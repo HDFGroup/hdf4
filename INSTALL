@@ -22,6 +22,7 @@ Supported Platforms
   ------------            -----------  -----------------   -------   -----------
   Sun4(SunOS 4.1.4)           GCC 2.7.2      f77 SC1.0        X         X
   Sun4(Solaris 2.3)           CC SC3.0       f77 SC3.0        X         X
+  Sun4(Solaris 2.4)           CC SC3.0       f77              X         X
   SGI-?(IRIX4.0.2)            CC             f77              X         X
   SGI-Indy(IRIX5.3)           CC             f77              X         X
   SGI-Indy(IRIX6.1_32)        CC             f77              X         X
@@ -33,7 +34,7 @@ Supported Platforms
   CM5 (Sun Frontend)          GCC 2.6.3      f77 SC1.0        X         X
   CM5 (Parallel I/O)          CSTAR 7.2      CMF 2.2.11       X         X
   IBM RS6000/AIX              CC             f77              X         X
-  DEC Alpha/OSF1/1 v3.0       CC 3.11        f77              X         X
+  DEC Alpha/OSF1/1 v3.2       CC 3.11        f77              X         X
   DecStation/MIPSEL           CC              -
   IBM PC - Intel Pentium
        Solarisx86             GCC 2.7.0       -               X         X
