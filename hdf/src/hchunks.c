@@ -2875,7 +2875,7 @@ HMCwriteChunk(int32 access_id,  /* IN: access aid to mess with */
     chunkinfo_t *info       = NULL; /* chunked element information record */
     CHUNK_REC   *chkptr     = NULL; /* Chunk record to inserted in TBBT  */
     int32       *chk_key    = NULL; /* Chunk recored key for insertion in TBBT */
-    const VOIDP *bptr       = NULL; /* data buffer pointer */
+    const VOID  *bptr       = NULL; /* data buffer pointer */
     VOID        *chk_data   = NULL; /* chunk data */
     uint8       *chk_dptr   = NULL; /* chunk data pointer */
     int32       relative_posn;      /* relative position in chunked element */
