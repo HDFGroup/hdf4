@@ -28,7 +28,7 @@ Supported Platforms
   HP9000/735(HPUX 9.03)       CC             f77              X         X
   Convex C3880(ConvexOS 11.0) CC v5.0        fc v8.0          X         X
   Convex Exemplar(HPUX)       CC             f77              X         X
-  Cray C90 (UNICOS 803.2)     CC             cf77             X         X(C only)
+  Cray C90 (UNICOS 803.2)     CC             cf77             X         X
   CM5 (Sun Frontend)          GCC 2.6.3      f77 SC1.0        X         X
   CM5 (Parallel I/O)          CSTAR 7.1.1    CMF 2.2.11       X         X
   IBM RS6000/AIX              CC              -               X         X
@@ -39,7 +39,7 @@ Supported Platforms
        Linux                  GCC         Fortran compiler   X         X
                                              2.6.2
                                  (Fortran to C converter)
-       Windows NT/95        Visual C++ 2.0    -               X         X(C only)
+       Windows NT/95        Visual C++ 2.0    -               X        X(C only)
        Free BSD 2.0         GCC 2.6.2     Fortran compiler    X         X
                                              2.6.2
                                  (Fortran to C converter)
@@ -91,8 +91,9 @@ General Configuration/Installation - Unix
     Layout of configuration files
     -----------------------------
     The following shows the layout of the files used in the configuration.
-    NOTE: The $(toplevel)/mfhdf/CUSTOMIZE and $(toplevel)/mfhdf/configure(autoconf)
-          files are no longer used in the configuration
+    NOTE: The $(toplevel)/mfhdf/CUSTOMIZE and 
+          $(toplevel)/mfhdf/configure(autoconf) files are no longer used 
+          in the configuration
   
     $(toplevel)/Makefile.in
                 config.guess
@@ -121,9 +122,9 @@ General Configuration/Installation - Unix
     Changing default values(CC,CFLAGS,..)
     -------------------------------------
     To change any of the default values for CC, FC, CFLAGS, FFLAGS,..etc
-    edit the makefile fragment '$(toplevel)/config/mh-<os>' for your particular
-    operating system. After changing the values you must re-run the 
-    top-level 'configure' script. 
+    edit the makefile fragment '$(toplevel)/config/mh-<os>' for your 
+    particular operating system. After changing the values you must 
+    re-run the top-level 'configure' script. 
 
     Running configure
     -----------------
@@ -132,12 +133,12 @@ General Configuration/Installation - Unix
 
 	./configure -v --prefix=/usr/local/hdf
 
-    If you're using `csh' on an old version of System V, you might need to type
-    `sh ./configure -v --prefix=/usr/local/hdf' instead to prevent `csh' 
-     from trying to execute `configure' itself.
+    If you're using `csh' on an old version of System V, you might need 
+    to type `sh ./configure -v --prefix=/usr/local/hdf' instead to prevent 
+    `csh' from trying to execute `configure' itself.
 
-    This will configure the distribution to install the libraries,
-    utilities, include and man files in '/usr/local/hdf/lib','/usr/local/hdf/bin',
+    This will configure the distribution to install the libraries, utilities,
+    include and man files in '/usr/local/hdf/lib','/usr/local/hdf/bin',
     '/usr/local/hdf/include' and '/usr/local/hdf/man' respectively. The
     default 'prefix' is '/usr/local'. It is advisable to use something
     like the above to avoid overwriting say another 'libjpeg.a' that might be
@@ -163,7 +164,8 @@ General Configuration/Installation - Unix
 
         make test 
 
-    It is a good idea to save the output of the tests and view it later for errors.
+    It is a good idea to save the output of the tests and view it later 
+    for errors.
     e.g. 
 
         make test >& make.test.out
@@ -224,8 +226,9 @@ Pablo Instrumentation
 
     More detailed documentation on how to use the instrumented version of
     the HDF library with Pablo can be found in the Pablo directory 
-    '$(toplevel)/hdf/pablo'. See the provided '$(toplevel)/hdf/pablo/README.Pablo'
-     and the PostScript file '$(toplevel)/hdf/pablo/Pablo.ps'.
+    '$(toplevel)/hdf/pablo'. 
+    See the provided '$(toplevel)/hdf/pablo/README.Pablo' and the PostScript 
+    file '$(toplevel)/hdf/pablo/Pablo.ps'.
 
     At this time only an instrumented version of the core HDF library libdf.a 
     can be created. Future versions will have support for the SDxx interface
@@ -262,17 +265,17 @@ File Page Buffering(Beta release)
 
     The file page buffering allows the file to be mapped to user memory on 
     a per page basis i.e a memory pool of the file. With regards to the 
-    file system, page sizes can be allocated based on the file system page-size 
-    or if the user wants in some multiple of the file system page-size. This 
-    allows for fewer pages to be managed along with accommodating the users file 
-    usage pattern.
+    file system, page sizes can be allocated based on the file system 
+    page-size or if the user wants in some multiple of the file system 
+    page-size. This allows for fewer pages to be managed along with 
+    accommodating the users file usage pattern.
 
     The current version supports setting the page-size and number of pages
     in the memory pool through user routines. The default is 8192 bytes for 
     page-size and 1 for number of pages in the pool.
 
-    More detailed documentation on how to use the file page buffering version of
-    the HDF library can be found in the directory '$(toplevel)/release_notes'.
+    More detailed documentation on how to use the file page buffering version 
+    of the HDF library can be found in the directory'$(toplevel)/release_notes'.
     See the provided file '$(toplevel)/release_notes/page_buf.txt'
 
     To enable the creation of a library using page buffering the following 
@@ -285,8 +288,8 @@ File Page Buffering(Beta release)
     # documentation before enabling this feature.
     #FMPOOL_FLAGS  = -DHAVE_FMPOOL
 
-    After setting these values you must re-run  the toplevel 'configure' script. 
-    Details on running configure can be found above in the section
+    After setting these values you must re-run  the toplevel 'configure' 
+    script.  Details on running configure can be found above in the section
     'General Configuration/Installation - Unix'.
 
 
@@ -296,10 +299,10 @@ Documentation
     Manual pages for the library are not yet completed but some early
     drafts are available in $(toplevel)/man.
 
-    The files in sub-directory $(toplevel)/release_notes are detailed descriptions
-    for the new features. They can be used as  supplement documentation 
-    for HDF4.0. Those files are also available on the NCSA ftp server, 
-    in /HDF/Documentation/HDF4.0/4.0b2_release_notes/.
+    The files in sub-directory $(toplevel)/release_notes are detailed 
+    descriptions for the new features. They can be used as supplement 
+    documentation for HDF4.0. Those files are also available on the NCSA 
+    ftp server, in /HDF/Documentation/HDF4.0/4.0b2_release_notes/.
 
 
 Installation Location
@@ -312,8 +315,8 @@ Installation Location
 
     eg.  ./configure -v --prefix=/usr/local/hdf
 
-     This will configure the distribution to install the libraries,
-     utilities, include and man files in '/usr/local/hdf/lib','/usr/local/hdf/bin',
+     This will configure the distribution to install the libraries, utilities,
+     include and man files in '/usr/local/hdf/lib','/usr/local/hdf/bin',
      '/usr/local/hdf/include' and '/usr/local/hdf/man' respectively. The
      default 'prefix' is '/usr/local'. It is advisable to use something
      like the above to avoid overwriting say another 'libjpeg.a' that might be
@@ -324,9 +327,9 @@ Specifying the System Type
 ==========================
 
     There may be some features `configure' can not figure out
-    automatically, but needs to determine by the type of host HDF/netCDF will run
-    on.  Usually `configure' can figure that out, but if it prints a
-    message saying it can not guess the host type, give it the
+    automatically, but needs to determine by the type of host HDF/netCDF
+    will run on.  Usually `configure' can figure that out, but if it prints
+    a message saying it can not guess the host type, give it the
     `--host=TYPE' option.  TYPE can either be a short name for the system
     type, such as `sun4', or a canonical name with three fields:
 
