@@ -28,7 +28,8 @@
 /*-------------------------------------------------------------------------
  * Function: copy_sds
  *
- * Purpose: copy an SDS from input file to output file and compress it using options
+ * Purpose: copy an SDS from input file to output file and compress it 
+ *  using options
  *
  * Return: 0, -1 for error 
  *
