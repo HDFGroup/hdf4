@@ -325,18 +325,12 @@ SDstart(const char *name,   /* IN: file name to open */
 
     /* check if bad create/open */
     if(cdfid == -1) 
-      {
-        ret_value = FAIL;
-        goto done;
-      }
+        HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
     /* hmm.....*/
     handle = NC_check_id(cdfid);
     if(handle == NULL) 
-      {
-        ret_value = FAIL;
-        goto done;
-      }
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* set in 'define' mode? */
     handle->flags &= ~(NC_INDEF);
