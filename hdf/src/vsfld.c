@@ -732,21 +732,21 @@ intn VSsetexternalfile(int32 vkey, char *filename, int32 offset)
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     if(!w->ref)
-	HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     /* no need to give a length since the element already exists */
     /* The Data portion of a Vdata is always stored in linked blocks. */
     /* So, use the special tag */
     status = (intn)HXcreate(vs->f, (uint16)VSDATATAG, (uint16) w->ref,
 		      filename, offset, (int32)0);
-    if(status != FAIL) {
-	if((vs->aid != 0) && (vs->aid != FAIL))
-	    Hendaccess(vs->aid);
-	vs->aid = status;
-    }
+    if(status != FAIL)
+      {
+        if((vs->aid != 0) && (vs->aid != FAIL))
+            Hendaccess(vs->aid);
+        vs->aid = status;
+      }
     else
-	ret_value = FAIL;
-
+        ret_value = FAIL;
 
 done:
     if(ret_value == FAIL)
@@ -758,3 +758,4 @@ done:
 
     return ret_value;
 } /* VSsetexternalfile */
+
