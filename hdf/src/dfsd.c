@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.13  1993/01/07 21:09:21  georgev
-Forgot to swith order of HDmemcpy arguments in DFSDgetfillvalue.
+Revision 1.14  1993/01/15 16:50:20  georgev
+DFSDwritefillvalue works now.
 
+ * Revision 1.13  1993/01/07  21:09:21  georgev
+ * Forgot to swith order of HDmemcpy arguments in DFSDgetfillvalue.
+ *
  * Revision 1.12  1993/01/06  19:32:23  chouck
  * Spelled one of the Hendaccess()s wrong (oops)
  *
@@ -181,7 +184,8 @@ static struct {			/* Indicators of status (s) of info:    */
     int transpose;	/* It should be taken out!!!		!!!  */
     int cal;
     int fill_value;
-} Ref = {  -1, -1, -1, { -1, -1, -1 }, -1, -1 , -1, -1, -1};
+    int new_ndg;
+} Ref = {  -1, -1, -1, { -1, -1, -1 }, -1, -1 , -1, -1, -1, -1};
     
 static int Maxstrlen[4] = { DFS_MAXLEN, DFS_MAXLEN, DFS_MAXLEN, DFS_MAXLEN };
 static int Ismaxmin      = 0;	/* is there a max/min value on read?  */
@@ -679,6 +683,7 @@ int32  dimsizes[];
 
     /* Note dimensions modified */
     Ref.dims = 0;
+    Ref.new_ndg = 0;
     return(0);
 }
 /*-----------------------------------------------------------------------------
@@ -1399,6 +1404,7 @@ int32 numbertype;
     Writesdg.filenumsubclass = outNT;
     Ref.nt = 0;
     Ref.dims = (Ref.dims >= 0? 0: Ref.dims);
+    Ref.new_ndg = 0;
     return(DFKsetNT(numbertype));
 }
 
@@ -1438,6 +1444,7 @@ DFSsdg *sdg;
     Ref.nt = -1;
     Ref.maxmin = -1;    /* maxmin and scales should be changed to */
     Ref.scales = -1;    /* new number type              */
+    Ref.new_ndg = -1;
     return(0);
 }
 
@@ -3122,6 +3129,7 @@ DFSsdg *sdg;
     Ref.dims = -1;
     Ref.scales = Ref.luf[LABEL] = Ref.luf[UNIT] = Ref.luf[FORMAT] = (-1);
     Ref.coordsys = Ref.maxmin = (-1);
+    Ref.new_ndg = -1;
     return(0);
 }
 
@@ -4017,7 +4025,7 @@ DFSDgetfillvalue(fill_value)
  * Returns: 0 on success, FAIL on failure
  * Users:   HDF programmers, other routines and utilities
  * Invokes: HEclear, DFSDIopen
- * Remarks:
+ * Remarks: Nedd an efficient implementation to handle large datasets.
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
@@ -4030,25 +4038,56 @@ DFSDwritefillvalue(filename, fill_value)
     void *fill_value;
 #endif /* PROTOTYPE */
 {
-    int32 file_id, aid;
-    int32 buf_size;
-    uint8 *buf;
+    intn  i;
+    int32 numtype;      /* current number type  */
+    int32 localNTsize;  /* size of this NT on as it is on this machine  */
+    int32 fileNTsize;   /* size of this NT as it will be in the file  */
+    int32 dataset_size; 
+    int32 *size_dims;
+    int32 *start_dims;
+    int32 *stride;
+    uint8 *buf;         /* buffer of fill values */
+
     char *FUNC="DFSDwritefillvalue";
 
     /* Clear error stack  */
     HEclear();
 
-    /* Open file for WRITE access  */
-    file_id = DFSDIopen(filename, DFACC_WRITE);
-    if (file_id == DF_NOFILE)
-      return FAIL;
+    /* Get local and file number type sizes  */
+    numtype     = Writesdg.numbertype;
+    fileNTsize  = DFKNTsize(numtype);
+    localNTsize = DFKNTsize(numtype | DFNT_NATIVE);
+
+    /* Allocate space for start_dims, size_dims and stride */
+    start_dims =(int32 *)HDgetspace((uint32)3 * Writesdg.rank * sizeof(int32));
+    if (start_dims == NULL)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+    size_dims = start_dims + Writesdg.rank;
+    stride    = size_dims + Writesdg.rank;
+    
+    /* Get data set size, and intialize start dims and size dims */
+    dataset_size = localNTsize;
+    for (i = 0; i < Writesdg.rank; i++)
+      {
+        start_dims[i] = 1;
+        stride[i]     = 1;
+        size_dims[i] = Writesdg.dimsizes[i];
+        dataset_size = dataset_size * size_dims[i];
+      }
 
     /*
-    ** Loop till you get the largest possible buffer
-    ** as a multiple of the dataset size.
+    ** Allocate space for dataset, this will cause problems for 
+    ** huge datasets. Will need to replace with a more robust version.
     */
+    if ((buf = (uint8 *) HDgetspace((uint32) dataset_size)) == NULL)
+      HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    return Hclose(file_id);
+    /* Intialize buffer to fill value */
+    for (i = 0; i < dataset_size; i = i + localNTsize)
+        HDmemcpy((uint8 *)&(buf[i]), fill_value, localNTsize);
+   
+    /* Write fill values using a slab */
+    return DFSDwriteslab(filename, start_dims, stride, size_dims, buf);
 }
 
 /*----------------------------------------------------------------------------
@@ -4126,6 +4165,10 @@ DFSDwriteslab(filename, start, stride, count, data)
 
     /* Clear error stack  */
     HEclear();
+
+    /* Make sure file name is valid */
+    if (filename == NULL)
+       return FAIL;
 
     /* Sanity checking of input data  */
     if (!data)
@@ -4214,7 +4257,7 @@ DFSDwriteslab(filename, start, stride, count, data)
     /*
     ** Check if fill value is set
     */
-    if (Ref.fill_value)
+    if (!Ref.fill_value)
       {
         int write_fill = 0;
 
