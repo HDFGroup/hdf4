@@ -388,9 +388,9 @@ int  copy_gr(int32 infile_id,
    case COMP_CODE_SZIP:
    if (set_szip (rank,dimsizes,dtype,n_comps,&c_info)==FAIL)
    {
-    printf( "Error: Failed to set SZIP compression for <%s>\n", path);
-    ret=-1;
-    goto out;
+    printf( "Warning: SZIP compression cannot be set for <%s>. \
+     Using no compression \n", path);
+    comp_type=0;
    }
    break;
   case COMP_CODE_RLE:         

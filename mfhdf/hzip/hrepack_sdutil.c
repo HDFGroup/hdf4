@@ -385,6 +385,7 @@ int set_szip(int32 rank,
              comp_info *c_info)
 {
  int   i;
+ int32 pixels_per_block;
 
  /*
  pixels_per_scanline = size of the fastest-changing dimension 
@@ -410,10 +411,22 @@ int set_szip(int32 rank,
   and <= MAX_PIXELS_PER_BLOCK
   */
 
- c_info->szip.pixels_per_block=2;
+ pixels_per_block=16;
+ if (pixels_per_block > c_info->szip.pixels_per_scanline)
+ {
+  do {
+   pixels_per_block-=2;
+   if (pixels_per_block==2)
+    break;
+  }
+   while (pixels_per_block > c_info->szip.pixels_per_scanline);
+ }
+
+ c_info->szip.pixels_per_block=pixels_per_block;
+
  if (c_info->szip.pixels_per_block > c_info->szip.pixels_per_scanline)
  {
-  printf("Error: in SZIP setting, pixels per block <%d>, \
+  printf("Warning: in SZIP setting, pixels per block <%d>, \
    cannot be greater than pixels per scanline<%d>\n",
    c_info->szip.pixels_per_block, c_info->szip.pixels_per_scanline);
   return -1;

@@ -376,7 +376,8 @@ int copy_sds(int32 sd_in,
   case COMP_CODE_SZIP:
    if (set_szip (rank,dimsizes,dtype,1,&c_info)==FAIL)
    {
-    printf( "Error: Failed to set SZIP compression for <%s>\n", path);
+    printf( "Warning: SZIP compression cannot be set for <%s>. \
+     Using no compression \n", path);
     comp_type=0;
    }
    break;
