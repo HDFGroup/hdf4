@@ -193,14 +193,23 @@ typedef char              int8;
 typedef unsigned char     uint8;
 typedef short int         int16;
 typedef unsigned short int uint16;
+#ifdef _LP64 /* 64-bit environment */
+typedef int               int32;
+typedef unsigned int      uint32;
+#else /* 32-bit environment */
 typedef long int          int32;
 typedef unsigned long int uint32;
+#endif
 typedef int               intn;
 typedef unsigned int      uintn;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef float             float32;
 typedef double            float64;
+#ifdef _LP64 /* 64-bit environment */
+typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
+#else /* 32-bit environment */
 typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
+#endif
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
