@@ -30,6 +30,7 @@ d_min_val1, d_max_val1, d_min_val2, d_max_val2); }
  printf("Range File1: %d/%d  File2: %d/%d\n", \
 i4_min_val1, i4_max_val1, i4_min_val2, i4_max_val2); }
 
+
 /*-------------------------------------------------------------------------
  * printf formatting
  *-------------------------------------------------------------------------
@@ -111,7 +112,7 @@ int array_diff(void *buf1,
                int32 *dims,
                int32 type, 
                float32 err_limit, 
-               int32 max_err_cnt, 
+               uint32 max_err_cnt, 
                int32 statistics,
                void *fill1, 
                void *fill2)
@@ -134,7 +135,7 @@ int array_diff(void *buf1,
  int32   i4_max_val1=0, i4_min_val1=0, i4_max_val2=0, i4_min_val2=0;
  int16   i2_diff;
  int8    c_diff;
- int     n_diff = 0;
+ uint32  n_diff = 0;
  int     is_fill1, is_fill2;
  int     n_stats = 0;
  char    *debug;
@@ -168,9 +169,9 @@ int array_diff(void *buf1,
   break;
  case DFNT_UINT8:
  case DFNT_UCHAR8:
-  i4_max_val1 = 0;
+  i4_max_val1 = -UCHAR_MAX -1;
   i4_min_val1 = UCHAR_MAX;
-  i4_max_val2 = 0;
+  i4_max_val2 = -UCHAR_MAX -1;
   i4_min_val2 = UCHAR_MAX;
   break;
  case DFNT_INT16:
@@ -180,22 +181,22 @@ int array_diff(void *buf1,
   i4_min_val2 = SHRT_MAX;
   break;
  case DFNT_UINT16:
-  i4_max_val1 = 0;
+  i4_max_val1 = -USHRT_MAX -1;
   i4_min_val1 = USHRT_MAX;
-  i4_max_val2 = 0;
+  i4_max_val2 = -USHRT_MAX -1;
   i4_min_val2 = USHRT_MAX;
   break;
  case DFNT_INT32:
-  i4_max_val1 = (int32)LONG_MIN;
-  i4_min_val1 = (int32)LONG_MAX;
-  i4_max_val2 = (int32)LONG_MIN;
-  i4_min_val2 = (int32)LONG_MAX;
+  i4_max_val1 = INT_MIN;
+  i4_min_val1 = INT_MAX;
+  i4_max_val2 = INT_MIN;
+  i4_min_val2 = INT_MAX;
   break;
  case DFNT_UINT32:
-  i4_max_val1 = 0;
-  i4_min_val1 = (int32)ULONG_MAX;
-  i4_max_val2 = 0;
-  i4_min_val2 = (int32)ULONG_MAX;
+  i4_max_val1 = INT_MIN;
+  i4_min_val1 = INT_MAX;
+  i4_max_val2 = INT_MIN;
+  i4_min_val2 = INT_MAX;
   break;
  case DFNT_FLOAT:
   d_max_val1 = -FLT_MAX;
@@ -332,12 +333,12 @@ int array_diff(void *buf1,
     n_stats++;
    }
    if (! is_fill1) {
-    i4_max_val1 = MYMAX(i4_max_val1, (int32)(*i4ptr1));
-    i4_min_val1 = MYMIN(i4_min_val1, (int32)(*i4ptr1));
+    i4_max_val1 = MYMAX(i4_max_val1,*i4ptr1);
+    i4_min_val1 = MYMIN(i4_min_val1,*i4ptr1);
    }
-   if (! is_fill2) {
-    i4_max_val2 = MYMAX(i4_max_val2, (int32)(*i4ptr2));
-    i4_min_val2 = MYMIN(i4_min_val2, (int32)(*i4ptr2));
+    if (! is_fill2) {
+    i4_max_val2 = MYMAX(i4_max_val2,*i4ptr2);
+    i4_min_val2 = MYMIN(i4_min_val2,*i4ptr2);
    }
    if (i4_diff > (int32) err_limit)
    {
@@ -393,7 +394,7 @@ int array_diff(void *buf1,
     if (n_diff <= max_err_cnt) {
      print_pos(&ph,i,acc,pos,rank,name1,name2);
      printf(SPACES);
-     printf(FFORMAT,*fptr1,*fptr2,abs(*fptr1-*fptr2));
+     printf(FFORMAT,*fptr1,*fptr2,fabs(*fptr1-*fptr2));
     }
    }                                               
    fptr1++;  fptr2++;
@@ -437,7 +438,7 @@ int array_diff(void *buf1,
     if (n_diff <= max_err_cnt) {
      print_pos(&ph,i,acc,pos,rank,name1,name2);
      printf(SPACES);
-     printf(FFORMAT,*dptr1,*dptr2,abs(*dptr1-*dptr2));
+     printf(FFORMAT,*dptr1,*dptr2,fabs(*dptr1-*dptr2));
     }
    }
    dptr1++;  dptr2++;
@@ -535,9 +536,10 @@ int
 vdata_cmp(int32  vs1, int32  vs2, 
           char   *gname, 
           char   *cname, 
-          int32  max_err_cnt)
+          uint32  max_err_cnt)
 {
- int32   i, j, k, iflag, err_cnt;
+ int32   i, j, k, iflag;
+ uint32  err_cnt;
  int32   nv1, interlace1, vsize1;
  int32   vsotag1;
  char    fields1[VSFIELDMAX*FIELDNAMELENMAX];

@@ -125,9 +125,6 @@ TOOLTEST hdiff_11.txt hdifftst1.hdf hdifftst2.hdf
 cd testfiles
 ../hdifftst
 cd ..
-# do a 1st run, generate output
-#RUN >& /dev/null
-RUN
 # compare output
 RUN
 

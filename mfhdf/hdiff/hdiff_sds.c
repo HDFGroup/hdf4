@@ -67,7 +67,7 @@ int diff_sds(const char  *fname1,
  intn  empty2_sds;
  VOIDP buf1=NULL;
  VOIDP buf2=NULL;
- int32 max_err_cnt;
+ uint32 max_err_cnt;
  int   i;
 
 /*-------------------------------------------------------------------------

@@ -62,7 +62,7 @@ typedef struct {			/* selection for comparison  */
     int vd;			/*
 				 * if true, compare Vdata only 
 				 */
-    int32 max_err_cnt;            /*
+    uint32 max_err_cnt;         /*
                                  * max. no of difference to be printed
                                  */
     float32 err_limit;		/*
@@ -118,7 +118,7 @@ int  hdiff(const char *fname1, const char *fname2, diff_opt_t *opt);
 int  gattr_diff(int32 sdid1, int32 sdid2, diff_opt_t *opt);
 int  sdattr_diff(int32 sdid1, int32 sdid2, diff_opt_t *opt);
 void pr_att_vals(nc_type type, int len, void *vals);
-int  vdata_cmp(int32 vs1, int32 vs2, char *gname, char*cname, int32 max_err_cnt);
+int  vdata_cmp(int32 vs1, int32 vs2, char *gname, char*cname, uint32 max_err_cnt);
 void fmt_print(uint8 *x, int32 type);
 void make_vars(char *optarg, diff_opt_t *opt, int option);
 
@@ -132,7 +132,7 @@ int array_diff(void *buf1,
                int32 *dims,
                int32 type, 
                float32 err_limit, 
-															int32 max_err_cnt, 
+															uint32 max_err_cnt, 
                int32 statistics,
 															void *fill1, 
                void *fill2);

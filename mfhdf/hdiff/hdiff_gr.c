@@ -64,7 +64,7 @@ int diff_gr( int32 file1_id,
  int   dim_diff=0;             /* dimensions are different */
  VOIDP buf1=NULL;
  VOIDP buf2=NULL;
- int32 max_err_cnt;
+ uint32 max_err_cnt;
  int   i, cmp;
 
 
