@@ -3,7 +3,7 @@
   --------
   1. Obtaining the latest version
 
-  2. Installing HDF/netCDF
+  2. Installing HDF/mfhdf
   2.1 Supported Platforms
   2.2 Third Party Software Requirements
   2.3 System Requirements
@@ -60,10 +60,10 @@
 
      ftp://ftp.ncsa.uiuc.edu/HDF/HDF_Current
 
-2. Installing HDF/netCDF	
-   =====================
+2. Installing HDF/mfhdf	
+   ====================
 
-    For compiling and installing HDF/netCDF libraries, tests and
+    For compiling and installing HDF/mfhdf libraries, tests and
     utilities on a system, please follow these instructions. 
 
 2.1 Supported Platforms
@@ -90,23 +90,23 @@
   Cray C90 (UNICOS 803.2)     -               -               -         - 
   Cray YMP (UNICOS 9.0.2asC cri.3) -          -               -         -
   CM5 (Parallel I/O, 4.1.3_U1)CSTAR 7.2      CMF 2.1          X         X 
-  IBM RS6000/AIX v4.1         -               -               -         - 
+  IBM RS6000/AIX (4.1)        -               -               -         - 
   IBM SP2 (single node, v4.1) XLC 3.1.4.0    f77 3.2.4.2      X         X 
   DEC Alpha/Digital Unix v3.2 CC             f77              X         X
   DEC Alpha/OpenVMS AXP v6.2  DECC 5.3       DEC FORTRAN 6.3  X         X
   VAX OpenVMS v6.2            DECC 5.3       DEC FORTRAN 6.3  X         X
   IBM PC - Intel Pentium
-       Solarisx86 (2.5)       GCC 2.7.2       -               X         X 
-       Linux(a.out) v1.2.4    GCC            FORTRAN compiler X         X
+       Solarisx86 (2.5)       GCC 2.7.2.1     -               X         X 
+       Linux(a.out) (1.2.4)   GCC            FORTRAN compiler X         X
                                               2.6.2     
                                       (FORTRAN to C converter)
-       Linux(elf)  1.2.13     GCC 2.7         -               X         X
-       FreeBSD 2.2            GCC 2.6.3      f77              X         X
+       Linux(elf)  (2.0.27)   GCC 2.7.2.1     -               X         X
+       FreeBSD (2.2)          GCC 2.6.3      f77              X         X
 
   PowerPC(Mac-OS-7.6)         Codewarrior 11  -               X         X
   68k-far/4i/8d(Mac-OS-7.6)   -               -               -         -
   Windows NT/95               Visual C++ 4.2  -               X         X  
-  T3D (v9.0.2asC)             CC 5.0.1        -               X         X 
+  T3D (v9.0.2asC)             -               -               -         - 
 
 2.2  Third Party Software Requirements:
      ==================================
@@ -117,7 +117,7 @@
      2. ZLIB 1.0.4(libz.a) distribution.
 
      Both of these distributions are included with this distribution
-     in 'hdf/jpeg' and 'hdf/zlib'. The HDF/netCDF base distribution
+     in 'hdf/jpeg' and 'hdf/zlib'. The HDF/mfhdf base distribution
      in known to work with these versions only.
 
 2.3 System Requirements
@@ -359,9 +359,8 @@
     2.5.3 Solaris(2.5) on INTEL(x86)
     --------------------------------
 
-    The distribution has been compiled/tested with GCC 2.7.2 with
-    *NO* FORTRAN support. The binary distribution was compiled
-    using GCC 2.7.2.
+    The distribution has been compiled/tested with GCC 2.7.2.1 with
+    *NO* FORTRAN support.
 
     When compiling your programs on Solaris_x86, you must include the 
     the nsl library, to resolve calls to the xdr* routines.
@@ -417,7 +416,7 @@
         $(toplevel)/release_notes/install_winNT.txt.
 
     To compile your program with HDF libraries, you need to define the
-       architecture as INTEL86 via a /DINTEL86 preprocessor macro. 
+    architecture as INTEL86 via a /DINTEL86 preprocessor macro. 
  
     2.5.6 CM5 Parallel I/O Extension
     --------------------------------
@@ -440,10 +439,7 @@
 
     The distribution was compiled/tested with MetroWerks Codewarrior(CW8).
     Only the base libraries{libdf.a,zlib.a,libjpeg.a,libmfhdf.a,libxdr.a}
-    were compiled and tested on the PowerPC and 68k without Fortran support.
-
-    The 68k version was compiled/tested using 4byte integers, 8byte doubles 
-    and far option.
+    were compiled and tested on the PowerPC without Fortran support.
 
     *NO* Fortran support is included in this distribution.
 
@@ -577,6 +573,7 @@
 
     2.5.10 T3D Single node
     ----------------------
+    ** Not supported with HDF 4.1r1 **
  
     HDF has been ported to the T3D system but only the C interface is
     supported for now.  To make the binary, you need to specify 't3d'
@@ -722,7 +719,7 @@
 2.8 Installation Location
     =====================
 
-    By default, `make install' will install the HDF/netCDF files in
+    By default, `make install' will install the HDF/mfhdf files in
     `$(toplevel)/NewHDF/bin', '$(toplevel)/NewHDF/lib', etc.  You may
     then copy the files to the appropriate directories on your system.
     If you prefer, you can specify the directory so that `make install'
@@ -746,7 +743,7 @@
     ==========================
 
     There may be some features `configure' can not figure out
-    automatically, but needs to determine by the type of host HDF/netCDF
+    automatically, but needs to determine by the type of host HDF/mfhdf
     will run on.  Usually `configure' can figure that out, but if it prints
     a message saying it can not guess the host type, give it the
     `--host=TYPE' option.  TYPE can either be a short name for the system
@@ -803,8 +800,8 @@
 5. Documentation
    =============
 
-   The HDF 4.0r2 documentation can be found on the NCSA ftp server
-   in the directory /HDF/Documentation/HDF4.0r2/.  The
+   The HDF 4.1r1 documentation can be found on the NCSA ftp server
+   in the directory /HDF/Documentation/HDF4.1r1/.  The
    HDF home page is at:
 
       http://hdf.ncsa.uiuc.edu/
@@ -812,7 +809,7 @@
 6. FAQ
    ===
    An FAQ is available on our ftp server, as well as under
-   "Information about HDF" in the home page.
+   "Information about HDF" on the home page.
 
 7. HELP
    ====
