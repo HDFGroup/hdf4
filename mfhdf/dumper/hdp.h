@@ -478,8 +478,8 @@ extern intn do_dumprig(intn curr_arg, intn argc, char *argv[], intn help);
 
 /* hdp_vg.c */
 extern intn do_dumpvg(intn curr_arg, intn argc, char *argv[], intn help);
-extern intn print_data_annots(int32 file_id, char *file_name, int32 tag, int32 ref);
-extern intn print_file_annotations( int32 file_id, char *file_name );
+extern intn print_data_annots(int32 file_id, const char *file_name, int32 tag, int32 ref);
+extern intn print_file_annotations( int32 file_id, const char *file_name );
 void print_fields( char *fields, char *field_title, FILE *fp );
 
 /* hdp_vd.c */

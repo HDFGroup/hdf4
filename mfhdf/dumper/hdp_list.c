@@ -243,7 +243,7 @@ print_annots_by_object(
    int32 *ann_list = NULL;
    char *annot_type_text = "invalid";	/* "label" or "description" */
    char *func_name = "print_annots_by_object"; /* used to print error msg */
-   char error_item[80];	/* holds tag, ref, and fname for error msg */
+   char error_item[256];	/* holds tag, ref, and fname for error msg */
    intn   ret_value = SUCCEED;
 
    /* stores the current values tag, ref, and file name in error_item,

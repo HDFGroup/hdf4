@@ -256,7 +256,7 @@ done:
    print an error message in the stderr to help debugging */
 void
 resetVG( int32 *vg_id,
-         char  *curr_file_name )
+         const char  *curr_file_name )
 {
    if( *vg_id != FAIL )
    {
@@ -392,7 +392,7 @@ intn
 get_VGandInfo( int32 *vg_id,
                int32  file_id,
                int32  vg_ref,
-               char  *file_name,
+               const  char *file_name,
                int32 *n_entries,
                char  *vgname,
                char  *vgclass )
@@ -444,7 +444,7 @@ done:
 
 intn 
 print_data_annots( int32 file_id,
-                char *file_name,
+                const char *file_name,
                 int32 tag,
                 int32 ref )
 {
@@ -732,7 +732,7 @@ done:
    two routines print_all_file_labels and print_file_descs defined in
    hdp_list.c to display the file annotations of the current file */
 intn
-print_file_annotations( int32 file_id, char* file_name )
+print_file_annotations( int32 file_id, const char* file_name )
 {
    int32 an_id = FAIL;
    intn  status = SUCCEED, ret_value = SUCCEED;
@@ -778,7 +778,7 @@ void
 closeVG(
     int32 *file_id,     /* will be returned as a FAIL */
     int32 **vg_chosen,  /* will be returned as a NULL */
-    char  *curr_file_name )
+    const char  *curr_file_name )
 {
    if( *file_id != FAIL )
    {
@@ -803,7 +803,7 @@ intn
 vgBuildGraph(int32        vg_id, 
            int32        file_id, 
            int32        num_entries, 
-	   char* file_name,
+	   const char* file_name,
            vg_info_t *aNode,
            intn         *skipfile)
 {

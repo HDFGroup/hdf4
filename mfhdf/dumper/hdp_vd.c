@@ -570,7 +570,7 @@ intn getFieldIndices(
 intn
 dumpvd_ascii(dump_info_t * dumpvd_opts, 
              int32 file_id,
-             char  *file_name,
+             const char  *file_name,
 	     FILE* fp,
              int32 num_vd_chosen, 
              char *flds_chosen[MAXCHOICES],
@@ -782,7 +782,7 @@ done:
 intn
 dumpvd_binary(dump_info_t * dumpvd_opts, 
               int32 file_id,
-              char  *file_name,
+              const char  *file_name,
 	      FILE* fp,
               int32 num_vd_chosen, 
               char *flds_chosen[MAXCHOICES],
@@ -919,7 +919,7 @@ void
 closeVD(
     int32 *file_id,     /* will be returned as a FAIL */
     int32 **vd_chosen,  /* will be returned as a NULL */
-    char  *curr_file_name )
+    const char  *curr_file_name )
 {
    if( *file_id != FAIL )
    {
