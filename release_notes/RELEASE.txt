@@ -42,6 +42,10 @@ New Features and Changes:
      
     Library
     ========= 
+	- The current SDgetcompress and GRgetcompress have severe flaws.
+	  Two new APIs, SDgetcompinfo and GRgetcompinfo, were added to 
+	  provide better functionality and will replace SDgetcompress and
+	  GRgetcompress, eventually. BMR - 2005/4/4
    
     Utilities
     ========= 
@@ -52,6 +56,8 @@ Support for new platforms and compilers
 
 Bugs fixed since HDF4.2r1
 =========================
+	- Added the display of compression method to hdp dumpsds and dumpgr.
+	  (bugzilla #130) BMR - 2005/4/4
 
 Documentation
 ==============
