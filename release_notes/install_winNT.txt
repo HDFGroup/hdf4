@@ -8,10 +8,10 @@ future.
 
 The instructions which follow assume that you will be using one of the 'zip'
 files that we provide, either the complete source & binary release
-(hdf40r2b.zip) or the source only release (hdf40r2s.zip).  To build the HDF,
+(hdf41b1.zip) or the source only release (hdf41b1s.zip).  To build the HDF,
 JPEG, zlib and netCDF libraries and utilities, follow these instructions:
 
-    1) Create a directory to unpack the library in (\HDF4.0 for example).
+    1) Create a directory to unpack the library in (\HDF4.1b1 for example).
 
     2) Copy the distribution archive to that directory and unpack it using
         the appropriate archiver options to create a directory hierarchy.
@@ -34,6 +34,8 @@ JPEG, zlib and netCDF libraries and utilities, follow these instructions:
             c) mfhdf\libsrc\cdftest.exe
             d) mfhdf\libsrc\hdftest.exe
             e) mfhdf\nctest\nctest.exe
+        Note: create a sub-directory testdir directory and copy hdf\test\*.dat 
+              files to the directory where testhdf.exe resides. 
             
 To use the HDF/JPEG/netCDF library the following locations may need to be
 specified for locating header files:
