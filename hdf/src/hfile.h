@@ -210,16 +210,86 @@ typedef HFILE hdf_file_t;
 /* ----------------------- Internal Data Structures ----------------------- */
 /* The internal structure used to keep track of the files opened: an
    array of filerec_t structures, each has a linked list of ddblock_t.
-   Each ddblock_t struct points to an array of dd_t structs. */
+   Each ddblock_t struct points to an array of dd_t structs. 
+
+   File Header(4 bytes)
+   ===================
+   <--- 32 bits ----->
+   ------------------
+   |HDF magic number |
+   ------------------
+
+   HDF magic number - 0x0e031301 (Hexadecimal)
+
+   Data Descriptor(DD - 12 bytes)
+   ==============================
+   <-  16 bits -> <- 16 bits -> <- 32 bits -> <- 32 bits ->
+   --------------------------------------------------------
+   |    Tag      | reference   |  Offset     |  Length    |
+   |             | number      |             |            |
+   --------------------------------------------------------
+        \____________/
+               V
+        tag/ref (unique data indentifier in file)
+   
+   Tag  -- identifies the type of data, 16 bit unsigned integer whose
+           value ranges from 1 - 65535. Tags are assigned by NCSA.
+           Current tag assingments are:
+           00001 - 32767  - reserved for NCSA use
+           32768 - 64999  - user definable
+           65000 - 65535  - reserved for expansion of format
+
+   Refererence number - 16 bit unsigned integer whose assignment is not
+          gauranteed to be consecutive. Provides a way to distinguish 
+          elements with the same tag in the file.
+
+   Offset - Specifies the byte offset of the data element from the 
+            beginning of the file - 32 bit unsigned integer
+
+   Length - Indicates the byte length of the data element
+            32 bit unsigned integer
+
+   Data Descriptor Header(DDH - 6 bytes)
+   ====================================
+   <-  16 bits -> <- 32 bits ->
+   -----------------------------
+   | Block Size  | Next Block  |
+   -----------------------------
+
+   Block Size - Indicates the number of DD's in the DD Block,
+                16 bit unsigned integer value
+   Next Block - Gives the offset of the next DD Block. The last DD Block has
+                a ZERO(0) in the "Next Block" field in the DDH.
+                32 bit unsigned integer value
+
+   Data Descriptor Block(DDB - variable size)
+   ==========================================
+   <- DD Header -> <--------------- DD's --------------------->
+   --------------------------------------------------------...-
+   |Block | Next  | DD | DD | DD | DD | DD | DD | DD | DD |...|
+   |Size  | Block |    |    |    |    |    |    |    |    |   |
+   --------------------------------------------------------...-
+   <-------------------------- DD Block ---------------------->
+
+   Note: default number of DD's in a DD Block is 16
+
+   HDF file layout
+   =============================
+   (one example)
+   ---------------------------------------------------------------------
+   | FH | DD Block | Data | DD Block | Data | DD Block | Data | .....
+   ---------------------------------------------------------------------
+ 
+*/
 
 /* record of each data decsriptor */
 typedef struct dd_t
   {
-      uint16      tag;          /* Tag number of element */
+      uint16      tag;          /* Tag number of element i.e. type of data */
       uint16      ref;          /* Reference number of element */
-      int32       length;       /* length of dd */
-      int32       offset;       /* offset to next dd */
-  }
+      int32       length;       /* length of data element */
+      int32       offset;       /* byte offset of data element from */
+  }                             /* beginning of file */
 dd_t;
 
 /* version tags */
