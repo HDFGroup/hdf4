@@ -18,7 +18,23 @@ dnl
 AC_INIT([HDF], [4.1r5], [hdfhelp@ncsa.uiuc.edu])
 AC_CONFIG_SRCDIR([hdf/src/atom.c])
 AC_CONFIG_AUX_DIR([bin])
+AC_CONFIG_HEADER([hdf/src/h4config.h])
+
 AM_INIT_AUTOMAKE([HDF], [4.1r5])
+
+AC_OUTPUT_COMMANDS([
+  echo "creating hdf/src/h4config.h"
+  sed 's/#define /#define H4_/' < hdf/src/h4config.h |\
+    sed 's/#undef /#undef H4_/' > h4config
+  if test ! -f hdf/src/h4config.h; then
+    /bin/mv -f h4config hdf/src/h4config.h
+  elif (diff h4config hdf/src/h4config.h >/dev/null); then
+    /bin/rm -f h4config
+    echo "hdf/src/h4config.h is unchanged"
+  else
+    /bin/mv -f h4config hdf/src/h4config.h
+  fi
+])
 
 dnl ======================================================================
 dnl Information on the package
@@ -262,7 +278,7 @@ dnl Is the SZip library present?
 AC_ARG_WITH([szlib],
             [AC_HELP_STRING([--with-szlib=DIR],
                             [Use szlib library [default=yes]])],,
-            withval=yes)
+            withval=no)
 
 case "$withval" in
   yes)
@@ -275,7 +291,8 @@ case "$withval" in
     fi
     ;;
   no)
-    AC_MSG_ERROR([szlib library required to build HDF4])
+    AC_MSG_CHECKING([for szlib])
+    AC_MSG_RESULT([suppressed])
     ;;
   *)
     HAVE_SZIP="yes"

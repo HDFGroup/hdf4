@@ -165,6 +165,7 @@ SUFFIXES = .inc .f90
 subdir = hdf/src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
+CONFIG_HEADER = h4config.h
 CONFIG_CLEAN_FILES =
 LIBRARIES = $(lib_LIBRARIES)
 
@@ -197,7 +198,7 @@ am_libdf_a_OBJECTS = atom.$(OBJEXT) bitvect.$(OBJEXT) cdeflate.$(OBJEXT) \
 	vparse.$(OBJEXT) vrw.$(OBJEXT) vsfld.$(OBJEXT)
 libdf_a_OBJECTS = $(am_libdf_a_OBJECTS)
 
-DEFAULT_INCLUDES =  -I. -I$(srcdir)
+DEFAULT_INCLUDES =  -I. -I$(srcdir) -I.
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/atom.Po ./$(DEPDIR)/bitvect.Po \
@@ -246,10 +247,12 @@ F77LINK = $(F77LD) $(AM_FFLAGS) $(FFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES = $(libdf_a_SOURCES)
 HEADERS = $(include_HEADERS)
 
-DIST_COMMON = $(include_HEADERS) INSTALL Makefile.am Makefile.in
+DIST_COMMON = $(include_HEADERS) INSTALL Makefile.am Makefile.in \
+	h4config.h.in
 SOURCES = $(libdf_a_SOURCES)
 
-all: all-am
+all: h4config.h
+	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
 .SUFFIXES: .inc .f90 .c .f .o .obj
@@ -258,6 +261,23 @@ $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.ac $(ACLOCAL_M4)
 	  $(AUTOMAKE) --foreign  hdf/src/Makefile
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
+
+h4config.h: stamp-h1
+	@if test ! -f $@; then \
+	  rm -f stamp-h1; \
+	  $(MAKE) stamp-h1; \
+	else :; fi
+
+stamp-h1: $(srcdir)/h4config.h.in $(top_builddir)/config.status
+	@rm -f stamp-h1
+	cd $(top_builddir) && $(SHELL) ./config.status hdf/src/h4config.h
+
+$(srcdir)/h4config.h.in:  $(top_srcdir)/configure.ac $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOHEADER)
+	touch $(srcdir)/h4config.h.in
+
+distclean-hdr:
+	-rm -f h4config.h stamp-h1
 libLIBRARIES_INSTALL = $(INSTALL_DATA)
 install-libLIBRARIES: $(lib_LIBRARIES)
 	@$(NORMAL_INSTALL)
@@ -439,11 +459,11 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	       END { for (i in files) print i; }'`; \
 	mkid -fID $$unique
 
-TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+TAGS:  $(HEADERS) $(SOURCES) h4config.h.in $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	tags=; \
 	here=`pwd`; \
-	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
+	list='$(SOURCES) $(HEADERS) h4config.h.in $(LISP) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -454,11 +474,11 @@ TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 	     $$tags $$unique
 
 ctags: CTAGS
-CTAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+CTAGS:  $(HEADERS) $(SOURCES) h4config.h.in $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	tags=; \
 	here=`pwd`; \
-	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
+	list='$(SOURCES) $(HEADERS) h4config.h.in $(LISP) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -509,7 +529,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LIBRARIES) $(HEADERS)
+all-am: Makefile $(LIBRARIES) $(HEADERS) h4config.h
 
 installdirs:
 	$(mkinstalldirs) $(DESTDIR)$(libdir) $(DESTDIR)$(includedir)
@@ -544,7 +564,7 @@ clean-am: clean-generic clean-libLIBRARIES mostlyclean-am
 distclean: distclean-am
 
 distclean-am: clean-am distclean-compile distclean-depend \
-	distclean-generic distclean-tags
+	distclean-generic distclean-hdr distclean-tags
 
 dvi: dvi-am
 
@@ -585,8 +605,8 @@ uninstall-am: uninstall-includeHEADERS uninstall-info-am \
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
 	clean-libLIBRARIES ctags distclean distclean-compile \
-	distclean-depend distclean-generic distclean-tags distdir dvi \
-	dvi-am info info-am install install-am install-data \
+	distclean-depend distclean-generic distclean-hdr distclean-tags \
+	distdir dvi dvi-am info info-am install install-am install-data \
 	install-data-am install-exec install-exec-am \
 	install-includeHEADERS install-info install-info-am \
 	install-libLIBRARIES install-man install-strip installcheck \

@@ -225,6 +225,7 @@
 ./hdf/src/dynarray.h
 ./hdf/src/glist.c
 ./hdf/src/glist.h
+./hdf/src/h4config.h.in
 ./hdf/src/hbitio.c
 ./hdf/src/hbitio.h
 ./hdf/src/hblocks.c
