@@ -93,7 +93,7 @@
   SGI-Origin(IRIX64 v6.5-n32)     CC 7.2.1.2m      f77 7.2.1.2m     
   SGI-Origin(IRIX64 v6.5-64)      CC 7.2.1.2m      f77 7.2.1.2m    
   HP9000/755(HP-UX B.10.20)       CC A.10.32.03    f77       
-  Exemplar(HP-UX A.09.03)         CC 6.5           fc 9.5        
+  Exemplar(HP-UX B.10.01)         CC V2.0          f77 V1.2.6
   Cray T90
    CFP  (UNICOS 10.0.0eu u10.49)  CC 6.2.0.1       f90 3.2.0.1  
    IEEE (UNICOS 10.0.0ev d10.161) CC 6.2.0.1       f90 3.2.0.1  
