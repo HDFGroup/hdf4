@@ -63,7 +63,7 @@ typedef enum
     SD_ID = 0,		/* SD id */
     SDS_ID,		/* SDS id */
     DIM_ID		/* Dimension id */
-} id_type_t;
+} hdf_idtype_t;
 
 #ifdef __cplusplus
 extern "C" {
@@ -208,7 +208,7 @@ HDFLIBAPI intn SDisdimval_bwcomp
 HDFLIBAPI int32 SDcheckempty
     (int32 sdsid, intn *emptySDS);
 
-HDFLIBAPI id_type_t SDidtype
+HDFLIBAPI hdf_idtype_t SDidtype
     (int32 an_id);
 
 /*====================== Chunking Routines ================================*/

@@ -50,7 +50,11 @@ status = SDisdimval_bwcomp(dimid);
 
 status = SDcheckempty(sdsid, emptySDS);
 
- NOTE: This file needs to have the comments cleaned up for most of the
+        --- take an id and determine if it is an SD id, SDS id, dim id, or
+            none of the above ---
+id_type =  SDidtype(an_id);
+
+NOTE: This file needs to have the comments cleaned up for most of the
        functions here. -GV 9/10/97
 
 ******************************************************************************/
@@ -6246,7 +6250,7 @@ done:
     a dimension id, or indicate that it is not a valid SD API id.
 
  RETURNS
-    A value of type id_type_t, which can be either of the following:
+    A value of type hdf_idtype_t, which can be either of the following:
     SD_ID, SDS_ID, DIM_ID, NOT_SDAPI_ID.
 
  AUTHOR
@@ -6255,11 +6259,10 @@ done:
  MODIFICATION
 
 ******************************************************************************/
-id_type_t SDidtype(int32 an_id)
+hdf_idtype_t SDidtype(int32 an_id)
 {
-    CONSTR(FUNC, "SDidtype");	/* for HGOTO_ERROR */
     NC     *handle = NULL;	/* file record struct */
-    id_type_t ret_value = NOT_SDAPI_ID;
+    hdf_idtype_t ret_value = NOT_SDAPI_ID;
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDidtype: I've been called\n");

@@ -34,7 +34,7 @@ test_SDAPI_ids()
 {
     int32     fid, dset1, dset2, dim_id;
     int32     dimsize[RANK];
-    id_type_t id_type;
+    hdf_idtype_t id_type;
     intn      status;
     intn      num_errs = 0;         /* number of errors so far */
 
@@ -114,7 +114,7 @@ test_nonSDAPI_ids ()
     int32     vdata_ref;
     intn      status;
     int32     dims[2]={4,5};    /* dimensions for the empty image */
-    id_type_t id_type;
+    hdf_idtype_t id_type;
     intn      num_errs = 0;     /* number of errors so far */
 
     /* Open the HDF file */
