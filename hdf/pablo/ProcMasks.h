@@ -80,7 +80,7 @@
    Hputelement, Hread, Hseek, Hstartread, Hstartwrite, Hsync, Htrunc,
    Hwrite, HXcreate, HXsetcreatedir, HXsetdir, HLconvert, Hstartaccess,
    Hisappendable, Htell, Htagnewref, Hcache, Hsetaccesstype, Hexist,
-   Hsetlength */
+   Hsetlength, Hfidinquire */
 
 #define HE_mask		0x40
 /* HEclear, HEprint, HEpush, HEreport, HEstring */
