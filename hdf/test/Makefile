@@ -86,11 +86,14 @@ ftests: $(FTESTS)
 clean: 
 	 -$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) fortest core
 
+distclean: 
+	 -$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) fortest core *.hdf
+
 depend: 
 	 makedepend -I$(HDFINC) *.c
 
 saber:	$(SRCS)
-	 #load $(SRCS) -I../include -D$(MACHINE) 
+	 #load -I$(HDFINC) -D$(MACHINE) $(SRCS)
 
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
