@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.17  1992/07/08 22:18:22  sxu
+# Revision 1.18  1992/07/13 21:46:30  sxu
+# Modified CFLAGS for IRIS4.
+#
+# Revision 1.17  1992/07/08  22:18:22  sxu
 # Added tsdstr.c and tsdstrF.f
 #
 # Revision 1.16  1992/07/08  15:36:04  sxu
@@ -156,7 +159,6 @@
 
 # ==> specify your machine
 MACHINE=SUN
-
 # ==> specify your fortran compiler 
 FC=f77 
 FFLAGS=  -g
@@ -171,8 +173,9 @@ IFLAGS=   -I../include -I.
 #    STDFLAG = __STDC__
 #    CFLAGS=  -g -D${MACHINE} $(IFLAGS) -D${STDFLAG}
 
-# ==> For IRIS4, specify CFLAGS as follows:
-#    CFLAGS=  -g -ansi
+
+# ==> For IRIS4, specify CFLAGS as follows: 
+#CFLAGS=  -g -D${MACHINE} $(IFLAGS) -ansi
 
 CFLAGS=  -g -D${MACHINE} $(IFLAGS)
 
