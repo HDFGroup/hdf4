@@ -20,7 +20,7 @@
 #
 # Type of C compiler (default is `cc'):
 # Try 'gcc -ansi' if your cc is not ANSI compatible.
-CC='cc -ansi'
+CC='cc -32 -cckr'
 #
 # C compiler flags (default is `-O'):
 #CFLAGS='-g'
@@ -30,6 +30,12 @@ RANLIB=true
 #
 # C preprocessor flags 
 # CPPFLAGS=-DNDEBUG
+#
+# Type of FORTRAN 77 compiler (default is `f77'):
+FC='f77 -32'
+#
+# FORTRAN compiler flags (default is `'):
+#FFLAGS='-g'
 #
 # Location of the HDF home.  Must be an absolute path.
 HDF_HOME=`pwd`/..
