@@ -188,12 +188,22 @@ typedef enum
       DFE_VGSIZE,               /* Too many elements in VGroup */
       DFE_VTAB,                 /* Elmt not in vtab[] */
       DFE_CANTADDELEM,          /* Cannot add tag/ref to VGroup */
+      DFE_BADVGNAME,            /* Cannot set VGroup name */
+      DFE_BADVGCLASS,           /* Cannot set VGroup class */
 
 /* Vdata errors */
       DFE_BADFIELDS,            /* Bad fields string passed to Vset routine */
       DFE_NOVS,                 /* Counldn't find VS in file */
       DFE_SYMSIZE,              /* Too many symbols in users table */
       DFE_BADATTACH,            /* Cannot write to a previously attached VData */
+      DFE_BADVSNAME,            /* Cannot set VData name */
+      DFE_BADVSCLASS,           /* Cannot set VData class */
+      DFE_VSWRITE,              /* Error writing to VData */
+      DFE_VSREAD,               /* Error reading from VData */
+
+/* High-level Vdata/Vset errors */
+      DFE_VSCANTCREATE,         /* Cannot create VData */
+      DFE_VGCANTCREATE,         /* Cannot create VGroup */
 
 /* Generic Vdata/Vset errors */
       DFE_CANTATTACH,           /* Cannot attach to a VData/Vset */
@@ -338,12 +348,22 @@ PRIVATE const struct error_messages_t error_messages[] =
     {DFE_VGSIZE,        "No more elements will fit in this VGroup"},
     {DFE_VTAB,          "Element is not in VSet tables"},
     {DFE_CANTADDELEM,   "Cannot add tag/ref to VGroup"},
+    {DFE_BADVGNAME,     "Cannot set VGroup name"},
+    {DFE_BADVGCLASS,    "Cannot set VGroup class"},
 
 /* Vdata errors */
     {DFE_BADFIELDS,     "Unable to parse fields string correctly"},
     {DFE_NOVS,          "Could not find specified VS or VG in file"},
     {DFE_SYMSIZE,       "Too many symbols in table"},
     {DFE_BADATTACH,     "Cannot write to a previously attached VData"},
+    {DFE_BADVSNAME,     "Cannot set VData name"},
+    {DFE_BADVSCLASS,    "Cannot set VData class"},
+    {DFE_VSWRITE,       "Error writing to VData"},
+    {DFE_VSREAD,        "Error reading from VData"},
+
+/* High-level Vdata/Vset errors */
+    {DFE_VSCANTCREATE,  "Cannot create VData"},
+    {DFE_VGCANTCREATE,  "Cannot create VGroup"},
 
 /* Generic Vdata/Vset errors */
     {DFE_CANTATTACH,    "Cannot attach to a VData"},
