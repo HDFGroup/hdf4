@@ -13,9 +13,6 @@ static bool_t NC_xdr_cdf
 
 #define WRITE_NDG 1
 
-/* Private buffer */
-PRIVATE uint8 *ptbuf = NULL;
-
 /*
  * free the stuff that xdr_cdf allocates
  */
@@ -896,6 +893,7 @@ NC_var **var;
   uint8        ntstring[4];
   uint16       ref;
   int8         outNT;
+  uint8 tbuf[2+((MAX_VAR_DIMS+1)*8)];   /* temporary buffer */
   int32 tags[MAX_NC_ATTRS + MAX_VAR_DIMS + 2], refs[MAX_NC_ATTRS + MAX_VAR_DIMS + 10];
   uint16       nt_ref, rank;
   int32     GroupID, val;
@@ -991,14 +989,6 @@ NC_var **var;
   count++;
   
 #ifdef WRITE_NDG
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
-        ptbuf = (uint8 *)HDmalloc(TBUF_SZ * sizeof(uint8));
-        if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
-
   /* prepare to start writing ndg   */
   if ((GroupID = DFdisetup(10)) < 0)
       return FAIL;
@@ -1013,7 +1003,7 @@ NC_var **var;
       return FAIL;
 
   /* put rank & dimensions in buffer */
-  bufp = ptbuf;
+  bufp = tbuf;
   rank = assoc->count;
   UINT16ENCODE(bufp, rank);
   for(i = 0; i < (int)rank; i++) {
@@ -1038,7 +1028,7 @@ NC_var **var;
           UINT16ENCODE(bufp, nt_ref);
       }   
   /* write out SDD record */
-  if(Hputelement(handle->hdf_file, DFTAG_SDD, ref, ptbuf, (int32) (bufp-ptbuf)) == FAIL)
+  if(Hputelement(handle->hdf_file, DFTAG_SDD, ref, tbuf, (int32) (bufp-tbuf)) == FAIL)
       return FAIL;
   
   /* write dimension record tag/ref */

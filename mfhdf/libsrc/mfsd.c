@@ -323,9 +323,6 @@ int32 id;
 
 #endif /* SYNC_ON_EACC */
 
-    /* Get rid of the temporary buffer allocated for I/O */
-    SDPfreebuf();
-
     return(ncclose(cdfid));
 
 } /* SDend */

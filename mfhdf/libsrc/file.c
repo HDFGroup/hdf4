@@ -675,10 +675,13 @@ NC *handle ;
 	}
 
 #ifdef HDF
-        if(handle->file_type == HDF_FILE) {
-            handle->flags &= ~(NC_CREAT | NC_INDEF | NC_NDIRTY | NC_HDIRTY) ;
-            return(0) ;
-        }
+    /* Get rid of the temporary buffer allocated for I/O */
+    SDPfreebuf();
+
+    if(handle->file_type == HDF_FILE) {
+        handle->flags &= ~(NC_CREAT | NC_INDEF | NC_NDIRTY | NC_HDIRTY) ;
+        return(0) ;
+    }
 #endif	
 
         if(handle->vars == NULL) 
