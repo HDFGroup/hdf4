@@ -243,11 +243,11 @@ CHDRS= tproto.h tutils.h
 
 CSRCS= 	rig.c sdstr.c blocks.c an.c anfile.c extelt.c file.c file1.c vers.c \
 	sdmms.c sdnmms.c slab.c litend.c tvset.c comp.c bitio.c tree.c conv.c \
-	nbit.c man.c mgr.c testhdf.c tbv.c tvsfpack.c
+	nbit.c man.c mgr.c testhdf.c tbv.c tvsfpack.c chunks.c
 
 COBJS= rig.o sdstr.o blocks.o an.o anfile.o extelt.o file.o file1.o vers.o \
 	sdmms.o sdnmms.o slab.o litend.o tvset.o comp.o bitio.o tree.o conv.o \
-	nbit.o man.o mgr.o testhdf.o tbv.o tvsfpack.o
+	nbit.o man.o mgr.o testhdf.o tbv.o tvsfpack.o chunks.o
 
 FSRCS= fortest.c fortestF.f forsupff.f forsupf.c \
 	manf.f mgrf.f slabwf.f t24f.f tanf.f tanfilef.f tpf.f tr8f.f \
