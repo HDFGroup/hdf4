@@ -56,7 +56,7 @@ test_hextelt(void)
     CHECK(fid, FAIL, "Hopen");
 
     /* Write first object to header file */
-    MESSAGE(5, printf("Writing object(%d bytes) into base file\n",
+    MESSAGE(5, printf("Writing object(%lu bytes) into base file\n",
                       HDstrlen(STRING2));
             );
     ret = Hputelement(fid, (uint16) 1000, (uint16) 1,
@@ -108,7 +108,7 @@ test_hextelt(void)
     aid1 = HXcreate(fid, 1000, 2, "t3.hdf", (int32) 0, (int32) 0);
     CHECK(aid1, FAIL, "HXcreate");
 
-    MESSAGE(5, printf("Writing string '%s'(%d bytes) to file #3\n", 
+    MESSAGE(5, printf("Writing string '%s'(%lu bytes) to file #3\n", 
                       STRING, HDstrlen(STRING));
         );
     ret = Hwrite(aid1, (int32)HDstrlen(STRING) + 1, STRING);
