@@ -122,35 +122,36 @@ C-----------------------------------------------------------------------------*/
       return
       end
 C------------------------------------------------------------------------------
-C Name: hishdf
+C Name: hishdff
 C Purpose:  Identifies if the file "file_name" is an HDF file. 
 C Inputs:   file_name:  File name
 C Returns: TRUE (1) if successful, FALSE (0) otherwise.
 C Invokes: hiopen
 C----------------------------------------------------------------------------*/
 
-      integer function hishdf(filename)
+      integer function hishdff(filename)
 
       character*(*) filename
       integer       hiishdf
 
-      hishdf = hiishdf(filename, len(filename))
+      hishdff = hiishdf(filename, len(filename))
       return
       end
 C-----------------------------------------------------------------------------
-C Name: hestring
+C Name: hestringf
 C Purpose: retrieves the error message associated with the specified error code 
 C Inputs:  error_code 
 C Outputs: error_message - string associated with the error code 
 C Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
 C-----------------------------------------------------------------------------*/
 
-      integer function hestring(error_code, error_message)
+      integer function hestringf(error_code, error_message)
 
       integer error_code 
       character*(*) error_message 
       integer hestringc 
 
-      hestring = hestringc(error_code, error_message,len(error_message))
+      hestringf = hestringc(error_code, error_message,
+     .                      len(error_message))
       return
       end
