@@ -4199,6 +4199,9 @@ mopen(char *name, intn flags)
   /* get target file */
   target_file = base_name(name,':');
 
+#ifdef MAC_DEBUG
+  printf("mopen: target_file %s\n",target_file);
+#endif
   /* get target directory if one is specified 
      this routine mallocs space so free it at the end */
   if ((target_dir = path_name(name,':')) == NULL)
@@ -4206,6 +4209,7 @@ mopen(char *name, intn flags)
      ret_value = FAIL;
      goto done;
    }
+
   /* check if we have a directory in path name */
   if (target_dir == ".")
     { /* default to current directory */
@@ -4225,8 +4229,7 @@ mopen(char *name, intn flags)
           }
     }
 #ifdef MAC_DEBUG
-  printf("mopen: target_dir %s\n",target_dir);
-  printf("mopen: target_file %s\n",target_file);
+  printf("mopen: opened target_dir %s\n",target_dir);
 #endif
   /* get ready to convert target file C string to Pascal string */
   HDstrcpy((char *) pname, (char *) target_file);
@@ -4238,7 +4241,7 @@ mopen(char *name, intn flags)
                         (long)(cur_dirp->dd_fd),pname,(FSSpecPtr)&sfFile);
 
 #ifdef MAC_DEBUG
-  printf("mopen: makeing FSspec for %s\n",name);
+  printf("mopen: made FSspec for %s\n",name);
 #endif
 
   /* Do we need to create file */
@@ -4314,10 +4317,15 @@ mopen(char *name, intn flags)
        }
     }
 
+#ifdef MAC_DEBUG
+  fprintf(stdout,"mopen: opened/created file %s\n",name);
+#endif
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
-
+#ifdef MAC_DEBUG
+  fprintf(stdout,"mopen: Failed open/create file %s\n",name);
+#endif
     } /* end if */
 
   /* Normal function cleanup */
@@ -4327,9 +4335,6 @@ done:
   if (target_dir != NULL)
       HDfree(target_dir);
 
-#ifdef MAC_DEBUG
-  fprintf(stdout,"mopen: opened/created file %s\n",name);
-#endif
   return (ret_value);
 } /* mopen() */
 
