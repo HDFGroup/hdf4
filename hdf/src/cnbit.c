@@ -1,3 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
+/* $Id$ */
+
 /*
  FILE
        cnbit.c
@@ -18,23 +36,6 @@
     10/10/93     Starting writing specs & coding prototype
 */
 
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-/*
-$Header$
-
-$Log$
-Revision 1.2  1993/10/19 17:59:35  koziol
-Same as previous log message, just tweaks to make the SGI happy...
-
- * Revision 1.1  1993/10/19  17:36:29  koziol
- * Tons of changes and updates.  Fixed the 0 length problem in Hstartwrite(),
- * made all the 'void' returning routines in the Vsets return a succeed or
- * fail.  Added N-Bit files (which aren't working yet...)
- *
- *
- */
 
 /* General HDF includes */
 #include "hdf.h"

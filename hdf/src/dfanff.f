@@ -1,3 +1,14 @@
+C****************************************************************************
+C* NCSA HDF                                                                 *
+C* Software Development Group                                               *
+C* National Center for Supercomputing Applications                          *
+C* University of Illinois at Urbana-Champaign                               *
+C* 605 E. Springfield, Champaign IL 61820                                   *
+C*                                                                          *
+C* For conditions of distribution and use, see the accompanying             *
+C* hdf/COPYRIGHT file.                                                      *
+C*                                                                          *
+C****************************************************************************
 C
 C $Id$
 C
