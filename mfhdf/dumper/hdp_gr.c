@@ -31,12 +31,12 @@ dumpgr_usage(intn  argc,
              char *argv[])
 {
     printf("Usage:\n");
-    printf("%s dumpgr [-a|-i <indices>|-r <refs>|-n <names>] [-l <interlace>] [-p] [-dhvc] [-o <filename>] [-bx] <filelist>\n", argv[0]);
+    printf("%s dumpgr [-a|-i <indices>|-r <refs>|-n <names>] [-m <interlace>] [-p] [-dhvc] [-o <filename>] [-bx] <filelist>\n", argv[0]);
     printf("\t-a\tDump all RIs in the file (default)\n");
     printf("\t-i <indices>\tDump the <indices>th RIs in the file \n");
     printf("\t-r <refs>\tDump the RIs with reference number <refs>\n");
     printf("\t-n <names>\tDump the RIs with name <names>\n");
-    printf("\t-l <interlace>\tDump data in interlace mode <interlace= 0, 1, or 2>\n");
+    printf("\t-m <interlace>\tDump data in interlace mode <interlace= 0, 1, or 2>\n");
     printf("\t-d\tDump data only, no tag/ref, formatted to input to hp2hdf\n");
     printf("\t-h\tDump header only, no annotation for elements nor data\n");
     printf("\t-v\tDump everything including all annotations (default)\n");
@@ -101,7 +101,7 @@ parse_dumpgr_opts(dump_info_t *dumpgr_opts,
              (*curr_arg)++;
              break;
 
-         case 'l':	/* dump data in different interlace than at creation */
+         case 'm':	/* dump data in different interlace than at creation */
              (*curr_arg)++;  /* move forward to interlace option input */
              user_interlace = atoi( argv[*curr_arg] );
 	     if( user_interlace == MFGR_INTERLACE_PIXEL || 

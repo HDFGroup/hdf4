@@ -295,8 +295,8 @@ TEST dumpgr-14.out dumpgr -h Image_with_Palette.hdf
 TEST dumpgr-15.out dumpgr -r 2,4 -p -d Image_with_Palette.hdf
 # Test 16: to test new option -c
 TEST dumpgr-16.out dumpgr -r 6 -d -c grtdfui82.hdf
-# Test 17: to test new option -l (interlace mode = LINE)
-TEST dumpgr-17.out dumpgr -r 6 -l 1 grtdfui82.hdf
+# Test 17: to test new option -m (interlace mode = LINE)
+TEST dumpgr-17.out dumpgr -r 6 -m 1 grtdfui82.hdf
 else
 MESG 3 "$TestName <<<SKIPPED>>>"
 fi
