@@ -316,19 +316,23 @@ typedef char              *_fcd;
 #ifndef _ALL_SOURCE       
 typedef char              int8;
 typedef short int         int16; 
-typedef long int          int32; 
+typedef int               int32;
 #endif  
 typedef char              char8;
 typedef unsigned char     uchar8;
 typedef unsigned char     uint8;
 typedef unsigned short int uint16;
-typedef unsigned long int uint32;
+typedef unsigned int      uint32;
 typedef int               intn;
 typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+#ifdef AIX5L64
+typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
+#else /*AIX5L64 */
 typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
+#endif /*AIX5L64 */
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
 #define FILELIB PAGEBUFIO  /* enable page buffering */
