@@ -25,10 +25,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/02/11 17:16:24  chouck
-Cosmetic changes.
-Added new tag values
+Revision 1.3  1992/02/21 21:06:29  mfolk
+no change
 
+ * Revision 1.2  1992/02/11  17:16:24  chouck
+ * Cosmetic changes.
+ * Added new tag values
+ *
  * Revision 3.3  1991/10/22  17:56:10  dilg
  * 5
  * HDF3.1r5
