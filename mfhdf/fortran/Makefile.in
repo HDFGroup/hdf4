@@ -788,7 +788,7 @@ $(PROGRAM).f:	fortc1.sed fortc2.sed common.m4 $(PROGRAM).src $(OS).m4
 	./fortc -L . -O $(OS) $(PROGRAM).src > $@
 
 hdftest:        hdftest.f $(LIBRARY)
-	$(FC) -g hdftest.f $(LIBS) -o $@
+	$(FC) $(FFLAGS) hdftest.f $(LIBS) -o $@
 	./hdftest > hdfout.new
 	@cmd="$(DIFF) $(DIFF_FLAGS) hdfout.new hdftst.sav"; \
 	    echo $$cmd; \
