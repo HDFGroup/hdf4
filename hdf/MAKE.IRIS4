@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.4  1992/08/12 22:30:23  dilg
+# Revision 1.5  1992/08/14 20:30:24  sxu
+# Added SHELL, -cckr (or -ansi) and -lgl_a.
+#
+# Revision 1.4  1992/08/12  22:30:23  dilg
 # Reincarnated all machine-specific Makefiles from generic Makefile.
 #
 # Revision 1.4  1992/08/05  21:47:57  chouck
@@ -68,14 +71,18 @@
 
 # Define your machine type
 MACHINE=IRIS4
+SHELL= /bin/sh
 
 # Define your C compiler and flags
 CC= cc
-CFLAGS= -D${MACHINE} 
+CFLAGS= -D${MACHINE} -cckr
 
 # Define your FORTRAN compiler
 FC= f77
 FFLAGS=
+
+# Define gl library
+GLLIB = -lgl_a
 
 # Location where the HDF include files are to be installed
 HDFINC= `pwd`/include
@@ -103,19 +110,10 @@ RMFLAGS= -f
 #
 
 HDF_FLAGS       = \
-        CC="$(CC)" \
-        CFLAGS="$(CFLAGS)" \
-        FC="$(FC)" \
-        FFLAGS="$(FFLAGS)" \
-        RANLIB="$(RANLIB)" \
-        AR="$(AR)" \
-        ARFLAGS="$(ARFLAGS)" \
-        RM="$(RM)" \
-        RMFLAGS="$(RMFLAGS)" \
-        MACHINE="$(MACHINE)" \
-        HDFLIB="$(HDFLIB)" \
-        HDFINC="$(HDFINC)" \
-	HDFBIN="$(HDFBIN)"	
+        CC="$(CC)" CFLAGS="$(CFLAGS)" FC="$(FC)" FFLAGS="$(FFLAGS)" \
+        RANLIB="$(RANLIB)" AR="$(AR)" ARFLAGS="$(ARFLAGS)" RM="$(RM)" \
+        RMFLAGS="$(RMFLAGS)" MACHINE="$(MACHINE)" HDFLIB="$(HDFLIB)" \
+        HDFINC="$(HDFINC)" HDFBIN="$(HDFBIN)" GLLIB="$(GLLIB)"	
 
 #
 #
