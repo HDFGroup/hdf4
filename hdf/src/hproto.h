@@ -2053,12 +2053,20 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #   define nhnumber  FNAME(HNUMBER)
 #   define nhxisdir  FNAME(HXISDIR)
 #   define nhxiscdir FNAME(HXISCDIR)
+#   define nhddontatexit FNAME(HDDONTATEXIT)
+#   define nhglibverc FNAME(HGLIBVERC)
+#   define nhgfilverc FNAME(HGFILVERC)
+
 #else
 #   define nhiopen   FNAME(hiopen)
 #   define nhclose   FNAME(hclose)
 #   define nhnumber  FNAME(hnumber)
 #   define nhxisdir  FNAME(hxisdir)
 #   define nhxiscdir FNAME(hxiscdir)
+#   define nhddontatexit FNAME(hddontatexit)
+#   define nhglibverc FNAME(hglibverc)
+#   define nhgfilverc FNAME(hgfilverc)
+
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* HFILE_FNAMES */
 
@@ -2076,6 +2084,20 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 
     extern	FRETVAL(intf) nhxiscdir
 		(_fcd dir, intf * dirlen);
+ 
+    extern      FRETVAL(intf)
+                nhddontatexit(void);
+
+    extern      FRETVAL(intf)   
+                nhglibverc(intf *major_v, intf *minor_v, intf *release,
+                _fcd string, intf *len);
+
+    extern      FRETVAL(intf)
+                nhgfilverc(intf *file_id, intf *major_v, intf *minor_v,
+                intf *release, _fcd string, intf *len);
+
+
+
     
 /*
    ** from dfufp2im.c

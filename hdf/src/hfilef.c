@@ -35,12 +35,16 @@ static char RcsId[] = "@(#)$Revision$";
 #   define nhxisdir  FNAME(HXISDIR)
 #   define nhxiscdir FNAME(HXISCDIR)
 #   define nhddontatexit FNAME(HDDONTATEXIT)
+#   define nhglibverc FNAME(HGLIBVERC)
+#   define nhgfilverc FNAME(HGFILVERC)
 #else
 #   define nhiopen   FNAME(hiopen)
 #   define nhclose   FNAME(hclose)
 #   define nhxisdir  FNAME(hxisdir)
 #   define nhxiscdir FNAME(hxiscdir)
 #   define nhddontatexit FNAME(hddontatexit)
+#   define nhglibverc FNAME(hglibverc)
+#   define nhgfilverc FNAME(hgfilverc)
 #endif /* DF_CAPFNAMES */
 #endif /* HFILE_FNAMES */
 
@@ -162,4 +166,97 @@ FRETVAL(intf)
 nhddontatexit(void)
 {
    return((intf)(HDdont_atexit()));
+}
+/*-----------------------------------------------------------------------------
+ * Name: hglibverc
+ * Purpose:  Calls Hgetlibversion
+ * 
+ * Outputs: major_v - major version number
+ *          minor_v - minor version number
+ *          release - release number
+ *          string  - version number text string
+ * Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
+ *----------------------------------------------------------------------------*/
+ 
+ 
+ FRETVAL(intf)
+#ifdef PROTOTYPE
+nhglibverc(intf *major_v, intf *minor_v, intf *release, _fcd string, intf *len)
+#else
+nhglibverc(major_v, minor_v, release, string, len)
+           intf *major_v;
+           intf *minor_v;
+           intf *release;
+           _fcd  string;
+           intf  *len;
+#endif /* PROTOTYPE */
+{
+   char *cstring;
+   uint32 cmajor_v;
+   uint32 cminor_v;
+   uint32 crelease;
+   intn   status;
+   
+   cstring = NULL;
+   if (*len) cstring = (char *) HDmalloc((uint32)*len + 1);
+   status = Hgetlibversion(&cmajor_v, &cminor_v, &crelease, cstring);
+ 
+   HDpackFstring(cstring,  _fcdtocp(string),  *len);
+
+   if(cstring)  HDfree((VOIDP)cstring);
+
+   *major_v = (intf) cmajor_v;
+   *minor_v = (intf) cminor_v;
+   *release = (intf) crelease;
+
+   return((intf)status);
+
+}
+/*-----------------------------------------------------------------------------
+ * Name: hgfilverc
+ * Purpose:  Calls Hgetfileversion
+ * Inputs:  file_id - file identifier 
+ * Outputs: major_v - major version number
+ *          minor_v - minor version number
+ *          release - release number
+ *          string  - version number text string
+ * Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
+ *----------------------------------------------------------------------------*/
+ 
+ 
+ FRETVAL(intf)
+#ifdef PROTOTYPE
+nhgfilverc(intf *file_id, intf *major_v, intf *minor_v, intf *release,
+            _fcd string, intf *len)
+#else
+nhgfilverc(file_id, major_v, minor_v, release, string, len)
+           intf *file_id; 
+           intf *major_v;
+           intf *minor_v;
+           intf *release;
+           _fcd  string;
+           intf  *len;
+#endif /* PROTOTYPE */
+{
+   char *cstring;
+   uint32 cmajor_v;
+   uint32 cminor_v;
+   uint32 crelease;
+   intn   status;
+   
+   cstring = NULL;
+   if (*len) cstring = (char *) HDmalloc((uint32)*len + 1);
+   status = Hgetfileversion((int32) *file_id, &cmajor_v, &cminor_v, &crelease,
+                            cstring);
+ 
+   HDpackFstring(cstring,  _fcdtocp(string),  *len);
+
+   if(cstring)  HDfree((VOIDP)cstring);
+
+   *major_v = (intf) cmajor_v;
+   *minor_v = (intf) cminor_v;
+   *release = (intf) crelease;
+
+   return((intf)status);
+
 }

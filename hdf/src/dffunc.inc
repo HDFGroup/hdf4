@@ -538,6 +538,13 @@ C
       external hxscdir
       integer  hxsdir
       external hxsdir
+      integer  hddontatexit
+      external hddontatexit
+      integer  hglibver
+      external hglibver
+      integer  hgfilver
+      external hgfilver
+      
 
 C
 C     Decls of MGxxx functions for Fortran multi-file GR interface

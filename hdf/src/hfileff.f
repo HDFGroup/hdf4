@@ -79,4 +79,45 @@ C----------------------------------------------------------------------------*/
       hxscdir = hxiscdir(dir, len(dir))
       return
       end
+C-----------------------------------------------------------------------------
+C Name: hglibver
+C Purpose: retrieves the version information for the current HDF library
+C Outputs: major_v - major version number
+C          minor_v - minor version number
+C          release - release number
+C          string  - version number test string
+C Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
+C-----------------------------------------------------------------------------*/
 
+      integer function hglibver(major_v, minor_v, release, string)
+
+      integer major_v, minor_v, release
+      character*(*) string
+      integer hglibverc 
+
+      hglibver = hglibverc(major_v, minor_v, release, string,
+     .                     len(string))
+      return
+      end
+C-----------------------------------------------------------------------------
+C Name: hgfilver
+C Purpose: retrieves the version information for the current HDF library
+C Inputs:  file_id - file identifier
+C Outputs: major_v - major version number
+C          minor_v - minor version number
+C          release - release number
+C          string  - version number test string
+C Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
+C-----------------------------------------------------------------------------*/
+
+      integer function hgfilver(file_id, major_v, minor_v, release,
+     .                          string)
+
+      integer file_id, major_v, minor_v, release
+      character*(*) string
+      integer hgfilverc 
+
+      hgfilver = hgfilverc(file_id, major_v, minor_v, release, string,
+     .                     len(string))
+      return
+      end
