@@ -45,8 +45,9 @@
 
 #define LIBVER_MAJOR	3
 #define LIBVER_MINOR    3
-#define LIBVER_RELEASE	0
-#define LIBVER_STRING   "NCSA HDF Version 3.3 Release 1, September 1993"
+#define LIBVER_RELEASE	2
+#define LIBVER_STRING   "NCSA HDF Version 3.3 Release 2, Novermber 1993"
+#define LIBVSTR_LEN    80      /* length of version string  */
 #define LIBVER_LEN	92	/* 4+4+4+80 = 92 */
 /* end of version tags */
 
@@ -175,7 +176,7 @@ typedef struct version_t {
     uint32 majorv;		/* major version number */
     uint32 minorv;		/* minor version number */
     uint32 release;		/* release number */
-    char string[81];		/* optional text description */
+    char string[LIBVSTR_LEN+1];	/* optional text description, len 80+1 */
     int16 modified;		/* indicates file was modified */
 } version_t;
 
