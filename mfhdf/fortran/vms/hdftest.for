@@ -36,7 +36,7 @@ C      integer   i32(2), ii32(2)
       integer sfwcdata, sfrcdata,  sfscfill, sfgcfill
       integer sfscatt,  sfrcatt,   sfsnatt,  sfrnatt
 C Comment out next line for VMS
-      integer sfsattr,  sfrattr
+C      integer sfsattr,  sfrattr
       integer SD_UNLIMITED, SD_DIMVAL_BW_INCOMP, DFNT_INT32
       integer SD_DIMVAL_BW_COMP
       parameter (SD_UNLIMITED = 0,
