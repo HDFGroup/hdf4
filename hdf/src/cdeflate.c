@@ -250,39 +250,44 @@ HCIcdeflate_term(compinfo_t * info,uint32 acc_mode)
 
     deflate_info = &(info->cinfo.coder_info.deflate_info);
 
-    if(acc_mode&DFACC_WRITE)
-      { /* flush the "deflated" data to the file */
-          intn status;
+    /* set flag to indicate second stage of initialization is finished */
 
-          do
-            {
-              /* Write more bytes from the file, if we've filled our buffer */
-              if(deflate_info->deflate_context.avail_out==0)
+    if(deflate_info->acc_init==1)
+      {
+        if(acc_mode&DFACC_WRITE)
+          { /* flush the "deflated" data to the file */
+              intn status;
+
+              do
                 {
-                    if(Hwrite(info->aid,DEFLATE_BUF_SIZE,deflate_info->io_buf)==FAIL)
-                        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-                    deflate_info->deflate_context.next_out=deflate_info->io_buf;
-                    deflate_info->deflate_context.avail_out=DEFLATE_BUF_SIZE;
-                } /* end if */
+                  /* Write more bytes from the file, if we've filled our buffer */
+                  if(deflate_info->deflate_context.avail_out==0)
+                    {
+                        if(Hwrite(info->aid,DEFLATE_BUF_SIZE,deflate_info->io_buf)==FAIL)
+                            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                        deflate_info->deflate_context.next_out=deflate_info->io_buf;
+                        deflate_info->deflate_context.avail_out=DEFLATE_BUF_SIZE;
+                    } /* end if */
 
-                status=deflate(&(deflate_info->deflate_context),Z_FINISH);
-            } while(status==Z_OK);
-          if(status!=Z_STREAM_END)
-              HRETURN_ERROR(DFE_CENCODE,FAIL);
-          if(deflate_info->deflate_context.avail_out<DEFLATE_BUF_SIZE)
-              if(Hwrite(info->aid,(int32)(DEFLATE_BUF_SIZE-deflate_info->deflate_context.avail_out),deflate_info->io_buf)==FAIL)
-                  HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                    status=deflate(&(deflate_info->deflate_context),Z_FINISH);
+                } while(status==Z_OK);
+              if(status!=Z_STREAM_END)
+                  HRETURN_ERROR(DFE_CENCODE,FAIL);
+              if(deflate_info->deflate_context.avail_out<DEFLATE_BUF_SIZE)
+                  if(Hwrite(info->aid,(int32)(DEFLATE_BUF_SIZE-deflate_info->deflate_context.avail_out),deflate_info->io_buf)==FAIL)
+                      HRETURN_ERROR(DFE_WRITEERROR,FAIL);
 
-          /* Close down the deflation buffer */
-          if(deflateEnd(&(deflate_info->deflate_context))!=Z_OK)
-              HRETURN_ERROR(DFE_CTERM,FAIL);
+              /* Close down the deflation buffer */
+              if(deflateEnd(&(deflate_info->deflate_context))!=Z_OK)
+                  HRETURN_ERROR(DFE_CTERM,FAIL);
+          } /* end if */
+        else
+          { /* finish up any inflated data */
+              /* Close down the inflation buffer */
+              if(inflateEnd(&(deflate_info->deflate_context))!=Z_OK)
+                  HRETURN_ERROR(DFE_CTERM,FAIL);
+          } /* end else */
       } /* end if */
-    else
-      { /* finish up any inflated data */
-          /* Close down the inflation buffer */
-          if(inflateEnd(&(deflate_info->deflate_context))!=Z_OK)
-              HRETURN_ERROR(DFE_CTERM,FAIL);
-      } /* end else */
 
     /* Get rid of the I/O buffer */
     HDfree(deflate_info->io_buf);
