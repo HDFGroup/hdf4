@@ -16,45 +16,45 @@ Distribution Layout
 
    hdf    -- contains the source code for the HDF 'base library', the 
              the multi_file annotation interface, the multi_file raster
-             image interface, HDF command line utilities (hdp, an hdf 
+             image interface, HDF command line utilities (hdp, the hdf 
              dumper is in mfhdf/), Pablo instrumentation support, 
-             and a test suite. It also contains the the software
+             and a test suite. It also contains the software
              distributions for IJPEG(hdf/jpeg) and ZLIB(hdf/zlib) 
              which are required by the HDF library. 
              Please see the README in each directory for further info
              on each package. 
 
-   mfhdf  -- contains the netCDF(MFHDF) part of HDF/netCDF distribution
+   mfhdf  -- contains the netCDF(mfhdf) part of the HDF/netCDF distribution
              and HDF dumper utility(hdp).
 
    man    -- incomplete set of man page(s) for HDF.
 
    release_notes -- descriptions on new features and bug fixes in this
                     release. Files in this sub-directory can be used 
-                    as  supplement documentation for HDF4.0. These files 
+                    as supplemental documentation for HDF4.0. These files 
                     are also available on the NCSA ftp server, 
                     in /HDF/Documentation/HDF4.0/release_notes/.
 
 Third Party Software Requirements:
 ---------------------------------
  1. IJPEG distribution release 6a(libjpeg.a). The "official" site 
-    for this is ftp::/ftp.uu.net/graphics/jpeg/jpegsrc.v6a.tar.gz
+    for this is ftp://ftp.uu.net/graphics/jpeg/jpegsrc.v6a.tar.gz
 
  2. ZLIB 1.0.2(libz.a) distribution.  
 
- Both of these distributions are include with this distribution
+ Both of these distributions are included with this distribution
  in 'hdf/jpeg' and 'hdf/zlib'. The HDF/netCDF base distribution
  in known to work with these versions only.
 
 System Requirements
 -------------------
- To build both HDF and netCDF library from sources, you need:
+ To build both HDF and netCDF library from source, you need:
 
-   * ANSI C compiler. The native ANSI compilers on the above 
+   * an ANSI C compiler. The native ANSI compilers on the above 
      platforms are supported. On platforms where no ANSI compiler
      was available the free GNU ANSI compiler GCC was used.
 
-   * Fortran 77 compiler if you want Fortran support. See above
+   * a Fortran 77 compiler if you want Fortran support. See above
      table for platforms where Fortran is supported. You can
      compile both libraries without Fortran support by setting 
      the Fortran compiler variable 'FC = NONE' in the respective
