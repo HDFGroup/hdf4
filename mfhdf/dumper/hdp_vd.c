@@ -492,7 +492,7 @@ intn getFieldIndices(
    int32 i;
    intn  flds_match = 0;
    intn  ret_value = SUCCEED;
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
 	/* macintosh cannot handle >32K locals */
    char *tempflds = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
    CHECK_ALLOC( tempflds, "tempflds", "getFieldIndices" );
@@ -544,7 +544,7 @@ intn getFieldIndices(
    }	/* for (fld_name_idx...) */
 
 /* free dynamic space if on MAC */
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
    if(tempflds != NULL)
    {
       HDfree(tempflds);
@@ -585,7 +585,7 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
    int32       vd_id = FAIL;
    int32       an_handle   = FAIL;
    intn        status = SUCCEED, ret_value = SUCCEED;
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
 	/* macintosh cannot handle >32K locals */
    char *fields = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
    CHECK_ALLOC( fields, "fields", "dumpvd_ascii" );
@@ -765,7 +765,7 @@ done:
               VSdetach(vd_id);
       }
     /* Normal cleanup */
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
    if(fields != NULL)
    {
       HDfree(fields);
@@ -798,7 +798,7 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
    int32       vd_id = FAIL;
    intn        status;
    intn        ret_value = SUCCEED;
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
 	/* macintosh cannot handle >32K locals */
    char *fields = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
 
@@ -895,7 +895,7 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
    }	/* for each vdata */
 
    /* Normal cleanup */
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
    if(fields != NULL)
    {
       HDfree(fields);

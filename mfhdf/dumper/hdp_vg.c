@@ -531,7 +531,7 @@ void print_fields( char *fields,
           count = 0;
    char  *ptr, *tempPtr,
           fldname[MAXNAMELEN],
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__) 
 
    /* Lets allocate space for tmpflds */
    *tempflds = (char *)HDmalloc(VSFIELDMAX * FIELDNAMELENMAX * sizeof(char *));
@@ -572,7 +572,7 @@ void print_fields( char *fields,
       fprintf(fp, "];\n");
    }  /* there are fields to print */
    
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
    if(tempflds != NULL)
    {
       HDfree(tempflds);
@@ -979,7 +979,7 @@ vgdumpfull(int32        vg_id,
     char  *file_name = dumpvg_opts->ifile_name;
     intn   status, ret_value = SUCCEED;
 
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
 	/* macintosh cannot handle >32K locals */
    char *fields = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
    CHECK_ALLOC( fields, "*fields", "vgdumpfull" );
@@ -1170,7 +1170,7 @@ done:
             }
       }
     /* Normal cleanup */
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
    if(fields != NULL)
    {
       HDfree(fields);
