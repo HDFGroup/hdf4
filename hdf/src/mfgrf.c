@@ -751,3 +751,469 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
     return(ret);
 }   /* end mgifndat() */
 
+/*-------------------------------------------------------------------------
+ * Name:    mgcgichnk
+ * Puporse: Call GRgetchunkinfo
+ * Inputs:  id: access id to GR
+ * Outputs: dim_length: chunk dimensions
+ *          flags:            -1 - GR is nonchunked
+ *                             0 - GR is chunked, no compression
+ *                             1 - GR is chunked and compressed 
+ * Returns: 0 on success, -1 on failure with error set
+ * Users:   HDF Fortran programmers          
+ *-------------------------------------------------------------------------*/
+
+    FRETVAL (intf)
+#ifdef PROTOTYPE
+      nmgcgichnk(intf *id, intf *dim_length, intf *flags)
+#else
+       nmgcgichnk( id, dim_length, flags)
+       intf *id;       
+       intf *dim_length;
+       intf *flags;
+#endif /* PROTOTYPE */
+{
+
+HDF_CHUNK_DEF chunk_def;  /* Chunk definition set */
+int32 riid;               /* GR id               */
+comp_info cinfo;          /* compression info     */
+int   i;
+int32 rank, status, cflags, comp_type;
+intf ret;
+
+riid = *id;
+rank = 2;
+
+/* Get GR info */
+  
+       status = GRgetchunkinfo(riid, &chunk_def, &cflags);
+       if(status == FAIL) return FAIL;
+
+switch (cflags)  
+
+  {
+
+  case HDF_NONE:       /* Non-chunked GR */
+
+    *flags = -1;
+     ret = 0;
+     return(ret);
+     break;
+
+  case HDF_CHUNK:    /* Chunked, noncompressed GR */
+
+    *flags = 0;
+     for (i=0; i < rank; i++)
+          dim_length[rank-i-1] = chunk_def.chunk_lengths[i];
+     ret = 0;
+     return(ret);
+     break;
+
+  case (HDF_CHUNK | HDF_COMP):     /* Chunked and compressed GR */
+ 
+     *flags = 1;
+     for (i=0; i < rank; i++)
+          dim_length[rank-i-1] =  chunk_def.comp.chunk_lengths[i];
+     ret = 0;
+     return(ret);
+     break;
+
+  default:
+
+    return FAIL;
+    break;
+            
+  }
+
+
+}   
+#if 0 /* Commented out for now  -EIP 12/29/97 */ 
+/*-----------------------------------------------------------------------------
+ * Name:     mgcrcchnk
+ * Purpose:  read the specified chunk of CHARACTER data to the buffer
+ * Inputs:   id        - access ID to GR
+ *           start     - origin of chunk to read 
+ * Outputs:  char_data  - buffer the data will be read into
+ * Calls:    scrchnk 
+ * Reamrks:  dimensions will be flipped in scrchnk function
+ * Returns:  0 on success, -1 on failure with error set
+ *----------------------------------------------------------------------------*/   
+    FRETVAL (intf)
+#ifdef PROTOTYPE 
+       nmgcrcchnk(intf *id, intf *start, _fcd char_data)
+#else
+       nmgcrcchnk(id, start, char_data)
+                intf *id;
+                intf *start;
+               _fcd  char_data;
+#endif /* PROTOTYPE */
+
+{
+       intf  ret;
+
+       ret = nmgcrchnk(id, start, (VOIDP) _fcdtocp(char_data));
+
+       return(ret);
+
+} 
+
+/*-----------------------------------------------------------------------------
+ * Name:     mgcrchnk
+ * Purpose:  read the specified chunk of NUMERIC data to the buffer
+ * Inputs:   id        - access ID to GR
+ *           start     - origin of chunk to read 
+ * Outputs:  num_data  - buffer the data will be read into
+ * Calls:    GRreadchunk
+ * Remarks:  need to flip the dimensions to account for array ordering
+ *           differencies (start --> cstart)
+ *           If performance becomes an issue, use static cstart 
+ * Returns:  0 on success, -1 on failure with error set
+ *----------------------------------------------------------------------------*/   
+    FRETVAL (intf)
+#ifdef PROTOTYPE
+       nmgcrchnk(intf *id, intf *start, VOIDP num_data)
+#else
+       nmgcrchnk(id, start, num_data)
+                intf *id;
+                intf *start;
+                VOIDP num_data;
+#endif /* PROTOTYPE */
+
+{
+       intf    ret;
+       int32   rank, status, i;
+       int32   *cstart;
+
+       rank = 2;
+/* Allocate memory for cstart array; use static array, if performance
+       becomes an issue */
+
+       cstart = (int32 *) HDmalloc(sizeof(int32) * rank);
+       if(!cstart) return FAIL;
+
+/* Flip an array to account for array odering in Fortran and C */
+
+       for ( i=0; i < rank; i++)
+             cstart[i] = start[rank-i-1] - 1;
+
+/* Call GRreadchunk function to read the data */
+
+       ret = GRreadchunk(*id, cstart, num_data);
+
+/* Free memory */
+
+       HDfree((VOIDP)cstart);
+       return(ret);
+
+} 
+
+#endif /*Commented out for now -EIP 12/29/97 */
+/*-----------------------------------------------------------------------------
+ * Name:     mgcscchnk
+ * Purpose:  set the maximum number of chunks to cache 
+ * Inputs:   id        - access ID to GR
+ *           maxcache  - max number of chunks to cache
+ *           flags     - flags= 0, HDF_CACHEALL
+ *                       Currently only 0 can be passed
+ * Calls:    GRsetchunkcache
+ * Returns:  0 on success, -1 on failure with error set
+ *----------------------------------------------------------------------------*/   
+    FRETVAL (intf)
+#ifdef PROTOTYPE
+       nmgcscchnk(intf *id, intf *maxcache, intf *flags)
+#else
+       nmgcscchnk(id, maxcache, flags)
+                intf *id;
+                intf *maxcache;
+                intf *flags;
+#endif /* PROTOTYPE */
+
+{
+       intf  ret;
+
+       ret = GRsetchunkcache(*id, *maxcache, *flags);
+
+       return(ret);
+
+} 
+
+/*-------------------------------------------------------------------------
+ * Name:    mgcschnk
+ * Puporse: Call GRsetchunk
+ * Inputs:  id: access id to GR
+ *          dim_length: chunk dimensions
+ *          comp_type:  type of compression
+ *                              COMP_CODE_NONE    (0)
+ *                              COMP_CODE_RLE     (1)
+ *                              COMP_CODE_SKPHUFF (3)
+ *                              COMP_CODE_DEFLATE (4)
+ *                              COMP_CODE_INVALID (5)
+ *          comp_prm:   compression parameters array
+ *          comp_prm[0] = skphuff_skp_size: size of individual elements for 
+ *                            Adaptive Huffman compression algorithm
+ *          comp_prm[0] = deflate_level:    GZIP  compression parameter
+ * Returns: 0 on success, -1 on failure with error set
+ * Users:   HDF Fortran programmers          
+ *-------------------------------------------------------------------------*/
+
+    FRETVAL (intf)
+#ifdef PROTOTYPE
+      nmgcschnk(intf *id, intf *dim_length, intf *comp_type,
+                intf *comp_prm)
+#else
+       nmgcschnk( id, dim_length, comp_type,
+                 comp_prm)
+       intf *id;
+       intf *dim_length;
+       intf *comp_type;
+       intf *comp_prm;
+#endif /* PROTOTYPE */
+{
+
+HDF_CHUNK_DEF chunk_def;  /* Chunk definition set */
+int32 riid;               /* GR id               */
+int32 cflags;             /* chunk flags          */
+comp_info cinfo;          /* compression info     */
+int   i, CASE;
+int32 rank, status;
+intf ret;
+
+rank   = 2;
+CASE   = *comp_type;
+riid  = *id;
+cflags = HDF_CHUNK | HDF_COMP;
+
+switch (CASE)  {
+
+       case 0:       /* No compression */
+         cflags = HDF_CHUNK;
+         for (i=0; i < rank; i++)
+               chunk_def.chunk_lengths[i] = dim_length[rank-i-1]; 
+         break;
+    
+       case 1:       /* RLE compression */
+         for (i=0; i < rank; i++)
+                chunk_def.comp.chunk_lengths[i] = dim_length[rank-i-1];
+
+         chunk_def.comp.comp_type = COMP_CODE_RLE;
+
+         break;
+
+#ifdef GRsetchunk_does_not_support_NBIT
+
+       case 2:      /* N-bit encoding */
+         for (i=0; i < rank; i++)
+                chunk_def.comp.chunk_lengths[i] = dim_length[rank-i-1]; 
+
+         chunk_def.comp.comp_type = COMP_CODE_NBIT;
+         chunk_def.comp.cinfo.nbit.sign_ext = comp_prm[0];
+         chunk_def.comp.cinfo.nbit.fill_one = comp_prm[1];
+         chunk_def.comp.cinfo.nbit.start_bit = comp_prm[2];
+         chunk_def.comp.cinfo.nbit.bit_len = comp_prm[3];  
+
+         break; 
+ 
+#endif
+       case 3:      /* Skipping Huffman encoding */
+          for (i=0; i < rank; i++)
+                chunk_def.comp.chunk_lengths[i] = dim_length[rank-i-1];
+
+          chunk_def.comp.comp_type = COMP_CODE_SKPHUFF;
+          chunk_def.comp.cinfo.skphuff.skp_size = comp_prm[0];
+
+          break;
+
+       case 4:      /* GZIP compression */  
+          for (i=0; i < rank; i++)
+                 chunk_def.comp.chunk_lengths[i] = dim_length[rank-i-1];
+           
+          chunk_def.comp.comp_type = COMP_CODE_DEFLATE;
+          chunk_def.comp.cinfo.deflate.level = comp_prm[0];
+
+          break;
+
+       default:
+
+          return FAIL;
+          break;
+                    
+                     }
+
+ret = GRsetchunk(riid, chunk_def, cflags);
+ 
+return(ret);
+
+}   
+#if 0 /* Commented out for now  -EIP 12/29/97 */ 
+/*-----------------------------------------------------------------------------
+ * Name:     mgcwcchnk
+ * Purpose:  write the specified chunk of CHARACTER data to the GR 
+ * Inputs:   id        - access ID to GR
+ *           start     - origin of chunk to read 
+ * Outputs:  char_data  - buffer the data will be read into
+ * Calls:    mgcwchnk 
+ * Reamrks:  dimensions will be flipped in scrchnk function
+ * Returns:  0 on success, -1 on failure with error set
+ *----------------------------------------------------------------------------*/   
+    FRETVAL (intf)
+#ifdef PROTOTYPE
+       nmgcwcchnk(intf *id, intf *start, _fcd char_data)
+#else
+       nmgcwcchnk(id, start, char_data)
+                intf *id;
+                intf *start;
+               _fcd  char_data;
+#endif /* PROTOTYPE */
+
+{
+       intf  ret;
+
+       ret = nmgcwchnk(id, start, (VOIDP) _fcdtocp(char_data));
+
+       return(ret);
+
+} 
+
+/*-----------------------------------------------------------------------------
+ * Name:     mgcwchnk
+ * Purpose:  write the specified chunk of NUMERIC data to the GR
+ * Inputs:   id        - access ID to GR
+ *           start     - origin of chunk to write
+ *           num_data  - buffer for data
+ * Calls:    GRwritechunk
+ * Remarks:  need to flip the dimensions to account for array ordering
+ *           differencies (start --> cstart)
+ *           If performance becomes an issue, use static cstart 
+ * Returns:  0 on success, -1 on failure with error set
+ *----------------------------------------------------------------------------*/   
+    FRETVAL (intf)
+#ifdef PROTOTYPE
+       nmgcwchnk(intf *id, intf *start, VOIDP num_data)
+#else
+       nmgcwchnk(id, start, num_data)
+                intf *id;
+                intf *start;
+                VOIDP num_data;
+#endif /* PROTOTYPE */
+
+{
+       intf    ret;
+       int32   rank, status, i;
+       int32   *cstart;
+
+       rank = 2;
+/* Allocate memory for cstart array; use static array, if performance
+       becomes an issue */
+
+       cstart = (int32 *) HDmalloc(sizeof(int32) * rank);
+       if(!cstart) return FAIL;
+
+/* Flip an array */
+
+       for ( i=0; i < rank; i++)
+             cstart[i] = start[rank-i-1] - 1;
+
+/* Call GRwritechunk function to write the data */
+
+       ret = GRwritechunk(*id, cstart, num_data);
+
+/* Free memory */ 
+
+       HDfree((VOIDP)cstart);
+
+       return(ret);
+
+} 
+#endif /*Commented out for now -EIP 12/29/97 */
+/*-------------------------------------------------------------------------
+ * Name:    mgcscompress
+ * Puporse: Call GRsetcompress
+ * Inputs:  id: access id to GR
+ *          comp_type:  type of compression
+ *                      COMP_CODE_NONE = 0
+ *                      COMP_CODE_RLE  = 1
+ *                      COMP_CODE_SKPHUFF = 3
+ *                      COMP_CODE_DEFLATE = 4
+ *          comp_prm:   compression parameters array
+ *          comp_prm[0]=skphuff_skp_size: size of individual elements for 
+ *                            Adaptive Huffman compression algorithm
+ *          comp_prm[0]=deflate_level:    GZIP  compression parameter
+ * Returns: 0 on success, -1 on failure with error set
+ * Users:   HDF Fortran programmers          
+ *-------------------------------------------------------------------------*/
+
+    FRETVAL (intf)
+#ifdef PROTOTYPE
+       nmgcscompress(intf *id, intf *comp_type, intf *comp_prm)
+#else
+       nmgcscompress( id, comp_type, comp_prm)
+       intf *id;
+       intf *comp_type;
+       intf *comp_prm;
+#endif /* PROTOTYPE */
+{
+
+int32 riid;               /*  GR id               */
+comp_info c_info;         /* compression info     */
+int32 c_type;              /* compression type definition */
+
+int   i, CASE;
+intf ret;
+
+
+
+CASE = *comp_type;
+riid = *id;
+switch (CASE)  {
+
+       case COMP_CODE_NONE:       /* No compression */
+         c_type = COMP_CODE_NONE;
+         break;
+    
+       case COMP_CODE_RLE:             /* RLE compression */
+         c_type = COMP_CODE_RLE;
+         break;
+ 
+       case COMP_CODE_SKPHUFF:      /* Skipping Huffman encoding */
+          c_type = COMP_CODE_SKPHUFF;
+          c_info.skphuff.skp_size = comp_prm[0];
+          break;
+
+       case COMP_CODE_DEFLATE:      /* GZIP compression */  
+          c_type = COMP_CODE_DEFLATE;
+          c_info.deflate.level = comp_prm[0];
+          break;
+
+       default:
+
+          return FAIL;
+          break;
+                    
+                     }
+
+ret = GRsetcompress(riid, c_type, &c_info);
+return(ret);
+
+}   
+/*-------------------------------------------------------------------------
+ * Name:    mgclt2rf
+ * Puporse: Call GRluttoref
+ * Inputs:  id: LUT id returned by GRgetlutid(mggltid) 
+ * Returns: valid reference number if a pallette exists or 0 (DFREF_WILDCARD)
+ *          if one doesn't / FAIL
+ * Users:   HDF Fortran programmers          
+ *-------------------------------------------------------------------------*/
+
+    FRETVAL (intf)
+#ifdef PROTOTYPE
+       nmgclt2rf(intf *id)
+#else
+       nmgclt2rf( id)
+       intf *id;
+#endif /* PROTOTYPE */
+{
+   intf ret;
+
+   ret = GRluttoref ( *id );
+   return(ret);
+}
