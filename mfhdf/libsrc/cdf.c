@@ -713,18 +713,23 @@ NC_attr **attr;
   name = (*attr)->name->values;
   values = (*attr)->data->values;
   size = (*attr)->data->count;
-  type = hdf_map_type((*attr)->data->type);
+  type = (*attr)->HDFtype;
 
 #if DEBUG
  fprintf(stderr, "hdf_write_attr I've been called\n");
  fprintf(stderr, "The attribute is called %s\n", name);
- fprintf(stderr, "Type = %d (%d)  size  %d\n", type, (*attr)->data->type, size);
+ fprintf(stderr, "Type = %d (%d)  size  %d\n", type, (*attr)->HDFtype, size);
  fprintf(stderr, "Value: ");
   switch(type) {
   case DFNT_CHAR :fprintf(stderr, " (char) %s\n", (char *) values); break;
-  case DFNT_INT32 :fprintf(stderr, " (long) %d\n", (int *) values); break;
-  case DFNT_FLOAT32 :fprintf(stderr, " (float) %f\n", (float *) values); break;
-  case DFNT_FLOAT64 :fprintf(stderr, " (double) %f\n", (double *) values); break;
+  case DFNT_UINT8 :fprintf(stderr, " (uint8) %d\n", (char *) values); break;
+  case DFNT_INT8 :fprintf(stderr, " (int8) %d\n", (char *) values); break;
+  case DFNT_UINT16 :fprintf(stderr, " (uint16) %d\n", (int *) values); break;
+  case DFNT_INT16 :fprintf(stderr, " (int16) %d\n", (int *) values); break;
+  case DFNT_UINT32 :fprintf(stderr, " (uint32) %d\n", (int *) values); break;
+  case DFNT_INT32 :fprintf(stderr, " (int32) %d\n", (int *) values); break;
+  case DFNT_FLOAT32 :fprintf(stderr, " (float32) %f\n", (float *) values); break;
+  case DFNT_FLOAT64 :fprintf(stderr, " (float64) %f\n", (double *) values); break;
   default:fprintf(stderr, "???\n");
   }
 #endif
@@ -1248,7 +1253,7 @@ int32   vg;
   int count, type, t, n;
   NC_attr **attributes;
   NC_array *Array = NULL;
-  int32 vs, tag, id, vsize, attr_size;
+  int32 vs, tag, id, vsize, attr_size, nt;
 
   count = 0;
   id = -1;
@@ -1282,7 +1287,8 @@ int32   vg;
           VSgetclass(vs, class);
           if(!HDstrcmp(class, ATTRIBUTE)) {
               VSinquire(vs, &attr_size, NULL, fields, &vsize, vsname);
-              type = hdf_unmap_type(VFfieldtype(vs, 0));
+              nt = VFfieldtype(vs, 0);
+              type = hdf_unmap_type(nt);
               values = (char *) HDmalloc(vsize * attr_size + 1);
               VSsetfields(vs, fields);
               VSread(vs, (uint8 *) values, attr_size, FULL_INTERLACE);
@@ -1297,6 +1303,7 @@ int32   vg;
                   fprintf(stderr, "Can't create new attribute #%d\n", count);
                   return NULL;
               }
+              attributes[count]->HDFtype = nt;
               
 #if DEBUG
               fprintf(stderr, "Attribute <%s> has type %d and size %d\n", 

@@ -49,7 +49,8 @@ char *argv[];
     int16   sdata[100];
     int32  ndg_saved_ref;
 
-    float32 data[1000], max, min;
+    uint8  iuval;
+    float32 data[1000], max, min, imax, imin;
     float64 cal, cale, ioff, ioffe;
 
     ncopts = NC_VERBOSE;
@@ -214,7 +215,6 @@ char *argv[];
         fprintf(stderr, "Wrong name for SDattrinfo(dim)\n");
         num_err++;
     }
-
     ival = 0;
     status = SDreadattr(dimid2, 0, (VOIDP) &ival);
     CHECK(status, "SDreatattr");
@@ -223,6 +223,37 @@ char *argv[];
         fprintf(stderr, "Wrong value for SDreadattr(dim)\n");
         num_err++;
     }
+
+    /* add an unsigned integer */
+    iuval = 253;
+    status = SDsetattr(dimid2, "UnsignedInteger", DFNT_UINT8, 1, (VOIDP) &iuval);
+    CHECK(status, "SDsetattr");
+
+    /* lets make sure we can read it too */
+    status = SDattrinfo(dimid2, 1, name, &nt, &count);
+    CHECK(status, "SDattrinfo");
+
+    if(nt != DFNT_UINT8) {
+        fprintf(stderr, "Wrong number type for SDattrinfo(dim)\n");
+        num_err++;
+    }
+    if(count != 1) {
+        fprintf(stderr, "Wrong count for SDattrinfo(dim)\n");
+        num_err++;
+    }
+    if(strcmp(name, "UnsignedInteger")) {
+        fprintf(stderr, "Wrong name for SDattrinfo(dim)\n");
+        num_err++;
+    }
+    iuval = 0;
+    status = SDreadattr(dimid2, 1, (VOIDP) &iuval);
+    CHECK(status, "SDreatattr");
+    
+    if(iuval != 253) {
+        fprintf(stderr, "Wrong value for SDreadattr(dim)\n");
+        num_err++;
+    }
+
 
     status = SDnametoindex(f1, "DataSetAlpha");
     if(status != 0) {
@@ -257,6 +288,9 @@ char *argv[];
     max = 10.0;
     min = 4.6;
     status = SDsetrange(newsds, (VOIDP) &max, (VOIDP) &min);
+    CHECK(status, "SDsetrange");
+
+    status = SDgetrange(newsds, (VOIDP) &imax, (VOIDP) &imin);
     CHECK(status, "SDsetrange");
 
     status = SDsetattr(newsds, "spam", DFNT_CHAR8, 6, "Hi mom");

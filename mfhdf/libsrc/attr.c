@@ -29,7 +29,9 @@ const void *values ;
 	ret->data = NC_new_array(type, count, values) ;
 	if( ret->data == NULL)
 		goto alloc_err ;
-
+#ifdef HDF
+        ret->HDFtype = hdf_map_type(type);
+#endif
 	return(ret) ;
 alloc_err :
 	nc_serror("NC_new_attr") ;
@@ -219,6 +221,9 @@ const void *values ;
 			return(-1) ;
 		}
 		/* else */
+#ifdef HDF
+                (*atp)->HDFtype = hdf_map_type(datatype);
+#endif
 		if(handle->flags & NC_HSYNC)
 		{
 			handle->xdrs->x_op = XDR_ENCODE ;
