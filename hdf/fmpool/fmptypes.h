@@ -176,7 +176,7 @@ typedef int fmp_file_t;
                                   open((p), O_RDONLY, DEF_FILEMODE))
 #   define FMPI_CREATE(p)         (open((p), O_RDWR | O_CREAT | O_TRUNC,DEF_FILEMODE))
 #   define FMPI_CLOSE(f)          (close(f))
-#   define FMPI_FLUSH(f)          (fsync(f))
+#   define FMPI_FLUSH(f)          (fsync(f)==0 ? SUCCEED : FAIL)
 #if 0
 #   define FMPI_FLUSH(f)          (SUCCEED)
 #endif
