@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/01/19 05:54:13  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.4  1993/03/29 18:38:15  chouck
+Cleaned up a bunch of casting problems
 
+ * Revision 1.3  1993/01/19  05:54:13  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.2  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -107,9 +110,9 @@ int DFputcomp(file_id, tag, ref, image, xdim, ydim, palette, newpal, scheme, cin
             crowsize = xdim*121/120 + 128;
 
             /* allocate buffer for compression */
-            buffer = HDgetspace((uint32)cisize);
+            buffer = (uint8 *) HDgetspace((uint32)cisize);
             if (!buffer) {
-                buffer = HDgetspace((uint32)crowsize);
+                buffer = (uint8 *) HDgetspace((uint32)crowsize);
                 if (!buffer) {
                     HERROR(DFE_NOSPACE);
                     return FAIL;
@@ -166,7 +169,7 @@ int DFputcomp(file_id, tag, ref, image, xdim, ydim, palette, newpal, scheme, cin
             }
             cisize = xdim*ydim/4;  /* IMCOMP always cuts to 1/4 */
 
-            buffer = HDgetspace((uint32)cisize);
+            buffer = (uint8 *) HDgetspace((uint32)cisize);
             if (!buffer) {
                 HERROR(DFE_NOSPACE);
                 return FAIL;
@@ -253,9 +256,9 @@ int DFgetcomp(file_id, tag, ref, image, xdim, ydim, scheme)
         case DFTAG_RLE:
             crowsize = xdim*121/120 + 128; /* max size of a row */
 
-            buffer = HDgetspace((uint32)cisize);
+            buffer = (uint8 *) HDgetspace((uint32)cisize);
             if (!buffer) {
-                buffer = HDgetspace((uint32)crowsize);
+                buffer = (uint8 *) HDgetspace((uint32)crowsize);
                 if (!buffer) {
                     HERROR(DFE_NOSPACE);
                     Hendaccess(aid);
@@ -302,9 +305,9 @@ int DFgetcomp(file_id, tag, ref, image, xdim, ydim, scheme)
         case DFTAG_IMC:
             crowsize = xdim;        /* size of compressed row */
 
-            buffer = HDgetspace((uint32)cisize);
+            buffer = (uint8 *) HDgetspace((uint32)cisize);
             if (!buffer) {
-                buffer = HDgetspace((uint32)crowsize);
+                buffer = (uint8 *) HDgetspace((uint32)crowsize);
                 if (!buffer) {
                     HERROR(DFE_NOSPACE);
                     Hendaccess(aid);

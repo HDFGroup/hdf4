@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1993/01/19 05:54:05  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.8  1993/03/29 18:38:12  chouck
+Cleaned up a bunch of casting problems
 
+ * Revision 1.7  1993/01/19  05:54:05  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.6  1992/12/21  23:27:49  mfolk
  * Changed DFANIputann so that when you rewrite an annotation it
  * deletes the old one and writes the new one to the end of the
@@ -546,11 +549,11 @@ intn access;
 
         for (p=DFANdir[0]; p!=NULL; p=q) {  /* free linked list space */
             q = p->next;
-            HDfreespace(p);
+            HDfreespace((char *) p);
         }
         for (p=DFANdir[1]; p!=NULL; p=q) {
             q = p->next;
-            HDfreespace(p);
+            HDfreespace((char *) p);
         }
         DFANdir[0] = DFANdir[1] = NULL;
     }

@@ -5,15 +5,18 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1993/03/29 16:47:26  koziol
-Updated JPEG code to new JPEG 4 code.
-Changed VSets to use Threaded-Balanced-Binary Tree for internal
-	(in memory) representation.
-Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-	to use 32-bit integer keys instead of pointers.
-Backed out speedups for Cray, until I get the time to fix them.
-Fixed a bunch of bugs in the little-endian support in DFSD.
+Revision 1.7  1993/03/29 18:38:16  chouck
+Cleaned up a bunch of casting problems
 
+ * Revision 1.6  1993/03/29  16:47:26  koziol
+ * Updated JPEG code to new JPEG 4 code.
+ * Changed VSets to use Threaded-Balanced-Binary Tree for internal
+ * 	(in memory) representation.
+ * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+ * 	to use 32-bit integer keys instead of pointers.
+ * Backed out speedups for Cray, until I get the time to fix them.
+ * Fixed a bunch of bugs in the little-endian support in DFSD.
+ *
  * Revision 1.5  1993/01/19  05:54:26  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -1226,7 +1229,7 @@ int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran, newfile)
     
     if ((type==LUT) && (filename==NULL)) { /* set call */
         if (Grlutdata) {
-            HDfreespace(Grlutdata);
+            HDfreespace((char *) Grlutdata);
             Grlutdata = NULL;
         }
         Ref.lut = -1;
@@ -1322,7 +1325,7 @@ int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran, newfile)
 
     if (Grcompr==DFTAG_IMC) {
         Ref.lut = 0;
-        HDfreespace(newlut);
+        HDfreespace((char *) newlut);
         newlut = NULL;
     }
 

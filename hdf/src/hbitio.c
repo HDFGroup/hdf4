@@ -438,7 +438,7 @@ PRIVATE int HIget_bitfile_slot()
         for(i=0; i<MAX_BITFILE; i++)
             bitfile_records[i].used=FALSE;
 
-        if((bitfile_records[0].bytea=HDgetspace(BITBUF_SIZE))==NULL) {
+        if((bitfile_records[0].bytea = (uint8 *) HDgetspace(BITBUF_SIZE)) == NULL) {
             HERROR(DFE_NOSPACE);
             return(FAIL);
           } /* end if */
@@ -449,7 +449,7 @@ PRIVATE int HIget_bitfile_slot()
     /* return the first unused record */
     for(i=0; i<MAX_BITFILE; i++)
         if(!bitfile_records[i].used) {
-            if((bitfile_records[i].bytea=HDgetspace(BITBUF_SIZE))==NULL) {
+            if((bitfile_records[i].bytea = (uint8 *) HDgetspace(BITBUF_SIZE)) == NULL) {
                 HERROR(DFE_NOSPACE);
                 return(FAIL);
               } /* end if */

@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.11  1993/02/02 00:11:51  georgev
-Changed Hyperslab interface. Added DFSDstartslab(), DFSDendslab().
-Removed DFSDwritefillvalue().
+Revision 1.12  1993/03/29 18:38:22  chouck
+Cleaned up a bunch of casting problems
 
+ * Revision 1.11  1993/02/02  00:11:51  georgev
+ * Changed Hyperslab interface. Added DFSDstartslab(), DFSDendslab().
+ * Removed DFSDwritefillvalue().
+ *
  * Revision 1.10  1993/01/19  05:55:14  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -194,8 +197,7 @@ ndssdims(rank, dimsizes)
     }
    
     ret = DFSDsetdims((intn)*rank, cdims);
-    cdims = HDfreespace((uint32 *)cdims);
-    if (cdims != NULL) return FAIL;
+    HDfreespace((uint32 *)cdims);
     return(ret);
 }
 
@@ -417,10 +419,8 @@ ndspslc(windims, data, dims)
     }
    
     ret = DFSDIputslice(cwindims, data, cdims, 1);
-    cdims = HDfreespace((uint32 *)cdims);
-    if (cdims != NULL) return FAIL;
-    cwindims = HDfreespace((uint32 *)cwindims);
-    if (cwindims != NULL) return FAIL;
+    HDfreespace((uint32 *)cdims);
+    HDfreespace((uint32 *)cwindims);
     return(ret);
 }
 
@@ -576,8 +576,7 @@ ndsigdat(filename, rank, maxsizes, data, fnlen)
             p++;
         }
     	ret = DFSDIgetdata(fn, (intn)*rank, cmaxsizes, data, 1);
-    	p = cmaxsizes = HDfreespace((uint32 *)cmaxsizes);
-    	if (cmaxsizes != NULL) return FAIL;
+    	HDfreespace((uint32 *)cmaxsizes);
     }
     else	
         ret = DFSDIgetdata(fn, (intn)*rank, (int32 *)maxsizes, data, 1); /* 1==FORTRAN */
@@ -629,8 +628,7 @@ ndsipdat(filename, rank, dimsizes, data, fnlen)
     /* In HDF3.2 .hdf files, data and dimsizes are in C order  */
     ret = DFSDIputdata(fn, (intn)*rank, cdims, data, 0, 1);
     HDfreespace(fn);
-    cdims = HDfreespace((uint32 *)cdims);
-    if (cdims != NULL) return FAIL;
+    HDfreespace((uint32 *)cdims);
 
     return(ret);
 }
@@ -679,8 +677,7 @@ ndsiadat(filename, rank, dimsizes, data, fnlen)
     /* In HDF3.2 .hdf files, data and dimsizes are in C order  */
     ret = DFSDIputdata(fn, (intn)*rank, cdims, data, 1, 1);
     HDfreespace(fn);
-    cdims = HDfreespace((uint32 *)cdims);
-    if (cdims != NULL) return FAIL;
+    HDfreespace((uint32 *)cdims);
     return(ret);
 }
 
@@ -747,12 +744,9 @@ ndsigslc(filename, winst, windims, data, dims, fnlen)
             wsp++;
         }
     	ret = DFSDIgetslice(fn, cwinst, cwindims, data, cdims, 1);
-    	p = cdims = HDfreespace((uint32 *)cdims);
-    	if (cdims != NULL) return FAIL;
-    	wp = cwindims = HDfreespace((uint32 *)cwindims);
-    	if (cwindims != NULL) return FAIL;
-    	wsp = cwinst = HDfreespace((uint32 *)cwinst);
-    	if (cwinst != NULL) return FAIL;
+    	HDfreespace((uint32 *)cdims);
+    	HDfreespace((uint32 *)cwindims);
+    	HDfreespace((uint32 *)cwinst);
     }
     else	
         ret = DFSDIgetslice(fn, (int32 *)winst, (int32 *)windims,
@@ -1053,8 +1047,7 @@ ndfsdsetdims(rank, dimsizes)
     }
    
     ret = DFSDsetdims((intn)*rank, cdims);
-    cdims = HDfreespace((uint32 *)cdims);
-    if (cdims != NULL) return FAIL;
+    HDfreespace((uint32 *)cdims);
     return(ret);
 }
 
@@ -1272,10 +1265,8 @@ ndfsdputslice(windims, data, dims)
     }
    
     ret = DFSDIputslice(cwindims, data, cdims, 1);
-    cdims = HDfreespace((uint32 *)cdims);
-    if (cdims != NULL) return FAIL;
-    cwindims = HDfreespace((uint32 *)cwindims);
-    if (cwindims != NULL) return FAIL;
+    HDfreespace((uint32 *)cdims);
+    HDfreespace((uint32 *)cwindims);
     return(ret);
 }
 
@@ -1755,11 +1746,7 @@ ndfsdwriteslab(start, stride, count, data)
       }
 
     ret = DFSDwriteslab(lstart, lstride, lcount, data);
-
-    /* Free up space */
-    lstart = HDfreespace((int32 *)lstart);
-    if (lstart != NULL)
-      return FAIL;
+    HDfreespace((int32 *)lstart);
 
     return ret;
 }

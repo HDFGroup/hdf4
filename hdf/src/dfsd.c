@@ -5,15 +5,18 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.21  1993/03/29 16:47:40  koziol
-Updated JPEG code to new JPEG 4 code.
-Changed VSets to use Threaded-Balanced-Binary Tree for internal
-	(in memory) representation.
-Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-	to use 32-bit integer keys instead of pointers.
-Backed out speedups for Cray, until I get the time to fix them.
-Fixed a bunch of bugs in the little-endian support in DFSD.
+Revision 1.22  1993/03/29 18:38:19  chouck
+Cleaned up a bunch of casting problems
 
+ * Revision 1.21  1993/03/29  16:47:40  koziol
+ * Updated JPEG code to new JPEG 4 code.
+ * Changed VSets to use Threaded-Balanced-Binary Tree for internal
+ * 	(in memory) representation.
+ * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+ * 	to use 32-bit integer keys instead of pointers.
+ * Backed out speedups for Cray, until I get the time to fix them.
+ * Fixed a bunch of bugs in the little-endian support in DFSD.
+ *
  * Revision 1.19  1993/02/18  04:21:47  georgev
  * Fixed DFSDsetfillvalue so that users don't clobber their data.
  *
@@ -2186,17 +2189,16 @@ DFSsdg *sdg;
                 HRETURN_ERROR(DFE_CORRUPT, FAIL);
             
             /* get needed size of buffer, allocate */
-            length =  Hlength(file_id, elmt.tag, elmt.ref);
+            length = Hlength(file_id, elmt.tag, elmt.ref);
             if (length == FAIL) 
               return FAIL;
-            buf = HDgetspace((uint32) length);
+            buf = (uint8 *) HDgetspace((uint32) length);
             if (buf == NULL) 
               return FAIL;
             
             /* read in luf */
-            if (Hgetelement(file_id, elmt.tag, elmt.ref, buf) == FAIL) 
-              {
-                buf = HDfreespace(buf);
+            if (Hgetelement(file_id, elmt.tag, elmt.ref, buf) == FAIL) {
+                HDfreespace(buf);
                 return FAIL;
               }
             p = buf;
@@ -2204,9 +2206,8 @@ DFSsdg *sdg;
             /* allocate data luf space */
             sdg->dataluf[luf] = HDgetspace((uint32) HDstrlen((char*)p)+1);
 
-            if (sdg->dataluf[luf] == NULL) 
-              {
-                buf = HDfreespace(buf);
+            if (sdg->dataluf[luf] == NULL) {
+                HDfreespace(buf);
                 return FAIL;
               }
 
@@ -2217,9 +2218,8 @@ DFSsdg *sdg;
             /* get space for dimluf array */
             sdg->dimluf[luf] =
                 (char **) HDgetspace((uint32) sdg->rank * sizeof(char *));
-            if (sdg->dimluf[luf] == NULL) 
-              {
-                buf = HDfreespace(buf);
+            if (sdg->dimluf[luf] == NULL) {
+                HDfreespace(buf);
                 return FAIL;
               }
 
@@ -2228,15 +2228,14 @@ DFSsdg *sdg;
               {
                 sdg->dimluf[luf][i] = 
                     HDgetspace((uint32) HDstrlen((char*)p) + 1);
-                if (sdg->dimluf[luf][i] == NULL) 
-                  {
-                    buf = HDfreespace(buf);
+                if (sdg->dimluf[luf][i] == NULL) {
+                    HDfreespace(buf);
                     return FAIL;
                   }
                 HDstrcpy(sdg->dimluf[luf][i], (char*)p);
                 p += HDstrlen(sdg->dimluf[luf][i])+1;
               }
-            buf = HDfreespace(buf);
+            HDfreespace(buf);
             break;
 
         case DFTAG_SDS:     /* scales */
@@ -2249,14 +2248,12 @@ DFSsdg *sdg;
               return FAIL;
 
             /* read isscales */
-            isscales = HDgetspace((uint32) sdg->rank);
-            if (isscales == NULL) 
-              {
+            isscales = (uint8 *) HDgetspace((uint32) sdg->rank);
+            if (isscales == NULL) {
                 Hendaccess(aid);
                 return FAIL;
               }
-            if (Hread(aid, (int32) sdg->rank, isscales) == FAIL) 
-              {
+            if (Hread(aid, (int32) sdg->rank, isscales) == FAIL) {
                 Hendaccess(aid);
                 return FAIL;
               }
@@ -2264,8 +2261,7 @@ DFSsdg *sdg;
             /* allocate scale pointers */
             sdg->dimscales = 
                 (uint8 **) HDgetspace((uint32) sdg->rank * sizeof(int8 *));
-            if (sdg->dimscales == NULL) 
-              {
+            if (sdg->dimscales == NULL) {
                 HDfreespace(isscales);
                 Hendaccess(aid);
                 return FAIL;
@@ -2280,8 +2276,7 @@ DFSsdg *sdg;
                 /* space for scale */
                 sdg->dimscales[i] = (uint8 *)
                     HDgetspace((uint32) sdg->dimsizes[i] * localNTsize);
-                if (sdg->dimscales[i] == NULL) 
-                  {
+                if (sdg->dimscales[i] == NULL) {
                     HDfreespace(isscales);
                     Hendaccess(aid);
                     return FAIL;
@@ -2291,8 +2286,7 @@ DFSsdg *sdg;
                   { /* no conversion needed */
                     ret = Hread(aid, (int32)sdg->dimsizes[i]*fileNTsize, 
                                 (uint8 *) sdg->dimscales[i]);
-                    if (ret == FAIL) 
-                      { 
+                    if (ret == FAIL) { 
                         HDfreespace(isscales);
                         Hendaccess(aid);
                         return FAIL;
@@ -2302,9 +2296,8 @@ DFSsdg *sdg;
                   {                      /* conversion necessary */
 
                     /* allocate conversion buffer */
-                    buf = HDgetspace((uint32)sdg->dimsizes[i] * fileNTsize);
-                    if (buf == NULL) 
-                      {
+                    buf = (uint8 *) HDgetspace((uint32)sdg->dimsizes[i] * fileNTsize);
+                    if (buf == NULL) {
                         HDfreespace(isscales);
                         Hendaccess(aid);
                         return FAIL;
@@ -2313,9 +2306,8 @@ DFSsdg *sdg;
                     /* read scale from file */
                     ret = Hread(aid,
                                 (int32) (sdg->dimsizes[i]*fileNTsize), buf);
-                    if (ret == FAIL) 
-                      {
-                        buf = HDfreespace(buf);
+                    if (ret == FAIL) {
+                        HDfreespace(buf);
                         HDfreespace(isscales);
                         Hendaccess(aid);
                         return FAIL;
@@ -2362,7 +2354,7 @@ DFSsdg *sdg;
                 /* conversion needed */
 
                 /* allocate buffer */
-                buf = HDgetspace((uint32) 2 * fileNTsize);
+                buf = (uint8 *) HDgetspace((uint32) 2 * fileNTsize);
                 if (buf == NULL) 
                   return FAIL;
 
@@ -2424,7 +2416,7 @@ DFSsdg *sdg;
                   return FAIL;
 
                 /* allocate buffer */
-                buf = HDgetspace((uint32) eltSize);
+                buf = (uint8 *) HDgetspace((uint32) eltSize);
                 if (buf == NULL) 
                   return FAIL;
                 
@@ -2503,7 +2495,7 @@ DFSsdg *sdg;
                   return FAIL;
 
                 /* allocate buffer for conversion  */
-                buf = HDgetspace((uint32) eltSize);
+                buf = (uint8 *) HDgetspace((uint32) eltSize);
                 if (buf == NULL) 
                   return FAIL;
 
@@ -2684,7 +2676,7 @@ DFSsdg *sdg;
     
     /* check if there is a scale and write it out */
     if (!Ref.scales) {		/* if scale set */
-        Isscales = HDgetspace((uint32) sdg->rank);
+        Isscales = (uint8 *) HDgetspace((uint32) sdg->rank);
         if (Isscales==NULL) return FAIL;
         Ref.scales = (-1);                  /* assume there is no scale */
         
@@ -2728,7 +2720,7 @@ DFSsdg *sdg;
             }
             else {              /* convert and write */
                         /* allocate buffer */
-                buf = HDgetspace((uint32) (fileNTsize * sdg->dimsizes[j]));
+                buf = (uint8 *) HDgetspace((uint32) (fileNTsize * sdg->dimsizes[j]));
                 if (buf==NULL) {
                     HDfreespace(Isscales); 
                     return FAIL;
@@ -2743,13 +2735,13 @@ DFSsdg *sdg;
                     HDfreespace(buf);
                     return FAIL;
                 }
-                buf = HDfreespace(buf);
+                HDfreespace(buf);
             }
         }
         Ref.scales = ref;
         Hendaccess(aid);
     }
-    Isscales = HDfreespace(Isscales);
+    HDfreespace(Isscales);
     if (Ref.scales>0)
         if (DFdiput(GroupID, DFTAG_SDS, (uint16) Ref.scales) < 0)
             return FAIL;
@@ -2776,7 +2768,7 @@ DFSsdg *sdg;
         }
         else {
 	    /* allocate buffer */
-            buf = HDgetspace((uint32) 2*fileNTsize); /* max/min is 8 bytes */
+            buf = (uint8 *) HDgetspace((uint32) 2*fileNTsize); /* max/min is 8 bytes */
             if (buf==NULL) return FAIL;
             
 	    /* convert */
@@ -2786,10 +2778,11 @@ DFSsdg *sdg;
             ret = Hputelement(file_id, DFTAG_SDM, ref, buf,
                               (int32) (2*fileNTsize));
             if (ret == FAIL) { 
-                buf = HDfreespace(buf); return FAIL;
+                HDfreespace(buf); 
+                return FAIL;
             }
             Ref.maxmin = ref;
-            buf = HDfreespace(buf);
+            HDfreespace(buf);
         }
     }
     if (Ref.maxmin>0)
@@ -3683,7 +3676,7 @@ int DFSDIgetslice(filename, winst, windims, data, dims, isfortran)
 
         /* allocate 1 row buffers */
         if (convert) {
-            if ((buf = HDgetspace((uint32) readsize)) == NULL) {
+            if ((buf = (uint8 *) HDgetspace((uint32) readsize)) == NULL) {
                 HDfreespace((char *)wstart);
                 HERROR(DFE_NOSPACE);
                 Hendaccess(aid);
@@ -4550,8 +4543,7 @@ DFSDwriteslab(start, stride, count, data)
         /* If conversion, allocate 1 row buffers */
         if (convert)
           {
-            if ((buf = HDgetspace((uint32) rowsize)) == NULL)
-              {
+            if ((buf = (uint8 *) HDgetspace((uint32) rowsize)) == NULL) {
                 HDfreespace((char *)startdims);
                 Hendaccess(aid);
                 Hclose(Sfile_id);

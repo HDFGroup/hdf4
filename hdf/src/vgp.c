@@ -5,15 +5,18 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.9  1993/03/29 16:50:38  koziol
-Updated JPEG code to new JPEG 4 code.
-Changed VSets to use Threaded-Balanced-Binary Tree for internal
-	(in memory) representation.
-Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-	to use 32-bit integer keys instead of pointers.
-Backed out speedups for Cray, until I get the time to fix them.
-Fixed a bunch of bugs in the little-endian support in DFSD.
+Revision 1.10  1993/03/29 18:38:26  chouck
+Cleaned up a bunch of casting problems
 
+ * Revision 1.9  1993/03/29  16:50:38  koziol
+ * Updated JPEG code to new JPEG 4 code.
+ * Changed VSets to use Threaded-Balanced-Binary Tree for internal
+ * 	(in memory) representation.
+ * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+ * 	to use 32-bit integer keys instead of pointers.
+ * Backed out speedups for Cray, until I get the time to fix them.
+ * Fixed a bunch of bugs in the little-endian support in DFSD.
+ *
  * Revision 1.7  1993/02/09  17:59:20  chouck
  * Added a fix to Vinsert() to increase the size of a Vgroup dynamically.
  * Also fixed a problem in vunpackvg() when reading Vgroups with no
@@ -124,18 +127,18 @@ HFILEID f;
 	vf->vgtab.vg       = NULL;
 	vf->vgtab.next     = NULL;
 #else
-    vf->vgtabn = 0;
-    vf->vgtree=tbbtdmake(&vcompare,sizeof(int32));
-    if(vf->vgtree==NULL)
-        return(FAIL);
+        vf->vgtabn = 0;
+        vf->vgtree = tbbtdmake(vcompare, sizeof(int32));
+        if(vf->vgtree == NULL)
+            return(FAIL);
 #endif
-
+        
     stat = aid = Hstartread(f, DFTAG_VG,  DFREF_WILDCARD);
     while (stat != FAIL) {
         HQuerytagref (aid, &tag, &ref);
         if (NULL== (v = (vginstance_t*) HDgetspace (sizeof(vginstance_t)))) {
             HERROR(DFE_NOSPACE);
-            tbbtdfree(vf->vgtree,&vtfreenode,NULL);
+            tbbtdfree(vf->vgtree, vtfreenode, NULL);
             return(FAIL);
           }
           
@@ -168,9 +171,9 @@ HFILEID f;
 	vf->vstab.next     = NULL;
 #else
     vf->vstabn = 0;
-    vf->vstree=tbbtdmake(&vcompare,sizeof(int32));
+    vf->vstree = tbbtdmake(vcompare, sizeof(int32));
     if(vf->vstree==NULL) {
-        tbbtdfree(vf->vgtree,&vtfreenode,NULL);
+        tbbtdfree(vf->vgtree, vtfreenode, NULL);
         return(FAIL);
       } /* end if */
 #endif
@@ -180,8 +183,8 @@ HFILEID f;
         HQuerytagref (aid, &tag, &ref);
         if (NULL == (w = (vsinstance_t*) HDgetspace (sizeof(vsinstance_t)))) {
             HERROR(DFE_NOSPACE);
-            tbbtdfree(vf->vgtree,&vtfreenode,NULL);
-            tbbtdfree(vf->vstree,&vtfreenode,NULL);
+            tbbtdfree(vf->vgtree, vtfreenode, NULL);
+            tbbtdfree(vf->vstree, vtfreenode, NULL);
             return(FAIL);
           }
           
@@ -210,8 +213,8 @@ HFILEID f;
 #endif
             HERROR(DFE_BADOPEN);
             HEreport("This file is incompatible with the current release");
-            tbbtdfree(vf->vgtree,&vtfreenode,NULL);
-            tbbtdfree(vf->vstree,&vtfreenode,NULL);
+            tbbtdfree(vf->vgtree, vtfreenode, NULL);
+            tbbtdfree(vf->vstree, vtfreenode, NULL);
             return(FAIL);
           }
         
@@ -270,8 +273,8 @@ HFILEID f;
     vf->vgtab.next = NULL;
     vf->vstab.next = NULL;
 #else
-    tbbtdfree(vf->vgtree,&vtfreenode,NULL);
-    tbbtdfree(vf->vstree,&vtfreenode,NULL);
+    tbbtdfree(vf->vgtree, vtfreenode, NULL);
+    tbbtdfree(vf->vstree, vtfreenode, NULL);
 #endif
 }  /* Remove_vfile */
 
@@ -1378,9 +1381,9 @@ int32  tag, ref;
 */
 
 #ifdef PROTOTYPE
-PRIVATE int32 vinsertpair (VGROUP *vg, uint16 tag, uint16 ref)
+int32 vinsertpair (VGROUP *vg, uint16 tag, uint16 ref)
 #else
-PRIVATE int32 vinsertpair ( vg, tag, ref)
+int32 vinsertpair ( vg, tag, ref)
 VGROUP      * vg;
 uint16      tag, ref;   /* this MUST be uint16 -  private routine */
 #endif
