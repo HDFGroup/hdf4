@@ -173,17 +173,18 @@
 /* -----------  Reserved classes and names for vdatas/vgroups -----*/
 
 /* The names of the Vgroups created by the GR interface, from mfgr.h */
-#define GR_NAME "RIG0.0"    /* name of the Vgroup containing all the images */
-#define RI_NAME "RI0.0"     /* name of a Vgroup containing information a
-bout one image */
-#define RIGATTRNAME  "RIATTR0.0N"  /* name of a Vdata containing an attr
-ibute */
-#define RIGATTRCLASS "RIATTR0.0C"  /* class of a Vdata containing an att
-ribute */
+#define GR_NAME "RIG0.0"          /* name of the Vgroup containing all the images */
+#define RI_NAME "RI0.0"           /* name of a Vgroup containing information a
+                                     bout one image */
+#define RIGATTRNAME  "RIATTR0.0N" /* name of a Vdata containing an 
+                                     attribute */
+#define RIGATTRCLASS "RIATTR0.0C" /* class of a Vdata containing an 
+                                     attribute */
 /* Vdata and Vgroup attributes use the same class as that of SD attr,
  *  _HDF_ATTRIBUTE  "Attr0.0"  8/1/96 */
-/* classes of the Vdatas/Vgroups created by the SD interface, from 
-   local_nc.h  */
+
+/* classes of the Vdatas/Vgroups created by the SD interface, 
+   from local_nc.h  */
 #define _HDF_ATTRIBUTE         "Attr0.0" 
         /* class of a Vdata containing SD interface attribute */
 #define _HDF_VARIABLE          "Var0.0"
@@ -197,11 +198,20 @@ ribute */
 #define DIM_VALS01        "DimVal0.1"
              /* class of a Vdata containing an SD dimension size */
 #define _HDF_CDF               "CDF0.0"
-/* DATA is defined in DTM. Change DATA to DATA0 *
-#define DATA              "Data0.0"
-*/
+/* DATA is defined in DTM. Change DATA to DATA0 
+  #define DATA              "Data0.0" */
 #define DATA0             "Data0.0"
 #define ATTR_FIELD_NAME   "VALUES"
+
+/* The following vdata class name is reserved by the Chunking interface.
+   originally defined in 'hchunks.h'. The full class name 
+   currently is "_HDF_CHK_TBL_0". -GV 9/25/97 */
+#ifdef   _HCHUNKS_MAIN_
+/* Private to 'hchunks.c' */
+#define _HDF_CHK_TBL_CLASS "_HDF_CHK_TBL_" /* 13 bytes */
+#define _HDF_CHK_TBL_CLASS_VER  0          /* zero version number for class */
+#endif /* _HCHUNKS_MAIN_ */
+
 
 /* ------------  pre-defined attribute names ---------------- */
 /* For MFGR interface */
