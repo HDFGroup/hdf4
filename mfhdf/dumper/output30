@@ -108,23 +108,23 @@ Graphical representation of the file:-
    vg3 	-- vg2 	-- vd  
 	-- vg0 	-- vd  
 	-- vg1 	-- vd  
-	--   
-	--   
-	--   
-	--   
+	-- Scientific Data  
+	-- Number type  
+	-- SciData dimension record  
+	-- Numeric Data Group  
 
    vg4 	-- vg2 	-- vd  
 	-- vg1 	-- vd  
-	--   
-	--   
-	--   
-	--   
+	-- Scientific Data  
+	-- Number type  
+	-- SciData dimension record  
+	-- Numeric Data Group  
 
    vg5 	-- vg2 	-- vd  
-	--   
-	--   
-	--   
-	--   
+	-- Scientific Data  
+	-- Number type  
+	-- SciData dimension record  
+	-- Numeric Data Group  
 
    vg6 	-- vg0 	-- vd  
 	-- vg1 	-- vd  
@@ -132,19 +132,19 @@ Graphical representation of the file:-
 	-- vg3 	-- vg2 	-- vd  
 		-- vg0 	-- vd  
 		-- vg1 	-- vd  
-		--   
-		--   
-		--   
-		--   
+		-- Scientific Data  
+		-- Number type  
+		-- SciData dimension record  
+		-- Numeric Data Group  
 	-- vg4 	-- vg2 	-- vd  
 		-- vg1 	-- vd  
-		--   
-		--   
-		--   
-		--   
+		-- Scientific Data  
+		-- Number type  
+		-- SciData dimension record  
+		-- Numeric Data Group  
 	-- vg5 	-- vg2 	-- vd  
-		--   
-		--   
-		--   
-		--   
+		-- Scientific Data  
+		-- Number type  
+		-- SciData dimension record  
+		-- Numeric Data Group  
 
