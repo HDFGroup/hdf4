@@ -586,9 +586,9 @@ vunpackvs(VDATA * vs, /* IN/OUT: */
           INT16DECODE(bb, int16var);
           vs->wlist.n = (intn)int16var;
 
-          /* Can't really check for malloc failure... -QAK. Why not? -GV */
           /* Allocate buffer to hold all the int16/uint16 arrays */
-          vs->wlist.bptr = HDmalloc(sizeof(uint16)*(size_t)(vs->wlist.n*5));
+          if(NULL==(vs->wlist.bptr = HDmalloc(sizeof(uint16)*(size_t)(vs->wlist.n*5))))
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           /* Use buffer to support the other arrays */
           vs->wlist.type = (int16 *)vs->wlist.bptr;
@@ -610,12 +610,14 @@ vunpackvs(VDATA * vs, /* IN/OUT: */
               UINT16DECODE(bb, vs->wlist.order[i]);
 
           /* retrieve the field names (and each field name's length)  */
-          vs->wlist.name = HDmalloc(sizeof(char *)*(size_t)vs->wlist.n);
+          if(NULL==(vs->wlist.name = HDmalloc(sizeof(char *)*(size_t)vs->wlist.n)))
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           for (i = 0; i < vs->wlist.n; i++) 
             {
                 INT16DECODE(bb, int16var);    /* this gives the length */
-                vs->wlist.name[i] = HDmalloc((int16var+1)*sizeof(char));
+                if(NULL==(vs->wlist.name[i] = HDmalloc((int16var+1)*sizeof(char))))
+                    HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 HIstrncpy(vs->wlist.name[i], (char *) bb, int16var + 1);
 
