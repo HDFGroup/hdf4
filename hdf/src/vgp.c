@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/08/27 19:54:56  likkai
+Vclose now returns an (intn) status.
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*****************************************************************************
 * 
@@ -1585,7 +1588,7 @@ int16 	ndds;
 * INPUTS: 
 *     int32   f       - if of HDF file to be closed.
 *
-* RETURN VALUE:  None
+* RETURN VALUE:  intn status - result of Hopen().
 *
 * See also Vopen().
 *
@@ -1594,19 +1597,22 @@ int16 	ndds;
 */
 
 #ifdef PROTOTYPE
-PUBLIC void Vclose (HFILEID f)
+PUBLIC intn Vclose (HFILEID f)
 
 #else
 
-PUBLIC void Vclose (f)
+PUBLIC intn Vclose (f)
 	HFILEID f;
 #endif
 
 {
 	char * FUNC = "Vclose";
+   intn status;
 
 	Vfinish (f);
-	Hclose (f);
+	status = Hclose (f);
+
+	return (status);
 
 }
 
