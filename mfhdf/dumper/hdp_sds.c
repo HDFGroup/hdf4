@@ -715,7 +715,7 @@ dsd(dump_info_t *dumpsds_opts,
                                         goto done;
                                     }
 
-                                  attr_buf_size = DFKNTsize(attr_nt) * attr_count;
+                                  attr_buf_size = DFKNTsize(attr_nt|DFNT_NATIVE) * attr_count;
 
                                   attr_buf = (VOIDP) HDmalloc(attr_buf_size);
                                   if (attr_buf == NULL)
