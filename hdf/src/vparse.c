@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1993/08/18 16:00:52  chouck
-Restored changes from version 1.5 that had gotten blown away (grumble grumble)
+Revision 1.8  1993/08/28 02:00:17  georgev
+Mac fix. No strdup().
 
+ * Revision 1.7  1993/08/18  16:00:52  chouck
+ * Restored changes from version 1.5 that had gotten blown away (grumble grumble)
+ *
  * Revision 1.6  1993/08/16  21:46:45  koziol
  * Wrapped in changes for final, working version on the PC.
  *
@@ -87,7 +90,16 @@ int32 scanattrs (attrs,attrc,attrv)
   register char   *s, *s0, *ss;
   register intn   i, slen, len;
   char * FUNC = "scanattrs";
+#ifndef macintosh
   char * saved_string = HDstrdup(attrs);
+#else /* macintosh */
+  char * saved_string;
+  
+  slen = HDstrlen(attrs) + 1; /* add one for null */
+  saved_string = (char *)HDgetspace(slen);
+  if (HIstrncpy(saved_string, attrs, slen) == NULL)
+      return FAIL;
+#endif /* macintosh */
   
   s = saved_string;
   slen = HDstrlen(s);
