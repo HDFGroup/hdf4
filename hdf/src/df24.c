@@ -517,7 +517,7 @@ DF24nimages(const char *filename)
                     nimages++;
                 }   /* end if */
               else	{
-              	freeDIGroup(group_id);
+              	DFdifree(group_id);
                 HGOTO_ERROR(DFE_GETELEM, FAIL);
               }
             }     /* end if */

@@ -1002,14 +1002,14 @@ for (i = 0; i < curr_image; i++)
                                             }
                                           else
                                             {
-											  freeDIGroup( GroupID );
+											  DFdifree( GroupID );
                                               HGOTO_ERROR(DFE_READERROR, FAIL);
                                             }
                                                
                                            /* read NT */
                                           if (Hgetelement(file_id, new_image->lut_dim.nt_tag, new_image->lut_dim.nt_ref, ntstring) == FAIL)
                                             {
-											  freeDIGroup( GroupID );
+											  DFdifree( GroupID );
                                               HGOTO_ERROR(DFE_READERROR, FAIL);
                                             }
 
@@ -1053,14 +1053,14 @@ for (i = 0; i < curr_image; i++)
                                               }
                                             else
                                               {
-											    freeDIGroup( GroupID );
+											    DFdifree( GroupID );
                                                 HGOTO_ERROR(DFE_GETELEM, FAIL);
                                               }
                                                
                                              /* read NT */
                                             if (Hgetelement(file_id, new_image->img_dim.nt_tag, new_image->img_dim.nt_ref, ntstring) == FAIL)
                                               {
-											    freeDIGroup( GroupID );
+											    DFdifree( GroupID );
                                                 HGOTO_ERROR(DFE_GETELEM, FAIL);
                                               }
 

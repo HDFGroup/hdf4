@@ -2395,7 +2395,7 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
             {     /* read in the tag/refs in the link element */
               if (Hgetelement(file_id, di.tag, di.ref, ptbuf) == (int32) FAIL)
                 {
-                  freeDIGroup(GroupID);
+                  DFdifree(GroupID);
                   HGOTO_ERROR(DFE_GETELEM, FAIL);
                 }
               bufp = ptbuf;
@@ -2405,7 +2405,7 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
               UINT16DECODE(bufp, lnkdd[1].ref);
               new->sdg.tag = lnkdd[1].tag;
               new->sdg.ref = lnkdd[1].ref;
-              freeDIGroup(GroupID);
+              DFdifree(GroupID);
             }
         }   /* end of NDG    */
 
@@ -2455,7 +2455,7 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
             {     /* read in the tag/refs in the link element */
               if (Hgetelement(file_id, di.tag, di.ref, ptbuf) == (int32) FAIL)
                 {
-                  freeDIGroup(GroupID);
+                  DFdifree(GroupID);
                   HGOTO_ERROR(DFE_GETELEM, FAIL);
                 }
               bufp = ptbuf;
@@ -2465,7 +2465,7 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
               UINT16DECODE(bufp, lnkdd[1].ref);
               new->sdg.tag = lnkdd[0].tag;
               new->sdg.ref = lnkdd[0].ref;
-              freeDIGroup(GroupID);
+              DFdifree(GroupID);
             }
         }   /* end of SDG    */
 
@@ -2706,14 +2706,14 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
           aid = Hstartread(file_id, elmt.tag, elmt.ref);
           if (aid == FAIL)
             {
-              freeDIGroup(GroupID);
+              DFdifree(GroupID);
               HGOTO_ERROR(DFE_BADAID, FAIL);
             }
 
           /* read rank */
           if (Hread(aid, (int32) 2, ptbuf) == FAIL)
             {
-              freeDIGroup(GroupID);
+              DFdifree(GroupID);
               Hendaccess(aid);
               HGOTO_ERROR(DFE_READERROR, FAIL);
             }
@@ -2726,7 +2726,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                                              sizeof(int32));
           if (sdg->dimsizes == NULL)
             {
-              freeDIGroup(GroupID);
+              DFdifree(GroupID);
               Hendaccess(aid);
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
             }
@@ -2734,7 +2734,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
           /* read dimension record */
           if (Hread(aid, (int32) 4 * sdg->rank, ptbuf) == FAIL)
             {
-              freeDIGroup(GroupID);
+              DFdifree(GroupID);
               Hendaccess(aid);
               HGOTO_ERROR(DFE_READERROR, FAIL);
             }
@@ -2745,7 +2745,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
           /* read tag/ref of NT */
           if (Hread(aid, (int32) 4, ptbuf) == FAIL)
             {
-              freeDIGroup(GroupID);
+              DFdifree(GroupID);
               Hendaccess(aid);
               HGOTO_ERROR(DFE_READERROR, FAIL);
             }
@@ -2756,7 +2756,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
           /* read actual NT */
           if (Hgetelement(file_id, nt.tag, nt.ref, ntstring) == FAIL)
             {
-              freeDIGroup(GroupID);
+              DFdifree(GroupID);
               Hendaccess(aid);
               HGOTO_ERROR(DFE_GETELEM, FAIL);
             }
@@ -2764,7 +2764,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
           /* check for any valid NT */
           if (ntstring[1] == DFNT_NONE)
             {
-              freeDIGroup(GroupID);
+              DFdifree(GroupID);
               Hendaccess(aid);
               HGOTO_ERROR(DFE_BADCALL, FAIL);
             }
@@ -2772,7 +2772,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
           /* if looking for an SDG type must be FLOAT32 */
           if (tag == DFTAG_SDG && ntstring[1] != DFNT_FLOAT32)
             {
-              freeDIGroup(GroupID);
+              DFdifree(GroupID);
               Hendaccess(aid);
               HGOTO_ERROR(DFE_BADCALL, FAIL);
             }
@@ -2785,7 +2785,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               && (fileNT != DFNTF_PC)
               && (fileNT != platnumsubclass))
             {
-              freeDIGroup(GroupID);
+              DFdifree(GroupID);
               Hendaccess(aid);
               HGOTO_ERROR(DFE_BADCALL, FAIL);
             }
@@ -2809,7 +2809,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
             {
               if (Hread(aid, (int32) 4, ptbuf) == FAIL)
                 {
-	              freeDIGroup(GroupID);
+	              DFdifree(GroupID);
                   Hendaccess(aid);
                   HGOTO_ERROR(DFE_READERROR, FAIL);
                 }
@@ -2820,7 +2820,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               /* read NT itself */
               if (Hgetelement(file_id, nt.tag, nt.ref, ntstring) == FAIL)
                 {
-	              freeDIGroup(GroupID);
+	              DFdifree(GroupID);
                   Hendaccess(aid);
                   HGOTO_ERROR(DFE_GETELEM, FAIL);
                 }
@@ -2828,7 +2828,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               /* check for any valid NT */
               if (ntstring[1] == DFNT_NONE)
                 {
-	              freeDIGroup(GroupID);
+	              DFdifree(GroupID);
                   Hendaccess(aid);
                   HGOTO_ERROR(DFE_BADCALL, FAIL);
                 }
@@ -2836,7 +2836,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               /* if looking for an SDG type must be FLOAT32 */
               if (tag == DFTAG_SDG && ntstring[1] != DFNT_FLOAT32)
                 {
-	              freeDIGroup(GroupID);
+	              DFdifree(GroupID);
                   Hendaccess(aid);
                   HGOTO_ERROR(DFE_BADCALL, FAIL);
                 }
@@ -2862,7 +2862,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
 
           if (!sdg->dimsizes)
             {
-	          freeDIGroup(GroupID);
+	          DFdifree(GroupID);
               HGOTO_ERROR(DFE_CORRUPT, FAIL);
             }
 
@@ -2870,20 +2870,20 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
           length = Hlength(file_id, elmt.tag, elmt.ref);
           if (length == FAIL)
             {
-	          freeDIGroup(GroupID);
+	          DFdifree(GroupID);
               HGOTO_ERROR(DFE_BADLEN, FAIL);
             }
           buf = (uint8 *) HDmalloc((uint32) length);
           if (buf == NULL)
             {
-	          freeDIGroup(GroupID);
+	          DFdifree(GroupID);
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
             }
 
           /* read in luf */
           if (Hgetelement(file_id, elmt.tag, elmt.ref, buf) == FAIL)
             {
-	          freeDIGroup(GroupID);
+	          DFdifree(GroupID);
               HDfree((VOIDP) buf);
               HGOTO_ERROR(DFE_GETELEM, FAIL);
             }
@@ -2894,7 +2894,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
 
           if (sdg->dataluf[luf] == NULL)
             {
-	          freeDIGroup(GroupID);
+	          DFdifree(GroupID);
               HDfree((VOIDP) buf);
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
             }
@@ -2908,7 +2908,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
             (char **) HDmalloc((uint32) sdg->rank * sizeof(char *));
           if (sdg->dimluf[luf] == NULL)
             {
-	          freeDIGroup(GroupID);
+	          DFdifree(GroupID);
               HDfree((VOIDP) buf);
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
             }
@@ -2920,7 +2920,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                 HDmalloc((uint32) HDstrlen((char *) p) + 1);
               if (sdg->dimluf[luf][i] == NULL)
                 {
-		          freeDIGroup(GroupID);
+		          DFdifree(GroupID);
                   HDfree((VOIDP) buf);
                   HGOTO_ERROR(DFE_NOSPACE, FAIL);
                 }
@@ -2933,7 +2933,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
         case DFTAG_SDS: /* scales */
           if (!sdg->dimsizes)
 	        {
-	          freeDIGroup(GroupID);
+	          DFdifree(GroupID);
               HGOTO_ERROR(DFE_CORRUPT, FAIL);
             }
 
@@ -2941,7 +2941,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
           aid = Hstartread(file_id, elmt.tag, elmt.ref);
           if (aid == FAIL)
 	        {
-	          freeDIGroup(GroupID);
+	          DFdifree(GroupID);
               HGOTO_ERROR(DFE_BADAID, FAIL);
             }
 
@@ -2949,13 +2949,13 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
           isscales = (uint8 *) HDmalloc((uint32) sdg->rank);
           if (isscales == NULL)
             {
-	          freeDIGroup(GroupID);
+	          DFdifree(GroupID);
               Hendaccess(aid);
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
             }
           if (Hread(aid, (int32) sdg->rank, isscales) == FAIL)
             {
-	          freeDIGroup(GroupID);
+	          DFdifree(GroupID);
               Hendaccess(aid);
               HGOTO_ERROR(DFE_READERROR, FAIL);
             }
@@ -2965,7 +2965,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
             (uint8 **) HDmalloc((uint32) sdg->rank * sizeof(int8 *));
           if (sdg->dimscales == NULL)
             {
-	          freeDIGroup(GroupID);
+	          DFdifree(GroupID);
               HDfree((VOIDP) isscales);
               Hendaccess(aid);
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -2983,7 +2983,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                 HDmalloc((size_t) (sdg->dimsizes[i] * localNTsize));
               if (sdg->dimscales[i] == NULL)
                 {
-		          freeDIGroup(GroupID);
+		          DFdifree(GroupID);
                   HDfree((VOIDP) isscales);
                   Hendaccess(aid);
                   HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -2995,7 +2995,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                               (uint8 *) sdg->dimscales[i]);
                   if (ret == FAIL)
                     {
-			          freeDIGroup(GroupID);
+			          DFdifree(GroupID);
                       HDfree((VOIDP) isscales);
                       Hendaccess(aid);
                       HGOTO_ERROR(DFE_READERROR, FAIL);
@@ -3007,7 +3007,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                   buf = (uint8 *) HDmalloc((size_t) (sdg->dimsizes[i] * fileNTsize));
                   if (buf == NULL)
                     {
-			          freeDIGroup(GroupID);
+			          DFdifree(GroupID);
                       HDfree((VOIDP) isscales);
                       Hendaccess(aid);
                       HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -3017,7 +3017,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                   ret = Hread(aid,(int32) (sdg->dimsizes[i] * fileNTsize), buf);
                   if (ret == FAIL)
                     {
-			          freeDIGroup(GroupID);
+			          DFdifree(GroupID);
                       HDfree((VOIDP) buf);
                       HDfree((VOIDP) isscales);
                       Hendaccess(aid);
@@ -3042,14 +3042,14 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
           length = Hlength(file_id, elmt.tag, elmt.ref);
           if (length == FAIL)
             {
-	          freeDIGroup(GroupID);
+	          DFdifree(GroupID);
               HGOTO_ERROR(DFE_BADLEN, FAIL);
             }
 
           sdg->coordsys = (char *) HDmalloc((uint32) length);
           if (sdg->coordsys == NULL)
             {
-	          freeDIGroup(GroupID);
+	          DFdifree(GroupID);
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
             }
 
@@ -3057,7 +3057,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
           if (Hgetelement(file_id, elmt.tag, elmt.ref,
                           (uint8 *) sdg->coordsys) == FAIL)
 	        {
-	          freeDIGroup(GroupID);
+	          DFdifree(GroupID);
               HGOTO_ERROR(DFE_GETELEM, FAIL);
             }
           break;
@@ -3068,7 +3068,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               if (Hgetelement(file_id, elmt.tag, elmt.ref,
                               (uint8 *) &(sdg->max_min[0])) == FAIL)
                 {
-		          freeDIGroup(GroupID);
+		          DFdifree(GroupID);
                   HGOTO_ERROR(DFE_GETELEM, FAIL);
                 }
             }
@@ -3079,14 +3079,14 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               buf = (uint8 *) HDmalloc((size_t) (2 * fileNTsize));
               if (buf == NULL)
                 {
- 		          freeDIGroup(GroupID);
+ 		          DFdifree(GroupID);
                  HGOTO_ERROR(DFE_NOSPACE, FAIL);
                 }
 
               /* read and convert max/min */
               if (Hgetelement(file_id, elmt.tag, elmt.ref, buf) == FAIL)
                 {
-		          freeDIGroup(GroupID);
+		          DFdifree(GroupID);
                   HGOTO_ERROR(DFE_GETELEM, FAIL);
                 }
 
@@ -3105,7 +3105,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               intn        eltSize = (intn) Hlength(file_id, elmt.tag, elmt.ref);
               if (eltSize == FAIL)
                 {
-		          freeDIGroup(GroupID);
+		          DFdifree(GroupID);
                   HGOTO_ERROR(DFE_BADLEN, FAIL);
                 }
 
@@ -3115,7 +3115,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                   if (Hgetelement(file_id, elmt.tag, elmt.ref,
                                   (unsigned char *) &sdg->cal) < 0)
 	                {
-			          freeDIGroup(GroupID);
+			          DFdifree(GroupID);
                       HGOTO_ERROR(DFE_GETELEM, FAIL);
                     }
                 }
@@ -3128,7 +3128,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                   if (Hgetelement(file_id, elmt.tag, elmt.ref,
                                   (unsigned char *) buf2) < 0)
 	                {
-			          freeDIGroup(GroupID);
+			          DFdifree(GroupID);
                       HGOTO_ERROR(DFE_GETELEM, FAIL);
                     }
 
@@ -3149,7 +3149,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               eltSize = (intn) Hlength(file_id, elmt.tag, elmt.ref);
               if (eltSize == FAIL)
                 {
-                  freeDIGroup(GroupID);
+                  DFdifree(GroupID);
                   HGOTO_ERROR(DFE_BADLEN, FAIL);
                 }
 
@@ -3157,14 +3157,14 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               buf = (uint8 *) HDmalloc((uint32) eltSize);
               if (buf == NULL)
                 {
-                  freeDIGroup(GroupID);
+                  DFdifree(GroupID);
                   HGOTO_ERROR(DFE_NOSPACE, FAIL);
                 }
 
               /* read and convert calibration */
               if (Hgetelement(file_id, elmt.tag, elmt.ref, buf) == FAIL)
                 {
-                  freeDIGroup(GroupID);
+                  DFdifree(GroupID);
                   HGOTO_ERROR(DFE_GETELEM, FAIL);
                 }
 
@@ -3210,7 +3210,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               intn        eltSize = (intn) Hlength(file_id, elmt.tag, elmt.ref);
               if (eltSize == FAIL)
                 {
-                  freeDIGroup(GroupID);
+                  DFdifree(GroupID);
                   HGOTO_ERROR(DFE_BADLEN, FAIL);
                 }
 
@@ -3218,7 +3218,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               if (Hgetelement(file_id, elmt.tag, elmt.ref,
                               (unsigned char *) sdg->fill_value) == FAIL)
                 {
-                  freeDIGroup(GroupID);
+                  DFdifree(GroupID);
                   HGOTO_ERROR(DFE_GETELEM, FAIL);
                 }
             }
@@ -3230,7 +3230,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               eltSize = (intn) Hlength(file_id, elmt.tag, elmt.ref);
               if (eltSize == FAIL)
                 {
-                  freeDIGroup(GroupID);
+                  DFdifree(GroupID);
                   HGOTO_ERROR(DFE_BADLEN, FAIL);
                 }
 
@@ -3238,14 +3238,14 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               buf = (uint8 *) HDmalloc((uint32) eltSize);
               if (buf == NULL)
                 {
-                  freeDIGroup(GroupID);
+                  DFdifree(GroupID);
                   HGOTO_ERROR(DFE_NOSPACE, FAIL);
                 }
 
               /* read fill value into buffer */
               if (Hgetelement(file_id, elmt.tag, elmt.ref, buf) == FAIL)
                 {
-                  freeDIGroup(GroupID);
+                  DFdifree(GroupID);
                   HGOTO_ERROR(DFE_GETELEM, FAIL);
                 }
 
@@ -3263,7 +3263,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
         default:
           if ((elmt.tag <= DFTAG_BREQ) && (elmt.tag >= DFTAG_EREQ))
 	        {
-	          freeDIGroup(GroupID);
+	          DFdifree(GroupID);
               HGOTO_ERROR(DFE_BADNDG, FAIL);
             }
           break;

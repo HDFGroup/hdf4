@@ -566,7 +566,7 @@ DFGRgetrig(int32 file_id, uint16 ref, DFGRrig * rig)
                       }
                     else
                       {
-                    	freeDIGroup(GroupID);
+                    	DFdifree(GroupID);
                         HGOTO_ERROR(DFE_READERROR, FAIL);
                     }
 
@@ -577,12 +577,12 @@ DFGRgetrig(int32 file_id, uint16 ref, DFGRrig * rig)
                     if (Hgetelement(file_id, rig->datadesc[type].nt.tag,
                               rig->datadesc[type].nt.ref, ntstring) == FAIL)
                       {
-                    	freeDIGroup(GroupID);
+                    	DFdifree(GroupID);
                         HGOTO_ERROR(DFE_READERROR, FAIL);
                       }
                     if ((ntstring[2] != 8) || (ntstring[1] != DFNT_UCHAR))
                       {
-                     	freeDIGroup(GroupID);
+                     	DFdifree(GroupID);
                         HGOTO_ERROR(DFE_BADCALL, FAIL);
                       }
                     break;

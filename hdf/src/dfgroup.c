@@ -299,7 +299,7 @@ DFdiwrite(int32 file_id, int32 list, uint16 tag, uint16 ref)
 
 
 /*-----------------------------------------------------------------------------
- * Name:    freeDIGroup
+ * Name:    DFdifree
  * Purpose: Cleanup DI group
  * Inputs:  groupID
  * Returns: none
@@ -321,9 +321,9 @@ DFdiwrite(int32 file_id, int32 list, uint16 tag, uint16 ref)
  *		loop or finding an element while doing a search.
  *
  *---------------------------------------------------------------------------*/
-void freeDIGroup(int32 groupID)
+void DFdifree(int32 groupID)
 {
-    CONSTR(FUNC, "freeDIGroup");
+    CONSTR(FUNC, "DFdifree");
 	DIlist_ptr	list_rec;
 	
 	list_rec = GID2REC( groupID );

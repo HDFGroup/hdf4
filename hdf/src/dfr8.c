@@ -858,13 +858,13 @@ DFR8getrig(int32 file_id, uint16 ref, DFRrig * rig)
             }     /* end if */
           else
             {
-              freeDIGroup(GroupID);
+              DFdifree(GroupID);
               ret_value = FAIL;
               goto done;
             }
           if (rig->descimage.ncomponents != 1)
             {
-              freeDIGroup(GroupID);
+              DFdifree(GroupID);
               HGOTO_ERROR(DFE_BADCALL, FAIL);
             }
           if (rig->descimage.nt.tag == 0)
@@ -874,12 +874,12 @@ DFR8getrig(int32 file_id, uint16 ref, DFRrig * rig)
           if (Hgetelement(file_id, rig->descimage.nt.tag,
                           rig->descimage.nt.ref, ntstring) == FAIL)
             {
-              freeDIGroup(GroupID);
+              DFdifree(GroupID);
               HGOTO_ERROR(DFE_GETELEM, FAIL);
             }
           if ((ntstring[2] != 8) || (ntstring[1] != DFNT_UCHAR))
             {
-              freeDIGroup(GroupID);
+              DFdifree(GroupID);
               HGOTO_ERROR(DFE_BADCALL, FAIL);
             }
           break;
@@ -1126,7 +1126,7 @@ DFR8nimages(const char *filename)
                 }   /* end if */
               else
                 {
-                  freeDIGroup(group_id);
+                  DFdifree(group_id);
                   HGOTO_ERROR(DFE_GETELEM, FAIL);
                 }
             }     /* end if */
