@@ -10,7 +10,7 @@ File: sd_chunk_examples.c
                       1 for 2-D array with compression..
 
   Example 1. 2-D 9x4 SDS of uint16 with 3x2 chunks
-             Write data using SDwriteChunk().
+             Write data using SDwritechunk().
              Read data using SDreaddata().
 
   Example 2. 3-D 2x3x4 SDS of uint16 with 2x3x2 chunks
@@ -18,15 +18,15 @@ File: sd_chunk_examples.c
              Read data using SDreaddata().
 
   Example 3. 3-D 2x3x4 SDS of uint16 with 1x1x4 chunks
-             Write data using SDwriteChunk().
+             Write data using SDwritechunk().
              Read data using SDreaddata().
 
   Example 4. 3-D 2x3x4 SDS of uint16 with 1x1x4 chunks
              Write data using SDwritedata().
-             Read data using SDreadChunk().
+             Read data using SDreadchunk().
 
   Example 5. 2-D 9x4 SDS of uint16 with 3x2 chunks with GZIP compression.
-             Write data using SDwriteChunk().
+             Write data using SDwritechunk().
              Read data using SDreaddata().
 
 Author - GeorgeV
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
 
     /* 
       Example 1. 2-D 9x4 SDS of uint16 with 3x2 chunks
-                 Write data using SDwriteChunk().
+                 Write data using SDwritechunk().
                  Read data using SDreaddata().
     */
 
@@ -148,42 +148,42 @@ int main(int argc, char *argv[])
        chunk is 3x2 which will create 6 chunks */
     chunk_def.chunk_lengths[0] = 3;
     chunk_def.chunk_lengths[1] = 2;
-    status = SDsetChunk(sdsid, chunk_def, HDF_CHUNK);
+    status = SDsetchunk(sdsid, chunk_def, HDF_CHUNK);
 
     /* Set Chunk cache to hold 3 chunks */
-    status = SDsetChunkCache(sdsid, 3, 0);
+    status = SDsetchunkcache(sdsid, 3, 0);
 
-    /* Write data use SDwriteChunk */
+    /* Write data use SDwritechunk */
 
     /* Write chunk 1 */
     start_dims[0] = 0;
     start_dims[1] = 0;
-    status = SDwriteChunk(sdsid, start_dims, (VOIDP) chunk1_2u16);
+    status = SDwritechunk(sdsid, start_dims, (VOIDP) chunk1_2u16);
 
     /* Write chunk 4 */
     start_dims[0] = 1;
     start_dims[1] = 1;
-    status = SDwriteChunk(sdsid, start_dims, (VOIDP) chunk4_2u16);
+    status = SDwritechunk(sdsid, start_dims, (VOIDP) chunk4_2u16);
 
     /* Write chunk 2 */
     start_dims[0] = 0;
     start_dims[1] = 1;
-    status = SDwriteChunk(sdsid, start_dims, (VOIDP) chunk2_2u16);
+    status = SDwritechunk(sdsid, start_dims, (VOIDP) chunk2_2u16);
 
     /* Write chunk 5 */
     start_dims[0] = 2;
     start_dims[1] = 0;
-    status = SDwriteChunk(sdsid, start_dims, (VOIDP) chunk5_2u16);
+    status = SDwritechunk(sdsid, start_dims, (VOIDP) chunk5_2u16);
 
     /* Write chunk 3 */
     start_dims[0] = 1;
     start_dims[1] = 0;
-    status = SDwriteChunk(sdsid, start_dims, (VOIDP) chunk3_2u16);
+    status = SDwritechunk(sdsid, start_dims, (VOIDP) chunk3_2u16);
 
     /* Write chunk 6 */
     start_dims[0] = 2;
     start_dims[1] = 1;
-    status = SDwriteChunk(sdsid, start_dims, (VOIDP) chunk6_2u16);
+    status = SDwritechunk(sdsid, start_dims, (VOIDP) chunk6_2u16);
  
     /* read a portion of data back in using SDreaddata
        i.e  5x2 subset of the whole array */
@@ -199,7 +199,7 @@ int main(int argc, char *argv[])
     */
 
     /* Get chunk information */
-    status = SDgetChunkInfo(sdsid, &rchunk_def, &cflags);
+    status = SDgetchunkinfo(sdsid, &rchunk_def, &cflags);
 
 
     /* Close down this SDS*/    
@@ -226,10 +226,10 @@ int main(int argc, char *argv[])
     chunk_def.chunk_lengths[0] = 2;
     chunk_def.chunk_lengths[1] = 2;
     chunk_def.chunk_lengths[2] = 3;
-    status = SDsetChunk(sdsid, chunk_def, HDF_CHUNK);
+    status = SDsetchunk(sdsid, chunk_def, HDF_CHUNK);
 
     /* Set Chunk cache to hold 2 chunks*/
-    status = SDsetChunkCache(sdsid, 2, 0);
+    status = SDsetchunkcache(sdsid, 2, 0);
 
     /* Write data using SDwritedata*/
     start_dims[0] = 0;
@@ -252,14 +252,14 @@ int main(int argc, char *argv[])
     /* Verify the data in inbuf_3u16 against u16_3data[] */
 
     /* Get chunk information */
-    status = SDgetChunkInfo(sdsid, &rchunk_def, &cflags);
+    status = SDgetchunkinfo(sdsid, &rchunk_def, &cflags);
 
     /* Close down this SDS*/    
     status = SDendaccess(sdsid);
 
     /* 
       Example 3. 3-D 2x3x4 SDS of uint16 with 1x1x4 chunks
-                 Write data using SDwriteChunk().
+                 Write data using SDwritechunk().
                  Read data using SDreaddata().
     */
 
@@ -278,48 +278,48 @@ int main(int argc, char *argv[])
     chunk_def.chunk_lengths[0] = 1;
     chunk_def.chunk_lengths[1] = 1;
     chunk_def.chunk_lengths[2] = 4;
-    status = SDsetChunk(sdsid, chunk_def, HDF_CHUNK);
+    status = SDsetchunk(sdsid, chunk_def, HDF_CHUNK);
 
     /* Set Chunk cache to hold 4 chunks*/
-    status = SDsetChunkCache(sdsid, 4, 0);
+    status = SDsetchunkcache(sdsid, 4, 0);
 
-    /* Write data use SDwriteChunk */
+    /* Write data use SDwritechunk */
 
     /* Write chunk 1 */
     start_dims[0] = 0;
     start_dims[1] = 0;
     start_dims[2] = 0;
-    status = SDwriteChunk(sdsid, start_dims, (VOIDP) chunk1_3u16);
+    status = SDwritechunk(sdsid, start_dims, (VOIDP) chunk1_3u16);
 
     /* Write chunk 4 */
     start_dims[0] = 1;
     start_dims[1] = 0;
     start_dims[2] = 0;
-    status = SDwriteChunk(sdsid, start_dims, (VOIDP) chunk4_3u16);
+    status = SDwritechunk(sdsid, start_dims, (VOIDP) chunk4_3u16);
 
     /* Write chunk 2 */
     start_dims[0] = 0;
     start_dims[1] = 1;
     start_dims[2] = 0;
-    status = SDwriteChunk(sdsid, start_dims, (VOIDP) chunk2_3u16);
+    status = SDwritechunk(sdsid, start_dims, (VOIDP) chunk2_3u16);
 
     /* Write chunk 5 */
     start_dims[0] = 1;
     start_dims[1] = 1;
     start_dims[2] = 0;
-    status = SDwriteChunk(sdsid, start_dims, (VOIDP) chunk5_3u16);
+    status = SDwritechunk(sdsid, start_dims, (VOIDP) chunk5_3u16);
 
     /* Write chunk 3 */
     start_dims[0] = 0;
     start_dims[1] = 2;
     start_dims[2] = 0;
-    status = SDwriteChunk(sdsid, start_dims, (VOIDP) chunk3_3u16);
+    status = SDwritechunk(sdsid, start_dims, (VOIDP) chunk3_3u16);
 
     /* Write chunk 6 */
     start_dims[0] = 1;
     start_dims[1] = 2;
     start_dims[2] = 0;
-    status = SDwriteChunk(sdsid, start_dims, (VOIDP) chunk6_3u16);
+    status = SDwritechunk(sdsid, start_dims, (VOIDP) chunk6_3u16);
  
     /* read data back in using SDreaddata*/
     start_dims[0] = 0;
@@ -339,7 +339,7 @@ int main(int argc, char *argv[])
     /* 
       Example 4. 3-D 2x3x4 SDS of uint16 with 1x1x4 chunks
                  Write data using SDwritedata().
-                 Read data using SDreadChunk().
+                 Read data using SDreadchunk().
     */
 
     /* Now create a new 2x3x4 SDS of uint16 in file 'chunk.hdf' */
@@ -357,10 +357,10 @@ int main(int argc, char *argv[])
     chunk_def.chunk_lengths[0] = 1;
     chunk_def.chunk_lengths[1] = 1;
     chunk_def.chunk_lengths[2] = 4;
-    status = SDsetChunk(sdsid, chunk_def, HDF_CHUNK);
+    status = SDsetchunk(sdsid, chunk_def, HDF_CHUNK);
 
     /* Set Chunk cache to hold 4 chunks */
-    status = SDsetChunkCache(sdsid, 4, 0);
+    status = SDsetchunkcache(sdsid, 4, 0);
 
     /* Write data using SDwritedata*/
     start_dims[0] = 0;
@@ -371,44 +371,44 @@ int main(int argc, char *argv[])
     edge_dims[2] = 4;
     status = SDwritedata(sdsid, start_dims, NULL, edge_dims, (VOIDP) u16_3data);
 
-    /* read data back in using SDreadChunk and verify against
+    /* read data back in using SDreadchunk and verify against
        the chunk arrays chunk1_3u16[] ... chunk6_3u16[] */
 
     /* read chunk 1 */
     start_dims[0] = 0;
     start_dims[1] = 0;
     start_dims[2] = 0;
-    status = SDreadChunk(sdsid, start_dims, (VOIDP) ru8_3data);
+    status = SDreadchunk(sdsid, start_dims, (VOIDP) ru8_3data);
 
     /* read chunk 2 */
     start_dims[0] = 0;
     start_dims[1] = 1;
     start_dims[2] = 0;
-    status = SDreadChunk(sdsid, start_dims, (VOIDP) ru8_3data);
+    status = SDreadchunk(sdsid, start_dims, (VOIDP) ru8_3data);
 
     /* read chunk 3 */
     start_dims[0] = 0;
     start_dims[1] = 2;
     start_dims[2] = 0;
-    status = SDreadChunk(sdsid, start_dims, (VOIDP) ru8_3data);
+    status = SDreadchunk(sdsid, start_dims, (VOIDP) ru8_3data);
 
     /* read chunk 4 */
     start_dims[0] = 1;
     start_dims[1] = 0;
     start_dims[2] = 0;
-    status = SDreadChunk(sdsid, start_dims, (VOIDP) ru8_3data);
+    status = SDreadchunk(sdsid, start_dims, (VOIDP) ru8_3data);
 
     /* read chunk 5 */
     start_dims[0] = 1;
     start_dims[1] = 1;
     start_dims[2] = 0;
-    status = SDreadChunk(sdsid, start_dims, (VOIDP) ru8_3data);
+    status = SDreadchunk(sdsid, start_dims, (VOIDP) ru8_3data);
 
     /* read chunk 6 */
     start_dims[0] = 1;
     start_dims[1] = 2;
     start_dims[2] = 0;
-    status = SDreadChunk(sdsid, start_dims, (VOIDP) ru8_3data);
+    status = SDreadchunk(sdsid, start_dims, (VOIDP) ru8_3data);
 
     /* Close down this SDS*/    
     status = SDendaccess(sdsid);
@@ -416,7 +416,7 @@ int main(int argc, char *argv[])
 
     /* 
       Example 5. 2-D 9x4 SDS of uint16 with 3x2 chunks with GZIP compression
-                 Write data using SDwriteChunk().
+                 Write data using SDwritechunk().
                  Read data using SDreaddata().
     */
 
@@ -440,43 +440,43 @@ int main(int argc, char *argv[])
     chunk_def.comp.cinfo.deflate.level = 6;       /* Level */
 
     /* set Chunking with Compression */
-    status = SDsetChunk(sdsid, chunk_def, HDF_CHUNK | HDF_COMP);
+    status = SDsetchunk(sdsid, chunk_def, HDF_CHUNK | HDF_COMP);
 
     /* Set Chunk cache to hold 3 chunks */
-    status = SDsetChunkCache(sdsid, 3, 0);
+    status = SDsetchunkcache(sdsid, 3, 0);
 
-    /* Write data use SDwriteChunk 
+    /* Write data use SDwritechunk 
        NOTE: This is the recommended way when using Compression */
 
     /* Write chunk 1 */
     start_dims[0] = 0;
     start_dims[1] = 0;
-    status = SDwriteChunk(sdsid, start_dims, (VOIDP) chunk1_2u16);
+    status = SDwritechunk(sdsid, start_dims, (VOIDP) chunk1_2u16);
 
     /* Write chunk 4 */
     start_dims[0] = 1;
     start_dims[1] = 1;
-    status = SDwriteChunk(sdsid, start_dims, (VOIDP) chunk4_2u16);
+    status = SDwritechunk(sdsid, start_dims, (VOIDP) chunk4_2u16);
 
     /* Write chunk 2 */
     start_dims[0] = 0;
     start_dims[1] = 1;
-    status = SDwriteChunk(sdsid, start_dims, (VOIDP) chunk2_2u16);
+    status = SDwritechunk(sdsid, start_dims, (VOIDP) chunk2_2u16);
 
     /* Write chunk 5 */
     start_dims[0] = 2;
     start_dims[1] = 0;
-    status = SDwriteChunk(sdsid, start_dims, (VOIDP) chunk5_2u16);
+    status = SDwritechunk(sdsid, start_dims, (VOIDP) chunk5_2u16);
 
     /* Write chunk 3 */
     start_dims[0] = 1;
     start_dims[1] = 0;
-    status = SDwriteChunk(sdsid, start_dims, (VOIDP) chunk3_2u16);
+    status = SDwritechunk(sdsid, start_dims, (VOIDP) chunk3_2u16);
 
     /* Write chunk 6 */
     start_dims[0] = 2;
     start_dims[1] = 1;
-    status = SDwriteChunk(sdsid, start_dims, (VOIDP) chunk6_2u16);
+    status = SDwritechunk(sdsid, start_dims, (VOIDP) chunk6_2u16);
  
     /* read a portion of data back in using SDreaddata
        i.e  5x2 subset of the whole array */
@@ -492,7 +492,7 @@ int main(int argc, char *argv[])
     */
 
     /* Get chunk information */
-    status = SDgetChunkInfo(sdsid, &rchunk_def, &cflags);
+    status = SDgetchunkinfo(sdsid, &rchunk_def, &cflags);
 
     /* Close down this SDS*/    
     status = SDendaccess(sdsid);
