@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/02/10 20:59:34  chouck
-Initial revision
+Revision 1.2  1992/05/28 14:24:01  chouck
+Added casts for calls to Hinquire()
 
+ * Revision 1.1  1992/02/10  20:59:34  chouck
+ * Initial revision
+ *
 */
 /*
 
@@ -68,7 +71,8 @@ int main(argc, argv)
     int32 aid1, aid2;
     int32 fileid, length, offset, posn;
     uint16 tag, ref;
-    int access, special, ret, i;
+    int16 access, special;
+    int ret, i;
 
     if (argc > 1 && strcmp(argv[1], "-shell") == 0) {
        shell = 1;
