@@ -292,16 +292,6 @@ nssdc_read_cdf(xdrs, handlep)
          */
         rank = 0;
 
-#if 0
-    /* create the record dimension */
-    if(maxRec > 0) {
-
-#ifdef DEBUG
-        fprintf(stderr,"Created CDFrecord dimension %d\n", maxRec);
-#endif
-    }
-#endif
-
         if(bitset(vFlags, rVAR_RECVARY_BIT)) {
             char dimname[1000];
             sprintf(dimname, "%s_REC", name);

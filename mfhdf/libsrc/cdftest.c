@@ -2,7 +2,7 @@
  * 	Copyright 1988 University Corporation for Atmospheric Research
  *      See netcdf/COPYRIGHT file for copying and redistribution conditions.
  */
-static char mrcsid[] = "$Id$";
+static char mrcsid[] = "Id: cdftest.c,v 1.11 1994/01/10 23:07:27 chouck Exp ";
 
 /*
  *	 Program to create a cdf, exercise all cdf functions.
