@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.14  1993/09/28 18:04:31  koziol
-Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
-tag handling.  Added new compression special tag type.
+Revision 1.15  1993/09/28 18:44:15  koziol
+Fixed various things the Sun's pre-processor didn't like.
 
+ * Revision 1.14  1993/09/28  18:04:31  koziol
+ * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
+ * tag handling.  Added new compression special tag type.
+ *
  * Revision 1.13  1993/09/21  00:58:36  georgev
  * With the new HDstrdup() need casts on the Mac and Convex.
  *
@@ -88,8 +91,6 @@ typedef struct {
 /* forward declaration of the functions provided in this module */
 PRIVATE int32 HXIstaccess
     PROTO((accrec_t *access_rec, int16 access));
-PRIVATE int32 HXIcloseAID
-    PROTO((accrec_t *access_rec));
 
 /* ext_funcs -- table of the accessing functions of the external
    data element function modules.  The position of each function in
@@ -679,7 +680,7 @@ int32 HXPendaccess(access_rec)
        FID2REC(access_rec->file_id);
 
     /* close the file pointed to by this access rec */
-    HXIcloseAID(access_rec);
+    HXPcloseAID(access_rec);
 
     /* validate file record */
 
@@ -712,14 +713,14 @@ int32 HXPendaccess(access_rec)
 
 */
 #ifdef PROTOTYPE
-int32 HXIcloseAID(accrec_t *access_rec)
+int32 HXPcloseAID(accrec_t *access_rec)
 #else
-int32 HXIcloseAID(access_rec)
+int32 HXPcloseAID(access_rec)
 accrec_t *access_rec;
 #endif
 {
 
-    char *FUNC="HXIcloseAID"; /* for HERROR */
+    char *FUNC="HXPcloseAID"; /* for HERROR */
     extinfo_t *info =          /* special information record */
        (extinfo_t *)access_rec->special_info;
 
@@ -735,4 +736,4 @@ accrec_t *access_rec;
     return SUCCEED;
 
 
-} /* HXIcloseAID */
+} /* HXPcloseAID */

@@ -42,7 +42,7 @@ struct tbbt_node {
 # define  Other(side)   ( LEFT + RIGHT - (side) )
 # define  Delta(n,s)    (  ( Heavy(n,s) ? 1 : -1 )                          \
                             *  ( Double(n) ? 2 : UnBal(n) ? 1 : 0 )  )
-#if defined macintosh  | THINK_C /* There is a limit to recursive
+#if defined macintosh | defined THINK_C /* There is a limit to recursive
                                     macro substitution */
 # define  SetFlags(n,s,c,b,i)   (  ( -2<(b) && (b)<2 ? 0 : TBBT_DOUBLE )   \
     |  ( 0>(b) ? TBBT_HEAVY(s) : (b)>0 ? TBBT_HEAVY( 1 + 2 - (s)) : 0 )    \

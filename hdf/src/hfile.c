@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.24  1993/09/28 18:04:36  koziol
-Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
-tag handling.  Added new compression special tag type.
+Revision 1.25  1993/09/28 18:44:19  koziol
+Fixed various things the Sun's pre-processor didn't like.
 
+ * Revision 1.24  1993/09/28  18:04:36  koziol
+ * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
+ * tag handling.  Added new compression special tag type.
+ *
  * Revision 1.23  1993/09/21  00:58:37  georgev
  * With the new HDstrdup() need casts on the Mac and Convex.
  *
@@ -690,7 +693,7 @@ intn Hnextread(access_id, tag, ref, origin)
      * need to close the file before moving on
      */
     if(access_rec->special == SPECIAL_EXT) {
-        if(HXIcloseAID(access_rec) == FAIL) {
+        if(HXPcloseAID(access_rec) == FAIL) {
             HERROR(DFE_CANTCLOSE);
             return FAIL;
         }

@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1993/09/28 18:04:21  koziol
-Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
-tag handling.  Added new compression special tag type.
+Revision 1.2  1993/09/28 18:44:12  koziol
+Fixed various things the Sun's pre-processor didn't like.
 
+ * Revision 1.1  1993/09/28  18:04:21  koziol
+ * Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
+ * tag handling.  Added new compression special tag type.
+ *
 *
 */
 
@@ -55,6 +58,7 @@ tag handling.  Added new compression special tag type.
     9/21/93     Starting coding specs
 */
 
+#define COMPRESS_MASTER
 #include "hdf.h"
 #include "herr.h"
 #include "hfile.h"

@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.32  1993/09/28 18:04:59  koziol
-Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
-tag handling.  Added new compression special tag type.
+Revision 1.33  1993/09/28 18:44:36  koziol
+Fixed various things the Sun's pre-processor didn't like.
 
+ * Revision 1.32  1993/09/28  18:04:59  koziol
+ * Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
+ * tag handling.  Added new compression special tag type.
+ *
  * Revision 1.31  1993/09/16  17:19:48  chouck
  * Allow duplicates in Vgroups unless NO_DUPLICATES is defined
  *
@@ -123,19 +126,25 @@ tag handling.  Added new compression special tag type.
 #include "hfile.h"
 
 PRIVATE int32 Load_vfile
-  PROTO((HFILEID f));
+    PROTO((HFILEID f));
 
 PRIVATE VOID Remove_vfile
-  PROTO((HFILEID f));
+    PROTO((HFILEID f));
+
+PRIVATE vginstance_t *vginstance
+    PROTO((HFILEID f, uint16 vgid));
+
+PRIVATE void vunpackvg
+    PROTO((VGROUP *vg, uint8 buf[]));
 
 PUBLIC intn vcompare
     PROTO((VOIDP k1,VOIDP k2,intn cmparg));
 
-PRIVATE vginstance_t *vginstance
-  PROTO((HFILEID f, uint16 vgid));
+PUBLIC VOID vdestroynode
+    PROTO((VOIDP n));
 
-PRIVATE void vunpackvg
-    PROTO((VGROUP *vg, uint8 buf[]));
+PUBLIC VOID vsdestroynode
+    PROTO((VOIDP n));
 
 /*
 * -------------------------------------------------------------------- 

@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.43  1993/09/28 18:04:44  koziol
-Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
-tag handling.  Added new compression special tag type.
+Revision 1.44  1993/09/28 18:44:27  koziol
+Fixed various things the Sun's pre-processor didn't like.
 
+ * Revision 1.43  1993/09/28  18:04:44  koziol
+ * Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
+ * tag handling.  Added new compression special tag type.
+ *
  * Revision 1.42  1993/09/11  21:00:29  koziol
  * Defined alternate HDstrdup routine for VMS and fixed a couple of HDstrdup
  * mistakes.
@@ -379,7 +382,8 @@ extern int32 HLPendaccess
 ** from hextelt.c
 */
 extern int32 HXcreate
-  PROTO((int32 file_id, uint16 tag, uint16 ref, char _HUGE *extern_file_name, int32 f_offset, int32 start_len));
+  PROTO((int32 file_id, uint16 tag, uint16 ref, char _HUGE *extern_file_name, 
+	int32 f_offset, int32 start_len));
 
 extern int32 HXPstread
     PROTO((accrec_t *rec));
@@ -402,6 +406,9 @@ extern int32 HXPinquire
             int16 *pspecial));
 
 extern int32 HXPendaccess
+    PROTO((accrec_t *access_rec));
+
+extern int32 HXPcloseAID
     PROTO((accrec_t *access_rec));
 
 /*

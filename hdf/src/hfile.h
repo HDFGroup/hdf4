@@ -2,11 +2,14 @@
 $Header$
 
 $Log$
-Revision 1.23  1993/09/20 19:56:14  koziol
-Updated the "special element" function pointer array to be a structure
-of function pointers.  This way, function prototypes can be written for the
-functions pointers and some type checking done.
+Revision 1.24  1993/09/28 18:44:24  koziol
+Fixed various things the Sun's pre-processor didn't like.
 
+ * Revision 1.23  1993/09/20  19:56:14  koziol
+ * Updated the "special element" function pointer array to be a structure
+ * of function pointers.  This way, function prototypes can be written for the
+ * functions pointers and some type checking done.
+ *
  * Revision 1.22  1993/09/13  21:12:54  chouck
  * Modified date for Release 1
  *
@@ -444,9 +447,6 @@ extern int HIadd_hash_dd
 extern int HIdel_hash_dd
   PROTO((filerec_t *file_rec, uint16 look_tag, uint16 look_ref));
 
-extern int32 HXIcloseAID
-    PROTO((accrec_t *access_rec));
-	
 #ifdef MAC
 extern hdf_file_t mopen
 	PROTO((char * filename, intn access));
