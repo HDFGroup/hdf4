@@ -204,7 +204,7 @@ install-prog: all
 	done
 
 test-utils:
-	./testutil.sh
+	./testutil.sh $(target_canonical)
 
 #.c.o: 
 #	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
