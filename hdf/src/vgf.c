@@ -718,7 +718,7 @@ nvffnamec(intf * vkey, intf * index, _fcd fname, intf *len)
       {
        /* HDstrcpy(_fcdtocp(fname),fieldname);*/
         HDpackFstring(fieldname, _fcdtocp(fname), (intn) *len);
-        HDfree(fieldname);
+        /* HDfree(fieldname); */
         return(SUCCEED);
       } /* end if */
     else
