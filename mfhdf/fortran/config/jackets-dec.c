@@ -1,4 +1,4 @@
-/*
+*
  *	Copyright 1990, University Corporation for Atmospheric Research
  *      See netcdf/COPYRIGHT file for copying and redistribution conditions.
  */
@@ -163,7 +163,7 @@ fstrncpy (target, source, maxlen)
 	*target++ = *source++;
     *target = '\0';
 }
-
+#ifdef WE_COULDNT_READ_NAMES_WITH_SPACES
 /* copy function used to copy strings terminated with blanks */
 static void
 nstrncpy (target, source, maxlen)
@@ -175,8 +175,25 @@ nstrncpy (target, source, maxlen)
 	*target++ = *source++;
     *target = '\0';
 }
+#endif
 
+/* copy function used to copy strings with embeded blanks and
+   terminated with blanks */
+static void
+nstrncpy (target, source, maxlen)
+    char *target;		/* space to be copied into */
+    char *source;		/* string to be copied */
+    int maxlen;			/* maximum length of *source */
+{
+/* Copy all string */
+    while (maxlen--) 
+        *target++ = *source++;
+    *target -- = '\0';
+/* Disregard all trailing spaces  */
+     while (*target == ' ')
+         *target-- = '\0';
 
+}
 /*
  * Compute product of dimensions.
  */

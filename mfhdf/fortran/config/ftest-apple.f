@@ -485,7 +485,7 @@ c
       
       bvalidrg(1) = 1
       bvalidrg(2) = 250
-      call ncapt (ncid, bid, 'validrange', NCBYTE, 2,
+      call ncapt (ncid, bid, 'valid range', NCBYTE, 2,
      +bvalidrg, iret)
 
 c
@@ -494,7 +494,7 @@ c
 
       svalidrg(1) = -100
       svalidrg(2) = 100
-      call ncapt (ncid, sid, 'validrange', NCSHORT, 2, 
+      call ncapt (ncid, sid, 'valid range', NCSHORT, 2, 
      +svalidrg, iret)
 
 c
@@ -503,7 +503,7 @@ c
 
       lvalidrg(1) = 0
       lvalidrg(2) = 360
-      call ncapt (ncid, lid, 'validrange', NCLONG, 2,
+      call ncapt (ncid, lid, 'valid range', NCLONG, 2,
      +lvalidrg, iret)
       
 c
@@ -512,7 +512,7 @@ c
 
       rvalidrg(1) = 0.0
       rvalidrg(2) = 5000.0
-      call ncapt (ncid, fid, 'validrange', NCFLOAT, 2,
+      call ncapt (ncid, fid, 'valid range', NCFLOAT, 2,
      +rvalidrg, iret)
 
 c
@@ -521,7 +521,7 @@ c
 
       dvalidrg(1) = 0D0
       dvalidrg(2) = 500D0
-      call ncapt (ncid, did, 'validrange', NCDOUBLE, 2,
+      call ncapt (ncid, did, 'valid range', NCDOUBLE, 2,
      +dvalidrg, iret)
 
 c
@@ -571,11 +571,12 @@ c      character*31 dimnam(MAXNCDIM)
       data dimnam /'time', 'lat', 'lon', 'level',
      + 'length', 27*'0'/
       data dimsiz /4, 5, 5, 4, 80, 27*0/
-      data varnam/'bytev', 'shortv', 'longv', 'floatv', 'doublev', 
+      data varnam/'bytev', 'short v', 'longv', 'floatv', 'doublev', 
      + 'chv', 'cv'/
       
-      data attname/'validrange', '0', 'validrange', '0', 'validrange',
-     + '0', 'validrange', '0', 'validrange', '0', 'longname', 'id',
+      data attname/'valid range', '0', 'valid range',
+     + '0', 'valid range',
+     + '0', 'valid range', '0', 'valid range', '0', 'longname', 'id',
      + '0', '0'/
       data gattnam/'source','basetime'/
       end
@@ -824,7 +825,7 @@ c
 c     short
 c
       sdims(1) = timedim
-      sid = ncvdef (ncid, 'shortv', NCSHORT, 1, sdims, iret)
+      sid = ncvdef (ncid, 'short v', NCSHORT, 1, sdims, iret)
 c
 c     long
 c
