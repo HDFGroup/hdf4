@@ -18,6 +18,8 @@
 static const char * type_name(nc_type type);
 
 char *progname;
+struct ncdim dims[MAX_NC_DIMS]; /* dimensions */
+long vdims[MAX_NC_DIMS];	/* dimension sizes for a single variable */
 
 static void
 usage()
@@ -282,8 +284,6 @@ do_ncdump(char *path, struct fspec* specp)
 	int xdimid;			/* id of unlimited dimension */
 	int dimid;			/* dimension id */
 	int varid;			/* variable id */
-	struct ncdim dims[MAX_NC_DIMS]; /* dimensions */
-	long vdims[MAX_NC_DIMS];	/* dimension sizes for a single variable */
 	struct ncvar var;		/* variable */
 	struct ncatt att;		/* attribute */
 	int id;				/* dimension number per variable */
