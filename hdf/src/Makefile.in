@@ -291,8 +291,22 @@ install-lib: install-headers
 	( cd $(libdir) ; $(RANLIB) $(libdir)/$(TARGETLIB).n )
 	mv -f $(libdir)/$(TARGETLIB).n $(libdir)/$(TARGETLIB)
 
-install-headers: $(HINCS)
-	for p in $(HINCS); do \
+install-headers: FORCE
+	@case "$(FC)" in \
+	NONE*|none*) \
+	    $(MAKE) $(MFLAGS) $(HDF_FLAGS) install-headers-nofort;; \
+	*) \
+	    $(MAKE) $(MFLAGS) $(HDF_FLAGS) install-headers-all; \
+	esac
+
+install-headers-all:
+	for p in $(HDRS) $(FINCS); do \
+	    $(INSTALL_DATA) \
+		`pwd`/$$p $(includedir)/$$p; \
+	done
+
+install-headers-nofort:
+	for p in $(HDRS); do \
 	    $(INSTALL_DATA) \
 		`pwd`/$$p $(includedir)/$$p; \
 	done
