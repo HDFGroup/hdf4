@@ -134,6 +134,10 @@ libnostub: libnofortran
 
 allnostub: allnofortran
 
+libs:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
+          SUBDIRS="src jpeg" subd
+
 libdf:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
           SUBDIRS="src" subd
@@ -247,6 +251,7 @@ help:
 	@echo "make testnofortran - makes HDF library and tests"
 	@echo "                     excluding fortran support""
 	@echo "make utilities     - makes HDF library and utilities"
+	@echo "make libs          - makes HDF and IJG JPEG libraries only"
 	@echo "make libdf         - makes HDF library "
 	@echo "make libjpeg       - makes IJG JPEG library "
 	@echo "make hdf-test          - run HDF tests " 
