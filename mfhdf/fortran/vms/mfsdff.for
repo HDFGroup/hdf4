@@ -281,3 +281,24 @@ C----------------------------------------------------------------------
       sffattr = scfattr(id, name, len(name))
       return
       end
+
+
+C----------------------------------------------------------------------
+C     Name: sfsextf
+C     Purpose:  call scsextf to store data in an external file
+C     Inputs:   id: sds id
+C               fname: name of external file
+C               offset: Number of bytes from the beginning of the
+C                       external file to where the data starts
+C     Returns: 0 on success, FAIL on failure with error set
+C     Users:    Fortran stub routine
+C----------------------------------------------------------------------
+
+      integer function sfsextf(id, fname, offset)
+
+      character*(*) fname
+      integer       id, offset, scsextf
+
+      sfsextf = scsextf(id, fname, offset, len(fname))
+      return
+      end

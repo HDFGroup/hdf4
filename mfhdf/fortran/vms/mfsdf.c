@@ -58,7 +58,7 @@ nscstart(name, access, namelen)
     fn = HDf2cstring(name, *namelen);
     
     ret = (intf) SDstart(fn, *access);
-    HDfreespace((VOIDP)fn);
+    HDfree((VOIDP)fn);
 
     return(ret);
 }
@@ -205,7 +205,7 @@ nscginfo(id, name, rank, dimsizes, nt, nattr, len)
     int32 rank32, nt32, nattr32;
 
     iname = NULL;
-    if(*len)   iname  = (char *) HDgetspace((uint32)*len + 1);
+    if(*len)   iname  = (char *) HDmalloc((uint32)*len + 1);
 
     status = SDgetinfo((int32) *id, iname, &rank32, cdims, &nt32, &nattr32);
 
@@ -214,7 +214,7 @@ nscginfo(id, name, rank, dimsizes, nt, nattr, len)
 
     HDpackFstring(iname,  _fcdtocp(name),  *len);
 
-    if(iname)  HDfreespace((VOIDP)iname);
+    if(iname)  HDfree((VOIDP)iname);
   
     *rank  = (intf) rank32;
     *nt    = (intf) nt32;
@@ -433,7 +433,7 @@ nscn2index(id, name, namelen)
     
     fn = HDf2cstring(name, *namelen);
     ret = (intf) SDnametoindex(*id, fn);
-    HDfreespace((VOIDP)fn);
+    HDfree((VOIDP)fn);
     return(ret);
 }
 
@@ -468,7 +468,7 @@ nsccreate(id, name, nt, rank, dims, namelen)
     int32 * cdims, i;
     
     fn = HDf2cstring(name, *namelen);
-    cdims = (int32 *) HDgetspace(sizeof(int32) * (*rank));
+    cdims = (int32 *) HDmalloc(sizeof(int32) * (*rank));
     if(!cdims) return FAIL;
 
     for(i = 0; i < *rank; i++)
@@ -476,8 +476,8 @@ nsccreate(id, name, nt, rank, dims, namelen)
 
     ret = (intf) SDcreate(*id, fn, *nt, *rank, cdims);
 
-    HDfreespace((VOIDP)fn);
-    HDfreespace((VOIDP)cdims);
+    HDfree((VOIDP)fn);
+    HDfree((VOIDP)cdims);
     return(ret);
 }
 
@@ -522,9 +522,9 @@ nscsdimstr(id, l, u, f, ll, ul, fl)
         fstr = NULL;
 
     ret = (intf) SDsetdimstrs(*id, lstr, ustr, fstr);
-    if(ll) HDfreespace((VOIDP)lstr);
-    if(ul) HDfreespace((VOIDP)ustr);
-    if(fl) HDfreespace((VOIDP)fstr);
+    if(ll) HDfree((VOIDP)lstr);
+    if(ul) HDfree((VOIDP)ustr);
+    if(fl) HDfree((VOIDP)fstr);
     return(ret);
 }
 
@@ -555,7 +555,7 @@ nscsdimname(id, name, len)
         nstr = NULL;
 
     ret = (intf) SDsetdimname(*id, nstr);
-    if(len) HDfreespace((VOIDP)nstr);
+    if(len) HDfree((VOIDP)nstr);
     return(ret);
 }
 
@@ -607,10 +607,10 @@ nscsdatstr(id, l, u, f, c, ll, ul, fl, cl)
         cstr = NULL;
 
     ret = (intf) SDsetdatastrs(*id, lstr, ustr, fstr, cstr);
-    if(ll) HDfreespace((VOIDP)lstr);
-    if(ul) HDfreespace((VOIDP)ustr);
-    if(fl) HDfreespace((VOIDP)fstr);
-    if(cl) HDfreespace((VOIDP)cstr);
+    if(ll) HDfree((VOIDP)lstr);
+    if(ul) HDfree((VOIDP)ustr);
+    if(fl) HDfree((VOIDP)fstr);
+    if(cl) HDfree((VOIDP)cstr);
     return(ret);
 }
 
@@ -678,10 +678,14 @@ nsfrdata(id, start, stride, end, values)
         if((cstride[i] = stride[rank - i - 1]) != 1) nostride = FALSE;
     }
     
+#ifdef CM5
+    ret = (intf) CMreaddata(*id, cstart, (nostride? NULL : cstride), cend, values);
+#else
     if(nostride)
         ret = (intf) SDreaddata(*id, cstart, NULL, cend, values);
     else
         ret = (intf) SDreaddata(*id, cstart, cstride, cend, values);
+#endif
   
     return(ret);
 }
@@ -726,10 +730,14 @@ nsfwdata(id, start, stride, end, values)
         if((cstride[i] = stride[rank - i - 1]) != 1) nostride = FALSE;
     }
     
+#ifdef CM5
+    ret = (intf) CMwritedata(*id, cstart, (nostride? NULL : cstride), cend, values);
+#else
     if(nostride)
         ret = (intf) SDwritedata(*id, cstart, NULL, cend, values);
     else
         ret = (intf) SDwritedata(*id, cstart, cstride, cend, values);
+#endif
         
     return(ret);
 }
@@ -755,27 +763,25 @@ nscgdimstrs(dim, label, unit, format, llabel, lunit, lformat, mlen)
 #endif /* PROTOTYPE */
 {
     char *ilabel, *iunit, *iformat;
-    intn rank, cdim;
     intf ret;
-    intn isndg, status;
 
     iunit = ilabel = iformat = NULL;
 
-    if(*llabel)  ilabel  = (char *) HDgetspace((uint32)*llabel + 1);
-    if(*lunit)   iunit   = (char *) HDgetspace((uint32)*lunit + 1);
-    if(*lformat) iformat = (char *) HDgetspace((uint32)*lformat + 1);
+    if(*llabel)  ilabel  = (char *) HDmalloc((uint32)*llabel + 1);
+    if(*lunit)   iunit   = (char *) HDmalloc((uint32)*lunit + 1);
+    if(*lformat) iformat = (char *) HDmalloc((uint32)*lformat + 1);
 
-    status = SDgetdimstrs(*dim, ilabel, iunit, iformat, *mlen);
+    ret = (intf)SDgetdimstrs(*dim, ilabel, iunit, iformat, *mlen);
 
     HDpackFstring(ilabel,  _fcdtocp(label),  *llabel);
     HDpackFstring(iunit,   _fcdtocp(unit),   *lunit);
     HDpackFstring(iformat, _fcdtocp(format), *lformat);
 
-    if(ilabel)  HDfreespace((VOIDP)ilabel);
-    if(iunit)   HDfreespace((VOIDP)iunit);
-    if(iformat) HDfreespace((VOIDP)iformat);
+    if(ilabel)  HDfree((VOIDP)ilabel);
+    if(iunit)   HDfree((VOIDP)iunit);
+    if(iformat) HDfree((VOIDP)iformat);
 
-    return status;
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -799,30 +805,28 @@ nscgdatstrs(id, label, unit, format, coord, llabel, lunit, lformat, lcoord, len)
 #endif /* PROTOTYPE */
 {
     char *ilabel, *iunit, *iformat, *icoord;
-    intn rank, cdim;
     intf ret;
-    intn isndg, status;
 
     iunit = ilabel = iformat = NULL;
 
-    if(*llabel)  ilabel  = (char *) HDgetspace((uint32)*llabel + 1);
-    if(*lunit)   iunit   = (char *) HDgetspace((uint32)*lunit + 1);
-    if(*lformat) iformat = (char *) HDgetspace((uint32)*lformat + 1);
-    if(*lcoord)  icoord  = (char *) HDgetspace((uint32)*lcoord + 1);
+    if(*llabel)  ilabel  = (char *) HDmalloc((uint32)*llabel + 1);
+    if(*lunit)   iunit   = (char *) HDmalloc((uint32)*lunit + 1);
+    if(*lformat) iformat = (char *) HDmalloc((uint32)*lformat + 1);
+    if(*lcoord)  icoord  = (char *) HDmalloc((uint32)*lcoord + 1);
 
-    status = SDgetdatastrs(*id, ilabel, iunit, iformat, icoord, *len);
+    ret = (intf)SDgetdatastrs(*id, ilabel, iunit, iformat, icoord, *len);
 
     HDpackFstring(ilabel,  _fcdtocp(label),  *llabel);
     HDpackFstring(iunit,   _fcdtocp(unit),   *lunit);
     HDpackFstring(iformat, _fcdtocp(format), *lformat);
     HDpackFstring(icoord,  _fcdtocp(coord),  *lcoord);
 
-    if(ilabel)  HDfreespace((VOIDP)ilabel);
-    if(iunit)   HDfreespace((VOIDP)iunit);
-    if(iformat) HDfreespace((VOIDP)iformat);
-    if(icoord)  HDfreespace((VOIDP)icoord);
+    if(ilabel)  HDfree((VOIDP)ilabel);
+    if(iunit)   HDfree((VOIDP)iunit);
+    if(iformat) HDfree((VOIDP)iformat);
+    if(icoord)  HDfree((VOIDP)icoord);
 
-    return status;
+    return ret;
 }
 
 
@@ -847,22 +851,24 @@ nscgainfo(id, number, name, nt, count, len)
      intf *count, *len, *nt;
 #endif /* PROTOTYPE */
 {
-    char *iname;
-    int32 status;
-    int32 nt32;
+    char  * iname;
+    intn    status;
+    int32   nt32;
+    int32   cnt32;
 
     iname = NULL;
-    if(*len)   iname  = (char *) HDgetspace((uint32)*len + 1);
+    if(*len)   iname  = (char *) HDmalloc((uint32)*len + 1);
 
-    status = SDattrinfo(*id, *number, iname, &nt32, count);
+    status = SDattrinfo(*id, *number, iname, &nt32, &cnt32);
 
     HDpackFstring(iname,  _fcdtocp(name),  *len);
 
-    if(iname)  HDfreespace((VOIDP)iname);
+    if(iname)  HDfree((VOIDP)iname);
 
     *nt    = (intf) nt32;
+    *count = (intf) cnt32;
   
-    return(status);
+    return((intf)status);
 
 }
 
@@ -892,17 +898,17 @@ nscgdinfo(id, name, sz, nt, nattr, len)
     int32 sz32, nt32, nattr32;
 
     iname = NULL;
-    if(*len)   iname  = (char *) HDgetspace((uint32)*len + 1);
+    if(*len)   iname  = (char *) HDmalloc((uint32)*len + 1);
 
     status = SDdiminfo(*id, iname, &sz32, &nt32, &nattr32);
 
     HDpackFstring(iname,  _fcdtocp(name),  *len);
 
-    if(iname)  HDfreespace((VOIDP)iname);
+    if(iname)  HDfree((VOIDP)iname);
   
     *nt    = (intf) nt32;
     *sz    = (intf) sz32;
-    *nattr = (intf) nattr;
+    *nattr = (intf) nattr32;
 
     return(status);
 
@@ -941,7 +947,7 @@ nscsattr(id, name, nt, count, data, len)
 
     ret = (intf) SDsetattr(*id, an, *nt, *count, data);
 
-    HDfreespace((VOIDP)an);
+    HDfree((VOIDP)an);
     return(ret);
 }
 
@@ -969,7 +975,7 @@ nscfattr(id, name, namelen)
     fn = HDf2cstring(name, *namelen);
     
     ret = (intf) SDfindattr(*id, fn);
-    HDfreespace((VOIDP)fn);
+    HDfree((VOIDP)fn);
 
     return(ret);
 }
@@ -1027,9 +1033,137 @@ nsfref2index(id, ref)
 #ifdef PROTOTYPE
 nsfiscvar(intf *id)
 #else
-nsfiscvarindex(id)
+nsfiscvar(id)
      intf *id;
 #endif /* PROTOTYPE */
 {
     return((intf) SDiscoordvar(*id));
 }
+
+/*-----------------------------------------------------------------------------
+ * Name:    scsextf
+ * Purpose: store data in an external file
+ * Inputs:  id: sds id
+ *          name: name of external file
+ *          offset: Number of bytes from the beginning of the
+ *                    external file to where the data starts
+ *          namelen: length of name
+ * Returns: 0 on success, -1 on failure with error set
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nscsextf(intf *id, _fcd name, intf *offset, intf *namelen)
+#else
+nscsextf(id, name, offset, namelen)
+     intf *id;
+     _fcd name;
+     intf *offset;
+     intf *namelen;
+#endif /* PROTOTYPE */
+{
+    char   *fn;
+    intf    ret;
+    
+    fn = HDf2cstring(name, *namelen);
+    if (!fn) return(FAIL);
+    ret = (intf) SDsetexternalfile(*id, fn, *offset);
+    HDfree((VOIDP)fn);
+    return(ret);
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    sfsnbit
+ * Purpose: store data in n-bit data element
+ * Inputs:  id: sds id
+ *          start_bit: starting bit offset
+ *          bit_len: # of bits to write
+ *          sign_ext: whether to use the top bit as a sign extender
+ *          fill_one: whether to fill the "background bits" with ones
+ * Returns: 0 on success, -1 on failure with error set
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfsnbit(intf *id, intf *start_bit, intf *bit_len, intf *sign_ext, intf *fill_one)
+#else
+nsfsnbit(id, start_bit, bit_len, sign_ext, fill_one)
+     intf *id;
+     intf *start_bit;
+     intf *bit_len;
+     intf *sign_ext;
+     intf *fill_one;
+#endif /* PROTOTYPE */
+{
+    return((intf)SDsetnbitdataset((int32)*id,(intn)*start_bit,(intn)*bit_len,
+	(intn)*sign_ext,(intn)*fill_one));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    sdfsacct
+ * Purpose: Call SDsetaccesstype to set the access type
+ * Inputs:  id: sds id
+ *          type: the access type
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfsacct(intf *id, intf *type)
+#else
+nsfsacct(id, type)
+     intf *id;
+     intf *type;
+#endif /* PROTOTYPE */
+{
+    return((intf) SDsetaccesstype(*id, *type));
+}
+/*-----------------------------------------------------------------------------
+ * Name:    sfsdmvc
+ * Purpose: Call SDsetdimval_comp to set the dim value backward 
+ *            compatibility type
+ * Inputs:  id: sds id
+ *          compmode: backward compatibility:
+ *                    SD_DIMVAL_BW_COMP -- compatible (in mfhdf.h)
+ *                    SD_DIMVAL_BW_INCOMP -- incompatible.
+ *
+ * Returns: SUCCESS on success, FAIL on failure 
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfsdmvc(intf *id, intf *compmode)
+#else
+nsfsdmvc(id, compmode)
+     intf *id;
+     intf *compmode;
+#endif /* PROTOTYPE */
+{
+    return((intf) SDsetdimval_comp(*id, *compmode));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    sfisdmvc
+ * Purpose: Call SDisdimval_bwcomp to get the dim value backward 
+ *            compatibility 
+ * Inputs:  id: sds id
+ *
+ * Returns: SD_DIMVAL_BW_COMP (1) if dimval is backward compatible;
+            SD_DIMVAL_BW_INCOMP (0) for not compatible; (in mfhdf.h)
+            FAIL (-1) for error.
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfisdmvc(intf *id)
+#else
+nsfisdmvc(id)
+     intf *id;
+#endif /* PROTOTYPE */
+{
+    return((intf) SDisdimval_bwcomp(*id));
+}
+
