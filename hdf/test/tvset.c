@@ -643,7 +643,7 @@ read_vset_stuff(void)
 	    printf(">>> Reopen External file %s failed\n", EXTFNM);
 	}
 	else{
-	    status = HI_READ(fd, gbuf, (2*count*sizeof(int32)));
+	    status = HI_READ(fd, gbuf, (2*count*DFKNTsize(DFNT_INT32)));
 	    if (status == FAIL){
 		num_errs++;
 		printf(">>> Reading External file data failed\n");
