@@ -283,7 +283,9 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
         HRETURN_ERROR(DFE_INTERNAL, NULL);
     nimages = (intn) (nri + nci + nri8 + nci8 + nvg);
 
+#ifdef QAK
 printf("%s: nri=%ld, nci=%ld, nri8=%ld, nci8=%ld, nvg=%ld\n",FUNC,(long)nri,(long)nci,(long)nri8,(long)nci8,(long)nvg);
+#endif /* QAK */
     /* if there are no images just close the file and get out */
     if (nimages == 0)
         return (SUCCEED);
@@ -300,7 +302,9 @@ printf("%s: nri=%ld, nci=%ld, nri8=%ld, nci8=%ld, nvg=%ld\n",FUNC,(long)nri,(lon
           int32       gr_key;         /* Vgroup key of the GR Vgroup */
 
           gr_ptr->gr_ref=gr_ref; /* squirrel this away for later use */
+#ifdef QAK
 printf("%s: found GR group gr_ref=%u\n",FUNC,gr_ref);
+#endif /* QAK */
 
           if((gr_key=Vattach(file_id,(int32)gr_ref,"r"))!=FAIL)
             {
@@ -318,18 +322,27 @@ printf("%s: found GR group gr_ref=%u\n",FUNC,gr_ref);
                       switch(grp_tag)
                         {
                             case DFTAG_VG:  /* should be an image */
+#ifdef QAK
+printf("%s: found DFTAG_VG\n",FUNC);
+#endif /* QAK */
                                 if((img_key=Vattach(file_id,grp_ref,"r"))!=FAIL)
                                   {
                                     if(Vgetclass(img_key,textbuf)!=FAIL)
                                       {
                                         if(!HDstrcmp(textbuf,RI_NAME))
                                           { /* found an image, whew! */
+#ifdef QAK
+printf("%s: found an image\n",FUNC);
+#endif /* QAK */
                                             for(j=0; j<Vntagrefs(img_key); j++)
                                               {
                                                   if(Vgettagref(img_key,j,&img_tag,&img_ref)==FAIL)
                                                       continue;
                                                   if(img_tag==DFTAG_RI)
                                                     {
+#ifdef QAK
+printf("%s: found DFTAG_RI\n",FUNC);
+#endif /* QAK */
                                                         img_info[curr_image].grp_tag=grp_tag;
                                                         img_info[curr_image].grp_ref=grp_ref;
                                                         img_info[curr_image].img_tag=img_tag;
@@ -352,7 +365,9 @@ printf("%s: found GR group gr_ref=%u\n",FUNC,gr_ref);
 
                                       if((new_attr=(at_info_t *)HDmalloc(sizeof(at_info_t)))==NULL)
                                           HRETURN_ERROR(DFE_NOSPACE,FAIL);
+#ifdef QAK
 printf("%s: found global attribute, new_attr=%p\n",FUNC,new_attr);
+#endif /* QAK */
                                       new_attr->ref=grp_ref;
                                       new_attr->index=gr_ptr->gattr_count;
                                       new_attr->data_modified=FALSE;
@@ -389,7 +404,9 @@ printf("%s: found global attribute, new_attr=%p\n",FUNC,new_attr);
                                                 HDstrcpy(new_attr->name,fname);
                                               } /* end else */
                                                 
+#ifdef QAK
 printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new_attr->index);
+#endif /* QAK */
                                             tbbtdins(gr_ptr->gattree, (VOIDP) new_attr, NULL);    /* insert the attr instance in B-tree */ 
 
                                             VSdetach(at_key);
@@ -551,7 +568,7 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
 
                                 /* Get the name of the image */
                                 if(Vgetname(img_key,textbuf)==FAIL)
-                                    sprintf(textbuf,"Raster Image #%d",(int)curr_image);
+                                    sprintf(textbuf,"Raster Image #%d",(int)i);
                                 if((new_image->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
                                     HRETURN_ERROR(DFE_NOSPACE,FAIL);
                                 HDstrcpy(new_image->name,textbuf);
@@ -758,7 +775,7 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
                           HDmemset(new_image,0,sizeof(ri_info_t));
 
                           /* Get the name of the image */
-                          sprintf(textbuf,"Raster Image #%d",(int)curr_image);
+                          sprintf(textbuf,"Raster Image #%d",(int)i);
                           if((new_image->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
                               HRETURN_ERROR(DFE_NOSPACE,FAIL);
                           HDstrcpy(new_image->name,textbuf);
@@ -898,7 +915,7 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
                           HDmemset(new_image,0,sizeof(ri_info_t));
 
                           /* Get the name of the image */
-                          sprintf(textbuf,"Raster Image #%d",(int)curr_image);
+                          sprintf(textbuf,"Raster Image #%d",(int)i);
                           if((new_image->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
                               HRETURN_ERROR(DFE_NOSPACE,FAIL);
                           HDstrcpy(new_image->name,textbuf);
@@ -975,10 +992,6 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
       } /* end for */
 
     HDfree((VOIDP) img_info);   /* free offsets */
-#ifdef QAK
-    if (Hclose(file_id) == FAIL)
-        HRETURN_ERROR(DFE_CANTCLOSE, FAIL);
-#endif /* QAK */
     return (SUCCEED);
 } /* end GRIget_image_list() */
 
@@ -1148,8 +1161,8 @@ intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
     
     /* Write out the raster image's number-type record */
     ntstring[0] = DFNT_VERSION;     /* version */
-    ntstring[1] = DFNT_UCHAR;       /* type */
-    ntstring[2] = 8;                /* width: RIG data is 8-bit chars */
+    ntstring[1] = img_ptr->img_dim.nt;       /* type */
+    ntstring[2] = DFKNTsize(img_ptr->img_dim.nt)*8; /* width: RIG data is 8-bit chars */
     ntstring[3] = DFNTC_BYTE;       /* class: data are numeric values */
     if (Hputelement(hdf_file_id, img_ptr->img_dim.nt_tag,
             img_ptr->img_dim.nt_ref, ntstring, (int32) 4) == FAIL)
@@ -1235,6 +1248,17 @@ intn GRIupdateRIG(int32 hdf_file_id,ri_info_t *img_ptr)
     if (!HDvalidfid(hdf_file_id) || img_ptr==NULL)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
+    /* Don't write out a RIG, unless it is compatible with the older RIGS */
+    /*  which already exist.  This is to guarantee compatibility with older */
+    /*  software, both application and in the library */
+    if(img_ptr->img_dim.nt!=DFNT_UINT8 || (img_ptr->img_dim.ncomps!=1
+            && img_ptr->img_dim.ncomps!=3))
+        return(SUCCEED); /* lie and say it's ok - QAK */
+
+#ifdef QAK
+printf("%s: writing RIG\n",FUNC);
+#endif /* QAK */
+
     /* Write out the image/palette meta-information */
     if (GRIupdatemeta(hdf_file_id,img_ptr)==FAIL)
         HRETURN_ERROR(DFE_INTERNAL, FAIL);
@@ -1319,13 +1343,22 @@ printf("%s: check 2.0, GroupID=%ld\n",FUNC,(long)GroupID);
     if(img_ptr->ri_ref==DFTAG_NULL)
         img_ptr->ri_ref=VQueryref(GroupID);
 
-    /* Set the name of the RI group */
+    /* Set the name of the RI */
+    if(img_ptr->name!=NULL)
+        if(Vsetname(GroupID,img_ptr->name)==FAIL)
+            HRETURN_ERROR(DFE_BADVSNAME,FAIL);
+
+    /* Set the class of the RI group */
     if(Vsetclass(GroupID,RI_NAME)==FAIL)
         HRETURN_ERROR(DFE_BADVSNAME,FAIL);
 
     /* add image dimension tag/ref to RIG */
     if (Vaddtagref(GroupID, DFTAG_ID, (uint16) img_ptr->img_dim.dim_ref) == FAIL)
         HRETURN_ERROR(DFE_CANTADDELEM, FAIL);
+
+    /* If we don't have a tag for the image, just use DFTAG_RI for now */
+    if(img_ptr->img_tag==DFTAG_NULL)
+        img_ptr->img_tag=DFTAG_RI;
 
     /* add image data tag/ref to RIG */
     if (Vaddtagref(GroupID, img_ptr->img_tag, img_ptr->img_ref) == FAIL)
@@ -1434,6 +1467,7 @@ intn GRend(int32 grid)
     int32 gr_idx;               /* index into the gr_tab array */
     int32 GroupID;              /* VGroup ID for the GR group */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    filerec_t *file_rec;        /* File record */
 
     /* clear error stack and check validity of file id */
     HEclear();
@@ -1446,181 +1480,187 @@ intn GRend(int32 grid)
     gr_idx=GRID2SLOT(grid);
     gr_ptr=gr_tab[gr_idx];
     hdf_file_id=gr_ptr->hdf_file_id;
+    file_rec = FID2REC(hdf_file_id);
 
-    /* Check if the GR group exists, and create it if not */
-    if(gr_ptr->gr_ref==DFTAG_NULL)
+    if(((file_rec->access)&DFACC_WRITE)!=0)
       {
-        if((GroupID=Vattach(gr_ptr->hdf_file_id,-1,"w"))==FAIL)
-            HRETURN_ERROR(DFE_CANTATTACH,FAIL);
-        if((gr_ptr->gr_ref=VQueryref(GroupID))==(uint16)FAIL)
-            HRETURN_ERROR(DFE_NOVALS,FAIL);
-        if(Vsetname(GroupID,GR_NAME)==FAIL)
-            HRETURN_ERROR(DFE_BADVSNAME,FAIL);
-      } /* end if */
-    else
-      {
-        if((GroupID=Vattach(gr_ptr->hdf_file_id,gr_ptr->gr_ref,"w"))==FAIL)
-            HRETURN_ERROR(DFE_CANTATTACH,FAIL);
-      } /* end else */
+        /* Check if the GR group exists, and create it if not */
+        if(gr_ptr->gr_ref==DFTAG_NULL)
+          {
+            if((GroupID=Vattach(gr_ptr->hdf_file_id,-1,"w"))==FAIL)
+                HRETURN_ERROR(DFE_CANTATTACH,FAIL);
+            if((gr_ptr->gr_ref=VQueryref(GroupID))==(uint16)FAIL)
+                HRETURN_ERROR(DFE_NOVALS,FAIL);
+            if(Vsetname(GroupID,GR_NAME)==FAIL)
+                HRETURN_ERROR(DFE_BADVSNAME,FAIL);
+          } /* end if */
+        else
+          {
+            if((GroupID=Vattach(gr_ptr->hdf_file_id,gr_ptr->gr_ref,"w"))==FAIL)
+                HRETURN_ERROR(DFE_CANTATTACH,FAIL);
+          } /* end else */
 
-    /* Write out the information for RIs which have been changed */
+        /* Write out the information for RIs which have been changed */
+#ifdef QAK
 printf("%s: gr_modified=%d, gr_count=%ld\n",FUNC,gr_ptr->gr_modified,(long)gr_ptr->gr_count);
-    if(gr_ptr->gr_modified==TRUE && gr_ptr->gr_count>0)
-      {
-          VOIDP      *t;
-          ri_info_t *img_ptr;   /* ptr to the image */
+#endif /* QAK */
+        if(gr_ptr->gr_modified==TRUE && gr_ptr->gr_count>0)
+          {
+              VOIDP      *t;
+              ri_info_t *img_ptr;   /* ptr to the image */
 
 #ifdef QAK
 printf("%s: gr_modified=%d, gr_count=%ld\n",FUNC,gr_ptr->gr_modified,(long)gr_ptr->gr_count);
 #endif /* QAK */
-          if (NULL == (t = (VOIDP *) tbbtfirst((TBBT_NODE *) * (gr_ptr->grtree))))
-            {
-                HRETURN_ERROR(DFE_NOTINTABLE, FAIL);
-            } /* end if */
-          else
-              img_ptr = (ri_info_t *) * t;   /* get actual pointer to the ri_info_t */
+              if (NULL == (t = (VOIDP *) tbbtfirst((TBBT_NODE *) * (gr_ptr->grtree))))
+                {
+                    HRETURN_ERROR(DFE_NOTINTABLE, FAIL);
+                } /* end if */
+              else
+                  img_ptr = (ri_info_t *) * t;   /* get actual pointer to the ri_info_t */
 
-          /* cycle through all of the images in memory */
-          while (t!=NULL)
-            {
+              /* cycle through all of the images in memory */
+              while (t!=NULL)
+                {
 #ifdef QAK
 printf("%s: data_modified=%d, meta_modified=%d, attr_modified=%d\n",FUNC,img_ptr->data_modified,img_ptr->meta_modified,img_ptr->attr_modified);
 printf("%s: ri_ref=%u\n",FUNC,img_ptr->ri_ref);
 #endif /* QAK */
-                /* check if the image data has been modified */
-                if(img_ptr->data_modified==TRUE)
-                  {
-                    /* do nothing currently, we are synchronously updating the image data */
-                    HRETURN_ERROR(DFE_INTERNAL,FAIL); /* fail for now! */
-                  } /* end if */
+                    /* check if the image data has been modified */
+                    if(img_ptr->data_modified==TRUE)
+                      {
+                        /* do nothing currently, we are synchronously updating the image data */
+                          img_ptr->data_modified=FALSE;
+                      } /* end if */
 
-                /* check if the image meta-info has been modified */
-                if(img_ptr->meta_modified==TRUE)
-                  {
-                      /* write out the RI/RIG information again */
-                      if(GRIupdateRIG(gr_ptr->hdf_file_id,img_ptr)==FAIL)
-                          HRETURN_ERROR(DFE_INTERNAL, FAIL);
-                      if(GRIupdateRI(gr_ptr->hdf_file_id,img_ptr)==FAIL)
-                          HRETURN_ERROR(DFE_INTERNAL, FAIL);
-                      img_ptr->meta_modified=FALSE;
-                  } /* end if */
+                    /* check if the image meta-info has been modified */
+                    if(img_ptr->meta_modified==TRUE)
+                      {
+                          /* write out the RI/RIG information again */
+                          if(GRIupdateRIG(gr_ptr->hdf_file_id,img_ptr)==FAIL)
+                              HRETURN_ERROR(DFE_INTERNAL, FAIL);
+                          if(GRIupdateRI(gr_ptr->hdf_file_id,img_ptr)==FAIL)
+                              HRETURN_ERROR(DFE_INTERNAL, FAIL);
+                          img_ptr->meta_modified=FALSE;
+                      } /* end if */
 
-                /* check if the local attributes has been modified */
-                if(img_ptr->attr_modified==TRUE && img_ptr->lattr_count>0)
-                  {
-                      VOIDP      *t;
-                      at_info_t *attr_ptr;   /* ptr to the attribute */
+                    /* check if the local attributes has been modified */
+                    if(img_ptr->attr_modified==TRUE && img_ptr->lattr_count>0)
+                      {
+                          VOIDP      *t;
+                          at_info_t *attr_ptr;   /* ptr to the attribute */
 
-                      if (NULL == (t = (VOIDP *) tbbtfirst((TBBT_NODE *) * (img_ptr->lattree))))
-                        {
-                            HRETURN_ERROR(DFE_NOTINTABLE, FAIL);
-                        } /* end if */
-                      else
-                          attr_ptr = (at_info_t *) * t;   /* get actual pointer to the at_info_t */
+                          if (NULL == (t = (VOIDP *) tbbtfirst((TBBT_NODE *) * (img_ptr->lattree))))
+                            {
+                                HRETURN_ERROR(DFE_NOTINTABLE, FAIL);
+                            } /* end if */
+                          else
+                              attr_ptr = (at_info_t *) * t;   /* get actual pointer to the at_info_t */
 
-                      /* cycle through all of the local attributes in memory */
-                      while (t!=NULL)
-                        {
-                            /* check if the attribute data has been modified */
-                            if(attr_ptr->data_modified==TRUE)
-                              {
-                                  if(GRIup_attr_data(gr_ptr->hdf_file_id,attr_ptr)==FAIL)
-                                      HRETURN_ERROR(DFE_INTERNAL, FAIL);
-                                  attr_ptr->data_modified=FALSE;
-                              } /* end if */
+                          /* cycle through all of the local attributes in memory */
+                          while (t!=NULL)
+                            {
+                                /* check if the attribute data has been modified */
+                                if(attr_ptr->data_modified==TRUE)
+                                  {
+                                      if(GRIup_attr_data(gr_ptr->hdf_file_id,attr_ptr)==FAIL)
+                                          HRETURN_ERROR(DFE_INTERNAL, FAIL);
+                                      attr_ptr->data_modified=FALSE;
+                                  } /* end if */
 
 #ifdef QAK
 printf("%s: ri_ref=%u, atptr->ref=%u\n",FUNC,img_ptr->ri_ref,attr_ptr->ref);
 #endif /* QAK */
-                            /* check if the attribute was added to the group */
-                            if(attr_ptr->new==TRUE)
-                              {
-                                  int32 GroupID;  /* ID of the Vgroup */
+                                /* check if the attribute was added to the group */
+                                if(attr_ptr->new==TRUE)
+                                  {
+                                      int32 GroupID;  /* ID of the Vgroup */
 
-                                  if((GroupID=Vattach(gr_ptr->hdf_file_id,img_ptr->ri_ref,"w"))==FAIL)
-                                      HRETURN_ERROR(DFE_CANTATTACH,FAIL);
-                                  if(Vaddtagref(GroupID,ATTR_TAG,attr_ptr->ref)==FAIL)
-                                      HRETURN_ERROR(DFE_CANTADDELEM,FAIL);
-                                  if(Vdetach(GroupID)==FAIL)
-                                      HRETURN_ERROR(DFE_CANTDETACH,FAIL);
-                                  attr_ptr->new=FALSE;
-                              } /* end if */
+                                      if((GroupID=Vattach(gr_ptr->hdf_file_id,img_ptr->ri_ref,"w"))==FAIL)
+                                          HRETURN_ERROR(DFE_CANTATTACH,FAIL);
+                                      if(Vaddtagref(GroupID,ATTR_TAG,attr_ptr->ref)==FAIL)
+                                          HRETURN_ERROR(DFE_CANTADDELEM,FAIL);
+                                      if(Vdetach(GroupID)==FAIL)
+                                          HRETURN_ERROR(DFE_CANTDETACH,FAIL);
+                                      attr_ptr->new=FALSE;
+                                  } /* end if */
 
-                            /* get the next local attribute in the tree/list */
-                            if (NULL != (t = (VOIDP *) tbbtnext((TBBT_NODE *) t)))     /* get the next node in the tree */
-                                attr_ptr = (at_info_t *) * t;     /* get actual pointer to the at_info_t */
-                        } /* end while */
-                      img_ptr->attr_modified=FALSE;
-                  } /* end if */
+                                /* get the next local attribute in the tree/list */
+                                if (NULL != (t = (VOIDP *) tbbtnext((TBBT_NODE *) t)))     /* get the next node in the tree */
+                                    attr_ptr = (at_info_t *) * t;     /* get actual pointer to the at_info_t */
+                            } /* end while */
+                          img_ptr->attr_modified=FALSE;
+                      } /* end if */
 
-                /* Check if the RI is already in the GR, add it if not */
-                if(Vinqtagref(GroupID,RI_TAG,img_ptr->ri_ref)==FALSE)
-                    if(Vaddtagref(GroupID,RI_TAG,img_ptr->ri_ref)==FAIL)
-                        HRETURN_ERROR(DFE_CANTADDELEM,FAIL);
+                    /* Check if the RI is already in the GR, add it if not */
+                    if(Vinqtagref(GroupID,RI_TAG,img_ptr->ri_ref)==FALSE)
+                        if(Vaddtagref(GroupID,RI_TAG,img_ptr->ri_ref)==FAIL)
+                            HRETURN_ERROR(DFE_CANTADDELEM,FAIL);
 
-                /* get the next image in the tree/list */
-                if (NULL != (t = (VOIDP *) tbbtnext((TBBT_NODE *) t)))     /* get the next node in the tree */
-                    img_ptr = (ri_info_t *) * t;     /* get actual pointer to the ri_info_t */
-            } /* end while */
-      } /* end if */
+                    /* get the next image in the tree/list */
+                    if (NULL != (t = (VOIDP *) tbbtnext((TBBT_NODE *) t)))     /* get the next node in the tree */
+                        img_ptr = (ri_info_t *) * t;     /* get actual pointer to the ri_info_t */
+                } /* end while */
+          } /* end if */
 
 #ifdef QAK
 printf("%s: gr_ptr=%p, gr_ptr->gattr_modified=%d, gr_ptr->gattr_count=%ld\n",FUNC,gr_ptr,gr_ptr->gattr_modified,gr_ptr->gattr_count);
 #endif /* QAK */
-    /* Write out the information for the global attributes which have been changed */
-    if(gr_ptr->gattr_modified==TRUE && gr_ptr->gattr_count>0)
-      {
-          VOIDP      *t;
-          at_info_t *attr_ptr;   /* ptr to the attribute */
+        /* Write out the information for the global attributes which have been changed */
+        if(gr_ptr->gattr_modified==TRUE && gr_ptr->gattr_count>0)
+          {
+              VOIDP      *t;
+              at_info_t *attr_ptr;   /* ptr to the attribute */
 
-          if (NULL == (t = (VOIDP *) tbbtfirst((TBBT_NODE *) * (gr_ptr->gattree))))
-            {
-                HRETURN_ERROR(DFE_NOTINTABLE, FAIL);
-            } /* end if */
-          else
-              attr_ptr = (at_info_t *) * t;   /* get actual pointer to the at_info_t */
+              if (NULL == (t = (VOIDP *) tbbtfirst((TBBT_NODE *) * (gr_ptr->gattree))))
+                {
+                    HRETURN_ERROR(DFE_NOTINTABLE, FAIL);
+                } /* end if */
+              else
+                  attr_ptr = (at_info_t *) * t;   /* get actual pointer to the at_info_t */
 
 #ifdef QAK
 printf("%s: attr_ptr=%p\n",FUNC,attr_ptr);
 #endif /* QAK */
-          /* cycle through all of the global attributes in memory */
-          while (t!=NULL)
-            {
+              /* cycle through all of the global attributes in memory */
+              while (t!=NULL)
+                {
 #ifdef QAK
 printf("%s: attr_ptr->data_modified=%d\n",FUNC,attr_ptr->data_modified);
 #endif /* QAK */
-                /* check if the attribute data has been modified */
-                if(attr_ptr->data_modified==TRUE)
-                  {
-                    if(GRIup_attr_data(gr_ptr->hdf_file_id,attr_ptr)==FAIL)
-                        HRETURN_ERROR(DFE_INTERNAL, FAIL);
-                    attr_ptr->data_modified=FALSE;
+                    /* check if the attribute data has been modified */
+                    if(attr_ptr->data_modified==TRUE)
+                      {
+                        if(GRIup_attr_data(gr_ptr->hdf_file_id,attr_ptr)==FAIL)
+                            HRETURN_ERROR(DFE_INTERNAL, FAIL);
+                        attr_ptr->data_modified=FALSE;
 
 #ifdef QAK
 printf("%s: attr_ptr->new=%d\n",FUNC,attr_ptr->new);
 #endif /* QAK */
-                    /* check if the attribute was a new attribute */
-                    if(attr_ptr->new==TRUE)
-                      {
+                        /* check if the attribute was a new attribute */
+                        if(attr_ptr->new==TRUE)
+                          {
 #ifdef QAK
 printf("%s: GroupID=%ld\n",FUNC,(long)GroupID);
 #endif /* QAK */
-                        if(Vaddtagref(GroupID,ATTR_TAG,attr_ptr->ref)==FAIL)
-                            HRETURN_ERROR(DFE_CANTADDELEM,FAIL);
-                        attr_ptr->new=FALSE;
+                            if(Vaddtagref(GroupID,ATTR_TAG,attr_ptr->ref)==FAIL)
+                                HRETURN_ERROR(DFE_CANTADDELEM,FAIL);
+                            attr_ptr->new=FALSE;
+                          } /* end if */
                       } /* end if */
-                  } /* end if */
 
-                /* get the next global attribute in the tree/list */
-                if (NULL != (t = (VOIDP *) tbbtnext((TBBT_NODE *) t)))     /* get the next node in the tree */
-                    attr_ptr = (at_info_t *) * t;     /* get actual pointer to the at_info_t */
-            } /* end while */
-        gr_ptr->gattr_modified=FALSE;
+                    /* get the next global attribute in the tree/list */
+                    if (NULL != (t = (VOIDP *) tbbtnext((TBBT_NODE *) t)))     /* get the next node in the tree */
+                        attr_ptr = (at_info_t *) * t;     /* get actual pointer to the at_info_t */
+                } /* end while */
+            gr_ptr->gattr_modified=FALSE;
+          } /* end if */
+
+        /* Let go of the GR Vgroup */
+        if(Vdetach(GroupID)==FAIL)
+            HRETURN_ERROR(DFE_CANTDETACH,FAIL);
       } /* end if */
-
-    /* Let go of the GR Vgroup */
-    if(Vdetach(GroupID)==FAIL)
-        HRETURN_ERROR(DFE_CANTDETACH,FAIL);
 
 /* Free all the memory we've allocated -QAK */
 
@@ -1764,7 +1804,7 @@ int32 GRcreate(int32 grid,char *name,int32 ncomp,int32 nt,int32 il,int32 dimsize
     ri_ptr->im_il=MFGR_INTERLACE_PIXEL;
     ri_ptr->lut_il=MFGR_INTERLACE_PIXEL;
     ri_ptr->data_modified=FALSE;
-    ri_ptr->meta_modified=FALSE;
+    ri_ptr->meta_modified=TRUE;
     ri_ptr->attr_modified=FALSE;
     ri_ptr->lattr_count=0;
     ri_ptr->lattree = tbbtdmake(rigcompare, sizeof(int32));
@@ -1780,6 +1820,9 @@ int32 GRcreate(int32 grid,char *name,int32 ncomp,int32 nt,int32 il,int32 dimsize
 
     /* insert the new image in the global image tree */
     tbbtdins(gr_ptr->grtree, (VOIDP) ri_ptr, NULL);    /* insert the new image into B-tree */ 
+
+    /* indicate that the GR info has changed */
+    gr_ptr->gr_modified=TRUE;
     gr_ptr->gr_count++;
 
     return(RISLOT2ID(gr_idx,ri_ptr->index));
@@ -1867,7 +1910,7 @@ int32 GRnametoindex(int32 grid,char *name)
  REVISION LOG
 --------------------------------------------------------------------------*/
 intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
-    int32 *dimsizes,int32 *n_attr)
+    int32 dimsizes[2],int32 *n_attr)
 {
     CONSTR(FUNC, "GRgetiminfo");   /* for HERROR */
     int32 gr_idx;               /* index into the gr_tab array */
@@ -1978,6 +2021,9 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
     /* clear error stack and check validity of args */
     HEclear();
 
+#ifdef QAK
+printf("%s: check 1\n",FUNC);
+#endif /* QAK */
     /* check the basic validity of the args (stride is OK to be NULL) */
     if(!VALIDRIID(riid) || start==NULL /* || in_stride==NULL */ || count==NULL
             || data==NULL)
@@ -1997,6 +2043,9 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
             || (count[XDIM]<1 || count[YDIM]<1))
         HRETURN_ERROR(DFE_BADDIM, FAIL);
 
+#ifdef QAK
+printf("%s: check 2, stride[XDIM,YDIM]=%ld, %ld\n",FUNC,stride[XDIM],stride[YDIM]);
+#endif /* QAK */
     /* Get the array index for the grid */
     gr_idx=RIID2GRID(riid);
     gr_ptr=gr_tab[gr_idx];
@@ -2011,6 +2060,11 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
         HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
+#ifdef QAK
+printf("%s: stride[XDIM,YDIM]=%ld, %ld\n",FUNC,stride[XDIM],stride[YDIM]);
+printf("%s: start[XDIM,YDIM]=%ld, %ld\n",FUNC,start[XDIM],start[YDIM]);
+printf("%s: count[XDIM,YDIM]=%ld, %ld\n",FUNC,count[XDIM],count[YDIM]);
+#endif /* QAK */
     if(stride[XDIM]==1 && stride[YDIM]==1)
       { /* solid block of data */
           solid_block=TRUE;
@@ -2023,6 +2077,9 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
     else /* block of data spread out with strides */
           solid_block=FALSE;
 
+#ifdef QAK
+printf("%s: check 3\n",FUNC);
+#endif /* QAK */
     /* Get the size of the pixels in memory and on disk */
     pixel_mem_size=ri_ptr->img_dim.ncomps*DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND));
     pixel_disk_size=ri_ptr->img_dim.ncomps*DFKNTsize(ri_ptr->img_dim.nt);
@@ -2049,6 +2106,9 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
     else
         new_image=FALSE;
 
+#ifdef QAK
+printf("%s: check 4\n",FUNC);
+#endif /* QAK */
 /* QAK */
     if(ri_ptr->comp_img==TRUE)
       {   /* create a compressed image */
@@ -2061,6 +2121,9 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
       } /* end if */
     else 
       {   /* create an uncompressed image */
+#ifdef QAK
+printf("%s: check 5, new_image=%d, whole_image=%d, solid_block=%d\n",FUNC,new_image,whole_image,solid_block);
+#endif /* QAK */
           if(new_image==TRUE)
             { /* Create the tag/ref for the new image */
                 ri_ptr->img_tag=DFTAG_RI;
@@ -2070,7 +2133,7 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
           if(whole_image==TRUE)
             { /* write the whole image out */
                 if(Hputelement(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
-                        (uint8 *)img_data,count[XDIM]*count[YDIM])==FAIL)
+                        (uint8 *)img_data,pixel_disk_size*count[XDIM]*count[YDIM])==FAIL)
                     HRETURN_ERROR(DFE_PUTELEM,FAIL);
             } /* end if */
           else
@@ -2084,6 +2147,9 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
                     fill_hi_size=0,     /* number of bytes in the "high" block */
                     fill_line_size=0;   /* number of bytes in the "line" block */
 
+#ifdef QAK
+printf("%s: check 6, ri_ptr->fill_img=%d\n",FUNC,ri_ptr->fill_img);
+#endif /* QAK */
                 if((aid=Hstartaccess(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
                         DFACC_WRITE))==FAIL)
                     HRETURN_ERROR(DFE_BADAID,FAIL);
@@ -2126,9 +2192,15 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
                       ri_ptr->store_fill=TRUE;  /* set flag to store fill value attribute */
 
                       /* Get rid of the fill pixel */
-                      HDfree(fill_pixel);
+                      if(ri_ptr->fill_value==NULL)
+                          ri_ptr->fill_value=fill_pixel;
+                      else
+                          HDfree(fill_pixel);
                   } /* end if */
 
+#ifdef QAK
+printf("%s: check 7, fill_image=%d\n",FUNC,fill_image);
+#endif /* QAK */
                 tmp_data=img_data;
                 if(solid_block==TRUE)
                   {   /* write out runs of data in the image */
@@ -2139,9 +2211,17 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
                         
                       if(fill_image==TRUE)
                         {   /* surround the block to write with fill values */
+#ifdef QAK
+printf("%s: check 8\n",FUNC);
+#endif /* QAK */
+#ifdef QAK
                             if(Hseek(aid,0,DF_START)==FAIL)
                                 HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+#endif /* QAK */
 
+#ifdef QAK
+printf("%s: check 8.5\n",FUNC);
+#endif /* QAK */
                             /* write out lines "below" the block */
                             if(start[YDIM]>0)
                               { /* fill in the lines leading up the block */
@@ -2150,11 +2230,17 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
                                         HRETURN_ERROR(DFE_WRITEERROR,FAIL);
                               } /* end if */
 
+#ifdef QAK
+printf("%s: check 9\n",FUNC);
+#endif /* QAK */
                             /* write prelude of low pixels */
                             if(fill_lo_size>0)
                                 if(Hwrite(aid,fill_lo_size,fill_line)==FAIL)
                                     HRETURN_ERROR(DFE_WRITEERROR,FAIL);
 
+#ifdef QAK
+printf("%s: check 10, fill_lo_size=%ld, fill_hi_size=%ld\n",FUNC,(long)fill_lo_size,(long)fill_hi_size);
+#endif /* QAK */
                             /* write out the block */
                             for(i=0; i<count[YDIM]; i++)
                               {
@@ -2171,11 +2257,17 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
                                   tmp_data=(VOIDP)((char *)tmp_data+pix_len);
                               } /* end for */
                             
+#ifdef QAK
+printf("%s: check 11\n",FUNC);
+#endif /* QAK */
                             /* Finish the last chunk of high side fill values */
                             if(fill_hi_size>0)
                                 if(Hwrite(aid,fill_hi_size,fill_line)==FAIL)
                                     HRETURN_ERROR(DFE_WRITEERROR,FAIL);
 
+#ifdef QAK
+printf("%s: check 12\n",FUNC);
+#endif /* QAK */
                             /* write out lines "above" the block */
                             if((start[YDIM]+((count[YDIM]-1)*stride[YDIM])+1)
                                 <ri_ptr->img_dim.ydim)
@@ -2188,13 +2280,16 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
                         } /* end if */
                       else
                         {   /* don't worry about fill values */
+#ifdef QAK
+printf("%s: check 12.5\n",FUNC);
+#endif /* QAK */
                             for(i=0; i<count[YDIM]; i++)
                               {
                                   if(Hseek(aid,img_offset,DF_START)==FAIL)
                                       HRETURN_ERROR(DFE_SEEKERROR,FAIL);
                                   if(Hwrite(aid,pix_len,tmp_data)==FAIL)
                                       HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-                                  img_offset+=ri_ptr->img_dim.ydim;
+                                  img_offset+=pixel_disk_size*ri_ptr->img_dim.xdim;
                                   tmp_data=(VOIDP)((char *)tmp_data+pix_len);
                               } /* end for */
                         } /* end else */
@@ -2208,10 +2303,16 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
                           fill_ydim=FALSE;  /* whether to fill in the Y dimension */
 
                       stride_add=pixel_disk_size*stride[XDIM];
+#ifdef QAK
+printf("%s: check 13, stride_add=%ld\n",FUNC,(long)stride_add);
+#endif /* QAK */
 
                       /* check if we need to insert fill pixels between strides */
                       if(fill_image==TRUE)
                         {   /* create the "stride" pixel block */
+#ifdef QAK
+printf("%s: check 14\n",FUNC);
+#endif /* QAK */
                             if(stride[XDIM]>1)
                               {
                                 /* allocate space for the "stride" block */
@@ -2222,8 +2323,10 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
                                 fill_ydim=TRUE;
 
                             /* write fills and sub-sampled data */
+#ifdef QAK
                             if(Hseek(aid,0,DF_START)==FAIL)
                                 HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+#endif /* QAK */
 
                             /* write out lines "below" the block */
                             if(start[YDIM]>0)
@@ -2238,6 +2341,12 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
                                 if(Hwrite(aid,fill_lo_size,fill_line)==FAIL)
                                     HRETURN_ERROR(DFE_WRITEERROR,FAIL);
 
+#ifdef QAK
+printf("%s: check 14.5, fill_lo_size=%ld, fill_hi_size=%ld\n",FUNC,(long)fill_lo_size,(long)fill_hi_size);
+printf("%s: check 14.55, pixel_disk_size=%ld\n",FUNC,(long)pixel_disk_size);
+printf("%s: check 14.6, fill_xdim=%ld, fill_ydim=%ld, fill_line_size=%ld\n",FUNC,(long)fill_xdim,(long)fill_ydim,(long)fill_line_size);
+printf("%s: check 14.61, count[YDIM]=%ld, count[XDIM]=%ld\n",FUNC,(long)count[YDIM],(long)count[XDIM]);
+#endif /* QAK */
                             for(i=0; i<count[YDIM]; i++)
                               {
                                   for(j=0; j<count[XDIM]; j++)
@@ -2254,6 +2363,9 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
                                   if(fill_ydim==TRUE)
                                       for(k=1; k<stride[YDIM]; k++)
                                         {
+#ifdef QAK
+printf("%s: check 14.65, k=%d\n",FUNC,(int)k);
+#endif /* QAK */
                                           if(Hwrite(aid,fill_line_size,fill_line)==FAIL)
                                               HRETURN_ERROR(DFE_WRITEERROR,FAIL);
                                         } /* end for */
@@ -2263,8 +2375,13 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
                                   /* at the same time. */
                                   if((fill_hi_size+fill_lo_size)>0
                                           && i<(count[YDIM]-1))
+                                    {
+#ifdef QAK
+printf("%s: check 14.7, i=%d\n",FUNC,(int)i);
+#endif /* QAK */
                                       if(Hwrite(aid,(fill_hi_size+fill_lo_size),fill_line)==FAIL)
                                           HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                    } /* end if */
                               } /* end for */
 
                             /* Finish the last chunk of high side fill values */
@@ -2276,6 +2393,9 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
                             if((start[YDIM]+((count[YDIM]-1)*stride[YDIM])+1)
                                 <ri_ptr->img_dim.ydim)
                               {
+#ifdef QAK
+printf("%s: check 14.8\n",FUNC);
+#endif /* QAK */
                                 for(i=start[YDIM]+((count[YDIM]-1)*stride[YDIM])+1;
                                         i<ri_ptr->img_dim.ydim; i++)
                                     if(Hwrite(aid,fill_line_size,fill_line)==FAIL)
@@ -2285,11 +2405,17 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
                         } /* end if */
                       else
                         {   /* don't worry about fill values */
+#ifdef QAK
+printf("%s: check 15, stride_add=%ld, img_offset=%ld\n",FUNC,(long)stride_add,(long)img_offset);
+#endif /* QAK */
                             for(i=0; i<count[YDIM]; i++)
                               {
                                   int32 local_offset;
   
                                   local_offset=img_offset;
+#ifdef QAK
+printf("%s: check 15.5, local_offset=%ld\n",FUNC,(long)local_offset);
+#endif /* QAK */
                                   for(j=0; j<count[XDIM]; j++)
                                     {
                                       if(Hseek(aid,local_offset,DF_START)==FAIL)
@@ -2300,7 +2426,7 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
                                       tmp_data=(VOIDP)((char *)tmp_data+pixel_disk_size);
                                     } /* end for */
   
-                                  img_offset+=ri_ptr->img_dim.xdim*stride[YDIM];
+                                  img_offset+=ri_ptr->img_dim.xdim*stride[YDIM]*pixel_disk_size;
                               } /* end for */
                         } /* end else */
                   } /* end else */
@@ -2366,8 +2492,7 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOI
     intn solid_block=FALSE;     /* whether the image data is a solid block of data */
     intn whole_image=FALSE;     /* whether we are writing out the whole image */
     VOIDP *img_data;            /* pointer to the converted image data to write */
-    uintn pixel_mem_size,       /* size of a pixel in memory */
-        pixel_disk_size;        /* size of a pixel on disk */
+    uintn pixel_disk_size;      /* size of a pixel on disk */
     intn convert;               /* true if machine NT != NT to be written */
     uint8 platnumsubclass;      /* class of this NT for this platform */
 
@@ -2420,7 +2545,6 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOI
         solid_block=FALSE;
 
     /* Get the size of the pixels in memory and on disk */
-    pixel_mem_size=ri_ptr->img_dim.ncomps*DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND));
     pixel_disk_size=ri_ptr->img_dim.ncomps*DFKNTsize(ri_ptr->img_dim.nt);
 
     /* Get number-type and conversion information */
@@ -2429,8 +2553,11 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOI
 
     if(ri_ptr->img_tag==DFTAG_NULL || ri_ptr->img_ref==DFTAG_NULL)
       { /* Fake an image for the user by using the pixel fill value */
-          VOIDP fill_pixel; /* converted value for the filled pixel */
+          VOIDP fill_pixel;         /* converted value for the filled pixel */
+          uintn pixel_mem_size;     /* size of a pixel in memory */
           int32 at_index;
+
+          pixel_mem_size=ri_ptr->img_dim.ncomps*DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND));
 
           if((fill_pixel=(VOIDP)HDmalloc(pixel_mem_size))==NULL)
               HRETURN_ERROR(DFE_NOSPACE,FAIL);
@@ -2459,6 +2586,9 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOI
           else /* no conversion necessary, just use the user's buffer */
               img_data=data;
 
+#ifdef QAK
+printf("%s: check 1 whole_image=%d, solid_block=%d\n",FUNC,(int)whole_image,(int)solid_block);
+#endif /* QAK */
           if(whole_image==TRUE)
             { /* read the whole image in */
                 if(Hgetelement(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
@@ -2471,6 +2601,9 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOI
                 VOIDP tmp_data;   /* temp. pointer to the image data read in */
                 int32 aid;
 
+#ifdef QAK
+printf("%s: check 1.5\n",FUNC);
+#endif /* QAK */
                 if((aid=Hstartaccess(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
                         DFACC_READ))==FAIL)
                     HRETURN_ERROR(DFE_BADAID,FAIL);
@@ -2483,6 +2616,9 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOI
                       int32 pix_len;    /* length of current row's pixel run */
                       intn i;           /* temporary loop variable */
 
+#ifdef QAK
+printf("%s: check 2\n",FUNC);
+#endif /* QAK */
                       pix_len=pixel_disk_size*count[XDIM];
                         
                       /* read in the block */
@@ -2501,6 +2637,9 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOI
                       intn i,j;         /* temporary loop variables */
                       int32 stride_add; /* amount to add for stride amount */
 
+#ifdef QAK
+printf("%s: check 3\n",FUNC);
+#endif /* QAK */
                       stride_add=pixel_disk_size*stride[XDIM];
 
                       for(i=0; i<count[YDIM]; i++)
@@ -2518,13 +2657,16 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOI
                                 tmp_data=(VOIDP)((char *)tmp_data+pixel_disk_size);
                               } /* end for */
 
-                            img_offset+=ri_ptr->img_dim.xdim*stride[YDIM];
+                            img_offset+=ri_ptr->img_dim.xdim*stride[YDIM]*pixel_disk_size;
                         } /* end for */
                   } /* end else */
                 if(Hendaccess(aid)==FAIL)
                     HRETURN_ERROR(DFE_CANTENDACCESS,FAIL);
             } /* end else */
                   
+#ifdef QAK
+printf("%s: convert=%d\n",FUNC,(int)convert);
+#endif /* QAK */
           if(convert)
             { /* convert the pixel data into the HDF disk format */
                 DFKconvert(img_data,data,ri_ptr->img_dim.nt,
@@ -3330,11 +3472,11 @@ intn GRsetattr(int32 id,char *name,int32 attr_nt,int32 count,VOIDP data)
     int32 hdf_file_id;          /* HDF file ID from Hopen */
     int32 gr_idx;               /* index into the gr_tab array */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
-    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    ri_info_t *ri_ptr=NULL;     /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
     int32 ri_index;             /* index of the RI in the GR */
     TBBT_TREE *search_tree;     /* attribute tree to search through */
-    at_info_t *at_ptr;          /* ptr to the attribute to work with */
+    at_info_t *at_ptr=NULL;     /* ptr to the attribute to work with */
     int32 at_size;              /* size in bytes of the attribute data */
     int32 *update_count;        /* pointer to the count of attributes in a tree */
     uintn *update_flag;         /* pointer to the flag to indicate an attribute tree is changed */
@@ -3344,15 +3486,20 @@ intn GRsetattr(int32 id,char *name,int32 attr_nt,int32 count,VOIDP data)
     /* clear error stack and check validity of args */
     HEclear();
 
+#ifdef QAK
+printf("%s: entering\n",FUNC);
+printf("%s: id=%ld, name=%p, data=%p, count=%ld\n",FUNC,(long)id,name,data,(long)count);
+#endif /* QAK */
     /* check the validity of the args */
     if((!VALIDRIID(id) && !VALIDGRID(id)) || data==NULL || name==NULL
             || count<=0 || (DFKNTsize(attr_nt)==FAIL))
         HRETURN_ERROR(DFE_ARGS, FAIL);
     
-printf("%s: entering\n",FUNC);
     if(VALIDGRID(id))
       {
+#ifdef QAK
 printf("%s: got a GRID\n",FUNC);
+#endif /* QAK */
           /* Get the array index for the grid */
           gr_idx=GRID2SLOT(id);
           gr_ptr=gr_tab[gr_idx];
@@ -3360,7 +3507,9 @@ printf("%s: got a GRID\n",FUNC);
           hdf_file_id=gr_ptr->hdf_file_id;
           search_tree=gr_ptr->gattree;
           update_flag=&(gr_ptr->gattr_modified);
+#ifdef QAK
 printf("%s: gr_ptr->gattr_count=%ld\n",FUNC,(long)gr_ptr->gattr_count);
+#endif /* QAK */
           update_count=&(gr_ptr->gattr_count);
       } /* end if */
     else if(VALIDRIID(id))
@@ -3368,7 +3517,9 @@ printf("%s: gr_ptr->gattr_count=%ld\n",FUNC,(long)gr_ptr->gattr_count);
           /* Need this flag for later */
           is_riid=TRUE;
 
+#ifdef QAK
 printf("%s: got a RIID\n",FUNC);
+#endif /* QAK */
           /* Get the array index for the grid */
           gr_idx=RIID2GRID(id);
           gr_ptr=gr_tab[gr_idx];
@@ -3390,13 +3541,18 @@ printf("%s: got a RIID\n",FUNC);
     else    /* shouldn't get here, but what the heck... */
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
+#ifdef QAK
 printf("%s: check 1, search_tree=%p\n",FUNC,search_tree);
+#endif /* QAK */
     /* Search for an attribute with the same name */
     if((t = (VOIDP *) tbbtfirst((TBBT_NODE *)*search_tree))!=NULL)
       {
+#ifdef QAK
 printf("%s: t=%p\n",FUNC,t);
+#endif /* QAK */
           do {
               at_ptr=(at_info_t *)*t;
+#ifdef QAK
 printf("%s: at_ptr=%p\n",FUNC,at_ptr);
 if(at_ptr!=NULL)
 {
@@ -3404,21 +3560,28 @@ if(at_ptr!=NULL)
     if(at_ptr->name!=NULL && name!=NULL)
         printf("%s: at_ptr->name=%s, name=%s\n",FUNC,at_ptr->name,name);
 }
+#endif /* QAK */
               if(at_ptr!=NULL && HDstrcmp(at_ptr->name,name)==0)  /* ie. the name matches */
                 {
                     found=TRUE;
                     break;
                 } /* end if */
+#ifdef QAK
 printf("%s: check 1.9: found=%d\n",FUNC,found);
+#endif /* QAK */
           } while((t= (VOIDP *)tbbtnext((TBBT_NODE *)t))!=NULL);
       } /* end if */
 
+#ifdef QAK
 printf("%s: check 2: found=%d\n",FUNC,found);
+#endif /* QAK */
     if(found==TRUE) /* attribute already exists, just update it */
       {
           int32 new_at_size;          /* size in bytes of the new attribute data */
 
+#ifdef QAK
 printf("%s: found existing attribute\n",FUNC);
+#endif /* QAK */
           /* Catch the user if he tries to change the NT */
           if(attr_nt!=at_ptr->nt)
               HRETURN_ERROR(DFE_ARGS, FAIL);
@@ -3469,12 +3632,16 @@ printf("%s: found existing attribute\n",FUNC);
       } /* end if */
     else    /* a new attribute */
       {
+#ifdef QAK
 printf("%s: check 2.5: creating new attribute\n",FUNC);
+#endif /* QAK */
         if((at_ptr=(at_info_t *)HDmalloc(sizeof(at_info_t)))==NULL)
             HRETURN_ERROR(DFE_NOSPACE,FAIL);
 
         /* Fill in fields for the new attribute */
+#ifdef QAK
 printf("%s:1: gr_ptr->gattr_count=%ld\n",FUNC,(long)gr_ptr->gattr_count);
+#endif /* QAK */
         at_ptr->index=*update_count;  /* get the index and update the tree's count */
         at_ptr->nt=attr_nt;
         at_ptr->len=count;
@@ -3512,7 +3679,9 @@ printf("%s:1: gr_ptr->gattr_count=%ld\n",FUNC,(long)gr_ptr->gattr_count);
         /* flag the attribute tree as being modified */
         *update_flag=TRUE;
         (*update_count)++;  /* get the index and update the tree's count */
+#ifdef QAK
 printf("%s:2: gr_ptr->gattr_count=%ld\n",FUNC,(long)gr_ptr->gattr_count);
+#endif /* QAK */
       } /* end else */
 
     /* set this flag also, if we set local attributes */
@@ -3523,7 +3692,9 @@ printf("%s:2: gr_ptr->gattr_count=%ld\n",FUNC,(long)gr_ptr->gattr_count);
         gr_ptr->gr_modified=TRUE;
       } /* end if */
 
+#ifdef QAK
 printf("%s: check 3\n",FUNC);
+#endif /* QAK */
     return(SUCCEED);
 } /* end GRsetattr() */
 
@@ -3573,7 +3744,9 @@ intn GRattrinfo(int32 id,int32 index,char *name,int32 *attr_nt,int32 *count)
     
     if(VALIDGRID(id))
       {
+#ifdef QAK
 printf("%s: found a GRID\n",FUNC);
+#endif /* QAK */
           /* Get the array index for the grid */
           gr_idx=GRID2SLOT(id);
           gr_ptr=gr_tab[gr_idx];
@@ -3585,7 +3758,9 @@ printf("%s: found a GRID\n",FUNC);
       } /* end if */
     else if(VALIDRIID(id))
       {
+#ifdef QAK
 printf("%s: found a RIID\n",FUNC);
+#endif /* QAK */
           /* Get the array index for the grid */
           gr_idx=RIID2GRID(id);
           gr_ptr=gr_tab[gr_idx];
@@ -3820,7 +3995,10 @@ int32 GRfindattr(int32 id,char *name)
 API functions to finish:
 
 Misc. stuff left to do:
-    Deal with special elements for images
+    Deal with special elements for images.
+    GRrename for images.
+    GRsetflags to suppress writing fill data and to suppress fillvalue attr.
+    Read/Write Interlaced data (of line & plane types, pixel is working).
 
 Features not supported:
     Add in full support for multiple palettes with each RI.
