@@ -103,6 +103,9 @@ static char RcsId[] = "@(#)$Revision$";
  * Users:   HDF Fortran programmers
  * Invokes: DFopen
  * Method:  Convert filename to C string, call DFopen
+ * Note: DFopen actually return *DF.  In machines that a pointer
+ *       is bigger than a Fortran INTEGER, this routine would fail.
+ *       This is a design error and has easy portable solution.
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
