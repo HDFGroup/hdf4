@@ -1,3 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
+/* $Id$ */
+
 #include <stdlib.h>
 #include <string.h>
 #include "hdf.h"
@@ -283,9 +301,9 @@ char *argv[];
         uint8 *pal_ptr=pal_buf;     /* temporary pointer into the palette */
 
         for(i=0; i<256; i++) {
-            red_comp[i]=*pal_ptr++;
-            green_comp[i]=*pal_ptr++;
-            blue_comp[i]=*pal_ptr++;
+            red_comp[i]   = *pal_ptr++;
+            green_comp[i] = *pal_ptr++;
+            blue_comp[i]  = *pal_ptr++;
           } /* end for */
       } /* end if */
     else {      /* no palette, use a greyscale palette */
