@@ -15,12 +15,12 @@ dnl
 dnl NOTE: Don't forget to change the version number here when we do a
 dnl release!!!
 dnl
-AC_INIT([HDF], [4.2r0 Beta], [hdfhelp@ncsa.uiuc.edu])
+AC_INIT([HDF], [4.2r0-Beta], [hdfhelp@ncsa.uiuc.edu])
 AC_CONFIG_SRCDIR([hdf/src/atom.c])
 AC_CONFIG_AUX_DIR([bin])
 AC_CONFIG_HEADER([hdf/src/h4config.h])
 
-AM_INIT_AUTOMAKE([HDF], [4.2r0 Beta])
+AM_INIT_AUTOMAKE([HDF], [4.2r0-Beta])
 AM_MAINTAINER_MODE
 
 AC_OUTPUT_COMMANDS([
