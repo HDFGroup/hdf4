@@ -508,48 +508,48 @@ extern uint16 DF24lastref
 extern int32 DFANgetlablen
     PROTO((char _HUGE *filename, uint16 tag, uint16 ref));
 
-extern int DFANgetlabel
+extern intn DFANgetlabel
     PROTO((char _HUGE *filename, uint16 tag, uint16 ref, char _HUGE *label,
             int32 maxlen));
 
 extern int32 DFANgetdesclen
     PROTO((char _HUGE *filename, uint16 tag, uint16 ref));
 
-extern int DFANgetdesc
+extern intn DFANgetdesc
     PROTO((char _HUGE *filename, uint16 tag, uint16 ref, char _HUGE *desc,
             int32 maxlen));
 
 extern int32 DFANgetfidlen
-    PROTO((int32 file_id, int isfirst));
+    PROTO((int32 file_id, intn isfirst));
 
 extern int32 DFANgetfid
-    PROTO((int32 file_id, char _HUGE *id, int32 maxlen, int isfirst));
+    PROTO((int32 file_id, char _HUGE *id, int32 maxlen, intn isfirst));
 
 extern int32 DFANgetfdslen
-    PROTO((int32 file_id, int isfirst));
+    PROTO((int32 file_id, intn isfirst));
 
 extern int32 DFANgetfds
-    PROTO((int32 file_id, char _HUGE *desc, int32 maxlen, int isfirst));
+    PROTO((int32 file_id, char _HUGE *desc, int32 maxlen, intn isfirst));
 
-extern int DFANputlabel
+extern intn DFANputlabel
     PROTO((char _HUGE *filename, uint16 tag, uint16 ref, char _HUGE *label));
 
-extern int DFANputdesc
+extern intn DFANputdesc
     PROTO((char _HUGE *filename, uint16 tag, uint16 ref, char _HUGE *desc,
             int32 desclen));
 
-extern int DFANaddfid
+extern intn DFANaddfid
     PROTO((int32 file_id, char _HUGE *id));
 
-extern int DFANaddfds
+extern intn DFANaddfds
     PROTO((int32 file_id, char _HUGE *desc, int32 desclen));
 
 extern uint16 DFANlastref
     PROTO((void));
 
-extern int DFANlablist
+extern intn DFANlablist
     PROTO((char _HUGE *filename, uint16 tag, uint16 _HUGE reflist[],
-            char _HUGE *labellist, int listsize, int maxlen, int startpos));
+            char _HUGE *labellist, intn listsize, intn maxlen, intn startpos));
 
 extern uint16 DFANIlocate
   PROTO((int32 file_id, int type, uint16 tag, uint16 ref));

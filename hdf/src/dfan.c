@@ -153,10 +153,10 @@ int32 DFANgetlablen(filename, tag, ref)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFANgetlabel(char *filename, uint16 tag, uint16 ref, char *label,
+intn DFANgetlabel(char *filename, uint16 tag, uint16 ref, char *label,
                  int32 maxlen)
 #else
-int DFANgetlabel(filename, tag, ref, label, maxlen)
+intn DFANgetlabel(filename, tag, ref, label, maxlen)
 char *filename;
 uint16 tag, ref;
 char *label;
@@ -202,10 +202,10 @@ uint16 tag, ref;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFANgetdesc(char *filename, uint16 tag, uint16 ref, char *desc,
+intn DFANgetdesc(char *filename, uint16 tag, uint16 ref, char *desc,
                 int32 maxlen)
 #else
-int DFANgetdesc(filename, tag, ref, desc, maxlen)
+intn DFANgetdesc(filename, tag, ref, desc, maxlen)
 char *filename;
 uint16 tag, ref;
 char *desc;
@@ -256,13 +256,13 @@ int isfirst;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int32 DFANgetfid(int32 file_id, char *id, int32 maxlen, int isfirst)
+int32 DFANgetfid(int32 file_id, char *id, int32 maxlen, intn isfirst)
 #else
 int32 DFANgetfid(file_id, id, maxlen, isfirst)
 int32 file_id;
 char *id;
 int32 maxlen;
-int isfirst;
+intn isfirst;
 #endif 
 {
      return ( DFANIgetfann(file_id, id, maxlen, DFAN_LABEL, isfirst) );
@@ -281,11 +281,11 @@ int isfirst;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int32 DFANgetfdslen(int32 file_id, int isfirst)
+int32 DFANgetfdslen(int32 file_id, intn isfirst)
 #else
 int32 DFANgetfdslen(file_id, isfirst)
     int32 file_id;
-    int isfirst;
+    intn isfirst;
 #endif 
 {
      return ( DFANIgetfannlen(file_id, DFAN_DESC, isfirst) );
@@ -308,13 +308,13 @@ int32 DFANgetfdslen(file_id, isfirst)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int32 DFANgetfds(int32 file_id, char *desc, int32 maxlen, int isfirst)
+int32 DFANgetfds(int32 file_id, char *desc, int32 maxlen, intn isfirst)
 #else
 int32 DFANgetfds(file_id, desc, maxlen, isfirst)
 int32 file_id;
 char *desc;
 int32 maxlen;
-int isfirst;
+intn isfirst;
 #endif 
 {
     return ( DFANIgetfann(file_id, desc, maxlen, DFAN_DESC, isfirst) );
@@ -338,9 +338,9 @@ int isfirst;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFANputlabel(char *filename, uint16 tag, uint16 ref, char *label)
+intn DFANputlabel(char *filename, uint16 tag, uint16 ref, char *label)
 #else
-int DFANputlabel(filename, tag, ref, label)
+intn DFANputlabel(filename, tag, ref, label)
 char *filename;
 uint16 tag, ref;
 char *label;
@@ -364,10 +364,10 @@ char *label;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFANputdesc(char *filename, uint16 tag, uint16 ref, char *desc,
+intn DFANputdesc(char *filename, uint16 tag, uint16 ref, char *desc,
                 int32 desclen)
 #else
-int DFANputdesc(filename, tag, ref, desc, desclen)
+intn DFANputdesc(filename, tag, ref, desc, desclen)
 char *filename;
 uint16 tag, ref;
 char *desc;
@@ -393,9 +393,9 @@ int32 desclen;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFANaddfid(int32 file_id, char *id)
+intn DFANaddfid(int32 file_id, char *id)
 #else
-int DFANaddfid(file_id, id)
+intn DFANaddfid(file_id, id)
 int32 file_id;
 char *id;
 #endif 
@@ -416,9 +416,9 @@ char *id;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFANaddfds(int32 file_id, char *desc, int32 desclen)
+intn DFANaddfds(int32 file_id, char *desc, int32 desclen)
 #else
-int DFANaddfds(file_id, desc, desclen)
+intn DFANaddfds(file_id, desc, desclen)
 int32 file_id;
 char *desc;
 int32 desclen;
@@ -476,15 +476,15 @@ uint16 DFANlastref()
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFANlablist(char *filename, uint16 tag, uint16 reflist[], char *labellist,
-                int listsize, int maxlen, int startpos)
+intn DFANlablist(char *filename, uint16 tag, uint16 reflist[], char *labellist,
+                intn listsize, intn maxlen, intn startpos)
 #else
-int DFANlablist(filename, tag, reflist, labellist, listsize, maxlen, startpos)
+intn DFANlablist(filename, tag, reflist, labellist, listsize, maxlen, startpos)
 char *filename;
 uint16 tag, reflist[];
 char *labellist;
-int listsize;
-int maxlen, startpos;
+intn listsize;
+intn maxlen, startpos;
 #endif 
 {
     return(DFANIlablist(filename, tag, reflist, (uint8 *)labellist, 
