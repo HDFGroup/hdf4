@@ -676,25 +676,25 @@ int32   idarray[];       /* array to contain the refs */
 int32   asize;            /* input: size of idarray */
 #endif
 {
-    uint8  *lonevg; /* local wrk area: stores flags of vgroups */
-	int32	i;
-	int32 	vgid, vstag, id;
+    uint8 * lonevg; /* local wrk area: stores flags of vgroups */
+    int32   i;
+    int32   vgid, vstag, id;
     int32   vkey;
-	int32 	nlone; /* total number of lone vgroups */
-	char * FUNC = "Vlone";
-
-/* -- allocate space for vgroup refs, init to zeroes -- */
+    int32   nlone; /* total number of lone vgroups */
+    char  * FUNC = "Vlone";
+    
+    /* -- allocate space for vgroup refs, init to zeroes -- */
     if (NULL == (lonevg = (uint8 *) HDgetspace ( 65000L * sizeof(uint8))))
         HRETURN_ERROR(DFE_NOSPACE,FAIL);
     HDmemset(lonevg,0,65000L*sizeof(uint8));
-
-/* -- look for all vgroups in the file, and flag (1) each -- */
+    
+    /* -- look for all vgroups in the file, and flag (1) each -- */
     id = -1;
     while( -1L != (id = Vgetid (f, id)))   /* until no more vgroups */
         lonevg[ id ] = 1;
-
-/* -- Look through all vgs, searching for vgroups -- */
-/* -- increment its index in lonevg if found -- */
+    
+    /* -- Look through all vgs, searching for vgroups -- */
+    /* -- increment its index in lonevg if found -- */
     vgid = -1;
     while( -1L != (vgid = Vgetid (f, vgid))) {  /* until no more vgroups */
         vkey = Vattach(f,vgid,"r");
@@ -706,7 +706,7 @@ int32   asize;            /* input: size of idarray */
         }
         Vdetach(vkey);
     }
-
+    
     /* -- check in lonevg: it's a lone vgroup if its flag is still 1 -- */
     nlone = 0;
     for(i=0; i<65000; i++) {
@@ -719,6 +719,7 @@ int32   asize;            /* input: size of idarray */
     HDfreespace ((VOIDP)lonevg);
 
     return (nlone); /* return the TOTAL # of lone vgroups */
+
 } /* Vlone */
 
 
@@ -738,12 +739,12 @@ HFILEID f;
 char    * vgname;
 #endif
 {
-  	int32 	vgid = -1;
-    int32   ret_ref;
+    int32 vgid = -1;
+    int32 ret_ref;
     int32 vkey;
-  	char 		name[512];
-	char * 	FUNC = "Vfind";
-
+    char  name[512];
+    char * FUNC = "Vfind";
+    
     while ( -1L != (vgid=Vgetid(f, vgid)) ) {
         vkey = Vattach(f,vgid,"r");
         if (vkey==FAIL)
@@ -753,10 +754,10 @@ char    * vgname;
         if (!HDstrcmp(vgname,name)) {
             ret_ref = VQueryref(vkey);
             return (ret_ref);   /* found the vgroup */
-          } /* end if */
-  	}
-  	return(0); /* not found */
-
+        } /* end if */
+    }
+    return(0); /* not found */
+    
 } /* Vfind */
 
 /* ================================================================== */
@@ -774,12 +775,12 @@ HFILEID f;
 char * vsname;
 #endif
 {
-  	int32 	vsid = -1;
-    int32   ret_ref;
+    int32 vsid = -1;
+    int32 ret_ref;
     int32 vkey;
-  	char 		name[512];
-	char * 	FUNC = "VSfind";
-
+    char  name[512];
+    char * FUNC = "VSfind";
+    
     while ( -1L != (vsid=VSgetid(f, vsid)) ) {
         vkey = VSattach(f,vsid,"r");
         if (vkey==FAIL)
@@ -789,9 +790,11 @@ char * vsname;
         if (!HDstrcmp(vsname, name)) {
             ret_ref = VSQueryref(vkey);
             return(ret_ref);  /* found the vdata */
-          } /* end if */
-  	}
-  	return(0); /* not found */
+        } /* end if */
+    }
+
+    return(0); /* not found */
+
 } /* VSfind */
 
 /* ================================================================== */

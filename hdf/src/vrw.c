@@ -74,30 +74,31 @@ int32 vkey;
 int32      eltpos;
 #endif
 {
-	int32 	stat, offset;
+    int32 	stat, offset;
     vsinstance_t    *w;
     VDATA           *vs;
     char *  FUNC = "VSseek";
-
+    
     if (!VALIDVSID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
-
-  /* locate vs's index in vstab */
+    
+    /* locate vs's index in vstab */
     if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey))))
         HRETURN_ERROR(DFE_NOVS,FAIL);
-
+    
     vs=w->vs;
     if ((vs==NULL) || (eltpos < 0))
         HRETURN_ERROR(DFE_ARGS,FAIL);
-
-	offset  = eltpos * vs->wlist.ivsize;
-
+    
+    offset  = eltpos * vs->wlist.ivsize;
+    
     stat = Hseek (vs->aid, offset, DF_START);
-	if (stat==FAIL)
+    if (stat==FAIL)
         HRETURN_ERROR(DFE_BADSEEK,FAIL);
+    
+    return(eltpos);
 
-	return(eltpos);
-} /* Vseek */
+} /* VSseek */
 
 /* ------------------------------------------------------------------------ */
 
