@@ -38,6 +38,10 @@ import java.net.*;
 
 /**
  * JHV  is to display the HDF tree structure
+ * Modification:
+ * 	Keep track of current HDF directory, and selected HDF file will be
+ * located under previous selected HDF file directory.  Also improve the  
+ * "Load File" and let it do more work than "Open file".  08/08/97 xlu
  *
  * @author HDF Group, NCSA
  */
@@ -138,6 +142,9 @@ int fid;
   // define a display level for HDF tree
   public 	int	dispLevel   = USER;
 
+  // current hdf file directory
+  String 	cDir;
+
   /**
    * It is called automatically by the system the application is started.
    */
@@ -168,6 +175,10 @@ int fid;
 		   tmpHDFFile = new String(args[2]);    	
 	}
     }
+
+    //   set current hdf file directory
+    jhv.cDir = jhv.jhvDir;
+
     jhv.init(tmpHDFFile);
     
     Frame frame = new Frame();
@@ -196,7 +207,7 @@ int fid;
   {
     String arg = e.getActionCommand();
 
-     if (arg.equals("Open") || arg.equals("Load File")) {
+     if (arg.equals("Open")) {
 	
 	// an HDF file source 
 	openFileOnLocal();
@@ -219,21 +230,23 @@ int fid;
       infoText.select(0,0);
     }
 
-    else return;
+    else {
 
-    /** taken out by Peter Cao on 8-7-97    
     // open file
     if (arg.equals("Load File")) {
-      hdfFile = new String(hdfFileText.getText());
-    // an HDF file source 
+       hdfFile = new String(hdfFileText.getText());
+       // an HDF file source 
        if (hdfFile.indexOf("://") !=  -1) {
-    // supported by URL, This feature is not supported yet
-         this.isLocal = false;
+          // supported by URL, This feature is not supported yet
+          this.isLocal = false;
        }
        else  {
            this.isLocal = true;
-           if (!isFile(hdfFile)) 
-           openFileOnLocal();
+           if (!isFile(hdfFile)) {
+		if (isDirectory(hdfFile)) 
+		   cDir = hdfFile;
+                openFileOnLocal();
+	   }
        }
       
       setup(hdfFile);
@@ -246,10 +259,11 @@ int fid;
       hdfCanvas.setImage(null);
       hdfCanvas.repaint();		
     }
-    */
-
+   
+    }
   }
   
+
   /**
    * Initialize the applet. Resize and load images.
    */
@@ -853,6 +867,13 @@ int fid;
      
   }
 
+   public boolean isDirectory(String str) {
+    
+       File tmpFile = new File(str);
+       return(tmpFile.isDirectory());
+     
+  }
+
   public void openFileOnServer() {
   }
 
@@ -863,7 +884,9 @@ int fid;
     this.isLocal = true;
 				
     FileDialog fd = new FileDialog(getFrame(), "HDF File");
-    fd.setDirectory(jhvDir);		
+
+    // cDir is a directory of the last HDF file
+    fd.setDirectory(cDir);		
     fd.show();
 		
     hdfFile = null;
@@ -875,7 +898,9 @@ int fid;
     if (isMac())
        hdfFile = fd.getDirectory() + separator + fd.getFile();
     else
-       hdfFile = fd.getDirectory() + fd.getFile();	
+       hdfFile = fd.getDirectory() + fd.getFile();
+       cDir = fd.getDirectory()	;
+
 	} else {
 		hdfFile = new String("");
 	}
@@ -890,7 +915,6 @@ int fid;
 
 	jhvFrame = f;
   }
-
 
   public Frame getFrame() {
   
@@ -958,7 +982,6 @@ int fid;
                              int datatype, int w, int h, int pos,
                              byte[] output);
    
-
 }
 
 /** This class is actual HDF tree node derived from the HDFTreeNode and
@@ -1142,6 +1165,7 @@ class HDFTreeNode extends TreeNode
     eraseImage();
   }
   
+
 public String ANfileannotation() throws HDFException {
 
 	HDFLibrary hdf = applet_.hdf;
