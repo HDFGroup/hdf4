@@ -4,11 +4,14 @@ Compression Algorithms and interface
 compressed using a variety of algorithms.  This is completely transparent 
 to users once the data has been compressed initially - further data written
 to an object or read from it are compressed or decompressed internally to
-the library, without user intervention.  Currently only three compression
-algorithms are supported: Run-Length Encoding (RLE), adaptive Huffman,
-and an LZ-77 dictionary coder (the gzip 'deflation' algorithm).
-Plans for future algorithms include an Lempel/Ziv-78 dictionary coding,
-an arithmetic coder and a faster Huffman algorithm.
+the library, without user intervention.  (For information on compressing
+SDS datasets, see the ../release_notes/comp_SDS.txt file.)  
+
+Currently only three compression algorithms are supported: Run-Length Encoding 
+(RLE), adaptive Huffman, and an LZ-77 dictionary coder (the gzip 'deflation' 
+algorithm).  Plans for future algorithms include an Lempel/Ziv-78 dictionary 
+coding, an arithmetic coder and a faster Huffman algorithm.
+
     The public interface for this routine is contained in the user-level
 function call, HCcreate.  The interface to HCcreate is described below:
 
