@@ -377,6 +377,9 @@ main(int argc, char *argv[])
       }
 
     opt.to_image = FALSE;   /* default: no image */
+    opt.to_float = FALSE;   /* default: make float if no image */
+			    /* Set FALSE here.  Will be set TRUE */
+			    /* after confirming image option is not set.  */
     opt.ctm = EXPAND;   /* default: pixel replication */
     opt.hres = 0;   /* default: no expansion values */
     opt.vres = 0;
