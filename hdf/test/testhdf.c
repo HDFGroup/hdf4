@@ -64,14 +64,14 @@ struct TestStruct
   }
 FAR         Test[MAXNUMOFTESTS];
 
-void 
+void
 InitTest(const char *TheName, VOID(*TheCall) (), const char *TheDescr)
 {
     if (Index >= MAXNUMOFTESTS)
       {
-	  printf("Uh-oh, too many tests added, increase MAXNUMOFTEST!\n");
-	  exit(0);
-      }		/* end if */
+          printf("Uh-oh, too many tests added, increase MAXNUMOFTEST!\n");
+          exit(0);
+      }     /* end if */
     HDstrcpy(Test[Index].Description, TheDescr);
     HDstrcpy(Test[Index].Name, TheName);
     Test[Index].Call = TheCall;
@@ -80,7 +80,7 @@ InitTest(const char *TheName, VOID(*TheCall) (), const char *TheDescr)
     Index++;
 }
 
-void 
+void
 usage(intn argc, char *argv[])
 {
     intn        i;
@@ -103,14 +103,14 @@ usage(intn argc, char *argv[])
     printf("%16s %s\n", "Name", "Description");
     printf("%16s %s\n", "----", "-----------");
     for (i = 0; i < Index; i++)
-	printf("%16s %s\n", Test[i].Name, Test[i].Description);
+        printf("%16s %s\n", Test[i].Name, Test[i].Description);
     printf("\n\n");
-}	/* end usage() */
+}   /* end usage() */
 
-int 
+int
 main(int argc, char *argv[])
 {
-    int         CLLoop;		/* Command Line Loop */
+    int         CLLoop;         /* Command Line Loop */
     int         Loop, Loop1;
     int         Summary = 0;
     int         CleanUp = 1;
@@ -149,158 +149,158 @@ main(int argc, char *argv[])
     InitTest("tbbt", test_tbbt, "Threaded Balanced Binary Trees");
     InitTest("vset", test_vsets, "VSET Interface Test");
 
-    Verbosity = 4;	/* Default Verbosity is Low */
+    Verbosity = 4;  /* Default Verbosity is Low */
     ret = Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
 
     printf("\nFor help use: testhdf -help\n");
     printf("Built with HDF Library Version: %u.%ur%u, %s\n\n", (unsigned) lmajor,
-	   (unsigned) lminor, (unsigned) lrelease, lstring);
+           (unsigned) lminor, (unsigned) lrelease, lstring);
     for (CLLoop = 1; CLLoop < argc; CLLoop++)
       {
-	  if ((argc > CLLoop + 1) && ((HDstrcmp(argv[CLLoop], "-verbose") == 0) ||
-				      (HDstrcmp(argv[CLLoop], "-v") == 0)))
-	    {
-		if (argv[CLLoop + 1][0] == 'l')
-		    Verbosity = 4;
-		else if (argv[CLLoop + 1][0] == 'm')
-		    Verbosity = 6;
-		else if (argv[CLLoop + 1][0] == 'h')
-		    Verbosity = 10;
-		else
-		    Verbosity = atoi(argv[CLLoop + 1]);
-	    }	/* end if */
-	  if ((argc > CLLoop) && ((HDstrcmp(argv[CLLoop], "-summary") == 0) ||
-				  (HDstrcmp(argv[CLLoop], "-s") == 0)))
-	      Summary = 1;
+          if ((argc > CLLoop + 1) && ((HDstrcmp(argv[CLLoop], "-verbose") == 0) ||
+                                      (HDstrcmp(argv[CLLoop], "-v") == 0)))
+            {
+                if (argv[CLLoop + 1][0] == 'l')
+                    Verbosity = 4;
+                else if (argv[CLLoop + 1][0] == 'm')
+                    Verbosity = 6;
+                else if (argv[CLLoop + 1][0] == 'h')
+                    Verbosity = 10;
+                else
+                    Verbosity = atoi(argv[CLLoop + 1]);
+            }   /* end if */
+          if ((argc > CLLoop) && ((HDstrcmp(argv[CLLoop], "-summary") == 0) ||
+                                  (HDstrcmp(argv[CLLoop], "-s") == 0)))
+              Summary = 1;
 
-	  if ((argc > CLLoop) && (HDstrcmp(argv[CLLoop], "-help") == 0))
-	    {
-		usage(argc, argv);
-		exit(0);
-	    }
+          if ((argc > CLLoop) && (HDstrcmp(argv[CLLoop], "-help") == 0))
+            {
+                usage(argc, argv);
+                exit(0);
+            }
 
-	  if ((argc > CLLoop) && ((HDstrcmp(argv[CLLoop], "-cleanoff") == 0) ||
-				  (HDstrcmp(argv[CLLoop], "-c") == 0)))
-	      CleanUp = 0;
-	  if ((argc > CLLoop + 1) && ((HDstrcmp(argv[CLLoop], "-exclude") == 0) ||
-				      (HDstrcmp(argv[CLLoop], "-x") == 0)))
-	    {
-		Loop = CLLoop + 1;
-		while ((Loop < argc) && (argv[Loop][0] != '-'))
-		  {
-		      for (Loop1 = 0; Loop1 < Index; Loop1++)
-			  if (HDstrcmp(argv[Loop], Test[Loop1].Name) == 0)
-			      Test[Loop1].SkipFlag = 1;
-		      Loop++;
-		  }	/* end while */
-	    }	/* end if */
-	  if ((argc > CLLoop + 1) && ((HDstrcmp(argv[CLLoop], "-begin") == 0) ||
-				      (HDstrcmp(argv[CLLoop], "-b") == 0)))
-	    {
-		Loop = CLLoop + 1;
-		while ((Loop < argc) && (argv[Loop][0] != '-'))
-		  {
-		      for (Loop1 = 0; Loop1 < Index; Loop1++)
-			{
-			    if (HDstrcmp(argv[Loop], Test[Loop1].Name) != 0)
-				Test[Loop1].SkipFlag = 1;
-			    if (HDstrcmp(argv[Loop], Test[Loop1].Name) == 0)
-				Loop1 = Index;
-			}	/* end for */
-		      Loop++;
-		  }	/* end while */
-	    }	/* end if */
-	  if ((argc > CLLoop + 1) && ((HDstrcmp(argv[CLLoop], "-only") == 0) ||
-				      (HDstrcmp(argv[CLLoop], "-o") == 0)))
-	    {
-		for (Loop = 0; Loop < Index; Loop++)
-		    Test[Loop].SkipFlag = 1;
-		Loop = CLLoop + 1;
-		while ((Loop < argc) && (argv[Loop][0] != '-'))
-		  {
-		      for (Loop1 = 0; Loop1 < Index; Loop1++)
-			  if (HDstrcmp(argv[Loop], Test[Loop1].Name) == 0)
-			      Test[Loop1].SkipFlag = 0;
-		      Loop++;
-		  }	/* end while */
-	    }	/* end if */
-      }		/* end for */
+          if ((argc > CLLoop) && ((HDstrcmp(argv[CLLoop], "-cleanoff") == 0) ||
+                                  (HDstrcmp(argv[CLLoop], "-c") == 0)))
+              CleanUp = 0;
+          if ((argc > CLLoop + 1) && ((HDstrcmp(argv[CLLoop], "-exclude") == 0) ||
+                                      (HDstrcmp(argv[CLLoop], "-x") == 0)))
+            {
+                Loop = CLLoop + 1;
+                while ((Loop < argc) && (argv[Loop][0] != '-'))
+                  {
+                      for (Loop1 = 0; Loop1 < Index; Loop1++)
+                          if (HDstrcmp(argv[Loop], Test[Loop1].Name) == 0)
+                              Test[Loop1].SkipFlag = 1;
+                      Loop++;
+                  }     /* end while */
+            }   /* end if */
+          if ((argc > CLLoop + 1) && ((HDstrcmp(argv[CLLoop], "-begin") == 0) ||
+                                      (HDstrcmp(argv[CLLoop], "-b") == 0)))
+            {
+                Loop = CLLoop + 1;
+                while ((Loop < argc) && (argv[Loop][0] != '-'))
+                  {
+                      for (Loop1 = 0; Loop1 < Index; Loop1++)
+                        {
+                            if (HDstrcmp(argv[Loop], Test[Loop1].Name) != 0)
+                                Test[Loop1].SkipFlag = 1;
+                            if (HDstrcmp(argv[Loop], Test[Loop1].Name) == 0)
+                                Loop1 = Index;
+                        }   /* end for */
+                      Loop++;
+                  }     /* end while */
+            }   /* end if */
+          if ((argc > CLLoop + 1) && ((HDstrcmp(argv[CLLoop], "-only") == 0) ||
+                                      (HDstrcmp(argv[CLLoop], "-o") == 0)))
+            {
+                for (Loop = 0; Loop < Index; Loop++)
+                    Test[Loop].SkipFlag = 1;
+                Loop = CLLoop + 1;
+                while ((Loop < argc) && (argv[Loop][0] != '-'))
+                  {
+                      for (Loop1 = 0; Loop1 < Index; Loop1++)
+                          if (HDstrcmp(argv[Loop], Test[Loop1].Name) == 0)
+                              Test[Loop1].SkipFlag = 0;
+                      Loop++;
+                  }     /* end while */
+            }   /* end if */
+      }     /* end for */
 
     for (Loop = 0; Loop < Index; Loop++)
       {
-	  if (Test[Loop].SkipFlag)
-	    {
-		MESSAGE(4, printf("Skipping -- %s \n", Test[Loop].Description);
-		    );
-	    }
-	  else
-	    {
-		MESSAGE(2, printf("Testing  -- %s (%s) \n", Test[Loop].Description,
-				  Test[Loop].Name);
-		    );
-		MESSAGE(5, printf("===============================================\n");
-		    );
-		Test[Loop].NumErrors = num_errs;
-		(*Test[Loop].Call) ();
-		Test[Loop].NumErrors = num_errs - Test[Loop].NumErrors;
-		MESSAGE(5, printf("===============================================\n");
-		    );
-		MESSAGE(5, printf("There were %d errors detected.\n\n", (int) Test[Loop].NumErrors);
-		    );
+          if (Test[Loop].SkipFlag)
+            {
+                MESSAGE(4, printf("Skipping -- %s \n", Test[Loop].Description);
+                    );
+            }
+          else
+            {
+                MESSAGE(2, printf("Testing  -- %s (%s) \n", Test[Loop].Description,
+                                  Test[Loop].Name);
+                    );
+                MESSAGE(5, printf("===============================================\n");
+                    );
+                Test[Loop].NumErrors = num_errs;
+                (*Test[Loop].Call) ();
+                Test[Loop].NumErrors = num_errs - Test[Loop].NumErrors;
+                MESSAGE(5, printf("===============================================\n");
+                    );
+                MESSAGE(5, printf("There were %d errors detected.\n\n", (int) Test[Loop].NumErrors);
+                    );
 
 #ifdef QAK
-		MESSAGE(2, printf("Testing  -- %s (%s) \n", Test[Loop].Description,
-				  Test[Loop].Name);
-		    );
-		MESSAGE(5, printf("===============================================\n");
-		    );
-		Test[Loop].NumErrors = num_errs;
-		(*Test[Loop].Call) ();
-		Test[Loop].NumErrors = num_errs - Test[Loop].NumErrors;
-		MESSAGE(5, printf("===============================================\n");
-		    );
+                MESSAGE(2, printf("Testing  -- %s (%s) \n", Test[Loop].Description,
+                                  Test[Loop].Name);
+                    );
+                MESSAGE(5, printf("===============================================\n");
+                    );
+                Test[Loop].NumErrors = num_errs;
+                (*Test[Loop].Call) ();
+                Test[Loop].NumErrors = num_errs - Test[Loop].NumErrors;
+                MESSAGE(5, printf("===============================================\n");
+                    );
 #endif
 
-	    }	/* end else */
-      }		/* end for */
+            }   /* end else */
+      }     /* end for */
 
     MESSAGE(2, printf("\n\n");
-	)
-	if (num_errs)
-	printf("!!! %d Error(s) were detected !!!\n\n", (int) num_errs);
+        )
+        if (num_errs)
+        printf("!!! %d Error(s) were detected !!!\n\n", (int) num_errs);
     else
-	printf("All tests were successful. \n\n");
+        printf("All tests were successful. \n\n");
 
     if (Summary)
       {
-	  printf("Summary of Test Results:\n");
-	  printf("Name of Test     Errors Description of Test\n");
-	  printf("---------------- ------ --------------------------------------\n");
+          printf("Summary of Test Results:\n");
+          printf("Name of Test     Errors Description of Test\n");
+          printf("---------------- ------ --------------------------------------\n");
 
-	  for (Loop = 0; Loop < Index; Loop++)
-	    {
-		if (Test[Loop].NumErrors == -1)
-		    printf("%16s %6s %s\n", Test[Loop].Name, "N/A", Test[Loop].Description);
-		else
-		    printf("%16s %6d %s\n", Test[Loop].Name, (int) Test[Loop].NumErrors,
-			   Test[Loop].Description);
-	    }	/* end for */
-	  printf("\n\n");
-      }		/* end if */
+          for (Loop = 0; Loop < Index; Loop++)
+            {
+                if (Test[Loop].NumErrors == -1)
+                    printf("%16s %6s %s\n", Test[Loop].Name, "N/A", Test[Loop].Description);
+                else
+                    printf("%16s %6d %s\n", Test[Loop].Name, (int) Test[Loop].NumErrors,
+                           Test[Loop].Description);
+            }   /* end for */
+          printf("\n\n");
+      }     /* end if */
 
     if (CleanUp)
       {
-	  MESSAGE(2, printf("\nCleaning Up...\n\n");
-	      );
+          MESSAGE(2, printf("\nCleaning Up...\n\n");
+              );
 #ifdef PC
-	  remove("*.hdf");
-	  remove("*.tmp");
+          remove("*.hdf");
+          remove("*.tmp");
 #else
-	  system("rm -f *.hdf *.tmp");
+          system("rm -f *.hdf *.tmp");
 #endif
-      }		/* end if */
+      }     /* end if */
 #ifdef TEST_PC
     fclose(dbg_file);
 #endif
     return (0);
-}	/* end main() */
+}   /* end main() */

@@ -41,7 +41,7 @@ static char RcsId[] = "@(#)$Revision$";
 #include <sys/stat.h>
 #include "hdf.h"
 
-#define DefaultDatafile	"DataFile"
+#define DefaultDatafile "DataFile"
 
 /* Prototypes declaration */
 int         main
@@ -54,9 +54,9 @@ void        usage
             (void);
 
 /* variables */
-char       *progname;		/* the name this program is invoked, i.e. argv[0] */
+char       *progname;           /* the name this program is invoked, i.e. argv[0] */
 
-int 
+int
 main(int argc, char *argv[])
 {
     int32       infile, aid, ret;
@@ -76,89 +76,89 @@ main(int argc, char *argv[])
     /* parse arguments */
     while (argc > 0 && **argv == '-')
       {
-	  switch ((*argv)[1])
-	    {
-		case 'd':
-		    argc--;
-		    argv++;
-		    if (argc > 0)
-		      {
-			  strcpy(datafilename, *argv++);
-			  argc--;
-		      }
-		    else
-		      {
-			  usage();
-			  exit(1);
-		      }
-		    break;
-		default:
-		    usage();
-		    exit(1);
-	    }
+          switch ((*argv)[1])
+            {
+                case 'd':
+                    argc--;
+                    argv++;
+                    if (argc > 0)
+                      {
+                          strcpy(datafilename, *argv++);
+                          argc--;
+                      }
+                    else
+                      {
+                          usage();
+                          exit(1);
+                      }
+                    break;
+                default:
+                    usage();
+                    exit(1);
+            }
       }
 
     if (argc == 1)
       {
-	  filename = *argv++;
-	  argc--;
+          filename = *argv++;
+          argc--;
       }
     else
       {
-	  usage();
-	  exit(1);
+          usage();
+          exit(1);
       }
 
     if (datafilename[0] == '\0')
-	strcpy(datafilename, DefaultDatafile);
+        strcpy(datafilename, DefaultDatafile);
 
     /* Check to make sure input file is HDF */
     ret = (int) Hishdf(filename);
     if (ret == FALSE)
       {
-	  error("given file is not an HDF file\n");
+          error("given file is not an HDF file\n");
       }
 
     /* check if datafile already exists.  If so, set offset to its length. */
     {
-	struct stat buf;
-	if (stat(datafilename, &buf) == 0)
-	  {
-	      printf("External file %s already exists.  Using append mode.\n", datafilename);
-	      fileoffset = buf.st_size;
-	  }
-	else
-	    fileoffset = 0;
+        struct stat buf;
+        if (stat(datafilename, &buf) == 0)
+          {
+              printf("External file %s already exists.  Using append mode.\n", datafilename);
+              fileoffset = buf.st_size;
+          }
+        else
+            fileoffset = 0;
     }
 
     /* Open HDF file */
     infile = Hopen(filename, DFACC_RDWR, 0);
     if (infile == FAIL)
       {
-	  error("Can't open the HDF file\n");
+          error("Can't open the HDF file\n");
       }
 
     /* Process the file */
     ret = aid = Hstartread(infile, DFTAG_SD, DFREF_WILDCARD);
     while (ret != FAIL)
       {
-	  /*
-	   * Get data about the current one
-	   */
-	  ret = Hinquire(aid, NULL, &tag, &ref, &length, &offset, NULL, NULL, &special);
+          /*
+           * Get data about the current one
+           */
+          ret = Hinquire(aid, NULL, &tag, &ref, &length, &offset, NULL, NULL, &special);
 
-	  /* check the tag value since external element object are returned the same. */
-	  if (tag == DFTAG_SD)
-	    {
-		printf("moving Scientific Data (%d,%d) to %s\n", tag, ref, datafilename);
-		ret = HXcreate(infile, tag, ref, datafilename, fileoffset, length);
-		fileoffset += length;
-	    }
+          /* check the tag value since external element object are returned the same. */
+          if (tag == DFTAG_SD)
+            {
+                printf("moving Scientific Data (%d,%d) to %s\n", tag, ref, datafilename);
+                ret = HXcreate(infile, tag, ref, datafilename, fileoffset, length);
+                fileoffset += length;
+            }
 
-	  /*
-	   * Move to the next one
-	   */
-	  ret = Hnextread(aid, DFTAG_SD, DFREF_WILDCARD, DF_CURRENT);
+          /*
+           * Move to the next one
+           */
+          ret = Hnextread(aid, DFTAG_SD, DFREF_WILDCARD, DF_CURRENT);
       }
 
     /*
@@ -166,7 +166,7 @@ main(int argc, char *argv[])
      */
     ret = Hendaccess(aid);
     if (ret == FAIL)
-	hdferror();
+        hdferror();
 
     /* done; close files */
     Hclose(infile);
@@ -187,7 +187,7 @@ main(int argc, char *argv[])
    **   This routine terminates the program with code 1.
    ** EXAMPLES
  */
-void 
+void
 hdferror(void)
 {
     HEprint(stderr, 0);
@@ -209,14 +209,14 @@ hdferror(void)
    **   This routine terminates the program with code 1.
    ** EXAMPLES
  */
-void 
+void
 error(const char *string)
 {
     fprintf(stderr, "%s: %s\n", progname, string);
     exit(1);
 }
 
-void 
+void
 usage(void)
 {
     fprintf(stderr, "Usage: %s [-d <datafilename>] <hdffile>\n", progname);

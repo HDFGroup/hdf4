@@ -56,7 +56,7 @@ static char RcsId[] = "@(#)$Revision$";
  * List of commands:       annotate   dump    if      open    putr8    unalias
  *                         close      getr8   info    prev    revert   wait
  *                         delete     help    next    put     select   write
- *                         display 
+ *                         display
  *
  * Predicates are of the form TAG = 3 IMAGE_SIZE < 1000  LABEL = "abc"
  * Type <command> -help for usage of <command>.  DO NOT type the command
@@ -80,58 +80,58 @@ int         he_remote = YES;
 /* is this batch mode or interactive? */
 extern int  he_batch;
 
-int 
+int
 main(int argc, char *argv[])
 {
-    int         backup = YES;	/* Backup files when opening? */
+    int         backup = YES;   /* Backup files when opening? */
     register int i;
     char       *fileName = NULL;
 
     for (i = 1; i < argc; i++)
       {
-	  if (argv[i][0] == '-')
-	    {
-		switch (findOpt(argv[i] + 1))
-		  {
-		      case HE_HELP:
-			  printf("he [<file>] [-nobackup] [-batch]\n");
-			  help();
-			  quit(0);
-			  break;
-		      case HE_BATCH:
-			  he_batch = YES;
-			  break;
-		      case HE_REMOTE:
-			  he_remote = YES;
-			  break;
-		      case HE_NOBACKUP:
-			  backup = NO;
-			  break;
-		      case HE_BACKUP:
-			  backup = YES;
-			  break;
-		      case HE_NOTFOUND:
-			  unkOpt(argv[i]);
-			  quit(1);	/* does not return */
-			  break;
-		      case HE_AMBIG:
-			  ambigOpt(argv[i]);
-			  quit(1);
-			  break;
-		      default:
-			  irrOpt(argv[i]);
-			  quit(1);	/* does not return */
-			  break;
-		  }
-	    }
-	  else
-	    {
-		/* Must be a filename */
-		if (!fileName)
-		    fileName = argv[i];
-		else
-		    fprintf(stderr, "Single file only. %s not open.\n", argv[i]);
-	    }
+          if (argv[i][0] == '-')
+            {
+                switch (findOpt(argv[i] + 1))
+                  {
+                      case HE_HELP:
+                          printf("he [<file>] [-nobackup] [-batch]\n");
+                          help();
+                          quit(0);
+                          break;
+                      case HE_BATCH:
+                          he_batch = YES;
+                          break;
+                      case HE_REMOTE:
+                          he_remote = YES;
+                          break;
+                      case HE_NOBACKUP:
+                          backup = NO;
+                          break;
+                      case HE_BACKUP:
+                          backup = YES;
+                          break;
+                      case HE_NOTFOUND:
+                          unkOpt(argv[i]);
+                          quit(1);  /* does not return */
+                          break;
+                      case HE_AMBIG:
+                          ambigOpt(argv[i]);
+                          quit(1);
+                          break;
+                      default:
+                          irrOpt(argv[i]);
+                          quit(1);  /* does not return */
+                          break;
+                  }
+            }
+          else
+            {
+                /* Must be a filename */
+                if (!fileName)
+                    fileName = argv[i];
+                else
+                    fprintf(stderr, "Single file only. %s not open.\n", argv[i]);
+            }
       }
 
     /* if there is a file name given in the command line, open it */
@@ -141,33 +141,33 @@ main(int argc, char *argv[])
 #endif /* PC */
 
     if (fileName)
-	he_status = openFile(fileName, backup);
+        he_status = openFile(fileName, backup);
 
     /* read, execute loop */
     cmdLoop();
 
     if (fileOpen())
-	close(YES);	/* close with keep */
+        close(YES);     /* close with keep */
     quit(0);
     return 0;
 }
 
 /* cmdLoop -- read commands and execute them */
-void 
+void
 cmdLoop(void)
 {
     HE_CMD     *cmd;
 
     for (cmd = getCmd(); cmd; cmd = getCmd())
       {
-	  if (cmd->func)
-	      he_status = (*cmd->func) (cmd);
-	  else
-	    {
-		fprintf(stderr, "Unknown command: %s.\n", cmd->argv[0]);
-		he_status = HE_FAIL;
-	    }
-	  deleteCmd(cmd);
+          if (cmd->func)
+              he_status = (*cmd->func) (cmd);
+          else
+            {
+                fprintf(stderr, "Unknown command: %s.\n", cmd->argv[0]);
+                he_status = HE_FAIL;
+            }
+          deleteCmd(cmd);
       }
 }
 
@@ -179,7 +179,7 @@ char       *he_file;
 DFdesc      he_desc[HE_DESC_SZ];
 HE_GROUP    he_grp[HE_DESC_SZ];
 
-int32 
+int32
 getElement(int desc, char **pdata)
 {
     int32       length;
@@ -190,19 +190,19 @@ getElement(int desc, char **pdata)
     /* alloc memory to read the element in */
     *pdata = (char *) HDgetspace(length);
     if (*pdata == NULL)
-	return FAIL;
+        return FAIL;
 
     /* read in the element and check for error */
     if ((fid = Hopen(he_file, DFACC_READ, 0)) == (int32) NULL)
       {
-	  HEprint(stderr, 0);
-	  return FAIL;
+          HEprint(stderr, 0);
+          return FAIL;
       }
     if (Hgetelement(fid, he_desc[desc].tag, he_desc[desc].ref, (unsigned char *) (*pdata)) < 0)
       {
-	  HDfreespace(*pdata);
-	  fprintf(stderr, "Cannot read element.\n");
-	  return FAIL;
+          HDfreespace(*pdata);
+          fprintf(stderr, "Cannot read element.\n");
+          return FAIL;
       }
     Hclose(fid);
     return length;
@@ -217,21 +217,21 @@ getElement(int desc, char **pdata)
    if (fork() == 0)
 
    {
-   this is the child 
+   this is the child
 
    if (execl("/bin/od", "od", format, file, 0) == -1)
    fprintf(stderr, "Error while executing od.\n");
 
-   return control to the parent 
+   return control to the parent
    exit(0);
    }
 
-   the parent waits for the child to die 
+   the parent waits for the child to die
 
    wait(0);
 
    this is a bug because it always returns OK, will expand this as
-   soon as the status return mechanism from wait is understood 
+   soon as the status return mechanism from wait is understood
    return HE_OK;
 
    }
@@ -240,7 +240,7 @@ getElement(int desc, char **pdata)
 /* the tmp directory, currently set for unix */
 #define TDIR "/tmp/"
 
-int 
+int
 getTmpName(char **pname)
 {
     int         length;
@@ -252,7 +252,7 @@ getTmpName(char **pname)
 
     length = HDstrlen(s);
     if (length <= 0)
-	return FAIL;
+        return FAIL;
 
     *pname = (char *) HDgetspace(length + 1);
     HDstrcpy(*pname, s);
@@ -260,7 +260,7 @@ getTmpName(char **pname)
     return length;
 }
 
-int 
+int
 writeToFile(char *file, char *data, int32 length)
 {
     FILE       *fd;
@@ -268,20 +268,20 @@ writeToFile(char *file, char *data, int32 length)
 
     fd = fopen(file, "w");
     if (fd == NULL)
-	return FAIL;
+        return FAIL;
 
     written = fwrite(data, sizeof(char), (size_t) length, fd);
     if (written != length)
       {
-	  fprintf(stderr, "Error in write.\n");
-	  return FAIL;
+          fprintf(stderr, "Error in write.\n");
+          return FAIL;
       }
     fclose(fd);
 
     return HE_OK;
 }
 
-int 
+int
 removeFile(char *file)
 {
 #ifndef VMS
@@ -292,7 +292,7 @@ removeFile(char *file)
 }
 
 /* is a file currently opened */
-int 
+int
 fileOpen(void)
 {
     return (he_file != NULL);
@@ -304,38 +304,38 @@ backupName(char *file)
     return catStr(file, "$hdfed$");
 }
 
-int 
+int
 backupFile(char *file)
 {
-    char       *back;		/* backup file name */
+    char       *back;           /* backup file name */
 
     back = backupName(file);
     return copyFile(file, back);
 }
 
-int 
+int
 copyFile(char *from, char *to)
 {
     int         num_read;
-    char        buf[HE_BUF_SZ];	/* copying buffer */
+    char        buf[HE_BUF_SZ]; /* copying buffer */
     FILE       *fp;
     FILE       *bfp;
 
     /* open the hdf file for backing up */
     if ((fp = fopen(from, "r")) == NULL)
       {
-	  fprintf(stderr, "Unable to open file: <%s>\n", from);
-	  return FAIL;
+          fprintf(stderr, "Unable to open file: <%s>\n", from);
+          return FAIL;
       }
     if ((bfp = fopen(to, "w")) == NULL)
       {
-	  fclose(fp);
-	  fprintf(stderr, "Unable to open backup file.\n");
-	  return FAIL;
+          fclose(fp);
+          fprintf(stderr, "Unable to open backup file.\n");
+          return FAIL;
       }
     /* copy the contents from hdf file to backup file */
     while ((num_read = fread(buf, 1, HE_BUF_SZ, fp)) > 0)
-	fwrite(buf, 1, num_read, bfp);
+        fwrite(buf, 1, num_read, bfp);
 
     fclose(fp);
     fclose(bfp);
@@ -343,7 +343,7 @@ copyFile(char *from, char *to)
     return HE_OK;
 }
 
-int 
+int
 updateDesc(void)
 {
     uint32      fid;
@@ -353,24 +353,24 @@ updateDesc(void)
 
     if ((fid = Hopen(he_file, DFACC_READ, 0)) == 0)
       {
-	  printf("failed opening\n");
-	  HEprint(stdout, 0);
-	  return FAIL;
+          printf("failed opening\n");
+          HEprint(stdout, 0);
+          return FAIL;
       }
 
     aid = Hstartread(fid, DFTAG_WILDCARD, DFREF_WILDCARD);
     if (aid == FAIL)
       {
-	  HEprint(stderr, 0);
-	  return FAIL;
+          HEprint(stderr, 0);
+          return FAIL;
       }
 
     status = SUCCEED;
     for (i = 0; (i < HE_DESC_SZ) && (status != FAIL); i++)
       {
-	  Hinquire(aid, NULL, &he_desc[i].tag, &he_desc[i].ref, &he_desc[i].length,
-		   &he_desc[i].offset, NULL, (int16 *) NULL, (int16 *) NULL);
-	  status = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
+          Hinquire(aid, NULL, &he_desc[i].tag, &he_desc[i].ref, &he_desc[i].length,
+                   &he_desc[i].offset, NULL, (int16 *) NULL, (int16 *) NULL);
+          status = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
       }
     he_numDesc = i;
 
@@ -378,57 +378,57 @@ updateDesc(void)
     he_numGrp = 0;
     for (i = 0; i < he_numDesc; i++)
       {
-	  if (isGrp(he_desc[i].tag))
-	    {
-		he_grp[he_numGrp].desc = i;
-		he_grp[he_numGrp].size = (int) (he_desc[i].length / sizeof(tag_ref));
-		he_grp[he_numGrp].ddList = (tag_ref_ptr) HDgetspace(he_desc[i].length);
+          if (isGrp(he_desc[i].tag))
+            {
+                he_grp[he_numGrp].desc = i;
+                he_grp[he_numGrp].size = (int) (he_desc[i].length / sizeof(tag_ref));
+                he_grp[he_numGrp].ddList = (tag_ref_ptr) HDgetspace(he_desc[i].length);
 
-		if (!he_grp[he_numGrp].ddList)
-		  {
-		      fprintf(stderr, "Out of memory. Closing file.\n");
-		      closeFile(1);	/* keep the backup */
-		      return FAIL;
-		  }
-		groupID = DFdiread(fid, he_desc[i].tag, he_desc[i].ref);
-		if (groupID < 0)
-		  {
-		      HEprint(stderr, 0);
-		      return FAIL;
-		  }
-		for (j = 0; j < he_grp[he_numGrp].size; j++)
-		    DFdiget(groupID, &he_grp[he_numGrp].ddList[j].tag,
-			    &he_grp[he_numGrp].ddList[j].ref);
+                if (!he_grp[he_numGrp].ddList)
+                  {
+                      fprintf(stderr, "Out of memory. Closing file.\n");
+                      closeFile(1);     /* keep the backup */
+                      return FAIL;
+                  }
+                groupID = DFdiread(fid, he_desc[i].tag, he_desc[i].ref);
+                if (groupID < 0)
+                  {
+                      HEprint(stderr, 0);
+                      return FAIL;
+                  }
+                for (j = 0; j < he_grp[he_numGrp].size; j++)
+                    DFdiget(groupID, &he_grp[he_numGrp].ddList[j].tag,
+                            &he_grp[he_numGrp].ddList[j].ref);
 
-		he_numGrp++;
-	    }
+                he_numGrp++;
+            }
       }
     Hendaccess(aid);
     Hclose(fid);
     return SUCCEED;
 }
 
-int 
+int
 initFile(char *file)
 {
     if (he_file)
-	HDfreespace(he_file);
+        HDfreespace(he_file);
     he_file = copyStr(file);
 
     if (updateDesc() < 0)
-	return FAIL;
+        return FAIL;
 
     /* if there are groups in this file, go to the first group tag */
     /* otherwise, just go to the first element */
     if (he_numGrp > 0)
-	he_currDesc = he_grp[0].desc;
+        he_currDesc = he_grp[0].desc;
     else
-	he_currDesc = 0;
+        he_currDesc = 0;
 
     return resetPred();
 }
 
-int 
+int
 closeFile(int keep)
 {
     register int i;
@@ -436,25 +436,25 @@ closeFile(int keep)
 
     if (!fileOpen())
       {
-	  fprintf(stderr, "No open file to close.\n");
-	  return FAIL;
+          fprintf(stderr, "No open file to close.\n");
+          return FAIL;
       }
     /* free some dynamic storages */
     if (he_backup && !keep)
       {
-	  back = backupName(he_file);
-	  (void) removeFile(back);
-	  HDfreespace(back);
+          back = backupName(he_file);
+          (void) removeFile(back);
+          HDfreespace(back);
       }
     HDfreespace(he_file);
     he_file = NULL;
     for (i = 0; i < he_numGrp; i++)
-	HDfreespace(he_grp[i].ddList);
+        HDfreespace(he_grp[i].ddList);
 
     return HE_OK;
 }
 
-int 
+int
 getR8(int xdim, int ydim, char *image, char *pal, int compress)
 {
     FILE       *fp;
@@ -464,43 +464,43 @@ getR8(int xdim, int ydim, char *image, char *pal, int compress)
 
     if (!fileOpen())
       {
-	  noFile();
-	  return FAIL;
+          noFile();
+          return FAIL;
       }
     if (pal)
-	if (setPal(pal) < 0)
-	    /* Error already signalled by setPal */
-	    return FAIL;
+        if (setPal(pal) < 0)
+            /* Error already signalled by setPal */
+            return FAIL;
 
     length = xdim * ydim;
     buf = (char *) HDgetspace(length);
 
     if ((fp = fopen(image, "r")) == NULL)
       {
-	  fprintf(stderr, "Error opening image file: %s.\n", image);
-	  return FAIL;
+          fprintf(stderr, "Error opening image file: %s.\n", image);
+          return FAIL;
       }
     if ((ret = fread(buf, xdim, ydim, fp)) < ydim)
       {
-	  fprintf(stderr, "Error reading image file: %s.\n", image);
-	  return FAIL;
+          fprintf(stderr, "Error reading image file: %s.\n", image);
+          return FAIL;
       }
     fclose(fp);
 
     if ((ret = DFR8addimage(he_file, buf, (int32) xdim, (int32) ydim, (uint16) compress)) < 0)
       {
-	  HEprint(stderr, 0);
-	  return FAIL;
+          HEprint(stderr, 0);
+          return FAIL;
       }
     HDfreespace(buf);
 
     if (updateDesc() < 0)
-	return FAIL;
+        return FAIL;
 
     return HE_OK;
 }
 
-int 
+int
 setPal(char *pal)
 {
     FILE       *fp;
@@ -512,93 +512,93 @@ setPal(char *pal)
 
     if ((fp = fopen(pal, "r")) == NULL)
       {
-	  fprintf(stderr, "Error opening palette file: %s.\n", pal);
-	  return FAIL;
+          fprintf(stderr, "Error opening palette file: %s.\n", pal);
+          return FAIL;
       }
     if ((ret = fread(reds, 1, HE_COLOR_SZ, fp)) < HE_COLOR_SZ ||
-	(ret = fread(greens, 1, HE_COLOR_SZ, fp)) < HE_COLOR_SZ ||
-	(ret = fread(blues, 1, HE_COLOR_SZ, fp)) < HE_COLOR_SZ)
+        (ret = fread(greens, 1, HE_COLOR_SZ, fp)) < HE_COLOR_SZ ||
+        (ret = fread(blues, 1, HE_COLOR_SZ, fp)) < HE_COLOR_SZ)
       {
-	  fprintf(stderr, "Error reading palette file: %s.\n", pal);
-	  return FAIL;
+          fprintf(stderr, "Error reading palette file: %s.\n", pal);
+          return FAIL;
       }
 
     /* convert sun palette to hdf palette */
     p = palette;
     for (i = 0; i < HE_COLOR_SZ; i++)
       {
-	  *p++ = reds[i];
-	  *p++ = greens[i];
-	  *p++ = blues[i];
+          *p++ = reds[i];
+          *p++ = greens[i];
+          *p++ = blues[i];
       }
 
     if (DFR8setpalette((uint8 *) palette) < 0)
       {
-	  fputs("Error setting palette.\n", stderr);
-	  return FAIL;
+          fputs("Error setting palette.\n", stderr);
+          return FAIL;
       }
 
     return HE_OK;
 }
 
-int 
+int
 findDesc(tag_ref_ptr dd)
 {
     register int i;
 
     for (i = 0; i < he_numDesc; i++)
-	if ((he_desc[i].tag == dd->tag) && (he_desc[i].ref == dd->ref))
-	    return i;
+        if ((he_desc[i].tag == dd->tag) && (he_desc[i].ref == dd->ref))
+            return i;
 
     return FAIL;
 }
 
-int 
+int
 desc2Grp(int desc)
 {
     register int i;
 
     for (i = 0; i < he_numGrp; i++)
-	if (he_grp[i].desc == desc)
-	    return i;
+        if (he_grp[i].desc == desc)
+            return i;
 
     NOT_REACHED();
     return FAIL;
 }
 
-int 
+int
 hasReference(int desc)
 {
     register int i, j;
 
     for (i = 0; i < he_numGrp; i++)
-	for (j = 0; j < he_grp[i].size; j++)
-	    if (he_grp[i].ddList[j].tag == he_desc[desc].tag &&
-		he_grp[i].ddList[j].ref == he_desc[desc].ref)
-		return YES;
+        for (j = 0; j < he_grp[i].size; j++)
+            if (he_grp[i].ddList[j].tag == he_desc[desc].tag &&
+                he_grp[i].ddList[j].ref == he_desc[desc].ref)
+                return YES;
     return NO;
 }
 
-int 
+int
 deleteDesc(int desc)
 {
     int32       fid;
 
     if ((fid = Hopen(he_file, DFACC_WRITE, 0)) == (int32) NULL)
       {
-	  HEprint(stderr, 0);
-	  return FAIL;
+          HEprint(stderr, 0);
+          return FAIL;
       }
 
     if (Hdeldd(fid, he_desc[desc].tag, he_desc[desc].ref) == FAIL)
       {
-	  HEprint(stderr, 0);
-	  return FAIL;
+          HEprint(stderr, 0);
+          return FAIL;
       }
     return Hclose(fid);
 }
 
-int 
+int
 getCurrRig(int32 *pXdim, int32 *pYdim, char **pPalette, char **pRaster)
 {
     int         ispal;
@@ -607,28 +607,28 @@ getCurrRig(int32 *pXdim, int32 *pYdim, char **pPalette, char **pRaster)
 
     if (DFR8getdims(he_file, pXdim, pYdim, &ispal) < 0)
       {
-	  fprintf(stderr, "Error getting image group.\n");
-	  HEprint(stderr, 0);
-	  return FAIL;
+          fprintf(stderr, "Error getting image group.\n");
+          HEprint(stderr, 0);
+          return FAIL;
       }
     if (ispal)
-	*pPalette = (char *) HDgetspace(HE_PALETTE_SZ);
+        *pPalette = (char *) HDgetspace(HE_PALETTE_SZ);
     else
-	*pPalette = (char *) NULL;
+        *pPalette = (char *) NULL;
     *pRaster = (char *) HDgetspace((*pXdim) * (*pYdim));
 
     if (DFR8getimage(he_file, (unsigned char *) *pRaster, *pXdim, *pYdim,
-		     (unsigned char *) *pPalette) == FAIL)
+                     (unsigned char *) *pPalette) == FAIL)
       {
-	  fprintf(stderr, "Error getting image group.\n");
-	  HEprint(stderr, 0);
-	  return FAIL;
+          fprintf(stderr, "Error getting image group.\n");
+          HEprint(stderr, 0);
+          return FAIL;
       }
 
     return HE_OK;
 }
 
-int 
+int
 putWithTempl(char *template, int n1, int n2, int n3, char *data, int length, int verbose)
 {
     char       *file;
@@ -636,25 +636,25 @@ putWithTempl(char *template, int n1, int n2, int n3, char *data, int length, int
 
     convertTemplate(template, n1, n2, n3, &file);
     if (verbose)
-	printf("Writing to file: %s\n", file);
+        printf("Writing to file: %s\n", file);
     ret = writeToFile(file, data, length);
     HDfreespace(file);
 
     return ret;
 }
 
-int 
+int
 revert(void)
 {
     char       *back;
 
     back = backupName(he_file);
     if (copyFile(back, he_file) < 0)
-	return FAIL;
+        return FAIL;
     return initFile(he_file);
 }
 
-int 
+int
 writeElt(char *file, uint16 ref, int elt)
 {
     int         ret;
@@ -671,43 +671,43 @@ writeElt(char *file, uint16 ref, int elt)
     eltLength = getElement(elt, &data);
     if (eltLength <= 0)
       {
-	  fprintf(stderr, "Cannot get element: tag %d ref %d.\n",
-		  he_desc[elt].tag, he_desc[elt].ref);
-	  return FAIL;
+          fprintf(stderr, "Cannot get element: tag %d ref %d.\n",
+                  he_desc[elt].tag, he_desc[elt].ref);
+          return FAIL;
       }
     /* special case */
 
     if (he_desc[elt].tag == DFTAG_SDD)
       {
 
-	  /* lots of hack here */
-	  /* assume that the number types are of the same ref as this elt */
-	  p = data;
+          /* lots of hack here */
+          /* assume that the number types are of the same ref as this elt */
+          p = data;
 
-	  /* get the rank */
-	  /* NOTE: UINT16READ and UINT16WRITE advances p */
-	  UINT16DECODE(p, rank);
-	  /* move to the NT of the data */
-	  p += (rank * 4);
-	  UINT16DECODE(p, ntTag);
-	  UINT16DECODE(p, ntRef);
+          /* get the rank */
+          /* NOTE: UINT16READ and UINT16WRITE advances p */
+          UINT16DECODE(p, rank);
+          /* move to the NT of the data */
+          p += (rank * 4);
+          UINT16DECODE(p, ntTag);
+          UINT16DECODE(p, ntRef);
 
-	  /* set up to write the number type element */
-	  ntDesc = (tag_ref_ptr) HDgetspace(sizeof(tag_ref));
-	  ntDesc->tag = ntTag;
-	  ntDesc->ref = ntRef;
-	  nt = findDesc(ntDesc);
-	  HDfreespace(ntDesc);
-	  writeElt(file, ref, nt);
+          /* set up to write the number type element */
+          ntDesc = (tag_ref_ptr) HDgetspace(sizeof(tag_ref));
+          ntDesc->tag = ntTag;
+          ntDesc->ref = ntRef;
+          nt = findDesc(ntDesc);
+          HDfreespace(ntDesc);
+          writeElt(file, ref, nt);
 
-	  p -= 2;
-	  UINT16ENCODE(p, ref);
-	  /* do the NT of scales */
-	  for (i = 0; (uint16) i < rank; i++)
-	    {
-		p += 2;
-		UINT16ENCODE(p, ref);
-	    }
+          p -= 2;
+          UINT16ENCODE(p, ref);
+          /* do the NT of scales */
+          for (i = 0; (uint16) i < rank; i++)
+            {
+                p += 2;
+                UINT16ENCODE(p, ref);
+            }
       }
 
     ret = putElement(file, he_desc[elt].tag, ref, data, eltLength);
@@ -715,28 +715,28 @@ writeElt(char *file, uint16 ref, int elt)
     return ret;
 }
 
-int 
+int
 putElement(char *file, uint16 tag, uint16 ref, char *data, int32 len)
 {
     int32       ret;
     int32       fid;
 
     if ((fid = Hopen(file, DFACC_READ | DFACC_WRITE, 0)) == (uint32) NULL)
-	/* a little tricky here */
-	if (HEvalue(0) != DFE_FNF || (fid = Hopen(file, DFACC_ALL, 0)) == (uint32) NULL)
-	  {
-	      HEprint(stderr, 0);
-	      return FAIL;
-	  }
+        /* a little tricky here */
+        if (HEvalue(0) != DFE_FNF || (fid = Hopen(file, DFACC_ALL, 0)) == (uint32) NULL)
+          {
+              HEprint(stderr, 0);
+              return FAIL;
+          }
     if ((ret = Hputelement(fid, tag, ref, (unsigned char *) data, len)) < 0)
       {
-	  HEprint(stderr, 0);
-	  return (int) ret;
+          HEprint(stderr, 0);
+          return (int) ret;
       }
     return Hclose(fid);
 }
 
-int 
+int
 writeGrp(char *file)
 {
     register int i;
@@ -753,44 +753,44 @@ writeGrp(char *file)
     gid = DFdisetup(he_grp[grp].size);
     for (i = 0; i < he_grp[grp].size; i++)
       {
-	  elt = findDesc(he_grp[grp].ddList + i);
-	  if (elt >= 0)
-	      writeElt(file, ref, elt);
-	  /* update the group dd list */
-	  DFdiput(gid, he_grp[grp].ddList[i].tag, ref);
+          elt = findDesc(he_grp[grp].ddList + i);
+          if (elt >= 0)
+              writeElt(file, ref, elt);
+          /* update the group dd list */
+          DFdiput(gid, he_grp[grp].ddList[i].tag, ref);
       }
     /* do the group now */
 
     if ((fid = Hopen(file, DFACC_READ | DFACC_WRITE, 0)) == (uint32) NULL)
       {
-	  HEprint(stderr, 0);
-	  return FAIL;
+          HEprint(stderr, 0);
+          return FAIL;
       }
     if ((ret = DFdiwrite(fid, gid, currTag(), ref)) < 0)
       {
-	  HEprint(stderr, 0);
-	  return ret;
+          HEprint(stderr, 0);
+          return ret;
       }
     return Hclose(fid);
 }
 
-int 
+int
 getNewRef(char *file, uint16 *pRef)
 {
     int32       fid;
 
     if ((fid = Hopen(file, DFACC_READ | DFACC_WRITE, 0)) == (uint32) NULL)
-	/* a little tricky here */
-	if (HEvalue(0) != DFE_FNF || (fid = Hopen(file, DFACC_ALL, 0)) == (uint32) NULL)
-	  {
-	      HEprint(stderr, 0);
-	      return FAIL;
-	  }
+        /* a little tricky here */
+        if (HEvalue(0) != DFE_FNF || (fid = Hopen(file, DFACC_ALL, 0)) == (uint32) NULL)
+          {
+              HEprint(stderr, 0);
+              return FAIL;
+          }
     *pRef = Hnewref(fid);
     return Hclose(fid);
 }
 
-int 
+int
 writeAnnot(char *file, uint16 tag, uint16 ref)
 {
     char       *data;
@@ -801,24 +801,24 @@ writeAnnot(char *file, uint16 tag, uint16 ref)
 
     while (tag == 0)
       {
-	  printf("Attach to what tag? (> 0)");
-	  scanf("%d", &tmp);
-	  tag = (uint16) tmp;
+          printf("Attach to what tag? (> 0)");
+          scanf("%d", &tmp);
+          tag = (uint16) tmp;
       }
 
     while (ref == 0)
       {
-	  printf("Attach to what ref? (> 0)");
-	  scanf("%d", &tmp);
-	  ref = (uint16) tmp;
+          printf("Attach to what ref? (> 0)");
+          scanf("%d", &tmp);
+          ref = (uint16) tmp;
       }
 
     eltLength = getElement(he_currDesc, &data);
     if (eltLength <= 0)
       {
-	  fprintf(stderr, "Cannot get element: tag %d ref %d.\n",
-		  he_desc[he_currDesc].tag, he_desc[he_currDesc].ref);
-	  return FAIL;
+          fprintf(stderr, "Cannot get element: tag %d ref %d.\n",
+                  he_desc[he_currDesc].tag, he_desc[he_currDesc].ref);
+          return FAIL;
       }
 
     p = data;
@@ -831,59 +831,59 @@ writeAnnot(char *file, uint16 tag, uint16 ref)
 
     if (getNewRef(file, &newRef) < 0)
       {
-	  fprintf(stderr, "Error getting new ref number.\n");
-	  return FAIL;
+          fprintf(stderr, "Error getting new ref number.\n");
+          return FAIL;
       }
 
     return putElement(file, he_desc[he_currDesc].tag, newRef, data, eltLength);
 }
 
-int32 
+int32
 getAnn(int ann, int16 tag, int16 ref, char **pBuf)
 {
     int32       len;
 
     if (ann == HE_LABEL)
       {
-	  len = DFANgetlablen(he_file, tag, ref);
-	  if (len > 0)
-	    {
-		*pBuf = (char *) HDgetspace(len + 1);
-		DFANgetlabel(he_file, tag, ref, *pBuf, len + 1);
-	    }
-	  else
-	      *pBuf = NULL;
+          len = DFANgetlablen(he_file, tag, ref);
+          if (len > 0)
+            {
+                *pBuf = (char *) HDgetspace(len + 1);
+                DFANgetlabel(he_file, tag, ref, *pBuf, len + 1);
+            }
+          else
+              *pBuf = NULL;
       }
     else
       {
-	  len = DFANgetdesclen(he_file, tag, ref);
-	  if (len > 0)
-	    {
-		*pBuf = (char *) HDgetspace(len);
-		DFANgetdesc(he_file, tag, ref, *pBuf, len);
-	    }
-	  else
-	      *pBuf = NULL;
+          len = DFANgetdesclen(he_file, tag, ref);
+          if (len > 0)
+            {
+                *pBuf = (char *) HDgetspace(len);
+                DFANgetdesc(he_file, tag, ref, *pBuf, len);
+            }
+          else
+              *pBuf = NULL;
       }
     return len;
 }
 
-int 
+int
 putAnn(int ann, uint16 tag, uint16 ref, char *buf, int32 len)
 {
     int         ret;
 
     if (ann == HE_LABEL)
-	ret = DFANputlabel(he_file, tag, ref, buf);
+        ret = DFANputlabel(he_file, tag, ref, buf);
     else
-	ret = DFANputdesc(he_file, tag, ref, buf, len);
+        ret = DFANputdesc(he_file, tag, ref, buf, len);
     if (ret < 0)
-	HEprint(stderr, 0);
+        HEprint(stderr, 0);
 
     return ret;
 }
 
-int32 
+int32
 readFromFile(char *file, char **pBuf)
 {
     FILE       *fp;
@@ -893,21 +893,21 @@ readFromFile(char *file, char **pBuf)
 
     fp = fopen(file, "r");
     if (fp == NULL)
-	return FAIL;
+        return FAIL;
 
     soFar = 0;
     bufLen = 0;
     for (num_read = HE_BUF_SZ; num_read == HE_BUF_SZ; soFar += num_read)
       {
-	  bufLen += HE_BUF_SZ;
-	  if (bufLen == HE_BUF_SZ)
-	      *pBuf = (char *) HDgetspace(bufLen);
-	  else
-	      *pBuf = (char *) HDregetspace(*pBuf, bufLen);
-	  if (*pBuf == NULL)
-	      return FAIL;
+          bufLen += HE_BUF_SZ;
+          if (bufLen == HE_BUF_SZ)
+              *pBuf = (char *) HDgetspace(bufLen);
+          else
+              *pBuf = (char *) HDregetspace(*pBuf, bufLen);
+          if (*pBuf == NULL)
+              return FAIL;
 
-	  num_read = fread((*pBuf) + soFar, 1, HE_BUF_SZ, fp);
+          num_read = fread((*pBuf) + soFar, 1, HE_BUF_SZ, fp);
       }
     *pBuf = (char *) HDregetspace(*pBuf, soFar + 1);
     (*pBuf)[soFar] = '\0';
@@ -924,164 +924,164 @@ struct
 he_optTab[] =
 {
     {
-	"readonly", HE_RDONLY
+        "readonly", HE_RDONLY
     }
     ,
     {
-	"all", HE_ALL
+        "all", HE_ALL
     }
     ,
     {
-	"backup", HE_BACKUP
+        "backup", HE_BACKUP
     }
     ,
     {
-	"batch", HE_BATCH
+        "batch", HE_BATCH
     }
     ,
     {
-	"help", HE_HELP
+        "help", HE_HELP
     }
     ,
     {
-	"longout", HE_LONGOUT
+        "longout", HE_LONGOUT
     }
     ,
     {
-	"nobackup", HE_NOBACKUP
+        "nobackup", HE_NOBACKUP
     }
     ,
     {
-	"remote", HE_REMOTE
+        "remote", HE_REMOTE
     }
     ,
     {
-	"verbose", HE_VERBOSE
+        "verbose", HE_VERBOSE
     }
     ,
     {
-	"position", HE_POSITION
+        "position", HE_POSITION
     }
     ,
     {
-	"expansion", HE_EXPANSION
+        "expansion", HE_EXPANSION
     }
     ,
     {
-	"large", HE_LARGE
+        "large", HE_LARGE
     }
     ,
     {
-	"offset", HE_OFFSET
+        "offset", HE_OFFSET
     }
     ,
     {
-	"ascii", HE_ASCII
+        "ascii", HE_ASCII
     }
     ,
     {
-	"octal", HE_OCTAL
+        "octal", HE_OCTAL
     }
     ,
     {
-	"hexadecimal", HE_HEX
+        "hexadecimal", HE_HEX
     }
     ,
     {
-	"decimal", HE_DECIMAL
+        "decimal", HE_DECIMAL
     }
     ,
     {
-	"float", HE_FLOAT
+        "float", HE_FLOAT
     }
     ,
     {
-	"dimensions", HE_DIMS
+        "dimensions", HE_DIMS
     }
     ,
     {
-	"image", HE_IMAGE
+        "image", HE_IMAGE
     }
     ,
     {
-	"palette", HE_PALETTE
+        "palette", HE_PALETTE
     }
     ,
     {
-	"raster", HE_RASTER
+        "raster", HE_RASTER
     }
     ,
     {
-	"rle", HE_RLE
+        "rle", HE_RLE
     }
     ,
     {
-	"compress", HE_RLE
+        "compress", HE_RLE
     }
     ,
     {
-	"imcomp", HE_IMCOMP
+        "imcomp", HE_IMCOMP
     }
     ,
     {
-	"group", HE_DOGROUP
+        "group", HE_DOGROUP
     }
     ,
     {
-	"file", HE_FILE
+        "file", HE_FILE
     }
     ,
     {
-	"keep", HE_KEEP
+        "keep", HE_KEEP
     }
     ,
     {
-	"length", HE_LENGTH
+        "length", HE_LENGTH
     }
     ,
     {
-	"attachto", HE_ATTACHTO
+        "attachto", HE_ATTACHTO
     }
     ,
     {
-	"label", HE_LABEL
+        "label", HE_LABEL
     }
     ,
     {
-	"descriptor", HE_DESCRIPTOR
+        "descriptor", HE_DESCRIPTOR
     }
     ,
     {
-	"editor", HE_EDITOR
+        "editor", HE_EDITOR
     }
     ,
     {
-	"byte", HE_BYTE
+        "byte", HE_BYTE
     }
     ,
     {
-	"short", HE_SHORT
+        "short", HE_SHORT
     }
     ,
     {
-	"double", HE_DOUBLE
+        "double", HE_DOUBLE
     }
     ,
     {
-	"ushort", HE_USHORT
+        "ushort", HE_USHORT
     }
     ,
     {
-	"udecimal", HE_UDECIMAL
+        "udecimal", HE_UDECIMAL
     }
     ,
     {
-	"raw", HE_RAW
+        "raw", HE_RAW
     }
     ,
 };
 
-int 
+int
 findOpt(char *word)
 {
     unsigned    len;
@@ -1091,20 +1091,20 @@ findOpt(char *word)
     len = HDstrlen(word);
 
     for (i = 0; i < sizeof(he_optTab) / sizeof(he_optTab[0]); i++)
-	if (!HDstrncmp(he_optTab[i].str, word, len))
-	  {
-	      /* exact match */
-	      if (HDstrlen(he_optTab[i].str) == len)
-		  return he_optTab[i].key;
+        if (!HDstrncmp(he_optTab[i].str, word, len))
+          {
+              /* exact match */
+              if (HDstrlen(he_optTab[i].str) == len)
+                  return he_optTab[i].key;
 
-	      if (found < 0)
-		  found = i;
-	      else
-		  return HE_AMBIG;
-	  }
+              if (found < 0)
+                  found = i;
+              else
+                  return HE_AMBIG;
+          }
 
     if (found < 0)
-	return HE_NOTFOUND;
+        return HE_NOTFOUND;
 
     return he_optTab[found].key;
 }
@@ -1130,45 +1130,45 @@ copyStr(char *s)
     return t;
 }
 
-int 
+int
 isGrp(uint16 tag)
 {
     switch (tag)
       {
-	  case DFTAG_RIG:
-	  case DFTAG_SDG:
-	  case DFTAG_NDG:
-	      /* and other group tags */
-	      return 1;
-	  default:
-	      return 0;
+          case DFTAG_RIG:
+          case DFTAG_SDG:
+          case DFTAG_NDG:
+              /* and other group tags */
+              return 1;
+          default:
+              return 0;
       }
 }
 
-int 
+int
 HEquit(HE_CMD * cmd)
 {
     if (cmd->argc > 1)
       {
-	  puts("quit");
-	  puts("\tQuits this application.");
-	  return HE_OK;
+          puts("quit");
+          puts("\tQuits this application.");
+          return HE_OK;
       }
     return quit(0);
 }
 
-int 
+int
 quit(int status)
 {
     if (fileOpen())
       {
-	  if (closeFile(0) < 0)
-	      return HE_FAIL;
+          if (closeFile(0) < 0)
+              return HE_FAIL;
       }
     exit(status);
 }
 
-int 
+int
 HEhelp(HE_CMD * dummy)
 {
     /* shut compiler up */
@@ -1178,7 +1178,7 @@ HEhelp(HE_CMD * dummy)
     return HE_OK;
 }
 
-void 
+void
 help(void)
 {
     /* print some help informations */
@@ -1213,40 +1213,40 @@ help(void)
 
 }
 
-int 
+int
 HEwait(HE_CMD * cmd)
 {
     int         c;
 
     if (cmd->argv[1][0] == '-' && findOpt(cmd->argv[1] + 1) == HE_HELP)
       {
-	  printf("wait [<message>]\n");
-	  printf("\tPrints message and then wait for user to hit return\n");
-	  return HE_OK;
+          printf("wait [<message>]\n");
+          printf("\tPrints message and then wait for user to hit return\n");
+          return HE_OK;
       }
 
     printf("%s\nPress return to continue.", cmd->argv[1]);
     do
-	c = getchar();
+        c = getchar();
     while (c != '\n');
 
     return HE_OK;
 }
 
-void 
+void
 deleteCmd(HE_CMD * cmd)
 {
     register int i;
 
     if (cmd == NULL)
-	return;
+        return;
     if (cmd->next != NULL)
-	deleteCmd(cmd->next);
+        deleteCmd(cmd->next);
     if (cmd->sub != NULL)
-	deleteCmd(cmd->sub);
+        deleteCmd(cmd->sub);
     for (i = 0; i < cmd->argc; i++)
-	if (cmd->argv[i] != NULL)
-	    HDfreespace(cmd->argv[i]);
+        if (cmd->argv[i] != NULL)
+            HDfreespace(cmd->argv[i]);
     HDfreespace(cmd);
 }
 
@@ -1256,7 +1256,7 @@ deleteCmd(HE_CMD * cmd)
 #define TEMPLATE_CHAR2 '@'
 #define TEMPLATE_CHAR3 '%'
 
-void 
+void
 convertTemplate(char *template, int n1, int n2, int n3, char **pname)
 {
     char        s1[20], s2[20], s3[20];
@@ -1269,40 +1269,40 @@ convertTemplate(char *template, int n1, int n2, int n3, char **pname)
     *pname = t = (char *) HDgetspace(HDstrlen(template) + 61);
 
     while (*template)
-	switch (*template)
-	  {
-	      case TEMPLATE_CHAR1:
-		  fillTemplate(&template, &t, s1, TEMPLATE_CHAR1);
-		  break;
-	      case TEMPLATE_CHAR2:
-		  fillTemplate(&template, &t, s2, TEMPLATE_CHAR2);
-		  break;
-	      case TEMPLATE_CHAR3:
-		  fillTemplate(&template, &t, s3, TEMPLATE_CHAR3);
-		  break;
-	      default:
-		  *t++ = *template++;
-	  }
+        switch (*template)
+          {
+              case TEMPLATE_CHAR1:
+                  fillTemplate(&template, &t, s1, TEMPLATE_CHAR1);
+                  break;
+              case TEMPLATE_CHAR2:
+                  fillTemplate(&template, &t, s2, TEMPLATE_CHAR2);
+                  break;
+              case TEMPLATE_CHAR3:
+                  fillTemplate(&template, &t, s3, TEMPLATE_CHAR3);
+                  break;
+              default:
+                  *t++ = *template++;
+          }
     *t = '\0';
 }
 
-void 
+void
 fillTemplate(char **template, char **pout, char *s, char templateChar)
 {
     int         templateLen, sLen;
 
     /* count length of template to replace */
     for (templateLen = 0; **template == templateChar;
-	 (*template)++, templateLen++) ;
+         (*template)++, templateLen++) ;
     sLen = HDstrlen(s);
 
     /* fill with zero's if the space reserved in template is
        longer than the length of s */
     for (; templateLen > sLen; templateLen--)
-	*(*pout)++ = '0';
+        *(*pout)++ = '0';
 
     while (*s)
-	*(*pout)++ = *s++;
+        *(*pout)++ = *s++;
 }
 
 /* end of he-main.c */

@@ -1102,17 +1102,17 @@ fuzzy_memcmp(const void *s1, const void *s2, int32 len, intn fuzz_factor)
 
     while (len > 0 && (int) ABS(*t2 - *t1) <= fuzz_factor)
       {
-	  t1++;
-	  t2++;
-	  len--;
-      }		/* end while */
+          t1++;
+          t2++;
+          len--;
+      }     /* end while */
     if (len == 0)
-	return (0);
+        return (0);
     else
       {
-	  return ((intn) (*t1 - *t2));
+          return ((intn) (*t1 - *t2));
       }
-}	/* end fuzzy_memcmp() */
+}   /* end fuzzy_memcmp() */
 
 #ifdef DEC_ALPHA
 #define JPEG_FUZZ 13
@@ -1125,7 +1125,7 @@ fuzzy_memcmp(const void *s1, const void *s2, int32 len, intn fuzz_factor)
 void
 test_r24(void)
 {
-    comp_info   cinfo;		/* compression information for the JPEG */
+    comp_info   cinfo;          /* compression information for the JPEG */
     int32       xd, yd;
     intn        il;
     int         Error;
@@ -1142,20 +1142,20 @@ test_r24(void)
     jpeg_24bit_temp = (uint8 *) HDgetspace(JPEGX * JPEGY * 3);
     if (!jpeg_24bit_temp)
       {
-	  fprintf(stderr, "Out of memory!\n");
-	  exit(1);
+          fprintf(stderr, "Out of memory!\n");
+          exit(1);
       }
 
     for (i = 0; i < YSIZE; i++)
-	for (j = 0; j < XSIZE; j++)
-	  {
-	      buf[i][j][0] = buf[i][j][1] = buf[i][j][2] = (char) (i + j);
-	      buf1[i][0][j] = buf1[i][1][j] = buf1[i][2][j] = (char) (i | j);
-	      buf2[0][i][j] = buf2[1][i][j] = buf2[2][i][j] = (char) (i ^ j);
-	  }
+        for (j = 0; j < XSIZE; j++)
+          {
+              buf[i][j][0] = buf[i][j][1] = buf[i][j][2] = (char) (i + j);
+              buf1[i][0][j] = buf1[i][1][j] = buf1[i][2][j] = (char) (i | j);
+              buf2[0][i][j] = buf2[1][i][j] = buf2[2][i][j] = (char) (i ^ j);
+          }
 
     MESSAGE(5, printf("Writing 24bit images with differing interlacing\n");
-	);
+        );
 
     ret = DF24setil(DFIL_PIXEL);
     RESULT("DF24setil");
@@ -1177,14 +1177,14 @@ test_r24(void)
 
     if ((ret = DF24nimages(TESTFILE)) != 3)
       {
-	  fprintf(stderr, "  >>> DF24nimages() gives wrong number: %d <<<\n", ret);
-	  num_errs++;
+          fprintf(stderr, "  >>> DF24nimages() gives wrong number: %d <<<\n", ret);
+          num_errs++;
       }
 
     /* read image 0 */
 
     MESSAGE(5, printf("Reading and verifying 24bit images\n");
-	);
+        );
 
     ret = DF24restart();
     RESULT("DF24restart");
@@ -1193,50 +1193,50 @@ test_r24(void)
     ret = DF24getdims(TESTFILE, &xd, &yd, &il);
     RESULT("DF24getdims");
     if (ret == FAIL)
-	HEprint(stderr, 0);
+        HEprint(stderr, 0);
 
     if ((xd != XSIZE) || (yd != YSIZE) || il != 0)
       {
-	  fprintf(stderr, "Returned meta-data is wrong for image 0\n");
-	  num_errs++;
+          fprintf(stderr, "Returned meta-data is wrong for image 0\n");
+          num_errs++;
       }
 
     ret = DF24getimage(TESTFILE, (VOIDP) in, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
     for (i = 0; i < YSIZE; i++)
-	for (j = 0; j < XSIZE; j++)
-	    if (in[i][j][0] != buf[i][j][0]
-		|| in[i][j][1] != buf[i][j][1]
-		|| in[i][j][2] != buf[i][j][2])
-	      {
-		  Error = TRUE;
-	      }
+        for (j = 0; j < XSIZE; j++)
+            if (in[i][j][0] != buf[i][j][0]
+                || in[i][j][1] != buf[i][j][1]
+                || in[i][j][2] != buf[i][j][2])
+              {
+                  Error = TRUE;
+              }
 
     if (Error)
       {
-	  printf("in:\n");
-	  for (i = 0; i < YSIZE; i++)
-	    {
-		for (j = 0; j < XSIZE; j++)
-		    printf("(%d,%d,%d)", (int) in[i][j][0], (int) in[i][j][1], (int) in[i][j][2]);
-		printf("\n");
-	    }
-	  printf("buf:\n");
-	  for (i = 0; i < YSIZE; i++)
-	    {
-		for (j = 0; j < XSIZE; j++)
-		    printf("(%d,%d,%d)", (int) buf[i][j][0], (int) buf[i][j][1], (int) buf[i][j][2]);
-		printf("\n");
-	    }
-	  fprintf(stderr, "Image 0 was incorrect\n");
-	  num_errs++;
+          printf("in:\n");
+          for (i = 0; i < YSIZE; i++)
+            {
+                for (j = 0; j < XSIZE; j++)
+                    printf("(%d,%d,%d)", (int) in[i][j][0], (int) in[i][j][1], (int) in[i][j][2]);
+                printf("\n");
+            }
+          printf("buf:\n");
+          for (i = 0; i < YSIZE; i++)
+            {
+                for (j = 0; j < XSIZE; j++)
+                    printf("(%d,%d,%d)", (int) buf[i][j][0], (int) buf[i][j][1], (int) buf[i][j][2]);
+                printf("\n");
+            }
+          fprintf(stderr, "Image 0 was incorrect\n");
+          num_errs++;
       }
 
     if (ref0 != DF24lastref())
       {
-	  fprintf(stderr, "Bogus lastref for image 0\n");
-	  num_errs++;
+          fprintf(stderr, "Bogus lastref for image 0\n");
+          num_errs++;
       }
 
     /* read image 1 */
@@ -1246,32 +1246,32 @@ test_r24(void)
 
     if ((xd != XSIZE) || (yd != YSIZE) || il != 1)
       {
-	  fprintf(stderr, "Returned meta-data is wrong for image 1\n");
-	  num_errs++;
+          fprintf(stderr, "Returned meta-data is wrong for image 1\n");
+          num_errs++;
       }
 
     ret = DF24getimage(TESTFILE, (VOIDP) in, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
     for (i = 0; i < YSIZE; i++)
-	for (j = 0; j < XSIZE; j++)
-	    if (in[i][j][0] != buf1[i][0][j]
-		|| in[i][j][1] != buf1[i][1][j]
-		|| in[i][j][2] != buf1[i][2][j])
-	      {
-		  Error = TRUE;
-	      }
+        for (j = 0; j < XSIZE; j++)
+            if (in[i][j][0] != buf1[i][0][j]
+                || in[i][j][1] != buf1[i][1][j]
+                || in[i][j][2] != buf1[i][2][j])
+              {
+                  Error = TRUE;
+              }
 
     if (Error)
       {
-	  fprintf(stderr, "Image 1 was incorrect\n");
-	  num_errs++;
+          fprintf(stderr, "Image 1 was incorrect\n");
+          num_errs++;
       }
 
     if (ref1 != DF24lastref())
       {
-	  fprintf(stderr, "Bogus lastref for image 1\n");
-	  num_errs++;
+          fprintf(stderr, "Bogus lastref for image 1\n");
+          num_errs++;
       }
 
     /* read image 2 */
@@ -1281,32 +1281,32 @@ test_r24(void)
 
     if ((xd != XSIZE) || (yd != YSIZE) || il != 2)
       {
-	  fprintf(stderr, "Returned meta-data is wrong for image 2\n");
-	  num_errs++;
+          fprintf(stderr, "Returned meta-data is wrong for image 2\n");
+          num_errs++;
       }
 
     ret = DF24getimage(TESTFILE, (VOIDP) in, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
     for (i = 0; i < YSIZE; i++)
-	for (j = 0; j < XSIZE; j++)
-	    if (in[i][j][0] != buf2[0][i][j]
-		|| in[i][j][1] != buf2[1][i][j]
-		|| in[i][j][2] != buf2[2][i][j])
-	      {
-		  Error = TRUE;
-	      }
+        for (j = 0; j < XSIZE; j++)
+            if (in[i][j][0] != buf2[0][i][j]
+                || in[i][j][1] != buf2[1][i][j]
+                || in[i][j][2] != buf2[2][i][j])
+              {
+                  Error = TRUE;
+              }
 
     if (Error)
       {
-	  fprintf(stderr, "Image 2 was incorrect\n");
-	  num_errs++;
+          fprintf(stderr, "Image 2 was incorrect\n");
+          num_errs++;
       }
 
     if (ref2 != DF24lastref())
       {
-	  fprintf(stderr, "Bogus lastref for image 2\n");
-	  num_errs++;
+          fprintf(stderr, "Bogus lastref for image 2\n");
+          num_errs++;
       }
 
     ret = DF24restart();
@@ -1321,26 +1321,26 @@ test_r24(void)
 
     if ((xd != XSIZE) || (yd != YSIZE) || il != 0)
       {
-	  fprintf(stderr, "Returned meta-data is wrong for image 3\n");
-	  num_errs++;
+          fprintf(stderr, "Returned meta-data is wrong for image 3\n");
+          num_errs++;
       }
 
     ret = DF24getimage(TESTFILE, (VOIDP) in1, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
     for (i = 0; i < YSIZE; i++)
-	for (j = 0; j < XSIZE; j++)
-	    if (in1[i][0][j] != buf[i][j][0]
-		|| in1[i][1][j] != buf[i][j][1]
-		|| in1[i][2][j] != buf[i][j][2])
-	      {
-		  Error = TRUE;
-	      }
+        for (j = 0; j < XSIZE; j++)
+            if (in1[i][0][j] != buf[i][j][0]
+                || in1[i][1][j] != buf[i][j][1]
+                || in1[i][2][j] != buf[i][j][2])
+              {
+                  Error = TRUE;
+              }
 
     if (Error)
       {
-	  fprintf(stderr, "Image 3 was incorrect\n");
-	  num_errs++;
+          fprintf(stderr, "Image 3 was incorrect\n");
+          num_errs++;
       }
 
     /* read image 4 */
@@ -1350,26 +1350,26 @@ test_r24(void)
 
     if ((xd != XSIZE) || (yd != YSIZE) || il != 1)
       {
-	  fprintf(stderr, "Returned meta-data is wrong for image 4\n");
-	  num_errs++;
+          fprintf(stderr, "Returned meta-data is wrong for image 4\n");
+          num_errs++;
       }
 
     ret = DF24getimage(TESTFILE, (VOIDP) in1, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
     for (i = 0; i < YSIZE; i++)
-	for (j = 0; j < XSIZE; j++)
-	    if (in1[i][0][j] != buf1[i][0][j]
-		|| in1[i][1][j] != buf1[i][1][j]
-		|| in1[i][2][j] != buf1[i][2][j])
-	      {
-		  Error = TRUE;
-	      }
+        for (j = 0; j < XSIZE; j++)
+            if (in1[i][0][j] != buf1[i][0][j]
+                || in1[i][1][j] != buf1[i][1][j]
+                || in1[i][2][j] != buf1[i][2][j])
+              {
+                  Error = TRUE;
+              }
 
     if (Error)
       {
-	  fprintf(stderr, "Image 4 was incorrect\n");
-	  num_errs++;
+          fprintf(stderr, "Image 4 was incorrect\n");
+          num_errs++;
       }
 
     /* read image 5 */
@@ -1379,26 +1379,26 @@ test_r24(void)
 
     if ((xd != XSIZE) || (yd != YSIZE) || il != 2)
       {
-	  fprintf(stderr, "Returned meta-data is wrong for image 5\n");
-	  num_errs++;
+          fprintf(stderr, "Returned meta-data is wrong for image 5\n");
+          num_errs++;
       }
 
     ret = DF24getimage(TESTFILE, (VOIDP) in1, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
     for (i = 0; i < YSIZE; i++)
-	for (j = 0; j < XSIZE; j++)
-	    if (in1[i][0][j] != buf2[0][i][j]
-		|| in1[i][1][j] != buf2[1][i][j]
-		|| in1[i][2][j] != buf2[2][i][j])
-	      {
-		  Error = TRUE;
-	      }
+        for (j = 0; j < XSIZE; j++)
+            if (in1[i][0][j] != buf2[0][i][j]
+                || in1[i][1][j] != buf2[1][i][j]
+                || in1[i][2][j] != buf2[2][i][j])
+              {
+                  Error = TRUE;
+              }
 
     if (Error)
       {
-	  fprintf(stderr, "Image 5 was incorrect\n");
-	  num_errs++;
+          fprintf(stderr, "Image 5 was incorrect\n");
+          num_errs++;
       }
 
     /* read image 6 */
@@ -1414,26 +1414,26 @@ test_r24(void)
 
     if ((xd != XSIZE) || (yd != YSIZE) || il != 0)
       {
-	  fprintf(stderr, "Returned meta-data is wrong for image 6\n");
-	  num_errs++;
+          fprintf(stderr, "Returned meta-data is wrong for image 6\n");
+          num_errs++;
       }
 
     ret = DF24getimage(TESTFILE, (VOIDP) in2, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
     for (i = 0; i < YSIZE; i++)
-	for (j = 0; j < XSIZE; j++)
-	    if (in2[0][i][j] != buf[i][j][0]
-		|| in2[1][i][j] != buf[i][j][1]
-		|| in2[2][i][j] != buf[i][j][2])
-	      {
-		  Error = TRUE;
-	      }
+        for (j = 0; j < XSIZE; j++)
+            if (in2[0][i][j] != buf[i][j][0]
+                || in2[1][i][j] != buf[i][j][1]
+                || in2[2][i][j] != buf[i][j][2])
+              {
+                  Error = TRUE;
+              }
 
     if (Error)
       {
-	  fprintf(stderr, "Image 6 was incorrect\n");
-	  num_errs++;
+          fprintf(stderr, "Image 6 was incorrect\n");
+          num_errs++;
       }
 
     /* read image 7 */
@@ -1442,25 +1442,25 @@ test_r24(void)
 
     if ((xd != XSIZE) || (yd != YSIZE) || il != 1)
       {
-	  fprintf(stderr, "Returned meta-data is wrong for image 7\n");
-	  num_errs++;
+          fprintf(stderr, "Returned meta-data is wrong for image 7\n");
+          num_errs++;
       }
 
     ret = DF24getimage(TESTFILE, (VOIDP) in2, XSIZE, YSIZE);
     RESULT("DF24getimage");
     for (i = 0; i < YSIZE; i++)
-	for (j = 0; j < XSIZE; j++)
-	    if (in2[0][i][j] != buf1[i][0][j]
-		|| in2[1][i][j] != buf1[i][1][j]
-		|| in2[2][i][j] != buf1[i][2][j])
-	      {
-		  Error = TRUE;
-	      }
+        for (j = 0; j < XSIZE; j++)
+            if (in2[0][i][j] != buf1[i][0][j]
+                || in2[1][i][j] != buf1[i][1][j]
+                || in2[2][i][j] != buf1[i][2][j])
+              {
+                  Error = TRUE;
+              }
 
     if (Error)
       {
-	  fprintf(stderr, "Image 7 was incorrect\n");
-	  num_errs++;
+          fprintf(stderr, "Image 7 was incorrect\n");
+          num_errs++;
       }
 
     /* read image 8 */
@@ -1470,36 +1470,36 @@ test_r24(void)
 
     if ((xd != XSIZE) || (yd != YSIZE) || il != 2)
       {
-	  fprintf(stderr, "Returned meta-data is wrong for image 8\n");
-	  num_errs++;
+          fprintf(stderr, "Returned meta-data is wrong for image 8\n");
+          num_errs++;
       }
 
     ret = DF24getimage(TESTFILE, (VOIDP) in2, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
     for (i = 0; i < YSIZE; i++)
-	for (j = 0; j < XSIZE; j++)
-	    if (in2[0][i][j] != buf2[0][i][j]
-		|| in2[1][i][j] != buf2[1][i][j]
-		|| in2[2][i][j] != buf2[2][i][j])
-	      {
-		  Error = TRUE;
-	      }
+        for (j = 0; j < XSIZE; j++)
+            if (in2[0][i][j] != buf2[0][i][j]
+                || in2[1][i][j] != buf2[1][i][j]
+                || in2[2][i][j] != buf2[2][i][j])
+              {
+                  Error = TRUE;
+              }
 
     if (Error)
       {
-	  fprintf(stderr, "Image 8 was incorrect\n");
-	  num_errs++;
+          fprintf(stderr, "Image 8 was incorrect\n");
+          num_errs++;
       }
 
     MESSAGE(5, printf("\nStoring 24-bit images with JPEG compression\n");
-	);
+        );
 
     ret = DF24setil(0);
     RESULT("DF24setil");
 
     MESSAGE(6, printf("Storing first image with JPEG quality 80\n");
-	);
+        );
     cinfo.jpeg.quality = 80;
     cinfo.jpeg.force_baseline = TRUE;
     DF24setcompress(COMP_JPEG, &cinfo);
@@ -1507,7 +1507,7 @@ test_r24(void)
     RESULT("DF24putimage");
 
     MESSAGE(6, printf("Storing second image with JPEG quality 30\n");
-	);
+        );
     cinfo.jpeg.quality = 30;
     cinfo.jpeg.force_baseline = TRUE;
     DF24setcompress(COMP_JPEG, &cinfo);
@@ -1515,7 +1515,7 @@ test_r24(void)
     RESULT("DF24addimage");
 
     MESSAGE(6, printf("Storing third image with JPEG default quality of 75\n");
-	);
+        );
     cinfo.jpeg.quality = 75;
     cinfo.jpeg.force_baseline = TRUE;
     DF24setcompress(COMP_JPEG, &cinfo);
@@ -1524,12 +1524,12 @@ test_r24(void)
 
     if (DF24nimages(JPEGFILE) != 3)
       {
-	  fprintf(stderr, "  >>> DF24nimages() gives wrong number for JPEG images<<<\n");
-	  num_errs++;
+          fprintf(stderr, "  >>> DF24nimages() gives wrong number for JPEG images<<<\n");
+          num_errs++;
       }
 
     MESSAGE(5, printf("\nReading and verifying 24bit JPEG'ed images\n\n");
-	);
+        );
 
     ret = DF24restart();
     RESULT("DF24restart");
@@ -1541,9 +1541,9 @@ test_r24(void)
 
     if ((xd != JPEGX) || (yd != JPEGY))
       {
-	  fprintf(stderr, "Returned meta-data is wrong for JPEG quality 80 image\n");
-	  fprintf(stderr, "xd=%ld, yd=%ld\n", xd, yd);
-	  num_errs++;
+          fprintf(stderr, "Returned meta-data is wrong for JPEG quality 80 image\n");
+          fprintf(stderr, "xd=%ld, yd=%ld\n", xd, yd);
+          num_errs++;
       }
 
     ret = DF24getimage(JPEGFILE, (VOIDP) jpeg_24bit_temp, JPEGX, JPEGY);
@@ -1551,9 +1551,9 @@ test_r24(void)
 
     if ((ret = fuzzy_memcmp(jpeg_24bit_temp, jpeg_24bit_j80, sizeof(jpeg_24bit_orig), JPEG_FUZZ)) != 0)
       {
-	  fprintf(stderr, "24-bit JPEG quality 80 image was incorrect\n");
-	  fprintf(stderr, "ret=%d, sizeof(jpeg_24bit_orig)=%u\n", (int) ret, (unsigned) sizeof(jpeg_24bit_orig));
-	  num_errs++;
+          fprintf(stderr, "24-bit JPEG quality 80 image was incorrect\n");
+          fprintf(stderr, "ret=%d, sizeof(jpeg_24bit_orig)=%u\n", (int) ret, (unsigned) sizeof(jpeg_24bit_orig));
+          num_errs++;
       }
 
     ret = DF24getdims(JPEGFILE, &xd, &yd, &il);
@@ -1561,9 +1561,9 @@ test_r24(void)
 
     if ((xd != JPEGX) || (yd != JPEGY))
       {
-	  fprintf(stderr, "Returned meta-data is wrong for JPEG quality 30 image\n");
-	  fprintf(stderr, "xd=%ld, yd=%ld\n", xd, yd);
-	  num_errs++;
+          fprintf(stderr, "Returned meta-data is wrong for JPEG quality 30 image\n");
+          fprintf(stderr, "xd=%ld, yd=%ld\n", xd, yd);
+          num_errs++;
       }
 
     ret = DF24getimage(JPEGFILE, (VOIDP) jpeg_24bit_temp, JPEGX, JPEGY);
@@ -1571,9 +1571,9 @@ test_r24(void)
 
     if ((ret = fuzzy_memcmp(jpeg_24bit_temp, jpeg_24bit_j30, sizeof(jpeg_24bit_orig), JPEG_FUZZ)) != 0)
       {
-	  fprintf(stderr, "24-bit JPEG quality 30 image was incorrect\n");
-	  fprintf(stderr, "ret=%d, sizeof(jpeg_24bit_orig)=%u\n", (int) ret, (unsigned) sizeof(jpeg_24bit_orig));
-	  num_errs++;
+          fprintf(stderr, "24-bit JPEG quality 30 image was incorrect\n");
+          fprintf(stderr, "ret=%d, sizeof(jpeg_24bit_orig)=%u\n", (int) ret, (unsigned) sizeof(jpeg_24bit_orig));
+          num_errs++;
       }
 
     ret = DF24getdims(JPEGFILE, &xd, &yd, &il);
@@ -1581,9 +1581,9 @@ test_r24(void)
 
     if ((xd != JPEGX) || (yd != JPEGY))
       {
-	  fprintf(stderr, "Returned meta-data is wrong for JPEG quality 75 image\n");
-	  fprintf(stderr, "xd=%ld, yd=%ld\n", xd, yd);
-	  num_errs++;
+          fprintf(stderr, "Returned meta-data is wrong for JPEG quality 75 image\n");
+          fprintf(stderr, "xd=%ld, yd=%ld\n", xd, yd);
+          num_errs++;
       }
 
     ret = DF24getimage(JPEGFILE, (VOIDP) jpeg_24bit_temp, JPEGX, JPEGY);
@@ -1591,13 +1591,13 @@ test_r24(void)
 
     if ((ret = fuzzy_memcmp(jpeg_24bit_temp, jpeg_24bit_j75, sizeof(jpeg_24bit_orig), JPEG_FUZZ)) != 0)
       {
-	  fprintf(stderr, "24-bit JPEG quality 75 image was incorrect\n");
-	  fprintf(stderr, "ret=%d, sizeof(jpeg_24bit_orig)=%u\n", (int) ret, (unsigned) sizeof(jpeg_24bit_orig));
+          fprintf(stderr, "24-bit JPEG quality 75 image was incorrect\n");
+          fprintf(stderr, "ret=%d, sizeof(jpeg_24bit_orig)=%u\n", (int) ret, (unsigned) sizeof(jpeg_24bit_orig));
 #ifdef QAK
-	  print_image24("JPEG(75) Correct image", (uint8 *) jpeg_24bit_j75, JPEGX, JPEGY);
-	  print_image24("JPEG(75) New image", (uint8 *) jpeg_24bit_temp, JPEGX, JPEGY);
+          print_image24("JPEG(75) Correct image", (uint8 *) jpeg_24bit_j75, JPEGX, JPEGY);
+          print_image24("JPEG(75) New image", (uint8 *) jpeg_24bit_temp, JPEGX, JPEGY);
 #endif
-	  num_errs++;
+          num_errs++;
       }
 
     HDfreespace((VOIDP) jpeg_24bit_temp);
@@ -1605,50 +1605,50 @@ test_r24(void)
 
 VOID
 check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy,
-	     uint8 *oldim, uint8 *newim, uint8 *oldpal, uint8 *newpal)
+             uint8 *oldim, uint8 *newim, uint8 *oldpal, uint8 *newpal)
 {
     int         error;
     int         x, y;
     uint8      *op, *np;
 
     MESSAGE(5, printf("Checking image and palette.\n");
-	);
+        );
 
     op = (uint8 *) oldim;
     np = (uint8 *) newim;
     if (newx != oldx || newy != oldy)
-	printf("        >>> DIMENSIONS WRONG <<<\n\n");
+        printf("        >>> DIMENSIONS WRONG <<<\n\n");
     error = FALSE;
     for (x = 0; x < oldx; x++)
-	for (y = 0; y < oldy; y++)
-	  {
-	      if (*op != *np)
-		{
-		    printf("\t>>>Error at %d %d, orig image=%d; new image=%d<<<\n",
-			   x, y, *op, *np);
-		    error = TRUE;
-		}
-	      op++;
-	      np++;
-	  }
+        for (y = 0; y < oldy; y++)
+          {
+              if (*op != *np)
+                {
+                    printf("\t>>>Error at %d %d, orig image=%d; new image=%d<<<\n",
+                           x, y, *op, *np);
+                    error = TRUE;
+                }
+              op++;
+              np++;
+          }
     if (error)
       {
-	  printf("    >>> Image is wrong. <<<\n");
-	  num_errs++;
+          printf("    >>> Image is wrong. <<<\n");
+          num_errs++;
       }
 
     error = FALSE;
     for (x = 0; x < 768; x++)
-	if (oldpal[x] != newpal[x])
-	  {
-	      printf("\t>>>Pal error at %d, orig pal %u new pal %u<<<\n",
-		     x, oldpal[x], newpal[x]);
-	      error = TRUE;
-	  }
+        if (oldpal[x] != newpal[x])
+          {
+              printf("\t>>>Pal error at %d, orig pal %u new pal %u<<<\n",
+                     x, oldpal[x], newpal[x]);
+              error = TRUE;
+          }
     if (error)
       {
-	  printf("    >>> Palette is wrong. <<<\n");
-	  num_errs++;
+          printf("    >>> Palette is wrong. <<<\n");
+          num_errs++;
       }
 }
 
@@ -1662,7 +1662,7 @@ check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy,
 void
 test_r8(void)
 {
-    comp_info   cinfo;		/* compression information for the JPEG */
+    comp_info   cinfo;          /* compression information for the JPEG */
     uint8      *im2, *ii2;
     uint8      *im1, *ii1;
     uint8      *pal1, *pal2, *ipal;
@@ -1679,16 +1679,16 @@ test_r8(void)
     ii1 = (uint8 *) HDgetspace(XD1 * YD1 * sizeof(uint8));
     if (!im1 || !ii1)
       {
-	  fprintf(stderr, "Out of memory!\n");
-	  exit(1);
+          fprintf(stderr, "Out of memory!\n");
+          exit(1);
       }
 
     im2 = (uint8 *) HDgetspace(XD2 * YD2 * sizeof(uint8));
     ii2 = (uint8 *) HDgetspace(XD2 * YD2 * sizeof(uint8));
     if (!im2 || !ii2)
       {
-	  fprintf(stderr, "Out of memory!\n");
-	  exit(1);
+          fprintf(stderr, "Out of memory!\n");
+          exit(1);
       }
 
     pal1 = (uint8 *) HDgetspace(768 * sizeof(char));
@@ -1696,49 +1696,49 @@ test_r8(void)
     ipal = (uint8 *) HDgetspace(768 * sizeof(char));
     if (!ipal || !pal1 || !pal2)
       {
-	  fprintf(stderr, "Out of memory!\n");
-	  exit(1);
+          fprintf(stderr, "Out of memory!\n");
+          exit(1);
       }
 
     jpeg_8bit_temp = (uint8 *) HDgetspace(JPEGX * JPEGY);
     if (!jpeg_8bit_temp)
       {
-	  fprintf(stderr, "Out of memory!\n");
-	  exit(1);
+          fprintf(stderr, "Out of memory!\n");
+          exit(1);
       }
 
     for (y = 0; y < YD1; y++)
-	for (x = 0; x < XD1; x++)
-	    im1[y * XD1 + x] = (uint8) (x + y);
+        for (x = 0; x < XD1; x++)
+            im1[y * XD1 + x] = (uint8) (x + y);
     for (y = 0; y < YD2; y++)
-	for (x = 0; x < XD2; x++)
-	    im2[y * XD2 + x] = (uint8) ((2 * x + y) - 256 * ((2 * x + y) / 256));
+        for (x = 0; x < XD2; x++)
+            im2[y * XD2 + x] = (uint8) ((2 * x + y) - 256 * ((2 * x + y) / 256));
     for (x = 0; x < 256; x++)
       {
-	  pal1[3 * x] = (uint8) x;
-	  pal1[3 * x + 1] = (uint8) x;
-	  pal1[3 * x + 2] = (uint8) x;
-	  pal2[x] = (uint8) x;
-	  pal2[x + 256] = (uint8) x;
-	  pal2[x + 512] = (uint8) x;
+          pal1[3 * x] = (uint8) x;
+          pal1[3 * x + 1] = (uint8) x;
+          pal1[3 * x + 2] = (uint8) x;
+          pal2[x] = (uint8) x;
+          pal2[x + 256] = (uint8) x;
+          pal2[x + 512] = (uint8) x;
       }
 
     /* start here */
 
     MESSAGE(5, printf("Storing 8bit raster images\n");
-	);
+        );
     ret = DFR8setpalette(pal1);
     RESULT("DFR8setpalette");
 
     MESSAGE(5, printf("Putting image with no compression\n");
-	);
+        );
     ret = DFR8putimage(TESTFILE, (VOIDP) im1, XD1, YD1, 0);
     RESULT("DFR8putimage");
     num_images++;
     ref1 = DFR8lastref();
 
     MESSAGE(5, printf("Putting image RLE compression\n");
-	);
+        );
     ret = DFR8addimage(TESTFILE, (VOIDP) im2, XD2, YD2, DFTAG_RLE);
     RESULT("DFR8addimage");
     num_images++;
@@ -1747,7 +1747,7 @@ test_r8(void)
     ret = DFR8setpalette(pal2);
     RESULT("DFR8setpalette");
     MESSAGE(5, printf("Putting image IMCOMP compression\n");
-	);
+        );
     ret = DFR8addimage(TESTFILE, (VOIDP) im2, XD2, YD2, DFTAG_IMCOMP);
     RESULT("DFR8addimage");
     num_images++;
@@ -1756,18 +1756,18 @@ test_r8(void)
     ret = DFR8nimages(TESTFILE);
     if (ret != num_images)
       {
-	  fprintf(stderr, "        >>> WRONG NUMBER OF IMAGES <<<\n");
-	  num_errs++;
+          fprintf(stderr, "        >>> WRONG NUMBER OF IMAGES <<<\n");
+          num_errs++;
       }
 
     MESSAGE(5, printf("Reading and verifying 8bit raster images\n");
-	);
+        );
 
     ret = DFR8restart();
     RESULT("DFR8restart");
 
     MESSAGE(5, printf("Verifying uncompressed image\n");
-	);
+        );
 
     ret = DFR8getdims(TESTFILE, &xd, &yd, &ispal);
     RESULT("DFR8getdims");
@@ -1777,13 +1777,13 @@ test_r8(void)
     check_im_pal(XD1, YD1, xd, yd, im1, ii1, pal1, ipal);
 
     MESSAGE(5, printf("Verifying RLE compressed image\n");
-	);
+        );
 
     ret = DFR8getdims(TESTFILE, &xd, &yd, &ispal);
     RESULT("DFR8getdims");
 
     MESSAGE(5, printf("Verifying IMCOMP compressed image\n");
-	);
+        );
 
     ret = DFR8getdims(TESTFILE, &xd, &yd, &ispal);
     RESULT("DFR8getdims");
@@ -1791,7 +1791,7 @@ test_r8(void)
     RESULT("DFR8getimage");
 
     MESSAGE(5, printf("Rechecking RLE image\n");
-	);
+        );
 
     ret = DFR8readref(TESTFILE, ref2);
     RESULT("DFR8readref");
@@ -1800,7 +1800,7 @@ test_r8(void)
     check_im_pal(XD2, YD2, XD2, YD2, im2, ii2, pal1, ipal);
 
     MESSAGE(5, printf("Changing palette of first image\n");
-	);
+        );
 
     ret = DFR8writeref(TESTFILE, ref1);
     RESULT("DFR8writeref");
@@ -1810,7 +1810,7 @@ test_r8(void)
     RESULT("DFR8addimage");
 
     MESSAGE(5, printf("Verifying palette change\n");
-	);
+        );
 
     ret = DFR8readref(TESTFILE, ref1);
     RESULT("DFR8readref");
@@ -1821,10 +1821,10 @@ test_r8(void)
     check_im_pal(XD1, YD1, xd, yd, im1, ii1, pal2, ipal);
 
     MESSAGE(5, printf("\nStoring 8-bit images with JPEG compression\n");
-	);
+        );
 
     MESSAGE(6, printf("Storing first image with JPEG quality 80\n");
-	);
+        );
     cinfo.jpeg.quality = 80;
     cinfo.jpeg.force_baseline = TRUE;
     DFR8setcompress(COMP_JPEG, &cinfo);
@@ -1832,7 +1832,7 @@ test_r8(void)
     RESULT("DFR8putimage");
 
     MESSAGE(6, printf("Storing second image with JPEG quality 30\n");
-	);
+        );
     cinfo.jpeg.quality = 30;
     cinfo.jpeg.force_baseline = TRUE;
     DFR8setcompress(COMP_JPEG, &cinfo);
@@ -1840,12 +1840,12 @@ test_r8(void)
     RESULT("DFR8addimage");
 
     MESSAGE(6, printf("Storing third image with JPEG default quality of 75\n");
-	);
+        );
     ret = DFR8addimage(JPEGFILE, (VOIDP) jpeg_8bit_orig, JPEGX, JPEGY, COMP_JPEG);
     RESULT("DFR8addimage");
 
     MESSAGE(5, printf("\nReading and verifying 8-bit JPEG'ed images\n\n");
-	);
+        );
 
     ret = DFR8restart();
     RESULT("DFR8restart");
@@ -1855,8 +1855,8 @@ test_r8(void)
 
     if ((xd != JPEGX) || (yd != JPEGY))
       {
-	  fprintf(stderr, "Returned meta-data is wrong for JPEG quality 80 image\n");
-	  num_errs++;
+          fprintf(stderr, "Returned meta-data is wrong for JPEG quality 80 image\n");
+          num_errs++;
       }
 
     ret = DFR8getimage(JPEGFILE, (uint8 *) jpeg_8bit_temp, JPEGX, JPEGY, NULL);
@@ -1864,8 +1864,8 @@ test_r8(void)
 
     if (HDmemcmp(jpeg_8bit_temp, jpeg_8bit_j80, sizeof(jpeg_8bit_orig)))
       {
-	  fprintf(stderr, "8-bit JPEG quality 80 image was incorrect\n");
-	  num_errs++;
+          fprintf(stderr, "8-bit JPEG quality 80 image was incorrect\n");
+          num_errs++;
       }
 
     ret = DFR8getdims(JPEGFILE, &xd, &yd, &ispal);
@@ -1873,8 +1873,8 @@ test_r8(void)
 
     if ((xd != JPEGX) || (yd != JPEGY))
       {
-	  fprintf(stderr, "Returned meta-data is wrong for JPEG quality 30 image\n");
-	  num_errs++;
+          fprintf(stderr, "Returned meta-data is wrong for JPEG quality 30 image\n");
+          num_errs++;
       }
 
     ret = DFR8getimage(JPEGFILE, (uint8 *) jpeg_8bit_temp, JPEGX, JPEGY, NULL);
@@ -1882,8 +1882,8 @@ test_r8(void)
 
     if (HDmemcmp(jpeg_8bit_temp, jpeg_8bit_j30, sizeof(jpeg_8bit_orig)))
       {
-	  fprintf(stderr, "8-bit JPEG quality 30 image was incorrect\n");
-	  num_errs++;
+          fprintf(stderr, "8-bit JPEG quality 30 image was incorrect\n");
+          num_errs++;
       }
 
     ret = DFR8getdims(JPEGFILE, &xd, &yd, &ispal);
@@ -1891,8 +1891,8 @@ test_r8(void)
 
     if ((xd != JPEGX) || (yd != JPEGY))
       {
-	  fprintf(stderr, "Returned meta-data is wrong for JPEG quality 75 image\n");
-	  num_errs++;
+          fprintf(stderr, "Returned meta-data is wrong for JPEG quality 75 image\n");
+          num_errs++;
       }
 
     ret = DFR8getimage(JPEGFILE, (uint8 *) jpeg_8bit_temp, JPEGX, JPEGY, NULL);
@@ -1900,8 +1900,8 @@ test_r8(void)
 
     if (HDmemcmp(jpeg_8bit_temp, jpeg_8bit_j75, sizeof(jpeg_8bit_orig)))
       {
-	  fprintf(stderr, "8-bit JPEG quality 75 image was incorrect\n");
-	  num_errs++;
+          fprintf(stderr, "8-bit JPEG quality 75 image was incorrect\n");
+          num_errs++;
       }
 
     HDfreespace((VOIDP) im1);
@@ -1928,22 +1928,22 @@ test_pal(void)
     ipal = (char *) HDgetspace(768 * sizeof(char));
     if (!ipal || !pal1 || !pal2)
       {
-	  fprintf(stderr, "Out of memory!\n");
-	  exit(1);
+          fprintf(stderr, "Out of memory!\n");
+          exit(1);
       }
 
     for (i = 0; i < 256; i++)
       {
-	  pal1[3 * i] = (uint8) i;
-	  pal1[3 * i + 1] = (uint8) i;
-	  pal1[3 * i + 2] = (uint8) i;
-	  pal2[i] = (uint8) i;
-	  pal2[i + 256] = (uint8) i;
-	  pal2[i + 512] = (uint8) i;
+          pal1[3 * i] = (uint8) i;
+          pal1[3 * i + 1] = (uint8) i;
+          pal1[3 * i + 2] = (uint8) i;
+          pal2[i] = (uint8) i;
+          pal2[i + 256] = (uint8) i;
+          pal2[i + 512] = (uint8) i;
       }
 
     MESSAGE(5, printf("Adding palettes to a file\n");
-	);
+        );
 
     ret = DFPputpal(TESTFILE, pal1, 0, "w");
     RESULT("DFPputpal");
@@ -1954,7 +1954,7 @@ test_pal(void)
     ref2 = DFPlastref();
 
     MESSAGE(5, printf("Reading and verifying palettes\n");
-	);
+        );
 
     ret = DFPrestart();
     RESULT("DFPrestart");
@@ -1963,32 +1963,32 @@ test_pal(void)
     ret = DFPgetpal(TESTFILE, ipal);
     RESULT("DFPgetpal");
     for (i = 0; i < 768; i++)
-	if (ipal[i] != pal1[i])
-	    printf("Error at %d, ipal %d pal1 %d\n", i, ipal[i], pal1[i]);
+        if (ipal[i] != pal1[i])
+            printf("Error at %d, ipal %d pal1 %d\n", i, ipal[i], pal1[i]);
 
     if (ref1 != DFPlastref())
       {
-	  fprintf(stderr, "  >>> DFPlastref() bad for palette 1 <<<\n");
-	  num_errs++;
+          fprintf(stderr, "  >>> DFPlastref() bad for palette 1 <<<\n");
+          num_errs++;
       }
 
     /* read and check palette 2 */
     ret = DFPgetpal(TESTFILE, ipal);
     RESULT("DFPgetpal");
     for (i = 0; i < 768; i++)
-	if (ipal[i] != pal2[i])
-	    printf("Error at %d, ipal %d pal2 %d\n", i, ipal[i], pal2[i]);
+        if (ipal[i] != pal2[i])
+            printf("Error at %d, ipal %d pal2 %d\n", i, ipal[i], pal2[i]);
 
     if (ref2 != DFPlastref())
       {
-	  fprintf(stderr, "  >>> DFPlastref() bad for palette 2 <<<\n");
-	  num_errs++;
+          fprintf(stderr, "  >>> DFPlastref() bad for palette 2 <<<\n");
+          num_errs++;
       }
 
     if (DFPnpals(TESTFILE) != 2)
       {
-	  fprintf(stderr, "  >>> DFPnpals() gives wrong number <<<\n");
-	  num_errs++;
+          fprintf(stderr, "  >>> DFPnpals() gives wrong number <<<\n");
+          num_errs++;
       }
 
     /* recheck palette number 2 */
@@ -1997,8 +1997,8 @@ test_pal(void)
     ret = DFPgetpal(TESTFILE, ipal);
     RESULT("DFPgetpal");
     for (i = 0; i < 768; i++)
-	if (ipal[i] != pal2[i])
-	    printf("Error at %d, ipal %d pal2 %d\n", i, ipal[i], pal2[i]);
+        if (ipal[i] != pal2[i])
+            printf("Error at %d, ipal %d pal2 %d\n", i, ipal[i], pal2[i]);
 
     /* recheck palette number 1 */
     ret = DFPreadref(TESTFILE, ref1);
@@ -2006,13 +2006,13 @@ test_pal(void)
     ret = DFPgetpal(TESTFILE, ipal);
     RESULT("DFPgetpal");
     for (i = 0; i < 768; i++)
-	if (ipal[i] != pal1[i])
-	    printf("Error at %d, ipal %d pal1 %d\n", i, ipal[i], pal1[i]);
+        if (ipal[i] != pal1[i])
+            printf("Error at %d, ipal %d pal1 %d\n", i, ipal[i], pal1[i]);
 
     MESSAGE(5, printf("Modifying first palette\n");
-	);
+        );
     for (i = 0; i < 256; i++)
-	pal1[i + 256] = (uint8) (255 - i);
+        pal1[i + 256] = (uint8) (255 - i);
     ret = DFPwriteref(TESTFILE, ref1);
     RESULT("DFPwriteref");
 
@@ -2025,8 +2025,8 @@ test_pal(void)
     ret = DFPgetpal(TESTFILE, ipal);
     RESULT("DFPgetpal");
     for (i = 0; i < 768; i++)
-	if (ipal[i] != pal1[i])
-	    printf("Error at %d, ipal %d pal1 %d\n", i, ipal[i], pal1[i]);
+        if (ipal[i] != pal1[i])
+            printf("Error at %d, ipal %d pal1 %d\n", i, ipal[i], pal1[i]);
     HDfreespace((VOIDP) pal1);
     HDfreespace((VOIDP) pal2);
     HDfreespace((VOIDP) ipal);

@@ -35,7 +35,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define MAXLEN_DESC  1000
 #define ROWS           10
 #define COLS           10
-#define REPS            2	/* number of data sets to write to file */
+#define REPS            2   /* number of data sets to write to file */
 
 static VOID gen2Dfloat
             (int height, int width, float *data);
@@ -86,52 +86,52 @@ test_an()
 
 /********  Write labels and descriptions *********/
     MESSAGE(5, printf("***  Writing labels and descriptions with SDS and RIS ***\n");
-	);
+        );
     for (j = 0; j < REPS; j++)
       {
 
-	  /* write out scientific data set */
-	  ret = DFSDadddata(TESTFILE, 2, dimsizes, (VOIDP) data);
-	  RESULT("DFSDadddata");
+          /* write out scientific data set */
+          ret = DFSDadddata(TESTFILE, 2, dimsizes, (VOIDP) data);
+          RESULT("DFSDadddata");
 
-	  if ((j % 3) != 0)
-	    {	/* write out annotations for 2 out of every 3 */
-		refnum = DFSDlastref();
-		ret = DFANputlabel(TESTFILE, DFTAG_SDG, refnum, labsds);
-		RESULT("DFANputlabel");
-		ret = DFANputdesc(TESTFILE, DFTAG_SDG, refnum,
-				  descsds, HDstrlen(descsds));
-		RESULT("DFANputdesc");
-	    }
+          if ((j % 3) != 0)
+            {   /* write out annotations for 2 out of every 3 */
+                refnum = DFSDlastref();
+                ret = DFANputlabel(TESTFILE, DFTAG_SDG, refnum, labsds);
+                RESULT("DFANputlabel");
+                ret = DFANputdesc(TESTFILE, DFTAG_SDG, refnum,
+                                  descsds, HDstrlen(descsds));
+                RESULT("DFANputdesc");
+            }
 
-	  ret = DFR8addimage(TESTFILE, (VOIDP) image, COLS, ROWS, 0);
-	  RESULT("DFR8addimage");
-	  refnum = DFR8lastref();
-	  ret = DFANputlabel(TESTFILE, DFTAG_RIG, refnum, labris);
-	  RESULT("DFANputlabel");
-	  ret = DFANputdesc(TESTFILE, DFTAG_RIG, refnum, descris, HDstrlen(descris));
-	  RESULT("DFANputdesc");
+          ret = DFR8addimage(TESTFILE, (VOIDP) image, COLS, ROWS, 0);
+          RESULT("DFR8addimage");
+          refnum = DFR8lastref();
+          ret = DFANputlabel(TESTFILE, DFTAG_RIG, refnum, labris);
+          RESULT("DFANputlabel");
+          ret = DFANputdesc(TESTFILE, DFTAG_RIG, refnum, descris, HDstrlen(descris));
+          RESULT("DFANputdesc");
       }
 
 /********  Read labels and descriptions *********/
 
     MESSAGE(5, printf("*** Reading labels and descriptions for SDS and RIS ***\n");
-	);
+        );
 
     for (j = 0; j < REPS; j++)
       {
 
-	  ret = DFSDgetdims(TESTFILE, &rank, dimsizes, 3);
-	  RESULT("DFSDgetdims");
-	  refnum = DFSDlastref();
+          ret = DFSDgetdims(TESTFILE, &rank, dimsizes, 3);
+          RESULT("DFSDgetdims");
+          refnum = DFSDlastref();
 
-	  if ((j % 3) != 0)	/* read in annotations for 2 out of every 3 */
-	      check_lab_desc(DFTAG_SDG, refnum, labsds, descsds);
+          if ((j % 3) != 0)     /* read in annotations for 2 out of every 3 */
+              check_lab_desc(DFTAG_SDG, refnum, labsds, descsds);
 
-	  ret = DFR8getimage(TESTFILE, newimage, (int32) COLS, (int32) ROWS, pal);
-	  RESULT("DFR8getimage");
-	  refnum = DFR8lastref();
-	  check_lab_desc(DFTAG_RIG, refnum, labris, descris);
+          ret = DFR8getimage(TESTFILE, newimage, (int32) COLS, (int32) ROWS, pal);
+          RESULT("DFR8getimage");
+          refnum = DFR8lastref();
+          check_lab_desc(DFTAG_RIG, refnum, labris, descris);
       }
 
     HDfreespace((VOIDP) data);
@@ -141,7 +141,7 @@ test_an()
 
 /****************************************************************
 **
-**  gen2Dfloat:  generate 2-D data array 
+**  gen2Dfloat:  generate 2-D data array
 **
 ****************************************************************/
 static      VOID
@@ -153,8 +153,8 @@ gen2Dfloat(int height, int width, float *data)
     /* store one value per row, increasing by one for each row */
     pdata = data;
     for (i = 0; i < height; i++)
-	for (j = 0; j < width; j++)
-	    *pdata++ = (float) i + 1;
+        for (j = 0; j < width; j++)
+            *pdata++ = (float) i + 1;
 
 }
 
@@ -175,15 +175,15 @@ genimage(int height, int width, float *data, uint8 *image)
     max = min = *pdata;
     for (i = 0; i < limit; i++, pdata++)
       {
-	  max = (max > *pdata) ? max : *pdata;
-	  min = (min < *pdata) ? min : *pdata;
+          max = (max > *pdata) ? max : *pdata;
+          min = (min < *pdata) ? min : *pdata;
       }
     /* store one value per row, increasing by one for each row */
     pdata = data;
     pimage = image;
     multiplier = (float32) 255.0 / (max - min);
     for (i = 0; i < limit; i++)
-	*image++ = (uint8) (((*pdata++) - min) * multiplier);
+        *image++ = (uint8) (((*pdata++) - min) * multiplier);
 
 }
 
@@ -203,39 +203,39 @@ check_lab_desc(uint16 tag, uint16 ref, char *label, char *desc)
     RESULT("DFANgetlablen");
     if (inlablen != (int32) HDstrlen(label))
       {
-	  printf("\t>>>BAD LABEL LENGTH.\n\t       IS: %d\n\tSHOULD BE: %d<<<\n",
-		 (int) inlablen, (int) HDstrlen(label));
-	  num_errs++;
+          printf("\t>>>BAD LABEL LENGTH.\n\t       IS: %d\n\tSHOULD BE: %d<<<\n",
+                 (int) inlablen, (int) HDstrlen(label));
+          num_errs++;
       }
     ret = DFANgetlabel(TESTFILE, tag, ref, inlabel, MAXLEN_LAB);
     RESULT("DFANgetlabel");
     if (HDstrcmp(inlabel, label) != 0)
       {
-	  printf("\t>>>BAD LABEL. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n",
-		 inlabel, label);
-	  num_errs++;
+          printf("\t>>>BAD LABEL. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n",
+                 inlabel, label);
+          num_errs++;
       }
 
     indesclen = ret = DFANgetdesclen(TESTFILE, tag, ref);
     RESULT("DFANgetdesclen");
     if (indesclen != (int32) HDstrlen(desc))
       {
-	  printf("\t>>>BAD DESCRIPTION LENGTH. \n\t       IS: %d", (int) indesclen);
-	  printf("\n\tSHOULD BE: %d<<<\n", (int) HDstrlen(desc));
-	  num_errs++;
+          printf("\t>>>BAD DESCRIPTION LENGTH. \n\t       IS: %d", (int) indesclen);
+          printf("\n\tSHOULD BE: %d<<<\n", (int) HDstrlen(desc));
+          num_errs++;
       }
     else
       {
-	  indesc = (char *) HDgetspace(indesclen + 1);
-	  ret = DFANgetdesc(TESTFILE, tag, ref, indesc, MAXLEN_DESC);
-	  RESULT("DFANgetdesc");
-	  indesc[indesclen] = '\0';
-	  if (HDstrcmp(indesc, desc) != 0)
-	    {
-		printf("\t>>>BAD DESCRIPTION.\n\t      IS: %s", indesc);
-		printf("\n\tSHOULD BE: %s<<<\n", desc);
-		num_errs++;
-	    }
-	  HDfreespace((VOIDP) indesc);
+          indesc = (char *) HDgetspace(indesclen + 1);
+          ret = DFANgetdesc(TESTFILE, tag, ref, indesc, MAXLEN_DESC);
+          RESULT("DFANgetdesc");
+          indesc[indesclen] = '\0';
+          if (HDstrcmp(indesc, desc) != 0)
+            {
+                printf("\t>>>BAD DESCRIPTION.\n\t      IS: %s", indesc);
+                printf("\n\tSHOULD BE: %s<<<\n", desc);
+                num_errs++;
+            }
+          HDfreespace((VOIDP) indesc);
       }
 }

@@ -39,12 +39,12 @@ int         cntimage
 VOID        finishing
             (void);
 
-int 
+int
 main(int argc, char *argv[])
 {
     int         i, j;
-    int         nimg, nimg0;	/* nimg, nimg0 -- number of images        */
-    int32       w, h;		/* w, h -- width and height of images */
+    int         nimg, nimg0;    /* nimg, nimg0 -- number of images        */
+    int32       w, h;           /* w, h -- width and height of images */
     int         ret, n_infile, getoutfile, ispal;
     int32       dimsizes[3];
     char       *infile, *outfile, **argv_infile;
@@ -53,34 +53,34 @@ main(int argc, char *argv[])
 
     if (argc < 4)
       {
-	  printf("Usage %s.\n", USAGE);
-	  finishing();
+          printf("Usage %s.\n", USAGE);
+          finishing();
       }
     /* initialization   */
 
     nimg = 0;
     w = h = 0;
-    n_infile = 0;	/* count number of input files   */
+    n_infile = 0;   /* count number of input files   */
     getoutfile = 0;
-    argv_infile = &argv[1];	/* save start address of input file names. */
+    argv_infile = &argv[1];     /* save start address of input file names. */
 
     /* Count total number of images to be converted.   */
 
     while (--argc > 1)
-      {		/* reach -o. go to get output file name */
-	  infile = *++argv;
-	  if (infile[0] == '-')
-	    {
-		getoutfile = 1;
-		break;
-	    }
-	  else
-	    {
-		n_infile++;
-		ret = cntimage(infile, &w, &h, &nimg);
-		if (ret != 0)
-		    finishing();
-	    }
+      {     /* reach -o. go to get output file name */
+          infile = *++argv;
+          if (infile[0] == '-')
+            {
+                getoutfile = 1;
+                break;
+            }
+          else
+            {
+                n_infile++;
+                ret = cntimage(infile, &w, &h, &nimg);
+                if (ret != 0)
+                    finishing();
+            }
       }
 
     nimg0 = nimg;
@@ -91,9 +91,9 @@ main(int argc, char *argv[])
     argc--;
 
     if (getoutfile == 0 || argc < 1)
-      {		/* is -o or outfile missing?    */
-	  printf("Bad commend line. \n\n\t\t %s\n", USAGE);
-	  finishing();
+      {     /* is -o or outfile missing?    */
+          printf("Bad commend line. \n\n\t\t %s\n", USAGE);
+          finishing();
       }
 
     outfile = *++argv;
@@ -106,49 +106,49 @@ main(int argc, char *argv[])
     ret = DFR8getdims(infile, &w, &h, &ispal);
     if (ispal)
       {
-	  DFPgetpal(infile, (char *) palette);
-	  DFR8restart();	/* in case the palette is not at the  */
-	  /* beginning of the first input file  */
-	  DFPputpal(outfile, (char *) palette, 0, "a");
+          DFPgetpal(infile, (char *) palette);
+          DFR8restart();    /* in case the palette is not at the  */
+          /* beginning of the first input file  */
+          DFPputpal(outfile, (char *) palette, 0, "a");
       }
     while (nimg > 0)
       {
-	  indata = indata0;	/* Restart from the beginning of the buf */
-	  ret = DFR8getimage(infile, indata, w, h, palette);
-	  if (ret != 0)
-	    {	/* end of file. open next one   */
-		n_infile--;
-		if (n_infile < 1)
-		  {
-		      printf("Inconsistent number of files and images\n");
-		      finishing();
-		  }
-		infile = *++argv_infile;
-		ret = DFR8getimage(infile, indata, w, h, palette);
-		if (ret != 0)
-		    finishing();
-	    }
+          indata = indata0;     /* Restart from the beginning of the buf */
+          ret = DFR8getimage(infile, indata, w, h, palette);
+          if (ret != 0)
+            {   /* end of file. open next one   */
+                n_infile--;
+                if (n_infile < 1)
+                  {
+                      printf("Inconsistent number of files and images\n");
+                      finishing();
+                  }
+                infile = *++argv_infile;
+                ret = DFR8getimage(infile, indata, w, h, palette);
+                if (ret != 0)
+                    finishing();
+            }
 
-	  /* convert image data into floating point and store in the array  */
+          /* convert image data into floating point and store in the array  */
 
-	  for (i = 0; i < w; i++)
-	      for (j = 0; j < h; j++)
-		  *outdata++ = *indata++;
-	  nimg--;
+          for (i = 0; i < w; i++)
+              for (j = 0; j < h; j++)
+                  *outdata++ = *indata++;
+          nimg--;
       }
 
     dimsizes[0] = nimg0;
     dimsizes[1] = h;
     dimsizes[2] = w;
     if (DFSDsetNT(DFNT_UINT8) == FAIL)
-	finishing();
+        finishing();
     ret = DFSDadddata(outfile, 3, dimsizes, (VOIDP) outdata0);
     if (ret != 0)
-	finishing();
+        finishing();
     return (0);
 }
 
-VOID 
+VOID
 finishing(void)
 {
     printf("end of ristosds.\n");
@@ -157,7 +157,7 @@ finishing(void)
 
 /* count # of images  */
 
-int 
+int
 cntimage(char *filename, int32 *p_w, int32 *p_h, int *n_images)
 
 {
@@ -169,31 +169,31 @@ cntimage(char *filename, int32 *p_w, int32 *p_h, int *n_images)
     ret = DFR8getdims(filename, &width, &height, &ispal);
     if (ret == FAIL)
       {
-	  HEprint(stderr, 0);
-	  finishing();
+          HEprint(stderr, 0);
+          finishing();
       }
     if (*p_w == 0 && *p_h == 0)
-      {		/* the first time  */
-	  *p_w = width;
-	  *p_h = height;
+      {     /* the first time  */
+          *p_w = width;
+          *p_h = height;
       }
     while (ret == 0)
-      {		/* count # of images and check dims    */
-	  if ((width != *p_w) || (height != *p_h))
-	    {
-		printf("Inconsistent dims: %s .\n", filename);
-		dimerror = -1;
-		break;
-	    }
-	  *n_images = *n_images + 1;
-	  ret = DFR8getdims(filename, &width, &height, &ispal);
+      {     /* count # of images and check dims    */
+          if ((width != *p_w) || (height != *p_h))
+            {
+                printf("Inconsistent dims: %s .\n", filename);
+                dimerror = -1;
+                break;
+            }
+          *n_images = *n_images + 1;
+          ret = DFR8getdims(filename, &width, &height, &ispal);
       }
 
     /* ready to return   */
 
     DFR8restart();
     if (dimerror == -1)
-	return (-1);
+        return (-1);
     else
-	return (0);
+        return (0);
 }

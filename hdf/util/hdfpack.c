@@ -83,7 +83,7 @@ int32       nblk = 0;
 char       *from_file = NULL;
 char       *to_file = NULL;
 
-int 
+int
 main(int argc, char *argv[])
 {
     int         i, num_desc, fnum, merge;
@@ -105,16 +105,16 @@ main(int argc, char *argv[])
     HDstrcpy(invoke, strtok(argv[0], "/]\\\0"));
     for (;;)
       {
-	  if (tmp != NULL)
-	      HDstrcpy(invoke, tmp);
-	  if ((tmp = strtok((char *) NULL, "/]\\\0")) == NULL)
-	      break;
+          if (tmp != NULL)
+              HDstrcpy(invoke, tmp);
+          if ((tmp = strtok((char *) NULL, "/]\\\0")) == NULL)
+              break;
       }
 
     if (argc < 3)
       {
-	  usage(invoke);
-	  exit(1);
+          usage(invoke);
+          exit(1);
       }
 
 /*
@@ -124,60 +124,60 @@ main(int argc, char *argv[])
     i = 1;
     while (i < argc)
       {
-	  if (argv[i][0] == '-')
-	    {
-		switch (argv[i][1])
-		  {
-		      case 'b':
-			  if (optset == 0)
-			    {
-				blocks = 0;
-				optset = 1;
-			    }
-			  else
-			    {
-				error("incompatible options: -i and -b");
-			    }
-			  break;
-		      case 'i':
-			  if (optset == 0)
-			    {
-				intr = 1;
-				blocks = 0;
-				optset = 1;
-			    }
-			  else
-			    {
-				error("incompatible options: -i and -b");
-			    }
-			  break;
-		      case 'd':
-			  ndds = (int16) atoi(&argv[i][2]);
-			  break;
-		      case 't':
-			  nblk = atoi(&argv[i][2]);
-			  break;
-		      case 'x':
-			  external = TRUE;
-			  break;
-		      case 'r':
-			  from_file = argv[++i];
-			  to_file = argv[++i];
-			  break;
-		      default:
-			  fprintf(stderr, "Unknown option -%c ignored\n", argv[i][1]);
-			  break;
-		  }
-	    }
-	  else
-	    {
-		if (fnum < 2)
-		  {
-		      HDstrcpy(fname[fnum], argv[i]);
-		      fnum++;
-		  }
-	    }
-	  i++;
+          if (argv[i][0] == '-')
+            {
+                switch (argv[i][1])
+                  {
+                      case 'b':
+                          if (optset == 0)
+                            {
+                                blocks = 0;
+                                optset = 1;
+                            }
+                          else
+                            {
+                                error("incompatible options: -i and -b");
+                            }
+                          break;
+                      case 'i':
+                          if (optset == 0)
+                            {
+                                intr = 1;
+                                blocks = 0;
+                                optset = 1;
+                            }
+                          else
+                            {
+                                error("incompatible options: -i and -b");
+                            }
+                          break;
+                      case 'd':
+                          ndds = (int16) atoi(&argv[i][2]);
+                          break;
+                      case 't':
+                          nblk = atoi(&argv[i][2]);
+                          break;
+                      case 'x':
+                          external = TRUE;
+                          break;
+                      case 'r':
+                          from_file = argv[++i];
+                          to_file = argv[++i];
+                          break;
+                      default:
+                          fprintf(stderr, "Unknown option -%c ignored\n", argv[i][1]);
+                          break;
+                  }
+            }
+          else
+            {
+                if (fnum < 2)
+                  {
+                      HDstrcpy(fname[fnum], argv[i]);
+                      fnum++;
+                  }
+            }
+          i++;
       }
 
 /*
@@ -185,18 +185,18 @@ main(int argc, char *argv[])
  */
     if ((fnum != 2) || (HDstrcmp(fname[0], fname[1]) == 0))
       {
-	  error("need 2 unique file names");
+          error("need 2 unique file names");
       }
 
     if (from_file && to_file)
-	printf("Going to rename external file %s to %s\n", from_file, to_file);
+        printf("Going to rename external file %s to %s\n", from_file, to_file);
 
 /*
    **   Check to make sure input file is HDF
  */
     ret = (int) Hishdf(fname[0]);
     if (ret == FALSE)
-	hdferror();
+        hdferror();
 
 /*
    **   Open input and output files
@@ -204,12 +204,12 @@ main(int argc, char *argv[])
     infile = Hopen(fname[0], DFACC_READ, 0);
 
     if (infile == FAIL)
-	hdferror();
+        hdferror();
 
     outfile = Hopen(fname[1], DFACC_CREATE, ndds);
 
     if (outfile == FAIL)
-	hdferror();
+        hdferror();
 
 /*
    **   See how many data elements there
@@ -217,19 +217,19 @@ main(int argc, char *argv[])
  */
     num_desc = (int) Hnumber(infile, DFTAG_WILDCARD);
     if (num_desc == FAIL)
-	hdferror();
+        hdferror();
 
     dlist = (mydd_t *) HDgetspace(num_desc * sizeof(*dlist));
     if (dlist == NULL)
-	error("\tWow!  That file must be HUGE!\n\tThere isn't enough memory to hold the DD's.\n");
+        error("\tWow!  That file must be HUGE!\n\tThere isn't enough memory to hold the DD's.\n");
 
 /*
    **   Allocate data buffer - try 1 Meg first, work down
  */
-    data_size = 1048576;	/* 1 MB */
+    data_size = 1048576;    /* 1 MB */
     data = NULL;
     while ((data = (unsigned char *) HDgetspace(data_size)) == NULL)
-	data_size /= 2;		/* okay then, cut request by half */
+        data_size /= 2;     /* okay then, cut request by half */
 
 /*
    **   Get all DD's for data elements
@@ -237,31 +237,31 @@ main(int argc, char *argv[])
     aid = Hstartread(infile, DFTAG_WILDCARD, DFREF_WILDCARD);
     if (aid == FAIL)
       {
-	  printf("MAJOR PROBLEM: Hstartread for DD's; line %d\n", __LINE__);
-	  hdferror();
+          printf("MAJOR PROBLEM: Hstartread for DD's; line %d\n", __LINE__);
+          hdferror();
       }
     for (i = 0; i < num_desc; i++)
       {
 
-	  /*
-	   * Get data about the current one
-	   */
-	  Hinquire(aid, NULL, &dlist[i].tag, &dlist[i].ref, &dlist[i].length,
-		   &dlist[i].offset, NULL, NULL, &dlist[i].special);
+          /*
+           * Get data about the current one
+           */
+          Hinquire(aid, NULL, &dlist[i].tag, &dlist[i].ref, &dlist[i].length,
+                   &dlist[i].offset, NULL, NULL, &dlist[i].special);
 
-	  /*
-	   * Move to the next one
-	   */
-	  ret = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
+          /*
+           * Move to the next one
+           */
+          ret = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
 
-	  /*
-	   * Fail if there are none left and we expect more
-	   */
-	  if ((ret == FAIL) && (i + 1 < num_desc))
-	    {
-		printf("MAJOR PROBLEM: DDs; only got %d of %d; line %d\n", i, num_desc, __LINE__);
-		hdferror();
-	    }
+          /*
+           * Fail if there are none left and we expect more
+           */
+          if ((ret == FAIL) && (i + 1 < num_desc))
+            {
+                printf("MAJOR PROBLEM: DDs; only got %d of %d; line %d\n", i, num_desc, __LINE__);
+                hdferror();
+            }
       }
 
     /*
@@ -269,7 +269,7 @@ main(int argc, char *argv[])
      */
     ret = Hendaccess(aid);
     if (ret == FAIL)
-	hdferror();
+        hdferror();
 
 /*
    **   Sort DD's by offset to make it easy to
@@ -281,92 +281,92 @@ main(int argc, char *argv[])
     oldlen = -1;
     for (i = 0; i < num_desc; i++)
       {
-	  if (((dlist[i].tag != DFTAG_NULL) && (dlist[i].tag != DFTAG_VERSION))
-	      && (dlist[i].tag != DFTAG_LINKED))
-	    {
-		if ((dlist[i].offset != oldoff) || (dlist[i].length != oldlen))
-		  {
+          if (((dlist[i].tag != DFTAG_NULL) && (dlist[i].tag != DFTAG_VERSION))
+              && (dlist[i].tag != DFTAG_LINKED))
+            {
+                if ((dlist[i].offset != oldoff) || (dlist[i].length != oldlen))
+                  {
 /*
    **   if this DD points to different data, read the data
    **   from the old file and write it to the new file
  */
-		      switch (dlist[i].special)
-			{
-			    case SPECIAL_LINKED:
-				if (intr == 1)
-				    merge = promptblocks(&dlist[i]);
-				else
-				    merge = blocks;
-				if (merge == 0)
-				  {
-				      copy_blocks(&dlist[i], infile, outfile);
-				  }
-				else
-				  {
-				      merge_blocks(&dlist[i], infile, outfile);
-				  }
-				break;
-			    case SPECIAL_EXT:
-				if (external)
-				  {
-				      sp_info_block_t info;
-				      int32       aid, new_aid;
-				      char       *name;
+                      switch (dlist[i].special)
+                        {
+                            case SPECIAL_LINKED:
+                                if (intr == 1)
+                                    merge = promptblocks(&dlist[i]);
+                                else
+                                    merge = blocks;
+                                if (merge == 0)
+                                  {
+                                      copy_blocks(&dlist[i], infile, outfile);
+                                  }
+                                else
+                                  {
+                                      merge_blocks(&dlist[i], infile, outfile);
+                                  }
+                                break;
+                            case SPECIAL_EXT:
+                                if (external)
+                                  {
+                                      sp_info_block_t info;
+                                      int32       aid, new_aid;
+                                      char       *name;
 
-				      /* get file name and offset */
-				      aid = Hstartread(infile, dlist[i].tag, dlist[i].ref);
-				      if (aid == FAIL)
-					  continue;
+                                      /* get file name and offset */
+                                      aid = Hstartread(infile, dlist[i].tag, dlist[i].ref);
+                                      if (aid == FAIL)
+                                          continue;
 
-				      ret = HDget_special_info(aid, &info);
-				      if ((ret == FAIL) || (info.key != SPECIAL_EXT))
-					  continue;
+                                      ret = HDget_special_info(aid, &info);
+                                      if ((ret == FAIL) || (info.key != SPECIAL_EXT))
+                                          continue;
 
-				      /* see if should be renamed */
-				      if (from_file && !HDstrcmp(info.path, from_file))
-					  name = to_file;
-				      else
-					  name = info.path;
+                                      /* see if should be renamed */
+                                      if (from_file && !HDstrcmp(info.path, from_file))
+                                          name = to_file;
+                                      else
+                                          name = info.path;
 
-				      /* create the new one */
-				      new_aid = HXcreate(outfile, BASETAG(dlist[i].tag),
-					    dlist[i].ref, name, info.offset,
-							 dlist[i].length);
+                                      /* create the new one */
+                                      new_aid = HXcreate(outfile, BASETAG(dlist[i].tag),
+                                            dlist[i].ref, name, info.offset,
+                                                         dlist[i].length);
 
-				      /* close the elements */
-				      Hendaccess(aid);
-				      Hendaccess(new_aid);
+                                      /* close the elements */
+                                      Hendaccess(aid);
+                                      Hendaccess(new_aid);
 
-				  }
-				else
-				  {
-				      /* pull into the file */
-				      merge_blocks(&dlist[i], infile, outfile);
-				  }
-				break;
-			    default:
-				merge_blocks(&dlist[i], infile, outfile);
-				break;
-			}	/* switch (special) */
-		  }
-		else
-		  {
+                                  }
+                                else
+                                  {
+                                      /* pull into the file */
+                                      merge_blocks(&dlist[i], infile, outfile);
+                                  }
+                                break;
+                            default:
+                                merge_blocks(&dlist[i], infile, outfile);
+                                break;
+                        }   /* switch (special) */
+                  }
+                else
+                  {
 /*
    **   otherwise, just make a new DD for same data
  */
-		      ret = Hdupdd(outfile, dlist[i].tag, dlist[i].ref,
-				   dlist[i - 1].tag, dlist[i - 1].ref);
-		      if (ret == FAIL)
-			{
-			    HERROR(DFE_GENAPP);
-			    hdferror();
-			}
-		  }
-	    }
+                      ret = Hdupdd(outfile, dlist[i].tag, dlist[i].ref,
+                                   dlist[i - 1].tag, dlist[i - 1].ref);
+                      if (ret == FAIL)
+                        {
+                            HERROR(DFE_GENAPP);
+                            hdferror();
+                        }
+                  }
+            }
 /*
    **   save offset of data to check against next DD
  */
-	  oldoff = dlist[i].offset;
+          oldoff = dlist[i].offset;
       }
 
 /*
@@ -390,7 +390,7 @@ main(int argc, char *argv[])
    ** NAME
    **      promptblocks
  */
-int 
+int
 promptblocks(mydd_t * dd)
 {
     char        ans[80];
@@ -399,16 +399,16 @@ promptblocks(mydd_t * dd)
     printf("\ttag = %d\n\tref = %d\n(y/n): ", dd->tag, dd->ref);
     gets(ans);
     if ((ans[0] == 'y') || (ans[0] == 'Y'))
-	return (1);
+        return (1);
     else
-	return (0);
+        return (0);
 }
 
 /*
    ** NAME
    **      copy_blocks -- move a linked-block element; preserve blocking
  */
-VOID 
+VOID
 copy_blocks(mydd_t * dd, int32 infile, int32 outfile)
 {
     int32       inaid, ret, rdret, outaid;
@@ -419,8 +419,8 @@ copy_blocks(mydd_t * dd, int32 infile, int32 outfile)
     ret = HDget_special_info(inaid, &info);
     if ((ret != SUCCEED) || (info.key != SPECIAL_LINKED))
       {
-	  HERROR(DFE_GENAPP);
-	  hdferror();
+          HERROR(DFE_GENAPP);
+          hdferror();
       }
 /*
    **  copy first block
@@ -428,39 +428,39 @@ copy_blocks(mydd_t * dd, int32 infile, int32 outfile)
     outaid = Hstartwrite(outfile, BASETAG(dd->tag), dd->ref, info.first_len);
     if (outaid == FAIL)
       {
-	  HERROR(DFE_GENAPP);
-	  hdferror();
+          HERROR(DFE_GENAPP);
+          hdferror();
       }
     rdret = 0;
     while (rdret < info.first_len)
       {
-	  ret = Hread(inaid,
-	   (data_size < info.first_len) ? data_size : info.first_len, data);
-	  if (ret == FAIL)
-	    {
-		HERROR(DFE_GENAPP);
-		hdferror();
-	    }
-	  rdret += ret;
-	  ret = Hwrite(outaid, ret, data);
-	  if (ret == FAIL)
-	    {
-		HERROR(DFE_GENAPP);
-		hdferror();
-	    }
+          ret = Hread(inaid,
+           (data_size < info.first_len) ? data_size : info.first_len, data);
+          if (ret == FAIL)
+            {
+                HERROR(DFE_GENAPP);
+                hdferror();
+            }
+          rdret += ret;
+          ret = Hwrite(outaid, ret, data);
+          if (ret == FAIL)
+            {
+                HERROR(DFE_GENAPP);
+                hdferror();
+            }
       }
     ret = Hendaccess(outaid);
 /*
    **  promote to linked-block element
  */
     if (nblk > 0)
-	info.nblocks = nblk;
+        info.nblocks = nblk;
 
     outaid = HLcreate(outfile, BASETAG(dd->tag), dd->ref, info.block_len, info.nblocks);
     if (outaid == FAIL)
       {
-	  HERROR(DFE_GENAPP);
-	  hdferror();
+          HERROR(DFE_GENAPP);
+          hdferror();
       }
 /*
    **  copy remaining blocks
@@ -468,21 +468,21 @@ copy_blocks(mydd_t * dd, int32 infile, int32 outfile)
     rdret = data_size;
     while (rdret == data_size)
       {
-	  rdret = Hread(inaid, data_size, data);
-	  if (rdret == FAIL)
-	    {
-		HERROR(DFE_GENAPP);
-		hdferror();
-	    }
-	  if (rdret != 0)
-	    {
-		ret = Hwrite(outaid, rdret, data);
-		if (ret == FAIL)
-		  {
-		      HERROR(DFE_GENAPP);
-		      hdferror();
-		  }
-	    }
+          rdret = Hread(inaid, data_size, data);
+          if (rdret == FAIL)
+            {
+                HERROR(DFE_GENAPP);
+                hdferror();
+            }
+          if (rdret != 0)
+            {
+                ret = Hwrite(outaid, rdret, data);
+                if (ret == FAIL)
+                  {
+                      HERROR(DFE_GENAPP);
+                      hdferror();
+                  }
+            }
       }
     Hendaccess(outaid);
 }
@@ -491,7 +491,7 @@ copy_blocks(mydd_t * dd, int32 infile, int32 outfile)
    ** NAME
    **      merge_blocks
  */
-VOID 
+VOID
 merge_blocks(mydd_t * dd, int32 infile, int32 outfile)
 {
     int32       inaid, outaid, ret, len;
@@ -500,44 +500,44 @@ merge_blocks(mydd_t * dd, int32 infile, int32 outfile)
     inaid = Hstartread(infile, dd->tag, dd->ref);
     if (inaid == FAIL)
       {
-	  HERROR(DFE_GENAPP);
-	  hdferror();
+          HERROR(DFE_GENAPP);
+          hdferror();
       }
     outaid = Hstartwrite(outfile, BASETAG(dd->tag), dd->ref, dd->length);
     if (outaid == FAIL)
       {
-	  HERROR(DFE_GENAPP);
-	  hdferror();
+          HERROR(DFE_GENAPP);
+          hdferror();
       }
 
     while (dd->length > 0)
       {
-	  dd->length -= (len = Hread(inaid, data_size, data));
-	  if (len == FAIL)
-	    {
-		HERROR(DFE_GENAPP);
-		hdferror();
-	    }
-	  ret = Hwrite(outaid, len, data);
-	  if (len == FAIL)
-	    {
-		HERROR(DFE_GENAPP);
-		hdferror();
-	    }
+          dd->length -= (len = Hread(inaid, data_size, data));
+          if (len == FAIL)
+            {
+                HERROR(DFE_GENAPP);
+                hdferror();
+            }
+          ret = Hwrite(outaid, len, data);
+          if (len == FAIL)
+            {
+                HERROR(DFE_GENAPP);
+                hdferror();
+            }
       }
 
     ret = Hendaccess(inaid);
     if (ret == FAIL)
       {
-	  HERROR(DFE_GENAPP);
-	  hdferror();
+          HERROR(DFE_GENAPP);
+          hdferror();
       }
 
     ret = Hendaccess(outaid);
     if (ret == FAIL)
       {
-	  HERROR(DFE_GENAPP);
-	  hdferror();
+          HERROR(DFE_GENAPP);
+          hdferror();
       }
 }
 
@@ -554,7 +554,7 @@ merge_blocks(mydd_t * dd, int32 infile, int32 outfile)
    ** COMMENTS, BUGS, ASSUMPTIONS
    ** EXAMPLES
  */
-static VOID 
+static      VOID
 usage(char *name)
 {
     fprintf(stderr, "Usage:  %s [-i | -b] [-d#] [-t#] [-x] [-r <from> <to>] <infile> <outfile>\n", name);
@@ -581,7 +581,7 @@ usage(char *name)
    **   This routine terminates the program with code 1.
    ** EXAMPLES
  */
-static VOID 
+static      VOID
 hdferror(void)
 {
     HEprint(stderr, 0);
@@ -603,7 +603,7 @@ hdferror(void)
    **   This routine terminates the program with code 1.
    ** EXAMPLES
  */
-static VOID 
+static      VOID
 error(const char *string)
 {
     fprintf(stderr, "%s: %s\n", invoke, string);
@@ -628,7 +628,7 @@ error(const char *string)
    ** COMMENTS, BUGS, ASSUMPTIONS
    ** EXAMPLES
  */
-int 
+int
 desc_comp(const void *d1, const void *d2)
 {
     return ((int) (((const mydd_t *) d1)->offset - ((const mydd_t *) d2)->offset));

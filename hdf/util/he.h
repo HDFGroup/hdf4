@@ -20,7 +20,7 @@
 
 #include <string.h>
 
-/* 
+/*
  * the following may not exist on all systems it should define stuff
  * like fork(), and other system calls
  */
@@ -32,8 +32,8 @@
 #define ASSERT(e) {if(!(e)){fprintf(stderr,"Assertion failed: file %s, line %d\n",__FILE__,__LINE__);exit(1);}}
 #define NOT_REACHED() {fprintf(stderr,"Should not reach: file %s, line %d\n",__FILE__,__LINE__);exit(1);}
 #else
-#define ASSERT(e)	/* empty assertion */
-#define NOT_REACHED()	/* empty */
+#define ASSERT(e)   /* empty assertion */
+#define NOT_REACHED()   /* empty */
 #endif /* DEBUG */
 
 #define HE_ARG_SZ 30
@@ -134,10 +134,10 @@ typedef struct he_pred
   {
       int         key, Comp, argType;
       union
-	{
-	    int         i;
-	    char       *str;
-	}
+        {
+            int         i;
+            char       *str;
+        }
       arg;
   }
 HE_PRED;

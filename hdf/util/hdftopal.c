@@ -37,19 +37,19 @@ static char RcsId[] = "@(#)$Revision$";
 int         main(int argc, char *argv[]);
 int         rawpalconv(char *hdffile, char *rawpalfile);
 
-int 
+int
 main(int argc, char *argv[])
 {
     if (argc != 3)
       {
-	  printf("Usage:\n");
-	  printf("   %s hdffile rawpalfile \n\n", argv[0]);
-	  printf("%s,  version: 1.1   date: July 1, 1992\n\n", argv[0]);
-	  printf("   This utility converts a palette from an HDF file \n");
-	  printf("   to a raw palette in a raw palette file.\n\n");
-	  printf("   The outgoing palette will have 768 bytes: First \n");
-	  printf("   256 red values, then 256 greens, then 256 blues.\n\n");
-	  exit(1);
+          printf("Usage:\n");
+          printf("   %s hdffile rawpalfile \n\n", argv[0]);
+          printf("%s,  version: 1.1   date: July 1, 1992\n\n", argv[0]);
+          printf("   This utility converts a palette from an HDF file \n");
+          printf("   to a raw palette in a raw palette file.\n\n");
+          printf("   The outgoing palette will have 768 bytes: First \n");
+          printf("   256 red values, then 256 greens, then 256 blues.\n\n");
+          exit(1);
       }
 
     rawpalconv(argv[1], argv[2]);
@@ -60,7 +60,7 @@ main(int argc, char *argv[])
  *      rawpalconv(palfile, outfile) sets the palette
  */
 
-int 
+int
 rawpalconv(char *hdffile, char *rawpalfile)
 {
     uint8       palspace[1024], reds[256], greens[256], blues[256], *p;
@@ -70,27 +70,27 @@ rawpalconv(char *hdffile, char *rawpalfile)
     ret = DFPgetpal(hdffile, (char *) palspace);
     if (ret < 0)
       {
-	  printf("Error in reading file %s\n", hdffile);
-	  exit(1);
+          printf("Error in reading file %s\n", hdffile);
+          exit(1);
       }
 
     p = palspace;
     for (j = 0; j < 256; j++)
       {
-	  reds[j] = *p++;
-	  greens[j] = *p++;
-	  blues[j] = *p++;
+          reds[j] = *p++;
+          greens[j] = *p++;
+          blues[j] = *p++;
       }
 
 #ifdef PC
-    fp = fopen(rawpalfile, "wb");	/* open in binary mode on PC */
+    fp = fopen(rawpalfile, "wb");   /* open in binary mode on PC */
 #else
     fp = fopen(rawpalfile, "w");
 #endif
     if (fp == NULL)
       {
-	  printf("Error opening raw palette file %s\n", rawpalfile);
-	  exit(1);
+          printf("Error opening raw palette file %s\n", rawpalfile);
+          exit(1);
       }
 
     fwrite(reds, 1, 256, fp);

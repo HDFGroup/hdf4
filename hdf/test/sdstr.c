@@ -32,7 +32,7 @@ static int  number_failed = 0;
 static VOID compare
             (const char *outstring, const char *instring);
 
-void 
+void
 test_tsdstr(void)
 {
     int         i, j, ret;
@@ -59,21 +59,21 @@ test_tsdstr(void)
     dimfmts[1] = "c_dim2_fmt_b";
 
     MESSAGE(5, printf("Creating arrays...\n");
-	);
+        );
 
     for (i = 0; i < 10; i++)
       {
-	  for (j = 0; j < 10; j++)
-	    {
-		f32[i][j] = (i * 10) + j;	/* range: 0 ~ 4-billion */
-	    }
+          for (j = 0; j < 10; j++)
+            {
+                f32[i][j] = (i * 10) + j;   /* range: 0 ~ 4-billion */
+            }
       }
 
     ret = DFSDsetdims(rank, dims);
     RESULT("DFSDsetdims");
     /* individual files */
     MESSAGE(5, printf("Testing arrays in individual files...\n");
-	);
+        );
 
     ret = DFSDsetNT(DFNT_NFLOAT32);
     RESULT("DFSDsetNT");
@@ -115,29 +115,29 @@ test_tsdstr(void)
 
     if (number_failed > 0)
       {
-	  MESSAGE(7, printf("\n\t>>> %d TESTS FAILED <<<\n\n", number_failed);
-	      )
+          MESSAGE(7, printf("\n\t>>> %d TESTS FAILED <<<\n\n", number_failed);
+              )
       }
     else
-	MESSAGE(7, printf("\n\t>>> ALL TESTS PASSED <<<\n\n");
-	)
+        MESSAGE(7, printf("\n\t>>> ALL TESTS PASSED <<<\n\n");
+        )
 
-	num_errs = num_errs + number_failed;
+        num_errs = num_errs + number_failed;
 
 }
 
-static VOID 
+static      VOID
 compare(const char *outstring, const char *instring)
 {
     if (0 == HDstrcmp(outstring, instring))
-	MESSAGE(5, printf("Test passed for %s\n", outstring);
-	)
-	else
+        MESSAGE(5, printf("Test passed for %s\n", outstring);
+        )
+        else
       {
-	  MESSAGE(5, printf(">>> Test failed for %s\n", outstring);
-	      );
-	  MESSAGE(5, printf("    Input string =  %s\n", instring);
-	      );
-	  number_failed++;
+          MESSAGE(5, printf(">>> Test failed for %s\n", outstring);
+              );
+          MESSAGE(5, printf("    Input string =  %s\n", instring);
+              );
+          number_failed++;
       }
 }

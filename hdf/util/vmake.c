@@ -20,17 +20,17 @@ static char *RcsId[] = "@(#)$Revision$";
 *
 * vmake.c
 *
-*	HDF Vset utility.
+*   HDF Vset utility.
 *
-*	vmake:  utility creates vsets. May be used in 3 ways:
-*			(1)	add a new vgroup.
-*			(2)	add a new vdata from ascii data.
-*			(3)	link vgroups and vdatas to a vgroup.
+*   vmake:  utility creates vsets. May be used in 3 ways:
+*           (1) add a new vgroup.
+*           (2) add a new vdata from ascii data.
+*           (3) link vgroups and vdatas to a vgroup.
 *
 *    USAGE:
-*			(1) 	vmake file vgname
-*			(2)	vmake file vsname {format} {ascii data stream}
-*			(3)	vmake file -l vgref v1 v2 ... vn
+*           (1)     vmake file vgname
+*           (2) vmake file vsname {format} {ascii data stream}
+*           (3) vmake file -l vgref v1 v2 ... vn
 *
 *
 ******************************************************************************/
@@ -73,7 +73,7 @@ int         show_help_msg
 /*
  *  Main entry point
  */
-int 
+int
 main(int ac, char **av)
 {
 
@@ -81,57 +81,57 @@ main(int ac, char **av)
 
     if (ac < 3)
       {
-	  show_help_msg();
-	  exit(0);
+          show_help_msg();
+          exit(0);
       }
     else if (ac == 3)
       {
-	  if (!HDstrcmp(av[2], "-l"))
-	    {
-		show_help_msg();
-		exit(0);
-	    }
-	  hfile = av[1];
-	  vgname = av[2];
-	  vgadd(hfile, vgname);
+          if (!HDstrcmp(av[2], "-l"))
+            {
+                show_help_msg();
+                exit(0);
+            }
+          hfile = av[1];
+          vgname = av[2];
+          vgadd(hfile, vgname);
       }
 
     else if (ac == 4)
       {
-	  if (!HDstrcmp(av[2], "-l"))
-	    {
-		show_help_msg();
-		exit(0);
-	    }
-	  hfile = av[1];
-	  vsname = av[2];
-	  fmt = av[3];
-	  vsadd(hfile, vsname, fmt);
+          if (!HDstrcmp(av[2], "-l"))
+            {
+                show_help_msg();
+                exit(0);
+            }
+          hfile = av[1];
+          vsname = av[2];
+          fmt = av[3];
+          vsadd(hfile, vsname, fmt);
       }
 
     else if (!HDstrcmp(av[2], "-l"))
       {
-	  int         i;
-	  int32       n;
-	  int32       vgref, ids[50];
+          int         i;
+          int32       n;
+          int32       vgref, ids[50];
 
-	  hfile = av[1];
-	  sscanf(av[3], "%ld", &vgref);
-	  for (n = 0, i = 4; i < ac; i++, n++)
-	    {
-		sscanf(av[i], "%ld", &ids[n]);
-	    }
-	  vsetlink(hfile, vgref, ids, n);
+          hfile = av[1];
+          sscanf(av[3], "%ld", &vgref);
+          for (n = 0, i = 4; i < ac; i++, n++)
+            {
+                sscanf(av[i], "%ld", &ids[n]);
+            }
+          vsetlink(hfile, vgref, ids, n);
       }
     else
       {
-	  show_help_msg();
-	  exit(0);
+          show_help_msg();
+          exit(0);
       }
     return (0);
-}	/* main */
+}   /* main */
 
-void 
+void
 showfmttypes()
 {
     fprintf(stderr, "\tvalid fmt types: \n");
@@ -142,7 +142,7 @@ showfmttypes()
     fprintf(stderr, "\t  f - float   (float32 in HDF file) \n");
 }
 
-int 
+int
 show_help_msg(void)
 {
 
@@ -170,11 +170,11 @@ show_help_msg(void)
 
     return (1);
 
-}	/* show_help_msg */
+}   /* show_help_msg */
 
 /* ------------------------------------------------------- */
 
-int32 
+int32
 vsetlink(char *hfile, int32 vgid, int32 ids[], int32 n)
 {
     HFILEID     f;
@@ -186,50 +186,50 @@ vsetlink(char *hfile, int32 vgid, int32 ids[], int32 n)
     f = Hopen(hfile, DFACC_ALL, 0);
     if (f == FAIL)
       {
-	  fprintf(stderr, "cannot open %s.  \n", hfile);
-	  exit(0);
+          fprintf(stderr, "cannot open %s.  \n", hfile);
+          exit(0);
       }
     Vinitialize(f);
     vgmain = Vattach(f, vgid, "w");
     if (vgmain == FAIL)
       {
-	  fprintf(stderr, "0\n");
-	  Vfinish(f);
-	  Hclose(f);
-	  exit(-1);
+          fprintf(stderr, "0\n");
+          Vfinish(f);
+          Hclose(f);
+          exit(-1);
       }
 
     for (i = 0; i < n; i++)
       {
-	  if (-1 != vexistvg(f, (uint16) ids[i]))
-	    {
-		if ((vg = Vattach(f, ids[i], "r")) != FAIL)
-		  {
-		      if (Vinsert(vgmain, vg) == -1)
-			{	/*  is really VGROUP* */
-			    err = 1;
-			    fprintf(stderr, "insert a vg (%d)fails!!\n", (int) ids[i]);
-			}
-		      Vdetach(vg);
-		  }
-	    }
-	  else if (-1 != vexistvs(f, (uint16) ids[i]))
-	    {
-		if ((vs = VSattach(f, ids[i], "r")) != FAIL)
-		  {
-		      if (Vinsert(vgmain, vs) == FAIL)
-			{
-			    err = 1;
-			    fprintf(stderr, "insert a vs (%d)fails!!\n", (int) ids[i]);
-			}
-		      VSdetach(vs);
-		  }
-	    }
-	  else
-	    {
-		fprintf(stderr, "no such vgroup or vdata [%d]\n", (int) ids[i]);
-		err = 1;
-	    }
+          if (-1 != vexistvg(f, (uint16) ids[i]))
+            {
+                if ((vg = Vattach(f, ids[i], "r")) != FAIL)
+                  {
+                      if (Vinsert(vgmain, vg) == -1)
+                        {   /*  is really VGROUP* */
+                            err = 1;
+                            fprintf(stderr, "insert a vg (%d)fails!!\n", (int) ids[i]);
+                        }
+                      Vdetach(vg);
+                  }
+            }
+          else if (-1 != vexistvs(f, (uint16) ids[i]))
+            {
+                if ((vs = VSattach(f, ids[i], "r")) != FAIL)
+                  {
+                      if (Vinsert(vgmain, vs) == FAIL)
+                        {
+                            err = 1;
+                            fprintf(stderr, "insert a vs (%d)fails!!\n", (int) ids[i]);
+                        }
+                      VSdetach(vs);
+                  }
+            }
+          else
+            {
+                fprintf(stderr, "no such vgroup or vdata [%d]\n", (int) ids[i]);
+                err = 1;
+            }
       }
 
     Vdetach(vgmain);
@@ -237,18 +237,18 @@ vsetlink(char *hfile, int32 vgid, int32 ids[], int32 n)
     Hclose(f);
 
     if (err)
-	exit(-1);
+        exit(-1);
     else
-	fprintf(stderr, "1\n");		/* success */
+        fprintf(stderr, "1\n");     /* success */
     return (1);
-}	/* vsetlink */
+}   /* vsetlink */
 
 /* ------------------------------------------------------- */
-/* 
-   add a (new) vgroup to the file 
+/*
+   add a (new) vgroup to the file
  */
 
-int32 
+int32
 vgadd(char *hfile, char *vgname)
 {
     HFILEID     f;
@@ -258,15 +258,15 @@ vgadd(char *hfile, char *vgname)
     f = Hopen(hfile, DFACC_ALL, 0);
     if (f == FAIL)
       {
-	  fprintf(stderr, "cannot open %s. \n", hfile);
-	  exit(0);
+          fprintf(stderr, "cannot open %s. \n", hfile);
+          exit(0);
       }
     Vinitialize(f);
     vg = Vattach(f, -1, "w");
     if (vg == FAIL)
       {
-	  fprintf(stderr, "cannot attach vg\n");
-	  exit(0);
+          fprintf(stderr, "cannot attach vg\n");
+          exit(0);
       }
     ref = VQueryref(vg);
     Vsetname(vg, vgname);
@@ -276,7 +276,7 @@ vgadd(char *hfile, char *vgname)
     fprintf(stderr, "%d\n", (int) ref);
     return (1);
 
-}	/* vgadd */
+}   /* vgadd */
 
 /* ------------------------------------------------------- */
 /*
@@ -284,7 +284,7 @@ vgadd(char *hfile, char *vgname)
    Data will be ascii and will come in from stdin
    according to the format (c-style).
  */
-void 
+void
 vsadd(char *hfile, char *vsname, char *format)
 {
     int32       ret, i, n, nwritten;
@@ -299,14 +299,14 @@ vsadd(char *hfile, char *vsname, char *format)
     nfld = scanit(format, &fields, &type, &order);
     if (nfld < 1)
       {
-	  fprintf(stderr, "bad fields\n");
-	  exit(-1);
+          fprintf(stderr, "bad fields\n");
+          exit(-1);
       }
 
     if ((f = Hopen(hfile, DFACC_ALL, 0)) == FAIL)
       {
-	  fprintf(stderr, "cannot open %s.  \n", hfile);
-	  exit(-1);
+          fprintf(stderr, "cannot open %s.  \n", hfile);
+          exit(-1);
       }
     Vinitialize(f);
     vs = VSattach(f, -1, "w");
@@ -317,40 +317,40 @@ vsadd(char *hfile, char *vsname, char *format)
     allfields[0] = '\0';
     for (i = 0; i < nfld; i++)
       {
-	  switch (type[i])
-	    {
-		case 'c':
-		    ftype = DFNT_CHAR;
-		    break;
-		case 's':
-		    ftype = DFNT_INT16;
-		    break;
-		case 'f':
-		    ftype = DFNT_FLOAT32;
-		    break;
-		case 'l':
-		    ftype = DFNT_INT32;
-		    break;
-		case 'b':
-		    ftype = DFNT_INT8;
-		    break;
-		case 'D':
-		    ftype = DFNT_DOUBLE;
-		    break;
+          switch (type[i])
+            {
+                case 'c':
+                    ftype = DFNT_CHAR;
+                    break;
+                case 's':
+                    ftype = DFNT_INT16;
+                    break;
+                case 'f':
+                    ftype = DFNT_FLOAT32;
+                    break;
+                case 'l':
+                    ftype = DFNT_INT32;
+                    break;
+                case 'b':
+                    ftype = DFNT_INT8;
+                    break;
+                case 'D':
+                    ftype = DFNT_DOUBLE;
+                    break;
 
-		default:
-		    fprintf(stderr, "bad type [%c]\n", (char) type[i]);
-		    showfmttypes();
-		    exit(-1);
-		    break;
-	    }
-	  ret = VSfdefine(vs, fields[i], ftype, order[i]);
-	  HDstrcat(allfields, fields[i]);
-	  HDstrcat(allfields, ",");
+                default:
+                    fprintf(stderr, "bad type [%c]\n", (char) type[i]);
+                    showfmttypes();
+                    exit(-1);
+                    break;
+            }
+          ret = VSfdefine(vs, fields[i], ftype, order[i]);
+          HDstrcat(allfields, fields[i]);
+          HDstrcat(allfields, ",");
       }
 
     i = HDstrlen(allfields);
-    allfields[i - 1] = '\0';	/* remove last comma */
+    allfields[i - 1] = '\0';    /* remove last comma */
 
     VSsetname(vs, vsname);
     ret = VSsetfields(vs, allfields);
@@ -358,12 +358,12 @@ vsadd(char *hfile, char *vsname, char *format)
     nwritten = 0;
     while ((n = inpdata(&buf)) > 0)
       {
-	  /*  printf("inpdata rets n=%d .. ",n); */
-	  ret = VSwrite(vs, buf, n, FULL_INTERLACE);
-	  printf("+%d  \n", (int) ret);
-	  nwritten += n;
-	  if (ret < 1)
-	      fprintf(stderr, "Vswrite stat=%d\n", (int) ret);
+          /*  printf("inpdata rets n=%d .. ",n); */
+          ret = VSwrite(vs, buf, n, FULL_INTERLACE);
+          printf("+%d  \n", (int) ret);
+          nwritten += n;
+          if (ret < 1)
+              fprintf(stderr, "Vswrite stat=%d\n", (int) ret);
       }
     VSdetach(vs);
     Vfinish(f);
@@ -371,7 +371,7 @@ vsadd(char *hfile, char *vsname, char *format)
     fprintf(stderr, "%d, %d\n", (int) ref, (int) nwritten);
     return;
 
-}	/* vsadd */
+}   /* vsadd */
 
 /* ------------------------------------------------------------------ */
 /* This part of the code deals with formatting stdin input data.      */
@@ -388,7 +388,7 @@ static int32 ftyp[MAXVAR];
 static int  ntotal = 0;
 
 /* scanf functions */
-static int32 
+static int32
 inplong(int32 *x)
 {
     int32       val, ret;
@@ -398,7 +398,7 @@ inplong(int32 *x)
     return (ret);
 }
 
-static int32 
+static int32
 inpshort(int16 *x)
 {
     int         ret, val;
@@ -408,7 +408,7 @@ inpshort(int16 *x)
     return (ret);
 }
 
-static int32 
+static int32
 inpbyte(int8 *x)
 {
     int         ret;
@@ -419,7 +419,7 @@ inpbyte(int8 *x)
     return (ret);
 }
 
-static int32 
+static int32
 inpfloat(float32 *x)
 {
     int         ret;
@@ -430,7 +430,7 @@ inpfloat(float32 *x)
     return (ret);
 }
 
-static int32 
+static int32
 inpchar(char *x)
 {
     return (scanf("%c ", x));
@@ -439,7 +439,7 @@ inpchar(char *x)
 #define BUFSIZE 40000
 unsigned char inpbuffer[BUFSIZE];
 
-int32 
+int32
 inpdata(unsigned char **bp)
 {
     int32       totalsize, nread, t, i, j, k;
@@ -450,40 +450,40 @@ inpdata(unsigned char **bp)
 
     for (i = 0; i < ntotal; i++)
       {
-	  switch (fmts[i])
-	    {
+          switch (fmts[i])
+            {
 
-		case 'c':
-		    inpfn[i] = inpchar;
-		    inpsiz[i] = sizeof(char);
-		    break;
+                case 'c':
+                    inpfn[i] = inpchar;
+                    inpsiz[i] = sizeof(char);
+                    break;
 
-		case 'b':
-		    inpfn[i] = inpbyte;
-		    inpsiz[i] = sizeof(int8);
-		    break;
+                case 'b':
+                    inpfn[i] = inpbyte;
+                    inpsiz[i] = sizeof(int8);
+                    break;
 
-		case 's':
-		    inpfn[i] = inpshort;
-		    inpsiz[i] = sizeof(short);
-		    break;
+                case 's':
+                    inpfn[i] = inpshort;
+                    inpsiz[i] = sizeof(short);
+                    break;
 
-		case 'l':
-		    inpfn[i] = inplong;
-		    inpsiz[i] = sizeof(long);
-		    break;
+                case 'l':
+                    inpfn[i] = inplong;
+                    inpsiz[i] = sizeof(long);
+                    break;
 
-		case 'f':
-		    inpfn[i] = inpfloat;
-		    inpsiz[i] = sizeof(float);
-		    break;
+                case 'f':
+                    inpfn[i] = inpfloat;
+                    inpsiz[i] = sizeof(float);
+                    break;
 
-		default:
-		    printf("inpdata: fmt routine for [%c] not ready\n", fmts[i]);
-	    }
+                default:
+                    printf("inpdata: fmt routine for [%c] not ready\n", fmts[i]);
+            }
       }
     for (totalsize = 0, i = 0; i < ntotal; i++)
-	totalsize += (fords[i] * inpsiz[i]);
+        totalsize += (fords[i] * inpsiz[i]);
     maxrec = BUFSIZE / totalsize - 1;
 
     /* begin reading in the ascii data from stdin */
@@ -491,23 +491,23 @@ inpdata(unsigned char **bp)
     *bp = b = inpbuffer;
     for (nread = 0, j = 0; j < maxrec; j++, nread++)
       {
-	  for (i = 0; i < ntotal; i++)
-	    {
-		for (k = 0; k < fords[i]; k++)
-		  {
-		      t = (inpfn[i]) (b);
-		      if (t == EOF)
-			  return (nread);
-		      b += inpsiz[i];
-		  }
-	    }
+          for (i = 0; i < ntotal; i++)
+            {
+                for (k = 0; k < fords[i]; k++)
+                  {
+                      t = (inpfn[i]) (b);
+                      if (t == EOF)
+                          return (nread);
+                      b += inpsiz[i];
+                  }
+            }
       }
 
-    return (nread);	/* no of recs read */
+    return (nread);     /* no of recs read */
 
-}	/* inpdata */
+}   /* inpdata */
 
-int32 
+int32
 scanit(char *string, char ***fields, int32 **type, int32 **order)
 {
     int32       ns, i;
@@ -522,24 +522,24 @@ scanit(char *string, char ***fields, int32 **type, int32 **order)
     p1 = p2 = 0;
     for (i = 0; i < ns; i++)
       {
-	  c = ss[i];
-	  if (c == '=')
-	    {
-		p2 = i;
-		savfld(ss, (int) p1, (int) (p2 - 1));
-		p1 = p2 + 1;
-	    }
-	  else if (c == ',')
-	    {
-		p2 = i;
-		savtype(ss, (int) p1, (int) (p2 - 1));
-		p1 = p2 + 1;
-	    }
+          c = ss[i];
+          if (c == '=')
+            {
+                p2 = i;
+                savfld(ss, (int) p1, (int) (p2 - 1));
+                p1 = p2 + 1;
+            }
+          else if (c == ',')
+            {
+                p2 = i;
+                savtype(ss, (int) p1, (int) (p2 - 1));
+                p1 = p2 + 1;
+            }
       }
     for (i = 0; i < ntotal; i++)
       {
-	  fldptr[i] = flds[i];
-	  ftyp[i] = fmts[i];
+          fldptr[i] = flds[i];
+          ftyp[i] = fmts[i];
       }
 
     *type = ftyp;
@@ -547,23 +547,23 @@ scanit(char *string, char ***fields, int32 **type, int32 **order)
     *fields = fldptr;
     return (ntotal);
 
-}	/* scanit */
+}   /* scanit */
 
-int32 
+int32
 compact(char *ss, char *dd)
 {
     int         i, t, n = HDstrlen(ss);
     for (t = 0, i = 0; i < n; i++)
-	if (ss[i] != ' ')
-	  {
-	      dd[t++] = ss[i];
-	  }
+        if (ss[i] != ' ')
+          {
+              dd[t++] = ss[i];
+          }
     dd[t] = '\0';
     return (1);
 }
 
 /* ------------------------------------------------------------------ */
-int32 
+int32
 savfld(char *ss, int p1, int p2)
 {
     int32       t = p2 - p1 + 1;
@@ -571,9 +571,9 @@ savfld(char *ss, int p1, int p2)
     HDstrncpy(flds[ntotal], &ss[p1], (size_t) t);
     flds[ntotal][t] = '\0';
     return (1);
-}	/* savfld */
+}   /* savfld */
 
-int32 
+int32
 savtype(char *ss, int p1, int p2)
 {
     char        temp[20];
@@ -586,7 +586,7 @@ savtype(char *ss, int p1, int p2)
 
 }
 
-int32 
+int32
 separate(char *ss, char *fmt, int32 *num)
 {
     int32       i, n;
@@ -594,14 +594,14 @@ separate(char *ss, char *fmt, int32 *num)
     n = HDstrlen(ss);
     while (i < n)
       {
-	  if (ss[i] < '0' || ss[i] > '9')
-	      break;
-	  i++;
+          if (ss[i] < '0' || ss[i] > '9')
+              break;
+          i++;
       }
     if (i > 0)
-	sscanf(ss, "%ld", num);
+        sscanf(ss, "%ld", num);
     else
-	*num = 1;
+        *num = 1;
     *fmt = ss[i];
     return (1);
 }

@@ -58,7 +58,7 @@ static uint32 FAR ui32scale[10], FAR tui32scale[10];
 static uint32 ui32max = 999999999, ui32min = 0;
 static uint32 tui32max, tui32min;
 
-void 
+void
 test_sdnmms(void)
 {
     int         i, j, err, err1, err2, ret;
@@ -70,46 +70,46 @@ test_sdnmms(void)
     dims[1] = 10;
 
     MESSAGE(5, printf("Creating arrays...\n");
-	);
+        );
 
     for (i = 0; i < 10; i++)
       {
-	  for (j = 0; j < 10; j++)
-	    {
+          for (j = 0; j < 10; j++)
+            {
 
-		f64[i][j] = (i * 40) + j;	/* range: 0 ~ 4-billion */
+                f64[i][j] = (i * 40) + j;   /* range: 0 ~ 4-billion */
 
-		f32[i][j] = (i * 40) + j;	/* range: 0 ~ 4-billion */
+                f32[i][j] = (i * 40) + j;   /* range: 0 ~ 4-billion */
 
-		i8[i][j] = (int8) ((i * 10) + j);	/* range: 0 ~ 100 */
-		ui8[i][j] = (uint8) ((i * 20) + j);	/* range: 0 ~ 200 */
+                i8[i][j] = (int8) ((i * 10) + j);   /* range: 0 ~ 100 */
+                ui8[i][j] = (uint8) ((i * 20) + j);     /* range: 0 ~ 200 */
 
-		i16[i][j] = (int16) ((i * 3000) + j);	/* range: 0 ~ 30000 */
-		ui16[i][j] = (uint16) ((i * 6000) + j);		/* range: 0 ~ 60000 */
+                i16[i][j] = (int16) ((i * 3000) + j);   /* range: 0 ~ 30000 */
+                ui16[i][j] = (uint16) ((i * 6000) + j);     /* range: 0 ~ 60000 */
 
-		i32[i][j] = (int32) ((i * 20) + j);	/* range: 0 ~ 2-billion */
-		ui32[i][j] = (uint32) ((i * 40) + j);	/* range: 0 ~ 4-billion */
-	    }
+                i32[i][j] = (int32) ((i * 20) + j);     /* range: 0 ~ 2-billion */
+                ui32[i][j] = (uint32) ((i * 40) + j);   /* range: 0 ~ 4-billion */
+            }
 
-	  f64scale[i] = (i * 40) + j;	/* range: 0 ~ 4-billion */
+          f64scale[i] = (i * 40) + j;   /* range: 0 ~ 4-billion */
 
-	  f32scale[i] = (float32) ((i * 40) + j);	/* range: 0 ~ 4-billion */
+          f32scale[i] = (float32) ((i * 40) + j);   /* range: 0 ~ 4-billion */
 
-	  i8scale[i] = (int8) ((i * 10) + j);	/* range: 0 ~ 100 */
-	  ui8scale[i] = (uint8) ((i * 20) + j);		/* range: 0 ~ 200 */
+          i8scale[i] = (int8) ((i * 10) + j);   /* range: 0 ~ 100 */
+          ui8scale[i] = (uint8) ((i * 20) + j);     /* range: 0 ~ 200 */
 
-	  i16scale[i] = (int16) ((i * 3000) + j);	/* range: 0 ~ 30000 */
-	  ui16scale[i] = (uint16) ((i * 6000) + j);	/* range: 0 ~ 60000 */
+          i16scale[i] = (int16) ((i * 3000) + j);   /* range: 0 ~ 30000 */
+          ui16scale[i] = (uint16) ((i * 6000) + j);     /* range: 0 ~ 60000 */
 
-	  i32scale[i] = (int32) ((i * 20) + j);		/* range: 0 ~ 2-billion */
-	  ui32scale[i] = (uint32) ((i * 40) + j);	/* range: 0 ~ 4-billion */
+          i32scale[i] = (int32) ((i * 20) + j);     /* range: 0 ~ 2-billion */
+          ui32scale[i] = (uint32) ((i * 40) + j);   /* range: 0 ~ 4-billion */
       }
 
     ret = DFSDsetdims(rank, dims);
     RESULT("DFSDsetdims");
 
     MESSAGE(5, printf("Writing arrays to single file...\n");
-	);
+        );
 
     ret = DFSDsetNT(DFNT_NFLOAT64);
     RESULT("DFSDsetNT");
@@ -184,7 +184,7 @@ test_sdnmms(void)
     RESULT("DFSDadddata");
 
     MESSAGE(5, printf("Reading arrays from single file...\n");
-	);
+        );
 
     ret = DFSDgetdata("nntcheck.hdf", rank, dims, (VOIDP) tf64);
     RESULT("DFSDgetdata");
@@ -243,230 +243,230 @@ test_sdnmms(void)
     RESULT("DFSDgetrange");
 
     MESSAGE(5, printf("Checking arrays from single file...\n\n");
-	);
+        );
 
     err = 0;
     err1 = 0;
     err2 = 0;
     for (i = 0; i < 10; i++)
       {
-	  for (j = 0; j < 10; j++)
-	      if (f64[i][j] != tf64[i][j])
-		  err = 1;
-	  if (f64scale[i] != tf64scale[i])
-	      err2 = 1;
+          for (j = 0; j < 10; j++)
+              if (f64[i][j] != tf64[i][j])
+                  err = 1;
+          if (f64scale[i] != tf64scale[i])
+              err2 = 1;
       }
     if ((f64max != tf64max) || (f64min != tf64min))
-	err1 = 1;
+        err1 = 1;
 
     num_errs += err + err1 + err2;
     MESSAGE(5, if (err == 1)
-	    printf(">>> Test failed for float64 array.\n");
-	    else
-	    printf("Test passed for float64 array.\n");) ;
+            printf(">>> Test failed for float64 array.\n");
+            else
+            printf("Test passed for float64 array.\n");) ;
     MESSAGE(5, if (err2 == 1)
-	    printf(">>> Test failed for float64 scales.\n");
-	    else
-	    printf("Test passed for float64 scales.\n");) ;
+            printf(">>> Test failed for float64 scales.\n");
+            else
+            printf("Test passed for float64 scales.\n");) ;
     MESSAGE(5, if (err1 == 1)
-	    printf(">>> Test failed for float64 max/min.\n");
-	    else
-	    printf("Test passed for float64 max/min.\n");) ;
+            printf(">>> Test failed for float64 max/min.\n");
+            else
+            printf("Test passed for float64 max/min.\n");) ;
 
     err = 0;
     err1 = 0;
     err2 = 0;
     for (i = 0; i < 10; i++)
       {
-	  for (j = 0; j < 10; j++)
-	      if (f32[i][j] != tf32[i][j])
-		  err = 1;
-	  if (f32scale[i] != tf32scale[i])
-	      err2 = 1;
+          for (j = 0; j < 10; j++)
+              if (f32[i][j] != tf32[i][j])
+                  err = 1;
+          if (f32scale[i] != tf32scale[i])
+              err2 = 1;
       }
     if ((f32max != tf32max) || (f32min != tf32min))
-	err1 = 1;
+        err1 = 1;
 
     num_errs += err + err1 + err2;
     MESSAGE(5, if (err == 1)
-	    printf(">>> Test failed for float32 array.\n");
-	    else
-	    printf("Test passed for float32 array.\n");) ;
+            printf(">>> Test failed for float32 array.\n");
+            else
+            printf("Test passed for float32 array.\n");) ;
     MESSAGE(5, if (err2 == 1)
-	    printf(">>> Test failed for float32 scales.\n");
-	    else
-	    printf("Test passed for float32 scales.\n");) ;
+            printf(">>> Test failed for float32 scales.\n");
+            else
+            printf("Test passed for float32 scales.\n");) ;
     MESSAGE(5, if (err1 == 1)
-	    printf(">>> Test failed for float32 max/min.\n");
-	    else
-	    printf("Test passed for float32 max/min.\n");) ;
+            printf(">>> Test failed for float32 max/min.\n");
+            else
+            printf("Test passed for float32 max/min.\n");) ;
 
     err = 0;
     err1 = 0;
     err2 = 0;
     for (i = 0; i < 10; i++)
       {
-	  for (j = 0; j < 10; j++)
-	      if (i8[i][j] != ti8[i][j])
-		  err = 1;
-	  if (i8scale[i] != ti8scale[i])
-	      err2 = 1;
+          for (j = 0; j < 10; j++)
+              if (i8[i][j] != ti8[i][j])
+                  err = 1;
+          if (i8scale[i] != ti8scale[i])
+              err2 = 1;
       }
     if ((i8max != ti8max) || (i8min != ti8min))
-	err1 = 1;
+        err1 = 1;
 
     num_errs += err + err1 + err2;
     MESSAGE(5, if (err == 1)
-	    printf(">>> Test failed for int8 array.\n");
-	    else
-	    printf("Test passed for int8 array.\n");) ;
+            printf(">>> Test failed for int8 array.\n");
+            else
+            printf("Test passed for int8 array.\n");) ;
     MESSAGE(5, if (err2 == 1)
-	    printf(">>> Test failed for int8 scales.\n");
-	    else
-	    printf("Test passed for int8 scales.\n");) ;
+            printf(">>> Test failed for int8 scales.\n");
+            else
+            printf("Test passed for int8 scales.\n");) ;
     MESSAGE(5, if (err1 == 1)
-	    printf(">>> Test failed for int8 max/min.\n");
-	    else
-	    printf("Test passed for int8 max/min.\n");) ;
+            printf(">>> Test failed for int8 max/min.\n");
+            else
+            printf("Test passed for int8 max/min.\n");) ;
 
     err = 0;
     err1 = 0;
     err2 = 0;
     for (i = 0; i < 10; i++)
       {
-	  for (j = 0; j < 10; j++)
-	      if (ui8[i][j] != tui8[i][j])
-		  err = 1;
-	  if (ui8scale[i] != tui8scale[i])
-	      err2 = 1;
+          for (j = 0; j < 10; j++)
+              if (ui8[i][j] != tui8[i][j])
+                  err = 1;
+          if (ui8scale[i] != tui8scale[i])
+              err2 = 1;
       }
     if ((ui8max != tui8max) || (ui8min != tui8min))
-	err1 = 1;
+        err1 = 1;
 
     num_errs += err + err1 + err2;
     MESSAGE(5, if (err == 1)
-	    printf(">>> Test failed for uint8 array.\n");
-	    else
-	    printf("Test passed for uint8 array.\n");) ;
+            printf(">>> Test failed for uint8 array.\n");
+            else
+            printf("Test passed for uint8 array.\n");) ;
     MESSAGE(5, if (err2 == 1)
-	    printf(">>> Test failed for uint8 scales.\n");
-	    else
-	    printf("Test passed for uint8 scales.\n");) ;
+            printf(">>> Test failed for uint8 scales.\n");
+            else
+            printf("Test passed for uint8 scales.\n");) ;
     MESSAGE(5, if (err1 == 1)
-	    printf(">>> Test failed for uint8 max/min.\n");
-	    else
-	    printf("Test passed for uint8 max/min.\n");) ;
+            printf(">>> Test failed for uint8 max/min.\n");
+            else
+            printf("Test passed for uint8 max/min.\n");) ;
 
     err = 0;
     err1 = 0;
     err2 = 0;
     for (i = 0; i < 10; i++)
       {
-	  for (j = 0; j < 10; j++)
-	      if (i16[i][j] != ti16[i][j])
-		  err = 1;
-	  if (i16scale[i] != ti16scale[i])
-	      err2 = 1;
+          for (j = 0; j < 10; j++)
+              if (i16[i][j] != ti16[i][j])
+                  err = 1;
+          if (i16scale[i] != ti16scale[i])
+              err2 = 1;
       }
     if ((i16max != ti16max) || (i16min != ti16min))
-	err1 = 1;
+        err1 = 1;
 
     num_errs += err + err1 + err2;
     MESSAGE(5, if (err == 1)
-	    printf(">>> Test failed for int16 array.\n");
-	    else
-	    printf("Test passed for int16 array.\n");) ;
+            printf(">>> Test failed for int16 array.\n");
+            else
+            printf("Test passed for int16 array.\n");) ;
     MESSAGE(5, if (err2 == 1)
-	    printf(">>> Test failed for int16 scales.\n");
-	    else
-	    printf("Test passed for int16 scales.\n");) ;
+            printf(">>> Test failed for int16 scales.\n");
+            else
+            printf("Test passed for int16 scales.\n");) ;
     MESSAGE(5, if (err1 == 1)
-	    printf(">>> Test failed for int16 max/min.\n");
-	    else
-	    printf("Test passed for int16 max/min.\n");) ;
+            printf(">>> Test failed for int16 max/min.\n");
+            else
+            printf("Test passed for int16 max/min.\n");) ;
 
     err = 0;
     err1 = 0;
     err2 = 0;
     for (i = 0; i < 10; i++)
       {
-	  for (j = 0; j < 10; j++)
-	      if (ui16[i][j] != tui16[i][j])
-		  err = 1;
-	  if (ui16scale[i] != tui16scale[i])
-	      err2 = 1;
+          for (j = 0; j < 10; j++)
+              if (ui16[i][j] != tui16[i][j])
+                  err = 1;
+          if (ui16scale[i] != tui16scale[i])
+              err2 = 1;
       }
     if ((ui16max != tui16max) || (ui16min != tui16min))
-	err1 = 1;
+        err1 = 1;
 
     num_errs += err + err1 + err2;
     MESSAGE(5, if (err == 1)
-	    printf(">>> Test failed for uint16 array.\n");
-	    else
-	    printf("Test passed for uint16 array.\n");) ;
+            printf(">>> Test failed for uint16 array.\n");
+            else
+            printf("Test passed for uint16 array.\n");) ;
     MESSAGE(5, if (err2 == 1)
-	    printf(">>> Test failed for uint16 scales.\n");
-	    else
-	    printf("Test passed for uint16 scales.\n");) ;
+            printf(">>> Test failed for uint16 scales.\n");
+            else
+            printf("Test passed for uint16 scales.\n");) ;
     MESSAGE(5, if (err1 == 1)
-	    printf(">>> Test failed for uint16 max/min.\n");
-	    else
-	    printf("Test passed for uint16 max/min.\n");) ;
+            printf(">>> Test failed for uint16 max/min.\n");
+            else
+            printf("Test passed for uint16 max/min.\n");) ;
 
     err = 0;
     err1 = 0;
     err2 = 0;
     for (i = 0; i < 10; i++)
       {
-	  for (j = 0; j < 10; j++)
-	      if (i32[i][j] != ti32[i][j])
-		  err = 1;
-	  if (i32scale[i] != ti32scale[i])
-	      err2 = 1;
+          for (j = 0; j < 10; j++)
+              if (i32[i][j] != ti32[i][j])
+                  err = 1;
+          if (i32scale[i] != ti32scale[i])
+              err2 = 1;
       }
     if ((i32max != ti32max) || (i32min != ti32min))
-	err1 = 1;
+        err1 = 1;
 
     num_errs += err + err1 + err2;
     MESSAGE(5, if (err == 1)
-	    printf(">>> Test failed for int32 array.\n");
-	    else
-	    printf("Test passed for int32 array.\n");) ;
+            printf(">>> Test failed for int32 array.\n");
+            else
+            printf("Test passed for int32 array.\n");) ;
     MESSAGE(5, if (err2 == 1)
-	    printf(">>> Test failed for int32 scales.\n");
-	    else
-	    printf("Test passed for int32 scales.\n");) ;
+            printf(">>> Test failed for int32 scales.\n");
+            else
+            printf("Test passed for int32 scales.\n");) ;
     MESSAGE(5, if (err1 == 1)
-	    printf(">>> Test failed for int32 max/min.\n");
-	    else
-	    printf("Test passed for int32 max/min.\n");) ;
+            printf(">>> Test failed for int32 max/min.\n");
+            else
+            printf("Test passed for int32 max/min.\n");) ;
 
     err = 0;
     err1 = 0;
     err2 = 0;
     for (i = 0; i < 10; i++)
       {
-	  for (j = 0; j < 10; j++)
-	      if (ui32[i][j] != tui32[i][j])
-		  err = 1;
-	  if (ui32scale[i] != tui32scale[i])
-	      err2 = 1;
+          for (j = 0; j < 10; j++)
+              if (ui32[i][j] != tui32[i][j])
+                  err = 1;
+          if (ui32scale[i] != tui32scale[i])
+              err2 = 1;
       }
     if ((ui32max != tui32max) || (ui32min != tui32min))
-	err1 = 1;
+        err1 = 1;
 
     num_errs += err + err1 + err2;
     MESSAGE(5, if (err == 1)
-	    printf(">>> Test failed for uint32 array.\n");
-	    else
-	    printf("Test passed for uint32 array.\n");) ;
+            printf(">>> Test failed for uint32 array.\n");
+            else
+            printf("Test passed for uint32 array.\n");) ;
     MESSAGE(5, if (err2 == 1)
-	    printf(">>> Test failed for uint32 scales.\n");
-	    else
-	    printf("Test passed for uint32 scales.\n");) ;
+            printf(">>> Test failed for uint32 scales.\n");
+            else
+            printf("Test passed for uint32 scales.\n");) ;
     MESSAGE(5, if (err1 == 1)
-	    printf(">>> Test failed for uint32 max/min.\n");
-	    else
-	    printf("Test passed for uint32 max/min.\n");) ;
+            printf(">>> Test failed for uint32 max/min.\n");
+            else
+            printf("Test passed for uint32 max/min.\n");) ;
 
 }

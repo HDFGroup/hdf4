@@ -73,9 +73,9 @@ static uint8 FAR fillui8 = 1;
 
 /* Dimensions of slab */
 static int32 FAR size_dims[3] =
-{2, 3, 4};			/* size of slab dims */
+{2, 3, 4};                      /* size of slab dims */
 static int32 FAR start_dims[3] =
-{1, 1, 1};			/* starting dims  */
+{1, 1, 1};                      /* starting dims  */
 static int32 FAR stride[3] =
 {0, 0, 0};
 static int32 FAR d_dims[3] =
@@ -169,505 +169,505 @@ static uint8 FAR sccolui8[4] =
 static float32 FAR slabw1[1][1][3] =
 {
     {
-	{(float32) 110.0, (float32) 111.0, (float32) 112.0}}};
+        {(float32) 110.0, (float32) 111.0, (float32) 112.0}}};
 static float32 FAR slabw2[2][1][3] =
 {
     {
-	{(float32) 20.0, (float32) 21.0, (float32) 22.0}},
+        {(float32) 20.0, (float32) 21.0, (float32) 22.0}},
     {
-	{(float32) 120.0, (float32) 121.0, (float32) 122.0}}};
+        {(float32) 120.0, (float32) 121.0, (float32) 122.0}}};
 static float32 FAR slabw3[1][2][3] =
 {
     {
-	{(float32) 0.0, (float32) 1.0, (float32) 2.0},
-	{(float32) 10.0, (float32) 11.0, (float32) 12.0}}};
+        {(float32) 0.0, (float32) 1.0, (float32) 2.0},
+        {(float32) 10.0, (float32) 11.0, (float32) 12.0}}};
 static float32 FAR slabw4[1][1][3] =
 {
     {
-	{(float32) 100.0, (float32) 101.0, (float32) 102.0}}};
+        {(float32) 100.0, (float32) 101.0, (float32) 102.0}}};
 static float32 FAR slabw5[2][3][1] =
 {
     {
-	{(float32) 3.0},
-	{(float32) 13.0},
-	{(float32) 23.0}},
+        {(float32) 3.0},
+        {(float32) 13.0},
+        {(float32) 23.0}},
     {
-	{(float32) 103.0},
-	{(float32) 113.0},
-	{(float32) 123.0}}};
+        {(float32) 103.0},
+        {(float32) 113.0},
+        {(float32) 123.0}}};
 
 static float64 FAR slabw1f64[1][1][3] =
 {
     {
-	{110.0, 111.0, 112.0}}};
+        {110.0, 111.0, 112.0}}};
 static float64 FAR slabw2f64[2][1][3] =
 {
     {
-	{20.0, 21.0, 22.0}},
+        {20.0, 21.0, 22.0}},
     {
-	{120.0, 121.0, 122.0}}};
+        {120.0, 121.0, 122.0}}};
 static float64 FAR slabw3f64[1][2][3] =
 {
     {
-	{0.0, 1.0, 2.0},
-	{10.0, 11.0, 12.0}}};
+        {0.0, 1.0, 2.0},
+        {10.0, 11.0, 12.0}}};
 static float64 FAR slabw4f64[1][1][3] =
 {
     {
-	{100.0, 101.0, 102.0}}};
+        {100.0, 101.0, 102.0}}};
 static float64 FAR slabw5f64[2][3][1] =
 {
     {
-	{3.0},
-	{13.0},
-	{23.0}},
+        {3.0},
+        {13.0},
+        {23.0}},
     {
-	{103.0},
-	{113.0},
-	{123.0}}};
+        {103.0},
+        {113.0},
+        {123.0}}};
 
 #ifndef PC
 static intn FAR slabw1in[1][1][3] =
 {
     {
-	{110, 111, 112}}};
+        {110, 111, 112}}};
 static intn FAR slabw2in[2][1][3] =
 {
     {
-	{20, 21, 22}},
+        {20, 21, 22}},
     {
-	{120, 121, 122}}};
+        {120, 121, 122}}};
 static intn FAR slabw3in[1][2][3] =
 {
     {
-	{0, 1, 2},
-	{10, 11, 12}}};
+        {0, 1, 2},
+        {10, 11, 12}}};
 static intn FAR slabw4in[1][1][3] =
 {
     {
-	{100, 101, 102}}};
+        {100, 101, 102}}};
 static intn FAR slabw5in[2][3][1] =
 {
     {
-	{3},
-	{13},
-	{23}},
+        {3},
+        {13},
+        {23}},
     {
-	{103},
-	{113},
-	{123}}};
+        {103},
+        {113},
+        {123}}};
 
 static uintn FAR slabw1uin[1][1][3] =
 {
     {
-	{110, 111, 112}}};
+        {110, 111, 112}}};
 static uintn FAR slabw2uin[2][1][3] =
 {
     {
-	{20, 21, 22}},
+        {20, 21, 22}},
     {
-	{120, 121, 122}}};
+        {120, 121, 122}}};
 static uintn FAR slabw3uin[1][2][3] =
 {
     {
-	{0, 1, 2},
-	{10, 11, 12}}};
+        {0, 1, 2},
+        {10, 11, 12}}};
 static uintn FAR slabw4uin[1][1][3] =
 {
     {
-	{100, 101, 102}}};
+        {100, 101, 102}}};
 static uintn FAR slabw5uin[2][3][1] =
 {
     {
-	{3},
-	{13},
-	{23}},
+        {3},
+        {13},
+        {23}},
     {
-	{103},
-	{113},
-	{123}}};
+        {103},
+        {113},
+        {123}}};
 #endif
 
 static int32 FAR slabw1i32[1][1][3] =
 {
     {
-	{110, 111, 112}}};
+        {110, 111, 112}}};
 static int32 FAR slabw2i32[2][1][3] =
 {
     {
-	{20, 21, 22}},
+        {20, 21, 22}},
     {
-	{120, 121, 122}}};
+        {120, 121, 122}}};
 static int32 FAR slabw3i32[1][2][3] =
 {
     {
-	{0, 1, 2},
-	{10, 11, 12}}};
+        {0, 1, 2},
+        {10, 11, 12}}};
 static int32 FAR slabw4i32[1][1][3] =
 {
     {
-	{100, 101, 102}}};
+        {100, 101, 102}}};
 static int32 FAR slabw5i32[2][3][1] =
 {
     {
-	{3},
-	{13},
-	{23}},
+        {3},
+        {13},
+        {23}},
     {
-	{103},
-	{113},
-	{123}}};
+        {103},
+        {113},
+        {123}}};
 
 static uint32 FAR slabw1ui32[1][1][3] =
 {
     {
-	{110, 111, 112}}};
+        {110, 111, 112}}};
 static uint32 FAR slabw2ui32[2][1][3] =
 {
     {
-	{20, 21, 22}},
+        {20, 21, 22}},
     {
-	{120, 121, 122}}};
+        {120, 121, 122}}};
 static uint32 FAR slabw3ui32[1][2][3] =
 {
     {
-	{0, 1, 2},
-	{10, 11, 12}}};
+        {0, 1, 2},
+        {10, 11, 12}}};
 static uint32 FAR slabw4ui32[1][1][3] =
 {
     {
-	{100, 101, 102}}};
+        {100, 101, 102}}};
 static uint32 FAR slabw5ui32[2][3][1] =
 {
     {
-	{3},
-	{13},
-	{23}},
+        {3},
+        {13},
+        {23}},
     {
-	{103},
-	{113},
-	{123}}};
+        {103},
+        {113},
+        {123}}};
 
 static int16 FAR slabw1i16[1][1][3] =
 {
     {
-	{110, 111, 112}}};
+        {110, 111, 112}}};
 static int16 FAR slabw2i16[2][1][3] =
 {
     {
-	{20, 21, 22}},
+        {20, 21, 22}},
     {
-	{120, 121, 122}}};
+        {120, 121, 122}}};
 static int16 FAR slabw3i16[1][2][3] =
 {
     {
-	{0, 1, 2},
-	{10, 11, 12}}};
+        {0, 1, 2},
+        {10, 11, 12}}};
 static int16 FAR slabw4i16[1][1][3] =
 {
     {
-	{100, 101, 102}}};
+        {100, 101, 102}}};
 static int16 FAR slabw5i16[2][3][1] =
 {
     {
-	{3},
-	{13},
-	{23}},
+        {3},
+        {13},
+        {23}},
     {
-	{103},
-	{113},
-	{123}}};
+        {103},
+        {113},
+        {123}}};
 
 static uint16 FAR slabw1ui16[1][1][3] =
 {
     {
-	{110, 111, 112}}};
+        {110, 111, 112}}};
 static uint16 FAR slabw2ui16[2][1][3] =
 {
     {
-	{20, 21, 22}},
+        {20, 21, 22}},
     {
-	{120, 121, 122}}};
+        {120, 121, 122}}};
 static uint16 FAR slabw3ui16[1][2][3] =
 {
     {
-	{0, 1, 2},
-	{10, 11, 12}}};
+        {0, 1, 2},
+        {10, 11, 12}}};
 static uint16 FAR slabw4ui16[1][1][3] =
 {
     {
-	{100, 101, 102}}};
+        {100, 101, 102}}};
 static uint16 FAR slabw5ui16[2][3][1] =
 {
     {
-	{3},
-	{13},
-	{23}},
+        {3},
+        {13},
+        {23}},
     {
-	{103},
-	{113},
-	{123}}};
+        {103},
+        {113},
+        {123}}};
 
 static int8 FAR slabw1i8[1][1][3] =
 {
     {
-	{110, 111, 112}}};
+        {110, 111, 112}}};
 static int8 FAR slabw2i8[2][1][3] =
 {
     {
-	{20, 21, 22}},
+        {20, 21, 22}},
     {
-	{120, 121, 122}}};
+        {120, 121, 122}}};
 static int8 FAR slabw3i8[1][2][3] =
 {
     {
-	{0, 1, 2},
-	{10, 11, 12}}};
+        {0, 1, 2},
+        {10, 11, 12}}};
 static int8 FAR slabw4i8[1][1][3] =
 {
     {
-	{100, 101, 102}}};
+        {100, 101, 102}}};
 static int8 FAR slabw5i8[2][3][1] =
 {
     {
-	{3},
-	{13},
-	{23}},
+        {3},
+        {13},
+        {23}},
     {
-	{103},
-	{113},
-	{123}}};
+        {103},
+        {113},
+        {123}}};
 
 static uint8 FAR slabw1ui8[1][1][3] =
 {
     {
-	{110, 111, 112}}};
+        {110, 111, 112}}};
 static uint8 FAR slabw2ui8[2][1][3] =
 {
     {
-	{20, 21, 22}},
+        {20, 21, 22}},
     {
-	{120, 121, 122}}};
+        {120, 121, 122}}};
 static uint8 FAR slabw3ui8[1][2][3] =
 {
     {
-	{0, 1, 2},
-	{10, 11, 12}}};
+        {0, 1, 2},
+        {10, 11, 12}}};
 static uint8 FAR slabw4ui8[1][1][3] =
 {
     {
-	{100, 101, 102}}};
+        {100, 101, 102}}};
 static uint8 FAR slabw5ui8[2][3][1] =
 {
     {
-	{3},
-	{13},
-	{23}},
+        {3},
+        {13},
+        {23}},
     {
-	{103},
-	{113},
-	{123}}};
+        {103},
+        {113},
+        {123}}};
 /* Slabs for slab3w() */
 static float32 FAR slab1[1][1][1] =
 {
     {
-	{(float32) 0.0}}};
+        {(float32) 0.0}}};
 static float32 FAR slab2[1][1][1] =
 {
     {
-	{(float32) 1.0}}};
+        {(float32) 1.0}}};
 static float32 FAR slab3[1][1][1] =
 {
     {
-	{(float32) 2.0}}};
+        {(float32) 2.0}}};
 static float32 FAR slab4[1][1][1] =
 {
     {
-	{(float32) 3.0}}};
+        {(float32) 3.0}}};
 static float32 FAR slab5[1][1][1] =
 {
     {
-	{(float32) 10.0}}};
+        {(float32) 10.0}}};
 static float32 FAR slab6[1][1][1] =
 {
     {
-	{(float32) 11.0}}};
+        {(float32) 11.0}}};
 static float32 FAR slab7[1][1][1] =
 {
     {
-	{(float32) 12.0}}};
+        {(float32) 12.0}}};
 static float32 FAR slab8[1][1][1] =
 {
     {
-	{(float32) 13.0}}};
+        {(float32) 13.0}}};
 static float32 FAR slab9[1][1][1] =
 {
     {
-	{(float32) 20.0}}};
+        {(float32) 20.0}}};
 static float32 FAR slab10[1][1][1] =
 {
     {
-	{(float32) 21.0}}};
+        {(float32) 21.0}}};
 static float32 FAR slab11[1][1][1] =
 {
     {
-	{(float32) 22.0}}};
+        {(float32) 22.0}}};
 static float32 FAR slab12[1][1][1] =
 {
     {
-	{(float32) 23.0}}};
+        {(float32) 23.0}}};
 static float32 FAR slab13[1][1][1] =
 {
     {
-	{(float32) 100.0}}};
+        {(float32) 100.0}}};
 static float32 FAR slab14[1][1][1] =
 {
     {
-	{(float32) 101.0}}};
+        {(float32) 101.0}}};
 static float32 FAR slab15[1][1][1] =
 {
     {
-	{(float32) 102.0}}};
+        {(float32) 102.0}}};
 static float32 FAR slab16[1][1][1] =
 {
     {
-	{(float32) 103.0}}};
+        {(float32) 103.0}}};
 static float32 FAR slab17[1][1][1] =
 {
     {
-	{(float32) 110.0}}};
+        {(float32) 110.0}}};
 static float32 FAR slab18[1][1][1] =
 {
     {
-	{(float32) 111.0}}};
+        {(float32) 111.0}}};
 static float32 FAR slab19[1][1][1] =
 {
     {
-	{(float32) 112.0}}};
+        {(float32) 112.0}}};
 static float32 FAR slab20[1][1][1] =
 {
     {
-	{(float32) 113.0}}};
+        {(float32) 113.0}}};
 static float32 FAR slab21[1][1][1] =
 {
     {
-	{(float32) 120.0}}};
+        {(float32) 120.0}}};
 static float32 FAR slab22[1][1][1] =
 {
     {
-	{(float32) 121.0}}};
+        {(float32) 121.0}}};
 static float32 FAR slab23[1][1][1] =
 {
     {
-	{(float32) 122.0}}};
+        {(float32) 122.0}}};
 static float32 FAR slab24[1][1][1] =
 {
     {
-	{(float32) 123.0}}};
+        {(float32) 123.0}}};
 
 /* data array in memory  */
 static float32 FAR fdata[2][3][4] =
 {
     {
-	{(float32) 0.0, (float32) 1.0, (float32) 2.0, (float32) 3.0},
-	{(float32) 10.0, (float32) 11.0, (float32) 12.0, (float32) 13.0},
-	{(float32) 20.0, (float32) 21.0, (float32) 22.0, (float32) 23.0}},
+        {(float32) 0.0, (float32) 1.0, (float32) 2.0, (float32) 3.0},
+        {(float32) 10.0, (float32) 11.0, (float32) 12.0, (float32) 13.0},
+        {(float32) 20.0, (float32) 21.0, (float32) 22.0, (float32) 23.0}},
     {
-	{(float32) 100.0, (float32) 101.0, (float32) 102.0, (float32) 103.0},
-	{(float32) 110.0, (float32) 111.0, (float32) 112.0, (float32) 113.0},
+        {(float32) 100.0, (float32) 101.0, (float32) 102.0, (float32) 103.0},
+        {(float32) 110.0, (float32) 111.0, (float32) 112.0, (float32) 113.0},
      {(float32) 120.0, (float32) 121.0, (float32) 122.0, (float32) 123.0}}};
 static float64 FAR f64data[2][3][4] =
 {
     {
-	{0.0, 1.0, 2.0, 3.0},
-	{10.0, 11.0, 12.0, 13.0},
-	{20.0, 21.0, 22.0, 23.0}},
+        {0.0, 1.0, 2.0, 3.0},
+        {10.0, 11.0, 12.0, 13.0},
+        {20.0, 21.0, 22.0, 23.0}},
     {
-	{100.0, 101.0, 102.0, 103.0},
-	{110.0, 111.0, 112.0, 113.0},
-	{120.0, 121.0, 122.0, 123.0}}};
+        {100.0, 101.0, 102.0, 103.0},
+        {110.0, 111.0, 112.0, 113.0},
+        {120.0, 121.0, 122.0, 123.0}}};
 #ifndef PC
 static intn FAR indata[2][3][4] =
 {
     {
-	{0, 1, 2, 3},
-	{10, 11, 12, 13},
-	{20, 21, 22, 23}},
+        {0, 1, 2, 3},
+        {10, 11, 12, 13},
+        {20, 21, 22, 23}},
     {
-	{100, 101, 102, 103},
-	{110, 111, 112, 113},
-	{120, 121, 122, 123}}};
+        {100, 101, 102, 103},
+        {110, 111, 112, 113},
+        {120, 121, 122, 123}}};
 static uintn FAR uindata[2][3][4] =
 {
     {
-	{0, 1, 2, 3},
-	{10, 11, 12, 13},
-	{20, 21, 22, 23}},
+        {0, 1, 2, 3},
+        {10, 11, 12, 13},
+        {20, 21, 22, 23}},
     {
-	{100, 101, 102, 103},
-	{110, 111, 112, 113},
-	{120, 121, 122, 123}}};
+        {100, 101, 102, 103},
+        {110, 111, 112, 113},
+        {120, 121, 122, 123}}};
 #endif
 static int32 FAR i32data[2][3][4] =
 {
     {
-	{0, 1, 2, 3},
-	{10, 11, 12, 13},
-	{20, 21, 22, 23}},
+        {0, 1, 2, 3},
+        {10, 11, 12, 13},
+        {20, 21, 22, 23}},
     {
-	{100, 101, 102, 103},
-	{110, 111, 112, 113},
-	{120, 121, 122, 123}}};
+        {100, 101, 102, 103},
+        {110, 111, 112, 113},
+        {120, 121, 122, 123}}};
 static uint32 FAR ui32data[2][3][4] =
 {
     {
-	{0, 1, 2, 3},
-	{10, 11, 12, 13},
-	{20, 21, 22, 23}},
+        {0, 1, 2, 3},
+        {10, 11, 12, 13},
+        {20, 21, 22, 23}},
     {
-	{100, 101, 102, 103},
-	{110, 111, 112, 113},
-	{120, 121, 122, 123}}};
+        {100, 101, 102, 103},
+        {110, 111, 112, 113},
+        {120, 121, 122, 123}}};
 static int16 FAR i16data[2][3][4] =
 {
     {
-	{0, 1, 2, 3},
-	{10, 11, 12, 13},
-	{20, 21, 22, 23}},
+        {0, 1, 2, 3},
+        {10, 11, 12, 13},
+        {20, 21, 22, 23}},
     {
-	{100, 101, 102, 103},
-	{110, 111, 112, 113},
-	{120, 121, 122, 123}}};
+        {100, 101, 102, 103},
+        {110, 111, 112, 113},
+        {120, 121, 122, 123}}};
 static uint16 FAR ui16data[2][3][4] =
 {
     {
-	{0, 1, 2, 3},
-	{10, 11, 12, 13},
-	{20, 21, 22, 23}},
+        {0, 1, 2, 3},
+        {10, 11, 12, 13},
+        {20, 21, 22, 23}},
     {
-	{100, 101, 102, 103},
-	{110, 111, 112, 113},
-	{120, 121, 122, 123}}};
+        {100, 101, 102, 103},
+        {110, 111, 112, 113},
+        {120, 121, 122, 123}}};
 static int8 FAR i8data[2][3][4] =
 {
     {
-	{0, 1, 2, 3},
-	{10, 11, 12, 13},
-	{20, 21, 22, 23}},
+        {0, 1, 2, 3},
+        {10, 11, 12, 13},
+        {20, 21, 22, 23}},
     {
-	{100, 101, 102, 103},
-	{110, 111, 112, 113},
-	{120, 121, 122, 123}}};
+        {100, 101, 102, 103},
+        {110, 111, 112, 113},
+        {120, 121, 122, 123}}};
 static uint8 FAR ui8data[2][3][4] =
 {
     {
-	{0, 1, 2, 3},
-	{10, 11, 12, 13},
-	{20, 21, 22, 23}},
+        {0, 1, 2, 3},
+        {10, 11, 12, 13},
+        {20, 21, 22, 23}},
     {
-	{100, 101, 102, 103},
-	{110, 111, 112, 113},
-	{120, 121, 122, 123}}};
+        {100, 101, 102, 103},
+        {110, 111, 112, 113},
+        {120, 121, 122, 123}}};
 /* Output files */
 static const char FAR *swf32 = "swf32.hdf";
 static const char FAR *swf64 = "swf64.hdf";
@@ -686,17 +686,17 @@ static const char FAR *sw4 = "s4w.hdf";
 /*
    ** Write data set to slabw.hdf as 5 hyperslabs.
  */
-int 
+int
 slabwf32(void)
 {
     int32       i, j, k;
     int32       ret = 0;
     int32       num_err = 0;
-    float32     sdata[2][3][4];	/* Data array read from from file */
+    float32     sdata[2][3][4]; /* Data array read from from file */
     float32     lfill;
 
     MESSAGE(10, printf("\n slabwf32:  Writing 5 slabs to slabwf32.hdf \n");
-	);
+        );
 
     ret = DFSDclear();
     CHECK(ret, FAIL, "DFSDclear");
@@ -725,7 +725,7 @@ slabwf32(void)
     ret = DFSDsetdimscale(3, size_dims[2], (VOIDP) sccolf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    /* 
+    /*
        ** write data out using slabs with
        ** each slab in different order to the file "slab.hdf"
      */
@@ -806,33 +806,33 @@ slabwf32(void)
     ret = DFSDgetfillvalue((VOIDP) &lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != fillf32)
-	num_err++;
+        num_err++;
     MESSAGE(10, printf("\n       fill value =: %f \n", lfill);
-	);
+        );
 
     if (num_err != 0)
-	MESSAGE(10, printf("\n      slabwf32:  %d failures.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n      slabwf32:  %d failures.  \n", (int) num_err);
+        );
 
     MESSAGE(10, printf("\n  Verifying data  \n");
-	);
+        );
     MESSAGE(10, printf("sdata = ");
-	);
+        );
     for (i = 0; i < d_dims[0]; i++)
-	for (j = 0; j < d_dims[1]; j++)
-	    for (k = 0; k < d_dims[2]; k++)
-	      {
-		  if (sdata[i][j][k] != fdata[i][j][k])
-		      num_err++;
-		  MESSAGE(10, printf("%f, ", sdata[i][j][k]);
-		      );
-	      }
+        for (j = 0; j < d_dims[1]; j++)
+            for (k = 0; k < d_dims[2]; k++)
+              {
+                  if (sdata[i][j][k] != fdata[i][j][k])
+                      num_err++;
+                  MESSAGE(10, printf("%f, ", sdata[i][j][k]);
+                      );
+              }
     if (num_err == 0)
-	MESSAGE(10, printf("\n       >>> All tests passed for slabwf32 <<< \n");
-	)
-	else
-	MESSAGE(10, printf("\n       slabwf32:  %d wrong values in slab.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n       >>> All tests passed for slabwf32 <<< \n");
+        )
+        else
+        MESSAGE(10, printf("\n       slabwf32:  %d wrong values in slab.  \n", (int) num_err);
+        );
 
     return (int) num_err;
 }
@@ -840,17 +840,17 @@ slabwf32(void)
 /*
    ** Write float64 data set to slabw.hdf as 5 hyperslabs.
  */
-int 
+int
 slabwf64(void)
 {
     int32       i, j, k;
     int32       ret = 0;
     int32       num_err = 0;
-    float64     sdata[2][3][4];	/* Data array read from from file */
+    float64     sdata[2][3][4]; /* Data array read from from file */
     float64     lfill;
 
     MESSAGE(10, printf("\n slabwf64:  Writing 5 slabs to slabwf64.hdf \n");
-	);
+        );
 
     ret = DFSDclear();
     CHECK(ret, FAIL, "DFSDclear");
@@ -963,33 +963,33 @@ slabwf64(void)
     ret = DFSDgetfillvalue((VOIDP) &lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != fillf64)
-	num_err += 1;
+        num_err += 1;
     MESSAGE(10, printf("\n       fill value =: %f \n", (float) lfill);
-	);
+        );
 
     if (num_err != 0)
-	MESSAGE(10, printf("\n      slabwf64:  %d failures.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n      slabwf64:  %d failures.  \n", (int) num_err);
+        );
 
     MESSAGE(10, printf("\n  Verifying data  \n");
-	);
+        );
     MESSAGE(10, printf("sdata = ");
-	);
+        );
     for (i = 0; i < d_dims[0]; i++)
-	for (j = 0; j < d_dims[1]; j++)
-	    for (k = 0; k < d_dims[2]; k++)
-	      {
-		  if (sdata[i][j][k] != f64data[i][j][k])
-		      num_err++;
-		  MESSAGE(10, printf("%f, ", (float) sdata[i][j][k]);
-		      );
-	      }
+        for (j = 0; j < d_dims[1]; j++)
+            for (k = 0; k < d_dims[2]; k++)
+              {
+                  if (sdata[i][j][k] != f64data[i][j][k])
+                      num_err++;
+                  MESSAGE(10, printf("%f, ", (float) sdata[i][j][k]);
+                      );
+              }
     if (num_err == 0)
-	MESSAGE(10, printf("\n       >>> All tests passed for slabwf64 <<< \n");
-	)
-	else
-	MESSAGE(10, printf("\n       slabwf64:  %d wrong values in slab.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n       >>> All tests passed for slabwf64 <<< \n");
+        )
+        else
+        MESSAGE(10, printf("\n       slabwf64:  %d wrong values in slab.  \n", (int) num_err);
+        );
 
     return (int) num_err;
 }
@@ -998,17 +998,17 @@ slabwf64(void)
 /*
    ** Write intn data set to slabwin.hdf as 5 hyperslabs.
  */
-int 
+int
 slabwin(void)
 {
     int32       i, j, k;
     int32       ret = 0;
     int32       num_err = 0;
-    intn        sdata[2][3][4];	/* Data array read from from file */
+    intn        sdata[2][3][4]; /* Data array read from from file */
     intn        lfill;
 
     MESSAGE(10, printf("\n slabwin:  Writing 5 slabs to slabwin.hdf \n");
-	);
+        );
 
     ret = DFSDclear();
     CHECK(ret, FAIL, "DFSDclear");
@@ -1121,33 +1121,33 @@ slabwin(void)
     ret = DFSDgetfillvalue((VOIDP) &lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != fillin)
-	num_err += 1;
+        num_err += 1;
     MESSAGE(10, printf("\n       fill value =: %d \n", lfill);
-	);
+        );
 
     if (num_err != 0)
-	MESSAGE(10, printf("\n      slabwin:  %d failures.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n      slabwin:  %d failures.  \n", (int) num_err);
+        );
 
     MESSAGE(10, printf("\n  Verifying data  \n");
-	);
+        );
     MESSAGE(10, printf("sdata = ");
-	);
+        );
     for (i = 0; i < d_dims[0]; i++)
-	for (j = 0; j < d_dims[1]; j++)
-	    for (k = 0; k < d_dims[2]; k++)
-	      {
-		  if (sdata[i][j][k] != indata[i][j][k])
-		      num_err++;
-		  MESSAGE(10, printf("%u, ", sdata[i][j][k]);
-		      );
-	      }
+        for (j = 0; j < d_dims[1]; j++)
+            for (k = 0; k < d_dims[2]; k++)
+              {
+                  if (sdata[i][j][k] != indata[i][j][k])
+                      num_err++;
+                  MESSAGE(10, printf("%u, ", sdata[i][j][k]);
+                      );
+              }
     if (num_err == 0)
-	MESSAGE(10, printf("\n       >>> All tests passed for slabwin <<< \n");
-	)
-	else
-	MESSAGE(10, printf("\n       slabwin:  %d wrong values in slab.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n       >>> All tests passed for slabwin <<< \n");
+        )
+        else
+        MESSAGE(10, printf("\n       slabwin:  %d wrong values in slab.  \n", (int) num_err);
+        );
 
     return (int) num_err;
 }
@@ -1155,17 +1155,17 @@ slabwin(void)
 /*
    ** Write uintn data set to slabwuin.hdf as 5 hyperslabs.
  */
-int 
+int
 slabwuin(void)
 {
     int32       i, j, k;
     int32       ret = 0;
     int32       num_err = 0;
-    uintn       sdata[2][3][4];	/* Data array read from from file */
+    uintn       sdata[2][3][4]; /* Data array read from from file */
     uintn       lfill;
 
     MESSAGE(10, printf("\n slabwuin:  Writing 5 slabs to slabwuin.hdf \n");
-	);
+        );
 
     ret = DFSDclear();
     CHECK(ret, FAIL, "DFSDclear");
@@ -1197,7 +1197,7 @@ slabwuin(void)
     ret = DFSDsetdimscale(3, size_dims[2], (VOIDP) sccoluin);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    /* 
+    /*
        ** write data out using slabs with
        ** each slab in different order to the file "slab.hdf"
      */
@@ -1278,33 +1278,33 @@ slabwuin(void)
     ret = DFSDgetfillvalue((VOIDP) &lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != filluin)
-	num_err += 1;
+        num_err += 1;
     MESSAGE(10, printf("\n       fill value =: %u \n", lfill);
-	);
+        );
 
     if (num_err != 0)
-	MESSAGE(10, printf("\n      slabwin:  %d failures.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n      slabwin:  %d failures.  \n", (int) num_err);
+        );
 
     MESSAGE(10, printf("\n  Verifying data  \n");
-	);
+        );
     MESSAGE(10, printf("sdata = ");
-	);
+        );
     for (i = 0; i < d_dims[0]; i++)
-	for (j = 0; j < d_dims[1]; j++)
-	    for (k = 0; k < d_dims[2]; k++)
-	      {
-		  if (sdata[i][j][k] != uindata[i][j][k])
-		      num_err++;
-		  MESSAGE(10, printf("%u, ", sdata[i][j][k]);
-		      );
-	      }
+        for (j = 0; j < d_dims[1]; j++)
+            for (k = 0; k < d_dims[2]; k++)
+              {
+                  if (sdata[i][j][k] != uindata[i][j][k])
+                      num_err++;
+                  MESSAGE(10, printf("%u, ", sdata[i][j][k]);
+                      );
+              }
     if (num_err == 0)
-	MESSAGE(10, printf("\n       >>> All tests passed for slabwuin <<< \n");
-	)
-	else
-	MESSAGE(10, printf("\n       slabwuin:  %d wrong values in slab.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n       >>> All tests passed for slabwuin <<< \n");
+        )
+        else
+        MESSAGE(10, printf("\n       slabwuin:  %d wrong values in slab.  \n", (int) num_err);
+        );
 
     return (int) num_err;
 }
@@ -1313,17 +1313,17 @@ slabwuin(void)
 /*
    ** Write int32 data set to slabwi32.hdf as 5 hyperslabs.
  */
-int 
+int
 slabwi32(void)
 {
     int32       i, j, k;
     int32       ret = 0;
     int32       num_err = 0;
-    int32       sdata[2][3][4];	/* Data array read from from file */
+    int32       sdata[2][3][4]; /* Data array read from from file */
     int32       lfill;
 
     MESSAGE(10, printf("\n slabwi32:  Writing 5 slabs to slabwi32.hdf \n");
-	);
+        );
 
     ret = DFSDclear();
     CHECK(ret, FAIL, "DFSDclear");
@@ -1436,33 +1436,33 @@ slabwi32(void)
     ret = DFSDgetfillvalue((VOIDP) &lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != filli32)
-	num_err += 1;
+        num_err += 1;
     MESSAGE(10, printf("\n       fill value =: %d \n", (int) lfill);
-	);
+        );
 
     if (num_err != 0)
-	MESSAGE(10, printf("\n      slabwi32:  %d failures.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n      slabwi32:  %d failures.  \n", (int) num_err);
+        );
 
     MESSAGE(10, printf("\n  Verifying data  \n");
-	);
+        );
     MESSAGE(10, printf("sdata = ");
-	);
+        );
     for (i = 0; i < d_dims[0]; i++)
-	for (j = 0; j < d_dims[1]; j++)
-	    for (k = 0; k < d_dims[2]; k++)
-	      {
-		  if (sdata[i][j][k] != i32data[i][j][k])
-		      num_err++;
-		  MESSAGE(10, printf("%d, ", (int) sdata[i][j][k]);
-		      );
-	      }
+        for (j = 0; j < d_dims[1]; j++)
+            for (k = 0; k < d_dims[2]; k++)
+              {
+                  if (sdata[i][j][k] != i32data[i][j][k])
+                      num_err++;
+                  MESSAGE(10, printf("%d, ", (int) sdata[i][j][k]);
+                      );
+              }
     if (num_err == 0)
-	MESSAGE(10, printf("\n       >>> All tests passed for slabwi32 <<< \n");
-	)
-	else
-	MESSAGE(10, printf("\n       slabwi32:  %d wrong values in slab.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n       >>> All tests passed for slabwi32 <<< \n");
+        )
+        else
+        MESSAGE(10, printf("\n       slabwi32:  %d wrong values in slab.  \n", (int) num_err);
+        );
 
     return (int) num_err;
 }
@@ -1470,17 +1470,17 @@ slabwi32(void)
 /*
    ** Write uint32 data set to slabwui32.hdf as 5 hyperslabs.
  */
-int 
+int
 slabwui32(void)
 {
     int32       i, j, k;
     int32       ret = 0;
     int32       num_err = 0;
-    uint32      sdata[2][3][4];	/* Data array read from from file */
+    uint32      sdata[2][3][4]; /* Data array read from from file */
     uint32      lfill;
 
     MESSAGE(10, printf("\n slabwui32:  Writing 5 slabs to slabwui32.hdf \n");
-	);
+        );
 
     ret = DFSDclear();
     CHECK(ret, FAIL, "DFSDclear");
@@ -1512,7 +1512,7 @@ slabwui32(void)
     ret = DFSDsetdimscale(3, size_dims[2], (VOIDP) sccolui32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    /* 
+    /*
        ** write data out using slabs with
        ** each slab in different order to the file "slab.hdf"
      */
@@ -1593,33 +1593,33 @@ slabwui32(void)
     ret = DFSDgetfillvalue((VOIDP) &lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != fillui32)
-	num_err += 1;
+        num_err += 1;
     MESSAGE(10, printf("\n       fill value =: %u \n", (unsigned) lfill);
-	);
+        );
 
     if (num_err != 0)
-	MESSAGE(10, printf("\n      slabwui32:  %d failures.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n      slabwui32:  %d failures.  \n", (int) num_err);
+        );
 
     MESSAGE(10, printf("\n  Verifying data  \n");
-	);
+        );
     MESSAGE(10, printf("sdata = ");
-	);
+        );
     for (i = 0; i < d_dims[0]; i++)
-	for (j = 0; j < d_dims[1]; j++)
-	    for (k = 0; k < d_dims[2]; k++)
-	      {
-		  if (sdata[i][j][k] != ui32data[i][j][k])
-		      num_err++;
-		  MESSAGE(10, printf("%u, ", (unsigned) sdata[i][j][k]);
-		      );
-	      }
+        for (j = 0; j < d_dims[1]; j++)
+            for (k = 0; k < d_dims[2]; k++)
+              {
+                  if (sdata[i][j][k] != ui32data[i][j][k])
+                      num_err++;
+                  MESSAGE(10, printf("%u, ", (unsigned) sdata[i][j][k]);
+                      );
+              }
     if (num_err == 0)
-	MESSAGE(10, printf("\n       >>> All tests passed for slabwui32 <<< \n");
-	)
-	else
-	MESSAGE(10, printf("\n       slabwui32:  %d wrong values in slab.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n       >>> All tests passed for slabwui32 <<< \n");
+        )
+        else
+        MESSAGE(10, printf("\n       slabwui32:  %d wrong values in slab.  \n", (int) num_err);
+        );
 
     return (int) num_err;
 }
@@ -1627,17 +1627,17 @@ slabwui32(void)
 /*
    ** Write int16 data set to slabwi16.hdf as 5 hyperslabs.
  */
-int 
+int
 slabwi16(void)
 {
     int32       i, j, k;
     int32       ret = 0;
     int32       num_err = 0;
-    int16       sdata[2][3][4];	/* Data array read from from file */
+    int16       sdata[2][3][4]; /* Data array read from from file */
     int16       lfill;
 
     MESSAGE(10, printf("\n slabwi16:  Writing 5 slabs to slabwi16.hdf \n");
-	);
+        );
 
     ret = DFSDclear();
     CHECK(ret, FAIL, "DFSDclear");
@@ -1669,7 +1669,7 @@ slabwi16(void)
     ret = DFSDsetdimscale(3, size_dims[2], (VOIDP) sccoli16);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    /* 
+    /*
        ** write data out using slabs with
        ** each slab in different order to the file "slab.hdf"
      */
@@ -1750,51 +1750,51 @@ slabwi16(void)
     ret = DFSDgetfillvalue((VOIDP) &lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != filli16)
-	num_err += 1;
+        num_err += 1;
     MESSAGE(10, printf("\n       fill value =: %d \n", lfill);
-	);
+        );
 
     if (num_err != 0)
-	MESSAGE(10, printf("\n      slabwi16:  %d failures.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n      slabwi16:  %d failures.  \n", (int) num_err);
+        );
 
     MESSAGE(10, printf("\n  Verifying data  \n");
-	);
+        );
     MESSAGE(10, printf("sdata = ");
-	);
+        );
     for (i = 0; i < d_dims[0]; i++)
-	for (j = 0; j < d_dims[1]; j++)
-	    for (k = 0; k < d_dims[2]; k++)
-	      {
-		  if (sdata[i][j][k] != i16data[i][j][k])
-		      num_err++;
-		  MESSAGE(10, printf("%d, ", sdata[i][j][k]);
-		      );
-	      }
+        for (j = 0; j < d_dims[1]; j++)
+            for (k = 0; k < d_dims[2]; k++)
+              {
+                  if (sdata[i][j][k] != i16data[i][j][k])
+                      num_err++;
+                  MESSAGE(10, printf("%d, ", sdata[i][j][k]);
+                      );
+              }
     if (num_err == 0)
-	MESSAGE(10, printf("\n       >>> All tests passed for slabwi16 <<< \n");
-	)
-	else
-	MESSAGE(10, printf("\n       slabwi16:  %d wrong values in slab.  \n", (int) num_err);
-	)
+        MESSAGE(10, printf("\n       >>> All tests passed for slabwi16 <<< \n");
+        )
+        else
+        MESSAGE(10, printf("\n       slabwi16:  %d wrong values in slab.  \n", (int) num_err);
+        )
 
-	return (int) num_err;
+        return (int) num_err;
 }
 
 /*
    ** Write uint16 data set to slabwui16.hdf as 5 hyperslabs.
  */
-int 
+int
 slabwui16(void)
 {
     int32       i, j, k;
     int32       ret = 0;
     int32       num_err = 0;
-    uint16      sdata[2][3][4];	/* Data array read from from file */
+    uint16      sdata[2][3][4]; /* Data array read from from file */
     uint16      lfill;
 
     MESSAGE(10, printf("\n slabwui16:  Writing 5 slabs to slabwui16.hdf \n");
-	);
+        );
 
     ret = DFSDclear();
     CHECK(ret, FAIL, "DFSDclear");
@@ -1907,33 +1907,33 @@ slabwui16(void)
     ret = DFSDgetfillvalue((VOIDP) &lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != fillui16)
-	num_err += 1;
+        num_err += 1;
     MESSAGE(10, printf("\n       fill value =: %u \n", lfill);
-	);
+        );
 
     if (num_err != 0)
-	MESSAGE(10, printf("\n      slabwui16:  %d failures.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n      slabwui16:  %d failures.  \n", (int) num_err);
+        );
 
     MESSAGE(10, printf("\n  Verifying data  \n");
-	);
+        );
     MESSAGE(10, printf("sdata = ");
-	);
+        );
     for (i = 0; i < d_dims[0]; i++)
-	for (j = 0; j < d_dims[1]; j++)
-	    for (k = 0; k < d_dims[2]; k++)
-	      {
-		  if (sdata[i][j][k] != ui16data[i][j][k])
-		      num_err++;
-		  MESSAGE(10, printf("%u, ", sdata[i][j][k]);
-		      );
-	      }
+        for (j = 0; j < d_dims[1]; j++)
+            for (k = 0; k < d_dims[2]; k++)
+              {
+                  if (sdata[i][j][k] != ui16data[i][j][k])
+                      num_err++;
+                  MESSAGE(10, printf("%u, ", sdata[i][j][k]);
+                      );
+              }
     if (num_err == 0)
-	MESSAGE(10, printf("\n       >>> All tests passed for slabwui16 <<< \n");
-	)
-	else
-	MESSAGE(10, printf("\n       slabwui16:  %d wrong values in slab.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n       >>> All tests passed for slabwui16 <<< \n");
+        )
+        else
+        MESSAGE(10, printf("\n       slabwui16:  %d wrong values in slab.  \n", (int) num_err);
+        );
 
     return (int) num_err;
 }
@@ -1941,17 +1941,17 @@ slabwui16(void)
 /*
    ** Write int8 data set to slabwi8.hdf as 5 hyperslabs.
  */
-int 
+int
 slabwi8(void)
 {
     int32       i, j, k;
     int32       ret = 0;
     int32       num_err = 0;
-    int8        sdata[2][3][4];	/* Data array read from from file */
+    int8        sdata[2][3][4]; /* Data array read from from file */
     int8        lfill;
 
     MESSAGE(10, printf("\n slabwi8:  Writing 5 slabs to slabwi8.hdf \n");
-	);
+        );
 
     ret = DFSDclear();
     CHECK(ret, FAIL, "DFSDclear");
@@ -1983,7 +1983,7 @@ slabwi8(void)
     ret = DFSDsetdimscale(3, size_dims[2], (VOIDP) sccoli8);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    /* 
+    /*
        ** write data out using slabs with
        ** each slab in different order to the file "slab.hdf"
      */
@@ -2064,51 +2064,51 @@ slabwi8(void)
     ret = DFSDgetfillvalue((VOIDP) &lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != filli8)
-	num_err += 1;
+        num_err += 1;
     MESSAGE(10, printf("\n       fill value =: %d \n", (int) lfill);
-	);
+        );
 
     if (num_err != 0)
-	MESSAGE(10, printf("\n      slabwi8:  %d failures.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n      slabwi8:  %d failures.  \n", (int) num_err);
+        );
 
     MESSAGE(10, printf("\n  Verifying data  \n");
-	);
+        );
     MESSAGE(10, printf("sdata = ");
-	);
+        );
     for (i = 0; i < d_dims[0]; i++)
-	for (j = 0; j < d_dims[1]; j++)
-	    for (k = 0; k < d_dims[2]; k++)
-	      {
-		  if (sdata[i][j][k] != i8data[i][j][k])
-		      num_err++;
-		  MESSAGE(10, printf("%d, ", (int) sdata[i][j][k]);
-		      );
-	      }
+        for (j = 0; j < d_dims[1]; j++)
+            for (k = 0; k < d_dims[2]; k++)
+              {
+                  if (sdata[i][j][k] != i8data[i][j][k])
+                      num_err++;
+                  MESSAGE(10, printf("%d, ", (int) sdata[i][j][k]);
+                      );
+              }
     if (num_err == 0)
-	MESSAGE(10, printf("\n       >>> All tests passed for slabwi8 <<< \n");
-	)
-	else
-	MESSAGE(10, printf("\n       slabwi8:  %d wrong values in slab.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n       >>> All tests passed for slabwi8 <<< \n");
+        )
+        else
+        MESSAGE(10, printf("\n       slabwi8:  %d wrong values in slab.  \n", (int) num_err);
+        );
 
     return (int) num_err;
 }
 
-/* 
+/*
    ** Write uint8 data set to slabw.hdf as 5 hyperslabs.
  */
-int 
+int
 slabwui8(void)
 {
     int32       i, j, k;
     int32       ret = 0;
     int32       num_err = 0;
-    uint8       sdata[2][3][4];	/* Data array read from from file */
+    uint8       sdata[2][3][4]; /* Data array read from from file */
     uint8       lfill;
 
     MESSAGE(10, printf("\n slabwui8:  Writing 5 slabs to slabwui8.hdf \n");
-	);
+        );
 
     ret = DFSDclear();
     CHECK(ret, FAIL, "DFSDclear");
@@ -2140,7 +2140,7 @@ slabwui8(void)
     ret = DFSDsetdimscale(3, size_dims[2], (VOIDP) sccolui8);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    /* 
+    /*
        ** write data out using slabs with
        ** each slab in different order to the file "slab.hdf"
      */
@@ -2221,46 +2221,46 @@ slabwui8(void)
     ret = DFSDgetfillvalue((VOIDP) &lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != fillui8)
-	num_err += 1;
+        num_err += 1;
     MESSAGE(10, printf("\n       fill value =: %u \n", (unsigned) lfill);
-	);
+        );
 
     if (num_err != 0)
-	MESSAGE(10, printf("\n      slabwui8:  %d failures.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n      slabwui8:  %d failures.  \n", (int) num_err);
+        );
 
     MESSAGE(10, printf("\n  Verifying data  \n");
-	);
+        );
     MESSAGE(10, printf("sdata = ");
-	);
+        );
     num_err = 0;
     for (i = 0; i < d_dims[0]; i++)
-	for (j = 0; j < d_dims[1]; j++)
-	    for (k = 0; k < d_dims[2]; k++)
-	      {
-		  if (sdata[i][j][k] != ui8data[i][j][k])
-		      num_err += 1;
-		  MESSAGE(10, printf("%u, ", (unsigned) sdata[i][j][k]);
-		      );
-	      }
+        for (j = 0; j < d_dims[1]; j++)
+            for (k = 0; k < d_dims[2]; k++)
+              {
+                  if (sdata[i][j][k] != ui8data[i][j][k])
+                      num_err += 1;
+                  MESSAGE(10, printf("%u, ", (unsigned) sdata[i][j][k]);
+                      );
+              }
     if (num_err == 0)
-	MESSAGE(10, printf("\n       >>> All tests passed for slabwui8 <<< \n");
-	)
-	else
-	MESSAGE(10, printf("\n       slabwui8:  %d wrong values in slab.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n       >>> All tests passed for slabwui8 <<< \n");
+        )
+        else
+        MESSAGE(10, printf("\n       slabwui8:  %d wrong values in slab.  \n", (int) num_err);
+        );
 
     return (int) num_err;
 }
 
-int 
+int
 slab1w(void)
 {
     int32       ret = 0;
     int32       num_err = 0;
 
     MESSAGE(10, printf("\n slab1w: Writing the first 3 of 5 slabs to slab1w.hdf \n");
-	);
+        );
 
     ret = DFSDclear();
     CHECK(ret, FAIL, "DFSDclear");
@@ -2293,7 +2293,7 @@ slab1w(void)
     ret = DFSDsetfillvalue((VOIDP) &fillf32);
     CHECK(ret, FAIL, "DFSDsetfillvalue");
     MESSAGE(10, printf("\n        slab1w: Setting fill value =%f \n", fillf32);
-	);
+        );
 
     /*
        ** write each slab in different order
@@ -2337,27 +2337,27 @@ slab1w(void)
     CHECK(ret, FAIL, "DFSDendslab");
 
     if (num_err == 0)
-	MESSAGE(10, printf("\n        >>> All tests passed for slab1w, now run slab2w <<< \n");
-	)
-	else
-	MESSAGE(10, printf("\n         slab1w:  %d failures.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n        >>> All tests passed for slab1w, now run slab2w <<< \n");
+        )
+        else
+        MESSAGE(10, printf("\n         slab1w:  %d failures.  \n", (int) num_err);
+        );
 
     return (int) num_err;
 }
 
-int 
+int
 slab2w(void)
 {
     int32       i, j, k;
     int32       ret = 0;
     int32       num_err = 0;
-    float32     sdata[2][3][4];	/* Data array read from from file */
+    float32     sdata[2][3][4]; /* Data array read from from file */
     float32     lfill;
     intn        trank;
 
     MESSAGE(10, printf("\n slab2w:  Writing the last 2 of 5 slabs to slab1w.hdf \n");
-	);
+        );
 
     ret = DFSDclear();
     CHECK(ret, FAIL, "DFSDclear");
@@ -2371,7 +2371,7 @@ slab2w(void)
     CHECK(ret, FAIL, "DFSDgetfillvalue");
 
     MESSAGE(10, printf("\n       fill value =: %f \n", lfill);
-	);
+        );
 
     /* Call Writeref() first */
     ret = DFSDwriteref(sw1, 2);
@@ -2418,39 +2418,39 @@ slab2w(void)
     CHECK(ret, FAIL, "DFSDreadslab");
 
     if (num_err != 0)
-	MESSAGE(10, printf("\n        slab2w:  %d failures.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n        slab2w:  %d failures.  \n", (int) num_err);
+        );
 
     MESSAGE(10, printf("\n         Verifying data \n");
-	);
+        );
     for (i = 0; i < d_dims[0]; i++)
-	for (j = 0; j < d_dims[1]; j++)
-	    for (k = 0; k < d_dims[2]; k++)
-	      {
-		  if (sdata[i][j][k] != fdata[i][j][k])
-		      num_err++;
-	      }
+        for (j = 0; j < d_dims[1]; j++)
+            for (k = 0; k < d_dims[2]; k++)
+              {
+                  if (sdata[i][j][k] != fdata[i][j][k])
+                      num_err++;
+              }
 
     if (num_err == 0)
-	MESSAGE(10, printf("\n        >>> All tests passed for slab2w <<< \n");
-	)
-	else
-	MESSAGE(10, printf("\n        slab2w:  %d wrong values in slab.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n        >>> All tests passed for slab2w <<< \n");
+        )
+        else
+        MESSAGE(10, printf("\n        slab2w:  %d wrong values in slab.  \n", (int) num_err);
+        );
 
     return (int) num_err;
 }
 
-int 
+int
 slab3w(void)
 {
     int32       i, j, k;
     int32       ret = 0;
     int32       num_err = 0;
-    float32     adata[2][3][4];	/* Data array read from from file */
+    float32     adata[2][3][4]; /* Data array read from from file */
 
     MESSAGE(10, printf("\n slab3w: Writing all 24 elements of data as slabs to slab3w.hdf \n");
-	);
+        );
 
     ret = DFSDclear();
     CHECK(ret, FAIL, "DFSDclear");
@@ -2479,8 +2479,8 @@ slab3w(void)
     ret = DFSDsetdimscale(3, size_dims[2], (VOIDP) sccolf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    /* 
-       ** write each element in different order 
+    /*
+       ** write each element in different order
      */
 
     /* Set max, min range */
@@ -2723,43 +2723,43 @@ slab3w(void)
     CHECK(ret, FAIL, "DFSDreadslab");
 
     if (num_err != 0)
-	MESSAGE(10, printf("\n        slab3w:  %d failures.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n        slab3w:  %d failures.  \n", (int) num_err);
+        );
 
     MESSAGE(10, printf("\n        Verifying data  \n");
-	);
+        );
     MESSAGE(10, printf("adata = ");
-	);
+        );
     for (i = 0; i < d_dims[0]; i++)
-	for (j = 0; j < d_dims[1]; j++)
-	    for (k = 0; k < d_dims[2]; k++)
-	      {
-		  if (adata[i][j][k] != fdata[i][j][k])
-		      num_err++;
-		  MESSAGE(10, printf("%f, ", adata[i][j][k]);
-		      );
-	      }
+        for (j = 0; j < d_dims[1]; j++)
+            for (k = 0; k < d_dims[2]; k++)
+              {
+                  if (adata[i][j][k] != fdata[i][j][k])
+                      num_err++;
+                  MESSAGE(10, printf("%f, ", adata[i][j][k]);
+                      );
+              }
 
     if (num_err == 0)
-	MESSAGE(10, printf("\n        >>> All tests passed for slab3w <<< \n");
-	)
-	else
-	MESSAGE(10, printf("\n       slab3w:  %d wrong values in slab.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n        >>> All tests passed for slab3w <<< \n");
+        )
+        else
+        MESSAGE(10, printf("\n       slab3w:  %d wrong values in slab.  \n", (int) num_err);
+        );
 
     return (int) num_err;
 }
 
-int 
+int
 slab4w(void)
 {
     int32       i, j, k;
     int32       ret = 0;
     int32       num_err = 0;
-    float32     bdata[2][3][4];	/* Data array read from from file */
+    float32     bdata[2][3][4]; /* Data array read from from file */
 
     MESSAGE(10, printf("\n slab4w: Writing data as 1 slab to slab4w.hdf \n");
-	);
+        );
 
     ret = DFSDclear();
     CHECK(ret, FAIL, "DFSDclear");
@@ -2822,25 +2822,25 @@ slab4w(void)
     CHECK(ret, FAIL, "DFSDreadslab");
 
     if (num_err != 0)
-	MESSAGE(10, printf("\n        slab4w:  %d failures.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n        slab4w:  %d failures.  \n", (int) num_err);
+        );
 
     MESSAGE(10, printf("\n          Verifying data  \n");
-	);
+        );
 
     for (i = 0; i < d_dims[0]; i++)
-	for (j = 0; j < d_dims[1]; j++)
-	    for (k = 0; k < d_dims[2]; k++)
-	      {
-		  if (bdata[i][j][k] != fdata[i][j][k])
-		      num_err++;
-	      }
+        for (j = 0; j < d_dims[1]; j++)
+            for (k = 0; k < d_dims[2]; k++)
+              {
+                  if (bdata[i][j][k] != fdata[i][j][k])
+                      num_err++;
+              }
     if (num_err == 0)
-	MESSAGE(10, printf("\n          >>> All tests passed for slab4w <<< \n");
-	)
-	else
-	MESSAGE(10, printf("\n          slab4w:  %d wrong values in slab.  \n", (int) num_err);
-	);
+        MESSAGE(10, printf("\n          >>> All tests passed for slab4w <<< \n");
+        )
+        else
+        MESSAGE(10, printf("\n          slab4w:  %d wrong values in slab.  \n", (int) num_err);
+        );
 
     return (int) (num_err);
 }
@@ -2848,7 +2848,7 @@ slab4w(void)
 /*
    ** Main slab call to all other slab functions
  */
-void 
+void
 test_slab(void)
 {
     num_errs += slabwf32();

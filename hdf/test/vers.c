@@ -25,7 +25,7 @@ static char RcsId[] = "@(#)$Revision$";
 #include <stdio.h>
 #include "tproto.h"
 
-void 
+void
 test_vers(void)
 {
     int         ret;
@@ -35,10 +35,10 @@ test_vers(void)
     ret = Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
     RESULT("Hgetlibversion");
     MESSAGE(5, printf("Library Version\n");
-	);
+        );
     MESSAGE(5, printf("---------------\n");
-	);
+        );
     MESSAGE(5, printf("Major:\t\t%u\nMinor:\t\t%u\nRelease:\t%u\nString:\t\t\"%s\"\n", (unsigned) lmajor, (unsigned) lminor, (unsigned) lrelease, lstring);
-	);
+        );
 
 }

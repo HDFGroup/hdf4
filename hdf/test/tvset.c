@@ -24,7 +24,7 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hdf.h"
 #include "tproto.h"
 
-#define VDATA_COUNT  1000	/* make this many Vdatas to check for memory leaks */
+#define VDATA_COUNT  1000   /* make this many Vdatas to check for memory leaks */
 
 #define FNAME0   "tvset.hdf"
 #define FNAME1   "tvset1.hdf"
@@ -35,7 +35,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define FIELD2       "DIFFERENT_FIELD_NAME"
 
 /* write some stuff to the file */
-int32 
+int32
 write_vset_stuff(void)
 {
     int32       status;
@@ -43,9 +43,9 @@ write_vset_stuff(void)
     int32       vg1, vg2;
     int32       vs1;
     int32       count, i, j, num;
-    int32       ibuf[2000];	/* integer buffer */
-    float32     fbuf[2000];	/* floating point buffer */
-    char        gbuf[2000];	/* generic buffer */
+    int32       ibuf[2000];     /* integer buffer */
+    float32     fbuf[2000];     /* floating point buffer */
+    char        gbuf[2000];     /* generic buffer */
     const char *name;
     char       *p;
     char8       c;
@@ -54,8 +54,8 @@ write_vset_stuff(void)
     fid = Hopen(FNAME0, DFACC_CREATE, 100);
     if (fid == FAIL)
       {
-	  num_errs++;
-	  return FAIL;
+          num_errs++;
+          return FAIL;
       }
 
     Vstart(fid);
@@ -66,20 +66,20 @@ write_vset_stuff(void)
      *
      */
 
-    /* 
+    /*
      *  start simple --- create a simple Vgroup
      */
     vg1 = Vattach(fid, -1, "w");
     if (vg1 == FAIL)
       {
-	  num_errs++;
-	  printf(">>> Failed creating initial Vgroup\n");
+          num_errs++;
+          printf(">>> Failed creating initial Vgroup\n");
       }
 
     Vsetname(vg1, "Simple Vgroup");
     Vsetclass(vg1, "Test object");
     MESSAGE(5, printf("created Vgroup %s (empty)\n", "Simple Vgroup");
-	);
+        );
 
     /*
      * Lets do some more complex ones now
@@ -87,8 +87,8 @@ write_vset_stuff(void)
     vg2 = Vattach(fid, -1, "w");
     if (vg2 == FAIL)
       {
-	  num_errs++;
-	  printf(">>> Failed creating second Vgroup\n");
+          num_errs++;
+          printf(">>> Failed creating second Vgroup\n");
       }
 
     /* keep track of how many in Vgroup */
@@ -98,28 +98,28 @@ write_vset_stuff(void)
     status = Vinsert(vg2, vg1);
     if (status == FAIL)
       {
-	  num_errs++;
-	  printf(">>> Vinsert failed\n");
+          num_errs++;
+          printf(">>> Vinsert failed\n");
       }
     else
-	num++;
+        num++;
 
     /* add a bogus element */
     status = Vaddtagref(vg2, (int32) 1000, (int32) 12345);
     if (status == FAIL)
       {
-	  num_errs++;
-	  printf(">>> Vaddtagref failed for bogus element\n");
+          num_errs++;
+          printf(">>> Vaddtagref failed for bogus element\n");
       }
     else
-	num++;
+        num++;
 
     /* create an element and insert that */
     aid = Hstartwrite(fid, (uint16) 123, (uint16) 1234, 10);
     if (aid == FAIL)
       {
-	  num_errs++;
-	  printf(">>> Hstartwrite failed\n");
+          num_errs++;
+          printf(">>> Hstartwrite failed\n");
       }
     Hendaccess(aid);
 
@@ -127,26 +127,26 @@ write_vset_stuff(void)
     status = Vaddtagref(vg2, (int32) 123, (int32) 1234);
     if (status == FAIL)
       {
-	  num_errs++;
-	  printf(">>> Vaddtagref failed for legit element\n");
+          num_errs++;
+          printf(">>> Vaddtagref failed for legit element\n");
       }
     else
-	num++;
+        num++;
 
 #ifdef NO_DUPLICATES
     /* attempt to add an element already in the Vgroup */
     status = Vaddtagref(vg2, (int32) 123, (int32) 1234);
     if (status != FAIL)
       {
-	  num_errs++;
-	  printf(">>> Vaddtagref added a duplicate element\n");
+          num_errs++;
+          printf(">>> Vaddtagref added a duplicate element\n");
       }
 
     /* check that the number is correct */
     if (num != Vntagrefs(vg2))
       {
-	  num_errs++;
-	  printf(">>> Vntagrefs returned %d was expecting %d\n", Vntagrefs(vg2), num);
+          num_errs++;
+          printf(">>> Vntagrefs returned %d was expecting %d\n", Vntagrefs(vg2), num);
       }
 #endif /* NO_DUPLICATES */
 
@@ -154,15 +154,15 @@ write_vset_stuff(void)
     /* look for a valid one first */
     if (Vinqtagref(vg2, 1000, 12345) == FALSE)
       {
-	  num_errs++;
-	  printf(">>> Vinqtagref couldn't find valid element\n");
+          num_errs++;
+          printf(">>> Vinqtagref couldn't find valid element\n");
       }
 
     /* look for a bogus one */
     if (Vinqtagref(vg2, 1000, 123456) != FALSE)
       {
-	  num_errs++;
-	  printf(">>> Vinqtagref found a bogus element\n");
+          num_errs++;
+          printf(">>> Vinqtagref found a bogus element\n");
       }
 
     Vsetname(vg2, "Second Vgroup");
@@ -171,7 +171,7 @@ write_vset_stuff(void)
     Vdetach(vg1);
     Vdetach(vg2);
     MESSAGE(5, printf("created Vgroup %s with %d elements\n", "Second Vgroup", (int) num);
-	);
+        );
 
     /*
 
@@ -188,19 +188,19 @@ write_vset_stuff(void)
     status = VSsetfields(vs1, FIELD1);
     if (status == FAIL)
       {
-	  num_errs++;
-	  printf(">>> Vsetfields failed for %s\n", name);
+          num_errs++;
+          printf(">>> Vsetfields failed for %s\n", name);
       }
 
     /* create some bogus data */
     for (i = 0, count = 100; i < count; i++)
-	fbuf[i] = (float32) i;
+        fbuf[i] = (float32) i;
 
     /* store it */
     VSwrite(vs1, (unsigned char *) fbuf, count, FULL_INTERLACE);
     VSdetach(vs1);
     MESSAGE(5, printf("created VDATA %s with %d elements\n", name, (int) count);
-	);
+        );
 
     /* Int32 Vdata */
     vs1 = VSattach(fid, -1, "w");
@@ -211,19 +211,19 @@ write_vset_stuff(void)
     status = VSsetfields(vs1, FIELD2);
     if (status == FAIL)
       {
-	  num_errs++;
-	  printf(">>> Vsetfields failed for %s\n", name);
+          num_errs++;
+          printf(">>> Vsetfields failed for %s\n", name);
       }
 
     /* create some bogus data */
     for (i = 0, count = 100; i < 2 * count; i++)
-	ibuf[i] = i;
+        ibuf[i] = i;
 
     /* store it */
     VSwrite(vs1, (unsigned char *) ibuf, count, FULL_INTERLACE);
     VSdetach(vs1);
     MESSAGE(5, printf("created VDATA %s with %d elements\n", name, (int) count);
-	);
+        );
 
     /* Int32 and Float32 Vdata */
     vs1 = VSattach(fid, -1, "w");
@@ -235,26 +235,26 @@ write_vset_stuff(void)
     status = VSsetfields(vs1, "A, B");
     if (status == FAIL)
       {
-	  num_errs++;
-	  printf(">>> Vsetfields failed for %s\n", name);
+          num_errs++;
+          printf(">>> Vsetfields failed for %s\n", name);
       }
 
     /* create some bogus data */
     p = gbuf;
     for (i = 0, count = 100; i < count; i++)
       {
-	  float32     tf = (float32) (i * 2);
-	  HDmemcpy(p, &tf, sizeof(float32));
-	  p += sizeof(float32);
-	  HDmemcpy(p, &i, sizeof(int32));
-	  p += sizeof(int32);
+          float32     tf = (float32) (i * 2);
+          HDmemcpy(p, &tf, sizeof(float32));
+          p += sizeof(float32);
+          HDmemcpy(p, &i, sizeof(int32));
+          p += sizeof(int32);
       }
 
     /* store it */
     VSwrite(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
     VSdetach(vs1);
     MESSAGE(5, printf("created VDATA %s with %d elements\n", name, (int) count);
-	);
+        );
 
 #define ST "STATION_NAME"
 #define VL "VALUES"
@@ -272,8 +272,8 @@ write_vset_stuff(void)
     status = VSsetfields(vs1, MX);
     if (status == FAIL)
       {
-	  num_errs++;
-	  printf(">>> Vsetfields failed for %s\n", name);
+          num_errs++;
+          printf(">>> Vsetfields failed for %s\n", name);
       }
 
     /* create some bogus data */
@@ -283,76 +283,76 @@ write_vset_stuff(void)
     f = (float32) 15.5;
     for (i = 0, count = 10; i < count; i++)
       {
-	  HDmemcpy(p, &c, sizeof(char8));
-	  p += sizeof(char8);
-	  c++;
-	  HDmemcpy(p, &c, sizeof(char8));
-	  p += sizeof(char8);
-	  c++;
-	  HDmemcpy(p, &j, sizeof(int32));
-	  p += sizeof(int32);
-	  j++;
-	  HDmemcpy(p, &j, sizeof(int32));
-	  p += sizeof(int32);
-	  j++;
-	  HDmemcpy(p, &j, sizeof(int32));
-	  p += sizeof(int32);
-	  j++;
-	  HDmemcpy(p, &f, sizeof(float32));
-	  p += sizeof(float32);
-	  f += (float32) 0.5;
+          HDmemcpy(p, &c, sizeof(char8));
+          p += sizeof(char8);
+          c++;
+          HDmemcpy(p, &c, sizeof(char8));
+          p += sizeof(char8);
+          c++;
+          HDmemcpy(p, &j, sizeof(int32));
+          p += sizeof(int32);
+          j++;
+          HDmemcpy(p, &j, sizeof(int32));
+          p += sizeof(int32);
+          j++;
+          HDmemcpy(p, &j, sizeof(int32));
+          p += sizeof(int32);
+          j++;
+          HDmemcpy(p, &f, sizeof(float32));
+          p += sizeof(float32);
+          f += (float32) 0.5;
       }
 
     /* store it */
     VSwrite(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
     VSdetach(vs1);
     MESSAGE(5, printf("created VDATA %s with %d elements\n", name, (int) count);
-	);
+        );
 
     /* create a whole bunch of Vdatas to check for memory leakage */
     for (i = 0; i < VDATA_COUNT; i++)
       {
-	  char        name[80];
-	  vs1 = VSattach(fid, -1, "w");
-	  if (vs1 == FAIL)
-	    {
-		num_errs++;
-		printf(">>> Vsattach failed on loop %d\n", (int) i);
-		continue;
-	    }
-	  sprintf(name, "VdataLoop-%d", (int) i);
-	  VSsetname(vs1, name);
-	  status = VSfdefine(vs1, "A", DFNT_CHAR8, 1);
-	  if (status == FAIL)
-	    {
-		num_errs++;
-		printf(">>> VSfdefine failed on loop %d\n", (int) i);
-		continue;
-	    }
-	  status = VSsetfields(vs1, "A");
-	  if (status == FAIL)
-	    {
-		num_errs++;
-		printf(">>> VSsetfields failed on loop %d\n", (int) i);
-		continue;
-	    }
-	  VSwrite(vs1, (unsigned char *) name, 1, FULL_INTERLACE);
-	  VSdetach(vs1);
+          char        name[80];
+          vs1 = VSattach(fid, -1, "w");
+          if (vs1 == FAIL)
+            {
+                num_errs++;
+                printf(">>> Vsattach failed on loop %d\n", (int) i);
+                continue;
+            }
+          sprintf(name, "VdataLoop-%d", (int) i);
+          VSsetname(vs1, name);
+          status = VSfdefine(vs1, "A", DFNT_CHAR8, 1);
+          if (status == FAIL)
+            {
+                num_errs++;
+                printf(">>> VSfdefine failed on loop %d\n", (int) i);
+                continue;
+            }
+          status = VSsetfields(vs1, "A");
+          if (status == FAIL)
+            {
+                num_errs++;
+                printf(">>> VSsetfields failed on loop %d\n", (int) i);
+                continue;
+            }
+          VSwrite(vs1, (unsigned char *) name, 1, FULL_INTERLACE);
+          VSdetach(vs1);
       }
 
     Vend(fid);
     Hclose(fid);
     return SUCCEED;
 
-}	/* write_vset_stuff */
+}   /* write_vset_stuff */
 
 /* read everything back in and check it */
-int32 
+int32
 read_vset_stuff(void)
 {
-    int32       ibuf[2000];	/* integer buffer */
-    float32     fbuf[2000];	/* floating point buffer */
-    char        gbuf[2000];	/* generic buffer */
+    int32       ibuf[2000];     /* integer buffer */
+    float32     fbuf[2000];     /* floating point buffer */
+    char        gbuf[2000];     /* generic buffer */
     int32       list[50];
     int32       tags[100], refs[100], tag, ref;
     char        name[512], class[512], fields[512];
@@ -368,8 +368,8 @@ read_vset_stuff(void)
     fid = Hopen(FNAME0, DFACC_RDONLY, 0);
     if (fid == FAIL)
       {
-	  num_errs++;
-	  return FAIL;
+          num_errs++;
+          return FAIL;
       }
 
     Vstart(fid);
@@ -385,16 +385,16 @@ read_vset_stuff(void)
     status = Vlone(fid, list, 10);
     if (status != num)
       {
-	  num_errs++;
-	  printf(">>> Vlone found %d was expecting %d\n", (int) status, (int) num);
+          num_errs++;
+          printf(">>> Vlone found %d was expecting %d\n", (int) status, (int) num);
       }
 
     /* test Vgetname and Vgetclass */
     vg1 = Vattach(fid, list[0], "r");
     if (vg1 == FAIL)
       {
-	  num_errs++;
-	  printf(">>> Was not able to attach (r) Vgroup %d\n", (int) list[0]);
+          num_errs++;
+          printf(">>> Was not able to attach (r) Vgroup %d\n", (int) list[0]);
       }
 
     Vgetname(vg1, name);
@@ -402,44 +402,44 @@ read_vset_stuff(void)
 
     if (HDstrcmp(name, "Second Vgroup"))
       {
-	  num_errs++;
-	  printf(">>> Got bogus Vgroup name : %s\n", name);
+          num_errs++;
+          printf(">>> Got bogus Vgroup name : %s\n", name);
       }
 
     if (HDstrcmp(class, "Test object"))
       {
-	  num_errs++;
-	  printf(">>> Got bogus Vgroup class : %s\n", class);
+          num_errs++;
+          printf(">>> Got bogus Vgroup class : %s\n", class);
       }
 
     num = 3;
     status = Vgettagrefs(vg1, tags, refs, 100);
     if (status == FAIL)
       {
-	  num_errs++;
-	  printf(">>> Vgettagrefs found %d was expecting %d\n", (int) status, (int) num);
+          num_errs++;
+          printf(">>> Vgettagrefs found %d was expecting %d\n", (int) status, (int) num);
       }
 
     for (i = 0; i < num; i++)
       {
-	  status = Vgettagref(vg1, i, &tag, &ref);
-	  if (status == FAIL)
-	    {
-		num_errs++;
-		printf(">>> Vgettagref failed on call %d\n", (int) i);
-	    }
+          status = Vgettagref(vg1, i, &tag, &ref);
+          if (status == FAIL)
+            {
+                num_errs++;
+                printf(">>> Vgettagref failed on call %d\n", (int) i);
+            }
 
-	  if (tag != tags[i])
-	    {
-		num_errs++;
-		printf(">>> Vgettagref Tag #%d disagrees %d %d\n", (int) i, (int) tag, (int) tags[i]);
-	    }
+          if (tag != tags[i])
+            {
+                num_errs++;
+                printf(">>> Vgettagref Tag #%d disagrees %d %d\n", (int) i, (int) tag, (int) tags[i]);
+            }
 
-	  if (ref != refs[i])
-	    {
-		num_errs++;
-		printf(">>> Vgettagref Ref #%d disagrees %d %d\n", (int) i, (int) ref, (int) refs[i]);
-	    }
+          if (ref != refs[i])
+            {
+                num_errs++;
+                printf(">>> Vgettagref Ref #%d disagrees %d %d\n", (int) i, (int) ref, (int) refs[i]);
+            }
 
       }
 
@@ -447,15 +447,15 @@ read_vset_stuff(void)
     ref = Vgetid(fid, -1);
     if (ref == FAIL)
       {
-	  num_errs++;
-	  printf(">>> Vgetid was unable to find first Vgroup\n");
+          num_errs++;
+          printf(">>> Vgetid was unable to find first Vgroup\n");
       }
 
     ref = Vgetid(fid, ref);
     if (ref != list[0])
       {
-	  num_errs++;
-	  printf(">>> Vgetid was unable to find second Vgroup (should have been first lone one)\n");
+          num_errs++;
+          printf(">>> Vgetid was unable to find second Vgroup (should have been first lone one)\n");
       }
 
     /*
@@ -468,8 +468,8 @@ read_vset_stuff(void)
     ref = VSgetid(fid, -1);
     if (ref == FAIL)
       {
-	  num_errs++;
-	  printf(">>> VSgetid was unable to find first Vdata\n");
+          num_errs++;
+          printf(">>> VSgetid was unable to find first Vdata\n");
       }
 
     /* read in the first data and verify metadata and contents */
@@ -480,69 +480,69 @@ read_vset_stuff(void)
 
     if (HDstrcmp(name, "Float Vdata"))
       {
-	  num_errs++;
-	  printf(">>> Got bogus Vdata name (VSgetname) : %s\n", name);
+          num_errs++;
+          printf(">>> Got bogus Vdata name (VSgetname) : %s\n", name);
       }
 
     if (HDstrcmp(class, "Test object"))
       {
-	  num_errs++;
-	  printf(">>> Got bogus Vdata class : %s\n", class);
+          num_errs++;
+          printf(">>> Got bogus Vdata class : %s\n", class);
       }
 
     status = VSinquire(vs1, &count, &intr, fields, &sz, name);
     if (status == FAIL)
       {
-	  num_errs++;
-	  printf(">>> VSinquire failed on float Vdata\n");
+          num_errs++;
+          printf(">>> VSinquire failed on float Vdata\n");
       }
 
     if (HDstrcmp(name, "Float Vdata"))
       {
-	  num_errs++;
-	  printf(">>> Got bogus Float Vdata name (VSinquire) : %s\n", name);
+          num_errs++;
+          printf(">>> Got bogus Float Vdata name (VSinquire) : %s\n", name);
       }
 
     if (count != 100)
       {
-	  num_errs++;
-	  printf(">>> Got wrong count %d expecting 100\n", (int) count);
+          num_errs++;
+          printf(">>> Got wrong count %d expecting 100\n", (int) count);
       }
 
     if (sz != sizeof(float32))
       {
-	  num_errs++;
-	  printf(">>> Got wrong data size %d should be sizeof(float32)\n", (int) sz);
+          num_errs++;
+          printf(">>> Got wrong data size %d should be sizeof(float32)\n", (int) sz);
       }
 
 #ifndef VDATA_FIELDS_ALL_UPPER
     if (HDstrcmp(fields, FIELD1))
       {
-	  num_errs++;
-	  printf(">>> Got bogus field name %s\n", fields);
+          num_errs++;
+          printf(">>> Got bogus field name %s\n", fields);
       }
 #else
     if (HDstrcmp(fields, FIELD1_UPPER))
       {
-	  num_errs++;
-	  printf(">>> Got bogus field name %s\n", fields);
+          num_errs++;
+          printf(">>> Got bogus field name %s\n", fields);
       }
 #endif /* VDATA_FIELDS_ALL_UPPER */
 
     /* read it */
     VSsetfields(vs1, fields);
     for (i = 0; i < count; i++)
-	fbuf[i] = 0;
+        fbuf[i] = 0;
     VSread(vs1, (unsigned char *) fbuf, count, FULL_INTERLACE);
 
     /* verify */
     for (i = 0; i < count; i++)
       {
-	  if (fbuf[i] != (float32) i)
-	    {
-		num_errs++;
-		printf(">>> Float value %d was expecting %d got %f\n", (int) i, (int) i, fbuf[i]);
-	    }
+          if (fbuf[i] != (float32) i)
+            {
+                num_errs++;
+                printf(">>> Float value %d was expecting %d got %f\n", (int) i, (int) i, fbuf[i]);
+            }
       }
 
     VSdetach(vs1);
@@ -551,8 +551,8 @@ read_vset_stuff(void)
     ref = VSgetid(fid, ref);
     if (ref == FAIL)
       {
-	  num_errs++;
-	  printf(">>> VSgetid was unable to find second Vdata\n");
+          num_errs++;
+          printf(">>> VSgetid was unable to find second Vdata\n");
       }
 
     /* read in the first data and verify metadata and contents */
@@ -563,61 +563,61 @@ read_vset_stuff(void)
 
     if (HDstrcmp(name, "Integer Vdata"))
       {
-	  num_errs++;
-	  printf(">>> Got bogus Vdata name (VSgetname) : %s\n", name);
+          num_errs++;
+          printf(">>> Got bogus Vdata name (VSgetname) : %s\n", name);
       }
 
     if (HDstrcmp(class, "Test object"))
       {
-	  num_errs++;
-	  printf(">>> Got bogus Vdata class : %s\n", class);
+          num_errs++;
+          printf(">>> Got bogus Vdata class : %s\n", class);
       }
 
     status = VSinquire(vs1, &count, &intr, fields, &sz, name);
     if (status == FAIL)
       {
-	  num_errs++;
-	  printf(">>> VSinquire failed on float Vdata\n");
+          num_errs++;
+          printf(">>> VSinquire failed on float Vdata\n");
       }
 
     if (HDstrcmp(name, "Integer Vdata"))
       {
-	  num_errs++;
-	  printf(">>> Got bogus Integer Vdata name (VSinquire) : %s\n", name);
+          num_errs++;
+          printf(">>> Got bogus Integer Vdata name (VSinquire) : %s\n", name);
       }
 
     if (count != 100)
       {
-	  num_errs++;
-	  printf(">>> Got wrong count %d expecting 100\n", (int) count);
+          num_errs++;
+          printf(">>> Got wrong count %d expecting 100\n", (int) count);
       }
 
     if (sz != 2 * sizeof(int32))
       {
-	  num_errs++;
-	  printf(">>> Got wrong data size %d should be 2 * sizeof(int32)\n", (int) sz);
+          num_errs++;
+          printf(">>> Got wrong data size %d should be 2 * sizeof(int32)\n", (int) sz);
       }
 
     if (HDstrcmp(fields, FIELD2))
       {
-	  num_errs++;
-	  printf(">>> Got bogus field name %s\n", fields);
+          num_errs++;
+          printf(">>> Got bogus field name %s\n", fields);
       }
 
     /* read it */
     VSsetfields(vs1, fields);
     for (i = 0; i < 2 * count; i++)
-	ibuf[i] = 0;
+        ibuf[i] = 0;
     VSread(vs1, (unsigned char *) ibuf, count, FULL_INTERLACE);
 
     /* verify */
     for (i = 0; i < 2 * count; i++)
       {
-	  if (ibuf[i] != i)
-	    {
-		num_errs++;
-		printf(">>> Int value %d was expecting %d got %d\n", (int) i, (int) i, (int) ibuf[i]);
-	    }
+          if (ibuf[i] != i)
+            {
+                num_errs++;
+                printf(">>> Int value %d was expecting %d got %d\n", (int) i, (int) i, (int) ibuf[i]);
+            }
       }
 
     VSdetach(vs1);
@@ -626,8 +626,8 @@ read_vset_stuff(void)
     ref = VSgetid(fid, ref);
     if (ref == FAIL)
       {
-	  num_errs++;
-	  printf(">>> VSgetid was unable to find third Vdata\n");
+          num_errs++;
+          printf(">>> VSgetid was unable to find third Vdata\n");
       }
 
     /* read in the first data and verify metadata and contents */
@@ -638,76 +638,76 @@ read_vset_stuff(void)
 
     if (HDstrcmp(name, "Mixed Vdata"))
       {
-	  num_errs++;
-	  printf(">>> Got bogus Vdata name (VSgetname) : %s\n", name);
+          num_errs++;
+          printf(">>> Got bogus Vdata name (VSgetname) : %s\n", name);
       }
 
     if (HDstrcmp(class, "No class specified"))
       {
-	  num_errs++;
-	  printf(">>> Got bogus Vdata class : %s\n", class);
+          num_errs++;
+          printf(">>> Got bogus Vdata class : %s\n", class);
       }
 
     status = VSinquire(vs1, &count, &intr, fields, &sz, name);
     if (status == FAIL)
       {
-	  num_errs++;
-	  printf(">>> VSinquire failed on float Vdata\n");
+          num_errs++;
+          printf(">>> VSinquire failed on float Vdata\n");
       }
 
     if (HDstrcmp(name, "Mixed Vdata"))
       {
-	  num_errs++;
-	  printf(">>> Got bogus Mixed Vdata name (VSinquire) : %s\n", name);
+          num_errs++;
+          printf(">>> Got bogus Mixed Vdata name (VSinquire) : %s\n", name);
       }
 
     if (count != 100)
       {
-	  num_errs++;
-	  printf(">>> Got wrong count %d expecting 100\n", (int) count);
+          num_errs++;
+          printf(">>> Got wrong count %d expecting 100\n", (int) count);
       }
 
     if (sz != sizeof(int32) + sizeof(float32))
       {
-	  num_errs++;
-	  printf(">>> Got wrong data size %d should be sizeof(int32) + sizeof(float32)\n", (int) sz);
+          num_errs++;
+          printf(">>> Got wrong data size %d should be sizeof(int32) + sizeof(float32)\n", (int) sz);
       }
 
     if (HDstrcmp(fields, "A,B"))
       {
-	  num_errs++;
-	  printf(">>> Got bogus field name %s\n", fields);
+          num_errs++;
+          printf(">>> Got bogus field name %s\n", fields);
       }
 
     /* read it */
     VSsetfields(vs1, fields);
     for (i = 0; i < 1000; i++)
-	gbuf[i] = 0;
+        gbuf[i] = 0;
     VSread(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
 
     /* verify */
     p = gbuf;
     for (i = 0; i < count; i++)
       {
-	  float32     fl;
-	  int32       in;
+          float32     fl;
+          int32       in;
 
-	  HDmemcpy(&fl, p, sizeof(float32));
-	  p += sizeof(float32);
-	  HDmemcpy(&in, p, sizeof(int32));
-	  p += sizeof(int32);
+          HDmemcpy(&fl, p, sizeof(float32));
+          p += sizeof(float32);
+          HDmemcpy(&in, p, sizeof(int32));
+          p += sizeof(int32);
 
-	  if (in != i)
-	    {
-		num_errs++;
-		printf(">>> Mixed int value %d was expecting %d got %d\n", (int) i, (int) i, (int) in);
-	    }
+          if (in != i)
+            {
+                num_errs++;
+                printf(">>> Mixed int value %d was expecting %d got %d\n", (int) i, (int) i, (int) in);
+            }
 
-	  if (fl != (float32) i * 2)
-	    {
-		num_errs++;
-		printf(">>> Mixed float value %d was expecting %d got %f\n", (int) i, (int) i, fl);
-	    }
+          if (fl != (float32) i * 2)
+            {
+                num_errs++;
+                printf(">>> Mixed float value %d was expecting %d got %f\n", (int) i, (int) i, fl);
+            }
       }
 
     VSdetach(vs1);
@@ -716,8 +716,8 @@ read_vset_stuff(void)
     ref = VSgetid(fid, ref);
     if (ref == FAIL)
       {
-	  num_errs++;
-	  printf(">>> VSgetid was unable to find multi-order Vdata\n");
+          num_errs++;
+          printf(">>> VSgetid was unable to find multi-order Vdata\n");
       }
 
     /* read in the first data and verify metadata and contents */
@@ -728,43 +728,43 @@ read_vset_stuff(void)
 
     if (HDstrcmp(name, "Multi-Order Vdata"))
       {
-	  num_errs++;
-	  printf(">>> Got bogus Vdata name (VSgetname) : %s\n", name);
+          num_errs++;
+          printf(">>> Got bogus Vdata name (VSgetname) : %s\n", name);
       }
 
     if (HDstrcmp(class, "No class specified"))
       {
-	  num_errs++;
-	  printf(">>> Got bogus Vdata class : %s\n", class);
+          num_errs++;
+          printf(">>> Got bogus Vdata class : %s\n", class);
       }
 
     status = VSinquire(vs1, &count, &intr, fields, &sz, name);
     if (status == FAIL)
       {
-	  num_errs++;
-	  printf(">>> VSinquire failed on multi-order Vdata\n");
+          num_errs++;
+          printf(">>> VSinquire failed on multi-order Vdata\n");
       }
 
     if (count != 10)
       {
-	  num_errs++;
-	  printf(">>> Got wrong count %d expecting 10\n", (int) count);
+          num_errs++;
+          printf(">>> Got wrong count %d expecting 10\n", (int) count);
       }
 
     if (HDstrcmp(fields, MX))
       {
-	  num_errs++;
-	  printf(">>> Got bogus field name %s\n", fields);
+          num_errs++;
+          printf(">>> Got bogus field name %s\n", fields);
       }
 
-    /* 
-     * verify - read in all fields 
+    /*
+     * verify - read in all fields
      */
 
     /* read it */
     VSsetfields(vs1, fields);
     for (i = 0; i < 1000; i++)
-	gbuf[i] = 0;
+        gbuf[i] = 0;
     VSread(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
 
     p = gbuf;
@@ -774,82 +774,82 @@ read_vset_stuff(void)
 
     for (i = 0; i < count; i++)
       {
-	  float32     fl;
-	  int32       in;
-	  char8       c;
+          float32     fl;
+          int32       in;
+          char8       c;
 
-	  /* read and verify characters */
-	  HDmemcpy(&c, p, sizeof(char8));
-	  p += sizeof(char8);
+          /* read and verify characters */
+          HDmemcpy(&c, p, sizeof(char8));
+          p += sizeof(char8);
 
-	  if (c != c_expected)
-	    {
-		num_errs++;
-		printf(">>> Multi-order char value %d.0 was expecting %c got %c\n", (int) i, c_expected, c);
-	    }
-	  c_expected++;
+          if (c != c_expected)
+            {
+                num_errs++;
+                printf(">>> Multi-order char value %d.0 was expecting %c got %c\n", (int) i, c_expected, c);
+            }
+          c_expected++;
 
-	  HDmemcpy(&c, p, sizeof(char8));
-	  p += sizeof(char8);
+          HDmemcpy(&c, p, sizeof(char8));
+          p += sizeof(char8);
 
-	  if (c != c_expected)
-	    {
-		num_errs++;
-		printf(">>> Multi-order char value %d.1 was expecting %c got %c\n", (int) i, c_expected, c);
-	    }
-	  c_expected++;
+          if (c != c_expected)
+            {
+                num_errs++;
+                printf(">>> Multi-order char value %d.1 was expecting %c got %c\n", (int) i, c_expected, c);
+            }
+          c_expected++;
 
-	  /* read and verify integers */
-	  HDmemcpy(&in, p, sizeof(int32));
-	  p += sizeof(int32);
+          /* read and verify integers */
+          HDmemcpy(&in, p, sizeof(int32));
+          p += sizeof(int32);
 
-	  if (in != in_expected)
-	    {
-		num_errs++;
-		printf(">>> Multi-order int value %d.0 was expecting %d got %d\n", (int) i, (int) in_expected, (int) in);
-	    }
-	  in_expected++;
-	  HDmemcpy(&in, p, sizeof(int32));
-	  p += sizeof(int32);
+          if (in != in_expected)
+            {
+                num_errs++;
+                printf(">>> Multi-order int value %d.0 was expecting %d got %d\n", (int) i, (int) in_expected, (int) in);
+            }
+          in_expected++;
+          HDmemcpy(&in, p, sizeof(int32));
+          p += sizeof(int32);
 
-	  if (in != in_expected)
-	    {
-		num_errs++;
-		printf(">>> Multi-order int value %d.1 was expecting %d got %d\n", (int) i, (int) in_expected, (int) in);
-	    }
-	  in_expected++;
-	  HDmemcpy(&in, p, sizeof(int32));
-	  p += sizeof(int32);
+          if (in != in_expected)
+            {
+                num_errs++;
+                printf(">>> Multi-order int value %d.1 was expecting %d got %d\n", (int) i, (int) in_expected, (int) in);
+            }
+          in_expected++;
+          HDmemcpy(&in, p, sizeof(int32));
+          p += sizeof(int32);
 
-	  if (in != in_expected)
-	    {
-		num_errs++;
-		printf(">>> Multi-order int value %d.2 was expecting %d got %d\n", (int) i, (int) in_expected, (int) in);
-	    }
-	  in_expected++;
+          if (in != in_expected)
+            {
+                num_errs++;
+                printf(">>> Multi-order int value %d.2 was expecting %d got %d\n", (int) i, (int) in_expected, (int) in);
+            }
+          in_expected++;
 
-	  /* read and verify floating point value */
-	  HDmemcpy(&fl, p, sizeof(float32));
-	  p += sizeof(float32);
+          /* read and verify floating point value */
+          HDmemcpy(&fl, p, sizeof(float32));
+          p += sizeof(float32);
 
-	  if (fl != fl_expected)
-	    {
-		num_errs++;
-		printf(">>> Multi-order float value %d was expecting %f got %f\n", (int) i, fl_expected, fl);
-	    }
-	  fl_expected += (float32) 0.5;
+          if (fl != fl_expected)
+            {
+                num_errs++;
+                printf(">>> Multi-order float value %d was expecting %f got %f\n", (int) i, fl_expected, fl);
+            }
+          fl_expected += (float32) 0.5;
 
       }
 
-    /* 
-     * verify - just read in the character field with FULL_INTERLACE 
+    /*
+     * verify - just read in the character field with FULL_INTERLACE
      */
 
     /* read it */
     VSseek(vs1, 0);
     VSsetfields(vs1, ST);
     for (i = 0; i < 1000; i++)
-	gbuf[i] = 0;
+        gbuf[i] = 0;
     VSread(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
 
     p = gbuf;
@@ -857,40 +857,40 @@ read_vset_stuff(void)
 
     for (i = 0; i < count; i++)
       {
-	  char8       c;
+          char8       c;
 
-	  /* read and verify characters */
-	  HDmemcpy(&c, p, sizeof(char8));
-	  p += sizeof(char8);
+          /* read and verify characters */
+          HDmemcpy(&c, p, sizeof(char8));
+          p += sizeof(char8);
 
-	  if (c != c_expected)
-	    {
-		num_errs++;
-		printf(">>> FULL_INTERLACE read char value %d.0 (%c) got %c %d\n", (int) i, c_expected, c, c);
-	    }
-	  c_expected++;
+          if (c != c_expected)
+            {
+                num_errs++;
+                printf(">>> FULL_INTERLACE read char value %d.0 (%c) got %c %d\n", (int) i, c_expected, c, c);
+            }
+          c_expected++;
 
-	  HDmemcpy(&c, p, sizeof(char8));
-	  p += sizeof(char8);
+          HDmemcpy(&c, p, sizeof(char8));
+          p += sizeof(char8);
 
-	  if (c != c_expected)
-	    {
-		num_errs++;
-		printf(">>> FULL_INTERLACE read char value %d.1 (%c) %c got %c\n", (int) i, c_expected, c, c);
-	    }
-	  c_expected++;
+          if (c != c_expected)
+            {
+                num_errs++;
+                printf(">>> FULL_INTERLACE read char value %d.1 (%c) %c got %c\n", (int) i, c_expected, c, c);
+            }
+          c_expected++;
 
       }
 
-    /* 
-     * verify - just read in the character field with NO_INTERLACE 
+    /*
+     * verify - just read in the character field with NO_INTERLACE
      */
 
     /* read it */
     VSseek(vs1, 0);
     VSsetfields(vs1, ST);
     for (i = 0; i < 1000; i++)
-	gbuf[i] = 0;
+        gbuf[i] = 0;
     VSread(vs1, (unsigned char *) gbuf, count, NO_INTERLACE);
 
     p = gbuf;
@@ -898,28 +898,28 @@ read_vset_stuff(void)
 
     for (i = 0; i < count; i++)
       {
-	  char8       c;
+          char8       c;
 
-	  /* read and verify characters */
-	  HDmemcpy(&c, p, sizeof(char8));
-	  p += sizeof(char8);
+          /* read and verify characters */
+          HDmemcpy(&c, p, sizeof(char8));
+          p += sizeof(char8);
 
-	  if (c != c_expected)
-	    {
-		num_errs++;
-		printf(">>> NO_INTERLACE read char value %d.0 (%c) got %c\n", (int) i, c_expected, c);
-	    }
-	  c_expected++;
+          if (c != c_expected)
+            {
+                num_errs++;
+                printf(">>> NO_INTERLACE read char value %d.0 (%c) got %c\n", (int) i, c_expected, c);
+            }
+          c_expected++;
 
-	  HDmemcpy(&c, p, sizeof(char8));
-	  p += sizeof(char8);
+          HDmemcpy(&c, p, sizeof(char8));
+          p += sizeof(char8);
 
-	  if (c != c_expected)
-	    {
-		num_errs++;
-		printf(">>> NO_INTERLACE read char value %d.1 (%c) %c got\n", (int) i, c_expected, c);
-	    }
-	  c_expected++;
+          if (c != c_expected)
+            {
+                num_errs++;
+                printf(">>> NO_INTERLACE read char value %d.1 (%c) %c got\n", (int) i, c_expected, c);
+            }
+          c_expected++;
 
       }
 
@@ -927,8 +927,8 @@ read_vset_stuff(void)
     VSfind(fid, "foo");
     if (VSseek(vs1, 0) == FAIL)
       {
-	  num_errs++;
-	  printf(">>> VSseek failed after VSfind call\n");
+          num_errs++;
+          printf(">>> VSseek failed after VSfind call\n");
       }
 
     VSdetach(vs1);
@@ -937,20 +937,20 @@ read_vset_stuff(void)
     Hclose(fid);
     return SUCCEED;
 
-}	/* read_vset_stuff */
+}   /* read_vset_stuff */
 
 /* main test driver */
-void 
+void
 test_vsets(void)
 {
     int32       status;
 
     status = write_vset_stuff();
     if (status == FAIL)
-	return;
+        return;
 
     status = read_vset_stuff();
     if (status == FAIL)
-	return;
+        return;
 
-}	/* test_vsets */
+}   /* test_vsets */

@@ -27,7 +27,7 @@ static char RcsId[] = "@(#)$Revision$";
 extern int  wait(int);
 #endif /* SUN */
 
-int 
+int
 HEannotate(HE_CMD * cmd)
 {
     register int i;
@@ -35,55 +35,55 @@ HEannotate(HE_CMD * cmd)
     int         ann = HE_LABEL;
 
     for (i = 1; i < cmd->argc; i++)
-	if (cmd->argv[i][0] == '-')
-	    switch (findOpt(cmd->argv[i] + 1))
-	      {
-		  case HE_HELP:
-		      puts("annotate [-label|-descriptor] [-editor <editor>]");
-		      puts("\tEdit an annotation");
-		      puts("\t-label\t\tEdit label (default)");
-		      puts("\t-descriptor\tEdit descriptor");
-		      puts("\t-editor\t\tUse editor (default EDITOR env value)");
-		      return HE_OK;
-		  case HE_LABEL:
-		      ann = HE_LABEL;
-		      break;
-		  case HE_DESCRIPTOR:
-		      ann = HE_DESCRIPTOR;
-		      break;
-		  case HE_EDITOR:
-		      if (++i < cmd->argc)
-			  editor = cmd->argv[i];
-		      break;
-		  case HE_NOTFOUND:
-		      unkOpt(cmd->argv[i]);
-		      return HE_FAIL;
-		  case HE_AMBIG:
-		      ambigOpt(cmd->argv[i]);
-		      return HE_FAIL;
-		  default:
-		      irrOpt(cmd->argv[i]);
-		      return HE_FAIL;
-	      }
-	else
-	  {
-	      unkArg(cmd->argv[i]);
-	      return HE_FAIL;
-	  }
+        if (cmd->argv[i][0] == '-')
+            switch (findOpt(cmd->argv[i] + 1))
+              {
+                  case HE_HELP:
+                      puts("annotate [-label|-descriptor] [-editor <editor>]");
+                      puts("\tEdit an annotation");
+                      puts("\t-label\t\tEdit label (default)");
+                      puts("\t-descriptor\tEdit descriptor");
+                      puts("\t-editor\t\tUse editor (default EDITOR env value)");
+                      return HE_OK;
+                  case HE_LABEL:
+                      ann = HE_LABEL;
+                      break;
+                  case HE_DESCRIPTOR:
+                      ann = HE_DESCRIPTOR;
+                      break;
+                  case HE_EDITOR:
+                      if (++i < cmd->argc)
+                          editor = cmd->argv[i];
+                      break;
+                  case HE_NOTFOUND:
+                      unkOpt(cmd->argv[i]);
+                      return HE_FAIL;
+                  case HE_AMBIG:
+                      ambigOpt(cmd->argv[i]);
+                      return HE_FAIL;
+                  default:
+                      irrOpt(cmd->argv[i]);
+                      return HE_FAIL;
+              }
+        else
+          {
+              unkArg(cmd->argv[i]);
+              return HE_FAIL;
+          }
     return annotate(editor, ann);
 }
 
 /* Edit annontations (labels and descriptions) for the
  * current data element */
-int 
+int
 annotate(char *editor, int ann)
 {
 
 #if !defined MAC && !defined PC
 
-    int32       len;		/* length of annotation */
-    char       *buf;		/* annotation buffer */
-    char       *file;		/* tmp file name */
+    int32       len;            /* length of annotation */
+    char       *buf;            /* annotation buffer */
+    char       *file;           /* tmp file name */
     register int i;
     int         ret;
 
@@ -91,8 +91,8 @@ annotate(char *editor, int ann)
      */
     if (!fileOpen())
       {
-	  noFile();
-	  return HE_FAIL;
+          noFile();
+          return HE_FAIL;
       }
 
     /* Get the annotation from hdf file
@@ -116,14 +116,14 @@ annotate(char *editor, int ann)
      */
     if (len > 0 && buf != NULL)
       {
-	  /* doctor the buffer a little for the editors
-	   */
-	  if (ann == HE_LABEL)
-	      buf[len] = '\n';
-	  else
-	      len--;
-	  writeToFile(file, buf, len + 1);
-	  HDfreespace(buf);
+          /* doctor the buffer a little for the editors
+           */
+          if (ann == HE_LABEL)
+              buf[len] = '\n';
+          else
+              len--;
+          writeToFile(file, buf, len + 1);
+          HDfreespace(buf);
       }
 
 #ifndef VMS
@@ -133,30 +133,30 @@ annotate(char *editor, int ann)
      */
     if (editor == NULL)
       {
-	  editor = (char *) getenv("EDITOR");
-	  if (editor == NULL)
-	      editor = "/usr/bin/ex";
+          editor = (char *) getenv("EDITOR");
+          if (editor == NULL)
+              editor = "/usr/bin/ex";
       }
     if (fork() == 0)
       {
-	  /* this is the child */
-	  if (execl(editor, editor, file, 0) == -1)
-	      fprintf(stderr, "Error while editing label.\n");
+          /* this is the child */
+          if (execl(editor, editor, file, 0) == -1)
+              fprintf(stderr, "Error while editing label.\n");
 
-	  /* return control to the parent if exec fails
-	   */
-	  exit(0);
+          /* return control to the parent if exec fails
+           */
+          exit(0);
       }
 #else  /* VMS  */
     if (vfork() == 0)
-	/* this is the child */
+        /* this is the child */
       {
-	  intn        ret_status;
-	  $DESCRIPTOR(input_file, file);
-	  $DESCRIPTOR(output_file, file);
-	  ret_status = TPU$EDIT(&input_file, &output_file);
-	  fprintf("TPU$EDIT return status: %d. \n", ret_status);
-	  exit(0);
+          intn        ret_status;
+          $DESCRIPTOR(input_file, file);
+          $DESCRIPTOR(output_file, file);
+          ret_status = TPU$EDIT(&input_file, &output_file);
+          fprintf("TPU$EDIT return status: %d. \n", ret_status);
+          exit(0);
       }
 #endif
 
@@ -167,16 +167,16 @@ annotate(char *editor, int ann)
      */
     len = readFromFile(file, &buf);
     if (len <= 0 || buf == NULL)
-	return len;
+        return len;
 
     /* doctor the buffer for standard format
      */
     if (ann == HE_LABEL)
       {
-	  /* take out control characters from the end */
-	  for (i = len; i >= 0 && !isgraph(buf[i]); i--)
-	      ;
-	  buf[i + 1] = '\0';
+          /* take out control characters from the end */
+          for (i = len; i >= 0 && !isgraph(buf[i]); i--)
+              ;
+          buf[i + 1] = '\0';
       }
 
     /* forget the tmp file
@@ -206,7 +206,7 @@ annotate(char *editor, int ann)
 
 extern int  he_backup;
 
-int 
+int
 HEopen(HE_CMD * cmd)
 {
     int         backup = YES;
@@ -214,41 +214,41 @@ HEopen(HE_CMD * cmd)
     char       *file = NULL;
 
     for (i = 1; i < cmd->argc; i++)
-	if (cmd->argv[i][0] != '-')
-	  {
-	      if (!file)
-		  file = cmd->argv[i];
-	      else
-		{
-		    fprintf(stderr, "Only one file allowed.\n");
-		    return FAIL;
-		}
-	  }
-	else
-	    switch (findOpt(cmd->argv[i] + 1))
-	      {
-		  case HE_HELP:
-		      puts("open <file> [-nobackup]");
-		      puts("\t-nobackup\tDon't make a backup for this file.");
-		      return HE_OK;
-		  case HE_NOBACKUP:
-		      backup = 0;
-		      break;
-		  case HE_NOTFOUND:
-		      unkOpt(cmd->argv[i]);
-		      return FAIL;
-		  case HE_AMBIG:
-		      ambigOpt(cmd->argv[i]);
-		      return FAIL;
-		  default:
-		      irrOpt(cmd->argv[i]);
-		      return FAIL;
-	      }
+        if (cmd->argv[i][0] != '-')
+          {
+              if (!file)
+                  file = cmd->argv[i];
+              else
+                {
+                    fprintf(stderr, "Only one file allowed.\n");
+                    return FAIL;
+                }
+          }
+        else
+            switch (findOpt(cmd->argv[i] + 1))
+              {
+                  case HE_HELP:
+                      puts("open <file> [-nobackup]");
+                      puts("\t-nobackup\tDon't make a backup for this file.");
+                      return HE_OK;
+                  case HE_NOBACKUP:
+                      backup = 0;
+                      break;
+                  case HE_NOTFOUND:
+                      unkOpt(cmd->argv[i]);
+                      return FAIL;
+                  case HE_AMBIG:
+                      ambigOpt(cmd->argv[i]);
+                      return FAIL;
+                  default:
+                      irrOpt(cmd->argv[i]);
+                      return FAIL;
+              }
 
     if (!file)
       {
-	  fprintf(stderr, "Please specify a file name.\n");
-	  return FAIL;
+          fprintf(stderr, "Please specify a file name.\n");
+          return FAIL;
       }
 
     return openFile(file, backup);
@@ -257,7 +257,7 @@ HEopen(HE_CMD * cmd)
 /* openFile -- Internal open file routine. */
 /* Called by:   HEopen, main */
 /* Returns:     HE_OK and FAIL */
-int 
+int
 openFile(char *file, int backup)
 {
     ASSERT(file);
@@ -265,81 +265,81 @@ openFile(char *file, int backup)
     /* only allow one file at a time */
     if (fileOpen())
       {
-	  fprintf(stderr, "File: %s is still open. Close before reopening.\n",
-		  he_file);
-	  return FAIL;
+          fprintf(stderr, "File: %s is still open. Close before reopening.\n",
+                  he_file);
+          return FAIL;
       }
 
     /* Make backup first if necessary */
     if (backup)
       {
-	  if (backupFile(file) < 0)
-	      return FAIL;
-	  he_backup = 1;
+          if (backupFile(file) < 0)
+              return FAIL;
+          he_backup = 1;
       }
     else
-	he_backup = 0;
+        he_backup = 0;
 
     if (initFile(file) < 0)
-	return FAIL;
+        return FAIL;
 
     return HE_OK;
 }
 
 /* HEclose -- close current file */
 /* Called by HEdoCmd */
-int 
+int
 HEclose(HE_CMD * cmd)
 {
     register int i;
     int         keep = NO;
 
     for (i = 1; i < cmd->argc; i++)
-	if (cmd->argv[i][0] != '-')
-	  {
-	      unkArg(cmd->argv[i]);
-	      return FAIL;
-	  }
-	else
-	    switch (findOpt(cmd->argv[i] + 1))
-	      {
-		  case HE_HELP:
-		      puts("close [-keep]");
-		      puts("\t-keep\t\tDon't delete the backup file.");
-		      return HE_OK;
-		  case HE_KEEP:
-		      keep = YES;
-		      break;
-		  case HE_NOTFOUND:
-		      unkOpt(cmd->argv[i]);
-		      return FAIL;
-		  case HE_AMBIG:
-		      ambigOpt(cmd->argv[i]);
-		      return FAIL;
-		  default:
-		      irrOpt(cmd->argv[i]);
-		      return FAIL;
-	      }
+        if (cmd->argv[i][0] != '-')
+          {
+              unkArg(cmd->argv[i]);
+              return FAIL;
+          }
+        else
+            switch (findOpt(cmd->argv[i] + 1))
+              {
+                  case HE_HELP:
+                      puts("close [-keep]");
+                      puts("\t-keep\t\tDon't delete the backup file.");
+                      return HE_OK;
+                  case HE_KEEP:
+                      keep = YES;
+                      break;
+                  case HE_NOTFOUND:
+                      unkOpt(cmd->argv[i]);
+                      return FAIL;
+                  case HE_AMBIG:
+                      ambigOpt(cmd->argv[i]);
+                      return FAIL;
+                  default:
+                      irrOpt(cmd->argv[i]);
+                      return FAIL;
+              }
 
     return closeFile(keep);
 }
 
-int 
+int
 HErevert(HE_CMD * cmd)
 {
     if (cmd->argc < 2)
-	return revert();
+        return revert();
 
     if (cmd->argv[1][0] != '-' || findOpt(cmd->argv[1] + 1) == HE_HELP)
       {
-	  puts("revert");
-	  puts("\tDiscard all changes.");
-	  return HE_OK;
+          puts("revert");
+          puts("\tDiscard all changes.");
+          return HE_OK;
       }
     return HE_FAIL;
 }
 
-int 
+int
 HEwrite(HE_CMD * cmd)
 {
     register int i;
@@ -348,40 +348,40 @@ HEwrite(HE_CMD * cmd)
     uint16      tag = 0;
 
     if (cmd->argc < 2 ||
-	(cmd->argv[1][0] == '-' && findOpt(cmd->argv[1] + 1) == HE_HELP))
+        (cmd->argv[1][0] == '-' && findOpt(cmd->argv[1] + 1) == HE_HELP))
       {
-	  puts("write <file> [-attachto <atag> <aref>]");
-	  puts("\tWrite an element or group into another HDF file");
-	  puts("\t-attchto\tONLY for writing annontations");
-	  puts("\t\t\tWhat element to attach annotation to");
-	  return HE_OK;
+          puts("write <file> [-attachto <atag> <aref>]");
+          puts("\tWrite an element or group into another HDF file");
+          puts("\t-attchto\tONLY for writing annontations");
+          puts("\t\t\tWhat element to attach annotation to");
+          return HE_OK;
       }
 
     file = cmd->argv[1];
     for (i = 2; i < cmd->argc; i++)
-	if (cmd->argv[i][0] != '-')
-	    file = cmd->argv[i];
-	else
-	    switch (findOpt(cmd->argv[i] + 1))
-	      {
-		  case HE_ATTACHTO:
-		      tag = (uint16) atoi(cmd->argv[++i]);
-		      ref = (uint16) atoi(cmd->argv[++i]);
-		      break;
-		  case HE_NOTFOUND:
-		      unkOpt(cmd->argv[i]);
-		      return HE_FAIL;
-		  case HE_AMBIG:
-		      ambigOpt(cmd->argv[i]);
-		      return HE_FAIL;
-		  default:
-		      irrOpt(cmd->argv[i]);
-		      return HE_FAIL;
-	      }
+        if (cmd->argv[i][0] != '-')
+            file = cmd->argv[i];
+        else
+            switch (findOpt(cmd->argv[i] + 1))
+              {
+                  case HE_ATTACHTO:
+                      tag = (uint16) atoi(cmd->argv[++i]);
+                      ref = (uint16) atoi(cmd->argv[++i]);
+                      break;
+                  case HE_NOTFOUND:
+                      unkOpt(cmd->argv[i]);
+                      return HE_FAIL;
+                  case HE_AMBIG:
+                      ambigOpt(cmd->argv[i]);
+                      return HE_FAIL;
+                  default:
+                      irrOpt(cmd->argv[i]);
+                      return HE_FAIL;
+              }
     return writ(file, tag, ref);
 }
 
-int 
+int
 writ(char *file, uint16 tag, uint16 ref)
 {
     int         ret;
@@ -389,23 +389,23 @@ writ(char *file, uint16 tag, uint16 ref)
 
     if (!fileOpen())
       {
-	  noFile();
-	  return HE_FAIL;
+          noFile();
+          return HE_FAIL;
       }
     if (!HDstrcmp(file, he_file))
       {
-	  fprintf(stderr, "Cannot write to self.\n");
-	  return HE_FAIL;
+          fprintf(stderr, "Cannot write to self.\n");
+          return HE_FAIL;
       }
 
     /* handle special cases */
     if (isAnnot(currTag()))
-	return writeAnnot(file, tag, ref);
+        return writeAnnot(file, tag, ref);
     if (isGrp(currTag()))
-	return writeGrp(file);
+        return writeGrp(file);
 
     if (getNewRef(file, &ref1) < 0)
-	return HE_FAIL;
+        return HE_FAIL;
 
     ret = writeElt(file, ref1, he_currDesc);
     return ret;
@@ -413,7 +413,7 @@ writ(char *file, uint16 tag, uint16 ref)
 
 /* --------------------------- get a r8 from a file ----------------------- */
 
-int 
+int
 HEgetR8(HE_CMD * cmd)
 {
     register int i;
@@ -422,68 +422,68 @@ HEgetR8(HE_CMD * cmd)
     int         compress = 0;
 
     if (cmd->argc < 4 ||
-	(cmd->argv[1][0] == '-' && findOpt(cmd->argv[1] + 1) == HE_HELP))
+        (cmd->argv[1][0] == '-' && findOpt(cmd->argv[1] + 1) == HE_HELP))
       {
-	  puts("getr8 <image> <xdim> <ydim> [-palette <palette>] [-raster|-rle|-imcomp]");
-	  puts("\tGet a r8 group from raw files");
-	  puts("\t-palette\tRaw palette file");
-	  puts("\t-raster\t\tNo compression (default)");
-	  puts("\t-rle\t\tRun-length compression");
-	  puts("\t-imcomp\t\tImcomp compression");
-	  return HE_OK;
+          puts("getr8 <image> <xdim> <ydim> [-palette <palette>] [-raster|-rle|-imcomp]");
+          puts("\tGet a r8 group from raw files");
+          puts("\t-palette\tRaw palette file");
+          puts("\t-raster\t\tNo compression (default)");
+          puts("\t-rle\t\tRun-length compression");
+          puts("\t-imcomp\t\tImcomp compression");
+          return HE_OK;
       }
     image = cmd->argv[1];
     xdim = atoi(cmd->argv[2]);
     ydim = atoi(cmd->argv[3]);
 
     for (i = 4; i < cmd->argc; i++)
-	if (cmd->argv[i][0] == '-')
-	    switch (findOpt(cmd->argv[i] + 1))
-	      {
-		  case HE_PALETTE:
-		      pal = cmd->argv[++i];
-		      break;
-		  case HE_RASTER:
-		      compress = 0;
-		      break;
-		  case HE_RLE:
-		      compress = HE_RLE;
-		      break;
-		  case HE_IMCOMP:
-		      compress = HE_IMCOMP;
-		      break;
-		  case HE_NOTFOUND:
-		      unkOpt(cmd->argv[i]);
-		      return FAIL;
-		  case HE_AMBIG:
-		      ambigOpt(cmd->argv[i]);
-		      return FAIL;
-		  default:
-		      irrOpt(cmd->argv[i]);
-		      return FAIL;
-	      }
-	else
-	  {
-	      unkArg(cmd->argv[i]);
-	      return FAIL;
-	  }
+        if (cmd->argv[i][0] == '-')
+            switch (findOpt(cmd->argv[i] + 1))
+              {
+                  case HE_PALETTE:
+                      pal = cmd->argv[++i];
+                      break;
+                  case HE_RASTER:
+                      compress = 0;
+                      break;
+                  case HE_RLE:
+                      compress = HE_RLE;
+                      break;
+                  case HE_IMCOMP:
+                      compress = HE_IMCOMP;
+                      break;
+                  case HE_NOTFOUND:
+                      unkOpt(cmd->argv[i]);
+                      return FAIL;
+                  case HE_AMBIG:
+                      ambigOpt(cmd->argv[i]);
+                      return FAIL;
+                  default:
+                      irrOpt(cmd->argv[i]);
+                      return FAIL;
+              }
+        else
+          {
+              unkArg(cmd->argv[i]);
+              return FAIL;
+          }
 
     if (!image)
       {
-	  fprintf(stderr, "No image file specified.\n");
-	  return FAIL;
+          fprintf(stderr, "No image file specified.\n");
+          return FAIL;
       }
     if (xdim == 0 || ydim == 0)
       {
-	  fprintf(stderr, "No dimensions specified.\n");
-	  return FAIL;
+          fprintf(stderr, "No dimensions specified.\n");
+          return FAIL;
       }
     return getR8(xdim, ydim, image, pal, compress);
 }
 
 /* --------------- generic put routines ---------------------- */
 
-int 
+int
 HEput(HE_CMD * cmd)
 {
     register int i;
@@ -491,40 +491,40 @@ HEput(HE_CMD * cmd)
     char       *template = "elt#.@";
 
     for (i = 1; i < cmd->argc; i++)
-	if (cmd->argv[i][0] == '-')
-	    switch (findOpt(cmd->argv[i] + 1))
-	      {
-		  case HE_HELP:
-		      puts("put [-file <file>] [-verbose]");
-		      puts("\tPut the raw binary of this element in a file");
-		      puts("\t-file\t\tOut file name (default \"elt#.@\")");
-		      puts("\t-verbose\tOutput diagnostic info");
-		      return HE_OK;
-		  case HE_FILE:
-		      template = cmd->argv[++i];
-		      break;
-		  case HE_VERBOSE:
-		      verbose = YES;
-		      break;
-		  case HE_NOTFOUND:
-		      unkOpt(cmd->argv[i]);
-		      return HE_FAIL;
-		  case HE_AMBIG:
-		      ambigOpt(cmd->argv[i]);
-		      return HE_FAIL;
-		  default:
-		      irrOpt(cmd->argv[i]);
-		      return HE_FAIL;
-	      }
-	else
-	  {
-	      unkArg(cmd->argv[i]);
-	      return HE_FAIL;
-	  }
+        if (cmd->argv[i][0] == '-')
+            switch (findOpt(cmd->argv[i] + 1))
+              {
+                  case HE_HELP:
+                      puts("put [-file <file>] [-verbose]");
+                      puts("\tPut the raw binary of this element in a file");
+                      puts("\t-file\t\tOut file name (default \"elt#.@\")");
+                      puts("\t-verbose\tOutput diagnostic info");
+                      return HE_OK;
+                  case HE_FILE:
+                      template = cmd->argv[++i];
+                      break;
+                  case HE_VERBOSE:
+                      verbose = YES;
+                      break;
+                  case HE_NOTFOUND:
+                      unkOpt(cmd->argv[i]);
+                      return HE_FAIL;
+                  case HE_AMBIG:
+                      ambigOpt(cmd->argv[i]);
+                      return HE_FAIL;
+                  default:
+                      irrOpt(cmd->argv[i]);
+                      return HE_FAIL;
+              }
+        else
+          {
+              unkArg(cmd->argv[i]);
+              return HE_FAIL;
+          }
     return put(template, verbose);
 }
 
-int 
+int
 put(char *template, int verbose)
 {
     int         length;
@@ -533,9 +533,9 @@ put(char *template, int verbose)
 
     length = (int) getElement(he_currDesc, &data);
     if ((length <= 0) || (data == NULL))
-	return HE_FAIL;
+        return HE_FAIL;
     ret = putWithTempl(template, he_currDesc, length, 1, data, length,
-		       verbose);
+                       verbose);
     HDfreespace(data);
 
     return ret;
@@ -543,7 +543,7 @@ put(char *template, int verbose)
 
 /* ------------------ routines to put an r8 into a file --------------------- */
 
-int 
+int
 HEputR8(HE_CMD * cmd)
 {
     register int i;
@@ -552,44 +552,44 @@ HEputR8(HE_CMD * cmd)
     char       *pal = "pal#";
 
     for (i = 1; i < cmd->argc; i++)
-	if (cmd->argv[i][0] == '-')
-	    switch (findOpt(cmd->argv[i] + 1))
-	      {
-		  case HE_HELP:
-		      puts("putr8 [-image <img>] [-palette <pal>] [-verbose]");
-		      puts("\tPut an r8 group into raw image and palette files");
-		      puts("\t-image\t\tImage file name template (default \"img#.@.%\")");
-		      puts("\t-palette\tPalette file name template (default \"pal#\")");
-		      puts("\t-verbose\tTo give output of steps taken");
-		      return HE_OK;
-		  case HE_IMAGE:
-		      image = cmd->argv[++i];
-		      break;
-		  case HE_PALETTE:
-		      pal = cmd->argv[++i];
-		      break;
-		  case HE_VERBOSE:
-		      verbose = YES;
-		      break;
-		  case HE_NOTFOUND:
-		      unkOpt(cmd->argv[i]);
-		      return HE_FAIL;
-		  case HE_AMBIG:
-		      ambigOpt(cmd->argv[i]);
-		      return HE_FAIL;
-		  default:
-		      irrOpt(cmd->argv[i]);
-		      return HE_FAIL;
-	      }
-	else
-	  {
-	      unkArg(cmd->argv[i]);
-	      return HE_FAIL;
-	  }
+        if (cmd->argv[i][0] == '-')
+            switch (findOpt(cmd->argv[i] + 1))
+              {
+                  case HE_HELP:
+                      puts("putr8 [-image <img>] [-palette <pal>] [-verbose]");
+                      puts("\tPut an r8 group into raw image and palette files");
+                      puts("\t-image\t\tImage file name template (default \"img#.@.%\")");
+                      puts("\t-palette\tPalette file name template (default \"pal#\")");
+                      puts("\t-verbose\tTo give output of steps taken");
+                      return HE_OK;
+                  case HE_IMAGE:
+                      image = cmd->argv[++i];
+                      break;
+                  case HE_PALETTE:
+                      pal = cmd->argv[++i];
+                      break;
+                  case HE_VERBOSE:
+                      verbose = YES;
+                      break;
+                  case HE_NOTFOUND:
+                      unkOpt(cmd->argv[i]);
+                      return HE_FAIL;
+                  case HE_AMBIG:
+                      ambigOpt(cmd->argv[i]);
+                      return HE_FAIL;
+                  default:
+                      irrOpt(cmd->argv[i]);
+                      return HE_FAIL;
+              }
+        else
+          {
+              unkArg(cmd->argv[i]);
+              return HE_FAIL;
+          }
     return putR8(image, pal, verbose);
 }
 
-int 
+int
 putR8(char *image, char *pal, int verbose)
 {
     int         ret;
@@ -599,41 +599,41 @@ putR8(char *image, char *pal, int verbose)
 
     if (!fileOpen())
       {
-	  noFile();
-	  return HE_FAIL;
+          noFile();
+          return HE_FAIL;
       }
     if (!isRig(currTag()))
       {
-	  fprintf(stderr, "Current element not an image group.");
-	  return HE_FAIL;
+          fprintf(stderr, "Current element not an image group.");
+          return HE_FAIL;
       }
     getCurrRig(&xdim, &ydim, &palette, &raster);
     if (raster == NULL)
       {
-	  fprintf(stderr, "Cannot find raster.\n");
-	  return HE_FAIL;
+          fprintf(stderr, "Cannot find raster.\n");
+          return HE_FAIL;
       }
     ret = putWithTempl(image, he_currDesc, (int) xdim, (int) ydim, raster, (int) (xdim * ydim),
-		       verbose);
+                       verbose);
     HDfreespace(raster);
     if (ret < 0)
-	return HE_FAIL;
+        return HE_FAIL;
     if (palette != NULL)
       {
-	  register int i;
-	  char        p[HE_PALETTE_SZ];
+          register int i;
+          char        p[HE_PALETTE_SZ];
 
-	  for (i = 0; i < HE_COLOR_SZ; i++)
-	    {
-		p[i] = *palette++;
-		p[HE_COLOR_SZ + i] = *palette++;
-		p[2 * HE_COLOR_SZ + i] = *palette++;
-	    }
-	  ret = putWithTempl(pal, he_currDesc, (int) xdim, (int) ydim, p,
-			     HE_PALETTE_SZ, verbose);
-	  HDfreespace(palette);
-	  if (ret < 0)
-	      return HE_FAIL;
+          for (i = 0; i < HE_COLOR_SZ; i++)
+            {
+                p[i] = *palette++;
+                p[HE_COLOR_SZ + i] = *palette++;
+                p[2 * HE_COLOR_SZ + i] = *palette++;
+            }
+          ret = putWithTempl(pal, he_currDesc, (int) xdim, (int) ydim, p,
+                             HE_PALETTE_SZ, verbose);
+          HDfreespace(palette);
+          if (ret < 0)
+              return HE_FAIL;
       }
 
     return HE_OK;

@@ -32,7 +32,7 @@ int         num_errs
 #ifdef TEST_PC
 #define FAR far
 #else
-#define FAR	/* */
+#define FAR     /* */
 #endif /* TEST_PC */
 
 /* Used to make certain a return value _is_not_ a value */

@@ -17,7 +17,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
-/* ------ he-cntrl.c ------  
+/* ------ he-cntrl.c ------
    This file contains much of the contol mechanisms for HDFed
    - Many of the command line functions
    - The parsing functions
@@ -27,84 +27,84 @@ static char RcsId[] = "@(#)$Revision$";
 #include "he.h"
 
 /* --- HEif --- executes commands if predicates are satisfied */
-int 
+int
 HEif(HE_CMD * cmd)
 {
-    HE_PRED    *pred;		/* predicates */
-    HE_CMD     *cmdTail;	/* last cmd we've seen in the sublist */
+    HE_PRED    *pred;           /* predicates */
+    HE_CMD     *cmdTail;        /* last cmd we've seen in the sublist */
 
     if (cmd->argc == 2 && !HDstrcmp(cmd->argv[1], "-help"))
       {
-	  puts("if [<predicates>]");
-	  puts("  <commands>*");
-	  puts("end");
-	  puts("\tExecutes commands if predicates are satisfied by element");
-	  return HE_OK;
+          puts("if [<predicates>]");
+          puts("  <commands>*");
+          puts("end");
+          puts("\tExecutes commands if predicates are satisfied by element");
+          return HE_OK;
       }
 
     /* parse the predicates on this command */
     pred = parsePred(cmd->argc, cmd->argv);
     if (!pred)
-	return FAIL;
+        return FAIL;
 
     /* execute the sub list only is the predicates are satisfied */
     if (satPred(currDesc(), pred))
       {
-	  /* go through sub-list until an end is encountered */
-	  for (cmdTail = cmd->sub;
-	       cmdTail && HDstrcmp(cmdTail->argv[0], "end");
-	       cmdTail = cmdTail->next)
-	      if (cmdTail->func)
-		  he_status = (*cmdTail->func) (cmdTail);
-	      else
-		{
-		    fprintf(stderr, "Unrecognized command: %s\n", cmd->argv[0]);
-		    return FAIL;
-		}
+          /* go through sub-list until an end is encountered */
+          for (cmdTail = cmd->sub;
+               cmdTail && HDstrcmp(cmdTail->argv[0], "end");
+               cmdTail = cmdTail->next)
+              if (cmdTail->func)
+                  he_status = (*cmdTail->func) (cmdTail);
+              else
+                {
+                    fprintf(stderr, "Unrecognized command: %s\n", cmd->argv[0]);
+                    return FAIL;
+                }
       }
     return HE_OK;
 }
 
 /* --- HEselect --- step through all the elements in a file and execute if
    predicates are satisfied */
-int 
+int
 HEselect(HE_CMD * cmd)
 {
-    int         t_currDesc;	/* tmp var */
-    HE_PRED    *pred;		/* predicate structure */
-    HE_CMD     *cmdTail;	/* last cmd we've seen in the sublist */
+    int         t_currDesc;     /* tmp var */
+    HE_PRED    *pred;           /* predicate structure */
+    HE_CMD     *cmdTail;        /* last cmd we've seen in the sublist */
 
     if (cmd->argc == 2 && !HDstrcmp(cmd->argv[1], "-help"))
       {
-	  puts("select [<predicates>]");
-	  puts("  <commands>*");
-	  puts("end");
-	  puts("\tSteps through all elements in the file that satisfies the");
-	  puts("\tpredicates and execute the commands on them.");
-	  return HE_OK;
+          puts("select [<predicates>]");
+          puts("  <commands>*");
+          puts("end");
+          puts("\tSteps through all elements in the file that satisfies the");
+          puts("\tpredicates and execute the commands on them.");
+          return HE_OK;
       }
 
     /* generate predicate structure for this predicate list */
     pred = parsePred(cmd->argc, cmd->argv);
     if (!pred)
-	return FAIL;
+        return FAIL;
 
     /* save the curr desc index */
     t_currDesc = he_currDesc;
 
     /* step through all elements */
     for (he_currDesc = 0; he_currDesc < he_numDesc; he_currDesc++)
-	if (currTag() != DFTAG_NULL && satPred(currDesc(), pred))
-	    for (cmdTail = cmd->sub; HDstrcmp(cmdTail->argv[0], "end");
-		 cmdTail = cmdTail->next)
-		if (cmdTail->func)
-		    he_status = (*cmdTail->func) (cmdTail);
-		else
-		  {
-		      fprintf(stderr, "Unrecognized command: %s\n",
-			      cmdTail->argv[0]);
-		      he_status = FAIL;
-		  }
+        if (currTag() != DFTAG_NULL && satPred(currDesc(), pred))
+            for (cmdTail = cmd->sub; HDstrcmp(cmdTail->argv[0], "end");
+                 cmdTail = cmdTail->next)
+                if (cmdTail->func)
+                    he_status = (*cmdTail->func) (cmdTail);
+                else
+                  {
+                      fprintf(stderr, "Unrecognized command: %s\n",
+                              cmdTail->argv[0]);
+                      he_status = FAIL;
+                  }
 
     /* restore he_currDesc */
     he_currDesc = t_currDesc;
@@ -116,7 +116,7 @@ HEselect(HE_CMD * cmd)
 
 extern HE_PRED *he_predicates;
 
-int 
+int
 HEnext(HE_CMD * cmd)
 {
     int         tmp;
@@ -124,15 +124,15 @@ HEnext(HE_CMD * cmd)
 
     if (cmd->argc == 2 && !HDstrcmp(cmd->argv[1], "-help"))
       {
-	  puts("next [<predicates>]");
-	  puts("\tMove to the next element that satisfies the predicate");
-	  return HE_OK;
+          puts("next [<predicates>]");
+          puts("\tMove to the next element that satisfies the predicate");
+          return HE_OK;
       }
 
     if (!fileOpen())
       {
-	  noFile();
-	  return HE_FAIL;
+          noFile();
+          return HE_FAIL;
       }
 
     predicates = parsePred(cmd->argc, cmd->argv);
@@ -140,28 +140,28 @@ HEnext(HE_CMD * cmd)
     /* the following code assumes that parsePred() returns NULL if error, */
     /* a predicate struct with no key if empty predicate list */
     if (!predicates)
-	return HE_FAIL;
+        return HE_FAIL;
 
     /* replace this only if it is non-empty */
     if (predicates[0].key != 0)
       {
-	  if (he_predicates)
-	      HDfreespace(he_predicates);
-	  he_predicates = predicates;
+          if (he_predicates)
+              HDfreespace(he_predicates);
+          he_predicates = predicates;
       }
 
     tmp = he_currDesc;
     do
       {
-	  if (tmp >= he_numDesc - 1)
-	    {
-		fprintf(stderr, "Reached end of file. Not moved.\n");
-		return HE_FAIL;
-	    }
-	  tmp++;
+          if (tmp >= he_numDesc - 1)
+            {
+                fprintf(stderr, "Reached end of file. Not moved.\n");
+                return HE_FAIL;
+            }
+          tmp++;
       }
     while (he_desc[tmp].tag == DFTAG_NULL ||
-	   !satPred(he_desc + tmp, he_predicates));
+           !satPred(he_desc + tmp, he_predicates));
 
     he_currDesc = tmp;
 
@@ -170,7 +170,7 @@ HEnext(HE_CMD * cmd)
 
 /* ---------- Move to previous item -------------- */
 
-int 
+int
 HEprev(HE_CMD * cmd)
 {
     int         tmp;
@@ -178,15 +178,15 @@ HEprev(HE_CMD * cmd)
 
     if (cmd->argc == 2 && !HDstrcmp(cmd->argv[1], "-help"))
       {
-	  puts("prev [<predicates>]");
-	  puts("\tMove to the next element that satisfies the predicate");
-	  return HE_OK;
+          puts("prev [<predicates>]");
+          puts("\tMove to the next element that satisfies the predicate");
+          return HE_OK;
       }
 
     if (!fileOpen())
       {
-	  noFile();
-	  return HE_FAIL;
+          noFile();
+          return HE_FAIL;
       }
 
     predicates = parsePred(cmd->argc, cmd->argv);
@@ -194,27 +194,27 @@ HEprev(HE_CMD * cmd)
     /* the following code assumes that parsePred() returns NULL if error,
        a predicate struct with no key if empty predicate list */
     if (!predicates)
-	return HE_FAIL;
+        return HE_FAIL;
 
     if (predicates[0].key != 0)
       {
-	  if (he_predicates)
-	      HDfreespace(he_predicates);
-	  he_predicates = predicates;
+          if (he_predicates)
+              HDfreespace(he_predicates);
+          he_predicates = predicates;
       }
 
     tmp = he_currDesc;
     do
       {
-	  if (tmp <= 0)
-	    {
-		fprintf(stderr, "Reached beginning of file. Not moved.\n");
-		return HE_FAIL;
-	    }
-	  tmp--;
+          if (tmp <= 0)
+            {
+                fprintf(stderr, "Reached beginning of file. Not moved.\n");
+                return HE_FAIL;
+            }
+          tmp--;
       }
     while (he_desc[tmp].tag == DFTAG_NULL ||
-	   !satPred(he_desc + tmp, he_predicates));
+           !satPred(he_desc + tmp, he_predicates));
     he_currDesc = tmp;
 
     return HE_OK;
@@ -222,96 +222,96 @@ HEprev(HE_CMD * cmd)
 
 /* ----------- routines to call od on some objects ----------- */
 
-int 
+int
 HEdump(HE_CMD * cmd)
 {
     register int i;
     int         offset = 0, raw = 0;
     char       *format = "-o";
-    int32       length = 0;	/* zero is special, means all */
+    int32       length = 0;     /* zero is special, means all */
 
     for (i = 1; i < cmd->argc; i++)
-	if (cmd->argv[i][0] == '-')
-	    switch (findOpt(cmd->argv[i] + 1))
-	      {
-		  case HE_HELP:
-		      printf("dump [-offset <offset>] [-length <len>]\n");
-		      printf("\t[-decimal|-short|-byte|-hexidecimal|-float|-double|-ascii|\n");
-		      printf("\t[-udecimal|-ushort|-octal|]\n");
-		      printf("\tDisplay the contents of the current object\n");
-		      printf("\t-offset            Start offset\n");
-		      printf("\t-length            Length (bytes) to look at\n");
-		      printf("\t-decimal           Decimal format [32 bit integers]\n");
-		      printf("\t-short             Decimal format   [16 bit integers]\n");
-		      printf("\t-byte              Decimal format    [8 bit integers]\n");
-		      printf("\t-hexidecimal       Hexidecimal format\n");
-		      printf("\t-float             Float format   [32 bit floats]\n");
-		      printf("\t-double            Float format  [64 bit floats]\n");
-		      printf("\t-ascii             Ascii format\n");
-		      printf("\t-udecimal          Unsigned Decimal format [32 bit integers]\n");
-		      printf("\t-ushort            Unsigned Decimal format   [16 bit integers]\n");
-		      printf("\t-octal             Octal format [Default]\n");
-		      return HE_OK;
-		  case HE_OFFSET:
-		      offset = atoi(cmd->argv[++i]);
-		      break;
-		  case HE_LENGTH:
-		      length = atoi(cmd->argv[++i]);
-		      if (length <= 0)
-			{
-			    fprintf(stderr, "Illegal length: %s, ignored.\n",
-				    cmd->argv[i]);
-			    length = 0;
-			}
-		      break;
-		  case HE_DECIMAL:
-		      format = "-i";
-		      break;
-		  case HE_UDECIMAL:
-		      format = "-d";
-		      break;
-		  case HE_SHORT:
-		      format = "-j";
-		      break;
-		  case HE_USHORT:
-		      format = "-s";
-		      break;
-		  case HE_BYTE:
-		      format = "-b";
-		      break;
-		  case HE_OCTAL:
-		      format = "-o";
-		      break;
-		  case HE_HEX:
-		      format = "-x";
-		      break;
-		  case HE_FLOAT:
-		      format = "-f";
-		      break;
-		  case HE_DOUBLE:
-		      format = "-e";
-		      break;
-		  case HE_ASCII:
-		      format = "-a";
-		      break;
-		  case HE_RAW:
-		      raw = DFNT_NATIVE;
-		      break;
-		  case HE_NOTFOUND:
-		      unkOpt(cmd->argv[i]);
-		      return HE_FAIL;
-		  case HE_AMBIG:
-		      ambigOpt(cmd->argv[i]);
-		      return HE_FAIL;
-		  default:
-		      irrOpt(cmd->argv[i]);
-		      return HE_FAIL;
-	      }
-	else
-	  {
-	      unkArg(cmd->argv[i]);
-	      return HE_FAIL;
-	  }
+        if (cmd->argv[i][0] == '-')
+            switch (findOpt(cmd->argv[i] + 1))
+              {
+                  case HE_HELP:
+                      printf("dump [-offset <offset>] [-length <len>]\n");
+                      printf("\t[-decimal|-short|-byte|-hexidecimal|-float|-double|-ascii|\n");
+                      printf("\t[-udecimal|-ushort|-octal|]\n");
+                      printf("\tDisplay the contents of the current object\n");
+                      printf("\t-offset            Start offset\n");
+                      printf("\t-length            Length (bytes) to look at\n");
+                      printf("\t-decimal           Decimal format [32 bit integers]\n");
+                      printf("\t-short             Decimal format   [16 bit integers]\n");
+                      printf("\t-byte              Decimal format    [8 bit integers]\n");
+                      printf("\t-hexidecimal       Hexidecimal format\n");
+                      printf("\t-float             Float format   [32 bit floats]\n");
+                      printf("\t-double            Float format  [64 bit floats]\n");
+                      printf("\t-ascii             Ascii format\n");
+                      printf("\t-udecimal          Unsigned Decimal format [32 bit integers]\n");
+                      printf("\t-ushort            Unsigned Decimal format   [16 bit integers]\n");
+                      printf("\t-octal             Octal format [Default]\n");
+                      return HE_OK;
+                  case HE_OFFSET:
+                      offset = atoi(cmd->argv[++i]);
+                      break;
+                  case HE_LENGTH:
+                      length = atoi(cmd->argv[++i]);
+                      if (length <= 0)
+                        {
+                            fprintf(stderr, "Illegal length: %s, ignored.\n",
+                                    cmd->argv[i]);
+                            length = 0;
+                        }
+                      break;
+                  case HE_DECIMAL:
+                      format = "-i";
+                      break;
+                  case HE_UDECIMAL:
+                      format = "-d";
+                      break;
+                  case HE_SHORT:
+                      format = "-j";
+                      break;
+                  case HE_USHORT:
+                      format = "-s";
+                      break;
+                  case HE_BYTE:
+                      format = "-b";
+                      break;
+                  case HE_OCTAL:
+                      format = "-o";
+                      break;
+                  case HE_HEX:
+                      format = "-x";
+                      break;
+                  case HE_FLOAT:
+                      format = "-f";
+                      break;
+                  case HE_DOUBLE:
+                      format = "-e";
+                      break;
+                  case HE_ASCII:
+                      format = "-a";
+                      break;
+                  case HE_RAW:
+                      raw = DFNT_NATIVE;
+                      break;
+                  case HE_NOTFOUND:
+                      unkOpt(cmd->argv[i]);
+                      return HE_FAIL;
+                  case HE_AMBIG:
+                      ambigOpt(cmd->argv[i]);
+                      return HE_FAIL;
+                  default:
+                      irrOpt(cmd->argv[i]);
+                      return HE_FAIL;
+              }
+        else
+          {
+              unkArg(cmd->argv[i]);
+              return HE_FAIL;
+          }
     return dump(length, offset, format, raw);
 }
 
@@ -320,7 +320,7 @@ HEdump(HE_CMD * cmd)
 /*
  * Run 'od' on a segment of the current data element
  */
-int 
+int
 dump(int32 length, int offset, char *format, int raw_flag)
 {
     int32       eltLength;
@@ -330,30 +330,30 @@ dump(int32 length, int offset, char *format, int raw_flag)
 
     if (!fileOpen())
       {
-	  noFile();
-	  return HE_FAIL;
+          noFile();
+          return HE_FAIL;
       }
 
     eltLength = getElement(he_currDesc, &data);
     if (eltLength <= 0)
       {
-	  fprintf(stderr, "Unable to get element.\n");
-	  return HE_FAIL;
+          fprintf(stderr, "Unable to get element.\n");
+          return HE_FAIL;
       }
 
     /* adjust the offset, negative offset implies starting from end. then
        check to see if offset is in range */
     if (offset < 0)
-	offset += (int) eltLength;
+        offset += (int) eltLength;
     if (offset < 0 || offset > eltLength)
       {
-	  fprintf(stderr, "Illegal offset. Setting offset to 0.\n");
-	  offset = 0;
+          fprintf(stderr, "Illegal offset. Setting offset to 0.\n");
+          offset = 0;
       }
 
     /* adjust the length if it falls beyond the end of the element */
     if (length == 0 || length > (eltLength - offset))
-	length = eltLength - offset;
+        length = eltLength - offset;
 
     /*
      * Dump the data to the console
@@ -362,227 +362,227 @@ dump(int32 length, int offset, char *format, int raw_flag)
     switch (format[1])
       {
 
-	  case 'i':
-	      {
-		  register int32 *idata;
-		  idata = (int32 *) HDgetspace(length / 4 * sizeof(int32));
+          case 'i':
+              {
+                  register int32 *idata;
+                  idata = (int32 *) HDgetspace(length / 4 * sizeof(int32));
 
-		  DFKconvert((VOIDP) (data + offset), (VOIDP) idata, DFNT_INT32 | raw_flag,
-			     length / 4, DFACC_READ, 0, 0);
-		  printf("%8d: ", offset);
-		  for (i = 0; i < length / 4; i++)
-		    {
-			printf("%11d ", (int) idata[i]);
-			if (++len > 4)
-			  {
-			      len = 0;
-			      printf("\n%8d: ", (int) (offset + (i + 1) * 4));
-			  }
-		    }
-		  printf("\n");
-		  HDfreespace((VOIDP) idata);
-	      }
-	      break;
+                  DFKconvert((VOIDP) (data + offset), (VOIDP) idata, DFNT_INT32 | raw_flag,
+                             length / 4, DFACC_READ, 0, 0);
+                  printf("%8d: ", offset);
+                  for (i = 0; i < length / 4; i++)
+                    {
+                        printf("%11d ", (int) idata[i]);
+                        if (++len > 4)
+                          {
+                              len = 0;
+                              printf("\n%8d: ", (int) (offset + (i + 1) * 4));
+                          }
+                    }
+                  printf("\n");
+                  HDfreespace((VOIDP) idata);
+              }
+              break;
 
-	  case 'd':
-	      {
-		  register uint32 *idata;
-		  idata = (uint32 *) HDgetspace(length / 4 * sizeof(int32));
+          case 'd':
+              {
+                  register uint32 *idata;
+                  idata = (uint32 *) HDgetspace(length / 4 * sizeof(int32));
 
-		  DFKconvert((VOIDP) (data + offset), (VOIDP) idata, DFNT_UINT32 | raw_flag,
-			     length / 4, DFACC_READ, 0, 0);
-		  printf("%8d: ", offset);
-		  for (i = 0; i < length / 4; i++)
-		    {
-			printf("%11u ", (int) idata[i]);
-			if (++len > 4)
-			  {
-			      len = 0;
-			      printf("\n%8d: ", (int) (offset + (i + 1) * 4));
-			  }
-		    }
-		  printf("\n");
-		  HDfreespace((VOIDP) idata);
-	      }
-	      break;
-	  case 'j':
-	      {
-		  register int16 *sdata;
-		  sdata = (int16 *) HDgetspace(length / 2 * sizeof(int16));
-		  DFKconvert((VOIDP) (data + offset), (VOIDP) sdata, DFNT_INT16 | raw_flag,
-			     length / 2, DFACC_READ, 0, 0);
+                  DFKconvert((VOIDP) (data + offset), (VOIDP) idata, DFNT_UINT32 | raw_flag,
+                             length / 4, DFACC_READ, 0, 0);
+                  printf("%8d: ", offset);
+                  for (i = 0; i < length / 4; i++)
+                    {
+                        printf("%11u ", (int) idata[i]);
+                        if (++len > 4)
+                          {
+                              len = 0;
+                              printf("\n%8d: ", (int) (offset + (i + 1) * 4));
+                          }
+                    }
+                  printf("\n");
+                  HDfreespace((VOIDP) idata);
+              }
+              break;
+          case 'j':
+              {
+                  register int16 *sdata;
+                  sdata = (int16 *) HDgetspace(length / 2 * sizeof(int16));
+                  DFKconvert((VOIDP) (data + offset), (VOIDP) sdata, DFNT_INT16 | raw_flag,
+                             length / 2, DFACC_READ, 0, 0);
 
-		  printf("%8d: ", offset);
-		  for (i = 0; i < length / 2; i++)
-		    {
-			printf("%10d ", sdata[i]);
-			if (++len > 5)
-			  {
-			      len = 0;
-			      printf("\n%8d: ", (int) (offset + (i + 1) * 2));
-			  }
-		    }
-		  printf("\n");
-		  HDfreespace((VOIDP) sdata);
-	      }
-	      break;
+                  printf("%8d: ", offset);
+                  for (i = 0; i < length / 2; i++)
+                    {
+                        printf("%10d ", sdata[i]);
+                        if (++len > 5)
+                          {
+                              len = 0;
+                              printf("\n%8d: ", (int) (offset + (i + 1) * 2));
+                          }
+                    }
+                  printf("\n");
+                  HDfreespace((VOIDP) sdata);
+              }
+              break;
 
-	  case 's':
-	      {
-		  register uint16 *sdata;
-		  sdata = (uint16 *) HDgetspace(length / 2 * sizeof(uint16));
+          case 's':
+              {
+                  register uint16 *sdata;
+                  sdata = (uint16 *) HDgetspace(length / 2 * sizeof(uint16));
 
-		  DFKconvert((VOIDP) (data + offset), (VOIDP) sdata, DFNT_UINT16 | raw_flag,
-			     length / 2, DFACC_READ, 0, 0);
-		  printf("%8d: ", offset);
-		  for (i = 0; i < length / 2; i++)
-		    {
-			printf("%10d ", sdata[i]);
-			if (++len > 5)
-			  {
-			      len = 0;
-			      printf("\n%8d: ", (int) (offset + (i + 1) * 2));
-			  }
-		    }
-		  printf("\n");
-		  HDfreespace((VOIDP) sdata);
-	      }
-	      break;
+                  DFKconvert((VOIDP) (data + offset), (VOIDP) sdata, DFNT_UINT16 | raw_flag,
+                             length / 2, DFACC_READ, 0, 0);
+                  printf("%8d: ", offset);
+                  for (i = 0; i < length / 2; i++)
+                    {
+                        printf("%10d ", sdata[i]);
+                        if (++len > 5)
+                          {
+                              len = 0;
+                              printf("\n%8d: ", (int) (offset + (i + 1) * 2));
+                          }
+                    }
+                  printf("\n");
+                  HDfreespace((VOIDP) sdata);
+              }
+              break;
 
-	  case 'b':
-	      {
-		  register uint8 *bdata;
-		  bdata = (uint8 *) HDgetspace(length);
+          case 'b':
+              {
+                  register uint8 *bdata;
+                  bdata = (uint8 *) HDgetspace(length);
 
-		  DFKconvert((VOIDP) (data + offset), (VOIDP) bdata, DFNT_UINT8 | raw_flag,
-			     length, DFACC_READ, 0, 0);
-		  printf("%8d: ", offset);
-		  for (i = 0; i < length; i++)
-		    {
-			printf("%6d ", bdata[i]);
-			if (++len > 7)
-			  {
-			      len = 0;
-			      printf("\n%8d: ", (int) (offset + (i + 1)));
-			  }
-		    }
-		  printf("\n");
-		  HDfreespace((VOIDP) bdata);
-	      }
-	      break;
+                  DFKconvert((VOIDP) (data + offset), (VOIDP) bdata, DFNT_UINT8 | raw_flag,
+                             length, DFACC_READ, 0, 0);
+                  printf("%8d: ", offset);
+                  for (i = 0; i < length; i++)
+                    {
+                        printf("%6d ", bdata[i]);
+                        if (++len > 7)
+                          {
+                              len = 0;
+                              printf("\n%8d: ", (int) (offset + (i + 1)));
+                          }
+                    }
+                  printf("\n");
+                  HDfreespace((VOIDP) bdata);
+              }
+              break;
 
-	  case 'x':
-	      {
-		  register intn *idata;
-		  intn        sizeintn;
-		  sizeintn = sizeof(intn);
-		  idata = (intn *) (data + offset);
-		  printf("%8d: ", offset);
-		  for (i = 0; i < length / sizeintn; i++)
-		    {
-			printf("%10x ", idata[i]);
-			if (++len > 5)
-			  {
-			      len = 0;
-			      printf("\n%8d: ", (int) (offset + (i + 1) * sizeintn));
-			  }
-		    }
-		  printf("\n");
-		  HDfreespace((VOIDP) idata);
-	      }
-	      break;
+          case 'x':
+              {
+                  register intn *idata;
+                  intn        sizeintn;
+                  sizeintn = sizeof(intn);
+                  idata = (intn *) (data + offset);
+                  printf("%8d: ", offset);
+                  for (i = 0; i < length / sizeintn; i++)
+                    {
+                        printf("%10x ", idata[i]);
+                        if (++len > 5)
+                          {
+                              len = 0;
+                              printf("\n%8d: ", (int) (offset + (i + 1) * sizeintn));
+                          }
+                    }
+                  printf("\n");
+                  HDfreespace((VOIDP) idata);
+              }
+              break;
 
-	  case 'o':
-	      {
-		  register intn *idata;
-		  intn        sizeintn;
-		  sizeintn = sizeof(intn);
-		  idata = (intn *) (data + offset);
-		  printf("%8d: ", offset);
-		  for (i = 0; i < length / 4; i++)
-		    {
-			printf("%10o ", idata[i]);
-			if (++len > 4)
-			  {
-			      len = 0;
-			      printf("\n%8d: ", (int) (offset + (i + 1) * sizeintn));
-			  }
-		    }
-		  printf("\n");
-		  HDfreespace((VOIDP) idata);
-	      }
-	      break;
+          case 'o':
+              {
+                  register intn *idata;
+                  intn        sizeintn;
+                  sizeintn = sizeof(intn);
+                  idata = (intn *) (data + offset);
+                  printf("%8d: ", offset);
+                  for (i = 0; i < length / 4; i++)
+                    {
+                        printf("%10o ", idata[i]);
+                        if (++len > 4)
+                          {
+                              len = 0;
+                              printf("\n%8d: ", (int) (offset + (i + 1) * sizeintn));
+                          }
+                    }
+                  printf("\n");
+                  HDfreespace((VOIDP) idata);
+              }
+              break;
 
-	  case 'a':
-	      {
-		  register char *cdata;
-		  cdata = (char *) (data + offset);
-		  printf("%8d: ", offset);
-		  for (i = 0; i < length; i++)
-		    {
-			if (cdata[i] != '\0')
-			    printf("%c", cdata[i]);
-			else
-			    printf(" ");
-			if (++len > 40)
-			  {
-			      len = 0;
-			      printf("\n%8d: ", (int) (offset + (i + 1)));
-			  }
-		    }
-		  printf("\n");
-	      }
-	      break;
+          case 'a':
+              {
+                  register char *cdata;
+                  cdata = (char *) (data + offset);
+                  printf("%8d: ", offset);
+                  for (i = 0; i < length; i++)
+                    {
+                        if (cdata[i] != '\0')
+                            printf("%c", cdata[i]);
+                        else
+                            printf(" ");
+                        if (++len > 40)
+                          {
+                              len = 0;
+                              printf("\n%8d: ", (int) (offset + (i + 1)));
+                          }
+                    }
+                  printf("\n");
+              }
+              break;
 
-	  case 'f':
-	      {
-		  register float32 *fdata;
-		  fdata = (float32 *) HDgetspace(length / 4 * sizeof(float32));
+          case 'f':
+              {
+                  register float32 *fdata;
+                  fdata = (float32 *) HDgetspace(length / 4 * sizeof(float32));
 
-		  DFKconvert((VOIDP) (data + offset), (VOIDP) fdata, DFNT_FLOAT32 | raw_flag,
-			     length / 4, DFACC_READ, 0, 0);
+                  DFKconvert((VOIDP) (data + offset), (VOIDP) fdata, DFNT_FLOAT32 | raw_flag,
+                             length / 4, DFACC_READ, 0, 0);
 
-		  printf("%8d: ", offset);
-		  for (i = 0; i < length / 4; i++)
-		    {
-			printf("%15e", fdata[i]);
-			if (++len > 3)
-			  {
-			      len = 0;
-			      printf("\n%8d: ", (int) (offset + (i + 1) * 4));
-			  }
-		    }
-		  printf("\n");
-		  HDfreespace((VOIDP) fdata);
-	      }
-	      break;
+                  printf("%8d: ", offset);
+                  for (i = 0; i < length / 4; i++)
+                    {
+                        printf("%15e", fdata[i]);
+                        if (++len > 3)
+                          {
+                              len = 0;
+                              printf("\n%8d: ", (int) (offset + (i + 1) * 4));
+                          }
+                    }
+                  printf("\n");
+                  HDfreespace((VOIDP) fdata);
+              }
+              break;
 
-	  case 'e':
-	      {
-		  register float64 *fdata;
-		  fdata = (float64 *) HDgetspace(length / 8 * sizeof(float64));
+          case 'e':
+              {
+                  register float64 *fdata;
+                  fdata = (float64 *) HDgetspace(length / 8 * sizeof(float64));
 
-		  DFKconvert((VOIDP) (data + offset), (VOIDP) fdata, DFNT_FLOAT64 | raw_flag,
-			     length / 8, DFACC_READ, 0, 0);
+                  DFKconvert((VOIDP) (data + offset), (VOIDP) fdata, DFNT_FLOAT64 | raw_flag,
+                             length / 8, DFACC_READ, 0, 0);
 
-		  printf("%8d: ", offset);
-		  for (i = 0; i < length / 8; i++)
-		    {
-			printf("%30e", fdata[i]);
-			if (++len > 1)
-			  {
-			      len = 0;
-			      printf("\n%8d: ", (int) (offset + (i + 1) * 8));
-			  }
-		    }
-		  printf("\n");
-		  HDfreespace((VOIDP) fdata);
-	      }
-	      break;
+                  printf("%8d: ", offset);
+                  for (i = 0; i < length / 8; i++)
+                    {
+                        printf("%30e", fdata[i]);
+                        if (++len > 1)
+                          {
+                              len = 0;
+                              printf("\n%8d: ", (int) (offset + (i + 1) * 8));
+                          }
+                    }
+                  printf("\n");
+                  HDfreespace((VOIDP) fdata);
+              }
+              break;
 
-	  default:
-	      printf("Doing the default thang\n");
-	      break;
+          default:
+              printf("Doing the default thang\n");
+              break;
 
       }
 
@@ -593,7 +593,7 @@ dump(int32 length, int offset, char *format, int raw_flag)
 
 /* ------------------ Print 'info' ----------------- */
 
-int 
+int
 HEinfo(HE_CMD * cmd)
 {
     register int i;
@@ -603,50 +603,50 @@ HEinfo(HE_CMD * cmd)
     int         label = NO;
 
     for (i = 1; i < cmd->argc; i++)
-	if (cmd->argv[i][0] == '-')
-	    switch (findOpt(cmd->argv[i] + 1))
-	      {
-		  case HE_HELP:
-		      puts("info [-all] [-long] [-group] [-label]");
-		      puts("\t-all\t\tShow info for all elements in file");
-		      puts("\t-long\t\tShow more info");
-		      puts("\t-group\t\tOrganize info in group(s)");
-		      puts("\t-label\t\tShow label if any");
-		      return HE_OK;
-		  case HE_LONGOUT:
-		      longout = YES;
-		      break;
-		  case HE_ALL:
-		      all = YES;
-		      break;
-		  case HE_LABEL:
-		      label = YES;
-		      break;
-		  case HE_DOGROUP:
-		      group = YES;
-		      break;
-		  case HE_NOTFOUND:
-		      unkOpt(cmd->argv[i]);
-		      return HE_FAIL;
-		  case HE_AMBIG:
-		      ambigOpt(cmd->argv[i]);
-		      return HE_FAIL;
-		  default:
-		      irrOpt(cmd->argv[i]);
-		      return HE_FAIL;
-	      }
-	else
-	  {
-	      unkArg(cmd->argv[i]);
-	      return HE_FAIL;
-	  }
+        if (cmd->argv[i][0] == '-')
+            switch (findOpt(cmd->argv[i] + 1))
+              {
+                  case HE_HELP:
+                      puts("info [-all] [-long] [-group] [-label]");
+                      puts("\t-all\t\tShow info for all elements in file");
+                      puts("\t-long\t\tShow more info");
+                      puts("\t-group\t\tOrganize info in group(s)");
+                      puts("\t-label\t\tShow label if any");
+                      return HE_OK;
+                  case HE_LONGOUT:
+                      longout = YES;
+                      break;
+                  case HE_ALL:
+                      all = YES;
+                      break;
+                  case HE_LABEL:
+                      label = YES;
+                      break;
+                  case HE_DOGROUP:
+                      group = YES;
+                      break;
+                  case HE_NOTFOUND:
+                      unkOpt(cmd->argv[i]);
+                      return HE_FAIL;
+                  case HE_AMBIG:
+                      ambigOpt(cmd->argv[i]);
+                      return HE_FAIL;
+                  default:
+                      irrOpt(cmd->argv[i]);
+                      return HE_FAIL;
+              }
+        else
+          {
+              unkArg(cmd->argv[i]);
+              return HE_FAIL;
+          }
     return info(all, longout, group, label);
 }
 
 /*
  *Show info about data elements
  */
-int 
+int
 info(int all, int longout, int group, int label)
 {
     int         idx;
@@ -658,92 +658,92 @@ info(int all, int longout, int group, int label)
 
     if (!fileOpen())
       {
-	  noFile();
-	  return HE_OK;
+          noFile();
+          return HE_OK;
       }
 
     if (!group || (!isGrp(currTag()) && !all))
       {
-	  if (all)
-	    {
-		start = 0;
-		end = he_numDesc - 1;
-	    }
-	  else
-	      start = end = he_currDesc;
+          if (all)
+            {
+                start = 0;
+                end = he_numDesc - 1;
+            }
+          else
+              start = end = he_currDesc;
 
-	  for (i = start; i <= end; i++)
-	      if (he_desc[i].tag == DFTAG_NULL)
-		  empty++;
-	      else
-		{
-		    if (all && i == he_currDesc)
-			printf("*");
-		    else
-			printf(" ");
-		    printf("(%d) ", i + 1);	/* 1 based */
-		    infoDesc(i, longout, label);
-		}
+          for (i = start; i <= end; i++)
+              if (he_desc[i].tag == DFTAG_NULL)
+                  empty++;
+              else
+                {
+                    if (all && i == he_currDesc)
+                        printf("*");
+                    else
+                        printf(" ");
+                    printf("(%d) ", i + 1);     /* 1 based */
+                    infoDesc(i, longout, label);
+                }
 
-	  if (empty > 0)
-	      printf("Empty (tag %d) : %d slots.\n", DFTAG_NULL, empty);
+          if (empty > 0)
+              printf("Empty (tag %d) : %d slots.\n", DFTAG_NULL, empty);
       }
     else
       {
-	  mark = (int *) HDclearspace(he_numDesc, sizeof(int));
+          mark = (int *) HDclearspace(he_numDesc, sizeof(int));
 
-	  if (all)
-	    {
-		start = 0;
-		end = he_numGrp - 1;
-	    }
-	  else
-	    {
-		if (he_numGrp == 0)
-		  {
-		      fprintf(stderr, "There is no group in this file.\n");
-		      return HE_FAIL;
-		  }
-		start = end = currGrpNo();
-	    }
-	  for (i = start; i <= end; i++)
-	    {
-		printf("**Group %d:\n", i + 1);		/* 1 based */
-		idx = he_grp[i].desc;
-		infoDesc(idx, longout, label);
+          if (all)
+            {
+                start = 0;
+                end = he_numGrp - 1;
+            }
+          else
+            {
+                if (he_numGrp == 0)
+                  {
+                      fprintf(stderr, "There is no group in this file.\n");
+                      return HE_FAIL;
+                  }
+                start = end = currGrpNo();
+            }
+          for (i = start; i <= end; i++)
+            {
+                printf("**Group %d:\n", i + 1);     /* 1 based */
+                idx = he_grp[i].desc;
+                infoDesc(idx, longout, label);
 
-		mark[idx] = YES;
+                mark[idx] = YES;
 
-		for (j = 0; j < he_grp[i].size; j++)
-		    if ((d = findDesc(he_grp[i].ddList + j)) >= 0)
-		      {
-			  mark[d] = 1;
-			  infoDesc(d, longout, 0);
-		      }
-		    else
-			fprintf(stderr,
-			    "**Tag: %d, Ref: %d not in descriptors list!\n",
-				he_grp[i].ddList[j].tag,
-				he_grp[i].ddList[j].ref);
-	    }
-	  if (all)
-	    {
-		puts("\n**These do not belong to any group:");
-		for (i = 0; i < he_numDesc; i++)
-		    if (!mark[i])
-			if (he_desc[i].tag == DFTAG_NULL)
-			    empty++;
-			else
-			    infoDesc(i, longout, label);
+                for (j = 0; j < he_grp[i].size; j++)
+                    if ((d = findDesc(he_grp[i].ddList + j)) >= 0)
+                      {
+                          mark[d] = 1;
+                          infoDesc(d, longout, 0);
+                      }
+                    else
+                        fprintf(stderr,
+                            "**Tag: %d, Ref: %d not in descriptors list!\n",
+                                he_grp[i].ddList[j].tag,
+                                he_grp[i].ddList[j].ref);
+            }
+          if (all)
+            {
+                puts("\n**These do not belong to any group:");
+                for (i = 0; i < he_numDesc; i++)
+                    if (!mark[i])
+                        if (he_desc[i].tag == DFTAG_NULL)
+                            empty++;
+                        else
+                            infoDesc(i, longout, label);
 
-		if (empty > 0)
-		    printf("Empty (tag %d) : %d slots.\n", DFTAG_NULL, empty);
-	    }
+                if (empty > 0)
+                    printf("Empty (tag %d) : %d slots.\n", DFTAG_NULL, empty);
+            }
       }
     return HE_OK;
 }
 
-void 
+void
 infoDesc(int desc, int longout, int label)
 {
     char       *s;
@@ -751,58 +751,58 @@ infoDesc(int desc, int longout, int label)
 
     name = HDgettagname(he_desc[desc].tag);
     if (!name)
-	name = "Unknown Tag";
+        name = "Unknown Tag";
 
     printf("\t%-30s: (Tag %d)", name, he_desc[desc].tag);
 
     if (longout)
-	printf("\n\tRef: %d, Offset: %ld, Length: %ld (bytes)\n",
-	       he_desc[desc].ref, (long) he_desc[desc].offset, (long) he_desc[desc].length);
+        printf("\n\tRef: %d, Offset: %ld, Length: %ld (bytes)\n",
+               he_desc[desc].ref, (long) he_desc[desc].offset, (long) he_desc[desc].length);
     else
-	printf(" Ref %d\n", he_desc[desc].ref);
+        printf(" Ref %d\n", he_desc[desc].ref);
     if (label)
       {
-	  getAnn(HE_LABEL, he_desc[desc].tag, he_desc[desc].ref, &s);
-	  if (s != NULL)
-	      printf("\tLabel: %s\n", s);
+          getAnn(HE_LABEL, he_desc[desc].tag, he_desc[desc].ref, &s);
+          if (s != NULL)
+              printf("\tLabel: %s\n", s);
       }
 }
 
 /* ---------- HEdelete --- 'stub' function for delete */
-int 
+int
 HEdelete(HE_CMD * cmd)
 {
     if (cmd->argc < 2)
-	return delete(he_currDesc);
+        return delete(he_currDesc);
     else
       {
-	  if (cmd->argv[1][0] != '-')
-	    {
-		unkArg(cmd->argv[1]);
-		return HE_FAIL;
-	    }
-	  else
-	      switch (findOpt(cmd->argv[1] + 1))
-		{
-		    case HE_HELP:
-			puts("delete");
-			puts("\tDelete this element or group.");
-			return HE_OK;
-		    case HE_NOTFOUND:
-			unkOpt(cmd->argv[1]);
-			return HE_FAIL;
-		    case HE_AMBIG:
-			ambigOpt(cmd->argv[1]);
-			return HE_FAIL;
-		    default:
-			irrOpt(cmd->argv[1]);
-			return HE_FAIL;
-		}
+          if (cmd->argv[1][0] != '-')
+            {
+                unkArg(cmd->argv[1]);
+                return HE_FAIL;
+            }
+          else
+              switch (findOpt(cmd->argv[1] + 1))
+                {
+                    case HE_HELP:
+                        puts("delete");
+                        puts("\tDelete this element or group.");
+                        return HE_OK;
+                    case HE_NOTFOUND:
+                        unkOpt(cmd->argv[1]);
+                        return HE_FAIL;
+                    case HE_AMBIG:
+                        ambigOpt(cmd->argv[1]);
+                        return HE_FAIL;
+                    default:
+                        irrOpt(cmd->argv[1]);
+                        return HE_FAIL;
+                }
       }
 }
 
 /* delete -- deletes a group and its elts or an elt from current hdf file */
-int 
+int
 delete(int curr)
 {
     int         ret;
@@ -810,8 +810,8 @@ delete(int curr)
     /* check if any file is open */
     if (!fileOpen())
       {
-	  noFile();
-	  return HE_FAIL;
+          noFile();
+          return HE_FAIL;
       }
 
     /* call the actual routine to do it, the update the descriptor list */
@@ -825,7 +825,7 @@ delete(int curr)
    a file. if the current elt is a group, it will call itself on the elts
    of the group. else, it will check if any group references the elt, and
    actually deletes it if there is no other references */
-int 
+int
 recurseDel(int curr)
 {
     int         d, currGrp;
@@ -833,38 +833,38 @@ recurseDel(int curr)
 
     if (isGrp(he_desc[curr].tag))
       {
-	  /* if this is a group, do its elts then itself */
+          /* if this is a group, do its elts then itself */
 
-	  /* find the index of the group */
-	  currGrp = desc2Grp(curr);
+          /* find the index of the group */
+          currGrp = desc2Grp(curr);
 
-	  /* step through the elts of this group */
-	  for (i = 0; i < he_grp[currGrp].size; i++)
-	    {
-		d = findDesc(he_grp[currGrp].ddList + i);
-		if (d >= 0)
-		  {
-		      /* null this so it will not report that this is a multiple
-		       * copy of itself */
-		      he_grp[currGrp].ddList[i].tag = DFTAG_NULL;
-		      he_grp[currGrp].ddList[i].ref = 0;
+          /* step through the elts of this group */
+          for (i = 0; i < he_grp[currGrp].size; i++)
+            {
+                d = findDesc(he_grp[currGrp].ddList + i);
+                if (d >= 0)
+                  {
+                      /* null this so it will not report that this is a multiple
+                       * copy of itself */
+                      he_grp[currGrp].ddList[i].tag = DFTAG_NULL;
+                      he_grp[currGrp].ddList[i].ref = 0;
 
-		      /* Try to delete this component */
-		      if (recurseDel(d) < 0)
-			  return HE_FAIL;
-		  }
-	    }
-	  /* tried all components, now delete self */
-	  if (!hasReference(curr))
-	      if (deleteDesc(curr) < 0)
-		  return HE_FAIL;
+                      /* Try to delete this component */
+                      if (recurseDel(d) < 0)
+                          return HE_FAIL;
+                  }
+            }
+          /* tried all components, now delete self */
+          if (!hasReference(curr))
+              if (deleteDesc(curr) < 0)
+                  return HE_FAIL;
       }
     else
-	/* not a group, actually delete this only if there is no group
-	   referencing it */
+        /* not a group, actually delete this only if there is no group
+           referencing it */
     if (!hasReference(curr))
-	if (deleteDesc(curr) < 0)
-	    return HE_FAIL;
+        if (deleteDesc(curr) < 0)
+            return HE_FAIL;
     return HE_OK;
 }
 
@@ -873,9 +873,9 @@ recurseDel(int curr)
 #define SPACE ' '
 #define TAB '\t'
 #define QUOTE '"'
-#define BREAK '\003'	/* C-c */
-#define ESCAPE '\\'	/* Quote escape */
-#define COMMENT '!'	/* Comment a line if first character */
+#define BREAK '\003'    /* C-c */
+#define ESCAPE '\\'     /* Quote escape */
+#define COMMENT '!'     /* Comment a line if first character */
 
 /* max line size -- change this if you type longer than this in one line */
 #define HE_LINE_SZ 512
@@ -904,100 +904,100 @@ struct
 he_funcTab[] =
 {
     {
-	"open", (HE_FUNC) HEopen
+        "open", (HE_FUNC) HEopen
     }
     ,
     {
-	"close", (HE_FUNC) HEclose
+        "close", (HE_FUNC) HEclose
     }
     ,
     {
-	"next", (HE_FUNC) HEnext
+        "next", (HE_FUNC) HEnext
     }
     ,
     {
-	"prev", (HE_FUNC) HEprev
+        "prev", (HE_FUNC) HEprev
     }
     ,
     {
-	"alias", (HE_FUNC) HEalias
+        "alias", (HE_FUNC) HEalias
     }
     ,
     {
-	"unalias", (HE_FUNC) HEunalias
+        "unalias", (HE_FUNC) HEunalias
     }
     ,
     {
-	"display", (HE_FUNC) HEdisplay
+        "display", (HE_FUNC) HEdisplay
     }
     ,
     {
-	"info", (HE_FUNC) HEinfo
+        "info", (HE_FUNC) HEinfo
     }
     ,
     {
-	"list", (HE_FUNC) HEinfo
+        "list", (HE_FUNC) HEinfo
     }
     ,
     {
-	"if", (HE_FUNC) HEif
+        "if", (HE_FUNC) HEif
     }
     ,
     {
-	"select", (HE_FUNC) HEselect
+        "select", (HE_FUNC) HEselect
     }
     ,
     {
-	"wait", (HE_FUNC) HEwait
+        "wait", (HE_FUNC) HEwait
     }
     ,
     {
-	"delete", (HE_FUNC) HEdelete
+        "delete", (HE_FUNC) HEdelete
     }
     ,
     {
-	"quit", (HE_FUNC) HEquit
+        "quit", (HE_FUNC) HEquit
     }
     ,
     {
-	"dump", (HE_FUNC) HEdump
+        "dump", (HE_FUNC) HEdump
     }
     ,
     {
-	"getr8", (HE_FUNC) HEgetR8
+        "getr8", (HE_FUNC) HEgetR8
     }
     ,
     {
-	"putr8", (HE_FUNC) HEputR8
+        "putr8", (HE_FUNC) HEputR8
     }
     ,
     {
-	"put", (HE_FUNC) HEput
+        "put", (HE_FUNC) HEput
     }
     ,
     {
-	"revert", (HE_FUNC) HErevert
+        "revert", (HE_FUNC) HErevert
     }
     ,
     {
-	"write", (HE_FUNC) HEwrite
+        "write", (HE_FUNC) HEwrite
     }
     ,
     {
-	"annotate", (HE_FUNC) HEannotate
+        "annotate", (HE_FUNC) HEannotate
     }
     ,
     {
-	"help", (HE_FUNC) HEhelp
+        "help", (HE_FUNC) HEhelp
     }
     ,
     {
-	"end", (HE_FUNC) 0
+        "end", (HE_FUNC) 0
     }
     ,
 };
 
-HE_FUNC 
+HE_FUNC
 findFunc(char *fword)
 {
     unsigned    len;
@@ -1007,44 +1007,44 @@ findFunc(char *fword)
     len = HDstrlen((const char *) fword);
 
     for (i = 0; i < sizeof(he_funcTab) / sizeof(he_funcTab[0]); i++)
-	if (!HDstrncmp(he_funcTab[i].str, (const char *) fword, len))
-	  {
-	      /* check for exact match */
-	      if (HDstrlen(he_funcTab[i].str) == len)
-		  return he_funcTab[i].func;
+        if (!HDstrncmp(he_funcTab[i].str, (const char *) fword, len))
+          {
+              /* check for exact match */
+              if (HDstrlen(he_funcTab[i].str) == len)
+                  return he_funcTab[i].func;
 
-	      if (found < 0)
-		  found = i;
-	      else
-		{
-		    fprintf(stderr, "Ambiguous command: %s.\n", fword);
-		    return NULL;
-		}
-	  }
+              if (found < 0)
+                  found = i;
+              else
+                {
+                    fprintf(stderr, "Ambiguous command: %s.\n", fword);
+                    return NULL;
+                }
+          }
 
     if (found < 0)
-	return NULL;
+        return NULL;
     else
-	return he_funcTab[found].func;
+        return he_funcTab[found].func;
 }
 
 /* prompt -- printout prompt according to the nesting level */
-void 
+void
 prompt(void)
 {
 
 #ifndef MAC
 
     if (!he_nestLevel)
-	printf("hdfed%s ", he_prompt);
+        printf("hdfed%s ", he_prompt);
     else
       {
-	  register int i;
+          register int i;
 
-	  printf("     %s ", he_prompt);
-	  for (i = he_nestLevel; i; i--)
-	      putchar(he_nestChar);
-	  putchar(' ');
+          printf("     %s ", he_prompt);
+          for (i = he_nestLevel; i; i--)
+              putchar(he_nestChar);
+          putchar(' ');
       }
 
 #endif /* MAC */
@@ -1055,68 +1055,68 @@ prompt(void)
 /* Skips all initial spaces and empty commands */
 /* always returns with at least a word in p, unless eof */
 /* if eof and p is not empty, return HE_OK, else if no word, return EOF */
-int 
+int
 getLine(register char *p)
 {
     static int  ch = 0;
 
     do
       {
-	  if (!he_batch && (ch != EOF))
-	      prompt();
-	  ch = getc(stdin);
-	  if (ch == COMMENT)
-	    {
-		/* Skip this line */
-		do
-		    ch = getchar();
-		while ((ch != CR) && (ch != EOF));
-	    }
-	  else
-	      while ((ch == SPACE) || (ch == TAB) || (ch == HE_SEPARATOR))
-		  ch = getchar();
-	  if (ch == EOF)
-	      return EOF;
+          if (!he_batch && (ch != EOF))
+              prompt();
+          ch = getc(stdin);
+          if (ch == COMMENT)
+            {
+                /* Skip this line */
+                do
+                    ch = getchar();
+                while ((ch != CR) && (ch != EOF));
+            }
+          else
+              while ((ch == SPACE) || (ch == TAB) || (ch == HE_SEPARATOR))
+                  ch = getchar();
+          if (ch == EOF)
+              return EOF;
       }
     while (ch == CR);
 
     while ((ch != EOF) && (ch != CR))
-	switch (ch)
-	  {
-	      case ESCAPE:
-		  ch = getchar();
-		  if (!(ch == CR))
-		      *p++ = (char) ch;
-		  ch = getchar();
-		  break;
-	      case QUOTE:
-		  ch = getchar();
-		  while (ch != QUOTE)
-		    {
-			if (ch == ESCAPE)
-			    ch = getchar();
-			*p++ = (char) ch;
-			ch = getchar();
-		    }
-		  ch = getchar();	/* Skip over the QUOTE */
-		  break;
-	      case SPACE:
-	      case TAB:
-		  *p++ = SPACE;
-		  while ((ch == SPACE) || (ch == TAB))
-		      ch = getchar();
-		  break;
-	      case HE_SEPARATOR:
-		  if (!isspace(*(p - 1)))
-		      *p++ = SPACE;
-		  *p++ = HE_SEPARATOR;
-		  ch = SPACE;	/* Ensure next is a space */
-		  break;
-	      default:
-		  *p++ = (char) ch;
-		  ch = getchar();
-		  break;
-	  }
+        switch (ch)
+          {
+              case ESCAPE:
+                  ch = getchar();
+                  if (!(ch == CR))
+                      *p++ = (char) ch;
+                  ch = getchar();
+                  break;
+              case QUOTE:
+                  ch = getchar();
+                  while (ch != QUOTE)
+                    {
+                        if (ch == ESCAPE)
+                            ch = getchar();
+                        *p++ = (char) ch;
+                        ch = getchar();
+                    }
+                  ch = getchar();   /* Skip over the QUOTE */
+                  break;
+              case SPACE:
+              case TAB:
+                  *p++ = SPACE;
+                  while ((ch == SPACE) || (ch == TAB))
+                      ch = getchar();
+                  break;
+              case HE_SEPARATOR:
+                  if (!isspace(*(p - 1)))
+                      *p++ = SPACE;
+                  *p++ = HE_SEPARATOR;
+                  ch = SPACE;   /* Ensure next is a space */
+                  break;
+              default:
+                  *p++ = (char) ch;
+                  ch = getchar();
+                  break;
+          }
 
     *p++ = '\0';
     return ch;
@@ -1133,16 +1133,16 @@ nextWord(char **p)
 
     q = *p;
     while (*q && isspace(*q))
-	q++;
+        q++;
     if (!(*q))
       {
-	  *p = q;
-	  return NULL;
+          *p = q;
+          return NULL;
       }
 
     s = q;
     while (*s && !isspace(*s))
-	s++;
+        s++;
     len = (unsigned) (s - q);
 
     word = (char *) HDgetspace(len + 1);
@@ -1151,7 +1151,7 @@ nextWord(char **p)
 
     *p = s;
     while (**p && (isspace(**p)))
-	(*p)++;
+        (*p)++;
 
     return word;
 }
@@ -1165,7 +1165,7 @@ parseCmd(char **p)
     HE_CMD     *cmdTail;
 
     if (!(**p))
-	return NULL;
+        return NULL;
 
     cmd = (HE_CMD *) HDclearspace(1, sizeof(HE_CMD));
     cmd->next = cmd->sub = (HE_CMD *) NULL;
@@ -1173,31 +1173,31 @@ parseCmd(char **p)
     cmd->argv[0] = nextWord(p);
 
     if ((aliasCmd = findAlias(cmd->argv[0])) != NULL)
-	cmd = aliasCmd;
+        cmd = aliasCmd;
     else
-	cmd->func = findFunc(cmd->argv[0]);
+        cmd->func = findFunc(cmd->argv[0]);
 
     if ((cmd->func == (HE_FUNC) HEalias) ||
-	(cmd->func == (HE_FUNC) HEwait))
+        (cmd->func == (HE_FUNC) HEwait))
       {
-	  /* let the alias command handle the parsing */
-	  cmd->argv[1] = copyStr(*p);
-	  cmd->argc = 2;
+          /* let the alias command handle the parsing */
+          cmd->argv[1] = copyStr(*p);
+          cmd->argc = 2;
 
-	  **p = '\0';
+          **p = '\0';
       }
     else
       {
-	  cmdTail = cmd;
-	  while (cmdTail->next)
-	      cmdTail = cmdTail->next;
+          cmdTail = cmd;
+          while (cmdTail->next)
+              cmdTail = cmdTail->next;
 
-	  for (word = nextWord(p); word && HDstrcmp(word, ";");
-	       word = nextWord(p), cmdTail->argc++)
-	      cmdTail->argv[cmdTail->argc] = word;
+          for (word = nextWord(p); word && HDstrcmp(word, ";");
+               word = nextWord(p), cmdTail->argc++)
+              cmdTail->argv[cmdTail->argc] = word;
 
-	  while (**p && (isspace(**p) || (**p == ';')))
-	      (*p)++;
+          while (**p && (isspace(**p) || (**p == ';')))
+              (*p)++;
       }
     return cmd;
 }
@@ -1213,19 +1213,19 @@ parse(void)
     HE_CMD     *cmdTail;
 
     if (getLine(line) == EOF)
-	return NULL;
+        return NULL;
     ptr = line;
 
     cmdTail = cmd = parseCmd(&ptr);
     while (cmdTail->next)
-	cmdTail = cmdTail->next;
+        cmdTail = cmdTail->next;
 
     while (notDone)
       {
-	  cmdTail->next = parseCmd(&ptr);
-	  notDone = (cmdTail->next != NULL);
-	  while (cmdTail->next)
-	      cmdTail = cmdTail->next;
+          cmdTail->next = parseCmd(&ptr);
+          notDone = (cmdTail->next != NULL);
+          while (cmdTail->next)
+              cmdTail = cmdTail->next;
       }
     return cmd;
 }
@@ -1238,30 +1238,30 @@ getCmd(void)
     HE_CMD     *cmdTail;
 
     if (!cmdList)
-	cmdList = parse();
+        cmdList = parse();
     if (!cmdList)
-	return NULL;
+        return NULL;
 
     cmd = cmdList;
     if (cmdList)
-	cmdList = cmdList->next;
-    cmd->next = (HE_CMD *) NULL;	/* Cut off links since these will be */
+        cmdList = cmdList->next;
+    cmd->next = (HE_CMD *) NULL;    /* Cut off links since these will be */
     /* accessed later */
 
     if (cmd && ((cmd->func == (HE_FUNC) HEif) ||
-		(cmd->func == (HE_FUNC) HEselect)) &&
-	!((cmd->argc > 1) && (cmd->argv[1][0] == '-') &&
-	  (findOpt(cmd->argv[1] + 1) == HE_HELP)))
+                (cmd->func == (HE_FUNC) HEselect)) &&
+        !((cmd->argc > 1) && (cmd->argv[1][0] == '-') &&
+          (findOpt(cmd->argv[1] + 1) == HE_HELP)))
       {
-	  he_nestLevel++;
+          he_nestLevel++;
 
-	  cmd->sub = getCmd();
-	  for (cmdTail = cmd->sub;
-	       cmdTail && HDstrcmp(cmdTail->argv[0], "end");	/* while != "end" */
-	       cmdTail = cmdTail->next)
-	      cmdTail->next = getCmd();
+          cmd->sub = getCmd();
+          for (cmdTail = cmd->sub;
+               cmdTail && HDstrcmp(cmdTail->argv[0], "end");    /* while != "end" */
+               cmdTail = cmdTail->next)
+              cmdTail->next = getCmd();
 
-	  he_nestLevel--;
+          he_nestLevel--;
       }
     return cmd;
 }
@@ -1277,21 +1277,21 @@ he_aliasTab[HE_ALIAS_SZ];
 
 int         he_numAlias = 0;
 
-int 
+int
 setAlias(char *str, HE_CMD * cmd)
 {
     register int i;
 
     for (i = 0; i < he_numAlias; i++)
-	if (!HDstrcmp(str, he_aliasTab[i].str))
-	  {
-	      he_aliasTab[i].cmd = cmd;
-	      return HE_OK;
-	  }
+        if (!HDstrcmp(str, he_aliasTab[i].str))
+          {
+              he_aliasTab[i].cmd = cmd;
+              return HE_OK;
+          }
     if (he_numAlias == HE_ALIAS_SZ)
       {
-	  fprintf(stderr, "Alias table full.\n");
-	  return HE_FAIL;
+          fprintf(stderr, "Alias table full.\n");
+          return HE_FAIL;
       }
     he_aliasTab[he_numAlias].str = str;
     he_aliasTab[he_numAlias++].cmd = cmd;
@@ -1310,7 +1310,7 @@ mkDupCmd(HE_CMD * cmd)
     dupCmd->argc = cmd->argc;
     dupCmd->next = dupCmd->sub = (HE_CMD *) NULL;
     for (i = 0; i < cmd->argc; i++)
-	dupCmd->argv[i] = copyStr(cmd->argv[i]);
+        dupCmd->argv[i] = copyStr(cmd->argv[i]);
 
     return dupCmd;
 }
@@ -1324,42 +1324,42 @@ findAlias(char *str)
     HE_CMD     *cmdTail;
 
     for (i = 0; i < he_numAlias; i++)
-	if (!HDstrcmp(str, he_aliasTab[i].str))
-	  {
-	      cmd = he_aliasTab[i].cmd;
-	      dupCmd = mkDupCmd(cmd);
+        if (!HDstrcmp(str, he_aliasTab[i].str))
+          {
+              cmd = he_aliasTab[i].cmd;
+              dupCmd = mkDupCmd(cmd);
 
-	      cmd = cmd->next;
-	      for (cmdTail = dupCmd; cmd;
-		   cmd = cmd->next, cmdTail = cmdTail->next)
-		  cmdTail->next = mkDupCmd(cmd);
+              cmd = cmd->next;
+              for (cmdTail = dupCmd; cmd;
+                   cmd = cmd->next, cmdTail = cmdTail->next)
+                  cmdTail->next = mkDupCmd(cmd);
 
-	      return dupCmd;
-	  }
+              return dupCmd;
+          }
     return NULL;
 }
 
-int 
+int
 HEunalias(HE_CMD * cmd)
 {
     register int a, i, j;
 
     for (a = 1; a < cmd->argc; a++)
-	for (i = 0; i < he_numAlias; i++)
-	    if (!HDstrcmp(cmd->argv[a], he_aliasTab[i].str))
-	      {
-		  he_numAlias--;
-		  for (j = i; j < he_numAlias; j++)
-		    {
-			he_aliasTab[j].str = he_aliasTab[j + 1].str;
-			he_aliasTab[j].cmd = he_aliasTab[j + 1].cmd;
-		    }
-		  break;
-	      }
+        for (i = 0; i < he_numAlias; i++)
+            if (!HDstrcmp(cmd->argv[a], he_aliasTab[i].str))
+              {
+                  he_numAlias--;
+                  for (j = i; j < he_numAlias; j++)
+                    {
+                        he_aliasTab[j].str = he_aliasTab[j + 1].str;
+                        he_aliasTab[j].cmd = he_aliasTab[j + 1].cmd;
+                    }
+                  break;
+              }
     return HE_OK;
 }
 
-void 
+void
 printAlias(char *word, HE_CMD * cmd)
 {
     register int j;
@@ -1367,14 +1367,14 @@ printAlias(char *word, HE_CMD * cmd)
     printf("%s:", word);
     for (; cmd; cmd = cmd->next)
       {
-	  printf("\t");
-	  for (j = 0; j < cmd->argc; j++)
-	      printf("%s ", cmd->argv[j]);
-	  puts("");
+          printf("\t");
+          for (j = 0; j < cmd->argc; j++)
+              printf("%s ", cmd->argv[j]);
+          puts("");
       }
 }
 
-int 
+int
 HEalias(HE_CMD * cmd)
 {
     char       *s;
@@ -1387,23 +1387,23 @@ HEalias(HE_CMD * cmd)
 
     if (!word)
       {
-	  for (i = 0; i < he_numAlias; i++)
-	      printAlias(he_aliasTab[i].str, he_aliasTab[i].cmd);
-	  return HE_OK;
+          for (i = 0; i < he_numAlias; i++)
+              printAlias(he_aliasTab[i].str, he_aliasTab[i].cmd);
+          return HE_OK;
       }
 
     cmd = parseCmd(&s);
     if (!cmd)
       {
-	  cmd = findAlias(word);
-	  printAlias(word, cmd);
-	  return HE_OK;
+          cmd = findAlias(word);
+          printAlias(word, cmd);
+          return HE_OK;
       }
-    for (cmdTail = cmd; cmdTail->next; cmdTail = cmdTail->next)		/*EMPTY */
-	;
+    for (cmdTail = cmd; cmdTail->next; cmdTail = cmdTail->next)     /*EMPTY */
+        ;
     while ((cmdTail->next = parseCmd(&s)) != NULL)
-	for (; cmdTail->next; cmdTail = cmdTail->next)	/*EMPTY */
-	    ;
+        for (; cmdTail->next; cmdTail = cmdTail->next)  /*EMPTY */
+            ;
     return setAlias(word, cmd);
 }
 
@@ -1411,11 +1411,11 @@ HE_PRED    *he_predicates;
 
 /* resetPred -- for setting the he_predicates to point to a pred
    of only group, this is the default when a file is opened */
-int 
+int
 resetPred(void)
 {
     if (he_predicates != NULL)
-	HDfreespace(he_predicates);
+        HDfreespace(he_predicates);
 
     he_predicates = (HE_PRED *) HDclearspace(2, sizeof(HE_PRED));
     he_predicates[0].key = HEK_GROUP;
@@ -1432,61 +1432,61 @@ struct
 he_keyTab[] =
 {
     {
-	"!=", HEK_NEQUAL | HE_COMPARATOR
+        "!=", HEK_NEQUAL | HE_COMPARATOR
     }
     ,
     {
-	"<", HEK_LESST | HE_COMPARATOR
+        "<", HEK_LESST | HE_COMPARATOR
     }
     ,
     {
-	"<=", HEK_LEQUAL | HE_COMPARATOR
+        "<=", HEK_LEQUAL | HE_COMPARATOR
     }
     ,
     {
-	"==", HEK_EQUAL | HE_COMPARATOR
+        "==", HEK_EQUAL | HE_COMPARATOR
     }
     ,
     {
-	">", HEK_GRT | HE_COMPARATOR
+        ">", HEK_GRT | HE_COMPARATOR
     }
     ,
     {
-	">=", HEK_GEQUAL | HE_COMPARATOR
+        ">=", HEK_GEQUAL | HE_COMPARATOR
     }
     ,
     {
-	"all", HEK_ALL | HE_PREDICATE
+        "all", HEK_ALL | HE_PREDICATE
     }
     ,
     {
-	"any", HEK_ALL | HE_PREDICATE
+        "any", HEK_ALL | HE_PREDICATE
     }
     ,
     {
-	"ref", HEK_REF | HE_PREDICATE
+        "ref", HEK_REF | HE_PREDICATE
     }
     ,
     {
-	"succeed", HEK_SUCCEED | HE_PREDICATE
+        "succeed", HEK_SUCCEED | HE_PREDICATE
     }
     ,
     {
-	"fail", HEK_FAIL | HE_PREDICATE
+        "fail", HEK_FAIL | HE_PREDICATE
     }
     ,
     {
-	"tag", HEK_TAG | HE_PREDICATE
+        "tag", HEK_TAG | HE_PREDICATE
     }
     ,
     {
-	"group", HEK_GROUP | HE_PREDICATE
+        "group", HEK_GROUP | HE_PREDICATE
     }
     ,
 /* Finish this later */
 };
 
-int 
+int
 findKey(char *word)
 {
     register int i;
@@ -1496,33 +1496,33 @@ findKey(char *word)
     len = HDstrlen(word);
 
     for (i = 0; i < sizeof(he_keyTab) / sizeof(he_keyTab[0]); i++)
-	if (!HDstrncmp(he_keyTab[i].str, word, len))
-	  {
-	      /* if this is an exact match, just return */
-	      if (HDstrlen(he_keyTab[i].str) == len)
-		  return he_keyTab[i].key;
-	      if (found < 0)
-		  found = i;
-	      else
-		{
-		    fprintf(stderr, "Ambiguous: %s.\n", word);
-		    return HE_NOTFOUND;
-		}
-	  }
+        if (!HDstrncmp(he_keyTab[i].str, word, len))
+          {
+              /* if this is an exact match, just return */
+              if (HDstrlen(he_keyTab[i].str) == len)
+                  return he_keyTab[i].key;
+              if (found < 0)
+                  found = i;
+              else
+                {
+                    fprintf(stderr, "Ambiguous: %s.\n", word);
+                    return HE_NOTFOUND;
+                }
+          }
     if (found < 0)
       {
-	  fprintf(stderr, "Predicate/comparator: %s not found.\n", word);
-	  return HE_NOTFOUND;
+          fprintf(stderr, "Predicate/comparator: %s not found.\n", word);
+          return HE_NOTFOUND;
       }
     return he_keyTab[found].key;
 }
 
-int 
+int
 isNumber(register char *s)
 {
     for (; *s; s++)
-	if (!isdigit((int) *s))
-	    return NO;
+        if (!isdigit((int) *s))
+            return NO;
 
     return YES;
 }
@@ -1544,131 +1544,131 @@ parsePred(int argc, char *argv[])
 
     for (i = 1; i < argc; i++)
       {
-	  s = argv[i];
-	  while (*s)
-	    {
-		if (state != 2)
-		    tok = nextToken(&s);
-		else
-		    tok = nextWord(&s);
-		if (!tok)
-		    break;
+          s = argv[i];
+          while (*s)
+            {
+                if (state != 2)
+                    tok = nextToken(&s);
+                else
+                    tok = nextWord(&s);
+                if (!tok)
+                    break;
 
-		if (state != 2)
-		  {
-		      if ((key = findKey(tok)) == HE_NOTFOUND)
-			{
-			    HDfreespace(pred);
-			    return NULL;
-			}
-		      HDfreespace(tok);
-		  }
+                if (state != 2)
+                  {
+                      if ((key = findKey(tok)) == HE_NOTFOUND)
+                        {
+                            HDfreespace(pred);
+                            return NULL;
+                        }
+                      HDfreespace(tok);
+                  }
 
-		switch (state)
-		  {
-		      case 0:
-			  /* Ready to accept a predicate */
-			  if (!(key & HE_PREDICATE))
-			    {
-				fprintf(stderr, "Parse error: %s.\n", argv[i]);
-				HDfreespace(pred);
-				return NULL;
-			    }
-			  pred[++predNum].key = key & ~(HE_PREDICATE | HE_COMPARATOR);
-			  state = 1;
-			  break;
+                switch (state)
+                  {
+                      case 0:
+                          /* Ready to accept a predicate */
+                          if (!(key & HE_PREDICATE))
+                            {
+                                fprintf(stderr, "Parse error: %s.\n", argv[i]);
+                                HDfreespace(pred);
+                                return NULL;
+                            }
+                          pred[++predNum].key = key & ~(HE_PREDICATE | HE_COMPARATOR);
+                          state = 1;
+                          break;
 
-		      case 1:
-			  /* Can be a comparator for previous pred or a new predicate */
-			  if (key & HE_PREDICATE)
-			    {
-				pred[++predNum].key =
-				    key & ~(HE_PREDICATE | HE_COMPARATOR);
+                      case 1:
+                          /* Can be a comparator for previous pred or a new predicate */
+                          if (key & HE_PREDICATE)
+                            {
+                                pred[++predNum].key =
+                                    key & ~(HE_PREDICATE | HE_COMPARATOR);
 
-			    }
-			  else if (key & HE_COMPARATOR)
-			    {
-				pred[predNum].Comp =
-				    key & ~(HE_PREDICATE | HE_COMPARATOR);
-				state = 2;
-			    }
-			  else
-			    {
-				fprintf(stderr, "Parse error: %s.\n", argv[i]);
-				HDfreespace(pred);
-				return NULL;
-			    }
-			  break;
+                            }
+                          else if (key & HE_COMPARATOR)
+                            {
+                                pred[predNum].Comp =
+                                    key & ~(HE_PREDICATE | HE_COMPARATOR);
+                                state = 2;
+                            }
+                          else
+                            {
+                                fprintf(stderr, "Parse error: %s.\n", argv[i]);
+                                HDfreespace(pred);
+                                return NULL;
+                            }
+                          break;
 
-		      case 2:
-			  /* Looking for an argument */
-			  if (isNumber(tok))
-			    {
-				pred[predNum].argType = HE_NUMBER;
-				pred[predNum].arg.i = atoi(tok);
-			    }
-			  else
-			    {
-				pred[predNum].argType = HE_STRING;
-				pred[predNum].arg.str = copyStr(tok);
-			    }
-			  state = 0;
-			  break;
+                      case 2:
+                          /* Looking for an argument */
+                          if (isNumber(tok))
+                            {
+                                pred[predNum].argType = HE_NUMBER;
+                                pred[predNum].arg.i = atoi(tok);
+                            }
+                          else
+                            {
+                                pred[predNum].argType = HE_STRING;
+                                pred[predNum].arg.str = copyStr(tok);
+                            }
+                          state = 0;
+                          break;
 
-		      default:
-			  NOT_REACHED();
-			  break;
-		  }
-	    }
+                      default:
+                          NOT_REACHED();
+                          break;
+                  }
+            }
       }
     pred[++predNum].key = 0;
 
     return pred;
 }
 
-int 
+int
 satPred(DFdesc * desc, HE_PRED pred[])
 {
     int         i;
 
     if (!pred)
-	return YES;
+        return YES;
     for (i = 0; pred[i].key; i++)
       {
-	  switch (pred[i].key)
-	    {
-		case HEK_ALL:
-		    return YES;		/* Always satisfied */
-		case HEK_GROUP:
-		    if (!isGrp(desc->tag))
-			return NO;
-		    break;
-		case HEK_TAG:
-		    if (pred[i].argType != HE_NUMBER)
-		      {
-			  fprintf(stderr, "Argument to tag predicate not a number.");
-			  return NO;
-		      }
-		    if (!numCompare((int) desc->tag, pred[i].Comp, pred[i].arg.i))
-			return NO;
-		    break;
-		case HEK_REF:
-		    if (pred[i].argType != HE_NUMBER)
-		      {
-			  fprintf(stderr, "Argument to ref predicate not a number.");
-			  return NO;
-		      }
-		    if (!numCompare((int) desc->ref, pred[i].Comp, pred[i].arg.i))
-			return NO;
-		    break;
-		case HEK_SUCCEED:
-		    return (he_status == 0);
-		case HEK_FAIL:
-		    return (he_status != 0);
-		default:
-		    NOT_REACHED();
-		    break;
-	    }
+          switch (pred[i].key)
+            {
+                case HEK_ALL:
+                    return YES;     /* Always satisfied */
+                case HEK_GROUP:
+                    if (!isGrp(desc->tag))
+                        return NO;
+                    break;
+                case HEK_TAG:
+                    if (pred[i].argType != HE_NUMBER)
+                      {
+                          fprintf(stderr, "Argument to tag predicate not a number.");
+                          return NO;
+                      }
+                    if (!numCompare((int) desc->tag, pred[i].Comp, pred[i].arg.i))
+                        return NO;
+                    break;
+                case HEK_REF:
+                    if (pred[i].argType != HE_NUMBER)
+                      {
+                          fprintf(stderr, "Argument to ref predicate not a number.");
+                          return NO;
+                      }
+                    if (!numCompare((int) desc->ref, pred[i].Comp, pred[i].arg.i))
+                        return NO;
+                    break;
+                case HEK_SUCCEED:
+                    return (he_status == 0);
+                case HEK_FAIL:
+                    return (he_status != 0);
+                default:
+                    NOT_REACHED();
+                    break;
+            }
       }
 
     return 1;
@@ -1681,51 +1681,51 @@ nextToken(char **p)
     char       *tok;
 
     if (!(**p))
-	return NULL;
+        return NULL;
 
     s = *p;
 
     if (isalnum(**p))
-	while (isalnum(*s))
-	    s++;
+        while (isalnum(*s))
+            s++;
     else
-	while (*s && !isalnum(*s))
-	    s++;
+        while (*s && !isalnum(*s))
+            s++;
 
     q = tok = (char *) HDgetspace((s - (*p)) + 1);
     while (*p != s)
-	*q++ = *(*p)++;
+        *q++ = *(*p)++;
     *q = '\0';
 
     return tok;
 }
 
-int 
+int
 numCompare(int n1, int Comp, int n2)
 {
     switch (Comp)
       {
-	  case HEK_EQUAL:
-	      return (n1 == n2);
+          case HEK_EQUAL:
+              return (n1 == n2);
 
-	  case HEK_NEQUAL:
-	      return (n1 != n2);
+          case HEK_NEQUAL:
+              return (n1 != n2);
 
-	  case HEK_GRT:
-	      return (n1 > n2);
+          case HEK_GRT:
+              return (n1 > n2);
 
-	  case HEK_GEQUAL:
-	      return (n1 >= n2);
+          case HEK_GEQUAL:
+              return (n1 >= n2);
 
-	  case HEK_LESST:
-	      return (n1 < n2);
+          case HEK_LESST:
+              return (n1 < n2);
 
-	  case HEK_LEQUAL:
-	      return (n1 <= n2);
+          case HEK_LEQUAL:
+              return (n1 <= n2);
 
-	  default:
-	      NOT_REACHED();
-	      break;
+          default:
+              NOT_REACHED();
+              break;
       }
     return NO;
 }
