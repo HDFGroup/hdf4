@@ -26,6 +26,7 @@
 ./bin/snapshot
 
 ./config/mh-aix
+./config/mh-aix64
 ./config/mh-alpha
 ./config/mh-decstation
 ./config/mh-fbsd
