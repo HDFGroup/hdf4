@@ -151,7 +151,7 @@ C get the 1st attr of fld 0
          number_failed = number_failed + 1
       endif
       ret = vsfgnat(vsid, findex, aindex, iattrg)
-      call VERIFY(ret, 'vsfgatt1', number_failed)
+      call VERIFY(ret, 'vsfgnatt1', number_failed)
       if (dabs(iattrg(1)-GATTR1) .gt. dabs(geps * GATTR1)) 
      +          then
          call MESSAGE(1, 'Wrong double attr for vsname1')
@@ -235,7 +235,7 @@ C vdata attrs
       call VERIFY(ret, 'vsfatch', number_failed)
       ret = vsfscat(vsid, ENTIRE_VDATA, 'vscattr0', DFNT_CHAR, 3,
      +              'at2')
-      call VERIFY(ret, 'vfsatt', number_failed)
+      call VERIFY(ret, 'vfscatt', number_failed)
       ret = vsfsnat(vsid, 0, 'vsattr1', DFNT_FLOAT32, 1, 
      +             RATTR1)
       call VERIFY(ret, 'vsfsnat', number_failed)
@@ -265,7 +265,7 @@ C     +     .or. iattrc(3) .ne. '0') then
          number_failed = number_failed + 1
       endif
       ret = vfgnatt(vgid, 1, iattrr)
-      call VERIFY(ret, 'vfgatt', number_failed)
+      call VERIFY(ret, 'vfgnatt', number_failed)
       if (abs(iattrr(1)-RATTR1) .gt. abs(RATTR1*feps)) 
      +          then
          call MESSAGE(1, 'Wrong values of real attr for vg')
@@ -289,7 +289,7 @@ C     +     .or. iattrc(3) .ne. '2') then
          print *, iattrc, 'at2'
       endif
       ret = vsfgnat(vsid, 0, 0, iattrr)
-      call VERIFY(ret, 'vsfgatt2', number_failed)
+      call VERIFY(ret, 'vsfgnatt2', number_failed)
       if (abs(iattrr(1)-RATTR1) .gt. abs(RATTR1*feps)) 
      +          then
          call MESSAGE(1, 'Wrong values of real attr for vs')
