@@ -2517,10 +2517,7 @@ test_mgr_lut()
 {
     int32 fid;              /* hdf file id */
     int32 grid;             /* grid for the interface */
-    int32 n_datasets;       /* number of datasets */
-    int32 n_attrs;          /* number of attributes */
     int32 ret;              /* generic return value */
-    VOIDP image;            /* image to retrieve */
 
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing Multi-file Raster Palette routines\n"););
@@ -2534,82 +2531,118 @@ test_mgr_lut()
     CHECK(grid,FAIL,"GRstart");
 
 /* pick up here -QAK2 */
-#ifdef QAK
     {
         intn i,j;     /* local counting variables */
+        int32 riid;               /* RI ID for an image */
+        int32 lutid;              /* RI ID for an image */
+        char name[MAX_IMG_NAME];  /* storage for the image's name */
+        int32 ncomp;              /* number of components */
+        int32 pal_ncomp;          /* number of palette components */
+        int32 nt;                 /* NT of the components */
+        int32 pal_nt;             /* NT of the palette components */
+        int32 il;                 /* interlace of the image data */
+        int32 pal_il;             /* interlace of the palette data */
+        int32 dimsizes[2];        /* dimension sizes of the image */
+        int32 pal_entries;        /* number of entries in the palette */
+        int32 n_attr;             /* number of attributes with each image */
+        uint8 *tmp_data;          /* temporary buffer pointer */
+        VOIDP pal_data;           /* buffer for the palette data */
+
+        /* Attach to the image */
+        riid=GRselect(grid,0);
+        CHECK(riid,FAIL,"GRselect");
+
+        /* Get the Image information */
+        *name='\0';
+        ret=GRgetiminfo(riid,name,&ncomp,&nt,&il,dimsizes,&n_attr);
+        CHECK(ret,FAIL,"GRgetiminfo");
+
+        lutid=GRgetlutid(riid,0);
+        CHECK(lutid,FAIL,"GRgetlutid");
         
-        ret=(intn)GRfileinfo(grid,&n_datasets,&n_attrs);
-        CHECK(ret,FAIL,"GRfileinfo");
+        /* Get the Palette information */
+        ret=GRgetlutinfo(lutid,&pal_ncomp,&pal_nt,&pal_il,&pal_entries);
+        CHECK(ret,FAIL,"GRgetlutinfo");
 
-        for(i=0; i<n_datasets; i++)
+        /* Check the palette values, they should all be "nil" values */
+        if(pal_ncomp!=0)
           {
-              int32 riid;               /* RI ID for an image */
-              int32 lutid;               /* RI ID for an image */
-              char name[MAX_IMG_NAME];  /* storage for the image's name */
-              int32 ncomp;              /* number of components */
-              int32 nt;                 /* NT of the components */
-              int32 il;                 /* interlace of the image data */
-              int32 start[2];
-              int32 stride[2];
-              int32 dimsizes[2];        /* dimension sizes of the image */
-              int32 n_attr;             /* number of attributes with each image */
-              VOIDP img_data;           /* buffer for the image data */
+              MESSAGE(3, printf("Incorrect palette components\n"););
+              num_errs++;
+          } /* end if */
+        if(pal_nt!=DFNT_NONE)
+          {
+              MESSAGE(3, printf("Incorrect palette number-type\n"););
+              num_errs++;
+          } /* end if */
+        if(pal_il!=(-1))
+          {
+              MESSAGE(3, printf("Incorrect palette interlace, pal_il=%d\n",(int)pal_il););
+              num_errs++;
+          } /* end if */
+        if(pal_entries!=0)
+          {
+              MESSAGE(3, printf("Incorrect palette # of entries\n"););
+              num_errs++;
+          } /* end if */
 
-              /* Attach to the image */
-              riid=GRselect(grid,i);
-              CHECK(riid,FAIL,"GRselect");
+        /* Set the palette components */
+        pal_ncomp=3;
+        pal_nt=DFNT_UINT8;
+        pal_il=(int32)MFGR_INTERLACE_PIXEL;
+        pal_entries=256;
 
-              /* Get the Image information */
-              *name='\0';
-              ret=GRgetiminfo(riid,name,&ncomp,&nt,&il,dimsizes,&n_attr);
-              CHECK(ret,FAIL,"GRgetiminfo");
+        pal_data=HDmalloc(pal_entries*pal_ncomp*DFKNTsize(pal_nt|DFNT_NATIVE));
+        CHECK(pal_data,NULL,"HDmalloc");
 
-              image=HDmalloc(dimsizes[XDIM]*dimsizes[YDIM]*ncomp*DFKNTsize(nt|DFNT_NATIVE));
-              CHECK(image,NULL,"HDmalloc");
+        /* Initialize the palette data, in 'pixel' interlace */
+        tmp_data=(uint8 *)pal_data;
+        for(j=0; j<pal_entries; j++)
+            for(i=0; i<pal_ncomp; i++)
+                *tmp_data++=(uint8)(j*i);
 
-              start[0]=start[1]=0;
-              stride[0]=stride[1]=1;
-              ret=GRreadimage(riid,start,stride,dimsizes,image);
+        /* Write the palette out */
+        ret=GRwritelut(lutid,pal_ncomp,pal_nt,pal_il,pal_entries,pal_data);
+        CHECK(ret,FAIL,"GRwritelut");
 
-              /* Check the image data itself */
-              for(j=(intn)MFGR_INTERLACE_PIXEL; j<=(intn)MFGR_INTERLACE_COMPONENT; j++)
+        /* Check the image data itself */
+        for(j=(intn)MFGR_INTERLACE_PIXEL; j<=(intn)MFGR_INTERLACE_COMPONENT; j++)
+          {
+              VOIDP pixel_buf;
+              int32 dimsizes[2];
+
+              tmp_data=HDmalloc(pal_entries*pal_ncomp*DFKNTsize(pal_nt|DFNT_NATIVE));
+              CHECK(tmp_data,NULL,"HDmalloc");
+
+              pixel_buf=HDmalloc(pal_entries*pal_ncomp*DFKNTsize(pal_nt|DFNT_NATIVE));
+              CHECK(pixel_buf,NULL,"HDmalloc");
+
+              HDmemset(tmp_data,0,pal_entries*pal_ncomp*DFKNTsize(pal_nt|DFNT_NATIVE));
+
+              ret=GRreqlutil(lutid,j);
+              CHECK(ret,FAIL,"GRreqlutil");
+
+              ret=GRreadlut(lutid,tmp_data);
+
+              dimsizes[XDIM]=1;
+              dimsizes[YDIM]=pal_entries;
+              GRIil_convert(pal_data,MFGR_INTERLACE_PIXEL,pixel_buf,j,dimsizes,pal_ncomp,pal_nt);
+              if(0!=HDmemcmp(tmp_data,pixel_buf,
+                    pal_entries*pal_ncomp*DFKNTsize(pal_nt|DFNT_NATIVE)))
                 {
-                    VOIDP pixel_buf;
-
-                    img_data=HDmalloc(dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATIVE));
-                    CHECK(img_data,NULL,"HDmalloc");
-
-                    pixel_buf=HDmalloc(dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATIVE));
-                    CHECK(pixel_buf,NULL,"HDmalloc");
-
-                    HDmemset(img_data,0,dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATIVE));
-
-                    ret=GRreqimageil(riid,j);
-                    CHECK(ret,FAIL,"GRreqimageil");
-
-                    start[0]=start[1]=0;
-                    stride[0]=stride[1]=1;
-                    ret=GRreadimage(riid,start,stride,dimsizes,img_data);
-
-                    GRIil_convert(image,MFGR_INTERLACE_PIXEL,pixel_buf,j,dimsizes,ncomp,nt);
-                    if(0!=HDmemcmp(img_data,pixel_buf,
-                          dimsizes[XDIM]*dimsizes[YDIM]*ncomp*DFKNTsize(nt|DFNT_NATIVE)))
-                      {
-                          MESSAGE(3, printf("Error reading data for image %d, j=%d\n",i,j););
-                          num_errs++;
-                      } /* end if */
-                    HDfree(img_data);
-                    HDfree(pixel_buf);
-                } /* end for */
-
-              HDfree(image);
-
-              /* End access to the image */
-              ret=GRendaccess(riid);
-              CHECK(ret,FAIL,"GRendaccess");
+                    MESSAGE(3, printf("Error reading data for palette j=%d\n",j););
+                    num_errs++;
+                } /* end if */
+              HDfree(tmp_data);
+              HDfree(pixel_buf);
           } /* end for */
+
+        HDfree(pal_data);
+
+        /* End access to the image */
+        ret=GRendaccess(riid);
+        CHECK(ret,FAIL,"GRendaccess");
       } /* end block */
-#endif /* QAK */
     
     /* shut down the gr interface */
     ret=GRend(grid);
@@ -2654,6 +2687,8 @@ test_mgr_attr()
 {
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing Multi-file Raster Attribute routines\n"););
+
+/* I believe that these are adequately tested in the test_mgr_image routine -QAK */
 }   /* end test_mgr_attr() */
 
 /****************************************************************
