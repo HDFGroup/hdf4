@@ -19,21 +19,21 @@
 #############################################################################
 #
 # Type of C compiler (default is `cc'):
-# CC='gcc -traditional'
-#CC='gcc -ansi'
+# CC='gcc -ansi'
 #
 # C compiler flags (default is `-O'):
-#CFLAGS=-O
-#LIBS=-lresolv
+CFLAGS="-O"
 #
 # C preprocessor flags 
 # CPPFLAGS=-DNDEBUG
 #
-# Location of HDF include files
-HDF_INC=-I/usr6/koziol/hdf/HDF4.0/hdf/include
+# Location of the HDF home.  Must be an absolute path.
+HDF_HOME=${PWD}/..
+# Location of HDF include files.  Must be an absolute path.
+HDF_INC=-I${HDF_HOME}/hdf/include
 #
-# Location of HDF library file
-HDF_LIB=/usr6/koziol/hdf/HDF4.0/hdf/lib/libdf.a
+# Location of HDF library file.  Must be an absolute path.
+HDF_LIB=${HDF_HOME}/hdf/lib/libdf.a
 #
 # Installation prefix (default is `..'):
 # prefix=/usr/local/unidata
