@@ -577,6 +577,7 @@
 ./hdf/test/tsdntf.f
 ./hdf/test/tsdstrf.f
 ./hdf/test/tstubsf.f
+./hdf/test/tszip.c
 ./hdf/test/tutils.h
 ./hdf/test/tv1.res
 ./hdf/test/tv2.res
