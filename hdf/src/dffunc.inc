@@ -338,6 +338,8 @@ C
       external sfscompress
       integer  sfisrcrd
       external sfisrcrd
+      integer  sfsblsz
+      external sfsblsz
 C
 C     Declarations of return values for HDF Vgroup functions
 C
