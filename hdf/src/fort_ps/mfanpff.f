@@ -280,6 +280,7 @@ C      integer afiwann
       INTERFACE
          INTEGER FUNCTION afiwann(ann_id, ann, annlen)
             !MS$ATTRIBUTES C,reference,alias:'_AFIWANN' :: afiwann
+   	      !DEC$ ATTRIBUTES reference :: ann
             integer ann_id, annlen
             character*(*) ann
          END FUNCTION afiwann
@@ -305,6 +306,7 @@ C      integer afirann
       INTERFACE
          INTEGER FUNCTION afirann(ann_id, ann, maxlen)
             !MS$ATTRIBUTES C,reference,alias:'_AFIRANN' :: afirann
+	      !DEC$ ATTRIBUTES reference :: ann
             integer ann_id, maxlen
             character*(*) ann
          END FUNCTION afirann
