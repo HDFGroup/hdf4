@@ -159,7 +159,7 @@ char**av;
   if(nlone > 0) {
 
     printf("Lone vdatas:\n");
-    if (NULL == (lonevs = (int*) VGETSPACE (sizeof(int)*nlone))) {
+    if (NULL == (lonevs = (int32 *) VGETSPACE (sizeof(int)*nlone))) {
       printf("%s: File has %d lone vdatas but ",av[0],nlone ); 
       printf("cannot alloc lonevs space. Quit.\n"); 
       exit(0);
@@ -258,7 +258,7 @@ int32 vsdumpfull(vs) VDATA * vs;
   int32 nf;
   
   VSinquire(vs, &nv,&interlace, fields, &vsize, vsname);
-  bb = (char*) VGETSPACE (nv*vsize);
+  bb = (BYTE *) VGETSPACE (nv*vsize);
   if(bb==NULL) { 
     printf("vsdumpfull malloc error\n");
     return(0); 
