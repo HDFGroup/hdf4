@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.9  1993/03/05 17:18:00  chouck
-Added some new ID types
+Revision 1.10  1993/03/17 21:30:23  chouck
+Added offsets to external elements
 
+ * Revision 1.9  1993/03/05  17:18:00  chouck
+ * Added some new ID types
+ *
  * Revision 1.8  1993/01/19  05:55:56  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -61,7 +64,7 @@ Added some new ID types
 #define LIBVER_MAJOR	3
 #define LIBVER_MINOR    3
 #define LIBVER_RELEASE	0
-#define LIBVER_STRING   "NCSA HDF Version 3.3 Beta Release 1 Nov 1, 1992"
+#define LIBVER_STRING   "NCSA HDF Version 3.3 Alpha Release 5 Apr 1, 1993"
 #define LIBVER_LEN	92	/* 4+4+4+80 = 92 */
 /* end of version tags */
 

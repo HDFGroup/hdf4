@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.19  1993/02/17 20:45:10  briand
-Added the FORTRAN stub for Hnumber.
+Revision 1.20  1993/03/17 21:30:26  chouck
+Added offsets to external elements
 
+ * Revision 1.19  1993/02/17  20:45:10  briand
+ * Added the FORTRAN stub for Hnumber.
+ *
  * Revision 1.18  1993/02/16  18:55:18  koziol
  * Fixed incorrect prototype for DFKconvert
  *
@@ -243,7 +246,8 @@ extern int32 HLcreate
 ** from hextelt.c 
 */
 extern int32 HXcreate
-  PROTO((int32 file_id, uint16 tag, uint16 ref, char _HUGE *extern_file_name));
+  PROTO((int32 file_id, uint16 tag, uint16 ref, char _HUGE *extern_file_name, 
+         int32 offset, int32 start_len));
 
 /*
 ** from herr.c 
