@@ -1,13 +1,15 @@
                ABOUT HDF4.0 Beta 1
-                May 31, 1995
+                 July 25, 1995
 
 CONTENTS
 
-    1. New features in HDF4.0 Beta 1 release
-    2. Bugs fixed
-    3. PLatforms tested
-    4. Installation HDF4.0 Beta 1 on WindowsNT/95
-    5. Known problems
+    1. New features in the HDF4.0 Beta 1 release
+    2. Bugs fixed and known problems
+    3. Platforms tested
+    4. Installation of HDF4.0 Beta 1 on WindowsNT/95
+    5. Known problems in compilation, testing and
+       installation of HDF4.0b1
+    6. Installing without FORTRAN support
 
 1. New features in HDF4.0 Beta 1 release
 
@@ -15,14 +17,15 @@ CONTENTS
      It is now possible to automatically configure and build 
      both the HDF library and netCDF library with one command. 
      See the README and the INSTALL files at the top level of 
-     HDF4.0beta1 for detail instructions on configuring and 
+     HDF4.0beta1 for detailed instructions on configuring and 
      installation.
      
    o Multi-file Annotation Interface (ANxxx)
 
      The multi-file annotation Interface is for accessing 
-     file/object label/description. It allows users to keep open 
-     more than one file at a time, and access more than one 
+     file labels and descriptions, and object labels and 
+     descriptions. It allows users to keep open more than 
+     one file at a time, and to access more than one 
      annotation at a time.  It also allows multiple labels 
      and multiple descriptions to be applied to an HDF object 
      or HDF file. 
@@ -35,19 +38,19 @@ CONTENTS
      functions for manipulating raster images of all kinds.  
      This interface allows users to keep open more than one 
      file at a time, and to "attach" more than one raster 
-     image at a time.  It supports a more general framework 
+     image at a time.  It supports a general framework 
      for attributes within the RIS data-model, allowing 
      'name = value' style metadata.  It allows access to 
-     subsamples and subsets of images.  HDF4.0beta1 
-     implemented only C interface. The Fortran interface
-     will be available in next release. 
+     subsamples and subsets of images.  HDF4.0beta1 includes
+     a C interface only. The Fortran interface will be available 
+     in the next release. 
  
      A draft of the documentation for this interface is in 
             ./mf_ris.txt.
 
    o New Compression Algorithms and interface
      A new low-level compression interface has been added to 
-     the HDF which allows any data-object to be compressed 
+     HDF which allows any data-object to be compressed 
      using a variety of algorithms.  Currently only two 
      compression algorithms are supported: Run-Length 
      Encoding (RLE) and adaptive Huffman.
@@ -63,12 +66,12 @@ CONTENTS
             ./JPEG_v5b.txt 
 
 
-     The JPEG library will need to be linked with user's 
-     applications when whether they are compressed with JPEG or not.
+     The JPEG library will need to be linked with a user's 
+     applications whether they are compressed with JPEG or not.
 
-     For example on a SUN SPARC, the .h files are in the 
-     directory "incdir", all libraries are in "libdir"
-     The following command should be used to compile a 
+     For example on a SUN SPARC, if the .h files are in the 
+     directory "incdir", and all libraries are in "libdir,"
+     the following command should be used to compile a 
      C program "myprog.c":
 
      cc -DSUN -DHDF -Iincdir myprog.c libdir/libnetcdf.a \
@@ -79,10 +82,10 @@ CONTENTS
      cc -DSUN -DHDF -Iincdir myprog.c -L libdir -lnetcdf \
          -ldf -ljpeg -o myprog
 
-     Note the order is important, libnetcdf.a, libdf.a and
-     then libjpeg.a.
+     Note that the order is important: libnetcdf.a must occur first,
+     then libdf.a, and then libjpeg.a.
   
-    For FORTRAN programs, use command line:
+     For FORTRAN programs, use command line:
 
       f77 -o myprogf myprogf.f libdir/libnetcdf.a \
          libdir/libdf.a libdir/libjpeg.a
@@ -91,34 +94,35 @@ CONTENTS
 
       f77 -o myprogf myprogf.f -L libdir -lnetcdf -ldf -ljpeg
   
-     Note the order is important, libnetcdf.a, libdf.a and
-     then libjpeg.a.
+     Note that the order is important: libnetcdf.a, then libdf.a 
+     and then libjpeg.a.
  
    o Compression for HDF SDS
-     Two new compression functions are added to the SD 
+     Two new compression functions have been added to the SD 
      interface in this release to compress SDS datasets. 
      One function allows users to compress a scientific 
      dataset  using RLE encoding or adaptive Huffman  
-     compression algorithms. Another one is for storaging 
-     a scientific dataset in 1-32 bit integer values 
-     (instead of being restricted to 8, 16 or 32-bit sizes). 
+     compression algorithms. Another one is for storing 
+     a scientific dataset using integers whose size is any
+     number of bits between 1 and 32 (instead of being restricted 
+     to 8, 16 or 32-bit sizes). 
 
      A draft of the documentation for these functions is in
             ./comp_SDS.txt
 
 
    o External Path Handling
-     New functions are added to allow applications to 
+     New functions have been added to allow applications to 
      specify directories to create or search for external 
      files. More explanation can be found in:
    
             ./external_path.txt.
  
           
-   o Parallel I/O for CM5
-     An extension using the parallel I/O in CM5 is added 
-     to the SDS interface.  Initial tests have resulted 
-     in about 25 MBytes/second IO throughput using the 
+   o Parallel I/O for the CM5
+     An extension using the parallel I/O facilities on a  CM5 
+     has been added to the SDS interface.  Initial tests have 
+     resulted in about 25 MBytes/second I/O throughput using the 
      SDA (Scalable Disk Array) file system. The library 
      provides interfaces for both C* and CMF programming
      languages. See:
@@ -128,8 +132,8 @@ CONTENTS
 
    o HDF dumper
      Hdp is a command line utility designed for quick 
-     display of contents and data of HDF3.3 objects,RIS, 
-     SDS, Vdata and Vgroup. It can list the contents of 
+     display of contents and data of HDF3.3 objects, RIS, 
+     SDS, Vdata, and Vgroup. It can list the contents of 
      hdf files at various levels with different details. 
      It can also dump the data of one or more specific 
      objects in the file.  See:
@@ -143,37 +147,56 @@ CONTENTS
   Fortran version of VSQxxxx functions, failure in 
   defining more than 36 fields in Vdatas, etc. were 
   fixed in this beta release. For more details about
-  fixed and non-fixed bugs and problems please see:
+  fixed and un-fixed bugs and problems please see:
   
             ./bug_fixed.txt.
 
-3. HDF4.0 Beta 1 has been tested on systems:
+3. HDF4.0 Beta 1 has been tested on the following systems:
 SunOS 4.1.3, SunOS 5.3 (Solaris 2.3), SGI/IRIX5.3, Linux,
 HP/UX 9.01, IBM RS6000/AIX (C only), C3880/ConvexOS,11.0, 
 DEC alpha/OSF (C only), DecStation/MIPSEL (C only), CM5,
 Cray C90, Free BSD 2.0, Windows NT. See the INSTALL file 
 at the top level of HDF4.0b1 for more details.
 
-4. Install HDF4.0 Beta 1 on Windows NT and Windows 95
+4. Installing HDF4.0 Beta 1 on Windows NT and Windows 95
 Since Windows NT, Windows '95 (Chicago) and Windows 3.1 
 (with the Win 32s extensions) all are designed to run 
-the same 32-bit code, our decision is to support only 
+the same 32-bit code, we have decided to support only 
 32-bit libraries and code on the MS-Windows platform.  
 To build the HDF, JPEG and netCDF libraries and utilities, 
-follow instructions listed in:
+follow the instructions listed in:
 
             ./install_winNT.txt. 
    
-5. Known problems in HDF4.0b1 compilation,testing and 
-   installation:
+5. Known problems in compilation,testing and installation
+   of HDF4.0b1:
 
    . On SunOS, tsdmmsf.f fails
-   . On C90, mfhdf/fortran doesn't configure correctly.
+   . On C90, mfhdf/fortran test doesn't configure correctly.
      The adaptive Huffman algorithm does not work right 
      either.  Due to this problem, when running 
      hdf/test/testhdf the test module comp prints out 
      error messages.  
-   . On DecStation/MIPSEL, ncdump gives segmentation fault.
-   . Fortran interface was not tested on IBM RS6000, 
-     DecStation/MIPSEL, and Dec Alpha/OSF because Fortran 
+   . On DecStation/MIPSEL, ncdump gives a segmentation fault.
+   . The Fortran interface has not been tested on IBM RS6000, 
+     DecStation/MIPSEL, and Dec Alpha/OSF because a Fortran 
      compiler is not available on those machines in our group.
+   . If the external element test in hdf/test/testhdf fails 
+     and there is no subdirectory "testdir" in hdf/test/, 
+     create one via "mkdir" and run the test again. (The 
+     "testdir" should have been created by "make". But 
+     the "make" in some old systems does not support the 
+     creation commands.)
+   . A bug was found in the "mfhdf.h" file late in the testing
+     stage. The error occured in the CM5 parallel I/O 
+     extension only. The fix is not included in the source
+     release, but it is avalable in the binary release for 
+     the CM5 version.  Please retrieve the fix there. 
+
+6. Installing without FORTRAN support:
+   . On UNIX systems without a FORTRAN system installed, 
+     the config/mh-<sys> will need to have the 'FC' macros 
+     defined to "NONE" for correct configuration and the 
+     target "allnofortran" should be used to build the 
+     distribution, instead of the target "all".
+
