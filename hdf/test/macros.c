@@ -6,7 +6,7 @@
 
 #define INT32MAX 2147483647 /* 0x7fffffff */
 
-#define UINT32MAX 4294967295 /* 0xffffffff */
+#define UINT32MAX 4294967295UL /* 0xffffffff */
 
 extern int Verbocity;
 
