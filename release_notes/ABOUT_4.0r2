@@ -1,0 +1,137 @@
+                            ABOUT HDF4.0 Release 2
+                                July 19, 1996
+
+INTRODUCTION
+
+This document describes the differences between HDF 4.0r1p1 and
+HDF 4.0r2.  It is written for people who are familiar with
+previous releases of HDF and wish to migrate to HDF 4.0r2.
+The documentation and release notes provide more in-depth 
+information concerning the topics discussed here.  The HDF 4.0
+documentation can be found on the NCSA ftp server in the
+directory /HDF/Documentation/HDF4.0/Users_Guide.
+
+First-time HDF users are encouraged to read the FAQ in this
+release for more information about HDF.  Users can also look 
+at the home page for HDF at: 
+
+    http://hdf.ncsa.uiuc.edu/  
+
+If you have any questions or comments, please send them to:
+
+         hdfhelp@ncsa.uiuc.edu
+
+CONTENTS
+
+- New Features and Changes
+- Platforms Tested
+- Known Problems
+
+
+New Features and Changes:
+-------------------------
+o HDF now supports unlimited number of access IDs and files IDs.
+
+o The vdata field size limit has been increased from 32000 to 65535.
+
+o The hdp utility has been updated to:
+   - view a GR object
+   - recognize the new compression methods
+   - view descriptive annotations
+   - display the library version
+
+o SDsetattr and GRsetattr now check for both MAX_ORDER and 
+  MAX_FIELD_SIZE.
+
+o The handling of DFNT_CHAR in all Fortran interfaces has been 
+  cleaned up.  See release_notes/Fortran_APIs.txt for more 
+  information.
+
+o When appending compressed data onto the end of an unlimited
+  dimension SDS, the SD interface no longer writes the fill-values
+  in locations where they will immediately be over-written by data.
+  This was done for the compression layer, but has the added
+  enhancement of improving performance.
+
+o On the Cray, there were boundary problems when foreign data did not
+  start from the 64-bit boundary.  This has been fixed.
+
+o There are no longer the following name collisions with the HDF 
+  libraries:
+     -  AVS (HPread, HPwrite)
+     -  Windows SDK (_hread) 
+     -  ODL library (_HDF_<constant>)
+
+o The compression problems have been fixed when using HDF on IRIX 6.1 
+  with the -n32.
+
+o The zlib and jpeg libraries have been updated.  The versions included
+  with HDF 4.0 Release 2 are:
+
+      zlib version 1.0.2
+      jpeg version 6a (7-Feb-96)
+       
+o The hdfls utility has been updated to:
+    - support the new compression modes
+    - display the library version
+
+o Support for the 16-bit architecture has been pulled out of HDF.
+
+o The Fortran tests on the hdf/ side have been unified.  The result is 
+  that the Fortran test output has been cleaned up and shortened, when running 
+  "make test". (ALBERT, SHOULD ANYTHING ELSE BE ADDED TO THIS?)
+
+o A new compile option, '-DHAVE_NETCDF', has been added, to avoid conflicts 
+  in linking the HDF/MFHDF library with the original netCDF library. 
+  This is only available for the C-interface.  However, keep in 
+  mind that you cannot read/write HDF files using the netCDF libraries.  
+  See section 2.4.3.2 in the INSTALL file for more information.  
+
+o The code has been rearranged so that most applications' binaries
+  will be smaller.
+
+o A new routine, VSfpack(), has been added.  Please see the HDF man
+  page on how to use this routine.
+
+o A new routine, GRpal2ref(), has been added.  Please see the HDF man
+  page on how to use this routine. 
+
+o Several internal problems have been fixed with the GR interface.
+
+o When compiling and testing HDF, the default location to place the
+  binaries, has been changed from /usr/local/bin to $PWD/NewHDF.
+  For example, the following commands will result in the HDF binaries
+  being placed in the directory ../dev/NewHDF:
+
+        cd dev
+        ./configure -v
+        make 
+        make test
+        make install
+
+
+Platforms Tested:
+-----------------
+
+HDF 4.0r2 has been tested on the following platforms:
+
+  AIX                           Linux ELF
+  C90                           MAC 
+  CM5                           SP2
+  Digital Unix 3.2              Solaris_2.4
+  Exemplar 9.03                 Solaris 2.5
+  Free BSD                      Solaris_x86 2.4 (C only)
+  Fujitsu (C only)              SunOS 4.1.4
+  HP-UX                         T3D
+  IRIX 6.1 w/-n32 bit option    VMS
+  IRIX 6.1 w/-64 bit option     Windows NT/95
+  IRIX 5.3                      YMP
+  Linux A.OUT                   
+
+Known Problems:
+---------------
+
+o On the SunOS platform, there is a bug when using sfscal()/sfgcal() 
+  routines with gcc and f77.
+ 
+o On the VMS platform, there is a bug with float64 data.
