@@ -46,17 +46,43 @@
 #ifndef _FMPTYPES_H_
 #define	_FMPTYPES_H_
 
+#include <errno.h>
+#include <string.h>
 #include <sys/types.h>
 #include "cdefs.h"
+
+#ifdef HAVE_LIMITS_H
 #include <limits.h>
+#endif /* HAVE_LIMITS_H */
+
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif /* HAVE_UNISTD_H */
 
 #ifdef HAVE_FCNTL
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#endif
+#endif /* HAVE_FCNTL */
+
+#ifdef HAVE_MIN_MAX
+#include <sys/param.h>
+#endif /* HAVE_MIN_MAX */
+
+#ifdef HAVE_STAT
+#include <sys/stat.h>
+#endif /* HAVE_STAT */
+
+#ifdef HAVE_STDLIB
+#include <stdlib.h>
+#endif /* HAVE_STDLIB */
+
+#ifdef HAVE_STDIO
+#include <stdio.h>
+#endif /* HAVE_STDIO */
+
 #ifdef __FMPINTERFACE_PRIVATE
-#include <compat.h>
+#include "compat.h"
 #endif
 
 #define	RET_ERROR	-1		/* Return values. */
@@ -65,7 +91,7 @@
 #ifndef SUCCEED
 #define SUCCEED          0
 #define FAIL            (-1)
-#endif
+#endif  /* SUCCEED */
 
 #ifndef	__BIT_TYPES_DEFINED__
 #define	__BIT_TYPES_DEFINED__
@@ -93,7 +119,7 @@ typedef u_int32_t	pgno_t;         /* page type */
 #define DFACC_RDONLY 1
 #define DFACC_RDWR   3
 #define DFACC_CLOBBER 4
-#endif
+#endif  /* DFACC_READ */
 
 /* -------------------------- File I/O Functions -------------------------- */
 /* FILE_IO -- file library to use for file access: 
@@ -103,7 +129,6 @@ typedef u_int32_t	pgno_t;         /* page type */
 #ifdef HAVE_STDIO
 #define FMPI_FAIL    NULL
 /* using C buffered file I/O routines to access files */
-#include <stdio.h>
 typedef FILE *fmp_file_t;
 
 #ifdef VMS
@@ -145,10 +170,10 @@ typedef int fmp_file_t;
                                   open((p), O_RDONLY, DEF_FILEMODE))
 #   define FMPI_CREATE(p)         (open((p), O_RDWR | O_CREAT | O_TRUNC,DEF_FILEMODE))
 #   define FMPI_CLOSE(f)          (close(f))
-#   define FMPI_FLUSH(f)          (fsync(f))
 #if 0
-#   define FMPI_FLUSH(f)          (SUCCEED)
+#   define FMPI_FLUSH(f)          (fsync(f))
 #endif
+#   define FMPI_FLUSH(f)          (SUCCEED)
 #   define FMPI_READ(f, b, n)     (read((f), (char *)(b), (n)))
 #   define FMPI_WRITE(f, b, n)    (write((f), (char *)(b), (n)))
 #   define FMPI_SEEK(f, o)        (lseek((f), (off_t)(o), SEEK_SET))
