@@ -43,11 +43,11 @@ COBJS=hfile.o herr.o hblocks.o hextelt.o hkit.o dfan.o dfr8.o dfcomp.o\
 
 FSRCS=hfilef.c herrf.c hfileff.f dfanf.c dfr8f.c dfpf.c df24f.c dfsdf.c \
       vgf.c dff.c dfanff.f df24ff.f dfpff.f dfr8ff.f dfsdff.f vgff.f dfff.f \
-      dfutilf.c dfufp2if.f mfanf.c mfanff.f
+      dfutilf.c dfufp2if.f mfanf.c 
 
 FOBJS=hfilef.o herrf.o hfileff.o dfanf.o dfr8f.o dfpf.o df24f.o dfsdf.o\
       vgf.o dff.o dfanff.o df24ff.o dfpff.o dfr8ff.o dfsdff.o vgff.o dfff.o\
-      dfutilf.o dfufp2if.o mfanf.o mfanff.o
+      dfutilf.o dfufp2if.o mfanf.o 
 
 FINCS=dffunc.inc hdf.inc
 
