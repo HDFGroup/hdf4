@@ -24,16 +24,15 @@
   2.5 Platform-specific Notes
   2.5.1 HPUX(9.03) on PA-RISC
   2.5.2 Solaris(2.5) on Sparc
-  2.5.3 Solaris(2.4) on INTEL(x86)
+  2.5.3 Solaris(2.5) on INTEL(x86)
   2.5.4 OpenVMS AXP and OpenVMS VAX
   2.5.5 Windows '95 or Windows NT
   2.5.6 CM5 Parallel I/O Extension
   2.5.7 PowerPC/68k(far/4i/8d)- Macintosh OS
   2.5.8 Exemplar (HP-UX 9.03)
-  2.5.9 Fujitsu UXP/M-1800(Unix_System_V-4.0)
-  2.5.10 SP2 Single node
-  2.5.11 T3D Single node
-  2.5.12 IRIX 6.2
+  2.5.9 SP2 Single node
+  2.5.10 T3D Single node
+  2.5.11 IRIX 6.2
 
   2.6 Pablo Instrumentation
   2.7 File Cache(Beta release)
@@ -82,9 +81,10 @@
   SGI-Indy(IRIX6.2_n32)       CC 7.0         f77 7.0          X         X
   SGI-Indy(IRIX6.2_64)        CC 7.0         f77 7.0          X         X
   HP9000/735(HPUX 9.03)       CC(A.09.77)    f77(09.16)       X         X
-  Exemplar(HPUX 9.03)         -               -               -         -        
+  HP9000/770(HPUX B.10.10)    CC             f77              X         X
+  Exemplar(HPUX A.09.03)      CC             f77              X         X 
   Cray C90 (UNICOS 803.2)     -               -               -         - 
-  Cray YMP (UNICOS 9.0.2asC  CC 4.0.4.0      cf77 6.0.5.0     X         X
+  Cray YMP (UNICOS 9.0.2asC   CC 4.0.4.0     cf77 6.0.5.0     X         X
             cri.3)
   CM5 (Parallel I/O, 4.1.3_U1)-               -               -         -
   IBM RS6000/AIX v4.1         -               -               -         - 
@@ -92,10 +92,11 @@
   DEC Alpha/Digital Unix v3.2 CC             f77              X         X
   DEC Alpha/OpenVMS AXP v6.2  DECC 5.3       DEC FORTRAN 6.3  X         X
   VAX OpenVMS v6.2            DECC 5.3       DEC FORTRAN 6.3  X         X
-  Fujitsu UXP/M-1800(SYS_V-4.0) -             -               -         - 
   IBM PC - Intel Pentium
-       Solarisx86             -               -               -         - 
-       Linux(a.out) v1.2.4    -               -               -         - 
+       Solarisx86 (2.5)       GCC 2.7.2       -               X         X 
+       Linux(a.out) v1.2.4    GCC            FORTRAN compiler X         X
+                                              2.6.2     
+                                      (FORTRAN to C converter)
        Linux(elf)  1.2.13     GCC 2.7         -               X         X
        FreeBSD 2.2            GCC 2.6.3      f77              X         X
 
@@ -333,7 +334,7 @@
     2.5.1 HPUX(9.03) on PA-RISC
     ---------------------------
     The distribution has been compiled/tested with the native
-    ANSI-C compiler and Fortran compiler.The binary distribution 
+    ANSI-C compiler and Fortran compiler. The binary distribution 
     was compiled using the native compilers.
 
     2.5.2 Solaris(2.5) on Sparc
@@ -346,18 +347,27 @@
     the nsl library, to resolve calls to the xdr* routines.
     For example,
 
-        cc -o <prog> <prog.c> -I<path for HDF include directory> \
-              -L<path for HDF libraries> -lmfhdf -ldf -ljpeg -lz \
-              -L/usr/lib -lnsl
-    
+      cc -Xc -xO2 -o <your program> <your program>.c  \
+         -I<path for hdf include directory>\
+         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz \
+         -L/usr/lib -lnsl
 
-    2.5.3 Solaris(2.4) on INTEL(x86)
+
+    2.5.3 Solaris(2.5) on INTEL(x86)
     --------------------------------
-     ** not available with 4.1b1 **
 
-    The distribution has been compiled/tested with GCC 2.6.3 with
-    *NO* fortran support. The binary distribution was compiled
-    using GCC 2.6.3.
+    The distribution has been compiled/tested with GCC 2.7.2 with
+    *NO* FORTRAN support. The binary distribution was compiled
+    using GCC 2.7.2.
+
+    When compiling your programs on Solaris_x86, you must include the 
+    the nsl library, to resolve calls to the xdr* routines.
+    For example,
+
+       gcc -ansi -O -o <your program> <your program>.c \
+           -I<path for hdf include directory> \
+           -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz  \
+           -L/usr/lib -lnsl
 
     2.5.4 OpenVMS AXP on DEC Alpha and OpenVMS on VAX
     -------------------------------------------------
@@ -407,7 +417,6 @@
  
     2.5.6 CM5 Parallel I/O Extension
     --------------------------------
-    ** not available with 4.1b1 **
 
     To install the parallel I/O extension for CM5, read the separate 
     installation instructions in:
@@ -543,7 +552,6 @@
 
     2.5.8 Exemplar
     --------------
-    ** not available with 4.1b1 **
 
     You need to change the compiler in dev/config/mh-hpux to use /bin/cc. 
     Otherwise, the default will be the CONVEX C compiler.
@@ -552,20 +560,7 @@
     Change 'srcdir' and 'TOP_SRCDIR' in the top Makefile.in, 
     ./hdf/Makefile.in, and ./mfhdf/Makefile.in to absolute pathnames.
 
-
-
-    2.5.9 Fujitsu UXP/M-1800(Unix_System_V-4.0)
-    --------------------------------------------
-    ** not available with 4.1b1 **
-
-    The distribution has been compiled/tested with the native
-    ANSI-C compiler only. No fortran support is provided as
-    there was a problem with the fortran linker and system XDR libraries
-    at the time of the distribution. The binary distribution was compiled
-    using the native compiler.
-
-
-    2.5.10 SP2 Single node
+    2.5.9 SP2 Single node
     ----------------------
     HDF has been compiled and tested to run in a single node of the SP2
     system.  You can make the library the same way you would on an AIX system.  
@@ -574,9 +569,8 @@
     not support concurrent access of the same HDF file.
 
 
-    2.5.11 T3D Single node
+    2.5.10 T3D Single node
     ----------------------
-    ** not available with 4.1b1 **
  
     HDF has been ported to the T3D system but only the C interface is
     supported for now.  To make the binary, you need to specify 't3d'
@@ -590,9 +584,9 @@
     does not support concurrent access of the same HDF file.
 
 
-    2.5.12 IRIX 6.2
+    2.5.11 IRIX 6.2
     ---------------
-    SGI supports IRIX 6.2 on all their new machines.  HDF version 4.1b1
+    SGI supports IRIX 6.2 on all their new machines.  HDF version 4.1r1
     was tested on various types of SGI machines running IRIX 6.2.
     The configure script has been updated to work on three different
     systems.
@@ -610,7 +604,6 @@
 
 2.6 Pablo Instrumentation
     ====================
-    *** Not Supported in Beta Release ***
 
     This version of the distribution has support to create an instrumented 
     version of the HDF library(libdf-inst.a). This library along with
