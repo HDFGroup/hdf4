@@ -630,7 +630,7 @@ NC_array *
   hdf_read_attrs(xdrs, handle, vg)
 XDR    *xdrs;
 NC     *handle;
-VGROUP *vg;
+int32   vg;
 {
 
   char vsname[100], fields[100], *values, class[128];

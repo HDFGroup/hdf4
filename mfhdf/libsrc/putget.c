@@ -805,7 +805,7 @@ Void *values ;
         if(handle->is_hdf) {
           if(!hdf_xdr_NCvdata(handle, vp,
                           offset, vp->type, 
-                          (unsigned)*edges, values))
+                          (uint32)*edges, values))
             return(-1) ;
         } else 
 #endif
@@ -975,7 +975,7 @@ Void *values ;
                                 if(handle->is_hdf) {
                                   if(!hdf_xdr_NCvdata(handle, vp,
                                                   offset, vp->type, 
-                                                  (unsigned)iocount, values))
+                                                  (uint32)iocount, values))
                                     return(-1) ;
                                 } else
 #endif
@@ -1197,7 +1197,7 @@ Void **datap ;
                 if(handle->is_hdf) {
                     if(!hdf_xdr_NCvdata(handle, rvp[ii],
                                         offset, rvp[ii]->type, 
-                                        (unsigned)iocount, datap[ii]))
+                                        (uint32)iocount, datap[ii]))
                         return(-1) ;
                 } else
 #endif

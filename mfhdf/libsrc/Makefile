@@ -5,8 +5,8 @@
 
 PROGRAM		= cdftest
 CPP_OLD_FILLVALUES	= 
-CPPFLAGS	= $(CPP_OLD_FILLVALUES) -DNDEBUG -DHDF
-CFLAGS		= -g -I/hdf/home/chouck/hdf/33/include -DDEC_ALPHA
+CPPFLAGS	= $(CPP_OLD_FILLVALUES) -DNDEBUG -DHDF -DNO_STRERROR
+CFLAGS		= -g -I/hdf/home/chouck/hdf/33/include -DIRIS4 -cckr
 GARBAGE		= $(PROGRAM) test.cdf cdfout.new test*.hdf \
                   hdftest hdfout.new
 HEADERS		= netcdf.h
@@ -29,7 +29,7 @@ LIBRARY		= netcdf
 DEBUGLIBRARY	= netcdf_g
 PROFILEDLIBRARY	= netcdf_pg
 OBJS		= $(PROGRAM).o
-LD_XDR		= 
+LD_XDR		= -lsun
 LD_NETCDF	= -L. -lnetcdf
 LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB)
 prefix		= /hdf/home/chouck/hdf
@@ -70,7 +70,7 @@ $(PROGRAM):	$(PROGRAM).o library
 hdftest:	hdftest.o library        
 	$(CC) $(CFLAGS) hdftest.o $(LIBS) -o $@
 	./hdftest > hdfout.new
-	@cmd="diff hdftout.new hdfout.sav"; \
+	@cmd="diff hdfout.new hdfout.sav"; \
 	    echo $$cmd; \
 	    if $$cmd; then \
 		echo "*** HDF passes formatted test ***"; \
@@ -116,7 +116,7 @@ FC		= f77
 NCDUMP		= @NCDUMP@
 NCGEN		= @NCGEN@
 NEQN		= neqn
-OS		= osf
+OS		= irix
 SHELL		= /bin/sh
 TBL		= tbl
 

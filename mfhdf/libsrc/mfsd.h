@@ -1,4 +1,7 @@
 
+#ifndef _MFSD_H_
+#define _MFSD_H_
+
 #ifndef HDF
 #define HDF 1
 #endif
@@ -6,6 +9,10 @@
 #include "local_nc.h"
 
 #define SD_UNLIMITED NC_UNLIMITED
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern NC_dim * SDIget_dim
     PROTO((NC *handle, int32 id));
@@ -166,3 +173,8 @@ extern int32 SDgetdimstrs
 #endif
 #endif
 
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _MFSD_H_ */
