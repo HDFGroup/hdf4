@@ -16,11 +16,11 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
+#include "mfhdf.h"
+
 #ifdef HDF
 
 #define CHECK(status, name) {if(status == FAIL) { printf("*** Routine %s FAILED at line %d ***\n", name, __LINE__); num_err++;}}
-
-#include "mfhdf.h"
 
 #define FILE1   "test1.hdf"
 #define FILE2   "test2.hdf"
