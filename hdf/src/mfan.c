@@ -93,7 +93,8 @@ ANfreekey(VOIDP key)
 } /* ANfreekey() */
 
 /* Following 3 routines are used for debugging purposes to dump 
- * key/data pairs from the TBBT trees */
+ * key/data pairs from the TBBT trees 
+ * eg. tbbt_dump(tree, dumpnodeKey, 0)*/
 VOID
 dumpnodeKey(VOID *key, VOID *data)
 {
