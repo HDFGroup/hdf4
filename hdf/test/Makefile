@@ -30,20 +30,17 @@ CTESTS= nt_rig.o nt_sdstr.o nt_hblocks.o nt_an.o nt_anfile.o \
         nt_sdnmms.o nt_slab.o testhdf.o
 
 FTESTS= tr8f t24f tpf tanf tanfilef tsdstrf tsdntf tsdnntf \
-        tsdmmsf tsdnmmsf tstubsf 
-#        slabwf slab1wf slab2wf slab3wf slab4wf
+        tsdmmsf tsdnmmsf tstubsf \
+        slabwf slab1wf slab2wf slab3wf slab4wf
 TESTF = fortest.o
 FOBJS = tr8f.o t24f.o tpf.o tanf.o tanfilef.o tsdstrf.o tsdntf.o \
-        tsdnntf.o tsdmmsf.o tsdnmmsf.o tstubsf.o fortest.o
-#        slabwf.o slab1wf.o slab2wf.o slab3wf.o slab4wf.o 
-#        tsdmms tsdnmms tsdnnt tsdnt tan \
-#        tanfile tstubs tv1 tv2 tvers egchi
-
+        tsdnntf.o tsdmmsf.o tsdnmmsf.o tstubsf.o fortest.o \
+        slabwf.o slab1wf.o slab2wf.o slab3wf.o slab4wf.o 
 
 .f: $< $(HDFLIB)/libdf.a
 	$(FC) $(FFLAGS) $< -o $@ $(HDFLIB)/libdf.a
 
-all: testhdf fortest
+all: testhdf fortest 
 
 .c.o: 
 	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
@@ -59,7 +56,7 @@ fortest: ftests fortest.o
 ftests: $(FTESTS)
 
 clean: 
-	 -$(RM) $(RMFLAGS) $(CTESTS) $(FOBJS)
+	 -$(RM) $(RMFLAGS) $(CTESTS) $(FOBJS) $(FTESTS)
 
 depend: 
 	 makedepend -I$(HDFINC) *.c
