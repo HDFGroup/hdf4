@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.9  1993/04/14 21:39:15  georgev
-Had to add some VOIDP casts to some functions to make the compiler happy.
+Revision 1.10  1993/06/16 17:17:59  chouck
+Fixed comments and increased some buffer sizes
 
+ * Revision 1.9  1993/04/14  21:39:15  georgev
+ * Had to add some VOIDP casts to some functions to make the compiler happy.
+ *
  * Revision 1.8  1993/04/06  17:23:38  chouck
  * Added Vset macros
  *
@@ -101,7 +104,9 @@ int32 (*ext_funcs[])() = {
     HXIendaccess,
 };
 
-/*- HXcreate
+/* ------------------------------- HXcreate ------------------------------- */
+/*
+
  Create a data element in an external file.  If that file already
  exists, we will simply *modify* that file, not delete it and
  start over.  Offset and start_len are for encapsulating data
@@ -110,7 +115,10 @@ int32 (*ext_funcs[])() = {
 
  If the objext we are writing out already exists in an HDF file and 
  is "promoted" then the start_len is ignored.
--*/
+
+ Return an AID to the newly created external element, FAIL on error.
+
+*/
 #ifdef PROTOTYPE
 int32 HXcreate(int32 file_id, uint16 tag, uint16 ref, char *extern_file_name, int32 f_offset, int32 start_len)
 #else
@@ -336,9 +344,15 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
     return ASLOT2ID(slot);
 }
 
-/*- HXIstaccess
- start accessing a data element
- called by HXIstread and HXIstwrite
+
+/* ----------------------------- HXIstaccess ------------------------------ */
+/*
+
+  start accessing a data element
+  called by HXIstread and HXIstwrite
+  
+  Return FAIL on error
+
 -*/
 #ifdef PROTOTYPE
 PRIVATE int32 HXIstaccess(accrec_t *access_rec, int16 access)
@@ -621,9 +635,13 @@ PRIVATE int32 HXIwrite(access_rec, length, data)
     return length;
 }
 
-/*- HXIinquire
+
+/* ------------------------------ HXIinquire ------------------------------ */
+/*
+
  inquire information about the access record and data element
--*/
+
+*/
 #ifdef PROTOTYPE
 PRIVATE int32 HXIinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
                         uint16 *pref, int32 *plength, int32 *poffset,
@@ -663,8 +681,10 @@ PRIVATE int32 HXIinquire(access_rec, pfile_id, ptag, pref, plength, poffset,
 
 /* ----------------------------- HXIendaccess ----------------------------- */
 /*
+
   Close the file pointed to by the current AID and free the AID
--*/
+
+*/
 #ifdef PROTOTYPE
 PRIVATE int32 HXIendaccess(accrec_t *access_rec)
 #else
@@ -699,14 +719,16 @@ PRIVATE int32 HXIendaccess(access_rec)
 
 /* ----------------------------- HXIcloseAID ------------------------------ */
 /*
-close the file currently being pointed to by this AID but do *NOT* 
-free the AID.
 
-This is called by Hnextread() which reuses an AID to point to
-the 'next' object as requested.  If the current object was an
-external object, the external file needs to be closed before all
-reference to it is lost.
--*/
+  close the file currently being pointed to by this AID but do *NOT* 
+  free the AID.
+  
+  This is called by Hnextread() which reuses an AID to point to
+  the 'next' object as requested.  If the current object was an
+  external object, the external file needs to be closed before all
+  reference to it is lost.
+
+*/
 #ifdef PROTOTYPE
 int32 HXIcloseAID(accrec_t *access_rec)
 #else
