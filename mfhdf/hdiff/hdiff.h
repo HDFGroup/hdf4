@@ -88,7 +88,7 @@ int  sddata_diff(int sdid1, int sdid2, struct fspec specp);
 int  vdata_diff(int32 fid1, int32 fid2, struct fspec specp, int32 cmp_flag, int32 f_flag);
 void pr_att_vals(nc_type type, int len, void *vals);
 int  vdata_cmp(int32 vs1, int32 vs2, char *gname, char*cname, int32 max_err_cnt);
-void fmt_print(char *x, int32 type);
+void fmt_print(uint8 *x, int32 type);
 void make_vars(char *optarg, struct fspec* fspecp, int option);
 int  is_readable( char *vgclass );
 

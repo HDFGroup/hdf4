@@ -482,13 +482,13 @@ int32  max_err_cnt;
 
 void
 fmt_print(x, type)
-char *x;
+uint8 *x;
 int32 type;
 {
- short s = 0;
- long  l = 0;
- float f = 0;
- double d = 0;
+ int16    s = 0;
+ int32    l = 0;
+ float32  f = 0;
+ float64  d = 0;
  
  switch(type) 
  {
