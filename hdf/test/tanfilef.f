@@ -38,7 +38,6 @@ C
       character*100 desc1, desc2, tempstr
       character*64 TESTFILE
       character*1 CR
-      character*1 NULL
 
       ISFIRST = 1
       NOFIRST = 0
@@ -49,7 +48,6 @@ C
       MAXLEN_DESC = 100
       DFACC_CREATE = 4
       DFACC_READ = 1
-      NULL = char(0)
 
       lab1 = 'File label #1: aaa'
       lab2 = 'File label #2: bbbbbb'

@@ -304,7 +304,7 @@ main(int argc, char *argv[])
           MESSAGE(2, printf("\nCleaning Up...\n\n");
               );
 #ifndef VMS
-          system("rm *.hdf");
+          system("rm -f *.hdf");
 #else
           system("delete *.hdf;*");
 #endif

@@ -202,7 +202,7 @@ C *********** Write out 2 descritptions for each SDS ***********
 
          endif
 
-         ret = d8aimg(TESTFILE, image, COLS, ROWS, NULL)
+         ret = d8aimg(TESTFILE, image, COLS, ROWS, 0)
          call RESULT(ret, 'd8aimg', number_failed)
          refnum = DFR8lastref()
 

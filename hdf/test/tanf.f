@@ -106,7 +106,7 @@ C         write out annotations for 2 out of every 3
               call RESULT(ret, 'dapdesc', number_failed)
           endif
 
-          ret = d8aimg(TESTFILE, image, COLS, ROWS, NULL)
+          ret = d8aimg(TESTFILE, image, COLS, ROWS, 0)
           call RESULT(ret, 'd8aimg', number_failed)
           refnum = DFR8lastref()
           ret = daplab(TESTFILE, DFTAG_RIG, refnum, labris)

@@ -322,7 +322,7 @@ $(ZLIBLIB)/libz.a:
 #	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
 #
 .c.o: 
-	 $(CC) $(ALL_CFLAGS) -c $*.c 
+	$(CC) $(ALL_CFLAGS) -c $*.c 
 
 .f.o:
 	$(FC) $(FFLAGS) -c $*.f 
@@ -338,17 +338,17 @@ test-hdf::		FORCE
 	esac
 
 atest-hdf: testhdf fortest
-	 -$(RM) $(RMFLAGS) *.hdf 
+	-$(RM) $(RMFLAGS) *.hdf 
 	./testhdf
-	 -$(RM) $(RMFLAGS) *.hdf 
+	-$(RM) $(RMFLAGS) *.hdf 
 	./fortest
 
 test-hdfnofortran: testhdf
-	 -$(RM) $(RMFLAGS) *.hdf 
+	-$(RM) $(RMFLAGS) *.hdf 
 	./testhdf
 
 test-hdffortran: fortest fortest.sav
-	 -$(RM) $(RMFLAGS) *.hdf 
+	-$(RM) $(RMFLAGS) *.hdf 
 	./fortest > fortest.out
 	@cmp fortest.out fortest.sav && echo "*** Fortran tests passed ***";
 
@@ -377,15 +377,16 @@ gentest: gentest.c $(HDFLIB)/libdf.a
 ftests: $(FTESTS)
 
 clean: 
-	 -$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) fortest core \
-	*.hdf ptesthdf qtesthdf gentest *.o $(TESTDIR)/*
+	-$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) fortest fortestF \
+	core *.hdf ptesthdf qtesthdf gentest *.o fortest.arg $(TESTDIR)/*
 
 distclean: 
-	 -$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) *.o fortest core \
-	*.hdf  ptesthdf qtesthdf gentest config.status Makefile $(TESTDIR)/*
+	-$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) fortest fortestF \
+	core *.hdf ptesthdf qtesthdf gentest *.o fortest.arg $(TESTDIR)/* \
+	config.status Makefile
 
 depend: 
-	 makedepend -I$(HDFINC) *.c
+	makedepend -I$(HDFINC) *.c
 
 saber:	$(SRCS)
 	 #load $(ALL_CFLAGS) $(SRCS) 
