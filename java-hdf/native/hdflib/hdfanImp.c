@@ -260,7 +260,7 @@ jobject obj)
 }
 
 
-JNIEXPORT jint JNICALL Java_ncsa_hdf_hdflib_HDFLibrary_ANget_1tagref 
+JNIEXPORT jint JNICALL Java_ncsa_hdf_hdflib_HDFLibrary_ANget_tagref 
 ( JNIEnv *env,
 jobject obj, 
 jint an_id,

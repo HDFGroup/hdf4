@@ -23,6 +23,7 @@
  */
 
 #include "hdf.h"
+#include "mfhdf.h"
 
 #include <stdio.h>
 
@@ -114,6 +115,38 @@ jstring gr_name)
 	(*env)->ReleaseStringUTFChars(env,gr_name,str);
 
 	return rval;
+}
+
+JNIEXPORT jboolean JNICALL Java_ncsa_hdf_hdflib_HDFLibrary_GRgetchunkinfo 
+( JNIEnv *env,
+jobject obj, 
+jint sdsid,
+jobject chunk_def, /* Out: HDFChunkInfo */
+jintArray cflags)              /* OUT: Integer */
+{
+int32 rval;
+HDF_CHUNK_DEF cdef;
+jboolean stat;
+jint *flgs;
+jboolean bb;
+
+/*
+	bzero((char *)&cdef, sizeof(cdef));
+*/
+	flgs = (*env)->GetIntArrayElements(env,cflags,&bb);
+	rval = SDgetchunkinfo( (int32)sdsid, &cdef, (int32 *)&(flgs[0]));
+
+	/* convert cdef to HDFchunkinfo */
+	if (rval == FAIL) {
+		(*env)->ReleaseIntArrayElements(env,cflags,(jint *)flgs,JNI_ABORT);
+		return JNI_FALSE;
+	} else {
+		(*env)->ReleaseIntArrayElements(env,cflags,(jint *)flgs,JNI_COMMIT);
+		stat = makeChunkInfo( env, obj, chunk_def, flgs, &cdef);
+
+		return stat/*JNI_TRUE*/;
+	}
+
 }
 
 JNIEXPORT jboolean JNICALL Java_ncsa_hdf_hdflib_HDFLibrary_GRgetiminfo 
@@ -470,23 +503,6 @@ jint pal_id)
 }
 
 
-JNIEXPORT jboolean JNICALL Java_ncsa_hdf_hdflib_HDFLibrary_GRsetaccesstype 
-( JNIEnv *env,
-jobject obj, 
-jint ri_id, 
-jint access_mode)
-{
-	intn rval;
-
-	rval = GRsetaccesstype((int32) ri_id, (uintn) access_mode);
-	if (rval == FAIL) {
-		return JNI_FALSE;
-	} else {
-		return JNI_TRUE;
-	}
-}
-
-
 JNIEXPORT jboolean JNICALL Java_ncsa_hdf_hdflib_HDFLibrary_GRsetattr__ILjava_lang_String_2IILjava_lang_String_2 
 ( JNIEnv *env,
 jobject obj, 
@@ -571,6 +587,43 @@ jobject c_info) /* IN:  CompInfo */
 	}
 }
 
+JNIEXPORT jboolean JNICALL Java_ncsa_hdf_hdflib_HDFLibrary_GRsetchunk 
+( JNIEnv *env,
+jobject obj, 
+jint sdsid,
+jobject chunk_def, /* IN: HDFChunkInfo */
+jint flags)              
+{
+intn rval;
+HDF_CHUNK_DEF c_def;
+jboolean bval;
+
+/*
+	bzero((char *)&c_def, sizeof(c_def));
+*/
+
+	bval = getChunkInfo(env,obj,chunk_def,&c_def);
+
+	/* check results */
+
+	rval = SDsetchunk ((int32) sdsid, c_def, (int32) flags);
+
+	if (rval == FAIL) {
+		return JNI_FALSE;
+	} else {
+		return JNI_TRUE;
+	}
+}
+
+JNIEXPORT jint JNICALL Java_ncsa_hdf_hdflib_HDFLibrary_GRsetchunkcache 
+( JNIEnv *env,
+jobject obj, 
+jint sdsid,
+jint maxcache,
+jint flags)              
+{
+	return ( SDsetchunkcache((int32)sdsid, (int32)maxcache, (int32)flags) );
+}
 
 JNIEXPORT jboolean JNICALL Java_ncsa_hdf_hdflib_HDFLibrary_GRsetexternalfile 
 ( JNIEnv *env,
