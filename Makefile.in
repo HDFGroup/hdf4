@@ -33,7 +33,7 @@ docdir = $(datadir)/doc
 
 SHELL = /bin/sh
 
-INSTALL = $${srcroot}/install.sh -c
+INSTALL = ${TOP_SRCDIR}/install-sh -c
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL) -m 644
 
@@ -213,20 +213,31 @@ libjpeg:
           SUBDIRS="$(HDFDIR)" subd
 
 install:	
-	true
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(HDFDIR)" subd
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=install \
+          SUBDIRS="$(NETCDFDIR)" subd
+
+install-hdf:	
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install \
+          SUBDIRS="$(HDFDIR)" subd
+
+install-netcdf:	
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=install \
+          SUBDIRS="$(NETCDFDIR)" subd
 
 hdfclean:		
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="clean" \
           SUBDIRS="$(HDFDIR)" subd
 
 netcdfclean:		
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="clean" \
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG="clean" \
           SUBDIRS="$(NETCDFDIR)" subd
 
 clean:		
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(HDFDIR)" subd
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
           SUBDIRS="$(NETCDFDIR)" subdn
 
 hdfdistclean:		
@@ -234,13 +245,13 @@ hdfdistclean:
           SUBDIRS="$(HDFDIR)" subd
 
 netcdfdistclean:		
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="distclean" \
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG="distclean" \
           SUBDIRS="$(NETCDFDIR)" subd
 
 distclean:	
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(HDFDIR)" subd
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
           SUBDIRS="$(NETCDFDIR)" subdn
 	-$(RM) $(RMFLAGS) config.status Makefile mfhdf/CUSTOMIZE
 
@@ -264,6 +275,10 @@ help:
 	@echo "make netcdf-test       - run NETCDF tests " 
 	@echo "make hdf-test          - run HDF tests " 
 	@echo "make hdf-testnofortran - run HDF tests except the fortran test " 
+	@echo "make install           - install HDF,netCDF libraries, "
+	@echo "                         utilites, and includes " 
+	@echo "make install-hdf       - install HDF library, utilities and includes"
+	@echo "make install-netcdf    - install netCDF library, utilities and includes"
 	@echo "make clean        - cleans up HDF and NETCDF packages(*.o,libdf.a,..)"
 	@echo "make distclean    - cleans up HDF and NETCDF packages including"
 	@echo "                    configuration(Makefiles,config.status,..)"

@@ -21,6 +21,7 @@ SHELL = /bin/sh
 
 # 'srcdir' Gets set to directory this Makefile is found in
 srcdir = .
+TOP_SRCDIR = ../..
 
 prefix = /usr/local
 
@@ -42,7 +43,7 @@ man8dir = $(mandir)/man8
 man9dir = $(mandir)/man9
 docdir = $(datadir)/doc
 
-INSTALL = $${srcroot}/install.sh -c
+INSTALL = ${TOP_SRCDIR}/install-sh -c
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL) -m 644
 
@@ -73,11 +74,17 @@ FFLAGS=
 MAKEINFO = makeinfo
 TEXI2DVI = texi2dvi
 
+# The echo command.
+ECHO = echo
+
 # Directory in which to install scripts.
 bindir = $(exec_prefix)/bin
 
 # Directory in which to install library files.
 libdir = $(prefix)/lib
+
+# Directory in which to install include files.
+includedir = $(prefix)/include
 
 # Directory in which to install documentation info files.
 infodir = $(prefix)/info
@@ -108,6 +115,8 @@ UTILS = hdf24to8 hdfcomp hdfls hdfpack hdftopal hdftor8 paltohdf \
 
 HEOBJ = he_main.o he_cntrl.o he_disp.o he_file.o
 
+PROGS = $(UTILS) hdfed
+
 all: hdfed utils fp2hdf fptest
 #	-if( test \! -d $(HDFBIN)) then (mkdir $(HDFBIN)) fi
 #	-cp $(UTILS) hdfed $(HDFBIN)
@@ -122,6 +131,14 @@ rebuildnofortran:
 
 # Leave this target blank with no actions, the rebuild macros above depend on it
 force_rebuild:
+
+install: install-prog
+
+install-prog: all
+	for p in $(PROGS); do \
+	    $(INSTALL_PROGRAM) \
+		`pwd`/$$p $(bindir)/`$(ECHO) $$p`; \
+	done
 
 #.c.o: 
 #	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
@@ -169,6 +186,7 @@ help:
 	@echo "make help    - prints this usage section"
 	@echo "make all     - (DEFAULT) makes utilities"
 	@echo "make hdfed   - makes hdfed utilitiy"
+	@echo "make install - install HDF utilites, "
 	@echo "make clean     - cleans up tests (both C and Fortran)"
 	@echo "make distclean - cleans up HDF tests including"
 	@echo "                 configuration(Makefiles,config.status,..)"

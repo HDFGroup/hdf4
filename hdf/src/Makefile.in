@@ -58,6 +58,7 @@ SHELL = /bin/sh
 
 # 'srcdir' Gets set to directory this Makefile is found in
 srcdir = .
+TOP_SRCDIR = ../..
 
 prefix = /usr/local
 
@@ -79,7 +80,7 @@ man8dir = $(mandir)/man8
 man9dir = $(mandir)/man9
 docdir = $(datadir)/doc
 
-INSTALL = $${srcroot}/install.sh -c
+INSTALL = ${TOP_SRCDIR}/install-sh -c
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL) -m 644
 
@@ -116,6 +117,9 @@ bindir = $(exec_prefix)/bin
 # Directory in which to install library files.
 libdir = $(prefix)/lib
 
+# Directory in which to install include files.
+includedir = $(prefix)/include
+
 # Directory in which to install documentation info files.
 infodir = $(prefix)/info
 
@@ -124,6 +128,7 @@ infodir = $(prefix)/info
 CMSRCS=cmextelt.cs
 CMOBJS=
 
+TARGETLIB = libdf.a
 
 #### ----- host and target specific makefile fragments come in here.-------
 ### ------------------- end of makefile fragments -------------------------
@@ -150,8 +155,10 @@ ARCHIVE=hdf.shar
 #
 include src.inc
 
+HINCS = $(HDRS) $(FINCS)
+
 #.SUFFIXES:
-.SUFFIXES: .c.o .f.o
+.SUFFIXES: .c.o .f.o .installed .finstalled
 
 # This rule causes ansi2knr to be invoked.
 #@ISANSICOM@.c.o:
@@ -210,13 +217,26 @@ debug: libdf.a
 saber:
 	#load -D$(MACHINE) $(CSRCS) $(TSRCS) -lc
 
+install: install-lib install-headers
+
+install-lib: install-headers
+	$(INSTALL_DATA) $(TARGETLIB) $(libdir)/$(TARGETLIB).n
+	( cd $(libdir) ; $(RANLIB) $(libdir)/$(TARGETLIB).n )
+	mv -f $(libdir)/$(TARGETLIB).n $(libdir)/$(TARGETLIB)
+
+install-headers:
+	for p in $(HINCS); do \
+	    $(INSTALL_DATA) \
+		`pwd`/$$p $(includedir)/$$p; \
+	done
+
 .installed: libdf.a
 	-if (test \! -d $(HDFINC)) then (mkdir $(HDFINC) ) fi
 	-cp $(HDRS) $(FINCS) $(HDFINC)
 	-if (test \! -d $(HDFLIB)) then (mkdir $(HDFLIB) ) fi
 	-cp libdf.a $(HDFLIB)
 	-$(RANLIB) $(HDFLIB)/libdf.a
-	touch .installed
+	-touch .installed
 
 .finstalled: libnofortran
 	-if (test \! -d $(HDFINC)) then (mkdir $(HDFINC) ) fi
@@ -224,7 +244,7 @@ saber:
 	-if (test \! -d $(HDFLIB)) then (mkdir $(HDFLIB) ) fi
 	-cp libdf.a $(HDFLIB)
 	-$(RANLIB) $(HDFLIB)/libdf.a
-	touch .finstalled
+	-touch .finstalled
 
 depend:
 	makedepend -fMakefile -- $(CSRCS)
@@ -270,6 +290,8 @@ help:
 	@echo "make rebuild      - rebuilds HDF library "
 	@echo "make rebuildnofortran - rebuilds HDF library excluding"
 	@echo "                        fortran support "
+	@echo "make install          - install HDF library, "
+	@echo "                        and includes " 
 	@echo "make clean     - cleans up HDF library(*.o,libdf.a,..)"
 	@echo "make distclean - cleans up HDF library including"
 	@echo "                 configuration(Makefiles,config.status,..)"

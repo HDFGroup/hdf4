@@ -6,6 +6,7 @@ SHELL = /bin/sh
 
 # 'srcdir' Gets set to directory this Makefile is found in
 srcdir = .
+TOP_SRCDIR = ..
 
 prefix = /usr/local
 
@@ -27,7 +28,7 @@ man8dir = $(mandir)/man8
 man9dir = $(mandir)/man9
 docdir = $(datadir)/doc
 
-INSTALL = $${srcroot}/install.sh -c
+INSTALL = ${TOP_SRCDIR}/install-sh -c
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL) -m 644
 
@@ -163,6 +164,12 @@ hdf-testnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=hdf-testnofortran \
           SUBDIRS="test" subd
 
+install:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install-lib \
+          SUBDIRS="src jpeg " subd
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install \
+          SUBDIRS="util" subd
+
 perfs:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
           SUBDIRS="src jpeg perf" subd
@@ -244,6 +251,8 @@ help:
 	@echo "make libjpeg       - makes IJG JPEG library "
 	@echo "make hdf-test          - run HDF tests " 
 	@echo "make hdf-testnofortran - run HDF tests except the fortran test " 
+	@echo "make install           - install HDF library, "
+	@echo "                         utilites, and includes " 
 	@echo "make clean     - cleans up HDF packages(*.o,libdf.a,..)"
 	@echo "make distclean - cleans up HDF packages including"
 	@echo "                 configuration(Makefiles,config.status,..)"
