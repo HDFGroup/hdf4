@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.4  1992/07/31 21:10:24  chouck
-Use in-house print routines rather than fork() a call to od
+Revision 1.5  1992/08/18 19:49:33  chouck
+Include string.h
 
+ * Revision 1.4  1992/07/31  21:10:24  chouck
+ * Use in-house print routines rather than fork() a call to od
+ *
  * Revision 1.3  1992/07/15  21:48:48  sxu
  * No change.
  *
@@ -19,7 +22,9 @@ Use in-house print routines rather than fork() a call to od
 #include "hdf.h"
 #include <ctype.h>
 #include <stdio.h>
-#include <sys/wait.h>
+/* #include <sys/wait.h> */
+
+#include <string.h>
 
 /* 
  * the following may not exist on all systems it should define stuff
