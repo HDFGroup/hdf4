@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/08/27 22:18:42  chouck
+Added support for calibration tag reading and writing
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*-----------------------------------------------------------------------------
  * File:    dfsd.h
@@ -32,21 +35,23 @@ typedef struct {                /* DFdi = data identifier = tag/ref */
 /* include numbertype and aid for 3.2   S. Xu   */
 /* structure to hold SDG info */
 typedef struct DFSsdg {
-    DFdi    data;		/* tag/ref of data in file */
-    intn    rank;		/* number of dimensions */
-    int32   *dimsizes;		/* dimensions of data */
+    DFdi    data;              /* tag/ref of data in file */
+    intn    rank;              /* number of dimensions */
+    int32   *dimsizes;	       /* dimensions of data */
     char    *coordsys;
-    char    *dataluf[3];	/* label/unit/format of data */
-    char    **dimluf[3];        /* label/unit/format for each dim */
-    uint8   **dimscales;	/* scales for each dimension */
-    uint8   max_min[16];	/* max, min values of data, */
-	    			/* currently atmost 8 bytes each	*/
-    int32   numbertype;		/* default is float32      */
-    uint8   filenumsubclass;    /* number format in the file, default is IEEE */
-    int32   aid;		/* access id		*/
-    int32   compression;	/* 0 -- not compressed  */
-    int32   isndg;      /* 0 -- pure sdg, written by 3.1   */
-				/* 1 -- ndg or nsdg, written by 3.2   */
+    char    *dataluf[3];       /* label/unit/format of data */
+    char    **dimluf[3];       /* label/unit/format for each dim */
+    uint8   **dimscales;       /* scales for each dimension */
+    uint8   max_min[16];       /* max, min values of data, */
+	    		       /* currently atmost 8 bytes each	*/
+    int32   numbertype;	       /* default is float32      */
+    uint8   filenumsubclass;   /* number format in the file, default is IEEE */
+    int32   aid;               /* access id		*/
+    int32   compression;       /* 0 -- not compressed  */
+    int32   isndg;      /* 0 -- pure sdg, written by 3.1 else ndg */
+    float64 cal, cal_err;      /* calibration multiplier stuff          */
+    float64 ioff, ioff_err;    /* calibration offset stuff              */
+    int32   cal_type;          /* number type of data after calibration */
 } DFSsdg;
 
 /* DFnsdgle is the internal structure which stores SDG or NDS and   */
@@ -63,16 +68,6 @@ typedef struct DFnsdg_t_hdr	{
     uint32 size;
     DFnsdgle *nsdg_t;
 }  DFnsdg_t_hdr;
-
-#if 0 /* testing... */
-#ifndef PC
-#ifndef VMS
-int32 DFSDIopen();
-#else /*VMS*/
-int32 _DFSDIopen();
-#endif
-#endif /* !PC */
-#endif /* testing... */
 
 extern int DFSDgetdims
     PROTO((char *filename, intn *prank, int32 sizes[], intn maxrank));
@@ -157,7 +152,7 @@ extern int DFSDIputslice
     PROTO((int32 windims[], void *data, int32 dims[], int isfortran));
 extern int DFSDIendslice
     PROTO((int isfortran));
-extern int32 DFSDIrefresh
+extern intn DFSDIrefresh
     PROTO((char *filename));
 extern int DFSDIisndg
     PROTO((int32 *isndg));

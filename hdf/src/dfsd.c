@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/08/27 22:18:42  chouck
+Added support for calibration tag reading and writing
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*-----------------------------------------------------------------------------
  File:  dfsd.c
@@ -101,13 +104,19 @@ static DFnsdg_t_hdr *nsdghdr = NULL;
 /* initialize aid to -1 and numbertype to DFNT_NONE.   S. Xu    */
 static DFSsdg Readsdg =     /* struct for reading */
 { {(uint16)0, (uint16)0}, (intn)0, NULL, NULL, { NULL, NULL, NULL },
-  { NULL, NULL, NULL }, NULL, {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0},
-    (int32)DFNT_NONE, DFNTF_NONE, (int32)-1, (int32)0 };
+      { NULL, NULL, NULL }, NULL, {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0},
+      (int32)DFNT_NONE, DFNTF_NONE, (int32)-1, (int32)0,
+      (float64) 1.0, (float64) 0.0, (float64) 0.0, (float64) 0.0,
+      (int32) -1 
+};
 
 static DFSsdg Writesdg =    /* struct for writing */
 { {(uint16)0, (uint16)0}, (intn)0, NULL, NULL, { NULL, NULL, NULL },
-  { NULL, NULL, NULL }, NULL, {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0},
-    (int32)DFNT_NONE, DFNTF_NONE, (int32)-1, (int32)0 };
+      { NULL, NULL, NULL }, NULL, {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0},
+      (int32)DFNT_NONE, DFNTF_NONE, (int32)-1, (int32)0,
+      (float64) 1.0, (float64) 0.0, (float64) 0.0, (float64) 0.0,
+      (int32) -1 
+};
 
 static  uint16  Writeref=0;	/* ref of next SDG/NDG to write to file */
 static int Newdata=(-1);	/* Values in Readsdg fresh? */
@@ -126,12 +135,14 @@ static struct {			/* Indicators of status (s) of info:    */
     int scales;
     int maxmin;
     int transpose;	/* It should be taken out!!!		!!!  */
-} Ref = {  -1, -1, -1, { -1, -1, -1 }, -1, -1 , -1};
+    int cal;
+} Ref = {  -1, -1, -1, { -1, -1, -1 }, -1, -1 , -1, -1};
     
 static int Maxstrlen[4] = { DFS_MAXLEN, DFS_MAXLEN, DFS_MAXLEN, DFS_MAXLEN };
-static int Ismaxmin = 0;	/* is there a max/min value on read? */
+static int Ismaxmin      = 0;	/* is there a max/min value on read?  */
 static int FileTranspose = 0;	/* is the data in column major order? */
-static int Fortorder = 0;	/* should data be written col major? */
+static int Fortorder     = 0;	/* should data be written col major?  */
+static int IsCal         = 0;   /* has calibration info been set?     */
 
 /* In ver. 3.2 numbertype and file number format (subclass) are included  */
 /* in DFSsdg, and  fileNTsize is local to functions . 		*/ 
@@ -1764,6 +1775,7 @@ DFSsdg *sdg;
     DFSDIclear(sdg);
     if(tag == DFTAG_NDG) DFSDIclearNT(sdg);
     Ismaxmin = 0;
+    IsCal = FALSE;
 
     /*
      * Loop through all members of the group 
@@ -2006,7 +2018,7 @@ DFSsdg *sdg;
             break;
             
         case DFTAG_SDM:	/* max/min */
-            if (fileNT==platnumsubclass) {       /* no conversion */
+            if (fileNT == platnumsubclass) {       /* no conversion */
                 if (Hgetelement(file_id, elmt.tag, elmt.ref,
                                 (uint8 *) &(sdg->max_min[0])) == FAIL)
                     return FAIL;
@@ -2028,6 +2040,109 @@ DFSsdg *sdg;
                 HDfreespace(buf);
             }
             Ismaxmin = 1;
+            break;
+
+        case DFTAG_CAL:
+
+printf("Found some calibration info\n");
+            if (fileNT == platnumsubclass) {       /* no conversion */
+
+                /* get size of element */
+                intn eltSize = Hlength(file_id, elmt.tag, elmt.ref);
+                if(eltSize == FAIL) return FAIL; 
+                
+                if(eltSize == 36) {
+                    /* element is new, double based type */
+                    if (Hgetelement(file_id, elmt.tag, elmt.ref,
+                                    (unsigned char*) &sdg->cal)<0)
+                        return(-1);
+                } else {
+
+                    /* element is old float based type */
+                    char *buf2;
+
+                    /* allocate input buffer */
+                    buf2 = HDgetspace((uint32) 4 * sizeof(float32));
+                    if(buf == NULL) return FAIL;
+
+                    /* move 'em over */
+                    sdg->ioff     = (float64) buf2[0];
+                    sdg->ioff_err = (float64) buf2[1];
+                    sdg->cal      = (float64) buf2[2];
+                    sdg->cal_err  = (float64) buf2[3];
+                    sdg->cal_type = DFNT_INT16;
+
+                    HDfreespace(buf2);
+                }
+            }
+            else {
+
+                intn eltSize;
+printf("doing conversion\n");
+
+                /* get size of element */
+                eltSize = Hlength(file_id, elmt.tag, elmt.ref);
+                if(eltSize == FAIL) return FAIL;
+
+
+printf("Got back the element size %d\n", eltSize);
+
+                /* allocate buffer */
+                buf = HDgetspace((uint32) eltSize);
+                if (buf == NULL) return FAIL;
+                
+                /* read and convert calibration */
+                if (Hgetelement(file_id, elmt.tag, elmt.ref, buf) == FAIL)
+                    return FAIL;
+
+                if(eltSize == 36) {
+
+                    /* element is new, double based type */
+
+                    /* read in the 64bit float factors */
+                    DFKconvert(buf, 
+                               (unsigned char *) &sdg->cal, 
+                               DFNT_FLOAT64, 4, DFACC_READ, 0, 0);
+
+
+printf("I think the cal is %f\n", sdg->cal);
+                    
+                    /* read in the 32bit integer number type */
+                    DFKconvert(buf + 32,
+                               (unsigned char *) &sdg->cal_type, 
+                               DFNT_INT32, 1, DFACC_READ, 0, 0);
+
+                } else {
+
+                    /* element is old float based type */
+                    char *buf2;
+
+ printf("(float32) I think the cal is %f\n", sdg->cal); 
+                    /* allocate translation buffer */
+                    buf2 = HDgetspace((uint32) 4 * sizeof(float32));
+                    if(buf == NULL) return FAIL;
+
+                    /* convert calibration factors */
+                    DFKconvert(buf, buf2, DFNT_FLOAT32, 4,
+                               DFACC_READ, 0, 0);
+
+                    /* move 'em over */
+                    sdg->ioff     = (float64) buf2[0];
+                    sdg->ioff_err = (float64) buf2[1];
+                    sdg->cal      = (float64) buf2[2];
+                    sdg->cal_err  = (float64) buf2[3];
+                    sdg->cal_type = DFNT_INT16;
+
+                    HDfreespace(buf2);
+
+                }
+
+                HDfreespace(buf);
+                
+            }
+            
+            IsCal = TRUE;
+
             break;
                     
         case DFTAG_SDT:
@@ -2298,6 +2413,54 @@ DFSsdg *sdg;
         if (DFdiput(DFTAG_SDM, (uint16) Ref.maxmin) < 0)
             return FAIL;
     Ref.maxmin = (-1);		/* max/min should be reset for each data set */
+    
+    /* Write calibration. */
+    if (!Ref.cal) {
+        
+        printf("Writing out calibration information\n");
+        
+        if (platnumsubclass == outNT) {     /* no conversion */
+            if (Hputelement(file_id, DFTAG_CAL, ref, 
+                            (unsigned char *) &sdg->cal,
+                            (int32) 36)<0) 
+                return(-1);
+            Ref.cal = ref;
+        }
+        else {
+            /* allocate buffer */
+            uint8 *buf;
+            
+            /* allocate translation buffer */
+            buf = (uint8 *) HDgetspace((uint32) 
+                                       4 * sizeof(float64) +
+                                       1 * sizeof(int32));
+            if(buf == NULL) return FAIL;
+            
+            /* convert doubles */            
+            DFKconvert((uint8*) &sdg->cal, buf, 
+                       DFNT_FLOAT64, 4, DFACC_WRITE, 0, 0);
+            
+            /* convert int */
+            DFKconvert((uint8*) &sdg->cal_type, buf + 32, 
+                       DFNT_INT32, 1, DFACC_WRITE, 0, 0);
+            
+            /* write it into the file */
+            if (Hputelement(file_id, DFTAG_CAL, ref, 
+                            (unsigned char *) buf,
+                            (int32) 36) < 0) 
+                return(-1);
+            Ref.cal = ref;
+            HDfreespace(buf);
+            
+        }
+    }
+
+    
+    if (Ref.cal>0)
+        if (DFdiput(DFTAG_CAL, (uint16) Ref.cal) < 0)
+            return(-1);
+    Ref.cal = (-1);        /* Calibration should be reset for each data set */
+    
     
     if (!Ref.transpose) {        /* if transposed, add transpose tag */
         if (Hdupdd(file_id, DFTAG_SDT, ref, DFTAG_SDD, ref) == FAIL)
@@ -2608,9 +2771,9 @@ int32 file_id;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFSDIrefresh(char *filename)
+intn DFSDIrefresh(char *filename)
 #else
-int DFSDIrefresh(filename)
+intn DFSDIrefresh(filename)
 char *filename;
 #endif /* PROTOTYPE */
 {
@@ -3408,6 +3571,92 @@ int DFSDIputslice(windims, data, dims, isfortran)
     return(ret>=0 ? 0 : -1);
 }
 
-/******************************************************************************/
-/*----------------------- Internal routines ---------------------------------*/
-/******************************************************************************/
+/* ------------------------------ DFSDgetcal ------------------------------ */
+/*-----------------------------------------------------------------------------
+ * Name:    DFSDgetcal()
+ * Purpose: Get calibration and uncalibrated offsets for data values
+ * Inputs:  pcal:  Pointer to float64 to return calibration value
+ *          pcal_err:  Pointer to float64 to return calibration error value
+ *          pioff:  Pointer to float64 to return uncalibrated offset value 
+ *          pioff_err:  Pointer to float64 to return uncalibrated offset error value
+ *          cal_nt : Pointer to int32 to return what the data's real NT is
+ * Globals: IsCal
+ * Returns: 0 on success, -1 if no values or if error, with DFerror set
+ * Users:   HDF users, utilities, other routines
+ * Invokes: none
+ * Method:  Retrieves values from Readsdg
+ * Remarks: none
+ *---------------------------------------------------------------------------*/
+
+#if defined __STDC__ || defined PC
+int DFSDgetcal(float64 *pcal, float64 *pcal_err, float64 *pioff, float64 *pioff_err,
+               int32 *cal_nt)
+#else
+int DFSDgetcal(pcal, pcal_err, pioff, pioff_err, cal_nt)
+float64 *pcal, *pcal_err, *pioff, *pioff_err;
+int32   *cal_nt;
+#endif /* __STDC__ || PC */
+{
+
+    static char *FUNC = "DFSDgetcal";
+
+    HEclear();
+    
+    if (Newdata<0) {
+        HERROR(DFE_BADCALL);
+        return(FAIL);
+    }
+
+    if (IsCal) {
+        *pcal      = Readsdg.cal;
+        *pcal_err  = Readsdg.cal_err;
+        *pioff     = Readsdg.ioff;
+        *pioff_err = Readsdg.ioff_err;
+        *cal_nt    = Readsdg.cal_type;
+        return(0);
+    } else {
+        HERROR(DFE_NOVALS);
+        return(FAIL);
+    }
+
+} /* DFSDgetcal */
+
+
+/* ------------------------------ DFSDsetcal ------------------------------ */
+/*-----------------------------------------------------------------------------
+ * Name:    DFSDsetcal()
+ * Purpose: Set calibration and offset (before calibration) of data
+ * Inputs:  cal:  Calibration
+ *          cal_err:  Calibration error
+ *          ioff:  Uncalibrated offset
+ *          ioff_err:  Uncalibrated offset error
+ *          cal_nt:  Numbertype of uncalibrated data
+ * Globals: Ref
+ * Returns: SUCCEED on success, FAIL if no calibration values or if error
+ * Users:   HDF users, utilities, other routines
+ * Invokes: none
+ * Method:  Modify Writesdg, set Ref
+ * Remarks: Automatically cleared after call to DFSDputdata or DFSDadddata
+ *---------------------------------------------------------------------------*/
+#if defined __STDC__ || defined PC
+int DFSDsetcal(float64 cal, float64 cal_err, float64 ioff, float64 ioff_err,
+               int32 cal_nt)
+#else
+int DFSDsetcal(cal, cal_err, ioff, ioff_err, cal_nt)
+float64 cal, cal_err, ioff, ioff_err;
+int32 cal_nt;
+#endif /* __STDC__ || PC */
+{
+    HEclear();
+
+    Writesdg.cal      = (float64) cal;
+    Writesdg.cal_err  = (float64) cal_err;
+    Writesdg.ioff     = (float64) ioff;
+    Writesdg.ioff_err = (float64) ioff_err;
+    Writesdg.cal_type = (int32)   cal_nt;
+
+    Ref.cal = 0;
+
+    return(SUCCEED);
+}
+
