@@ -37,10 +37,6 @@
 
 static int condensed;
 
-#ifdef MAC
-int vsdumpfull(VDATA *);
-#endif
-
 int32 vsdumpfull
   PROTO((VDATA * vs)); 
 
@@ -85,6 +81,7 @@ char**av;
   }
 
   if((f=Hopen(av[1],DFACC_READ,0))==FAIL) exit(0);
+  Vstart(f);
   printf("\nFILE: %s\n",av[1]);
   
   nvg=0;
@@ -184,6 +181,7 @@ char**av;
     HDfreespace (lonevs);
   }
 
+  Vend(f);
   Hclose(f);
   
 } /* main */
