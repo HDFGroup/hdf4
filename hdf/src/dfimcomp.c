@@ -349,7 +349,8 @@ cnt_color(int blocks)
       {
           k = indx(color_pt[i].c[RED], color_pt[i].c[GREEN], color_pt[i].c[BLUE]);
           /*    printf("cnt_color: k is %d\n",k); */
-          temp[k] = 0;
+          if (k < MAXCOLOR) /* Fortner Fix: supplied by Peter Lawton */
+              temp[k] = 0;
       }
 
     count = 0;
