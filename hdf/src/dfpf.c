@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/01/19 05:54:50  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.4  1993/04/14 21:39:11  georgev
+Had to add some VOIDP casts to some functions to make the compiler happy.
 
+ * Revision 1.3  1993/01/19  05:54:50  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.2  1992/09/11  14:15:04  koziol
  * Changed Fortran stubs' parameter passing to use a new typedef, intf,
  * which should be typed to the size of an INTEGER*4 in whatever Fortran
@@ -88,7 +91,7 @@ ndpigpal(filename, pal, fnlen)
 
     fn = HDf2cstring(filename, *fnlen);
     ret =  DFPgetpal(fn, (VOIDP)_fcdtocp(pal));
-    HDfreespace(fn);
+    HDfreespace((VOIDP)fn);
     return(ret);
 }
 
@@ -128,7 +131,7 @@ ndpippal(filename, pal, overwrite, filemode, fnlen)
     fn = HDf2cstring(filename, *fnlen);
     ret =  DFPputpal(fn, (VOIDP)_fcdtocp(pal), *overwrite,
             (char*)_fcdtocp(filemode));
-    HDfreespace(fn);
+    HDfreespace((VOIDP)fn);
     return(ret);
 }
 
@@ -156,7 +159,7 @@ ndpinpal(filename, fnlen)
 
     fn = HDf2cstring(filename, *fnlen);
     ret =  DFPnpals(fn);
-    HDfreespace(fn);
+    HDfreespace((VOIDP)fn);
     return(ret);
 }
 
@@ -187,7 +190,7 @@ ndpirref(filename, ref, fnlen)
 
     fn = HDf2cstring(filename, *fnlen);
     ret =  DFPreadref(fn, *ref);
-    HDfreespace(fn);
+    HDfreespace((VOIDP)fn);
     return(ret);
 }
 
@@ -220,7 +223,7 @@ ndpiwref(filename, ref, fnlen)
 
     fn = HDf2cstring(filename, *fnlen);
     ret =  DFPreadref(fn, *ref);
-    HDfreespace(fn);
+    HDfreespace((VOIDP)fn);
     return(ret);
 }
 

@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/01/19 05:54:09  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.4  1993/04/14 21:39:00  georgev
+Had to add some VOIDP casts to some functions to make the compiler happy.
 
+ * Revision 1.3  1993/01/19  05:54:09  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.2  1992/09/11  14:15:04  koziol
  * Changed Fortran stubs' parameter passing to use a new typedef, intf,
  * which should be typed to the size of an INTEGER*4 in whatever Fortran
@@ -142,7 +145,7 @@ ndaiganl(filename, tag, ref, type, fnlen)
 
     fn = HDf2cstring(filename, *fnlen);
     ret = DFANIgetannlen(fn, (uint16) *tag, (uint16) *ref, *type);
-    HDfreespace(fn);
+    HDfreespace((VOIDP)fn);
 
     return(ret);
 }
@@ -180,7 +183,7 @@ ndaigann(filename, tag, ref, annotation, maxlen, type, fnlen)
     fn = HDf2cstring(filename, *fnlen);
     ret = DFANIgetann(fn, (uint16) *tag, (uint16) *ref, 
                       (uint8*)_fcdtocp(annotation), *maxlen, *type);
-    HDfreespace(fn);
+    HDfreespace((VOIDP)fn);
 
     return(ret);
 }
@@ -218,7 +221,7 @@ ndaipann(filename, tag, ref, annotation, annlen, type, fnlen)
     fn = HDf2cstring(filename, *fnlen);
     ret = DFANIputann(fn, (uint16) *tag, (uint16) *ref, 
                       (uint8*)_fcdtocp(annotation), *annlen, *type);
-    HDfreespace(fn);
+    HDfreespace((VOIDP)fn);
     return(ret);
 }
 
@@ -277,8 +280,8 @@ ndailist(filename, tag, reflist, labellist,listsize, maxlen,startpos,fnlen)
     for (i=0; i < *listsize; i++)
         reflist[i] = tempreflist[i];
 
-    HDfreespace(fn);
-    HDfreespace(tempreflist);
+    HDfreespace((VOIDP)fn);
+    HDfreespace((VOIDP)tempreflist);
 
     return(nrefs);
 }

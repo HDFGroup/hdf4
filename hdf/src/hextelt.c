@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1993/04/06 17:23:38  chouck
-Added Vset macros
+Revision 1.9  1993/04/14 21:39:15  georgev
+Had to add some VOIDP casts to some functions to make the compiler happy.
 
+ * Revision 1.8  1993/04/06  17:23:38  chouck
+ * Added Vset macros
+ *
  * Revision 1.7  1993/04/05  22:35:43  koziol
  * Fixed goofups made in haste when patching code.
  *
@@ -230,34 +233,34 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
        buf = (VOIDP)HDgetspace((uint32) data_dd->length);
        if (!buf) {
            HERROR(DFE_NOSPACE);
-           HDfreespace(info);
+           HDfreespace((VOIDP)info);
            return FAIL;
        }
        if (HI_SEEK(file_rec->file, data_dd->offset) == FAIL) {
            HERROR(DFE_SEEKERROR);
-           HDfreespace(info);
-           HDfreespace(buf);
+           HDfreespace((VOIDP)info);
+           HDfreespace((VOIDP)buf);
            return FAIL;
        }
        if (HI_READ(file_rec->file, buf, data_dd->length) == FAIL) {
            HERROR(DFE_READERROR);
-           HDfreespace(info);
-           HDfreespace(buf);
+           HDfreespace((VOIDP)info);
+           HDfreespace((VOIDP)buf);
            return FAIL;
        }
        if (HI_SEEK(file_external, f_offset) == FAIL) {
            HERROR(DFE_SEEKERROR);
-           HDfreespace(info);
-           HDfreespace(buf);
+           HDfreespace((VOIDP)info);
+           HDfreespace((VOIDP)buf);
            return FAIL;
        }
        if (HI_WRITE(file_external, buf, data_dd->length) == FAIL) {
            HERROR(DFE_WRITEERROR);
-           HDfreespace(info);
-           HDfreespace(buf);
+           HDfreespace((VOIDP)info);
+           HDfreespace((VOIDP)buf);
            return FAIL;
        }
-       HDfreespace(buf);
+       HDfreespace((VOIDP)buf);
        info->length = data_dd->length;
     } else {
        info->length = start_len;

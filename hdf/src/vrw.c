@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1993/04/06 17:23:48  chouck
-Added Vset macros
+Revision 1.8  1993/04/14 21:39:33  georgev
+Had to add some VOIDP casts to some functions to make the compiler happy.
 
+ * Revision 1.7  1993/04/06  17:23:48  chouck
+ * Added Vset macros
+ *
  * Revision 1.6  1993/03/29  16:50:51  koziol
  * Updated JPEG code to new JPEG 4 code.
  * Changed VSets to use Threaded-Balanced-Binary Tree for internal
@@ -212,7 +215,7 @@ uint8    buf[];
     if(Vtbufsize < nelt * hsize) {
         Vtbufsize = nelt * hsize;
         if(Vtbuf)
-            HDfreespace(Vtbuf);
+            HDfreespace((VOIDP)Vtbuf);
         if((Vtbuf = (uint8 *) HDgetspace ( Vtbufsize )) == NULL) {
             HERROR(DFE_NOSPACE);
             return(FAIL);
@@ -357,7 +360,7 @@ uint8    buf[];
 		}
 	} /* case (d) */
 /*
-    HDfreespace (tbuf);
+    HDfreespace ((VOIDP)tbuf);
 */
 	return(nv/hsize);
 } /* VSread */
@@ -466,7 +469,7 @@ uint8        buf[];
     if(Vtbufsize < nelt * hsize) {
         Vtbufsize = nelt * hsize;
         if(Vtbuf)
-            HDfreespace(Vtbuf);
+            HDfreespace((VOIDP)Vtbuf);
         if((Vtbuf = (uint8 *) HDgetspace ( Vtbufsize )) == NULL) {
             HERROR(DFE_NOSPACE);
             return(FAIL);

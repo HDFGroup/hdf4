@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1993/03/29 18:38:15  chouck
-Cleaned up a bunch of casting problems
+Revision 1.5  1993/04/14 21:39:02  georgev
+Had to add some VOIDP casts to some functions to make the compiler happy.
 
+ * Revision 1.4  1993/03/29  18:38:15  chouck
+ * Cleaned up a bunch of casting problems
+ *
  * Revision 1.3  1993/01/19  05:54:13  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -158,7 +161,7 @@ int DFputcomp(file_id, tag, ref, image, xdim, ydim, palette, newpal, scheme, cin
 
             if (buftype==1) { /* write out entire image */
                 ret = Hputelement(file_id, tag, ref, buffer, total);
-                HDfreespace(buffer);
+                HDfreespace((VOIDP)buffer);
             }
             break;
 
@@ -178,7 +181,7 @@ int DFputcomp(file_id, tag, ref, image, xdim, ydim, palette, newpal, scheme, cin
             DFCIimcomp(xdim, ydim, image, buffer, palette, newpal, 0);
             ret = Hputelement(file_id, tag, ref, buffer, cisize);
 
-            HDfreespace(buffer);
+            HDfreespace((VOIDP)buffer);
             break;
 
         case DFTAG_JPEG:        /* JPEG compression (for 24-bit images) */
@@ -272,7 +275,7 @@ int DFgetcomp(file_id, tag, ref, image, xdim, ydim, scheme)
             in = buffer;
             out = image;
             if ((n=Hread(aid, buflen, in))<0) {
-                HDfreespace(buffer);
+                HDfreespace((VOIDP)buffer);
                 Hendaccess(aid);
                 return(-1);
               } /* end if */
@@ -289,7 +292,7 @@ int DFgetcomp(file_id, tag, ref, image, xdim, ydim, scheme)
                     HDmemcpy(buffer, in, (size_t)bufleft);
                     in = buffer;
                     if ((n=Hread(aid,buflen-bufleft,(uint8 *)&in[bufleft]))<0) {
-                        HDfreespace(buffer);
+                        HDfreespace((VOIDP)buffer);
                         Hendaccess(aid);
                         return FAIL;
                       } /* end if */
@@ -299,7 +302,7 @@ int DFgetcomp(file_id, tag, ref, image, xdim, ydim, scheme)
               } /* end for */
 
             Hendaccess(aid);
-            HDfreespace(buffer);
+            HDfreespace((VOIDP)buffer);
             break;
 
         case DFTAG_IMC:
@@ -319,21 +322,21 @@ int DFgetcomp(file_id, tag, ref, image, xdim, ydim, scheme)
                 buflen = cisize;
             if (buflen>=cisize) {
                 if (Hread(aid, cisize, buffer) < cisize) {
-                    HDfreespace(buffer);
+                    HDfreespace((VOIDP)buffer);
                     Hendaccess(aid);
                     return FAIL;
                   } /* end if */
            /* HDfreespace(buffer); */
                 Hendaccess(aid);
                 DFCIunimcomp(xdim, ydim, buffer, image);
-                HDfreespace(buffer);
+                HDfreespace((VOIDP)buffer);
                 break;              /* go to end of switch */
               } /* end if */
 
             in = buffer;            /* if can only read piecemeal */
             out = image;
             if ((n=Hread(aid, buflen, in))<0) {
-                HDfreespace(buffer);
+                HDfreespace((VOIDP)buffer);
                 Hendaccess(aid);
                 return FAIL;
               } /* end if */
@@ -348,7 +351,7 @@ int DFgetcomp(file_id, tag, ref, image, xdim, ydim, scheme)
                     HDmemcpy(buffer, in, (size_t)bufleft);
                     in = buffer;
                     if ((n=Hread(aid,buflen-bufleft,(uint8 *)&in[bufleft]))<0) {
-                        HDfreespace(buffer);
+                        HDfreespace((VOIDP)buffer);
                         Hendaccess(aid);
                         return FAIL;
                       } /* end if */
@@ -357,7 +360,7 @@ int DFgetcomp(file_id, tag, ref, image, xdim, ydim, scheme)
                   } /* end if */
               } /* end for */
 
-            HDfreespace(buffer);
+            HDfreespace((VOIDP)buffer);
             Hendaccess(aid);
             break;
 

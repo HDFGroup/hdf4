@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.10  1993/01/19 05:55:52  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.11  1993/04/14 21:39:18  georgev
+Had to add some VOIDP casts to some functions to make the compiler happy.
 
+ * Revision 1.10  1993/01/19  05:55:52  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.9  1993/01/14  19:09:07  chouck
  * Added routine Hfidinquire() to get info about an open file
  *
@@ -525,7 +528,7 @@ intn Hclose(file_id)
     for(i = 0; i < HASH_MASK + 1; i++) {
       for(p = file_rec->hash[i]; p; p = q) {
         q = p->next;
-        HDfreespace(p);
+        HDfreespace((VOIDP)p);
       }
       file_rec->hash[i] = NULL;
     }

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1993/04/06 17:23:29  chouck
-Added Vset macros
+Revision 1.5  1993/04/14 21:39:04  georgev
+Had to add some VOIDP casts to some functions to make the compiler happy.
 
+ * Revision 1.4  1993/04/06  17:23:29  chouck
+ * Added Vset macros
+ *
  * Revision 1.3  1993/01/19  05:54:22  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -126,7 +129,7 @@ ndfiopen(name, access, defdds, namelen)
     
     fn = DFIf2cstring(name, *namelen);
     ret = (int32) DFopen(fn, (intn)*access, (intn)*defdds);
-    HDfreespace(fn);
+    HDfreespace((VOIDP)fn);
     return(ret);
 }
 
@@ -188,7 +191,7 @@ ndfdesc(dfile, ptr, begin, num)
         ptr[i][3] = ptr1[i].length;
     }
 
-    HDfreespace(ptr1);
+    HDfreespace((VOIDP)ptr1);
 
     return(num_desc);
 }
@@ -269,7 +272,7 @@ ndfiaccess(dfile, tag, ref, access, acclen)
 
     acc = DFIf2cstring(access, *acclen);
     ret = (int32)DFaccess((DF *) *dfile, (uint16)*tag, (uint16)*ref, acc);
-    HDfreespace(acc);
+    HDfreespace((VOIDP)acc);
     return(ret);
 }
 
@@ -496,7 +499,7 @@ ndffind(dfile, itag, iref, len)
     *iref = (int32)(ptr1->ref);
     *len = ptr1->length;
 
-    HDfreespace(ptr1);
+    HDfreespace((VOIDP)ptr1);
 
     return(ret);
 }
@@ -612,7 +615,7 @@ ndfiishdf(name, namelen)
 
     fn = DFIf2cstring(name, *namelen);
     ret = DFishdf(fn);
-    HDfreespace(fn);
+    HDfreespace((VOIDP)fn);
     return(ret);
 }
 

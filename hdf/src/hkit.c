@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1993/04/05 22:35:51  koziol
-Fixed goofups made in haste when patching code.
+Revision 1.9  1993/04/14 21:39:22  georgev
+Had to add some VOIDP casts to some functions to make the compiler happy.
 
+ * Revision 1.8  1993/04/05  22:35:51  koziol
+ * Fixed goofups made in haste when patching code.
+ *
  * Revision 1.7  1993/03/29  17:21:03  chouck
  * Fixed a prototype problem
  *
@@ -806,7 +809,7 @@ int HIdel_hash_dd(file_rec, look_tag, look_ref)
       else
         file_rec->hash[key & HASH_MASK] = p->next;
 
-      HDfreespace(p);
+      HDfreespace((VOIDP)p);
       return SUCCEED;
     }
     prev = p;

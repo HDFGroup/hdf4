@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.9  1993/04/13 16:50:27  georgev
-Casting problems on SGI's for two calls to the new balanced tree stuff.
+Revision 1.10  1993/04/14 21:39:31  georgev
+Had to add some VOIDP casts to some functions to make the compiler happy.
 
+ * Revision 1.9  1993/04/13  16:50:27  georgev
+ * Casting problems on SGI's for two calls to the new balanced tree stuff.
+ *
  * Revision 1.8  1993/04/08  18:33:59  chouck
  * Various Vset modifications (additions of Vdelete and VSdelete)
  *
@@ -540,7 +543,7 @@ char *  accesstype;
         vs->oref      = vnewref(f);
         if (vs->oref == 0) {
             HERROR(DFE_NOREF);
-            HDfreespace(vs);
+            HDfreespace((VOIDP)vs);
             return(FAIL);
           }
           
@@ -634,7 +637,7 @@ char *  accesstype;
 
         vs->aid     = Hstartread(vs->f, VSDATATAG, vs->oref);
         if(vs->aid == FAIL) {
-            HDfreespace(vs);
+            HDfreespace((VOIDP)vs);
             HRETURN_ERROR(DFE_BADAID, FAIL);
         }
 
@@ -687,7 +690,7 @@ char *  accesstype;
           
         vs->aid   = Hstartwrite(vs->f, VSDATATAG, vs->oref, 0);
         if(vs->aid == FAIL) {
-            HDfreespace(vs);
+            HDfreespace((VOIDP)vs);
             HRETURN_ERROR(DFE_BADAID, FAIL);
         }
           
@@ -768,7 +771,7 @@ int32 vkey;
 #if 0
           if (w->nattach == 0) {
             w->vs = NULL; /* detach vs from vsdir */
-            HDfreespace(vs);
+            HDfreespace((VOIDP)vs);
           }
 #endif
           Hendaccess (vs->aid);
@@ -795,7 +798,7 @@ int32 vkey;
 
 	/* remove all defined symbols */
     for(i=0; i<vs->nusym; i++)
-        HDfreespace(vs->usym[i].name);
+        HDfreespace((VOIDP)vs->usym[i].name);
 	vs->nusym = 0;
 
 #if 0
@@ -820,27 +823,27 @@ int32 vkey;
                   t = vs->vm;
                   while (t != NULL) { 
                     HDmemcpy(&vwhole[cursize], t->mem, t->n);
-                    HDfreespace(t->mem);
+                    HDfreespace((VOIDP)t->mem);
                     cursize+= t->n;
                     t = t->next; 
                   }
                   /* free all VMBLOCKS */
                   t = vs->vm;
-                  while (t != NULL) { p = t; t = t->next; HDfreespace(p); }
+                  while (t != NULL) { p = t; t = t->next; HDfreespace((VOIDP)p); }
                   vs->vm = (VMBLOCK*) NULL;
                   
                   /* write out vwhole to file as 1 vdata */
                   stat = aid =Hstartwrite(vs->f,VSDATATAG,vs->oref, totalsize);
                   Hwrite(aid,  totalsize , vwhole);
                   Hendaccess (aid);
-                  HDfreespace(vwhole);
+                  HDfreespace((VOIDP)vwhole);
                   /* END OF VMBLOCK VERSION */ 	}}
 #endif
 
         Hendaccess (vs->aid);
 #if 0
         w->vs = NULL; /* detach vs from vsdir */
-        HDfreespace (vs);
+        HDfreespace ((VOIDP)vs);
 #endif
 	return;
 
@@ -1175,9 +1178,9 @@ int32 vsid;
     if(t == NULL)
         return FAIL;
 
-    tmp = tbbtrem((TBBT_NODE **)vf->vstree, (VOIDP)t, NULL);
+    tmp = tbbtrem((TBBT_NODE **)vf->vstree, (TBBT_NODE *)t, NULL);
     if(tmp) 
-        HDfreespace(tmp);
+        HDfreespace((VOIDP)tmp);
 
 printf("deleting Vdata %d\n", vsid);
 

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.15  1993/04/13 16:50:30  georgev
-Casting problems on SGI's for two calls to the new balanced tree stuff.
+Revision 1.16  1993/04/14 21:39:29  georgev
+Had to add some VOIDP casts to some functions to make the compiler happy.
 
+ * Revision 1.15  1993/04/13  16:50:30  georgev
+ * Casting problems on SGI's for two calls to the new balanced tree stuff.
+ *
  * Revision 1.14  1993/04/10  00:02:19  koziol
  * Removed debugging statements.
  *
@@ -277,8 +280,8 @@ HFILEID f;
     while (vginst) {
         vg1 = vginst->next;
         if (vginst->vg)  {
-            HDfreespace (vginst->vg);
-            HDfreespace (vginst);
+            HDfreespace ((VOIDP)vginst->vg);
+            HDfreespace ((VOIDP)vginst);
         }
         vginst = vg1;
     }
@@ -287,8 +290,8 @@ HFILEID f;
     while (vsinst) {
         vs1 = vsinst->next; 
         if (vsinst->vs) {
-            HDfreespace (vsinst->vs);
-            HDfreespace (vsinst);
+            HDfreespace ((VOIDP)vsinst->vs);
+            HDfreespace ((VOIDP)vsinst);
         }
         vsinst = vs1; 
     }
@@ -352,7 +355,7 @@ PUBLIC VOID vtfreenode(n)
 VOIDP n;
 #endif
 {
-    HDfreespace(n);
+    HDfreespace((VOIDP)n);
 }  /* vtfreenode */
 
 #ifdef NOTNEEDED
@@ -793,7 +796,7 @@ tbbtdump(vf->vgtree,0);
         v->vg             = vg;
         v->nattach        = 1;
         v->nentries    = vg->nvelt;
-        HDfreespace(vgpack);
+        HDfreespace((VOIDP)vgpack);
           
 #ifdef OLD_WAY
         return(vg);
@@ -875,7 +878,7 @@ int32 vkey;
         HERROR(DFE_WRITEERROR);
         HEprint(stderr, 0);
       }
-      HDfreespace(vgpack);
+      HDfreespace((VOIDP)vgpack);
       vg->marked = 0;
 /*    return; */
     }
@@ -889,9 +892,9 @@ int32 vkey;
   
   v->vg = NULL;             /* detach vg from vgdir */
   
-  HDfreespace(vg->tag);
-  HDfreespace(vg->ref);
-  HDfreespace(vg);
+  HDfreespace((VOIDP)vg->tag);
+  HDfreespace((VOIDP)vg->ref);
+  HDfreespace((VOIDP)vg);
   
   return; /* ok */
 } /* Vdetach */
@@ -970,8 +973,10 @@ int32 vskey;          /* (VGROUP*) or (VDATA*), doesn't matter */
 
     if(vg->nvelt >= (uintn)vg->msize) {
         vg->msize *= 2;
-        vg->tag= (uint16 *) HDregetspace(vg->tag, vg->msize * sizeof(uint16));
-        vg->ref= (uint16 *) HDregetspace(vg->ref, vg->msize * sizeof(uint16));
+        vg->tag= (uint16 *) 
+                  HDregetspace((VOIDP)vg->tag, vg->msize * sizeof(uint16));
+        vg->ref= (uint16 *) 
+                  HDregetspace((VOIDP)vg->ref, vg->msize * sizeof(uint16));
         
         if((vg->tag == NULL) || (vg->ref == NULL)) {
             HERROR(DFE_NOSPACE);
@@ -1422,8 +1427,10 @@ uint16      tag, ref;   /* this MUST be uint16 -  private routine */
 
     if(vg->nvelt >= (uintn)vg->msize) {
         vg->msize *= 2;
-        vg->tag  = (uint16 *) HDregetspace(vg->tag, vg->msize * sizeof(uint16));
-        vg->ref  = (uint16 *) HDregetspace(vg->ref, vg->msize * sizeof(uint16));
+        vg->tag  = (uint16 *) 
+                    HDregetspace((VOIDP)vg->tag, vg->msize * sizeof(uint16));
+        vg->ref  = (uint16 *) 
+                    HDregetspace((VOIDP)vg->ref, vg->msize * sizeof(uint16));
 
         if((vg->tag == NULL) || (vg->ref == NULL)) {
             HERROR(DFE_NOSPACE);
@@ -1481,8 +1488,8 @@ int32   vgid;
 
     vunpackvg(&vg,vgpack);
 
-    HDfreespace(vg.tag);
-    HDfreespace(vg.ref);
+    HDfreespace((VOIDP)vg.tag);
+    HDfreespace((VOIDP)vg.ref);
 
     return( (int32) vg.nvelt);
 } /* Ventries */
@@ -2118,7 +2125,7 @@ int32 vgid;
 
     tmp = tbbtrem((TBBT_NODE **)vf->vgtree, (VOIDP)t, NULL);
     if(tmp) 
-        HDfreespace(tmp);
+        HDfreespace((VOIDP)tmp);
 
     Hdeldd(f, DFTAG_VG, (uint16) vgid);
 

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1993/04/05 22:34:58  koziol
-Fixed goofups made in haste when patching code.
+Revision 1.9  1993/04/14 21:38:58  georgev
+Had to add some VOIDP casts to some functions to make the compiler happy.
 
+ * Revision 1.8  1993/04/05  22:34:58  koziol
+ * Fixed goofups made in haste when patching code.
+ *
  * Revision 1.7  1993/03/29  16:47:13  koziol
  * Updated JPEG code to new JPEG 4 code.
  * Changed VSets to use Threaded-Balanced-Binary Tree for internal
@@ -147,7 +150,7 @@ nd2igdim(filename, pxdim, pydim, pil, fnlen)
 
     fn = HDf2cstring(filename, *fnlen);
     ret =  DF24getdims(fn, (int32 *)pxdim, (int32 *)pydim, (intn *)pil);
-    HDfreespace(fn);
+    HDfreespace((VOIDP)fn);
     return(ret);
 }
 
@@ -181,7 +184,7 @@ nd2igimg(filename, image, xdim, ydim, fnlen)
 
     fn = HDf2cstring(filename, *fnlen);
     ret =  DF24getimage(fn, (VOIDP)_fcdtocp(image), *xdim, *ydim);
-    HDfreespace(fn);
+    HDfreespace((VOIDP)fn);
     return(ret);
 }
 
@@ -220,7 +223,7 @@ nd2iaimg(filename, image, xdim, ydim, fnlen, newfile)
     fn = HDf2cstring(filename, (intn)*fnlen);
     ret = DFGRIaddimlut(fn, (VOIDP)_fcdtocp(image), *xdim, *ydim,
             IMAGE, 1, *newfile);
-    HDfreespace(fn);
+    HDfreespace((VOIDP)fn);
     return(ret);
 }
 
@@ -514,6 +517,6 @@ nd2irref(filename, ref, fnlen)
 
     fn = HDf2cstring(filename, *fnlen);
     ret = DFGRreadref(fn, (uint16)*ref);
-    HDfreespace(fn);
+    HDfreespace((VOIDP)fn);
     return(ret);
 }

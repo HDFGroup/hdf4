@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/04/06 17:23:40  chouck
-Added Vset macros
+Revision 1.6  1993/04/14 21:39:27  georgev
+Had to add some VOIDP casts to some functions to make the compiler happy.
 
+ * Revision 1.5  1993/04/06  17:23:40  chouck
+ * Added Vset macros
+ *
  * Revision 1.4  1993/03/29  16:50:28  koziol
  * Updated JPEG code to new JPEG 4 code.
  * Changed VSets to use Threaded-Balanced-Binary Tree for internal
@@ -763,7 +766,7 @@ int32   asize;            /* input: size of idarray */
             nlone ++;
         }
     }
-    HDfreespace(lonevdata);
+    HDfreespace((VOIDP)lonevdata);
 
     return (nlone); /* return the TOTAL # of lone vdatas */
 } /* VSlone */
@@ -849,7 +852,7 @@ int32   asize;            /* input: size of idarray */
             nlone ++;
         }
     }
-    HDfreespace (lonevg);
+    HDfreespace ((VOIDP)lonevg);
 
     return (nlone); /* return the TOTAL # of lone vgroups */
 } /* Vlone */

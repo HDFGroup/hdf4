@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/01/19 05:54:31  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.6  1993/04/14 21:39:06  georgev
+Had to add some VOIDP casts to some functions to make the compiler happy.
 
+ * Revision 1.5  1993/01/19  05:54:31  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.4  1992/12/28  18:18:37  mfolk
  * Changed header doc of DFdiget to make it a little clearer.
  *
@@ -141,7 +144,7 @@ int32 DFdiread(file_id, tag, ref)
    
     new_list->DIlist = (uint8 *) HDgetspace((uint32)length);
     if (!new_list->DIlist) {
-        HDfreespace(new_list);
+        HDfreespace((VOIDP)new_list);
         HERROR(DFE_NOSPACE);
         return FAIL;
     }
@@ -151,8 +154,8 @@ int32 DFdiread(file_id, tag, ref)
 
     /* read in group */
     if (Hgetelement(file_id, tag, ref, (uint8 *)new_list->DIlist)<0) {
-        HDfreespace(new_list->DIlist);
-        HDfreespace(new_list);
+        HDfreespace((VOIDP)new_list->DIlist);
+        HDfreespace((VOIDP)new_list);
         return FAIL;
     }
     return (int32) setgroupREC(new_list);
@@ -194,8 +197,8 @@ int DFdiget(list, ptag, pref)
     UINT16DECODE(p, *pref);
 
     if (list_rec->current == list_rec->num) {
-        HDfreespace(list_rec->DIlist);     /* if all returned, free storage */
-        HDfreespace(list_rec);
+        HDfreespace((VOIDP)list_rec->DIlist);/*if all returned, free storage */
+        HDfreespace((VOIDP)list_rec);
         Group_list[list & 0xffff] = NULL;  /* YUCK! BUG! */
     }
     return SUCCEED;
@@ -234,7 +237,7 @@ int32 DFdisetup(maxsize)
     new_list->DIlist = (uint8 *) HDgetspace((uint32)(maxsize * 4));
                                /* 4==sizeof(DFdi) */
     if (!new_list->DIlist) {
-        HDfreespace(new_list);
+        HDfreespace((VOIDP)new_list);
         HERROR(DFE_NOSPACE);
         return FAIL;
     }
@@ -315,10 +318,10 @@ int DFdiwrite(file_id, list, tag, ref)
 
     ret = Hputelement(file_id, tag, ref, list_rec->DIlist, 
                       (int32)list_rec->current * 4);   /* 4 == sizeof(DFdi) */
-    HDfreespace(list_rec->DIlist);
-    HDfreespace(list_rec);
+    HDfreespace((VOIDP)list_rec->DIlist);
+    HDfreespace((VOIDP)list_rec);
     Group_list[list & 0xffff] = NULL;  /* YUCK! BUG! */
     return ret;
 }
 
-
+     
