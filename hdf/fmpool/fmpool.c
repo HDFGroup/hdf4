@@ -912,6 +912,11 @@ fmpool_sync(mp)
         }
     } /* end for bp */
 
+  /* Sync the file descriptor. This is an expensive operation 
+  *  if using FCNTL routines */
+  if (FMPI_FLUSH(mp->fd) == FAIL)
+    ret = RET_ERROR ;
+
 done:
   if(ret == RET_ERROR)
     { /* error cleanup */
@@ -922,9 +927,8 @@ done:
 #ifdef MPOOL_DEBUG
       (void)fprintf(stderr,"fmpool_sync: exiting \n");
 #endif
-  /* Sync the file descriptor. This is an expensive operation 
-  *  if using FCNTL routines */
-  return (FMPI_FLUSH(mp->fd) ? RET_ERROR : RET_SUCCESS);
+
+  return ret;
 } /* fmpool_sync() */
 
 #if 0
