@@ -24,12 +24,12 @@
 $ create/dir [.lib]
 $ create/dir [.include]
 $ create/dir [.bin]
-$ define/nolog hdf$src     _$1$dia0:[folk.33b2.hdf.src]   ! HDF src
-$ define/nolog hdf$util    _$1$dia0:[folk.33b2.hdf.util]  ! HDF utilities
-$ define/nolog hdf$test    _$1$dia0:[folk.33b2.hdf.test]  ! HDF test programs
-$ define/nolog hdf$lib     _$1$dia0:[folk.33b2.hdf.lib]df ! Location and name for lib
-$ define/nolog hdf$include _$1$dia0:[folk.33b2.hdf.include] ! Where to put includes
-$ define/nolog hdf$bin     _$1$dia0:[folk.33b2.hdf.bin]   ! Where to put executables
+$ define/nolog hdf$src     _$1$dia0:[folk.HDF33.hdf.src]   ! HDF src
+$ define/nolog hdf$util    _$1$dia0:[folk.HDF33.hdf.util]  ! HDF utilities
+$ define/nolog hdf$test    _$1$dia0:[folk.HDF33.hdf.test]  ! HDF test programs
+$ define/nolog hdf$lib     _$1$dia0:[folk.HDF33.hdf.lib]df ! Location and name for lib
+$ define/nolog hdf$include _$1$dia0:[folk.HDF33.hdf.include] ! Where to put includes
+$ define/nolog hdf$bin     _$1$dia0:[folk.HDF33.hdf.bin]   ! Where to put executables
 $ !
 $ define/nolog sys$clib sys$library:vaxcrtl
 $ !
