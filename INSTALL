@@ -93,8 +93,9 @@
    IEEE (UNICOS 10.0.0bt d10.25)  CC 5.0.5.0       f90 3.0.2.0  
   Cray C90 (UNICOS 803.2)           -                -        
   IBM SP2 (single node, v4.2.1)   XLC 3.1.4.0      f77 4.1.0.6       
-  DEC Alpha/Digital Unix v3.2     CC               f77              
+  DEC Alpha/Digital Unix v4.0     CC               f77              
   DEC Alpha/OpenVMS AXP v6.2        -                -  
+  DEC Alpha/OpenVMS AXP v7.1        -                -  
   VAX OpenVMS v6.2                  -                - 
   IBM PC - Intel Pentium
        Solarisx86 (2.5.1)         GCC 2.7.2.1        -                
