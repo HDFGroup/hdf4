@@ -92,6 +92,7 @@ NC_var *var ;
               Free(var->shape) ;
           if(var->dsizes != NULL)
               Free(var->dsizes) ;
+
           if (NC_free_array(var->attrs) == FAIL)
             {
                 ret_value = FAIL;
@@ -135,8 +136,10 @@ NC_array *dims;
 	xszof = NC_xtypelen(var->type) ;
 #endif
 
-	var->shape = NULL ;
-	var->dsizes = NULL ;
+	/* var->shape and var->dsizes were simply set to NULL without 
+	   checking, which caused memory leaks reported in bug# 418.
+	   Added the check and free memory as needed right before assigning
+	   the new shape and dsizes below.  BMR - Apr 8, 01 */
 
 	/*
 	 * Allocate the shape array
@@ -179,6 +182,10 @@ NC_array *dims;
 		}
 		op++ ; ip++ ;
 	}
+
+	/* Free memory if this var already has shape previously allocated */
+	if(var->shape != NULL)
+            Free(var->shape);
 	var->shape = shape ;
 
 	/*
@@ -188,11 +195,15 @@ NC_array *dims;
 	dsizes = (unsigned long *)HDmalloc(ii * sizeof(unsigned long)) ;
 	if(dsizes == NULL)
 	{
-        Free(shape) ;
-        var->shape = NULL;
-		nc_serror("NC_var_dsizes") ;
-		return(-1) ;
+            Free(shape) ;
+            var->shape = NULL;
+	    nc_serror("NC_var_shape") ;
+	    return(-1) ;
 	}
+
+	/* Free memory if this var already has dsizes previously allocated */
+	if(var->dsizes != NULL)
+            Free(var->dsizes);
 	var->dsizes = dsizes ;
 
 	/* 
