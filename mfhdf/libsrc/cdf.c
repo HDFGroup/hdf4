@@ -408,24 +408,26 @@ int type;
 
 
 /* ----------------------------------------------------------------
-** UnMap a data type.  I.e. go from an HDF type to an NC_<type>
+**  UnMap a data type.  I.e. go from an HDF type to an NC_<type>
+**  The HDF type may be in DFNT_NATIVE mode, so only look at the 
+**    bottom bits
 */
 int
   hdf_unmap_type(type)
 int type;
 {
 
-  switch(type) {
+  switch(type & 0xff) {
   case DFNT_CHAR        :
     return NC_CHAR;
   case DFNT_INT8        :
-  case DFNT_UINT8        :
+  case DFNT_UINT8       :
     return NC_BYTE;
   case DFNT_INT16       :
-  case DFNT_UINT16       :
+  case DFNT_UINT16      :
     return NC_SHORT;
   case DFNT_INT32       :
-  case DFNT_UINT32       :
+  case DFNT_UINT32      :
     return NC_LONG;
   case DFNT_FLOAT32     :
     return NC_FLOAT; 
@@ -458,6 +460,7 @@ int i;
 
 } /* get_hdf_ref */
 
+
 /* ----------------------------------------------------------------
 ** Given a dimension pointer return the ref of a Vdata which was
 **   newly created to represent the values the dimension takes on
@@ -468,7 +471,6 @@ int i;
 **
 ** NOTE:  This may cause conflicts cuz we may get called before
 **   the variable's values are set???
-** BUG:  Assume dimension values are always integers for now.
 */
 int 
   hdf_create_dim_vdata(xdrs, handle, dim)
@@ -678,6 +680,7 @@ NC_var **var;
   NC_iarray *assoc;
   uint8 ntstring[4];
   uint16 ref;
+  int8 outNT;
   int32 tags[100], refs[100];
 
   register int  i, count;
@@ -740,12 +743,20 @@ NC_var **var;
   /*
    * Write out a number type tag so that we can recover this 
    *   variable's type later on
+   *
+   * by default numbers are converted to IEEE otherwise we need to save the 
+   *   machine type in the NT object
    */
+  if((*var)->HDFtype & DFNT_NATIVE)
+      outNT = DFKgetPNSC((*var)->HDFtype, DF_MT);
+  else
+      outNT = DFNTF_IEEE;
+
   ref = Hnewref(handle->hdf_file);
   ntstring[0] = DFNT_VERSION;                    /* version */
   ntstring[1] = (uint8)((*var)->HDFtype & 0xff); /* type */
   ntstring[2] = (uint8)((*var)->HDFsize * 8);    /* width (in bits) */
-  ntstring[3] = DFNTF_NONE;                      /* class: IEEE or machine class */
+  ntstring[3] = outNT;                           /* class: IEEE or machine class */
   if(Hputelement(handle->hdf_file, DFTAG_NT, ref, ntstring, (int32) 4) == FAIL)
       return FAIL;
   tags[count] = DFTAG_NT;
@@ -1164,40 +1175,17 @@ int32  vg;
                       if(!HDstrcmp(class, DIMENSION) || 
                          !HDstrcmp(class, UDIMENSION)) {
                           
-                          if(!HDstrcmp(class, UDIMENSION)) {
-#ifdef DEBUG
-                              fprintf(stderr, "Found a rec-var %s\n", vgname);
-#endif
+                          if(!HDstrcmp(class, UDIMENSION))
                               is_rec_var = TRUE;
-                          }
                           
                           Vinquire(sub, &entries, subname);      
-                          
                           dims[ndims] = (int) NC_dimid( handle, subname);
-#if DEBUG
-                          fprintf(stderr, "Var <%s> has dimension <%s> #%d\n", 
-                                  vgname, subname, dims[ndims]);
-#endif
                           ndims++;
                       }
                       Vdetach(sub);
                       break;
                   case DFTAG_VH :   /* ----- V D A T A --------- */
-
-#ifdef OLD_DATA
-                      vs = VSattach(handle->hdf_file, sub_id, "r");
-                      if(!HDstrcmp(VSCLASS(vs), DATA)) {
-                          type = hdf_unmap_type(VFfieldtype(vs, 0));
-                          data_ref = sub_id; 
-                          VSQuerycount(vs, &data_count);
-#if DEBUG
-                          fprintf(stderr, "Var <%s> has type %d\n", vgname, type);
-#endif
-                      }
-                      VSdetach(vs);
-#endif
                       break;
-
                   case DFTAG_SD :   /* ------- Data Storage ------ */
                       data_ref = sub_id;
                       data_count = Hlength(handle->hdf_file, DATA_TAG, sub_id);
@@ -1207,6 +1195,35 @@ int32  vg;
                           return FAIL;
                       HDFtype = ntstring[1];
                       type = hdf_unmap_type(HDFtype);
+
+                      /*
+                       * Check if data was stored in native format
+                       * And make sure the numbertype version numbers are the same
+                       */
+                      if((ntstring[0] != DFNT_VERSION) ||
+                         ((ntstring[3] != DFNTF_NONE) &&
+                          (ntstring[3] != DFNTF_IEEE))) {
+                          
+                          /* check if in native mode for a different type of machine */
+                          if(ntstring[3] != DFKgetPNSC(HDFtype, DF_MT)) {
+                              /* 
+                               * OK, we have a problem here --- is in native mode
+                               * for a different machine.  PUNT
+                               */
+                              
+                              goto bad_number_type;
+
+                          } else {
+                              /*
+                               * Is in native mode but its OK --- same machine type
+                               */
+                              
+                              HDFtype |= DFNT_NATIVE;
+
+                          }
+
+                      }
+                      
                       break;
                   default:
                       /* Do nothing */
@@ -1253,7 +1270,6 @@ int32  vg;
                       /*
                        * Now figure out how many recs have been written
                        */
-/*                      vp->numrecs = data_count / (vp->dsizes[0] / NC_typelen(vp->type)); */
                       vp->numrecs = data_count / vp->dsizes[0] - 1; 
                       
 #ifdef DEBUG
@@ -1263,8 +1279,8 @@ int32  vg;
                        * Deallocate the shape info as it will be recomputed
                        *  at a higher level later
                        */
-                      Free(vp->shape);
-                      Free(vp->dsizes);
+                      HDfreespace(vp->shape);
+                      HDfreespace(vp->dsizes);
                       
                   } else {
                       /* Not a rec var, don't worry about it */
@@ -1275,6 +1291,9 @@ int32  vg;
               count++;
               
           }
+
+bad_number_type:
+          
           Vdetach(var);
       }
   }
@@ -1388,6 +1407,10 @@ NC **handlep;
   case XDR_DECODE :
       if((status = hdf_read_xdr_cdf(xdrs, handlep)) == FALSE)
           status = hdf_read_sds_cdf(xdrs, handlep);
+      break;
+  case XDR_FREE   :
+      NC_free_cdf((*handlep));
+      status = TRUE;
       break;
   default:
       status = TRUE;
@@ -1545,15 +1568,9 @@ void hdf_close(handle)
         for(i = 0; i < tmp->count; i++) {
             vp = (NC_var **) vars;
 
-#ifdef OLD_DATA
-            if((*vp)->vs)
-                VSdetach((*vp)->vs);
-            (*vp)->vs = NULL;
-#else
             if((*vp)->aid)
                 Hendaccess((*vp)->aid);
             (*vp)->aid = NULL;
-#endif
 
             vars += tmp->szof;
         }

@@ -791,6 +791,9 @@ int32 nt, rank, *dimsizes;
     if(var == NULL)
         return FAIL;
     
+    /* NC_new_var strips off "nativeness" add it back in if appropriate */
+    var->HDFtype = nt;
+
     /* add it to the handle */
     if(handle->vars == NULL) { /* first time */
         handle->vars = NC_new_array(NC_VARIABLE,(unsigned)1, (Void *)&var);

@@ -524,37 +524,31 @@ Void  * value;
 int32   len;
 int32   type;
 {
-    register Void *lo, *hi;
+    register uint8 *lo, *hi;
     
-    lo = storage;
-    hi = storage + len;
+    lo = (uint8 *) storage;
+    hi = (uint8 *) storage + len;
 
     switch(type) {
     case NC_BYTE    :
     case NC_CHAR    :
-        { 
-/*
-            char t = *((char *) value);
-            while(lo < hi) *lo++ = t;
-*/
-	    HDmemset(lo, *((char *)value), len);
-        }
+        HDmemset(lo, *((char *)value), len);
         break;
     case NC_SHORT    :
         {
-            short t = *((short *) value);
+            int16 t = *((int16 *) value);
             while(lo < hi) {
-                *((short *) lo) = t;
-                lo += sizeof(short);
+                *((int16 *) lo) = t;
+                lo += sizeof(int16);
             }
         }
         break;
     case NC_LONG     :
         {
-            long t =  *((long *) value);
+            int32 t =  *((int32 *) value);
             while(lo < hi) {
-                *((long *) lo) = t;
-                lo += sizeof(long);
+                *((int32 *) lo) = t;
+                lo += sizeof(int32);
             }
         }
         break;
