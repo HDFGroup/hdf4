@@ -341,6 +341,8 @@ nafwriteann(intf *ann_id,_fcd ann, intf *annlen)
     char       *iann = HDf2cstring(ann, (intn) *annlen);
     intf        status;
 
+    if (!iann)
+	    return(FAIL);
     status = ANwriteann((int32)*ann_id, iann, (int32)*annlen);
 
     HDfree(iann);

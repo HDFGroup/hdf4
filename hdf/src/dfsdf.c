@@ -429,6 +429,8 @@ ndsigdim(_fcd filename, intf * prank, intf sizes[], intf * maxrank,
     intf        ret;
 
     fn = HDf2cstring(filename, (intn) *lenfn);
+    if (!fn)
+	return(-1);
     ret = DFSDgetdims(fn, (intn *) prank, (int32 *) sizes, (intn) *maxrank);
     DFSDIisndg(&isndg);
     if (isndg)
@@ -466,6 +468,8 @@ ndsigdat(_fcd filename, intf * rank, intf maxsizes[], VOIDP data, intf * fnlen)
     int32      *p, *cmaxsizes;
 
     fn = HDf2cstring(filename, (intn) *fnlen);
+    if (!fn)
+	return(-1);
     /* if DFSDgetdims has not be called call DFSDIsdginfo to */
     /* refresh Readsdg       */
     if (DFSDIrefresh(fn) < 0)
@@ -523,6 +527,8 @@ ndsipdat(_fcd filename, intf * rank, intf dimsizes[], VOIDP data, intf * fnlen)
           p++;
       }
     fn = HDf2cstring(filename, (intn) *fnlen);
+    if (!fn)
+	return(-1);
 
     /* 0, 1 specify create mode, called from FORTRAN program */
     /* In HDF3.2 .hdf files, data and dimsizes are in C order  */
@@ -564,6 +570,8 @@ ndsiadat(_fcd filename, intf * rank, intf dimsizes[], VOIDP data, intf * fnlen)
           p++;
       }
     fn = HDf2cstring(filename, (intn) *fnlen);
+    if (!fn)
+	return(-1);
 
     /* 1, 1 specify create mode, called from FORTRAN program */
     /* In HDF3.2 .hdf files, data and dimsizes are in C order  */
@@ -599,6 +607,8 @@ ndsigslc(_fcd filename, intf winst[], intf windims[], VOIDP data, intf dims[],
     intn        isndg;
 
     fn = HDf2cstring(filename, (intn) *fnlen);
+    if (!fn)
+	return(-1);
 
     /* if DFSDgetdims has not be called call DFSDIsdginfo to */
     /* refresh Readsdg       */
@@ -660,6 +670,8 @@ ndsisslc(_fcd filename, intf * fnlen)
     intf        ret;
 
     fn = HDf2cstring(filename, (intn) *fnlen);
+    if (!fn)
+	return(-1);
     ret = DFSDstartslice(fn);
     HDfree(fn);
     return (ret);
@@ -683,6 +695,8 @@ ndsirref(_fcd filename, intf * ref, intf * fnlen)
     intf        ret;
 
     fn = HDf2cstring(filename, (intn) *fnlen);
+    if (!fn)
+	return(-1);
     ret = DFSDreadref(fn, (uint16) *ref);
     HDfree(fn);
     return (ret);
@@ -723,6 +737,8 @@ ndsinum(_fcd filename, intf * len)
     intf        status;
 
     cname = HDf2cstring(filename, (intn) *len);
+    if (!cname)
+	return(-1);
     status = DFSDndatasets(cname);
     HDfree(cname);
 
@@ -749,6 +765,8 @@ ndsip32s(_fcd filename, intf * ref, intf * ispre32, intf * len)
     intf        status;
 
     cname = HDf2cstring(filename, (intn) *len);
+    if (!cname)
+	return(-1);
     status = DFSDpre32sdg(cname, (uint16) *ref, (intn *) ispre32);
 
     HDfree(cname);
@@ -1169,6 +1187,13 @@ ndsisdis(intf * dim, _fcd flabel, _fcd funit, _fcd fformat,
     intf        status;
     intn        rank, cdim;
 
+    if (!(label && unit && format))
+    {
+	if (label) HDfree(label);
+	if (unit) HDfree(unit);
+	if (format) HDfree(format);
+	return FAIL;
+    }
     status = DFSDIgetwrank(&rank);
 
     if (rank < *dim)
@@ -1262,6 +1287,14 @@ ndsisdas(_fcd flabel, _fcd funit, _fcd fformat, _fcd fcoordsys, intf * isfortran
     char       *format = HDf2cstring(fformat, (intn) *lformat);
     char       *coordsys = HDf2cstring(fcoordsys, (intn) *lcoordsys);
     intf        status;
+
+    if (!(label && unit && format))
+    {
+	if (label) HDfree(label);
+	if (unit) HDfree(unit);
+	if (format) HDfree(format);
+	return FAIL;
+    }
 
     /* shut compiler up */
     isfortran = isfortran;
@@ -1376,6 +1409,8 @@ ndsiwref(_fcd filename, intf * fnlen, intf * ref)
     intf        ret;
 
     fn = HDf2cstring(filename, (intn) *fnlen);
+    if (!fn)
+	return(-1);
     ret = DFSDwriteref(fn, (uint16) *ref);
     HDfree(fn);
     return (ret);

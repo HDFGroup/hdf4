@@ -75,6 +75,7 @@ ndfivopn(_fcd name, intf * acc_mode, intf * defdds, intf * namelen)
     intf        ret;
 
     fn = HDf2cstring(name, (intn) *namelen);
+    if (!fn) return(FAIL);
     ret = (intf) Vopen(fn, (intn) *acc_mode, (int16) *defdds);
     HDfree(fn);
     return (ret);
@@ -107,6 +108,7 @@ nvatchc(HFILEID * f, intf * vgid, _fcd accesstype)
     char       *acc;
 
     acc = HDf2cstring(accesstype, 1);
+    if (!acc) return(FAIL);
 
     vkey = Vattach(*f, *vgid, acc);
     HDfree(acc);
@@ -212,6 +214,7 @@ nvsnamc(intf * vkey, _fcd vgname, intf * vgnamelen)
     intf        ret;
 
     name = HDf2cstring(vgname, (intn) *vgnamelen);
+    if (!name) return(FAIL);
     /* trimendblanks(name); */
     ret = (intf) Vsetname(*vkey, name);
     HDfree(name);
@@ -232,6 +235,7 @@ nvsclsc(intf * vkey, _fcd vgclass, intf * vgclasslen)
     intf        ret;
 
     class = HDf2cstring(vgclass, (intn) *vgclasslen);
+    if (!class) return(FAIL);
     /* trimendblanks(class); */
     ret = (intf) Vsetclass(*vkey, class);
     HDfree(class);
@@ -313,6 +317,7 @@ nvsatchc(HFILEID * f, intf * vsid, _fcd accesstype)
     char       *acc;
 
     acc = HDf2cstring(accesstype, 1);   /* 'r' or 'w' only */
+    if (!acc) return(FAIL);
     vkey = VSattach(*f, *vsid, acc);
     HDfree(acc);
 
@@ -430,6 +435,7 @@ nvsfexc(intf * vkey, _fcd fields, intf * fieldslen)
     char       *flds;
 
     flds = HDf2cstring(fields, (intn) *fieldslen);
+    if (!flds) return(FAIL);
     /* trimendblanks(flds); */
     ret = (int32) VSfexist(*vkey, flds);
     HDfree(flds);
@@ -450,6 +456,7 @@ nvsfndc(HFILEID * f, _fcd name, intf * namelen)
     char       *cname;
 
     cname = HDf2cstring(name, (intn) *namelen);
+    if (!cname) return(FAIL);
     /* trimendblanks(flds); */
     ret = (intf) VSfind(*f, cname);
     HDfree(cname);
@@ -506,6 +513,7 @@ nvssnamc(intf * vkey, _fcd vsname, intf * vsnamelen)
     intf        ret;
 
     name = HDf2cstring(vsname, (intn) *vsnamelen);
+    if (!name) return(FAIL);
     /* trimendblanks (name); */
     ret = (intf) VSsetname(*vkey, name);
     HDfree(name);
@@ -526,6 +534,7 @@ nvssclsc(intf * vkey, _fcd vsclass, intf * vsclasslen)
     intf        ret;
 
     class = HDf2cstring(vsclass, (intn) *vsclasslen);
+    if (!class) return(FAIL);
     /* trimendblanks(class); */
     ret = (intf) VSsetclass(*vkey, class);
     HDfree(class);
@@ -546,6 +555,7 @@ nvssfldc(intf * vkey, _fcd fields, intf * fieldslen)
     intf        ret;
 
     flds = HDf2cstring(fields, (intn) *fieldslen);
+    if (!flds) return(FAIL);
     /* trimendblanks(flds); */
     ret = (int32) VSsetfields(*vkey, flds);
     HDfree(flds);
@@ -578,6 +588,7 @@ nvsfdefc(intf * vkey, _fcd field, intf * localtype, intf * order, intf * fieldle
     char       *fld;
 
     fld = HDf2cstring(field, (intn) *fieldlen);
+    if (!fld) return(FAIL);
     /* trimendblanks(fld); */
     ret = (int32) VSfdefine(*vkey, fld, *localtype, *order);
     HDfree(fld);
@@ -742,6 +753,7 @@ nvssizc(intf * vkey, _fcd fields, intf * fieldslen)
     intf        ret;
 
     flds = HDf2cstring(fields, (intn) *fieldslen);
+    if (!flds) return(FAIL);
     /* trimendblanks(flds); */
     ret = VSsizeof(*vkey, flds);
     HDfree(flds);
@@ -797,6 +809,7 @@ nvfindc(HFILEID _HUGE * f, _fcd name, intf _HUGE * namelen)
     intf ret;
 
     tmp_name = HDf2cstring(name, (intn) *namelen);
+    if (!tmp_name) return(FAIL);
 
     ret = (intf) Vfind((int32)*f, tmp_name);
     HDfree(tmp_name);
@@ -817,6 +830,7 @@ nvfndclsc(HFILEID _HUGE * f, _fcd class, intf _HUGE * classlen)
     intf ret;
 
     t_class = HDf2cstring(class, (intn) *classlen);
+    if (!t_class) return(FAIL);
 
     ret = (intf) Vfindclass((int32)*f, t_class);
     HDfree(t_class);
@@ -843,8 +857,18 @@ nvhsdc(HFILEID * f, _fcd field, uint8 *buf, intf * n, intf * datatype, _fcd vsna
     intf        ret_val;
 
     fld = HDf2cstring(field, (intn) *fieldlen);
+    if (!fld) return(FAIL);
     name = HDf2cstring(vsname, (intn) *vsnamelen);
+    if (!name){
+	HDfree(fld);
+	return(FAIL);
+    }
     class = HDf2cstring(vsclass, (intn) *vsclasslen);
+    if (!class){
+	HDfree(fld);
+	HDfree(name);
+	return(FAIL);
+    }
 
     ret_val = (intf) VHstoredata(*f, fld, buf, *n, *datatype, name, class);
     HDfree(fld);
@@ -869,8 +893,18 @@ nvhsdmc(HFILEID * f, _fcd field, uint8 *buf, intf * n, intf * datatype,
     intf        ret_val;
 
     fld = HDf2cstring(field, (intn) *fieldlen);
+    if (!fld) return(FAIL);
     name = HDf2cstring(vsname, (intn) *vsnamelen);
+    if (!name){
+	HDfree(fld);
+	return(FAIL);
+    }
     class = HDf2cstring(vsclass, (intn) *vsclasslen);
+    if (!class){
+	HDfree(fld);
+	HDfree(name);
+	return(FAIL);
+    }
 
     ret_val = (intf) VHstoredatam(*f, fld, buf, *n, *datatype, name, class, *order);
     HDfree(fld);
@@ -894,7 +928,12 @@ nvhmkgpc(HFILEID * f, intf * tagarray, intf * refarray, intf * n, _fcd vgname,
     intf        ret_val;
 
     gname = HDf2cstring(vgname, (intn) *vgnamelen);
+    if (!gname) return(FAIL);
     gclass = HDf2cstring(vgclass, (intn) *vgclasslen);
+    if (!gclass){
+	HDfree(gname);
+	return(FAIL);
+    }
 
     ret_val = (intf) VHmakegroup(*f, (int32 *) tagarray, (int32 *) refarray,
                                  *n, gname, gclass);
@@ -917,6 +956,7 @@ nvflocc(intf * vkey, _fcd field, intf * fieldlen)
     intf        ret;
 
     fld = HDf2cstring(field, (intn) *fieldlen);
+    if (!fld) return(FAIL);
     /* trimendblanks(fld); */
     ret = (int32) Vflocate(*vkey, fld);
     HDfree(fld);

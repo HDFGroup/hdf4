@@ -145,6 +145,8 @@ ndaiganl(_fcd filename, intf * tag, intf * ref, intf * type, intf * fnlen)
     intf        ret;
 
     fn = HDf2cstring(filename, (intn) *fnlen);
+    if (!fn)
+	return(-1);
     ret = DFANIgetannlen(fn, (uint16) *tag, (uint16) *ref, (intn) *type);
     HDfree((VOIDP) fn);
 
@@ -173,6 +175,8 @@ ndaigann(_fcd filename, intf * tag, intf * ref, _fcd annotation, intf * maxlen,
     intf        ret;
 
     fn = HDf2cstring(filename, (intn) *fnlen);
+    if (!fn)
+	return(-1);
     ret = DFANIgetann(fn, (uint16) *tag, (uint16) *ref,
              (uint8 *) _fcdtocp(annotation), (int32) *maxlen, (intn) *type);
     HDfree((VOIDP) fn);
@@ -202,6 +206,8 @@ ndaipann(_fcd filename, intf * tag, intf * ref, _fcd annotation,
     intf        ret;
 
     fn = HDf2cstring(filename, (intn) *fnlen);
+    if (!fn)
+	return(-1);
     ret = DFANIputann(fn, (uint16) *tag, (uint16) *ref,
              (uint8 *) _fcdtocp(annotation), (int32) *annlen, (intn) *type);
     HDfree((VOIDP) fn);
@@ -237,6 +243,8 @@ ndailist(_fcd filename, intf * tag, intf reflist[], _fcd labellist,
     uint16     *tempreflist;
 
     fn = HDf2cstring(filename, (intn) *fnlen);
+    if (!fn)
+	return(-1);
 
     /* create reflist with true uint16s to maintain compatibility
        ** with machines that allocate more than 16 bits per uint16.

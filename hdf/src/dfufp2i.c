@@ -119,6 +119,8 @@ nduif2i(int32 *hdim, int32 *vdim, float32 *max, float32 *min, float32 hscale[],
     int         ret;
 
     fn = HDf2cstring(outfile, *lenfn);
+    if (!fn)
+	return(FAIL);
     ret = DFUfptoimage(*hdim, *vdim, (float32)*max, (float32)*min, hscale, vscale, data,
                 _fcdtocp(palette), fn, *ct_method, *hres, *vres, *compress);
     HDfree(fn);

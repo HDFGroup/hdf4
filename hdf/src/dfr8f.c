@@ -121,6 +121,8 @@ nd8igdim(_fcd filename, intf * xdim, intf * ydim, intf * ispal, intf * lenfn)
     intf        ret;
 
     fn = HDf2cstring(filename, (intn) *lenfn);
+    if (!fn)
+	return(-1);
     ret = DFR8getdims(fn, (int32 *) xdim, (int32 *) ydim, (intn *) ispal);
     HDfree((VOIDP) fn);
     return (ret);
@@ -146,6 +148,8 @@ nd8igimg(_fcd filename, _fcd image, intf * xdim, intf * ydim, _fcd pal, intf * l
     intf        ret;
 
     fn = HDf2cstring(filename, (intn) *lenfn);
+    if (!fn)
+	return(-1);
     ret = DFR8getimage(fn, (uint8 *) _fcdtocp(image), *xdim, *ydim,
                        (uint8 *) _fcdtocp(pal));
     HDfree((VOIDP) fn);
@@ -173,6 +177,8 @@ nd8ipimg(_fcd filename, _fcd image, intf * xdim, intf * ydim, intf * compress,
     intf        ret;
 
     fn = HDf2cstring(filename, (intn) *lenfn);
+    if (!fn)
+	return(-1);
     ret = (intf) DFR8putimage(fn, (VOIDP) _fcdtocp(image),
                           (int32) *xdim, (int32) *ydim, (uint16) *compress);
     HDfree((VOIDP) fn);
@@ -200,6 +206,8 @@ nd8iaimg(_fcd filename, _fcd image, intf * xdim, intf * ydim, intf * compress,
     intf        ret;
 
     fn = HDf2cstring(filename, (intn) *lenfn);
+    if (!fn)
+	return(-1);
     ret = (intf) DFR8addimage(fn, (VOIDP) _fcdtocp(image),
                           (int32) *xdim, (int32) *ydim, (uint16) *compress);
     HDfree((VOIDP) fn);
@@ -255,6 +263,8 @@ nd8iwref(_fcd filename, intf * ref, intf * fnlen)
     Ref = (uint16) *ref;
 
     fn = HDf2cstring(filename, (intn) *fnlen);
+    if (!fn)
+	return(-1);
     ret = DFR8writeref(fn, Ref);
     HDfree((VOIDP) fn);
     return (ret);
@@ -278,6 +288,8 @@ nd8inims(_fcd filename, intf * fnlen)
     intf        ret;
 
     fn = HDf2cstring(filename, (intn) *fnlen);
+    if (!fn)
+	return(-1);
     ret = DFR8nimages(fn);
     HDfree((VOIDP) fn);
     return (ret);

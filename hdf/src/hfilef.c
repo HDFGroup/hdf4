@@ -62,6 +62,8 @@ nhiopen(_fcd name, intf * acc_mode, intf * defdds, intf * namelen)
     intf        ret;
 
     fn = HDf2cstring(name, (intn) *namelen);
+    if (!fn)
+	return(FAIL);
     ret = (intf) Hopen(fn, (intn) *acc_mode, (int16) *defdds);
     HDfree(fn);
     return (ret);
@@ -114,6 +116,8 @@ nhxisdir(_fcd dir, intf * dirlen)
     intf        ret;
 
     fn = HDf2cstring(dir, (intn) *dirlen);
+    if (!fn)
+	return(FAIL);
     ret = (intf) HXsetdir(fn);
     HDfree(fn);
     return (ret);
@@ -136,6 +140,8 @@ nhxiscdir(_fcd dir, intf * dirlen)
     intf        ret;
 
     fn = HDf2cstring(dir, (intn) *dirlen);
+    if (!fn)
+	return(FAIL);
     ret = (intf) HXsetcreatedir(fn);
     HDfree(fn);
     return (ret);
