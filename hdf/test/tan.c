@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/03/23 16:38:33  mfolk
-fixed minor bug in reporting success/failure of a DFR8 routine.
+Revision 1.4  1992/05/27 21:46:34  chouck
+Added a cast
 
+ * Revision 1.3  1992/03/23  16:38:33  mfolk
+ * fixed minor bug in reporting success/failure of a DFR8 routine.
+ *
  * Revision 1.2  1992/02/28  15:22:47  mfolk
  * *** empty log message ***
  *
@@ -95,7 +98,7 @@ main()
             RESULT("DFANputdesc");
         }
 
-        ret = DFR8addimage(TESTFILE, (char *)image, COLS, ROWS, NULL);
+        ret = DFR8addimage(TESTFILE, (char *)image, COLS, ROWS, (int) NULL);
         RESULT("DFR8addimage");
         refnum = DFR8lastref();
         ret = DFANputlabel(TESTFILE, DFTAG_RIG, refnum, labris);
