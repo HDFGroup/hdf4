@@ -31,8 +31,9 @@ extern int num_errs;
 #define FNAME1   "tvset1.hdf"
 #define FNAME2   "tvset2.hdf"
 
-#define FIELD1   "FIELD_NAME_HERE"
-#define FIELD2   "DIFFERENT_FIELD_NAME"
+#define FIELD1       "FIELD_name_HERE"
+#define FIELD1_UPPER "FIELD_NAME_HERE"
+#define FIELD2       "DIFFERENT_FIELD_NAME"
 
 /* write some stuff to the file */
 int32 write_vset_stuff() {
@@ -428,12 +429,18 @@ int32 read_vset_stuff() {
         printf(">>> Got wrong data size %d should be sizeof(float32)\n", sz);
     }
 
+#ifndef VDATA_FIELDS_ALL_UPPER
     if(HDstrcmp(fields, FIELD1)) {        
         num_errs++;
         printf(">>> Got bogus field name %s\n", fields);
     }
+#else
+    if(HDstrcmp(fields, FIELD1_UPPER)) {        
+        num_errs++;
+        printf(">>> Got bogus field name %s\n", fields);
+    }
+#endif /* VDATA_FIELDS_ALL_UPPER */    
 
-    
     /* read it */
     VSsetfields(vs1, fields);
     for(i = 0; i < count; i++) fbuf[i] = 0;
