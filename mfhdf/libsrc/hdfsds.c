@@ -652,7 +652,7 @@ intn hdf_read_ndgs(handle)
              *   rewritten).  Otherwise calls to SDidtoref() will return
              *   bogus values
              */
-            vars[current_var]->ndg_ref  = Hnewref(handle->hdf_file);
+            vars[current_var]->ndg_ref  = ndgRef; 
 
             /*
              * --------------------------------------------
