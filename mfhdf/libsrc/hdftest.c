@@ -26,7 +26,7 @@ char *argv[];
     int     count, num_err = 0;
     int32   idata[100];
     int16   sdata[100];
-    uint16  ndg_saved_ref;
+    int32  ndg_saved_ref;
 
     float32 data[1000], max, min;
     float64 cal, cale, ioff, ioffe;

@@ -37,17 +37,6 @@ based?  Right now, it is zero based.
 PRIVATE NC_dim * SDIget_dim
     PROTO((NC *handle, int32 id));
 
-
-/*
- * We will assume that the way hfile.c handles fids is fixed and so
- *   we can hack a structure table based on it
- */
-
-static intn SDTbl[MAX_FILE];
-
-#define FIDtoSDTbl(i) ((VALIDFID(i) ? &(SDTbl[(uint32)(i) & 0xffff]) : NULL))
-
-
 /* Local function prototypes */
 PRIVATE NC * SDIhandle_from_id PROTO((int32 id, intn typ));
 PRIVATE NC_var * SDIget_var PROTO((NC *handle, int32 sdsid));
@@ -2502,7 +2491,7 @@ char  * attrname;
   Vgroups and annotations
 
 */
-uint16
+int32
 #ifdef PROTOTYPE
 SDidtoref(int32 id)
 #else
@@ -2513,7 +2502,6 @@ int32   id;
 
     NC       * handle;
     NC_var   * var;
-    intn       status;
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDidtoref: I've been called\n");
@@ -2521,16 +2509,16 @@ int32   id;
     
     handle = SDIhandle_from_id(id, SDSTYPE);
     if(handle == NULL || !handle->is_hdf) 
-        return 0;
+        return FAIL;
 
     if(handle->vars == NULL)
-        return 0;
+        return FAIL;
 
     var = SDIget_var(handle, id);
     if(var == NULL)
-        return 0;
+        return FAIL;
 
-    return((uint16) var->ndg_ref);
+    return((int32) var->ndg_ref);
 
 } /* SDidtoref */
 
@@ -2543,11 +2531,11 @@ int32   id;
 */
 int32
 #ifdef PROTOTYPE
-SDreftoindex(int32 fid, uint16 ref)
+SDreftoindex(int32 fid, int32 ref)
 #else
 SDreftoindex(fid, ref)
 int32    fid;
-uint16   ref;
+int32   ref;
 #endif
 {
 
