@@ -34,7 +34,7 @@
 /* Private to 'hchunks.c' */
 
 #include "tbbt.h"   /* TBBT stuff */
-#include "hcache.h" /* caching routines */
+#include "mcache.h" /* caching routines */
 
 /* Define class and name(partial) for chunk table */
 #define _HDF_CHK_TBL_CLASS "_HDF_CHK_TBL_" /* 13 bytes */

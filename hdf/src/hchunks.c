@@ -234,7 +234,7 @@ LOCAL ROUTINES
 #define  _HCHUNKS_MAIN_
 #include "hdf.h"
 #include "hfile.h"
-#include "hcache.h" /* cache */
+#include "mcache.h" /* cache */
 #include "hchunks.h"
 
 /* private functions */
