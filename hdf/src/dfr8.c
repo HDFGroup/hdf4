@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/01/19 05:54:54  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.6  1993/02/22 23:30:29  georgev
+Fixed minor compilier warning for the SGI.
 
+ * Revision 1.5  1993/01/19  05:54:54  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.4  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -142,7 +145,7 @@ intn DFR8setcompress(type,cinfo)
         CompType=DFTAG_GREYJPEG;
     else    /* otherwise, just use mapped tag */
         CompType=compress_map[type];
-    CompInfo=*cinfo;
+    CompInfo = *cinfo;
     return(SUCCEED);
 }   /* end DFR8setcompress() */
 
