@@ -4,7 +4,7 @@ divert(-1)
 define(`M4__SYSTEM', AIX)
 
 # transformation from fortran name to name of C module
-define(`NAMEF',`$1_')	# for AIX, use name with appended underscore
+define(`NAMEF',`$1')	# for AIX, use same name
 
 # transformation from string name to corresponding argument name
 define(`STRINGF',`$1')
