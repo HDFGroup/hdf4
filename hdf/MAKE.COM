@@ -53,6 +53,8 @@ $ @MAKEFS
 ! $ !
 $ copy df.olb hdf$lib
 $ copy *.h    hdf$include
+$ delete *.obj;*
+$ delete df.olb;*
 ! $ !
 ! $ ! Build the HDF utility programs
 ! $ !
@@ -62,6 +64,8 @@ $ @MAKEUTIL
 ! $ ! Move the HDF utilities to where they belong
 ! $ !
 $ copy *.exe hdf$bin
+$ delete *.exe;*
+$ delete *.obj;*
 ! $ !
 $ @setuputils
 ! $ !
@@ -69,7 +73,7 @@ $ @setuputils
 ! $ !
 $ set default hdf$test
 $ @MAKE
-$ set default hdf$src
-$ !
+! $ !
+$ delete *.obj;*
 $ type sys$input
   ======== HDF 4.0 has now been built ========
