@@ -2,9 +2,8 @@
 Expected output for './hdp list -n Example6.hdf'
 #############################
 File: Example6.hdf
+Last modified with NCSA HDF Version 4.0 Release 1, Jan. 19, 1996
 
-File library version: Major= 4, Minor=0, Release=1
-String=NCSA HDF Version 4.0 Release 1, Jan. 19, 1996
 File Label #0: This is a file label for AN 
 File Label #1: This is a file label for AN 
    no             tagname     tag     ref  index_by_tag

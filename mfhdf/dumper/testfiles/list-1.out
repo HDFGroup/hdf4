@@ -2,9 +2,8 @@
 Expected output for './hdp list tdata.hdf'
 #############################
 File: tdata.hdf
+Last modified with NCSA HDF Version 3.3 Release 4, October 1994
 
-File library version: Major= 3, Minor=3, Release=4
-String=NCSA HDF Version 3.3 Release 4, October 1994
 Linked Blocks Indicator: (tag 20)
 	Ref nos: 18 19 20 21 22 23 24 25 26 
 Version Descriptor  : (tag 30)
