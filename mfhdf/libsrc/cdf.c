@@ -1080,6 +1080,11 @@ int32  vg;
                   dim_size = NC_UNLIMITED;
                   VSsetfields(vs, "Values");
                   VSseek(vs, 0);
+                  
+                  /*
+                   * This is highly dangerous since there might be multiple
+                   * unlimited dimensions
+                   */
                   if(VSread(vs, (uint8 *) &(handle->numrecs), 1, FULL_INTERLACE) != 1)
                       HEprint(stderr, 0);
               }
