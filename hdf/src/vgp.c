@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.20  1993/07/14 11:55:47  koziol
-Fixed memory leaks in freeing trees
+Revision 1.21  1993/07/14 20:52:55  chouck
+Plugged memory leak on Vdelete() and VSdelete()
 
+ * Revision 1.20  1993/07/14  11:55:47  koziol
+ * Fixed memory leaks in freeing trees
+ *
  * Revision 1.19  1993/05/04  18:56:24  georgev
  * Fixed a minor cast problem on the Mac.
  *
@@ -149,7 +152,7 @@ HFILEID f;
         return SUCCEED;
     }
 
-	/* load all the vg's  tag/refs from file */
+    /* load all the vg's  tag/refs from file */
 #ifdef OLD_WAY
     vf->vgtabn    = -1;
     vf->vgtabtail = &(vf->vgtab);
@@ -274,7 +277,6 @@ HFILEID f;
     vfile_t      *vf=NULL;
     char * FUNC = "Remove_vfile";
     
-    
     /* Figure out what file to work on */
     vf = Get_vfile(f);
     
@@ -285,7 +287,7 @@ HFILEID f;
     if(--vf->access) {
         return;
     }
-        
+
 #ifdef OLD_WAY
 	/* free vstab and vgtab link-list entries */
     vginst = vf->vgtab.next;
@@ -367,15 +369,17 @@ PUBLIC VOID vdestroynode(n)
 VOIDP n;
 #endif
 {
-    VGROUP       *vg;
+    VGROUP       * vg;
 
-    vg=((vginstance_t *)n)->vg;
-    if(vg!=NULL) {
+    vg = ((vginstance_t *)n)->vg;
+    if(vg != NULL) {
         HDfreespace((VOIDP)vg->tag);
         HDfreespace((VOIDP)vg->ref);
         HDfreespace((VOIDP)vg);
-      } /* end if */
+    }
+
     HDfreespace((VOIDP)n);
+
 }  /* vdestroynode */
 
 #ifdef NOTNEEDED
@@ -775,6 +779,7 @@ tbbtdump(vf->vgtree,0);
            */
         if (v->vg != NULL) {
             v->nattach++;
+
 #ifdef OLD_WAY
             return(v->vg);
 #else
@@ -791,6 +796,7 @@ tbbtdump(vf->vgtree,0);
         vgpack = (uint8 *) HDgetspace(len);
         if(vgpack == NULL)
             return(FAIL);
+
 
         if (Hgetelement(f, DFTAG_VG, (uint16)vgid, vgpack) == (int32)FAIL) {
             HERROR(DFE_NOMATCH);
@@ -2122,11 +2128,12 @@ int32 vgid;
 #endif
 {
 
-    VOIDP     tmp;
-    vfile_t * vf;
-    VOIDP   * t;
-    int32     key;
-    char    * FUNC = "Vdelete";
+    VGROUP       * vg;
+    vginstance_t * v;
+    vfile_t      * vf;
+    VOIDP        * t;
+    int32          key;
+    char         * FUNC = "Vdelete";
 
     if(vgid < 0) {
         HERROR(DFE_ARGS);
@@ -2145,9 +2152,16 @@ int32 vgid;
     if(t == NULL)
         return FAIL;
 
-    tmp = tbbtrem((TBBT_NODE **)vf->vgtree, (TBBT_NODE *)t, NULL);
-    if(tmp) 
-        HDfreespace((VOIDP)tmp);
+    v = (vginstance_t *) tbbtrem((TBBT_NODE **)vf->vgtree, (TBBT_NODE *)t, NULL);
+    if(v) {
+        vg = (VGROUP *)  v->vg;
+        HDfreespace((VOIDP) v);
+        if(vg) {
+            HDfreespace((VOIDP) vg->tag);
+            HDfreespace((VOIDP) vg->ref);
+            HDfreespace((VOIDP) vg);
+        }
+    }
 
     Hdeldd(f, DFTAG_VG, (uint16) vgid);
 

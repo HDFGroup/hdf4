@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.16  1993/07/14 11:55:51  koziol
-Fixed memory leaks in freeing trees
+Revision 1.17  1993/07/14 20:53:04  chouck
+Plugged memory leak on Vdelete() and VSdelete()
 
+ * Revision 1.16  1993/07/14  11:55:51  koziol
+ * Fixed memory leaks in freeing trees
+ *
  * Revision 1.15  1993/04/22  16:46:58  koziol
  * Fixed a type in VSappendable
  *
@@ -475,10 +478,12 @@ VOIDP n;
 {
     VDATA       *vs;
 
-    vs=((vsinstance_t *)n)->vs;
-    if(vs!=NULL) 
+    vs = ((vsinstance_t *)n)->vs;
+    if(vs != NULL)
         HDfreespace((VOIDP)vs);
+
     HDfreespace((VOIDP)n);
+
 }  /* vsdestroynode */
 
 /* ------------------------------------------------------------------ */
@@ -1198,12 +1203,12 @@ int32 f;
 int32 vsid;
 #endif
 {
-
-    VOIDP     tmp;
-    vfile_t * vf;
-    VOIDP   * t;
-    int32     key;
-    char    * FUNC = "VSdelete";
+    VDATA        * vd;
+    vsinstance_t * v;
+    vfile_t      * vf;
+    VOIDP        * t;
+    int32          key;
+    char         * FUNC = "VSdelete";
 
     if(vsid < -1 ) {
         HERROR(DFE_ARGS);
@@ -1222,9 +1227,15 @@ int32 vsid;
     if(t == NULL)
         return FAIL;
 
-    tmp = tbbtrem((TBBT_NODE **)vf->vstree, (TBBT_NODE *)t, NULL);
-    if(tmp) 
-        HDfreespace((VOIDP)tmp);
+    v = (vsinstance_t *) tbbtrem((TBBT_NODE **)vf->vstree, (TBBT_NODE *)t, NULL);
+
+    if(v) {
+        vd = (VDATA *)  v->vs;
+        HDfreespace((VOIDP) v);
+        if(vd)
+            HDfreespace((VOIDP) vd);
+    }
+
 
     Hdeldd(f, DFTAG_VS, (uint16) vsid);
     Hdeldd(f, DFTAG_VH, (uint16) vsid);
