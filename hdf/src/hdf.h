@@ -155,7 +155,7 @@ typedef intn (*hdf_termfunc_t)(void);   /* termination function typedef */
 
 /* these may eventaully evolve into real-life functions but not yet */
 #define HDFopen(f,a,d)      Hopen((f), (a), (d))
-#define HDFclose(f,a,d)     Hclose((f), (a), (d))
+#define HDFclose(f)         Hclose((f))
 #define Vstart(f)           Vinitialize((f))
 #define Vend(f)             Vfinish((f))
 
