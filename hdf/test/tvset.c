@@ -1256,6 +1256,230 @@ read_vset_stuff(void)
     return SUCCEED;
 }   /* read_vset_stuff */
 
+/* Testing VSdelete for vdatas.*/
+void
+test_vsdelete(void)
+{
+#define FIELD_NAME     "Field Entries"
+#define NUMBER_OF_ROWS 10
+#define ORDER           3
+    int32  file_id;
+    int32  vdata_id;
+    int32  status;
+    int32  num_of_elements;
+    int16  vdata_buf[NUMBER_OF_ROWS * ORDER];
+    int32  v_ref;
+    intn   i;
+
+    /* Open the HDF file. */
+    file_id = Hopen(FNAME0, DFACC_RDWR, 0);
+    CHECK(file_id,FAIL,"Hopen:tvset.hdf");
+
+    /* Initialize HDF for subsequent vgroup/vdata access. */
+    status = Vstart(file_id);
+    CHECK(status,FAIL,"Vstart:file_id");
+
+    /* Create a new vdata. */
+    vdata_id = VSattach(file_id, -1, "w");
+    CHECK(vdata_id,FAIL,"VSattach:vdata_id");
+          
+    /* Define the field data name, type and order. */
+    status = VSfdefine(vdata_id, FIELD_NAME, DFNT_INT16, ORDER);
+    CHECK(status,FAIL,"VSfdefine:vdata_id");
+
+    /* Specify the field(s) that will be written to. */
+    status = VSsetfields(vdata_id, FIELD_NAME);
+    CHECK(status,FAIL,"VSsetfields:vdata_id");
+
+    /* Generate the Vset data. */
+    for (i = 0; i < NUMBER_OF_ROWS * ORDER; i+=ORDER) 
+      {
+          vdata_buf[i] = i;
+          vdata_buf[i + 1] = i + 1;
+          vdata_buf[i + 2] = i + 2;
+      }
+
+    /* Write the data to the Vset. */
+    num_of_elements = VSwrite(vdata_id, (const uint8 *)vdata_buf, 
+                              NUMBER_OF_ROWS, FULL_INTERLACE);
+    CHECK(num_of_elements,FAIL,"VSwrite:");
+
+    /* Set the name and class. */
+    status = VSsetname(vdata_id, "Vdata should have been deleted");
+    CHECK(status,FAIL,"VSsetname:vdata_id");
+
+    status = VSsetclass(vdata_id, "Vdata should have been deleted");
+    CHECK(status,FAIL,"VSsetclass:vdata_id");
+
+    /* get ref of Vdata */
+    v_ref = VSQueryref(vdata_id);
+    CHECK(v_ref,FAIL,"VSQueryref:vdata_id");
+
+    /* Terminate access to the vdata. */
+    status = VSdetach(vdata_id);
+    CHECK(status,FAIL,"VSdetach:vdata_id");
+
+    /* Terminate access to the Vxxx interface and close the file. */
+    status = Vend(file_id);
+    CHECK(status,FAIL,"Vend:file_id");
+
+    status = Hclose(file_id);
+    CHECK(status,FAIL,"Hclose:file_id");
+
+    /* Now open the file again and delete the vdata */
+    /* Open the HDF file. */
+    file_id = Hopen(FNAME0, DFACC_RDWR, 0);
+    CHECK(file_id,FAIL,"Hopen:tvset.hdf");
+
+    /* Initialize HDF for subsequent vgroup/vdata access. */
+    status = Vstart(file_id);
+    CHECK(status,FAIL,"Vstart:file_id");
+
+    /* attach to Vdata */
+    vdata_id = VSattach(file_id, v_ref, "w");
+    CHECK(vdata_id,FAIL,"VSattach:vdata_id");
+
+    /* delete this Vdata */
+    status = VSdelete (file_id, v_ref);
+    CHECK(status,FAIL,"VSdelete:vdata_id");
+
+    /* Terminate access to the vdata. */
+    status = VSdetach(vdata_id);
+    CHECK(status,FAIL,"VSdetach:vdata_id");
+
+    /* Terminate access to the Vxxx interface and close the file. */
+    status = Vend(file_id);
+    CHECK(status,FAIL,"Vend:file_id");
+
+    status = Hclose(file_id);
+    CHECK(status,FAIL,"Hclose:file_id");
+
+    /* Now open file again and try to attach to vdata with 'v_ref'.
+       The VSattach should fail. */
+    /* Open the HDF file. */
+    file_id = Hopen(FNAME0, DFACC_RDONLY, 0);
+    CHECK(file_id,FAIL,"Hopen:tvset.hdf");
+
+    /* Initialize HDF for subsequent the vgroup/vdata access. */
+    status = Vstart(file_id);
+    CHECK(status,FAIL,"Vstart:file_id");
+
+    /* Try to attach to Vdata. This should fail now */
+    vdata_id = VSattach(file_id, v_ref, "w");
+    if (vdata_id != FAIL)
+      {
+          num_errs++;
+          printf(">>> VSdelete failed to delete vdata \n");
+      }
+
+    /* Terminate access to the Vxxx interface and close the file. */
+    status = Vend(file_id);
+    CHECK(status,FAIL,"Vend:file_id");
+
+    status = Hclose(file_id);
+    CHECK(status,FAIL,"Hclose:file_id");
+
+} /* test_vsdelete */
+
+/* Testing Vdelete for vgroups. */ 
+void
+test_vdelete(void)
+{
+    int32 file_id;
+    int32 vgroup_id;
+    int32 status;
+    int32 vg_ref;
+
+    /* Open the HDF file. */
+    file_id = Hopen(FNAME0, DFACC_RDWR, 0);
+    CHECK(file_id,FAIL,"Hopen:tvset.hdf");
+
+    /* Initialize HDF for subsequent vgroup/vdata access. */
+    status = Vstart(file_id);
+    CHECK(status,FAIL,"Vstart:file_id");
+
+    /* Create a new vgroup. */
+    vgroup_id = Vattach(file_id, -1, "w");
+    CHECK(vgroup_id,FAIL,"Vattach:vgroup_id");
+          
+    /* Set the name and class. */
+    status = Vsetname(vgroup_id, "Vgroup should have been deleted");
+    CHECK(status,FAIL,"Vsetname:vgroup_id");
+
+    status = Vsetclass(vgroup_id, "Vgroup should have been deleted");
+    CHECK(status,FAIL,"Vsetclass:vgroup_id");
+
+    /* get ref of vgroup */
+    vg_ref = VQueryref(vgroup_id);
+    CHECK(vg_ref,FAIL,"VQueryref:vgroup_id");
+
+    /* Terminate access to the vgroup. */
+    status = Vdetach(vgroup_id);
+    CHECK(status,FAIL,"Vdetach:vgroup_id");
+    
+    /* Terminate access to the Vxxx interface and close the file. */
+    status = Vend(file_id);
+    CHECK(status,FAIL,"Vend:file_id");
+
+    status = Hclose(file_id);
+    CHECK(status,FAIL,"Hclose:file_id");
+
+    /* Now open the file again and delete the vgroup */
+    /* Open the HDF file. */
+    file_id = Hopen(FNAME0, DFACC_RDWR, 0);
+    CHECK(file_id,FAIL,"Hopen:tvset.hdf");
+
+    /* Initialize HDF for subsequent vgroup/vdata access. */
+    status = Vstart(file_id);
+    CHECK(status,FAIL,"Vstart:file_id");
+
+    /* attach to vgroup */
+    vgroup_id = Vattach(file_id, vg_ref, "w");
+    CHECK(vgroup_id,FAIL,"Vattach:vgroup_id");
+
+    /* delete this vgroup */
+    status = Vdelete (file_id, vg_ref);
+    CHECK(status,FAIL,"Vdelete:vgroup_id");
+
+    /* Terminate access to the vgroup. */
+    status = Vdetach(vgroup_id);
+    CHECK(status,FAIL,"VSdetach:vgroup_id");
+
+    /* Terminate access to the Vxxx interface and close the file. */
+    status = Vend(file_id);
+    CHECK(status,FAIL,"Vend:file_id");
+
+    status = Hclose(file_id);
+    CHECK(status,FAIL,"Hclose:file_id");
+
+    /* Now open file again and try to attach to vgroup with 'vg_ref'.
+       The Vattach should fail. */
+    /* Open the HDF file. */
+    file_id = Hopen(FNAME0, DFACC_RDONLY, 0);
+    CHECK(file_id,FAIL,"Hopen:tvset.hdf");
+
+    /* Initialize HDF for subsequent the vgroup/vdata access. */
+    status = Vstart(file_id);
+    CHECK(status,FAIL,"Vstart:file_id");
+
+    /* Try to attach to vgroup. This should fail now */
+    vgroup_id = Vattach(file_id, vg_ref, "w");
+    if (vgroup_id != FAIL)
+      {
+          num_errs++;
+          printf(">>> Vdelete failed to delete vdata \n");
+      }
+
+    /* Terminate access to the Vxxx interface and close the file. */
+    status = Vend(file_id);
+    CHECK(status,FAIL,"Vend:file_id");
+
+    status = Hclose(file_id);
+    CHECK(status,FAIL,"Hclose:file_id");
+
+} /* test_vdelete */
+
+
 /* main test driver */
 void
 test_vsets(void)
@@ -1269,5 +1493,11 @@ test_vsets(void)
     status = read_vset_stuff();
     if (status == FAIL)
         return;
+
+    /* test VSdelete */
+    test_vsdelete();
+
+    /* test Vdelete */
+    test_vdelete();
 
 }   /* test_vsets */
