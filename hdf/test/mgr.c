@@ -250,401 +250,6 @@ void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt)
       } /* end for */
 }   /* dump_image() */
 
-#ifdef QAK
-/****************************************************************
-**
-**  test_mgr(): Main multi-file raster image test routine
-** 
-****************************************************************/
-void
-test_mgr_old()
-{
-    intn i,j,k;             /* local counting variable */
-    int32 hdf_file_id;      /* HDF file ID */
-    int32 grid;             /* GR interface ID */
-    int32 riid;             /* RI interface ID */
-    int32 ret;              /* generic return value */
-    int32 n_datasets;       /* number of datasets */
-    int32 n_attrs;          /* number of attributes */
-    int32 ncomp;            /* number of components */
-    int32 nt;               /* number-type */
-    int32 il;               /* interlace */
-    int32 dimsizes[2];      /* dimension sizes */
-    char attr_name[32];     /* name of the attribute */
-    char u8_attr[64];       /* uint8 attribute */
-    uint16 *img1_data;      /* uint16 image pointer */
-    int32 start[2];         /* starting location for I/O */
-    int32 stride[2];        /* stride of I/O */
-    int32 count[2];         /* count of I/O */
-
-    /* Create the test file */
-#ifdef QAK
-    hdf_file_id=Hopen(TESTFILE,DFACC_ALL,0);
-#else /* QAK */
-    hdf_file_id=Hopen(TESTFILE,DFACC_RDWR,0);
-#endif /* QAK */
-    CHECK(hdf_file_id,FAIL,"Hopen");
-
-    /* Try initializing the GR interface */
-    grid=GRstart(hdf_file_id);
-    CHECK(grid,FAIL,"GRstart");
-
-    ret=(intn)GRfileinfo(grid,&n_datasets,&n_attrs);
-    CHECK(ret,FAIL,"GRfileinfo");
-
-printf("hdf_file_id=%ld\n",(long)hdf_file_id);
-printf("grid=%ld: n_datasets=%ld, n_attrs=%ld\n",(long)grid,(long)n_datasets,(long)n_attrs);
-    if(n_attrs>0)
-      {
-          for(i=0; i<n_attrs; i++)
-            {
-                ret=(intn)GRattrinfo(grid,i,attr_name,&nt,&ncomp);
-                CHECK(ret,FAIL,"GRattrinfo");
-if(ret==FAIL)
-    HEprint(stderr,0);
-
-                ret=(intn)GRgetattr(grid,i,u8_attr);
-                CHECK(ret,FAIL,"GRgetattr");
-                if(ret!=FAIL)
-                    printf("Global Attribute #%d: Name=%s, Value=%s\n",i,attr_name,u8_attr);
-
-            } /* end for */
-      } /* end if */
-
-    /* Shut down the GR interface */
-    ret=GRend(grid);
-    CHECK(ret,FAIL,"GRend");
-if(ret==FAIL)
-    HEprint(stderr,0);
-
-    /* Close the file */
-    ret=Hclose(hdf_file_id);
-    CHECK(ret,FAIL,"Hclose");
-if(ret==FAIL)
-    HEprint(stderr,0);
-
-
-    /* Ok, let's try playing with the images some */
-    hdf_file_id=Hopen(TESTFILE,DFACC_RDWR,0);
-    CHECK(hdf_file_id,FAIL,"Hopen");
-
-    /* Try initializing the GR interface */
-    grid=GRstart(hdf_file_id);
-    CHECK(grid,FAIL,"GRstart");
-
-    ret=(intn)GRfileinfo(grid,&n_datasets,&n_attrs);
-    CHECK(ret,FAIL,"GRfileinfo");
-
-    /* Attach to each image */
-    for(i=0; i<n_datasets; i++)
-      {
-          riid=GRselect(grid,i);
-          CHECK(riid,FAIL,"GRselect");
-          if(riid==FAIL)
-              HEprint(stderr,0);
-          else
-            {
-                ret=(intn)GRgetiminfo(riid,NULL,&ncomp,&nt,&il,dimsizes,&n_attrs);
-                CHECK(ret,FAIL,"GRfileinfo");
-
-printf("%d: riid=%ld: ncomp=%ld, nt=%ld, il=%ld, dim[0]=%ld, dim[1]=%ld, n_attrs=%ld\n",i,(long)riid,(long)ncomp,(long)nt,(long)il,(long)dimsizes[0],(long)dimsizes[1],(long)n_attrs);
-
-              /* Detach from the first image */
-              ret=GRendaccess(riid);
-              CHECK(ret,FAIL,"GRselect");
-            } /* end else */
-      } /* end for */
-
-    /* Shut down the GR interface */
-    ret=GRend(grid);
-    CHECK(ret,FAIL,"GRend");
-if(ret==FAIL)
-    HEprint(stderr,0);
-
-    /* Close the file */
-    ret=Hclose(hdf_file_id);
-    CHECK(ret,FAIL,"Hclose");
-if(ret==FAIL)
-    HEprint(stderr,0);
-
-
-    /* Ok, now create some attributes in the images */
-    hdf_file_id=Hopen(TESTFILE,DFACC_RDWR,0);
-    CHECK(hdf_file_id,FAIL,"Hopen");
-
-    /* Try initializing the GR interface */
-    grid=GRstart(hdf_file_id);
-    CHECK(grid,FAIL,"GRstart");
-
-    /* Create an attribute for the file */
-    HDstrcpy(attr_name,"Test1");
-    HDstrcpy(u8_attr,"Attribute value 1");
-    ret=GRsetattr(grid,attr_name,DFNT_UINT8,HDstrlen(u8_attr)+1,u8_attr);
-    CHECK(ret,FAIL,"GRsetattr");
-
-    /* Create another attribute for the file */
-    HDstrcpy(attr_name,"Test2");
-    HDstrcpy(u8_attr,"Attribute value 2");
-    ret=GRsetattr(grid,attr_name,DFNT_UINT8,HDstrlen(u8_attr)+1,u8_attr);
-    CHECK(ret,FAIL,"GRsetattr");
-
-    ret=(intn)GRfileinfo(grid,&n_datasets,&n_attrs);
-    CHECK(ret,FAIL,"GRfileinfo");
-
-    /* Attach to each image */
-    for(i=0; i<n_datasets; i++)
-      {
-          riid=GRselect(grid,i);
-          CHECK(riid,FAIL,"GRselect");
-          if(riid==FAIL)
-              HEprint(stderr,0);
-          else
-            {
-                /* Create an attribute for the image */
-                HDstrcpy(attr_name,"Image1");
-                HDstrcpy(u8_attr,"Attribute value 1");
-                ret=GRsetattr(riid,attr_name,DFNT_UINT8,HDstrlen(u8_attr)+1,u8_attr);
-                CHECK(ret,FAIL,"GRsetattr");
-
-                /* Create another attribute for the image */
-                HDstrcpy(attr_name,"Image2");
-                HDstrcpy(u8_attr,"Attribute value 2");
-                ret=GRsetattr(riid,attr_name,DFNT_UINT8,HDstrlen(u8_attr)+1,u8_attr);
-                CHECK(ret,FAIL,"GRsetattr");
-
-                ret=(intn)GRgetiminfo(riid,NULL,&ncomp,&nt,&il,dimsizes,&n_attrs);
-                CHECK(ret,FAIL,"GRfileinfo");
-
-printf("%d: riid=%ld: ncomp=%ld, nt=%ld, il=%ld, dim[0]=%ld, dim[1]=%ld, n_attrs=%ld\n",i,(long)riid,(long)ncomp,(long)nt,(long)il,(long)dimsizes[0],(long)dimsizes[1],(long)n_attrs);
-
-                for(j=0; j<n_attrs; j++)
-                  {
-                    ret=(intn)GRattrinfo(riid,j,attr_name,&nt,&ncomp);
-                    CHECK(ret,FAIL,"GRattrinfo");
-if(ret==FAIL)
-    HEprint(stderr,0);
-
-                    ret=(intn)GRgetattr(riid,j,u8_attr);
-                    CHECK(ret,FAIL,"GRgetattr");
-                    if(ret!=FAIL)
-                        printf("Image #%d Attribute #%d: Name=%s, Value=%s\n",i,j,attr_name,u8_attr);
-                  } /* end for */
-
-                /* Detach from the image */
-                ret=GRendaccess(riid);
-                CHECK(ret,FAIL,"GRendaccess");
-            } /* end else */
-      } /* end for */
-
-    /* Shut down the GR interface */
-    ret=GRend(grid);
-    CHECK(ret,FAIL,"GRend");
-if(ret==FAIL)
-    HEprint(stderr,0);
-
-    /* Close the file */
-    ret=Hclose(hdf_file_id);
-    CHECK(ret,FAIL,"Hclose");
-if(ret==FAIL)
-    HEprint(stderr,0);
-
-    /* Ok, now create some new images in the file */
-    hdf_file_id=Hopen(TESTFILE,DFACC_RDWR,0);
-    CHECK(hdf_file_id,FAIL,"Hopen");
-
-    /* Try initializing the GR interface */
-    grid=GRstart(hdf_file_id);
-    CHECK(grid,FAIL,"GRstart");
-
-    dimsizes[0]=21;
-    dimsizes[1]=23;
-    ncomp=4;
-    nt=DFNT_UINT16;
-    riid=(intn)GRcreate(grid,"Test Image #1",ncomp,nt,0,dimsizes);
-    CHECK(riid,FAIL,"GRcreate");
-
-    img1_data=HDmalloc(dimsizes[0]*dimsizes[1]*DFKNTsize(nt | DFNT_NATIVE)*ncomp);
-    CHECK(img1_data,NULL,"HDmalloc");
-
-    {
-        uint16 *tptr=(uint16 *)img1_data;
-
-        for(i=0; i<dimsizes[1]; i++)
-            for(j=0; j<dimsizes[0]; j++)
-                for(k=0; k<ncomp; k++)
-                    *tptr++=j+k;
-    }
-            
-    start[0]=start[1]=0;
-    stride[0]=1;
-    stride[1]=2;
-    count[0]=dimsizes[0]/2;
-    count[1]=dimsizes[1]/2;
-    ret=GRwriteimage(riid,start,stride,count,img1_data);
-    CHECK(ret,FAIL,"GRwriteimage");
-if(ret==FAIL)
-    HEprint(stderr,0);
-    
-    {
-        uint16 *tptr=(uint16 *)img1_data;
-
-        for(i=0; i<dimsizes[1]; i++)
-            for(j=0; j<dimsizes[0]; j++)
-                for(k=0; k<ncomp; k++)
-                    *tptr++=2;
-    }
-
-    start[0]=start[1]=1;
-    stride[0]=2;
-    stride[1]=1;
-    count[0]=dimsizes[0]/2;
-    count[1]=dimsizes[1]/2;
-    ret=GRwriteimage(riid,start,stride,count,img1_data);
-    CHECK(ret,FAIL,"GRwriteimage");
-if(ret==FAIL)
-    HEprint(stderr,0);
-    
-    /* Get rid of the image data */
-    HDfree(img1_data);
-
-    /* Detach from the image */
-    ret=GRendaccess(riid);
-    CHECK(ret,FAIL,"GRendaccess");
-if(ret==FAIL)
-    HEprint(stderr,0);
-
-    dimsizes[0]=17;
-    dimsizes[1]=19;
-    ncomp=2;
-    nt=DFNT_FLOAT64;
-    riid=(intn)GRcreate(grid,"Test Image #2",ncomp,nt,0,dimsizes);
-    CHECK(riid,FAIL,"GRcreate");
-
-    img1_data=HDmalloc(dimsizes[0]*dimsizes[1]*DFKNTsize(nt | DFNT_NATIVE)*ncomp);
-    CHECK(img1_data,NULL,"HDmalloc");
-
-    {
-        float64 *tptr=(float64 *)img1_data;
-
-        for(i=0; i<dimsizes[1]; i++)
-            for(j=0; j<dimsizes[0]; j++)
-                for(k=0; k<ncomp; k++)
-                    *tptr++=6.0;
-    }
-            
-    start[0]=start[1]=0;
-    stride[0]=stride[1]=1;
-    count[0]=dimsizes[0]/2;
-    count[1]=dimsizes[1]/2;
-    ret=GRwriteimage(riid,start,stride,count,img1_data);
-    CHECK(ret,FAIL,"GRwriteimage");
-if(ret==FAIL)
-    HEprint(stderr,0);
-    
-    {
-        float64 *tptr=(float64 *)img1_data;
-
-        for(i=0; i<dimsizes[1]; i++)
-            for(j=0; j<dimsizes[0]; j++)
-                for(k=0; k<ncomp; k++)
-                    *tptr++=9.0;
-    }
-            
-    start[0]=dimsizes[0]/2;
-    start[1]=dimsizes[1]/2;
-    stride[0]=stride[1]=1;
-    count[0]=dimsizes[0]/2;
-    count[1]=dimsizes[1]/2;
-    ret=GRwriteimage(riid,start,stride,count,img1_data);
-    CHECK(ret,FAIL,"GRwriteimage");
-if(ret==FAIL)
-    HEprint(stderr,0);
-    
-    /* Get rid of the image data */
-    HDfree(img1_data);
-
-    /* Detach from the image */
-    ret=GRendaccess(riid);
-    CHECK(ret,FAIL,"GRendaccess");
-if(ret==FAIL)
-    HEprint(stderr,0);
-
-    ret=(intn)GRfileinfo(grid,&n_datasets,&n_attrs);
-    CHECK(ret,FAIL,"GRfileinfo");
-
-    /* Attach to each image */
-    for(i=0; i<n_datasets; i++)
-      {
-          riid=GRselect(grid,i);
-          CHECK(riid,FAIL,"GRselect");
-          if(riid==FAIL)
-              HEprint(stderr,0);
-          else
-            {
-                /* Create an attribute for the image */
-                HDstrcpy(attr_name,"Image1");
-                HDstrcpy(u8_attr,"Attribute value 1");
-                ret=GRsetattr(riid,attr_name,DFNT_UINT8,HDstrlen(u8_attr)+1,u8_attr);
-                CHECK(ret,FAIL,"GRsetattr");
-
-                /* Create another attribute for the image */
-                HDstrcpy(attr_name,"Image2");
-                HDstrcpy(u8_attr,"Attribute value 2");
-                ret=GRsetattr(riid,attr_name,DFNT_UINT8,HDstrlen(u8_attr)+1,u8_attr);
-                CHECK(ret,FAIL,"GRsetattr");
-
-                ret=(intn)GRgetiminfo(riid,NULL,&ncomp,&nt,&il,dimsizes,&n_attrs);
-                CHECK(ret,FAIL,"GRfileinfo");
-
-printf("%d: riid=%ld: ncomp=%ld, nt=%ld, il=%ld, dim[0]=%ld, dim[1]=%ld, n_attrs=%ld\n",i,(long)riid,(long)ncomp,(long)nt,(long)il,(long)dimsizes[0],(long)dimsizes[1],(long)n_attrs);
-
-                img1_data=HDmalloc(dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATVIE));
-                CHECK(img1_data,NULL,"HDmalloc");
-
-                HDmemset(img1_data,0,dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATIVE));
-
-                start[0]=start[1]=0;
-                stride[0]=stride[1]=1;
-                ret=GRreadimage(riid,start,stride,dimsizes,img1_data);
-
-                /* Dump the image out */
-                dump_image(img1_data,dimsizes[0],dimsizes[1],ncomp,nt);
-
-                HDfree(img1_data);
-
-                for(j=0; j<n_attrs; j++)
-                  {
-                    ret=(intn)GRattrinfo(riid,j,attr_name,&nt,&ncomp);
-                    CHECK(ret,FAIL,"GRattrinfo");
-if(ret==FAIL)
-    HEprint(stderr,0);
-
-                    ret=(intn)GRgetattr(riid,j,u8_attr);
-                    CHECK(ret,FAIL,"GRgetattr");
-                    if(ret!=FAIL)
-                        printf("Image #%d Attribute #%d: Name=%s, Value=%s\n",i,j,attr_name,u8_attr);
-                  } /* end for */
-
-                /* Detach from the image */
-                ret=GRendaccess(riid);
-                CHECK(ret,FAIL,"GRendaccess");
-            } /* end else */
-      } /* end for */
-
-    /* Shut down the GR interface */
-    ret=GRend(grid);
-    CHECK(ret,FAIL,"GRend");
-if(ret==FAIL)
-    HEprint(stderr,0);
-
-    /* Close the file */
-    ret=Hclose(hdf_file_id);
-    CHECK(ret,FAIL,"Hclose");
-if(ret==FAIL)
-    HEprint(stderr,0);
-} /* test_mgr_old() */
-#endif /* QAK */
-
 /* Test outline:
     I. Interface Initialization
         A. GRstart
@@ -773,42 +378,12 @@ test_mgr_init()
     CHECK(ret,FAIL,"Hclose");
 }   /* end test_mgr_init() */
 
-/****************************************************************
-**
-**  test_mgr_image(): Multi-file Raster Image I/O Test Routine
-** 
-**      A. GRcreate/GRselect/GRendaccess w/GRgetiminfo
-**      B. Write/Read images
-**          1. With no Data
-**              a. Default fill value
-**              b. user defined fill value
-**          2. With real Data
-**              a. New Image
-**                  1. With default fill value
-**                      aa. Whole image
-**                      bb. Sub-setted image
-**                      cc. Sub-sampled image
-**                  2. With user defined vill value
-**                      aa. Whole image
-**                      bb. Sub-setted image
-**                      cc. Sub-sampled image
-**              b. Existing Image
-**                  1. Whole image
-**                  2. Sub-setted image
-**                  3. Sub-sampled image
-** 
-****************************************************************/
-void
-test_mgr_image()
+/* Sub-tests for test_mgr_image() */
+void test_mgr_image_b1a()
 {
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
-    int32 n_datasets;       /* number of datasets */
-    int32 n_attrs;          /* number of attributes */
     int32 ret;              /* generic return value */
-
-    /* Output message about test being performed */
-    MESSAGE(6, printf("Testing Multi-file Raster Image I/O routines\n"););
 
 /* B1a - Read/Write images - with no Data - Default Fill Value */
     MESSAGE(8, printf("Check out I/O on image with no data, using the default fill value\n"););
@@ -878,6 +453,13 @@ test_mgr_image()
     /* Close the file */
     ret=Hclose(fid);
     CHECK(ret,FAIL,"Hclose");
+} /* end test_mgr_image_b1a() */
+
+void test_mgr_image_b1b()
+{
+    int32 fid;              /* HDF file ID */
+    int32 grid;             /* GRID for the interface */
+    int32 ret;              /* generic return value */
 
 /* B1b - Read/Write images - with no Data - User-defined Fill Value */
     MESSAGE(8, printf("Check out I/O on image with no data, using User Defined fill-value\n"););
@@ -952,6 +534,13 @@ test_mgr_image()
     /* Close the file */
     ret=Hclose(fid);
     CHECK(ret,FAIL,"Hclose");
+} /* end test_mgr_image_b1b() */
+
+void test_mgr_image_b2a1aa()
+{
+    int32 fid;              /* HDF file ID */
+    int32 grid;             /* GRID for the interface */
+    int32 ret;              /* generic return value */
 
 /* B2a1aa - Read/Write images - with real Data - New Image - with Default Fill Value - Whole Image */
     MESSAGE(8, printf("Check out I/O on new image with real data, with Default fill-value, Whole Image\n"););
@@ -1059,6 +648,13 @@ test_mgr_image()
     /* Close the file */
     ret=Hclose(fid);
     CHECK(ret,FAIL,"Hclose");
+} /* end test_mgr_image_b2a1aa() */
+
+void test_mgr_image_b2a1bb1()
+{
+    int32 fid;              /* HDF file ID */
+    int32 grid;             /* GRID for the interface */
+    int32 ret;              /* generic return value */
 
 /* B2a1bb - Read/Write images - with real Data - New Image - with Default Fill Value - Sub-setted Image */
     MESSAGE(8, printf("Check out I/O on new image with real data, with Default fill-value, Writing Sub-setted Image\n"););
@@ -1191,6 +787,14 @@ test_mgr_image()
     ret=Hclose(fid);
     CHECK(ret,FAIL,"Hclose");
 
+} /* end test_mgr_image_b2a1bb1() */
+
+void test_mgr_image_b2a1bb2()
+{
+    int32 fid;              /* HDF file ID */
+    int32 grid;             /* GRID for the interface */
+    int32 ret;              /* generic return value */
+
     MESSAGE(8, printf("Check out I/O on new image with real data, with Default fill-value, Reading Sub-setted Image\n"););
     /* Open up the existing datafile and get the image information from it */
     fid=Hopen(TESTFILE,DFACC_RDWR,0);
@@ -1313,6 +917,14 @@ test_mgr_image()
     /* Close the file */
     ret=Hclose(fid);
     CHECK(ret,FAIL,"Hclose");
+
+} /* end test_mgr_image_b2a1bb2() */
+
+void test_mgr_image_b2a1cc1()
+{
+    int32 fid;              /* HDF file ID */
+    int32 grid;             /* GRID for the interface */
+    int32 ret;              /* generic return value */
 
 /* B2a1cc - Read/Write images - with real Data - New Image - with Default Fill Value - Sub-sampled Image */
     MESSAGE(8, printf("Check out I/O on new image with real data, with Default fill-value, Writing Sub-sampled Image\n"););
@@ -1444,6 +1056,14 @@ test_mgr_image()
     ret=Hclose(fid);
     CHECK(ret,FAIL,"Hclose");
 
+}
+
+void test_mgr_image_b2a1cc2()
+{
+    int32 fid;              /* HDF file ID */
+    int32 grid;             /* GRID for the interface */
+    int32 ret;              /* generic return value */
+
     MESSAGE(8, printf("Check out I/O on new image with real data, with Default fill-value, Reading Sub-sampled Image\n"););
     /* Open up the existing datafile and get the image information from it */
     fid=Hopen(TESTFILE,DFACC_RDWR,0);
@@ -1566,9 +1186,17 @@ test_mgr_image()
     ret=Hclose(fid);
     CHECK(ret,FAIL,"Hclose");
 
+} /* end test_mgr_image_b2a1cc() */
+
+void test_mgr_image_b2a2aa()
+{
+#ifdef QAK
+    int32 fid;              /* HDF file ID */
+    int32 grid;             /* GRID for the interface */
+    int32 ret;              /* generic return value */
+
 /* B2a2aa - Read/Write images - with real Data - New Image - with User-Defined Fill Value - Whole Image */
 /* The following test is unnecessary, fill-values only are important when writing out partial images */
-#ifdef QAK
     MESSAGE(8, printf("Check out I/O on new image with real data, with User-Defined fill-value, Whole Image\n"););
 
     /* Open up the existing datafile and get the image information from it */
@@ -1675,6 +1303,14 @@ test_mgr_image()
     ret=Hclose(fid);
     CHECK(ret,FAIL,"Hclose");
 #endif /* QAK */
+
+} /* end test_mgr_image_b2a2aa() */
+
+void test_mgr_image_b2a2bb()
+{
+    int32 fid;              /* HDF file ID */
+    int32 grid;             /* GRID for the interface */
+    int32 ret;              /* generic return value */
 
 /* B2a2bb - Read/Write images - with real Data - New Image - with User-Defined Fill Value - Sub-setted Image */
     MESSAGE(8, printf("Check out I/O on new image with real data, with User-Defined fill-value, Writing Sub-setted Image\n"););
@@ -1943,6 +1579,14 @@ test_mgr_image()
     CHECK(ret,FAIL,"Hclose");
 #endif /* QAK */
 
+} /* end test_mgr_image_b2a2bb() */
+
+void test_mgr_image_b2a2cc()
+{
+    int32 fid;              /* HDF file ID */
+    int32 grid;             /* GRID for the interface */
+    int32 ret;              /* generic return value */
+
 /* B2a2cc - Read/Write images - with real Data - New Image - with User-Defined Fill Value - Sub-sampled Image */
     MESSAGE(8, printf("Check out I/O on new image with real data, with User-Defined fill-value, Writing Sub-sampled Image\n"););
 
@@ -2203,6 +1847,14 @@ test_mgr_image()
     CHECK(ret,FAIL,"Hclose");
 #endif /* QAK */
 
+} /* end test_mgr_image_b2a2cc() */
+
+void test_mgr_image_b2b1()
+{
+    int32 fid;              /* HDF file ID */
+    int32 grid;             /* GRID for the interface */
+    int32 ret;              /* generic return value */
+
 /* B2b1 - Read/Write images - with real Data - Existing Image - Whole Image */
     MESSAGE(8, printf("Check out I/O from Existing Image - Whole Image\n"););
 
@@ -2215,6 +1867,8 @@ test_mgr_image()
     CHECK(grid,FAIL,"GRstart");
 
     {
+        int32 n_datasets;       /* number of datasets */
+        int32 n_attrs;          /* number of attributes */
         intn i;     /* local counting variables */
         
         ret=(intn)GRfileinfo(grid,&n_datasets,&n_attrs);
@@ -2364,10 +2018,68 @@ test_mgr_image()
     ret=Hclose(fid);
     CHECK(ret,FAIL,"Hclose");
 
+} /* end test_mgr_image_b2b1() */
+
+void test_mgr_image_b2b2()
+{
 /* B2b2 - Read/Write images - with real Data - Existing Image - Sub-setted Image */
     /* This test is unnecessary, I think this case has been adequately covered above -QAK */
+} /* end test_mgr_image_b2b2() */
+
+void test_mgr_image_b2b3()
+{
 /* B2b3 - Read/Write images - with real Data - Existing Image - Sub-sampled Image */
     /* This test is unnecessary, I think this case has been adequately covered above -QAK */
+} /* end test_mgr_image_b2b3() */
+
+/****************************************************************
+**
+**  test_mgr_image(): Multi-file Raster Image I/O Test Routine
+** 
+**      A. GRcreate/GRselect/GRendaccess w/GRgetiminfo
+**      B. Write/Read images
+**          1. With no Data
+**              a. Default fill value
+**              b. user defined fill value
+**          2. With real Data
+**              a. New Image
+**                  1. With default fill value
+**                      aa. Whole image
+**                      bb. Sub-setted image
+**                      cc. Sub-sampled image
+**                  2. With user defined vill value
+**                      aa. Whole image
+**                      bb. Sub-setted image
+**                      cc. Sub-sampled image
+**              b. Existing Image
+**                  1. Whole image
+**                  2. Sub-setted image
+**                  3. Sub-sampled image
+** 
+****************************************************************/
+void
+test_mgr_image()
+{
+    int32 fid;              /* HDF file ID */
+    int32 grid;             /* GRID for the interface */
+    int32 ret;              /* generic return value */
+
+    /* Output message about test being performed */
+    MESSAGE(6, printf("Testing Multi-file Raster Image I/O routines\n"););
+
+    test_mgr_image_b1a();
+    test_mgr_image_b1b();
+    test_mgr_image_b2a1aa();
+    test_mgr_image_b2a1bb1();
+    test_mgr_image_b2a1bb2();
+    test_mgr_image_b2a1cc1();
+    test_mgr_image_b2a1cc2();
+    test_mgr_image_b2a2aa();
+    test_mgr_image_b2a2bb();
+    test_mgr_image_b2a2cc();
+    test_mgr_image_b2b1();
+    test_mgr_image_b2b2();
+    test_mgr_image_b2b3();
 }   /* end test_mgr_image() */
 
 /****************************************************************
