@@ -15,7 +15,10 @@ hdf/jpeg/testprog.jpg -text
 hdf/pablo/Pablo.doc -text
 hdf/pablo/Pablo.pdf -text
 hdf/src/hdflib.project -text
+hdf/test/8bit.dat -text
 hdf/test/bitio.dat -text
+hdf/test/greyjpeg.dat -text
+hdf/test/jpeg.dat -text
 hdf/test/litend.dat -text
 hdf/test/nbit.dat -text
 hdf/test/tmgr.dat -text

@@ -189,7 +189,8 @@ static void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt
 #endif /* QAK */
           for(j=0; j<xdim; j++)
             {
-                printf("{");
+                if(ncomp>1)
+                    printf("{");
                 for(k=0; k<ncomp; k++)
                   {
                     switch(nt)
@@ -199,7 +200,7 @@ static void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt
 #ifdef QAK
                             {
                                 char *ptr=(char *)data;
-                                printf("%c ",*ptr);
+                                printf("%c",*ptr);
                             }
                             break;
 #endif /* QAK */
@@ -207,56 +208,56 @@ static void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt
                           case DFNT_UINT8:
                             {
                                 unsigned char *ptr=(unsigned char *)data;
-                                printf("%u ",(unsigned)*ptr);
+                                printf("%u",(unsigned)*ptr);
                             }
                             break;
 
                           case DFNT_INT8:
                             {
                                 char *ptr=(char *)data;
-                                printf("%d ",(int)*ptr);
+                                printf("%d",(int)*ptr);
                             }
                             break;
 
                           case DFNT_UINT16:
                             {
                                 uint16 *ptr=(uint16 *)data;
-                                printf("%u ",(unsigned)*ptr);
+                                printf("%u",(unsigned)*ptr);
                             }
                             break;
 
                           case DFNT_INT16:
                             {
                                 int16 *ptr=(int16 *)data;
-                                printf("%d ",(int)*ptr);
+                                printf("%d",(int)*ptr);
                             }
                             break;
 
                           case DFNT_UINT32:
                             {
                                 uint32 *ptr=(uint32 *)data;
-                                printf("%lu ",(unsigned long)*ptr);
+                                printf("%lu",(unsigned long)*ptr);
                             }
                             break;
 
                           case DFNT_INT32:
                             {
                                 int32 *ptr=(int32 *)data;
-                                printf("%ld ",(long)*ptr);
+                                printf("%ld",(long)*ptr);
                             }
                             break;
 
                           case DFNT_FLOAT32:
                             {
                                 float32 *ptr=(float32 *)data;
-                                printf("%f ",(double)*ptr);
+                                printf("%f",(double)*ptr);
                             }
                             break;
 
                           case DFNT_FLOAT64:
                             {
                                 float64 *ptr=(float64 *)data;
-                                printf("%f ",(double)*ptr);
+                                printf("%f",(double)*ptr);
                             }
                             break;
 
@@ -265,11 +266,14 @@ static void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt
                             break;
 
                       } /* end switch */
-            if(k<(ncomp-1))
-                printf(",");
+                    if(k<(ncomp-1))
+                        printf(", ");
                     data=(void *)((char *)data+nt_size);
                   } /* end for */
-                printf("},");
+                if(ncomp>1)
+                    printf("}, ");
+                else
+                    printf(", ");
 
             } /* end for */
           printf("\n");
@@ -313,17 +317,18 @@ static void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt
         B. Read/Write Palettes
             1. GRwritelut
             2. GRreadlut
-	C. GRluttoref
+        C. GRluttoref
     VI. Special Element Functions [Need to be implemented]
         A. GRsetexternalfile
         B. GRsetaccesstype
-        C. GRsetcompress
     VII. Atribute Functions
         A. GRattrinfo
         B. Read/Write Attributes
             1. GRsetattr
             2. GRgetattr
         C. GRfindattr
+    VIII. Old-Style Raster Image Access
+    IX. Compressed image Functions
         
 */
 
@@ -364,7 +369,7 @@ test_mgr_init(void)
 
     if(n_datasets!=0 || n_attrs!=0)
       {
-          MESSAGE(3, printf("Number of datasets/attributes in new file incorrect\n"););
+          MESSAGE(3, printf("Error! Number of datasets/attributes in new file incorrect\n"););
           num_errs++;
       } /* end if */
 
@@ -393,7 +398,7 @@ test_mgr_init(void)
 
     if(n_datasets!=5 || n_attrs!=2)
       {
-          MESSAGE(3, printf("Number of datasets/attributes in existing file incorrect\n"););
+          MESSAGE(3, printf("Error! Number of datasets/attributes in existing file incorrect\n"););
           num_errs++;
       } /* end if */
 
@@ -2285,49 +2290,49 @@ static void test_mgr_image_b2b1(int flag)
               /* Check the name for correctness */
               if(HDstrcmp(name,datafile_info[i].name))
                 {
-                    MESSAGE(3, printf("Name for image %d is: %s, should be %s\n",i,name,datafile_info[i].name););
+                    MESSAGE(3, printf("Error! Name for image %d is: %s, should be %s\n",i,name,datafile_info[i].name););
                     num_errs++;
                 } /* end if */
 
               /* Check the # of components */
               if(ncomp!=datafile_info[i].ncomp)
                 {
-                    MESSAGE(3, printf("Number of components for image %d is: %ld, should be %ld\n",i,(long)ncomp,(long)datafile_info[i].ncomp););
+                    MESSAGE(3, printf("Error! Number of components for image %d is: %ld, should be %ld\n",i,(long)ncomp,(long)datafile_info[i].ncomp););
                     num_errs++;
                 } /* end if */
 
               /* Check the NT of components */
               if(nt!=datafile_info[i].nt)
                 {
-                    MESSAGE(3, printf("NT of components for image %d is: %ld, should be %ld\n",i,(long)nt,(long)datafile_info[i].nt););
+                    MESSAGE(3, printf("Error! NT of components for image %d is: %ld, should be %ld\n",i,(long)nt,(long)datafile_info[i].nt););
                     num_errs++;
                 } /* end if */
 
               /* Check the interlace of components */
               if(il!=datafile_info[i].il)
                 {
-                    MESSAGE(3, printf("Interlace of components for image %d is: %ld, should be %ld\n",i,(long)il,(long)datafile_info[i].il););
+                    MESSAGE(3, printf("Error! Interlace of components for image %d is: %ld, should be %ld\n",i,(long)il,(long)datafile_info[i].il););
                     num_errs++;
                 } /* end if */
 
               /* Check the x-dimension of the image */
               if(dimsizes[XDIM]!=datafile_info[i].dimsizes[XDIM])
                 {
-                    MESSAGE(3, printf("X-dim of image %d is: %ld, should be %ld\n",i,(long)dimsizes[XDIM],(long)datafile_info[i].dimsizes[XDIM]););
+                    MESSAGE(3, printf("Error! X-dim of image %d is: %ld, should be %ld\n",i,(long)dimsizes[XDIM],(long)datafile_info[i].dimsizes[XDIM]););
                     num_errs++;
                 } /* end if */
 
               /* Check the y-dimension of the image */
               if(dimsizes[YDIM]!=datafile_info[i].dimsizes[YDIM])
                 {
-                    MESSAGE(3, printf("Y-dim of image %d is: %ld, should be %ld\n",i,(long)dimsizes[YDIM],(long)datafile_info[i].dimsizes[YDIM]););
+                    MESSAGE(3, printf("Error! Y-dim of image %d is: %ld, should be %ld\n",i,(long)dimsizes[YDIM],(long)datafile_info[i].dimsizes[YDIM]););
                     num_errs++;
                 } /* end if */
 
               /* Check the # of attributes of the image */
               if(n_attr!=datafile_info[i].n_attr)
                 {
-                    MESSAGE(3, printf("# of attributes for image %d is: %ld, should be %ld\n",i,(long)n_attr,(long)datafile_info[i].n_attr););
+                    MESSAGE(3, printf("Error! # of attributes for image %d is: %ld, should be %ld\n",i,(long)n_attr,(long)datafile_info[i].n_attr););
                     num_errs++;
                 } /* end if */
 
@@ -2597,7 +2602,7 @@ static void test_mgr_image_chunk(int flag)
     status = GRsetchunk(riid8, chunk_def, HDF_CHUNK | HDF_COMP);
     if(status == FAIL) 
       {
-        fprintf(stderr, "Chunk Test 7. Failed to create new chunked, GZIP Compressed data set\n");
+        fprintf(stderr, "Error! Chunk Test 7. Failed to create new chunked, GZIP Compressed data set\n");
         num_err++;
         goto test8;
       }
@@ -2856,22 +2861,22 @@ test_mgr_lut(int flag)
         /* Check the palette values, they should all be "nil" values */
         if(pal_ncomp!=0)
           {
-              MESSAGE(3, printf("Incorrect palette components\n"););
+              MESSAGE(3, printf("Error! Incorrect palette components\n"););
               num_errs++;
           } /* end if */
         if(pal_nt!=DFNT_NONE)
           {
-              MESSAGE(3, printf("Incorrect palette number-type\n"););
+              MESSAGE(3, printf("Error! Incorrect palette number-type\n"););
               num_errs++;
           } /* end if */
         if(pal_il!=(-1))
           {
-              MESSAGE(3, printf("Incorrect palette interlace, pal_il=%d\n",(int)pal_il););
+              MESSAGE(3, printf("Error! Incorrect palette interlace, pal_il=%d\n",(int)pal_il););
               num_errs++;
           } /* end if */
         if(pal_entries!=0)
           {
-              MESSAGE(3, printf("Incorrect palette # of entries\n"););
+              MESSAGE(3, printf("Error! Incorrect palette # of entries\n"););
               num_errs++;
           } /* end if */
 
@@ -2957,7 +2962,6 @@ test_mgr_lut(int flag)
 **  VI. Special Element Functions [Need to be implemented]
 **      A. GRsetexternalfile
 **      B. GRsetaccesstype
-**      C. GRsetcompress
 ** 
 ****************************************************************/
 static void
@@ -2988,6 +2992,461 @@ test_mgr_attr(int flag)
 /* I believe that these are adequately tested in the test_mgr_image routine -QAK */
 }   /* end test_mgr_attr() */
 
+#define OLDRLEFILE  "8bit.dat"
+#define OLDGREYJPEGFILE  "greyjpeg.dat"
+#define OLDJPEGFILE  "jpeg.dat"
+#define JPEGX   46
+#define JPEGY   23
+
+static const uint8  jpeg_8bit_j80[JPEGY][JPEGX] =
+{
+    {200, 200, 200, 200, 200, 200, 200, 200, 202, 202, 201, 201, 201, 200, 200, 200, 201, 201, 200, 200, 200, 201, 202, 202, 202, 202, 201, 200, 200, 200, 200, 201, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200}, 
+    {200, 200, 200, 200, 200, 200, 200, 200, 199, 199, 199, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 199, 199, 199, 199, 200, 200, 201, 201, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200}, 
+    {200, 200, 200, 200, 200, 200, 200, 200, 199, 199, 199, 200, 200, 201, 201, 201, 200, 200, 201, 201, 201, 200, 199, 199, 199, 199, 200, 201, 201, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200}, 
+    {200, 200, 200, 200, 200, 200, 200, 200, 201, 201, 201, 201, 201, 201, 201, 201, 201, 201, 202, 202, 202, 201, 200, 199, 202, 202, 202, 202, 202, 200, 199, 198, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200}, 
+    {200, 200, 200, 200, 200, 200, 200, 200, 201, 201, 201, 200, 200, 200, 199, 199, 200, 200, 200, 201, 201, 200, 200, 200, 200, 200, 201, 201, 201, 200, 200, 199, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200}, 
+    {200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 199, 199, 199, 198, 198, 198, 199, 199, 198, 198, 198, 199, 200, 201, 197, 197, 197, 198, 198, 200, 201, 202, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200}, 
+    {200, 200, 200, 200, 200, 200, 200, 200, 199, 199, 200, 200, 201, 202, 202, 203, 201, 200, 199, 198, 199, 201, 204, 205, 203, 202, 200, 199, 198, 200, 202, 203, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200}, 
+    {200, 200, 200, 200, 200, 200, 200, 200, 200, 201, 202, 203, 205, 207, 208, 209, 205, 203, 201, 200, 202, 205, 208, 211, 214, 211, 206, 202, 200, 200, 201, 202, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200}, 
+    {199, 199, 198, 199, 200, 202, 204, 205, 202, 200, 197, 198, 201, 204, 205, 205, 220, 204, 207, 222, 225, 201, 206, 213, 205, 218, 219, 224, 222, 198, 222, 208, 222, 208, 235, 201, 189, 204, 198, 202, 199, 201, 209, 192, 192, 217}, 
+    {200, 200, 199, 199, 200, 201, 202, 203, 210, 208, 205, 203, 201, 197, 191, 186, 170, 212, 216, 191, 222, 217, 218, 185, 216, 226, 200, 193, 207, 232, 193, 221, 210, 124, 127, 218, 223, 192, 197, 207, 207, 209, 210, 220, 209, 184}, 
+    {202, 201, 201, 200, 200, 200, 201, 201, 196, 197, 200, 203, 203, 200, 195, 191, 196, 180, 168, 123, 34, 66, 56, 74, 57, 83, 73, 81, 94, 221, 72, 64, 120, 119, 83, 100, 207, 190, 198, 198, 94, 44, 57, 50, 213, 215}, 
+    {54, 54, 54, 53, 53, 54, 54, 54, 49, 51, 55, 59, 62, 63, 63, 62, 54, 110, 65, 43, 69, 40, 54, 36, 53, 67, 57, 65, 66, 61, 94, 83, 83, 69, 102, 99, 64, 214, 195, 90, 28, 46, 63, 51, 43, 57}, 
+    {52, 52, 53, 54, 54, 55, 55, 55, 56, 54, 51, 48, 47, 46, 48, 49, 56, 63, 48, 72, 67, 55, 51, 65, 50, 48, 46, 70, 49, 67, 63, 86, 59, 107, 60, 73, 40, 44, 102, 36, 40, 218, 192, 165, 101, 44}, 
+    {198, 199, 200, 201, 202, 202, 202, 202, 199, 197, 194, 190, 188, 190, 194, 198, 196, 151, 88, 202, 61, 71, 148, 169, 165, 188, 139, 77, 86, 70, 81, 84, 163, 226, 206, 184, 52, 46, 48, 165, 204, 189, 179, 213, 208, 79}, 
+    {199, 200, 201, 202, 202, 201, 200, 199, 201, 203, 204, 205, 206, 209, 214, 218, 218, 198, 195, 199, 182, 201, 202, 206, 201, 228, 240, 191, 131, 121, 110, 221, 211, 208, 207, 198, 213, 231, 204, 220, 197, 211, 207, 194, 207, 213}, 
+    {201, 202, 202, 203, 202, 200, 199, 197, 199, 202, 206, 206, 204, 202, 202, 203, 205, 195, 210, 199, 211, 220, 210, 224, 224, 204, 215, 205, 227, 218, 229, 220, 203, 201, 199, 202, 206, 206, 195, 205, 203, 194, 202, 197, 210, 190}, 
+    {200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 203, 206, 210, 213, 213, 210, 206, 203, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200}, 
+    {200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 198, 199, 201, 202, 202, 201, 199, 198, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200}, 
+    {200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 199, 199, 198, 197, 197, 198, 199, 199, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200}, 
+    {200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 202, 201, 200, 199, 199, 200, 201, 202, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200}, 
+    {200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 199, 199, 199, 199, 199, 199, 199, 199, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200}, 
+    {200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 198, 199, 200, 201, 201, 200, 199, 198, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200}, 
+    {200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 201, 201, 202, 202, 202, 202, 201, 201, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200} 
+};
+
+static const uint8  jpeg_24bit_j30[JPEGY][JPEGX][3] =
+{
+    235, 112, 16, 235, 112, 16, 235, 112, 16, 235, 112, 16, 235, 112, 16, 235, 112, 16, 
+    235, 112, 16, 235, 112, 16, 230, 107, 11, 231, 108, 12, 232, 109, 13, 234, 111, 15, 
+    236, 113, 17, 238, 115, 19, 239, 116, 20, 247, 113, 24, 255, 100, 25, 255, 95, 30, 
+    255, 96, 32, 255, 96, 35, 255, 95, 41, 255, 95, 42, 255, 95, 46, 255, 95, 46, 252, 88, 37, 
+    254, 88, 36, 255, 90, 32, 255, 90, 28, 255, 91, 25, 255, 92, 21, 255, 93, 17, 255, 98, 14, 
+    250, 106, 10, 247, 107, 12, 255, 100, 19, 255, 96, 25, 255, 93, 30, 255, 95, 30, 
+    255, 99, 28, 242, 108, 23, 228, 116, 16, 215, 124, 10, 210, 127, 9, 210, 127, 9, 
+    217, 122, 16, 221, 119, 18, 
+
+    245, 110, 3, 245, 110, 3, 245, 110, 3, 245, 110, 3, 245, 110, 3, 245, 110, 3, 245, 110, 3, 
+    245, 110, 3, 241, 106, 0, 241, 106, 0, 242, 107, 0, 244, 109, 2, 245, 110, 3, 247, 112, 5, 
+    248, 113, 6, 251, 112, 9, 250, 102, 6, 253, 99, 9, 251, 100, 11, 251, 99, 15, 250, 99, 20, 
+    249, 99, 23, 249, 98, 25, 249, 98, 25, 249, 98, 25, 250, 98, 22, 251, 98, 18, 255, 99, 14, 
+    255, 99, 8, 255, 100, 4, 255, 100, 1, 255, 100, 0, 255, 102, 0, 255, 101, 3, 255, 99, 7, 
+    255, 98, 12, 255, 99, 14, 255, 101, 16, 252, 104, 14, 247, 107, 10, 242, 111, 5, 
+    238, 114, 2, 235, 116, 0, 233, 116, 2, 235, 115, 5, 236, 113, 7, 
+
+    255, 104, 0, 255, 104, 0, 255, 104, 0, 255, 104, 0, 255, 104, 0, 255, 104, 0, 255, 104, 0, 
+    255, 104, 0, 255, 100, 0, 255, 100, 0, 255, 101, 0, 255, 102, 0, 255, 103, 0, 255, 104, 0, 
+    255, 105, 0, 255, 109, 0, 243, 110, 0, 238, 112, 0, 236, 113, 0, 236, 112, 0, 235, 112, 0, 
+    235, 111, 0, 235, 111, 0, 235, 111, 0, 241, 117, 0, 242, 116, 0, 243, 115, 0, 244, 116, 0, 
+    245, 115, 0, 245, 114, 0, 246, 114, 0, 255, 107, 0, 255, 94, 0, 255, 90, 0, 255, 97, 0, 
+    255, 104, 0, 247, 112, 0, 242, 115, 0, 246, 113, 0, 255, 108, 0, 255, 99, 0, 255, 94, 0, 
+    255, 92, 0, 255, 94, 0, 255, 100, 0, 255, 103, 0, 
+
+    255, 103, 0, 255, 104, 0, 255, 103, 0, 255, 104, 0, 255, 103, 0, 255, 104, 0, 255, 103, 0, 
+    255, 104, 0, 255, 99, 0, 255, 101, 0, 255, 100, 0, 255, 101, 0, 255, 101, 0, 255, 102, 0, 
+    255, 101, 0, 255, 105, 0, 251, 113, 0, 244, 116, 0, 244, 116, 0, 244, 115, 0, 242, 115, 0, 
+    242, 114, 0, 242, 114, 0, 244, 113, 0, 249, 118, 0, 249, 118, 0, 249, 117, 0, 248, 117, 0, 
+    248, 116, 0, 247, 116, 0, 248, 115, 0, 255, 108, 0, 255, 97, 0, 255, 93, 0, 255, 99, 0, 
+    255, 105, 0, 252, 113, 0, 249, 114, 0, 253, 111, 0, 255, 106, 0, 255, 97, 0, 255, 93, 0, 
+    255, 90, 0, 255, 92, 0, 255, 97, 0, 255, 100, 0, 
+
+    255, 106, 0, 254, 106, 0, 255, 106, 0, 254, 106, 0, 255, 106, 0, 254, 106, 0, 255, 106, 0, 
+    254, 106, 0, 253, 103, 0, 251, 103, 0, 253, 103, 0, 250, 102, 0, 252, 102, 0, 250, 102, 0, 
+    251, 101, 0, 252, 101, 0, 255, 107, 0, 255, 106, 0, 255, 105, 0, 255, 105, 0, 255, 104, 0, 
+    255, 103, 0, 255, 102, 0, 255, 101, 0, 255, 100, 0, 255, 100, 0, 255, 101, 0, 255, 102, 0, 
+    255, 103, 0, 255, 102, 0, 255, 103, 0, 255, 106, 0, 236, 111, 21, 233, 111, 26, 250, 107, 5, 
+    255, 104, 0, 255, 101, 0, 255, 100, 0, 255, 101, 0, 255, 103, 0, 249, 106, 14, 238, 108, 30, 
+    232, 109, 39, 235, 109, 35, 246, 106, 19, 252, 105, 10, 
+
+    250, 107, 5, 250, 107, 5, 250, 107, 5, 250, 107, 5, 250, 107, 5, 250, 107, 5, 250, 107, 5, 
+    250, 107, 5, 248, 105, 3, 247, 104, 2, 246, 103, 1, 245, 102, 0, 244, 101, 0, 243, 100, 0, 
+    242, 99, 0, 246, 98, 0, 255, 103, 0, 255, 101, 0, 255, 99, 0, 255, 98, 0, 255, 97, 0, 
+    255, 96, 3, 255, 94, 7, 255, 94, 9, 255, 87, 2, 255, 88, 0, 255, 90, 0, 255, 94, 0, 
+    255, 95, 0, 255, 98, 0, 255, 101, 0, 252, 107, 0, 222, 119, 18, 217, 120, 25, 235, 112, 16, 
+    253, 105, 7, 255, 98, 0, 255, 96, 0, 255, 97, 3, 255, 102, 9, 242, 108, 19, 229, 113, 26, 
+    224, 115, 30, 226, 114, 28, 240, 109, 21, 247, 106, 18, 
+
+    252, 106, 7, 252, 106, 7, 252, 106, 7, 252, 106, 7, 252, 106, 7, 252, 106, 7, 252, 106, 7, 
+    252, 106, 7, 250, 104, 5, 249, 103, 4, 248, 102, 3, 247, 101, 2, 245, 99, 0, 244, 98, 0, 
+    242, 96, 0, 243, 96, 0, 247, 100, 0, 249, 99, 0, 250, 98, 0, 252, 96, 0, 253, 94, 0, 
+    254, 93, 5, 255, 91, 9, 255, 90, 12, 244, 81, 2, 244, 83, 3, 246, 87, 3, 246, 92, 2, 
+    247, 99, 3, 248, 105, 3, 249, 108, 2, 245, 115, 0, 233, 120, 0, 229, 121, 0, 231, 115, 14, 
+    232, 110, 37, 235, 104, 58, 239, 101, 64, 245, 101, 51, 250, 102, 32, 254, 105, 2, 
+    255, 108, 0, 255, 109, 0, 255, 108, 0, 255, 104, 0, 255, 102, 5, 
+
+    255, 103, 5, 255, 104, 5, 255, 103, 5, 255, 104, 5, 255, 103, 5, 255, 104, 5, 255, 103, 5, 
+    255, 104, 5, 255, 101, 3, 253, 101, 2, 253, 99, 1, 250, 98, 0, 249, 95, 0, 247, 95, 0, 
+    246, 92, 0, 247, 91, 0, 247, 88, 0, 250, 86, 0, 252, 84, 0, 253, 83, 0, 255, 80, 4, 
+    255, 79, 9, 255, 77, 14, 255, 77, 18, 248, 67, 10, 249, 70, 12, 248, 76, 12, 248, 83, 15, 
+    251, 91, 17, 251, 98, 18, 252, 104, 18, 249, 110, 5, 242, 116, 0, 236, 118, 0, 228, 117, 12, 
+    222, 114, 39, 219, 111, 62, 224, 108, 67, 235, 105, 55, 249, 102, 32, 255, 101, 0, 
+    255, 99, 0, 255, 99, 0, 255, 99, 0, 255, 98, 0, 255, 99, 5, 
+
+    255, 97, 0, 255, 97, 0, 255, 97, 0, 255, 97, 0, 255, 97, 0, 255, 97, 0, 255, 97, 0, 
+    255, 97, 0, 245, 82, 0, 255, 96, 0, 255, 111, 10, 255, 114, 13, 255, 106, 5, 255, 98, 0, 
+    255, 96, 0, 255, 95, 1, 255, 84, 4, 255, 62, 0, 245, 31, 0, 234, 18, 0, 255, 36, 0, 
+    255, 66, 26, 255, 71, 38, 255, 56, 29, 255, 80, 55, 255, 35, 10, 225, 6, 0, 231, 21, 0, 
+    254, 53, 11, 255, 64, 16, 244, 57, 4, 224, 55, 0, 204, 62, 0, 204, 82, 0, 164, 52, 0, 
+    208, 103, 0, 255, 160, 52, 219, 108, 3, 217, 87, 0, 255, 128, 37, 255, 100, 20, 255, 93, 18, 
+    255, 88, 19, 255, 91, 20, 255, 97, 19, 255, 99, 18, 
+
+    233, 101, 29, 233, 101, 29, 233, 101, 29, 233, 101, 29, 233, 101, 29, 233, 101, 29, 
+    233, 101, 29, 233, 101, 29, 225, 93, 21, 232, 100, 28, 239, 107, 35, 239, 107, 35, 
+    236, 104, 32, 238, 106, 34, 248, 116, 44, 255, 124, 59, 235, 101, 50, 255, 122, 80, 
+    255, 121, 87, 233, 85, 59, 202, 47, 29, 200, 42, 33, 221, 58, 59, 236, 73, 78, 182, 21, 29, 
+    210, 53, 60, 243, 94, 96, 243, 105, 102, 207, 79, 70, 173, 56, 39, 186, 75, 55, 215, 117, 90, 
+    197, 116, 86, 234, 162, 114, 248, 174, 103, 124, 45, 0, 139, 53, 0, 251, 155, 43, 
+    217, 104, 10, 203, 76, 5, 205, 63, 25, 204, 54, 39, 207, 54, 49, 217, 66, 57, 227, 87, 54, 
+    233, 96, 52, 
+
+    186, 122, 110, 186, 122, 110, 186, 122, 110, 186, 122, 110, 186, 122, 110, 186, 122, 110, 
+    186, 122, 110, 186, 122, 110, 180, 116, 104, 180, 116, 104, 177, 113, 101, 173, 109, 97, 
+    175, 111, 99, 188, 124, 112, 207, 143, 131, 202, 169, 154, 150, 174, 158, 163, 213, 201, 
+    177, 219, 215, 137, 175, 178, 88, 117, 131, 70, 92, 115, 80, 99, 131, 93, 111, 149, 
+    95, 114, 156, 103, 131, 170, 120, 156, 192, 122, 171, 201, 94, 156, 179, 59, 132, 149, 
+    49, 131, 143, 68, 144, 158, 133, 189, 216, 174, 205, 225, 149, 151, 140, 234, 208, 171, 
+    226, 170, 113, 165, 93, 35, 241, 163, 124, 195, 123, 111, 155, 97, 122, 123, 79, 130, 
+    96, 60, 124, 92, 57, 115, 118, 73, 102, 146, 98, 114, 
+
+    91, 68, 94, 89, 69, 94, 91, 68, 94, 89, 69, 94, 91, 68, 94, 89, 69, 94, 91, 68, 94, 
+    89, 69, 94, 84, 61, 87, 78, 58, 83, 74, 51, 77, 69, 49, 74, 75, 52, 78, 85, 65, 90, 
+    103, 80, 106, 86, 104, 124, 53, 149, 161, 34, 166, 178, 27, 152, 172, 5, 123, 151, 
+    0, 99, 138, 0, 88, 138, 0, 75, 136, 0, 60, 127, 0, 96, 165, 0, 87, 155, 0, 94, 158, 
+    0, 124, 182, 9, 154, 207, 17, 175, 220, 30, 198, 237, 60, 212, 249, 38, 146, 182, 
+    39, 114, 145, 184, 230, 254, 118, 136, 158, 83, 71, 91, 193, 165, 187, 150, 117, 148, 
+    135, 107, 147, 74, 60, 111, 72, 68, 127, 66, 74, 136, 63, 72, 131, 61, 65, 113, 61, 62, 106, 
+
+
+    78, 71, 113, 77, 72, 113, 78, 71, 113, 77, 72, 113, 78, 71, 113, 77, 72, 113, 78, 71, 113, 
+    77, 72, 113, 79, 72, 114, 74, 69, 110, 72, 65, 107, 70, 65, 106, 74, 67, 109, 76, 71, 112, 
+    80, 73, 115, 60, 84, 122, 38, 121, 153, 28, 137, 168, 27, 129, 169, 16, 108, 159, 
+    16, 97, 160, 29, 103, 176, 36, 104, 187, 30, 97, 186, 19, 89, 184, 19, 100, 192, 
+    20, 114, 202, 8, 117, 199, 0, 105, 182, 0, 108, 177, 0, 148, 212, 64, 192, 229, 90, 170, 159, 
+    128, 184, 171, 49, 108, 142, 74, 129, 209, 7, 56, 175, 0, 20, 152, 142, 161, 255, 
+    106, 108, 195, 51, 36, 77, 113, 90, 96, 176, 152, 140, 187, 172, 165, 140, 145, 167, 
+    86, 100, 137, 
+
+    172, 124, 136, 171, 125, 136, 172, 124, 136, 171, 125, 136, 172, 124, 136, 171, 125, 136, 
+    172, 124, 136, 171, 125, 136, 185, 137, 149, 181, 135, 146, 179, 131, 143, 179, 133, 144, 
+    182, 134, 146, 179, 133, 144, 172, 124, 136, 149, 123, 132, 108, 126, 128, 135, 170, 172, 
+    162, 190, 201, 147, 165, 187, 126, 132, 166, 135, 134, 178, 169, 161, 218, 195, 186, 249, 
+    176, 171, 238, 150, 155, 221, 131, 151, 212, 128, 163, 219, 114, 166, 214, 84, 151, 193, 
+    60, 138, 174, 69, 133, 142, 206, 228, 189, 64, 71, 30, 118, 131, 139, 135, 151, 202, 
+    90, 105, 196, 58, 61, 164, 49, 33, 122, 225, 187, 246, 150, 90, 102, 200, 129, 107, 
+    241, 170, 128, 233, 173, 136, 183, 149, 140, 145, 124, 129, 
+
+    241, 96, 31, 240, 97, 31, 241, 96, 31, 240, 97, 31, 241, 96, 31, 240, 97, 31, 241, 96, 31, 
+    240, 97, 31, 255, 111, 46, 247, 104, 38, 242, 97, 32, 241, 98, 32, 246, 101, 36, 
+    244, 101, 35, 237, 92, 27, 217, 88, 20, 184, 87, 8, 212, 125, 46, 240, 143, 74, 229, 123, 65, 
+    212, 94, 48, 216, 89, 54, 232, 100, 77, 243, 110, 93, 233, 103, 90, 192, 72, 58, 
+    177, 71, 55, 215, 127, 105, 255, 191, 160, 255, 205, 167, 217, 174, 131, 183, 139, 92, 
+    99, 39, 0, 208, 135, 80, 180, 96, 34, 179, 81, 16, 193, 78, 13, 193, 65, 2, 237, 98, 43, 
+    195, 48, 4, 242, 95, 61, 236, 93, 63, 219, 84, 55, 193, 69, 35, 174, 61, 17, 178, 72, 20, 
+
+
+    255, 91, 0, 255, 91, 0, 255, 91, 0, 255, 91, 0, 255, 91, 0, 255, 91, 0, 255, 91, 0, 
+    255, 91, 0, 255, 97, 0, 255, 86, 0, 255, 74, 0, 255, 73, 0, 255, 80, 0, 255, 83, 0, 
+    255, 79, 0, 248, 76, 0, 254, 98, 0, 249, 100, 0, 247, 90, 0, 250, 87, 0, 255, 92, 3, 
+    255, 91, 9, 242, 58, 0, 204, 19, 0, 217, 35, 0, 214, 41, 0, 220, 57, 0, 223, 72, 1, 
+    202, 66, 0, 173, 48, 0, 162, 46, 0, 169, 58, 0, 227, 114, 46, 244, 122, 49, 242, 104, 6, 
+    230, 75, 0, 255, 96, 0, 255, 78, 0, 236, 47, 0, 255, 117, 18, 255, 99, 30, 255, 94, 44, 
+    255, 94, 53, 255, 100, 51, 255, 107, 34, 254, 104, 19, 
+
+    255, 102, 0, 255, 102, 0, 255, 102, 0, 255, 102, 0, 255, 102, 0, 255, 102, 0, 255, 102, 0, 
+    255, 102, 0, 255, 102, 0, 255, 102, 0, 255, 102, 0, 255, 102, 0, 255, 102, 0, 255, 102, 0, 
+    255, 102, 0, 255, 102, 0, 253, 100, 0, 244, 93, 0, 234, 81, 0, 228, 72, 0, 229, 71, 0, 
+    238, 78, 0, 251, 88, 0, 255, 96, 5, 255, 100, 10, 255, 101, 10, 255, 102, 10, 254, 104, 10, 
+    252, 105, 10, 249, 106, 10, 247, 107, 10, 246, 107, 12, 246, 107, 16, 247, 106, 14, 
+    253, 105, 5, 255, 105, 0, 255, 104, 0, 255, 103, 0, 255, 101, 0, 255, 101, 0, 255, 100, 9, 
+    255, 100, 16, 255, 101, 19, 254, 102, 18, 254, 104, 10, 254, 104, 7, 
+
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 111, 8, 255, 106, 3, 249, 98, 0, 243, 92, 0, 243, 92, 0, 
+    249, 98, 0, 255, 106, 3, 255, 111, 8, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 112, 9, 255, 110, 7, 255, 108, 5, 255, 106, 3, 255, 106, 3, 
+    255, 108, 5, 255, 110, 7, 255, 112, 9, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 252, 101, 0, 254, 103, 0, 255, 104, 1, 255, 105, 2, 255, 105, 2, 
+    255, 104, 1, 254, 103, 0, 252, 101, 0, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 247, 96, 0, 250, 99, 0, 253, 102, 0, 255, 104, 1, 255, 104, 1, 
+    253, 102, 0, 250, 99, 0, 247, 96, 0, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 253, 102, 0, 255, 104, 1, 255, 106, 3, 255, 108, 5, 255, 108, 5, 
+    255, 106, 3, 255, 104, 1, 253, 102, 0, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 107, 4, 255, 106, 3, 255, 106, 3, 255, 105, 2, 255, 105, 2, 
+    255, 106, 3, 255, 106, 3, 255, 107, 4, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2, 
+    255, 105, 2, 255, 105, 2, 255, 105, 2, 255, 105, 2 
+};
+
+/* Sub-tests for test_mgr_old() */
+static void test_mgr_old_a(int flag)
+{
+    int32 fid;              /* HDF file ID */
+    int32 grid;             /* GRID for the interface */
+    int32 ret;              /* generic return value */
+
+/* A - Read RLE compressed data from old raster image file */
+    MESSAGE(8, printf("Read RLE compressed image\n"););
+
+    /* Open up the existing datafile and get the image information from it */
+    fid=Hopen(OLDRLEFILE,DFACC_RDWR,0);
+    CHECK(fid,FAIL,"Hopen");
+
+    /* Initialize the GR interface */
+    grid=GRstart(fid);
+    CHECK(grid,FAIL,"GRstart");
+
+    {
+        int32 riid;     /* RI ID for the new image */
+        int32 dims[2]={10,10};    /* dimensions for the empty image */
+        uint8 image[10][10]; /* space for the image data */
+        uint8 image0[10][10]; /* space for the image data */
+        int32 start[2]; /* start of image data to grab */
+        int32 stride[2];/* stride of image data to grab */
+        intn i,j;       /* indices */
+
+        /* Initialize data we are looking for in image */
+        for (i = 0; i < 10; i++)
+            for (j = 0; j < 10; j++)
+                image0[i][j] = (uint8) (i + j);
+
+        /* Get the first image in this file */
+        riid=GRselect(grid,0);
+        CHECK(riid,FAIL,"GRselect");
+
+        /* Read the whole image in */
+        start[0]=start[1]=0;
+        stride[0]=stride[1]=1;
+        ret=GRreadimage(riid,start,stride,dims,image);
+        CHECK(ret,FAIL,"GRreadimage");
+
+        /* Verify correct image contents */
+        if(HDmemcmp(image,image0,10*10)!=0) {
+            MESSAGE(3, printf("Error reading data for RLE compressed image\n"););
+            num_errs++;
+        } /* end if */
+
+        /* Close the empty image */
+        ret=GRendaccess(riid);
+        CHECK(ret,FAIL,"GRendaccess");
+    }
+    
+    /* Shut down the GR interface */
+    ret=GRend(grid);
+    CHECK(ret,FAIL,"GRend");
+
+    /* Close the file */
+    ret=Hclose(fid);
+    CHECK(ret,FAIL,"Hclose");
+} /* end test_mgr_old_a() */
+
+static void test_mgr_old_c(int flag)
+{
+    int32 fid;              /* HDF file ID */
+    int32 grid;             /* GRID for the interface */
+    int32 ret;              /* generic return value */
+
+/* C - Read 8-bit JPEG compressed data from old raster image file */
+    MESSAGE(8, printf("Read 8-bit JPEG compressed image\n"););
+
+    /* Open up the existing datafile and get the image information from it */
+    fid=Hopen(OLDGREYJPEGFILE,DFACC_READ,0);
+    CHECK(fid,FAIL,"Hopen");
+
+    /* Initialize the GR interface */
+    grid=GRstart(fid);
+    CHECK(grid,FAIL,"GRstart");
+
+    {
+        int32 riid;     /* RI ID for the new image */
+        int32 dims[2]={JPEGX,JPEGY};    /* dimensions for the empty image */
+        uint8 image[JPEGY][JPEGX]; /* space for the image data */
+        int32 start[2]; /* start of image data to grab */
+        int32 stride[2];/* stride of image data to grab */
+
+        /* Get the first image in this file */
+        riid=GRselect(grid,0);
+        CHECK(riid,FAIL,"GRselect");
+
+        /* Read the whole image in */
+        start[0]=start[1]=0;
+        stride[0]=stride[1]=1;
+        ret=GRreadimage(riid,start,stride,dims,image);
+        CHECK(ret,FAIL,"GRreadimage");
+
+        /* Verify correct image contents */
+        if(HDmemcmp(image,jpeg_8bit_j80,JPEGY*JPEGX)!=0) {
+            MESSAGE(3, printf("Error reading data for 8-bit JPEG compressed image\n"););
+            num_errs++;
+        } /* end if */
+
+        /* Close the empty image */
+        ret=GRendaccess(riid);
+        CHECK(ret,FAIL,"GRendaccess");
+    }
+    
+    /* Shut down the GR interface */
+    ret=GRend(grid);
+    CHECK(ret,FAIL,"GRend");
+
+    /* Close the file */
+    ret=Hclose(fid);
+    CHECK(ret,FAIL,"Hclose");
+} /* end test_mgr_old_c() */
+
+static void test_mgr_old_e(int flag)
+{
+    int32 fid;              /* HDF file ID */
+    int32 grid;             /* GRID for the interface */
+    int32 ret;              /* generic return value */
+
+/* E - Read 24-bit JPEG compressed data from old raster image file */
+    MESSAGE(8, printf("Read 24-bit JPEG compressed image\n"););
+
+    /* Open up the existing datafile and get the image information from it */
+    fid=Hopen(OLDJPEGFILE,DFACC_READ,0);
+    CHECK(fid,FAIL,"Hopen");
+
+    /* Initialize the GR interface */
+    grid=GRstart(fid);
+    CHECK(grid,FAIL,"GRstart");
+
+    {
+        int32 riid;     /* RI ID for the new image */
+        int32 dims[2]={JPEGX,JPEGY};    /* dimensions for the empty image */
+        uint8 image[JPEGY][JPEGX][3]; /* space for the image data */
+        int32 start[2]; /* start of image data to grab */
+        int32 stride[2];/* stride of image data to grab */
+
+        /* Get the first image in this file */
+        riid=GRselect(grid,0);
+        CHECK(riid,FAIL,"GRselect");
+
+        /* Read the whole image in */
+        start[0]=start[1]=0;
+        stride[0]=stride[1]=1;
+        ret=GRreadimage(riid,start,stride,dims,image);
+        CHECK(ret,FAIL,"GRreadimage");
+
+        /* Verify correct image contents */
+        if(HDmemcmp(image,jpeg_24bit_j30,JPEGY*JPEGX*3)!=0) {
+            MESSAGE(3, printf("Error reading data for 8-bit JPEG compressed image\n"););
+            num_errs++;
+        } /* end if */
+
+        /* Close the empty image */
+        ret=GRendaccess(riid);
+        CHECK(ret,FAIL,"GRendaccess");
+    }
+    
+    /* Shut down the GR interface */
+    ret=GRend(grid);
+    CHECK(ret,FAIL,"GRend");
+
+    /* Close the file */
+    ret=Hclose(fid);
+    CHECK(ret,FAIL,"Hclose");
+} /* end test_mgr_old_c() */
+
+/****************************************************************
+**
+**  test_mgr_old(): Multi-file Raster Old-style Image Access tests
+** 
+**  VIII. Old-style raster image tests
+**      A. Read data from RLE compressed image
+**      B. Create RLE compressed image & write to it (not implemented)
+**      C. Read data from 8-bit JPEG compressed image
+**      D. Create 8-bit JPEG compressed image & write to it
+**      E. Read data from 24-bit JPEG compressed image
+**      F. Create 24-bit JPEG compressed image & write to it
+** 
+****************************************************************/
+static void
+test_mgr_old(int flag)
+{
+    /* Output message about test being performed */
+    MESSAGE(6, printf("Testing Multi-file Raster Old-Style Access\n"););
+    test_mgr_old_a(flag);
+#ifdef NOT_IMPLEMENTED
+    test_mgr_old_b(flag);
+#endif
+    test_mgr_old_c(flag);
+#ifdef NOT_IMPLEMENTED
+    test_mgr_old_d(flag);
+#endif
+    test_mgr_old_e(flag);
+#ifdef NOT_IMPLEMENTED
+    test_mgr_old_f(flag);
+#endif /* NOT_YET */
+
+}   /* end test_mgr_old() */
+
+/****************************************************************
+**
+**  test_mgr_compress(): Multi-file Raster Compression tests
+** 
+**  VIII. Compressed image tests
+**      A. Create Image
+**      B. Write data to RLE compressed image
+**      C. Read data from JPEG compressed image
+**      D. Write data to JPEG compressed image
+** 
+****************************************************************/
+static void
+test_mgr_compress(int flag)
+{
+    /* Output message about test being performed */
+    MESSAGE(6, printf("Testing Multi-file Raster Compression Testing\n"););
+#ifdef NOT_YET
+    test_mgr_compress_a(flag);
+    test_mgr_compress_b(flag);
+    test_mgr_compress_c(flag);
+    test_mgr_compress_d(flag);
+#endif /* NOT_YET */
+
+}   /* end test_mgr_compress() */
+
 /****************************************************************
 **
 **  test_mgr(): Main multi-file raster image test routine
@@ -3005,6 +3464,8 @@ test_mgr(void)
         V. Palette Functions            - test_mgr_lut
         VI. Special Element Functions   - test_mgr_special
         VII. Atribute Functions         - test_mgr_attr
+        VIII. Access to old-style images - test_mgr_old
+        VIII. Compressed images         - test_mgr_compress
     */
 
     /* Output message about test being performed */
@@ -3018,5 +3479,7 @@ test_mgr(void)
     test_mgr_lut(0);
     test_mgr_special(0);
     test_mgr_attr(0);
+    test_mgr_old(0);
+    test_mgr_compress(0);
 }   /* test_mgr() */
 
