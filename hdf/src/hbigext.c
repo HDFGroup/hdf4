@@ -48,7 +48,7 @@ typedef struct {
 
 /* forward declaration of the functions provided in this module */
 PRIVATE int32 HBIstaccess
-    PROTO((accrec_t *access_rec, int16 access));
+    PROTO((accrec_t *access_rec, int16 acc_mode));
 
 /* Private buffer */
 PRIVATE uint8 *ptbuf = NULL;
@@ -100,18 +100,18 @@ funclist_t bigext_funcs = {
 
 --------------------------------------------------------------------------*/ 
 #ifdef PROTOTYPE
-int32 HBcreate(int32 file_id, uint16 tag, uint16 ref, char *extern_file_name, int32 offset, int32 start_len)
+int32 HBcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, int32 offset, int32 start_len)
 #else
 int32 HBcreate(file_id, tag, ref, extern_file_name, offset, start_len)
     int32 file_id;             /* file record id */
     uint16 tag, ref;           /* tag/ref of the special data element
                                   to create */
-    char *extern_file_name;    /* name of external file to use as
+    const char *extern_file_name;    /* name of external file to use as
                                   data element */
     int32 offset,start_len;
 #endif
 {
-    char *FUNC="HBcreate";     /* for HERROR */
+    CONSTR(FUNC,"HBcreate");     /* for HERROR */
     filerec_t *file_rec;       /* file record */
     accrec_t *access_rec;      /* access element record */
     int slot;
@@ -250,7 +250,7 @@ int32 HBcreate(file_id, tag, ref, extern_file_name, offset, start_len)
        INT32ENCODE(p, info->length);
        INT32ENCODE(p, info->extern_offset);
        INT32ENCODE(p, info->length_file_name);
-       HDstrcpy((char *) p, (char *)extern_file_name);
+       HDstrcpy((char *) p, extern_file_name);
     }
     if (HI_SEEKEND(file_rec->file) == FAIL) {
        access_rec->used = FALSE;
@@ -324,21 +324,21 @@ int32 HBcreate(file_id, tag, ref, extern_file_name, offset, start_len)
 
 --------------------------------------------------------------------------- */ 
 #ifdef PROTOTYPE
-PRIVATE int32 HBIstaccess(accrec_t *access_rec, int16 access)
+PRIVATE int32 HBIstaccess(accrec_t *access_rec, int16 acc_mode)
 #else
-PRIVATE int32 HBIstaccess(access_rec, access)
+PRIVATE int32 HBIstaccess(access_rec, acc_mode)
     accrec_t *access_rec;      /* access record */
-    int16 access;              /* access mode */
+    int16 acc_mode;              /* access mode */
 #endif
 {
-    char *FUNC="HBIstaccess";  /* for HERROR */
+    CONSTR(FUNC,"HBIstaccess");  /* for HERROR */
     dd_t *info_dd;             /* dd of the special information element */
     extinfo_t *info;           /* special element information */
     filerec_t *file_rec;       /* file record */
 
     /* get file record and validate */
     file_rec = FID2REC(access_rec->file_id);
-    if (!file_rec || file_rec->refcount == 0 || !(file_rec->access & access))
+    if (!file_rec || file_rec->refcount == 0 || !(file_rec->access & acc_mode))
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* Check if temproray buffer has been allocated */
@@ -351,7 +351,7 @@ PRIVATE int32 HBIstaccess(access_rec, access)
     /* intialize the access record */
     access_rec->special = SPECIAL_EXT;
     access_rec->posn = 0;
-    access_rec->access = access;
+    access_rec->access = acc_mode;
 
     /* get the dd for information */
     info_dd = &access_rec->block->ddlist[access_rec->idx];
@@ -402,7 +402,7 @@ PRIVATE int32 HBIstaccess(access_rec, access)
            HRETURN_ERROR(DFE_READERROR,FAIL);
        }
        info->extern_file_name[info->length_file_name] = '\0';
-       info->file_external = HI_OPEN(info->extern_file_name, access);
+       info->file_external = HI_OPEN(info->extern_file_name, acc_mode);
        if (OPENERR(info->file_external)) {
            access_rec->used = FALSE;
            HRETURN_ERROR(DFE_BADOPEN,FAIL);
@@ -493,7 +493,7 @@ int32 HBPseek(access_rec, offset, origin)
     int origin;
 #endif
 {
-    char *FUNC="HBPseek";      /* for HERROR */
+    CONSTR(FUNC,"HBPseek");      /* for HERROR */
 
     /* Adjust offset according to origin.
        there is no upper bound to posn */
@@ -542,7 +542,7 @@ int32 HBPread(access_rec, length, data)
     VOIDP data;                        /* data buffer */
 #endif
 {
-    char *FUNC="HBPread";      /* for HERROR */
+    CONSTR(FUNC,"HBPread");      /* for HERROR */
     extinfo_t *info =          /* information on the special element */
        (extinfo_t *)access_rec->special_info;
 
@@ -588,15 +588,15 @@ int32 HBPread(access_rec, length, data)
 
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 HBPwrite(accrec_t *access_rec, int32 length, VOIDP data)
+int32 HBPwrite(accrec_t *access_rec, int32 length, const VOIDP data)
 #else
 int32 HBPwrite(access_rec, length, data)
     accrec_t *access_rec;      /* access record */
     int32 length;              /* length of data to write */
-    VOIDP data;                        /* data buffer */
+    const VOIDP data;                        /* data buffer */
 #endif
 {
-    char *FUNC="HBPwrite";     /* for HERROR */
+    CONSTR(FUNC,"HBPwrite");     /* for HERROR */
     extinfo_t *info =          /* information on the special element */
        (extinfo_t*)(access_rec->special_info);
 
@@ -740,7 +740,7 @@ int32 HBPendaccess(access_rec)
     accrec_t *access_rec;      /* access record to dispose of */
 #endif
 {
-    char *FUNC="HBPendaccess"; /* for HERROR */
+    CONSTR(FUNC,"HBPendaccess"); /* for HERROR */
     filerec_t *file_rec =      /* file record */
        FID2REC(access_rec->file_id);
 
@@ -790,7 +790,7 @@ accrec_t *access_rec;
 #endif
 {
 
-    char *FUNC="HBPcloseAID"; /* for HERROR */
+    CONSTR(FUNC,"HBPcloseAID"); /* for HERROR */
     extinfo_t *info =          /* special information record */
        (extinfo_t *)access_rec->special_info;
 

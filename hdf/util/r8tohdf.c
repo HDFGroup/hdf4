@@ -40,9 +40,9 @@ int imconv();
 #endif /* PROTOTYPE */
 
 #ifdef PROTOTYPE
-main(int argc, char *argv[]) 
+int main(int argc, char *argv[]) 
 #else
-main(argc,argv) 
+int main(argc,argv) 
     int argc;
     char *argv[];
 #endif /* PROTOTYPE */
@@ -125,9 +125,9 @@ main(argc,argv)
  */
 
 #ifdef PROTOTYPE
-palconv(char *palfile)
+int palconv(char *palfile)
 #else
-palconv(palfile)
+int palconv(palfile)
 char *palfile;
 #endif /* PROTOTYPE */
 {
@@ -167,9 +167,9 @@ char *palfile;
 
 
 #ifdef PROTOTYPE
-imconv(char *outfile, char *imfile, uint16 compress)
+int imconv(char *outfile, char *imfile, uint16 compress)
 #else
-imconv(outfile, imfile, compress)
+int imconv(outfile, imfile, compress)
 char *outfile;
 char *imfile;
 uint16 compress;

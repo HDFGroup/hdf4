@@ -95,7 +95,7 @@ uint16 tag;             /* tag of elt to read */
 uint16 ref;             /* ref of elt to read */
 #endif
 {
-    char *FUNC="Hstartbitread";   /* for HERROR */
+    CONSTR(FUNC,"Hstartbitread");   /* for HERROR */
     int bitslot;        /* slot in bit-access record array */
     int32 aid;          /* Access ID for the bit-level routines to use */
     struct bitrec_t *bitfile_rec;   /* Pointer to the bitfile record */
@@ -173,7 +173,7 @@ uint16 ref;             /* ref of elt to write */
 int32 length;           /* length of elt to write */
 #endif
 {
-    char *FUNC="Hstartbitwrite";  /* for HERROR */
+    CONSTR(FUNC,"Hstartbitwrite");  /* for HERROR */
     int bitslot;            /* free access records array slot */
     bitrec_t *bitfile_rec;  /* access record */
     int32 aid;              /* Access ID for the bit-level routines to use */
@@ -253,7 +253,7 @@ intn Hbitappendable(bitid)
 int32 bitid;            /* Bit ID to use */
 #endif
 {
-    char *FUNC="Hbitappendable";    /* for HERROR */
+    CONSTR(FUNC,"Hbitappendable");    /* for HERROR */
     bitrec_t *bitfile_rec;  /* access record */
 
     /* clear error stack and check validity of file id */
@@ -302,7 +302,7 @@ intn count;             /* Number of bits to write */
 uint32 data;            /* Actual bits to output */
 #endif
 {
-    char *FUNC="Hbitwrite"; /* for HERROR */
+    CONSTR(FUNC,"Hbitwrite"); /* for HERROR */
     bitrec_t *bitfile_rec;  /* access record */
     intn orig_count=count;  /* keep track of orig, number of bits to output */
 
@@ -446,7 +446,7 @@ intn count;             /* Number of bits to write */
 uint32 *data;           /* Actual bits to output */
 #endif
 {
-    char *FUNC="Hbitread"; /* for HERROR */
+    CONSTR(FUNC,"Hbitread"); /* for HERROR */
     bitrec_t *bitfile_rec;  /* access record */
     register uint32 l;
     uint32 b=0;         /* bits to return */
@@ -590,7 +590,7 @@ int32 byte_offset;
 intn bit_offset;
 #endif
 {
-    char *FUNC="Hbitseek";  /* for HERROR */
+    CONSTR(FUNC,"Hbitseek");  /* for HERROR */
     bitrec_t *bitfile_rec;  /* access record */
     intn seek_pos;          /* position of block to seek to */
     int32 read_size;        /* number of bytes to read into buffer */
@@ -714,7 +714,7 @@ int32 bitfile_id;           /* access id */
 intn flushbit;              /* how to flush the bits */
 #endif
 {
-    char *FUNC="Hendbitaccess";   /* for HERROR */
+    CONSTR(FUNC,"Hendbitaccess");   /* for HERROR */
     bitrec_t *bitfile_rec;      /* bitfile record */
 
     /* check validity of access id */
@@ -770,7 +770,7 @@ intn flushbit;
 bool writeout;
 #endif
 {
-    char *FUNC="HIbitflush";
+    CONSTR(FUNC,"HIbitflush");
     intn write_size;            /* number of bytes to write out */
 
 #ifdef TESTING
@@ -831,7 +831,7 @@ PRIVATE int HIget_bitfile_slot()
 #endif
 {
     int i;                     /* temp index */
-    char *FUNC="HIget_bitfile_slot";
+    CONSTR(FUNC,"HIget_bitfile_slot");
 
     /* Access records not allocated yet, allocate dynamically and initialize */
     if (!bitfile_records) {

@@ -76,7 +76,8 @@ int HEwait
 int HEwrite
   PROTO((HE_CMD *cmd));
 
-int annotate();
+int annotate
+  PROTO((char *editor,int ann));
 
 int backupFile
   PROTO((char *file));
@@ -129,7 +130,8 @@ int fileOpen
 void fillTemplate
   PROTO((char **template, char **pout, char *s, char templateChar));
 
-HE_CMD *findAlias();
+HE_CMD *findAlias
+  PROTO((char *str));
 
 int findDesc
   PROTO((tag_ref_ptr dd));
@@ -137,7 +139,8 @@ int findDesc
 HE_FUNC findFunc
   PROTO((char *word));
 
-int findKey();
+int findKey
+  PROTO((char *word));
 
 int findOpt
   PROTO((char *word));
@@ -154,8 +157,11 @@ int getCurrRig
 int32 getElement
   PROTO((int desc, char **pdata));
 
-int getLine();
-int getNewRef();
+int getLine
+  PROTO((register char *));
+
+int getNewRef
+  PROTO((char *file,uint16 *pRef));
 
 int getPix
   PROTO((void));
@@ -190,7 +196,8 @@ int initFile
 int isGrp
   PROTO((uint16 tag));
 
-int isNumber();
+int isNumber
+  PROTO((register char *s));
 
 int largeSet
   PROTO((void));
@@ -198,11 +205,17 @@ int largeSet
 int main
   PROTO((int argc, char *argv[]));
 
-HE_CMD *mkDupCmd();
-char *nextToken();
-char *nextWord();
+HE_CMD *mkDupCmd
+  PROTO((HE_CMD *cmd));
 
-int numCompare();
+char *nextToken
+  PROTO((char **p));
+
+char *nextWord
+  PROTO((char **p));
+
+int numCompare
+  PROTO((int n1,int Comp, int n2));
 
 int od
   PROTO((char *format, char *file));
@@ -210,15 +223,23 @@ int od
 int openFile
   PROTO((char *file, int backup));
 
-HE_CMD *parse();
-HE_CMD *parseCmd();
-HE_PRED *parsePred();
+HE_CMD *parse
+  PROTO((void));
+
+HE_CMD *parseCmd
+  PROTO((char **p));
+
+HE_PRED *parsePred
+  PROTO((int argc,char *argv[]));
 
 int pixImage
   PROTO((int usepal));
 
-void printAlias();
-void prompt();
+void printAlias
+  PROTO((char *word,HE_CMD *cmd));
+
+void prompt
+  PROTO((void));
 
 int put
   PROTO((char *template, int verbose));
@@ -250,7 +271,8 @@ int recurseDel
 int removeFile
   PROTO((char *file));
 
-int resetPred();
+int resetPred
+  PROTO((void));
 
 int revert
   PROTO((void));
@@ -258,8 +280,11 @@ int revert
 int rleIt
   PROTO((char *buf, char *bufto, int len));
 
-int satPred();
-int setAlias();
+int satPred
+  PROTO((DFdesc *desc, HE_PRED pred[]));
+
+int setAlias
+  PROTO((char *str,HE_CMD *cmd));
 
 int setPal
   PROTO((char *pal));

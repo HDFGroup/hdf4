@@ -72,9 +72,9 @@ typedef FILE *hdf_file_t;
 #else /* PC386 */
 #   define HI_CREATE(p)        (fopen((p), "w+"))
 #endif  /* PC386 */
-#   define HI_READ(f, b, n)    (((n) == fread((b), 1, (n), (f))) ? \
+#   define HI_READ(f, b, n)    (((n) == fread((b), 1, (size_t)(n), (f))) ? \
                                 SUCCEED : FAIL)
-#   define HI_WRITE(f, b, n)   (((n) == fwrite((b), 1, (n), (f))) ? \
+#   define HI_WRITE(f, b, n)   (((n) == fwrite((b), 1, (size_t)(n), (f))) ? \
                                 SUCCEED : FAIL)
 #   define HI_CLOSE(f)   (fclose(f))
 #   define HI_FLUSH(f)   (fflush(f)==0 ? SUCCEED : FAIL)
@@ -255,7 +255,7 @@ typedef struct funclist_t {
                              int32 *poffset, int32 *pposn, int16 *paccess, 
                              int16 *pspecial));
     int32 (*read)    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
-    int32 (*write)   PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+    int32 (*write)   PROTO((accrec_t *access_rec, int32 length, const VOIDP data));
     int32 (*endaccess) PROTO((accrec_t *access_rec));
 } funclist_t;
 
@@ -301,7 +301,7 @@ typedef struct functab_t {
 #define VGIDTYPE  8         /* also defined in vg.h for Vgroups */
 #define VSIDTYPE  9         /* also defined in vg.h for Vsets */
 #define BITTYPE   10        /* For bit-accesses */
-#define FSLOT2ID(s) ((((uint32)FIDTYPE & 0xffff) << 16) | ((s) & 0xffff))
+#define FSLOT2ID(s) ((int32)((((uint32)FIDTYPE & 0xffff) << 16)|((s) & 0xffff)))
 #define VALIDFID(i) (((((uint32)(i) >> 16) & 0xffff) == FIDTYPE) && \
                      (((uint32)(i) & 0xffff) < MAX_FILE))
 #define FID2SLOT(i) (VALIDFID(i) ? (uint32)(i) & 0xffff : -1)
@@ -409,7 +409,7 @@ extern int32 HLPread
     PROTO((accrec_t *access_rec, int32 length, VOIDP data));
 
 extern int32 HLPwrite
-    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+    PROTO((accrec_t *access_rec, int32 length, const VOIDP data));
 
 extern int32 HLPinquire
     PROTO((accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
@@ -435,7 +435,7 @@ extern int32 HXPread
     PROTO((accrec_t *access_rec, int32 length, VOIDP data));
 
 extern int32 HXPwrite
-    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+    PROTO((accrec_t *access_rec, int32 length, const VOIDP data));
 
 extern int32 HXPinquire
     PROTO((accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
@@ -464,7 +464,7 @@ extern int32 HBPread
     PROTO((accrec_t *access_rec, int32 length, VOIDP data));
 
 extern int32 HBPwrite
-    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+    PROTO((accrec_t *access_rec, int32 length, const VOIDP data));
 
 extern int32 HBPinquire
     PROTO((accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
@@ -499,7 +499,7 @@ extern int32 HCPread
     PROTO((accrec_t *access_rec, int32 length, VOIDP data));
 
 extern int32 HCPwrite
-    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+    PROTO((accrec_t *access_rec, int32 length, const VOIDP data));
 
 extern int32 HCPendaccess
     PROTO((accrec_t *access_rec));

@@ -56,7 +56,7 @@ PRIVATE uint16	acc_tag	    = 0;
 PRIVATE uint16	acc_ref	    = 0;
 PRIVATE char	*DFelement  = NULL;
 
-extern DF *makedf();
+/* extern DF *makedf(); */
 
 #if defined c_plusplus || defined __cplusplus
 extern "C" {

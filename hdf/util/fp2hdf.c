@@ -166,9 +166,6 @@
 void help();
 void mean();
 void usage();
-extern void exit();
-extern double strtod();
-extern long strtol();
 
 
 /*
@@ -336,7 +333,7 @@ static int state_table[17][10] = {
  * Purpose:
  *	The driver for "fp2hdf".
  */
-main(argc, argv) 
+int main(argc, argv) 
 int argc;
 char *argv[];
 {
@@ -346,10 +343,10 @@ char *argv[];
 	int token;
 	int state = 0;
 
-	static char *err1 = "Invalid number of arguments:  %d.\n";
-	static char *err2 = "Error in state table.\n";
-	static char *err3 = "No output file given.\n";
-	static char *err4 = "Program aborted.\n";
+	const char *err1 = "Invalid number of arguments:  %d.\n";
+	const char *err2 = "Error in state table.\n";
+	const char *err3 = "No output file given.\n";
+	const char *err4 = "Program aborted.\n";
 
 	/*
 	 * set 'stdout' and 'stderr' to line-buffering mode
@@ -484,7 +481,7 @@ int *is_maxmin;
 	int32 hdfdims[3];		/* order: ZYX or YX */
 	int32 len = in->dims[0] * in->dims[1] * in->dims[2];
 
-	static char *err1 = "Unable to get input data from file: %s.\n";
+	const char *err1 = "Unable to get input data from file: %s.\n";
 
 	/*
 	 * extract the input data from the input file
@@ -570,10 +567,10 @@ FILE *strm;
 	int32 hdfdims[3];		/* order: ZYX or YX */
     int32 nt;               /* number type of input file */
 
-	static char *err1 = "Unable to get data dimensions from file: %s.\n";
-	static char *err2 = "Invalid data rank of %d in file: %s.\n";
-	static char *err3 = "Dimension(s) is less than '2' in file: %s.\n";
-    static char *err4 = "Unexpected number type from file: %s.\n";
+	const char *err1 = "Unable to get data dimensions from file: %s.\n";
+	const char *err2 = "Invalid data rank of %d in file: %s.\n";
+	const char *err3 = "Dimension(s) is less than '2' in file: %s.\n";
+    const char *err4 = "Unexpected number type from file: %s.\n";
 
 	/*
 	 * extract the rank and dimensions of the HDF input file
@@ -669,7 +666,7 @@ struct Input *in;
 {
 	float64 fp64;
 
-	static char *err1 = "Unable to get 'float' value from file: %s.\n";
+	const char *err1 = "Unable to get 'float' value from file: %s.\n";
 
 	if (in->is_text == TRUE) {
 		if (fscanf(strm, "%e", fp32) != 1) {
@@ -710,7 +707,7 @@ FILE *strm;
 int *ival;
 struct Input *in;
 {
-	static char *err1 = "Unable to get 'int' value from file: %s.\n";
+	const char *err1 = "Unable to get 'int' value from file: %s.\n";
 
 	/*
 	 * process TEXT-formatted input
@@ -751,7 +748,7 @@ struct Input *in;
 FILE *strm;
 int *is_maxmin;
 {
-	static char *err1 = "Unable to get max/min values from file: %s.\n";
+	const char *err1 = "Unable to get max/min values from file: %s.\n";
 
 	/*
 	 * extract the max/min values from the input file
@@ -801,7 +798,7 @@ int *is_scale;
 	int i;
 	int32 hdfdims[3];		/* order: ZYX or YX */
 
-	static char *err1 = "Unable to get axis scale from file: %s.\n";
+	const char *err1 = "Unable to get axis scale from file: %s.\n";
 
 	*is_scale = TRUE;
 
@@ -934,7 +931,7 @@ char *s;
 	int len;
 	int token;
 
-	static char *err1 = "Illegal argument: %s.\n";
+	const char *err1 = "Illegal argument: %s.\n";
 
 	/*
 	 * identify the token type
@@ -944,35 +941,35 @@ char *s;
 		len = HDstrlen(&s[1]);
 		switch (s[1]) {
 			case 'o':
-				if (!HDstrncmp("outfile", &s[1], len));
+				if (!HDstrncmp("outfile", &s[1], len))
 					token = OPT_o;
 				break;
 			case 'r':
-				if (!HDstrncmp("raster", &s[1], len));
+				if (!HDstrncmp("raster", &s[1], len))
 					token = OPT_r;
 				break;
 			case 'e':
-				if (!HDstrncmp("expand", &s[1], len));
+				if (!HDstrncmp("expand", &s[1], len))
 					token = OPT_e;
 				break;
 			case 'i':
-				if (!HDstrncmp("interp", &s[1], len));
+				if (!HDstrncmp("interp", &s[1], len))
 					token = OPT_i;
 				break;
 			case 'p':
-				if (!HDstrncmp("palfile", &s[1], len));
+				if (!HDstrncmp("palfile", &s[1], len))
 					token = OPT_p;
 				break;
 			case 'f':
-				if (!HDstrncmp("float", &s[1], len));
+				if (!HDstrncmp("float", &s[1], len))
 					token = OPT_f;
 				break;
 			case 'h':
-				if (!HDstrncmp("help", &s[1], len));
+				if (!HDstrncmp("help", &s[1], len))
 					token = OPT_h;
 				break;
 			case 'm':
-				if (!HDstrncmp("mean", &s[1], len));
+				if (!HDstrncmp("mean", &s[1], len))
 					token = OPT_m;
 				break;
 			default:
@@ -1005,9 +1002,9 @@ FILE **strm;
 {
 	char buf[8];
 
-	static char *err1 = "Unable to open file: %s.\n";
-	static char *err2 = "Unable to get format tag from file: %s.\n";
-	static char *err3 = "Invalid file format in file: %s.\n";
+	const char *err1 = "Unable to open file: %s.\n";
+	const char *err2 = "Unable to get format tag from file: %s.\n";
+	const char *err3 = "Invalid file format in file: %s.\n";
 
 	/*
 	 * determine the input file format
@@ -1253,7 +1250,7 @@ int res;
 	float32 loc;
 	float32 delta;
 
-	static char *err1 = "Unable to allocate dynamic memory.\n";
+	const char *err1 = "Unable to allocate dynamic memory.\n";
 
 	/*
 	 * determine the midpoints between scale values
@@ -1337,7 +1334,7 @@ struct Raster *im;
 	float32 *pt[8];
 	unsigned char *ip = im->image;
 
-	static char *err1 = "Unable to allocate dynamic memory.\n";
+	const char *err1 = "Unable to allocate dynamic memory.\n";
 
 	/*
 	 * determine the range of pixel locations
@@ -1582,7 +1579,7 @@ struct Options *opt;
  * Purpose:
  *	Process the (user specified) palette input file.
  */
-palette(palfile)
+int palette(palfile)
 char *palfile;
 {
 	unsigned char *color;
@@ -1590,14 +1587,14 @@ char *palfile;
 	FILE *strm;
 	int i;
 
-	static char *err1 = "Unable to get palette from file: %s.\n";
-	static char *err2 = "Unable to open palette file: %s.\n";
-	static char *err3 = "Unable to set default palette.\n";
+	const char *err1 = "Unable to get palette from file: %s.\n";
+	const char *err2 = "Unable to open palette file: %s.\n";
+	const char *err3 = "Unable to set default palette.\n";
 
 	/*
 	 * extract a palette from an HDF file
 	 */
-	if (!DFishdf(palfile)) {
+	if (!Hishdf(palfile)) {
 		if (DFPgetpal(palfile, pal)) {
 			(void) fprintf(stderr, err1, palfile);
 			goto err;
@@ -1670,7 +1667,7 @@ struct Raster *im;
 	float32 ratio;
 	unsigned char *ip, *plane, *row, *pix;
 
-	static char *err1 = "Unable to dynamically allocate memory.\n";
+	const char *err1 = "Unable to dynamically allocate memory.\n";
 
 	dp = (float32 *)in->data;
 	ip = im->image;
@@ -1800,14 +1797,14 @@ struct Options *opt;
 	int h, v, d;
 #endif	/* DEBUG */
 
-	static char *err1 = "Error creating HDF output file: %s.\n";
-	static char *err2 = "Unable to dynamically allocate memory.\n";
-	static char *err3a = "Warning: cannot make image smaller using -e ";
-	static char *err3b = "option.\n\t %s resolution will be made the ";
-	static char *err3c = "same as %s dimension of the\n\t dataset, ";
-	static char *err3d = "which is: %d.\n\n";
-	static char *err4 = "Unable to write an RIS8 to the HDF output file\n";
-	static char *err5 = "Unable to write an SDS to the HDF output file\n";
+	const char *err1 = "Error creating HDF output file: %s.\n";
+	const char *err2 = "Unable to dynamically allocate memory.\n";
+	const char *err3a = "Warning: cannot make image smaller using -e ";
+	const char *err3b = "option.\n\t %s resolution will be made the ";
+	const char *err3c = "same as %s dimension of the\n\t dataset, ";
+	const char *err3d = "which is: %d.\n\n";
+	const char *err4 = "Unable to write an RIS8 to the HDF output file\n";
+	const char *err5 = "Unable to write an SDS to the HDF output file\n";
 
 	/*
 	 * process the palette file (if one was specified)

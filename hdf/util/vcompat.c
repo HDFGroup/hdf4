@@ -20,16 +20,16 @@ static char RcsId[] = "@(#)$Revision$";
 #include "vg.h"
 
 #ifdef PROTOTYPE
-main (int ac,char **av)
+int main (int ac,char **av)
 #else
-main (ac,av)
+int main (ac,av)
 int ac;
 char**av;
 #endif
 {
 
 if (ac!=2) { 
-	fprintf(stderr,"%v: converts HDF vset v1.0 files to v2.0\n",av[0]);
+	fprintf(stderr,"%s: converts HDF vset v1.0 files to v2.0\n",av[0]);
 	fprintf(stderr,"Usage: %s hdf-file\n",av[0]);
 	exit(0);
 	}

@@ -91,7 +91,7 @@ extern int Verbocity;
 void test_bitio_write()
 {
     int32 fid;
-    int32 bitid1,bitid2;
+    int32 bitid1;
     int32 ret;
     intn i;
     uint32 tot_bits=0;
@@ -233,8 +233,6 @@ void test_bitio_seek()
     int32 fid;
     int32 bitid1;
     int32 ret;
-    intn inbits;
-    uint32 tempbuf;
     intn i;
 
     SEED((int)time(NULL));
@@ -254,7 +252,7 @@ void test_bitio_seek()
         ret=Hbitread(bitid1,outbuf[i],&inbuf2[i]);
         VERIFY(ret,outbuf[i],"Hbitread");
         if(outbuf2[i]!=inbuf2[i])
-            printf("outbuf[%d]=%u, outbuf2[%d]=%u inbuf2[%d]=%u, totbits[%d]=%u\n",i,outbuf[i],i,outbuf2[i],i,inbuf2[i],i,totbits[i]);
+            printf("outbuf[%d]=%u, outbuf2[%d]=%lu inbuf2[%d]=%lu, totbits[%d]=%lu\n",i,outbuf[i],i,(long)outbuf2[i],i,(long)inbuf2[i],i,(long)totbits[i]);
       } /* end for */
 
     ret=Hendbitaccess(bitid1,0);
@@ -270,7 +268,7 @@ void test_bitio_seek()
         ret=Hbitread(bitid1,outbuf[i],&inbuf2[i]);
         VERIFY(ret,outbuf[i],"Hbitread");
         if(outbuf2[i]!=inbuf2[i])
-            printf("outbuf[%d]=%u, outbuf2[%d]=%u inbuf2[%d]=%u, totbits[%d]=%u\n",i,outbuf[i],i,outbuf2[i],i,inbuf2[i],i,totbits[i]);
+            printf("outbuf[%d]=%u, outbuf2[%d]=%lu inbuf2[%d]=%lu, totbits[%d]=%lu\n",i,outbuf[i],i,(long)outbuf2[i],i,(long)inbuf2[i],i,(long)totbits[i]);
       } /* end for */
 
     ret=Hendbitaccess(bitid1,0);
@@ -304,7 +302,7 @@ void test_bitio_seek()
         ret=Hbitread(bitid1,outbuf[i],&inbuf2[i]);
         VERIFY(ret,outbuf[i],"Hbitread");
         if(outbuf2[i]!=inbuf2[i])
-            printf("outbuf[%d]=%u, outbuf2[%d]=%u inbuf2[%d]=%u, totbits[%d]=%u\n",i,outbuf[i],i,outbuf2[i],i,inbuf2[i],i,totbits[i]);
+            printf("outbuf[%d]=%u, outbuf2[%d]=%lu inbuf2[%d]=%lu, totbits[%d]=%lu\n",i,outbuf[i],i,(long)outbuf2[i],i,(long)inbuf2[i],i,(long)totbits[i]);
       } /* end for */
 
 
@@ -339,7 +337,7 @@ void test_bitio_seek()
         ret=Hbitread(bitid1,outbuf[i],&inbuf2[i]);
         VERIFY(ret,outbuf[i],"Hbitread");
         if(outbuf2[i]!=inbuf2[i])
-            printf("outbuf[%d]=%u, outbuf2[%d]=%u inbuf2[%d]=%u, totbits[%d]=%u\n",i,outbuf[i],i,outbuf2[i],i,inbuf2[i],i,totbits[i]);
+            printf("outbuf[%d]=%u, outbuf2[%d]=%lu inbuf2[%d]=%lu, totbits[%d]=%lu\n",i,outbuf[i],i,(long)outbuf2[i],i,(long)inbuf2[i],i,(long)totbits[i]);
       } /* end for */
 
 

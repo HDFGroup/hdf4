@@ -39,15 +39,6 @@ PRIVATE vginstance_t *vginstance
 PRIVATE void vunpackvg
     PROTO((VGROUP *vg, uint8 buf[]));
 
-PUBLIC intn vcompare
-    PROTO((VOIDP k1,VOIDP k2,intn cmparg));
-
-PUBLIC VOID vdestroynode
-    PROTO((VOIDP n));
-
-PUBLIC VOID vsdestroynode
-    PROTO((VOIDP n));
-
 /*
 * -------------------------------------------------------------------- 
 * PRIVATE  data structure and routines.
@@ -87,9 +78,9 @@ HFILEID f;
     vfile_t		  * vf;
     vginstance_t  * v;
     vsinstance_t  * w;
-    int32 			aid, stat;
+    int32 			aid, ret;
     uint16			tag, ref;
-    char * FUNC = "Load_vfile";
+    CONSTR(FUNC,"Load_vfile");
 
     /* Check if vfile buffer has been allocated */
     if (vfile == NULL)
@@ -98,7 +89,7 @@ HFILEID f;
         if (vfile == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
         /* zero the space */
-        vfile = (vfile_t *)memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+        vfile = (vfile_t *)HDmemset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
       }
 
     /* allocate a new vfile_t structure */
@@ -117,8 +108,8 @@ HFILEID f;
     if(vf->vgtree == NULL)
         return(FAIL);
         
-    stat = aid = Hstartread(f, DFTAG_VG,  DFREF_WILDCARD);
-    while (stat != FAIL) {
+    ret = aid = Hstartread(f, DFTAG_VG,  DFREF_WILDCARD);
+    while (ret != FAIL) {
         HQuerytagref (aid, &tag, &ref);
         if (NULL== (v = (vginstance_t*) HDgetspace (sizeof(vginstance_t)))) {
             tbbtdfree(vf->vgtree, vdestroynode, NULL);
@@ -132,7 +123,7 @@ HFILEID f;
         v->nattach  = 0;
         v->nentries = 0;
         tbbtdins(vf->vgtree,(VOIDP)v,NULL);    /* insert the vg instance in B-tree */
-        stat = Hnextread (aid, DFTAG_VG, DFREF_WILDCARD, DF_CURRENT);
+        ret = Hnextread (aid, DFTAG_VG, DFREF_WILDCARD, DF_CURRENT);
 	}
     Hendaccess (aid);
 
@@ -144,8 +135,8 @@ HFILEID f;
         return(FAIL);
       } /* end if */
 
-    stat = aid = Hstartread(f, VSDESCTAG,  DFREF_WILDCARD);
-    while (stat != FAIL) {
+    ret = aid = Hstartread(f, VSDESCTAG,  DFREF_WILDCARD);
+    while (ret != FAIL) {
         HQuerytagref (aid, &tag, &ref);
         if (NULL == (w = (vsinstance_t*) HDgetspace (sizeof(vsinstance_t)))) {
             tbbtdfree(vf->vgtree, vdestroynode, NULL);
@@ -160,7 +151,7 @@ HFILEID f;
         w->nattach  = 0;
         w->nvertices= 0;
         tbbtdins(vf->vstree,(VOIDP)w,NULL);    /* insert the vg instance in B-tree */
-        stat = Hnextread (aid, VSDESCTAG, DFREF_WILDCARD, DF_CURRENT);
+        ret = Hnextread (aid, VSDESCTAG, DFREF_WILDCARD, DF_CURRENT);
 	}
     Hendaccess (aid);
 
@@ -192,7 +183,7 @@ HFILEID f;
 #endif
 {
     vfile_t      *vf=NULL;
-    char * FUNC = "Remove_vfile";
+    CONSTR(FUNC,"Remove_vfile");
     
     /* Check if vfile buffer has been allocated */
     if (vfile == NULL)
@@ -201,7 +192,7 @@ HFILEID f;
         if (vfile == NULL)
           HERROR(DFE_NOSPACE);
         /* zero the space */
-        vfile = (vfile_t *)memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+        vfile = (vfile_t *)HDmemset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
       }
 
     /* Figure out what file to work on */
@@ -250,7 +241,7 @@ PUBLIC VOID vprint(k1)
 VOIDP k1;
 #endif
 {
-    printf("Ptr=%p, key=%d, ref=%d\n",k1,((vginstance_t *)k1)->key,((vginstance_t *)k1)->ref);
+    printf("Ptr=%p, key=%d, ref=%d\n",k1,(int)((vginstance_t *)k1)->key,(int)((vginstance_t *)k1)->ref);
 }  /* vprint */
 
 /* ---------------------------- vdestroynode ------------------------- */
@@ -306,7 +297,7 @@ PUBLIC intn Vinitialize(f)
 HFILEID f;
 #endif
 {
-    char * FUNC = "Vinitialize";
+    CONSTR(FUNC,"Vinitialize");
 
     return(Load_vfile (f));
 }
@@ -320,7 +311,7 @@ PUBLIC intn Vfinish (f)
 HFILEID f;
 #endif
 {
-    char * FUNC = "Vfinish";
+    CONSTR(FUNC,"Vfinish");
     
     Remove_vfile (f);
     return(SUCCEED);
@@ -346,7 +337,7 @@ uint16  vgid;
     VOIDP *t;
     vfile_t      * vf;
     int32 key;
-    char *FUNC = "vginstance";
+    CONSTR(FUNC,"vginstance");
 
     /* Check if vfile buffer has been allocated */
     if (vfile == NULL)
@@ -355,7 +346,7 @@ uint16  vgid;
         if (vfile == NULL)
           HRETURN_ERROR(DFE_NOSPACE, NULL);
         /* zero the space */
-        vfile = (vfile_t *)memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+        vfile = (vfile_t *)HDmemset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
       }
 
     if (NULL== (vf = Get_vfile(f)))
@@ -384,7 +375,7 @@ HFILEID     f;
 uint16  vgid;
 #endif
 {
-    char * FUNC = "vexistvg";
+    CONSTR(FUNC,"vexistvg");
   
     if (NULL== (vginstance_t *) vginstance(f,vgid))
         return(FAIL);
@@ -426,7 +417,7 @@ int32           *size;  /* the size of buf is returned here */
 {
 	register uint16 	i;
     register uint8      *bb;
-	char * FUNC = "vpackvg";
+	CONSTR(FUNC,"vpackvg");
 
 	bb = &buf[0];
 
@@ -491,7 +482,7 @@ uint8  buf[];  /* must contain a DFTAG_VG data object from file */
     register uint8   *bb;
     register uintn   u;
     register uint16  uint16var;
-    char * FUNC = "vunpackvg";
+    CONSTR(FUNC,"vunpackvg");
     
     bb = &buf[0];
 
@@ -555,20 +546,20 @@ uint8  buf[];  /* must contain a DFTAG_VG data object from file */
 */
 
 #ifdef PROTOTYPE
-PUBLIC int32 Vattach (HFILEID f, int32 vgid, char *accesstype)
+PUBLIC int32 Vattach (HFILEID f, int32 vgid, const char *accesstype)
 #else
 PUBLIC int32 Vattach (f, vgid, accesstype)
 HFILEID f;      /* HDF file handle */
 int32   vgid;       /* actual vgroup's vgid or -1 for new vgroup */
-char    *accesstype;    /* access mode */
+const char    *accesstype;    /* access mode */
 #endif
 {
 	VGROUP			*vg;
-    int16           access;
+    int16           acc_mode;
     uint8           * vgpack;
     vginstance_t    * v;
 	vfile_t			* vf;
-	char * FUNC = "Vattach";
+	CONSTR(FUNC,"Vattach");
 
     /* Check if vfile buffer has been allocated */
     if (vfile == NULL)
@@ -577,7 +568,7 @@ char    *accesstype;    /* access mode */
         if (vfile == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
         /* zero the space */
-        vfile = (vfile_t *)memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+        vfile = (vfile_t *)HDmemset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
       }
 
     if (f == FAIL)
@@ -586,14 +577,14 @@ char    *accesstype;    /* access mode */
         HRETURN_ERROR(DFE_FNF,FAIL);
 
     if(tolower(accesstype[0])=='r')
-        access = 'r';
+        acc_mode = 'r';
     else if(tolower(accesstype[0])=='w')
-        access = 'w';
+        acc_mode = 'w';
     else
         HRETURN_ERROR(DFE_BADACC, FAIL);
 
     if (vgid == -1) {           /******* create a NEW vg in vgdir ******/
-        if (access=='r')
+        if (acc_mode=='r')
             HRETURN_ERROR(DFE_ARGS,FAIL);
 
       /* allocate space for vg, & zero it out */
@@ -616,7 +607,7 @@ char    *accesstype;    /* access mode */
         if( vg->oref == 0 )
             HRETURN_ERROR(DFE_NOREF,FAIL);
 
-        vg->access    = access;
+        vg->access    = acc_mode;
 
         vg->marked        = 0;
         vg->vgclass[0]    = '\0';
@@ -679,7 +670,7 @@ char    *accesstype;    /* access mode */
         vg->f             = f;
         vg->oref            = (uint16)vgid;
         vg->otag      = DFTAG_VG;
-        vg->access        = access;
+        vg->access        = acc_mode;
         vg->marked        = 0;
           
         /* attach vg to file's vgtab at the vg instance v */
@@ -719,7 +710,7 @@ int32 vkey;
     int32         vgpacksize;
     uint8         * vgpack;
     vginstance_t  * v;
-    char * FUNC = "Vdetach";
+    CONSTR(FUNC,"Vdetach");
 
     if (!VALIDVGID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -739,7 +730,7 @@ int32 vkey;
   /* if that vgroup is empty */
     if (vg->access == 'w') {
         if ((vg->nvelt==0) || (vg->marked == 1)) {
-            vgpack = (uint8 *) HDgetspace((int32) sizeof(VGROUP) + vg->nvelt * 4);
+            vgpack = (uint8 *) HDgetspace((uint32) sizeof(VGROUP) + vg->nvelt * 4);
             vpackvg(vg,vgpack,&vgpacksize);
 
           /*
@@ -784,7 +775,7 @@ int32 insertkey;          /* (VGROUP*) or (VDATA*), doesn't matter */
     vsinstance_t  * w;
     vginstance_t  * x;
     register uintn u;
-    char * FUNC = "Vinsert";
+    CONSTR(FUNC,"Vinsert");
     uint16 newtag, newref;
     int32 newfid;
 
@@ -878,7 +869,7 @@ char * field;
     vginstance_t  * v;
     VGROUP *vg;
     int32 vskey;
-    char * FUNC = "Vflocate";
+    CONSTR(FUNC,"Vflocate");
     
     if (!VALIDVGID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -925,7 +916,7 @@ int32   tag, ref;
     register uint16     ttag, rref;
     vginstance_t  * v;
     VGROUP *vg;
-    char * FUNC = "Vinqtagref";
+    CONSTR(FUNC,"Vinqtagref");
 
     if (!VALIDVGID(vkey))
         HRETURN_ERROR(DFE_ARGS,FALSE);
@@ -962,7 +953,7 @@ int32 vkey;
 {
     vginstance_t  * v;
     VGROUP *vg;
-    char * FUNC = "Vntagrefs";
+    CONSTR(FUNC,"Vntagrefs");
     
     if (!VALIDVGID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -1000,7 +991,7 @@ int32 tagarray[], refarray[];
     int32 i;
     vginstance_t  * v;
     VGROUP *vg;
-    char * FUNC = "Vgettagrefs";
+    CONSTR(FUNC,"Vgettagrefs");
     
     if (!VALIDVGID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -1045,7 +1036,7 @@ int32   *tag, *ref; /* these are returned */
 {
     vginstance_t  * v;
     VGROUP *vg;
-    char * FUNC = "Vgettagref";
+    CONSTR(FUNC,"Vgettagref");
     
     if (!VALIDVGID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -1081,7 +1072,7 @@ int32 vkey;
 {
     vginstance_t  * v;
     VGROUP *vg;
-    char * FUNC = "Vgettagref";
+    CONSTR(FUNC,"Vgettagref");
     
     if (!VALIDVGID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -1112,7 +1103,7 @@ int32 vkey;
 {
     vginstance_t  * v;
     VGROUP *vg;
-    char * FUNC = "Vgettagref";
+    CONSTR(FUNC,"Vgettagref");
     
     if (!VALIDVGID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -1153,7 +1144,7 @@ int32  tag, ref;
     int32 i;
     uint16 ttag, rref;
 #endif
-    char * FUNC = "Vaddtagref";
+    CONSTR(FUNC,"Vaddtagref");
 
     if (!VALIDVGID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -1196,7 +1187,7 @@ VGROUP      * vg;
 uint16      tag, ref;   /* this MUST be uint16 -  private routine */
 #endif
 {
-    char * FUNC = "vinsertpair";
+    CONSTR(FUNC,"vinsertpair");
     
     if(vg->nvelt >= (uintn)vg->msize) {
         vg->msize *= 2;
@@ -1237,7 +1228,7 @@ int32   vgid;
     uint8   * vgpack;
 	VGROUP 	vg;
     int32   len;
-    char * FUNC = "Ventries";
+    CONSTR(FUNC,"Ventries");
 
 	if (vgid < 1)
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -1271,16 +1262,16 @@ int32   vgid;
 *	truncates to max length of VGNAMELENMAX 
 */
 #ifdef PROTOTYPE
-PUBLIC int32 Vsetname (int32 vkey, char *vgname)
+PUBLIC int32 Vsetname (int32 vkey, const char *vgname)
 #else
 PUBLIC int32 Vsetname (vkey, vgname)
 int32 vkey;
-char        *vgname;
+const char        *vgname;
 #endif
 {
     vginstance_t  * v;
     VGROUP *vg;
-    char * FUNC = "Vsetname";
+    CONSTR(FUNC,"Vsetname");
     
     if (!VALIDVGID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -1309,16 +1300,16 @@ char        *vgname;
 */
 
 #ifdef PROTOTYPE
-PUBLIC int32 Vsetclass (int32 vkey, char *vgclass)
+PUBLIC int32 Vsetclass (int32 vkey, const char *vgclass)
 #else
 PUBLIC int32 Vsetclass (vkey, vgclass)
 int32 vkey;
-char *vgclass;
+const char *vgclass;
 #endif
 {
     vginstance_t  * v;
     VGROUP *vg;
-    char * FUNC = "Vsetclass";
+    CONSTR(FUNC,"Vsetclass");
     
     if (!VALIDVGID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -1358,7 +1349,7 @@ int32   id;     /* valid id of the entry in question */
     register uint16 ID;
     vginstance_t  * v;
     VGROUP *vg;
-    char * FUNC = "Visvg";
+    CONSTR(FUNC,"Visvg");
     
     if (!VALIDVGID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -1400,7 +1391,7 @@ int32   id;
     register intn i;
     vginstance_t  * v;
     VGROUP *vg;
-    char * FUNC = "VSisvs";
+    CONSTR(FUNC,"VSisvs");
     
     if (!VALIDVGID(vkey))
         HRETURN_ERROR(DFE_ARGS,FALSE);
@@ -1446,7 +1437,7 @@ int32   vgid;                   /* current vgid */
 	vfile_t		* vf;
     VOIDP *t;
 	int32 key;
-	char * FUNC = "Vgetid";
+	CONSTR(FUNC,"Vgetid");
 
     if(vgid < -1 )
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -1458,7 +1449,7 @@ int32   vgid;                   /* current vgid */
         if (vfile == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
         /* zero the space */
-        vfile = (vfile_t *)memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+        vfile = (vfile_t *)HDmemset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
       }
 
     if (NULL==(vf = Get_vfile(f)))
@@ -1519,7 +1510,7 @@ int32 id;     /* actual id of an entry in the vgroup vg */
     register uintn  u;
     vginstance_t  * v;
     VGROUP *vg;
-    char * FUNC = "Vgetnext";
+    CONSTR(FUNC,"Vgetnext");
     
     if (!VALIDVGID(vkey) || id<(-1))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -1578,7 +1569,7 @@ char *vgname;            /* its name is returned in this var */
 {
     vginstance_t  * v;
     VGROUP *vg;
-    char * FUNC = "Vgetname";
+    CONSTR(FUNC,"Vgetname");
 
     if (!VALIDVGID(vkey) || vgname==NULL)
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -1614,7 +1605,7 @@ char    *vgclass;   /* its class name is returned in this var */
 {
     vginstance_t  * v;
     VGROUP *vg;
-    char * FUNC = "Vgetclass";
+    CONSTR(FUNC,"Vgetclass");
 
     if (!VALIDVGID(vkey) || vgclass==NULL)
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -1657,7 +1648,7 @@ char        *vgname;
 {
     vginstance_t  * v;
     VGROUP *vg;
-    char * FUNC = "Vinquire";
+    CONSTR(FUNC,"Vinquire");
     
     if (!VALIDVGID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -1708,18 +1699,18 @@ char        *vgname;
 */
 
 #ifdef PROTOTYPE
-PUBLIC HFILEID Vopen( char *path, intn access, int16 ndds)
+PUBLIC HFILEID Vopen( char *path, intn acc_mode, int16 ndds)
 #else
-PUBLIC HFILEID Vopen (path, access, ndds)
+PUBLIC HFILEID Vopen (path, acc_mode, ndds)
 char 		*path;
-intn 		access;
+intn 		acc_mode;
 int16       ndds;
 #endif
 {
-	char * FUNC = "Vopen";
+	CONSTR(FUNC,"Vopen");
 	HFILEID  f;
 
-  	f = Hopen(path, access, ndds);
+  	f = Hopen(path, acc_mode, ndds);
     if (f==FAIL)
         return(FAIL);
 
@@ -1754,7 +1745,7 @@ PUBLIC intn Vclose (f)
 HFILEID f;
 #endif
 {
-	char * FUNC = "Vclose";
+	CONSTR(FUNC,"Vclose");
 
 	Vfinish (f);
     return(Hclose (f));
@@ -1784,7 +1775,7 @@ int32 vgid;
     vfile_t      * vf;
     VOIDP        * t;
     int32          key;
-    char         * FUNC = "Vdelete";
+    CONSTR(FUNC,"Vdelete");
 
     if(vgid < 0)
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -1796,7 +1787,7 @@ int32 vgid;
         if (vfile == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
         /* zero the space */
-        vfile = (vfile_t *)memset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
+        vfile = (vfile_t *)HDmemset(vfile, 0, (MAX_VFILE * sizeof(vfile_t))); 
       }
 
     if (NULL==(vf = Get_vfile(f)))

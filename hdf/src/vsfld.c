@@ -127,11 +127,11 @@ int16 x;
 */
 
 #ifdef PROTOTYPE
-PUBLIC intn VSsetfields (int32 vkey, char *fields)
+PUBLIC intn VSsetfields (int32 vkey, const char *fields)
 #else
 PUBLIC intn VSsetfields (vkey,fields)
 int32 vkey;
-char    *fields;
+const char    *fields;
 #endif
 {
     char          **av;
@@ -143,7 +143,7 @@ char    *fields;
     VWRITELIST    * wlist;
     vsinstance_t  * w;
     VDATA         * vs;
-    char  * FUNC = "VSsetfields";
+    CONSTR(FUNC,"VSsetfields");
 
     if (!VALIDVSID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -271,11 +271,11 @@ char    *fields;
 */
 
 #ifdef PROTOTYPE
-PUBLIC intn VSfdefine (int32 vkey, char *field, int32 localtype, int32 order)
+PUBLIC intn VSfdefine (int32 vkey, const char *field, int32 localtype, int32 order)
 #else
 PUBLIC intn VSfdefine (vkey, field, localtype, order)
 int32 vkey;
-char    *field;
+const char    *field;
 int32   localtype, order;
 #endif
 {
@@ -286,7 +286,7 @@ int32   localtype, order;
     register intn j;
     vsinstance_t    *w;
     VDATA           *vs;
-    char  * FUNC = "VSfdefine";
+    CONSTR(FUNC,"VSfdefine");
 
     if (!VALIDVSID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -329,9 +329,7 @@ int32   localtype, order;
     if ((vs->usym[usymid].isize = DFKNTsize( (int32) localtype)) == FAIL)
         HRETURN_ERROR(DFE_BADTYPE,FAIL);
   
-    j  = HDstrlen(av[0]) + 1;
-  
-    if( (ss = (char*) HDgetspace (j))==NULL)
+    if( (ss = (char*) HDgetspace (HDstrlen(av[0]) + 1))==NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
   
     HDstrcpy(ss, av[0]);
@@ -382,7 +380,7 @@ int32 vkey;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VFnfeilds";
+    CONSTR(FUNC,"VFnfeilds");
 
     if (!VALIDVSID(vkey)) {
         HERROR(DFE_ARGS);
@@ -427,7 +425,7 @@ int32 index;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VFfieldname";
+    CONSTR(FUNC,"VFfieldname");
 
     if (!VALIDVSID(vkey)) {
         HERROR(DFE_ARGS);
@@ -470,7 +468,7 @@ int32 index;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VFfeildtype";
+    CONSTR(FUNC,"VFfeildtype");
 
     if (!VALIDVSID(vkey)) {
         HERROR(DFE_ARGS);
@@ -513,7 +511,7 @@ int32 index;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VFfieldisize";
+    CONSTR(FUNC,"VFfieldisize");
 
     if (!VALIDVSID(vkey)) {
         HERROR(DFE_ARGS);
@@ -556,7 +554,7 @@ int32 index;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VFfieldisize";
+    CONSTR(FUNC,"VFfieldisize");
 
     if (!VALIDVSID(vkey)) {
         HERROR(DFE_ARGS);
@@ -599,7 +597,7 @@ int32 index;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VFfieldorder";
+    CONSTR(FUNC,"VFfieldorder");
 
     if (!VALIDVSID(vkey)) {
         HERROR(DFE_ARGS);

@@ -53,7 +53,7 @@ extern int32 HCPcrle_read
     PROTO((accrec_t *access_rec, int32 length, VOIDP data));
 
 extern int32 HCPcrle_write
-    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+    PROTO((accrec_t *access_rec, int32 length, const VOIDP data));
 
 extern int32 HCPcrle_endaccess
     PROTO((accrec_t *access_rec));

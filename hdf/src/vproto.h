@@ -59,10 +59,10 @@ extern VOID VSdump
   PROTO((int32 vkey));
 
 extern int32 VSsetname
-  PROTO((int32 vkey, char _HUGE *vsname));
+  PROTO((int32 vkey, const char _HUGE *vsname));
 
 extern int32 VSsetclass
-  PROTO((int32 vkey, char _HUGE *vsclass));
+  PROTO((int32 vkey, const char _HUGE *vsclass));
 
 extern int32 VSgetname
   PROTO((int32 vkey, char _HUGE *vsname));
@@ -81,10 +81,10 @@ extern int32 Vlone
   PROTO((HFILEID f, int32 _HUGE idarray[], int32 asize));
 
 extern int32 Vfind
-  PROTO((HFILEID f, char _HUGE *vgname));
+  PROTO((HFILEID f, const char _HUGE *vgname));
 
 extern int32 VSfind
-  PROTO((HFILEID f, char _HUGE *vsname));
+  PROTO((HFILEID f, const char _HUGE *vsname));
 
 extern VOID Vsetzap
     PROTO((void));
@@ -111,7 +111,7 @@ extern intn Vfinish
   PROTO((HFILEID f));
 
 extern HFILEID Vopen
-    PROTO(( char *path, intn access, int16 ndds));
+    PROTO(( char *path, intn acc_mode, int16 ndds));
 
 extern intn Vclose
     PROTO((HFILEID f));
@@ -120,7 +120,7 @@ extern int32 vexistvg
   PROTO((HFILEID f, uint16 vgid));
 
 extern int32 Vattach
-  PROTO((HFILEID f, int32 vgid, char _HUGE *accesstype));
+  PROTO((HFILEID f, int32 vgid, const char _HUGE *accesstype));
 
 extern int32 Vdetach
   PROTO((int32 vkey));
@@ -157,10 +157,10 @@ extern int32 Ventries
   PROTO((HFILEID f, int32 vgid));
 
 extern int32 Vsetname
-  PROTO((int32 vkey, char _HUGE *vgname));
+  PROTO((int32 vkey, const char _HUGE *vgname));
 
 extern int32 Vsetclass
-  PROTO((int32 vkey, char _HUGE *vgclass));
+  PROTO((int32 vkey, const char _HUGE *vgclass));
 
 extern int32 Visvg
   PROTO((int32 vkey, int32 id));
@@ -190,7 +190,7 @@ extern int32 Vdelete
 ** from vparse.c
 */
 extern int32 scanattrs
-  PROTO((char _HUGE *attrs, int32 _HUGE *attrc, char _HUGE ***attrv));
+  PROTO((const char _HUGE *attrs, int32 _HUGE *attrc, char _HUGE ***attrv));
 
 
 /*
@@ -220,7 +220,7 @@ extern VOID vsdestroynode
     PROTO((VOIDP n));
 
 extern int32 VSattach
-    PROTO((HFILEID f, int32 vsid, char _HUGE *accesstype));
+    PROTO((HFILEID f, int32 vsid, const char _HUGE *accesstype));
 
 extern int32 VSdetach
     PROTO((int32 vkey));
@@ -255,10 +255,10 @@ extern int16 HDFSIZEOF
     PROTO((int16 x));
 
 extern intn VSsetfields
-  PROTO((int32 vkey, char _HUGE *fields));
+  PROTO((int32 vkey, const char _HUGE *fields));
 
 extern intn VSfdefine
-  PROTO((int32 vkey, char _HUGE *field, int32 localtype, int32 order));
+  PROTO((int32 vkey, const char _HUGE *field, int32 localtype, int32 order));
 
 extern int32 VFnfields 
     PROTO((int32 vkey));
@@ -397,7 +397,7 @@ extern int32 VSwrite
 #endif  /* VG_FNAMES */
 
 extern FRETVAL(intf) ndfivopn
-    PROTO((_fcd filename, intf _HUGE *access, intf _HUGE *defdds, intf _HUGE *namelen));
+    PROTO((_fcd filename, intf _HUGE *acc_mode, intf _HUGE *defdds, intf _HUGE *namelen));
 
 extern FRETVAL(intf) ndfvclos
     PROTO((intf _HUGE *file_id));

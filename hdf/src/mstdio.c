@@ -76,7 +76,7 @@ int32 HCPmstdio_stread(access_rec)
     accrec_t *access_rec;
 #endif
 {
-    char *FUNC="HCPmstdio_stread";  /* for HERROR */
+    CONSTR(FUNC,"HCPmstdio_stread");
     compinfo_t *info;               /* information on the special element */
     int32 ret;
 
@@ -117,7 +117,7 @@ int32 HCPmstdio_stwrite(access_rec)
     accrec_t *access_rec;
 #endif
 {
-    char *FUNC="HCPmstdio_stwrite";  /* for HERROR */
+    CONSTR(FUNC,"HCPmstdio_stwrite");
     compinfo_t *info;               /* information on the special element */
     int32 ret;
 
@@ -173,7 +173,7 @@ int32 HCPmstdio_seek(access_rec, offset, origin)
     int origin;
 #endif
 {
-    char *FUNC="HCPmstdio_seek";    /* for HERROR */
+    CONSTR(FUNC,"HCPmstdio_seek");
     compinfo_t *info;               /* information on the special element */
     int32 ret;
 
@@ -218,7 +218,7 @@ int32 HCPmstdio_read(access_rec, length, data)
     VOIDP data;                        /* data buffer */
 #endif
 {
-    char *FUNC="HCPmstdio_read";      /* for HERROR */
+    CONSTR(FUNC,"HCPmstdio_read");
     compinfo_t *info;       /* information on the special element */
     int32 ret;
 
@@ -254,15 +254,15 @@ int32 HCPmstdio_read(access_rec, length, data)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int32 HCPmstdio_write(accrec_t *access_rec, int32 length, VOIDP data)
+int32 HCPmstdio_write(accrec_t *access_rec, int32 length, const VOIDP data)
 #else
 int32 HCPmstdio_write(access_rec, length, data)
     accrec_t *access_rec;   /* access record */
     int32 length;           /* length of data to write */
-    VOIDP data;             /* data buffer */
+    const VOIDP data;             /* data buffer */
 #endif
 {
-    char *FUNC="HCPmstdio_write";     /* for HERROR */
+    CONSTR(FUNC,"HCPmstdio_write");
     compinfo_t *info;       /* information on the special element */
     int32 ret;
 
@@ -329,7 +329,7 @@ int32 HCPmstdio_inquire(access_rec, pfile_id, ptag, pref, plength, poffset,
      int16 *pspecial;          /* ptr to special code */
 #endif
 {
-    char *FUNC="HCPmstdio_inquire";     /* for HERROR */
+    CONSTR(FUNC,"HCPmstdio_inquire");
     compinfo_t *info;       /* information on the special element */
     int32 ret;
 
@@ -366,7 +366,7 @@ int32 HCPmstdio_endaccess(access_rec)
     accrec_t *access_rec;      /* access record to dispose of */
 #endif
 {
-    char *FUNC="HCPmstdio_endaccess"; /* for HERROR */
+    CONSTR(FUNC,"HCPmstdio_endaccess");
     compinfo_t *info;       /* information on the special element */
     int32 ret;
 

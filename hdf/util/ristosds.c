@@ -45,9 +45,9 @@ VOID finishing
 #endif
 
 #ifdef PROTOTYPE
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 #else
-main(argc, argv)
+int main(argc, argv)
     int argc;
     char *argv[];
 #endif /* PROTOTYPE */

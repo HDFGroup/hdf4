@@ -275,8 +275,8 @@ void test_sdmms()
        (cal5 != ical5))
         {
             MESSAGE(5,printf(">>> Test failed for float32 calibration.\n"););
-            MESSAGE(5,printf(" Is %f %f %f %f %d\n", ical1, ical2, ical3, ical4, ical5););
-            MESSAGE(5,printf(" sld be %f %f %f %f %d\n", cal1, cal2, cal3, cal4, cal5););
+            MESSAGE(5,printf(" Is %f %f %f %f %d\n", ical1, ical2, ical3, ical4, (int)ical5););
+            MESSAGE(5,printf(" sld be %f %f %f %f %d\n", cal1, cal2, cal3, cal4, (int)cal5););
         }
     else 
 	MESSAGE(5,printf("Test passed for float32 calibration.\n"););

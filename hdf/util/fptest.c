@@ -27,7 +27,7 @@
  *
  *	data element value = row value + column value [+ plane value, if rank=3]
  */
-main()
+int main()
 {
 	int nrow = 3, ncol = 4, npln = 5, ione = 1;
 	int i, j, k;
@@ -45,9 +45,9 @@ main()
 	float64 rowi8 =  1.0e0, coli8 =  2.0e0, plni8 =  5.0e0;
 	float64 dzero = 0.0e0;
 
-	static char *text = "TEXT";
-	static char *fp32 = "FP32";
-	static char *fp64 = "FP64";
+	const char *text = "TEXT";
+	const char *fp32 = "FP32";
+	const char *fp64 = "FP64";
 
 	/*
 	 * initialize the row, column, and plane vectors

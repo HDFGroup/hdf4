@@ -62,11 +62,11 @@ extern int Verbocity;
 
 void test_comp()
 {
-    int32 fid, fid1;
-    int32 aid1, aid2;
+    int32 fid;
+    int32 aid1;
     int32 fileid, length, offset, posn;
     uint16 tag, ref, ref1, ref2, ref3;
-    int16 access, special;
+    int16 acc_mode, special;
     register int i,j;
     int32 ret;
     intn errors = 0;
@@ -116,7 +116,7 @@ void test_comp()
 
     ret = Hwrite(aid1, BUFSIZE/2, outbuf);
     if(ret != BUFSIZE/2) {
-      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,ret);
+      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,(int)ret);
       HEprint(stdout,0);
       errors++;
     }
@@ -133,7 +133,7 @@ void test_comp()
 
     ret = Hwrite(aid1, BUFSIZE/2, outbuf2);
     if(ret != BUFSIZE/2) {
-      fprintf(stderr, "ERROR: (%d) Hwrite returned the wrong length: %d\n", __LINE__,ret);
+      fprintf(stderr, "ERROR: (%d) Hwrite returned the wrong length: %d\n", __LINE__,(int)ret);
       HEprint(stdout,0);
       errors++;
     }
@@ -145,7 +145,7 @@ void test_comp()
     ret = Hgetelement(fid, (uint16) 1000, (uint16) ref1, inbuf);
     if(ret != BUFSIZE/2) {
       HEprint(stderr,0);
-      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, ret);
+      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, (int)ret);
       errors++;
     }
 
@@ -160,7 +160,7 @@ void test_comp()
     ret = Hgetelement(fid, (uint16) 1000, (uint16) ref2, inbuf2);
     if(ret != BUFSIZE/2) {
       HEprint(stderr,0);
-      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n", __LINE__,ret);
+      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n", __LINE__,(int)ret);
       errors++;
     }
 
@@ -181,7 +181,7 @@ void test_comp()
 
     ret = Hwrite(aid1, BUFSIZE, outbuf);
     if(ret != BUFSIZE) {
-      fprintf(stderr, "ERROR: (%d) Hwrite returned the wrong length: %d\n", __LINE__,ret);
+      fprintf(stderr, "ERROR: (%d) Hwrite returned the wrong length: %d\n", __LINE__,(int)ret);
       errors++;
     }
 
@@ -202,7 +202,7 @@ void test_comp()
     CHECK(aid1, FAIL, "Hstartread");
 
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
-                  &access, &special);
+                  &acc_mode, &special);
     CHECK(ret, FAIL, "Hinquire");
     if(!special) {
       fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
@@ -232,7 +232,7 @@ void test_comp()
 #endif
 
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
-                  &access, &special);
+                  &acc_mode, &special);
     CHECK(ret, FAIL, "Hinquire");
     if(!special) {
       fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",

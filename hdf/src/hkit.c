@@ -87,7 +87,7 @@ char _HUGE *HDf2cstring(fdesc, len)
     str = _fcdtocp(fdesc);
     for(i=len-1;i>=0 && (!isascii(str[i]) || !isgraph(str[i])); i--)
         /*EMPTY*/;
-    cstr = (char *)HDgetspace(i+2);
+    cstr = (char *)HDgetspace((uint32)(i+2));
     cstr[i+1] = '\0';
     for (; i>=0; i--) cstr[i] = str[i];
     return cstr;
@@ -131,7 +131,7 @@ int HIlookup_dd(file_rec, look_tag, look_ref, pblock, pidx)
      int32 *pidx;               /* OUT: index into ddlist where dd is found */
 #endif
 { 
-    char *FUNC="HIlookup_dd";       /* for HERROR */
+    CONSTR(FUNC,"HIlookup_dd");       /* for HERROR */
     register intn tag, ref, key, i;
     register tag_ref_list_ptr p;
     
@@ -209,7 +209,7 @@ int HIadd_hash_dd(file_rec, look_tag, look_ref, pblock, pidx)
      int32 pidx;                /* index into ddlist where dd is */
 #endif
 {
-    char *FUNC="HIadd_hash_dd";       /* for HERROR */
+    CONSTR(FUNC,"HIadd_hash_dd");       /* for HERROR */
     register intn tag, ref, key, i;
     register tag_ref_list_ptr p, where;
 
@@ -277,7 +277,7 @@ int HIdel_hash_dd(file_rec, look_tag, look_ref)
      uint16 look_ref;           /* ref of dd to add */
 #endif
 {
-  char *FUNC="HIdel_hash_dd";       /* for HERROR */
+  CONSTR(FUNC,"HIdel_hash_dd");       /* for HERROR */
   register intn tag, ref, key, i;
   register tag_ref_list_ptr p;
 
@@ -452,7 +452,7 @@ intn HDflush(file_id)
     int32 file_id;             /* id of file to flush */
 #endif
 {
-    char *FUNC="HDflush";       /* for HERROR */
+    CONSTR(FUNC,"HDflush");       /* for HERROR */
 
 #ifndef MAC
 
@@ -531,9 +531,9 @@ intn len;
 
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-char _HUGE *HDgettagname(uint16 tag)
+const char _HUGE *HDgettagname(uint16 tag)
 #else
-char _HUGE *HDgettagname(tag)
+const char _HUGE *HDgettagname(tag)
      uint16 tag;
 #endif /* PROTOTYPE */
 {

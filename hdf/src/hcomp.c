@@ -90,7 +90,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* declaration of the functions provided in this module */
 PRIVATE int32 HCIstaccess
-    PROTO((accrec_t *access_rec, int16 access));
+    PROTO((accrec_t *access_rec, int16 acc_mode));
 
 PRIVATE int32 HCIinit_coder
     PROTO((comp_coder_info_t *cinfo,comp_coder_t coder_type,
@@ -158,7 +158,7 @@ PRIVATE int32 HCIinit_coder(cinfo, coder_type, c_info)
     comp_info *c_info;      /* encoding information */
 #endif
 {
-    char *FUNC="HCIinit_coder";  /* for HERROR */
+    CONSTR(FUNC,"HCIinit_coder");  /* for HERROR */
 
     switch(coder_type) {    /* determin the type of encoding */
         case COMP_CODE_RLE:           /* Run-length encoding */
@@ -223,7 +223,7 @@ PRIVATE int32 HCIinit_model(minfo, model_type, m_info)
     model_info *m_info;     /* modeling information */
 #endif
 {
-    char *FUNC="HCIinit_model";  /* for HERROR */
+    CONSTR(FUNC,"HCIinit_model");  /* for HERROR */
 
     switch(model_type) {    /* determine the type of modeling */
         case COMP_MODEL_STDIO:        /* standard C stdio modeling */
@@ -273,7 +273,7 @@ PRIVATE int32 HCIwrite_header(file_rec,access_rec,info,dd,special_tag,ref)
     uint16 special_tag,ref; /* the tag/ref pair of the compressed element */
 #endif
 {
-    char *FUNC="HCIwrite_header";  /* for HERROR */
+    CONSTR(FUNC,"HCIwrite_header");  /* for HERROR */
     uint8 *p;       /* pointer to the temporary buffer */
 
     /* Check if temproray buffer has been allocated */
@@ -395,7 +395,7 @@ PRIVATE int32 HCIread_header(file_rec,access_rec,info,info_dd,c_info,m_info)
     model_info *m_info; /* ptr to modeling information to fill in */
 #endif
 {
-    char *FUNC="HCIread_header";    /* for HERROR */
+    CONSTR(FUNC,"HCIread_header");    /* for HERROR */
     uint16 header_version;      /* version of the compression header */
     uint16 mtype,ctype;         /* temporary variables for model and coder type */
     uint8 *p;       /* pointer to the temporary buffer */
@@ -503,7 +503,7 @@ int32 HCcreate(file_id, tag, ref, model_type, m_info, coder_type, c_info)
     comp_info *c_info;      /* coding information */
 #endif
 {
-    char *FUNC="HCcreate";  /* for HERROR */
+    CONSTR(FUNC,"HCcreate");  /* for HERROR */
     filerec_t *file_rec;    /* file record */
     accrec_t *access_rec;   /* access element record */
     int slot;
@@ -697,7 +697,7 @@ printf("HCcreate(): check 6.6, coder_funcs.write=%p\n",info->cinfo.coder_funcs.w
     if(data_dd!=NULL) {
         VOIDP buf;              /* temporary buffer */
 
-        buf=HDgetspace(data_dd->length);
+        buf=HDgetspace((uint32)data_dd->length);
         if(buf==NULL) {
             access_rec->used=FALSE;
             HDfreespace((VOIDP)info);
@@ -768,14 +768,14 @@ printf("HCcreate(): check 7, coder_funcs.write=%p\n",info->cinfo.coder_funcs.wri
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-PRIVATE int32 HCIstaccess(accrec_t *access_rec, int16 access)
+PRIVATE int32 HCIstaccess(accrec_t *access_rec, int16 acc_mode)
 #else
-PRIVATE int32 HCIstaccess(access_rec, access)
+PRIVATE int32 HCIstaccess(access_rec, acc_mode)
     accrec_t *access_rec;   /* access record */
-    int16 access;           /* access mode */
+    int16 acc_mode;           /* access mode */
 #endif
 {
-    char *FUNC="HCIstaccess";   /* for HERROR */
+    CONSTR(FUNC,"HCIstaccess");   /* for HERROR */
     dd_t *info_dd;              /* dd of the special information element */
     compinfo_t *info;           /* special element information */
     filerec_t *file_rec;        /* file record */
@@ -788,7 +788,7 @@ PRIVATE int32 HCIstaccess(access_rec, access)
 
     /* get file record and validate */
     file_rec=FID2REC(access_rec->file_id);
-    if(!file_rec || file_rec->refcount==0 || !(file_rec->access & access))
+    if(!file_rec || file_rec->refcount==0 || !(file_rec->access & acc_mode))
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* Check if temproray buffer has been allocated */
@@ -801,7 +801,7 @@ PRIVATE int32 HCIstaccess(access_rec, access)
     /* intialize the access record */
     access_rec->special=SPECIAL_COMP;
     access_rec->posn=0;
-    access_rec->access=access;
+    access_rec->access=acc_mode;
 
     /* get the dd for information */
     info_dd=&access_rec->block->ddlist[access_rec->idx];
@@ -902,7 +902,7 @@ int32 HCPstread(access_rec)
     accrec_t *access_rec;
 #endif
 {
-    char *FUNC="HCPstread";     /* for HERROR */
+    CONSTR(FUNC,"HCPstread");     /* for HERROR */
     compinfo_t *info;           /* information on the special element */
     int32 aid;                  /* AID to return */
     int32 ret;
@@ -945,7 +945,7 @@ int32 HCPstwrite(access_rec)
     accrec_t *access_rec;
 #endif
 {
-    char *FUNC="HCPstwrite";    /* for HERROR */
+    CONSTR(FUNC,"HCPstwrite");    /* for HERROR */
     compinfo_t *info;           /* information on the special element */
     int32 aid;                  /* AID to return */
     int32 ret;
@@ -992,7 +992,7 @@ int32 HCPseek(access_rec, offset, origin)
     intn origin;
 #endif
 {
-    char *FUNC="HCPseek";   /* for HERROR */
+    CONSTR(FUNC,"HCPseek");   /* for HERROR */
     compinfo_t *info;       /* information on the special element */
     int32 ret;
 
@@ -1044,7 +1044,7 @@ int32 HCPread(access_rec, length, data)
     VOIDP data;             /* data buffer */
 #endif
 {
-    char *FUNC="HCPread";   /* for HERROR */
+    CONSTR(FUNC,"HCPread");   /* for HERROR */
     compinfo_t *info;       /* information on the special element */
     int32 ret;
 
@@ -1092,15 +1092,15 @@ int32 HCPread(access_rec, length, data)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int32 HCPwrite(accrec_t *access_rec, int32 length, VOIDP data)
+int32 HCPwrite(accrec_t *access_rec, int32 length, const VOIDP data)
 #else
 int32 HCPwrite(access_rec, length, data)
     accrec_t *access_rec;      /* access record */
     int32 length;              /* length of data to write */
-    VOIDP data;                        /* data buffer */
+    const VOIDP data;                        /* data buffer */
 #endif
 {
-    char *FUNC="HCPwrite";     /* for HERROR */
+    CONSTR(FUNC,"HCPwrite");     /* for HERROR */
     compinfo_t *info;       /* information on the special element */
     int32 ret;
 
@@ -1246,7 +1246,7 @@ int32 HCPendaccess(access_rec)
     accrec_t *access_rec;      /* access record to dispose of */
 #endif
 {
-    char *FUNC="HCPendaccess";      /* for HERROR */
+    CONSTR(FUNC,"HCPendaccess");      /* for HERROR */
     filerec_t *file_rec=FID2REC(access_rec->file_id);   /* file record */
 
     /* validate file record */
@@ -1291,7 +1291,7 @@ int32 HCPcloseAID(access_rec)
     accrec_t *access_rec;      /* access record to dispose of */
 #endif
 {
-    char *FUNC="HCPcloseAID"; /* for HERROR */
+    CONSTR(FUNC,"HCPcloseAID"); /* for HERROR */
     compinfo_t *info;         /* special information record */
     int32 ret;
 

@@ -79,7 +79,7 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
-  char *FUNC="DFKsb2b";
+  CONSTR(FUNC,"DFKsb2b");
 
   HEclear();
 
@@ -159,7 +159,7 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
-  char *FUNC="DFKsb4b";
+  CONSTR(FUNC,"DFKsb4b");
 #ifdef TEST3_sb4b
   uint32 *lp_dest;
   uint32 *lp_src;
@@ -335,7 +335,7 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
-    char *FUNC="DFKsb8b";
+    CONSTR(FUNC,"DFKsb8b");
 
     HEclear();
 

@@ -73,11 +73,11 @@ trimendblanks(ss)
 
    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfivopn(_fcd name, intf *access, intf *defdds, intf *namelen)
+ndfivopn(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
 #else
-ndfivopn(name, access, defdds, namelen)
+ndfivopn(name, acc_mode, defdds, namelen)
 _fcd name;
-intf *access;
+intf *acc_mode;
 intf *defdds;
 intf *namelen;
 #endif /* PROTOTYPE */
@@ -86,7 +86,7 @@ intf *namelen;
    intf ret;
 
    fn = HDf2cstring(name, (intn)*namelen);
-   ret = (intf)Vopen(fn, (intn)*access, (int16)*defdds);
+   ret = (intf)Vopen(fn, (intn)*acc_mode, (int16)*defdds);
    HDfreespace(fn);
    return(ret);
 }	/* end ndfivopn() */
@@ -525,15 +525,15 @@ _fcd    fields;
 intf    *fieldslen;
 #endif
 {
-    intf    stat;
+    intf    ret;
 	char		*flds;
 
     flds = HDf2cstring (fields, (intn)*fieldslen );
 	/* trimendblanks(flds); */
-    stat =  (int32) VSfexist(*vkey, flds);
+    ret =  (int32) VSfexist(*vkey, flds);
     HDfreespace (flds);
 
-	return (stat);
+	return (ret);
 }
 
 /* ------------------------------------------------------------------ */
@@ -552,15 +552,15 @@ _fcd    name;
 intf    *namelen;
 #endif
 {
-    intf    stat;
+    intf    ret;
 	char	*cname;
 
     cname = HDf2cstring (name, (intn)*namelen);
 	/* trimendblanks(flds); */
-    stat =  (intf) VSfind(*f, cname);
+    ret =  (intf) VSfind(*f, cname);
     HDfreespace (cname);
 
-	return (stat);
+	return (ret);
 }
 
 /* ------------------------------------------------------------------ */
@@ -652,14 +652,14 @@ intf    *fieldslen;
 #endif
 {
 	char 	*flds;
-    intf    stat;
+    intf    ret;
 
     flds = HDf2cstring (fields, (intn)*fieldslen);
 	/* trimendblanks(flds); */
-    stat =  (int32) VSsetfields (*vkey, flds);
+    ret =  (int32) VSsetfields (*vkey, flds);
     HDfreespace (flds);
 
-	return(stat);
+	return(ret);
 }
 
 /* ------------------------------------------------------------------ */
@@ -697,14 +697,14 @@ intf    *localtype, *order;
 intf    *fieldlen;
 #endif
 {
-    intf    stat;
+    intf    ret;
     char    *fld;
 
     fld  = HDf2cstring (field, (intn)*fieldlen);
 	/* trimendblanks(fld); */
-    stat =  (int32) VSfdefine(*vkey, fld, *localtype, *order );
+    ret =  (int32) VSfdefine(*vkey, fld, *localtype, *order );
     HDfreespace(fld);
-	return (stat);
+	return (ret);
 }
 
 /* ------------------------------------------------------------------ */
@@ -819,13 +819,13 @@ intf    *fieldslen;
 #endif
 {
 	char 	*flds;
-    intf    stat;
+    intf    ret;
 
     flds = HDf2cstring (fields, (intn)*fieldslen);
 	/* trimendblanks(flds); */
-    stat =  VSsizeof(*vkey, flds);
+    ret =  VSsizeof(*vkey, flds);
     HDfreespace(flds);
-	return (stat);
+	return (ret);
 }
 
 /* ------------------------------------------------------------------ */
@@ -1010,14 +1010,14 @@ intf    *fieldlen;
 #endif
 {
     char  *fld;
-    intf  stat;
+    intf  ret;
 
     fld = HDf2cstring (field, (intn)*fieldlen);
 	/* trimendblanks(fld); */
-    stat = (int32) Vflocate (*vkey, fld);
+    ret = (int32) Vflocate (*vkey, fld);
     HDfreespace(fld);
 
-	return(stat);
+	return(ret);
 }
 
 /* ------------------------------------------------------------------ */

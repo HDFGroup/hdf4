@@ -67,7 +67,7 @@ static const uint32 mask_arr32[33]={    /* array of values with [n] bits set */
 
 /* declaration of the functions provided in this module */
 PRIVATE int32 HCIcnbit_staccess
-    PROTO((accrec_t *access_rec, int16 access));
+    PROTO((accrec_t *access_rec, int16 acc_mode));
 
 PRIVATE int32 HCIcnbit_init
     PROTO((accrec_t *access_rec));
@@ -107,10 +107,9 @@ PRIVATE int32 HCIcnbit_init(access_rec)
 accrec_t *access_rec;
 #endif
 {
-    char *FUNC="HCIcnbit_init";         /* for HERROR */
+    CONSTR(FUNC,"HCIcnbit_init");
     compinfo_t *info;                   /* special element information */
     comp_coder_nbit_info_t *nbit_info;  /* ptr to N-bit info */
-    uint8 mask;                         /* mask to apply */
     intn bits;                          /* number of bits in number type */
     intn top_bit,bot_bit;               /* bits around a range of bytes */
     intn mask_top,mask_bot;             /* top and bottom bits in mask */
@@ -238,7 +237,7 @@ int32 length;
 uint8 *buf;
 #endif
 {
-    char *FUNC="HCIcnbit_decode";       /* for HERROR */
+    CONSTR(FUNC,"HCIcnbit_decode");
     comp_coder_nbit_info_t *nbit_info;  /* ptr to n-bit info */
     int32 orig_length;      /* original length to write */
     uint32 input_bits;      /* bits read from the file */
@@ -249,8 +248,6 @@ uint8 *buf;
     nbit_mask_info_t *mask_info;    /* ptr to the mask info */
     intn copy_length;       /* number of bytes to copy */
     intn buf_items;         /* number of items which will fit into expansion buffer */
-    bool top_bit,           /* the top bit in an n-bit item */
-        top_bit_found;      /* set to TRUE if we've found the top bit */
     uint8 *rbuf,*rbuf2;     /* pointer into the n-bit read buffer */
     intn i,j;               /* local counting variable */
 
@@ -377,7 +374,7 @@ int32 length;
 uint8 *buf;
 #endif
 {
-    char *FUNC="HCIcnbit_encode";       /* for HERROR */
+    CONSTR(FUNC,"HCIcnbit_encode");
     comp_coder_nbit_info_t *nbit_info;  /* ptr to n-bit info */
     int32 orig_length;      /* original length to write */
     uint32 output_bits;     /* bits to write to the file */
@@ -443,7 +440,7 @@ PRIVATE int32 HCIcnbit_term(info)
 compinfo_t *info;
 #endif
 {
-    char *FUNC="HCIcnbit_term";          /* for HERROR */
+    CONSTR(FUNC,"HCIcnbit_term");
 
     return(SUCCEED);
 }   /* end HCIcnbit_term() */
@@ -469,14 +466,14 @@ compinfo_t *info;
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-PRIVATE int32 HCIcnbit_staccess(accrec_t *access_rec, int16 access)
+PRIVATE int32 HCIcnbit_staccess(accrec_t *access_rec, int16 acc_mode)
 #else
-PRIVATE int32 HCIcnbit_staccess(access_rec,access)
+PRIVATE int32 HCIcnbit_staccess(access_rec,acc_mode)
 accrec_t *access_rec;
-int16 access;
+int16 acc_mode;
 #endif
 {
-    char *FUNC="HCIcnbit_staccess";      /* for HERROR */
+    CONSTR(FUNC,"HCIcnbit_staccess");
     compinfo_t *info;                   /* special element information */
 
     info=(compinfo_t *)access_rec->special_info;
@@ -484,7 +481,7 @@ int16 access;
 #ifdef TESTING
 printf("HCIcnbit_staccess(): info=%p\n",info);
 #endif
-    if(access==DFACC_READ)
+    if(acc_mode==DFACC_READ)
         info->aid=Hstartbitread(access_rec->file_id,DFTAG_COMPRESSED,
                 info->comp_ref);
     else
@@ -525,7 +522,7 @@ int32 HCPcnbit_stread(access_rec)
 accrec_t *access_rec;
 #endif
 {
-    char *FUNC="HCPcnbit_stread";     /* for HERROR */
+    CONSTR(FUNC,"HCPcnbit_stread");
     int32 ret;
 
     if((ret=HCIcnbit_staccess(access_rec, DFACC_READ))==FAIL)
@@ -559,7 +556,7 @@ int32 HCPcnbit_stwrite(access_rec)
 accrec_t *access_rec;
 #endif
 {
-    char *FUNC="HCPcnbit_stwrite";     /* for HERROR */
+    CONSTR(FUNC,"HCPcnbit_stwrite");
     int32 ret;
 
 #ifdef TESTING
@@ -603,7 +600,7 @@ int32 offset;
 int origin;
 #endif
 {
-    char *FUNC="HCPcnbit_seek";         /* for HERROR */
+    CONSTR(FUNC,"HCPcnbit_seek");
     compinfo_t *info;                   /* special element information */
     comp_coder_nbit_info_t *nbit_info;  /* ptr to n-bit info */
     int32 bit_offset;                   /* offset of the bit to seek to */
@@ -657,7 +654,7 @@ int32 length;
 VOIDP data;
 #endif
 {
-    char *FUNC="HCPcnbit_read";      /* for HERROR */
+    CONSTR(FUNC,"HCPcnbit_read");
     compinfo_t *info;                   /* special element information */
 
     info=(compinfo_t *)access_rec->special_info;
@@ -690,15 +687,15 @@ VOIDP data;
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int32 HCPcnbit_write(accrec_t *access_rec, int32 length, VOIDP data)
+int32 HCPcnbit_write(accrec_t *access_rec, int32 length, const VOIDP data)
 #else
 int32 HCPcnbit_write(access_rec,length,data)
 accrec_t *access_rec;
 int32 length;
-VOIDP data;
+const VOIDP data;
 #endif
 {
-    char *FUNC="HCPcnbit_write";     /* for HERROR */
+    CONSTR(FUNC,"HCPcnbit_write");
     compinfo_t *info;               /* special element information */
 
     info=(compinfo_t *)access_rec->special_info;
@@ -791,7 +788,7 @@ int32 HCPcnbit_endaccess(access_rec)
 accrec_t *access_rec;
 #endif
 {
-    char *FUNC="HCPcnbit_endaccess";    /* for HERROR */
+    CONSTR(FUNC,"HCPcnbit_endaccess");
     compinfo_t *info;                   /* special element information */
     comp_coder_nbit_info_t *nbit_info;  /* ptr to n-bit info */
 

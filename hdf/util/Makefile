@@ -44,7 +44,8 @@ HDFINC = ../include
 HDFBIN = ../bin
 #For IRIS4, include libgl_s.a
 #GLLIB = -lgl_s
-GLLIB = 
+#For the HP9000 include libm.a
+GLLIB = -lm
 
 CFLAGS = -D$(MACHINE)
 

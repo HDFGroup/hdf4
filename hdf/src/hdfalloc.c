@@ -112,10 +112,11 @@ VOIDP HDmemfill(dest, src, item_size, num_items)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #if defined PROTOTYPE
-char _HUGE *HIstrncpy(register char *dest,register char *source,int32 len)
+char _HUGE *HIstrncpy(register char *dest,register const char *source,int32 len)
 #else
 char _HUGE *HIstrncpy(dest, source, len)
-register char *source, *dest;
+register char *source; 
+register const char *dest;
 int32 len;
 #endif /* PROTOTYPE */
 {
@@ -207,10 +208,7 @@ int32 HDspaceleft(void)
     return((int32)total_free);
 } /* end HDspaceleft() */
 #endif /* WIN3 */
-#endif /* PC */
 
-
-#if defined PC && !defined PC386
 #ifdef WIN3
 /*--------------------------------------------------------------------------
  NAME
@@ -231,7 +229,7 @@ int32 HDspaceleft(void)
 --------------------------------------------------------------------------*/
 VOIDP HDgetspace(uint32 qty)
 {
-    char *FUNC="HDgetspace";
+    char FUNC[]="HDgetspace";
     HGLOBAL hTmp;
     HGLOBAL far *wfpTmp;
 
@@ -268,7 +266,7 @@ VOIDP HDgetspace(uint32 qty)
 --------------------------------------------------------------------------*/
 VOIDP HDregetspace(VOIDP vfp, uint32 new_size)
 {
-    char *FUNC="HDregetspace";
+    char FUNC[]="HDregetspace";
     HGLOBAL new_handle;         /* handle of the new memory block */
     HGLOBAL hTmp;
     WORD far *wfpTmp;
@@ -345,7 +343,7 @@ void _HUGE *HDfreespace(void *vfp)
 --------------------------------------------------------------------------*/
 VOIDP HDgetspace(uint32 qty)
 {
-    char *FUNC="HDgetspace";
+    char FUNC[]="HDgetspace";
     char huge *p;
 
 #ifndef TEST_PC
@@ -393,7 +391,7 @@ VOIDP HDgetspace(uint32 qty)
 --------------------------------------------------------------------------*/
 VOIDP HDregetspace(VOIDP ptr, uint32 qty)
 {
-    char *FUNC="HDregetspace";
+    char FUNC[]="HDregetspace";
     uint32 old_size;
     char *p=ptr;
     char *p2;
@@ -464,6 +462,9 @@ VOIDP HDfreespace(void *ptr)
 
 #else /* !PC | PC386 */
 
+/* define MALLOC_CHECK to get some more information when malloc/realloc fail */
+
+#ifdef MALLOC_CHECK
 /*--------------------------------------------------------------------------
  NAME
     HDgetspace -- dynamicly allocates memory
@@ -488,7 +489,7 @@ VOIDP HDgetspace(qty)
 uint32 qty;
 #endif /* PROTOTYPE */
 {
-    char *FUNC="HDgetspace";
+    char FUNC[]="HDgetspace";
     char *p;
 
     p = (char *) malloc(qty);
@@ -525,7 +526,7 @@ VOIDP where;
 uint32 qty;
 #endif /* PROTOTYPE */
 {
-    char *FUNC="HDregetspace";
+    char FUNC[]="HDregetspace";
     char *p;
 
     p = (char *) realloc(where, qty);
@@ -563,8 +564,50 @@ VOIDP ptr;
         free(ptr);
     return(NULL);
 }   /* end HDfreespace() */
+#endif /* MALLOC_CHECK */
 
 #endif /* !PC | PC386 */
+
+#ifdef MALLOC_CHECK
+/*--------------------------------------------------------------------------
+ NAME
+    HDclearspace -- dynamicly allocates memory and clears it to zero
+ USAGE
+    VOIDP HDclearspace(n,size)
+        uint32 n;         IN: the number of blocks to allocate
+        uint32 size;      IN: the size of the block
+ RETURNS
+    Pointer to the memory allocated on success, NULL on failure.
+ DESCRIPTION
+    Dynamicly allocates a block of memory and returns a pointer to it
+    after setting it to zero.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    Acts like calloc().  Instead of doing all the work ourselves, this calls
+    HDgetspace and HDmemset().
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+#if defined PROTOTYPE
+VOIDP HDclearspace(uint32 n,uint32 size)
+#else
+VOIDP HDclearspace(n,size)
+uint32 n;
+uint32 size;
+#endif /* PROTOTYPE */
+{
+    VOIDP p;
+
+    p=HDgetspace(n*size);
+    if (p==NULL) {
+        HEreport("Attempted to allocate %d blocks of %d bytes", (int)n,(int)size);
+        HRETURN_ERROR(DFE_NOSPACE,NULL);
+      } /* end if */
+    else
+        HDmemset(p,0,n*size);
+    return(p);
+} /* end HDclearspace() */
+#endif /* MALLOC_CHECK */
 
 #if defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL | defined NEXT
 /*--------------------------------------------------------------------------

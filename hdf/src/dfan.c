@@ -77,7 +77,7 @@ PRIVATE DFANdirhead *DFANdir[2] = { NULL,          /* object labels       */
 
 #ifndef VMS
 PRIVATE int32 DFANIopen
-    PROTO((char *filename, intn access));
+    PROTO((const char *filename, intn acc_mode));
 #else /*VMS*/
 PRIVATE int32 _DFANIopen();
 #endif
@@ -108,10 +108,10 @@ PRIVATE int32 _DFANIopen();
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int32 DFANgetlablen(char *filename, uint16 tag, uint16 ref)
+int32 DFANgetlablen(const char *filename, uint16 tag, uint16 ref)
 #else
 int32 DFANgetlablen(filename, tag, ref)
-    char *filename;
+    const char *filename;
     uint16 tag, ref;
 #endif
 {
@@ -142,11 +142,11 @@ int32 DFANgetlablen(filename, tag, ref)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFANgetlabel(char *filename, uint16 tag, uint16 ref, char *label,
+intn DFANgetlabel(const char *filename, uint16 tag, uint16 ref, char *label,
                  int32 maxlen)
 #else
 intn DFANgetlabel(filename, tag, ref, label, maxlen)
-char *filename;
+const char *filename;
 uint16 tag, ref;
 char *label;
 int32 maxlen;
@@ -177,10 +177,10 @@ int32 maxlen;
  *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int32 DFANgetdesclen(char *filename, uint16 tag, uint16 ref)
+int32 DFANgetdesclen(const char *filename, uint16 tag, uint16 ref)
 #else
 int32 DFANgetdesclen(filename, tag, ref)
-char *filename;
+const char *filename;
 uint16 tag, ref;
 #endif 
 {
@@ -213,11 +213,11 @@ uint16 tag, ref;
  *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFANgetdesc(char *filename, uint16 tag, uint16 ref, char *desc,
+intn DFANgetdesc(const char *filename, uint16 tag, uint16 ref, char *desc,
                 int32 maxlen)
 #else
 intn DFANgetdesc(filename, tag, ref, desc, maxlen)
-char *filename;
+const char *filename;
 uint16 tag, ref;
 char *desc;
 int32 maxlen;
@@ -402,10 +402,10 @@ intn isfirst;
  *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFANputlabel(char *filename, uint16 tag, uint16 ref, char *label)
+intn DFANputlabel(const char *filename, uint16 tag, uint16 ref, char *label)
 #else
 intn DFANputlabel(filename, tag, ref, label)
-char *filename;
+const char *filename;
 uint16 tag, ref;
 char *label;
 #endif 
@@ -441,11 +441,11 @@ char *label;
  *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFANputdesc(char *filename, uint16 tag, uint16 ref, char *desc,
+intn DFANputdesc(const char *filename, uint16 tag, uint16 ref, char *desc,
                 int32 desclen)
 #else
 intn DFANputdesc(filename, tag, ref, desc, desclen)
-char *filename;
+const char *filename;
 uint16 tag, ref;
 char *desc;
 int32 desclen;
@@ -585,11 +585,11 @@ uint16 DFANlastref()
  *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFANlablist(char *filename, uint16 tag, uint16 reflist[], char *labellist,
+intn DFANlablist(const char *filename, uint16 tag, uint16 reflist[], char *labellist,
                 intn listsize, intn maxlen, intn startpos)
 #else
 intn DFANlablist(filename, tag, reflist, labellist, listsize, maxlen, startpos)
-char *filename;
+const char *filename;
 uint16 tag, reflist[];
 char *labellist;
 intn listsize;
@@ -610,9 +610,9 @@ intn maxlen, startpos;
  NAME
        DFANIopen -- open or reopen a file
  USAGE
-       PRIVATE int32 DFANIopen(filename, access)
+       PRIVATE int32 DFANIopen(filename, acc_mode)
        char *filename;  IN: name of file to open
-       intn access;     IN: access mode
+       intn acc_mode;     IN: access mode
  RETURNS
        File identifier if successful and NULL on failure.
  DESCRIPTION
@@ -627,14 +627,14 @@ intn maxlen, startpos;
  *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-PRIVATE int32 DFANIopen(char *filename, intn access)
+PRIVATE int32 DFANIopen(const char *filename, intn acc_mode)
 #else
-PRIVATE int32 DFANIopen(filename, access)
-char *filename;
-intn access;
+PRIVATE int32 DFANIopen(filename, acc_mode)
+const char *filename;
+intn acc_mode;
 #endif 
 {
-    char *FUNC = "DFANIopen";
+    CONSTR(FUNC,"DFANIopen");
     int32 file_id;
     DFANdirhead *p, *q;
 
@@ -647,9 +647,9 @@ intn access;
       }
 
         /* use reopen if same file as last time - more efficient */
-    if (HDstrncmp(Lastfile,filename,DF_MAXFNLEN) || (access==DFACC_CREATE)) {
+    if (HDstrncmp(Lastfile,filename,DF_MAXFNLEN) || (acc_mode==DFACC_CREATE)) {
                                     /* treat create as different file */
-        file_id = Hopen(filename, access, 0); 
+        file_id = Hopen(filename, acc_mode, 0); 
         if (file_id == FAIL) 
             return FAIL;
 
@@ -664,7 +664,7 @@ intn access;
         DFANdir[0] = DFANdir[1] = NULL;
     }
     else {
-        file_id = Hopen(filename, access, 0);
+        file_id = Hopen(filename, acc_mode, 0);
         if (file_id == FAIL)
             return FAIL;
     }
@@ -711,7 +711,7 @@ int type;
 uint16 tag, ref;
 #endif 
 {
-    char *FUNC="DFANIlocate";
+    CONSTR(FUNC,"DFANIlocate");
     uint8 datadi[4];
     int32 more_anns;
     int32 aid;
@@ -863,15 +863,15 @@ int type;
  *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int32 DFANIgetannlen(char *filename, uint16 tag, uint16 ref, int type)
+int32 DFANIgetannlen(const char *filename, uint16 tag, uint16 ref, int type)
 #else
 int32 DFANIgetannlen(filename, tag, ref, type)
-char *filename;
+const char *filename;
 uint16 tag, ref;
 int type;
 #endif 
 {
-    char *FUNC="DFANIgetannlen";
+    CONSTR(FUNC,"DFANIgetannlen");
     int32 file_id, annlength;
     uint16 anntag, annref;
 
@@ -926,18 +926,18 @@ int type;
  *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFANIgetann(char *filename, uint16 tag, uint16 ref, uint8 *ann,
+intn DFANIgetann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
                 int32 maxlen, int type)
 #else
 intn DFANIgetann(filename, tag, ref, ann, maxlen, type)
-char *filename;
+const char *filename;
 uint16 tag, ref;
 uint8 *ann;
 int32 maxlen;
 int type;
 #endif 
 {
-    char *FUNC="DFANIgetann";
+    CONSTR(FUNC,"DFANIgetann");
     int32 file_id, aid;
     int32 annlen;
     uint16 anntag, annref;
@@ -1019,11 +1019,11 @@ int type;
  *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFANIputann(char *filename, uint16 tag, uint16 ref, uint8 *ann,
+intn DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
                 int32 annlen, int type)
 #else
 intn DFANIputann(filename, tag, ref, ann, annlen, type)
-char *filename;
+const char *filename;
 uint16 tag, ref;
 uint8 *ann;
 int32 annlen;
@@ -1031,7 +1031,7 @@ int type;
 #endif 
 {
 
-    char *FUNC="DFANIputann";
+    CONSTR(FUNC,"DFANIputann");
     int32 file_id, aid;
     int newflag=0;
     uint16 anntag, annref;
@@ -1132,19 +1132,19 @@ int type;
  *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFANIlablist(char *filename, uint16 tag, uint16 reflist[], 
+int DFANIlablist(const char *filename, uint16 tag, uint16 reflist[], 
 		 uint8 *labellist, int listsize, int maxlen, int startpos, 
 		 int isfortran)
 #else
 int DFANIlablist(filename, tag, reflist, labellist, listsize, maxlen,
                                                         startpos, isfortran)
-char *filename;
+const char *filename;
 uint16 tag, reflist[];
 uint8 *labellist;                       /* actually an array of strings */
 int listsize, maxlen, startpos, isfortran;
 #endif 
 {
-    char *FUNC="DFANIlablist";
+    CONSTR(FUNC,"DFANIlablist");
     int32 i;
     int j, k;
     int32 file_id, aid, len;
@@ -1166,9 +1166,9 @@ int listsize, maxlen, startpos, isfortran;
 
     /* clear labellist.  pad with blanks for Fortran; add null for C  */
     if (isfortran)
-        HDmemset(labellist, ' ', (int32)maxlen * (int32)listsize);
+        HDmemset(labellist, ' ', (uint32)maxlen * (uint32)listsize);
     else
-        HDmemset(labellist, '\0', (int32)maxlen * (int32)listsize);
+        HDmemset(labellist, '\0', (uint32)maxlen * (uint32)listsize);
 
     /* find all refs for this tag; store them in reflist */
     nrefs = Hnumber(file_id, tag);         /* how many times is tag in file? */
@@ -1278,7 +1278,7 @@ int DFANIaddfann(file_id, ann, annlen, type)
     int type;
 #endif 
 {
-    char *FUNC="DFANIaddfann";
+    CONSTR(FUNC,"DFANIaddfann");
     uint16 anntag, annref;
 
     HEclear();
@@ -1329,7 +1329,7 @@ int type;
 int isfirst;
 #endif 
 {
-    char *FUNC="DFANIgetfannlen";
+    CONSTR(FUNC,"DFANIgetfannlen");
     uint16 anntag, annref;
     int32 aid;
     int32 length;
@@ -1406,7 +1406,7 @@ int type;
 int isfirst;
 #endif 
 {
-    char *FUNC="DFANIgetfann";
+    CONSTR(FUNC,"DFANIgetfann");
     uint16 anntag, annref;
     int32 length, aid;
 

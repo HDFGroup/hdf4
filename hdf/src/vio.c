@@ -58,7 +58,7 @@ uint16 vsid;
     VOIDP *t;
     register vfile_t      * vf;
     int32 key;
-    char * FUNC = "vsinstance";
+    CONSTR(FUNC,"vsinstance");
   
     /* Check if vfile buffer has been allocated */
     if (vfile == NULL)
@@ -420,21 +420,20 @@ VOIDP n;
    *************************************************************** */
 
 #ifdef PROTOTYPE
-PUBLIC int32 VSattach (HFILEID f, int32 vsid, char *accesstype)
+PUBLIC int32 VSattach (HFILEID f, int32 vsid, const char *accesstype)
 #else
 PUBLIC int32 VSattach (f, vsid, accesstype)
 HFILEID f;
 int32   vsid;
-char *  accesstype;
+const char *  accesstype;
 #endif
 {
     VDATA * vs;  			 /* new vdata to be returned */
-    int32   vspacksize;
     uint8 * vspack;
-    int32   access;
+    int32   acc_mode;
     vsinstance_t * w;
     vfile_t	 * vf;
-    char * FUNC = "VSattach";
+    CONSTR(FUNC,"VSattach");
     
     /* Check if vfile buffer has been allocated */
     if (vfile == NULL) {
@@ -449,14 +448,14 @@ char *  accesstype;
         HRETURN_ERROR(DFE_FNF, FAIL);
     
     if ( accesstype[0]=='R' || accesstype[0]=='r')
-        access = 'r';
+        acc_mode = 'r';
     else if ( accesstype[0]=='W' || accesstype[0]=='w')
-        access = 'w';
+        acc_mode = 'w';
     else
         HRETURN_ERROR(DFE_BADACC, FAIL);
     
     if (vsid == -1) {  /* ---------- VSID IS -1 ----------------------- */
-        if (access == 'r')
+        if (acc_mode == 'r')
             HRETURN_ERROR(DFE_BADACC,FAIL);
         
         /* otherwise 'w' */
@@ -512,7 +511,7 @@ char *  accesstype;
     
     /*  --------  VSID IS NON_NEGATIVE ------------- */
     
-    if (access == 'r') { /* reading an existing vdata */
+    if (acc_mode == 'r') { /* reading an existing vdata */
         
         if (NULL == (w =  vsinstance (f, (uint16) vsid)) )
             HRETURN_ERROR(DFE_VTAB, FAIL);
@@ -573,7 +572,7 @@ char *  accesstype;
     } /* end of case where vsid is positive, and "r"  */
     
     
-    if (access == 'w') { /* writing to an existing vdata */
+    if (acc_mode == 'w') { /* writing to an existing vdata */
         
         if ((w = vsinstance(f, (uint16) vsid)) == NULL)
             HRETURN_ERROR(DFE_VTAB, FAIL);
@@ -660,11 +659,11 @@ PUBLIC int32 VSdetach (vkey)
 int32 vkey;
 #endif
 {
-    int32			i, stat, vspacksize;
+    int32	i, ret, vspacksize;
     uint8            *vspack;
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VSdetach";
+    CONSTR(FUNC,"VSdetach");
 
     if (!VALIDVSID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -705,9 +704,9 @@ int32 vkey;
         if ( (vspack= (uint8 *) HDgetspace (sizeof(VWRITELIST))) == NULL)
             HRETURN_ERROR(DFE_NOSPACE,FAIL);
         vpackvs(vs, vspack, &vspacksize);
-        stat = Hputelement(vs->f, VSDESCTAG, vs->oref, vspack, vspacksize);
+        ret = Hputelement(vs->f, VSDESCTAG, vs->oref, vspack, vspacksize);
         HDfreespace((VOIDP)vspack);
-        if (stat == FAIL)
+        if (ret == FAIL)
             HRETURN_ERROR(DFE_WRITEERROR,FAIL);
         vs->marked = 0;
     }
@@ -746,7 +745,7 @@ int32 blk;
     int32           blksize, curr_size;
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VSappendable";
+    CONSTR(FUNC,"VSappendable");
 
     if (!VALIDVSID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -798,7 +797,7 @@ HFILEID f;
 	vfile_t	       * vf;
     VOIDP *t;
     int32 key;
-    char * FUNC = "VSgetid";
+    CONSTR(FUNC,"VSgetid");
 
     /* Check if vfile buffer has been allocated */
     if (vfile == NULL)
@@ -855,7 +854,7 @@ int32 vkey;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VSQuerytag";
+    CONSTR(FUNC,"VSQuerytag");
 
     if (!VALIDVSID(vkey)) {
         HERROR(DFE_ARGS);
@@ -896,7 +895,7 @@ int32 vkey;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VSQueryref";
+    CONSTR(FUNC,"VSQueryref");
 
     if (!VALIDVSID(vkey)) {
         HERROR(DFE_ARGS);
@@ -930,7 +929,7 @@ int32 vkey;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VSgetversion";
+    CONSTR(FUNC,"VSgetversion");
 
     if (!VALIDVSID(vkey))
         HRETURN_ERROR(DFE_ARGS,NULL);
@@ -958,7 +957,7 @@ int32 vkey;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VSgetversion";
+    CONSTR(FUNC,"VSgetversion");
 
     if (!VALIDVSID(vkey))
         HRETURN_ERROR(DFE_ARGS,0);
@@ -998,7 +997,7 @@ int32 vsid;
     vfile_t      * vf;
     VOIDP        * t;
     int32          key;
-    char         * FUNC = "VSdelete";
+    CONSTR(FUNC,"VSdelete");
 
     if(vsid < -1 ) {
         HERROR(DFE_ARGS);

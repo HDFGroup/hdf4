@@ -101,11 +101,11 @@ PRIVATE DFRrig Zrig = {          /* empty RIG for initialization */
 
 /* private functions */
 PRIVATE intn DFR8Iputimage
-    PROTO((char *filename,VOIDP image,int32 xdim,int32 ydim,uint16 compress,
+    PROTO((const char *filename,VOIDP image,int32 xdim,int32 ydim,uint16 compress,
             intn append));
 
 PRIVATE int32 DFR8Iopen
-    PROTO((char *filename, intn access));
+    PROTO((const char *filename, intn acc_mode));
 
 PRIVATE intn DFR8Iriginfo
     PROTO((int32 file_id));
@@ -148,7 +148,7 @@ intn DFR8setcompress(type,cinfo)
     comp_info *cinfo;
 #endif
 {
-    char *FUNC="DFR8setcompress";
+    CONSTR(FUNC,"DFR8setcompress");
 
     if(type<0 || type>COMP_MAX_COMP || compress_map[type]==0)
         HRETURN_ERROR(DFE_BADSCHEME, FAIL);
@@ -187,15 +187,15 @@ intn DFR8setcompress(type,cinfo)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFR8getdims(char *filename, int32 *pxdim, int32 *pydim, intn *pispal)
+intn DFR8getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pispal)
 #else
 intn DFR8getdims(filename, pxdim, pydim, pispal)
-    char *filename;
+    const char *filename;
     int32 *pxdim, *pydim;
     intn *pispal;
 #endif
 {
-    char *FUNC="DFR8getdims";
+    CONSTR(FUNC,"DFR8getdims");
     int32 file_id;
 
     HEclear();
@@ -247,16 +247,16 @@ intn DFR8getdims(filename, pxdim, pydim, pispal)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFR8getimage(char *filename,uint8 *image,int32 xdim,int32 ydim,uint8 *pal)
+intn DFR8getimage(const char *filename,uint8 *image,int32 xdim,int32 ydim,uint8 *pal)
 #else
 intn DFR8getimage(filename, image, xdim, ydim, pal)
-    char *filename;
+    const char *filename;
     int32 xdim, ydim;
     uint8 *image;
     uint8 *pal;
 #endif
 {
-    char *FUNC="DFR8getimage";
+    CONSTR(FUNC,"DFR8getimage");
     int32 file_id;
 
     HEclear();
@@ -337,7 +337,7 @@ intn DFR8setpalette(pal)
     uint8 *pal;
 #endif
 {
-    char *FUNC = "DFR8setpalette";
+    CONSTR(FUNC,"DFR8setpalette");
 
     /* Check if Palette buffer has been allocated */
     if (Palette == NULL) {
@@ -389,19 +389,19 @@ intn DFR8setpalette(pal)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-PRIVATE intn DFR8Iputimage(char *filename, VOIDP image, int32 xdim, int32 ydim,
+PRIVATE intn DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
                          uint16 compress, intn append)
 #else
 PRIVATE intn DFR8Iputimage(filename, image, xdim, ydim, compress, append)
-    char *filename;
+    const char *filename;
     int32 xdim, ydim;
     VOIDP image;
     uint16 compress;            /* compression scheme */
     intn append;                /* 0 is a put, 1 is a putnext */
 #endif
 {
-    char *FUNC="DFR8Iputimage";
-    intn access;            /* create if op 0, write if op 1 */
+    CONSTR(FUNC,"DFR8Iputimage");
+    intn acc_mode;            /* create if op 0, write if op 1 */
     int32 file_id;
     uint16 r8tag;           /* RIG and raster tags of image being written */
     uint8 *pal;             /* pointer to palette to be written */
@@ -421,9 +421,9 @@ PRIVATE intn DFR8Iputimage(filename, image, xdim, ydim, compress, append)
       } /* end if */
 
     pal = (Newpalette>=0) ? Palette : NULL;
-    access = append ? DFACC_WRITE : DFACC_CREATE;
+    acc_mode = append ? DFACC_WRITE : DFACC_CREATE;
 
-    if ((file_id=DFR8Iopen(filename, access))==FAIL)
+    if ((file_id=DFR8Iopen(filename, acc_mode))==FAIL)
         HRETURN_ERROR(DFE_BADOPEN,FAIL);
 
     if (!Writeref)
@@ -542,11 +542,11 @@ PRIVATE intn DFR8Iputimage(filename, image, xdim, ydim, compress, append)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFR8putimage(char *filename, VOIDP image, int32 xdim, int32 ydim,
+intn DFR8putimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
                 uint16 compress)
 #else
 intn DFR8putimage(filename, image, xdim, ydim, compress)
-    char *filename;
+    const char *filename;
     int32 xdim, ydim;
     VOIDP image;
     uint16 compress;
@@ -579,11 +579,11 @@ intn DFR8putimage(filename, image, xdim, ydim, compress)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFR8addimage(char *filename, VOIDP image, int32 xdim, int32 ydim,
+intn DFR8addimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
                 uint16 compress)
 #else
 intn DFR8addimage(filename, image, xdim, ydim, compress)
-    char *filename;
+    const char *filename;
     int32 xdim, ydim;
     VOIDP image;
     uint16 compress;
@@ -624,7 +624,7 @@ PRIVATE intn DFR8getrig(file_id, ref, rig)
     DFRrig *rig;
 #endif
 {
-    char *FUNC="DFR8getrig";
+    CONSTR(FUNC,"DFR8getrig");
     uint16 elt_tag;
     uint16 elt_ref;
     uint8 ntstring[4];
@@ -722,7 +722,7 @@ PRIVATE intn DFR8putrig(file_id, ref, rig, wdim)
     intn wdim;
 #endif
 {
-    char *FUNC="DFR8putrig";
+    CONSTR(FUNC,"DFR8putrig");
     static uint16 prevdimref=0; /*ref of previous dimension record, to reuse */
     R8dim im8dim;
     uint8 ntstring[4];
@@ -810,13 +810,13 @@ PRIVATE intn DFR8putrig(file_id, ref, rig, wdim)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFR8nimages(char *filename)
+intn DFR8nimages(const char *filename)
 #else
 intn DFR8nimages(filename)
-    char *filename;
+    const char *filename;
 #endif
 {
-    char *FUNC="DFR8nimages";
+    CONSTR(FUNC,"DFR8nimages");
     int32 file_id;
     int32 group_id;         /* group ID for looking at RIG's */
     uint16 elt_tag,elt_ref; /* tag/ref of items in a RIG */
@@ -945,14 +945,14 @@ intn DFR8nimages(filename)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFR8readref(char *filename, uint16 ref)
+intn DFR8readref(const char *filename, uint16 ref)
 #else
 intn DFR8readref(filename, ref)
-    char *filename;
+    const char *filename;
     uint16 ref;
 #endif
 {
-    char *FUNC="DFR8readref";
+    CONSTR(FUNC,"DFR8readref");
     int32 file_id;
     int32 aid;
 
@@ -990,10 +990,10 @@ intn DFR8readref(filename, ref)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFR8writeref(char *filename, uint16 ref)
+intn DFR8writeref(const char *filename, uint16 ref)
 #else
 intn DFR8writeref(filename, ref)
-    char *filename;
+    const char *filename;
     uint16 ref;
 #endif
 {
@@ -1060,9 +1060,9 @@ uint16 DFR8lastref()
  NAME
     DFR8Iopen -- open or reopen a file
  USAGE
-    int32 DFR8Iopen(filename, access)
+    int32 DFR8Iopen(filename, acc_mode)
         char *filename;             IN: name of file to open
-        intn access;                IN: access mode to open file with
+        intn acc_mode;                IN: access mode to open file with
  RETURNS
     HDF file ID on success, FAIL on failure
  DESCRIPTION
@@ -1076,20 +1076,20 @@ uint16 DFR8lastref()
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-PRIVATE int32 DFR8Iopen(char *filename, intn access)
+PRIVATE int32 DFR8Iopen(const char *filename, intn acc_mode)
 #else
-PRIVATE int32 DFR8Iopen(filename, access)
-    char *filename;
-    intn access;
+PRIVATE int32 DFR8Iopen(filename, acc_mode)
+    const char *filename;
+    intn acc_mode;
 #endif
 {
-    char *FUNC="DFR8Iopen";
+    CONSTR(FUNC,"DFR8Iopen");
     int32 file_id;
 
     /* use reopen if same file as last time - more efficient */
-    if (HDstrncmp(Lastfile,filename,DF_MAXFNLEN) || (access==DFACC_CREATE)) {
+    if (HDstrncmp(Lastfile,filename,DF_MAXFNLEN) || (acc_mode==DFACC_CREATE)) {
                                /* treat create as different file */
-        if ((file_id = Hopen(filename, access, 0))== FAIL)
+        if ((file_id = Hopen(filename, acc_mode, 0))== FAIL)
             HRETURN_ERROR(DFE_BADOPEN,FAIL);
         foundRig = -1;         /* don't know if any RIGs in file */
         Refset = 0;            /* no ref to get set for this file */
@@ -1100,7 +1100,7 @@ PRIVATE int32 DFR8Iopen(filename, access)
             Newpalette = 1; /* need to write out palette */
       } /* end if */
     else {
-        if ((file_id = Hopen(filename, access, 0))== FAIL)
+        if ((file_id = Hopen(filename, acc_mode, 0))== FAIL)
             HRETURN_ERROR(DFE_BADOPEN,FAIL);
       } /* end else */
 
@@ -1136,7 +1136,7 @@ PRIVATE intn DFR8Iriginfo(file_id)
     int32 file_id;
 #endif
 {
-    char *FUNC="DFR8riginfo";
+    CONSTR(FUNC,"DFR8riginfo");
     uint16 riref=0, ciref=0;
     int32 aid=FAIL;
     uint16 ref;

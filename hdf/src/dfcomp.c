@@ -79,7 +79,7 @@ intn DFputcomp(file_id, tag, ref, image, xdim, ydim, palette, newpal, scheme, ci
     comp_info *cinfo;
 #endif
 {
-    char *FUNC="DFputcomp";
+    CONSTR(FUNC,"DFputcomp");
     uint8 *buffer;             /* buffer to hold compressed image */
     uint8 *in;                 /* pointer to input for compression */
     uint8 *out;                /* pointer to space for compressed output */
@@ -217,7 +217,7 @@ int DFgetcomp(file_id, tag, ref, image, xdim, ydim, scheme)
     uint16 scheme;
 #endif
 {
-    char *FUNC="DFgetcomp";
+    CONSTR(FUNC,"DFgetcomp");
     uint8 *buffer;
     uint8 *in;
     uint8 *out;

@@ -218,7 +218,7 @@ uint16 tag, ref;
     RESULT("DFANgetlablen");
     if (inlablen != (int32)HDstrlen(label)) {
         printf("\t>>>BAD LABEL LENGTH.\n\t       IS: %d\n\tSHOULD BE: %d<<<\n",
-                                                inlablen, HDstrlen(label) );
+                                        (int)inlablen, (int)HDstrlen(label) );
         num_errs++;
     }
     ret = DFANgetlabel(TESTFILE, tag, ref, inlabel, MAXLEN_LAB);
@@ -232,8 +232,8 @@ uint16 tag, ref;
     indesclen = ret = DFANgetdesclen(TESTFILE, tag, ref);
     RESULT("DFANgetdesclen");
     if (indesclen != (int32)HDstrlen(desc)) {
-        printf("\t>>>BAD DESCRIPTION LENGTH. \n\t       IS: %d", indesclen);
-        printf("\n\tSHOULD BE: %d<<<\n", HDstrlen(desc) );
+        printf("\t>>>BAD DESCRIPTION LENGTH. \n\t       IS: %d",(int)indesclen);
+        printf("\n\tSHOULD BE: %d<<<\n", (int)HDstrlen(desc) );
         num_errs++;
     }
     else {

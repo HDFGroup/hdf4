@@ -203,10 +203,10 @@ PRIVATE uint8 *ptbuf = NULL;
 
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFSDgetdims(char *filename, intn *prank, int32 sizes[], intn maxrank)
+intn DFSDgetdims(const char *filename, intn *prank, int32 sizes[], intn maxrank)
 #else
 intn DFSDgetdims(filename, prank, sizes, maxrank)
-     char  *filename;
+     const char  *filename;
      intn  *prank;
      int32 sizes[];
      intn  maxrank;
@@ -214,7 +214,7 @@ intn DFSDgetdims(filename, prank, sizes, maxrank)
 {
     intn i;
     int32 file_id;
-    char *FUNC="DFSDgetdims";
+    CONSTR(FUNC,"DFSDgetdims");
 
     HEclear(); /* Clear error stack */
 
@@ -273,7 +273,7 @@ intn DFSDgetdatastrs(label, unit, format, coordsys)
 {
     int32 luf;
     char *lufp;
-    char *FUNC="DFSDgetdatastrs";
+    CONSTR(FUNC,"DFSDgetdatastrs");
 
     HEclear(); /* Clear error stack */
     
@@ -341,7 +341,7 @@ intn DFSDgetdimstrs(dim, label, unit, format)
     intn luf;
     intn rdim;
     char *lufp;
-    char *FUNC="DFSDgetdimstrs";
+    CONSTR(FUNC,"DFSDgetdimstrs");
 
     HEclear();  /* Clear error stack */
     
@@ -406,7 +406,7 @@ intn DFSDgetdatalen(llabel, lunit, lformat, lcoordsys)
      intn *lcoordsys;
 #endif /* PROTOTYPE */
 {
-    char *FUNC="DFSDgetdatalen";
+    CONSTR(FUNC,"DFSDgetdatalen");
 
     HEclear(); /* Clear error stack */
 
@@ -452,7 +452,7 @@ intn DFSDgetdimlen(dim, llabel, lunit, lformat)
      intn *lformat;
 #endif /* PROTOTYPE */
 {
-    char *FUNC="DFSDgetdimlen";
+    CONSTR(FUNC,"DFSDgetdimlen");
 
     HEclear();  /* Clear error stack */
 
@@ -498,12 +498,12 @@ intn DFSDgetdimscale(dim, maxsize, scale)
      VOIDP scale;
 #endif /* PROTOTYPE */
 {
-    int32 dimsize;
+    uint32 dimsize;
     int32 numtype;
     int32 localNTsize;
     intn rdim;
     uint8 *p1, *p2;
-    char *FUNC="DFSDgetdimscale";
+    CONSTR(FUNC,"DFSDgetdimscale");
 
     HEclear();  /* Clear error stack */
     
@@ -572,9 +572,9 @@ int DFSDgetrange(pmax, pmin)
 #endif /* PROTOTYPE */
 {
     int32 numtype;
-    int32 localNTsize;
+    uint32 localNTsize;
     uint8 *p1, *p2;
-    char *FUNC="DFSDgetrange";
+    CONSTR(FUNC,"DFSDgetrange");
 
     HEclear(); /* Clear error stack */
     
@@ -633,10 +633,10 @@ int DFSDgetrange(pmax, pmin)
 
 ---------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFSDgetdata(char *filename, intn rank, int32 maxsizes[], VOIDP data)
+intn DFSDgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data)
 #else
 intn DFSDgetdata(filename, rank, maxsizes, data)
-     char  *filename;
+     const char  *filename;
      intn  rank;
      int32 maxsizes[];
      VOIDP data;
@@ -714,7 +714,7 @@ intn DFSDsetdims(rank, dimsizes)
 #endif /* PROTOTYPE */
 {
     intn i;
-    char *FUNC="DFSDsetdims";
+    CONSTR(FUNC,"DFSDsetdims");
 
     HEclear();
 
@@ -778,13 +778,13 @@ intn DFSDsetdims(rank, dimsizes)
        to be assigned to the next data set written to the file.
 -----------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFSDsetdatastrs(char *label, char *unit, char *format, char *coordsys)
+intn DFSDsetdatastrs(const char *label, const char *unit, const char *format, const char *coordsys)
 #else
 intn DFSDsetdatastrs(label, unit, format, coordsys)
-     char *label;
-     char *unit;
-     char *format;
-     char *coordsys;
+     const char *label;
+     const char *unit;
+     const char *format;
+     const char *coordsys;
 #endif /* PROTOTYPE */
 {
     return (DFSDIsetdatastrs(label, unit, format, coordsys));
@@ -808,18 +808,18 @@ intn DFSDsetdatastrs(label, unit, format, coordsys)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDIsetdatastrs(char *label, char *unit, char *format, char *coordsys)
+intn DFSDIsetdatastrs(const char *label, const char *unit, const char *format, const char *coordsys)
 #else
 intn DFSDIsetdatastrs(label, unit, format, coordsys)
-     char *label;
-     char *unit;
-     char *format;
-     char *coordsys;
+     const char *label;
+     const char *unit;
+     const char *format;
+     const char *coordsys;
 #endif /* PROTOTYPE */
 {
     intn luf;			/* takes values LABEL, UNIT, FORMAT */
 				/* in succession */
-    char *lufp;			/* points to label, unit, format */
+    const char *lufp;		/* points to label, unit, format */
 				/* in succession */
 
 /* NOTE: The following code should be changed to write all three, even if
@@ -834,7 +834,7 @@ intn DFSDIsetdatastrs(label, unit, format, coordsys)
         lufp = (luf == LABEL) ? label : (luf == UNIT) ? unit : format;
 
 	/* free space if allocated */
-        Writesdg.dataluf[luf] = HDfreespace((VOIDP)Writesdg.dataluf[luf]);
+        HDfreenclear(Writesdg.dataluf[luf]);
 
 	/* copy string */
         if (lufp) 
@@ -845,7 +845,7 @@ intn DFSDIsetdatastrs(label, unit, format, coordsys)
           }
       }
 
-    Writesdg.coordsys = HDfreespace((VOIDP)Writesdg.coordsys);
+    HDfreenclear(Writesdg.coordsys);
 
     if (coordsys) 
       {
@@ -882,13 +882,13 @@ intn DFSDIsetdatastrs(label, unit, format, coordsys)
        empty strings.
 -----------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFSDsetdimstrs(intn dim, char *label, char *unit, char *format)
+intn DFSDsetdimstrs(intn dim, const char *label, const char *unit, const char *format)
 #else
 intn DFSDsetdimstrs(dim, label, unit, format)
      intn dim;
-     char *label;
-     char *unit;
-     char *format;
+     const char *label;
+     const char *unit;
+     const char *format;
 #endif /* PROTOTYPE */
 {
     return (DFSDIsetdimstrs(dim, label, unit, format));
@@ -911,13 +911,13 @@ intn DFSDsetdimstrs(dim, label, unit, format)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDIsetdimstrs(intn dim, char *label, char *unit, char *format)
+intn DFSDIsetdimstrs(intn dim, const char *label, const char *unit, const char *format)
 #else
 intn DFSDIsetdimstrs(dim, label, unit, format)
      intn dim;
-     char *label;
-     char *unit;
-     char *format;
+     const char *label;
+     const char *unit;
+     const char *format;
 #endif /* PROTOTYPE */
 {
     intn i;
@@ -925,9 +925,9 @@ intn DFSDIsetdimstrs(dim, label, unit, format)
     intn luflen;
     intn luf;			/* takes values LABEL, UNIT, FORMAT */
 				/* in succession */
-    char *lufp;			/* points to label, unit, format */
+    const char *lufp;		/* points to label, unit, format */
 				/* in succession */
-    char *FUNC="DFSDsetdimstrs";
+    CONSTR(FUNC,"DFSDsetdimstrs");
     HEclear();
 
     /* translate from 1 to 0 origin */
@@ -954,7 +954,7 @@ intn DFSDIsetdimstrs(dim, label, unit, format)
           }
 
 	/* free string space if allocated */
-        Writesdg.dimluf[luf][rdim] = HDfreespace((VOIDP)Writesdg.dimluf[luf][rdim]);
+        HDfreenclear(Writesdg.dimluf[luf][rdim]);
 
 /* NOTE: The following code should be changed to write all three, even if
          one or more is an empty string.  Then, when DFSDgetdimstrs is called
@@ -1005,10 +1005,10 @@ intn DFSDsetdimscale(dim, dimsize, scale)
     int32 i;
     intn rdim;
     int32 numtype;
-    int32 bytesize;
+    uint32 bytesize;
     int32 localNTsize;
     uint8 *p1, *p2;
-    char *FUNC="DFSDsetdimscale";
+    CONSTR(FUNC,"DFSDsetdimscale");
 
     HEclear();
     rdim = dim - 1;		/* translate from 1 to 0 origin */
@@ -1033,8 +1033,7 @@ intn DFSDsetdimscale(dim, dimsize, scale)
     if (!scale) 
       {		/* No scale for this dimension */
         if (Writesdg.dimscales)
-            Writesdg.dimscales[rdim] =
-		(uint8 *) HDfreespace((VOIDP) Writesdg.dimscales[rdim]);
+		HDfreenclear( Writesdg.dimscales[rdim]);
         Ref.scales = 0;
         return SUCCEED;
       }
@@ -1114,7 +1113,7 @@ intn DFSDsetrange(maxi, mini)
 #endif /* PROTOTYPE */
 {
     int32 numtype;
-    int32 localNTsize;
+    uint32 localNTsize;
     intn i;
     uint8 *p1, *p2;
 
@@ -1162,10 +1161,10 @@ intn DFSDsetrange(maxi, mini)
 -----------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDputdata(char *filename, intn rank, int32 dimsizes[], VOIDP data)
+intn DFSDputdata(const char *filename, intn rank, int32 dimsizes[], VOIDP data)
 #else
 intn DFSDputdata(filename, rank, dimsizes, data)
-     char *filename;
+     const char *filename;
      intn rank;
      int32 dimsizes[];
      VOID *data;
@@ -1200,10 +1199,10 @@ DESCRIPTION
       file, along with the data array itself.
 -----------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFSDadddata(char *filename, intn rank, int32 dimsizes[], VOIDP data)
+intn DFSDadddata(const char *filename, intn rank, int32 dimsizes[], VOIDP data)
 #else
 intn DFSDadddata(filename, rank, dimsizes, data)
-     char  *filename;
+     const char  *filename;
      intn  rank;
      int32 dimsizes[];
      VOIDP data;
@@ -1260,7 +1259,7 @@ int32 DFSDndatasets(filename)
 {
     int32 file_id;
     int32 nsdgs=0;
-    char *FUNC="DFSDndatasets";
+    CONSTR(FUNC,"DFSDndatasets");
 
     HEclear();
 
@@ -1357,7 +1356,7 @@ intn DFSDreadref(filename, ref)
 {
     int32 file_id;
     int32 aid;
-    char *FUNC="DFSDreadref";
+    CONSTR(FUNC,"DFSDreadref");
 
     HEclear();
 
@@ -1415,11 +1414,11 @@ intn DFSDreadref(filename, ref)
 ----------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDgetslice(char *filename, int32 winst[], int32 windims[], VOIDP data,
+intn DFSDgetslice(const char *filename, int32 winst[], int32 windims[], VOIDP data,
 		  int32 dims[])
 #else
 intn DFSDgetslice(filename, winst, windims, data, dims)
-     char *filename;
+     const char *filename;
      int32 winst[];
      int32 windims[];
      int32 dims[];
@@ -1450,15 +1449,15 @@ intn DFSDgetslice(filename, winst, windims, data, dims)
        with HDF applications built on earlier version of the library.
 -----------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFSDstartslice(char *filename)
+intn DFSDstartslice(const char *filename)
 #else
 intn DFSDstartslice(filename)
-     char *filename;
+     const char *filename;
 #endif /* PROTOTYPE */
 {
     intn i;
     int32 size;
-    char *FUNC="DFSDstartslice";
+    CONSTR(FUNC,"DFSDstartslice");
 
     HEclear();
 
@@ -1611,7 +1610,7 @@ intn DFSDsetNT(numbertype)
 #endif /* PROTOTYPE */
 {
     uint8 outNT;
-    char *FUNC="DFSDsetNT";
+    CONSTR(FUNC,"DFSDsetNT");
 
     HEclear();
 
@@ -1654,7 +1653,7 @@ intn DFSDIclearNT(sdg)
 #endif
 {
     intn i;
-    char *FUNC="DFSDIclearNT";
+    CONSTR(FUNC,"DFSDIclearNT");
 
     HEclear();
 
@@ -1666,8 +1665,7 @@ intn DFSDIclearNT(sdg)
     if (sdg->dimscales)
       {
         for (i=0; i<sdg->rank; i++)
-            sdg->dimscales[i] = (uint8 *)
-                                HDfreespace((VOIDP) sdg->dimscales[i]);
+            HDfreenclear(sdg->dimscales[i]);
       }
 
     Ref.nt      = -1;
@@ -1713,7 +1711,7 @@ intn DFSDgetNT(pnumbertype)
      int32 *pnumbertype;
 #endif
 {
-    char *FUNC="DFSDgetNT";
+    CONSTR(FUNC,"DFSDgetNT");
 
     HEclear();
 
@@ -1758,7 +1756,7 @@ intn DFSDpre32sdg(filename, ref,ispre32)
     int32  file_id;
     intn   found = 0;
     DFnsdgle *ptr;
-    char *FUNC="DFSDpre32sdg";
+    CONSTR(FUNC,"DFSDpre32sdg");
    
     file_id = DFSDIopen(filename, DFACC_READ);
     if (file_id== FAIL) 
@@ -1817,11 +1815,11 @@ intn DFSDpre32sdg(filename, ref,ispre32)
  * Users:   DFSDIopen for READ
  *--------------------------------------------------------------------------*/
 #if defined PROTOTYPE
-intn DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr *nsdghdr)
+intn DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr *l_nsdghdr)
 #else
-intn DFSDIsetnsdg_t(file_id,nsdghdr)
+intn DFSDIsetnsdg_t(file_id,l_nsdghdr)
      int32 file_id;
-     DFnsdg_t_hdr *nsdghdr;
+     DFnsdg_t_hdr *l_nsdghdr;
 #endif
 {
     uint32 sz_DFnsdgle = (uint32)sizeof(struct DFnsdgle);
@@ -1843,7 +1841,7 @@ intn DFSDIsetnsdg_t(file_id,nsdghdr)
     DFdi di;
     DFdi lnkdd[2];
     uint8 *bufp;
-    char *FUNC="DFSDsetnsdg_t";
+    CONSTR(FUNC,"DFSDsetnsdg_t");
   
     if (!HDvalidfid(file_id)) 
         HRETURN_ERROR(DFE_BADCALL, FAIL);
@@ -1866,8 +1864,8 @@ intn DFSDIsetnsdg_t(file_id,nsdghdr)
     
     if ( (ndgs+sdgs) == 0 ) 
       {       /* no sdgs or ndgs in file */
-        nsdghdr->size   = 0;
-        nsdghdr->nsdg_t = NULL;
+        l_nsdghdr->size   = 0;
+        l_nsdghdr->nsdg_t = NULL;
         return SUCCEED;
       }
     if ( (ntb = (DFnsdgle *)HDgetspace(sz_DFnsdgle) ) == NULL)  
@@ -2045,8 +2043,7 @@ intn DFSDIsetnsdg_t(file_id,nsdghdr)
                 else 
                   {
                     sr->next = sf->next;
-                    if ((sf = (DFnsdgle *)HDfreespace((VOIDP) sf)) != NULL)
-                        return FAIL;
+                    HDfreenclear(sf);
                     sdgs--;
                   }
               }
@@ -2068,8 +2065,8 @@ intn DFSDIsetnsdg_t(file_id,nsdghdr)
     while (nf->next != NULL) 
         nf = nf->next;
     nf->next        = stb->next; /* the first node in stb is a dummy */
-    nsdghdr->size   = ndgs + sdgs;
-    nsdghdr->nsdg_t = ntb->next;
+    l_nsdghdr->size   = ndgs + sdgs;
+    l_nsdghdr->nsdg_t = ntb->next;
     
     /* Release the first nodes in stb and ntb  */
     HDfreespace((VOIDP)stb);
@@ -2086,22 +2083,22 @@ intn DFSDIsetnsdg_t(file_id,nsdghdr)
 * Returns: 0 on succeeds, FAIL on failure
 * -------------------------------------------------------------------*/
 #if defined PROTOTYPE
-intn DFSDInextnsdg(DFnsdg_t_hdr *nsdghdr, DFdi *nsdg)
+intn DFSDInextnsdg(DFnsdg_t_hdr *l_nsdghdr, DFdi *nsdg)
 #else
-intn DFSDInextnsdg(nsdghdr,nsdg)
-     DFnsdg_t_hdr *nsdghdr;
+intn DFSDInextnsdg(l_nsdghdr,nsdg)
+     DFnsdg_t_hdr *l_nsdghdr;
      DFdi *nsdg;
 #endif /* PROTOTYPE*/
 {
     uint32 num;
     intn found=FALSE;
     DFnsdgle *ptr;
-    char *FUNC="DFSDInextnsdg";
+    CONSTR(FUNC,"DFSDInextnsdg");
 
     nsdg->tag = DFTAG_NULL;
     nsdg->ref = 0;
-    ptr = nsdghdr->nsdg_t;
-    num = nsdghdr->size;
+    ptr = l_nsdghdr->nsdg_t;
+    num = l_nsdghdr->size;
 
     if ((ptr == NULL) || (num == 0)) 
       return SUCCEED;
@@ -2189,7 +2186,7 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
     uint8 *isscales;
     uint8 *buf;
     uint8 *p;           /* temporary pointer for moving things to buffer */
-    char *FUNC="DFSDIgetndg";
+    CONSTR(FUNC,"DFSDIgetndg");
 
     HEclear();
 
@@ -2741,7 +2738,7 @@ intn DFSDIputndg(file_id, ref, sdg)
     int32 ret;
     int32 aid;
     DFdi nt ;
-    char *FUNC="DFSDIputndg";
+    CONSTR(FUNC,"DFSDIputndg");
 
     HEclear();
 
@@ -3033,30 +3030,21 @@ intn DFSDIputndg(file_id, ref, sdg)
         else
           {
             /* allocate buffer */
-            uint8 *buf;
-
-            /* allocate translation buffer */
-            buf = (uint8 *) HDgetspace((uint32)
-                                       4 * sizeof(float64) +
-                                       1 * sizeof(int32));
-            if(buf == NULL)
-              return FAIL;
+            uint8 buf2[4 * sizeof(float64) + sizeof(int32)];
 
             /* convert doubles */            
-            DFKconvert((VOIDP) &sdg->cal, (VOIDP)buf, 
+            DFKconvert((VOIDP) &sdg->cal, (VOIDP)buf2, 
                        DFNT_FLOAT64, 4, DFACC_WRITE, 0, 0);
 
             /* convert int */
-            DFKconvert((VOIDP) &sdg->cal_type, (VOIDP)(buf + 32),
+            DFKconvert((VOIDP) &sdg->cal_type, (VOIDP)(buf2 + 32),
                        DFNT_INT32, 1, DFACC_WRITE, 0, 0);
             
             /* write it into the file */
             if (Hputelement(file_id, DFTAG_CAL, ref,
-                            (unsigned char *) buf,
-                            (int32) 36) < 0) 
+                            (unsigned char *) buf2, (int32) 36) < 0) 
                 return(FAIL);
             Ref.cal = ref;
-            HDfreespace((VOIDP)buf);
             
           }
       }
@@ -3082,15 +3070,15 @@ intn DFSDIputndg(file_id, ref, sdg)
         else
           {
             /* Allocate buffer  */
-            uint8 buf[DFSD_MAXFILL_LEN];
+            uint8 buf2[DFSD_MAXFILL_LEN];
 
             /* Convert from native to IEEE  */
-            DFKconvert((VOIDP) sdg->fill_value, (VOIDP)buf,
+            DFKconvert((VOIDP) sdg->fill_value, (VOIDP)buf2,
                        numtype, 1, DFACC_WRITE, 0, 0);
 
             /* Write it into the file  */
             if (Hputelement(file_id, DFTAG_FV, ref,
-                            (unsigned char *) buf,
+                            (unsigned char *) buf2,
                             (int32) fileNTsize) == FAIL)
                 return(FAIL);
 
@@ -3181,7 +3169,7 @@ intn DFSDIendslice(isfortran)
 {
     intn i;
     intn ret;
-    char *FUNC="DFSDIendslice";
+    CONSTR(FUNC,"DFSDIendslice");
 
     HEclear();
 
@@ -3220,8 +3208,7 @@ intn DFSDIendslice(isfortran)
 	    front = rear->next;
 	    while (rear != NULL)	
               {
-	       if ((rear = (DFnsdgle *)HDfreespace((VOIDP) rear)) != NULL)
-     	         return FAIL;
+	       HDfreenclear( rear);
  	       rear = front;
 	       if (rear != NULL) front = rear->next;
 	      }
@@ -3230,8 +3217,7 @@ intn DFSDIendslice(isfortran)
 	    lastnsdg.tag    = DFTAG_NULL;
 	    lastnsdg.ref    = 0;
           }
-        if ((nsdghdr=(DFnsdg_t_hdr *)HDfreespace((VOIDP)nsdghdr)) != NULL)
-          return FAIL;
+        HDfreenclear(nsdghdr);
       }
 	
     Lastref  = Writeref;	/* remember ref written */
@@ -3240,7 +3226,7 @@ intn DFSDIendslice(isfortran)
     Hendaccess(Writesdg.aid);
     ret      = Hclose(Sfile_id);
     Sfile_id = 0;       /* partial write complete */
-    Sddims   = (int32 *) HDfreespace((VOIDP) Sddims);
+    HDfreenclear(Sddims);
 
     return(ret);
 }
@@ -3253,7 +3239,7 @@ intn DFSDIendslice(isfortran)
  * Name:    DFSDIopen
  * Purpose: open or reopen a file
  * Inputs:  filename: name of file to open
- *          access : access mode
+ *          acc_mode : access mode
  * Returns: file id on success, -1 (FAIL) on failure with error set
  * Users:   HDF systems programmers, many SD routines
  * Invokes: DFopen
@@ -3262,15 +3248,15 @@ intn DFSDIendslice(isfortran)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int32 DFSDIopen(char *filename, intn access)
+int32 DFSDIopen(const char *filename, intn acc_mode)
 #else
-int32 DFSDIopen(filename, access)
-     char *filename;
-     intn access;
+int32 DFSDIopen(filename, acc_mode)
+     const char *filename;
+     intn acc_mode;
 #endif /* PROTOTYPE */
 {
     int32 file_id;
-    char *FUNC="DFSDIopen";
+    CONSTR(FUNC,"DFSDIopen");
 
     if (Sfile_id!=DF_NOFILE)      /* in the middle of a partial write */
         HRETURN_ERROR(DFE_ALROPEN, FAIL); 
@@ -3284,7 +3270,7 @@ int32 DFSDIopen(filename, access)
       }
 
     /* use reopen if same file as last time - more efficient */
-    if ((HDstrcmp(Lastfile,filename)) || (access == DFACC_CREATE)) 
+    if ((HDstrcmp(Lastfile,filename)) || (acc_mode == DFACC_CREATE)) 
       {
         /* open a new file, delete nsdg table and reset lastnsdg  */
         if (nsdghdr != NULL) 	
@@ -3297,8 +3283,7 @@ int32 DFSDIopen(filename, access)
                 while (rear != NULL)
                   {
                     front = rear->next;
-                    if ((rear = (DFnsdgle *)HDfreespace((VOIDP) rear)) != NULL)
-                        return FAIL;
+                    HDfreenclear(rear);
                     rear = front;
                   }
                 nsdghdr->size   = 0;
@@ -3306,12 +3291,11 @@ int32 DFSDIopen(filename, access)
                 lastnsdg.tag    = DFTAG_NULL;
                 lastnsdg.ref    = 0;
               }
-            if ((nsdghdr=(DFnsdg_t_hdr *)HDfreespace((VOIDP)nsdghdr)) != NULL)
-                return FAIL;
+            HDfreenclear(nsdghdr);
           }
 
         /* treat create as different file */
-        file_id = Hopen(filename, access, (int16) 0);
+        file_id = Hopen(filename, acc_mode, (int16) 0);
         if (file_id == FAIL) 
             return FAIL;
         Newdata  = (-1);         /* data in Readsdg is not fresh */ 
@@ -3330,7 +3314,7 @@ int32 DFSDIopen(filename, access)
       }
     else
       {
-        file_id = Hopen(filename, access, (int16) 0);
+        file_id = Hopen(filename, acc_mode, (int16) 0);
         if (file_id == FAIL)
             return FAIL;
       }
@@ -3344,7 +3328,7 @@ int32 DFSDIopen(filename, access)
         nsdghdr->size   = 0;
         nsdghdr->nsdg_t = NULL;
       }
-    if ((nsdghdr->nsdg_t == NULL) && (access == DFACC_READ))  
+    if ((nsdghdr->nsdg_t == NULL) && (acc_mode == DFACC_READ))  
       {
         if (DFSDIsetnsdg_t(file_id,nsdghdr ) < 0) 
           return(FAIL);
@@ -3377,7 +3361,7 @@ intn DFSDIsdginfo(file_id)
 #endif /* PROTOTYPE */
 {
     DFdi ptr;
-    char *FUNC="DFSDIsdginfo";
+    CONSTR(FUNC,"DFSDIsdginfo");
     int32 aid;
 
     HEclear();
@@ -3454,7 +3438,7 @@ intn DFSDIrefresh(filename)
 #endif /* PROTOTYPE */
 {
       int32 file_id;
-      char *FUNC="DFSDIrefresh";
+      CONSTR(FUNC,"DFSDIrefresh");
 
       HEclear();
       if (Newdata != 1 || Nextsdg) 
@@ -3562,15 +3546,15 @@ intn DFSDIclear(sdg)
 {
     intn i;
     intn luf;
-    char *FUNC="DFSDIclear";
+    CONSTR(FUNC,"DFSDIclear");
 
     HEclear();
 
     if (Sfile_id !=DF_NOFILE)      /* cannot clear during slice writes */
         HRETURN_ERROR(DFE_BADCALL, FAIL); 
 
-    sdg->dimsizes = (int32 *) HDfreespace((VOIDP) sdg->dimsizes);
-    sdg->coordsys = HDfreespace((VOIDP)sdg->coordsys);
+    HDfreenclear(sdg->dimsizes);
+    HDfreenclear(sdg->coordsys);
 
     /* free label/unit/format pointers */
     for (luf = LABEL; luf <= FORMAT; luf++)
@@ -3578,26 +3562,25 @@ intn DFSDIclear(sdg)
         if (sdg->dimluf[luf])
           {       /* free strings */
             for (i = 0; i <sdg->rank; i++)
-                sdg->dimluf[luf][i] = HDfreespace((VOIDP)sdg->dimluf[luf][i]);
+                HDfreenclear(sdg->dimluf[luf][i]);
           }
 
 	/* free string pointers */
-        sdg->dimluf[luf] = (char **) HDfreespace((VOIDP) sdg->dimluf[luf]);
+        HDfreenclear(sdg->dimluf[luf]);
 
 	/* free data string */
-        sdg->dataluf[luf] = HDfreespace((VOIDP)sdg->dataluf[luf]);
+        HDfreespace(sdg->dataluf[luf]);
       }
 
     /* free scale pointers */
     if (sdg->dimscales)
       {
         for (i = 0; i < sdg->rank; i++)
-            sdg->dimscales[i] = 
-              (uint8 *)HDfreespace((VOIDP) sdg->dimscales[i]);
+              HDfreenclear(sdg->dimscales[i]);
       }
 
     /* free array of scale pointers */
-    sdg->dimscales = (uint8 **) HDfreespace((VOIDP)sdg->dimscales);
+    HDfreenclear(sdg->dimscales);
     sdg->rank      = 0;
 
     /* number type is independant to dimsizes   4/7/92  sxu
@@ -3640,11 +3623,11 @@ intn DFSDIclear(sdg)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDIgetdata(char *filename, intn rank, int32 maxsizes[], VOIDP data,
+intn DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data,
 	          intn isfortran)
 #else
 int DFSDIgetdata(filename, rank, maxsizes, data, isfortran)
-     char *filename;
+     const char *filename;
      intn rank;
      int32 maxsizes[];
      VOID *data;
@@ -3656,7 +3639,7 @@ int DFSDIgetdata(filename, rank, maxsizes, data, isfortran)
     int32 *winst;
     int32 *windims;
     int32 file_id;
-    char *FUNC="DFSDIgetdata";
+    CONSTR(FUNC,"DFSDIgetdata");
 
     HEclear();
 
@@ -3717,11 +3700,11 @@ int DFSDIgetdata(filename, rank, maxsizes, data, isfortran)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDIputdata(char *filename, intn rank, int32 *dimsizes, VOIDP data,
+intn DFSDIputdata(const char *filename, intn rank, int32 *dimsizes, VOIDP data,
 	          intn accmode, intn isfortran)
 #else
 intn DFSDIputdata(filename, rank, dimsizes, data, accmode, isfortran)
-     char *filename;
+     const char *filename;
      intn  rank;
      int32   *dimsizes;
      VOID *data;
@@ -3731,7 +3714,7 @@ intn DFSDIputdata(filename, rank, dimsizes, data, accmode, isfortran)
 {
     intn ret;
     int32 file_id;
-    char *FUNC="DFSDIputdata";
+    CONSTR(FUNC,"DFSDIputdata");
 
     HEclear();
 
@@ -3802,11 +3785,11 @@ intn DFSDIputdata(filename, rank, dimsizes, data, accmode, isfortran)
 /*****************************************************************************/
 
 #ifdef PROTOTYPE
-intn DFSDIgetslice(char *filename, int32 winst[], int32 windims[],
+intn DFSDIgetslice(const char *filename, int32 winst[], int32 windims[],
 	           VOIDP data, int32 dims[], intn isfortran)
 #else
 intn DFSDIgetslice(filename, winst, windims, data, dims, isfortran)
-    char    *filename;  /* HDF file containing the dataset */
+    const char    *filename;  /* HDF file containing the dataset */
     int32 winst[];      /* array containing the coordinates of the start */
                         /*  of the slice in the HDF file */
     int32 windims[];	/* array containing the size of the slice */
@@ -3851,7 +3834,7 @@ intn DFSDIgetslice(filename, winst, windims, data, dims, isfortran)
     uint8 *dp;            /* ptr into data[] at an element of the current row */
     uint8 *buf;           /* buffer containing the converted current row */
     int32 file_id;        /* HDF file pointer */
-    char *FUNC="DFSDIgetslice";
+    CONSTR(FUNC,"DFSDIgetslice");
 
     HEclear();
 
@@ -4191,7 +4174,7 @@ intn DFSDIputslice(windims, data, dims, isfortran)
     uint8 *datap;        /* pointer into data[] at */
                          /*  the start of the current row */
     uint8 *buf;          /* buffer containing converted current row */
-    char *FUNC="DFSDIputslice";
+    CONSTR(FUNC,"DFSDIputslice");
 
     HEclear();
 
@@ -4379,7 +4362,7 @@ intn DFSDgetcal(pcal, pcal_err, pioff, pioff_err, cal_nt)
      int32   *cal_nt;
 #endif /* __STDC__ || PC */
 {
-    PRIVATE char *FUNC = "DFSDgetcal";
+    CONSTR(FUNC,"DFSDgetcal");
 
     HEclear();
     
@@ -4480,17 +4463,17 @@ intn DFSDsetcal(cal, cal_err, ioff, ioff_err, cal_nt)
 -----------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
 intn
-DFSDwriteref(char *filename, uint16 ref)
+DFSDwriteref(const char *filename, uint16 ref)
 #else
 intn
 DFSDwriteref(filename, ref)
-    char *filename;
+    const char *filename;
     uint16 ref;
 #endif /* PROTOTYPE */
 {
     int32 file_id; 
     int32 aid;
-    char *FUNC="DFSDwriteref";
+    CONSTR(FUNC,"DFSDwriteref");
 
     /* Clear error stack */
     HEclear();
@@ -4561,8 +4544,8 @@ DFSDsetfillvalue(fill_value)
 #endif /* PROTOTYPE */
 {
     int32 numtype;      /* current number type  */
-    int32 localNTsize;  /* size of this NT on as it is on this machine  */
-    char *FUNC="DFSDsetfillvalue";
+    uint32 localNTsize;  /* size of this NT on as it is on this machine  */
+    CONSTR(FUNC,"DFSDsetfillvalue");
 
     /* Clear error stack  */
     HEclear();
@@ -4611,8 +4594,8 @@ DFSDgetfillvalue(fill_value)
 #endif /* PROTOTYPE */
 {
     int32 numtype;      /* current number type  */
-    int32 localNTsize;  /* size of this NT on as it is on this machine  */
-    char *FUNC="DFSDgetfillvalue";
+    uint32 localNTsize;  /* size of this NT on as it is on this machine  */
+    CONSTR(FUNC,"DFSDgetfillvalue");
 
     /* Clear error stack  */
     HEclear();
@@ -4667,11 +4650,11 @@ DFSDgetfillvalue(fill_value)
 -----------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDreadslab(char *filename, int32 start[], int32 slab_size[], 
+intn DFSDreadslab(const char *filename, int32 start[], int32 slab_size[], 
                  int32 stride[], VOIDP buffer, int32 buffer_size[])
 #else
 intn DFSDreadslab(filename, start, slab_size, stride, buffer, buffer_size)
-     char *filename;
+     const char *filename;
      int32 start[];
      int32 slab_size[];
      int32 stride[];
@@ -4701,22 +4684,22 @@ intn DFSDreadslab(filename, start, slab_size, stride, buffer, buffer_size)
 -----------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
 intn
-DFSDstartslab(char *filename)
+DFSDstartslab(const char *filename)
 #else
 intn
 DFSDstartslab(filename)
-     char *filename;
+     const char *filename;
 #endif /* PROTOTYPE */
 {
     int32 i;
     int32 sdg_size;
-    int32 localNTsize;
+    uint32 localNTsize;
     int32 fileNTsize;
     int32 fill_bufsize = 16384; /* Chosen for the PC */
     int32 odd_size;
     uint8 *fill_buf;
 
-    char *FUNC="DFSDstartslab";
+    CONSTR(FUNC,"DFSDstartslab");
 
     /* Clear errors */
     HEclear();
@@ -4894,7 +4877,7 @@ DFSDwriteslab(start, stride, count, data)
     uint8 *datap;          /* ptr into data[] at starting offset */
                            /*   of current block */
 
-    char *FUNC="DFSDwriteslab";
+    CONSTR(FUNC,"DFSDwriteslab");
 
     /* Clear error stack  */
     HEclear();
@@ -5160,7 +5143,7 @@ DFSDendslab()
 #endif /* PROTOTYPE */
 {
     intn ret;
-    char *FUNC="DFSDendslab";
+    CONSTR(FUNC,"DFSDendslab");
 
     /* Clear error stack */
     HEclear();
@@ -5189,8 +5172,7 @@ DFSDendslab()
                 front = rear->next;
                 while (rear != NULL)
                   {
-                   if ((rear=(DFnsdgle *)HDfreespace((VOIDP) rear)) != NULL)
-                      return FAIL;
+                   HDfreenclear(rear);
                    rear = front;
                    if (rear != NULL)
                         front = rear->next;
@@ -5201,11 +5183,7 @@ DFSDendslab()
                 lastnsdg.ref = 0;
               }
 
-            if ((nsdghdr=(DFnsdg_t_hdr *)HDfreespace((VOIDP)nsdghdr))
-                 != NULL)
-              {
-                return FAIL;
-              }
+            HDfreenclear(nsdghdr);
           }
 
         Ref.new_ndg = -1;

@@ -41,7 +41,7 @@ static char RcsId[] = "@(#)$Revision$";
  * BUG: the final Vtbuf never gets freed
  */
 #define VDATA_BUFFER_MAX 1000000
-PRIVATE int32 Vtbufsize = 0;
+PRIVATE uint32 Vtbufsize = 0;
 PRIVATE uint8 *Vtbuf = NULL;
 
 
@@ -66,10 +66,10 @@ int32 vkey;
 int32      eltpos;
 #endif
 {
-    int32 	stat, offset;
+    int32 	ret, offset;
     vsinstance_t    *w;
     VDATA           *vs;
-    char *  FUNC = "VSseek";
+    CONSTR(FUNC,"VSseek");
     
     if (!VALIDVSID(vkey))
         HRETURN_ERROR(DFE_ARGS, FAIL);
@@ -84,8 +84,8 @@ int32      eltpos;
     
     offset  = eltpos * vs->wlist.ivsize;
     
-    stat = Hseek (vs->aid, offset, DF_START);
-    if (stat==FAIL)
+    ret = Hseek (vs->aid, offset, DF_START);
+    if (ret==FAIL)
         HRETURN_ERROR(DFE_BADSEEK,FAIL);
     
     return(eltpos);
@@ -125,7 +125,7 @@ uint8 buf[];
     int32          uvsize; /* size of "element" as NEEDED by user */
     vsinstance_t   *wi;
     VDATA          *vs;
-    char *  FUNC = "VSread";
+    CONSTR(FUNC,"VSread");
 
     if (!VALIDVSID(vkey))
         HRETURN_ERROR(DFE_ARGS, FAIL);
@@ -346,9 +346,9 @@ uint8        buf[];
     intn         hdf_size = 0;   /* size of record in HDF file */
     vsinstance_t * wi;
     VDATA        * vs;
-    int32        elements, bytes; /* number of elements / bytes to write next time */
+    int32        bytes; /* number of elements / bytes to write next time */
     int32        chunk, done; /* number of records to do / done */
-    char *  FUNC = "VSwrite";
+    CONSTR(FUNC,"VSwrite");
 
     if (!VALIDVSID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);

@@ -38,12 +38,12 @@ static char RcsId[] = "@(#)$Revision$";
 /* We use a stack to hold the errors plus we keep track of the function,
    file and line where the error occurs.*/
 
-/* the strcuture of the error stack element */
+/* the structure of the error stack element */
 
 typedef struct error_t {
     hdf_err_code_t error_code;    /* Error number */
-    char *function_name;            /* function where error occur */
-    char *file_name;                /* file where error occur */
+    const char *function_name;      /* function where error occur */
+    const char *file_name;          /* file where error occur */
     intn line;                      /* line in file where error occurs */
     intn system;                    /* bool for system or HDF error */
     char *desc;                     /* optional supplied description */
@@ -94,9 +94,9 @@ int32 error_top = 0;
 
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-char _HUGE *HEstring(hdf_err_code_t error_code)
+const char _HUGE *HEstring(hdf_err_code_t error_code)
 #else
-char _HUGE *HEstring(error_code)
+const char _HUGE *HEstring(error_code)
     hdf_err_code_t error_code;
 #endif
 {
@@ -142,7 +142,7 @@ VOID HEclear()
 
     /* error_top == 0 means no error in stack */
     /* clean out old descriptions if they exist */
-    for (error_top; error_top; error_top--) {
+    for (; error_top>0; error_top--) {
         if(error_stack[error_top - 1].desc) {
             HDfreespace(error_stack[error_top - 1].desc);
             error_stack[error_top - 1].desc = NULL;
@@ -173,12 +173,12 @@ VOID HEclear()
 
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-VOID HEpush(hdf_err_code_t error_code, char *function_name, char *file_name, intn line)
+VOID HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_name, intn line)
 #else
 VOID HEpush(error_code, function_name, file_name, line)
     hdf_err_code_t error_code;/* internal number of the error */
-    char   *function_name;      /* name of function that error occurred */
-    char   *file_name;          /* name of file that error occurred */
+    const char   *function_name; /* name of function that error occurred */
+    const char   *file_name;          /* name of file that error occurred */
     intn   line;                /* line number in file that error occurred */
 #endif
 {
@@ -229,11 +229,11 @@ VOID HEpush(error_code, function_name, file_name, line)
 
 --------------------------------------------------------------------------- */
 #if defined PROTOTYPE
-VOID HEreport(char *format, ...)
+VOID HEreport(const char *format, ...)
 {
     va_list arg_ptr;
     char *tmp;
-    char *FUNC="HEreport";   /* name of function if HIalloc fails */
+    CONSTR(FUNC,"HEreport");   /* name of function if HIalloc fails */
 
     va_start(arg_ptr, format);
 
@@ -256,7 +256,7 @@ VOID HEreport(char *format, ...)
 VOID HEreport(va_alist)
 va_dcl
 {
-    char *FUNC="HEreport";   /* name of function if HIalloc fails */
+    CONSTR(FUNC,"HEreport");   /* name of function if HIalloc fails */
     char *tmp;
     char * format;
     va_list arg_ptr;

@@ -89,15 +89,15 @@ static int32 FAR stride[3]     = {0, 0, 0};
 static int32 FAR d_dims[3]     = {0, 0, 0};
 
 /* luf for planes, rows and cols  */
-static char FAR *lpln = "Time";
-static char FAR *upln = "Second";
-static char FAR *fpln = "Int32";
-static char FAR *lrow = "Line";
-static char FAR *urow = "Inch";
-static char FAR *frow = "Int16";
-static char FAR *lcol = "Column";
-static char FAR *ucol = "Cm";
-static char FAR *fcol = "Int32";
+static const char FAR *lpln = "Time";
+static const char FAR *upln = "Second";
+static const char FAR *fpln = "Int32";
+static const char FAR *lrow = "Line";
+static const char FAR *urow = "Inch";
+static const char FAR *frow = "Int16";
+static const char FAR *lcol = "Column";
+static const char FAR *ucol = "Cm";
+static const char FAR *fcol = "Int32";
 
 /* scales for planes, rows, and cols */
 static float64 FAR scplnf64[2] = {0.0, 100.0};
@@ -334,19 +334,19 @@ static uint8 FAR ui8data[2][3][4] =
 		  { 110, 111, 112, 113},
 		  { 120, 121, 122, 123}}};
 /* Output files */
-static char FAR *swf32  = "swf32.hdf";
-static char FAR *swf64  = "swf64.hdf";
-static char FAR *swin = "swin.hdf";
-static char FAR *swuin = "swuin.hdf";
-static char FAR *swi32 = "swi32.hdf";
-static char FAR *swui32 = "swui32.hdf";
-static char FAR *swi16 = "swi16.hdf";
-static char FAR *swui16 = "swui16.hdf";
-static char FAR *swi8  = "swi8.hdf";
-static char FAR *swui8  = "swui8.hdf";
-static char FAR *sw1 = "s1w.hdf";
-static char FAR *sw3 = "s3w.hdf";
-static char FAR *sw4 = "s4w.hdf";
+static const char FAR *swf32  = "swf32.hdf";
+static const char FAR *swf64  = "swf64.hdf";
+static const char FAR *swin = "swin.hdf";
+static const char FAR *swuin = "swuin.hdf";
+static const char FAR *swi32 = "swi32.hdf";
+static const char FAR *swui32 = "swui32.hdf";
+static const char FAR *swi16 = "swi16.hdf";
+static const char FAR *swui16 = "swui16.hdf";
+static const char FAR *swi8  = "swi8.hdf";
+static const char FAR *swui8  = "swui8.hdf";
+static const char FAR *sw1 = "s1w.hdf";
+static const char FAR *sw3 = "s3w.hdf";
+static const char FAR *sw4 = "s4w.hdf";
 
 /*
 ** Write data set to slabw.hdf as 5 hyperslabs.

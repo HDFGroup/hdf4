@@ -67,7 +67,7 @@ static VOID usage
 static VOID hdferror
     PROTO((void));
 static VOID error
-    PROTO((char *));
+    PROTO((const char *));
 int desc_comp
     PROTO((const void *d1, const void *d2));
 
@@ -77,15 +77,15 @@ int32 data_size;
 int32 nblk = 0;
 
 #ifdef PROTOTYPE
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 #else
-main(argc, argv)
+int main(argc, argv)
 int argc;
 char *argv[];
 #endif /* PROTOTYPE */
 {
-    int i, num_desc, ret, fnum, merge;
-    int32 infile, outfile, aid, stat;
+    int i, num_desc, fnum, merge;
+    int32 infile, outfile, aid, ret;
     mydd_t *dlist;
     int32 oldoff, oldlen;
     int blocks = 1;
@@ -93,16 +93,16 @@ char *argv[];
     int16 ndds = 0;
     int optset = 0;
     char *tmp, fname[2][80];
-    char *FUNC="main";
+    CONSTR(FUNC,"main");
 
 /*
 **   Get invocation name of program
 */
     tmp = (char *)NULL;
-    strcpy(invoke, strtok(argv[0], "/]\\\0"));
+    HDstrcpy(invoke, strtok(argv[0], "/]\\\0"));
     for (;;) {
 	if (tmp != NULL)
-	    strcpy(invoke, tmp);
+	    HDstrcpy(invoke, tmp);
 	if ((tmp = strtok((char *)NULL, "/]\\\0")) == NULL)
 	    break;
     }
@@ -149,7 +149,7 @@ char *argv[];
         }
 	} else {
 	    if (fnum < 2) {
-	        strcpy(fname[fnum], argv[i]);
+	        HDstrcpy(fname[fnum], argv[i]);
 	        fnum++;
 	    }
 	}
@@ -159,7 +159,7 @@ char *argv[];
 /*
 **   Enough [unique] file arguments?
 */
-    if ((fnum != 2) || (strcmp(fname[0], fname[1]) == 0)) {
+    if ((fnum != 2) || (HDstrcmp(fname[0], fname[1]) == 0)) {
 	error("need 2 unique file names");
     }
 
@@ -222,12 +222,12 @@ char *argv[];
         /*
          * Move to the next one
          */
-	stat = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
+	ret = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
 
         /*
          * Fail if there are none left and we expect more
          */
-	if ((stat == FAIL) && (i + 1 < num_desc)) {
+	if ((ret == FAIL) && (i + 1 < num_desc)) {
 	    printf("MAJOR PROBLEM: DDs; only got %d of %d; line %d\n",i,num_desc,__LINE__);
 	    hdferror();
         }
@@ -236,8 +236,8 @@ char *argv[];
     /*
      * Close the access element
      */
-    stat = Hendaccess(aid);
-    if (stat == FAIL)
+    ret = Hendaccess(aid);
+    if (ret == FAIL)
         hdferror();
 
 /*
@@ -336,7 +336,7 @@ int32 infile, outfile;
 #endif /* PROTOTYPE */
 {
     int32 inaid, ret, rdret, len, first_len, block_len, nblocks, outaid;
-    char *FUNC="copy_blocks";
+    CONSTR(FUNC,"copy_blocks");
 
 
     inaid = Hstartread(infile, dd->tag, dd->ref);
@@ -414,7 +414,7 @@ int32 infile, outfile;
 #endif /* PROTOTYPE */
 {
     int32 inaid, outaid, ret, len;
-    char *FUNC="merge_blocks";
+    CONSTR(FUNC,"merge_blocks");
 
 
     inaid = Hstartread(infile, dd->tag, dd->ref);
@@ -518,10 +518,10 @@ static VOID hdferror()
 ** EXAMPLES
 */
 #ifdef PROTOTYPE
-static VOID error(char *string)
+static VOID error(const char *string)
 #else
 static VOID error(string)
-char *string;
+const char *string;
 #endif
 {
     fprintf(stderr, "%s: %s\n", invoke, string);
@@ -553,5 +553,5 @@ int desc_comp(d1, d2)
 const VOID *d1, *d2;
 #endif /* PROTOTYPE */
 {
-    return((int)(((mydd_t *)d1)->offset - ((mydd_t *)d2)->offset));
+    return((int)(((const mydd_t *)d1)->offset - ((const mydd_t *)d2)->offset));
 }

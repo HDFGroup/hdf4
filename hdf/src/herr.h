@@ -161,7 +161,7 @@ typedef enum {
 
 typedef struct error_messages_t {
     hdf_err_code_t error_code;
-    char *str;
+    const char *str;
 } error_messages_t;
 
 PRIVATE const struct error_messages_t error_messages[] =

@@ -59,11 +59,11 @@ PRIVATE char    sym[50][FIELDNAMELENMAX+1]; /* array of tokens ? */
 PRIVATE	intn 	nsym;   /* token index ? */
 
 #ifdef PROTOTYPE
-int32 scanattrs (char *attrs, int32 *attrc, char ***attrv)
+int32 scanattrs (const char *attrs, int32 *attrc, char ***attrv)
 #else
 int32 scanattrs (attrs,attrc,attrv)
 
-     char	*attrs;		/* field string (input) */
+     const char	*attrs;		/* field string (input) */
      int32	*attrc;		/* # of fields (output) */
      char	***attrv;	/* array of char ptrs to fields (output) */
 #endif
@@ -71,7 +71,7 @@ int32 scanattrs (attrs,attrc,attrv)
 {
     register char   *s, *s0, *ss;
     register intn   slen, len;
-    char * FUNC = "scanattrs";
+    CONSTR(FUNC,"scanattrs");
     char * saved_string = (char *) HDstrdup(attrs);
     
 #if defined(macintosh) | defined(THINK_C) | defined(DMEM) /* Dynamic memory */

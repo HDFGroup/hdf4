@@ -138,7 +138,7 @@ int getSpace()
 	oldx = xdim; oldy = ydim; 
 	
 	if (wheresmall)
-	    free(wheresmall);
+	    HDfreespace(wheresmall);
 	
 	if (NULL == (wheresmall = (uint8 *) HDgetspace(xdim*ydim))) {
 	    printf(" Cannot allocate memory, fatal error\n");
@@ -271,7 +271,7 @@ int rImage(usepal)
 *  Send the data for the image with RLE encoding for efficiency.
 *  Encode each line and send it.
 */
-    space    = (int8 *) malloc(ydim+128);
+    space    = (int8 *) HDgetspace(ydim+128);
     thisline = (int8 *) wheresmall;
 
     for (i = 0; i < ydim; i++) {
@@ -312,7 +312,7 @@ int rImage(usepal)
 *  pause for the user
 */
 
-    free(space);
+    HDfreespace(space);
     return HE_OK;
 }
 

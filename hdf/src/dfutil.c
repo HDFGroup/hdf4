@@ -60,7 +60,7 @@ uint16 DFfindnextref(file_id, tag, lref)
     uint16 tag, lref;
 #endif /* PROTOTYPE */
 {
-    char *FUNC="DFfindnextref";
+    CONSTR(FUNC,"DFfindnextref");
     uint16 newtag, newref;
     int32 aid;
 

@@ -42,9 +42,9 @@ int palconv();
 #endif /* PROTOTYPE */
 
 #ifdef PROTOTYPE
-main(int argc, char *argv[]) 
+int main(int argc, char *argv[]) 
 #else
-main(argc, argv) 
+int main(argc, argv) 
 int argc;
 char *argv[];
 #endif /* PROTOTYPE */
@@ -70,9 +70,9 @@ char *argv[];
  */
 
 #ifdef PROTOTYPE
-palconv(char *palfile, char *outfile)
+int palconv(char *palfile, char *outfile)
 #else
-palconv(palfile, outfile)
+int palconv(palfile, outfile)
 char *palfile, *outfile;
 #endif /* PROTOTYPE */
 {

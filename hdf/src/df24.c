@@ -70,15 +70,15 @@ static int32 last_ydim = 0;         /* .....gheesh.........*/
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DF24getdims(char *filename, int32 *pxdim, int32 *pydim, intn *pil)
+intn DF24getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pil)
 #else
 intn DF24getdims(filename, pxdim, pydim, pil)
-    char *filename;
+    const char *filename;
     int32 *pxdim, *pydim;
     intn *pil;
 #endif
 {
-    char *FUNC="DF24getdims";
+    CONSTR(FUNC,"DF24getdims");
     intn ncomps;
 
     do {
@@ -139,15 +139,15 @@ intn DF24reqil(il)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DF24getimage(char *filename, VOIDP image, int32 xdim, int32 ydim)
+intn DF24getimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
 #else
 intn DF24getimage(filename, image, xdim, ydim)
-    char *filename;
+    const char *filename;
     VOIDP image;
     int32 xdim, ydim;
 #endif
 {
-    char *FUNC="DF24getimage";
+    CONSTR(FUNC,"DF24getimage");
     intn ret, il;
     int32 tx, ty;
 
@@ -301,15 +301,15 @@ intn DF24restart()
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DF24addimage(char *filename, VOIDP image, int32 xdim, int32 ydim)
+intn DF24addimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
 #else
 intn DF24addimage(filename, image, xdim, ydim)
-    char *filename;
+    const char *filename;
     VOIDP image;
     int32 xdim, ydim;
 #endif
 {
-    char *FUNC="DF24addimage";
+    CONSTR(FUNC,"DF24addimage");
 
     /* 0 == C */
     if (!dimsset && DFGRIsetdims(xdim, ydim, 3, IMAGE) == FAIL)
@@ -340,15 +340,15 @@ intn DF24addimage(filename, image, xdim, ydim)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DF24putimage(char *filename, VOIDP image, int32 xdim, int32 ydim)
+intn DF24putimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
 #else
 intn DF24putimage(filename, image, xdim, ydim)
-    char *filename;
+    const char *filename;
     VOIDP image;
     int32 xdim, ydim;
 #endif
 {
-    char *FUNC="DF24putimage";
+    CONSTR(FUNC,"DF24putimage");
 
     /* 0 == C */
     if (!dimsset && DFGRIsetdims(xdim, ydim, 3, IMAGE) == FAIL)
@@ -374,13 +374,13 @@ intn DF24putimage(filename, image, xdim, ydim)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DF24nimages(char *filename)
+intn DF24nimages(const char *filename)
 #else
 intn DF24nimages(filename)
-    char *filename;
+    const char *filename;
 #endif
 {
-    char *FUNC="DF24nimages";
+    CONSTR(FUNC,"DF24nimages");
     int32 file_id;
     int32 group_id;         /* group ID for looking at RIG's */
     uint16 elt_tag,elt_ref; /* tag/ref of items in a RIG */
@@ -446,10 +446,10 @@ intn DF24nimages(filename)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DF24readref(char *filename, uint16 ref)
+intn DF24readref(const char *filename, uint16 ref)
 #else
 intn DF24readref(filename, ref)
-    char *filename;
+    const char *filename;
     uint16 ref;
 #endif
 {

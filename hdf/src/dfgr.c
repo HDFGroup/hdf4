@@ -125,11 +125,11 @@ PRIVATE int DFGRaddrig
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFGRgetlutdims(char *filename, int32 *pxdim, int32 *pydim, int *pncomps,
+int DFGRgetlutdims(const char *filename, int32 *pxdim, int32 *pydim, int *pncomps,
                   int *pil)
 #else
 int DFGRgetlutdims(filename, pxdim, pydim, pncomps, pil)
-char *filename;
+const char *filename;
 int32 *pxdim, *pydim;
 int *pncomps, *pil;
 #endif
@@ -172,10 +172,10 @@ int il;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFGRgetlut(char *filename, VOIDP lut, int32 xdim, int32 ydim)
+int DFGRgetlut(const char *filename, VOIDP lut, int32 xdim, int32 ydim)
 #else
 int DFGRgetlut(filename, lut, xdim, ydim)
-char *filename;
+const char *filename;
 VOIDP lut;
 int32 xdim, ydim;
 #endif
@@ -199,11 +199,11 @@ int32 xdim, ydim;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFGRgetimdims(char *filename, int32 *pxdim, int32 *pydim, int *pncomps,
+int DFGRgetimdims(const char *filename, int32 *pxdim, int32 *pydim, int *pncomps,
                  int *pil)
 #else
 int DFGRgetimdims(filename, pxdim, pydim, pncomps, pil)
-char *filename;
+const char *filename;
 int32 *pxdim, *pydim;
 int *pncomps, *pil;
 #endif
@@ -244,10 +244,10 @@ int il;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFGRgetimage(char *filename, VOIDP image, int32 xdim, int32 ydim)
+int DFGRgetimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
 #else
 int DFGRgetimage(filename, image, xdim, ydim)
-char *filename;
+const char *filename;
 VOIDP image;
 int32 xdim, ydim;
 #endif
@@ -276,7 +276,7 @@ int32 scheme;
 comp_info *cinfo;
 #endif
 {
-    char *FUNC="DFGRsetcompress";
+    CONSTR(FUNC,"DFGRsetcompress");
 
     if(scheme<0 || scheme>COMP_MAX_COMP || compress_map[scheme]==0)
         HRETURN_ERROR(DFE_BADSCHEME, FAIL);
@@ -336,7 +336,7 @@ int32 xdim, ydim;
 #endif
 {
     /* 0 == C, 0 == no newfile */
-    return(DFGRIaddimlut((char*)NULL, lut, xdim, ydim, LUT, 0, 0));
+    return(DFGRIaddimlut((const char*)NULL, lut, xdim, ydim, LUT, 0, 0));
 }
 
 
@@ -353,10 +353,10 @@ int32 xdim, ydim;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFGRaddlut(char *filename, VOIDP lut, int32 xdim, int32 ydim)
+int DFGRaddlut(const char *filename, VOIDP lut, int32 xdim, int32 ydim)
 #else
 int DFGRaddlut(filename, lut, xdim, ydim)
-char *filename;
+const char *filename;
 VOIDP lut;
 int32 xdim, ydim;
 #endif
@@ -404,10 +404,10 @@ int ncomps, il;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFGRaddimage(char *filename, VOIDP image, int32 xdim, int32 ydim)
+int DFGRaddimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
 #else
 int DFGRaddimage(filename, image, xdim, ydim)
-char *filename;
+const char *filename;
 VOIDP image;
 int32 xdim, ydim;
 #endif
@@ -417,10 +417,10 @@ int32 xdim, ydim;
 }
 
 #ifdef PROTOTYPE
-int DFGRputimage(char *filename, VOIDP image, int32 xdim, int32 ydim)
+int DFGRputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
 #else
 int DFGRputimage(filename, image, xdim, ydim)
-char *filename;
+const char *filename;
 VOIDP image;
 int32 xdim, ydim;
 #endif
@@ -441,10 +441,10 @@ int32 xdim, ydim;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFGRreadref(char *filename, uint16 ref)
+int DFGRreadref(const char *filename, uint16 ref)
 #else
 int DFGRreadref(filename, ref)
-    char *filename;
+    const char *filename;
     uint16 ref;
 #endif
 {
@@ -494,7 +494,7 @@ PRIVATE int DFGRgetrig(file_id, ref, rig)
     DFGRrig *rig;
 #endif
 {
-    char *FUNC="DFGRgetrig";
+    CONSTR(FUNC,"DFGRgetrig");
     uint16 elt_tag, elt_ref;
     uint8 ntstring[4];
     int type;
@@ -576,12 +576,11 @@ PRIVATE int DFGRaddrig(file_id, ref, rig)
     DFGRrig *rig;
 #endif
 {
-    char *FUNC="DFGRaddrig";
+    CONSTR(FUNC,"DFGRaddrig");
     uint8 ntstring[4];
     int32 lutsize;
     int32 GroupID;
     uint8 GRtbuf[64];       /* local buffer for reading RIG info */
-intn i;
 
     HEclear();
 
@@ -685,7 +684,7 @@ intn i;
  * Name:    DFGRIopen
  * Purpose: open or reopen a file
  * Inputs:  filename: name of file to open
- *          access : access mode
+ *          acc_mode : access mode
  * Returns: file pointer on success, NULL on failure with DFerror set
  * Users:   HDF systems programmers, all the RIG routines
  * Invokes: DFopen
@@ -694,17 +693,17 @@ intn i;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int32 DFGRIopen(char *filename, int access)
+int32 DFGRIopen(const char *filename, int acc_mode)
 #else
-int32 DFGRIopen(filename, access)
-    char *filename;
-    int access;
+int32 DFGRIopen(filename, acc_mode)
+    const char *filename;
+    int acc_mode;
 #endif
 {
-    char *FUNC="DFGRIopen";
+    CONSTR(FUNC,"DFGRIopen");
     int32 file_id;
 
-    file_id = Hopen(filename, access, 0);
+    file_id = Hopen(filename, acc_mode, 0);
     if (file_id == FAIL)
         HRETURN_ERROR(DFE_BADOPEN,FAIL);
 
@@ -717,7 +716,7 @@ int32 DFGRIopen(filename, access)
       }
 
     /* use reopen if same file as last time - more efficient */
-    if (HDstrncmp(Grlastfile,filename,DF_MAXFNLEN) || (access==DFACC_CREATE)) {
+    if (HDstrncmp(Grlastfile,filename,DF_MAXFNLEN) || (acc_mode==DFACC_CREATE)) {
        /* treat create as different file */
         Grrefset = 0;          /* no ref to get set for this file */
         Grnewdata = 0;
@@ -861,16 +860,16 @@ int32 file_id;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFGRIgetdims(char *filename, int32 *pxdim, int32 *pydim,
+int DFGRIgetdims(const char *filename, int32 *pxdim, int32 *pydim,
                         int *pncomps, int *pil, int type)
 #else
 int DFGRIgetdims(filename, pxdim, pydim, pncomps, pil, type)
-    char *filename;
+    const char *filename;
     int32 *pxdim, *pydim;
     int *pncomps, *pil, type;
 #endif
 {
-    char *FUNC="DFGRIgetdims";
+    CONSTR(FUNC,"DFGRIgetdims");
     int32 file_id;
 
     HEclear();
@@ -949,17 +948,17 @@ int DFGRIreqil(il, type)
 /* shut lint up */
 /* ARGSUSED */
 #ifdef PROTOTYPE
-int DFGRIgetimlut(char *filename, VOIDP imlut, int32 xdim, int32 ydim,
+int DFGRIgetimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
                          int type, int isfortran)
 #else
 int DFGRIgetimlut(filename, imlut, xdim, ydim, type, isfortran)
-    char *filename;
+    const char *filename;
     int32 xdim, ydim;
     VOIDP imlut;
     int type, isfortran;
 #endif
 {
-    char *FUNC="DFGRIgetimlut";
+    CONSTR(FUNC,"DFGRIgetimlut");
     int32 file_id;
     int32 currpos[3], currmax[3], destsize[3], bufsize, i, j;
     uint8 *buf, *destp;
@@ -1110,7 +1109,7 @@ int DFGRIsetdims(xdim, ydim, ncomps, type)
     int type;
 #endif
 {
-    char *FUNC="DFGRIsetdims";
+    CONSTR(FUNC,"DFGRIsetdims");
     if (ncomps == FAIL || (xdim<=0) || (ydim<=0)) {
         HERROR(DFE_ARGS);
         return FAIL;
@@ -1144,7 +1143,7 @@ int DFGRIsetil(il, type)
     int type;
 #endif
 {
-    char *FUNC="DFGRIsetil";
+    CONSTR(FUNC,"DFGRIsetil");
     if (il == FAIL) {
         HERROR(DFE_ARGS);
         return FAIL;
@@ -1193,17 +1192,17 @@ int DFGRIrestart()
 /* shut lint up */
 /* ARGSUSED */
 #ifdef PROTOTYPE
-int DFGRIaddimlut(char *filename, VOIDP imlut, int32 xdim, int32 ydim,
+int DFGRIaddimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
                  int type, int isfortran, int newfile)
 #else
 int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran, newfile)
-    char *filename;
+    const char *filename;
     int32 xdim, ydim;
     VOIDP imlut;
     int type, isfortran, newfile;
 #endif
 {
-    char *FUNC="DFGRIaddimlut";
+    CONSTR(FUNC,"DFGRIaddimlut");
     int32 file_id;
     uint16 wtag, wref;         /* tag of image/lut being written */
     uint8 *newlut;
@@ -1257,7 +1256,7 @@ int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran, newfile)
         Grlutdata = (uint8 *) HDgetspace((uint32)lutsize);
         if(Grlutdata==NULL)
             return FAIL;
-        HDmemcpy(Grlutdata, imlut, (int)lutsize);
+        HDmemcpy(Grlutdata, imlut, (uint32)lutsize);
         Ref.lut = 0;
         return SUCCEED;
     }

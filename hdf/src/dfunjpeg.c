@@ -193,9 +193,9 @@ decompress_info_ptr cinfo;
         if (*htblptr == NULL)
             *htblptr = (HUFF_TBL *) (*cinfo->emethods->alloc_small) (SIZEOF(HUFF_TBL));
 
-        memcpy((void *) (*htblptr)->bits, (void *) bits,
+        HDmemcpy((void *) (*htblptr)->bits, (void *) bits,
             SIZEOF((*htblptr)->bits));
-        memcpy((void *) (*htblptr)->huffval, (void *) huffval,
+        HDmemcpy((void *) (*htblptr)->huffval, (void *) huffval,
             SIZEOF((*htblptr)->huffval));
     }
 }   /* end get_dht() */

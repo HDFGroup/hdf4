@@ -43,7 +43,7 @@ PRIVATE uint16 Lastref = 0;     /* Last ref read/written */
 PRIVATE char Lastfile[DF_MAXFNLEN] = ""; /* last file opened */
 
 PRIVATE int32 DFPIopen
-    PROTO((char _HUGE *filename, intn access));
+    PROTO((const char _HUGE *filename, intn acc_mode));
 
 /*--------------------------------------------------------------------------
  NAME
@@ -63,14 +63,14 @@ PRIVATE int32 DFPIopen
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFPgetpal(char *filename, VOIDP palette)
+intn DFPgetpal(const char *filename, VOIDP palette)
 #else
 intn DFPgetpal(filename, palette)
-    char *filename;
+    const char *filename;
     VOIDP palette;
 #endif
 {
-    char *FUNC="DFPgetpal";
+    CONSTR(FUNC,"DFPgetpal");
     int32 file_id;
     int32 aid;
     int32 length;
@@ -155,16 +155,16 @@ intn DFPgetpal(filename, palette)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFPputpal(char *filename, VOIDP palette, intn overwrite, char *filemode)
+intn DFPputpal(const char *filename, VOIDP palette, intn overwrite, const char *filemode)
 #else
 intn DFPputpal(filename, palette, overwrite, filemode)
-    char *filename;
+    const char *filename;
     VOIDP palette;
     intn overwrite;
-    char *filemode;
+    const char *filemode;
 #endif
 {
-    char *FUNC="DFPputpal";
+    CONSTR(FUNC,"DFPputpal");
     int32 file_id;
 
     HEclear();
@@ -215,10 +215,10 @@ intn DFPputpal(filename, palette, overwrite, filemode)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFPaddpal(char *filename, VOIDP palette)
+intn DFPaddpal(const char *filename, VOIDP palette)
 #else
 intn DFPaddpal(filename, palette)
-    char *filename;
+    const char *filename;
     VOIDP palette;
 #endif
 {
@@ -241,13 +241,13 @@ intn DFPaddpal(filename, palette)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFPnpals(char *filename)
+intn DFPnpals(const char *filename)
 #else
 intn DFPnpals(filename)
-    char *filename;
+    const char *filename;
 #endif
 {
-    char *FUNC="DFPnpals";
+    CONSTR(FUNC,"DFPnpals");
     int32 file_id;
     intn curr_pal;          /* current palette count */
     intn nip8, nlut,        /* number of IP8s & number of LUTs */
@@ -324,14 +324,14 @@ intn DFPnpals(filename)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFPreadref(char *filename, uint16 ref)
+intn DFPreadref(const char *filename, uint16 ref)
 #else
 intn DFPreadref(filename, ref)
-    char *filename;
+    const char *filename;
     uint16 ref;
 #endif
 {
-    char *FUNC="DFPreadref";
+    CONSTR(FUNC,"DFPreadref");
     int32 file_id;
     int32 aid;
 
@@ -371,10 +371,10 @@ intn DFPreadref(filename, ref)
 
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFPwriteref(char *filename, uint16 ref)
+intn DFPwriteref(const char *filename, uint16 ref)
 #else
 intn DFPwriteref(filename, ref)
-    char *filename;
+    const char *filename;
     uint16 ref;
 #endif
 {
@@ -439,7 +439,7 @@ uint16 DFPlastref()
  * Name:    DFPIopen
  * Purpose: open or reopen a file
  * Inputs:  filename: name of file to open
- *          access : access mode
+ *          acc_mode : access mode
  * Returns: file pointer on success, NULL on failure with DFerror set
  * Users:   HDF systems programmers, other DFP routines
  * Invokes: DFopen
@@ -451,9 +451,9 @@ uint16 DFPlastref()
  NAME
     DFPIopen -- open/reopen file for palette interface
  USAGE
-    int32 DFPIopen(filename,access)
+    int32 DFPIopen(filename,acc_mode)
         char *filename;         IN: name of HDF file
-        intn access;            IN: type of access to open file with
+        intn acc_mode;            IN: type of access to open file with
  RETURNS
     HDF file handle on success, FAIL on failure.
  DESCRIPTION
@@ -467,26 +467,26 @@ uint16 DFPlastref()
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-PRIVATE int32 DFPIopen(char *filename, intn access)
+PRIVATE int32 DFPIopen(const char *filename, intn acc_mode)
 #else
-PRIVATE int32 DFPIopen(filename, access)
-    char *filename;
-    intn access;
+PRIVATE int32 DFPIopen(filename, acc_mode)
+    const char *filename;
+    intn acc_mode;
 #endif
 {
-    char *FUNC="DFPIopen";
+    CONSTR(FUNC,"DFPIopen");
     int32 file_id;
 
     /* use reopen if same file as last time - more efficient */
-    if (HDstrncmp(Lastfile,filename,DF_MAXFNLEN) || (access==DFACC_CREATE)) {
+    if (HDstrncmp(Lastfile,filename,DF_MAXFNLEN) || (acc_mode==DFACC_CREATE)) {
                                     /* treat create as different file */
-        if ((file_id = Hopen(filename, access, 0)) == FAIL)
+        if ((file_id = Hopen(filename, acc_mode, 0)) == FAIL)
             HRETURN_ERROR(DFE_BADOPEN,FAIL);
         Refset = 0;         /* no ref to get set for this file */
         Readref = 0;
       } /* end if */
     else
-        if ((file_id = Hopen(filename, access, 0)) == FAIL)
+        if ((file_id = Hopen(filename, acc_mode, 0)) == FAIL)
            HRETURN_ERROR(DFE_BADOPEN,FAIL);
 
     /* remember filename, so reopen may be used next time if same file */

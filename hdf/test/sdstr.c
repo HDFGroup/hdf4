@@ -34,7 +34,7 @@ extern int Verbocity;
 int number_failed = 0;
 
 static VOID compare
-    PROTO((char *outstring, char *instring));
+    PROTO((const char *outstring, const char *instring));
 
 void test_tsdstr()
 {
@@ -42,7 +42,10 @@ void test_tsdstr()
     intn rank;
     int32 dims[2];
     float32 f32[10][10], tf32[10][10];
-    char *datalabel, *dataunit, *datafmt, *coordsys;
+    const char *datalabel="Datalabel", 
+	*dataunit="Dataunit", 
+	*datafmt="Datafmt", 
+	*coordsys="coordsys";
     char in_datalabel[256], in_dataunit[256], in_datafmt[256],
         in_coordsys[256];
 
@@ -52,10 +55,6 @@ void test_tsdstr()
     rank = 2;
     dims[0] = 10;
     dims[1] = 10;
-    datalabel  = "Datalabel";
-    dataunit   = "Dataunit";
-    datafmt    = "Datafmt";
-    coordsys   = "coordsys";
 
     dimlabels[0]  = "c_dim1_label_a";
     dimunits[0]   = "c_dim1_unit_a";
@@ -128,10 +127,10 @@ void test_tsdstr()
 }
 
 #ifdef PROTOTYPE
-static VOID compare(char *outstring, char *instring)
+static VOID compare(const char *outstring, const char *instring)
 #else
 static VOID compare(outstring, instring)
-char *outstring, *instring;
+const char *outstring, *instring;
 #endif
 {
     if (0 == HDstrcmp(outstring, instring))

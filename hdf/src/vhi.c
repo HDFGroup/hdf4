@@ -70,7 +70,7 @@ PUBLIC int32 VHstoredata (f, field, buf, n, datatype, vsname, vsclass)
 {
   int32	ref;
   int32 order = 1;
-  char * FUNC = "VHstoredata";
+  CONSTR(FUNC,"VHstoredata");
   
   ref = (int32) VHstoredatam (f, field, buf, n, datatype, vsname, vsclass, order);
   return (ref);
@@ -117,7 +117,7 @@ char *  vsname, * vsclass;
     int32 s;
     int32 ref;
     int32 vs;
-    char * FUNC = "VHstoredatam";
+    CONSTR(FUNC,"VHstoredatam");
     
     vs = VSattach (f,-1,"w");
     if (vs == FAIL)
@@ -183,7 +183,7 @@ char        * vgname, * vgclass;
 {
     int32 ref, i, s;
     int32 vg;
-    char * FUNC = "VHmakegroup";
+    CONSTR(FUNC,"VHmakegroup");
 
     vg = Vattach (f, -1, "w");
     if(vg == FAIL)

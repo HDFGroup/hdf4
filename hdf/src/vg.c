@@ -73,7 +73,7 @@ HFILEID f;
 #endif
 {
 	uint16 r;
-	char * FUNC = "vnewref";
+	CONSTR(FUNC,"vnewref");
 
     r = (uint16) Hnewref (f);
     if (r == 0)
@@ -138,7 +138,7 @@ int32 vkey;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VSelts";
+    CONSTR(FUNC,"VSelts");
 
     if (!VALIDVSID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -176,7 +176,7 @@ int32 vkey;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VSgetinterlace";
+    CONSTR(FUNC,"VSgetinterlace");
 
     if (!VALIDVSID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -215,7 +215,7 @@ int32 interlace;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VSsetinterlace";
+    CONSTR(FUNC,"VSsetinterlace");
 
     if (!VALIDVSID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -267,7 +267,7 @@ char  * fields;         /* fieldnames are returned in this var */
 	int32 i;
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VSgetfields";
+    CONSTR(FUNC,"VSgetfields");
 
     if (!VALIDVSID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -317,7 +317,7 @@ char *fields;
     VWRITELIST	*w;
     vsinstance_t    *wi;
     VDATA           *vs;
-    char * FUNC = "VSfexist";
+    CONSTR(FUNC,"VSfexist");
 
     if (!VALIDVSID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -388,7 +388,7 @@ char  *fields;
     char   	**av;
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VSsizeof";
+    CONSTR(FUNC,"VSsizeof");
 
     if (!VALIDVSID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -435,7 +435,7 @@ int32 vkey;
 #ifdef OLD_WAY
     VWRITELIST  *w;
 	int32 		i;
-	char * FUNC = "VSdump";
+	CONSTR(FUNC,"VSdump");
 
 	if (!vs) { 
           sprintf(sjs,"@VSdump: vs is null\n"); zj;
@@ -475,16 +475,16 @@ DESCRIPTION
 ---------------------------------------------------------- */
 
 #ifdef PROTOTYPE
-PUBLIC int32 VSsetname (int32 vkey, char *vsname)
+PUBLIC int32 VSsetname (int32 vkey, const char *vsname)
 #else
 PUBLIC int32 VSsetname (vkey, vsname)
 int32 vkey;
-char    *vsname;
+const char    *vsname;
 #endif
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VSsetname";
+    CONSTR(FUNC,"VSsetname");
     int slen;
 
     if (!VALIDVSID(vkey))
@@ -522,16 +522,16 @@ DESCRIPTION
         Truncates class name to max length of VSNAMELENMAX
 ---------------------------------------------------------- */
 #ifdef PROTOTYPE
-PUBLIC int32 VSsetclass (int32 vkey, char *vsclass)
+PUBLIC int32 VSsetclass (int32 vkey, const char *vsclass)
 #else
 PUBLIC int32 VSsetclass (vkey, vsclass)
 int32 vkey;
-char    *vsclass;
+const char    *vsclass;
 #endif
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VSsetclass";
+    CONSTR(FUNC,"VSsetclass");
     int slen;
 
     if (!VALIDVSID(vkey))
@@ -578,7 +578,7 @@ char    *vsname;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VSgetname";
+    CONSTR(FUNC,"VSgetname");
 
     if (!VALIDVSID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -618,7 +618,7 @@ char    *vsclass;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VSgetclass";
+    CONSTR(FUNC,"VSgetclass");
 
     if (!VALIDVSID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
@@ -669,7 +669,7 @@ char    *fields, *vsname;
 int32   *nelt, *interlace, *eltsize;
 #endif
 {
-    char * FUNC = "VSinquire";
+    CONSTR(FUNC,"VSinquire");
 
 	if(fields)
         VSgetfields(vkey,fields);
@@ -716,7 +716,7 @@ int32   asize;            /* input: size of idarray */
     int32  i, vgid, vsid, vstag;
     int32  vkey;
     int32  nlone; /* total number of lone vdatas */
-    char * FUNC = "VSlone";
+    CONSTR(FUNC,"VSlone");
 
 /* -- allocate space for vdata refs, init to zeroes -- */
     if (NULL == (lonevdata = (uint8 *) HDgetspace( 65000L * sizeof(uint8))))
@@ -788,7 +788,7 @@ int32   asize;            /* input: size of idarray */
     int32   vgid, vstag, id;
     int32   vkey;
     int32   nlone; /* total number of lone vgroups */
-    char  * FUNC = "Vlone";
+    CONSTR(FUNC,"Vlone");
     
     /* -- allocate space for vgroup refs, init to zeroes -- */
     if (NULL == (lonevg = (uint8 *) HDgetspace ( 65000L * sizeof(uint8))))
@@ -843,18 +843,18 @@ RETURNS
            vgroup's ref (a positive integer).
 ----------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 Vfind (HFILEID f, char *vgname)
+int32 Vfind (HFILEID f, const char *vgname)
 #else
 int32 Vfind (f, vgname)
 HFILEID f;
-char    * vgname;
+const char    * vgname;
 #endif
 {
     int32 vgid = -1;
     int32 ret_ref;
     int32 vkey;
     char  name[512];
-    char * FUNC = "Vfind";
+    CONSTR(FUNC,"Vfind");
     
     while ( -1L != (vgid = Vgetid(f, vgid)) ) {
         vkey = Vattach(f, vgid, "r");
@@ -889,18 +889,18 @@ RETURNS
              ref (a positive integer).
 --------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 VSfind (HFILEID f, char *vsname)
+int32 VSfind (HFILEID f, const char *vsname)
 #else
 int32 VSfind (f, vsname)
 HFILEID f;
-char * vsname;
+const char * vsname;
 #endif
 {
     int32 vsid = -1;
     int32 ret_ref;
     int32 vkey;
     char  name[512];
-    char * FUNC = "VSfind";
+    CONSTR(FUNC,"VSfind");
     
     while ( -1L != (vsid=VSgetid(f, vsid)) ) {
         vkey = VSattach(f,vsid,"r");

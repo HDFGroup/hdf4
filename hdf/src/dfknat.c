@@ -77,7 +77,7 @@ uint32 num_elm, source_stride, dest_stride;
     register uint32 i;
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-    char *FUNC="DFKnb1b";
+    CONSTR(FUNC,"DFKnb1b");
 
     HEclear();
     
@@ -135,7 +135,7 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 buf[2];                          /* Inplace processing buffer */
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-  char *FUNC="DFKnb2b";
+  CONSTR(FUNC,"DFKnb2b");
 
   HEclear();
 
@@ -202,7 +202,7 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 buf[4];                          /* Inplace processing buffer */
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-  char *FUNC="DFKnb4b";
+  CONSTR(FUNC,"DFKnb4b");
 
   HEclear();
 
@@ -280,7 +280,7 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
 
-    char *FUNC="DFKnb8b";
+    CONSTR(FUNC,"DFKnb8b");
 
     HEclear();
 

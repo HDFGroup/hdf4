@@ -94,6 +94,7 @@ typedef struct {
 #define STREQ(s, t) (strcmp((s), (t)) == 0)
 #define NSTREQ(s, t, n) (strncmp((s), (t), (n)) == 0)
 #endif
+#define HDfreenclear(p) { if((p)!=NULL) HDfreespace(p); p=NULL; }
 
 #ifndef PRIVATE
 #   define PRIVATE static

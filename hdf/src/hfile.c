@@ -138,7 +138,7 @@ PRIVATE intn HIchangedd
 #endif
 
 PRIVATE intn HIget_file_slot
-  PROTO((char *path, char *FUNC));
+  PROTO((const char *path, char *FUNC));
 
 PRIVATE bool HIvalid_magic
   PROTO((hdf_file_t file, char *FUNC));
@@ -199,23 +199,23 @@ PRIVATE intn HIread_version
 
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int32 Hopen(char *path, intn access, int16 ndds)
+int32 Hopen(const char *path, intn acc_mode, int16 ndds)
 #else
-int32 Hopen(path, access, ndds)
-    char *path;                        /* Path of file to open */
-    intn access;                       /* Access mode */
+int32 Hopen(path, acc_mode, ndds)
+    const char *path;                        /* Path of file to open */
+    intn acc_mode;                       /* Access mode */
     int16 ndds;                        /* Number of dd's in each ddblock
                                             if file is created */
 #endif
 {
-    char *FUNC="Hopen";                /* For HERROR */
-    int slot;                  /* File record slot */
-    filerec_t *file_rec;       /* File record */
-    int vtag = 0;		/* write version tag? */
+    CONSTR(FUNC,"Hopen");       /* For HERROR */
+    int slot;               /* File record slot */
+    filerec_t *file_rec;    /* File record */
+    int vtag = 0;	/* write version tag? */
 
     /* Clear errors and check args and all the boring stuff. */
     HEclear();
-    if (!path || ((access & DFACC_ALL) != access)) 
+    if (!path || ((acc_mode & DFACC_ALL) != acc_mode)) 
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* Get a space to put the file information.
@@ -230,10 +230,10 @@ int32 Hopen(path, access, ndds)
 
     /* If this request is to create a new file and file is still
      * in use, return error. */
-    if (access == DFACC_CREATE) 
+    if (acc_mode == DFACC_CREATE) 
        HRETURN_ERROR(DFE_ALROPEN,FAIL);
 
-    if ((access & DFACC_WRITE) && !(file_rec->access & DFACC_WRITE)) {
+    if ((acc_mode & DFACC_WRITE) && !(file_rec->access & DFACC_WRITE)) {
        /* If the request includes writing, and if original open does not
           provide for write, then try to reopen file for writing.
           This cannot be done on OS (such as the SXOS) where only one
@@ -241,7 +241,7 @@ int32 Hopen(path, access, ndds)
 #ifndef NO_MULTI_OPEN
            hdf_file_t f;
 
-           f = HI_OPEN(file_rec->path, access);
+           f = HI_OPEN(file_rec->path, acc_mode);
            if (OPENERR(f)) 
                HRETURN_ERROR(DFE_DENIED,FAIL);
 
@@ -266,12 +266,12 @@ int32 Hopen(path, access, ndds)
        bool new_file=FALSE;
 
        /* Open the file, fill in the blanks and all the good stuff. */
-       if (access != DFACC_CREATE) {
+       if (acc_mode != DFACC_CREATE) {
            /* try to open existing file */
 
-           file_rec->file = HI_OPEN(file_rec->path, access);
+           file_rec->file = HI_OPEN(file_rec->path, acc_mode);
            if (OPENERR(file_rec->file)) {
-               if (access & DFACC_WRITE) {
+               if (acc_mode & DFACC_WRITE) {
                    /* Seems like the file is not there, try to create it. */
                    new_file = TRUE;
                } else 
@@ -279,7 +279,7 @@ int32 Hopen(path, access, ndds)
 
            } else {
                /* Open existing file successfully. */
-               file_rec->access = access | DFACC_READ;
+               file_rec->access = acc_mode | DFACC_READ;
 
                /* Check to see if file is a HDF file. */
                if (!HIvalid_magic(file_rec->file, FUNC)) {
@@ -296,7 +296,7 @@ int32 Hopen(path, access, ndds)
        }
        /* do *not* use else here */
 
-       if (access == DFACC_CREATE || new_file) {
+       if (acc_mode == DFACC_CREATE || new_file) {
            /* create the file */
            
            /* make user we get a version tag */
@@ -318,7 +318,7 @@ int32 Hopen(path, access, ndds)
                HRETURN_ERROR(DFE_WRITEERROR,FAIL);
 
            file_rec->maxref = 0;
-           file_rec->access = new_file ? access | DFACC_READ : DFACC_ALL;
+           file_rec->access = new_file ? acc_mode | DFACC_READ : DFACC_ALL;
        }
        file_rec->refcount = 1;
        file_rec->attach = 0;
@@ -364,7 +364,7 @@ intn Hclose(file_id)
 #endif
 {
     register intn i;
-    char *FUNC="Hclose";       /* for HERROR */
+    CONSTR(FUNC,"Hclose");       /* for HERROR */
     filerec_t *file_rec;       /* file record pointer */
     register tag_ref_list_ptr p, q;
     
@@ -460,7 +460,7 @@ int32 Hstartread(file_id, tag, ref)
     uint16 ref;                        /* ref of elt to read */
 #endif
 {
-    char *FUNC="Hstartread";   /* for HERROR */
+    CONSTR(FUNC,"Hstartread");   /* for HERROR */
     int slot;                  /* slot in access record array */
     filerec_t *file_rec;       /* file record */
     accrec_t *access_rec;      /* access record */
@@ -548,7 +548,7 @@ intn Hnextread(access_id, tag, ref, origin)
     intn origin;                /* where to start searching from */
 #endif
 {
-    char *FUNC="Hnextread";    /* for HERROR */
+    CONSTR(FUNC,"Hnextread");    /* for HERROR */
     filerec_t *file_rec;       /* file record */
     accrec_t *access_rec;      /* access record */
     ddblock_t *block;
@@ -664,7 +664,7 @@ int32 *find_offset,*find_length;
 intn direction;
 #endif
 {
-    char *FUNC="Hfind";         /* for HERROR */
+    CONSTR(FUNC,"Hfind");         /* for HERROR */
     filerec_t *file_rec;        /* file record */
     ddblock_t *block;
     int32 idx;
@@ -742,7 +742,7 @@ intn Hexist(file_id, search_tag, search_ref)
      uint16 search_ref;
 #endif
 {
-    char *FUNC="Hexist";        /* for HERROR */
+    CONSTR(FUNC,"Hexist");        /* for HERROR */
     uint16 find_tag=0,find_ref=0;
     int32 find_offset,find_length;
 
@@ -795,7 +795,7 @@ intn Hinquire(access_id, pfile_id, ptag, pref, plength, poffset, pposn,
     int16 *pspecial;             /* special code */
 #endif
 {
-    char *FUNC="Hinquire";     /* for HERROR */
+    CONSTR(FUNC,"Hinquire");     /* for HERROR */
     register accrec_t *access_rec;      /* access record */
     register dd_t *dd;                  /* dd of access record */
 
@@ -863,7 +863,7 @@ int32 Hstartwrite(file_id, tag, ref, length)
     int32 length;              /* length of elt to write */
 #endif
 {
-    char *FUNC="Hstartwrite";  /* for HERROR */
+    CONSTR(FUNC,"Hstartwrite");  /* for HERROR */
     int slot;                  /* free access records array slot */
     bool ddnew = FALSE;                /* is the dd a new one? */
     filerec_t *file_rec;       /* file record */
@@ -1075,7 +1075,7 @@ intn Happendable(aid)
     int32 aid;              /* Access ID (from Hstartwrite, etc.) */
 #endif
 {
-    char *FUNC="Happendable";   /* for HERROR */
+    CONSTR(FUNC,"Happendable");   /* for HERROR */
     int32 file_id;              /* file id the AID is attached to */
     filerec_t *file_rec;        /* file record */
     accrec_t *access_rec;       /* access record */
@@ -1145,7 +1145,7 @@ intn Hseek(access_id, offset, origin)
     intn origin;            /* origin in this elt to seek from */
 #endif
 {
-    char *FUNC="Hseek";                /* for HERROR */
+    CONSTR(FUNC,"Hseek");                /* for HERROR */
     accrec_t *access_rec;      /* access record */
 
     /* clear error stack and check validity of this access id */
@@ -1225,15 +1225,15 @@ intn Hseek(access_id, offset, origin)
 
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int32 Hread(int32 access_id, int32 length, uint8 *data)
+int32 Hread(int32 access_id, int32 length, VOIDP data)
 #else
 int32 Hread(access_id, length, data)
     int32 access_id;           /* access id */
     int32 length;              /* length of data to read */
-    uint8 *data;               /* data buffer to read into */
+    VOIDP data;               /* data buffer to read into */
 #endif
 {
-    char *FUNC="Hread";                /* for HERROR */
+    CONSTR(FUNC,"Hread");                /* for HERROR */
     filerec_t *file_rec;       /* file record */
     accrec_t *access_rec;      /* access record */
     dd_t *dd;                  /* current dd pointer */
@@ -1247,7 +1247,7 @@ int32 Hread(access_id, length, data)
     
     /* special elt, so call special function */
     if (access_rec->special)
-      return (*access_rec->special_func->read)(access_rec, length, (VOIDP) data);
+      return (*access_rec->special_func->read)(access_rec, length, data);
 
     /* check validity of file record */
     file_rec = FID2REC(access_rec->file_id);
@@ -1286,7 +1286,7 @@ int32 Hread(access_id, length, data)
        int32 Hwrite(access_id, len, data)
        int32 access_id;        IN: id of WRITE access element
        int32 len;              IN: length of segment to write
-       char *data;             IN: pointer to data to write
+       const char *data;       IN: pointer to data to write
  RETURNS
        returns length of segment successfully written, FAIL (-1) otherwise
  DESCRIPTION
@@ -1300,15 +1300,15 @@ int32 Hread(access_id, length, data)
 
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int32 Hwrite(int32 access_id, int32 length, uint8 *data)
+int32 Hwrite(int32 access_id, int32 length, const VOIDP data)
 #else
 int32 Hwrite(access_id, length, data)
     int32 access_id;           /* access id */
     int32 length;              /* length of data to write */
-    uint8 *data;               /* data buffer */
+    const VOIDP data;          /* data buffer */
 #endif
 {
-    char *FUNC="Hwrite";       /* for HERROR */
+    CONSTR(FUNC,"Hwrite");       /* for HERROR */
     filerec_t *file_rec;       /* file record */
     accrec_t *access_rec;      /* access record */
     dd_t *dd;                  /* ptr to dd of current elt */
@@ -1329,7 +1329,7 @@ printf("Hwrite(): before special element function call\n");
 #endif
     /* if special elt, call special function */
     if (access_rec->special)
-       return (*access_rec->special_func->write)(access_rec, length, (VOIDP)data);
+       return (*access_rec->special_func->write)(access_rec, length, data);
 
     /* check validity of file record and get dd ptr */
     file_rec = FID2REC(access_rec->file_id);
@@ -1413,7 +1413,7 @@ intn HDgetc(access_id)
     int32 access_id;           /* access id */
 #endif
 {
-    char *FUNC="HDgetc";     /* for HERROR */
+    CONSTR(FUNC,"HDgetc");     /* for HERROR */
     uint8 c;                /* character read in */
 
     if(Hread(access_id,1,&c)==FAIL)
@@ -1448,7 +1448,7 @@ intn HDputc(c,access_id)
     int32 access_id;        /* access id */
 #endif
 {
-    char *FUNC="HDputc";    /* for HERROR */
+    CONSTR(FUNC,"HDputc");    /* for HERROR */
 
     if(Hwrite(access_id,1,&c)==FAIL)
         HRETURN_ERROR(DFE_WRITEERROR,FAIL);
@@ -1481,7 +1481,7 @@ intn Hendaccess(access_id)
     int32 access_id;           /* access id */
 #endif
 {
-    char *FUNC="Hendaccess";   /* for HERROR */
+    CONSTR(FUNC,"Hendaccess");   /* for HERROR */
     filerec_t *file_rec;       /* file record */
     accrec_t *access_rec;      /* access record */
 
@@ -1542,7 +1542,7 @@ int32 Hgetelement(file_id, tag, ref, data)
     uint8 *data;            /* data buffer to read into */
 #endif
 {
-    char *FUNC="Hgetelement";  /* for HERROR */
+    CONSTR(FUNC,"Hgetelement");  /* for HERROR */
     int32 access_id;           /* access record id */
     int32 length;              /* length of this elt */
 
@@ -1595,7 +1595,7 @@ int32 Hputelement(file_id, tag, ref, data, length)
     int32 length;              /* length of data to write */
 #endif
 {
-    char *FUNC="Hputelement";  /* for HERROR */
+    CONSTR(FUNC,"Hputelement");  /* for HERROR */
     int32 access_id;           /* access record id */
     int32 ret;                 /* return code */
 
@@ -1644,7 +1644,7 @@ int32 Hlength(file_id, tag, ref)
     uint16 ref;                        /* ref of id to inquire */
 #endif
 {
-    char *FUNC="Hlength";      /* for HERROR */
+    CONSTR(FUNC,"Hlength");      /* for HERROR */
     int32 access_id;           /* access record id */
     int32 length;              /* length of elt inquired */
     int ret;                   /* return code */
@@ -1699,7 +1699,7 @@ int32 Hoffset(file_id, tag, ref)
     uint16 ref;                        /* ref of elt to inquire */
 #endif
 {
-    char *FUNC="Hoffset";      /* for HERROR */
+    CONSTR(FUNC,"Hoffset");      /* for HERROR */
     int32 access_id;           /* access record id */
     int32 offset;              /* offset of elt inquired */
     int ret;                   /* return code */
@@ -1752,7 +1752,7 @@ intn Hdupdd(file_id, tag, ref, old_tag, old_ref)
     uint16 old_ref;            /* ref of old dd to duplicate */
 #endif
 {
-    char *FUNC="Hdupdd";       /* for HERROR */
+    CONSTR(FUNC,"Hdupdd");       /* for HERROR */
     filerec_t *file_rec;       /* file record */
     ddblock_t *block;          /* dd block fo old dd */
     ddblock_t *new_block;      /* dd block of new dd */
@@ -1898,7 +1898,7 @@ intn Hdeldd(file_id, tag, ref)
     uint16 ref;                        /* ref of dd to delete */
 #endif
 {
-    char *FUNC="Hdeldd";       /* for HERROR */
+    CONSTR(FUNC,"Hdeldd");       /* for HERROR */
     filerec_t *file_rec;       /* file record */
     ddblock_t *block;          /* dd block of deleted dd */
     int32 idx;                 /* dd list index of deleted dd */
@@ -1957,7 +1957,7 @@ uint16 Hnewref(file_id)
     int32 file_id;             /* file record id */
 #endif
 {
-    char *FUNC="Hnewref";      /* for HERROR */
+    CONSTR(FUNC,"Hnewref");      /* for HERROR */
     filerec_t *file_rec;       /* file record */
     uint16 ref;                        /* the new ref */
 
@@ -1996,7 +1996,7 @@ uint16 Hnewref(file_id)
        Hishdf -- tells if a file is an HDF file
  USAGE
        intn Hishdf(path)
-       char *path;             IN: name of file
+       const char *path;             IN: name of file
  RETURNS
        returns TRUE (non-zero) if file is HDF, FALSE (0) otherwise
  DESCRIPTION
@@ -2009,13 +2009,13 @@ uint16 Hnewref(file_id)
 
 intn
 #ifdef PROTOTYPE
-Hishdf(char *filename)
+Hishdf(const char *filename)
 #else
 Hishdf(filename)
-    char *filename;
+    const char *filename;
 #endif /* PROTOTYPE */
 {
-    char *FUNC = "Hishdf";
+    CONSTR(FUNC,"Hishdf");
 
 #if defined(VMS) || defined(MAC) || defined(PC)
   
@@ -2032,7 +2032,6 @@ Hishdf(filename)
 
     bool ret;
     hdf_file_t fp;
-    char b[MAGICLEN];
   
     fp = HI_OPEN(filename, DFACC_READ);
     if (OPENERR(fp)) {
@@ -2069,7 +2068,7 @@ int32 Htrunc(aid, trunc_len)
     int32 trunc_len;       /* length to truncate element to */
 #endif
 {
-    char *FUNC="Htrunc";       /* for HERROR */
+    CONSTR(FUNC,"Htrunc");       /* for HERROR */
     accrec_t *access_rec;      /* access record */
 
     /* clear error stack and check validity of access id */
@@ -2492,7 +2491,7 @@ PRIVATE int HIlock(file_id)
     int32 file_id;             /* file record id to lock */
 #endif
 {
-    char *FUNC="HIlock";       /* for HERROR */
+    CONSTR(FUNC,"HIlock");       /* for HERROR */
 
     /* get file record and check validity */
     filerec_t *file_rec=FID2REC(file_id);
@@ -2518,7 +2517,7 @@ PRIVATE int HIunlock(file_id)
     int32 file_id;             /* file record to unlock */
 #endif
 {
-    char *FUNC="HIunlock";     /* for HERROR */
+    CONSTR(FUNC,"HIunlock");     /* for HERROR */
 
     /* get file record and validate */
     filerec_t *file_rec=FID2REC(file_id);
@@ -2557,7 +2556,7 @@ int32 Hnumber(file_id, tag)
     uint16 tag;
 #endif
 {
-    char *FUNC="Hnumber";
+    CONSTR(FUNC,"Hnumber");
     int32 n = 0;
     ddblock_t *block;
     int32 idx;
@@ -2707,8 +2706,7 @@ uint32 *majorv, *minorv, *releasev;
 char string[];
 #endif
 {
-    char *FUNC="Hgetlibversion";
-    int i;
+    CONSTR(FUNC,"Hgetlibversion");
 
     HEclear();
 
@@ -2718,7 +2716,6 @@ char string[];
     HIstrncpy(string, LIBVER_STRING, LIBVSTR_LEN+1);
 
     return(SUCCEED);
-
 } /* HDgetlibversion */
 
 
@@ -2753,7 +2750,7 @@ char string[];
 #endif
 {
     filerec_t *file_rec;
-    char *FUNC="Hgetfileversion";
+    CONSTR(FUNC,"Hgetfileversion");
 
 
     HEclear();
@@ -2935,10 +2932,10 @@ FILE *fp;
 
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-PRIVATE int HIget_file_slot(char *path, char *FUNC)
+PRIVATE int HIget_file_slot(const char *path, char *FUNC)
 #else
 PRIVATE int HIget_file_slot(path, FUNC)
-    char *path;                /* file path */
+    const char *path;                /* file path */
     char *FUNC;                /* Error is charged to calling function */
 #endif
 {
@@ -3414,7 +3411,7 @@ int32 file_id;
     uint8 /*lstring[81],*/ lversion[LIBVER_LEN];
     filerec_t *file_rec;
     int ret, i;
-    char *FUNC="Hupdate_version";
+    CONSTR(FUNC,"Hupdate_version");
 
     HEclear();
 
@@ -3434,7 +3431,7 @@ int32 file_id;
     	UINT32ENCODE(p, file_rec->version.minorv);
     	UINT32ENCODE(p, file_rec->version.release);
         HIstrncpy((char*) p, file_rec->version.string, LIBVSTR_LEN);
-        for (i = strlen((char *)p); i < LIBVSTR_LEN; i++)
+        for (i = HDstrlen((char *)p); i < LIBVSTR_LEN; i++)
             p[i] = (uint8) 0;
     }
 
@@ -3476,7 +3473,7 @@ int32 file_id;
 {
     filerec_t *file_rec;
     uint8 fversion[LIBVER_LEN];
-    char *FUNC="Hread_version";
+    CONSTR(FUNC,"Hread_version");
 
     HEclear();
 
@@ -3535,7 +3532,7 @@ int32 block_size;
 bool moveto;
 #endif
 {
-    char *FUNC="HPgetdiskblock";
+    CONSTR(FUNC,"HPgetdiskblock");
     uint8 temp;
     int32 ret;
 
@@ -3588,7 +3585,7 @@ int32 block_off;
 int32 block_size;
 #endif
 {
-    char *FUNC="HPfreediskblock";
+    CONSTR(FUNC,"HPfreediskblock");
 
     return(SUCCEED);
 }   /* HPfreediskblock() */
@@ -3611,17 +3608,17 @@ int32 block_size;
 
 -------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn Hfidinquire(int32 file_id, char **fname, intn *access, intn *attach)
+intn Hfidinquire(int32 file_id, char **fname, intn *acc_mode, intn *attach)
 #else
-intn Hfidinquire(file_id, fname, access, attach)
+intn Hfidinquire(file_id, fname, acc_mode, attach)
 int32 file_id;
 char  **fname;
-intn  *access;
+intn  *acc_mode;
 intn  *attach;
 #endif
 {
     filerec_t *file_rec;
-    char *FUNC="Hfidinquire";
+    CONSTR(FUNC,"Hfidinquire");
 
     HEclear();
 
@@ -3630,7 +3627,7 @@ intn  *attach;
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
     *fname  = file_rec->path;
-    *access = file_rec->access;
+    *acc_mode = file_rec->access;
     *attach = file_rec->attach;
 
     return SUCCEED;
@@ -3652,7 +3649,8 @@ intn  *attach;
 #include "Strings.h"
 #endif
 
-PRIVATE int32 hdfc = 1061109567L;    /* equal to '????' in ascii */
+PRIVATE int32 hdfc = 1061109567L;    /* equal to 4 '?' in a row in ascii */
+					/* yes, I am deliberately avoiding the trigraph :-) */
 PRIVATE int32 hdft = 1600085855L;    /* equal to '_HDF' in ascii */
 
 #ifdef MPW
@@ -3696,7 +3694,7 @@ mopen(char *name, intn flags)
     OSErr result;
     FInfo fndrInfo;
 
-    strcpy((char *) pname, (char *) name);
+    HDstrcpy((char *) pname, (char *) name);
     CtoPstr(pname);
 
     result = GetVol(NULL,&volref);

@@ -103,7 +103,7 @@ extern "C" {
 
 /* prototypes for dfstubs.c */
 extern DF *DFopen
-  PROTO((char *name, int access, int ndds));
+  PROTO((char *name, int acc_mode, int ndds));
 
 extern int DFclose
   PROTO((DF *dfile));
@@ -121,10 +121,10 @@ extern int DFfind
   PROTO((DF *dfile, DFdesc *ptr));
 
 extern int DFaccess
-  PROTO((DF *dfile, uint16 tag, uint16 ref, char *access));
+  PROTO((DF *dfile, uint16 tag, uint16 ref, char *acc_mode));
 
 extern int DFstart
-  PROTO((DF *dfile, uint16 tag, uint16 ref, char *access));
+  PROTO((DF *dfile, uint16 tag, uint16 ref, char *acc_mode));
 
 extern int32 DFread
   PROTO((DF *dfile, char *ptr, int32 len));
@@ -184,6 +184,10 @@ extern char *DFIf2cstring
 extern int32 DFIspaceleft
   PROTO((void));
 #endif /* PC */
+
+/* prototypes for dfconv.c */
+extern int DFconvert
+  PROTO((uint8 *source,uint8 *dest,int ntype,int sourcetype,int desttype, int32 size));
 
 #if defined c_plusplus || defined __cplusplus
 }

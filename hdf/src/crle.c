@@ -53,7 +53,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* declaration of the functions provided in this module */
 PRIVATE int32 HCIcrle_staccess
-    PROTO((accrec_t *access_rec, int16 access));
+    PROTO((accrec_t *access_rec, int16 acc_mode));
 
 PRIVATE int32 HCIcrle_init
     PROTO((accrec_t *access_rec));
@@ -93,7 +93,7 @@ PRIVATE int32 HCIcrle_init(access_rec)
     accrec_t *access_rec;   /* access record */
 #endif
 {
-    char *FUNC="HCIcrle_init";          /* for HERROR */
+    CONSTR(FUNC,"HCIcrle_init");
     compinfo_t *info;                   /* special element information */
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
 
@@ -143,10 +143,10 @@ PRIVATE int32 HCIcrle_decode(info,length,buf)
     uint8 *buf;             /* buffer to read data into */
 #endif
 {
-    char *FUNC="HCIcrle_decode";        /* for HERROR */
+    CONSTR(FUNC,"HCIcrle_decode");
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
     int32 orig_length;      /* original length to write */
-    intn dec_len;           /* length to decode */
+    uintn dec_len;           /* length to decode */
     intn c;                 /* character to hold a byte read in */
 
     rle_info=&(info->cinfo.coder_info.rle_info);
@@ -174,7 +174,7 @@ PRIVATE int32 HCIcrle_decode(info,length,buf)
             if(length>rle_info->buf_length)  /* still need more data */
                 dec_len=rle_info->buf_length;
             else        /* only grab "length" bytes */
-                dec_len=(intn)length;
+                dec_len=(uintn)length;
 
             if(rle_info->rle_state==RLE_RUN)
                 HDmemset(buf,rle_info->last_byte,dec_len);  /* copy the run */
@@ -225,7 +225,7 @@ PRIVATE int32 HCIcrle_encode(info,length,buf)
     uint8 *buf;             /* buffer to read data from */
 #endif
 {
-    char *FUNC="HCIcrle_encode";        /* for HERROR */
+    CONSTR(FUNC,"HCIcrle_encode");
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
     int32 orig_length;      /* original length to write */
     intn c;                 /* character to hold a byte read in */
@@ -338,7 +338,7 @@ PRIVATE int32 HCIcrle_term(info)
     compinfo_t *info;       /* compression info */
 #endif
 {
-    char *FUNC="HCIcrle_term";          /* for HERROR */
+    CONSTR(FUNC,"HCIcrle_term");
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
     intn c;                 /* character to hold a byte read in */
 
@@ -390,19 +390,19 @@ PRIVATE int32 HCIcrle_term(info)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-PRIVATE int32 HCIcrle_staccess(accrec_t *access_rec, int16 access)
+PRIVATE int32 HCIcrle_staccess(accrec_t *access_rec, int16 acc_mode)
 #else
-PRIVATE int32 HCIcrle_staccess(access_rec, access)
+PRIVATE int32 HCIcrle_staccess(access_rec, acc_mode)
     accrec_t *access_rec;   /* access record */
-    int16 access;           /* access mode */
+    int16 acc_mode;           /* access mode */
 #endif
 {
-    char *FUNC="HCIcrle_staccess";      /* for HERROR */
+    CONSTR(FUNC,"HCIcrle_staccess");
     compinfo_t *info;                   /* special element information */
 
     info=(compinfo_t *)access_rec->special_info;
 
-    if(access==DFACC_READ)
+    if(acc_mode==DFACC_READ)
         info->aid=Hstartread(access_rec->file_id,DFTAG_COMPRESSED,
                 info->comp_ref);
     else 
@@ -440,7 +440,7 @@ int32 HCPcrle_stread(access_rec)
     accrec_t *access_rec;
 #endif
 {
-    char *FUNC="HCPcrle_stread";     /* for HERROR */
+    CONSTR(FUNC,"HCPcrle_stread");
     int32 ret;
 
     if((ret=HCIcrle_staccess(access_rec, DFACC_READ))==FAIL)
@@ -474,7 +474,7 @@ int32 HCPcrle_stwrite(access_rec)
     accrec_t *access_rec;
 #endif
 {
-    char *FUNC="HCPcrle_stwrite";     /* for HERROR */
+    CONSTR(FUNC,"HCPcrle_stwrite");
     int32 ret;
 
     if((ret=HCIcrle_staccess(access_rec, DFACC_WRITE))==FAIL)
@@ -515,7 +515,7 @@ int32 HCPcrle_seek(access_rec, offset, origin)
     int origin;
 #endif
 {
-    char *FUNC="HCPcrle_seek";      /* for HERROR */
+    CONSTR(FUNC,"HCPcrle_seek");
     compinfo_t *info;                   /* special element information */
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
     uint8 *tmp_buf;                 /* pointer to throw-away buffer */
@@ -579,7 +579,7 @@ int32 HCPcrle_read(access_rec, length, data)
     VOIDP data;                /* data buffer */
 #endif
 {
-    char *FUNC="HCPcrle_read";      /* for HERROR */
+    CONSTR(FUNC,"HCPcrle_read");
     compinfo_t *info;                   /* special element information */
 
     info=(compinfo_t *)access_rec->special_info;
@@ -612,15 +612,15 @@ int32 HCPcrle_read(access_rec, length, data)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int32 HCPcrle_write(accrec_t *access_rec, int32 length, VOIDP data)
+int32 HCPcrle_write(accrec_t *access_rec, int32 length, const VOIDP data)
 #else
 int32 HCPcrle_write(access_rec, length, data)
     accrec_t *access_rec;       /* access record */
     int32 length;               /* length of data to write */
-    VOIDP data;                 /* data buffer */
+    const VOIDP data;                 /* data buffer */
 #endif
 {
-    char *FUNC="HCPcrle_write";     /* for HERROR */
+    CONSTR(FUNC,"HCPcrle_write");
     compinfo_t *info;               /* special element information */
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
 
@@ -716,7 +716,7 @@ int32 HCPcrle_endaccess(access_rec)
     accrec_t *access_rec;      /* access record to dispose of */
 #endif
 {
-    char *FUNC="HCPcrle_endaccess"; /* for HERROR */
+    CONSTR(FUNC,"HCPcrle_endaccess");
     compinfo_t *info;               /* special element information */
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
 

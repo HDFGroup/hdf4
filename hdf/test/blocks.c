@@ -39,7 +39,7 @@ void test_hblocks()
     int32 aid1, aid2;
     int32 fileid, length, offset, posn;
     uint16 tag, ref;
-    int16 access, special;
+    int16 acc_mode, special;
     register int i;
     int32 ret;
     intn errors = 0;
@@ -68,7 +68,7 @@ void test_hblocks()
 
     ret = Hwrite(aid1, HDstrlen("correct")+1, (uint8 *) "correct");
     if(ret != (int32)HDstrlen("correct") + 1) {
-      fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", ret);
+      fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int)ret);
       errors++;
     }
 
@@ -81,7 +81,7 @@ void test_hblocks()
 
     ret = Hwrite(aid1, BUFSIZE/2, outbuf);
     if(ret != BUFSIZE/2) {
-      fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", ret);
+      fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int)ret);
       errors++;
     }
 
@@ -96,7 +96,7 @@ void test_hblocks()
 
     ret = Hwrite(aid1, HDstrlen("element 1000 2")+1, (uint8 *) "element 1000 2");
     if(ret != (int32)HDstrlen("element 1000 2") + 1) {
-      fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", ret);
+      fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int)ret);
       errors++;
     }
 
@@ -106,7 +106,7 @@ void test_hblocks()
     MESSAGE(5,printf("Verifying data\n"););
     ret = Hgetelement(fid, (uint16) 1000, (uint16) 4, inbuf);
     if(ret != BUFSIZE/2) {
-      fprintf(stderr, "ERROR: Hgetelement returned the wrong length: %d\n", ret);
+      fprintf(stderr, "ERROR: Hgetelement returned the wrong length: %d\n", (int)ret);
       errors++;
     }
 
@@ -123,7 +123,7 @@ void test_hblocks()
 
     ret = Hwrite(aid1, BUFSIZE, outbuf);
     if(ret != BUFSIZE) {
-      fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", ret);
+      fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int)ret);
       errors++;
     }
 
@@ -146,7 +146,7 @@ void test_hblocks()
     CHECK(aid1, FAIL, "Hstartread");
 
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
-                  &access, &special);
+                  &acc_mode, &special);
     CHECK(ret, FAIL, "Hinquire");
     if(!special) {
       fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
@@ -156,13 +156,13 @@ void test_hblocks()
 
     ret = Hread(aid1, length, inbuf);
     if(ret != 23) {
-      fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", ret);
+      fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int)ret);
       errors++;
     }
 
     if(HDstrcmp((const char *) inbuf, (const char *) "element 1000 1 correct")) {
       fprintf(stderr, "ERROR: Hread returned the wrong data\n");
-      fprintf(stderr, "\t       Is: %s\n", inbuf);
+      fprintf(stderr, "\t       Is: %s\n", (char *)inbuf);
       fprintf(stderr, "\tShould be: element 1000 1 correct\n");
       errors++;
     }
@@ -174,7 +174,7 @@ void test_hblocks()
     CHECK(ret, FAIL, "Hnextread");
 
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
-                  &access, &special);
+                  &acc_mode, &special);
     CHECK(ret, FAIL, "Hinquire");
     if(!special) {
       fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
@@ -186,7 +186,7 @@ void test_hblocks()
     CHECK(ret, FAIL, "Hnextread");
 
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
-                  &access, &special);
+                  &acc_mode, &special);
     CHECK(ret, FAIL, "Hinquire");
     if(special) {
       fprintf(stderr, "ERROR: Hinquire thinks a non-special element is special\n");
@@ -203,7 +203,7 @@ void test_hblocks()
     CHECK(ret, FAIL, "Hnextread");
 
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
-                  &access, &special);
+                  &acc_mode, &special);
     CHECK(ret, FAIL, "Hinquire");
     if(!special) {
       fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
@@ -217,7 +217,7 @@ void test_hblocks()
 
     ret = Hwrite(aid2, 4, (uint8 *) "ABCD");
     if(ret != 4) {
-      fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", ret);
+      fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int)ret);
       errors++;
     }
 

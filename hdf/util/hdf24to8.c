@@ -68,9 +68,9 @@ int r24r8
   PROTO((int32, int32, unsigned char *, unsigned char *, int, unsigned char *));
 
 #ifdef PROTOTYPE
-main (int argc, char *argv[])
+int main (int argc, char *argv[])
 #else
-main (argc, argv)
+int main (argc, argv)
 int argc;
 char *argv[];
 #endif /* PROTOTYPE */ 
@@ -144,17 +144,17 @@ char *argv[];
 		exit (-1);
 	}
 
-	free ((char *) r24);
-	free ((char *) r8);
-	free ((char *) pal);
+	HDfreespace ((char *) r24);
+	HDfreespace ((char *) r8);
+	HDfreespace ((char *) pal);
 
 	return 0;
 }
 
 #ifdef PROTOTYPE
-r24r8 (int32 xres, int32 yres, UCHAR *dat24, UCHAR *dat8, int cres, UCHAR *cdat)
+int r24r8 (int32 xres, int32 yres, UCHAR *dat24, UCHAR *dat8, int cres, UCHAR *cdat)
 #else
-r24r8 (xres, yres, dat24, dat8, cres, cdat)
+int r24r8 (xres, yres, dat24, dat8, cres, cdat)
 int32    xres;      /* x dimension - horizontal size */
 int32    yres;      /* y dimension - vertical size */
 UCHAR   *dat24;		/* pointer to 24 bit image in "pixel" format */
@@ -171,9 +171,6 @@ UCHAR   *cdat;		/* pointer to palette - should be 3 * 256 bytes long */
     UINT    *idat[2];
     UINT    *cp,*np;
     UCHAR   *dip,*dop,*rp,*gp,*bp;
-#ifdef UNIX
-    char    *malloc();
-#endif
 
     if ((idat[0] = (UINT *)HDgetspace(6*xres*sizeof(UINT))) == NULL)
     {   fprintf(stderr,"error: Memory allocation fault\n");
@@ -342,9 +339,8 @@ UCHAR   *cdat;		/* pointer to palette - should be 3 * 256 bytes long */
 
     *dop++ = (UCHAR)((rct * gres + gct) * bres + bct + coff);
 
-    free(idat[0]);
+    HDfreespace(idat[0]);
     return 0;
 }
-
 
 

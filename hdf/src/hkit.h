@@ -23,7 +23,7 @@
    required but efficiency should be okay. */
 typedef struct tag_descript_t {
     uint16 tag;    /* tag for description ? */
-    char   *desc;  /* tag description ? */  
+    const char   *desc;  /* tag description ? */  
 } tag_descript_t;
 
 /*  NOTE: 

@@ -40,9 +40,9 @@ int32 vsdumpfull
   PROTO((int32 vs)); 
 
 #ifdef PROTOTYPE
-main(int ac,char **av)
+int main(int ac,char **av)
 #else
-main(ac,av)
+int main(ac,av)
 int ac; 
 char**av;
 #endif
@@ -62,15 +62,16 @@ char**av;
     int32 nlone; /* total number of lone vdatas */
     
     char fields[50], vgname[50],vsname[50];
-    char  vgclass[50],vsclass[50], *name;
+    char  vgclass[50],vsclass[50]; 
+    const char *name;
     int32 fulldump = 0, start = 1;
     
     if (ac == 3) if(av[2][0]=='-'||av[2][0]=='+') {
-        sscanf(&(av[2][1]),"%d",&vsno);
+        sscanf(&(av[2][1]),"%ld",&vsno);
         if(vsno == 0) {
             printf("FULL DUMP\n"); 
         } else { 
-            printf("FULL DUMP on vs#%d\n",vsno); 
+            printf("FULL DUMP on vs#%ld\n",(long)vsno); 
         }
         fulldump = 1;
         if(av[2][0]=='+') condensed = 1; 
@@ -97,7 +98,7 @@ char**av;
     while( (vgid = Vgetid(f,vgid)) != -1) {
         vg = Vattach(f,vgid,"r");
         if(vg == FAIL) {
-            printf("cannot open vg id=%d\n",vgid);
+            printf("cannot open vg id=%d\n",(int)vgid);
         }
         Vinquire(vg,&n, vgname);
         vgotag = VQuerytag(vg);
@@ -105,7 +106,7 @@ char**av;
         Vgetclass(vg, vgclass); 
         if (HDstrlen(vgname)==0)  HDstrcat(vgname,"NoName");
         printf("\nvg:%d <%d/%d> (%s {%s}) has %d entries:\n",
-               nvg, vgotag, vgoref, vgname, vgclass,n);
+               (int)nvg, (int)vgotag, (int)vgoref, vgname, vgclass,(int)n);
         
         for (t=0; t< Vntagrefs(vg); t++) {
             Vgettagref(vg, t, &vstag, &vsid);
@@ -115,7 +116,7 @@ char**av;
                 vs = VSattach(f,vsid,"r");
                 
                 if(vs == FAIL) {
-                    printf("cannot open vs id=%d\n",vsid);
+                    printf("cannot open vs id=%d\n",(int)vsid);
                     continue;
                 }
                 
@@ -125,7 +126,7 @@ char**av;
                 if (HDstrlen(vsname)==0)  HDstrcat(vsname,"NoName");
                 VSgetclass(vs,vsclass); 
                 printf("  vs:%d <%d/%d> nv=%d i=%d fld [%s] vsize=%d (%s {%s})\n",
-                       t, vsotag, vsoref, nv, interlace, fields, vsize, vsname, vsclass);
+                       (int)t, (int)vsotag, (int)vsoref, (int)nv, (int)interlace, fields, (int)vsize, vsname, vsclass);
                 
                 if(fulldump && vsno==0) vsdumpfull(vs);
                 else if(fulldump && vsno==vsoref) vsdumpfull(vs);
@@ -138,7 +139,7 @@ char**av;
                     vgt = Vattach(f,vsid,"r");
                     
                     if(vgt== FAIL) {
-                        printf("cannot open vg id=%d\n",vsid);
+                        printf("cannot open vg id=%d\n",(int)vsid);
                         continue;
                     }
                     
@@ -148,12 +149,12 @@ char**av;
                     vgoref = VQueryref(vgt);
                     Vgetclass(vgt, vgclass);
                     printf("  vg:%d <%d/%d> ne=%d (%s {%s})\n",
-                           t, vgotag, vgoref, ne,  vgname, vgclass );
+                           (int)t, (int)vgotag, (int)vgoref, (int)ne,  vgname, vgclass );
                     Vdetach(vgt);
                 } else { 
                     name = HDgettagname((uint16)vstag);
                     if(!name) name = "Unknown Tag";
-                    printf("  --:%d <%d/%d> %s\n", t, vstag, vsid, name);
+                    printf("  --:%d <%d/%d> %s\n", (int)t, (int)vstag, (int)vsid, name);
             }
         } /* while */
         
@@ -171,7 +172,7 @@ char**av;
         
         printf("Lone vdatas:\n");
         if (NULL == (lonevs = (int32 *) HDgetspace(sizeof(int)*nlone))) {
-            printf("%s: File has %d lone vdatas but ",av[0],nlone ); 
+            printf("%s: File has %d lone vdatas but ",av[0],(int)nlone ); 
             printf("cannot alloc lonevs space. Quit.\n"); 
             exit(0);
         }
@@ -180,7 +181,7 @@ char**av;
         for(i=0; i<nlone;i++) {
             vsid = lonevs[i];
             if( FAIL == ( vs = VSattach(f,lonevs[i],"r"))) {
-                printf("cannot open vs id=%d\n",vsid);
+                printf("cannot open vs id=%d\n",(int)vsid);
                 continue;
             }
             VSinquire (vs, &nv,&interlace, fields, &vsize, vsname);
@@ -189,7 +190,7 @@ char**av;
             vsoref = VSQueryref(vs);
             VSgetclass (vs, vsclass);
             printf("L vs:%d <%d/%d> nv=%d i=%d fld [%s] vsize=%d (%s {%s})\n",
-                   vsid, vsotag, vsoref, nv, interlace, fields, vsize, vsname, vsclass);
+                   (int)vsid, (int)vsotag, (int)vsoref, (int)nv, (int)interlace, fields, (int)vsize, vsname, vsclass);
             if (fulldump && vsno==0) vsdumpfull(vs);
             else if (fulldump && vsno==vsoref) vsdumpfull(vs);
             VSdetach(vs);
@@ -347,7 +348,7 @@ int32 vs;
     
     nf = w->n;
     for (i=0; i < w->n; i++) {
-        printf("%d: fld [%s], type=%d, order=%d\n", i, w->name[i], w->type[i], w->order[i]);
+        printf("%d: fld [%s], type=%d, order=%d\n", (int)i, w->name[i], w->type[i], w->order[i]);
         
         order[i] = w->order[i];
         off[i]   = DFKNTsize(w->type[i] | DFNT_NATIVE);
@@ -382,7 +383,7 @@ int32 vs;
             break;
             
         default: 
-            fprintf(stderr,"sorry, type [%s] not supported\n", w->type[i]); 
+            fprintf(stderr,"sorry, type [%d] not supported\n", (int)w->type[i]); 
             break;
             
         }

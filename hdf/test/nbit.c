@@ -145,11 +145,9 @@ void test_nbit1(fid)
 int32 fid;
 #endif
 {
-    int32 aid1, aid2;
-    int32 fileid, length, offset, posn;
-    uint16 tag, ref, ref1, ref2, ref3;
-    int16 access, special;
-    register int i,j;
+    int32 aid1;
+    uint16 ref1;
+    register int i;
     int32 ret;
     intn errors = 0;
     model_info m_info;
@@ -178,7 +176,7 @@ int32 fid;
 
     ret = Hwrite(aid1, NBIT_SIZE1, outbuf);
     if(ret != NBIT_SIZE1) {
-      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,ret);
+      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,(int)ret);
       HEprint(stdout,0);
       errors++;
     }
@@ -190,7 +188,7 @@ int32 fid;
     ret = Hgetelement(fid, NBIT_TAG1, (uint16) ref1, inbuf);
     if(ret != NBIT_SIZE1) {
       HEprint(stderr,0);
-      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, ret);
+      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, (int)ret);
       errors++;
     }
 
@@ -203,6 +201,7 @@ int32 fid;
     }
     HDfreespace(outbuf);
     HDfreespace(inbuf);
+    num_errs+=errors;
 }
 
 #ifdef PROTOTYPE
@@ -212,11 +211,9 @@ void test_nbit2(fid)
 int32 fid;
 #endif
 {
-    int32 aid1, aid2;
-    int32 fileid, length, offset, posn;
-    uint16 tag, ref, ref1, ref2, ref3;
-    int16 access, special;
-    register int i,j;
+    int32 aid1;
+    uint16 ref1;
+    register int i;
     int32 ret;
     intn errors = 0;
     model_info m_info;
@@ -244,7 +241,7 @@ int32 fid;
 
     ret = Hwrite(aid1, NBIT_SIZE2, (uint8 FAR *)outbuf);
     if(ret != NBIT_SIZE2) {
-      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,ret);
+      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,(int)ret);
       HEprint(stdout,0);
       errors++;
     }
@@ -256,7 +253,7 @@ int32 fid;
     ret = Hgetelement(fid, NBIT_TAG2, (uint16) ref1, (uint8 FAR *)inbuf);
     if(ret != NBIT_SIZE2) {
       HEprint(stderr,0);
-      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, ret);
+      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, (int)ret);
       errors++;
     }
 
@@ -268,6 +265,7 @@ int32 fid;
     }
     HDfreespace(outbuf);
     HDfreespace(inbuf);
+    num_errs+=errors;
 }
 
 #ifdef PROTOTYPE
@@ -277,11 +275,9 @@ void test_nbit3(fid)
 int32 fid;
 #endif
 {
-    int32 aid1, aid2;
-    int32 fileid, length, offset, posn;
-    uint16 tag, ref, ref1, ref2, ref3;
-    int16 access, special;
-    register int i,j;
+    int32 aid1;
+    uint16 ref1;
+    register int i;
     int32 ret;
     intn errors = 0;
     model_info m_info;
@@ -314,7 +310,7 @@ int32 fid;
     CHECK(ret, FAIL, "DFKconvert");
     ret = Hwrite(aid1, NBIT_SIZE3*DFKNTsize(DFNT_UINT16), convbuf);
     if(ret != NBIT_SIZE3*DFKNTsize(DFNT_UINT16)) {
-      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,ret);
+      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,(int)ret);
       HEprint(stdout,0);
       errors++;
     }
@@ -327,7 +323,7 @@ int32 fid;
     ret = Hgetelement(fid, NBIT_TAG3, (uint16) ref1, convbuf);
     if(ret != NBIT_SIZE3*DFKNTsize(DFNT_UINT16)) {
       HEprint(stderr,0);
-      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, ret);
+      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, (int)ret);
       errors++;
     }
 
@@ -348,6 +344,7 @@ int32 fid;
     HDfreespace(outbuf);
     HDfreespace(inbuf);
     HDfreespace(convbuf);
+    num_errs+=errors;
 }
 
 #ifdef PROTOTYPE
@@ -357,11 +354,9 @@ void test_nbit4(fid)
 int32 fid;
 #endif
 {
-    int32 aid1, aid2;
-    int32 fileid, length, offset, posn;
-    uint16 tag, ref, ref1, ref2, ref3;
-    int16 access, special;
-    register int i,j;
+    int32 aid1;
+    uint16 ref1;
+    register int i;
     int32 ret;
     intn errors = 0;
     model_info m_info;
@@ -395,7 +390,7 @@ int32 fid;
 
     ret = Hwrite(aid1, NBIT_SIZE4*DFKNTsize(DFNT_INT16), convbuf);
     if(ret != NBIT_SIZE4*DFKNTsize(DFNT_INT16)) {
-      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,ret);
+      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,(int)ret);
       HEprint(stdout,0);
       errors++;
     }
@@ -410,7 +405,7 @@ int32 fid;
     ret = Hgetelement(fid, NBIT_TAG4, (uint16) ref1, convbuf);
     if(ret != NBIT_SIZE4*DFKNTsize(DFNT_INT16)) {
       HEprint(stderr,0);
-      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, ret);
+      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, (int)ret);
       errors++;
     }
 
@@ -431,6 +426,7 @@ int32 fid;
     HDfreespace(outbuf);
     HDfreespace(inbuf);
     HDfreespace(convbuf);
+    num_errs+=errors;
 }
 
 #ifdef PROTOTYPE
@@ -440,11 +436,9 @@ void test_nbit5(fid)
 int32 fid;
 #endif
 {
-    int32 aid1, aid2;
-    int32 fileid, length, offset, posn;
-    uint16 tag, ref, ref1, ref2, ref3;
-    int16 access, special;
-    register int i,j;
+    int32 aid1;
+    uint16 ref1;
+    register int i;
     int32 ret;
     intn errors = 0;
     model_info m_info;
@@ -478,7 +472,7 @@ int32 fid;
 
     ret = Hwrite(aid1, NBIT_SIZE5*DFKNTsize(DFNT_UINT32), convbuf);
     if(ret != NBIT_SIZE5*DFKNTsize(DFNT_UINT32)) {
-      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,ret);
+      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,(int)ret);
       HEprint(stdout,0);
       errors++;
     }
@@ -493,7 +487,7 @@ int32 fid;
     ret = Hgetelement(fid, NBIT_TAG5, (uint16) ref1, convbuf);
     if(ret != NBIT_SIZE5*DFKNTsize(DFNT_UINT32)) {
       HEprint(stderr,0);
-      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, ret);
+      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, (int)ret);
       errors++;
     }
 
@@ -505,7 +499,7 @@ int32 fid;
        test_in=inbuf[i]&NBIT_MASK5B;
 #ifndef TESTING
        if (test_in != test_out) {
-           printf("Wrong data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i],test_out, inbuf[i],test_in);
+           printf("Wrong data at %d, out (%lu)%lu in (%lu)%lu\n", i, (unsigned long)outbuf[i],(unsigned long)test_out, (unsigned long)inbuf[i],(unsigned long)test_in);
            errors++;
          }
 #else
@@ -515,6 +509,7 @@ int32 fid;
     HDfreespace(outbuf);
     HDfreespace(inbuf);
     HDfreespace(convbuf);
+    num_errs+=errors;
 }
 
 #ifdef PROTOTYPE
@@ -524,11 +519,9 @@ void test_nbit6(fid)
 int32 fid;
 #endif
 {
-    int32 aid1, aid2;
-    int32 fileid, length, offset, posn;
-    uint16 tag, ref, ref1, ref2, ref3;
-    int16 access, special;
-    register int i,j;
+    int32 aid1;
+    uint16 ref1;
+    register int i;
     int32 ret;
     intn errors = 0;
     model_info m_info;
@@ -562,7 +555,7 @@ int32 fid;
 
     ret = Hwrite(aid1, NBIT_SIZE6*DFKNTsize(DFNT_INT32), convbuf);
     if(ret != NBIT_SIZE6*DFKNTsize(DFNT_INT32)) {
-      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,ret);
+      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,(int)ret);
       HEprint(stdout,0);
       errors++;
     }
@@ -577,7 +570,7 @@ int32 fid;
     ret = Hgetelement(fid, NBIT_TAG6, (uint16) ref1, convbuf);
     if(ret != NBIT_SIZE6*DFKNTsize(DFNT_INT32)) {
       HEprint(stderr,0);
-      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, ret);
+      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, (int)ret);
       errors++;
     }
 
@@ -589,7 +582,7 @@ int32 fid;
        test_in=inbuf[i]&NBIT_MASK6B;
 #ifndef TESTING
        if (test_in != test_out) {
-           printf("Wrong data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i],test_out, inbuf[i],test_in);
+           printf("Wrong data at %d, out (%ld)%ld in (%ld)%ld\n", i, (long)outbuf[i],(long)test_out, (long)inbuf[i],(long)test_in);
            errors++;
          }
 #else
@@ -599,6 +592,7 @@ int32 fid;
     HDfreespace(outbuf);
     HDfreespace(inbuf);
     HDfreespace(convbuf);
+    num_errs+=errors;
 }
 
 #ifdef PROTOTYPE
@@ -608,11 +602,9 @@ void test_nbit7(fid)
 int32 fid;
 #endif
 {
-    int32 aid1, aid2;
-    int32 fileid, length, offset, posn;
-    uint16 tag, ref, ref1, ref2, ref3;
-    int16 access, special;
-    register int i,j;
+    int32 aid1;
+    uint16 ref1;
+    register int i;
     int32 ret;
     intn errors = 0;
     model_info m_info;
@@ -641,7 +633,7 @@ int32 fid;
 
     ret = Hwrite(aid1, NBIT_SIZE7, outbuf);
     if(ret != NBIT_SIZE7) {
-      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,ret);
+      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,(int)ret);
       HEprint(stdout,0);
       errors++;
     }
@@ -653,7 +645,7 @@ int32 fid;
     ret = Hgetelement(fid, NBIT_TAG7, (uint16) ref1, inbuf);
     if(ret != NBIT_SIZE7) {
       HEprint(stderr,0);
-      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, ret);
+      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, (int)ret);
       errors++;
     }
 
@@ -666,6 +658,7 @@ int32 fid;
     }
     HDfreespace(outbuf);
     HDfreespace(inbuf);
+    num_errs+=errors;
 }
 
 #ifdef PROTOTYPE
@@ -675,11 +668,9 @@ void test_nbit8(fid)
 int32 fid;
 #endif
 {
-    int32 aid1, aid2;
-    int32 fileid, length, offset, posn;
-    uint16 tag, ref, ref1, ref2, ref3;
-    int16 access, special;
-    register int i,j;
+    int32 aid1;
+    uint16 ref1;
+    register int i;
     int32 ret;
     intn errors = 0;
     model_info m_info;
@@ -708,7 +699,7 @@ int32 fid;
 
     ret = Hwrite(aid1, NBIT_SIZE8, (uint8 FAR *)outbuf);
     if(ret != NBIT_SIZE8) {
-      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,ret);
+      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,(int)ret);
       HEprint(stdout,0);
       errors++;
     }
@@ -720,7 +711,7 @@ int32 fid;
     ret = Hgetelement(fid, NBIT_TAG8, (uint16) ref1, (uint8 FAR *)inbuf);
     if(ret != NBIT_SIZE8) {
       HEprint(stderr,0);
-      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, ret);
+      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, (int)ret);
       errors++;
     }
 
@@ -733,6 +724,7 @@ int32 fid;
     }
     HDfreespace(outbuf);
     HDfreespace(inbuf);
+    num_errs+=errors;
 }
 
 #ifdef PROTOTYPE
@@ -742,11 +734,9 @@ void test_nbit9(fid)
 int32 fid;
 #endif
 {
-    int32 aid1, aid2;
-    int32 fileid, length, offset, posn;
-    uint16 tag, ref, ref1, ref2, ref3;
-    int16 access, special;
-    register int i,j;
+    int32 aid1;
+    uint16 ref1;
+    register int i;
     int32 ret;
     intn errors = 0;
     model_info m_info;
@@ -780,7 +770,7 @@ int32 fid;
 
     ret = Hwrite(aid1, NBIT_SIZE9*DFKNTsize(DFNT_UINT16), convbuf);
     if(ret != NBIT_SIZE9*DFKNTsize(DFNT_UINT16)) {
-      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,ret);
+      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,(int)ret);
       HEprint(stdout,0);
       errors++;
     }
@@ -795,7 +785,7 @@ int32 fid;
     ret = Hgetelement(fid, NBIT_TAG9, (uint16) ref1, convbuf);
     if(ret != NBIT_SIZE9*DFKNTsize(DFNT_UINT16)) {
       HEprint(stderr,0);
-      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, ret);
+      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, (int)ret);
       errors++;
     }
 
@@ -817,6 +807,7 @@ int32 fid;
     HDfreespace(outbuf);
     HDfreespace(inbuf);
     HDfreespace(convbuf);
+    num_errs+=errors;
 }
 
 #ifdef PROTOTYPE
@@ -826,11 +817,9 @@ void test_nbit10(fid)
 int32 fid;
 #endif
 {
-    int32 aid1, aid2;
-    int32 fileid, length, offset, posn;
-    uint16 tag, ref, ref1, ref2, ref3;
-    int16 access, special;
-    register int i,j;
+    int32 aid1;
+    uint16 ref1;
+    register int i;
     int32 ret;
     intn errors = 0;
     model_info m_info;
@@ -864,7 +853,7 @@ int32 fid;
 
     ret = Hwrite(aid1, NBIT_SIZE10*DFKNTsize(DFNT_INT16), convbuf);
     if(ret != NBIT_SIZE10*DFKNTsize(DFNT_INT16)) {
-      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,ret);
+      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,(int)ret);
       HEprint(stdout,0);
       errors++;
     }
@@ -879,7 +868,7 @@ int32 fid;
     ret = Hgetelement(fid, NBIT_TAG10, (uint16) ref1, convbuf);
     if(ret != NBIT_SIZE10*DFKNTsize(DFNT_INT16)) {
       HEprint(stderr,0);
-      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, ret);
+      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, (int)ret);
       errors++;
     }
 
@@ -901,6 +890,7 @@ int32 fid;
     HDfreespace(outbuf);
     HDfreespace(inbuf);
     HDfreespace(convbuf);
+    num_errs+=errors;
 }
 
 #ifdef PROTOTYPE
@@ -910,11 +900,9 @@ void test_nbit11(fid)
 int32 fid;
 #endif
 {
-    int32 aid1, aid2;
-    int32 fileid, length, offset, posn;
-    uint16 tag, ref, ref1, ref2, ref3;
-    int16 access, special;
-    register int i,j;
+    int32 aid1;
+    uint16 ref1;
+    register int i;
     int32 ret;
     intn errors = 0;
     model_info m_info;
@@ -948,7 +936,7 @@ int32 fid;
 
     ret = Hwrite(aid1, NBIT_SIZE11*DFKNTsize(DFNT_UINT32), convbuf);
     if(ret != NBIT_SIZE11*DFKNTsize(DFNT_UINT32)) {
-      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,ret);
+      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,(int)ret);
       HEprint(stdout,0);
       errors++;
     }
@@ -963,7 +951,7 @@ int32 fid;
     ret = Hgetelement(fid, NBIT_TAG11, (uint16) ref1, convbuf);
     if(ret != NBIT_SIZE11*DFKNTsize(DFNT_UINT32)) {
       HEprint(stderr,0);
-      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, ret);
+      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, (int)ret);
       errors++;
     }
 
@@ -975,7 +963,7 @@ int32 fid;
        test_in=inbuf[i]&NBIT_MASK11B;
 #ifndef TESTING
        if (test_in != test_out) {
-           printf("Wrong data at %d, out (%u)%u in (%u)%u\n", i, outbuf[i],test_out, inbuf[i],test_in);
+           printf("Wrong data at %d, out (%lu)%lu in (%lu)%lu\n", i, (unsigned long)outbuf[i],(unsigned long)test_out, (unsigned long)inbuf[i],(unsigned long)test_in);
            errors++;
          }
 #else
@@ -985,6 +973,7 @@ int32 fid;
     HDfreespace(outbuf);
     HDfreespace(inbuf);
     HDfreespace(convbuf);
+    num_errs+=errors;
 }
 
 #ifdef PROTOTYPE
@@ -994,11 +983,9 @@ void test_nbit12(fid)
 int32 fid;
 #endif
 {
-    int32 aid1, aid2;
-    int32 fileid, length, offset, posn;
-    uint16 tag, ref, ref1, ref2, ref3;
-    int16 access, special;
-    register int i,j;
+    int32 aid1;
+    uint16 ref1;
+    register int i;
     int32 ret;
     intn errors = 0;
     model_info m_info;
@@ -1032,7 +1019,7 @@ int32 fid;
 
     ret = Hwrite(aid1, NBIT_SIZE12*DFKNTsize(DFNT_INT32), convbuf);
     if(ret != NBIT_SIZE12*DFKNTsize(DFNT_INT32)) {
-      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,ret);
+      fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__,(int)ret);
       HEprint(stdout,0);
       errors++;
     }
@@ -1047,7 +1034,7 @@ int32 fid;
     ret = Hgetelement(fid, NBIT_TAG12, (uint16) ref1, convbuf);
     if(ret != NBIT_SIZE12*DFKNTsize(DFNT_INT32)) {
       HEprint(stderr,0);
-      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, ret);
+      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, (int)ret);
       errors++;
     }
 
@@ -1059,7 +1046,7 @@ int32 fid;
        test_in=inbuf[i]&NBIT_MASK12B;
 #ifndef TESTING
        if (test_in != test_out) {
-           printf("Wrong data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i],test_out, inbuf[i],test_in);
+           printf("Wrong data at %d, out (%ld)%ld in (%ld)%ld\n", i, (long)outbuf[i],(long)test_out, (long)inbuf[i],(long)test_in);
            errors++;
          }
 #else
@@ -1069,6 +1056,7 @@ int32 fid;
     HDfreespace(outbuf);
     HDfreespace(inbuf);
     HDfreespace(convbuf);
+    num_errs+=errors;
 }
 
 void test_nbit()

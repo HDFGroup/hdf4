@@ -58,8 +58,8 @@ int compare(aa, bb)
 const VOIDP aa, bb;
 #endif /* PROTOTYPE */
 {
-    dd_t *a = (dd_t *) aa;
-    dd_t *b = (dd_t *) bb;
+    const dd_t *a = (const dd_t *) aa;
+    const dd_t *b = (const dd_t *) bb;
     
     if(a->tag > b->tag) return(1);
     if(a->tag < b->tag) return(-1);
@@ -69,9 +69,9 @@ const VOIDP aa, bb;
 }
 
 #ifdef PROTOTYPE
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 #else
-main(argc, argv)
+int main(argc, argv)
 int argc;
 char *argv[];
 #endif /* PROTOTYPE */
@@ -189,10 +189,10 @@ char *argv[];
 }
 
 #ifdef PROTOTYPE
-int lprint(dd_t *desc, int num)
+int lprint(dd_t *l_desc, int num)
 #else
-int lprint(desc, num)
-dd_t  *desc;
+int lprint(l_desc, num)
+dd_t  *l_desc;
 int num;
 #endif /* PROTOTYPE */
 {
@@ -200,10 +200,11 @@ int num;
   intn j = 0, empty = 0, status;
   uint16 prev = 0;
   int32 len;
-  char *name, *label_str;
+  const char *name; 
+  char *label_str;
   
   while (j <num) {
-    if (desc[j].tag == DFTAG_NULL) {
+    if (l_desc[j].tag == DFTAG_NULL) {
       empty++;
       j++;
       continue;               /* don't print anything now */
@@ -213,7 +214,7 @@ int num;
      * skip this tag if the user only wants to see some tags and
      *  this is not one of them 
      */
-    if(only_tag != DFTAG_NULL && only_tag != desc[j].tag) {
+    if(only_tag != DFTAG_NULL && only_tag != l_desc[j].tag) {
         j++;
         continue;
     }
@@ -221,23 +222,23 @@ int num;
     /*
     ** Find and print text description of this tag
     */
-    name = HDgettagname(desc[j].tag);
+    name = HDgettagname(l_desc[j].tag);
     if(!name) name = "Unknown Tag";
-    printf("\n%-30s: (tag %d)\n", name, desc[j].tag);
+    printf("\n%-30s: (tag %d)\n", name, l_desc[j].tag);
 
     /*
     ** Print out reference number information
     */
-    prev = desc[j].tag;
+    prev = l_desc[j].tag;
     if(longout) {
-      while (desc[j].tag == prev && j < num) {
-	printf("\tRef no %6d\t%8ld bytes\n", desc[j].ref, desc[j].length);
+      while (l_desc[j].tag == prev && j < num) {
+	printf("\tRef no %6d\t%8ld bytes\n", l_desc[j].ref, l_desc[j].length);
         if(labels) {
             /* read in all of the labels */
-            len = DFANgetlablen(file_name, prev, desc[j].ref);
+            len = DFANgetlablen(file_name, prev, l_desc[j].ref);
             if(len != FAIL) {
                 label_str = (char *) HDgetspace((uint32) len + 1);
-                status = DFANgetlabel(file_name, prev, desc[j].ref, label_str, len + 1);
+                status = DFANgetlabel(file_name, prev, l_desc[j].ref, label_str, len + 1);
                 label_str[len] = '\0';
                 if(status == FAIL) 
                     printf("\t  Unable to read label\n");
@@ -247,10 +248,10 @@ int num;
             }
 
             /* read in all of the annotations */
-            len = DFANgetdesclen(file_name, prev, desc[j].ref);
+            len = DFANgetdesclen(file_name, prev, l_desc[j].ref);
             if(len != FAIL) {
                 label_str = (char *) HDgetspace((uint32) len + 1);
-                status = DFANgetdesc(file_name, prev, desc[j].ref, label_str, len + 1);
+                status = DFANgetdesc(file_name, prev, l_desc[j].ref, label_str, len + 1);
                 label_str[len] = '\0';
                 if(status == FAIL) 
                     printf("\t  Unable to read description\n");
@@ -263,8 +264,8 @@ int num;
       }
     } else {
       printf("\tRef nos:");
-      while (desc[j].tag==(uint16)prev && j<num) {
-	printf(" %d",desc[j].ref);
+      while (l_desc[j].tag==(uint16)prev && j<num) {
+	printf(" %d",l_desc[j].ref);
 	j++;
       }
     }

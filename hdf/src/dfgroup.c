@@ -66,7 +66,7 @@ setgroupREC(list_rec)
      DIlist_ptr list_rec;
 #endif
 {
-    char *FUNC="setgroupREC";
+    CONSTR(FUNC,"setgroupREC");
     int32 i;
 
     if (!Group_list) {
@@ -113,7 +113,7 @@ int32 DFdiread(file_id, tag, ref)
 #endif
 {
     DIlist_ptr new_list;
-    char *FUNC="DFdiread";
+    CONSTR(FUNC,"DFdiread");
     int32 length;
 
     HEclear();
@@ -171,7 +171,7 @@ intn DFdiget(list, ptag, pref)
      uint16 *pref;
 #endif
 {
-    char       *FUNC="DFdiget";
+    CONSTR(FUNC,"DFdiget");
     uint8      *p;
     DIlist_ptr list_rec;
 
@@ -215,7 +215,7 @@ int32 DFdisetup(maxsize)
     int maxsize;
 #endif
 {
-    char *FUNC="DFdisetup";
+    CONSTR(FUNC,"DFdisetup");
     DIlist_ptr new_list;
 
     new_list = (DIlist_ptr) HDgetspace((uint32) sizeof(DIlist));
@@ -253,7 +253,7 @@ intn DFdiput(list, tag, ref)
      uint16 tag, ref;
 #endif
 {
-    char *FUNC="DFdiput";
+    CONSTR(FUNC,"DFdiput");
     uint8 *p;
     DIlist_ptr list_rec;
     
@@ -292,7 +292,7 @@ intn DFdiwrite(file_id, list, tag, ref)
      uint16 tag, ref;
 #endif
 {
-    char *FUNC="DFdiwrite";
+    CONSTR(FUNC,"DFdiwrite");
     int32 ret;                   /* return value */
     DIlist_ptr list_rec;
 

@@ -864,9 +864,9 @@ VOID tbbtprint(node)
 TBBT_NODE *node;
 #endif
 {
-	printf("node=%p, key=%p, data=%p, flags=%x\n",node,node->key,node->data,node->flags);
-	printf("Lcnt=%d, Rcnt=%d\n",node->lcnt,node->rcnt);
-printf("*key=%d\n",*(int32 *)(node->key));
+	printf("node=%p, key=%p, data=%p, flags=%x\n",node,node->key,node->data,(unsigned)node->flags);
+	printf("Lcnt=%d, Rcnt=%d\n",(int)node->lcnt,(int)node->rcnt);
+printf("*key=%d\n",(int)*(int32 *)(node->key));
 	printf("Lchild=%p, Rchild=%p, Parent=%p\n",node->Lchild,node->Rchild,node->Parent);
 }	/* end tbbtprint() */
 

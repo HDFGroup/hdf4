@@ -77,7 +77,7 @@ typedef struct linkinfo_t {
 
 /* private functions */
 PRIVATE int32 HLIstaccess
-    PROTO((accrec_t *access_rec, int16 access));
+    PROTO((accrec_t *access_rec, int16 acc_mode));
 
 PRIVATE link_t *HLInewlink
     PROTO((int32 file_id, int32 number_blocks, uint16 link_ref, uint16 first_block_ref));
@@ -144,7 +144,7 @@ int32 HLcreate(file_id, tag, ref, block_length, number_blocks)
     int32 number_blocks;
 #endif
 {
-    char *FUNC="HLcreate";     /* for HERROR */
+    CONSTR(FUNC,"HLcreate");     /* for HERROR */
     filerec_t *file_rec;       /* file record */
     accrec_t *access_rec;      /* access record */
     int slot;                  /* slot in access records */
@@ -356,7 +356,7 @@ int32 *length, *first_length, *block_length, *number_blocks;
 #endif /* PROTOTYPE */
 {
     accrec_t *arec;
-    char *FUNC="HDinqblockinfo";
+    CONSTR(FUNC,"HDinqblockinfo");
 
 
     HEclear();
@@ -386,9 +386,9 @@ int32 *length, *first_length, *block_length, *number_blocks;
  NAME
 	HLIstaccess -- set up AID to access a linked block elem
  USAGE
-	int32 HLIstaccess(access_rec, access)
+	int32 HLIstaccess(access_rec, acc_mode)
         access_t * access_rec;   IN: access record to fill in
-        int16      access;       IN: access mode
+        int16      acc_mode;       IN: access mode
  RETURNS
         The AID of the access record on success FAIL on error.
  DESCRIPTION
@@ -400,21 +400,21 @@ int32 *length, *first_length, *block_length, *number_blocks;
 
 ----------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-PRIVATE int32 HLIstaccess(accrec_t *access_rec, int16 access)
+PRIVATE int32 HLIstaccess(accrec_t *access_rec, int16 acc_mode)
 #else
-PRIVATE int32 HLIstaccess(access_rec, access)
+PRIVATE int32 HLIstaccess(access_rec, acc_mode)
     accrec_t *access_rec;      /* access record */
-    int16 access;               /* access mode */
+    int16 acc_mode;               /* access mode */
 #endif
 {
-    char *FUNC="HLIstaccess";  /* for HERROR */
+    CONSTR(FUNC,"HLIstaccess");  /* for HERROR */
     filerec_t *file_rec;       /* file record */
     linkinfo_t *info;          /* information about data elt */
     dd_t *dd;                  /* dd for the special elt */
 
     /* validate file record id */
     file_rec = FID2REC(access_rec->file_id);
-    if (!file_rec || file_rec->refcount == 0 || !(file_rec->access & access))
+    if (!file_rec || file_rec->refcount == 0 || !(file_rec->access & acc_mode))
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
 
@@ -428,7 +428,7 @@ PRIVATE int32 HLIstaccess(access_rec, access)
     /* set up some data in access record */
     access_rec->special = SPECIAL_LINKED;
     access_rec->posn = 0;
-    access_rec->access = access;
+    access_rec->access = acc_mode;
     dd = &access_rec->block->ddlist[access_rec->idx];
 
     /* 
@@ -437,21 +437,21 @@ PRIVATE int32 HLIstaccess(access_rec, access)
      */
     if (access_rec->special_info != NULL) 
       { /* special information record */
-        linkinfo_t *info = (linkinfo_t *)access_rec->special_info;
+        linkinfo_t *t_info = (linkinfo_t *)access_rec->special_info;
 
-        if (--(info->attached) == 0) 
+        if (--(t_info->attached) == 0) 
           {
-           link_t *link;           /* current link to free */
+           link_t *t_link;           /* current link to free */
            link_t *next;           /* next link to free */
 
            /* free the linked list of links/block tables */
-           for (link = info->link; link; link = next) 
+           for (t_link = t_info->link; t_link; t_link = next) 
              {
-               next = link->next;
-               HDfreespace((VOIDP) link->block_list);
-               HDfreespace((VOIDP) link);
+               next = t_link->next;
+               HDfreespace((VOIDP) t_link->block_list);
+               HDfreespace((VOIDP) t_link);
              }
-           HDfreespace((VOIDP) info);
+           HDfreespace((VOIDP) t_info);
            access_rec->special_info = NULL;
          }
       }
@@ -615,29 +615,29 @@ PRIVATE link_t * HLIgetlink(file_id, ref, number_blocks)
     int32 number_blocks;       /* number of blocks in this link elt */
 #endif
 {
-    char *FUNC="HLIgetlink";   /* for HERROR */
+    CONSTR(FUNC,"HLIgetlink");   /* for HERROR */
     int32 access_id;           /* access record id */
     uint8 *buffer;
     uint16 tag = DFTAG_LINKED;
 
     /* allocate necessary memory for block table */
-    link_t *link = (link_t *) HDgetspace((uint32)sizeof(link_t));
-    if (link==NULL)
+    link_t *new_link = (link_t *) HDgetspace((uint32)sizeof(link_t));
+    if (new_link==NULL)
        HRETURN_ERROR(DFE_NOSPACE,NULL);
 
-    link->block_list = (block_t*) HDgetspace((uint32)number_blocks
+    new_link->block_list = (block_t*) HDgetspace((uint32)number_blocks
                                         * sizeof(block_t));
-    if (link->block_list==NULL) {
-       HDfreespace((VOIDP) link);
+    if (new_link->block_list==NULL) {
+       HDfreespace((VOIDP) new_link);
        HRETURN_ERROR(DFE_NOSPACE,NULL);
     }
-    link->next = (link_t *) NULL;
+    new_link->next = (link_t *) NULL;
 
     /* read block table into buffer */
     buffer = (uint8 *) HDgetspace((uint32)(2 + 2*number_blocks));
     if (buffer==NULL) {
-        HDfreespace((VOIDP) link->block_list);
-        HDfreespace((VOIDP) link);
+        HDfreespace((VOIDP) new_link->block_list);
+        HDfreespace((VOIDP) new_link);
         HRETURN_ERROR(DFE_NOSPACE,NULL);
       } /* end if */
 
@@ -645,8 +645,8 @@ PRIVATE link_t * HLIgetlink(file_id, ref, number_blocks)
     if (access_id == FAIL ||
             Hread(access_id, 2+2*number_blocks, buffer) == FAIL) {
         HDfreespace((VOIDP)buffer);
-        HDfreespace((VOIDP) link->block_list);
-        HDfreespace((VOIDP) link);
+        HDfreespace((VOIDP) new_link->block_list);
+        HDfreespace((VOIDP) new_link);
         HRETURN_ERROR(DFE_READERROR,NULL);
     }
 
@@ -654,14 +654,14 @@ PRIVATE link_t * HLIgetlink(file_id, ref, number_blocks)
         register int32 i;
         uint8 *p = buffer;
 
-        UINT16DECODE(p, link->nextref);
+        UINT16DECODE(p, new_link->nextref);
         for (i=0; i<number_blocks; i++)
-           UINT16DECODE(p, link->block_list[i].ref);
+           UINT16DECODE(p, new_link->block_list[i].ref);
     }
     Hendaccess(access_id);
     HDfreespace((VOIDP)buffer);
 
-    return link;
+    return new_link;
 
 } /* HLIgetlink */
 
@@ -691,7 +691,7 @@ int32 HLPseek(access_rec, offset, origin)
     int origin;
 #endif
 {
-    char *FUNC="HLPseek";      /* for HERROR */
+    CONSTR(FUNC,"HLPseek");      /* for HERROR */
 
     /* validate access record */
     if (access_rec->special != SPECIAL_LINKED)
@@ -744,14 +744,14 @@ int32 HLPread(access_rec, length, datap)
     VOIDP datap;               /* buffer to read data into */
 #endif
 {
-    char *FUNC="HLPread";      /* for HERROR */
+    CONSTR(FUNC,"HLPread");      /* for HERROR */
     uint8 *data=(uint8 *)datap;
 
     /* information record for this special data elt */
     linkinfo_t *info = (linkinfo_t*)(access_rec->special_info);
 
     /* block table record */
-    link_t *link = info->link;
+    link_t *t_link = info->link;
 
     /* relative position in linked block of data elt */
     int32 relative_posn = access_rec->posn;
@@ -788,9 +788,9 @@ int32 HLPread(access_rec, length, datap)
         register int32 i;
 
         for (i=0; i<block_idx/info->number_blocks; i++) {
-           if (link==NULL)
+           if (t_link==NULL)
                HRETURN_ERROR(DFE_INTERNAL,FAIL);
-           link = link->next;
+           t_link = t_link->next;
        }
     }
     block_idx %= info->number_blocks;
@@ -805,10 +805,10 @@ int32 HLPread(access_rec, length, datap)
 
         if (remaining > length)
             remaining = length;
-        if (link->block_list[block_idx].ref != 0) {
+        if (t_link->block_list[block_idx].ref != 0) {
             int32 access_id;    /* access record id for this block */
             block_t *current_block = /* record on the current block */
-                &(link->block_list[block_idx]);
+                &(t_link->block_list[block_idx]);
 
             access_id = Hstartread(access_rec->file_id,DFTAG_LINKED,
                     current_block->ref);
@@ -835,8 +835,8 @@ int32 HLPread(access_rec, length, datap)
         length -= remaining;
         if (length > 0 && ++block_idx >= info->number_blocks) {
             block_idx = 0;
-            link = link->next;
-            if (link==NULL)
+            t_link = t_link->next;
+            if (t_link==NULL)
                 HRETURN_ERROR(DFE_INTERNAL,FAIL);
         }
         relative_posn = 0;
@@ -868,15 +868,15 @@ int32 HLPread(access_rec, length, datap)
 
 --------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
-int32 HLPwrite(accrec_t *access_rec, int32 length, VOIDP datap)
+int32 HLPwrite(accrec_t *access_rec, int32 length, const VOIDP datap)
 #else
 int32 HLPwrite(access_rec, length, datap)
     accrec_t *access_rec;      /* access record */
     int32 length;              /* length of data */
-    VOIDP datap;                        /* data buffer to write from */
+    const VOIDP datap;                        /* data buffer to write from */
 #endif
 {
-    char *FUNC="HLPwrite";     /* for HERROR */
+    CONSTR(FUNC,"HLPwrite");     /* for HERROR */
     uint8 *data=(uint8 *)datap;
     filerec_t *file_rec =      /* file record */
        FID2REC(access_rec->file_id);
@@ -884,7 +884,7 @@ int32 HLPwrite(access_rec, length, datap)
         &(access_rec->block->ddlist[access_rec->idx]);
     linkinfo_t *info =         /* linked blocks information record */
        (linkinfo_t*)(access_rec->special_info);
-    link_t *link =             /* ptr to link block table */
+    link_t *t_link =             /* ptr to link block table */
        info->link;
     int32 relative_posn =      /* relative position in linked block */
        access_rec->posn;
@@ -934,15 +934,15 @@ int32 HLPwrite(access_rec, length, datap)
        for (num_links=block_idx/info->number_blocks;
             num_links>0;
             num_links--) {
-           if (!link->next) {
+           if (!t_link->next) {
 
                /* create missing link (block table) */
 
-                link->nextref = Hnewref(access_rec->file_id);
-                link->next =
+                t_link->nextref = Hnewref(access_rec->file_id);
+                t_link->next =
                    HLInewlink(access_rec->file_id, info->number_blocks,
-                              link->nextref, 0);
-               if (!link->next)
+                              t_link->nextref, 0);
+               if (!t_link->next)
                    return FAIL;
                {               /* AA */
                    /* update previous link with information about new link */
@@ -961,17 +961,17 @@ int32 HLPwrite(access_rec, length, datap)
 
                    if (link_id == FAIL)
                        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-                   UINT16ENCODE(p, link->nextref);
+                   UINT16ENCODE(p, t_link->nextref);
                    if (Hwrite(link_id, 2, ptbuf) == FAIL)
                        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
                    Hendaccess(link_id);
                }               /* AA */
-           }                   /* if not link->next */
+           }                   /* if not t_link->next */
 
            /* move to the next link */
 
-            prev_link = link;
-           link = link->next;
+            prev_link = t_link;
+           t_link = t_link->next;
        }                       /* for */
     }                          /*  */
 
@@ -988,12 +988,12 @@ int32 HLPwrite(access_rec, length, datap)
        /* determine length and write this block */
 
        if (remaining > length) remaining = length;
-       if (link->block_list[block_idx].ref != 0) {
+       if (t_link->block_list[block_idx].ref != 0) {
 
            /* this block already exist, so just set up access to it */
 
            block_t *current_block = /* ptr to current block record */
-               &(link->block_list[block_idx]);
+               &(t_link->block_list[block_idx]);
 
            access_id= Hstartwrite(access_rec->file_id, DFTAG_LINKED,
                                   current_block->ref, current_length);
@@ -1045,7 +1045,7 @@ int32 HLPwrite(access_rec, length, datap)
 
            /* update memory structure */
 
-           link->block_list[block_idx].ref = new_ref;
+           t_link->block_list[block_idx].ref = new_ref;
        }                       /* if new_ref */
 
        /* move ptrs and counters for next phase */
@@ -1060,15 +1060,15 @@ int32 HLPwrite(access_rec, length, datap)
 
            block_idx = 0;
 
-           if (!link->next) {
+           if (!t_link->next) {
 
                /* create missing link/block table */
 
-                link->nextref = Hnewref(access_rec->file_id);
-                link->next = HLInewlink(access_rec->file_id,
+                t_link->nextref = Hnewref(access_rec->file_id);
+                t_link->next = HLInewlink(access_rec->file_id,
                                        info->number_blocks,
-                                        link->nextref, 0);
-               if (!link->next)
+                                        t_link->nextref, 0);
+               if (!t_link->next)
                    return FAIL;
 
                {               /* BB */
@@ -1086,17 +1086,17 @@ int32 HLPwrite(access_rec, length, datap)
 
                    if (link_id == FAIL)
                        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-                   UINT16ENCODE(p, link->nextref);
+                   UINT16ENCODE(p, t_link->nextref);
                    if (Hwrite(link_id, 2, ptbuf) == FAIL)
                        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
                    Hendaccess(link_id);
                }               /* BB */
-           }                   /* if not link->next  */
+           }                   /* if not t_link->next  */
 
            /* move to the next link/block table */
 
-            prev_link = link;
-            link = link->next;
+            prev_link = t_link;
+            t_link = t_link->next;
 
        }
 
@@ -1160,32 +1160,32 @@ PRIVATE link_t *HLInewlink(file_id, number_blocks, link_ref, first_block_ref)
     uint16 first_block_ref;     /* ref of first block in this link */
 #endif
 {
-    char *FUNC="HLInewlink";   /* for HERROR */
+    CONSTR(FUNC,"HLInewlink");   /* for HERROR */
     int32 link_id;             /* access record id of new link */
     uint8 *buf;                /* temp buffer */
 
     /* set up new link record in memory */
 
     /* new link record */
-    link_t *link = (link_t *)HDgetspace((uint32)sizeof(link_t));
+    link_t *t_link = (link_t *)HDgetspace((uint32)sizeof(link_t));
 
-    if (!link)
+    if (!t_link)
        HRETURN_ERROR(DFE_NOSPACE,NULL);
 
-    link->block_list = (block_t *) HDgetspace((uint32)number_blocks
+    t_link->block_list = (block_t *) HDgetspace((uint32)number_blocks
                                          * sizeof(block_t));
-    if (!link->block_list) {
-       HDfreespace((VOIDP) link);
+    if (!t_link->block_list) {
+       HDfreespace((VOIDP) t_link);
        HRETURN_ERROR(DFE_NOSPACE,NULL);
     }
-    link->next = NULL;
+    t_link->next = NULL;
 
     /* write the new link to file */
 
     link_id = Hstartwrite(file_id, DFTAG_LINKED, link_ref, 2+2*number_blocks);
     if (link_id==FAIL) {
-        HDfreespace((VOIDP) link->block_list);
-        HDfreespace((VOIDP) link);
+        HDfreespace((VOIDP) t_link->block_list);
+        HDfreespace((VOIDP) t_link);
         HRETURN_ERROR(DFE_WRITEERROR,NULL);
     }
     {                          /* CC */
@@ -1194,22 +1194,22 @@ PRIVATE link_t *HLInewlink(file_id, number_blocks, link_ref, first_block_ref)
 
        p = buf = (uint8 *)HDgetspace((uint32) (2 + 2*number_blocks));
        if (!buf) {
-            HDfreespace((VOIDP) link->block_list);
-            HDfreespace((VOIDP) link);
+            HDfreespace((VOIDP) t_link->block_list);
+            HDfreespace((VOIDP) t_link);
             HRETURN_ERROR(DFE_NOSPACE,NULL);
        }
 
        /* set up the record and write to file */
-       link->nextref = 0;
+       t_link->nextref = 0;
        UINT16ENCODE(p, 0);
-       link->block_list[0].ref = first_block_ref;
+       t_link->block_list[0].ref = first_block_ref;
        UINT16ENCODE(p, first_block_ref);
 
        for (i=1; i<number_blocks; i++) {
 
            /* set up each block in this link */
 
-           link->block_list[i].ref = 0;
+           t_link->block_list[i].ref = 0;
            UINT16ENCODE(p, 0);
        }
     }                          /* CC */
@@ -1218,14 +1218,14 @@ PRIVATE link_t *HLInewlink(file_id, number_blocks, link_ref, first_block_ref)
 
     if (Hwrite(link_id, 2+2*number_blocks, buf) == FAIL) {
         HDfreespace((VOIDP)buf);
-        HDfreespace((VOIDP) link->block_list);
-        HDfreespace((VOIDP) link);
+        HDfreespace((VOIDP) t_link->block_list);
+        HDfreespace((VOIDP) t_link);
         HRETURN_ERROR(DFE_WRITEERROR,NULL);
     }
     HDfreespace((VOIDP)buf);
     Hendaccess(link_id);
 
-    return link;
+    return t_link;
 
 } /* HLInewlink */
 
@@ -1317,7 +1317,7 @@ int32 HLPendaccess(access_rec)
     accrec_t *access_rec;      /* access record to dispose of */
 #endif
 {
-    char *FUNC="HLPendaccess"; /* for HERROR */
+    CONSTR(FUNC,"HLPendaccess"); /* for HERROR */
     linkinfo_t *info =         /* special information record */
        (linkinfo_t *)access_rec->special_info;
     filerec_t *file_rec =      /* file record */
@@ -1327,15 +1327,15 @@ int32 HLPendaccess(access_rec)
        If no more references to that, free the record */
 
     if (--(info->attached) == 0) {
-       link_t *link;           /* current link to free */
+       link_t *t_link;           /* current link to free */
        link_t *next;           /* next link to free */
 
        /* free the linked list of links/block tables */
 
-       for (link = info->link; link; link = next) {
-           next = link->next;
-           HDfreespace((VOIDP) link->block_list);
-           HDfreespace((VOIDP) link);
+       for (t_link = info->link; t_link; t_link = next) {
+           next = t_link->next;
+           HDfreespace((VOIDP) t_link->block_list);
+           HDfreespace((VOIDP) t_link);
        }
 
        HDfreespace((VOIDP) info);

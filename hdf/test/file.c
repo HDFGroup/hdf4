@@ -71,7 +71,7 @@ void test_hfile()
     int32 aid1, aid2;
     int32 fileid, length, offset, posn;
     uint16 tag, ref;
-    int16 access, special;
+    int16 acc_mode, special;
     int32 ret;
     int i;
     intn errors = 0;
@@ -117,7 +117,7 @@ void test_hfile()
 
     ret = Hgetelement(fid, (uint16) 100, (uint16) 4, inbuf);
     if(ret != 2000) {
-      fprintf(stderr, "Hgetelement returned wrong count: %d\n", ret);
+      fprintf(stderr, "Hgetelement returned wrong count: %d\n", (int)ret);
       errors++;
     }
 
@@ -144,19 +144,19 @@ void test_hfile()
     CHECK(aid1, FAIL, "Hstartread");
 
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
-                  &access, &special);
+                  &acc_mode, &special);
     CHECK(ret, FAIL, "Hinquire");
 
     MESSAGE(5,printf("Verifying data\n\n"););
     ret = Hread(aid1, length, inbuf);
     if(ret != 14) {
-      fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", ret);
+      fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int)ret);
       errors++;
     }
 
     if(HDstrcmp((const char *) inbuf, (const char *) "testing 100 1")) {
       fprintf(stderr, "ERROR: Hread returned the wrong data\n");
-      fprintf(stderr, "\t       Is: %s\n", inbuf);
+      fprintf(stderr, "\t       Is: %s\n", (char *)inbuf);
       fprintf(stderr, "\tShould be: testing 100 1\n");
       errors++;
     }
@@ -169,7 +169,7 @@ void test_hfile()
     CHECK(ret, FAIL, "Hnextread");
 
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
-                  &access, &special);
+                  &acc_mode, &special);
     CHECK(ret, FAIL, "Hinquire");
 
     ret = Hnextread(aid1, 100, DFREF_WILDCARD, DF_CURRENT);
@@ -183,7 +183,7 @@ void test_hfile()
     CHECK(ret, FAIL, "Hnextread");
 
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
-                  &access, &special);
+                  &acc_mode, &special);
     CHECK(ret, FAIL, "Hinquire");
 
     ret = Hnextread(aid1, DFTAG_WILDCARD, 3, DF_CURRENT);
@@ -197,7 +197,7 @@ void test_hfile()
     CHECK(ret, FAIL, "Hnextread");
 
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
-                  &access, &special);
+                  &acc_mode, &special);
     CHECK(ret, FAIL, "Hinquire");
 
     aid2 = Hstartwrite(fid, 100, 1, 4);

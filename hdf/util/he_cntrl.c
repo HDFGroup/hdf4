@@ -37,7 +37,7 @@ int HEif(cmd)
     HE_PRED *pred;		/* predicates */
     HE_CMD *cmdTail;		/* last cmd we've seen in the sublist */
 
-    if (cmd->argc == 2 && !strcmp(cmd->argv[1],"-help"))
+    if (cmd->argc == 2 && !HDstrcmp(cmd->argv[1],"-help"))
     {
 	puts("if [<predicates>]");
 	puts("  <commands>*");
@@ -55,7 +55,7 @@ int HEif(cmd)
     {
 	/* go through sub-list until an end is encountered */
 	for (cmdTail = cmd->sub; 
-             cmdTail && strcmp(cmdTail->argv[0], "end");
+             cmdTail && HDstrcmp(cmdTail->argv[0], "end");
 	     cmdTail = cmdTail->next)
 	    if (cmdTail->func)
 		he_status = (*cmdTail->func) (cmdTail);
@@ -81,7 +81,7 @@ int HEselect(cmd)
     HE_PRED *pred;		/* predicate structure */
     HE_CMD *cmdTail;		/* last cmd we've seen in the sublist */
 
-    if (cmd->argc == 2 && !strcmp(cmd->argv[1],"-help"))
+    if (cmd->argc == 2 && !HDstrcmp(cmd->argv[1],"-help"))
     {
 	puts("select [<predicates>]");
 	puts("  <commands>*");
@@ -101,7 +101,7 @@ int HEselect(cmd)
     /* step through all elements */
     for (he_currDesc = 0; he_currDesc < he_numDesc; he_currDesc++)
 	if (currTag() != DFTAG_NULL && satPred(currDesc(), pred))
-	    for (cmdTail = cmd->sub; strcmp(cmdTail->argv[0], "end");
+	    for (cmdTail = cmd->sub; HDstrcmp(cmdTail->argv[0], "end");
 		 cmdTail = cmdTail->next)
 		if (cmdTail->func)
 		    he_status = (*cmdTail->func) (cmdTail);
@@ -131,9 +131,8 @@ int HEnext(cmd)
 {
     int tmp;
     HE_PRED *predicates;
-    HE_PRED *parsePred();
 
-    if (cmd->argc == 2 && !strcmp(cmd->argv[1],"-help"))
+    if (cmd->argc == 2 && !HDstrcmp(cmd->argv[1],"-help"))
     {
 	puts("next [<predicates>]");
 	puts("\tMove to the next element that satisfies the predicate");
@@ -155,7 +154,7 @@ int HEnext(cmd)
     /* replace this only if it is non-empty */
     if (predicates[0].key != 0)
     {
-	if (he_predicates) free(he_predicates);
+	if (he_predicates) HDfreespace (he_predicates);
 	he_predicates = predicates;
     }
 
@@ -187,9 +186,8 @@ int HEprev(cmd)
 {
     int tmp;
     HE_PRED *predicates;
-    HE_PRED *parsePred();
 
-    if (cmd->argc == 2 && !strcmp(cmd->argv[1],"-help"))
+    if (cmd->argc == 2 && !HDstrcmp(cmd->argv[1],"-help"))
     {
 	puts("prev [<predicates>]");
 	puts("\tMove to the next element that satisfies the predicate");
@@ -210,7 +208,7 @@ int HEprev(cmd)
 
     if (predicates[0].key != 0)
     {
-	if (he_predicates) free(he_predicates);
+	if (he_predicates) HDfreespace(he_predicates);
 	he_predicates = predicates;
     }
 
@@ -389,8 +387,8 @@ int dump(length, offset, format, raw_flag)
                        length/4, DFACC_READ, 0, 0); 
             printf("%8d: ", offset); 
             for(i = 0; i < length/4; i++) {
-                printf("%11d ", idata[i]);
-                if(++len > 4) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 4));} 
+                printf("%11d ", (int)idata[i]);
+                if(++len > 4) {len = 0; printf("\n%8d: ", (int)(offset + (i + 1) * 4));} 
             }  
             printf("\n");
             HDfreespace((VOIDP)idata);
@@ -406,8 +404,8 @@ int dump(length, offset, format, raw_flag)
                        length/4, DFACC_READ, 0, 0);
             printf("%8d: ", offset);
             for(i = 0; i < length/4; i++) {
-                printf("%11u ", idata[i]);
-                if(++len > 4) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 4));}
+                printf("%11u ", (int)idata[i]);
+                if(++len > 4) {len = 0; printf("\n%8d: ", (int)(offset + (i + 1) * 4));}
             }
             printf("\n");
             HDfreespace((VOIDP)idata);
@@ -423,7 +421,7 @@ int dump(length, offset, format, raw_flag)
             printf("%8d: ", offset);
             for(i = 0; i < length/2; i++) {
                 printf("%10d ", sdata[i]);
-                if(++len > 5) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 2));}
+                if(++len > 5) {len = 0; printf("\n%8d: ", (int)(offset + (i + 1) * 2));}
             }
             printf("\n");
             HDfreespace((VOIDP)sdata);
@@ -440,7 +438,7 @@ int dump(length, offset, format, raw_flag)
             printf("%8d: ", offset); 
             for(i = 0; i < length/2; i++) {
                 printf("%10d ", sdata[i]);
-                if(++len > 5) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 2));} 
+                if(++len > 5) {len = 0; printf("\n%8d: ", (int)(offset + (i + 1) * 2));} 
             } 
             printf("\n");
             HDfreespace((VOIDP)sdata);
@@ -457,7 +455,7 @@ int dump(length, offset, format, raw_flag)
             printf("%8d: ", offset); 
             for(i = 0; i < length; i++) {
                 printf("%6d ", bdata[i]);
-                if(++len > 7) {len = 0; printf("\n%8d: ", (offset + (i + 1)));} 
+                if(++len > 7) {len = 0; printf("\n%8d: ", (int)(offset + (i + 1)));} 
             }
             printf("\n");
             HDfreespace((VOIDP)bdata);
@@ -473,7 +471,7 @@ int dump(length, offset, format, raw_flag)
             printf("%8d: ", offset); 
             for(i = 0; i < length / sizeintn; i++) {
                 printf("%10x ", idata[i]);
-                if(++len > 5) {len = 0; printf("\n%8d: ", (offset + (i + 1) * sizeintn));} 
+                if(++len > 5) {len = 0; printf("\n%8d: ", (int)(offset + (i + 1) * sizeintn));} 
             }
             printf("\n"); 
             HDfreespace((VOIDP)idata);
@@ -489,7 +487,7 @@ int dump(length, offset, format, raw_flag)
             printf("%8d: ", offset);
             for(i = 0; i < length / 4; i++) {
                 printf("%10o ", idata[i]);
-                if(++len > 4) {len = 0; printf("\n%8d: ", (offset + (i + 1) * sizeintn));} 
+                if(++len > 4) {len = 0; printf("\n%8d: ", (int)(offset + (i + 1) * sizeintn));} 
             }
             printf("\n");
             HDfreespace((VOIDP)idata);
@@ -506,7 +504,7 @@ int dump(length, offset, format, raw_flag)
                    printf("%c", cdata[i]);
                 else 
                    printf(" ");
-                if(++len > 40) {len = 0; printf("\n%8d: ", (offset + (i+1)));}  
+                if(++len > 40) {len = 0; printf("\n%8d: ", (int)(offset + (i+1)));}  
             }
             printf("\n");
         }
@@ -523,7 +521,7 @@ int dump(length, offset, format, raw_flag)
             printf("%8d: ", offset);
             for(i = 0; i < length / 4; i++) {
                 printf("%15e", fdata[i]);
-                if(++len > 3) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 4));}
+                if(++len > 3) {len = 0; printf("\n%8d: ", (int)(offset + (i + 1) * 4));}
             }
             printf("\n");
             HDfreespace((VOIDP)fdata);
@@ -541,7 +539,7 @@ int dump(length, offset, format, raw_flag)
             printf("%8d: ", offset);
             for(i = 0; i < length / 8; i++) {
                 printf("%30e", fdata[i]);
-                if(++len > 1) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 8));}
+                if(++len > 1) {len = 0; printf("\n%8d: ", (int)(offset + (i + 1) * 8));}
             }
             printf("\n"); 
             HDfreespace((VOIDP)fdata);
@@ -554,7 +552,7 @@ int dump(length, offset, format, raw_flag)
 
     }
 
-    free(data);
+    HDfreespace(data);
 
     return HE_OK;
 }
@@ -666,7 +664,7 @@ int info(all, longout, group, label)
     }
     else
     {
-	mark = (int *) calloc(he_numDesc, sizeof(int));
+	mark = (int *) HDclearspace(he_numDesc, sizeof(int));
 
 	if (all)
 	{
@@ -728,7 +726,8 @@ void infoDesc(desc, longout, label)
     int label;
 #endif
 {
-    char *s, *name;
+    char *s; 
+    const char *name;
 
     name = HDgettagname(he_desc[desc].tag);
     if(!name) name = "Unknown Tag";
@@ -736,8 +735,8 @@ void infoDesc(desc, longout, label)
     printf("\t%-30s: (Tag %d)", name, he_desc[desc].tag);
 
     if (longout)
-	printf("\n\tRef: %d, Offset: %d, Length: %d (bytes)\n",
-	       he_desc[desc].ref, he_desc[desc].offset, he_desc[desc].length);
+	printf("\n\tRef: %d, Offset: %ld, Length: %ld (bytes)\n", 
+	    he_desc[desc].ref, (long)he_desc[desc].offset, (long)he_desc[desc].length);
     else
 	printf(" Ref %d\n", he_desc[desc].ref);
     if (label)
@@ -886,7 +885,7 @@ char he_nestChar = '>';
    add additional functions anywhere in the table BEFORE the
    Marker {0,0} entry */
 struct {
-    char *str;
+    const char *str;
     HE_FUNC func;
 } he_funcTab[] =
 {
@@ -913,7 +912,6 @@ struct {
 {"annotate", (HE_FUNC) HEannotate},
 {"help",     (HE_FUNC) HEhelp},
 {"end",      (HE_FUNC) 0},
-{NULL,       (HE_FUNC) 0},			/* Marker */
 };
 
 #ifdef PROTOTYPE
@@ -927,13 +925,13 @@ HE_FUNC findFunc(fword)
     int found = -1;
     register int i;
 
-    len = strlen((const char *) fword);
+    len = HDstrlen((const char *) fword);
 
-    for (i = 0; he_funcTab[i].str; i++)
-	if (!strncmp(he_funcTab[i].str, (const char *) fword, len))
+    for (i = 0; i<sizeof(he_funcTab)/sizeof(he_funcTab[0]); i++)
+	if (!HDstrncmp(he_funcTab[i].str, (const char *) fword, len))
 	{
 	    /* check for exact match */
-	    if (strlen(he_funcTab[i].str) == len)
+	    if (HDstrlen(he_funcTab[i].str) == len)
 		return he_funcTab[i].func;
 
 	    if (found < 0)
@@ -1069,8 +1067,8 @@ char *nextWord(p)
     while (*s && !isspace(*s)) s++;
     len = s - q;
 
-    word = (char *) malloc(len + 1);
-    strncpy(word, q, len);
+    word = (char *) HDgetspace(len + 1);
+    HDstrncpy(word, q, len);
     word[len] = '\0';
 
     *p = s;
@@ -1093,7 +1091,7 @@ HE_CMD *parseCmd(p)
 
     if (!(**p)) return NULL;
 
-    cmd = (HE_CMD *) calloc(1, sizeof(HE_CMD));
+    cmd = (HE_CMD *) HDclearspace(1, sizeof(HE_CMD));
     cmd->next = cmd->sub = (HE_CMD *) NULL;
     cmd->argc = 1;
     cmd->argv[0] = nextWord(p);
@@ -1116,7 +1114,7 @@ HE_CMD *parseCmd(p)
 	cmdTail = cmd;
 	while (cmdTail->next) cmdTail = cmdTail->next;
 
-	for (word = nextWord(p); word && strcmp(word, ";");
+	for (word = nextWord(p); word && HDstrcmp(word, ";");
 	     word = nextWord(p), cmdTail->argc++)
 	    cmdTail->argv[cmdTail->argc] = word;
 
@@ -1182,7 +1180,7 @@ HE_CMD *getCmd()
 
 	cmd->sub = getCmd();
 	for (cmdTail = cmd->sub;
-	     cmdTail && strcmp(cmdTail->argv[0], "end"); /* while != "end" */
+	     cmdTail && HDstrcmp(cmdTail->argv[0], "end"); /* while != "end" */
 	     cmdTail = cmdTail->next)
 	    cmdTail->next = getCmd();
 
@@ -1211,7 +1209,7 @@ int setAlias(str, cmd)
     register int i;
 
     for (i = 0; i < he_numAlias; i++)
-	if (!strcmp(str, he_aliasTab[i].str))
+	if (!HDstrcmp(str, he_aliasTab[i].str))
 	{
 	    he_aliasTab[i].cmd = cmd;
 	    return HE_OK;
@@ -1237,7 +1235,7 @@ HE_CMD *mkDupCmd(cmd)
     register int i;
     HE_CMD *dupCmd;
 
-    dupCmd = (HE_CMD *) calloc(1, sizeof(HE_CMD));
+    dupCmd = (HE_CMD *) HDclearspace(1, sizeof(HE_CMD));
     dupCmd->func = cmd->func;
     dupCmd->argc = cmd->argc;
     dupCmd->next = dupCmd->sub = (HE_CMD *) NULL;
@@ -1260,7 +1258,7 @@ HE_CMD *findAlias(str)
     HE_CMD *cmdTail;
 
     for (i = 0; i < he_numAlias; i++)
-	if (!strcmp(str, he_aliasTab[i].str))
+	if (!HDstrcmp(str, he_aliasTab[i].str))
 	{
 	    cmd = he_aliasTab[i].cmd;
 	    dupCmd = mkDupCmd(cmd);
@@ -1286,7 +1284,7 @@ int HEunalias(cmd)
 
     for (a = 1; a < cmd->argc; a++)
 	for (i = 0; i < he_numAlias; i++)
-	    if (!strcmp(cmd->argv[a], he_aliasTab[i].str))
+	    if (!HDstrcmp(cmd->argv[a], he_aliasTab[i].str))
 	    {
 		he_numAlias--;
 		for (j = i; j < he_numAlias; j++)
@@ -1366,9 +1364,9 @@ int resetPred()
 #endif
 {
     if (he_predicates != NULL)
-	free(he_predicates);
+	HDfreespace(he_predicates);
 
-    he_predicates = (HE_PRED *) calloc(2, sizeof(HE_PRED));
+    he_predicates = (HE_PRED *) HDclearspace(2, sizeof(HE_PRED));
     he_predicates[0].key = HEK_GROUP;
     he_predicates[1].key = 0;
 
@@ -1376,7 +1374,7 @@ int resetPred()
 }
 
 struct {
-    char *str;
+    const char *str;
     int key;
 } he_keyTab[] =
 {
@@ -1394,7 +1392,6 @@ struct {
 {"tag",		HEK_TAG | HE_PREDICATE},
 {"group",	HEK_GROUP | HE_PREDICATE},
 /* Finish this later */
-{NULL, 0},			/* Marker */
 };
 
 #ifdef PROTOTYPE
@@ -1408,13 +1405,13 @@ int findKey(word)
     int len;
     int found = -1;
 
-    len = strlen(word);
+    len = HDstrlen(word);
 
-    for (i = 0; he_keyTab[i].str; i++)
-	if (!strncmp(he_keyTab[i].str, word, len))
+    for (i = 0; i<sizeof(he_keyTab)/sizeof(he_keyTab[0]); i++)
+	if (!HDstrncmp(he_keyTab[i].str, word, len))
 	{
 	    /* if this is an exact match, just return */
-	    if (strlen(he_keyTab[i].str) == len)
+	    if (HDstrlen(he_keyTab[i].str) == len)
 		return he_keyTab[i].key;
 	    if (found < 0)
 		found = i;
@@ -1463,7 +1460,7 @@ HE_PRED *parsePred(argc, argv)
     char *s;
     char *tok;
 
-    pred = (HE_PRED *) calloc(HE_PRED_SZ, sizeof(HE_PRED));
+    pred = (HE_PRED *) HDclearspace(HE_PRED_SZ, sizeof(HE_PRED));
 
     for ( i = 1; i < argc; i++)
     {
@@ -1480,10 +1477,10 @@ HE_PRED *parsePred(argc, argv)
 	    {
 		if ((key = findKey(tok)) == HE_NOTFOUND)
 		{
-		    free(pred);
+		    HDfreespace(pred);
 		    return NULL;
 		}
-		free(tok);
+		HDfreespace(tok);
 	    }
 
 	    switch(state)
@@ -1493,7 +1490,7 @@ HE_PRED *parsePred(argc, argv)
 		if (!(key & HE_PREDICATE))
 		{
 		    fprintf(stderr, "Parse error: %s.\n", argv[i]);
-		    free(pred);
+		    HDfreespace(pred);
 		    return NULL;
 		}
 		pred[++predNum].key = key & ~(HE_PREDICATE | HE_COMPARATOR);
@@ -1517,7 +1514,7 @@ HE_PRED *parsePred(argc, argv)
 		else
 		{
 		    fprintf(stderr, "Parse error: %s.\n", argv[i]);
-		    free(pred);
+		    HDfreespace(pred);
 		    return NULL;
 		}
 		break;
@@ -1619,7 +1616,7 @@ char *nextToken(p)
     else
 	while (*s && !isalnum(*s)) s++;
 
-    q = tok = (char *) malloc((s-(*p)) + 1);
+    q = tok = (char *) HDgetspace((s-(*p)) + 1);
     while (*p != s) *q++ = *(*p)++;
     *q = '\0';
 

@@ -78,9 +78,9 @@ int show_help_msg
  *  Main entry point
  */
 #ifdef PROTOTYPE
-main(int ac,char **av)
+int main(int ac,char **av)
 #else
-main(ac,av)
+int main(ac,av)
 int ac;
 char**av;
 #endif
@@ -109,11 +109,12 @@ char**av;
 
   else if (!HDstrcmp(av[2],"-l")) {
     int i;
-	int32 n, vgref, ids[50];
+	int32 n;
+	int32 vgref, ids[50];
 
 	  	hfile 	= av[1];
-		sscanf(av[3],"%d",&vgref);
-		for(n=0,i=4;i<ac;i++,n++) { sscanf(av[i],"%d",&ids[n]); }
+		sscanf(av[3],"%ld",&vgref);
+		for(n=0,i=4;i<ac;i++,n++) { sscanf(av[i],"%ld",&ids[n]); }
 		vsetlink(hfile,vgref,ids,n);
 		}
   else {
@@ -194,7 +195,7 @@ int32 vgid, n, ids[];
             if ((vg=Vattach(f,ids[i],"r")) != FAIL)  {
                 if (Vinsert(vgmain,vg)  == -1)  { /*  is really VGROUP* */
                     err = 1;
-                    fprintf(stderr,"insert a vg (%d)fails!!\n",ids[i]);
+                    fprintf(stderr,"insert a vg (%d)fails!!\n",(int)ids[i]);
                 }
                 Vdetach(vg);
             }
@@ -203,13 +204,13 @@ int32 vgid, n, ids[];
             if ((vs= VSattach(f,ids[i],"r")) != FAIL) {
                 if (Vinsert(vgmain,vs) == FAIL) {
                     err = 1;
-                    fprintf(stderr,"insert a vs (%d)fails!!\n",ids[i]);
+                    fprintf(stderr,"insert a vs (%d)fails!!\n",(int)ids[i]);
                 }
                 VSdetach(vs);
             }
         }
         else {
-            fprintf(stderr,"no such vgroup or vdata [%d]\n",ids[i]);
+            fprintf(stderr,"no such vgroup or vdata [%d]\n",(int)ids[i]);
             err= 1;
         }
     }
@@ -252,7 +253,7 @@ char * vgname;
   Vdetach(vg);
   Vfinish(f);
   Hclose(f);
-  fprintf(stderr,"%d\n",ref);
+  fprintf(stderr,"%d\n",(int)ref);
   return(1);
 
 } /* vgadd */
@@ -272,7 +273,7 @@ char * vsname;
 char * format;
 #endif
 {
-  int32 stat, i,n, nwritten;
+  int32 ret, i,n, nwritten;
   unsigned char *buf;
   char **fields;
   int32 *type, *order, nfld;
@@ -291,7 +292,7 @@ char * format;
   vs = VSattach(f,-1,"w");
   ref = VSQueryref(vs);
 
-printf("vsadd: ref is %d\n",ref);
+printf("vsadd: ref is %d\n",(int)ref);
 
   allfields[0] = '\0';
   for (i=0;i<nfld;i++) {
@@ -303,12 +304,12 @@ printf("vsadd: ref is %d\n",ref);
 		  case 'b': ftype = DFNT_INT8;       break; 
 		  case 'D': ftype = DFNT_DOUBLE;     break; 
 
-		  default:  fprintf(stderr,"bad type [%c]\n",type[i]); 
+		  default:  fprintf(stderr,"bad type [%c]\n",(char)type[i]); 
 						showfmttypes();
 						exit(-1);
 						break;
 		  }
-	  stat = VSfdefine(vs,fields[i],ftype,order[i]);
+	  ret = VSfdefine(vs,fields[i],ftype,order[i]);
       HDstrcat(allfields,fields[i]);
       HDstrcat(allfields,",");
      }
@@ -316,20 +317,20 @@ printf("vsadd: ref is %d\n",ref);
   i=HDstrlen(allfields); allfields[i-1]='\0'; /* remove last comma */
 
   VSsetname(vs,vsname);
-  stat = VSsetfields(vs,allfields);
+  ret = VSsetfields(vs,allfields);
 
   nwritten = 0;
   while( (n = inpdata(&buf)) > 0) {
 	 /*  printf("inpdata rets n=%d .. ",n); */
-    stat = VSwrite(vs,buf,n,FULL_INTERLACE);
-     printf("+%d  \n",stat); 
+    ret = VSwrite(vs,buf,n,FULL_INTERLACE);
+     printf("+%d  \n",(int)ret); 
 	 nwritten +=n;
-	 if (stat < 1) fprintf(stderr,"Vswrite stat=%d\n",stat);
+	 if (ret < 1) fprintf(stderr,"Vswrite stat=%d\n",(int)ret);
 	 }
   VSdetach(vs);
   Vfinish(f);
   Hclose(f);
-  fprintf(stderr,"%d\n",ref,nwritten);
+  fprintf(stderr,"%d, %d\n",(int)ref,(int)nwritten);
   return;
 
 } /* vsadd */
@@ -358,7 +359,7 @@ static int32 inplong  (x)
 int32  *x;
 #endif
 {
-int val, ret;
+int32 val, ret;
 
     ret = scanf ("%ld ",&val);
     *x = (int32)val;
@@ -595,7 +596,7 @@ int32 *num;
     if(ss[i]<'0' ||  ss[i] >'9') break; 
     i++;
   }
-  if(i>0) sscanf(ss,"%d",num); else *num= 1;
+  if(i>0) sscanf(ss,"%ld",num); else *num= 1;
   *fmt  = ss[i];
   return (1);
 }

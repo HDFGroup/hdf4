@@ -703,7 +703,7 @@ JSAMPARRAY pixel_row;
           } /* end for */
       } /* end if */
     else {      /* 8-bit images */
-        HDmemcpy(pixel_row[0],img_ptr,cinfo->image_width);
+        HDmemcpy(pixel_row[0],img_ptr,(uint32)cinfo->image_width);
         img_ptr+=cinfo->image_width;
       } /* end else */
 }   /* end get_input_row() */

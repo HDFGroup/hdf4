@@ -284,7 +284,7 @@ char *argv[];
         new_xdim=(int32)(img_scale*xdim);    /* calc. new image's dimensions */
         new_ydim=(int32)(img_scale*ydim);
         if((scaled_image = (uint8 *) HDgetspace(new_xdim*new_ydim))==NULL) {
-            printf("Error, cannot allocate space for %ldx%ld scaled image\n");
+            printf("Error, cannot allocate space for %ldx%ld scaled image\n",new_xdim,new_ydim);
             return(1);
           } /* end if */
         if(!magnify(img_buf,scaled_image,0,0,xdim-1,ydim-1,xdim,ydim,new_xdim,new_ydim)) {
