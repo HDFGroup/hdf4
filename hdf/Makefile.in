@@ -126,7 +126,7 @@ all:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libz.a \
           SUBDIRS="zlib" subd  
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="src pablo fmpool util test" subd message 
+          SUBDIRS="src pablo fmpool util test" subd
 
 allnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
@@ -134,7 +134,7 @@ allnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libz.a \
           SUBDIRS="zlib" subd  
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
-          SUBDIRS="src pablo fmpool util test" subd message 
+          SUBDIRS="src pablo fmpool util test" subd
 
 rebuild rebuildnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
@@ -142,7 +142,7 @@ rebuild rebuildnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libz.a \
           SUBDIRS="zlib" subd 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="src pablo fmpool util test" subd message 
+          SUBDIRS="src pablo fmpool util test" subd
 
 libnofortran:
 	@$(MAKE) $(MYFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
@@ -150,7 +150,7 @@ libnofortran:
 	@$(MAKE) $(MYFLAGS) $(HDF_FLAGS) TARG=libz.a \
 	  SUBDIRS="zlib" subd 
 	@$(MAKE) $(MYFLAGS) $(HDF_FLAGS) TARG=nofortran \
-	  SUBDIRS="src pablo fmpool" subd message
+	  SUBDIRS="src pablo fmpool" subd
 
 libnostub: libnofortran
 
@@ -206,7 +206,7 @@ testnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libz.a \
           SUBDIRS="zlib" subd 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
-          SUBDIRS="src pablo fmpool test" subd message 
+          SUBDIRS="src pablo fmpool test" subd
 
 test-hdf:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=test-hdf \
@@ -260,7 +260,7 @@ debug:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libz.a \
           SUBDIRS="zlib" subd 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=debug \
-          SUBDIRS="src fmpool test" subd message 
+          SUBDIRS="src fmpool test" subd
 
 saber:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=saber \
@@ -307,14 +307,6 @@ dist: $(DISTFILES)
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
 
-
-message:
-	@echo ""
-	@echo "***********************************************************"
-	@echo " HDF 4.1 library successfully created."
-	@echo ""
-	@echo "***********************************************************"
-	@echo ""
 
 help:
 	@echo ""
