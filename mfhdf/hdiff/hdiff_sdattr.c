@@ -54,6 +54,14 @@ sdattr_diff(int32 sdid1, int32 sdid2, struct fspec specp)
   varid1 = SDselect(sdid1, iv1);
   iret1 = SDgetinfo(varid1, var1.name, &var1.ndims, var1.dims, &var1.type,
    &var1.natts);
+
+
+  /* check if the given SDS is "fake" dimension scale */
+  if(HDstrncmp(var1.name, "fakeDim", 7) == 0)
+  {
+   continue;  
+  }
+  
   
   iv2 = SDnametoindex(sdid2, var1.name);
   if (iv2 == -1)     /* sd doesn't exist in file2 */
