@@ -134,6 +134,7 @@ The following sections discuss installation procedures in detail:
    Section V:    Some Helpful Pointers
    Section VI:   Disable Szip Compression Feature inside HDF4
    Section VII:  Build and Test HDF4 Library on the Command Line
+   Section VIII: Build HDF4 Multithreaded Static Library
 
 ************************************************************************
 
@@ -171,6 +172,11 @@ Notes:
       higher versions) users, we support building HDF4 libraries and
       utilities from the HDF4 source code archive on command line.
       To build HDF4 on the command line, please read section VII.
+
+   d. To build HDF4 Multithreaded static library, please read
+      section VIII.
+
+Building Instructions:
 
    1. Unpack Win32.nofortran.zip or Win32.zip in directory HDF42r1\. 
 
@@ -1050,6 +1056,104 @@ Step 3. Build and Test
 Having built and tested HDF4 libraries and utilities successfully 
 on the command line, you can install HDF4 libraries following the
 instruction in Section I, Step 4.
+
+
+Section VIII: Build HDF4 Multithreaded Static Library
+======================================================================
+
+In this section, we just briefly introduce how to build HDF4
+multithreaded static library.
+
+Step I: The following codes (lines 112~115 in the header file) in
+        hdf4/hdf/src/hdfi.h should be removed or commented out:
+
+#	if defined(_MT) && !defined(_HDFDLL_)
+#		error To use the HDF libraries from a multithreaded project, you must use the HDF DLLs
+#		error Use the Mutlithreaded DLL runtime libraries (prefered), or define the macro "_HDFDLL_"
+#	endif
+
+
+Step II: The "Runtime library" settings for static projects should be
+         modified as multithreaded.  Please following the instructions
+         below to modify the "Runtime library" settings.
+
+
+For Microsoft Visual C++ 6.0 Users:
+
+1. Right click project "hdf", go to Settings->C/C++;
+   In the "Settings For:" text box, select "Win32 Debug";
+   In the "Category:" text box, select "Code Generation";
+   In the "Use run-time library:" text box, select "Debug
+   Multithreaded";
+   In the "Settings For:" text box, select "Win32 Release"; 
+   In the "Use run-time library:" text box, select "Multithreaded";
+   Then press "OK".
+
+2. Repeat step 1  to set the settings for "Use run-time library"
+   for all the left static projects as "Debug Multithreaded" for
+   debug version and "Multithreaded" for release version.
+
+3. (Optional, only for HDF4 with Fortran support)
+
+   Right click project "hdftestf", go to Settings->Link;
+   In the "Settings For:" text box, select "Win32 Debug";
+   In the "Category:" text box, select "Input";
+   In the "Ignore libraries:" text box, add "libcmtd.lib";
+   In the "Settings For:" text box, select "Win32 Rlease";
+   In the "Ignore libraries:" text box, add "libcmt.lib";
+   Then press "OK".
+
+4. (Optional, only for HDF4 with Fortran support)
+
+   Repeat step 3 to add "libcmtd.lib" to the "Ignore libraries:"
+   for project "fortestf" debug version, and add "libcmt.lib"
+   to the "Ignore libraryies:" for project "fortestf" release version.
+
+
+For Microsoft Visual .NET and Intel C++ 8.1 Compiler Users:
+(HDF4 without Fortran support)
+
+1. Right click project "hdf", go to Properties->C/C++->Code Generation;
+   In the "Settings For:" text box, select "Debug";
+   In the "Runtime Library" text box, select "Multi-threaded Debug (/MTD)";
+   In the "Settings For:" text box, select "Release"; 
+   In the "Runtime Library" text box, select "Multi-threaded (/MT)";
+   Then press "OK".
+
+2. Repeat step 1 to set the settings for "Runtime Library"
+   for all the left static projects (except project hdf_ap, mfhdf_ap,
+   test, and util) as "Multi-threaded Debug (/MTD)" for
+   debug version and "Multithreaded (/MT)" for release version.
+
+(Note: For .NET users without Intel Fortran Compiler, HDF4 Fortran
+       support is not available.)
+
+
+For Intel 8.1 Fortran Compiler Users: (HDF4 with Fortran support)
+
+1. Right click project "hdf_lib", go to Properties->C/C++->Code Generation;
+   In the "Settings For:" text box, select "Debug";
+   In the "Runtime Library" text box, select "Multi-threaded Debug (/MTD)";
+   In the "Settings For:" text box, select "Release"; 
+   In the "Runtime Library" text box, select "Multi-threaded (/MT)";
+   Then press "OK".
+
+2. Repeat step 1 to set the settings for "Runtime Library"
+   for all the left static projects (except project hdf_ap, mfhdf_ap,
+   test, and util) as "Multi-threaded Debug (/MTD)" for
+   debug version and "Multithreaded (/MT)" for release version.
+
+3. Right click project "hdf", go to Properties->Fortran->Libraries;
+   In the "Settings For:" text box, select "Debug";
+   In the "Runtime Library" text box, select "Debug Multithreaded";
+   In the "Settings For:" text box, select "Release"; 
+   In the "Runtime Library" text box, select "Multithreaded";
+   Then press "OK".
+
+4. Repeat step 1  to set the settings for "Runtime Library" for fortestf,
+   hdftestf, and mfhdf projects as "Debug Multithreaded" for
+   debug version and "Multithreaded" for release version.
+
 
 
 Please send email to hdfhelp@ncsa.uiuc.edu for further assistance.
