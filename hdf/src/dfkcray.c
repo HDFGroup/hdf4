@@ -28,20 +28,24 @@ static char RcsId[] = "@(#)$Revision$";
  PRIVATE conversion functions:
     DFKui2i -  Unicos routine for importing 16 bit unsigned integers
     DFKui2s -  Unicos routine for importing 16 bit signed integers
-    DFKuo2i -  Unicos routine for exporting 16 bit integers (both)
-    DFKui4i -  Unicos routine for importing unsigned 32bit integers
-    DFKui4s -  Unicos routine for importing signed 32bit integers
-    DFKuo4i -  Unicos routine for exporting 4 byte integers (both)
+    DFKuo2i -  Unicos routine for exporting 16 bit unsigned integers
+    DFKuo2s -  Unicos routine for exporting 16 bit signed integers
+    DFKui4i -  Unicos routine for importing 32 bit unsigned integers
+    DFKui4s -  Unicos routine for importing 32 bit signed integers
+    DFKuo4i -  Unicos routine for exporting 32 bit unsigned integers
+    DFKuo4s -  Unicos routine for exporting 32 bit signed integers
     DFKui4f -  Unicos routine for importing 32 bit floats
     DFKuo4f -  Unicos routine for exporting 32 bit floats
     DFKui8f -  Unicos routine for importing 64 bit floats
     DFKuo8f -  Unicos routine for exporting 64 bit floats
     DFKlui2i-  Unicos routine for importing little-endian 16 bit unsigned ints
     DFKlui2s-  Unicos routine for importing little-endian 16 bit signed ints
-    DFKluo2i-  Unicos routine for exporting little-endian 16 bit ints (both)
-    DFKlui4i-  Unicos routine for importing little-endian unsigned 32bit ints
-    DFKlui4s-  Unicos routine for importing little-endian signed 32bit ints
-    DFKluo4i-  Unicos routine for exporting little-endian 4 byte ints (both)
+    DFKluo2i-  Unicos routine for exporting little-endian 16 bit unsigned ints
+    DFKluo2s-  Unicos routine for exporting little-endian 16 bit signed ints
+    DFKlui4i-  Unicos routine for importing little-endian 32 bit unsigned ints
+    DFKlui4s-  Unicos routine for importing little-endian 32 bit signed ints
+    DFKluo4i-  Unicos routine for exporting little-endian 32 bit unsigned ints
+    DFKluo4s-  Unicos routine for exporting little-endian 32 bit signed ints
     DFKlui4f-  Unicos routine for importing little-endian 32 bit floats
     DFKluo4f-  Unicos routine for exporting little-endian 32 bit floats
     DFKlui8f-  Unicos routine for importing little-endian 64 bit floats
@@ -134,19 +138,19 @@ uintn elem_size, num_elem;
                 dest=(uint8 *)lp_dest;
                 switch(odd_man_out) {
                     case 3:
-                        dest[0]=source[5];
-                        dest[1]=source[4];
+                        dest[0]=source[1];
+                        dest[1]=source[0];
                         dest[2]=source[3];
                         dest[3]=source[2];
-                        dest[4]=source[1];
-                        dest[5]=source[0];
+                        dest[4]=source[5];
+                        dest[5]=source[4];
                         break;
 
                     case 2:
-                        dest[0]=source[3];
-                        dest[1]=source[2];
-                        dest[2]=source[1];
-                        dest[3]=source[0];
+                        dest[0]=source[1];
+                        dest[1]=source[0];
+                        dest[2]=source[3];
+                        dest[3]=source[2];
                         break;
 
                     case 1:
@@ -235,9 +239,248 @@ uint32 num_elm, source_stride, dest_stride;
         fast_processing = 1;
 
     if(fast_processing) {
+#ifdef DOESNT_WORK
         ierr=IEG2CRAY(&type,&num_elm,source,&bitoff,dest);
 	    if(ierr!=0)
             HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#else
+#ifndef DUFF_ui2i
+#if defined TEST2_ui2i
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm%4;
+
+        n=num_elm/4;
+        lp_dest=(long *)dest;
+        lp_src=(unsigned long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long));
+        for(i = 0; i < n; i++) {
+            lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+            lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+            lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+            lp_dest[3]=lp_src[0]&UI2I_MASKD;
+            lp_dest+=4;
+            lp_src++;
+          } /* end for */
+        switch(odd_man_out) {
+            case 3:
+                lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                break;
+
+            case 2:
+                lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                break;
+
+            case 1:
+                lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                break;
+
+            default:
+                break;
+          } /* end switch */
+#elif defined TEST1_ui2i
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm%4;
+
+        n=num_elm/4;
+        lp_dest=(long *)dest;
+        lp_src=(unsigned long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long));
+        for(i = 0; i < n; i++) {
+            *lp_dest++=(lp_src[0]&UI2I_MASKA)>>48;
+            *lp_dest++=(lp_src[0]&UI2I_MASKB)>>32;
+            *lp_dest++=(lp_src[0]&UI2I_MASKC)>>16;
+            *lp_dest++=lp_src[0]&UI2I_MASKD;
+            lp_src++;
+          } /* end for */
+        switch(odd_man_out) {
+            case 3:
+                *lp_dest++=(lp_src[0]&UI2I_MASKA)>>48;
+                *lp_dest++=(lp_src[0]&UI2I_MASKB)>>32;
+                *lp_dest++=(lp_src[0]&UI2I_MASKC)>>16;
+                break;
+
+            case 2:
+                *lp_dest++=(lp_src[0]&UI2I_MASKA)>>48;
+                *lp_dest++=(lp_src[0]&UI2I_MASKB)>>32;
+                break;
+
+            case 1:
+                *lp_dest++=(lp_src[0]&UI2I_MASKA)>>48;
+                break;
+
+            default:
+                break;
+          } /* end switch */
+#else
+    for(i = 0; i < num_elm; i++) {
+      lptr_dest[0] = 0x0000000000000000;
+      dest[6] = source[0];
+      dest[7] = source[1];
+      source += 2;
+      lptr_dest++;
+      dest = (uint8*)lptr_dest;
+    }
+#endif
+#else   /* DUFF_ui2i */
+        uintn n;
+        int odd_man_out;        /* By default there are even num_elm */
+		uintn orig_num_elm=num_elm;
+
+        lp_dest=(long *)dest;
+        lp_src=(unsigned long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long));
+
+        odd_man_out = num_elm%4;
+
+        num_elm/=4;
+        n=(num_elm+7)/8;
+		if(orig_num_elm>3)
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+#ifdef QAK
+            case 15:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 14:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 13:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 12:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 11:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 10:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 9:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 8:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+#endif
+            case 7:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 6:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 5:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 4:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 3:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 2:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 1:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+                } while(--n>0);
+		}
+        switch(odd_man_out) {
+            case 3:
+                lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                break;
+
+            case 2:
+                lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                break;
+
+            case 1:
+                lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                break;
+
+            default:
+                break;
+          } /* end switch */
+#endif  /* DUFF_ui2i */
+#endif
       } /* end if */
     else { /* Generic stride processing */
         for(i = 0; i < num_elm; i++) {
@@ -388,6 +631,248 @@ uint32 num_elm, source_stride, dest_stride;
         fast_processing = 1;
 
     if(fast_processing) {
+#ifdef DOESNT_WORK
+        ierr=CRAY2IEG(&type,&num_elm,dest,&bitoff,source);
+	    if(ierr!=0)
+            HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#else
+#ifndef DUFF_uo2i
+#if defined TEST1_uo2i
+    int odd_man_out;        /* By default there are even num_elm */
+    intn n;
+
+    odd_man_out = num_elm%4;
+
+    n=num_elm/4;
+    lp_dest=(long *)dest;
+    lp_src=(long *)source;
+    for(i = 0; i < n; i++) {
+        *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                    ((lp_src[1]&UO2I_MASK)<<32) |
+                    ((lp_src[2]&UO2I_MASK)<<16) |
+                    (lp_src[3]&UO2I_MASK);
+        lp_src+=4;
+    }
+    switch(odd_man_out) {   /* clean up leftovers */
+        case 3:
+            *lp_dest=((lp_src[0]&UO2I_MASK)<<48) |
+                        ((lp_src[1]&UO2I_MASK)<<32) |
+                        ((lp_src[2]&UO2I_MASK)<<16);
+            break;
+
+        case 2:
+            *lp_dest=((lp_src[0]&UO2I_MASK)<<48) |
+                        ((lp_src[1]&UO2I_MASK)<<32);
+            break;
+
+        case 1:
+            *lp_dest=(lp_src[0]&UO2I_MASK)<<48;
+            break;
+
+        default:
+            break;
+      } /* end switch */
+#else
+    for(i = 0; i < num_elm; i++) {
+      dest[0] = source[6];
+      dest[1] = source[7];
+      dest += 2;
+      source += 8;
+    }
+#endif
+#else   /* DUFF_uo2i */
+        uintn n;
+        int odd_man_out;        /* By default there are even num_elm */
+		uintn orig_num_elm=num_elm;
+
+        odd_man_out = num_elm%4;
+
+        num_elm/=4;
+        n=(num_elm+7)/8;
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+		if(orig_num_elm>3)
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+#ifdef QAK
+            case 15:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 14:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 13:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 12:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 11:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 10:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 9:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 8:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+#endif
+            case 7:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 6:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 5:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 4:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 3:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 2:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 1:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+                } while(--n>0);
+		}
+
+        switch(odd_man_out) {   /* clean up leftovers */
+            case 3:
+                *lp_dest=((lp_src[0]&UO2I_MASK)<<48) |
+                            ((lp_src[1]&UO2I_MASK)<<32) |
+                            ((lp_src[2]&UO2I_MASK)<<16);
+                break;
+
+            case 2:
+                *lp_dest=((lp_src[0]&UO2I_MASK)<<48) |
+                            ((lp_src[1]&UO2I_MASK)<<32);
+                break;
+
+            case 1:
+                *lp_dest=(lp_src[0]&UO2I_MASK)<<48;
+                break;
+
+            default:
+                break;
+          } /* end switch */
+#endif  /* DUFF_uo2i */
+#endif
+      } /* end if */
+    else { /* Generic Stride processing */
+        for(i = 0; i < num_elm; i++) {
+#ifdef NOINTCRAY2IEG
+            dest[0] = source[6];
+            dest[1] = source[7];
+#else
+            ierr=CRAY2IEG(&type,&n_elem,dest,&bitoff,source);
+    	    if(ierr!=0)
+                HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#endif
+            source += source_stride;
+            dest += dest_stride;
+          } /* end for */
+      } /* end else */
+  return(SUCCEED);
+}
+
+#define UO2S_MASK 0x000000000000ffff
+
+/************************************************************/
+/* DFKuo2s()                                                */
+/* -->Unicos routine for exporting signed 2 byte data items */
+/************************************************************/
+#ifdef PROTOTYPE
+int DFKuo2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+int DFKuo2s(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+    register uintn i;
+    int fast_processing=0;
+#ifdef PROTOTYPE
+    uint8 * source = (uint8*)s;
+    uint8 * dest = (uint8*)d;
+#endif /* PROTOTYPE */
+    long *lp_dest;
+    long *lp_src;
+    char *FUNC="DFKuo2s";
+	int ierr;       /* error from IEG2CRAY */
+	int type=7;     /* type of conversion to perform 7=short integer */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+    intn n_elem=1;  /* the number of elements for stride-based processing */
+
+    HEclear();
+
+    if(source == dest || num_elm == 0)  /* Inplace conversions  not permitted */
+        HRETURN_ERROR(DFE_BADCONV,FAIL);  /* No elements to convert is an error */
+
+    /* Find out if it is OK to use faster array processing */
+    if(source_stride == 0 && dest_stride == 0)
+        fast_processing = 1;
+
+    if(fast_processing) {
         ierr=CRAY2IEG(&type,&num_elm,dest,&bitoff,source);
 	    if(ierr!=0)
             HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
@@ -449,9 +934,163 @@ uint32 num_elm, source_stride, dest_stride;
         fast_processing = 1;
 
     if(fast_processing) {
+#ifdef DOESNT_WORK
         ierr=IEG2CRAY(&type,&num_elm,source,&bitoff,dest);
 	    if(ierr!=0)
             HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#else
+#ifndef DUFF_ui4i
+#if defined TEST2_ui4i
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm % 2;
+
+        n=num_elm/2;
+        lp_dest=(long *)dest;
+        lp_src=(unsigned long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long)); /* initialize to zeros */
+        for(i = 0; i < n; i++) {
+            lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+            lp_dest[1]=lp_src[0]&UI4I_MASKB;
+            lp_dest+=2;
+            lp_src++;
+          } /* end for */
+        if(odd_man_out)
+            *lp_dest=(lp_src[0]&UI4I_MASKA)>>32;
+#elif defined TEST1_ui4i
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm % 2;
+
+        n=num_elm/2;
+        lp_dest=(long *)dest;
+        lp_src=(unsigned long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long)); /* initialize to zeros */
+        for(i = 0; i < n; i++) {
+            *lp_dest++=(lp_src[0]&UI4I_MASKA)>>32;
+            *lp_dest++=lp_src[0]&UI4I_MASKB;
+            lp_src++;
+          } /* end for */
+        if(odd_man_out)
+            *lp_dest++=(lp_src[0]&UI4I_MASKA)>>32;
+#else
+        for(i = 0; i < num_elm; i++) {
+            lptr_dest[0]=0;
+            dest[4] = source[0];
+            dest[5] = source[1];
+            dest[6] = source[2];
+            dest[7] = source[3];
+            source += 4;
+            lptr_dest ++;
+            dest = (uint8 *)lptr_dest;
+          } /* end for */
+#endif
+#else   /* DUFF_ui4i */
+        uintn n;
+        int odd_man_out;        /* By default there are even num_elm */
+		uintn orig_num_elm=num_elm;
+
+        lp_dest=(long *)dest;
+        lp_src=(unsigned long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long)); /* initialize to zeros */
+
+        odd_man_out = num_elm % 2;
+
+        num_elm/=2;
+        n=(num_elm+7)/8;
+		if(orig_num_elm>1)
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+#ifdef QAK
+            case 15:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 14:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 13:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 12:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 11:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 10:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 9:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 8:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+#endif
+            case 7:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 6:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 5:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 4:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 3:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 2:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 1:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+                } while(--n>0);
+		}
+        if(odd_man_out)
+            *lp_dest=(lp_src[0]&UI4I_MASKA)>>32;
+#endif  /* DUFF_ui4i */
+#endif
       } /* end if */
     else {
         for(i = 0; i < num_elm; i++) {
@@ -592,6 +1231,166 @@ uint32 num_elm, source_stride, dest_stride;
         fast_processing = 1;
 
     if(fast_processing) {
+#ifdef DOESNT_WORK
+        ierr=CRAY2IEG(&type,&num_elm,dest,&bitoff,source);
+	    if(ierr!=0)
+            HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#else
+#ifndef DUFF_uo4i
+#if defined TEST1_uo4i
+    int odd_man_out;        /* By default there are even num_elm */
+    intn n;
+
+    odd_man_out = num_elm % 2;
+
+    n=num_elm/2;
+    lp_dest=(long *)dest;
+    lp_src=(long *)source;
+    for(i = 0; i < n; i++) {
+        *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+        lp_src+=2;
+    }
+    if(odd_man_out)
+        *lp_dest=(lp_src[0]&UO4I_MASK)<<32;
+#else
+    for(i = 0; i < num_elm; i++) {
+      dest[0] = source[4];
+      dest[1] = source[5];
+      dest[2] = source[6];
+      dest[3] = source[7];
+      dest += 4;
+      source += 8;
+    }
+#endif
+#else   /* DUFF_uo4i */
+        uintn n;
+        int odd_man_out;        /* By default there are even num_elm */
+		uintn orig_num_elm=num_elm;
+
+        odd_man_out = num_elm % 2;
+
+        num_elm/=2;
+        n=(num_elm+7)/8;
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+
+		if(orig_num_elm>1)
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+#ifdef QAK
+            case 15:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 14:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 13:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 12:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 11:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 10:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 9:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 8:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+#endif
+            case 7:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 6:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 5:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 4:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 3:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 2:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 1:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+                } while(--n>0);
+		}
+        if(odd_man_out)
+            *lp_dest++=(lp_src[0]&UO4I_MASK)<<32;
+
+#endif  /* DUFF_uo4i */
+#endif
+      } /* end if */
+    else
+        for(i = 0; i < num_elm; i++) {
+#ifdef NOINTCRAY2IEG
+            dest[0] = source[4];
+            dest[1] = source[5];
+            dest[2] = source[6];
+            dest[3] = source[7];
+#else
+            ierr=CRAY2IEG(&type,&n_elem,dest,&bitoff,source);
+    	    if(ierr!=0)
+                HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#endif
+            dest += dest_stride;
+            source += source_stride;
+          } /* end for */
+  return(SUCCEED);
+}
+
+#define UO4S_MASK 0x00000000ffffffff
+
+/************************************************************/
+/* DFKuo4s()                                                */
+/* -->Unicos routine for exporting signed 4 byte data items */
+/************************************************************/
+#ifdef PROTOTYPE
+int DFKuo4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+int DFKuo4s(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+    int fast_processing=0;
+    register uintn i;
+#ifdef PROTOTYPE
+    uint8 * source = (uint8*)s;
+    uint8 * dest = (uint8*)d;
+#endif /* PROTOTYPE */
+    long *lp_dest;
+    long *lp_src;
+    char *FUNC="DFKuo4s";
+    int ierr;       /* error from IEG2CRAY */
+    int type=1;     /* type of conversion to perform 7=short integer */
+    int bitoff=0;   /* bit offset in the IEEE stream */
+    intn n_elem=1;  /* the number of elements for stride-based processing */
+
+    HEclear();
+
+    if(source == dest || num_elm == 0)   /* Inplace conversions  not permitted */
+        HRETURN_ERROR(DFE_BADCONV,FAIL);    /* No elements to convert is an error */
+
+    if(source_stride == 0 && dest_stride == 0)
+        fast_processing = 1;
+
+    if(fast_processing) {
         ierr=CRAY2IEG(&type,&num_elm,dest,&bitoff,source);
 	    if(ierr!=0)
             HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
@@ -689,9 +1488,9 @@ uint32 dest_stride;
             HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
       } /* end if */
     else { /* We end up here if we are doing stride based processing */
+#ifdef NOFLOATCRAY2IEG
         buf1 = 0;
         for(i = 0; i < num_elm; i++) {
-#ifdef NOFLOATCRAY2IEG
             dud1[0] = source[0];               /* Loop would be less efficient */
             dud1[1] = source[1];
             dud1[2] = source[2];
@@ -716,14 +1515,23 @@ uint32 dest_stride;
             dest[6] = dud2[6];
             dest[7] = dud2[7];
 
-#else
-            ierr=IEG2CRAY(&type,&n_elem,source,&bitoff,dest);
-        	if(ierr!=0)
-                HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
-#endif
             source += source_stride;
             dest += dest_stride;
           } /* end for */
+#else
+        uint8 tmp_dst[8];
+        float32 tmp_src;
+
+        for(i = 0; i < num_elm; i++) {
+            HDmemcpy(&tmp_src,source,sizeof(float32));
+            ierr=IEG2CRAY(&type,&n_elem,&tmp_src,&bitoff,tmp_dst);
+        	if(ierr!=0)
+                HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+            HDmemcpy(dest,tmp_dst,8);
+            source += source_stride;
+            dest += dest_stride;
+          } /* end for */
+#endif
       } /* end else */
   return(SUCCEED);
 }
@@ -795,9 +1603,9 @@ uint32 num_elm, source_stride, dest_stride;
             HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
       } /* end if */
     else { /* We end up here if we are doing stride based processing */
+#ifdef NOFLOATCRAY2IEG
         buf1 = 0;
         for(i = 0; i < num_elm; i++) {
-#ifdef NOFLOATCRAY2IEG
             dud1[0] = source[0];               /* Loop would be less efficient */
             dud1[1] = source[1];
             dud1[2] = source[2];
@@ -820,14 +1628,23 @@ uint32 num_elm, source_stride, dest_stride;
             dest[2] = dud2[2];
             dest[3] = dud2[3];
 
-#else
-            ierr=CRAY2IEG(&type,&n_elem,dest,&bitoff,source);
-    	    if(ierr!=0)
-                HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
-#endif
             source += source_stride;
             dest += dest_stride;
           } /* end for */
+#else
+        uint8 tmp_dst[8];
+        float32 tmp_src;
+
+        for(i = 0; i < num_elm; i++) {
+            HDmemcpy(&tmp_src,source,sizeof(float32));
+            ierr=CRAY2IEG(&type,&n_elem,tmp_dst,&bitoff,&tmp_src);
+    	    if(ierr!=0) 
+                HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+            HDmemcpy(dest,tmp_dst,4);
+            source += source_stride;
+            dest += dest_stride;
+          } /* end for */
+#endif
       } /* end else */
   return(SUCCEED);
 }
@@ -1067,12 +1884,341 @@ uint32 num_elm, source_stride, dest_stride;
         fast_processing = 1;
 
     if(fast_processing) {
+#ifdef DOESNT_WORK
         tmp_dst=(uint8 *)HDgetspace(2*num_elm);
         DFKswap(source,tmp_dst,2,num_elm);
         ierr=IEG2CRAY(&type,&num_elm,tmp_dst,&bitoff,dest);
         HDfreespace(tmp_dst);
     	if(ierr!=0)
             HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#else
+#ifndef DUFF_lui2i
+#if defined TEST2_lui2i
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm%4;
+
+        n=num_elm/4;
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long));
+        for(i = 0; i < n; i++) {
+            lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                    ((lp_src[0]&LUI2I_MASKA2)>>40);
+            lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                    ((lp_src[0]&LUI2I_MASKB2)>>24);
+            lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                    ((lp_src[0]&LUI2I_MASKC2)>>8);
+            lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                    ((lp_src[0]&LUI2I_MASKD2)<<8);
+            lp_dest+=4;
+            lp_src++;
+          } /* end for */
+        switch(odd_man_out) {
+            case 3:
+                lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2I_MASKA2)>>40);
+                lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                        ((lp_src[0]&LUI2I_MASKB2)>>24);
+                lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                        ((lp_src[0]&LUI2I_MASKC2)>>8);
+                break;
+
+            case 2:
+                lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2I_MASKA2)>>40);
+                lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                        ((lp_src[0]&LUI2I_MASKB2)>>24);
+                break;
+
+            case 1:
+                lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2I_MASKA2)>>40);
+                break;
+
+            default:
+                break;
+          } /* end switch */
+#elif defined TEST1_lui2i
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm%4;
+
+        n=num_elm/4;
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long));
+        for(i = 0; i < n; i++) {
+            *lp_dest++=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                    ((lp_src[0]&LUI2I_MASKA2)>>40);
+            *lp_dest++=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                    ((lp_src[0]&LUI2I_MASKB2)>>24);
+            *lp_dest++=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                    ((lp_src[0]&LUI2I_MASKC2)>>8);
+            *lp_dest++=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                    ((lp_src[0]&LUI2I_MASKD2)<<8);
+            lp_src++;
+          } /* end for */
+        switch(odd_man_out) {
+            case 3:
+                *lp_dest++=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2I_MASKA2)>>40);
+                *lp_dest++=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                        ((lp_src[0]&LUI2I_MASKB2)>>24);
+                *lp_dest++=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                        ((lp_src[0]&LUI2I_MASKC2)>>8);
+                break;
+
+            case 2:
+                *lp_dest++=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2I_MASKA2)>>40);
+                *lp_dest++=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                        ((lp_src[0]&LUI2I_MASKB2)>>24);
+                break;
+
+            case 1:
+                *lp_dest++=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2I_MASKA2)>>40);
+                break;
+
+            default:
+                break;
+          } /* end switch */
+#else
+    for(i = 0; i < num_elm; i++) {
+      lptr_dest[0] = 0x0000000000000000;
+      dest[6] = source[1];
+      dest[7] = source[0];
+      source += 2;
+      lptr_dest++;
+      dest = (uint8*)lptr_dest;
+    }
+#endif
+#else   /* DUFF_lui2i */
+        uintn n;
+        int odd_man_out;        /* By default there are even num_elm */
+		uintn orig_num_elm=num_elm;
+
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long));
+
+        odd_man_out = num_elm % 4;
+
+        num_elm/=4;
+        n=(num_elm+7)/8;
+		if(orig_num_elm>3)
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+#ifdef QAK
+            case 15:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 14:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 13:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 12:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 11:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 10:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 9:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 8:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+#endif
+            case 7:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 6:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 5:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 4:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 3:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 2:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 1:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+                } while(--n>0);
+		}
+        switch(odd_man_out) {
+            case 3:
+                lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2I_MASKA2)>>40);
+                lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                        ((lp_src[0]&LUI2I_MASKB2)>>24);
+                lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                        ((lp_src[0]&LUI2I_MASKC2)>>8);
+                break;
+
+            case 2:
+                lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2I_MASKA2)>>40);
+                lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                        ((lp_src[0]&LUI2I_MASKB2)>>24);
+                break;
+
+            case 1:
+                lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2I_MASKA2)>>40);
+                break;
+
+            default:
+                break;
+          } /* end switch */
+#endif  /* DUFF_lui2i */
+#endif
       } /* end for */
     else { /* Generic stride processing */
 #ifdef NOINTCRAY2IEG
@@ -1252,6 +2398,344 @@ uint32 num_elm, source_stride, dest_stride;
         fast_processing = 1;
 
     if(fast_processing) {
+#ifdef DOESNT_WORK
+        tmp_dst=(uint8 *)HDgetspace(2*num_elm);
+        ierr=CRAY2IEG(&type,&num_elm,tmp_dst,&bitoff,source);
+    	if(ierr!=0) {
+            HDfreespace(tmp_dst);
+            HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+          } /* end if */
+        DFKswap(tmp_dst,dest,2,num_elm);
+        HDfreespace(tmp_dst);
+#else
+#ifndef DUFF_luo2i
+#if defined TEST1_luo2i
+    int odd_man_out;        /* By default there are even num_elm */
+    intn n;
+
+    odd_man_out = num_elm%4;
+
+    n=num_elm/4;
+    lp_dest=(long *)dest;
+    lp_src=(long *)source;
+    for(i = 0; i < n; i++) {
+        *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                    ((lp_src[0]&LUO2I_MASKB)<<40) |
+                    ((lp_src[1]&LUO2I_MASKA)<<40) |
+                    ((lp_src[1]&LUO2I_MASKB)<<24) |
+                    ((lp_src[2]&LUO2I_MASKA)<<24) |
+                    ((lp_src[2]&LUO2I_MASKB)<<8) |
+                    ((lp_src[3]&LUO2I_MASKA)<<8) |
+                    ((lp_src[3]&LUO2I_MASKB)>>8);
+        lp_src+=4;
+    }
+    switch(odd_man_out) {   /* clean up leftovers */
+        case 3:
+            *lp_dest=((lp_src[0]&LUO2I_MASKA)<<56) |
+                        ((lp_src[0]&LUO2I_MASKB)<<40) |
+                        ((lp_src[1]&LUO2I_MASKA)<<40) |
+                        ((lp_src[1]&LUO2I_MASKB)<<24) |
+                        ((lp_src[2]&LUO2I_MASKA)<<24) |
+                        ((lp_src[2]&LUO2I_MASKB)<<8);
+            break;
+
+        case 2:
+            *lp_dest=((lp_src[0]&LUO2I_MASKA)<<56) |
+                        ((lp_src[0]&LUO2I_MASKB)<<40) |
+                        ((lp_src[1]&LUO2I_MASKA)<<40) |
+                        ((lp_src[1]&LUO2I_MASKB)<<24);
+            break;
+
+        case 1:
+            *lp_dest=((lp_src[0]&LUO2I_MASKA)<<56) |
+                        ((lp_src[0]&LUO2I_MASKB)<<40);
+            break;
+
+        case 0:
+            break;
+      } /* end switch */
+#else
+    for(i = 0; i < num_elm; i++) {
+      dest[0] = source[7];
+      dest[1] = source[6];
+      dest += 2;
+      source += 8;
+    }
+#endif
+#else   /* DUFF_luo2i */
+        uintn n;
+        int odd_man_out;        /* By default there are even num_elm */
+		uintn orig_num_elm=num_elm;
+
+        odd_man_out = num_elm % 4;
+
+        num_elm/=4;
+        n=(num_elm+7)/8;
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+		if(orig_num_elm>3)
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+#ifdef QAK
+            case 15:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 14:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 13:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 12:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 11:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 10:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 9:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 8:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+#endif
+            case 7:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 6:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 5:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 4:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 3:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 2:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 1:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+                } while(--n>0);
+		}
+        switch(odd_man_out) {   /* clean up leftovers */
+            case 3:
+                *lp_dest=((lp_src[0]&LUO2I_MASKA)<<56) |
+                            ((lp_src[0]&LUO2I_MASKB)<<40) |
+                            ((lp_src[1]&LUO2I_MASKA)<<40) |
+                            ((lp_src[1]&LUO2I_MASKB)<<24) |
+                            ((lp_src[2]&LUO2I_MASKA)<<24) |
+                            ((lp_src[2]&LUO2I_MASKB)<<8);
+                break;
+
+            case 2:
+                *lp_dest=((lp_src[0]&LUO2I_MASKA)<<56) |
+                            ((lp_src[0]&LUO2I_MASKB)<<40) |
+                            ((lp_src[1]&LUO2I_MASKA)<<40) |
+                            ((lp_src[1]&LUO2I_MASKB)<<24);
+                break;
+
+            case 1:
+                *lp_dest=((lp_src[0]&LUO2I_MASKA)<<56) |
+                            ((lp_src[0]&LUO2I_MASKB)<<40);
+                break;
+
+            default:
+                break;
+          } /* end switch */
+#endif  /* DUFF_luo2i */
+#endif
+      } /* end if */
+    else { /* Generic Stride processing */
+#ifdef NOINTCRAY2IEG
+        for(i = 0; i < num_elm; i++){
+            dest[0] = source[7];
+            dest[1] = source[6];
+            source += source_stride;
+            dest += dest_stride;
+          } /* end for */
+#else
+        tmp_dst=(uint8 *)HDgetspace(2);
+        for(i = 0; i < num_elm; i++) {
+            ierr=CRAY2IEG(&type,&n_elem,tmp_dst,&bitoff,source);
+        	if(ierr!=0) {
+                HDfreespace(tmp_dst);
+                HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+              } /* end if */
+            DFKswap(tmp_dst,dest,2,1);
+            source += source_stride;
+            dest += dest_stride;
+          } /* end for */
+        HDfreespace(tmp_dst);
+#endif
+      } /* end else */
+  return(SUCCEED);
+}
+
+#define LUO2S_MASKA 0x00000000000000ff
+#define LUO2S_MASKB 0x000000000000ff00
+
+/************************************************************/
+/* DFKluo2s()                                               */
+/* -->Unicos routine for exporting signed 2 byte            */
+/*      little-endian data items                            */
+/************************************************************/
+#ifdef PROTOTYPE
+int DFKluo2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+int DFKluo2s(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+    register uint32 i;
+    int fast_processing=0;
+#ifdef PROTOTYPE
+    uint8 * source = (uint8*)s;
+    uint8 * dest = (uint8*)d;
+#endif /* PROTOTYPE */
+    long *lp_dest;
+    long *lp_src;
+    char *FUNC="DFKuo2s";
+	int ierr;       /* error from IEG2CRAY */
+	int type=7;     /* type of conversion to perform 7=short integer */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+    uint8 *tmp_dst; /* temporary buffer to hold byte swapped values */
+    intn n_elem=1;  /* the number of elements for stride-based processing */
+
+    HEclear();
+
+    if(source == dest || num_elm == 0)  /* Inplace conversions  not permitted */
+        HRETURN_ERROR(DFE_BADCONV,FAIL);/* No elements to convert is an error */
+
+    /* Find out if it is OK to use faster array processing */
+    if(source_stride == 0 && dest_stride == 0)
+        fast_processing = 1;
+
+    if(fast_processing) {
         tmp_dst=(uint8 *)HDgetspace(2*num_elm);
         ierr=CRAY2IEG(&type,&num_elm,tmp_dst,&bitoff,source);
     	if(ierr!=0) {
@@ -1335,12 +2819,283 @@ uint32 num_elm, source_stride, dest_stride;
         fast_processing = 1;
 
     if(fast_processing) {
+#ifdef DOESNT_WORK
         tmp_dst=(uint8 *)HDgetspace(4*num_elm);
         DFKswap(source,tmp_dst,4,num_elm);
         ierr=IEG2CRAY(&type,&num_elm,tmp_dst,&bitoff,dest);
         HDfreespace(tmp_dst);
     	if(ierr!=0)
             HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+#else
+#ifndef DUFF_lui4i
+#if defined TEST2_lui4i
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm % 2;
+
+        n=num_elm/2;
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long)); /* initialize to zeros */
+        for(i = 0; i < n; i++) {
+            lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                        (lp_src[0]&LUI4I_MASKB)>>40 |
+                        (lp_src[0]&LUI4I_MASKC)>>24 |
+                        (lp_src[0]&LUI4I_MASKD)>>8;
+            lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                        (lp_src[0]&LUI4I_MASKF)>>8 |
+                        (lp_src[0]&LUI4I_MASKG)<<8 |
+                        (lp_src[0]&LUI4I_MASKH)<<24;
+            lp_dest+=2;
+            lp_src++;
+          } /* end for */
+        if(odd_man_out)
+            *lp_dest=(lp_src[0]&LUI4I_MASKA)>>56 |
+                        (lp_src[0]&LUI4I_MASKB)>>40 |
+                        (lp_src[0]&LUI4I_MASKC)>>24 |
+                        (lp_src[0]&LUI4I_MASKD)>>8;
+#elif defined TEST1_lui4i
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm % 2;
+
+        n=num_elm/2;
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long)); /* initialize to zeros */
+        for(i = 0; i < n; i++) {
+            *lp_dest++=(lp_src[0]&LUI4I_MASKA)>>56 |
+                        (lp_src[0]&LUI4I_MASKB)>>40 |
+                        (lp_src[0]&LUI4I_MASKC)>>24 |
+                        (lp_src[0]&LUI4I_MASKD)>>8;
+            *lp_dest++=(lp_src[0]&LUI4I_MASKE)>>24 |
+                        (lp_src[0]&LUI4I_MASKF)>>8 |
+                        (lp_src[0]&LUI4I_MASKG)<<8 |
+                        (lp_src[0]&LUI4I_MASKH)<<24;
+            lp_src++;
+          } /* end for */
+        if(odd_man_out)
+            *lp_dest++=(lp_src[0]&LUI4I_MASKA)>>56 |
+                        (lp_src[0]&LUI4I_MASKB)>>40 |
+                        (lp_src[0]&LUI4I_MASKC)>>24 |
+                        (lp_src[0]&LUI4I_MASKD)>>8;
+#else
+    for(i = 0; i < num_elm; i++) {
+      lptr_dest[0] = 0;
+      dest[4] = source[3];
+      dest[5] = source[2];
+      dest[6] = source[1];
+      dest[7] = source[0];
+      source += 4;
+      lptr_dest ++;
+      dest = (uint8 *)lptr_dest;
+    }
+#endif
+#else   /* DUFF_lui4i */
+        uintn n;
+        int odd_man_out;        /* By default there are even num_elm */
+		uintn orig_num_elm=num_elm;
+
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long)); /* initialize to zeros */
+
+        odd_man_out = num_elm % 2;
+
+        num_elm/=2;
+        n=(num_elm+7)/8;
+		if(orig_num_elm>1)
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+#ifdef QAK
+            case 15:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 14:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 13:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 12:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 11:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 10:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 9:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 8:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+#endif
+            case 7:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 6:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 5:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 4:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 3:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 2:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 1:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+                } while(--n>0);
+		}
+        if(odd_man_out)
+            *lp_dest=(lp_src[0]&LUI4I_MASKA)>>56 |
+                        (lp_src[0]&LUI4I_MASKB)>>40 |
+                        (lp_src[0]&LUI4I_MASKC)>>24 |
+                        (lp_src[0]&LUI4I_MASKD)>>8;
+#endif  /* DUFF_lui4i */
+#endif
       } /* end if */
     else {
 #ifdef NOINTCRAY2IEG
@@ -1513,6 +3268,291 @@ uint32 num_elm, source_stride, dest_stride;
         fast_processing = 1;
 
     if(fast_processing) {
+#ifdef DOESNT_WORK
+        tmp_dst=(uint8 *)HDgetspace(4*num_elm);
+        ierr=CRAY2IEG(&type,&num_elm,tmp_dst,&bitoff,source);
+    	if(ierr!=0) {
+            HDfreespace(tmp_dst);
+            HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+          } /* end if */
+        DFKswap(tmp_dst,dest,4,num_elm);
+        HDfreespace(tmp_dst);
+#else
+#ifndef DUFF_luo4i
+#if defined TEST2_luo4i
+    int odd_man_out = 0;        /* By default there are even num_elm */
+    intn n;
+
+    if(num_elm % 2)             /* If this is true, we have odd num */
+      odd_man_out = 1;
+
+    n=num_elm/2;
+    lp_dest=(long *)dest;
+    lp_src=(long *)source;
+    for(i = 0; i < n; i++) {
+        *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) | ((lp_src[0]&LUO4I_MASKB)<<40) |
+                   ((lp_src[1]&LUO4I_MASKA)>>8) | ((lp_src[1]&LUO4I_MASKB)<<8);
+        *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) | ((*lp_dest&LUO4I_MASKD)<<16);
+		lp_dest++;
+        lp_src+=2;
+    }
+    if(odd_man_out) {
+        *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) | ((lp_src[0]&LUO4I_MASKB)<<40);
+        *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) | ((*lp_dest&LUO4I_MASKD)<<16);
+      } /* end if */
+#else
+    for(i = 0; i < num_elm; i++) {
+      dest[0] = source[7];
+      dest[1] = source[6];
+      dest[2] = source[5];
+      dest[3] = source[4];
+      dest += 4;
+      source += 8;
+    }
+#endif
+#else   /* DUFF_luo4i */
+        register uintn n;
+        int odd_man_out = 0;        /* By default there are even num_elm */
+		uintn orig_num_elm=num_elm;
+
+        if(num_elm % 2)             /* If this is true, we have odd num */
+          odd_man_out = 1;
+
+        num_elm/=2;
+        n=(num_elm+7)/8;
+        lp_dest=(unsigned long *)dest;
+        lp_src=(unsigned long *)source;
+		if(orig_num_elm>1)
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
+                    lp_src+=2;
+#ifdef QAK
+            case 15:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
+                    lp_src+=2;
+            case 14:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
+                    lp_src+=2;
+            case 13:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
+                    lp_src+=2;
+            case 12:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
+                    lp_src+=2;
+            case 11:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
+                    lp_src+=2;
+            case 10:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
+                    lp_src+=2;
+            case 9:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
+                    lp_src+=2;
+            case 8:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
+                    lp_src+=2;
+#endif
+            case 7:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
+                    lp_src+=2;
+            case 6:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
+                    lp_src+=2;
+            case 5:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
+                    lp_src+=2;
+            case 4:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
+                    lp_src+=2;
+            case 3:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
+                    lp_src+=2;
+            case 2:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
+                    lp_src+=2;
+            case 1:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
+                    lp_src+=2;
+                } while(--n>0);
+		}
+        if(odd_man_out) {
+            *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                    ((lp_src[0]&LUO4I_MASKB)<<40);
+            *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
+                    ((*lp_dest&LUO4I_MASKD)<<16);
+          } /* end if */
+#endif  /* DUFF_luo4i */
+#endif
+      } /* end if */
+    else {
+#ifdef NOINTCRAY2IEG
+        for(i = 0; i < num_elm; i++) {
+            dest[0] = source[7];
+            dest[1] = source[6];
+            dest[2] = source[5];
+            dest[3] = source[4];
+            dest += dest_stride;
+            source += source_stride;
+          } /* end for */
+#else
+        tmp_dst=(uint8 *)HDgetspace(4);
+        for(i = 0; i < num_elm; i++) {
+            ierr=CRAY2IEG(&type,&n_elem,tmp_dst,&bitoff,source);
+        	if(ierr!=0) {
+                HDfreespace(tmp_dst);
+                HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
+              } /* end if */
+            DFKswap(tmp_dst,dest,4,num_elm);
+            dest += dest_stride;
+            source += source_stride;
+          } /* end for */
+        HDfreespace(tmp_dst);
+#endif
+      } /* end else */
+    return(SUCCEED);
+}
+
+#define LUO4S_MASKA 0x00000000ff00ff00
+#define LUO4S_MASKB 0x0000000000ff00ff
+#define LUO4S_MASKC 0xffff0000ffff0000
+#define LUO4S_MASKD 0x0000ffff0000ffff
+
+/************************************************************/
+/* DFKluo4s()                                               */
+/* -->Unicos routine for exporting signed 4 byte            */
+/*      little-endian data items                            */
+/************************************************************/
+#ifdef PROTOTYPE
+int DFKluo4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+int DFKluo4s(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+    int fast_processing=0;
+    register uintn i;
+#ifdef PROTOTYPE
+    uint8 * source = (uint8*)s;
+    uint8 * dest = (uint8*)d;
+#endif /* PROTOTYPE */
+    unsigned long *lp_dest;
+    unsigned long *lp_src;
+    char *FUNC="DFKuo4s";
+	int ierr;       /* error from IEG2CRAY */
+	int type=1;     /* type of conversion to perform 1=integer */
+	int bitoff=0;   /* bit offset in the IEEE stream */
+    uint8 *tmp_dst; /* temporary buffer to hold byte swapped values */
+    intn n_elem=1;  /* the number of elements for stride-based processing */
+
+    HEclear();
+
+    if(source == dest || num_elm == 0) /* Inplace conversions  not permitted */
+        HRETURN_ERROR(DFE_BADCONV,FAIL); /* No elements to convert is an error */
+
+    if(source_stride == 0 && dest_stride == 0)
+        fast_processing = 1;
+
+    if(fast_processing) {
         tmp_dst=(uint8 *)HDgetspace(4*num_elm);
         ierr=CRAY2IEG(&type,&num_elm,tmp_dst,&bitoff,source);
     	if(ierr!=0) {
@@ -1668,20 +3708,23 @@ uint32 dest_stride;
             dest += dest_stride;
           } /* end for */
 #else
+        float32 tmp_dst2;
+
         tmp_dst=(uint8 *)HDgetspace(4);
         for(i = 0; i < num_elm; i++) {
             DFKswap(source,tmp_dst,4,1);
-            ierr=IEG2CRAY(&type,&n_elem,tmp_dst,&bitoff,dest);
+            ierr=IEG2CRAY(&type,&n_elem,tmp_dst,&bitoff,&tmp_dst2);
         	if(ierr!=0) {
                 HDfreespace(tmp_dst);
                 HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */
               } /* end if */
+            HDmemcpy(dest,&tmp_dst2,4);
             source += source_stride;
             dest += dest_stride;
           } /* end for */
         HDfreespace(tmp_dst);
 #endif
-      } /* end for */
+      } /* end else */
     return(SUCCEED);
 }
 
@@ -1789,9 +3832,12 @@ uint32 num_elm, source_stride, dest_stride;
             dest += dest_stride;
           } /* end for */
 #else
+        float32 tmp_src;
+
         tmp_dst=(uint8 *)HDgetspace(4);
         for(i = 0; i < num_elm; i++) {
-            ierr=CRAY2IEG(&type,&n_elem,tmp_dst,&bitoff,source);
+            HDmemcpy(&tmp_src,source,sizeof(float32));
+            ierr=CRAY2IEG(&type,&n_elem,tmp_dst,&bitoff,&tmp_src);
         	if(ierr!=0) {
                 HDfreespace(tmp_dst);
                 HRETURN_ERROR(DFE_BADCONV,FAIL);  /* error in Cray conversion */

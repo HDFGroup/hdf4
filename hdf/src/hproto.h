@@ -786,6 +786,9 @@ extern intn DFKui2s
 extern intn DFKuo2i
     PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
 
+extern intn DFKuo2s
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
 extern intn DFKui4i
     PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
 
@@ -793,6 +796,9 @@ extern intn DFKui4s
     PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
 
 extern intn DFKuo4i
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKuo4s
     PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
 
 extern intn DFKui4f
@@ -816,6 +822,9 @@ extern intn DFKlui2s
 extern intn DFKluo2i
     PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
 
+extern intn DFKluo2s
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
 extern intn DFKlui4i
     PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
 
@@ -823,6 +832,9 @@ extern intn DFKlui4s
     PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
 
 extern intn DFKluo4i
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKluo4s
     PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
 
 extern intn DFKlui4f
