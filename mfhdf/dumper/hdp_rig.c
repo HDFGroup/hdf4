@@ -10,16 +10,11 @@
  *                                                                          *
  ****************************************************************************/
 
-/* File: hdp_rig.c
-   Programmer: Eric Tsui
-   Working period: Fall 1994
- */
-
 #ifdef RCSID
-static char RcsId[] = "@(#)1.1";
+static char RcsId[] = "@(#)$Revision$";
 #endif
 
-/* hdp_rig.c,v 1.1 1994/12/24 14:12:18 ktsui Exp */
+/* $Id$ */
 
 
 #include <stdio.h>
@@ -32,7 +27,7 @@ static char RcsId[] = "@(#)1.1";
 #define IMAGE 1
 
 
-extern void sort(int32 chosen[100]);
+extern void sort(int32 chosen[MAXCHOICES]);
 
 static intn drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc, 
 		 char *argv[], int model);
@@ -93,8 +88,8 @@ intn parse_dumprig_opts(dump_info_t *dumprig_opts, intn *curr_arg,
 		case 'i':	/* dump by index */
 		    dumprig_opts->filter=DINDEX;	
                     (*curr_arg)++;
-		    dumprig_opts->filter_num = (int*)malloc(sizeof(int*)*1000);
-		    string = (char*)malloc(sizeof(char)*MAXNAMELEN);
+		    dumprig_opts->filter_num = (int*)HDgetspace(sizeof(int*)*1000);
+		    string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN);
 		    ptr = argv[*curr_arg];
 		    lastItem = 0;
 		    for (i=0; !lastItem; i++) {
@@ -114,8 +109,8 @@ intn parse_dumprig_opts(dump_info_t *dumprig_opts, intn *curr_arg,
                 case 'r':       /* dump by reference */
                     dumprig_opts->filter=DREFNUM;
 		    (*curr_arg)++;
-                    dumprig_opts->filter_num = (int*)malloc(sizeof(int*)*1000);
-		    string = (char*)malloc(sizeof(char)*MAXNAMELEN);
+                    dumprig_opts->filter_num = (int*)HDgetspace(sizeof(int*)*1000);
+		    string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN);
 		    ptr = argv[*curr_arg]; 
 		    lastItem = 0;
 		    for (i=0; !lastItem; i++) {
@@ -220,27 +215,18 @@ extern int32 dumpfull(int32 nt,int32 cnt,VOIDP databuf,intn indent,FILE *ofp);
 static intn drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc, 
 		 char *argv[], int model)  
 {
-    intn  i, ret, isdimvar;
-    int32 rig_id, rig_chosen[100];
-    int32 rank, nt, nattr, ndsets, temp, nglb_attr;
-    int32 j, k, attr_nt, attr_count, attr_buf_size, attr_index;
+    int32 rig_id, rig_chosen[MAXCHOICES];
+    int32 width, height, nt, ndsets, temp, index;
+    int32 i, j, k, x, y, ret;
     char file_name[MAXFNLEN], name[MAXNAMELEN]; 
-    char attr_name[MAXNAMELEN], dim_nm[MAXNAMELEN];
-    int32 dimsizes[MAXRANK], dim_id, dimNT[MAXRANK], dimnattr[MAXRANK];
-    FILE  *fp, *fopen();
-    int32 /* ref ,*/ index;
-    VOIDP attr_buf;
-    char *nt_desc, *attr_nt_desc;
-    int rig, y;
-    int32 width, height;
-    int ncomps, il;
+    FILE  *fp;
     VOIDP image;
-    int index_error=0, x, dumpall=0;
+    int index_error=0, dumpall=0, ncomps, il, rig;
     
     while (curr_arg < argc)   { /* Examine all files. */
         HDstrcpy(file_name, argv[curr_arg]);
         curr_arg++;
-	for (i=0; i<100; i++)
+	for (i=0; i<MAXCHOICES; i++)
 	   rig_chosen[i] = -1;
 
 	/* Determine which RIGs are to be displayed. */

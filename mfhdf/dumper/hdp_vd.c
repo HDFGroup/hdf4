@@ -10,32 +10,24 @@
  *                                                                          *
  ****************************************************************************/
 
-/* File: hdp_vd.c 
-   Programmer: Eric Tsui
-   Working period: Fall 1994
- */
-
 #ifdef RCSID
-static char RcsId[] = "@(#)1.1";
+static char RcsId[] = "@(#)$Revision$";
 #endif
 
-/* hdp_vd.c,v 1.1 1994/12/24 14:12:18 ktsui Exp */
+/* $Id$ */
 
 
 #include "hdp.h"
 #include <math.h>
 
-#define MAXFLDSCHOSEN 100
-#define MAXVDSCHOSEN 100
-
-extern void sort(int32 *chosen);
+extern void sort(int32 chosen[MAXCHOICES]);
 
 static intn dvd(dump_info_t *dumpvd_opts, intn curr_arg, intn argc, 
-		char *argv[], char *flds_chosen[MAXNAMELEN], 
+		char *argv[], char *flds_chosen[MAXCHOICES], 
 		int dumpallfields);
 
 int32 dumpvd(int32 vd_id, int data_only, FILE *fp, char sep[2], 
-		   int32 flds_indices[MAXFLDSCHOSEN], int dumpallfields);
+		   int32 flds_indices[MAXCHOICES], int dumpallfields);
 
 int32 VSref_index(int32 file_id, int32 vd_ref);
 
@@ -82,7 +74,7 @@ void init_dumpvd_opts(dump_info_t *dumpvd_opts)
 
 
 intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
-		       char *argv[], char *flds_chosen[MAXNAMELEN], 
+		       char *argv[], char *flds_chosen[MAXCHOICES], 
 		       int *dumpallfields)
 {
    int32 i, k, lastItem, number=1, count;
@@ -100,9 +92,9 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
 		case 'i':	/* dump by index */
 		    dumpvd_opts->filter=DINDEX;	
                     (*curr_arg)++;
-		    string = (char*)malloc(sizeof(char)*MAXNAMELEN);	
+		    string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN);	
 		    ptr = argv[*curr_arg];
-		    dumpvd_opts->filter_num = (int*)malloc(sizeof(int)*
+		    dumpvd_opts->filter_num = (int*)HDgetspace(sizeof(int)*
 					      (charcount(ptr, ',')+1));
 		    lastItem = 0;
 		    /* Extract each index from the index list and store it 
@@ -124,9 +116,9 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
                 case 'r':       /* dump by reference */
                     dumpvd_opts->filter=DREFNUM;
 		    (*curr_arg)++;
-		    string = (char*)malloc(sizeof(char)*MAXNAMELEN);	
+		    string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN);	
                     ptr = argv[*curr_arg];
-		    dumpvd_opts->filter_num = (int*)malloc(sizeof(int)*
+		    dumpvd_opts->filter_num = (int*)HDgetspace(sizeof(int)*
 					      (charcount(ptr, ',')+1));
                     lastItem = 0;
                     for (i=0; !lastItem; i++) {
@@ -135,7 +127,7 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
                           lastItem = 1;
                        else
                           *tempPtr = '\0';
-		       string = (char*)malloc(sizeof(char)*MAXNAMELEN);	
+		       string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN);	
                        strcpy(string, ptr);
                        dumpvd_opts->filter_num[i] = atoi(string);
                        ptr = tempPtr + 1;
@@ -155,7 +147,7 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
 			  lastItem = 1;
 		       else 
 			  *tempPtr = '\0';
-		       string = (char*)malloc(sizeof(char)*MAXNAMELEN);	
+		       string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN);	
 		       strcpy(string, ptr);
 		       dumpvd_opts->filter_str[i] = string;
 		       ptr = tempPtr +1;
@@ -175,7 +167,7 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
 			  lastItem = 1;
 		       else
 			  *tempPtr = '\0';
-		       string = (char*)malloc(sizeof(char)*MAXNAMELEN);
+		       string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN);
 		       strcpy(string,ptr);
 		       dumpvd_opts->filter_str[i] = string;
 		       ptr = tempPtr + 1;
@@ -198,7 +190,7 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
 			  lastItem = 1;
 		       else
 			  *tempPtr = '\0';
-		       string = (char*)malloc(sizeof(char)*MAXNAMELEN); 
+		       string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN); 
 		       strcpy(string, ptr); 
 		       flds_chosen[i] = string;
 		       ptr = tempPtr + 1;
@@ -253,9 +245,10 @@ void do_dumpvd(intn curr_arg,intn argc,char *argv[],dump_opt_t *glob_opts)
 {
     dump_info_t dumpvd_opts;	/* dumpvd options */
     intn ret;
-    char *flds_chosen[MAXNAMELEN];
+    char *flds_chosen[MAXCHOICES];
     int dumpallfields, i;
 
+    flds_chosen[0] = NULL;
     dumpallfields = 1;
     if(glob_opts->help==TRUE) {
 	dumpvd_usage(argc,argv);
@@ -328,7 +321,7 @@ int32 fmtfloat64(char *x, FILE *ofp);
 
 #define BUFFER 1000000
 
-int choose_vd(dump_info_t *dumpvd_opts, int32 vd_chosen[MAXVDSCHOSEN], 
+int choose_vd(dump_info_t *dumpvd_opts, int32 vd_chosen[MAXCHOICES], 
 	      int32 file_id, int *index_error)
 {
    int32 i, k=0, index, find_ref, number;
@@ -406,28 +399,20 @@ int choose_vd(dump_info_t *dumpvd_opts, int32 vd_chosen[MAXVDSCHOSEN],
 
 
 static intn dvd(dump_info_t *dumpvd_opts, intn curr_arg, 
-                intn argc, char *argv[], char *flds_chosen[MAXNAMELEN], 
+                intn argc, char *argv[], char *flds_chosen[MAXCHOICES], 
 		int dumpallfields)  
 {
-    int32 file_id, vd_id, vd_chosen[MAXVDSCHOSEN], flds_indices[MAXFLDSCHOSEN];
-    int32 rank, nt, nattr, ndsets, nglb_attr;
-    int32 j, k, m, attr_nt, attr_count, attr_buf_size, attr_index;
-    char file_name[MAXFNLEN]; 
-    char attr_name[MAXNAMELEN], dim_nm[MAXNAMELEN];
-    int32 dimsizes[MAXRANK], dim_id, dimNT[MAXRANK], dimnattr[MAXRANK];
-    int32 i,nvf,interlace,vsize;
-    int32 len, x, lastItem;
-    intn status;
-    int32 vdata_ref=-1, vdata_tag;
+    int32 file_id, vd_id, vd_chosen[MAXCHOICES], flds_indices[MAXCHOICES];
+    int32 i, j, k, m, x;
+    int32 nvf,interlace,vsize, index, len, lastItem;
+    int32 vdata_ref=-1, vdata_tag, status;
     char *name, *label_str;
     char vdclass[VSNAMELENMAX],vdname[VSNAMELENMAX];
     char fields[FIELDNAMELENMAX], tempflds[FIELDNAMELENMAX];
-    FILE  *fp, *fopen();
-    int32 index;
-    VOIDP attr_buf;
-    char *nt_desc, *attr_nt_desc;
-    int index_error=0, dumpall=0, data_only;
     char *tempPtr, *ptr, string[MAXNAMELEN];
+    char file_name[MAXFNLEN]; 
+    FILE  *fp;
+    int index_error=0, dumpall=0, data_only;
 
     while (curr_arg < argc) {  /* Loop until all specified files have been 
 				  processed */
@@ -439,7 +424,7 @@ static intn dvd(dump_info_t *dumpvd_opts, intn curr_arg,
            exit(1);
         }
        
-	for (i=0; i<MAXVDSCHOSEN; i++)
+	for (i=0; i<MAXCHOICES; i++)
 	   vd_chosen[i] = -1;
         /* Find out which VDs have been chosen. */
         choose_vd(dumpvd_opts, vd_chosen, file_id, &index_error);
@@ -496,7 +481,7 @@ static intn dvd(dump_info_t *dumpvd_opts, intn curr_arg,
            if (flds_chosen[0]!=NULL) { 
 	      strcpy(tempflds, fields);
 	      ptr = tempflds;
-	      for (j=0; j<MAXFLDSCHOSEN; j++) /* Initialization */
+	      for (j=0; j<MAXCHOICES; j++) /* Initialization */
 	         flds_indices[j] = -1;
 	      m = 0;
 	      lastItem = 0;

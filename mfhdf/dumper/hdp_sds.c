@@ -11,10 +11,10 @@
  ****************************************************************************/
 
 #ifdef RCSID
-static char RcsId[] = "@(#)1.1";
+static char RcsId[] = "@(#)Revision";
 #endif
 
-/* hdp_vd.c,v 1.1 1994/12/24 14:12:18 ktsui Exp */
+/* $Id$ */
 
 
 #include <stdio.h>
@@ -25,12 +25,12 @@ static char RcsId[] = "@(#)1.1";
 
 static intn dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[]);
 
-void sort(int32 chosen[100])
+void sort(int32 chosen[MAXCHOICES])
 {
    int32 temp, i, j;
 
-   for (i=0; chosen[i]!=-1; i++)
-      for (j=i; chosen[j]!=-1; j++) 
+   for (i=0; i<MAXCHOICES; i++)
+      for (j=i; j<MAXCHOICES; j++) 
          if (chosen[i]>chosen[j]) {
             temp = chosen[i];
             chosen[i] = chosen[j];
@@ -80,8 +80,8 @@ intn parse_dumpsds_opts(dump_info_t *dumpsds_opts,intn *curr_arg,intn argc,char 
 		case 'i':	/* dump by index */
 		    dumpsds_opts->filter=DINDEX;	
                     (*curr_arg)++;
-		    dumpsds_opts->filter_num = (int*)malloc(sizeof(int*)*1000);
-		    string = (char*)malloc(sizeof(char)*MAXNAMELEN);
+		    dumpsds_opts->filter_num = (int*)HDgetspace(sizeof(int*)*1000);
+		    string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN);
 		    ptr = argv[*curr_arg];
 		    lastItem = 0;
 		    for (i=0; !lastItem; i++) {
@@ -101,8 +101,8 @@ intn parse_dumpsds_opts(dump_info_t *dumpsds_opts,intn *curr_arg,intn argc,char 
                 case 'r':       /* dump by reference */
                     dumpsds_opts->filter=DREFNUM;
                     (*curr_arg)++; 
-		    dumpsds_opts->filter_num = (int*)malloc(sizeof(int*)*1000);
-		    string = (char*)malloc(sizeof(char)*MAXNAMELEN);
+		    dumpsds_opts->filter_num = (int*)HDgetspace(sizeof(int*)*1000);
+		    string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN);
 		    lastItem = 0;
 		    ptr = argv[*curr_arg];
 		    for (i=0; !lastItem; i++) {
@@ -111,7 +111,7 @@ intn parse_dumpsds_opts(dump_info_t *dumpsds_opts,intn *curr_arg,intn argc,char 
 			   lastItem = 1;
 		        else
 			   *tempPtr = '\0';
-		        string = (char*)malloc(sizeof(char)*MAXNAMELEN);
+		        string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN);
 			strcpy(string,ptr);
 			dumpsds_opts->filter_num[i] = atoi(string);
 			ptr = tempPtr + 1;
@@ -131,7 +131,7 @@ intn parse_dumpsds_opts(dump_info_t *dumpsds_opts,intn *curr_arg,intn argc,char 
 			  lastItem = 1;
 		       else
 			  *tempPtr = '\0';
-		       string = (char*)malloc(sizeof(char)*MAXNAMELEN);
+		       string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN);
 		       strcpy(string, ptr);
 		       dumpsds_opts->filter_str[i] = string;
 		       ptr = tempPtr + 1;
@@ -487,13 +487,13 @@ int32 sdsdumpfull(int32 sds_id, int32 rank, int32 dimsizes[], int32 nt,
 static intn dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[])  
 {
     intn  i, ret, isdimvar;
-    int32 sdf_id, sds_id, sd_chosen[100];
+    int32 sdf_id, sds_id, sd_chosen[MAXCHOICES];
     int32 rank, nt, nattr, ndsets, nglb_attr;
     int32 j, k, attr_nt, attr_count, attr_buf_size, attr_index;
     char file_name[MAXFNLEN], name[MAXNAMELEN]; 
     char attr_name[MAXNAMELEN], dim_nm[MAXNAMELEN];
     int32 dimsizes[MAXRANK], dim_id, dimNT[MAXRANK], dimnattr[MAXRANK];
-    FILE  *fp, *fopen();
+    FILE  *fp;
     int32 /* ref ,*/ index;
     VOIDP attr_buf;
     char *nt_desc, *attr_nt_desc;
@@ -508,7 +508,7 @@ static intn dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[
            printf("Failure in open %s\n", file_name);
            exit(1);
         }
-        for (i=0; i<100; i++)
+        for (i=0; i<MAXCHOICES; i++)
 	   sd_chosen[i] = -1;
         k = 0; 
 	switch (dumpsds_opts->filter) {  /* Determine the SDs having been
@@ -548,7 +548,7 @@ static intn dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[
 		}
                 break;
 	     case DCLASS:
-		  printf("Currently, on class defined on an SD.\n");
+		  printf("Currently, no class defined on an SD.\n");
 		  exit(1);
              case DALL:
                   break;
@@ -660,7 +660,7 @@ static intn dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[
                              exit(1);
                          }
                          attr_buf_size = DFKNTsize(attr_nt)*attr_count;
-                         attr_buf =(VOIDP) malloc(attr_buf_size);
+                         attr_buf =(VOIDP) HDgetspace(attr_buf_size);
                          ret=SDreadattr(sds_id, attr_index, attr_buf);
                          if (ret == FAIL) {
                              printf("Failure in SDfindattr %s\n", file_name);

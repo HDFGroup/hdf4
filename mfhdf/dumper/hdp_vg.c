@@ -10,21 +10,20 @@
  *                                                                          *
  ****************************************************************************/
 
-/* File: hdp_vg.c
-   Programmer: Eric Tsui
-   Working period: Fall 1994
- */
-
 #ifdef RCSID
-static char RcsId[] = "@(#)1.1";
+static char RcsId[] = "@(#)$Revision$";
 #endif
 
-/* hdp_vg.c,v 1.1 1994/12/24 14:12:18 ktsui Exp */
+/* $Id$ */
 
 
 #include "hdp.h"
 #include <math.h>
 #include "vg.h"
+
+#define NUM_VGS 20;
+
+FILE *fopen();
 
 struct node {
    int32 index,displayed;
@@ -35,7 +34,7 @@ struct node {
 void display (struct node *ptr, int32 level, struct node **list, 
 	      int32 num_nodes, int32 firstchild);
 
-extern void sort(int32 chosen[100]);
+extern void sort(int32 chosen[MAXCHOICES]);
 
 static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg, intn argc, 
 		char *argv[]);
@@ -161,26 +160,17 @@ int32 fmtfloat64(char *x, FILE *ofp);
 static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg, 
                 intn argc, char *argv[])  
 {
-    int32 file_id, vg_id, vg_chosen[100];
-    int32 rank, nt, nattr, ndsets, nglb_attr;
-    int32 j, k, attr_nt, attr_count, attr_buf_size, attr_index;
-    char file_name[MAXFNLEN]; 
-    char attr_name[MAXNAMELEN], dim_nm[MAXNAMELEN];
-    int32 dimsizes[MAXRANK], dim_id, dimNT[MAXRANK], dimnattr[MAXRANK];
-    int32 i,n,interlace,vsize;
-    int32 len, nvg;
-    intn status;
+    int32 file_id, vg_id, vg_chosen[MAXCHOICES];
+    int32 i, j, k, n, x, y;
+    int32 interlace,vsize, len, nvg, index, status;
     int32 vg_ref=-1, vg_tag;
-    int32 find_offset, find_length;
+    int32 level, num_nodes=0, max_vgs, num_vgs;
+    int index_error=0, dumpall=0;
     char *name, *label_str;
+    char file_name[MAXFNLEN]; 
     char vgclass[VGNAMELENMAX],vgname[VGNAMELENMAX],fields[FIELDNAMELENMAX];
-    FILE  *fp, *fopen();
-    int32 index;
-    VOIDP attr_buf;
-    char *nt_desc, *attr_nt_desc;
-    int x, index_error=0, dumpall=0;
+    FILE  *fp;
     struct node **list, *ptr;
-    int32 level, y, num_nodes=0;
 
     while (curr_arg < argc)   { /* Examine each file. */
         HDstrcpy(file_name, argv[curr_arg]);
@@ -191,7 +181,7 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
            exit(1);
         }
 	
-	for (i=0; i<100; i++)
+	for (i=0; i<MAXCHOICES; i++)
 	   vg_chosen[i] = -1;
         k = 0;
         switch (dumpvg_opts->filter) {  /* Determine the vgroups to be dumped 
@@ -279,7 +269,10 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
 	   dumpall = 1;
         else
 	   sort(vg_chosen);
-
+       
+	max_vgs = NUM_VGS;
+	list = (struct node**)HDgetspace(sizeof(struct node*)*max_vgs);
+	num_vgs = 0;
 	for (i=0; (vg_ref=Vgetid(file_id,vg_ref))!=-1; i++) { 
 	   int32 skip=FALSE;
 	   content_t save=dumpvg_opts->contents;
@@ -300,7 +293,12 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
 	   if (HDstrlen(vgname)==0)
 	      HDstrcat(vgname,"");
 	   Vgetclass(vg_id, vgclass);
-	   list[i] = (struct node*)malloc(sizeof(struct node)); 
+           num_vgs++; 
+	   if (num_vgs>max_vgs) {
+	      max_vgs += NUM_VGS;
+	      list = HDregetspace(list,(uint32)sizeof(struct node)*max_vgs);
+           }
+	   list[i] = (struct node*)HDgetspace(sizeof(struct node)); 
 	   num_nodes++;
 	   
 	   switch (dumpvg_opts->contents) {
@@ -342,24 +340,7 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
 	   strcpy(list[i]->name, vgname); 
 	   list[i]->displayed = FALSE;
          } /* for */
-	
 	 Vend(file_id);
-
-/* TEST */
-/*
-	 printf("\n\n\n");
-	 for (y=0; y<num_nodes; y++) {
-	    printf("Index = %d;\n", list[y]->index);
-	    printf("Name = %s;\n", list[y]->name);
-	    for (i=0; list[y]->children[i]!=NULL; i++) {
-	       printf("   #%d: %s;", i, list[y]->children[i]);
-               printf(" type = %s;\n", list[y]->type[i]);   
-	    }
-	    printf("\n");
-         }
-*/
-/* TEST */
-      
 	 if (dumpvg_opts->contents!=DDATA) {
 	    printf("\n\nGraphical representation of the file:-\n");
 	    printf("(vg#: vgroup;   vd: vdata)\n\n");
@@ -391,8 +372,8 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode,
    char *tempPtr, *ptr, string[MAXNAMELEN], tempflds[FIELDNAMELENMAX];
 
    num_entries = Vntagrefs(vg_id);
-   aNode->children = (char**)malloc(sizeof(char*)*num_entries);
-   aNode->type = (char**)malloc(sizeof(char*)*num_entries);
+   aNode->children = (char**)HDgetspace(sizeof(char*)*num_entries);
+   aNode->type = (char**)HDgetspace(sizeof(char*)*num_entries);
    
    for (t = 0; t<num_entries; t++) {
       Vgettagref(vg_id, t, &tag, &vsid);
@@ -417,9 +398,9 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode,
             fprintf(fp, "\tname = %s; class = %s\n", vgname, vgclass);
          } 
 	 Vdetach(vgt);
-	 aNode->children[t] = (char*)malloc(sizeof(char)*strlen(vgname));
+	 aNode->children[t] = (char*)HDgetspace(sizeof(char)*strlen(vgname));
 	 strcpy(aNode->children[t], vgname);
-	 aNode->type[t] = (char*)malloc(sizeof(char)*3);
+	 aNode->type[t] = (char*)HDgetspace(sizeof(char)*3);
 	 strcpy(aNode->type[t], "vg");
       } /* if */
       else if (tag == VSDESCTAG) {
@@ -476,10 +457,10 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode,
 
 
 	 VSdetach(vs);
-	 aNode->children[t] = (char*)malloc(sizeof(char)*strlen(vsname));
+	 aNode->children[t] = (char*)HDgetspace(sizeof(char)*strlen(vsname));
 	 strcpy(aNode->children[t], vsname); 
 	 
-	 aNode->type[t] = (char*)malloc(sizeof(char)*3);
+	 aNode->type[t] = (char*)HDgetspace(sizeof(char)*3);
 	 strcpy(aNode->type[t], "vd");
       }
       else {
@@ -490,11 +471,11 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode,
 	    fprintf(fp, "     #%d (%s)\n", (int) t, name);
 	    fprintf(fp, "\ttag = %d; reference = %d;\n", (int) tag, (int) vsid);
 	 }
-	 aNode->children[t] = (char*)malloc(sizeof(char)*4);
+	 aNode->children[t] = (char*)HDgetspace(sizeof(char)*4);
          strcpy(aNode->children[t], "***"); 
 	 tempPtr = (char*)HDgettagname((uint16) tag);
 	 if (!tempPtr) {
-	    aNode->type[t] = (char*)malloc(sizeof(char)*15);
+	    aNode->type[t] = (char*)HDgetspace(sizeof(char)*15);
 	    strcpy(aNode->type[t], "Unknown Object"); 
          }
 	 else
