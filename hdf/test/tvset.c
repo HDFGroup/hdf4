@@ -729,6 +729,15 @@ read_vset_stuff(void)
     ret=VSdetach(vs1);
     RESULT("VSdetach");
 
+#ifndef HAVE_FMPOOL 
+/* Commented out this test when using the file caching.This is beacause this 
+   test opens the external file directly without using HDF calls. As a result
+   the file memory pool buffer that was created for this external file will 
+   not be shared with this low-level call as the low-level file cache open 
+   creates a unique pool for every call. It is upto the programmer
+   then to share the file pool. -GeorgeV
+ */
+
     /* testing VSsetexternalfile by reading the external file directly */
     {   hdf_file_t fd;
         int j;
@@ -767,8 +776,7 @@ read_vset_stuff(void)
 	    HI_CLOSE(fd);
 	}
     }
-
-	    
+#endif /* HAVE_FMPOOL */
 
     /* Move to the next one (integers + floats) */
     ref = VSgetid(fid, ref);
