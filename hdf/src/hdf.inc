@@ -439,11 +439,10 @@ C	PARAMETERS
       parameter(HDF_VDATA = -1)
 
 C       Standard return codes       
-C next 2 lines are commented out temporarily, SUCCEED and FAIL is in fortest.inc 
-C     integer	SUCCEED, FAIL  
+      integer	SUCCEED, FAIL  
  
-C     parameter(SUCCEED         = 0,                                      &
-C    &		FAIL     	= -1)
+      parameter(SUCCEED         = 0,                                      &
+     &		FAIL     	= -1)
 
 
 C	Compression Types 
