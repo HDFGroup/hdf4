@@ -1340,7 +1340,7 @@ Hwrite(int32 access_id, int32 length, const VOIDP data)
 #endif
     /* if special elt, call special function */
     if (access_rec->special)
-        return (*access_rec->special_func->write) (access_rec, length, (VOIDP) data);
+        return (*access_rec->special_func->write) (access_rec, length, data);
 
     /* check validity of file record and get dd ptr */
     file_rec = FID2REC(access_rec->file_id);

@@ -140,6 +140,60 @@ tbbtdfind(TBBT_TREE * tree, VOIDP key, TBBT_NODE ** pp)
     return (tbbtfind(tree->root, key, tree->compar, tree->cmparg, pp));
 }
 
+/* tbbtless -- Find a node in a tree which is less than a key, */
+/*  based on a key value */
+/* Returns a pointer to the found node (or NULL) */
+TBBT_NODE  *
+tbbtless(TBBT_NODE * root, VOIDP key,
+     intn (*compar) HPROTO((VOIDP, VOIDP, intn)), intn arg, TBBT_NODE ** pp)
+{
+    TBBT_NODE  *ptr = root;
+    TBBT_NODE  *parent = NULL;
+    intn        cmp = 1;
+
+    if (ptr)
+      {
+          intn        side;
+
+          while (0 != (cmp = KEYcmp(key, ptr->key, arg)))
+            {
+                parent = ptr;
+                side = (cmp < 0) ? LEFT : RIGHT;
+                if (!HasChild(ptr, side))
+                    break;
+                ptr = ptr->link[side];
+            }
+      }
+    if(cmp!=0)
+	/* didn't find an exact match, search back up the tree until a node */
+	/* is found with a key less than the key searched for */
+      {
+	while((ptr=ptr->Parent)!=NULL) 
+	  {
+              cmp = KEYcmp(key, ptr->key, arg);
+	      if(cmp<0) /* found a node which is less than the search for one */
+		  break;
+	  } /* end while */
+	if(ptr==NULL) /* didn't find a node in the tree which was less */
+	  cmp=1;
+	else /* reset this for cmp test below */
+	  cmp=0;
+      } /* end if */
+    if (NULL != pp)
+        *pp = parent;
+    return ((0 == cmp) ? ptr : NULL);
+}
+
+/* tbbtdless -- Find a node less than a key in a "described" tree */
+/* Returns a pointer to the found node (or NULL) */
+TBBT_NODE  *
+tbbtdless(TBBT_TREE * tree, VOIDP key, TBBT_NODE ** pp)
+{
+    if (tree == NULL)
+        return (NULL);
+    return (tbbtless(tree->root, key, tree->compar, tree->cmparg, pp));
+}
+
 /* tbbtindx -- Look up the Nth node (in key order) */
 /* Returns a pointer to the `indx'th node (or NULL) */
 TBBT_NODE  *

@@ -54,7 +54,7 @@
 #
 
 # ==> specify your machine
-MACHINE=SUN
+#MACHINE=SUN
 
 # ==> specify directories in which to store HDF include files,
 #     HDF library, and HDF utilities
@@ -62,19 +62,26 @@ HDFINC=../include
 HDFLIB=../lib
 HDFBIN=../bin
 
+# ==> specify where to find the JPEG include files and library
+JPEGINC=../jpeg
+JPEGLIB=../jpeg
+
 # ==> specify your FORTRAN compiler (Convex: fc)
 FC=f77
 FFLAGS= -g
 
 # ==> specify your C compiler
 CC=cc
-CFLAGS=  -g -D${MACHINE}
+CFLAGS=  -g 
+
+# ==> specify your C* compiler
+CS=cs
 
 # ==> For the ALPHA, uncomment the following line
-#CFLAGS=  -g -DALPHA -std1
+#CFLAGS=  -g -std1
 
 # ==> For the IRIS and INDIGO, and the NEXT, uncomment the following line
-#CFLAGS=  -g -D${MACHINE} -ansi
+#CFLAGS=  -g -ansi
 
 # ==> where are your hdf.h, hdfi.h and vg.h files located?
 #IFLAGS=   -I../h -I.
@@ -102,63 +109,11 @@ LINTFLAGS=
 SHAR=shar
 ARCHIVE=hdf.shar
 
-HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h dfan.h dfrig.h dfgr.h dfsd.h \
-     vg.h df.h dfi.h dfstubs.h dfufp2i.h vproto.h hcomp.h hconv.h hbitio.h \
-     tbbt.h crle.h cnbit.h mstdio.h cnone.h cskphuff.h
-
-CSRCS=hfile.c herr.c hblocks.c hextelt.c hkit.c dfan.c dfr8.c dfcomp.c \
-      dfrle.c dfimcomp.c dfjpeg.c dfunjpeg.c dfp.c dfgr.c df24.c dfsd.c \
-      dfgroup.c dfconv.c dfufp2i.c vg.c vrw.c vio.c vparse.c vconv.c vsfld.c \
-      vgp.c vhi.c dfutil.c dfstubs.c dfknat.c dfkswap.c dfkcray.c dfkvms.c \
-      dfkconv.c dfkfuji.c hbitio.c tbbt.c hdfalloc.c hcomp.c crle.c cnbit.c \
-      mstdio.c hbigext.c cnone.c cskphuff.c
-
-COBJS=hfile.o herr.o hblocks.o hextelt.o hkit.o dfan.o dfr8.o dfcomp.o \
-      dfrle.o dfimcomp.o dfjpeg.o dfunjpeg.o dfp.o dfgr.o df24.o dfsd.o \
-      dfgroup.o dfconv.o dfufp2i.o vg.o vrw.o vio.o vparse.o vconv.o vsfld.o \
-      vgp.o vhi.o dfutil.o dfstubs.o dfknat.o dfkswap.o dfkcray.o dfkvms.o \
-      dfkconv.o dfkfuji.o hbitio.o tbbt.o hdfalloc.o hcomp.o crle.o cnbit.o \
-      mstdio.o hbigext.o cnone.o cskphuff.o
-
-FSRCS=hfilef.c herrf.c hfileff.f dfanf.c dfr8f.c dfpf.c df24f.c dfsdf.c \
-      vgf.c dff.c dfanff.f df24ff.f dfpff.f dfr8ff.f dfsdff.f vgff.f dfff.f \
-      dfutilf.c dfufp2if.f
-
-FOBJS=hfilef.o herrf.o hfileff.o dfanf.o dfr8f.o dfpf.o df24f.o dfsdf.o \
-      vgf.o dff.o dfanff.o df24ff.o dfpff.o dfr8ff.o dfsdff.o vgff.o dfff.o \
-      dfutilf.o dfufp2if.o
-
-#JFSRCS= jdmain.c jcmain.c jrdjfif.c jrdgif.c jrdppm.c jrdrle.c jrdtarga.c \
-#        jwrjfif.c jwrgif.c jwrppm.c jwrrle.c jwrtarga.c
-#
-JCSRCS= jbsmooth.c jcarith.c jccolor.c jcdeflts.c jcexpand.c jchuff.c \
-        jcmaster.c jcmcu.c jcpipe.c jcsample.c jdarith.c jdcolor.c \
-        jddeflts.c jdhuff.c jdmaster.c jdmcu.c jdpipe.c jdsample.c \
-        jerror.c jquant1.c jquant2.c jfwddct.c jrevdct.c jutils.c jmemmgr.c \
-        jmemsys.c
-
-JINCS= jinclude.h jconfig.h jpegdata.h jversion.h jmemsys.h 
-
-# objectfiles common to both JPEG compression and decompression
-COMOBJECTS= jutils.o jerror.o jmemmgr.o jmemsys.o 
-# compression objectfiles
-CLIBOBJECTS= jcmaster.o jcdeflts.o jcarith.o jccolor.o jcexpand.o \
-        jchuff.o jcmcu.o jcpipe.o jcsample.o jfwddct.o
-        
-CFILEOBJECTS=jwrjfif.o jrdgif.o jrdppm.o jrdrle.o jrdtarga.o
-
-# decompression objectfiles
-DLIBOBJECTS= jdmaster.o jddeflts.o jbsmooth.o jdarith.o jdcolor.o \
-        jdhuff.o jdmcu.o jdpipe.o jdsample.o jquant1.o \
-        jquant2.o jrevdct.o
-
-DFILEOBJECTS=jrdjfif.o jwrgif.o jwrppm.o jwrrle.o jwrtarga.o
-
-# These objectfiles are included in libjpeg.lib
-JOBJS= $(CLIBOBJECTS) $(DLIBOBJECTS) $(COMOBJECTS)
+#include the source file definitions
+include src.inc
 
 .c.o:
-	$(CC) $(CFLAGS) -c $<
+	$(CC) $(CFLAGS) -I$(JPEGINC) -c $<
 
 .f.o:
 	$(FC) $(FFLAGS) -c $<
@@ -167,28 +122,37 @@ JOBJS= $(CLIBOBJECTS) $(DLIBOBJECTS) $(COMOBJECTS)
 
 all: libdf.a .installed
 
-libdf.a: $(COBJS) $(FOBJS) $(JOBJS)
+libdf.a: $(COBJS) $(FOBJS) #$(JOBJS)
 	-$(RM) libdf.a
-	$(AR) $(ARFLAGS) libdf.a `lorder '$(COBJS) $(FOBJS) $(JOBJS)' | tsort `
+	$(AR) $(ARFLAGS) libdf.a `lorder '$(COBJS) $(FOBJS)' | tsort `
 	$(RANLIB) libdf.a
 
-libnofortran: $(COBJS) $(JOBJS)
+libnofortran: $(COBJS) #$(JOBJS) 
 	-$(RM) libdf.a
-	$(AR) $(ARFLAGS) libdf.a `lorder $(COBJS) $(JOBJS) | tsort `
+	$(AR) $(ARFLAGS) libdf.a `lorder $(COBJS) | tsort `
 	$(RANLIB) libdf.a
 
-nofortran: libnofortran .finstalled
+libnostub nofortran: libnofortran .finstalled
 
-libnostub: nofortran
+rebuild:
+	@$(MAKE) all $(HDF_FLAGS) FRC=force_rebuild
+
+rebuildnofortran:
+	@$(MAKE) nofortran $(MFLAGS) $(HDF_FLAGS) FRC=force_rebuild
+
+# Leave this target blank with no actions, the rebuild macros above depend on it
+force_rebuild:
+
+$(FOBJS): $(FRC)
 
 debug: libdf.a .installed
 
 saber:
-	#load -D$(MACHINE) $(CSRCS) $(TSRCS) $(JCSRCS) -lc
+	#load -D$(MACHINE) $(CSRCS) $(TSRCS) -lc
 
 .installed: libdf.a
 	-if (test \! -d $(HDFINC)) then (mkdir $(HDFINC) ) fi
-	-cp $(HDRS) $(JINCS) $(HDFINC)
+	-cp $(HDRS) $(HDFINC)
 	-if (test \! -d $(HDFLIB)) then (mkdir $(HDFLIB) ) fi
 	-cp libdf.a $(HDFLIB)
 	-$(RANLIB) $(HDFLIB)/libdf.a
@@ -196,14 +160,14 @@ saber:
 
 .finstalled: libnofortran
 	-if (test \! -d $(HDFINC)) then (mkdir $(HDFINC) ) fi
-	-cp $(HDRS) $(JINCS) $(HDFINC)
+	-cp $(HDRS) $(HDFINC)
 	-if (test \! -d $(HDFLIB)) then (mkdir $(HDFLIB) ) fi
 	-cp libdf.a $(HDFLIB)
 	-$(RANLIB) $(HDFLIB)/libdf.a
 	touch .finstalled
 
 depend:
-	makedepend -fMakefile -- $(JCSRCS) $(CSRCS)
+	makedepend -fMakefile -- $(CSRCS)
 
 clean:
 	-$(RM) $(RMFLAGS) *.o
@@ -229,145 +193,93 @@ TAGS: $(SRCS) $(HDRS)
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 
-jbsmooth.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
-jbsmooth.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
-jcarith.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
-jcarith.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
-jccolor.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
-jccolor.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
-jcdeflts.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
-jcdeflts.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
-jcexpand.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
-jcexpand.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
-jchuff.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
-jchuff.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
-jcmaster.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
-jcmaster.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
-jcmcu.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h herr.h
-jcmcu.o: hproto.h vproto.h jconfig.h jpegdata.h
-jcpipe.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
-jcpipe.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
-jcsample.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
-jcsample.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
-jdarith.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
-jdarith.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
-jdcolor.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
-jdcolor.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
-jddeflts.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
-jddeflts.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
-jdhuff.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
-jdhuff.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
-jdmaster.o: jinclude.h hdf.h hdfi.h  hbitio.h hcomp.h
-jdmaster.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
-jdmcu.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h herr.h
-jdmcu.o: hproto.h vproto.h jconfig.h jpegdata.h
-jdpipe.o: jinclude.h hdf.h hdfi.h  hbitio.h hcomp.h
-jdpipe.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
-jdsample.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
-jdsample.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
-jerror.o: jinclude.h hdf.h hdfi.h  hbitio.h hcomp.h
-jerror.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
-jquant1.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
-jquant1.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
-jquant2.o: jinclude.h hdf.h hdfi.h  hbitio.h hcomp.h
-jquant2.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
-jfwddct.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
-jfwddct.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
-jrevdct.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
-jrevdct.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
-jutils.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
-jutils.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
-jmemmgr.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
-jmemmgr.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h jmemsys.h
-jmemsys.o: jinclude.h hdf.h hdfi.h hbitio.h hcomp.h
-jmemsys.o: herr.h hproto.h vproto.h jconfig.h jpegdata.h
 hfile.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-hfile.o: vproto.h hfile.h
+hfile.o: vproto.h hfile.h $(FRC)
 herr.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-herr.o: vproto.h 
+herr.o: vproto.h  $(FRC)
 hblocks.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-hblocks.o: vproto.h hfile.h
+hblocks.o: vproto.h hfile.h $(FRC)
 hextelt.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-hextelt.o: vproto.h hfile.h
+hextelt.o: vproto.h hfile.h $(FRC)
 hkit.o: hdf.h hdfi.h hbitio.h
-hkit.o: hcomp.h herr.h hproto.h vproto.h hfile.h hkit.h
+hkit.o: hcomp.h herr.h hproto.h vproto.h hfile.h hkit.h $(FRC)
 dfan.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-dfan.o: vproto.h hfile.h dfan.h
+dfan.o: vproto.h hfile.h dfan.h $(FRC)
 dfr8.o: hdf.h hdfi.h  hbitio.h hcomp.h herr.h hproto.h
-dfr8.o: vproto.h dfrig.h
+dfr8.o: vproto.h dfrig.h $(FRC)
 dfcomp.o: hdf.h hdfi.h  hbitio.h hcomp.h herr.h hproto.h
-dfcomp.o: vproto.h
+dfcomp.o: vproto.h $(FRC)
 dfrle.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-dfrle.o: vproto.h
+dfrle.o: vproto.h $(FRC)
 dfimcomp.o: hdf.h hdfi.h  hbitio.h hcomp.h herr.h
-dfimcomp.o: hproto.h vproto.h
+dfimcomp.o: hproto.h vproto.h $(FRC)
 dfjpeg.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-dfjpeg.o: vproto.h jinclude.h jconfig.h jpegdata.h
+dfjpeg.o: vproto.h  $(FRC)
 dfunjpeg.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h
-dfunjpeg.o: hproto.h vproto.h jinclude.h jconfig.h jpegdata.h
+dfunjpeg.o: hproto.h vproto.h  $(FRC)
 dfp.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-dfp.o: vproto.h hfile.h
+dfp.o: vproto.h hfile.h $(FRC)
 dfgr.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-dfgr.o: vproto.h dfgr.h
+dfgr.o: vproto.h dfgr.h $(FRC)
 df24.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-df24.o: vproto.h dfgr.h
+df24.o: vproto.h dfgr.h $(FRC)
 dfsd.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-dfsd.o: vproto.h dfsd.h hfile.h
+dfsd.o: vproto.h dfsd.h hfile.h $(FRC)
 dfgroup.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-dfgroup.o: vproto.h hfile.h
+dfgroup.o: vproto.h hfile.h $(FRC)
 dfconv.o: hdf.h hdfi.h hbitio.h
-dfconv.o: hcomp.h herr.h hproto.h vproto.h hconv.h
+dfconv.o: hcomp.h herr.h hproto.h vproto.h hconv.h $(FRC)
 dfufp2i.o: hdf.h hdfi.h hbitio.h
-dfufp2i.o: hcomp.h herr.h hproto.h vproto.h dfufp2i.h dfsd.h
+dfufp2i.o: hcomp.h herr.h hproto.h vproto.h dfufp2i.h dfsd.h $(FRC)
 vg.o: vg.h hdf.h hdfi.h  hbitio.h hcomp.h herr.h hproto.h
-vg.o: vproto.h tbbt.h
+vg.o: vproto.h tbbt.h $(FRC)
 vrw.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-vrw.o: vproto.h vg.h tbbt.h hfile.h
+vrw.o: vproto.h vg.h tbbt.h hfile.h $(FRC)
 vio.o: vg.h hdf.h hdfi.h  hbitio.h hcomp.h herr.h
-vio.o: hproto.h vproto.h tbbt.h hfile.h
+vio.o: hproto.h vproto.h tbbt.h hfile.h $(FRC)
 vparse.o: vg.h hdf.h hdfi.h hbitio.h hcomp.h herr.h
-vparse.o: hproto.h vproto.h tbbt.h
+vparse.o: hproto.h vproto.h tbbt.h $(FRC)
 vconv.o: vg.h hdf.h hdfi.h hbitio.h hcomp.h herr.h
-vconv.o: hproto.h vproto.h tbbt.h
+vconv.o: hproto.h vproto.h tbbt.h $(FRC)
 vsfld.o: vg.h hdf.h hdfi.h hbitio.h hcomp.h herr.h
-vsfld.o: hproto.h vproto.h tbbt.h
+vsfld.o: hproto.h vproto.h tbbt.h $(FRC)
 vgp.o: vg.h hdf.h hdfi.h hbitio.h hcomp.h herr.h
-vgp.o: hproto.h vproto.h tbbt.h hfile.h
+vgp.o: hproto.h vproto.h tbbt.h hfile.h $(FRC)
 vhi.o: vg.h hdf.h hdfi.h hbitio.h hcomp.h herr.h
-vhi.o: hproto.h vproto.h tbbt.h
+vhi.o: hproto.h vproto.h tbbt.h $(FRC)
 dfutil.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-dfutil.o: vproto.h
+dfutil.o: vproto.h $(FRC)
 dfstubs.o: dfstubs.h df.h hdf.h hdfi.h hbitio.h hcomp.h
-dfstubs.o: herr.h hproto.h vproto.h 
+dfstubs.o: herr.h hproto.h vproto.h  $(FRC)
 dfknat.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-dfknat.o: vproto.h hconv.h
+dfknat.o: vproto.h hconv.h $(FRC)
 dfkswap.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-dfkswap.o: vproto.h hconv.h
+dfkswap.o: vproto.h hconv.h $(FRC)
 dfkcray.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-dfkcray.o: vproto.h hconv.h
+dfkcray.o: vproto.h hconv.h $(FRC)
 dfkvms.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-dfkvms.o: vproto.h hconv.h
+dfkvms.o: vproto.h hconv.h $(FRC)
 dfkconv.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-dfkconv.o: vproto.h hconv.h
+dfkconv.o: vproto.h hconv.h $(FRC)
 dfkfuji.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-dfkfuji.o: vproto.h hconv.h
+dfkfuji.o: vproto.h hconv.h $(FRC)
 hbitio.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-hbitio.o: vproto.h hfile.h
+hbitio.o: vproto.h hfile.h $(FRC)
 tbbt.o:  hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-tbbt.o: vproto.h tbbt.h
+tbbt.o: vproto.h tbbt.h $(FRC)
 hdfalloc.o: hdf.h hdfi.h  hbitio.h
-hdfalloc.o: hcomp.h herr.h hproto.h vproto.h hfile.h
+hdfalloc.o: hcomp.h herr.h hproto.h vproto.h hfile.h $(FRC)
 hcomp.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-hcomp.o: vproto.h hfile.h hcompi.h mstdio.h cnone.h crle.h cnbit.h cskphuff.h
+hcomp.o: vproto.h hfile.h hcompi.h mstdio.h cnone.h crle.h cnbit.h cskphuff.h $(FRC)
 crle.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-crle.o: vproto.h hfile.h hcompi.h mstdio.h crle.h 
+crle.o: vproto.h hfile.h hcompi.h mstdio.h crle.h  $(FRC)
 cnbit.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-cnbit.o: vproto.h hfile.h hcompi.h mstdio.h cnbit.h
+cnbit.o: vproto.h hfile.h hcompi.h mstdio.h cnbit.h $(FRC)
 mstdio.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-mstdio.o: vproto.h hfile.h hcompi.h mstdio.h
+mstdio.o: vproto.h hfile.h hcompi.h mstdio.h $(FRC)
 hbigext.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-hbigext.o: vproto.h hfile.h
+hbigext.o: vproto.h hfile.h $(FRC)
 cnone.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-cnone.o: vproto.h hfile.h hcompi.h mstdio.h cnone.h
+cnone.o: vproto.h hfile.h hcompi.h mstdio.h cnone.h $(FRC)
 cskphuff.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-cskphuff.o: vproto.h hfile.h hcompi.h mstdio.h cskphuff.h
+cskphuff.o: vproto.h hfile.h hcompi.h mstdio.h cskphuff.h $(FRC)

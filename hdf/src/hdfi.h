@@ -80,13 +80,13 @@
 #if defined TEST_PC || defined TEST_WIN
 #define FAR far
 #else
-#define FAR     /* */
+#define FAR /* */
 #endif
 
-#if defined(SUN) || defined(sun)
+#if defined(SUN) || defined(sun) || defined(__sun__)
 #ifdef __STDC__
 #define ANSISUN
-#else  /* __STDC__ */
+#else /* __STDC__ */
 #define KNRSUN
 #endif /* __STDC__ */
 #endif /* SUN || sun */
@@ -99,38 +99,38 @@
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
-            Please check your Makefile.
+Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
 #ifndef PROTOTYPE
-#define PROTOTYPE               /* to invoke ANSI prototypes */
-#endif                          /* PROTOTYPE */
+#define PROTOTYPE		/* to invoke ANSI prototypes */
+#endif	/* PROTOTYPE */
 
 #include <limits.h>
 #include <string.h>
 #include <unistd.h>
 #include <ctype.h>
 #include <sys/time.h>
-#include <sys/file.h>           /* for unbuffered i/o stuff */
+#include <sys/file.h>               /* for unbuffered i/o stuff */
 #define DF_MT             DFMT_SUN
-typedef void VOID;
-typedef void *VOIDP;
-typedef char *_fcd;
-typedef char char8;
-typedef unsigned char uchar8;
-typedef char int8;
-typedef unsigned char uint8;
-typedef short int int16;
+typedef void              VOID;
+typedef void              *VOIDP;
+typedef char              *_fcd;
+typedef char              char8;
+typedef unsigned char     uchar8;
+typedef char              int8;
+typedef unsigned char     uint8;
+typedef short int         int16;
 typedef unsigned short int uint16;
-typedef long int int32;
+typedef long int          int32;
 typedef unsigned long int uint32;
-typedef int intn;
-typedef unsigned int uintn;
-typedef int intf;               /* size of INTEGERs in Fortran compiler */
-typedef float float32;
-typedef double float64;
-#define _HUGE   /* This should only be defined to a value on the PC */
+typedef int               intn;
+typedef unsigned int      uintn;
+typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+typedef float             float32;
+typedef double            float64;
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
@@ -154,37 +154,37 @@ typedef double float64;
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
-            Please check your Makefile.
+Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
 #   define BSD
-#define DUMBCC                  /* because it is.  for later use in macros */
+#define DUMBCC 	/* because it is.  for later use in macros */
 #include <limits.h>
 #include <string.h>
 #ifndef __GNUC__
 #include <memory.h>
-#endif                          /* __GNUC__ */
+#endif /* __GNUC__ */
 #include <unistd.h>
-#include <sys/file.h>           /* for unbuffered i/o stuff */
+#include <sys/file.h>               /* for unbuffered i/o stuff */
 #define DF_MT             DFMT_SUN
-typedef void VOID;
-typedef char *VOIDP;
-typedef char *_fcd;
-typedef char char8;
-typedef unsigned char uchar8;
-typedef char int8;
-typedef unsigned char uint8;
-typedef short int int16;
+typedef void              VOID;
+typedef char              *VOIDP;
+typedef char              *_fcd;
+typedef char              char8;
+typedef unsigned char     uchar8;
+typedef char              int8;
+typedef unsigned char     uint8;
+typedef short int         int16;
 typedef unsigned short int uint16;
-typedef long int int32;
+typedef long int          int32;
 typedef unsigned long int uint32;
-typedef int intn;
-typedef unsigned int uintn;
-typedef int intf;               /* size of INTEGERs in Fortran compiler */
-typedef float float32;
-typedef double float64;
-#define _HUGE   /* This should only be defined to a value on the PC */
+typedef int               intn;
+typedef unsigned int      uintn;
+typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+typedef float             float32;
+typedef double            float64;
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
@@ -206,6 +206,7 @@ typedef double float64;
 
 #endif /* SUN */
 
+
 #if defined(IBM6000) || defined(_AIX)
 
 #ifndef IBM6000
@@ -214,38 +215,38 @@ typedef double float64;
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
-            Please check your Makefile.
+Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
 #   define BSD
 #ifndef PROTOTYPE
-#define PROTOTYPE               /* to invoke ANSI prototypes */
-#endif                          /* PROTOTYPE */
+#define PROTOTYPE       /* to invoke ANSI prototypes */
+#endif  /* PROTOTYPE */
 
 #include <string.h>
 #ifndef __GNUC__
 #include <memory.h>
-#endif                          /* __GNUC__ */
-#include <sys/file.h>           /* for unbuffered i/o stuff */
+#endif /* __GNUC__ */
+#include <sys/file.h>               /* for unbuffered i/o stuff */
 #define DF_MT             DFMT_IBM6000
-typedef void VOID;
-typedef void *VOIDP;
-typedef char *_fcd;
-typedef char char8;
-typedef unsigned char uchar8;
-typedef char int8;
-typedef unsigned char uint8;
-typedef short int int16;
+typedef void              VOID;
+typedef void              *VOIDP;
+typedef char              *_fcd;
+typedef char              char8;
+typedef unsigned char     uchar8;
+typedef char              int8;
+typedef unsigned char     uint8;
+typedef short int         int16;
 typedef unsigned short int uint16;
-typedef long int int32;
+typedef long int          int32;
 typedef unsigned long int uint32;
-typedef int intn;
-typedef unsigned int uintn;
-typedef float float32;
-typedef double float64;
-typedef int intf;               /* size of INTEGERs in Fortran compiler */
-#define _HUGE   /* This should only be defined to a value on the PC */
+typedef int               intn;
+typedef unsigned int      uintn;
+typedef float             float32;
+typedef double            float64;
+typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
 
@@ -261,7 +262,7 @@ typedef int intf;               /* size of INTEGERs in Fortran compiler */
 
 #endif /* IBM6000 */
 
-#if defined(HP9000) || defined(hpux)
+#if defined(HP9000) || defined(hpux) || defined(__hpux)
 
 #ifndef HP9000
 #define HP9000
@@ -269,7 +270,7 @@ typedef int intf;               /* size of INTEGERs in Fortran compiler */
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
-            Please check your Makefile.
+Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
@@ -278,26 +279,26 @@ If you get an error on this line more than one machine type has been defined.
 #include <string.h>
 #ifndef __GNUC__
 #include <memory.h>
-#endif                          /* __GNUC__ */
-#include <sys/file.h>           /* for unbuffered i/o stuff */
+#endif /* __GNUC__ */
+#include <sys/file.h>               /* for unbuffered i/o stuff */
 #define DF_MT             DFMT_HP9000
-typedef void VOID;
-typedef void *VOIDP;
-typedef char *_fcd;
-typedef char char8;
-typedef unsigned char uchar8;
-typedef char int8;
-typedef unsigned char uint8;
-typedef short int int16;
+typedef void              VOID;
+typedef void              *VOIDP;
+typedef char              *_fcd;
+typedef char              char8;
+typedef unsigned char     uchar8;
+typedef char              int8;
+typedef unsigned char     uint8;
+typedef short int         int16;
 typedef unsigned short int uint16;
-typedef long int int32;
+typedef long int          int32;
 typedef unsigned long int uint32;
-typedef int intn;
-typedef unsigned int uintn;
-typedef float float32;
-typedef double float64;
-typedef int intf;               /* size of INTEGERs in Fortran compiler */
-#define _HUGE   /* This should only be defined to a value on the PC */
+typedef int               intn;
+typedef unsigned int      uintn;
+typedef float             float32;
+typedef double            float64;
+typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
 #ifndef __STDC__
@@ -313,7 +314,8 @@ typedef int intf;               /* size of INTEGERs in Fortran compiler */
 
 #endif /* HP9000 */
 
-#if defined(IRIS4) || defined(sgi)
+
+#if defined(IRIS4) || defined(sgi) || defined(__sgi__) || defined(__sgi)
 
 #ifndef IRIS4
 #define IRIS4
@@ -321,7 +323,7 @@ typedef int intf;               /* size of INTEGERs in Fortran compiler */
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
-            Please check your Makefile.
+Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 
@@ -330,26 +332,26 @@ If you get an error on this line more than one machine type has been defined.
 #include <limits.h>
 #ifndef __GNUC__
 #include <memory.h>
-#endif                          /* __GNUC__ */
-#include <sys/file.h>           /* for unbuffered i/o stuff */
+#endif /* __GNUC__ */
+#include <sys/file.h>               /* for unbuffered i/o stuff */
 #define DF_MT              DFMT_IRIS4
-typedef void VOID;
-typedef void *VOIDP;
-typedef char *_fcd;
-typedef signed char char8;
-typedef unsigned char uchar8;
-typedef signed char int8;
-typedef unsigned char uint8;
-typedef short int int16;
+typedef void               VOID;
+typedef void               *VOIDP;
+typedef char               *_fcd;
+typedef signed char        char8;
+typedef unsigned char      uchar8;
+typedef signed char        int8;
+typedef unsigned char      uint8;
+typedef short int          int16;
 typedef unsigned short int uint16;
-typedef long int int32;
-typedef unsigned long int uint32;
-typedef int intn;
-typedef unsigned int uintn;
-typedef float float32;
-typedef double float64;
-typedef int intf;               /* size of INTEGERs in Fortran compiler */
-#define _HUGE   /* This should only be defined to a value on the PC */
+typedef long int           int32;
+typedef unsigned long int  uint32;
+typedef int                intn;
+typedef unsigned int       uintn;
+typedef float              float32;
+typedef double             float64;
+typedef int                intf;     /* size of INTEGERs in Fortran compiler */
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
@@ -374,7 +376,7 @@ typedef int intf;               /* size of INTEGERs in Fortran compiler */
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
-            Please check your Makefile.
+Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 
@@ -385,29 +387,30 @@ If you get an error on this line more than one machine type has been defined.
 #ifndef O_RDONLY
 #include <fcntl.h>              /* for unbuffered i/o stuff */
 #define L_INCR  1
-#endif                          /*O_RDONLY */
+#endif /*O_RDONLY*/
 
 #define DF_MT   DFMT_UNICOS
-typedef void VOID;
-typedef void *VOIDP;
-typedef char *_fcd;
-typedef signed char char8;
-typedef unsigned char uchar8;
-typedef signed char int8;
-typedef unsigned char uint8;
-typedef int int16;
-typedef unsigned int uint16;
-typedef int int32;
-typedef unsigned int uint32;
-typedef int intn;
-typedef unsigned int uintn;
-typedef float float32;
-typedef double float64;
-typedef int intf;               /* size of INTEGERs in Fortran compiler */
+typedef void            VOID;
+typedef void            *VOIDP;
+typedef char            *_fcd;
+typedef signed char     char8;
+typedef unsigned char   uchar8;
+typedef signed char     int8;
+typedef unsigned char   uint8;
+typedef int             int16;
+typedef unsigned int    uint16;
+typedef int             int32;
+typedef unsigned int    uint32;
+typedef int             intn;
+typedef unsigned int    uintn;
+typedef float           float32;
+typedef double          float64;
+typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 
-#define _HUGE   /* This should only be defined to a value on the PC */
-#define DF_CAPFNAMES    /* fortran names are in all caps */
+#define _HUGE              /* This should only be defined to a value on the PC */
+#define DF_CAPFNAMES            /* fortran names are in all caps */
 #define FILELIB UNIXBUFIO
+
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -420,42 +423,43 @@ typedef int intf;               /* size of INTEGERs in Fortran compiler */
 
 #endif /* UNICOS */
 
-#ifdef VMS
+#if defined(VMS) || defined(vms)
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
-            Please check your Makefile.
+Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 #include <file.h>               /* for unbuffered i/o stuff */
 #include <limits.h>
 
 #define DF_MT              DFMT_VAX
-typedef int VOID;
-typedef char *VOIDP;
-typedef char *_fcd;
-typedef char char8;
-typedef unsigned char uchar8;
-typedef char int8;
-typedef unsigned char uint8;
-typedef short int int16;
+typedef int                VOID;
+typedef char               *VOIDP;
+typedef char               *_fcd;
+typedef char               char8;
+typedef unsigned char      uchar8;
+typedef char               int8;
+typedef unsigned char      uint8;
+typedef short int          int16;
 typedef unsigned short int uint16;
-typedef long int int32;
-typedef unsigned long int uint32;
-typedef int intn;
-typedef unsigned int uintn;
-typedef float float32;
-typedef double float64;
-typedef int intf;               /* size of INTEGERs in Fortran compiler */
-#define _HUGE   /* This should only be defined to a value on the PC */
+typedef long int           int32;
+typedef unsigned long int  uint32;
+typedef int                intn;
+typedef unsigned int       uintn;
+typedef float              float32;
+typedef double             float64;
+typedef int                intf;     /* size of INTEGERs in Fortran compiler */
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define _fcdtocp(desc)  ((char *) *((char **) &desc[4]))
 
-/*
-   Redef a couple of C routine names to avoid conflicts
-   since the VMS link command is case-insensitive
- */
+/* 
+  Redef a couple of C routine names to avoid conflicts
+  since the VMS link command is case-insensitive
+*/
 #define FILELIB UNIXBUFIO
 #include "dfivms.h"
+
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -474,22 +478,22 @@ typedef int intf;               /* size of INTEGERs in Fortran compiler */
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
-            Please check your Makefile.
+Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
 #ifdef OLD_WAY
 
-#include <sys/file.h>           /* for unbuffered i/o stuff */
+#include <sys/file.h>               /* for unbuffered i/o stuff */
 #include <stdlib.h>
 
-#define __STDC__                /* To invoke ANSI compilation */
+#define __STDC__                    /* To invoke ANSI compilation */
 
 #ifndef PROTOTYPE
-#define PROTOTYPE               /* to invoke ANSI prototypes */
-#endif                          /* PROTOTYPE */
+#define PROTOTYPE                   /* to invoke ANSI prototypes */
+#endif  /* PROTOTYPE */
 
-#endif                          /* OLD_WAY */
+#endif /* OLD_WAY */
 #include <limits.h>
 
 /* For Convex machines with native format floats */
@@ -498,23 +502,23 @@ If you get an error on this line more than one machine type has been defined.
 #else
 #define DF_MT             DFMT_CONVEX
 #endif
-typedef void VOID;
-typedef void *VOIDP;
-typedef char *_fcd;
-typedef char char8;
-typedef unsigned char uchar8;
-typedef char int8;
-typedef unsigned char uint8;
-typedef short int int16;
+typedef void              VOID;
+typedef void              *VOIDP;
+typedef char              *_fcd;
+typedef char              char8;
+typedef unsigned char     uchar8;
+typedef char              int8;
+typedef unsigned char     uint8;
+typedef short int         int16;
 typedef unsigned short int uint16;
-typedef long int int32;
+typedef long int          int32;
 typedef unsigned long int uint32;
-typedef int intn;
-typedef unsigned int uintn;
-typedef float float32;
-typedef double float64;
-typedef int intf;               /* size of INTEGERs in Fortran compiler */
-#define _HUGE   /* This should only be defined to a value on the PC */
+typedef int               intn;
+typedef unsigned int      uintn;
+typedef float             float32;
+typedef double            float64;
+typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
@@ -531,36 +535,41 @@ typedef int intf;               /* size of INTEGERs in Fortran compiler */
 
 #endif /* CONVEX */
 
-#ifdef MIPSEL
+
+#if defined(MIPSEL) || (defined(mips) && defined(ultrix))
+
+#ifndef MIPSEL
+#define MIPSEL
+#endif
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
-            Please check your Makefile.
+Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 
-#define DUMBCC                  /* because it is.  for later use in macros */
+#define DUMBCC 	/* because it is.  for later use in macros */
 #include <limits.h>
 #include <sys/types.h>
-#include <sys/file.h>           /* for unbuffered i/o stuff */
+#include <sys/file.h>               /* for unbuffered i/o stuff */
 #define DF_MT   DFMT_MIPSEL
-typedef void VOID;
-typedef void *VOIDP;
-typedef char *_fcd;
-typedef char char8;
-typedef unsigned char uchar8;
-typedef char int8;
-typedef unsigned char uint8;
-typedef short int16;
-typedef unsigned short uint16;
-typedef int int32;
-typedef unsigned int uint32;
-typedef int intn;
-typedef unsigned int uintn;
-typedef float float32;
-typedef double float64;
-typedef int intf;               /* size of INTEGERs in Fortran compiler */
-#define _HUGE   /* This should only be defined to a value on the PC */
+typedef void            VOID;
+typedef void            *VOIDP;
+typedef char            *_fcd;
+typedef char            char8;
+typedef unsigned char   uchar8;
+typedef char            int8;
+typedef unsigned char   uint8;
+typedef short           int16;
+typedef unsigned short  uint16;
+typedef int             int32;
+typedef unsigned int    uint32;
+typedef int             intn;
+typedef unsigned int    uintn;
+typedef float           float32;
+typedef double          float64;
+typedef int             intf;     /* size of INTEGERs in Fortran compiler */
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define _fcdtocp(desc) (desc)
 #define FNAME_POST_UNDERSCORE
 #define FILELIB UNIXBUFIO
@@ -580,11 +589,11 @@ typedef int intf;               /* size of INTEGERs in Fortran compiler */
 
 #endif /* MIPSEL */
 
-#ifdef MAC
+#if defined(MAC) || defined(macintosh)
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
-            Please check your Makefile.
+Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 #define PROTOTYPE
@@ -593,40 +602,39 @@ If you get an error on this line more than one machine type has been defined.
 #include <fcntl.h>              /* unbuffered I/O stuff for MPW */
 #include <string.h>
 #include <stdlib.h>
-#include <limits.h>
 #ifdef THINK_C                  /* for THINK C */
 #include <unix.h>
 #define isascii(c)  (isprint(c) || iscntrl(c))
-#else                           /* MPW, possibly others */
+#else  /* MPW, possibly others */
 #include <Files.h>              /* for unbuffered I/O stuff */
-#endif                          /*THINK_C */
+#endif /*THINK_C*/
 #ifndef ABSOFT
 #define DF_CAPFNAMES            /* fortran names are in all caps */
-#endif                          /* ABSOFT */
+#endif /* ABSOFT */
 #define DF_DYNAMIC              /* use dynamic allocation */
 #define DF_MT   DFMT_MAC
 
-typedef void VOID;
-typedef char *VOIDP;
-typedef char *_fcd;
-typedef char char8;
-typedef unsigned char uchar8;
-typedef char int8;
-typedef unsigned char uint8;
-typedef short int int16;
+typedef void              VOID;
+typedef char              *VOIDP;
+typedef char              *_fcd;
+typedef char              char8;
+typedef unsigned char     uchar8;
+typedef char              int8;
+typedef unsigned char     uint8;
+typedef short int         int16;
 typedef unsigned short int uint16;
-typedef long int int32;
+typedef long int          int32;
 typedef unsigned long int uint32;
-typedef int intn;
-typedef unsigned int uintn;
-typedef float float32;
-typedef double float64;
-typedef int intf;               /* size of INTEGERs in Fortran compiler */
-#define _HUGE   /* This should only be defined to a value on the PC */
+typedef int               intn;
+typedef unsigned int      uintn;
+typedef float             float32;
+typedef double            float64;
+typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define _fcdtocp(desc) (desc)
-void        exit(int status);
+void exit(int status);
 
-#define register    /* don't mess with the MAC compiler's register allocation */
+#define register   /* don't mess with the MAC compiler's register allocation */
 #define FILELIB MACIO
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
@@ -636,100 +644,107 @@ void        exit(int status);
 /*  what each does */
 #define JMEMSYS         MEM_ANSI
 
-#endif /*MAC */
+#endif /*MAC*/
 
 #if defined WIN3 || defined __WINDOWS__ || defined _WINDOWS || defined WINNT
 #ifdef WINNT
 #define PC386
-#else  /* WINNT */
+#else /* WINNT */
 #ifndef WIN3
 #define WIN3
-#endif /* WIN3 */
+#endif  /* WIN3 */
 #define PC
 #endif /* WINNT */
-#endif /* WIN3 */
+#endif  /* WIN3 */
 
-#if defined PC || defined MSDOS || defined M_I86 || defined M_I386 || defined PC386
+#if defined PC || defined MSDOS || defined M_I86 || defined M_I386 || defined PC386 || defined __i386 || defined UNIX386
 #ifndef PC
 #define PC
 #endif /* PC */
 
-#if defined M_I386 && !defined PC386
+#if !defined PC386 && (defined M_I386 || defined unix || defined __unix)
 #define PC386
 #endif /* M_I386 && !PC386 */
 
+#if !defined UNIX386 && (defined unix || defined __unix)
+#define UNIX386
+#endif /* UNIX386 */
+
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
-            Please check your Makefile.
+Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 
-#if !defined TEST_PC && !defined TEST_WIN && !defined unix
+#if !defined TEST_PC && !defined TEST_WIN && !defined UNIX386
 #undef FAR
 #endif
 
 #include <fcntl.h>
-#ifdef unix
-#include <sys/types.h>          /* for unbuffered file I/O */
+#ifdef UNIX386
+#include <sys/types.h>      /* for unbuffered file I/O */
 #include <sys/stat.h>
-#else                           /* !unix */
-#include <sys\types.h>          /* for unbuffered file I/O */
+#include <unistd.h>
+#else /* !UNIX386 */
+#include <sys\types.h>      /* for unbuffered file I/O */
 #include <sys\stat.h>
 #include <io.h>
-#include <conio.h>              /* for debugging getch() calls */
-#endif                          /* unix */
+#include <conio.h>          /* for debugging getch() calls */
+#endif /* UNIX386 */
 #include <malloc.h>
-#include <string.h>             /* for vaious string functions */
-#include <limits.h>             /* for UINT_MAX used in various places */
+#include <string.h>         /* for vaious string functions */
+#include <limits.h>         /* for UINT_MAX used in various places */
 #include <stdlib.h>
-#include <ctype.h>              /* for character macros */
+#include <ctype.h>          /* for character macros */
 #ifdef __WATCOMC__
-#include <stddef.h>             /* for the 'fortran' pragma */
+#include <stddef.h>         /* for the 'fortran' pragma */
 #endif
 #if defined WIN3 || defined WINNT
-#ifndef GMEM_MOVEABLE           /* check if windows header is already included */
-#include <windows.h>            /* include the windows headers */
+#ifndef GMEM_MOVEABLE       /* check if windows header is already included */
+#include <windows.h>        /* include the windows headers */
 #endif
-#endif                          /* WIN3 || WINNT */
+#endif /* WIN3 || WINNT */
 
 #define DF_MT             DFMT_PC
 
 #ifndef PROTOTYPE
 /* Want prototypes for the PC even if we're not completely ANSI C compliant */
 #define PROTOTYPE
-#endif                          /* !PROTOTYPE */
+#endif  /* !PROTOTYPE */
 
-#ifndef VOID                    /* The stupid windows.h header file uses a #define instead of a typedef */
-typedef void VOID;
-#endif /* end VOID */
+#ifndef VOID    /* The stupid windows.h header file uses a #define instead of a typedef */
+typedef void              VOID;
+#endif  /* end VOID */
 #ifndef PC386
-typedef void huge *VOIDP;
-typedef char huge *_fcd;
-#else  /* PC386 */
-typedef void *VOIDP;
-typedef char *_fcd;
-#endif /* PC386 */
-typedef char char8;
-typedef unsigned char uchar8;
-typedef char int8;
-typedef unsigned char uint8;
-typedef short int int16;
+typedef void              huge *VOIDP;
+typedef char              huge *_fcd;
+#else   /* PC386 */
+typedef void *            VOIDP;
+typedef char *            _fcd;
+#endif  /* PC386 */
+typedef char              char8;
+typedef unsigned char     uchar8;
+typedef char              int8;
+typedef unsigned char     uint8;
+typedef short int         int16;
 typedef unsigned short int uint16;
-typedef long int int32;
+typedef long int          int32;
 typedef unsigned long int uint32;
-typedef int intn;
-typedef unsigned int uintn;
-typedef float float32;
-typedef double float64;
-typedef long intf;              /* size of INTEGERs in Fortran compiler */
+typedef int               intn;
+typedef unsigned int      uintn;
+typedef float             float32;
+typedef double            float64;
+typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 #ifndef PC386
 /* used to force the prototypes in hproto.h to use huge pointers */
 #define _HUGE              huge
-#else  /* PC386 */
-#define _HUGE   /* This should only be defined to a value on the PC */
-#endif /* PC386 */
+#else   /* PC386 */
+#define _HUGE              /* This should only be defined to a value on the PC */
+#endif  /* PC386 */
 
-#ifdef PC386
+#if defined UNIX386
+#define FNAME_POST_UNDERSCORE
+#elif defined PC386
 #define DF_CAPFNAMES
 #endif
 #define _fcdtocp(desc) (desc)
@@ -741,10 +756,10 @@ typedef long intf;              /* size of INTEGERs in Fortran compiler */
 #else
 #ifdef WIN3
 #define FILELIB WINIO
-#else  /* ! WIN3 */
-#ifdef PC386    /* !WIN3 */
+#else /* ! WIN3 */
+#ifdef PC386 /* !WIN3 */
 #define FILELIB UNIXBUFIO
-#else  /* must be plain PC */
+#else /* must be plain PC */
 #define FILELIB PCIO
 #endif /* PC */
 #endif /* WIN3 */
@@ -757,9 +772,9 @@ typedef long intf;              /* size of INTEGERs in Fortran compiler */
 /*  what each does */
 #ifndef PC386
 #define JMEMSYS         MEM_DOS
-#else  /* PC386 */
+#else   /* PC386 */
 #define JMEMSYS         MEM_ANSI
-#endif /* PC386 */
+#endif  /* PC386 */
 
 #define HAVE_STDC
 #define INCLUDES_ARE_ANSI
@@ -767,11 +782,11 @@ typedef long intf;              /* size of INTEGERs in Fortran compiler */
 #ifdef TEST_WIN
 #ifdef stderr
 #undef stderr
-#endif /* stderr */
+#endif  /* stderr */
 extern FILE *dbg_file;
 #define stderr dbg_file
 #define stdout dbg_file
-#endif /* TEST_WIN */
+#endif  /* TEST_WIN */
 
 #endif /* PC */
 
@@ -783,7 +798,7 @@ extern FILE *dbg_file;
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
-            Please check your Makefile.
+Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
@@ -791,26 +806,26 @@ If you get an error on this line more than one machine type has been defined.
 #define isascii(c)  (isprint(c) || iscntrl(c))
 #ifndef __GNUC__
 #include <memory.h>
-#endif                          /* __GNUC__ */
-#include <sys/file.h>           /* for unbuffered i/o stuff */
+#endif /* __GNUC__ */
+#include <sys/file.h>               /* for unbuffered i/o stuff */
 #define DF_MT             DFMT_NEXT
-typedef void VOID;
-typedef void *VOIDP;
-typedef char *_fcd;
-typedef char char8;
-typedef unsigned char uchar8;
-typedef char int8;
-typedef unsigned char uint8;
-typedef short int int16;
+typedef void              VOID;
+typedef void              *VOIDP;
+typedef char              *_fcd;
+typedef char              char8;
+typedef unsigned char     uchar8;
+typedef char              int8;
+typedef unsigned char     uint8;
+typedef short int         int16;
 typedef unsigned short int uint16;
-typedef long int int32;
+typedef long int          int32;
 typedef unsigned long int uint32;
-typedef int intn;
-typedef unsigned int uintn;
-typedef int intf;               /* size of INTEGERs in Fortran compiler */
-typedef float float32;
-typedef double float64;
-#define _HUGE   /* This should only be defined to a value on the PC */
+typedef int               intn;
+typedef unsigned int      uintn;
+typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+typedef float             float32;
+typedef double            float64;
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
@@ -827,41 +842,41 @@ typedef double float64;
 
 #endif /* NEXT */
 
-#ifdef MOTOROLA
+#if defined(MOTOROLA) || defined(m88k)
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
-            Please check your Makefile.
+Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
 #include <string.h>
 #ifndef __GNUC__
 #include <memory.h>
-#endif                          /* __GNUC__ */
+#endif /* __GNUC__ */
 #include <unistd.h>
-#include <sys/file.h>           /* for unbuffered i/o stuff */
+#include <sys/file.h>               /* for unbuffered i/o stuff */
 #ifndef O_RDONLY
 #include <fcntl.h>              /* for unbuffered i/o stuff */
-#endif                          /*O_RDONLY */
+#endif /*O_RDONLY*/
 #define DF_MT             DFMT_MOTOROLA
-typedef void VOID;
-typedef void *VOIDP;
-typedef char *_fcd;
-typedef char char8;
-typedef unsigned char uchar8;
-typedef char int8;
-typedef unsigned char uint8;
-typedef short int int16;
+typedef void              VOID;
+typedef void              *VOIDP;
+typedef char              *_fcd;
+typedef char              char8;
+typedef unsigned char     uchar8;
+typedef char              int8;
+typedef unsigned char     uint8;
+typedef short int         int16;
 typedef unsigned short int uint16;
-typedef long int int32;
+typedef long int          int32;
 typedef unsigned long int uint32;
-typedef int intn;
-typedef unsigned int uintn;
-typedef int intf;               /* size of INTEGERs in Fortran compiler */
-typedef float float32;
-typedef double float64;
-#define _HUGE   /* This should only be defined to a value on the PC */
+typedef int               intn;
+typedef unsigned int      uintn;
+typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+typedef float             float32;
+typedef double            float64;
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
@@ -886,30 +901,30 @@ typedef double float64;
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
-            Please check your Makefile.
+Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
 #include <string.h>
-#include <sys/file.h>           /* for unbuffered i/o stuff */
+#include <sys/file.h>               /* for unbuffered i/o stuff */
 #define DF_MT             DFMT_ALPHA
-typedef void VOID;
-typedef void *VOIDP;
-typedef char *_fcd;
-typedef char char8;
-typedef unsigned char uchar8;
-typedef char int8;
-typedef unsigned char uint8;
-typedef short int int16;
+typedef void              VOID;
+typedef void              *VOIDP;
+typedef char              *_fcd;
+typedef char              char8;
+typedef unsigned char     uchar8;
+typedef char              int8;
+typedef unsigned char     uint8;
+typedef short int         int16;
 typedef unsigned short int uint16;
-typedef int int32;
-typedef unsigned int uint32;
-typedef int intn;
-typedef unsigned int uintn;
-typedef int intf;               /* size of INTEGERs in Fortran compiler */
-typedef float float32;
-typedef double float64;
-#define _HUGE   /* This should only be defined to a value on the PC */
+typedef int               int32;
+typedef unsigned int      uint32;
+typedef int               intn;
+typedef unsigned int      uintn;
+typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+typedef float             float32;
+typedef double            float64;
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
@@ -936,33 +951,33 @@ typedef double float64;
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
-            Please check your Makefile.
+Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 #ifndef PROTOTYPE
 #define PROTOTYPE
-#endif                          /* !PROTOTYPE */
+#endif /* !PROTOTYPE */
 #include <string.h>
 #include <memory.h>
 #include <sys/types.h>
 #define DF_MT              DFMT_VP
-typedef void VOID;
-typedef void *VOIDP;
-typedef char *_fcd;
-typedef char char8;
-typedef unsigned char uchar8;
-typedef char int8;
-typedef unsigned char uint8;
-typedef short int int16;
+typedef void                VOID;
+typedef void               *VOIDP;
+typedef char               *_fcd;
+typedef char               char8;
+typedef unsigned char      uchar8;
+typedef char               int8;
+typedef unsigned char      uint8;
+typedef short int          int16;
 typedef unsigned short int uint16;
-typedef long int int32;
-typedef unsigned long int uint32;
-typedef int intn;
-typedef unsigned int uintn;
-typedef int intf;               /* size of INTEGERs in Fortran compiler */
-typedef float float32;
-typedef double float64;
-#define _HUGE   /* This should only be defined to a value on the PC */
+typedef long int           int32;
+typedef unsigned long int  uint32;
+typedef int                intn;
+typedef unsigned int       uintn;
+typedef int                intf;     /* size of INTEGERs in Fortran compiler */
+typedef float              float32;
+typedef double             float64;
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
@@ -984,7 +999,7 @@ typedef double float64;
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
-            Please check your Makefile.
+Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 
@@ -993,23 +1008,23 @@ If you get an error on this line more than one machine type has been defined.
 #include <sys/file.h>           /* for unbuffered i/o stuff */
 #include <unistd.h>             /* mis-using def. for SEEK_SET, but oh well */
 #define DF_MT   DFMT_I860
-typedef void VOID;
-typedef void *VOIDP;
-typedef char *_fcd;
-typedef char char8;
-typedef unsigned char uchar8;
-typedef char int8;
-typedef unsigned char uint8;
-typedef short int16;
-typedef unsigned short uint16;
-typedef int int32;
-typedef unsigned int uint32;
-typedef int intn;
-typedef unsigned int uintn;
-typedef float float32;
-typedef double float64;
-typedef int intf;               /* size of INTEGERs in Fortran compiler */
-#define _HUGE   /* This should only be defined to a value on the PC */
+typedef void            VOID;
+typedef void            *VOIDP;
+typedef char            *_fcd;
+typedef char            char8;
+typedef unsigned char   uchar8;
+typedef char            int8;
+typedef unsigned char   uint8;
+typedef short           int16;
+typedef unsigned short  uint16;
+typedef int             int32;
+typedef unsigned int    uint32;
+typedef int             intn;
+typedef unsigned int    uintn;
+typedef float           float32;
+typedef double          float64;
+typedef int             intf;     /* size of INTEGERs in Fortran compiler */
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define _fcdtocp(desc) (desc)
 #define FNAME_POST_UNDERSCORE
 #define FILELIB UNIXBUFIO
@@ -1027,9 +1042,9 @@ typedef int intf;               /* size of INTEGERs in Fortran compiler */
 #endif /* I860 */
 
 #ifndef GOT_MACHINE
-No machine type has been defined.Your Makefile needs to have someing like
--           DSUN or - DUNICOS in order for the HDF internal structures to be defined
-            correctly.
+No machine type has been defined.  Your Makefile needs to have someing like
+-DSUN or -DUNICOS in order for the HDF internal structures to be defined
+correctly.
 #endif
 
 /*-----------------------------------------------------*/
@@ -1088,30 +1103,29 @@ No machine type has been defined.Your Makefile needs to have someing like
 ***************************************************************************/
 #    ifndef DFKMASTER
 #if defined __STDC__ || defined PC
-extern int  (*DFKnumin)
-                (void _HUGE * source, void _HUGE * dest, uint32 num_elm,
-                 uint32 source_stride, uint32 dest_stride);
-extern int  (*DFKnumout) (void _HUGE * source, void _HUGE * dest, uint32 num_elm,
-                          uint32 source_stride, uint32 dest_stride);
+extern int (*DFKnumin)(void _HUGE * source, void _HUGE * dest, uint32 num_elm,
+            uint32 source_stride,uint32 dest_stride);
+extern int (*DFKnumout)(void _HUGE * source, void _HUGE * dest, uint32 num_elm,
+            uint32 source_stride,uint32 dest_stride);
 #else
-extern int  (*DFKnumin) ();
-extern int  (*DFKnumout) ();
+extern int (*DFKnumin)();
+extern int (*DFKnumout)();
 #endif
-#     endif     /* DFKMASTER */
+#     endif /* DFKMASTER */
 
 /*****************************************************************
 *  Create DFtbuf: a temporary buffer used when a small amount of
 *  memory is needed, as when small conversions are done
 ******************************************************************/
 #define DF_TBUFSZ       512     /* buffer size can be smaller */
-#if 0   /* replaced with dynamic memory calls */
+#if 0 /* replaced with dynamic memory calls */
 #ifdef  HMASTER
-int FAR     int_DFtbuf[DF_TBUFSZ];  /* int declaration to force word boundary */
-uint8 FAR  *DFtbuf = (uint8 *) int_DFtbuf;
-#else  /* !HMASTER */
+    int    FAR int_DFtbuf[DF_TBUFSZ]; /* int declaration to force word boundary */
+    uint8  FAR *DFtbuf = (uint8 *) int_DFtbuf;
+#else /* !HMASTER */
 extern uint8 FAR *DFtbuf;
-#endif /*HMASTER */
-#endif
+#endif /*HMASTER*/
+#endif 
 
 /*----------------------------------------------------------------
 ** MACRO FCALLKEYW for any special fortran-C stub keyword
@@ -1128,22 +1142,23 @@ extern uint8 FAR *DFtbuf;
 #undef FRETVAL
 #endif
 
-#if defined(MAC)    /* with LS FORTRAN */
+#if defined(MAC)                /* with LS FORTRAN */
 #ifndef ABSOFT
 #   define FCALLKEYW    pascal
 #   define FRETVAL(x)   pascal x
 #endif /* ABSOFT */
 #endif
 
-#if defined(PC) && !defined(PC386)  /* with MS Fortran */
+#if defined(PC) && !defined(PC386)   /* with MS Fortran */
 #   define FCALLKEYW    __fortran
 #   define FRETVAL(x)   x __fortran
 #endif
 
-#ifndef FRETVAL     /* !MAC && !PC */
-#   define FCALLKEYW    /*NONE */
+#ifndef FRETVAL /* !MAC && !PC */
+#   define FCALLKEYW    /*NONE*/
 #   define FRETVAL(x)   x
 #endif
+
 
 /*----------------------------------------------------------------
 ** MACRO FNAME for any fortran callable routine name.
@@ -1241,6 +1256,7 @@ extern uint8 FAR *DFtbuf;
 #endif /* !(VMS | PC) */
 #endif /* WIN3 */
 
+
 /**************************************************************************
 *  Memory functions defined differently under MS Windows
 **************************************************************************/
@@ -1255,7 +1271,7 @@ extern uint8 FAR *DFtbuf;
 #       define HDmemset(dst,c,n)     (memset_big((dst),(c),(n)))
 #       define HDmemcmp(dst,src,n)   (memcmp_big((dst),(src),(n)))
 #   endif   /* WIN3 */
-#else  /* !WIN & !PC */
+#else   /* !WIN & !PC */
 # define HDmemcpy(dst,src,n)   (memcpy((dst),(src),(n)))
 # define HDmemset(dst,c,n)     (memset((dst),(c),(n)))
 # define HDmemcmp(dst,src,n)   (memcmp((dst),(src),(n)))
@@ -1265,3 +1281,4 @@ extern uint8 FAR *DFtbuf;
 #define DFSDnumber DFSDndatasets
 
 #endif /* HDFI_H */
+

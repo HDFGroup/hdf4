@@ -148,6 +148,8 @@ typedef TBBT_NODE **TBBT_TREE;
  * ITM **root= NULL;        (* How to create an empty tree w/o tbbtdmake() *)
  * ITM **tbbtdfind( ITM ***tree, void *key, ITM ***pp );
  * ITM **tbbtfind( ITM **root, void *key, int (*cmp)(), int arg, ITM ***pp );
+ * ITM **tbbtdless( ITM ***tree, void *key, ITM ***pp );
+ * ITM **tbbtless( ITM **root, void *key, int (*cmp)(), int arg, ITM ***pp );
  * ITM **tbbtindx( ITM **root, long indx );
  * ITM **tbbtdins( ITM ***tree, ITM *item, void *key );
  * ITM **tbbtins( ITM ***root, ITM *item, void *key, int (*cmp)(), int arg );
@@ -201,6 +203,8 @@ extern      "C"
  * So could be used as:
  *     node= tbbtdfind( tree1, key, NULL );
  *     node= tbbtfind( *tree1, key, compar, arg, NULL );
+ *     node= tbbtdless( tree1, key, NULL );
+ *     node= tbbtless( *tree1, key, compar, arg, NULL );
  *     node= tbbtdins( tree1, item, key );
  *     node= tbbtins( tree1, item, key, compar, arg );
  *     item= tbbtrem( tree1, tbbtdfind(tree1,key,NULL), NULL );
@@ -222,6 +226,11 @@ extern      "C"
     TBBT_NODE  *tbbtfind
                 (TBBT_NODE * root, VOIDP key, intn (*cmp) HPROTO((VOIDP, VOIDP, intn)),
                  intn arg, TBBT_NODE ** pp);
+    TBBT_NODE  *tbbtdless
+                (TBBT_TREE * tree, VOIDP key, TBBT_NODE ** pp);
+    TBBT_NODE  *tbbtless
+                (TBBT_NODE * root, VOIDP key, intn (*cmp) HPROTO((VOIDP, VOIDP, intn)),
+                 intn arg, TBBT_NODE ** pp);
 /* Locate a node based on the key given.  A pointer to the node in the tree
  * with a key value matching `key' is returned.  If no such node exists, NULL
  * is returned.  Whether a node is found or not, if `pp' is not NULL, `*pp'
@@ -230,7 +239,9 @@ extern      "C"
  * used on trees created using tbbtdmake() (so that `cmp' and `arg' don't have
  * to be passed).  tbbtfind() can be used on the root or any subtree of a tree
  * create using tbbtdmake() and is used on any tree (or subtree) created with-
- * out using tbbtdmake().
+ * out using tbbtdmake().  tbbtless() & tbbtdless() work exactly like tbbtfind()
+ * and tbbtdfind() except that they find the node with a key which is less than
+ * or equal to the key given to them.
  */
 
     TBBT_NODE  *tbbtindx
