@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.11  1993/10/06 20:27:40  koziol
-More compression fixed, and folded Doug's suggested change into VSappendable.
+Revision 1.11.2.1  1993/10/10 22:10:16  koziol
+Moved Tag descriptions into a header file.  Updated compression routines.
 
+ * Revision 1.11  1993/10/06  20:27:40  koziol
+ * More compression fixed, and folded Doug's suggested change into VSappendable.
+ *
  * Revision 1.10  1993/10/04  20:02:49  koziol
  * Updated error reporting in H-Layer routines, and added more error codes and
  * compression stuff.
@@ -173,6 +176,9 @@ extern int32 error_top;
 #define DFE_CODER       -74 /* Error in encoding layer of compression */
 #define DFE_CINIT       -75 /* Error in encoding initialization */
 #define DFE_CDECODE     -76 /* Error in decoding compressed data */
+#define DFE_CENCODE     -77 /* Error in encoding compressed data */
+#define DFE_CTERM       -78 /* Error in encoding termination */
+#define DFE_MINIT       -79 /* Error in modeling initialization */
 
 #ifdef _H_ERR_MASTER_
 
@@ -262,8 +268,12 @@ PRIVATE const error_messages_t error_messages[] =
 { DFE_MODEL,        "Error in modeling layer of compression"},
 { DFE_CODER,        "Error in encoding layer of compression"},
 { DFE_CINIT,        "Error in encoding initialization"},
-{ DFE_CDECODE,      "Error in decoding compressed data"}
+{ DFE_CDECODE,      "Error in decoding compressed data"},
+{ DFE_CENCODE,      "Error in encoding compressed data"},
+{ DFE_CTERM,        "Error in encoding termination"},
+{ DFE_MINIT,        "Error in modeling initialization"}
 };
 #endif /* _H_ERR_MASTER_ */
 
 #endif /* __HERR_H */
+
