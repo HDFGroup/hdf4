@@ -114,29 +114,20 @@ The dataset currently cannot be special already i.e. NBIT,
 COMPRESSED, or EXTERNAL. This is an Error.
 
 The defintion of the "HDF_CHUNK_DEF" union with relvant fields is:
+.nf
 
 typedef union hdf_chunk_def_u
-.br
 {
-.br
 int32  chunk_lengths[MAX_VAR_DIMS];  Chunk lengths along 
-.br
                                       each dimension.
-.br
        {
-.br
          int32 chunk_lengths[MAX_VAR_DIMS]; Chunk lengths along 
-.br
                                             each dimension.
-.br
          int32 comp_type;                   Compression type
-.br
          comp_info cinfo;                   Compression info struct
-.br
        }comp;
-.br
 } HDF_CHUNK_DEF
-.br
+.fi
 
 The simplist is the "chunk_lengths" array specifiying chunk
 lengths for each dimension where the "flags" argument set 
@@ -165,85 +156,49 @@ cache is always created.
 The following example shows the organization of chunks for a 2D array.
 E.g. 4x4 array with 2x2 chunks. The array shows the layout of
 chunks in the chunk array.
+.nf
 
-
-.SK
     4 ---------------------
-.br
       |         |         |
-.br
 Y     |  (0,1)  |  (1,1)  |
-.br
 ^     |         |         |
-.br
 |   2 ---------------------
-.br
 |     |         |         |
-.br
 |     |  (0,0)  |  (1,0)  |
-.br
 |     |         |         |
-.br
 |     ---------------------
-.br
 |     0         2         4
-.br
 ---------------> X
 
-.br
---Without compression--:
-.br
+ --Without compression--:
 {
-.br
  HDF_CHUNK_DEF chunk_def;
-.br
-.......
-.br
--- Set chunk lengths --
-.br
+ .......
+ -- Set chunk lengths --
  chunk_def.chunk_lengths[0]= 2;
-.br
  chunk_def.chunk_lengths[1]= 2;
 
-.br
--- Set Chunking --
-.br
+ -- Set Chunking --
  SDsetChunk(sdsid, chunk_def, HDF_CHUNK);
-.br
-......
-.br
+ ......
 }
 
-.br
---With compression--:
-.br
+ --With compression--:
 {
-.br
  HDF_CHUNK_DEF chunk_def;
-.br
-.......
-.br
--- Set chunk lengths first --
-.br
+ .......
+ -- Set chunk lengths first --
  chunk_def.chunk_lengths[0]= 2;
-.br
  chunk_def.chunk_lengths[1]= 2;
 
-.br
--- Set compression --
-.br
+ -- Set compression --
  chunk_def.comp.cinfo.deflate.level = 9;
-.br
  chunk_def.comp.comp_type = COMP_CODE_DEFLATE;
-.br
--- Set Chunking with Compression --
-.br
+ -- Set Chunking with Compression --
  SDsetChunk(sdsid, chunk_def, HDF_CHUNK | HDF_COMP);
-.br
-......
-.br
+ ......
 }.
-.br
+.fi
 
 .SS "SDgetChunkInfo"
 This routine gets any special information on the SDS. If its chunked,
@@ -253,33 +208,23 @@ the "HDF_CHUNK_DEF" union. You can pass in a NULL for "chunk_def"
 if don't want the chunk lengths for each dimension.
 Additionaly if successfull it will return a bit-or'd value in "flags"
 indicating if the SDS is:
-.br
+.nf
+
        Chunked                  -> flags = HDF_CHUNK
-.br
        Chunked and compressed   -> flags = HDF_CHUNK | HDF_COMP
-.br
        Non-chunked              -> flags = HDF_NONE
-.br
+
 e.g. 4x4 array - Pseudo-C
-.br
 {
-.br
  int32   rcdims[3];
-.br
  HDF_CHUNK_DEF rchunk_def;
-.br
  int32   cflags;
-.br
-...
-.br
+ ...
  rchunk_def.chunk_lengths = rcdims;
-.br
  SDgetChunkInfo(sdsid, &rchunk_def, &cflags);
-.br
-...
-.br
+ ...
 }.
-.br
+.fi
 .SS "SDwriteChunk"
 This routine writes a whole chunk of data to the chunked SDS
 specified by chunk "origin" for the given SDS and can be used
