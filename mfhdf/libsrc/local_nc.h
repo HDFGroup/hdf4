@@ -94,6 +94,7 @@ typedef struct {
         long size ;
 #ifdef HDF
 	int32 vgid;   /* id of the Vgroup representing this dimension */
+        int32 count;  /* Number of pointers to this dimension */
 #endif
 } NC_dim ;
 

@@ -25,6 +25,9 @@ long size ;
 		goto alloc_err ;
 
 	ret->size = size ;
+#ifdef HDF
+        ret->count = 1;
+#endif /* HDF */
 	return(ret) ;
 alloc_err :
 	nc_serror("NC_new_dim") ;
@@ -41,6 +44,13 @@ NC_dim *dim ;
 {
 	if(dim ==NULL)
 		return ;
+#ifdef HDF
+        if (dim->count > 1)
+          {
+           dim->count -=  1;
+           return;
+          }
+#endif /* HDF */
 	NC_free_string(dim->name) ;
 	Free(dim) ;
 }
