@@ -16,6 +16,6 @@
 !$ ! set up testhdf
 !$ ! change below to the hdf bin directory
 !$ ! 
-$ define/nolog hdf$test    _$1$dia0:[folk.hdf33.hdf.test]
+$ define/nolog hdf$test    mrlxp4$dka200:[folk.dev.hdf.test]
 $ !
 $ testhdf     :== $ hdf$test:testhdf

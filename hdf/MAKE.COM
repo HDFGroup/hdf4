@@ -24,16 +24,16 @@
 $ create/dir [-.lib]
 $ create/dir [-.include]
 $ create/dir [-.bin]
-$ define/nolog hdf$src     mrlxp4$dka300:[folk.dev.hdf.src]   ! HDF src
-$ define/nolog hdf$util    mrlxp4$dka300:[folk.dev.hdf.util]  ! HDF utilities
-$ define/nolog hdf$test    mrlxp4$dka300:[folk.dev.hdf.test]  ! HDF test programs
-$ define/nolog jpeg$src    mrlxp4$dka300:[folk.dev.hdf.jpeg]  !
-$ define/nolog zlib$src    mrlxp4$dka300:[folk.dev.hdf.zlib]  !
-$ define/nolog hdf$lib     mrlxp4$dka300:[folk.dev.lib]df ! Location and name for lib
-$ define/nolog jpeg$lib     mrlxp4$dka300:[folk.dev.lib]libjpeg.olb
-$ define/nolog zlib$lib     mrlxp4$dka300:[folk.dev.lib]libz.olb
-$ define/nolog hdf$include mrlxp4$dka300:[folk.dev.include] ! Where to put includes
-$ define/nolog hdf$bin     mrlxp4$dka300:[folk.dev.bin]   ! Where to put executables
+$ define/nolog hdf$src     mrlxp4$dka200:[folk.dev.hdf.src]   ! HDF src
+$ define/nolog hdf$util    mrlxp4$dka200:[folk.dev.hdf.util]  ! HDF utilities
+$ define/nolog hdf$test    mrlxp4$dka200:[folk.dev.hdf.test]  ! HDF test programs
+$ define/nolog jpeg$src    mrlxp4$dka200:[folk.dev.hdf.jpeg]  !
+$ define/nolog zlib$src    mrlxp4$dka200:[folk.dev.hdf.zlib]  !
+$ define/nolog hdf$lib     mrlxp4$dka200:[folk.dev.lib]df ! Location and name for lib
+$ define/nolog jpeg$lib     mrlxp4$dka200:[folk.dev.lib]libjpeg.olb
+$ define/nolog zlib$lib     mrlxp4$dka200:[folk.dev.lib]libz.olb
+$ define/nolog hdf$include mrlxp4$dka200:[folk.dev.include] ! Where to put includes
+$ define/nolog hdf$bin     mrlxp4$dka200:[folk.dev.bin]   ! Where to put executables
 $ !
 $ define/nolog sys$clib sys$library:vaxcrtl
 $ !
