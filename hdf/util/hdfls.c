@@ -26,9 +26,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.12  1992/05/26 21:00:08  koziol
-Folded Jason's Mac port and Linted code into the main version
+Revision 1.13  1992/05/31 19:16:26  mfolk
+No change.  But Convex doesn't like match of arg types in call to
+qsort on line 220.
 
+ * Revision 1.12  1992/05/26  21:00:08  koziol
+ * Folded Jason's Mac port and Linted code into the main version
+ *
  * Revision 1.11  1992/04/24  15:38:25  koziol
  * PC port
  *
