@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1993/04/19 22:47:30  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.9  1993/04/26 22:40:29  koziol
+Shortened the long form of the DFR8setcompress and DF24setcompress calls to
+make the Vax happy...
 
+ * Revision 1.8  1993/04/19  22:47:30  koziol
+ * General Code Cleanup to reduce/remove errors on the PC
+ *
  * Revision 1.7  1993/04/14  21:39:13  georgev
  * Had to add some VOIDP casts to some functions to make the compiler happy.
  *
@@ -507,7 +511,7 @@ ndfr8restart()
 }
 
 /*-----------------------------------------------------------------------------
- * Name:    dfr8setcompress
+ * Name:    dfr8scompress
  * Purpose: set the compression to use when writing the next image
  * Inputs:
  *      scheme - the type of compression to use
@@ -521,9 +525,9 @@ ndfr8restart()
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfr8setcompress(intf *scheme)
+ndfr8scompress(intf *scheme)
 #else
-ndfr8setcompress(scheme)
+ndfr8scompress(scheme)
 intf *scheme;
 #endif /* PROTOTYPE */
 {
@@ -537,7 +541,7 @@ intf *scheme;
 }   /* end dfr8setcompress() */
 
 /*-----------------------------------------------------------------------------
- * Name:    dfr8setjpeg
+ * Name:    dfr8sjpeg
  * Purpose: change the JPEG compression parameters
  * Inputs:
  *      quality - what the JPEG quality rating should be
@@ -550,9 +554,9 @@ intf *scheme;
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfr8setjpeg(intf *quality,intf *force_baseline)
+ndfr8sjpeg(intf *quality,intf *force_baseline)
 #else
-ndfr8setjpeg(quality,force_baseline)
+ndfr8sjpeg(quality,force_baseline)
 intf *quality;
 intf *force_baseline;
 #endif /* PROTOTYPE */

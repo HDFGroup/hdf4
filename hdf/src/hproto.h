@@ -2,10 +2,14 @@
 $Header$
 
 $Log$
-Revision 1.28  1993/04/26 15:08:22  chouck
-Fixes for the convex (doesn't like foo(VOID) prototypes)
-Also added extern "C" { } around prototypes
+Revision 1.29  1993/04/26 22:40:32  koziol
+Shortened the long form of the DFR8setcompress and DF24setcompress calls to
+make the Vax happy...
 
+ * Revision 1.28  1993/04/26  15:08:22  chouck
+ * Fixes for the convex (doesn't like foo(VOID) prototypes)
+ * Also added extern "C" { } around prototypes
+ *
  * Revision 1.27  1993/04/22  23:00:22  koziol
  * Changed DFR8nimages, DFPnpals to report the correct number of images
  * and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
@@ -1073,9 +1077,9 @@ extern FRETVAL(intf) ndaiafid
 #   define ndfr8setpalette   FNAME(DFR8SETPALETTE)
 #   define ndfr8restart  FNAME(DFR8RESTART)
 #   define nd8scomp  FNAME(D8SCOMP)
-#   define ndfr8setcompress FNAME(DFR8SETCOMPRESS)
+#   define ndfr8setcompress FNAME(DFR8SCOMPRESS)
 #   define nd8sjpeg  FNAME(D8SJPEG)
-#   define ndfr8setjpeg FNAME(DFR8SETJPEG)
+#   define ndfr8setjpeg FNAME(DFR8SJPEG)
 #else   /* !DF_CAPFNAMES */
 #   define nd8spal   FNAME(d8spal)
 #   define nd8first  FNAME(d8first)
@@ -1091,9 +1095,9 @@ extern FRETVAL(intf) ndaiafid
 #   define ndfr8setpalette   FNAME(dfr8setpalette)
 #   define ndfr8restart  FNAME(dfr8restart)
 #   define nd8scomp  FNAME(d8scomp)
-#   define ndfr8setcompress FNAME(dfr8setcompress)
+#   define ndfr8setcompress FNAME(dfr8scompress)
 #   define nd8sjpeg  FNAME(d8sjpeg)
-#   define ndfr8setjpeg FNAME(dfr8setjpeg)
+#   define ndfr8setjpeg FNAME(dfr8sjpeg)
 #endif /* DF_CAPFNAMES */
 #endif /* DFR8_FNAMES */
 
@@ -1143,13 +1147,13 @@ extern  FRETVAL(intf) ndfr8restart
 extern FRETVAL(intf) nd8scomp
     PROTO((intf *scheme));
 
-extern FRETVAL(intf) ndfr8setcompress
+extern FRETVAL(intf) ndfr8scompress
     PROTO((intf *scheme));
 
 extern FRETVAL(intf) nd8sjpeg
     PROTO((intf *quality,intf *force_baseline));
 
-extern FRETVAL(intf) ndfr8setjpeg
+extern FRETVAL(intf) ndfr8sjpeg
     PROTO((intf *quality,intf *force_baseline));
 
 /*
