@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/04/28 19:09:29  dilg
-Corrected incorrect expected return value for DFwrite on line 347.
+Revision 1.3  1992/04/28 19:36:55  dilg
+Some minor cosmetic changes.
 
+ * Revision 1.2  1992/04/28  19:09:29  dilg
+ * Corrected incorrect expected return value for DFwrite on line 347.
+ *
  * Revision 1.1  1992/02/26  23:05:33  dilg
  * Initial revision
  *
@@ -383,4 +386,6 @@ main()
 
     printf("\n\nTest Summary:\n");
     printf("   %d errors were encountered.\n", nerrors);
+    if (nerrors != 0)
+	printf("   Please check program output carefully.\n");
 }

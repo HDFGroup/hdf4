@@ -2,9 +2,12 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.1  1992/03/26 21:51:22  dilg
-C Initial revision
+C Revision 1.2  1992/04/28 19:36:55  dilg
+C Some minor cosmetic changes.
 C
+c Revision 1.1  1992/03/26  21:51:22  dilg
+c Initial revision
+c
 C
       program tdfstubsF
 
@@ -51,19 +54,9 @@ C
       print *, '">>>Failure".  An error count is kept and printed'
       print *, 'out at the end.'
       print *, ' '
-      print *, 'Hit <return> to continue.'
+      print *, 'Hit any alpha key and <return> to continue.'
       read *, in
-C      do 1 i=1, 20
-C        in(i) = char(20)
-C 1    continue
       in(1:20) = '                    '
-C    getchar();
-
-C#if defined PC || defined VMS
-C    system('del o1');
-C#else
-C    system('rm o1');
-C#endif /* PC .or. VMS */
 
       print *, ' '
       print *, 'Testing dferrno...'
@@ -77,19 +70,20 @@ C#endif /* PC .or. VMS */
 
       print *, ' '
       print *, 'Testing dfishdf... (should fail)'
-      ret = dfishdf('o1')
+      ret = dfishdf('o2')
       dfenum = dferrno()
       if (ret .eq. -1) then
         print *, 'Success:  dfishdf failed with DFerror = ', dfenum
       else
 	print *, '>>>Failure:  Non-existent file looks like HDF file.'
+	print *, '   Maybe there was a pre-existing file named "o2"'
 	print *, '   DFerror = ', dfenum
 	nerrors = nerrors + 1
       endif
 
       print *, ' '
       print *, 'Testing dfopen... (new file)'
-      dfile = dfopen('o1', 6, 0)
+      dfile = dfopen('o2', 6, 0)
       dfenum = dferrno()
       if (dfile .eq. 0) then
 	print *, '>>>Failure:  Error ', dfenum, ' opening file.'
@@ -124,7 +118,7 @@ C#endif /* PC .or. VMS */
 
       print *, ' '
       print *, 'Testing dfopen... (existing file)'
-      dfile = dfopen('o1', 2, 0)
+      dfile = dfopen('o2', 2, 0)
       dfenum = dferrno()
       if (dfile .eq. 0) then
 	print *, '>>>Failure:  Error ', dfenum, ' opening file.'
@@ -169,9 +163,6 @@ C#endif /* PC .or. VMS */
         endif
       endif
 
-C      do 20 i=1, 20
-C        in(i) = char(20)
-C 20   continue
       in(1:20) = '                    '
 
       print *, ' '
@@ -196,9 +187,6 @@ C 20   continue
 	print *, '>>>Failure:  Read allowed on element set up for write.'
 	nerrors = nerrors + 1
       endif
-C      do 30 i=1, 20
-C        in(i) = char(20)
-C 30   continue
       in(1:20) = '                    '
 
       print *, ' '
@@ -259,9 +247,6 @@ C 30   continue
 	  print *, 'Success:  string read is the same as string written.'
         endif
       endif
-C      do 50 i=1, 20
-C        in(i) = char(20)
-C 50   continue
       in(1:20) = '                    '
 
       print *, ' '
@@ -410,6 +395,9 @@ C
       print *, ' '
       print *, 'Test Summary:'
       print *, '   ', nerrors, ' errors were encountered.'
+      if (nerrors .ne. 0) then
+	print *, '   Please check program output carefully.'
+      endif
 
       stop
       end
