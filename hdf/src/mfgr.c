@@ -481,7 +481,7 @@ printf("%s: Vntagrefs=%d\n",FUNC,(int)Vntagrefs(img_key));
 #ifdef QAK
 printf("%s: img_tag=%u, img_ref=%u\n",FUNC,(unsigned)img_tag,(unsigned)img_ref);
 #endif /* QAK */
-                                                  if(img_tag==DFTAG_RI)
+                                                  if(img_tag==DFTAG_RI || img_tag==DFTAG_CI)
                                                     {
                                                         img_info[curr_image].grp_tag=(uint16)grp_tag;
                                                         img_info[curr_image].grp_ref=(uint16)grp_ref;
@@ -1906,6 +1906,9 @@ printf("%s: check 2.0, GroupID=%ld\n",FUNC,(long)GroupID);
     img_ptr->ri_ref = (uint16)temp_ref;
     }
 
+#ifdef QAK
+printf("%s: check 3.0, img_ptr->name=%s\n",FUNC,img_ptr->name);
+#endif /* QAK */
     /* Set the name of the RI */
     if(img_ptr->name!=NULL)
         if(Vsetname(GroupID,img_ptr->name)==FAIL)
