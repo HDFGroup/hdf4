@@ -1371,8 +1371,17 @@ ndsscal(float64 *cal, float64 *cal_err, float64 *ioff, float64 *ioff_err,
         intf * cal_type)
 {
     intf ret;
+    float64 dcal ;
+    float64 dcal_err ;
+    float64 dioff ;
+    float64 dioff_err ;
+    
+    HDmemcpy(&dcal, cal, sizeof(float64));
+    HDmemcpy(&dcal_err, cal_err, sizeof(float64));
+    HDmemcpy(&dioff, ioff, sizeof(float64));
+    HDmemcpy(&dioff_err, ioff_err, sizeof(float64));
 
-    ret=(intf)DFSDsetcal((float64)*cal, (float64)*cal_err, (float64)*ioff, (float64)*ioff_err, (int32)*cal_type);
+    ret=(intf)DFSDsetcal((float64)dcal, (float64)dcal_err, (float64)dioff, (float64)dioff_err, (int32)*cal_type);
     return ret;
 }   /* ndsscal */
 
@@ -1391,7 +1400,20 @@ FRETVAL(intf)
 ndsgcal(float64 *cal, float64 *cal_err, float64 *ioff, float64 *ioff_err,
         intf * cal_type)
 {
-    return DFSDgetcal(cal, cal_err, ioff, ioff_err, (int32 *) cal_type);
+    intf ret;
+    float64 dcal ;
+    float64 dcal_err ;
+    float64 dioff ;
+    float64 dioff_err ;
+    
+    ret =(intf) DFSDgetcal(&dcal, &dcal_err, &dioff, &dioff_err, (int32 *) cal_type);
+
+    HDmemcpy(cal, &dcal, sizeof(float64));
+    HDmemcpy(cal_err, &dcal_err, sizeof(float64));
+    HDmemcpy(ioff, &dioff, sizeof(float64));
+    HDmemcpy(ioff_err, &dioff_err, sizeof(float64));
+
+    return ret;
 }   /* ndsgcal */
 
 /*-----------------------------------------------------------------------------
