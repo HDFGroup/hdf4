@@ -4,8 +4,8 @@
 .SH "NAME"
 Vgetattr \- read values of a vgroup attribute
 .SH "SYNOPSIS"
+#include "hdf.h"
 .ft B
-#include <vattr.h>
 .sp
 extern intn Vgetattr
 .br
@@ -34,7 +34,7 @@ Read values of a vgroup attribute.
 .SH "RETURNS"
 Returns SUCCEED when successful, FAIL otherwise.
 .SH "FORTRAN"
-Integer function vfgatt(vgid,aindex,values) --
+Integer function vfgnatt(vgid,aindex,values) --
 .br
        get values of a numeric attribute
 .br

@@ -4,8 +4,8 @@
 .SH "NAME"
 VSgetattr \- get values of a specified attribute
 .SH "SYNOPSIS"
+#include "hdf.h"
 .ft B
-#include <vattr.h>
 .sp
 extern intn VSgetattr
 .br
@@ -39,7 +39,7 @@ Get values of a specified attribute.
 .SH "RETURNS"
 Returns SUCCEED if successful, FAIL otherwise.
 .SH "FORTRAN"
-Integer function vsfgatt(vsid,findex,aindex,values) --
+Integer function vsfgnat(vsid,findex,aindex,values) --
 .br
        get values of a numeric attribute
 .br

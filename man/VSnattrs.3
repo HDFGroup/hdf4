@@ -5,8 +5,8 @@
 VSnattrs \- get total number of attributes assigned for
 this vdata and its fields
 .SH "SYNOPSIS"
+#include "hdf.h"
 .ft B
-#include <vattr.h>
 .sp
 extern intn VSnattrs(int32 vsid);
 .ft R
@@ -21,7 +21,8 @@ or for the vdata ifself.
 Returns total number of attributes assigned to this vdata
 and its fields when successful, FAIL otherwise.
 .SH "FORTRAN"
-Integer function vsfnat(vsid)
+Integer function vsfnats(vsid)
+  integer vsid
 .br
   integer vsid.
 .SH "SEE ALSO"

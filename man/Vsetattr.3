@@ -5,7 +5,7 @@
 Vsetattr \- set an attribute for a vgroup
 .SH "SYNOPSIS"
 .ft B
-#include <vattr.h>
+#include "hdf.h"
 .sp
 extern intn Vsetattr
 .br
@@ -50,7 +50,7 @@ limit.
 .SH "RETURNS"
 Returns SUCCEED when successful, FAIL otherwise.
 .SH "FORTRAN"
-Integer function vfsatt(vgid,attrnm,dtype,count,values) --
+Integer function vfsnatt(vgid,attrnm,dtype,count,values) --
 .br
        set numeric attributes
 .br

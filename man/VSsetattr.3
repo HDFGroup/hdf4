@@ -5,8 +5,8 @@
 VSsetattr \- Set attribute for a vdata or a field of a
 vdata
 .SH "SYNOPSIS"
+#include "hdf.h"
 .ft B
-#include <vattr.h>
 .sp
 extern intn VSsetattr
 .br
@@ -60,7 +60,7 @@ limit.
 .SH "RETURNS"
 Returns SUCCEED if successful, FAIL otherwise.
 .SH "FORTRAN"
-Integer function vsfsat(vsid,findex,attrnm,dtype,count,values) --
+Integer function vsfsnat(vsid,findex,attrnm,dtype,count,values) --
 .br
        set a numeric attribute
 .br
