@@ -3273,6 +3273,7 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 #   define  nvsqnamec   FNAME(VSQNAMEC)
 #   define  nvsfccpk    FNAME(VSFCCPK)
 #   define  nvsfncpk    FNAME(VSFNCPK)
+#   define  nvdtrc      FNAME(VDTRC)
 #else                           /* !DF_CAPFNAMES */
 #   define  ndfivopn FNAME(dfivopn)
 #   define  ndfvclos FNAME(dfvclos)
@@ -3353,6 +3354,7 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 #   define  nvsqnamec   FNAME(vsqnamec)
 #   define  nvsfccpk    FNAME(vsfccpk)
 #   define  nvsfncpk    FNAME(vsfncpk)
+#   define  nvdtrc      FNAME(vdtrc)
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* VG_FNAMES */
 
@@ -3595,6 +3597,9 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
                 (intf  * vkey, intf  * which, intf  * tag, intf  * ref);
 
     extern      FRETVAL(intf) nvadtrc
+                (intf  * vkey, intf  * tag, intf  * ref);
+
+    extern      FRETVAL(intf) nvdtrc
                 (intf  * vkey, intf  * tag, intf  * ref);
 
 /* 

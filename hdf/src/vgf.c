@@ -16,6 +16,24 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
+/*-----------------------------------------------------------------------------
+  FUNCTION NAMEING CONVENTION:(For the most part true)
+  ---------------------------------------------------
+  This file contains the HDF-style C stubs for the Vxxx interfaces i.e.
+  both Vgroups and Vdatas. They call the corresponding C-functions for 
+  the Vxxx interfaces.
+
+  The basic routines called by fortran will be of the form vfxxx.
+
+  If only a C stub is needed it will be named nvfxxx and have the FNAME()
+  function applied to it. There are a few exceptions where C stub is 
+  named for example ndfixxx or ndfxxx, oh well.
+
+  If a Fortran stub is also required the fortran stub will be called
+  vfxxx(vgff.f) and the one in here will be nvfxxxc and again be FNAME()ed
+
+-----------------------------------------------------------------------------*/
+
 /*
    *
    * vgf.c
@@ -1385,4 +1403,16 @@ nvsfncpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz,
     if (flds_in_buf) HDfree(flds_in_buf);
     if (afield) HDfree(afield);
     return(ret);
+}
+
+/*
+   **  C-stub for deleting a tag/ref pair in a vgroup.
+   **  related: called by vfdtr() and calls Vdeletetagref(), 
+   **  
+ */
+
+FRETVAL(intf)
+nvdtrc(intf * vkey, intf * tag, intf * ref)
+{
+    return ((intf) Vdeletetagref(*vkey, *tag, *ref));
 }

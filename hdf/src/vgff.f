@@ -714,3 +714,14 @@ c               _HDF_VSUNPACK(1) for unpacking
      +                 fldbuf, len(buflds), len(pckfld)) 
       end
 c  
+
+c     ------------------------------------------------------------
+c     Delete a tag/ref pair in a vgroup.
+c     related: vfdtr()-->vdtrc()-->Vdeletetagref()
+
+      integer function vfdtr	( vg, tag, ref)
+      integer		vg, tag, ref
+      integer vdtrc				
+
+      vfdtr = vdtrc  ( vg, tag, ref)
+      end

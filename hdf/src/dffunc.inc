@@ -184,6 +184,7 @@ C
       integer vfainfo
       integer vfatch
       integer vfdtch
+      integer vfdtr
       integer vfend
       integer vfents
       integer vffdatt
