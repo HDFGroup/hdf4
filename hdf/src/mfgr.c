@@ -4275,6 +4275,10 @@ intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo)
     if (HAatom_group(riid)!=RIIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
+    /* Check the validity of the compression type */
+    if (comp_type < 0 || comp_type >= COMP_CODE_INVALID)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
