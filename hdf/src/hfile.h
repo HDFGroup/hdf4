@@ -122,6 +122,7 @@ typedef FILE *hdf_file_t;
 #   define HI_CLOSE(f)   (fclose(f))
 #   define HI_FLUSH(f)   (fflush(f)==0 ? SUCCEED : FAIL)
 #   define HI_SEEK(f,o)  (fseek((f), (long)(o), SEEK_SET)==0 ? SUCCEED : FAIL)
+#   define HI_SEEK_CUR(f,o)  (fseek((f), (long)(o), SEEK_CUR)==0 ? SUCCEED : FAIL)
 #   define HI_SEEKEND(f) (fseek((f), (long)0, SEEK_END)==0 ? SUCCEED : FAIL)
 #   define HI_TELL(f)    (ftell(f))
 #   define OPENERR(f)    ((f) == (FILE *)NULL)

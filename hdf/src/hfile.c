@@ -21,6 +21,33 @@ static char RcsId[] = "@(#)$Revision$";
 FILE
    hfile.c
    HDF low level file I/O routines
+
+   H-Level Limits
+   ==============
+   o MAX_FILE files open at a single time (#define in hfile.h) 
+   o MAX_ACC access records open at a single time (#define in hfile.h) 
+   o int16 total tags (fixed) 
+   o int32 max length and offset of an element in an HDF file (fixed) 
+
+   Routine prefix conventions
+   ==========================
+   HP: private, external
+   HI: private, static
+   HD: not-private, external (i.e. usable by non-developers)
+
+   "A" will be used to indicate that a routine is for parallel I/O.
+
+   Prefixes now have potentially three parts: (1) the interface, (2) optional
+   "A" to indicate parallel, and (3) scope:
+
+   <prefix> :== <interface>|<interface><scope>|<interface>A<scope>
+   <interface> :== H|HL|HX|SD|DFSD|DFAN|DFR8|...
+   <scope> :== D|P|I
+
+   Examples:  HAP => H interface, parallel, private external
+              HAD => H interface, parallel, non-private external
+              HI  => H interface, private static
+
 EXPORTED ROUTINES
    Hopen       -- open or create a HDF file
    Hclose      -- close HDF file
@@ -439,6 +466,8 @@ Hclose(int32 file_id)
     CONSTR(FUNC, "Hclose");     /* for HERROR */
     filerec_t  *file_rec;       /* file record pointer */
     register tag_ref_list_ptr p, q;
+    ddblock_t  *bl, *next;    /* current ddblock and next ddblock pointers.
+                                  for freeing ddblock linked list */
 
     /* convert file id to file rec and check for validity */
     file_rec = FID2REC(file_id);
@@ -453,9 +482,6 @@ Hclose(int32 file_id)
     /* decrease the reference count */
     if (--file_rec->refcount == 0)
       {
-          ddblock_t  *bl, *next;    /* current ddblock and next ddblock pointers.
-                                       for freeing ddblock linked list */
-
           /* if file reference count is zero but there are still attached
              access elts, reject this close. */
           if (file_rec->attach > 0)
@@ -1884,8 +1910,21 @@ Hwrite(int32 access_id, int32 length, const VOIDP data)
       }     /* end if */
 
     /* seek and write data */
+#ifndef NEW_SEEK
     if (HI_SEEK(file_rec->file, access_rec->posn + dd->offset) == FAIL)
         HRETURN_ERROR(DFE_SEEKERROR, FAIL);
+#else /* NEW_SEEK */
+
+    if ((file_off = (access_rec->posn + dd->offset) - HI_TELL(file_rec->file)) != 0)
+      {
+#ifdef SEEK_TESTING
+    printf("Hwrite: cur_seek_pos=%d, next_seek_pos=%d\n",
+           HI_TELL(file_rec->file),(access_rec->posn + dd->offset));
+#endif
+    if (HI_SEEK_CUR(file_rec->file, file_off) == FAIL)
+        HRETURN_ERROR(DFE_SEEKERROR, FAIL);
+      }
+#endif /* !NEW_SEEK */
     if (HI_WRITE(file_rec->file, data, length) == FAIL)
         HRETURN_ERROR(DFE_WRITEERROR, FAIL);
 
