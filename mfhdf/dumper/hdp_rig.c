@@ -98,7 +98,7 @@ intn parse_dumprig_opts(dump_info_t *dumprig_opts, intn *curr_arg,
 			  lastItem = 1;
 		       else
 			  *tempPtr = '\0';
-			  strcpy(string, ptr);
+			  HDstrcpy(string, ptr);
 			  dumprig_opts->filter_num[i] = atoi(string);
 			  ptr = tempPtr + 1;
 		    }
@@ -119,7 +119,7 @@ intn parse_dumprig_opts(dump_info_t *dumprig_opts, intn *curr_arg,
 			  lastItem = 1;
 		       else
 			  *tempPtr = '\0';
-		       strcpy(string,ptr);
+		       HDstrcpy(string,ptr);
 		       dumprig_opts->filter_num[i] = atoi(string);
 		       ptr = tempPtr + 1;
 		    }

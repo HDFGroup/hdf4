@@ -38,7 +38,7 @@ int32 charcount(char *str, char onechar)
 {
    int i, j, stop=0, count=0;
 
-   j = strlen(str);
+   j = HDstrlen(str);
    for (i=0; i<j; i++)
       if (str[i]==onechar)
 	 count++;
@@ -100,16 +100,16 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
 		    /* Extract each index from the index list and store it 
 		       as an element into the "filter_num" array. */
 		    for (i=0; !lastItem; i++) {
-		       tempPtr = strchr(ptr, ',');
+		       tempPtr = HDstrchr(ptr, ',');
 		       if (tempPtr == NULL)
 			  lastItem = 1;
 		       else
 			  *tempPtr = '\0';
-		       strcpy(string, ptr);
+		       HDstrcpy(string, ptr);
 		       dumpvd_opts->filter_num[i] = atoi(string);
 		       ptr = tempPtr + 1;
 		    }
-		    dumpvd_opts->filter_num[i] = NULL;
+		    dumpvd_opts->filter_num[i] = 0;
                     (*curr_arg)++;
 		    break;
 
@@ -122,19 +122,19 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
 					      (charcount(ptr, ',')+1));
                     lastItem = 0;
                     for (i=0; !lastItem; i++) {
-                       tempPtr = strchr(ptr, ',');
+                       tempPtr = HDstrchr(ptr, ',');
                        if (tempPtr == NULL)
                           lastItem = 1;
                        else
                           *tempPtr = '\0';
 		       string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);	
-                       strcpy(string, ptr);
+                       HDstrcpy(string, ptr);
                        dumpvd_opts->filter_num[i] = atoi(string);
                        ptr = tempPtr + 1;
 		       /*printf("dumpvd_opt:%d\n", dumpvd_opts->filter_num[i]);
                         */ 
 		    }
-		    dumpvd_opts->filter_num[i] = NULL;
+		    dumpvd_opts->filter_num[i] = 0;
                     (*curr_arg)++;
                     break;
 
@@ -144,13 +144,13 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
 		    lastItem = 0;
 		    ptr = argv[*curr_arg];
 		    for (i=0; !lastItem; i++) {
-		       tempPtr = strchr(ptr,',');
+		       tempPtr = HDstrchr(ptr,',');
 		       if (tempPtr == NULL)
 			  lastItem = 1;
 		       else 
 			  *tempPtr = '\0';
 		       string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);	
-		       strcpy(string, ptr);
+		       HDstrcpy(string, ptr);
 		       dumpvd_opts->filter_str[i] = string;
 		       ptr = tempPtr +1;
 		    }
@@ -164,13 +164,13 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
 		    lastItem = 0;
 		    ptr = argv[*curr_arg];
 		    for (i=0; !lastItem; i++) {
-		       tempPtr = strchr(ptr,',');
+		       tempPtr = HDstrchr(ptr,',');
 		       if (tempPtr == NULL)
 			  lastItem = 1;
 		       else
 			  *tempPtr = '\0';
 		       string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);
-		       strcpy(string,ptr);
+		       HDstrcpy(string,ptr);
 		       dumpvd_opts->filter_str[i] = string;
 		       ptr = tempPtr + 1;
 		    }
@@ -179,7 +179,7 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
 		    break;
 		
 		case 'f':	/* dump a subset of the fields */
-		 if (!strcmp(argv[1],"dumpvd")) {      
+		 if (!HDstrcmp(argv[1],"dumpvd")) {      
 		    if (dumpvd_opts->filter==DALL)
 		       dumpvd_opts->filter=DFIELDS; 
 		    *dumpallfields = 0;
@@ -187,13 +187,13 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
 		    lastItem = 0;
 		    ptr = argv[*curr_arg];
 		    for (i=0; !lastItem; i++) {
-		       tempPtr = strchr(ptr, ',');
+		       tempPtr = HDstrchr(ptr, ',');
 		       if (tempPtr == NULL)
 			  lastItem = 1;
 		       else
 			  *tempPtr = '\0';
 		       string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN); 
-		       strcpy(string, ptr); 
+		       HDstrcpy(string, ptr); 
 		       flds_chosen[i] = string;
 		       ptr = tempPtr + 1;
 		    }
@@ -330,13 +330,13 @@ int choose_vd(dump_info_t *dumpvd_opts, int32 vd_chosen[MAXCHOICES],
 
    switch (dumpvd_opts->filter) {  /* Determine which VDs have been chosen. */
       case DINDEX:
-         for (i=0; dumpvd_opts->filter_num[i]!=NULL; i++)  {
+         for (i=0; dumpvd_opts->filter_num[i]!=0; i++)  {
             vd_chosen[i] = dumpvd_opts->filter_num[i];
 	    vd_chosen[i]--;
 	 }
          break;
       case DREFNUM:
-         for (i=0; dumpvd_opts->filter_num[i]!=NULL; i++) {
+         for (i=0; dumpvd_opts->filter_num[i]!=0; i++) {
             index = VSref_index(file_id, dumpvd_opts->filter_num[i]);
 	    if (index==-1) {
 	       printf("Vdata with reference number %d: not found\n", 
@@ -502,7 +502,7 @@ static intn dvd(dump_info_t *dumpvd_opts, intn curr_arg,
 	      that they can be used to determine whether a field should be
 	      dumped later on. */
            if (flds_chosen[0]!=NULL) { 
-	      strcpy(tempflds, fields);
+	      HDstrcpy(tempflds, fields);
 	      ptr = tempflds;
 	      for (j=0; j<MAXCHOICES; j++) /* Initialization */
 	         flds_indices[j] = -1;
@@ -511,17 +511,17 @@ static intn dvd(dump_info_t *dumpvd_opts, intn curr_arg,
 	      /* Extract each field name from the list of fields of the 
 		 current record. */
 	      for (j=0; !lastItem; j++) {
-	         tempPtr = strchr(ptr, ',');
+	         tempPtr = HDstrchr(ptr, ',');
 	         if (tempPtr == NULL)
 		    lastItem = 1;
 	         else
 		    *tempPtr = '\0';
-	         strcpy(string, ptr);
+	         HDstrcpy(string, ptr);
 	         ptr = tempPtr + 1;
 		 /* Compare the extracted field name with each of the names
 		    of the fields having been chosen. */
 	         for (k=0; flds_chosen[k]!=NULL; k++) {
-		    if (!strcmp(flds_chosen[k], string)) {
+		    if (!HDstrcmp(flds_chosen[k], string)) {
 		       flds_indices[m] = j;
 		       m++;
 		       flds_match = 1; 
@@ -552,16 +552,16 @@ static intn dvd(dump_info_t *dumpvd_opts, intn curr_arg,
 		       operations is to display a list in a nice way even
 		       if the list is long. */
 		    lastItem = 0;
-		    strcpy(tempflds, fields);
+		    HDstrcpy(tempflds, fields);
 		    ptr = tempflds;
 		    for (z=0; !lastItem; z++) {
-		       tempPtr = strchr(ptr, ',');
+		       tempPtr = HDstrchr(ptr, ',');
 		       if (tempPtr == NULL)
 			  lastItem = 1;
                        else
 			  *tempPtr = '\0';
-		       strcpy(string, ptr);
-		       count += strlen(string);
+		       HDstrcpy(string, ptr);
+		       count += HDstrlen(string);
 		       if (count>50) {
 			  fprintf(fp, "\n               ");
 			  count = 0;
@@ -597,11 +597,11 @@ static intn dvd(dump_info_t *dumpvd_opts, intn curr_arg,
 	         case DDATA: /* data only */
 		    if (dumpvd_opts->contents == DDATA) {
 		       data_only = 1;
-		       strcpy(sep, "");
+		       HDstrcpy(sep, "");
 		    }
 		    else {
 		       data_only = 0;
-		       strcpy(sep, ";");
+		       HDstrcpy(sep, ";");
 		    }
 		    /* Only the chosen or all fields will be dumped out. */
 		    dumpvd(vd_id, data_only, fp, sep, 

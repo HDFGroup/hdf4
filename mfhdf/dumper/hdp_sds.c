@@ -90,7 +90,7 @@ intn parse_dumpsds_opts(dump_info_t *dumpsds_opts,intn *curr_arg,intn argc,char 
 			  lastItem = 1;
 		       else
 			  *tempPtr = '\0';
-	 	       strcpy(string, ptr);
+	 	       HDstrcpy(string, ptr);
 		       dumpsds_opts->filter_num[i] = atoi(string);
 		       ptr = tempPtr + 1;
 		    }
@@ -112,7 +112,7 @@ intn parse_dumpsds_opts(dump_info_t *dumpsds_opts,intn *curr_arg,intn argc,char 
 		        else
 			   *tempPtr = '\0';
 		        string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);
-			strcpy(string,ptr);
+			HDstrcpy(string,ptr);
 			dumpsds_opts->filter_num[i] = atoi(string);
 			ptr = tempPtr + 1;
 		    }
@@ -132,7 +132,7 @@ intn parse_dumpsds_opts(dump_info_t *dumpsds_opts,intn *curr_arg,intn argc,char 
 		       else
 			  *tempPtr = '\0';
 		       string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);
-		       strcpy(string, ptr);
+		       HDstrcpy(string, ptr);
 		       dumpsds_opts->filter_str[i] = string;
 		       ptr = tempPtr + 1;
  		    }

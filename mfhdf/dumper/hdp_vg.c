@@ -188,13 +188,13 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
 					   out. */
              int32 find_ref, number; 
 	     case DINDEX:
-		  for (i=0; dumpvg_opts->filter_num[i]!=NULL; i++) {
+		  for (i=0; dumpvg_opts->filter_num[i]!=0; i++) {
 		     vg_chosen[i] = dumpvg_opts->filter_num[i];
 		     vg_chosen[i]--;
                   } 
 		  break;
              case DREFNUM:
-		  for (i=0; dumpvg_opts->filter_num[i]!=NULL; i++) {
+		  for (i=0; dumpvg_opts->filter_num[i]!=0; i++) {
                      index = Vref_index(file_id, dumpvg_opts->filter_num[i]);
 		     if (index==-1) {
 		        printf("Vgroup with reference number %d: not found\n", 
@@ -337,7 +337,7 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
            } /* switch */
 	   Vdetach(vg_id);
 	   list[i]->index = i; 
-	   strcpy(list[i]->name, vgname); 
+	   HDstrcpy(list[i]->name, vgname); 
 	   list[i]->displayed = FALSE;
          } /* for */
 	 Vend(file_id);
@@ -398,10 +398,10 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode,
             fprintf(fp, "\tname = %s; class = %s\n", vgname, vgclass);
          } 
 	 Vdetach(vgt);
-	 aNode->children[t] = (char*)HDmalloc(sizeof(char)*strlen(vgname));
-	 strcpy(aNode->children[t], vgname);
+	 aNode->children[t] = (char*)HDmalloc(sizeof(char)*HDstrlen(vgname));
+	 HDstrcpy(aNode->children[t], vgname);
 	 aNode->type[t] = (char*)HDmalloc(sizeof(char)*3);
-	 strcpy(aNode->type[t], "vg");
+	 HDstrcpy(aNode->type[t], "vg");
       } /* if */
       else if (tag == VSDESCTAG) {
          vs = VSattach(file_id, vsid, "r");
@@ -431,16 +431,16 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode,
 	       operations is to display a list in a nice way even 
 	       if the list is long. */
             lastItem = 0;
-	    strcpy(tempflds, fields);
+	    HDstrcpy(tempflds, fields);
 	    ptr = tempflds;
 	    for (z=0; !lastItem; z++) {
-	       tempPtr = strchr(ptr, ',');
+	       tempPtr = HDstrchr(ptr, ',');
 	       if (tempPtr==NULL)
 	          lastItem = 1;
                else
 	          *tempPtr = '\0';
-	       strcpy(string, ptr);
-	       count += strlen(string);
+	       HDstrcpy(string, ptr);
+	       count += HDstrlen(string);
 	       if (count>50) {
 	          fprintf(fp, "\n\t          ");
 	          count = 0;
@@ -457,11 +457,11 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode,
 
 
 	 VSdetach(vs);
-	 aNode->children[t] = (char*)HDmalloc(sizeof(char)*strlen(vsname));
-	 strcpy(aNode->children[t], vsname); 
+	 aNode->children[t] = (char*)HDmalloc(sizeof(char)*HDstrlen(vsname));
+	 HDstrcpy(aNode->children[t], vsname); 
 	 
 	 aNode->type[t] = (char*)HDmalloc(sizeof(char)*3);
-	 strcpy(aNode->type[t], "vd");
+	 HDstrcpy(aNode->type[t], "vd");
       }
       else {
 	 name = HDgettagsname((uint16) tag);
@@ -472,11 +472,11 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode,
 	    fprintf(fp, "\ttag = %d; reference = %d;\n", (int) tag, (int) vsid);
 	 }
 	 aNode->children[t] = (char*)HDmalloc(sizeof(char)*4);
-         strcpy(aNode->children[t], "***"); 
+         HDstrcpy(aNode->children[t], "***"); 
 	 tempPtr = (char*)HDgettagdesc((uint16) tag);
 	 if (!tempPtr) {
 	    aNode->type[t] = (char*)HDmalloc(sizeof(char)*15);
-	    strcpy(aNode->type[t], "Unknown Object"); 
+	    HDstrcpy(aNode->type[t], "Unknown Object"); 
          }
 	 else
 	    aNode->type[t] = tempPtr + 6;
@@ -514,10 +514,10 @@ void display(struct node *ptr, int32 level, struct node **list,
          else
 	    firstchild = FALSE;
 	 name = ptr->children[i];
-	 if ((strcmp(ptr->type[i], "vd")) && 
-	     (strcmp(ptr->children[i], "***"))) {
+	 if ((HDstrcmp(ptr->type[i], "vd")) && 
+	     (HDstrcmp(ptr->children[i], "***"))) {
 	    x = 0; 
-	    while (strcmp(name, list[x]->name)) 
+	    while (HDstrcmp(name, list[x]->name)) 
 	       x++;
 	    display(list[x], level, list, num_nodes, firstchild);
          } /* if */ 

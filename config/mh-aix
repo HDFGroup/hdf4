@@ -10,7 +10,7 @@ CC= xlc
 CFLAGS=
 
 # Fortran compilier
-FC = xlf
+FC = NONE
 FFLAGS =
 
 # Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
