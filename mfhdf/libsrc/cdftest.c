@@ -118,7 +118,7 @@ createtestdims(cdfid, num_dims, sizes, dim_names)
 int cdfid ;
 int num_dims ;
 long *sizes ;
-char *dim_names[] ;
+const char *dim_names[] ;
 {
 	while(num_dims--)
 	{
@@ -133,7 +133,7 @@ testdims(cdfid, num_dims, sizes, dim_names)
 int cdfid ;
 int num_dims ;
 long *sizes ;
-char *dim_names[] ;
+const char *dim_names[] ;
 {
 	int ii ;
 	long size ;
