@@ -243,11 +243,11 @@ CHDRS= tproto.h tutils.h
 
 CSRCS= 	rig.c sdstr.c blocks.c an.c anfile.c extelt.c file.c file1.c vers.c \
 	sdmms.c sdnmms.c slab.c litend.c tvset.c comp.c bitio.c tree.c conv.c \
-	nbit.c man.c mgr.c testhdf.c tbv.c tvsfpack.c chunks.c
+	nbit.c man.c mgr.c testhdf.c tbv.c tvsfpack.c chunks.c vattr.c
 
 COBJS= rig.o sdstr.o blocks.o an.o anfile.o extelt.o file.o file1.o vers.o \
 	sdmms.o sdnmms.o slab.o litend.o tvset.o comp.o bitio.o tree.o conv.o \
-	nbit.o man.o mgr.o testhdf.o tbv.o tvsfpack.o chunks.o
+	nbit.o man.o mgr.o testhdf.o tbv.o tvsfpack.o chunks.o vattr.o
 
 FSRCS= fortest.c fortestF.f forsupff.f forsupf.c \
 	manf.f mgrf.f slabwf.f t24f.f tanf.f tanfilef.f tpf.f tr8f.f \
@@ -355,26 +355,26 @@ test-hdffortran: fortest fortest.sav
 	@cmp fortest.out fortest.sav && echo "*** Fortran tests passed ***";
 
 qtesthdf: $(COBJS) $(HDFLIB)/libdf.a
-	quantify $(CC) $(ALL_CFLAGS) -o qtesthdf $(COBJS) $(HDFSRC)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+	quantify $(CC) $(ALL_CFLAGS) -o qtesthdf $(COBJS) $(HDFSRC)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a -lm
 
 ptesthdf: $(COBJS) $(HDFLIB)/libdf.a
-	purify $(CC) $(ALL_CFLAGS) -o ptesthdf $(COBJS) $(HDFSRC)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+	purify $(CC) $(ALL_CFLAGS) -o ptesthdf $(COBJS) $(HDFSRC)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a -lm
 
 testhdf.tc: $(COBJS) $(HDFLIB)/libdf.a
-	proof $(CC) $(ALL_CFLAGS) -o testhdf.tc $(COBJS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+	proof $(CC) $(ALL_CFLAGS) -o testhdf.tc $(COBJS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a -lm
 
 testhdf: $(COBJS) $(HDFLIB)/libdf.a
-	$(CC) $(ALL_CFLAGS) -o testhdf $(COBJS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+	$(CC) $(ALL_CFLAGS) -o testhdf $(COBJS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a -lm
 	test -d $(TESTDIR) || mkdir $(TESTDIR)
 
 fortestF: $(FOBJS) $(HDFLIB)/libdf.a
-	$(FC) $(FFLAGS) -o $@ $(FOBJS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+	$(FC) $(FFLAGS) -o $@ $(FOBJS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a -lm
 
 fortest: $(HDFLIB)/libdf.a fortest.c $(CHDRS)
-	$(CC) $(ALL_CFLAGS) -o fortest fortest.c $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+	$(CC) $(ALL_CFLAGS) -o fortest fortest.c $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a -lm
 
 gentest: gentest.c $(HDFLIB)/libdf.a
-	$(CC) $(ALL_CFLAGS) gentest.c -o gentest $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+	$(CC) $(ALL_CFLAGS) gentest.c -o gentest $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a -lm
 
 ftests: $(FTESTS)
 

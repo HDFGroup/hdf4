@@ -45,7 +45,7 @@ static char RcsId[] = "@(#)$Revision$";
 #include <console.h>
 #endif
 
-#define MAXNUMOFTESTS 27
+#define MAXNUMOFTESTS 30
 #define TESTMASTER
 
 /* Internal Variables */
@@ -166,6 +166,7 @@ main(int argc, char *argv[])
     InitTest("nbit", test_nbit, "N-Bit Dataset Interface");
     InitTest("litend", test_litend, "LITTLE-ENDIAN INTERFACE");
     InitTest("vset", test_vsets, "VSET InterfaceTest");
+    InitTest("vattr", test_vset_attr, "VSET AttributeTest");
     InitTest("vsfpack", test_vspack, "Vdata fields pack Test");
     InitTest("mfgr", test_mgr, "Multi-File Generic Raster Image Interface");
 
