@@ -103,8 +103,10 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
+#ifdef QAK
 #include <unistd.h>
 #include <ctype.h>
+#endif /* QAK */
 #include <sys/time.h>
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #include <sys/stat.h>

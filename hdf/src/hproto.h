@@ -96,6 +96,9 @@ extern      "C"
     extern intn HPisappendable
                 (int32 aid);
 
+    extern intn HPregister_term_func
+                (hdf_termfunc_t term_func);
+
     extern intn Hseek
                 (int32 access_id, int32 offset, intn origin);
 
@@ -389,9 +392,6 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 
     extern intn HXsetdir
                 (const char *dir);
-
-    extern intn HXPshutdown
-                (void);
 
 /*
    ** from hcomp.c
@@ -2136,7 +2136,7 @@ extern intn  ANannlist(int32 an_id, ann_type type, uint16 elem_tag,
 
 extern int32 ANannlen(int32 ann_id);
 
-extern int32 ANwriteann(int32 ann_id, char *ann, int32 annlen);
+extern int32 ANwriteann(int32 ann_id, const char *ann, int32 annlen);
 
 extern int32 ANreadann(int32 ann_id, char *ann, int32 maxlen);
 
@@ -2284,13 +2284,15 @@ extern FRETVAL(intf)
 nmgifndat(intf * riid, _fcd name, intf *nlen);
 
 /* Multi-file Raster C-routines found in mfgr.c */
+extern intn rigcompare(VOIDP k1, VOIDP k2, intn cmparg);
+
 extern int32 GRstart(int32 hdf_file_id);
 
 extern intn GRfileinfo(int32 grid,int32 *n_datasets,int32 *n_attrs);
 
 extern intn GRend(int32 grid);
 
-extern int32 GRcreate(int32 grid,char *name,int32 ncomp,int32 nt,int32 il,
+extern int32 GRcreate(int32 grid,const char *name,int32 ncomp,int32 nt,int32 il,
     int32 dimsizes[2]);
 
 extern int32 GRselect(int32 grid,int32 index);
@@ -2332,13 +2334,13 @@ extern intn GRsetaccesstype(int32 riid,uintn accesstype);
 
 extern intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo);
 
-extern intn GRsetattr(int32 id,char *name,int32 attr_nt,int32 count,VOIDP data);
+extern intn GRsetattr(int32 id,const char *name,int32 attr_nt,int32 count,const VOIDP data);
 
 extern intn GRattrinfo(int32 id,int32 index,char *name,int32 *attr_nt,int32 *count);
 
 extern intn GRgetattr(int32 id,int32 index,VOIDP data);
 
-extern int32 GRfindattr(int32 id,char *name);
+extern int32 GRfindattr(int32 id,const char *name);
 
 extern intn GRPshutdown(void);
 
@@ -2625,11 +2627,11 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
  */
     extern int32 VHstoredata
                 (HFILEID f, char  * field, uint8  buf[], int32 n, int32 datatype,
-                 char  * vsname, char  * vsclass);
+                 const char  * vsname, const char  * vsclass);
 
     extern int32 VHstoredatam
                 (HFILEID f, char  * field, uint8  buf[], int32 n, int32 datatype,
-                 char  * vsname, char  * vsclass, int32 order);
+                 const char  * vsname, const char  * vsclass, int32 order);
 
     extern int32 VHmakegroup
                 (HFILEID f, int32  tagarray[], int32  refarray[], int32 n, char  * vgname,
@@ -2643,6 +2645,9 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
                 (HFILEID f, uint16 vsref);
 
     extern VOID vsdestroynode
+                (VOIDP n);
+
+    extern VOID vfdestroynode
                 (VOIDP n);
 
     extern int32 VSattach
@@ -2698,8 +2703,8 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
                 (int32 vkey, int32 index);
 
     extern intn VSsetexternalfile
-		(int32 vkey, char *filename, int32 offset);
- 
+		(int32 vkey, const char *filename, int32 offset);
+
     extern intn VSfpack
                 (int32 vsid, intn packtype, char *fields_in_buf,
                 VOIDP buf, int32 bufsz, intn n_records, 

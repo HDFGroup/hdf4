@@ -1435,7 +1435,7 @@ done:
  REVISION LOG
  *------------------------------------------------------------------------*/
 PRIVATE intn
-ANIwriteann(int32 ann_id, char *ann, int32 ann_len)
+ANIwriteann(int32 ann_id, const char *ann, int32 ann_len)
 {
     CONSTR(FUNC, "ANIwriteann");
 #ifdef HAVE_RBTREE
@@ -1597,7 +1597,7 @@ ANIwriteann(int32 ann_id, char *ann, int32 ann_len)
         printf("ANIwriteann: ann_len=%d, ann=%s\n", ann_len,ann);
 #endif
         /* then write the annotation itself */
-        if ((int32) FAIL == Hwrite(aid, ann_len, ann))
+        if ((int32) FAIL == Hwrite(aid, ann_len, (const VOIDP)ann))
           {     
             Hendaccess(aid);
             HE_REPORT_GOTO("Failed to write annotation",FAIL);
@@ -2638,7 +2638,7 @@ ANannlen(int32 ann_id)
  REVISION LOG
  *------------------------------------------------------------------------*/
 EXPORT int32
-ANwriteann(int32 ann_id, char *ann, int32 annlen)
+ANwriteann(int32 ann_id, const char *ann, int32 annlen)
 {
 #ifdef LATER
   CONSTR(FUNC, "ANwriteann");    /* for HERROR */

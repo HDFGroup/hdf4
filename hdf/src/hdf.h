@@ -144,6 +144,8 @@ typedef enum
 /* type for File ID to send to Hlevel from Vxx interface */
 typedef int32 HFILEID;
 
+typedef intn (*hdf_termfunc_t)(void);   /* termination function typedef */
+
 /* .................................................................. */
 
 /* Publically accessible functions declarations.  This includes all the

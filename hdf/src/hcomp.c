@@ -484,7 +484,6 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
     CONSTR(FUNC, "HCcreate");   /* for HERROR */
     filerec_t  *file_rec;       /* file record */
     accrec_t   *access_rec=NULL;/* access element record */
-    int         slot;
     compinfo_t *info=NULL;      /* special element information */
     atom_t      data_id=FAIL;   /* dd ID of existing regular element */
     int32       data_len;		/* length of the data we are checking */
@@ -1081,7 +1080,7 @@ DESCRIPTION
 int32
 HCPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
 {
-    char       *FUNC = "HCPinfo";   /* for HERROR */
+    CONSTR(FUNC, "HCPinfo");
     compinfo_t *info =          /* special information record */
     (compinfo_t *) access_rec->special_info;
 

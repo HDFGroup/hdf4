@@ -129,6 +129,9 @@ PRIVATE DFRrig Zrig =
      {0, 0}},
 };
 
+/* Whether we've installed the library termination function yet for this interface */
+PRIVATE intn library_terminate = FALSE;
+
 /* private functions */
 PRIVATE intn DFR8Iputimage
             (const char *filename, VOIDP image, int32 xdim, int32 ydim, uint16 compress,
@@ -145,6 +148,8 @@ PRIVATE intn DFR8getrig
 
 PRIVATE intn DFR8putrig
             (int32 file_id, uint16 ref, DFRrig * rig, intn wdim);
+
+PRIVATE intn DFR8Istart(void);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -180,11 +185,15 @@ DFR8setcompress(int32 type, comp_info * cinfo)
   TRACE_ON(DFR8_mask, ID_DFR8setcompress);
 #endif /* HAVE_PABLO */
 
+  /* Perform global, one-time initialization */
+  if (library_terminate == FALSE)
+      if(DFR8Istart()==FAIL)
+          HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if (type == COMP_NONE)
     {     /* quick check for no compression */
       CompType = 0;
-      ret_value = SUCCEED;
-      goto done;
+      HGOTO_DONE(SUCCEED);
     }     /* end if */
 
   if (type < 0 || type > COMP_MAX_COMP || compress_map[type] == 0)
@@ -251,22 +260,22 @@ DFR8getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pispal)
   if (!filename || !*filename || !pxdim || !pydim)
     HGOTO_ERROR(DFE_ARGS, FAIL);
 
+  /* Perform global, one-time initialization */
+  if (library_terminate == FALSE)
+      if(DFR8Istart()==FAIL)
+          HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if ((file_id = DFR8Iopen(filename, DFACC_READ)) == FAIL)
     HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
   if (DFR8Iriginfo(file_id) == FAIL)  /* reads next RIG or RI8 from file */
-    {
-      ret_value = HDerr(file_id);    /* on error, close file and return -1 */
-      goto done;
-    }
+      HGOTO_ERROR(DFE_INTERNAL,FAIL);
 
   Newdata = 1;
   *pxdim = Readrig.descimage.xdim;
   *pydim = Readrig.descimage.ydim;
   if (pispal)
     *pispal = Readrig.lut.tag ? 1 : 0;  /* is there a palette */
-
-  ret_value = Hclose(file_id);
 
 done:
   if(ret_value == FAIL)   
@@ -275,6 +284,7 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+  Hclose(file_id);
 
 #ifdef HAVE_PABLO
   TRACE_OFF(DFR8_mask, ID_DFR8getdims);
@@ -315,7 +325,7 @@ intn
 DFR8getimage(const char *filename, uint8 *image, int32 xdim, int32 ydim, uint8 *pal)
 {
   CONSTR(FUNC, "DFR8getimage");
-  int32       file_id;
+  int32       file_id=(-1);
   intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -327,21 +337,23 @@ DFR8getimage(const char *filename, uint8 *image, int32 xdim, int32 ydim, uint8 *
   if (!filename || !*filename || !image || (xdim <= 0) || (ydim <= 0))
     HGOTO_ERROR(DFE_ARGS, FAIL);
 
+  /* Perform global, one-time initialization */
+  if (library_terminate == FALSE)
+      if(DFR8Istart()==FAIL)
+          HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if ((file_id = DFR8Iopen(filename, DFACC_READ)) == FAIL)
     HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
   if (!Newdata)
     {     /* if Readrig not fresh */
       if (DFR8Iriginfo(file_id) == FAIL)    /*reads next RIG or RI8 from file */
-        {
-          ret_value = HDerr(file_id);  /* on error, close file and return -1 */
-          goto done;
-        }
+          HGOTO_ERROR(DFE_INTERNAL,FAIL);
     }     /* end if */
   Newdata = 0;    /* read new RIG next time */
 
   if ((Readrig.descimage.xdim > xdim) || (Readrig.descimage.ydim > ydim))
-    HGOTO_ERROR(DFE_ARGS, HDerr(file_id));
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* read image */
   if (Readrig.descimage.compr.tag)
@@ -349,18 +361,12 @@ DFR8getimage(const char *filename, uint8 *image, int32 xdim, int32 ydim, uint8 *
       if (DFgetcomp(file_id, Readrig.image.tag, Readrig.image.ref, image,
                     Readrig.descimage.xdim, Readrig.descimage.ydim,
                     Readrig.descimage.compr.tag) == FAIL)
-        {
-          ret_value = (HDerr(file_id));
-          goto done;
-        }
+          HGOTO_ERROR(DFE_INTERNAL,FAIL);
     }     /* end if */
   else
     {     /* non-compressed raster image */
       if (Hgetelement(file_id, Readrig.image.tag, Readrig.image.ref, image) == FAIL)
-        {
-          ret_value = HDerr(file_id);
-          goto done;
-        }
+          HGOTO_ERROR(DFE_GETELEM,FAIL);
     }     /* end else */
 
   if (xdim > Readrig.descimage.xdim)
@@ -382,19 +388,17 @@ DFR8getimage(const char *filename, uint8 *image, int32 xdim, int32 ydim, uint8 *
   if (pal && Readrig.lut.tag)
     {     /* read palette */
       if (Hgetelement(file_id, Readrig.lut.tag, Readrig.lut.ref, pal) == FAIL)
-        {
-          ret_value = HDerr(file_id);
-          goto done;
-        }
+          HGOTO_ERROR(DFE_GETELEM,FAIL);
     }     /* end if */
 
   if((ret_value = Hclose(file_id))==FAIL)
     HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
 
-
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
+        if(file_id!=(-1))
+            Hclose(file_id);
 
     } /* end if */
 
@@ -436,6 +440,11 @@ DFR8setpalette(uint8 *pal)
 #ifdef HAVE_PABLO
   TRACE_ON(DFR8_mask, ID_DFR8setpalette);
 #endif /* HAVE_PABLO */
+
+  /* Perform global, one-time initialization */
+  if (library_terminate == FALSE)
+      if(DFR8Istart()==FAIL)
+          HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
   /* Check if Palette buffer has been allocated */
   if (Palette == NULL)
@@ -506,7 +515,7 @@ DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
 {
   CONSTR(FUNC, "DFR8Iputimage");
   intn        acc_mode;       /* create if op 0, write if op 1 */
-  int32       file_id;
+  int32       file_id=(-1);
   uint16      r8tag;          /* RIG and raster tags of image being written */
   uint8      *pal;            /* pointer to palette to be written */
   uint8       newpal[768];    /* Imcomp creates new palette to be associated */
@@ -517,6 +526,11 @@ DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
 
   if (!filename || !*filename || !image || (xdim <= 0) || (ydim <= 0))
     HGOTO_ERROR(DFE_ARGS, FAIL);
+
+  /* Perform global, one-time initialization */
+  if (library_terminate == FALSE)
+      if(DFR8Istart()==FAIL)
+          HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
     /* Check if Palette buffer has been allocated */
   if (Palette == NULL)
@@ -558,7 +572,7 @@ DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
 
       if (DFputcomp(file_id, DFTAG_CI, Writeref, (uint8 *) image, xdim, ydim,
                     pal, (uint8 *) newpal, (int16) CompType, &CompInfo) == FAIL)
-        HGOTO_ERROR(DFE_WRITEERROR, HDerr(file_id));
+        HGOTO_ERROR(DFE_WRITEERROR, FAIL);
       Writerig.image.tag = DFTAG_CI;
       if (CompType == DFTAG_IMC)
         {
@@ -573,7 +587,7 @@ DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
           HGOTO_ERROR(DFE_NOREF, FAIL);
 
       if (Hputelement(file_id, DFTAG_RI, Writeref, (uint8 *) image, xdim * ydim) == FAIL)
-        HGOTO_ERROR(DFE_PUTELEM, HDerr(file_id));
+        HGOTO_ERROR(DFE_PUTELEM, FAIL);
       Writerig.image.tag = DFTAG_RI;
     }     /* end else */
   Writerig.image.ref = Writeref;
@@ -586,7 +600,7 @@ DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
         r8tag = (uint16) (CompType ?
                           ((CompType == DFTAG_RLE) ? DFTAG_CI8 : DFTAG_II8) : DFTAG_RI8);
         if (Hdupdd(file_id, r8tag, Writeref, Writerig.image.tag, Writeref) == FAIL)
-          HGOTO_ERROR(DFE_NOFREEDD, HDerr(file_id));
+          HGOTO_ERROR(DFE_NOFREEDD, FAIL);
       }     /* end if */
 
   /* Write out palette */
@@ -595,7 +609,7 @@ DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
       if (Newpalette == 1)
         {   /* write palette */
           if (Hputelement(file_id, DFTAG_LUT, Writeref, pal, (int32) 768) == FAIL)
-            HGOTO_ERROR(DFE_PUTELEM, HDerr(file_id));
+            HGOTO_ERROR(DFE_PUTELEM, FAIL);
           Writerig.lut.tag = DFTAG_LUT;
           Writerig.lut.ref = Writeref;
           Writerig.desclut.xdim = 768;
@@ -609,7 +623,7 @@ DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
       Hdeldd(file_id, DFTAG_IP8, Writeref);
       if (Hdupdd(file_id, DFTAG_IP8, Writeref, Writerig.lut.tag,
                  Writerig.lut.ref) == FAIL)
-        HGOTO_ERROR(DFE_NOFREEDD, HDerr(file_id));
+        HGOTO_ERROR(DFE_NOFREEDD, FAIL);
     }     /* end if */
 
   /* Write out RIG */
@@ -627,7 +641,7 @@ DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
 
   /* write ID, NT */
   if (DFR8putrig(file_id, Writeref, &Writerig, wdim) == FAIL)
-    HGOTO_ERROR(DFE_WRITEERROR, HDerr(file_id));
+    HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
   Lastref = Writeref;     /* remember ref written */
 
@@ -640,6 +654,8 @@ DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
+      if(file_id!=(-1))
+          Hclose(file_id);
 
     } /* end if */
 
@@ -674,13 +690,27 @@ intn
 DFR8putimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
              uint16 compress)
 {
-  intn ret_value;
+    CONSTR(FUNC, "DFR8putimage");    /* for HERROR */
+    intn ret_value;
 
 #ifdef HAVE_PABLO
   TRACE_ON(DFR8_mask, ID_DFR8putimage);
 #endif /* HAVE_PABLO */
 
+  /* Perform global, one-time initialization */
+  if (library_terminate == FALSE)
+      if(DFR8Istart()==FAIL)
+          HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   ret_value = (DFR8Iputimage(filename, image, xdim, ydim, compress, 0));
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
   TRACE_OFF(DFR8_mask, ID_DFR8putimage);
@@ -716,13 +746,27 @@ intn
 DFR8addimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
              uint16 compress)
 {
-  intn ret_value;
+    CONSTR(FUNC, "DFR8addimage");    /* for HERROR */
+    intn ret_value;
 
 #ifdef HAVE_PABLO
   TRACE_ON(DFR8_mask, ID_DFR8addimage);
 #endif /* HAVE_PABLO */
 
+  /* Perform global, one-time initialization */
+  if (library_terminate == FALSE)
+      if(DFR8Istart()==FAIL)
+          HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   ret_value = (DFR8Iputimage(filename, image, xdim, ydim, compress, 1));
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
   TRACE_OFF(DFR8_mask, ID_DFR8addimage);
@@ -769,6 +813,11 @@ DFR8getrig(int32 file_id, uint16 ref, DFRrig * rig)
 
   if (!HDvalidfid(file_id) || !ref || !rig)
     HGOTO_ERROR(DFE_ARGS, FAIL);
+
+  /* Perform global, one-time initialization */
+  if (library_terminate == FALSE)
+      if(DFR8Istart()==FAIL)
+          HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
     /* read RIG into memory */
   if ((GroupID = DFdiread(file_id, DFTAG_RIG, ref)) == FAIL)
@@ -876,6 +925,11 @@ DFR8putrig(int32 file_id, uint16 ref, DFRrig * rig, intn wdim)
 
   if (!HDvalidfid(file_id) || !ref)
     HGOTO_ERROR(DFE_ARGS, FAIL);
+
+  /* Perform global, one-time initialization */
+  if (library_terminate == FALSE)
+      if(DFR8Istart()==FAIL)
+          HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
   if (!rig->descimage.nt.tag)
     {     /* construct and write out NT */
@@ -989,6 +1043,11 @@ DFR8nimages(const char *filename)
 #endif /* HAVE_PABLO */
 
   HEclear();
+
+  /* Perform global, one-time initialization */
+  if (library_terminate == FALSE)
+      if(DFR8Istart()==FAIL)
+          HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
   /* should use reopen if same file as last time - more efficient */
   file_id = DFR8Iopen(filename, DFACC_READ);
@@ -1141,7 +1200,7 @@ intn
 DFR8readref(const char *filename, uint16 ref)
 {
   CONSTR(FUNC, "DFR8readref");
-  int32       file_id;
+  int32       file_id=(-1);
   int32       aid;
   intn        ret_value = SUCCEED;
 
@@ -1151,13 +1210,18 @@ DFR8readref(const char *filename, uint16 ref)
 
   HEclear();
 
+  /* Perform global, one-time initialization */
+  if (library_terminate == FALSE)
+      if(DFR8Istart()==FAIL)
+          HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if ((file_id = DFR8Iopen(filename, DFACC_READ)) == FAIL)
     HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
   if ((aid = Hstartread(file_id, DFTAG_RIG, ref)) == FAIL
       && (aid = Hstartread(file_id, DFTAG_RI8, ref)) == FAIL
       && (aid = Hstartread(file_id, DFTAG_CI8, ref)) == FAIL)
-    HGOTO_ERROR(DFE_NOMATCH, HDerr(file_id));
+    HGOTO_ERROR(DFE_NOMATCH, FAIL);
 
   Refset = ref;
   Newdata = 0;
@@ -1167,6 +1231,8 @@ DFR8readref(const char *filename, uint16 ref)
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
+      if(file_id!=(-1))
+          Hclose(file_id);
 
     } /* end if */
 
@@ -1198,6 +1264,7 @@ done:
 intn
 DFR8writeref(const char *filename, uint16 ref)
 {
+    CONSTR(FUNC, "DFR8writeref");    /* for HERROR */
   intn  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -1206,9 +1273,22 @@ DFR8writeref(const char *filename, uint16 ref)
 
   HEclear();
 
+  /* Perform global, one-time initialization */
+  if (library_terminate == FALSE)
+      if(DFR8Istart()==FAIL)
+          HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   /* shut compiler up */
   filename = filename;
   Writeref = ref;
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
   TRACE_OFF(DFR8_mask, ID_DFR8writeref);
@@ -1235,13 +1315,27 @@ DFR8writeref(const char *filename, uint16 ref)
 intn
 DFR8restart(void)
 {
-  intn ret_value = SUCCEED;
+    CONSTR(FUNC, "DFR8restart");    /* for HERROR */
+    intn ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
   TRACE_ON(DFR8_mask, ID_DFR8restart);
 #endif /* HAVE_PABLO */
 
+  /* Perform global, one-time initialization */
+  if (library_terminate == FALSE)
+      if(DFR8Istart()==FAIL)
+          HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   Lastfile[0] = '\0';
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
   TRACE_OFF(DFR8_mask, ID_DFR8restart);
@@ -1268,13 +1362,27 @@ DFR8restart(void)
 uint16
 DFR8lastref(void)
 {
-  uint16 ret_value;
+    CONSTR(FUNC, "DFR8lastref");    /* for HERROR */
+    uint16 ret_value;
 
 #ifdef HAVE_PABLO
   TRACE_ON(DFR8_mask, ID_DFR8lastref);
 #endif /* HAVE_PABLO */
 
+  /* Perform global, one-time initialization */
+  if (library_terminate == FALSE)
+      if(DFR8Istart()==FAIL)
+          HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   ret_value = Lastref;
+
+done:
+  if(ret_value == (uint16)FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
 
 #ifdef HAVE_PABLO
   TRACE_OFF(DFR8_mask, ID_DFR8lastref);
@@ -1282,6 +1390,42 @@ DFR8lastref(void)
 
   return ret_value;
 }   /* end DFR8lastref() */
+
+/*--------------------------------------------------------------------------
+ * NAME
+ *   DFR8getpalref - get the reference number of the palette
+ * DESCRIPTION
+ *   Convience function to get reference number of the palette of 
+ *   last image. Must come after DFR8getdims() since it relies on
+ *   this call to fill the Readrig structure
+ * RETURNS
+ *   SUCCEED.
+--------------------------------------------------------------------------*/
+intn
+DFR8getpalref(uint16 *pal_ref)
+{
+  CONSTR(FUNC, "DFR8getpalref");
+  intn        ret_value = SUCCEED;
+
+  HEclear();
+
+  /* Perform global, one-time initialization */
+  if (library_terminate == FALSE)
+      if(DFR8Istart()==FAIL)
+          HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
+  *pal_ref = Readrig.lut.ref; /* ref of palette */
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
+}   /* end DFR8getpalref() */
 
 /*************************************************************************/
 /*----------------------- Internal routines -----------------------------*/
@@ -1540,24 +1684,36 @@ done:
 }   /* end DFR8Iriginfo() */
 
 /*--------------------------------------------------------------------------
- * NAME
- *   DFR8getpalref - get the reference number of the palette
- * DESCRIPTION
- *   Convience function to get reference number of the palette of 
- *   last image. Must come after DFR8getdims() since it relies on
- *   this call to fill the Readrig structure
- * RETURNS
- *   SUCCEED.
+ NAME
+    DFR8Istart
+ PURPOSE
+    DFR8-level initialization routine
+ USAGE
+    intn DFR8Istart()
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    Register the shut-down routine (DFR8Pshutdown) for call with atexit
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
 --------------------------------------------------------------------------*/
-intn
-DFR8getpalref(uint16 *pal_ref)
+PRIVATE intn DFR8Istart(void)
 {
-  CONSTR(FUNC, "DFR8getpalref");
-  intn        ret_value = SUCCEED;
+    CONSTR(FUNC, "DFR8Istart");    /* for HERROR */
+    intn        ret_value = SUCCEED;
 
-  HEclear();
+#ifdef HAVE_PABLO
+  TRACE_ON(DFR8_mask, ID_DFR8Istart);
+#endif /* HAVE_PABLO */
 
-  *pal_ref = Readrig.lut.ref; /* ref of palette */
+    /* Don't call this routine again... */
+    library_terminate = TRUE;
+
+    /* Install atexit() library cleanup routine */
+    if (HPregister_term_func(&DFR8Pshutdown) != 0)
+      HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
   if(ret_value == FAIL)   
@@ -1566,9 +1722,12 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(DFR8_mask, ID_DFR8Istart);
+#endif /* HAVE_PABLO */
 
-  return ret_value;
-}   /* end DFR8getpalref() */
+    return(ret_value);
+} /* end DFR8Istart() */
 
 /*--------------------------------------------------------------------------
  NAME

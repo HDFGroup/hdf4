@@ -68,7 +68,6 @@ static char RcsId[] = "@(#)$Revision$";
  *
  *--------------------------------------------------------------------------*/
 
-#include <ctype.h>
 #include "hdf.h"
 #include "dfufp2i.h"
 #include "dfsd.h"

@@ -22,6 +22,7 @@
 #include "tbbt.h"
 #include "bitvect.h"
 #include "atom.h"
+#include "linklist.h"
 #include "dynarray.h"
 
 /* Magic cookie for HDF data files */
@@ -371,9 +372,6 @@ typedef struct accrec_t
       intn        appendable;   /* whether appends to the data are allowed */
       intn        special;      /* special element ? */
       intn        new_elem;     /* is a new element (i.e. no length set yet) */
-#ifdef OLD_WAY
-      intn        used;         /* whether the access record is used */
-#endif /* OLD_WAY */
       
       uint32      access;       /* access codes */
       uintn       access_type;  /* I/O access type: serial/parallel/... */

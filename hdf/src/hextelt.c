@@ -198,7 +198,6 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     CONSTR(FUNC, "HXcreate");   /* for HERROR */
     filerec_t  *file_rec;       /* file record */
     accrec_t   *access_rec=NULL;/* access element record */
-    int         slot;
     int32       dd_aid;         /* AID for writing the special info */
     hdf_file_t  file_external;  /* external file descriptor */
     extinfo_t  *info=NULL;      /* special element information */
@@ -384,7 +383,7 @@ DESCRIPTION
 intn
 HXPsetaccesstype(accrec_t * access_rec)
 {
-    char       *FUNC = "HXPsetaccesstype";  /* for HERROR */
+    CONSTR(FUNC, "HXPsetaccesstype");
     hdf_file_t  file_external;  /* external file descriptor */
 #ifdef CM5
     int32       para_extfile_id;    /* parallel external file id */
@@ -1194,7 +1193,7 @@ FORTRAN
 intn
 HXsetcreatedir(const char *dir)
 {
-  char       *FUNC = "HXsetcreatedir";  /* for HERROR */
+    CONSTR(FUNC, "HXsetcreatedir");
   char	*pt;
   intn       ret_value = SUCCEED;
 
@@ -1251,7 +1250,7 @@ FORTRAN
 intn
 HXsetdir(const char *dir)
 {
-  char  *FUNC = "HXsetdir";  /* for HERROR */
+    CONSTR(FUNC, "HXsetdir");
   char	*pt;
   intn   ret_value = SUCCEED;
 
@@ -1308,7 +1307,7 @@ PRIVATE
 char *
 HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 {
-    char       *FUNC = "HXIbuildfilename";  /* for HERROR */
+    CONSTR(FUNC, "HXIbuildfilename");
     int	        fname_len;		/* string length of the ext_fname */
     int	        path_len;		/* string length of prepend pathname */
     static int	firstinvoked = 1;	/* true if invoked the first time */

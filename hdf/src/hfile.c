@@ -126,6 +126,7 @@ PRIVATE intn default_cache = TRUE;
 
 /* Whether we've installed the library termination function yet for this interface */
 PRIVATE intn library_terminate = FALSE;
+PRIVATE list_head_t *cleanup_list = NULL;
 
 /*--------------------- Externally defined Globals --------------------------*/
 /* Function tables declarations.  These function tables contain pointers
@@ -376,7 +377,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
 #endif /* STDIO_BUF */
 	/* set up the newly created (and empty) file with
 	   the magic cookie and initial data descriptor records */
-          if (HP_write(file_rec, HDFMAGIC, MAGICLEN) == FAIL)
+          if (HP_write(file_rec, (const VOIDP)HDFMAGIC, MAGICLEN) == FAIL)
             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
           if (HI_FLUSH(file_rec->file) == FAIL)	/* flush the cookie */
@@ -654,7 +655,7 @@ done:
 ** COMMENTS, BUGS, ASSUMPTIONS
 --------------------------------------------------------------------------*/
 intn 
-Hfidinquire(int32 file_id, char **fname, intn *access, intn *attach)
+Hfidinquire(int32 file_id, char **fname, intn *faccess, intn *attach)
 {
     CONSTR(FUNC, "Hfidinquire");               /* for HERROR */
     filerec_t *file_rec;
@@ -671,7 +672,7 @@ Hfidinquire(int32 file_id, char **fname, intn *access, intn *attach)
         HGOTO_ERROR(DFE_BADACC, FAIL);
 
     *fname  = file_rec->path;
-    *access = file_rec->access;
+    *faccess = file_rec->access;
     *attach = file_rec->attach;
 
 done:
@@ -969,7 +970,6 @@ int32
 Hstartaccess(int32 file_id, uint16 tag, uint16 ref, uint32 flags)
 {
   CONSTR(FUNC, "Hstartaccess");	/* for HERROR */
-  int         slot;			/* free access records array slot */
   intn        ddnew = FALSE;	/* is the dd a new one? */
   filerec_t  *file_rec=NULL;		/* file record */
   accrec_t   *access_rec=NULL;		/* access record */
@@ -2131,7 +2131,6 @@ done:
 #else
   intn        ret;
   hdf_file_t  fp;
-  intn        i;
   intn   ret_value = TRUE;
 
 #ifdef HAVE_PABLO
@@ -2552,6 +2551,9 @@ PRIVATE intn HIstart(void)
     if(HAinit_group(AIDGROUP,256)==FAIL)
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
+    if((cleanup_list=HULcreate_list(NULL))==NULL)
+      HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
@@ -2565,6 +2567,55 @@ done:
 
     return(ret_value);
 } /* end HIstart() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    HPregister_term_func
+ PURPOSE
+    Registers a termination function in the list of routines to call during
+    atexit() termination.
+ USAGE
+    intn HPregister_term_func(term_func)
+        intn (*term_func)();           IN: function to call during axexit()
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    Adds routines to the linked-list of routines to call when terminating the
+    library.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    Should only ever be called by the "atexit" function, or real power-users.
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn HPregister_term_func(hdf_termfunc_t term_func)
+{
+    CONSTR(FUNC, "HPregister_term_func");    /* for HERROR */
+    intn        ret_value = SUCCEED;
+#ifdef HAVE_PABLO
+  TRACE_ON(H_mask, ID_HPregister_term_func);
+#endif /* HAVE_PABLO */
+
+    if(library_terminate == FALSE)
+        if(HIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
+    if(HULadd_node(cleanup_list,(VOIDP)term_func)==FAIL)
+      HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(H_mask, ID_HPregister_term_func);
+#endif /* HAVE_PABLO */
+
+    return(ret_value);
+} /* end HPregister_term_func() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -2589,6 +2640,7 @@ void HPend(void)
 #ifdef LATER
     CONSTR(FUNC, "HPend");    /* for HERROR */
 #endif /* LATER */
+    hdf_termfunc_t term_func;      /* pointer to a termination routine for an interface */
 
     /* Shutdown the file ID atom group */
     HAdestroy_group(FIDGROUP);
@@ -2596,20 +2648,33 @@ void HPend(void)
     /* Shutdown the access ID atom group */
     HAdestroy_group(AIDGROUP);
 
+    if((term_func=(hdf_termfunc_t)HULfirst_node(cleanup_list))!=NULL)
+      {
+        do {
+            (*term_func)();
+          } while((term_func=(hdf_termfunc_t)HULnext_node(cleanup_list))!=NULL);
+      } /* end if */
+#ifdef OLD_WAY
+    DFR8Pshutdown();
+    DFGRPshutdown();
+#endif /* OLD_WAY */
+
     /* can't issue errors if you're free'ing the error stack. */
     GRPshutdown();
     VSPfreebuf();
     VPshutdown();
     DFSDPshutdown();
-    DFR8Pshutdown();
     DFANPshutdown();
-    DFGRPshutdown();
     ANdestroy();
     HPbitshutdown();
+
+    HULdestroy_list(cleanup_list);    /* clear the list of interface cleanup routines */
+
     HXPshutdown();
     Hshutdown();
     HEshutdown();
     HAshutdown();
+    HULshutdown();
     tbbt_shutdown();
 } /* end HPend() */
 
@@ -2734,7 +2799,9 @@ GLOBALS
 VOIDP
 HIgetspinfo(accrec_t * access_rec)
 {
+#ifdef LATER
     CONSTR(FUNC, "HIgetspinfo");	/* for HERROR */
+#endif /* LATER */
     VOIDP    ret_value = NULL; /* FAIL */
   
     if((ret_value=HAsearch_atom(AIDGROUP,HPcompare_accrec_tagref,(const VOIDP)access_rec))!=NULL)
@@ -3175,7 +3242,9 @@ done:
 --------------------------------------------------------------------------*/
 intn HPcompare_filerec_path(const VOIDP obj, const VOIDP key)
 {
+#ifdef LATER
     CONSTR(FUNC, "HPcompare_filerec_path");
+#endif /* LATER */
 
 
 #ifdef LATER
@@ -3334,7 +3403,7 @@ HIupdate_version(int32 file_id)
   /* uint32 lmajorv, lminorv, lrelease; */
   uint8 /*lstring[81], */ lversion[LIBVER_LEN];
   filerec_t * file_rec;
-  int         ret, i;
+  int         i;
   CONSTR(FUNC, "Hupdate_version");
   int       ret_value = SUCCEED;
 
@@ -3582,7 +3651,7 @@ HPfreediskblock(filerec_t * file_rec, int32 block_off, int32 block_size)
 int32
 HDget_special_info(int32 access_id, sp_info_block_t * info_block)
 {
-  char       *FUNC = "HDget_special_info";	/* for HERROR */
+    CONSTR(FUNC, "HDget_special_info");
   accrec_t   *access_rec;		/* access record */
   int32       ret_value = FAIL;
 
@@ -3630,7 +3699,7 @@ done:
 int32
 HDset_special_info(int32 access_id, sp_info_block_t * info_block)
 {
-  char       *FUNC = "HDset_special_info";	/* for HERROR */
+    CONSTR(FUNC, "HDset_special_info");
   accrec_t   *access_rec;		/* access record */
   int32      ret_value = FAIL;
 

@@ -16,7 +16,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
-#include <ctype.h>
 #ifdef MALDEBUG
 #define __MALDEBUG__
 #endif

@@ -686,7 +686,9 @@ done:
 intn HTPendaccess(atom_t ddid           /* IN: DD id to end access to */
 )
 {
+#ifdef LATER
     CONSTR(FUNC, "HTPendaccess"); /* for HERROR */
+#endif /* LATER */
     int32 ret_value=SUCCEED;
 
     /* Chuck the atom */

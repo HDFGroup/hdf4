@@ -164,6 +164,14 @@ MODIFICATION HISTORY
  */
 static TBBT_TREE *gr_tree=NULL;
 
+PRIVATE intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr);
+
+PRIVATE intn GRIupdateRIG(int32 hdf_file_id,ri_info_t *img_ptr);
+
+PRIVATE intn GRIupdateRI(int32 hdf_file_id,ri_info_t *img_ptr);
+
+PRIVATE intn GRIup_attr_data(int32 hdf_file_id,at_info_t *attr_ptr);
+
 /*--------------------------------------------------------------------------
  NAME
     rigcompare
@@ -1346,7 +1354,6 @@ done:
 int32 GRstart(int32 hdf_file_id)
 {
     CONSTR(FUNC, "GRstart");    /* for HERROR */
-    intn next_gr;               /* index of the next open space in the gr_tab */
     gr_info_t *gr_ptr;          /* ptr to the new GR information for a file */
     int32  ret_value = SUCCEED;
 
@@ -1507,7 +1514,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
+PRIVATE intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
 {
     CONSTR(FUNC, "GRIupdatemeta");   /* for HERROR */
     uint8 GRtbuf[64];   /* local buffer for reading RIG info */
@@ -1629,7 +1636,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn GRIupdateRIG(int32 hdf_file_id,ri_info_t *img_ptr)
+PRIVATE intn GRIupdateRIG(int32 hdf_file_id,ri_info_t *img_ptr)
 {
     CONSTR(FUNC, "GRIupdateRIG");   /* for HERROR */
     int32 GroupID;      /* RIG id for group interface */
@@ -1719,7 +1726,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn GRIupdateRI(int32 hdf_file_id,ri_info_t *img_ptr)
+PRIVATE intn GRIupdateRI(int32 hdf_file_id,ri_info_t *img_ptr)
 {
     CONSTR(FUNC, "GRIupdateRI");   /* for HERROR */
     int32 GroupID;      /* RI vgroup id */
@@ -1817,7 +1824,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn GRIup_attr_data(int32 hdf_file_id,at_info_t *attr_ptr)
+PRIVATE intn GRIup_attr_data(int32 hdf_file_id,at_info_t *attr_ptr)
 {
     CONSTR(FUNC, "GRIup_attr_data");   /* for HERROR */
     intn   ret_value = SUCCEED;
@@ -1891,11 +1898,10 @@ intn GRend(int32 grid)
 {
     CONSTR(FUNC, "GRend");      /* for HERROR */
     int32 hdf_file_id;          /* HDF file ID */
-    int32 gr_idx;               /* index into the gr_tab array */
     int32 GroupID;              /* VGroup ID for the GR group */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     filerec_t *file_rec;        /* File record */
-    VOIDP      *t;
+    VOIDP      *t1;
     intn   ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -1944,21 +1950,21 @@ printf("%s: gr_modified=%d, gr_count=%ld\n",FUNC,gr_ptr->gr_modified,(long)gr_pt
 #endif /* QAK */
         if(gr_ptr->gr_modified==TRUE && gr_ptr->gr_count>0)
           {
-              VOIDP      *t;
+              VOIDP      *t2;
               ri_info_t *img_ptr;   /* ptr to the image */
 
 #ifdef QAK
 printf("%s: gr_modified=%d, gr_count=%ld\n",FUNC,gr_ptr->gr_modified,(long)gr_ptr->gr_count);
 #endif /* QAK */
-              if (NULL == (t = (VOIDP *) tbbtfirst((TBBT_NODE *) * (gr_ptr->grtree))))
+              if (NULL == (t2 = (VOIDP *) tbbtfirst((TBBT_NODE *) * (gr_ptr->grtree))))
                 {
                     HGOTO_ERROR(DFE_NOTINTABLE, FAIL);
                 } /* end if */
               else
-                  img_ptr = (ri_info_t *) * t;   /* get actual pointer to the ri_info_t */
+                  img_ptr = (ri_info_t *) * t2;   /* get actual pointer to the ri_info_t */
 
               /* cycle through all of the images in memory */
-              while (t!=NULL)
+              while (t2!=NULL)
                 {
 #ifdef QAK
 printf("%s: data_modified=%d, meta_modified=%d, attr_modified=%d\n",FUNC,img_ptr->data_modified,img_ptr->meta_modified,img_ptr->attr_modified);
@@ -1985,18 +1991,18 @@ printf("%s: ri_ref=%u\n",FUNC,img_ptr->ri_ref);
                     /* check if the local attributes has been modified */
                     if(img_ptr->attr_modified==TRUE && img_ptr->lattr_count>0)
                       {
-                          VOIDP      *t;
+                          VOIDP      *t3;
                           at_info_t *attr_ptr;   /* ptr to the attribute */
 
-                          if (NULL == (t = (VOIDP *) tbbtfirst((TBBT_NODE *) * (img_ptr->lattree))))
+                          if (NULL == (t3 = (VOIDP *) tbbtfirst((TBBT_NODE *) * (img_ptr->lattree))))
                             {
                                 HGOTO_ERROR(DFE_NOTINTABLE, FAIL);
                             } /* end if */
                           else
-                              attr_ptr = (at_info_t *) * t;   /* get actual pointer to the at_info_t */
+                              attr_ptr = (at_info_t *) * t3;   /* get actual pointer to the at_info_t */
 
                           /* cycle through all of the local attributes in memory */
-                          while (t!=NULL)
+                          while (t3!=NULL)
                             {
                                 /* check if the attribute data has been modified */
                                 if(attr_ptr->data_modified==TRUE)
@@ -2012,20 +2018,20 @@ printf("%s: ri_ref=%u, atptr->ref=%u\n",FUNC,img_ptr->ri_ref,attr_ptr->ref);
                                 /* check if the attribute was added to the group */
                                 if(attr_ptr->new_at==TRUE)
                                   {
-                                      int32 GroupID;  /* ID of the Vgroup */
+                                      int32 lGroupID;  /* ID of the Vgroup */
 
-                                      if((GroupID=Vattach(gr_ptr->hdf_file_id,img_ptr->ri_ref,"w"))==FAIL)
+                                      if((lGroupID=Vattach(gr_ptr->hdf_file_id,img_ptr->ri_ref,"w"))==FAIL)
                                           HGOTO_ERROR(DFE_CANTATTACH,FAIL);
-                                      if(Vaddtagref(GroupID,ATTR_TAG,attr_ptr->ref)==FAIL)
+                                      if(Vaddtagref(lGroupID,ATTR_TAG,attr_ptr->ref)==FAIL)
                                           HGOTO_ERROR(DFE_CANTADDELEM,FAIL);
-                                      if(Vdetach(GroupID)==FAIL)
+                                      if(Vdetach(lGroupID)==FAIL)
                                           HGOTO_ERROR(DFE_CANTDETACH,FAIL);
                                       attr_ptr->new_at=FALSE;
                                   } /* end if */
 
                                 /* get the next local attribute in the tree/list */
-                                if (NULL != (t = (VOIDP *) tbbtnext((TBBT_NODE *) t)))     /* get the next node in the tree */
-                                    attr_ptr = (at_info_t *) * t;     /* get actual pointer to the at_info_t */
+                                if (NULL != (t3 = (VOIDP *) tbbtnext((TBBT_NODE *) t3)))     /* get the next node in the tree */
+                                    attr_ptr = (at_info_t *) * t3;     /* get actual pointer to the at_info_t */
                             } /* end while */
                           img_ptr->attr_modified=FALSE;
                       } /* end if */
@@ -2036,8 +2042,8 @@ printf("%s: ri_ref=%u, atptr->ref=%u\n",FUNC,img_ptr->ri_ref,attr_ptr->ref);
                             HGOTO_ERROR(DFE_CANTADDELEM,FAIL);
 
                     /* get the next image in the tree/list */
-                    if (NULL != (t = (VOIDP *) tbbtnext((TBBT_NODE *) t)))     /* get the next node in the tree */
-                        img_ptr = (ri_info_t *) * t;     /* get actual pointer to the ri_info_t */
+                    if (NULL != (t2 = (VOIDP *) tbbtnext((TBBT_NODE *) t2)))     /* get the next node in the tree */
+                        img_ptr = (ri_info_t *) * t2;     /* get actual pointer to the ri_info_t */
                 } /* end while */
           } /* end if */
 
@@ -2047,21 +2053,21 @@ printf("%s: gr_ptr=%p, gr_ptr->gattr_modified=%d, gr_ptr->gattr_count=%ld\n",FUN
         /* Write out the information for the global attributes which have been changed */
         if(gr_ptr->gattr_modified==TRUE && gr_ptr->gattr_count>0)
           {
-              VOIDP      *t;
+              VOIDP      *t2;
               at_info_t *attr_ptr;   /* ptr to the attribute */
 
-              if (NULL == (t = (VOIDP *) tbbtfirst((TBBT_NODE *) * (gr_ptr->gattree))))
+              if (NULL == (t2 = (VOIDP *) tbbtfirst((TBBT_NODE *) * (gr_ptr->gattree))))
                 {
                     HGOTO_ERROR(DFE_NOTINTABLE, FAIL);
                 } /* end if */
               else
-                  attr_ptr = (at_info_t *) * t;   /* get actual pointer to the at_info_t */
+                  attr_ptr = (at_info_t *) * t2;   /* get actual pointer to the at_info_t */
 
 #ifdef QAK
 printf("%s: attr_ptr=%p\n",FUNC,attr_ptr);
 #endif /* QAK */
               /* cycle through all of the global attributes in memory */
-              while (t!=NULL)
+              while (t2!=NULL)
                 {
 #ifdef QAK
 printf("%s: attr_ptr->data_modified=%d\n",FUNC,attr_ptr->data_modified);
@@ -2089,8 +2095,8 @@ printf("%s: GroupID=%ld\n",FUNC,(long)GroupID);
                       } /* end if */
 
                     /* get the next global attribute in the tree/list */
-                    if (NULL != (t = (VOIDP *) tbbtnext((TBBT_NODE *) t)))     /* get the next node in the tree */
-                        attr_ptr = (at_info_t *) * t;     /* get actual pointer to the at_info_t */
+                    if (NULL != (t2 = (VOIDP *) tbbtnext((TBBT_NODE *) t2)))     /* get the next node in the tree */
+                        attr_ptr = (at_info_t *) * t2;     /* get actual pointer to the at_info_t */
                 } /* end while */
             gr_ptr->gattr_modified=FALSE;
           } /* end if */
@@ -2106,11 +2112,11 @@ printf("%s: GroupID=%ld\n",FUNC,(long)GroupID);
 
     /* Close down the entry for this file in the GR tree */
     /* Find the node in the tree */
-    if (( t = (VOIDP *) tbbtdfind(gr_tree, (VOIDP) &hdf_file_id, NULL)) == NULL)
+    if (( t1 = (VOIDP *) tbbtdfind(gr_tree, (VOIDP) &hdf_file_id, NULL)) == NULL)
         HGOTO_DONE(FAIL);
 
     /* Delete the node and free the gr_info_t stucture */
-    tbbtrem((TBBT_NODE **) gr_tree, (TBBT_NODE *) t, NULL);
+    tbbtrem((TBBT_NODE **) gr_tree, (TBBT_NODE *) t1, NULL);
     HDfree(gr_ptr);
 
     /* Close down the Vset routines we started */
@@ -2158,7 +2164,6 @@ done:
 int32 GRselect(int32 grid,int32 index)
 {
     CONSTR(FUNC, "GRselect");   /* for HERROR */
-    int32 gr_idx;               /* index into the gr_tab array */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
@@ -2232,10 +2237,9 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-int32 GRcreate(int32 grid,char *name,int32 ncomp,int32 nt,int32 il,int32 dimsizes[2])
+int32 GRcreate(int32 grid,const char *name,int32 ncomp,int32 nt,int32 il,int32 dimsizes[2])
 {
     CONSTR(FUNC, "GRcreate");   /* for HERROR */
-    int32 gr_idx;               /* index into the gr_tab array */
     int32 GroupID;              /* ID of the Vgroup created */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
@@ -2355,7 +2359,6 @@ done:
 int32 GRnametoindex(int32 grid,char *name)
 {
     CONSTR(FUNC, "GRnametoindex");   /* for HERROR */
-    int32 gr_idx;               /* index into the gr_tab array */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
@@ -2432,11 +2435,8 @@ intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
     int32 dimsizes[2],int32 *n_attr)
 {
     CONSTR(FUNC, "GRgetiminfo");   /* for HERROR */
-    int32 gr_idx;               /* index into the gr_tab array */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    VOIDP *t;                   /* temp. ptr to the image found */
-    int32 index;                /* index of the RI in the GR */
     intn  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -4255,15 +4255,13 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn GRsetattr(int32 id,char *name,int32 attr_nt,int32 count,VOIDP data)
+intn GRsetattr(int32 id,const char *name,int32 attr_nt,int32 count,const VOIDP data)
 {
     CONSTR(FUNC, "GRsetattr");   /* for HERROR */
     int32 hdf_file_id;          /* HDF file ID from Hopen */
-    int32 gr_idx;               /* index into the gr_tab array */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr=NULL;     /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
-    int32 ri_index;             /* index of the RI in the GR */
     TBBT_TREE *search_tree;     /* attribute tree to search through */
     at_info_t *at_ptr=NULL;     /* ptr to the attribute to work with */
     int32 at_size;              /* size in bytes of the attribute data */
@@ -4290,7 +4288,7 @@ printf("%s: id=%ld, name=%p, data=%p, count=%ld\n",FUNC,(long)id,name,data,(long
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* check the validity of the args */
-    if (HAatom_group(id)!=RIIDGROUP && HAatom_group(id)!=GRIDGROUP || data==NULL || name==NULL
+    if ((HAatom_group(id)!=RIIDGROUP && HAatom_group(id)!=GRIDGROUP) || data==NULL || name==NULL
             || count<=0 || DFKNTsize(attr_nt)==FAIL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
@@ -4544,11 +4542,9 @@ done:
 intn GRattrinfo(int32 id,int32 index,char *name,int32 *attr_nt,int32 *count)
 {
     CONSTR(FUNC, "GRattrinfo");   /* for HERROR */
-    int32 gr_idx;               /* index into the gr_tab array */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
-    int32 ri_index;             /* index of the RI in the GR */
     TBBT_TREE *search_tree;     /* attribute tree to search through */
     at_info_t *at_ptr;          /* ptr to the attribute to work with */
     intn   ret_value = SUCCEED;
@@ -4645,11 +4641,9 @@ intn GRgetattr(int32 id,int32 index,VOIDP data)
 {
     CONSTR(FUNC, "GRgetattr");   /* for HERROR */
     int32 hdf_file_id;          /* HDF file ID from Hopen */
-    int32 gr_idx;               /* index into the gr_tab array */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
-    int32 ri_index;             /* index of the RI in the GR */
     TBBT_TREE *search_tree;     /* attribute tree to search through */
     at_info_t *at_ptr;          /* ptr to the attribute to work with */
     int32 at_size;              /* size in bytes of the attribute data */
@@ -4767,16 +4761,14 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-int32 GRfindattr(int32 id,char *name)
+int32 GRfindattr(int32 id,const char *name)
 {
     CONSTR(FUNC, "GRfindattr");   /* for HERROR */
-    int32 gr_idx;               /* index into the gr_tab array */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     VOIDP *t;                   /* temp. ptr to the image found */
     TBBT_TREE *search_tree;     /* attribute tree to search through */
     at_info_t *at_ptr;          /* ptr to the attribute to work with */
-    int32 index;                /* index of the RI in the GR */
     int32 ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO

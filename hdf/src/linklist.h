@@ -38,8 +38,6 @@ typedef intn (*HULsearch_func_t)(const VOIDP obj, const VOIDP key);
 /* Type of the function to compare two objects */
 typedef intn (*HULfind_func_t)(const VOIDP obj1, const VOIDP obj2);
 
-#if defined LIST_MASTER | defined LIST_TESTER
-
 /* Linked list information structure used */
 typedef struct node_info_struct_tag {
     VOIDP *obj_ptr;         /* pointer associated with the linked list node */
@@ -54,6 +52,8 @@ typedef struct list_head_struct_tag {
     node_info_t *node_list; /* pointer to a linked list of nodes */
     node_info_t *curr_node; /* pointer to the current node when iterating */
   }list_head_t;
+
+#if defined LIST_MASTER | defined LIST_TESTER
 
 /* Define this in only one place */
 #ifdef LIST_MASTER

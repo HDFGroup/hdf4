@@ -301,31 +301,31 @@ DFKsetNT(int32 ntype)
           case DFNT_UINT8:
               DFKnumin = UI8_IN;
               DFKnumout = UI8_OUT;
-              return 0;
+              break;
           case DFNT_INT16:
               DFKnumin = SI16_IN;
               DFKnumout = SI16_OUT;
-              return 0;
+              break;
           case DFNT_UINT16:
               DFKnumin = UI16_IN;
               DFKnumout = UI16_OUT;
-              return 0;
+              break;
           case DFNT_INT32:
               DFKnumin = SI32_IN;
               DFKnumout = SI32_OUT;
-              return 0;
+              break;
           case DFNT_UINT32:
               DFKnumin = UI32_IN;
               DFKnumout = UI32_OUT;
-              return 0;
+              break;
           case DFNT_FLOAT32:
               DFKnumin = F32_IN;
               DFKnumout = F32_OUT;
-              return 0;
+              break;
           case DFNT_FLOAT64:
               DFKnumin = F64_IN;
               DFKnumout = F64_OUT;
-              return 0;
+              break;
 
               /*
                * NATIVE MODE 'CONVERSIONS'
@@ -336,31 +336,31 @@ DFKsetNT(int32 ntype)
           case DFNT_NUINT8:
               DFKnumin = NUI8_IN;
               DFKnumout = NUI8_OUT;
-              return 0;
+              break;
           case DFNT_NINT16:
               DFKnumin = NSI16_IN;
               DFKnumout = NSI16_OUT;
-              return 0;
+              break;
           case DFNT_NUINT16:
               DFKnumin = NUI16_IN;
               DFKnumout = NUI16_OUT;
-              return 0;
+              break;
           case DFNT_NINT32:
               DFKnumin = NSI32_IN;
               DFKnumout = NSI32_OUT;
-              return 0;
+              break;
           case DFNT_NUINT32:
               DFKnumin = NUI32_IN;
               DFKnumout = NUI32_OUT;
-              return 0;
+              break;
           case DFNT_NFLOAT32:
               DFKnumin = NF32_IN;
               DFKnumout = NF32_OUT;
-              return 0;
+              break;
           case DFNT_NFLOAT64:
               DFKnumin = NF64_IN;
               DFKnumout = NF64_OUT;
-              return 0;
+              break;
 
               /*
                * Little Endian Conversions
@@ -371,31 +371,31 @@ DFKsetNT(int32 ntype)
           case DFNT_LUINT8:
               DFKnumin = LUI8_IN;
               DFKnumout = LUI8_OUT;
-              return 0;
+              break;
           case DFNT_LINT16:
               DFKnumin = LSI16_IN;
               DFKnumout = LSI16_OUT;
-              return 0;
+              break;
           case DFNT_LUINT16:
               DFKnumin = LUI16_IN;
               DFKnumout = LUI16_OUT;
-              return 0;
+              break;
           case DFNT_LINT32:
               DFKnumin = LSI32_IN;
               DFKnumout = LSI32_OUT;
-              return 0;
+              break;
           case DFNT_LUINT32:
               DFKnumin = LUI32_IN;
               DFKnumout = LUI32_OUT;
-              return 0;
+              break;
           case DFNT_LFLOAT32:
               DFKnumin = LF32_IN;
               DFKnumout = LF32_OUT;
-              return 0;
+              break;
           case DFNT_LFLOAT64:
               DFKnumin = LF64_IN;
               DFKnumout = LF64_OUT;
-              return 0;
+              break;
 
 /* No conversion routines are specified for DFNT_custom.  User must provide. */
 /* Users should call DFCV_SetCustomIn() and DFCV_SetCustomOut() if they      */
@@ -405,11 +405,11 @@ DFKsetNT(int32 ntype)
 
           case DFNT_CUSTOM:
               g_ntype = DFNT_CUSTOM;
-              return 0;
+              break;
           default:
-              HERROR(DFE_BADCONV);
-              return FAIL;
+              HRETURN_ERROR(DFE_BADCONV,FAIL);
       }
+  return 0;
 }
 
 /*****************************************************************************

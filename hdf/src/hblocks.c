@@ -222,7 +222,6 @@ HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length,
     CONSTR(FUNC, "HLcreate");   /* for HERROR */
     filerec_t  *file_rec;       /* file record */
     accrec_t   *access_rec=NULL;/* access record */
-    int         slot;           /* slot in access records */
     int32       dd_aid;         /* AID for writing the special info */
     linkinfo_t *info = NULL;   /* information for the linked blocks elt */
     uint16      link_ref;       /* the ref of the link structure
@@ -1699,7 +1698,7 @@ DESCRIPTION
 int32
 HLPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
 {
-    char       *FUNC = "HLPinfo";   /* for HERROR */
+    CONSTR(FUNC, "HLPinfo");
     linkinfo_t *info =          /* special information record */
     (linkinfo_t *) access_rec->special_info;
     int32     ret_value = SUCCEED;

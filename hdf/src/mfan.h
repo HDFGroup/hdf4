@@ -116,7 +116,6 @@ PRIVATE intn    num_anns   = 0;    /* total number of annotations
 /* WE are NOT in main ANNOTATION source file
  * Nothing EXPORTED  */
 
-#endif /* !MFAN_C */
 
 /******************************************************************************
  NAME
@@ -272,7 +271,7 @@ extern int32 ANannlen(int32 ann_id /* IN: annotation id */);
 
 *******************************************************************************/
 extern int32 ANwriteann(int32 ann_id, /* IN: annotation id */
-                        char *ann, /* IN: annotation to write */
+                        const char *ann, /* IN: annotation to write */
                         int32 annlen /* IN: length of annotation*/);
 
 /******************************************************************************
@@ -313,5 +312,6 @@ extern uint16 atype2tag(ann_type atype);
 extern ann_type tag2atype(uint16 atag);
 
 extern int32 ANdestroy(void);
+#endif /* !MFAN_C */
 
 #endif /* _MFAN_H */

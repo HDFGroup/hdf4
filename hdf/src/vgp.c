@@ -81,7 +81,6 @@ EXPORTED ROUTINES
                   as well as from the file.
 *************************************************************************/
 
-#include <ctype.h>  /* for tolower() */
 #include "vg.h"
 
 /* Prototypes */
@@ -782,9 +781,9 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
     if ((vf = Get_vfile(f))==NULL)
         HGOTO_ERROR(DFE_FNF, FAIL);
 
-    if (tolower(accesstype[0]) == 'r')
+    if (accesstype[0] == 'R' || accesstype[0]=='r')
         acc_mode = 'r';
-    else if (tolower(accesstype[0]) == 'w')
+    else if (accesstype[0] == 'W' || accesstype[0]=='w')
         acc_mode = 'w';
     else
         HGOTO_ERROR(DFE_BADACC, FAIL);

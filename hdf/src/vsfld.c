@@ -50,7 +50,7 @@ EXPORTED ROUTINES
    ** ==================================================================
    * */
 
-PRIVATE SYMDEF rstab[] =
+PRIVATE const SYMDEF rstab[] =
 {
     {"PX", DFNT_FLOAT32, SIZE_FLOAT32, 1},
     {"PY", DFNT_FLOAT32, SIZE_FLOAT32, 1},
@@ -710,7 +710,7 @@ FORTRAN
 
 --------------------------------------------------------------------------- */
 
-intn VSsetexternalfile(int32 vkey, char *filename, int32 offset)
+intn VSsetexternalfile(int32 vkey, const char *filename, int32 offset)
 {
     CONSTR(FUNC, "VSsetexternalfile");
     int32       ret_value = SUCCEED;

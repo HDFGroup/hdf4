@@ -539,7 +539,6 @@ intn
 HULshutdown(void)
 {
     node_info_t *curr;
-    intn i;
 
     /* Release the free-list if it exists */
     if(node_free_list!=NULL)

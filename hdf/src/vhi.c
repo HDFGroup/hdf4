@@ -55,7 +55,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 int32
 VHstoredata(HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype,
-            char *vsname, char *vsclass)
+            const char *vsname, const char *vsclass)
 
 {
 #ifdef LATER
@@ -101,7 +101,7 @@ VHstoredata(HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype,
    --------------------------------------------------------------------------- */
 
 int32
-VHstoredatam(HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype, char *vsname, char *vsclass, int32 order)
+VHstoredatam(HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype, const char *vsname, const char *vsclass, int32 order)
 {
     CONSTR(FUNC, "VHstoredatam");
     int32       ref;
