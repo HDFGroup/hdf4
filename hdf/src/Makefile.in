@@ -486,3 +486,4 @@ hchunks.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 hchunks.o: hfile.h hchunks.h mcache.h hqueue.h $(FRC)
 mcache.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 mcache.o: hfile.h mcache.h hqueue.h
+vattr.o:  hdf.h hlimits.h hdfi.h herr.h hproto.h vg.h
