@@ -21,13 +21,21 @@ $ !
 $ type sys$input
 	Making utilities
 $ hdflib="[-.src]df/lib,[-.jpeg]libjpeg/lib,[-.zlib]libz/lib"
+$ hdfinc="([-.src],[-.jpeg],[-.zlib])"
 $ utils="hdfls,r8tohdf,hdfcomp,hdftor8,hdftopal,hdf8to24,"+-
 "jpeg2hdf,fp2hdf,fptest,he_main,he_cntrl,he_disp,he_file,"  +-
 "paltohdf,hdf24to8,hdfpack,ristosds,vshow,vmake,hdf2jpeg"
 $! "jpeg2hdf,fp2hdf,he_main,he_cntrl,he_disp,he_file"
 $! define/nolog hdf$lib MRLXP1$DKA200:[folk.dev.hdf.src]df.olb
-$ define/nolog  sys$clib sys$library:vaxcrtl
-$ cc/define=VMS/include=([-.src],[-.jpeg],[-.zlib]) 'utils
+$ if f$getsyi("arch_name") .eqs. "VAX"
+$ then
+$    define/nolog  sys$clib sys$library:deccrtl
+$    ccopt = "/DECC/STANDARD=VAXC/define=VMS/include='hdfinc"
+$ else
+$    define/nolog  sys$clib sys$library:vaxcrtl
+$    ccopt = "/define=VMS/include='hdfinc"
+$ endif
+$ cc 'ccopt  'utils
 $ link/exe=hdfed he_main,he_cntrl,he_disp,he_file,'hdflib, -
    sys$clib/lib, MRLXP1$DKA200:[folk.dev.hdf.util]helink.opt/option
 $ link hdfls,     'hdflib, sys$clib/lib
