@@ -1977,8 +1977,9 @@ const long *edges ;
      *  regular dimensions of an unlimited dimension dataset are being written
      *  out, it's ok to write out a "block" of all those slices at once. -QAK
      */
-	if( IS_RECVAR(vp) && (edp-1==edges) && !partial)
+/*	if( IS_RECVAR(vp) && (edp-1==edges) && !partial)
         edp=edges;
+*/
 
 	/* shp, edp reference last index s.t. shape[ii] == edge[ii] */
 	return(edp) ;
