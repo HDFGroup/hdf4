@@ -5352,7 +5352,7 @@ echo "$as_me: error: jpeg library required to build HDF4" >&2;}
    { (exit 1); exit 1; }; }
     ;;
   *)
-    HAVE_ZLIB="yes"
+    HAVE_JPEG="yes"
     case "$withval" in
       *,*)
         jpeg_inc="`echo $withval |cut -f1 -d,`"

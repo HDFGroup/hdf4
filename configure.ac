@@ -198,7 +198,7 @@ case $withval in
     AC_MSG_ERROR([jpeg library required to build HDF4])
     ;;
   *)
-    HAVE_ZLIB="yes"
+    HAVE_JPEG="yes"
     case "$withval" in
       *,*)
         jpeg_inc="`echo $withval |cut -f1 -d,`"
