@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1993/03/29 17:21:03  chouck
-Fixed a prototype problem
+Revision 1.8  1993/04/05 22:35:51  koziol
+Fixed goofups made in haste when patching code.
 
+ * Revision 1.7  1993/03/29  17:21:03  chouck
+ * Fixed a prototype problem
+ *
  * Revision 1.6  1993/01/26  19:42:48  koziol
  * Added support for reading and writing Little-Endian data on all
  * platforms.  This has been tested on: Cray, Sun, and PCs so far.
@@ -120,7 +123,7 @@ int32 HDspaceleft(void)
 
 #ifdef PC
 #ifdef WIN3
-void _HUGE *HDgetspace(uint32 qty)
+VOIDP HDgetspace(uint32 qty)
 {
     char *FUNC="HDgetspace";
 
@@ -188,7 +191,7 @@ void _HUGE *HDfreespace(void *vfp)
     return(NULL);
 }
 #else /* !WIN3 */
-void _HUGE *HDgetspace(uint32 qty)
+VOIDP HDgetspace(uint32 qty)
 {
     char *FUNC="HDgetspace";
     char huge *p;
@@ -260,7 +263,7 @@ VOIDP HDregetspace(VOIDP ptr, uint32 qty)
     return(p2);
 }
 
-void _HUGE *HDfreespace(void *ptr)
+VOIDP HDfreespace(void *ptr)
 {
     char *p=ptr;
 

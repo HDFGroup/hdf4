@@ -2,15 +2,18 @@
 $Header$
 
 $Log$
-Revision 1.7  1993/03/29 16:50:48  koziol
-Updated JPEG code to new JPEG 4 code.
-Changed VSets to use Threaded-Balanced-Binary Tree for internal
-	(in memory) representation.
-Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-	to use 32-bit integer keys instead of pointers.
-Backed out speedups for Cray, until I get the time to fix them.
-Fixed a bunch of bugs in the little-endian support in DFSD.
+Revision 1.8  1993/04/05 22:36:00  koziol
+Fixed goofups made in haste when patching code.
 
+ * Revision 1.7  1993/03/29  16:50:48  koziol
+ * Updated JPEG code to new JPEG 4 code.
+ * Changed VSets to use Threaded-Balanced-Binary Tree for internal
+ * 	(in memory) representation.
+ * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+ * 	to use 32-bit integer keys instead of pointers.
+ * Backed out speedups for Cray, until I get the time to fix them.
+ * Fixed a bunch of bugs in the little-endian support in DFSD.
+ *
  * Revision 1.6  1993/01/19  05:56:31  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -306,10 +309,8 @@ extern int32 Vaddtagref
   PROTO((int32 vkey, int32 tag, int32 ref));
 #endif
 
-#ifdef OLD_WAY
 extern int32 vinsertpair
   PROTO((VGROUP _HUGE *vg, uint16 tag, uint16 ref));
-#endif
 
 extern int32 Ventries
   PROTO((HFILEID f, int32 vgid));

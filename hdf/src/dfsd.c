@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.22  1993/03/29 18:38:19  chouck
-Cleaned up a bunch of casting problems
+Revision 1.23  1993/04/05 22:35:16  koziol
+Fixed goofups made in haste when patching code.
 
+ * Revision 1.22  1993/03/29  18:38:19  chouck
+ * Cleaned up a bunch of casting problems
+ *
  * Revision 1.21  1993/03/29  16:47:40  koziol
  * Updated JPEG code to new JPEG 4 code.
  * Changed VSets to use Threaded-Balanced-Binary Tree for internal
@@ -3333,9 +3336,11 @@ DFSsdg *sdg;
     */
     sdg->aid = (int32)-1;
     sdg->compression = (int32)0;
+    HDfreespace(sds->file_value);
     FileTranspose = 0;
 
     Ref.dims = -1;
+    Ref.fill_value = -1;
     Ref.scales = Ref.luf[LABEL] = Ref.luf[UNIT] = Ref.luf[FORMAT] = (-1);
     Ref.coordsys = Ref.maxmin = (-1);
     Ref.new_ndg = -1;

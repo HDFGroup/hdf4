@@ -2,15 +2,18 @@
 $Header$
 
 $Log$
-Revision 1.11  1993/03/29 16:48:03  koziol
-Updated JPEG code to new JPEG 4 code.
-Changed VSets to use Threaded-Balanced-Binary Tree for internal
-	(in memory) representation.
-Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-	to use 32-bit integer keys instead of pointers.
-Backed out speedups for Cray, until I get the time to fix them.
-Fixed a bunch of bugs in the little-endian support in DFSD.
+Revision 1.12  1993/04/05 22:35:48  koziol
+Fixed goofups made in haste when patching code.
 
+ * Revision 1.11  1993/03/29  16:48:03  koziol
+ * Updated JPEG code to new JPEG 4 code.
+ * Changed VSets to use Threaded-Balanced-Binary Tree for internal
+ * 	(in memory) representation.
+ * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+ * 	to use 32-bit integer keys instead of pointers.
+ * Backed out speedups for Cray, until I get the time to fix them.
+ * Fixed a bunch of bugs in the little-endian support in DFSD.
+ *
  * Revision 1.8  1993/01/19  05:55:56  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -67,7 +70,7 @@ Fixed a bunch of bugs in the little-endian support in DFSD.
 #define LIBVER_MAJOR	3
 #define LIBVER_MINOR    3
 #define LIBVER_RELEASE	0
-#define LIBVER_STRING   "NCSA HDF Version 3.3 Beta Release 1 Nov 1, 1992"
+#define LIBVER_STRING   "NCSA HDF Version 3.3 Alpha Release 7 Apr 6, 1993"
 #define LIBVER_LEN	92	/* 4+4+4+80 = 92 */
 /* end of version tags */
 
@@ -317,6 +320,8 @@ typedef struct functab_t {
 #define AIDTYPE   2
 #define GROUPTYPE 3
 #define SDSTYPE   4
+#define DIMTYPE   5
+#define CDFTYPE   6
 #define VGIDTYPE  8         /* also defined in vg.h for Vgroups */
 #define VSIDTYPE  9         /* also defined in vg.h for Vsets */
 #define BITTYPE   10        /* For bit-accesses */

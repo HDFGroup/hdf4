@@ -2,15 +2,18 @@
 $Header$
 
 $Log$
-Revision 1.15  1993/03/29 16:47:53  koziol
-Updated JPEG code to new JPEG 4 code.
-Changed VSets to use Threaded-Balanced-Binary Tree for internal
-	(in memory) representation.
-Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-	to use 32-bit integer keys instead of pointers.
-Backed out speedups for Cray, until I get the time to fix them.
-Fixed a bunch of bugs in the little-endian support in DFSD.
+Revision 1.16  1993/04/05 22:35:37  koziol
+Fixed goofups made in haste when patching code.
 
+ * Revision 1.15  1993/03/29  16:47:53  koziol
+ * Updated JPEG code to new JPEG 4 code.
+ * Changed VSets to use Threaded-Balanced-Binary Tree for internal
+ * 	(in memory) representation.
+ * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+ * 	to use 32-bit integer keys instead of pointers.
+ * Backed out speedups for Cray, until I get the time to fix them.
+ * Fixed a bunch of bugs in the little-endian support in DFSD.
+ *
  * Revision 1.14  1993/02/16  18:45:02  koziol
  * Added prototyping to RS/6000 definition
  *
@@ -440,7 +443,7 @@ Please check your Makefile.
 #define DF_MT             DFMT_CONVEX
 #endif
 typedef void              VOID;
-typedef char              *VOIDP;
+typedef void              *VOIDP;
 typedef char              *_fcd;
 typedef int               bool;
 typedef char              char8;
@@ -483,7 +486,7 @@ Please check your Makefile.
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #define DF_MT   DFMT_MIPSEL
 typedef void            VOID;
-typedef char            *VOIDP;
+typedef void            *VOIDP;
 typedef char            *_fcd;
 typedef int             bool;
 typedef char            char8;
@@ -669,7 +672,7 @@ Please check your Makefile.
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #define DF_MT             DFMT_NEXT
 typedef void              VOID;
-typedef char              *VOIDP;
+typedef void              *VOIDP;
 typedef char              *_fcd;
 typedef int               bool;
 typedef char              char8;
@@ -721,7 +724,7 @@ Please check your Makefile.
 #endif /*O_RDONLY*/
 #define DF_MT             DFMT_MOTOROLA
 typedef void              VOID;
-typedef char              *VOIDP;
+typedef void              *VOIDP;
 typedef char              *_fcd;
 typedef int               bool;
 typedef char              char8;

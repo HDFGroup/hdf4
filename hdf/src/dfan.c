@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1993/03/29 18:38:12  chouck
-Cleaned up a bunch of casting problems
+Revision 1.9  1993/04/05 22:35:02  koziol
+Fixed goofups made in haste when patching code.
 
+ * Revision 1.8  1993/03/29  18:38:12  chouck
+ * Cleaned up a bunch of casting problems
+ *
  * Revision 1.7  1993/01/19  05:54:05  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -549,11 +552,11 @@ intn access;
 
         for (p=DFANdir[0]; p!=NULL; p=q) {  /* free linked list space */
             q = p->next;
-            HDfreespace((char *) p);
+            HDfreespace((VOIDP) p);
         }
         for (p=DFANdir[1]; p!=NULL; p=q) {
             q = p->next;
-            HDfreespace((char *) p);
+            HDfreespace((VOIDP) p);
         }
         DFANdir[0] = DFANdir[1] = NULL;
     }

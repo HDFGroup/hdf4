@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1993/03/29 18:38:16  chouck
-Cleaned up a bunch of casting problems
+Revision 1.8  1993/04/05 22:35:06  koziol
+Fixed goofups made in haste when patching code.
 
+ * Revision 1.7  1993/03/29  18:38:16  chouck
+ * Cleaned up a bunch of casting problems
+ *
  * Revision 1.6  1993/03/29  16:47:26  koziol
  * Updated JPEG code to new JPEG 4 code.
  * Changed VSets to use Threaded-Balanced-Binary Tree for internal
@@ -923,9 +926,12 @@ int DFGRIreqil(il, type)
 
 
 /*-----------------------------------------------------------------------------
- * Name:    DFGRIg444444444444444444444444444444444444444444444444444444400000000000000000
-0444444444444444444444444444444444444444444444444444444444444444444444444444444444400000000000000000
-04444444444444444444444444444444444444444444444444444444444444444444444444444444for images
+ * Name:    DFGRIgetimlut
+ * Purpose: get next image/lut from a RIG
+ * Inputs:  filename: name of HDF file 
+ *          imlut: space to read image/lut into
+ *          xdim, ydim: dimensions of space allocated by user for image/lut
+ *          type: LUT for luts, IMAGE for images
  *          isfortran: 0 if called from C, 1 if called from Fortran
  * Returns: 0 on success, -1 on failure with DFerror set
  *          image/lut in imlut
@@ -1229,7 +1235,7 @@ int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran, newfile)
     
     if ((type==LUT) && (filename==NULL)) { /* set call */
         if (Grlutdata) {
-            HDfreespace((char *) Grlutdata);
+            HDfreespace((VOIDP) Grlutdata);
             Grlutdata = NULL;
         }
         Ref.lut = -1;
@@ -1325,7 +1331,7 @@ int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran, newfile)
 
     if (Grcompr==DFTAG_IMC) {
         Ref.lut = 0;
-        HDfreespace((char *) newlut);
+        HDfreespace((VOIDP) newlut);
         newlut = NULL;
     }
 

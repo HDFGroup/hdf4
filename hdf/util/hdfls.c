@@ -26,16 +26,19 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.22  1993/03/29 16:52:48  koziol
-Finished  DEC ALPHA port.
-Updated JPEG code to new JPEG 4 code.
-Changed VSets to use Threaded-Balanced-Binary Tree for internal
-	(in memory) representation.
-Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-	to use 32-bit integer keys instead of pointers.
-Backed out speedups for Cray, until I get the time to fix them.
-Fixed a bunch of bugs in the little-endian support in DFSD.
+Revision 1.23  1993/04/05 22:38:23  koziol
+Fixed goofups made in haste when patching code.
 
+ * Revision 1.22  1993/03/29  16:52:48  koziol
+ * Finished  DEC ALPHA port.
+ * Updated JPEG code to new JPEG 4 code.
+ * Changed VSets to use Threaded-Balanced-Binary Tree for internal
+ * 	(in memory) representation.
+ * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+ * 	to use 32-bit integer keys instead of pointers.
+ * Backed out speedups for Cray, until I get the time to fix them.
+ * Fixed a bunch of bugs in the little-endian support in DFSD.
+ *
  * Revision 1.20  1993/01/19  06:00:14  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -158,23 +161,23 @@ intn
 char * file_name;    /* name of current file being listed */
 
 int compare
-  PROTO((dd_t *a, dd_t *));
+  PROTO((const VOIDP , const VOIDP));
 int main
   PROTO((int, char **));
 int lprint
   PROTO((dd_t *, int));
 
 #ifdef PROTOTYPE
-int compare(dd_t *a, dd_t *b)
+int compare(const VOIDP a, const VOIDP b)
 #else
 int compare(a, b)
-dd_t *a,*b;
+const VOIDP a, b;
 #endif /* PROTOTYPE */
 {
-    if (a->tag>b->tag) return(1);
-    if (a->tag<b->tag) return(-1);
-    if (a->ref>b->ref) return(1);
-    if (a->ref<b->ref) return(-1);
+    if ((dd_t *)a->tag>(dd_t *)b->tag) return(1);
+    if ((dd_t *)a->tag<(dd_t *)b->tag) return(-1);
+    if ((dd_t *)a->ref>(dd_t *)b->ref) return(1);
+    if ((dd_t *)a->ref<(dd_t *)b->ref) return(-1);
     return(0);
 }
 

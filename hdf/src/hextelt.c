@@ -5,15 +5,18 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1993/03/29 16:48:00  koziol
-Updated JPEG code to new JPEG 4 code.
-Changed VSets to use Threaded-Balanced-Binary Tree for internal
-	(in memory) representation.
-Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-	to use 32-bit integer keys instead of pointers.
-Backed out speedups for Cray, until I get the time to fix them.
-Fixed a bunch of bugs in the little-endian support in DFSD.
+Revision 1.7  1993/04/05 22:35:43  koziol
+Fixed goofups made in haste when patching code.
 
+ * Revision 1.6  1993/03/29  16:48:00  koziol
+ * Updated JPEG code to new JPEG 4 code.
+ * Changed VSets to use Threaded-Balanced-Binary Tree for internal
+ * 	(in memory) representation.
+ * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+ * 	to use 32-bit integer keys instead of pointers.
+ * Backed out speedups for Cray, until I get the time to fix them.
+ * Fixed a bunch of bugs in the little-endian support in DFSD.
+ *
  * Revision 1.4  1993/01/19  05:55:48  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -31,7 +34,14 @@ Fixed a bunch of bugs in the little-endian support in DFSD.
 /*LINTLIBRARY*/
 /*+ hextelt.c
  Routines for external elements, i.e., data elements that reside on
- some other file.
+ some other file.  These elements have no limits on their length.
+ While users are prevented from reading beyond what is written, a 
+ user can write an unlimited amount of data.
+
+ 17-Mar-93
+ Adding offset and "starting length" to elements so that a user can
+ take an existing file with some data in it and create an HDF file
+ which has a pointer to that data.
 +*/
 
 #include "hdf.h"
@@ -43,6 +53,7 @@ Fixed a bunch of bugs in the little-endian support in DFSD.
 typedef struct {
     int attached;              /* number of access records attached
                                   to this information structure */
+    int32 extern_offset;
     int32 length;              /* length of this element */
     int32 length_file_name;    /* length of the external file name */
     hdf_file_t file_external;      /* external file descriptor */
@@ -85,17 +96,25 @@ int32 (*ext_funcs[])() = {
 };
 
 /*- HXcreate
- Create a data element in an external file.
+ Create a data element in an external file.  If that file already
+ exists, we will simply *modify* that file, not delete it and
+ start over.  Offset and start_len are for encapsulating data
+ that already exists in a seperate file so that it can be referenced
+ from the HDF file.
+
+ If the objext we are writing out already exists in an HDF file and 
+ is "promoted" then the start_len is ignored.
 -*/
 #ifdef PROTOTYPE
-int32 HXcreate(int32 file_id, uint16 tag, uint16 ref, char *extern_file_name)
+int32 HXcreate(int32 file_id, uint16 tag, uint16 ref, char *extern_file_name, int32 f_offset, int32 start_len)
 #else
-int32 HXcreate(file_id, tag, ref, extern_file_name)
+int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
     int32 file_id;             /* file record id */
     uint16 tag, ref;           /* tag/ref of the special data element
                                   to create */
     char *extern_file_name;    /* name of external file to use as
                                   data element */
+    int32 f_offset,start_len;
 #endif
 {
     char *FUNC="HXcreate";     /* for HERROR */
@@ -116,7 +135,7 @@ int32 HXcreate(file_id, tag, ref, extern_file_name)
 
     HEclear();
     file_rec = FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0 || !extern_file_name
+    if (!file_rec || file_rec->refcount == 0 || !extern_file_name || (f_offset<0)
 #ifndef oldspecial
        || SPECIALTAG(tag) || (special_tag = MKSPECIALTAG(tag)) == DFTAG_NULL
 #endif
@@ -182,7 +201,7 @@ int32 HXcreate(file_id, tag, ref, extern_file_name)
 
     /* create the external file */
 
-    file_external = HI_CREATE(extern_file_name);
+    file_external = HI_OPEN(extern_file_name,DFACC_WRITE);
     if (OPENERR(file_external)) {
        HERROR(DFE_BADOPEN);
        access_rec->used = FALSE;
@@ -220,7 +239,7 @@ int32 HXcreate(file_id, tag, ref, extern_file_name)
            HDfreespace(buf);
            return FAIL;
        }
-       if (HI_SEEK(file_external, 0) == FAIL) {
+       if (HI_SEEK(file_external, f_offset) == FAIL) {
            HERROR(DFE_SEEKERROR);
            HDfreespace(info);
            HDfreespace(buf);
@@ -235,12 +254,13 @@ int32 HXcreate(file_id, tag, ref, extern_file_name)
        HDfreespace(buf);
        info->length = data_dd->length;
     } else {
-       info->length = 0;
+       info->length = start_len;
     }
 #endif
 
     info->attached = 1;
     info->file_external = file_external;
+    info->extern_offset = f_offset;
     info->extern_file_name = HDgetspace((uint32)HDstrlen(extern_file_name)+1);
     HIstrncpy(info->extern_file_name, extern_file_name,
           HDstrlen(extern_file_name)+1);
@@ -254,6 +274,7 @@ int32 HXcreate(file_id, tag, ref, extern_file_name)
        uint8 *p = tbuf;
        INT16ENCODE(p, SPECIAL_EXT);
        INT32ENCODE(p, info->length);
+       INT32ENCODE(p, info->extern_offset);
        INT32ENCODE(p, info->length_file_name);
        HDstrcpy((char *) p, (char *)extern_file_name);
     }
@@ -263,7 +284,7 @@ int32 HXcreate(file_id, tag, ref, extern_file_name)
        return FAIL;
     }
     dd->offset = HI_TELL(file_rec->file);
-    dd->length = 10 + info->length_file_name;
+    dd->length = 14 + info->length_file_name;
     dd->tag = special_tag;
     dd->ref = ref;
     if (HI_WRITE(file_rec->file, tbuf, dd->length) == FAIL) {
@@ -361,7 +382,7 @@ PRIVATE int32 HXIstaccess(access_rec, access)
            access_rec->used = FALSE;
            return FAIL;
        }
-       if (HI_READ(file_rec->file, tbuf, 8) == FAIL) {
+       if (HI_READ(file_rec->file, tbuf, 12) == FAIL) {
            HERROR(DFE_READERROR);
            access_rec->used = FALSE;
            return FAIL;
@@ -376,6 +397,7 @@ PRIVATE int32 HXIstaccess(access_rec, access)
        {
            uint8 *p = tbuf;
            INT32DECODE(p, info->length);
+           INT32DECODE(p, info->extern_offset);
            INT32DECODE(p, info->length_file_name);
        }
        info->extern_file_name = (char *)HDgetspace((uint32)
@@ -497,7 +519,8 @@ PRIVATE int32 HXIread(access_rec, length, data)
 
     /* read it in from the file */
 
-    if (HI_SEEK(info->file_external, access_rec->posn) == FAIL) {
+    if (HI_SEEK(info->file_external, 
+	       access_rec->posn + info->extern_offset) == FAIL) {
        HERROR(DFE_SEEKERROR);
        return FAIL;
     }
@@ -538,7 +561,8 @@ PRIVATE int32 HXIwrite(access_rec, length, data)
 
     /* write the data onto file */
 
-    if (HI_SEEK(info->file_external, access_rec->posn) == FAIL) {
+    if (HI_SEEK(info->file_external, 
+		access_rec->posn + info->extern_offset) == FAIL) {
        HERROR(DFE_SEEKERROR);
        return FAIL;
     }
@@ -548,7 +572,8 @@ PRIVATE int32 HXIwrite(access_rec, length, data)
           reopen the file and try again */
 
        hdf_file_t f = HI_OPEN(info->extern_file_name, DFACC_WRITE);
-       if (OPENERR(f) || HI_SEEK(f, access_rec->posn) == FAIL ||
+       if (OPENERR(f) || HI_SEEK(f, 
+		   access_rec->posn + info->extern_offset) == FAIL ||
            HI_WRITE(f, data, length) == FAIL) {
            HERROR(DFE_DENIED);
            HI_CLOSE(f);
