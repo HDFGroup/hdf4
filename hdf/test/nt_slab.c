@@ -12,7 +12,10 @@ static char RcsId[] = "$Id$";
  * $Header$
  *
  * $Log$
- * Revision 1.1  1993/02/19 17:48:40  georgev
+ * Revision 1.2  1993/02/25 22:36:17  georgev
+ * Minor changes .
+ *
+ * Revision 1.1  1993/02/19  17:48:40  georgev
  * Added slab tests.
  *
  *
@@ -120,31 +123,31 @@ slabw()
     MESSAGE(10,printf("\n slabw:  Writing 5 slabs to slabw.hdf \n"););
 
     ret = DFSDclear();
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDclear");
 
     /* First set dimensions */
     ret = DFSDsetdims((int16)rank, size_dims);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdims");
 
     /* Set dimension strings */
     ret = DFSDsetdimstrs(1, lpln, upln, fpln);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     ret = DFSDsetdimstrs(2, lrow, urow, frow);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     ret = DFSDsetdimstrs(3, lcol, ucol, fcol);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
     ret = DFSDsetdimscale(1, size_dims[0], scpln);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimscale");
 
     ret = DFSDsetdimscale(2, size_dims[1], scrow);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimscale");
 
     ret = DFSDsetdimscale(3, size_dims[2], sccol);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* 
     ** write data out using slabs with
@@ -153,48 +156,41 @@ slabw()
 
     /* Set max, min range */
     ret = DFSDsetrange(&maxi, &mini);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetrange");
 
     /* Set fill value */
     ret = DFSDsetfillvalue(&fill);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetfillvalue");
 
     ret = DFSDstartslab(sw);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDstartslab");
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slabw1);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slabw2);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slabw3);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slabw4);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slabw5);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDendslab");
 
     /* Verify correctness of slab written */
@@ -202,7 +198,6 @@ slabw()
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
     ret = DFSDgetslice(sw, start_dims, size_dims, sdata, stride);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDgetslice");
 
     if (no_err != 0)
@@ -237,35 +232,35 @@ slab1w()
     MESSAGE(10,printf("\n slab1w: Writing the first 3 of 5 slabs to slab1w.hdf \n"););
 
     ret = DFSDclear();
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDclear");
 
     /* First set dimensions */
     ret = DFSDsetdims((int16)rank, size_dims);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdims");
 
     /* Set dimension strings */
     ret = DFSDsetdimstrs(1, lpln, upln, fpln);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     ret = DFSDsetdimstrs(2, lrow, urow, frow);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     ret = DFSDsetdimstrs(3, lcol, ucol, fcol);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
     ret = DFSDsetdimscale(1, size_dims[0], scpln);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimscale");
 
     ret = DFSDsetdimscale(2, size_dims[1], scrow);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimscale");
 
     ret = DFSDsetdimscale(3, size_dims[2], sccol);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* Set fill value */
     ret = DFSDsetfillvalue(&fill);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetfillvalue");
     MESSAGE(10,printf("\n        slab1w: Setting fill value =%f \n", fill););
 
     /* 
@@ -274,28 +269,28 @@ slab1w()
 
     /* Set max, min range */
     ret = DFSDsetrange(&maxi, &mini);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetrange");
 
     ret = DFSDstartslab(sw1);
-    no_err +=ret;
+    CHECK(ret, FAIL, "DFSDstartslab");
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slabw1);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slabw3);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slabw5);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDendslab");
 
     if (no_err == 0)
        MESSAGE(10,printf("\n        >>> All tests passed for slab1w, now run slab2w <<< \n");)
@@ -316,48 +311,41 @@ slab2w()
   int32 trank;
 
     MESSAGE(10,printf("\n slab2w:  Writing the last 2 of 5 slabs to slab1w.hdf \n"););
- 
+
     ret = DFSDclear();
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDclear");
 
     /* Get dimensions */
     ret = DFSDgetdims(sw1, &trank, size_dims, 3);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDgetdims");
 
     /* Get fill value */
     ret = DFSDgetfillvalue((float32 *)&fill);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDgetfillvalue");
 
     MESSAGE(10,printf("\n       fill value =: %f \n", fill););
 
     /* Call Writeref() first */
     ret = DFSDwriteref(sw1, 2);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteref");
 
     /* 
     ** write each slab in different order 
     */
     ret = DFSDstartslab(sw1);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDstartslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slabw2);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slabw4);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDendslab");
 
     /* Verify correctness of slab written */
@@ -365,7 +353,6 @@ slab2w()
     size_dims[0]  = 2; size_dims[1]  = 3; size_dims[2]  = 4;
     stride[0]     = 2; stride[1]     = 3; stride[2]     = 4;
     ret = DFSDgetslice(sw1, start_dims, size_dims, sdata, stride);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDgetslice");
 
     if (no_err != 0)
@@ -402,35 +389,31 @@ slab3w()
     MESSAGE(10,printf("\n slab3w: Writing all 24 elements of data as slabs to slab3w.hdf \n"););
 
     ret = DFSDclear();
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDclear");
 
-	/* First set dimensions */
+    /* First set dimensions */
     ret = DFSDsetdims((int16)rank, size_dims);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdims");
 
-	/* Set dimension strings */
+    /* Set dimension strings */
     ret = DFSDsetdimstrs(1, lpln, upln, fpln);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     ret = DFSDsetdimstrs(2, lrow, urow, frow);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     ret = DFSDsetdimstrs(3, lcol, ucol, fcol);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimstrs");
 
-	/* Set dimension scales */
+    /* Set dimension scales */
     ret = DFSDsetdimscale(1, size_dims[0], scpln);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimscale");
 
     ret = DFSDsetdimscale(2, size_dims[1], scrow);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimscale");
 
     ret = DFSDsetdimscale(3, size_dims[2], sccol);
-    no_err += ret;
-
-	/* Set max, min range */
-    ret = DFSDsetrange(&maxi, &mini);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* 
     ** write each element in different order 
@@ -438,135 +421,132 @@ slab3w()
 
     /* Set max, min range */
     ret = DFSDsetrange(&maxi, &mini);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetrange");
 
     ret = DFSDstartslab(sw3);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDstartslab");
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab20);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab21);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
+
     start_dims[0] = 2; start_dims[1] = 3; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab22);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
+
     start_dims[0] = 2; start_dims[1] = 3; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab23);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
+
     start_dims[0] = 2; start_dims[1] = 3; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab24);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
+
     start_dims[0] = 1; start_dims[1] = 2; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab6);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
+
     start_dims[0] = 1; start_dims[1] = 2; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab7);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
+
     start_dims[0] = 1; start_dims[1] = 2; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab8);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
+
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab9);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
+
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab10);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
+
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab16);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
+
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab17);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
+
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab18);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
+
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab19);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
+
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab11);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
+
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab12);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
+
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab13);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
+
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab14);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
+
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab15);
-    no_err += ret;
-        CHECK(ret, FAIL, "DFSDwriteslab");
+    CHECK(ret, FAIL, "DFSDwriteslab");
+
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab1);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
+
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab2);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
+
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab3);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
+
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab4);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
+
     start_dims[0] = 1; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
     ret = DFSDwriteslab(start_dims, stride, size_dims, slab5);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
+
     ret = DFSDendslab();
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDendslab");
 
     /* Verify correctness of slab written */
@@ -574,7 +554,6 @@ slab3w()
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
     ret = DFSDgetslice(sw3, start_dims, size_dims, adata, stride);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDgetslice");
 
     if (no_err != 0)
@@ -612,48 +591,46 @@ slab4w()
     MESSAGE(10,printf("\n slab4w: Writing data as 1 slab to slab4w.hdf \n"););
 
     ret = DFSDclear();
-    no_err += ret;
-	/* First set dimensions */
-    ret = DFSDsetdims((int16)rank, size_dims);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDclear");
 
-	/* Set dimension strings */
+    /* First set dimensions */
+    ret = DFSDsetdims((int16)rank, size_dims);
+    CHECK(ret, FAIL, "DFSDsetdims");
+
+    /* Set dimension strings */
     ret = DFSDsetdimstrs(1, lpln, upln, fpln);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     ret = DFSDsetdimstrs(2, lrow, urow, frow);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     ret = DFSDsetdimstrs(3, lcol, ucol, fcol);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimstrs");
 
-	/* Set dimension scales */
+    /* Set dimension scales */
     ret = DFSDsetdimscale(1, size_dims[0], scpln);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimscale");
 
     ret = DFSDsetdimscale(2, size_dims[1], scrow);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimscale");
 
     ret = DFSDsetdimscale(3, size_dims[2], sccol);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetdimscale");
 
 	/* Set max, min range */
     ret = DFSDsetrange(&maxi, &mini);
-    no_err += ret;
+    CHECK(ret, FAIL, "DFSDsetrange");
 
     ret = DFSDstartslab(sw4);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDstartslab");
 
     /* write out all the data to hdf file */
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     ret = DFSDwriteslab(start_dims, stride, size_dims, fdata);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDendslab");
 
     /* Verify correctness of slab written */
@@ -661,7 +638,6 @@ slab4w()
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
     ret = DFSDgetslice(sw4, start_dims, size_dims, bdata, stride);
-    no_err += ret;
     CHECK(ret, FAIL, "DFSDgetslice");
 
     if (no_err != 0)
