@@ -101,8 +101,7 @@ funclist_t linked_funcs = {
 };
 
 
-/* ------------------------------- HLcreate ------------------------------- */
-/*
+/* ------------------------------------------------------------------------ 
 
  NAME
 	HLcreate -- create a linked block element
@@ -1377,7 +1376,7 @@ int32 HLPinfo(accrec_t *access_rec, sp_info_block_t * info_block)
 #else
 int32 HLPinfo(access_rec, info_block)
      accrec_t        * access_rec;   /* access record */
-     sp_info_block_t * info_block    /* info_block to fill */
+     sp_info_block_t * info_block;   /* info_block to fill */
 #endif
 {
     char *FUNC="HLPinfo";      /* for HERROR */

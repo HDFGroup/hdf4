@@ -853,9 +853,9 @@ accrec_t *access_rec;
 #ifdef PROTOTYPE
 int32 HXPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
 #else
-int32 HXPinfo(accrec_rec, info_block)
-     accrec_t        * access_id;   /* access id */
-     sp_info_block_t * info_block   /* info_block to fill */
+int32 HXPinfo(access_rec, info_block)
+     accrec_t        * access_rec;  /* access record */
+     sp_info_block_t * info_block;  /* info_block to fill */
 #endif
 {
     char *FUNC="HXPinfo";      /* for HERROR */
@@ -903,9 +903,9 @@ int32 HXPinfo(accrec_rec, info_block)
 #ifdef PROTOTYPE
 int32 HXPreset(accrec_t * access_rec, sp_info_block_t * info_block)
 #else
-int32 HXPreset(accrec_rec, info_block)
-     accrec_t        * access_id;   /* access id */
-     sp_info_block_t * info_block   /* info_block to fill */
+int32 HXPreset(access_rec, info_block)
+     accrec_t        * access_rec;  /* access record */
+     sp_info_block_t * info_block;  /* info_block to fill */
 #endif
 {
     char      * FUNC="HXPreset"; /* for HERROR */

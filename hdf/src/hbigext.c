@@ -832,7 +832,7 @@ int32 HBPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
 #else
 int32 HBPinfo(access_rec, info_block)
      accrec_t        * access_rec;  /* access record */
-     sp_info_block_t * info_block   /* info_block to fill */
+     sp_info_block_t * info_block;  /* info_block to fill */
 #endif
 {
     char *FUNC="HXPinfo";      /* for HERROR */

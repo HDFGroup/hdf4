@@ -698,7 +698,7 @@ printf("HCcreate(): check 6.6, coder_funcs.write=%p\n",info->cinfo.coder_funcs.w
     if(data_dd!=NULL) {
         VOIDP buf;              /* temporary buffer */
 
-        buf=HDgetspace((uint32)data_dd->length);
+        buf=(VOIDP)HDgetspace((uint32)data_dd->length);
         if(buf==NULL) {
             access_rec->used=FALSE;
             HDfreespace((VOIDP)info);
@@ -1329,8 +1329,8 @@ int32 HCPcloseAID(access_rec)
 int32 HCPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
 #else
 int32 HCPinfo(access_rec, info_block)
-     accrec_t        * access_id;   /* access id */
-     sp_info_block_t * info_block   /* info_block to fill */
+     accrec_t        * access_rec;   /* access id */
+     sp_info_block_t * info_block;   /* info_block to fill */
 #endif
 {
     char *FUNC="HXPinfo";      /* for HERROR */

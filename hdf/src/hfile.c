@@ -3613,7 +3613,7 @@ int32 HDget_special_info(int32 access_id, sp_info_block_t * info_block)
 #else
 int32 HDget_special_info(access_id, info_block)
      int32             access_id;   /* access id */
-     sp_info_block_t * info_block   /* info_block to fill */
+     sp_info_block_t * info_block;  /* info_block to fill */
 #endif
 {
     char *FUNC="HDget_special_info";  /* for HERROR */
@@ -3664,7 +3664,7 @@ int32 HDset_special_info(int32 access_id, sp_info_block_t * info_block)
 #else
 int32 HDset_special_info(access_id, info_block)
      int32             access_id;   /* access id */
-     sp_info_block_t * info_block   /* new special information */
+     sp_info_block_t * info_block;  /* new special information */
 #endif
 {
     char *FUNC="HDset_special_info";  /* for HERROR */
