@@ -125,6 +125,9 @@ extern intn SDgetdimstrs
 extern intn SDsetexternalfile
     PROTO((int32 id, char *filename, int32 offset));
 
+extern intn SDsetbigexternalfile
+    PROTO((int32 id, char *filename, int32 offset));
+
 extern int32 SDfindattr
     PROTO((int32 id, char *attrname));
 
@@ -177,6 +180,8 @@ extern intn SDiscoordvar
 #   define nsfid2ref  FNAME(SFID2REF)
 #   define nsfref2index FNAME(SFREF2INDEX)
 #   define nsfiscvar   FNAME(SFISCVAR)
+#   define nscsextf    FNAME(SCSEXTF)
+#   define nsfsacct    FNAME(SFSACCT)
 #else   /* DF_CAPFNAMES */
 #   define nscstart    FNAME(scstart)
 #   define nsfend      FNAME(sfend)
@@ -210,6 +215,8 @@ extern intn SDiscoordvar
 #   define nsfid2ref   FNAME(sfid2ref)
 #   define nsfref2index FNAME(sfref2index)
 #   define nsfiscvar   FNAME(sfiscvar)
+#   define nscsextf    FNAME(scsextf)
+#   define nsfsacct    FNAME(sfsacct)
 #endif
 #endif
 

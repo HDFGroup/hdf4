@@ -18,7 +18,7 @@ static bool_t hdf_xdr_NCvdata
         VOIDP values));
 static bool_t hdf_xdr_NCv1data
     PROTO((NC *handle,NC_var *vp,u_long where,nc_type type,VOIDP values));
-static int32 hdf_get_vp_aid
+int32 hdf_get_vp_aid
     PROTO((NC *handle, NC_var *vp));
 
 /*
@@ -801,7 +801,7 @@ NC_var *vp;
   Return an AID for the current variable.  Return FALSE on error TRUE on success
 
 */
-static int32
+int32
 hdf_get_vp_aid(handle, vp)
 NC        * handle;
 NC_var    * vp;
@@ -906,8 +906,10 @@ uint32    count;
     if(status == FAIL)
         return(FALSE);
     
-    /* make sure our tmp buffer is big enough to hold everything */
     byte_count = count * vp->HDFsize;
+
+#ifndef CM5
+    /* make sure our tmp buffer is big enough to hold everything */
     if(tBuf_size < byte_count) {
         if(tBuf) HDfreespace((VOIDP)tBuf);
         tBuf_size = byte_count;
@@ -935,8 +937,11 @@ uint32    count;
         status = Hwrite(vp->aid, byte_count, (uint8 *) tBuf);
         if(status != byte_count) return FALSE;
     }
-    
-#if 0
+#else
+    /* no data conversion for CM5, for now. */
+#ifdef CM5
+CM_HDFtype = vp->HDFtype;
+#endif
 
     /*
      * Just do the I/O let the level above us worry about converting

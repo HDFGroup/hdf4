@@ -2787,15 +2787,7 @@ intn  len;
 
 --------------------------------------------------------------------------- */
 
-intn
-#ifdef PROTOTYPE
-SDsetexternalfile(int32 id, char *filename, int32 offset)
-#else
-SDsetexternalfile(id, filename, offset)
-int32   id;
-char  * filename;
-int32   offset;
-#endif
+intn SDsetexternalfile(int32 id, char *filename, int32 offset)
 {
 
     NC       * handle;
@@ -2853,6 +2845,105 @@ int32   offset;
     return(status);
 
 } /* SDsetexternalfile */
+
+
+/* -------------------------- SDsetbigexternalfile --------------------------- */
+/*
+
+ NAME
+	SDsetbigexternalfile -- store info in a separate file
+ USAGE
+	intn SDsetbigexternalfile(id, filename, offset)
+        int32   id;                  IN: dataset ID
+        char  * filename;            IN: name of big external file
+        int32   offset;              IN: offset in big external file
+ RETURNS
+        Return SUCCEED or FAIL
+
+ DESCRIPTION
+        Specify that the actual data for this dataset be stored in a 
+        separate file (a "big external file" in HDF terms) up to 2**64
+	bytes in size.
+
+        Only the data (as in SDwritedata()) will be stored externally.  
+        Attributes and such will still be in the main file
+
+        IMPORTANT:  It is the user's responsibility to see that the 
+        separate files are transported when the main file is moved.
+
+        IMPORTANT:  This can only be called *once* for a given dataset.  
+        The HDF utility 'hdfpack' may be able to undo it.
+
+        IMPORTANT:  This will only work on datasets stored in HDF files.
+
+
+--------------------------------------------------------------------------- */
+intn
+#ifdef PROTOTYPE
+SDsetbigexternalfile(int32 id, char *filename, int32 offset)
+#else
+SDsetbigexternalfile(id, filename, offset)
+int32   id;
+char  * filename;
+int32   offset;
+#endif
+{
+
+    NC       * handle;
+    NC_var   * var;
+    intn       status;
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDsetbigexternalfile: I've been called\n");
+#endif
+
+    if(!filename || offset < 0)
+        return FAIL;
+
+    handle = SDIhandle_from_id(id, SDSTYPE);
+    if(handle == NULL || handle->file_type != HDF_FILE)
+        return FAIL;
+
+    if(handle->vars == NULL)
+        return FAIL;
+
+    var = SDIget_var(handle, id);
+    if(var == NULL)
+        return FAIL;
+
+    /* already exists */
+    if(var->data_ref) {
+
+        /* no need to give a length since the element already exists */
+        status = (intn)HBcreate(handle->hdf_file, (uint16)DATA_TAG, (uint16) var->data_ref,
+                          filename, offset, (int32)0);
+
+    } else {
+        int32   length;
+
+        /* look up the length */
+        length = var->len;
+
+        /* element doesn't exist so we need a reference number */
+        var->data_ref = Hnewref(handle->hdf_file);
+        if(var->data_ref == 0)
+            return FAIL;
+
+        /* need to give a length since the element does not exist yet */
+        status = (intn)HBcreate(handle->hdf_file, (uint16)DATA_TAG, (uint16) var->data_ref,
+                          filename, offset, length);
+
+    }
+
+    if(status != FAIL) {
+        if((var->aid != 0) && (var->aid != FAIL))
+            Hendaccess(var->aid);
+        var->aid = status;
+    }
+
+    return(status);
+
+} /* SDsetbigexternalfile */
 
 
 /* ------------------------------ SDfindattr ------------------------------ */
@@ -3239,3 +3330,71 @@ int32 *sizes;
 */
 #endif /* 0 */
 
+
+/* -------------------------- SDsetaccesstype --------------------------- */
+/*
+
+ NAME
+	SDsetaccesstype -- set the I/O access type of an SD
+ USAGE
+	intn SDsetaccesstype(id, accesstype)
+        int32   id;              IN: dataset ID
+        uintn   accesstype;         IN: access type
+ RETURNS
+        Return SUCCEED if the SD data can be accessed via accesstype.
+	Otherwise return FAIL.
+
+ DESCRIPTION
+        Set the type of I/O (serial, parallel, ...) for accessing the
+	data of the SD.  Access types can be DFACC_SERIAL, DFACC_PARALLEL,
+	DFACC_DEFAULT.
+	
+--------------------------------------------------------------------------- */
+#ifdef CM5
+extern CM_DEBUG;
+#endif
+
+intn SDsetaccesstype(int32 id, uintn accesstype)
+{
+
+    NC       * handle;
+    NC_var   * var;
+    intn       status;
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDsetaccesstype: I've been called\n");
+#endif
+
+#ifdef CM5
+if (CM_DEBUG > 0)
+    printf("SDsetaccesstype under construction\n");
+#endif
+
+    switch (accesstype){
+        case DFACC_DEFAULT:
+        case DFACC_SERIAL:
+        case DFACC_PARALLEL:
+            break;
+        otherwise:
+            return (FAIL);
+    }
+
+    handle = SDIhandle_from_id(id, SDSTYPE);
+    if(handle == NULL || handle->file_type != HDF_FILE)
+        return FAIL;
+
+    if(handle->vars == NULL)
+        return FAIL;
+
+    var = SDIget_var(handle, id);
+    if(var == NULL)
+        return FAIL;
+
+    /* if aid is not valid yet, there is no access_rec setup yet. */
+    /* Go ahead and try set it up. */
+    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FALSE)
+        return(FAIL);
+    else 
+        return((intn)Hsetaccesstype(var->aid, accesstype));
+
+} /* SDsetaccesstype */
