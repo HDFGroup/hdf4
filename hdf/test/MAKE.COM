@@ -6,9 +6,9 @@
 !$! The following constants should probably be defined
 !$!   only once in the main HDF MAKE.COM...
 !$!
-!$! define/nolog hdf$lib [-.lib]df
-!$! define/nolog hdf$include [-.include]
-!$! define/nolog sys$clib sys$library:vaxcrtl
+$ define/nolog hdf$lib [-.lib]df
+$ define/nolog hdf$include [-.include]
+$ define/nolog sys$clib sys$library:vaxcrtl
 !$!
 $ type sys$input
   **    Making testhdf **
@@ -32,11 +32,9 @@ $ cc/define=VMS/include=hdf$include   anfile
 $ cc/define=VMS/include=hdf$include   slab
 $ cc/define=VMS/include=hdf$include   sdstr
 $ cc/define=VMS/include=hdf$include   litend
-$ cc/define=VMS/include=hdf$include   tv1
-$ cc/define=VMS/include=hdf$include   tv2
-$ cc/define=VMS/include=hdf$include   egchi
+$ cc/define=VMS/include=hdf$include   tvset
 $ link testhdf,rig,sdmms,sdnmms,an,anfile,sdstr,slab,litend, -
-  hfile, hfile1,hblocks,hextelt,vers,tv1, tv2, egchi, -
+  hfile, hfile1,hblocks,hextelt,vers,tvset, -
   hdf$lib/lib,sys$clib/lib
 $ type sys$input 
   **  Making Fortran interface test programs **
@@ -79,4 +77,5 @@ $ link slab4wf, hdf$lib/lib, sys$clib/lib
 $ link egfhi, hdf$lib/lib, sys$clib/lib
 $ delete *.obj;*
 $!
+
 
