@@ -197,6 +197,8 @@ char *argv[];
     uint8   ru8_data[4];    /* chunk input buffer */
     int32   rcdims[3];      /* for SDgetChunkInfo() */
     uint16  fill_u16 = 0;  /* fill value */
+    SD_CHUNK_DEF chunk_def; /* Chunk defintion */
+    comp_info cinfo;       /* compression info */
 #if 0
     float32 *wf32_data = f32_data;
     uint16  *wu16_data = u16_data;
@@ -1573,6 +1575,191 @@ char *argv[];
     /* Close down SDS*/    
     status = SDendaccess(newsds6);
     CHECK(status, "SDendaccess");
+
+
+    /* ---------------------------------------------------------------
+     *  Chunking with Compression 
+     ----------------------------------------------------------------*/
+
+    /* create a  9x4 SDS of uint16 in file 1 */
+    d_dims[0] = 9;
+    d_dims[1] = 4;
+    newsds8 = SDcreate(f1, "DataSetChunked_GZIP_5", DFNT_UINT16, 2, d_dims);
+    if(newsds8 == FAIL) 
+      {
+        fprintf(stderr, "Failed to create a new data set \n");
+        num_err++;
+      }
+
+    /* set fill value */
+    fill_u16 = 0;
+    status = SDsetfillvalue(newsds8, (VOIDP) &fill_u16);
+    CHECK(status, "SDsetfillvalue");
+
+    /* Create chunked SDS 
+       chunk is 3x2 which will create 6 chunks.
+       Use GZIP compression */
+    cdims[0] = 3;
+    cdims[1] = 2;
+    chunk_def.chunk_lengths = cdims;
+    cinfo.deflate.level = 9;
+    chunk_def.comp_type = COMP_CODE_DEFLATE;
+    chunk_def.cinfo = &cinfo;
+    status = SDsetChunk(newsds8, &chunk_def, SD_CHUNK_COMP);
+    if(status == FAIL) 
+      {
+        fprintf(stderr, "Failed to create new chunked, Compressed data set\n");
+        num_err++;
+      }
+
+    /* Set Chunk cache to hold 2 chunks */
+    status = SDsetChunkCache(newsds8, 2, 0);
+    if(status == FAIL) 
+      {
+        fprintf(stderr, "SDsetChunkCache failed\n");
+        num_err++;
+      }
+
+
+    /* Write data */
+    start_dims[0] = 0;
+    start_dims[1] = 0;
+    edge_dims[0] = 9;
+    edge_dims[1] = 4;
+    status = SDwritedata(newsds8, start_dims, NULL, edge_dims, (VOIDP) u16_2data);
+    if(status == FAIL) 
+      {
+        fprintf(stderr, "Failed to write slabw1 to new chunked data set\n");
+        num_err++;
+      }
+
+    /* read a portion of data back in using SDreaddata*/
+    start_dims[0] = 0;
+    start_dims[1] = 0;
+    edge_dims[0] = 9;
+    edge_dims[1] = 4;
+    status = SDreaddata(newsds8, start_dims, NULL, edge_dims, (VOIDP) inbuf1_2u16);
+    CHECK(status, "SDreaddata");
+    for (i = 0; i < 9; i++)
+      {
+        for (j = 0; j < 4; j++)
+          {
+              if (inbuf1_2u16[i][j] != u16_2data[i][j])
+                {
+                    fprintf(stderr,"inbuf1_2u16[%d][%d]=%d,",
+                            i,j,inbuf1_2u16[i][j]);
+                    fprintf(stderr,"u16_cdata[%d][%d]=%d,",
+                            i,j,u16_2data[i][j]);
+                    fprintf(stderr,"\n");
+                    num_err++;
+                }
+          }
+      }
+    /* Get chunk lengths */
+    status = SDgetChunkInfo(newsds8, rcdims, SD_CHUNK_LENGTHS);
+    if(status == FAIL) 
+      {
+        fprintf(stderr, "SDgetChunkInfo failed \n");
+        num_err++;
+      }
+
+    if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1])
+      {
+        fprintf(stderr, "SDgetChunkInfo returned wrong values\n");
+        num_err++;
+      }
+
+    /* check to see if SDS is chunked */
+    status = SDisChunked(newsds8);
+    if (status != 1)
+      {
+          fprintf(stderr,"SDisChunked does think SDS is chunked\n");
+      }
+
+    /* Close down this SDS*/    
+    status = SDendaccess(newsds8);
+    CHECK(status, "SDendaccess");
+
+    /*
+     * Chunking with NBIT
+     */
+#if 0 /* NOT YET */
+    f3 = SDstart(FILE3, DFACC_RDWR);
+    CHECK(f1, "SDstart");
+
+    nt = DFNT_INT32;
+    dimsize[0] = 5;
+    dimsize[1] = 5;
+    newsds = SDcreate(f3, "Chunked_NBitDataSet", nt, 2, dimsize);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to create a new chunked, nbit data set \n");
+        num_err++;
+    }
+
+    for(i = 0; i < 25; i++)
+        idata[i] = i*10;
+
+    /* Create chunked SDS 
+       chunk is 2x2 which will create 9 chunks.
+       Use NBIT compression */
+    cdims[0] = 2;
+    cdims[1] = 2;
+    chunk_def.chunk_lengths = cdims;
+    chunk_def.start_bit = 6;
+    chunk_def.bit_len   = 7;
+    chunk_def.sign_ext  = FALSE;
+    chunk_def.fill_one  = FALSE;
+    status = SDsetChunk(newsds, &chunk_def, SD_CHUNK_NBIT);
+    if(status == FAIL) 
+      {
+        fprintf(stderr, "Failed to create new chunked, NBIT data set\n");
+        num_err++;
+      }
+#if 0
+    status = SDsetnbitdataset(newsds,6,7,FALSE,FALSE);
+    CHECK(status, "SDsetnbitdataset");
+#endif
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
+    CHECK(status, "SDwritedata");
+
+    status = SDendaccess(newsds);
+    CHECK(status, "SDendaccess");
+
+    /* need to close to flush n-bit info to file */
+    status = SDend(f3);
+    CHECK(status, "SDend");
+
+    /* read the n-bit data back in */
+    f3 = SDstart(FILE3, DFACC_RDWR);
+    CHECK(f1, "SDstart (again)");
+
+    newsds2 = SDselect(f3, 0);
+    if(newsds == FAIL) {
+        fprintf(stderr, "Failed to select a data set for n-bit access\n");
+        num_err++;
+    }
+
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
+    CHECK(status, "SDreaddata");
+
+    for(i = 0; i < 25; i++)
+        if((idata[i]&0x7f) != rdata[i]) {
+            fprintf(stderr,"Bogus val in loc %d in n-bit dset want %ld got %ld\n",
+		    i, (long)idata[i], (long)rdata[i]);
+            num_err++;
+        }
+
+
+    status = SDendaccess(newsds2);
+    CHECK(status, "SDendaccess");
+
+    status = SDend(f3);
+    CHECK(status, "SDend");
+#endif /* CHUNKING with NBIT */
 
 #endif /* CHUNK_TEST */
 
