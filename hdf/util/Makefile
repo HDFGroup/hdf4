@@ -12,7 +12,7 @@
 #
 # $Id$
 #
-UTILS = hdf24to8 hdfcomp hdfls hdfpack hdfrseq hdftopal hdftor8 paltohdf \
+UTILS = hdf24to8 hdfcomp hdfls hdfpack hdftopal hdftor8 paltohdf \
         r8tohdf ristosds vcompat vmake vshow hdf8to24 hdf2jpeg jpeg2hdf fp2hdf \
 	hdfunpac
 
@@ -60,7 +60,6 @@ CFLAGS = -D$(MACHINE)
 
 .c.o: he.h he_proto.h $(HDFLIB)/libdf.a $(FRC)
 	$(CC) -c $(CFLAGS) -I$(HDFINC) $<
-#	$(CC) -c $(CFLAGS) -I$(HDFINC) $(GLLIB)  $<
 
 all: hdfed utils fptest
 	-if( test \! -d $(HDFBIN)) then (mkdir $(HDFBIN)) fi
@@ -81,10 +80,10 @@ hdfed: he.h he_proto.h $(HEOBJ) $(HDFLIB)/libdf.a $(FRC)
 	$(CC) $(CFLAGS) -I$(HDFINC) $(HEOBJ) $(HDFLIB)/libdf.a -o hdfed $(JPEGLIB)/libjpeg.a
 
 fp2hdf: $(HDFLIB)/libdf.a fp2hdf.c
-	$(CC) $(CFLAGS) -I$(HDFINC) fp2hdf.c -o $@ $(HDFLIB)/libdf.a $(GLLIB) $(MATHLIB) $(JPEGLIB)/libjpeg.a
+	$(CC) $(CFLAGS) -I$(HDFINC) fp2hdf.c -o $@ $(HDFLIB)/libdf.a $(MATHLIB) $(JPEGLIB)/libjpeg.a
 
 .c: $(HDFLIB)/libdf.a
-	$(CC) $(CFLAGS) -I$(HDFINC) $< -o $@ $(HDFLIB)/libdf.a $(GLLIB) $(JPEGLIB)/libjpeg.a
+	$(CC) $(CFLAGS) -I$(HDFINC) $< -o $@ $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
 
 .f: $(HDFLIB)/libdf.a 
 	$(FC) $(FFLAGS) $< $(HDFLIB)/libdf.a -o $@ $(JPEGLIB)/libjpeg.a
