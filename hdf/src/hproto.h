@@ -25,9 +25,12 @@
 $Header$
 
 $Log$
-Revision 1.12  1993/01/05 04:06:38  georgev
-Added Fortran hyperslab C stubs
+Revision 1.13  1993/01/14 19:09:07  chouck
+Added routine Hfidinquire() to get info about an open file
 
+ * Revision 1.12  1993/01/05  04:06:38  georgev
+ * Added Fortran hyperslab C stubs
+ *
  * Revision 1.11  1993/01/04  18:17:58  sxu
  * change dspre32 to dsip32s (for dfsdpre32sdg)
  *
@@ -174,6 +177,9 @@ extern char HUGE *HDgettagname
 
 extern int32 Hishdf
   PROTO((char HUGE *filename));
+
+extern intn Hfidinquire
+    PROTO((int32 file_id, char **fname, intn *access, intn *attach));
 
 /*
 ** from hkit.c 

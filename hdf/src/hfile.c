@@ -6,9 +6,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.9  1993/01/14 19:09:07  chouck
+Added routine Hfidinquire() to get info about an open file
 
+ * Revision 1.8  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.7  1992/10/09  20:49:17  chouck
  * Added some patches to work with ThinkC I/O on the Mac
  *
@@ -3248,6 +3251,52 @@ int32 file_id;
 }
 
 /* end version tags */
+
+
+/* ----------------------------- Hfidinquire ----------------------------- */
+/*
+** NAME
+**	Hfidinquire --- Inquire about a file ID
+** USAGE
+**	int Hfidinquire(file_id)
+**	int32 file_id;		IN: handle of file
+**      char  *path;            OUT: path of file
+**      int32 mode;             OUT: mode file is opened with 
+** RETURNS
+**	returns SUCCEED (0) if successful and FAIL (-1) if failed.
+** DESCRIPTION
+** GLOBAL VARIABLES
+** COMMENTS, BUGS, ASSUMPTIONS
+--------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+intn Hfidinquire(int32 file_id, char **fname, intn *access, intn *attach)
+#else
+intn Hfidinquire(file_id, fname, access, attach)
+int32 file_id;
+char  **fname;
+intn  *access;
+intn  *attach;
+#endif
+{
+    filerec_t *file_rec;
+    char *FUNC="Hfidinquire";
+
+    HEclear();
+
+    file_rec = FID2REC(file_id);
+    if (!file_rec || file_rec->refcount == 0) {
+        HERROR(DFE_ARGS);
+        return(FAIL);
+    }
+
+    *fname  = file_rec->path;
+    *access = file_rec->access;
+    *attach = file_rec->attach;
+
+    return SUCCEED;
+
+} /* Hfidinquire */
+
 
 #ifdef MAC
 /*
