@@ -60,7 +60,7 @@ fortest: $(FTESTS) fortest.o
 ftests: $(FTESTS)
 
 clean: 
-	 -$(RM) $(RMFLAGS) $(CTESTS) $(FOBJS) $(FTESTS)
+	 -$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) fortest
 
 depend: 
 	 makedepend -I$(HDFINC) *.c
