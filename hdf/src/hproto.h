@@ -465,6 +465,12 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (int32 aid);
 
 /*
+   ** from hcompri.c
+ */
+    HDFLIBAPI int32 HRPconvert
+                (int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim,int16 scheme, comp_info *cinfo, uintn pixel_size);
+
+/*
    ** from herr.c
  */
     HDFLIBAPI const char *HEstring

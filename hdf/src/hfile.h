@@ -741,6 +741,39 @@ extern      "C"
                 (accrec_t * access_rec, sp_info_block_t * info_block);
 
 /*
+   ** from hcompri.c
+ */
+
+    HDFLIBAPI int32 HRPstread
+                (accrec_t * rec);
+
+    HDFLIBAPI int32 HRPstwrite
+                (accrec_t * rec);
+
+    HDFLIBAPI int32 HRPseek
+                (accrec_t * access_rec, int32 offset, int origin);
+
+    HDFLIBAPI int32 HRPinquire
+                (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
+               int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
+                 int16 *pspecial);
+
+    HDFLIBAPI int32 HRPread
+                (accrec_t * access_rec, int32 length, void * data);
+
+    HDFLIBAPI int32 HRPwrite
+                (accrec_t * access_rec, int32 length, const void * data);
+
+    HDFLIBAPI intn HRPendaccess
+                (accrec_t * access_rec);
+
+    HDFLIBAPI int32 HRPcloseAID
+                (accrec_t * access_rec);
+
+    HDFLIBAPI int32 HRPinfo
+                (accrec_t * access_rec, sp_info_block_t * info_block);
+
+/*
    ** from hfiledd.c
  */
 /******************************************************************************

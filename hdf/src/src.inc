@@ -23,12 +23,6 @@
 #
 #
 
-#HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h dfan.h dfrig.h dfgr.h dfsd.h \
-#     vg.h df.h dfi.h dfstubs.h dfufp2i.h hcomp.h hconv.h hbitio.h \
-#     tbbt.h crle.h cnbit.h mstdio.h cnone.h cskphuff.h cdeflate.h mfgr.h \
-#     mfan.h hlimits.h hntdefs.h htags.h hkit.h hcompi.h bitvect.h atom.h \
-#     dynarray.h linklist.h glist.h
-
 # Header files not included for copying to 'include' directory during installation
 # These are private to the library and users do need them
 HDRS_NO= glist.h mcache.h hqueue.h
@@ -50,17 +44,12 @@ MFAN_HDRS=mfan.h
 MFGR_HDRS=mfgr.h
 
 CSRCS = $(HCSRCS) $(VCSRCS) $(DFCSRCS) $(MFCSRCS)
-HCSRCS=hfile.c herr.c hblocks.c hbuffer.c hextelt.c hkit.c hdfalloc.c hcomp.c \
-    hbitio.c tbbt.c hdfalloc.c hcomp.c crle.c cnbit.c mstdio.c cnone.c \
+HCSRCS=hfile.c herr.c hblocks.c hbuffer.c hcompri.c hextelt.c hkit.c hdfalloc.c \
+    hcomp.c hbitio.c tbbt.c hdfalloc.c hcomp.c crle.c cnbit.c mstdio.c cnone.c \
     cskphuff.c cdeflate.c bitvect.c atom.c hfiledd.c dynarray.c linklist.c \
     glist.c hchunks.c mcache.c 
 
 VCSRCS=vg.c vrw.c vio.c vparse.c vconv.c vsfld.c vgp.c vhi.c vattr.c
-
-#DFCSRCS=dfan.c dfr8.c dfcomp.c dfrle.c dfimcomp.c dfjpeg.c dfunjpeg.c dfp.c \
-#        dfgr.c df24.c dfsd.c dfgroup.c dfconv.c dfufp2i.c \
-#        dfutil.c dfstubs.c dfknat.c dfkswap.c dfkcray.c dfkvms.c \
-#        dfkconv.c dfkfuji.c 
 
 DFCSRCS=$(DFG_CSRCS) $(DFAN_CSRCS) $(DFSD_CSRCS) $(DFRI_CSRCS)
 DFG_CSRCS=dfgroup.c dfconv.c dfufp2i.c dfutil.c dfstubs.c dfknat.c dfkswap.c \
@@ -75,16 +64,12 @@ MFAN_CSRCS=mfan.c
 MFGR_CSRCS=mfgr.c
 
 COBJS = $(HCOBJS) $(VCOBJS) $(DFCOBJS) $(MFCOBJS)
-HCOBJS=hfile.o herr.o hblocks.o hbuffer.o hextelt.o hkit.o hdfalloc.o hcomp.o \
-    hbitio.o tbbt.o crle.o cnbit.o mstdio.o cnone.o cskphuff.o cdeflate.o \
-    bitvect.o atom.o hfiledd.o dynarray.o linklist.o glist.o hchunks.o mcache.o
+HCOBJS=hfile.o herr.o hblocks.o hbuffer.o hcompri.o hextelt.o hkit.o hdfalloc.o \
+    hcomp.o hbitio.o tbbt.o crle.o cnbit.o mstdio.o cnone.o cskphuff.o \
+    cdeflate.o bitvect.o atom.o hfiledd.o dynarray.o linklist.o glist.o \
+    hchunks.o mcache.o
 
 VCOBJS=vg.o vrw.o vio.o vparse.o vconv.o vsfld.o vgp.o vhi.o vattr.o
-
-#DFCOBJS=dfan.o dfr8.o dfcomp.o dfrle.o dfimcomp.o dfjpeg.o dfunjpeg.o dfp.o \
-#        dfgr.o df24.o dfsd.o dfgroup.o dfconv.o dfufp2i.o \
-#        dfutil.o dfstubs.o dfknat.o dfkswap.o dfkcray.o dfkvms.o \
-#        dfkconv.o dfkfuji.o 
 
 DFCOBJS=$(DFG_COBJS) $(DFAN_COBJS) $(DFSD_COBJS) $(DFRI_COBJS)
 DFG_COBJS=dfgroup.o dfconv.o dfufp2i.o dfutil.o dfstubs.o dfknat.o dfkswap.o \
@@ -99,8 +84,6 @@ MFAN_COBJS=mfan.o
 MFGR_COBJS=mfgr.o
 
 FSRCS = $(FCSRCS) $(FFSRCS)
-#FCSRCS=hfilef.c herrf.c dfanf.c dfr8f.c dfpf.c df24f.c dfsdf.c vgf.c dff.c \
-#    dfutilf.c mfanf.c mfgrf.c hkitf.c vattrf.c
 FCSRCS=$(H_FCSRCS) $(V_FCSRCS) $(DF_FCSRCS) $(DFAN_FCSRCS) $(DFSD_FCSRCS) \
        $(DFRI_FCSRCS) $(MFAN_FCSRCS) $(MFGR_FCSRCS)
 H_FCSRCS=hfilef.c herrf.c
@@ -112,8 +95,6 @@ DFRI_FCSRCS=dfr8f.c dfpf.c df24f.c
 MFAN_FCSRCS=mfanf.c
 MFGR_FCSRCS=mfgrf.c
 
-#FFSRCS=hfileff.f dfanff.f df24ff.f dfpff.f dfr8ff.f dfsdff.f vgff.f dfff.f \
-#    dfufp2if.f mfgrff.f hkitff.f vattrff.f
 FFSRCS=$(H_FFSRCS) $(V_FFSRCS) $(DF_FFSRCS) $(DFAN_FFSRCS) $(DFSD_FFSRCS) \
        $(DFRI_FFSRCS) $(MFAN_FFSRCS) $(MFGR_FFSRCS)
 H_FFSRCS=hfileff.f 
@@ -126,8 +107,6 @@ MFAN_FFSRCS=
 MFGR_FFSRCS=mfgrff.f
 
 FOBJS = $(FCOBJS) $(FFOBJS)
-#FCOBJS=hfilef.o herrf.o dfanf.o dfr8f.o dfpf.o df24f.o dfsdf.o vgf.o dff.o \
-#    dfutilf.o mfanf.o mfgrf.o vattrf.o
 
 FCOBJS=$(H_FCOBJS) $(V_FCOBJS) $(DF_FCOBJS) $(DFAN_FCOBJS) $(DFSD_FCOBJS) \
        $(DFRI_FCOBJS) $(MFAN_FCOBJS) $(MFGR_FCOBJS)
@@ -140,8 +119,6 @@ DFRI_FCOBJS=dfr8f.o dfpf.o df24f.o
 MFAN_FCOBJS=mfanf.o
 MFGR_FCOBJS=mfgrf.o
 
-#FFOBJS=hfileff.o dfanff.o df24ff.o dfpff.o dfr8ff.o dfsdff.o vgff.o dfff.o \
-#    dfufp2if.o mfgrff.o hkitff.o vattrff.o
 FFOBJS=$(H_FFOBJS) $(V_FFOBJS) $(DF_FFOBJS) $(DFAN_FFOBJS) $(DFSD_FFOBJS) \
        $(DFRI_FFOBJS) $(MFAN_FFOBJS) $(MFGR_FFOBJS)
 H_FFOBJS=hfileff.o 

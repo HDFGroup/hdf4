@@ -130,6 +130,7 @@
 #define SPECIAL_VLINKED 4   /* Variable-length linked blocks */
 #define SPECIAL_CHUNKED 5   /* chunked element */
 #define SPECIAL_BUFFERED 6  /* Buffered element */
+#define SPECIAL_COMPRAS 7   /* Compressed Raster element */
 
 #endif /* _HTAGS_H */
 

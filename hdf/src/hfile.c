@@ -165,6 +165,10 @@ extern funclist_t comp_funcs;
    For definition of the buffered data element, see hbuffer.c. */
 extern funclist_t buf_funcs;
 
+/* Functions for accessing compressed raster data elements.
+   For definition of the compressed raster data element, see hcompri.c. */
+extern funclist_t cr_funcs;
+
 /* Table of these function tables for accessing special elements.  The first
    member of each record is the speical code for that type of data element. */
 functab_t   functab[] =
@@ -177,6 +181,7 @@ functab_t   functab[] =
 	{SPECIAL_VLINKED, &vlnk_funcs},
 #endif /* LATER */
 	{SPECIAL_BUFFERED, &buf_funcs},
+	{SPECIAL_COMPRAS, &cr_funcs},
 	{0, NULL}					/* terminating record; add new record */
 			   /* before this line */
 };
@@ -1377,7 +1382,13 @@ printf("%s: check 1.0, offset=%d, origin=%d, data_len=%d\n",FUNC,(int)offset,(in
 
 #ifdef QAK
 printf("%s: check 1.5, offset=%d, origin=%d, data_len=%d\n",FUNC,(int)offset,(int)origin,(int)data_len);
+printf("%s: check 1.6, access_rec->posn=%d\n",FUNC,(int)access_rec->posn);
 #endif /* QAK */
+  /* If we aren't moving the access records position, bypass the next bit of code */
+  /* This allows seeking to offset zero in not-yet-existent data elements -QAK */
+  if(offset==access_rec->posn)
+      HGOTO_DONE(SUCCEED);
+
   /* Check the range */
   if (offset < 0 || (!access_rec->appendable && offset > data_len))
     {

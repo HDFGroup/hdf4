@@ -74,7 +74,7 @@ bufinfo_t;
 
 /* forward declaration of the functions provided in this module */
 
-/* ext_funcs -- table of the accessing functions of the external
+/* buf_funcs -- table of the accessing functions of the buffered
    data element function modules.  The position of each function in
    the table is standard */
 funclist_t  buf_funcs =
@@ -133,8 +133,11 @@ HBconvert(int32 aid)
     if ((access_rec = HAatom_object(aid)) == NULL)	/* get the access_rec pointer */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
+#ifdef QAK
+printf("%s: check 1.0\n",FUNC);
+#endif /* QAK */
     /* get the info for the dataset */
-    if (HTPis_special(access_rec->ddid)) {
+    if (HTPis_special(access_rec->ddid) || access_rec->special!=0) {
         if((*access_rec->special_func->inquire) (access_rec, NULL,
                            &data_tag, &data_ref, &data_len, &data_off, NULL, NULL, NULL)==FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -514,6 +517,9 @@ HBPendaccess(accrec_t * access_rec)
 #endif /* LATER */
     intn     ret_value = SUCCEED;
 
+#ifdef QAK
+printf("%s: check 1.0\n",FUNC);
+#endif /* QAK */
     /* shut down the memory buffer and dependant access record */
     HBPcloseAID(access_rec);
 
@@ -618,7 +624,7 @@ HBPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
     int32      ret_value = SUCCEED;
 
     /* validate access record */
-    if (access_rec->special != SPECIAL_EXT)
+    if (access_rec->special != SPECIAL_BUFFERED)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* fill in the info_block */
