@@ -21,15 +21,16 @@
 # Type of C compiler (default is `cc'):
 # Try 'gcc -ansi' if your cc is not ANSI compatible.
 # CC='gcc -ansi'
+CC='cc -ansi'
 #
 # C compiler flags (default is `-O'):
-CFLAGS='-g'
+# CFLAGS='-O'
 #
 # C preprocessor flags 
 # CPPFLAGS=-DNDEBUG
 #
 # Location of the HDF home.  Must be an absolute path.
-HDF_HOME=`pwd`/..
+HDF_HOME=/usr6/koziol/hdf/HDF4.0
 # Location of HDF include files.  Must be an absolute path.
 HDF_INC=-I${HDF_HOME}/hdf/include
 #
