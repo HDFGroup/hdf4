@@ -65,13 +65,15 @@
 #define DIMENSION         "Dim0.0"
 #define UDIMENSION        "UDim0.0"
 #define DIM_VALS          "DimVal0.0" 
+#define DIM_VALS01        "DimVal0.1"
 #define CDF               "CDF0.0"
 /* DATA is defined in DTM. Change DATA to DATA0 *
 #define DATA              "Data0.0"
 */
 #define DATA0             "Data0.0"
 #define ATTR_FIELD_NAME   "VALUES"
-
+#define DIMVAL_VERSION00  0  /* <dimsize> fake values */
+#define DIMVAL_VERSION01  1  /* 1 elt with value of <dimsize>  */
 #define BLOCK_MULT  64    /* multiplier for bytes in linked blocks */
 #define MAX_BLOCK_SIZE  65536    /* maximum size of block in linked blocks */
 #define BLOCK_COUNT 128   /* size of linked block pointer objects  */
@@ -129,6 +131,7 @@ typedef struct {
 	NC_string *name ;
         long size ;
 #ifdef HDF
+        int32 dim00_compat;   /* compatible with Dim0.0 */
 	int32 vgid;   /* id of the Vgroup representing this dimension */
         int32 count;  /* Number of pointers to this dimension */
 #endif

@@ -620,8 +620,8 @@ NC_dim *dim;
 {
   char *FUNC = "hdf_create_dim_vdata";
   int found = FALSE;
-  int i;
-  int ref;
+  int i, ref;
+  int32 val;
   long dsize;
 
 #if DEBUG
@@ -629,14 +629,12 @@ NC_dim *dim;
  fprintf(stderr, "handle->hdf_file = %d\n", handle->hdf_file);
 #endif
 
-  dsize = dim->size;
+/*  dsize = dim->size;  */
   if(dsize == NC_UNLIMITED) {
 #ifdef DEBUG
       fprintf(stderr, "Fudging unlimited dimension.\n");
 #endif
-      dsize = 1;
   }
-
 #if 0
   /* look for variable with the given name */
   if(handle->vars) {
@@ -648,24 +646,20 @@ NC_dim *dim;
 	break;
       }
   }
-
 #endif
-
   if(found) {
     /* load in the variable's values */
 #if DEBUG
    fprintf(stderr, "Found real values for dimension %s\n", dim->name->values);
 #endif
-
   } else {
-      int32 *val;
-      /* create a fake one */
+/*    int32 *val;
 #if DEBUG
       fprintf(stderr, "Creating fake dim  ::::%s::: (%d)\n", dim->name->values, dsize);
 #endif
-      
+*/      
       /* allocate space */
-      val = (int32 *) HDmalloc(dsize * sizeof(int32));
+/*      val = (int32 *) HDmalloc(dsize * sizeof(int32));
       if(!val) {
           HERROR(DFE_NOSPACE);
           return FAIL;
@@ -677,9 +671,11 @@ NC_dim *dim;
       } else {
           val[0] = (int32)handle->numrecs;
       }
-      
-      ref = VHstoredata(handle->hdf_file, "Values", (void *)val, dsize,
-                        DFNT_INT32, dim->name->values, DIM_VALS);
+*/      
+      dsize = 1;
+      val = (dim->size != NC_UNLIMITED) ? dim->size : (int32)handle->numrecs;
+      ref = VHstoredata(handle->hdf_file, "Values", (void *)&val, dsize,
+                        DFNT_INT32, dim->name->values, DIM_VALS01);
       
       if(ref == FAIL) {
 #ifdef DEBUG
@@ -688,7 +684,7 @@ NC_dim *dim;
           return FAIL;
       }
       
-      HDfree((VOIDP)val);
+/*      HDfree((VOIDP)val);  */
 
   }
   
@@ -699,6 +695,71 @@ NC_dim *dim;
   return ref;
   
 } /* hdf_create_dim_vdata */
+/* ----------------------------------------------------------------
+** Given a dimension pointer return the ref of an older version
+**   dim Vdata which was newly created to represent the values
+**   the dimension takes on, for backward compatibility.
+**
+**   For DIM_VALS, the values the variable takes on are the values
+**     for the 'steps' in the dimension.
+**
+*/
+int
+  hdf_create_compat_dim_vdata(xdrs, handle, dim, dimval_ver)
+XDR *xdrs;
+NC *handle;
+NC_dim *dim;
+int32 dimval_ver;
+{
+  char *FUNC = "hdf_create_compat_dim_vdata";
+  int found = FALSE;
+  int i;
+  int ref;
+  long dsize;
+  int32 *val;
+
+#ifdef DEBUG
+ fprintf(stderr, "hdf_create_compat_dim_vdata I've been called\n");
+ fprintf(stderr, "handle->hdf_file = %d\n", handle->hdf_file);
+ fprintf(stderr, "dim_ver = %d\n", dim_ver);
+#endif
+
+    if (dimval_ver != DIMVAL_VERSION00)
+          return FAIL;
+    dsize = dim->size;
+    if (dsize <= 0)
+            return FAIL;
+       /* create a fake one */
+#ifdef DEBUG
+    fprintf(stderr, "Creating fake dim  ::::%s::: (%d)\n",
+                     dim->name->values, dsize);
+#endif
+          /* allocate space */
+     val = (int32 *) HDmalloc(dsize * sizeof(int32));
+     if(!val) {
+              HERROR(DFE_NOSPACE);
+              return FAIL;
+     }
+     for(i = 0; i < dsize; i++)
+              val[i] = i;
+     ref = VHstoredata(handle->hdf_file, "Values", (void *)val,
+                   dsize, DFNT_INT32, dim->name->values, DIM_VALS);
+     if(ref == FAIL) {
+#ifdef DEBUG
+      fprintf(stderr, "FAILed creating Vdata %s\n", dim->name->values);
+#endif
+      return FAIL;
+      }
+
+      HDfree((VOIDP)val);
+
+#ifdef DEBUG
+  fprintf(stderr, "Returning vdata pointer %d\n", ref);
+#endif
+
+  return ref;
+
+} /* hdf_create_compat_dim_vdata */
 
 /* ----------------------------------------------------------------
 ** Write out a vdata representing an attribute
@@ -789,7 +850,12 @@ int32 cnt;
   refs[count] = hdf_create_dim_vdata(xdrs, handle, (*dim));
   if(refs[count] == FAIL) return FAIL;
   count++;
-  
+  if ((*dim)->dim00_compat) {
+     tags[count] = DFTAG_VH;
+     refs[count] = hdf_create_compat_dim_vdata(xdrs, handle, (*dim), DIMVAL_VERSION00);
+     if(refs[count] == FAIL) return FAIL;
+     count++;
+  } 
   if((*dim)->size == NC_UNLIMITED) 
       class = UDIMENSION;
   else
@@ -1149,7 +1215,7 @@ int32  vg;
 {
 
   char vgname[100], vsclass[128], vgclass[128];
-  int id, count, found;
+  int id, count, i, found;
   int sub_id;
   int32 dim_size;
   NC_dim **dimension;
@@ -1185,60 +1251,84 @@ int32  vg;
       dim = Vattach(handle->hdf_file, id, "r");
       if(dim == FAIL) continue;
       Vgetclass(dim, vgclass);
-      if(!HDstrcmp(vgclass, DIMENSION) || !HDstrcmp(vgclass, UDIMENSION)) {
-	Vinquire(dim, &entries, vgname);      
+      if(!HDstrcmp(vgclass, DIMENSION) || 
+         !HDstrcmp(vgclass, UDIMENSION)) {
+         int is_dimval, is_dimval01;
+         /* init both flags to FALSE  */
+         is_dimval = FALSE;
+         is_dimval01 = FALSE;
+	 Vinquire(dim, &entries, vgname);      
 	
 	/* 
-	 * look through for a Vdata of class DIM_VALS to get size 
+	 * look through for a Vdata of class DIM_VALS01 and/or DIM_VALS 
+         * to get size 
 	 */
-	sub_id = -1;
-	while(((sub_id = Vgetnext(dim, sub_id)) != FAIL) && !found) {
-	  if(Visvs(dim, sub_id)) {
-	    vs = VSattach(handle->hdf_file, sub_id, "r");
-	    if(vs == FAIL) HEprint(stdout, 0);
-	    
-            VSgetclass(vs, vsclass);
-	    if(!HDstrcmp(vsclass, DIM_VALS)) {
-              VSQuerycount(vs, &dim_size);
-
-              if(!HDstrcmp(vgclass, UDIMENSION)) {
-		  int32 val;	/* needs a temp var since handle->numrecs */
+	 sub_id = -1;
+	 while(((sub_id = Vgetnext(dim, sub_id)) != FAIL) ) {
+	   if(Visvs(dim, sub_id)) {
+	     vs = VSattach(handle->hdf_file, sub_id, "r");
+	     if(vs == FAIL) HEprint(stdout, 0);
+             VSgetclass(vs, vsclass);
+	     if(!HDstrcmp(vsclass, DIM_VALS)) {
+                 VSQuerycount(vs, &dim_size);   
+                 if (HDstrcmp(vgclass, UDIMENSION))  /* not unlimited dim */
+                     is_dimval = TRUE;
+             }
+             if ((!HDstrcmp(vsclass, DIM_VALS01)) ||
+                 (!HDstrcmp(vsclass, DIM_VALS) &&
+                  !HDstrcmp(vgclass, UDIMENSION))) {
+	          int32 val;	/* needs a temp var since handle->numrecs */
 				/* may not be an int32 */
-
-                  dim_size = NC_UNLIMITED;
                   VSsetfields(vs, "Values");
                   VSseek(vs, 0);
-                  
                   /*
                    * This is highly dangerous since there might be multiple
                    * unlimited dimensions
                    */
                   if(VSread(vs, (uint8 *) &val, 1, FULL_INTERLACE) != 1)
                       HEprint(stderr, 0);
-                  handle->numrecs = val;
-              }
-
-	      dimension[count] = NC_new_dim(vgname, dim_size);
-	      if(!dimension[count]) {
+                  if (!HDstrcmp(vgclass, UDIMENSION))   {
+                       dim_size = NC_UNLIMITED;
+                       handle->numrecs = val;
+                  }
+                  else  {  /* dimval01 */
+                      dim_size = val;
+                      is_dimval01 = TRUE;
+                  }
+             }  /* VSread */
+             VSdetach(vs); 
+             /* Is it the second dim vs of a compatible dim? */
+             found = FALSE;
+             for (i = count-1; ((i >= 0) && (!found)); i--)  {
+               if (!HDstrcmp(vgname, dimension[i]->name->values) &&
+                  (dim_size == dimension[i]->size))     {
+                   /* vgname is the dim name. vgname may be diff from vsname */
+                  if (is_dimval01 == TRUE && is_dimval == TRUE)
+                      dimension[i]->dim00_compat = 1;
+                  found = TRUE;   /* the second vs */
+               }
+             }  /* for */
+             if (!found) {
+	       dimension[count] = NC_new_dim(vgname, dim_size);
+	       if(!dimension[count]) {
 #ifdef DEBUG
 /* replace it with NCadvice or HERROR?? */
 		fprintf(stderr, "Can't create new dimension #%d\n", count);
 #endif
-		return FAIL;
-	      }
-	      
+	       return FAIL;
+	       }  /*  dimension[count]  */
 #if DEBUG
 	     fprintf(stderr, "Dimension <%s> has size %d\n", vgname, dim_size);
 #endif
+               if (!HDstrcmp(vsclass, DIM_VALS01)) /* dimvals01 only  */
+                   dimension[count]->dim00_compat = 0;
 	      count++;
-	      
-	    }
-	    VSdetach(vs);
-	  }
-	}
-      }
+	    }  /* found */
+	  }    /* is vs  */
+	}      /* while in dimension vg  */
+      }        /* is vg  */
       Vdetach(dim);
-    }
+    }  /* while */
   }
 
   if(count)

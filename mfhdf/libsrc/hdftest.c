@@ -37,9 +37,9 @@ char *argv[];
 #endif
 {
     int32 f1, f2, f3, sdsid, nt, dimsize[10], nattr;
-    int32 newsds, newsds2, newsds3, dimid, dimid2, number, offset;
-    int32 index, ival;
-    intn status, i;
+    int32 newsds, newsds2, newsds3, dimid, dimid1, dimid2, number, offset;
+    int32 index, ival, sdid;
+    intn status, i, rank, nattrs;
     char name[90], text[256];
     int32   start[10], end[10], scale[10], stride[10];
     char    l[80], u[80], fmt[80], c[80];
@@ -612,14 +612,120 @@ char *argv[];
     CHECK(status, "SDend");
 
 #endif /* NBIT_TEST */
-
+/* test SDsetdimval_incomp */
+    dimsize[0]=SD_UNLIMITED;
+    dimsize[1]=6;
+    sdid = SDcreate(f1, "dimval_non_compat", DFNT_INT32, 2, dimsize);
+    if (sdid == FAIL) {
+       fprintf(stderr, "Fail to create dimval_non_compat in FILE1\n");
+       num_err++;
+    }
+    dimid=SDgetdimid(sdid, 0);
+    status = SDsetdimval_incomp(dimid);
+    CHECK(status, "SDsetdimval_incomp");
+    dimid1=SDgetdimid(sdid, 1);
+    status = SDsetdimval_incomp(dimid1);
+    CHECK(status, "SDsetdimval_incomp");
+    for (i=0; i<6; i++)
+        scale[i]=i*5;
+    status = SDsetdimscale(dimid1, 6, DFNT_INT32, scale);
+    CHECK(status, "SDsetdimscale");
+    start[0]=0;
+    start[1]=0;
+    end[0]=4;
+    end[1]=6;
+    for (i=0; i<24; i++)
+        idata[i] = i;
+    status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
+    CHECK(status, "SDwritedata");
+    status = SDendaccess(sdid);
+    CHECK(status, "SDendaccess");
+    /* end of write "dimval_non_compat"  */ 
     status = SDend(f1);
     CHECK(status, "SDend");
-
-
-    /* open one last time to check that NDG ref has been constant */
+    /* read back and change dimval compatibility  */
     f1 = SDstart(FILE1, DFACC_RDWR);
-    CHECK(f1, "SDstart (again)");
+    CHECK(f1, "SDstart (again2)");
+    /* read back dimval_non_compat  */
+    index = SDnametoindex(f1, "dimval_non_compat");
+    if(index == FAIL) {
+        fprintf(stderr, "Failed on SDreftoindex call\n");
+        num_err++;
+    }
+    sdid = SDselect(f1, index);
+    if(sdid == FAIL) {
+        fprintf(stderr, "Failed on SDselect call\n");
+          num_err++;
+    }
+    status = SDgetinfo(sdid, name, &rank, dimsize, &nt, &nattrs);
+    CHECK(status, "SDgetinfo");
+    if (rank!=2 || dimsize[0]!=4 || dimsize[1]!=6 || nt!=DFNT_INT32) {
+        fprintf(stderr, "Failed on SDgetinfo call\n");
+          num_err++;
+    }
+    dimid=SDgetdimid(sdid,0);
+    status = SDdiminfo(dimid, name, &dimsize[0], &nt, &nattrs);
+    if (dimsize[0]!=SD_UNLIMITED || nt!= 0 )  {
+          fprintf(stderr, "Failed on SDgetinfo call\n");
+          num_err++;
+    }
+    dimid1=SDgetdimid(sdid,1);
+    status = SDdiminfo(dimid1, name, &dimsize[1], &nt, &nattrs);
+    if (dimsize[1]!=6 || nt!= DFNT_INT32 )  {
+          fprintf(stderr, "Failed on SDgetinfo call\n");
+          num_err++;
+    }
+    status = SDreaddata(sdid, start, NULL, end, (VOIDP)idata);
+    CHECK(status, "SDwritedata");
+    for (i=0; i<24; i++)  {
+        if (idata[i] != i) {
+           fprintf(stderr, "wrong value: should be %d, got %d\n",
+                           i, idata[i]);
+           num_err++;
+        }
+    }
+    status = SDisdimvalcomp(dimid1);
+    if (status != 0)  {
+          fprintf(stderr, "Failed on SDisdimvalcomp call\n");
+          num_err++;
+    }
+    status = SDsetdimval_comp(dimid1);
+    status = SDendaccess(sdid);
+    CHECK(status, "SDendaccess");
+    status = SDend(f1);
+    CHECK(status, "SDend");
+    /* open one last time to check that NDG ref has been constant */
+    /* check SDsetdimval_compat */
+    f1 = SDstart(FILE1, DFACC_RDWR);
+    CHECK(f1, "SDstart (again3)");
+    /* read back dimval_non_compat  */
+    index = SDnametoindex(f1, "dimval_non_compat");
+    if(index == FAIL) {
+        fprintf(stderr, "Failed on SDreftoindex call\n");
+        num_err++;
+    }
+    sdid = SDselect(f1, index);
+    if(sdid == FAIL) {
+        fprintf(stderr, "Failed on SDselect call\n");
+          num_err++;
+    }
+    status = SDgetinfo(sdid, name, &rank, dimsize, &nt, &nattrs);
+    CHECK(status, "SDgetinfo");
+    if (rank!=2 || dimsize[0]!=4 || dimsize[1]!=6 || nt!=DFNT_INT32) {
+        fprintf(stderr, "Failed on SDgetinfo call\n");
+          num_err++;
+    }
+    dimid1=SDgetdimid(sdid,1);
+    status = SDdiminfo(dimid1, name, &dimsize[1], &nt, &nattrs);
+    if (dimsize[1]!=6 || nt!= DFNT_INT32 )  {
+          fprintf(stderr, "Failed on SDgetinfo call\n");
+          num_err++;
+    }
+    status = SDisdimvalcomp(dimid1);
+    if (status != 1)  {
+          fprintf(stderr, "Failed on SDisdimvalcomp call\n");
+          num_err++;
+    }
 
     index = SDreftoindex(f1, ndg_saved_ref);
     if(index == FAIL) {
