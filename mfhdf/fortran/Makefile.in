@@ -415,7 +415,7 @@ $(LIBDIR)/$(LIB_SA):	$(LIBDIR) $(LIB_SA)
 # ###########################################################################
 # Programs:
 # ###########################################################################
-BINDIR		= $(exec_prefix)
+BINDIR		= $(exec_prefix)/bin
 
 programs:	$(PROGRAMS)
 program:
