@@ -26,7 +26,7 @@ New Features
  The Image window has added several new features that display the
  values of the data in an image.
 
-	* the value at the cursor can be tracked, giving either
+        * the value at the cursor can be tracked, giving either
           the pixel value, or the data value.   If the data value
           is scaled or has units, the proper values are displayed.
 
@@ -89,7 +89,7 @@ Bugs Fixed
  (See http://hdf.ncsa.uiuc.edu/tools.html for an incomplete list
  of tools.)
 
-2.  LIttle-endian data was not correctly handled
+2.  Little-endian data was not correctly handled
 
  This has been fixed.
 
@@ -119,7 +119,7 @@ Bugs Fixed
 
  We have seen and heard of many problems with window placement,
  blank windows, and windows that hang.  So far as we know, these
- problems stem from bugs is different implementations of the
+ problems stem from bugs in different implementations of the
  Java Virtual Machine.
 
  We have fixed as many problems as we can, and we hope that new
