@@ -1,5 +1,5 @@
-In this directory there are hdf utility programs, the makefiles, and a 
-subdirectory testfiles/ which contains all the data files needed to test
+In this directory there are hdf utility programs, makefiles, and a 
+subdirectory, testfiles/, which contains all the data files needed to test
 the utilities. The README.UTILS file describes how to use the data files
 in testfiles/ to test the utilities. 
 
@@ -7,15 +7,15 @@ The utilities are:
 
     . hdf24to8 -- converts 24-bit raster images to hdf 8-bit images
 
-    . hdfcomp -- re-compress 8-bit raster hdf file
+    . hdfcomp -- re-compresses an 8-bit raster hdf file
    
-    . hdfls -- lists basci information about an hdf file
+    . hdfls -- lists basic information about an hdf file
 
     . hdfpack --  compacts an hdf file
 
     . hdftopal -- extracts a palette from an hdf file
   
-    . hdftor8 -- exatracts 8-bit raster images and palettes from an
+    . hdftor8 -- extracts 8-bit raster images and palettes from an
                  hdf file
 
     . hdfed -- hdf file editor
@@ -24,14 +24,14 @@ The utilities are:
 
     . r8tohdf -- converts 8-bit raster images to hdf
 
-    . ristosds -- converts a series raster image hdf files into a
+    . ristosds -- converts a series of raster image hdf files into a
                   single 3D sds hdf file. 
 
     . vcompat -- converts hdf vset v1.0 files to v2.0
 
     . vmake -- creates vsets 
 
-    . vshow -- dumps out vsets in a hdf file
+    . vshow -- dumps out vsets in an hdf file
 
     . jpegtohdf -- converts jpeg images to hdf raster images
 
