@@ -203,7 +203,7 @@ ftests: $(FTESTS)
 
 clean: 
 	 -$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) fortest core \
-	qtesthdf ptesthdf
+	qtesthdf ptesthdf gentest
 
 depend: 
 	 makedepend -I$(HDFINC) *.c
