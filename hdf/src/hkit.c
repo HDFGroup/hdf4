@@ -35,7 +35,7 @@ intn len;
     for(i=0; (str[i]); i++)
         /* EMPTY */;
 #else /* OLD_WAY */
-    i=HDstrlen(str);
+    i=HDstrlen(str)+1;
 #endif /* OLD_WAY */
     for(; i<len; i++) str[i] = ' ';
     return 0;
@@ -66,7 +66,7 @@ char _HUGE *HDf2cstring(fdesc, len)
 #ifdef OLD_WAY
     for (; i>=0; i--) cstr[i] = str[i];
 #else /* OLD_WAY */
-    HDmemcpy(cstr,str,i);
+    HDmemcpy(cstr,str,i+1);
 #endif /* OLD_WAY */
     return cstr;
 }
