@@ -234,7 +234,7 @@ NAME
 USAGE
       intn VSattrhdfsize(int32 vsid, int32 findex, intn attrindex, int32 *size);
       int32 vsid;      IN: vdata id
-      int32 findex;    IN: field index. _HDF_VDATA (0xffffffff) for the vdata
+      int32 findex;    IN: field index. _HDF_VDATA (-1) for the vdata
       intn attrindex;  IN: which attr of the field/vdata 
                            attrindex is 0-based
       int32 *size;     OUT: size of the attr values in hdf files.
@@ -269,7 +269,7 @@ intn VSattrhdfsize(int32 vsid, int32 findex, intn attrindex, int32 *size)
         HGOTO_ERROR(DFE_NOVS, FAIL);
      if (NULL == (vs = vs_inst->vs))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-     if ((findex >= vs->wlist.n || findex < 0) && (findex != (int32)_HDF_VDATA))
+     if ((findex >= vs->wlist.n || findex < 0) && (findex != _HDF_VDATA))
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
      nattrs = vs->nattrs;
      if (attrindex <0 || attrindex >= nattrs)

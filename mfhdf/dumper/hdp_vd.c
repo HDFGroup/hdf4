@@ -646,7 +646,7 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
                       if (dumpvd_opts->contents != DHEADER)
                         {
                             /* dump attributes */
-                            if (FAIL == dumpattr(vd_id, (int32)_HDF_VDATA, 1, ft, fp))
+                            if (FAIL == dumpattr(vd_id, _HDF_VDATA, 1, ft, fp))
                               {
                                   fprintf(stderr,"Failed to print vdata attributes for vd_id(%d) in file %s\n",
                                           (int) vd_id, file_name);
