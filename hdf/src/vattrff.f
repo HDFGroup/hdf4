@@ -41,12 +41,12 @@ C
        vsffidx = vsfcfdx(vsid, fldnm, fldidx, 
      +                  len(fldnm))
        end
-C --------------- vsfsat -------------------------
-C    vsfsat -- set a numeric attribute for a vdata 
+C --------------- vsfsnat -------------------------
+C    vsfsnat -- set a numeric attribute for a vdata 
 C              or a field of a vdata
-C    VSsetattr -- vsfcsat -- vsfsat
+C    VSsetattr -- vsfcsat -- vsfsnat
 C
-       integer function vsfsat(vsid, findex,attrnm,dtype,
+       integer function vsfsnat(vsid, findex,attrnm,dtype,
      +                        count, values)
        integer vsid, findex, dtype, count
        character*(*) attrnm
@@ -69,7 +69,7 @@ C
        integer vsfcsca
      
        vsfscat = vsfcsca(vsid, findex, attrnm, dtype,
-     +         count, values, len(attrnm), len(values))
+     +         count, values, len(attrnm))
        end
 C --------------- vsffdat -------------------------
 C    vsffdat -- find attribute of a vdata of a field
@@ -84,17 +84,17 @@ C
        vsffdat = vsfcfda(vsid, findex, attrnm, 
      +                   len(attrnm))
        end 
-C --------------- vfsatt -------------------------
-C    vfsatt -- set a numeric attr for a vgroup
-C    Vsetattr -- vfcsatt -- vfsatt 
+C --------------- vfsnatt -------------------------
+C    vfsnatt -- set a numeric attr for a vgroup
+C    Vsetattr -- vfcsatt -- vfsnatt 
 C
-       integer function vfsatt(vgid, attrnm, dtype, 
+       integer function vfsnatt(vgid, attrnm, dtype, 
      +                        count, values)
        integer vgid, dtype, count, values
        character*(*) attrnm
        integer vfcsatt
 
-       vfsatt = vfcsatt(vgid, attrnm, dtype,count,
+       vfsnatt = vfcsatt(vgid, attrnm, dtype,count,
      +                  values, len(attrnm))
        end
 C -------------- vfscatt -------------------------

@@ -826,17 +826,16 @@ intn VSisattr(int32 vsid)
 
      HEclear();
      if (HAatom_group(vsid) != VSIDGROUP)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
+        HGOTO_ERROR(DFE_ARGS, FALSE);
      /* locate vs' index in vstab */
      if (NULL == (vs_inst = (vsinstance_t *)HAatom_object(vsid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, FALSE);
      if (NULL == (vs = vs_inst->vs))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, FALSE);
      if (HDstrcmp(vs->vsclass,  _HDF_ATTRIBUTE) == 0)
         ret_value = TRUE;
 done:
-    if (ret_value == FAIL)
+    if (ret_value == FALSE)
     { /* Error condition cleanup */
 
     } /* end if */

@@ -585,7 +585,7 @@ VSwrite(int32 vkey, const uint8 buf[], int32 nelt, int32 interlace)
                       DFKsetNT(type);
                       for (index = 0; index < order; index++)
                         {
-                            DFKnumout(src, dest, (uint32) chunk, (uint32) int_size, (uint32) hdf_size);
+                            DFKnumout((VOIDP)src, dest, (uint32) chunk, (uint32) int_size, (uint32) hdf_size);
                             dest += isize / order;
                             src += esize / order;
                         }
@@ -641,7 +641,7 @@ VSwrite(int32 vkey, const uint8 buf[], int32 nelt, int32 interlace)
 		      DFKsetNT(type);
 		      for (index = 0; index < order; index++)
 			{
-			    DFKnumout(src, dest, (uint32) nelt, (uint32) esize, (uint32) hdf_size);
+			    DFKnumout((VOIDP)src, dest, (uint32) nelt, (uint32) esize, (uint32) hdf_size);
 			    src += esize / order;
 			    dest += isize / order;
 			}
@@ -667,7 +667,7 @@ VSwrite(int32 vkey, const uint8 buf[], int32 nelt, int32 interlace)
 		      DFKsetNT(type);
 		      for (index = 0; index < order; index++)
 			{
-			    DFKnumout(src, dest, (uint32) nelt, (uint32) esize, (uint32) isize);
+			    DFKnumout((VOIDP)src, dest, (uint32) nelt, (uint32) esize, (uint32) isize);
 			    dest += isize / order;
 			    src += esize / order;
 			}
@@ -693,7 +693,7 @@ VSwrite(int32 vkey, const uint8 buf[], int32 nelt, int32 interlace)
 		      DFKsetNT(type);
 		      for (index = 0; index < order; index++)
 			{
-			    DFKnumout(src, dest, (uint32) nelt, (uint32) int_size, (uint32) isize);
+			    DFKnumout((VOIDP)src, dest, (uint32) nelt, (uint32) int_size, (uint32) isize);
 			    dest += isize / order;
 			    src += esize / order;
 			}

@@ -1935,7 +1935,7 @@ Hputelement(int32 file_id, uint16 tag, uint16 ref, const uint8 *data,
   if (( access_id = Hstartwrite(file_id, (uint16) tag, (uint16) ref, length))== FAIL)
     HGOTO_ERROR(DFE_NOMATCH, FAIL);
 
-  if ((ret_value = Hwrite(access_id, length, data)) == FAIL)
+  if ((ret_value = Hwrite(access_id, length, (const VOIDP) data)) == FAIL)
     HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
   if(Hendaccess(access_id)==FAIL)

@@ -15,7 +15,6 @@ static char RcsId[] = "@(#)$";
 #endif
 
 /* $Id$ */
-
 /*
    *
    * vattrf.c
@@ -94,13 +93,13 @@ nvsfcsca(intf *vsid, intf *findex, _fcd attrnm, intf *dtype,
 }
 
 /* -------------------------------------------------------
- * vsfnatt -- get total number of attributes of a vdata and
+ * vsfnats -- get total number of attributes of a vdata and
  *             its fields
- * VSnattr -- vsfnatt
+ * VSnattrs -- vsfnats
  */
 
 FRETVAL(intf)
-nvsfnatt(intf *vsid)
+nvsfnats(intf *vsid)
 {
    intf ret;
 
@@ -109,13 +108,13 @@ nvsfnatt(intf *vsid)
 }
 
 /* -------------------------------------------------------
- * vsffnat -- get number of attributes of a vdata or of a field
+ * vsffnas -- get number of attributes of a vdata or of a field
  *
- * VSfnattrs -- vsffnat
+ * VSfnattrs -- vsffnas
  */
 
 FRETVAL(intf)
-nvsffnat(intf *vsid, intf *findex)
+nvsffnas(intf *vsid, intf *findex)
 { 
     intf ret;
     int32 cfindex;
@@ -167,12 +166,12 @@ nvsfainf(intf *vsid, intf *findex, intf *aindex, _fcd attrname,
 }
 
 /* ---------------------------------------------------------
- * vsfgatt -- get values of a numeric attribute 
- * VSgetattr -- vsfgatt
+ * vsfgnat -- get values of a numeric attribute 
+ * VSgetattr -- vsfgnat
  */
 
 FRETVAL(intf)
-nvsfgatt(intf *vsid, intf *findex, intf *aindex, intf *values)
+nvsfgnat(intf *vsid, intf *findex, intf *aindex, intf *values)
 {
     intf ret;
     int32 cfindex;
@@ -184,7 +183,7 @@ nvsfgatt(intf *vsid, intf *findex, intf *aindex, intf *values)
 }
 
 /* --------------------------------------------------------
- * vsfcgca -- get values of a char type attribute 
+ * vsfgcat -- get values of a char type attribute 
  * VSgetattr -- vsfgcat
  */
 
@@ -215,7 +214,7 @@ nvsfisat(intf *vsid)
 
 /* ---------------------------------------------------------
  * vfcsatt -- set a numeric attr for a vgroup
- * Vsetattr -- vfcsatt -- vfsatt
+ * Vsetattr -- vfcsatt -- vfsnatt
  */
 
 FRETVAL(intf)
@@ -303,12 +302,12 @@ nvfainfo(intf *vgid, intf *aindex, _fcd attrname,
 }
 
 /* ---------------------------------------------------------
- * vfgatt -- get values of a numeric attribute 
- * Vgetattr -- vfgatt
+ * vfgnatt -- get values of a numeric attribute 
+ * Vgetattr -- vfgnatt
  */
 
 FRETVAL(intf)
-nvfgatt(intf *vgid, intf *aindex, intf *values)
+nvfgnatt(intf *vgid, intf *aindex, intf *values)
 {
     intf ret;
     ret = (intf) Vgetattr((int32) *vgid, (int32) *aindex,
