@@ -74,10 +74,7 @@ $ @setuputils
 ! $ !
 $ set default hdf$test
 $ @MAKE
-$ run testhdf.exe
-$ run fortest.exe
+! $ !
 $ delete *.obj;*
-$ set default hdf$src
-$ !
 $ type sys$input
-  ======== HDF 3.3 has now been built ========
+  ======== HDF 3.3 has now been built, run test programs! ========
