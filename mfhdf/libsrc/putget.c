@@ -2104,8 +2104,14 @@ void *values ;
             vp->numrecs=upper[0];
 	} /* end inline */
 
+#ifdef NOTNOW
+    /* Albert and I agree that this check below makes perfect sense, but it
+     * causes the ncdiminq test to fail for unlimited length dimensions.
+     * Perhaps someone with more time can look into this later.  -QAK
+     */
 	if (handle->numrecs < vp->numrecs)
 	    handle->numrecs = vp->numrecs;
+#endif /* NOTNOW */
 
 #ifdef VDEBUG
 	fprintf(stderr, "Exiting NCvario\n") ;
