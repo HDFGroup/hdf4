@@ -186,6 +186,7 @@ install: cjpeg djpeg rdjpgcom wrjpgcom
 
 install-lib: libjpeg.a install-headers
 	$(INSTALL_DATA) libjpeg.a $(libdir)/$(binprefix)libjpeg.a
+	$(RANLIB) $(libdir)/$(binprefix)libjpeg.a
 
 install-headers: jconfig.h
 	$(INSTALL_DATA) jconfig.h $(includedir)/jconfig.h

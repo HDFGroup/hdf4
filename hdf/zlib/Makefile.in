@@ -122,6 +122,7 @@ install: libz.a
 	chmod 644 $(prefix)/include/zlib.h $(prefix)/include/zconf.h
 	cp libz.a $(prefix)/lib
 	chmod 644 $(prefix)/lib/libz.a
+	$(RANLIB) $(prefix)/lib/libz.a
 
 libz.a: $(OBJS)
 	ar rc $@ $(OBJS)
