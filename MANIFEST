@@ -139,19 +139,6 @@
 ./hdf/pablo/README.Pablo
 ./hdf/pablo/depend
 
-./hdf/slib/Makefile.in
-./hdf/slib/burst_szip.c
-./hdf/slib/example.c
-./hdf/slib/gentest.c
-./hdf/slib/mcgill.c
-./hdf/slib/mcgill.h
-./hdf/slib/rice.c
-./hdf/slib/rice.h
-./hdf/slib/ricehdf.h
-./hdf/slib/sz_api.c
-./hdf/slib/szip_adpt.h
-./hdf/slib/szlib.h
-./hdf/slib/testit
 
 ./hdf/src/INSTALL
 ./hdf/src/Makefile.am
