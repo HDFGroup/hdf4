@@ -60,24 +60,31 @@
 #define WINIO       5
 #define PAGEBUFIO   6    /* page buffering - fmpool */
 
+/* IBM RS6000 AIX hack */
 #if defined(IBM6000) || defined(_AIX)
 #define _POSIX_SOURCE
-#endif /* RS6000 hack */
+#endif 
 
-/* Pablo include files */
+/* STDIO and STDLIB includes */
+#include <stdio.h>
+#include <stdlib.h>
+
+/* PABLO support files */
 #ifdef HAVE_PABLO
 #define IOTRACE
 #include "IOTrace.h"
 #endif  /* HAVE_PABLO */
 
-#include <stdio.h>
-#include <stdlib.h>
-
+/* For x86 archtectures */
 #if defined TEST_PC || defined TEST_WIN
 #define FAR far
 #else
 #define FAR /* */
 #endif
+
+/*-------------------------------------------------------------------------
+ * Define options for each platform
+ *-------------------------------------------------------------------------*/
 
 #if (defined(SUN) || defined(sun) || defined(__sun__)) & !defined(__i386)
 #ifdef __STDC__
@@ -105,6 +112,7 @@ Please check your Makefile.
 #include <ctype.h>
 #include <sys/time.h>
 #include <sys/file.h>               /* for unbuffered i/o stuff */
+#include <sys/stat.h>
 #define DF_MT             DFMT_SUN
 typedef void              VOID;
 typedef void              *VOIDP;
@@ -163,6 +171,7 @@ Please check your Makefile.
 #endif /* __GNUC__ */
 #include <unistd.h>
 #include <sys/file.h>               /* for unbuffered i/o stuff */
+#include <sys/stat.h>
 #define DF_MT             DFMT_SUN
 typedef void              VOID;
 typedef char              *VOIDP;
@@ -283,6 +292,7 @@ Please check your Makefile.
 #include <memory.h>
 #endif /* __GNUC__ */
 #include <sys/file.h>               /* for unbuffered i/o stuff */
+#include <sys/stat.h>
 #define DF_MT             DFMT_HP9000
 typedef void              VOID;
 typedef void              *VOIDP;
@@ -337,6 +347,7 @@ Please check your Makefile.
 #include <memory.h>
 #endif /* __GNUC__ */
 #include <sys/file.h>               /* for unbuffered i/o stuff */
+#include <sys/stat.h>
 #define DF_MT              DFMT_IRIX
 typedef void               VOID;
 typedef void               *VOIDP;
@@ -394,6 +405,7 @@ Please check your Makefile.
 #ifndef O_RDONLY
 #include <fcntl.h>              /* for unbuffered i/o stuff */
 #define L_INCR  1
+#include <sys/stat.h>
 #endif /*O_RDONLY*/
 
 #define DF_MT   DFMT_UNICOS
@@ -444,7 +456,7 @@ Please check your Makefile.
 #define GOT_MACHINE 1
 #include <file.h>               /* for unbuffered i/o stuff */
 #include <limits.h>
-
+#include <sys/stat.h>
 #define DF_MT              DFMT_VAX
 typedef int                VOID;
 typedef char               *VOIDP;
@@ -497,7 +509,7 @@ Please check your Makefile.
 #include <string.h>
 #include <limits.h>
 #include <sys/types.h>
-
+#include <sys/stat.h>
 /* For Convex machines with native format floats */
 #ifdef CONVEXNATIVE
 #define DF_MT             DFMT_CONVEXNATIVE
@@ -562,6 +574,7 @@ Please check your Makefile.
 #include <string.h>
 #include <sys/types.h>
 #include <sys/file.h>               /* for unbuffered i/o stuff */
+#include <sys/stat.h>
 #define DF_MT   DFMT_MIPSEL
 typedef void            VOID;
 typedef void            *VOIDP;
@@ -610,12 +623,12 @@ Please check your Makefile.
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>             /* for INT_MIN, etc. in hbitio.c */
-#ifdef THINK_C                  /* for THINK C */
+#ifdef SYMANTEC_C                  /* for SYMANTEC C */
 #include <unix.h>
 #define isascii(c)  (isprint(c) || iscntrl(c))
 #else  /* MPW, possibly others */
 #include <Files.h>              /* for unbuffered I/O stuff */
-#endif /*THINK_C*/
+#endif /* SYMANTEC_C*/
 #ifndef ABSOFT
 #define DF_CAPFNAMES            /* fortran names are in all caps */
 #endif /* ABSOFT */
@@ -817,6 +830,7 @@ Please check your Makefile.
 #include <memory.h>
 #endif /* __GNUC__ */
 #include <sys/file.h>               /* for unbuffered i/o stuff */
+#include <sys/stat.h>
 #define DF_MT             DFMT_NEXT
 typedef void              VOID;
 typedef void              *VOIDP;
@@ -869,6 +883,7 @@ Please check your Makefile.
 #endif /* __GNUC__ */
 #include <unistd.h>
 #include <sys/file.h>               /* for unbuffered i/o stuff */
+#include <sys/stat.h>
 #ifndef O_RDONLY
 #include <fcntl.h>              /* for unbuffered i/o stuff */
 #endif /*O_RDONLY*/
@@ -917,6 +932,7 @@ Please check your Makefile.
 
 #include <string.h>
 #include <sys/file.h>               /* for unbuffered i/o stuff */
+#include <sys/stat.h>
 #define DF_MT             DFMT_ALPHA
 typedef void              VOID;
 typedef void              *VOIDP;
@@ -974,6 +990,7 @@ Please check your Makefile.
 #include <string.h>
 #include <memory.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #define DF_MT              DFMT_VP
 typedef void                VOID;
 typedef void               *VOIDP;
@@ -1020,6 +1037,7 @@ Please check your Makefile.
 #include <limits.h>
 #include <sys/types.h>
 #include <sys/file.h>           /* for unbuffered i/o stuff */
+#include <sys/stat.h>
 #include <unistd.h>             /* mis-using def. for SEEK_SET, but oh well */
 #define DF_MT   DFMT_I860
 typedef void            VOID;
@@ -1242,7 +1260,7 @@ extern int (*DFKnumout)(void _HUGE * source, void _HUGE * dest, uint32 num_elm,
 #  define HDstrrchr(s,c)        (strrchr((s),(c)))
 #  define HDstrtol(s,e,b)       (strtol((s),(e),(b)))
 /* Can't use on PCs. strdup() uses malloc() and HDmalloc uses halloc() */
-#if !(defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL | defined NEXT | defined CONVEX)
+#if !(defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MAC | defined MIPSEL | defined NEXT | defined CONVEX)
 #  define HDstrdup(s)      ((char *)strdup((const char *)(s)))
 #endif /* !(VMS | PC) */
 #endif /* WIN3 */
@@ -1272,8 +1290,11 @@ extern int (*DFKnumout)(void _HUGE * source, void _HUGE * dest, uint32 num_elm,
 /**************************************************************************
 *  Misc. functions
 **************************************************************************/
-#include <sys/stat.h>
-#define HDstat(path, result)    (stat(path, result))
+#ifdef MAC
+#define HDstat(path, result)	(mstat(path))
+#else /* !MAC */
+#define HDstat(path, result)	(stat(path, result))
+#endif /* !MAC */
 #define HDgetenv(s1)            (getenv(s1))
 #define HDputenv(s1)            (putenv(s1))
 #define HDltoa(v)               (ltoa(v))
