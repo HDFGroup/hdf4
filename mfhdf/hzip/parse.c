@@ -129,6 +129,35 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
   }
  } /*i*/
 
+
+ /* check valid parameters */
+ switch (comp->type)
+  {
+  case COMP_CODE_RLE:
+   break;
+  case COMP_CODE_SKPHUFF:
+   if (comp->info<=0 ){
+    if (obj_list) free(obj_list);
+    printf("%s\nError: Invalid compression parameter\n",str);
+    exit(1);
+   }
+   break;
+  case COMP_CODE_DEFLATE:
+   if (comp->info<0 || comp->info>9 ){
+    if (obj_list) free(obj_list);
+    printf("%s\nError: Invalid compression parameter\n",str);
+    exit(1);
+   }
+   break;
+  case COMP_CODE_JPEG:
+   if (comp->info<0 || comp->info>100 ){
+    if (obj_list) free(obj_list);
+    printf("%s\nError: Invalid compression parameter\n",str);
+    exit(1);
+   }
+   break;
+  };
+
  return obj_list;
 }
 
@@ -237,13 +266,19 @@ obj_list_t* parse_chunk(char *str, int *n_objs, int32 *chunk_lengths, int *chunk
  {
   c = str[i];
   sdim[k]=c;
+
+  if (!isdigit(c) && c!='x'){
+			if (obj_list) free(obj_list);
+			printf("%s\nError: Invalid chunking definition\n",str);
+			exit(1);
+		}
+
   if ( c=='x' || i==len-1) 
   {
    if ( c=='x') {  
     sdim[k]='\0';     
     chunk_lengths[c_index]=atoi(sdim);
-    if (chunk_lengths[c_index]==0)
-     {
+    if (chunk_lengths[c_index]==0) {
       if (obj_list) free(obj_list);
       printf("%s\nError: Invalid chunking definition\n",str);
       exit(1);
@@ -337,7 +372,6 @@ void options_table_free( options_table_t *table )
 int options_add_chunk(obj_list_t *obj_list,int n_objs,int32 *chunk_lengths,
                       int chunk_rank,options_table_t *table )
 {
- 
  int i, j, k, I, added=0, found=0;
  
  if (table->nelems+n_objs >= table->size) {

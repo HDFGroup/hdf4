@@ -26,8 +26,8 @@ int          get_chunk(options_t *options, char* path, int32 *chunk_lengths);
 #endif
 
 
-int copy_vdata_attribute(int32 in, int32 out, int32 findex, intn attrindex);
-void options_get_info(options_t      *options,     /* global options */
+int  copy_vdata_attribute(int32 in, int32 out, int32 findex, intn attrindex);
+int  options_get_info(options_t      *options,     /* global options */
                       int32          *chunk_flags, /* chunk flags OUT */
                       HDF_CHUNK_DEF  *chunk_def,   /* chunk definition OUT */
                       int            *info,        /* compression info OUT */
@@ -94,6 +94,7 @@ int copy_sds(int32 sd_in,
  HDF_CHUNK_DEF    chunk_def_in;   /* chunk definition original */
  int32            chunk_flags;    /* chunk flags */ 
  int32            chunk_flags_in; /* chunk flags original*/ 
+ int              have_info;
 
 #if !defined (ONE_TABLE)
  int              chunk_rank;     /* rank got from chunk table  */
@@ -213,6 +214,7 @@ int copy_sds(int32 sd_in,
  /* check inspection mode */
  if ( options->trip>0 ) 
  {
+  have_info = 
   options_get_info(options,      /* global options */
                    &chunk_flags, /* chunk flags OUT */
                    &chunk_def,   /* chunk definition OUT */
@@ -222,6 +224,40 @@ int copy_sds(int32 sd_in,
                    path          /* path of object IN */
                    );
  } /* check inspection mode */
+
+
+
+/*-------------------------------------------------------------------------
+ * get size before printing
+ *-------------------------------------------------------------------------
+ */
+
+ /* compute the number of the bytes for each value. */
+ numtype = dtype & DFNT_MASK;
+ eltsz = DFKNTsize(numtype | DFNT_NATIVE);
+
+ /* set edges of SDS */
+ nelms=1;
+ for (j = 0; j < rank; j++) {
+  nelms   *= dimsizes[j];
+  edges[j] = dimsizes[j];
+  start[j] = 0;
+ }
+
+/*-------------------------------------------------------------------------
+ * check for objects too small
+ *-------------------------------------------------------------------------
+ */
+ if ( have_info && options->trip>0  && nelms*eltsz<options->threshold )
+ {
+  /* reset to the original values . we don't want to uncompress if it was */
+  chunk_flags=chunk_flags_in;
+  comp_type=comp_type_in;
+  if (options->verbose) {
+   printf("Warning: object size smaller than %d bytes. Not compressing <%s>\n",
+    options->threshold,path);
+  }
+ }
 
 /*-------------------------------------------------------------------------
  * print the PATH, COMP and CHUNK info
@@ -268,17 +304,7 @@ int copy_sds(int32 sd_in,
  *-------------------------------------------------------------------------
  */
 
- /* compute the number of the bytes for each value. */
- numtype = dtype & DFNT_MASK;
- eltsz = DFKNTsize(numtype | DFNT_NATIVE);
-
- /* set edges of SDS */
- nelms=1;
- for (j = 0; j < rank; j++) {
-  nelms   *= dimsizes[j];
-  edges[j] = dimsizes[j];
-  start[j] = 0;
- }
+ 
 
  /* alloc */
  if ((buf = (VOIDP) HDmalloc(nelms * eltsz)) == NULL) {
@@ -302,6 +328,7 @@ int copy_sds(int32 sd_in,
   ret=-1;
   goto out;
  }
+
 
 /*-------------------------------------------------------------------------
  * set chunk 
@@ -483,7 +510,7 @@ out:
  * Function: copy_sds_attrs
  *
  * Purpose: copy SD attributes from input file to output file 
-	*   used for global, dataset and dimension attributes
+ *   used for global, dataset and dimension attributes
  *
  * Return: 1, for success, -1 for error 
  *
@@ -703,7 +730,7 @@ int  copy_gr(int32 gr_in,
  HDF_CHUNK_DEF chunk_def_in;   /* chunk definition original */
  int32         chunk_flags;    /* chunk flags */ 
  int32         chunk_flags_in; /* chunk flags original*/ 
- int           i, j, ret, rank=2;
+ int           i, j, ret, rank=2, have_info;
  int           has_pal = 0;
  int32         start[2],       /* read start */
                edges[2],       /* read edges */
@@ -838,6 +865,7 @@ int  copy_gr(int32 gr_in,
  /* check inspection mode */
  if ( options->trip>0 ) 
  {
+  have_info = 
   options_get_info(options,      /* global options */
                    &chunk_flags, /* chunk flags OUT */
                    &chunk_def,   /* chunk definition OUT */
@@ -849,6 +877,39 @@ int  copy_gr(int32 gr_in,
  } /* check inspection mode */
 
 
+/*-------------------------------------------------------------------------
+ * check for data size before printing
+ *-------------------------------------------------------------------------
+ */
+
+ /* compute the number of the bytes for each value. */
+ numtype = dtype & DFNT_MASK;
+ eltsz = DFKNTsize(numtype | DFNT_NATIVE);
+
+ /* set edges of GR */
+ nelms=1;
+ for (j = 0; j < rank; j++) {
+  nelms   *= dimsizes[j];
+  edges[j] = dimsizes[j];
+  start[j] = 0;
+ }
+
+ data_size = dimsizes[0]*dimsizes[1]*n_comps*eltsz;
+
+/*-------------------------------------------------------------------------
+ * check for objects too small
+ *-------------------------------------------------------------------------
+ */
+ if ( have_info && options->trip>0  && nelms*eltsz<options->threshold )
+ {
+  /* reset to the original values . we don't want to uncompress if it was */
+  chunk_flags=chunk_flags_in;
+  comp_type=comp_type_in;
+  if (options->verbose) {
+   printf("Warning: object size smaller than %d bytes. Not compressing <%s>\n",
+    options->threshold,path);
+  }
+ }
  
 /*-------------------------------------------------------------------------
  * print the PATH, COMP and CHUNK info
@@ -896,19 +957,7 @@ int  copy_gr(int32 gr_in,
  *-------------------------------------------------------------------------
  */
 
- /* compute the number of the bytes for each value. */
- numtype = dtype & DFNT_MASK;
- eltsz = DFKNTsize(numtype | DFNT_NATIVE);
-
- /* set edges of GR */
- nelms=1;
- for (j = 0; j < rank; j++) {
-  nelms   *= dimsizes[j];
-  edges[j] = dimsizes[j];
-  start[j] = 0;
- }
-
- data_size = dimsizes[0]*dimsizes[1]*n_comps*eltsz;
+ 
 
  /* alloc */
  if ((buf = (VOIDP) HDmalloc(data_size)) == NULL) {
@@ -1496,7 +1545,7 @@ void copy_vg(char* infname,
  *
  * Purpose: get COMP and CHUNK info from options
  *
- * Return: void
+ * Return: 0 if no info for this PATH, 1 otherwise
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -1506,7 +1555,7 @@ void copy_vg(char* infname,
  */
 
 
-void options_get_info(options_t      *options,     /* global options */
+int  options_get_info(options_t      *options,     /* global options */
                       int32          *chunk_flags, /* chunk flags OUT */
                       HDF_CHUNK_DEF  *chunk_def,   /* chunk definition OUT */
                       int            *info,        /* compression info OUT */
@@ -1516,7 +1565,8 @@ void options_get_info(options_t      *options,     /* global options */
                       )
 {
 
- int i;
+ obj_info_t *obj=NULL; /* check if we have info for this object */
+ int         i;
  
 /*-------------------------------------------------------------------------
  * CASE 1: chunk==ALL comp==SELECTED 
@@ -1525,8 +1575,6 @@ void options_get_info(options_t      *options,     /* global options */
  
  if (options->all_chunk==1 && options->all_comp==0)
  {
-  obj_info_t *obj;
-  
   /* NONE option */
   if (options->chunk_g.rank==-2)
   {
@@ -1591,7 +1639,7 @@ void options_get_info(options_t      *options,     /* global options */
  */
  else if (options->all_chunk==0 && options->all_comp==0)
  {
-  obj_info_t *obj = options_get_object(path,options->op_tbl);
+  obj = options_get_object(path,options->op_tbl);
   
   if (obj!=NULL)
   {
@@ -1650,7 +1698,7 @@ void options_get_info(options_t      *options,     /* global options */
   */
  else if (options->all_chunk==0 && options->all_comp==1)
  {
-  obj_info_t *obj = options_get_object(path,options->op_tbl);
+  obj = options_get_object(path,options->op_tbl);
   
   if (obj!=NULL)
   {
@@ -1753,6 +1801,8 @@ void options_get_info(options_t      *options,     /* global options */
    };
   }
  } /* else if */
+
+ return (obj==NULL) ? 0 : 1;
  
 }
 

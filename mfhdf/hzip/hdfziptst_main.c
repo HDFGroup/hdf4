@@ -45,7 +45,7 @@ int main(void)
  options_t     options;      /* for hzip  */ 
  static struct fspec fspec;  /* for hdiff  */ 
  int           ret;
-	int32         attr_n_values = 3;  /* number of values in the vg attribute */
+ int32         attr_n_values = 3;  /* number of values in the vg attribute */
  char          vg_attr[3]    = {'A', 'B', 'C'};/* vg attribute values*/
 
  /* initialize options for hdiff */
@@ -56,7 +56,7 @@ int main(void)
  fspec.vd = 1;    /* compare Vdata */
 
 /*-------------------------------------------------------------------------
- * create FILENAME with SDSs, images , groups and vdatas
+ * create a file with SDSs, images , groups and vdatas
  *-------------------------------------------------------------------------
  */
        
@@ -202,7 +202,7 @@ int main(void)
  *-------------------------------------------------------------------------
  */ 
 
-	add_an(file_id);
+ add_an(file_id);
 
 
 /*-------------------------------------------------------------------------
@@ -244,7 +244,7 @@ int main(void)
  options.verbose=1;
  fspec.verbose  =1;
 #endif
- hzip_addcomp("gr4:GZIP",&options);
+ hzip_addcomp("gr4:HUFF 1",&options);
  hzip_addchunk("gr4:20x20",&options);
 
  hzip(FILENAME,FILENAME_OUT,&options);

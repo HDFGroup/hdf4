@@ -148,6 +148,7 @@ typedef struct {
 
  int verbose;                 /*verbose mode */
  int trip;                    /*which cycle are we in */
+	int threshold;               /*minimum size to compress, in bytes */
 } options_t;
 
 
@@ -162,10 +163,8 @@ void hzip_addchunk(char* str, options_t *options);
 void hzip_init    (options_t *options);
 void hzip_end     (options_t *options);
 
-
 int  list(char* infname,char* outfname,options_t *options);
-
-
+void read_info(char *filename,options_t *options); 
 
 #ifdef __cplusplus
 }
