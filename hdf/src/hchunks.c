@@ -2890,6 +2890,10 @@ HMCPchunkwrite(void  *cookie,    /* IN: access record to mess with */
           printf(")\n");
 #endif
 
+          if (chkptr->chk_ref == 0) {
+                    /* out of ref numbers -- extremely fatal  */
+                    HGOTO_ERROR(DFE_NOREF, FAIL);
+          }
           /* Copy origin first to vdata record*/
           pntr = v_data;
           for (k = 0; k < info->ndims; k++)
