@@ -790,7 +790,7 @@ done:
 int32 
 VSappendable(int32 vkey, int32 blk)
 {
-    int32       blksize, curr_size;
+    int32       blksize, curr_size=0;
     vsinstance_t *w;
     VDATA      *vs;
     int32      ret_value = SUCCEED;
