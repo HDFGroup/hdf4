@@ -56,20 +56,11 @@ test_szip_SDS8bit()
 				 0,0,6,6,3,4,
 				 5,5,6,6,3,4,
 				 0,0,6,6,3,4};
-    char    file_name8[512] = "";
-    char   *srcdir = getenv("srcdir");
-
-    /* Generate the correct name for the test file, by prepending the source path */
-    if (srcdir && ((strlen(srcdir) + strlen(FILE_NAME8) + 1) < sizeof(file_name8))) {
-        strcpy(file_name8, srcdir);
-        strcat(file_name8, "/");
-    }
-    strcat(file_name8, FILE_NAME8);
 
     /********************* End of variable declaration ***********************/
 
     /* Create the file and initialize SD interface */
-    sd_id = SDstart (file_name8, DFACC_CREATE);
+    sd_id = SDstart (FILE_NAME8, DFACC_CREATE);
     CHECK(sd_id, FAIL, "SDstart");
 
     /* Create the SDS */
@@ -123,7 +114,7 @@ test_szip_SDS8bit()
     */
 
     /* Reopen the file and select the first SDS */
-    sd_id = SDstart (file_name8, DFACC_READ);
+    sd_id = SDstart (FILE_NAME8, DFACC_READ);
     CHECK(sd_id, FAIL, "SDstart");
 
     sds_id = SDselect (sd_id, 0);
@@ -193,20 +184,11 @@ test_szip_SDS16bit()
 				   0,  0,600,600,300,400,
 				 500,500,600,600,300,400,
 				   0,  0,600,600,300,400};
-    char    file_name16[512] = "";
-    char   *srcdir = getenv("srcdir");
-
-    /* Generate the correct name for the test file, by prepending the source path */
-    if (srcdir && ((strlen(srcdir) + strlen(FILE_NAME16) + 1) < sizeof(file_name16))) {
-        strcpy(file_name16, srcdir);
-        strcat(file_name16, "/");
-    }
-    strcat(file_name16, FILE_NAME16);
 
     /********************* End of variable declaration ***********************/
 
     /* Create the file and initialize SD interface */
-    sd_id = SDstart (file_name16, DFACC_CREATE);
+    sd_id = SDstart (FILE_NAME16, DFACC_CREATE);
     CHECK(sd_id, FAIL, "SDstart");
 
     /* Create the SDS */
@@ -260,7 +242,7 @@ test_szip_SDS16bit()
     */
 
     /* Reopen the file and select the first SDS */
-    sd_id = SDstart (file_name16, DFACC_READ);
+    sd_id = SDstart (FILE_NAME16, DFACC_READ);
     CHECK(sd_id, FAIL, "SDstart");
 
     sds_id = SDselect (sd_id, 0);
@@ -330,20 +312,11 @@ test_szip_SDS32bit()
 				   0,  0,600,600,300,400,
 				 500,500,600,600,300,400,
 				   0,  0,600,600,300,400};
-    char    file_name32[512] = "";
-    char   *srcdir = getenv("srcdir");
-
-    /* Generate the correct name for the test file, by prepending the source path */
-    if (srcdir && ((strlen(srcdir) + strlen(FILE_NAME32) + 1) < sizeof(file_name32))) {
-        strcpy(file_name32, srcdir);
-        strcat(file_name32, "/");
-    }
-    strcat(file_name32, FILE_NAME32);
 
     /********************* End of variable declaration ***********************/
 
     /* Create the file and initialize SD interface */
-    sd_id = SDstart (file_name32, DFACC_CREATE);
+    sd_id = SDstart (FILE_NAME32, DFACC_CREATE);
     CHECK(sd_id, FAIL, "SDstart");
 
     /* Create the SDS */
@@ -397,7 +370,7 @@ test_szip_SDS32bit()
     */
 
     /* Reopen the file and select the first SDS */
-    sd_id = SDstart (file_name32, DFACC_READ);
+    sd_id = SDstart (FILE_NAME32, DFACC_READ);
     CHECK(sd_id, FAIL, "SDstart");
 
     sds_id = SDselect (sd_id, 0);
@@ -467,20 +440,11 @@ test_szip_SDSfl32bit()
 				   0.0,  0.0,600.0,600.0,300.0,400.0,
 				 500.0,500.0,600.0,600.0,300.0,400.0,
 				   0.0,  0.0,600.0,600.0,300.0,400.0};
-    char    file_namefl32[512] = "";
-    char   *srcdir = getenv("srcdir");
-
-    /* Generate the correct name for the test file, by prepending the source path */
-    if (srcdir && ((strlen(srcdir) + strlen(FILE_NAMEfl32) + 1) < sizeof(file_namefl32))) {
-        strcpy(file_namefl32, srcdir);
-        strcat(file_namefl32, "/");
-    }
-    strcat(file_namefl32, FILE_NAMEfl32);
 
     /********************* End of variable declaration ***********************/
 
     /* Create the file and initialize SD interface */
-    sd_id = SDstart (file_namefl32, DFACC_CREATE);
+    sd_id = SDstart (FILE_NAMEfl32, DFACC_CREATE);
     CHECK(sd_id, FAIL, "SDstart");
 
     /* Create the SDS */
@@ -534,7 +498,7 @@ test_szip_SDSfl32bit()
     */
 
     /* Reopen the file and select the first SDS */
-    sd_id = SDstart (file_namefl32, DFACC_READ);
+    sd_id = SDstart (FILE_NAMEfl32, DFACC_READ);
     CHECK(sd_id, FAIL, "SDstart");
 
     sds_id = SDselect (sd_id, 0);
@@ -604,20 +568,11 @@ test_szip_SDSfl64bit()
 				   0.0,  0.0,600.0,600.0,300.0,400.0,
 				 500.0,500.0,600.0,600.0,300.0,400.0,
 				   0.0,  0.0,600.0,600.0,300.0,400.0};
-    char    file_namefl64[512] = "";
-    char   *srcdir = getenv("srcdir");
-
-    /* Generate the correct name for the test file, by prepending the source path */
-    if (srcdir && ((strlen(srcdir) + strlen(FILE_NAMEfl64) + 1) < sizeof(file_namefl64))) {
-        strcpy(file_namefl64, srcdir);
-        strcat(file_namefl64, "/");
-    }
-    strcat(file_namefl64, FILE_NAMEfl64);
 
     /********************* End of variable declaration ***********************/
 
     /* Create the file and initialize SD interface */
-    sd_id = SDstart (file_namefl64, DFACC_CREATE);
+    sd_id = SDstart (FILE_NAMEfl64, DFACC_CREATE);
     CHECK(sd_id, FAIL, "SDstart");
 
     /* Create the SDS */
@@ -671,7 +626,7 @@ test_szip_SDSfl64bit()
      */
 
     /* Reopen the file and select the first SDS */
-    sd_id = SDstart (file_namefl64, DFACC_READ);
+    sd_id = SDstart (FILE_NAMEfl64, DFACC_READ);
     CHECK(sd_id, FAIL, "SDstart");
 
     sds_id = SDselect (sd_id, 0);
