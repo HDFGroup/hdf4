@@ -150,6 +150,9 @@ extern const char _HUGE *HDgettagname
 extern intn HDgettagnum
     (const char *tag_name);
 
+extern char _HUGE *HDgetNTdesc
+    (int32 nt);
+
 extern intn Hishdf
     (const char _HUGE *filename);
 

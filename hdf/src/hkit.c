@@ -574,3 +574,52 @@ intn HDgettagnum(const char *tag_name)
 	    return(tag_descriptions[i].tag);
     return(FAIL);
 }
+
+/* ----------------------------- HDgetNTname ----------------------------- */
+/*
+
+ NAME
+	HDgetNTdesc -- return a text description of a number-type
+ USAGE
+	char * HDgetNTdesc(nt)
+        int32   nt;          IN: tag of element to find
+ RETURNS
+        Descriptive text or NULL
+ DESCRIPTION
+        Map a number-type to a dynamically allocated text description of it.
+
+--------------------------------------------------------------------------- */
+char _HUGE *HDgetNTdesc(int32 nt)
+{
+    intn i;
+    char _HUGE *ret_desc=NULL;
+
+    if(nt&DFNT_NATIVE)
+	ret_desc=HDstrdup(nt_descriptions[0].desc); /* evil hard-coded values */
+    else if(nt&DFNT_CUSTOM)
+	ret_desc=HDstrdup(nt_descriptions[1].desc); /* evil hard-coded values */
+    else if(nt&DFNT_LITEND)
+	ret_desc=HDstrdup(nt_descriptions[2].desc); /* evil hard-coded values */
+
+    nt&=DFNT_MASK;	/* mask off unusual format types */
+    for(i=3; i<sizeof(nt_descriptions)/sizeof(nt_descript_t); i++)
+	if(nt_descriptions[i].nt==nt) {
+	    if(ret_desc==NULL)
+	       ret_desc=HDstrdup(nt_descriptions[i].desc);
+	    else {
+		char *t=HDgetspace(HDstrlen(ret_desc)+HDstrlen(nt_descriptions[i].desc)+2);
+		if(t==NULL) {
+                    HDfreespace(ret_desc);
+		    HRETURN_ERROR(DFE_NOSPACE,NULL);
+		  }	/* end if */
+		HDstrcpy(t,ret_desc);
+		HDstrcat(t," ");
+		HDstrcat(t,nt_descriptions[i].desc);
+		HDfreespace(ret_desc);
+		ret_desc=t;
+	      }	/* end else */
+	    return(ret_desc);
+	  }	/* end if */
+    return(NULL);
+}	/* end HDgetNTdesc() */
+

@@ -35,7 +35,7 @@ typedef struct tag_descript_t {
 #endif /* MIPSEL */
 
 /*  NOTE: 
- *        Please keep tag names <= 30 characters - a 
+ *        Please keep tag descriptions <= 30 characters - a 
  *        lot of pretty-printing code depends on it.
 */
 PRIVATE const tag_descript_t tag_descriptions[] =
@@ -112,6 +112,50 @@ PRIVATE const tag_descript_t tag_descriptions[] =
 { DFTAG_JPEG , string(DFTAG_JPEG), "24-bit JPEG Encoding"},
 { DFTAG_GREYJPEG , string(DFTAG_GREYJPEG), "8-bit JPEG Encoding"} 
       
+};
+
+/* nt_message is the list of NT descriptions in the system, kept as
+   NT-description pairs.  To look up a description, a linear search is
+   required but efficiency should be okay. */
+typedef struct nt_descript_t {
+    int32 nt;    		/* nt for description */
+    const char   *name;  	/* nt name */  
+    const char   *desc;  	/* nt description */  
+} nt_descript_t;
+
+PRIVATE const nt_descript_t nt_descriptions[] =
+{
+
+/* Masks for types */
+{ DFNT_NATIVE  , string(DFNT_NATIVE), 	"native format"},
+{ DFNT_CUSTOM  , string(DFNT_CUSTOM), 	"custom format"},
+{ DFNT_LITEND  , string(DFNT_LITEND), 	"little-endian format"},
+
+{ DFNT_NONE  , string(DFNT_NONE), 	"number-type not set"},
+
+/* Floating point types */
+{ DFNT_FLOAT32  , string(DFNT_FLOAT32), "32-bit floating point"},
+{ DFNT_FLOAT64  , string(DFNT_FLOAT64), "64-bit floating point"},
+{ DFNT_FLOAT128 , string(DFNT_FLOAT128),"128-bit floating point"},
+
+/* Integer types */
+{ DFNT_INT8 , string(DFNT_INT8), 	"8-bit signed integer"},
+{ DFNT_UINT8 , string(DFNT_UINT8), 	"8-bit unsigned integer"},
+{ DFNT_INT16 , string(DFNT_INT16), 	"16-bit signed integer"},
+{ DFNT_UINT16 , string(DFNT_UINT16), 	"16-bit unsigned integer"},
+{ DFNT_INT32 , string(DFNT_INT32), 	"32-bit signed integer"},
+{ DFNT_UINT32 , string(DFNT_UINT32), 	"32-bit unsigned integer"},
+{ DFNT_INT64 , string(DFNT_INT64), 	"64-bit signed integer"},
+{ DFNT_UINT64 , string(DFNT_UINT64), 	"64-bit unsigned integer"},
+{ DFNT_INT128 , string(DFNT_INT128), 	"128-bit signed integer"},
+{ DFNT_UINT128 , string(DFNT_UINT128), 	"128-bit unsigned integer"},
+
+/* Character types */
+{ DFNT_CHAR8 , string(DFNT_CHAR8), 	"8-bit signed char"},
+{ DFNT_UCHAR8 , string(DFNT_UCHAR8), 	"8-bit unsigned char"},
+{ DFNT_CHAR16 , string(DFNT_CHAR16), 	"16-bit signed char"},
+{ DFNT_UCHAR16 , string(DFNT_UCHAR16),	"16-bit unsigned char"}
+
 };
 
 #endif /* __HKIT_H */
