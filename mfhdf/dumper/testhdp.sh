@@ -196,12 +196,14 @@ MESG 3 "$TestName"
 TEST dumpsds-1.out dumpsds swf32.hdf
 TEST dumpsds-2.out dumpsds -i 2 swf32.hdf
 TEST dumpsds-3.out dumpsds -i 1,3 swf32.hdf
+
 # Next command should fail with error message: "SD with name Time: not found"
 TEST dumpsds-4.out dumpsds -n Time swf32.hdf
 TEST dumpsds-5.out dumpsds -n fakeDim0,Data-Set-2 swf32.hdf
 TEST dumpsds-6.out dumpsds -r 3,2 swf32.hdf
 TEST dumpsds-7.out dumpsds -r 3,2 -d swf32.hdf
 TEST dumpsds-8.out dumpsds -h swf32_fileattr.hdf
+TEST dumpsds-9.out dumpsds -c swf32_fileattr.hdf
 else
 MESG 3 "$TestName <<<SKIPPED>>>"
 fi
@@ -257,11 +259,14 @@ TEST dumpvg-6.out dumpvg -i 1,3,5 tdata.hdf
 TEST dumpvg-7.out dumpvg -r 32,39 tdata.hdf
 TEST dumpvg-8.out dumpvg -n nsamp,tdata.hdf tdata.hdf
 TEST dumpvg-9.out dumpvg -c CDF0.0 tdata.hdf
+
 # Added option -h to the following test; this option has always 
 # failed; just fixed it - BMR 8/1/00
 TEST dumpvg-10.out dumpvg -h -c Dim0.0,Var0.0 tdata.hdf
+
 # this following test is removed since option -d is removed
 #TEST dumpvg-11.out dumpvg -c Dim0.0,Var0.0 -d tdata.hdf
+
 # moved test #12 up to #11, consequently - BMR 7/25/00
 TEST dumpvg-11.out dumpvg tvattr.hdf
 else
@@ -287,16 +292,24 @@ $RM mybin.dat
 TEST dumpgr-9.out dumpgr grtdfui83.hdf
 TEST dumpgr-10.out dumpgr grtdfui84.hdf
 TEST dumpgr-11.out dumpgr grtdfui162.hdf
-# this test shows that file attribute is printed
+
+# Test 12 shows that file attribute is printed
 TEST dumpgr-12.out dumpgr grtdfi322.hdf
-# Added 13, 14, and 15 to test new option -p that prints palette
+
+# Tests 13, 14, and 15 to test new option -p that prints palette
 TEST dumpgr-13.out dumpgr -p Image_with_Palette.hdf
 TEST dumpgr-14.out dumpgr -h Image_with_Palette.hdf
 TEST dumpgr-15.out dumpgr -r 2,4 -p -d Image_with_Palette.hdf
-# Test 16: to test new option -c
-TEST dumpgr-16.out dumpgr -r 6 -d -c grtdfui82.hdf
+
+# Test 16: to test new option -s, printing data as stream
+TEST dumpgr-16.out dumpgr -r 6 -d -s grtdfui82.hdf
+
 # Test 17: to test new option -m (interlace mode = LINE)
 TEST dumpgr-17.out dumpgr -r 6 -m 1 grtdfui82.hdf
+
+# Test 18: to test new option -c (printing attribute data in clean format)
+TEST dumpgr-18.out dumpgr -c grtdfi322.hdf
+
 else
 MESG 3 "$TestName <<<SKIPPED>>>"
 fi
