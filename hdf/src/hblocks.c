@@ -299,6 +299,7 @@ HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length,
             }   
 
           data_dd->tag = DFTAG_LINKED;
+          data_dd->ref = Hnewref(file_id);
           if (HIupdate_dd(file_rec, data_block, data_idx, FUNC) == FAIL)
             {
                 access_rec->used = FALSE;

@@ -340,6 +340,8 @@ extern uint8 *tbuf;
 #define DFTAG_LINKED        20  /* linked-block special element */
 #define DFTAG_VERSION       30
 #define DFTAG_COMPRESSED    40  /* compressed special element */
+#define DFTAG_VLINKED       50  /* variable-len linked-block header */
+#define DFTAG_VLINKED_DATA  51  /* variable-len linked-block data */
 
 /* utility set */
 #define DFTAG_FID   ((uint16)100)   /* File identifier */
@@ -426,10 +428,11 @@ extern uint8 *tbuf;
 #define DFIL_PLANE   2  /* Scan Plane Interlacing */
 
 /* SPECIAL CODES */
-#define SPECIAL_LINKED 1
-#define SPECIAL_EXT 2
-#define SPECIAL_COMP 3
+#define SPECIAL_LINKED 1    /* Fixed-size Linked blocks */
+#define SPECIAL_EXT 2       /* External */
+#define SPECIAL_COMP 3      /* Compressed */
 #define SPECIAL_BIGEXT 4    /* Big External */
+#define SPECIAL_VLINKED 5   /* Variable-length linked blocks */
 
 /* PARAMETERS */
 
