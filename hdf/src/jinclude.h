@@ -37,7 +37,7 @@
 #endif
 #endif
 
-#ifdef macintosh
+#if defined macintosh | defined VMS
 #define INCLUDES_ARE_ANSI	/* Added for Mac, MPW does not define __STDC__ */
 #endif /* macintosh, MPW */
 
