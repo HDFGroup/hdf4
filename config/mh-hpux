@@ -7,12 +7,13 @@ VERSION  = 4.0
 #
 # Compiliers:
 # For gcc version
-#CC=gcc
-#CFLAGS=-ansi -O
+CC=gcc
+CFLAGS=-ansi -g -Wall -pedantic -D_POSIX_SOURCE
+#CFLAGS=-ansi -O -D_POSIX_SOURCE
 #
 #Using HP-ANSI compilier also needs LIBS = -lm(see below)
-CC=cc
-CFLAGS=-Aa -D_HPUX_SOURCE -O 
+#CC=cc
+#CFLAGS=-Aa -g -D_HPUX_SOURCE
 
 # Fortran compilier, possible values fort77, f77, cf77 and fc
 FC = f77
@@ -31,7 +32,7 @@ RMFLAGS = -f
 
 # Extra libraries to be include like '-lm' for fabs()
 # Needed only with naitve HP-ANSI compilier
-LIBS = -lm
+#LIBS = -lm
 
 # ------------ Macros for Pablo Instrumentation  --------------------
 # Uncomment the following lines to create a Pablo Instrumentation
