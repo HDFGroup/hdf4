@@ -398,7 +398,7 @@ C
 
       subroutine test_grchunk( err_grchunk )
       implicit none
-      integer N_COMP_TYPES, N_COMP_ARG, NCOMP, il
+      integer N_COMP_TYPES, N_COMP_ARG, NCOMP
       integer MFGR_INTERLACE_PIXEL 
       parameter(N_COMP_TYPES = 4, N_COMP_ARG =1)
       parameter(NCOMP = 2, MFGR_INTERLACE_PIXEL = 0)
@@ -728,7 +728,7 @@ C     GR compression test
 C
       subroutine test_grcompress( err_grcompress )
       implicit none
-      integer N_COMP_TYPES, N_COMP_ARG, NCOMP, il
+      integer N_COMP_TYPES, N_COMP_ARG, NCOMP
       parameter(N_COMP_TYPES = 4, N_COMP_ARG =1)
       integer MFGR_INTERLACE_PIXEL
       parameter(NCOMP = 2, MFGR_INTERLACE_PIXEL = 0)
