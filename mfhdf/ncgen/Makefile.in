@@ -84,7 +84,7 @@ ctest0:		ncgen test0.cdl
 ftest:		test1.cdl
 	@if [ `which "$(FC)" | wc -w` = 1 ]; then \
 	    $(MAKE) $(MFLAGS) ftest0; \
-	    ./ftest0		# tests `-f' option, creates ftest0.nc; \
+	    ./ftest0 ; \
 	    $(NCDUMP) -n test1 ftest0.nc > ftest1.cdl; \
 	    if diff test1.cdl ftest1.cdl; then \
 		echo "*** ncgen -f test successful ***"; \
