@@ -134,6 +134,9 @@ typedef enum
 #define PUBLIC  /* nothing */
 #endif
 
+#ifndef OLD_WAY
+#include "hntdefs.h"
+#else /* OLD_WAY */
 /* masks for types */
 #define DFNT_HDF      0x00000000    /* standard HDF format  */
 #define DFNT_NATIVE   0x00001000    /* native format        */
@@ -350,6 +353,7 @@ typedef enum
 
     /* maximum size of the atomic data types */
 #       define MAX_NT_SIZE      16
+#endif /* OLD_WAY */
 
 #if 0
 /* tbuf used as a temporary buffer for small jobs.  The size is
@@ -370,6 +374,9 @@ typedef enum
 extern uint8 *tbuf;
 #endif
 
+#ifndef OLD_WAY
+#include "htags.h"
+#else /* OLD_WAY */
 /* tags and refs */
 #define DFREF_WILDCARD      0
 #define DFTAG_WILDCARD      0
@@ -472,6 +479,7 @@ extern uint8 *tbuf;
 #define SPECIAL_EXT 2       /* External */
 #define SPECIAL_COMP 3      /* Compressed */
 #define SPECIAL_VLINKED 4   /* Variable-length linked blocks */
+#endif /* OLD_WAY */
 
 /* PARAMETERS */
 
