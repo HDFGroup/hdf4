@@ -20,6 +20,7 @@
 
 void        test_an(void);
 void        test_anfile(void);
+void        test_man(void);
 void        test_hblocks(void);
 void        test_hextelt(void);
 void        test_hfile(void);
