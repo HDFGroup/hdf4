@@ -30,6 +30,7 @@
 #define _VG_H
 
 #include "hdf.h"
+#include "herr.h"
 
 /* Include file for Threaded, Balanced Binary Tree implementation */
 #include "tbbt.h"
@@ -327,3 +328,4 @@ extern void vpackvs
 #endif /* c_plusplus || __cplusplus */
 
 #endif /* _VG_H */
+

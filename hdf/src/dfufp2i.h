@@ -15,30 +15,35 @@
 #ifndef DFUFP2IM_H /* avoid re-inclusion */
 #define DFUFP2IM_H
 
-/* Input structure */
-typedef struct {
-    int32    hdim;       /* horizontal dimension of input data */
-    int32    vdim;       /* vertical dimension of input data */
-    intn     is_pal;     /* flag to tell whether there is a palette */
-    intn     is_vscale;  /* flag telling whether vertical scale included  */
-    intn     is_hscale;  /* flag telling whether horizonatal scale included */
-    intn     ct_method;  /* color transform method: EXPAND or INTERP */
-    float32  max;        /* max value of data */
-    float32  min;        /* min value of the data */
-    float32  *hscale;    /* horizontal scale */
-    float32  *vscale;    /* vertical scale */
-    float32  *data;      /* floating point data */
-} Input;
+/*
+* definitions of structs used by routines: Input & Output
+*/
 
-/* Output structure */
-typedef struct {
-    int32    hres;       /* horizontal resolution of image */
-    int32    vres;       /* vertical resolution of image */
-    intn     compress;   /* compression scheme */
-    char     outfile[32]; /* output file name */
-    uint8    *image;      /* Image */
-    uint8    *palette;    /* Palette */
-} Output;
+struct Input {
+    int32
+        hdim, vdim;     /* horizontal and vertical dimensions of input data */
+    int
+        is_pal,         /* flag to tell whether there is a palette */
+        is_vscale,      /* flags telling whether scales were included  */
+        is_hscale,
+        ct_method;      /* color transform method: EXPAND or INTERP */
+    float32
+        max, min,        /* max and min values of the data */
+        *hscale,*vscale, /* horizontal and vertical scales */
+        *data;           /* floating point data */
+};
+
+struct Output {
+    int32
+        hres,vres;  /* horizontal and vertical resolution of image */
+    int compress;   /* compression scheme */
+    char
+        outfile[32]; /* output file name */
+    uint8
+        *image;     
+    uint8
+        *palette;   
+};
 
 /*----------------------------------------------------------------------------*/
 /*                           Function Prototypes                              */
@@ -60,21 +65,20 @@ extern int DFUfptoimage(int32 hdim, int32 vdim, float32 max, float32 min,
                         int32 hres, int32 vres, int compress);
 #endif
 extern int process
-    PROTO((Input *in, Output *out));
+    PROTO((struct Input *in, struct Output *out));
 extern int generate_scale
     PROTO((int32 dim, float32 *scale));
 extern int convert_interp
-    PROTO((Input *in, Output *out));
+    PROTO((struct Input *in, struct Output *out));
 extern int pixrep_scaled
-    PROTO((Input *in, Output *out));
+    PROTO((struct Input *in, struct Output *out));
 extern int compute_offsets
     PROTO((float32 *scale, int32 dim, int32 *offsets, int32 res));
 extern int pixrep_simple
-    PROTO((Input *in, Output *out));
+    PROTO((struct Input *in, struct Output *out));
 
 #if defined c_plusplus || defined __cplusplus
 }
 #endif /* c_plusplus || __cplusplus */
 
 #endif /* DFUFP2IM_H */
-

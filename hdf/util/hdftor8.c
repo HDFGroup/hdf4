@@ -22,6 +22,7 @@ static char RcsId[] = "@(#)$Revision$";
  */
 
 #include "hdf.h"
+#include "herr.h"
 
 #define PALETTE_SIZE	768	/* size of palette array */
 #define COLOR_SIZE	256	/* size of palette color array */
@@ -36,8 +37,8 @@ static char RcsId[] = "@(#)$Revision$";
 #define TEMPLATE_XDIM	'@'	/* image x dim positions */
 #define TEMPLATE_YDIM	'%'	/* image y dim positions */
 
-const char D_RASTER_TEM[]="img#-@.%"; /* default raster file name template */
-const char D_PALETTE_TEM[]="pal#";    /*  default palette file name template */
+#define D_RASTER_TEM    "img#-@.%" /* default raster file name template */
+#define D_PALETTE_TEM	"pal#"	/*  default palette file name template */
 
 int interactive;		/* interactive option */
 int verbose;			/* verbose option */
@@ -45,15 +46,15 @@ int verbose;			/* verbose option */
 int main
     PROTO((int argc, char *argv[]));
 void putRaster
-    PROTO((const char *template, int32 xdim, int32 ydim, int imageNumber,
+    PROTO((char *template, int32 xdim, int32 ydim, int imageNumber,
            uint8 *image));
 void putPalette
-    PROTO((const char *template, int imageNumber, uint8 *palette));
+    PROTO((char *template, int imageNumber, uint8 *palette));
 void convert
-    PROTO((const char *template, int imageNumber, int32 xdim, int32 ydim,
+    PROTO((char *template, int imageNumber, int32 xdim, int32 ydim,
            char *stringOut));
 void fillStr
-    PROTO((const char **template, char **stringOut, char *string, char specialChar));
+    PROTO((char **template, char **stringOut, char *string, char specialChar));
 char *newSpace
     PROTO((int32 size));
 char *getTemplate
@@ -72,7 +73,7 @@ int main(argc, argv)
     int32 xdim, ydim;
     char *hdfFile;
     uint8 *image, palette[PALETTE_SIZE];
-    const char *rasterTemplate = NULL, *paletteTemplate = NULL;
+    char *rasterTemplate = NULL, *paletteTemplate = NULL;
 
     if (argc < 2) {
         printf("%s,  version: 1.1   date: July 1, 1992\n", argv[0]);
@@ -163,12 +164,11 @@ int main(argc, argv)
  *        image : pointer to image array
  */
 #ifdef PROTOTYPE
-void putRaster(const char *template, int32 xdim, int32 ydim, int imageNumber,
+void putRaster(char *template, int32 xdim, int32 ydim, int imageNumber,
 	       uint8 *image)
 #else
 void putRaster(template, xdim, ydim, imageNumber, image)
-    const char *template;
-    char *image;
+    char *template, *image;
     int32 xdim, ydim;
     int imageNumber;
 #endif /* PROTOTYPE */
@@ -217,11 +217,10 @@ void putRaster(template, xdim, ydim, imageNumber, image)
  *        palette : pointer to the palette array
  */
 #ifdef PROTOTYPE
-void putPalette(const char *template, int imageNumber, uint8 *palette)
+void putPalette(char *template, int imageNumber, uint8 *palette)
 #else
 void putPalette(template, imageNumber, palette)
-    const char *template;
-    char *palette;
+    char *template, *palette;
     int imageNumber;
 #endif /* PROTOTYPE */
 {
@@ -289,12 +288,11 @@ void putPalette(template, imageNumber, palette)
  *        stringOut : the concocted file name
  */
 #ifdef PROTOTYPE
-void convert(const char *template, int imageNumber, int32 xdim, int32 ydim,
+void convert(char *template, int imageNumber, int32 xdim, int32 ydim,
 	     char *stringOut)
 #else
 void convert(template, imageNumber, xdim, ydim, stringOut)
-    const char *template; 
-    char *stringOut;
+    char *template, *stringOut;
     int imageNumber;
     int32 xdim, ydim;
 #endif /* PROTOTYPE */
@@ -341,17 +339,16 @@ void convert(template, imageNumber, xdim, ydim, stringOut)
  *        comverted string are moved to after the position of the conversion.
  */
 #ifdef PROTOTYPE
-void fillStr(const char **template, char **stringOut, char *string, char specialChar)
+void fillStr(char **template, char **stringOut, char *string, char specialChar)
 #else
 void fillStr(template, stringOut, string, specialChar)
-    const char **template;
-    char **stringOut, *string, specialChar;
+    char **template, **stringOut, *string, specialChar;
 #endif /* PROTOTYPE */
 {
     int templateLen, stringLen, i;
 
     for(templateLen = 1; *(++(*template)) == specialChar; templateLen++);
-    stringLen = HDstrlen(string);
+    stringLen = strlen(string);
 
     for(i = templateLen - stringLen; i > 0; i--)
         *(*stringOut)++ = '0';

@@ -17,9 +17,9 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*-----------------------------------------------------------------------------
- * File:     df24F.c
- * Purpose:  read and write 24-bit raster images
- * Invokes:  dfgr.c df24.c
+ * File:    df24F.c
+ * Purpose: read and write 24-bit raster images
+ * Invokes: dfgr.c df24.c
  * Contents: 
  *  d2reqil: use this interlace when returning image
  *  df24reqil: use this interlace when returning image

@@ -43,8 +43,8 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* ------------------------------------------------------------------ */
 
-PRIVATE void oldunpackvg PROTO((VGROUP *vg,uint8  buf[], int32 *size));
-PRIVATE void oldunpackvs PROTO((VDATA *vs, uint8 buf[], int32 *size));
+static void oldunpackvg PROTO((VGROUP *vg,uint8  buf[], int32 *size));
+static void oldunpackvs PROTO((VDATA *vs, uint8 buf[], int32 *size));
 
 /*
 *  this routine checks that the given OPENED file is compatible with
@@ -121,19 +121,19 @@ HFILEID f;
 	VGROUP	* vg;
 	VDATA	*vs;
     uint8   *buf=NULL; /* to store an old vdata or vgroup descriptor  */
-	int32 	old_bsize=0,bsize;
-	int32 	aid;
-    int32   ret;
+	int32 	old_bsize=0,bsize,
+	        aid;
+    int32   stat;
     uint16  u;
 	uint16	tag, ref;
-    CONSTR(FUNC,"vimakecompat");
+    char * FUNC = "vimakecompat";
 
 	/* =============================================  */
 	/* --- read all vgs and convert each --- */
 
 	vg = (VGROUP *)HDgetspace(sizeof(VGROUP));/*allocate space for the VGroup */
-    ret = aid = Hstartread (f, (uint16)OLD_VGDESCTAG, DFREF_WILDCARD);
-	while (ret != FAIL) {
+    stat = aid = Hstartread (f, (uint16)OLD_VGDESCTAG, DFREF_WILDCARD);
+	while (stat != FAIL) {
         HQuerytagref (aid, &tag, &ref);
         HQuerylength (aid, &bsize);
         if(buf==NULL || bsize>old_bsize) {
@@ -143,8 +143,8 @@ HFILEID f;
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
             old_bsize=bsize;
           } /* end if */
-       ret = Hgetelement (f, (uint16)OLD_VGDESCTAG, ref, (uint8*)buf);
-        if (ret == FAIL) {
+       stat = Hgetelement (f, (uint16)OLD_VGDESCTAG, ref, (uint8*)buf);
+        if (stat == FAIL) {
             HDfreespace((VOIDP)buf);
             HRETURN_ERROR(DFE_READERROR,0);
           } /* end if */
@@ -166,12 +166,12 @@ HFILEID f;
                     HERROR(DFE_NOTINSET);
 		vpackvg (vg, buf, &bsize);
 
-        ret = Hputelement (f, VGDESCTAG, ref, (uint8*)buf, bsize);
+        stat = Hputelement (f, VGDESCTAG, ref, (uint8*)buf, bsize);
         HDfreespace((VOIDP)buf);
-        if (ret == FAIL)
+        if (stat == FAIL)
             HRETURN_ERROR(DFE_WRITEERROR,0);
 
-        ret = Hnextread (aid, (uint16)OLD_VGDESCTAG, DFREF_WILDCARD, DF_CURRENT);
+        stat = Hnextread (aid, (uint16)OLD_VGDESCTAG, DFREF_WILDCARD, DF_CURRENT);
 	  } /* while */
     Hendaccess (aid);
     HDfreespace((VOIDP)vg);
@@ -183,8 +183,8 @@ HFILEID f;
     old_bsize=0;    /* reset state variables */
     buf=NULL;
 	vs = (VDATA *)HDgetspace(sizeof(VDATA));  /* allocate space for the VData */
-    ret = aid = Hstartread (f, (uint16)OLD_VSDESCTAG, DFREF_WILDCARD);
-	while (ret != FAIL) {
+    stat = aid = Hstartread (f, (uint16)OLD_VSDESCTAG, DFREF_WILDCARD);
+	while (stat != FAIL) {
 
         HQuerytagref (aid, &tag, &ref);
         HQuerylength (aid, &bsize);
@@ -195,8 +195,8 @@ HFILEID f;
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
             old_bsize=bsize;
           } /* end if */
-        ret = Hgetelement (f, tag, ref, (uint8*)buf);
-        if (ret == FAIL) {
+        stat = Hgetelement (f, tag, ref, (uint8*)buf);
+        if (stat == FAIL) {
             HDfreespace((VOIDP)buf);
             HRETURN_ERROR(DFE_READERROR,0);
           } /* end if */
@@ -211,18 +211,18 @@ HFILEID f;
 			vs->more = 0;
 		vpackvs (vs, buf, &bsize);
 
-        ret = Hputelement (f, VSDESCTAG, ref, (uint8*)buf, bsize);
-        if (ret == FAIL) {
+        stat = Hputelement (f, VSDESCTAG, ref, (uint8*)buf, bsize);
+        if (stat == FAIL) {
             HDfreespace((VOIDP)buf);
             HRETURN_ERROR(DFE_WRITEERROR,0);
           } /* end if */
 
 		/* duplicate a tag to point to vdata data */
-        ret = Hdupdd (f, NEW_VSDATATAG, ref, (uint16)OLD_VSDATATAG, ref);
+        stat = Hdupdd (f, NEW_VSDATATAG, ref, (uint16)OLD_VSDATATAG, ref);
         HDfreespace((VOIDP)buf);
-         if (ret == FAIL)
+         if (stat == FAIL)
             HRETURN_ERROR(DFE_DUPDD,0);
-        ret = Hnextread (aid, (uint16)OLD_VSDESCTAG, DFREF_WILDCARD, DF_CURRENT);
+        stat = Hnextread (aid, (uint16)OLD_VSDESCTAG, DFREF_WILDCARD, DF_CURRENT);
 	  } /* while */
 
     Hendaccess (aid);
@@ -256,16 +256,16 @@ char * fs;
 {
 
 	HFILEID	f;
-	int32 	ret;
-    CONSTR(FUNC,"vcheckcompat");
+	int32 	stat;
+    char * FUNC = "vcheckcompat";
 
     f = Hopen (fs,DFACC_ALL,0);
     if (f == FAIL)
         HRETURN_ERROR(DFE_BADOPEN,FAIL);
-	ret = vicheckcompat(f);
+	stat = vicheckcompat(f);
     Hclose (f);
 
-	return (ret);
+	return (stat);
 } /* vcheckcompat */
 
 /* ================================================================== */
@@ -288,15 +288,15 @@ char * fs;
 #endif
 {
 	HFILEID 	f;
-	int32 	ret;
-    CONSTR(FUNC,"vmakecompat");
+	int32 	stat;
+    char * FUNC = "vmakecompat";
 
     f = Hopen (fs,DFACC_ALL,0);
     if (f == FAIL)
         HRETURN_ERROR(DFE_BADOPEN,FAIL);
-	ret = vimakecompat(f);
+	stat = vimakecompat(f);
     Hclose (f);
-	return (ret);
+	return (stat);
 } /* vmakecompat */
 
 /* ==================================================================== */
@@ -312,7 +312,7 @@ int32*      size;   /* ignored, but included to look like packvg() */
 {
     uint8       *bb;
     uint32       i;
-	CONSTR(FUNC,"oldunpackvg");
+	char * FUNC = "oldunpackvg";
 
     *size = *size; /* dummy, so that compiler thinks it is used  */
 
@@ -346,7 +346,7 @@ uint8        buf[];
 {
     uint8   *bb;
 	int16    i;
-	CONSTR(FUNC,"oldunpackvs");
+	char * FUNC = "oldunpackvs";
 
     *size = *size; /* dummy */
 
@@ -382,7 +382,7 @@ uint8        buf[];
 
     /* **EXTRA**  fill in the machine-dependent size fields */
     for (i=0;i<vs->wlist.n;i++)
-        vs->wlist.esize[i]=(int16)(vs->wlist.order[i] * VSIZEOF((int16)vs->wlist.type[i]));
+        vs->wlist.esize[i]=(int16)vs->wlist.order[i] * (VSIZEOF((int16)vs->wlist.type[i]));
 
 } /* oldunpackvs */
 

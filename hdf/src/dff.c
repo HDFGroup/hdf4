@@ -96,7 +96,7 @@ static char RcsId[] = "@(#)$Revision$";
  * Name:    dfiopen
  * Purpose: call DFopen to open HDF file
  * Inputs:  name: name of file to open
- *      acc_mode: access mode - integer with value DFACC_READ etc. 
+ *      access: access mode - integer with value DFACC_READ etc. 
  *      defdds: default number of DDs per header block
  *      namelen: length of name
  * Returns: 0 on success, -1 on failure with DFerror set
@@ -107,11 +107,11 @@ static char RcsId[] = "@(#)$Revision$";
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfiopen(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
+ndfiopen(_fcd name, intf *access, intf *defdds, intf *namelen)
 #else
-ndfiopen(name, acc_mode, defdds, namelen)
+ndfiopen(name, access, defdds, namelen)
     _fcd name;
-    intf *acc_mode, *defdds;
+    intf *access, *defdds;
     intf *namelen;
 #endif /* PROTOTYPE */
 {
@@ -119,7 +119,7 @@ ndfiopen(name, acc_mode, defdds, namelen)
     intf ret;
     
     fn = DFIf2cstring(name, (intn)*namelen);
-    ret = (int32) DFopen(fn, (intn)*acc_mode, (intn)*defdds);
+    ret = (int32) DFopen(fn, (intn)*access, (intn)*defdds);
     HDfreespace((VOIDP)fn);
     return(ret);
 }
@@ -241,7 +241,7 @@ ndfdel(dfile, tag, ref)
  * Purpose: Call DFaccess to set up access to item
  * Inputs:  dfile: pointer to HDF file
  *          tag, ref: attributes of item to access
- *          acc_mode: access mode
+ *          access: access mode
  * Returns: 0 on success, -1 on failure with DFerror set
  * Users:   HDF Fortran programmers
  * Invokes: DFaccess
@@ -249,19 +249,19 @@ ndfdel(dfile, tag, ref)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfiaccess(intf *dfile, intf *tag, intf *ref, _fcd acc_mode, intf *acclen)
+ndfiaccess(intf *dfile, intf *tag, intf *ref, _fcd access, intf *acclen)
 #else
-ndfiaccess(dfile, tag, ref, acc_mode, acclen)
+ndfiaccess(dfile, tag, ref, access, acclen)
     intf *dfile;
     intf *tag, *ref;
-    _fcd acc_mode;
+    _fcd access;
     intf *acclen;
 #endif /* PROTOTYPE */
 {
     char *acc;
     intf ret;
 
-    acc = DFIf2cstring(acc_mode, (intn)*acclen);
+    acc = DFIf2cstring(access, (intn)*acclen);
     ret = (int32)DFaccess((DF *) *dfile, (uint16)*tag, (uint16)*ref, acc);
     HDfreespace((VOIDP)acc);
     return(ret);
@@ -274,7 +274,7 @@ ndfiaccess(dfile, tag, ref, acc_mode, acclen)
  * Purpose: Call DFaccess to set up access to item
  * Inputs:  dfile: pointer to HDF file
  *          tag, ref: attributes of item to access
- *          acc_mode: access mode
+ *          access: access mode
  * Returns: 0 on success, -1 on failure with DFerror set
  * Users:   HDF Fortran programmers
  * Invokes: DFaccess
@@ -282,15 +282,15 @@ ndfiaccess(dfile, tag, ref, acc_mode, acclen)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfstart(intf *dfile, intf *tag, intf *ref, char *acc_mode)
+ndfstart(intf *dfile, intf *tag, intf *ref, char *access)
 #else
-ndfstart(dfile, tag, ref, acc_mode)
+ndfstart(dfile, tag, ref, access)
     intf *dfile;
     intf *tag, *ref;
-    char *acc_mode;
+    char *access;
 #endif /* PROTOTYPE */
 {
-    return(DFaccess((DF *)*dfile, (uint16)*tag, (uint16)*ref, acc_mode));
+    return(DFaccess((DF *)*dfile, (uint16)*tag, (uint16)*ref, access));
 }
 #endif /* 0 */
 

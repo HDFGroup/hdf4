@@ -127,11 +127,11 @@ int16 x;
 */
 
 #ifdef PROTOTYPE
-PUBLIC intn VSsetfields (int32 vkey, const char *fields)
+PUBLIC intn VSsetfields (int32 vkey, char *fields)
 #else
 PUBLIC intn VSsetfields (vkey,fields)
 int32 vkey;
-const char    *fields;
+char    *fields;
 #endif
 {
     char          **av;
@@ -143,18 +143,27 @@ const char    *fields;
     VWRITELIST    * wlist;
     vsinstance_t  * w;
     VDATA         * vs;
-    CONSTR(FUNC,"VSsetfields");
+    char  * FUNC = "VSsetfields";
 
-    if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS,FAIL);
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
 
   /* locate vs's index in vstab */
-    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey))))
-        HRETURN_ERROR(DFE_NOVS,FAIL);
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
 
     vs=w->vs;
-    if (vs == NULL)
-        HRETURN_ERROR(DFE_ARGS,FAIL);
+    if (vs == NULL) {
+          HERROR(DFE_ARGS);
+          HEprint(stderr,0);
+          return(FAIL);
+    }
 
     if((scanattrs(fields, &ac, &av) == FAIL) || (ac == 0))
         HRETURN_ERROR(DFE_BADFIELDS,FAIL);
@@ -164,7 +173,7 @@ const char    *fields;
      *   read list cuz there is nothing there to read yet...
      */
     if(vs->access == 'w' && vs->nvertices == 0) {
-        wlist = &(vs->wlist);  /* use a shorter name to make code cleaner */
+        wlist = &(vs->wlist);
         wlist->ivsize = 0;
         wlist->n      = 0;
         for(i = 0; i < ac; i++) {
@@ -206,7 +215,7 @@ const char    *fields;
                         order = rstab[j].order;
                         wlist->type[wlist->n]  =  rstab[j].type;
                         wlist->order[wlist->n] =  order;
-                        wlist->esize[wlist->n] =  (int16) (order * DFKNTsize((int32)rstab[j].type | DFNT_NATIVE));
+                        wlist->esize[wlist->n] =  (int16) order * DFKNTsize(rstab[j].type | DFNT_NATIVE);
                         wlist->isize[wlist->n] =  order * rstab[j].isize;
                         wlist->ivsize+= (int16)(wlist->isize[wlist->n]);
                         wlist->n++;
@@ -231,14 +240,14 @@ const char    *fields;
             wlist->off[i] = (int16)j;
             j += wlist->isize[i];
         }
-        
-        return(SUCCEED); /* ok */
-    } /* writing to empty vdata */
     
-    /*
-     *   No matter the access mode, if there are elements in the VData
-     *      we should set the read list
-     */
+        return(SUCCEED); /* ok */
+  } /* writing to empty vdata */
+
+  /*
+   *   No matter the access mode, if there are elements in the VData
+   *      we should set the read list
+   */
     if(vs->nvertices > 0) {
         rlist = &(vs->rlist);
         rlist->n = 0;
@@ -271,11 +280,11 @@ const char    *fields;
 */
 
 #ifdef PROTOTYPE
-PUBLIC intn VSfdefine (int32 vkey, const char *field, int32 localtype, int32 order)
+PUBLIC intn VSfdefine (int32 vkey, char *field, int32 localtype, int32 order)
 #else
 PUBLIC intn VSfdefine (vkey, field, localtype, order)
 int32 vkey;
-const char    *field;
+char    *field;
 int32   localtype, order;
 #endif
 {
@@ -286,14 +295,20 @@ int32   localtype, order;
     register intn j;
     vsinstance_t    *w;
     VDATA           *vs;
-    CONSTR(FUNC,"VSfdefine");
+    char  * FUNC = "VSfdefine";
 
-    if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS,FAIL);
-
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
+  
   /* locate vs's index in vstab */
-    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey))))
-        HRETURN_ERROR(DFE_NOVS,FAIL);
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
 
     vs=w->vs;
     if ((vs == NULL) || (scanattrs(field,&ac,&av) == FAIL) || (ac != 1))
@@ -329,7 +344,9 @@ int32   localtype, order;
     if ((vs->usym[usymid].isize = DFKNTsize( (int32) localtype)) == FAIL)
         HRETURN_ERROR(DFE_BADTYPE,FAIL);
   
-    if( (ss = (char*) HDgetspace (HDstrlen(av[0]) + 1))==NULL)
+    j  = HDstrlen(av[0]) + 1;
+  
+    if( (ss = (char*) HDgetspace (j))==NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
   
     HDstrcpy(ss, av[0]);
@@ -380,7 +397,7 @@ int32 vkey;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    CONSTR(FUNC,"VFnfeilds");
+    char * FUNC = "VFnfeilds";
 
     if (!VALIDVSID(vkey)) {
         HERROR(DFE_ARGS);
@@ -425,7 +442,7 @@ int32 index;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    CONSTR(FUNC,"VFfieldname");
+    char * FUNC = "VFfieldname";
 
     if (!VALIDVSID(vkey)) {
         HERROR(DFE_ARGS);
@@ -468,7 +485,7 @@ int32 index;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    CONSTR(FUNC,"VFfeildtype");
+    char * FUNC = "VFfeildtype";
 
     if (!VALIDVSID(vkey)) {
         HERROR(DFE_ARGS);
@@ -511,7 +528,7 @@ int32 index;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    CONSTR(FUNC,"VFfieldisize");
+    char * FUNC = "VFfieldisize";
 
     if (!VALIDVSID(vkey)) {
         HERROR(DFE_ARGS);
@@ -554,7 +571,7 @@ int32 index;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    CONSTR(FUNC,"VFfieldisize");
+    char * FUNC = "VFfieldisize";
 
     if (!VALIDVSID(vkey)) {
         HERROR(DFE_ARGS);
@@ -597,7 +614,7 @@ int32 index;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    CONSTR(FUNC,"VFfieldorder");
+    char * FUNC = "VFfieldorder";
 
     if (!VALIDVSID(vkey)) {
         HERROR(DFE_ARGS);
@@ -619,3 +636,4 @@ int32 index;
     return ((int32) vs->wlist.order[index]);
 
 } /* VFfieldorder */
+

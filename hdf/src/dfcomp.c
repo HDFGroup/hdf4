@@ -28,10 +28,12 @@ static char RcsId[] = "@(#)$Revision$";
  * Remarks: DFgetcomp and DFputcomp constitute a general compression interface
  *---------------------------------------------------------------------------*/
 
-/* This module (dfcomp.c) used to be in */
-/* charge of the general compression information */
-/* but hcomp.c now supercedes it. */
+/* This module (dfcomp.c) is in charge of the general compression information */
+#define COMPRESS_MASTER
 #include "hdf.h"
+#undef COMPRESS_MASTER
+
+#include "herr.h"
 
 #define R8_MAX_BLOCKS 32
 #define R8_MAX_LENGTH 512
@@ -64,11 +66,11 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFputcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
+int DFputcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
              int32 ydim, uint8 *palette, uint8 *newpal, int16 scheme,
              comp_info *cinfo)
 #else
-intn DFputcomp(file_id, tag, ref, image, xdim, ydim, palette, newpal, scheme, cinfo)
+int DFputcomp(file_id, tag, ref, image, xdim, ydim, palette, newpal, scheme, cinfo)
     int32 file_id;
     uint16 tag, ref;
     uint8 *image;
@@ -79,7 +81,7 @@ intn DFputcomp(file_id, tag, ref, image, xdim, ydim, palette, newpal, scheme, ci
     comp_info *cinfo;
 #endif
 {
-    CONSTR(FUNC,"DFputcomp");
+    char *FUNC="DFputcomp";
     uint8 *buffer;             /* buffer to hold compressed image */
     uint8 *in;                 /* pointer to input for compression */
     uint8 *out;                /* pointer to space for compressed output */
@@ -90,7 +92,7 @@ intn DFputcomp(file_id, tag, ref, image, xdim, ydim, palette, newpal, scheme, ci
     int32 n;                   /* number of compressed bytes produced */
     int32 total;               /* total compressed bytes produced so far */
     int32 i;
-    int32 ret=0;
+    intn ret=0;
     int32 aid;
 
     if (!HDvalidfid(file_id) || !tag || !ref || xdim <= 0 || ydim <= 0 ||
@@ -185,7 +187,7 @@ intn DFputcomp(file_id, tag, ref, image, xdim, ydim, palette, newpal, scheme, ci
             HERROR(DFE_BADSCHEME);
             return FAIL;
     }
-    return((intn)ret);
+    return(ret);
 }   /* end DFputcomp() */
 
 /*-----------------------------------------------------------------------------
@@ -217,7 +219,7 @@ int DFgetcomp(file_id, tag, ref, image, xdim, ydim, scheme)
     uint16 scheme;
 #endif
 {
-    CONSTR(FUNC,"DFgetcomp");
+    char *FUNC="DFgetcomp";
     uint8 *buffer;
     uint8 *in;
     uint8 *out;
@@ -369,3 +371,4 @@ int DFgetcomp(file_id, tag, ref, image, xdim, ydim, scheme)
 
     return SUCCEED;
 }   /* end DFgetcomp() */
+

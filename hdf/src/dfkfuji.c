@@ -57,6 +57,7 @@ static char RcsId[] = "@(#)$Revision$";
 /*****************************************************************************/
 
 #include "hdf.h"
+#include "herr.h"
 #include "hconv.h"
 
 #if defined(VP)
@@ -860,3 +861,4 @@ uint32 num_elm, source_stride, dest_stride;
 int fuji_dummy; /* prevent empty symbol table messages */
 
 #endif /* VP */
+

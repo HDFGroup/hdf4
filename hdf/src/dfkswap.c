@@ -52,6 +52,7 @@ static char RcsId[] = "@(#)$Revision$";
 /*****************************************************************************/
 
 #include "hdf.h"
+#include "herr.h"
 #include "hconv.h"
 
 /*****************************************************************************/
@@ -79,7 +80,7 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
-  CONSTR(FUNC,"DFKsb2b");
+  char *FUNC="DFKsb2b";
 
   HEclear();
 
@@ -159,7 +160,7 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
-  CONSTR(FUNC,"DFKsb4b");
+  char *FUNC="DFKsb4b";
 #ifdef TEST3_sb4b
   uint32 *lp_dest;
   uint32 *lp_src;
@@ -335,7 +336,7 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
-    CONSTR(FUNC,"DFKsb8b");
+    char *FUNC="DFKsb8b";
 
     HEclear();
 
@@ -430,4 +431,5 @@ uint32 num_elm, source_stride, dest_stride;
 
   return 0;
 }
+
 

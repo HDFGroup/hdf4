@@ -21,17 +21,18 @@ static char RcsId[] = "@(#)$Revision$";
  * Purpose: Low level functions for implementing groups
  * Invokes: df.c df.h
  * Contents:
- *  DFdiread   : read in the data identifier list from the group
- *  DFdiget    : get next data identifier from list
- *  DFdisetup  : get ready to store a list of data identifiers to write out
- *  DFdiput    : add a data identifier to the list to be written out
- *  DFdiwrite  : write out the list of data identifiers
+ *  DFdiread: read in the data identifier list from the group
+ *  DFdiget: get next data identifier from list
+ *  DFdisetup: get ready to store a list of data identifiers to write out
+ *  DFdiput: add a data identifier to the list to be written out
+ *  DFdiwrite: write out the list of data identifiers
  * Remarks: A group is a way of associating data elements with each other.
  *          It is a tag whose data is a list of tag/refs
  *          Each tag/ref combination is called a data identifier (DI).
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
+#include "herr.h"
 #include "hfile.h"
 
 #define MAX_GROUPS 8
@@ -66,7 +67,7 @@ setgroupREC(list_rec)
      DIlist_ptr list_rec;
 #endif
 {
-    CONSTR(FUNC,"setgroupREC");
+    char *FUNC="setgroupREC";
     int32 i;
 
     if (!Group_list) {
@@ -113,7 +114,7 @@ int32 DFdiread(file_id, tag, ref)
 #endif
 {
     DIlist_ptr new_list;
-    CONSTR(FUNC,"DFdiread");
+    char *FUNC="DFdiread";
     int32 length;
 
     HEclear();
@@ -163,15 +164,15 @@ int32 DFdiread(file_id, tag, ref)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFdiget(int32 list, uint16 *ptag, uint16 *pref)
+int DFdiget(int32 list, uint16 *ptag, uint16 *pref)
 #else
-intn DFdiget(list, ptag, pref)
+int DFdiget(list, ptag, pref)
      int32  list;
      uint16 *ptag;
      uint16 *pref;
 #endif
 {
-    CONSTR(FUNC,"DFdiget");
+    char       *FUNC="DFdiget";
     uint8      *p;
     DIlist_ptr list_rec;
 
@@ -215,7 +216,7 @@ int32 DFdisetup(maxsize)
     int maxsize;
 #endif
 {
-    CONSTR(FUNC,"DFdisetup");
+    char *FUNC="DFdisetup";
     DIlist_ptr new_list;
 
     new_list = (DIlist_ptr) HDgetspace((uint32) sizeof(DIlist));
@@ -246,14 +247,14 @@ int32 DFdisetup(maxsize)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFdiput(int32 list, uint16 tag, uint16 ref)
+int DFdiput(int32 list, uint16 tag, uint16 ref)
 #else
-intn DFdiput(list, tag, ref)
+int DFdiput(list, tag, ref)
      int32 list;
      uint16 tag, ref;
 #endif
 {
-    CONSTR(FUNC,"DFdiput");
+    char *FUNC="DFdiput";
     uint8 *p;
     DIlist_ptr list_rec;
     
@@ -284,16 +285,16 @@ intn DFdiput(list, tag, ref)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFdiwrite(int32 file_id, int32 list, uint16 tag, uint16 ref)
+int DFdiwrite(int32 file_id, int32 list, uint16 tag, uint16 ref)
 #else
-intn DFdiwrite(file_id, list, tag, ref)
+int DFdiwrite(file_id, list, tag, ref)
      int32 file_id;
      int32 list;
      uint16 tag, ref;
 #endif
 {
-    CONSTR(FUNC,"DFdiwrite");
-    int32 ret;                   /* return value */
+    char *FUNC="DFdiwrite";
+    int ret;                   /* return value */
     DIlist_ptr list_rec;
 
     if (!HDvalidfid(file_id))
@@ -308,7 +309,9 @@ intn DFdiwrite(file_id, list, tag, ref)
                       (int32)list_rec->current * 4);
     HDfreespace((VOIDP)list_rec->DIlist);
     HDfreespace((VOIDP)list_rec);
+#ifdef QAK
+printf("DFdiwrite(): list=%ld, list&0xFFFF=%ld\n",list,(list & 0xffff));
+#endif
     Group_list[list & 0xffff] = NULL;  /* YUCK! BUG! */
-    return (intn)ret;
+    return ret;
 }
-

@@ -29,19 +29,20 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
+#include "herr.h"
 #include "jinclude.h"
 
 /* Static variables for JPEG compression (eventually these need to be stored */
 /* in the JPEG structure to hand around (to allow the routines to be */
 /* re-entrant)) */
-PRIVATE int32 img_file_id = 0; /* File ID for the HDF file */
-PRIVATE uint16 img_tag = 0;    /* tag number of the image to write out */
-PRIVATE uint16 img_ref = 0;    /* reference number of the image to write out */
-PRIVATE int32 jdata_aid = 0;   /* AID for writing out chunks of the image */
-PRIVATE int32 img_xdim = 0;    /* X and Y dimensions of the image to compress */
-PRIVATE int32 img_ydim = 0;
-PRIVATE uint8 *img_ptr = NULL;  /* Pointer to the image to compress */
-PRIVATE intn img_scheme = 0;    /* What type of image comp. are we doing? 24 or 8 bit */
+PRIVATE int32 img_file_id;  /* File ID for the HDF file */
+PRIVATE uint16 img_tag;     /* tag number of the image to write out */
+PRIVATE uint16 img_ref;     /* reference number of the image to write out */
+PRIVATE int32 jdata_aid;    /* AID for writing out chunks of the image */
+PRIVATE int32 img_xdim,     /* X and Y dimensions of the image to compress */
+    img_ydim;
+PRIVATE uint8 *img_ptr;     /* Pointer to the image to compress */
+PRIVATE intn img_scheme;    /* What type of image comp. are we doing? 24 or 8 bit */
 
 typedef enum {          /* JPEG marker codes */
   M_SOF0  = 0xc0,
@@ -193,9 +194,9 @@ decompress_info_ptr cinfo;
         if (*htblptr == NULL)
             *htblptr = (HUFF_TBL *) (*cinfo->emethods->alloc_small) (SIZEOF(HUFF_TBL));
 
-        HDmemcpy((void *) (*htblptr)->bits, (void *) bits,
+        memcpy((void *) (*htblptr)->bits, (void *) bits,
             SIZEOF((*htblptr)->bits));
-        HDmemcpy((void *) (*htblptr)->huffval, (void *) huffval,
+        memcpy((void *) (*htblptr)->huffval, (void *) huffval,
             SIZEOF((*htblptr)->huffval));
     }
 }   /* end get_dht() */
@@ -1197,3 +1198,4 @@ intn DFCIunjpeg(file_id, tag, ref, image, xdim, ydim, scheme)
 
     return(SUCCEED);     /* we must be ok... */
 }   /* end DFCIunjpeg() */
+

@@ -36,106 +36,97 @@ extern "C" {
 ** from hfile.c
 */
 extern int32 Hopen 
-    PROTO((const char _HUGE *path, intn acc_mode, int16 ndds));
+  PROTO((char _HUGE *path, intn access, int16 ndds));
 
 extern intn Hclose
-    PROTO((int32 file_id));
+  PROTO((int32 file_id));
 
 extern int32 Hstartread
-    PROTO((int32 file_id, uint16 tag, uint16 ref));
+  PROTO((int32 file_id, uint16 tag, uint16 ref));
 
 extern intn Hnextread
-    PROTO((int32 access_id, uint16 tag, uint16 ref, intn origin));
+  PROTO((int32 access_id, uint16 tag, uint16 ref, int origin));
 
 extern intn Hfind
     PROTO((int32 file_id, uint16 search_tag, uint16 search_ref,
-           uint16 *find_tag,uint16 *find_ref,int32 *find_offset,
-           int32 *find_length,intn direction));
-
-extern intn Hexist
-    PROTO((int32 file_id, uint16 search_tag, uint16 search_ref));
+        uint16 *find_tag,uint16 *find_ref,int32 *find_offset,
+        int32 *find_length,intn direction));
 
 extern intn Hinquire
-    PROTO((int32 access_id, int32 _HUGE *pfile_id, uint16 _HUGE *ptag,
-           uint16 _HUGE *pref,int32 _HUGE *plength, int32 _HUGE *poffset,
-           int32 _HUGE *pposn, int16 _HUGE *paccess, int16 _HUGE *pspecial));
+  PROTO((int32 access_id, int32 _HUGE *pfile_id, uint16 _HUGE *ptag,
+        uint16 _HUGE *pref,int32 _HUGE *plength, int32 _HUGE *poffset,
+        int32 _HUGE *pposn, int16 _HUGE *paccess, int16 _HUGE *pspecial));
 
 extern int32 Hstartwrite
-    PROTO((int32 file_id, uint16 tag, uint16 ref, int32 length));
+  PROTO((int32 file_id, uint16 tag, uint16 ref, int32 length));
 
 extern intn Happendable
-    PROTO((int32 aid));
+  PROTO((int32 aid));
 
 extern intn Hseek
-    PROTO((int32 access_id, int32 offset, intn origin));
+  PROTO((int32 access_id, int32 offset, int origin));
 
 extern int32 Hread
-    PROTO((int32 access_id, int32 length, VOIDP data));
+  PROTO((int32 access_id, int32 length, uint8 _HUGE *data));
 
 extern int32 Hwrite
-    PROTO((int32 access_id, int32 length, const VOIDP data));
+  PROTO((int32 access_id, int32 length, uint8 _HUGE *data));
 
 extern int32 Htrunc
-    PROTO((int32 access_id, int32 trunc_len));
+  PROTO((int32 access_id, int32 trunc_len));
 
-extern intn Hendaccess
-    PROTO((int32 access_id));
-
-extern intn HDgetc
-    PROTO((int32 access_id));
-
-extern intn HDputc
-    PROTO((uint8 c,int32 access_id));
+extern int32 Hendaccess
+  PROTO((int32 access_id));
 
 extern int32 Hgetelement
-    PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE *data));
+  PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE *data));
 
-extern int32 Hputelement
-    PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE *data, int32 length));
+extern int Hputelement
+  PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE *data, int32 length));
 
 extern int32 Hlength
-    PROTO((int32 file_id, uint16 tag, uint16 ref));
+  PROTO((int32 file_id, uint16 tag, uint16 ref));
 
 extern int32 Hoffset
-    PROTO((int32 file_id, uint16 tag, uint16 ref));
+  PROTO((int32 file_id, uint16 tag, uint16 ref));
 
 extern int Hdupdd
-    PROTO((int32 file_id, uint16 tag, uint16 ref, uint16 old_tag, uint16 old_ref));
+  PROTO((int32 file_id, uint16 tag, uint16 ref, uint16 old_tag, uint16 old_ref));
 
 extern int Hdeldd
-    PROTO((int32 file_id, uint16 tag, uint16 ref));
+  PROTO((int32 file_id, uint16 tag, uint16 ref));
 
 extern uint16 Hnewref
-    PROTO((int32 file_id));
+  PROTO((int32 file_id));
 
 extern int Hsync
-    PROTO((int32 file_id));
+  PROTO((int32 file_id));
 
-extern int32 Hnumber
-    PROTO((int32 file_id, uint16 tag));
+extern int Hnumber
+  PROTO((int32 file_id, uint16 tag));
 
-extern intn Hgetlibversion
-    PROTO((uint32 _HUGE *majorv, uint32 _HUGE *minorv,
-           uint32 _HUGE *releasev, char _HUGE *string));
+extern int Hgetlibversion
+  PROTO((uint32 _HUGE *majorv, uint32 _HUGE *minorv,
+        uint32 _HUGE *releasev, char _HUGE *string));
 
-extern intn Hgetfileversion
-    PROTO((int32 file_id, uint32 _HUGE *majorv, uint32 _HUGE *minorv,
-           uint32 _HUGE *release, char _HUGE *string));
+extern int Hgetfileversion
+  PROTO((int32 file_id, uint32 _HUGE *majorv, uint32 _HUGE *minorv,
+        uint32 _HUGE *release, char _HUGE *string));
 
 #if defined WIN3
 extern int32 HDfreadbig
-    PROTO((VOIDP buffer, int32 size,HFILE fp));
+  PROTO((VOIDP buffer, int32 size,HFILE fp));
 
 extern int32 HDfwritebig
-    PROTO((VOIDP buffer, int32 size,HFILE fp));
+  PROTO((VOIDP buffer, int32 size,HFILE fp));
 
 #else  /* !WIN3 */
 #if defined PC
 extern int32 HDfreadbig
-    PROTO((VOIDP buffer, int32 size,FILE _HUGE *fp));
+  PROTO((VOIDP buffer, int32 size,FILE _HUGE *fp));
 
 extern int32 HDfwritebig
-    PROTO((VOIDP buffer, int32 size,FILE _HUGE *fp));
+  PROTO((VOIDP buffer, int32 size,FILE _HUGE *fp));
 #endif /* PC */
 #endif /* !WIN3 */
 
@@ -143,54 +134,44 @@ extern uint16 HDmake_special_tag
   PROTO((uint16 tag));
 
 extern bool HDis_special_tag
-    PROTO((uint16 tag));
+  PROTO((uint16 tag));
 
 extern uint16 HDbase_tag
-    PROTO((uint16 tag));
+  PROTO((uint16 tag));
 
 extern int HDerr
-    PROTO((int32 file_id));
+  PROTO((int32 file_id));
 
 extern bool HDvalidfid
-    PROTO((int32 file_id));
+  PROTO((int32 file_id));
 
-extern const char _HUGE *HDgettagname
-    PROTO((uint16 tag));
+extern char _HUGE *HDgettagname
+  PROTO((uint16 tag));
 
 extern intn Hishdf
-    PROTO((const char _HUGE *filename));
+  PROTO((char _HUGE *filename));
 
 extern intn Hfidinquire
-    PROTO((int32 file_id, char _HUGE **fname, intn _HUGE *acc_mode,
-           intn _HUGE *attach));
+    PROTO((int32 file_id, char _HUGE **fname, intn _HUGE *access,
+        intn _HUGE *attach));
 
 /*
-** from hdfalloc.c
+** from hkit.c 
 */
-
-extern VOIDP HDmemfill
-  PROTO((VOIDP dest,const VOIDP src,uint32 item_size,uint32 num_items));
-
 extern char _HUGE *HIstrncpy
-  PROTO((register char _HUGE *dest, register const char _HUGE *source, int32 len));
+  PROTO((register char _HUGE *dest, register char _HUGE *source, int32 len));
 
 extern int32 HDspaceleft
   PROTO((void));
 
-#if (defined PC && !defined PC386) || defined MALLOC_CHECK
 extern VOIDP HDgetspace
   PROTO((uint32 qty));
 
 extern VOIDP HDregetspace
   PROTO((VOIDP where, uint32 qty));
 
-extern VOIDP HDclearspace
-  PROTO((uint32 n, uint32 size));
-
 extern VOIDP HDfreespace
   PROTO((VOIDP ptr));
-
-#endif /* (defined PC && !defined PC386) || defined MALLOC_CHECK */
 
 #if defined PC & !defined PC386
 extern VOIDP fmemcpy_big
@@ -246,38 +227,23 @@ extern int HDinqblockinfo
 ** from hextelt.c
 */
 extern int32 HXcreate
-    PROTO((int32 file_id, uint16 tag, uint16 ref, const char _HUGE *extern_file_name,
-	    int32 f_offset, int32 start_len));
-
-/*
-** from hcomp.c
-*/
-extern int32 HCcreate
-    PROTO((int32 file_id, uint16 tag, uint16 ref,
-        comp_model_t model_type, model_info _HUGE *m_info,
-        comp_coder_t coder_type, comp_info _HUGE *c_info));
-
-/*
-** from hbigext.c
-*/
-extern int32 HBcreate
-    PROTO((int32 file_id, uint16 tag, uint16 ref, const char _HUGE *extern_file_name,
+    PROTO((int32 file_id, uint16 tag, uint16 ref, char _HUGE *extern_file_name,
 	    int32 f_offset, int32 start_len));
 
 /*
 ** from herr.c
 */
-extern const char _HUGE *HEstring
-    PROTO((hdf_err_code_t error_code));
+extern char _HUGE *HEstring
+    PROTO((int16 error_code));
 
 extern VOID HEpush
-    PROTO((hdf_err_code_t error_code, const char _HUGE *function_name,
-        const char _HUGE *file_name,intn line));
+    PROTO((int16 error_code, char _HUGE *function_name, char _HUGE *file_name,
+        int line));
 
-/* #ifndef _H_ERR_MASTER_ */
+#ifndef _H_ERR_MASTER_
 extern VOID HEreport
-    PROTO((const char _HUGE *, ...));
-/* #endif */ /* _H_ERR_MASTER_ */
+    PROTO((char _HUGE *, ...));
+#endif /* _H_ERR_MASTER_ */
 
 extern VOID HEprint
     PROTO((FILE _HUGE *stream, int32 print_level));
@@ -289,33 +255,9 @@ extern VOID HEclear
     PROTO((void));
 
 /*
-** from hbitio.c
-*/
-extern int32 Hstartbitread
-    PROTO((int32 file_id,uint16 tag,uint16 ref));
-
-extern int32 Hstartbitwrite
-    PROTO((int32 file_id,uint16 tag,uint16 ref,int32 length));
-
-extern intn Hbitappendable
-    PROTO((int32 bitid));
-
-extern intn Hbitwrite
-    PROTO((int32 bitid, intn count, uint32 data));
-
-extern intn Hbitread
-    PROTO((int32 bitid, intn count, uint32 *data));
-
-extern intn Hbitseek
-    PROTO((int32 bitid, int32 byte_offset, intn bit_offset));
-
-extern int32 Hendbitaccess
-    PROTO((int32 bitfile_id,intn flushbit));
-
-/*
 ** from dfcomp.c
 */
-extern intn DFputcomp
+extern int DFputcomp
     PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE *image,
         int32 xdim, int32 ydim, uint8 _HUGE *palette, uint8 _HUGE *newpal,
         int16 scheme, comp_info *cinfo));
@@ -365,44 +307,47 @@ extern intn DFCIunjpeg
 extern int32 DFdiread
     PROTO((int32 file_id, uint16 tag, uint16 ref));
 
-extern intn DFdiget
+extern int DFdiget
     PROTO((int32 list, uint16 _HUGE *ptag, uint16 _HUGE *pref));
 
 extern int32 DFdisetup
     PROTO((int maxsize));
 
-extern intn DFdiput
+extern int DFdiput
     PROTO((int32 list, uint16 tag, uint16 ref));
 
-extern intn DFdiwrite
+extern int DFdiwrite
     PROTO((int32 file_id, int32 list, uint16 tag, uint16 ref));
 
 /*
 ** from dfp.c
 */
 extern intn DFPgetpal
-    PROTO((const char _HUGE *filename, VOIDP palette));
+    PROTO((char _HUGE *filename, VOIDP palette));
 
 extern intn DFPputpal
-    PROTO((const char _HUGE *filename, VOIDP palette, intn overwrite, const char _HUGE *filemode));
+    PROTO((char _HUGE *filename, VOIDP palette, int overwrite, char _HUGE *filemode));
 
-extern intn DFPaddpal
-    PROTO((const char _HUGE *filename, VOIDP palette));
+extern int DFPaddpal
+    PROTO((char _HUGE *filename, VOIDP palette));
 
-extern intn DFPnpals
-    PROTO((const char _HUGE *filename));
+extern int DFPnpals
+    PROTO((char _HUGE *filename));
 
 extern intn DFPreadref
-    PROTO((const char _HUGE *filename, uint16 ref));
+    PROTO((char _HUGE *filename, uint16 ref));
 
-extern intn DFPwriteref
-    PROTO((const char _HUGE *filename, uint16 ref));
+extern int DFPwriteref
+    PROTO((char _HUGE *filename, uint16 ref));
 
-extern intn DFPrestart
+extern int DFPrestart
     PROTO((void));
 
 extern uint16 DFPlastref
     PROTO((void));
+
+extern int32 DFPIopen
+    PROTO((char _HUGE *filename, int access));
 
 /*
 ** from dfr8.c
@@ -411,32 +356,32 @@ extern int DFR8setcompress
     PROTO((int32 scheme,comp_info *cinfo));
 
 extern intn DFR8getdims
-    PROTO((const char _HUGE *filename, int32 _HUGE *pxdim, int32 _HUGE *pydim,
+    PROTO((char _HUGE *filename, int32 _HUGE *pxdim, int32 _HUGE *pydim,
         int _HUGE *pispal));
 
 extern intn DFR8getimage
-    PROTO((const char _HUGE *filename, uint8 _HUGE *image, int32 xdim, int32 ydim,
+    PROTO((char _HUGE *filename, uint8 _HUGE *image, int32 xdim, int32 ydim,
         uint8 _HUGE *pal));
 
-extern intn DFR8setpalette
+extern int DFR8setpalette
     PROTO((uint8 _HUGE *pal));
 
-extern intn DFR8putimage
-    PROTO((const char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim, uint16 compress));
+extern int DFR8putimage
+    PROTO((char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim, uint16 compress));
 
-extern intn DFR8addimage
-    PROTO((const char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim, uint16 compress));
+extern int DFR8addimage
+    PROTO((char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim, uint16 compress));
 
-extern intn DFR8nimages
-    PROTO((const char _HUGE *filename));
+extern int DFR8nimages
+    PROTO((char _HUGE *filename));
 
 extern intn DFR8readref
-    PROTO((const char _HUGE *filename, uint16 ref));
+    PROTO((char _HUGE *filename, uint16 ref));
 
-extern intn DFR8writeref
-    PROTO((const char _HUGE *filename, uint16 ref));
+extern int DFR8writeref
+    PROTO((char _HUGE *filename, uint16 ref));
 
-extern intn DFR8restart
+extern int DFR8restart
     PROTO((void));
 
 extern uint16 DFR8lastref
@@ -445,113 +390,113 @@ extern uint16 DFR8lastref
 /*
 ** from dfgr.c 
 */
-extern intn DFGRgetlutdims
-  PROTO((const char _HUGE *filename, int32 _HUGE *pxdim, int32 _HUGE *pydim,
-        intn _HUGE *pncomps, intn _HUGE *pil));
+extern int DFGRgetlutdims
+  PROTO((char _HUGE *filename, int32 _HUGE *pxdim, int32 _HUGE *pydim,
+        int _HUGE *pncomps, int _HUGE *pil));
 
-extern intn DFGRreqlutil
-  PROTO((intn il));
+extern int DFGRreqlutil
+  PROTO((int il));
 
-extern intn DFGRgetlut
-  PROTO((const char _HUGE *filename, VOIDP lut, int32 xdim, int32 ydim));
+extern int DFGRgetlut
+  PROTO((char _HUGE *filename, VOIDP lut, int32 xdim, int32 ydim));
 
-extern intn DFGRgetimdims
-  PROTO((const char _HUGE *filename, int32 _HUGE *pxdim, int32 _HUGE *pydim,
-        intn _HUGE *pncomps, intn _HUGE *pil));
+extern int DFGRgetimdims
+  PROTO((char _HUGE *filename, int32 _HUGE *pxdim, int32 _HUGE *pydim,
+        int _HUGE *pncomps, int _HUGE *pil));
 
-extern intn DFGRreqimil
-  PROTO((intn il));
+extern int DFGRreqimil
+  PROTO((int il));
 
-extern intn DFGRgetimage
-  PROTO((const char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
+extern int DFGRgetimage
+  PROTO((char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
 
-extern intn DFGRsetcompress
+extern int DFGRsetcompress
   PROTO((int32 scheme,comp_info *cinfo));
 
-extern intn DFGRsetlutdims
-  PROTO((int32 xdim, int32 ydim, intn ncomps, intn il));
+extern int DFGRsetlutdims
+  PROTO((int32 xdim, int32 ydim, int ncomps, int il));
 
-extern intn DFGRsetlut
+extern int DFGRsetlut
   PROTO((VOIDP lut, int32 xdim, int32 ydim));
 
-extern intn DFGRaddlut
-  PROTO((const char _HUGE *filename, VOIDP lut, int32 xdim, int32 ydim));
+extern int DFGRaddlut
+  PROTO((char _HUGE *filename, VOIDP lut, int32 xdim, int32 ydim));
 
-extern intn DFGRsetimdims
-  PROTO((int32 xdim, int32 ydim, intn ncomps, intn il));
+extern int DFGRsetimdims
+  PROTO((int32 xdim, int32 ydim, int ncomps, int il));
 
-extern intn DFGRaddimage
-  PROTO((const char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
+extern int DFGRaddimage
+  PROTO((char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
 
-extern intn DFGRputimage
-  PROTO((const char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
+extern int DFGRputimage
+  PROTO((char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
 
-extern intn DFGRreadref
-  PROTO((const char _HUGE *filename, uint16 ref));
+extern int DFGRreadref
+  PROTO((char _HUGE *filename, uint16 ref));
 
 extern uint16 DFGRIlastref
     PROTO((void));
 
-extern intn DFGRIgetdims
-  PROTO((const char _HUGE *filename, int32 _HUGE *pxdim, int32 _HUGE *pydim,
-        intn _HUGE *pncomps, intn _HUGE *pil, intn type));
+extern int DFGRIgetdims
+  PROTO((char _HUGE *filename, int32 _HUGE *pxdim, int32 _HUGE *pydim,
+        int _HUGE *pncomps, int _HUGE *pil, int type));
 
-extern intn DFGRIreqil
+extern int DFGRIreqil
   PROTO((intn il, intn type));
 
-extern intn DFGRIgetimlut
-  PROTO((const char _HUGE *filename, VOIDP imlut, int32 xdim, int32 ydim, intn type,
-	 intn isfortran));
+extern int DFGRIgetimlut
+  PROTO((char _HUGE *filename, VOIDP imlut, int32 xdim, int32 ydim, int type,
+	 int isfortran));
 
-extern intn DFGRIsetdims
-  PROTO((int32 xdim, int32 ydim, intn ncomps, intn type));
+extern int DFGRIsetdims
+  PROTO((int32 xdim, int32 ydim, intn ncomps, int type));
 
-extern intn DFGRIsetil
-  PROTO((intn il, intn type));
+extern int DFGRIsetil
+  PROTO((int il, int type));
 
-extern intn DFGRIrestart
+extern int DFGRIrestart
   PROTO((void));
 
-extern intn DFGRIaddimlut
-  PROTO((const char _HUGE *filename, VOIDP imlut, int32 xdim, int32 ydim, intn type,
-	 intn isfortran, intn newfile));
+extern int DFGRIaddimlut
+  PROTO((char _HUGE *filename, VOIDP imlut, int32 xdim, int32 ydim, int type,
+	 int isfortran, int newfile));
 
 /*
-** from df24.c
+** from df24.c 
 */
-extern intn DF24getdims
-  PROTO((const char _HUGE *filename, int32 _HUGE *pxdim, int32 _HUGE *pydim,
-        intn _HUGE *pil));
+extern int DF24getdims
+  PROTO((char _HUGE *filename, int32 _HUGE *pxdim, int32 _HUGE *pydim,
+        int _HUGE *pil));
 
-extern intn DF24reqil
-  PROTO((intn il));
+extern int DF24reqil
+  PROTO((int il));
 
-extern intn DF24getimage
-  PROTO((const char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
+extern int DF24getimage
+  PROTO((char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
 
-extern intn DF24setdims
+extern int DF24setdims
   PROTO((int32 xdim, int32 ydim));
 
-extern intn DF24setil
-  PROTO((intn il));
+extern int DF24setil
+  PROTO((int il));
 
-extern intn DF24setcompress
+extern int DF24setcompress
   PROTO((int32 type,comp_info *cinfo));
 
-extern intn DF24restart
+extern int DF24restart
   PROTO((void));
 
-extern intn DF24addimage
-  PROTO((const char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
+extern int DF24addimage
+  PROTO((char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
 
-extern intn DF24putimage
-  PROTO((const char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
+extern int DF24putimage
+  PROTO((char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
 
-extern intn DF24nimages
-  PROTO((const char _HUGE *filename));
+extern int DF24nimages
+  PROTO((char _HUGE *filename));
 
-extern intn DF24readref
-  PROTO((const char _HUGE *filename, uint16 ref));
+extern int DF24readref
+  PROTO((char _HUGE *filename, uint16 ref));
 
 extern uint16 DF24lastref
     PROTO((void));
@@ -561,17 +506,17 @@ extern uint16 DF24lastref
 */
 
 extern int32 DFANgetlablen
-    PROTO((const char _HUGE *filename, uint16 tag, uint16 ref));
+    PROTO((char _HUGE *filename, uint16 tag, uint16 ref));
 
 extern intn DFANgetlabel
-    PROTO((const char _HUGE *filename, uint16 tag, uint16 ref, char _HUGE *label,
+    PROTO((char _HUGE *filename, uint16 tag, uint16 ref, char _HUGE *label,
             int32 maxlen));
 
 extern int32 DFANgetdesclen
-    PROTO((const char _HUGE *filename, uint16 tag, uint16 ref));
+    PROTO((char _HUGE *filename, uint16 tag, uint16 ref));
 
 extern intn DFANgetdesc
-    PROTO((const char _HUGE *filename, uint16 tag, uint16 ref, char _HUGE *desc,
+    PROTO((char _HUGE *filename, uint16 tag, uint16 ref, char _HUGE *desc,
             int32 maxlen));
 
 extern int32 DFANgetfidlen
@@ -587,10 +532,10 @@ extern int32 DFANgetfds
     PROTO((int32 file_id, char _HUGE *desc, int32 maxlen, intn isfirst));
 
 extern intn DFANputlabel
-    PROTO((const char _HUGE *filename, uint16 tag, uint16 ref, char _HUGE *label));
+    PROTO((char _HUGE *filename, uint16 tag, uint16 ref, char _HUGE *label));
 
 extern intn DFANputdesc
-    PROTO((const char _HUGE *filename, uint16 tag, uint16 ref, char _HUGE *desc,
+    PROTO((char _HUGE *filename, uint16 tag, uint16 ref, char _HUGE *desc,
             int32 desclen));
 
 extern intn DFANaddfid
@@ -603,7 +548,7 @@ extern uint16 DFANlastref
     PROTO((void));
 
 extern intn DFANlablist
-    PROTO((const char _HUGE *filename, uint16 tag, uint16 _HUGE reflist[],
+    PROTO((char _HUGE *filename, uint16 tag, uint16 _HUGE reflist[],
             char _HUGE *labellist, intn listsize, intn maxlen, intn startpos));
 
 extern uint16 DFANIlocate
@@ -613,18 +558,18 @@ extern int DFANIaddentry
   PROTO((int type, uint16 annref, uint16 datatag, uint16 dataref));
 
 extern int32 DFANIgetannlen
-  PROTO((const char _HUGE *filename, uint16 tag, uint16 ref, int type));
+  PROTO((char _HUGE *filename, uint16 tag, uint16 ref, int type));
 
 extern intn DFANIgetann
-  PROTO((const char _HUGE *filename, uint16 tag, uint16 ref, uint8 _HUGE *ann,
+  PROTO((char _HUGE *filename, uint16 tag, uint16 ref, uint8 _HUGE *ann,
             int32 maxlen, int type));
 
 extern intn DFANIputann
-  PROTO((const char _HUGE *filename, uint16 tag, uint16 ref, uint8 _HUGE *ann,
+  PROTO((char _HUGE *filename, uint16 tag, uint16 ref, uint8 _HUGE *ann,
             int32 annlen, int type));
 
 extern int DFANIlablist
-  PROTO((const char _HUGE *filename, uint16 tag, uint16 _HUGE reflist[],
+  PROTO((char _HUGE *filename, uint16 tag, uint16 _HUGE reflist[],
             uint8 _HUGE *labellist, int listsize, int maxlen, int startpos,
             int isfortran));
 
@@ -642,7 +587,7 @@ extern int32 DFANIgetfann
 */
 
 extern int DFSDgetdims
-    PROTO((const char _HUGE *filename, intn _HUGE *prank, int32 _HUGE sizes[], intn maxrank));
+    PROTO((char _HUGE *filename, intn _HUGE *prank, int32 _HUGE sizes[], intn maxrank));
 
 extern int DFSDgetdatastrs
     PROTO((char _HUGE *label, char _HUGE *unit, char _HUGE *format,char _HUGE *coordsys));
@@ -663,7 +608,7 @@ extern int DFSDgetrange
     PROTO((VOIDP pmax, VOIDP pmin));
 
 extern int DFSDgetdata
-    PROTO((const char _HUGE *filename, intn rank, int32 _HUGE maxsizes[], VOIDP data));
+    PROTO((char _HUGE *filename, intn rank, int32 _HUGE maxsizes[], VOIDP data));
 
 extern int DFSDsetlengths
     PROTO((int maxlen_label, int maxlen_unit, int maxlen_format,
@@ -673,10 +618,10 @@ extern int DFSDsetdims
     PROTO((intn rank, int32 _HUGE dimsizes[]));
 
 extern int DFSDsetdatastrs
-    PROTO((const char _HUGE *label, const char _HUGE *unit, const char _HUGE *format,const char _HUGE *coordsys));
+    PROTO((char _HUGE *label, char _HUGE *unit, char _HUGE *format,char _HUGE *coordsys));
 
 extern int DFSDsetdimstrs
-    PROTO((int dim, const char _HUGE *label, const char _HUGE *unit, const char _HUGE *format));
+    PROTO((int dim, char _HUGE *label, char _HUGE *unit, char _HUGE *format));
 
 extern int DFSDsetdimscale
     PROTO((intn dim, int32 dimsize, VOIDP scale));
@@ -685,10 +630,10 @@ extern int DFSDsetrange
     PROTO((VOIDP maxi, VOIDP mini));
 
 extern int DFSDputdata
-    PROTO((const char _HUGE *filename, intn rank, int32 _HUGE dimsizes[], VOIDP data));
+    PROTO((char _HUGE *filename, intn rank, int32 _HUGE dimsizes[], VOIDP data));
 
 extern int DFSDadddata
-    PROTO((const char _HUGE *filename, intn rank, int32 _HUGE dimsizes[], VOIDP data));
+    PROTO((char _HUGE *filename, intn rank, int32 _HUGE dimsizes[], VOIDP data));
 
 extern int DFSDrestart
     PROTO((void));
@@ -706,11 +651,11 @@ extern int DFSDreadref
     PROTO((char _HUGE *filename, uint16 ref));
 
 extern int DFSDgetslice
-    PROTO((const char _HUGE *filename, int32 _HUGE winst[], int32 _HUGE windims[],VOIDP data,
+    PROTO((char _HUGE *filename, int32 _HUGE winst[], int32 _HUGE windims[],VOIDP data,
                 int32 _HUGE dims[]));
 
 extern int DFSDstartslice
-    PROTO((const char _HUGE *filename));
+    PROTO((char _HUGE *filename));
 
 extern int DFSDputslice
     PROTO((int32 _HUGE winend[], VOIDP data, int32 _HUGE dims[]));
@@ -739,7 +684,7 @@ extern int DFSDgetcal
             float64 _HUGE *pioff_err, int32 _HUGE *cal_nt));
 
 extern int DFSDwriteref
-    PROTO((const char _HUGE *filename, uint16 ref));
+    PROTO((char _HUGE *filename, uint16 ref));
 
 extern int DFSDsetfillvalue
     PROTO((VOIDP fill_value));
@@ -748,7 +693,7 @@ extern int DFSDgetfillvalue
     PROTO((VOIDP fill_value));
 
 extern int DFSDstartslab
-    PROTO((const char _HUGE *filename));
+    PROTO((char _HUGE *filename));
 
 extern int DFSDwriteslab
     PROTO((int32 _HUGE start[], int32 _HUGE stride[], int32 _HUGE count[],
@@ -758,7 +703,7 @@ extern int DFSDendslab
     PROTO((void));
 
 extern int DFSDreadslab
-    PROTO((const char *filename, int32 _HUGE start[], int32 _HUGE slab_size[], 
+    PROTO((char *filename, int32 _HUGE start[], int32 _HUGE slab_size[],
            int32 _HUGE stride[], VOIDP buffer, int32 _HUGE buffer_size[]));
 
 /*
@@ -782,7 +727,7 @@ extern intn DFKsetNT
 
 extern int32 DFKconvert
     PROTO((VOIDP source, VOIDP dest, int32 ntype, int32 num_elm,
-            int16 acc_mode, int32 source_stride, int32 dest_stride));
+            int16 access, int32 source_stride, int32 dest_stride));
 
 /*
 ** from dfknat.c
@@ -1676,7 +1621,7 @@ extern FRETVAL(intf) ndf24sjpeg
 #endif /* DF_FNAMES */
 
 extern FRETVAL(intf) ndfiopen
-    PROTO((_fcd name, intf _HUGE *acc_mode, intf _HUGE *defdds, intf _HUGE *namelen));
+    PROTO((_fcd name, intf _HUGE *access, intf _HUGE *defdds, intf _HUGE *namelen));
 
 extern FRETVAL(intf) ndfclose
     PROTO((intf _HUGE *dfile));
@@ -1693,10 +1638,10 @@ extern FRETVAL(intf) ndfdel
     PROTO((intf _HUGE *dfile, intf _HUGE *tag, intf _HUGE *ref));
 
 extern FRETVAL(intf) ndfiaccess
-    PROTO((intf _HUGE *dfile, intf _HUGE *tag, intf _HUGE *ref, _fcd acc_mode, intf _HUGE *acclen));
+    PROTO((intf _HUGE *dfile, intf _HUGE *tag, intf _HUGE *ref, _fcd access, intf _HUGE *acclen));
 
 extern FRETVAL(intf) ndfstart
-    PROTO((intf _HUGE *dfile, intf _HUGE *tag, intf _HUGE *ref, char _HUGE *acc_mode));
+    PROTO((intf _HUGE *dfile, intf _HUGE *tag, intf _HUGE *ref, char _HUGE *access));
 
 extern FRETVAL(intf) ndfread
     PROTO((intf _HUGE *dfile, _fcd ptr, intf _HUGE *len));
@@ -1797,7 +1742,7 @@ extern FRETVAL(VOID) nheprnt
 #endif /* HFILE_FNAMES */
 
 extern FRETVAL(intf) nhiopen
-    PROTO((_fcd name, intf _HUGE *acc_mode, intf _HUGE *defdds, intf _HUGE *namelen));
+    PROTO((_fcd name, intf _HUGE *access, intf _HUGE *defdds, intf _HUGE *namelen));
 
 extern FRETVAL(intf) nhclose
     PROTO((intf _HUGE *file_id));

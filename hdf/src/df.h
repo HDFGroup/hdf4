@@ -33,6 +33,8 @@
 
 /* include DF (internal) header information */
 #include "hdf.h"
+#include "herr.h"
+/*#include "dfi.h"*/
 
 /*-------------------------------------------------------------------------*/
 /*                      Type declarations                                   */
@@ -68,10 +70,6 @@ typedef struct DF {
     DFdle *last_dle;		/* last_dle and last_dd are used in searches */
 				/* to indicate element returned */
 				/* by previous call to DFfind */
-    DFdd *up_dd;		/* DD of element being read/updated, */
-				/* used by DFstart */
-    uint16 last_tag;		/* Last tag searched for by DFfind */
-    uint16 last_ref;		/* Last reference number searched for */
     intn type;  /* 0= not in use, 1= normal, -1 = multiple */
 				/* this is a hook for when */
 				/* multiple files are open */
@@ -79,14 +77,18 @@ typedef struct DF {
 				/* 0=none, 1=r, 2=w, 3=r/w */
     intn changed;   /* True if anything in DDs modified */
 				/* since last write */
+    uint16 last_tag;		/* Last tag searched for by DFfind */
+    uint16 last_ref;		/* Last reference number searched for */
     intn last_dd;   /* see last_dle */
     intn defdds;    /* default numer of DD's in each block */
     intn up_access; /* access permissions to element being */
 				/* read/updated. Used by DFstart */
+    DFdd *up_dd;		/* DD of element being read/updated, */
+				/* used by DFstart */
     /* File handle is a file pointer or file descriptor depending on whether */
     /* we use buffered or unbuffered I/O.  But, since this structure is a */
     /* fake, it doesn't matter whether I/O is buffered or not. */
-    intn file;			/* file descriptor */
+    int file;			/* file descriptor */
 } DF;
 
 
@@ -97,13 +99,9 @@ typedef struct DFdata { /* structure for returning status information */
 /*--------------------------------------------------------------------------*/
 /*                          Procedure types                                 */
 
-#if defined c_plusplus || defined __cplusplus
-extern "C" {
-#endif /* c_plusplus || __cplusplus */
-
 /* prototypes for dfstubs.c */
 extern DF *DFopen
-  PROTO((char *name, int acc_mode, int ndds));
+  PROTO((char *name, int access, int ndds));
 
 extern int DFclose
   PROTO((DF *dfile));
@@ -121,10 +119,10 @@ extern int DFfind
   PROTO((DF *dfile, DFdesc *ptr));
 
 extern int DFaccess
-  PROTO((DF *dfile, uint16 tag, uint16 ref, char *acc_mode));
+  PROTO((DF *dfile, uint16 tag, uint16 ref, char *access));
 
 extern int DFstart
-  PROTO((DF *dfile, uint16 tag, uint16 ref, char *acc_mode));
+  PROTO((DF *dfile, uint16 tag, uint16 ref, char *access));
 
 extern int32 DFread
   PROTO((DF *dfile, char *ptr, int32 len));
@@ -184,14 +182,6 @@ extern char *DFIf2cstring
 extern int32 DFIspaceleft
   PROTO((void));
 #endif /* PC */
-
-/* prototypes for dfconv.c */
-extern int DFconvert
-  PROTO((uint8 *source,uint8 *dest,int ntype,int sourcetype,int desttype, int32 size));
-
-#if defined c_plusplus || defined __cplusplus
-}
-#endif /* c_plusplus || __cplusplus */
 
 /*--------------------------------------------------------------------------*/
 /*                          Global Variables                                */

@@ -11,7 +11,7 @@
  ****************************************************************************/
 
 #ifdef RCSID
-static char RcsId[] = "@(#) $Revision$"
+static char RcsId[] = "@(#)$Revision$";
 #endif
 
 /* $Id$ */
@@ -42,9 +42,9 @@ int palconv();
 #endif /* PROTOTYPE */
 
 #ifdef PROTOTYPE
-int main(int argc, char *argv[]) 
+main(int argc, char *argv[]) 
 #else
-int main(argc, argv) 
+main(argc, argv) 
 int argc;
 char *argv[];
 #endif /* PROTOTYPE */
@@ -70,9 +70,9 @@ char *argv[];
  */
 
 #ifdef PROTOTYPE
-int palconv(char *palfile, char *outfile)
+palconv(char *palfile, char *outfile)
 #else
-int palconv(palfile, outfile)
+palconv(palfile, outfile)
 char *palfile, *outfile;
 #endif /* PROTOTYPE */
 {

@@ -29,8 +29,6 @@ static char RcsId[] = "@(#)$Revision$";
 **          -i  Interactive mode; prompt for each linked-block element
 **          -d# Force the output file to have # DDs per DD block
 **          -t# Force output file to have # linked blocks per table entry
-**          -x  Keep external objects external
-**          -r <from> <to> rename external objects
 **      Only one of options b and i can be specified.
 ** COMMENTS, BUGS, ASSUMPTIONS
 **	Both arguments must be supplied to the program and they cannot be
@@ -69,7 +67,7 @@ static VOID usage
 static VOID hdferror
     PROTO((void));
 static VOID error
-    PROTO((const char *));
+    PROTO((char *));
 int desc_comp
     PROTO((const void *d1, const void *d2));
 
@@ -77,38 +75,34 @@ unsigned char *data;
 char invoke[81];
 int32 data_size;
 int32 nblk = 0;
-char *from_file = NULL;
-char *to_file = NULL;
-
 
 #ifdef PROTOTYPE
-int main(int argc, char *argv[])
+main(int argc, char *argv[])
 #else
-int main(argc, argv)
+main(argc, argv)
 int argc;
 char *argv[];
 #endif /* PROTOTYPE */
 {
-    int i, num_desc, fnum, merge;
-    int32 infile, outfile, aid, ret;
+    int i, num_desc, ret, fnum, merge;
+    int32 infile, outfile, aid, stat;
     mydd_t *dlist;
     int32 oldoff, oldlen;
     int blocks = 1;
     int intr = 0;
     int16 ndds = 0;
     int optset = 0;
-    intn external = FALSE;
     char *tmp, fname[2][80];
-    CONSTR(FUNC,"main");
+    char *FUNC="main";
 
 /*
 **   Get invocation name of program
 */
     tmp = (char *)NULL;
-    HDstrcpy(invoke, strtok(argv[0], "/]\\\0"));
+    strcpy(invoke, strtok(argv[0], "/]\\\0"));
     for (;;) {
 	if (tmp != NULL)
-	    HDstrcpy(invoke, tmp);
+	    strcpy(invoke, tmp);
 	if ((tmp = strtok((char *)NULL, "/]\\\0")) == NULL)
 	    break;
     }
@@ -149,20 +143,13 @@ char *argv[];
             case 't':
                 nblk = atoi(&argv[i][2]);
                 break;
-            case 'x':
-                external = TRUE;
-                break;
-            case 'r':
-                from_file = argv[++i];
-                to_file   = argv[++i];
-                break;
             default:
                 fprintf(stderr, "Unknown option -%c ignored\n", argv[i][1]);
                 break;
         }
 	} else {
 	    if (fnum < 2) {
-	        HDstrcpy(fname[fnum], argv[i]);
+	        strcpy(fname[fnum], argv[i]);
 	        fnum++;
 	    }
 	}
@@ -172,14 +159,9 @@ char *argv[];
 /*
 **   Enough [unique] file arguments?
 */
-    if ((fnum != 2) || (HDstrcmp(fname[0], fname[1]) == 0)) {
+    if ((fnum != 2) || (strcmp(fname[0], fname[1]) == 0)) {
 	error("need 2 unique file names");
     }
-
-
-    if(from_file && to_file) 
-        printf("Going to rename external file %s to %s\n", from_file, to_file);
-        
 
 /*
 **   Check to make sure input file is HDF
@@ -240,12 +222,12 @@ char *argv[];
         /*
          * Move to the next one
          */
-	ret = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
+	stat = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
 
         /*
          * Fail if there are none left and we expect more
          */
-	if ((ret == FAIL) && (i + 1 < num_desc)) {
+	if ((stat == FAIL) && (i + 1 < num_desc)) {
 	    printf("MAJOR PROBLEM: DDs; only got %d of %d; line %d\n",i,num_desc,__LINE__);
 	    hdferror();
         }
@@ -254,8 +236,8 @@ char *argv[];
     /*
      * Close the access element
      */
-    ret = Hendaccess(aid);
-    if (ret == FAIL)
+    stat = Hendaccess(aid);
+    if (stat == FAIL)
         hdferror();
 
 /*
@@ -286,41 +268,6 @@ char *argv[];
 			    merge_blocks(&dlist[i], infile, outfile);
 			}
 			break;
-                    case SPECIAL_EXT:
-                        if(external) {
-                            sp_info_block_t info;
-                            int32 aid, new_aid;
-                            char * name;
-
-                            /* get file name and offset */
-                            aid = Hstartread(infile, dlist[i].tag, dlist[i].ref);
-                            if(aid == FAIL)
-                                continue;
-
-                            ret = HDget_special_info(aid, &info);
-                            if((ret == FAIL) || (info.key != SPECIAL_EXT))
-                                continue;
-
-                            /* see if should be renamed */
-                            if(from_file && !HDstrcmp(info.path, from_file))
-                                name = to_file;
-                            else
-                                name = info.path;
-
-                            /* create the new one */
-                            new_aid = HXcreate(outfile, BASETAG(dlist[i].tag), 
-                                               dlist[i].ref, name, info.offset, 
-                                               dlist[i].length);
-
-                            /* close the elements */
-                            Hendaccess(aid);
-                            Hendaccess(new_aid);
-
-                        } else {
-                            /* pull into the file */
-                            merge_blocks(&dlist[i], infile, outfile);
-                        }
-                        break;
 		    default:
 			merge_blocks(&dlist[i], infile, outfile);
 			break;
@@ -340,17 +287,8 @@ char *argv[];
 /*
 **   save offset of data to check against next DD
 */
-        oldoff = dlist[i].offset;
+    oldoff = dlist[i].offset;
     }
-
-/*
-**   Rename any matching external elements
-*/
-    if(from_file && to_file) {
-
-
-    }
-    
 
 /*
 **   done; close files
@@ -397,29 +335,27 @@ mydd_t *dd;
 int32 infile, outfile;
 #endif /* PROTOTYPE */
 {
-    int32 inaid, ret, rdret, outaid;
-    sp_info_block_t info;
-    CONSTR(FUNC,"copy_blocks");
+    int32 inaid, ret, rdret, len, first_len, block_len, nblocks, outaid;
+    char *FUNC="copy_blocks";
 
 
     inaid = Hstartread(infile, dd->tag, dd->ref);
-    ret = HDget_special_info(inaid, &info);
-    if ((ret != SUCCEED) || (info.key != SPECIAL_LINKED)){
+    ret = HDinqblockinfo(inaid, &len, &first_len, &block_len, &nblocks);
+    if (ret != SUCCEED) {
         HERROR(DFE_GENAPP);
         hdferror();
     }
 /*
 **  copy first block
 */
-    outaid = Hstartwrite(outfile, BASETAG(dd->tag), dd->ref, info.first_len);
+    outaid = Hstartwrite(outfile, BASETAG(dd->tag), dd->ref, first_len);
     if (outaid == FAIL) {
         HERROR(DFE_GENAPP);
         hdferror();
     }
     rdret = 0;
-    while (rdret < info.first_len) {
-        ret = Hread(inaid, 
-                    (data_size < info.first_len) ? data_size : info.first_len, data);
+    while (rdret < first_len) {
+        ret = Hread(inaid, (data_size<first_len) ? data_size : first_len, data);
 	if (ret == FAIL) {
 	    HERROR(DFE_GENAPP);
 	    hdferror();
@@ -436,9 +372,9 @@ int32 infile, outfile;
 **  promote to linked-block element
 */
     if (nblk > 0)
-        info.nblocks = nblk;
+        nblocks = nblk;
 
-    outaid = HLcreate(outfile, BASETAG(dd->tag), dd->ref, info.block_len, info.nblocks);
+    outaid = HLcreate(outfile, BASETAG(dd->tag), dd->ref, block_len, nblocks);
     if (outaid == FAIL) {
 	HERROR(DFE_GENAPP);
 	hdferror();
@@ -478,7 +414,7 @@ int32 infile, outfile;
 #endif /* PROTOTYPE */
 {
     int32 inaid, outaid, ret, len;
-    CONSTR(FUNC,"merge_blocks");
+    char *FUNC="merge_blocks";
 
 
     inaid = Hstartread(infile, dd->tag, dd->ref);
@@ -539,14 +475,7 @@ static VOID usage(name)
 char *name;
 #endif /* PROTOTYPE */
 {
-    fprintf(stderr, "Usage:  %s [-i | -b] [-d#] [-t#] [-x] [-r <from> <to>] <infile> <outfile>\n", name);
-    fprintf(stderr, "\t-t# : reset the linked block sizing\n");
-    fprintf(stderr, "\t-d# : reset the number of DDs per DD block\n");
-    fprintf(stderr, "\t-i  : interactively merge linked blocks\n");
-    fprintf(stderr, "\t-b  : maintain linked blocking sizes\n");
-    fprintf(stderr, "\t-x  : keep external elements external\n");
-    fprintf(stderr, "\t-r <from> <to> :\n");
-    fprintf(stderr, "\t      change external element names matching <from> to <to>\n");
+    fprintf(stderr, "Usage:  %s [-i | -b] [-d#] [-t#] <infile> <outfile>\n", name);
 }
 
 /*
@@ -589,10 +518,10 @@ static VOID hdferror()
 ** EXAMPLES
 */
 #ifdef PROTOTYPE
-static VOID error(const char *string)
+static VOID error(char *string)
 #else
 static VOID error(string)
-const char *string;
+char *string;
 #endif
 {
     fprintf(stderr, "%s: %s\n", invoke, string);
@@ -624,5 +553,5 @@ int desc_comp(d1, d2)
 const VOID *d1, *d2;
 #endif /* PROTOTYPE */
 {
-    return((int)(((const mydd_t *)d1)->offset - ((const mydd_t *)d2)->offset));
+    return((int)(((mydd_t *)d1)->offset - ((mydd_t *)d2)->offset));
 }

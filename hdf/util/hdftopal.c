@@ -42,9 +42,9 @@ int rawpalconv();
 #endif /* PROTOTYPE */
 
 #ifdef PROTOTYPE
-int main(int argc, char *argv[]) 
+main(int argc, char *argv[]) 
 #else
-int main(argc,argv) 
+main(argc,argv) 
 int argc;
 char *argv[];
 #endif /* PROTOTYPE */
@@ -69,9 +69,9 @@ char *argv[];
  */
 
 #ifdef PROTOTYPE
-int rawpalconv(char *hdffile, char *rawpalfile)
+rawpalconv(char *hdffile, char *rawpalfile)
 #else
-int rawpalconv(hdffile, rawpalfile)
+rawpalconv(hdffile, rawpalfile)
 char *hdffile, *rawpalfile;
 #endif /* PROTOTYPE */
 {

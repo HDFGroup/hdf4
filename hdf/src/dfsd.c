@@ -26,64 +26,63 @@ static char RcsId[] = "@(#)$Revision$";
     df.c dfgroup.c dfkit.c dfi.h df.h dfsd.h
 
  Public functions:
-    DFSDgetdims      - get rank and dim sizes
-    DFSDgetdatastrs  - get label, unit, format and coord system of data
-    DFSDgetdimstrs   - get label, unit and format for a dimension
-    DFSDgetdatalen   - 
-    DFSDgetdimlen    -
-    DFSDgetdimscale  - get scale for a dimension
-    DFSDgetrange     - get max and min of data
-    DFSDgetdata      - get data values
-    DFSDgetNT        - get file number type for reading
-    DFSDpre32sdg     - tests, without calling DFSDsdginfo,  whether or
-                       not the SDG/ref written with 3.1
-    DFSDsetlengths   - set lengths of label, unit, format strings on gets
-    DFSDsetdims      - set rank and dim sizes
-    DFSDsetdatastrs  - set data label, unit, format and coord system
-    DFSDsetdimstrs   - set dim labels, units and formats
-    DFSDsetdimscale  - set scale for a dimension
-    DFSDsetrange     - set max and min of data
-    DFSDsetorder     - set array order to C or FORTRAN order
-    DFSDsetNT        - set number type to be written out
-    DFSDputdata      - output data, data info, and display info
-    DFSDrestart      - forget info about last file accessed - restart from 
-                       beginning
-    DFSDndatasets    - return number of SDGs in file
-    DFSDclear        - forget all info set by DFSDset* routines
-    DFSDlastref      - get reference number of last SDG read or written
-    DFSDgetslice     - get part of the data, specified as a slice
-    DFSDstartslice   - set up to write SD
-    DFSDputslice     - write specified number of data items to file
-    DFSDendslice     - end of series of writes, write out SDG
-    DFSDwriteref     - set reference number to be used in next SDS write slab
+    DFSDgetdims - get rank and dim sizes
+    DFSDgetdatastrs - get label, unit, format and coord system of data
+    DFSDgetdimstrs - get label, unit and format for a dimension
+    DFSDgetdatalen - 
+    DFSDgetdimlen -
+    DFSDgetdimscale - get scale for a dimension
+    DFSDgetrange - get max and min of data
+    DFSDgetdata - get data values
+    DFSDgetNT - get file number type for reading
+    DFSDpre32sdg - tests, without calling DFSDsdginfo,  whether or
+             not the SDG/ref written with 3.1
+    DFSDsetlengths - set lengths of label, unit, format strings on gets
+    DFSDsetdims - set rank and dim sizes
+    DFSDsetdatastrs - set data label, unit, format and coord system
+    DFSDsetdimstrs - set dim labels, units and formats
+    DFSDsetdimscale - set scale for a dimension
+    DFSDsetrange - set max and min of data
+    DFSDsetorder - set array order to C or FORTRAN order
+    DFSDsetNT - set number type to be written out
+    DFSDputdata - output data, data info, and display info
+    DFSDrestart - forget info about last file accessed - restart from beginning
+    DFSDndatasets - return number of SDGs in file
+    DFSDclear - forget all info set
+    DFSDlastref - get reference number of last SDG read or written
+    DFSDgetslice - get part of the data, specified as a slice
+    DFSDstartslice - set up to write SD
+    DFSDputslice - write specified number of data items to file
+    DFSDendslice - end of series of writes, write out SDG
+    DFSDwriteref - set reference number to be used in next SDS write slab
     DFSDsetfillvalue - set fill value to be used in next SDS written
     DFSDgetfillvalue - return fill value from SDS that is about to be read
-    DFSDstartslab    - set up to write slabs
-    DFSDwriteslab    - write hyperslab of values
-    DFSDendslab      - end of series of hyperslab writes
+    DFSDstartslab - set up to write slabs
+    DFSDwriteslab - write hyperslab of values
+    DFSDendslab   - end of series of hyperslab writes
     DFSDreadslab     - get part of the data, specified as a slab
 
 Lower level functions:
-    DFSDgetsdg  - read SDG into struct
-    DFSDputsdg  - write SDG to file
+    DFSDgetsdg - read SDG into struct
+    DFSDputsdg - write SDG to file
 
 Private functions:
-    DFSDIopen      - open or reopen file
-    DFSDIsdginfo   - find next sdg in file
-    DFSDIisndg     - was currently read sdg written by HDF3.2
-    DFSDIrefresh   - get info of next sdg if necessary
-    DFSDIgetrrank  - get rank of the currently read sdg
-    DFSDIgetwrank  - get rank of the sdg to be written
-    DFSDIclear     - clear sdg data structure of all info
-    DFSDIgetdata   - read data from file
-    DFSDIputdata   - write data to file
-    DFSDIgetslice  - get slice
-    DFSDIputslice  - put slice
-    DFSDIendslice  -
+    DFSDIopen - open or reopen file
+    DFSDIsdginfo - find next sdg in file
+    DFSDIisndg - was currently read sdg written by HDF3.2
+    DFSDIrefresh -- get info of next sdg if necessary
+    DFSDIgetrrank - get rank of the currently read sdg
+    DFSDIgetwrank - get rank of the sdg to be written
+    DFSDIclear - clear sdg data structure of all info
+    DFSDIgetdata - read data from file
+    DFSDIputdata - write data to file
+    DFSDIgetslice - get slice
+    DFSDIputslice - put slice
+    DFSDIendslice -
     DFSDIsetnsdg_t - set up nsdg table
-    DFSDInextnsdg  - get next nsdg from nsdg table
-    DFSDIgetndg    - read NDG into struct
-    DFSDIputndg    - write NDG to file
+    DFSDInextnsdg - get next nsdg from nsdg table
+    DFSDIgetndg - read NDG into struct
+    DFSDIputndg - write NDG to file
 
 Fortran stub functions:
     dsisdas - set data label, unit, format and coord system
@@ -95,6 +94,7 @@ Fortran stub functions:
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
+#include "herr.h"
 #include "dfsd.h"
 #include "hfile.h"
 
@@ -141,8 +141,8 @@ PRIVATE int32  *Sddims;		/*dims written so far in slice write */
 
 PRIVATE struct {	/* Indicators of status (s) of info:    */
     intn dims;		/* s = -1: there is no info in this category */
-    intn nt;            /* s = 0: info was set, but not yet written */
-    intn coordsys;      /* s > 0: info was set and written with ref no.s*/
+    intn nt;             /* s = 0: info was set, but not yet written */
+    intn coordsys;       /* s > 0: info was set and written with ref no.s*/
     intn luf[3];
     intn scales;
     intn maxmin;
@@ -156,7 +156,7 @@ PRIVATE intn Maxstrlen[4]  = { DFS_MAXLEN, DFS_MAXLEN, DFS_MAXLEN, DFS_MAXLEN };
 PRIVATE intn Ismaxmin      = 0;	/* is there a max/min value on read?  */
 PRIVATE intn FileTranspose = 0;	/* is the data in column major order? */
 PRIVATE intn Fortorder     = 0;	/* should data be written col major?  */
-PRIVATE intn IsCal         = 0; /* has calibration info been set?     */
+PRIVATE intn IsCal         = 0;   /* has calibration info been set?     */
 
 /* In ver. 3.2 numbertype and file number format (subclass) are included  */
 /* in DFSsdg, and  fileNTsize is local to functions . 		*/ 
@@ -167,58 +167,46 @@ PRIVATE intn IsCal         = 0; /* has calibration info been set?     */
 /*           userNT=DFNTF_IEEE ;	 default */
 
 PRIVATE uint16 Readref = 0;      /* ref of next SDG/NDG to be read? */
-#if 0
 PRIVATE char Lastfile[DF_MAXFNLEN] = "";	/* last file opened */
-#endif
-PRIVATE char *Lastfile = NULL;
 PRIVATE uint16 Lastref = 0;     /* Last ref to be read/written? */
 PRIVATE DFdi lastnsdg;		/* last read nsdg in nsdg_t */
 
-/* Private buffer */
-PRIVATE uint8 *ptbuf = NULL;
+/*-----------------------------------------------------------------------------
+ * Name:    DFSDgetdims
+ * Purpose: Get dimensions of data in next SDG
+ * Inputs:  filename: name of HDF file to use
+ *          prank: pointer to integer for returning rank (no of dimensions)
+ *          sizes: array of integers for returning size of each dimension
+ *          maxrank: size of array for returning dimensions
+ * Returns: 0 on success, FAIL on failure with ERROR set
+ * Outputs: rank in prank, size of each dimension in sizes
+ *          If rank > maxrank, rank is set, and -1 is returned
+ * Users:   HDF users, utilities, other routines
+ * Invokes: DFSDIopen, HERROR, Hclose, DFSDIsdginfo
+ * Method:  Opens file, calls DFSDIsdginfo to get SDG, copies rank etc, closes
+ *          file, returns
+ * Remarks: Always sequences to next SDG in file
+ *          User specifies maxrank, and allocates sizes as an array of integers
+ *          with dimension maxrank
+ *---------------------------------------------------------------------------*/
 
-/*--------------------------------------------------------------------------
- NAME    
-       DFSDgetdims 
- USAGE
-       int DFSDgetdims(filename, prank, sizes, maxrank)
-       char  *filename;   IN:  Name of file with scientific data set
-       int   prank;       OUT: Number of dimensions
-       int32 sizes:       OUT: array for holding dimensions of data set in file.
-       int   maxrank:     IN:  size of array "dimsizes"
-
- RETURNS
-       Returns SUCCED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Gets the number of dimensions(rank) and the sizes of the dimensions 
-       (dimsizes) for the next data set in the file. The input argument
-       "maxrank" tells the size of the array that is allocated for storing
-       the "dimsizses" array. The value of rank cannot exceed the value of 
-       "maxrank". The allocation of space for reading in the scientific
-       data set should correspond to the values read in by "DFSDgetdims".
-       The first value in the array "dimsizes" should equal the first 
-       dimension of the array that is allocated to hold the data set; the
-       second value in "dimsizes" should equal the second dimension of the
-       data set, and so forth. "DFSDgetdims" opens and closes the file.
-
---------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFSDgetdims(const char *filename, intn *prank, int32 sizes[], intn maxrank)
+intn DFSDgetdims(char *filename, intn *prank, int32 sizes[], intn maxrank)
 #else
 intn DFSDgetdims(filename, prank, sizes, maxrank)
-     const char  *filename;
-     intn  *prank;
+     char *filename;
+     intn *prank;
      int32 sizes[];
-     intn  maxrank;
+     intn maxrank;
 #endif /* PROTOTYPE */
 {
     intn i;
     int32 file_id;
-    CONSTR(FUNC,"DFSDgetdims");
+    char *FUNC="DFSDgetdims";
 
-    HEclear(); /* Clear error stack */
+    HEclear();
 
-    if (!prank)  /* check if ptr is valid */
+    if (!prank)                         /* check if ptr is valid */
         HRETURN_ERROR(DFE_BADPTR, FAIL);
 
     file_id = DFSDIopen(filename, DFACC_READ); /* open/reopen file */
@@ -235,32 +223,28 @@ intn DFSDgetdims(filename, prank, sizes, maxrank)
     if (maxrank < *prank) 	/* if not all dimensions copied */
         HRETURN_ERROR(DFE_NOTENOUGH, FAIL);
 
-    for (i = 0; i < *prank; i++) /* copy dimensions */
+    for (i = 0; i < *prank; i++)
         sizes[i] = Readsdg.dimsizes[i];
     Nextsdg = 0;
 
     return (Hclose(file_id));
 }
 
-/*---------------------------------------------------------------------------
- NAME    
-       DFSDgetdatastrs
- USAGE
-       int DFSDgetdatastrs(label, unit, format, coordsys)
-       char *label;    OUT: label string that describes the data
-       char *unit;     OUT: unit string that describes the unit used
-       char *format;   OUT: format string that describes the format for
-                            displaying the data
-       char *coordsys; OUT: string describing coordinate system
- RETURN
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Retrieves information about the data from its associated attribute
-       strings. Particularly, it reads the label, unit and format strings 
-       for the data. The parameter "coordsys" gives the coordinate system
-       that is to be used for interpreting the dimension information.
+/*-----------------------------------------------------------------------------
+ * Name:    DFSDgetdatastrs
+ * Purpose: Get information about data: label, units, format
+ * Inputs:  label: string to return label in, length Maxstrlen[LABEL]
+ *          unit: string to return unit in, length Maxstrlen[UNIT]
+ *          format: string to return format in, length Maxstrlen[FORMAT]
+ *          coordsys: string to return coord system, length Maxstrlen[COORDSYS]
+ * Returns: 0 on success, FAIL on failure with ERROR set
+ * Outputs: label, unit, format, coord system in the appropriate arguments
+ * Users:   HDF users, utilities, other routines
+ * Invokes: none
+ * Method:  get values from struct Readsdg
+ * Remarks: none
+ *---------------------------------------------------------------------------*/
 
-----------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
 intn DFSDgetdatastrs(char *label, char *unit, char *format, char *coordsys)
 #else
@@ -273,12 +257,13 @@ intn DFSDgetdatastrs(label, unit, format, coordsys)
 {
     int32 luf;
     char *lufp;
-    CONSTR(FUNC,"DFSDgetdatastrs");
+    char *FUNC="DFSDgetdatastrs";
 
-    HEclear(); /* Clear error stack */
+    HEclear();
     
     if (Newdata < 0) 
         HRETURN_ERROR(DFE_BADCALL, FAIL);
+
 /* NOTE: Once DFSDsetdatastrs is changed to always write all three (label,
          unit and format) whenever it is called, this routine should be
          changed so that it returns all three, if any exist.  This means
@@ -295,7 +280,7 @@ intn DFSDgetdatastrs(label, unit, format, coordsys)
             if (Readsdg.dataluf[luf])
                 HIstrncpy(lufp, Readsdg.dataluf[luf], Maxstrlen[luf]);
           }
-      } /* end for 'luf' */
+      }
     /* copy coordsys */
     if (coordsys)
       {
@@ -308,26 +293,22 @@ intn DFSDgetdatastrs(label, unit, format, coordsys)
     return SUCCEED;
 }
 
-/*----------------------------------------------------------------------------
- NAME   
-       DFSDgetdimstrs
- USAGE
-       int DFSDgetdimstrs(dim, label, unit, format)
-       int  dim;      OUT: Dimension this label, unit and format refer to
-       char *label;   OUT: Label that describes this dimension
-       char *unit;    OUT: Unit to be used with this dimension
-       char *format;  OUT: Format to be used in displaying scale for this
-                           dimension
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Gets the labe, unit and format strings corresponding to the specified
-       dimension. The space allocated for the label, unit and format string 
-       must be at least 1 byte larger than the length of the string. If the
-       length is unknown when the program is written, declare the array size
-       as 1+maxlen_label, _unit or _format after they are set by "DFSDsetlengths".
-       The maximum default string length is 255.
-----------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------
+ * Name:    DFSDgetdimstrs
+ * Purpose: Get information about a dimension: label, units, format
+ * Inputs:  dim: no of dimension to get information about
+ *          label: string to return label in, max length Maxstrlen[LABEL]
+ *          unit: string to return unit in, max length Maxstrlen[UNIT]
+ *          format: string to return format in, max length Maxstrlen[FORMAT]
+ * Returns: 0 on success, FAIL on failure with ERROR set
+ * Outputs: label, unit, format in the appropriate arguments
+ *          NULL string if no value for the arguments
+ * Users:   HDF users, utilities, other routines
+ * Invokes: none
+ * Method:  get values from struct Readsdg
+ * Remarks: none
+ *---------------------------------------------------------------------------*/
+
 #ifdef PROTOTYPE
 intn DFSDgetdimstrs(int dim, char *label, char *unit, char *format)
 #else
@@ -341,12 +322,13 @@ intn DFSDgetdimstrs(dim, label, unit, format)
     intn luf;
     intn rdim;
     char *lufp;
-    CONSTR(FUNC,"DFSDgetdimstrs");
+    char *FUNC="DFSDgetdimstrs";
 
-    HEclear();  /* Clear error stack */
+    HEclear();
     
     if (Newdata < 0) 
         HRETURN_ERROR(DFE_BADCALL, FAIL);
+
 /* NOTE: Once DFSDsetdimstrs is changed to always write all three (label,
          unit and format) whenever it is called, this routine should be
          changed so that it returns all three, if any exist.  This means
@@ -371,31 +353,24 @@ intn DFSDgetdimstrs(dim, label, unit, format)
               }
             if (Readsdg.dimluf[luf])
                 HIstrncpy(lufp, Readsdg.dimluf[luf][rdim], Maxstrlen[luf]);
-          } /* end if 'lufp' */
-      } /* end for 'luf' */
+          }
+      }
 
     return SUCCEED;
 }
                 
-/*---------------------------------------------------------------------------
- NAME   
-       DFSDgetdatalen
- USAGE
-       int DFSDgetdatalen(llabel, lunit, lformat, lcoordsys)
-       int *llabel;     OUT: length of label string
-       int *lunit;      OUT: length of unit string
-       int *lformat;    OUT: length of format string
-       int *lcoordsys;  OUT: length of coordsys string
+/*-----------------------------------------------------------------------------
+ * Name:    DFSDgetdatalen()
+ * Purpose: Get actual length of label, unit, format, coordsys strings
+ *          Called from FORTRAN
+ * Inputs:  llabel, lunit, lformat, lcoordsys - for returning lengths
+ * Globals: Readsdg
+ * Returns: SUCCEED on success, FAIL on error with error set
+ * Users:   HDF users, utilities, other routines
+ * Invokes: none
+ * Method:  get lengths from Readsdg
+ *---------------------------------------------------------------------------*/
 
- RETURN
-       Returns SUCCED(0) if succesful and FAIL(-1) otherwise
- DESCRIPTION
-       Gets actual length of label, unit, format and coordinate system
-       strings. The space allocated for the label, unit, format and
-       coordinate system strings must be at least 1 byte larger than the 
-       actual length of the string.
-
-----------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
 intn DFSDgetdatalen(intn *llabel, intn *lunit, intn *lformat, intn *lcoordsys)
 #else
@@ -406,9 +381,9 @@ intn DFSDgetdatalen(llabel, lunit, lformat, lcoordsys)
      intn *lcoordsys;
 #endif /* PROTOTYPE */
 {
-    CONSTR(FUNC,"DFSDgetdatalen");
+    char *FUNC="DFSDgetdatalen";
 
-    HEclear(); /* Clear error stack */
+    HEclear();
 
     if (Newdata < 0)  
         HRETURN_ERROR(DFE_BADCALL, FAIL); 
@@ -425,23 +400,18 @@ intn DFSDgetdatalen(llabel, lunit, lformat, lcoordsys)
     return SUCCEED;
 }
 
-/*---------------------------------------------------------------------------
- NAME 
-       DFSDgetdimlen
- USAGE
-       int DFSDgetdimlen(dim, llabel, lunit, lformat)
-       int dim;       OUT: number of dimensions to get info about
-       int *llabel;   OUT: length of label string
-       int *lunit;    OUT: length of unit string
-       int *lformat;  OUT: length of format string
- RETURN
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Get the length of label, unit, and format for the specified
-       dimension. The space allocated to hold the label, unit, and format
-       strings must be at least 1 byte larger than the actual length of the
-       string.
-----------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------
+ * Name:    DFSDgetdimlen()
+ * Purpose: Get actual length of label, unit, format strings
+ *          Called from FORTRAN
+ * Inputs:  dim. llabel, lunit, lformat - for returning lengths
+ * Globals: Readsdg
+ * Returns: SUCCEED on success, FAIL on error with error set
+ * Users:   HDF users, utilities, other routines
+ * Invokes: none
+ * Method:  get lengths from Readsdg
+ *---------------------------------------------------------------------------*/
+
 #ifdef PROTOTYPE
 intn DFSDgetdimlen(intn dim, intn *llabel, intn *lunit, intn *lformat)
 #else
@@ -452,9 +422,9 @@ intn DFSDgetdimlen(dim, llabel, lunit, lformat)
      intn *lformat;
 #endif /* PROTOTYPE */
 {
-    CONSTR(FUNC,"DFSDgetdimlen");
+    char *FUNC="DFSDgetdimlen";
 
-    HEclear();  /* Clear error stack */
+    HEclear();
 
     if (Newdata < 0)  
         HRETURN_ERROR(DFE_BADCALL, FAIL); 
@@ -472,40 +442,37 @@ intn DFSDgetdimlen(dim, llabel, lunit, lformat)
     return SUCCEED;
 }
 
-/*----------------------------------------------------------------------------
- NAME   
-       DFSDgetdimscale
- USAGE
-       int DFSDgetdimscale(dim, maxsize, scale)
-       int   dim;      IN: Dimension this scale corresponds to
-       int32 size;     IN:  size of scale 
-       VOIDP scale;    OUT: the scale 
- RETURN
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Gets the scale corresponding to the specified demension. The DFSD
-       interface in HDFv3.3 requires that the dimension scales are of the
-       same number type as the corresponding data. To store dimension scales
-       of a different number type than the corresponding data see the 
-       multi-file SD interface.
----------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------
+ * Name:    DFSDgetdimscale
+ * Purpose: Get dimension scale
+ * Inputs:  dim: no of dimension to get scale for
+ *          size: size of scale array
+ *          scale: array to return scale in
+ * Returns: 0 on success, FAIL on failure with error set
+ * Outputs: scale if present, else -1
+ * Users:   HDF users, utilities, other routines
+ * Invokes: none
+ * Method:  get values from struct Readsdg
+ * Remarks: none
+ *---------------------------------------------------------------------------*/
+
 #ifdef PROTOTYPE
 intn DFSDgetdimscale(intn dim, int32 maxsize, VOIDP scale)
 #else
 intn DFSDgetdimscale(dim, maxsize, scale)
-     intn dim;
+     int dim;
      int32 maxsize;
-     VOIDP scale;
+     VOID *scale;
 #endif /* PROTOTYPE */
 {
-    uint32 dimsize;
+    int32 dimsize;
     int32 numtype;
     int32 localNTsize;
     intn rdim;
     uint8 *p1, *p2;
-    CONSTR(FUNC,"DFSDgetdimscale");
+    char *FUNC="DFSDgetdimscale";
 
-    HEclear();  /* Clear error stack */
+    HEclear();
     
     if (Newdata < 0) 
         HRETURN_ERROR(DFE_BADCALL, FAIL);
@@ -538,45 +505,33 @@ intn DFSDgetdimscale(dim, maxsize, scale)
     return SUCCEED;
 }
 
-/*---------------------------------------------------------------------------
- NAME    
-       DFSDgetrange
- USAGE 
-       int DFSDgetrange(max, min)
-       VOIDP max;    OUT: High value stored with the scientific data set
-       VOIDP min;    OUT: Low value stored with the scientific data set
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Gets the maximum and minimum values stored with the scientific data
-       set. The "max" and "min" values are set by "DFSDsetrange". They are
-       not automatically stored when a data set is written to a file.
-       Since these values are supposed to relate to the data itself, it is
-       assumed that they are of the same number type as the data itself.
-       One implication of this is that in the C version of "DFSDgetrange"
-       the arguments are pointers, rather than simple variables, whereas in
-       the FORTRAN version they are simple variables of the same type as the
-       data array. Neither "DFSDgetrange" or "DFSDgetdata" compare the "max"
-       and "min" values stored with the data set to the actual values in
-       the data set; they merely retrieve the data. As a result, the 
-       maximum and minimum values may not always reflect the actual maximum
-       and minimum vlaues in the data set. In some cases the "max" and "min"
-       values may actually lie outside the range of values in the data set.
----------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------
+ * Name:    DFSDgetrange()
+ * Purpose: Get maximum and minimum data values
+ * Inputs:  pmax: pointer to int8 to return maximum value in
+ *          pmin: pointer to int8 to return minimum value in
+ * Globals: Ismaxmin
+ * Returns: 0 on success, -1 if no maxmin values or if error, with error set
+ * Users:   HDF users, utilities, other routines
+ * Invokes: none
+ * Method:  Retrieves values from Readsdg
+ * Remarks: none
+ *---------------------------------------------------------------------------*/
+
 #ifdef PROTOTYPE
 int DFSDgetrange(VOIDP pmax, VOIDP pmin)
 #else
 int DFSDgetrange(pmax, pmin)
-     VOIDP pmax;
-     VOIDP pmin;
+     VOID *pmax;
+     VOID *pmin;
 #endif /* PROTOTYPE */
 {
     int32 numtype;
-    uint32 localNTsize;
+    int32 localNTsize;
     uint8 *p1, *p2;
-    CONSTR(FUNC,"DFSDgetrange");
+    char *FUNC="DFSDgetrange";
 
-    HEclear(); /* Clear error stack */
+    HEclear();
     
     if (Newdata < 0) 
         HRETURN_ERROR(DFE_BADCALL, FAIL);
@@ -587,7 +542,7 @@ int DFSDgetrange(pmax, pmin)
     numtype     = Readsdg.numbertype;
     localNTsize = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
 
-    if (Ismaxmin) /* Ismaxmin is a global */
+    if (Ismaxmin)
       {
         p1 = (uint8 *)pmax;
         p2 = (uint8 *)&(Readsdg.max_min[0]);
@@ -601,69 +556,54 @@ int DFSDgetrange(pmax, pmin)
         HRETURN_ERROR(DFE_NOVALS, FAIL);
 }
 
-/*---------------------------------------------------------------------------
- NAME  
-      DFSDgetdata
- USAGE
-      intn DFSDgetdata(filename, rank, maxsizes, data)
-      char  filename;    IN:  name of HDF file containing scientific data set
-      intn  rank;        IN:  number of dimensions of array "data"
-      int32 maxsizes;    IN:  Array that holds dimensions of buffer that will
-                              hold the data
-      VOIDP data;        OUT: Array for holding the data
+/*-----------------------------------------------------------------------------
+ * Name:    DFSDgetdata
+ * Purpose: Get data from SDG.  Will sequence to next SDG if DFSDgetdims not
+ *          called.
+ * Inputs:  filename: name of HDF file to use
+ *          rank: no of dimensions of array "data"
+ *          maxsizes: actual dimensions of array "data"
+ *          data: data for returning scientific data
+ * Returns: 0 on success, FAIL on failure with error set
+ * Outputs: actual scientific data in array
+ * Users:   HDF users, utilities, other routines
+ * Invokes: DFSDIgetdata
+ * Method:  call DFSDIgetdata
+ * Remarks: maxsizes may be larger than actual size.  In that event, the actual
+ *          data may not be contiguous in the array "data"
+ *          User sets maxsizes before call.
+ *          It is not necessary to call DFSDgetdata first if the dimensions
+ *          are correct
+ *---------------------------------------------------------------------------*/
 
- RETURN
-       Returns SUCCEED(0) if succesful and FAIL(-1) otherwise.
- DESCRIPTION
-       Reads the next data set in the file. If you do no know the values of
-       "rank" or "dimsizes", you must call "DFSDgetdims" to get them and
-       then use them to provide the right amount of space for the array
-       "data". If you do not know the number type of the data in the 
-       scientific dat set, you can call "DFSDgetNT" to find out.
-       Subsequent calls to "DFSDgetdata"(or to "DFSDgetdims" and "DFSDgetdata")
-       will sequentially read scientific data sets from the file. For example,
-       if "DFSDgetdata" is called three times in succession, the third call
-       reads data from the third scientific data set in the file. Note that
-       if you do no know the values of "rank" or "dimsizes" you must call 
-       "DFSDgetdims" to get them each time and then provide the necessary
-       space to hold the data. If "DFSDgetdims" or "DFSDgetdata" is called
-       and there are no more scientific data sets left in the file, an
-       error code is returned and nothing is read. "DFSDrestart" can be 
-       used to override this convention.
-
----------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFSDgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data)
+intn DFSDgetdata(char *filename, intn rank, int32 maxsizes[], VOIDP data)
 #else
 intn DFSDgetdata(filename, rank, maxsizes, data)
-     const char  *filename;
-     intn  rank;
+     char *filename;
+     intn rank;
      int32 maxsizes[];
-     VOIDP data;
+     VOID *data;
 #endif /* PROTOTYPE */
 {
     return (DFSDIgetdata(filename, rank, maxsizes, data, 0));    /* 0 == C */
 }
 
 /*-----------------------------------------------------------------------------
- NAME 
-       DFSDsetlengths
- USAGE
-       int DFSDsetlengths(maxlen_label, maxlen_unit, maxlen_format, maxlen_coordsys)
-       int maxlen_label;     IN: maximum length of any label
-       int maxlen_unit;      IN: maximum length of any unit
-       int maxlen_format;    IN: maximum length of any format
-       int maxlen_coordsys;  IN: maximum length of any coordsys
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Sets the maximum lengths for the strings that will hold labels, units
-       formats and the name of the coordinate system. These lengths are used
-       by the routines "DFSDgetdimstrs" and "DFSDgetdatastrs" to determine
-       the maximum lengths of strings that they get from the HDF file.
-       Normally, "DFSDsetlengths" is not needed. If it is not called,
-       default maximum lengths of 255 are used for all strings.
------------------------------------------------------------------------------*/
+ * Name:    DFSDsetlengths()
+ * Purpose: Set maximum length for label, unit, format, coordsys strings
+ * Inputs:  maxlen_label, maxlen_format, maxlen_unit, maxlen_coordsys:
+ *              maximum length of each string.
+ * Globals: Maxstrlen
+ * Returns: 0 on success, FAIL on error with error set
+ * Users:   HDF users, utilities, other routines
+ * Invokes: none
+ * Method:  Stores values in global Maxstrlen
+ * Remarks: The get routines assume the array passed in by user is of this len
+ *          If this routine is not called, the lengths default to DFS_MAXLEN
+ *          The length includes the string terminator NULL byte
+ *---------------------------------------------------------------------------*/
+
 #ifdef PROTOTYPE
 intn DFSDsetlengths(intn maxlen_label, intn maxlen_unit, intn maxlen_format,
 		    intn maxlen_coordsys)
@@ -688,23 +628,22 @@ intn DFSDsetlengths(maxlen_label, maxlen_unit, maxlen_format, maxlen_coordsys)
 }
 
 /*-----------------------------------------------------------------------------
- NAME   
-       DFSDsetdims
- USAGE
-       int DFSDsetdims(rank, dimsizes)
-       int   rank;         IN: number of dimensions
-       int32 dimsizes[];   IN: array containing dimensions of scientific data sett
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Sets the rank and dimension sizes for all subsequent scientific data
-       sets written to the file. This routine must be called before calling
-       either "DFSDgetdimstrs" or "DFSDsetdimscale". "DFSDsetdims" need not
-       be called if other set routines are not called and the correct 
-       dimensions are supplied in "DFSDputdata" or "DFSDadddata". If the 
-       rank or dimension sizes change, all previous set calls are cleared,
-       except for the number type which is set by calling "DFSDsetNT".
------------------------------------------------------------------------------*/
+ * Name:    DFSDsetdims()
+ * Purpose: Set rank and sizes for subsequent SDGs
+ * Inputs:  rank: rank of array that holds the raw data
+ *          dimsizes: sizes of all of the dimensions
+ * Globals: Writesdg, Ref
+ * Returns: 0 on success, FAIL on error with error set
+ * Users:   HDF users, utilities, other routines
+ * Invokes: DFSDclear
+ * Method:  Stores values in global structure Writesdg
+ * Remarks: If dimensions change, all previous "set"s are cleared
+ *          This routine must be called before DFSDsetdimstrs and
+ *          DFSDsetdimscales.  It need not be called if these routines are
+ *          not called, and the correct dimensions are supplied to DFSDputdata
+ *          or DFSDadddata
+ *---------------------------------------------------------------------------*/
+
 #ifdef PROTOTYPE
 intn DFSDsetdims(intn rank, int32 dimsizes[])
 #else
@@ -714,7 +653,7 @@ intn DFSDsetdims(rank, dimsizes)
 #endif /* PROTOTYPE */
 {
     intn i;
-    CONSTR(FUNC,"DFSDsetdims");
+    char *FUNC="DFSDsetdims";
 
     HEclear();
 
@@ -763,28 +702,28 @@ intn DFSDsetdims(rank, dimsizes)
 }
 
 /*-----------------------------------------------------------------------------
- NAME    
-       DFSDsetdatastrs
- USAGE
-       int DFSDsetdatastrs(label, unit, format, coordsys)
-       char *label;       IN: label that describes the data
-       char *unit;        IN: unit to be used with the data
-       char *format;      IN: format to be used in displaying the data
-       char *coordsys;    IN: coordinate system
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Sets the label, unit, format and coordsys(coordinate system) strings
-       to be assigned to the next data set written to the file.
------------------------------------------------------------------------------*/
+ * Name:    DFSDsetdatastrs()
+ * Purpose: Set label, unit and format for displaying subsequent SDGs
+ * Inputs:  label: label to be used to describe data
+ *          unit: unit corresponding to data values
+ *          format: format to be used in displaying data values
+ *          coordsys: type of coordinate system
+ * Globals: Writesdg, Ref
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF users, utilities, other routines
+ * Invokes: DFSDIsetdatastrs
+ * Method:  
+ * Remarks: 
+ *---------------------------------------------------------------------------*/
+
 #ifdef PROTOTYPE
-intn DFSDsetdatastrs(const char *label, const char *unit, const char *format, const char *coordsys)
+intn DFSDsetdatastrs(char *label, char *unit, char *format, char *coordsys)
 #else
 intn DFSDsetdatastrs(label, unit, format, coordsys)
-     const char *label;
-     const char *unit;
-     const char *format;
-     const char *coordsys;
+     char *label;
+     char *unit;
+     char *format;
+     char *coordsys;
 #endif /* PROTOTYPE */
 {
     return (DFSDIsetdatastrs(label, unit, format, coordsys));
@@ -808,18 +747,18 @@ intn DFSDsetdatastrs(label, unit, format, coordsys)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDIsetdatastrs(const char *label, const char *unit, const char *format, const char *coordsys)
+intn DFSDIsetdatastrs(char *label, char *unit, char *format, char *coordsys)
 #else
 intn DFSDIsetdatastrs(label, unit, format, coordsys)
-     const char *label;
-     const char *unit;
-     const char *format;
-     const char *coordsys;
+     char *label;
+     char *unit;
+     char *format;
+     char *coordsys;
 #endif /* PROTOTYPE */
 {
     intn luf;			/* takes values LABEL, UNIT, FORMAT */
 				/* in succession */
-    const char *lufp;		/* points to label, unit, format */
+    char *lufp;			/* points to label, unit, format */
 				/* in succession */
 
 /* NOTE: The following code should be changed to write all three, even if
@@ -834,7 +773,7 @@ intn DFSDIsetdatastrs(label, unit, format, coordsys)
         lufp = (luf == LABEL) ? label : (luf == UNIT) ? unit : format;
 
 	/* free space if allocated */
-        HDfreenclear(Writesdg.dataluf[luf]);
+        Writesdg.dataluf[luf] = HDfreespace((VOIDP)Writesdg.dataluf[luf]);
 
 	/* copy string */
         if (lufp) 
@@ -845,7 +784,7 @@ intn DFSDIsetdatastrs(label, unit, format, coordsys)
           }
       }
 
-    HDfreenclear(Writesdg.coordsys);
+    Writesdg.coordsys = HDfreespace((VOIDP)Writesdg.coordsys);
 
     if (coordsys) 
       {
@@ -861,34 +800,28 @@ intn DFSDIsetdatastrs(label, unit, format, coordsys)
 }
 
 /*-----------------------------------------------------------------------------
- NAME 
-       DFSDsetdimstrs()
- USAGE
-       int  DFSDsetdimstrs(dim, label, unit, format)
-       int  dim;        IN: dimension this label, unit and format refer to
-       char *label;     IN: label that describes this dimension
-       char *unit;      IN: unit to be used with this dimension
-       char *format;    IN: format to be used to display scale
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Sets the label, unit, and format strings corresponding to the specified
-       dimension. In both FORTRAN and C programs, dim=1 for the first 
-       dimension, and dim=2 for the second and so on. If the user is not
-       interested in one or more strings, empty strings can be used as
-       parameters for the "DFSDsetdimstrs" call. For example, 
-       "DFSDsetdimstrs(1, "vertical", "", "") " will set the label for the
-       first dimension to "vertical" and set the unit and format strings to
-       empty strings.
------------------------------------------------------------------------------*/
+ * Name:    DFSDsetdimstrs()
+ * Purpose: For the given dimension, set label, unit, format
+ *          This routine needs to be called once for each dimension whose 
+ *          values the user wants to set.
+ * Inputs:  dim: the dimension that this info applies to
+ *          label: label to be used to describe this dimension
+ *          unit: units for dimension
+ *          format: format to be used in displaying
+ * Globals: 
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF users, utilities, other routines
+ * Invokes: DFSDIsetdimstrs
+ * Method:  
+ *---------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFSDsetdimstrs(intn dim, const char *label, const char *unit, const char *format)
+intn DFSDsetdimstrs(intn dim, char *label, char *unit, char *format)
 #else
 intn DFSDsetdimstrs(dim, label, unit, format)
      intn dim;
-     const char *label;
-     const char *unit;
-     const char *format;
+     char *label;
+     char *unit;
+     char *format;
 #endif /* PROTOTYPE */
 {
     return (DFSDIsetdimstrs(dim, label, unit, format));
@@ -911,13 +844,13 @@ intn DFSDsetdimstrs(dim, label, unit, format)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDIsetdimstrs(intn dim, const char *label, const char *unit, const char *format)
+intn DFSDIsetdimstrs(intn dim, char *label, char *unit, char *format)
 #else
 intn DFSDIsetdimstrs(dim, label, unit, format)
      intn dim;
-     const char *label;
-     const char *unit;
-     const char *format;
+     char *label;
+     char *unit;
+     char *format;
 #endif /* PROTOTYPE */
 {
     intn i;
@@ -925,9 +858,9 @@ intn DFSDIsetdimstrs(dim, label, unit, format)
     intn luflen;
     intn luf;			/* takes values LABEL, UNIT, FORMAT */
 				/* in succession */
-    const char *lufp;		/* points to label, unit, format */
+    char *lufp;			/* points to label, unit, format */
 				/* in succession */
-    CONSTR(FUNC,"DFSDsetdimstrs");
+    char *FUNC="DFSDsetdimstrs";
     HEclear();
 
     /* translate from 1 to 0 origin */
@@ -954,7 +887,7 @@ intn DFSDIsetdimstrs(dim, label, unit, format)
           }
 
 	/* free string space if allocated */
-        HDfreenclear(Writesdg.dimluf[luf][rdim]);
+        Writesdg.dimluf[luf][rdim] = HDfreespace((VOIDP)Writesdg.dimluf[luf][rdim]);
 
 /* NOTE: The following code should be changed to write all three, even if
          one or more is an empty string.  Then, when DFSDgetdimstrs is called
@@ -977,22 +910,20 @@ intn DFSDIsetdimstrs(dim, label, unit, format)
 } 
 
 /*-----------------------------------------------------------------------------
- NAME  
-       DFSDsetdimscale
- USAGE
-       int DFSDsetdimscale(dim, dimsize, scale)
-       int   dim;        IN: dimension the is scale corresponds to
-       int32 dimsize;    IN: size of scale in the dimension
-       VOID  *scale;     IN: the scale
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Sets the scale for a dimension. A scale is a 1D array whose value
-       describes reference points along one of the dimensions of the
-       scientific data set. For example, a 2D scientific data set representing
-       points on a mpa could have two scales, one representing points of 
-       latitude, and the other points of longitude.
------------------------------------------------------------------------------*/
+ * Name:    DFSDsetdimscale()
+ * Purpose: For the given dimension, set scale values
+ *          This routine needs to be called once for each dimension whose 
+ *          values the user wants to set.
+ * Inputs:  dim: the dimension that this info applies to
+ *          dimsize: number of points in the scale
+ *          scale: array of numbers that will make up the scale
+ * Globals: Writesdg, Ref
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF users, utilities, other routines
+ * Invokes: none
+ * Method:  Stores values in global structure Writesdg
+ *---------------------------------------------------------------------------*/
+
 #ifdef PROTOTYPE
 intn DFSDsetdimscale(intn dim, int32 dimsize, VOIDP scale)
 #else
@@ -1005,10 +936,10 @@ intn DFSDsetdimscale(dim, dimsize, scale)
     int32 i;
     intn rdim;
     int32 numtype;
-    uint32 bytesize;
+    int32 bytesize;
     int32 localNTsize;
     uint8 *p1, *p2;
-    CONSTR(FUNC,"DFSDsetdimscale");
+    char *FUNC="DFSDsetdimscale";
 
     HEclear();
     rdim = dim - 1;		/* translate from 1 to 0 origin */
@@ -1033,7 +964,8 @@ intn DFSDsetdimscale(dim, dimsize, scale)
     if (!scale) 
       {		/* No scale for this dimension */
         if (Writesdg.dimscales)
-		HDfreenclear( Writesdg.dimscales[rdim]);
+            Writesdg.dimscales[rdim] =
+		(uint8 *) HDfreespace((VOIDP) Writesdg.dimscales[rdim]);
         Ref.scales = 0;
         return SUCCEED;
       }
@@ -1080,30 +1012,18 @@ intn DFSDsetdimscale(dim, dimsize, scale)
 }
 
 /*-----------------------------------------------------------------------------
- NAME    
-       DFSDsetrange
- USAGE 
-       int DFSDsetrange(max, min)
-       VOIDP max;    IN: High value in the scientific data set
-       VOIDP min;    IN: Low value in the scientific data set
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Sets the maximum and minimum values to be stored with the scientific 
-       data set. Since these values are supposed to relate to the data itself, 
-       it is assumed that they are of the same number type as the data itself.
-       One implication of this is that in the C version of "DFSDgetrange"
-       the arguments are pointers, rather than simple variables, whereas in
-       the FORTRAN version they are simple variables of the same type as the
-       data array. This routine does not compute the maximum and minimum values;
-       it merely stores the values it is given. As a result, the 
-       maximum and minimum values may not always reflect the actual maximum
-       and minimum vlaues in the data set. When the maximum and minimum
-       values are written to a file, the HDF elemement that hold these value 
-       is cleared, because it is assumed that subsequent data sets will have
-       different values for "max" and "min". These values are automatically
-       cleared aftera a call to either "DFSDputdata" or "DFSDaddadata".
------------------------------------------------------------------------------*/
+ * Name:    DFSDsetrange()
+ * Purpose: Set maximum and minimum data values
+ * Inputs:  maxi: maximum value
+ *          mini: minimum value
+ * Globals: Ref
+ * Returns: 0 on success, -1 if no maxmin values or if error, with error set
+ * Users:   HDF users, utilities, other routines
+ * Invokes: none
+ * Method:  Modify Writesdg, set Ref
+ * Remarks: Automatically cleared after call to DFSDputdata or DFSDadddata
+ *---------------------------------------------------------------------------*/
+
 #ifdef PROTOTYPE
 intn DFSDsetrange(VOIDP maxi, VOIDP mini)
 #else
@@ -1113,7 +1033,7 @@ intn DFSDsetrange(maxi, mini)
 #endif /* PROTOTYPE */
 {
     int32 numtype;
-    uint32 localNTsize;
+    int32 localNTsize;
     intn i;
     uint8 *p1, *p2;
 
@@ -1141,30 +1061,24 @@ intn DFSDsetrange(maxi, mini)
 }
 
 /*-----------------------------------------------------------------------------
- NAME 
-       DFSDputdata
- USAGE
-       intn DFSDputdata(filename, rank, dimsizes, data)
-       char  *filename;     IN: name of file to store scientific data set in
-       int   rank;          IN: number of dimensions of data array to be stored
-       int32 dimsizes[];    IN: array that holds sizes of dimensions
-       VOID  *data;         IN: array holding data to be stored
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Writes scientific data and related information to an HDF file.
-       If a new filename is used, "DFSDputdata" functions exactly like
-       "DFSDadddata".
- WARNING
-       "DFSDputdata" will write data to an existing file by destroying the 
-       contents of the original file. Use with caution.
------------------------------------------------------------------------------*/
+ * Name:    DFSDputdata
+ * Purpose: Calls DFSDIputdata to write data and SDG to file
+ * Inputs:  filename: name of HDF file to use
+ *          rank: rank of data array
+ *          dimsizes: sizes of the dimensions of data array
+ *          data: array that holds data
+ * Globals: Writeref
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF users, utilities, other routines
+ * Invokes: DFSDIputdata
+ * Method:  Invoke DFSDIputdata
+ *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDputdata(const char *filename, intn rank, int32 dimsizes[], VOIDP data)
+intn DFSDputdata(char *filename, intn rank, int32 dimsizes[], VOIDP data)
 #else
 intn DFSDputdata(filename, rank, dimsizes, data)
-     const char *filename;
+     char *filename;
      intn rank;
      int32 dimsizes[];
      VOID *data;
@@ -1175,37 +1089,27 @@ intn DFSDputdata(filename, rank, dimsizes, data)
 }
 
 /*-----------------------------------------------------------------------------
-NAME
-      DFSDadddata
-USAGE
-      intn DFSDadddata(filename, rank, dimsizes, data)
-      char  *filename;    IN: Name of HDF file to store the data set
-      intn  rank;         IN: Number of dimensions in the data array to be written
-      int32 dimsizes[];   IN: Array holding the size of each dimension
-      VOIDP data;         IN: Array holding the data to be stored
+ * Name:    DFSDadddata
+ * Purpose: Calls DFSDIputdata to append data and SDG to file
+ * Inputs:  filename: name of HDF file to use
+ *          rank: rank of data array
+ *          dimsizes: sizes of the dimensions of data array
+ *          data: array that holds data
+ * Globals: Writeref
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF users, utilities, other routines
+ * Invokes: DFSDIputdata
+ * Method:  Invoke DFSDIputdata
+ *---------------------------------------------------------------------------*/
 
-RETURNS
-      SUCCEED(0) if successful and FAIL(-1) otherwise.
-
-DESCRIPTION
-      In addition to appending any multidemensional array of data to an HDF 
-      file, "DFSDaddata" automatically stores any information pertinent to the
-      data set. It will not overwrite existing data in the file. The array
-      "data" can be of any valid type. However if no number type has been set 
-      by "DFSDsetNT", it is assumed that the data type is of type "float32".
-      The invocation of "DFSDadddata" triggers the writing of the entire
-      scientific data set. That is, when "DFSDadddat" is called, all 
-      information that has been set by "DFSDset* " calls is written to the
-      file, along with the data array itself.
------------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-intn DFSDadddata(const char *filename, intn rank, int32 dimsizes[], VOIDP data)
+intn DFSDadddata(char *filename, intn rank, int32 dimsizes[], VOIDP data)
 #else
 intn DFSDadddata(filename, rank, dimsizes, data)
-     const char  *filename;
-     intn  rank;
+     char *filename;
+     intn rank;
      int32 dimsizes[];
-     VOIDP data;
+     VOID *data;
 #endif /* PROTOTYPE */
 {
     /* 1, 0 specifies append mode, C style array (row major) */
@@ -1213,42 +1117,38 @@ intn DFSDadddata(filename, rank, dimsizes, data)
 }
 
 /*-----------------------------------------------------------------------------
- NAME   
-       DFSDrestart
- USAGE
-       int DFSDrestart()
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Forces the next read operation to read the first scientific data set
-       in the file.
------------------------------------------------------------------------------*/
+ * Name:    DFSDrestart
+ * Purpose: Do not remember info about file - get again from first data set
+ * Inputs:  none
+ * Returns: 0 on success
+ * Users:   HDF programmers
+ * Remarks: Just reset Lastfile to NULL
+ *          Subsequent gets will starts from first image
+ *          Next put will write all "set" info to file
+ *---------------------------------------------------------------------------*/
+
 #ifdef PROTOTYPE
 intn DFSDrestart(void)
 #else
 intn DFSDrestart()
 #endif /* PROTOTYPE */
 {
-    Lastfile = NULL;
-    Readref  = 0;
-    return(SUCCEED);
+    Lastfile[0] = '\0';
+    Readref = 0;
+    return SUCCEED;
 }
     
 /*-----------------------------------------------------------------------------
- NAME 
-       DFSDndatasets
- USAGE
-       int32 DFSDndatasets(filename)
-       char *filename;     IN: filename of HDF file
- RETURNS
-       Returns the number of data sets if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Returns the number of scientific datasets in the file. In HDFv3.3
-       "DFSDndatasets" replaces "DFSDnumber". In order to maintain backward
-       compatibility with existing HDF applications, HDF will continue to 
-       support "DFSDnumber". However, it is recommended that all new applications
-       use "DFSDndatasets" instead of "DFSDnumber".
------------------------------------------------------------------------------*/
+ * Name:    DFSDndatasets
+ * Purpose: Return number of NSDGs in file
+ * Inputs:  filename - name of HDF file
+ * Globals: none
+ * Returns: number of NSDGs on success, FAIL on error with error set
+ * Users:   HDF users, utilities, other routines
+ * Invokes: DFSDIopen, Hclose
+ * Method:  open file (creating nsdgs table), then read nsdghdr->size
+ * Remarks: none
+ *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 int32 DFSDndatasets(char *filename)
@@ -1259,7 +1159,7 @@ int32 DFSDndatasets(filename)
 {
     int32 file_id;
     int32 nsdgs=0;
-    CONSTR(FUNC,"DFSDndatasets");
+    char *FUNC="DFSDndatasets";
 
     HEclear();
 
@@ -1276,17 +1176,17 @@ int32 DFSDndatasets(filename)
 }
 
 /*-----------------------------------------------------------------------------
- NAME   
-       DFSDclear
- USAGE
-       int DFSDclear()
- RETURNS
-      Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-      Clears all possible set values. After a call to "DFSDclear", all 
-      values set by an "DFSDset*" calls will not be written unless they 
-      are set again.
-----------------------------------------------------------------------------*/
+ * Name:    DFSDclear
+ * Purpose: Clear all "set" values
+ * Inputs:  none
+ * Globals: Writesdg, Ref
+ * Returns: 0 on success, FAIL on error with error set
+ * Users:   HDF users, utilities, other routines
+ * Invokes: DFSDIclear
+ * Method:  Invoke DFSDIclear
+ * Remarks: none
+ *---------------------------------------------------------------------------*/
+
 #ifdef PROTOTYPE
 #ifdef CONVEX
 intn DFSDclear()
@@ -1306,17 +1206,17 @@ intn DFSDclear()
 }
 
 /*-----------------------------------------------------------------------------
- NAME   
-       DFSDlastref
- USAGE
-       uint16 DFSDlastref()
- RETURNS
-       Returns the reference number of the last accessed scientific data set
-       if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Get the most recent reference number used in writing or reading a
-       scientific data set.
------------------------------------------------------------------------------*/
+ * Name:    DFSDlastref
+ * Purpose: Return last ref written or read
+ * Inputs:  none
+ * Globals: Lastref
+ * Returns: ref on success, FAIL on error with error set
+ * Users:   HDF users, utilities, other routines
+ * Invokes: none
+ * Method:  return Lastref
+ * Remarks: none
+ *---------------------------------------------------------------------------*/
+
 #ifdef PROTOTYPE
 uint16 DFSDlastref(void)
 #else
@@ -1327,24 +1227,15 @@ uint16 DFSDlastref()
 }
 
 /*-----------------------------------------------------------------------------
- NAME  
-       DFSDreadref
- USAGE
-       int DFSDreadref(filename, ref)
-       char   *filename;    IN: name of HDF file containing scientific data set
-       uint16 ref;          IN: reference number for next "DFSDgetdata" call
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Specifies teh reference number for the data set to be read during
-       the next read operation. This routine is most likely to be used in
-       conjunction with "DFANgetlablist" which returns a list of labels for
-       a given tag together with their reference numbers. It provides a sort
-       of random access to scientific data sets. There is no guarantee that
-       reference numbers appear in sequence in an HDF file, so ti is not
-       generally safe to assume that a reference number is a sequence number
-       for a scientific data set.
------------------------------------------------------------------------------*/
+ * Name:    DFSDreadref
+ * Purpose: Set ref of SDS to get next
+ * Inputs:  filename: file to which this applies
+ *          ref: reference number of next get
+ * Returns: 0 on success, FAIL on failure
+ * Users:   HDF programmers, other routines and utilities
+ * Invokes: DFSDIopen, DFIfind
+ * Remarks: checks if image with this ref exists
+ *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 intn DFSDreadref(char *filename, uint16 ref)
@@ -1356,7 +1247,7 @@ intn DFSDreadref(filename, ref)
 {
     int32 file_id;
     int32 aid;
-    CONSTR(FUNC,"DFSDreadref");
+    char *FUNC="DFSDreadref";
 
     HEclear();
 
@@ -1377,48 +1268,30 @@ intn DFSDreadref(filename, ref)
 }
 
 /*-----------------------------------------------------------------------------
- NAME    
-       DFSDgetslice
- USAGE
-       intn DFSDgetslice(filename, winst, windims, data, dims)
-       char  *filename;       IN:  name of HDF file 
-       int32 winst[];         IN:  array containing the coordinates for the start
-                                   of the slice
-       int32 windims[];       IN:  array containing the dimensions of the slice
-       VOID  *data;           OUT: array for returning the slice
-       int32 dims[];          OUT: dimensions of array data
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Gets a part of a scientific data set from a file. "DFSDgetslice" 
-       accesses the data set last accessed by "DFSDgetdims". If "DFSDgetdims"
-       has not been called for the named file, "DFSDgetslice" gets a slice
-       from the next data set in the file. The array "winst" specifies the
-       coordinates for the beginning of the slice. Array "windims" gives the
-       size of the slice. The number of elements in both "winst" and "windims"
-       must be equal to the rank of the data set. For example, if the file
-       contains a 3D data set, "winst" may contain the values {2,4,3}, while
-       "windims" contains the values {3,1,4} and the dims shuld be at least 
-       {3,1,4}, the same size as the slice. This will extract a 3x4, 
-       two-dimensional slice, containing the elements between(2,4.3) and
-       (4,4,6) from the original data set. The array "data" is the array
-       into which the slice is read. It must be at least as big as the desired
-       slice. The array "dims" is the array containing the actual dimensions
-       of the array "data". The user assigns values to "dims" before calling
-       "DFSDgetslice". All parameters assume FORTRAN-style 1-based arrays.
-       "DFSDgetslice" is obsoleted by "DFSDreadslab". "DFSDreadslab" is the
-       recommended fucntion call to use when reading hyperslabs(previously
-       known as data slices). HDFv3.3 will continue to support "DFSDgetslice"
-       only to maintain backward compatibility with HDF applications built
-       on earlier versions of the library.
-----------------------------------------------------------------------------*/
+ * Name:    DFSDgetslice
+ * Purpose: Get slice of data from SDG.  Will sequence to next SDG if
+ *          DFSDgetdims, DFSDgetdata or DFSDgetslice not called earlier.
+ * Inputs:  filename: name of HDF file to use
+ *          winst: array of size = rank of data, containing start of slice
+ *          windims: array of size rank, containing end of slice
+ *          data: array for returning slice
+ *          dims: dimensions of array data
+ * Returns: 0 on success, FAIL on failure with error set
+ * Outputs: slice of data in data
+ * Users:   DFSDIgetdata
+ * Invokes: DFSDIgetslice
+ * Method:  call DFSDIgetslice
+ * Remarks: dims may be larger than size of slice.  In that event, the actual
+ *          data may not be contiguous in the array "data".
+ *          User sets dims before call.
+ *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDgetslice(const char *filename, int32 winst[], int32 windims[], VOIDP data,
+intn DFSDgetslice(char *filename, int32 winst[], int32 windims[], VOIDP data,
 		  int32 dims[])
 #else
 intn DFSDgetslice(filename, winst, windims, data, dims)
-     const char *filename;
+     char *filename;
      int32 winst[];
      int32 windims[];
      int32 dims[];
@@ -1429,35 +1302,28 @@ intn DFSDgetslice(filename, winst, windims, data, dims)
 }
 
 /*-----------------------------------------------------------------------------
- NAME    
-       DFSDstartslice
- USAGE
-       int DFSDstartslice(filename)
-       char *filename;   IN: name of HDF file to write to
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise. 
- DESCRIPTION
-       Prepares the DFSD interface to write a slice to a scientific data set.
-       Before calling "DFSDstartslice", you must call "DFSDsetdims" to 
-       specify the dimensions of the data set to be written to the file.
-       "DFSDstartslice" always appends a new data set to an existing file.
-       Remember, you must call "DFSDstartslice" before calling "DFSDputslice"
-       or "DFSDendslice". "DFSDstarslice" is obsolete in favor of "DFSDstartslab"
-       "DFSDstartslab" is the recommended function to call to use when 
-       beginning hyperslab(i.e. data slabs) opertaions. HDFv3.3 will continue
-       to support "DFSDstartslice" only to maintain backward compatibility 
-       with HDF applications built on earlier version of the library.
------------------------------------------------------------------------------*/
+ * Name:    DFSDstartslice
+ * Purpose: Set up to write slice of data to SDG.
+ * Inputs:  filename: name of HDF file to write to
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   DFSDIputdata
+ * Invokes: DFSDIopen, DFnewref, DFaccess
+ * Method:  call DFSDIputslice
+ * Remarks: DFSDsetdims must have been called first
+ *          No call which needs a file open may be made after this
+ *          till DFSDendslice is called
+ *---------------------------------------------------------------------------*/
+
 #ifdef PROTOTYPE
-intn DFSDstartslice(const char *filename)
+intn DFSDstartslice(char *filename)
 #else
 intn DFSDstartslice(filename)
-     const char *filename;
+     char *filename;
 #endif /* PROTOTYPE */
 {
     intn i;
     int32 size;
-    CONSTR(FUNC,"DFSDstartslice");
+    char *FUNC="DFSDstartslice";
 
     HEclear();
 
@@ -1506,35 +1372,20 @@ intn DFSDstartslice(filename)
 }
 
 /*-----------------------------------------------------------------------------
- NAME  
-       DFSDputslice
- USAGE
-       int DFSDputslice(winend, data, dims)
-       int32 winend[];    IN: dimensions that specify the size of slice to be
-                              written
-       VOID  *data;       IN: array containing slice to be written
-       int32 dims[];      IN: dimensions of array data
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Writes part of a scientific data set to a file. "DFSDputslice" takes
-       some contiguous part of an array in memory and stores it as part of
-       the scientific data set array specified by "DFSDgetdims". Slices must
-       be stored contiguously. Array "windims" specifies the size of the
-       slice to be written. The number of elements in "windims" is equal to
-       the number of dimensions in the scientific data set array. The array
-       "data" is the array in memory containg the slice. The array "dims"
-       contains the dimensions of the array "data". Note that the two arrays
-       "windim" and "dims" need not be the same since the "windims" arguement
-       could refer to a sub-array of "data". In this case only a portion
-       of the array "data" is written to the scientific data set. All
-       parameters assume FORTRAN-style 1-based arrays. "DFSDputslice" is
-       obsoleted by "DFSDwriteslab". DFSDwriteslab is the recommended function
-       call to use when writing hyperslabs(previously known as data slices).
-       HDFv3.3 will continue to support "DFSDputslice" only to maintain 
-       backward compatibility with HDF applications built on earlier versions
-       of the library.
------------------------------------------------------------------------------*/
+ * Name:    DFSDputslice
+ * Purpose: Put slice of data to SDG.
+ * Inputs:  winend: array of size rank, containing end of slice
+ *          data: array containing slice
+ *          dims: dimensions of array data
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   DFSDIputdata
+ * Invokes: DFSDIputslice
+ * Method:  call DFSDIputslice
+ * Remarks: dims may be larger than size of slice.  In that event, the actual
+ *          data may not be contiguous in the array "data".
+ *          DFSDstartslice must have been called first
+ *---------------------------------------------------------------------------*/
+
 #ifdef PROTOTYPE
 intn DFSDputslice(int32 winend[], VOIDP data, int32 dims[])
 #else
@@ -1548,24 +1399,14 @@ intn DFSDputslice(winend, data, dims)
 }
 
 /*-----------------------------------------------------------------------------
- NAME    
-       DFSDendslice
- USAGE
-       int DFSDendslice()
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Terminates the write operation after storing a slice of data in a
-       scientific data set. "DFSDendslice" must be called after all the 
-       slices are written. It checks to insure that the entire data set
-       has been written, and returns an error code if not. "DFSDendslice"
-       is obsolete in favor of "DFSDendslab". "DFSDendslab" is the 
-       recommended function call to use when terminating hyperslab(previously
-       known as data slices) operations. HDFv3.3 will continue to support
-       "DFSDendslice" only to maintain backward compatability with HDF
-       applications build on earlier versions of the library.
-
-----------------------------------------------------------------------------*/
+ * Name:    DFSDendslice
+ * Purpose: Write of data to SDG completed, write SDG and close file
+ * Inputs:  none
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   DFSDIputdata
+ * Invokes: DFSDIendslice 
+ * Method:  call DFSDIendslice
+ *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 intn DFSDendslice(void)
@@ -1576,32 +1417,18 @@ intn DFSDendslice()
     return (DFSDIendslice(0));
 }
 
-/*---------------------------------------------------------------------------
- NAME  
-       DFSDsetNT
- USAGE
-       int DFSDsetNT(numbertype)
-       int32 *numbertype;  IN: Number type of the data to be written
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Sets the number type for the data to be written in the next write 
-       operation. "DFSDsetNT" must be called if a number type other than 
-       "float32" is to be stored. "DFSDsetNT" and "DFSDsetdims" can be called 
-       in any order, but they should be called before any other "DFSDset*" 
-       functions and before "DFSDputdata" or "DFSDadddata". Valid values for 
-       "DFSDgetNT" are of the general form "DFNT_<numbertype>". If you include 
-       the headier file "hdf.h" in your program, you can use the following 
-       symbolic names for the number types:
-            32-bit float          DFNT_FLOAT32    5
-            64-bit float          DFNT_FLOAT64    6
-            8-bit signed int      DFNT_INT8      20
-            8-bit unsigned int    DFNT_UINT8     21
-            16-bit signed int     DFNT_INT16     22
-            16-bit unsigned int   DFNT_UINT16    23
-            32-bit signed int     DFNT_INT32     24
-            32-bit unsigned int   DFNT_UINT32    25
----------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------
+* Name:     DFSDsetNT
+* Purpose:  Set number type for writing out to the hdf file
+* Inputs:   numbertype
+* Return:   0 on success, FAIL on failure with error set
+* Outputs:  none
+* Method:   Set Writesdg.numbertype to numbertype 
+*	    Calls DFKsetNT, which keeps current NT and also initializes
+*	    conversion routines. 
+* Remarks:
+*--------------------------------------------------------------------- */
+
 #if defined PROTOTYPE
 intn DFSDsetNT(int32 numbertype)
 #else
@@ -1610,7 +1437,7 @@ intn DFSDsetNT(numbertype)
 #endif /* PROTOTYPE */
 {
     uint8 outNT;
-    CONSTR(FUNC,"DFSDsetNT");
+    char *FUNC="DFSDsetNT";
 
     HEclear();
 
@@ -1653,7 +1480,7 @@ intn DFSDIclearNT(sdg)
 #endif
 {
     intn i;
-    CONSTR(FUNC,"DFSDIclearNT");
+    char *FUNC="DFSDIclearNT";
 
     HEclear();
 
@@ -1665,7 +1492,8 @@ intn DFSDIclearNT(sdg)
     if (sdg->dimscales)
       {
         for (i=0; i<sdg->rank; i++)
-            HDfreenclear(sdg->dimscales[i]);
+            sdg->dimscales[i] = (uint8 *)
+                                HDfreespace((VOIDP) sdg->dimscales[i]);
       }
 
     Ref.nt      = -1;
@@ -1676,33 +1504,14 @@ intn DFSDIclearNT(sdg)
     return SUCCEED;
 }
 
-/*---------------------------------------------------------------------------
- NAME  
-       DFSDgetNT
- USAGE
-       int DFSDgetNT(numbertype)
-       int32 *numbertype;    OUT: Number type of the data in the scientific 
-                                  data set.
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Gets the number type of the current scientific data set. This 
-       information is then used by calls such as "DFSDgetdata" and
-       "DFSDgetslice". Since "DFSDgetNT" gets the number type of the 
-       current data set, "DFSDgetdims" must be called before calling 
-       "DFSDgetNT". Valid values for "DFSDgetNT" are of the general form 
-       "DFNT_<numbertype>". The following are valid symbolic names and
-       their number types:
-
-            32-bit float          DFNT_FLOAT32    5
-            64-bit float          DFNT_FLOAT64    6
-            8-bit signed int      DFNT_INT8      20
-            8-bit unsigned int    DFNT_UINT8     21
-            16-bit signed int     DFNT_INT16     22
-            16-bit unsigned int   DFNT_UINT16    23
-            32-bit signed int     DFNT_INT32     24
-            32-bit unsigned int   DFNT_UINT32    25
---------------------------------------------------------------------------- */
+/*--------------------------------------------------------------------
+* Name:    DFSDgetNT
+* Purpose: Get number type to be read from the hdf file
+* Inputs:  pnumbertype: pointer to int32 to return number type in
+* Return:  0 on success, FAIL on error with DFerror set
+* Method:  return numbertype in sdg struct
+* Remark:
+*------------------------------------------------------------------- */
 
 #if defined PROTOTYPE
 intn DFSDgetNT(int32 *pnumbertype)
@@ -1711,7 +1520,7 @@ intn DFSDgetNT(pnumbertype)
      int32 *pnumbertype;
 #endif
 {
-    CONSTR(FUNC,"DFSDgetNT");
+    char *FUNC="DFSDgetNT";
 
     HEclear();
 
@@ -1722,27 +1531,17 @@ intn DFSDgetNT(pnumbertype)
     return SUCCEED;
 }
     
-/*---------------------------------------------------------------------------
- NAME
-       DFSDpre32sdg
- USAGE 
-       int DFSDpre32sdg(filename, ref, ispre32)
-       char   *filename;      IN:  The name of the HDF file containing the 
-                                   scientific data set
-       uint16 ref;            IN:  Reference number of scientific data set
-       int    ispre32;        OUT: Pointer to the results of the inquiry
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Tests if the scientific data set with the specified reference number
-       was created by a HDF library that precedes HDF3.2. This routine is 
-       for programmers who need to know whether a scientific data set was
-       written by a version of the HDF library earlier than HDF3.2. If the
-       scientific data set was created with a version of HDF prior to v3.2,
-       "ispre32" will be set to 1, otherwise it will be set to 0. Based on
-       this information, programmers can decide whether or not to transpose
-       the corresponding array.
-----------------------------------------------------------------------------*/
+/* ------------------------------------------------------------------
+* Name:    DFSDpre32sdg
+* Purpose: tests if the SDG with given ref is HDF3.1 object 
+* Inputs:  filename: the file where the SDG/ref resides in
+*          ref: ref of the SDG
+* Outputs: ispre32: set to TRUE--1 if it is 3.1 SDG; 
+*                   to FALSE--0 otherwise
+* Returns: SUCCEED--0 on sucess; FAIL (-1) otherwise 
+*          with error code set
+* Remarks: 
+* -------------------------------------------------------------------*/
 #if defined PROTOTYPE
 intn DFSDpre32sdg(char *filename, uint16 ref, intn *ispre32)
 #else
@@ -1756,7 +1555,7 @@ intn DFSDpre32sdg(filename, ref,ispre32)
     int32  file_id;
     intn   found = 0;
     DFnsdgle *ptr;
-    CONSTR(FUNC,"DFSDpre32sdg");
+    char *FUNC="DFSDpre32sdg";
    
     file_id = DFSDIopen(filename, DFACC_READ);
     if (file_id== FAIL) 
@@ -1815,11 +1614,11 @@ intn DFSDpre32sdg(filename, ref,ispre32)
  * Users:   DFSDIopen for READ
  *--------------------------------------------------------------------------*/
 #if defined PROTOTYPE
-intn DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr *l_nsdghdr)
+intn DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr *nsdghdr)
 #else
-intn DFSDIsetnsdg_t(file_id,l_nsdghdr)
+intn DFSDIsetnsdg_t(file_id,nsdghdr)
      int32 file_id;
-     DFnsdg_t_hdr *l_nsdghdr;
+     DFnsdg_t_hdr *nsdghdr;
 #endif
 {
     uint32 sz_DFnsdgle = (uint32)sizeof(struct DFnsdgle);
@@ -1841,18 +1640,10 @@ intn DFSDIsetnsdg_t(file_id,l_nsdghdr)
     DFdi di;
     DFdi lnkdd[2];
     uint8 *bufp;
-    CONSTR(FUNC,"DFSDsetnsdg_t");
+    char *FUNC="DFSDsetnsdg_t";
   
     if (!HDvalidfid(file_id)) 
         HRETURN_ERROR(DFE_BADCALL, FAIL);
-
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
-        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
-        if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
 
 /* MMM:  Talk to Shiming and make sure the change made to the way ndgs
          and sdgs are handled is ok.
@@ -1864,8 +1655,8 @@ intn DFSDIsetnsdg_t(file_id,l_nsdghdr)
     
     if ( (ndgs+sdgs) == 0 ) 
       {       /* no sdgs or ndgs in file */
-        l_nsdghdr->size   = 0;
-        l_nsdghdr->nsdg_t = NULL;
+        nsdghdr->size   = 0;
+        nsdghdr->nsdg_t = NULL;
         return SUCCEED;
       }
     if ( (ntb = (DFnsdgle *)HDgetspace(sz_DFnsdgle) ) == NULL)  
@@ -1945,9 +1736,9 @@ intn DFSDIsetnsdg_t(file_id,l_nsdghdr)
 
 	    if (found)	
               {    /* read in the tag/refs in the link element */
-                if (Hgetelement(file_id, di.tag, di.ref, ptbuf) == (int32)FAIL)
+                if (Hgetelement(file_id, di.tag, di.ref, DFtbuf) == (int32)FAIL)
                     return FAIL;
-                bufp = ptbuf;
+                bufp = DFtbuf;
                 UINT16DECODE(bufp, lnkdd[0].tag);
                 UINT16DECODE(bufp, lnkdd[0].ref);
                 UINT16DECODE(bufp, lnkdd[1].tag);
@@ -2001,9 +1792,9 @@ intn DFSDIsetnsdg_t(file_id,l_nsdghdr)
               }
 	    if (found)	
               {   /* read in the tag/refs in the link element */
-                if (Hgetelement(file_id,  di.tag, di.ref, ptbuf)==(int32)FAIL)
+                if (Hgetelement(file_id,  di.tag, di.ref, DFtbuf)==(int32)FAIL)
                     return FAIL;
-                bufp = ptbuf;
+                bufp = DFtbuf;
                 UINT16DECODE(bufp, lnkdd[0].tag);
                 UINT16DECODE(bufp, lnkdd[0].ref);
                 UINT16DECODE(bufp, lnkdd[1].tag);
@@ -2043,7 +1834,8 @@ intn DFSDIsetnsdg_t(file_id,l_nsdghdr)
                 else 
                   {
                     sr->next = sf->next;
-                    HDfreenclear(sf);
+                    if ((sf = (DFnsdgle *)HDfreespace((VOIDP) sf)) != NULL)
+                        return FAIL;
                     sdgs--;
                   }
               }
@@ -2065,8 +1857,8 @@ intn DFSDIsetnsdg_t(file_id,l_nsdghdr)
     while (nf->next != NULL) 
         nf = nf->next;
     nf->next        = stb->next; /* the first node in stb is a dummy */
-    l_nsdghdr->size   = ndgs + sdgs;
-    l_nsdghdr->nsdg_t = ntb->next;
+    nsdghdr->size   = ndgs + sdgs;
+    nsdghdr->nsdg_t = ntb->next;
     
     /* Release the first nodes in stb and ntb  */
     HDfreespace((VOIDP)stb);
@@ -2083,22 +1875,22 @@ intn DFSDIsetnsdg_t(file_id,l_nsdghdr)
 * Returns: 0 on succeeds, FAIL on failure
 * -------------------------------------------------------------------*/
 #if defined PROTOTYPE
-intn DFSDInextnsdg(DFnsdg_t_hdr *l_nsdghdr, DFdi *nsdg)
+intn DFSDInextnsdg(DFnsdg_t_hdr *nsdghdr, DFdi *nsdg)
 #else
-intn DFSDInextnsdg(l_nsdghdr,nsdg)
-     DFnsdg_t_hdr *l_nsdghdr;
+intn DFSDInextnsdg(nsdghdr,nsdg)
+     DFnsdg_t_hdr *nsdghdr;
      DFdi *nsdg;
 #endif /* PROTOTYPE*/
 {
     uint32 num;
     intn found=FALSE;
     DFnsdgle *ptr;
-    CONSTR(FUNC,"DFSDInextnsdg");
+    char *FUNC="DFSDInextnsdg";
 
     nsdg->tag = DFTAG_NULL;
     nsdg->ref = 0;
-    ptr = l_nsdghdr->nsdg_t;
-    num = l_nsdghdr->size;
+    ptr = nsdghdr->nsdg_t;
+    num = nsdghdr->size;
 
     if ((ptr == NULL) || (num == 0)) 
       return SUCCEED;
@@ -2186,7 +1978,7 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
     uint8 *isscales;
     uint8 *buf;
     uint8 *p;           /* temporary pointer for moving things to buffer */
-    CONSTR(FUNC,"DFSDIgetndg");
+    char *FUNC="DFSDIgetndg";
 
     HEclear();
 
@@ -2195,14 +1987,6 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
 
     if (!ref)
         HRETURN_ERROR(DFE_BADREF, FAIL);
-
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
-        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
-        if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
 
     /* read NDG into memory */
     if ((GroupID = DFdiread(file_id, tag, ref)) < 0)
@@ -2234,12 +2018,12 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
                 return FAIL;
 
             /* read rank */
-            if (Hread(aid, (int32) 2, ptbuf) == FAIL)
+            if (Hread(aid, (int32) 2, DFtbuf) == FAIL)
               {
                 Hendaccess(aid);
                 return FAIL;
               }
-            p = ptbuf;
+            p = DFtbuf;
             INT16DECODE(p, sdg->rank);
 
             /* get space for dimensions */
@@ -2252,22 +2036,22 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
               }
 
             /* read dimension record */
-            if (Hread(aid, (int32) 4 * sdg->rank, ptbuf) == FAIL)
+            if (Hread(aid, (int32) 4 * sdg->rank,DFtbuf) == FAIL)
               {
                 Hendaccess(aid);
                 return FAIL;
               }
-            p = ptbuf;
+            p = DFtbuf;
             for (i=0; i<sdg->rank; i++)
                 INT32DECODE(p, sdg->dimsizes[i]);
             
             /* read tag/ref of NT */
-            if (Hread(aid,(int32) 4,  ptbuf) == FAIL) 
+            if (Hread(aid,(int32) 4,  DFtbuf) == FAIL) 
               {
                 Hendaccess(aid);
                 return FAIL;
               }
-            p = ptbuf;
+            p = DFtbuf;
             UINT16DECODE(p, nt.tag);
             UINT16DECODE(p, nt.ref);
             
@@ -2321,12 +2105,12 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
             /* read and check all scale NTs */
             for (i = 0; i < sdg->rank; i++) 
               {
-                if (Hread(aid, (int32) 4, ptbuf) == FAIL) 
+                if (Hread(aid, (int32) 4, DFtbuf) == FAIL) 
                   {
                     Hendaccess(aid);
                     return FAIL;
                   }
-                p = ptbuf;
+                p = DFtbuf;
                 UINT16DECODE(p, nt.tag);
                 UINT16DECODE(p, nt.ref);
                     
@@ -2738,7 +2522,7 @@ intn DFSDIputndg(file_id, ref, sdg)
     int32 ret;
     int32 aid;
     DFdi nt ;
-    CONSTR(FUNC,"DFSDIputndg");
+    char *FUNC="DFSDIputndg";
 
     HEclear();
 
@@ -2746,14 +2530,6 @@ intn DFSDIputndg(file_id, ref, sdg)
       HRETURN_ERROR(DFE_BADCALL, FAIL);
     if (!ref)
       HRETURN_ERROR(DFE_BADREF, FAIL);
-
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
-        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
-        if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
 
     /* set number type and subclass	*/
     if (sdg->numbertype == DFNT_NONE)
@@ -2790,7 +2566,7 @@ intn DFSDIputndg(file_id, ref, sdg)
       {   /* new NDD; write rank, dims, data NT and scale NTs */
 
         /* put rank & dimensions in buffer */
-        bufp = ptbuf;
+        bufp = DFtbuf;
         UINT16ENCODE(bufp, sdg->rank);
         for (i=0; i<sdg->rank; i++)
             INT32ENCODE(bufp, sdg->dimsizes[i]);
@@ -2806,7 +2582,7 @@ intn DFSDIputndg(file_id, ref, sdg)
             UINT16ENCODE(bufp, nt.ref);
           }   
         /* write out NDD record */
-        ret = Hputelement(file_id,DFTAG_SDD, ref,ptbuf,(int32) (bufp-ptbuf));
+        ret = Hputelement(file_id,DFTAG_SDD, ref,DFtbuf,(int32) (bufp-DFtbuf));
         if (ret == FAIL)
             return FAIL;
         Ref.dims = ref;
@@ -2820,7 +2596,7 @@ intn DFSDIputndg(file_id, ref, sdg)
       {
         luftag = (uint16)((luf==LABEL) ? DFTAG_SDL :
                 (luf==UNIT) ? DFTAG_SDU : DFTAG_SDF);
-        bufp   = ptbuf;
+        bufp   = DFtbuf;
         /* this block of code checks if luf is NULL, else writes it */
         if (!Ref.luf[luf])
           {            /* if luf was set */
@@ -2853,7 +2629,7 @@ intn DFSDIputndg(file_id, ref, sdg)
               }   /* i loop   */
             Ref.luf[luf] = ref; /* remember ref */
             ret = Hputelement(file_id, luftag, (uint16)Ref.luf[luf],
-                              ptbuf, (int32) (bufp-ptbuf));
+                              DFtbuf, (int32) (bufp-DFtbuf));
             if (ret == FAIL)
               return FAIL;
           }  /* luf was set */
@@ -2952,7 +2728,6 @@ intn DFSDIputndg(file_id, ref, sdg)
         Hendaccess(aid);
       }
     HDfreespace((VOIDP)Isscales);
-    Isscales = NULL;
     if (Ref.scales > 0)
         if (DFdiput(GroupID, DFTAG_SDS, (uint16) Ref.scales) < 0)
             return FAIL;
@@ -3031,21 +2806,30 @@ intn DFSDIputndg(file_id, ref, sdg)
         else
           {
             /* allocate buffer */
-            uint8 buf2[4 * sizeof(float64) + sizeof(int32)];
+            uint8 *buf;
+
+            /* allocate translation buffer */
+            buf = (uint8 *) HDgetspace((uint32)
+                                       4 * sizeof(float64) +
+                                       1 * sizeof(int32));
+            if(buf == NULL)
+              return FAIL;
 
             /* convert doubles */            
-            DFKconvert((VOIDP) &sdg->cal, (VOIDP)buf2, 
+            DFKconvert((VOIDP) &sdg->cal, (VOIDP)buf, 
                        DFNT_FLOAT64, 4, DFACC_WRITE, 0, 0);
 
             /* convert int */
-            DFKconvert((VOIDP) &sdg->cal_type, (VOIDP)(buf2 + 32),
+            DFKconvert((VOIDP) &sdg->cal_type, (VOIDP)(buf + 32),
                        DFNT_INT32, 1, DFACC_WRITE, 0, 0);
             
             /* write it into the file */
             if (Hputelement(file_id, DFTAG_CAL, ref,
-                            (unsigned char *) buf2, (int32) 36) < 0) 
+                            (unsigned char *) buf,
+                            (int32) 36) < 0) 
                 return(FAIL);
             Ref.cal = ref;
+            HDfreespace((VOIDP)buf);
             
           }
       }
@@ -3071,15 +2855,15 @@ intn DFSDIputndg(file_id, ref, sdg)
         else
           {
             /* Allocate buffer  */
-            uint8 buf2[DFSD_MAXFILL_LEN];
+            uint8 buf[DFSD_MAXFILL_LEN];
 
             /* Convert from native to IEEE  */
-            DFKconvert((VOIDP) sdg->fill_value, (VOIDP)buf2,
+            DFKconvert((VOIDP) sdg->fill_value, (VOIDP)buf,
                        numtype, 1, DFACC_WRITE, 0, 0);
 
             /* Write it into the file  */
             if (Hputelement(file_id, DFTAG_FV, ref,
-                            (unsigned char *) buf2,
+                            (unsigned char *) buf,
                             (int32) fileNTsize) == FAIL)
                 return(FAIL);
 
@@ -3116,7 +2900,7 @@ intn DFSDIputndg(file_id, ref, sdg)
         lnkdd[0].ref = ref;
         lnkdd[1].tag = DFTAG_SDG;
         lnkdd[1].ref = ref;
-        bufp = ptbuf;
+        bufp = DFtbuf;
 
         for (i = 0; i < 2; i++)
           {
@@ -3124,7 +2908,7 @@ intn DFSDIputndg(file_id, ref, sdg)
             UINT16ENCODE(bufp, lnkdd[i].ref);
           }
         ret = Hputelement(file_id, DFTAG_SDLNK, ref,
-                          ptbuf,(int32) (bufp-ptbuf));
+                          DFtbuf,(int32) (bufp-DFtbuf));
         if (ret == FAIL)
           return FAIL;
 
@@ -3170,7 +2954,7 @@ intn DFSDIendslice(isfortran)
 {
     intn i;
     intn ret;
-    CONSTR(FUNC,"DFSDIendslice");
+    char *FUNC="DFSDIendslice";
 
     HEclear();
 
@@ -3209,7 +2993,8 @@ intn DFSDIendslice(isfortran)
 	    front = rear->next;
 	    while (rear != NULL)	
               {
-	       HDfreenclear( rear);
+	       if ((rear = (DFnsdgle *)HDfreespace((VOIDP) rear)) != NULL)
+     	         return FAIL;
  	       rear = front;
 	       if (rear != NULL) front = rear->next;
 	      }
@@ -3218,7 +3003,8 @@ intn DFSDIendslice(isfortran)
 	    lastnsdg.tag    = DFTAG_NULL;
 	    lastnsdg.ref    = 0;
           }
-        HDfreenclear(nsdghdr);
+        if ((nsdghdr=(DFnsdg_t_hdr *)HDfreespace((VOIDP)nsdghdr)) != NULL)
+          return FAIL;
       }
 	
     Lastref  = Writeref;	/* remember ref written */
@@ -3227,7 +3013,7 @@ intn DFSDIendslice(isfortran)
     Hendaccess(Writesdg.aid);
     ret      = Hclose(Sfile_id);
     Sfile_id = 0;       /* partial write complete */
-    HDfreenclear(Sddims);
+    Sddims   = (int32 *) HDfreespace((VOIDP) Sddims);
 
     return(ret);
 }
@@ -3240,7 +3026,7 @@ intn DFSDIendslice(isfortran)
  * Name:    DFSDIopen
  * Purpose: open or reopen a file
  * Inputs:  filename: name of file to open
- *          acc_mode : access mode
+ *          access : access mode
  * Returns: file id on success, -1 (FAIL) on failure with error set
  * Users:   HDF systems programmers, many SD routines
  * Invokes: DFopen
@@ -3249,29 +3035,21 @@ intn DFSDIendslice(isfortran)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int32 DFSDIopen(const char *filename, intn acc_mode)
+int32 DFSDIopen(char *filename, intn access)
 #else
-int32 DFSDIopen(filename, acc_mode)
-     const char *filename;
-     intn acc_mode;
+int32 DFSDIopen(filename, access)
+     char *filename;
+     intn access;
 #endif /* PROTOTYPE */
 {
     int32 file_id;
-    CONSTR(FUNC,"DFSDIopen");
+    char *FUNC="DFSDIopen";
 
     if (Sfile_id!=DF_NOFILE)      /* in the middle of a partial write */
         HRETURN_ERROR(DFE_ALROPEN, FAIL); 
 
-    /* Check if filename buffer has been allocated */
-    if (Lastfile == NULL)
-      {
-        Lastfile = (char *)HDgetspace((DF_MAXFNLEN +1) * sizeof(char));
-        if (Lastfile == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
-
     /* use reopen if same file as last time - more efficient */
-    if ((HDstrcmp(Lastfile,filename)) || (acc_mode == DFACC_CREATE)) 
+    if ((HDstrcmp(Lastfile,filename)) || (access == DFACC_CREATE)) 
       {
         /* open a new file, delete nsdg table and reset lastnsdg  */
         if (nsdghdr != NULL) 	
@@ -3284,7 +3062,8 @@ int32 DFSDIopen(filename, acc_mode)
                 while (rear != NULL)
                   {
                     front = rear->next;
-                    HDfreenclear(rear);
+                    if ((rear = (DFnsdgle *)HDfreespace((VOIDP) rear)) != NULL)
+                        return FAIL;
                     rear = front;
                   }
                 nsdghdr->size   = 0;
@@ -3292,11 +3071,12 @@ int32 DFSDIopen(filename, acc_mode)
                 lastnsdg.tag    = DFTAG_NULL;
                 lastnsdg.ref    = 0;
               }
-            HDfreenclear(nsdghdr);
+            if ((nsdghdr=(DFnsdg_t_hdr *)HDfreespace((VOIDP)nsdghdr)) != NULL)
+                return FAIL;
           }
 
         /* treat create as different file */
-        file_id = Hopen(filename, acc_mode, (int16) 0);
+        file_id = Hopen(filename, access, (int16) 0);
         if (file_id == FAIL) 
             return FAIL;
         Newdata  = (-1);         /* data in Readsdg is not fresh */ 
@@ -3315,7 +3095,7 @@ int32 DFSDIopen(filename, acc_mode)
       }
     else
       {
-        file_id = Hopen(filename, acc_mode, (int16) 0);
+        file_id = Hopen(filename, access, (int16) 0);
         if (file_id == FAIL)
             return FAIL;
       }
@@ -3329,7 +3109,7 @@ int32 DFSDIopen(filename, acc_mode)
         nsdghdr->size   = 0;
         nsdghdr->nsdg_t = NULL;
       }
-    if ((nsdghdr->nsdg_t == NULL) && (acc_mode == DFACC_READ))  
+    if ((nsdghdr->nsdg_t == NULL) && (access == DFACC_READ))  
       {
         if (DFSDIsetnsdg_t(file_id,nsdghdr ) < 0) 
           return(FAIL);
@@ -3362,7 +3142,7 @@ intn DFSDIsdginfo(file_id)
 #endif /* PROTOTYPE */
 {
     DFdi ptr;
-    CONSTR(FUNC,"DFSDIsdginfo");
+    char *FUNC="DFSDIsdginfo";
     int32 aid;
 
     HEclear();
@@ -3439,7 +3219,7 @@ intn DFSDIrefresh(filename)
 #endif /* PROTOTYPE */
 {
       int32 file_id;
-      CONSTR(FUNC,"DFSDIrefresh");
+      char *FUNC="DFSDgetdims";
 
       HEclear();
       if (Newdata != 1 || Nextsdg) 
@@ -3547,15 +3327,15 @@ intn DFSDIclear(sdg)
 {
     intn i;
     intn luf;
-    CONSTR(FUNC,"DFSDIclear");
+    char *FUNC="DFSDIclear";
 
     HEclear();
 
     if (Sfile_id !=DF_NOFILE)      /* cannot clear during slice writes */
         HRETURN_ERROR(DFE_BADCALL, FAIL); 
 
-    HDfreenclear(sdg->dimsizes);
-    HDfreenclear(sdg->coordsys);
+    sdg->dimsizes = (int32 *) HDfreespace((VOIDP) sdg->dimsizes);
+    sdg->coordsys = HDfreespace((VOIDP)sdg->coordsys);
 
     /* free label/unit/format pointers */
     for (luf = LABEL; luf <= FORMAT; luf++)
@@ -3563,25 +3343,26 @@ intn DFSDIclear(sdg)
         if (sdg->dimluf[luf])
           {       /* free strings */
             for (i = 0; i <sdg->rank; i++)
-                HDfreenclear(sdg->dimluf[luf][i]);
+                sdg->dimluf[luf][i] = HDfreespace((VOIDP)sdg->dimluf[luf][i]);
           }
 
 	/* free string pointers */
-        HDfreenclear(sdg->dimluf[luf]);
+        sdg->dimluf[luf] = (char **) HDfreespace((VOIDP) sdg->dimluf[luf]);
 
 	/* free data string */
-        HDfreenclear(sdg->dataluf[luf]);
+        sdg->dataluf[luf] = HDfreespace((VOIDP)sdg->dataluf[luf]);
       }
 
     /* free scale pointers */
     if (sdg->dimscales)
       {
         for (i = 0; i < sdg->rank; i++)
-              HDfreenclear(sdg->dimscales[i]);
+            sdg->dimscales[i] = 
+              (uint8 *)HDfreespace((VOIDP) sdg->dimscales[i]);
       }
 
     /* free array of scale pointers */
-    HDfreenclear(sdg->dimscales);
+    sdg->dimscales = (uint8 **) HDfreespace((VOIDP)sdg->dimscales);
     sdg->rank      = 0;
 
     /* number type is independant to dimsizes   4/7/92  sxu
@@ -3624,11 +3405,11 @@ intn DFSDIclear(sdg)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data,
+intn DFSDIgetdata(char *filename, intn rank, int32 maxsizes[], VOIDP data,
 	          intn isfortran)
 #else
 int DFSDIgetdata(filename, rank, maxsizes, data, isfortran)
-     const char *filename;
+     char *filename;
      intn rank;
      int32 maxsizes[];
      VOID *data;
@@ -3640,7 +3421,7 @@ int DFSDIgetdata(filename, rank, maxsizes, data, isfortran)
     int32 *winst;
     int32 *windims;
     int32 file_id;
-    CONSTR(FUNC,"DFSDIgetdata");
+    char *FUNC="DFSDIgetdata";
 
     HEclear();
 
@@ -3701,11 +3482,11 @@ int DFSDIgetdata(filename, rank, maxsizes, data, isfortran)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDIputdata(const char *filename, intn rank, int32 *dimsizes, VOIDP data,
+intn DFSDIputdata(char *filename, intn rank, int32 *dimsizes, VOIDP data,
 	          intn accmode, intn isfortran)
 #else
 intn DFSDIputdata(filename, rank, dimsizes, data, accmode, isfortran)
-     const char *filename;
+     char *filename;
      intn  rank;
      int32   *dimsizes;
      VOID *data;
@@ -3715,7 +3496,7 @@ intn DFSDIputdata(filename, rank, dimsizes, data, accmode, isfortran)
 {
     intn ret;
     int32 file_id;
-    CONSTR(FUNC,"DFSDIputdata");
+    char *FUNC="DFSDIputdata";
 
     HEclear();
 
@@ -3786,11 +3567,11 @@ intn DFSDIputdata(filename, rank, dimsizes, data, accmode, isfortran)
 /*****************************************************************************/
 
 #ifdef PROTOTYPE
-intn DFSDIgetslice(const char *filename, int32 winst[], int32 windims[],
+intn DFSDIgetslice(char *filename, int32 winst[], int32 windims[],
 	           VOIDP data, int32 dims[], intn isfortran)
 #else
 intn DFSDIgetslice(filename, winst, windims, data, dims, isfortran)
-    const char    *filename;  /* HDF file containing the dataset */
+    char    *filename;  /* HDF file containing the dataset */
     int32 winst[];      /* array containing the coordinates of the start */
                         /*  of the slice in the HDF file */
     int32 windims[];	/* array containing the size of the slice */
@@ -3835,7 +3616,7 @@ intn DFSDIgetslice(filename, winst, windims, data, dims, isfortran)
     uint8 *dp;            /* ptr into data[] at an element of the current row */
     uint8 *buf;           /* buffer containing the converted current row */
     int32 file_id;        /* HDF file pointer */
-    CONSTR(FUNC,"DFSDIgetslice");
+    char *FUNC="DFSDIgetslice";
 
     HEclear();
 
@@ -4175,7 +3956,7 @@ intn DFSDIputslice(windims, data, dims, isfortran)
     uint8 *datap;        /* pointer into data[] at */
                          /*  the start of the current row */
     uint8 *buf;          /* buffer containing converted current row */
-    CONSTR(FUNC,"DFSDIputslice");
+    char *FUNC="DFSDIputslice";
 
     HEclear();
 
@@ -4314,43 +4095,23 @@ intn DFSDIputslice(windims, data, dims, isfortran)
     return(ret>=0 ? 0 : -1);
 }
 
+/* ------------------------------ DFSDgetcal ------------------------------ */
 /*-----------------------------------------------------------------------------
- NAME    
-       DFSDgetcal
- USAGE
-       int DFSDgetcal(pcal, pcal_err, pioff, pioff_err, cal_nt)
-       float64 *pcal;       OUT: calibration factor
-       float64 *pcal_err;   OUT: calibration error value
-       float64 *pioff;      OUT: uncalibrated offset value 
-       float64 *pioff_err;  OUT: uncalibrated offset error value
-       int32   *cal_nt;     OUT: Nunber type of uncalibrated data
+ * Name:    DFSDgetcal()
+ * Purpose: Get calibration and uncalibrated offsets for data values
+ * Inputs:  pcal:  Pointer to float64 to return calibration value
+ *          pcal_err:  Pointer to float64 to return calibration error value
+ *          pioff:  Pointer to float64 to return uncalibrated offset value 
+ *          pioff_err:  Pointer to float64 to return uncalibrated offset error value
+ *          cal_nt : Pointer to int32 to return what the data's real NT is
+ * Globals: IsCal
+ * Returns: 0 on success, -1 if no values or if error, with DFerror set
+ * Users:   HDF users, utilities, other routines
+ * Invokes: none
+ * Method:  Retrieves values from Readsdg
+ * Remarks: none
+ *---------------------------------------------------------------------------*/
 
- RETURNS
-       Returns SUCCED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       This routine reads the calibration record, if there is one, attached
-       to the scientific data set. A calibration record contains four 64-bit
-       floating point values followed by a 32-bit integer, to be interpreted
-       as follows:
-
-            cal        - calibration factor
-            cal_err    - calibration error
-            offset     - uncalibrated offset
-            offset_err - uncalibrated offset error
-            num_type   - number type of uncalibrated data
-
-       The relationship between a value 'iy' stored in a data set and the
-       actual value 'y' is defined as:
-       
-            y = cal * (iy - offset)
-
-       The variable "offset_err" contains a potential error of offset,
-       and "cal_err" contains a potential error of "cal". Currently the
-       calibration record is provided for information only. The DFSD
-       interface performs no operations on the data based on the calibration
-       tag.
-
-----------------------------------------------------------------------------*/
 #if defined __STDC__ || defined PC
 intn DFSDgetcal(float64 *pcal, float64 *pcal_err, float64 *pioff, 
                 float64 *pioff_err, int32 *cal_nt)
@@ -4363,7 +4124,7 @@ intn DFSDgetcal(pcal, pcal_err, pioff, pioff_err, cal_nt)
      int32   *cal_nt;
 #endif /* __STDC__ || PC */
 {
-    CONSTR(FUNC,"DFSDgetcal");
+    PRIVATE char *FUNC = "DFSDgetcal";
 
     HEclear();
     
@@ -4384,44 +4145,22 @@ intn DFSDgetcal(pcal, pcal_err, pioff, pioff_err, cal_nt)
 
 } /* DFSDgetcal */
 
+/* ------------------------------ DFSDsetcal ------------------------------ */
 /*-----------------------------------------------------------------------------
- NAME   
-       DFSDsetcal
- USAGE
-       intn DFSDsetcal(cal, cal_err, ioff, ioff_err, cal_nt)
-       float64 cal;         IN: calibration factor
-       float64 cal_err;     IN: calibration error
-       float64 ioff;        IN: uncalibrated offset
-       float64 ioff_err;    IN: uncalibrated offset error
-       int32   cal_nt;      IN: number type of uncalibrated data
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Sets the calibration information associated with data. This routine
-       sets the calibration record attached to a data set. A calibration
-       record contains four 64-bit floating point values followed by a 
-       32-bit integer, to be interpreted as follows:
-
-            cal        - calibration factor
-            cal_err    - calibration error
-            offset     - uncalibrated offset
-            offset_err - uncalibrated offset error
-            num_type   - number type of uncalibrated data
-
-       The relationship between a value 'iy' stored in a data set and the
-       actual value 'y' is defined as:
-       
-            y = cal * (iy - offset)
-
-       The variable "offset_err" contains a potential error of offset,
-       and "cal_err" contains a potential error of "cal". Currently the
-       calibration record is provided for information only. The DFSD
-       interface performs no operations on the data based on the calibration
-       tag. "DFSDsetcal" works like other "DFSDset*" routines, with one
-       exception: the calibration information is automatically cleared
-       after a call to "DFSDputdata" or "DFSDadddata". Hence, "DFSDsetcal"
-       must be called anew for each data set that is to be written.
-----------------------------------------------------------------------------*/
+ * Name:    DFSDsetcal()
+ * Purpose: Set calibration and offset (before calibration) of data
+ * Inputs:  cal:  Calibration
+ *          cal_err:  Calibration error
+ *          ioff:  Uncalibrated offset
+ *          ioff_err:  Uncalibrated offset error
+ *          cal_nt:  Numbertype of uncalibrated data
+ * Globals: Ref
+ * Returns: SUCCEED on success, FAIL if no calibration values or if error
+ * Users:   HDF users, utilities, other routines
+ * Invokes: none
+ * Method:  Modify Writesdg, set Ref
+ * Remarks: Automatically cleared after call to DFSDputdata or DFSDadddata
+ *---------------------------------------------------------------------------*/
 #if defined __STDC__ || defined PC
 intn DFSDsetcal(float64 cal, float64 cal_err, float64 ioff, float64 ioff_err,
                 int32 cal_nt)
@@ -4447,34 +4186,31 @@ intn DFSDsetcal(cal, cal_err, ioff, ioff_err, cal_nt)
     return(SUCCEED);
 }
 
+/* ------------------------------ Slab Write ----------------------------- */
 /*-----------------------------------------------------------------------------
- NAME 
-       DFSDwriteref
- USAGE
-       int DFSDwriteref(filename, ref)
-       char   *filename;  IN: HDF file to write to
-       uint16 ref;        IN: reference number for the next writing of data
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Specifies the data set to be written to next by using the reference
-       number. Note that there is no gaurantee that reference numbers appear
-       in sequence in and HDF file; therefore, it is not safe to assume
-       that a reference number is the sequence number for a data set. 
------------------------------------------------------------------------------*/
+ * Name:    DFSDwriteref
+ * Purpose: Set ref of SDS to write next
+ * Inputs:  filename: file to which this applies
+ *          ref: reference number of next write
+ * Returns: 0 on success, FAIL on failure
+ * Users:   HDF programmers, other routines and utilities
+ * Invokes: HEclear, DFSDIopen, Hstartread, DFSDIgetndg, Hendacces, Hclose
+ * Remarks:
+ *---------------------------------------------------------------------------*/
+
 #ifdef PROTOTYPE
 intn
-DFSDwriteref(const char *filename, uint16 ref)
+DFSDwriteref(char *filename, uint16 ref)
 #else
 intn
 DFSDwriteref(filename, ref)
-    const char *filename;
+    char *filename;
     uint16 ref;
 #endif /* PROTOTYPE */
 {
     int32 file_id; 
     int32 aid;
-    CONSTR(FUNC,"DFSDwriteref");
+    char *FUNC="DFSDwriteref";
 
     /* Clear error stack */
     HEclear();
@@ -4515,25 +4251,15 @@ DFSDwriteref(filename, ref)
 }
 
 /*-----------------------------------------------------------------------------
- NAME   
-       DFSDsetfillvalue
- USAGE
-       int DFSDsetfillvalue(fill_value)
-       VOID *fill_value;     IN: number to be stored in any unwritten locations
-                                 of the scientific data set
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Set the value used to fill in any unwritten location in a scientific
-       data set. Since the data is written in hyperslabs, it is possible
-       that not alof the possible locations in a given data set are written
-       to. The fill value is placed into all unwritten locations. The value
-       gets written if the following "DFSDwriteslab" call is the first
-       call to the data set i.e. the data set is created. It is assumed that
-       the fille value has the same number type as the data set.
- WARNING 
-       Memory bug on SGI's if you try to free allocated space for fill values.
------------------------------------------------------------------------------*/
+ * Name:    DFSDsetfillvalue
+ * Purpose: Set fill value of SDS
+ * Inputs:  fill_value: fill value
+ * Returns: 0 on success, FAIL on failure
+ * Users:   HDF programmers, other routines and utilities
+ * Invokes: HEclear, DFKNTsize, HDfreespace, HDgetspace, HDmemcpy
+ * Remarks: Memory bug on SGI's if you try to free allocated space for
+ *          fill values.
+ *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 intn
@@ -4545,8 +4271,8 @@ DFSDsetfillvalue(fill_value)
 #endif /* PROTOTYPE */
 {
     int32 numtype;      /* current number type  */
-    uint32 localNTsize;  /* size of this NT on as it is on this machine  */
-    CONSTR(FUNC,"DFSDsetfillvalue");
+    int32 localNTsize;  /* size of this NT on as it is on this machine  */
+    char *FUNC="DFSDsetfillvalue";
 
     /* Clear error stack  */
     HEclear();
@@ -4570,21 +4296,15 @@ DFSDsetfillvalue(fill_value)
 }
 
 /*-----------------------------------------------------------------------------
- NAME
-       DFSDgetfillvalue
- USAGE
-       int DFSDgetfillvalue(fill_value)
-       VOID *fill_value;    OUT: Number to be stored in any unwritten 
-                                 locations of the scientific data set
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-      Gets the value used to fill any unwritten location in a scientific
-      data set. The value is set by "DFSDsetfillvalue". Note that a call
-      that initializes file information structures such as "DFSDgetdims" 
-      is required in order for "DFSDgetfillvalue" to succeed. This is because 
-      "DFSDgetfillvalue" does not take a file name as an arguement.
------------------------------------------------------------------------------*/
+ * Name:    DFSDgetfillvalue
+ * Purpose: Get fill value of SDS
+ * Inputs:  fill_value: fill value is returned
+ * Returns: 0 on success, FAIL on failure
+ * Users:   HDF programmers, other routines and utilities
+ * Invokes: HEclear, DFKNT, HDmemcpy
+ * Remarks: 
+ *---------------------------------------------------------------------------*/
+
 #ifdef PROTOTYPE
 intn
 DFSDgetfillvalue(VOIDP fill_value)
@@ -4595,8 +4315,8 @@ DFSDgetfillvalue(fill_value)
 #endif /* PROTOTYPE */
 {
     int32 numtype;      /* current number type  */
-    uint32 localNTsize;  /* size of this NT on as it is on this machine  */
-    CONSTR(FUNC,"DFSDgetfillvalue");
+    int32 localNTsize;  /* size of this NT on as it is on this machine  */
+    char *FUNC="DFSDgetfillvalue";
 
     /* Clear error stack  */
     HEclear();
@@ -4617,49 +4337,35 @@ DFSDgetfillvalue(fill_value)
 }
 
 /*-----------------------------------------------------------------------------
- NAME
-       DFSDreadslab
- USAGE
-       int DFSDreadslab(filename, start, slab_size, stride, buffer, buffer_size)
-       char *filename;       IN: name of HDF file to write to
-       int32 start[];        IN: array of size rank containing the coordinates
-                                 for the start of the slab of data
-       int32 slab_size[];    IN: array of size rank containing the size of
-                                 each dimension in the slab of data
-       int32 stride[];       IN: sub-sampling stride(not implemented)
-       VOIDP buffer;         OUT: buffer to hold the extracted slab of data 
-       int32 buffer_size[];  OUT: array containing the dimensions of the buffer
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Reads a sub-array of data from a scientific data set. "DFSDreadslab"
-       will sequence to the next scientific data set if "DFSDgetdims" or
-       "DFSDgetdata" is not called earlier. The "start[]" indices are relative
-       to 1. The rank(size) of "start[]" must be the same as the number of
-       dimensions of the specified variable. The elements of "slab_size[]"
-       must be no larger than the dimensions of the scientific data set. 
-       The stride feature is not currently implemented. For now just pass 
-       the "start[]" array as the arguement for "stride[]" where it will be
-       ignored. To extract a slab of lower dimension than that of the data 
-       set, enter 1 in the "slab_size[] array for each ommitted dimension.
-       For example, to extract a 2D slab from a 3D data set, specify the
-       beginning coordiantes in 3 dimensions in "start[]" and enter a 1 for 
-       the for the missing dimension in the array "slab_size[]". More 
-       specifically, to extract a 3x4 slab containing the elements (6,7,8)
-       through (8.7,11) specify the begining coordiantes as {6,7,8} and 
-       the slab size as {3,1,4}.
------------------------------------------------------------------------------*/
+ * Name:    DFSDreadslab
+ * Purpose: Get slab of data from SDG.  Will sequence to next SDG if
+ *          DFSDgetdims, DFSDgetdata or DFSDreadslab not called earlier.
+ * Inputs:  filename: name of HDF file to use
+ *          start: array of size = rank of data, containing start of slice
+ *          slab_size: array of size rank, containing end of slice
+ *          stride:
+ *          buffer: array for returning slice
+ *          buffer_size: dimensions of array data
+ * Returns: 0 on success, FAIL on failure with error set
+ * Outputs: slab of data in data
+ * Users:   
+ * Invokes: DFSDgetslice
+ * Method:  call DFSDgetslice
+ * Remarks: buffer may be larger than size of slab.  In that event, the actual
+ *          data may not be contiguous in the array "buffer".
+ *          User sets buffer_size before call.
+ *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDreadslab(const char *filename, int32 start[], int32 slab_size[], 
+intn DFSDreadslab(char *filename, int32 start[], int32 slab_size[], 
                  int32 stride[], VOIDP buffer, int32 buffer_size[])
 #else
 intn DFSDreadslab(filename, start, slab_size, stride, buffer, buffer_size)
-     const char *filename;
+     char *filename;
      int32 start[];
      int32 slab_size[];
      int32 stride[];
-     VOIDP buffer;
+     VOID *buffer;
      int32 buffer_size[];
 #endif /* PROTOTYPE */
 {
@@ -4668,39 +4374,37 @@ intn DFSDreadslab(filename, start, slab_size, stride, buffer, buffer_size)
 
 
 /*-----------------------------------------------------------------------------
- NAME   
-       DFSDstartslab
- USAGE
-       int DFSDstartslab(filename)
-       char *filename;    IN: name of HDF file to write to
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Prepares the DFSD interface to write a slab(s) od data to a scientific
-       data set. "DFSDsetdims" must be called before calling "DFSDstartslab".
-       No call which needs to open a file may be made after a "DFSDstartslab"
-       call until "DFSDendslab" is called. This routine will write out the
-       fill values if "DFSDsetfillvalue" is called before this routine and
-       this is the first write(i.e. creation) to the data set.
------------------------------------------------------------------------------*/
+ * Name:    DFSDstartslab
+ * Purpose: Set up to write slab of data to SD.
+ * Inputs:  filename: name of HDF file to write to
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   None
+ * Invokes: 
+ * Method:
+ * Remarks: DFSDsetdims must have been called first
+ *          No call which needs a file open may be made after this
+ *          till DFSDendslab is called. This routine will write out the fill 
+ *          values if DFSDsetfillvalue() is called before this routine.
+ *---------------------------------------------------------------------------*/
+
 #ifdef PROTOTYPE
 intn
-DFSDstartslab(const char *filename)
+DFSDstartslab(char *filename)
 #else
 intn
 DFSDstartslab(filename)
-     const char *filename;
+     char *filename;
 #endif /* PROTOTYPE */
 {
     int32 i;
     int32 sdg_size;
-    uint32 localNTsize;
+    int32 localNTsize;
     int32 fileNTsize;
     int32 fill_bufsize = 16384; /* Chosen for the PC */
     int32 odd_size;
     uint8 *fill_buf;
 
-    CONSTR(FUNC,"DFSDstartslab");
+    char *FUNC="DFSDstartslab";
 
     /* Clear errors */
     HEclear();
@@ -4804,33 +4508,20 @@ DFSDstartslab(filename)
 }
 
 /*----------------------------------------------------------------------------
- NAME
-       DFSDwriteslab
- USAGE
-       int  DFSDwriteslab(start, stride, count, data)
-       int32 start[];     IN: array containing the coordinates of the start 
-                              of the slab in the HDF file 
-       int32 stride[];    IN: array containing the dimensions of data[] 
-       int32 count[];     IN: array containing the size of the slab 
-       VOID  *data;       IN: array to hold the floating point data to write
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Writes a slab of data to a scientific data set. The "start" indices
-       are relative to 1. The rank of "start" must be the same as the
-       number of dimensions of the specified variable. The elements of "start"
-       must be no larger than the scientific data set's dimensions in order.
-       The stride feature is not currently implemented. For now just pass the
-       "start" array as the argument for "stride" where it will be ignored.
-       The rank of "count" must be the same as the number of dimensions of the
-       specified variable. The elements of "count" must be no larger that
-       the scientific data sets's dimensions in order. The order in which
-       the data will be written into the specified hyperslab is with the
-       last dimension varying the fastest. The array "data" should be of
-       appropriate number type for the data set. Note that neither the
-       compilier nor the HDF sotfware can detect if the wrong type of data
-       is written.
-----------------------------------------------------------------------------*/
+ * Name:    DFSDwriteslab
+ * Purpose: Write slab of data to SD.
+ * Inputs:  start: array of size = rank of data, containing start of slab
+ *          stride: array for subsampling
+ *          count: array of size rank, containing size of slab
+ *          data: array of data to be written
+ * Returns: 0 on success, FAIL on failure with error set
+ * Outputs: None
+ * Users:   HDF programmers
+ * Invokes:
+ * Method:  Open file,  convert types if necessary, write data to file
+ * Remarks: 
+ *--------------------------------------------------------------------------*/
+
 #ifdef PROTOTYPE
 intn
 DFSDwriteslab(int32 start[], int32 stride[],
@@ -4878,7 +4569,7 @@ DFSDwriteslab(start, stride, count, data)
     uint8 *datap;          /* ptr into data[] at starting offset */
                            /*   of current block */
 
-    CONSTR(FUNC,"DFSDwriteslab");
+    char *FUNC="DFSDwriteslab";
 
     /* Clear error stack  */
     HEclear();
@@ -5122,19 +4813,16 @@ DFSDwriteslab(start, stride, count, data)
 }
 
 /*-----------------------------------------------------------------------------
- NAME 
-       DFSDendslab
- USAGE
-       int DFSDendslab()
- 
- RETURNS
-       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
- DESCRIPTION
-       Ends a sequence of slab calls started by "DFSDstartslab" by closing
-       the file. Writes the NDG information to the file if this call follows
-       a "DFSDstartslab" that created a new SDG.
+ * Name:    DFSDendslab
+ * Purpose: Write of data to SDG completed, write NDG and close file
+ * Inputs:  None
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   DFSDwriteslab
+ * Invokes:
+ * Method:  call DFSDputndg, close Sfile_id
+ * Remarks: Writes NDG to file on very fist write to SDS.
+ *---------------------------------------------------------------------------*/
 
-----------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
 intn
 DFSDendslab(void)
@@ -5144,7 +4832,7 @@ DFSDendslab()
 #endif /* PROTOTYPE */
 {
     intn ret;
-    CONSTR(FUNC,"DFSDendslab");
+    char *FUNC="DFSDendslab";
 
     /* Clear error stack */
     HEclear();
@@ -5173,7 +4861,8 @@ DFSDendslab()
                 front = rear->next;
                 while (rear != NULL)
                   {
-                   HDfreenclear(rear);
+                   if ((rear=(DFnsdgle *)HDfreespace((VOIDP) rear)) != NULL)
+                      return FAIL;
                    rear = front;
                    if (rear != NULL)
                         front = rear->next;
@@ -5184,7 +4873,11 @@ DFSDendslab()
                 lastnsdg.ref = 0;
               }
 
-            HDfreenclear(nsdghdr);
+            if ((nsdghdr=(DFnsdg_t_hdr *)HDfreespace((VOIDP)nsdghdr))
+                 != NULL)
+              {
+                return FAIL;
+              }
           }
 
         Ref.new_ndg = -1;
@@ -5199,4 +4892,3 @@ DFSDendslab()
 
     return ret;
 }
-

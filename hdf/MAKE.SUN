@@ -12,6 +12,7 @@
 #
 # $Id$
 #
+#
 # ##################################################################
 #
 #           MAKEFILE for creating the HDF library, libdf.a, on Suns
@@ -133,11 +134,11 @@ libdf:
 
 utilities:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="src util" _sub
+          SUBDIRS="util" _sub
 
 tests:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="src test" _sub
+          SUBDIRS="test" _sub
 
 testnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \

@@ -39,7 +39,7 @@ void test_hextelt()
     int32 aid1, aid2;
     int32 fileid, length, offset, posn;
     uint16 tag, ref;
-    int16 acc_mode, special;
+    int16 access, special;
     int i;
     int32 ret;
     intn errors = 0;
@@ -70,7 +70,7 @@ void test_hextelt()
 
     ret = Hwrite(aid1, HDstrlen("correct")+1, (uint8 *) "correct");
     if(ret != (int32)HDstrlen("correct") + 1) {
-      fprintf(stderr, "Hwrite failed (code %d)\n", (int)ret);
+      fprintf(stderr, "Hwrite failed (code %d)\n", ret);
       HEprint(stderr, 0);
       exit(1);
     }
@@ -101,7 +101,7 @@ void test_hextelt()
     MESSAGE(5,printf("Writing string '%s' to file #3\n", STRING););
     ret = Hwrite(aid1, HDstrlen(STRING)+1, (uint8 *) STRING);
     if(ret != (int32)HDstrlen(STRING)+1) {
-      fprintf(stderr, "Hwrite failed (code %d)\n", (int)ret);
+      fprintf(stderr, "Hwrite failed (code %d)\n", ret);
       HEprint(stderr, 0);
       exit(1);
     }
@@ -116,7 +116,7 @@ void test_hextelt()
     ret = Hgetelement(fid, (uint16) 1001, (uint16) 2, inbuf);
     if(ret != 4) {
       fprintf(stderr, "Incorrect element size returned from Hgetelement: %d\n",
-              (int)ret);
+              ret);
       HEprint(stderr, 0);
       exit(1);
     }
@@ -136,7 +136,7 @@ void test_hextelt()
     ret = Hgetelement(fid, (uint16) 1000, (uint16) 4, inbuf);
     if(ret != 2000) {
       fprintf(stderr, "Incorrect element size returned from Hgetelement: %d\n",
-              (int)ret);
+              ret);
       HEprint(stderr, 0);
       exit(1);
     }
@@ -156,7 +156,7 @@ void test_hextelt()
     MESSAGE(5,printf("Writing %d bytes to file #4\n",BUF_SIZE););
     ret = Hwrite(aid1, BUF_SIZE, outbuf);
     if(ret != BUF_SIZE) {
-      fprintf(stderr, "Hwrite failed (code %d)\n", (int)ret);
+      fprintf(stderr, "Hwrite failed (code %d)\n", ret);
       HEprint(stderr, 0);
       exit(1);
     }
@@ -179,19 +179,19 @@ void test_hextelt()
 
     MESSAGE(5,printf("Inquiring about access element in file #1\n"););
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
-                  &acc_mode, &special);
+                  &access, &special);
     CHECK(ret, FAIL, "Hinquire");
 
     ret = Hread(aid1, length, inbuf);
     if(ret != length) {
-      fprintf(stderr, "Hread failed (code %d)\n", (int)ret);
+      fprintf(stderr, "Hread failed (code %d)\n", ret);
       HEprint(stderr, 0);
       exit(1);
     }
 
     if(HDstrcmp((const char *) inbuf, (const char *) "element 1000 1 correct")) {
       fprintf(stderr, "Object stored in file #1 is wrong\n");
-      fprintf(stderr, "\t       Is: %s\n", (char *)inbuf);
+      fprintf(stderr, "\t       Is: %s\n", inbuf);
       fprintf(stderr, "\tShould be: element 1000 1 correct\n");
       errors++;
     }
@@ -204,7 +204,7 @@ void test_hextelt()
 
     MESSAGE(5,printf("Inquiring about access element in file #2\n"););
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
-                  &acc_mode, &special);
+                  &access, &special);
     CHECK(ret, FAIL, "Hinquire");
 
     ret = Hnextread(aid1, DFTAG_WILDCARD, DFREF_WILDCARD, DF_START);
@@ -212,7 +212,7 @@ void test_hextelt()
 
     MESSAGE(5,printf("Inquiring about access element in file #3\n"););
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
-                  &acc_mode, &special);
+                  &access, &special);
     CHECK(ret, FAIL, "Hinquire");
 
     ret = Hnextread(aid1, DFTAG_WILDCARD, 3, DF_CURRENT);
@@ -226,7 +226,7 @@ void test_hextelt()
 
     MESSAGE(5,printf("Inquiring about access element in file #4\n"););
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
-                  &acc_mode, &special);
+                  &access, &special);
     CHECK(ret, FAIL, "Hinquire");
 
     aid2 = Hstartwrite(fid, 1000, 1, 4);
@@ -234,7 +234,7 @@ void test_hextelt()
 
     ret = Hwrite(aid2, 4, (uint8 *) "ABCD");
     if(ret != 4) {
-      fprintf(stderr, "Hwrite failed (code %d)\n", (int)ret);
+      fprintf(stderr, "Hwrite failed (code %d)\n", ret);
       HEprint(stderr, 0);
       exit(1);
     }

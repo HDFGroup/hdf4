@@ -55,28 +55,29 @@ const char* TheDescr;
 void CallFortranTest(TheCall) 
 char* TheCall;
 {
-#ifdef VMS
   static  char TheProc[25];
 
-  HDstrcpy(TheProc , "run ");   
-  HDstrcat(TheProc, TheCall);
+#ifdef VMS
+  strcpy(TheProc , "run ");   
+  strcat(TheProc, TheCall);
   system(TheProc);
 #else
   system(TheCall);
 #endif
 }
 
-int main (argc, argv) 
+main (argc, argv) 
      int argc;
      char* argv[];
 {
   int CLLoop; /* Command Line Loop */
-  int Loop, Loop1;
-  int Summary=0;
+  int ErrLoop;
+  int Loop,Loop1;
+  int Summary    = 0;
   int CleanUp    = 1;
   int ret;
   uint32 lmajor, lminor, lrelease;
-  char lstring[81];
+  char fstring[81], lstring[81], output[256];
 
   InitTest("slab1","slab1wf","");
   InitTest("slab2","slab2wf","");
@@ -101,11 +102,11 @@ int main (argc, argv)
   ret = Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
 
   printf("\nFORTEST V%s Built on: %s \n", VERSION, BUILDDATE );
-  printf("HDF Library Version: %u.%ur%u, %s\n\n",
-         (unsigned)lmajor, (unsigned)lminor, (unsigned)lrelease, lstring);
+  printf("HDF Library Version: %d.%dr%d\n\n",
+         lmajor, lminor, lrelease, lstring);
   for (CLLoop = 1; CLLoop < argc; CLLoop++) {
-    if ((argc > CLLoop+1) && ((HDstrcmp(argv[CLLoop],"-verbose")==0) ||
-        (HDstrcmp(argv[CLLoop],"-v")==0))) {
+    if ((argc > CLLoop+1) && (HDstrcmp(argv[CLLoop],"-verbose")==0) ||
+        (HDstrcmp(argv[CLLoop],"-v")==0)) {
       if (argv[CLLoop+1][0] == 'l')
         Verbocity = 4;
       else if (argv[CLLoop+1][0] == 'm')
@@ -115,8 +116,8 @@ int main (argc, argv)
       else 
         Verbocity = atoi(argv[CLLoop+1]); 
     }
-    if ((argc > CLLoop) && ((HDstrcmp(argv[CLLoop],"-summary")==0) ||
-        (HDstrcmp(argv[CLLoop],"-s")==0))) {
+    if ((argc > CLLoop) && (HDstrcmp(argv[CLLoop],"-summary")==0) ||
+        (HDstrcmp(argv[CLLoop],"-s")==0)) {
       Summary = 1;
     }
     if ((argc > CLLoop) && (HDstrcmp(argv[CLLoop],"-help")==0)) {
@@ -143,12 +144,12 @@ int main (argc, argv)
       printf("\n\n");
       exit(0);
     }
-    if ((argc > CLLoop) && ((HDstrcmp(argv[CLLoop],"-cleanno")==0) ||
-        (HDstrcmp(argv[CLLoop],"-c")==0))) {
+    if ((argc > CLLoop) && (HDstrcmp(argv[CLLoop],"-cleanno")==0) ||
+        (HDstrcmp(argv[CLLoop],"-c")==0)) {
       CleanUp = 0;
     }
-    if ((argc > CLLoop+1) && ((HDstrcmp(argv[CLLoop],"-exclude") ==0) ||
-        (HDstrcmp(argv[CLLoop],"-x")==0))) {
+    if ((argc > CLLoop+1) && (HDstrcmp(argv[CLLoop],"-exclude") ==0) ||
+        (HDstrcmp(argv[CLLoop],"-x")==0)) {
       Loop = CLLoop+1;
       while ((Loop < argc) && (argv[Loop][0] != '-')) {
         for (Loop1 = 0; Loop1 < NUMOFTESTS; Loop1++) {
@@ -158,8 +159,8 @@ int main (argc, argv)
         Loop++;
       }
     }
-    if ((argc > CLLoop+1) && ((HDstrcmp(argv[CLLoop],"-begin") ==0) ||
-        (HDstrcmp(argv[CLLoop],"-b")==0))) {
+    if ((argc > CLLoop+1) && (HDstrcmp(argv[CLLoop],"-begin") ==0) ||
+        (HDstrcmp(argv[CLLoop],"-b")==0)) {
       Loop = CLLoop+1;
       while ((Loop < argc) && (argv[Loop][0] != '-')) {
         for (Loop1 = 0; Loop1 < NUMOFTESTS; Loop1++) {
@@ -171,8 +172,8 @@ int main (argc, argv)
         Loop++;
       }
     }
-    if ((argc > CLLoop+1) && ((HDstrcmp(argv[CLLoop],"-only") ==0) ||
-        (HDstrcmp(argv[CLLoop],"-o")==0))) {
+    if ((argc > CLLoop+1) && (HDstrcmp(argv[CLLoop],"-only") ==0) ||
+        (HDstrcmp(argv[CLLoop],"-o")==0)) {
       for (Loop = 0; Loop < NUMOFTESTS; Loop++) {
         Test[Loop].SkipFlag = 1;
       }
@@ -244,4 +245,7 @@ int main (argc, argv)
 #endif
   }
 }
+
+
+
 

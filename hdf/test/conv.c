@@ -83,7 +83,7 @@ extern int Verbocity;
 
 /* Local variables */
 static int32 test_type[]={0,DFNT_LITEND,DFNT_NATIVE};
-static const char *test_name[]={"Big-Endian","Little-Endian","Native"};
+static char *test_name[]={"Big-Endian","Little-Endian","Native"};
 
 void test_conv()
 {
@@ -116,7 +116,7 @@ void test_conv()
     intn t;
     int32 ret;
 
-    SEED(time(NULL));   /* seed with effectively random number */
+    SEED((int)time(NULL));   /* seed with effectively random number */
 
     for(t=0; t<sizeof(test_type)/sizeof(int32); t++) {
         MESSAGE(5,printf("Testing %s Number-Types\n",test_name[t]););
@@ -125,17 +125,17 @@ void test_conv()
         /* allocate arrays */
         src_int8=(int8 *)HDgetspace(TEST_SIZE*sizeof(int8));
         if(src_int8==NULL) {
-        	CHECK(src_int8,NULL,"HDgetspace");
+        	CHECK(src_int8,NULL,HDgetspace);
         	return;
           } /* end if */
         dst_int8=(int8 *)HDgetspace(TEST_SIZE*sizeof(int8));
         if(dst_int8==NULL) {
-        	CHECK(dst_int8,NULL,"HDgetspace");
+        	CHECK(dst_int8,NULL,HDgetspace);
         	return;
           } /* end if */
         dst2_int8=(int8 *)HDgetspace(TEST_SIZE*sizeof(int8));
         if(dst2_int8==NULL) {
-            CHECK(dst2_int8,NULL,"HDgetspace");
+            CHECK(dst2_int8,NULL,HDgetspace);
             return;
           } /* end if */
 
@@ -177,7 +177,7 @@ void test_conv()
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s int8 values with %d/%d stride\n",(int)(c2-c1),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],SOURCE_STRIDE,DEST_STRIDE););
 
-        MESSAGE(6,printf("re-converting %s int8 array with %d/%d stride\n",test_name[t],SOURCE_STRIDE,DEST_STRIDE););
+        MESSAGE(6,printf("re-converting %s int8 array with %d/%d stride\n",test_name[t],SOURCE_STRIDE,DEST_STRIDE,SOURCE_STRIDE););
         c3=clock();
         ret=DFKconvert((VOIDP)dst_int8,(VOIDP)dst2_int8,test_type[t]|DFNT_INT8,TEST_SIZE/4,DFACC_READ,DEST_STRIDE*sizeof(int8),SOURCE_STRIDE*sizeof(int8));
         c4=clock();
@@ -196,17 +196,17 @@ void test_conv()
         MESSAGE(6,printf("seeding %s uint8 array\n",test_name[t]););
         src_uint8=(uint8 *)HDgetspace(TEST_SIZE*sizeof(uint8));
         if(src_uint8==NULL) {
-            CHECK(src_uint8,NULL,"HDgetspace");
+            CHECK(src_uint8,NULL,HDgetspace);
             return;
           } /* end if */
         dst_uint8=(uint8 *)HDgetspace(TEST_SIZE*sizeof(uint8));
         if(dst_uint8==NULL) {
-            CHECK(dst_uint8,NULL,"HDgetspace");
+            CHECK(dst_uint8,NULL,HDgetspace);
             return;
           } /* end if */
         dst2_uint8=(uint8 *)HDgetspace(TEST_SIZE*sizeof(uint8));
         if(dst2_uint8==NULL) {
-            CHECK(dst2_uint8,NULL,"HDgetspace");
+            CHECK(dst2_uint8,NULL,HDgetspace);
             return;
           } /* end if */
 
@@ -268,17 +268,17 @@ void test_conv()
         MESSAGE(6,printf("seeding %s int16 array\n",test_name[t]););
         src_int16=(int16 *)HDgetspace(TEST_SIZE*sizeof(int16));
         if(src_int16==NULL) {
-            CHECK(src_int16,NULL,"HDgetspace");
+            CHECK(src_int16,NULL,HDgetspace);
             return;
           } /* end if */
         dst_int16=(int16 *)HDgetspace(TEST_SIZE*sizeof(int16));
         if(dst_int16==NULL) {
-            CHECK(dst_int16,NULL,"HDgetspace");
+            CHECK(dst_int16,NULL,HDgetspace);
             return;
           } /* end if */
         dst2_int16=(int16 *)HDgetspace(TEST_SIZE*sizeof(int16));
         if(dst2_int16==NULL) {
-            CHECK(dst2_int16,NULL,"HDgetspace");
+            CHECK(dst2_int16,NULL,HDgetspace);
             return;
           } /* end if */
 
@@ -339,17 +339,17 @@ void test_conv()
         MESSAGE(6,printf("seeding %s uint16 array\n",test_name[t]););
         src_uint16=(uint16 *)HDgetspace(TEST_SIZE*sizeof(uint16));
         if(src_uint16==NULL) {
-            CHECK(src_uint16,NULL,"HDgetspace");
+            CHECK(src_uint16,NULL,HDgetspace);
             return;
           } /* end if */
         dst_uint16=(uint16 *)HDgetspace(TEST_SIZE*sizeof(uint16));
         if(dst_uint16==NULL) {
-            CHECK(dst_uint16,NULL,"HDgetspace");
+            CHECK(dst_uint16,NULL,HDgetspace);
             return;
           } /* end if */
         dst2_uint16=(uint16 *)HDgetspace(TEST_SIZE*sizeof(uint16));
         if(dst2_uint16==NULL) {
-            CHECK(dst2_uint16,NULL,"HDgetspace");
+            CHECK(dst2_uint16,NULL,HDgetspace);
             return;
           } /* end if */
 
@@ -410,17 +410,17 @@ void test_conv()
         MESSAGE(6,printf("seeding %s int32 array\n",test_name[t]););
         src_int32=(int32 *)HDgetspace(TEST_SIZE*sizeof(int32));
         if(src_int32==NULL) {
-            CHECK(src_int32,NULL,"HDgetspace");
+            CHECK(src_int32,NULL,HDgetspace);
             return;
           } /* end if */
         dst_int32=(int32 *)HDgetspace(TEST_SIZE*sizeof(int32));
         if(dst_int32==NULL) {
-            CHECK(dst_int32,NULL,"HDgetspace");
+            CHECK(dst_int32,NULL,HDgetspace);
             return;
           } /* end if */
         dst2_int32=(int32 *)HDgetspace(TEST_SIZE*sizeof(int32));
         if(dst2_int32==NULL) {
-            CHECK(dst2_int32,NULL,"HDgetspace");
+            CHECK(dst2_int32,NULL,HDgetspace);
             return;
           } /* end if */
 
@@ -481,17 +481,17 @@ void test_conv()
         MESSAGE(6,printf("seeding %s uint32 array\n",test_name[t]););
         src_uint32=(uint32 *)HDgetspace(TEST_SIZE*sizeof(uint32));
         if(src_uint32==NULL) {
-            CHECK(src_uint32,NULL,"HDgetspace");
+            CHECK(src_uint32,NULL,HDgetspace);
             return;
           } /* end if */
         dst_uint32=(uint32 *)HDgetspace(TEST_SIZE*sizeof(uint32));
         if(dst_uint32==NULL) {
-            CHECK(dst_uint32,NULL,"HDgetspace");
+            CHECK(dst_uint32,NULL,HDgetspace);
             return;
           } /* end if */
         dst2_uint32=(uint32 *)HDgetspace(TEST_SIZE*sizeof(uint32));
         if(dst2_uint32==NULL) {
-            CHECK(dst2_uint32,NULL,"HDgetspace");
+            CHECK(dst2_uint32,NULL,HDgetspace);
             return;
           } /* end if */
 
@@ -552,17 +552,17 @@ void test_conv()
         MESSAGE(6,printf("seeding %s float32 array\n",test_name[t]););
         src_float32=(float32 *)HDgetspace(TEST_SIZE*sizeof(float32));
         if(src_float32==NULL) {
-            CHECK(src_float32,NULL,"HDgetspace");
+            CHECK(src_float32,NULL,HDgetspace);
             return;
           } /* end if */
         dst_float32=(float32 *)HDgetspace(TEST_SIZE*sizeof(float32));
         if(dst_float32==NULL) {
-            CHECK(dst_float32,NULL,"HDgetspace");
+            CHECK(dst_float32,NULL,HDgetspace);
             return;
           } /* end if */
         dst2_float32=(float32 *)HDgetspace(TEST_SIZE*sizeof(float32));
         if(dst2_float32==NULL) {
-            CHECK(dst2_float32,NULL,"HDgetspace");
+            CHECK(dst2_float32,NULL,HDgetspace);
             return;
           } /* end if */
 
@@ -677,17 +677,17 @@ void test_conv()
         MESSAGE(6,printf("seeding %s float64 array\n",test_name[t]););
         src_float64=(float64 *)HDgetspace(TEST_SIZE*sizeof(float64));
         if(src_float64==NULL) {
-            CHECK(src_float64,NULL,"HDgetspace");
+            CHECK(src_float64,NULL,HDgetspace);
             return;
           } /* end if */
         dst_float64=(float64 *)HDgetspace(TEST_SIZE*sizeof(float64));
         if(dst_float64==NULL) {
-            CHECK(dst_float64,NULL,"HDgetspace");
+            CHECK(dst_float64,NULL,HDgetspace);
             return;
           } /* end if */
         dst2_float64=(float64 *)HDgetspace(TEST_SIZE*sizeof(float64));
         if(dst2_float64==NULL) {
-            CHECK(dst2_float64,NULL,"HDgetspace");
+            CHECK(dst2_float64,NULL,HDgetspace);
             return;
           } /* end if */
 

@@ -79,70 +79,6 @@
 #endif
 
 #if defined(SUN) || defined(sun)
-#ifdef __STDC__
-#define ANSISUN
-#else /* __STDC__ */
-#define KNRSUN
-#endif /* __STDC__ */
-#endif /* SUN || sun */
-
-#if defined(ANSISUN)
-
-#ifndef SUN
-#define SUN
-#endif
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE
-
-#ifndef PROTOTYPE
-#define PROTOTYPE		/* to invoke ANSI prototypes */
-#endif	/* PROTOTYPE */
-
-#include <limits.h>
-#include <string.h>
-#include <unistd.h>
-#include <ctype.h>
-#include <sys/time.h>
-#include <sys/file.h>               /* for unbuffered i/o stuff */
-#define DF_MT             DFMT_SUN
-typedef void              VOID;
-typedef void              *VOIDP;
-typedef char              *_fcd;
-typedef int               bool;
-typedef char              char8;
-typedef unsigned char     uchar8;
-typedef char              int8;
-typedef unsigned char     uint8;
-typedef short int         int16;
-typedef unsigned short int uint16;
-typedef long int          int32;
-typedef unsigned long int uint32;
-typedef int               intn;
-typedef unsigned int      uintn;
-typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-typedef float             float32;
-typedef double            float64;
-#define _HUGE              /* This should only be defined to a value on the PC */
-#define FNAME_POST_UNDERSCORE
-#define _fcdtocp(desc) (desc)
-#define FILELIB UNIXBUFIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-#define HAVE_STDC
-#define INCLUDES_ARE_ANSI
-
-#endif /* ANSISUN */
-
-#if defined(KNRSUN)
 
 #ifndef SUN
 #define SUN
@@ -155,7 +91,6 @@ Please check your Makefile.
 #define GOT_MACHINE
 
 #   define BSD
-#define DUMBCC 	/* because it is.  for later use in macros */
 #include <limits.h>
 #include <string.h>
 #ifndef __GNUC__
@@ -538,7 +473,6 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 
-#define DUMBCC 	/* because it is.  for later use in macros */
 #include <limits.h>
 #include <sys/types.h>
 #include <sys/file.h>               /* for unbuffered i/o stuff */
@@ -667,9 +601,6 @@ Please check your Makefile.
 #include <limits.h>         /* for UINT_MAX used in various places */
 #include <stdlib.h>
 #include <ctype.h>          /* for character macros */
-#ifdef __WATCOMC__
-#include <stddef.h>         /* for the 'fortran' pragma */
-#endif
 #ifdef WIN3
 #ifndef GMEM_MOVEABLE       /* check if windows header is already included */
 #include <windows.h>        /* include the windows headers */
@@ -1029,9 +960,6 @@ correctly.
         *(p) = (uint8)(((i) >> 8) & 0xff); (p)++; \
         *(p) = (uint8)((i) & 0xff); (p)++; }
 
-#   define NBYTEENCODE(d, s, n) \
-{   HDmemcpy(d,s,n); p+=n }
-
 #   define INT16DECODE(p, i) \
 { (i) = (int16)((*(p) & 0xff) << 8); (p)++; \
         (i) |= (int16)((*(p) & 0xff)); (p)++; }
@@ -1051,11 +979,6 @@ correctly.
         (i) |= ((uint32)(*(p) & 0xff) << 16); (p)++; \
         (i) |= ((uint32)(*(p) & 0xff) << 8); (p)++; \
         (i) |= (*(p) & 0xff); (p)++; }
-
-/* Note! the NBYTEDECODE macro is backwards from the memcpy() routine, */
-/*      in the spirit of the other DECODE macros */
-#   define NBYTEDECODE(s, d, n) \
-{   HDmemcpy(d,s,n); p+=n }
 
 /**************************************************************************
 *                   Conversion Routine Pointers
@@ -1077,14 +1000,12 @@ extern int (*DFKnumout)();
 *  memory is needed, as when small conversions are done
 ******************************************************************/
 #define DF_TBUFSZ       512     /* buffer size can be smaller */
-#if 0 /* replaced with dynamic memory calls */
 #ifdef  HMASTER
     int    FAR int_DFtbuf[DF_TBUFSZ]; /* int declaration to force word boundary */
     uint8  FAR *DFtbuf = (uint8 *) int_DFtbuf;
 #else /* !HMASTER */
 extern uint8 FAR *DFtbuf;
 #endif /*HMASTER*/
-#endif 
 
 /*----------------------------------------------------------------
 ** MACRO FCALLKEYW for any special fortran-C stub keyword
@@ -1153,40 +1074,11 @@ extern uint8 FAR *DFtbuf;
 #endif
 
 /**************************************************************************
-*  Generally useful macro definitions
-**************************************************************************/
-#ifndef MIN
-#define MIN(a,b)    (((a)<(b)) ? (a) : (b))
-#endif
-#ifndef MAX
-#define MAX(a,b)    (((a)>(b)) ? (a) : (b))
-#endif
-
-/**************************************************************************
 *  Debugging Allocation functions
 **************************************************************************/
 #ifdef MALDEBUG
 #include "maldebug.h"
 #endif
-
-/**************************************************************************
-*  Macros to work around ANSI C portability problems.
-**************************************************************************/
-#ifdef DUMBCC
-#define CONSTR(v,s) char *v=s
-#else
-#define CONSTR(v,s) char v[]=s
-#endif
-
-/**************************************************************************
-*  Allocation functions defined differently for PC's under MS-DOS and Windows
-**************************************************************************/
-#if !(defined PC & !defined PC386) & !defined MALLOC_CHECK
-#  define HDgetspace(s)      (malloc(s))
-#  define HDclearspace(a,b)  (calloc(a,b))
-#  define HDfreespace(p)     (free(p))
-#  define HDregetspace(p,s)  (realloc(p,s))
-#endif /* PC & !defined PC386 */
 
 /**************************************************************************
 *  String functions defined differently under MS Windows

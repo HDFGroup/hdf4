@@ -12,6 +12,7 @@ C****************************************************************************
 C
 C $Id$
 C
+C
       program slab3wf
 C
 C The program writes the 24 elements of the data set individually

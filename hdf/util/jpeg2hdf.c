@@ -11,8 +11,8 @@
  ****************************************************************************/
 
 #ifdef RCSID
-static char *RcsId[] = "@(#)$Revision$";
-#endif 
+static char RcsId[] = "@(#)$Revision$";
+#endif
 
 /* $Id$ */
 

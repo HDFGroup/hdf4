@@ -8,12 +8,13 @@
 # * For conditions of distribution and use, see the accompanying             *
 # * hdf/COPYING file.                                                        *
 # *                                                                          *
-# ****************************************************************************
+# ***************************************************************************
 #
 # $Id$
 #
+#
 UTILS = hdf24to8 hdfcomp hdfls hdfpack hdfrseq hdftopal hdftor8 paltohdf \
-        r8tohdf ristosds vcompat vmake vshow hdf8to24 hdf2jpeg jpeg2hdf fp2hdf
+        r8tohdf ristosds vcompat vmake vshow hdf8to24 hdf2jpeg jpeg2hdf 
 
 HEOBJ = he_main.o he_cntrl.o he_disp.o he_file.o
 
@@ -44,8 +45,7 @@ HDFINC = ../include
 HDFBIN = ../bin
 #For IRIS4, include libgl_s.a
 #GLLIB = -lgl_s
-#For the HP9000 include libm.a
-GLLIB = -lm
+GLLIB = 
 
 CFLAGS = -D$(MACHINE)
 
@@ -55,29 +55,26 @@ CFLAGS = -D$(MACHINE)
 # ==> For IRIS4, specify CFLAGS as follows:
 #CFLAGS=  -g -D$(MACHINE) -ansi
 
-.c.o: he.h he_proto.h $(HDFLIB)/libdf.a
+.c.o: he.h he_proto.h
 	$(CC) -c $(CFLAGS) -I$(HDFINC) $(HDFLIB)/libdf.a $(GLLAB)  $<
 #	$(CC) -c $(CFLAGS) -I$(HDFINC) $(GLLIB)  $<
 
-all: hdfed utils fp2hdf fptest fptestf
+all: hdfed utils
 	-if( test \! -d $(HDFBIN)) then (mkdir $(HDFBIN)) fi
 	-cp $(UTILS) hdfed $(HDFBIN)
 
-nofortran: hdfed utils fp2hdf fptest
+nofortran: all
 
-hdfed: he.h he_proto.h $(HEOBJ) $(HDFLIB)/libdf.a
+hdfed: he.h he_proto.h $(HEOBJ)
 	$(CC) $(CFLAGS) -I$(HDFINC) $(HEOBJ) $(HDFLIB)/libdf.a -o hdfed
 
 .c: $(HDFLIB)/libdf.a
 	$(CC) $(CFLAGS) -I$(HDFINC) $< -o $@ $(HDFLIB)/libdf.a $(GLLIB)
 
-.f: $(HDFLIB)/libdf.a
-	$(FC) $(FFLAGS) $< $(HDFLIB)/libdf.a -o $@
-
-utils: $(UTILS) $(HDFLIB)/libdf.a
+utils: $(UTILS)
 
 clean:
-	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed fptest fptestf
+	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed
 
 distclean:
-	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed fptest fptestf
+	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed

@@ -35,8 +35,8 @@ char *argv[];
 #endif 
 {
     int32 f1, f2, sdsid, nt, dimsize[10], nattr, rank;
-    int32 newsds, newsds2, newsds3, dimid, dimid2, number, offset;
-    int32 index, ival;
+    int32 newsds, newsds2, newsds3, dimid, number, offset;
+    int32 index;
     intn status, i;
     char name[90], text[256];
     int32   start[10], end[10], scale[10], stride[10];
@@ -64,7 +64,6 @@ char *argv[];
         num_err++;
     }
 
-    /* create a 4 by 8 dataset */
     dimsize[0] = 4;
     dimsize[1] = 8;
     newsds = SDcreate(f1, "DataSetAlpha", DFNT_FLOAT32, 2, dimsize);
@@ -110,7 +109,7 @@ char *argv[];
     
     status = SDfindattr(dimid, "DimensionAttribute");
     if(status != 0) {
-        fprintf(stderr, "Bad index for SDfindattr on Dimension Attribute %d\n",
+        fprintf(stderr, "Bad index for SDfindattr on Dimnesion Attribute %d\n",
                 status);
         num_err++;
     }
@@ -144,83 +143,6 @@ char *argv[];
 
     status = SDsetdimstrs(dimid, "DimLabel", NULL, "TheFormat");
     CHECK(status, "SDsetdimstrs");
-
-    /* verify that we can read the dimensions values with SDreaddata */
-    start[0] = 0;
-    end[0]   = 4;
-    status = SDreaddata(dimid, start, NULL, end, (VOIDP) idata);
-    CHECK(status, "SDreaddata");
-
-    for(i = 0; i < 4; i++) {
-        if(idata[i] != scale[i]) {
-            fprintf(stderr, "SDreaddata() returned %d not %d in location %d\n", 
-                    idata[i], scale[i], i);
-            num_err++;
-        }
-    }
-
-    /* lets store an attribute here */
-    max = 3.1415;
-    status = SDsetattr(dimid, "DimAttr", DFNT_FLOAT32, 1, (VOIDP) &max);
-    CHECK(status, "SDsetattr");
-
-    /* lets make sure we can read it too */
-    status = SDattrinfo(dimid, 3, name, &nt, &count);
-    CHECK(status, "SDattrinfo");
-
-    if(nt != DFNT_FLOAT32) {
-        fprintf(stderr, "Wrong number type for SDattrinfo(dim)\n");
-        num_err++;
-    }
-
-    if(count != 1) {
-        fprintf(stderr, "Wrong count for SDattrinfo(dim)\n");
-        num_err++;
-    }
-
-    if(strcmp(name, "DimAttr")) {
-        fprintf(stderr, "Wrong name for SDattrinfo(dim)\n");
-        num_err++;
-    }
-
-    dimid2 = SDgetdimid(newsds, 1);
-    if(dimid2 == FAIL) {
-        fprintf(stderr, "Failed to get second dimension id\n");
-        num_err++;
-    }
-
-    /* lets store an attribute without explicitly creating the coord var first */
-    ival = -256;
-    status = SDsetattr(dimid2, "Integer", DFNT_INT32, 1, (VOIDP) &ival);
-    CHECK(status, "SDsetattr");
-
-    /* lets make sure we can read it too */
-    status = SDattrinfo(dimid2, 0, name, &nt, &count);
-    CHECK(status, "SDattrinfo");
-
-    if(nt != DFNT_INT32) {
-        fprintf(stderr, "Wrong number type for SDattrinfo(dim)\n");
-        num_err++;
-    }
-
-    if(count != 1) {
-        fprintf(stderr, "Wrong count for SDattrinfo(dim)\n");
-        num_err++;
-    }
-
-    if(strcmp(name, "Integer")) {
-        fprintf(stderr, "Wrong name for SDattrinfo(dim)\n");
-        num_err++;
-    }
-
-    ival = 0;
-    status = SDreadattr(dimid2, 0, (VOIDP) &ival);
-    CHECK(status, "SDreatattr");
-    
-    if(ival != -256) {
-        fprintf(stderr, "Wrong value for SDreadattr(dim)\n");
-        num_err++;
-    }
 
     status = SDnametoindex(f1, "DataSetAlpha");
     if(status != 0) {
@@ -323,7 +245,6 @@ char *argv[];
     status = SDsetcal(newsds3, cal, cale, ioff, ioffe, nt);
     CHECK(status, "SDsetcal");
 
-    /* create a record variable */
     dimsize[0] = SD_UNLIMITED;
     dimsize[1] = 6;
     newsds2 = SDcreate(f2, "DataSetBeta", DFNT_INT16, 2, dimsize);

@@ -41,13 +41,14 @@ extern int num_errs;
 int32 write_vset_stuff() {
     int32 status;
     int32 fid, aid;
-    int32 vg1, vg2;
-    int32 vs1;
+    int32 tags[10], refs[10];
+    int32 vg1, vg2, vg3, vg4;
+    int32 vs1, vs2, vs3, vs4;
     int32 count, i, j, num;
     int32   ibuf[2000]; /* integer buffer */
     float32 fbuf[2000]; /* floating point buffer */
     char    gbuf[2000]; /* generic buffer */
-    const char  * name;
+    char  * name;
     char  * p;
     char8   c;
     float32 f;
@@ -156,7 +157,7 @@ int32 write_vset_stuff() {
         
     Vdetach(vg1);
     Vdetach(vg2);
-    MESSAGE(5,printf("created Vgroup %s with %d elements\n", "Second Vgroup", (int)num););
+    MESSAGE(5,printf("created Vgroup %s with %d elements\n", "Second Vgroup", num););
 
 
     /*
@@ -184,7 +185,7 @@ int32 write_vset_stuff() {
     /* store it */
     VSwrite(vs1, (unsigned char *) fbuf, count, FULL_INTERLACE);
     VSdetach(vs1);
-    MESSAGE(5,printf("created VDATA %s with %d elements\n", name, (int)count););
+    MESSAGE(5,printf("created VDATA %s with %d elements\n", name, count););
 
     /* Int32 Vdata */
     vs1 = VSattach(fid, -1, "w");
@@ -204,7 +205,7 @@ int32 write_vset_stuff() {
     /* store it */
     VSwrite(vs1, (unsigned char *) ibuf, count, FULL_INTERLACE);
     VSdetach(vs1);
-    MESSAGE(5,printf("created VDATA %s with %d elements\n", name, (int)count););
+    MESSAGE(5,printf("created VDATA %s with %d elements\n", name, count););
 
 
     /* Int32 and Float32 Vdata */
@@ -223,15 +224,15 @@ int32 write_vset_stuff() {
     /* create some bogus data */
     p = gbuf;
     for(i = 0, count = 100; i < count; i++) {
-        float32 tf = i * 2;
-        HDmemcpy(p, &tf, sizeof(float32)); p += sizeof(float32);
+        float32 f = i * 2;
+        HDmemcpy(p, &f, sizeof(float32)); p += sizeof(float32);
         HDmemcpy(p, &i, sizeof(int32));   p += sizeof(int32);
     }
     
     /* store it */
     VSwrite(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
     VSdetach(vs1);
-    MESSAGE(5,printf("created VDATA %s with %d elements\n", name, (int)count););
+    MESSAGE(5,printf("created VDATA %s with %d elements\n", name, count););
 
 
 #define ST "STATION_NAME"
@@ -301,6 +302,7 @@ int32 write_vset_stuff() {
     }
 
 
+
     Vend(fid);
     Hclose(fid);
     return SUCCEED;
@@ -318,8 +320,8 @@ int32 read_vset_stuff() {
     char    name[512], class[512], fields[512];
     char  * p;
     int32   fid;
-    int32   vg1;
-    int32   vs1;
+    int32   vg1, vg2;
+    int32   vs1, vs2;
     int32   status, num, i, count, intr, sz;
     float32 fl_expected;
     int32   in_expected;
@@ -346,14 +348,14 @@ int32 read_vset_stuff() {
     status = Vlone(fid, list, 10);
     if(status != num) {
         num_errs++;
-        printf(">>> Vlone found %d was expecting %d\n", (int)status, (int)num);
+        printf(">>> Vlone found %d was expecting %d\n", status, num);
     }
     
     /* test Vgetname and Vgetclass */
     vg1 = Vattach(fid, list[0], "r");
     if(vg1 == FAIL) {
         num_errs++;
-        printf(">>> Was not able to attach (r) Vgroup %d\n", (int)list[0]);
+        printf(">>> Was not able to attach (r) Vgroup %d\n", list[0]);
     }
 
     Vgetname (vg1, name);
@@ -373,24 +375,24 @@ int32 read_vset_stuff() {
     status = Vgettagrefs(vg1, tags, refs, 100);
     if(status == FAIL) {
         num_errs++;
-        printf(">>> Vgettagrefs found %d was expecting %d\n", (int)status, (int)num);
+        printf(">>> Vgettagrefs found %d was expecting %d\n", status, num);
     }
 
     for(i = 0; i < num; i++) {
         status = Vgettagref(vg1, i, &tag, &ref);
         if(status == FAIL) {
             num_errs++;
-            printf(">>> Vgettagref failed on call %d\n", (int)i);
+            printf(">>> Vgettagref failed on call %d\n", i);
         }
         
         if(tag != tags[i]) {
             num_errs++;
-            printf(">>> Vgettagref Tag #%d disagrees %d %d\n", (int)i, (int)tag, (int)tags[i]);
+            printf(">>> Vgettagref Tag #%d disagrees %d %d\n", i, tag, tags[i]);
         }
 
         if(ref != refs[i]) {
             num_errs++;
-            printf(">>> Vgettagref Ref #%d disagrees %d %d\n", (int)i, (int)ref, (int)refs[i]);
+            printf(">>> Vgettagref Ref #%d disagrees %d %d\n", i, ref, refs[i]);
         }
 
     }
@@ -450,13 +452,14 @@ int32 read_vset_stuff() {
 
     if(count != 100) {
         num_errs++;
-        printf(">>> Got wrong count %d expecting 100\n", (int)count);
+        printf(">>> Got wrong count %d expecting 100\n", count);
     }
 
     if(sz != sizeof(float32)) {
         num_errs++;
-        printf(">>> Got wrong data size %d should be sizeof(float32)\n", (int)sz);
+        printf(">>> Got wrong data size %d should be sizeof(float32)\n", sz);
     }
+
 
 #ifndef VDATA_FIELDS_ALL_UPPER
     if(HDstrcmp(fields, FIELD1)) {        
@@ -479,7 +482,7 @@ int32 read_vset_stuff() {
     for(i = 0; i < count; i++) {
         if(fbuf[i] != (float32) i) {
             num_errs++;
-            printf(">>> Float value %d was expecting %d got %f\n", (int)i, (int) i, fbuf[i]);
+            printf(">>> Float value %d was expecting %d got %f\n", i, (float32) i, fbuf[i]);
         }
     }
 
@@ -521,12 +524,12 @@ int32 read_vset_stuff() {
 
     if(count != 100) {
         num_errs++;
-        printf(">>> Got wrong count %d expecting 100\n", (int)count);
+        printf(">>> Got wrong count %d expecting 100\n", count);
     }
 
     if(sz != 2 * sizeof(int32)) {
         num_errs++;
-        printf(">>> Got wrong data size %d should be 2 * sizeof(int32)\n", (int)sz);
+        printf(">>> Got wrong data size %d should be 2 * sizeof(int32)\n", sz);
     }
 
     if(HDstrcmp(fields, FIELD2)) {
@@ -543,7 +546,7 @@ int32 read_vset_stuff() {
     for(i = 0; i < 2 * count; i++) {
         if(ibuf[i] != i) {
             num_errs++;
-            printf(">>> Int value %d was expecting %d got %d\n", (int)i, (int)i, (int)ibuf[i]);
+            printf(">>> Int value %d was expecting %d got %d\n", i, i, ibuf[i]);
         }
     }
 
@@ -586,12 +589,12 @@ int32 read_vset_stuff() {
 
     if(count != 100) {
         num_errs++;
-        printf(">>> Got wrong count %d expecting 100\n", (int)count);
+        printf(">>> Got wrong count %d expecting 100\n", count);
     }
 
     if(sz != sizeof(int32) + sizeof(float32)) {
         num_errs++;
-        printf(">>> Got wrong data size %d should be sizeof(int32) + sizeof(float32)\n", (int)sz);
+        printf(">>> Got wrong data size %d should be sizeof(int32) + sizeof(float32)\n", sz);
     }
 
     if(HDstrcmp(fields, "A,B")) {
@@ -615,12 +618,12 @@ int32 read_vset_stuff() {
         
         if(in != i) {
             num_errs++;
-            printf(">>> Mixed int value %d was expecting %d got %d\n", (int)i, (int)i, (int)in);
+            printf(">>> Mixed int value %d was expecting %d got %d\n", i, i, in);
         }
 
         if(fl != (float32) i * 2) {
             num_errs++;
-            printf(">>> Mixed float value %d was expecting %d got %f\n", (int)i, (int)i, fl);
+            printf(">>> Mixed float value %d was expecting %d got %f\n", i, i, fl);
         }
     }
 
@@ -657,7 +660,7 @@ int32 read_vset_stuff() {
     
     if(count != 10) {
         num_errs++;
-        printf(">>> Got wrong count %d expecting 10\n", (int)count);
+        printf(">>> Got wrong count %d expecting 10\n", count);
     }
 
     if(HDstrcmp(fields, MX)) {
@@ -692,7 +695,7 @@ int32 read_vset_stuff() {
 
         if(c != c_expected) {
             num_errs++;
-            printf(">>> Multi-order char value %d.0 was expecting %c got %c\n", (int)i, c_expected, c);
+            printf(">>> Multi-order char value %d.0 was expecting %c got %c\n", i, c_expected, c);
         }
         c_expected++;
 
@@ -700,7 +703,7 @@ int32 read_vset_stuff() {
 
         if(c != c_expected) {
             num_errs++;
-            printf(">>> Multi-order char value %d.1 was expecting %c got %c\n", (int)i, c_expected, c);
+            printf(">>> Multi-order char value %d.1 was expecting %c got %c\n", i, c_expected, c);
         }
         c_expected++;
 
@@ -709,21 +712,21 @@ int32 read_vset_stuff() {
         
         if(in != in_expected) {
             num_errs++;
-            printf(">>> Multi-order int value %d.0 was expecting %d got %d\n", (int)i, (int)in_expected, (int)in);
+            printf(">>> Multi-order int value %d.0 was expecting %d got %d\n", i, in_expected, in);
         }
         in_expected++;
         HDmemcpy(&in, p, sizeof(int32));   p += sizeof(int32);
         
         if(in != in_expected) {
             num_errs++;
-            printf(">>> Multi-order int value %d.1 was expecting %d got %d\n", (int)i, (int)in_expected, (int)in);
+            printf(">>> Multi-order int value %d.1 was expecting %d got %d\n", i, in_expected, in);
         }
         in_expected++;
         HDmemcpy(&in, p, sizeof(int32));   p += sizeof(int32);
         
         if(in != in_expected) {
             num_errs++;
-            printf(">>> Multi-order int value %d.2 was expecting %d got %d\n", (int)i, (int)in_expected, (int)in);
+            printf(">>> Multi-order int value %d.2 was expecting %d got %d\n", i, in_expected, in);
         }
         in_expected++;
 
@@ -732,7 +735,7 @@ int32 read_vset_stuff() {
 
         if(fl != fl_expected) {
             num_errs++;
-            printf(">>> Multi-order float value %d was expecting %f got %f\n", (int)i, fl_expected, fl);
+            printf(">>> Multi-order float value %d was expecting %f got %f\n", i, fl_expected, fl);
         }
         fl_expected += 0.5;
 
@@ -760,7 +763,7 @@ int32 read_vset_stuff() {
 
         if(c != c_expected) {
             num_errs++;
-            printf(">>> FULL_INTERLACE read char value %d.0 (%c) got %c %d\n", (int)i, c_expected, c, c);
+            printf(">>> FULL_INTERLACE read char value %d.0 (%c) got %c %d\n", i, c_expected, c, c);
         }
         c_expected++;
 
@@ -768,7 +771,7 @@ int32 read_vset_stuff() {
 
         if(c != c_expected) {
             num_errs++;
-            printf(">>> FULL_INTERLACE read char value %d.1 (%c) %c got %c\n", (int)i, c_expected, c, c);
+            printf(">>> FULL_INTERLACE read char value %d.1 (%c) %c got %c %d\n", i, c_expected, c, c);
         }
         c_expected++;
 
@@ -796,7 +799,7 @@ int32 read_vset_stuff() {
 
         if(c != c_expected) {
             num_errs++;
-            printf(">>> NO_INTERLACE read char value %d.0 (%c) got %c\n", (int)i, c_expected, c);
+            printf(">>> NO_INTERLACE read char value %d.0 (%c) got %c\n", i, c_expected, c);
         }
         c_expected++;
 
@@ -804,7 +807,7 @@ int32 read_vset_stuff() {
 
         if(c != c_expected) {
             num_errs++;
-            printf(">>> NO_INTERLACE read char value %d.1 (%c) %c got\n", (int)i, c_expected, c);
+            printf(">>> NO_INTERLACE read char value %d.1 (%c) %c got %c\n", i, c_expected, c);
         }
         c_expected++;
 

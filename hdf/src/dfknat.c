@@ -17,7 +17,7 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*------------------------------------------------------------------
- File:  dfknat.c
+ File:  dfcnat.c
 
  Purpose:
     Routines to support "native mode" conversion to and from HDF format
@@ -32,7 +32,7 @@ static char RcsId[] = "@(#)$Revision$";
 
  Remarks:
     These files used to be in dfconv.c, but it got a little too huge,
-    so they were broken into a separate file.
+    so I broke them out into seperate files. - Q
 
  *------------------------------------------------------------------*/
 
@@ -53,6 +53,7 @@ static char RcsId[] = "@(#)$Revision$";
 /*****************************************************************************/
 
 #include "hdf.h"
+#include "herr.h"
 #include "hconv.h"
 
 /*****************************************************************************/
@@ -77,7 +78,7 @@ uint32 num_elm, source_stride, dest_stride;
     register uint32 i;
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-    CONSTR(FUNC,"DFKnb1b");
+    char *FUNC="DFKnb1b";
 
     HEclear();
     
@@ -135,7 +136,7 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 buf[2];                          /* Inplace processing buffer */
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-  CONSTR(FUNC,"DFKnb2b");
+  char *FUNC="DFKnb2b";
 
   HEclear();
 
@@ -202,7 +203,7 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 buf[4];                          /* Inplace processing buffer */
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-  CONSTR(FUNC,"DFKnb4b");
+  char *FUNC="DFKnb4b";
 
   HEclear();
 
@@ -280,7 +281,7 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
 
-    CONSTR(FUNC,"DFKnb8b");
+    char *FUNC="DFKnb8b";
 
     HEclear();
 
@@ -345,5 +346,6 @@ uint32 num_elm, source_stride, dest_stride;
     
   return 0;
 }
+
 
 

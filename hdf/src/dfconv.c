@@ -116,6 +116,7 @@ static char RcsId[] = "@(#)$Revision$";
 #include <ctype.h>
 #define DFKMASTER  /* Define this for the prototypes for DFKnumin/out */
 #include "hdf.h"
+#include "herr.h"
 #include "hconv.h"
 
 /*
@@ -149,7 +150,7 @@ uint8 * source, * dest;
 uint32 num_elm, source_stride, dest_stride;
 #endif /* PROTOTYPE */
 {
-  CONSTR(FUNC,"DFKInoset");
+  char *FUNC="DFKInoset";
 
   HEclear();
 
@@ -199,7 +200,7 @@ DFKNTsize(number_type)
 int32 number_type;
 #endif /* PROTOTYPE */
 {
-    CONSTR(FUNC,"DFKNTsize");
+    char *FUNC="DFKNTsize";
 
 	switch (number_type)  {
     	    case DFNT_NUCHAR:	return(SIZE_NUCHAR);
@@ -265,7 +266,7 @@ intn DFKsetNT(ntype)
 int32 ntype;
 #endif /* PROTOTYPE */
 {
-  CONSTR(FUNC,"DFKsetNT");
+  char *FUNC="DFKsetNT";
 
   HEclear();
 
@@ -459,8 +460,8 @@ int ntype, sourcetype, desttype;
 int32 size;
 #endif /* PROTOTYPE */
 { 
-  register uint32 num_elm;
-  CONSTR(FUNC,"DFconvert");
+  register int32 num_elm;
+  char *FUNC="DFconvert";
 
   HEclear();
 
@@ -566,7 +567,7 @@ int32 numbertype, machinetype;
 *	   dest -- location to put the converted data
 *	   ntype -- the current number type
 *	   num_elm -- number of elements to be converted
-*	   acc_mode -- DFACC_READ for numin, DFACC_WRITE for numout
+*	   access -- DFACC_READ for numin, DFACC_WRITE for numout
 *	   source_stride, dest_stride -- strides in source and destination
 * Returns: 0 -- succeed; FAIL -- failure
 * Users:   DFSDgetsdg, DFSDputsdg, DFSDIgetslice, DFSDIgetslice
@@ -575,21 +576,21 @@ int32 numbertype, machinetype;
 
 #if defined PROTOTYPE
 int32 DFKconvert(VOIDP source, VOIDP dest, int32 ntype, int32 num_elm,
-	 	 int16 acc_mode, int32 source_stride, int32 dest_stride)
+	 	 int16 access, int32 source_stride, int32 dest_stride)
 #else
-int32 DFKconvert(source, dest, ntype, num_elm, acc_mode, source_stride,
+int32 DFKconvert(source, dest, ntype, num_elm, access, source_stride,
 		 dest_stride)
 VOIDP source;
 VOIDP dest;
 int32 ntype, num_elm, source_stride, dest_stride;
-int16 acc_mode;
+int16 access;
 #endif
 
 {
     int ret;
 
     DFKsetNT(ntype);
-    if (acc_mode == DFACC_READ) 
+    if (access == DFACC_READ) 
         ret = DFKnumin(source, dest, num_elm, source_stride, dest_stride);
     else
         ret = DFKnumout(source, dest, num_elm, source_stride, dest_stride);
@@ -599,4 +600,5 @@ int16 acc_mode;
 /*****************************************************************************
  * Miscellaneous Other Conversion Routines
  *****************************************************************************/
+
 

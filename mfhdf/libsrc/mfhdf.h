@@ -22,11 +22,7 @@
 #include "hdf.h"
 #include "netcdf.h"
 
-/* use this as marker for unlimited dimension */
 #define SD_UNLIMITED NC_UNLIMITED
-
-/* marker for ragged dimension */
-#define SD_RAGGED    -1
 
 #ifdef __cplusplus
 extern "C" {

@@ -139,9 +139,7 @@ static uint8 FAR jpeg_8bit_j75[JPEGY][JPEGX]={
 199, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 201, 201, 202, 202, 202, 202, 201, 201, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200
 };
 
-#ifdef OLD_WAY
 static uint8 FAR jpeg_8bit_temp[JPEGY][JPEGX];
-#endif
 
 static uint8 FAR jpeg_24bit_orig[JPEGY][JPEGX][3]={
 255,103,0,255,103,0,255,103,0,255,103,0,255,103,0,255,103,0,255,103,0,255,103,0,
@@ -1085,9 +1083,7 @@ static uint8 FAR jpeg_24bit_j75[JPEGY][JPEGX][3]={
 };
 #endif
 
-#ifdef OLD_WAY
 static uint8 FAR jpeg_24bit_temp[JPEGY][JPEGX][3];
-#endif
 
 
 #define ABS(x)  ((int)(x)<0 ? (-x) : x)
@@ -1174,8 +1170,8 @@ void test_r24()
     RESULT("DF24addimage");
     ref2 = DF24lastref();
 
-    if((ret=DF24nimages(TESTFILE)) != 3) {
-        fprintf(stderr,"  >>> DF24nimages() gives wrong number: %d <<<\n",ret);
+    if(DF24nimages(TESTFILE) != 3) {
+        fprintf(stderr,"  >>> DF24nimages() gives wrong number <<<\n");
         num_errs++;
     }
 
@@ -1189,8 +1185,6 @@ void test_r24()
     RESULT("DF24reqil");
     ret = DF24getdims(TESTFILE, &xd, &yd, &il);
     RESULT("DF24getdims");
-if(ret==FAIL)
-    HEprint(stderr,0);
 
     if((xd != XSIZE) || (yd != YSIZE) || il != 0) {
         fprintf(stderr, "Returned meta-data is wrong for image 0\n");
@@ -1501,7 +1495,7 @@ if(ret==FAIL)
 
     if((ret=fuzzy_memcmp(jpeg_24bit_temp,jpeg_24bit_j80,sizeof(jpeg_24bit_orig),JPEG_FUZZ))!=0) {
         fprintf(stderr, "24-bit JPEG quality 80 image was incorrect\n");
-        fprintf(stderr,"ret=%d, sizeof(jpeg_24bit_orig)=%u\n",(int)ret,(unsigned)sizeof(jpeg_24bit_orig));
+        fprintf(stderr,"ret=%d, sizeof(jpeg_24bit_orig)=%u\n",ret,sizeof(jpeg_24bit_orig));
         num_errs++;
     }
     
@@ -1519,7 +1513,7 @@ if(ret==FAIL)
 
     if((ret=fuzzy_memcmp(jpeg_24bit_temp,jpeg_24bit_j30,sizeof(jpeg_24bit_orig),JPEG_FUZZ))!=0) {
         fprintf(stderr, "24-bit JPEG quality 30 image was incorrect\n");
-        fprintf(stderr,"ret=%d, sizeof(jpeg_24bit_orig)=%u\n",(int)ret,(unsigned)sizeof(jpeg_24bit_orig));
+        fprintf(stderr,"ret=%d, sizeof(jpeg_24bit_orig)=%u\n",ret,sizeof(jpeg_24bit_orig));
         num_errs++;
     }
     
@@ -1537,7 +1531,7 @@ if(ret==FAIL)
 
     if((ret=fuzzy_memcmp(jpeg_24bit_temp,jpeg_24bit_j75,sizeof(jpeg_24bit_orig),JPEG_FUZZ))!=0) {
         fprintf(stderr, "24-bit JPEG quality 75 image was incorrect\n");
-        fprintf(stderr,"ret=%d, sizeof(jpeg_24bit_orig)=%u\n",(int)ret,(unsigned)sizeof(jpeg_24bit_orig));
+        fprintf(stderr,"ret=%d, sizeof(jpeg_24bit_orig)=%u\n",ret,sizeof(jpeg_24bit_orig));
 #ifdef QAK
 	print_image24("JPEG(75) Correct image",(uint8 *)jpeg_24bit_j75,JPEGX,JPEGY);
 	print_image24("JPEG(75) New image",(uint8 *)jpeg_24bit_temp,JPEGX,JPEGY);
@@ -1552,11 +1546,11 @@ if(ret==FAIL)
 
 #ifdef PROTOTYPE
 VOID check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy,
-    uint8 *oldim, uint8 *newim, uint8 *oldpal, uint8 *newpal)
+    uint8 **oldim, uint8 **newim, uint8 *oldpal, uint8 *newpal)
 #else
 VOID check_im_pal(oldx, oldy, newx, newy, oldim, newim, oldpal, newpal)
     int32 oldx, oldy, newx, newy;
-    uint8 *oldim, *newim, *oldpal, *newpal;
+    uint8 **oldim, **newim, *oldpal, *newpal;
 #endif
 {
     int error;
@@ -1707,7 +1701,7 @@ void test_r8()
     ret = DFR8getimage(TESTFILE, (uint8 *) ii1, (int32) XD1, (int32) YD1, ipal);
     RESULT("DFR8getimage");
     error = FALSE;
-    check_im_pal(XD1, YD1, xd, yd, im1, ii1, pal1, ipal);
+    check_im_pal(XD1, YD1, xd, yd, (uint8 **)im1, (uint8 **)ii1, pal1, ipal);
 
     MESSAGE(5,printf("Verifying RLE compressed image\n"););
 
@@ -1727,7 +1721,7 @@ void test_r8()
     RESULT("DFR8readref");
     ret = DFR8getimage(TESTFILE, (uint8 *) ii2, (int32) XD2, (int32) YD2, ipal);
     RESULT("DFR8getimage");
-    check_im_pal(XD2, YD2, XD2, YD2, im2, ii2, pal1, ipal);
+    check_im_pal(XD2, YD2, XD2, YD2, (uint8 **)im2, (uint8 **)ii2, pal1, ipal);
 
     MESSAGE(5,printf("Changing palette of first image\n"););
 
@@ -1747,7 +1741,7 @@ void test_r8()
     RESULT("DFR8getdims");
     ret = DFR8getimage(TESTFILE, (uint8 *) ii1, (int32) XD1, (int32) YD1, ipal);
     RESULT("DFR8getimage");
-    check_im_pal(XD1, YD1, xd, yd, im1, ii1, pal2, ipal);
+    check_im_pal(XD1, YD1, xd, yd, (uint8 **)im1, (uint8 **)ii1, pal2, ipal);
 
     MESSAGE(5,printf("\nStoring 8-bit images with JPEG compression\n"););
   

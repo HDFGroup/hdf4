@@ -147,8 +147,8 @@ int main(argc,argv)
 *  Check to see if we are displaying on a local console or on a
 *  remote ICR.  This program does double duty.
 */
-    i = HDstrlen(argv[0]);
-    if (HDstrncmp("hdfseq",argv[0]+i-6,6))
+    i = strlen(argv[0]);
+    if (strncmp("hdfseq",argv[0]+i-6,6))
         remote=1;
 
 /*
@@ -251,9 +251,9 @@ int main(argc,argv)
 *  to all work.
 */
 #ifdef PROTOTYPE
-int getspace(void)
+getspace(void)
 #else
-int getspace()
+getspace()
 #endif /* PROTOTYPE  */
     {
 
@@ -264,9 +264,9 @@ int getspace()
         oldx = xdim; oldy = ydim; 
 
         if (wheresmall)
-            HDfreespace(wheresmall);
+            free(wheresmall);
 
-        if (NULL == (wheresmall = (char *)HDgetspace(xdim*ydim))) {
+        if (NULL == (wheresmall = (char *)malloc(xdim*ydim))) {
             puts(" Cannot allocate memory, fatal error");
             exit(1);
         }
@@ -295,8 +295,8 @@ getpix()
     if (!remote && (oldxs != xsize || oldys != ysize)) {
         oldxs = xsize ; oldys = ysize;
         if (img)
-            HDfreespace(img);
-        if ((img = (unsigned short *)HDgetspace(xdim*ydim*sizeof(short))) == NULL) {
+            free(img);
+        if ((img = (unsigned short *)malloc(xdim*ydim*sizeof(short))) == NULL) {
             puts(" Cannot allocate memory, fatal error");
             exit(1);
         } 
@@ -315,9 +315,9 @@ getpix()
 *
 */
 #ifdef PROTOTYPE
-int largeset(void)
+largeset(void)
 #else
-int largeset()
+largeset()
 #endif /* PROTOTYPE  */
     {
 
@@ -356,9 +356,9 @@ int largeset()
 *
 */
 #ifdef PROTOTYPE
-int showpic(char *filename)
+showpic(char *filename)
 #else
-int showpic(filename)
+showpic(filename)
     char *filename;
 #endif /* PROTOTYPE  */
     {
@@ -367,7 +367,7 @@ int showpic(filename)
 
     oldx = xdim; oldy = ydim;       /* save old values */
 
-    if (-1==Hishdf(filename)) {
+    if (-1==DFishdf(filename)) {
         printf("\'%s\' is not an HDF Format Data File.\n", filename);
         return(0);
     }
@@ -559,9 +559,9 @@ int usepal;
 *  Just print the codes to stdout using the protocol.
 */
 #ifdef PROTOTYPE
-int rimage(int usepal)
+rimage(int usepal)
 #else
-int rimage(usepal)
+rimage(usepal)
     int usepal;
 #endif /* PROTOTYPE  */
     {
@@ -598,7 +598,7 @@ int rimage(usepal)
 *  Send the data for the image with RLE encoding for efficiency.
 *  Encode each line and send it.
 */
-    space = (char *)HDgetspace(ydim+100);
+    space = (char *)malloc(ydim+100);
     thisline = wheresmall;
 
     for (i = 0; i < ydim; i++) {
@@ -644,7 +644,7 @@ int rimage(usepal)
             exit(0);
     }
 
-    HDfreespace(space);
+    free(space);
     return(0);
 }
 

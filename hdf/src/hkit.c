@@ -18,27 +18,9 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include <ctype.h>
 #include "hdf.h"
+#include "herr.h"
 #include "hfile.h"
-#include "hkit.h"
 
-
-/* ------------------------------- HDc2fstr ------------------------------- */
-/*
-
- NAME
-	HDc2fstr -- convert a C string into a Fortran string IN PLACE
- USAGE
-	intn HDc2fstr(str, len)
-        char * str;       IN: string to convert
-        intn   len;       IN: length of Fortran string
- RETURNS
-        SUCCEED
- DESCRIPTION
-        Change a C string (NULL terminated) into a Fortran string.
-        Basically, all that is done is that the NULL is ripped out
-        and the string is padded with spaces
-
---------------------------------------------------------------------------- */ 
 #if defined PROTOTYPE
 intn HDc2fstr(char *str, intn len)
 #else
@@ -52,27 +34,9 @@ intn len;
     for(i=0; (str[i]); i++)
         /* EMPTY */;
     for(; i<len; i++) str[i] = ' ';
-    return SUCCEED;
-} /* HDc2fstr */
+    return 0;
+}
 
-
-/* ----------------------------- HDf2sstring ------------------------------ */
-/*
-
- NAME
-	HDf2sstring -- convert a Fortran string to a C string
- USAGE
-	char * HDf2cstring(fdesc, len)
-        _fcd  fdesc;     IN: Fortran string descriptor
-        intn  len;       IN: length of Fortran string
- RETURNS
-        SUCCEED
- DESCRIPTION
-        Chop off trailing blanks off of a Fortran string and
-        move it into a newly allocated C string.  It is up
-        to the user to free this string.
-
---------------------------------------------------------------------------- */ 
 #if defined PROTOTYPE
 char _HUGE *HDf2cstring(_fcd fdesc, intn len)
 #else
@@ -87,38 +51,24 @@ char _HUGE *HDf2cstring(fdesc, len)
     str = _fcdtocp(fdesc);
     for(i=len-1;i>=0 && (!isascii(str[i]) || !isgraph(str[i])); i--)
         /*EMPTY*/;
-    cstr = (char *)HDgetspace((uint32)(i+2));
+    cstr = (char *)HDgetspace(i+2);
     cstr[i+1] = '\0';
     for (; i>=0; i--) cstr[i] = str[i];
     return cstr;
-} /* HDf2cstring */
+}
 
+/*--------------------------------------------------------------------------
+ HIlookup_dd
 
-/* ----------------------------- HIlookup_dd ------------------------------ */
-/*
+ find the dd with tag and ref, by returning the block where the dd resides
+ and the index of the dd in the ddblock ddlist.
 
- NAME
-	HIlookup_dd -- find the dd record for an element
- USAGE
-	int HIlookup_dd(file_rec, tag, ref, block, idx)
-        filerec_t *  file_rec;       IN:  file record to search
-        uint16       tag;            IN:  tag of element to find
-        uint16       ref;            IN:  ref of element to find
-        ddblock_t ** block;          OUT: block element is in
-        int32     *  idx;            OUT: element's index in block
- RETURNS
-        SUCCEED / FAIL
- DESCRIPTION
-        find the dd with tag and ref, by returning the block 
-        where the dd resides and the index of the dd in the 
-        ddblock ddlist.
+ This function is different from HIfind_dd in that it does not understand
+ any ordering in the file.  Wildcards sent to this routine (i.e. to
+ get the 'next' widget get passed off to HIfind_dd().
 
-        This function is different from HIfind_dd in that it 
-        does not understand any ordering in the file.  Wildcards 
-        sent to this routine (i.e. to get the 'next' widget 
-        get passed off to HIfind_dd().
-
---------------------------------------------------------------------------- */
+ Return FAIL or SUCCEED
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
 int HIlookup_dd(filerec_t *file_rec, uint16 look_tag, uint16 look_ref, 
                 ddblock_t **pblock, int32 *pidx)
@@ -131,72 +81,57 @@ int HIlookup_dd(file_rec, look_tag, look_ref, pblock, pidx)
      int32 *pidx;               /* OUT: index into ddlist where dd is found */
 #endif
 { 
-    CONSTR(FUNC,"HIlookup_dd");       /* for HERROR */
-    register intn tag, ref, key, i;
-    register tag_ref_list_ptr p;
-    
-    if(look_tag == DFTAG_WILDCARD || look_ref == DFREF_WILDCARD)
-        return (HIfind_dd(look_tag, look_ref, pblock, pidx, DF_FORWARD));
-    
-    tag = (intn) look_tag;
-    ref = (intn) look_ref;
-    
-    /*
-     * Look for the normal version 
-     */
-    key = tag + ref;
-    
-    for(p = file_rec->hash[key & HASH_MASK]; p; p = p->next) {
-        for(i = 0; i < p->count; i++) {
-            if(p->objects[i].tag == tag && p->objects[i].ref == ref) {
-                *pblock = p->objects[i].pblock;
-                *pidx   = p->objects[i].pidx;
-                return SUCCEED;
-            }
-        }
-    }
-    
-    /*
-     * Try looking for the special version of this tag
-     */
-    tag = (intn) MKSPECIALTAG(look_tag);
-    key = tag + ref;
-    
-    for(p = file_rec->hash[key & HASH_MASK]; p; p = p->next) {
-        for(i = 0; i < p->count; i++) {
-            if(p->objects[i].tag == tag && p->objects[i].ref == ref) {
-                *pblock = p->objects[i].pblock;
-                *pidx   = p->objects[i].pidx;
-                return SUCCEED;
-            }
-        }
-    }
-    
-    return FAIL;
-    
-} /* HIlookup_dd */
+  char *FUNC="HIlookup_dd";       /* for HERROR */
+  register intn tag, ref, key, i;
+  register tag_ref_list_ptr p;
 
+  if(look_tag == DFTAG_WILDCARD || look_ref == DFREF_WILDCARD)
+    return (HIfind_dd(look_tag, look_ref, pblock, pidx, DF_FORWARD));
+
+  tag = (intn) look_tag;
+  ref = (intn) look_ref;
+
+  /*
+   * Look for the normal version 
+   */
+  key = tag + ref;
+
+  for(p = file_rec->hash[key & HASH_MASK]; p; p = p->next) {
+      for(i = 0; i < p->count; i++) {
+          if(p->objects[i].tag == tag && p->objects[i].ref == ref) {
+              *pblock = p->objects[i].pblock;
+              *pidx   = p->objects[i].pidx;
+              return SUCCEED;
+          }
+      }
+  }
+
+  /*
+   * Try looking for the special version of this tag
+   */
+  tag = (intn) MKSPECIALTAG(look_tag);
+  key = tag + ref;
+
+  for(p = file_rec->hash[key & HASH_MASK]; p; p = p->next) {
+      for(i = 0; i < p->count; i++) {
+          if(p->objects[i].tag == tag && p->objects[i].ref == ref) {
+              *pblock = p->objects[i].pblock;
+              *pidx   = p->objects[i].pidx;
+              return SUCCEED;
+          }
+      }
+  }
+
+  return FAIL;
+
+} /* HIlookup_dd */
 
 /* ---------------------------- HIadd_hash_dd ----------------------------- */
 /*
+  Add a new dd into the hash table
 
- NAME
-	HIadd_hash_dd -- add a dd to the hash table
- USAGE	
-        int HIadd_hash_dd(file_rec, tag, ref, block, idx)
-        filerec_t  * file_rec;       IN:  file record
-        uint16       tag;            IN:  tag of element to add
-        uint16       ref;            IN:  ref of element to add
-        ddblock_t  * block;          OUT: block element is in
-        int32        idx;            OUT: element's index in block
- RETURNS
-        SUCCEED / FAIL
- DESCRIPTION
-        Stick an new element into the file's hash table.  The hash table 
-        is keyed on the low order bits of (tag + ref) and gives a quick
-        means of mapping tag and ref to the DD record for this element
-
---------------------------------------------------------------------------- */
+  Return SUCCEED or FAIL
+*/
 #ifdef PROTOTYPE
 int HIadd_hash_dd(filerec_t *file_rec, uint16 look_tag, uint16 look_ref, 
                 ddblock_t *pblock, int32 pidx)
@@ -209,7 +144,7 @@ int HIadd_hash_dd(file_rec, look_tag, look_ref, pblock, pidx)
      int32 pidx;                /* index into ddlist where dd is */
 #endif
 {
-    CONSTR(FUNC,"HIadd_hash_dd");       /* for HERROR */
+    char *FUNC="HIadd_hash_dd";       /* for HERROR */
     register intn tag, ref, key, i;
     register tag_ref_list_ptr p, where;
 
@@ -253,21 +188,10 @@ int HIadd_hash_dd(file_rec, look_tag, look_ref, pblock, pidx)
 
 /* ---------------------------- HIdel_hash_dd ----------------------------- */
 /*
+  Delete a dd from the hash table
 
- NAME
-	HIdel_hash_dd -- remove a dd from the hash table
- USAGE	
-        int HIdel_hash_dd(file_rec, tag, ref)
-        filerec_t  * file_rec;       IN:  file record
-        uint16       tag;            IN:  tag of element to delete
-        uint16       ref;            IN:  ref of element to delete
- RETURNS
-        SUCCEED
- DESCRIPTION
-        Remove an element from the hash table.  Return succeed even
-        if the element does not exist in the table
- 
---------------------------------------------------------------------------- */
+  Return SUCCEED or FAIL
+*/
 #ifdef PROTOTYPE
 int HIdel_hash_dd(filerec_t *file_rec, uint16 look_tag, uint16 look_ref)
 #else
@@ -277,7 +201,7 @@ int HIdel_hash_dd(file_rec, look_tag, look_ref)
      uint16 look_ref;           /* ref of dd to add */
 #endif
 {
-  CONSTR(FUNC,"HIdel_hash_dd");       /* for HERROR */
+  char *FUNC="HIdel_hash_dd";       /* for HERROR */
   register intn tag, ref, key, i;
   register tag_ref_list_ptr p;
 
@@ -303,36 +227,13 @@ int HIdel_hash_dd(file_rec, look_tag, look_ref)
 } /* HIdel_hash_dd */
 
 
+/*--------------------------------------------------------------------------
+ HIfind_dd
 
-/* ----------------------------- HIfind_dd ------------------------------ */
-/*
-
- NAME
-	HIfind_dd -- find the dd record for an element
- USAGE
-	int HIfind_dd(file_rec, tag, ref, block, idx, direction)
-        filerec_t *  file_rec;       IN:  file record to search
-        uint16       tag;            IN:  tag of element to find
-        uint16       ref;            IN:  ref of element to find
-        ddblock_t ** block;          IN:  block to start search
-                                     OUT: block element is in
-        int32     *  idx;            IN:  index to start search
-                                     OUT: element's index in block
-        intn         direction;      IN:  direction to search 
-                                          (DF_FORWARD / DF_BACKWARD)
- RETURNS
-        SUCCEED / FAIL
- DESCRIPTION
-        find the dd with tag and ref, by returning the block 
-        where the dd resides and the index of the dd in the 
-        ddblock ddlist.  This is a more powerful, but slower 
-        version of HIlookup_dd()
-
-        By setting the direction and giving a starting block and
-        index we can handle searches like "give me the next widget"
-        or "give me the previous thing with ref = 3"
-
---------------------------------------------------------------------------- */
+ find the dd with tag and ref, by returning the block where the dd resides
+ and the index of the dd in the ddblock ddlist.
+ Revised to go either forward or backward through the DD list. (4/21/93 QAK)
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
 int HIfind_dd(uint16 look_tag, uint16 look_ref, ddblock_t **pblock, int32 *pidx,
     intn direction)
@@ -421,30 +322,20 @@ int HIfind_dd(look_tag, look_ref, pblock, pidx, direction)
     /* nothing found or bad direction */
 
     return(FAIL);
-
 } /* HIfind_dd */
-
 
 /* ------------------------------- HDflush -------------------------------- */
 /*
 
- NAME
-	HDflush -- flush the HDF file
- USAGE
-	intn HDflush(fid)
-        int32 fid;            IN: file ID
- RETURNS
-        SUCCEED / FAIL
- DESCRIPTION
-        Force the system to flush the HDF file stream
+  Force the system to flush the HDF file stream
 
-        This should be primarily used for debugging
-        
-        The MAC does not really support fflush() so this r
-        outine just returns SUCCEED always on a MAC w/o 
-        really doing anything.
+  This should be primarily used for debugging
 
---------------------------------------------------------------------------- */
+  The MAC does not really support fflush() so this routine just returns
+	SUCCEED always on a MAC w/o really doing anything.
+
+*/
+
 #ifdef PROTOTYPE
 intn HDflush(int32 file_id)
 #else
@@ -452,7 +343,7 @@ intn HDflush(file_id)
     int32 file_id;             /* id of file to flush */
 #endif
 {
-    CONSTR(FUNC,"HDflush");       /* for HERROR */
+    char *FUNC="HDflush";       /* for HERROR */
 
 #ifndef MAC
 
@@ -476,28 +367,15 @@ intn HDflush(file_id)
 /* ---------------------------- HDpackFstring ----------------------------- */
 /*
 
- NAME
-	HDpackFstring -- convert a C string into a Fortran string
- USAGE
-	intn HDpackFstring(src, dest, len)
-        char * src;          IN:  source string
-        char * dest;         OUT: destination
-        intn   len;          IN:  length of string
- RETURNS
-        SUCCEED / FAIL
- DESCRIPTION
-        given a NULL terminated C string 'src' convert it to
-        a space padded Fortran string 'dest' of length 'len'
+  HDpackFstring -- given a NULL terminated C string 'src' convert it to
+  a space padded Fortran string 'dest' of length 'len'
 
-        This is very similar to HDc2fstr except that function does
-        it in place and this one copies.  We should probably only
-        support one of these.
-
---------------------------------------------------------------------------- */
+*/
+intn
 #ifdef PROTOTYPE
-intn HDpackFstring(char *src, char *dest, intn len)
+HDpackFstring(char *src, char *dest, intn len)
 #else
-intn HDpackFstring(src, dest, len)
+HDpackFstring(src, dest, len)
 char *src, *dest;
 intn len;
 #endif
@@ -513,34 +391,152 @@ intn len;
 
     return SUCCEED;
 
-} /* HDpackFstring */
+}
 
 
-/* ----------------------------- HDgettagname ----------------------------- */
-/*
-
- NAME
-	HDgettagname -- return a text description of a tag
- USAGE
-	char * HDgettagname(tag)
-        uint16   tag;          IN: tag of element to find
- RETURNS
-        Descriptive text or NULL
- DESCRIPTION
-        Map a tag to a statically allocated text description of it.
-
---------------------------------------------------------------------------- */
+/*--------------------------------------------------------------------------
+ *  HDgettagname(tag) : map a tag to its corresponding name
+ *                      return NULL if tag is unknown.
+ *
+ *  NOTE: Please keep tag names <= 30 characters - a 
+ *        lot of pretty-printing code depends on it.
+--------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-const char _HUGE *HDgettagname(uint16 tag)
+char _HUGE *HDgettagname(uint16 tag)
 #else
-const char _HUGE *HDgettagname(tag)
+char _HUGE *HDgettagname(tag)
      uint16 tag;
 #endif /* PROTOTYPE */
 {
-    intn i;
 
-    for(i=0; i<sizeof(tag_descriptions)/sizeof(tag_descript_t); i++)
-	if(tag_descriptions[i].tag==tag)
-	    return(tag_descriptions[i].desc);
-    return(NULL);
+  char *name;
+
+  switch(tag) {
+      
+      /* Utility Tags */
+  case DFTAG_NULL  :
+      name = "No Data"; break;
+  case DFTAG_VERSION :
+      name = "Version Descriptor"; break;
+  case DFTAG_LINKED :
+      name = "Linked Blocks Indicator"; break;
+  case DFTAG_FID   : 
+      name = "File Identifier"; break;
+  case DFTAG_FD    :   
+      name = "File Description"; break;
+  case DFTAG_TID   :
+      name = "Tag Identifier"; break;
+  case DFTAG_TD    : 
+      name = "Tag Description"; break;
+  case DFTAG_DIL   :
+      name = "Data Id Label"; break;
+  case DFTAG_DIA   :    
+      name = "Data Id Annotation"; break;
+  case DFTAG_NT    :    
+      name = "Number type"; break;
+  case DFTAG_MT    :   
+      name = "Machine type"; break;
+      
+      /* raster-8 Tags */
+  case DFTAG_ID8   :   
+      name = "Image Dimensions-8"; break;
+  case DFTAG_IP8   :   
+      name = "Image Palette-8"; break;
+  case DFTAG_RI8   :  
+      name = "Raster Image-8"; break;
+  case DFTAG_CI8   : 
+      name = "RLE Compressed Image-8"; break;
+  case DFTAG_II8   :  
+      name = "Imcomp Image-8"; break;
+      
+      /* Raster Image Tags */
+  case DFTAG_ID    :  
+      name = "Image Dimensions"; break;
+  case DFTAG_LUT   :  
+      name = "Image Palette"; break;
+  case DFTAG_RI    : 
+      name = "Raster Image Data"; break;
+  case DFTAG_CI    :  
+      name = "Compressed Image"; break;
+  case DFTAG_RIG   : 
+      name = "Raster Image Group"; break;
+  case DFTAG_LD    : 
+      name = "Palette Dimension"; break;
+  case DFTAG_MD    :
+      name = "Matte Dimension"; break;
+  case DFTAG_MA    :
+      name = "Matte Data"; break;
+  case DFTAG_CCN   :   
+      name = "Color Correction"; break;
+  case DFTAG_CFM   : 
+      name = "Color Format"; break;
+  case DFTAG_AR    :   
+      name = "Aspect Ratio"; break;
+  case DFTAG_DRAW  :
+      name = "Sequenced images"; break;
+  case DFTAG_RUN   :   
+      name = "Runable program / script"; break;
+  case DFTAG_XYP   : 
+      name = "X-Y position"; break;
+  case DFTAG_MTO   :  
+      name = "M/c-Type override"; break;
+      
+      /* Tektronix */
+  case DFTAG_T14   :   
+      name = "TEK 4014 Data"; break;
+  case DFTAG_T105  :
+      name = "TEK 4105 data"; break;
+      
+      /* Compression Schemes */
+  case DFTAG_RLE   : 
+      name = "Run Length Encoding"; break;
+  case DFTAG_IMCOMP : 
+      name = "IMCOMP Encoding"; break;
+  case DFTAG_JPEG :
+      name = "24-bit JPEG Encoding"; break;
+  case DFTAG_GREYJPEG :
+      name = "8-bit JPEG Encoding"; break;
+      
+      /* Scientific / Numeric Data Sets */
+  case DFTAG_SDG   : 
+      name = "Scientific Data Group"; break;
+  case DFTAG_NDG   : 
+      name = "Numeric Data Group"; break;
+  case DFTAG_SD    :
+      name = "Scientific Data"; break;
+  case DFTAG_SDD   : 
+    name = "SciData dimension record"; break;
+  case DFTAG_SDL   :   
+      name = "SciData labels"; break;
+  case DFTAG_SDU   : 
+      name = "SciData units"; break;
+  case DFTAG_SDF   :  
+      name = "SciData formats"; break;
+  case DFTAG_SDS   :  
+      name = "SciData scales"; break;
+  case DFTAG_SDM   :  
+      name = "SciData max/min"; break;
+  case DFTAG_SDC   :  
+      name = "SciData coordsys"; break;
+  case DFTAG_SDT   :  
+      name = "Transpose"; break;
+  case DFTAG_SDLNK :  
+      name = "Links related to the dataset"; break;
+  case DFTAG_CAL   :  
+      name = "Calibration information"; break;
+      
+      /* V Group Tags */
+  case DFTAG_VG   :  
+      name = "Vgroup"; break;
+  case DFTAG_VH   : 
+      name = "Vdata"; break;
+  case DFTAG_VS   : 
+      name = "Vdata Storage"; break;
+  default:
+      name = (char *) NULL;
+      break;
+  }
+  
+  return name;
+  
 }

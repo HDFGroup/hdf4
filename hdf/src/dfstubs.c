@@ -44,7 +44,6 @@ static char RcsId[] = "@(#)$Revision$";
 ** AUTHOR
 **	Doug Ilg
 */
-
 #include "dfstubs.h"
 #include "df.h"
 
@@ -77,12 +76,12 @@ static char RcsId[] = "@(#)$Revision$";
 /*
  *  Important Internal Variables
  */
-PRIVATE DF *DFlist = NULL;         /* pointer to list of open DFs */
+static DF *DFlist=NULL;         /* pointer to list of open DFs */
 #ifdef PERM_OUT
-PRIVATE int DFinuse = 0;           /* How many are currently in use */
-PRIVATE uint16 DFmaxref = 0;         /* which is the largest ref used? */
-PRIVATE unsigned char *DFreflist=NULL; /* list of refs in use */
-PRIVATE char patterns[] = {0x80, 0x40, 0x20, 0x10, 0x08,
+static int DFinuse=0;           /* How many are currently in use */
+static uint16 DFmaxref;         /* which is the largest ref used? */
+static unsigned char *DFreflist=NULL; /* list of refs in use */
+static char patterns[] = {0x80, 0x40, 0x20, 0x10, 0x08,
                                        0x04, 0x02, 0x01};
 #endif /* PERM_OUT */
 
@@ -90,9 +89,9 @@ PRIVATE char patterns[] = {0x80, 0x40, 0x20, 0x10, 0x08,
 ** NAME
 **	DFopen -- open HDF file
 ** USAGE
-**	DF *DFopen(name, acc_mode, ndds)
+**	DF *DFopen(name, access, ndds)
 **	char* name;		IN: name of file to open
-**	int acc_mode;		IN: DFACC_READ, DFACC_WRITE, DFACC_CREATE,
+**	int access;		IN: DFACC_READ, DFACC_WRITE, DFACC_CREATE,
 **				    DFACC_ALL
 **	int ndds;		IN: number of DDs in a block
 ** RETURNS
@@ -109,12 +108,12 @@ PRIVATE char patterns[] = {0x80, 0x40, 0x20, 0x10, 0x08,
 ** REVISION LOG
 */
 #ifdef PROTOTYPE
-DF *DFopen(char *name, int acc_mode, int ndds)
+DF *DFopen(char *name, int access, int ndds)
 #else
 	DF *
-DFopen(name, acc_mode, ndds)
+DFopen(name, access, ndds)
     char *name;
-    int acc_mode;
+    int access;
     int ndds;
 #endif /* PROTOTYPE */
 {
@@ -125,7 +124,7 @@ DFopen(name, acc_mode, ndds)
     else
         DFerror = DFE_NONE;
 
-    DFaccmode = acc_mode | DFACC_READ;
+    DFaccmode = access | DFACC_READ;
     DFid = Hopen(name, DFaccmode, (int16)ndds);
 
     if(DFid == -1) {
@@ -164,7 +163,7 @@ DFclose(dfile)
     DF *dfile;
 #endif /* PROTOTYPE */
 {
-    int ret;
+    int stat;
 
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
@@ -185,8 +184,8 @@ DFclose(dfile)
         search_aid = 0;
     }
 
-    ret = Hclose(DFid);
-    if(ret == 0) {
+    stat = Hclose(DFid);
+    if(stat == 0) {
         dfile = 0;
         DFlist = (DF *)NULL;
         DFid = 0;
@@ -195,7 +194,7 @@ DFclose(dfile)
         DFerror = HEvalue(1);
     }
 
-    return(ret);
+    return(stat);
 }
 
 /*
@@ -229,7 +228,7 @@ DFdescriptors(dfile, ptr, begin, num)
     int num;
 #endif /* PROTOTYPE */
 {
-    int i, ret;
+    int i, stat;
     int32 aid;
 
     if (DFIcheck(dfile) != 0) {
@@ -247,8 +246,8 @@ DFdescriptors(dfile, ptr, begin, num)
     }
     
     for (i = 2; i <= begin; i++) {
-        ret = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
-        if (ret == FAIL) {
+        stat = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
+        if (stat == FAIL) {
             DFerror = HEvalue(1);
             return(-1);
         }
@@ -258,8 +257,8 @@ DFdescriptors(dfile, ptr, begin, num)
 	     &ptr[0].offset, NULL, NULL, NULL);
 
     for (i = 1; i < num; i++) {
-        ret = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD,  DF_CURRENT);
-        if (ret == FAIL)
+        stat = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD,  DF_CURRENT);
+        if (stat == FAIL)
             return (i);
         Hinquire(aid, NULL, &ptr[i].tag, &ptr[i].ref, &ptr[i].length,
              &ptr[i].offset, NULL, NULL, NULL);
@@ -298,7 +297,7 @@ DFnumber(dfile, tag)
 #endif /* PROTOTYPE */
 {
     int32 aid;
-    int num, ret;
+    int num, stat;
 
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
@@ -312,8 +311,8 @@ DFnumber(dfile, tag)
         return(0);
     
     num = 0;
-    for (ret = 0; ret == 0; num++)
-        ret = Hnextread(aid, tag, DFREF_WILDCARD, DF_CURRENT);
+    for (stat = 0; stat == 0; num++)
+        stat = Hnextread(aid, tag, DFREF_WILDCARD, DF_CURRENT);
     Hendaccess(aid);
     return(num);
 }
@@ -387,7 +386,7 @@ DFfind(dfile, ptr)
     DFdesc *ptr;
 #endif /* PROTOTYPE */
 {
-    int ret;
+    int stat;
 
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
@@ -399,12 +398,12 @@ DFfind(dfile, ptr)
     if (search_stat == DFSRCH_NEW) {
         search_aid = Hstartread(DFid, search_tag, search_ref);
         search_stat = DFSRCH_OLD;
-        ret = 0;
+        stat = 0;
     } else {
-        ret = Hnextread(search_aid, search_tag, search_ref, DF_CURRENT);
+        stat = Hnextread(search_aid, search_tag, search_ref, DF_CURRENT);
     }
 
-    if ((search_aid == FAIL) || (ret == FAIL)) {
+    if ((search_aid == FAIL) || (stat == FAIL)) {
         DFerror = DFE_NOMATCH;
         ptr->tag = 0;
         ptr->ref = 0;
@@ -422,11 +421,11 @@ DFfind(dfile, ptr)
 ** NAME
 **	DFaccess -- set up a read/write on a data element
 ** USAGE
-**	int DFaccess(dfile, tag, ref, acc_mode)
+**	int DFaccess(dfile, tag, ref, access)
 **	DF *dfile;		IN: pointer to open HDF file
 **	uint16 tag;		IN: tag of element
 **	uint16 ref;		IN: ref number of element
-**	char *acc_mode;		IN: "r", "w", or "a" (read, write, append)
+**	char *access;		IN: "r", "w", or "a" (read, write, append)
 ** RETURNS
 **	0 on success, -1 on failure
 ** DESCRIPTION
@@ -442,14 +441,14 @@ DFfind(dfile, ptr)
 ** REVISION LOG
 */
 #ifdef PROTOTYPE
-int DFaccess(DF *dfile, uint16 tag, uint16 ref, char *acc_mode)
+int DFaccess(DF *dfile, uint16 tag, uint16 ref, char *access)
 #else
 	int
-DFaccess(dfile, tag, ref, acc_mode)
+DFaccess(dfile, tag, ref, access)
     DF *dfile;
     uint16 tag;
     uint16 ref;
-    char *acc_mode;
+    char *access;
 #endif /* PROTOTYPE */
 {
     int accmode;
@@ -465,7 +464,7 @@ DFaccess(dfile, tag, ref, acc_mode)
     else
         DFerror = DFE_NONE;
 
-    switch(*acc_mode) {
+    switch(*access) {
 	case 'r': accmode = DFACC_READ;
 		  break;
 	case 'w': accmode = DFACC_WRITE;
@@ -490,7 +489,7 @@ DFaccess(dfile, tag, ref, acc_mode)
     if (((tag != acc_tag) || (ref != acc_ref)) || (accmode != DFelaccmode))
         if (DFelstat == DFEL_RESIDENT) {
 	    Hputelement(DFid, acc_tag, acc_ref, DFelement, DFelsize);
-	    HDfreespace(DFelement);
+	    free(DFelement);
         }
 	else
 	    Hendaccess(DFaid);
@@ -503,7 +502,7 @@ test */
     DFelseekpos = 0;
     DFelsize = 0;
 
-    switch(*acc_mode) {
+    switch(*access) {
 	case 'r': 
 		  DFelsize = Hlength(DFid, acc_tag, acc_ref);
 		  if (DFelsize <= 0) {
@@ -578,11 +577,11 @@ DFIclearacc()
 ** NAME
 **	DFstart -- set up a read/write on an access element
 ** USAGE
-**	int DFstart(dfile, tag, ref, acc_mode)
+**	int DFstart(dfile, tag, ref, access)
 **	DF *dfile;		IN: pointer to open  DF file
 **	uint16 tag;		IN: tag of element
 **	uint16 ref;		IN: ref number of element
-**	char *acc_mode;		IN: "r", "w", ro "a" (read, write, append)
+**	char *access;		IN: "r", "w", ro "a" (read, write, append)
 ** RETURNS
 **	0 on success, -1 on failure
 ** DESCRIPTION
@@ -593,17 +592,17 @@ DFIclearacc()
 ** REVISION LOG
 */
 #ifdef PROTOTYPE
-int DFstart(DF *dfile, uint16 tag, uint16 ref, char *acc_mode)
+int DFstart(DF *dfile, uint16 tag, uint16 ref, char *access)
 #else
 	int
-DFstart(dfile, tag, ref, acc_mode)
+DFstart(dfile, tag, ref, access)
     DF *dfile;
     uint16 tag;
     uint16 ref;
-    char *acc_mode;
+    char *access;
 #endif /* PROTOTYPE */
 {
-    return(DFaccess(dfile, tag, ref, acc_mode));
+    return(DFaccess(dfile, tag, ref, access));
 }
     
 
@@ -636,7 +635,7 @@ DFread(dfile, ptr, len)
     int32 len;
 #endif /* PROTOTYPE */
 {
-    int32 ret;
+    int32 stat;
 
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
@@ -646,22 +645,22 @@ DFread(dfile, ptr, len)
         DFerror = DFE_NONE;
 
     DFaid = Hstartread(DFid, acc_tag, acc_ref);
-    ret = Hseek(DFaid, DFelseekpos, 0);
-    if (ret == FAIL) {
+    stat = Hseek(DFaid, DFelseekpos, 0);
+    if (stat == FAIL) {
         DFerror = HEvalue(1);
         return(-1);
     }
 
-    ret = Hread(DFaid, len, (unsigned char *)ptr);
+    stat = Hread(DFaid, len, (unsigned char *)ptr);
     Hendaccess(DFaid);
 
-    if (ret == FAIL) {
+    if (stat == FAIL) {
         DFerror = HEvalue(1);
         return(-1);
     }
     else {
-        DFelseekpos += ret;
-        return(ret);
+        DFelseekpos += stat;
+        return(stat);
     }
 }
 
@@ -692,7 +691,7 @@ DFseek(dfile, offset)
     int32 offset;
 #endif /* PROTOTYPE */
 {
-    int ret;
+    int stat;
 
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
@@ -707,8 +706,8 @@ DFseek(dfile, offset)
         DFerror = DFE_BADSEEK;
         return(-1);
     } else {
-        ret = Hseek(DFaid, offset, DF_START);
-        if (ret == FAIL) {
+        stat = Hseek(DFaid, offset, DF_START);
+        if (stat == FAIL) {
             DFerror = HEvalue(1);
             return(-1);
         }
@@ -837,7 +836,7 @@ DFupdate(dfile)
     /* test
     if (DFelstat == DFEL_RESIDENT) {
 	Hputelement(DFid, acc_tag, acc_ref, DFelement, DFelsize);
-	HDfreespace(DFelement);
+	free(DFelement);
 	DFIclearacc();
     }
     test */
@@ -927,7 +926,7 @@ int32 DFgetelement(dfile, tag, ref, ptr)
     /* test
     if (DFelstat == DFEL_RESIDENT) {
 	Hputelement(DFid, acc_tag, acc_ref, DFelement, DFelsize);
-	HDfreespace(DFelement);
+	free(DFelement);
 	DFIclearacc();
     }
     test */
@@ -982,7 +981,7 @@ DFputelement(dfile, tag, ref, ptr, len)
     /* test
     if (DFelstat == DFEL_RESIDENT) {
 	Hputelement(DFid, acc_tag, acc_ref, DFelement, DFelsize);
-	HDfreespace(DFelement);
+	free(DFelement);
 	DFIclearacc();
     }
     test */
@@ -1110,7 +1109,7 @@ DFnewref(dfile)
     DF *dfile;
 #endif /* PROTOTYPE */
 {
-    uint16 ret;
+    uint16 stat;
 
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
@@ -1119,13 +1118,13 @@ DFnewref(dfile)
     else
         DFerror = DFE_NONE;
 
-    ret = Hnewref(DFid);
-    if (ret == 0xffff) {
+    stat = Hnewref(DFid);
+    if (stat == 0xffff) {
         DFerror = HEvalue(1);
         return(0);
     }
 
-    return(ret);
+    return(stat);
 }
 
 
@@ -1191,6 +1190,95 @@ DFerrno()
 {
     return(DFerror);
 }
+
+#ifdef PERM_OUT
+/*-----------------------------------------------------------------------------
+ * Name:    DFIseedDDs
+ * Purpose: read DDs in file into memory
+ * Inputs:  dfile: pointer to open DF file
+ * Returns: 0 on success, -1 on failure with DFerror set
+ * Users:   HDF systems programmers, DFopen
+ *---------------------------------------------------------------------------*/
+
+int DFIseedDDs(dfile)
+DF *dfile;
+{
+    DFdle *list;
+    DFddh ddh;
+    int i,n;                        /* n = no. of DDs in block */
+
+    DFerror = DFE_NONE;
+
+    if (dfile->list) {
+        DFerror = DFE_SEEDTWICE;    /* ### NOTE: Internal error! */
+        return(-1);
+    }
+
+    dfile->list= (DFdle *) DFIgetspace(sizeof(DFdle));
+    /* includes one DD - unused */
+    CKMALLOC( dfile->list, -1);
+
+    list=dfile->list;
+    list->next=NULL;                /* No other lists (yet) */
+    list->ddh.next= (int32)4L;      /* next is at 4 in file */
+    list->ddh.dds= -1;              /* flag so this is not written */
+
+    DFmaxref = 0;                   /* largest ref found till now is 0 */
+
+    while (list->ddh.next) {        /* while more headers to read */
+        CKSEEK( dfile->file, list->ddh.next, 0, -1);
+
+                            /* read headers */
+#ifdef DF_STRUCTOK
+        CKREAD( &ddh, sizeof(DFddh), 1, dfile->file, -1);
+#else /*DF_STRUCTOK*/
+        {
+            register  char *p;
+            p = DFtbuf;
+            CKREAD( DFtbuf, 6, 1, dfile->file, -1);     /* 6 = size of header */
+            INT16READ( p, ddh.dds);
+            INT32READ( p, ddh.next);
+        }
+#endif /*DF_STRUCTOK*/
+        n   =ddh.dds;
+
+        /* read in DDs */
+        list->next= (DFdle *)
+            DFIgetspace((unsigned)
+                        (sizeof(DFdle)+ (n-1)* sizeof(DFdd)));
+                                /* note space for 1 DD included in DLE */
+        CKMALLOC( list->next, -1);
+        list=list->next;
+        list->next=NULL;
+
+        HDmemcpy((char*)&(list->ddh), (char*)&ddh, sizeof(DFddh) ); /* Copy ddh */
+
+        if (n) {
+#ifdef DF_STRUCTOK
+            CKREAD( &list->dd[0], sizeof(DFdd), n, dfile->file, -1);
+            /* load DD's */
+#else /*DF_STRUCTOK*/
+            {
+                register  char *p;
+                p = DFtbuf;
+                CKREAD( DFtbuf, n*12, 1, dfile->file, -1);  /* 12=size of DD */
+                for (i=0; i<n; i++) {
+                    UINT16READ( p, list->dd[i].tag);
+                    UINT16READ( p, list->dd[i].ref);
+                    INT32READ( p, list->dd[i].offset);
+                    INT32READ( p, list->dd[i].length);
+                }
+            }
+#endif /*DF_STRUCTOK*/
+        }
+                /* Remember highest ref found - ignore MTs */
+        for (i=0; i<n; i++)
+            if ((list->dd[i].ref > DFmaxref) && (list->dd[i].tag != DFTAG_MT))
+                                     DFmaxref = list->dd[i].ref;
+    }
+    return(0);
+}
+#endif /* PERM_OUT */
 
 /*-----------------------------------------------------------------------------
  * Name:    DFIcheck
@@ -1540,12 +1628,7 @@ void *DFIfreespace(ptr)
 char *ptr;
 #endif /* PROTOTYPE */
 {
-#ifdef MALLOC_CHECK
     return(HDfreespace(ptr));
-#else
-    HDfreespace(ptr);
-    return(NULL);
-#endif
 }
 
 

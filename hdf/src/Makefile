@@ -104,21 +104,19 @@ ARCHIVE=hdf.shar
 
 HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h dfan.h dfrig.h dfgr.h dfsd.h \
      vg.h df.h dfi.h dfstubs.h dfufp2i.h vproto.h hcomp.h hconv.h hbitio.h \
-     tbbt.h crle.h cnbit.h mstdio.h
+     tbbt.h 
 
 CSRCS=hfile.c herr.c hblocks.c hextelt.c hkit.c dfan.c dfr8.c dfcomp.c \
       dfrle.c dfimcomp.c dfjpeg.c dfunjpeg.c dfp.c dfgr.c df24.c dfsd.c \
       dfgroup.c dfconv.c dfufp2i.c vg.c vrw.c vio.c vparse.c vconv.c vsfld.c \
       vgp.c vhi.c dfutil.c dfstubs.c dfknat.c dfkswap.c dfkcray.c dfkvms.c \
-      dfkconv.c dfkfuji.c hbitio.c tbbt.c hdfalloc.c hcomp.c crle.c cnbit.c \
-      mstdio.c hbigext.c
+      dfkconv.c dfkfuji.c hbitio.c tbbt.c hdfalloc.c  
 
 COBJS=hfile.o herr.o hblocks.o hextelt.o hkit.o dfan.o dfr8.o dfcomp.o \
       dfrle.o dfimcomp.o dfjpeg.o dfunjpeg.o dfp.o dfgr.o df24.o dfsd.o \
       dfgroup.o dfconv.o dfufp2i.o vg.o vrw.o vio.o vparse.o vconv.o vsfld.o \
       vgp.o vhi.o dfutil.o dfstubs.o dfknat.o dfkswap.o dfkcray.o dfkvms.o \
-      dfkconv.o dfkfuji.o hbitio.o tbbt.o hdfalloc.o hcomp.o crle.o cnbit.o \
-      mstdio.o hbigext.o
+      dfkconv.o dfkfuji.o hbitio.o tbbt.o hdfalloc.o  
 
 FSRCS=hfilef.c herrf.c hfileff.f dfanf.c dfr8f.c dfpf.c df24f.c dfsdf.c \
       vgf.c dff.c dfanff.f df24ff.f dfpff.f dfr8ff.f dfsdff.f vgff.f dfff.f \
@@ -167,12 +165,12 @@ all: libdf.a install_it
 
 libdf.a: $(COBJS) $(FOBJS) $(JOBJS)
 	-$(RM) libdf.a
-	$(AR) $(ARFLAGS) libdf.a `lorder '$(COBJS) $(FOBJS) $(JOBJS)' | tsort `
+	$(AR) $(ARFLAGS) libdf.a $(COBJS) $(FOBJS) $(JOBJS)
 	$(RANLIB) libdf.a
 
 libnofortran: $(COBJS) $(JOBJS)
 	-$(RM) libdf.a
-	$(AR) $(ARFLAGS) libdf.a `lorder $(COBJS) $(JOBJS) | tsort `
+	$(AR) $(ARFLAGS) libdf.a $(COBJS) $(JOBJS)
 	$(RANLIB) libdf.a
 
 nofortran: libnofortran install_it
@@ -189,8 +187,6 @@ hfile.o: hfile.h hdf.h herr.h hdfi.h hproto.h
 herr.o: hdf.h herr.h hdfi.h hproto.h
 
 hblocks.o: hfile.h hdf.h herr.h hdfi.h hproto.h
-
-hbigext.o: hfile.h hdf.h herr.h hdfi.h hproto.h
 
 hextelt.o: hfile.h hdf.h herr.h hdfi.h hproto.h
 
@@ -274,13 +270,6 @@ dff.o: hdf.h herr.h dfstubs.h df.h dfi.h hdfi.h hproto.h
 
 hdfalloc.o: hdf.h hdfi.h hproto.h
 
-hcomp.o: hdf.h hdfi.h hcompi.h crle.h cnbit.h mstdio.h
-
-crle.o: hdf.h hdfi.h hcompi.h crle.h
-
-#cnbit.o: hdf.h hdfi.h hcompi.h cnbit.h
-
-mstdio.o: hdf.h hdfi.h hcompi.h mstdio.h
 
 # JPEG source files
 jbsmooth.o : jbsmooth.c jinclude.h jconfig.h jpegdata.h

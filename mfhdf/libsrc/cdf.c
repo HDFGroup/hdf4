@@ -6,15 +6,11 @@
 
 #include	"local_nc.h"
 #include	"alloc.h"
-#include        <hfile.h>
 
 static bool_t NC_xdr_cdf
     PROTO((XDR *xdrs,NC **handlep));
 
 #define WRITE_NDG 1
-
-/* Private buffer */
-PRIVATE uint8 *ptbuf = NULL;
 
 /*
  * free the stuff that xdr_cdf allocates
@@ -42,70 +38,21 @@ NC *handle ;
 #endif /* !macintosh */
       Free(handle->xdrs) ;
 
-      if(handle->file_type == HDF_FILE) {
+#ifdef HDF
+      if(handle->is_hdf) {
           Vend(handle->hdf_file);
           Hclose(handle->hdf_file);
       }
+#endif
 
       Free(handle) ;
 }
 
-/*
-  
-  From NASA CDF Source
 
-*/
-#define V2_MAGIC_NUMBER  0x0000FFFF   /* Written twice at the beginning of file */
-#define V2_MAGIC_OFFSET  0
+#ifdef HDF
 
 
-/* -------------------------------- Hiscdf -------------------------------- */
-/*
-
-  Return TRUE/FALSE depending on if the given file is a NASA CDF file
-
-*/
-intn
-Hiscdf(filename)
-const char * filename;
-{
-    
-    char *FUNC = "Hiscdf";
-    intn       ret;
-    hdf_file_t fp;
-    uint8      b[4];
-    uint8    * bb;
-    int32      magic_num;
-  
-    fp = HI_OPEN(filename, DFACC_READ);
-    if (OPENERR(fp)) {
-        return(FALSE);
-    } else {
-        if(HI_SEEK(fp, V2_MAGIC_OFFSET) == FAIL) {
-            HERROR(DFE_SEEKERROR);
-            return FALSE;
-        }
-        
-        if(HI_READ(fp, b, 4) == FAIL) {
-            HERROR(DFE_READERROR);
-            return FALSE;
-        }
-
-        bb = &b[0];
-
-        INT32DECODE(bb, magic_num); 
-
-        if(magic_num == V2_MAGIC_NUMBER) 
-            ret = TRUE;
-        else 
-            ret = FALSE;
-
-        HI_CLOSE(fp);
-        return(ret);
-    }
-}
-
-
+#endif /* HDF */
 
 NC *
 NC_new_cdf(name, mode)
@@ -113,8 +60,6 @@ const char *name ;
 int mode ;
 {
 	NC *cdf ;
-        int32 hdf_mode;
-        char * FUNC = "NC_new_cdf";
 
 	cdf = (NC *)HDgetspace(sizeof(NC)) ;
 	if( cdf == NULL )
@@ -133,44 +78,33 @@ int mode ;
 		return(NULL) ;
 	} /* else */
 	
+#ifdef HDF
         /*
          * See what type of file we are looking at.
          * If we are creating a new file it will be an HDF file
          */
-        if(mode & NC_CREAT) {
-            cdf->file_type = HDF_FILE;
-        } else {
-            if(Hishdf((char *) name))
-                cdf->file_type = HDF_FILE;
-            else if(Hiscdf((char *) name))
-                cdf->file_type = CDF_FILE;
-            else
-                cdf->file_type = netCDF_FILE;
-            
-            if(cdf->file_type == CDF_FILE)
-                printf("Yow!  found a CDF file\n");
-        }
-
+        if(mode & NC_CREAT)
+            cdf->is_hdf = TRUE;
+        else
+            cdf->is_hdf = (int) Hishdf((char *) name);
+        
         /*
-         * Set up the XDR functions that some of the netCDF old code uses
+         * If we are dealing with an HDF file just set the op
+         *   (bad layering).  Do NOT call NCxdrfile_create() 
+         *   in this case cuz then we will have two open file
+         *   pointers to the same file and the Mac and VMS will
+         *   complain
          */
-        switch(cdf->file_type) {
-        case HDF_FILE:
+	if(cdf->is_hdf) 
             hdf_xdrfile_create(cdf->xdrs, mode);
-            break;
-        case netCDF_FILE:
-            if( NCxdrfile_create( cdf->xdrs, name, mode ) < 0) {
-                Free(cdf->xdrs) ;
-                Free(cdf) ;
-                return(NULL) ;
-            } 
-            break;
-        case CDF_FILE:
-/*             CDF_xdrfile_create(); */
-            /* try this, I bet it will be sufficient */
-            hdf_xdrfile_create(cdf->xdrs, mode);
-            break;
-        }
+        else
+#endif /* HDF */
+            if( NCxdrfile_create( cdf->xdrs, name, mode ) < 0) 
+                {
+                    Free(cdf->xdrs) ;
+                    Free(cdf) ;
+                    return(NULL) ;
+                } /* else */	
         
 	cdf->dims = NULL ;
 	cdf->attrs = NULL ;
@@ -180,32 +114,16 @@ int mode ;
 	cdf->numrecs = 0 ;
 	cdf->redefid = -1 ;
 
-        /* 
-         * determine the HDF access mode 
-         */
-        switch(mode) {
-        case NC_CLOBBER   :
-            hdf_mode = DFACC_CLOBBER; break;
-        case NC_NOCLOBBER :
-            /* will handle below */
-            break;
-        case NC_WRITE     :
-		hdf_mode = DFACC_RDWR;    break;
-        case NC_NOWRITE   :
-            hdf_mode = DFACC_RDONLY;  break;
-        default:
-            hdf_mode = DFACC_RDWR;
-        }
-        
-        
-        /*
-         * Do file type specific setup
-         */
-        switch(cdf->file_type) {
-        case HDF_FILE: 
+#ifdef HDF 
+
+        if(cdf->is_hdf) {
+            int32 hdf_mode;
             
-            /* see if the file exists */
-            if(mode == NC_NOCLOBBER) {
+            switch(mode) {
+            case NC_CLOBBER   :
+                hdf_mode = DFACC_CLOBBER; break;
+            case NC_NOCLOBBER :
+                /* see if the file exists */
                 if((int) Hishdf((char *) name))
                   { /* Need to free allocated structures */
                     NC_free_xcdf(cdf) ;
@@ -216,9 +134,15 @@ int mode ;
                     Free(cdf) ;
                     return(NULL);
                   }
+                hdf_mode = DFACC_RDWR;    break;
+            case NC_WRITE     :
+		hdf_mode = DFACC_RDWR;    break;
+            case NC_NOWRITE   :
+		hdf_mode = DFACC_RDONLY;  break;
+            default:
                 hdf_mode = DFACC_RDWR;
             }
-                
+
             cdf->hdf_file = (int32) Hopen((char *) name, hdf_mode, 200);
             Vstart(cdf->hdf_file);
             
@@ -234,36 +158,26 @@ int mode ;
 #ifdef DEBUG
             printf("value returned from Hopen() : %d\n", cdf->hdf_file);
 #endif
-            break;
-        case netCDF_FILE:
-#ifdef macintosh
-            /* for mac we don't handle XDR files */
-            return (NULL);
-#endif /* macintosh */
-            break;
-        case CDF_FILE:
-            fprintf(stderr, "About to do CDF file set up\n");
-            cdf->cdf_fp = HI_OPEN(name, hdf_mode);
-            if (OPENERR(cdf->cdf_fp)) 
-                HRETURN_ERROR(DFE_DENIED,NULL);
-            break;
         }
+#ifdef macintosh
+        else /* for mac we don't handle XDR files */
+		   return (NULL);
+#endif /* macintosh */
+#endif
 
-        /*
-         * Read in the contents
-         */
+
 	if(cdf->xdrs->x_op == XDR_DECODE) /* Not NC_CREAT */
 	{
 		if(!xdr_cdf(cdf->xdrs, &cdf) )
 		{
 			NC_free_cdf(cdf) ;
-			return (NULL) ;
+			return(NULL) ;
 		}
 		if( NC_computeshapes(cdf) == -1)
-			return (NULL) ;
+			return(NULL) ;
 	}
 
-	return (cdf) ;
+	return(cdf) ;
 }
 
 
@@ -305,16 +219,16 @@ NC *old ;
 
 /*
 #ifdef HDF
-        if(old->file_type == HDF_FILE) {
+        if(old->is_hdf) {
           cdf->hdf_file = old->hdf_file;
-          cdf->file_type = old->file_type;
+          cdf->is_hdf = old->is_hdf;
           cdf->vgid = old->vgid;
         }
 #endif
 */
 
 #ifdef HDF
-        cdf->file_type = old->file_type;
+        cdf->is_hdf = old->is_hdf;
 #endif
 
 	if(NCxdrfile_create( cdf->xdrs, name, mode) < 0)
@@ -384,32 +298,33 @@ int *xtendimp ;
 	return(cdfid) ;
 }
 
+#ifdef HDF
 bool_t
 xdr_cdf(xdrs, handlep)
 	XDR *xdrs;
 	NC **handlep;
 {
-    
-    switch((*handlep)->file_type) {
-    case HDF_FILE:
-        return(hdf_xdr_cdf(xdrs, handlep));
-        break;
-    case netCDF_FILE:
-        return(NC_xdr_cdf(xdrs, handlep));
-        break;
-    case CDF_FILE:
-        return(nssdc_xdr_cdf(xdrs, handlep));
-        break;
-    default:
-        return FALSE;
-    }
+
+  if((*handlep)->is_hdf)
+    return(hdf_xdr_cdf(xdrs, handlep));
+  else
+    return(NC_xdr_cdf(xdrs, handlep));
+
 }
+#endif
 
 
+#ifdef HDF
 static bool_t
 NC_xdr_cdf(xdrs, handlep)
 	XDR *xdrs;
 	NC **handlep;
+#else
+static bool_t
+xdr_cdf(xdrs, handlep)
+	XDR *xdrs;
+	NC **handlep;
+#endif
 {
 
 	u_long	magic = NCMAGIC ;
@@ -823,7 +738,6 @@ NC_var **var;
   uint16       nt_ref, rank;
   int32     *  ip, GroupID, val;
   uint8     *  bufp;
-  char      *FUNC = "hdf_write_var";
 
   register int  i, count;
   register Void *attribute;
@@ -907,13 +821,6 @@ NC_var **var;
   count++;
   
 #ifdef WRITE_NDG
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
-        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
-        if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
 
   /* prepare to start writing ndg   */
   if ((GroupID = DFdisetup(10)) < 0)
@@ -929,7 +836,7 @@ NC_var **var;
       return FAIL;
 
   /* put rank & dimensions in buffer */
-  bufp = ptbuf;
+  bufp = DFtbuf;
   rank = assoc->count;
   UINT16ENCODE(bufp, rank);
   for(i = 0; i < rank; i++) {
@@ -938,7 +845,7 @@ NC_var **var;
 
       /* need to fake the size of the record dimension */
       if(val == NC_UNLIMITED) {
-          if(handle->file_type == HDF_FILE)
+          if(handle->is_hdf)
               val = (*var)->numrecs;
           else
               val = handle->numrecs;
@@ -954,7 +861,7 @@ NC_var **var;
           UINT16ENCODE(bufp, nt_ref);
       }   
   /* write out SDD record */
-  if(Hputelement(handle->hdf_file, DFTAG_SDD, ref, ptbuf, (int32) (bufp-ptbuf)) == FAIL)
+  if(Hputelement(handle->hdf_file, DFTAG_SDD, ref, DFtbuf, (int32) (bufp-DFtbuf)) == FAIL)
       return FAIL;
   
   /* write dimension record tag/ref */
@@ -966,8 +873,10 @@ NC_var **var;
   count++;
 
   /* Add a bogus tag so we know this NDG is really a variable */
+/*
   if (DFdiput(GroupID, BOGUS_TAG,(uint16) ref) == FAIL)
       return FAIL;
+*/
 
   /* write out NDG */
   if (DFdiwrite(handle->hdf_file, GroupID, DFTAG_NDG, (*var)->ndg_ref) < 0) 
@@ -981,16 +890,9 @@ NC_var **var;
 
   (*var)->vgid = VHmakegroup(handle->hdf_file, tags, refs, count, 
                              (*var)->name->values, VARIABLE);
-
-  if((*var)->vgid == FAIL) {
-      fprintf(stderr, "Failed to write variable %s\n", (*var)->name->values);
-      fprintf(stderr, "count = %d\n", count);
-      for(i = 0; i < count; i++)
-          fprintf(stderr, "i = %d   tag = %d ref = %d\n", i, tags[i], refs[i]);
-          
+  if((*var)->vgid == FAIL)
       HEprint(stdout, 0);
-  }  
-
+  
   return (*var)->vgid;
   
 } /* hdf_write_var */
@@ -1073,7 +975,6 @@ NC **handlep;
       for(i = 0; i < tmp->count; i++) {
           tags[count] = (int32) VAR_TAG;
           refs[count] = (int32) hdf_write_var(xdrs, (*handlep), (NC_var **)vars);
-          if(refs[count] == FAIL) return FALSE;
           vars += tmp->szof;
           count++;
       }
@@ -1088,7 +989,6 @@ NC **handlep;
       for(i = 0; i < tmp->count; i++) {
           tags[count] = (int32) ATTR_TAG;
           refs[count] = (int32) hdf_write_attr(xdrs, (*handlep), (NC_attr **)attrs);
-          if(refs[count] == FAIL) return FALSE;
           attrs += tmp->szof;
           count++;
       }
@@ -1346,7 +1246,7 @@ int32  vg;
   uint8 ntstring[4];
   int   data_ref, is_rec_var, vg_size, count;
   int32 data_count, HDFtype, tag, id;
-  int32 n, sub_id, entries, ndg_ref, rag_ref;
+  int32 n, sub_id, entries, ndg_ref;
 
   register int     type, t, i;
   register int32   var, sub;
@@ -1397,7 +1297,6 @@ int32  vg;
               type = 0;
               data_ref = 0;
               data_count = 0;
-              rag_ref = 0;
               is_rec_var = FALSE;
               Vinquire(var, &n, vgname);      
           
@@ -1432,10 +1331,6 @@ int32  vg;
                   case DFTAG_SD :   /* ------- Data Storage ------ */
                       data_ref = sub_id;
                       data_count = Hlength(handle->hdf_file, DATA_TAG, sub_id);
-                      break;
-                  case DFTAG_SDRAG : /* ----- Ragged Array index ----- */
-                      rag_ref = sub_id;
-                      printf("Lookout!  Found a ragged array element\n");
                       break;
                   case DFTAG_NT :   /* ------- Number type ------- */
                       if(Hgetelement(handle->hdf_file, tag, sub_id, ntstring) == FAIL)
@@ -1497,12 +1392,6 @@ int32  vg;
               vp->data_tag = DATA_TAG;
               vp->HDFtype  = HDFtype;
               vp->ndg_ref  = (uint16) ndg_ref;
-
-              /* need to process the ragged array info here */
-              /* QUESTION:  Load the whole rag_fill list in now??????? */
-              if(rag_ref) {
-                  vp->is_ragged = TRUE;
-              }
               
               if(vp->data_ref) {
                   /*
@@ -1527,7 +1416,7 @@ int32  vg;
                        *   equation.  I don't remember why its there
                        *   (4-Nov-93)
                        */
-                      vp->numrecs = data_count / vp->dsizes[0];
+                      vp->numrecs = data_count / vp->dsizes[0]; 
                       
 #ifdef DEBUG
                       fprintf(stderr, "I have set numrecs to %d\n", vp->numrecs);
@@ -1653,7 +1542,7 @@ NC **handlep;
   int status;
 
 #if DEBUG
-  fprintf(stderr, "hdf_xdr_cdf i've been called op = %d \n", xdrs->x_op);
+  fprintf(stderr, "xdr_cdf i've been called op = %d \n", xdrs->x_op);
 #endif
 
   switch(xdrs->x_op) {
@@ -1899,7 +1788,7 @@ xdr_numrecs(xdrs, handle)
 {
 
 #ifdef HDF
-    if(handle->file_type == HDF_FILE) return TRUE;
+    if(handle->is_hdf) return TRUE;
 #endif
 
 	if( (handle->flags & NC_NOFILL)
@@ -2035,4 +1924,3 @@ NC_var *vp ;
 		
 		return(TRUE) ;
 }
-

@@ -1,3 +1,9 @@
+/* $Id$ */
+
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -9,12 +15,6 @@
  * hdf/COPYING file.                                                        *
  *                                                                          *
  ****************************************************************************/
-
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-
-/* $Id$ */
 
 /*
  FILE
@@ -115,16 +115,16 @@ void test_tbbt()
 	    if(Verbocity>9) {
 	        printf("ins_arr: \n");
 	        for(i=0; i<test_size; i++)   /* print the arrays */
-	            printf("%d \n",(int)ins_arr[i]);
+	            printf("%d \n",ins_arr[i]);
 	        printf("\nrem_arr: \n");
 	        for(i=0; i<test_size; i++)   /* print the arrays */
-	            printf("%d \n",(int)rem_arr[i]);
+	            printf("%d \n",rem_arr[i]);
 	        printf("\n");
 	      } /* end if */
 
 	    tree=tbbtdmake(tcompare,sizeof(int32));
 	    for(i=0; i<test_size; i++) {
-                MESSAGE(9,printf("inserting %d\n",(int)ins_arr[i]););
+                MESSAGE(9,printf("inserting %d\n",ins_arr[i]););
 	        tbbtdins(tree,(VOIDP)&ins_arr[i],NULL);
                 MESSAGE(9,tbbtdump(tree,-1););
 	      }
@@ -134,11 +134,11 @@ void test_tbbt()
 
 	        key=rem_arr[i];
 	        r=(VOIDP *)tbbtdfind(tree,(VOIDP)&key,NULL);
-                MESSAGE(9,printf("removing %d\n",(int)key););
+                MESSAGE(9,printf("removing %d\n",key););
 	        tbbtrem((TBBT_NODE **)tree,(TBBT_NODE *)r,NULL);
                 MESSAGE(9,tbbtdump(tree,-1););
     	      } /* end for */
-	    tbbtdfree(tree,NULL,NULL);
+	  tbbtdfree(tree,NULL,NULL);
 	  } /* end for */
       } /* end for */
 } /* end test_tbbt() */

@@ -675,14 +675,6 @@ case "${OS}" in
   done
 
                 LD_XDR=;;
-  nextos*)         for arg in -DNEXT; do
-    case "$HDF_INC" in
-      *$arg*) ;;
-      *)      HDF_INC="${HDF_INC-} $arg";;
-    esac
-  done
-
-                LD_XDR=;;
   hpux*)          for arg in -DHP9000; do
     case "$HDF_INC" in
       *$arg*) ;;

@@ -21,15 +21,15 @@ static char RcsId[] = "@(#)$Revision$";
  * Purpose: C stubs for Palette Fortran routines
  * Invokes: dfp.c dfkit.c
  * Contents: 
- *  dpigpal_     : Call DFPgetpal to get palette
- *  dpippal_     : Call DFPputpal to write/overwrite palette in file
- *  dpinpal_     : Call DFPnpals to get number of palettes in file
- *  dpiwref_     : Call DFPwriteref to set ref of pal to write next
- *  dpirref_     : Call DFPreadref to set ref of pal to read next
- *  dprest_      : Call DFPrestart to get palettes afresh in file
- *  dplref_      : Call DFPlastref to get ref of last pal read/written
- *  DFPrestart_  : Call DFPrestart to get palettes afresh in file
- *  DFPlastref_  : Call DFPlastref to get ref of last pal read/written
+ *  dpigpal_:   Call DFPgetpal to get palette
+ *  dpippal_:   Call DFPputpal to write/overwrite palette in file
+ *  dpinpal_:   Call DFPnpals to get number of palettes in file
+ *  dpiwref_:    Call DFPwriteref to set ref of pal to write next
+ *  dpirref_:    Call DFPreadref to set ref of pal to read next
+ *  dprest_:    Call DFPrestart to get palettes afresh in file
+ *  dplref_:    Call DFPlastref to get ref of last pal read/written
+ *  DFPrestart_:    Call DFPrestart to get palettes afresh in file
+ *  DFPlastref_:    Call DFPlastref to get ref of last pal read/written
  * Remarks: none
  *---------------------------------------------------------------------------*/
 

@@ -26,10 +26,8 @@
 #define    PROTO(x) ()
 #endif
 
-/* Internal DF structure */
 typedef struct {
-    uint16 tag;  /* tag of element */
-    uint16 ref;  /* ref of element */
+    uint16 tag, ref;
 } DFdi;
 
 /* internal file access codes */
@@ -42,14 +40,6 @@ typedef struct {
 #define DFACC_RDONLY 1
 #define DFACC_RDWR 3
 #define DFACC_CLOBBER 4
-
-/* File access modes */
-/* 001--007 for different serial modes */
-/* 011--017 for different parallel modes */
-
-#define DFACC_DEFAULT	000
-#define DFACC_SERIAL	001
-#define DFACC_PARALLEL	011
 
 /* used by Hnextread to determine where to start searching for the
    next tag/ref to read */
@@ -94,7 +84,6 @@ typedef struct {
 #define STREQ(s, t) (strcmp((s), (t)) == 0)
 #define NSTREQ(s, t, n) (strncmp((s), (t), (n)) == 0)
 #endif
-#define HDfreenclear(p) { if((p)!=NULL) HDfreespace(p); p=NULL; }
 
 #ifndef PRIVATE
 #   define PRIVATE static
@@ -102,6 +91,9 @@ typedef struct {
 #ifndef PUBLIC
 #define PUBLIC  /* nothing */
 #endif
+
+/* functions declarations */
+
 
 /* masks for types */
 #define DFNT_HDF      0x00000000    /* standard HDF format  */
@@ -309,15 +301,12 @@ typedef struct {
 #    define SIZE_LCHAR16     2    /* No current plans for support */
 #    define SIZE_LUCHAR16    2    /* No current plans for support */
 
-        /* sizes of different number types */
-#       define MACHINE_I8_SIZE     1
-#       define MACHINE_I16_SIZE    2
-#       define MACHINE_I32_SIZE    4
-#       define MACHINE_F32_SIZE    4
-#       define MACHINE_F64_SIZE    8
-
-        /* maximum size of the atomic data types */
-#       define MAX_NT_SIZE      16
+          /* sizes of different number types */
+#          define MACHINE_I8_SIZE     1
+#          define MACHINE_I16_SIZE    2
+#          define MACHINE_I32_SIZE    4
+#          define MACHINE_F32_SIZE    4
+#          define MACHINE_F64_SIZE    8
 
 /* tbuf used as a temporary buffer for small jobs.  The size is
    preferably > 512 but MUST be > ~256.  It is advised that if an
@@ -332,9 +321,7 @@ typedef struct {
 #endif /* !macintosh */
 #endif
 
-#if 0 /* replaced with dynamic memory */
 extern uint8 *tbuf;
-#endif
 
 /* tags and refs */
 #define DFREF_WILDCARD      0
@@ -353,7 +340,6 @@ extern uint8 *tbuf;
 #define DFTAG_DIA   ((uint16)105) /* data identifier annotation */
 #define DFTAG_NT    ((uint16)106) /* number type */
 #define DFTAG_MT    ((uint16)107) /* machine type */
-#define DFTAG_FREE  ((uint16)108) /* free space in the file */
 
 /* raster-8 set */
 #define DFTAG_ID8   ((uint16)200) /* 8-bit Image dimension */
@@ -387,11 +373,6 @@ extern uint8 *tbuf;
 #define DFTAG_T105  ((uint16)603) /* TEK 4105 data */
 
 /* Scientific Data set */
-/*
-  Objects of tag 721 are never actually written to the file.  The tag is 
-  needed to make things easier mixing DFSD and SD style objects in the
-  same file 
-*/
 #define DFTAG_SDG   ((uint16)700) /* Scientific Data Group */
 #define DFTAG_SDD   ((uint16)701) /* Scientific Data DimRec */
 #define DFTAG_SD    ((uint16)702) /* Scientific Data */
@@ -404,11 +385,9 @@ extern uint8 *tbuf;
 #define DFTAG_SDT   ((uint16)709) /* Transpose */
 #define DFTAG_SDLNK ((uint16)710) /* Links related to the dataset */
 #define DFTAG_NDG   ((uint16)720) /* Numeric Data Group */
-                                  /* tag 721 reserved chouck 24-Nov-93 */
 #define DFTAG_CAL   ((uint16)731) /* Calibration information */
 #define DFTAG_FV    ((uint16)732) /* Fill Value information */
 #define DFTAG_BREQ  ((uint16)799) /* Beginning of required tags   */
-#define DFTAG_SDRAG ((uint16)781) /* List of ragged array line lengths */
 #define DFTAG_EREQ  ((uint16)780) /* Current end of the range   */
 
 /* VSets */
@@ -432,7 +411,6 @@ extern uint8 *tbuf;
 #define SPECIAL_LINKED 1
 #define SPECIAL_EXT 2
 #define SPECIAL_COMP 3
-#define SPECIAL_BIGEXT 4	/* Big External */
 
 /* PARAMETERS */
 
@@ -487,7 +465,7 @@ extern uint8 *tbuf;
 */
 
 #define FIELDNAMELENMAX        128  /* fieldname   : 16 chars max */
-#if defined macintosh | defined THINK_C
+#if defined macintosh | THINK_C
 #define VSFIELDMAX             64  /* max no of fields per vdata */
 #else /* !macintosh */
 #define VSFIELDMAX             256  /* max no of fields per vdata */
@@ -550,7 +528,6 @@ typedef int32           HFILEID;
 /* Publically accessible functions declarations.  This includes all the
    functions that are used by application programs.  */
 
-#include "hbitio.h"
 #include "hcomp.h"
 #include "herr.h"
 #include "hproto.h"
@@ -563,3 +540,4 @@ typedef int32           HFILEID;
 #define Vend(f)             Vfinish((f))
 
 #endif /* HDF_H */
+

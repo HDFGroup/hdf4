@@ -32,12 +32,10 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* Private Function Prototypes */
 PRIVATE VOID vunpackvs
-    PROTO((VDATA *vs, uint8 buf[]));
-
-/* vpackvs is prototyped in vg.h since vconv.c needs to call it */
+    PROTO((VDATA *vs, uint8 buf[], int32 *size));
 
 /* External (within Vset routines) variables */
-extern vfile_t *vfile;
+extern vfile_t vfile[];
 
 /* ------------------------------------------------------------------ */
 /*
@@ -58,16 +56,8 @@ uint16 vsid;
     VOIDP *t;
     register vfile_t      * vf;
     int32 key;
-    CONSTR(FUNC,"vsinstance");
+    char * FUNC = "vsinstance";
   
-    /* Check if vfile buffer has been allocated */
-    if (vfile == NULL)
-      {
-        vfile = (vfile_t *)HDgetspace(MAX_VFILE * sizeof(vfile_t));
-        if (vfile == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, NULL);
-      }
-
     if (NULL==(vf = Get_vfile(f)))
         HRETURN_ERROR(DFE_FNF, NULL);
   
@@ -96,6 +86,8 @@ HFILEID f;
 uint16 vsid;
 #endif
 {
+    char * FUNC = "vexistvs";
+  
     if (NULL== vsinstance(f,vsid))
         return(FAIL);
     else
@@ -158,6 +150,7 @@ uint8        buf[];
 {
     register int32      i;
     register uint8      *bb;
+	char * FUNC = "vpackvs";
 
 	bb = &buf[0];
 
@@ -266,18 +259,22 @@ This routine will also initalize the VDATA structure as much as it can.
 */
 
 #ifdef PROTOTYPE
-PRIVATE VOID vunpackvs (VDATA *vs, uint8 buf[])
+PRIVATE VOID vunpackvs (VDATA *vs, uint8 buf[], int32 *size)
 #else
-PRIVATE VOID vunpackvs (vs, buf)
+PRIVATE VOID vunpackvs (vs, buf, size)
 VDATA   *vs;
 uint8   buf[];
+int32   *size;  /* UNUSED, but retained for compatibility with vpackvs */
 #endif
 {
     uint8   *bb;
     int32   i;
     int16   int16var;
+	char * FUNC = "vunpackvs";
 
-    bb = &buf[0];
+	i = *size; /* dum */
+
+	bb = &buf[0];
 
 	/* retrieve interlace */
     INT16DECODE(bb,vs->interlace);
@@ -336,11 +333,11 @@ uint8   buf[];
     if(vs->version <= VSET_OLD_TYPES)
         for (i = 0; i < vs->wlist.n; i++)   /* save the type */
             vs->wlist.type[i] = map_from_old_types(vs->wlist.type[i]);
-
+        
     /* --- EXTRA --- fill in the machine-dependent size fields */
     for (i = 0; i < vs->wlist.n; i++)
-        vs->wlist.esize[i] = (int16) (vs->wlist.order[i] * DFKNTsize((int32)vs->wlist.type[i] | (int32)DFNT_NATIVE));
-
+        vs->wlist.esize[i] = (int16) vs->wlist.order[i] * DFKNTsize(vs->wlist.type[i] | DFNT_NATIVE);
+    
 } /* vunpackvs */
 
 /* ---------------------------- vsdestroynode ------------------------- */
@@ -420,61 +417,58 @@ VOIDP n;
    *************************************************************** */
 
 #ifdef PROTOTYPE
-PUBLIC int32 VSattach (HFILEID f, int32 vsid, const char *accesstype)
+PUBLIC int32 VSattach (HFILEID f, int32 vsid, char *accesstype)
 #else
 PUBLIC int32 VSattach (f, vsid, accesstype)
 HFILEID f;
 int32   vsid;
-const char *  accesstype;
+char *  accesstype;
 #endif
 {
-    VDATA * vs;  			 /* new vdata to be returned */
-    uint8 * vspack;
-    int32   acc_mode;
-    vsinstance_t * w;
-    vfile_t	 * vf;
-    CONSTR(FUNC,"VSattach");
-    
-    /* Check if vfile buffer has been allocated */
-    if (vfile == NULL) {
-        vfile = (vfile_t *)HDgetspace(MAX_VFILE * sizeof(vfile_t));
-        if (vfile == NULL)
-            HRETURN_ERROR(DFE_NOSPACE, FAIL);
-    }
-    
+	VDATA 		*vs;  			 /* new vdata to be returned */
+	int32 		vspacksize;
+    uint8       *vspack;
+    int32       access;
+	vsinstance_t	* w;
+	vfile_t			* vf;
+	char * FUNC = "VSattach";
+
     if ((f == FAIL)  || (vsid < -1))
         HRETURN_ERROR(DFE_ARGS, FAIL);
     if (NULL==(vf = Get_vfile(f)))
         HRETURN_ERROR(DFE_FNF, FAIL);
-    
+
     if ( accesstype[0]=='R' || accesstype[0]=='r')
-        acc_mode = 'r';
+        access = 'r';
     else if ( accesstype[0]=='W' || accesstype[0]=='w')
-        acc_mode = 'w';
+        access = 'w';
     else
         HRETURN_ERROR(DFE_BADACC, FAIL);
-    
-    if (vsid == -1) {  /* ---------- VSID IS -1 ----------------------- */
-        if (acc_mode == 'r')
-            HRETURN_ERROR(DFE_BADACC,FAIL);
-        
-        /* otherwise 'w' */
-        /* allocate space for vs,  & zero it out  */
+
+	if (vsid == -1) {  /* ---------- VSID IS -1 ----------------------- */
+        if (access == 'r') {
+            HERROR(DFE_BADACC);
+            HEreport("VSattach: may not read vsid of -1");
+            return(FAIL);
+          }
+
+          /* otherwise 'w' */
+          /* allocate space for vs,  & zero it out  */
         if ( (vs= (VDATA*) HDgetspace (sizeof(VDATA))) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
-        
+
         vs->nvertices = 0;
         vs->wlist.n = vs->rlist.n = 0;
         vs->islinked = FALSE;
         vs->nusym = 0;
-        
+          
         vs->oref      = vnewref(f);
         if (vs->oref == 0) {
             HERROR(DFE_NOREF);
             HDfreespace((VOIDP)vs);
             return(FAIL);
-        }
-        
+          }
+          
         vs->otag      = DFTAG_VH;
         vs->vsname[0] = '\0';
         vs->interlace = FULL_INTERLACE; /* DEFAULT */
@@ -489,13 +483,13 @@ const char *  accesstype;
         vs->version   = VSET_VERSION;
           
         vs->vm        = (VMBLOCK*) NULL;
-        
+          
         vs->aid       = 0;
-        
-        /* attach new vs to file's vstab */
+          
+          /* attach new vs to file's vstab */
         if ( NULL == (w = (vsinstance_t*) HDgetspace (sizeof(vsinstance_t))))
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
-        
+          
         vf->vstabn++;
         w->key       = (int32) VSSLOT2ID(f,vs->oref); /* set the key for the node */
         w->ref       = (intn) vs->oref;
@@ -503,54 +497,53 @@ const char *  accesstype;
         w->nattach   = 1;
         w->nvertices = 0;
         tbbtdins(vf->vstree,(VOIDP)w,NULL);    /* insert the vs instance in B-tree */
-        
+          
         vs->instance = w;
-        
+
         return (w->key);
-    } /* end of case where vsid is -1 */
-    
-    /*  --------  VSID IS NON_NEGATIVE ------------- */
-    
-    if (acc_mode == 'r') { /* reading an existing vdata */
-        
+	} /* end of case where vsid is -1 */
+
+	/*  --------  VSID IS NON_NEGATIVE ------------- */
+
+	if (access == 'r') { /* reading an existing vdata */
+
         if (NULL == (w =  vsinstance (f, (uint16) vsid)) )
             HRETURN_ERROR(DFE_VTAB, FAIL);
-        
+
         /* this vdata is already attached for 'r', ok to do so again */
         if (w->nattach && w->vs->access == 'r') {
             w->nattach++;
             return (w->key);
-        }
-        
+          }
+
         if (w->vs) {    /* use existing vs record */
             vs = w->vs;
         } else {
-            
+
             /* allocate space for vs,  & zero it out  */
             if ( (vs=(VDATA*) HDgetspace (sizeof(VDATA))) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
-
         }
 
-        /* need to fetch from file */
+          /* need to fetch from file */
         if ( (vspack= (uint8 *) HDgetspace (sizeof(VWRITELIST))) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
         if (Hgetelement(f,DFTAG_VH,(uint16)vsid,vspack) == FAIL) {
             HDfreespace((VOIDP)vspack);
             HRETURN_ERROR(DFE_NOVS, FAIL);
-        } /* end if */
-        
+          } /* end if */
+
         vs->wlist.n = vs->rlist.n = 0;
-        
+
         /* unpack the vs, then init all other fields in it */
-        vunpackvs (vs,vspack);
+        vunpackvs (vs,vspack,&vspacksize);
         vs->otag    = DFTAG_VH;
         vs->oref    = (uint16)vsid;
         vs->access  = 'r';
         vs->f   = f;
         vs->marked  = 0;
         vs->nusym   = 0;
-        
+
         vs->vm      = (VMBLOCK*) NULL; /* always NULL for "r" */
 
         vs->aid     = Hstartread(vs->f, VSDATATAG, vs->oref);
@@ -559,9 +552,9 @@ const char *  accesstype;
             HDfreespace((VOIDP)vspack);
             HRETURN_ERROR(DFE_BADAID, FAIL);
         }
-        
+
         vs->instance = w;
-        
+
         /* attach vs to vsdir  at the vdata instance w */
         w->vs        = vs;
         w->nattach   = 1;
@@ -569,18 +562,18 @@ const char *  accesstype;
 
         HDfreespace((VOIDP)vspack);
         return (w->key);
-    } /* end of case where vsid is positive, and "r"  */
-    
-    
-    if (acc_mode == 'w') { /* writing to an existing vdata */
-        
+ 	} /* end of case where vsid is positive, and "r"  */
+
+
+	if (access == 'w') { /* writing to an existing vdata */
+
         if ((w = vsinstance(f, (uint16) vsid)) == NULL)
             HRETURN_ERROR(DFE_VTAB, FAIL);
-        
+
         if (w->nattach)  /* vdata previously attached before */
             HRETURN_ERROR(DFE_BADATTACH,FAIL);
-        
-        /* free old record (should reuse....) */
+
+          /* free old record (should reuse....) */
         if(w->vs) {
             vs = w->vs;
         } else {
@@ -588,20 +581,20 @@ const char *  accesstype;
             if( (vs=(VDATA*) HDgetspace(sizeof(VDATA))) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
         }
-        
-        /* need to fetch from file */
+
+          /* need to fetch from file */
         if ( (vspack= (uint8 *) HDgetspace (sizeof(VWRITELIST))) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
         if (Hgetelement(f, DFTAG_VH, (uint16)vsid, vspack) == FAIL) {
             HDfreespace((VOIDP)vspack);
             HRETURN_ERROR(DFE_NOMATCH, FAIL);
-        } /* end if */
-        
+          } /* end if */
+          
         vs->wlist.n = vs->rlist.n = 0;
         vs->nusym = 0;
-        
-        /* unpack the vs, then init all other fields in it */
-        vunpackvs (vs,vspack);
+          
+          /* unpack the vs, then init all other fields in it */
+        vunpackvs (vs,vspack,&vspacksize);
         vs->otag  = DFTAG_VH;
         vs->oref    = (uint16)vsid;
         vs->access    = 'w';
@@ -615,21 +608,18 @@ const char *  accesstype;
             HDfreespace((VOIDP)vspack);
             HRETURN_ERROR(DFE_BADAID, FAIL);
         }
-        
+
         vs->instance = w;
-        
-        /* attach vs to vsdir  at the vdata instance w */
+
+          /* attach vs to vsdir  at the vdata instance w */
         w->vs        = vs;
         w->nattach   = 1;
         w->nvertices = vs->nvertices;
-        
+
         HDfreespace((VOIDP)vspack);
         return(w->key);
-
-    } /* end of case where vsid is positive, and "w"  */
-    
+	} /* end of case where vsid is positive, and "w"  */
     return (FAIL);
-    
 } /* VSattach */
 
 /* ------------------------ VSdetach ----------------------------- */
@@ -653,30 +643,36 @@ const char *  accesstype;
    *************************************************************** */
 
 #ifdef PROTOTYPE
-PUBLIC int32 VSdetach (int32 vkey)
+PUBLIC void VSdetach (int32 vkey)
 #else
-PUBLIC int32 VSdetach (vkey)
-int32 vkey;
+PUBLIC void VSdetach (vkey)
+     int32 vkey;
 #endif
 {
-    int32	i, ret, vspacksize;
-    uint8            *vspack;
-    vsinstance_t    *w;
-    VDATA           *vs;
-    CONSTR(FUNC,"VSdetach");
+    int32           i, stat, vspacksize;
+    uint8           * vspack;
+    vsinstance_t    * w;
+    VDATA           * vs;
+    char * FUNC = "VSdetach";
 
-    if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS,FAIL);
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return;
+    }
     
     /* locate vg's index in vgtab */
-    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) 
-        HRETURN_ERROR(DFE_NOVS,FAIL);
-
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return;
+    }
+    
     vs=w->vs;
-
     if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
         HERROR(DFE_ARGS);
-        return (FAIL);
+        HEprint(stderr,0);
+        return;
     }
     
     w->nattach--;
@@ -693,35 +689,38 @@ int32 vkey;
             vs->aid = NO_ID;
 */
         }
-        return (SUCCEED);
+        return;
     }
     
     /* --- case where access was 'w' --- */
-    if (w->nattach != 0)
-        HRETURN_ERROR(DFE_CANTDETACH,FAIL);
-    
-    if (vs->marked)  { /* if marked , write out vdata's VSDESC to file */
-        if ( (vspack= (uint8 *) HDgetspace (sizeof(VWRITELIST))) == NULL)
-            HRETURN_ERROR(DFE_NOSPACE,FAIL);
-        vpackvs(vs, vspack, &vspacksize);
-        ret = Hputelement(vs->f, VSDESCTAG, vs->oref, vspack, vspacksize);
-        HDfreespace((VOIDP)vspack);
-        if (ret == FAIL)
-            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-        vs->marked = 0;
+    if (w->nattach != 0) {
+        HERROR(DFE_CANTDETACH);
+        return;
     }
     
+    if (vs->marked)  { /* if marked , write out vdata's VSDESC to file */
+        if ( (vspack= (uint8 *) HDgetspace (sizeof(VWRITELIST))) == NULL) {
+            HERROR(DFE_NOSPACE);
+            return;
+        } /* end if */
+        vpackvs(vs,vspack,&vspacksize);
+        stat = Hputelement (vs->f,VSDESCTAG,vs->oref,vspack,vspacksize);
+        HDfreespace((VOIDP)vspack);
+        if (stat == FAIL) {
+            HERROR(DFE_WRITEERROR);
+            return;
+            }
+        vs->marked = 0;
+    }
+        
     /* remove all defined symbols */
     for(i=0; i<vs->nusym; i++)
-        HDfreespace((VOIDP)vs->usym[i].name);
+            HDfreespace((VOIDP)vs->usym[i].name);
     vs->nusym = 0;
-    
-    w->vs = NULL;                 /* detach vs from vsdir */
     Hendaccess (vs->aid);
+    w->vs = NULL;                 /* detach vs from vsdir */
     HDfreespace((VOIDP)vs);
     
-    return(SUCCEED);
-
 } /* VSdetach */
 
 /* -------------------------- VSappendable -------------------------------- */
@@ -742,31 +741,50 @@ int32 vkey;
 int32 blk;
 #endif
 {
+    int32           status;
     int32           blksize, curr_size;
     vsinstance_t    *w;
     VDATA           *vs;
-    CONSTR(FUNC,"VSappendable");
+    char * FUNC = "VSappendable";
 
-    if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS,FAIL);
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
   
     /* locate vs's index in vstab */
-    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey))))
-        HRETURN_ERROR(DFE_NOVS,FAIL);
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(FAIL);
+    }
 
     vs=w->vs;
-    if ((vs == NULL) || (vs->otag != VSDESCTAG))
-        HRETURN_ERROR(DFE_ARGS,FAIL);
-
+    if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
+          HERROR(DFE_ARGS);
+          HEprint(stderr,0);
+          return(FAIL);
+    }
+  
     curr_size = vs->nvertices * vs->wlist.ivsize;
 
+#ifdef OLD_WAY
+    if(vs->nvertices && (curr_size > VDEFAULTBLKSIZE))
+        blksize = curr_size;
+    else
+        blksize = VDEFAULTBLKSIZE;
+
+    if(blk && blk > blksize) blksize = blk;
+#else
     if(blk>0)
-        blksize=blk;
+	blksize=blk;
     else
         if(vs->nvertices && (curr_size > VDEFAULTBLKSIZE))
             blksize = curr_size;
         else
             blksize = VDEFAULTBLKSIZE;
+#endif
 
     Hendaccess(vs->aid);
 
@@ -775,6 +793,7 @@ int32 blk;
         return FAIL;
 
     return SUCCEED;
+
 } /* VSappendable */
 
 /* ======================================================= */
@@ -797,15 +816,7 @@ HFILEID f;
 	vfile_t	       * vf;
     VOIDP *t;
     int32 key;
-    CONSTR(FUNC,"VSgetid");
-
-    /* Check if vfile buffer has been allocated */
-    if (vfile == NULL)
-      {
-        vfile = (vfile_t *)HDgetspace(MAX_VFILE * sizeof(vfile_t));
-        if (vfile == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
+    char * FUNC = "VSgetid";
 
     if (vsid < -1)
         HRETURN_ERROR(DFE_ARGS, FAIL);
@@ -854,7 +865,7 @@ int32 vkey;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    CONSTR(FUNC,"VSQuerytag");
+    char * FUNC = "VSQuerytag";
 
     if (!VALIDVSID(vkey)) {
         HERROR(DFE_ARGS);
@@ -895,7 +906,7 @@ int32 vkey;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    CONSTR(FUNC,"VSQueryref");
+    char * FUNC = "VSQueryref";
 
     if (!VALIDVSID(vkey)) {
         HERROR(DFE_ARGS);
@@ -929,18 +940,27 @@ int32 vkey;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    CONSTR(FUNC,"VSgetversion");
+    char * FUNC = "VSgetversion";
 
-    if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS,NULL);
-
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(NULL);
+    }
+  
   /* locate vs's index in vstab */
-    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey))))
-        HRETURN_ERROR(DFE_NOVS,NULL);
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(NULL);
+    }
 
     vs=w->vs;
-    if ((vs == NULL) || (vs->otag != VSDESCTAG))
-          HRETURN_ERROR(DFE_ARGS,NULL);
+    if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
+          HERROR(DFE_ARGS);
+          HEprint(stderr,0);
+          return(NULL);
+    }
 
     return (&(vs->wlist));
 }   /* end vswritelist() */
@@ -957,19 +977,28 @@ int32 vkey;
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    CONSTR(FUNC,"VSgetversion");
+    char * FUNC = "VSgetversion";
 
-    if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS,0);
-
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        HEprint(stderr, 0);
+        return(0);
+    }
+  
   /* locate vs's index in vstab */
-    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey))))
-        HRETURN_ERROR(DFE_NOVS,0);
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        HEprint(stderr, 0);
+        return(0);
+    }
 
     vs=w->vs;
-    if ((vs == NULL) || (vs->otag != VSDESCTAG))
-        HRETURN_ERROR(DFE_ARGS,0);
-
+    if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
+          HERROR(DFE_ARGS);
+          HEprint(stderr,0);
+          return(0);
+    }
+  
     return (vs->version);
 }   /* end VSgetversion() */
 
@@ -997,20 +1026,12 @@ int32 vsid;
     vfile_t      * vf;
     VOIDP        * t;
     int32          key;
-    CONSTR(FUNC,"VSdelete");
+    char         * FUNC = "VSdelete";
 
     if(vsid < -1 ) {
         HERROR(DFE_ARGS);
         return(FAIL);
     } 
-
-    /* Check if vfile buffer has been allocated */
-    if (vfile == NULL)
-      {
-        vfile = (vfile_t *)HDgetspace(MAX_VFILE * sizeof(vfile_t));
-        if (vfile == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
 
     if (NULL==(vf = Get_vfile(f))) {
         HERROR(DFE_FNF);
@@ -1034,4 +1055,3 @@ int32 vsid;
     return SUCCEED;
        
 } /* VSdelete */
-

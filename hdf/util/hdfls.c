@@ -18,6 +18,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "hdf.h"
 #include "hfile.h"
+#include "herr.h"
 
 #ifdef MAC
 /* this isn't worth putting in hdfi.h */
@@ -39,8 +40,7 @@ intn
     debug    = FALSE,        /* Debugging is off by default */
     sort     = TRUE,         /* Sorting is on by default */
     longout  = FALSE,        /* short output by default */
-    labels   = FALSE,        /* no label info by default */
-    special  = FALSE;        /* no special info by default */
+    labels   = FALSE;        /* no label info by default */
 uint16  only_tag = DFTAG_NULL;  /* by default print info about all tags */
 
 char * file_name;    /* name of current file being listed */
@@ -50,7 +50,7 @@ int compare
 int main
   PROTO((int, char **));
 int lprint
-  PROTO((int32, dd_t *, int));
+  PROTO((dd_t *, int));
 
 #ifdef PROTOTYPE
 int compare(const VOID * aa, const VOID * bb)
@@ -59,8 +59,8 @@ int compare(aa, bb)
 const VOIDP aa, bb;
 #endif /* PROTOTYPE */
 {
-    const dd_t *a = (const dd_t *) aa;
-    const dd_t *b = (const dd_t *) bb;
+    dd_t *a = (dd_t *) aa;
+    dd_t *b = (dd_t *) bb;
     
     if(a->tag > b->tag) return(1);
     if(a->tag < b->tag) return(-1);
@@ -70,9 +70,9 @@ const VOIDP aa, bb;
 }
 
 #ifdef PROTOTYPE
-int main(int argc, char *argv[])
+main(int argc, char *argv[])
 #else
-int main(argc, argv)
+main(argc, argv)
 int argc;
 char *argv[];
 #endif /* PROTOTYPE */
@@ -82,21 +82,16 @@ char *argv[];
     
     while((i < argc) && (argv[i][0]=='-')){
         switch(argv[i][1]) {
-        case 'o':                 /* give non ordered output */
-            sort = FALSE;
+        case 'o':
+            sort = 0;
             break;
-        case 'd':                 /* go into debugging mode */
+        case 'd':
             debug = TRUE;
             break;
-        case 'v':                 /* print labels for elements */
+        case 'v':
             labels = TRUE;
-            longout = TRUE;
-            break;
-        case 'l':                 /* give long output */
-            longout = TRUE;
-            break;
-        case 's':                 /* give info on special elements */
-            special = TRUE;
+            /* fall through... */
+        case 'l':
             longout = TRUE;
             break;
         case 't' :
@@ -130,7 +125,6 @@ char *argv[];
         printf("          For example '%s -t 700 foo.hdf' \n", argv[0]);
         printf("          will list information only about Scientific Data\n");
         printf("          Groups.\n");
-        printf("    -s: Give detailed descriptions of \"special elements\"\n");
         exit (1);
     }
     
@@ -179,7 +173,7 @@ char *argv[];
 	
 	if (sort) qsort( (char *)desc, n, sizeof(dd_t), compare);
 	
-	lprint(fid, desc, n);
+	lprint(desc, n);
         
 	if(Hendaccess(aid) == FAIL) {
             HEprint(stderr, 0);
@@ -196,116 +190,87 @@ char *argv[];
 }
 
 #ifdef PROTOTYPE
-int lprint(int32 fid, dd_t *desc, int num)
+int lprint(dd_t *desc, int num)
 #else
-int lprint(fid, desc, num)
-int32 fid;
+int lprint(desc, num)
 dd_t  *desc;
 int num;
 #endif /* PROTOTYPE */
 {
-    sp_info_block_t info;
-    
-    intn j = 0, empty = 0, status;
-    uint16 prev = 0;
-    int32 len;
-    char *name, *label_str;
-    
-    while (j <num) {
-        if (desc[j].tag == DFTAG_NULL) {
-            empty++;
-            j++;
-            continue;               /* don't print anything now */
-        }
-        
-        /* 
-         * skip this tag if the user only wants to see some tags and
-         *  this is not one of them 
-         */
-        if(only_tag != DFTAG_NULL && only_tag != desc[j].tag) {
-            j++;
-            continue;
-        }
-        
-        /*
-         ** Find and print text description of this tag
-         */
-        name = (char *) HDgettagname(desc[j].tag);
-        if(!name) name = "Unknown Tag";
-        printf("\n%-30s: (tag %d)\n", name, desc[j].tag);
-        
-        /*
-         ** Print out reference number information
-         */
-        prev = desc[j].tag;
-        if(longout) {
-            while (desc[j].tag == prev && j < num) {
-                printf("\tRef no %6d\t%8ld bytes\n", desc[j].ref, desc[j].length);
-                
-                /* print out labels and annotations if desired */
-                if(labels) {
-                    /* read in all of the labels */
-                    len = DFANgetlablen(file_name, prev, desc[j].ref);
-                    if(len != FAIL) {
-                        label_str = (char *) HDgetspace((uint32) len + 1);
-                        status = DFANgetlabel(file_name, prev, desc[j].ref, label_str, len + 1);
-                        label_str[len] = '\0';
-                        if(status == FAIL) 
-                            printf("\t  Unable to read label\n");
-                        else
-                            printf("\t  Label: %s\n", label_str);
-                        HDfreespace(label_str);
-                    }
-                    
-                    /* read in all of the annotations */
-                    len = DFANgetdesclen(file_name, prev, desc[j].ref);
-                    if(len != FAIL) {
-                        label_str = (char *) HDgetspace((uint32) len + 1);
-                        status = DFANgetdesc(file_name, prev, desc[j].ref, label_str, len + 1);
-                        label_str[len] = '\0';
-                        if(status == FAIL) 
-                            printf("\t  Unable to read description\n");
-                        else
-                            printf("\t  Description: %s\n", label_str);
-                        HDfreespace(label_str);
-                    }
-                }
-                /* print out special info if desired */
-                if((special) && (SPECIALTAG(prev))) {
-                    int32 aid, ret; 
-
-                    aid = Hstartread(fid, prev, desc[j].ref);
-                    ret = HDget_special_info(aid, &info);
-                    if((ret == FAIL) || (info.key == FAIL))
-                        continue;
-                    
-                    switch(info.key) {
-                    case SPECIAL_LINKED:
-                        printf("\tLinked Block: first %d  standard %d  per unit %d\n",
-                               info.first_len, info.block_len, info.nblocks);
-                        break;
-                    case SPECIAL_EXT:
-                        printf("\tExternal File: path %s  offset %d\n", 
-                               info.path, info.offset);
-                        break;
-                    default:
-                        printf("\tDo not understand special element type %d\n", info.key);
-                        break;
-                    }
-                    Hendaccess(aid);
-                }
-                j++;
-            }
-        } else {
-            printf("\tRef nos:");
-            while (desc[j].tag == (uint16)prev && j < num) {
-                printf(" %d",desc[j].ref);
-                j++;
-            }
-        }
+  
+  intn j = 0, empty = 0, status;
+  uint16 prev = 0;
+  int32 len;
+  char *name, *label_str;
+  
+  while (j <num) {
+    if (desc[j].tag == DFTAG_NULL) {
+      empty++;
+      j++;
+      continue;               /* don't print anything now */
     }
-    
-    if(empty) printf("\nEmpty (tag %d): %d slots\n", DFTAG_NULL, empty);
-    return 0;
-    
+
+    /* 
+     * skip this tag if the user only wants to see some tags and
+     *  this is not one of them 
+     */
+    if(only_tag != DFTAG_NULL && only_tag != desc[j].tag) {
+        j++;
+        continue;
+    }
+
+    /*
+    ** Find and print text description of this tag
+    */
+    name = HDgettagname(desc[j].tag);
+    if(!name) name = "Unknown Tag";
+    printf("\n%-30s: (tag %d)\n", name, desc[j].tag);
+
+    /*
+    ** Print out reference number information
+    */
+    prev = desc[j].tag;
+    if(longout) {
+      while (desc[j].tag == prev && j < num) {
+	printf("\tRef no %6d\t%8ld bytes\n", desc[j].ref, desc[j].length);
+        if(labels) {
+            /* read in all of the labels */
+            len = DFANgetlablen(file_name, prev, desc[j].ref);
+            if(len != FAIL) {
+                label_str = (char *) HDgetspace((uint32) len + 1);
+                status = DFANgetlabel(file_name, prev, desc[j].ref, label_str, len + 1);
+                label_str[len] = '\0';
+                if(status == FAIL) 
+                    printf("\t  Unable to read label\n");
+                else
+                    printf("\t  Label: %s\n", label_str);
+                HDfreespace(label_str);
+            }
+
+            /* read in all of the annotations */
+            len = DFANgetdesclen(file_name, prev, desc[j].ref);
+            if(len != FAIL) {
+                label_str = (char *) HDgetspace((uint32) len + 1);
+                status = DFANgetdesc(file_name, prev, desc[j].ref, label_str, len + 1);
+                label_str[len] = '\0';
+                if(status == FAIL) 
+                    printf("\t  Unable to read description\n");
+                else
+                    printf("\t  Description: %s\n", label_str);
+                HDfreespace(label_str);
+            }
+        }
+	j++;
+      }
+    } else {
+      printf("\tRef nos:");
+      while (desc[j].tag==(uint16)prev && j<num) {
+	printf(" %d",desc[j].ref);
+	j++;
+      }
+    }
+  }
+  if(empty) printf("\nEmpty (tag %d): %d slots\n", DFTAG_NULL, empty);
+  return 0;
+
 }

@@ -71,12 +71,8 @@ typedef struct DFnsdg_t_hdr	{
     DFnsdgle *nsdg_t;
 }  DFnsdg_t_hdr;
 
-#if defined c_plusplus || defined __cplusplus
-extern "C" {
-#endif /* c_plusplus || __cplusplus */
-
 extern int32 DFSDIopen
-    PROTO((const char _HUGE *filename, int acc_mode));
+    PROTO((char _HUGE *filename, int access));
 
 extern int DFSDIsdginfo
     PROTO((int32 file_id));
@@ -88,15 +84,15 @@ extern int DFSDIclearNT
     PROTO((DFSsdg _HUGE *sdg));
 
 extern int DFSDIgetdata
-    PROTO((const char _HUGE *filename, intn rank, int32 _HUGE maxsizes[], VOIDP data,
+    PROTO((char _HUGE *filename, intn rank, int32 _HUGE maxsizes[], VOIDP data,
                 int isfortran));
 
 extern int DFSDIputdata
-    PROTO((const char _HUGE *filename, intn rank, int32 _HUGE *dimsizes, VOIDP data,
+    PROTO((char _HUGE *filename, intn rank, int32 _HUGE *dimsizes, VOIDP data,
                 int accmode, int isfortran));
 
 extern int DFSDIgetslice
-    PROTO((const char _HUGE *filename, int32 _HUGE winst[], int32 _HUGE windims[], VOIDP data,
+    PROTO((char _HUGE *filename, int32 _HUGE winst[], int32 _HUGE windims[], VOIDP data,
                 int32 _HUGE dims[], int isfortran));
 
 extern int DFSDIputslice
@@ -118,15 +114,10 @@ extern int DFSDIgetwrank
     PROTO((intn _HUGE *rank));
 
 extern int DFSDIsetdimstrs
-    PROTO((int dim, const char _HUGE *label, const char _HUGE *unit, const char _HUGE *format));
+    PROTO((int dim, char _HUGE *label, char _HUGE *unit, char _HUGE *format));
 
 extern int DFSDIsetdatastrs
-    PROTO((const char _HUGE *label, const char _HUGE *unit, const char _HUGE *format,
-            const char _HUGE *coordsys));
-
-#if defined c_plusplus || defined __cplusplus
-}
-#endif /* c_plusplus || __cplusplus */
+    PROTO((char _HUGE *label, char _HUGE *unit, char _HUGE *format,
+            char _HUGE *coordsys));
 
 #endif /*DFSDG*/
-

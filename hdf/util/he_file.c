@@ -126,7 +126,7 @@ int annotate(editor, ann)
 	else
 	    len--;
 	writeToFile(file, buf, len+1);
-	HDfreespace(buf);
+	free(buf);
     }
 
 #ifndef VMS
@@ -136,6 +136,7 @@ int annotate(editor, ann)
      */
     if (editor == NULL)
     {
+        char *getenv();
         editor = getenv("EDITOR");
         if (editor == NULL) editor = "/usr/bin/ex";
     }
@@ -191,7 +192,7 @@ int annotate(editor, ann)
 
     /* clean up
      */
-    HDfreespace(buf);
+    free(buf);
     return ret;
 
 #else
@@ -416,7 +417,7 @@ int writ(file, tag, ref)
 	noFile();
 	return HE_FAIL;
     }
-    if (!HDstrcmp(file, he_file))
+    if (!strcmp(file, he_file))
     {
 	fprintf(stderr,"Cannot write to self.\n");
 	return HE_FAIL;
@@ -572,7 +573,7 @@ int put(template, verbose)
     if ((length <= 0) || (data == NULL)) return HE_FAIL;
     ret = putWithTempl(template, he_currDesc, length, 1, data, length,
 		       verbose);
-    HDfreespace(data);
+    free(data);
 
     return ret;
 }
@@ -661,7 +662,7 @@ int putR8(image, pal, verbose)
     }
     ret = putWithTempl(image, he_currDesc, xdim, ydim, raster, xdim*ydim,
 		       verbose);
-    HDfreespace(raster);
+    free(raster);
     if (ret < 0) return HE_FAIL;
     if (palette != NULL)
     {
@@ -676,7 +677,7 @@ int putR8(image, pal, verbose)
 	}
 	ret = putWithTempl(pal, he_currDesc, xdim, ydim, p,
 			   HE_PALETTE_SZ, verbose);
-	HDfreespace(palette);
+	free(palette);
 	if (ret < 0) return HE_FAIL;
     }
 

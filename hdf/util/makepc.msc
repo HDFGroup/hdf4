@@ -8,9 +8,10 @@
 # * For conditions of distribution and use, see the accompanying             *
 # * hdf/COPYING file.                                                        *
 # *                                                                          *
-# ****************************************************************************
+# ***************************************************************************
 #
 # $Id$
+#
 #
 UTILS = hdf24to8.exe hdfcomp.exe hdfls.exe hdfpack.exe hdfrseq.exe hdftopal.exe \
     hdftor8.exe paltohdf.exe r8tohdf.exe ristosds.exe vcompat.exe vmake.exe \

@@ -14,16 +14,16 @@ XDRFILE		= @XDRFILE@
 HDF_LIB         = @HDF_LIB@
 CSRCS		= array.c attr.c cdf.c dim.c error.c file.c \
 		  globdef.c iarray.c putget.c putgetg.c sharray.c string.c \
-		  var.c xdrposix.c xdrstdio.c hdfsds.c mfsd.c nssdc.c
+		  var.c xdrposix.c xdrstdio.c hdfsds.c mfsd.c
 MANIFEST	= Makefile.in README \
 		  depend \
 		  $(CSRCS) cdftest.c \
 		  alloc.h testout.sav descrip.mms error.h htons.mar \
 		  local_nc.h make.com msoft.mk netcdf.h ntohs.mar \
-		  test_cdf.sav hdfout.sav mfsd.c hdfsds.c hdftest.c nssdc.c
+		  test_cdf.sav hdfout.sav mfsd.c hdfsds.c hdftest.c
 LIBOBJS		= array.o attr.o cdf.o dim.o file.o iarray.o error.o \
 		  globdef.o putget.o putgetg.o sharray.o string.o var.o \
-		  @XDRFILE@.o hdfsds.o mfsd.o nssdc.o
+		  @XDRFILE@.o hdfsds.o mfsd.o
 LIBRARY		= netcdf
 DEBUGLIBRARY	= netcdf_g
 PROFILEDLIBRARY	= netcdf_pg

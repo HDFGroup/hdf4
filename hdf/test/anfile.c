@@ -29,10 +29,10 @@ extern int Verbocity;
 #define MAXLEN_DESC  1000
 
 static int checkannlen
-    PROTO((int32 ret, const char *oldstr, const char *type, int32 testflag));
+    PROTO((int32 ret, char *oldstr, char *type, int32 testflag));
 
 static int checkann
-    PROTO((const char *oldstr, const char *newstr, int32 ret, const char *type, int32 testflag));
+    PROTO((char *oldstr, char *newstr, int32 ret, char *type, int32 testflag));
 
 void test_anfile()
 {
@@ -126,17 +126,17 @@ void test_anfile()
 }
 
 #ifdef PROTOTYPE
-static int checkannlen(int32 ret, const char *oldstr, const char *type, int32 testflag)
+static int checkannlen(int32 ret, char *oldstr, char *type, int32 testflag)
 #else
 static int checkannlen(ret, oldstr, type, testflag)
 int32 ret, testflag;
-const char *oldstr, *type;
+char *oldstr, *type;
 #endif
 {
     if ( (ret >=0) && (ret != (int32)HDstrlen(oldstr)) ) {
         printf("Length of %s is INCORRECT\n", type);
-        printf("It is:  %d\n", (int)ret);
-        printf("It should be: %d\n", (int)HDstrlen(oldstr));
+        printf("It is:  %d\n", ret);
+        printf("It should be: %d\n", HDstrlen(oldstr));
         testflag = FAIL;
         return FAIL;
     }
@@ -144,15 +144,15 @@ const char *oldstr, *type;
 }
 
 #ifdef PROTOTYPE
-static int checkann(const char *oldstr, const char *newstr, int32 ret, const char *type,
+static int checkann(char *oldstr, char *newstr, int32 ret, char *type,
         int32 testflag)
 #else
 static int checkann(oldstr, newstr, ret, type, testflag)
-const char *oldstr, *newstr, *type;
+char *oldstr, *newstr, *type;
 int32 ret, testflag;
 #endif
 {
-    if ( (ret >=0) && (0 != HDstrcmp(oldstr, newstr)) ) {
+    if ( (ret >=0) && (0 != strcmp(oldstr, newstr)) ) {
         printf("%s is INCORRECT.\n", type);
         printf("It is:  %s\n", newstr);
         printf("It should be: %s\n", oldstr);

@@ -18,6 +18,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "hdf.h"
 #include "hfile.h"
+#include "herr.h"
 
 /* Size of the file buffer to copy through */
 #define MAX_FILE_BUF    16384
@@ -41,9 +42,9 @@ VOID usage()
 }   /* end usage() */
 
 #ifdef PROTOTYPE
-int main(int argc, char *argv[])
+main(int argc, char *argv[])
 #else
-int main(argc, argv)
+main(argc, argv)
 int argc;
 char *argv[];
 #endif /* PROTOTYPE */

@@ -18,7 +18,6 @@
 +*/
 
 #ifndef __HERR_H
-#define __HERR_H
 
 /* if these symbols are not provided by the compiler, we'll have to
    fake them.  These are used in HERROR for recording location of
@@ -36,20 +35,25 @@
    Assume that func and file are both stored in static space, or at
    least be not corrupted in the meanwhile. */
 
-#define HERROR(e) HEpush(e, FUNC, __FILE__, __LINE__)
+#define HERROR(e) HEpush((int16)(e), FUNC, __FILE__, __LINE__)
 
 /* HRETURN_ERROR macro, used to facilitate error reporting.  Makes
    same assumptions as HERROR.  IN ADDITION, this macro causes
    a return from the calling routine */
 
-#define HRETURN_ERROR(err, ret_val) {HERROR(err); return(ret_val);}
+#define HRETURN_ERROR(err, ret_val) {HERROR(err); return(ret_val);} 
 
 /* HCLOSE_RETURN_ERROR macro, used to facilitate error reporting.  Makes
    same assumptions as HRETURN_ERROR.  IN ADDITION, this macro causes
    the file specified by the id "fid" to be closed */
 
-#define HCLOSE_RETURN_ERROR(hfid, err, ret_val) {HERROR(err); Hclose(hfid); \
-                                                return(ret_val);}
+#define HCLOSE_RETURN_ERROR(hfid, err, ret_val) {HERROR(err); Hclose(hfid); return(ret_val);} 
+
+#if 0
+/* Clear the error stack */
+extern int32 error_top;
+#define HEclear() { error_top = (int32)0; }
+#endif
 
 /*
 ======================================================================
@@ -59,99 +63,83 @@
    whenever errors are added/deleted from this list.
 ======================================================================
 */
-/* Declare an enumerated type which holds all the valid HDF error codes */
-typedef enum {
-    DFE_NONE=0,         /* special zero, no error */
-    DFE_FNF,            /* File not found */
-    DFE_DENIED,         /* Access to file denied */
-    DFE_ALROPEN,        /* File already open */
-    DFE_TOOMANY,        /* Too Many AID's or files open */
-    DFE_BADNAME,        /* Bad file name on open */
-    DFE_BADACC,         /* Bad file access mode */
-    DFE_BADOPEN,        /* Other open error */
-    DFE_NOTOPEN,        /* File can't be closed 'cause it isn't open */
-    DFE_CANTCLOSE,      /* fclose wouldn't work! */
-    DFE_DFNULL,         /* DF is a null pointer */
-    DFE_ILLTYPE,        /* DF has an illegal type: internal error */
-    DFE_UNSUPPORTED,    /* Feature not currently supported */
-    DFE_BADDDLIST,      /* The DD list is non,existent: internal error */
-    DFE_NOTDFFILE,      /* This is not a DF file and it is not 0 length */
-    DFE_SEEDTWICE,      /* The DD list already seeded: internal error */
-    DFE_NOSPACE,        /* Malloc failed */
-    DFE_NOSUCHTAG,      /* No such tag in the file: search failed */
-    DFE_READERROR,      /* There was a read error */
-    DFE_WRITEERROR,     /* There was a write error */
-    DFE_SEEKERROR,      /* There was a seek error */
-    DFE_NOFREEDD,       /* There are no free DD's left: internal error */
-    DFE_BADTAG,         /* illegal WILDCARD tag */
-    DFE_BADREF,         /* illegal WILDCARD reference # */
-    DFE_RDONLY,         /* The DF is read only */
-    DFE_BADCALL,        /* Calls in wrong order */
-    DFE_BADPTR,         /* NULL ptr argument */
-    DFE_BADLEN,         /* Invalid len specified */
-    DFE_BADSEEK,        /* Attempt to seek past end of element */
-    DFE_NOMATCH,        /* No (more) DDs which match specified tag/ref */
-    DFE_NOTINSET,       /* Warning: Set contained unknown tag: ignored */
-    DFE_BADDIM,         /* negative or zero dimensions specified */
-    DFE_BADOFFSET,      /* Illegal offset specified */
-    DFE_BADSCHEME,      /* Unknown compression scheme specified */
-    DFE_NODIM,          /* No dimension record associated with image */
-    DFE_NOTENOUGH,      /* space provided insufficient for size of data */
-    DFE_NOVALS,         /* Values not available */
-    DFE_CORRUPT,        /* File is corrupted */
-    DFE_BADFP,          /* File contained an illegal floating point num */
-    DFE_NOREF,          /* no more reference numbers are available */
-    DFE_BADDATATYPE,    /* unknown or unavailable data type specified */
-    DFE_BADMCTYPE,      /* unknown or unavailable machine type specified */
-    DFE_BADNUMTYPE,     /* unknown or unavailable number type specified */
-    DFE_BADORDER,       /* unknown or illegal array order specified */
-    DFE_ARGS,           /* bad arguments to routine */
-    DFE_INTERNAL,       /* serious internal error */
-    DFE_DUPDD,          /* the new tag/ref is already used */
-    DFE_CANTMOD,        /* old element not exist, cannot modify */
-    DFE_RANGE,          /* improper range for attempted acess */
-    DFE_BADTABLE,       /* the nsdg table is wrong   */
-    DFE_BADSDG,         /* error processing an sdg    */
-    DFE_BADNDG,         /* error processing an ndg     */
-    DFE_BADFIELDS,      /* Bad fields string passed to Vset routine */
-    DFE_NORESET,        /* Too late to modify this value */
-    DFE_NOVS,           /* Counldn't find VS in file */
-    DFE_VGSIZE,         /* Too many elements in VGroup */
-    DFE_DIFFFILES,      /* Attempt to merge objs in diff files */
-    DFE_VTAB,           /* Elmt not in vtab[] */
-    DFE_BADAID,         /* Got a bogus aid */
-    DFE_OPENAID,        /* There are still active AIDs */
-    DFE_BADCONV,        /* Don't know how to convert data type */
-    DFE_GENAPP,         /* Generic application,level error */
-    DFE_CANTFLUSH,      /* Can't flush DD back to file */
-    DFE_BADTYPE,        /* Incompatible types specified */
-    DFE_SYMSIZE,        /* Too many symbols in users table */
-    DFE_BADATTACH,      /* Cannot write to a previously attached VData */
-    DFE_CANTDETACH,     /* Cannot detach a VData with access 'w' */
-    DFE_CANTUPDATE,     /* Cannot update the DD block */
-    DFE_CANTHASH,       /* Cannot add a DD to the hash table */
-    DFE_CANTDELDD,      /* Cannot delete a DD in the file */
-    DFE_CANTDELHASH,    /* Cannot delete a DD from the hash table */
-    DFE_BADMODEL,       /* Invalid compression model specified */
-    DFE_BADCODER,       /* Invalid compression encoder specified */
-    DFE_MODEL,          /* Error in modeling layer of compression */
-    DFE_CODER,          /* Error in encoding layer of compression */
-    DFE_CINIT,          /* Error in encoding initialization */
-    DFE_CDECODE,        /* Error in decoding compressed data */
-    DFE_CENCODE,        /* Error in encoding compressed data */
-    DFE_CTERM,          /* Error in encoding termination */
-    DFE_CSEEK,          /* Error seekging in encoded dataset */
-    DFE_MINIT,          /* Error in modeling initialization */
-    DFE_COMPINFO,       /* Invalid compression header */
-    DFE_BADRIG,         /* Error processing a RIG */
-    DFE_PUTELEM,        /* Hputelement failed in some way */
-    DFE_GETELEM,        /* Hgetelement failed in some way */
-    DFE_BADGROUP,       /* Error from DFdiread in opening a group */
-    DFE_GROUPSETUP,     /* Error from DFdisetup in opening a group */
-    DFE_PUTGROUP,       /* Error when putting a tag/ref into a group */
-    DFE_CANTCOMP,       /* Can't compress an object */
-    DFE_CANTDECOMP      /* Can't de-compress an object */
-} hdf_err_code_t;
+#define DFE_NONE        0   /* special zero, no error */
+#define DFE_FNF         -1  /* File not found */
+#define DFE_DENIED      -2  /* Access to file denied */
+#define DFE_ALROPEN     -3  /* File already open */
+#define DFE_TOOMANY     -4  /* Too Many AID's or files open */
+#define DFE_BADNAME     -5  /* Bad file name on open */
+#define DFE_BADACC      -6  /* Bad file access mode */
+#define DFE_BADOPEN     -7  /* Other open error */
+#define DFE_NOTOPEN     -8  /* File can't be closed 'cause it isn't open */
+#define DFE_CANTCLOSE   -9  /* fclose wouldn't work! */
+#define DFE_DFNULL      -10 /* DF is a null pointer */
+#define DFE_ILLTYPE     -11 /* DF has an illegal type: internal error */
+#define DFE_UNSUPPORTED -12 /* Feature not currently supported */
+#define DFE_BADDDLIST   -13 /* The DD list is non-existent: internal error */
+#define DFE_NOTDFFILE   -14 /* This is not a DF file and it is not 0 length */
+#define DFE_SEEDTWICE   -15 /* The DD list already seeded: internal error */
+#define DFE_NOSPACE     -16 /* Malloc failed */
+#define DFE_NOSUCHTAG   -17 /* No such tag in the file: search failed */
+#define DFE_READERROR   -18 /* There was a read error */
+#define DFE_WRITEERROR  -19 /* There was a write error */
+#define DFE_SEEKERROR   -20 /* There was a seek error */
+#define DFE_NOFREEDD    -21 /* There are no free DD's left: internal error */
+#define DFE_BADTAG      -22 /* illegal WILDCARD tag */
+#define DFE_BADREF      -23 /* illegal WILDCARD reference # */
+#define DFE_RDONLY      -24 /* The DF is read only */
+#define DFE_BADCALL     -25 /* Calls in wrong order */
+#define DFE_BADPTR      -26 /* NULL ptr argument */
+#define DFE_BADLEN      -27 /* Invalid len specified */
+#define DFE_BADSEEK     -28 /* Attempt to seek past end of element */
+#define DFE_NOMATCH     -29 /* No (more) DDs which match specified tag/ref */
+#define DFE_NOTINSET    -30 /* Warning: Set contained unknown tag: ignored */
+#define DFE_BADDIM      -31 /* negative or zero dimensions specified */
+#define DFE_BADOFFSET   -32 /* Illegal offset specified */
+#define DFE_BADSCHEME   -33 /* Unknown compression scheme specified */
+#define DFE_NODIM       -34 /* No dimension record associated with image */
+#define DFE_NOTENOUGH   -35 /* space provided insufficient for size of data */
+#define DFE_NOVALS      -36 /* Values not available */
+#define DFE_CORRUPT     -37 /* File is corrupted */
+#define DFE_BADFP       -38 /* File contained an illegal floating point num */
+#define DFE_NOREF       -39 /* no more reference numbers are available */
+#define DFE_BADDATATYPE -40 /* unknown or unavailable data type specified */
+#define DFE_BADMCTYPE   -41 /* unknown or unavailable machine type specified */
+#define DFE_BADNUMTYPE  -42 /* unknown or unavailable number type specified */
+#define DFE_BADORDER    -43 /* unknown or illegal array order specified */
+#define DFE_ARGS        -44 /* bad arguments to routine */
+#define DFE_INTERNAL    -45 /* serious internal error */
+#define DFE_DUPDD       -46 /* the new tag/ref is already used */
+#define DFE_CANTMOD     -47 /* old element not exist, cannot modify */
+#define DFE_RANGE       -48 /* improper range for attempted acess */
+#define DFE_BADTABLE    -49 /* the nsdg table is wrong   */
+#define DFE_BADSDG      -50 /* error processing an sdg    */
+#define DFE_BADNDG      -51 /* error processing an ndg     */
+#define DFE_BADFIELDS   -52 /* Bad fields string passed to Vset routine */
+#define DFE_NORESET     -53 /* Too late to modify this value */
+#define DFE_NOVS        -54 /* Counldn't find VS in file */
+#define DFE_VGSIZE      -55 /* Too many elements in VGroup */
+#define DFE_DIFFFILES   -56 /* Attempt to merge objs in diff files */
+#define DFE_VTAB        -57 /* Elmt not in vtab[] */
+#define DFE_BADAID      -58 /* Got a bogus aid */
+#define DFE_OPENAID     -59 /* There are still active AIDs */
+#define DFE_BADCONV     -60 /* Don't know how to convert data type */
+#define DFE_GENAPP      -61 /* Generic application-level error */
+#define DFE_CANTFLUSH   -62 /* Can't flush DD back to file */
+#define DFE_BADTYPE     -63 /* Incompatible types specified */
+#define DFE_SYMSIZE     -64 /* Too many symbols in users table */
+#define DFE_BADATTACH   -65 /* Cannot write to a previously attached VData */
+#define DFE_CANTDETACH  -66 /* Cannot detach a VData with access 'w' */
+#define DFE_CANTUPDATE  -67 /* Cannot update the DD block */
+#define DFE_CANTHASH    -68 /* Cannot add a DD to the hash table */
+#define DFE_CANTDELDD   -69 /* Cannot delete a DD in the file */
+#define DFE_CANTDELHASH -70 /* Cannot delete a DD from the hash table */
+#define DFE_BADMODEL    -71 /* Invalid compression model specified */
+#define DFE_BADCODER    -72 /* Invalid compression encoder specified */
+#define DFE_MODEL       -73 /* Error in modeling layer of compression */
+#define DFE_CODER       -74 /* Error in encoding layer of compression */
+#define DFE_CINIT       -75 /* Error in encoding initialization */
+#define DFE_CDECODE     -76 /* Error in decoding compressed data */
 
 #ifdef _H_ERR_MASTER_
 
@@ -160,11 +148,11 @@ typedef enum {
    required but efficiency should be okay. */
 
 typedef struct error_messages_t {
-    hdf_err_code_t error_code;
-    const char *str;
+    int16 error_code;
+    char *str;
 } error_messages_t;
 
-PRIVATE const struct error_messages_t error_messages[] =
+PRIVATE const error_messages_t error_messages[] =
 {
 { DFE_NONE,         "No error"},
 { DFE_FNF,          "File not found"},
@@ -241,20 +229,7 @@ PRIVATE const struct error_messages_t error_messages[] =
 { DFE_MODEL,        "Error in modeling layer of compression"},
 { DFE_CODER,        "Error in encoding layer of compression"},
 { DFE_CINIT,        "Error in encoding initialization"},
-{ DFE_CDECODE,      "Error in decoding compressed data"},
-{ DFE_CENCODE,      "Error in encoding compressed data"},
-{ DFE_CTERM,        "Error in encoding termination"},
-{ DFE_CSEEK,        "Error seekging in encoded dataset"},
-{ DFE_MINIT,        "Error in modeling initialization"},
-{ DFE_COMPINFO,     "Invalid compression header"},
-{ DFE_BADRIG,       "Error processing a RIG"},
-{ DFE_PUTELEM,      "Hputelement failed in some way"},
-{ DFE_GETELEM,      "Hgetelement failed in some way"},
-{ DFE_BADGROUP,     "Error from DFdiread in opening a group"},
-{ DFE_GROUPSETUP,   "Error from DFdisetup in opening a group"},
-{ DFE_PUTGROUP,     "Error when putting a tag/ref into a group"},
-{ DFE_CANTCOMP,     "Can't compress an object"},
-{ DFE_CANTDECOMP,   "Can't de-compress an object"}
+{ DFE_CDECODE,      "Error in decoding compressed data"}
 };
 #endif /* _H_ERR_MASTER_ */
 

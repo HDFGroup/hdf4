@@ -42,7 +42,7 @@ static char RcsId[] = "@(#)$Revision$";
  * Name:    hiopen
  * Purpose: call Hopen to open HDF file
  * Inputs:  name: name of file to open
- *          acc_mode: access mode - integer with value DFACC_READ etc. 
+ *          access: access mode - integer with value DFACC_READ etc. 
  *          defdds: default number of DDs per header block
  *          namelen: length of name
  * Returns: 0 on success, -1 on failure with error set
@@ -53,11 +53,11 @@ static char RcsId[] = "@(#)$Revision$";
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-nhiopen(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
+nhiopen(_fcd name, intf *access, intf *defdds, intf *namelen)
 #else
-nhiopen(name, acc_mode, defdds, namelen)
+nhiopen(name, access, defdds, namelen)
     _fcd name;
-    intf *acc_mode;
+    intf *access;
     intf *defdds;
     intf *namelen;
 #endif /* PROTOTYPE */
@@ -66,7 +66,7 @@ nhiopen(name, acc_mode, defdds, namelen)
     intf ret;
     
     fn = HDf2cstring(name, (intn)*namelen);
-    ret = (intf) Hopen(fn, (intn)*acc_mode, (int16)*defdds);
+    ret = (intf) Hopen(fn, (intn)*access, (int16)*defdds);
     HDfreespace(fn);
     return(ret);
 }

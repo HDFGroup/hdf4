@@ -13,6 +13,7 @@
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
+
 /* $Id$ */
 
 /*****************************************************************************
@@ -49,7 +50,7 @@ static char RcsId[] = "@(#)$Revision$";
 ** to scanattrs.
 **
 */
-#if defined(macintosh) | defined(THINK_C) | defined(DMEM) /* Dynamic memory */
+#if defined(macintosh) | defined(THINK_C)
 PRIVATE char** 	symptr = NULL; /* array of ptrs to tokens  ?*/
 PRIVATE char**  sym = NULL;    /* array of tokens ? */
 #else  /* !macintosh */
@@ -59,43 +60,41 @@ PRIVATE char    sym[50][FIELDNAMELENMAX+1]; /* array of tokens ? */
 PRIVATE	intn 	nsym;   /* token index ? */
 
 #ifdef PROTOTYPE
-int32 scanattrs (const char *attrs, int32 *attrc, char ***attrv)
+int32 scanattrs (char *attrs, int32 *attrc, char ***attrv)
 #else
 int32 scanattrs (attrs,attrc,attrv)
 
-     const char	*attrs;		/* field string (input) */
+     char	*attrs;		/* field string (input) */
      int32	*attrc;		/* # of fields (output) */
      char	***attrv;	/* array of char ptrs to fields (output) */
 #endif
      
 {
     register char   *s, *s0, *ss;
-    register intn   slen, len;
-    CONSTR(FUNC,"scanattrs");
+    register intn   i, slen, len;
+    char * FUNC = "scanattrs";
     char * saved_string = (char *) HDstrdup(attrs);
     
-#if defined(macintosh) | defined(THINK_C) | defined(DMEM) /* Dynamic memory */
-    register intn   i;
-    
+#if defined(macintosh) | defined(THINK_C)
     /* Lets allocate space for ptrs to tokens and tokens */
     if (symptr == NULL) {
         symptr = (char **)HDgetspace(50 * sizeof(char *));
         if (symptr == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
-    }   
-
+    }
+    
     if (sym == NULL) {
         sym = (char **)HDgetspace(50 * sizeof(char *));
         if (sym == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
         
-        for (i = 0; i < 50; i++)  {
-            sym[i] = (char *)HDgetspace(sizeof(char) * (FIELDNAMELENMAX + 1));
-            if (sym[i] == NULL)
-                HRETURN_ERROR(DFE_NOSPACE, FAIL);
-        }
+        for (i = 0; i < 50; i++)
+            {
+                sym[i] = (char *)HDgetspace(sizeof(char) * (FIELDNAMELENMAX + 1));
+                if (sym[i] == NULL)
+                    HRETURN_ERROR(DFE_NOSPACE, FAIL);
+            }
     }
-    
 #endif /* macintosh */
     
     s = saved_string;
