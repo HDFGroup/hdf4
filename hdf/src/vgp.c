@@ -1448,14 +1448,10 @@ done:
 int32
 Vaddtagref(int32 vkey, int32 tag, int32 ref)
 {
-    int32       n;
     vginstance_t *v;
     VGROUP     *vg;
     int32      ret_value = SUCCEED;
-#ifdef NO_DUPLICATES
-    int32       i;
-    uint16      ttag, rref;
-#endif
+    intn       i;
     CONSTR(FUNC, "Vaddtagref");
 
 #ifdef HAVE_PABLO
@@ -1473,21 +1469,12 @@ Vaddtagref(int32 vkey, int32 tag, int32 ref)
     if (vg == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-#ifdef NO_DUPLICATES
     /* make sure doesn't already exist in the Vgroup */
-    ttag = (uint16) tag;
-    rref = (uint16) ref;
     for (i = 0; i < vg->nvelt; i++)
-        if ((ttag == vg->tag[i]) && (rref == vg->ref[i]))
-          {
-            ret_value = (FAIL);  /* exists */
-            goto done;
-          }
-#endif /* NO_DUPLICATES */
+        if ((tag == vg->tag[i]) && (ref == vg->ref[i]))
+            HGOTO_DONE(vg->nvelt);
 
-    n = vinsertpair(vg, (uint16) tag, (uint16) ref);
-
-    ret_value = (n);
+    ret_value = vinsertpair(vg, (uint16) tag, (uint16) ref);
 
 done:
   if(ret_value == FAIL)   
