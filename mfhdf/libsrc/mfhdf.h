@@ -505,6 +505,7 @@ HDFLIBAPI intn SDsetchunkcache
 #   define nscscompress  FNAME(SCSCOMPRESS)
 #   define nsfsnbit      FNAME(SFSNBIT)
 #   define nsfsblsz      FNAME(SFSBLSZ)
+#   define nscchempty    FNAME(SCCHEMPTY)
 # else /* Fortran PowerStation */
 #   define nscstart    FNAME(SCSTART)
 #   define nscend      FNAME(SCEND)
@@ -563,6 +564,7 @@ HDFLIBAPI intn SDsetchunkcache
 #   define nscsblsz      FNAME(SCSBLSZ)
 #   define nscselct      FNAME(SCSELCT)
 #   define nscr2idx      FNAME(SCR2IDX)
+#   define nscchempty    FNAME(SCCHEMPTY)
 #  endif   /* Fortran PowerStation */
 #else   /* DF_CAPFNAMES */
 # if defined(UNIX386) || (!(defined INTEL86) && !(defined WIN32))
@@ -622,6 +624,7 @@ HDFLIBAPI intn SDsetchunkcache
 #   define nscscompress  FNAME(scscompress)
 #   define nsfsnbit      FNAME(sfsnbit)
 #   define nsfsblsz      FNAME(sfsblsz)
+#   define nscchempty    FNAME(scchempty)
 #  else /* Powerstation */
 #   define nscstart    FNAME(scstart)
 #   define nscend      FNAME(scend)
@@ -679,6 +682,7 @@ HDFLIBAPI intn SDsetchunkcache
 #   define nscsblsz      FNAME(scsblsz)
 #   define nscselct      FNAME(scselct)
 #   define nscr2idx      FNAME(scr2idx)
+#   define nscchempty    FNAME(scchempty)
 # endif /* powerstation  */
 #endif /* capital */
 #endif /* MFSD_FNAMES */
