@@ -1,3 +1,6 @@
+For bugs fixed in the current release see RELEASE.txt file
+For bugs fixed in all releases after HDF4.2r0-Beta see HISTORY.txt file.
+
 HDF4.2r0-Beta
 ========
 1. "hdp dumpgr" and "hdp dumpsds" have two new options:
