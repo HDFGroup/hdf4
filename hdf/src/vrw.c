@@ -331,11 +331,7 @@ VSread(int32 vkey,       /* IN: vdata key */
             /* CASE  (E): Only a single field in the Vdata */
             if (w->n == 1)
               {
-                  b1 = Src;
-                  b2 = Vtbuf;
-                  DFKsetNT((int32)w->type[0]);
-
-                  DFKnumin(b2, b1, (uint32) w->order[0] * (uint32)chunk, 0, 0);
+                  DFKconvert(Vtbuf,Src,w->type[0], (uint32) w->order[0] * (uint32)chunk, DFACC_READ, 0, 0);
               }     /* case (e) */
             /* ----------------------------------------------------------------- */
             /* CASE  (C):  iu=full, iv=full */
@@ -352,10 +348,9 @@ VSread(int32 vkey,       /* IN: vdata key */
                         isize = (intn)w->isize[i];
                         order = (intn)w->order[i];
 
-                        DFKsetNT(type);
                         for (index = 0; index < order; index++)
                           {
-                              DFKnumin(b2, b1, (uint32) chunk, (uint32) hsize, (uint32) uvsize);
+                              DFKconvert(b2, b1, type, (uint32) chunk, DFACC_READ, (uint32) hsize, (uint32) uvsize);
                               b1 += (int) esize / order;
                               b2 += (int) isize / order;
                           }
@@ -411,10 +406,9 @@ VSread(int32 vkey,       /* IN: vdata key */
                     esize = (intn)w->esize[i];
                     order = (intn)w->order[i];
 
-                    DFKsetNT(type);
                     for (index = 0; index < order; index++)
                       {
-                          DFKnumin(b2, b1, (uint32) nelt, (uint32) hsize, (uint32) esize);
+                          DFKconvert(b2, b1, type, (uint32) nelt, DFACC_READ, (uint32) hsize, (uint32) esize);
                           b2 += isize / order;
                           b1 += esize / order;
                       }
@@ -436,10 +430,9 @@ VSread(int32 vkey,       /* IN: vdata key */
                     isize = (intn)w->isize[i];
                     order = (intn)w->order[i];
 
-                    DFKsetNT(type);
                     for (index = 0; index < order; index++)
                       {
-                          DFKnumin(b2, b1, (uint32) nelt, (uint32) isize, (uint32) esize);
+                          DFKconvert(b2, b1, type, (uint32) nelt, DFACC_READ, (uint32) isize, (uint32) esize);
                           b1 += esize / order;
                           b2 += isize / order;
                       }
@@ -466,10 +459,9 @@ VSread(int32 vkey,       /* IN: vdata key */
                     esize = (intn)w->esize[i];
                     order = (intn)w->order[i];
 
-                    DFKsetNT(type);
                     for (index = 0; index < order; index++)
                       {
-                          DFKnumin(b2, b1, (uint32) nelt, (uint32) isize, (uint32) uvsize);
+                          DFKconvert(b2, b1, type, (uint32) nelt, DFACC_READ, (uint32) isize, (uint32) uvsize);
                           b1 += esize / order;
                           b2 += isize / order;
                       }
@@ -695,10 +687,9 @@ VSwrite(int32 vkey,         /* IN: vdata key */
                       isize = (intn)w->isize[j];
                       order = (intn)w->order[j];
 
-                      DFKsetNT(type);
                       for (index = 0; index < order; index++)
                         {
-                            DFKnumout(src, dest, (uint32) chunk, (uint32) int_size, (uint32) hdf_size);
+                            DFKconvert((VOIDP)src, dest, type, (uint32) chunk, DFACC_WRITE, (uint32) int_size, (uint32) hdf_size);
                             dest += isize / order;
                             src += esize / order;
                         }
@@ -751,13 +742,11 @@ VSwrite(int32 vkey,         /* IN: vdata key */
 		      isize = (intn)w->isize[j];
 		      order = (intn)w->order[j];
 
-		      DFKsetNT(type);
-		      for (index = 0; index < order; index++)
-			{
-			    DFKnumout(src, dest, (uint32) nelt, (uint32) esize, (uint32) hdf_size);
+		      for (index = 0; index < order; index++) {
+			    DFKconvert((VOIDP)src, dest, type, (uint32) nelt, DFACC_WRITE, (uint32) esize, (uint32) hdf_size);
 			    src += esize / order;
 			    dest += isize / order;
-			}
+			  }
 		      src += ((nelt - 1) * esize);
 		  }
 
@@ -777,13 +766,11 @@ VSwrite(int32 vkey,         /* IN: vdata key */
 		      isize = (intn)w->isize[j];
 		      order = (intn)w->order[j];
 
-		      DFKsetNT(type);
-		      for (index = 0; index < order; index++)
-			{
-			    DFKnumout(src, dest, (uint32) nelt, (uint32) esize, (uint32) isize);
+		      for (index = 0; index < order; index++) {
+			    DFKconvert((VOIDP)src, dest, type, (uint32) nelt, DFACC_WRITE, (uint32) esize, (uint32) isize);
 			    dest += isize / order;
 			    src += esize / order;
-			}
+			  }
 		      src += ((nelt - 1) * esize);
 		  }
 
@@ -803,13 +790,11 @@ VSwrite(int32 vkey,         /* IN: vdata key */
 		      esize = (intn)w->esize[j];
 		      order = (intn)w->order[j];
 
-		      DFKsetNT(type);
-		      for (index = 0; index < order; index++)
-			{
-			    DFKnumout(src, dest, (uint32) nelt, (uint32) int_size, (uint32) isize);
+		      for (index = 0; index < order; index++) {
+			    DFKconvert((VOIDP)src, dest, type, (uint32) nelt, DFACC_WRITE, (uint32) int_size, (uint32) isize);
 			    dest += isize / order;
 			    src += esize / order;
-			}
+  			  }
 		      offset += esize;
 		  }
 	    }	/* case (d) */

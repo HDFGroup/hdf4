@@ -570,6 +570,10 @@ DFKconvert(VOIDP source, VOIDP dest, int32 ntype, int32 num_elm,
 {
     int         ret;
 
+    /* Check args (minimally) */
+    if (source==NULL || dest==NULL)
+        return(-1);
+
     DFKsetNT(ntype);
     if (acc_mode == DFACC_READ)
         ret = DFKnumin(source, dest, (uint32)num_elm, (uint32)source_stride, (uint32)dest_stride);
