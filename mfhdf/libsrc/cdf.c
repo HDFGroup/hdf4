@@ -8,13 +8,14 @@
 #include	"alloc.h"
 #ifdef HDF
 #include    "hfile.h"
+
+extern bool_t  hdf_xdr_cdf
+   PROTO((XDR *xdrs, NC**handlep));
+
 #endif /* HDF */
 
 static bool_t NC_xdr_cdf
     PROTO((XDR *xdrs,NC **handlep));
-
-extern bool_t  hdf_xdr_cdf
-   PROTO((XDR *xdrs, NC**handlep));
 
 #define WRITE_NDG 1
 
