@@ -977,7 +977,12 @@ if [ -z "${norecursion}" -a -n "${configdirs}" ] ; then
                         elif [ -f ${newsrcdir}/configure.in ] ; then
                                 case "${progname}" in
                                 /*)     recprog=${progname} ;;
-                                *)      recprog=../${progname} ;;
+##
+## Changed the way this is handled the default case is to use
+## the top level configure found originaly and not the one found in
+## parent directory
+##                              *)      recprog=../${progname} ;;
+                                *)      recprog=${POPDIR}/${progname} ;;
                                 esac
 			else
 				eval echo No configuration information in ${configdir} ${redirect}
