@@ -139,6 +139,9 @@ all::         FORCE
 	  $(MAKE) $(MFLAGS) $(LOCAL_MACROS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" $(PROGRAM); \
 	fi
 
+debug:  $(PROGRAM)  ../libsrc/libmfhdf.a
+	purify $(CC) $(CFLAGS) $(CFLAGS_NETCDF) $(OBJS) $(LIBS) -o phdp
+
 
 test:	echo "*** there is no testing for $(PROGRAM) ***" ; 
 
