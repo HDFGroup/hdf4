@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.2  1992/07/15 19:36:00  chouck
+# Revision 1.3  1992/07/15 21:39:54  sxu
+# Added _STDC_ to make CONVEX happy.
+#
+# Revision 1.2  1992/07/15  19:36:00  chouck
 # Modified to conform to having a top level Makefile
 #
 # Revision 1.1  1992/07/14  20:08:47  dilg
@@ -35,7 +38,10 @@ MACHINE = SUN
 HDFLIB = ../lib
 HDFINC = ../include
 
-CFLAGS = -D$(MACHINE) -I$(HDFINC)
+CFLAGS = -D$(MACHINE) -I$(INCDIR) -L$(LIBDIR)
+
+# ==> For Convex, specify CFLAGS as follows:
+# CFLAGS=  -g -D$(MACHINE) -I$(INCDIR)  -L$(LIBDIR) -D__STDC__
 
 .c.o: he.h he_proto.h
 	$(CC) -c $(CFLAGS) -I$(HDFINC) $(HDFLIB)/libdf.a $<
