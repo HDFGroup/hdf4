@@ -143,7 +143,7 @@ AC_PROG_CPP
 AC_PROG_CXX
 
 AC_ARG_ENABLE([fortran],
-              [AC_HELP_STRING([--with-fortran],
+              [AC_HELP_STRING([--enable-fortran],
                               [Build Fortran into library [default=yes]])],,
               enableval="yes")
 

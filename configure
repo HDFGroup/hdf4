@@ -877,7 +877,7 @@ Optional Features:
                           (and sometimes confusing) to the casual installer
   --disable-dependency-tracking Speeds up one-time builds
   --enable-dependency-tracking  Do not reject slow dependency extractors
-  --with-fortran          Build Fortran into library [default=yes]
+  --enable-fortran        Build Fortran into library [default=yes]
   --enable-production     Determines how to run the compiler.
 
 Optional Packages:
