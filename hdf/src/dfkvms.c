@@ -831,7 +831,7 @@ uint32 num_elm, source_stride, dest_stride;
  *  the XDR library.
  */
 
-/* How an IEEE double looks */
+/* How an IEEE double looks 
 struct  ieee_double {
     unsigned int   mantissa1 : 20;
     unsigned int   exp       : 11;
@@ -839,7 +839,7 @@ struct  ieee_double {
     unsigned int   mantissa2 : 32;
 };
 
-/* How a Vax double looks */
+   How a Vax double looks 
 struct  vax_double {
     unsigned int    mantissa1 : 7;
     unsigned int    exp       : 8;
@@ -859,11 +859,12 @@ struct dbl_limits {
 };
 
 static struct dbl_limits dbl_lim[2] = {
-    {{ 0x7f,  0xff, 0x0, 0xffff, 0xffff, 0xfff},  /* Max Vax */
-     { 0x0,  0x7ff, 0x0, 0x0 }},                  /* Max IEEE */
-    {{ 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},             /* Min Vax */
-     { 0x0, 0x0, 0x0, 0x0 }}                      /* Min IEEE */
+    {{ 0x7f,  0xff, 0x0, 0xffff, 0xffff, 0xfff},   Max Vax 
+     { 0x0,  0x7ff, 0x0, 0x0 }},                   Max IEEE 
+    {{ 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},              Min Vax 
+     { 0x0, 0x0, 0x0, 0x0 }}                       Min IEEE 
 };
+*/
 
 /************************************************************/
 /* DFKlvi8f()                                                */

@@ -38,7 +38,9 @@
 #define TEST1_luo8f
 #endif
 
+#ifndef VMS
 #define DUFF
+#endif
 #ifdef DUFF
 #define DUFF_sb4b
 
