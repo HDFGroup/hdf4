@@ -31,7 +31,7 @@ C
       integer mgstart, mgfinfo, mgend, mgcreat, mgselct 
       integer mgn2ndx, mggiinf, mgwrimg, mgrdimg, mgendac
       integer mgid2rf, mgr2idx, mgrltil, mgrimil, mggltid
-      integer mgglinf, mgwrlut, mgrdlut
+      integer mgglinf, mgwrlut, mgwclut, mgrdlut, mgrclut
       integer mgsattr, mgatinf, mggattr, mgfndat
       integer mgscatt, mgsnatt, mggcatt, mggnatt
       integer mgwcimg, mgrcimg
@@ -165,8 +165,8 @@ C Store a palette with the image
       call MESSAGE(5,'Writing palette data')
       pal_id = mggltid(ri_id, 0)
       call VERIFY(pal_id,'mggltid',number_failed)
-      ret = mgwrlut(pal_id,3,DFNT_UINT8,MFGR_INTERLACE_PIXEL,256,pal)
-      call VERIFY(ret,'mgwrlut',number_failed)
+      ret = mgwclut(pal_id,3,DFNT_UINT8,MFGR_INTERLACE_PIXEL,256,pal)
+      call VERIFY(ret,'mgwclut',number_failed)
 
 C Store an attribute with the image
       call MESSAGE(5,'Writing attribute data')
@@ -263,12 +263,12 @@ C Check palette reading
       call MESSAGE(5,'Reading palette data')
       ret = mgglinf(pal_id,n_comp,nt,il,i)
       call VERIFY(ret,'mgglinf',number_failed)
-      ret = mgrdlut(pal_id,in_pal)
-      call VERIFY(ret,'mgrdlut',number_failed)
+      ret = mgrclut(pal_id,in_pal)
+      call VERIFY(ret,'mgrclut',number_failed)
       ret = mgrltil(pal_id,MFGR_INTERLACE_COMPONENT)
       call VERIFY(ret,'mgrltil',number_failed)
-      ret = mgrdlut(pal_id,in_pal2)
-      call VERIFY(ret,'mgrdlut',number_failed)
+      ret = mgrclut(pal_id,in_pal2)
+      call VERIFY(ret,'mgrclut',number_failed)
 
 C Check attribute reading
       index = mgfndat(ri_id,ATNAME1)

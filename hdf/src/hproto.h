@@ -2178,7 +2178,9 @@ extern intn ANdestroy(void);
 #  define nmggltid      FNAME(MGGLTID)
 #  define nmgglinf      FNAME(MGGLINF)
 #  define nmgwrlut      FNAME(MGWRLUT)
+#  define nmgwclut      FNAME(MGWCLUT)
 #  define nmgrdlut      FNAME(MGRDLUT)
+#  define nmgrclut      FNAME(MGRCLUT)
 #  define nmgisxfil     FNAME(MGISXFIL)
 #  define nmgssctp      FNAME(MGSACTP)
 #  define nmgiscatt     FNAME(MGISCATT)
@@ -2208,7 +2210,9 @@ extern intn ANdestroy(void);
 #  define nmggltid      FNAME(mggltid)
 #  define nmgglinf      FNAME(mgglinf)
 #  define nmgwrlut      FNAME(mgwrlut)
+#  define nmgwclut      FNAME(mgwclut)
 #  define nmgrdlut      FNAME(mgrdlut)
+#  define nmgrclut      FNAME(mgrclut)
 #  define nmgisxfil     FNAME(mgisxfil)
 #  define nmgssctp      FNAME(mgsactp)
 #  define nmgiscatt     FNAME(mgiscatt)
@@ -2282,7 +2286,13 @@ extern FRETVAL(intf)
 nmgwrlut(intf * lutid, intf *ncomp, intf *nt, intf *il, intf *nentries, VOIDP data);
 
 extern FRETVAL(intf)
+nmgwrlut(intf * lutid, intf *ncomp, intf *nt, intf *il, intf *nentries, _fcd data);
+
+extern FRETVAL(intf)
 nmgrdlut(intf * lutid, VOIDP data);
+
+extern FRETVAL(intf)
+nmgrclut(intf * lutid, _fcd data);
 
 extern FRETVAL(intf)
 nmgisxfil(intf * riid, _fcd filename, intf *offset, intf *nlen);

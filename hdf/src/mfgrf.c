@@ -41,7 +41,9 @@ static char RcsId[] = "@(#)$Revision$";
  *  mggltid:    Call GRgetlutid to get a palette ID for an image
  *  mgglinf:    Call GRgetlutinfo to get information about a palette
  *  mgwrlut:    Call GRwritelut to write a palette to the file
+ *  mgwclut:    Call GRwritelut to write a character palette to the file
  *  mgrdlut:    Call GRreadlut to read a palette from the file
+ *  mgrclut:    Call GRreadlut to read a character palette from the file
  *  mgsxfil:    Call GRsetexternalfile to move an image into an external file
  *  mgsactp:    Call GRsetaccesstype to set the access type for an image
  *  mgscomp:    Call GRsetcompress to compress an image in the file [Later]
@@ -464,6 +466,27 @@ nmgglinf(intf * lutid, intf *ncomp, intf *nt, intf *il, intf *nentries)
 }   /* end mgglinf() */
 
 /*-----------------------------------------------------------------------------
+ * Name:    mgwclut
+ * Purpose: Call GRwritelut to write data into a character palette
+ * Inputs:
+ *      lutid: LUT ID of the image
+ *      ncomp: number of components per palette entry
+ *      nt: number-type of components in palette entry
+ *      il: interlace of components in palette entry
+ *      nentries: number of palette entries
+ *      data: data to write
+ * Returns: SUCCEED on success, FAIL on failure
+ * Users:   HDF Fortran programmers
+ * Invokes: GRwritelut
+ *---------------------------------------------------------------------------*/
+
+FRETVAL(intf)
+nmgwclut(intf * lutid, intf *ncomp, intf *nt, intf *il, intf *nentries, _fcd data)
+{
+    return((intf)GRwritelut((int32)*lutid,(int32)*ncomp,(int32)*nt,(int32)*il,(int32)*nentries,(VOIDP)_fcdtocp(data)));
+}   /* end mgwrlut() */
+
+/*-----------------------------------------------------------------------------
  * Name:    mgwrlut
  * Purpose: Call GRwritelut to write data into a palette
  * Inputs:
@@ -483,6 +506,23 @@ nmgwrlut(intf * lutid, intf *ncomp, intf *nt, intf *il, intf *nentries, VOIDP da
 {
     return((intf)GRwritelut((int32)*lutid,(int32)*ncomp,(int32)*nt,(int32)*il,(int32)*nentries,data));
 }   /* end mgwrlut() */
+
+/*-----------------------------------------------------------------------------
+ * Name:    mgrclut
+ * Purpose: Call GRreadlut to read data from a character palette
+ * Inputs:
+ *      lutid: LUT ID of the image
+ *      data: data to read
+ * Returns: SUCCEED on success, FAIL on failure
+ * Users:   HDF Fortran programmers
+ * Invokes: GRreadlut
+ *---------------------------------------------------------------------------*/
+
+FRETVAL(intf)
+nmgrclut(intf * lutid, _fcd data)
+{
+    return((intf)GRreadlut((int32)*lutid,(VOIDP)_fcdtocp(data)));
+}   /* end mgrclut() */
 
 /*-----------------------------------------------------------------------------
  * Name:    mgrdlut
