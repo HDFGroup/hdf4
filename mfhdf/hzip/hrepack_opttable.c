@@ -40,7 +40,7 @@ void options_table_init( options_table_t **tbl )
  for (i = 0; i < table->size; i++) {
    strcpy(table->objs[i].path,"\0");
    table->objs[i].comp.info  = -1;
-   table->objs[i].comp.type  = -1;
+   table->objs[i].comp.type  = COMP_CODE_NONE;
    table->objs[i].chunk.rank = -1;
   }
  
@@ -84,7 +84,7 @@ int options_add_chunk(obj_list_t *obj_list,int n_objs,int32 *chunk_lengths,
   for (i = table->nelems; i < table->size; i++) {
    strcpy(table->objs[i].path,"\0");
    table->objs[i].comp.info  = -1;
-   table->objs[i].comp.type  = -1;
+   table->objs[i].comp.type  = COMP_CODE_NONE;
    table->objs[i].chunk.rank = -1;
   }
  }
@@ -176,7 +176,7 @@ int options_add_comp(obj_list_t *obj_list,int n_objs,comp_info_t comp,
   for (i = table->nelems; i < table->size; i++) {
    strcpy(table->objs[i].path,"\0");
    table->objs[i].comp.info  = -1;
-   table->objs[i].comp.type  = -1;
+   table->objs[i].comp.type  = COMP_CODE_NONE;
    table->objs[i].chunk.rank = -1;
   }
  }

@@ -401,7 +401,7 @@ int set_szip(int32 rank,
  if (c_info->szip.pixels_per_scanline > MAX_PIXELS_PER_SCANLINE)
  {
   printf("Warning: in SZIP setting, pixels per scanline was set to <%d>, \
-          MAX_PIXELS_PER_SCANLINE\n");
+          MAX_PIXELS_PER_SCANLINE\n",MAX_PIXELS_PER_SCANLINE);
   c_info->szip.pixels_per_scanline = MAX_PIXELS_PER_SCANLINE;
  }
  
@@ -531,7 +531,7 @@ int check_szip_params( int bits_per_pixel,
  
  if (image_pixels % pixels_per_scanline)
  {
-  fprintf(stderr, "Pixels (%d) must be integer multiple of pixels per scanline (%d)\n", 
+  printf("Pixels (%ld) must be integer multiple of pixels per scanline (%d)\n", 
    image_pixels,pixels_per_scanline);
   return -1;
  }
@@ -539,7 +539,7 @@ int check_szip_params( int bits_per_pixel,
 #if 0
  if (pixels_per_scanline % pixels_per_block)
  {
-  fprintf(stderr, "Pixels per scanline (%d) must be an integer multiple of pixels per block (%d)\n", 
+  printf("Pixels per scanline (%d) must be an integer multiple of pixels per block (%d)\n", 
    pixels_per_scanline, pixels_per_block);
   return -1;
  }

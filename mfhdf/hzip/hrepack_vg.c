@@ -101,13 +101,11 @@ void copy_vg(char* infname,
              options_t *options,
              table_t *table)
 {
- int32 status_32,             /* returned status_n for functions returning an int32 */
-       vgroup_id,             /* vg identifier */
+ int32 vgroup_id,             /* vg identifier */
        vgroup_id_out,         /* vg identifier */
        ntagrefs,              /* number of tag/ref pairs in a vgroup */
        *tags,                 /* buffer to hold the tag numbers of vgroups   */
-       *refs,                 /* buffer to hold the ref numbers of vgroups   */
-       vg_index;              /* position of a vgroup in the vgroup  */
+       *refs;                 /* buffer to hold the ref numbers of vgroups   */
  char  vgroup_name [VGNAMELENMAX], vgroup_class[VGNAMELENMAX];
  char  *path=NULL;
  
@@ -118,19 +116,27 @@ void copy_vg(char* infname,
  */
 
  vgroup_id = Vattach (infile_id, ref, "r");
- status_32 = Vgetname (vgroup_id, vgroup_name);
- status_32 = Vgetclass (vgroup_id, vgroup_class);
+ if (Vgetname (vgroup_id, vgroup_name)==FAIL){
+  printf( "Could not get group name\n");
+ }
+ if (Vgetclass (vgroup_id, vgroup_class)==FAIL){
+  printf( "Could not get group class\n");
+ }
  
  /* ignore reserved HDF groups/vdatas */
  if( is_reserved(vgroup_class)){
-  status_32 = Vdetach (vgroup_id);
+  if (Vdetach (vgroup_id)==FAIL){
+   printf( "Could not dettach group\n");
+  }
   return;
  }
  if(vgroup_name != NULL) 
   if(strcmp(vgroup_name,GR_NAME)==0) {
-   status_32 = Vdetach (vgroup_id);
+   if (Vdetach (vgroup_id)==FAIL){
+    printf( "Could not dettach group\n");
+   }
    return;
- }
+  }
   
  /* initialize path */
  path=get_path(path_name,vgroup_name);
@@ -152,11 +158,17 @@ void copy_vg(char* infname,
  * to -1 for creating and the access mode is "w" for writing 
  */
  vgroup_id_out = Vattach (outfile_id, -1, "w");
- status_32     = Vsetname (vgroup_id_out, vgroup_name);
- status_32     = Vsetclass (vgroup_id_out, vgroup_class);
+ if (Vsetname (vgroup_id_out, vgroup_name)==FAIL){
+  printf( "Could not set group name for <%s>\n",path);
+ }
+ if (Vsetclass (vgroup_id_out, vgroup_class)==FAIL){
+  printf( "Could not set group class for <%s>\n",path);
+ }
  
  /* insert the created vgroup into its parent */
- vg_index = Vinsert (vgroup_id_out_par, vgroup_id_out);
+ if (Vinsert (vgroup_id_out_par, vgroup_id_out)==FAIL){
+  printf( "Could not insert group\n");
+ }
  
  /* insert objects for this group */
  ntagrefs  = Vntagrefs(vgroup_id);
@@ -171,8 +183,12 @@ void copy_vg(char* infname,
   free (tags);
   free (refs);
  }
- status_32 = Vdetach (vgroup_id);
- status_32 = Vdetach (vgroup_id_out);
+ if (Vdetach (vgroup_id)==FAIL){
+  printf( "Could not detach group\n");
+ }
+ if (Vdetach (vgroup_id_out)==FAIL){
+  printf( "Could not detach group\n");
+ }
  
  if (path)
   free(path);

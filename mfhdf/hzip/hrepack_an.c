@@ -134,8 +134,7 @@ int copy_an_data(int32 infile_id,
                  char *path, 
                  options_t *options) 
 {
- int32 status_32,
-       an_id,         /* AN interface identifier */
+ int32 an_id,         /* AN interface identifier */
        an_out,        /* AN interface identifier */
        ann_id,        /* an annotation identifier */
        ann_out,       /* an annotation identifier */
@@ -145,6 +144,7 @@ int copy_an_data(int32 infile_id,
        
  char *buf;           /* buffer to hold the read annotation */
  int  is_label= (type==AN_DATA_LABEL)?1:0;
+ int  ret=0;
 
  if ( options->trip==0 ) 
  {
@@ -221,11 +221,17 @@ int copy_an_data(int32 infile_id,
   }
   if (buf) free(buf);
  }
-
+ 
  /* Terminate access to the AN interface */
- status_32 = ANend (an_id);
- status_32 = ANend (an_out);
- return 1;
+ if (ANend (an_id)==FAIL){
+  printf( "Failed close AN for <%s>\n", path);
+  ret=-1;
+ }
+ if (ANend (an_out)==FAIL){
+  printf( "Failed close AN for <%s>\n", path);
+  ret=-1;
+ }
+ return ret;
 }
 
 

@@ -46,7 +46,7 @@ void add_sd (char *fname,
              char* sds_name,          /* sds name */
              int32 vgroup_id,         /* group ID */
              int32 chunk_flags,       /* chunk flags */
-             int32 comp_type,         /* compression flag */
+             comp_coder_t comp_type,  /* compression flag */
              comp_info *c_info        /* compression structure */ );
 
 void add_sd3d(char *fname,
@@ -54,14 +54,14 @@ void add_sd3d(char *fname,
               char* sds_name,          /* sds name */
               int32 vgroup_id,         /* group ID */
               int32 chunk_flags,       /* chunk flags */
-              int32 comp_type,         /* compression flag */
+              comp_coder_t comp_type,  /* compression flag */
               comp_info *c_info        /* compression structure */ );
 
 void add_gr(char* gr_name,           /* gr name */
             int32 file_id,           /* file ID */
             int32 vgroup_id,         /* group ID */
             int32 chunk_flags,       /* chunk flags */
-            int32 comp_type,         /* compression flag */
+            comp_coder_t comp_type,  /* compression flag */
             comp_info *comp_info     /* compression structure */ );
 
 void add_pal(char* fname);

@@ -45,9 +45,7 @@ int copy_vs( int32 infile_id,
              table_t *table,
              int   is_lone)
 {
- intn  status_n;              /* returned status_n for functions returning an intn  */
- int32 status_32,             /* returned status_n for functions returning an int32 */
-       vdata_id,              /* vdata identifier */
+ int32 vdata_id,              /* vdata identifier */
        vdata_out,             /* vdata identifier */
        vdata_ref,             /* reference number of the vdata */
        n_records,             /* number of records */
@@ -72,11 +70,11 @@ int copy_vs( int32 infile_id,
   printf( "Failed to attach vdata ref %d\n", ref);
   return-1;
  }
- if ((status_32 = VSgetname  (vdata_id, vdata_name)) == FAIL ){
+ if (VSgetname  (vdata_id, vdata_name)==FAIL){
   printf( "Failed to name for vdata ref %d\n", ref);
   return-1;
  }
- if ((status_32 = VSgetclass (vdata_id, vdata_class)) == FAIL ){
+ if (VSgetclass (vdata_id, vdata_class)==FAIL){
   printf( "Failed to name for vdata ref %d\n", ref);
   return-1;
  }
@@ -84,7 +82,7 @@ int copy_vs( int32 infile_id,
  /* ignore reserved HDF groups/vdatas; they are lone ones */
  if( is_lone==1 && vdata_class != NULL) {
   if( is_reserved(vdata_class)){
-   if ((status_32 = VSdetach (vdata_id)) == FAIL )
+   if (VSdetach (vdata_id)== FAIL )
     printf( "Failed to detach vdata <%s>\n", path_name);
    return 0;
   }
@@ -107,7 +105,7 @@ int copy_vs( int32 infile_id,
  
  /* check inspection mode */
  if ( options->trip==0 ) {
-  if ((status_32 = VSdetach (vdata_id)) == FAIL )
+  if (VSdetach (vdata_id)==FAIL)
    printf( "Failed to detach vdata <%s>\n", path_name);
   if (path) free(path);
   return 0;
@@ -142,16 +140,16 @@ int copy_vs( int32 infile_id,
  
  if ((vdata_out  = VSattach (outfile_id, -1, "w")) == FAIL) {
   printf( "Failed to create new VS <%s>\n", path);
-  status_32 = VSdetach (vdata_id);
+  VSdetach (vdata_id);
   if (path) free(path);
   return -1;
  }
- if ((status_32 = VSsetname (vdata_out, vdata_name)) == FAIL) {
+ if (VSsetname (vdata_out, vdata_name)== FAIL) {
   printf( "Failed to set name for new VS <%s>\n", path);
   ret=-1;
   goto out;
  }
- if ((status_32 = VSsetclass(vdata_out, vdata_class)) == FAIL) {
+ if (VSsetclass(vdata_out, vdata_class)== FAIL) {
   printf( "Failed to set class for new VS <%s>\n", path);
   ret=-1;
   goto out;
@@ -186,7 +184,7 @@ int copy_vs( int32 infile_id,
  }
  
  /* Set fields */
- if ((status_n = VSsetfields(vdata_out, fieldname_list)) == FAIL) {
+ if (VSsetfields(vdata_out, fieldname_list)==FAIL) {
   printf( "Error: cannot define fields for VS <%s>\n", path);
   ret=-1;
   goto out;
@@ -199,7 +197,7 @@ int copy_vs( int32 infile_id,
  */ 
 
  /* Set fields for reading */
- if ((status_n = VSsetfields(vdata_id, fieldname_list)) == FAIL) {
+ if (VSsetfields(vdata_id, fieldname_list)== FAIL) {
    printf( "Error: cannot define fields for VS <%s>\n", path);
    ret=-1;
    goto out;
@@ -266,7 +264,7 @@ int copy_vs( int32 infile_id,
   }
   
   /* add the VS to the vgroup. the INPUT TAG is used */
-  if ((status_32 = Vaddtagref (vgroup_id_out_par, tag, vdata_ref)) == FAIL) {
+  if (Vaddtagref (vgroup_id_out_par, tag, vdata_ref)== FAIL) {
    printf( "Failed to add new VS to group <%s>\n", path);
   }
  }
@@ -280,8 +278,10 @@ int copy_vs( int32 infile_id,
  
 out:
  /* terminate access to the VSs */
- status_32 = VSdetach (vdata_id);
- status_32 = VSdetach (vdata_out);
+ if (VSdetach (vdata_id)==FAIL||
+     VSdetach (vdata_out)==FAIL){
+  printf( "Could not detach VG in <%s>\n", path);
+ }
  
  if (path)
   free(path);

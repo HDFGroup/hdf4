@@ -183,7 +183,7 @@ void add_gr(char* gr_name,           /* gr name */
             int32 file_id,           /* file ID */
             int32 vgroup_id,         /* group ID */
             int32 chunk_flags,       /* chunk flags */
-            int32 comp_type,         /* compression flag */
+            comp_coder_t comp_type,  /* compression flag */
             comp_info *comp_info     /* compression structure */ )
 {
  int32  gr_id,          /* GR interface identifier */
@@ -368,7 +368,6 @@ void add_gr(char* gr_name,           /* gr name */
 void add_glb_attrs(char *fname,
                    int32 file_id)
 {
- intn  status;                 /* status for functions returning an intn */
  int32 sd_id,                  /* SD interface identifier */
        gr_id;                  /* GR interface identifier */
  uint8 attr_values[2]={1,2};
@@ -383,10 +382,12 @@ void add_glb_attrs(char *fname,
  sd_id  = SDstart (fname, DFACC_WRITE);
 
  /* assign an attribute to the SD */
- status = SDsetattr(sd_id, "MySDgattr", DFNT_UINT8, n_values, (VOIDP)attr_values);
+ if (SDsetattr(sd_id, "MySDgattr", DFNT_UINT8, n_values, (VOIDP)attr_values)==FAIL){
+  printf("Could not set SDS attr\n");
+ }
 
  /* terminate access to the SD interface */
- status = SDend (sd_id);
+ SDend (sd_id);
 
 /*-------------------------------------------------------------------------
  * make GR global attributes
@@ -396,10 +397,12 @@ void add_glb_attrs(char *fname,
  gr_id  = GRstart(file_id);
  
  /* assign an attribute to the GR */
- status = GRsetattr(gr_id, "MyGRgattr", DFNT_UINT8, n_values, (VOIDP)attr_values);
+ if (GRsetattr(gr_id, "MyGRgattr", DFNT_UINT8, n_values, (VOIDP)attr_values)==FAIL){
+  printf("Could not set GR attr\n");
+ }
 
  /* terminate access to the GR interface */
- status = GRend (gr_id);
+ GRend (gr_id);
 }
 
 
@@ -421,9 +424,7 @@ void add_glb_attrs(char *fname,
 
 void add_r8(char* image_file,char *fname,int32 file_id,int32 vgroup_id)
 {
- intn   status_n;       /* returned status_n for functions returning an intn  */
- int32  status_32,      /* returned status_n for functions returning an int32 */
-        ri_ref;         /* reference number of the GR image */
+ int32  ri_ref;         /* reference number of the GR image */
  char   *srcdir = getenv("srcdir"); /* the source directory */
  char   data_file[512]="";          /* buffer to hold name of existing data file */
  
@@ -437,10 +438,14 @@ void add_r8(char* image_file,char *fname,int32 file_id,int32 vgroup_id)
  if ( read_data(data_file)>0)
  {
   /* add a palette */
-  status_n = DFR8setpalette(pal_rgb);
+  if (DFR8setpalette(pal_rgb)==FAIL){
+   printf( "Could not set palette for image\n");
+  }
 
   /* write the image */
-  status_n = DFR8addimage(fname, image_data, X_LENGTH, Y_LENGTH, 0);
+  if (DFR8addimage(fname, image_data, X_LENGTH, Y_LENGTH, 0)==FAIL){
+   printf( "Could not write palette for image\n");
+  }
   
   /* obtain the reference number of the RIS8 */
   ri_ref = DFR8lastref();
@@ -451,7 +456,9 @@ void add_r8(char* image_file,char *fname,int32 file_id,int32 vgroup_id)
   
   /* add the image to the vgroup. the tag DFTAG_RIG is used */
   if (vgroup_id)
-   status_32 = Vaddtagref (vgroup_id, TAG_GRP_IMAGE, ri_ref);
+   if (Vaddtagref (vgroup_id, TAG_GRP_IMAGE, ri_ref)==FAIL){
+   printf( "Could not add image to group\n");
+  }
 
   /* add an annotation and label to the object */
   add_an(file_id, TAG_GRP_IMAGE, ri_ref);
@@ -484,9 +491,7 @@ void add_r8(char* image_file,char *fname,int32 file_id,int32 vgroup_id)
 
 void add_r24(char* image_file,char *fname,int32 file_id,intn il,int32 vgroup_id)
 {
- intn   status_n;       /* returned status_n for functions returning an intn  */
- int32  status_32,      /* returned status_n for functions returning an int32 */
-        ri_ref;         /* reference number of the GR image */
+ int32  ri_ref;         /* reference number of the GR image */
  char   *srcdir = getenv("srcdir"); /* the source directory */
  char   data_file[512]="";          /* buffer to hold name of existing data file */
  
@@ -500,10 +505,14 @@ void add_r24(char* image_file,char *fname,int32 file_id,intn il,int32 vgroup_id)
  if ( read_data(data_file)>0)
  {
   /* set pixel interlace */
-  status_n = DF24setil(il);
+  if (DF24setil(il)==FAIL){
+   printf( "Could not set interlace for image\n");
+  }
 
   /* write the image */
-  status_n = DF24addimage(fname, image_data, X_LENGTH, Y_LENGTH);
+  if (DF24addimage(fname, image_data, X_LENGTH, Y_LENGTH)==FAIL){
+   printf( "Could not write image\n");
+  }
   
   /* obtain the reference number of the RIS24 */
   ri_ref = DF24lastref();
@@ -514,7 +523,9 @@ void add_r24(char* image_file,char *fname,int32 file_id,intn il,int32 vgroup_id)
   
   /* add the image to the vgroup. the tag DFTAG_RIG is used */
   if (vgroup_id)
-   status_32 = Vaddtagref (vgroup_id, TAG_GRP_IMAGE, ri_ref);
+   if (Vaddtagref (vgroup_id, TAG_GRP_IMAGE, ri_ref)==FAIL){
+   printf( "Could not set group for image\n");
+  }
 
   /* add an annotation and label to the object */
   add_an(file_id, TAG_GRP_IMAGE, ri_ref);
@@ -560,7 +571,7 @@ void add_sd(char *fname,             /* file name */
             char* sds_name,          /* sds name */
             int32 vgroup_id,         /* group ID */
             int32 chunk_flags,       /* chunk flags */
-            int32 comp_type,         /* compression flag */
+            comp_coder_t comp_type,  /* compression flag */
             comp_info *comp_info     /* compression structure */ )
 
 {
@@ -787,7 +798,7 @@ void add_sd3d(char *fname,             /* file name */
               char* sds_name,          /* sds name */
               int32 vgroup_id,         /* group ID */
               int32 chunk_flags,       /* chunk flags */
-              int32 comp_type,         /* compression flag */
+              comp_coder_t comp_type,  /* compression flag */
               comp_info *comp_info     /* compression structure */ )
 
 {
@@ -938,12 +949,9 @@ fail:
 
 void add_vs(char* vs_name,int32 file_id,int32 vgroup_id)
 {
- intn    status_n;       /* returned status_n for functions returning an intn  */
- int32   status_32,      /* returned status_n for functions returning an int32 */
-         vdata_ref,      /* reference number of the vdata */
+ int32   vdata_ref,      /* reference number of the vdata */
          vdata_tag,      /* tag number of the vdata */
-         vdata_id,       /* vdata id */
-         num_of_records; /* number of records actually written to vdata */
+         vdata_id;       /* vdata id */
  int32   attr_n_values   = 3; /* number of values in the vdata attribute */
  int32   field_n_values  = 4; /* number of values in the field attribute */
  char    vd_attr[3]      = {'A', 'B', 'C'};/* vdata attribute values*/
@@ -952,23 +960,29 @@ void add_vs(char* vs_name,int32 file_id,int32 vgroup_id)
  int     i;
 
  /* Initialize the VS interface */
- status_n = Vstart (file_id);
+ Vstart (file_id);
  
  /* Create a new vdata, set to -1 to create  */
  vdata_ref = -1,    
  vdata_id = VSattach (file_id, vdata_ref, "w");
  
  /* Set name and class name of the vdata */
- status_32 = VSsetname (vdata_id, vs_name);
- status_32 = VSsetclass (vdata_id, CLASS_NAME);
+ if (VSsetname (vdata_id, vs_name)==FAIL){
+  printf( "Could not set name for VS\n");
+ }
+ if (VSsetclass (vdata_id, CLASS_NAME)==FAIL){
+  printf( "Could not set class for VS\n");
+ }
  
  /* Introduce each field's name, data type, and order */
- status_n = VSfdefine (vdata_id, FIELD1_NAME, DFNT_FLOAT32, ORDER_1 );
- status_n = VSfdefine (vdata_id, FIELD2_NAME, DFNT_FLOAT32, ORDER_2 );
- status_n = VSfdefine (vdata_id, FIELD3_NAME, DFNT_FLOAT32, ORDER_3 );
+ VSfdefine (vdata_id, FIELD1_NAME, DFNT_FLOAT32, ORDER_1 );
+ VSfdefine (vdata_id, FIELD2_NAME, DFNT_FLOAT32, ORDER_2 );
+ VSfdefine (vdata_id, FIELD3_NAME, DFNT_FLOAT32, ORDER_3 );
  
  /* Finalize the definition of the fields */
- status_n = VSsetfields (vdata_id, FIELDNAME_LIST);
+ if (VSsetfields (vdata_id, FIELDNAME_LIST)==FAIL){
+  printf( "Could not set fields for VS\n");
+ }
  
 /* 
  * Buffer the data by the record for fully interlaced mode.  Note that the
@@ -987,16 +1001,21 @@ void add_vs(char* vs_name,int32 file_id,int32 vgroup_id)
  }
  
 /* Write the data from data_buf to the vdata with full interlacing mode */
- num_of_records = VSwrite (vdata_id, (uint8 *)data_buf, N_RECORDS, 
-  FULL_INTERLACE);
+ if (VSwrite (vdata_id, (uint8 *)data_buf, N_RECORDS,FULL_INTERLACE)==FAIL){
+  printf( "Could not write VS\n");
+ }
   
  /* Attach an attribute to the vdata, i.e., indicated by the second parameter */
- status_n = VSsetattr (vdata_id,_HDF_VDATA,"Myattr",DFNT_CHAR,
-  attr_n_values, vd_attr);
+ if (VSsetattr (vdata_id,_HDF_VDATA,"Myattr",DFNT_CHAR,
+  attr_n_values, vd_attr)==FAIL){
+  printf( "Could not set attr for VS\n");
+ }
  
  /* Attach an attribute to the field 0 */
- status_n = VSsetattr (vdata_id, 0, "Myfattr", DFNT_INT32, 
-  field_n_values, fld_attr);
+ if (VSsetattr (vdata_id, 0, "Myfattr", DFNT_INT32, 
+  field_n_values, fld_attr)==FAIL){
+  printf( "Could not set attr for VS\n");
+ }
  
  /* Obtain the tag and ref number of the vdata */
  vdata_tag = VSQuerytag (vdata_id);
@@ -1008,13 +1027,19 @@ void add_vs(char* vs_name,int32 file_id,int32 vgroup_id)
  
  /* add the VS to the vgroup*/
  if (vgroup_id)
-  status_32 = Vaddtagref (vgroup_id, vdata_tag, vdata_ref);
+  if (Vaddtagref (vgroup_id, vdata_tag, vdata_ref)==FAIL){
+  printf( "Could not set group for VS\n");
+ }
  
  /* terminate access to the VSs */
- status_32 = VSdetach (vdata_id);
+ if (VSdetach (vdata_id)==FAIL){
+  printf( "Could not detach VS\n");
+ }
  
  /* Terminate access to the VS interface */
- status_n = Vend (file_id);
+ if (Vend (file_id)==FAIL){
+  printf( "Could not end VS\n");
+ }
 
  /* add an annotation and label to the vdata */
  add_an(file_id, vdata_tag, vdata_ref);
@@ -1043,9 +1068,7 @@ void add_vs(char* vs_name,int32 file_id,int32 vgroup_id)
 
 void add_file_an(int32 file_id)
 {
- intn  status_n;     /* returned status for functions returning an intn  */
- int32 status_32,    /* returned status for functions returning an int32 */
-       an_id,        /* AN interface identifier */
+ int32 an_id,        /* AN interface identifier */
        file_label_id,/* file label identifier */
        file_desc_id, /* file description identifier */
        data_label_id,  /* data label identifier */
@@ -1065,14 +1088,17 @@ void add_file_an(int32 file_id)
  file_label_id = ANcreatef (an_id, AN_FILE_LABEL);
 
  /* Write the annotations to the file label */
- status_32 = ANwriteann (file_label_id,FILE_LABEL_TXT,strlen (FILE_LABEL_TXT));
+ if (ANwriteann (file_label_id,FILE_LABEL_TXT,strlen (FILE_LABEL_TXT))==FAIL){
+  printf( "Could not write AN\n");
+ }
 
  /* Create file description */
  file_desc_id = ANcreatef (an_id, AN_FILE_DESC);
 
  /* Write the annotation to the file description */
- status_32 = ANwriteann (file_desc_id, FILE_DESC_TXT, strlen (FILE_DESC_TXT));
-
+ if (ANwriteann (file_desc_id, FILE_DESC_TXT, strlen (FILE_DESC_TXT))==FAIL){
+  printf( "Could not write AN\n");
+ }
 
 /*-------------------------------------------------------------------------
  * data labels and annotations
@@ -1080,9 +1106,11 @@ void add_file_an(int32 file_id)
  */ 
  
  /* Create a vgroup in the V interface*/
- status_n = Vstart (file_id);
+ Vstart (file_id);
  vgroup_id = Vattach (file_id, -1, "w");
- status_32 = Vsetname (vgroup_id, "an_group");
+ if (Vsetname (vgroup_id, "an_group")==FAIL){
+  printf( "Could not set name for VG\n");
+ }
  
  /* Obtain the tag and ref number of the vgroup */
  vgroup_tag = (uint16) VQuerytag (vgroup_id);
@@ -1092,26 +1120,38 @@ void add_file_an(int32 file_id)
  data_label_id = ANcreate (an_id, vgroup_tag, vgroup_ref, AN_DATA_LABEL);
  
  /* Write the annotation text to the data label */
- status_32 = ANwriteann (data_label_id, DATA_LABEL_TXT, strlen (DATA_LABEL_TXT));
+ if (ANwriteann (data_label_id, DATA_LABEL_TXT, strlen (DATA_LABEL_TXT))==FAIL){
+  printf( "Could not write AN\n");
+ }
  
  /* Create the data description for the vgroup identified by its tag and ref number */
  data_desc_id = ANcreate (an_id, vgroup_tag, vgroup_ref, AN_DATA_DESC);
  
  /* Write the annotation text to the data description */
- status_32 = ANwriteann (data_desc_id, DATA_DESC_TXT, strlen (DATA_DESC_TXT));
+ if (ANwriteann (data_desc_id, DATA_DESC_TXT, strlen (DATA_DESC_TXT))==FAIL){
+  printf( "Could not write AN\n");
+ }
  
  /* Teminate access to the vgroup and to the V interface */
- status_32 = Vdetach (vgroup_id);
- status_n = Vend (file_id);
+ if (Vdetach (vgroup_id)==FAIL){
+  printf( "Could not detach VG\n");
+ }
+ if (Vend (file_id)==FAIL){
+  printf( "Could not end VG\n");
+ }
  
  /* Terminate access to each annotation explicitly */
- status_n = ANendaccess (file_label_id);
- status_n = ANendaccess (file_desc_id);
- status_n = ANendaccess (data_label_id);
- status_n = ANendaccess (data_desc_id);
+ if (ANendaccess (file_label_id)==FAIL||
+     ANendaccess (file_desc_id)==FAIL||
+     ANendaccess (data_label_id)==FAIL||
+     ANendaccess (data_desc_id)==FAIL){
+  printf( "Could not end AN\n");
+ }
  
  /* Terminate access to the AN interface */
- status_32 = ANend (an_id);
+ if (ANend (an_id)==FAIL==FAIL){
+  printf( "Could not end AN\n");
+ }
 }
 
 
@@ -1133,9 +1173,7 @@ void add_file_an(int32 file_id)
 
 void add_an(int32 file_id, int32 tag, int32 ref)
 {
- intn  status_n;     /* returned status for functions returning an intn  */
- int32 status_32,    /* returned status for functions returning an int32 */
-       an_id,        /* AN interface identifier */
+ int32 an_id,        /* AN interface identifier */
        data_label_id,  /* data label identifier */
        data_desc_id;   /* data description identifier */
          
@@ -1164,11 +1202,15 @@ void add_an(int32 file_id, int32 tag, int32 ref)
  }
  
  /* Terminate access to each annotation explicitly */
- status_n = ANendaccess (data_label_id);
- status_n = ANendaccess (data_desc_id);
+ if (ANendaccess (data_label_id)==FAIL||
+     ANendaccess (data_desc_id)==FAIL){
+  printf( "Failed to close AN\n");
+ }
  
  /* Terminate access to the AN interface */
- status_32 = ANend (an_id);
+ if (ANend (an_id)==FAIL){
+  printf( "Failed to close AN\n");
+ }
 }
 
 

@@ -65,14 +65,10 @@ char    *progname;
 
 int main(void)
 {
- intn          status_n;     /* returned status_n for functions returning an intn  */
- int32         status_32,    /* returned status_n for functions returning an int32 */
-               vgroup_ref=-1,/* reference number of the group */
-               vgroup1_id,   /* vgroup identifier */
+ int32         vgroup1_id,   /* vgroup identifier */
                vgroup2_id,   /* vgroup identifier */
                vgroup3_id,   /* vgroup identifier */
                vgroup_img_id,/* vgroup identifier */
-               vg_index,     /* position of a vgroup in the vgroup  */
                file_id;      /* HDF file identifier, same for V interface */
  options_t     options;      /* for hrepack  */ 
  static struct fspec fspec;  /* for hdiff  */ 
@@ -101,7 +97,9 @@ int main(void)
  file_id = Hopen (FILENAME, DFACC_CREATE, 0);
   
  /* initialize the V interface */
- status_n = Vstart (file_id);
+ if (Vstart (file_id)==FAIL){
+  printf( "Could not start VG\n");
+ }
 
 
 /*-------------------------------------------------------------------------
@@ -112,29 +110,43 @@ int main(void)
  /* create the first vgroup.  the vgroup reference number is set
   * to -1 for creating and the access mode is "w" for writing
   */
- vgroup1_id = Vattach (file_id, vgroup_ref, "w");
- status_32  = Vsetname (vgroup1_id, "g1");
+ vgroup1_id = Vattach (file_id, -1, "w");
+ if (Vsetname (vgroup1_id, "g1")==FAIL){
+  printf( "Could not name group\n");
+ }
 
  /* attach an attribute to the vgroup */
- status_n = Vsetattr (vgroup1_id,"Myattr",DFNT_CHAR,attr_n_values,vg_attr);
+ if (Vsetattr (vgroup1_id,"Myattr",DFNT_CHAR,attr_n_values,vg_attr)==FAIL){
+  printf( "Could set group attributes\n");
+ }
  
  /* create the second vgroup */
- vgroup2_id = Vattach (file_id, vgroup_ref, "w");
- status_32  = Vsetname (vgroup2_id, "g2");
+ vgroup2_id = Vattach (file_id, -1, "w");
+ if (Vsetname (vgroup2_id, "g2")==FAIL){
+  printf( "Could not name group\n");
+ }
 
  /* create the 3rd vgroup */
- vgroup3_id = Vattach (file_id, vgroup_ref, "w");
- status_32  = Vsetname (vgroup3_id, "g3");
+ vgroup3_id = Vattach (file_id, -1, "w");
+ if (Vsetname (vgroup3_id, "g3")==FAIL){
+  printf( "Could not name group\n");
+ }
 
  /* insert the second vgroup into the first vgroup using its identifier */
- vg_index = Vinsert (vgroup1_id, vgroup2_id);
+ if (Vinsert (vgroup1_id, vgroup2_id)==FAIL){
+  printf( "Could not insert VG\n");
+ }
 
  /* insert the 3rd vgroup into the 2nd vgroup using its identifier */
- vg_index = Vinsert (vgroup2_id, vgroup3_id);
+ if (Vinsert (vgroup2_id, vgroup3_id)==FAIL){
+  printf( "Could not insert VG\n");
+ }
 
  /* create the 4th vgroup, for images */
- vgroup_img_id = Vattach (file_id, vgroup_ref, "w");
- status_32     = Vsetname (vgroup_img_id, "images");
+ vgroup_img_id = Vattach (file_id, -1, "w");
+ if (Vsetname (vgroup_img_id, "images")==FAIL){
+  printf( "Could not name group\n");
+ }
  
 /*-------------------------------------------------------------------------
  * add some SDS to the file
@@ -258,9 +270,13 @@ int main(void)
  *-------------------------------------------------------------------------
  */ 
 
+#if defined (ENABLE_SZIP)
+
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_SZIP;
  add_gr("gr_szip",file_id,0,chunk_flags,comp_type,&comp_info);
+
+#endif
 
 /*-------------------------------------------------------------------------
  * add some GR realistic images to the file
@@ -307,16 +323,22 @@ int main(void)
  */
 
  /* terminate access to the vgroups */
- status_32 = Vdetach (vgroup1_id);
- status_32 = Vdetach (vgroup2_id);
- status_32 = Vdetach (vgroup3_id);
- status_32 = Vdetach (vgroup_img_id);
+ if (Vdetach (vgroup1_id)==FAIL ||
+     Vdetach (vgroup2_id)==FAIL ||
+     Vdetach (vgroup3_id)==FAIL ||
+     Vdetach (vgroup_img_id)==FAIL){
+  printf( "Could not close group\n");
+ }
  
  /* terminate access to the V interface */
- status_n = Vend (file_id);
+ if (Vend (file_id)==FAIL){
+  printf( "Could not end VG\n");
+ }
 
  /* close the HDF file */
- status_n = Hclose (file_id);
+ if (Hclose (file_id)==FAIL){
+  printf( "Could not close file\n");
+ }
 
 /*-------------------------------------------------------------------------
  * TESTS:
@@ -336,6 +358,7 @@ int main(void)
  in_chunk_lengths[0]=10;
  in_chunk_lengths[1]=8;
  in_chunk_lengths[2]=6;
+
 
 /*-------------------------------------------------------------------------
  * test0:  

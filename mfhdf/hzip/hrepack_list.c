@@ -74,7 +74,6 @@ int list(char* infname, char* outfname, options_t *options)
  table_t  *table=NULL;
  int32    infile_id;
  int32    outfile_id;
- intn     status_n;  
  int      i;
  char*    err;
 
@@ -111,9 +110,9 @@ int list(char* infname, char* outfname, options_t *options)
 	list_an (infname,outfname,infile_id,outfile_id,options);
 
  /* close the HDF files */
- if ((status_n = Hclose (infile_id)) == FAIL )
+ if (Hclose (infile_id)==FAIL)
   printf( "Failed to close file <%s>\n", infname);
- if ((status_n = Hclose (outfile_id)) == FAIL )
+ if (Hclose (outfile_id)==FAIL)
   printf( "Failed to close file <%s>\n", outfname);
 
  /* 
@@ -167,10 +166,7 @@ int list(char* infname, char* outfname, options_t *options)
 void list_vg(char* infname,char* outfname,int32 infile_id,int32 outfile_id,
              table_t *table,options_t *options)
 {
- intn  status_n;       /* returned status_n for functions returning an intn  */
- int32 status_32,      /* returned status_n for functions returning an int32 */
-       vgroup_ref=-1,  /* reference number of the group */
-       vgroup_id,      /* vgroup identifier */
+ int32 vgroup_id,      /* vgroup identifier */
        nlones = 0,     /* number of lone vgroups */
        ntagrefs,       /* number of tag/ref pairs in a vgroup */
        *ref_array=NULL,/* buffer to hold the ref numbers of lone vgroups   */
@@ -183,8 +179,8 @@ void list_vg(char* infname,char* outfname,int32 infile_id,int32 outfile_id,
  int   i;
 
  /* initialize the V interface for both files */
- status_n = Vstart (infile_id);
- status_n = Vstart (outfile_id);
+ Vstart (infile_id);
+ Vstart (outfile_id);
 
 /*
  * get and print the names and class names of all the lone vgroups.
@@ -218,17 +214,25 @@ void list_vg(char* infname,char* outfname,int32 infile_id,int32 outfile_id,
    * moving to the next.
    */
    vgroup_id = Vattach (infile_id, ref_array[i], "r");
-   status_32 = Vgetname (vgroup_id, vgroup_name);
-   status_32 = Vgetclass (vgroup_id, vgroup_class);
+   if (Vgetname (vgroup_id, vgroup_name)==FAIL){
+    printf( "Could not get name for group\n");
+   }
+   if (Vgetclass (vgroup_id, vgroup_class)==FAIL){
+    printf( "Could not get class for group\n");
+   }
    
    /* ignore reserved HDF groups/vdatas */
    if( is_reserved(vgroup_class)){
-    status_32 = Vdetach (vgroup_id);
+    if (Vdetach (vgroup_id)==FAIL){
+     printf( "Could not detach group\n");
+    }
     continue;
    }
    if(vgroup_name != NULL) 
     if(strcmp(vgroup_name,GR_NAME)==0) {
-     status_32 = Vdetach (vgroup_id);
+     if (Vdetach (vgroup_id)==FAIL){
+      printf( "Could not detach group\n");
+     }
      continue;
     }
        
@@ -259,8 +263,6 @@ void list_vg(char* infname,char* outfname,int32 infile_id,int32 outfile_id,
 
     copy_vgroup_attrs(vgroup_id,vgroup_id_out,vgroup_name,options);
     copy_vg_an(infile_id,outfile_id,vgroup_id,vgroup_id_out,vgroup_name,options);
-
- 
        
     /* insert objects for this group */
     ntagrefs = Vntagrefs(vgroup_id);
@@ -326,9 +328,7 @@ void vgroup_insert(char* infname,
                    table_t *table,
                    options_t *options)
 {
- intn  status_n;              /* returned status_n for functions returning an intn  */
- int32 status_32,             /* returned status_n for functions returning an int32 */
-       vgroup_id,             /* vgroup identifier */
+ int32 vgroup_id,             /* vgroup identifier */
        ntagrefs,              /* number of tag/ref pairs in a vgroup */
        sd_id,                 /* SD interface identifier */
        sd_out,                /* SD interface identifier */
@@ -338,8 +338,8 @@ void vgroup_insert(char* infname,
        *refs,                 /* buffer to hold the ref numbers of vgroups   */
        gr_id,                 /* GR interface identifier */
        gr_out,                /* GR interface identifier */
-       vgroup_id_out,         /* vgroup identifier */
-       vg_index;              /* position of a vgroup in the vgroup  */
+       vgroup_id_out;         /* vgroup identifier */
+       
  char  vgroup_name[VGNAMELENMAX], vgroup_class[VGNAMELENMAX];
  char  *path=NULL;
  int   i;
@@ -358,17 +358,25 @@ void vgroup_insert(char* infname,
   case DFTAG_VG: 
    
    vgroup_id = Vattach (infile_id, ref, "r");
-   status_32 = Vgetname (vgroup_id, vgroup_name);
-   status_32 = Vgetclass (vgroup_id, vgroup_class);
+   if (Vgetname (vgroup_id, vgroup_name)==FAIL){
+    printf( "Could not get name for VG\n");
+   }
+   if (Vgetclass (vgroup_id, vgroup_class)==FAIL){
+    printf( "Could not get class for VG\n");
+   }
    
    /* ignore reserved HDF groups/vdatas */
    if( is_reserved(vgroup_class)){
-    status_32 = Vdetach (vgroup_id);
+    if (Vdetach (vgroup_id)==FAIL){
+     printf( "Could not detach VG\n");
+    }
     break;
    }
    if(vgroup_name != NULL) 
     if(strcmp(vgroup_name,GR_NAME)==0) {
-     status_32 = Vdetach (vgroup_id);
+     if (Vdetach (vgroup_id)==FAIL){
+      printf( "Could not detach VG\n");
+     }
      break;
     }
 
@@ -395,12 +403,10 @@ void vgroup_insert(char* infname,
    * to -1 for creating and the access mode is "w" for writing 
    */
    vgroup_id_out = Vattach (outfile_id, -1, "w");
-   if (Vsetname (vgroup_id_out, vgroup_name)==FAIL)
-   {
+   if (Vsetname (vgroup_id_out, vgroup_name)==FAIL){
     printf("Error: Could not create group <%s>\n", vgroup_name);
    }
-   if (Vsetclass (vgroup_id_out, vgroup_class)==FAIL)
-   {
+   if (Vsetclass (vgroup_id_out, vgroup_class)==FAIL){
     printf("Error: Could not create group <%s>\n", vgroup_name);
    }
 
@@ -408,7 +414,9 @@ void vgroup_insert(char* infname,
    copy_vg_an(infile_id,outfile_id,vgroup_id,vgroup_id_out,path,options);
    
    /* insert the created vgroup into its parent */
-   vg_index = Vinsert (vgroup_id_out_par, vgroup_id_out);
+   if (Vinsert (vgroup_id_out_par, vgroup_id_out)==FAIL){
+    printf("Could not insert group <%s>\n", vgroup_name);
+   }
     
    /* insert objects for this group */
    ntagrefs  = Vntagrefs(vgroup_id);
@@ -453,8 +461,8 @@ void vgroup_insert(char* infname,
    copy_sds(sd_id,sd_out,tag,ref,vgroup_id_out_par,path_name,options,table,
             infile_id,outfile_id);
  
-   status_n = SDend (sd_id);
-   status_n = SDend (sd_out);
+   SDend (sd_id);
+   SDend (sd_out);
 
    
    break;
@@ -479,8 +487,8 @@ void vgroup_insert(char* infname,
    copy_gr(infile_id,outfile_id,gr_id,gr_out,tag,ref,vgroup_id_out_par,
            path_name,options,table);
 
-   status_n = GRend (gr_id);
-   status_n = GRend (gr_out);
+   GRend (gr_id);
+   GRend (gr_out);
    
    break;
 
@@ -513,7 +521,6 @@ void vgroup_insert(char* infname,
 
 void list_gr(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options)
 {
- intn  status;            /* status for functions returning an intn */
  int32 gr_id,             /* GR interface identifier */
        gr_out,            /* GR interface identifier */
        ri_id,             /* raster image identifier */
@@ -533,13 +540,20 @@ void list_gr(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table
  gr_out = GRstart (outfile_id);
  
  /* determine the contents of the file */
- status = GRfileinfo (gr_id, &n_rimages, &n_file_attrs);
+ if (GRfileinfo (gr_id, &n_rimages, &n_file_attrs)==FAIL){
+  printf( "Could not get info for GR\n");
+  GRend (gr_id);
+  GRend (gr_out);
+  return;
+ }
   
  for (ri_index = 0; ri_index < n_rimages; ri_index++)
  {
   ri_id = GRselect (gr_id, ri_index);
-  status = GRgetiminfo (ri_id, name, &n_comps, &data_type, &interlace_mode, 
-   dim_sizes, &n_attrs);
+  if (GRgetiminfo (ri_id, name, &n_comps, &data_type, &interlace_mode, 
+   dim_sizes, &n_attrs)==FAIL){
+   printf("Could not get GR info\n");
+  }
 
   gr_ref = GRidtoref(ri_id);
 
@@ -551,7 +565,9 @@ void list_gr(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table
        table_search(table,DFTAG_CI8,gr_ref)>=0 ||
        table_search(table,DFTAG_II8,gr_ref)>=0 )
   {
-   status = GRendaccess (ri_id);
+   if (GRendaccess (ri_id)==FAIL){
+    printf("Could not close GR\n");
+   }
    continue;
   }
 
@@ -559,12 +575,16 @@ void list_gr(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table
   copy_gr(infile_id,outfile_id,gr_id,gr_out,DFTAG_RI,gr_ref,0,NULL,options,table);
 
   /* terminate access to the current raster image */
-  status = GRendaccess (ri_id);
+  if (GRendaccess (ri_id)==FAIL){
+   printf( "Could not end GR\n");
+  }
  }
  
  /* terminate access to the GR interface */
- status = GRend (gr_id);
- status = GRend (gr_out);
+ if (GRend (gr_id)==FAIL||
+     GRend (gr_out)==FAIL){
+   printf( "Could not end GR\n");
+  }
  
 
 }
@@ -587,7 +607,6 @@ void list_sds(char* infname,
               table_t *table,
               options_t *options)
 {
- intn  status;                 /* status for functions returning an intn */
  int32 sd_id,                  /* SD interface identifier */
        sd_out,                 /* SD interface identifier */
        sds_id,                 /* dataset identifier */
@@ -606,12 +625,14 @@ void list_sds(char* infname,
  sd_out = SDstart (outfname, DFACC_WRITE);
  
  /* determine the number of data sets in the file and the number of file attributes */
- status = SDfileinfo (sd_id, &n_datasets, &n_file_attrs);
+ if (SDfileinfo (sd_id, &n_datasets, &n_file_attrs)==FAIL){
+  printf("Could not get SDS info\n");
+ }
 
  for (index = 0; index < n_datasets; index++)
  {
   sds_id  = SDselect (sd_id, index);
-  status  = SDgetinfo(sds_id, name, &rank, dim_sizes, &data_type, &n_attrs);
+  SDgetinfo(sds_id, name, &rank, dim_sizes, &data_type, &n_attrs);
   sds_ref = SDidtoref(sds_id);
 
   /* check if already inserted in Vgroup; search all SDS tags */
@@ -619,7 +640,7 @@ void list_sds(char* infname,
        table_search(table,DFTAG_SDG,sds_ref)>=0 ||
        table_search(table,DFTAG_NDG,sds_ref)>=0 )
   {
-   status = SDendaccess (sds_id);
+   SDendaccess (sds_id);
    continue;
   }
 
@@ -628,12 +649,12 @@ void list_sds(char* infname,
            infile_id,outfile_id);
      
   /* terminate access to the current dataset */
-  status = SDendaccess (sds_id);
+  SDendaccess (sds_id);
  }
  
  /* terminate access to the SD interface */
- status = SDend (sd_id);
- status = SDend (sd_out);
+ SDend (sd_id);
+ SDend (sd_out);
  
 
 }
@@ -651,16 +672,14 @@ void list_sds(char* infname,
 
 void list_vs(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options)
 {
- intn  status_n;     /* returned status_n for functions returning an intn  */
- int32 vdata_ref=-1, /* reference number of the vdata */
-       nlones = 0,   /* number of lone vdatas */
+ int32 nlones = 0,   /* number of lone vdatas */
        *ref_array,   /* buffer to hold the ref numbers of lone vdatas   */
        ref;          /* temporary ref number  */
  int   i;
 
  /* initialize the V interface */
- status_n = Vstart (infile_id);
- status_n = Vstart (outfile_id);
+ Vstart (infile_id);
+ Vstart (outfile_id);
 
 /*
  * get and print the names and class names of all the lone vdatas.
@@ -711,8 +730,10 @@ void list_vs(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table
  } /* if */
 
  /* terminate access to the VS interface */
- status_n = Vend (infile_id);
- status_n = Vend (outfile_id);
+ if (Vend (infile_id)==FAIL||
+  Vend (outfile_id)==FAIL){
+  printf( "Could not end VG\n");
+ }
 
 
 
@@ -732,7 +753,6 @@ void list_vs(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table
 
 void list_glb(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options)
 {
- intn  status;                 /* status for functions returning an intn */
  int32 sd_id,                  /* SD interface identifier */
        sd_out,                 /* SD interface identifier */
        gr_id,                  /* GR interface identifier */
@@ -755,13 +775,15 @@ void list_glb(char* infname,char* outfname,int32 infile_id,int32 outfile_id,tabl
  sd_out = SDstart (outfname, DFACC_WRITE);
 
  /* determine the number of data sets in the file and the number of file attributes */
- status = SDfileinfo (sd_id, &n_datasets, &n_file_attrs);
+ if (SDfileinfo (sd_id, &n_datasets, &n_file_attrs)==FAIL){
+  printf("Could not get SDS info\n");
+ }
  
  copy_sds_attrs(sd_id,sd_out,n_file_attrs,options);
 
  /* terminate access to the SD interface */
- status = SDend (sd_id);
- status = SDend (sd_out);
+ SDend (sd_id);
+ SDend (sd_out);
 
 
 /*-------------------------------------------------------------------------
@@ -773,13 +795,15 @@ void list_glb(char* infname,char* outfname,int32 infile_id,int32 outfile_id,tabl
  gr_out = GRstart(outfile_id);
 
  /* determine the number of data sets in the file and the number of file attributes */
- status = GRfileinfo (gr_id, &n_datasets, &n_file_attrs);
+ if (GRfileinfo (gr_id, &n_datasets, &n_file_attrs)==FAIL){
+  printf("Could not get GR info\n");
+ }
  
  copy_gr_attrs(gr_id,gr_out,n_file_attrs,options);
 
  /* terminate access to the GR interface */
- status = GRend (gr_id);
- status = GRend (gr_out);
+ GRend (gr_id);
+ GRend (gr_out);
  
 
 }
@@ -797,9 +821,7 @@ void list_glb(char* infname,char* outfname,int32 infile_id,int32 outfile_id,tabl
 
 void list_an(char* infname,char* outfname,int32 infile_id,int32 outfile_id,options_t *options)
 {
- intn  status_n;      /* returned status for functions returning an intn  */
- int32 status_32,     /* returned status for functions returning an int32 */
-       an_id,         /* AN interface identifier */
+ int32 an_id,         /* AN interface identifier */
        ann_id,        /* an annotation identifier */
        i,             /* position of an annotation in all of the same type*/
        ann_length,    /* length of the text in an annotation */
@@ -822,8 +844,11 @@ void list_an(char* infname,char* outfname,int32 infile_id,int32 outfile_id,optio
  * Get the annotation information, e.g., the numbers of file labels, file
  * descriptions, data labels, and data descriptions.
  */
- status_n = ANfileinfo (an_id, &n_file_labels, &n_file_descs, 
-  &n_data_labels, &n_data_descs);
+ if (ANfileinfo (an_id, &n_file_labels, &n_file_descs, 
+  &n_data_labels, &n_data_descs)==FAIL){
+  printf( "Could not get AN info\n");
+  goto out;
+ }
  
 
 /*-------------------------------------------------------------------------
@@ -851,19 +876,24 @@ void list_an(char* infname,char* outfname,int32 infile_id,int32 outfile_id,optio
   * necessarily end with a null character.
   * 
   */
-  status_32 = ANreadann (ann_id, ann_buf, ann_length+1);
+  if (ANreadann (ann_id, ann_buf, ann_length+1)==FAIL){
+   printf( "Could not read AN\n");
+  }
 
   /* Create the file label */
   file_label_id = ANcreatef (an_out, AN_FILE_LABEL);
 
   /* Write the annotations  */
-  if ((status_32 = ANwriteann (file_label_id, ann_buf, ann_length))==FAIL) {
+  if (ANwriteann (file_label_id, ann_buf, ann_length)==FAIL) {
    printf("Failed to write file label %d\n", i);
 		}
   
   /* Terminate access to the current data label */
-  status_n = ANendaccess (ann_id);
-  status_n = ANendaccess (file_label_id);
+  if (ANendaccess (ann_id)==FAIL||
+      ANendaccess (file_label_id)==FAIL){
+   printf( "Could not end AN\n");
+  }
+
   
   /* Free the space allocated for the annotation buffer */
   free (ann_buf);
@@ -885,27 +915,35 @@ void list_an(char* infname,char* outfname,int32 infile_id,int32 outfile_id,optio
   /* Allocate space for the buffer to hold the data label text */
   ann_buf = malloc ((ann_length+1) * sizeof (char));
  
-  status_32 = ANreadann (ann_id, ann_buf, ann_length+1);
+  if (ANreadann (ann_id, ann_buf, ann_length+1)==FAIL){
+   printf( "Could not read AN\n");
+  }
 
    /* Create the label */
   file_desc_id = ANcreatef (an_out, AN_FILE_DESC);
 
   /* Write the annotations  */
-  if ((status_32 = ANwriteann (file_desc_id, ann_buf, ann_length))==FAIL){
+  if (ANwriteann (file_desc_id, ann_buf, ann_length)==FAIL){
    printf("Failed to write file description %d\n", i);
 		}
   
   /* Terminate access to the current data label */
-  status_n = ANendaccess (ann_id);
-  status_n = ANendaccess (file_desc_id);
+  if (ANendaccess (ann_id)==FAIL||
+      ANendaccess (file_desc_id)==FAIL){
+   printf( "Could not read AN\n");
+  }
  
   /* Free the space allocated for the annotation buffer */
   free (ann_buf);
  }
  
  /* Terminate access to the AN interface */
- status_32 = ANend (an_id);
- status_32 = ANend (an_out);
+out:
+ if (ANend (an_id)==FAIL||
+  ANend (an_out)==FAIL){
+  printf( "Could not end AN\n");
+ }
+
  
 }
 

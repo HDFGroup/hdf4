@@ -32,7 +32,6 @@
 
 int sds_verifiy_comp(char *sds_name, int32 in_comp_type, int32 in_comp_info)
 {
- intn          status_n;     /* returned status_n for functions returning an intn  */
  comp_coder_t  comp_type;    /* to retrieve compression type into */
  comp_info     comp_info;    /* compression structure */ 
  int32         sd_id,
@@ -44,7 +43,7 @@ int sds_verifiy_comp(char *sds_name, int32 in_comp_type, int32 in_comp_info)
  sds_index = SDnametoindex(sd_id, sds_name);
  if ((sds_id = SDselect(sd_id, sds_index))==FAIL) {
   printf("Error: Cannot open sds <%s>", sds_name);
-  status_n = SDend (sd_id);
+  SDend (sd_id);
   return -1;
  }
 
@@ -55,29 +54,29 @@ int sds_verifiy_comp(char *sds_name, int32 in_comp_type, int32 in_comp_info)
  
  comp_type = COMP_CODE_NONE;  /* reset variables before retrieving info */
  HDmemset(&comp_info, 0, sizeof(comp_info)) ;
- status_n = SDgetcompress(sds_id, &comp_type, &comp_info);
+ SDgetcompress(sds_id, &comp_type, &comp_info);
  if ( comp_type != in_comp_type )
  {
   printf("Error: Compression type does not match ");
-  status_n = SDendaccess (sds_id);
-  status_n = SDend (sd_id);
+  SDendaccess (sds_id);
+  SDend (sd_id);
   return -1;
  }
  if (in_comp_info) {
   if ( comp_info.skphuff.skp_size != in_comp_info )
   {
    printf("Error: compresion information does not match ");
-   status_n = SDendaccess (sds_id);
-   status_n = SDend (sd_id);
+   SDendaccess (sds_id);
+   SDend (sd_id);
    return -1;
   }
  }
  
  /* terminate access to the sds */
- status_n = SDendaccess (sds_id);
+ SDendaccess (sds_id);
  
  /* terminate access to the sd interface */
- status_n = SDend (sd_id);
+ SDend (sd_id);
  
  return 0;
  
@@ -99,7 +98,6 @@ int sds_verifiy_comp(char *sds_name, int32 in_comp_type, int32 in_comp_info)
 
 int sds_verifiy_comp_all(int32 in_comp_type, int32 in_comp_info)
 {
- intn          status_n;     /* returned status_n for functions returning an intn  */
  comp_coder_t  comp_type;    /* to retrieve compression type into */
  comp_info     comp_info;    /* compression structure */ 
  int32         sd_id,
@@ -118,9 +116,9 @@ int sds_verifiy_comp_all(int32 in_comp_type, int32 in_comp_info)
  sd_id  = SDstart (FILENAME_OUT, DFACC_READ);
  
  /* determine the number of data sets in the file */
- if ((status_n = SDfileinfo (sd_id, &n_datasets, &n_file_attrs))==FAIL) {
+ if (SDfileinfo (sd_id, &n_datasets, &n_file_attrs)==FAIL) {
   printf("Error: Cannot get file information");
-  status_n = SDend (sd_id);
+  SDend (sd_id);
   return -1;
  }
  
@@ -134,7 +132,7 @@ int sds_verifiy_comp_all(int32 in_comp_type, int32 in_comp_info)
    continue;
   }
 
-  status_n = SDgetinfo(sds_id, name, &rrank, dim_sizes, &data_type, &n_attrs);
+  SDgetinfo(sds_id, name, &rrank, dim_sizes, &data_type, &n_attrs);
  
  /*-------------------------------------------------------------------------
   * retrieve and verify the compression info
@@ -143,12 +141,13 @@ int sds_verifiy_comp_all(int32 in_comp_type, int32 in_comp_info)
   
   comp_type = COMP_CODE_NONE;  /* reset variables before retrieving info */
   HDmemset(&comp_info, 0, sizeof(comp_info)) ;
-  status_n = SDgetcompress(sds_id, &comp_type, &comp_info);
+  
+  SDgetcompress(sds_id, &comp_type, &comp_info);
   if ( comp_type != in_comp_type )
   {
    printf("Error: compression type does not match ");
-   status_n = SDendaccess (sds_id);
-   status_n = SDend (sd_id);
+   SDendaccess (sds_id);
+   SDend (sd_id);
    return -1;
   }
   if (in_comp_type) 
@@ -175,18 +174,18 @@ int sds_verifiy_comp_all(int32 in_comp_type, int32 in_comp_info)
    if ( info != in_comp_info )
    {
     printf("Error: compresion information does not match for <%s>",name);
-    status_n = SDendaccess (sds_id);
-    status_n = SDend (sd_id);
+    SDendaccess (sds_id);
+    SDend (sd_id);
     return -1;
    }
   }
   
   /* terminate access to the current dataset */
-  status_n = SDendaccess (sds_id);
+  SDendaccess (sds_id);
  }
  
  /* terminate access to the sd interface */
- status_n = SDend (sd_id);
+ SDend (sd_id);
  
  return 0;
 }
@@ -208,7 +207,6 @@ int sds_verifiy_comp_all(int32 in_comp_type, int32 in_comp_info)
 int sds_verifiy_chunk(char *sds_name, int32 in_chunk_flags, int rank, 
                       int32 *in_chunk_lengths)
 {
- intn          status_n;     /* returned status_n for functions returning an intn  */
  HDF_CHUNK_DEF chunk_def;    /* chunk defintion read */ 
  int32         chunk_flags;  /* chunking flag */ 
  int32         sd_id,
@@ -221,10 +219,10 @@ int sds_verifiy_chunk(char *sds_name, int32 in_chunk_flags, int rank,
  sds_index = SDnametoindex(sd_id, sds_name);
  if ((sds_id = SDselect(sd_id, sds_index))==FAIL) {
   printf("Error: cannot open sds <%s>", sds_name);
-  status_n = SDend (sd_id);
+  SDend (sd_id);
   return -1;
  }
- status_n  = SDgetchunkinfo (sds_id, &chunk_def, &chunk_flags);
+ SDgetchunkinfo (sds_id, &chunk_def, &chunk_flags);
 
 /*-------------------------------------------------------------------------
  * retrieve and verify the chunk info
@@ -233,8 +231,8 @@ int sds_verifiy_chunk(char *sds_name, int32 in_chunk_flags, int rank,
  if ( chunk_flags != (in_chunk_flags) )
  {
   printf("Error: chunk flags do not match");
-  status_n = SDendaccess (sds_id);
-  status_n = SDend (sd_id);
+  SDendaccess (sds_id);
+  SDend (sd_id);
   return -1;
  }
  for (i = 0; i < rank; i++)
@@ -242,17 +240,17 @@ int sds_verifiy_chunk(char *sds_name, int32 in_chunk_flags, int rank,
   if (chunk_def.chunk_lengths[i] != in_chunk_lengths[i] )
   {
    printf("Error: chunk lengths do not match ");
-   status_n = SDendaccess (sds_id);
-   status_n = SDend (sd_id);
+   SDendaccess (sds_id);
+   SDend (sd_id);
    return -1;
   }
  }
 
  /* terminate access to the sds */
- status_n = SDendaccess (sds_id);
+ SDendaccess (sds_id);
  
  /* terminate access to the sd interface */
- status_n = SDend (sd_id);
+ SDend (sd_id);
  
  return 0;
  
@@ -275,7 +273,6 @@ int sds_verifiy_chunk(char *sds_name, int32 in_chunk_flags, int rank,
 int sds_verifiy_chunk_all(int32 in_chunk_flags, int rank, 
                           int32 *in_chunk_lengths,char *sds_exclude)
 {
- intn          status_n;     /* returned status_n for functions returning an intn  */
  HDF_CHUNK_DEF chunk_def;    /* chunk defintion read */ 
  int32         chunk_flags;  /* chunking flag */ 
  int32         sd_id,
@@ -294,9 +291,9 @@ int sds_verifiy_chunk_all(int32 in_chunk_flags, int rank,
  sd_id  = SDstart (FILENAME_OUT, DFACC_READ);
  
  /* determine the number of data sets in the file */
- if ((status_n = SDfileinfo (sd_id, &n_datasets, &n_file_attrs))==FAIL) {
+ if (SDfileinfo (sd_id, &n_datasets, &n_file_attrs)==FAIL) {
   printf("Error: cannot get file information");
-  status_n = SDend (sd_id);
+  SDend (sd_id);
   return -1;
  }
  
@@ -310,14 +307,14 @@ int sds_verifiy_chunk_all(int32 in_chunk_flags, int rank,
    continue;
   }
 
-  status_n = SDgetinfo(sds_id, name, &rrank, dim_sizes, &data_type, &n_attrs);
-  status_n = SDgetchunkinfo (sds_id, &chunk_def, &chunk_flags);
+  SDgetinfo(sds_id, name, &rrank, dim_sizes, &data_type, &n_attrs);
+  SDgetchunkinfo (sds_id, &chunk_def, &chunk_flags);
 
   /* do not compare this one */
   if (strcmp(name,sds_exclude)==0)
   {
-   status_n = SDendaccess(sds_id);
-   status_n = SDend (sd_id);
+   SDendaccess(sds_id);
+   SDend (sd_id);
    return 0;
   }
   
@@ -328,8 +325,8 @@ int sds_verifiy_chunk_all(int32 in_chunk_flags, int rank,
   if ( chunk_flags != (in_chunk_flags) )
   {
    printf("Error: chunk flags do not match");
-   status_n = SDendaccess (sds_id);
-   status_n = SDend (sd_id);
+   SDendaccess (sds_id);
+   SDend (sd_id);
    return -1;
   }
   for (i = 0; i < rank; i++)
@@ -337,18 +334,18 @@ int sds_verifiy_chunk_all(int32 in_chunk_flags, int rank,
    if (chunk_def.chunk_lengths[i] != in_chunk_lengths[i] )
    {
     printf("Error: chunk lengths do not match ");
-    status_n = SDendaccess (sds_id);
-    status_n = SDend (sd_id);
+    SDendaccess (sds_id);
+    SDend (sd_id);
     return -1;
    }
   }
   
   /* terminate access to the current dataset */
-  status_n = SDendaccess (sds_id);
+  SDendaccess (sds_id);
  }
  
  /* terminate access to the sd interface */
- status_n = SDend (sd_id);
+ SDend (sd_id);
  
  return 0;
  

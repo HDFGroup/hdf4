@@ -239,10 +239,13 @@ char* get_scomp(int code)
   return "SZIP";
  else if (code==COMP_CODE_NONE)
   return "NONE";
+ else if (code==COMP_CODE_INVALID)
+  return "COMP_CODE_INVALID";
  else {
   printf("Input Error in compression type\n");
   exit(1);
  }
+ return NULL;
 } 
 
 

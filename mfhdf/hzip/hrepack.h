@@ -54,7 +54,7 @@ typedef struct {
 
 /* the type of compression and additional parameter */
 typedef struct {
- int type;
+ comp_coder_t type;
  int info;
 } comp_info_t;
 

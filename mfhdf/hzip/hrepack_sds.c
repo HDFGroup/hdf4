@@ -50,9 +50,7 @@ int copy_sds(int32 sd_in,
              int32 infile_id,
              int32 outfile_id)
 {
- intn  status_n;              /* returned status_n for functions returning an intn  */
- int32 status_32,             /* returned status_n for functions returning an int32 */
-       sds_id,                /* data set identifier */
+ int32 sds_id,                /* data set identifier */
        sds_out,               /* data set identifier */
        sds_index,             /* index number of the data set */
        dtype,                 /* SDS data type */
@@ -73,8 +71,7 @@ int copy_sds(int32 sd_in,
  char             *path=NULL;
  VOIDP            buf=NULL;
  VOIDP            dim_buf=NULL;
- int              i, j, ret=1;
- comp_info_t      *comp=NULL;     /* compression info got from table */
+ int              i, j, ret=1,stat;
  int              info;           /* temporary int compression info */
  comp_coder_t     comp_type;      /* compression type requested  */
  comp_coder_t     comp_type_in;   /* compression type original  */
@@ -91,7 +88,11 @@ int copy_sds(int32 sd_in,
  sds_id    = SDselect(sd_in,sds_index);
  
  /*obtain name,rank,dimsizes,datatype and num of attributes of sds */
- status_n=SDgetinfo(sds_id,sds_name,&rank,dimsizes,&dtype,&nattrs);
+ if (SDgetinfo(sds_id,sds_name,&rank,dimsizes,&dtype,&nattrs)==FAIL){
+  printf( "Could not get info for SDS\n");
+  SDendaccess(sds_id);
+  return -1;
+ }
 
  /* check if the given SDS is a dimension scale, return 0 for no table add */
  if ( SDiscoordvar(sds_id) ) {
@@ -116,10 +117,20 @@ int copy_sds(int32 sd_in,
  
  comp_type_in = COMP_CODE_NONE;  /* reset variables before retrieving info */
  HDmemset(&c_info_in, 0, sizeof(comp_info)) ;
- status_n = SDgetcompress(sds_id, &comp_type_in, &c_info_in);
+ stat=SDgetcompress(sds_id, &comp_type_in, &c_info_in);
+ if (stat==FAIL && comp_type_in>0){
+  printf( "Could not get compression info for SDS <%s>\n",path);
+  SDendaccess(sds_id);
+  return -1;
+ }
 
  /* get chunk lengths */
- status_n = SDgetchunkinfo(sds_id, &chunk_def_in, &chunk_flags_in);
+ if (SDgetchunkinfo(sds_id, &chunk_def_in, &chunk_flags_in)==FAIL){
+  printf( "Could not get chunk info for SDS <%s>\n",path);
+  SDendaccess(sds_id);
+  return -1;
+ }
+
  /* retrieve the compress info if so */
  if ( (HDF_CHUNK | HDF_COMP) == chunk_flags_in )
  {
@@ -378,7 +389,7 @@ int copy_sds(int32 sd_in,
    {
     printf( "Warning: SZIP compression cannot be set for <%s>. \
      Using no compression \n", path);
-    comp_type=0;
+    comp_type=COMP_CODE_NONE;
    }
    break;
   case COMP_CODE_RLE:         
@@ -529,7 +540,7 @@ int copy_sds(int32 sd_in,
  if (vgroup_id_out_par) 
  {
   /* add the SDS to the vgroup. the tag DFTAG_NDG is used */
-  if ((status_32 = Vaddtagref (vgroup_id_out_par, TAG_GRP_DSET, sds_ref)) == FAIL) {
+  if (Vaddtagref (vgroup_id_out_par, TAG_GRP_DSET, sds_ref)==FAIL) {
    printf( "Failed to add new SDS to group <%s>\n", path);
    ret=-1;
    goto out;
