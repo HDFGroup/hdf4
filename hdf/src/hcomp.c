@@ -100,15 +100,6 @@ PRIVATE int32 HCIinit_coder
             (int16 acc_mode, comp_coder_info_t * cinfo, comp_coder_t coder_type,
              comp_info * coder_info);
 
-PRIVATE int32 HCPquery_encode_header(comp_model_t model_type, model_info * m_info,
-         comp_coder_t coder_type, comp_info * c_info);
-
-PRIVATE intn HCPencode_header(uint8 *p, comp_model_t model_type, model_info * m_info,
-         comp_coder_t coder_type, comp_info * c_info);
-
-PRIVATE intn HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info * m_info,
-         comp_coder_t *coder_type, comp_info * c_info);
-
 PRIVATE int32 HCIread_header
             (filerec_t * file_rec, accrec_t * access_rec,
              compinfo_t * info, comp_info * c_info, model_info * m_info);
@@ -279,7 +270,7 @@ HCIinit_model(int16 acc_mode, comp_model_info_t * minfo, comp_model_t model_type
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+int32
 HCPquery_encode_header(comp_model_t model_type, model_info * m_info,
          comp_coder_t coder_type, comp_info * c_info)
 {
@@ -348,7 +339,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+intn
 HCPencode_header(uint8 *p, comp_model_t model_type, model_info * m_info,
          comp_coder_t coder_type, comp_info * c_info)
 {
@@ -428,7 +419,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+intn
 HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info * m_info,
          comp_coder_t *coder_type, comp_info * c_info)
 {

@@ -401,6 +401,16 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                  comp_model_t model_type, model_info * m_info,
                  comp_coder_t coder_type, comp_info * c_info);
 
+    extern int32 HCPquery_encode_header(comp_model_t model_type, model_info * m_info,
+             comp_coder_t coder_type, comp_info * c_info);
+
+    extern intn HCPencode_header(uint8 *p, comp_model_t model_type, model_info * m_info,
+             comp_coder_t coder_type, comp_info * c_info);
+
+    extern intn HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info * m_info,
+             comp_coder_t *coder_type, comp_info * c_info);
+
+
 /*
    ** from hvblocks.c
  */
