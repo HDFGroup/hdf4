@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/04/19 22:47:51  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.4  1993/05/11 16:57:06  koziol
+Fixed two leaking AID places.
 
+ * Revision 1.3  1993/04/19  22:47:51  koziol
+ * General Code Cleanup to reduce/remove errors on the PC
+ *
  * Revision 1.2  1993/01/19  05:55:30  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -82,6 +85,7 @@ uint16 DFfindnextref(file_id, tag, lref)
     if (HQuerytagref(aid, &newtag, &newref) == FAIL)
         return (uint16)FAIL;
 
+    Hendaccess(aid);
     return (newref);
 }
 

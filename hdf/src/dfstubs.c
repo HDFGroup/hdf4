@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/04/22 15:06:35  chouck
-A plane call to free() had snuck through
+Revision 1.6  1993/05/11 16:57:03  koziol
+Fixed two leaking AID places.
 
+ * Revision 1.5  1993/04/22  15:06:35  chouck
+ * A plain call to free() had snuck through
+ *
  * Revision 1.4  1993/04/19  22:47:46  koziol
  * General Code Cleanup to reduce/remove errors on the PC
  *
@@ -419,6 +422,7 @@ DFfind(dfile, ptr)
     Hinquire(search_aid, NULL, &ptr->tag, &ptr->ref, &ptr->length, &ptr->offset,
 	     NULL, NULL, NULL);
 
+    Hendaccess(search_aid);
     return(0);
 }
 
