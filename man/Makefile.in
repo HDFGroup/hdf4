@@ -109,6 +109,7 @@ DISTFILES = $(MAN_NROFF_1)
 
 # Man pages
 MAN_NROFF_1 = hdf.1 hdfunpac.1
+MAN_NROFF_3 =
 
 all: docs
 
@@ -123,7 +124,7 @@ rebuildnofortran:
 # Leave this target blank with no actions, the rebuild macros above depend on it
 force_rebuild:
 
-install: install-man1 install-man3
+install: install-man1 
 
 install-man1: 
 	for p in $(MAN_NROFF_1); do \
