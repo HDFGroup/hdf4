@@ -26,10 +26,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1992/03/23 17:21:52  likkai
-Put in description of "-d" option in "usage" message.
-and redo the format for the output of that option.
+Revision 1.9  1992/03/25 22:51:35  chouck
+Fixed stupid bugs relating to unknown tags
 
+ * Revision 1.8  1992/03/23  17:21:52  likkai
+ * Put in description of "-d" option in "usage" message.
+ * and redo the format for the output of that option.
+ *
  * Revision 1.7  1992/03/18  17:49:26  chouck
  * Added Hendaccess() call so that Hclose() will not FAIL
  * ,
@@ -236,7 +239,7 @@ int num;
     */
     name = HDgettagname(desc[j].tag);
     if(!name) name = "Unknown Tag";
-    printf("\n%-30s: (tag %d)\n", HDgettagname(desc[j].tag), desc[j].tag);
+    printf("\n%-30s: (tag %d)\n", name, desc[j].tag);
 
     /*
     ** Print out reference number information
