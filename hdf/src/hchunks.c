@@ -942,7 +942,12 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
     int32       dd_aid;              /* AID for writing the special info */
     uint16      data_tag, data_ref;  /* Tag/ref of the data in the file */
     uint8       local_ptbuf[4];      /* 4 bytes for special header length */
-    VOID       *c_sp_header = NULL;   /* special element header */
+#if 0
+    uint8       *c_sp_header = NULL;   /* special element header(dynamic) */
+#endif
+    uint8       c_sp_header[256]="" ;   /* special element header buffer.
+                                           dynamic allocation causes 
+                                           a problem on the HPUX -GV */
     int32       interlace;           /* type of interlace */
     int32       vdata_size;          /* size of Vdata */
     int32       num_recs;            /* number of Vdatas */
@@ -1081,10 +1086,11 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
           if (info->sp_tag_header_len < 0 || info->sp_tag_header_len > 256)
               HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
+#if 0 /* dynamic alocation causes a problem on HPUX, removed for now -GV */
           /* Allocate buffer space for rest of special header */
-          if (( c_sp_header = (VOID *) HDcalloc(info->sp_tag_header_len,1))==NULL)
+          if (( c_sp_header = (uint8 *) HDcalloc(info->sp_tag_header_len,1))==NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
-
+#endif
           /* first read special header in */
           if (Hread(dd_aid, info->sp_tag_header_len, c_sp_header) == FAIL)
               HGOTO_ERROR(DFE_READERROR, FAIL);
@@ -1422,10 +1428,11 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
       } /* end if */
 
     /* Normal function cleanup */
+#if 0 /* dynamic alocation causes a problem on HPUX, removed for now -GV */
     /* free specail element header */
     if (c_sp_header != NULL)
         HDfree(c_sp_header);
-
+#endif
     /* free allocated space for vdata record */
     if (v_data != NULL)
         HDfree(v_data);
