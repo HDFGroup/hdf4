@@ -6,7 +6,7 @@ Obtaining the latest version
     The most recent version of the distribution can be obtained from
 the NCSA ftp archive site at:
 
-     ftp://ftp.ncsa.uiuc.edu/HDF/HDF4.0.beta
+     ftp://ftp.ncsa.uiuc.edu/HDF/HDF4.0r1
 
 Distribution Layout
 -------------------
@@ -83,4 +83,22 @@ To install the libraries, utilities, includes and man pages type: e.g.
 
 See the INSTALL file for detail instructions on configuring and 
 installation.
+
+                  ----------------
+
+The HDF 4.0 documentation can be found on the NCSA ftp server
+in the directory /HDF/Documentation/HDF4.0/Users_Guide.  The
+HDF home page is at:
+
+      http://hdf.ncsa.uiuc.edu/
+
+An FAQ is available on our ftp server, as well as under
+"Information about HDF" in the home page.
+
+If you have any questions or comments, or would like to be
+added to or removed from our hdfnews email list, contact us
+at:
+
+      hdfhelp@ncsa.uiuc.edu
+
 
