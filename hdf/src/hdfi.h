@@ -365,7 +365,7 @@ typedef unsigned int       uintn;
 typedef float              float32;
 typedef double             float64;
 typedef int                intf;     /* size of INTEGERs in Fortran compiler */
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
+typedef long               hdf_pint_t;   /* an integer the same size as a pointer */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
