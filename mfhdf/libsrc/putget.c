@@ -2104,6 +2104,9 @@ void *values ;
             vp->numrecs=upper[0];
 	} /* end inline */
 
+	if (handle->numrecs < vp->numrecs)
+	    handle->numrecs = vp->numrecs;
+
 #ifdef VDEBUG
 	fprintf(stderr, "Exiting NCvario\n") ;
 #endif /* VDEBUG */
