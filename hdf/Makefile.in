@@ -203,6 +203,14 @@ install:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install \
           SUBDIRS="util" subd
 
+install-libs:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install-lib \
+          SUBDIRS="src jpeg" subd
+
+install-utils:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install \
+          SUBDIRS="util" subd
+
 perfs:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd
@@ -292,6 +300,8 @@ help:
 	@echo "make test-hdffortran   - run HDF fortran tests only " 
 	@echo "make install           - install HDF library, "
 	@echo "                         utilites, and includes " 
+	@echo "make install-libs      - install HDF library and includes " 
+	@echo "make install-utils     - install HDF utilities " 
 	@echo "make clean     - cleans up HDF packages(*.o,libdf.a,..)"
 	@echo "make distclean - cleans up HDF packages including"
 	@echo "                 configuration(Makefiles,config.status,..)"
