@@ -376,7 +376,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
 #endif /* STDIO_BUF */
 	/* set up the newly created (and empty) file with
 	   the magic cookie and initial data descriptor records */
-          if (HPwrite(file_rec, HDFMAGIC, MAGICLEN) == FAIL)
+          if (HP_write(file_rec, HDFMAGIC, MAGICLEN) == FAIL)
             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
           if (HI_FLUSH(file_rec->file) == FAIL)	/* flush the cookie */
@@ -1492,7 +1492,7 @@ Hread(int32 access_id, int32 length, VOIDP data)
   if (length == 0 || length + access_rec->posn > data_len)
     length = data_len - access_rec->posn;
 
-  if (HPread(file_rec, data, length) == FAIL)
+  if (HP_read(file_rec, data, length) == FAIL)
     HGOTO_ERROR(DFE_READERROR, FAIL);
 
   /* move the position of the access record */
@@ -1615,7 +1615,7 @@ printf("%s: offset=%ld\n",FUNC,(long)(access_rec->posn+data_off));
   if (HPseek(file_rec, access_rec->posn + data_off) == FAIL)
     HGOTO_ERROR(DFE_SEEKERROR, FAIL);
 
-  if (HPwrite(file_rec, data, length) == FAIL)
+  if (HP_write(file_rec, data, length) == FAIL)
     HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
   /* update end of file pointer? */
@@ -2635,7 +2635,7 @@ HIextend_file(filerec_t * file_rec)
 
   if (HPseek(file_rec, file_rec->f_end_off) == FAIL)
     HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-  if (HPwrite(file_rec, &temp, 1) == FAIL)
+  if (HP_write(file_rec, &temp, 1) == FAIL)
     HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
 done:
@@ -2682,7 +2682,7 @@ HIget_function_table(accrec_t * access_rec)
 
   if (HPseek(file_rec, data_off) == FAIL)
     HGOTO_ERROR(DFE_SEEKERROR, NULL);
-  if (HPread(file_rec, lbuf, 2) == FAIL)
+  if (HP_read(file_rec, lbuf, 2) == FAIL)
     HGOTO_ERROR(DFE_READERROR, NULL);
 
   /* using special code, look up function table in associative table */
@@ -3492,11 +3492,11 @@ HPgetdiskblock(filerec_t * file_rec, int32 block_size, intn moveto)
           /* Write the debugging head & tail to the file block allocated */
           if (HPseek(file_rec, file_rec->f_end_off) == FAIL)
             HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-          if (HPwrite(file_rec, diskblock_header, DISKBLOCK_HSIZE) == FAIL)
+          if (HP_write(file_rec, diskblock_header, DISKBLOCK_HSIZE) == FAIL)
             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
           if (HPseek(file_rec, file_rec->f_end_off+block_size-DISKBLOCK_TSIZE) == FAIL)
             HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-          if (HPwrite(file_rec, diskblock_tail, DISKBLOCK_TSIZE) == FAIL)
+          if (HP_write(file_rec, diskblock_tail, DISKBLOCK_TSIZE) == FAIL)
             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
         }	/* end else */
 #else /* DISKBLOCK_DEBUG */
@@ -3506,7 +3506,7 @@ HPgetdiskblock(filerec_t * file_rec, int32 block_size, intn moveto)
         {
           if (HPseek(file_rec, ret_value + block_size - 1) == FAIL)
             HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-          if (HPwrite(file_rec, &temp, 1) == FAIL)
+          if (HP_write(file_rec, &temp, 1) == FAIL)
             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
         }	/* end else */
 #endif /* DISKBLOCK_DEBUG */
@@ -3698,11 +3698,11 @@ Hdumpseek(void)
 
 /*--------------------------------------------------------------------------
  NAME
-    HPread
+    HP_read
  PURPOSE
     Alias for HI_READ on HDF files.
  USAGE
-    intn HPread(file_rec,buf,bytes)
+    intn HP_read(file_rec,buf,bytes)
         filerec_t * file_rec;   IN: Pointer to the HDF file record
         VOIDP buf;              IN: Pointer to the buffer to read data into
         int32 bytes;            IN: # of bytes to read
@@ -3717,9 +3717,9 @@ Hdumpseek(void)
  REVISION LOG
 --------------------------------------------------------------------------*/
 intn 
-HPread(filerec_t *file_rec,VOIDP buf,int32 bytes)
+HP_read(filerec_t *file_rec,VOIDP buf,int32 bytes)
 {
-  CONSTR(FUNC, "HPread");
+  CONSTR(FUNC, "HP_read");
   intn     ret_value = SUCCEED;
 
   /* Check for switching file access operations */
@@ -3746,7 +3746,7 @@ done:
   /* Normal function cleanup */
 
   return ret_value;
-} /* end HPread() */
+} /* end HP_read() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -3808,11 +3808,11 @@ done:
 
 /*--------------------------------------------------------------------------
  NAME
-    HPwrite
+    HP_write
  PURPOSE
     Alias for HI_WRITE on HDF files.
  USAGE
-    intn HPwrite(file_rec,buf,bytes)
+    intn HP_write(file_rec,buf,bytes)
         filerec_t * file_rec;   IN: Pointer to the HDF file record
         VOIDP buf;              IN: Pointer to the buffer to write
         int32 bytes;            IN: # of bytes to write
@@ -3827,9 +3827,9 @@ done:
  REVISION LOG
 --------------------------------------------------------------------------*/
 intn 
-HPwrite(filerec_t *file_rec,const VOIDP buf,int32 bytes)
+HP_write(filerec_t *file_rec,const VOIDP buf,int32 bytes)
 {
-  CONSTR(FUNC, "HPwrite");
+  CONSTR(FUNC, "HP_write");
   intn    ret_value = SUCCEED;
 
   /* Check for switching file access operations */
@@ -3857,7 +3857,7 @@ done:
   /* Normal function cleanup */
 
   return ret_value;
-} /* end HPwrite() */
+} /* end HP_write() */
 
 #ifdef HAVE_FMPOOL
 /******************************************************************************

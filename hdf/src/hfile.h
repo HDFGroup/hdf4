@@ -518,13 +518,13 @@ extern      "C"
     extern int32 HDget_special_info
                 (int32 access_id, sp_info_block_t * info_block);
 
-    extern intn HPread
+    extern intn HP_read
                 (filerec_t *file_rec,VOIDP buf,int32 bytes);
 
     extern intn HPseek
                 (filerec_t *file_rec,int32 offset);
 
-    extern intn HPwrite
+    extern intn HP_write
                 (filerec_t *file_rec,const VOIDP buf,int32 bytes);
 
     extern intn tagcompare

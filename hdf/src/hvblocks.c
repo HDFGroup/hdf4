@@ -364,7 +364,7 @@ HVcreate(int32 file_id, uint16 tag, uint16 ref)
         INT32ENCODE(p, info->min_size);
         UINT16ENCODE(p, link_ref);  /* link_ref */
     }
-    if (HPwrite(file_rec, local_ptbuf, dd->length) == FAIL)
+    if (HP_write(file_rec, local_ptbuf, dd->length) == FAIL)
       {
           access_rec->used = FALSE;
           HGOTO_ERROR(DFE_WRITEERROR, FAIL);

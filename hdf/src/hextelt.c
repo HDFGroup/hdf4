@@ -506,7 +506,7 @@ HXIstaccess(accrec_t * access_rec, int16 acc_mode)
       {   /* look for information in the file */
           if (HPseek(file_rec, data_off + 2) == FAIL)
               HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-          if (HPread(file_rec, local_ptbuf, 12) == FAIL)
+          if (HP_read(file_rec, local_ptbuf, 12) == FAIL)
               HGOTO_ERROR(DFE_READERROR, FAIL);
 
           access_rec->special_info = (VOIDP) HDmalloc((uint32) sizeof(extinfo_t));
@@ -523,7 +523,7 @@ HXIstaccess(accrec_t * access_rec, int16 acc_mode)
           info->extern_file_name = (char *) HDmalloc((uint32) info->length_file_name + 1);
           if (!info->extern_file_name)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
-          if (HPread(file_rec, info->extern_file_name, info->length_file_name) == FAIL)
+          if (HP_read(file_rec, info->extern_file_name, info->length_file_name) == FAIL)
               HGOTO_ERROR(DFE_READERROR, FAIL);
 
           info->extern_file_name[info->length_file_name] = '\0';
@@ -842,7 +842,7 @@ HXPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
               HGOTO_ERROR(DFE_INTERNAL, FAIL);
           if (HPseek(file_rec, data_off + 2) == FAIL)
               HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-          if (HPwrite(file_rec, local_ptbuf, 4) == FAIL)
+          if (HP_write(file_rec, local_ptbuf, 4) == FAIL)
               HGOTO_ERROR(DFE_WRITEERROR, FAIL);
       }
 
@@ -1149,7 +1149,7 @@ HXPreset(accrec_t * access_rec, sp_info_block_t * info_block)
     }
 
     /* write out the new external file record */
-    if (HPwrite(file_rec, local_ptbuf, new_len) == FAIL)
+    if (HP_write(file_rec, local_ptbuf, new_len) == FAIL)
         HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
     /* update the DD block in the file */

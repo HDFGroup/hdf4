@@ -377,7 +377,7 @@ HCIread_header(filerec_t * file_rec, accrec_t * access_rec,
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
     if (HPseek(file_rec, data_off + 2) == FAIL)
         HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-    if (HPread(file_rec, local_ptbuf, (COMP_HEADER_LENGTH - 2)) == FAIL)
+    if (HP_read(file_rec, local_ptbuf, (COMP_HEADER_LENGTH - 2)) == FAIL)
         HGOTO_ERROR(DFE_READERROR, FAIL);
 
     p = local_ptbuf;
@@ -405,7 +405,7 @@ HCIread_header(filerec_t * file_rec, accrec_t * access_rec,
                   uint16      f_one;    /* temp. var for fill one */
                   int32       m_off, m_len;     /* temp. var for mask offset and len */
 
-                  if (HPread(file_rec, p, 16) == FAIL)
+                  if (HP_read(file_rec, p, 16) == FAIL)
                       HGOTO_ERROR(DFE_READERROR, FAIL);
                   /* specify number-type of N-bit data */
                   INT32DECODE(p, c_info->nbit.nt);
@@ -429,7 +429,7 @@ HCIread_header(filerec_t * file_rec, accrec_t * access_rec,
                   uint32      skp_size,     /* size of skipping unit */
                               comp_size;    /* # of bytes to compress */
 
-                  if (HPread(file_rec, p, 8) == FAIL)
+                  if (HP_read(file_rec, p, 8) == FAIL)
                       HGOTO_ERROR(DFE_READERROR, FAIL);
                   /* specify skipping unit size */
                   UINT32DECODE(p, skp_size);
@@ -901,7 +901,7 @@ HCPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
           if (HPseek(file_rec, data_off + 4) == FAIL)
               HGOTO_ERROR(DFE_SEEKERROR, FAIL);
           /* re-write un-comp. len */
-          if (HPwrite(file_rec, local_ptbuf, 4) == FAIL)     
+          if (HP_write(file_rec, local_ptbuf, 4) == FAIL)     
               HGOTO_ERROR(DFE_WRITEERROR, FAIL);
       }     /* end if */
 

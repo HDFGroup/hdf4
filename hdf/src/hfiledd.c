@@ -185,7 +185,7 @@ intn HTPstart(filerec_t *file_rec       /* IN:  File record to store info in */
         /* Read in the start of this dd block.
            Read data consists of ndds (number of dd's in this block) and
            offset (offset to the next ddblock). */
-        if (HPread(file_rec, ddhead, NDDS_SZ + OFFSET_SZ) == FAIL)
+        if (HP_read(file_rec, ddhead, NDDS_SZ + OFFSET_SZ) == FAIL)
           HGOTO_ERROR(DFE_READERROR, FAIL);
   
         /* Decode the numbers. */
@@ -222,7 +222,7 @@ intn HTPstart(filerec_t *file_rec       /* IN:  File record to store info in */
         curr_dd_ptr=ddcurr->ddlist;
   
         /* Read in a chunk of dd's from the file. */
-        if (HPread(file_rec, tbuf, ndds * DD_SZ) == FAIL)
+        if (HP_read(file_rec, tbuf, ndds * DD_SZ) == FAIL)
           HGOTO_ERROR(DFE_READERROR, FAIL);
   
       /* decode the dd's */
@@ -346,7 +346,7 @@ intn HTPinit(filerec_t *file_rec,       /* IN: File record to store info in */
     p = &ddhead[0];
     INT16ENCODE(p, block->ndds);
     INT32ENCODE(p, (int32) 0);
-    if (HPwrite(file_rec, ddhead, NDDS_SZ + OFFSET_SZ) == FAIL)
+    if (HP_write(file_rec, ddhead, NDDS_SZ + OFFSET_SZ) == FAIL)
       HGOTO_ERROR(DFE_WRITEERROR, FAIL);
   
     /* allocate and initialize dd list */
@@ -374,7 +374,7 @@ intn HTPinit(filerec_t *file_rec,       /* IN: File record to store info in */
     HDmemfill(p,tbuf,DD_SZ,(ndds-1));
 
     /* Write the NIL dd's out into the DD block on disk */
-    if (HPwrite(file_rec, tbuf, ndds * DD_SZ) == FAIL)
+    if (HP_write(file_rec, tbuf, ndds * DD_SZ) == FAIL)
       HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
     /* Update the DFTAG_NULL pointers */
@@ -448,7 +448,7 @@ intn HTPsync(filerec_t *file_rec       /* IN:  File record to store info in */
             p = ddhead;
             INT16ENCODE(p, block->ndds);
             INT32ENCODE(p, block->nextoffset);
-            if (HPwrite(file_rec, ddhead, NDDS_SZ + OFFSET_SZ) == FAIL)
+            if (HP_write(file_rec, ddhead, NDDS_SZ + OFFSET_SZ) == FAIL)
               HGOTO_ERROR(DFE_WRITEERROR, FAIL);
   
       /* n is the maximum number of dd's in tbuf */
@@ -475,7 +475,7 @@ intn HTPsync(filerec_t *file_rec       /* IN:  File record to store info in */
                 INT32ENCODE(p, list->length);
               }	/* end for */
 
-            if (HPwrite(file_rec, tbuf, ndds * DD_SZ) == FAIL)
+            if (HP_write(file_rec, tbuf, ndds * DD_SZ) == FAIL)
               HGOTO_ERROR(DFE_WRITEERROR, FAIL);
   
             block->dirty = FALSE;	/* block has been flushed */
@@ -1461,7 +1461,7 @@ static intn HTInew_dd_block(filerec_t * file_rec)
         p = ddhead;
         INT16ENCODE(p, block->ndds);
         INT32ENCODE(p, (int32) 0);
-        if (HPwrite(file_rec, ddhead, NDDS_SZ + OFFSET_SZ) == FAIL)
+        if (HP_write(file_rec, ddhead, NDDS_SZ + OFFSET_SZ) == FAIL)
           HGOTO_ERROR(DFE_WRITEERROR, FAIL);
       }		/* end else */
   
@@ -1493,7 +1493,7 @@ static intn HTInew_dd_block(filerec_t * file_rec)
         INT32ENCODE(p, (int32) 0);
         HDmemfill(p,tbuf,DD_SZ,(ndds-1));
 
-        if (HPwrite(file_rec, tbuf, ndds * DD_SZ) == FAIL)
+        if (HP_write(file_rec, tbuf, ndds * DD_SZ) == FAIL)
           HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
         HDfree(tbuf);
@@ -1518,7 +1518,7 @@ static intn HTInew_dd_block(filerec_t * file_rec)
         INT32ENCODE(p, nextoffset);
         if (HPseek(file_rec, offset) == FAIL)
           HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-        if (HPwrite(file_rec, ddhead, OFFSET_SZ) == FAIL)
+        if (HP_write(file_rec, ddhead, OFFSET_SZ) == FAIL)
           HGOTO_ERROR(DFE_WRITEERROR, FAIL);
       }	/* end else */
   
@@ -1886,7 +1886,7 @@ static intn HTIupdate_dd(filerec_t * file_rec, dd_t * dd_ptr)
         UINT16ENCODE(p, dd_ptr->ref);
         INT32ENCODE(p, dd_ptr->offset);
         INT32ENCODE(p, dd_ptr->length);
-        if (HPwrite(file_rec, tbuf, DD_SZ) == FAIL)
+        if (HP_write(file_rec, tbuf, DD_SZ) == FAIL)
           HGOTO_ERROR(DFE_WRITEERROR, FAIL);
       } /* end else */
   
