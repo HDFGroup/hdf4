@@ -134,7 +134,7 @@ minigzip: minigzip.o libz.a
 	$(CC) $(CFLAGS) -o $@ minigzip.o $(LDFLAGS)
 
 clean distclean:
-	rm -f *.o example minigzip libz.a foo.gz
+	rm -f *.o example minigzip libz.a foo.gz config.status Makefile
 
 zip:
 	zip -ul9 zlib README ChangeLog Makefile Make????.??? Makefile.?? \
