@@ -102,19 +102,8 @@ main(int argc, char *argv[], char *env[])    /* main body of code */
   if ((buffer = (char *) calloc(1, reclen)) == NULL)
     printf("unable to allocate buffer(reclen) of size %d\n",reclen);
 
-#if 0
-  printf("buffer[]=");
-#endif
   for (i=0; i < reclen; i++)
-    {
       buffer[i] = i % 15;
-#if 0
-      printf("%d,",buffer[i]);
-#endif
-    }
-#if 0
-  printf("\n");
-#endif
 
   if ((pindex = (int *) calloc(numrecs, sizeof(int))) == NULL)
     printf("unable to allocate pindex[numrecs] of size integer\n");
