@@ -26,10 +26,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.17  1992/07/08 15:39:42  chouck
-Removed return(0) at end of main().  Took out some debugging
-info from the -t option
+Revision 1.18  1992/07/09 01:18:57  koziol
+More PC fixes
 
+ * Revision 1.17  1992/07/08  15:39:42  chouck
+ * Removed return(0) at end of main().  Took out some debugging
+ * info from the -t option
+ *
  * Revision 1.16  1992/06/19  16:45:58  chouck
  * More descriptive error messages when Hopen() fails
  *
@@ -233,7 +236,7 @@ char *argv[];
                 fflush(stdout);
                 HEprint(stderr, 0);
             }
-	}
+        }
         
 	aid = Hstartread(fid, DFTAG_WILDCARD, DFREF_WILDCARD);
 	if(aid == FAIL) {
