@@ -199,7 +199,7 @@ extern intn do_list(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_op
 extern intn do_dumpsds(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts);
 
 /* hdp_rig.c */
-extern void do_dumprig(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts);
+extern intn do_dumprig(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts);
 
 /* hdp_vg.c */
 extern intn do_dumpvg(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts);

@@ -107,7 +107,8 @@ main(int argc, char *argv[])
           break;
 
       case DUMPRIG:
-          do_dumprig(curr_arg, argc, argv, &glob_opts);
+          if (FAIL == do_dumprig(curr_arg, argc, argv, &glob_opts))
+              exit(1);
           break;
 
       case DUMPVG:
