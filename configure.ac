@@ -90,6 +90,7 @@ dnl ----------------------------------------------------------------------
 AC_PROG_MAKE_SET
 
 AC_PROG_CC
+AC_PROG_CPP
 AC_PROG_F77
 AC_PROG_CXX
 
