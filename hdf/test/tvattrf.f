@@ -157,7 +157,14 @@ C get the 1st attr of fld 0
          call MESSAGE(1, 'Wrong findex of fldname1 of  vsname1')
          number_failed = number_failed + 1
       endif
+C
+C     The following two lines should be used INSTEAD OF the third line on
+C     machines using 64-bit single precision and 128-bit double precision.
+C
+C     ret = vsfgnat(vsid, findex, aindex, iattrr)
+C     iattrg(1) = iattrr(1)
       ret = vsfgnat(vsid, findex, aindex, iattrg)
+C
       call VRFY(ret, 'vsfgnatt1', number_failed)
       if (dabs(iattrg(1)-GATTR1) .gt. dabs(geps * GATTR1)) 
      +          then
