@@ -1,69 +1,29 @@
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.12  1993/09/30 19:04:55  koziol
-Added basic compressing functionality for special tags.
+/* $Id$ */
 
- * Revision 1.11  1993/09/28  18:04:15  koziol
- * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
- * tag handling.  Added new compression special tag type.
- *
- * Revision 1.10  1993/05/04  18:55:56  georgev
- * Fixed a minor cast problem on the Mac.
- *
- * Revision 1.9  1993/04/22  23:00:05  koziol
- * Changed DFR8nimages, DFPnpals to report the correct number of images
- * and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
- *
- * Revision 1.7  1993/03/29  16:47:32  koziol
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.5  1993/01/19  05:54:54  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.4  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.3  1992/10/22  22:53:32  chouck
- * Added group handle to group interface
- *
- * Revision 1.2  1992/09/17  20:02:17  koziol
- * Included Shiming's bugfix to RIG stuff
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*-----------------------------------------------------------------------------
- * File:    dfr8.c
- * Purpose: read and write 8-bit Raster Image Groups
- * Invokes: df.c, dfcomp.c, dfgroup.c, dfrig.h
+ * File:     dfr8.c
+ * Purpose:  read and write 8-bit Raster Image Groups
+ * Invokes:  df.c, dfcomp.c, dfgroup.c, dfrig.h
  * Contents:
- *  DFR8getdims: retrieve information about 8-bit image dimensions
- *  DFR8getimage: retrieve 8-bit image and associated palette
- *  DFR8setpalette: specify palette to be used with subsequent 8-bit images
- *  DFR8Iputimage: internal routine that write 8-bit images to files
- *  DFR8putimage: write 8-bit image into an HDF file
- *  DFR8addimage: append another 8-bit image to an HDF file
- *  DFR8getrig: read in a raster image group for 8-bit images
- *  DFR8putrig: write out a raster image group for 8-bit images
- *  DFR8nimages: number of images in HDF file
- *  DFR8readref: get image with this reference number next
- *  DFR8writeref: put image with this reference number next
- *  DFR8restart: forget info about last file accessed - restart from beginning
- *  DFR8lastref: return reference number of last element read or written
- *  DFR8setcompress: Set the compression for next image written
+ *  DFR8getdims     : retrieve information about 8-bit image dimensions
+ *  DFR8getimage    : retrieve 8-bit image and associated palette
+ *  DFR8setpalette  : specify palette to be used with subsequent 8-bit images
+ *  DFR8Iputimage   : internal routine that write 8-bit images to files
+ *  DFR8putimage    : write 8-bit image into an HDF file
+ *  DFR8addimage    : append another 8-bit image to an HDF file
+ *  DFR8getrig      : read in a raster image group for 8-bit images
+ *  DFR8putrig      : write out a raster image group for 8-bit images
+ *  DFR8nimages     : number of images in HDF file
+ *  DFR8readref     : get image with this reference number next
+ *  DFR8writeref    : put image with this reference number next
+ *  DFR8restart     : forget info about last file accessed - restart from  
+ *                    beginning
+ *  DFR8lastref     : return reference number of last element read or written
+ *  DFR8setcompress : Set the compression for next image written
  * Private:
  *  DFR8Iopen: open/reopen file
  *  DFR8Iriginfo: obtain info about next RIG/RI8 to get

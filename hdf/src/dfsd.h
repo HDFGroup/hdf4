@@ -1,47 +1,5 @@
-/*
-$Header$
+/* $Id$ */
 
-$Log$
-Revision 1.12  1993/10/01 20:00:46  koziol
-Put "extern C" block around function prototypes for C++ compatibility.
-
- * Revision 1.11  1993/08/16  21:45:30  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.10  1993/04/19  22:47:40  koziol
- * General Code Cleanup to reduce/remove errors on the PC
- *
- * Revision 1.9  1993/02/02  00:10:49  georgev
- * Changed prototypes for Hyperslab routines to reflect new interface.
- *
- * Revision 1.8  1993/01/26  19:42:40  koziol
- * Added support for reading and writing Little-Endian data on all
- * platforms.  This has been tested on: Cray, Sun, and PCs so far.
- *
- * Revision 1.7  1993/01/19  05:55:12  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.6  1993/01/04  18:03:39  sxu
- * change dfsdpre32 to dfsdpre32sdg
- *
- * Revision 1.5  1992/11/10  20:21:32  georgev
- * Added fill value to DFSsdg struct, Added prototypes for
- *  hyperslab routines
- *
- * Revision 1.4  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.3  1992/08/31  16:14:52  chouck
- * Added Fortran support for calibration tags
- *
- * Revision 1.2  1992/08/27  22:18:42  chouck
- * Added support for calibration tag reading and writing
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*-----------------------------------------------------------------------------
  * File:    dfsd.h
  * Purpose: header file for the Scientific Data set
