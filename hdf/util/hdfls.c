@@ -22,16 +22,6 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hdf.h"
 #include "hfile.h"
 
-#if 0
-#ifdef MAC
-/* this isn't worth putting in hdfi.h */
-/* otherwise, need to include stdlib.h, which */
-/* in turn requires other includes - very messy, trust me */
-void        qsort(void *base, size_t nmemb, size_t size,
-                  int         (*compar) (const void *, const void *));
-#endif
-#endif
-
 #define MAXBUFF 8192
 
 dd_t       *desc_buf;
@@ -402,7 +392,7 @@ main(int argc, char *argv[])
           exit(1);
       }
 
-    desc_buf = (dd_t *) HDmalloc(sizeof(dd_t) * MAXBUFF);
+    desc_buf = (dd_t *) HDcalloc(MAXBUFF, sizeof(dd_t));
 
     while (i < argc)
       {
