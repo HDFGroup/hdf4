@@ -957,7 +957,10 @@ uint32    count;
       } /* end if */
     
 
-/*    This should be set by the caller */
+/*    This should be set by the caller.
+      Note: Don't understand why this is the case but not setting
+            it here causes a bug on little endian machines when
+            data conversion occurs. -GV */
 /*    DFKsetNT(vp->HDFtype); */
     
 #ifdef CM5
@@ -969,6 +972,7 @@ CM_HDFtype = vp->HDFtype;
             status = Hread(vp->aid, byte_count, (uint8 *) tBuf);
             if(status != byte_count) 
                 return FALSE;
+            DFKsetNT(vp->HDFtype); /* added back here -GV */
             DFKnumin((uint8 *) tBuf, (uint8 *) values, (uint32) count, 0, 0);
           } /* end if */
         else {
@@ -978,6 +982,7 @@ CM_HDFtype = vp->HDFtype;
           } /* end else */
     } else {
         if(convert) {
+            DFKsetNT(vp->HDFtype); /* added back here -GV */
             DFKnumout((uint8 *) values, tBuf, (uint32) count, 0, 0);
             status = Hwrite(vp->aid, byte_count, (uint8 *) tBuf);
           } /* end if */
