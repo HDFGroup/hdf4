@@ -42,7 +42,7 @@ gattr_diff(int32 sdid1,
    continue;
   }
   iret2 = SDattrinfo(sdid2, ib, att2.name, &att2.type, &att2.len);
-  att1.val = (void *) malloc((unsigned) (att1.len*DFKNTsize(att1.type)));
+  att1.val = (void *) malloc((unsigned) (att1.len*DFKNTsize(att1.type | DFNT_NATIVE)));
   if (!att1.val) 
   {
    error("Out of memory!");
@@ -50,7 +50,7 @@ gattr_diff(int32 sdid1,
    SDend(sdid2);
    exit(0);
   }
-  att2.val = (void *) malloc((unsigned) (att2.len*DFKNTsize(att2.type)));
+  att2.val = (void *) malloc((unsigned) (att2.len*DFKNTsize(att2.type | DFNT_NATIVE)));
   if (!att2.val) 
   {
    error("Out of memory!");
@@ -66,7 +66,7 @@ gattr_diff(int32 sdid1,
    iret2 = 1;
   if (iret2 == 0)       /* compare the data */
    iret2 = memcmp((void *) att1.val, att2.val, 
-   att1.len*DFKNTsize(att1.type));
+   att1.len*DFKNTsize(att1.type | DFNT_NATIVE));
   
   if (iret2 != 0)
   {

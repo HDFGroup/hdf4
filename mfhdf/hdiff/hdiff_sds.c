@@ -345,12 +345,12 @@ int diff_sds_attrs(int32 sds1_id,int32 nattrs1,int32 sds2_id,int32 nattrs2,char*
    continue;
   }
   
-  attr1_buf = (void *) malloc((unsigned)nelms1*DFKNTsize(dtype1));
+  attr1_buf = (void *) malloc((unsigned)nelms1*DFKNTsize(dtype1 | DFNT_NATIVE));
   if (!attr1_buf) {
    printf("Out of memory!");
    return -1;
   }
-  attr2_buf = (void *) malloc((unsigned)nelms2*DFKNTsize(dtype2));
+  attr2_buf = (void *) malloc((unsigned)nelms2*DFKNTsize(dtype2 | DFNT_NATIVE));
   if (!attr2_buf) {
    printf("Out of memory!");
    return -1;
@@ -366,7 +366,7 @@ int diff_sds_attrs(int32 sds1_id,int32 nattrs1,int32 sds2_id,int32 nattrs2,char*
   }
 
 
-  cmp = HDmemcmp(attr1_buf,attr2_buf,nelms1*DFKNTsize(dtype1));
+  cmp = HDmemcmp(attr1_buf,attr2_buf,nelms1*DFKNTsize(dtype1 | DFNT_NATIVE));
   if (cmp!=0)
   {
    printf("\n---------------------------\n");
