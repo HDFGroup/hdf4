@@ -53,13 +53,31 @@ C
       real*4 f32scale(10), tf32scale(10)
       real*4 f32max, f32min, tf32max, tf32min
 
-C  Change these to be of type 'byte' for VMS      
+C Change these to be of type 'byte' for VMS      
 C      byte i8(10,10), ti8(10,10)
 C      byte i8scale(10), ti8scale(10), i8max, i8min
 C      byte ti8max, ti8min   
       character i8(10,10), ti8(10,10)
       character i8scale(10), ti8scale(10), i8max, i8min
       character ti8max, ti8min
+C Align the Character variables with the surrogate names.
+C Need to do this because HDF always assume int8 is a packed 8 bits
+C quantities of precisely 1 byte big.  Integer*1 may have memory size
+C as large as a normal integer (e.g. Cray).
+C Cannot just use the character variables as for some compilers,
+C the argument address of a character argument is not compatible with
+C that of a numerial argument.
+
+      integer surri8, surri8max, surri8min, surri8scale
+      integer surrti8, surrti8max, surrti8min, surrti8scale
+      equivalence (i8, surri8)
+      equivalence (i8scale, surri8scale)
+      equivalence (i8min, surri8min)
+      equivalence (i8max, surri8max)
+      equivalence (ti8, surrti8)
+      equivalence (ti8scale, surrti8scale)
+      equivalence (ti8min, surrti8min)
+      equivalence (ti8max, surrti8max)
 
       integer*2 i16(10,10), ti16(10,10)
       integer*2 i16scale(10), ti16scale(10), i16max, i16min
@@ -158,9 +176,9 @@ C
       call errchkio(err1, err2, err3, number_failed, 'float32 write')
 
       err  = dssnt(DFNT_INT8)
-      err1 = dssdisc(1, 10, i8scale)
-      err2 = dssrang(i8max, i8min)
-      err3 = dsadata('of.hdf', rank, dims, i8)
+      err1 = dssdisc(1, 10, surri8scale)
+      err2 = dssrang(surri8max, surri8min)
+      err3 = dsadata('of.hdf', rank, dims, surri8)
       call errchkio(err1, err2, err3, number_failed, 'int8 write')
       
       
@@ -216,9 +234,9 @@ C
          print *, '>>> Read calibration where none stored'
       endif
       
-      err1 = dsgdata('of.hdf', rank, dims, ti8)
-      err2 = dsgdisc(1, 10, ti8scale)
-      err3 = dsgrang(ti8max, ti8min)
+      err1 = dsgdata('of.hdf', rank, dims, surrti8)
+      err2 = dsgdisc(1, 10, surrti8scale)
+      err3 = dsgrang(surrti8max, surrti8min)
       call errchkio(err1, err2, err3, number_failed, 'int8 read')
       
       err1 = dsgdata('of.hdf', rank, dims, ti16)
