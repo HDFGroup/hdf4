@@ -44,7 +44,7 @@ const struct {
     int32 dimsizes[2];
     int32 n_attr;
 } datafile_info[]=
-  {
+  { /* This information applies to the tmgr.dat" file */
     {"Raster Image #0", 3, DFNT_UCHAR8, MFGR_INTERLACE_PIXEL, {13,15}, 2},
     {"Raster Image #1", 3, DFNT_UCHAR8, MFGR_INTERLACE_LINE, {13,15}, 2},
     {"Raster Image #2", 3, DFNT_UCHAR8, MFGR_INTERLACE_COMPONENT, {13,15}, 2},
@@ -52,428 +52,103 @@ const struct {
     {"Test Image #2", 2, DFNT_FLOAT64, MFGR_INTERLACE_PIXEL, {17,19}, 3}
   };
 
-#ifdef QAK
-#define MAXLEN_LAB    50
-#define MAXLEN_DESC  500
-#define ROWS          10
-#define COLS          10
-#define REPS           3   /* number of data sets to write to file */
-
-/* File labels/desriptions to write */
-static char *file_lab[2] = {"File label #1: aaa", "File label #2: bbbbbb"};
-static char *file_desc[2]= {"File Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 13"
-                           "\n        14 15 16 17 18 19 20 **END FILE DESCR**\n",
-                           "File Descr #2: A B C D E F G H I J K L \n"
-                           "               M N O  **END FILE DESCR**\n"};
-
-/* Data labels /descriptions to write */
-static char *labsds[2] = {"Object label #1:  sds", 
-                          "Object label #1.1:sds"};
-static char *labris[2] = {"Object label #2:  image", 
-                          "Object label #2.1:image"};
-static char *descsds[2]={"Object Descr #1:   1  2  3  4  5  6  7  8  9 10 11 12 "
-                         "\n       13 14 15 16 17 18 19 20 **END SDS DESCR**\n",
-                         "Object Descr #1.1: 1  2  3  4  5  6  7  8  9 10 11 12 "
-                         "\n       13 14 15 16 17 18 19 20 **END SDS DESCR**\n"};
-static char *descris[2] = {"Object Descr #2:   A B C D E F G H I J K L \n"
-                           "                 M N O **END IMAGE DESCR **\n",
-                           "Object Descr #2.1: A B C D E F G H I J K L \n"
-                           "                 M N O **END IMAGE DESCR **\n"};
-
-static VOID 
-gen2Dfloat (int height, int width, float *data);
-
-static VOID 
-genimage (int height, int width, float *data, uint8 *image);
-
-static VOID 
-check_lab_desc (char *fname, uint16 tag, uint16 ref,char* label[],char *desc[]);
-
-static VOID
-check_fann(char *fname);
-
-/****************************************************************
-**
-**  check_fann:  Check file labels and descriptions in file
-**
-****************************************************************/
-static VOID
-check_fann(char *fname)
-{
-  int32 ret;
-  int32 file_handle;
-  int32 ann_handle;
-  int32 nflabs, nfdescs, nolabs, nodescs;
-  int32 ann_len;
-  char *ann_label = NULL;
-  char *ann_desc = NULL;
-  intn  i;
-  intn indx;
-
-  /* open file again */
-  ret = file_handle = ANstart(fname, DFACC_READ);
-  RESULT("ANstart");
-
-  /* Get Info On Annotations In File */
-  ret = ANfileinfo(file_handle, &nflabs, &nfdescs, &nolabs, &nodescs);
-  RESULT("Anfileinfo");
-#ifdef AN_DEBUG
-  printf("There Are Nflabs=%d, Nfdescs=%d, Nolabs=%d, Nodescs=%d \n",nflabs,
-         nfdescs, nolabs, nodescs);
-#endif
-
-  /* read file labels */
-  for (i = 0; i < nflabs; i++)
-    { /* select file label */
-      indx = i;
-      ann_handle = ret = ANselect(file_handle, indx, AN_FILE_LABEL);
-      RESULT("ANselect");
-
-      /* get file label length */
-      ann_len = ret = ANannlen(ann_handle);
-      RESULT("ANannlen");
-        
-      /* check ann length */
-      if (ann_len != (int32) HDstrlen(file_lab[i]))
-        {
-          printf("\t>>>BAD FILE LABEL LENGTH.\n\t    IS: %d\n\tSHOULD BE: %d<<<\n",
-                 (int) ann_len, (int) HDstrlen(file_lab[i]));
-          num_errs++;
-        }
-
-      /* allocate space for label */
-      if (ann_label == NULL)
-        {
-          if ((ann_label = (char *)HDmalloc((ann_len+1)*sizeof(char))) 
-              == NULL)
-            {
-              printf("Error: failed to allocate space to hold file label \n");
-              exit(1);
-            }
-          HDmemset(ann_label,'\0', ann_len+1);
-        }
-      
-      /* read label */
-      ret = ANreadann(ann_handle, ann_label, ann_len+1);
-      RESULT("ANreadann");
-      ret = ANendaccess(ann_handle);
-      RESULT("ANendaccess");      
-      
-      /* check label */
-      if (HDstrncmp((const char *)ann_label, (const char *)file_lab[i],ann_len+1) != 0)
-        {
-          printf("\t>>>BAD FILE LABEL. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n",
-                 ann_label, file_lab[i]);
-          num_errs++;
-        }
-#ifdef AN_DEBUG
-      printf("found ann_len=%d, file label=%s\n", strlen(ann_label),ann_label);
-#endif
-      HDfree(ann_label);
-      ann_label = NULL;
-    } /* end for nflabs */
-
-  /* read file descriptions */
-  for (i = 0; i < nfdescs; i++)
-    { /* select file label */
-      indx = i;
-      ann_handle = ret = ANselect(file_handle, indx, AN_FILE_DESC);
-      RESULT("ANselect");
-
-      /* get file label length */
-      ann_len = ret = ANannlen(ann_handle);
-      RESULT("ANannlen");
-        
-      /* check ann length */
-      if (ann_len != (int32) HDstrlen(file_desc[i]))
-        {
-          printf("\t>>>BAD FILE DESC LENGTH.\n\t    IS: %d\n\tSHOULD BE: %d<<<\n",
-                 (int) ann_len, (int) HDstrlen(file_desc[i]));
-          num_errs++;
-        }
-
-      /* allocate space for desc */
-      if (ann_desc == NULL)
-        {
-          if ((ann_desc = (char *)HDmalloc((ann_len+1)*sizeof(char))) 
-              == NULL)
-            {
-              printf("Error: failed to allocate space to hold file desc  \n");
-              exit(1);
-            }
-          HDmemset(ann_desc,'\0', ann_len+1);
-        }
-      
-      /* read desc */
-      ret = ANreadann(ann_handle, ann_desc, ann_len+1);
-      RESULT("ANreadann");
-      ret = ANendaccess(ann_handle);
-      RESULT("ANendaccess");      
-            
-      /* check desc */
-      if (HDstrncmp((const char *)ann_desc,(const char *)file_desc[i],ann_len+1) != 0)
-        {
-          printf("\t>>>BAD FILE DESC. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n",
-                 ann_desc, file_desc[i]);
-          num_errs++;
-        }
-#ifdef AN_DEBUG
-      printf("found ann_len=%d, file desc=%s\n", strlen(ann_desc),ann_desc);
-#endif
-      HDfree(ann_desc);
-      ann_desc = NULL;
-    } /* end for nfdescs */
-
-  /* Clean up */
-  if (ann_label != NULL)
-    HDfree(ann_label);
-  if (ann_desc != NULL)
-    HDfree(ann_desc);
-
-  /* close file */
-  ANend(file_handle);
-} /* check_fann() */
-
-/****************************************************************
-**
-**  gen2Dfloat:  generate 2-D data array
-**
-****************************************************************/
-static      VOID
-gen2Dfloat(int height, int width, float *data)
-{
-  int    i, j;
-  float  *pdata;
-
-  /* store one value per row, increasing by one for each row */
-  pdata = data;
-  for (i = 0; i < height; i++)
-    for (j = 0; j < width; j++)
-      *pdata++ = (float) i + 1;
-
-} /* gen2Dfloat() */
-
-/****************************************************************
-**
-**  genimage:  generate image from 2-D float array
-**
-****************************************************************/
-static      VOID
-genimage(int height, int width, float *data, uint8 *image)
-{
-  int    i, limit;
-  float  *pdata, max, min, multiplier;
-  uint8  *pimage;
-
-  limit = height * width;
-  pdata = data;
-  max   = min = *pdata;
-  for (i = 0; i < limit; i++, pdata++)
-    {
-      max = (max > *pdata) ? max : *pdata;
-      min = (min < *pdata) ? min : *pdata;
-    }
-  /* store one value per row, increasing by one for each row */
-  pdata  = data;
-  pimage = image;
-  multiplier = (float32) 255.0 / (max - min);
-  for (i = 0; i < limit; i++)
-    *image++ = (uint8) (((*pdata++) - min) * multiplier);
-} /* geniamge() */
-
-/****************************************************************
-**
-**  check_lab_desc:  read and compare label and description
-**                   with expected ones
-**
-****************************************************************/
-static      VOID
-check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label[], char *desc[])
-{
-  int32 ret;
-  int32 file_handle;
-  int32 nflabs, nfdescs, nolabs, nodescs;
-  intn  num_dlabels, num_ddescs;
-  int32  *dlabels, *ddescs;
-  int32 ann_len;
-  char  *ann_label = NULL;
-  char  *ann_desc = NULL;
-  int i;
-
-  /* open file again */
-  ret = file_handle = ANstart(fname, DFACC_READ);
-  RESULT("ANstart");
-
-  /* Get Info On Annotations In File */
-  ret = ANfileinfo(file_handle, &nflabs, &nfdescs, &nolabs, &nodescs);
-  RESULT("Anfileinfo");
-#ifdef AN_DEBUG
-  printf("There Are Nflabs=%d, Nfdescs=%d, Nolabs=%d, Nodescs=%d \n",nflabs,
-         nfdescs, nolabs, nodescs);
-#endif
-  /* Get number of annotations with this tag/ref */
-  num_dlabels = ret = ANnumann(file_handle, AN_DATA_LABEL, tag, ref);
-  RESULT("ANnumann");
-#ifdef AN_DEBUG
-  printf("there are %d data labels for tag=%d, ref=%d \n", num_dlabels, 
-         tag, ref);
-#endif
-  num_ddescs = ret = ANnumann(file_handle, AN_DATA_DESC, tag, ref);
-  RESULT("ANnumann"); 
-#ifdef AN_DEBUG
-  printf("There Are %d Data Descriptions For Tag=%d, Ref=%d \n", 
-         num_ddescs, tag, ref);
-#endif
-  /* allocate space for list of label annotation id's with this tag/ref */
-  if (num_dlabels == 0)
-    {
-      printf("Error: no data labels found\n");
-      num_errs++;
-    }
-  else
-    {
-      if ((dlabels = (int32 *)HDmalloc(num_dlabels * sizeof(int32))) == NULL)
-        {
-          printf("Error: failed to allocate space to hold data label ids\n");
-          exit(1);
-        }
-    }
-
-  /* allocate space for list of description annotation id's with this tag/ref */
-  if (num_ddescs == 0)
-    {
-      printf("Error: no data descriptions found\n");
-      num_errs++;
-    }
-  else
-    {
-      if ((ddescs = (int32 *)HDmalloc(num_ddescs * sizeof(int32))) == NULL)
-        {
-          printf("Error: failed to allocate space to hold data descs ids\n");
-          exit(1);
-        }
-    }
-
-  /* get list of label annotations id's with this tag/ref */
-  ret = ANannlist(file_handle, AN_DATA_LABEL, tag, ref, dlabels);
-  RESULT("ANannlist");
-  if (ret != num_dlabels)
-    printf("Error:ret!=nlabels there are %d data labels for tag=%d,ref=%d \n", 
-           num_dlabels, tag, ref);
-
-  /* get list of description annotations id's with this tag/ref */
-  ret = ANannlist(file_handle, AN_DATA_DESC, tag, ref, ddescs);
-  RESULT("ANannlist");
-  if (ret != num_ddescs)
-    printf("Error:ret!=ndescs there are %d data descss for tag=%d,ref=%d \n", 
-           num_ddescs, tag, ref);
-
-  /* loop through label list */
-  for (i = 0; i < num_dlabels; i++)
-    {
-      ann_len = ret = ANannlen(dlabels[i]);
-      RESULT("ANannlen");
-        
-      /* check ann length */
-      if (ann_len != (int32) HDstrlen(label[i]))
-        {
-          printf("\t>>>BAD DATA LABEL LENGTH.\n\t    IS: %d\n\tSHOULD BE: %d<<<\n",
-                 (int) ann_len, (int) HDstrlen(label[i]));
-          num_errs++;
-        }
-
-      /* allocate space for label */
-      if (ann_label == NULL)
-        {
-          if ((ann_label = (char *)HDmalloc((ann_len+1)*sizeof(char))) 
-              == NULL)
-            {
-              printf("Error: failed to allocate space to hold data label \n");
-              exit(1);
-            }
-          HDmemset(ann_label,'\0', ann_len+1);
-        }
-      
-      /* read label */
-      ret = ANreadann(dlabels[i], ann_label, ann_len+1);
-      RESULT("ANreadann");
-      ret = ANendaccess(dlabels[i]);
-      RESULT("ANendaccess");      
-
-      /* check label */
-      if (HDstrncmp((const char *)ann_label, (const char *)label[i], ann_len+1) != 0)
-        {
-          printf("\t>>>BAD DATA LABEL. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n",
-                 ann_label, label[i]);
-          num_errs++;
-        }
-#ifdef AN_DEBUG
-      printf("found data_len=%d, data label=%s\n", strlen(ann_label),ann_label);
-#endif
-      HDfree(ann_label);
-      ann_label = NULL;
-    } /* end for labels */
-
-  /* loop through desc list */
-  for (i = 0; i < num_ddescs; i++)
-    {
-      /* get desc length */
-      ann_len = ret = ANannlen(ddescs[i]);
-      RESULT("ANannlen");
-
-      /* check desc length */
-      if (ann_len != (int32) HDstrlen(desc[i]))
-        {
-          printf("\t>>>BAD DATA DESC LENGTH.\n\t    IS: %d\n\tSHOULD BE: %d<<<\n",
-                 (int) ann_len, (int) HDstrlen(desc[i]));
-          num_errs++;
-        }
-
-      /* allocate space for descritpion */
-      if (ann_desc == NULL)
-        {
-          if ((ann_desc = (char *)HDmalloc((ann_len+1)*sizeof(char))) 
-              == NULL)
-            {
-              printf("Error: failed to allocate space to hold data desc \n");
-              exit(1);
-              }
-          HDmemset(ann_desc,'\0', ann_len+1);
-        }
-
-      /* read description */
-      ret = ANreadann(ddescs[i], ann_desc, ann_len+1);
-      RESULT("ANreadann");
-      ret = ANendaccess(ddescs[i]);
-      RESULT("ANendaccess");      
-
-      /* check desc */
-      if (HDstrncmp((const char *)ann_desc, (const char *)desc[i], ann_len) != 0)
-        {
-          printf("\t>>>BAD DATA DESC. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n",
-                 ann_desc, desc[i]);
-          num_errs++;
-        }
-#ifdef AN_DEBUG
-      printf("found data desclen=%d, desc=%s\n", strlen(ann_desc),ann_desc);
-#endif
-      HDfree(ann_desc);
-      ann_desc = NULL;
-    } /* end for descs */
-    
-  /* free space */
-  HDfree(dlabels);
-  HDfree(ddescs);
-  if (ann_label != NULL)
-    HDfree(ann_label);
-  if (ann_desc != NULL)
-    HDfree(ann_desc);
-
-  /* close file */
-  ANend(file_handle);
-} /* check_lab_desc() */
-
-#endif /* QAK */
+const uint8 image0[15][13][3]={
+{{0 ,0 ,0 },{1 ,1 ,1 },{2 ,2 ,2 },{3 ,3 ,3 },{4 ,4 ,4 },{5 ,5 ,5 },{6 ,6 ,6 },{7 ,7 ,7 },{8 ,8 ,8 },{9 ,9 ,9 },{10 ,10 ,10 },{11 ,11 ,11 },{12 ,12 ,12 }},
+{{1 ,1 ,1 },{2 ,2 ,2 },{3 ,3 ,3 },{4 ,4 ,4 },{5 ,5 ,5 },{6 ,6 ,6 },{7 ,7 ,7 },{8 ,8 ,8 },{9 ,9 ,9 },{10 ,10 ,10 },{11 ,11 ,11 },{12 ,12 ,12 },{13 ,13 ,13 }},
+{{2 ,2 ,2 },{3 ,3 ,3 },{4 ,4 ,4 },{5 ,5 ,5 },{6 ,6 ,6 },{7 ,7 ,7 },{8 ,8 ,8 },{9 ,9 ,9 },{10 ,10 ,10 },{11 ,11 ,11 },{12 ,12 ,12 },{13 ,13 ,13 },{14 ,14 ,14 }},
+{{3 ,3 ,3 },{4 ,4 ,4 },{5 ,5 ,5 },{6 ,6 ,6 },{7 ,7 ,7 },{8 ,8 ,8 },{9 ,9 ,9 },{10 ,10 ,10 },{11 ,11 ,11 },{12 ,12 ,12 },{13 ,13 ,13 },{14 ,14 ,14 },{15 ,15 ,15 }},
+{{4 ,4 ,4 },{5 ,5 ,5 },{6 ,6 ,6 },{7 ,7 ,7 },{8 ,8 ,8 },{9 ,9 ,9 },{10 ,10 ,10 },{11 ,11 ,11 },{12 ,12 ,12 },{13 ,13 ,13 },{14 ,14 ,14 },{15 ,15 ,15 },{16 ,16 ,16 }},
+{{5 ,5 ,5 },{6 ,6 ,6 },{7 ,7 ,7 },{8 ,8 ,8 },{9 ,9 ,9 },{10 ,10 ,10 },{11 ,11 ,11 },{12 ,12 ,12 },{13 ,13 ,13 },{14 ,14 ,14 },{15 ,15 ,15 },{16 ,16 ,16 },{17 ,17 ,17 }},
+{{6 ,6 ,6 },{7 ,7 ,7 },{8 ,8 ,8 },{9 ,9 ,9 },{10 ,10 ,10 },{11 ,11 ,11 },{12 ,12 ,12 },{13 ,13 ,13 },{14 ,14 ,14 },{15 ,15 ,15 },{16 ,16 ,16 },{17 ,17 ,17 },{18 ,18 ,18 }},
+{{7 ,7 ,7 },{8 ,8 ,8 },{9 ,9 ,9 },{10 ,10 ,10 },{11 ,11 ,11 },{12 ,12 ,12 },{13 ,13 ,13 },{14 ,14 ,14 },{15 ,15 ,15 },{16 ,16 ,16 },{17 ,17 ,17 },{18 ,18 ,18 },{19 ,19 ,19 }},
+{{8 ,8 ,8 },{9 ,9 ,9 },{10 ,10 ,10 },{11 ,11 ,11 },{12 ,12 ,12 },{13 ,13 ,13 },{14 ,14 ,14 },{15 ,15 ,15 },{16 ,16 ,16 },{17 ,17 ,17 },{18 ,18 ,18 },{19 ,19 ,19 },{20 ,20 ,20 }},
+{{9 ,9 ,9 },{10 ,10 ,10 },{11 ,11 ,11 },{12 ,12 ,12 },{13 ,13 ,13 },{14 ,14 ,14 },{15 ,15 ,15 },{16 ,16 ,16 },{17 ,17 ,17 },{18 ,18 ,18 },{19 ,19 ,19 },{20 ,20 ,20 },{21 ,21 ,21 }},
+{{10 ,10 ,10 },{11 ,11 ,11 },{12 ,12 ,12 },{13 ,13 ,13 },{14 ,14 ,14 },{15 ,15 ,15 },{16 ,16 ,16 },{17 ,17 ,17 },{18 ,18 ,18 },{19 ,19 ,19 },{20 ,20 ,20 },{21 ,21 ,21 },{22 ,22 ,22 }},
+{{11 ,11 ,11 },{12 ,12 ,12 },{13 ,13 ,13 },{14 ,14 ,14 },{15 ,15 ,15 },{16 ,16 ,16 },{17 ,17 ,17 },{18 ,18 ,18 },{19 ,19 ,19 },{20 ,20 ,20 },{21 ,21 ,21 },{22 ,22 ,22 },{23 ,23 ,23 }},
+{{12 ,12 ,12 },{13 ,13 ,13 },{14 ,14 ,14 },{15 ,15 ,15 },{16 ,16 ,16 },{17 ,17 ,17 },{18 ,18 ,18 },{19 ,19 ,19 },{20 ,20 ,20 },{21 ,21 ,21 },{22 ,22 ,22 },{23 ,23 ,23 },{24 ,24 ,24 }},
+{{13 ,13 ,13 },{14 ,14 ,14 },{15 ,15 ,15 },{16 ,16 ,16 },{17 ,17 ,17 },{18 ,18 ,18 },{19 ,19 ,19 },{20 ,20 ,20 },{21 ,21 ,21 },{22 ,22 ,22 },{23 ,23 ,23 },{24 ,24 ,24 },{25 ,25 ,25 }},
+{{14 ,14 ,14 },{15 ,15 ,15 },{16 ,16 ,16 },{17 ,17 ,17 },{18 ,18 ,18 },{19 ,19 ,19 },{20 ,20 ,20 },{21 ,21 ,21 },{22 ,22 ,22 },{23 ,23 ,23 },{24 ,24 ,24 },{25 ,25 ,25 },{26 ,26 ,26 }}
+};
+const uint8 image1[15][13][3]={
+{{0 ,1 ,2 },{3 ,4 ,5 },{6 ,7 ,8 },{9 ,10 ,11 },{12 ,0 ,1 },{2 ,3 ,4 },{5 ,6 ,7 },{8 ,9 ,10 },{11 ,12 ,0 },{1 ,2 ,3 },{4 ,5 ,6 },{7 ,8 ,9 },{10 ,11 ,12 }},
+{{1 ,1 ,3 },{3 ,5 ,5 },{7 ,7 ,9 },{9 ,11 ,11 },{13 ,1 ,1 },{3 ,3 ,5 },{5 ,7 ,7 },{9 ,9 ,11 },{11 ,13 ,1 },{1 ,3 ,3 },{5 ,5 ,7 },{7 ,9 ,9 },{11 ,11 ,13 }},
+{{2 ,3 ,2 },{3 ,6 ,7 },{6 ,7 ,10 },{11 ,10 ,11 },{14 ,2 ,3 },{2 ,3 ,6 },{7 ,6 ,7 },{10 ,11 ,10 },{11 ,14 ,2 },{3 ,2 ,3 },{6 ,7 ,6 },{7 ,10 ,11 },{10 ,11 ,14 }},
+{{3 ,3 ,3 },{3 ,7 ,7 },{7 ,7 ,11 },{11 ,11 ,11 },{15 ,3 ,3 },{3 ,3 ,7 },{7 ,7 ,7 },{11 ,11 ,11 },{11 ,15 ,3 },{3 ,3 ,3 },{7 ,7 ,7 },{7 ,11 ,11 },{11 ,11 ,15 }},
+{{4 ,5 ,6 },{7 ,4 ,5 },{6 ,7 ,12 },{13 ,14 ,15 },{12 ,4 ,5 },{6 ,7 ,4 },{5 ,6 ,7 },{12 ,13 ,14 },{15 ,12 ,4 },{5 ,6 ,7 },{4 ,5 ,6 },{7 ,12 ,13 },{14 ,15 ,12 }},
+{{5 ,5 ,7 },{7 ,5 ,5 },{7 ,7 ,13 },{13 ,15 ,15 },{13 ,5 ,5 },{7 ,7 ,5 },{5 ,7 ,7 },{13 ,13 ,15 },{15 ,13 ,5 },{5 ,7 ,7 },{5 ,5 ,7 },{7 ,13 ,13 },{15 ,15 ,13 }},
+{{6 ,7 ,6 },{7 ,6 ,7 },{6 ,7 ,14 },{15 ,14 ,15 },{14 ,6 ,7 },{6 ,7 ,6 },{7 ,6 ,7 },{14 ,15 ,14 },{15 ,14 ,6 },{7 ,6 ,7 },{6 ,7 ,6 },{7 ,14 ,15 },{14 ,15 ,14 }},
+{{7 ,7 ,7 },{7 ,7 ,7 },{7 ,7 ,15 },{15 ,15 ,15 },{15 ,7 ,7 },{7 ,7 ,7 },{7 ,7 ,7 },{15 ,15 ,15 },{15 ,15 ,7 },{7 ,7 ,7 },{7 ,7 ,7 },{7 ,15 ,15 },{15 ,15 ,15 }},
+{{8 ,9 ,10 },{11 ,12 ,13 },{14 ,15 ,8 },{9 ,10 ,11 },{12 ,8 ,9 },{10 ,11 ,12 },{13 ,14 ,15 },{8 ,9 ,10 },{11 ,12 ,8 },{9 ,10 ,11 },{12 ,13 ,14 },{15 ,8 ,9 },{10 ,11 ,12 }},
+{{9 ,9 ,11 },{11 ,13 ,13 },{15 ,15 ,9 },{9 ,11 ,11 },{13 ,9 ,9 },{11 ,11 ,13 },{13 ,15 ,15 },{9 ,9 ,11 },{11 ,13 ,9 },{9 ,11 ,11 },{13 ,13 ,15 },{15 ,9 ,9 },{11 ,11 ,13 }},
+{{10 ,11 ,10 },{11 ,14 ,15 },{14 ,15 ,10 },{11 ,10 ,11 },{14 ,10 ,11 },{10 ,11 ,14 },{15 ,14 ,15 },{10 ,11 ,10 },{11 ,14 ,10 },{11 ,10 ,11 },{14 ,15 ,14 },{15 ,10 ,11 },{10 ,11 ,14 }},
+{{11 ,11 ,11 },{11 ,15 ,15 },{15 ,15 ,11 },{11 ,11 ,11 },{15 ,11 ,11 },{11 ,11 ,15 },{15 ,15 ,15 },{11 ,11 ,11 },{11 ,15 ,11 },{11 ,11 ,11 },{15 ,15 ,15 },{15 ,11 ,11 },{11 ,11 ,15 }},
+{{12 ,13 ,14 },{15 ,12 ,13 },{14 ,15 ,12 },{13 ,14 ,15 },{12 ,12 ,13 },{14 ,15 ,12 },{13 ,14 ,15 },{12 ,13 ,14 },{15 ,12 ,12 },{13 ,14 ,15 },{12 ,13 ,14 },{15 ,12 ,13 },{14 ,15 ,12 }},
+{{13 ,13 ,15 },{15 ,13 ,13 },{15 ,15 ,13 },{13 ,15 ,15 },{13 ,13 ,13 },{15 ,15 ,13 },{13 ,15 ,15 },{13 ,13 ,15 },{15 ,13 ,13 },{13 ,15 ,15 },{13 ,13 ,15 },{15 ,13 ,13 },{15 ,15 ,13 }},
+{{14 ,15 ,14 },{15 ,14 ,15 },{14 ,15 ,14 },{15 ,14 ,15 },{14 ,14 ,15 },{14 ,15 ,14 },{15 ,14 ,15 },{14 ,15 ,14 },{15 ,14 ,14 },{15 ,14 ,15 },{14 ,15 ,14 },{15 ,14 ,15 },{14 ,15 ,14 }}
+};
+const uint8 image2[15][13][3]={
+{{0 ,1 ,2 },{3 ,4 ,5 },{6 ,7 ,8 },{9 ,10 ,11 },{12 ,1 ,0 },{3 ,2 ,5 },{4 ,7 ,6 },{9 ,8 ,11 },{10 ,13 ,2 },{3 ,0 ,1 },{6 ,7 ,4 },{5 ,10 ,11 },{8 ,9 ,14 }},
+{{3 ,2 ,1 },{0 ,7 ,6 },{5 ,4 ,11 },{10 ,9 ,8 },{15 ,4 ,5 },{6 ,7 ,0 },{1 ,2 ,3 },{12 ,13 ,14 },{15 ,8 ,5 },{4 ,7 ,6 },{1 ,0 ,3 },{2 ,13 ,12 },{15 ,14 ,9 }},
+{{6 ,7 ,4 },{5 ,2 ,3 },{0 ,1 ,14 },{15 ,12 ,13 },{10 ,7 ,6 },{5 ,4 ,3 },{2 ,1 ,0 },{15 ,14 ,13 },{12 ,11 ,8 },{9 ,10 ,11 },{12 ,13 ,14 },{15 ,0 ,1 },{2 ,3 ,4 }},
+{{9 ,8 ,11 },{10 ,13 ,12 },{15 ,14 ,1 },{0 ,3 ,2 },{5 ,10 ,11 },{8 ,9 ,14 },{15 ,12 ,13 },{2 ,3 ,0 },{1 ,6 ,11 },{10 ,9 ,8 },{15 ,14 ,13 },{12 ,3 ,2 },{1 ,0 ,7 }},
+{{12 ,13 ,14 },{15 ,8 ,9 },{10 ,11 ,4 },{5 ,6 ,7 },{0 ,13 ,12 },{15 ,14 ,9 },{8 ,11 ,10 },{5 ,4 ,7 },{6 ,1 ,14 },{15 ,12 ,13 },{10 ,11 ,8 },{9 ,6 ,7 },{4 ,5 ,2 }},
+{{0 ,1 ,2 },{3 ,4 ,5 },{6 ,7 ,8 },{9 ,10 ,11 },{12 ,1 ,0 },{3 ,2 ,5 },{4 ,7 ,6 },{9 ,8 ,11 },{10 ,13 ,2 },{3 ,0 ,1 },{6 ,7 ,4 },{5 ,10 ,11 },{8 ,9 ,14 }},
+{{3 ,2 ,1 },{0 ,7 ,6 },{5 ,4 ,11 },{10 ,9 ,8 },{15 ,4 ,5 },{6 ,7 ,0 },{1 ,2 ,3 },{12 ,13 ,14 },{15 ,8 ,5 },{4 ,7 ,6 },{1 ,0 ,3 },{2 ,13 ,12 },{15 ,14 ,9 }},
+{{6 ,7 ,4 },{5 ,2 ,3 },{0 ,1 ,14 },{15 ,12 ,13 },{10 ,7 ,6 },{5 ,4 ,3 },{2 ,1 ,0 },{15 ,14 ,13 },{12 ,11 ,8 },{9 ,10 ,11 },{12 ,13 ,14 },{15 ,0 ,1 },{2 ,3 ,4 }},
+{{9 ,8 ,11 },{10 ,13 ,12 },{15 ,14 ,1 },{0 ,3 ,2 },{5 ,10 ,11 },{8 ,9 ,14 },{15 ,12 ,13 },{2 ,3 ,0 },{1 ,6 ,11 },{10 ,9 ,8 },{15 ,14 ,13 },{12 ,3 ,2 },{1 ,0 ,7 }},
+{{12 ,13 ,14 },{15 ,8 ,9 },{10 ,11 ,4 },{5 ,6 ,7 },{0 ,13 ,12 },{15 ,14 ,9 },{8 ,11 ,10 },{5 ,4 ,7 },{6 ,1 ,14 },{15 ,12 ,13 },{10 ,11 ,8 },{9 ,6 ,7 },{4 ,5 ,2 }},
+{{0 ,1 ,2 },{3 ,4 ,5 },{6 ,7 ,8 },{9 ,10 ,11 },{12 ,1 ,0 },{3 ,2 ,5 },{4 ,7 ,6 },{9 ,8 ,11 },{10 ,13 ,2 },{3 ,0 ,1 },{6 ,7 ,4 },{5 ,10 ,11 },{8 ,9 ,14 }},
+{{3 ,2 ,1 },{0 ,7 ,6 },{5 ,4 ,11 },{10 ,9 ,8 },{15 ,4 ,5 },{6 ,7 ,0 },{1 ,2 ,3 },{12 ,13 ,14 },{15 ,8 ,5 },{4 ,7 ,6 },{1 ,0 ,3 },{2 ,13 ,12 },{15 ,14 ,9 }},
+{{6 ,7 ,4 },{5 ,2 ,3 },{0 ,1 ,14 },{15 ,12 ,13 },{10 ,7 ,6 },{5 ,4 ,3 },{2 ,1 ,0 },{15 ,14 ,13 },{12 ,11 ,8 },{9 ,10 ,11 },{12 ,13 ,14 },{15 ,0 ,1 },{2 ,3 ,4 }},
+{{9 ,8 ,11 },{10 ,13 ,12 },{15 ,14 ,1 },{0 ,3 ,2 },{5 ,10 ,11 },{8 ,9 ,14 },{15 ,12 ,13 },{2 ,3 ,0 },{1 ,6 ,11 },{10 ,9 ,8 },{15 ,14 ,13 },{12 ,3 ,2 },{1 ,0 ,7 }},
+{{12 ,13 ,14 },{15 ,8 ,9 },{10 ,11 ,4 },{5 ,6 ,7 },{0 ,13 ,12 },{15 ,14 ,9 },{8 ,11 ,10 },{5 ,4 ,7 },{6 ,1 ,14 },{15 ,12 ,13 },{10 ,11 ,8 },{9 ,6 ,7 },{4 ,5 ,2 }}
+};
+const uint16 image3[23][21][4]={
+{{0 ,1 ,2 ,3 },{1 ,2 ,3 ,4 },{2 ,3 ,4 ,5 },{3 ,4 ,5 ,6 },{4 ,5 ,6 ,7 },{5 ,6 ,7 ,8 },{6 ,7 ,8 ,9 },{7 ,8 ,9 ,10 },{8 ,9 ,10 ,11 },{9 ,10 ,11 ,12 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 }},
+{{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 }},
+{{10 ,11 ,12 ,13 },{2 ,2 ,2 ,2 },{12 ,13 ,14 ,15 },{2 ,2 ,2 ,2 },{14 ,15 ,16 ,17 },{2 ,2 ,2 ,2 },{16 ,17 ,18 ,19 },{2 ,2 ,2 ,2 },{18 ,19 ,20 ,21 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 }},
+{{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 }},
+{{20 ,21 ,22 ,23 },{2 ,2 ,2 ,2 },{1 ,2 ,3 ,4 },{2 ,2 ,2 ,2 },{3 ,4 ,5 ,6 },{2 ,2 ,2 ,2 },{5 ,6 ,7 ,8 },{2 ,2 ,2 ,2 },{7 ,8 ,9 ,10 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 }},
+{{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 }},
+{{9 ,10 ,11 ,12 },{2 ,2 ,2 ,2 },{11 ,12 ,13 ,14 },{2 ,2 ,2 ,2 },{13 ,14 ,15 ,16 },{2 ,2 ,2 ,2 },{15 ,16 ,17 ,18 },{2 ,2 ,2 ,2 },{17 ,18 ,19 ,20 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 }},
+{{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 }},
+{{19 ,20 ,21 ,22 },{2 ,2 ,2 ,2 },{0 ,1 ,2 ,3 },{2 ,2 ,2 ,2 },{2 ,3 ,4 ,5 },{2 ,2 ,2 ,2 },{4 ,5 ,6 ,7 },{2 ,2 ,2 ,2 },{6 ,7 ,8 ,9 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 }},
+{{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 }},
+{{8 ,9 ,10 ,11 },{2 ,2 ,2 ,2 },{10 ,11 ,12 ,13 },{2 ,2 ,2 ,2 },{12 ,13 ,14 ,15 },{2 ,2 ,2 ,2 },{14 ,15 ,16 ,17 },{2 ,2 ,2 ,2 },{16 ,17 ,18 ,19 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 }},
+{{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 },{2 ,2 ,2 ,2 },{0 ,0 ,0 ,0 }},
+{{18 ,19 ,20 ,21 },{19 ,20 ,21 ,22 },{20 ,21 ,22 ,23 },{0 ,1 ,2 ,3 },{1 ,2 ,3 ,4 },{2 ,3 ,4 ,5 },{3 ,4 ,5 ,6 },{4 ,5 ,6 ,7 },{5 ,6 ,7 ,8 },{6 ,7 ,8 ,9 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 }},
+{{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 }},
+{{7 ,8 ,9 ,10 },{8 ,9 ,10 ,11 },{9 ,10 ,11 ,12 },{10 ,11 ,12 ,13 },{11 ,12 ,13 ,14 },{12 ,13 ,14 ,15 },{13 ,14 ,15 ,16 },{14 ,15 ,16 ,17 },{15 ,16 ,17 ,18 },{16 ,17 ,18 ,19 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 }},
+{{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 }},
+{{17 ,18 ,19 ,20 },{18 ,19 ,20 ,21 },{19 ,20 ,21 ,22 },{20 ,21 ,22 ,23 },{0 ,1 ,2 ,3 },{1 ,2 ,3 ,4 },{2 ,3 ,4 ,5 },{3 ,4 ,5 ,6 },{4 ,5 ,6 ,7 },{5 ,6 ,7 ,8 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 }},
+{{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 }},
+{{6 ,7 ,8 ,9 },{7 ,8 ,9 ,10 },{8 ,9 ,10 ,11 },{9 ,10 ,11 ,12 },{10 ,11 ,12 ,13 },{11 ,12 ,13 ,14 },{12 ,13 ,14 ,15 },{13 ,14 ,15 ,16 },{14 ,15 ,16 ,17 },{15 ,16 ,17 ,18 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 }},
+{{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 }},
+{{16 ,17 ,18 ,19 },{17 ,18 ,19 ,20 },{18 ,19 ,20 ,21 },{19 ,20 ,21 ,22 },{20 ,21 ,22 ,23 },{0 ,1 ,2 ,3 },{1 ,2 ,3 ,4 },{2 ,3 ,4 ,5 },{3 ,4 ,5 ,6 },{4 ,5 ,6 ,7 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 }},
+{{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 }},
+{{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 }}
+};
+const float64 image4[19][17][2]={
+{{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0}},
+{{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0}},
+{{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0}},
+{{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0}},
+{{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0}},
+{{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0}},
+{{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0}},
+{{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0}},
+{{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0}},
+{{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{0.0,0.0}},
+{{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{0.0,0.0}},
+{{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{0.0,0.0}},
+{{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{0.0,0.0}},
+{{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{0.0,0.0}},
+{{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{0.0,0.0}},
+{{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{0.0,0.0}},
+{{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{0.0,0.0}},
+{{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{9.0,9.0},{0.0,0.0}},
+{{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0}}
+};
 
 void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt)
 {
@@ -482,10 +157,12 @@ void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt)
 
     for(i=0; i<ydim; i++)
       {
+#ifdef QAK
           printf("%ld:",(long)i);
+#endif /* QAK */
           for(j=0; j<xdim; j++)
             {
-                printf("(");
+                printf("{");
                 for(k=0; k<ncomp; k++)
                   {
                     switch(nt)
@@ -561,15 +238,18 @@ void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt)
                             break;
 
                       } /* end switch */
+            if(k<(ncomp-1))
+                printf(",");
                     data=(void *)((char *)data+nt_size);
                   } /* end for */
-                printf(")");
+                printf("},");
 
             } /* end for */
           printf("\n");
       } /* end for */
 }   /* dump_image() */
 
+#ifdef QAK
 /****************************************************************
 **
 **  test_mgr(): Main multi-file raster image test routine
@@ -578,166 +258,6 @@ void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt)
 void
 test_mgr_old()
 {
-#ifdef QAK
-  uint8  pal[768];
-  uint8  *image, *newimage;
-  uint16 refnum;
-  int32  ret;
-  intn   rank;
-  int    i,j;
-  int32  dimsizes[2];
-  float  *data;
-  int32   file_handle; /* file handle */
-  int32   ann_handle;  /* annotation handle */
-
-  /***** generate float array and image *****/
-  data     = (float *) HDmalloc(ROWS * COLS * sizeof(float));
-  image    = (uint8 *) HDmalloc(ROWS * COLS * sizeof(char));
-  newimage = (uint8 *) HDmalloc(ROWS * COLS * sizeof(char));
-
-  dimsizes[0] = ROWS;
-  dimsizes[1] = COLS;
-
-  /* generate images */
-  gen2Dfloat(ROWS, COLS, data);
-  genimage(ROWS, COLS, data, image);
-
-  ret = DFSDsetdims(2, dimsizes);
-  RESULT("DFSDsetdims");
-    
-  /* Start annotation Interface on file */
-  ret = file_handle = ANstart(TESTFILE, DFACC_CREATE);
-  RESULT("ANstart");
-
-  /********  Write file labels and descriptions *********/
-  MESSAGE(5, printf("***  Writing file labels and descriptions ***\n"););
-
-  /* create and write file labels */
-  for (i = 1; i >= 0; i--)
-    {
-      ret = ann_handle = ANcreatef(file_handle, AN_FILE_LABEL);
-      RESULT("ANcreatef");
-      ret = ANwriteann(ann_handle, file_lab[i], HDstrlen(file_lab[i]));
-      RESULT("ANwriteann");
-      ret = ANendaccess(ann_handle);
-      RESULT("ANendaccess");
-    }
-
-  /* create and write file descriptions */
-  for (i = 1; i >= 0; i--)
-    {
-      ret = ann_handle = ANcreatef(file_handle, AN_FILE_DESC);
-      RESULT("ANcreatef");
-      ret = ANwriteann(ann_handle, file_desc[i], HDstrlen(file_desc[i]));
-      RESULT("ANwriteann");
-      ret = ANendaccess(ann_handle);
-      RESULT("ANendaccess");
-    }
-
-  /********  Write labels and descriptions *********/
-  MESSAGE(5, printf("***  Writing labels and descriptions with SDS and RIS ***\n"););
-
-  for (j = 0; j < REPS; j++)
-    {
-      /* write out scientific data set */
-      ret = DFSDadddata(TESTFILE, 2, dimsizes, (VOIDP) data);
-      RESULT("DFSDadddata");
-
-      if ((j % 3) != 0)
-        {   /* write out annotations for 2 out of every 3 */
-          refnum = DFSDlastref();
-          /* create and write data label */
-          for (i = 1; i >=0; i--)
-            {
-              ret = ann_handle = ANcreate(file_handle, DFTAG_SDG, refnum, 
-                                          AN_DATA_LABEL);
-              RESULT("ANcreate");
-              ret = ANwriteann(ann_handle, labsds[i], HDstrlen(labsds[i]));
-              RESULT("ANwriteann");
-              ret = ANendaccess(ann_handle);
-              RESULT("ANendaccess");
-            }
-
-          /* create and write data description */
-          for (i = 1; i >=0; i--)
-            {
-              ret = ann_handle = ANcreate(file_handle, DFTAG_SDG, refnum, 
-                                          AN_DATA_DESC);
-              RESULT("ANcreate");
-              ret = ANwriteann(ann_handle, descsds[i], HDstrlen(descsds[i]));
-              RESULT("ANwriteann");
-              ret = ANendaccess(ann_handle);
-              RESULT("ANendaccess");
-            }
-        }
-
-      ret = DFR8addimage(TESTFILE, (VOIDP) image, COLS, ROWS, 0);
-      RESULT("DFR8addimage");
-      refnum = DFR8lastref();
-
-      /* create and write image label */
-      for (i = 1; i >=0; i--)
-        {
-          ret = ann_handle = ANcreate(file_handle, DFTAG_RIG, refnum, 
-                                      AN_DATA_LABEL);
-          RESULT("ANcreate");
-          ret = ANwriteann(ann_handle, labris[i], HDstrlen(labris[i]));
-          RESULT("ANwriteann");
-          ret = ANendaccess(ann_handle);
-          RESULT("ANendaccess");
-        }
-
-      /* create and write image description */
-      for (i = 1; i >=0; i--)
-        {
-          ret = ann_handle = ANcreate(file_handle, DFTAG_RIG, refnum, 
-                                      AN_DATA_DESC);
-          RESULT("ANcreate");
-          ret = ANwriteann(ann_handle, descris[i], HDstrlen(descris[i]));
-          RESULT("ANwriteann");
-          ret = ANendaccess(ann_handle);
-          RESULT("ANendaccess");
-        }
-    } /* end for j */
-
-  /* End writing annotations */
-  ANend(file_handle);
-  
-  /********  Read labels and descriptions *********/
-  MESSAGE(5, printf("*** Reading labels and descriptions for SDS and RIS ***\n"););
-
-  for (j = 0; j < REPS; j++)
-    {
-      ret = DFSDgetdims(TESTFILE, &rank, dimsizes, 3);
-      RESULT("DFSDgetdims");
-
-      refnum = DFSDlastref();
-
-      /* Check data set labels/descriptions */
-      if ((j % 3) != 0)     /* read in annotations for 2 out of every 3 */
-        check_lab_desc(TESTFILE, DFTAG_SDG, refnum, labsds, descsds);
-
-      ret = DFR8getimage(TESTFILE, newimage, (int32) COLS, (int32) ROWS, pal);
-      RESULT("DFR8getimage");
-      refnum = DFR8lastref();
-
-      /* Check image labels/descriptions */
-      check_lab_desc(TESTFILE, DFTAG_RIG, refnum, labris, descris);
-    }
-
-  /***************** Read file labels and descriptions */
-  MESSAGE(5, printf("*** Reading file label and descriptions ***\n"););
-  check_fann(TESTFILE);
-
-#if 0
-  /* Destroy Annotation interface */
-  ANdestroy();
-#endif
-  /* free up space */
-  HDfree((VOIDP) data);
-  HDfree((VOIDP) image);
-  HDfree((VOIDP) newimage);
-#else /* QAK */
     intn i,j,k;             /* local counting variable */
     int32 hdf_file_id;      /* HDF file ID */
     int32 grid;             /* GR interface ID */
@@ -749,7 +269,6 @@ test_mgr_old()
     int32 nt;               /* number-type */
     int32 il;               /* interlace */
     int32 dimsizes[2];      /* dimension sizes */
-    char img_name[32];      /* image name space */
     char attr_name[32];     /* name of the attribute */
     char u8_attr[64];       /* uint8 attribute */
     uint16 *img1_data;      /* uint16 image pointer */
@@ -1122,8 +641,8 @@ if(ret==FAIL)
     CHECK(ret,FAIL,"Hclose");
 if(ret==FAIL)
     HEprint(stderr,0);
-#endif /* QAK */
 } /* test_mgr_old() */
+#endif /* QAK */
 
 /* Test outline:
     I. Interface Initialization
@@ -1279,7 +798,7 @@ test_mgr_image()
     int32 n_datasets;       /* number of datasets */
     int32 n_attrs;          /* number of attributes */
     int32 ret;              /* generic return value */
-    intn i,j,k;             /* local counting variables */
+    intn i;                 /* local counting variables */
 
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing Multi-file Raster Image I/O routines\n"););
@@ -1307,6 +826,7 @@ test_mgr_image()
           int32 il;                 /* interlace of the image data */
           int32 dimsizes[2];        /* dimension sizes of the image */
           int32 n_attr;             /* number of attributes with each image */
+          VOIDP img_data;           /* buffer for the image data */
 
           /* Attach to the image */
           riid=GRselect(grid,i);
@@ -1365,6 +885,67 @@ test_mgr_image()
                 MESSAGE(3, printf("# of attributes for image %d is: %ld, should be %ld\n",i,(long)n_attr,(long)datafile_info[i].n_attr););
                 num_errs++;
             } /* end if */
+
+          /* Check the image data itself */
+          {
+              int32 start[2];
+              int32 stride[2];
+
+                img_data=HDmalloc(dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt));
+                CHECK(img_data,NULL,"HDmalloc");
+
+                HDmemset(img_data,0,dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt));
+
+                start[0]=start[1]=0;
+                stride[0]=stride[1]=1;
+                ret=GRreadimage(riid,start,stride,dimsizes,img_data);
+
+                switch(i)
+                  {
+                      case 0:
+                          if(0!=HDmemcmp(img_data,image0,sizeof(image0)))
+                            {
+                                MESSAGE(3, printf("Error reading data for image %d\n",i););
+                                num_errs++;
+                            } /* end if */
+                          break;
+
+                      case 1:
+                          if(0!=HDmemcmp(img_data,image1,sizeof(image1)))
+                            {
+                                MESSAGE(3, printf("Error reading data for image %d\n",i););
+                                num_errs++;
+                            } /* end if */
+                          break;
+
+                      case 2:
+                          if(0!=HDmemcmp(img_data,image2,sizeof(image2)))
+                            {
+                                MESSAGE(3, printf("Error reading data for image %d\n",i););
+                                num_errs++;
+                            } /* end if */
+                          break;
+
+                      case 3:
+                          if(0!=HDmemcmp(img_data,image3,sizeof(image3)))
+                            {
+                                MESSAGE(3, printf("Error reading data for image %d\n",i););
+                                num_errs++;
+                            } /* end if */
+                          break;
+
+                      case 4:
+                          if(0!=HDmemcmp(img_data,image4,sizeof(image4)))
+                            {
+                                MESSAGE(3, printf("Error reading data for image %d\n",i););
+                                num_errs++;
+                            } /* end if */
+                          break;
+
+                  } /* end switch */
+
+                HDfree(img_data);
+          } /* end block */
 
           /* End access to the image */
           ret=GRendaccess(riid);
