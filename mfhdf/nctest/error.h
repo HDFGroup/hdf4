@@ -20,10 +20,18 @@ extern "C" {
 #endif
 
 /* Print error message to stderr, don't exit */
+#ifndef NO_STRARG
+extern void derror(char *fmt, ...);
+#else
+extern void derror();
+#endif
+
+/*
 extern void	error		PROTO((
 				       char *fmt,
 				       ...
 				       ));
+*/
 
 /*
  * Turn off netCDF library handling of errors.  Caller must check all error

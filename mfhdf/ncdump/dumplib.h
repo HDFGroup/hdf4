@@ -28,10 +28,18 @@ extern "C" {
 #endif
 
 /* Print error message to stderr, don't exit */
+#ifndef NO_STRARG
+extern void error(char *fmt, ...);
+#else
+extern void error();
+#endif
+
+/*
 extern void	error		PROTO((
 				       char *fmt,
 				       ...
 				       ));
+*/
 
 /* set position in line before lput() calls */
 extern void	set_indent	PROTO((

@@ -18,10 +18,19 @@ extern char	*cdlname;	/* for error messages */
 extern "C" {
 #endif
 
+#ifndef NO_STRARG
+extern void derror(char *fmt, ...);
+#else
+extern void derror();
+#endif
+
+/*
 extern void	derror		PROTO((
 				       char *fmt,
 				       ...
 				       ));
+*/
+
 extern void	*emalloc	PROTO((
 				       int size
 				       ));
