@@ -271,6 +271,18 @@ install:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install \
           SUBDIRS="$(MANDIR)" subd
 
+install-libs:	
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(HDFDIR)" subd
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(NETCDFDIR)" subd
+
+install-utils:	
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(HDFDIR)" subd
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(NETCDFDIR)" subd
+
 install-hdf:	
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install \
           SUBDIRS="$(HDFDIR)" subd
@@ -287,10 +299,27 @@ install-mfhdf:
 	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=install \
           SUBDIRS="$(NETCDFDIR)" subd
 
+install-mfhdf-libs:	
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=install-libs \
+          SUBDIRS="$(NETCDFDIR)" subd
+
+install-mfhdf-utils:	
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=install-utils \
+          SUBDIRS="$(NETCDFDIR)" subd
+
 install-man:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install \
           SUBDIRS="$(MANDIR)" subd
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(NETCDFDIR)" subd
 
+install-hdf-man:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install \
+          SUBDIRS="$(MANDIR)" subd
+
+install-mfhdf-man:
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(NETCDFDIR)" subd
 hdfclean:		
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="clean" \
           SUBDIRS="$(HDFDIR)" subd
@@ -348,11 +377,17 @@ help:
 	@echo "make test-hdfnofortran - run HDF tests except the fortran test" 
 	@echo "make install           - install HDF,netCDF libraries,"
 	@echo "                         utilites, and includes" 
+	@echo "make install-libs      - install HDF,netCDF libraries and includes"
+	@echo "make install-utils     - install HDF,netCDF utilities"
+	@echo "make install-man       - install HDF and netCDF man pages"
 	@echo "make install-hdf       - install HDF library, utilities and includes"
 	@echo "make install-hdf-libs  - install HDF library and includes"
 	@echo "make install-hdf-utils - install utilities"
+	@echo "make install-hdf-man   - install HDF man pages"
 	@echo "make install-mfhdf     - install netCDF library, utilities and includes"
-	@echo "make install-man       - install HDF man pages"
+	@echo "make install-mfhdf-libs - install netCDF library and includes"
+	@echo "make install-mfhdf-utils - install netCDF utilities"
+	@echo "make install-mfhdf-man   - install netCDF man pages"
 	@echo "make clean        - cleans up HDF and NETCDF packages(*.o,libdf.a,..)"
 	@echo "make distclean    - cleans up HDF and NETCDF packages including"
 	@echo "                    configuration(Makefiles,config.status,..)"

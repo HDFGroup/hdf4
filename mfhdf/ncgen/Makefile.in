@@ -145,6 +145,8 @@ all::		$(PROGRAM)
 test:           $(PROGRAM) test0.cdl btest ctest ftest FORCE
 
 install::	installed_program installed_manuals
+install-utils::	installed_program
+install-man::	installed_manuals
 
 $(PROGRAM):	main.o
 

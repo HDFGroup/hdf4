@@ -152,6 +152,8 @@ test:		$(PROGRAM) test0.cdl
 	    rm test1.cdl test1.nc test2.cdl
 
 install::	installed_program installed_manuals
+install-utils::	installed_program
+install-man::	installed_manuals
 
 # This is the master.mk.in makefile.  It contains general rules.
 #
