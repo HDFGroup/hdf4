@@ -99,7 +99,7 @@ JPEGLIB=$(srcdir)/../jpeg
 JPEGINC=$(srcdir)/../jpeg
 
 #Where are the utility includes
-UTILINC=$(srdir)
+UTILINC=$(srcdir)
 
 # Utilities
 UTILS = hdf24to8 hdfcomp hdfls hdfpack hdftopal hdftor8 paltohdf \
@@ -146,6 +146,10 @@ utils: $(UTILS) $(HDFLIB)/libdf.a
 $(HEOBJ): $(FRC)
 
 $(UTILS): $(FRC)
+
+$(HDFLIB)/libdf.a:
+
+$(JPEGLIB)/libjpeg.a:
 
 clean:
 	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed fptest
