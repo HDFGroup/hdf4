@@ -179,9 +179,9 @@ public class JHVDataFrame extends Frame implements AdjustmentListener,
   /** popup the new frame actually */
   public void popup() {
 
-    //pack();
-    // default frame size
-    //setSize(3*256, 2*256);
+    // reset the byte data
+    HDFObject.object2byte(imgCanvas.hdfData, imgCanvas.hdfDataType,
+        null,imgCanvas.imageData);
 
     // paint dataspread sheet
     dataCanvas.repaint();
@@ -831,7 +831,7 @@ class JHVDataCanvas extends Canvas
     // set Font for component
     super.setFont(f);
     
-    // get new FontMetrics
+    // get new FontMetricsp
     FontMetrics fontMetrics = getFontMetrics(getFont());
     
     // set font width & height
@@ -1143,11 +1143,10 @@ int m = (int)(height - (canvasHeight - p));
 
 	int factorVal    = 1;
 	String factorStr = datFrame.factor.getText();
-	
-	if (Character.isDigit(factorStr.charAt(0))) 
+	if (Character.isDigit(factorStr.charAt(0)))
 	    // get  value
 	    factorVal = Integer.parseInt(factorStr);
-	
+
 	    byte[][] tmp;
 	    
 	    tmp = new byte[datasetRange.height][datasetRange.width];
@@ -1167,7 +1166,7 @@ int m = (int)(height - (canvasHeight - p));
 
 	// set default image
 	defaultImage = image;
-	
+
 	if (imageFrame == null) {
 	    // display the image in the seprate frame
 	    imageFrame = new ImageFrame(image);
@@ -1175,8 +1174,9 @@ int m = (int)(height - (canvasHeight - p));
 	    // set dataFrame for imageFrame
 	    imageFrame.dataFrame = this.datFrame;
 	}
-	else
+	else {
 	    imageFrame.imageCanvas.setImage(defaultImage);
+        }
 	
 	return ;
     }
@@ -1294,13 +1294,13 @@ public Image createSampleImage(byte[][] data, Rectangle subset, int ratio, byte[
     
     if (subset == null) 
         return null;
-   
-    // specify the pixel value of the generic image 
+
+    // specify the pixel value of the generic image
     byte[] pixels;
     int w = subset.width  * ratio;
     int h = subset.height * ratio;
     int size = w*h;
-    
+
     pixels = new byte[size];
     
     if (getImageData(data,subset, ratio, pixels))  {

@@ -30,7 +30,7 @@ class ImageCanvas extends Canvas {
   Graphics 	offGraphics;
  
   /** display string */
-  String infoStr = "None image created";
+  String infoStr = "No Image";
     
   /** frame displayed ? */
   boolean frameDisplayed = false;
@@ -529,8 +529,7 @@ public class ImageFrame extends Frame
     
     
   }
-  
-  
+ 
 
   public void actionPerformed(ActionEvent e)
   {
