@@ -1,11 +1,37 @@
+/***************************************************************************
+*
+*
+*                         NCSA HDF version 3.2r3
+*                            December 1, 1992
+*
+* NCSA HDF Version 3.2 source code and documentation are in the public
+* domain.  Specifically, we give to the public domain all rights for future
+* licensing of the source code, all resale rights, and all publishing rights.
+*
+* We ask, but do not require, that the following message be included in all
+* derived works:
+*
+* Portions developed at the National Center for Supercomputing Applications at
+* the University of Illinois at Urbana-Champaign, in collaboration with the
+* Information Technology Institute of Singapore.
+*
+* THE UNIVERSITY OF ILLINOIS GIVES NO WARRANTY, EXPRESSED OR IMPLIED, FOR THE
+* SOFTWARE AND/OR DOCUMENTATION PROVIDED, INCLUDING, WITHOUT LIMITATION,
+* WARRANTY OF MERCHANTABILITY AND WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE
+*
+****************************************************************************
+*/
 /*
 $Header$
 
 $Log$
-Revision 1.5  1992/11/10 20:21:32  georgev
-Added fill value to DFSsdg struct, Added prototypes for
- hyperslab routines
+Revision 1.6  1993/01/04 18:03:39  sxu
+change dfsdpre32 to dfsdpre32sdg
 
+ * Revision 1.5  1992/11/10  20:21:32  georgev
+ * Added fill value to DFSsdg struct, Added prototypes for
+ *  hyperslab routines
+ *
  * Revision 1.4  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -134,8 +160,8 @@ extern int DFSDsetorder
     PROTO((int arrayorder));
 extern int DFSDgetNT
     PROTO((int32 HUGE *pnumbertype));
-extern intn DFSDpre32
-    PROTO((void));
+extern intn DFSDpre32sdg
+    PROTO((char HUGE *filename,uint16 ref, intn HUGE *ispre32));
 extern int DFSDgetsdg
     PROTO((int32 file_id, uint16 ref, DFSsdg HUGE *sdg));
 extern int DFSDputsdg
