@@ -126,7 +126,7 @@ message:
 	@echo ""
 	@echo "User programs can be created as follows:"
 	@echo ""
-	@echo "   cc -D${MACHINE} program.c libdf.a -o program"
+	@echo "   ${CC} program.c libdf.a -o program"
 	@echo ""
 	@echo "***********************************************************"
 	@echo ""
