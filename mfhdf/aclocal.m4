@@ -1,6 +1,20 @@
 define(diversion_number, divnum)dnl
 divert(-1)
 
+
+# Check for fill value usage.
+#
+define(UL_FILLVALUES, [dnl
+echo checking for fill value usage
+if test "${OLD_FILLVALUES-}" = yes; then
+    UC_REPLACE(OLD_FILLVALUES, 1)dnl
+else
+    UC_REPLACE(OLD_FILLVALUES, 0)dnl
+fi
+UC_CREATE(libsrc/netcdf.h)dnl
+])
+
+
 # Check for XDR header-file directory.
 #
 define(UL_CPP_XDR, [dnl
@@ -47,7 +61,14 @@ esac
 UC_ENSURE(DEFS, ${CPP_XDR-})dnl
 UC_ENSURE(LIBS, ${LD_XDR-})dnl
 AC_TEST_PROGRAM(dnl
-[#undef NDEBUG
+[
+#undef NDEBUG
+
+#ifdef _AIX
+#   ifndef _ALL_SOURCE
+#     define _ALL_SOURCE
+#   endif
+#endif
 
 #include <assert.h>
 #include <stdio.h>
@@ -56,8 +77,12 @@ AC_TEST_PROGRAM(dnl
 
 #define TESTFILE	"conftest.xdr"
 #define EPSILON		.0005
-#define	FLT_MIN		1e-37		/* Standard C maximum */
-#define FLT_EPSILON	1e-5		/* Standard C maximum */
+#ifndef FLT_MIN
+#   define    FLT_MIN 1e-37           /* Standard C maximum */
+#endif
+#ifndef FLT_EPSILON
+#   define FLT_EPSILON        1e-5            /* Standard C maximum */
+#endif
 
 main(ac,av)
     int			ac ;
@@ -122,7 +147,8 @@ main(ac,av)
     assert(*fp == 0 || (*fp <= floats[ii]*(1+FLT_EPSILON) && *fp >= floats[ii]*(1-FLT_EPSILON))) ;
 
     exit(0) ;
-}],dnl
+}
+],dnl
 XDR_LIBOBJS=
 XDR_INSTALL_DEPS=,dnl
 XDR_LIBOBJS="xdr.o xdrfloat.o xdrstdio.o xdrarray.o"
@@ -184,7 +210,7 @@ int foo(int bar, ...) {
 #
 define(UL_STRERROR, [dnl
 AC_REQUIRE([UC_PROG_FC])dnl
-if test -z "$FC"; then
+if test `which "${FC-}" | wc -w` != 1; then
 AC_FUNC_CHECK(strerror, , [[UC_ENSURE(CPPFLAGS, -DNO_STRERROR)]])dnl
 else
   echo checking for strerror

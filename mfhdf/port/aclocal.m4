@@ -2,6 +2,15 @@ define(diversion_number, divnum)dnl
 divert(-1)
 
 
+# Define a substitution for both `@...@' and C preprocessor forms.
+#
+define(UC_REPLACE, [dnl
+$1=$2
+AC_SUBST($1)dnl
+AC_DEFINE($1,$2)
+])
+
+
 # Set the value of a variable.  Use the environment if possible; otherwise
 # set it to a default value.  Call the substitute routine.
 #
@@ -23,8 +32,8 @@ UC_PORT dnl
 # Set up for customizing the makefile in the port/ subdirectory.
 #
 define([UC_PORT], [dnl
-AC_CONFIG_HEADER(port/udposix.h) dnl
-UC_ENSURE(PORT_MANIFEST, udposix.h.in)dnl
+TRANSFORMEES='port/Makefile port/master.mk'
+POST_PROCESSEES='port/Makefile'
 UC_DEFAULT(CPPFLAGS, -DNDEBUG) dnl
 UC_DEFAULT(CFLAGS, -O) dnl
 UC_OS dnl
@@ -32,7 +41,6 @@ case "${OS}" in
   aix*)  UC_ENSURE(CPPFLAGS, -D_ALL_SOURCE);;
   hpux*) UC_ENSURE(CPPFLAGS, -D_HPUX_SOURCE);;
 esac
-UC_DEFAULT(FFLAGS, -O) dnl
 UC_DEFAULT(LIBOBJS, ) dnl
 UC_DEFAULT(PORT_HEADERS, ) dnl
 UC_DEFAULT(PORT_MANIFEST, )
@@ -54,8 +62,22 @@ UC_POSTPROCESS_MAKEFILES($1) dnl
 # Finish with everything (both GNU and Unidata autoconf(1) support).
 #
 define([UC_FINISH], [dnl
-AC_OUTPUT($1)dnl
-UC_TERM($1)dnl
+AC_OUTPUT($1 ${TRANSFORMEES-})dnl
+UC_TERM($1 ${POST_PROCESSEES-})dnl
+])
+
+
+# Add a member to the list of makefiles to be post-processed.
+#
+define([UC_POST_PROCESS], [dnl
+UC_ENSURE(POST_PROCESSEES, $1)dnl
+])
+
+
+# Add a member to the list of files to be transformed.
+#
+define([UC_CREATE], [dnl
+UC_ENSURE(TRANSFORMEES, $1)dnl
 ])
 
 
@@ -104,13 +126,9 @@ extern int foo(int bar);
 define([UC_UPPERCASE],[translit($1,abcdefghijklmnopqrstuvwxyz,ABCDEFGHIJKLMNOPQRSTUVWXYZ)])
 
 
-# Replace `/'s in argument with `_'s..
-#
-define([UC_SLASHTO_],[translit($1,/,_)])
-
 # Return the C macro name version of the argument.
 #
-define([UC_C_MACRONAME], [UC_UPPERCASE(UC_SLASHTO_($1))])
+define([UC_C_MACRONAME], [UC_UPPERCASE([translit($1,/.<>,__)])])
 
 
 # Obtain the pathname of a system-supplied header file.  The value of the
@@ -123,11 +141,19 @@ dnl
 dnl We add additional `/'s to the header file name to preclude compiler 
 dnl warnings about the non-portability of `#include "/usr/include/..."'.
 dnl
-path=//`$CPP conftestpath.c 2> /dev/null |
+path=`$CPP conftestpath.c 2> /dev/null |
     sed -n 's/^#.* 1 "\(.*$1\.h\)".*/\1/p' | 
     head -1`
+if test -z "$path"; then
+    path=/dev/null
+else
+    path=//$path
+fi
 rm -f conftestpath.c
-AC_DEFINE(UD_SYSTEM_[]UC_C_MACRONAME(ifelse($2,,$1,$2))_H, \"$path\")
+ifelse($1, limits, , [ifelse($1, float, , [dnl
+UC_CREATE(port/$1.h)dnl
+UC_REPLACE(UD_SYSTEM_[]UC_C_MACRONAME(ifelse($2,,$1,$2))_H,\"$path\")dnl
+])])dnl
 ])
 
 
@@ -136,17 +162,17 @@ AC_DEFINE(UD_SYSTEM_[]UC_C_MACRONAME(ifelse($2,,$1,$2))_H, \"$path\")
 define([UC_VARIADIC_FUNCTIONS],[dnl
 AC_REQUIRE([UC_PROG_CPP])dnl
 UC_ENSURE(PORT_MANIFEST, stdarg.h.in)dnl
-AC_COMPILE_CHECK([variadic function support], [#include <stdarg.h>],
-;}
+AC_COMPILE_CHECK([variadic function support], [#include <stdarg.h>]
 int foo(int bar, ...) {
     va_list     alist;
     va_start(alist, bar);
     bar = (int)va_arg(alist, int);
     va_end(alist);
     return bar;
-, dnl
-[UC_SYSTEM_HEADER(stdarg)], dnl
-[AC_DEFINE(UD_NO_STDARG)
+}, , [dnl
+UC_REPLACE(UD_NO_STDARG,0)dnl
+UC_SYSTEM_HEADER(stdarg)], [dnl
+UC_REPLACE(UD_NO_STDARG,1)dnl
 UC_SYSTEM_HEADER(varargs, stdarg)])dnl
 UC_ENSURE(PORT_HEADERS, stdarg.h)dnl
 AC_PROVIDE([$0])dnl
@@ -217,26 +243,35 @@ AC_REQUIRE([UC_MAKESTRING])dnl
 AC_REQUIRE([UC_GLUE])dnl
 AC_REQUIRE([UC_VOIDP])dnl
 UC_ENSURE(PORT_MANIFEST, udposix.h.in)dnl
+UC_ENSURE(PORT_HEADERS, udposix.h)dnl
+UC_CREATE(port/udposix.h)dnl
 AC_PROVIDE([$0])dnl
 ])])
 
 
 # Check for a function.
 #
-define([UC_FUNC],
-[AC_COMPILE_CHECK(function $2 declaration, [#include $1], dnl
+define([UC_FUNC], [dnl
+AC_COMPILE_CHECK(function $2 declaration, [#include $1
 extern struct {int foo;} *$2();
-, dnl
-[AC_DEFINE(UD_NO_[]UC_UPPERCASE($2)_DECL)
+], , [dnl
+UC_REPLACE(UD_NO_[]UC_UPPERCASE($2)_DECL,1)dnl
 AC_REPLACE_FUNCS($2)dnl
-])])
+], [dnl
+UC_REPLACE(UD_NO_[]UC_UPPERCASE($2)_DECL,0)])dnl
+AC_FUNC_CHECK($2, , [UC_REPLACE(UD_NO_[]UC_UPPERCASE($2)_FUNC,1)])dnl
+])
 
 
 # Check for a type definition.
 #
-define([UC_TYPEDEF],
-[AC_COMPILE_CHECK(typedef $2, [#include $1
-typedef void $2;], , [AC_DEFINE(UD_NO_[]UC_UPPERCASE($2))])dnl
+define([UC_TYPEDEF], [dnl
+AC_COMPILE_CHECK("typedef $2 in $1", [#include $1
+typedef void $2;], , [dnl
+UC_REPLACE(UD_NO_[]UC_C_MACRONAME($1[]_$2),1)dnl
+], [dnl
+UC_REPLACE(UD_NO_[]UC_C_MACRONAME($1[]_$2),0)dnl
+])dnl
 ])
 
 
@@ -244,7 +279,11 @@ typedef void $2;], , [AC_DEFINE(UD_NO_[]UC_UPPERCASE($2))])dnl
 #
 define([UC_STRUCT], [dnl
 AC_COMPILE_CHECK(structure $2, [#include $1
-struct $2 {char *foo;};], , [AC_DEFINE(UD_NO_[]UC_UPPERCASE($2)[]_STRUCT)])dnl
+struct $2 {char *foo;};], , [dnl
+UC_REPLACE(UD_NO_[]UC_UPPERCASE($2)[]_STRUCT,1)dnl
+], [dnl
+UC_REPLACE(UD_NO_[]UC_UPPERCASE($2)[]_STRUCT,0)dnl
+])dnl
 ])
 
 
@@ -253,8 +292,10 @@ struct $2 {char *foo;};], , [AC_DEFINE(UD_NO_[]UC_UPPERCASE($2)[]_STRUCT)])dnl
 define([UC_MACRO], [dnl
 AC_COMPILE_CHECK(macro $2, [#include $1
 #ifdef $2
-  #error
-#endif], , [AC_DEFINE(UD_NO_[]UC_UPPERCASE($2)_MACRO)])dnl
+  error
+#endif], , 
+[UC_REPLACE(UD_NO_[]UC_UPPERCASE($2)_MACRO,1)],
+[UC_REPLACE(UD_NO_[]UC_UPPERCASE($2)_MACRO,0)])dnl
 ])
 
 
@@ -263,6 +304,7 @@ AC_COMPILE_CHECK(macro $2, [#include $1
 define([UC_UDPOSIX_LIMITS], [dnl
 ifdef([AC_PROVIDE_$0], , [dnl
 AC_REQUIRE([UC_PROG_CC])dnl
+AC_REQUIRE([UC_UDPOSIX])dnl
 UC_ENSURE(PORT_MANIFEST, config.c)dnl
 AC_HEADER_CHECK(limits.h, UC_SYSTEM_HEADER(limits), [dnl
 UC_ENSURE(PORT_HEADERS, limits.h)], dnl
@@ -275,6 +317,7 @@ UC_ENSURE(PORT_HEADERS, limits.h)], dnl
 define([UC_UDPOSIX_FLOAT], [dnl
 ifdef([AC_PROVIDE_$0], , [dnl
 AC_REQUIRE([UC_PROG_CC])dnl
+AC_REQUIRE([UC_UDPOSIX])dnl
 echo "checking for conforming <float.h>"
 UC_ENSURE(PORT_MANIFEST, config.c)dnl
 AC_TEST_CPP([#include <float.h>
@@ -301,14 +344,12 @@ UC_ENSURE(PORT_HEADERS, stddef.h)dnl
 UC_SYSTEM_HEADER(stddef)dnl
 UC_MACRO(<stddef.h>, offsetof, (type\, member), dnl
     ((size_t)\&((type*)0)->member))dnl
+UC_TYPEDEF(<stddef.h>, size_t)dnl
 AC_PROVIDE([$0])dnl
 ])])
 
 
-# Ensure a POSIX <stdlib.h>.  NB: Don't check for `size_t' because, by
-# convention, all portable programs will include <stddef.h> before
-# <stdlib.h> so that any compiler-supplied size_t declaration lockout
-# mechanisms will be activated.
+# Ensure a POSIX <stdlib.h>.
 #
 define([UC_UDPOSIX_STDLIB], [dnl
 AC_REQUIRE([UC_UDPOSIX])dnl
@@ -317,24 +358,22 @@ UC_ENSURE(PORT_HEADERS, stdlib.h)dnl
 UC_SYSTEM_HEADER(stdlib)dnl
 dnl UC_TYPEDEF(<stdlib.h>, div_t, struct div { int quot; int rem; })dnl
 dnl UC_TYPEDEF(<stdlib.h>, ldiv_t, struct ldiv { long quot; long rem; })dnl
-dnl UC_TYPEDEF(<stdlib.h>, size_t, unsigned int)dnl
+UC_TYPEDEF(<stdlib.h>, size_t)dnl
 UC_FUNC(<stdlib.h>, atexit, int atexit, (void (*fcn)(void)))dnl
+UC_FUNC(<stdlib.h>, getenv)dnl
 AC_HAVE_FUNCS(on_exit)dnl
 AC_PROVIDE([$0])dnl
 ])
 
 
-# Ensure a POSIX <string.h>.  NB: Don't check for `size_t' because, by
-# convention, all portable programs will include <stddef.h> before
-# <string.h> so that any compiler-supplied size_t declaration lockout
-# mechanisms will be activated.
+# Ensure a POSIX <string.h>.
 #
 define([UC_UDPOSIX_STRING], [dnl
 AC_REQUIRE([UC_UDPOSIX])dnl
 UC_ENSURE(PORT_MANIFEST, strerror.c string.h strstr.c string.h.in)dnl
 UC_ENSURE(PORT_HEADERS, string.h)dnl
 UC_SYSTEM_HEADER(string)dnl
-dnl UC_TYPEDEF(<string.h>, size_t, unsigned int)dnl
+UC_TYPEDEF(<string.h>, size_t)dnl
 UC_FUNC(<string.h>, strerror, char *strerror, (int errno))dnl
 UC_FUNC(<string.h>, strstr, char *strstr, 
     (const char *cs\, const char *ct))dnl
@@ -348,11 +387,13 @@ AC_PROVIDE([$0])dnl
 define([UC_UDPOSIX_TIME], [dnl
 ifdef([AC_PROVIDE_$0], , [
 AC_REQUIRE([UC_UDPOSIX])dnl
-UC_ENSURE(PORT_MANIFEST, difftime.c time.h.in)dnl
+UC_ENSURE(PORT_MANIFEST, difftime.c strftime.c time.h.in)dnl
 UC_ENSURE(PORT_HEADERS, time.h)dnl
 UC_SYSTEM_HEADER(time)dnl
-UC_TYPEDEF(<time.h>, time_t, long)dnl
-UC_FUNC(<string.h>, difftime, double difftime, (time_t t1, time_t t0))dnl
+UC_TYPEDEF(<time.h>, time_t)dnl
+UC_TYPEDEF(<time.h>, size_t)dnl
+UC_FUNC(<time.h>, difftime)dnl
+UC_FUNC(<time.h>, strftime)dnl
 AC_PROVIDE([$0])dnl
 ])])
 
@@ -362,13 +403,13 @@ AC_PROVIDE([$0])dnl
 define([UC_UDPOSIX_SIGNAL], [dnl
 AC_REQUIRE([UC_UDPOSIX])dnl
 UC_ENSURE(PORT_MANIFEST, signal.h.in sigaddset.c \
-    sigdelset.c sigemptyset.c sigprocmask.c sigsuspend.c)dnl
+    sigdelset.c sigemptyset.c sigfillset.c sigismember.c sigpending.c \
+    sigprocmask.c sigsuspend.c)dnl
 UC_ENSURE(PORT_HEADERS, signal.h)dnl
 UC_SYSTEM_HEADER(signal)dnl
-UC_TYPEDEF(<signal.h>, sigset_t, unsigned long)dnl
-UC_TYPEDEF(<signal.h>, sig_atomic_t, int)dnl
-UC_STRUCT(<signal.h>, sigaction, {void (*sa_handler)(); sigset_t sa_mask; int sa_flags;})dnl
-UC_FUNC(<signal.h>, sigaction, int sigaction, (int sig\, const struct sigaction *act\, struct sigaction * oact))dnl
+UC_TYPEDEF(<signal.h>, sigset_t)dnl
+UC_TYPEDEF(<signal.h>, sig_atomic_t)dnl
+UC_STRUCT(<signal.h>, sigaction)dnl
 UC_FUNC(<signal.h>, sigemptyset, int sigemptyset, (sigset_t *set))dnl
 UC_FUNC(<signal.h>, sigfillset, int sigfillset, (sigset_t *set))dnl
 UC_FUNC(<signal.h>, sigaddset, int sigaddset, (sigset_t *set\, int signo))dnl
@@ -381,6 +422,20 @@ UC_FUNC(<signal.h>, sigsuspend, int sigsuspend, (const sigset_t *set))dnl
 AC_HAVE_FUNCS(sigvec sigblock sigpause sigsetmask sigstack bsdsigp)dnl
 AC_PROVIDE([$0])dnl
 ])
+
+
+# Ensure a POSIX <unistd.h>.
+#
+define([UC_UDPOSIX_UNISTD], [dnl
+ifdef([AC_PROVIDE_$0], , [
+AC_REQUIRE([UC_UDPOSIX])dnl
+UC_ENSURE(PORT_MANIFEST, unistd.h.in)dnl
+UC_ENSURE(PORT_HEADERS, unistd.h)dnl
+UC_SYSTEM_HEADER(unistd)dnl
+UC_TYPEDEF(<unistd.h>, size_t)dnl
+UC_FUNC(<unistd.h>, getlogin)dnl
+AC_PROVIDE([$0])dnl
+])])
 
 
 # Ensure a <select.h>.
@@ -456,12 +511,19 @@ AC_PROVIDE([$0])dnl
 # Check for FORTRAN compiler.
 #
 define([UC_PROG_FC], [dnl
-AC_PROGRAMS_CHECK(FC, f77 cf77 fc)dnl
+ifdef([AC_PROVIDE_$0], , [ dnl
+UC_REQUIRE([UC_OS])dnl
+case "$OS" in
+  hpux*) AC_PROGRAMS_CHECK(FC, fort77 fortc f77);;
+  dgux*) AC_PROGRAMS_CHECK(FC, ghf77 f77);;
+  *)     AC_PROGRAMS_CHECK(FC, f77 cf77 fc);;
+esac
 if test -z "$FC"; then
   UC_NEED_VALUE(FC, [FORTRAN compiler], /bin/f77)dnl
 fi
 AC_PROVIDE([$0])dnl
-])
+])])
+
 
 # Check for FORTRAN library.
 #
@@ -508,6 +570,8 @@ AC_REQUIRE([UC_OS])dnl
 AC_REQUIRE([UC_UDPOSIX_STDDEF])dnl
 UC_ENSURE(PORT_SUBDIRS, fortc)dnl
 UC_ENSURE(PORT_MANIFEST, fortc.h fortc.fc udalloc.h)dnl
+UC_CREATE(port/fortc/Makefile)dnl
+UC_POST_PROCESS(port/fortc/Makefile)dnl
 dir=`pwd`/port/fortc
 FORTC="$dir/fortc"
 AC_SUBST(FORTC)dnl
@@ -534,6 +598,13 @@ test "$TBL" = cat &&
 ])
 
 
+# Check for makeinfo(1).
+#
+define([UC_PROG_MAKEINFO], [dnl
+AC_PROGRAM_CHECK(MAKEINFO, makeinfo, makeinfo)dnl
+])
+
+
 # Determine the operating system.
 #
 define([UC_OS], [dnl
@@ -546,6 +617,9 @@ OS_osf
 #endif
 #ifdef _AIX
 OS_aix
+#endif
+#ifdef __DGUX__
+OS_dgux
 #endif
 #ifdef hpux
 OS_hpux
@@ -564,6 +638,9 @@ OS_unicos
 #endif
 #ifdef __convex__
 OS_convex
+#endif
+#ifdef masscomp
+OS_rtu
 #endif
 CAT_EOF
 OS=`cc -E conftest.c | sed -n '/^OS_/ {
@@ -711,10 +788,8 @@ define([UC_CPP_X11], [dnl
 echo checking for X11 header-files
 UC_TEST_DIR(CPP_X11, ${OPENWINHOME-/usr/openwin}/[[include]] \
     /usr/[[include]] /usr/local/[[include]], X11/Xlib.h,
-    X Window System [[[include]]]-directory, -I/usr/openwin/[[[include]]])dnl
-if test -n "${CPP_X11}"; then
-  CPP_X11=-I${CPP_X11}
-fi
+    X11 [[[include]]]-directory, -I/usr/openwin/[[[include]]])dnl
+CPP_X11=`case ${CPP_X11} in -I*) echo ${CPP_X11};; *) echo -I${CPP_X11-};; esac`
 AC_PROVIDE([$0])dnl
 ])
 
@@ -734,7 +809,7 @@ AC_PROVIDE([$0])dnl
 define([UC_LIB_X11], [dnl
 echo checking for X11 library
 UC_TEST_LIB(LD_X11, ${OPENWINHOME-/usr/openwin}/lib /usr/lib dnl
-  /usr/lib/X11 /usr/local/lib /usr/local/lib/X11, X11, X Window System, dnl
+  /usr/lib/X11 /usr/local/lib /usr/local/lib/X11, X11, X11, dnl
   -L/usr/lib/X11 -lX11)dnl
 AC_PROVIDE([$0])dnl
 ])
@@ -883,8 +958,8 @@ define(dn,divnum)divert(-1)undivert[]divert(dn)undefine([dn])dnl
 #
 # Create a script to accomplish the post processing.
 #
-cat << \EOF_CONFTEST_SH > conftest.sh
-cat << \EOF_CONFTEST_C > conftest.c
+cat << EOF_CONFTEST_SH > conftest.sh
+cat << EOF_CONFTEST_C > conftest.c
 #include <stdio.h>
 main()
 {
@@ -903,8 +978,8 @@ readsub(inpath)
     }
     buf[[sizeof(buf)-1]]	= 0;
     while (fgets(buf, sizeof(buf), fp) != NULL) {
-	if (sscanf(buf, "[include]%*[[] \t[]]%s", path) == 1) {
-	    if (!readsub(path))
+      if (sscanf(buf, "[include]%*[[] \\t[]]%s", path) == 1) {
+          if (!readsub(path))
 		return 0;
 	} else {
 	    (void) fputs(buf, stdout);
@@ -914,13 +989,13 @@ readsub(inpath)
 }
 EOF_CONFTEST_C
 if $CC -o conftest conftest.c; then
-    conftest=`pwd`/conftest
+    conftest=\`pwd\`/conftest
     set $1
     for file do
-      echo post processing makefile \`$file\'
-      sd=`pwd`/`echo $file | sed 's,[[^/]]*$,,'`
-      base=`basename $file`
-      (cd $sd; $conftest < $base > conftest.mk && mv conftest.mk $base)
+      echo post processing makefile \\\`\$file\\'
+      sd=\`pwd\`/\`echo \$file | sed 's,[[^/]]*\$,,'\`
+      base=\`basename \$file\`
+      (cd \$sd; \$conftest < \$base > conftest.mk && mv conftest.mk \$base)
     done
 fi
 rm conftest conftest.c
@@ -936,7 +1011,7 @@ cat conftest.sh >> config.status
 # If appropriate, do the postprocessing now because the previous step 
 # couldn't.
 #
-test -n "$no_create" || CC=$CC sh conftest.sh
+test -n "$no_create" || sh conftest.sh
 rm conftest.sh
 ])
 
@@ -1018,7 +1093,7 @@ ifelse($2, , [dnl
   for arg in $2; do
     case "$$1" in
       *$arg*[)] ;;
-      *[)]      $1="$$1 $arg";;
+      *[)]      $1="${$1-} $arg";;
     esac
   done
 ])dnl

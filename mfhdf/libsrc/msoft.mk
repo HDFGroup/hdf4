@@ -15,13 +15,14 @@ CC        = cl
 CFLAGS    = /c /AL /Za
 
 LINK      = link
-LFLAGS    = /nod
+LFLAGS    = /nod /st:1000
 
 DESTDIR   = C:
 LIBDIR    = $(DESTDIR)\lib
 
 INCDIR    = ..\xdr
 INCLUDES  = /I$(INCDIR)
+DEFINES  = /DSWAP /DNO_SYSTEM_XDR_INCLUDES /DDOS_FS
 
 NETCDFLIB = netcdf.lib
 CLIBS     = llibc7.lib
@@ -45,23 +46,24 @@ COBJS = array.obj attr.obj cdf.obj dim.obj error.obj file.obj globdef.obj \
 	iarray.obj putget.obj putgetg.obj sharray.obj string.obj var.obj \
 	xdrposix.obj
 
-LOBJS = -+array -+attr -+cdf -+dim -+error -+file -+globdef -+iarray \
-	-+putget -+putgetg -+sharray -+string -+var -+xdrposix
+LOBJS1 = -+array -+attr -+cdf -+dim -+error -+file -+globdef -+iarray
+LOBJS2 = -+putget -+putgetg -+sharray -+string -+var -+xdrposix
 
 .c.obj:
-	$(CC) $(CFLAGS) $(INCLUDES) $<
+        $(CC) $(CFLAGS) $(INCLUDES) $(DEFINES) $<
 
 all:		$(NETCDFLIB)
 
 $(NETCDFLIB): netcdf.h $(COBJS) 
-	$(AR) $@ $(ARFLAGS) $(LOBJS),LIB.LST;
+        $(AR) $@ $(ARFLAGS) $(LOBJS1),LIB.LST;
+        $(AR) $@ $(ARFLAGS) $(LOBJS2),LIB.LST;
 
 test:		cdftest.exe FORCE
 	cdftest
 
 FORCE:
 
-cdftest.exe: cdftest.obj $(COBJS)
+cdftest.exe: cdftest.obj $(NETCDFLIB)
 	$(LINK) $(LFLAGS) cdftest.obj,,,$(LIBS);
 
 clean  :
@@ -70,59 +72,58 @@ clean  :
 install : $(NETCDFLIB)
 	copy $(NETCDFLIB) $(LIBDIR)
 
-array.o: array.c
-array.o: ./local_nc.h
-array.o: ./netcdf.h
-array.o: ./alloc.h
-attr.o: attr.c
-attr.o: ./local_nc.h
-attr.o: ./netcdf.h
-attr.o: ./alloc.h
-cdf.o: cdf.c
-cdf.o: ./local_nc.h
-cdf.o: ./netcdf.h
-cdf.o: ./alloc.h
-cdftest.o: cdftest.c
-cdftest.o: ./netcdf.h
-dim.o: dim.c
-dim.o: ./local_nc.h
-dim.o: ./netcdf.h
-dim.o: ./alloc.h
-error.o: error.c
-error.o: ./local_nc.h
-error.o: ./netcdf.h
-file.o: file.c
-file.o: ./local_nc.h
-file.o: ./netcdf.h
-file.o: ./alloc.h
-globdef.o: globdef.c
-globdef.o: ./netcdf.h
-iarray.o: iarray.c
-iarray.o: ./local_nc.h
-iarray.o: ./netcdf.h
-iarray.o: ./alloc.h
-putget.o: putget.c
-putget.o: ./local_nc.h
-putget.o: ./netcdf.h
-putget.o: ./alloc.h
-putgetg.o: putgetg.c
-putgetg.o: ./local_nc.h
-putgetg.o: ./netcdf.h
-sharray.o: sharray.c
-sharray.o: ./local_nc.h
-sharray.o: ./netcdf.h
-sharray.o: ./alloc.h
-string.o: string.c
-string.o: ./local_nc.h
-string.o: ./netcdf.h
-string.o: ./alloc.h
-var.o: var.c
-var.o: ./local_nc.h
-var.o: ./netcdf.h
-var.o: ./alloc.h
-xdrposix.o: xdrposix.c
-xdrposix.o: ./netcdf.h
-xdrposix.o: ./local_nc.h
-xdrposix.o: ./netcdf.h
-
+array.obj: array.c
+array.obj: ./local_nc.h
+array.obj: ./netcdf.h
+array.obj: ./alloc.h
+attr.obj: attr.c
+attr.obj: ./local_nc.h
+attr.obj: ./netcdf.h
+attr.obj: ./alloc.h
+cdf.obj: cdf.c
+cdf.obj: ./local_nc.h
+cdf.obj: ./netcdf.h
+cdf.obj: ./alloc.h
+cdftest.obj: cdftest.c
+cdftest.obj: ./netcdf.h
+dim.obj: dim.c
+dim.obj: ./local_nc.h
+dim.obj: ./netcdf.h
+dim.obj: ./alloc.h
+error.obj: error.c
+error.obj: ./local_nc.h
+error.obj: ./netcdf.h
+file.obj: file.c
+file.obj: ./local_nc.h
+file.obj: ./netcdf.h
+file.obj: ./alloc.h
+globdef.obj: globdef.c
+globdef.obj: ./netcdf.h
+iarray.obj: iarray.c
+iarray.obj: ./local_nc.h
+iarray.obj: ./netcdf.h
+iarray.obj: ./alloc.h
+putget.obj: putget.c
+putget.obj: ./local_nc.h
+putget.obj: ./netcdf.h
+putget.obj: ./alloc.h
+putgetg.obj: putgetg.c
+putgetg.obj: ./local_nc.h
+putgetg.obj: ./netcdf.h
+sharray.obj: sharray.c
+sharray.obj: ./local_nc.h
+sharray.obj: ./netcdf.h
+sharray.obj: ./alloc.h
+string.obj: string.c
+string.obj: ./local_nc.h
+string.obj: ./netcdf.h
+string.obj: ./alloc.h
+var.obj: var.c
+var.obj: ./local_nc.h
+var.obj: ./netcdf.h
+var.obj: ./alloc.h
+xdrposix.obj: xdrposix.c
+xdrposix.obj: ./netcdf.h
+xdrposix.obj: ./local_nc.h
+xdrposix.obj: ./netcdf.h
 

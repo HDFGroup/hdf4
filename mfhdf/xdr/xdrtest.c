@@ -12,7 +12,9 @@ static char rcsid[] = "$Id$" ;
  */
 #include <stdio.h>
 #include <sys/types.h>		/* for <netinet/in.h> on some systems */
-#include <netinet/in.h>		/* for htonl() */
+#ifndef MSDOS
+#   include <netinet/in.h>	/* for htonl() */
+#endif
 
 /*
  * The following is necessary because the assert() macro *must* be defined
@@ -169,7 +171,7 @@ char *av[] ;
 	poses[jj++] = xdr_getpos(xdrs) ;
 
 	assert( xdr_setpos(xdrs, seeks[jj])) ;
-	assert( XDR_PUTBYTES(xdrs, bytes, sizeof(bytes))) ;
+	assert( xdr_opaque(xdrs, (caddr_t)bytes, sizeof(bytes))) ;
 
 	/* no setpos, just for variety */
 	szof = sizeof(int) ;
@@ -184,7 +186,7 @@ char *av[] ;
 	poses[jj++] = xdr_getpos(xdrs) ;
 
 	assert( xdr_setpos(xdrs, seeks[jj])) ;
-	assert( XDR_PUTLONG(xdrs, &lnum)) ;
+	assert( xdr_long(xdrs, &lnum)) ;
 	poses[jj++] = xdr_getpos(xdrs) ;
 
 	assert( xdr_setpos(xdrs, seeks[jj])) ;
@@ -222,7 +224,7 @@ char *av[] ;
 	count = 8192 ;
 	for( lnum = 0 ; lnum < count ; lnum++)
 	{
-		assert( XDR_PUTLONG(xdrs, &lnum) ) ;
+		assert( xdr_long(xdrs, &lnum) ) ;
 	}
 #endif
 
@@ -259,7 +261,7 @@ char *av[] ;
 	printf("string: %s\n", got_s) ;
 
 	assert( xdr_setpos(xdrs, seeks[jj])) ;
-	assert( XDR_GETBYTES(xdrs, got_ab, sizeof(bytes))) ;
+	assert( xdr_opaque(xdrs, (caddr_t)got_ab, sizeof(bytes))) ;
 	printf("unsigned bytes: ");
 	for(ii = 0, bp = got_ab ;
 			ii < sizeof(bytes) ; ii++, bp++)
@@ -297,7 +299,7 @@ char *av[] ;
 	putchar('\n') ;
 
 	assert( xdr_setpos(xdrs, seeks[jj])) ;
-	assert( XDR_GETLONG(xdrs, got_al)) ;
+	assert( xdr_long(xdrs, got_al)) ;
 	assert( poses[jj++] = xdr_getpos(xdrs) ) ;
 	printf("LONG: %ld\n", *got_al) ;
 
@@ -375,7 +377,7 @@ char *av[] ;
 	count = 8192 ;
 	for( ii = 0 ; ii < count ; ii++)
 	{
-		assert( XDR_GETLONG(xdrs, got_al) ) ;
+		assert( xdr_long(xdrs, got_al) ) ;
 		assert( *got_al == ii ) ;
 	}
 #endif

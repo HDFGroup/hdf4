@@ -4,12 +4,13 @@ dnl Process this file with GNU autoconf(1) to produce a configure script.
 dnl
 UC_INIT(nctest)
 
+UL_FILLVALUES
+
 UC_DEFAULT(CFLAGS, -O)
-UC_DEFAULT(CPP_OLD_FILLVALUES,)
 UC_DEFAULT(CPPFLAGS, -DNDEBUG)
 UC_ENSURE(CPPFLAGS, -DHDF)
 UC_DEFAULT(HDF_INC, -I/hdf/home/chouck/hdf/33/include)
-UC_DEFAULT(HDF_LIB, -I/hdf/home/chouck/hdf/33/lib/libdf.a)
+UC_DEFAULT(HDF_LIB, /hdf/home/chouck/hdf/33/lib/libdf.a)
 UC_DEFAULT(FFLAGS,)
 UC_DEFAULT(LEX, lex)
 UC_DEFAULT(YACC, yacc)
@@ -24,6 +25,7 @@ UC_PROG_NEQN
 UC_PROG_TBL
 UC_PROG_INSTALL
 UC_PROG_AR
+UC_PROG_MAKEINFO
 
 UL_XDR
 UL_PROTOTYPES
@@ -37,21 +39,8 @@ UC_VERSION
 
 UC_CHECK_MISSING
 
-AC_OUTPUT( \
+UC_FINISH( \
     Makefile \
-    port/Makefile port/master.mk \
-    xdr/Makefile \
-    libsrc/Makefile \
-    fortran/Makefile \
-    ncgen/Makefile \
-    ncdump/Makefile \
-    nctest/Makefile \
-    doc/Makefile \
-    )
-
-UC_TERM( \
-    Makefile \
-    port/Makefile \
     xdr/Makefile \
     libsrc/Makefile \
     fortran/Makefile \

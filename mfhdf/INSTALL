@@ -8,7 +8,7 @@ the notes at the end of this file.
 
 On a UNIX system:
 
-1) Configure the makefiles via the `configure' script.
+1) Create the makefiles via the `configure' script.
 
     1.1) Decide where you want the software installed.  By default, all
          software will be installed in peer directories of the directory
@@ -32,17 +32,17 @@ On a UNIX system:
 	 (e.g. /usr/local) and its subdirectories in order to install the
 	 software.
 
-    1.2) Decide the values you want for the following makefile macros:
+    1.2) Decide the values you want for the following symbols:
 
-	Macro		Definition			Default Value
+	Symbol		Definition			Default Value
 	-----		----------			-------------
-	CC		   C compiler 			cc
-	CPPFLAGS	   C preprocessor options	-DNDEBUG
-	CFLAGS		   C compiler options		-O
-	FC		   FORTRAN compiler		f77
-	FFLAGS		   FORTRAN compiler options	-O
-	CPP_OLD_FILLVALUES Use old, default floating-	<undefined>
-			   point fill values?
+	CC		C compiler			cc
+	CPPFLAGS	C preprocessor options		-DNDEBUG
+	CFLAGS		C compiler options		-O
+	FC		FORTRAN compiler		f77
+	FFLAGS		FORTRAN compiler options	-O
+	OLD_FILLVALUES	Use old, default floating-	no
+			point fill values?
 
 	 The default -DNDEBUG value for CPPFLAGS means that the C
 	 preprocessor will cause the use of the C assert() macro in the
@@ -55,22 +55,23 @@ On a UNIX system:
 	 macro to a dummy value (e.g. "/bin/f77" or "/foo/bar").  The
 	 makefiles check to see that the compiler actually exists.
 
-	 The CPP_OLD_FILLVALUES macro is provided for backward
-	 compatibility only.  If you are a new user of netCDF, then you may
-	 safely ignore it and the following paragraph.
+	 The OLD_FILLVALUES macro is provided for backward compatibility
+	 only.  If you are a new user of netCDF, then you may safely ignore
+	 it.  If, however, you have an existing archive of netCDF files
+	 that use default floating-point fill values, then you should know
+	 that the definition of the default floating-point fill values
+	 changed with version 2.3 of the netCDF package.  Prior to this
+	 release, the default floating-point fill values were not very
+	 portable:  their correct behavior depended not only upon the
+	 particular platform, but also upon the compilation environment.
+	 This led to the definition of new, default floating-point fill
+	 values that are portable across all platforms and compilation
+	 environments.  If you wish, however, to obtain the old,
+	 non-portable floating-point fill values, then OLD_FILLVALUES
+	 should have the value `yes'.  
 
-	 If, however, you have an existing archive of netCDF files that use
-	 default floating-point fill values, then you should know that 
-	 the definition of the default floating-point fill values changed
-	 with version 2.3 of the netCDF package.  Prior to this release,
-	 the default floating-point fill values were not very portable:
-	 their correct behavior depended not only upon the particular
-	 platform, but also upon the compilation environment.  This led to
-	 the definition of new, default floating-point fill values that are
-	 portable across all platforms and compilation environments.  If
-	 you wish, however, to obtain the old, non-portable floating-point
-	 fill values, then CPP_OLD_FILLVALUES should have the value
-	 `-DNC_OLD_FILLVALUES'.
+	 Implementation detail on fill values is contained in the file
+	 libsrc/netcdf.h.in.
 
     1.3) If you want changes to the above defaults to be somewhat permanent,
 	 then edit them into the CUSTOMIZE file, which is in the same
@@ -94,6 +95,9 @@ On a UNIX system:
 	     If using sh(1) or bash(1):
 
 		 $ CC=gcc CPPFLAGS= ./configure --prefix=/usr/local
+
+	 NOTE:  You must run the `configure' script even if you accept all
+	 the defaults.
 
 2) Make "all".  It is to your advantage to log the build process in case
    something goes wrong and you request assistance.  For example:
@@ -192,31 +196,58 @@ Notes:
 
 On a VMS system:
 
-For installation on a VMS system, use the make.com files in each source
-directory, and build in the subdirectories in the following order:  xdr,
-src, nctest, util, fortran/vms, ncdump, ncgen.
+    1) Read the exposition of NC_OLD_FILLVALUES in the file libsrc/netcdf.h
+       and set the macro appropriately.
 
-On a DOS or OS/2 system:
+    2) Use the make.com files in each source directory, and build in the
+       subdirectories in the following order:  [.xdr], [.libsrc], [.nctest],
+       [fortran.vms], [.ncdump], [.ncgen].  Note that, by default, the
+       netCDF library will be installed in [-.lib], the C and FORTRAN
+       include files will be installed in [-.include], and the programs
+       `ncgen' and `ncdump' will *not* be installed but will be found in
+       their respective subdirectories.
 
-For installation on a PCDOS, MSDOS or OS/2 system, use the msoft.mk file in
-this top-level directory, which invokes the make utility recursively for all
-the source subdirectories.  You should make the targets "all", "test" and
-"install".  Recursive makes work with DOS 5.0 and OS/2 but may not work with
-earlier versions of DOS because of memory limitations; in this case you will
-have to use the msoft.mk files in each of the subdirectories.  You will have
-to set the "OS2" macro appropriately in the top-level msoft.mk file, if you
-are building the system on OS/2 rather than MSDOS.  You may have to delete
-or rename the VMS-specific make.com files if your make utility is called
-"make".  If you are making the Fortran interface, ignore the Fortran error
-messages about VALUE type and length mismatches.  For FORTRAN users, the C
-library should be built without FORTRAN compatibility, but the FORTRAN
-library should be built with C compatibility.
+On a PCDOS, MSDOS, or OS/2 system:
+
+    1) The netCDF package has been tested on MSDOS Version 5.0 and OS/2
+       Version 1.3.
+
+       MSDOS: in order to build the package using recursive makes (nmake),
+       you will have to boot a configuration that contains no (or as few
+       as possible) TSRs from CONFIG.SYS.  If you do not, the compiler and/or
+       linker WILL run out of heap space at some time during the build.
+       
+    2) Read the exposition of NC_OLD_FILLVALUES in the file libsrc/netcdf.h
+       and set the macro appropriately.
+
+    3) If you are building the system on OS/2, you will have to set the "OS2" 
+       macro to 1 in the top-level msoft.mk file or supply the definition
+       OS2=1 on the make invocation command line.  Using msoft.mk from the 
+       top-level directory will invoke the make utility (nmake) recursively 
+       for all the source subdirectories.  
+
+    4) Successively make the targets "all", "test" and "install".  
+
+    NOTES:
+       o Recursive makes work with DOS 5.0 and OS/2 but may not work with 
+         earlier versions of DOS because of memory limitations (see 1) above); 
+         in this case you will have to use the msoft.mk files in each of the 
+         subdirectories.  
+
+       o You may have to delete or rename the VMS-specific make.com files if 
+         your make utility is named "make".  
+
+       o If you are making the Fortran interface, ignore the Fortran error 
+         messages about VALUE type and length mismatches.  For FORTRAN users, 
+         the C library should be built without FORTRAN compatibility, but the 
+         FORTRAN library should be built with C compatibility.
 
 Questions about building or installing netCDF software should be sent to
 support@unidata.ucar.edu.
 
-Good Luck.
+Good Luck  :-)
 
 Russ Rew
 Steve Emmerson
 Glenn Davis
+Tom Yoksas

@@ -18,13 +18,14 @@ extern "C" {
 /* fill typed value block with values of specified type */
 extern	void	val_fill	PROTO((
 				       nc_type ,
-				       int, void *
+				       long,
+				       void *
 				       ));
 
 /* fill typed value block with zeros of specified type */
 extern	void	val_fill_zero	PROTO((
 				       nc_type ,
-				       int,
+				       long,
 				       void *
 				       ));
 
@@ -34,14 +35,15 @@ extern	void	val_fill_zero	PROTO((
  */
 extern	int	val_cmp		PROTO((
 				       nc_type ,
-				       int, void *,
+				       long,
+				       void *,
 				       void *
 				       ));
 
 /* print typed value block with values of specified type */
 extern	void	val_out		PROTO((
 				       nc_type ,
-				       int,
+				       long,
 				       void *
 				       ));
 #ifdef __cplusplus

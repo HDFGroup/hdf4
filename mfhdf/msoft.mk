@@ -1,53 +1,69 @@
-# $Id$
+#   Copyright 1989, University Corporation for Atmospheric Research
 #
-#          Makefile to build netcdf library and utilities on MSDOS and OS/2
+#	PC Makefile for eXternal Data Representation library routines
+#		used by the netCDF.
 #
-# Anticipated, changeable macros (others won't be passed, recursively):
-#
-#   Set the definition of the OS2 macro to match OS as follows:
+#  NOTE:  Set the definition of the OS2 macro to match OS as follows:
 #         OS2 = 0     -> DOS
 #         OS2 = 1     -> OS/2
 
-OS2     = 0
-CC        = cl
-CFLAGS    = /c /AL /Za
-DESTDIR   = C:
-F77	  = fl
-FFLAGS	  = /c /AL
-WANT_FORTRAN_NETCDF = 1
+OS2      = 0
 
-# End of anticipated macros
+AR       = LIB
+ARFLAGS  = 
 
-# Macros for recursive make(1)s:
-MY_MFLAGS	= \
-	OS2="$(OS2)" \
-	CC="$(CC)" \
-	CFLAGS="$(CFLAGS)" \
-	DESTDIR="$(DESTDIR)" \
-	F77="$(F77)" \
-	FFLAGS="$(FFLAGS)" \
-	WANT_FORTRAN_NETCDF="$(WANT_FORTRAN_NETCDF)"
+CC       = cl
+CFLAGS   = /c /AL /Za
 
-!IF $(WANT_FORTRAN_NETCDF)
-FORTRANSUB       = fortran
+LINK     = link
+LFLAGS   = /nod
+
+DESTDIR  = C:
+
+INCDIR   = .
+INCLUDES = /I$(INCDIR)
+
+LIBDIR   = $(DESTDIR)\lib
+
+XDRLIB   = xdr.lib
+!IF $(OS2)
+OS2LIB    = os2.lib
+!ELSE
+OS2LIB    =
 !ENDIF
+LIBS     = $(XDRLIB) llibc7.lib $(OS2LIB)
 
-INSTSUBS           = xdr libsrc $(FORTRANSUB) ncgen ncdump
-ALLSUBS            = xdr libsrc nctest $(FORTRANSUB) ncgen ncdump
+XDROBJS  = xdr.obj xdrarray.obj xdrfloat.obj xdrstdio.obj byteordr.obj
+XDRLOBJS = -+xdr -+xdrarray -+xdrfloat -+xdrstdio -+byteordr
 
-all:
-	@$(MAKE) /F msoft.mk $(MAKEFLAGS) $(MY_MFLAGS) TARG=$@ $(ALLSUBS)
+all:		$(XDRLIB)
 
-test:
-	@$(MAKE) /F msoft.mk $(MAKEFLAGS) $(MY_MFLAGS) TARG=$@ $(ALLSUBS)
+$(XDRLIB): $(XDROBJS)
+	$(AR) $@ $(ARFLAGS) $(XDRLOBJS),LIB.LST;
+
+test:		xdrtest.exe FORCE
+	xdrtest
+
+FORCE:
+
+xdrtest.exe: xdrtest.obj $(XDROBJS)
+	$(LINK) $(LFLAGS) xdrtest.obj,,,$(LIBS);
+
+install:
+	copy $(XDRLIB) $(LIBDIR)
 
 clean:
-	@$(MAKE) /F msoft.mk $(MAKEFLAGS) $(MY_MFLAGS) TARG=$@ $(ALLSUBS)
+	rm -f *.obj *.map *.lst *.bak xdr.lib xdrtest.exe test.xdr
 
-install: all
-	@$(MAKE) /F msoft.mk $(MAKEFLAGS) $(MY_MFLAGS) TARG=$@ $(INSTSUBS)
-
-$(ALLSUBS):	
-	cd $@
-	$(MAKE) /F msoft.mk $(MAKEFLAGS) $(MY_MFLAGS) $(TARG)
-	cd ..
+xdr.obj: xdr.c types.h xdr.h
+	$(CC) $(CFLAGS) $(INCLUDES) xdr.c
+xdrfloat.obj: xdrfloat.c types.h xdr.h
+	$(CC) $(CFLAGS) $(INCLUDES) xdrfloat.c
+xdrarray.obj: xdrarray.c types.h xdr.h
+	$(CC) $(CFLAGS) $(INCLUDES) xdrarray.c
+xdrtest.obj: xdrtest.c types.h xdr.h
+	$(CC) $(CFLAGS) $(INCLUDES) xdrtest.c
+xdrstdio.obj: xdrstdio.c types.h xdr.h
+	$(CC) $(CFLAGS) $(INCLUDES) xdrstdio.c
+byteordr.obj: byteordr.c
+	$(CC) $(CFLAGS) byteordr.c

@@ -7,15 +7,58 @@
 #include	"local_nc.h"
 #include	"alloc.h"
 
+/* you may wish to tune this: big on a cray, small on a PC? */
+#define NC_SHRT_BUFSIZ 8192
+#define NC_NSHRTS_PER (NC_SHRT_BUFSIZ/2) /* number of netshorts the buffer holds */
+
+/*
+ * internal function, bulk xdr of an even number of shorts, less than NC_NSHRTS_PER
+ */
+static
+bool_t
+NCxdr_shortsb(xdrs, sp, nshorts)
+	XDR *xdrs;
+	short *sp;
+	u_int nshorts ;
+{
+	unsigned char buf[NC_SHRT_BUFSIZ] ;
+	unsigned char *cp ;
+	unsigned int nbytes = nshorts * 2;
+
+	/* assert(nshorts <= NC_NSHRTS_PER) ; */
+	/* assert(nshorts > 0) ; */
+
+	if(xdrs->x_op == XDR_ENCODE)
+	{
+		for(cp = buf ; cp < &buf[nbytes] ; sp++, cp += 2 )
+		{
+			*(cp +1) = *sp % 256 ;
+			*cp = (*sp >> 8) ;
+		}
+	}
+
+	if(!xdr_opaque(xdrs, (caddr_t)buf, nbytes))
+		return FALSE ;
+	
+	if(xdrs->x_op == XDR_DECODE)
+	{
+		for(cp = buf ; cp < &buf[nbytes] ; sp++, cp += 2 )
+		{
+			*sp = ((*cp & 0x7f) << 8) + *(cp +1) ;
+			if(*cp & 0x80)
+			{
+				/* extern is neg */
+				*sp -= 0x8000 ;
+			}
+		}
+	}
+
+	return TRUE ;
+}
+
 
 /*
  * Translate an array of cnt short integers at sp.
- *
- * N.B.:
- * Alignment constraints may recommend alternative solutions
- *
- * Example implementation of ntohs() and htons() can be found in
- *	 ../xdr/byteorder.c
  */
 bool_t
 xdr_shorts(xdrs, sp, cnt)
@@ -23,149 +66,39 @@ xdr_shorts(xdrs, sp, cnt)
 	short *sp;
 	u_int cnt ;
 {
-#ifndef BIG_SHORTS
-	short *bp ;
-	u_char buf[4] ;
-	int rem = cnt % 2 ;
-	bool_t stat = TRUE ;
+	int odd ; /* 1 if cnt is odd, 0 otherwise */
 
-	bp = (short *)buf ;
-	cnt /= 2 ;
+	if(cnt == 0)
+		return TRUE ;	/* ? */
 
-	if( xdrs->x_op == XDR_DECODE)
-	{
-		for( ; (cnt > 0) && stat ; cnt--)
-		{
-			stat = XDR_GETBYTES(xdrs, buf, 4) ;
-#ifdef SWAP
-			*sp++ = ntohs(*bp++) ;
-			*sp++ = ntohs(*bp--) ;
-#else /* SWAP */
-			*sp++ = *bp++ ;
-			*sp++ = *bp-- ;
-#endif /* SWAP */
-		}
-		if(stat && rem) /* remainder */
-		{
-			stat = XDR_GETBYTES(xdrs, buf, 4) ;
-#ifdef SWAP
-			*sp = ntohs(*bp) ;
-#else /* SWAP */
-			*sp = *bp ;
-#endif /* SWAP */
-		}
-		return(stat) ;
-	}
-	if( xdrs->x_op == XDR_ENCODE)
-	{
-		for(  ; (cnt > 0) && stat ; cnt--)
-		{
-#ifdef SWAP
-			*bp++ = htons(*sp++) ;
-			*bp-- = htons(*sp++) ;
-#else /* SWAP */
-			*bp++ = *sp++ ;
-			*bp-- = *sp++ ;
-#endif /* SWAP */
-			stat = XDR_PUTBYTES(xdrs, buf, 4) ;
-		}
-		if(stat && rem) /* remainder */
-		{
-#ifdef SWAP
-			*bp++ = htons(*sp) ;
-#else /* SWAP */
-			*bp++ = *sp ;
-#endif /* SWAP */
-			*bp = 0 ;
-			stat = XDR_PUTBYTES(xdrs, buf, 4) ;
-		}
-		return(stat) ;
-	}
-	return(FALSE) ;
-#else
-	/* BIG_SHORTS */
-	struct {
-		unsigned pad : 32 ;
-		unsigned hs: 1 ;
-		unsigned hi: 15 ;
-		unsigned ls: 1 ;
-		unsigned lo: 15 ;
-	} buf;
-	int rem = cnt % 2 ;
-	bool_t stat = TRUE ;
+	odd = cnt % 2 ;
+	if(odd) 
+		cnt-- ;
+	/* cnt is even, odd is set if apropos */
 
-	cnt /= 2 ;
+	while(cnt > NC_NSHRTS_PER)
+	{
+		if(!NCxdr_shortsb(xdrs, sp, NC_NSHRTS_PER))
+			return FALSE ;
+		/* else */
+		sp += NC_NSHRTS_PER ;
+		cnt -= NC_NSHRTS_PER ;
+	}
 
-	if( xdrs->x_op == XDR_DECODE)
+	/* we know cnt <= NC_NSHRTS_PER at this point */
+
+	if(cnt != 0)
 	{
-		for( ; (cnt > 0) && stat ; cnt--)
-		{
-			stat = XDR_GETLONG(xdrs, &buf) ;
-			*sp++ = buf.hs ? -32768 + buf.hi : buf.hi ;
-#if DEBUGC
-			fprintf(stderr, "\t%d\n", *(sp-1)) ;
-#endif
-			*sp++ = buf.ls ? -32768 + buf.lo : buf.lo ;
-#if DEBUGC
-			fprintf(stderr, "\t%d\n", *(sp-1)) ;
-#endif
-		}
-		if(stat && rem) /* remainder */
-		{
-			stat = XDR_GETLONG(xdrs, &buf) ;
-			*sp = buf.hs ? -32768 + buf.hi : buf.hi ;
-#if DEBUGC
-			fprintf(stderr, "\t%d\n", *sp) ;
-#endif
-		}
-		return(stat) ;
+		if(!NCxdr_shortsb(xdrs, sp, cnt))
+			return FALSE ;
+		/* else */
+		sp += cnt ;
+		cnt = 0 ;
 	}
-	if( xdrs->x_op == XDR_ENCODE)
-	{
-#ifdef DEBUGC
-	{ int ii; for(ii = 0 ; ii< 2*cnt ; ii++)
-		fprintf(stderr, "%d: %d\n", ii, sp[ii]) ; }
-#endif
-		for(  ; (cnt > 0) && stat ; cnt--)
-		{
-			if( *sp < 0 )
-			{
-				buf.hs = 1 ;
-				buf.hi = *sp + 32768 ;
-			}  else {
-				buf.hs = 0 ;
-				buf.hi = *sp ;
-			}
-			sp++ ;
-			if( *sp < 0 )
-			{
-				buf.ls = 1 ;
-				buf.lo = *sp + 32768 ;
-			}  else {
-				buf.ls = 0 ;
-				buf.lo = *sp ;
-			}
-			sp++ ;
-#ifdef DEBUGC
-		fprintf(stderr, "%d %d : %d\n", 
-			 buf.hi, buf.lo, sizeof(buf)) ;
-#endif
-			stat = XDR_PUTLONG(xdrs, &buf) ;
-		}
-		if(stat && rem) /* remainder */
-		{
-			if( *sp < 0 )
-			{
-				buf.hs = 1 ;
-				buf.hi = *sp + 32768 ;
-			}  else {
-				buf.hs = 0 ;
-				buf.hi = *sp ;
-			}
-			stat = XDR_PUTLONG(xdrs, &buf) ;
-		}
-		return(stat) ;
-	}
-	return(FALSE) ;
-#endif /* !BIG_SHORTS */
+
+	if(odd)
+		if(!xdr_NCvshort(xdrs, 0, sp))
+			return FALSE ;
+
+	return TRUE ;
 }

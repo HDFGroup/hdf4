@@ -14,8 +14,8 @@
 /* fill typed value block with values of specified type */
 void
 val_fill(type, len, vals)
-     nc_type type;			/* netcdf type, NC_BYTE, ..., NC_DOUBLE */
-     int len;			/* number of elements to fill with */
+     nc_type type;		/* netcdf type, NC_BYTE, ..., NC_DOUBLE */
+     long len;			/* number of elements to fill with */
      void *vals;		/* start of first block of values */
 {
     static char pname[] = "val_fill";
@@ -38,22 +38,22 @@ val_fill(type, len, vals)
       case NC_SHORT:
 	gp.sp = (short *) vals;
 	for (iel = 0; iel < len; iel++)
-	  *gp.sp++ = (short) iel;
+	  *gp.sp++ = (short) (iel - len/2); /* negative and positive values */
 	break;
       case NC_LONG:
 	gp.lp = (long *) vals;
 	for (iel = 0; iel < len; iel++)
-	  *gp.lp++ = (long) iel;
+	  *gp.lp++ = (long) (iel - len/2);
 	break;
       case NC_FLOAT:
 	gp.fp = (float *) vals;
 	for (iel = 0; iel < len; iel++)
-	  *gp.fp++ = (float) (iel+1); /* to temporarily bypass ultrix 0.f bug */
+	  *gp.fp++ = (float) (iel+1);
 	break;
       case NC_DOUBLE:
 	gp.dp = (double *) vals;
 	for (iel = 0; iel < len; iel++)
-	  *gp.dp++ = (double) iel;
+	  *gp.dp++ = (double) (iel - len/2);
 	break;
       default:
 	error("%s: bad type, test program error", pname);
@@ -65,7 +65,7 @@ val_fill(type, len, vals)
 void
 val_fill_zero(type, len, vals)
      nc_type type;		/* netcdf type, NC_BYTE, ..., NC_DOUBLE */
-     int len;			/* number of elements to fill with */
+     long len;			/* number of elements to fill with */
      void *vals;		/* start of first block of values */
 {
     static char pname[] = "val_fill_zero";
@@ -119,7 +119,7 @@ val_fill_zero(type, len, vals)
 int
 val_cmp (type, len, v1, v2)
      nc_type type;		/* netcdf type, NC_BYTE, ..., NC_DOUBLE */
-     int len;			/* number of elements of type to compare */
+     long len;			/* number of elements of type to compare */
      void *v1;			/* start of first block of values */
      void *v2;			/* start of second block of values */
 {
@@ -196,7 +196,7 @@ val_cmp (type, len, v1, v2)
 void
 val_out(type, len, vals)
      nc_type type;		/* netcdf type, NC_BYTE, ..., NC_DOUBLE */
-     int len;			/* number of elements to fill with */
+     long len;			/* number of elements to fill with */
      void *vals;		/* start of first block of values */
 {
     static char pname[] = "val_oout";

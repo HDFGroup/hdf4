@@ -40,6 +40,11 @@ test_ncvarput(path)
 
     (void) fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
+    /* handle case where struct netcdf test is uninitialised */
+    hc.cor[0] = 0 ;
+    hc.edg[0] = 1 ;
+    hc.vals = 0 ;
+
     if ((cdfid = ncopen(path, NC_WRITE)) == -1) {
 	error("%s: ncopen failed", pname);
 	return;
@@ -77,20 +82,26 @@ test_ncvarput(path)
 	    ncclose(cdfid); return;
 	}
 	hc.edg[id] = tmp;
-	tmp = hc.cor[id];
-	hc.cor[id] = test.dims[id].size; /* try big coordinate, should fail */
-	if(ncvarput (cdfid, iv, hc.cor, hc.edg, hc.vals) != -1) {
-	    error("%s: ncvarput should fail for too-high coordinate", pname);
-	    ncclose(cdfid); return;
+	{ 
+		long mqv = test.vars[iv].ndims -1 ;
+		int dim = test.vars[iv].dims[mqv] ;
+
+		tmp = hc.cor[mqv];
+		hc.cor[mqv] = test.dims[dim].size; /* try big coordinate, should fail */
+		if(ncvarput (cdfid, iv, hc.cor, hc.edg, hc.vals) != -1) {
+		    error("%s: ncvarput should fail for too-high coordinate", pname);
+		    ncclose(cdfid); return;
+		}
+		hc.cor[mqv] = tmp;
+	
+		tmp = hc.edg[mqv];
+		hc.edg[mqv] = test.dims[dim].size + 1; /* try big edge, should fail */
+		if(ncvarput (cdfid, iv, hc.cor, hc.edg, hc.vals) != -1) {
+		    error("%s: ncvarput should fail for too-high edge", pname);
+		    ncclose(cdfid); return;
+		}
+		hc.edg[mqv] = tmp;
 	}
-	hc.cor[id] = tmp;
-	tmp = hc.edg[id];
-	hc.edg[id] = test.dims[id].size + 1; /* try big edge, should fail */
-	if(ncvarput (cdfid, iv, hc.cor, hc.edg, hc.vals) != -1) {
-	    error("%s: ncvarput should fail for too-high edge", pname);
-	    ncclose(cdfid); return;
-	}
-	hc.edg[id] = tmp;
 
 	if (ncredef(cdfid) == -1) {
 	    error("%s: ncredef failed", pname);
@@ -106,6 +117,8 @@ test_ncvarput(path)
 	    ncclose(cdfid); return;
 	}
     }
+    else
+	error("\"struct netcdf test\" uninitialized, no tests performed") ;
     /* try with bad variable handle, should fail */
     if(ncvarput (cdfid, -1, hc.cor, hc.edg, hc.vals) != -1) {
 	error("%s: ncvarput should fail for bad variable handle", pname);
@@ -120,7 +133,7 @@ test_ncvarput(path)
 	error("%s: ncvarput failed to report bad netcdf handle", pname);
 	nerrs++;
     }
-    free ((char *)hc.vals);
+    if(hc.vals) free ((char *)hc.vals);
     if (nerrs > 0)
       (void) fprintf(stderr,"FAILED! ***\n");
     else

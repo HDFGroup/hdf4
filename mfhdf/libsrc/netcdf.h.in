@@ -1,4 +1,3 @@
-/*# Generated automatically from netcdf.h.in by configure. */
 /*
  *	Copyright 1993, University Corporation for Atmospheric Research
  *
@@ -62,7 +61,7 @@
  *
  * Implementation details are contained in the section below on fill values.
  */
-#define NC_OLD_FILLVALUES	0
+#define NC_OLD_FILLVALUES	@OLD_FILLVALUES@
 
 /*
  * 	Fill values

@@ -81,6 +81,10 @@ static void *rec_start;		/* start of space for a record of data */
 # define DATA 275
 
 #include <malloc.h>
+#include <memory.h>
+#if 0
+#include <values.h>
+#endif
 
 #ifdef __cplusplus
 

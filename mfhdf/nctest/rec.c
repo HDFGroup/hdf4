@@ -468,7 +468,6 @@ test_ncrecput(path)
       (void) fprintf(stderr,"FAILED! ***\n");
     else
       (void) fprintf(stderr,"ok ***\n");
-
 }
 
 

@@ -77,20 +77,26 @@ test_ncvarget(path)
 	    ncclose(cdfid); return;
 	}
 	hc.edg[id] = tmp;
-	tmp = hc.cor[id];
-	hc.cor[id] = test.dims[id].size; /* try big coordinate, should fail */
+
+	{ 
+		long mqv = test.vars[iv].ndims -1 ;
+		int dim = test.vars[iv].dims[mqv] ;
+
+	tmp = hc.cor[mqv];
+	hc.cor[mqv] = test.dims[dim].size; /* try big coordinate, should fail */
 	if(ncvarget (cdfid, iv, hc.cor, hc.edg, hc.vals) != -1) {
 	    error("%s: ncvarget should fail for too-high coordinate", pname);
 	    ncclose(cdfid); return;
 	}
-	hc.cor[id] = tmp;
-	tmp = hc.edg[id];
-	hc.edg[id] = test.dims[id].size + 1; /* try big edge, should fail */
+	hc.cor[mqv] = tmp;
+	tmp = hc.edg[mqv];
+	hc.edg[mqv] = test.dims[dim].size + 1; /* try big edge, should fail */
 	if(ncvarget (cdfid, iv, hc.cor, hc.edg, hc.vals) != -1) {
 	    error("%s: ncvarget should fail for too-high edge", pname);
 	    ncclose(cdfid); return;
 	}
-	hc.edg[id] = tmp;
+	hc.edg[mqv] = tmp;
+	} /* mqv block */
 
 	if (ncredef(cdfid) == -1) {
 	    error("%s: ncredef failed", pname);

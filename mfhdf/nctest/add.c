@@ -129,7 +129,8 @@ del_att (test, varid, iatt)	/* delete attribute iatt in the netcdf test */
     for (ia = 0; ia < test->natts ; ia++) { /* find attribute to delete */
 	if (test->atts[ia].var == varid &&
 	    strcmp(test->atts[ia].name, iatt->name) == 0) {
-	    for (ib = ia+1; ib < test->natts; ib++) { /* move down */
+	    free(test->atts[ia].name);
+            for (ib = ia+1; ib < test->natts; ib++) { /* move down */
 		test->atts[ib-1].var =   test->atts[ib].var;
 		test->atts[ib-1].name =  test->atts[ib].name;
 		test->atts[ib-1].type =  test->atts[ib].type;

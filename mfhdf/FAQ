@@ -21,19 +21,15 @@ List of Questions:
     7:  Is netCDF available for the Apple Macintosh?
     8:  What are some references to netCDF?
     9:  What are the files in pub/netcdf/ on unidata.ucar.edu?
-    10: Why do I get a "Cross-device link error" when trying to run nctest?
-    11: How do I get the current netcdf distribution to compile under AIX 3.2?
-    12: Why does the `ncgen -f' test fail under Ultrix?
-    13: How do I build netCDF for HPUX platforms?
-    14: Why do I get XDR error messages when trying to write data?
-    15: What's the best way to represent the following data using netCDF: ...?
-    16: Are there plans to add facilities for data compression to netCDF?
-    17: What utilities are available for netCDF?
-    18: What is the status of implementing additional netCDF operators?
-    19: Is there a mailing list for netCDF discussions and questions?
-    20: How do I make a bug report?
-    21: How widely is netCDF used?
-    22: Is there any WAIS or gopher access to netCDF information?
+    10: Why do I get XDR error messages when trying to write data?
+    11: What is the best way to represent [some particular data] using netCDF?
+    12: Are there plans to add facilities for data compression to netCDF?
+    13: What utilities are available for netCDF?
+    14: What is the status of implementing additional netCDF operators?
+    15: Is there a mailing list for netCDF discussions and questions?
+    16: How do I make a bug report?
+    17: How widely is netCDF used?
+    18: Is there any WAIS or gopher access to netCDF information?
 
 1:  What Is netCDF?
 
@@ -72,41 +68,36 @@ A:  Via anonymous FTP from
 	host:	unidata.ucar.edu [128.117.140.3]
 	file:	pub/netcdf/netcdf.tar.Z
 
-    Make sure the file is transmitted in BINARY mode.  This is version 2.02,
-    last updated in December 1991.
+    Make sure the file is transmitted in BINARY mode.  This is version 2.3,
+    last updated in April 1993.
 
 3:  What does netCDF run on?
 
-A:  Version 2.02 of netCDF has been tested on the following platforms:
+A:  Version 2.3 of netCDF has been tested on the following platforms:
 
-	SPARCstation, SunOS 4.x
-	Sun 3, SunOS
-	DECstation or VAXstation, Ultrix 4.x
-	VAXstation, VMS
-	IBM RS-6000, AIX 3.x
-	IBM PS/2, MSDOS 5.0
-	IBM PS/2 OS/2
-	CRAY YMP, UNICOS
-
-    The next version will in addition be tested on
-
-	SGI, IRIX
-	HP, HPUX
+	CRAY Y-MP	  UNICOS 6.1.6
+	DEC VAX		  VMS 5.5-2
+	DECstation 3000	  ULTRIX V4.3
+	HP-9000/7xx	  HPUX 9.0
+	IBM PS/2	  MSDOS 5.0
+	IBM PS/2	  OS/2
+	IBM RS-6000	  AIX 3.2
+	SGI Iris	  IRIX 4.0.5F
+	SPARCstation	  Solaris 2.1
+	SPARCstation	  SunOS 4.1.3
 
     The experience of outside developers indicates that netCDF is relatively
     easy to port to any system that has a C compiler and an XDR library
     (eXternal Data Representation, used for NFS and usually supplied by
     vendors).
 
-4:  When will the next version be available?  What changes are included?
+4:  What has changed since the netCDF 2.2 release in December 1991?
 
-A:  We hope to make the next version available in February 1993.  It contains
-    bug fixes, portability enhancements, performance enhancements, and a few
-    new capabilities.
+A:  NetCDF 2.3, made available in April 1993, contains bug fixes, portability
+    enhancements, performance enhancements, and a few new capabilities.
 
-    We implemented some new optimizations for the library that result in
-    significant speedups for accessing cross-sections involving
-    non-contiguous data.
+    Some new optimizations for the library result in significant speedups
+    for accessing cross-sections involving non-contiguous data.
 
     New capabilities include some additional interfaces that provide a more
     general form of hyperslab access.  This supports sub-sampling along
@@ -129,11 +120,11 @@ A:  We hope to make the next version available in February 1993.  It contains
     data values for large multidimensional variables, or to provide full
     annotations in the form of trailing CDL comments for every data value.
 
-    The new release also includes a prototype implementation of a C++
+    The current release also includes a prototype implementation of a C++
     interface for the netCDF data access library.  It provides all the
-    functionality of the C interface, improves type safety by eliminating
-    all use of void* pointers, and is somewhat simpler to use than the C
-    interface.  With the C++ interface no IDs are needed for netCDF
+    functionality of the previous C interface, improves type safety by
+    eliminating use of void* pointers, and is somewhat simpler to use than
+    the C interface.  With the C++ interface, no IDs are needed for netCDF
     components, there is no need to specify types when creating attributes,
     and less indirection is required for dealing with dimensions.  However,
     since this is a prototype interface and implementation, it may be
@@ -202,13 +193,13 @@ A:  Unidata doesn't test or maintain a version of netCDF for Macintoshes,
 A:  Hard-copies of some of these are available from the Unidata Program
     Center, P.O. Box 3000, Boulder, CO 80307-3000:
 
-    NetCDF User's Guide, An Interface for Data Access, Version 2.0, November
-    1991.  (Available from Unidata or by anonymous FTP from unidata.ucar.edu
-    in the file pub/netcdf/guide.ps.Z)
+    Rew, R.  K., G. P.  Davis, and S. Emmerson, NetCDF User's Guide, An
+    Interface for Data Access, Version 2.3, April 1993.  (Available from
+    Unidata or by anonymous FTP from unidata.ucar.edu in the file
+    pub/netcdf/guide.ps.Z)
 
-    Rew, Russell K. and Glenn P. Davis, "NetCDF: An Interface for
-    Scientific Data Access," Computer Graphics and Applications,
-    IEEE, pp. 76-82, July 1990.
+    Rew, R. K. and G. P. Davis, "NetCDF: An Interface for Scientific Data
+    Access," Computer Graphics and Applications, IEEE, pp. 76-82, July 1990.
 
     Rew, R. K. and G. P. Davis, "The Unidata netCDF: Software for Scientific
     Data Access," Sixth International Conference on Interactive Information
@@ -221,9 +212,9 @@ A:  Hard-copies of some of these are available from the Unidata Program
     Estuarine and Coastal Modeling. Tampa, Florida.  (Also available via
     anonymous FTP from sparky.er.usgs.gov in the file pub/netcdf.asce.ps)
 
-    Fulker, David W., "Unidata Strawman for Storing Earth-Referencing Data,"
-    Seventh International Conference on Interactive Information
-    and Processing Systems for Meteorology, Oceanography, and Hydrology, New
+    Fulker, D. W., "Unidata Strawman for Storing Earth-Referencing Data,"
+    Seventh International Conference on Interactive Information and
+    Processing Systems for Meteorology, Oceanography, and Hydrology, New
     Orleans, La., American Meteorology Society, January 1991.
 
 9:  What are the files in pub/netcdf/ on unidata.ucar.edu?
@@ -264,86 +255,7 @@ A:  File                         Purpose
 			   Macintosh.  These were contributed by Chuck
 			   Denham, U.S.  Geological Survey.
 
-10: Why do I get a "Cross-device link error" when trying to run nctest?
-
-       --- Testing ncagt, ncagtc ...
-       --- Testing ncredf, ncdren, ncvren, ncaren, ncendf ...
-       ncendef: rename failed: Cross-device link
-
-    You've run into a problem caused by having temporary files created on a
-    different file system, due to having the environment variable TMPDIR
-    set.  If you unset the TMPDIR environment variable or set it to a
-    directory in the same filesystem on which you are running the tests,
-    things should work OK.  We've fixed this problem in the next release so
-    that having TMPDIR set will no longer cause problems.
-
-11: How do I get the current netcdf distribution to compile under AIX 3.2?
-    I have no problems with it under AIX3.1, but on 3.2, when I try a make,
-    it complains about multiple redeclarations of malloc().
-
-A:  This is fixed in the next release, but for now for AIX 3.2, you will
-    need a patch to two files in the current distribution (which was tested
-    on AIX 3.1).  The patch is available via anonymous FTP from
-
-	host:	unidata.ucar.edu
-	file:	pub/netcdf/aix-3.2-patch
-
-    Apply this patch from the top-level netcdf directory via Larry Wall's
-    patch(1) utility, e.g.
-
-	$ cd /usr/local/src/unidata/netcdf
-	$ patch < aix-3.2-patch
-
-    or you can apply the patch manually, since it only involves adding two
-    lines and deleting one line.
-
-12: Why does the `ncgen -f' test fail under Ultrix?
-
-    Making `test' in /usr/local/unidata/src/netcdf/ncgen
-    *** ncgen -n test successful ***
-    *** ncgen -c test successful ***
-    52c52
-    <   4, 5, 0.000244140625,
-    ---
-    4, 5, 0.0002441406250000001,
-    *** ncgen -f test failed ***
-    *** Error code 1
-
-A:  This problem is fixed in the next version.  The difference found in the
-    (ncgen -f) test is really not significant, so to avoid it stopping the
-    make, use the "-k" flag when invoking make or change
-    src/netcdf/nctest/Makefile with the following patch:
-
-    diff -r1.36 Makefile
-    129,130c129
-    < 		echo "*** ncgen -f test failed ***"; \
-    < 		exit 1; \
-    ---
-    > 		echo "*** ncgen -f test failed (but small difference OK) ***";
-
-    Then you should be able to rerun the make and everything past this point
-    will get built OK.
-
-    This is the only machine/compiler we've encountered that makes this test
-    fail.  The number 0.000244140625 is exactly 1/4096., and hence requires
-    only one bit in its mantissa, but its decimal representation is just
-    long enough to require double precision floating-point on most machines
-    to get the correct value (that's why we used it in the test).
-    Double-precision values in ncdump are currently formatted using "%.16g";
-    to avoid this problem, the next version of ncdump will use a "%.15g"
-    format and respect a "C_format" attribute for specifying a different
-    format for any variable.  In any case, you can safely ignore the error.
-    If you want to change ncdump to only print out 15 significant digits,
-    change line 140 in ncdump/vardata.c to use "%.15g".
-
-13: How do I build netCDF for HPUX platforms?
-
-A: The next version will build on HPUX as released.  Until then, you may
-    apply the patches detailed by Tomas Johannesson on porting netCDF to
-    HPUX.  These patches are contained in the file pub/netcdf/hpux-patches
-    on unidata.ucar.edu and available via anonymous FTP.
-
-14: Why do I get XDR error messages when trying to write data?
+10: Why do I get XDR error messages when trying to write data?
 
 A:  Probably due to a write error, perhaps because of exceeding disk quotas,
     a full device, or permission problems.  The netCDF library is usually
@@ -356,7 +268,7 @@ A:  Probably due to a write error, perhaps because of exceeding disk quotas,
     information passed up to calling routines from the XDR layer to make
     construction of a meaningful error message possible.
 
-15: What's the best way to represent data using netCDF?
+11: What is the best way to represent [some particular data] using netCDF?
 
 A:  There are many ways to represent the same information in any
     general-purpose data model.  Choices left up to the user in the case of
@@ -371,7 +283,7 @@ A:  There are many ways to represent the same information in any
     was useful to change the structure of netCDF files after experience with
     how the data is used.
 
-16: Are there plans to add facilities for data compression to netCDF?
+12: Are there plans to add facilities for data compression to netCDF?
 
 A:  We have no plans to add data compression to netCDF (although we do hope
     to eventually add a form of transparent data packing on write and
@@ -404,7 +316,7 @@ A:  We have no plans to add data compression to netCDF (although we do hope
     but instead read the compressed array in all at once and uncompress it
     before using it.
 
-17: What utilities are available for netCDF?
+13: What utilities are available for netCDF?
 
 A:  The only utilities available in the current netCDF distribution are
     ncdump and ncgen, for converting netCDF files to an ASCII human-readable
@@ -416,7 +328,7 @@ A:  The only utilities available in the current netCDF distribution are
     file utilities.txt in the answer to the question above on important
     files in /pub/netcdf on unidata.ucar.edu for more information.
 
-18: What is the status of implementing additional netCDF operators?
+14: What is the status of implementing additional netCDF operators?
 
 A:  Work on additional netCDF operators has been suspended until we can get
     more programmer resources, due to a higher priority recently placed on
@@ -427,7 +339,7 @@ A:  Work on additional netCDF operators has been suspended until we can get
     operators, please contact support@unidata.ucar.edu to find out if
     someone else is already working on it.
 
-19: Is there a mailing list for netCDF discussions and questions?
+15: Is there a mailing list for netCDF discussions and questions?
 
 A:  Yes - there are two.  The mailing list
 
@@ -448,7 +360,7 @@ A:  Yes - there are two.  The mailing list
     file mail-archives/netcdfgroup available via anonymous FTP from
     unidata.ucar.edu.
 
-20: How do I make a bug report?
+16: How do I make a bug report?
 
 A:  If you find a bug, send a description to 
 
@@ -458,7 +370,7 @@ A:  If you find a bug, send a description to
     netCDF that you think are not appropriate for the entire netcdfgroup
     mailing list.
 
-21: How widely is netCDF used?
+17: How widely is netCDF used?
 
 A:  We don't really know, but the netcdfgroup and netcdfdigest mailing lists
     have 260 addresses, some of which are aliases to more addresses, in
@@ -516,7 +428,7 @@ A:  We don't really know, but the netcdfgroup and netcdfdigest mailing lists
     committee recently selected netCDF as the ADISS Project Analytical
     Information Model programming interface and toolkit.
 
-22: Is there any WAIS or gopher access to netCDF information?
+18: Is there any WAIS or gopher access to netCDF information?
 
     Yes, `netcdf-group.src' is a WAIS source that provides a full-text
     search of the netcdfgroup mailing list archive and is registered with

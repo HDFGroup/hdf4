@@ -1,8 +1,52 @@
 VERSION		COMMENTS
 
-1.4.1	?
+1.5	?
+		Added support for Concurrent's (Masscomp's?) Real Time Unix
+		(RTU) operating system.
+
+		Made missing system header files be defined as `/dev/null'.
+
+		Added default definition of NULL to stddef.h.in.
+
+		Added support for `sigset_t', `sig_atomic_t', and `struct
+		sigaction' and for sigfillset(), sigismember(), and
+		sigpending(), and sigaction().
+
+		Modified autoconf(1) support:
+		    Made udposix.h independent of AC_CONFIG_HEADER().
+
+		    Added capability for transforming any file via @...@
+		    substitutions (not just makefiles).  This required a
+		    slight change to autoconf(1)'s `acgeneral.m4'.
+
+		    Made configure create POSIX header-files (e.g. stdlib.h),
+		    allowing @...@ substitutions, and modified them
+		    accordingly.
+
+		Added full support for `size_t' in <stddef.h>, <stdlib.h>,
+		<string.h>, and <time.h>.
+
+		Added support for GNU info(1) pages.
+
+		Added support for Data General's DGUX to fortc(1), UC_OS,
+		and UC_PROG_FC.
+
+1.4.1	1993-3-27
 		Undid 1.4 modification because the library-build rule would
 		fail on platforms where autoconf set RANLIB to `@:'.
+
+		Quoted all define() first arguments in file `aclocal.m4' so
+		that it can be read twice by m4(1) (useful because when 
+		autoconf(1) is executed in this directory, it effectively
+		reads `aclocal.m4' twice).
+
+		Placed under CVS control.
+
+		Corrected UC_CPP_X11 so that it won't generate `-I-I...'.
+
+		Added test for OSF operating system.
+
+		Added CPP_LDM and LD_LDM to missing values checklist.
 
 1.4	1993-3-5
 

@@ -7,12 +7,12 @@ PROGRAM		= nctest
 CPP_NETCDF	= -I../libsrc
 CPPFLAGS	= $(CPP_NETCDF) -DNDEBUG -DHDF -DNO_HAVE_PROTOTYPES -Dconst= -DNO_STDARG -DNO_STRERROR
 HDF_LIB         = /hdf/home/chouck/hdf/33/lib/libdf.a
-CFLAGS		= -O -I/hdf/home/chouck/hdf/33/include -DSUN
+CFLAGS		= -g -I/hdf/home/chouck/hdf/33/include -DSUN
 MANIFEST	= Makefile.in README add.c add.h atttests.c cdftests.c \
 		  depend dimtests.c driver.c emalloc.c emalloc.h error.c \
 		  error.h misctest.c msoft.mk rec.c slabs.c testcdf.h \
 		  tests.h val.c val.h vardef.c varget.c vargetg.c varput.c \
-		  varputg.c vartests.c vputget.c vputgetg.c
+		  varputg.c vartests.c vputget.c vputgetg.c make.com
 LIBNAME		= netcdf
 LD_NETCDF	= -L../libsrc -l$(LIBNAME)
 SRCS		= varget.c vargetg.c varput.c varputg.c vardef.c vartests.c \
@@ -29,6 +29,8 @@ all::		program
 
 test:		$(PROGRAM)
 	./$(PROGRAM)
+
+$(PROGRAM):   ../libsrc/libnetcdf.a
 
 install::
 
@@ -60,6 +62,7 @@ INSTALL		= /bin/install -c
 INSTALL_DATA	= $(INSTALL) -m 664
 INSTALL_PROGRAM	= $(INSTALL)
 FC		= f77
+MAKEINFO        = 
 NCDUMP		= @NCDUMP@
 NCGEN		= @NCGEN@
 NEQN		= neqn
@@ -391,6 +394,62 @@ dummy_mandir $(MANDIR):
 	mkdir -p $@
 	chmod u+rwx,g+rws,o=rx $@
 
+############################################################################
+# TeX-Info Pages:
+############################################################################
+INFODIR       = $(prefix)/info
+
+installed_infos:      FORCE
+	if [ -z "$(MAKEINFO)" ]; then \
+		echo 1>&2 "Can't install info(1) pages because no makeinfo(1)"; \
+	else \
+	  if [ -n "$(INFOS)" ]; then \
+	      infos="$(INFOS)"; \
+	      for info in $$infos; do \
+		$(MAKE) $(MFLAGS) INFODIR=$(INFODIR) INFO=$$info \
+		installed_info || exit 1; \
+	      done; \
+	   else \
+	      :; \
+	   fi; \
+	fi;
+# The following target decouples the previous targets from the actual rule;
+# thus, eliminating extraneous make(1) messages.
+#
+installed_info:       $(INFODIR)/$(INFO)
+
+$(INFODIR)/$(INFO):   $(INFODIR) $(INFO)
+	$(INSTALL_DATA) $(INFO) $@
+
+dummy_infodir $(INFODIR):
+	mkdir -p $@
+	chmod u+rwx,g+rws,o=rx $@
+
+# Rules for generating info pages:
+#
+.SUFFIXES:    .info .texi .texinfo .txn
+.texi.info:
+	@if [ -z "$(MAKEINFO)" ]; then \
+	  echo 1>&2 "Can't create $@ because no makeinfo(1)"; \
+	else \
+	  $(MAKEINFO) $< --no-split --output=$@; \
+	fi
+.texinfo.info:
+	@if [ -z "$(MAKEINFO)" ]; then \
+	  echo 1>&2 "Can't create $@ because no makeinfo(1)"; \
+	else \
+	  $(MAKEINFO) $< --no-split --output=$@; \
+	fi
+.txn.info:
+	@if [ -z "$(MAKEINFO)" ]; then \
+	  echo 1>&2 "Can't create $@ because no makeinfo(1)"; \
+	else \
+	  $(MAKEINFO) $< --no-split --output=$@; \
+	fi
+
+# Ensure that info page depends on canonical TeX-Info macros.
+#
+dummy_info $(INFO):   texinfo.tex
 
 ############################################################################
 # Cleanup:
@@ -515,6 +574,7 @@ MANIFEST.echo:	FORCE
 	    subdirs="$(SUBDIRS)"; \
 	    for subdir in $$subdirs; do \
 		(cd $$subdir && \
+                echo 1>&2 Creating $@ in `pwd` && \
 		$(MAKE) $(MFLAGS) MANIFEST.echo | \
 		    sed "s|^|$$subdir/|") || exit 1; \
 	    done; \

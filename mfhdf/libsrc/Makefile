@@ -4,9 +4,8 @@
 # $Id$
 
 PROGRAM		= cdftest
-CPP_OLD_FILLVALUES	= 
-CPPFLAGS	= $(CPP_OLD_FILLVALUES) -DNDEBUG -DHDF -DNO_STRERROR
-CFLAGS		= -g -I/hdf/home/chouck/hdf/33/include -DIRIS4 -cckr
+CPPFLAGS	= -DNDEBUG -DHDF -DNO_HAVE_PROTOTYPES -Dconst= -DNO_STDARG -DNO_STRERROR
+CFLAGS		= -g -I/hdf/home/chouck/hdf/33/include -DSUN
 GARBAGE		= $(PROGRAM) test.cdf cdfout.new test*.hdf \
                   hdftest hdfout.new
 HEADERS		= netcdf.h
@@ -20,8 +19,7 @@ MANIFEST	= Makefile.in README \
 		  $(CSRCS) cdftest.c \
 		  alloc.h testout.sav descrip.mms error.h htons.mar \
 		  local_nc.h make.com msoft.mk netcdf.h ntohs.mar \
-		  test_cdf.sav hdfout.sav mfsd.c hdfpg.c hdfcdf.c \
-                  hdfsds.c
+		  test_cdf.sav hdfout.sav mfsd.c hdfsds.c hdftest.c
 LIBOBJS		= array.o attr.o cdf.o dim.o file.o iarray.o error.o \
 		  globdef.o putget.o putgetg.o sharray.o string.o var.o \
 		  xdrposix.o hdfsds.o mfsd.o
@@ -29,7 +27,7 @@ LIBRARY		= netcdf
 DEBUGLIBRARY	= netcdf_g
 PROFILEDLIBRARY	= netcdf_pg
 OBJS		= $(PROGRAM).o
-LD_XDR		= -lsun
+LD_XDR		= 
 LD_NETCDF	= -L. -lnetcdf
 LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB)
 prefix		= /hdf/home/chouck/hdf
@@ -109,14 +107,15 @@ AR		= ar
 CC		= cc
 CPP		= cc -E
 INCDIR		= $(prefix)/include
-INSTALL		= cp
-INSTALL_DATA	= $(INSTALL)
+INSTALL		= /bin/install -c
+INSTALL_DATA	= $(INSTALL) -m 664
 INSTALL_PROGRAM	= $(INSTALL)
 FC		= f77
+MAKEINFO        = 
 NCDUMP		= @NCDUMP@
 NCGEN		= @NCGEN@
 NEQN		= neqn
-OS		= irix
+OS		= sunos
 SHELL		= /bin/sh
 TBL		= tbl
 
@@ -444,6 +443,62 @@ dummy_mandir $(MANDIR):
 	mkdir -p $@
 	chmod u+rwx,g+rws,o=rx $@
 
+############################################################################
+# TeX-Info Pages:
+############################################################################
+INFODIR       = $(prefix)/info
+
+installed_infos:      FORCE
+	if [ -z "$(MAKEINFO)" ]; then \
+		echo 1>&2 "Can't install info(1) pages because no makeinfo(1)"; \
+	else \
+	  if [ -n "$(INFOS)" ]; then \
+	      infos="$(INFOS)"; \
+	      for info in $$infos; do \
+		$(MAKE) $(MFLAGS) INFODIR=$(INFODIR) INFO=$$info \
+		installed_info || exit 1; \
+	      done; \
+	   else \
+	      :; \
+	   fi; \
+	fi;
+# The following target decouples the previous targets from the actual rule;
+# thus, eliminating extraneous make(1) messages.
+#
+installed_info:       $(INFODIR)/$(INFO)
+
+$(INFODIR)/$(INFO):   $(INFODIR) $(INFO)
+	$(INSTALL_DATA) $(INFO) $@
+
+dummy_infodir $(INFODIR):
+	mkdir -p $@
+	chmod u+rwx,g+rws,o=rx $@
+
+# Rules for generating info pages:
+#
+.SUFFIXES:    .info .texi .texinfo .txn
+.texi.info:
+	@if [ -z "$(MAKEINFO)" ]; then \
+	  echo 1>&2 "Can't create $@ because no makeinfo(1)"; \
+	else \
+	  $(MAKEINFO) $< --no-split --output=$@; \
+	fi
+.texinfo.info:
+	@if [ -z "$(MAKEINFO)" ]; then \
+	  echo 1>&2 "Can't create $@ because no makeinfo(1)"; \
+	else \
+	  $(MAKEINFO) $< --no-split --output=$@; \
+	fi
+.txn.info:
+	@if [ -z "$(MAKEINFO)" ]; then \
+	  echo 1>&2 "Can't create $@ because no makeinfo(1)"; \
+	else \
+	  $(MAKEINFO) $< --no-split --output=$@; \
+	fi
+
+# Ensure that info page depends on canonical TeX-Info macros.
+#
+dummy_info $(INFO):   texinfo.tex
 
 ############################################################################
 # Cleanup:
@@ -568,6 +623,7 @@ MANIFEST.echo:	FORCE
 	    subdirs="$(SUBDIRS)"; \
 	    for subdir in $$subdirs; do \
 		(cd $$subdir && \
+                echo 1>&2 Creating $@ in `pwd` && \
 		$(MAKE) $(MFLAGS) MANIFEST.echo | \
 		    sed "s|^|$$subdir/|") || exit 1; \
 	    done; \
@@ -589,7 +645,6 @@ FORCE:
 
 ### Everything after the following line might be overwritten ###
 ### DO NOT DELETE THIS LINE.  make depend DEPENDS ON IT ###
-arg.o: arg.c
 array.o: array.c
 array.o: ./local_nc.h
 array.o: ./netcdf.h
@@ -602,8 +657,6 @@ cdf.o: cdf.c
 cdf.o: ./local_nc.h
 cdf.o: ./netcdf.h
 cdf.o: ./alloc.h
-cdftest-gt.o: cdftest-gt.c
-cdftest-gt.o: ./netcdf.h
 cdftest.o: cdftest.c
 cdftest.o: ./netcdf.h
 dim.o: dim.c
@@ -613,37 +666,27 @@ dim.o: ./alloc.h
 error.o: error.c
 error.o: ./local_nc.h
 error.o: ./netcdf.h
-externinit.o: externinit.c
-externinit.o: ./netcdf.h
-file-144.o: file-144.c
-file-144.o: ./local_nc.h
-file-144.o: ./netcdf.h
-file-144.o: ./alloc.h
-file-fin.o: file-fin.c
-file-fin.o: ./netcdf.h
 file.o: file.c
 file.o: ./local_nc.h
 file.o: ./netcdf.h
 file.o: ./alloc.h
 globdef.o: globdef.c
 globdef.o: ./netcdf.h
+hdfsds.o: hdfsds.c
+hdfsds.o: ./local_nc.h
+hdfsds.o: ./netcdf.h
+hdftest.o: hdftest.c
+hdftest.o: ./mfsd.h
+hdftest.o: ./local_nc.h
+hdftest.o: ./netcdf.h
 iarray.o: iarray.c
 iarray.o: ./local_nc.h
 iarray.o: ./netcdf.h
 iarray.o: ./alloc.h
-nc.o: nc.c
-nc.o: ./nc.h
-nc.o: ./netcdf.h
-nctime.o: nctime.c
-nctime.o: ./timing.h
-nctime.o: ./netcdf.h
-ncvgt.o: ncvgt.c
-ncvgt.o: ./netcdf.h
-obioread.o: obioread.c
-obioread.o: ./timing.h
-ofread.o: ofread.c
-ofread.o: ./timing.h
-posix.o: posix.c
+mfsd.o: mfsd.c
+mfsd.o: ./mfsd.h
+mfsd.o: ./local_nc.h
+mfsd.o: ./netcdf.h
 putget.o: putget.c
 putget.o: ./local_nc.h
 putget.o: ./netcdf.h
@@ -651,51 +694,24 @@ putget.o: ./alloc.h
 putgetg.o: putgetg.c
 putgetg.o: ./local_nc.h
 putgetg.o: ./netcdf.h
-rectest.o: rectest.c
-rectest.o: ./netcdf.h
-russ_bug.o: russ_bug.c
-russ_bug.o: ./netcdf.h
 sharray.o: sharray.c
 sharray.o: ./local_nc.h
 sharray.o: ./netcdf.h
 sharray.o: ./alloc.h
-stdio.o: stdio.c
 string.o: string.c
 string.o: ./local_nc.h
 string.o: ./netcdf.h
 string.o: ./alloc.h
-tbioread.o: tbioread.c
-tfread.o: tfread.c
-time-biowrite.o: time-biowrite.c
-time-fwrite.o: time-fwrite.c
-tposix.o: tposix.c
-tstdio.o: tstdio.c
-twrite.o: twrite.c
-ubioread.o: ubioread.c
-ubioread.o: ./timing.h
-ufread.o: ufread.c
-ufread.o: ./timing.h
-usgs.o: usgs.c
-usgs.o: ./netcdf.h
 var.o: var.c
 var.o: ./local_nc.h
 var.o: ./netcdf.h
 var.o: ./alloc.h
-version.o: version.c
-x.o: x.c
-x.o: ./local_nc.h
-x.o: ./netcdf.h
-x.o: ./alloc.h
 xdrposix.o: xdrposix.c
 xdrposix.o: ./netcdf.h
 xdrposix.o: ./local_nc.h
 xdrposix.o: ./netcdf.h
 xdrstdio.o: xdrstdio.c
-xdrstdio.o: ./netcdf.h
 xdrstdio.o: ./local_nc.h
 xdrstdio.o: ./netcdf.h
-xx.o: xx.c
-y.o: y.c
-y.o: ./netcdf.h
-zbioread.o: zbioread.c
-zbioread.o: ./timing.h
+xdrstdio.o: ./netcdf.h
+xdrstdio.o: ./local_nc.h

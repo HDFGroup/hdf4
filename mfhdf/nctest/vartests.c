@@ -283,12 +283,12 @@ test_varputget1(cdfid)
 		tmpp = (void *) &chval;
 		break;
 	      case NC_SHORT:
-		elm[ie].val.sh = (short) (ie+1);
+		elm[ie].val.sh = (short) (ie-1);
 		voidp = (void *) &elm[ie].val.sh;
 		tmpp = (void *) &shval;
 		break;
 	      case NC_LONG:
-		elm[ie].val.lo = (long) (ie+1);
+		elm[ie].val.lo = (long) (ie-3);
 		voidp = (void *) &elm[ie].val.lo;
 		tmpp = (void *) &loval;
 		break;
@@ -298,7 +298,7 @@ test_varputget1(cdfid)
 		tmpp = (void *) &flval;
 		break;
 	      case NC_DOUBLE:
-		elm[ie].val.db = (double) (ie+1);
+		elm[ie].val.db = (double) (ie-1);
 		voidp = (void *) &elm[ie].val.db;
 		tmpp = (void *) &dbval;
 		break;

@@ -26,7 +26,7 @@ FTEST     = ftest
 !ENDIF
 
 LINK      = link
-LFLAGS    = /st:10000 /nod /noe
+LFLAGS    = /st:15000 /nod /noe
 
 INCDIR    = ..\libsrc
 INCLUDES  = /I$(INCDIR)
@@ -61,10 +61,10 @@ SRCS =  main.c generate.c load.c ncgentab.c escapes.c \
 MAIN =  main.obj
 
 OBJS =	generate.obj load.obj ncgentab.obj escapes.obj \
-	getfill.obj init.obj close.obj genlib.obj
+	getfill.obj init.obj close.obj genlib.obj getopt.obj
 
-LOBJS1 =  -+generate.obj -+load.obj -+ncgentab.obj -+escapes.obj 
-LOBJS2 = -+getfill.obj -+init.obj -+close.obj -+genlib.obj
+LOBJS1 = -+generate.obj -+load.obj -+ncgentab.obj -+escapes.obj 
+LOBJS2 = -+getfill.obj -+init.obj -+close.obj -+genlib.obj -+getopt.obj
 
 all:	$(GOAL)
 
@@ -75,6 +75,9 @@ $(NCGENLIB): $(OBJS)
 	$(AR) $@ $(ARFLAGS) $(LOBJS1),LIB.LST;
 	$(AR) $@ $(ARFLAGS) $(LOBJS2),LIB.LST;
 
+getopt.obj:	..\util\getopt.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) $?
+
 install: $(GOAL)
 	copy $(GOAL) $(BINDIR)
 
@@ -82,38 +85,38 @@ test:   ncgen.exe test0.cdl ntest ctest $(FTEST) FORCE
 
 FORCE:
 
-# test "-n" option of ncgen
+# test "-b" option of ncgen
 ntest:	ncgen.exe test0.cdl test1.cdl
-	ncgen -n test1.cdl
-	..\ncdump\ncdump test1.cdf > test2.cdl
+	ncgen -b test1.cdl
+	..\ncdump\ncdump test1.nc > test2.cdl
  	diff test1.cdl test2.cdl
-	@echo "*** ncgen -n test successful ***"
+	@echo "*** ncgen -b test successful ***"
 
 # test "-c" option of ncgen
 ctest:	ncgen.exe test0.cdl test1.cdl
-	ncgen -c test0.cdl > test0.c
+	ncgen -c -o ctest0.nc test0.cdl > test0.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(INCLUDES) test0.c
 	$(LINK) $(LFLAGS) test0,test0.exe,,$(LIBS);
 	test0
-	..\ncdump\ncdump -n test1 ctest0.cdf > ctest1.cdl
+	..\ncdump\ncdump -n test1 ctest0.nc > ctest1.cdl
  	diff test1.cdl ctest1.cdl
 	@echo "*** ncgen -c test successful ***"
 
 # test "-f" option of ncgen
 ftest:	ncgen.exe test0.cdl netcdf.inc test1.cdl msoft.int jackets.obj fslen.obj
-	ncgen -f test0.cdl > test0.for
+	ncgen -f -o ftest0.nc test0.cdl > test0.for
 	$(F77) $(FFLAGS) test0.for
 	$(LINK) $(LFLAGS) test0 jackets fslen,test0.exe,,$(LIBS) $(FORTLIB);
 	test0
-	..\ncdump\ncdump -n test1 ftest0.cdf > ftest1.cdl
+	..\ncdump\ncdump -n test1 ftest0.nc > ftest1.cdl
  	diff test1.cdl ftest1.cdl
 	@echo "*** ncgen -f test successful ***" 
 
-test1.cdl: test0.cdf
-	..\ncdump\ncdump -n test1 test0.cdf > test1.cdl
+test1.cdl: test0.nc
+	..\ncdump\ncdump -n test1 test0.nc > test1.cdl
 
-test0.cdf: ncgen.exe test0.cdl
-	ncgen -n test0.cdl
+test0.nc: ncgen.exe test0.cdl
+	ncgen -b test0.cdl
 
 netcdf.inc: $(FORTDIR)\netcdf.inc
 	rm -f netcdf.inc
@@ -133,22 +136,22 @@ msoft.int: $(FORTDIR)\msoft.int
 	rm -f msoft.int
 	copy $(FORTDIR)\msoft.int
 
-ncgentab.c : msofttab.c
-	cp $? $@
+ncgentab.c: msofttab.c
+	copy msofttab.c ncgentab.c
 
-ncgentab.h : msofttab.h
-	cp $? $@
+ncgentab.h: msofttab.h
+	copy msofttab.h ncgentab.h
 
-ncgenyy.c : msoftyy.c
-	cp $? $@
+ncgenyy.c: msoftyy.c
+	copy msoftyy.c ncgenyy.c
 
 ncgen: ncgen.exe
 
 clean:
 	rm -f *.obj *.map *.lst netcdf.inc msoft.int jackets.c fslen.asm \
-		*.bak ncgen.lib $(GOAL)
-	rm -f test0.cdf test0.for test0.exe test1.cdf test1.cdl test2.cdl \
-		ftest0.cdf ftest1.cdl test0.c ctest0.cdf ctest1.cdl
+		*.bak ncgen.lib ncgentab.c ncgentab.h ncgenyy.c $(GOAL) 
+	rm -f test0.nc test0.for test0.exe test1.nc test1.cdl test2.cdl \
+		ftest0.nc ftest1.cdl test0.c ctest0.nc ctest1.cdl
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 

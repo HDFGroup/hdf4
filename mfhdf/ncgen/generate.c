@@ -928,11 +928,11 @@ cstrstr(valp, len)
 	derror("too much character data!");
 	exit(9);
     }
-    istr0 = istr = (char *) emalloc(len + 1);
+    istr0 = istr = (char *) emalloc((int)len + 1);
     strncpy(istr, (char *) valp, (int)len);
     istr[len] = '\0';
 
-    sp = cp = (char *) emalloc(4*len+3);
+    sp = cp = (char *) emalloc(4*(int)len+3);
 
     *cp++ = '"';
     while (*istr != '\0') {
@@ -990,11 +990,11 @@ fstrstr(str, ilen)
 	derror("too much character data!");
 	exit(9);
     }
-    istr0 = istr = (char *) emalloc(ilen + 1);
+    istr0 = istr = (char *) emalloc((int)ilen + 1);
     strncpy(istr, (char *) str, (int)ilen);
     istr[ilen] = '\0';
     
-    ostr = cp = (char *) emalloc(12*ilen);
+    ostr = cp = (char *) emalloc(12*(int)ilen);
     *ostr = '\0';
     if (*istr == '\0') {	/* empty string input, not legal in FORTRAN */
 	strcat(ostr,"' '");

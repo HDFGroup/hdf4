@@ -14,8 +14,9 @@ PORT_CFORTRAN	= @PORT_CFORTRAN@
 NEED_FORTC	= @NEED_FORTC@
 
 PORT_HEADERS	= @PORT_HEADERS@
-made_headers	= float.h limits.h signal.h stdarg.h stddef.h stdlib.h \
-		  string.h time.h
+config_headers	= signal.h stdarg.h stddef.h stdlib.h string.h time.h \
+		  udconfig.h udposix.h
+made_headers	= float.h limits.h
 LIBOBJS		= uddummy.o @LIBOBJS@
 
 prefix		= ../../..
@@ -23,8 +24,8 @@ prefix		= ../../..
 SUBDIRS		= @PORT_SUBDIRS@
 SUBDIR_TARGETS	= fortc/all fortc/install fortc/clean fortc/distclean
 MANIFEST        = COPYRIGHT CUSTOMIZE HISTORY Makefile.in VERSION aclocal.m4 \
-		  configure configure.in depend master.mk.in uddummy.c \
-		  @PORT_MANIFEST@
+		  @PORT_MANIFEST@ \
+		  configure configure.in depend master.mk.in uddummy.c
 
 # Note that the `all' target might not make `fortc/all'.  That will depend 
 # on whether or not that utility is required.
@@ -56,7 +57,7 @@ clean::		FORCE
 	else \
 	    :; \
 	fi
-	rm -f $(made_headers) $(PORT_HEADERS) config
+	rm -f $(made_headers) config
 
 distclean::
 	@if [ "$(NEED_FORTC)" = yes ]; then \
@@ -64,7 +65,7 @@ distclean::
 	else \
 	    :; \
 	fi
-	rm -f $(made_headers) $(PORT_HEADERS) config udposix.h master.mk
+	rm -f $(made_headers) $(config_headers) config master.mk
 
 Makefile:	Makefile.in master.mk.in
 
@@ -72,18 +73,6 @@ float.h:	config
 	./config -f > $@
 limits.h:	config
 	./config -l > $@
-signal.h:	signal.h.in
-	cp $? $@
-stdarg.h:	stdarg.h.in
-	cp $? $@
-stddef.h:	stddef.h.in
-	cp $? $@
-stdlib.h:	stdlib.h.in
-	cp $? $@
-string.h:	string.h.in
-	cp $? $@
-time.h:		time.h.in
-	cp $? $@
 cfortran.h:	cfortran_h
 	if test "$(PORT_CFORTRAN)" = stdc; then \
 	    sed 's/\/\*\*\//##/g' cfortran_h > $@; \

@@ -58,7 +58,7 @@ extern void	set_formats	PROTO((
 char *		get_fmt		PROTO((
 				       int ncid,
 				       int varid,
-				       nc_type
+				       nc_type type
 				       ));
 
 /* structure for list of variables specified with -v option */

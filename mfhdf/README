@@ -1,6 +1,6 @@
 			       Unidata netCDF
-				Version 2.02
-			       December 1991
+				Version 2.3
+				 April 1993
 
 The Unidata network Common Data Form (netCDF) is an interface for scientific
 data access and a freely-distributed software library that provides an
@@ -48,8 +48,7 @@ unidata.ucar.edu include
  README                 general information about netCDF
 
  FAQ			Frequently Asked Questions (with answers) about
-			netCDF.  Includes answers to some common questions
-			about building netCDF on various platforms.
+			netCDF.
 
  utilities.txt          a list of software packages currently available or
                         under development for manipulating and displaying

@@ -7,25 +7,26 @@ PROGRAM		= ncgen
 BINFILES	= $(PROGRAM)
 CPP_NETCDF	= -I../libsrc
 CPPFLAGS	= $(CPP_NETCDF) -DNDEBUG -DHDF -DNO_HAVE_PROTOTYPES -Dconst= -DNO_STDARG -DNO_STRERROR
-CFLAGS		= -O -I/hdf/home/chouck/hdf/33/include -DSUN
-FFLAGS		= -O
+CFLAGS		= -g -I/hdf/home/chouck/hdf/33/include -DSUN
+FFLAGS		= 
 MANUALS		= ncgen.1
 GARBAGE		= $(PROGRAM) \
 		  ncgenyy.c ncgentab.c ncgentab.h \
 		  test0.nc test1.nc test1.cdl test2.cdl test0.f ctest0 \
 		  ftest0 ftest0.nc ftest1.cdl test0.c ctest0.nc ctest1.cdl
+vms_stuff	= vmstab.c vmstab.h vms_yy.c
 MANIFEST	= Makefile.in depend README \
 		  close.c descrip.mms escapes.c generate.c generic.h \
 		  genlib.c genlib.h getfill.c init.c lexyacc.com load.c \
 		  main.c make.com msoft.mk msofttab.c msofttab.h \
 		  msoftyy.c ncgen.1 ncgen.h ncgen.l ncgen.opt ncgen.y \
-		  test.com test0.cdl
+		  test.com test0.cdl \
+                  $(vms_stuff)
 LIBNAME		= netcdf
 LD_NETCDF	= -L../libsrc -l$(LIBNAME)
 OBJS		= main.o generate.o load.o ncgentab.o escapes.o \
 		  getfill.o init.o close.o genlib.o
 LD_XDR		= 
-LD_NETCDF	= -L../libsrc -lnetcdf
 LIBS		= $(LD_NETCDF) $(LD_XDR) /hdf/home/chouck/hdf/33/lib/libdf.a
 LEX		= lex
 YACC		= yacc
@@ -33,13 +34,7 @@ prefix		= /hdf/home/chouck/hdf
 
 all::		$(PROGRAM)
 
-test:           $(PROGRAM) test0.cdl btest ctest FORCE
-	@if [ -n "$(FC)" ]; then \
-	    $(MAKE) $(MFLAGS) NCDUMP=$(NCDUMP) ftest; \
-	else \
-	    echo "\`ftest' not made because the make(1)-macro for" \
-		"the FORTRAN compiler (FC) is empty"; \
-	fi
+test:           $(PROGRAM) test0.cdl btest ctest ftest FORCE
 
 install::	installed_program installed_manuals
 
@@ -54,6 +49,13 @@ ncgentab.h:	ncgen.y ncgenyy.c ncgen.h
 ncgenyy.c:	ncgen.l
 	$(LEX) ncgen.l
 	mv lex.yy.c ncgenyy.c
+
+# The SunOS 4.1.3 yacc(1) doesn't generate correct code.
+#
+vms-stuff:    ncgentab.h ncgentab.c ncgenyy.c
+	cp ncgentab.h vmstab.h
+	cp ncgentab.c vmstab.c
+	cp ncgenyy.c vms_yy.c
 
 #
 # test "-b" option of ncgen
@@ -75,24 +77,34 @@ ctest:		test1.cdl ctest0
 
 ctest0:		ncgen test0.cdl
 	./$(PROGRAM) -c -o ctest0.nc test0.cdl > test0.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ test0.c $(LD_NETCDF) $(LIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ test0.c $(LIBS)
 
 #
 # test "-f" option of ncgen
 #
-ftest:		test1.cdl ftest0
-	./ftest0		# tests `-f' option, creates ftest0.nc
-	$(NCDUMP) -n test1 ftest0.nc > ftest1.cdl
-	@if diff test1.cdl ftest1.cdl; then \
-	    echo "*** ncgen -f test successful ***"; \
-	else \
-	    echo "*** ncgen -f test failed " \
-		"(but roundoff differences are OK) ***"; \
-	fi
+ftest:                test1.cdl
+        @if [ `which "$(FC)" | wc -w` = 1 ]; then \
+            $(MAKE) $(MFLAGS) ftest0; \
+            ./ftest0            # tests `-f' option, creates ftest0.nc; \
+            $(NCDUMP) -n test1 ftest0.nc > ftest1.cdl; \
+            if diff test1.cdl ftest1.cdl; then \
+                echo "*** ncgen -f test successful ***"; \
+            else \
+                echo "*** ncgen -f test failed " \
+                    "(but roundoff differences are OK) ***"; \
+            fi; \
+        else \
+            echo 1>&2 "\`$@' not made because no FORTRAN compiler"; \
+        fi
 
-ftest0:		$(PROGRAM) test0.cdl netcdf.inc
-	./$(PROGRAM) -f -o ftest0.nc test0.cdl > test0.f
-	$(FC) $(FFLAGS) -o $@ test0.f $(LD_NETCDF) $(LIBS)
+ftest0:               $(PROGRAM) test0.cdl
+        @if [ `which "$(FC)" | wc -w` = 1 ]; then \
+            $(MAKE) $(MFLAGS) netcdf.inc; \
+            ./$(PROGRAM) -f -o ftest0.nc test0.cdl > test0.f; \
+            $(FC) $(FFLAGS) -o $@ test0.f $(LIBS); \
+        else \
+            echo 1>&2 "\`$@' not made because no FORTRAN compiler"; \
+        fi
 
 test1.cdl:	test0.nc
 	$(NCDUMP) -n test1 test0.nc > $@
@@ -101,16 +113,11 @@ test0.nc:	$(PROGRAM) test0.cdl
 	./$(PROGRAM) -b -o test0.nc test0.cdl
 
 netcdf.inc:
-	ln -s ../fortran/$@ .
-
-msofttab.c : ncgentab.c
-	cp $? $@
-
-msofttab.h : ncgentab.h
-	cp $? $@
-
-msoftyy.c : ncgenyy.c
-	cp $? $@
+        @if [ `which "$(FC)" | wc -w` = 1 ]; then \
+            ln -s ../fortran/$@ .; \
+        else \
+            echo 1>&2 "\`$@' not made because no FORTRAN compiler"; \
+        fi
 
 # Generated automatically from master.mk.in by configure.
 # This is the master makefile.  It contains general rules.
@@ -134,6 +141,7 @@ INSTALL		= /bin/install -c
 INSTALL_DATA	= $(INSTALL) -m 664
 INSTALL_PROGRAM	= $(INSTALL)
 FC		= f77
+MAKEINFO        = 
 NCDUMP		= @NCDUMP@
 NCGEN		= @NCGEN@
 NEQN		= neqn
@@ -465,6 +473,62 @@ dummy_mandir $(MANDIR):
 	mkdir -p $@
 	chmod u+rwx,g+rws,o=rx $@
 
+############################################################################
+# TeX-Info Pages:
+############################################################################
+INFODIR       = $(prefix)/info
+
+installed_infos:      FORCE
+	if [ -z "$(MAKEINFO)" ]; then \
+		echo 1>&2 "Can't install info(1) pages because no makeinfo(1)"; \
+	else \
+	  if [ -n "$(INFOS)" ]; then \
+	      infos="$(INFOS)"; \
+	      for info in $$infos; do \
+		$(MAKE) $(MFLAGS) INFODIR=$(INFODIR) INFO=$$info \
+		installed_info || exit 1; \
+	      done; \
+	   else \
+	      :; \
+	   fi; \
+	fi;
+# The following target decouples the previous targets from the actual rule;
+# thus, eliminating extraneous make(1) messages.
+#
+installed_info:       $(INFODIR)/$(INFO)
+
+$(INFODIR)/$(INFO):   $(INFODIR) $(INFO)
+	$(INSTALL_DATA) $(INFO) $@
+
+dummy_infodir $(INFODIR):
+	mkdir -p $@
+	chmod u+rwx,g+rws,o=rx $@
+
+# Rules for generating info pages:
+#
+.SUFFIXES:    .info .texi .texinfo .txn
+.texi.info:
+	@if [ -z "$(MAKEINFO)" ]; then \
+	  echo 1>&2 "Can't create $@ because no makeinfo(1)"; \
+	else \
+	  $(MAKEINFO) $< --no-split --output=$@; \
+	fi
+.texinfo.info:
+	@if [ -z "$(MAKEINFO)" ]; then \
+	  echo 1>&2 "Can't create $@ because no makeinfo(1)"; \
+	else \
+	  $(MAKEINFO) $< --no-split --output=$@; \
+	fi
+.txn.info:
+	@if [ -z "$(MAKEINFO)" ]; then \
+	  echo 1>&2 "Can't create $@ because no makeinfo(1)"; \
+	else \
+	  $(MAKEINFO) $< --no-split --output=$@; \
+	fi
+
+# Ensure that info page depends on canonical TeX-Info macros.
+#
+dummy_info $(INFO):   texinfo.tex
 
 ############################################################################
 # Cleanup:
@@ -589,6 +653,7 @@ MANIFEST.echo:	FORCE
 	    subdirs="$(SUBDIRS)"; \
 	    for subdir in $$subdirs; do \
 		(cd $$subdir && \
+                echo 1>&2 Creating $@ in `pwd` && \
 		$(MAKE) $(MFLAGS) MANIFEST.echo | \
 		    sed "s|^|$$subdir/|") || exit 1; \
 	    done; \

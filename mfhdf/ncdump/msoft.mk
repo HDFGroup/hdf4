@@ -15,7 +15,7 @@ CC        = cl
 CFLAGS    = /c /AL /Za
 
 LINK      = link
-LFLAGS    = /st:15000 /nod
+LFLAGS    = /st:30000 /nod
 
 INCDIR1   = ..\libsrc 
 INCDIR2   = ..\xdr

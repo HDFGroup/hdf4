@@ -114,12 +114,8 @@ esac
   echo reading configuration customizations
   . ./CUSTOMIZE
 fi
-    for arg in udposix.h.in; do
-    case "$PORT_MANIFEST" in
-      *$arg*) ;;
-      *)      PORT_MANIFEST="$PORT_MANIFEST $arg";;
-    esac
-  done
+ TRANSFORMEES='port/Makefile port/master.mk'
+POST_PROCESSEES='port/Makefile'
 CPPFLAGS=${CPPFLAGS-"-DNDEBUG"}
 
  CFLAGS=${CFLAGS-"-O"}
@@ -133,6 +129,9 @@ OS_osf
 #endif
 #ifdef _AIX
 OS_aix
+#endif
+#ifdef __DGUX__
+OS_dgux
 #endif
 #ifdef hpux
 OS_hpux
@@ -149,6 +148,12 @@ OS_ultrix
 #ifdef _UNICOS
 OS_unicos
 #endif
+#ifdef __convex__
+OS_convex
+#endif
+#ifdef masscomp
+OS_rtu
+#endif
 CAT_EOF
 OS=`cc -E conftest.c | sed -n '/^OS_/ {
   s///p
@@ -163,21 +168,19 @@ fi
   aix*)    for arg in -D_ALL_SOURCE; do
     case "$CPPFLAGS" in
       *$arg*) ;;
-      *)      CPPFLAGS="$CPPFLAGS $arg";;
+      *)      CPPFLAGS="${CPPFLAGS-} $arg";;
     esac
   done
 ;;
   hpux*)   for arg in -D_HPUX_SOURCE; do
     case "$CPPFLAGS" in
       *$arg*) ;;
-      *)      CPPFLAGS="$CPPFLAGS $arg";;
+      *)      CPPFLAGS="${CPPFLAGS-} $arg";;
     esac
   done
 ;;
 esac
-FFLAGS=${FFLAGS-"-O"}
-
- LIBOBJS=${LIBOBJS-""}
+LIBOBJS=${LIBOBJS-""}
 
  PORT_HEADERS=${PORT_HEADERS-""}
 
@@ -247,10 +250,23 @@ fi
 test -z "$RANLIB" && RANLIB="@:"
   
 
+echo checking for fill value usage
+if test "${OLD_FILLVALUES-}" = yes; then
+    OLD_FILLVALUES=1
+DEFS="$DEFS -DOLD_FILLVALUES=1"
+else
+    OLD_FILLVALUES=0
+DEFS="$DEFS -DOLD_FILLVALUES=0"
+fi
+  for arg in libsrc/netcdf.h; do
+    case "$TRANSFORMEES" in
+      *$arg*) ;;
+      *)      TRANSFORMEES="${TRANSFORMEES-} $arg";;
+    esac
+  done
+
+
 CFLAGS=${CFLAGS-"-O"}
-
-
-CPP_OLD_FILLVALUES=${CPP_OLD_FILLVALUES-""}
 
 
 CPPFLAGS=${CPPFLAGS-"-DNDEBUG"}
@@ -259,14 +275,14 @@ CPPFLAGS=${CPPFLAGS-"-DNDEBUG"}
   for arg in -DHDF; do
     case "$CPPFLAGS" in
       *$arg*) ;;
-      *)      CPPFLAGS="$CPPFLAGS $arg";;
+      *)      CPPFLAGS="${CPPFLAGS-} $arg";;
     esac
   done
 
 HDF_INC=${HDF_INC-"-I/hdf/home/chouck/hdf/33/include"}
 
 
-HDF_LIB=${HDF_LIB-"-I/hdf/home/chouck/hdf/33/lib/libdf.a"}
+HDF_LIB=${HDF_LIB-"/hdf/home/chouck/hdf/33/lib/libdf.a"}
 
 
 FFLAGS=${FFLAGS-""}
@@ -344,7 +360,8 @@ if test `$CPP conftest.c 2> /dev/null | wc -l` = 0; then
 fi
 rm -f conftest.c
 
-for p in f77 cf77
+ case "$OS" in
+  hpux*) for p in fort77 fortc f77
 do
 if test -z "$FC"; then
   echo checking for $p
@@ -362,6 +379,46 @@ test -z "$FC" && FC=""
 
 test -n "$FC" && break
 done
+;;
+  dgux*) for p in ghf77 f77
+do
+if test -z "$FC"; then
+  echo checking for $p
+  saveifs="$IFS"; IFS="${IFS}:"
+  for dir in $PATH; do
+    test -z "$dir" && dir=.
+    if test -f $dir/$p; then
+      FC="$p"
+      break
+    fi
+  done
+  IFS="$saveifs"
+fi
+test -z "$FC" && FC=""
+
+test -n "$FC" && break
+done
+;;
+  *)     for p in f77 cf77 fc
+do
+if test -z "$FC"; then
+  echo checking for $p
+  saveifs="$IFS"; IFS="${IFS}:"
+  for dir in $PATH; do
+    test -z "$dir" && dir=.
+    if test -f $dir/$p; then
+      FC="$p"
+      break
+    fi
+  done
+  IFS="$saveifs"
+fi
+test -z "$FC" && FC=""
+
+test -n "$FC" && break
+done
+;;
+esac
 if test -z "$FC"; then
   echo "FC:FORTRAN compiler:/bin/f77" >> conf.missing
 fi
@@ -447,6 +504,20 @@ if test -z "$AR"; then
   echo "AR:library utility:/bin/ar" >> conf.missing
 fi
 
+if test -z "$MAKEINFO"; then
+  echo checking for makeinfo
+  saveifs="$IFS"; IFS="${IFS}:"
+  for dir in $PATH; do
+    test -z "$dir" && dir=.
+    if test -f $dir/makeinfo; then
+      MAKEINFO="makeinfo"
+      break
+    fi
+  done
+  IFS="$saveifs"
+fi
+test -z "$MAKEINFO" && MAKEINFO=""
+
 
 echo checking for XDR header-file
   if test -z "$CPP_XDR"; then
@@ -482,14 +553,14 @@ case "${OS}" in
                   for arg in -DIRIS4; do
     case "$HDF_INC" in
       *$arg*) ;;
-      *)      HDF_INC="$HDF_INC $arg";;
+      *)      HDF_INC="${HDF_INC-} $arg";;
     esac
   done
 
                   for arg in -cckr; do
     case "$HDF_INC" in
       *$arg*) ;;
-      *)      HDF_INC="$HDF_INC $arg";;
+      *)      HDF_INC="${HDF_INC-} $arg";;
     esac
   done
 ;;
@@ -497,14 +568,14 @@ case "${OS}" in
 		  for arg in -DSWAP; do
     case "$CPPFLAGS" in
       *$arg*) ;;
-      *)      CPPFLAGS="$CPPFLAGS $arg";;
+      *)      CPPFLAGS="${CPPFLAGS-} $arg";;
     esac
   done
 
                   for arg in -DMIPSEL; do
     case "$HDF_INC" in
       *$arg*) ;;
-      *)      HDF_INC="$HDF_INC $arg";;
+      *)      HDF_INC="${HDF_INC-} $arg";;
     esac
   done
 ;;
@@ -512,21 +583,21 @@ case "${OS}" in
 		  for arg in -DBIG_SHORTS -DBIG_LONGS; do
     case "$CPPFLAGS" in
       *$arg*) ;;
-      *)      CPPFLAGS="$CPPFLAGS $arg";;
+      *)      CPPFLAGS="${CPPFLAGS-} $arg";;
     esac
   done
 
                   for arg in -DUNICOS; do
     case "$HDF_INC" in
       *$arg*) ;;
-      *)      HDF_INC="$HDF_INC $arg";;
+      *)      HDF_INC="${HDF_INC-} $arg";;
     esac
   done
 ;;
   aix*)           for arg in -DIBM6000; do
     case "$HDF_INC" in
       *$arg*) ;;
-      *)      HDF_INC="$HDF_INC $arg";;
+      *)      HDF_INC="${HDF_INC-} $arg";;
     esac
   done
 
@@ -534,7 +605,7 @@ case "${OS}" in
   sunos*)         for arg in -DSUN; do
     case "$HDF_INC" in
       *$arg*) ;;
-      *)      HDF_INC="$HDF_INC $arg";;
+      *)      HDF_INC="${HDF_INC-} $arg";;
     esac
   done
 
@@ -542,7 +613,23 @@ case "${OS}" in
   hpux*)          for arg in -DHP9000; do
     case "$HDF_INC" in
       *$arg*) ;;
-      *)      HDF_INC="$HDF_INC $arg";;
+      *)      HDF_INC="${HDF_INC-} $arg";;
+    esac
+  done
+
+                LD_XDR=;;
+  osf*)           for arg in -DDEC_ALPHA; do
+    case "$HDF_INC" in
+      *$arg*) ;;
+      *)      HDF_INC="${HDF_INC-} $arg";;
+    esac
+  done
+
+                LD_XDR=;;
+  convex*)        for arg in -DCONVEX; do
+    case "$HDF_INC" in
+      *$arg*) ;;
+      *)      HDF_INC="${HDF_INC-} $arg";;
     esac
   done
 
@@ -552,17 +639,24 @@ esac
   for arg in ${CPP_XDR-}; do
     case "$DEFS" in
       *$arg*) ;;
-      *)      DEFS="$DEFS $arg";;
+      *)      DEFS="${DEFS-} $arg";;
     esac
   done
   for arg in ${LD_XDR-}; do
     case "$LIBS" in
       *$arg*) ;;
-      *)      LIBS="$LIBS $arg";;
+      *)      LIBS="${LIBS-} $arg";;
     esac
   done
 cat > conftest.c <<EOF
+
 #undef NDEBUG
+
+#ifdef _AIX
+#   ifndef _ALL_SOURCE
+#     define _ALL_SOURCE
+#   endif
+#endif
 
 #include <assert.h>
 #include <stdio.h>
@@ -571,8 +665,12 @@ cat > conftest.c <<EOF
 
 #define TESTFILE	"conftest.xdr"
 #define EPSILON		.0005
-#define	FLT_MIN		1e-37		/* Standard C maximum */
-#define FLT_EPSILON	1e-5		/* Standard C maximum */
+#ifndef FLT_MIN
+#   define    FLT_MIN 1e-37           /* Standard C maximum */
+#endif
+#ifndef FLT_EPSILON
+#   define FLT_EPSILON        1e-5            /* Standard C maximum */
+#endif
 
 main(ac,av)
     int			ac ;
@@ -638,6 +736,7 @@ main(ac,av)
 
     exit(0) ;
 }
+
 EOF
 eval $compile
 if test -s conftest && (./conftest; exit) 2>/dev/null; then
@@ -663,7 +762,7 @@ else
     for arg in -DNO_HAVE_PROTOTYPES; do
     case "$CPPFLAGS" in
       *$arg*) ;;
-      *)      CPPFLAGS="$CPPFLAGS $arg";;
+      *)      CPPFLAGS="${CPPFLAGS-} $arg";;
     esac
   done
 
@@ -684,7 +783,7 @@ else
     for arg in -Dconst=; do
     case "$CPPFLAGS" in
       *$arg*) ;;
-      *)      CPPFLAGS="$CPPFLAGS $arg";;
+      *)      CPPFLAGS="${CPPFLAGS-} $arg";;
     esac
   done
 
@@ -710,14 +809,14 @@ else
     for arg in -DNO_STDARG; do
     case "$CPPFLAGS" in
       *$arg*) ;;
-      *)      CPPFLAGS="$CPPFLAGS $arg";;
+      *)      CPPFLAGS="${CPPFLAGS-} $arg";;
     esac
   done
 
 fi
 rm -f conftest*
 
-if test -z "$FC"; then
+if test `which "${FC-}" | wc -w` != 1; then
 echo checking for strerror
 cat > conftest.c <<EOF
 #include <stdio.h>
@@ -737,7 +836,7 @@ else
     for arg in -DNO_STRERROR; do
     case "$CPPFLAGS" in
       *$arg*) ;;
-      *)      CPPFLAGS="$CPPFLAGS $arg";;
+      *)      CPPFLAGS="${CPPFLAGS-} $arg";;
     esac
   done
 
@@ -753,7 +852,7 @@ else
       for arg in -DNO_STRERROR; do
     case "$CPPFLAGS" in
       *$arg*) ;;
-      *)      CPPFLAGS="$CPPFLAGS $arg";;
+      *)      CPPFLAGS="${CPPFLAGS-} $arg";;
     esac
   done
   fi
@@ -842,7 +941,6 @@ done
 
 trap 'rm -f \
     Makefile \
-    port/Makefile port/master.mk \
     xdr/Makefile \
     libsrc/Makefile \
     fortran/Makefile \
@@ -850,21 +948,22 @@ trap 'rm -f \
     ncdump/Makefile \
     nctest/Makefile \
     doc/Makefile \
-     port/udposix.h conftest*; exit 1' 1 3 15
-PORT_MANIFEST='$PORT_MANIFEST'
+     ${TRANSFORMEES-}; exit 1' 1 3 15
 CPPFLAGS='$CPPFLAGS'
 CFLAGS='$CFLAGS'
 OS='$OS'
-FFLAGS='$FFLAGS'
 LIBOBJS='$LIBOBJS'
 PORT_HEADERS='$PORT_HEADERS'
+PORT_MANIFEST='$PORT_MANIFEST'
 PORT_SUBDIRS='$PORT_SUBDIRS'
 CC='$CC'
 AR='$AR'
 RANLIB='$RANLIB'
-CPP_OLD_FILLVALUES='$CPP_OLD_FILLVALUES'
+OLD_FILLVALUES='$OLD_FILLVALUES'
+TRANSFORMEES='$TRANSFORMEES'
 HDF_INC='$HDF_INC'
 HDF_LIB='$HDF_LIB'
+FFLAGS='$FFLAGS'
 LEX='$LEX'
 YACC='$YACC'
 XDRFILE='$XDRFILE'
@@ -877,6 +976,7 @@ TBL='$TBL'
 INSTALL='$INSTALL'
 INSTALL_PROGRAM='$INSTALL_PROGRAM'
 INSTALL_DATA='$INSTALL_DATA'
+MAKEINFO='$MAKEINFO'
 CPP_XDR='$CPP_XDR'
 DEFS='$DEFS'
 LIBS='$LIBS'
@@ -888,6 +988,7 @@ VERSION='$VERSION'
 MAJOR_NO='$MAJOR_NO'
 MINOR_NO='$MINOR_NO'
 srcdir='$srcdir'
+DEFS='$DEFS'
 prefix='$prefix'
 exec_prefix='$exec_prefix'
 prsub='$prsub'
@@ -897,7 +998,6 @@ cat >> config.status <<\EOF
 top_srcdir=$srcdir
 for file in .. \
     Makefile \
-    port/Makefile port/master.mk \
     xdr/Makefile \
     libsrc/Makefile \
     fortran/Makefile \
@@ -905,7 +1005,7 @@ for file in .. \
     ncdump/Makefile \
     nctest/Makefile \
     doc/Makefile \
-    ; do if [ "x$file" != "x.." ]; then
+     ${TRANSFORMEES-}; do if [ "x$file" != "x.." ]; then
   srcdir=$top_srcdir
   # Remove last slash and all that follows it.  Not all systems have dirname.
   dir=`echo $file|sed 's%/[^/][^/]*$%%'`
@@ -918,20 +1018,21 @@ for file in .. \
   echo "# Generated automatically from `echo $file|sed 's|.*/||'`.in by configure." > $file
   sed -e "
 $prsub
-s%@PORT_MANIFEST@%$PORT_MANIFEST%g
 s%@CPPFLAGS@%$CPPFLAGS%g
 s%@CFLAGS@%$CFLAGS%g
 s%@OS@%$OS%g
-s%@FFLAGS@%$FFLAGS%g
 s%@LIBOBJS@%$LIBOBJS%g
 s%@PORT_HEADERS@%$PORT_HEADERS%g
+s%@PORT_MANIFEST@%$PORT_MANIFEST%g
 s%@PORT_SUBDIRS@%$PORT_SUBDIRS%g
 s%@CC@%$CC%g
 s%@AR@%$AR%g
 s%@RANLIB@%$RANLIB%g
-s%@CPP_OLD_FILLVALUES@%$CPP_OLD_FILLVALUES%g
+s%@OLD_FILLVALUES@%$OLD_FILLVALUES%g
+s%@TRANSFORMEES@%$TRANSFORMEES%g
 s%@HDF_INC@%$HDF_INC%g
 s%@HDF_LIB@%$HDF_LIB%g
+s%@FFLAGS@%$FFLAGS%g
 s%@LEX@%$LEX%g
 s%@YACC@%$YACC%g
 s%@XDRFILE@%$XDRFILE%g
@@ -944,6 +1045,7 @@ s%@TBL@%$TBL%g
 s%@INSTALL@%$INSTALL%g
 s%@INSTALL_PROGRAM@%$INSTALL_PROGRAM%g
 s%@INSTALL_DATA@%$INSTALL_DATA%g
+s%@MAKEINFO@%$MAKEINFO%g
 s%@CPP_XDR@%$CPP_XDR%g
 s%@DEFS@%$DEFS%g
 s%@LIBS@%$LIBS%g
@@ -955,72 +1057,13 @@ s%@VERSION@%$VERSION%g
 s%@MAJOR_NO@%$MAJOR_NO%g
 s%@MINOR_NO@%$MINOR_NO%g
 s%@srcdir@%$srcdir%g
-s%@DEFS@%-DHAVE_CONFIG_H%" $top_srcdir/${file}.in >> $file
+s%@DEFS@%$DEFS%
+" $top_srcdir/${file}.in >> $file
 fi; done
-
-echo creating port/udposix.h
-# These sed commands are put into SEDDEFS when defining a macro.
-# They are broken into pieces to make the sed script easier to manage.
-# They are passed to sed as "A NAME B NAME C VALUE D", where NAME
-# is the cpp macro being defined and VALUE is the value it is being given.
-# Each defining turns into a single global substitution command.
-#
-# SEDd sets the value in "#define NAME VALUE" lines.
-SEDdA='s@^\([ 	]*\)#\([ 	]*define[ 	][ 	]*\)'
-SEDdB='\([ 	][ 	]*\)[^ 	]*@\1#\2'
-SEDdC='\3'
-SEDdD='@g'
-# SEDu turns "#undef NAME" with trailing blanks into "#define NAME VALUE".
-SEDuA='s@^\([ 	]*\)#\([ 	]*\)undef\([ 	][ 	]*\)'
-SEDuB='\([ 	]\)@\1#\2define\3'
-SEDuC=' '
-SEDuD='\4@g'
-# SEDe turns "#undef NAME" without trailing blanks into "#define NAME VALUE".
-SEDeA='s@^\([ 	]*\)#\([ 	]*\)undef\([ 	][ 	]*\)'
-SEDeB='$@\1#\2define\3'
-SEDeC=' '
-SEDeD='@g'
-rm -f conftest.sed
-cat > conftest.sed <<CONFEOF
-EOF
-# Turn off quoting long enough to insert the sed commands.
-cat >> config.status <<EOF
-$SEDDEFS
-EOF
-cat >> config.status <<\EOF
-CONFEOF
-rm -f conftest.h
-# Break up the sed commands because old seds have small limits.
-cp $top_srcdir/port/udposix.h.in conftest.h1
-while :
-do
-  lines=`grep -c . conftest.sed`
-  if test -z "$lines" || test "$lines" -eq 0; then break; fi
-  rm -f conftest.s1 conftest.s2 conftest.h2
-  sed 40q conftest.sed > conftest.s1 # Like head -40.
-  sed 1,40d conftest.sed > conftest.s2 # Like tail +41.
-  sed -f conftest.s1 < conftest.h1 > conftest.h2
-  rm -f conftest.s1 conftest.h1 conftest.sed
-  mv conftest.h2 conftest.h1
-  mv conftest.s2 conftest.sed
-done
-rm -f conftest.sed conftest.h
-echo "/* port/udposix.h.  Generated automatically by configure.  */" > conftest.h
-cat conftest.h1 >> conftest.h
-rm -f conftest.h1
-if cmp -s port/udposix.h conftest.h 2>/dev/null; then
-  # The file exists and we would not be changing it.
-  rm -f conftest.h
-else
-  rm -f port/udposix.h
-  mv conftest.h port/udposix.h
-fi
 
 EOF
 chmod +x config.status
 test -n "$no_create" || ./config.status
-
-
 if test -s conf.missing; then
   cat << CAT_EOF
 
@@ -1042,8 +1085,8 @@ rm -f conf.missing
 #
 # Create a script to accomplish the post processing.
 #
-cat << \EOF_CONFTEST_SH > conftest.sh
-cat << \EOF_CONFTEST_C > conftest.c
+cat << EOF_CONFTEST_SH > conftest.sh
+cat << EOF_CONFTEST_C > conftest.c
 #include <stdio.h>
 main()
 {
@@ -1062,8 +1105,8 @@ readsub(inpath)
     }
     buf[sizeof(buf)-1]	= 0;
     while (fgets(buf, sizeof(buf), fp) != NULL) {
-	if (sscanf(buf, "include%*[] \t[]%s", path) == 1) {
-	    if (!readsub(path))
+      if (sscanf(buf, "include%*[] \\t[]%s", path) == 1) {
+          if (!readsub(path))
 		return 0;
 	} else {
 	    (void) fputs(buf, stdout);
@@ -1073,10 +1116,9 @@ readsub(inpath)
 }
 EOF_CONFTEST_C
 if $CC -o conftest conftest.c; then
-    conftest=`pwd`/conftest
+    conftest=\`pwd\`/conftest
     set \
     Makefile \
-    port/Makefile \
     xdr/Makefile \
     libsrc/Makefile \
     fortran/Makefile \
@@ -1084,12 +1126,12 @@ if $CC -o conftest conftest.c; then
     ncdump/Makefile \
     nctest/Makefile \
     doc/Makefile \
-    
+     ${POST_PROCESSEES-}
     for file do
-      echo post processing makefile \`$file\'
-      sd=`pwd`/`echo $file | sed 's,[^/]*$,,'`
-      base=`basename $file`
-      (cd $sd; $conftest < $base > conftest.mk && mv conftest.mk $base)
+      echo post processing makefile \\\`\$file\\'
+      sd=\`pwd\`/\`echo \$file | sed 's,[^/]*\$,,'\`
+      base=\`basename \$file\`
+      (cd \$sd; \$conftest < \$base > conftest.mk && mv conftest.mk \$base)
     done
 fi
 rm conftest conftest.c
@@ -1105,6 +1147,6 @@ cat conftest.sh >> config.status
 # If appropriate, do the postprocessing now because the previous step 
 # couldn't.
 #
-test -n "$no_create" || CC=$CC sh conftest.sh
+test -n "$no_create" || sh conftest.sh
 rm conftest.sh
  

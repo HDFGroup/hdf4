@@ -8,15 +8,16 @@ LIBRARY		= udport
 MAJOR_NO	= 2
 MINOR_NO	= 
 
-CPPFLAGS	= -I. -DNDEBUG -DHDF -DNO_STRERROR
+CPPFLAGS	= -I. -DNDEBUG -DHDF -DNO_HAVE_PROTOTYPES -Dconst= -DNO_STDARG -DNO_STRERROR
 CFLAGS		= -g
 
 PORT_CFORTRAN	= @PORT_CFORTRAN@
 NEED_FORTC	= @NEED_FORTC@
 
 PORT_HEADERS	= 
-made_headers	= float.h limits.h signal.h stdarg.h stddef.h stdlib.h \
-		  string.h time.h
+config_headers	= signal.h stdarg.h stddef.h stdlib.h string.h time.h \
+		  udconfig.h udposix.h
+made_headers	= float.h limits.h
 LIBOBJS		= uddummy.o 
 
 prefix		= /hdf/home/chouck/hdf
@@ -24,8 +25,8 @@ prefix		= /hdf/home/chouck/hdf
 SUBDIRS		= 
 SUBDIR_TARGETS	= fortc/all fortc/install fortc/clean fortc/distclean
 MANIFEST        = COPYRIGHT CUSTOMIZE HISTORY Makefile.in VERSION aclocal.m4 \
-		  configure configure.in depend master.mk.in uddummy.c \
-		   udposix.h.in
+		   \
+		  configure configure.in depend master.mk.in uddummy.c
 
 # Note that the `all' target might not make `fortc/all'.  That will depend 
 # on whether or not that utility is required.
@@ -57,7 +58,7 @@ clean::		FORCE
 	else \
 	    :; \
 	fi
-	rm -f $(made_headers) $(PORT_HEADERS) config
+	rm -f $(made_headers) config
 
 distclean::
 	@if [ "$(NEED_FORTC)" = yes ]; then \
@@ -65,7 +66,7 @@ distclean::
 	else \
 	    :; \
 	fi
-	rm -f $(made_headers) $(PORT_HEADERS) config udposix.h master.mk
+	rm -f $(made_headers) $(config_headers) config master.mk
 
 Makefile:	Makefile.in master.mk.in
 
@@ -73,18 +74,6 @@ float.h:	config
 	./config -f > $@
 limits.h:	config
 	./config -l > $@
-signal.h:	signal.h.in
-	cp $? $@
-stdarg.h:	stdarg.h.in
-	cp $? $@
-stddef.h:	stddef.h.in
-	cp $? $@
-stdlib.h:	stdlib.h.in
-	cp $? $@
-string.h:	string.h.in
-	cp $? $@
-time.h:		time.h.in
-	cp $? $@
 cfortran.h:	cfortran_h
 	if test "$(PORT_CFORTRAN)" = stdc; then \
 	    sed 's/\/\*\*\//##/g' cfortran_h > $@; \
@@ -124,14 +113,15 @@ AR		= ar
 CC		= cc
 CPP		= cc -E
 INCDIR		= $(prefix)/include
-INSTALL		= cp
-INSTALL_DATA	= $(INSTALL)
+INSTALL		= /bin/install -c
+INSTALL_DATA	= $(INSTALL) -m 664
 INSTALL_PROGRAM	= $(INSTALL)
 FC		= f77
+MAKEINFO        = 
 NCDUMP		= @NCDUMP@
 NCGEN		= @NCGEN@
 NEQN		= neqn
-OS		= irix
+OS		= sunos
 SHELL		= /bin/sh
 TBL		= tbl
 
@@ -459,6 +449,62 @@ dummy_mandir $(MANDIR):
 	mkdir -p $@
 	chmod u+rwx,g+rws,o=rx $@
 
+############################################################################
+# TeX-Info Pages:
+############################################################################
+INFODIR       = $(prefix)/info
+
+installed_infos:      FORCE
+	if [ -z "$(MAKEINFO)" ]; then \
+		echo 1>&2 "Can't install info(1) pages because no makeinfo(1)"; \
+	else \
+	  if [ -n "$(INFOS)" ]; then \
+	      infos="$(INFOS)"; \
+	      for info in $$infos; do \
+		$(MAKE) $(MFLAGS) INFODIR=$(INFODIR) INFO=$$info \
+		installed_info || exit 1; \
+	      done; \
+	   else \
+	      :; \
+	   fi; \
+	fi;
+# The following target decouples the previous targets from the actual rule;
+# thus, eliminating extraneous make(1) messages.
+#
+installed_info:       $(INFODIR)/$(INFO)
+
+$(INFODIR)/$(INFO):   $(INFODIR) $(INFO)
+	$(INSTALL_DATA) $(INFO) $@
+
+dummy_infodir $(INFODIR):
+	mkdir -p $@
+	chmod u+rwx,g+rws,o=rx $@
+
+# Rules for generating info pages:
+#
+.SUFFIXES:    .info .texi .texinfo .txn
+.texi.info:
+	@if [ -z "$(MAKEINFO)" ]; then \
+	  echo 1>&2 "Can't create $@ because no makeinfo(1)"; \
+	else \
+	  $(MAKEINFO) $< --no-split --output=$@; \
+	fi
+.texinfo.info:
+	@if [ -z "$(MAKEINFO)" ]; then \
+	  echo 1>&2 "Can't create $@ because no makeinfo(1)"; \
+	else \
+	  $(MAKEINFO) $< --no-split --output=$@; \
+	fi
+.txn.info:
+	@if [ -z "$(MAKEINFO)" ]; then \
+	  echo 1>&2 "Can't create $@ because no makeinfo(1)"; \
+	else \
+	  $(MAKEINFO) $< --no-split --output=$@; \
+	fi
+
+# Ensure that info page depends on canonical TeX-Info macros.
+#
+dummy_info $(INFO):   texinfo.tex
 
 ############################################################################
 # Cleanup:
@@ -583,6 +629,7 @@ MANIFEST.echo:	FORCE
 	    subdirs="$(SUBDIRS)"; \
 	    for subdir in $$subdirs; do \
 		(cd $$subdir && \
+                echo 1>&2 Creating $@ in `pwd` && \
 		$(MAKE) $(MFLAGS) MANIFEST.echo | \
 		    sed "s|^|$$subdir/|") || exit 1; \
 	    done; \

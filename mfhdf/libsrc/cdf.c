@@ -7,20 +7,31 @@
 #include	"local_nc.h"
 #include	"alloc.h"
 
+/*
+ * free the stuff that xdr_cdf allocates
+ */
+void
+NC_free_xcdf(handle)
+NC *handle ;
+{
+    if(handle == NULL)
+        return ;
+    NC_free_array(handle->dims) ;
+    NC_free_array(handle->attrs) ;
+    NC_free_array(handle->vars) ;
+}
 
 void
 NC_free_cdf(handle)
 NC *handle ;
 {
-	if(handle == NULL)
-		return ;
-	NC_free_array(handle->dims) ;
-	NC_free_array(handle->attrs) ;
-	NC_free_array(handle->vars) ;
+      if(handle == NULL)
+              return ;
+      NC_free_xcdf(handle) ;
 
-	xdr_destroy(handle->xdrs) ;
-	Free(handle->xdrs) ;
-	Free(handle) ;
+      xdr_destroy(handle->xdrs) ;
+      Free(handle->xdrs) ;
+      Free(handle) ;
 }
 
 
@@ -49,7 +60,8 @@ int mode ;
 	} /* else */	
 
 	if( NCxdrfile_create( cdf->xdrs, name, mode ) < 0) 
-	{
+        {
+                Free(cdf->xdrs) ;
 		Free(cdf) ;
 		return(NULL) ;
 	} /* else */	
@@ -177,7 +189,7 @@ NC *old ;
 	old->xdrs->x_op = XDR_DECODE ;
 	if(!xdr_cdf(old->xdrs, &cdf) )
 	{
-		NC_free_cdf(cdf) ;
+		NC_free_xcdf(cdf) ;
 		return(NULL) ;
 	}
 	if( NC_computeshapes(cdf) == -1)
@@ -268,7 +280,7 @@ xdr_cdf(xdrs, handlep)
 
 	if( xdrs->x_op == XDR_FREE)
 	{
-		NC_free_cdf(*handlep) ;
+		NC_free_xcdf(*handlep) ;
 		return(TRUE) ;
 	}
 	
@@ -333,14 +345,10 @@ xdr_cdf(xdrs, handlep)
 
 #ifdef HDF
 
-#ifdef OLD_WAY
-#include "hdfcdf.c"
-#else
-
 /*****************************************************************************
 * 
-*			NCSA HDF / netCDF --- PROTOTYPE
-*			        June 15, 1992
+*			NCSA HDF / netCDF Project
+*			        May, 1993
 *
 * NCSA HDF / netCDF source code and documentation are in the public domain.  
 * Specifically, we give to the public domain all rights for future
@@ -359,14 +367,7 @@ xdr_cdf(xdrs, handlep)
 * 
 ******************************************************************************
 *
-* WARNING:  This is experimental software, while all of the netCDF software
-*   tests pass, it is a safe bet that there are still bugs in the code.  
-*
 * Please report all bugs / comments to chouck@ncsa.uiuc.edu
-*
-* As this is a prototype implementation we can not guarantee that future
-*   releases of NCSA HDF / netCDF software will be backward compatible 
-*   with data created with this release.
 *
 *****************************************************************************/
 
@@ -1572,8 +1573,6 @@ void hdf_close(handle)
 
 } /* hdf_close */
                 
-#endif
-
 #endif /* HDF */
 
 /*
@@ -1627,7 +1626,7 @@ xdr_numrecs(xdrs, handle)
 			xdr_getpos(xdrs), 
 			handle->begin_rec, handle->numrecs, handle->recsize) ;
 #endif /*  RDEBUG */
-		if( !XDR_PUTLONG(xdrs, (long*)&(handle->numrecs)) )
+		if( !xdr_u_long(xdrs, &(handle->numrecs)) )
 			return(FALSE) ;
 	}
 
@@ -1639,6 +1638,21 @@ xdr_numrecs(xdrs, handle)
 	return( xdr_u_long(xdrs, &(handle->numrecs)) ) ;
 }
 
+static bool_t
+xdr_4bytes(xdrs, cp)
+XDR *xdrs ;
+char *cp ; /* at least 4 valid bytes */
+{
+      return xdr_opaque(xdrs, cp, 4) ;
+}
+
+static bool_t
+xdr_2shorts(xdrs, sp)
+XDR *xdrs ;
+short *sp ; /* at least 2 valid shorts */
+{
+      return xdr_shorts(xdrs, sp, 2) ;
+}
 
 bool_t
 xdr_NC_fill(xdrs, vp)
@@ -1684,24 +1698,15 @@ NC_var *vp ;
 		case NC_BYTE :
 		case NC_CHAR :
 			alen /= 4 ;
-			xdr_NC_fnct = xdrs->x_ops->x_putlong ;
+			xdr_NC_fnct = xdr_4bytes ;
 			break ;
 		case NC_SHORT :
-#ifndef BIG_SHORTS
 			alen /= 4 ;
-			xdr_NC_fnct = xdrs->x_ops->x_putlong ;
+			xdr_NC_fnct = xdr_2shorts ;
 			break ;
-#else
-			
-			for(stat = TRUE ; stat && (alen > 0) ; alen -= 4)
-			{
-				stat = xdr_shorts(xdrs,(short *)fillp, 2) ;
-			}
-			goto out ;
-#endif
 		case NC_LONG :
 			alen /= 4 ;
-			xdr_NC_fnct = xdrs->x_ops->x_putlong ;
+			xdr_NC_fnct = xdr_long ;
 			break ;	
 		case NC_FLOAT :
 			alen /= 4 ;
@@ -1721,9 +1726,7 @@ NC_var *vp ;
 		{
 			stat = (*xdr_NC_fnct)(xdrs,fillp) ;	
 		}
-#ifdef BIG_SHORTS
-out:
-#endif
+
 		if(!stat)
 		{
 			NCadvise(NC_EXDR, "xdr_NC_fill") ;

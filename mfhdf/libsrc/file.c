@@ -23,6 +23,12 @@ static NC *_cdfs[MAX_NC_OPEN] ;
 #define remove(fpath) unlink((fpath))
 #endif
 
+#ifdef DOS_FS
+#define SEP '\\' /* this separates path components on DOS */
+#endif
+#ifndef SEP
+#define SEP '/' /* default, unix */
+#endif
 
 /*
  *  Check validity of cdf handle, return pointer to NC struct or
@@ -174,6 +180,11 @@ int id ;
 	} else /* read only */
 	{
 		/* assert(handle->xdrs->x_op == XDR_DECODE) ; */
+                /* free the stuff in handle that xdr_cdf allocates */
+                handle->xdrs->x_op = XDR_FREE ;
+                (void) xdr_cdf(handle->xdrs, &handle) ;
+                handle->xdrs->x_op = XDR_DECODE ;
+ 
 		if(!xdr_cdf(handle->xdrs, &handle) )
 		{
 			nc_serror("xdr_cdf") ;
@@ -313,7 +324,7 @@ const char *proto ;
 /* NO_GETPID defined if the OS lacks the getpid() function */
 #ifndef NO_GETPID
 #	define TN_NDIGITS 4
-	int pid ;
+        unsigned int pid ; /* OS/2 DOS (MicroSoft Lib) allows "negative" int pids */
 #else
 #	define TN_NDIGITS 0
 #endif /* !NO_GETPID */
@@ -533,12 +544,15 @@ NC *handle ;
  * Copy nbytes bytes from source to target.
  * Streams target and source should be positioned before the call.
  * opaque I/O, no XDR conversion performed (or needed).
+ * The Macros XDR_GETBYTES and XDR_PUTBYTES may not be
+ * supported on your xdr implementation. If not, calls
+ * to xdr_opaque may be used.
  */
 bool_t
 NC_dcpy( target, source, nbytes)
 XDR *target ;
 XDR *source ;
-int nbytes ;
+long nbytes ;
 {
 /* you may wish to tune this: big on a cray, small on a PC? */
 #define NC_DCP_BUFSIZE 8192
@@ -583,7 +597,7 @@ int varid ;
 		return(FALSE) ;
 	}
 		
-	return(NC_dcpy(target, old->xdrs, (size_t)(*vpp)->len)) ;
+	return(NC_dcpy(target, old->xdrs, (*vpp)->len)) ;
 }
 
 
@@ -711,9 +725,20 @@ NC *handle ;
 
 	if(!(handle->flags & NC_CREAT)) /* redefine */
 	{
-		if( rename(handle->path, stash->path) != 0)
+                char realpath[FILENAME_MAX + 1] ;
+                strcpy(realpath, stash->path) ;
+
+                /* close stash */
+                NC_free_cdf(stash) ;
+#ifdef DOS_FS
+                xdr_destroy(handle->xdrs) ; /* close handle */
+                if( remove(realpath) != 0 )
+                      nc_serror("couldn't remove filename \"%s\"", realpath) ;
+#endif
+                if( rename(handle->path, realpath) != 0)
+
 		{
-			nc_serror("rename failed") ;
+			nc_serror("rename %s -> %s failed", handle->path, realpath) ;
 			/* try to restore state prior to redef */
 			_cdfs[cdfid] = stash ;
 			_cdfs[handle->redefid] = NULL ;
@@ -722,7 +747,11 @@ NC *handle ;
 			NC_free_cdf(handle) ;
 			return(-1) ;
 		}
-		(void) strncpy(handle->path, stash->path, FILENAME_MAX) ;
+                (void) strncpy(handle->path, realpath, FILENAME_MAX) ;
+#ifdef DOS_FS
+                if( NCxdrfile_create( handle->xdrs, handle->path, NC_WRITE ) < 0)
+                        return -1 ;
+#endif
 		NC_free_cdf(stash) ;
 		_cdfs[handle->redefid] = NULL ;
 		if(handle->redefid == _ncdf - 1)

@@ -29,7 +29,7 @@ const long array[] ;
 	fprintf(stderr, "%s", label) ;
 	fputc('\t',stderr) ;	
 	for(; count > 0 ; count--, array++)
-		fprintf(stderr," %d", *array) ;
+		fprintf(stderr," %ld", *array) ;
 	fputc('\n',stderr) ;	
 }
 #endif /* VDEBUG */
@@ -89,13 +89,13 @@ const long *coords ;
 	up = vp->shape + vp->assoc->count - 1 ;
 	ip = coords + vp->assoc->count - 1 ;
 #ifdef CDEBUG
-	fprintf(stderr,"	NCcoordck: coords %d, count %d, ip %d\n",
+	fprintf(stderr,"	NCcoordck: coords %ld, count %ld, ip %d\n",
 		coords, vp->assoc->count, ip ) ;
 #endif /* CDEBUG */
 	for( ; ip >= boundary ; ip--, up--)
 	{
 #ifdef CDEBUG
-		fprintf(stderr,"	NCcoordck: ip %d, *ip %d, up %d, *up %d\n",
+		fprintf(stderr,"	NCcoordck: ip %p, *ip %ld, up %p, *up %lu\n",
 			ip, *ip, up, *up ) ;
 #endif /* CDEBUG */
 		if( *ip < 0 || *ip >= *up )
@@ -281,10 +281,11 @@ unsigned rem ;
 unsigned count ;
 char *values ;
 {
-	char buf[sizeof(long)] ;
+	char buf[4] ;
 	u_long origin ;
+        enum xdr_op  x_op = xdrs->x_op ; /* save state */
 
-	if(xdrs->x_op == XDR_ENCODE)
+	if(x_op == XDR_ENCODE)
 	{
 	/*
 	 * Since we only read/write multiples of four bytes,
@@ -300,9 +301,13 @@ char *values ;
 		if( !xdr_setpos(xdrs, origin) ) 
 			return(FALSE) ;
 #endif /* XDRSTDIO */
-	}
-	if( !XDR_GETLONG(xdrs, (long *)buf ))
-	{
+                /* next op is a get */
+                xdrs->x_op = XDR_DECODE ;
+        }
+
+        if(!xdr_opaque(xdrs, buf, 4))
+        {
+                /* get failed, assume we are trying to read off the end */
 #ifdef XDRSTDIO
 		/*
 		 * N.B. 2 : Violates layering,
@@ -316,46 +321,41 @@ char *values ;
 			 * beyond EOF
 			 */
 			clearerr((FILE*)xdrs->x_private) ;
-			(void)memset(buf, 0, sizeof(long)) ;
+			(void)HDmemset(buf, 0, sizeof(buf)) ;
 		}
 		else
 		{
 			NCadvise(NC_EXDR, "xdr_NCvbyte") ;
-			return(FALSE) ;
+			xdrs->x_op = x_op ;
+                        return(FALSE) ;
 		}
 #else
-		(void)memset(buf, 0, sizeof(long)) ;
+		(void)HDmemset(buf, 0, sizeof(buf)) ;
 #endif /* XDRSTDIO */
 	}
 
-#ifdef SWAP
-	rem = 3 - rem ;
-#endif /* SWAP */
-#ifdef BIG_LONGS
-/* this correction should be applied anytime sizeof(long) > 4 */
-	rem += (sizeof(long) - 4) ;
-#endif
+       if(x_op == XDR_ENCODE) /* back to encode */
+                xdrs->x_op = x_op ;
+
 	while(count-- != 0)
 	{
-		if(xdrs->x_op == XDR_ENCODE)
+		if(x_op == XDR_ENCODE)
 			buf[rem] = *values ;
 		else
 			*values = buf[rem] ;
 	
-#ifndef SWAP
 		rem++ ;
-#else
-		rem-- ;
-#endif
 		values++ ;
 	}
-	if(xdrs->x_op == XDR_ENCODE)
+
+	if(x_op == XDR_ENCODE)
 	{
 		if( !xdr_setpos(xdrs, origin) )
 			return(FALSE) ;
-		if( !XDR_PUTLONG(xdrs, (long *)buf ))
+		if( !xdr_opaque(xdrs, buf, 4))
 			return(FALSE) ;
 	}
+
 	return(TRUE) ;
 }
 
@@ -364,135 +364,77 @@ char *values ;
  * xdr a short leaving adjoining short within the word ok.
  * (minimum unit of io is 4 bytes)
  */
-static bool_t
+bool_t
 xdr_NCvshort(xdrs, which, values)
 XDR *xdrs ;
 unsigned which ;
 short *values ;
 {
-#ifndef BIG_SHORTS
-	short buf[2] ;
-	u_long origin ;
+        unsigned char buf[4] ; /* unsigned is important here */
+        u_long origin ;
+        enum xdr_op  x_op = xdrs->x_op ; /* save state */
 
-	if(xdrs->x_op == XDR_ENCODE)
-	{
-		origin = xdr_getpos( xdrs ) ;
-
+        if(x_op == XDR_ENCODE)
+        {
+                origin = xdr_getpos( xdrs ) ;
 #ifdef XDRSTDIO
-		/* See N.B. above */
-		if( !xdr_setpos(xdrs, origin) )
-			return(FALSE) ;
+                /* See N.B. above */
+                if( !xdr_setpos(xdrs, origin) )
+                        return(FALSE) ;
 #endif /* XDRSTDIO */
-	}
-	if(!XDR_GETLONG(xdrs, (long *)buf) )
-	{
+                /* next op is a get */
+                xdrs->x_op = XDR_DECODE ;
+        }
+
+        if(!xdr_opaque(xdrs, (caddr_t)buf, 4))
+        {
+                /* get failed, assume we are trying to read off the end */
 #ifdef XDRSTDIO
-		/* See N.B. 2 above */
-		if(feof((FILE*)xdrs->x_private)) /* NC_NOFILL */
-		{
-			clearerr((FILE*)xdrs->x_private) ;
-			(void)memset((char *)buf, 0, sizeof(long)) ;
-		}
-		else
-		{
-			NCadvise(NC_EXDR, "xdr_NCvshort") ;
-			return(FALSE) ;
-		}
+                /* See N.B. 2 above */
+                if(feof((FILE*)xdrs->x_private)) /* NC_NOFILL */
+                {
+                        /* failed because we tried to read
+                         * beyond EOF
+                         */
+                        clearerr((FILE*)xdrs->x_private) ;
+                        (void)memset(buf, 0, sizeof(buf)) ;
+                }
+                else
+                {
+                        NCadvise(NC_EXDR, "xdr_NCvbyte") ;
+                        xdrs->x_op = x_op ;
+                        return(FALSE) ;
+                }
 #else
-	(void)memset((char *)buf, 0, sizeof(long)) ;
+                (void)HDmemset(buf, 0, sizeof(buf)) ;
 #endif /* XDRSTDIO */
-	}
+        }
 
-#ifdef SWAP
-	which = 1 - which ;
-#endif /* SWAP */
-	if(xdrs->x_op == XDR_ENCODE)
-	{
-		buf[which] = *values ;
-		if( !xdr_setpos(xdrs, origin) )
-			return(FALSE) ;
-		if( !XDR_PUTLONG(xdrs, (long *)buf) )
-			return(FALSE) ;
-	} else
-		*values = buf[which] ;
-	return(TRUE) ;
-#else
-	/* BIG_SHORTS */
-	struct {
-		unsigned pad : 32 ;
-		unsigned hs: 1 ;
-		unsigned hi: 15 ;
-		unsigned ls: 1 ;
-		unsigned lo: 15 ;
-	} buf;
-	u_long origin ;
+        if(x_op == XDR_ENCODE) /* back to encode */
+                xdrs->x_op = x_op ;
+ 
+        if(which != 0) which = 2 ;
 
-	if(xdrs->x_op == XDR_ENCODE)
-	{
-		origin = xdr_getpos( xdrs ) ;
+        if(xdrs->x_op == XDR_ENCODE)
+        {
+                buf[which +1] = *values % 256 ;
+                buf[which] = (*values >> 8) ;
 
-#ifdef XDRSTDIO
-		/* See N.B. above */
-		if( !xdr_setpos(xdrs, origin) )
-			return(FALSE) ;
-#endif /* XDRSTDIO */
-		if(!XDR_GETLONG(xdrs, &buf) )
-		{
-#ifdef XDRSTDIO
-			/* See N.B. 2 above */
-			if(feof((FILE*)xdrs->x_private)) /* NC_NOFILL */
-			{
-				clearerr((FILE*)xdrs->x_private) ;
-				(void)memset((char *)&buf, 0, sizeof(buf)) ;
-			}
-			else
-			{
-				NCadvise(NC_EXDR, "xdr_NCvshort") ;
-				return(FALSE) ;
-			}
-#else
-			(void)memset((char *)&buf, 0, sizeof(buf)) ;
-#endif /* XDRSTDIO */
-		}
-	} else if( !XDR_GETLONG(xdrs, &buf) )
-		return(FALSE) ;
-
-	if(xdrs->x_op == XDR_ENCODE)
-	{
-		if(which == 1)
-		{
-			if( *values < 0 )
-			{
-				buf.ls = 1 ;
-				buf.lo = *values + 32768 ;
-			}  else {
-				buf.ls = 0 ;
-				buf.lo = *values ;
-			}
-		} else {
-			if( *values < 0 )
-			{
-				buf.hs = 1 ;
-				buf.hi = *values + 32768 ;
-			}  else {
-				buf.hs = 0 ;
-				buf.hi = *values ;
-			}
-		}
-		if( !xdr_setpos(xdrs, origin) )
-			return(FALSE) ;
-		if( !XDR_PUTLONG(xdrs, &buf) )
-			return(FALSE) ;
-	} else {
-		if(which == 1)
-		{
-			*values = buf.ls ? -32768 + buf.lo : buf.lo ;
-		} else {
-			*values = buf.hs ? -32768 + buf.hi : buf.hi ;
-		}
-	}
-	return(TRUE) ;
-#endif /* !BIG_SHORTS */
+                if( !xdr_setpos(xdrs, origin) )
+                        return(FALSE) ;
+                if( !xdr_opaque(xdrs, (caddr_t)buf, 4))
+                        return(FALSE) ;
+        }
+        else
+        {
+                *values = ((buf[which] & 0x7f) << 8) + buf[which + 1] ;
+                if(buf[which] & 0x80)
+                {
+                        /* extern is neg */
+                       *values -= 0x8000 ;
+                 }
+        }
+        return(TRUE) ;
 }
 
 
@@ -538,14 +480,10 @@ Void *values ;
 
 #ifdef HDF
 
-#ifdef QAK
-#include "hdfpg.c"
-#else
-
 /*****************************************************************************
 * 
-*			NCSA HDF / netCDF --- PROTOTYPE
-*			        June 15, 1992
+*			NCSA HDF / netCDF Project
+*			       May, 1993
 *
 * NCSA HDF / netCDF source code and documentation are in the public domain.  
 * Specifically, we give to the public domain all rights for future
@@ -564,14 +502,7 @@ Void *values ;
 * 
 ******************************************************************************
 *
-* WARNING:  This is experimental software, while all of the netCDF software
-*   tests pass, it is a safe bet that there are still bugs in the code.  
-*
 * Please report all bugs / comments to chouck@ncsa.uiuc.edu
-*
-* As this is a prototype implementation we can not guarantee that future
-*   releases of NCSA HDF / netCDF software will be backward compatible 
-*   with data created with this release.
 *
 *****************************************************************************/
 
@@ -960,11 +891,7 @@ Void *values;
     
     return (hdf_xdr_NCvdata(handle, vp, where, type, 1, values)); 
 
-} /* xdr_NCv1data */
-
-
-
-#endif
+} /* hdf_xdr_NCv1data */
 
 #endif
 
@@ -1043,6 +970,11 @@ const ncvoid *value ;
 	if(handle == NULL)
 		return(-1) ;
 
+        if(!(handle->flags & NC_RDWR))
+        {
+                NCadvise(NC_EPERM, "%s: NC_NOWRITE", handle->path) ;
+                return(-1) ;
+        }
 	handle->xdrs->x_op = XDR_ENCODE ;
 
 	return( NCvar1io(handle, varid, coords, (Void *)value) ) ;
@@ -1243,7 +1175,7 @@ Void *values ;
 
 	offset = NC_varoffset(handle, vp, start) ;
 #ifdef VDEBUG
-	fprintf(stderr, "\t\t %s offset %d, *edges %lu\n",
+	fprintf(stderr, "\t\t %s offset %ld, *edges %lu\n",
 				vp->name->values, offset, *edges ) ;
 	arrayp("\t\t coords", vp->assoc->count, start) ;
 #endif
@@ -1347,7 +1279,7 @@ Void *values ;
 	if(edp0 == NULL)
 		return(-1) ;
 #ifdef VDEBUG
-	fprintf(stderr, "edp0 %d\n", edp0 - edges) ;
+	fprintf(stderr, "edp0\t%ld\n", (unsigned long)edp0 - (unsigned long)edges) ;
 #endif /* VDEBUG */
 
 	/* now accumulate max count for a single io operation */
@@ -1400,13 +1332,13 @@ Void *values ;
 	while(*coords < *upper)
 	{
 #ifdef VDEBUG
-		fprintf(stderr, "\t*cc %d, *mm %d\n",
+		fprintf(stderr, "\t*cc %ld, *mm %ld\n",
 			*cc, *mm) ;
 #endif /* VDEBUG */
 		while( *cc < *mm )
 		{
 #ifdef VDEBUG
-			fprintf(stderr, "\t\tedp0 %d, edges %d, mm %d, &upper[] %d\n",
+			fprintf(stderr, "\t\tedp0 %p, edges %p, mm %p, &upper[] %p\n",
 				edp0, edges, mm, &upper[edp0-edges-1]) ;
 #endif /* VDEBUG */
 			if(edp0 == edges || mm == &upper[edp0-edges-1])
@@ -1416,7 +1348,7 @@ Void *values ;
 					return(-1) ;
 				offset = NC_varoffset(handle, vp, coords) ;
 #ifdef VDEBUG
-				fprintf(stderr, "\t\t %s offset %d, iocount %lu\n",
+				fprintf(stderr, "\t\t %s offset %lu, iocount %lu\n",
 					vp->name->values, offset, iocount ) ;
 				arrayp("\t\t coords", vp->assoc->count, coords) ;
 #endif
@@ -1439,7 +1371,7 @@ Void *values ;
 				values += iocount * szof ;
 				(*cc) += (edp0 == edges ? iocount : 1) ;
 #ifdef VDEBUG
-				fprintf(stderr, "\t\t *cc %d, *mm %d  continue\n",
+				fprintf(stderr, "\t\t *cc %ld, *mm %ld  continue\n",
 					*cc, *mm) ;
 #endif /* VDEBUG */
 				continue ;
@@ -1447,12 +1379,12 @@ Void *values ;
 			cc++ ;
 			mm++ ;
 #ifdef VDEBUG
-			fprintf(stderr, "\t\t*cc %d, *mm %d\n",
+			fprintf(stderr, "\t\t*cc %ld, *mm %ld\n",
 				*cc, *mm) ;
 #endif /* VDEBUG */
 		}
 #ifdef VDEBUG
-		fprintf(stderr, "\tcc %d, coords %d\n",
+		fprintf(stderr, "\tcc %p, coords %p\n",
 			cc, coords) ;
 #endif /* VDEBUG */
 		if(cc == coords)
@@ -1467,7 +1399,7 @@ Void *values ;
 		mm-- ;
 		(*cc)++ ;
 #ifdef VDEBUG
-		fprintf(stderr, "\t*coords %d, *upper %d\n",
+		fprintf(stderr, "\t*coords %ld, *upper %ld\n",
 			*coords, *upper) ;
 #endif
 	}
@@ -1498,6 +1430,11 @@ const ncvoid *values ;
 	if(handle == NULL)
 		return(-1) ;
 
+        if(!(handle->flags & NC_RDWR))
+        {
+                NCadvise(NC_EPERM, "%s: NC_NOWRITE", handle->path) ;
+                return(-1) ;
+        }
 	handle->xdrs->x_op = XDR_ENCODE ;
 
 	return( NCvario(handle, varid, start, edges, (Void *)values) ) ;
@@ -1654,7 +1591,7 @@ Void **datap ;
                     {
                         if(!xdr_NCvdata(handle->xdrs,
                                         offset, rvp[ii]->type, 
-                                        (unsigned)iocount, datap[ii]))
+                                        iocount, datap[ii]))
                             return(-1) ;
                     }
 

@@ -16,6 +16,7 @@
 #include "error.h"
 #include "emalloc.h"
 #include "tests.h"
+#include "val.h"
 
 #define LEN_OF(array) ((sizeof array) / (sizeof array[0]))
 

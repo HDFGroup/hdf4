@@ -152,8 +152,8 @@ case 13:
 
 # line 49 "ncgen.l"
 {
-		char *s = yytext+strlen("netcdf");
-		char *t = yytext+yyleng-1;
+		char *s = (char*)yytext+strlen("netcdf");
+		char *t = (char*)yytext+yyleng-1;
 		while (isspace(*s))
 			s++;
 		while (isspace(*t))
@@ -202,8 +202,8 @@ case 18:
 
 # line 82 "ncgen.l"
 {
-		if (sscanf(yytext, "%le", &double_val) != 1) {
-		    sprintf(errstr,"bad long or double constant: %s",yytext);
+		if (sscanf((char*)yytext, "%le", &double_val) != 1) {
+		    sprintf(errstr,"bad long or double constant: %s",(char*)yytext);
 		    yyerror(errstr);
 		}
                 return (DOUBLE_CONST);
@@ -213,8 +213,8 @@ case 19:
 
 # line 89 "ncgen.l"
 {
-		if (sscanf(yytext, "%e", &float_val) != 1) {
-		    sprintf(errstr,"bad float constant: %s",yytext);
+		if (sscanf((char*)yytext, "%e", &float_val) != 1) {
+		    sprintf(errstr,"bad float constant: %s",(char*)yytext);
 		    yyerror(errstr);
 		}
                 return (FLOAT_CONST);
@@ -224,8 +224,8 @@ case 20:
 
 # line 96 "ncgen.l"
 {
-		if (sscanf(yytext, "%hd", &short_val) != 1) {
-		    sprintf(errstr,"bad short constant: %s",yytext);
+		if (sscanf((char*)yytext, "%hd", &short_val) != 1) {
+		    sprintf(errstr,"bad short constant: %s",(char*)yytext);
 		    yyerror(errstr);
 		}
 		return (SHORT_CONST);
@@ -237,9 +237,9 @@ case 21:
 {
 #ifdef cray	/* machines where longs have more precision than doubles. */
     		char *ptr;
-		long_val = strtol(yytext, &ptr, 0);
-		if (ptr == yytext) {
-		    sprintf(errstr,"bad long constant: %s",yytext);
+		long_val = strtol((char*)yytext, &ptr, 0);
+		if (ptr == (char*)yytext) {
+		    sprintf(errstr,"bad long constant: %s",(char*)yytext);
 		    yyerror(errstr);
 		}
 		return (LONG_CONST);
@@ -251,13 +251,13 @@ case 21:
 		 */
 		double dd;
 #ifdef VMS  /* work around bug in VMS strtol() */
-		if (STREQ(yytext, "-2147483648")) {
+		if (STREQ((char*)yytext, "-2147483648")) {
 		    long_val = -2147483648;
 		    return (LONG_CONST);
 		}
 #endif /* VMS */
-		if (sscanf(yytext, "%le", &dd) != 1) {
-		    sprintf(errstr,"bad long constant: %s",yytext);
+		if (sscanf((char*)yytext, "%le", &dd) != 1) {
+		    sprintf(errstr,"bad long constant: %s",(char*)yytext);
 		    yyerror(errstr);
 		}
 		if (dd < LONG_MIN  ||  dd > LONG_MAX) {
@@ -276,13 +276,13 @@ case 22:
 {
 		long dd;
 #ifdef VMS  /* work around bug in VMS strtol() */
-		if (STREQ(yytext, "-2147483648")) {
+		if (STREQ((char*)yytext, "-2147483648")) {
 		    long_val = -2147483648;
 		    return (LONG_CONST);
 		}
 #endif /* VMS */
-		if (sscanf(yytext, "%li", &dd) != 1) {
-		    sprintf(errstr,"bad long constant: %s",yytext);
+		if (sscanf((char*)yytext, "%li", &dd) != 1) {
+		    sprintf(errstr,"bad long constant: %s",(char*)yytext);
 		    yyerror(errstr);
 		}
 		long_val = dd;
@@ -293,7 +293,7 @@ case 23:
 
 # line 153 "ncgen.l"
          {
-	        (void) sscanf(&yytext[1],"%c",&byte_val);
+	        (void) sscanf((char*)&yytext[1],"%c",&byte_val);
 		return (BYTE_CONST);
                 }
 break;
@@ -301,7 +301,7 @@ case 24:
 
 # line 157 "ncgen.l"
  {
-		byte_val = strtol(&yytext[2], (char **) 0, 8);
+		byte_val = strtol((char*)&yytext[2], (char **) 0, 8);
 		return (BYTE_CONST);
                 }
 break;
@@ -309,7 +309,7 @@ case 25:
 
 # line 161 "ncgen.l"
  {
-		byte_val = strtol(&yytext[2], (char **) 0, 16);
+		byte_val = strtol((char*)&yytext[2], (char **) 0, 16);
 		return (BYTE_CONST);
                 }
 break;
@@ -317,7 +317,7 @@ case 26:
 
 # line 165 "ncgen.l"
        {
-	       switch (yytext[2]) {
+	       switch ((char)yytext[2]) {
 	          case 'a': byte_val = '\007'; break; /* not everyone under-
 						       * stands '\a' yet */
      	          case 'b': byte_val = '\b'; break;
@@ -329,7 +329,7 @@ case 26:
 		  case '\\': byte_val = '\\'; break;
 		  case '?': byte_val = '\?'; break;
 		  case '\'': byte_val = '\''; break;
-		  default: byte_val = yytext[2];
+		  default: byte_val = (char)yytext[2];
 	           }
 		return (BYTE_CONST);
                 }

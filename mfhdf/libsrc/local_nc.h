@@ -15,8 +15,15 @@
 #ifndef FILENAME_MAX
 #define FILENAME_MAX  255
 #endif
+
+#ifndef       NO_SYSTEM_XDR_INCLUDES
 #include	<rpc/types.h>
 #include	<rpc/xdr.h>
+#else
+#include      <types.h> /* "../xdr/types.h" */
+#include      <xdr.h>  /* "../xdr/xdr.h" */
+#endif /* !NO_SYSTEM_XDR_INCLUDES */
+
 #include	"netcdf.h" /* needed for defs of nc_type, ncvoid, ... */
 
 /* ptr argument type in internal functions */
@@ -353,10 +360,15 @@ extern bool_t	NCcoordck	PROTO((
 	NC_var *vp, 
 	const long *coords
 ));
+extern bool_t xdr_NCvshort    PROTO((
+        XDR *xdrs,
+        unsigned which,
+        short *values
+));
 extern bool_t	NC_dcpy			PROTO((
 	XDR *target,
 	XDR *source,
-	int nbytes
+	long nbytes
 ));
 
 

@@ -11,7 +11,7 @@ MANIFEST	= Makefile.in README add.c add.h atttests.c cdftests.c \
 		  depend dimtests.c driver.c emalloc.c emalloc.h error.c \
 		  error.h misctest.c msoft.mk rec.c slabs.c testcdf.h \
 		  tests.h val.c val.h vardef.c varget.c vargetg.c varput.c \
-		  varputg.c vartests.c vputget.c vputgetg.c
+		  varputg.c vartests.c vputget.c vputgetg.c make.com
 LIBNAME		= netcdf
 LD_NETCDF	= -L../libsrc -l$(LIBNAME)
 SRCS		= varget.c vargetg.c varput.c varputg.c vardef.c vartests.c \
@@ -28,6 +28,8 @@ all::		program
 
 test:		$(PROGRAM)
 	./$(PROGRAM)
+
+$(PROGRAM):   ../libsrc/libnetcdf.a
 
 install::
 

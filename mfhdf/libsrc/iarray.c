@@ -11,7 +11,7 @@
 NC_iarray *
 NC_new_iarray(count, values)
 unsigned count ;
-const int values[] ;
+const int *values ;           /* VAX C doesn't like values[] */
 {
 	NC_iarray *ret ;
 	int *ip ;

@@ -22,7 +22,7 @@
 # CC='gcc -traditional'
 #
 # C compiler flags (default is `-O'):
-# CFLAGS=-g
+CFLAGS=-g
 #
 # C preprocessor flags 
 # CPPFLAGS=-DNDEBUG
@@ -37,5 +37,6 @@ HDF_LIB=/hdf/home/chouck/hdf/33/lib/libdf.a
 # prefix=/usr/local/unidata
 #
 # Whether to use the old floating-point fill values for backward
-# compatibility (see INSTALL).  Uncomment to obtain the pre-2.3 values.
-# CPP_OLD_FILLVALUES=-DNC_OLD_FILLVALUES
+# compatibility (see INSTALL).  Uncomment to obtain the pre-2.3 default,
+# floating-point fill values.
+# OLD_FILLVALUES=yes

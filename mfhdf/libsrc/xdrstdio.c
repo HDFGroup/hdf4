@@ -23,8 +23,13 @@ static char rcsid[] = "$Id$";
  */
 
 #include <stdio.h>
-#include <rpc/types.h>
-#include <rpc/xdr.h>
+#include "local_nc.h" /* prototypes for NCadvis, nc_error */
+		      /* also obtains <stdio.h>, <rpc/types.h>, &
+		       * <rpc/xdr.h> */
+#ifdef DOS_FS
+#include    <fcntl.h>   /* O_BINARY */
+#define USE_BFLAG
+#endif
 
 #ifdef USE_XDRNCSTDIO
 
@@ -37,7 +42,7 @@ static bool_t	xdrNCstdio_getlong();
 static bool_t	xdrNCstdio_putlong();
 static bool_t	xdrNCstdio_getbytes();
 static bool_t	xdrNCstdio_putbytes();
-static u_int	xdrNCstdio_getpos();
+static u_long	xdrNCstdio_getpos();
 static bool_t	xdrNCstdio_setpos();
 static long *	xdrNCstdio_inline();
 static void	xdrNCstdio_destroy();
@@ -154,18 +159,18 @@ xdrNCstdio_putbytes(xdrs, addr, len)
 	return (TRUE);
 }
 
-static u_int
+static u_long
 xdrNCstdio_getpos(xdrs)
 	XDR *xdrs;
 {
 	XDRNC_POS(xdrs) = ftell((FILE *)xdrs->x_private);
-	return ((u_int)XDRNC_POS(xdrs));
+	return ((u_long)XDRNC_POS(xdrs));
 }
 
 static bool_t
 xdrNCstdio_setpos(xdrs, pos) 
 	XDR *xdrs;
-	u_int pos;
+	u_long pos;
 { 
 	if(xdrs->x_op == XDRNC_LASTOP(xdrs) && pos == XDRNC_POS(xdrs))
 		return TRUE ;
@@ -217,7 +222,7 @@ xdrNCstdio_destroy(xdrs)
 static bool_t
 xdrNCstdio_setpos(xdrs, pos) 
 	XDR *xdrs;
-	u_int pos;
+	u_long pos;
 { 
 
 	static XDR *last = NULL ;
@@ -308,6 +313,14 @@ int ncmode ;
 		return(-1) ;
 	}
 
+#ifdef DOS_FS
+	/*
+ 	 * set default mode to binary to suppress the expansion of
+	 * 0x0f into CRLF
+	 */
+	if(_fmode != O_BINARY)
+		_fmode = O_BINARY ;
+#endif
 	fp = fopen(path, fmode) ;
 	if( fp == NULL )
 	{

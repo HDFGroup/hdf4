@@ -102,6 +102,10 @@ ncdesc:	NETCDF
 		'{'
 		   { init_netcdf(); }
                 dimsection	/* dimension declarations */
+                     {
+                       if (ndims > MAX_NC_DIMS)
+                         derror("Too many dimensions");
+                   }
                 vasection	/* variable and attribute declarations */
 		   {
 		       if (derror_count == 0)

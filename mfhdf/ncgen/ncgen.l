@@ -47,8 +47,8 @@ dimensions:|DIMENSIONS:	{return (DIMENSIONS);}
 variables:|VARIABLES:	{return (VARIABLES);}
 data:|DATA:		{return (DATA);}
 (netcdf|NETCDF|netCDF)[^\{]+	{
-		char *s = yytext+strlen("netcdf");
-		char *t = yytext+yyleng-1;
+		char *s = (char*)yytext+strlen("netcdf");
+		char *t = (char*)yytext+yyleng-1;
 		while (isspace(*s))
 			s++;
 		while (isspace(*t))
@@ -80,22 +80,22 @@ FloatInf|Infinity|Inf	{    /* float missing values */
 		lineno++ ;
 		}
 [+-]?[0-9]*\.[0-9]*{exp}?[LlDd]?|[+-]?[0-9]*{exp}[LlDd]? {
-		if (sscanf(yytext, "%le", &double_val) != 1) {
-		    sprintf(errstr,"bad long or double constant: %s",yytext);
+		if (sscanf((char*)yytext, "%le", &double_val) != 1) {
+		    sprintf(errstr,"bad long or double constant: %s",(char*)yytext);
 		    yyerror(errstr);
 		}
                 return (DOUBLE_CONST);
                 }
 [+-]?[0-9]*\.[0-9]*{exp}?[Ff]|[+-]?[0-9]*{exp}[Ff] {
-		if (sscanf(yytext, "%e", &float_val) != 1) {
-		    sprintf(errstr,"bad float constant: %s",yytext);
+		if (sscanf((char*)yytext, "%e", &float_val) != 1) {
+		    sprintf(errstr,"bad float constant: %s",(char*)yytext);
 		    yyerror(errstr);
 		}
                 return (FLOAT_CONST);
                 }
 [+-]?[0-9]+[sS]|0[xX][0-9a-fA-F]+[sS] {
-		if (sscanf(yytext, "%hd", &short_val) != 1) {
-		    sprintf(errstr,"bad short constant: %s",yytext);
+		if (sscanf((char*)yytext, "%hd", &short_val) != 1) {
+		    sprintf(errstr,"bad short constant: %s",(char*)yytext);
 		    yyerror(errstr);
 		}
 		return (SHORT_CONST);
@@ -103,9 +103,9 @@ FloatInf|Infinity|Inf	{    /* float missing values */
 [+-]?[1-9][0-9]*[lL]?|0[lL]? {
 #ifdef cray	/* machines where longs have more precision than doubles. */
     		char *ptr;
-		long_val = strtol(yytext, &ptr, 0);
-		if (ptr == yytext) {
-		    sprintf(errstr,"bad long constant: %s",yytext);
+		long_val = strtol((char*)yytext, &ptr, 0);
+		if (ptr == (char*)yytext) {
+		    sprintf(errstr,"bad long constant: %s",(char*)yytext);
 		    yyerror(errstr);
 		}
 		return (LONG_CONST);
@@ -117,13 +117,13 @@ FloatInf|Infinity|Inf	{    /* float missing values */
 		 */
 		double dd;
 #ifdef VMS  /* work around bug in VMS strtol() */
-		if (STREQ(yytext, "-2147483648")) {
+		if (STREQ((char*)yytext, "-2147483648")) {
 		    long_val = -2147483648;
 		    return (LONG_CONST);
 		}
 #endif /* VMS */
-		if (sscanf(yytext, "%le", &dd) != 1) {
-		    sprintf(errstr,"bad long constant: %s",yytext);
+		if (sscanf((char*)yytext, "%le", &dd) != 1) {
+		    sprintf(errstr,"bad long constant: %s",(char*)yytext);
 		    yyerror(errstr);
 		}
 		if (dd < LONG_MIN  ||  dd > LONG_MAX) {
@@ -138,32 +138,32 @@ FloatInf|Infinity|Inf	{    /* float missing values */
 0[xX]?[0-9a-fA-F]+[lL]? {
 		long dd;
 #ifdef VMS  /* work around bug in VMS strtol() */
-		if (STREQ(yytext, "-2147483648")) {
+		if (STREQ((char*)yytext, "-2147483648")) {
 		    long_val = -2147483648;
 		    return (LONG_CONST);
 		}
 #endif /* VMS */
-		if (sscanf(yytext, "%li", &dd) != 1) {
-		    sprintf(errstr,"bad long constant: %s",yytext);
+		if (sscanf((char*)yytext, "%li", &dd) != 1) {
+		    sprintf(errstr,"bad long constant: %s",(char*)yytext);
 		    yyerror(errstr);
 		}
 		long_val = dd;
 		return LONG_CONST;
 	        }
 \'[^\\]\'          {
-	        (void) sscanf(&yytext[1],"%c",&byte_val);
+	        (void) sscanf((char*)&yytext[1],"%c",&byte_val);
 		return (BYTE_CONST);
                 }
 \'\\[0-7][0-7]?[0-7]?\'  {
-		byte_val = strtol(&yytext[2], (char **) 0, 8);
+		byte_val = strtol((char*)&yytext[2], (char **) 0, 8);
 		return (BYTE_CONST);
                 }
 \'\\x[0-9a-fA-F][0-9a-fA-F]?\'  {
-		byte_val = strtol(&yytext[2], (char **) 0, 16);
+		byte_val = strtol((char*)&yytext[2], (char **) 0, 16);
 		return (BYTE_CONST);
                 }
 \'\\.\'        {
-	       switch (yytext[2]) {
+	       switch ((char*)yytext[2]) {
 	          case 'a': byte_val = '\007'; break; /* not everyone under-
 						       * stands '\a' yet */
      	          case 'b': byte_val = '\b'; break;
@@ -175,7 +175,7 @@ FloatInf|Infinity|Inf	{    /* float missing values */
 		  case '\\': byte_val = '\\'; break;
 		  case '?': byte_val = '\?'; break;
 		  case '\'': byte_val = '\''; break;
-		  default: byte_val = yytext[2];
+		  default: byte_val = (char)yytext[2];
 	           }
 		return (BYTE_CONST);
                 }

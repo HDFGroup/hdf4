@@ -521,7 +521,7 @@ vardata(vp, vdims, ncid, varid, fsp)
 
 	if (vrank > 0) {
 	    corsav = cor[vrank-1];
-	    if (fsp->brief_data_cmnts
+	    if (fsp->brief_data_cmnts != false
 		&& vrank > 1
 		&& left > 0) {	/* print brief comment with indices range */
 		Printf("// %s(",vp->name);

@@ -2,13 +2,7 @@ dnl $Id$
 dnl
 dnl Process this file with GNU autoconf(1) to produce a configure script.
 dnl
-AC_INIT(udconfig.h.in)
-
-include(local.m4)dnl
-
-AC_CONFIG_HEADER(udposix.h)
-
-UC_CUSTOMIZE
+UC_INIT(udposix.h)
 
 UC_PREFIX(../../..)
 
@@ -50,9 +44,7 @@ UC_FTPDIR(pub/sdm)
 
 UC_VERSION
 
-UC_CHECK_MISSING
-
-AC_OUTPUT(Makefile master.mk signal.h stdarg.h stdlib.h \
-          string.h udposix.h fortc/Makefile)
-
-UC_POSTPROCESS_MAKEFILES(Makefile fortc/Makefile)
+UC_FINISH(
+    Makefile \
+    fortc/Makefile \
+)

@@ -24,11 +24,12 @@ LIBRARY		= [-]netcdf.olb
 LINKFLAGS	= /nodebug/exec=$(mms$target_name).exe
 !LINKFLAGS	= /debug/exec=$(mms$target_name).exe
 CFLAGS		= $(COPTS)/include=[-.xdr]
-LIBOBJS 	= array=array.obj, attr=attr.obj, cdf=cdf.obj, dim=dim.obj,-
-		    file=file.obj, iarray=iarray.obj, error=error.obj,-
-		    putget=putget.obj, sharray=sharray.obj, string=string.obj,-
-		    var=var.obj,-
-		    htons.obj, ntohs.obj
+LIBOBJS       = array=array.obj, attr=attr.obj, cdf=cdf.obj, dim=dim.obj,-
+                  file=file.obj, iarray=iarray.obj, error=error.obj,-
+                  putget=putget.obj, putgetg=putgetg.obj,-
+                  sharray=sharray.obj, string=string.obj,-
+                  var=var.obj,-
+                  htons.obj, ntohs.obj
 CLIB 		=  sys$library:vaxcrtl.olb/lib
 LINKLIBS 	=  $(LIBRARY)/lib, $(CLIB)
 
@@ -61,6 +62,7 @@ file.obj :	file.c local_nc.h netcdf.h alloc.h
 iarray.obj :	iarray.c local_nc.h netcdf.h alloc.h
 error.obj :	error.c alloc.h
 putget.obj :	putget.c local_nc.h netcdf.h
+putgetg.obj:    putgetg.c local_nc.h netcdf.h
 sharray.obj :	sharray.c local_nc.h netcdf.h alloc.h
 string.obj :	string.c local_nc.h netcdf.h alloc.h
 var.obj :	var.c local_nc.h netcdf.h alloc.h

@@ -6,8 +6,7 @@ PROGRAM		= ftest
 OS		= @OS@
 FC		= @FC@
 CPP_NETCDF	= -I../libsrc @HDF_INC@
-CPP_OLD_FILLVALUES	= @CPP_OLD_FILLVALUES@
-CPPFLAGS	= $(CPP_NETCDF) $(CPP_OLD_FILLVALUES) @CPPFLAGS@
+CPPFLAGS	= $(CPP_NETCDF) @CPPFLAGS@
 CFLAGS		= @CFLAGS@
 FFLAGS		= @FFLAGS@
 HDF_LIB         = @HDF_LIB@
@@ -17,38 +16,50 @@ HEADERS		= netcdf.inc
 MANIFEST	= $(PROGRAM).src Makefile.in README aix.m4 common.inc \
 		  common.m4 depend descrip.mms fortc fortc1.sed \
 		  fortc2.sed hpux.m4 irix.m4 jackets.src msoft.m4 msoft.mk \
-		  sunos.m4 ultrix.m4 unicos.m4 vms.m4 \
+		  next.m4 osf.m4 sunos.m4 ultrix.m4 unicos.m4 vms.m4 \
 		  msoft/NOTES msoft/fslen.asm msoft/ftest.for \
 		  msoft/jackets.c msoft/msoft.int \
-		  msoft/netcdf.inc
+		  msoft/netcdf.inc \
+		  vms/ftest.for \
+		  vms/ftest.m4 \
+		  vms/jackets.c \
+		  vms/make.com \
+		  vms/netcdf.inc \
+		  mfsdf.c mfsdff.f hdftest.f
 
 LIBOBJS		= jackets.o mfsdf.o mfsdff.o
 LIBNAME		= netcdf
-LIBRARY		= ../libsrc/lib$(LIBNAME).a
+REMOTE_LIBRARY	= ../libsrc/lib$(LIBNAME).a
 OBJS		= $(PROGRAM).o $(LIBOBJS) 
 LD_XDR		= @LD_XDR@
 LD_NETCDF	= -L../libsrc -lnetcdf
 LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB)
 prefix		= ../../..
 
-all::		netcdf.inc $(LIBRARY)
+all::		FORCE
+	@if [ `which "$(FC)" | wc -w` = 1 ]; then \
+	    $(MAKE) netcdf.inc $(REMOTE_LIBRARY); \
+	else \
+	    echo 1>&2 "\`$@' not made because no FORTRAN compiler"; \
+	fi
 
 test:		FORCE
-	@if [ -n "$(FC)" ]; then \
+	@if [ `which "$(FC)" | wc -w` = 1 ]; then \
 	    $(MAKE) $(MFLAGS) $(PROGRAM); \
 	    $(MAKE) $(MFLAGS) hdftest; \
 	    ./$(PROGRAM); \
 	else \
-	    echo "\`$@' not made because FORTRAN macro FC unset"; \
+	    echo 1>&2 "\`$@' not made because no FORTRAN compiler"; \
 	fi
 
-install::	installed_headers
+install::	FORCE
+	@if [ `which "$(FC)" | wc -w` = 1 ]; then \
+	    $(MAKE) installed_headers; \
+	else \
+	    echo 1>&2 "\`$@' not made because no FORTRAN compiler"; \
+	fi
 
-$(LIBRARY):	$(LIBOBJS)
-	$(AR) rcuv $@ $?
-	$(RANLIB) $@
-
-$(PROGRAM):	$(PROGRAM).o $(LIBRARY)
+$(PROGRAM):	$(REMOTE_LIBRARY)
 
 jackets.c:	fortc1.sed fortc2.sed common.m4 jackets.src $(OS).m4
 	./fortc -L . -O $(OS) jackets.src > $@

@@ -15,7 +15,7 @@ F77	  = fl
 FFLAGS	  = /c /AL
 
 LINK	  = link
-LFLAGS	  = /nod /noe
+LFLAGS	  = /st:10000 /nod /noe
 
 DESTDIR   = C:
 
@@ -77,7 +77,7 @@ fslen.asm: msoft\fslen.asm
 	copy msoft\fslen.asm fslen.asm
 
 install: $(GOAL)
-	cp $(GOAL) $(BINDIR)
+	copy $(GOAL) $(BINDIR)
 
 clean:
 	rm -f ftest.obj jackets.obj fslen.obj ftest.map $(GOAL) *.cdf

@@ -17,14 +17,29 @@ static char rcsid[] = "$Id$";
  * -glenn
  */
 
-#include <unistd.h>
+#ifdef vms
+#   include <unixio.h>
+#   include <file.h>
+#else
+#   ifdef MSDOS
+#       include <io.h>
+#   else
+#       include <unistd.h>
+#   endif
+#   include <fcntl.h>
+#endif
 #include <sys/types.h>
-#include <fcntl.h>
 #include <string.h>
 #include "netcdf.h" /* NC_ */
 #include "local_nc.h" /* prototypes for NCadvis, nc_error */
 		      /* also obtains <stdio.h>, <rpc/types.h>, &
 		       * <rpc/xdr.h> */
+
+#ifndef DOS_FS
+typedef u_int ncpos_t ;
+#else
+typedef off_t ncpos_t ;
+#endif
 
 typedef struct {
 	int fd;			/* the file descriptor */	
@@ -73,7 +88,7 @@ int fmode;
 	biop->nread = 0 ;
 	biop->nwrote = 0 ;
 	biop->cnt = 0 ;
-	memset(biop->base, 0, BIOBUFSIZ) ;
+	memset(biop->base, 0, ((size_t)(BIOBUFSIZ))) ;
 	biop->ptr = biop->base ;
 
 	return biop ;	
@@ -84,24 +99,24 @@ static int
 rdbuf(biop)
 biobuf *biop;
 {
-		memset(biop->base, 0, BIOBUFSIZ) ;
+	memset(biop->base, 0, ((size_t)(BIOBUFSIZ))) ;
 
-		if(biop->mode & O_WRONLY)
+	if(biop->mode & O_WRONLY)
+	{
+		biop->cnt = 0 ;
+	}
+	else
+	{
+		if(biop->nwrote != BIOBUFSIZ)
 		{
-			biop->cnt = 0 ;
+			/* last write wasn't a full block, adjust position ahead */
+			if(lseek(biop->fd, biop->page * BIOBUFSIZ, SEEK_SET) == ((off_t)-1))
+				return -1 ;
 		}
-		else
-		{
-			if(biop->nwrote != BIOBUFSIZ)
-			{
-				/* last write wasn't a full block, adjust position ahead */
-				if(lseek(biop->fd, biop->page * BIOBUFSIZ, SEEK_SET) < 0)
-					return -1 ;
-			}
-			biop->nread = biop->cnt = read(biop->fd, biop->base, BIOBUFSIZ) ;
-		}
-		biop->ptr = biop->base ;
-		return biop->cnt ;
+		biop->nread = biop->cnt = read(biop->fd, biop->base, BIOBUFSIZ) ;
+	}
+	biop->ptr = biop->base ;
+	return biop->cnt ;
 }
 
 
@@ -110,7 +125,8 @@ wrbuf(biop)
 biobuf *biop;
 {
 
-	if((biop->mode & O_RDONLY) || biop->cnt == 0) 
+	if(!((biop->mode & O_WRONLY) || (biop->mode & O_RDWR))
+		|| biop->cnt == 0) 
 	{
 		biop->nwrote = 0 ;
 	}
@@ -119,7 +135,7 @@ biobuf *biop;
 		if(biop->nread != 0)
 		{
 			/* if we read something, we have to adjust position back */
-			if(lseek(biop->fd, biop->page * BIOBUFSIZ, SEEK_SET) < 0)
+			if(lseek(biop->fd, biop->page * BIOBUFSIZ, SEEK_SET) == ((off_t)-1))
 				return -1 ;
 		}
 		biop->nwrote = write(biop->fd, biop->base, biop->cnt) ;
@@ -161,9 +177,8 @@ biobuf *biop;
 unsigned char *ptr;
 int nbytes;
 {
-	unsigned ngot = 0 ;
-	int ch ;
-	int rem ; 
+	int ngot = 0 ;
+	size_t rem ; 
 
 	if(nbytes == 0)
 		return 0 ;	
@@ -177,11 +192,11 @@ int nbytes;
 			nbytes -= rem ;
 			ngot += rem ;
 		}
-		if(nextbuf(biop) < 0)
+		if(nextbuf(biop) <= 0)
 			return ngot ;
 	}
 	/* we know nbytes <= REM at this point */
-	(void) memcpy(ptr, biop->ptr, nbytes) ;
+	(void) memcpy(ptr, biop->ptr, (size_t)nbytes) ;
 	biop->ptr += nbytes ;
 	ngot += nbytes ;
 	return ngot ;
@@ -194,9 +209,13 @@ biobuf *biop;
 unsigned char *ptr;
 int nbytes;
 {
-	int rem ;
-	unsigned nwrote = 0 ;
+	size_t rem ;
+	int nwrote = 0 ;
 	int cnt ;
+
+	if(!((biop->mode & O_WRONLY) || (biop->mode & O_RDWR)))
+		return -1 ;
+
 	while(nbytes > (rem = BREM(biop)))
 	{
 		if(rem > 0)
@@ -212,7 +231,7 @@ int nbytes;
 			return nwrote ;
 	}
 	/* we know nbytes <= BREM at this point */
-	(void) memcpy(biop->ptr, ptr, nbytes) ;
+	(void) memcpy(biop->ptr, ptr, (size_t)nbytes) ;
 	biop->isdirty = !0 ;
 	biop->ptr += nbytes ;
 	if((cnt = CNT(biop)) > biop->cnt)
@@ -227,12 +246,16 @@ static bool_t	xdrposix_getlong();
 static bool_t	xdrposix_putlong();
 static bool_t	xdrposix_getbytes();
 static bool_t	xdrposix_putbytes();
-static u_int	xdrposix_getpos();
+static ncpos_t	xdrposix_getpos();
 static bool_t	xdrposix_setpos();
 #ifdef CRAY
 static inline_t *	xdrposix_inline();
 #else
+#ifdef __alpha
+static int *	xdrposix_inline();
+#else
 static long *	xdrposix_inline();
+#endif
 #endif
 static void	xdrposix_destroy();
 
@@ -389,7 +412,7 @@ xdrposix_putbytes(xdrs, addr, len)
 	return (TRUE);
 }
 
-static u_int
+static ncpos_t
 xdrposix_getpos(xdrs)
 	XDR *xdrs;
 {
@@ -401,7 +424,7 @@ xdrposix_getpos(xdrs)
 static bool_t
 xdrposix_setpos(xdrs, pos) 
 	XDR *xdrs;
-	u_long pos;
+	ncpos_t pos;
 { 
 	biobuf *biop = (biobuf *)xdrs->x_private ;
 	off_t page ;
@@ -434,7 +457,11 @@ xdrposix_setpos(xdrs, pos)
 #ifdef CRAY
 static inline_t *
 #else
+#ifdef __alpha
+static int *
+#else
 static long *
+#endif
 #endif
 xdrposix_inline(xdrs, len)
 	XDR *xdrs;
@@ -488,6 +515,14 @@ int ncmode ;
 	}
 #ifdef CRAY
 	fmode |= O_RAW ;
+#endif
+#ifdef DOS_FS
+	/*
+ 	 * set default mode to binary to suppress the expansion of
+	 * 0x0f into CRLF
+	 */
+	if(_fmode != O_BINARY)
+		_fmode = O_BINARY ;
 #endif
 	fd = open(path, fmode, 0666) ;
 	if( fd == -1 )

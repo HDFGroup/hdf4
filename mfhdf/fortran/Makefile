@@ -4,13 +4,12 @@
 # $Id$
 
 PROGRAM		= ftest
-OS		= irix
+OS		= sunos
 FC		= f77
-CPP_NETCDF	= -I../libsrc -I/hdf/home/chouck/hdf/33/include -DIRIS4 -cckr
-CPP_OLD_FILLVALUES	= 
-CPPFLAGS	= $(CPP_NETCDF) $(CPP_OLD_FILLVALUES) -DNDEBUG -DHDF -DNO_STRERROR
+CPP_NETCDF	= -I../libsrc -I/hdf/home/chouck/hdf/33/include -DSUN
+CPPFLAGS	= $(CPP_NETCDF) -DNDEBUG -DHDF -DNO_HAVE_PROTOTYPES -Dconst= -DNO_STDARG -DNO_STRERROR
 CFLAGS		= -g
-FFLAGS		= -O
+FFLAGS		= 
 HDF_LIB         = /hdf/home/chouck/hdf/33/lib/libdf.a
 GARBAGE		= $(PROGRAM) test.nc copy.nc netcdf.inc jackets.c \
 		  $(PROGRAM).f test*.hdf hdftest hdfout.new
@@ -18,38 +17,50 @@ HEADERS		= netcdf.inc
 MANIFEST	= $(PROGRAM).src Makefile.in README aix.m4 common.inc \
 		  common.m4 depend descrip.mms fortc fortc1.sed \
 		  fortc2.sed hpux.m4 irix.m4 jackets.src msoft.m4 msoft.mk \
-		  sunos.m4 ultrix.m4 unicos.m4 vms.m4 \
+		  next.m4 osf.m4 sunos.m4 ultrix.m4 unicos.m4 vms.m4 \
 		  msoft/NOTES msoft/fslen.asm msoft/ftest.for \
 		  msoft/jackets.c msoft/msoft.int \
-		  msoft/netcdf.inc
+		  msoft/netcdf.inc \
+		  vms/ftest.for \
+		  vms/ftest.m4 \
+		  vms/jackets.c \
+		  vms/make.com \
+		  vms/netcdf.inc \
+		  mfsdf.c mfsdff.f hdftest.f
 
 LIBOBJS		= jackets.o mfsdf.o mfsdff.o
 LIBNAME		= netcdf
-LIBRARY		= ../libsrc/lib$(LIBNAME).a
+REMOTE_LIBRARY	= ../libsrc/lib$(LIBNAME).a
 OBJS		= $(PROGRAM).o $(LIBOBJS) 
-LD_XDR		= -lsun
+LD_XDR		= 
 LD_NETCDF	= -L../libsrc -lnetcdf
 LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB)
 prefix		= /hdf/home/chouck/hdf
 
-all::		netcdf.inc $(LIBRARY)
+all::		FORCE
+	@if [ `which "$(FC)" | wc -w` = 1 ]; then \
+	    $(MAKE) netcdf.inc $(REMOTE_LIBRARY); \
+	else \
+	    echo 1>&2 "\`$@' not made because no FORTRAN compiler"; \
+	fi
 
 test:		FORCE
-	@if [ -n "$(FC)" ]; then \
+	@if [ `which "$(FC)" | wc -w` = 1 ]; then \
 	    $(MAKE) $(MFLAGS) $(PROGRAM); \
 	    $(MAKE) $(MFLAGS) hdftest; \
 	    ./$(PROGRAM); \
 	else \
-	    echo "\`$@' not made because FORTRAN macro FC unset"; \
+	    echo 1>&2 "\`$@' not made because no FORTRAN compiler"; \
 	fi
 
-install::	installed_headers
+install::	FORCE
+	@if [ `which "$(FC)" | wc -w` = 1 ]; then \
+	    $(MAKE) installed_headers; \
+	else \
+	    echo 1>&2 "\`$@' not made because no FORTRAN compiler"; \
+	fi
 
-$(LIBRARY):	$(LIBOBJS)
-	$(AR) rcuv $@ $?
-	$(RANLIB) $@
-
-$(PROGRAM):	$(PROGRAM).o $(LIBRARY)
+$(PROGRAM):	$(REMOTE_LIBRARY)
 
 jackets.c:	fortc1.sed fortc2.sed common.m4 jackets.src $(OS).m4
 	./fortc -L . -O $(OS) jackets.src > $@
@@ -91,14 +102,15 @@ AR		= ar
 CC		= cc
 CPP		= cc -E
 INCDIR		= $(prefix)/include
-INSTALL		= cp
-INSTALL_DATA	= $(INSTALL)
+INSTALL		= /bin/install -c
+INSTALL_DATA	= $(INSTALL) -m 664
 INSTALL_PROGRAM	= $(INSTALL)
 FC		= f77
+MAKEINFO        = 
 NCDUMP		= @NCDUMP@
 NCGEN		= @NCGEN@
 NEQN		= neqn
-OS		= irix
+OS		= sunos
 SHELL		= /bin/sh
 TBL		= tbl
 
@@ -426,6 +438,62 @@ dummy_mandir $(MANDIR):
 	mkdir -p $@
 	chmod u+rwx,g+rws,o=rx $@
 
+############################################################################
+# TeX-Info Pages:
+############################################################################
+INFODIR       = $(prefix)/info
+
+installed_infos:      FORCE
+	if [ -z "$(MAKEINFO)" ]; then \
+		echo 1>&2 "Can't install info(1) pages because no makeinfo(1)"; \
+	else \
+	  if [ -n "$(INFOS)" ]; then \
+	      infos="$(INFOS)"; \
+	      for info in $$infos; do \
+		$(MAKE) $(MFLAGS) INFODIR=$(INFODIR) INFO=$$info \
+		installed_info || exit 1; \
+	      done; \
+	   else \
+	      :; \
+	   fi; \
+	fi;
+# The following target decouples the previous targets from the actual rule;
+# thus, eliminating extraneous make(1) messages.
+#
+installed_info:       $(INFODIR)/$(INFO)
+
+$(INFODIR)/$(INFO):   $(INFODIR) $(INFO)
+	$(INSTALL_DATA) $(INFO) $@
+
+dummy_infodir $(INFODIR):
+	mkdir -p $@
+	chmod u+rwx,g+rws,o=rx $@
+
+# Rules for generating info pages:
+#
+.SUFFIXES:    .info .texi .texinfo .txn
+.texi.info:
+	@if [ -z "$(MAKEINFO)" ]; then \
+	  echo 1>&2 "Can't create $@ because no makeinfo(1)"; \
+	else \
+	  $(MAKEINFO) $< --no-split --output=$@; \
+	fi
+.texinfo.info:
+	@if [ -z "$(MAKEINFO)" ]; then \
+	  echo 1>&2 "Can't create $@ because no makeinfo(1)"; \
+	else \
+	  $(MAKEINFO) $< --no-split --output=$@; \
+	fi
+.txn.info:
+	@if [ -z "$(MAKEINFO)" ]; then \
+	  echo 1>&2 "Can't create $@ because no makeinfo(1)"; \
+	else \
+	  $(MAKEINFO) $< --no-split --output=$@; \
+	fi
+
+# Ensure that info page depends on canonical TeX-Info macros.
+#
+dummy_info $(INFO):   texinfo.tex
 
 ############################################################################
 # Cleanup:
@@ -550,6 +618,7 @@ MANIFEST.echo:	FORCE
 	    subdirs="$(SUBDIRS)"; \
 	    for subdir in $$subdirs; do \
 		(cd $$subdir && \
+                echo 1>&2 Creating $@ in `pwd` && \
 		$(MAKE) $(MFLAGS) MANIFEST.echo | \
 		    sed "s|^|$$subdir/|") || exit 1; \
 	    done; \

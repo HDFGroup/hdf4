@@ -3,8 +3,7 @@
 # $Id$
 
 PROGRAM		= cdftest
-CPP_OLD_FILLVALUES	= @CPP_OLD_FILLVALUES@
-CPPFLAGS	= $(CPP_OLD_FILLVALUES) @CPPFLAGS@
+CPPFLAGS	= @CPPFLAGS@
 CFLAGS		= @CFLAGS@ @HDF_INC@
 GARBAGE		= $(PROGRAM) test.cdf cdfout.new test*.hdf \
                   hdftest hdfout.new
@@ -19,8 +18,7 @@ MANIFEST	= Makefile.in README \
 		  $(CSRCS) cdftest.c \
 		  alloc.h testout.sav descrip.mms error.h htons.mar \
 		  local_nc.h make.com msoft.mk netcdf.h ntohs.mar \
-		  test_cdf.sav hdfout.sav mfsd.c hdfpg.c hdfcdf.c \
-                  hdfsds.c
+		  test_cdf.sav hdfout.sav mfsd.c hdfsds.c hdftest.c
 LIBOBJS		= array.o attr.o cdf.o dim.o file.o iarray.o error.o \
 		  globdef.o putget.o putgetg.o sharray.o string.o var.o \
 		  @XDRFILE@.o hdfsds.o mfsd.o

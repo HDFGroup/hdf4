@@ -73,7 +73,7 @@ M4__STRING_DESCRIPTOR_INCLUDES
 
 M4__FORTRAN_DEFINES
 
-#ifndef NC_OLD_FILLVALUES
+#if !NC_OLD_FILLVALUES
 
 struct ncfils {			/* This will be a common block from Fortran */
     double dd;
@@ -91,7 +91,7 @@ struct ncfils {			/* This will be a common block from Fortran */
     FILL_BYTE
 };
 
-#else	/* NC_OLD_FILLVALUES defined below */
+#else	/* NC_OLD_FILLVALUES below */
 
 /*
  * This section is provided for backward compatibility only.  Using
@@ -118,7 +118,7 @@ struct ncfils {			/* This will be a common block from Fortran */
     FILL_BYTE
 };
 
-#endif	/* NC_OLD_FILLVALUES defined above */
+#endif	/* NC_OLD_FILLVALUES above */
 
 
 /*
