@@ -486,7 +486,7 @@ C
 C----We will write four images using different compression methods to
 C    one file.
 C
-       file = "GRchunked1.hdf"
+       file = 'GRchunked1.hdf'
 C
 C   No compresion
 C
@@ -864,7 +864,7 @@ C
 C
 C---We will write/read to four different files corresponding to the
 C   different compression types.
-      file = "GRcompressed.hdf"
+      file = 'GRcompressed.hdf'
 C
 C   No compresion
 C
@@ -1198,8 +1198,8 @@ C
 C---We will write/read to four different files corresponding to the
 C   different compression types.
 C
-C   We will try to write to one file gr_chunked.hdf
-       file = "GRchunked2.hdf"
+C   We will try to write to one file GRchunked2.hdf
+       file = 'GRchunked2.hdf'
 C   No compresion
 C
       name(1) = 'Nocomp_data'    
