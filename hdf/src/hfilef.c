@@ -88,15 +88,15 @@ nhclose(intf * file_id)
  * Name:    hnumber
  * Purpose: Get numer of elements with tag
  * Inputs:  file_id: handle to HDF file to close
- * Returns: 0 on success, FAIL on failure with error set
+ * Returns: the number of objects of type 'tag' else FAIL
  * Users:   HDF Fortran programmers
  * Invokes: Hnumber
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-nhnumber(int32 file_id, uint16 tag)
+nhnumber(intf * file_id, intf *tag)
 {
-    return (Hnumber(file_id, tag));
+    return (Hnumber((int32) *file_id, (uint16) *tag));
 }
 
 /*-----------------------------------------------------------------------------
