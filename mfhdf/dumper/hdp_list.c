@@ -127,7 +127,7 @@ static intn parse_list_opts(list_info_t *list_opts,intn curr_arg,intn argc,char 
 						list_opts->limit=LTAGNAME;/* limit to tag name output */
 						list_opts->limit_name=HDstrdup(argv[curr_arg]);
                         list_opts->limit_tag=tagname_to_num(list_opts->limit_name);
-                        if(list_opts->limit_tag==FAIL) {
+                        if(list_opts->limit_tag==DFTAG_NULL) {
                             printf("ERROR: invalid tag name: %s\n",list_opts->limit_name);
                             return(FAIL);
                           } /* end if */

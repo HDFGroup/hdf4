@@ -102,7 +102,7 @@ intn parse_dumprig_opts(dump_info_t *dumprig_opts, intn *curr_arg,
 			  dumprig_opts->filter_num[i] = atoi(string);
 			  ptr = tempPtr + 1;
 		    }
-		    dumprig_opts->filter_num[i] = NULL;
+		    dumprig_opts->filter_num[i] = -1;
                     (*curr_arg)++;
 		    break;
 
@@ -123,7 +123,7 @@ intn parse_dumprig_opts(dump_info_t *dumprig_opts, intn *curr_arg,
 		       dumprig_opts->filter_num[i] = atoi(string);
 		       ptr = tempPtr + 1;
 		    }
-		    dumprig_opts->filter_num[i] = NULL;
+		    dumprig_opts->filter_num[i] = -1;
                     (*curr_arg)++;
                     break;
 
@@ -232,7 +232,7 @@ static intn drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc,
 	/* Determine which RIGs are to be displayed. */
         switch (dumprig_opts->filter) {  
              case DINDEX:
-		  for (i=0; dumprig_opts->filter_num[i]!=NULL; i++) {
+		  for (i=0; dumprig_opts->filter_num[i]!=-1; i++) {
 		     rig_chosen[i] = dumprig_opts->filter_num[i];
 		     rig_chosen[i]--;
 		  }
@@ -312,7 +312,7 @@ static intn drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc,
 	        int ref_found=0, m;
 		/* Determine if the image just read has the reference 
 		   specified by the user. */
-		for (m=0; dumprig_opts->filter_num[m]!=NULL; m++)
+		for (m=0; dumprig_opts->filter_num[m]!=-1; m++)
 		   if (dumprig_opts->filter_num[m]==rig_ref)
 		      ref_found = 1;
 		if (!ref_found) { /* If no match, then the current image is

@@ -94,7 +94,7 @@ intn parse_dumpsds_opts(dump_info_t *dumpsds_opts,intn *curr_arg,intn argc,char 
 		       dumpsds_opts->filter_num[i] = atoi(string);
 		       ptr = tempPtr + 1;
 		    }
-		    dumpsds_opts->filter_num[i] = NULL;
+		    dumpsds_opts->filter_num[i] = -1;
 		    (*curr_arg)++;
 		    break;
 
@@ -116,7 +116,7 @@ intn parse_dumpsds_opts(dump_info_t *dumpsds_opts,intn *curr_arg,intn argc,char 
 			dumpsds_opts->filter_num[i] = atoi(string);
 			ptr = tempPtr + 1;
 		    }
-		    dumpsds_opts->filter_num[i] = NULL;
+		    dumpsds_opts->filter_num[i] = -1;
 		    (*curr_arg)++;
                     break;
 
@@ -514,13 +514,13 @@ static intn dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[
 	switch (dumpsds_opts->filter) {  /* Determine the SDs having been
 					    selected. */
              case DINDEX:
-		for (i=0; dumpsds_opts->filter_num[i]!=NULL; i++) {
+		for (i=0; dumpsds_opts->filter_num[i]!= -1; i++) {
 		   sd_chosen[i] = dumpsds_opts->filter_num[i];
 		   sd_chosen[i]--;
 		}
                 break;
              case DREFNUM:
-		for (i=0; dumpsds_opts->filter_num[i]!=NULL; i++) {
+		for (i=0; dumpsds_opts->filter_num[i]!= -1; i++) {
                    index = SDreftoindex(sdf_id, dumpsds_opts->filter_num[i]);
 		   if (index==-1) {
 		      printf("SD with reference number %d: not found\n",
