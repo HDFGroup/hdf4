@@ -44,6 +44,8 @@ TBBT_NODE *root;
 intn side;
 #endif
 {
+    if(root==NULL)
+	return(NULL);
     while(  HasChild( root, side )  ) {
         root= root->link[side];
     }
