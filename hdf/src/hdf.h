@@ -114,18 +114,9 @@ typedef enum
 #ifndef EXPORT
 #define EXPORT
 #endif
-#ifndef IMPORT
-#define IMPORT extern
-#endif 
-#ifndef LOCAL
-#define LOCAL  static
-#endif
 
 #ifndef PRIVATE
 #define PRIVATE static
-#endif
-#ifndef PUBLIC
-#define PUBLIC  /* nothing */
 #endif
 
 /* Include the Number-type definitions */
