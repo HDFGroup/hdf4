@@ -12,6 +12,43 @@
 
 char *progname;
 
+/*
+Examples:
+
+# Compare global attributes only
+-g hdifftst1.hdf hdifftst2.hdf
+
+# Compare SD local attributes only
+-s hdifftst1.hdf hdifftst2.hdf
+
+# Compare SD data only
+-d hdifftst1.hdf hdifftst2.hdf
+
+# Compare Vdata data only
+-D hdifftst1.hdf hdifftst2.hdf
+
+# Print statistics
+-d -S hdifftst1.hdf hdifftst2.hdf
+
+# Compare SD data on variable(s)
+-d -v dset1 hdifftst1.hdf hdifftst2.hdf
+
+# Compare vdata on variable(s) 
+-D -u vdata1 hdifftst1.hdf hdifftst2.hdf
+
+# Print difference up to count number
+-d -e 2 hdifftst1.hdf hdifftst2.hdf
+
+# Print difference when it is greater than limit
+-d -t 2 hdifftst1.hdf hdifftst2.hdf
+
+# no options
+hdifftst1.hdf hdifftst2.hdf
+
+# verbose 
+-b hdifftst1.hdf hdifftst2.hdf
+*/
+
 
 static void
 usage()

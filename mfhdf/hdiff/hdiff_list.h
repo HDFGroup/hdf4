@@ -24,14 +24,14 @@ extern "C" {
 
 
 /* get the list of HDF objects in the file */
-int Hgetlist (char* fname, table_t *list);
+int Hgetlist (char* fname, dtable_t *list);
 
-int hdiff_list_vg (char* fname,int32 file_id,table_t *table);
-int hdiff_list_gr (char* fname,int32 file_id,table_t *table);
-int hdiff_list_sds(char* fname,int32 file_id,table_t *table);
-int hdiff_list_vs (char* fname,int32 file_id,table_t *table);
-int hdiff_list_glb(char* fname,int32 file_id,table_t *table);
-int hdiff_list_an (char* fname,int32 file_id,table_t *table);
+int hdiff_list_vg (char* fname,int32 file_id,dtable_t *table);
+int hdiff_list_gr (char* fname,int32 file_id,dtable_t *table);
+int hdiff_list_sds(char* fname,int32 file_id,dtable_t *table);
+int hdiff_list_vs (char* fname,int32 file_id,dtable_t *table);
+int hdiff_list_glb(char* fname,int32 file_id,dtable_t *table);
+int hdiff_list_an (char* fname,int32 file_id,dtable_t *table);
 
 
 int insert_vg_attrs(int32 vgroup_id,char *path);
@@ -44,27 +44,27 @@ int insert_vg(char* fname,
               int32* tags, 
               int32* refs, 
               int npairs, 
-              table_t *table);
+              dtable_t *table);
 
 int  insert_sds(int32 file_id,
                 int32 sd_id,
                 int32 tag,
                 int32 ref,
                 char *path_name,
-                table_t *table);
+                dtable_t *table);
 
 int  insert_gr(int32 file_id,
                int32 gr_in,
                int32 tag,               /* tag of input GR */
                int32 ref,               /* ref of input GR */
                char*path_name,          /* absolute path for input group name */
-               table_t *table);
+               dtable_t *table);
 
 int  insert_vs( int32 file_id,
                 int32 tag,
                 int32 ref,               /* ref of input VS */
                 char*path_name,          /* absolute path for input group name */
-                table_t *table,
+                dtable_t *table,
                 int is_lone);
 
 

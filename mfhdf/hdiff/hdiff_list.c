@@ -60,7 +60,7 @@ char *get_path(char*path_name, char*obj_name);
  */
 
 
-int Hgetlist (char* fname, table_t *table)
+int Hgetlist (char* fname, dtable_t *table)
 {
  int32    file_id;
  int      n_objs=0;
@@ -105,7 +105,7 @@ int Hgetlist (char* fname, table_t *table)
 
 int hdiff_list_vg(char* fname,
             int32 file_id,
-            table_t *table)
+            dtable_t *table)
 {
  int32 vgroup_ref=-1,  /* reference number of the group */
        vgroup_id,      /* vgroup identifier */
@@ -249,7 +249,7 @@ int insert_vg(char* fname,
               int32* in_tags,          /* tag list for parent group */
               int32* in_refs,          /* ref list for parent group */
               int npairs,              /* number tag/ref pairs for parent group */
-              table_t *table)
+              dtable_t *table)
 {
  intn  status_n;      /* returned status for functions returning an intn  */
  int32 status_32,     /* returned status for functions returning an int32 */
@@ -388,7 +388,7 @@ int insert_vg(char* fname,
  *-------------------------------------------------------------------------
  */
 
-int hdiff_list_gr(char* fname,int32 file_id,table_t *table)
+int hdiff_list_gr(char* fname,int32 file_id,dtable_t *table)
 {
  intn  status;            /* status for functions returning an intn */
  int32 gr_id,             /* GR interface identifier */
@@ -456,7 +456,7 @@ int hdiff_list_gr(char* fname,int32 file_id,table_t *table)
 
 int hdiff_list_sds(char* fname,
               int32 file_id,
-              table_t *table)
+              dtable_t *table)
 {
  intn  status;                 /* status for functions returning an intn */
  int32 sd_id,                  /* SD interface identifier */
@@ -515,7 +515,7 @@ int hdiff_list_sds(char* fname,
  */
 
 
-int hdiff_list_vs(char* fname,int32 file_id,table_t *table)
+int hdiff_list_vs(char* fname,int32 file_id,dtable_t *table)
 {
  intn  status_n;     /* returned status_n for functions returning an intn  */
  int32 vdata_ref=-1, /* reference number of the vdata */
@@ -624,7 +624,7 @@ int insert_vg_attrs(int32 vg_in,char *path)
  *-------------------------------------------------------------------------
  */
 
-int hdiff_list_glb(char* fname,int32 file_id,table_t *table)
+int hdiff_list_glb(char* fname,int32 file_id,dtable_t *table)
 {
  intn  status;                 /* status for functions returning an intn */
  int32 sd_id,                  /* SD interface identifier */
@@ -677,7 +677,7 @@ int hdiff_list_glb(char* fname,int32 file_id,table_t *table)
  */
 
 
-int hdiff_list_an(char* fname,int32 file_id,table_t *table)
+int hdiff_list_an(char* fname,int32 file_id,dtable_t *table)
 {
  intn  status_n;      /* returned status for functions returning an intn  */
  int32 status_32,     /* returned status for functions returning an int32 */
@@ -895,7 +895,7 @@ int  insert_sds(int32 file_id,
                 int32 tag,            /* tag of input SDS */
                 int32 ref,            /* ref of input SDS */
                 char *path_name,      /* absolute path for input group name */
-                table_t *table)
+                dtable_t *table)
 {
  intn  status_n;              /* returned status_n for functions returning an intn  */
  int32 sds_id,                /* data set identifier */
@@ -1104,7 +1104,7 @@ int  insert_gr(int32 file_id,
                int32 tag,               /* tag of input GR */
                int32 ref,               /* ref of input GR */
                char*path_name,          /* absolute path for input group name */
-               table_t *table)
+               dtable_t *table)
 {
  intn          status_n;      /* returned status_n for functions returning an intn  */
  int32         ri_id,         /* raster image identifier */
@@ -1207,7 +1207,7 @@ int  insert_vs( int32 file_id,
                 int32 tag,
                 int32 ref,               /* ref of input VS */
                 char*path_name,          /* absolute path for input group name */
-                table_t *table,
+                dtable_t *table,
                 int is_lone)
 {
  int32 status_32,             /* returned status_n for functions returning an int32 */

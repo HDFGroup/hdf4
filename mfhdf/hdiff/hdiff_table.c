@@ -29,7 +29,7 @@
  *-------------------------------------------------------------------------
  */
 
-int dtable_search(table_t *table, int tag, int ref )
+int dtable_search(dtable_t *table, int tag, int ref )
 {
  int i;
  
@@ -55,13 +55,13 @@ int dtable_search(table_t *table, int tag, int ref )
  *-------------------------------------------------------------------------
  */
 
-void dtable_add(table_t *table, int tag, int ref, char* path)
+void dtable_add(dtable_t *table, int tag, int ref, char* path)
 {
  int i;
  
  if (table->nobjs == table->size) {
   table->size *= 2;
-  table->objs = (obj_info_t*)realloc(table->objs, table->size * sizeof(obj_info_t));
+  table->objs = (dobj_info_t*)realloc(table->objs, table->size * sizeof(dobj_info_t));
   
   for (i = table->nobjs; i < table->size; i++) {
    table->objs[i].tag = table->objs[i].ref = -1;
@@ -92,14 +92,14 @@ void dtable_add(table_t *table, int tag, int ref, char* path)
  *-------------------------------------------------------------------------
  */
 
-void dtable_init( table_t **tbl )
+void dtable_init( dtable_t **tbl )
 {
  int i;
- table_t* table = (table_t*) malloc(sizeof(table_t));
+ dtable_t* table = (dtable_t*) malloc(sizeof(dtable_t));
  
  table->size = 20;
  table->nobjs = 0;
- table->objs = (obj_info_t*) malloc(table->size * sizeof(obj_info_t));
+ table->objs = (dobj_info_t*) malloc(table->size * sizeof(dobj_info_t));
  
  for (i = 0; i < table->size; i++) {
   table->objs[i].tag = table->objs[i].ref = -1;
@@ -123,7 +123,7 @@ void dtable_init( table_t **tbl )
  *-------------------------------------------------------------------------
  */
 
-void dtable_free( table_t *table )
+void dtable_free( dtable_t *table )
 {
  free(table->objs);
  free(table);
@@ -144,7 +144,7 @@ void dtable_free( table_t *table )
  *-------------------------------------------------------------------------
  */
 
-char* dtable_check(table_t *table, char*obj_name)
+char* dtable_check(dtable_t *table, char*obj_name)
 {
  int   i;
  int32 tag;
@@ -186,7 +186,7 @@ char* dtable_check(table_t *table, char*obj_name)
  *-------------------------------------------------------------------------
  */
 
-void dtable_print(table_t *table)
+void dtable_print(dtable_t *table)
 {
  int i;
 
