@@ -20,8 +20,7 @@ compressed datastream.  Please send questions about compression to the
 general HDF support e-mail address:  hdfhelp@ncsa.uiuc.edu
 
 Compression for HDF SDS
-    There are two new compression functions added to the SD interface in this
-release, SDsetcompress and SDsetnbitdataset.   Both functions are used as
+The SDsetcompress and SDsetnbitdataset functions are used as
 higher-level routines to access the HCcreate function (HCcreate is described
 in the reference manual).  SDsetnbitdataset allows for the storage of 1-32 bit 
 integer values (instead of being restricted to 8, 16 or 32-bit sizes) in a
@@ -142,7 +141,7 @@ types of compression.
     16-bit unsigned integers from memory into a compressed representation on
     disk.
 
-    For example, to compress dataset using the gzip deflation algorithm, with
+    For example, to compress a dataset using the gzip deflation algorithm, with
     the maximum effort to compress the data, the following setup and call would
     be used:
 
