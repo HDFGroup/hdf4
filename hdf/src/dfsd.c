@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.33  1993/09/02 00:17:51  georgev
-Fixed large number of casts.
+Revision 1.34  1993/09/03 15:16:47  chouck
+Fixed a casting problem for the SGI
 
+ * Revision 1.33  1993/09/02  00:17:51  georgev
+ * Fixed large number of casts.
+ *
  * Revision 1.32  1993/09/02  00:00:21  georgev
  * Fixed some more prototypes.
  *
@@ -2503,7 +2506,7 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
                                DFNT_FLOAT64, 4, DFACC_READ, 0, 0);
 
                     /* read in the 32bit integer number type */
-                    DFKconvert((VOIDP)buf + 32,
+                    DFKconvert((VOIDP)(buf + 32),
                                (VOIDP)&sdg->cal_type, 
                                DFNT_INT32, 1, DFACC_READ, 0, 0);
                   }
@@ -2928,7 +2931,7 @@ intn DFSDIputndg(file_id, ref, sdg)
                        DFNT_FLOAT64, 4, DFACC_WRITE, 0, 0);
 
             /* convert int */
-            DFKconvert((VOIDP) &sdg->cal_type, (VOIDP)buf + 32,
+            DFKconvert((VOIDP) &sdg->cal_type, (VOIDP)(buf + 32),
                        DFNT_INT32, 1, DFACC_WRITE, 0, 0);
             
             /* write it into the file */
