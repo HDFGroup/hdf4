@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.14  1992/06/04 18:59:26  dilg
+# Revision 1.15  1992/06/09 20:19:24  dilg
+# Changed CFLAGS for IRIS4 from -cckr to -ansi
+#
+# Revision 1.14  1992/06/04  18:59:26  dilg
 # Changes back to generic SUN from IBM6000
 #
 # Revision 1.13  1992/06/04  04:47:15  sxu
@@ -161,7 +164,7 @@ IFLAGS=   -I../include -I.
 #    CFLAGS=  -g -D${MACHINE} $(IFLAGS) -D${STDFLAG}
 
 # ==> For IRIS4, specify CFLAGS as follows:
-#    CFLAGS=  -g -cckr
+#    CFLAGS=  -g -ansi
 
 CFLAGS=  -g -D${MACHINE} $(IFLAGS)
 
