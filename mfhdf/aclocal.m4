@@ -82,9 +82,7 @@ case "${OS}" in
   sunos*)       UC_ENSURE(HDF_INC, -DSUN)
                 LD_XDR=;;
   hpux*)        UC_ENSURE(HDF_INC, -DHP9000)
-                if test "$GCC" = 1; then
-                        DUMMY=
-                else
+                if test -z "$GCC"; then
                         UC_ENSURE(CPPFLAGS, -Aa)
                 fi
                 LD_XDR=;;

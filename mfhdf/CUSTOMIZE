@@ -23,7 +23,7 @@
 # CC='gcc -ansi'
 #
 # C compiler flags (default is `-O'):
-CFLAGS='-O'
+CFLAGS='-g'
 #
 # C preprocessor flags 
 # CPPFLAGS=-DNDEBUG
