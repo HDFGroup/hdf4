@@ -34,13 +34,9 @@ static char mrcsid[] = "Id: cdftest.c,v 1.11 1994/01/10 23:07:27 chouck Exp ";
 #define CDFMAXLONG		2147483647
 #define  CDFMAXBYTE	127
 
-/*   #ifdef PC  */
-/* For CRAYMPP, an explicit include <errno.h> uses the task-local memory */
-/* errno.  Read the CRAYMPP errno.h for more explanation. */
-#if defined PC || (defined VMS) || (defined CRAYMPP)
 #include <errno.h>
-#else
-extern int errno ;
+#if defined ERRNO_MISSING
+extern int errno;
 #endif
 
 #define FILENAME		"test.cdf"
