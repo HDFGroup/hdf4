@@ -55,10 +55,10 @@ typedef NETLONG     netlong;
 #endif
 
 #include <string.h>
-#include "netcdf.h" /* NC_ */
 #include "local_nc.h" /* prototypes for NCadvis, nc_error */
 		      /* also obtains <stdio.h>, <rpc/types.h>, &
 		       * <rpc/xdr.h> */
+#include "netcdf.h" /* NC_ */
 #include "mfhdf.h"
 
 #if !(defined DOS_FS || defined(macintosh) || defined (SYMANTEC_C))
