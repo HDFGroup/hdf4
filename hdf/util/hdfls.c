@@ -3,7 +3,7 @@
 *			  NCSA HDF version 3.2beta
 *			     February 29, 1992
 *
-* NCSA HDF Version 3.10r5 source code and documentation are in the public
+* NCSA HDF Version 3.2 source code and documentation are in the public
 * domain.  Specifically, we give to the public domain all rights for future
 * licensing of the source code, all resale rights, and all publishing rights.
 * 
@@ -26,9 +26,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1992/02/29 18:58:36  sxu
-add header
+Revision 1.6  1992/03/11 20:53:33  chouck
+Use HDgettagname() to look up tag names.  Change the tag/ref look
+up routines to use Hiquire() and Hnextread instead of DFdescriptors()
 
+ * Revision 1.5  1992/02/29  18:58:36  sxu
+ * add header
+ *
  * Revision 1.4  1992/02/26  17:46:31  likkai
  * added descriptions for Vset elements.
  *
@@ -82,78 +86,15 @@ int
     sort=1,         /* Sorting is on by default */
     longout=0;      /* short output by default */
 
-struct des {
-    int num;
-    char name[50];
-}   tagdes[]={
-        {DFTAG_NULL, "Empty               (Utility)   "},
-
-        {DFTAG_LINKED,  "Link to other block (Utility)"},
-        {DFTAG_VERSION, "File Version        (Utility)   "},
-
-        {DFTAG_FID,  "File Identifier     (Utility)   "},
-        {DFTAG_FD,   "File Description    (Utility)   "},
-        {DFTAG_TID,  "Tag Identifier      (Utility)   "},
-        {DFTAG_TD,   "Tag Description     (Utility)   "},
-        {DFTAG_DIL,  "Data Id Label       (Utility)   "},
-        {DFTAG_DIA,  "Data Id Annotation  (Utility)   "},
-        {DFTAG_NT,   "Number type         (Utility)   "},
-        {DFTAG_MT,   "Machine type        (Utility)   "},
-        {DFTAG_ID8,  "Image Dimensions-8  (Raster-8)  "},
-        {DFTAG_IP8,  "Image Palette-8     (Raster-8)  "},
-        {DFTAG_RI8,  "Raster Image-8      (Raster-8)  "},
-        {DFTAG_CI8,  "Compressed Image-8  (Raster-8)  "},
-        {DFTAG_II8,  "Imcomp Image-8      (Raster-8)  "},
-        {DFTAG_ID,   "Image Dimensions    (Raster)    "},
-        {DFTAG_LUT,  "Image Palette       (Raster)    "},
-        {DFTAG_RI,   "Raster Image        (Raster)    "},
-        {DFTAG_CI,   "Compressed Image    (Raster)    "},
-        {DFTAG_RIG,  "Raster Image Group  (Raster)    "},
-        {DFTAG_LD,   "Palette Dimension   (Raster)    "},
-        {DFTAG_MD,   "Matte Dimension     (Raster)    "},
-        {DFTAG_MA,   "Matte Data          (Raster)    "},
-        {DFTAG_CCN,  "Color Correction    (Raster)    "},
-        {DFTAG_CFM,  "Color Format        (Raster)    "},
-        {DFTAG_AR,   "Aspect Ratio        (Raster)    "},
-        {DFTAG_DRAW, "Draw                (Composite) "},
-        {DFTAG_RUN,  "Run                 (Composite) "},
-        {DFTAG_XYP,  "X-Y position        (Composite) "},
-        {DFTAG_MTO,  "M/c-Type override   (Composite)"},
-        {DFTAG_T14,  "TEK 4014 Data       (Tektronix) "},
-        {DFTAG_T105, "TEK 4105 data       (Tektronix) "},
-        {DFTAG_RLE,  "Run Length Encoding (Raster)    "},
-        {DFTAG_IMC,  "IMCOMP Encoding     (Raster)    "},
-        {DFTAG_SDG,  "Scientific Data Group (SciData) "},
-        {DFTAG_SDD,  "SciData description (SciData)   "},
-        {DFTAG_SD,   "Scientific Data     (SciData)   "},
-        {DFTAG_SDS,  "SciData Scales      (SciData)   "},
-        {DFTAG_SDL,  "SciData labels      (SciData)   "},
-        {DFTAG_SDU,  "SciData units       (SciData)   "},
-        {DFTAG_SDF,  "SciData formats     (SciData)   "},
-        {DFTAG_SDM,  "SciData max/min     (SciData)   "}, 
-        {DFTAG_SDC,  "SciData coordsys    (SciData)   "},
-        {DFTAG_SDT,  "SciData transpose   (SciData)   "},
-
-        {DFTAG_RLE,  "Run Length Encoding (Compression)"},
-        {DFTAG_IMC,     "IMCOMP compression (Compression)"},
-        {DFTAG_IMCOMP, "IMCOMP compression (Compression)"},
-
-        {DFTAG_VG,  	"Vgroup              (Vset)"},
-        {DFTAG_VH,  	"Vdata Header        (Vset)"},
-        {DFTAG_VS,  	"Vdata Storage Area  (Vset)"},
-
-	     {-1,         "Unknown Tag                     "}
-    };
-
 int compare
-  PROTO((struct DFdd *, struct DFdd *));
+  PROTO((dd_t *a, dd_t *));
 int main
   PROTO((int, char **));
 int lprint
-  PROTO((struct DFdd *, int));
+  PROTO((dd_t *, int));
 
 #ifdef PROTOTYPE
-int compare(dd_t *a, DFdesc *b)
+int compare(dd_t *a, dd_t *b)
 #else
 int compare(a, b)
 dd_t *a,*b;
@@ -174,10 +115,10 @@ int argc;
 char *argv[];
 #endif /* PROTOTYPE */
 {
-    int32 fid;
-    int i=1, j, n;
+    int32 fid, aid;
+    int i=1, j, n, status;
     filerec_t *file_rec;    /* file record */
-    dd_t *desc;
+    dd_t desc[MAXBUFF];
 
     if (argc <2) {
         printf("%s,  version: 1.1   date: February 10, 1992\n",argv[0]);
@@ -211,35 +152,45 @@ char *argv[];
         fid=Hopen( argv[i], DFACC_READ, -1);
         printf( "%s:  ", argv[i]);
         if (fid == FAIL) {
-	  printf("Not an HDF file.\n");
+	  printf("\n\tNot an HDF file.\n");
 	  i++;
 	  continue;
 	}
 
-	file_rec = FID2REC(fid);
-	
-	/*
-	  while{desc = file_rec->ddhead->ddlist) {
-	  */
-	desc = file_rec->ddhead->ddlist;
-	n = file_rec->ddhead->ndds;
-	
+	aid = Hstartread(fid, DFTAG_WILDCARD, DFREF_WILDCARD);
+	if(aid == FAIL) {
+	  HEprint(stderr, 0);
+	  i++;
+	  continue;	  
+	}
+
+	status = SUCCEED;
+	for(n = 0; (n < MAXBUFF) && (status != FAIL); n++) {
+	  Hinquire(aid, NULL, &desc[n].tag, &desc[n].ref, &desc[n].length,
+		   &desc[n].offset, NULL, NULL, NULL);
+	  status = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
+	}
+
+	if(n == MAXBUFF) {
+	  fprintf(stderr, 
+		  "Warning:  File may have more DD's than hdfls can display\n");
+	}
+
 	if(debug) {
 	  for (j=0; j<n; j++) {
-	    printf("%d) %d[%d]",j,desc[j].tag,desc[j].ref);
-	    printf(" off %ld len %ld\n", desc[j].offset,desc[j].length);
+	    printf("%d) %d[%d]", j, desc[j].tag, desc[j].ref);
+	    printf(" off %ld len %ld\n", desc[j].offset, desc[j].length);
 	  }
 	}
 	
 	if (sort) qsort( (char *) desc, n, sizeof(dd_t), compare);
 	
 	lprint(desc, n);
-	/*	
-	}
-	*/
 
-        if (Hclose(fid) == FAIL) 
-	  HEprint();
+        if (Hclose(fid) == FAIL) {
+/* BUG:  This is failing, but I don't know why */
+/*	  HEprint(stderr, 0); */
+	}
 
         i++;
         printf("\n");
@@ -256,8 +207,9 @@ int num;
 #endif /* PROTOTYPE */
 {
   
-  int i=0,j=0;
+  int j=0;
   int prev=0, empty=0;
+  char *name;
   
   while (j <num) {
     if (desc[j].tag==DFTAG_NULL) {
@@ -269,10 +221,9 @@ int num;
     /*
     ** Find and print text description of this tag
     */
-    i=0;
-    while ((uint16)tagdes[i].num!=desc[j].tag  && tagdes[i].num>0) i++;
-    printf("\n%s:", tagdes[i].name);
-    printf(" (tag %d)\n",desc[j].tag);
+    name = HDgettagname(desc[j].tag);
+    if(!name) name = "Unknown Tag";
+    printf("\n%-30s: (tag %d)\n", HDgettagname(desc[j].tag), desc[j].tag);
 
     /*
     ** Print out reference number information
@@ -291,7 +242,7 @@ int num;
       }
     }
   }
-  printf("\nEmpty (tag %d): %d slots\n", DFTAG_NULL, empty);
+  if(empty) printf("\nEmpty (tag %d): %d slots\n", DFTAG_NULL, empty);
   return 0;
 
 }
