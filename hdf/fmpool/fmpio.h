@@ -23,16 +23,6 @@
 #include "fmptypes.h"
 #include "fmpool.h"
 
-#if 0
-#ifndef MPOOL_DEBUG
-#define MPOOL_DEBUG 0
-#endif
-
-#ifndef STATISTICS
-#define STATISTICS 0
-#endif
-#endif
-
 /* Memory Pool file structure */
 typedef struct mpfile_st 
 {

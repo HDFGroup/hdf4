@@ -184,7 +184,7 @@ mpool_open(key, fd, pagesize, maxcache)
   if (len % pagesize) 
     {
       mp->lastpagesize = len % pagesize; /* odd size of last page */
-      mp->npages++;
+      (mp->npages)++;
     }
   else 
     mp->lastpagesize = pagesize; 
@@ -202,11 +202,11 @@ mpool_open(key, fd, pagesize, maxcache)
           ret = RET_ERROR;
           goto done;
         }
-      lp->pgno   = pageno;     /* set page number */
-      lp->eflags = ELEM_SYNC; /* valid page exists on disk */
+      lp->pgno   = (pgno_t)pageno;     /* set page number */
+      lp->eflags = (u_int8_t)ELEM_SYNC; /* valid page exists on disk */
 #ifdef STATISTICS
-      lp->elemhit = 0;
-      ++mp->listalloc;
+      lp->elemhit = (u_int32_t)0;
+      ++(mp->listalloc);
 #endif
 #ifdef MPOOL_DEBUG
     (void)fprintf(stderr,"mpool_open: pageno=%d, lhead=%08x\n",pageno,lhead);
@@ -249,7 +249,6 @@ done:
       /* free up list elements */
       for (entry = 0; entry < HASHSIZE; ++entry)
         {
-          lhead = &mp->lhqh[entry];
           while ((lp = mp->lhqh[entry].cqh_first) != (void *)&mp->lhqh[entry]) 
             {
               CIRCLEQ_REMOVE(&mp->lhqh[entry], mp->lhqh[entry].cqh_first, hl);
@@ -315,7 +314,7 @@ USAGE
    MPOOL *mp;         IN: MPOOL cookie 
    pgno_t *pgnoaddr;  IN/OUT:address of newly created page 
    pgno_t pagesize;   IN:page size for last page
-   u_int flags;       IN:MPOOL_EXTEND or 0 
+   u_int32_t flags;       IN:MPOOL_EXTEND or 0 
 RETURNS
    Returns the new page if succesfula and NULL otherwise
 DESCRIPTION
@@ -337,7 +336,7 @@ mpool_new(mp, pgnoaddr, pagesize, flags)
   MPOOL *mp;        /* MPOOL cookie */
   pgno_t *pgnoaddr; /* address of newly create page */
   pgno_t pagesize;  /* page size for last page*/
-  u_int flags;      /* MPOOL_EXTEND or 0 */
+  u_int32_t flags;      /* MPOOL_EXTEND or 0 */
 {
   struct _hqh  *head = NULL;  /* head of an entry in hash chain */
   struct _lhqh *lhead = NULL; /* head of an entry in list hash chain */
@@ -464,7 +463,7 @@ USAGE
    void *mpool_get(mp, pgno, flags)
    MPOOL *mp;      IN: MPOOL cookie 
    pgno_t pgno;    IN: page number 
-   u_int flags;	   IN: not used? 
+   u_int32_t flags;	   IN: not used? 
 RETURNS
    The specifed page if successful and NULL otherwise
 DESCRIPTION
@@ -480,7 +479,7 @@ void *
 mpool_get(mp, pgno, flags)
   MPOOL *mp;      /* MPOOL cookie */
   pgno_t pgno;    /* page number */
-  u_int flags;	  /* XXX not used? */
+  u_int32_t flags;	  /* XXX not used? */
 {
   struct _hqh *head = NULL; /* head of lru queue */
   struct _lhqh *lhead = NULL; /* head of an entry in list hash chain */
@@ -559,6 +558,7 @@ mpool_get(mp, pgno, flags)
             ++mp->listhit;
             ++lp->elemhit;
 #endif
+            break;
           }
         }
 
@@ -588,13 +588,14 @@ mpool_get(mp, pgno, flags)
     if (lp->pgno == pgno)
       { /* hit */
 #ifdef STATISTICS
-  ++mp->listhit;
-  ++lp->elemhit;
+        ++mp->listhit;
+        ++lp->elemhit;
 #ifdef MPOOL_DEBUG
     (void)fprintf(stderr,"mpool_get: mp->listhit=%d\n",mp->listhit);
 #endif
 #endif
         list_hit = 1;
+        break;
       }
     }
 
@@ -721,7 +722,7 @@ USAGE
    int mpool_put(mp, page, flags)
    MPOOL *mp;     IN: MPOOL cookie 
    void *page;    IN: page to put 
-   u_int flags;   IN: flags = 0, MPOOL_DIRTY 
+   u_int32_t flags;   IN: flags = 0, MPOOL_DIRTY 
 RETURNS
    RET_SUCCESS if succesful and RET_ERROR otherwise
 DESCRIPTION
@@ -732,7 +733,7 @@ int
 mpool_put(mp, page, flags)
   MPOOL *mp;    /* MPOOL cookie */
   void *page;   /* page to put */
-  u_int flags;  /* flags = 0, MPOOL_DIRTY */
+  u_int32_t flags;  /* flags = 0, MPOOL_DIRTY */
 {
   struct _lhqh *lhead = NULL; /* head of an entry in list hash chain */
   L_ELEM       *lp   = NULL;
@@ -778,6 +779,7 @@ mpool_put(mp, page, flags)
   (void)fprintf(stderr,"mpool_put: markign page=%d as written \n",bp->pgno);
 #endif
             lp->eflags = ELEM_WRITTEN;
+            break;
           }
     }
 
@@ -933,7 +935,7 @@ USAGE
    int mpool_page_sync(mp, pgno, flags)
    MPOOL *mp;     IN: MPOOL cookie 
    pgno_t pgno;   IN: page number 
-   u_int flags;	  IN: not used? 
+   u_int32_t flags;	  IN: not used? 
 RETURNS
    RET_SUCCESS if succesful and RET_ERROR otherwise   
 DESCRIPTION
@@ -950,7 +952,7 @@ int
 mpool_page_sync(mp, pgno, flags)
   MPOOL *mp;     /* MPOOL cookie */
   pgno_t pgno;    /* page number */
-  u_int flags;	  /* XXX not used? */
+  u_int32_t flags;	  /* XXX not used? */
 {
   struct _lhqh *lhead = NULL; /* head of an entry in list hash chain */
   L_ELEM       *lp   = NULL;
@@ -1011,6 +1013,7 @@ mpool_page_sync(mp, pgno, flags)
             ++lp->elemhit;
 #endif
             lp->eflags = ELEM_SYNC;
+            break;
           }
 
       /* Run page through the user's filter. */
@@ -1243,6 +1246,7 @@ mpool_write(mp, bp)
         ++lp->elemhit;
 #endif
         lp->eflags = ELEM_SYNC;
+        break;
       }
 
   /* Run page through the user's filter. */
@@ -1500,8 +1504,9 @@ mpool_stat(mp)
           lhead = &mp->lhqh[entry];
           for (lp = lhead->cqh_first; lp != (void *)lhead; lp = lp->hl.cqe_next)
             {
+              cnt++;
               (void)fprintf(stderr, "%s%u(%u)", sep, lp->pgno, lp->elemhit);
-              if (++cnt >= 8) 
+              if (cnt >= 8) 
                 {
                   sep = "\n";
                   cnt = 0;
@@ -1511,11 +1516,9 @@ mpool_stat(mp)
             }
           if (cnt >= 8) 
             {
-              sep = "\n";
+              (void)fprintf(stderr, "\n");
               cnt = 0;
             } 
-          else
-            sep = ", ";
         }
       (void)fprintf(stderr, "\n");
     } /* end if mp */

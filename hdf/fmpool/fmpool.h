@@ -85,14 +85,13 @@ typedef struct _lelem
 {
   CIRCLEQ_ENTRY(_lelem) hl;		/* hash list */
   pgno_t pgno;                          /* page number */
-
+#ifdef STATISTICS
+  u_int32_t	elemhit;                /* # of hits on page */
+#endif
 #define ELEM_READ    0x01
 #define ELEM_WRITTEN 0x02
 #define ELEM_SYNC    0x03
   u_int8_t eflags;                      /* 0, 1= read, 2=written */
-#ifdef STATISTICS
-  u_int	elemhit;                /* # of hits on page */
-#endif
 } L_ELEM;
 
 #define	MPOOL_EXTEND	0x10		/* increase number of pages 
@@ -107,8 +106,8 @@ typedef struct MPOOL
   pgno_t	curcache;		/* current number of cached pages */
   pgno_t	maxcache;		/* max number of cached pages */
   pgno_t	npages;			/* number of pages in the file */
-  u_int	lastpagesize;		/* page size of last page */
-  u_int	pagesize;		/* file page size */
+  u_int32_t	        lastpagesize;		/* page size of last page */
+  u_int32_t	        pagesize;		/* file page size */
   fmp_file_t    fd;			/* file descriptor */
                                 /* page in conversion routine */
   void    (*pgin) __P((void *, pgno_t, void *));
@@ -116,17 +115,17 @@ typedef struct MPOOL
   void    (*pgout) __P((void *, pgno_t, void *));
   void	*pgcookie;		/* cookie for page in/out routines */
 #ifdef STATISTICS
-  u_int	listhit;                /* # of list hits */
-  u_int	listalloc;              /* # of list elems allocated */
-  u_int	cachehit;               /* # of cache hits */
-  u_int	cachemiss;              /* # of cache misses */
-  u_int	pagealloc;              /* # of pages allocated */
-  u_int	pageflush;              /* # of pages flushed */
-  u_int	pageget;                /* # of pages requested from pool */
-  u_int	pagenew;                /* # of new pages */
-  u_int	pageput;                /* # of pages put back into pool */
-  u_int	pageread;               /* # of pages read from file */
-  u_int	pagewrite;              /* # of pages written to file */
+  u_int32_t	listhit;                /* # of list hits */
+  u_int32_t	listalloc;              /* # of list elems allocated */
+  u_int32_t	cachehit;               /* # of cache hits */
+  u_int32_t	cachemiss;              /* # of cache misses */
+  u_int32_t	pagealloc;              /* # of pages allocated */
+  u_int32_t	pageflush;              /* # of pages flushed */
+  u_int32_t	pageget;                /* # of pages requested from pool */
+  u_int32_t	pagenew;                /* # of new pages */
+  u_int32_t	pageput;                /* # of pages put back into pool */
+  u_int32_t	pageread;               /* # of pages read from file */
+  u_int32_t	pagewrite;              /* # of pages written to file */
 #endif /* STATISTICS */
 } MPOOL;
 
@@ -310,11 +309,11 @@ __BEGIN_DECLS
 MPOOL	*mpool_open __P((void *, fmp_file_t, pgno_t, pgno_t));
 void	 mpool_filter __P((MPOOL *, void (*)(void *, pgno_t, void *),
                            void (*)(void *, pgno_t, void *), void *));
-void	*mpool_new __P((MPOOL *, pgno_t *, pgno_t, u_int));
-void	*mpool_get __P((MPOOL *, pgno_t, u_int));
-int	 mpool_put __P((MPOOL *, void *, u_int));
+void	*mpool_new __P((MPOOL *, pgno_t *, pgno_t, u_int32_t));
+void	*mpool_get __P((MPOOL *, pgno_t, u_int32_t));
+int	 mpool_put __P((MPOOL *, void *, u_int32_t));
 int	 mpool_sync __P((MPOOL *));
-int	 mpool_page_sync __P((MPOOL *, pgno_t, u_int));
+int	 mpool_page_sync __P((MPOOL *, pgno_t, u_int32_t));
 int	 mpool_close __P((MPOOL *));
 #ifdef USE_INLINE
 BKT	*mpool_look __P((MPOOL *, pgno_t));
