@@ -121,7 +121,7 @@ test_tbbt(void)
                       printf("\n");
                   }     /* end if */
 
-                tree = tbbtdmake(tcompare, sizeof(int32));
+                tree = tbbtdmake(tcompare, sizeof(int32),0);
                 for (i = 0; i < test_size; i++)
                   {
                       MESSAGE(9, printf("inserting %d\n", (int) ins_arr[i]);
