@@ -1886,7 +1886,7 @@ return(ret);
  * Name:    sfisrcrd
  * Purpose: call SDisrecord to see if a dataset is a record variable
  * Inputs:  id: sds id
- * Returns: TRUE/FALSE
+ * Returns: TRUE/FALSE (1/0))
  *---------------------------------------------------------------------------*/
 
    FRETVAL(intf)
@@ -1898,5 +1898,24 @@ nsfisrcrd(id)
 #endif /* PROTOTYPE */
 {
     return((intf) SDisrecord(*id));
+}
+/*-----------------------------------------------------------------------------
+ * Name:    sfsblksz
+ * Purpose: call SDsetblocksize
+ * Inputs:  id:          sd id
+            block_size:  block size  in bytes
+ * Returns: SUCCEED/FAIL (0/-1)
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfsblksz(intf *id, intf *block_size)
+#else
+nsfsblsz(id, block_size)
+     intf *id;
+     intf *block_size;
+#endif /* PROTOTYPE */
+{
+    return((intf) SDsetblocksize(*id, *block_size));
 }
    
