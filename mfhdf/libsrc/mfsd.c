@@ -896,7 +896,7 @@ int32 nt, rank, *dimsizes;
     if(dims == NULL)
         return FAIL;
 
-    if(rank > MAX_NC_DIMS)
+    if(rank > MAX_VAR_DIMS)
         return FAIL;
 
     for(i = 0; i < rank; i++) {
@@ -911,8 +911,9 @@ int32 nt, rank, *dimsizes;
             handle->dims = NC_new_array(NC_DIMENSION,(unsigned)1, (Void *)&newdim);
             if(handle->dims == NULL)
                 return FAIL;
-	    } else if(handle->dims->count >= MAX_NC_DIMS) {
+/*	    } else if(handle->dims->count >= MAX_NC_DIMS) {
             return FAIL;
+*/
 	    } else {
             if( NC_incr_array(handle->dims, (Void *)&newdim) == NULL)
                 return FAIL;
