@@ -35,7 +35,7 @@ int main(int argc, char **argv)
 
 
  /* initialize options, -t table and -c table  */
- hzip_init (&options);
+ hzip_init (&options,0);
 
  for ( i = 1; i < argc; i++) 
  {

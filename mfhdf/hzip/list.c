@@ -87,10 +87,16 @@ int list(char* infname, char* outfname, options_t *options)
  infile_id  = Hopen (infname,DFACC_READ,0);
  outfile_id = Hopen (outfname,DFACC_CREATE,0);
 
- if (infile_id==FAIL || outfile_id==FAIL)
+ if (infile_id==FAIL)
  {
   table_free(table);
-  printf("Cannot open files %s and %s\n",infname,outfname);
+  printf("Cannot open file <%s>\n",infname);
+  return FAIL;
+ }
+ if (outfile_id==FAIL)
+ {
+  table_free(table);
+  printf("Cannot create file <%s>\n",outfname);
   return FAIL;
  }
 
@@ -106,10 +112,10 @@ int list(char* infname, char* outfname, options_t *options)
 	list_an (infname,outfname,infile_id,outfile_id,table,options);
 
  /* close the HDF files */
- status_n = Hclose (infile_id);
- status_n = Hclose (outfile_id);
-
-
+ if ((status_n = Hclose (infile_id)) == FAIL )
+  fprintf(stderr, "Failed to close file <%s>\n", infname);
+ if ((status_n = Hclose (outfile_id)) == FAIL )
+  fprintf(stderr, "Failed to close file <%s>\n", infname);
 
 #if !defined (ONE_TABLE)
 
@@ -730,7 +736,7 @@ void list_vs(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table
     continue;
    }
 
-   /* copy VS; the if test checks for reserved vdatas, that are not added to table  */
+   /* copy VS */
    copy_vs(infile_id,outfile_id,DFTAG_VS,ref,0,NULL,options,table);
  
   } /* for */

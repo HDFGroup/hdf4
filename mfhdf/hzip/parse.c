@@ -42,7 +42,7 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
  unsigned    i, u;
  char        c;
  size_t      len=strlen(str);
- int         j, m, n, k, end_obj;
+ int         j, m, n, k, end_obj, no_param=0;
  char        obj[MAX_NC_NAME]; 
  char        scomp[10];
  char        stype[5];
@@ -91,6 +91,8 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
   exit(1);
  }
 
+#if 1
+
  /* get compression type */
  for ( i=end_obj+1, k=0; i<len; i++,k++)
  {
@@ -103,24 +105,59 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
 
     /* here we could have 1, 2 or 3 digits (2 and 3 in the JPEG case) */
     for ( m=0,u=i+1; u<len; u++,m++) {
-     stype[m]=str[u];
+     c = str[u];
+     if (!isdigit(c)){
+      printf("Error: Invalid compression parameter in <%s>\n",str);
+      exit(1);
+     }
+     stype[m]=c;
     }
     stype[m]='\0';
     comp->info=atoi(stype);
+    i+=m; /* jump */
    }
    else if (i==len-1) { /*no more parameters */
     scomp[k+1]='\0';
+    no_param=1;
    }
    if (HDstrcmp(scomp,"NONE")==0)
     comp->type=COMP_CODE_NONE;
    else if (HDstrcmp(scomp,"RLE")==0)
+   {
     comp->type=COMP_CODE_RLE;
+    if (m>0){ /*RLE does not have parameter */
+     if (obj_list) free(obj_list);
+     printf("Error: Invalid compression parameter in <%s>\n",str);
+     exit(1);
+    }
+   }
    else if (HDstrcmp(scomp,"HUFF")==0)
+   {
     comp->type=COMP_CODE_SKPHUFF;
+    if (no_param) { /*no more parameters, HUFF must have parameter */
+     if (obj_list) free(obj_list);
+     printf("Error: Missing compression parameter in <%s>\n",str);
+     exit(1);
+    }
+   }
    else if (HDstrcmp(scomp,"GZIP")==0)
+   {
     comp->type=COMP_CODE_DEFLATE;
+    if (no_param) { /*no more parameters, GZIP must have parameter */
+     if (obj_list) free(obj_list);
+     printf("Error: Missing compression parameter in <%s>\n",str);
+     exit(1);
+    }
+   }
    else if (HDstrcmp(scomp,"JPEG")==0)
+   {
     comp->type=COMP_CODE_JPEG;
+    if (no_param) { /*no more parameters, JPEG must have parameter */
+     if (obj_list) free(obj_list);
+     printf("Error: Missing compression parameter in <%s>\n",str);
+     exit(1);
+    }
+   }
    else {
     if (obj_list) free(obj_list);
     printf("%s\nError: Invalid compression type\n",str);
@@ -128,6 +165,8 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
    }
   }
  } /*i*/
+
+#endif
 
 
  /* check valid parameters */

@@ -312,8 +312,8 @@ void add_r24(char *fname,char* name_file,int32 vgroup_id)
 
 
 /* dimensions of dataset */
-#define X_DIM      4
-#define Y_DIM      16
+#define X_DIM      20
+#define Y_DIM      80
 
 void add_sd(char *fname,             /* file name */
             char* sds_name,          /* sds name */

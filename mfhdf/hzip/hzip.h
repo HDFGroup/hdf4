@@ -160,7 +160,7 @@ extern "C" {
 void hzip         (char* infname, char* outfname, options_t *options);
 void hzip_addcomp (char* str, options_t *options);
 void hzip_addchunk(char* str, options_t *options);
-void hzip_init    (options_t *options);
+void hzip_init    (options_t *options, int verbose);
 void hzip_end     (options_t *options);
 
 int  list(char* infname,char* outfname,options_t *options);

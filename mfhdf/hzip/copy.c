@@ -1193,7 +1193,8 @@ int copy_vs( int32 infile_id,
  /* ignore reserved HDF groups/vdatas */
  if(vdata_class != NULL) {
   if( is_reserved(vdata_class)){
-   status_32 = Vdetach (vdata_id);
+   if ((status_32 = VSdetach (vdata_id)) == FAIL )
+    fprintf(stderr, "Failed to detach vdata <%s>\n", path_name);
    return 0;
   }
  }
@@ -1215,7 +1216,8 @@ int copy_vs( int32 infile_id,
  
  /* check inspection mode */
  if ( options->trip==0 ) {
-  status_32 = Vdetach (vdata_id);
+  if ((status_32 = VSdetach (vdata_id)) == FAIL )
+   fprintf(stderr, "Failed to detach vdata <%s>\n", path_name);
   if (path) free(path);
   return 0;
  }

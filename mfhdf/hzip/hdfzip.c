@@ -19,10 +19,11 @@
 void print_options(options_t *options);
 
 
-void hzip_init (options_t *options)
+void hzip_init (options_t *options, int verbose)
 {
  memset(options,0,sizeof(options_t));
  options->threshold = 1024;
+ options->verbose   = verbose;
  
 #if defined (ONE_TABLE)
  options_table_init(&(options->op_tbl));

@@ -15,7 +15,16 @@
 #define HDF_ZIP_ADD__
 
 
+
+#if 0
+#define HZIPTST_DEBUG  /* turn on for verbose output of hzip and hdiff */
+#endif
+
+#if defined (HZIPTST_DEBUG)
+#define TESTING(WHAT) {printf("%-70s", "Testing " WHAT); fflush(stdout); printf("\n");}
+#else
 #define TESTING(WHAT) {printf("%-70s", "Testing " WHAT); fflush(stdout);}
+#endif
 #define PASSED() {puts(" PASSED");fflush(stdout);}
 #define H5_FAILED() {puts("*FAILED*");fflush(stdout);}
 
