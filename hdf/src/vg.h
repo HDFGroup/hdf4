@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.2  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.3  1992/11/24 17:43:26  chouck
+Fixed memory over-write when VGroups have lots of members
 
+ * Revision 1.2  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -127,12 +130,12 @@ typedef struct read_struct
 } VREADLIST;
 
 /* 
-*  ----------------------------------------------- 
-        V G R O U P     definition     
-*  ----------------------------------------------- 
-*/
+ *  ----------------------------------------------- 
+ V G R O U P     definition     
+ *  ----------------------------------------------- 
+ */
 
-#define MAXNVELT  64		/* max no of objects in a vgroup */
+#define MAXNVELT  32		/* max no of objects in a vgroup */
 
 struct vgroup_desc
 { 
@@ -140,14 +143,14 @@ struct vgroup_desc
   HFILEID f;	 	    	/* HDF file id  */
   uint16  nvelt; 		/* S no of objects */
   intn	  access;		/* 'r' or 'w' */
-  uint16  tag[MAXNVELT];	/* S tag of objects */
-  uint16  ref[MAXNVELT];	/* S ref of objects */
+  uint16  *tag;	                /* S tag of objects */
+  uint16  *ref;	                /* S ref of objects */
   char	  vgname[VGNAMELENMAX+1];/* S name of this vgroup */
   char	  vgclass[VGNAMELENMAX+1];/* S class name of this vgroup */
-  VDATA*  velt[MAXNVELT];	/* pts to a objects if attached; or else NULL */
   intn	  marked;		/* =1 if new info has been added to vgroup */
   uint16  extag, exref;	        /* expansion tag-ref */
   int16	  version, more;	/* version and "more" field */	
+  intn    msize;                /* max size of storage arrays */
 };		
 /* VGROUP */
 

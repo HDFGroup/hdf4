@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.3  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.4  1992/11/24 17:43:26  chouck
+Fixed memory over-write when VGroups have lots of members
 
+ * Revision 1.3  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.2  1992/09/11  14:15:04  koziol
  * Changed Fortran stubs' parameter passing to use a new typedef, intf,
  * which should be typed to the size of an INTEGER*4 in whatever Fortran
@@ -131,7 +134,7 @@ extern void vpackvg
   PROTO((VGROUP HUGE *vg, BYTE HUGE buf[], int32 HUGE *size));
 
 extern void vunpackvg
-  PROTO((VGROUP HUGE *vg, BYTE HUGE buf[], int32 HUGE *size));
+  PROTO((VGROUP HUGE *vg, BYTE HUGE buf[]));
 
 extern VGROUP HUGE *Vattach
   PROTO((HFILEID f, int32 vgid, char HUGE *accesstype));
