@@ -1,3 +1,57 @@
+
+HDF4.1r3
+=========
+1. HDF 4.1r2 was unable to properly read HDF SDSs created with HDF 3.3x.
+   It did not read the correct SDS names.  This problem has been fixed.
+2. Many problems with the GR interface were fixed:
+   - The GR interface can now read compressed files created with the
+     DFR8 and DF24 interfaces, except for those which were compressed
+     with IMCOMP compression.
+   - Palettes can now be written and read properly with the GR interface.
+   - 24-bit raster images can now be read by the GR interface.
+3. You can now create an SDS with a name up to 256 characters in length.
+   The previous limit was 64.
+4. SDfileinfo no longer returns the wrong number of datasets for old
+   files created with the DFSD interface.
+5. The Vdata/Vgroup interfaces in HDF did not check return values, which
+   caused problems on the Macintosh, and could have potentially caused
+   problems on all platforms.  HDF now checks all return values properly.
+6. Several missing Fortran functions have been added to the
+  ./include/dffunc.inc file.
+7. Calling SDreaddata after setting the fill value and before doing
+   an SDendaccess and SDend caused a core dump on IRIX6.x with the
+   -64 bit option.  This problem has been fixed.
+8. Many hdp fixes were made:
+   - Options 'o' and 'b' or 'x': it used to be that you had to give -o
+     in order for -b or -x to be valid; now you can just give -b or -x
+     and the output will go to the screen.  Basically, you can have either
+     binary or ASCII text to the screen now where it used to be just ASCII.
+   - Options (-r,-i,-n,-c) can be given on the same command line; previously
+     the last option overrode all the previous ones.
+   - Added printing of GR file attributes (bug #192)
+   - Added printing of a palette to the dumpgr command (bug #252) with the new
+     option -p
+       -p : print palette info and data
+       -p -h : print palette info
+       -p -d : print palette data
+   - Added printing of SD file attributes to the dumpsds command
+   - The -c option for dumpvd used to only show the first vdata; now all vdatas
+     of the same class show for option -c.  Also, multiple class names listed
+     with this option are searched; they used to be ignored.
+   - Added printing file annotations to the dumpvd command.
+   - Improved output wording for the dumpvd command.  For example, <Undefine>
+     gets printed instead of nothing, or FULL_INTERLACE/NO_INTERLACE is printed
+     instead of "0/1".
+   - In one case the dumpvg command would get into an infinite loop.  This
+     problem has been fixed.
+   - With the dumpvg command, all vgroups of the same class show for option -c;
+     previously only the first one was shown.  Also, multiple class names listed
+     with this option are now searched; they used to be ignored.
+   - File annotations can now be printed with the dumpvg command.
+   - With the dumpvg command, occasionally a core dump occurred when printing
+     the Graphical Representation part if multiple hdf files were given.  This
+     has been fixed.
+
 HDF4.1r2
 ========
 1. The hdp utility can now dump data properly to a binary file (using
