@@ -1,4 +1,5 @@
 * text=auto !eol
+/DevStu.zip -text
 hdf/jpeg/jpeglib.project -text
 hdf/jpeg/testimg.gif -text
 hdf/jpeg/testimg.jpg -text
