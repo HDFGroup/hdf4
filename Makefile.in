@@ -42,7 +42,7 @@ M4   = /usr/local/bin/m4
 # /usr/local/bin/perl (GNU version?)
 PERL = /usr/local/bin/perl
 
-# Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
+# Name of achive randomizer, usually ranlib (use 'true' if non-existant)
 RANLIB = ranlib
 
 # Name of library archiver and flags to send, default 'AR=ar', 'ARFLAGS=r'
