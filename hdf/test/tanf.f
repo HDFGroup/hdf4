@@ -2,9 +2,12 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.5  1992/05/29 15:20:58  sxu
-C declare tag's ref's and rank as int16
+C Revision 1.6  1992/05/29 18:29:36  chouck
+C Fixed int16 / int32 problems.  Made buffer size 500 for RS/6000
 C
+c Revision 1.5  1992/05/29  15:20:58  sxu
+c declare tag's ref's and rank as int16
+c
 c Revision 1.4  1992/05/04  16:56:44  dilg
 c Added a call to INT() within call to CHAR() to make Cray compiler happy.
 c Changed calls to non-standard function JMOD() to calls to standard function
@@ -42,25 +45,25 @@ C
 
       integer number_failed, ISFIRST, NOTFIRST, MAXLEN_LAB
       integer MAXLEN_DESC, ROWS, COLS, REPS
-      integer*2 DFTAG_SDG, DFTAG_RIG
+      integer DFTAG_SDG, DFTAG_RIG
 
       parameter ( ISFIRST =        1, 
      *            NOTFIRST =       0, 
      *            MAXLEN_LAB =    30,
-     *            MAXLEN_DESC = 1000, 
+     *            MAXLEN_DESC =  500, 
      *            DFTAG_SDG   =  700,
      *            DFTAG_RIG   =  306,
      *            ROWS =          10, 
      *            COLS =          10,
      *            REPS =           2 )
 
-      integer*2 refnum
+      integer refnum
       integer ret
-      integer*2 rank
+      integer rank
       integer j, dimsizes(2)
 
       character*30 labsds, labris
-      character*1000 descsds, descris
+      character*500 descsds, descris
       character pal(768)
       character*64 TESTFILE
 
@@ -227,12 +230,12 @@ C**************************************************************
       integer tag, ref, num_failed
 
       parameter ( MAXLEN_LAB =    30,
-     *            MAXLEN_DESC = 1000 )
+     *            MAXLEN_DESC =  500 )
 
       integer daglab, dagllen, dagdlen, dagdesc
       integer  inlablen, indesclen, ret
       character*30   inlabel
-      character*1000 indesc
+      character*500 indesc
 
       inlablen =  dagllen(filename, tag, ref)
       call RESULT(inlablen, 'dagllen')
