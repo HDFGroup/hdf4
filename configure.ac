@@ -95,7 +95,7 @@ AC_PROG_F77
 AC_PROG_CXX
 
 AC_PROG_INSTALL
-AC_PROG_LEX
+AM_PROG_LEX
 AC_PROG_LN_S
 AC_PROG_RANLIB
 AC_PROG_YACC
@@ -490,6 +490,7 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/libsrc/Makefile
                  mfhdf/ncdump/Makefile
                  mfhdf/ncgen/Makefile
+                 mfhdf/nctest/Makefile
                  mfhdf/pablo/Makefile
                  mfhdf/port/Makefile
                  mfhdf/xdr/Makefile])
