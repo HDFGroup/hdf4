@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/02/26 23:05:33  dilg
-Initial revision
+Revision 1.2  1992/04/28 19:09:29  dilg
+Corrected incorrect expected return value for DFwrite on line 347.
 
+ * Revision 1.1  1992/02/26  23:05:33  dilg
+ * Initial revision
+ *
 */
 #include <stdio.h>
 #include "df.h"
@@ -345,7 +348,7 @@ main()
 	    	nerrors++;
             } else {
 		ret = DFwrite(dfile, ar3, a3size);
-                if (ret != 0) {
+                if (ret != a3size) {
 	    	    printf(">>>DFwrite failed at line %d.\n", __LINE__ - 2);
 	    	    printf("   DFerror = %d\n", DFerror);
 	    	    nerrors++;
