@@ -693,7 +693,7 @@ NC_var **var;
   uint8 ntstring[4];
   uint16 ref;
   int8 outNT;
-  int32 tags[100], refs[100];
+  int32 tags[MAX_NC_ATTRS + MAX_VAR_DIMS + 2], refs[MAX_NC_ATTRS + MAX_VAR_DIMS + 2];
 
   register int  i, count;
   register Void *attribute;

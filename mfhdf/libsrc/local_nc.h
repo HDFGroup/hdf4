@@ -450,12 +450,6 @@ extern void hdf_cdf_clobber
 extern void hdf_close
     PROTO((NC *));
 
-extern intn hdf_query_seen_sdg
-    PROTO((uint16 ));
-
-extern char hdf_register_seen_sdg
-    PROTO((uint16 ));
-
 extern intn hdf_read_sds_dims
     PROTO((NC *));
 

@@ -39,6 +39,12 @@ PRIVATE intn       sdgCurrent;
 PRIVATE intn       sdgMax;
 PRIVATE uint16     *sdgTable;
 
+intn hdf_query_seen_sdg
+    PROTO((uint16 ndgRef));
+
+VOID hdf_register_seen_sdg
+    PROTO((uint16 ndgRef));
+
 /* --------------------------- hdf_query_seen_sdg --------------------------- */
 /*
  *  The SDG with the given ref number might be part of an SDG-NDG combo

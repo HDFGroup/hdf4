@@ -15,9 +15,6 @@
 extern "C" {
 #endif
 
-extern NC_dim * SDIget_dim
-    PROTO((NC *handle, int32 id));
-
 extern int32 SDstart
     PROTO((char *name, int32 access));
 
