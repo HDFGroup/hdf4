@@ -313,6 +313,7 @@ static void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt
         B. Read/Write Palettes
             1. GRwritelut
             2. GRreadlut
+	C. GRluttoref
     VI. Special Element Functions [Need to be implemented]
         A. GRsetexternalfile
         B. GRsetaccesstype
@@ -2796,6 +2797,7 @@ test_mgr_interlace(int flag)
 **      B. Read/Write Palettes
 **          1. GRwritelut
 **          2. GRreadlut
+**	C. GRluttoref
 ** 
 ****************************************************************/
 static void
@@ -2833,6 +2835,7 @@ test_mgr_lut(int flag)
         int32 n_attr;             /* number of attributes with each image */
         uint8 *tmp_data;          /* temporary buffer pointer */
         VOIDP pal_data;           /* buffer for the palette data */
+	uint16 pal_ref;		  /* reference number of the palette */
 
         /* Attach to the image */
         riid=GRselect(grid,0);
@@ -2844,7 +2847,7 @@ test_mgr_lut(int flag)
         CHECK(ret,FAIL,"GRgetiminfo");
 
         lutid=GRgetlutid(riid,0);
-        CHECK(lutid,FAIL,"GRgetlutid");
+	CHECK(lutid,FAIL,"GRgetlutid");
         
         /* Get the Palette information */
         ret=GRgetlutinfo(lutid,&pal_ncomp,&pal_nt,&pal_il,&pal_entries);
@@ -2925,6 +2928,14 @@ test_mgr_lut(int flag)
 
         HDfree(pal_data);
 
+	/* This lutid should yield a valid reference number, which is not 0 - BMR */ 
+        pal_ref=GRluttoref(lutid);
+	CHECK(pal_ref,0,"GRluttoref");
+
+	/* Now, this bogus lutid should cause GRluttoref to return a 0 - BMR */
+        pal_ref=GRluttoref(0);
+	VERIFY(pal_ref,0,"GRluttoref");
+        
         /* End access to the image */
         ret=GRendaccess(riid);
         CHECK(ret,FAIL,"GRendaccess");
