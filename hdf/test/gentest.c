@@ -52,8 +52,8 @@ static char RcsId[] = "@(#)$Revision$";
 #define BITIO_SIZE1 4096
 
 #define NBIT_NAME   "nbit.dat"
-#define NBIT_TAG1   1000
-#define NBIT_REF1   1000
+#define NBIT_TAG1   (uint16)1000
+#define NBIT_REF1   (uint16)1000
 #define NBIT_SIZE1  4096
 #define NBIT_BITS1  6
 
@@ -90,7 +90,7 @@ gen_bitio_test(void)
       }     /* end if */
 
     for (i = 0; i < BITIO_SIZE1; i++)   /* fill with pseudo-random data */
-        bit_data[i] = (i * 3) % 256;
+        bit_data[i] = (uint8)((i * 3) % 256);
 
     if (FAIL == Hputelement(fid, BITIO_TAG1, BITIO_REF1, bit_data, BITIO_SIZE1))
       {
@@ -151,7 +151,7 @@ gen_nbit_test(void)
       }     /* end if */
 
     for (i = 0; i < NBIT_SIZE1; i++)    /* fill with pseudo-random data */
-        nbit_data[i] = (i * 3) % 64;
+        nbit_data[i] = (uint8)((i * 3) % 64);
 
     store = 0;
     store_bits = 0;
@@ -159,23 +159,23 @@ gen_nbit_test(void)
     for (i = 0; i < NBIT_SIZE1; i++)
       {     /* pack the bits together */
           store <<= NBIT_BITS1;
-          store |= nbit_data[i] & maskc[NBIT_BITS1];
+          store |= (uint32)nbit_data[i] & (uint32)maskc[NBIT_BITS1];
           store_bits += NBIT_BITS1;
-          if (store_bits >= BITNUM)
+          if (store_bits >= (intn)BITNUM)
             {   /* have at least a full byte */
-                out_data[out_num] = (store >> (store_bits - BITNUM)) & maskc[8];
+                out_data[out_num] = (uint8)((store >> (store_bits - (intn)BITNUM)) & (uint32)maskc[8]);
                 out_num++;
-                store_bits -= BITNUM;
+                store_bits -= (intn)BITNUM;
                 store >>= BITNUM;
             }   /* end if */
       }     /* end for */
     if (store_bits > 0)
       {     /* push over any leftover bits to the left */
-          out_data[out_num] = store << (BITNUM - store_bits);
+          out_data[out_num] = (uint8)(store << ((intn)BITNUM - store_bits));
           out_num++;
       }     /* end if */
 
-    if (FAIL == Hputelement(fid, NBIT_TAG1, NBIT_REF1, out_data, out_num))
+    if (FAIL == Hputelement(fid, NBIT_TAG1, NBIT_REF1, out_data, (int32)out_num))
       {
           HDfree(nbit_data);
           HDfree(out_data);
@@ -195,8 +195,11 @@ gen_nbit_test(void)
 int
 main(int argc, char *argv[])
 {
+    /* shut compiler up */
+    argc=argc; argv=argv;
+
     gen_bitio_test();
     gen_nbit_test();
 
-    exit(0);
+    return(0);
 }   /* end main() */

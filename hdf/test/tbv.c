@@ -60,7 +60,7 @@ static void test_1(void)
     MESSAGE(8, printf("Bit-vector size=%d\n",(int)size););
     VERIFY(size,BV_DEFAULT_BITS,"bv_size");
     flags=bv_flags(b);
-    CHECK(flags,FAIL,"bv_flags");
+    CHECK(flags,(uint32)FAIL,"bv_flags");
     MESSAGE(8, printf("Bit-vector flags=%lx\n",(unsigned long)flags););
     ret=bv_delete(b);
     CHECK(ret,FAIL,"bv_delete");
@@ -72,7 +72,7 @@ static void test_1(void)
     MESSAGE(8, printf("Bit-vector size=%d\n",(int)size););
     VERIFY(size,80000,"bv_size");
     flags=bv_flags(b);
-    CHECK(flags,FAIL,"bv_flags");
+    CHECK(flags,(uint32)FAIL,"bv_flags");
     MESSAGE(8, printf("Bit-vector flags=%lx\n",(unsigned long)flags););
     ret=bv_delete(b);
     CHECK(ret,FAIL,"bv_delete");
@@ -95,7 +95,7 @@ static void test_2(void)
     MESSAGE(8, printf("Bit-vector size=%d\n",(int)size););
     VERIFY(size,BV_DEFAULT_BITS,"bv_size");
     flags=bv_flags(b);
-    CHECK(flags,FAIL,"bv_flags");
+    CHECK(flags,(uint32)FAIL,"bv_flags");
     MESSAGE(8, printf("Bit-vector flags=%lx\n",(unsigned long)flags););
     /* Check setting bits */
     ret=bv_set(b,13,BV_TRUE);
@@ -125,7 +125,7 @@ static void test_2(void)
     MESSAGE(8, printf("Bit-vector size=%d\n",(int)size););
     VERIFY(size,1000,"bv_size");
     flags=bv_flags(b);
-    CHECK(flags,FAIL,"bv_flags");
+    CHECK(flags,(uint32)FAIL,"bv_flags");
     MESSAGE(8, printf("Bit-vector flags=%lx\n",(unsigned long)flags););
     /* Check setting bits */
     ret=bv_set(b,13,BV_TRUE);
@@ -168,7 +168,7 @@ static void test_3(void)
     MESSAGE(8, printf("Bit-vector size=%d\n",(int)size););
     VERIFY(size,BV_DEFAULT_BITS,"bv_size");
     flags=bv_flags(b);
-    CHECK(flags,FAIL,"bv_flags");
+    CHECK(flags,(uint32)FAIL,"bv_flags");
     MESSAGE(8, printf("Bit-vector flags=%lx\n",(unsigned long)flags););
 
     /* Check setting bits */

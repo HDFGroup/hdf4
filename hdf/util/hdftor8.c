@@ -151,7 +151,7 @@ main(int argc, char *argv[])
               break;
       }
 
-    err_val = HEvalue(1);
+    err_val = (int)HEvalue(1);
     if ((err_val != DFE_NOMATCH) && (err_val != DFE_NONE))
       {
           if (verbose)
@@ -193,7 +193,7 @@ putRaster(const char *template, int32 xdim, int32 ydim, int imageNumber,
           puts("Unable to open file. Exiting...");
           exit(1);
       }
-    if (fwrite(image, (int) xdim, (int) ydim, fd) != (unsigned) ydim)
+    if (fwrite(image, (size_t) xdim, (size_t) ydim, fd) != (unsigned) ydim)
       {
           puts("Unable to write to file. Exiting...");
           exit(1);
@@ -333,7 +333,7 @@ fillStr(const char **template, char **stringOut, char *string, char specialChar)
     int         templateLen, stringLen, i;
 
     for (templateLen = 1; *(++(*template)) == specialChar; templateLen++) ;
-    stringLen = HDstrlen(string);
+    stringLen = (int)HDstrlen(string);
 
     for (i = templateLen - stringLen; i > 0; i--)
         *(*stringOut)++ = '0';

@@ -179,13 +179,13 @@ imconv(char *outfile, char *imfile, uint16 compress)
           exit(1);
       }
 
-    if ((space = (char *) HDmalloc((uint32) xdim * ydim)) == NULL)
+    if ((space = (char *) HDmalloc((size_t) (xdim * ydim))) == NULL)
       {
           printf("Not enough memory to convert image\n");
           exit(1);
       }
 
-    if ((ret = fread(space, (int) xdim, (int) ydim, fp)) <= 0)
+    if ((ret = (int)fread(space, (size_t) xdim, (size_t) ydim, fp)) <= 0)
       {
           printf("Cannot read image file\n");
           fclose(fp);

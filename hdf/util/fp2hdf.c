@@ -442,7 +442,7 @@ main(int argc, char *argv[])
                     opt.mean = TRUE;
                     break;
                 case 16:    /* mean value */
-                    opt.meanval = atof(argv[i]);
+                    opt.meanval = (float32)atof(argv[i]);
                     break;
                 case ERR:   /* command syntax error */
                 default:
@@ -699,7 +699,7 @@ gdimen(char *infile, struct Input *inp, FILE *strm)
 static int
 gfloat(char *infile, FILE * strm, float32 *fp32, struct Input *in)
 {
-    float64     fp64;
+    float64     fp64=0.0;
 
     const char *err1 = "Unable to get 'float' value from file: %s.\n";
 
@@ -998,7 +998,7 @@ gscale(char *infile, struct Input *in, FILE *strm, int *is_scale)
 static int
 gtoken(char *s)
 {
-    int         len;
+    size_t      len;
     int         token;
 
     const char *err1 = "Illegal argument: %s.\n";
@@ -1326,20 +1326,19 @@ indexes(float32 *scale, int dim, int *idx, int res)
     /*
      * determine the midpoints between scale values
      */
-    if ((midpt = (float32 *) HDmalloc((unsigned int) (dim * sizeof(float32))))
-        == NULL)
+    if ((midpt = (float32 *) HDmalloc((size_t) dim * sizeof(float32))) == NULL)
       {
           (void) fprintf(stderr, err1);
           goto err;
       }
     for (i = 0; i < dim - 1; i++)
-        midpt[i] = (scale[i] + scale[i + 1]) * 0.5;
+        midpt[i] = (scale[i] + scale[i + 1]) * (float32)0.5;
     midpt[dim - 1] = scale[dim - 1] + (scale[dim - 1] - midpt[dim - 2]);
 
     /*
      * determine the distance between pixel locations
      */
-    delta = (scale[dim - 1] - scale[0]) / (res - 1.0);
+    delta = (scale[dim - 1] - scale[0]) / (float32)(res - 1);
 
     /*
      * compute indexes, keeping the index the same until the location
@@ -1399,8 +1398,8 @@ interp(struct Input *in, struct Raster *im)
     float32     loc;
     float32     range;
     float32     ratio;
-    float32     hrange, vrange, drange = 0;
-    float32     hdelta, vdelta, ddelta = 0;
+    float32     hrange, vrange, drange = (float32)0.0;
+    float32     hdelta, vdelta, ddelta = (float32)0.0;
     float32     t1, t2, t3, t4, t5, t6;
     float32    *hratio, *vratio, *dratio = NULL;
     float32    *pt[8];
@@ -1412,7 +1411,7 @@ interp(struct Input *in, struct Raster *im)
      * determine the range of pixel locations
      */
     range = in->max - in->min;
-    ratio = 237.9 / range;
+    ratio = (float32)237.9 / range;
     hrange = in->hscale[in->dims[0] - 1] - in->hscale[0];
     vrange = in->vscale[in->dims[1] - 1] - in->vscale[0];
     if (in->rank == 3)
@@ -1421,16 +1420,15 @@ interp(struct Input *in, struct Raster *im)
     /*
      * determine the distance between pixel locations
      */
-    hdelta = hrange / (im->hres - 1);
-    vdelta = vrange / (im->vres - 1);
+    hdelta = hrange / (float32)(im->hres - 1);
+    vdelta = vrange / (float32)(im->vres - 1);
     if (in->rank == 3)
-        ddelta = drange / (im->dres - 1);
+        ddelta = drange / (float32)(im->dres - 1);
 
     /*
      * allocate dynamic memory for the interpolation ratio buffers
      */
-    if ((hratio = (float32 *) HDmalloc((unsigned int) im->hres *
-                                         sizeof(float32))) == NULL)
+    if ((hratio = (float32 *) HDmalloc((size_t) im->hres * sizeof(float32))) == NULL)
       {
           (void) fprintf(stderr, err1);
           goto err;
@@ -1485,7 +1483,7 @@ interp(struct Input *in, struct Raster *im)
       {
           loc = hdelta * (float) i + in->hscale[0];
           hinc[i] = 0;
-          while ((j < (in->dims[0] - 2)) && ((hrange > 0) ?
+          while ((j < (in->dims[0] - 2)) && ((hrange > (float32)0.0) ?
                      (in->hscale[j + 1] < loc) : (in->hscale[j + 1] > loc)))
             {
                 hinc[i] += 1;
@@ -1496,7 +1494,7 @@ interp(struct Input *in, struct Raster *im)
     for (i = 0, j = 0, voff[0] = 0; i < im->vres; i++)
       {
           loc = vdelta * (float) i + in->vscale[0];
-          while ((j < (in->dims[1] - 2)) && ((vrange > 0) ?
+          while ((j < (in->dims[1] - 2)) && ((vrange > (float32)0.0) ?
                      (in->vscale[j + 1] < loc) : (in->vscale[j + 1] > loc)))
             {
                 voff[i] += 1;
@@ -1510,7 +1508,7 @@ interp(struct Input *in, struct Raster *im)
           for (i = 0, j = 0, doff[0] = 0; i < im->dres; i++)
             {
                 loc = ddelta * (float) i + in->dscale[0];
-                while ((j < (in->dims[2] - 2)) && ((drange > 0) ?
+                while ((j < (in->dims[2] - 2)) && ((drange > (float32)0.0) ?
                      (in->dscale[j + 1] < loc) : (in->dscale[j + 1] > loc)))
                   {
                       doff[i] += 1;
@@ -1546,7 +1544,7 @@ interp(struct Input *in, struct Raster *im)
                           pix = in->max;    /* clip (bug fix) */
                       if (pix < in->min)
                           pix = in->min;    /* ditto */
-                      *ip++ = (ratio * (pix - in->min)) + 1.5;
+                      *ip++ = (unsigned char)((ratio * (pix - in->min)) + (float32)1.5);
                   }
             }
       }
@@ -1584,7 +1582,7 @@ interp(struct Input *in, struct Raster *im)
                                 pix = in->max;  /* clip (bug fix) */
                             if (pix < in->min)
                                 pix = in->min;  /* ditto */
-                            *ip++ = (ratio * (pix - in->min)) + 1.5;
+                            *ip++ = (unsigned char)((ratio * (pix - in->min)) + (float32)1.5);
                         }
                   }
             }
@@ -1658,8 +1656,8 @@ mean(struct Input *in,struct Options * opt)
 {
     float32     delta, delta_max, delta_min;
 
-    delta_max = fabs(in->max - opt->meanval);
-    delta_min = fabs(opt->meanval - in->min);
+    delta_max = (float32)fabs((double)(in->max - opt->meanval));
+    delta_min = (float32)fabs((double)(opt->meanval - in->min));
     delta = (delta_max > delta_min) ? delta_max : delta_min;
 
     in->max = opt->meanval + delta;
@@ -1778,7 +1776,7 @@ pixrep(struct Input *in, struct Raster *im)
     dp = (float32 *) in->data;
     ip = im->image;
     range = in->max - in->min;
-    ratio = 237.9 / range;
+    ratio = (float32)237.9 / range;
 
     /*
      * determine the scale indexes of the horizontal pixel locations
@@ -1847,7 +1845,7 @@ pixrep(struct Input *in, struct Raster *im)
                       if (vidx[j] > ovidx)
                         {
                             for (i = 0; i < in->dims[0]; i++)
-                                pix[i] = (ratio * (*dp++ - in->min)) + 1.5;
+                                pix[i] = (unsigned char )((ratio * (*dp++ - in->min)) + (float32)1.5);
                             for (i = 0; i < im->hres; i++)
                                 *ip++ = pix[hidx[i]];
                             /*
@@ -1970,22 +1968,22 @@ process(struct Options *opt)
           /*
            * get the scale for each axis
            */
-          if ((in.hscale = (float32 *) HDmalloc((unsigned int)
-                             ((in.dims[0] + 1) * sizeof(float32)))) == NULL)
+          if ((in.hscale = (float32 *) HDmalloc((size_t)
+                             (in.dims[0] + 1) * sizeof(float32))) == NULL)
             {
                 (void) fprintf(stderr, err2);
                 goto err;
             }
-          if ((in.vscale = (float32 *) HDmalloc((unsigned int)
-                             ((in.dims[1] + 1) * sizeof(float32)))) == NULL)
+          if ((in.vscale = (float32 *) HDmalloc((size_t)
+                             (in.dims[1] + 1) * sizeof(float32))) == NULL)
             {
                 (void) fprintf(stderr, err2);
                 goto err;
             }
           if (in.rank == 3)
             {
-                if ((in.dscale = (float32 *) HDmalloc((unsigned int)
-                             ((in.dims[2] + 1) * sizeof(float32)))) == NULL)
+                if ((in.dscale = (float32 *) HDmalloc((size_t)
+                             (in.dims[2] + 1) * sizeof(float32))) == NULL)
                   {
                       (void) fprintf(stderr, err2);
                       goto err;
@@ -1998,8 +1996,8 @@ process(struct Options *opt)
            * get the input data
            */
           len = in.dims[0] * in.dims[1] * in.dims[2];
-          if ((in.data = (VOIDP) HDmalloc((unsigned int) (len *
-                                                 sizeof(float32)))) == NULL)
+          if ((in.data = (VOIDP) HDmalloc((size_t) len *
+                                                 sizeof(float32))) == NULL)
             {
                 (void) fprintf(stderr, err2);
                 goto err;

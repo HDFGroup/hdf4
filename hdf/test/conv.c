@@ -127,7 +127,7 @@ test_conv(void)
 
     SEED((int)time(NULL));   /* seed with effectively random number */
 
-    for(t=0; t<sizeof(test_type)/sizeof(int32); t++) {
+    for(t=0; (size_t)t<sizeof(test_type)/sizeof(int32); t++) {
         MESSAGE(5,printf("Testing %s Number-Types\n",test_name[t]););
         MESSAGE(6,printf("seeding int8 array\n"););
 

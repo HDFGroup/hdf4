@@ -63,10 +63,10 @@ fpack(void)
     pntr = databuf;
     /* pack a record at a time */
     for (i = 0; i < NRECORDS; i++) {
-        source[i].temp = 1.11 * (i+1);
-        source[i].height = 2.22 * (i+1);
-        source[i].speed = i;
-        source[i].ident = 'A' + i;
+        source[i].temp = (float32)1.11 * (float32)(i+1);
+        source[i].height = (float32)2.22 * (float32)(i+1);
+        source[i].speed = (int16)i;
+        source[i].ident = (char)('A' + i);
          /* test error checks  */ 
         if (i==0) {
 	    /* test not enough vdata buffer size */
@@ -118,10 +118,10 @@ fpack(void)
     /* pack a field at a time */
     pntr = databuf;
     for (i = 0; i < NRECORDS; i++) {
-        source[i].temp = 3.33 * (i+1);
-        source[i].height = 4.44 * (i+1);
-        source[i].speed = 2*i;
-        source[i].ident = 'a' + i;
+        source[i].temp = (float32)3.33 * (float32)(i+1);
+        source[i].height = (float32)4.44 * (float32)(i+1);
+        source[i].speed = (int16)(2*i);
+        source[i].ident = (char)('a' + i);
 	databufptr[0] = &source[i].speed;
         istat = VSfpack(vdata_id,_HDF_VSPACK,NULL, pntr,rec_size,
                    1, FIELD_3, databufptr);
@@ -214,8 +214,8 @@ funpack(void)
     }
 
     for (i=0; i<NRECORDS; i++)  
-         if ((iident[i] != 'A'+i) || (abs(itemp[i] - 1.11*(i+1)) > EPS) ||
-            (ispeed[i] != i) || (abs(iheight[i] - 2.22*(i+1)) > EPS))  {
+         if ((iident[i] != (char)('A'+i)) || (fabs((double)(itemp[i] - (float32)1.11*(float32)(i+1))) > EPS) ||
+            (ispeed[i] != i) || (fabs((double)(iheight[i] - (float32)2.22*(float32)(i+1))) > EPS))  {
             num_errs++;
             printf(">>> Wrong data1 after VSfpack.\n");
         }
@@ -242,8 +242,8 @@ funpack(void)
     }
  
     for (i=0; i<NRECORDS; i++)  
-         if ((iident[i] != 'a'+i) || (abs(itemp[i] - 3.33*(i+1)) > EPS) ||
-            (ispeed[i] != 2*i) || (abs(iheight[i] - 4.44*(i+1)) > EPS))  {
+         if ((iident[i] != (char)('a'+i)) || (fabs((double)(itemp[i] - (float32)3.33*(float32)(i+1))) > EPS) ||
+            (ispeed[i] != 2*i) || (fabs((double)(iheight[i] - (float32)4.44*(float32)(i+1))) > EPS))  {
             num_errs++;
             printf(">>> Wrong data2 after VSfpack.\n");
         }
@@ -276,7 +276,7 @@ funpack(void)
     }
     for (i=0; i<NRECORDS; i++)
          if ((iident[i] != 'A'+i) || (ispeed[i] != i) || 
-              (abs(iheight[i] - 2.22*(i+1)) > EPS))  {
+              (fabs((double)(iheight[i] - (float32)2.22*(float32)(i+1))) > EPS))  {
             num_errs++;
             printf(">>> Wrong subset data1 after VSfpack.\n");
         }
@@ -294,8 +294,8 @@ funpack(void)
          printf(">>> VSfpack failed in unpacking 2nd subset\n");
     }
     for (i=0; i<NRECORDS; i++)
-         if ((iident[i] != 'a'+i) || (ispeed[i] != 2*i) || 
-              (abs(iheight[i] - 4.44*(i+1)) > EPS)) {
+         if ((iident[i] != (char)('a'+i)) || (ispeed[i] != 2*i) || 
+              (fabs((double)(iheight[i] - (float32)4.44*(float32)(i+1))) > EPS)) {
             num_errs++;
             printf(">>> Wrong subset data2 after VSfpack.\n");
         }
@@ -309,11 +309,11 @@ funpack(void)
 /* main test driver */
 void
 test_vspack(void)
-{    int32 status;
+{
      
-    if ((status = fpack()) == FAIL)
+    if (fpack() == FAIL)
         return;
 
-    if  ((status = funpack()) == FAIL)
+    if  (funpack() == FAIL)
         return;
 }  /* test_vspack */ 

@@ -73,14 +73,14 @@ static char RcsId[] = "@(#)$Revision$";
 #define NBIT_SIZE5  4096
 #define NBIT_BITS5  27
 #define NBIT_MASK5A 0x07ffffff
-#define NBIT_MASK5B 0xffffffff
+#define NBIT_MASK5B 0xffffffffUL
 
 #define NBIT_TAG6   1005
 #define NBIT_REF6   1005
 #define NBIT_SIZE6  4096
 #define NBIT_BITS6  29
-#define NBIT_MASK6A 0xffffffff
-#define NBIT_MASK6B 0xffffffff
+#define NBIT_MASK6A 0xffffffffUL
+#define NBIT_MASK6B 0xffffffffUL
 
 #define NBIT_TAG7   1006
 #define NBIT_REF7   1006
@@ -118,8 +118,8 @@ static char RcsId[] = "@(#)$Revision$";
 #define NBIT_SIZE11  4096
 #define NBIT_BITS11  18
 #define NBIT_OFF11   27
-#define NBIT_MASK11A 0xf00003ff
-#define NBIT_MASK11B 0xffffffff
+#define NBIT_MASK11A 0xf00003ffUL
+#define NBIT_MASK11B 0xffffffffUL
 
 #define NBIT_TAG12   1011
 #define NBIT_REF12   1011
@@ -127,7 +127,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define NBIT_BITS12  27
 #define NBIT_OFF12   31
 #define NBIT_MASK12A 0x0000001f
-#define NBIT_MASK12B 0xffffffff
+#define NBIT_MASK12B 0xffffffffUL
 
 static void test_nbit1(int32 fid);
 static void test_nbit2(int32 fid);
@@ -292,7 +292,7 @@ test_nbit3(int32 fid)
 
     outbuf = (uint16 *) HDmalloc(NBIT_SIZE3 * sizeof(uint16));
     inbuf = (uint16 *) HDmalloc(NBIT_SIZE3 * sizeof(uint16));
-    convbuf = (uint8 *) HDmalloc(NBIT_SIZE3 * DFKNTsize(DFNT_UINT16));
+    convbuf = (uint8 *) HDmalloc(NBIT_SIZE3 * (size_t)DFKNTsize(DFNT_UINT16));
 
     for (i = 0; i < NBIT_SIZE3; i++)    /* fill with pseudo-random data */
         outbuf[i] = (uint16) (i * 3);
@@ -373,7 +373,7 @@ test_nbit4(int32 fid)
 
     outbuf = (int16 *) HDmalloc(NBIT_SIZE4 * sizeof(int16));
     inbuf = (int16 *) HDmalloc(NBIT_SIZE4 * sizeof(int16));
-    convbuf = (uint8 *) HDmalloc(NBIT_SIZE4 * DFKNTsize(DFNT_INT16));
+    convbuf = (uint8 *) HDmalloc(NBIT_SIZE4 * (size_t)DFKNTsize(DFNT_INT16));
 
     for (i = 0; i < NBIT_SIZE4; i++)    /* fill with pseudo-random data */
         outbuf[i] = (int16) (((i * 3) % (64 * 256)) - (32 * 256));
@@ -457,10 +457,10 @@ test_nbit5(int32 fid)
 
     outbuf = (uint32 *) HDmalloc(NBIT_SIZE5 * sizeof(uint32));
     inbuf = (uint32 *) HDmalloc(NBIT_SIZE5 * sizeof(uint32));
-    convbuf = (uint8 *) HDmalloc(NBIT_SIZE5 * DFKNTsize(DFNT_UINT32));
+    convbuf = (uint8 *) HDmalloc(NBIT_SIZE5 * (size_t)DFKNTsize(DFNT_UINT32));
 
     for (i = 0; i < NBIT_SIZE5; i++)    /* fill with pseudo-random data */
-        outbuf[i] = (i * 300000);
+        outbuf[i] = (uint32)(i * 300000);
 
     ref1 = Hnewref(fid);
     CHECK(ref1, 0, "Hnewref");
@@ -509,7 +509,7 @@ test_nbit5(int32 fid)
     for (i = 0; i < NBIT_SIZE5; i++)
       {
           test_out = outbuf[i] & NBIT_MASK5A;
-          test_in = inbuf[i] & NBIT_MASK5B;
+          test_in = (uintn)inbuf[i] & (uintn)NBIT_MASK5B;
 #ifndef TESTING
           if ((uint32) test_in != (uint32) test_out)
             {
@@ -542,7 +542,7 @@ test_nbit6(int32 fid)
 
     outbuf = (int32 *) HDmalloc(NBIT_SIZE6 * sizeof(int32));
     inbuf = (int32 *) HDmalloc(NBIT_SIZE6 * sizeof(int32));
-    convbuf = (uint8 *) HDmalloc(NBIT_SIZE6 * DFKNTsize(DFNT_INT32));
+    convbuf = (uint8 *) HDmalloc(NBIT_SIZE6 * (size_t)DFKNTsize(DFNT_INT32));
 
     for (i = 0; i < NBIT_SIZE6; i++)    /* fill with pseudo-random data */
         outbuf[i] = ((i * 300001) % ((int32) 16 * 256 * 256 * 256)) - ((int32) 8 * 256 * 256 * 256);
@@ -593,8 +593,8 @@ test_nbit6(int32 fid)
 
     for (i = 0; i < NBIT_SIZE6; i++)
       {
-          test_out = outbuf[i] & NBIT_MASK6A;
-          test_in = inbuf[i] & NBIT_MASK6B;
+          test_out = (int32)((uintn)outbuf[i] & (uintn)NBIT_MASK6A);
+          test_in = (int32)((uintn)inbuf[i] & (uintn)NBIT_MASK6B);
 #ifndef TESTING
           if ((int32) test_in != (int32) test_out)
             {
@@ -763,7 +763,7 @@ test_nbit9(int32 fid)
 
     outbuf = (uint16 *) HDmalloc(NBIT_SIZE9 * sizeof(uint16));
     inbuf = (uint16 *) HDmalloc(NBIT_SIZE9 * sizeof(uint16));
-    convbuf = (uint8 *) HDmalloc(NBIT_SIZE9 * DFKNTsize(DFNT_UINT16));
+    convbuf = (uint8 *) HDmalloc(NBIT_SIZE9 * (size_t)DFKNTsize(DFNT_UINT16));
 
     for (i = 0; i < NBIT_SIZE9; i++)    /* fill with pseudo-random data */
         outbuf[i] = (uint16) (i * 3);
@@ -848,7 +848,7 @@ test_nbit10(int32 fid)
 
     outbuf = (int16 *) HDmalloc(NBIT_SIZE10 * sizeof(int16));
     inbuf = (int16 *) HDmalloc(NBIT_SIZE10 * sizeof(int16));
-    convbuf = (uint8 *) HDmalloc(NBIT_SIZE10 * DFKNTsize(DFNT_UINT16));
+    convbuf = (uint8 *) HDmalloc(NBIT_SIZE10 * (size_t)DFKNTsize(DFNT_UINT16));
 
     for (i = 0; i < NBIT_SIZE10; i++)   /* fill with pseudo-random data */
         outbuf[i] = (int16) ((((i * 3) % (2 * 256)) - (256)) << ((NBIT_OFF10 - NBIT_BITS10) + 1));
@@ -942,10 +942,10 @@ test_nbit11(int32 fid)
 
     outbuf = (uint32 *) HDmalloc(NBIT_SIZE11 * sizeof(uint32));
     inbuf = (uint32 *) HDmalloc(NBIT_SIZE11 * sizeof(uint32));
-    convbuf = (uint8 *) HDmalloc(NBIT_SIZE11 * DFKNTsize(DFNT_UINT32));
+    convbuf = (uint8 *) HDmalloc(NBIT_SIZE11 * (size_t)DFKNTsize(DFNT_UINT32));
 
     for (i = 0; i < NBIT_SIZE11; i++)   /* fill with pseudo-random data */
-        outbuf[i] = (i * 304327);
+        outbuf[i] = (uint32)(i * 304327);
 
     ref1 = Hnewref(fid);
     CHECK(ref1, 0, "Hnewref");
@@ -993,8 +993,8 @@ test_nbit11(int32 fid)
 
     for (i = 0; i < NBIT_SIZE11; i++)
       {
-          test_out = (outbuf[i] | NBIT_MASK11A) & NBIT_MASK11B;
-          test_in = inbuf[i] & NBIT_MASK11B;
+          test_out = (outbuf[i] | (uintn)NBIT_MASK11A) & (uintn)NBIT_MASK11B;
+          test_in = inbuf[i] & (uintn)NBIT_MASK11B;
 #ifndef TESTING
           if ((uint32) test_in != (uint32) test_out)
             {
@@ -1027,7 +1027,7 @@ test_nbit12(int32 fid)
 
     outbuf = (int32 *) HDmalloc(NBIT_SIZE12 * sizeof(int32));
     inbuf = (int32 *) HDmalloc(NBIT_SIZE12 * sizeof(int32));
-    convbuf = (uint8 *) HDmalloc(NBIT_SIZE12 * DFKNTsize(DFNT_INT32));
+    convbuf = (uint8 *) HDmalloc(NBIT_SIZE12 * (size_t)DFKNTsize(DFNT_INT32));
 
     for (i = 0; i < NBIT_SIZE12; i++)   /* fill with pseudo-random data */
         outbuf[i] = (((i * 300001) % ((int32) 4 * 256 * 256 * 256)) - ((int32) 2 * 256 * 256 * 256)) << ((NBIT_OFF10 - NBIT_BITS10) + 1);
@@ -1078,8 +1078,8 @@ test_nbit12(int32 fid)
 
     for (i = 0; i < NBIT_SIZE12; i++)
       {
-          test_out = (outbuf[i] | NBIT_MASK12A) & NBIT_MASK12B;
-          test_in = inbuf[i] & NBIT_MASK12B;
+          test_out = (int32)(((uintn)outbuf[i] | (uintn)NBIT_MASK12A) & (uintn)NBIT_MASK12B);
+          test_in = (int32)((uintn)inbuf[i] & (uintn)NBIT_MASK12B);
 #ifndef TESTING
           if ((int32) test_in != (int32) test_out)
             {

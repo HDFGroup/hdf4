@@ -78,23 +78,23 @@ test_hfile(void)
     ret_bool = (intn) Hishdf(TESTFILE_NAME);
     CHECK(ret_bool, FALSE, "Hishdf");
 
-    ret = Hnewref(fid);
+    ret = (int32)Hnewref(fid);
     CHECK(ret, FAIL, "Hnewref");
 
     MESSAGE(5, printf("Reading / Writing to file\n");
         );
     ret = Hputelement(fid, (uint16) 100, 1,
-                  (uint8 *) "testing 100 1", HDstrlen("testing 100 1") + 1);
+                  (uint8 *) "testing 100 1", (int32)HDstrlen("testing 100 1") + 1);
     CHECK(ret, FAIL, "Hputelement");
 
     ret = Hputelement(fid, (uint16) 100, (uint16) 4, outbuf, 2000);
     CHECK(ret, FAIL, "Hputelement");
 
-    ret = Hnewref(fid);
+    ret = (int32)Hnewref(fid);
     CHECK(ret, FAIL, "Hnewref");
 
     ret = Hputelement(fid, (uint16) 103, (uint16) 2,
-                  (uint8 *) "element 103 2", HDstrlen("element 103 2") + 1);
+                  (uint8 *) "element 103 2", (int32)HDstrlen("element 103 2") + 1);
     CHECK(ret, FAIL, "Hputlement");
 
     ret = Hgetelement(fid, (uint16) 100, (uint16) 4, inbuf);
@@ -122,7 +122,7 @@ test_hfile(void)
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen");
 
-    ret = Hnewref(fid);
+    ret = (int32)Hnewref(fid);
     CHECK(ret, FAIL, "Hnewref");
 
     aid1 = Hstartread(fid, 100, 1);
@@ -149,7 +149,7 @@ test_hfile(void)
           errors++;
       }
 
-    ret = Hnewref(fid);
+    ret = (int32)Hnewref(fid);
     CHECK(ret, FAIL, "Hnewref");
 
     MESSAGE(5, printf("Testing a number of searching schemes\n");
@@ -220,7 +220,7 @@ test_hfile(void)
           errors++;
       }
 
-    ret = Hnewref(fid1);
+    ret = (int32)Hnewref(fid1);
     CHECK(ret, FAIL, "Hnewref");
 
     ret = Hclose(fid);

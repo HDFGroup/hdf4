@@ -59,12 +59,7 @@ main(int argc, char *argv[])
     int         Loop, Loop1;
     int         Summary = 0;
     int         CleanUp = 1;
-    int         ret;
     int         num_tests=0;
-    uint32      lmajor, lminor, lrelease;
-    char        lstring[81];
-    char        verb_env[81];
-    char        verb_tmp[81];
     FILE	*cmdfile;
     char	*cmdfilename="fortest.arg";
 

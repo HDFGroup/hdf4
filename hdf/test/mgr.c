@@ -151,7 +151,9 @@ const float64 image4[19][17][2]={
 {{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0}}
 };
 
+#ifdef QAK
 static void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt);
+#endif /* QAK */
 static void test_mgr_init(void);
 static void test_mgr_image_b1a(void);
 static void test_mgr_image_b1b(void);
@@ -450,9 +452,9 @@ static void test_mgr_image_b1a(void)
         riid=GRselect(grid,index);
         CHECK(riid,FAIL,"GRselect");
 
-        HDmemset(image,255,dims[0]*dims[1]*3*sizeof(float32));
+        HDmemset(image,255,(size_t)(dims[0]*dims[1]*3)*sizeof(float32));
         /* '0' is the default fill value */
-        HDmemset(image0,0,dims[0]*dims[1]*3*sizeof(float32));
+        HDmemset(image0,0,(size_t)(dims[0]*dims[1]*3)*sizeof(float32));
 
         start[0]=start[1]=0;
         stride[0]=stride[1]=1;
@@ -531,7 +533,7 @@ static void test_mgr_image_b1b(void)
         riid=GRselect(grid,index);
         CHECK(riid,FAIL,"GRselect");
 
-        HDmemset(image,0,dims[0]*dims[1]*4*sizeof(float64));
+        HDmemset(image,0,(size_t)(dims[0]*dims[1]*4)*sizeof(float64));
         /* fill the memory-only with the default pixel fill-value */
         HDmemfill(image0,fill_pixel,sizeof(fill_pixel),sizeof(image0)/sizeof(fill_pixel));
 
@@ -923,7 +925,7 @@ static void test_mgr_image_b2a1bb2(void)
         ret=GRreadimage(riid,start,stride,count,image);
         CHECK(ret,FAIL,"GRreadimage");
 
-        if(0!=HDmemcmp(image,sub_image,count[XDIM]*count[YDIM]*sizeof(fill_pixel)))
+        if(0!=HDmemcmp(image,sub_image,(size_t)(count[XDIM]*count[YDIM])*sizeof(fill_pixel)))
           {
               MESSAGE(3, printf("%d:Error reading data for new image with default fill-value, sub-setted image\n",__LINE__););
               num_errs++;
@@ -999,7 +1001,7 @@ static void test_mgr_image_b2a1cc1(void)
         intn i,j,k;     /* local counting variables */
 
         /* fill the memory-only with the default pixel fill-values */
-        HDmemset(image0,0,sizeof(TEST_VARTYPE)*TEST_YDIM*TEST_XDIM*TEST_NCOMP);
+        HDmemset(image0,0,sizeof(TEST_VARTYPE)*(size_t)(TEST_YDIM*TEST_XDIM*TEST_NCOMP));
         sub_ptr=(TEST_VARTYPE *)sub_image;
         for(i=0; i<TEST_YDIM; i++)
           {
@@ -1018,7 +1020,7 @@ static void test_mgr_image_b2a1cc1(void)
           } /* end for */
 
         /* initialize the disk buffer */
-        HDmemset(image,255,sizeof(TEST_VARTYPE)*TEST_YDIM*TEST_XDIM*TEST_NCOMP);
+        HDmemset(image,255,sizeof(TEST_VARTYPE)*(size_t)(TEST_YDIM*TEST_XDIM*TEST_NCOMP));
 
         /* Create empty image with default fill value */
         riid=GRcreate(grid,"Test Image B2a1cc",TEST_NCOMP,TEST_NT,MFGR_INTERLACE_PIXEL,dims);
@@ -1191,7 +1193,7 @@ static void test_mgr_image_b2a1cc2(void)
         ret=GRreadimage(riid,start,stride,count,image);
         CHECK(ret,FAIL,"GRreadimage");
 
-        if(0!=HDmemcmp(image,sub_image,count[XDIM]*count[YDIM]*sizeof(fill_pixel)))
+        if(0!=HDmemcmp(image,sub_image,(size_t)(count[XDIM]*count[YDIM])*sizeof(fill_pixel)))
           {
               MESSAGE(3, printf("%d:Error reading data for new image with default fill-value, sub-sampled image\n",__LINE__););
               num_errs++;
@@ -1374,9 +1376,9 @@ static void test_mgr_image_b2a2bb(void)
         uint16 ref;     /* RI ref #. */
         int32 index;    /* RI index # */
         TEST_VARTYPE image[TEST_YDIM][TEST_XDIM][TEST_NCOMP]; /* space for the image data */
-        TEST_VARTYPE fill_pixel[TEST_NCOMP]={-3.75,4.5,-0.375,100.125};   /* pixel with fill values */
-        TEST_VARTYPE pixel[TEST_NCOMP]={-20.00,4.875,0.125,1.0};   /* pixel with fill values */
-        TEST_VARTYPE pixel2[TEST_NCOMP]={1.25,1.0,-6500.0,350.0};   /* pixel with fill values */
+        TEST_VARTYPE fill_pixel[TEST_NCOMP]={(TEST_VARTYPE)-3.75,(TEST_VARTYPE)4.5,(TEST_VARTYPE)-0.375,(TEST_VARTYPE)100.125};   /* pixel with fill values */
+        TEST_VARTYPE pixel[TEST_NCOMP]={(TEST_VARTYPE)-20.00,(TEST_VARTYPE)4.875,(TEST_VARTYPE)0.125,(TEST_VARTYPE)1.0};   /* pixel with fill values */
+        TEST_VARTYPE pixel2[TEST_NCOMP]={(TEST_VARTYPE)1.25,(TEST_VARTYPE)1.0,(TEST_VARTYPE)-6500.0,(TEST_VARTYPE)350.0};   /* pixel with fill values */
         TEST_VARTYPE image0[TEST_YDIM][TEST_XDIM][TEST_NCOMP]; /* space for the image data */
         TEST_VARTYPE sub_image[TEST_YDIM][TEST_XDIM][TEST_NCOMP]; /* space for the image data */
         TEST_VARTYPE *sub_ptr;
@@ -1680,7 +1682,7 @@ static void test_mgr_image_b2a2cc(void)
           } /* end for */
 
         /* initialize the disk buffer */
-        HDmemset(image,255,sizeof(TEST_VARTYPE)*TEST_YDIM*TEST_XDIM*TEST_NCOMP);
+        HDmemset(image,255,sizeof(TEST_VARTYPE)*(size_t)(TEST_YDIM*TEST_XDIM*TEST_NCOMP));
 
         /* Create empty image with default fill value */
         riid=GRcreate(grid,"Test Image B2a2cc",TEST_NCOMP,TEST_NT,MFGR_INTERLACE_PIXEL,dims);
@@ -1972,10 +1974,10 @@ static void test_mgr_image_b2b1(void)
                   int32 start[2];
                   int32 stride[2];
 
-                    img_data=HDmalloc(dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATIVE));
+                    img_data=HDmalloc((size_t)(dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATIVE)));
                     CHECK(img_data,NULL,"HDmalloc");
 
-                    HDmemset(img_data,0,dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATIVE));
+                    HDmemset(img_data,0,(size_t)(dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATIVE)));
 
                     start[0]=start[1]=0;
                     stride[0]=stride[1]=1;
@@ -2178,7 +2180,7 @@ test_mgr_interlace(void)
               ret=GRgetiminfo(riid,name,&ncomp,&nt,&il,dimsizes,&n_attr);
               CHECK(ret,FAIL,"GRgetiminfo");
 
-              image=HDmalloc(dimsizes[XDIM]*dimsizes[YDIM]*ncomp*DFKNTsize(nt|DFNT_NATIVE));
+              image=HDmalloc((size_t)(dimsizes[XDIM]*dimsizes[YDIM]*ncomp*DFKNTsize(nt|DFNT_NATIVE)));
               CHECK(image,NULL,"HDmalloc");
 
               start[0]=start[1]=0;
@@ -2190,13 +2192,13 @@ test_mgr_interlace(void)
                 {
                     VOIDP pixel_buf;
 
-                    img_data=HDmalloc(dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATIVE));
+                    img_data=HDmalloc((size_t)(dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATIVE)));
                     CHECK(img_data,NULL,"HDmalloc");
 
-                    pixel_buf=HDmalloc(dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATIVE));
+                    pixel_buf=HDmalloc((size_t)(dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATIVE)));
                     CHECK(pixel_buf,NULL,"HDmalloc");
 
-                    HDmemset(img_data,0,dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATIVE));
+                    HDmemset(img_data,0,(size_t)(dimsizes[0]*dimsizes[1]*ncomp*DFKNTsize(nt|DFNT_NATIVE)));
 
                     ret=GRreqimageil(riid,j);
                     CHECK(ret,FAIL,"GRreqimageil");
@@ -2205,9 +2207,9 @@ test_mgr_interlace(void)
                     stride[0]=stride[1]=1;
                     ret=GRreadimage(riid,start,stride,dimsizes,img_data);
 
-                    GRIil_convert(image,MFGR_INTERLACE_PIXEL,pixel_buf,j,dimsizes,ncomp,nt);
+                    GRIil_convert(image,MFGR_INTERLACE_PIXEL,pixel_buf,(gr_interlace_t)j,dimsizes,ncomp,nt);
                     if(0!=HDmemcmp(img_data,pixel_buf,
-                          dimsizes[XDIM]*dimsizes[YDIM]*ncomp*DFKNTsize(nt|DFNT_NATIVE)))
+                          (size_t)(dimsizes[XDIM]*dimsizes[YDIM]*ncomp*DFKNTsize(nt|DFNT_NATIVE))))
                       {
                           MESSAGE(3, printf("Error reading data for image %d, j=%d\n",i,j););
                           num_errs++;
@@ -2324,7 +2326,7 @@ test_mgr_lut(void)
         pal_il=(int32)MFGR_INTERLACE_PIXEL;
         pal_entries=256;
 
-        pal_data=HDmalloc(pal_entries*pal_ncomp*DFKNTsize(pal_nt|DFNT_NATIVE));
+        pal_data=HDmalloc((size_t)(pal_entries*pal_ncomp*DFKNTsize(pal_nt|DFNT_NATIVE)));
         CHECK(pal_data,NULL,"HDmalloc");
 
         /* Initialize the palette data, in 'pixel' interlace */
@@ -2343,13 +2345,13 @@ test_mgr_lut(void)
               VOIDP pixel_buf;
               int32 dimsizes2[2];
 
-              tmp_data=HDmalloc(pal_entries*pal_ncomp*DFKNTsize(pal_nt|DFNT_NATIVE));
+              tmp_data=HDmalloc((size_t)(pal_entries*pal_ncomp*DFKNTsize(pal_nt|DFNT_NATIVE)));
               CHECK(tmp_data,NULL,"HDmalloc");
 
-              pixel_buf=HDmalloc(pal_entries*pal_ncomp*DFKNTsize(pal_nt|DFNT_NATIVE));
+              pixel_buf=HDmalloc((size_t)(pal_entries*pal_ncomp*DFKNTsize(pal_nt|DFNT_NATIVE)));
               CHECK(pixel_buf,NULL,"HDmalloc");
 
-              HDmemset(tmp_data,0,pal_entries*pal_ncomp*DFKNTsize(pal_nt|DFNT_NATIVE));
+              HDmemset(tmp_data,0,(size_t)(pal_entries*pal_ncomp*DFKNTsize(pal_nt|DFNT_NATIVE)));
 
               ret=GRreqlutil(lutid,j);
               CHECK(ret,FAIL,"GRreqlutil");
@@ -2358,9 +2360,9 @@ test_mgr_lut(void)
 
               dimsizes2[XDIM]=1;
               dimsizes2[YDIM]=pal_entries;
-              GRIil_convert(pal_data,MFGR_INTERLACE_PIXEL,pixel_buf,j,dimsizes2,pal_ncomp,pal_nt);
+              GRIil_convert(pal_data,MFGR_INTERLACE_PIXEL,pixel_buf,(gr_interlace_t)j,dimsizes2,pal_ncomp,pal_nt);
               if(0!=HDmemcmp(tmp_data,pixel_buf,
-                    pal_entries*pal_ncomp*DFKNTsize(pal_nt|DFNT_NATIVE)))
+                    (size_t)(pal_entries*pal_ncomp*DFKNTsize(pal_nt|DFNT_NATIVE))))
                 {
                     MESSAGE(3, printf("Error reading data for palette j=%d\n",j););
                     num_errs++;

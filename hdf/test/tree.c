@@ -68,6 +68,8 @@ swap_arr(int32 *arr, intn a, intn b)
 intn
 tcompare(VOIDP k1, VOIDP k2, intn cmparg)
 {
+    /* shut compiler up */
+    cmparg=cmparg;
     return ((intn) ((*(int32 *) k1) - (*(int32 *) k2)));
 }
 
@@ -82,8 +84,8 @@ test_tbbt(void)
     TBBT_TREE  *tree;
     VOIDP      *r;
 
-    t = time(NULL);
-    SEED(t);
+    t = (intn)time(NULL);
+    SEED((uintn)t);
 
     for (test_size = 3; test_size <= MAX_TEST_SIZE; test_size++)
       {

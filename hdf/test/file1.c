@@ -121,14 +121,15 @@ test_file_limits(void)
     ret = Hclose(files[0]);
 } /* end test_file_limits() */
 
+#define TAG1    ((uint16)1000)
+#define TAG2    ((uint16)1001)
+
 static void
 test_ref_limits(void)
 {
     int32 i;                /* local counting variable */
     int32 fid;              /* file ID */
     int32 iloop;
-    const uint16 tag1=1000, /* tags to create objects with */
-        tag2=1001;
 
     MESSAGE(6, printf("Testing reference # limits\n"););
     MESSAGE(7, printf("Writing out data\n"););
@@ -147,11 +148,11 @@ test_ref_limits(void)
                 int32 ret;
 
                 /* Write out data to tag1 */
-                ref=Htagnewref(fid,tag1);
+                ref=Htagnewref(fid,TAG1);
                 CHECK(ref, 0, "Htagnewref");
-                aid=Hstartwrite(fid,tag1,ref,sizeof(int32));
+                aid=Hstartwrite(fid,TAG1,ref,sizeof(int32));
                 CHECK(aid, FAIL, "Hstartwrite");
-                data=ref;
+                data=(int32)ref;
                 ret=Hwrite(aid,sizeof(int32),&data);
                 CHECK(ret, FAIL, "Hwrite");
                 ret=Hendaccess(aid);
@@ -162,9 +163,9 @@ test_ref_limits(void)
                     break;
 
                 /* Write out data to tag2 */
-                ref=Htagnewref(fid,tag2);
+                ref=Htagnewref(fid,TAG2);
                 CHECK(ref, 0, "Htagnewref");
-                aid=Hstartwrite(fid,tag2,ref,sizeof(int32));
+                aid=Hstartwrite(fid,TAG2,ref,sizeof(int32));
                 CHECK(aid, FAIL, "Hstartwrite");
                 data=ref<<16;
                 ret=Hwrite(aid,sizeof(int32),&data);
@@ -192,7 +193,7 @@ test_ref_limits(void)
               int32 ret;
 
               /* Read in data from tag1 */
-              aid1=Hstartread(fid,tag1,DFREF_WILDCARD);
+              aid1=Hstartread(fid,TAG1,DFREF_WILDCARD);
               CHECK(aid1, FAIL, "Hstartread");
               ret=Hread(aid1,sizeof(int32),&data);
               CHECK(ret, FAIL, "Hread");
@@ -201,7 +202,7 @@ test_ref_limits(void)
               VERIFY((uint16)data,ref,"Hread");
 
               /* Read in data from tag2 */
-              aid2=Hstartread(fid,tag2,DFREF_WILDCARD);
+              aid2=Hstartread(fid,TAG2,DFREF_WILDCARD);
               CHECK(aid2, FAIL, "Hstartread");
               ret=Hread(aid2,sizeof(int32),&data);
               CHECK(ret, FAIL, "Hread");
@@ -209,7 +210,7 @@ test_ref_limits(void)
               CHECK(ret, FAIL, "Hinquire");
               VERIFY((uint32)data,(((uint32)ref)<<16),"Hread");
 
-              while(Hnextread(aid1,tag1,DFTAG_WILDCARD,DF_CURRENT)!=FAIL)
+              while(Hnextread(aid1,TAG1,DFTAG_WILDCARD,DF_CURRENT)!=FAIL)
                 {
                     ret=Hread(aid1,sizeof(int32),&data);
                     CHECK(ret, FAIL, "Hread");
@@ -217,7 +218,7 @@ test_ref_limits(void)
                     CHECK(ret, FAIL, "Hinquire");
                     VERIFY((uint16)data,ref,"Hread");
 
-                  if(Hnextread(aid2,tag2,DFTAG_WILDCARD,DF_CURRENT)!=FAIL)
+                  if(Hnextread(aid2,TAG2,DFTAG_WILDCARD,DF_CURRENT)!=FAIL)
                     {
                         ret=Hread(aid2,sizeof(int32),&data);
                         CHECK(ret, FAIL, "Hread");

@@ -45,23 +45,23 @@ test_hblocks(void)
     fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
     CHECK(fid, FAIL, "Hopen");
 
-    ret = Hnewref(fid);
+    ret = (int32)Hnewref(fid);
     CHECK(ret, FAIL, "Hnewref");
 
     MESSAGE(5, printf("Write an element and then promote to Linked Blocks\n");
         );
     ret = Hputelement(fid, (uint16) 1000, (uint16) 1,
                       (uint8 *) "element 1000 1 wrong ",
-                      HDstrlen("element 1000 1 wrong ") + 1);
+                      (int32)HDstrlen("element 1000 1 wrong ") + 1);
     CHECK(ret, FAIL, "Hputelement");
 
     aid1 = HLcreate(fid, 1000, 1, 10, 10);
     CHECK(aid1, FAIL, "HLcreate");
 
-    ret = Hseek(aid1, HDstrlen("element 1000 1 "), DF_START);
+    ret = Hseek(aid1, (int32)HDstrlen("element 1000 1 "), DF_START);
     CHECK(ret, FAIL, "Hseek");
 
-    ret = Hwrite(aid1, HDstrlen("correct") + 1, (uint8 *) "correct");
+    ret = Hwrite(aid1, (int32)HDstrlen("correct") + 1, (uint8 *) "correct");
     if (ret != (int32) HDstrlen("correct") + 1)
       {
           fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int) ret);
@@ -86,13 +86,13 @@ test_hblocks(void)
     ret = Hendaccess(aid1);
     CHECK(ret, FAIL, "Hendaccess");
 
-    ret = Hnewref(fid);
+    ret = (int32)Hnewref(fid);
     CHECK(ret, FAIL, "Hnewref");
 
     aid1 = HLcreate(fid, 1000, 2, 128, 16);
     CHECK(aid1, FAIL, "HLcreate");
 
-    ret = Hwrite(aid1, HDstrlen("element 1000 2") + 1, (uint8 *) "element 1000 2");
+    ret = Hwrite(aid1, (int32)HDstrlen("element 1000 2") + 1, (uint8 *) "element 1000 2");
     if (ret != (int32) HDstrlen("element 1000 2") + 1)
       {
           fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int) ret);
@@ -142,7 +142,7 @@ test_hblocks(void)
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen");
 
-    ret = Hnewref(fid);
+    ret = (int32)Hnewref(fid);
     CHECK(ret, FAIL, "Hnewref");
 
     MESSAGE(5, printf("Verifying data\n");
@@ -176,7 +176,7 @@ test_hblocks(void)
           errors++;
       }
 
-    ret = Hnewref(fid);
+    ret = (int32)Hnewref(fid);
     CHECK(ret, FAIL, "Hnewref");
 
     ret = Hnextread(aid1, 1000, DFREF_WILDCARD, DF_CURRENT);
@@ -255,7 +255,7 @@ test_hblocks(void)
     fid1 = Hopen(TESTFILE_NAME, DFACC_READ, 0);
     CHECK(fid1, FAIL, "Hopen");
 
-    ret = Hnewref(fid1);
+    ret = (int32)Hnewref(fid1);
     CHECK(ret, FAIL, "Hnewref");
 
     MESSAGE(5, printf("Closing the files\n");

@@ -1,6 +1,6 @@
 
 #include <stdio.h>
-#include "df.h"
+#include "hdf.h"
 
 /*
  * Name:
@@ -29,7 +29,7 @@
  *      data element value = row value + column value [+ plane value, if rank=3]
  */
 int
-main(int argc, char * argv[])
+main(int argc, char * argv[] )
 {
     int         nrow = 3, ncol = 4, npln = 5, ione = 1;
     int         i, j, k;
@@ -37,9 +37,9 @@ main(int argc, char * argv[])
 
     float32     b32r2[3][4], b32r3[5][3][4];
     float32     row4[3], col4[4], pln4[5];
-    float32     rowo4 = 11.0e0, colo4 = 21.0e0, plno4 = 51.0e0;
-    float32     rowi4 = 1.0e0, coli4 = 2.0e0, plni4 = 5.0e0;
-    float32     ezero = 0.0e0;
+    float32     rowo4 = (float32)11.0e0, colo4 = (float32)21.0e0, plno4 = (float32)51.0e0;
+    float32     rowi4 = (float32)1.0e0, coli4 = (float32)2.0e0, plni4 = (float32)5.0e0;
+    float32     ezero = (float32)0.0e0;
 
     float64     b64r2[3][4], b64r3[5][3][4];
     float64     row8[3], col8[4], pln8[5];
@@ -50,6 +50,9 @@ main(int argc, char * argv[])
     const char *text = "TEXT";
     const char *fp32 = "FP32";
     const char *fp64 = "FP64";
+
+    /* shut compiler up */
+    argv=argv; argc=argc;
 
     /*
      * initialize the row, column, and plane vectors

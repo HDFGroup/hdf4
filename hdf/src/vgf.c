@@ -313,9 +313,6 @@ nvisvsc(intf * vkey, intf * id)
 FRETVAL(intf)
 nvsatchc(HFILEID * f, intf * vsid, _fcd accesstype)
 {
-    intf        vkey;
-    char       *acc;
-
     /* need not HDf2cstring since only first char is accessed. */
     return(VSattach(*f, *vsid, _fcdtocp(accesstype)));
 }
@@ -455,8 +452,8 @@ nvsinqc(intf * vkey, intf * nelt, intf * interlace, _fcd fields, intf * eltsize,
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
     tvsname = (char *) HDmalloc(*vsnamelen + 1);
     if (!tfields){
-	HDfree(tfields);
-        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        HDfree(tfields);
+        HRETURN_ERROR(DFE_NOSPACE, FAIL)
     }
     
     /* the following contains error for nelt, interlace and eltsize */

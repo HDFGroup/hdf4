@@ -47,7 +47,7 @@ HEif(HE_CMD * cmd)
         return FAIL;
 
     /* execute the sub list only is the predicates are satisfied */
-    if (satPred(currDesc(), pred))
+    if (satPred(currDesc, pred))
       {
           /* go through sub-list until an end is encountered */
           for (cmdTail = cmd->sub;
@@ -93,7 +93,7 @@ HEselect(HE_CMD * cmd)
 
     /* step through all elements */
     for (he_currDesc = 0; he_currDesc < he_numDesc; he_currDesc++)
-        if (currTag() != DFTAG_NULL && satPred(currDesc(), pred))
+        if (currTag != DFTAG_NULL && satPred(currDesc, pred))
             for (cmdTail = cmd->sub; HDstrcmp(cmdTail->argv[0], "end");
                  cmdTail = cmdTail->next)
                 if (cmdTail->func)
@@ -476,7 +476,7 @@ dump(int32 length, int offset, char *format, int raw_flag)
                   intn        sizeintn;
 
                   sizeintn = sizeof(intn);
-                  idata = (intn *) HDmalloc(length / 4 * sizeintn);
+                  idata = (intn *) HDmalloc((size_t)(length / 4 * sizeintn));
                   DFKconvert((VOIDP) (data + offset), (VOIDP) idata, DFNT_NINT32 | raw_flag,
                              length / 4, DFACC_READ, 0, 0);
                   printf("%8d: ", offset);
@@ -500,7 +500,7 @@ dump(int32 length, int offset, char *format, int raw_flag)
                   intn        sizeintn;
 
                   sizeintn = sizeof(intn);
-                  idata = (intn *) HDmalloc(length / 4 * sizeintn);
+                  idata = (intn *) HDmalloc((size_t)(length / 4 * sizeintn));
                   DFKconvert((VOIDP) (data + offset), (VOIDP) idata, DFNT_NINT32 | raw_flag,
                              length / 4, DFACC_READ, 0, 0);
                   printf("%8d: ", offset);
@@ -667,7 +667,7 @@ info(int all, int longout, int group, int label)
           return HE_OK;
       }
 
-    if (!group || (!isGrp(currTag()) && !all))
+    if (!group || (!isGrp(currTag) && !all))
       {
           if (all)
             {
@@ -709,7 +709,7 @@ info(int all, int longout, int group, int label)
                       fprintf(stderr, "There is no group in this file.\n");
                       return HE_FAIL;
                   }
-                start = end = currGrpNo();
+                start = end = currGrpNo;
             }
           for (i = start; i <= end; i++)
             {
@@ -899,7 +899,7 @@ int         he_nestLevel = 0;
 
 /* prompt is actually "he"<he_prompt><space> */
 char       *he_prompt = ">";
-char        he_nestChar = '>';
+#define he_nestChar '>'
 
 /* table to associate command to the function --
    add additional functions anywhere in the table BEFORE the
@@ -1010,7 +1010,7 @@ findFunc(char *fword)
 {
     unsigned    len;
     int         found = -1;
-    int i;
+    uintn i;
 
     len = HDstrlen((const char *) fword);
 
@@ -1022,7 +1022,7 @@ findFunc(char *fword)
                   return he_funcTab[i].func;
 
               if (found < 0)
-                  found = i;
+                  found = (int)i;
               else
                 {
                     fprintf(stderr, "Ambiguous command: %s.\n", fword);
@@ -1111,7 +1111,7 @@ getLine(char *p)
                       ch = getchar();
                   break;
               case HE_SEPARATOR:
-                  if (!isspace(*(p - 1)))
+                  if (!isspace((int)*(p - 1)))
                       *p++ = SPACE;
                   *p++ = HE_SEPARATOR;
                   ch = SPACE;   /* Ensure next is a space */
@@ -1136,7 +1136,7 @@ nextWord(char **p)
     unsigned    len;
 
     q = *p;
-    while (*q && isspace(*q))
+    while (*q && isspace((int)*q))
         q++;
     if (!(*q))
       {
@@ -1145,7 +1145,7 @@ nextWord(char **p)
       }
 
     s = q;
-    while (*s && !isspace(*s))
+    while (*s && !isspace((int)*s))
         s++;
     len = (unsigned) (s - q);
 
@@ -1154,7 +1154,7 @@ nextWord(char **p)
     word[len] = '\0';
 
     *p = s;
-    while (**p && (isspace(**p)))
+    while (**p && (isspace((int)**p)))
         (*p)++;
 
     return word;
@@ -1200,7 +1200,7 @@ parseCmd(char **p)
                word = nextWord(p), cmdTail->argc++)
               cmdTail->argv[cmdTail->argc] = word;
 
-          while (**p && (isspace(**p) || (**p == ';')))
+          while (**p && (isspace((int)**p) || (**p == ';')))
               (*p)++;
       }
     return cmd;
@@ -1493,7 +1493,7 @@ he_keyTab[] =
 int
 findKey(char *word)
 {
-    int i;
+    uintn i;
     unsigned    len;
     int         found = -1;
 
@@ -1506,7 +1506,7 @@ findKey(char *word)
               if (HDstrlen(he_keyTab[i].str) == len)
                   return he_keyTab[i].key;
               if (found < 0)
-                  found = i;
+                  found = (int)i;
               else
                 {
                     fprintf(stderr, "Ambiguous: %s.\n", word);
@@ -1689,11 +1689,11 @@ nextToken(char **p)
 
     s = *p;
 
-    if (isalnum(**p))
-        while (isalnum(*s))
+    if (isalnum((int)**p))
+        while (isalnum((int)*s))
             s++;
     else
-        while (*s && !isalnum(*s))
+        while (*s && !isalnum((int)*s))
             s++;
 
     q = tok = (char *) HDmalloc((s - (*p)) + 1);

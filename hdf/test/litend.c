@@ -101,7 +101,7 @@ test_little_read(void)
             num_errs++;
           } /* end if */
         else {
-            data_i8=(int8 *)HDmalloc(dimsizes[0]*dimsizes[1]*sizeof(int8));
+            data_i8=(int8 *)HDmalloc((size_t)(dimsizes[0]*dimsizes[1])*sizeof(int8));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_i8);
             RESULT("DFSDgetdata");
 
@@ -129,7 +129,7 @@ test_little_read(void)
             num_errs++;
           } /* end if */
         else {
-            data_u8=(uint8 *)HDmalloc(dimsizes[0]*dimsizes[1]*sizeof(uint8));
+            data_u8=(uint8 *)HDmalloc((size_t)(dimsizes[0]*dimsizes[1])*sizeof(uint8));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_u8);
             RESULT("DFSDgetdata");
 
@@ -157,7 +157,7 @@ test_little_read(void)
             num_errs++;
           } /* end if */
         else {
-            data_i16=(int16 *)HDmalloc(dimsizes[0]*dimsizes[1]*sizeof(int16));
+            data_i16=(int16 *)HDmalloc((size_t)(dimsizes[0]*dimsizes[1])*sizeof(int16));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_i16);
             RESULT("DFSDgetdata");
 
@@ -185,8 +185,7 @@ test_little_read(void)
             num_errs++;
           } /* end if */
         else {
-            data_u16=(uint16 *)HDmalloc(dimsizes[0]*
-		    dimsizes[1]*sizeof(uint16));
+            data_u16=(uint16 *)HDmalloc((size_t)(dimsizes[0]*dimsizes[1])*sizeof(uint16));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_u16);
             RESULT("DFSDgetdata");
 
@@ -214,7 +213,7 @@ test_little_read(void)
             num_errs++;
           } /* end if */
         else {
-            data_i32=(int32 *)HDmalloc(dimsizes[0]*dimsizes[1]*sizeof(int32));
+            data_i32=(int32 *)HDmalloc((size_t)(dimsizes[0]*dimsizes[1])*sizeof(int32));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_i32);
             RESULT("DFSDgetdata");
 
@@ -242,8 +241,7 @@ test_little_read(void)
             num_errs++;
           } /* end if */
         else {
-            data_u32=(uint32 *)HDmalloc(dimsizes[0]*dimsizes[1]*
-		    sizeof(uint32));
+            data_u32=(uint32 *)HDmalloc((size_t)(dimsizes[0]*dimsizes[1])*sizeof(uint32));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_u32);
             RESULT("DFSDgetdata");
 
@@ -271,8 +269,7 @@ test_little_read(void)
             num_errs++;
           } /* end if */
         else {
-            data_f32=(float32 *)HDmalloc(dimsizes[0]*dimsizes[1]*
-		    sizeof(float32));
+            data_f32=(float32 *)HDmalloc((size_t)(dimsizes[0]*dimsizes[1])*sizeof(float32));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_f32);
             RESULT("DFSDgetdata");
 
@@ -300,8 +297,7 @@ test_little_read(void)
             num_errs++;
           } /* end if */
         else {
-            data_f64=(float64 *)HDmalloc(dimsizes[0]*dimsizes[1]*
-		    sizeof(float64));
+            data_f64=(float64 *)HDmalloc((size_t)(dimsizes[0]*dimsizes[1])*sizeof(float64));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_f64);
             RESULT("DFSDgetdata");
 
@@ -485,7 +481,7 @@ test_little_write(void)
             }   /* end if */
           else
             {
-                data_i8 = (int8 *) HDmalloc(dimsizes[0] * dimsizes[1] * sizeof(int8));
+                data_i8 = (int8 *) HDmalloc((size_t)(dimsizes[0] * dimsizes[1]) * sizeof(int8));
                 ret = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP) data_i8);
                 RESULT("DFSDgetdata");
 
@@ -516,7 +512,7 @@ test_little_write(void)
             }   /* end if */
           else
             {
-                data_u8 = (uint8 *) HDmalloc(dimsizes[0] * dimsizes[1] * sizeof(uint8));
+                data_u8 = (uint8 *) HDmalloc((size_t)(dimsizes[0] * dimsizes[1]) * sizeof(uint8));
                 ret = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP) data_u8);
                 RESULT("DFSDgetdata");
 
@@ -547,7 +543,7 @@ test_little_write(void)
             }   /* end if */
           else
             {
-                data_i16 = (int16 *) HDmalloc(dimsizes[0] * dimsizes[1] * sizeof(int16));
+                data_i16 = (int16 *) HDmalloc((size_t)(dimsizes[0] * dimsizes[1]) * sizeof(int16));
                 ret = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP) data_i16);
                 RESULT("DFSDgetdata");
 
@@ -578,8 +574,7 @@ test_little_write(void)
             }   /* end if */
           else
             {
-                data_u16 = (uint16 *) HDmalloc(dimsizes[0] * dimsizes[1] *
-                                                 sizeof(uint16));
+                data_u16 = (uint16 *) HDmalloc((size_t)(dimsizes[0] * dimsizes[1]) * sizeof(uint16));
                 ret = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP) data_u16);
                 RESULT("DFSDgetdata");
 
@@ -610,7 +605,7 @@ test_little_write(void)
             }   /* end if */
           else
             {
-                data_i32 = (int32 *) HDmalloc(dimsizes[0] * dimsizes[1] * sizeof(int32));
+                data_i32 = (int32 *) HDmalloc((size_t)(dimsizes[0] * dimsizes[1]) * sizeof(int32));
                 ret = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP) data_i32);
                 RESULT("DFSDgetdata");
 
@@ -641,8 +636,7 @@ test_little_write(void)
             }   /* end if */
           else
             {
-                data_u32 = (uint32 *) HDmalloc(dimsizes[0] * dimsizes[1] *
-                                                 sizeof(uint32));
+                data_u32 = (uint32 *) HDmalloc((size_t)(dimsizes[0] * dimsizes[1]) * sizeof(uint32));
                 ret = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP) data_u32);
                 RESULT("DFSDgetdata");
 
@@ -673,8 +667,7 @@ test_little_write(void)
             }   /* end if */
           else
             {
-                data_f32 = (float32 *) HDmalloc(dimsizes[0] * dimsizes[1] *
-                                                  sizeof(float32));
+                data_f32 = (float32 *) HDmalloc((size_t)(dimsizes[0] * dimsizes[1]) * sizeof(float32));
                 ret = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP) data_f32);
                 RESULT("DFSDgetdata");
 
@@ -705,8 +698,7 @@ test_little_write(void)
             }   /* end if */
           else
             {
-                data_f64 = (float64 *) HDmalloc(dimsizes[0] * dimsizes[1] *
-                                                  sizeof(float64));
+                data_f64 = (float64 *) HDmalloc((size_t)(dimsizes[0] * dimsizes[1]) * sizeof(float64));
                 ret = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP) data_f64);
                 RESULT("DFSDgetdata");
 

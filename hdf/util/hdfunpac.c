@@ -127,7 +127,7 @@ main(int argc, char *argv[])
         if (stat(datafilename, &buf) == 0)
           {
               printf("External file %s already exists.  Using append mode.\n", datafilename);
-              fileoffset = buf.st_size;
+              fileoffset = (int32)buf.st_size;
           }
         else
             fileoffset = 0;

@@ -78,7 +78,7 @@ char  data2[6] = {'A','B','C','D','E','F'}, idata2[6];
 uint16 attr2[2] = {16, 32}, iattr2[2];
 uint32 attr1[4] = {100, 132, 10032, 10064}, iattr1[2];
 char   attr3[6] = {'m','N','p', 'S', 't', '\0'}, iattr3[6];
-float32 attr4[2] = {32.001, -34.002}, iattr4[2];
+float32 attr4[2] = {(float32)32.001, (float32)-34.002}, iattr4[2];
 float64 attr5[2] = {64.12345, -64.12345}, iattr5[2];
 
 /* create vdatas and vgroups */
@@ -86,7 +86,6 @@ float64 attr5[2] = {64.12345, -64.12345}, iattr5[2];
 intn write_vset_stuff(void)
 {
    int32 fid, vgid, vsid;
-   intn  vsversion;
 
    if (FAIL == (fid = Hopen(FILENAME, DFACC_CREATE, 0))) {
          num_errs++;
@@ -245,7 +244,7 @@ intn write_vattrs(void)
          num_errs++;
          printf(">>> Search for non-existing field, should fail.\n");
       }
-   if (FAIL == VSsetattr(vsid, _HDF_ENTIRE_VDATA, ATTNAME3, DFNT_CHAR8,3, attr3)) {
+   if (FAIL == VSsetattr(vsid, (int32)_HDF_ENTIRE_VDATA, ATTNAME3, DFNT_CHAR8,3, attr3)) {
          num_errs++;
          printf(">>> VSsetattr3 failed\n");
       }
@@ -277,7 +276,7 @@ intn write_vattrs(void)
       }
 
    /* set same attr name to different fields */
-   if (FAIL == VSsetattr(vsid, _HDF_ENTIRE_VDATA, ATTNAME4, DFNT_FLOAT32,1, attr4)) {
+   if (FAIL == VSsetattr(vsid, (int32)_HDF_ENTIRE_VDATA, ATTNAME4, DFNT_FLOAT32,1, attr4)) {
          num_errs++;
          printf(">>> VSsetattr6 failed\n");
       }
@@ -350,7 +349,7 @@ intn write_vattrs(void)
          printf(">>> VSsetattr6 failed\n");
       }
 
-   if (FAIL == VSsetattr(vsid, _HDF_ENTIRE_VDATA, ATTNAME7, DFNT_CHAR8,3, attr3)) {
+   if (FAIL == VSsetattr(vsid, (int32)_HDF_ENTIRE_VDATA, ATTNAME7, DFNT_CHAR8,3, attr3)) {
          num_errs++;
          printf(">>> VSsetattr7 failed\n");
       }
@@ -456,9 +455,8 @@ intn read_vattrs(void)
 {
    int32 fid, vgid, vsid, vgref, vsref;
    intn n_vgattrs, n_vsattrs, n_fldattrs;
-   intn  iattrindex, i, ret;
+   intn  iattrindex, ret;
    int32 i_type, i_count, i_size, iversion;
-   char iname[FIELDNAMELENMAX+1], iclass[FIELDNAMELENMAX+1];
    char iattrname[FIELDNAMELENMAX+1];
 
    if (FAIL == (fid = Hopen(FILENAME, DFACC_RDONLY, 0))) {
@@ -619,13 +617,13 @@ intn read_vattrs(void)
          printf(">>> Wrong num of Vsname1 attrs, should be %d, ");
          printf("got %d.\n", 6, n_vsattrs);
    }
-   if (FAIL == (n_fldattrs = VSfnattrs(vsid, _HDF_ENTIRE_VDATA)) || n_fldattrs != 2) {
+   if (FAIL == (n_fldattrs = VSfnattrs(vsid, (int32)_HDF_ENTIRE_VDATA)) || n_fldattrs != 2) {
         num_errs++;
         printf(">>> Wrong num of Vsname1 vdata attrs, ");
         printf("should be %d, got %d.\n ", 2, n_fldattrs);
    }
    /* look for non-existing attr, should fail */
-   if (FAIL != (iattrindex = VSfindattr(vsid, _HDF_ENTIRE_VDATA, ATTNAME9))) {
+   if (FAIL != (iattrindex = VSfindattr(vsid, (int32)_HDF_ENTIRE_VDATA, ATTNAME9))) {
         num_errs++;
         printf(">>> attname9 is not an attr of vdata vsname1, ");
         printf(" should fail.\n");
@@ -659,13 +657,13 @@ intn read_vattrs(void)
    }
 
    /* get the 2nd attr  */
-   if ((FAIL == (iattrindex = VSfindattr(vsid, _HDF_ENTIRE_VDATA, ATTNAME4))) ||
+   if ((FAIL == (iattrindex = VSfindattr(vsid, (int32)_HDF_ENTIRE_VDATA, ATTNAME4))) ||
              (iattrindex != 1))  {
         num_errs++;
         printf(">>> attname4 should be index 1 of vsname1, not %d.\n",
                      iattrindex);
    }
-   if ((FAIL == VSattrinfo(vsid, _HDF_ENTIRE_VDATA, iattrindex, iattrname, 
+   if ((FAIL == VSattrinfo(vsid, (int32)_HDF_ENTIRE_VDATA, iattrindex, iattrname, 
                &i_type, &i_count, &i_size)) || 
                (HDstrcmp(iattrname, ATTNAME4) != 0) ||
                (i_type != DFNT_FLOAT32) || (i_count != 1) || 
@@ -674,7 +672,7 @@ intn read_vattrs(void)
         printf(">>> Wrong attrinfo for attname4 of vdata vsname1; ");
         printf(" got  %s %d %d.\n", iattrname, i_type,i_count);
    }
-   if (FAIL == VSgetattr(vsid, _HDF_ENTIRE_VDATA, 1, iattr4) ||
+   if (FAIL == VSgetattr(vsid, (int32)_HDF_ENTIRE_VDATA, 1, iattr4) ||
        (fabs((double)(iattr4[0] - attr4[0])) > fabs((double)(attr4[0]*EPS32))))  {
          num_errs++;
          printf(">>> Wrong values for attname4  of vsname1; \
@@ -744,9 +742,7 @@ intn read_vattrs(void)
 void
 test_vset_attr(void)   
 {
-   intn ret;
-
-   ret = write_vset_stuff();
-   ret = write_vattrs();
-   ret = read_vattrs(); 
+   write_vset_stuff();
+   write_vattrs();
+   read_vattrs(); 
 } /* test_vset_attr */

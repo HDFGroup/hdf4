@@ -445,16 +445,16 @@ test_comp(void)
     /* in that order */
     for (test_num = 0; test_num < NUM_OUTBUFS; test_num++)
       {
-          for (ntype_num = 0; ntype_num < (sizeof(test_ntypes) / sizeof(test_ntypes[0]));
+          for (ntype_num = 0; (size_t)ntype_num < (sizeof(test_ntypes) / sizeof(test_ntypes[0]));
                ntype_num++)
             {
                 for (model_num = 0;
-                 model_num < (sizeof(test_models) / sizeof(test_models[0]));
+                 (size_t)model_num < (sizeof(test_models) / sizeof(test_models[0]));
                      model_num++)
                   {
                       init_model_info(test_models[model_num], &m_info, test_ntypes[ntype_num]);
                       for (coder_num = 0;
-                           coder_num < (sizeof(test_coders) / sizeof(test_coders[0]));
+                           (size_t)coder_num < (sizeof(test_coders) / sizeof(test_coders[0]));
                            coder_num++)
                         {
                             init_coder_info(test_coders[coder_num], &c_info, test_ntypes[ntype_num]);

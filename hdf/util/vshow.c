@@ -47,8 +47,10 @@ static int32 fmtbyte
 static int32 fmtchar
             (char *x);
 
+#ifdef UNUSED
 static int32 fmtint
             (char *x);
+#endif /* UNUSED */
 
 static int32 fmtfloat
             (char *x);
@@ -86,7 +88,7 @@ main(int ac, char **av)
     char        vsname[VSNAMELENMAX];
     char        vgclass[VGNAMELENMAX], vsclass[VSNAMELENMAX];
     const char *name;
-    int32       fulldump = 0, start = 1, full;
+    int32       fulldump = 0, full;
 
 #if defined __MWERKS__
     ac = ccommand(&av);
@@ -109,7 +111,6 @@ main(int ac, char **av)
                   condensed = 1;
               else
                   condensed = 0;
-              start = 2;
           }
 
     if (ac < 2)
@@ -229,7 +230,7 @@ main(int ac, char **av)
       {
 
           printf("Lone vdatas:\n");
-          if (NULL == (lonevs = (int32 *) HDmalloc(sizeof(int) * nlone)))
+          if (NULL == (lonevs = (int32 *) HDmalloc(sizeof(int) * (size_t)nlone)))
             {
                 printf("%s: File has %d lone vdatas but ", av[0], (int) nlone);
                 printf("cannot alloc lonevs space. Quit.\n");
@@ -290,6 +291,7 @@ fmtchar(char *x)
     return (1);
 }
 
+#ifdef UNUSED
 static int32
 fmtint(char *x)
 {
@@ -298,11 +300,12 @@ fmtint(char *x)
     cn += printf("%d", i);
     return (1);
 }
+#endif /* UNUSED */
 
 static int32
 fmtfloat(char *x)
 {
-    float       f = 0;
+    float       f = (float)0.0;
     HDmemcpy(&f, x, sizeof(float32));
     cn += printf("%f", f);
     return (1);
@@ -329,7 +332,7 @@ fmtshort(char *x)
 static int32
 fmtdouble(char *x)
 {
-    double      d = 0;
+    double      d = 0.0;
     HDmemcpy(&d, x, sizeof(float64));
     cn += printf("%f", d);
     return (1);
@@ -387,7 +390,7 @@ vsdumpfull(int32 vs)
       {
           printf("%d: fld [%s], type=%d, order=%d\n", (int) i, w->name[i], w->type[i], w->order[i]);
 
-          order[i] = w->order[i];
+          order[i] = (int32)w->order[i];
           off[i] = DFKNTsize(w->type[i] | DFNT_NATIVE);
 
           switch (w->type[i])
@@ -525,7 +528,7 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
           printf("     %d attributes:  attr_tag/ref     attr_of_field\n",
                        nattrs);
           for (i=0; i<nattrs; i++)  {
-             if (vs_alist->findex != _HDF_ENTIRE_VDATA)
+             if (vs_alist->findex != (int)_HDF_ENTIRE_VDATA)
                  printf("     %d:               %d/%d               %d\n",
                  i, vs_alist->atag, vs_alist->aref,vs_alist->findex);
              else
@@ -539,7 +542,7 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
       for (j=-1; j<vs->wlist.n; j++)  
       {	  int32 temp;
 
-	  temp = (j == -1)? _HDF_ENTIRE_VDATA : j;
+	  temp = (j == -1) ? (int)_HDF_ENTIRE_VDATA : j;
           f_nattrs = VSfnattrs(vid, temp);
           if (f_nattrs == 0) continue;  /* no attr for this field */
           if (j == -1)

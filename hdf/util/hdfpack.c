@@ -282,7 +282,7 @@ main(int argc, char *argv[])
    **   Sort DD's by offset to make it easy to
    **   find DD's that point to the same data
  */
-    qsort((char *) dlist, num_desc, sizeof(*dlist), desc_comp);
+    qsort((char *) dlist, (size_t)num_desc, sizeof(*dlist), desc_comp);
 
     oldoff = -1;
     oldlen = -1;

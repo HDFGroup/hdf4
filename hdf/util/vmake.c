@@ -359,7 +359,7 @@ vsadd(char *hfile, char *vsname, char *format)
           HDstrcat(allfields, ",");
       }
 
-    i = HDstrlen(allfields);
+    i = (int32)HDstrlen(allfields);
     allfields[i - 1] = '\0';    /* remove last comma */
 
     VSsetname(vs, vsname);
@@ -526,13 +526,13 @@ scanit(char *string, char ***fields, int32 **type, int32 **order)
     int32       c;
 
     compact(string, ss);
-    ns = HDstrlen(ss);
+    ns = (int32)HDstrlen(ss);
     ss[ns++] = ',';
 
     p1 = p2 = 0;
     for (i = 0; i < ns; i++)
       {
-          c = ss[i];
+          c = (int32)ss[i];
           if (c == '=')
             {
                 p2 = i;
@@ -549,7 +549,7 @@ scanit(char *string, char ***fields, int32 **type, int32 **order)
     for (i = 0; i < ntotal; i++)
       {
           fldptr[i] = flds[i];
-          ftyp[i] = fmts[i];
+          ftyp[i] = (int32)fmts[i];
       }
 
     *type = ftyp;
@@ -562,7 +562,7 @@ scanit(char *string, char ***fields, int32 **type, int32 **order)
 int32
 compact(char *ss, char *dd)
 {
-    int         i, t, n = HDstrlen(ss);
+    int         i, t, n = (int)HDstrlen(ss);
     for (t = 0, i = 0; i < n; i++)
         if (ss[i] != ' ')
           {
@@ -588,7 +588,7 @@ savtype(char *ss, int p1, int p2)
 {
     char        temp[20];
     int32       t = p2 - p1 + 1;
-    HDstrncpy(temp, &ss[p1], p2 - p1 + 1);
+    HDstrncpy(temp, &ss[p1], (size_t)(p2 - p1 + 1));
     temp[t] = '\0';
     separate(temp, &fmts[ntotal], &fords[ntotal]);
     ntotal++;
@@ -601,7 +601,7 @@ separate(char *ss, char *fmt, int32 *num)
 {
     int32       i, n;
     i = 0;
-    n = HDstrlen(ss);
+    n = (int32)HDstrlen(ss);
     while (i < n)
       {
           if (ss[i] < '0' || ss[i] > '9')

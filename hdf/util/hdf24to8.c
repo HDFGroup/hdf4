@@ -165,7 +165,7 @@ r24r8(int32 xres, int32 yres, UCHAR * dat24, UCHAR * dat8, int cres, UCHAR * cda
     UINT       *cp, *np;
     UCHAR      *dip, *dop, *rp, *gp, *bp;
 
-    if ((idat[0] = (UINT *) HDmalloc(6 * xres * sizeof(UINT))) == NULL)
+    if ((idat[0] = (UINT *) HDmalloc((size_t)(6 * xres) * sizeof(UINT))) == NULL)
       {
           fprintf(stderr, "error: Memory allocation fault\n");
           return -1;
@@ -208,148 +208,148 @@ r24r8(int32 xres, int32 yres, UCHAR * dat24, UCHAR * dat8, int cres, UCHAR * cda
     dop = dat8;
 
     for (xct = (intn) (3 * xres); --xct >= 0;)
-        *cp++ = *dip++;
+        *cp++ = (UINT)*dip++;
 
     for (yct = 0; yct < (yres - 1); yct++)
       {
           np = idat[(yct + 1) % 2];
           for (xct = (intn) (3 * xres); --xct >= 0;)
-              *np++ = *dip++;
+              *np++ = (UINT)*dip++;
 
           cp = idat[yct % 2];
           np = idat[(yct + 1) % 2];
 
-          if ((rct = (cp[0] * rn / rr)) > rn)
+          if ((rct = ((int)cp[0] * rn / rr)) > rn)
               rct = rn;
-          if ((gct = (cp[1] * gn / gr)) > gn)
+          if ((gct = ((int)cp[1] * gn / gr)) > gn)
               gct = gn;
-          if ((bct = (cp[2] * bn / br)) > bn)
+          if ((bct = ((int)cp[2] * bn / br)) > bn)
               bct = bn;
 
           *dop++ = (UCHAR) (ct = (rct * gres + gct) * bres + bct + coff);
 
-          rd = cp[0] - rp[ct];
-          gd = cp[1] - gp[ct];
-          bd = cp[2] - bp[ct];
+          rd = (int)cp[0] - rp[ct];
+          gd = (int)cp[1] - gp[ct];
+          bd = (int)cp[2] - bp[ct];
 
           cp += 3;
           np += 3;
 
-          cp[0] += rd * 7 / 16;
-          cp[1] += gd * 7 / 16;
-          cp[2] += bd * 7 / 16;
-          np[-3] += rd * 5 / 16;
-          np[-2] += gd * 5 / 16;
-          np[-1] += bd * 5 / 16;
-          np[0] += rd / 16;
-          np[1] += gd / 16;
-          np[2] += bd / 16;
+          cp[0] += (UINT)(rd * 7 / 16);
+          cp[1] += (UINT)(gd * 7 / 16);
+          cp[2] += (UINT)(bd * 7 / 16);
+          np[-3] += (UINT)(rd * 5 / 16);
+          np[-2] += (UINT)(gd * 5 / 16);
+          np[-1] += (UINT)(bd * 5 / 16);
+          np[0] += (UINT)(rd / 16);
+          np[1] += (UINT)(gd / 16);
+          np[2] += (UINT)(bd / 16);
 
           for (xct = 2; xct < xres; xct++)
             {
-                if ((rct = (cp[0] * rn / rr)) > rn)
+                if ((rct = ((int)cp[0] * rn / rr)) > rn)
                     rct = rn;
-                if ((gct = (cp[1] * gn / gr)) > gn)
+                if ((gct = ((int)cp[1] * gn / gr)) > gn)
                     gct = gn;
-                if ((bct = (cp[2] * bn / br)) > bn)
+                if ((bct = ((int)cp[2] * bn / br)) > bn)
                     bct = bn;
 
                 *dop++ = (UCHAR) (ct = (rct * gres + gct) * bres + bct + coff);
 
-                rd = cp[0] - rp[ct];
-                gd = cp[1] - gp[ct];
-                bd = cp[2] - bp[ct];
+                rd = (int)cp[0] - rp[ct];
+                gd = (int)cp[1] - gp[ct];
+                bd = (int)cp[2] - bp[ct];
 
                 cp += 3;
                 np += 3;
 
-                cp[0] += rd * 7 / 16;
-                cp[1] += gd * 7 / 16;
-                cp[2] += bd * 7 / 16;
-                np[-6] += rd * 3 / 16;
-                np[-5] += gd * 3 / 16;
-                np[-4] += bd * 3 / 16;
-                np[-3] += rd * 5 / 16;
-                np[-2] += gd * 5 / 16;
-                np[-1] += bd * 5 / 16;
-                np[0] += rd / 16;
-                np[1] += gd / 16;
-                np[2] += bd / 16;
+                cp[0] += (UINT)(rd * 7 / 16);
+                cp[1] += (UINT)(gd * 7 / 16);
+                cp[2] += (UINT)(bd * 7 / 16);
+                np[-6] += (UINT)(rd * 3 / 16);
+                np[-5] += (UINT)(gd * 3 / 16);
+                np[-4] += (UINT)(bd * 3 / 16);
+                np[-3] += (UINT)(rd * 5 / 16);
+                np[-2] += (UINT)(gd * 5 / 16);
+                np[-1] += (UINT)(bd * 5 / 16);
+                np[0] += (UINT)(rd / 16);
+                np[1] += (UINT)(gd / 16);
+                np[2] += (UINT)(bd / 16);
 
             }
 
-          if ((rct = (cp[0] * rn / rr)) > rn)
+          if ((rct = ((int)cp[0] * rn / rr)) > rn)
               rct = rn;
-          if ((gct = (cp[1] * gn / gr)) > gn)
+          if ((gct = ((int)cp[1] * gn / gr)) > gn)
               gct = gn;
-          if ((bct = (cp[2] * bn / br)) > bn)
+          if ((bct = ((int)cp[2] * bn / br)) > bn)
               bct = bn;
 
           *dop++ = (UCHAR) (ct = (rct * gres + gct) * bres + bct + coff);
 
-          rd = cp[0] - rp[ct];
-          gd = cp[1] - gp[ct];
-          bd = cp[2] - bp[ct];
+          rd = (int)cp[0] - rp[ct];
+          gd = (int)cp[1] - gp[ct];
+          bd = (int)cp[2] - bp[ct];
 
           cp += 3;
           np += 3;
 
-          np[-6] += rd * 3 / 16;
-          np[-5] += gd * 3 / 16;
-          np[-4] += bd * 3 / 16;
-          np[-3] += rd * 5 / 16;
-          np[-2] += gd * 5 / 16;
-          np[-1] += bd * 5 / 16;
+          np[-6] += (UINT)(rd * 3 / 16);
+          np[-5] += (UINT)(gd * 3 / 16);
+          np[-4] += (UINT)(bd * 3 / 16);
+          np[-3] += (UINT)(rd * 5 / 16);
+          np[-2] += (UINT)(gd * 5 / 16);
+          np[-1] += (UINT)(bd * 5 / 16);
       }
 
     cp = idat[yct % 2];
 
-    if ((rct = (cp[0] * rn / rr)) > rn)
+    if ((rct = ((int)cp[0] * rn / rr)) > rn)
         rct = rn;
-    if ((gct = (cp[1] * gn / gr)) > gn)
+    if ((gct = ((int)cp[1] * gn / gr)) > gn)
         gct = gn;
-    if ((bct = (cp[2] * bn / br)) > bn)
+    if ((bct = ((int)cp[2] * bn / br)) > bn)
         bct = bn;
 
     *dop++ = (UCHAR) (ct = (rct * gres + gct) * bres + bct + coff);
 
-    rd = cp[0] - rp[ct];
-    gd = cp[1] - gp[ct];
-    bd = cp[2] - bp[ct];
+    rd = (int)cp[0] - rp[ct];
+    gd = (int)cp[1] - gp[ct];
+    bd = (int)cp[2] - bp[ct];
 
     cp += 3;
 
-    cp[0] += rd * 7 / 16;
-    cp[1] += gd * 7 / 16;
-    cp[2] += bd * 7 / 16;
+    cp[0] += (UINT)(rd * 7 / 16);
+    cp[1] += (UINT)(gd * 7 / 16);
+    cp[2] += (UINT)(bd * 7 / 16);
 
     for (xct = 2; xct < xres; xct++)
       {
-          if ((rct = (cp[0] * rn / rr)) > rn)
+          if ((rct = ((int)cp[0] * rn / rr)) > rn)
               rct = rn;
-          if ((gct = (cp[1] * gn / gr)) > gn)
+          if ((gct = ((int)cp[1] * gn / gr)) > gn)
               gct = gn;
-          if ((bct = (cp[2] * bn / br)) > bn)
+          if ((bct = ((int)cp[2] * bn / br)) > bn)
               bct = bn;
 
           *dop++ = (UCHAR) (ct = (rct * gres + gct) * bres + bct + coff);
 
-          rd = cp[0] - rp[ct];
-          gd = cp[1] - gp[ct];
-          bd = cp[2] - bp[ct];
+          rd = (int)cp[0] - rp[ct];
+          gd = (int)cp[1] - gp[ct];
+          bd = (int)cp[2] - bp[ct];
 
           cp += 3;
 
-          cp[0] += rd * 7 / 16;
-          cp[1] += gd * 7 / 16;
-          cp[2] += bd * 7 / 16;
+          cp[0] += (UINT)(rd * 7 / 16);
+          cp[1] += (UINT)(gd * 7 / 16);
+          cp[2] += (UINT)(bd * 7 / 16);
       }
 
-    if ((rct = (cp[0] * rn / rr)) > rn)
+    if ((rct = ((int)cp[0] * rn / rr)) > rn)
         rct = rn;
-    if ((gct = (cp[1] * gn / gr)) > gn)
+    if ((gct = ((int)cp[1] * gn / gr)) > gn)
         gct = gn;
-    if ((bct = (cp[2] * bn / br)) > bn)
+    if ((bct = ((int)cp[2] * bn / br)) > bn)
         bct = bn;
 
     *dop++ = (UCHAR) ((rct * gres + gct) * bres + bct + coff);

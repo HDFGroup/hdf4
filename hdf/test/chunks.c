@@ -1550,7 +1550,7 @@ test_chunks(void)
     chunk[0].pdims[2].distrib_type = 0; /* NONE */
 
     fill_val_len = 4;
-    fill_val_f32 = 0.0;
+    fill_val_f32 = (float32)0.0;
 
     /* Open file for writing last odd size chunks now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);

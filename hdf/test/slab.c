@@ -711,7 +711,7 @@ slabwf32(void)
     int32       ret = 0;
     int32       num_err = 0;
     float32     sdata[2][3][4]; /* Data array read from from file */
-    float32     lfill;
+    float32     lfill=(float32)0.0;
 
     MESSAGE(10, printf("\n slabwf32:  Writing 5 slabs to slabwf32.hdf \n");
         );
@@ -720,7 +720,7 @@ slabwf32(void)
     CHECK(ret, FAIL, "DFSDclear");
 
     /* First set dimensions */
-    ret = DFSDsetdims((int16) rank, size_dims);
+    ret = DFSDsetdims((intn) rank, size_dims);
     CHECK(ret, FAIL, "DFSDsetdims");
 
     /* Set dimension strings */
@@ -865,7 +865,7 @@ slabwf64(void)
     int32       ret = 0;
     int32       num_err = 0;
     float64     sdata[2][3][4]; /* Data array read from from file */
-    float64     lfill;
+    float64     lfill=(float64)0.0;
 
     MESSAGE(10, printf("\n slabwf64:  Writing 5 slabs to slabwf64.hdf \n");
         );
@@ -877,7 +877,7 @@ slabwf64(void)
     CHECK(ret, FAIL, "DFSDsetNT");
 
     /* First set dimensions */
-    ret = DFSDsetdims((int16) rank, size_dims);
+    ret = DFSDsetdims((intn) rank, size_dims);
     CHECK(ret, FAIL, "DFSDsetdims");
 
     /* Set dimension strings */
@@ -1023,7 +1023,7 @@ slabwin(void)
     int32       ret = 0;
     int32       num_err = 0;
     intn        sdata[2][3][4]; /* Data array read from from file */
-    intn        lfill;
+    intn        lfill=(intn)0;
 
     MESSAGE(10, printf("\n slabwin:  Writing 5 slabs to slabwin.hdf \n");
         );
@@ -1035,7 +1035,7 @@ slabwin(void)
     CHECK(ret, FAIL, "DFSDsetNT");
 
     /* First set dimensions */
-    ret = DFSDsetdims((int16) rank, size_dims);
+    ret = DFSDsetdims((intn) rank, size_dims);
     CHECK(ret, FAIL, "DFSDsetdims");
 
     /* Set dimension strings */
@@ -1180,7 +1180,7 @@ slabwuin(void)
     int32       ret = 0;
     int32       num_err = 0;
     uintn       sdata[2][3][4]; /* Data array read from from file */
-    uintn       lfill;
+    uintn       lfill=(uintn)0;
 
     MESSAGE(10, printf("\n slabwuin:  Writing 5 slabs to slabwuin.hdf \n");
         );
@@ -1192,7 +1192,7 @@ slabwuin(void)
     CHECK(ret, FAIL, "DFSDsetNT");
 
     /* First set dimensions */
-    ret = DFSDsetdims((int16) rank, size_dims);
+    ret = DFSDsetdims((intn) rank, size_dims);
     CHECK(ret, FAIL, "DFSDsetdims");
 
     /* Set dimension strings */
@@ -1338,7 +1338,7 @@ slabwi32(void)
     int32       ret = 0;
     int32       num_err = 0;
     int32       sdata[2][3][4]; /* Data array read from from file */
-    int32       lfill;
+    int32       lfill=(int32)0;
 
     MESSAGE(10, printf("\n slabwi32:  Writing 5 slabs to slabwi32.hdf \n");
         );
@@ -1350,7 +1350,7 @@ slabwi32(void)
     CHECK(ret, FAIL, "DFSDsetNT");
 
     /* First set dimensions */
-    ret = DFSDsetdims((int16) rank, size_dims);
+    ret = DFSDsetdims((intn) rank, size_dims);
     CHECK(ret, FAIL, "DFSDsetdims");
 
     /* Set dimension strings */
@@ -1495,7 +1495,7 @@ slabwui32(void)
     int32       ret = 0;
     int32       num_err = 0;
     uint32      sdata[2][3][4]; /* Data array read from from file */
-    uint32      lfill;
+    uint32      lfill=(uint32)0;
 
     MESSAGE(10, printf("\n slabwui32:  Writing 5 slabs to slabwui32.hdf \n");
         );
@@ -1507,7 +1507,7 @@ slabwui32(void)
     CHECK(ret, FAIL, "DFSDsetNT");
 
     /* First set dimensions */
-    ret = DFSDsetdims((int16) rank, size_dims);
+    ret = DFSDsetdims((intn) rank, size_dims);
     CHECK(ret, FAIL, "DFSDsetdims");
 
     /* Set dimension strings */
@@ -1652,7 +1652,7 @@ slabwi16(void)
     int32       ret = 0;
     int32       num_err = 0;
     int16       sdata[2][3][4]; /* Data array read from from file */
-    int16       lfill;
+    int16       lfill=(int16)0;
 
     MESSAGE(10, printf("\n slabwi16:  Writing 5 slabs to slabwi16.hdf \n");
         );
@@ -1664,7 +1664,7 @@ slabwi16(void)
     CHECK(ret, FAIL, "DFSDsetNT");
 
     /* First set dimensions */
-    ret = DFSDsetdims((int16) rank, size_dims);
+    ret = DFSDsetdims((intn) rank, size_dims);
     CHECK(ret, FAIL, "DFSDsetdims");
 
     /* Set dimension strings */
@@ -1809,7 +1809,7 @@ slabwui16(void)
     int32       ret = 0;
     int32       num_err = 0;
     uint16      sdata[2][3][4]; /* Data array read from from file */
-    uint16      lfill;
+    uint16      lfill=(uint16)0;
 
     MESSAGE(10, printf("\n slabwui16:  Writing 5 slabs to slabwui16.hdf \n");
         );
@@ -1821,7 +1821,7 @@ slabwui16(void)
     CHECK(ret, FAIL, "DFSDsetNT");
 
     /* First set dimensions */
-    ret = DFSDsetdims((int16) rank, size_dims);
+    ret = DFSDsetdims((intn) rank, size_dims);
     CHECK(ret, FAIL, "DFSDsetdims");
 
     /* Set dimension strings */
@@ -1966,7 +1966,7 @@ slabwi8(void)
     int32       ret = 0;
     int32       num_err = 0;
     int8        sdata[2][3][4]; /* Data array read from from file */
-    int8        lfill;
+    int8        lfill=(int8)0;
 
     MESSAGE(10, printf("\n slabwi8:  Writing 5 slabs to slabwi8.hdf \n");
         );
@@ -1978,7 +1978,7 @@ slabwi8(void)
     CHECK(ret, FAIL, "DFSDsetNT");
 
     /* First set dimensions */
-    ret = DFSDsetdims((int16) rank, size_dims);
+    ret = DFSDsetdims((intn) rank, size_dims);
     CHECK(ret, FAIL, "DFSDsetdims");
 
     /* Set dimension strings */
@@ -2123,7 +2123,7 @@ slabwui8(void)
     int32       ret = 0;
     int32       num_err = 0;
     uint8       sdata[2][3][4]; /* Data array read from from file */
-    uint8       lfill;
+    uint8       lfill=(uint8)0;
 
     MESSAGE(10, printf("\n slabwui8:  Writing 5 slabs to slabwui8.hdf \n");
         );
@@ -2135,7 +2135,7 @@ slabwui8(void)
     CHECK(ret, FAIL, "DFSDsetNT");
 
     /* First set dimensions */
-    ret = DFSDsetdims((int16) rank, size_dims);
+    ret = DFSDsetdims((intn) rank, size_dims);
     CHECK(ret, FAIL, "DFSDsetdims");
 
     /* Set dimension strings */
@@ -2284,7 +2284,7 @@ slab1w(void)
     CHECK(ret, FAIL, "DFSDclear");
 
     /* First set dimensions */
-    ret = DFSDsetdims((int16) rank, size_dims);
+    ret = DFSDsetdims((intn) rank, size_dims);
     CHECK(ret, FAIL, "DFSDsetdims");
 
     /* Set dimension strings */
@@ -2371,7 +2371,7 @@ slab2w(void)
     int32       ret = 0;
     int32       num_err = 0;
     float32     sdata[2][3][4]; /* Data array read from from file */
-    float32     lfill;
+    float32     lfill=(float32)0.0;
     intn        trank;
 
     MESSAGE(10, printf("\n slab2w:  Writing the last 2 of 5 slabs to slab1w.hdf \n");
@@ -2474,7 +2474,7 @@ slab3w(void)
     CHECK(ret, FAIL, "DFSDclear");
 
     /* First set dimensions */
-    ret = DFSDsetdims((int16) rank, size_dims);
+    ret = DFSDsetdims((intn) rank, size_dims);
     CHECK(ret, FAIL, "DFSDsetdims");
 
     /* Set dimension strings */
@@ -2783,7 +2783,7 @@ slab4w(void)
     CHECK(ret, FAIL, "DFSDclear");
 
     /* First set dimensions */
-    ret = DFSDsetdims((int16) rank, size_dims);
+    ret = DFSDsetdims((intn) rank, size_dims);
     CHECK(ret, FAIL, "DFSDsetdims");
 
     /* Set dimension strings */

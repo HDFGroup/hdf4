@@ -17,10 +17,6 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /* --- he-file.c  --- file and annotation manipulation routines */
-#if defined _POSIX_SOURCE
-#include <unistd.h>
-#endif
-
 #include "he.h"
 #ifdef VMS
 #   include <descrip.h>
@@ -33,9 +29,12 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 /* get the prototype for the wait() func. */
-#if defined SUN | defined HP9000
+#if defined SUN | defined HP9000 | defined IRIX
 #include <sys/wait.h>
 #endif /* SUN | HP9000 */
+#if defined _POSIX_SOURCE | defined IRIX
+#include <unistd.h>
+#endif
 
 int
 HEannotate(HE_CMD * cmd)
@@ -107,7 +106,7 @@ annotate(char *editor, int ann)
 
     /* Get the annotation from hdf file
      */
-    len = getAnn(ann, currTag(), he_desc[he_currDesc].ref, &buf);
+    len = getAnn(ann, currTag, he_desc[he_currDesc].ref, &buf);
 
     /* make sure some editor will be used
      * defaults to /usr/bin/ex
@@ -200,7 +199,7 @@ annotate(char *editor, int ann)
     if (ann == HE_LABEL)
       {
           /* take out control characters from the end */
-          for (i = len; i >= 0 && !isgraph(buf[i]); i--)
+          for (i = len; i >= 0 && !isgraph((int)buf[i]); i--)
               ;
           buf[i + 1] = '\0';
       }
@@ -211,7 +210,7 @@ annotate(char *editor, int ann)
 
     /* write annotation to the hdf file
      */
-    ret = putAnn(ann, currTag(), he_desc[he_currDesc].ref, buf, len);
+    ret = putAnn(ann, currTag, he_desc[he_currDesc].ref, buf, len);
     updateDesc();
 
     /* clean up
@@ -425,9 +424,9 @@ writ(char *file, uint16 tag, uint16 ref)
       }
 
     /* handle special cases */
-    if (isAnnot(currTag()))
+    if (isAnnot(currTag))
         return writeAnnot(file, tag, ref);
-    if (isGrp(currTag()))
+    if (isGrp(currTag))
         return writeGrp(file);
 
     if (getNewRef(file, &ref1) < 0)
@@ -628,7 +627,7 @@ putR8(char *image, char *pal, int verbose)
           noFile();
           return HE_FAIL;
       }
-    if (!isRig(currTag()))
+    if (!isRig(currTag))
       {
           fprintf(stderr, "Current element not an image group.");
           return HE_FAIL;

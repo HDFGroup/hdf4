@@ -146,7 +146,7 @@ int         findOpt
             (char *word);
 
 int32       getAnn
-            (int ann, int16 tag, int16 ref, char **pBuf);
+            (int ann, uint16 tag, uint16 ref, char **pBuf);
 
 HE_CMD     *getCmd
             (void);

@@ -188,9 +188,9 @@ extern HE_GROUP he_grp[];
 
 #define isAnnot(t)    (t == DFTAG_DIL || t == DFTAG_DIA)
 #define isRig(t)      (t == DFTAG_RIG)
-#define currTag()     (he_desc[he_currDesc].tag)
-#define currGrpNo()   (desc2Grp(he_currDesc))
-#define currDesc()    ((DFdesc*) he_desc + he_currDesc)
+#define currTag       (he_desc[he_currDesc].tag)
+#define currGrpNo     (desc2Grp(he_currDesc))
+#define currDesc      ((DFdesc*) he_desc + he_currDesc)
 
 #include "he_proto.h"
 

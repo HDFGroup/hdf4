@@ -81,7 +81,7 @@ static uint32  maskbuf[] =
     0x0001ffff, 0x0003ffff, 0x0007ffff, 0x000fffff,
     0x001fffff, 0x003fffff, 0x007fffff, 0x00ffffff,
     0x01ffffff, 0x03ffffff, 0x07ffffff, 0x0fffffff,
-    0x1fffffff, 0x3fffffff, 0x7fffffff, 0xffffffff};
+    0x1fffffffUL, 0x3fffffffUL, 0x7fffffffUL, 0xffffffffUL};
 
 static void test_bitio_write(void);
 static void test_bitio_read(void);
@@ -98,12 +98,12 @@ test_bitio_write(void)
 
     MESSAGE(6, printf("Testing bitio write routines\n");
         );
-    SEED((int) time(NULL));
+    SEED((uintn) time(NULL));
     for (i = 0; i < BUFSIZE; i++)
       {
           totbits[i] = tot_bits;
           tot_bits += (uint32) (outbuf[i] = (uint8) (((RAND() >> 4) % 32) + 1));    /* number of bits to output */
-          outbuf2[i] = RAND() & maskbuf[outbuf[i]];     /* actual bits to output */
+          outbuf2[i] = (uintn)RAND() & maskbuf[outbuf[i]];     /* actual bits to output */
       }     /* end for */
 
     fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
@@ -115,11 +115,11 @@ test_bitio_write(void)
 
     for (i = 0; i < BUFSIZE; i++)
       {
-          ret = Hbitwrite(bitid1, outbuf[i], (uint32) outbuf2[i]);
+          ret = Hbitwrite(bitid1, (intn)outbuf[i], (uint32) outbuf2[i]);
 #ifdef TESTING
           printf("outbuf[%d]=%u, outbuf2[%d]=%u, totbits[%d]=%u\n", i, outbuf[i], i, outbuf2[i], i, totbits[i]);
 #endif
-          VERIFY((uint32) ret, outbuf[i], "Hbitwrite");
+          VERIFY((uint8) ret, outbuf[i], "Hbitwrite");
       }     /* end for */
 
     ret = Hendbitaccess(bitid1, 0);
@@ -130,11 +130,11 @@ test_bitio_write(void)
 
     for (i = 0; i < BUFSIZE; i++)
       {
-          ret = Hbitread(bitid1, outbuf[i], &inbuf2[i]);
+          ret = Hbitread(bitid1, (intn)outbuf[i], &inbuf2[i]);
 #ifdef TESTING
           printf("outbuf[%d]=%u, inbuf2[%d]=%u, totbits[%d]=%u\n", i, outbuf[i], i, inbuf2[i], i, totbits[i]);
 #endif
-          VERIFY((uint32) ret, outbuf[i], "Hbitread");
+          VERIFY((uint8) ret, outbuf[i], "Hbitread");
       }     /* end for */
     if (HDmemcmp(outbuf2, inbuf2, sizeof(int32) * BUFSIZE))
       {
@@ -165,7 +165,7 @@ test_bitio_read(void)
     intn        i;
     uint8      *test_ptr;
 
-    SEED((int) time(NULL));
+    SEED((uintn) time(NULL));
 
     MESSAGE(6, printf("Testing bitio read routines\n");
         );
@@ -225,7 +225,7 @@ test_bitio_read(void)
     ret = Hendbitaccess(bitid1, 0);
     RESULT("Hbitendaccess");
 
-    test_ptr = (uint8 *) HDmalloc((DATASIZE / 4) * DFKNTsize(DFNT_UINT32));
+    test_ptr = (uint8 *) HDmalloc((size_t)((DATASIZE / 4) * DFKNTsize(DFNT_UINT32)));
     CHECK(test_ptr, NULL, "HDmalloc");
     ret = DFKconvert(inbuf2, test_ptr, DFNT_UINT32, (DATASIZE / 4), DFACC_WRITE, 0, 0);
     CHECK(ret, FAIL, "DFKconvert");
@@ -251,7 +251,7 @@ test_bitio_seek(void)
     int32       ret;
     intn        i;
 
-    SEED((int) time(NULL));
+    SEED((uintn) time(NULL));
 
     MESSAGE(6, printf("Testing bitio seek routines\n");
         );
@@ -266,10 +266,10 @@ test_bitio_seek(void)
 
     for (i = 0; i < BUFSIZE; i++)
       {
-          ret = Hbitseek(bitid1, totbits[i] / 8, (intn) (totbits[i] % 8));
+          ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (intn) (totbits[i] % 8));
           CHECK(ret, FAIL, "Hbitseek");
-          ret = Hbitread(bitid1, outbuf[i], &inbuf2[i]);
-          VERIFY((uint32) ret, outbuf[i], "Hbitread");
+          ret = Hbitread(bitid1, (intn)outbuf[i], &inbuf2[i]);
+          VERIFY((uint8) ret, outbuf[i], "Hbitread");
           if (outbuf2[i] != inbuf2[i])
               printf("outbuf[%d]=%u, outbuf2[%d]=%lu inbuf2[%d]=%lu, totbits[%d]=%lu\n", i, outbuf[i], i, (long) outbuf2[i], i, (long) inbuf2[i], i, (long) totbits[i]);
       }     /* end for */
@@ -284,10 +284,10 @@ test_bitio_seek(void)
 
     for (i = BUFSIZE - 1; i >= 0; i--)
       {
-          ret = Hbitseek(bitid1, totbits[i] / 8, (intn) (totbits[i] % 8));
+          ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (intn) (totbits[i] % 8));
           CHECK(ret, FAIL, "Hbitseek");
-          ret = Hbitread(bitid1, outbuf[i], &inbuf2[i]);
-          VERIFY((uint32) ret, outbuf[i], "Hbitread");
+          ret = Hbitread(bitid1, (intn)outbuf[i], &inbuf2[i]);
+          VERIFY((uint8) ret, outbuf[i], "Hbitread");
           if (outbuf2[i] != inbuf2[i])
               printf("outbuf[%d]=%u, outbuf2[%d]=%lu inbuf2[%d]=%lu, totbits[%d]=%lu\n", i, outbuf[i], i, (long) outbuf2[i], i, (long) inbuf2[i], i, (long) totbits[i]);
       }     /* end for */
@@ -305,12 +305,12 @@ test_bitio_seek(void)
     /* re-write every other sequence of bits in the dataset */
     for (i = 0; i < BUFSIZE; i += 2)
       {
-          outbuf2[i] = RAND() & maskbuf[outbuf[i]];     /* actual bits to output */
+          outbuf2[i] = (uintn)RAND() & maskbuf[outbuf[i]];     /* actual bits to output */
 
-          ret = Hbitseek(bitid1, totbits[i] / 8, (intn) (totbits[i] % 8));
+          ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (intn) (totbits[i] % 8));
           CHECK(ret, FAIL, "Hbitseek");
-          ret = Hbitwrite(bitid1, outbuf[i], (uint32) outbuf2[i]);
-          VERIFY((uint32) ret, outbuf[i], "Hbitwrite");
+          ret = Hbitwrite(bitid1, (intn)outbuf[i], (uint32) outbuf2[i]);
+          VERIFY((uint8) ret, outbuf[i], "Hbitwrite");
       }     /* end for */
 
     ret = Hendbitaccess(bitid1, 0);
@@ -323,10 +323,10 @@ test_bitio_seek(void)
 
     for (i = 0; i < BUFSIZE; i++)
       {
-          ret = Hbitseek(bitid1, totbits[i] / 8, (intn) (totbits[i] % 8));
+          ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (intn) (totbits[i] % 8));
           CHECK(ret, FAIL, "Hbitseek");
-          ret = Hbitread(bitid1, outbuf[i], &inbuf2[i]);
-          VERIFY((uint32) ret, outbuf[i], "Hbitread");
+          ret = Hbitread(bitid1, (intn)outbuf[i], &inbuf2[i]);
+          VERIFY((uint8) ret, outbuf[i], "Hbitread");
           if (outbuf2[i] != inbuf2[i])
               printf("outbuf[%d]=%u, outbuf2[%d]=%lu inbuf2[%d]=%lu, totbits[%d]=%lu\n", i, outbuf[i], i, (long) outbuf2[i], i, (long) inbuf2[i], i, (long) totbits[i]);
       }     /* end for */
@@ -344,12 +344,12 @@ test_bitio_seek(void)
     /* re-write every other sequence of bits in the dataset */
     for (i = BUFSIZE - 1; i >= 0; i -= 2)
       {
-          outbuf2[i] = RAND() & maskbuf[outbuf[i]];     /* actual bits to output */
+          outbuf2[i] = (uintn)RAND() & maskbuf[outbuf[i]];     /* actual bits to output */
 
-          ret = Hbitseek(bitid1, totbits[i] / 8, (intn) (totbits[i] % 8));
+          ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (intn) (totbits[i] % 8));
           CHECK(ret, FAIL, "Hbitseek");
-          ret = Hbitwrite(bitid1, outbuf[i], (uint32) outbuf2[i]);
-          VERIFY((uint32) ret, outbuf[i], "Hbitwrite");
+          ret = Hbitwrite(bitid1, (intn)outbuf[i], (uint32) outbuf2[i]);
+          VERIFY((uint8) ret, outbuf[i], "Hbitwrite");
       }     /* end for */
 
     ret = Hendbitaccess(bitid1, 0);
@@ -362,10 +362,10 @@ test_bitio_seek(void)
 
     for (i = 0; i < BUFSIZE; i++)
       {
-          ret = Hbitseek(bitid1, totbits[i] / 8, (intn) (totbits[i] % 8));
+          ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (intn) (totbits[i] % 8));
           CHECK(ret, FAIL, "Hbitseek");
-          ret = Hbitread(bitid1, outbuf[i], &inbuf2[i]);
-          VERIFY((uint32) ret, outbuf[i], "Hbitread");
+          ret = Hbitread(bitid1, (intn)outbuf[i], &inbuf2[i]);
+          VERIFY((uint8) ret, outbuf[i], "Hbitread");
           if (outbuf2[i] != inbuf2[i])
               printf("outbuf[%d]=%u, outbuf2[%d]=%lu inbuf2[%d]=%lu, totbits[%d]=%lu\n", i, outbuf[i], i, (long) outbuf2[i], i, (long) inbuf2[i], i, (long) totbits[i]);
       }     /* end for */

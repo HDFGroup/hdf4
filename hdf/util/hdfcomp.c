@@ -33,9 +33,8 @@ int ispal;
 
 int main(int argc, char *argv[]) 
 {
-    int i, ret;
+    int i;
     char *outfile;
-    int image = 1;
     intn jpeg_qual=75;      /* JPEG quality factor */
     uint16 prevref, writeref, compress = (uint16) 0;
     comp_info cinfo;        /* compression structure */
@@ -45,7 +44,7 @@ int main(int argc, char *argv[])
         copy_ilabel,        /* flag to indicate to copy image labels */
         copy_idesc;         /* flag to indicate to copy image descriptions */
     char *annbuf=NULL;      /* buffer to store annotations in */
-    uint32 annbuflen=0;     /* length of the annotation buffer */
+    int32 annbuflen=0;      /* length of the annotation buffer */
 
 #if defined __MWERKS__
     argc = ccommand(&argv);
@@ -84,19 +83,15 @@ int main(int argc, char *argv[])
         if (*argv[i] == '-') {
             switch (argv[i][1]) {
                 case 'r':               /* raster */
-                    image = 1;
                     compress = (uint16) 0;
                     break;
                 case 'c':               /* RLE */
-                    image = 1;
                     compress = COMP_RLE;
                     break;
                 case 'i':               /* IMCOMP */
-                    image = 1;
                     compress = COMP_IMCOMP;
                     break;
                 case 'j':               /* JPEG */
-                    image = 1;
                     compress = COMP_JPEG;
                     if((jpeg_qual=atoi(&argv[i][2]))<=0 || jpeg_qual>100) {
                         printf("Bad JPEG quality setting, should be between\n");
@@ -170,7 +165,7 @@ int main(int argc, char *argv[])
             /* copy the images over */
             while (DFR8getdims(argv[i], &xdim, &ydim, &ispal) >= 0) {
                 prevref = DFR8lastref();
-                if ((space = (uint8 *) HDmalloc(xdim * ydim)) == NULL) {
+                if ((space = (uint8 *) HDmalloc((size_t)(xdim * ydim))) == NULL) {
                     printf("Not enough memory to convert image");
                     exit(1);
                 }
@@ -187,10 +182,10 @@ int main(int argc, char *argv[])
                 }
 
                 writeref=Hnewref(out_fid);
-                ret = DFR8writeref(outfile, writeref);
+                DFR8writeref(outfile, writeref);
 
                 if(compress)
-                    DFR8setcompress(compress,&cinfo);
+                    DFR8setcompress((int32)compress,&cinfo);
                 if (DFR8addimage(outfile, (VOIDP) space,
                         xdim, ydim, compress)<0) {
                     printf("Error writing image to file %s\n", outfile);
@@ -241,8 +236,8 @@ int main(int argc, char *argv[])
                   } /* end if */
 
                 /* sequence past this image */
-                ret = DFR8readref(argv[i], prevref);
-                ret = DFR8getdims(argv[i], &xdim, &ydim, &ispal);
+                DFR8readref(argv[i], prevref);
+                DFR8getdims(argv[i], &xdim, &ydim, &ispal);
 
                 HDfree((VOIDP)space);
             }

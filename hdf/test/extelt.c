@@ -61,7 +61,7 @@ test_hextelt(void)
             );
     ret = Hputelement(fid, (uint16) 1000, (uint16) 1,
                       (uint8 *) STRING2,
-                      HDstrlen(STRING2) + 1);
+                      (int32)HDstrlen(STRING2) + 1);
     CHECK(ret, FAIL, "Hputelement");
 
     /* Promote the above object to an external object */
@@ -70,14 +70,14 @@ test_hextelt(void)
     aid1 = HXcreate(fid, 1000, 1, "t1.hdf", (int32) 0, (int32) 0);
     CHECK(aid1, FAIL, "HXcreate");
 
-    ret = Hseek(aid1, HDstrlen("element 1000 1") + 1, DF_START);
+    ret = Hseek(aid1, (int32)HDstrlen("element 1000 1") + 1, DF_START);
     CHECK(ret, FAIL, "Hseek");
 
     /* Now verify that the new promoted object can be written to */
     MESSAGE(5, printf("Writing to promoted object now in file #1 \n");
             );
 
-    ret = Hwrite(aid1, HDstrlen("correct") + 1, (uint8 *) "correct");
+    ret = Hwrite(aid1, (int32)HDstrlen("correct") + 1, (uint8 *) "correct");
     if (ret != (int32) HDstrlen("correct") + 1)
       {
           fprintf(stderr, "Hwrite failed (code %d)\n", (int) ret);
@@ -111,7 +111,7 @@ test_hextelt(void)
     MESSAGE(5, printf("Writing string '%s'(%d bytes) to file #3\n", 
                       STRING, HDstrlen(STRING));
         );
-    ret = Hwrite(aid1, HDstrlen(STRING) + 1, (uint8 *) STRING);
+    ret = Hwrite(aid1, (int32)HDstrlen(STRING) + 1, (uint8 *) STRING);
     if (ret != (int32) HDstrlen(STRING) + 1)
       {
           fprintf(stderr, "Hwrite failed (code %d)\n", (int) ret);
@@ -400,7 +400,7 @@ test_hextelt(void)
     fid1 = Hopen(TESTFILE_NAME, DFACC_READ, 0);
     CHECK(fid1, FAIL, "Hopen");
 
-    ret = Hnewref(fid1);
+    ret = (int32)Hnewref(fid1);
     CHECK(ret, FAIL, "Hnewref");
 
     /* Close first open of file */

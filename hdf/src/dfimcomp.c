@@ -265,7 +265,7 @@ compress(unsigned char raster[], int block)
                           c_lo[l] = c_lo[l] + (int) raster[3 * j + l];
                   }     /* end of if */
 
-                bit >>= 1;
+                bit = (uint8)(bit>>1);
             }   /* end of for j */
 
           k++;
@@ -278,8 +278,8 @@ compress(unsigned char raster[], int block)
               color_pt[hi].c[i] = (uint8) ((float) c_hi[i] / (float) high);
           if (high != 16)
               color_pt[lo].c[i] = (uint8) ((float) c_lo[i] / (float) (16 - high));
-          color_pt[hi].c[i] >>= 3;
-          color_pt[lo].c[i] >>= 3;
+          color_pt[hi].c[i] = (uint8)(color_pt[hi].c[i] >> 3);
+          color_pt[lo].c[i] = (uint8)(color_pt[lo].c[i] >> 3);
 
       }
 }   /* end of compress */

@@ -196,14 +196,14 @@ print_item(int32 fid, dd_t *desc_list, intn n)
                       v_init_done = TRUE;
                       Vinitialize(fid);
                   }     /* end if */
-                if ((vkey = Vattach(fid, desc_list[n].ref, "r")) != FAIL)
+                if ((vkey = Vattach(fid, (int32)desc_list[n].ref, "r")) != FAIL)
                   {
                       ntagrefs = Vntagrefs(vkey);
                       printf("\tContents: %d items\n", (int) ntagrefs);
                       if (ntagrefs > 0)
                         {
-                            tag_arr = (int32 *) HDmalloc(sizeof(int32) * ntagrefs);
-                            ref_arr = (int32 *) HDmalloc(sizeof(int32) * ntagrefs);
+                            tag_arr = (int32 *) HDmalloc(sizeof(int32) * (size_t)ntagrefs);
+                            ref_arr = (int32 *) HDmalloc(sizeof(int32) * (size_t)ntagrefs);
                             if (tag_arr == NULL || ref_arr == NULL)
                               {
                                   HDfree(tag_arr);
@@ -350,7 +350,7 @@ void usage(char *argv[])
 }
 
 /* dump the DD blocks */
-int dumpDD()
+int dumpDD(void)
 {
     hdf_file_t file_id;    /* stdio file ID */
     int32 next_block=MAGICLEN;
@@ -593,7 +593,7 @@ main(int argc, char *argv[])
             }
 
           if (sort)
-              qsort((char *) desc_buf, n, sizeof(dd_t), compare);
+              qsort((char *) desc_buf, (size_t)n, sizeof(dd_t), compare);
 
           v_init_done = FALSE;
 

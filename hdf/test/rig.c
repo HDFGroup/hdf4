@@ -1499,7 +1499,6 @@ test_r8(void)
     uint16      ref1, ref2;
     int32       xd, yd;
     int         ispal;
-    int         error;
     uint8      *jpeg_8bit_temp;
 
     im1 = (uint8 *) HDmalloc(XD1 * YD1 * sizeof(uint8));
@@ -1613,7 +1612,6 @@ test_r8(void)
     RESULT("DFR8getdims");
     ret = DFR8getimage(TESTFILE, (uint8 *) ii1, (int32) XD1, (int32) YD1, ipal);
     RESULT("DFR8getimage");
-    error = FALSE;
     check_im_pal(XD1, YD1, xd, yd, im1, ii1, pal1, ipal);
 
     MESSAGE(5, printf("Verifying RLE compressed image\n");

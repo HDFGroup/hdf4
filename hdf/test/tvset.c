@@ -362,7 +362,7 @@ write_vset_stuff(void)
 
     /* create some bogus data */
     for (i = 0; i < MAX_ORDER; i++)
-         gbuf1[i] = i % 256;
+         gbuf1[i] = (uint8)(i % 256);
     VSwrite(vs1, (unsigned char *) gbuf1, 1, FULL_INTERLACE);
     VSdetach(vs1);
     MESSAGE(5, printf("created VDATA %s with %d order\n", name, (int)
@@ -383,7 +383,7 @@ write_vset_stuff(void)
     
     /* create some bogus data */
     for (i = 0; i < max_order; i++)
-         gbuf2[i] = i * 0.11; 
+         gbuf2[i] = (float32)i * (float32)0.11; 
     VSwrite(vs1, (unsigned char *) gbuf2, 1, FULL_INTERLACE);
     VSdetach(vs1);
     MESSAGE(5, printf("created VDATA %s with %d order\n", name, (int)
@@ -614,7 +614,7 @@ read_vset_stuff(void)
           printf(">>> Got wrong count %d expecting 100\n", (int) count);
       }
 
-    if (sz != sizeof(float32))
+    if ((size_t)sz != sizeof(float32))
       {
           num_errs++;
           printf(">>> Got wrong data size %d should be sizeof(float32)\n", (int) sz);
@@ -698,7 +698,7 @@ read_vset_stuff(void)
           printf(">>> Got wrong count %d expecting 100\n", (int) count);
       }
 
-    if (sz != 2 * sizeof(int32))
+    if ((size_t)sz != 2 * sizeof(int32))
       {
           num_errs++;
           printf(">>> Got wrong data size %d should be 2 * sizeof(int32)\n", (int) sz);
@@ -823,7 +823,7 @@ read_vset_stuff(void)
           printf(">>> Got wrong count %d expecting 100\n", (int) count);
       }
 
-    if (sz != sizeof(int32) + sizeof(float32))
+    if ((size_t)sz != sizeof(int32) + sizeof(float32))
       {
           num_errs++;
           printf(">>> Got wrong data size %d should be sizeof(int32) + sizeof(float32)\n", (int) sz);
@@ -845,8 +845,8 @@ read_vset_stuff(void)
     p = gbuf;
     for (i = 0; i < count; i++)
       {
-          float32     fl;
-          int32       in;
+          float32     fl=(float32)0.0;
+          int32       in=(int32)0;
 
           HDmemcpy(&fl, p, sizeof(float32));
           p += sizeof(float32);
@@ -859,7 +859,7 @@ read_vset_stuff(void)
                 printf(">>> Mixed int value %d was expecting %d got %d\n", (int) i, (int) i, (int) in);
             }
 
-          if (fl != (float32) i * 2)
+          if (fl != (float32) (i * 2))
             {
                 num_errs++;
                 printf(">>> Mixed float value %d was expecting %d got %f\n", (int) i, (int) i, fl);
@@ -931,9 +931,9 @@ read_vset_stuff(void)
 
     for (i = 0; i < count; i++)
       {
-          float32     fl;
-          int32       in;
-          char8       c;
+          float32     fl=(float32)0.0;
+          int32       in=(int32)0;
+          char8       c=(char8)0;
 
           /* read and verify characters */
           HDmemcpy(&c, p, sizeof(char8));
@@ -1014,7 +1014,7 @@ read_vset_stuff(void)
 
     for (i = 0; i < count; i++)
       {
-          char8       c;
+          char8       c='\0';
 
           /* read and verify characters */
           HDmemcpy(&c, p, sizeof(char8));
@@ -1055,7 +1055,7 @@ read_vset_stuff(void)
 
     for (i = 0; i < count; i++)
       {
-          char8       c;
+          char8       c='\0';
 
           /* read and verify characters */
           HDmemcpy(&c, p, sizeof(char8));

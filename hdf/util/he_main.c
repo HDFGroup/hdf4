@@ -255,7 +255,7 @@ getTmpName(char **pname)
     (void) sprintf(s, "%she%d.%d", TDIR, (int)getpid(), count);
     count++;
 
-    length = HDstrlen(s);
+    length = (int)HDstrlen(s);
     if (length <= 0)
         return FAIL;
 
@@ -275,7 +275,7 @@ writeToFile(char *file, char *data, int32 length)
     if (fd == NULL)
         return FAIL;
 
-    written = fwrite(data, sizeof(char), (size_t) length, fd);
+    written = (int)fwrite(data, sizeof(char), (size_t) length, fd);
     if (written != length)
       {
           fprintf(stderr, "Error in write.\n");
@@ -339,8 +339,8 @@ copyFile(char *from, char *to)
           return FAIL;
       }
     /* copy the contents from hdf file to backup file */
-    while ((num_read = fread(buf, 1, HE_BUF_SZ, fp)) > 0)
-        fwrite(buf, 1, num_read, bfp);
+    while ((num_read = (int)fread(buf, 1, HE_BUF_SZ, fp)) > 0)
+        fwrite(buf, 1, (size_t)num_read, bfp);
 
     fclose(fp);
     fclose(bfp);
@@ -351,7 +351,7 @@ copyFile(char *from, char *to)
 int
 updateDesc(void)
 {
-    uint32      fid;
+    int32      fid;
     int32       groupID;
     int32       aid, status;
     int i, j;
@@ -468,7 +468,6 @@ getR8(int xdim, int ydim, char *image, char *pal, int compress)
     FILE       *fp;
     int32       length;
     char       *buf;
-    int32       ret;
 
     if (!fileOpen())
       {
@@ -488,14 +487,14 @@ getR8(int xdim, int ydim, char *image, char *pal, int compress)
           fprintf(stderr, "Error opening image file: %s.\n", image);
           return FAIL;
       }
-    if ((ret = fread(buf, xdim, ydim, fp)) < ydim)
+    if (fread(buf, (size_t)xdim, (size_t)ydim, fp) < (size_t)ydim)
       {
           fprintf(stderr, "Error reading image file: %s.\n", image);
           return FAIL;
       }
     fclose(fp);
 
-    if ((ret = DFR8addimage(he_file, buf, (int32) xdim, (int32) ydim, (uint16) compress)) < 0)
+    if (DFR8addimage(he_file, buf, (int32) xdim, (int32) ydim, (uint16) compress) < 0)
       {
           HEprint(stderr, 0);
           return FAIL;
@@ -516,16 +515,15 @@ setPal(char *pal)
     char        palette[HE_PALETTE_SZ];
     char *p;
     int i;
-    int         ret;
 
     if ((fp = fopen(pal, "r")) == NULL)
       {
           fprintf(stderr, "Error opening palette file: %s.\n", pal);
           return FAIL;
       }
-    if ((ret = fread(reds, 1, HE_COLOR_SZ, fp)) < HE_COLOR_SZ ||
-        (ret = fread(greens, 1, HE_COLOR_SZ, fp)) < HE_COLOR_SZ ||
-        (ret = fread(blues, 1, HE_COLOR_SZ, fp)) < HE_COLOR_SZ)
+    if (fread(reds, 1, HE_COLOR_SZ, fp) < HE_COLOR_SZ ||
+        fread(greens, 1, HE_COLOR_SZ, fp) < HE_COLOR_SZ ||
+        fread(blues, 1, HE_COLOR_SZ, fp) < HE_COLOR_SZ)
       {
           fprintf(stderr, "Error reading palette file: %s.\n", pal);
           return FAIL;
@@ -623,7 +621,7 @@ getCurrRig(int32 *pXdim, int32 *pYdim, char **pPalette, char **pRaster)
         *pPalette = (char *) HDmalloc(HE_PALETTE_SZ);
     else
         *pPalette = (char *) NULL;
-    *pRaster = (char *) HDmalloc((*pXdim) * (*pYdim));
+    *pRaster = (char *) HDmalloc((size_t)(*pXdim) * (size_t)(*pYdim));
 
     if (DFR8getimage(he_file, (unsigned char *) *pRaster, *pXdim, *pYdim,
                      (unsigned char *) *pPalette) == FAIL)
@@ -729,9 +727,9 @@ putElement(char *file, uint16 tag, uint16 ref, char *data, int32 len)
     int32       ret;
     int32       fid;
 
-    if ((fid = Hopen(file, DFACC_READ | DFACC_WRITE, 0)) == (uint32) NULL)
+    if ((fid = Hopen(file, DFACC_READ | DFACC_WRITE, 0)) == FAIL)
         /* a little tricky here */
-        if (HEvalue(0) != DFE_FNF || (fid = Hopen(file, DFACC_ALL, 0)) == (uint32) NULL)
+        if (HEvalue(0) != DFE_FNF || (fid = Hopen(file, DFACC_ALL, 0)) == FAIL)
           {
               HEprint(stderr, 0);
               return FAIL;
@@ -757,7 +755,7 @@ writeGrp(char *file)
 
     getNewRef(file, &ref);
 
-    grp = currGrpNo();
+    grp = currGrpNo;
     gid = DFdisetup(he_grp[grp].size);
     for (i = 0; i < he_grp[grp].size; i++)
       {
@@ -769,12 +767,12 @@ writeGrp(char *file)
       }
     /* do the group now */
 
-    if ((fid = Hopen(file, DFACC_READ | DFACC_WRITE, 0)) == (uint32) NULL)
+    if ((fid = Hopen(file, DFACC_READ | DFACC_WRITE, 0)) == FAIL)
       {
           HEprint(stderr, 0);
           return FAIL;
       }
-    if ((ret = DFdiwrite(fid, gid, currTag(), ref)) < 0)
+    if ((ret = DFdiwrite(fid, gid, currTag, ref)) < 0)
       {
           HEprint(stderr, 0);
           return ret;
@@ -787,9 +785,9 @@ getNewRef(char *file, uint16 *pRef)
 {
     int32       fid;
 
-    if ((fid = Hopen(file, DFACC_READ | DFACC_WRITE, 0)) == (uint32) NULL)
+    if ((fid = Hopen(file, DFACC_READ | DFACC_WRITE, 0)) == FAIL)
         /* a little tricky here */
-        if (HEvalue(0) != DFE_FNF || (fid = Hopen(file, DFACC_ALL, 0)) == (uint32) NULL)
+        if (HEvalue(0) != DFE_FNF || (fid = Hopen(file, DFACC_ALL, 0)) == FAIL)
           {
               HEprint(stderr, 0);
               return FAIL;
@@ -847,7 +845,7 @@ writeAnnot(char *file, uint16 tag, uint16 ref)
 }
 
 int32
-getAnn(int ann, int16 tag, int16 ref, char **pBuf)
+getAnn(int ann, uint16 tag, uint16 ref, char **pBuf)
 {
     int32       len;
 
@@ -856,7 +854,7 @@ getAnn(int ann, int16 tag, int16 ref, char **pBuf)
           len = DFANgetlablen(he_file, tag, ref);
           if (len > 0)
             {
-                *pBuf = (char *) HDmalloc(len + 1);
+                *pBuf = (char *) HDmalloc((size_t)(len + 1));
                 DFANgetlabel(he_file, tag, ref, *pBuf, len + 1);
             }
           else
@@ -867,7 +865,7 @@ getAnn(int ann, int16 tag, int16 ref, char **pBuf)
           len = DFANgetdesclen(he_file, tag, ref);
           if (len > 0)
             {
-                *pBuf = (char *) HDmalloc(len);
+                *pBuf = (char *) HDmalloc((size_t)len);
                 DFANgetdesc(he_file, tag, ref, *pBuf, len);
             }
           else
@@ -915,7 +913,7 @@ readFromFile(char *file, char **pBuf)
           if (*pBuf == NULL)
               return FAIL;
 
-          num_read = fread((*pBuf) + soFar, 1, HE_BUF_SZ, fp);
+          num_read = (int32)fread((*pBuf) + soFar, 1, HE_BUF_SZ, fp);
       }
     *pBuf = (char *) HDrealloc(*pBuf, soFar + 1);
     (*pBuf)[soFar] = '\0';
@@ -1094,7 +1092,7 @@ findOpt(char *word)
 {
     unsigned    len;
     int         found = -1;
-    int i;
+    uintn i;
 
     len = HDstrlen(word);
 
@@ -1106,7 +1104,7 @@ findOpt(char *word)
                   return he_optTab[i].key;
 
               if (found < 0)
-                  found = i;
+                  found = (int)i;
               else
                   return HE_AMBIG;
           }
@@ -1303,7 +1301,7 @@ fillTemplate(char **template, char **pout, char *s, char templateChar)
     /* count length of template to replace */
     for (templateLen = 0; **template == templateChar;
          (*template)++, templateLen++) ;
-    sLen = HDstrlen(s);
+    sLen = (int)HDstrlen(s);
 
     /* fill with zero's if the space reserved in template is
        longer than the length of s */

@@ -91,7 +91,7 @@ test_sdnmms(void)
                 ui32[i][j] = (uint32) ((i * 40) + j);   /* range: 0 ~ 4-billion */
             }
 
-          f64scale[i] = (i * 40) + j;   /* range: 0 ~ 4-billion */
+          f64scale[i] = (float64)((i * 40) + j);   /* range: 0 ~ 4-billion */
 
           f32scale[i] = (float32) ((i * 40) + j);   /* range: 0 ~ 4-billion */
 

@@ -97,22 +97,22 @@ magnify(uint8 *from_buffer, uint8 *to_buffer, int32 from_x0,
         return (FALSE);
 
 /* find width and height of the window to magnify */
-    wind_width = (from_x1 - from_x0) + 1;
-    wind_height = (from_y1 - from_y0) + 1;
+    wind_width = (float64)((from_x1 - from_x0) + 1);
+    wind_height = (float64)((from_y1 - from_y0) + 1);
 
 /* allocate room for the x coordinate lookup table */
-    x_coor = (int32 *) HDmalloc((int32) (to_width * sizeof(int32)));
+    x_coor = (int32 *) HDmalloc((int32) ((size_t)to_width * sizeof(int32)));
     EXCHECK(x_coor == NULL, XCoorFailed);   /* check if malloc() failed */
     temp_val = wind_width / (float64) to_width;
     for (u = 0; u < to_width; u++)  /* calculate the x coordinate lookup table */
         x_coor[u] = ((uint16) ((float64) u * temp_val) + from_x0);
 
 /* allocate room for the array of pointers */
-    y_coor = (uint8 **) HDmalloc((int32) (to_height * sizeof(uint8 *)));
+    y_coor = (uint8 **) HDmalloc((int32) ((size_t)to_height * sizeof(uint8 *)));
     EXCHECK(y_coor == NULL, YCoorFailed);   /* check if malloc() failed */
     temp_val = wind_height / (float64) to_height;
     for (u = 0; u < to_height; u++)     /* calculate the y coordinates */
-        y_coor[u] = from_buffer + ((uint32) ((float64) u * temp_val) + from_y0) * from_width;
+        y_coor[u] = from_buffer + ((uint32) ((float64) u * temp_val) + (uint32)from_y0) * (uint32)from_width;
 
     last_buf = to_buffer;   /* set the previous line pointer */
     buf_off = to_buffer;    /* set the pointer to the "to" image */
@@ -170,7 +170,7 @@ convert8to24(uint8 *img8_buf, uint8 *img24_buf, int32 img_xdim,
     if (img8_buf == NULL || img24_buf == NULL)  /* check for invalid images */
         return (FALSE);
 
-    pixels = img_xdim * img_ydim;   /* get the number of pixels to process */
+    pixels = (uint32)(img_xdim * img_ydim);   /* get the number of pixels to process */
     while (pixels > 0)
       {     /* do all the pixels */
           *img24_buf++ = red_comp[*img8_buf];
@@ -229,7 +229,7 @@ main(int argc, char *argv[])
                 switch (argv[file][1])
                   {
                       case 's':
-                          if ((img_scale = (float32) atof(&argv[file][2])) <= 0)
+                          if ((img_scale = (float32) atof(&argv[file][2])) <= (float32)0.0)
                             {   /* check for valid scale */
                                 printf("Bad scale, must be greater than 0\n");
                                 return (1);
@@ -263,7 +263,7 @@ main(int argc, char *argv[])
           return (1);
       }     /* end if */
 
-    if ((img_buf = (uint8 *) HDmalloc(xdim * ydim)) == NULL)
+    if ((img_buf = (uint8 *) HDmalloc((size_t)(xdim * ydim))) == NULL)
       {
           printf("Error, cannot allocate space for %ldx%ld image\n", xdim, ydim);
           return (1);
@@ -292,9 +292,9 @@ main(int argc, char *argv[])
           uint8      *scaled_image;     /* storage for the scaled image */
           int32       new_xdim, new_ydim;   /* the new image's x and y dim. */
 
-          new_xdim = (int32) (img_scale * xdim);    /* calc. new image's dimensions */
-          new_ydim = (int32) (img_scale * ydim);
-          if ((scaled_image = (uint8 *) HDmalloc(new_xdim * new_ydim)) == NULL)
+          new_xdim = (int32) (img_scale * (float32)xdim);    /* calc. new image's dimensions */
+          new_ydim = (int32) (img_scale * (float32)ydim);
+          if ((scaled_image = (uint8 *) HDmalloc((size_t)(new_xdim * new_ydim))) == NULL)
             {
                 printf("Error, cannot allocate space for %ldx%ld scaled image\n", new_xdim, new_ydim);
                 return (1);
@@ -330,7 +330,7 @@ main(int argc, char *argv[])
       }     /* end else */
 
     /* allocate space for the 24-bit image */
-    if ((img24_buf = (uint8 *) HDmalloc(xdim * ydim * 3)) == NULL)
+    if ((img24_buf = (uint8 *) HDmalloc((size_t)(xdim * ydim * 3))) == NULL)
       {
           printf("Error, cannot allocate space for %ldx%ld 24-bit image\n", xdim, ydim);
           return (1);

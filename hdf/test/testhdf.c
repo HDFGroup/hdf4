@@ -66,8 +66,7 @@ struct TestStruct
 
 static void
 InitTest(const char *TheName, VOID(*TheCall) (void), const char *TheDescr);
-static void
-usage(intn argc, char *argv[]);
+static void usage(void);
 
 static void
 InitTest(const char *TheName, VOID(*TheCall) (void), const char *TheDescr)
@@ -86,7 +85,7 @@ InitTest(const char *TheName, VOID(*TheCall) (void), const char *TheDescr)
 }
 
 static void
-usage(intn argc, char *argv[])
+usage(void)
 {
     intn        i;
 
@@ -124,7 +123,6 @@ main(int argc, char *argv[])
     int         Summary = 0;
     int         CleanUp = 1;
     int         Cache = 1;
-    int         ret;
     uint32      lmajor, lminor, lrelease;
     char        lstring[81];
 
@@ -171,7 +169,7 @@ main(int argc, char *argv[])
     InitTest("mfgr", test_mgr, "Multi-File Generic Raster Image Interface");
 
     Verbosity = 4;  /* Default Verbosity is Low */
-    ret = Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
+    Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
 
     printf("\nFor help use: testhdf -help\n");
     printf("Built with HDF Library Version: %u.%ur%u, %s\n\n", (unsigned) lmajor,
@@ -197,7 +195,7 @@ main(int argc, char *argv[])
           if ((argc > CLLoop) && ((HDstrcmp(argv[CLLoop], "-help") == 0) ||
                                   (HDstrcmp(argv[CLLoop], "-h") == 0)))
             {
-                usage(argc, argv);
+                usage();
                 exit(0);
             }
 

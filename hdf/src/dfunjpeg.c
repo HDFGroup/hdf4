@@ -272,7 +272,7 @@ jpeg_HDF_src(struct jpeg_decompress_struct *cinfo_ptr, int32 file_id, uint16 tag
 #else /* OLD_WAY */
     if(scheme==DFTAG_JPEG || scheme==DFTAG_GREYJPEG)
       {
-        src->tag = scheme;      /* start reading from the JPEG header first */
+        src->tag = (uint16)scheme;      /* start reading from the JPEG header first */
         src->old_jpeg_image=TRUE;   /* indicate an old-style image */
         src->old_header_read=FALSE; /* start with the header */
       } /* end if */

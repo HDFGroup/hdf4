@@ -41,7 +41,7 @@ jpeg_add_quant_table (j_compress_ptr cinfo, int which_tbl,
     *qtblptr = jpeg_alloc_quant_table((j_common_ptr) cinfo);
 
   for (i = 0; i < DCTSIZE2; i++) {
-    temp = ((long) basic_table[i] * scale_factor + 50L) / 100L;
+    temp = ((long) basic_table[i] * (long)scale_factor + 50L) / 100L;
     /* limit the values to the valid range */
     if (temp <= 0L) temp = 1L;
     if (temp > 32767L) temp = 32767L; /* max quantizer needed for 12 bits */
@@ -533,7 +533,7 @@ jpeg_simple_progression (j_compress_ptr cinfo)
   /* We use permanent pool just in case application re-uses script. */
   scanptr = (jpeg_scan_info *)
     (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
-				nscans * SIZEOF(jpeg_scan_info));
+				(size_t)nscans * SIZEOF(jpeg_scan_info));
   cinfo->scan_info = scanptr;
   cinfo->num_scans = nscans;
 

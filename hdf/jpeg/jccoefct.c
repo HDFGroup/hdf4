@@ -169,8 +169,8 @@ compress_data (j_compress_ptr cinfo, JSAMPIMAGE input_buf)
 	compptr = cinfo->cur_comp_info[ci];
 	blockcnt = (MCU_col_num < last_MCU_col) ? compptr->MCU_width
 						: compptr->last_col_width;
-	xpos = MCU_col_num * compptr->MCU_sample_width;
-	ypos = yoffset * DCTSIZE; /* ypos == (yoffset+yindex) * DCTSIZE */
+	xpos = MCU_col_num * (unsigned)compptr->MCU_sample_width;
+	ypos = (unsigned)yoffset * DCTSIZE; /* ypos == (yoffset+yindex) * DCTSIZE */
 	for (yindex = 0; yindex < compptr->MCU_height; yindex++) {
 	  if (coef->iMCU_row_num < last_iMCU_row ||
 	      yoffset+yindex < compptr->last_row_height) {

@@ -106,7 +106,7 @@ gen2Dfloat(int height, int width, float32 *data)
     pdata = data;
     for (i = 0; i < height; i++)
         for (j = 0; j < width; j++)
-            *pdata++ = (float32) i + 1;
+            *pdata++ = (float32) (i + 1);
 
 } /* gen2Dfloat() */
 
@@ -121,7 +121,6 @@ genimage(int height, int width, float32 *data, uint8 *image)
     int    i, limit;
     float32  *pdata = NULL;
     float32  max, min, multiplier;
-    uint8  *pimage = NULL;
 
     limit = height * width;
     pdata = data;
@@ -134,7 +133,6 @@ genimage(int height, int width, float32 *data, uint8 *image)
 
     /* store one value per row, increasing by one for each row */
     pdata  = data;
-    pimage = image;
     multiplier = (float32) 255.0 / (max - min);
     for (i = 0; i < limit; i++)
         *image++ = (uint8) (((*pdata++) - min) * multiplier);
@@ -225,7 +223,7 @@ check_fann(const char *fname)
           RESULT("ANendaccess");      
       
           /* check label */
-          if (HDstrncmp((const char *)ann_label, (const char *)file_lab[i],ann_len+1) != 0)
+          if (HDstrncmp((const char *)ann_label, (const char *)file_lab[i],(size_t)(ann_len+1)) != 0)
             {
                 printf("\t>>>BAD FILE LABEL. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n",
                        ann_label, file_lab[i]);
@@ -280,7 +278,7 @@ check_fann(const char *fname)
           RESULT("ANendaccess");      
             
           /* check desc */
-          if (HDstrncmp((const char *)ann_desc,(const char *)file_desc[i],ann_len+1) != 0)
+          if (HDstrncmp((const char *)ann_desc,(const char *)file_desc[i],(size_t)(ann_len+1)) != 0)
             {
                 printf("\t>>>BAD FILE DESC. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n",
                        ann_desc, file_desc[i]);
@@ -447,7 +445,7 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[],
           RESULT("ANendaccess");      
 
           /* check label */
-          if (HDstrncmp((const char *)ann_label, (const char *)label[i], ann_len+1) != 0)
+          if (HDstrncmp((const char *)ann_label, (const char *)label[i], (size_t)(ann_len+1)) != 0)
             {
                 printf("\t>>>BAD DATA LABEL. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n",
                        ann_label, label[i]);
@@ -498,7 +496,7 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[],
           RESULT("ANendaccess");      
 
           /* check desc */
-          if (HDstrncmp((const char *)ann_desc, (const char *)desc[i], ann_len) != 0)
+          if (HDstrncmp((const char *)ann_desc, (const char *)desc[i], (size_t)ann_len) != 0)
             {
                 printf("\t>>>BAD DATA DESC. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n",
                        ann_desc, desc[i]);
@@ -613,7 +611,7 @@ test_man(void)
       {
           ret = ann_handle = ANcreatef(an_handle, AN_FILE_LABEL);
           RESULT("ANcreatef");
-          ret = ANwriteann(ann_handle, file_lab[i], HDstrlen(file_lab[i]));
+          ret = ANwriteann(ann_handle, file_lab[i], (int32)HDstrlen(file_lab[i]));
           RESULT("ANwriteann");
           ret = ANendaccess(ann_handle);
           RESULT("ANendaccess");
@@ -624,7 +622,7 @@ test_man(void)
       {
           ret = ann_handle = ANcreatef(an_handle, AN_FILE_DESC);
           RESULT("ANcreatef");
-          ret = ANwriteann(ann_handle, file_desc[i], HDstrlen(file_desc[i]));
+          ret = ANwriteann(ann_handle, file_desc[i], (int32)HDstrlen(file_desc[i]));
           RESULT("ANwriteann");
           ret = ANendaccess(ann_handle);
           RESULT("ANendaccess");
@@ -658,7 +656,7 @@ test_man(void)
                       ret = ann_handle = ANcreate(an_handle, DFTAG_NDG, refnum, 
                                                   AN_DATA_LABEL);
                       RESULT("ANcreate");
-                      ret = ANwriteann(ann_handle, labsds[i], HDstrlen(labsds[i]));
+                      ret = ANwriteann(ann_handle, labsds[i], (int32)HDstrlen(labsds[i]));
                       RESULT("ANwriteann");
                       ret = ANendaccess(ann_handle);
                       RESULT("ANendaccess");
@@ -670,7 +668,7 @@ test_man(void)
                       ret = ann_handle = ANcreate(an_handle, DFTAG_NDG, refnum, 
                                                   AN_DATA_DESC);
                       RESULT("ANcreate");
-                      ret = ANwriteann(ann_handle, descsds[i], HDstrlen(descsds[i]));
+                      ret = ANwriteann(ann_handle, descsds[i], (int32)HDstrlen(descsds[i]));
                       RESULT("ANwriteann");
                       ret = ANendaccess(ann_handle);
                       RESULT("ANendaccess");
@@ -689,7 +687,7 @@ test_man(void)
                 ret = ann_handle = ANcreate(an_handle, DFTAG_RIG, refnum, 
                                             AN_DATA_LABEL);
                 RESULT("ANcreate");
-                ret = ANwriteann(ann_handle, labris[i], HDstrlen(labris[i]));
+                ret = ANwriteann(ann_handle, labris[i], (int32)HDstrlen(labris[i]));
                 RESULT("ANwriteann");
                 ret = ANendaccess(ann_handle);
                 RESULT("ANendaccess");
@@ -701,7 +699,7 @@ test_man(void)
                 ret = ann_handle = ANcreate(an_handle, DFTAG_RIG, refnum, 
                                             AN_DATA_DESC);
                 RESULT("ANcreate");
-                ret = ANwriteann(ann_handle, descris[i], HDstrlen(descris[i]));
+                ret = ANwriteann(ann_handle, descris[i], (int32)HDstrlen(descris[i]));
                 RESULT("ANwriteann");
                 ret = ANendaccess(ann_handle);
                 RESULT("ANendaccess");

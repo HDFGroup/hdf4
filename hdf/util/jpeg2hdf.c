@@ -281,7 +281,7 @@ read_file_header(FILE * f)
         return (0);
 
     /* Process markers until SOF */
-    c = process_tables(f);
+    c = (int)process_tables(f);
 
     switch (c)
       {
@@ -430,7 +430,9 @@ main(int argc, char *argv[])
 {
     int32       off_image;      /* offset of the JPEG image in the JFIF file */
     int32       file_len;       /* total length of the JPEG file */
+#ifdef OLD_WAY
     int32       image_len;      /* length of the image in the JPEG file (in bytes) */
+#endif /* OLD_WAY */
     FILE       *jfif_file;      /* file handle of the JFIF image */
     int32       file_id;        /* HDF file ID of the file to write */
     uint16      wtag;           /* tag number to use for the image */
@@ -465,8 +467,10 @@ main(int argc, char *argv[])
 
     if (!fseek(jfif_file, 0, SEEK_END))
       {
-          file_len = ftell(jfif_file);
+          file_len = (int32)ftell(jfif_file);
+#ifdef OLD_WAY
           image_len = file_len - off_image;
+#endif /* OLD_WAY */
           fseek(jfif_file, 0, SEEK_SET);    /* go back to beginning of JFIF file */
       }     /* end if */
     else

@@ -74,7 +74,7 @@ main(int argc, char *argv[])
       {
           if (jfif_char > argv[2])
             {   /* copy initial portion */
-                HDstrncpy(jfif_name, argv[2], (intn) (jfif_char - argv[2]));
+                HDstrncpy(jfif_name, argv[2], (size_t) (jfif_char - argv[2]));
                 jfif_name[jfif_char - argv[2]] = '\0';  /* terminate the string */
             }   /* end if */
           HDstrcat(jfif_name, "%d");    /* append formatter */

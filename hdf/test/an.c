@@ -100,7 +100,7 @@ test_an(void)
                 ret = DFANputlabel(TESTFILE, DFTAG_SDG, refnum, labsds);
                 RESULT("DFANputlabel");
                 ret = DFANputdesc(TESTFILE, DFTAG_SDG, refnum,
-                                  descsds, HDstrlen(descsds));
+                                  descsds, (int32)HDstrlen(descsds));
                 RESULT("DFANputdesc");
             }
 
@@ -109,7 +109,7 @@ test_an(void)
           refnum = DFR8lastref();
           ret = DFANputlabel(TESTFILE, DFTAG_RIG, refnum, labris);
           RESULT("DFANputlabel");
-          ret = DFANputdesc(TESTFILE, DFTAG_RIG, refnum, descris, HDstrlen(descris));
+          ret = DFANputdesc(TESTFILE, DFTAG_RIG, refnum, descris, (int32)HDstrlen(descris));
           RESULT("DFANputdesc");
       }
 
@@ -154,7 +154,7 @@ gen2Dfloat(int height, int width, float *data)
     pdata = data;
     for (i = 0; i < height; i++)
         for (j = 0; j < width; j++)
-            *pdata++ = (float) i + 1;
+            *pdata++ = (float) (i + 1);
 
 }
 
@@ -168,7 +168,6 @@ genimage(int height, int width, float *data, uint8 *image)
 {
     int         i, limit;
     float      *pdata, max, min, multiplier;
-    uint8      *pimage;
 
     limit = height * width;
     pdata = data;
@@ -180,7 +179,6 @@ genimage(int height, int width, float *data, uint8 *image)
       }
     /* store one value per row, increasing by one for each row */
     pdata = data;
-    pimage = image;
     multiplier = (float32) 255.0 / (max - min);
     for (i = 0; i < limit; i++)
         *image++ = (uint8) (((*pdata++) - min) * multiplier);

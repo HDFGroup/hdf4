@@ -143,7 +143,7 @@ emit_dqt (j_compress_ptr cinfo, int index)
 
   prec = 0;
   for (i = 0; i < DCTSIZE2; i++) {
-    if (qtbl->quantval[i] > 255)
+    if ((unsigned)qtbl->quantval[i] > (unsigned)255)
       prec = 1;
   }
 
@@ -156,10 +156,10 @@ emit_dqt (j_compress_ptr cinfo, int index)
 
     for (i = 0; i < DCTSIZE2; i++) {
       /* The table entries must be emitted in zigzag order. */
-      unsigned int qval = qtbl->quantval[jpeg_natural_order[i]];
+      unsigned int qval = (unsigned)qtbl->quantval[jpeg_natural_order[i]];
       if (prec)
-	emit_byte(cinfo, qval >> 8);
-      emit_byte(cinfo, qval & 0xFF);
+	emit_byte(cinfo, (int)(qval >> 8));
+      emit_byte(cinfo, (int)(qval & 0xFF));
     }
 
     qtbl->sent_table = TRUE;
@@ -197,10 +197,10 @@ emit_dht (j_compress_ptr cinfo, int index, boolean is_ac)
     emit_byte(cinfo, index);
     
     for (i = 1; i <= 16; i++)
-      emit_byte(cinfo, htbl->bits[i]);
+      emit_byte(cinfo, (int)htbl->bits[i]);
     
     for (i = 0; i < length; i++)
-      emit_byte(cinfo, htbl->huffval[i]);
+      emit_byte(cinfo, (int)htbl->huffval[i]);
     
     htbl->sent_table = TRUE;
   }
@@ -246,6 +246,9 @@ emit_dac (j_compress_ptr cinfo)
       emit_byte(cinfo, cinfo->arith_ac_K[i]);
     }
   }
+#else /* C_ARITH_CODING_SUPPORTED */
+    /* Shut compiler up */
+    cinfo=cinfo;
 #endif /* C_ARITH_CODING_SUPPORTED */
 }
 
@@ -364,7 +367,7 @@ emit_jfif_app0 (j_compress_ptr cinfo)
    */
   emit_byte(cinfo, 1);		/* Major version */
   emit_byte(cinfo, 1);		/* Minor version */
-  emit_byte(cinfo, cinfo->density_unit); /* Pixel size information */
+  emit_byte(cinfo, (int)cinfo->density_unit); /* Pixel size information */
   emit_2bytes(cinfo, (int) cinfo->X_density);
   emit_2bytes(cinfo, (int) cinfo->Y_density);
   emit_byte(cinfo, 0);		/* No thumbnail image */
@@ -437,7 +440,7 @@ write_any_marker (j_compress_ptr cinfo, int marker,
     emit_2bytes(cinfo, (int) (datalen + 2)); /* total length */
 
     while (datalen--) {
-      emit_byte(cinfo, *dataptr);
+      emit_byte(cinfo, (int)*dataptr);
       dataptr++;
     }
   }

@@ -64,10 +64,10 @@ test_anfile(void)
 
     MESSAGE(5, puts("Writing file descriptions.");
         );
-    ret = DFANaddfds(file_id, desc1, HDstrlen(desc1));
+    ret = DFANaddfds(file_id, desc1, (int32)HDstrlen(desc1));
     RESULT("DFANaddfds");
 
-    ret = DFANaddfds(file_id, desc2, HDstrlen(desc2));
+    ret = DFANaddfds(file_id, desc2, (int32)HDstrlen(desc2));
     RESULT("DFANaddfds");
 
     if (FAIL == Hclose(file_id))

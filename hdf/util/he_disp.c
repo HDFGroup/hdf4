@@ -131,7 +131,7 @@ getSpace(void)
           if (wheresmall)
               HDfree(wheresmall);
 
-          if (NULL == (wheresmall = (uint8 *) HDmalloc(xdim * ydim)))
+          if (NULL == (wheresmall = (uint8 *) HDmalloc((size_t)(xdim * ydim))))
             {
                 printf(" Cannot allocate memory, fatal error\n");
                 exit(1);
@@ -242,15 +242,15 @@ rImage(int usepal)
           thischar = (int8 *) rgb;
           for (j = 0; j < 768; j++)
             {
-                c = *thischar++;
-                if (c > 31 && c < 123)
+                c = (unsigned char)*thischar++;
+                if ((unsigned)c > (unsigned)31 && (unsigned)c < (unsigned)123)
                   {
-                      putchar(c);
+                      putchar((int)c);
                   }
                 else
                   {
-                      putchar((c >> 6) + 123);
-                      putchar((c & 0x3f) + 32);
+                      putchar((int)(((unsigned)c >> 6) + (unsigned)123));
+                      putchar((int)((c & 0x3f) + 32));
                   }
             }
       }
@@ -286,16 +286,16 @@ rImage(int usepal)
  */
 /***********************************************************************/
 
-                c = *thischar++;    /* get byte to send */
+                c = (unsigned char)*thischar++;    /* get byte to send */
 
-                if (c > 31 && c < 123)
+                if ((unsigned)c > (unsigned)31 && (unsigned)c < (unsigned)123)
                   {
-                      putchar(c);
+                      putchar((int)c);
                   }
                 else
                   {
-                      putchar((c >> 6) + 123);
-                      putchar((c & 0x3f) + 32);
+                      putchar((int)((unsigned)(c >> 6) + (unsigned)123));
+                      putchar((int)((c & 0x3f) + 32));
                   }
             }
       }

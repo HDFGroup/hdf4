@@ -271,12 +271,15 @@ compress_output (j_compress_ptr cinfo, JSAMPIMAGE input_buf)
   JBLOCKROW buffer_ptr;
   jpeg_component_info *compptr;
 
+  /* Shut compiler up */
+  input_buf=input_buf;
+
   /* Align the virtual buffers for the components used in this scan. */
   for (ci = 0; ci < cinfo->comps_in_scan; ci++) {
     compptr = cinfo->cur_comp_info[ci];
     buffer[ci] = (*cinfo->mem->access_virt_barray)
       ((j_common_ptr) cinfo, coef->whole_image[compptr->component_index],
-       coef->iMCU_row_num * compptr->v_samp_factor,
+       (unsigned)coef->iMCU_row_num * (unsigned)compptr->v_samp_factor,
        (JDIMENSION) compptr->v_samp_factor, FALSE);
   }
 
@@ -289,7 +292,7 @@ compress_output (j_compress_ptr cinfo, JSAMPIMAGE input_buf)
       blkn = 0;			/* index of current DCT block within MCU */
       for (ci = 0; ci < cinfo->comps_in_scan; ci++) {
 	compptr = cinfo->cur_comp_info[ci];
-	start_col = MCU_col_num * compptr->MCU_width;
+	start_col = (unsigned)MCU_col_num * (unsigned)compptr->MCU_width;
 	blockcnt = (MCU_col_num < last_MCU_col) ? compptr->MCU_width
 						: compptr->last_col_width;
 	for (yindex = 0; yindex < compptr->MCU_height; yindex++) {

@@ -363,7 +363,7 @@ get_app0 (j_decompress_ptr cinfo)
        */
       if (b[5] != 1)
 	WARNMS2(cinfo, JWRN_JFIF_MAJOR, b[5], b[6]);
-      else if (b[6] > 2)
+      else if ((unsigned)b[6] > (unsigned)2)
 	TRACEMS2(cinfo, 1, JTRC_JFIF_MINOR, b[5], b[6]);
       /* Save info */
       cinfo->saw_JFIF_marker = TRUE;
