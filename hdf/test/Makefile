@@ -39,18 +39,15 @@ FOBJS = tr8f.o t24f.o tpf.o tanf.o tanfilef.o tsdstrf.o tsdntf.o \
 #        tsdmms tsdnmms tsdnnt tsdnt tan \
 #        tanfile tstubs tv1 tv2 tvers egchi
 
-<<<<<<< Makefile
-.c.o: ; $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c
-
 .f: $< $(HDFLIB)/libdf.a
 	$(FC) $(FFLAGS) $< -o $@ $(HDFLIB)/libdf.a
 
 all: testhdf fortest
-=======
-.c.o: ; $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
+
+.c.o: 
+	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
 
 all: testhdf
->>>>>>> 1.3
 
 testhdf: $(CTESTS)
 	$(CC) $(CFLAGS) -o testhdf $(CTESTS) $(HDFLIB)/libdf.a
@@ -60,9 +57,11 @@ fortest: ftests fortest.o
 
 ftests: $(FTESTS)
 
-clean: ; -$(RM) $(RMFLAGS) $(CTESTS) $(FOBJS)
+clean: 
+	 -$(RM) $(RMFLAGS) $(CTESTS) $(FOBJS)
 
-depend: ; makedepend -I$(HDFINC) *.c
+depend: 
+	 makedepend -I$(HDFINC) *.c
 
 
 

@@ -26,7 +26,7 @@ const char* TheDescr;
   static int Index=0;
   HDstrcpy(Test[Index].Description,TheDescr);
   HDstrcpy(Test[Index].Name,TheName);
-  Test[Index].Call = TheCall;
+  Test[Index].Call = (VOIDP) TheCall;
   Test[Index].NumErrors = -1;
   Test[Index].SkipFlag = 0;
   Index++;

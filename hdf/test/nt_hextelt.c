@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1993/01/27 22:41:25  briand
-Fixed problem with compiling on RS6000.
+Revision 1.3  1993/02/16 20:51:14  chouck
+Went back to using -ansi so needed to fix a few casting problems
 
+ * Revision 1.2  1993/01/27  22:41:25  briand
+ * Fixed problem with compiling on RS6000.
+ *
  * Revision 1.1  1993/01/27  22:04:29  briand
  * Converted test files to work with master test program: testhdf
  *
@@ -171,7 +174,7 @@ void test_hextelt()
       exit(1);
     }
 
-    if(strcmp(inbuf, "element 1000 1 correct")) {
+    if(HDstrcmp((const char *) inbuf, (const char *) "element 1000 1 correct")) {
       fprintf(stderr, "Object stored in file #1 is wrong\n");
       fprintf(stderr, "\t       Is: %s\n", inbuf);
       fprintf(stderr, "\tShould be: element 1000 1 correct\n");
