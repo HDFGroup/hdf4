@@ -16,6 +16,8 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
+#ifdef HDF
+
 #define CHECK(status, name) {if(status == FAIL) { printf("*** Routine %s FAILED at line %d ***\n", name, __LINE__); num_err++;}}
 
 #include "mfhdf.h"
@@ -769,6 +771,6 @@ char *argv[];
     exit(0);
 }
 
-
+#endif /* HDF */
 
 

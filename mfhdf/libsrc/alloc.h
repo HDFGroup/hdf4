@@ -27,6 +27,7 @@ extern char *realloc();
 #define Free(ptr)		HDfree((VOIDP)ptr)
 #else
 #define Free(ptr)		free(ptr)
+#define HDfree(ptr)     free(ptr)
 #endif
 #else
 /* old style free */
@@ -34,8 +35,18 @@ extern char *realloc();
 #define Free(ptr)		(void)HDfree((char *)ptr)
 #else
 #define Free(ptr)		(void)free((char *)ptr)
+#define HDfree(ptr)     (void)free((char *)ptr)
 #endif
 #endif /* !NO_STDLIB */
+
+
+/* We need to define these to standard ones when HDF is not defined */
+#ifndef HDF
+#define HDcalloc(nelem, elsize)   calloc(nelem,elsize)
+#define HDmemset(dst,c,n)         memset(dst,c,n)
+#define HDrealloc(p,s)            realloc(p,s)
+#define HDmalloc(s)               malloc(s)
+#endif /* HDF */
 
 #define ARRAYLEN(arr) (sizeof(arr)/sizeof(arr[0]))
 

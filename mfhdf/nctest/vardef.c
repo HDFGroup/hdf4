@@ -19,8 +19,10 @@
 #endif
 
 #define LEN_OF(array) ((sizeof array) / (sizeof array[0]))
+#ifdef HDF
 #define  EPS64          ((float64)1.0E-14)
 #define  EPS32          ((float32)1.0E-7)
+#endif
 
 /*
  * Test ncvardef
@@ -243,9 +245,11 @@ printf("\n\n After cast %ld %ld\n", a, b);
 	    {
 		float val, fillval = FILL_FLOAT;
 		if (ncvarget1(cdfid, va_id[iv], where, (void *) &val) != -1) {
-/*		    if (val != fillval) {
-*/
+#ifdef HDF
           if (fabs((double)(val - fillval)) > fabs((double)(fillval*EPS32))) {
+#else /*!HDF */
+		    if (val != fillval) {
+#endif
 			error("%s: unwritten float not FILL_FLOAT", pname);
 			nerrs++;
 		    }
@@ -259,9 +263,11 @@ printf("\n\n After cast %ld %ld\n", a, b);
 	    {
 		double val, fillval = FILL_DOUBLE;
 		if (ncvarget1(cdfid, va_id[iv], where, (void *) &val) != -1) {
-/*		    if (val != fillval) {
-*/
+#ifdef HDF
           if (fabs((double)(val - fillval)) > fabs((double)(fillval*EPS64))) {
+#else  /* !HDF */
+		    if (val != fillval) {
+#endif /* !HDF */
 			error("%s: unwritten double not FILL_DOUBLE", pname);
 			nerrs++;
 		    }

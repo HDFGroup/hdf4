@@ -50,6 +50,8 @@ status = SDisdimval_bwcomp(dimid);
 */
 
 #include "local_nc.h"
+
+#ifdef HDF
 #include "mfhdf.h"
 #include "hfile.h"
 
@@ -3745,4 +3747,4 @@ int32 dimid;
 
 } /* SDisdimval_bwcomp */
 
-
+#endif /* HDF */

@@ -6,7 +6,9 @@
 
 #include	"local_nc.h"
 #include	"alloc.h"
+#ifdef HDF
 #include    "hfile.h"
+#endif /* HDF */
 
 static bool_t NC_xdr_cdf
     PROTO((XDR *xdrs,NC **handlep));
@@ -42,28 +44,27 @@ NC *handle ;
 #endif /* !macintosh */
       Free(handle->xdrs) ;
 
+#ifdef HDF
       if(handle->file_type == HDF_FILE) {
           Vend(handle->hdf_file);
           Hclose(handle->hdf_file);
       }
+#endif /* HDF */
 
       Free(handle) ;
 }
 
-/*
-  
-  From NASA CDF Source
 
+#ifdef HDF 
+/*
+  From NASA CDF Source
 */
 #define V2_MAGIC_NUMBER  0x0000FFFF   /* Written twice at the beginning of file */
 #define V2_MAGIC_OFFSET  0
 
-
 /* -------------------------------- Hiscdf -------------------------------- */
 /*
-
   Return TRUE/FALSE depending on if the given file is a NASA CDF file
-
 */
 intn
 Hiscdf(filename)
@@ -104,7 +105,7 @@ const char * filename;
         return(ret);
     }
 }
-
+#endif /* HDF */
 
 
 NC *
@@ -113,8 +114,10 @@ const char *name ;
 int mode ;
 {
 	NC *cdf ;
-        int32 hdf_mode;
-        char * FUNC = "NC_new_cdf";
+#ifdef HDF
+    int32 hdf_mode;
+#endif
+    char * FUNC = "NC_new_cdf";
 
 	cdf = (NC *)HDcalloc(1,sizeof(NC)) ;
 	if( cdf == NULL )
@@ -133,6 +136,7 @@ int mode ;
 		return(NULL) ;
 	} /* else */
 	
+#ifdef HDF
         /*
          * See what type of file we are looking at.
          * If we are creating a new file it will be an HDF file
@@ -174,6 +178,14 @@ int mode ;
             break;
         }
         
+#else /* !HDF */
+        if( NCxdrfile_create( cdf->xdrs, name, mode ) < 0) {
+            Free(cdf->xdrs) ;
+            Free(cdf) ;
+            return(NULL) ;
+        } 
+#endif /* !HDF */
+
 	cdf->dims = NULL ;
 	cdf->attrs = NULL ;
 	cdf->vars = NULL ;
@@ -182,6 +194,7 @@ int mode ;
 	cdf->numrecs = 0 ;
 	cdf->redefid = -1 ;
 
+#ifdef HDF 
         /* 
          * determine the HDF access mode 
          */
@@ -252,6 +265,7 @@ int mode ;
                 HRETURN_ERROR(DFE_DENIED,NULL);
             break;
         }
+#endif /* HDF */
 
         /*
          * Read in the contents
@@ -393,7 +407,7 @@ xdr_cdf(xdrs, handlep)
 	XDR *xdrs;
 	NC **handlep;
 {
-    
+#ifdef HDF    
     switch((*handlep)->file_type) {
     case HDF_FILE:
         return(hdf_xdr_cdf(xdrs, handlep));
@@ -407,6 +421,9 @@ xdr_cdf(xdrs, handlep)
     default:
         return FALSE;
     }
+#else /* !HDF */
+    return(NC_xdr_cdf(xdrs, handlep));
+#endif /* !HDF */
 }
 
 

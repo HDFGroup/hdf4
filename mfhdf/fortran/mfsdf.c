@@ -31,6 +31,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 */
 
+#ifdef HDF
 #include "mfhdf.h"
 
 /*-----------------------------------------------------------------------------
@@ -1166,4 +1167,4 @@ nsfisdmvc(id)
 {
     return((intf) SDisdimval_bwcomp(*id));
 }
-
+#endif /* HDF */

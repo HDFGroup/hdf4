@@ -91,13 +91,14 @@
 #define MAX_BLOCK_SIZE  65536    /* maximum size of block in linked blocks */
 #define BLOCK_COUNT 128   /* size of linked block pointer objects  */
 
-#endif
+#endif /* HDF */
 
 /* from cdflib.h CDF 2.3 */
 #ifndef MAX_VXR_ENTRIES
 #define MAX_VXR_ENTRIES                 10
 #endif /* MAX_VXR_ENTRIES */
 
+#ifdef HDF
 /* VIX record for CDF variable data storage */
 typedef struct vix_t_def {
     int32              nEntries;                    /* number of entries in this vix */
@@ -107,7 +108,7 @@ typedef struct vix_t_def {
     int32              offset[MAX_VXR_ENTRIES];     /* file offset of records */
     struct vix_t_def * next;                        /* next one in line */
 } vix_t;
-
+#endif /* HDF */
 
 /* like, a discriminated union in the sense of xdr */
 typedef struct {

@@ -7,6 +7,7 @@
 #include	<string.h>
 #include	"local_nc.h"
 #include	"alloc.h"
+#ifdef HDF
 #include    "hfile.h"    /* Ugh!  We need the defs for HI_READ and HI_SEEK */
 
 /* Local function prototypes */
@@ -20,6 +21,7 @@ static bool_t hdf_xdr_NCv1data
     PROTO((NC *handle,NC_var *vp,u_long where,nc_type type,VOIDP values));
 int32 hdf_get_vp_aid
     PROTO((NC *handle, NC_var *vp));
+#endif /* HDF */
 
 /*
  * If you use ./xdrstdio.c rather than ./xdrposix.c as
@@ -273,8 +275,10 @@ const long *coords ;
     const long *ip  ;
     unsigned long *up ;
     const long *boundary ;
+#ifdef HDF
     vix_t * vix;
     intn    i;
+#endif
     
     if(vp->assoc->count == 0) /* 'scaler' variable */
         return(vp->begin) ;
@@ -290,6 +294,7 @@ const long *coords ;
         offset += *up * *ip ;
     
     if( IS_RECVAR(vp) ) {
+#ifdef HDF
         switch(handle->file_type) {
         case HDF_FILE:
             return( vp->dsizes[0] * *coords + offset) ;
@@ -304,7 +309,11 @@ const long *coords ;
             return (0);
             break;
         }
+#else /* !HDF */
+        return( vp->begin + handle->recsize * *coords + offset) ;
+#endif /* !HDF */
     } else {
+#ifdef HDF
         switch(handle->file_type) {
         case HDF_FILE:
             return (offset);
@@ -337,6 +346,9 @@ const long *coords ;
             } /* loop over all vix records */
             break;
         }
+#else /* !HDF */
+        return (vp->begin + offset);
+#endif /* !HDF */
     }
     
     /* should never get to here */
@@ -583,13 +595,13 @@ Void *values ;
 *
 *****************************************************************************/
 
+#ifdef HDF
 
 PRIVATE int32 tBuf_size = 0;
 PRIVATE int32 tValues_size = 0;
 PRIVATE int8  *tBuf = NULL;
 PRIVATE int8  *tValues = NULL;
 
-#ifdef HDF
 /* ------------------------------ SDPfreebuf ------------------------------ */
 /*
     Throw away the temporary buffer we've allocated 
@@ -611,7 +623,6 @@ intn SDPfreebuf()
 
     return(SUCCEED);
 }
-#endif /* HDF */
 
 #define MAX_SIZE 1000000
 
@@ -1121,6 +1132,8 @@ uint32    count;
 } /* nssdc_xdr_NCvdata */
 
 
+#endif /* HDF */
+
 
 static
 NCvar1io(handle, varid, coords, value)
@@ -1143,6 +1156,7 @@ Void *value ;
 
 	if(vp->assoc->count == 0) /* 'scaler' variable */
 	{
+#ifdef HDF
             switch(handle->file_type) {
             case HDF_FILE:
                 return(
@@ -1156,6 +1170,11 @@ Void *value ;
                 break;
                 
             }
+#else /* !HDF */
+            return(
+                xdr_NCv1data(handle->xdrs, vp->begin, vp->type, value) ?
+                0 : -1 ) ;
+#endif /* !HDF */
         }
 
 	if( !NCcoordck(handle, vp, coords) )
@@ -1170,6 +1189,7 @@ Void *value ;
 	arrayp("coords", vp->assoc->count, coords) ;
 #endif /* VDEBUG */
         
+#ifdef HDF
         switch(handle->file_type) {
         case HDF_FILE:
             if( !hdf_xdr_NCv1data(handle, vp, offset, vp->type, value))
@@ -1180,6 +1200,10 @@ Void *value ;
                 return(-1) ;
             break;
         }
+#else /* !HDF */
+        if( !xdr_NCv1data(handle->xdrs, offset, vp->type, value))
+            return(-1) ;
+#endif /* !HDF */
         
 	return(0) ;
 }
@@ -1416,6 +1440,7 @@ Void *values ;
 	if(newrecs > 0)
 		handle->flags |= NC_NDIRTY ;
 
+#ifdef HDF
         switch(handle->file_type) {
         case HDF_FILE:
             DFKsetNT(vp->HDFtype);
@@ -1438,6 +1463,12 @@ Void *values ;
                 return(-1) ;
             break;
         }
+#else /* !HDF */
+        if(!xdr_NCvdata(handle->xdrs,
+                        offset, vp->type, 
+                        (unsigned)*edges, values))
+            return(-1) ;
+#endif /* !HDF */
         
 	if(newrecs > 0)
 	{
@@ -1485,23 +1516,31 @@ Void *values ;
 	arrayp("edges", vp->assoc->count, edges) ;
 #endif /* VDEBUG */
 
-        if(handle->file_type != netCDF_FILE)
-                DFKsetNT(vp->HDFtype);
+#ifdef HDF
+    if(handle->file_type != netCDF_FILE)
+        DFKsetNT(vp->HDFtype);
+#endif
 
 	if(vp->assoc->count == 0) /* 'scaler' variable */
 	{
-            switch(handle->file_type) {
-            case HDF_FILE:
-                return(
-                       hdf_xdr_NCv1data(handle, vp, vp->begin, vp->type, values) ?
-                       0 : -1 ) ;
-                break;
-            case netCDF_FILE:
-		return(
-                       xdr_NCv1data(handle->xdrs, vp->begin, vp->type, values) ?
-                       0 : -1 ) ;
-                break;
+#ifdef HDF
+        switch(handle->file_type) {
+        case HDF_FILE:
+            return(
+                hdf_xdr_NCv1data(handle, vp, vp->begin, vp->type, values) ?
+                0 : -1 ) ;
+            break;
+        case netCDF_FILE:
+            return(
+                xdr_NCv1data(handle->xdrs, vp->begin, vp->type, values) ?
+                0 : -1 ) ;
+            break;
             }
+#else /* !HDF */
+        return(
+            xdr_NCv1data(handle->xdrs, vp->begin, vp->type, values) ?
+            0 : -1 ) ;
+#endif /* !HDF */
 	}
 
 	if( !NCcoordck(handle, vp, start) )
@@ -1586,26 +1625,33 @@ Void *values ;
 				arrayp("\t\t coords", vp->assoc->count, coords) ;
 #endif
 
-                                switch(handle->file_type) {
-                                case HDF_FILE:
-                                    if(!hdf_xdr_NCvdata(handle, vp,
-                                                        offset, vp->type, 
-                                                        (uint32)iocount, values))
-                                        return(-1) ;
-                                    break;
-                                case CDF_FILE:
-                                    if(!nssdc_xdr_NCvdata(handle, vp,
-                                                        offset, vp->type, 
-                                                        (uint32)iocount, values))
-                                        return(-1) ;
-                                    break;
-                                case netCDF_FILE:
-                                    if(!xdr_NCvdata(handle->xdrs,
-                                                    offset, vp->type, 
-                                                    (unsigned)iocount, values))
-                                        return(-1) ;
-                                    break;
-                                }
+#ifdef HDF
+                switch(handle->file_type) {
+                case HDF_FILE:
+                    if(!hdf_xdr_NCvdata(handle, vp,
+                                        offset, vp->type, 
+                                        (uint32)iocount, values))
+                        return(-1) ;
+                    break;
+                case CDF_FILE:
+                    if(!nssdc_xdr_NCvdata(handle, vp,
+                                          offset, vp->type, 
+                                          (uint32)iocount, values))
+                        return(-1) ;
+                    break;
+                case netCDF_FILE:
+                    if(!xdr_NCvdata(handle->xdrs,
+                                    offset, vp->type, 
+                                    (unsigned)iocount, values))
+                        return(-1) ;
+                    break;
+                }
+#else /* !HDF */
+                if(!xdr_NCvdata(handle->xdrs,
+                                offset, vp->type, 
+                                (unsigned)iocount, values))
+                    return(-1) ;
+#endif /* !HDF */
                                 
 				values += iocount * szof ;
 				(*cc) += (edp0 == edges ? iocount : 1) ;
@@ -1814,28 +1860,35 @@ Void **datap ;
 		offset = NC_varoffset(handle, rvp[ii], coords) ;
 		iocount = NCelemsPerRec(rvp[ii]) ;
 
-                switch(handle->file_type) {
-                case HDF_FILE:
-                    DFKsetNT(rvp[ii]->HDFtype);
-                    if(!hdf_xdr_NCvdata(handle, rvp[ii],
-                                        offset, rvp[ii]->type, 
-                                        (uint32)iocount, datap[ii]))
-                        return(-1) ;
-                    break;
-                case CDF_FILE:
-                    DFKsetNT(rvp[ii]->HDFtype);
-                    if(!nssdc_xdr_NCvdata(handle, rvp[ii],
-                                        offset, rvp[ii]->type, 
-                                        (uint32)iocount, datap[ii]))
-                        return(-1) ;
-                    break;
-                case netCDF_FILE:
-                    if(!xdr_NCvdata(handle->xdrs,
-                                    offset, rvp[ii]->type, 
-                                    iocount, datap[ii]))
-                        return(-1) ;
-                    break;
-                }
+#ifdef HDF
+        switch(handle->file_type) {
+        case HDF_FILE:
+            DFKsetNT(rvp[ii]->HDFtype);
+            if(!hdf_xdr_NCvdata(handle, rvp[ii],
+                                offset, rvp[ii]->type, 
+                                (uint32)iocount, datap[ii]))
+                return(-1) ;
+            break;
+        case CDF_FILE:
+            DFKsetNT(rvp[ii]->HDFtype);
+            if(!nssdc_xdr_NCvdata(handle, rvp[ii],
+                                  offset, rvp[ii]->type, 
+                                  (uint32)iocount, datap[ii]))
+                return(-1) ;
+            break;
+        case netCDF_FILE:
+            if(!xdr_NCvdata(handle->xdrs,
+                            offset, rvp[ii]->type, 
+                            iocount, datap[ii]))
+                return(-1) ;
+            break;
+        }
+#else /* !HDF */
+        if(!xdr_NCvdata(handle->xdrs,
+                        offset, rvp[ii]->type, 
+                        iocount, datap[ii]))
+            return(-1) ;
+#endif /* !HDF */
 
 	}
 	return 0 ;

@@ -49,7 +49,11 @@ const char *str ;
 	return(ret) ;
 alloc_err :
 	nc_serror("NC_new_string") ;
+#ifdef HDF
 	if(ret != NULL) HDfree((VOIDP)ret) ;
+#else
+	if(ret != NULL) HDfree(ret) ;
+#endif
 	return(NULL) ;
 }
 
