@@ -2,15 +2,18 @@
 $Header$
 
 $Log$
-Revision 1.4  1993/03/29 16:47:57  koziol
-Updated JPEG code to new JPEG 4 code.
-Changed VSets to use Threaded-Balanced-Binary Tree for internal
-	(in memory) representation.
-Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-	to use 32-bit integer keys instead of pointers.
-Backed out speedups for Cray, until I get the time to fix them.
-Fixed a bunch of bugs in the little-endian support in DFSD.
+Revision 1.5  1993/04/06 17:23:37  chouck
+Added Vset macros
 
+ * Revision 1.4  1993/03/29  16:47:57  koziol
+ * Updated JPEG code to new JPEG 4 code.
+ * Changed VSets to use Threaded-Balanced-Binary Tree for internal
+ * 	(in memory) representation.
+ * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+ * 	to use 32-bit integer keys instead of pointers.
+ * Backed out speedups for Cray, until I get the time to fix them.
+ * Fixed a bunch of bugs in the little-endian support in DFSD.
+ *
  * Revision 1.3  1993/02/18  04:23:21  georgev
  * Added new HCLOSE_RETURN_ERROR macro.
  *
@@ -75,7 +78,7 @@ extern int32 error_top;
 #define DFE_FNF         -1  /* File not found */
 #define DFE_DENIED      -2  /* Access to file denied */
 #define DFE_ALROPEN     -3  /* File already open */
-#define DFE_TOOMANY     -4  /* Too Many DF's or files open */
+#define DFE_TOOMANY     -4  /* Too Many AID's or files open */
 #define DFE_BADNAME     -5  /* Bad file name on open */
 #define DFE_BADACC      -6  /* Bad file access mode */
 #define DFE_BADOPEN     -7  /* Other open error */
@@ -156,7 +159,7 @@ PRIVATE struct error_messages_t error_messages[] =
 { DFE_FNF,         "File not found"},
 { DFE_DENIED,      "Access to file denied"},
 { DFE_ALROPEN,     "File already open"},
-{ DFE_TOOMANY,     "Too Many DF's or files open"},
+{ DFE_TOOMANY,     "Too Many AID's or files open"},
 { DFE_BADNAME,     "Bad file name on open"},
 { DFE_BADACC,      "Bad file access mode"},
 { DFE_BADOPEN,     "Error opening file"},

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.23  1993/04/05 22:35:16  koziol
-Fixed goofups made in haste when patching code.
+Revision 1.24  1993/04/06 17:23:33  chouck
+Added Vset macros
 
+ * Revision 1.23  1993/04/05  22:35:16  koziol
+ * Fixed goofups made in haste when patching code.
+ *
  * Revision 1.22  1993/03/29  18:38:19  chouck
  * Cleaned up a bunch of casting problems
  *
@@ -3336,7 +3339,7 @@ DFSsdg *sdg;
     */
     sdg->aid = (int32)-1;
     sdg->compression = (int32)0;
-    HDfreespace(sds->file_value);
+    HDfreespace(sdg->fill_value);
     FileTranspose = 0;
 
     Ref.dims = -1;

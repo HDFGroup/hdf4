@@ -2,15 +2,18 @@
 $Header$
 
 $Log$
-Revision 1.6  1993/03/29 16:50:30  koziol
-Updated JPEG code to new JPEG 4 code.
-Changed VSets to use Threaded-Balanced-Binary Tree for internal
-	(in memory) representation.
-Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-	to use 32-bit integer keys instead of pointers.
-Backed out speedups for Cray, until I get the time to fix them.
-Fixed a bunch of bugs in the little-endian support in DFSD.
+Revision 1.7  1993/04/06 17:23:41  chouck
+Added Vset macros
 
+ * Revision 1.6  1993/03/29  16:50:30  koziol
+ * Updated JPEG code to new JPEG 4 code.
+ * Changed VSets to use Threaded-Balanced-Binary Tree for internal
+ * 	(in memory) representation.
+ * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+ * 	to use 32-bit integer keys instead of pointers.
+ * Backed out speedups for Cray, until I get the time to fix them.
+ * Fixed a bunch of bugs in the little-endian support in DFSD.
+ *
  * Revision 1.5  1993/01/19  05:56:15  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -191,6 +194,11 @@ struct vdata_desc {
   struct vs_instance_struct *instance; /* ptr to the intance struct for this VData */
 }; /* VDATA */ 
 
+/* 
+  with the definition of Vobject handles these macros have been replaced
+  with functions of the *SAME* name
+*/
+#ifdef OLD_MACROS
 /* macros - Use these for accessing items in a vdata or a group. */
 #define VQuerytag(vgroup)	(vgroup->otag)
 #define VQueryref(vgroup)	(vgroup->oref)
@@ -204,12 +212,13 @@ struct vdata_desc {
 #define VFfieldisize(vdata,t) 	(vdata->wlist.isize[t])
 #define VFfieldesize(vdata,t) 	(vdata->wlist.esize[t])
 #define VFfieldorder(vdata,t) 	(vdata->wlist.order[t])
+#endif /* OLD_MACROS */
 
 /* --------------  H D F    V S E T   tags  ---------------------------- */
 
-#define OLD_VGDESCTAG  	61820		/* tag for a vgroup d*/ 
-#define OLD_VSDESCTAG 	61821		/* tag for a vdata descriptor */
-#define OLD_VSDATATAG 	61822		/* tag for actual raw data of a vdata */ 
+#define OLD_VGDESCTAG  	61820	/* tag for a vgroup d*/ 
+#define OLD_VSDESCTAG 	61821	/* tag for a vdata descriptor */
+#define OLD_VSDATATAG 	61822	/* tag for actual raw data of a vdata */ 
 
 #define NEW_VGDESCTAG    1965
 #define NEW_VSDESCTAG    1962
@@ -248,8 +257,8 @@ struct vdata_desc {
 /* kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk */
 
 /* need to tune these to vertex boundary later.  Jason Ng 6-APR-92 */
-#define VDEFAULTBLKSIZE    512
-#define VDEFAULTNBLKS      8
+#define VDEFAULTBLKSIZE    1024
+#define VDEFAULTNBLKS      32
 
 /* .................................................................. */
 /* Private data structures. Unlikely to be of interest to applications */
@@ -354,38 +363,47 @@ typedef struct vfiledir_struct {
 /* macros for VSinquire */
 
 #define VSQuerycount(vs, count) \
-        (VSinquire ((VDATA *) vs, (int32 *) count, (int32*) NULL, (char*) NULL, (int32*) NULL, (char*) NULL))
+        (VSinquire (vs, (int32 *) count, (int32*) NULL, (char*) NULL, (int32*) NULL, (char*) NULL))
 
 #define VSQueryinterlace(vs, intr) \
-        (VSinquire ((VDATA *) vs, (int32 *) NULL, (int32*) intr, (char*) NULL, (int32*) NULL, (char*) NULL))
+        (VSinquire (vs, (int32 *) NULL, (int32*) intr, (char*) NULL, (int32*) NULL, (char*) NULL))
 
 #define VSQueryfields(vs, flds) \
-        (VSinquire ((VDATA *) vs, (int32 *) NULL, (int32*) NULL, (char*) flds, (int32*) NULL, (char*) NULL))
+        (VSinquire (vs, (int32 *) NULL, (int32*) NULL, (char*) flds, (int32*) NULL, (char*) NULL))
 
 #define VSQueryvsize(vs, size) \
-        (VSinquire ((VDATA *) vs, (int32 *) NULL, (int32*) NULL, (char*) NULL, (int32*) size, (char*) NULL))
+        (VSinquire (vs, (int32 *) NULL, (int32*) NULL, (char*) NULL, (int32*) size, (char*) NULL))
 
 #define VSQueryname(vs, name) \
-        (VSinquire ((VDATA *) vs, (int32 *) NULL, (int32*) NULL, (char*) NULL, (int32*) size, (char*) name))
+        (VSinquire (vs, (int32 *) NULL, (int32*) NULL, (char*) NULL, (int32*) size, (char*) name))
 
 /*
  *   Macros to provide fast access to the name and class of a Vset
  *     element.  The information returned is only guarenteed to be
  *     valid as long as the provided Vstructure is attached
+ *
+ *   The macros are NO LONGER SUPPORTED
  */
+
+#ifdef OLD_MACROS
 
 #define VGCLASS(vg) ((vg)->vgclass)
 #define VGNAME(vg)  ((vg)->vgname)
 
 #define VSCLASS(vs) ((vs)->vsclass)
 #define VSNAME(vs)  ((vs)->vsname)
+#endif /* OLD_MACROS */
 
 #include "vproto.h"
 
-#define Vstart(f)     Vinitialize((f))
-#define Vend(f)       Vfinish((f))
-#define DFvsetopen(x,y,z)   Vopen((x),(y),(z))
-#define DFvsetclose(x)   Vclose((x))
+#define Vstart(f)          Vinitialize((f))
+#define Vend(f)            Vfinish((f))
+
+#ifdef OLD_MACROS
+#define DFvsetopen(x,y,z)  Vopen((x),(y),(z))
+#define DFvsetclose(x)     Vclose((x))
+#endif /* OLD_MACROS */
+
 
 #endif /* _VG_H */
 

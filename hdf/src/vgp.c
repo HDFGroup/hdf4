@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.11  1993/03/29 18:58:30  chouck
-Made vinsertpair() public and added dummy decls to convert and JPeg
-files to prevent 'empty symbol table' messages on the Sun
+Revision 1.12  1993/04/06 17:23:43  chouck
+Added Vset macros
 
+ * Revision 1.11  1993/03/29  18:58:30  chouck
+ * Made vinsertpair() public and added dummy decls to convert and JPeg
+ * files to prevent 'empty symbol table' messages on the Sun
+ *
  * Revision 1.10  1993/03/29  18:38:26  chouck
  * Cleaned up a bunch of casting problems
  *
@@ -1239,20 +1242,17 @@ int32   *tag, *ref; /* these are returned */
     return (SUCCEED); /* ok */
 } /* Vgettagref */
 
-/* -------------------------- Vgetotag -------------------------------- */
+
+/* -------------------------- VQuerytag -------------------------------- */
 /*
-* Returns the otag from the vgroup.
-* RETURNS FAIL if OK.
-* RETURNS SUCCEED if error.
-* 12-MAY-91 Jason Ng NCSA.
-*
-*/
+ * Return the tag of this Vgroup.
+ * Return 0 on failure
+ */
 #ifdef PROTOTYPE
-PUBLIC int32 Vgetotag (int32 vkey, int32 *tag)
+PUBLIC int32 VQuerytag(int32 vkey)
 #else
-PUBLIC int32 Vgetotag (vkey, tag)
+PUBLIC int32 VQuerytag(vkey)
 int32 vkey;
-int32 *tag; /* this is returned */
 #endif
 {
     vginstance_t  * v;
@@ -1261,14 +1261,12 @@ int32 *tag; /* this is returned */
     
     if (!VALIDVGID(vkey)) {
         HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
         return(FAIL);
-      } /* end if */
+    } 
   
-  /* locate vg's index in vgtab */
+    /* locate vg's index in vgtab */
     if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
         HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
         return(FAIL);
     }
 
@@ -1278,24 +1276,21 @@ int32 *tag; /* this is returned */
         return(FAIL);
     }
     
-    *tag  = (int32) vg->otag;
-    return (SUCCEED); /* ok */
-} /* Vgetotag */
+    return ((int32) vg->otag);
 
-/* -------------------------- Vgetoref -------------------------------- */
+} /* VQuerytag */
+
+
+/* -------------------------- VQueryref -------------------------------- */
 /*
-* Returns the oref from the vgroup.
-* RETURNS FAIL if OK.
-* RETURNS SUCCEED if error.
-* 12-MAY-91 Jason Ng NCSA.
-*
+  Return the ref of this Vgroup.
+  Return FAIL on failure
 */
 #ifdef PROTOTYPE
-PUBLIC int32 Vgetoref (int32 vkey, int32 *ref)
+PUBLIC int32 VQueryref(int32 vkey)
 #else
-PUBLIC int32 Vgetoref (vkey, ref)
+PUBLIC int32 VQueryref(vkey)
 int32 vkey;
-int32 *ref; /* this is returned */
 #endif
 {
     vginstance_t  * v;
@@ -1304,14 +1299,12 @@ int32 *ref; /* this is returned */
     
     if (!VALIDVGID(vkey)) {
         HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
         return(FAIL);
-      } /* end if */
+    } 
   
-  /* locate vg's index in vgtab */
+    /* locate vg's index in vgtab */
     if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
         HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
         return(FAIL);
     }
 
@@ -1321,9 +1314,10 @@ int32 *ref; /* this is returned */
         return(FAIL);
     }
     
-    *ref  = (int32) vg->oref;
-    return (SUCCEED); /* ok */
-} /* Vgetoref */
+    return ((int32) vg->oref);
+
+} /* VQueryref */
+
 
 /* ------------------------ Vaddtagref ---------------------------------- */
 /*

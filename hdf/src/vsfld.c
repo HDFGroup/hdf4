@@ -5,15 +5,18 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/03/29 16:50:54  koziol
-Updated JPEG code to new JPEG 4 code.
-Changed VSets to use Threaded-Balanced-Binary Tree for internal
-	(in memory) representation.
-Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-	to use 32-bit integer keys instead of pointers.
-Backed out speedups for Cray, until I get the time to fix them.
-Fixed a bunch of bugs in the little-endian support in DFSD.
+Revision 1.6  1993/04/06 17:23:50  chouck
+Added Vset macros
 
+ * Revision 1.5  1993/03/29  16:50:54  koziol
+ * Updated JPEG code to new JPEG 4 code.
+ * Changed VSets to use Threaded-Balanced-Binary Tree for internal
+ * 	(in memory) representation.
+ * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+ * 	to use 32-bit integer keys instead of pointers.
+ * Backed out speedups for Cray, until I get the time to fix them.
+ * Fixed a bunch of bugs in the little-endian support in DFSD.
+ *
  * Revision 1.4  1993/01/19  05:56:36  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -373,4 +376,274 @@ int32   localtype, order;
 } /* VSfdefine */
 
 /* ------------------------------------------------------------------ */
+
+/* ------------------------------------------------------------------------ */
+/* erstwhile macros - Use these for accessing user-defined fields in a vdata. */
+/*
+#define VFnfields(vdata)        (vdata->wlist.n)
+#define VFfieldname(vdata,t) 	(vdata->wlist.name[t])
+#define VFfieldtype(vdata,t) 	(vdata->wlist.type[t])
+#define VFfieldisize(vdata,t) 	(vdata->wlist.isize[t])
+#define VFfieldesize(vdata,t) 	(vdata->wlist.esize[t])
+#define VFfieldorder(vdata,t) 	(vdata->wlist.order[t]) 
+*/
+/* ------------------------------------------------------------------------ */
+
+/* ------------------------------ VFnfields ------------------------------- */
+/*
+  
+  Return the number of fields in this Vdata
+  Return FAIL on failure
+
+*/
+
+PUBLIC 
+#ifdef PROTOTYPE
+int32 VFnfields(int32 vkey)
+#else
+int32 VFnfields(vkey)
+int32 vkey;
+#endif
+{
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char * FUNC = "VFnfeilds";
+
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        return(FAIL);
+    }
+  
+    /* locate vs's index in vstab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        return(FAIL);
+    }
+
+    vs=w->vs;
+    if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
+          HERROR(DFE_ARGS);
+          return(FAIL);
+    }
+
+    return ((int32) vs->wlist.n);
+
+} /* VFnfields */
+
+/* ----------------------------- VFfieldname ------------------------------ */
+/*
+  
+  Return the name of the given field in this Vdata.
+  This is just a pointer to the string in local memory and is only guarenteed
+  to be valid as long as we are VSattached() to this Vdata
+
+  Return NULL on failure
+
+*/
+
+PUBLIC 
+#ifdef PROTOTYPE
+char * VFfieldname(int32 vkey, int32 index)
+#else
+char * VFfieldname(vkey, index)
+int32 vkey;
+int32 index;
+#endif
+{
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char * FUNC = "VFfieldname";
+
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        return(NULL);
+    }
+  
+    /* locate vs's index in vstab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        return(NULL);
+    }
+
+    vs=w->vs;
+    if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
+          HERROR(DFE_ARGS);
+          return(NULL);
+    }
+
+    return ((char *) vs->wlist.name[index]);
+
+} /* VFfieldname */
+
+/* ----------------------------- VFfieldtype ------------------------------ */
+/*
+  
+  Return the type of the given field in this Vdata.
+
+  Return FAIL on failure
+
+*/
+
+PUBLIC 
+#ifdef PROTOTYPE
+int32 VFfieldtype(int32 vkey, int32 index)
+#else
+int32 VFfieldtype(vkey, index)
+int32 vkey;
+int32 index;
+#endif
+{
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char * FUNC = "VFfeildtype";
+
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        return(FAIL);
+    }
+  
+    /* locate vs's index in vstab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        return(FAIL);
+    }
+
+    vs=w->vs;
+    if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
+        HERROR(DFE_ARGS);
+        return(FAIL);
+    }
+
+    return ((int32) vs->wlist.type[index]);
+
+} /* VFfieldtype */
+
+/* ----------------------------- VFfieldisize ------------------------------ */
+/*
+  
+  Return the internal (i.e. in memory) size of the given field in this Vdata.
+
+  Return FAIL on failure
+
+*/
+
+PUBLIC 
+#ifdef PROTOTYPE
+int32 VFfieldisize(int32 vkey, int32 index)
+#else
+int32 VFfieldisize(vkey, index)
+int32 vkey;
+int32 index;
+#endif
+{
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char * FUNC = "VFfieldisize";
+
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        return(FAIL);
+    }
+  
+    /* locate vs's index in vstab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        return(FAIL);
+    }
+
+    vs=w->vs;
+    if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
+          HERROR(DFE_ARGS);
+          return(FAIL);
+    }
+
+    return ((int32) vs->wlist.isize[index]);
+
+} /* VFfieldisize */
+
+/* ----------------------------- VFfieldesize ------------------------------ */
+/*
+  
+  Return the external (i.e. on disk) size of the given field in this Vdata.
+
+  Return FAIL on failure
+
+*/
+
+PUBLIC 
+#ifdef PROTOTYPE
+int32 VFfieldesize(int32 vkey, int32 index)
+#else
+int32 VFfieldesize(vkey, index)
+int32 vkey;
+int32 index;
+#endif
+{
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char * FUNC = "VFfieldisize";
+
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        return(FAIL);
+    }
+  
+    /* locate vs's index in vstab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        return(FAIL);
+    }
+
+    vs=w->vs;
+    if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
+          HERROR(DFE_ARGS);
+          return(FAIL);
+    }
+
+    return ((int32) vs->wlist.esize[index]);
+
+} /* VFfieldesize */
+
+/* ----------------------------- VFfieldorder ------------------------------ */
+/*
+  
+  Return the order of the given field in this Vdata.
+
+  Return FAIL on failure
+
+*/
+
+PUBLIC 
+#ifdef PROTOTYPE
+int32 VFfieldorder(int32 vkey, int32 index)
+#else
+int32 VFfieldorder(vkey, index)
+int32 vkey;
+int32 index;
+#endif
+{
+    vsinstance_t    *w;
+    VDATA           *vs;
+    char * FUNC = "VFfieldorder";
+
+    if (!VALIDVSID(vkey)) {
+        HERROR(DFE_ARGS);
+        return(FAIL);
+    }
+  
+    /* locate vs's index in vstab */
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
+        HERROR(DFE_NOVS);
+        return(FAIL);
+    }
+
+    vs=w->vs;
+    if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
+        HERROR(DFE_ARGS);
+        return(FAIL);
+    }
+
+    return ((int32) vs->wlist.order[index]);
+
+} /* VFfieldorder */
 

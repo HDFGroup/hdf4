@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1993/04/05 22:35:43  koziol
-Fixed goofups made in haste when patching code.
+Revision 1.8  1993/04/06 17:23:38  chouck
+Added Vset macros
 
+ * Revision 1.7  1993/04/05  22:35:43  koziol
+ * Fixed goofups made in haste when patching code.
+ *
  * Revision 1.6  1993/03/29  16:48:00  koziol
  * Updated JPEG code to new JPEG 4 code.
  * Changed VSets to use Threaded-Balanced-Binary Tree for internal
@@ -201,13 +204,16 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
 
     /* create the external file */
 
-    file_external = HI_OPEN(extern_file_name,DFACC_WRITE);
+    file_external = HI_OPEN(extern_file_name, DFACC_WRITE);
     if (OPENERR(file_external)) {
-       HERROR(DFE_BADOPEN);
-       access_rec->used = FALSE;
-       return FAIL;
+        file_external = HI_CREATE(extern_file_name);
+        if(OPENERR(file_external)) {
+            HERROR(DFE_BADOPEN);
+            access_rec->used = FALSE;
+            return FAIL;
+        }
     }
-
+    
     /* set up the special element information and write it to file */
 
     access_rec->special_info = (VOIDP) HDgetspace((uint32)sizeof(extinfo_t));

@@ -5,15 +5,18 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/03/29 16:50:41  koziol
-Updated JPEG code to new JPEG 4 code.
-Changed VSets to use Threaded-Balanced-Binary Tree for internal
-	(in memory) representation.
-Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-	to use 32-bit integer keys instead of pointers.
-Backed out speedups for Cray, until I get the time to fix them.
-Fixed a bunch of bugs in the little-endian support in DFSD.
+Revision 1.4  1993/04/06 17:23:45  chouck
+Added Vset macros
 
+ * Revision 1.3  1993/03/29  16:50:41  koziol
+ * Updated JPEG code to new JPEG 4 code.
+ * Changed VSets to use Threaded-Balanced-Binary Tree for internal
+ * 	(in memory) representation.
+ * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+ * 	to use 32-bit integer keys instead of pointers.
+ * Backed out speedups for Cray, until I get the time to fix them.
+ * Fixed a bunch of bugs in the little-endian support in DFSD.
+ *
  * Revision 1.2  1993/01/19  05:56:24  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -85,6 +88,7 @@ RETURN:
       -1 if error.
       ref of that new vdata (a +ve integer) if successful.
 */
+
 #ifdef PROTOTYPE
 PUBLIC int32 VHstoredatam (HFILEID f, char *field, uint8 buf[], int32  n, int32 datatype, char *vsname, char *vsclass, int32 order)
 #else
@@ -98,52 +102,38 @@ int32   order;
 char *  vsname, * vsclass;
 #endif
 {
-	int32 s;
-	int32 ref;
+    int32 s;
+    int32 ref;
 #ifdef OLD_WAY
-	VDATA * vs;
+    VDATA * vs;
 #else
-    int32 vskey;
+    int32 vs;
 #endif
-	char * FUNC = "VHstoredatam";
-
-#ifdef OLD_WAY
-    vs = (VDATA*) VSattach (f,-1,"w");
-    if (vs==NULL)
+    char * FUNC = "VHstoredatam";
+    
+    vs = VSattach (f,-1,"w");
+    if (vs == FAIL)
         return (FAIL);
+
     s = VSfdefine (vs, field, datatype, order);
     if (s == -1)
         return (FAIL);
+
     s = VSsetfields (vs,field);
     if (s == -1)
         return (FAIL);
+
     s = VSwrite (vs, buf, n, FULL_INTERLACE);
     if (n != s)
         return (FAIL);
-	VSsetname (vs, vsname);
-	VSsetclass(vs, vsclass);
-	ref = VSQueryref(vs);
-	VSdetach(vs);
-#else
-    vskey = VSattach (f,-1,"w");
-    if (vskey==FAIL)
-        return (FAIL);
-    s = VSfdefine (vskey, field, datatype, order);
-    if (s == -1)
-        return (FAIL);
-    s = VSsetfields (vskey,field);
-    if (s == -1)
-        return (FAIL);
-    s = VSwrite (vskey, buf, n, FULL_INTERLACE);
-    if (n != s)
-        return (FAIL);
-    VSsetname (vskey, vsname);
-    VSsetclass(vskey, vsclass);
-    VSgetoref(vskey,&ref);
-    VSdetach(vskey);
-#endif
 
-	return ((int32) ref);
+    VSsetname (vs, vsname);
+    VSsetclass(vs, vsclass);
+    ref = VSQueryref(vs);
+    VSdetach(vs);
+
+    return ((int32) ref);
+
 } /* VHstoredatam */
 
 /* ------------------------ VHmakegroup ------------------------------- */
@@ -170,45 +160,34 @@ int32   n;
 char        * vgname, * vgclass;
 #endif
 {
-	int32 	ref, i, s;	
+    int32 ref, i, s;
+
 #ifdef OLD_WAY
-	VGROUP *	vg;
+    VGROUP *	vg;
 #else
-    int32 vgkey;
+    int32 vg;
 #endif
-	char * FUNC = "VHmakegroup";
 
-#ifdef OLD_WAY
-    vg = (VGROUP*) Vattach (f, -1, "w");
-    if (vg==NULL)
+    char * FUNC = "VHmakegroup";
+
+    vg = Vattach (f, -1, "w");
+    if(vg == FAIL)
         return (FAIL);
-	Vsetname (vg, vgname);
-	Vsetclass(vg, vgclass);
 
-	for (i=0; i<n; i++) {
-		s = Vaddtagref (vg, tagarray[i], refarray[i]);
-		if (s == -1) return (FAIL);
-		}
-
-	ref = VQueryref(vg);
-	Vdetach (vg);
-#else
-    vgkey = Vattach (f, -1, "w");
-    if (vgkey==FAIL)
-        return (FAIL);
-    Vsetname (vgkey, vgname);
-    Vsetclass(vgkey, vgclass);
-
-	for (i=0; i<n; i++) {
-        s = Vaddtagref (vgkey, tagarray[i], refarray[i]);
+    Vsetname (vg, vgname);
+    Vsetclass(vg, vgclass);
+    
+    for (i=0; i<n; i++) {
+        s = Vaddtagref (vg, tagarray[i], refarray[i]);
         if (s == -1)
             return (FAIL);
     }
+    
+    ref = VQueryref(vg);
+    Vdetach(vg);
 
-    Vgetoref(vgkey,&ref);
-    Vdetach(vgkey);
-#endif
-	return (ref);
+    return (ref);
+
 } /* VHmakegroup */
 
 /* ------------------------------------------------------------------ */

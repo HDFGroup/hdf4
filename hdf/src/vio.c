@@ -5,15 +5,18 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1993/03/29 16:50:43  koziol
-Updated JPEG code to new JPEG 4 code.
-Changed VSets to use Threaded-Balanced-Binary Tree for internal
-	(in memory) representation.
-Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-	to use 32-bit integer keys instead of pointers.
-Backed out speedups for Cray, until I get the time to fix them.
-Fixed a bunch of bugs in the little-endian support in DFSD.
+Revision 1.7  1993/04/06 17:23:46  chouck
+Added Vset macros
 
+ * Revision 1.6  1993/03/29  16:50:43  koziol
+ * Updated JPEG code to new JPEG 4 code.
+ * Changed VSets to use Threaded-Balanced-Binary Tree for internal
+ * 	(in memory) representation.
+ * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+ * 	to use 32-bit integer keys instead of pointers.
+ * Backed out speedups for Cray, until I get the time to fix them.
+ * Fixed a bunch of bugs in the little-endian support in DFSD.
+ *
  * Revision 1.5  1993/01/19  05:56:27  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -963,85 +966,91 @@ HFILEID f;
             return(w->ref); /* rets vdata's ref */
           } /* end else */
 #endif
+
 } /* VSgetid */
 
+
 /* -------------- Return the otag of a VData----------------- */
+/*
+  
+  Return the 'otag' of the given Vdata
+  Return FAIL on failure
+
+*/
 
 PUBLIC 
 #ifdef PROTOTYPE
-int32 VSgetotag(int32 vkey,int32 *tag)
+int32 VSQuerytag(int32 vkey)
 #else
-int32 VSgetotag(vkey,tag)
+int32 VSQuerytag(vkey)
 int32 vkey;
-int32 *tag;
 #endif
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VSgetversion";
+    char * FUNC = "VSQuerytag";
 
     if (!VALIDVSID(vkey)) {
         HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(0);
+        return(FAIL);
     }
   
-  /* locate vs's index in vstab */
+    /* locate vs's index in vstab */
     if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
         HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(0);
+        return(FAIL);
     }
 
     vs=w->vs;
     if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
           HERROR(DFE_ARGS);
-          HEprint(stderr,0);
-          return(0);
+          return(FAIL);
     }
 
-    *tag=(int32)vs->otag;
-    return (SUCCEED);
-}   /* end VSgetotag() */
+    return ((int32) vs->otag);
+
+} /* VSQuerytag */
 
 /* -------------- Return the oref of a VData----------------- */
+/*
+
+  Return the ref of the given Vdata
+  Return FAIL on failure
+
+*/
 
 PUBLIC 
 #ifdef PROTOTYPE
-int32 VSgetoref(int32 vkey,int32 *ref)
+int32 VSQueryref(int32 vkey)
 #else
-int32 VSgetoref(vkey,ref)
+int32 VSQueryref(vkey)
 int32 vkey;
-int32 *ref;
 #endif
 {
     vsinstance_t    *w;
     VDATA           *vs;
-    char * FUNC = "VSgetversion";
+    char * FUNC = "VSQueryref";
 
     if (!VALIDVSID(vkey)) {
         HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(0);
+        return(FAIL);
     }
   
   /* locate vs's index in vstab */
     if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
         HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(0);
+        return(FAIL);
     }
 
     vs=w->vs;
     if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
           HERROR(DFE_ARGS);
-          HEprint(stderr,0);
-          return(0);
+          return(FAIL);
     }
 
-    *ref=(int32)vs->oref;
-    return (SUCCEED);
-}   /* end VSgetoref() */
+    return ((int32) vs->oref);
+
+} /* VSQueryref */
 
 /* -------------- Return the writelist of a VData----------------- */
 

@@ -5,15 +5,18 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1993/03/29 16:50:28  koziol
-Updated JPEG code to new JPEG 4 code.
-Changed VSets to use Threaded-Balanced-Binary Tree for internal
-	(in memory) representation.
-Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-	to use 32-bit integer keys instead of pointers.
-Backed out speedups for Cray, until I get the time to fix them.
-Fixed a bunch of bugs in the little-endian support in DFSD.
+Revision 1.5  1993/04/06 17:23:40  chouck
+Added Vset macros
 
+ * Revision 1.4  1993/03/29  16:50:28  koziol
+ * Updated JPEG code to new JPEG 4 code.
+ * Changed VSets to use Threaded-Balanced-Binary Tree for internal
+ * 	(in memory) representation.
+ * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+ * 	to use 32-bit integer keys instead of pointers.
+ * Backed out speedups for Cray, until I get the time to fix them.
+ * Fixed a bunch of bugs in the little-endian support in DFSD.
+ *
  * Revision 1.3  1993/01/19  05:56:12  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -892,11 +895,12 @@ char    * vgname;
         Vdetach (vkey);
 #endif
         if (!HDstrcmp(vgname,name)) {
-            Vgetoref(vkey,&ret_ref);
+            ret_ref = VQueryref(vkey);
             return (ret_ref);   /* found the vgroup */
           } /* end if */
   	}
   	return(0); /* not found */
+
 } /* Vfind */
 
 /* ================================================================== */
@@ -938,11 +942,12 @@ char * vsname;
         VSdetach (vkey);
 #endif
         if (!HDstrcmp(vsname, name)) {
-            VSgetoref(vkey,&ret_ref);
+            ret_ref = VSQueryref(vkey);
             return(ret_ref);  /* found the vdata */
           } /* end if */
   	}
   	return(0); /* not found */
+
 } /* VSfind */
 
 /* ================================================================== */
