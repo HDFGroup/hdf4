@@ -119,6 +119,7 @@ static char RcsId[] = "@(#)$Revision$";
                            multiple 'specialiness' layout.
    version        - version info (8 bit field)
    flag           - bit field to set additional specialness  (32 bit field)
+                    only bottom 8bits used for now.
    elem_tot_len   - Valid logical Length of the entire element(4 bytes)
                     The logical physical length is this value multiplied
                     by 'nt_size'.
@@ -141,7 +142,8 @@ static char RcsId[] = "@(#)$Revision$";
    --------------------------------------
    distrib_type   - type of data distribution along this dimension (32 bit field)
                     0->None, 1->Block
-                    Currently only block distribution is supported.
+                    Currently only block distribution is supported but
+                    this is not checked or verified for now.
    dim_length     - length of this dimension. (4 bytes)
    chunk_length   - length of the chunk along this dimension (4 bytes)
 
@@ -1164,7 +1166,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
           } /* end decode special header */
 
           /* if multiply special deal with now */
-          switch(info->flag)
+          switch(info->flag & 0xff) /* only using 8bits for now */
             {
             case SPECIAL_COMP:
             {
@@ -1598,7 +1600,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     HDmemcpy(info->fill_val, fill_val, info->fill_val_len); /* fill_val_len bytes */
 
     /* if compression set then fill in info i.e ENCODE for storage */
-    switch(info->flag)
+    switch(info->flag & 0xff) /* only using 8bits for now */
       {
       case SPECIAL_COMP:
           /* set compression info */
@@ -1758,7 +1760,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
        See description of format header at top of file for more
        info on fields.
        Include also length for multiply specialness headers */
-    switch(info->flag)
+    switch(info->flag & 0xff) /* only using 8bits for now */
       {
       case SPECIAL_COMP:
           sp_tag_header_len = 6 + 9 + 12 + 8 +(12*info->ndims) + 4 + info->fill_val_len
@@ -1780,7 +1782,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
        'sp_tag_head_len' (4 bytes) which are not included 
        If also multiply special need to subtract another 6 byts plus
        length for multiply specialness headers */
-    switch(info->flag)
+    switch(info->flag & 0xff) /* only using 8bits for now */
       {
       case SPECIAL_COMP:
           info->sp_tag_header_len = sp_tag_header_len - 6 - 6 - info->comp_sp_tag_head_len;
@@ -1823,7 +1825,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
 
         /* Future to encode multiply specialness stuff
            header lengths, header,..etc*/
-        switch(info->flag)
+        switch(info->flag & 0xff) /* only using 8bits for now */
           {
           case SPECIAL_COMP:
               UINT16ENCODE(p, SPECIAL_COMP);              /* 2 bytes */
@@ -2784,7 +2786,7 @@ HMCPchunkwrite(VOID  *cookie,    /* IN: access record to mess with */
 
           /* Create compressed chunk if set 
              else start write access on element */
-          switch(info->flag)
+          switch(info->flag & 0xff) /* only using 8bits for now */
             {
             case SPECIAL_COMP: /* Create compressed chunk */
                 if ((chk_id = HCcreate(access_rec->file_id, chk_rec->chk_tag,
@@ -3557,7 +3559,7 @@ HMCPinfo(accrec_t *access_rec,       /* IN: access record of access elemement */
     info_chunk->key        = SPECIAL_CHUNKED;
     info_chunk->chunk_size = (info->chunk_size * info->nt_size); /* phsyical size */
     info_chunk->ndims      = info->ndims; 
-    if (info->flag == SPECIAL_COMP)
+    if ((info->flag & 0xff) == SPECIAL_COMP) /* only using 8bits for now */
       {
           info_chunk->comp_type  = (int32)info->comp_type;
           info_chunk->model_type = (int32)info->model_type;
