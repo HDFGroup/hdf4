@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1992/06/26 20:23:20  mlivin
-added in tests for Hishdf - open HDF, closed HDF, non-HDF, non-existing
+Revision 1.7  1992/07/16 19:34:08  mlivin
+changed re-opening of file to NOT include DFACC_CREATE
 
+ * Revision 1.6  1992/06/26  20:23:20  mlivin
+ * added in tests for Hishdf - open HDF, closed HDF, non-HDF, non-existing
+ *
  * Revision 1.5  1992/06/22  23:04:42  chouck
  * Removed calls to fork()
  *
@@ -126,7 +129,7 @@ int main(argc, argv)
     CHECK(ret, FAIL, "Hclose");
 
     printf("\nClosing and re-opening file %s\n\n", TESTFILE_NAME);
-    fid = Hopen(TESTFILE_NAME, DFACC_ALL, 0);
+    fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen");
 
     ret = Hnewref(fid);
