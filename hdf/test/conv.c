@@ -72,7 +72,7 @@ typedef int clock_t;
 
 /* define aliases for random number generation */
 #define RAND rand
-#define SEED(a) srand(a)
+#define SEED(a) srand((unsigned)(a))
 
 #ifdef NO_TIMING
 #define clock() (0)

@@ -130,7 +130,7 @@ int32 write_vset_stuff(void)
     if(status != FAIL) {
         num_errs++;
         printf(">>> Vaddtagref added a duplicate element\n");
-    } 
+    }
 
     /* check that the number is correct */
     if(num != Vntagrefs(vg2)) {
@@ -180,7 +180,7 @@ int32 write_vset_stuff(void)
     
 
     /* create some bogus data */
-    for(i = 0, count = 100; i < count; i++) fbuf[i] = i;
+    for(i = 0, count = 100; i < count; i++) fbuf[i] = (float32)i;
     
     /* store it */
     VSwrite(vs1, (unsigned char *) fbuf, count, FULL_INTERLACE);
@@ -224,7 +224,7 @@ int32 write_vset_stuff(void)
     /* create some bogus data */
     p = gbuf;
     for(i = 0, count = 100; i < count; i++) {
-        float32 tf = i * 2;
+        float32 tf = (float32)(i * 2);
         HDmemcpy(p, &tf, sizeof(float32)); p += sizeof(float32);
         HDmemcpy(p, &i, sizeof(int32));   p += sizeof(int32);
     }
@@ -258,14 +258,14 @@ int32 write_vset_stuff(void)
     p = gbuf;
     c = 'a';
     j = 0;
-    f = 15.5;
+    f = (float32)15.5;
     for(i = 0, count = 10; i < count; i++) {
         HDmemcpy(p, &c, sizeof(char8));   p += sizeof(char8); c++;
         HDmemcpy(p, &c, sizeof(char8));   p += sizeof(char8); c++;
         HDmemcpy(p, &j, sizeof(int32));   p += sizeof(int32); j++;
         HDmemcpy(p, &j, sizeof(int32));   p += sizeof(int32); j++;
         HDmemcpy(p, &j, sizeof(int32));   p += sizeof(int32); j++;
-        HDmemcpy(p, &f, sizeof(float32)); p += sizeof(float32); f += 0.5;
+        HDmemcpy(p, &f, sizeof(float32)); p += sizeof(float32); f += (float32)0.5;
     }
     
     /* store it */
@@ -679,7 +679,7 @@ int32 read_vset_stuff(void)
     VSread(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
 
     p = gbuf;
-    fl_expected = 15.5;
+    fl_expected = (float32)15.5;
     in_expected = 0;
     c_expected = 'a';
     
@@ -736,7 +736,7 @@ int32 read_vset_stuff(void)
             num_errs++;
             printf(">>> Multi-order float value %d was expecting %f got %f\n", (int)i, fl_expected, fl);
         }
-        fl_expected += 0.5;
+        fl_expected += (float32)0.5;
 
     }
 

@@ -154,8 +154,8 @@ void test_nbit1(int32 fid)
     inbuf=(uint8 *)HDgetspace(NBIT_SIZE1*sizeof(uint8));
 
     for(i=0; i<NBIT_SIZE1; i++)    /* fill with pseudo-random data */
-        outbuf[i]=(i*3);
-		 
+        outbuf[i]=(uint8)(i*3);
+
     ref1 = Hnewref(fid);
     CHECK(ref1, 0, "Hnewref");
 
@@ -188,7 +188,7 @@ void test_nbit1(int32 fid)
     }
 
     for (i=0; i < NBIT_SIZE1; i++) {
-       test_val=outbuf[i]&NBIT_MASK1;
+       test_val=(uint8)(outbuf[i]&NBIT_MASK1);
        if (inbuf[i] != test_val) {
            printf("Wrong data at %d, out (%d)%d in %d\n", i, outbuf[i],test_val, inbuf[i]);
            errors++;
@@ -214,7 +214,7 @@ void test_nbit2(int32 fid)
     inbuf=(int8 *)HDgetspace(NBIT_SIZE2*sizeof(int8));
 
     for(i=0; i<NBIT_SIZE2; i++)    /* fill with pseudo-random data */
-        outbuf[i]=((i*3)%64)-32;
+        outbuf[i]=(int8)(((i*3)%64)-32);
 		 
     ref1 = Hnewref(fid);
     CHECK(ref1, 0, "Hnewref");
@@ -276,7 +276,7 @@ void test_nbit3(int32 fid)
     convbuf=(uint8 *)HDgetspace(NBIT_SIZE3*DFKNTsize(DFNT_UINT16));
 
     for(i=0; i<NBIT_SIZE3; i++)    /* fill with pseudo-random data */
-        outbuf[i]=(i*3);
+        outbuf[i]=(uint16)(i*3);
 		 
     ref1 = Hnewref(fid);
     CHECK(ref1, 0, "Hnewref");
@@ -315,8 +315,8 @@ void test_nbit3(int32 fid)
     ret=DFKconvert(convbuf,inbuf,DFNT_UINT16,NBIT_SIZE3,DFACC_READ,0,0);
     CHECK(ret, FAIL, "DFKconvert");
     for (i=0; i < NBIT_SIZE3; i++) {
-       test_out=outbuf[i]&NBIT_MASK3A;
-       test_in=inbuf[i]&NBIT_MASK3B;
+       test_out=(uint16)(outbuf[i]&NBIT_MASK3A);
+       test_in=(uint16)(inbuf[i]&NBIT_MASK3B);
 #ifndef TESTING
        if (test_in != test_out) {
            printf("Wrong data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i],test_out, inbuf[i],test_in);
@@ -350,7 +350,7 @@ void test_nbit4(int32 fid)
     convbuf=(uint8 *)HDgetspace(NBIT_SIZE4*DFKNTsize(DFNT_INT16));
 
     for(i=0; i<NBIT_SIZE4; i++)    /* fill with pseudo-random data */
-        outbuf[i]=((i*3)%(64*256))-(32*256);
+        outbuf[i]=(int16)(((i*3)%(64*256))-(32*256));
 		 
     ref1 = Hnewref(fid);
     CHECK(ref1, 0, "Hnewref");
@@ -392,8 +392,8 @@ void test_nbit4(int32 fid)
     ret=DFKconvert(convbuf,inbuf,DFNT_INT16,NBIT_SIZE4,DFACC_READ,0,0);
     CHECK(ret, FAIL, "DFKconvert");
     for (i=0; i < NBIT_SIZE4; i++) {
-       test_out=outbuf[i]&NBIT_MASK4A;
-       test_in=inbuf[i]&NBIT_MASK4B;
+       test_out=(int16)(outbuf[i]&NBIT_MASK4A);
+       test_in=(int16)(inbuf[i]&NBIT_MASK4B);
 #ifndef TESTING
        if (test_in != test_out) {
            printf("Wrong data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i],test_out, inbuf[i],test_in);
@@ -505,8 +505,8 @@ void test_nbit6(int32 fid)
     convbuf=(uint8 *)HDgetspace(NBIT_SIZE6*DFKNTsize(DFNT_INT32));
 
     for(i=0; i<NBIT_SIZE6; i++)    /* fill with pseudo-random data */
-        outbuf[i]=((i*300001)%(16*256*256*256))-(8*256*256*256);
-		 
+        outbuf[i]=((i*300001)%((int32)16*256*256*256))-((int32)8*256*256*256);
+
     ref1 = Hnewref(fid);
     CHECK(ref1, 0, "Hnewref");
 
@@ -581,7 +581,7 @@ void test_nbit7(int32 fid)
     inbuf=(uint8 *)HDgetspace(NBIT_SIZE7*sizeof(uint8));
 
     for(i=0; i<NBIT_SIZE7; i++)    /* fill with pseudo-random data */
-        outbuf[i]=(i*3);
+        outbuf[i]=(uint8)(i*3);
 
     ref1 = Hnewref(fid);
     CHECK(ref1, 0, "Hnewref");
@@ -615,7 +615,7 @@ void test_nbit7(int32 fid)
     }
 
     for (i=0; i < ret; i++) {
-        test_val=(outbuf[i]&NBIT_MASK7A)|NBIT_MASK7B;
+        test_val=(uint8)((outbuf[i]&NBIT_MASK7A)|NBIT_MASK7B);
         if (inbuf[i] != test_val) {
             printf("Wrong data at %d, out (%d)%d in %d\n", i, outbuf[i],test_val, inbuf[i]);
             errors++;
@@ -642,7 +642,7 @@ void test_nbit8(int32 fid)
     inbuf=(int8 *)HDgetspace(NBIT_SIZE8*sizeof(int8));
 
     for(i=0; i<NBIT_SIZE8; i++)    /* fill with pseudo-random data */
-        outbuf[i]=(((i*3)%16)-8)<<2;
+        outbuf[i]=(int8)((((i*3)%16)-8)<<2);
 		 
     ref1 = Hnewref(fid);
     CHECK(ref1, 0, "Hnewref");
@@ -676,7 +676,7 @@ void test_nbit8(int32 fid)
     }
 
     for (i=0; i < ret; i++) {
-	test_val=outbuf[i]|NBIT_MASK8;
+	test_val=(int8)(outbuf[i]|NBIT_MASK8);
        if (inbuf[i] != test_val) {
            printf("Wrong data at %d, out (%d:%x)%d in %d\n", i, outbuf[i],outbuf[i],test_val, inbuf[i]);
            errors++;
@@ -705,7 +705,7 @@ void test_nbit9(int32 fid)
     convbuf=(uint8 *)HDgetspace(NBIT_SIZE9*DFKNTsize(DFNT_UINT16));
 
     for(i=0; i<NBIT_SIZE9; i++)    /* fill with pseudo-random data */
-        outbuf[i]=(i*3);
+        outbuf[i]=(uint16)(i*3);
 
     ref1 = Hnewref(fid);
     CHECK(ref1, 0, "Hnewref");
@@ -748,8 +748,8 @@ void test_nbit9(int32 fid)
     CHECK(ret, FAIL, "DFKconvert");
 
     for (i=0; i < NBIT_SIZE9; i++) {
-       test_out=(outbuf[i]|NBIT_MASK9A)&NBIT_MASK9B;
-       test_in=inbuf[i]&NBIT_MASK9B;
+       test_out=(uint16)((outbuf[i]|NBIT_MASK9A)&NBIT_MASK9B);
+       test_in=(uint16)(inbuf[i]&NBIT_MASK9B);
 #ifndef TESTING
        if (test_in != test_out) {
            printf("Wrong data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i],test_out, inbuf[i],test_in);
@@ -783,7 +783,7 @@ void test_nbit10(int32 fid)
     convbuf=(uint8 *)HDgetspace(NBIT_SIZE10*DFKNTsize(DFNT_UINT16));
 
     for(i=0; i<NBIT_SIZE10; i++)    /* fill with pseudo-random data */
-        outbuf[i]=(((i*3)%(2*256))-(256))<<((NBIT_OFF10-NBIT_BITS10)+1);
+        outbuf[i]=(int16)((((i*3)%(2*256))-(256))<<((NBIT_OFF10-NBIT_BITS10)+1));
 		 
     ref1 = Hnewref(fid);
     CHECK(ref1, 0, "Hnewref");
@@ -826,8 +826,8 @@ void test_nbit10(int32 fid)
     CHECK(ret, FAIL, "DFKconvert");
 
     for (i=0; i < NBIT_SIZE10; i++) {
-       test_out=(outbuf[i]|NBIT_MASK10A)&NBIT_MASK10B;
-       test_in=inbuf[i]&NBIT_MASK10B;
+       test_out=(int16)((outbuf[i]|NBIT_MASK10A)&NBIT_MASK10B);
+       test_in=(int16)(inbuf[i]&NBIT_MASK10B);
 #ifndef TESTING
        if (test_in != test_out) {
            printf("Wrong data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i],test_out, inbuf[i],test_in);
@@ -939,7 +939,7 @@ void test_nbit12(int32 fid)
     convbuf=(uint8 *)HDgetspace(NBIT_SIZE12*DFKNTsize(DFNT_INT32));
 
     for(i=0; i<NBIT_SIZE12; i++)    /* fill with pseudo-random data */
-        outbuf[i]=(((i*300001)%(4*256*256*256))-(2*256*256*256))<<((NBIT_OFF10-NBIT_BITS10)+1);
+        outbuf[i]=(((i*300001)%((int32)4*256*256*256))-((int32)2*256*256*256))<<((NBIT_OFF10-NBIT_BITS10)+1);
 		 
     ref1 = Hnewref(fid);
     CHECK(ref1, 0, "Hnewref");

@@ -158,11 +158,11 @@ ARCHIVE=hdf.zip
 
 SRCS=   testhdf.c rig.c sdstr.c blocks.c an.c anfile.c \
         extelt.c file.c file1.c vers.c sdmms.c \
-        sdnmms.c slab.c litend.c
+        sdnmms.c slab.c litend.c comp.c tvset.c conv.c nbit.c bitio.c tree.c
 
 CTESTS= testhdf.obj rig.obj sdstr.obj blocks.obj an.obj anfile.obj \
-        extelt.obj file.obj file1.obj vers.obj sdmms.obj \
-        sdnmms.obj slab.obj litend.obj
+        extelt.obj file.obj file1.obj vers.obj sdmms.obj sdnmms.obj slab.obj \
+        litend.obj comp.obj tvset.obj conv.obj nbit.obj bitio.obj tree.obj
 
 FTESTS= tr8f.exe t24f.exe tpf.exe tanf.exe tanfilef.exe tsdstrf.exe tsdntf.exe tsdnntf.exe \
         tsdmmsf.exe tsdnmmsf.exe tstubsf.exe \

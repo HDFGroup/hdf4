@@ -77,7 +77,7 @@ void test_comp()
         outbuf[i] = (char) (i % 256);
     for(i=0; i<BUFSIZE; i++)
         for(j=0; j<130 && i<BUFSIZE; j++,i++)
-            outbuf2[i]=i;
+            outbuf2[i]=(uint8)i;
 
     MESSAGE(5,printf("Creating a file %s\n", TESTFILE_NAME););
     fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
