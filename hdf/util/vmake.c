@@ -1,42 +1,3 @@
-/*****************************************************************************
-* 
-*			  NCSA HDF version 3.2beta
-*			     February 29, 1992
-*
-* NCSA HDF Version 3.10r5 source code and documentation are in the public
-* domain.  Specifically, we give to the public domain all rights for future
-* licensing of the source code, all resale rights, and all publishing rights.
-* 
-* We ask, but do not require, that the following message be included in all
-* derived works:
-* 
-* Portions developed at the National Center for Supercomputing Applications at
-* the University of Illinois at Urbana-Champaign.
-* 
-* THE UNIVERSITY OF ILLINOIS GIVES NO WARRANTY, EXPRESSED OR IMPLIED, FOR THE
-* SOFTWARE AND/OR DOCUMENTATION PROVIDED, INCLUDING, WITHOUT LIMITATION,
-* WARRANTY OF MERCHANTABILITY AND WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE
-* 
-*****************************************************************************/
-
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-/*
-$Header$
-
-$Log$
-Revision 1.3  1992/03/01 20:11:02  dilg
-Changed #include <*> to #include "*" for all includes.  Closed un-closed
-comments.
-
- * Revision 1.2  1992/02/29  18:58:36  sxu
- * add header
- *
- * Revision 1.1  1992/02/28  17:00:00  likkai
- * Initial revision
- *
-*/
 
 /*****************************************************************************
 *
@@ -55,21 +16,41 @@ comments.
 *			(3)	vmake file -l vgref v1 v2 ... vn
 *
 *
-*****************************************************************************/
+*****************************************************************************
+* 
+*			  NCSA HDF Vset release 2.1
+*					May 1991
+* 				Jason Ng May 1991 NCSA
+*
+* NCSA HDF Vset release 2.1 source code and documentation are in the public
+* domain.  Specifically, we give to the public domain all rights for future
+* licensing of the source code, all resale rights, and all publishing rights.
+* 
+* We ask, but do not require, that the following message be included in all
+* derived works:
+* 
+* Portions developed at the National Center for Supercomputing Applications at
+* the University of Illinois at Urbana-Champaign.
+* 
+* THE UNIVERSITY OF ILLINOIS GIVES NO WARRANTY, EXPRESSED OR IMPLIED, FOR THE
+* SOFTWARE AND/OR DOCUMENTATION PROVIDED, INCLUDING, WITHOUT LIMITATION,
+* WARRANTY OF MERCHANTABILITY AND WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE
+* 
+******************************************************************************/
 
-#include "vg.h"
+#include <vg.h>
 
 #ifdef MAC
- int show_help_msg(void);
- int vgadd(char *, char *);
- int vsadd(char *,char *, char *);
- int vsetlink (char *, int, int*, int);
- int scanit (char*, char***, int**, int**);
- int getdata ( unsigned char**);  
- int compact (char *,char *);
- int savfld (char *,int, int);
- int savtype (char *,int, int);
- int separate(char *ss, char *, int*);
+ int32 show_help_msg(void);
+ int32 vgadd(char *, char *);
+ int32 vsadd(char *,char *, char *);
+ int32 vsetlink (char *, int, int*, int);
+ int32 scanit (char*, char***, int**, int**);
+ int32 getdata ( unsigned char**);  
+ int32 compact (char *,char *);
+ int32 savfld (char *,int, int);
+ int32 savtype (char *,int, int);
+ int32 separate(char *ss, char *, int*);
 
 #endif
 
@@ -126,7 +107,7 @@ int show_help_msg()  {
 	 printf("  v1,..,vn are refs of vgroups and vdatas\n");
     printf("  format is <field=fmt,field=fmt,..>\n");
     printf("    field is any text string\n");
-    printf("    fmt is one of [d,l,f,c] optionally preceded by a decimal.\n");
+    printf("    fmt is one of [dlfcb] optionally preceded by a decimal.\n");
     printf("\nTo create a vdata, vmake reads ascii data from stdin\n");
 
     printf("EXAMPLES:\n");
@@ -140,15 +121,15 @@ int show_help_msg()  {
 
 /* ------------------------------------------------------- */
 
-int vsetlink  (hfile,vgid,ids,n)
+int32 vsetlink  (hfile,vgid,ids,n)
 char * hfile;
-int vgid, n, ids[];
+int32 vgid, n, ids[];
 {
   HFILEID f;
   VGROUP * vgmain, *vg;
   VDATA * vs;
-  int err=0;
-  int i;
+  int32 err=0;
+  int32 i;
 
 	f = Hopen(hfile,DFACC_ALL,0);
 	if (f == FAIL) {
@@ -193,12 +174,12 @@ int vgid, n, ids[];
 add a (new) vgroup to the file 
 */
 
-int vgadd (hfile,vgname) 
+int32 vgadd (hfile,vgname) 
 char * hfile;
 char * vgname;
 {
   HFILEID f;
-  int ref; 
+  int32 ref; 
   VGROUP * vg;
 
   f=Hopen(hfile,DFACC_ALL,0);
@@ -230,14 +211,14 @@ char * vsname;
 char * format;
 
 {
-  int stat, i,n, nwritten;
+  int32 stat, i,n, nwritten;
   unsigned char *buf;
   char **fields;
-  int *type, *order, nfld;
+  int32 *type, *order, nfld;
   char allfields[100];
   HFILEID	f;
   VDATA *vs;
-  int ref,ftype;
+  int32 ref,ftype;
 
   nfld = scanit(format,&fields,&type,&order);
   if (nfld < 1) { fprintf(stderr,"bad fields\n"); exit(-1); }
@@ -258,7 +239,16 @@ printf("vsadd: ref is %d\n",ref);
 		  case 'f': ftype = LOCAL_FLOATTYPE; break;
 		  case 'c': ftype = LOCAL_CHARTYPE;  break;
 		  case 'l': ftype = LOCAL_LONGTYPE;  break;
-		  default:  fprintf(stderr,"bad type [%c]\n",type[i]); exit(-1); break;
+		  /* case 'b': ftype = LOCAL_BYTETYPE;  break; */
+		  default:  fprintf(stderr,"bad type [%c]\n",type[i]); 
+		  				fprintf(stderr,"valid types: \n");
+		  				fprintf(stderr,"\t  d - integer \n");
+		  				fprintf(stderr,"\t  f - float \n");
+		  				fprintf(stderr,"\t  c - char (text) \n");
+		  				fprintf(stderr,"\t  l - long \n");
+		  				/* fprintf(stderr,"\t  b - byte \n"); */
+						exit(-1); 
+						break;
 		  }
 	  stat = VSfdefine(vs,fields[i],ftype,order[i]);
 	  strcat(allfields,fields[i]);
@@ -303,27 +293,27 @@ static int  ntotal = 0;
 
 
 /* scanf functions */
-static int getint  (x) int  *x; { return(scanf ("%d ",x)); }
-static int getfloat(x) float*x; { return(scanf ("%f ",x)); }
-static int getbyte (x) char *x; { return(scanf ("%c ",x)); }
-static int getlong (x) long *x; { return(scanf ("%ld ",x)); }
+static int32 getint  (x) int  *x; { return(scanf ("%d ",x)); }
+static int32 getfloat(x) float*x; { return(scanf ("%f ",x)); }
+static int32 getbyte (x) char *x; { return(scanf ("%c ",x)); }
+static int32 getlong (x) long *x; { return(scanf ("%ld ",x)); }
 
 /* printf functions */
-static int putbyte (x) char *x; { putchar(*x);    return (1);   }
-static int putint  (x) int  *x; { printf("%d ",*x); return (1);}
-static int putfloat(x) float*x; { printf("%f ",*x); return (1);}
-static int putlong (x) long *x; { printf("%ld ",*x); return (1);}
+static int32 putbyte (x) char *x; { putchar(*x);    return (1);   }
+static int32 putint  (x) int  *x; { printf("%d ",*x); return (1);}
+static int32 putfloat(x) float*x; { printf("%f ",*x); return (1);}
+static int32 putlong (x) long *x; { printf("%ld ",*x); return (1);}
 
 
 #define BUFSIZE 40000
 
-int getdata (bp) unsigned char**bp; { 
-  int totalsize, nread, t,i,j,k;
+int32 getdata (bp) unsigned char**bp; { 
+  int32 totalsize, nread, t,i,j,k;
   unsigned char *b;
-  int maxrec;
-  int (*getfn[MAXVAR])();
-  int (*putfn[MAXVAR])();
-  int getsiz[MAXVAR];
+  int32 maxrec;
+  int32 (*getfn[MAXVAR])();
+  int32 (*putfn[MAXVAR])();
+  int32 getsiz[MAXVAR];
   unsigned char getbuffer[BUFSIZE];
 
      for(i=0;i<ntotal;i++) {
@@ -362,16 +352,16 @@ int getdata (bp) unsigned char**bp; {
 
 } /* getdata */
 
- int scanit (string,fields,type,order)
+ int32 scanit (string,fields,type,order)
  char *   string;
  char *** fields;
- int  **  type;
- int  **  order;
+ int32  **  type;
+ int32  **  order;
  {
-  int ns,i;
-  int p1,p2;
+  int32 ns,i;
+  int32 p1,p2;
   char ss[300];
-  int c;
+  int32 c;
 
  
  compact(string,ss);
@@ -393,20 +383,7 @@ int getdata (bp) unsigned char**bp; {
 	 }
    for(i=0;i<ntotal;i++) {
 	  fldptr[i] = flds[i];
-	  switch(fmts[i]) {
-		  case 'd':
-				ftyp[i]   = 'd';
-				break;
-		  case 'f':
-				ftyp[i]   = 'f';
-				break;
-		  case 'c':
-				ftyp[i]   = 'c';
-				break;
-		  case 'l':
-				ftyp[i]   = 'l';
-				break;
-		  } 
+	  ftyp[i]   = fmts[i];
 	  }
 
    *type   =  ftyp;
@@ -416,7 +393,7 @@ int getdata (bp) unsigned char**bp; {
 
  } /* scanit */
 
- int compact (ss,dd) char *ss, *dd; {
+ int32 compact (ss,dd) char *ss, *dd; {
 	int i,t,n = strlen(ss);
 	for(t=0,i=0;i<n;i++) if(ss[i]!=' ') { dd[t++] = ss[i]; }
 	dd[t] = '\0';
@@ -425,17 +402,17 @@ int getdata (bp) unsigned char**bp; {
 
 /* ------------------------------------------------------------------ */
 
-int savfld (ss,p1,p2) char *ss; int p1,p2; {
-  int t=p2-p1+1;
+int32 savfld (ss,p1,p2) char *ss; int p1,p2; {
+  int32 t=p2-p1+1;
   strncpy(flds[ntotal],&ss[p1],t);
   flds[ntotal][t] = '\0';
   return (1);
 
  } /* savfld */
 
-int savtype (ss,p1,p2) char *ss; int p1,p2; {
+int32 savtype (ss,p1,p2) char *ss; int p1,p2; {
   char temp[20];
-  int t=p2-p1+1;
+  int32 t=p2-p1+1;
   strncpy(temp,&ss[p1],p2-p1+1); temp[t] = '\0';
   separate(temp,&fmts[ntotal],&fords[ntotal]);
   ntotal++;
@@ -443,8 +420,8 @@ int savtype (ss,p1,p2) char *ss; int p1,p2; {
 
   }
 
-int separate(ss,fmt,num) char *ss; char *fmt; int*num; {
-	int i,n;
+int32 separate(ss,fmt,num) char *ss; char *fmt; int*num; {
+	int32 i,n;
 	i=0;
 	n=strlen(ss);
 	while(i<n) {
