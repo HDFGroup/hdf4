@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.23  1993/04/05 22:35:56  koziol
-Fixed goofups made in haste when patching code.
+Revision 1.24  1993/04/13 21:45:24  georgev
+Fixed preproccessor error on HPUX with #elif.
 
+ * Revision 1.23  1993/04/05  22:35:56  koziol
+ * Fixed goofups made in haste when patching code.
+ *
  * Revision 1.22  1993/03/29  18:58:26  chouck
  * Made vinsertpair() public and added dummy decls to convert and JPeg
  * files to prevent 'empty symbol table' messages on the Sun
@@ -168,13 +171,15 @@ extern int32 HDfreadbig
 extern int32 HDfwritebig
   PROTO((VOIDP buffer, int32 size,HFILE fp));
 
-#elif defined PC
+#else  /* !WIN3 */
+#if defined PC
 extern int32 HDfreadbig
   PROTO((VOIDP buffer, int32 size,FILE _HUGE *fp));
 
 extern int32 HDfwritebig
   PROTO((VOIDP buffer, int32 size,FILE _HUGE *fp));
-#endif
+#endif /* PC */
+#endif /* !WIN3 */
 
 extern uint16 HDmake_special_tag
   PROTO((uint16 tag));
