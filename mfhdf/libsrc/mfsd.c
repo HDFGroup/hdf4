@@ -2621,3 +2621,57 @@ int32   id;
         return FALSE;
 
 } /* SDisrecord */
+
+/* ----------------------------- SDiscoordvar ----------------------------- */
+/*
+
+  Return TRUE if the dataset in question is a coordinate variable
+
+*/
+int32
+#ifdef PROTOTYPE
+SDiscoordvar(int32 id)
+#else
+SDiscoordvar(id)
+int32   id;
+#endif
+{
+
+    NC       * handle;
+    NC_var   * var;
+    NC_dim   * dim;
+    int32      dimindex;
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDisrecord: I've been called\n");
+#endif
+    
+    handle = SDIhandle_from_id(id, SDSTYPE);
+    if(handle == NULL || !handle->is_hdf) 
+        return FALSE;
+
+    if(handle->vars == NULL)
+        return FALSE;
+
+    var = SDIget_var(handle, id);
+    if(var == NULL)
+        return FALSE;
+
+    if(var->assoc->count != 1)
+        return FALSE;
+
+    dimindex = var->assoc->values[0];
+
+    dim = SDIget_dim(handle, dimindex);
+    if(dim == NULL)
+        return FALSE;
+
+    if(var->name->len != dim->name->len)
+        return FALSE;
+
+    if(HDstrcmp(var->name->values, dim->name->values))
+        return FALSE;
+
+    return TRUE;
+
+} /* SDisrecord */
