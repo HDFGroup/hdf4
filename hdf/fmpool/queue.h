@@ -33,6 +33,17 @@
  *	@(#)queue.h	8.3 (Berkeley) 12/13/93
  */
 
+/*****************************************************************************
+ * File: compat.h
+ *
+ * This is a modfied version of the original Berkley code for
+ * manipulating a memory pool. This version however is not 
+ * compatible with the original Berkley version.
+ *
+ * Author: George V.
+ *
+ *****************************************************************************/ 
+
 #ifndef	_QUEUE_H_
 #define	_QUEUE_H_
 

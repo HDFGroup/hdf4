@@ -30,7 +30,7 @@ static char RcsId[] = "@(#)$Revision$";
    MPread   - read data from file memory pool into user's buffer
    MPwrite  - write data from user's buffer to file memory pool 
 
-   AUTHOR - GeorgeV
+   AUTHOR - George V.
 
  +*/
 

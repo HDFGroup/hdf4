@@ -36,6 +36,17 @@
  *	@(#)cdefs.h	8.7 (Berkeley) 1/21/94
  */
 
+/*****************************************************************************
+ * File: compat.h
+ *
+ * This is a modfied version of the original Berkley code for
+ * manipulating a memory pool. This version however is not 
+ * compatible with the original Berkley version.
+ *
+ * Author: George V.
+ *
+ *****************************************************************************/ 
+
 /*#if !defined(_CDEFS_H_) && !defined(_SYS_CDEFS_H) */
 #if !defined(_CDEFS_H_)
 #define	_CDEFS_H_

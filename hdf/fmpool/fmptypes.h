@@ -33,11 +33,13 @@
  */
 
 /*****************************************************************************
- * File: fmptypes.h
+ * File: compat.h
  *
  * This is a modfied version of the original Berkley code for
  * manipulating a memory pool. This version however is not 
  * compatible with the original Berkley version.
+ *
+ * Author: George V.
  *
  *****************************************************************************/ 
 
