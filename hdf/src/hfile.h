@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.8  1993/01/19 05:55:56  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.9  1993/03/05 17:18:00  chouck
+Added some new ID types
 
+ * Revision 1.8  1993/01/19  05:55:56  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.7  1993/01/14  19:08:42  chouck
  * Added ID type of SDS objects (4)
  *
@@ -308,6 +311,10 @@ typedef struct functab_t {
 #define AIDTYPE   2
 #define GROUPTYPE 3
 #define SDSTYPE   4
+#define DIMTYPE   5
+#define CDFTYPE   6
+
+
 #define FSLOT2ID(s) ((((uint32)FIDTYPE & 0xffff) << 16) | ((s) & 0xffff))
 #define VALIDFID(i) (((((uint32)(i) >> 16) & 0xffff) == FIDTYPE) && \
                     (((uint32)(i) & 0xffff) < MAX_FILE))
