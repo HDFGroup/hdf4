@@ -25,9 +25,9 @@ int32 write_vset_stuff() {
     int32 vg1, vg2, vg3, vg4;
     int32 vs1, vs2, vs3, vs4;
     int32 count, i, j, num;
-    int32   ibuf[1000]; /* integer buffer */
-    float32 fbuf[1000]; /* floating point buffer */
-    char    gbuf[1000]; /* generic buffer */
+    int32   ibuf[2000]; /* integer buffer */
+    float32 fbuf[2000]; /* floating point buffer */
+    char    gbuf[2000]; /* generic buffer */
     char  * name;
     char  * p;
     char8   c;
@@ -261,9 +261,9 @@ int32 write_vset_stuff() {
 
 /* read everything back in and check it */
 int32 read_vset_stuff() {
-    int32   ibuf[1000]; /* integer buffer */
-    float32 fbuf[1000]; /* floating point buffer */
-    char    gbuf[1000]; /* generic buffer */
+    int32   ibuf[2000]; /* integer buffer */
+    float32 fbuf[2000]; /* floating point buffer */
+    char    gbuf[2000]; /* generic buffer */
     int32   list[50];
     int32   tags[100], refs[100], tag, ref;
     char    name[512], class[512], fields[512];
