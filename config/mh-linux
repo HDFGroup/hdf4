@@ -105,8 +105,11 @@ CFLAGS_NETCDF =
 # for AIX
 # CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -D_ALL_SOURCE
 #
-# for Sunos and Linux
-CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DNO_STRERROR
+# for Sunos
+#CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DNO_STRERROR
+#
+# for Linux
+CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF
 #
 # for IRIX6.0 (32-bit mode). If you prefer other 32 bit option like -n32, 
 #  replace '-32' below
