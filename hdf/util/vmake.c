@@ -46,7 +46,7 @@
  int32 vsadd(char *,char *, char *);
  int32 vsetlink (char *, int, int*, int);
  int32 scanit (char*, char***, int**, int**);
- int32 getdata ( unsigned char**);  
+ int32 inpdata ( unsigned char**);  
  int32 compact (char *,char *);
  int32 savfld (char *,int, int);
  int32 savtype (char *,int, int);
@@ -261,8 +261,8 @@ printf("vsadd: ref is %d\n",ref);
   stat = VSsetfields(vs,allfields);
 
   nwritten = 0;
-  while( (n = getdata(&buf)) > 0) {
-	 /*  printf("getdata rets n=%d .. ",n); */
+  while( (n = inpdata(&buf)) > 0) {
+	 /*  printf("inpdata rets n=%d .. ",n); */
     stat = VSwrite(vs,buf,n,FULL_INTERLACE);
      printf("+%d",stat); 
 	 nwritten +=n;
@@ -293,64 +293,64 @@ static int  ntotal = 0;
 
 
 /* scanf functions */
-static int32 getint  (x) int  *x; { return(scanf ("%d ",x)); }
-static int32 getfloat(x) float*x; { return(scanf ("%f ",x)); }
-static int32 getbyte (x) char *x; { return(scanf ("%c ",x)); }
-static int32 getlong (x) long *x; { return(scanf ("%ld ",x)); }
+static int32 inpint  (x) int  *x; { return(scanf ("%d ",x)); }
+static int32 inpfloat(x) float*x; { return(scanf ("%f ",x)); }
+static int32 inpchar (x) char *x; { return(scanf ("%c ",x)); }
+static int32 inplong (x) long *x; { return(scanf ("%ld ",x)); }
 
 /* printf functions */
-static int32 putbyte (x) char *x; { putchar(*x);    return (1);   }
-static int32 putint  (x) int  *x; { printf("%d ",*x); return (1);}
-static int32 putfloat(x) float*x; { printf("%f ",*x); return (1);}
-static int32 putlong (x) long *x; { printf("%ld ",*x); return (1);}
+static int32 outchar (x) char *x; { putchar(*x);    return (1);   }
+static int32 outint  (x) int  *x; { printf("%d ",*x); return (1);}
+static int32 outfloat(x) float*x; { printf("%f ",*x); return (1);}
+static int32 outlong (x) long *x; { printf("%ld ",*x); return (1);}
 
 
 #define BUFSIZE 40000
 
-int32 getdata (bp) unsigned char**bp; { 
+int32 inpdata (bp) unsigned char**bp; { 
   int32 totalsize, nread, t,i,j,k;
   unsigned char *b;
   int32 maxrec;
-  int32 (*getfn[MAXVAR])();
-  int32 (*putfn[MAXVAR])();
-  int32 getsiz[MAXVAR];
-  unsigned char getbuffer[BUFSIZE];
+  int32 (*inpfn[MAXVAR])();
+  int32 (*outfn[MAXVAR])();
+  int32 inpsiz[MAXVAR];
+  unsigned char inpbuffer[BUFSIZE];
 
      for(i=0;i<ntotal;i++) {
 	    switch(fmts[i]) {
 		   case 'd':
-		     putfn[i] = putint; getfn[i]  = getint; getsiz[i] = sizeof(int);
+		     outfn[i] = outint; inpfn[i]  = inpint; inpsiz[i] = sizeof(int);
 			  break;
 		   case 'f':
-			  putfn[i] = putfloat; getfn[i]  = getfloat; getsiz[i] = sizeof(float);
+			  outfn[i] = outfloat; inpfn[i]  = inpfloat; inpsiz[i] = sizeof(float);
 			  break;
 		   case 'c':
-			  putfn[i]  = putbyte; getfn[i]  = getbyte; getsiz[i] = sizeof(char);
+			  outfn[i]  = outchar; inpfn[i]  = inpchar; inpsiz[i] = sizeof(char);
 			  break;
 		   case 'l':
-			  putfn[i]  = putlong; getfn[i]  = getlong; getsiz[i] = sizeof(long);
+			  outfn[i]  = outlong; inpfn[i]  = inplong; inpsiz[i] = sizeof(long);
 			  break;
 		   } 
 	    }
-     for (totalsize=0, i=0;i<ntotal;i++) totalsize  += (fords[i]*getsiz[i]); 
+     for (totalsize=0, i=0;i<ntotal;i++) totalsize  += (fords[i]*inpsiz[i]); 
 	  maxrec = BUFSIZE/totalsize - 1; 
 
   /* begin reading in the ascii data from stdin */
 
-	*bp = b = getbuffer;
+	*bp = b = inpbuffer;
    for (nread=0, j=0;j<maxrec;j++,nread++) {
       for(i=0;i<ntotal;i++) {
 		   for(k=0;k<fords[i];k++) {
-			  t = (getfn[i])(b);  
+			  t = (inpfn[i])(b);  
 	        if (t==EOF)  return(nread); 
-			  b+=getsiz[i];
+			  b+=inpsiz[i];
 			  }
 		   }
       }
 
    return (nread); /* no of recs read */
 
-} /* getdata */
+} /* inpdata */
 
  int32 scanit (string,fields,type,order)
  char *   string;
