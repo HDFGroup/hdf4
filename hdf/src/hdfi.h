@@ -44,6 +44,8 @@
 /*          (i.e. Big-Endian, 32-bit architecture w/Fujitsu Native Floats)  */
 /*      7 - Cray MPP                                                        */
 /*          (i.e. Big-Endian, 32-bit architecture w/IEEE Floats, but no 16-bit type)            */
+/*      8 - Cray IEEE                                                       */
+/*          (i.e. Big-Endian, all 64-bit architecture w/IEEE Floats)        */
 /*--------------------------------------------------------------------------*/
 #define     DFMT_SUN            0x1111
 #define     DFMT_ALLIANT        0x1111
@@ -54,6 +56,7 @@
 #define     DFMT_CONVEXNATIVE   0x5511
 #define     DFMT_CONVEX         0x1111
 #define     DFMT_UNICOS         0x3331
+#define     DFMT_UNICOSIEEE     0x1831
 #define     DFMT_CTSS           0x3331
 #define     DFMT_VAX            0x2221
 #define     DFMT_MIPSEL         0x4441
@@ -406,7 +409,11 @@ Please check your Makefile.
 #include <sys/stat.h>
 #endif /*O_RDONLY*/
 
+#ifdef _CRAYIEEE
+#define DF_MT   DFMT_UNICOSIEEE
+#else
 #define DF_MT   DFMT_UNICOS
+#endif
 typedef void            VOID;
 typedef void            *VOIDP;
 #ifdef OLD_WAY /* May need to be included on other machines than the C-90 */

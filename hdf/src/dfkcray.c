@@ -97,7 +97,88 @@ static char RcsId[] = "@(#)$Revision$";
 #define BITOFF 58
 #define NOINTCRAY2IEG
 /* #define NOFLOATCRAY2IEG */
+
+#ifdef _CRAYIEEE /* IEEE T90 */
+
+#undef DUFF_luo4i  /* there is a weird Heisenbug in this code */
+
+/* Currently, CRI2IEG has a bug when converting 64-bit ints into 16-bit ints. */
+#define BUGGY_CRI2IEG
+
+static void get_correct_cri_type(int *type, int *newtype, int *forlen)
+{
+	switch (*type) {
+		case 1:
+			*newtype = 2;
+			*forlen = 4 * 8;
+			break;
+		case 2:
+			*newtype = 3;
+			*forlen = 4 * 8;
+			break;
+		case 7:
+			*newtype = 2;
+			*forlen = 2 * 8;
+			break;
+		case 8:
+			*newtype = 3;
+			*forlen = 8 * 8;
+			break;
+		default:
+			*newtype = -1;
+			*forlen = -1;
+			break;
+	}
+}
+
+#define IEG2CRAY(type_p, num_p, for_p, bitoff_p, nat_p) 0; \
+{	\
+	int cri2ieg_type, natlen = 8*8, forlen, stride = 1; \
+	get_correct_cri_type(type_p, &cri2ieg_type, &forlen); \
+	ierr = IEG2CRI(&cri2ieg_type, num_p, for_p, bitoff_p, nat_p, &stride, &natlen, &forlen); \
+}
+
+#ifndef BUGGY_CRI2IEG
+
+#define CRAY2IEG(type_p, num_p, for_p, bitoff_p, nat_p) 0; \
+{	\
+	int cri2ieg_type, natlen = 8*8, forlen, stride = 1; \
+	get_correct_cri_type(type_p, &cri2ieg_type, &forlen); \
+	ierr = CRI2IEG(&cri2ieg_type, num_p, for_p, bitoff_p, nat_p, &stride, &natlen, &forlen); \
+}
+
+#else /* BUGGY_CRI2IEG */
+
+static void my_convert_64_to_16(int n, int *source, char *dest)
+{
+	int i;
+	for (i = 0; i < n; ++i) {
+		dest[0] = (char) (((*source) >> 8) & 0xFF);
+		dest[1] = (char) ((*source) & 0xFF);
+		dest += 2;
+		++source;
+	}
+}
+
+#define CRAY2IEG(type_p, num_p, for_p, bitoff_p, nat_p) 0; \
+{	\
+	int cri2ieg_type, natlen = 8*8, forlen, stride = 1; \
+	if (*(type_p) == 7) \
+		my_convert_64_to_16(*(num_p),(int*)(nat_p),(char*)(for_p)); \
+	else { \
+		get_correct_cri_type(type_p, &cri2ieg_type, &forlen); \
+		ierr = CRI2IEG(&cri2ieg_type, num_p, for_p, bitoff_p, nat_p, &stride, &natlen, &forlen); \
+	} \
+}
+
+#endif /* BUGGY_CRI2IEG */
+
+#else /* Not IEEE T90 */
+
 #define NOSTRIDEFLOATCRAY2IEG
+
+#endif /* Not IEEE T90 */
+
 
 PRIVATE VOID DFKswap
             (VOIDP s, VOIDP d, uintn elem_size, uintn num_elem);
