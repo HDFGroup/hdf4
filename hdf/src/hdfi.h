@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.24  1993/05/05 19:47:04  chouck
-Define PROTOTYPE if using C++
+Revision 1.25  1993/05/12 16:40:49  chouck
+Made int8 a 'singed char' because on some platforms (e.g. SGI) char can
+be unisgned by default
 
+ * Revision 1.24  1993/05/05  19:47:04  chouck
+ * Define PROTOTYPE if using C++
+ *
  * Revision 1.23  1993/04/30  20:28:51  koziol
  * Added correct #define's for JPEG on the Cray
  *
@@ -272,9 +276,9 @@ typedef void              VOID;
 typedef void              *VOIDP;
 typedef char              *_fcd;
 typedef int               bool;
-typedef char              char8;
+typedef signed char       char8;
 typedef unsigned char     uchar8;
-typedef char              int8;
+typedef signed char       int8;
 typedef unsigned char     uint8;
 typedef short int         int16;
 typedef unsigned short int uint16;
@@ -321,9 +325,9 @@ typedef void               VOID;
 typedef void               *VOIDP;
 typedef char               *_fcd;
 typedef int                bool;
-typedef char               char8;
+typedef signed char        char8;
 typedef unsigned char      uchar8;
-typedef char               int8;
+typedef signed char        int8;
 typedef unsigned char      uint8;
 typedef short int          int16;
 typedef unsigned short int uint16;
@@ -372,9 +376,9 @@ typedef void            VOID;
 typedef void            *VOIDP;
 typedef char            *_fcd;
 typedef int             bool;
-typedef char            char8;
+typedef signed char     char8;
 typedef unsigned char   uchar8;
-typedef char            int8;
+typedef signed char     int8;
 typedef unsigned char   uint8;
 typedef int             int16;
 typedef unsigned int    uint16;
