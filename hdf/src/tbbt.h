@@ -6,7 +6,7 @@
  * 605 E. Springfield, Champaign IL 61820                                   *
  *                                                                          *
  * For conditions of distribution and use, see the accompanying             *
- * hdf/COPYING file.                                                        *
+ * hdf/COPYING file.                                                      *
  *                                                                          *
  ****************************************************************************/
 
@@ -24,6 +24,7 @@
 
 typedef   struct tbbt_node  TBBT_NODE;
 
+/* Threaded node structure */
 struct tbbt_node {
   VOIDP     data;      /* Pointer to user data to be associated with node */
   VOIDP     key;       /* Field to sort nodes on */
@@ -37,22 +38,35 @@ struct tbbt_node {
 # define  Lchild    link[LEFT]
 # define  Rchild    link[RIGHT]
 # define  TBBT_FLAG unsigned long
+# define  TBBT_LEAF unsigned long
   TBBT_FLAG  flags;     /* Combination of the following bit fields: */
 # define  TBBT_HEAVY(s) s   /* If the `s' sub-tree is deeper than the other */
 # define  TBBT_DOUBLE   4   /* If "heavy" sub-tree is two levels deeper */
 # define  TBBT_INTERN   8   /* If node is internal (has two children) */
-# define  TBBT_BITS     4   /* Number of bits used above */
 # define  TBBT_UNBAL    ( TBBT_HEAVY(LEFT) | TBBT_HEAVY(RIGHT) )
 # define  TBBT_FLAGS    ( TBBT_UNBAL | TBBT_INTERN | TBBT_DOUBLE )
 # define  TBBT_CHILD(s) ( TBBT_INTERN | TBBT_HEAVY(s) )
-# define  LeftCnt(node) ( (node)->flags >> TBBT_BITS )  /* Left descendants */
-# define  Cnt(node,s)   ( LEFT==(s) ? LeftCnt(node) : 0L )
+  TBBT_LEAF  lcnt;      /* count of left children */
+  TBBT_LEAF  rcnt;      /* count of right children */
+# define  LeftCnt(node) ( (node)->lcnt )  /* Left descendants */
+# define  RightCnt(node) ( (node)->rcnt )  /* Left descendants */
+# define  Cnt(node,s)   ( LEFT==(s) ? LeftCnt(node) : RightCnt(node) )
+#ifdef QAK
 # define  HasChild(n,s) ( TBBT_CHILD(s) & (n)->flags )
 # define  Heavy(n,s)    ( TBBT_HEAVY(s) & (n)->flags )
-# define  Intern(n)     ( TBBT_INTERN & (n)->flags )
-# define  UnBal(n)      ( TBBT_UNBAL & (n)->flags )
+# define  Intern(n)     ( TBBT_INTERN & (n)->flags ) 
+# define  UnBal(n)      ( TBBT_UNBAL & (n)->flags ) 
+#else
+# define  HasChild(n,s) ( Cnt(n,s)>0 )
+# define  Heavy(n,s)    ( (s) & (LeftCnt(n)>RightCnt(n) ? LEFT : \
+				 LeftCnt(n)==RightCnt(n) ? 0 : RIGHT)) 
+# define  Intern(n)     ( LeftCnt(n) && RightCnt(n) )
+# define  UnBal(n)      ( LeftCnt(n)>RightCnt(n) ? LEFT : \
+				 LeftCnt(n)==RightCnt(n) ? 0 : RIGHT) 
+#endif 
 # define  Double(n)     ( TBBT_DOUBLE & (n)->flags )
 # define  Other(side)   ( LEFT + RIGHT - (side) )
+#ifdef QAK
 # define  Delta(n,s)    (  ( Heavy(n,s) ? 1 : -1 )                          \
                             *  ( Double(n) ? 2 : UnBal(n) ? 1 : 0 )  )
 #if defined macintosh | defined THINK_C /* There is a limit to recursive
@@ -69,8 +83,16 @@ struct tbbt_node {
 #endif /* !macintosh */
 /* n=node, s=LEFT/RIGHT, c=`s' descendant count, b=balance(s), i=internal */
 /* SetFlags( ptr, LEFT, Cnt(RIGHT,kid), -2, YES ) */
+#else
+# define  Delta(n,s)    (  ( Heavy(n,s) ? 1 : -1 )                          \
+                            *  ( Double(n) ? 2 : UnBal(n) ? 1 : 0 )  )
+# define  SetFlags(n,s,b,i)   (  ( -2<(b) && (b)<2 ? 0 : TBBT_DOUBLE )   \
+    |  ( 0>(b) ? TBBT_HEAVY(s) : (b)>0 ? TBBT_HEAVY(Other(s)) : 0 )        \
+    |  ( (i) ? TBBT_INTERN : 0 )  )
+#endif
 };
 typedef   struct tbbt_tree  TBBT_TREE;
+/* Threaded tree structure */
 struct tbbt_tree {
   TBBT_NODE *root;
   unsigned long count;  /* The number of nodes in the tree currently */
