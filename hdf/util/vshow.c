@@ -24,14 +24,19 @@ static char RcsId[] = "@(#)$Revision$";
 *
 *	vshow: 	dumps out vsets in a hdf file.
 *
-*	Usage:  vshow [file] {+{n}}
+*	Usage:  vshow [file] [+|-[n]]
 *		the '+' option indicates a full dump on all vdatas.
-*		'+n' means full dump only for the nth vdata.
-*
+*		    '+n' means full dump only for the nth vdata.
+*                   '-' dump all Vdatas one record per line
+*                   '-n' dump nth Vdata one record per line
 *
 ******************************************************************************/
 
-#include "vg.h"
+#include "hdf.h"
+#include "vg.h" /* <---- this should really NOT be used.  we should
+                   use the access functions not mess with the data
+                   structure
+                 */
 
 static int condensed;
 
@@ -62,96 +67,100 @@ char**av;
   
   char fields[50], vgname[50],vsname[50];
   char  vgclass[50],vsclass[50], *name;
-  int32 fulldump = 0, start = 1;
+  int32 fulldump = 0;
   
   if (ac == 3) if(av[2][0]=='-'||av[2][0]=='+') {
-    sscanf(&(av[2][1]),"%d",&vsno);
-    if(vsno == 0) {
-      printf("FULL DUMP\n"); 
-    } else { 
-      printf("FULL DUMP on vs#%d\n",vsno); 
-    }
-    fulldump = 1;
-    if(av[2][0]=='+') condensed = 1; 
-    else condensed = 0;
-    start = 2;
+      sscanf(&(av[2][1]),"%d",&vsno);
+      if(vsno == 0) {
+          printf("FULL DUMP\n"); 
+      } else { 
+          printf("FULL DUMP on vs#%d\n",vsno); 
+      }
+      fulldump = 1;
+      
+      /* see if we want one record per line or multiple records per line */
+      if(av[2][0]=='+') 
+          condensed = 1; 
+      else 
+          condensed = 0;
   }
-
+  
   if(ac < 2) {
-    printf("%s: dumps HDF vsets info from hdf file\n",av[0]);
-    printf("usage: %s file {+n} \n", av[0]);
-    printf("\t +  gives full dump of all vdatas.\n"); 
-    printf("\t +n gives full dump of vdata with id n.\n"); 
-    exit(0);
+      printf("%s: dumps HDF vsets info from hdf file\n",av[0]);
+      printf("usage: %s file {+n} \n", av[0]);
+      printf("\t +  gives full dump of all vdatas.\n"); 
+      printf("\t +n gives full dump of vdata with id n.\n"); 
+      exit(0);
   }
-
+  
   if((f=Hopen(av[1],DFACC_READ,0))==FAIL) exit(0);
   Vstart(f);
   printf("\nFILE: %s\n",av[1]);
   
   nvg=0;
   while( (vgid = Vgetid(f,vgid)) != -1) {
-    vg = Vattach(f,vgid,"r");
-    if(vg == FAIL) {
-      printf("cannot open vg id=%d\n",vgid);
-    }
-    Vinquire(vg,&n, vgname);
-    vgotag = VQuerytag(vg);
-    vgoref = VQueryref(vg);
-    Vgetclass(vg, vgclass); 
-    if (HDstrlen(vgname)==0)  HDstrcat(vgname,"NoName");
-    printf("\nvg:%d <%d/%d> (%s {%s}) has %d entries:\n",
-           nvg, vgotag, vgoref, vgname, vgclass,n);
-    
-    for (t=0; t< Vntagrefs(vg); t++) {
-      Vgettagref(vg, t, &vstag, &vsid);
-      
-      /* ------ V D A T A ---------- */
-      if (vstag==VSDESCTAG)  {  
-        vs = VSattach(f,vsid,"r");
-
-        if(vs == FAIL) {
-          printf("cannot open vs id=%d\n",vsid);
-          continue;
-        }
-
-        VSinquire(vs, &nv,&interlace, fields, &vsize, vsname);
-	vsotag = VSQuerytag(vs);
-	vsoref = VSQueryref(vs);
-        if (HDstrlen(vsname)==0)  HDstrcat(vsname,"NoName");
-        VSgetclass(vs,vsclass); 
-        printf("  vs:%d <%d/%d> nv=%d i=%d fld [%s] vsize=%d (%s {%s})\n",
-                t, vsotag, vsoref, nv, interlace, fields, vsize, vsname, vsclass);
-        
-        if(fulldump && vsno==0) vsdumpfull(vs);
-        else if(fulldump && vsno==vsoref) vsdumpfull(vs);
-        
-        VSdetach(vs);
+      vg = Vattach(f,vgid,"r");
+      if(vg == FAIL) {
+          printf("cannot open vg id=%d\n",vgid);
       }
-      else 
-        if (vstag==VGDESCTAG)  {  
-          /* ------ V G R O U P ----- */
-          vgt = Vattach(f,vsid,"r");
-          
-          if(vgt== FAIL) {
-            printf("cannot open vg id=%d\n",vsid);
-            continue;
-          }
-          
-          Vinquire(vgt, &ne, vgname);
-          if (HDstrlen(vgname)==0)  HDstrcat(vgname,"NoName");
-	  vgotag = VQuerytag(vgt);
-	  vgoref = VQueryref(vgt);
-          Vgetclass(vgt, vgclass);
-          printf("  vg:%d <%d/%d> ne=%d (%s {%s})\n",
-                 t, vgotag, vgoref, ne,  vgname, vgclass );
-          Vdetach(vgt);
-        }
-        else { 
-          name = HDgettagname((uint16)vstag);
-          if(!name) name = "Unknown Tag";
-          printf("  --:%d <%d/%d> %s\n", t, vstag, vsid, name);
-        }
+      Vinquire(vg,&n, vgname);
+      vgotag = VQuerytag(vg);
+      vgoref = VQueryref(vg);
+      Vgetclass(vg, vgclass); 
+      if (HDstrlen(vgname)==0)  HDstrcat(vgname,"NoName");
+      printf("\nvg:%d <%d/%d> (%s {%s}) has %d entries:\n",
+             nvg, vgotag, vgoref, vgname, vgclass,n);
+      
+      for (t=0; t< Vntagrefs(vg); t++) {
+        Vgettagref(vg, t, &vstag, &vsid);
+        
+        switch(vstag) {
+        case DFTAG_VH:
+            /* ------ V D A T A ---------- */
+            vs = VSattach(f,vsid,"r");
+            
+            if(vs == FAIL) {
+                printf("cannot open vs id=%d\n",vsid);
+                continue;
+            }
+            
+            VSinquire(vs, &nv,&interlace, fields, &vsize, vsname);
+            vsotag = VSQuerytag(vs);
+            vsoref = VSQueryref(vs);
+            if (HDstrlen(vsname)==0)  HDstrcat(vsname,"NoName");
+            VSgetclass(vs,vsclass); 
+            printf("  vs:%d <%d/%d> nv=%d i=%d fld [%s] vsize=%d (%s {%s})\n",
+                   t, vsotag, vsoref, nv, interlace, fields, vsize, vsname, vsclass);
+            
+            if(fulldump && vsno==0) vsdumpfull(vs);
+            else if(fulldump && vsno==vsoref) vsdumpfull(vs);
+            
+            VSdetach(vs);
+            break;
+        case DFTAG_VG:
+            /* ------ V G R O U P ----- */
+            vgt = Vattach(f,vsid,"r");
+            
+            if(vgt== FAIL) {
+                printf("cannot open vg id=%d\n",vsid);
+              continue;
+            }
+            
+            Vinquire(vgt, &ne, vgname);
+            if (HDstrlen(vgname)==0)  HDstrcat(vgname,"NoName");
+            vgotag = VQuerytag(vgt);
+            vgoref = VQueryref(vgt);
+            Vgetclass(vgt, vgclass);
+            printf("  vg:%d <%d/%d> ne=%d (%s {%s})\n",
+                   t, vgotag, vgoref, ne,  vgname, vgclass );
+            Vdetach(vgt);
+            break;
+        default:
+            name = HDgettagname((uint16)vstag);
+            if(!name) name = "Unknown Tag";
+            printf("  --:%d <%d/%d> %s\n", t, vstag, vsid, name);
+            break;
+        } /* switch on tag type */
     } /* while */
     
     Vdetach(vg);

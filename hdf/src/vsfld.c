@@ -117,6 +117,8 @@ int16 x;
 } /* HDFSIZEOF */
 
 
+#define TOO_BIG 32000
+
 /* ------------------------------------------------------------------ */
 /*
 ** sets the fields in a vdata for reading or writing
@@ -132,14 +134,15 @@ int32 vkey;
 char    *fields;
 #endif
 {
-    char  **av;
-    int32   ac, found;
+    char          **av;
+    int32         ac, found;
     register intn j, i;
-    intn  order;
-    VREADLIST   *rlist;
-    VWRITELIST  *wlist;
-    vsinstance_t    *w;
-    VDATA           *vs;
+    intn          order;
+    int32         value;
+    VREADLIST     * rlist;
+    VWRITELIST    * wlist;
+    vsinstance_t  * w;
+    VDATA         * vs;
     char  * FUNC = "VSsetfields";
 
     if (!VALIDVSID(vkey)) {
@@ -165,16 +168,16 @@ char    *fields;
     if((scanattrs(fields, &ac, &av) == FAIL) || (ac == 0))
         HRETURN_ERROR(DFE_BADFIELDS,FAIL);
 
-  /*
-   * write to an empty vdata : set the write list but do not set the
-   *   read list cuz there is nothing there to read yet...
-   */
+    /*
+     * write to an empty vdata : set the write list but do not set the
+     *   read list cuz there is nothing there to read yet...
+     */
     if(vs->access == 'w' && vs->nvertices == 0) {
         wlist = &(vs->wlist);
         wlist->ivsize = 0;
         wlist->n      = 0;
         for(i = 0; i < ac; i++) {
-
+            
             found = FALSE;
             /* --- first look in the user's symbol table --- */
             for(j = 0; j < vs->nusym; j++)
@@ -185,9 +188,19 @@ char    *fields;
                     order = vs->usym[j].order;
                     wlist->type[wlist->n]  = vs->usym[j].type;
                     wlist->order[wlist->n] = order;
-                    wlist->esize[wlist->n] = (int16) order * DFKNTsize(vs->usym[j].type | DFNT_NATIVE);
-                    wlist->isize[wlist->n] = order * vs->usym[j].isize;
-                    wlist->ivsize+= (int16)(wlist->isize[wlist->n]);
+                    
+                    value = order * DFKNTsize(vs->usym[j].type | DFNT_NATIVE);
+                    if(value > TOO_BIG) HRETURN_ERROR(DFE_BADFIELDS,FAIL);
+                    wlist->esize[wlist->n] = (int16) value;
+
+                    value = order * vs->usym[j].isize;
+                    if(value > TOO_BIG) HRETURN_ERROR(DFE_BADFIELDS,FAIL);
+                    wlist->isize[wlist->n] = (int16) value;
+
+                    value = (int32)wlist->ivsize + (int32)(wlist->isize[wlist->n]);
+                    if(value > TOO_BIG) HRETURN_ERROR(DFE_BADFIELDS,FAIL);
+                    wlist->ivsize += (int16) value;
+
                     wlist->n++;
                     break;
                 }
