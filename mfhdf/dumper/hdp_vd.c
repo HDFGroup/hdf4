@@ -648,20 +648,12 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
 	 ERROR_CONT_END( "in %s: VSinquire failed for vdata with ref#=%d", 
                         "dumpvd_ascii", (int) vdata_ref, vd_id );
 
-      /* Get the HDF size of the specified fields of the vdata only if 
-	 there are fields previously defined by VSsetfields and VSfdefine */
- /*     vsize = 0; /* reset record size */
-/*
-      if( fields != NULL && fields[0] != '\0' )
-      {
-*/
-          vsize = VShdfsize( vd_id, fields );
-          if (vsize == FAIL)
+      /* Get the HDF size of the specified fields of the vdata; VShdfsize 
+	 returns 0 if there are no fields previously defined */
+         vsize = VShdfsize( vd_id, fields );
+         if (vsize == FAIL)
              ERROR_CONT_END( "in %s: VShdfsize failed for vdata with ref#=%d",
 			 "dumpvd_ascii", (int) vdata_ref, vd_id );
-/*
-      }
-*/
 
       if (FAIL == (vdata_tag = VSQuerytag(vd_id)))
          ERROR_CONT_END( "in %s: VSQuerytag failed for vdata with ref#=%d", 
@@ -799,7 +791,6 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
    int32       i, vd_chosen_idx;
    int32       nvf;
    int32       interlace;
-   int32       vsize;
    int32       vdata_ref = -1;
    char        vdname[VSNAMELENMAX];
    intn        dumpall = 0;
