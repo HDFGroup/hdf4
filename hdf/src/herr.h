@@ -194,8 +194,10 @@ typedef enum
       DFE_NOVS,                 /* Counldn't find VS in file */
       DFE_SYMSIZE,              /* Too many symbols in users table */
       DFE_BADATTACH,            /* Cannot write to a previously attached VData */
-      DFE_CANTATTACH,           /* Cannot attach to a VData */
-      DFE_CANTDETACH,           /* Cannot detach a VData with access 'w' */
+
+/* Generic Vdata/Vset errors */
+      DFE_CANTATTACH,           /* Cannot attach to a VData/Vset */
+      DFE_CANTDETACH,           /* Cannot detach a VData/Vset with access 'w' */
 
 /* bit I/O errors */
       DFE_BITREAD,              /* There was a bit-read error */
@@ -342,6 +344,8 @@ PRIVATE const struct error_messages_t error_messages[] =
     {DFE_NOVS,          "Could not find specified VS or VG in file"},
     {DFE_SYMSIZE,       "Too many symbols in table"},
     {DFE_BADATTACH,     "Cannot write to a previously attached VData"},
+
+/* Generic Vdata/Vset errors */
     {DFE_CANTATTACH,    "Cannot attach to a VData"},
     {DFE_CANTDETACH,    "Cannot detach a VData with access 'w'"},
 

@@ -1058,7 +1058,7 @@ intn GRfileinfo(int32 grid,int32 *n_datasets,int32 *n_attrs)
  PURPOSE
     Internal routine to update the meta-data for an image
  USAGE
-    intn GRIupdateRIG(img_ptr)
+    intn GRIupdateRIG(hdf_file_id,img_ptr)
         int32 hdf_file_id;          IN: the file ID for the HDF file.
         ri_info_t *img_ptr;         IN: pointer to the image info for the
                                         image to write.
@@ -1158,7 +1158,7 @@ intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
  PURPOSE
     Internal routine to update the RIG for an image
  USAGE
-    intn GRIupdateRIG(img_ptr)
+    intn GRIupdateRIG(hdf_file_id,img_ptr)
         int32 hdf_file_id;          IN: the file ID for the HDF file.
         ri_info_t *img_ptr;         IN: pointer to the image info for the
                                         image to write.
@@ -1223,7 +1223,7 @@ intn GRIupdateRIG(int32 hdf_file_id,ri_info_t *img_ptr)
  PURPOSE
     Internal routine to update the RI Vgroup for an image
  USAGE
-    intn GRIupdateRIG(img_ptr)
+    intn GRIupdateRIG(hdf_file_id,img_ptr)
         int32 hdf_file_id;          IN: the file ID for the HDF file.
         ri_info_t *img_ptr;         IN: pointer to the image info for the
                                         image to write.
@@ -1240,7 +1240,7 @@ intn GRIupdateRIG(int32 hdf_file_id,ri_info_t *img_ptr)
 --------------------------------------------------------------------------*/
 intn GRIupdateRI(int32 hdf_file_id,ri_info_t *img_ptr)
 {
-    CONSTR(FUNC, "GRIupdateRIG");   /* for HERROR */
+    CONSTR(FUNC, "GRIupdateRI");   /* for HERROR */
     int32 GroupID;      /* RI vgroup id */
 
     HEclear();
@@ -1254,35 +1254,107 @@ intn GRIupdateRI(int32 hdf_file_id,ri_info_t *img_ptr)
     /* Write out the RI Vgroup itself */
     if ((GroupID = Vattach(hdf_file_id,(img_ptr->ri_ref>DFTAG_NULL ?
             img_ptr->ri_ref : -1),"w")) == FAIL)
-        HRETURN_ERROR(DFE_GROUPSETUP, FAIL);
+        HRETURN_ERROR(DFE_CANTATTACH, FAIL);
 
     /* add image dimension tag/ref to RIG */
     if (Vaddtagref(GroupID, DFTAG_ID, (uint16) img_ptr->img_dim.dim_ref) == FAIL)
         HRETURN_ERROR(DFE_CANTADDELEM, FAIL);
 
-/* QAK */
     /* add image data tag/ref to RIG */
-    if (DFdiput(GroupID, img_ptr->img_tag, img_ptr->img_ref) == FAIL)
-        HRETURN_ERROR(DFE_PUTGROUP, FAIL);
+    if (Vaddtagref(GroupID, img_ptr->img_tag, img_ptr->img_ref) == FAIL)
+        HRETURN_ERROR(DFE_CANTADDELEM, FAIL);
 
     /* Check if we should write palette information */
     if(img_ptr->lut_ref>DFTAG_NULL)
       {
           /* add palette dimension tag/ref to RIG */
-          if (DFdiput(GroupID, DFTAG_LD, (uint16) img_ptr->lut_dim.dim_ref) == FAIL)
-              HRETURN_ERROR(DFE_PUTGROUP, FAIL);
+          if (Vaddtagref(GroupID, DFTAG_LD, (uint16) img_ptr->lut_dim.dim_ref) == FAIL)
+              HRETURN_ERROR(DFE_CANTADDELEM, FAIL);
 
           /* add palette data tag/ref to RIG */
-          if (DFdiput(GroupID, img_ptr->lut_tag, img_ptr->lut_ref) == FAIL)
-              HRETURN_ERROR(DFE_PUTGROUP, FAIL);
+          if (Vaddtagref(GroupID, img_ptr->lut_tag, img_ptr->lut_ref) == FAIL)
+              HRETURN_ERROR(DFE_CANTADDELEM, FAIL);
       } /* end if */
 
     /* write out RIG */
-    if(DFdiwrite(hdf_file_id, GroupID, DFTAG_RIG, img_ptr->rig_ref)==FAIL)
-        HRETURN_ERROR(DFE_GROUPWRITE, FAIL);
+    if(Vdetach(GroupID)==FAIL)
+        HRETURN_ERROR(DFE_CANTDETACH, FAIL);
 
     return(SUCCEED);
-} /* end GRIupdateRIG() */
+} /* end GRIupdateRI() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRIup_attr_data
+ PURPOSE
+    Internal routine to update the attribute data
+ USAGE
+    intn GRIup_attr_data(hdf_file_id,attr_ptr)
+        int32 hdf_file_id;          IN: the file ID for the HDF file.
+        at_info_t *attr_ptr;        IN: pointer to the attribute info for the
+                                        attr. to write.
+ RETURNS
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    Write out the data for an attribute to an HDF file.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn GRIup_attr_data(int32 hdf_file_id,at_info_t *attr_ptr)
+{
+    CONSTR(FUNC, "GRIup_attr_data");   /* for HERROR */
+    int32 GroupID;      /* attribute Vdata id */
+
+    HEclear();
+    if (!HDvalidfid(hdf_file_id) || attr_ptr==NULL)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    /* Write out the attribute data */
+    if (attr_ptr->ref==DFTAG_NULL)  /* create a new attribute */
+      {
+/* QAK */
+      } /* end if */
+    else    /* update an existing one */
+      {
+      } /* end else */
+
+#ifdef BROKEN
+    /* Write out the RI Vgroup itself */
+    if ((GroupID = Vattach(hdf_file_id,(img_ptr->ri_ref>DFTAG_NULL ?
+            img_ptr->ri_ref : -1),"w")) == FAIL)
+        HRETURN_ERROR(DFE_CANTATTACH, FAIL);
+
+    /* add image dimension tag/ref to RIG */
+    if (Vaddtagref(GroupID, DFTAG_ID, (uint16) img_ptr->img_dim.dim_ref) == FAIL)
+        HRETURN_ERROR(DFE_CANTADDELEM, FAIL);
+
+    /* add image data tag/ref to RIG */
+    if (Vaddtagref(GroupID, img_ptr->img_tag, img_ptr->img_ref) == FAIL)
+        HRETURN_ERROR(DFE_CANTADDELEM, FAIL);
+
+    /* Check if we should write palette information */
+    if(img_ptr->lut_ref>DFTAG_NULL)
+      {
+          /* add palette dimension tag/ref to RIG */
+          if (Vaddtagref(GroupID, DFTAG_LD, (uint16) img_ptr->lut_dim.dim_ref) == FAIL)
+              HRETURN_ERROR(DFE_CANTADDELEM, FAIL);
+
+          /* add palette data tag/ref to RIG */
+          if (Vaddtagref(GroupID, img_ptr->lut_tag, img_ptr->lut_ref) == FAIL)
+              HRETURN_ERROR(DFE_CANTADDELEM, FAIL);
+      } /* end if */
+
+    /* write out RIG */
+    if(Vdetach(GroupID)==FAIL)
+        HRETURN_ERROR(DFE_CANTDETACH, FAIL);
+#endif /* BROKEN */
+
+    return(SUCCEED);
+} /* end GRIup_attr_data() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -1347,9 +1419,10 @@ intn GRend(int32 grid)
                 /* check if the image meta-info has been modified */
                 if(img_ptr->meta_modified==TRUE)
                   {
-                      /* write out the dimension information again */
                       /* write out the RI/RIG information again */
                       if(GRIupdateRIG(gr_ptr->hdf_file_id,img_ptr)==FAIL)
+                          HRETURN_ERROR(DFE_INTERNAL, FAIL);
+                      if(GRIupdateRI(gr_ptr->hdf_file_id,img_ptr)==FAIL)
                           HRETURN_ERROR(DFE_INTERNAL, FAIL);
                   } /* end if */
 
@@ -1372,6 +1445,8 @@ intn GRend(int32 grid)
                             /* check if the attribute data has been modified */
                             if(attr_ptr->data_modified==TRUE)
                               {
+                                  if(GRIup_attr_data(gr_ptr->hdf_file_id,attr_ptr)==FAIL)
+                                      HRETURN_ERROR(DFE_INTERNAL, FAIL);
                               } /* end if */
 
                             /* check if the attribute meta-info has been modified */
