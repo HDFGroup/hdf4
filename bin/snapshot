@@ -245,6 +245,7 @@ fi # Test the HDF4 library
 # Run Release snapshot, update version, and commit to cvs and tag
 #=============================
 if [ "$cmd" = "all" -o -n "$cmdrel" ]; then
+  if [ -n "$needmorework" ]; then
     if [ "$snapshot" = "yes" ]; then
 	(cd ${CURRENT} && ${MAKE} distclean)
 	(
@@ -260,6 +261,10 @@ if [ "$cmd" = "all" -o -n "$cmdrel" ]; then
 	)
 	errcode=$?
     fi
+  else
+    echo "need real release steps.  For now, only move current version to previous"
+  fi
+
 
     # Replace the previous version with the current version.
     # Should check if the errcode of the release process but there
