@@ -77,7 +77,6 @@ compare(const VOID * aa, const VOID * bb)
 void
 print_item(int32 fid, dd_t *desc_list, intn n)
 {
-    sp_info_block_t info;
     intn        status;
     int32       len;
     char       *name, *label_str;
@@ -117,6 +116,7 @@ print_item(int32 fid, dd_t *desc_list, intn n)
 
     if ((special) && (SPECIALTAG(desc_list[n].tag)))
       {     /* print out special info if desired */
+          sp_info_block_t info;
           int32       aid, ret;
 
           aid = Hstartread(fid, desc_list[n].tag, desc_list[n].ref);
