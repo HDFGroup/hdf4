@@ -468,6 +468,16 @@ extern intn SDsetchunkcache
 #   define nsfsacct    FNAME(SFSACCT)
 #   define nsfsdmvc    FNAME(SFSDMVC)
 #   define nsfisdmvc   FNAME(SFISDMVC)
+#   define nsfisrcrd     FNAME(SFISRCRD)
+#   define nscgichnk     FNAME(SCGICHNK)
+#   define nscrcchnk     FNAME(SCRCCHNK)
+#   define nscrchnk      FNAME(SCRCHNK)
+#   define nscscchnk     FNAME(SCSCCHNK)
+#   define nscschnk      FNAME(SCSCHNK)
+#   define nscwcchnk     FNAME(SCWCCHNK) 
+#   define nscwchnk      FNAME(SCWCHNK)
+#   define nscscompress  FNAME(SCSCOMPRESS)
+#   define nsfsnbit      FNAME(SFSNBIT)
 #else   /* DF_CAPFNAMES */
 #   define nscstart    FNAME(scstart)
 #   define nsfend      FNAME(sfend)
@@ -514,6 +524,16 @@ extern intn SDsetchunkcache
 #   define nsfsacct    FNAME(sfsacct)
 #   define nsfsdmvc    FNAME(sfsdmvc)
 #   define nsfisdmvc   FNAME(sfisdmvc)
+#   define nsfisrcrd     FNAME(sfisrcrd)
+#   define nscgichnk     FNAME(scgichnk)
+#   define nscrcchnk     FNAME(scrcchnk)
+#   define nscrchnk      FNAME(scrchnk)
+#   define nscscchnk     FNAME(scscchnk)
+#   define nscschnk      FNAME(scschnk)
+#   define nscwcchnk     FNAME(scwcchnk) 
+#   define nscwchnk      FNAME(scwchnk)
+#   define nscscompress  FNAME(scscompress)
+#   define nsfsnbit      FNAME(sfsnbit)
 #endif
 #endif
 
