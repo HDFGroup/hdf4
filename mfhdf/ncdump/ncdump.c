@@ -248,7 +248,7 @@ pr_att_vals(type, len, vals)
  */
 char *fixstr(char *str)
 {
-#ifndef __GNUC__
+#ifndef __GNUC__ 
     char *strdup(const char *);
 #endif  /* linux */
 	char *new_str, *ptr;
@@ -271,9 +271,10 @@ char *fixstr(char *str)
 }
 
 static void
-do_ncdump(path, specp)
-     char *path;
+do_ncdump(char *path, struct fspec* specp)
+/*     char *path;
      struct fspec* specp;
+*/
 {
 	int ndims;			/* number of dimensions */
 	int nvars;			/* number of variables */
