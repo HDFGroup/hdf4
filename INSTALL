@@ -382,6 +382,67 @@
     2.5.4 OpenVMS AXP on DEC Alpha and OpenVMS on VAX
     -------------------------------------------------
    
+   To build the HDF Library on VAX OpenVMS and Alpha OpenVMS systems use
+    MAKEVMS.COM file in the top level directory of the VMS Library source.
+                                                       -------------------
+
+    To build the library in interactive mode run
+
+    @MAKEVMS.COM
+
+    To build the library in the background:
+
+    1. Check that the first command in MAKEVMS.COM sets default directory
+       to the top level directory in the HDF Library source tree (just
+       edit the first command line:  $  set def.... ).
+
+    2. Submit MAKEVMS.COM to the appropriate batch queue on your system
+       For example:
+
+    $ submit/log=buildhdf.log/noprint/notify/restart/que=batch$queue MAKEVMS.COM
+
+
+    MAKEVMS.COM file
+
+    1.  Creates three directories in the top level directory:
+        [...tophdf.include]
+        [...tophdf.bin]
+        [...tophdf.lib]
+
+    2.  Builds four libraries LIBJPEG.OLB, LIBZ.OLB, DF.OLB, and MFHDF.OLB,
+        and copies them into the [...tophdf.bin] directory.
+
+    3.  Builds the HDF utilities and copies them into the [...tophdf.bin]
+        directory.
+
+    4.  Copies the header files to the [...tophdf.include] directory.
+
+    5.  Runs the library tests after building each library and the tests for the
+
+        ncdump, ncgen and hdp utilities.
+
+    We recommend building the library in background and then checking log file
+    for test results. Output of the hdp test is written to the
+    [...tophdf.mfhdf.dumper]hdp.out file.
+
+    See MAKEVMS.COM for more information.
+
+    NOTE: If you are building from UNIX source perform the following steps
+          before you run MAKEVMS.COM:
+
+          1. Make sure that files in the directory [.mfhdf.fortran.vms] are
+             up to date.
+          2. In the directory [.hdf.test] change the files
+             forsupff.f
+             tsdmmsf.f
+             tsdnmmsf.f
+             tsdntf.f
+             tsdnnt.f
+             tvsetf.f
+             slabwf.f
+                      following the instructions given in the comments,
+             which start with 'For VMS', in these files.
+
 
     2.5.5 Windows '95 or Windows NT, and Alpha NT.
     ---------------------------------------------
