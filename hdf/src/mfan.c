@@ -2519,6 +2519,12 @@ ANget_tagref(int32 an_id, int32 index, ann_type type, uint16 *tag, uint16 *ref)
 
 #else  /* use tbbt */
 
+  /* check index and adjust to 1 based for tbbtindx()*/
+  if(index >= 0 && index <= file_entry->an_num[type])
+    index++;
+  else
+    HE_REPORT_RETURN("bad index", FAIL);
+
   /* find 'index' entry */
   if ((entry = tbbtindx((TBBT_NODE *)*(file_entry->an_tree[type]), index)) == NULL)
     HE_REPORT_RETURN("failed to find 'index' entry", FAIL);
