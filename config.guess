@@ -274,6 +274,9 @@ EOF
     CRAY*C90:c90:*:*)
 	echo c90-cray-unicos
         exit 0 ;;
+    CRAY*J90:*:*:*)
+	echo j90-cray-unicos
+        exit 0 ;;
     CRAY*TS:*:*:*)
 	echo t90-cray-unicos
         exit 0 ;;
