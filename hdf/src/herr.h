@@ -91,7 +91,9 @@
 
 /* always points to the next available slot; the last error record is in slot (top-1) */
 #ifndef _H_ERR_MASTER_
+#ifndef WIN32
 extern
+#endif
 #endif /* _H_ERR_MASTER_ */
 int32       error_top
 #ifdef _H_ERR_MASTER_

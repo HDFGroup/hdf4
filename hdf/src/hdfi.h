@@ -878,7 +878,7 @@ Please check your Makefile.
 #endif
 
 #if defined(_MSC_VER) && !defined(_MFHDFLIB_) && !defined(_HDFLIB_)	/* Auto-link when possible */
-#	define HDF_LIB_VER	"414"
+#	define HDF_LIB_VER	"415"
 #	if !defined(_DEBUG)
 #		if !defined(_HDFDLL_)
 #			define HDF_LIB_NAME	"HD" HDF_LIB_VER ".lib"
