@@ -70,16 +70,17 @@
 
 /* For further error reporting */
 #define HE_REPORT(msg) HEreport(msg)
-#ifndef CONVEX
-#define HE_REPORT_RETURN(msg, ret_val) do { HEreport(msg); return(ret_val); \
-                                          } while (0)
-#else /* CONVEX */
-#define HE_REPORT_RETURN(msg, ret_val) { HEreport(msg); return(ret_val); \
-                                          } 
-#endif /* CONVEX */
+#define HE_REPORT_RETURN(msg, ret_val) { HEreport(msg); return(ret_val); }
 #define HE_CLOSE_REPORT_RETURN(hfid,msg, ret_val) { HEreport(msg); \
                                                     Hclose(hfid); \
                                                     return(ret_val);}
+
+#define HE_REPORT_GOTO(msg, ret_val) { HEreport(msg); ret_value = ret_val; \
+                                       goto done;}
+#define HE_CLOSE_REPORT_GOTO(hfid,msg, ret_val) { HEreport(msg); \
+                                                  Hclose(hfid); \
+                                                  ret_value = ret_val; \
+                                                  goto done;}
 
 
 /*
