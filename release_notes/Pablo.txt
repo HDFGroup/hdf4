@@ -2,9 +2,9 @@
 Pablo Instrumentation of HDF
 ===========================
     This version of the distribution has support to create an instrumented 
-    version of the HDF library(libdf-inst.a). This library along
+    version of the HDF library(libdf-inst.a). This library along with
     the Pablo performance data capture libraries can be used to gather data
-    about I/O behaviour and procedure execution times.  
+    about I/O behavior and procedure execution times.  
 
     More detailed documentation on how to use the instrumented version of
     the HDF library with Pablo can be found in the Pablo directory 
