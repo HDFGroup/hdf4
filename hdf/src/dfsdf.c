@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.23  1993/09/02 00:17:58  georgev
-Fixed large number of casts.
+Revision 1.24  1993/09/13 21:11:43  chouck
+Changed prototypes of (VOID) to (void) for Convex
 
+ * Revision 1.23  1993/09/02  00:17:58  georgev
+ * Fixed large number of casts.
+ *
  * Revision 1.22  1993/08/28  01:37:44  georgev
  * Fixed a slab fortran name.
  *
@@ -302,7 +305,7 @@ ndssrang(max, min)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndsclear(VOID)
+ndsclear(void)
 #else
 ndsclear()
 #endif /* PROTOTYPE */
@@ -420,7 +423,7 @@ ndsgdaln(llabel, lunit, lformat, lcoordsys)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndsfirst(VOID)
+ndsfirst(void)
 #else
 ndsfirst()
 #endif /* PROTOTYPE */
@@ -487,7 +490,7 @@ ndspslc(windims, data, dims)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndseslc(VOID)
+ndseslc(void)
 #else
 ndseslc()
 #endif /* PROTOTYPE */
@@ -878,7 +881,7 @@ ndsirref(filename, ref, fnlen)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE  
-ndslref(VOID)
+ndslref(void)
 #else
 ndslref()
 #endif /* PROTOTYPE */
@@ -1168,7 +1171,7 @@ ndfsdsetrange(max, min)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfsdclear(VOID)
+ndfsdclear(void)
 #else
 ndfsdclear()
 #endif /* PROTOTYPE */
@@ -1282,7 +1285,7 @@ ndfsdgetdatalen(llabel, lunit, lformat, lcoordsys)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfsdrestart(VOID)
+ndfsdrestart(void)
 #else
 ndfsdrestart()
 #endif /* PROTOTYPE */
@@ -1348,7 +1351,7 @@ ndfsdputslice(windims, data, dims)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfsdendslice(VOID)
+ndfsdendslice(void)
 #else
 ndfsdendslice()
 #endif /* PROTOTYPE */
@@ -1413,7 +1416,7 @@ ndfsdgetnt(pnumbertype)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfsdlastref(VOID)
+ndfsdlastref(void)
 #else
 ndfsdlastref()
 #endif /* PROTOTYPE */
