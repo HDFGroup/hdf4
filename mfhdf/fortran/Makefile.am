@@ -28,4 +28,4 @@ SUFFIXES = .inc .f90
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES=ftest.f jackets.c netcdf.inc
+DISTCLEANFILES = ftest.f jackets.c netcdf.inc netcdf.f90
