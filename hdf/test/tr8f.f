@@ -12,7 +12,7 @@ C****************************************************************************
 C
 C $Id$
 C
-      program tdfr8F
+      subroutine tr8f (number_failed)
 C
 C Test program:
 C     		Writes images together with pals to a file.
@@ -162,7 +162,7 @@ C Start here
           print *, '****' , number_failed, ' TESTS FAILED ****'
       endif
 
-      stop
+      return
       end
 
 C********************************************************

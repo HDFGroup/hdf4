@@ -12,7 +12,7 @@ C****************************************************************************
 C
 C $Id$
 C
-      program tdfpF
+      subroutine tpf (number_failed)
 C
 C
 C Test program: Writes palettes in a file.
@@ -172,7 +172,7 @@ C      call RESULT(ref2, 'dplref', number_failed)
           print *, '***** ALL TESTS SUCCESSFUL *****'
       endif
 
-      stop
+      return
       end
 
 

@@ -12,7 +12,7 @@ C****************************************************************************
 C
 C $Id$
 C
-      program slab1wf
+      subroutine slab1wf (num_err)
 C
 C Program writes data set as the first 3 of 5 slabs to slab1wf.hdf
 C The program slab2wf writes the last 2 of 5 slabs to slab1wf.hdf 
@@ -170,6 +170,6 @@ C
       print *,' '
 
 C
-      stop 
+      return 
       end
 

@@ -12,7 +12,7 @@ C****************************************************************************
 C
 C $Id$ 
 C
-      program slab2wf
+      subroutine slab2wf (num_err)
 C
 C Program writes data set as the last 2 of 5 slabs to slab1wf.hdf
 C The program slab1wf writes the first 3 of 5 slabs to slab1wf.hdf
@@ -136,6 +136,11 @@ C
       
       ret = dseslab()
       num_err = num_err + ret
+
+      if ( num_err .ne. 0) then
+         print *,'number of failures =',num_err
+      endif
+
 C
 C Retrieve slab for verification
 C
@@ -150,6 +155,9 @@ C
       sr(3) = 2
       num_err = 0
       ret = dsrslab(sn, st, sz, st, sa, sr)
+      num_err = num_err + ret
+
+      ret = dseslab()
       num_err = num_err + ret
 
       if ( num_err .ne. 0) then
@@ -178,6 +186,6 @@ C            print *, 'sa() ',sa(k,j,i)
 
 C
 C
-      stop 
+      return 
       end
 

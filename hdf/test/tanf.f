@@ -12,7 +12,7 @@ C****************************************************************************
 C
 C $Id$
 C
-      program tdfanF
+      subroutine tanf (number_failed)
 C
 C
 C  Test program: stores annotations in a file.
@@ -130,14 +130,14 @@ C********  Read labels and descriptions *********
 
 C         read in annotations for 2 out of every 3 
           if (mod(j,3) .ne. 0) then
-              call check_lab_desc(TESTFILE, DFTAG_SDG, refnum, 
+              call an_check_lab_desc(TESTFILE, DFTAG_SDG, refnum, 
      *                                  labsds, descsds, number_failed)
           endif
 
           ret = d8gimg(TESTFILE, newimage, COLS, ROWS, pal)
           call RESULT(ret, 'd8gimg', number_failed)
           refnum = DFR8lastref()
-          call check_lab_desc(TESTFILE, DFTAG_RIG, refnum, 
+          call an_check_lab_desc(TESTFILE, DFTAG_RIG, refnum, 
      *                                labris, descris, number_failed)
       
   200 continue
@@ -150,71 +150,17 @@ C         read in annotations for 2 out of every 3
           print *,'***** ',number_failed,' TESTS FAILED ***** '
       endif
 
-      stop
-      end
-
-
-C***************************************************************
-C
-C  gen2Dfloat:  generate 2-D data array 
-C
-C***************************************************************
-      subroutine gen2Dfloat(height, width, data)
-      integer   height, width
-      real data(height,width)
-
-      integer i, j
-
-C     store one value per row, increasing by one for each row 
-      do 110 i=1, height
-          do 100 j=1, width
-             data(height, width) = float(i)
-  100     continue
-  110 continue
       return
       end
 
 
-C***************************************************************
-C
-C  genimage:  generate image from 2-D float array
-C
-C***************************************************************
-      subroutine genimage(height, width, data, image)
-      integer   height, width
-      real      data(height, width)
-      character image(height, width)
-
-      integer i
-      real   max, min, multiplier
-
-      max = data(1,1)
-      min = data(1,1)
-      do 110 i=1, height
-          do 100 j=1, width
-             if (max .gt. data(i,j)) max = data(i,j)
-             if (min .lt. data(i,j)) min = data(i,j)
-  100     continue
-  110 continue
-
-C     store one value per row, increasing by one for each row 
-      multiplier = 255.0 /(max-min)
-      do 210 i=1, height
-          do 200 j=1, width
-             image(i,j) = char( int((data(i,j)-min) * multiplier) )
-  200     continue
-  210 continue
-      return 
-      end
-
-
 C**************************************************************
 C
-C  check_lab_desc:  read and compare label and description
+C  an_check_lab_desc:  read and compare label and description
 C                   with expected ones
 C
 C**************************************************************
-      subroutine check_lab_desc(filename, tag, ref, label, desc, 
+      subroutine an_check_lab_desc(filename, tag, ref, label, desc, 
      *                                                   num_failed)
       character*(*) filename, label, desc
       integer tag, ref, num_failed

@@ -12,7 +12,7 @@ C****************************************************************************
 C
 C $Id$
 C
-      program tdf24F
+      subroutine t24f (number_failed)
 
 C
 C Test Program: 
@@ -246,6 +246,6 @@ C
           print *, '****** ', number_failed, ' TESTS FAILES  ******'
       endif
 
-      stop 
+      return 
       end
 

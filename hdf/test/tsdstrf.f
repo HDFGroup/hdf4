@@ -12,7 +12,7 @@ C****************************************************************************
 C
 C $Id$
 C
-      program tsdstrf
+      subroutine tsdstrf (num_failed)
 C
 C This program tests correctness of writing and read datastrings
 C and dimension strings.
@@ -98,7 +98,7 @@ C characters of output and input strings in subroutine compare()
           print *, num_failed, ' values incorrect.'
       endif
 
-      stop
+      return
       end
 
      

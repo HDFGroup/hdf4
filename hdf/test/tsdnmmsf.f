@@ -12,7 +12,7 @@ C****************************************************************************
 C
 C $Id$
 C
-      program tdfsd_nmmsF
+      subroutine tsdnmmsf (number_failed)
 C
 C
 C  Program to test writing SDSs with different types of data and
@@ -274,70 +274,5 @@ C
           print *, '        >>> ALL TESTS PASSED <<<'
       endif
 
-      stop
-      end
-
-
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-C
-C     SUBROUTINE errchkio
-C
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-      subroutine errchkio(err1, err2, err3, num_fail, msg)
-      integer err1, err2, err3, num_fail
-      character*(*)  msg
-
-      integer FAIL
-
-      FAIL = -1
-
-      if (err1.eq.FAIL .or. err2.eq.FAIL .or. err3.eq.FAIL) then
-          num_fail = num_fail + 1
-          print *
-          print *,'>>> Test failed for ',msg, ' <<<'
-          print *, '  err1=',err1, '   err2=',err2, '   err3=',err3
-      else
-          print *,'Test passed for ', msg
-      endif
-      print *
-
       return
       end
-
-      
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-C
-C     SUBROUTINE errchkarr
-C
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-      subroutine errchkarr(err1, err2, err3, num_fail, type)
-      integer err1, err2, err3, num_fail
-      character*(*)  type
-      
-      print *
-      if (err1 .eq. 1) then
-        print *, '>>> Test failed for ', type, ' array' 
-        num_fail = num_fail + 1
-      else
-        print *, 'Test passed for ', type, ' array'
-      endif
-
-      if (err2 .eq. 1) then
-        print *, '>>> Test failed for ',type, ' scales.'
-        num_fail = num_fail + 1
-      else
-        print *, 'Test passed for ', type, ' scales.'
-      endif
-
-      if (err3 .eq. 1) then
-        print *, '>>> Test failed for ', type, ' max/min.'
-        num_fail = num_fail + 1
-      else
-        print *, 'Test passed for ', type, ' max/min.'
-      endif
-
-      print *
-
-      return
-      end
-

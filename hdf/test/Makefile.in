@@ -258,9 +258,10 @@ FFORSUPSRCS = forsupff.f
 FTESTS= tr8f t24f tpf tanf tanfilef tsdstrf tsdntf tsdnntf \
         tsdmmsf tsdnmmsf tstubsf \
         slabwf slab1wf slab2wf slab3wf slab4wf manf mgrf
-FOBJS = tr8f.o t24f.o tpf.o tanf.o tanfilef.o tsdstrf.o tsdntf.o \
-        tsdnntf.o tsdmmsf.o tsdnmmsf.o tstubsf.o fortest.o \
-        slabwf.o slab1wf.o slab2wf.o slab3wf.o slab4wf.o manf.o mgrf.o
+FOBJS = slab1wf.o slab2wf.o slab3wf.o slab4wf.o slabwf.o \
+	t24f.o tanf.o tanfilef.o manf.o mgrf.o tpf.o tr8f.o \
+	tsdmmsf.o tsdnmmsf.o tsdnntf.o tsdntf.o tsdstrf.o tstubsf.o \
+	fortestF.o
 CFORSUPOBJS = forsupf.o
 FFORSUPOBJS = forsupff.o
 TESTF = fortest.o
@@ -365,7 +366,10 @@ testhdf: $(CTESTS) $(HDFLIB)/libdf.a
 	$(CC) $(ALL_CFLAGS) -o testhdf $(CTESTS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
 	test -d $(TESTDIR) || mkdir $(TESTDIR)
 
-fortest: $(FTESTS) $(HDFLIB)/libdf.a fortest.o
+fortestF: $(FOBJS) $(FFORSUPOBJS) $(CFORSUPOBJS) $(HDFLIB)/libdf.a
+	$(FC) $(FFLAGS) -o $@ $(FOBJS) $(FFORSUPOBJS) $(CFORSUPOBJS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+
+fortest: $(HDFLIB)/libdf.a $(TESTF) fortestF
 	$(CC) $(ALL_CFLAGS) -o fortest $(TESTF) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
 
 gentest: gentest.c $(HDFLIB)/libdf.a

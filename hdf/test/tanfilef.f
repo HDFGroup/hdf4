@@ -12,7 +12,7 @@ C****************************************************************************
 C
 C $Id$
 C
-      program tdfanfileF
+      subroutine tanfilef (num_err)
 C
 C
 C  Test program: 
@@ -130,7 +130,7 @@ C
       endif
 
 
-      stop
+      return
       end
 
 

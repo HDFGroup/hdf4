@@ -12,7 +12,7 @@ C****************************************************************************
 C
 C $Id$
 C
-      program tdfsd_nntF
+      subroutine tsdnntf (number_failed)
 C
 C
 C  Program to test writing SDSs with different types of data.
@@ -251,22 +251,5 @@ C
        print *
        print *
        
-       stop
+       return
        end  
-       
-C
-C
-      subroutine err_check(err, num_fail, type)
-      integer err, num_fail
-      character*(*) type
-
-      if (err .eq. 1) then 
-  	print *,'>>> Test failed for ',type, ' array.'
-        num_fail = num_fail+1
-      else
-  	print *,'Test passed for ', type, ' array.'
-      endif
-
-      return
-      end
-

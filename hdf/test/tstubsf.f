@@ -12,7 +12,7 @@ C****************************************************************************
 C
 C $Id$
 C     
-      program tstubsF
+      subroutine tstubsf (nerrors)
       
       character ar0*10
       character ar1*9
@@ -49,8 +49,8 @@ C
       data ar2 /'...two...'/
       data ar3 /'...three'/
 
-      data nerrors /0/
 
+      nerrors = 0
       a0size = len(ar0)
       a1size = len(ar1)
       a2size = len(ar2)
@@ -100,7 +100,7 @@ c      in(1:20) = '                    '
       if (dfile .eq. 0) then
          print *, '>>>Failure:  Error ', dfenum, ' opening file.'
          print *, '   Quiting.'
-         stop
+         return
       else
          print *, 'Success      !'
       endif
@@ -135,7 +135,7 @@ c      in(1:20) = '                    '
       if (dfile .eq. 0) then
          print *, '>>>Failure:  Error ', dfenum, ' opening file.'
          print *, '   Quiting.'
-         stop
+         return
       else
          print *, 'Success      !'
       endif
@@ -434,5 +434,5 @@ C
          print *, '   Please check program output carefully.'
       endif
 
-      stop
+      return
       end

@@ -12,7 +12,7 @@ C****************************************************************************
 C
 C $Id$
 C
-      program slabwf
+      subroutine slabwf (num_err)
 C
 C Program to write data set as 5 slabs to slabwf.hdf 
 C 
@@ -213,6 +213,6 @@ C     		 print *, 'sa() ',sa(k,j,i)
       endif
 C
 C
-      stop 
+      return 
       end
 

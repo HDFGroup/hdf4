@@ -12,7 +12,7 @@ C****************************************************************************
 C
 C $Id$
 C
-      program mgrf
+      subroutine mgrf (num_err)
 
 C
 C Test Program: 
@@ -21,6 +21,7 @@ C Input file: none
 C Output file: tmgrf.hdf
 C
 C
+      integer num_err
       integer getverb
       integer Verbosity
 
@@ -80,6 +81,7 @@ C
       integer*4 attr(5), attr2(5)
       integer i, j, ret, number_failed
 
+      num_err = 0
       TESTFILE = 'tmgrf.hdf'
       IMAGE1 = 'Image #1'
       ATNAME1 = 'Attr. #1'
@@ -246,6 +248,6 @@ C Close the file
       endif
       endif
 
-      stop 
+      return 
       end
 

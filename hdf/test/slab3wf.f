@@ -12,7 +12,7 @@ C****************************************************************************
 C
 C $Id$
 C
-      program slab3wf
+      subroutine slab3wf (num_err)
 C
 C The program writes the 24 elements of the data set individually
 C as slabs to slab3wf.hdf 
@@ -374,6 +374,6 @@ C            print *, 'sa() ',sa(k,j,i)
 
 C
 C
-      stop 
+      return 
       end
 
