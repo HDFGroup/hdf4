@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1992/08/24 22:00:44  sxu
-Use vfork() and delete() for VMS
+Revision 1.6  1992/08/25 20:49:45  chouck
+Fixed backup name generation so its easier to open non-local files
 
+ * Revision 1.5  1992/08/24  22:00:44  sxu
+ * Use vfork() and delete() for VMS
+ *
  * Revision 1.4  1992/07/31  21:10:24  chouck
  * Use in-house print routines rather than fork() a call to od
  *
@@ -329,7 +332,7 @@ char *backupName(file)
     char *file;
 #endif
 {
-    return catStr("$",file);
+    return catStr(file, "~hdfed~");
 }
 
 #ifdef PROTOTYPE
