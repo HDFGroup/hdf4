@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/11/07 20:12:48  sxu
-added nlabs in DFANIlablist.
+Revision 1.4  1992/11/28 18:35:27  chouck
+Improved speed of initialization for DFANlablist()
 
+ * Revision 1.3  1992/11/07  20:12:48  sxu
+ * added nlabs in DFANIlablist.
+ *
  * Revision 1.2  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -967,16 +970,14 @@ int listsize, maxlen, startpos, isfortran;
     file_id = DFANIopen(filename, DFACC_READ);
     if (file_id == 0) return FAIL;
 
-       /* clear labellist.  pad with blanks for Fortran; add null for C  */
+    /* clear labellist.  pad with blanks for Fortran; add null for C  */
     if (isfortran)
-        for (i=0; i<(int32)maxlen*(int32)listsize; i++)
-            labellist[i] = ' ';
+        HDmemset(labellist, ' ', (int32)maxlen * (int32)listsize);
     else
-        for (i=0; i<(int32)maxlen*(int32)listsize; i++)
-            labellist[i] = '\0';
+        HDmemset(labellist, '\0', (int32)maxlen * (int32)listsize);
 
-        /* find all refs for this tag; store them in reflist */
 
+    /* find all refs for this tag; store them in reflist */
     nrefs = Hnumber(file_id, tag);         /* how many times is tag in file? */
     if (nrefs == FAIL) {
         Hclose(file_id); return FAIL;
