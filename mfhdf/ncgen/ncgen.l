@@ -163,7 +163,7 @@ FloatInf|Infinity|Inf	{    /* float missing values */
 		return (BYTE_CONST);
                 }
 \'\\.\'        {
-	       switch ((char*)yytext[2]) {
+	       switch ((int)yytext[2]) {
 	          case 'a': byte_val = '\007'; break; /* not everyone under-
 						       * stands '\a' yet */
      	          case 'b': byte_val = '\b'; break;
