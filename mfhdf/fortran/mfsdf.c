@@ -675,7 +675,7 @@ nsfrdata(id, start, stride, end, values)
     for(i = 0; i < rank; i++) {
         cstart[i] = start[rank - i - 1];
         cend[i]   = end[rank - i - 1];
-        if((cstride[i] = stride[rank - i - 1]) != 0) nostride = FALSE;
+        if((cstride[i] = stride[rank - i - 1]) != 1) nostride = FALSE;
     }
     
     if(nostride)
@@ -723,7 +723,7 @@ nsfwdata(id, start, stride, end, values)
     for(i = 0; i < rank; i++) {
         cstart[i] = start[rank - i - 1];
         cend[i]   = end[rank - i - 1];
-        if((cstride[i] = stride[rank - i - 1]) != 0) nostride = FALSE;
+        if((cstride[i] = stride[rank - i - 1]) != 1) nostride = FALSE;
     }
     
     if(nostride)
