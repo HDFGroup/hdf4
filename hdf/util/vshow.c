@@ -193,10 +193,28 @@ char**av;
 /* printing functions used by vsdumpfull(). */
 static int32 cn = 0;
 int32 fmtbyte(x) unsigned char*x;  { cn += printf("%02x ",*x); return(1);  }
-int32 fmtchar(x) char*x;   	{ cn++; putchar(*x); return(1); }
-int32 fmtint(x) int*x;   		{ cn += printf("%d ",*x); return(1);  }
-int32 fmtfloat(x) float*x; 	{ cn += printf("%f ",*x); return(1);  }
-int32 fmtlong(x) int*x;   	{ cn += printf("%ld ",*x); return(1);  }
+int32 fmtchar(x) char*x; 
+{ 
+	cn++; putchar(*x); return(1);
+	}
+int32 fmtint(x) char*x;
+{	int aint;
+		movebytes(x, &aint, sizeof(int)); cn += printf("%d",aint); 
+		return(1);  
+		}
+
+int32 fmtfloat(x) char*x;
+{	float afloat;
+		movebytes(x, &afloat, sizeof(float)); cn += printf("%f",afloat); 
+		return(1);  
+		}
+
+int32 fmtlong(x) char*x;   
+{	long along;
+		movebytes(x, &along, sizeof(long)); cn += printf("%ld",along); 
+		return(1);  
+		}
+
 /* ------------------------------------------------ */
 
 int32 vsdumpfull(vs) VDATA * vs; 
@@ -268,6 +286,7 @@ int32 vsdumpfull(vs) VDATA * vs;
 	for(j=0;j<nv;j++) {
 		for(i=0;i<nf;i++) {
 			for(t=0;t<order[i];t++) { (fmtfn[i]) (b); b+=off[i]; }
+			putchar(' ');
 		}
 		if (condensed) { if( cn > 70) { putchar('\n'); cn=0; } } 
 		else putchar('\n');
