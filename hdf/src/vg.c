@@ -851,13 +851,16 @@ char    * vgname;
 #endif
 {
     int32 vgid = -1;
+#ifdef OLD_WAY
     int32 ret_ref;
     int32 vkey;
     char  name[512];
+#else
+    vginstance_t    * v;
+#endif /* OLD_WAY */
 #ifdef LATER
     char * 	FUNC = "Vfind";
 #endif
-    vginstance_t    * v;
     
     while ( -1L != (vgid = Vgetid(f, vgid)) ) {
 #ifdef OLD_WAY
@@ -877,7 +880,7 @@ char    * vgname;
         if((v=vginstance(f,(uint16)vgid))==NULL)
             return(0);          /* error */
         if (!HDstrcmp(vgname, v->vg->vgname)) 
-            return((int32)(v->vg->oref));  /* found the vdata */
+            return((int32)(v->vg->oref));  /* found the vgroup */
 #endif /* OLD_WAY */
         
     }
@@ -901,13 +904,16 @@ char * vsname;
 #endif
 {
   	int32 	vsid = -1;
+#ifdef OLD_WAY
     int32   ret_ref;
     int32 vkey;
   	char 		name[512];
+#else
+    vsinstance_t    * v;
+#endif /* OLD_WAY */
 #ifdef LATER
 	char * 	FUNC = "VSfind";
 #endif
-    vsinstance_t    * v;
 
     while ( -1L != (vsid=VSgetid(f, vsid)) ) {
 #ifdef OLD_WAY
@@ -931,6 +937,67 @@ char * vsname;
   	return(0); /* not found */
 
 } /* VSfind */
+
+/* ------------------------------ Vfindclass ------------------------------- */
+/* new nov 16 1994 */
+/* looks in the file and returns the ref of the vgroup with class vgclass */
+/* 
+* returns 0 if not found, or error.
+* otherwise, returns the vgroup's ref (a +ve integer).
+*/
+
+#ifdef PROTOTYPE
+int32 Vfindclass (HFILEID f, char *vgclass)
+#else
+int32 Vfindclass (f, vgclass)
+HFILEID f;
+char    * vgclass;
+#endif
+{
+    int32 vgid = -1;
+#ifdef LATER
+    char * 	FUNC = "Vfindclass";
+#endif
+    vginstance_t    * v;
+    
+    while ( -1L != (vgid = Vgetid(f, vgid)) ) {
+        if((v=vginstance(f,(uint16)vgid))==NULL)
+            return(0);          /* error */
+        if (!HDstrcmp(vgclass, v->vg->vgclass)) 
+            return((int32)(v->vg->oref));  /* found the vgroup */
+    }
+    return(0); /* not found */
+} /* Vfindclass */
+
+/* ------------------------------ VSfindclass ----------------------------- */
+/* new nov 16 1994 */
+/* looks in the file and returns the ref of the vdata with class vsclass */
+/* 
+* returns 0 if not found, or error.
+* otherwise, returns the vdata's ref (a +ve integer).
+*/
+#ifdef PROTOTYPE
+int32 VSfindclass (HFILEID f, char *vsclass)
+#else
+int32 VSfindclass (f, vsclass)
+HFILEID f;
+char * vsclass;
+#endif
+{
+  	int32 	vsid = -1;
+#ifdef LATER
+	char * 	FUNC = "VSfindclass";
+#endif
+    vsinstance_t    * v;
+
+    while ( -1L != (vsid=VSgetid(f, vsid)) ) {
+        if((v=vsinstance(f,(uint16)vsid))==NULL)
+            return(0);          /* error */
+        if (!HDstrcmp(vsclass, v->vs->vsclass)) 
+            return((int32)(v->vs->oref));  /* found the vdata */
+  	}
+  	return(0); /* not found */
+} /* VSfindclass */
 
 /* ------------------------------- Vsetzap -------------------------------- */
 

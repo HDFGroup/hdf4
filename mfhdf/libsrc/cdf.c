@@ -1469,15 +1469,22 @@ bool_t
 XDR *xdrs;
 NC **handlep;
 {
-  char            vgname[100], class[128];
-  register int32  cdf_vg;
-  register int    vgid, found, status;
+#if DEBUG
+  char            vgname[100];
   int32           entries;
+#endif
+  register int32  cdf_vg;
+  register int    vgid, status;
+#ifdef OLD_WAY
+  register int    found;
+  char            class[128];
+#endif /* OLD_WAY */
 
 #if DEBUG
  fprintf(stderr, "hdf_read_xdr_cdf i've been called %d\n", (*handlep)->hdf_file);
 #endif
 
+#ifdef OLD_WAY
   /* find first thing of type CDF */
   vgid = -1;
   found = FALSE;
@@ -1497,12 +1504,23 @@ NC **handlep;
 
   if(!found)
     return FALSE;
+#else
+    if((vgid=Vfindclass((*handlep)->hdf_file,CDF))!=FAIL) {
+        cdf_vg = Vattach((*handlep)->hdf_file, vgid, "r");
+        if(cdf_vg == FAIL) {
+            fprintf(stderr, "Oops\n");
+            return FALSE;
+        }
+      } /* end if */
+    else
+        return(FALSE);
+#endif /* OLD_WAY */
 
   (*handlep)->vgid = vgid;
 
+#if DEBUG
   Vinquire(cdf_vg, &entries, vgname);
 
-#if DEBUG
  fprintf(stderr, "Found CDF : %s  (%d entries)\n", vgname, entries);
 #endif
 

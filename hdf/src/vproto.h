@@ -86,6 +86,12 @@ extern int32 Vfind
 extern int32 VSfind
   PROTO((HFILEID f, char _HUGE *vsname));
 
+extern int32 Vfindclass
+  PROTO((HFILEID f, char _HUGE *vgclass));
+
+extern int32 VSfindclass
+  PROTO((HFILEID f, char _HUGE *vsclass));
+
 extern VOID Vsetzap
     PROTO((void));
 

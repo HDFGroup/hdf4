@@ -102,6 +102,7 @@ struct vgroup_desc
   char    vgname[VGNAMELENMAX+1];   /* S name of this vgroup */
   char    vgclass[VGNAMELENMAX+1];  /* S class name of this vgroup */
   intn    marked;           /* =1 if new info has been added to vgroup */
+  intn    new;              /* =1 if this is a new vgroup */
   uint16  extag, exref;     /* expansion tag-ref */
   int16	  version, more;	/* version and "more" field */	
   intn    msize;            /* max size of storage arrays */

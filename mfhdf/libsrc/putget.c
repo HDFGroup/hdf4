@@ -630,7 +630,7 @@ NC_var *vp;
     
     if(vp->vgid) {
         /* attach to the variable's Vgroup */
-        vg = Vattach(handle->hdf_file, vp->vgid, "w");
+        vg = Vattach(handle->hdf_file, vp->vgid, "r");
         if(vg == FAIL) {
             HEprint(stderr, 0);
             return 0;
@@ -640,8 +640,12 @@ NC_var *vp;
         n = Vntagrefs(vg);
         for(t = 0; t < n; t++) {
             Vgettagref(vg, t, &tag, &vsid);
-            if(tag == DATA_TAG) return vsid;
+            if(tag == DATA_TAG) {
+                Vdetach(vg);
+                return vsid;
+            }
         }
+        Vdetach(vg);
     }
     
     if(handle->hdf_mode == DFACC_RDONLY)
@@ -755,6 +759,13 @@ NC_var *vp;
     }
 
     if(vp->vgid) {
+        /* attach to the variable's Vgroup */
+        vg = Vattach(handle->hdf_file, vp->vgid, "w");
+        if(vg == FAIL) {
+            HEprint(stderr, 0);
+            return 0;
+        }
+        
         /* add new Vdata to existing Vgroup */
         Vaddtagref(vg, (int32) DATA_TAG, (int32) vsid);
         

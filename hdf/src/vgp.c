@@ -571,6 +571,7 @@ uint16 ref;
     /* unpack vgpack into structure vg, and init  */
     vunpackvg(vg,vgpack);
     vg->f             = f;
+    vg->new           = 0; /* not a new Vgroup */
     vg->oref          = ref;
     vg->otag          = DFTAG_VG;
       
@@ -615,6 +616,7 @@ char    *accesstype;    /* access mode */
 #endif /* OLD_WAY */
     vginstance_t    * v;
 	vfile_t			* vf;
+    filerec_t *file_rec;       /* file record */
 	char * FUNC = "Vattach";
 
     if (f == FAIL) {
@@ -632,6 +634,11 @@ char    *accesstype;    /* access mode */
         access = 'w';
     else
         HRETURN_ERROR(DFE_BADACC, FAIL);
+
+    /* convert file id to file record and check for validity */
+    file_rec = FID2REC(f);
+    if(access=='w' && !(file_rec->access&DFACC_WRITE))
+       HRETURN_ERROR(DFE_ARGS,FAIL);
 
     if (vgid == -1) {           /******* create a NEW vg in vgdir ******/
         if (access=='r') {
@@ -667,7 +674,12 @@ char    *accesstype;    /* access mode */
 
         vg->access    = access;
 
+#ifdef OLD_WAY
         vg->marked        = 0;
+#else
+        vg->marked        = 1;
+        vg->new           = 1;
+#endif
         vg->vgclass[0]    = '\0';
         vg->extag     = 0;
         vg->exref     = 0;
@@ -807,8 +819,8 @@ int32 vkey;
         return;
     }
 
+#ifdef OLD_WAY
   /* update vgroup to file if it has write-access */
-
   /* if its marked flag is 1 */
   /* - OR - */
   /* if that vgroup is empty */
@@ -831,6 +843,30 @@ int32 vkey;
       vg->marked = 0;
     }
   }
+#else
+    /* Now, only update the Vgroup on disk if it has actually changed */
+    /* Since this can only happen for Vgroups with write access, there is no */
+    /* need to check for write access.... (I hope) -QAK */
+    if (vg->marked == 1) {
+      vgpack = (uint8 *) HDgetspace((int32) sizeof(VGROUP) + vg->nvelt * 4);
+      vpackvg(vg,vgpack,&vgpacksize);
+
+      /*
+       *  For now attempt to blow away the old one.  This is a total HACK
+       *    but the H-level needs to stabilize first
+       */
+      if(!vg->new)
+          Hdeldd(vg->f, DFTAG_VG, vg->oref);
+
+      if(Hputelement(vg->f, DFTAG_VG, vg->oref, vgpack, vgpacksize) == FAIL) {
+        HERROR(DFE_WRITEERROR);
+        HEprint(stderr, 0);
+      }
+      HDfreespace((VOIDP)vgpack);
+      vg->marked = 0;
+      vg->new = 0;
+    }
+#endif /* OLD_WAY */
   v->nattach--;
 } /* Vdetach */
 
@@ -882,7 +918,7 @@ int32 insertkey;          /* (VGROUP*) or (VDATA*), doesn't matter */
         return(FAIL);
     }
     
-    if (vg->otag != DFTAG_VG) {
+    if (vg->otag != DFTAG_VG || vg->access!='w') {
         HERROR(DFE_ARGS);
         return(FAIL);
     }
@@ -1464,7 +1500,7 @@ char        *vgname;
     }
 
     vg=v->vg;
-    if (vg == NULL) {
+    if (vg == NULL || vg->access!='w') {
         HERROR(DFE_BADPTR);
         return(FAIL);
     }
@@ -1510,7 +1546,7 @@ char *vgclass;
     }
 
     vg=v->vg;
-    if (vg == NULL) {
+    if (vg == NULL || vg->access!='w') {
         HERROR(DFE_BADPTR);
         return(FAIL);
     }
@@ -2013,12 +2049,18 @@ int32 vgid;
     vfile_t      * vf;
     VOIDP        * t;
     int32          key;
+    filerec_t *file_rec;       /* file record */
     char         * FUNC = "Vdelete";
 
     if(vgid < 0) {
         HERROR(DFE_ARGS);
         return(FAIL);
     } 
+
+    /* convert file id to file record and check for validity */
+    file_rec = FID2REC(f);
+    if(!(file_rec->access&DFACC_WRITE))
+       HRETURN_ERROR(DFE_ARGS,FAIL);
 
     if (NULL==(vf = Get_vfile(f))) {
         HERROR(DFE_FNF);
