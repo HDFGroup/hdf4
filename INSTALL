@@ -87,7 +87,7 @@ or
   Cray YMP (UNICOS 803.2)     CC             cf77             X         X
   CM5 (Sun Frontend)          GCC 2.6.3      f77 SC1.0        X         X
   CM5 (Parallel I/O)          CSTAR 7.2      CMF 2.2.11       X         X
-  IBM RS6000/AIX v4.0         GCC            g77              X         X
+  IBM RS6000/AIX v4.1.4       GCC            g77              X         X
   IBM SP2 (single node)        -              -               -         -   
   DEC Alpha/Digital Unix v3.2 CC             f77              X         X
   DEC Alpha/OpenVMS AXP v6.2  DECC 5.3       DEC FORTRAN      X         X
