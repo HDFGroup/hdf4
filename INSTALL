@@ -1,0 +1,109 @@
+Installing HDF/netCDF	
+=====================
+
+    For compiling and installing HDF/netCDF libraries,tests and
+    utilities on a system, please follow these instructions.
+
+Supported Platforms
+===================
+
+  Platform(OS)              C-Compilier  Fortran-Compilier   libdf.a   libnetcdf.a
+  ------------              -----------  -----------------   -------   ------------
+  Sun4(SunOS 4.1.3)         GCC 2.6.2        f77                 X         X
+  Sun4(Solaris 2.3)           CC             f77                 X         X
+  SGI-?(IRIX4.0.2)            CC             f77                 X         X
+  SGI-Indy(IRIX5.2)           CC             f77                 X         X
+  HP9000/735(HPUX 9.03)       CC             f77                 X         X
+  IBMRS6000*                  CC              -                  X         X
+  DEC Alpha/OSF               CC              -                  X         X
+  Cray C90**                  CC             
+  CM5                         CC  
+  Convex/ConvexOS             CC  
+  NeXT/NeXTSTEP+                
+  DecStation/MIPSEL++           
+  MacQuadra950(MacOS-7.5)    MPW           LS Fortran
+  IBM PC - Windows NT
+  Fujitsu VP/UXPM               
+  Intel i860                    
+  VMS/VMS                       
+    
+
+Requirements
+============
+
+    To build both HDF and netCDF library from sources, you need:
+
+      * ANSI C compilier. The native ANSI compiliers on the above 
+        platforms are supported. On platforms where no ANSI compilier
+        was available the free GNU ANSI compilier GCC was used.
+
+      * Fortran 77 compilier if you want fortran support. See above
+        table for platforms where fortran is supported.
+        
+
+Configuration/Installation
+===========================
+        
+    In this distribution there are two types of 'configure'
+    scripts. One is the Cygnus 'configure' script and the other is the
+    'configure' script created by the GNU autconf package. The Cygnus
+    'configure' script is used at the top level to configure the overall
+    distribution and the HDF library. The GNU 'configure' script is used by 
+    the netCDF distribution to configure itself. 
+
+    The Cygnus 'configure' script attempts to guess the correct
+    platfrom you are configuring the distribution for by calling the shell
+    script 'config.guess'. It outputs a unique string based on information
+    obtained from the UNIX command 'uname' consisting of CPU-VENDOR-OS
+    e.g. 'hppa1.1-hp-hpux9.03' from an  HP9000/735 running HPUX-9.03.
+
+
+
+
+Documentation
+=============
+
+
+
+Compilers and Options
+=====================
+
+
+
+Installation Names
+==================
+
+    By default, `make install' will install the HDF/netCDF files in
+    `/usr/local/bin', `/usr/local/man', etc.  You can specify an
+    installation prefix other than `/usr/local' by giving `configure' the
+    option `--prefix=PATH'.
+
+Specifying the System Type
+==========================
+
+    There may be some features `configure' can not figure out
+    automatically, but needs to determine by the type of host HDF/netCDF will run
+    on.  Usually `configure' can figure that out, but if it prints a
+    message saying it can not guess the host type, give it the
+    `--host=TYPE' option.  TYPE can either be a short name for the system
+    type, such as `sun4', or a canonical name with three fields:
+
+         CPU-COMPANY-SYSTEM
+
+    See the file `config.sub' for the possible values of each field.
+
+Operation Controls
+==================
+
+    `configure' recognizes the following options to control how it
+    operates. 
+
+NOTE: not all options are currently supported by this
+      distribution.
+
+    `--help'
+         Print a summary of the options to `configure', and exit.
+
+
+
+
