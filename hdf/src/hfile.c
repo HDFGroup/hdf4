@@ -151,6 +151,8 @@ PRIVATE intn HIupdate_version
 PRIVATE intn HIread_version
   PROTO((int32));
 
+/* #define TESTING */
+
 /*--------------------------------------------------------------------------
  NAME
        Hopen -- Opens a HDF file.
@@ -1288,12 +1290,18 @@ int32 Hwrite(access_id, length, data)
 
     /* clear error stack and check validity of access id */
 
+#ifdef TESTING
+printf("Hwrite(): entering\n");
+#endif
     HEclear();
     access_rec = AID2REC(access_id);
     if (access_rec == (accrec_t *) NULL || !access_rec->used
             || access_rec->access != DFACC_WRITE || data==NULL)
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
+#ifdef TESTING
+printf("Hwrite(): before special element function call\n");
+#endif
     /* if special elt, call special function */
     if (access_rec->special)
        return (*access_rec->special_func->write)(access_rec, length, (VOIDP)data);

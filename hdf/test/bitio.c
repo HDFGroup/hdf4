@@ -51,6 +51,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #define BUFSIZE     8192
 #define DATASIZE    4096
+#define NUM_BITS    32
 
 #define DATA_TAG_1      1000
 #define DATA_REF_1      1000
@@ -156,6 +157,7 @@ void test_bitio_read()
     intn inbits;
     uint32 tempbuf;
     intn i;
+    uint8 *test_ptr;
 
     SEED((int)time(NULL));
 
@@ -194,12 +196,12 @@ void test_bitio_read()
     CHECK(bitid1,FAIL,"Hstartbitread");
 
     /* read in random #'s of bits */
-    for(i=0; i<DATASIZE/4; i++) {
-        inbits=((RAND()>>4)%32)+1;       /* number of bits to input */
+    for(i=0; i<DATASIZE/(NUM_BITS/8); i++) {
+        inbits=((RAND()>>4)%NUM_BITS)+1;       /* number of bits to input */
         ret=Hbitread(bitid1,inbits,&inbuf2[i]);
         VERIFY(ret,inbits,"Hbitread");
-        if(inbits<32) {     /* if we've already grabbed 32-bit don't try for more */
-            inbits=32-inbits;
+        if(inbits<NUM_BITS) {     /* if we've already grabbed 32-bit don't try for more */
+            inbits=NUM_BITS-inbits;
             ret=Hbitread(bitid1,inbits,&tempbuf);
             VERIFY(ret,inbits,"Hbitread");
             inbuf2[i]<<=inbits;
@@ -209,12 +211,18 @@ void test_bitio_read()
     ret=Hendbitaccess(bitid1,0);
     RESULT("Hbitendaccess");
 
+    test_ptr=(uint8 *)HDgetspace((DATASIZE/4)*DFKNTsize(DFNT_UINT32));
+    CHECK(test_ptr,NULL,"HDgetspace");
+    ret=DFKconvert(inbuf2,test_ptr,DFNT_UINT32,(DATASIZE/4),DFACC_WRITE,0,0);
+    CHECK(ret,FAIL,"DFKconvert");
+
     /* check the data */
-    if(HDmemcmp(inbuf,inbuf2,sizeof(uint8)*DATASIZE)) {
+    if(HDmemcmp(inbuf,test_ptr,DATASIZE)!=0) {
         printf("Error in reading bit I/O data\n");
         HEprint(stdout,0);
         num_errs++;
-      }	/* end for */
+      } /* end if */
+    HDfreespace(test_ptr);
 
     ret=Hclose(fid);
     RESULT("Hclose");

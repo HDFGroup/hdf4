@@ -158,7 +158,7 @@ PRIVATE int32 HCIinit_coder(cinfo, coder_type, c_info)
     comp_info *c_info;      /* encoding information */
 #endif
 {
-    char *FUNC="HCIsetcoder_funcs";  /* for HERROR */
+    char *FUNC="HCIinit_coder";  /* for HERROR */
 
     switch(coder_type) {    /* determin the type of encoding */
         case COMP_CODE_RLE:           /* Run-length encoding */
@@ -168,9 +168,7 @@ PRIVATE int32 HCIinit_coder(cinfo, coder_type, c_info)
 
         case COMP_CODE_NBIT:        /* N-bit encoding */
             cinfo->coder_type=COMP_CODE_NBIT;   /* set the coding type */
-#ifdef NOT_YET
             cinfo->coder_funcs=cnbit_funcs;     /* set the N-bit func. ptrs */
-#endif
 
             /* copy coding info */
             cinfo->coder_info.nbit_info.nt=c_info->nbit.nt;
@@ -178,6 +176,10 @@ PRIVATE int32 HCIinit_coder(cinfo, coder_type, c_info)
             cinfo->coder_info.nbit_info.fill_one=c_info->nbit.fill_one;
             cinfo->coder_info.nbit_info.mask_off=c_info->nbit.start_bit;
             cinfo->coder_info.nbit_info.mask_len=c_info->nbit.bit_len;
+#ifdef TESTING
+printf("HCIinit_coder(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_len=%d\n",c_info->nbit.nt,c_info->nbit.sign_ext,c_info->nbit.fill_one,c_info->nbit.start_bit,c_info->nbit.bit_len);
+printf("HCIinit_coder(): coder_funcs.write=%p\n",cinfo->coder_funcs.write);
+#endif
             if((cinfo->coder_info.nbit_info.nt_size
                     =DFKNTsize(cinfo->coder_info.nbit_info.nt))==FAIL)
                 HRETURN_ERROR(DFE_BADNUMTYPE,FAIL);
@@ -300,6 +302,9 @@ PRIVATE int32 HCIwrite_header(file_rec,access_rec,info,dd,special_tag,ref)
     /* write any additional information needed for coding type */
     switch(info->cinfo.coder_type) {
         case COMP_CODE_NBIT:    /* N-bit coding needs info */
+#ifdef TESTING
+printf("HCIwrite_header(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_len=%d\n",info->cinfo.coder_info.nbit_info.nt,info->cinfo.coder_info.nbit_info.sign_ext,info->cinfo.coder_info.nbit_info.fill_one,info->cinfo.coder_info.nbit_info.mask_off,info->cinfo.coder_info.nbit_info.mask_len);
+#endif
             /* specify number-type of N-bit data */
             INT32ENCODE(p, info->cinfo.coder_info.nbit_info.nt);
             /* next is the flag to indicate whether to sign extend */
@@ -390,8 +395,7 @@ PRIVATE int32 HCIread_header(file_rec,access_rec,info,info_dd,c_info,m_info)
 
 
     /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
+    if (ptbuf == NULL) {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -425,6 +429,8 @@ PRIVATE int32 HCIread_header(file_rec,access_rec,info,info_dd,c_info,m_info)
                 uint16 f_one;               /* temp. var for fill one */
                 int32 m_off,m_len;          /* temp. var for mask offset and len */
 
+                if(HI_READ(file_rec->file, p, 16)==FAIL)
+                    HRETURN_ERROR(DFE_READERROR,FAIL);
                 /* specify number-type of N-bit data */
                 INT32DECODE(p, c_info->nbit.nt);
                 /* next is the flag to indicate whether to sign extend */
@@ -439,6 +445,9 @@ PRIVATE int32 HCIread_header(file_rec,access_rec,info,info_dd,c_info,m_info)
                 /* the number of bits extracted */
                 INT32DECODE(p, m_len);
                 c_info->nbit.bit_len=(intn)m_len;
+#ifdef TESTING
+printf("HCIread_header(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_len=%d\n",c_info->nbit.nt,c_info->nbit.sign_ext,c_info->nbit.fill_one,c_info->nbit.start_bit,c_info->nbit.bit_len);
+#endif
               } /* end case */
             break;
 
@@ -505,6 +514,9 @@ int32 HCcreate(file_id, tag, ref, model_type, m_info, coder_type, c_info)
     uint16 ctype,mtype;     /* temp. storage for coder and model types */
 #endif
 
+#ifdef TESTING
+printf("HCcreate(): entering\n");
+#endif
     /* clear error stack and validate args */
     HEclear();
     file_rec=FID2REC(file_id);
@@ -514,8 +526,7 @@ int32 HCcreate(file_id, tag, ref, model_type, m_info, coder_type, c_info)
 
 
     /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
+    if (ptbuf == NULL) {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -531,6 +542,9 @@ int32 HCcreate(file_id, tag, ref, model_type, m_info, coder_type, c_info)
 
     access_rec=&access_records[slot];
 
+#ifdef TESTING
+printf("HCcreate(): check 1\n");
+#endif
     /* look for existing data element of the same tag/ref */
     if(FAIL!=HIlookup_dd(file_rec, tag, ref, &data_block, &data_idx)) {
         data_dd=&(data_block->ddlist[data_idx]);
@@ -562,6 +576,9 @@ int32 HCcreate(file_id, tag, ref, model_type, m_info, coder_type, c_info)
       } /* end else */
     dd=&access_rec->block->ddlist[access_rec->idx];
 
+#ifdef TESTING
+printf("HCcreate(): check 2\n");
+#endif
     /* set up the special element information and write it to file */
     info=(compinfo_t *)HDgetspace(sizeof(compinfo_t));
     access_rec->special_info=(VOIDP)info;
@@ -578,8 +595,17 @@ int32 HCcreate(file_id, tag, ref, model_type, m_info, coder_type, c_info)
     /* set up compressed special info structure */
     info->attached=1;
     info->comp_ref=Hnewref(file_id);         /* get the new reference # */
+#ifdef TESTING
+printf("HCcreate(): check 3\n");
+#endif
     HCIinit_model(&(info->minfo),model_type,m_info);
+#ifdef TESTING
+printf("HCcreate(): check 4\n");
+#endif
     HCIinit_coder(&(info->cinfo),coder_type,c_info);
+#ifdef TESTING
+printf("HCcreate(): check 5, coder_funcs.write=%p\n",info->cinfo.coder_funcs.write);
+#endif
 
 #ifdef OLD_WAY
     /* write special element info to the file */
@@ -625,6 +651,9 @@ int32 HCcreate(file_id, tag, ref, model_type, m_info, coder_type, c_info)
       } /* end if */
 #endif
 
+#ifdef TESTING
+printf("HCcreate(): check 6, coder_funcs.write=%p\n",info->cinfo.coder_funcs.write);
+#endif
     /* update access record and file record */
     access_rec->special_func=&comp_funcs;
     access_rec->special=SPECIAL_COMP;
@@ -638,12 +667,18 @@ int32 HCcreate(file_id, tag, ref, model_type, m_info, coder_type, c_info)
     if(ref>file_rec->maxref)
         file_rec->maxref=ref;
 
+#ifdef TESTING
+printf("HCcreate(): check 6.5, coder_funcs.write=%p\n",info->cinfo.coder_funcs.write);
+#endif
     /* propagate the initialization down to the modeling layer */
     if((ret=(*(info->minfo.model_funcs.stwrite))(access_rec))==FAIL) {
         access_rec->used=FALSE;
         HRETURN_ERROR(DFE_MODEL,FAIL);
       } /* end if */
 
+#ifdef TESTING
+printf("HCcreate(): check 6.6, coder_funcs.write=%p\n",info->cinfo.coder_funcs.write);
+#endif
     /* compress the old DD and get rid of it, if there was one */
     if(data_dd!=NULL) {
         VOIDP buf;              /* temporary buffer */
@@ -692,6 +727,9 @@ int32 HCcreate(file_id, tag, ref, model_type, m_info, coder_type, c_info)
           } /* end if */
       } /* end if */
 
+#ifdef TESTING
+printf("HCcreate(): check 7, coder_funcs.write=%p\n",info->cinfo.coder_funcs.write);
+#endif
     return(ASLOT2ID(slot));
 }   /* end HCcreate() */
 
@@ -740,8 +778,7 @@ PRIVATE int32 HCIstaccess(access_rec, access)
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
+    if (ptbuf == NULL) {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -1053,22 +1090,30 @@ int32 HCPwrite(access_rec, length, data)
     compinfo_t *info;       /* information on the special element */
     int32 ret;
 
+#ifdef TESTING
+printf("HCPwrite(): entering\n");
+#endif
     /* validate length */
     if(length<0)
        HRETURN_ERROR(DFE_RANGE,FAIL);
 
 
     /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
+    if (ptbuf == NULL) {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
+#ifdef TESTING
+printf("HCPwrite(): before func ptr call\n");
+#endif
     info=(compinfo_t *)access_rec->special_info;
     if((ret=(*(info->minfo.model_funcs.write))(access_rec,length,data))==FAIL)
         HRETURN_ERROR(DFE_MODEL,FAIL);
+#ifdef TESTING
+printf("HCPwrite(): after func ptr call\n");
+#endif
 
     /* update access record, and information about special element */
     access_rec->posn+=length;

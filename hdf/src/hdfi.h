@@ -473,6 +473,7 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 
+#include <limits.h>
 #include <sys/types.h>
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #define DF_MT   DFMT_MIPSEL

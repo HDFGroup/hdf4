@@ -123,11 +123,20 @@ int32 HCPmstdio_stwrite(access_rec)
 
     info=(compinfo_t *)access_rec->special_info;
 
+#ifdef TESTING
+printf("HCPmstdio_stwrite(): info=%p\n",info);
+#endif
     /* set the offset */
     info->minfo.model_info.stdio_info.pos=0;
 
+#ifdef TESTING
+printf("HCPmstdio_stwrite(): before coder_funcs.write=%p\n",info->cinfo.coder_funcs.write);
+#endif
     if((ret=(*(info->cinfo.coder_funcs.stwrite))(access_rec))==FAIL)
         HRETURN_ERROR(DFE_CODER,FAIL);
+#ifdef TESTING
+printf("HCPmstdio_stwrite(): after coder_funcs.write=%p\n",info->cinfo.coder_funcs.write);
+#endif
     return(SUCCEED);
 }   /* HCPmstdio_stwrite() */
 
@@ -262,8 +271,14 @@ int32 HCPmstdio_write(access_rec, length, data)
     /* adjust model position */
     info->minfo.model_info.stdio_info.pos+=length;
 
+#ifdef TESTING
+printf("HCPmstdio_write(): before function ptr call func_ptr=%p\n",info->cinfo.coder_funcs.write);
+#endif
     if((ret=(*(info->cinfo.coder_funcs.write))(access_rec,length,data))==FAIL)
         HRETURN_ERROR(DFE_CODER,FAIL);
+#ifdef TESTING
+printf("HCPmstdio_write(): after function ptr call\n");
+#endif
     return(ret);
 }   /* HCPmstdio_write() */
 
