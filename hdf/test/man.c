@@ -35,6 +35,10 @@ static char RcsId[] = "@(#)$Revision$";
 *
 * 3. It writes labels and descriptions for all RISs.
 *
+* 4. Tests re-writing of annotation(only one type is tested but
+*    it should suffice to test the internals) while preserving
+*    original tag/ref of element.
+*
 *************************************************************/
 
 /* includes */
@@ -46,8 +50,10 @@ static char RcsId[] = "@(#)$Revision$";
 #define REPS           3    /* number of images/data sets to write to file */
 
 /* File labels/desriptions to write */
-static const char *file_lab[2] =
-{"File label #1: aaa", "File label #2: bbbbbb"};
+static const char *file_lab[3] =
+{"File label #1: aaa", 
+ "File label #2: bbbbbb",
+ "File label #3: cccc"};
 
 static const char *file_desc[2] =
 {"File Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 13"
@@ -136,6 +142,166 @@ genimage(int height, int width, float32 *data, uint8 *image)
     for (i = 0; i < limit; i++)
         *image++ = (uint8) (((*pdata++) - min) * multiplier);
 } /* geniamge() */
+
+/****************************************************************
+**
+**  check_fann_rewrite:  Check rewriting a file label while
+**                       preserving original tag/ref of element 
+**
+****************************************************************/
+static int32
+check_fann_rewrite(const char *fname)
+{
+    int32 ret = SUCCEED;         /* return value */
+    int32 file_handle; /* file handle */
+    int32 an_handle;   /* annotation interface handle */
+    int32 ann_handle;  /* annotation handle */
+    int32 nflabs,      /* number of file labels */
+        nfdescs,     /* number of file descs */
+        nolabs,      /* total number of data labels */
+        nodescs;     /* total number of data descs */
+    int32 ann_len;     /* length of annotation */
+    uint16 atag;       /* annotation tag */
+    uint16 aref;       /* annotation ref */
+    char *ann_label = NULL; /* annotation label */
+    int32 ann_id;
+    uint16 ann_tag;
+    uint16 ann_ref;
+    uint16 b_ann_tag;
+    uint16 b_ann_ref;
+    intn  i;
+
+    /* open file again for writing */
+    ret = file_handle = Hopen(fname, DFACC_RDWR,0);
+    RESULT("Hopen");
+
+    /* Start annotation handling */
+    ret = an_handle = ANstart(file_handle);
+    RESULT("ANstart");
+
+    /* Get Info On Annotations In File */
+    ret = ANfileinfo(an_handle, &nflabs, &nfdescs, &nolabs, &nodescs);
+    RESULT("Anfileinfo");
+
+#ifdef AN_DEBUG
+    printf("There Are Nflabs=%d, Nfdescs=%d, Nolabs=%d, Nodescs=%d \n",nflabs,
+           nfdescs, nolabs, nodescs);
+#endif
+
+    /* get first label */
+    ann_handle = ret = ANselect(an_handle, 0, AN_FILE_LABEL);
+    RESULT("ANselect");
+
+    /* save tag ref here */
+    ret = ANget_tagref(an_handle,0,AN_FILE_LABEL,&b_ann_tag,&b_ann_ref);
+    RESULT("ANget_tagref");
+
+    /* rewrite it with 3rd label entry */
+    ret = ANwriteann(ann_handle, file_lab[2], (int32)HDstrlen(file_lab[2]));
+    RESULT("ANwriteann");
+
+    ret = ANendaccess(ann_handle);
+    RESULT("ANendaccess");
+
+    ret = ANend(an_handle);
+    RESULT("ANend");
+
+    /* Now get ready to read the first file label back in */
+
+    /* Start annotation handling */
+    ret = an_handle = ANstart(file_handle);
+    RESULT("ANstart");
+
+    /* read the first file label */
+    ann_handle = ret = ANselect(an_handle, 0, AN_FILE_LABEL);
+    RESULT("ANselect");
+
+    /* get file label length */
+    ann_len = ret = ANannlen(ann_handle);
+    RESULT("ANannlen");
+
+    /* see if this routine works */
+    ret = ANget_tagref(an_handle,0,AN_FILE_LABEL,&atag,&aref);
+    RESULT("ANget_tagref");
+
+    /* verify against previous tag/ref, should be the same as before
+       re-write */
+    if (b_ann_tag != atag || b_ann_ref != aref)
+      {
+          printf(">>> Failed to preseve tag/ref for rewriting of file label\n");
+          num_errs++;
+      }
+
+    /* see if this routine works. Use tag/ref from ANget_tagref() */
+    ann_id = ret = ANtagref2id(an_handle,atag,aref);
+    RESULT("ANtagref2id");
+
+    if (ann_id != ann_handle)
+      {
+          printf(">>> ANtagref2id failed to return valid annotation handle \n");
+          num_errs++;
+      }
+
+    /* see if this routine works. Use annotation id from ANtagref2id() */
+    ret = ANid2tagref(ann_id,&ann_tag,&ann_ref);
+    RESULT("ANid2tagref");
+
+    if (ann_tag != atag || ann_ref != aref)
+      {
+          printf(">>> ANid2tagref failed to return valid tag and ref \n");
+          num_errs++;
+      }
+
+    /* check ann length against 3rd label */
+    if (ann_len != (int32) HDstrlen(file_lab[2]))
+      {
+          printf("\t>>>BAD FILE LABEL LENGTH.\n\t    IS: %d\n\tSHOULD BE: %d<<<\n",
+                 (int) ann_len, (int) HDstrlen(file_lab[2]));
+          num_errs++;
+      }
+
+    /* allocate space for label */
+    if (ann_label == NULL)
+      {
+          if ((ann_label = (char *)HDmalloc((ann_len+1)*sizeof(char))) 
+              == NULL)
+            {
+                printf("Error: failed to allocate space to hold file label \n");
+                return FAIL;
+            }
+          HDmemset(ann_label,'\0', ann_len+1);
+      }
+      
+    /* read label */
+    ret = ANreadann(ann_handle, ann_label, ann_len+1);
+    RESULT("ANreadann");
+
+    /* end acces to label */
+    ret = ANendaccess(ann_handle);
+    RESULT("ANendaccess");      
+      
+    /* check read label against 3rd label*/
+    if (HDstrncmp((const char *)ann_label, (const char *)file_lab[2],(size_t)(ann_len+1)) != 0)
+      {
+          printf("\t>>>BAD FILE LABEL. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n",
+                 ann_label, file_lab[i]);
+          num_errs++;
+      }
+
+#ifdef AN_DEBUG
+    printf("found ann_len=%d, file label=%s\n", strlen(ann_label),ann_label);
+#endif
+
+    /* Clean up */
+    HDfree(ann_label); /* free up space */
+    ann_label = NULL;
+
+    /* end access to annotations */
+    ANend(an_handle);
+    Hclose(file_handle);   /* close file */
+
+    return SUCCEED;
+} /* check_fann_rewrite() */
 
 /****************************************************************
 **
@@ -765,6 +931,12 @@ test_man(void)
 
     /* Verify file lables/descs */
     if (check_fann(TESTFILE) == FAIL)
+        return; /* end of test */
+
+    /* check the re-writing of annotations works. 
+       Only file labels are tested but it should suffice to
+       test the internals */
+    if (check_fann_rewrite(TESTFILE) == FAIL)
         return; /* end of test */
 
     /* free up space */
