@@ -1,17 +1,17 @@
 # This file was generated automatically by configure.  Do not edit.
 VPATH = .
 links = 
-host_alias = hppa1.1-hp-hpux9.03
-host_cpu = hppa1.1
-host_vendor = hp
-host_os = hpux9.03
-host_canonical = hppa1.1-hp-hpux9.03
-target_alias = hppa1.1-hp-hpux9.03
-target_cpu = hppa1.1
-target_vendor = hp
-target_os = hpux9.03
-target_canonical = hppa1.1-hp-hpux9.03
-host_makefile_frag = ../../config/mh-hpux
+host_alias = mips-sgi-irix6.1
+host_cpu = mips
+host_vendor = sgi
+host_os = irix6.1
+host_canonical = mips-sgi-irix6.1
+target_alias = mips-sgi-irix6.1
+target_cpu = mips
+target_vendor = sgi
+target_os = irix6.1
+target_canonical = mips-sgi-irix6.1
+host_makefile_frag = ../../config/mh-irix6
 # ****************************************************************************
 # * NCSA HDF                                                                 *
 # * Software Development Group                                               *
@@ -77,7 +77,7 @@ TOP_SRCDIR = ../..
 prefix = /usr/local
 
 exec_prefix = $(prefix)
-tooldir = $(exec_prefix)/hppa1.1-hp-hpux9.03
+tooldir = $(exec_prefix)/mips-sgi-irix6.1
 
 program_transform_name = 
 
@@ -152,28 +152,24 @@ TARGETLIB = libdf.a
 #CC=gcc
 #CFLAGS=-ansi 
 #
-#Using HP-ANSI compilier also needs LIBS = -lm(see below)
+#Using ANSI compilier
 CC=cc
-CFLAGS=-Aa -D_HPUX_SOURCE -g
+CFLAGS=-ansi
 
 # Fortran compilier
 FC = f77
 FFLAGS =
 
-# Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
-RANLIB = ranlib
+# Name of archive randomizer, usually ranlib (use 'true' if non-existant)
+RANLIB = true
 
 # Name of library archiver and flags to send, default 'AR=ar', 'ARFLAGS=r'
 AR = ar
-ARFLAGS = r
+ARFLAGS = rs
 
 # Name of remove utility, default 'RM=/bin/rm', 'RMFLAGS=-f'
 RM = /bin/rm
 RMFLAGS = -f
-
-# Extra libraries to be include like '-lm' for fabs()
-# Needed only with naitve HP-ANSI compilier
-LIBS = -lm
 ### ------------------- end of makefile fragments -------------------------
 
 # ############# End of system configuration section. ###############
