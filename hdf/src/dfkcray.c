@@ -5508,17 +5508,10 @@ uint32 num_elm, source_stride, dest_stride;
   return 0;
 }
 
-#if defined TEST2_luo4i | defined (DUFF_luo4i)
 #define LUO4I_MASKA 0x00000000ff00ff00
 #define LUO4I_MASKB 0x0000000000ff00ff
 #define LUO4I_MASKC 0xffff0000ffff0000
 #define LUO4I_MASKD 0x0000ffff0000ffff
-#elif defined TEST1_luo4i
-#define LUO4I_MASKA 0x00000000ff000000
-#define LUO4I_MASKB 0x0000000000ff0000
-#define LUO4I_MASKC 0x000000000000ff00
-#define LUO4I_MASKD 0x00000000000000ff
-#endif
 
 /************************************************************/
 /* DFKluo4i()                                                */
@@ -5540,8 +5533,8 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
-  long *lp_dest;
-  long *lp_src;
+  unsigned long *lp_dest;
+  unsigned long *lp_src;
   char *FUNC="DFKuo4i";
 
   HEclear();
@@ -5569,42 +5562,14 @@ uint32 num_elm, source_stride, dest_stride;
     lp_src=(long *)source;
     for(i = 0; i < n; i++) {
         *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) | ((lp_src[0]&LUO4I_MASKB)<<40) |
-                   ((lp_src[1]&LUO4I_MASKA)>>8) | ((lp_src[1]&LUO4I_MASKB)>>8);
-        *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) | ((*lp_dest&LUO4I_MASKD)<<16);
+                   ((lp_src[1]&LUO4I_MASKA)>>8) | ((lp_src[1]&LUO4I_MASKB)<<8);
+        *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) | ((*lp_dest&LUO4I_MASKD)<<16);
+		lp_dest++;
         lp_src+=2;
     }
     if(odd_man_out) {
         *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) | ((lp_src[0]&LUO4I_MASKB)<<40);
-        *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) | ((*lp_dest&LUO4I_MASKD)<<16);
-      } /* end if */
-#elif defined TEST1_luo4i
-    int odd_man_out = 0;        /* By default there are even num_elm */
-    intn n;
-
-    if(num_elm % 2)             /* If this is true, we have odd num */
-      odd_man_out = 1;
-
-    n=num_elm/2;
-    lp_dest=(long *)dest;
-    lp_src=(long *)source;
-    for(i = 0; i < n; i++) {
-    *lp_dest++=((lp_src[0]&LUO4I_MASKA)<<8) |
-                   ((lp_src[0]&LUO4I_MASKB)<<24) |
-                   ((lp_src[0]&LUO4I_MASKC)<<40) |
-                   ((lp_src[0]&LUO4I_MASKD)<<56) |
-                   ((lp_src[1]&LUO4I_MASKA)>>24) |
-                   ((lp_src[1]&LUO4I_MASKB)>>8) |
-                   ((lp_src[1]&LUO4I_MASKC)<<8) |
-                   ((lp_src[1]&LUO4I_MASKD)<<24);
-        lp_src+=2;
-    }
-    if(odd_man_out) {
-        dest=(uint8 *)lp_dest;
-        source=(uint8 *)lp_src;
-        dest[0] = source[7];
-        dest[1] = source[6];
-        dest[2] = source[5];
-        dest[3] = source[4];
+        *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) | ((*lp_dest&LUO4I_MASKD)<<16);
       } /* end if */
 #else
     for(i = 0; i < num_elm; i++) {
@@ -5626,8 +5591,8 @@ uint32 num_elm, source_stride, dest_stride;
 
         num_elm/=2;
         n=(num_elm+7)/8;
-        lp_dest=(long *)dest;
-        lp_src=(long *)source;
+        lp_dest=(unsigned long *)dest;
+        lp_src=(unsigned long *)source;
 		if(orig_num_elm>1)
         switch(num_elm%8) {
             case 0:
@@ -5635,138 +5600,154 @@ uint32 num_elm, source_stride, dest_stride;
                     *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
                                 ((lp_src[0]&LUO4I_MASKB)<<40) |
                                 ((lp_src[1]&LUO4I_MASKA)>>8) |
-                                ((lp_src[1]&LUO4I_MASKB)>>8);
-                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
                                 ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
                     lp_src+=2;
 #ifdef QAK
             case 15:
                     *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
                                 ((lp_src[0]&LUO4I_MASKB)<<40) |
                                 ((lp_src[1]&LUO4I_MASKA)>>8) |
-                                ((lp_src[1]&LUO4I_MASKB)>>8);
-                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
                                 ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
                     lp_src+=2;
             case 14:
                     *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
                                 ((lp_src[0]&LUO4I_MASKB)<<40) |
                                 ((lp_src[1]&LUO4I_MASKA)>>8) |
-                                ((lp_src[1]&LUO4I_MASKB)>>8);
-                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
                                 ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
                     lp_src+=2;
             case 13:
                     *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
                                 ((lp_src[0]&LUO4I_MASKB)<<40) |
                                 ((lp_src[1]&LUO4I_MASKA)>>8) |
-                                ((lp_src[1]&LUO4I_MASKB)>>8);
-                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
                                 ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
                     lp_src+=2;
             case 12:
                     *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
                                 ((lp_src[0]&LUO4I_MASKB)<<40) |
                                 ((lp_src[1]&LUO4I_MASKA)>>8) |
-                                ((lp_src[1]&LUO4I_MASKB)>>8);
-                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
                                 ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
                     lp_src+=2;
             case 11:
                     *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
                                 ((lp_src[0]&LUO4I_MASKB)<<40) |
                                 ((lp_src[1]&LUO4I_MASKA)>>8) |
-                                ((lp_src[1]&LUO4I_MASKB)>>8);
-                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
                                 ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
                     lp_src+=2;
             case 10:
                     *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
                                 ((lp_src[0]&LUO4I_MASKB)<<40) |
                                 ((lp_src[1]&LUO4I_MASKA)>>8) |
-                                ((lp_src[1]&LUO4I_MASKB)>>8);
-                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
                                 ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
                     lp_src+=2;
             case 9:
                     *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
                                 ((lp_src[0]&LUO4I_MASKB)<<40) |
                                 ((lp_src[1]&LUO4I_MASKA)>>8) |
-                                ((lp_src[1]&LUO4I_MASKB)>>8);
-                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
                                 ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
                     lp_src+=2;
             case 8:
                     *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
                                 ((lp_src[0]&LUO4I_MASKB)<<40) |
                                 ((lp_src[1]&LUO4I_MASKA)>>8) |
-                                ((lp_src[1]&LUO4I_MASKB)>>8);
-                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
                                 ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
                     lp_src+=2;
 #endif
             case 7:
                     *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
                                 ((lp_src[0]&LUO4I_MASKB)<<40) |
                                 ((lp_src[1]&LUO4I_MASKA)>>8) |
-                                ((lp_src[1]&LUO4I_MASKB)>>8);
-                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
                                 ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
                     lp_src+=2;
             case 6:
                     *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
                                 ((lp_src[0]&LUO4I_MASKB)<<40) |
                                 ((lp_src[1]&LUO4I_MASKA)>>8) |
-                                ((lp_src[1]&LUO4I_MASKB)>>8);
-                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
                                 ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
                     lp_src+=2;
             case 5:
                     *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
                                 ((lp_src[0]&LUO4I_MASKB)<<40) |
                                 ((lp_src[1]&LUO4I_MASKA)>>8) |
-                                ((lp_src[1]&LUO4I_MASKB)>>8);
-                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
                                 ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
                     lp_src+=2;
             case 4:
                     *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
                                 ((lp_src[0]&LUO4I_MASKB)<<40) |
                                 ((lp_src[1]&LUO4I_MASKA)>>8) |
-                                ((lp_src[1]&LUO4I_MASKB)>>8);
-                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
                                 ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
                     lp_src+=2;
             case 3:
                     *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
                                 ((lp_src[0]&LUO4I_MASKB)<<40) |
                                 ((lp_src[1]&LUO4I_MASKA)>>8) |
-                                ((lp_src[1]&LUO4I_MASKB)>>8);
-                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
                                 ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
                     lp_src+=2;
             case 2:
                     *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
                                 ((lp_src[0]&LUO4I_MASKB)<<40) |
                                 ((lp_src[1]&LUO4I_MASKA)>>8) |
-                                ((lp_src[1]&LUO4I_MASKB)>>8);
-                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
                                 ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
                     lp_src+=2;
             case 1:
                     *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
                                 ((lp_src[0]&LUO4I_MASKB)<<40) |
                                 ((lp_src[1]&LUO4I_MASKA)>>8) |
-                                ((lp_src[1]&LUO4I_MASKB)>>8);
-                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((lp_src[1]&LUO4I_MASKB)<<8);
+                    *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
                                 ((*lp_dest&LUO4I_MASKD)<<16);
+					lp_dest++;
                     lp_src+=2;
                 } while(--n>0);
 		}
         if(odd_man_out) {
             *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
                     ((lp_src[0]&LUO4I_MASKB)<<40);
-            *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+            *lp_dest=((*lp_dest&LUO4I_MASKC)>>16) |
                     ((*lp_dest&LUO4I_MASKD)<<16);
           } /* end if */
 #endif  /* DUFF_luo4i */
