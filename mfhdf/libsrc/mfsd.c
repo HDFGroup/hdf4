@@ -994,12 +994,12 @@ int32   id;
     fprintf(stderr, "SDendaccess: I've been called\n");
 #endif
 
-#ifdef SYNC_ON_EACC
-
     /* get the handle */
     handle = SDIhandle_from_id(id, SDSTYPE);
     if(handle == NULL) 
         return FAIL;
+
+#ifdef SYNC_ON_EACC
 
     /* make sure we can write to the file */
     if(handle->flags & NC_RDWR) {
@@ -2016,6 +2016,8 @@ int32 index;
 
     if(var->aid != NULL && var->aid != FAIL)
         Hendaccess(var->aid);
+
+    var->aid = FAIL;
 
     return SUCCEED;
 
