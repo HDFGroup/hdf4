@@ -2,9 +2,16 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.2  1992/05/29 18:54:51  chouck
-C Changed output file names
+C Revision 1.3  1992/06/01 14:53:26  mfolk
+C Convex Fortran doesn't have the 'OR' function.  You have to
+C use 'JIOR' instead.  So I added these comments right before
+C the 'OR' is called:
+C   C Some Fortrans do not have the 'OR' function.  If this
+C   C causes an error, try substituting 'JIOR'.
 C
+c Revision 1.2  1992/05/29  18:54:51  chouck
+c Changed output file names
+c
 c Revision 1.1  1992/04/27  17:28:04  sxu
 c Initial revision
 c
@@ -41,6 +48,9 @@ C
       DFNT_INT16 = 22
       DFNT_INT32 = 24
       DFNT_NATIVE = x'00001000'
+
+C Some Fortrans do not have the 'OR' function.  If this
+C causes an error, try substituting 'JIOR'.
 
       DFNT_NFLOAT64 = OR(DFNT_NATIVE, DFNT_FLOAT64)
       DFNT_NFLOAT32 = OR(DFNT_NATIVE, DFNT_FLOAT32)
