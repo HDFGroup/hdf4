@@ -206,7 +206,10 @@ hdfpack --  compacts an hdf file
        test.pck - 6747 
        test.blk - 7599
   
-   Remove test.hdf, test.blk, and test.pck.
+   Depending on the platform, the file sizes may be one byte off 
+   for test.pck and test.blk.
+  
+   Remove test.cdf, test.blk, and test.pck.
 
        rm test.hdf test.blk test.pck
 
