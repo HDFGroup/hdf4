@@ -71,11 +71,7 @@ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}:${UNAME
 	fi
 	exit 0 ;;
     sun4*:SunOS:5.*:*)
-	if test "`optisa sparcv9 sparcv8 sparcv7 sparc`" = sparcv9 ; then
-		echo sparc64-sun-solaris2`echo ${UNAME_RELEASE}|sed -e 's/[^.]*//'`
-	else
-		echo sparc-sun-solaris2`echo ${UNAME_RELEASE}|sed -e 's/[^.]*//'`
-	fi
+        echo sparc-sun-solaris2`echo ${UNAME_RELEASE}|sed -e 's/[^.]*//'`
 	exit 0 ;;
     i86pc*:SunOS:*:*)
 	echo i386-sun-solaris2${UNAME_RELEASE}

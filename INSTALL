@@ -359,13 +359,9 @@
     2.5.1a Solaris on 64-bit Sparc
     ------------------------------
     The distribution was tested for the 64-bit Sparc architecture on
-    Solaris 2.8.  The configure script should auto-detect the correct
-    CPU architecture and enable 64-bit support automatically.  If the
-    64-bit support is not detected correctly, run configure as follows:
+    Solaris 2.8.  The configure script will generate 32-bit binaries by
+    default.  To enable building 64-bit binaries, run configure as follows:
         ./configure -v --host=sparc64-sun-solaris2
-    To compile the distribution in 32-bit mode on a 64-bit machine, run
-    configure as follows:
-        ./configure -v --host=sparc-sun-solaris2
 
     To change compiler flags, etc. the config/mh-solaris64 configuration
     file must be modified, instead of the normal config/mh-solaris file.
