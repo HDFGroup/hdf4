@@ -84,7 +84,7 @@ lput(cp)
 }
 
 
-static const char *formats[] =
+static char *formats[] =
 {
     "%d",			/* bytes, shorts */
     "%s",			/* char arrays as strings */
