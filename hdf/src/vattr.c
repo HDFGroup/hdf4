@@ -187,19 +187,16 @@ static char RcsId[] = "@(#)$Revision$";
 *    
 * First draft on 7/31/96, modified on 8/6/96, 8/15/96
 *************************************************************/
- 
-#include "hdf.h"
-#include "vg.h"
-#include <stdio.h>
 
+#include "vattr.h"
 /* -----------------  VSfindex ---------------------
 NAME
       VSfindex -- find index of a named field in a vdata
 USAGE
-      intn VSfindex(int32 vsid, char *fieldname, int32 *fldindex)
+      intn VSfindex(int32 vsid, char *fieldname, int32 *findex)
       int32 vsid;    IN: vdata id which contains this field
       char *fieldname; IN: field name
-      int32 *fldindex; OUT: field index
+      int32 *findex; OUT: field index
 RETURNS
       Returns SUCCEED if successful;
               FAIL otherwise.
@@ -208,7 +205,7 @@ DESCRIPTION
       search the vdata name.  Use VSinquire() or VSgetname()
       to find vdata name. 
 ---------------------------------------------------- */
-intn VSfindex(int32 vsid, char *fieldname, int32 *fldindex)
+intn VSfindex(int32 vsid, char *fieldname, int32 *findex)
 {
      CONSTR(FUNC, "VSfindex");
      vsinstance_t *vs_inst;
@@ -237,14 +234,14 @@ intn VSfindex(int32 vsid, char *fieldname, int32 *fldindex)
          if (matchnocase(fieldname, w->name[i]))
              { 
                found = 1;
-               *fldindex = i;
+               *findex = i;
                break;
              }
 #else
          if (HDstrcmp(fieldname, w->name[i]) == 0)
              { 
                found = 1;
-               *fldindex = i;
+               *findex = i;
                break;
              }
 #endif /* VDATA_FIELDS_ALL_UPPER */
@@ -273,9 +270,9 @@ USAGE
      intn VSsetattr(int32 vsid, int32 findex, char *attrname,
                  int32 datatype, int32 count, VOIDP values)
      int32 vsid;     IN: vdata access id
-     int32 findex; IN: number determined by assinging each
-                           field in a record a number starting with
-                           0; -1 represents the entire vdata. 
+     int32 findex; IN: number determined by assinging each field 
+                       in a record a number starting with 0; 
+                       ENTIRE_VDATA (-1) represents the entire vdata. 
      char *attrname;   IN: name of the attribute
      int32 datatype;   IN: data type of the attribute
      int32 count;      IN: number of values the attribute has
@@ -320,7 +317,8 @@ intn VSsetattr(int32 vsid, int32 findex, char *attrname,
         HGOTO_ERROR(DFE_NOVS, FAIL);
      w = &(vs->wlist);
      /* check field index */
-     if (findex >= w->n || findex < -1)
+     if (findex >= w->n || findex < ENTIRE_VDATA) 
+                                 /* ENTIRE_VDATA is -1 */
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
      /* if the attr already exist for this field, check data type
         and order */
@@ -453,11 +451,10 @@ USAGE
       intn VSfnattrs(int32 vsid, int32 findex);
       int32 vsid;   IN: access id of the vdata
       int32 findex; IN: index of the field, 0 based. 
-                        Use -1 for the vdata itself. 
+                        Use ENTIRE_VDATA (-1) for the vdata itself. 
 RETURNS
       Returns the number of attributes assigned to 
-      the specified field (use -1 for the vdata itself)
-      when successful, FAIL otherwise.
+      the specified field when successful, FAIL otherwise.
 DESCRIPTION
       Use VSnattrs to get total number of attributes for all
       fields and the vdata ifself.
@@ -485,7 +482,8 @@ intn VSfnattrs(int32 vsid, int32 findex)
         HGOTO_ERROR(DFE_NOVS, FAIL);
      if (NULL == (vs = vs_inst->vs))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-     if (findex >= vs->wlist.n || findex < -1)
+     if (findex >= vs->wlist.n || findex < ENTIRE_VDATA)  
+            /* ENTIRE_VDATA is -1 */
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
      t_attrs = vs->nattrs;
      vs_alist = vs->alist;
@@ -519,7 +517,7 @@ done:
         intn VSfindattr(int32 vsid, int32 findex, char *attrname)
         int32 vsid;        IN: access id of the vdata
         int32 findex;      IN: index of the field starting from 0;
-                               -1 for the vdata 
+                               ENTIRE_VDATA (-1) for the vdata 
         char *attrname;    IN: name of the attr
  RETURNS
         Returns the index of the attr when successful,
@@ -550,7 +548,7 @@ intn VSfindattr(int32 vsid, int32 findex, char *attrname)
         HGOTO_ERROR(DFE_NOVS, FAIL);
      if (NULL == (vs = vs_inst->vs))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-     if (findex >= vs->wlist.n || findex < -1)
+     if (findex >= vs->wlist.n || findex < ENTIRE_VDATA)
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
      nattrs = vs->nattrs;
      vs_alist = vs->alist;
@@ -559,7 +557,7 @@ intn VSfindattr(int32 vsid, int32 findex, char *attrname)
             HGOTO_ERROR(DFE_ARGS, FAIL);
     fid = vs->f;
     found = 0;
-    a_index = -1;
+    a_index = ENTIRE_VDATA;  /* ENTIRE_VDATA is -1  */
     for (i=0; i<nattrs; i++)  {
         if (vs_alist->findex == findex)  {
            a_index++; /* index of fld attr */
@@ -615,7 +613,7 @@ USAGE
       intn VSattrinfo(int32 vsid, int32 findex, intn attrindex,
            char *name, int32 *datatype, int32 *count, int32 *size);
       int32 vsid;      IN: vdata id
-      int32 findex;    IN: field index. -1 for the vdata
+      int32 findex;    IN: field index. ENTIRE_VDATA (-1) for the vdata
       intn attrindex;  IN: which attr of the field/vdata 
                            attrindex is 0-based
       char *name;      OUT: attribute name
@@ -654,7 +652,7 @@ intn VSattrinfo(int32 vsid, int32 findex, intn attrindex,
         HGOTO_ERROR(DFE_NOVS, FAIL);
      if (NULL == (vs = vs_inst->vs))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-     if (findex >= vs->wlist.n || findex < -1)
+     if (findex >= vs->wlist.n || findex < ENTIRE_VDATA)
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
      nattrs = vs->nattrs;
      if (attrindex <0 || attrindex >= nattrs)
@@ -665,7 +663,7 @@ intn VSattrinfo(int32 vsid, int32 findex, intn attrindex,
             HGOTO_ERROR(DFE_ARGS, FAIL);
      fid = vs->f; /* assume attrs are in the same file */
     found = 0;
-    a_index = -1;
+    a_index = ENTIRE_VDATA; /* ENTIRE_VDATA is defined as -1 */
     for (i=0; i<nattrs; i++)  {
         if (vs_alist->findex == findex)  {
            a_index++; 
@@ -724,7 +722,7 @@ USAGE
        intn VSgetattr(int32 vsid, int32 findex, intn attrindex,
                   VOIDP values)
        int32 vsid;     IN: vdata access id
-       int32 findex;   IN: field index; -1 for vdata
+       int32 findex;   IN: field index; ENTIRE_VDATA (-1) for vdata
        intn attrindex; IN: attribute index
        VOIDP values;   OUT: buffer holding attribute values.
 RETURNS
@@ -758,7 +756,7 @@ intn VSgetattr(int32 vsid, int32 findex, intn attrindex,
         HGOTO_ERROR(DFE_NOVS, FAIL);
      if (NULL == (vs = vs_inst->vs))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-     if (findex >= vs->wlist.n || findex < -1)
+     if (findex >= vs->wlist.n || findex < ENTIRE_VDATA)
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
      nattrs = vs->nattrs;
      if (attrindex <0 || attrindex >= nattrs)
@@ -769,7 +767,7 @@ intn VSgetattr(int32 vsid, int32 findex, intn attrindex,
             HGOTO_ERROR(DFE_ARGS, FAIL);
      fid = vs->f;  /* assume attrs are in the same file */
     found = 0;
-    a_index = -1;
+    a_index = ENTIRE_VDATA;    /* ENTIRE_VDATA is defined as -1 */
     for (i=0; i<nattrs; i++)  {
         if (vs_alist->findex == findex)  {
            a_index++;
@@ -1114,9 +1112,6 @@ done:
         Returns the index of the attr when successful, 
         FAIL otherwise. 
  DESCRIPTION
-        If found the attribute with the given name, the 
-        index of the attr is stored in attrindex. If not
-        found,        
 ------------------------------------------------------------  */
 
 intn Vfindattr(int32 vgid, char *attrname)
@@ -1366,18 +1361,4 @@ done:
 
   return ret_value;
 }  /* Vgetattr */
-
-/* ----------  -------------------------
-NAME
-      
-USAGE
-     
-    
-RETURNS
-   
-  
- 
-DESCRIPTION
-  
--------------------------------------------------  */
 
