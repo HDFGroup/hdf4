@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.4  1992/09/17 19:49:16  koziol
-Made changes for ANSI compilation on the Convex
+Revision 1.5  1992/09/18 21:54:35  koziol
+Added the __STDC__ back to the Convex section
 
+ * Revision 1.4  1992/09/17  19:49:16  koziol
+ * Made changes for ANSI compilation on the Convex
+ *
  * Revision 1.3  1992/09/11  14:15:04  koziol
  * Changed Fortran stubs' parameter passing to use a new typedef, intf,
  * which should be typed to the size of an INTEGER*4 in whatever Fortran
@@ -336,6 +339,7 @@ Please check your Makefile.
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #include <stdlib.h>
 
+#define __STDC__					/* To invoke ANSI compilation */
 #ifndef PROTOTYPE
 #define PROTOTYPE					/* to invoke ANSI prototypes */
 #endif	/* PROTOTYPE */
