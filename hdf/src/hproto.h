@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.32  1993/04/28 22:02:06  koziol
-Fixed typo in ndfsdwslab macro
+Revision 1.33  1993/05/11 16:51:07  koziol
+Fixed typos and bugs in the Fujitsu VP support
 
+ * Revision 1.32  1993/04/28  22:02:06  koziol
+ * Fixed typo in ndfsdwslab macro
+ *
  * Revision 1.31  1993/04/27  21:01:00  georgev
  * Changed fortran stubs interface for hyperslabs, made them different
  * than the C names.
@@ -963,6 +966,18 @@ extern intn DFKpi8f
     PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
 
 extern intn DFKpo8f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKlpi4f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKlpo4f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKlpi8f
+    PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
+
+extern intn DFKlpo8f
     PROTO((VOIDP s,VOIDP d,uint32 num_elm,uint32 source_stride,uint32 dest_stride));
 
 /*

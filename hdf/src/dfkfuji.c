@@ -696,7 +696,7 @@ uint32 num_elm, source_stride, dest_stride;
           } /* ibe != 0 */
 
         /* put number into destination array */
-        buf  = (int32*)dest;
+        buf  = (uint32*)dest;
         *buf = ibs | ibe | ibt1;
         *(buf+1) = ibt2;
 
@@ -722,8 +722,8 @@ uint32 num_elm, source_stride, dest_stride;
 #define LPO8F_MASKC 0xffff0000
 #define LPO8F_MASKD 0x0000ffff
  
-static int32 take[4] = {0x007fffff, 0x003fffff, 0x001fffff, 0x000fffff};
-static int32 look[4] = {0x00800000, 0x00400000, 0x00200000, 0x00100000};
+static int32 ltake[4] = {0x007fffff, 0x003fffff, 0x001fffff, 0x000fffff};
+static int32 llook[4] = {0x00800000, 0x00400000, 0x00200000, 0x00100000};
 
 #ifdef PROTOTYPE
 int DFKlpo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
@@ -785,21 +785,21 @@ uint32 num_elm, source_stride, dest_stride;
                 ibt2 = un.sti.i2 ;
               } /* end if */
 
-            if((ibt1 & look[0]) != 0 ) {
+            if((ibt1 & llook[0]) != 0 ) {
                 k = 3 ;
-                ibt1 =  ibt1 & take[0] ;
+                ibt1 =  ibt1 & ltake[0] ;
               } /* end if */
-            else if((ibt1 & look[1]) != 0 ) {
+            else if((ibt1 & llook[1]) != 0 ) {
                 k = 2 ;
-                ibt1 =  ibt1 & take[1] ;
+                ibt1 =  ibt1 & ltake[1] ;
               } /* end if */
-            else if((ibt1 & look[2]) != 0 ) {
+            else if((ibt1 & llook[2]) != 0 ) {
                 k = 1 ;
-                ibt1 =  ibt1 & take[2] ;
+                ibt1 =  ibt1 & ltake[2] ;
               } /* end if */
-            else if((ibt1 & look[3]) != 0 ) {
+            else if((ibt1 & llook[3]) != 0 ) {
                 k = 0 ;
-                ibt1 =  ibt1 & take[3] ;
+                ibt1 =  ibt1 & ltake[3] ;
               } /* end if */
             else
                 k = 4;

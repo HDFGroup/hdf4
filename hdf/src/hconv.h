@@ -114,10 +114,10 @@
 #           define LF64_IN  DFKlci8f
 #           define LF64_OUT DFKlco8f
 #       elif defined(VP)
-#           define F32_IN   DFKlpi4f    /* Fujitsu VP little-endian routines */
-#           define F32_OUT  DFKlpo4f
-#           define F64_IN   DFKlpi8f
-#           define F64_OUT  DFKlpo8f
+#           define LF32_IN   DFKlpi4f   /* Fujitsu VP little-endian routines */
+#           define LF32_OUT  DFKlpo4f
+#           define LF64_IN   DFKlpi8f
+#           define LF64_OUT  DFKlpo8f
 #       else    /* !CONVEXNATIVE */
 #           define LF32_IN  DFKsb4b
 #           define LF32_OUT DFKsb4b
