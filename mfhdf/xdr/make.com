@@ -1,8 +1,8 @@
-!$ --------------------------------------------------------------------------
-!$! For making XDRTEST.EXE on VMS if you don't have MMS.
-!$! --------------------------------------------------------------------------
-!$!
-!$! $Id$
+$! --------------------------------------------------------------------------
+$! For making XDRTEST.EXE on VMS if you don't have MMS.
+$! --------------------------------------------------------------------------
+$!
+$! $Id$
 $
 $ macro :== macro/nolist/migration
 $ ccc := cc /opt/nodebug/nolist/define=(HDF,VMS, NO_SYS_XDR_INC)  -
@@ -13,11 +13,11 @@ $ ccc XDRTEST.C
 $ ccc XDRARRAY.C
 $ ccc XDRFLOAT.C
 $ ccc XDRSTDIO.C
-!$ macro HTONL.MAR
-!$ macro NTOHL.MAR
+$! macro HTONL.MAR
+$! macro NTOHL.MAR
 $
 $ library/create [-.-.LIB]MFHDF.OLB
-!$ library/replace [-.-.LIB]MFHDF.OLB XDR, XDRFLOAT, XDRSTDIO, HTONL, NTOHL
+$! library/replace [-.-.LIB]MFHDF.OLB XDR, XDRFLOAT, XDRSTDIO, HTONL, NTOHL
 $ library/replace [-.-.LIB]MFHDF.OLB XDR, XDRFLOAT, XDRSTDIO
 $
 $ link/nodebug/exec=XDRTEST.exe -
@@ -26,4 +26,5 @@ $ link/nodebug/exec=XDRTEST.exe -
     [-.-.lib]mfhdf.olb/lib, -
     sys$input/opt
        sys$library:vaxcrtl/lib
+$ delete *.obj;*
 
