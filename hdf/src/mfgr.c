@@ -567,6 +567,13 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
     */
 
     nimages = curr_image;   /* reset the number of images we really have */
+#ifdef QAK
+printf("before duplicate elimination\n");
+for (i = 0; i < curr_image; i++)
+  {
+    printf("%d: tag=%u, ref=%u, offset=%ld\n",(int)i,(unsigned)img_info[i].img_tag,(unsigned)img_info[i].img_ref,(long)img_info[i].offset);
+  } /* end for */
+#endif /* QAK */
     for (i = 0; i < curr_image; i++)
       {     /* go through the images looking for duplicates */
           if(img_info[i].img_tag!=DFTAG_NULL)
@@ -590,7 +597,7 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
                                               img_info[j].img_tag=DFTAG_NULL;
                                           else
                                             {
-                                              img_info[i].img_tag=DFTAG_NULL;
+                                              img_info[j].img_tag=DFTAG_NULL;
                                               if(img_info[i].grp_tag==DFTAG_RIG)
                                                   img_info[j].aux_ref=img_info[i].grp_ref;
                                             } /* end else */
@@ -611,6 +618,13 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
                           } /* end if */
                 } /* end for */
       } /* end for */
+#ifdef QAK
+printf("after duplicate elimination\n");
+for (i = 0; i < curr_image; i++)
+  {
+    printf("%d: tag=%u, ref=%u, offset=%ld\n",(int)i,(unsigned)img_info[i].img_tag,(unsigned)img_info[i].img_ref,(long)img_info[i].offset);
+  } /* end for */
+#endif /* QAK */
 
     /* Ok, now sort through the file for information about each image found */
     for(i=0; i<curr_image; i++)
