@@ -184,12 +184,12 @@ nvsfgat(intf *vsid, intf *findex, intf *aindex, intf *values)
 }
 
 /* --------------------------------------------------------
- * vsfgcat -- get values of a char type attribute 
- * VSgetattr -- vsfgcat
+ * vsfcgca -- get values of a char type attribute 
+ * VSgetattr -- vsfcgca -- vsfgcat
  */
 
 FRETVAL(intf)
-nvsfgcat(intf *vsid, intf *findex, intf *aindex, _fcd *values)
+nvsfcgca(intf *vsid,intf *findex,intf *aindex,_fcd values,intf *lvalues)
 {
     intf ret;
     int32 cfindex;
@@ -197,6 +197,7 @@ nvsfgcat(intf *vsid, intf *findex, intf *aindex, _fcd *values)
     cfindex = (*findex == -1)? (int32)_HDF_ENTIRE_VDATA : *findex;
     ret = (intf )VSgetattr((int32) *vsid, (int32) cfindex, (int32) *aindex,
                     (VOIDP) _fcdtocp(values));
+    ret = HDc2fstr((char *)_fcdtocp(values), *lvalues);
     return(ret);
 }
 
@@ -317,15 +318,16 @@ nvfgatt(intf *vgid, intf *aindex, intf *values)
 }
 
 /* --------------------------------------------------------
- * vfgcatt -- get values of a char type attribute 
- * Vgetattr -- vfgcatt
+ * vfcgcat -- get values of a char type attribute 
+ * Vgetattr -- vfcgcat -- vfgcatt
  */
 
 FRETVAL(intf)
-nvfgcatt(intf *vgid, intf *aindex, _fcd *values)
+nvfcgcat(intf *vgid, intf *aindex, _fcd values, intf *lvalues)
 {
     intf ret;
     ret = (intf) Vgetattr((int32) *vgid,(int32) *aindex,(VOIDP) _fcdtocp(values));
+    ret = HDc2fstr((char *)_fcdtocp(values), *lvalues);
     return(ret);
 }
 
