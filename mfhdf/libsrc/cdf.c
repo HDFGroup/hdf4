@@ -766,7 +766,7 @@ NC_var **var;
     attribute = attrs->values;
     for(i = 0; i < attrs->count; i++) {
       tags[count] = ATTR_TAG;
-      refs[count] = hdf_write_attr(xdrs, handle, attribute);
+      refs[count] = hdf_write_attr(xdrs, handle, (NC_attr **)attribute);
       attribute += attrs->szof;
       count++;
     }
@@ -966,7 +966,7 @@ NC **handlep;
       vars = (*handlep)->vars->values;
       for(i = 0; i < tmp->count; i++) {
           tags[count] = (int32) VAR_TAG;
-          refs[count] = (int32) hdf_write_var(xdrs, (*handlep), vars);
+          refs[count] = (int32) hdf_write_var(xdrs, (*handlep), (NC_var **)vars);
           vars += tmp->szof;
           count++;
       }
@@ -980,7 +980,7 @@ NC **handlep;
       attrs = (*handlep)->attrs->values;
       for(i = 0; i < tmp->count; i++) {
           tags[count] = (int32) ATTR_TAG;
-          refs[count] = (int32) hdf_write_attr(xdrs, (*handlep), attrs);
+          refs[count] = (int32) hdf_write_attr(xdrs, (*handlep), (NC_attr **)attrs);
           attrs += tmp->szof;
           count++;
       }
@@ -1080,7 +1080,7 @@ int32  vg;
                   dim_size = NC_UNLIMITED;
                   VSsetfields(vs, "Values");
                   VSseek(vs, 0);
-                  if(VSread(vs, (VOIDP) &(handle->numrecs), 1, FULL_INTERLACE) != 1)
+                  if(VSread(vs, (uint8 *) &(handle->numrecs), 1, FULL_INTERLACE) != 1)
                       HEprint(stderr, 0);
               }
 
@@ -1726,7 +1726,7 @@ void hdf_close(handle)
                             if(!HDstrcmp(class, DIM_VALS)) {
                                 VSsetfields(vs, "Values");
                                 VSseek(vs, 0);
-                                if(VSwrite(vs, (VOIDP) &(handle->numrecs), 1, FULL_INTERLACE) != 1) 
+                                if(VSwrite(vs, (uint8 *) &(handle->numrecs), 1, FULL_INTERLACE) != 1) 
                                     HEprint(stderr, 0);  
 
                             }
