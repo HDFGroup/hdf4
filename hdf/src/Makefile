@@ -67,11 +67,11 @@ JPEGINC=../jpeg
 JPEGLIB=../jpeg
 
 #Common include
-COMMINC=../common/chipset/src/rbtree
-COMMLIB=../common/chipset/src/librb.a
+#COMMINC=-I../common/chipset/src/rbtree
+#COMMLIB=../common/chipset/src/librb.a
 
 # all includes
-ALLINC= -I$(JPEGINC) -I$(COMMINC)
+ALLINC= -I$(JPEGINC) $(COMMINC)
 
 # ==> specify your FORTRAN compiler (Convex: fc)
 FC=f77
