@@ -5,9 +5,15 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/09/11 14:15:04  koziol
+Changed Fortran stubs' parameter passing to use a new typedef, intf,
+which should be typed to the size of an INTEGER*4 in whatever Fortran
+compiler the C functions need to be compatible with.  (This is mostly
+for the PC and possibly for the Mac)
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*-----------------------------------------------------------------------------
  * File:    dfanF.c
@@ -117,18 +123,18 @@ Initial revision
  * Invokes: DFANIgetannlen, HDf2cstring, DFIgetspace, DFIfreespace
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndaiganl(_fcd filename, int32 *tag, int32 *ref, int *type, int *fnlen)
+ndaiganl(_fcd filename, intf *tag, intf *ref, intf *type, intf *fnlen)
 #else
 ndaiganl(filename, tag, ref, type, fnlen)
     _fcd filename;
-    int32 *tag, *ref;
-    int *fnlen, *type;
+    intf *tag, *ref;
+    intf *fnlen, *type;
 #endif /* PROTOTYPE */
 {
     char *fn;
-    int32 ret;
+    intf ret;
 
     fn = HDf2cstring(filename, *fnlen);
     ret = DFANIgetannlen(fn, (uint16) *tag, (uint16) *ref, *type);
@@ -152,20 +158,20 @@ ndaiganl(filename, tag, ref, type, fnlen)
  * Invokes: DFANIgetann
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndaigann(_fcd filename, int32 *tag, int32 *ref, _fcd annotation, int32 *maxlen,
-	 int *type, int *fnlen)
+ndaigann(_fcd filename, intf *tag, intf *ref, _fcd annotation, intf *maxlen,
+     intf *type, intf *fnlen)
 #else
 ndaigann(filename, tag, ref, annotation, maxlen, type, fnlen)
     _fcd filename, annotation;
-    int32 *tag, *ref;
-    int32 *maxlen;
-    int *type, *fnlen;
+    intf *tag, *ref;
+    intf *maxlen;
+    intf *type, *fnlen;
 #endif /* PROTOTYPE */
 {
     char *fn;
-    int ret;
+    intf ret;
 
     fn = HDf2cstring(filename, *fnlen);
     ret = DFANIgetann(fn, (uint16) *tag, (uint16) *ref, 
@@ -190,20 +196,20 @@ ndaigann(filename, tag, ref, annotation, maxlen, type, fnlen)
  * Invokes: DFANIgetann
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndaipann(_fcd filename, int32 *tag, int32 *ref, _fcd annotation, 
-         int32 *annlen, int *type, int *fnlen)
+ndaipann(_fcd filename, intf *tag, intf *ref, _fcd annotation,
+         intf *annlen, intf *type, intf *fnlen)
 #else
 ndaipann(filename, tag, ref, annotation, annlen, type, fnlen)
     _fcd filename, annotation;
-    int32 *tag, *ref;
-    int32 *annlen;
-    int *type, *fnlen;
+    intf *tag, *ref;
+    intf *annlen;
+    intf *type, *fnlen;
 #endif /* PROTOTYPE */
 {
     char *fn;
-    int ret;
+    intf ret;
 
     fn = HDf2cstring(filename, *fnlen);
     ret = DFANIputann(fn, (uint16) *tag, (uint16) *ref, 
@@ -232,22 +238,23 @@ ndaipann(filename, tag, ref, annotation, annlen, type, fnlen)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndailist(_fcd filename, int32 *tag, int32 reflist[], _fcd labellist,
-    int *listsize, int *maxlen, int *startpos, int *fnlen)
+ndailist(_fcd filename, intf *tag, intf reflist[], _fcd labellist,
+    intf *listsize, intf *maxlen, intf *startpos, intf *fnlen)
 #else
 ndailist(filename, tag, reflist, labellist,listsize, maxlen,startpos,fnlen)
      _fcd filename;
-     int32 *tag;
-     int32 reflist[];
+     intf *tag;
+     intf reflist[];
      _fcd labellist;
-     int *listsize;
-     int *maxlen, *startpos, *fnlen;
+     intf *listsize;
+     intf *maxlen, *startpos, *fnlen;
 #endif /* PROTOTYPE */
 {
     char *fn;
-    int i, nrefs;
+    int i;
+    intf nrefs;
     uint16 *tempreflist;
 
     fn = HDf2cstring(filename, *fnlen);
@@ -284,7 +291,7 @@ ndailist(filename, tag, reflist, labellist,listsize, maxlen,startpos,fnlen)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(uint16)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 ndalref(void)
 #else
@@ -307,7 +314,7 @@ ndalref()
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(uint16)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 ndfanlastref(void)
 #else
@@ -334,14 +341,14 @@ ndfanlastref()
  * Invokes: DFANaddfileann
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfanaddfds(int32 *dfile, _fcd desc, int32 *desclen)
+ndfanaddfds(intf *dfile, _fcd desc, intf *desclen)
 #else
 ndfanaddfds(dfile, desc, desclen)
     int32 *dfile;
     _fcd  desc;
-    int32 *desclen;
+    intf *desclen;
 #endif /* PROTOTYPE */
 {
     return ( DFANIaddfann( *dfile, _fcdtocp(desc), *desclen, DFAN_DESC) );
@@ -357,13 +364,13 @@ ndfanaddfds(dfile, desc, desclen)
  * Invokes: DFANIgetfannlen
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfangetfidlen(int32 *dfile, int *isfirst)
+ndfangetfidlen(intf *dfile, intf *isfirst)
 #else
 ndfangetfidlen(dfile, isfirst)
-    int32 *dfile;
-    int *isfirst;
+    intf *dfile;
+    intf *isfirst;
 #endif /* PROTOTYPE */
 {
      return ( DFANIgetfannlen( *dfile, DFAN_LABEL, *isfirst) );
@@ -380,13 +387,13 @@ ndfangetfidlen(dfile, isfirst)
  * Invokes: DFANIgetfannlen
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfangetfdslen(int32 *dfile, int *isfirst)
+ndfangetfdslen(intf *dfile, intf *isfirst)
 #else
 ndfangetfdslen(dfile, isfirst)
-    int32 *dfile;
-    int *isfirst;
+    intf *dfile;
+    intf *isfirst;
 #endif /* PROTOTYPE */
 {
      return ( DFANIgetfannlen( *dfile, DFAN_DESC, *isfirst) );
@@ -404,15 +411,15 @@ ndfangetfdslen(dfile, isfirst)
  * Invokes: DFANgetfann
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfangetfid(int32 *dfile, _fcd id, int32 *maxlen, int *isfirst)
+ndfangetfid(intf *dfile, _fcd id, intf *maxlen, intf *isfirst)
 #else
 ndfangetfid(dfile, id, maxlen, isfirst)
-    int32 *dfile;
+    intf *dfile;
     _fcd  id;
-    int32 *maxlen;
-    int *isfirst;
+    intf *maxlen;
+    intf *isfirst;
 #endif /* PROTOTYPE */
 {
     return( DFANIgetfann( *dfile, _fcdtocp(id), *maxlen, DFAN_LABEL, *isfirst));
@@ -430,15 +437,15 @@ ndfangetfid(dfile, id, maxlen, isfirst)
  * Invokes: DFANgetfann
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfangetfds(int32 *dfile, _fcd id, int32 *maxlen, int *isfirst)
+ndfangetfds(intf *dfile, _fcd id, intf *maxlen, intf *isfirst)
 #else
 ndfangetfds(dfile, id, maxlen, isfirst)
-    int32 *dfile;
+    intf *dfile;
      _fcd  id;
-    int32 *maxlen;
-    int *isfirst;
+    intf *maxlen;
+    intf *isfirst;
 #endif /* PROTOTYPE */
 {
     return( DFANIgetfann( *dfile, _fcdtocp(id), *maxlen, DFAN_DESC, *isfirst));
@@ -459,14 +466,14 @@ ndfangetfds(dfile, id, maxlen, isfirst)
  * Invokes: DFANaddfileann
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndaafds(int32 *dfile, _fcd desc, int32 *desclen)
+ndaafds(intf *dfile, _fcd desc, intf *desclen)
 #else
 ndaafds(dfile, desc, desclen)
-    int32 *dfile;
+    intf *dfile;
     _fcd  desc;
-    int32 *desclen;
+    intf *desclen;
 #endif /* PROTOTYPE */
 {
     return ( DFANIaddfann( *dfile, _fcdtocp(desc), *desclen, DFAN_DESC) );
@@ -483,13 +490,13 @@ ndaafds(dfile, desc, desclen)
  * Invokes: DFANIgetfannlen
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndagfidl(int32 *dfile, int *isfirst)
+ndagfidl(intf *dfile, intf *isfirst)
 #else
 ndagfidl(dfile, isfirst)
-    int32 *dfile;
-    int *isfirst;
+    intf *dfile;
+    intf *isfirst;
 #endif /* PROTOTYPE */
 {
      return ( DFANIgetfannlen( *dfile, DFAN_LABEL, *isfirst) );
@@ -506,13 +513,13 @@ ndagfidl(dfile, isfirst)
  * Invokes: DFANIgetfannlen
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndagfdsl(int32 *dfile, int *isfirst)
+ndagfdsl(intf *dfile, intf *isfirst)
 #else
 ndagfdsl(dfile, isfirst)
-    int32 *dfile;
-    int *isfirst;
+    intf *dfile;
+    intf *isfirst;
 #endif /* PROTOTYPE */
 {
      return ( DFANIgetfannlen( *dfile, DFAN_DESC, *isfirst) );
@@ -530,19 +537,18 @@ ndagfdsl(dfile, isfirst)
  * Invokes: DFANIgetfann
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndagfid(int32 *dfile, _fcd id, int32 *maxlen, int *isfirst)
+ndagfid(intf *dfile, _fcd id, intf *maxlen, intf *isfirst)
 #else
 ndagfid(dfile, id, maxlen, isfirst)
-    int32 *dfile;
+    intf *dfile;
     _fcd  id;
-    int32 *maxlen;
-    int *isfirst;
+    intf *maxlen;
+    intf *isfirst;
 #endif /* PROTOTYPE */
 {
-    return ( DFANIgetfann( *dfile, _fcdtocp(id), *maxlen,
-			  DFAN_LABEL, *isfirst) );
+    return( DFANIgetfann( *dfile, _fcdtocp(id), *maxlen, DFAN_LABEL, *isfirst));
 }
 
 
@@ -558,15 +564,15 @@ ndagfid(dfile, id, maxlen, isfirst)
  * Invokes: DFANgetfann
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndagfds(int32 *dfile, _fcd id, int32 *maxlen, int *isfirst)
+ndagfds(intf *dfile, _fcd id, intf *maxlen, intf *isfirst)
 #else
 ndagfds(dfile, id, maxlen, isfirst)
-    int32 *dfile;
+    intf *dfile;
     _fcd  id;
-    int32 *maxlen;
-    int *isfirst;
+    intf *maxlen;
+    intf *isfirst;
 #endif /* PROTOTYPE */
 {
     return( DFANIgetfann( *dfile, _fcdtocp(id), *maxlen, DFAN_DESC, *isfirst));
@@ -589,14 +595,14 @@ ndagfds(dfile, id, maxlen, isfirst)
  * Invokes: DFANaddfann
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndaiafid(int32 *dfile, _fcd id, int32 *idlen)
+ndaiafid(intf *dfile, _fcd id, intf *idlen)
 #else
 ndaiafid(dfile, id, idlen)
-    int32 *dfile;
+    intf *dfile;
     _fcd  id;
-    int32 *idlen;
+    intf *idlen;
 #endif /* PROTOTYPE */
 {
     return(DFANIaddfann( *dfile, _fcdtocp(id),*idlen, DFAN_LABEL));

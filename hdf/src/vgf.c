@@ -5,9 +5,15 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/09/11 14:15:04  koziol
+Changed Fortran stubs' parameter passing to use a new typedef, intf,
+which should be typed to the size of an INTEGER*4 in whatever Fortran
+compiler the C functions need to be compatible with.  (This is mostly
+for the PC and possibly for the Mac)
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*
 *
@@ -130,12 +136,11 @@ void
 trimendblanks(char *ss) 
 #else
 trimendblanks(ss) 
-
-	char *ss;
+    char *ss;
 #endif
 {
+    int32 i,n;
 
-	int32 i,n;
     n = DFIstrlen(ss);
 	for(i=n-1;i>=0;i--) {
 		if(ss[i]!=' ') {
@@ -154,15 +159,14 @@ trimendblanks(ss)
 **  related: Vattach--vatchc--VFATCH
 */
 
-    FRETVAL(int32 *)
+    FRETVAL(intf *)
 #ifdef PROTOTYPE
-nvatchc(HFILEID *f, int32 *vgid, _fcd accesstype)
+nvatchc(HFILEID *f, intf *vgid, _fcd accesstype)
 #else
 nvatchc(f, vgid, accesstype)
-
-HFILEID	*f;
-int32       *vgid;
-_fcd        accesstype;                     /* assume one character only */
+    HFILEID *f;
+    intf       *vgid;
+    _fcd        accesstype;                     /* assume one character only */
 #endif
 {
 	VGROUP *vg;
@@ -191,7 +195,7 @@ _fcd        accesstype;                     /* assume one character only */
 nvdtchc(VGROUP **vg)
 #else
 nvdtchc(vg)
-VGROUP  **vg;
+    VGROUP  **vg;
 #endif
 {
 	Vdetach(*vg);
@@ -208,14 +212,13 @@ VGROUP  **vg;
 nvgnamc(VGROUP **vg, _fcd vgname)
 #else
 nvgnamc(vg, vgname)
-VGROUP  **vg;
-_fcd        vgname;             /* output */
+    VGROUP  **vg;
+    _fcd    vgname;             /* output */
 #endif
 
 {
 	Vgetname (*vg, vgname);
-
-}	/* VGNAMC */
+}   /* VGNAMC */
 
 /* ------------------------------------------------------------------ */
 /* 
@@ -228,15 +231,13 @@ _fcd        vgname;             /* output */
 nvgclsc(VGROUP ** vg, _fcd vgclass)
 #else
 nvgclsc(vg, vgclass)
-
-	VGROUP 	**vg;
+    VGROUP  **vg;
 	_fcd 		vgclass;				/* output */
 #endif
 
 {
 	 Vgetclass (*vg, vgclass);
-
-}	/* VGCLSC */
+}   /* VGCLSC */
 
 /* ------------------------------------------------------------------ */
 /* 
@@ -244,20 +245,18 @@ nvgclsc(vg, vgclass)
 **  related: Vinquire--vinqc--VFINQ
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvinqc(VGROUP** vg, int32 *nentries, _fcd vgname)
+nvinqc(VGROUP** vg, intf *nentries, _fcd vgname)
 #else
 nvinqc(vg, nentries, vgname)
-
-	VGROUP 	**vg;
-	int32	 	*nentries;			/* output */
+    VGROUP  **vg;
+    intf    *nentries;          /* output */
 	_fcd   	vgname;				/* output */
 #endif
 
 {
-	return( (int32) Vinquire(*vg, nentries, vgname) );
-
+    return( (intf) Vinquire(*vg, nentries, vgname) );
 } /* VINQC */
 
 
@@ -267,17 +266,16 @@ nvinqc(vg, nentries, vgname)
 **  related: Vgetid--vgidc--VFGID
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvgidc(HFILEID *f, int32 *vgid)
+nvgidc(HFILEID *f, intf *vgid)
 #else
 nvgidc(f,vgid)
-
-	HFILEID		*f;
-	int32 		*vgid;
+    HFILEID     *f;
+    intf        *vgid;
 #endif
 {
-	return( (int32) Vgetid (*f, *vgid) );
+    return( (intf) Vgetid (*f, *vgid) );
 }
 
 /* ------------------------------------------------------------------ */
@@ -286,14 +284,13 @@ nvgidc(f,vgid)
 **  related: Vgetnext--vgnxtc--VFGNXT
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvgnxtc(VGROUP **vg, int32 *id)
+nvgnxtc(VGROUP **vg, intf *id)
 #else
 nvgnxtc(vg,id)
-
     VGROUP  **vg;
-	int32		*id;
+    intf    *id;
 #endif
 {
 	return( Vgetnext(*vg, *id) );
@@ -307,15 +304,13 @@ nvgnxtc(vg,id)
 
     FRETVAL(void)
 #ifdef PROTOTYPE
-nvsnamc(VGROUP **vg, _fcd vgname, intn *vgnamelen)
+nvsnamc(VGROUP **vg, _fcd vgname, intf *vgnamelen)
 #else
 nvsnamc(vg, vgname, vgnamelen)
-
-	VGROUP	**vg;
+    VGROUP  **vg;
 	_fcd	vgname;
-	intn 	*vgnamelen;
+    intf    *vgnamelen;
 #endif
-
 {
 	char *name;
 
@@ -333,17 +328,16 @@ nvsnamc(vg, vgname, vgnamelen)
 
     FRETVAL(void)
 #ifdef PROTOTYPE
-nvsclsc(VGROUP **vg, _fcd vgclass, intn *vgclasslen)
+nvsclsc(VGROUP **vg, _fcd vgclass, intf *vgclasslen)
 #else
 nvsclsc(vg, vgclass, vgclasslen)
-
-	VGROUP	**vg;
+    VGROUP  **vg;
 	_fcd	vgclass;
-	intn 	*vgclasslen;
+    intf    *vgclasslen;
 #endif
-
 {
 	char *class;
+
     class = HDf2cstring (vgclass, (intn)*vgclasslen);
 	/* trimendblanks(class); */
 	Vsetclass (*vg, class);
@@ -356,17 +350,16 @@ nvsclsc(vg, vgclass, vgclasslen)
 **  related: Vinsert--vinsrtc--VFINSRT
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvinsrtc(VGROUP **vg, int32 **vobjptr)
+nvinsrtc(VGROUP **vg, intf **vobjptr)
 #else
 nvinsrtc(vg, vobjptr)
-
-	VGROUP	**vg;
-	int32		**vobjptr;
+    VGROUP  **vg;
+    intf    **vobjptr;
 #endif
 {
-    return( (int32) Vinsert(*vg, (VDATA *)*vobjptr) );
+    return( (intf) Vinsert(*vg, (VDATA *)*vobjptr) );
 }
 
 /* ------------------------------------------------------------------ */
@@ -375,17 +368,17 @@ nvinsrtc(vg, vobjptr)
 **  related: Visvg--visvgc--VFISVG
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvisvgc(VGROUP **vg, int32 *id)
+nvisvgc(VGROUP **vg, intf *id)
 #else
 nvisvgc(vg, id)
 
 	VGROUP	**vg;
-	int32		*id;
+    intf    *id;
 #endif
 {
-	return( (int32) Visvg(*vg, *id) );
+    return( (intf) Visvg(*vg, *id) );
 }
 
 /* ------------------------------------------------------------------ */
@@ -394,17 +387,16 @@ nvisvgc(vg, id)
 **  related: Visvs--visvsc--VFISVS
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvisvsc(VGROUP **vg, int32 *id)
+nvisvsc(VGROUP **vg, intf *id)
 #else
 nvisvsc(vg, id)
-
-	VGROUP	**vg;
-	int32		*id;
+    VGROUP  **vg;
+    intf    *id;
 #endif
 {
-	return( (int32) Visvs(*vg, *id) );
+    return( (intf) Visvs(*vg, *id) );
 }
 
 /* ================================================== */
@@ -416,17 +408,15 @@ nvisvsc(vg, id)
 **  related: VSattach--vsatchc--VFATCH
 */
 
-    FRETVAL(int32 *)
+    FRETVAL(intf *)
 #ifdef PROTOTYPE
-nvsatchc(HFILEID *f, int32 *vsid, _fcd accesstype)
+nvsatchc(HFILEID *f, intf *vsid, _fcd accesstype)
 #else
 nvsatchc(f, vsid, accesstype)
-
-	HFILEID		*f;
-	int32		*vsid;
+    HFILEID     *f;
+    intf        *vsid;
 	_fcd		accesstype;
 #endif
-
 {
 	VDATA *vs;
 	char 	*acc;
@@ -451,10 +441,8 @@ nvsatchc(f, vsid, accesstype)
 nvsdtchc(VDATA **vs)
 #else
 nvsdtchc(vs)
-
-	VDATA 	**vs;
+    VDATA   **vs;
 #endif
-
 {
 	VSdetach (*vs);
 }
@@ -465,18 +453,16 @@ nvsdtchc(vs)
 **  related: VSseek--vsseekc--VSFSEEK
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvsseekc(VDATA **vs, int32 *eltpos)
+nvsseekc(VDATA **vs, intf *eltpos)
 #else
 nvsseekc(vs, eltpos)
-
-	VDATA 	**vs;
-	int32		*eltpos;
+    VDATA   **vs;
+    intf    *eltpos;
 #endif
-
 {
-	return( (int32) VSseek(*vs, *eltpos) );
+    return( (intf) VSseek(*vs, *eltpos) );
 }
 
 /* ------------------------------------------------------------------ */
@@ -490,8 +476,7 @@ nvsseekc(vs, eltpos)
 nvsgnamc(VDATA **vs, _fcd vsname)
 #else
 nvsgnamc(vs, vsname)
-
-	VDATA 	**vs;
+    VDATA   **vs;
 	_fcd 		vsname;
 #endif
 
@@ -510,11 +495,9 @@ nvsgnamc(vs, vsname)
 nvsgclsc(VDATA **vs, _fcd vsclass)
 #else
 nvsgclsc(vs, vsclass)
-
     VDATA   **vs;
-	_fcd 		vsclass;					/* output */
+    _fcd    vsclass;                    /* output */
 #endif
-
 {
 	VSgetclass(*vs, vsclass);
 }	/* VSGCLSC */
@@ -525,19 +508,18 @@ nvsgclsc(vs, vsclass)
 **  related: VSinquire--vsinqc--VSFINQ
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvsinqc(VDATA **vs, int32 *nelt ,int32 *interlace, _fcd fields, int32 *eltsize, _fcd vsname)
+nvsinqc(VDATA **vs, intf *nelt ,intf *interlace, _fcd fields, intf *eltsize,
+    _fcd vsname)
 #else
 nvsinqc(vs, nelt ,interlace, fields, eltsize, vsname)
-
-	VDATA 	**vs;
-	int32		*nelt, *interlace, *eltsize;			/* outputs */
+    VDATA   **vs;
+    intf    *nelt, *interlace, *eltsize;            /* outputs */
 	_fcd  	fields, vsname;							/* outputs */
 #endif
-
 {
-	return( (int32) VSinquire (*vs, nelt, interlace, fields, eltsize, vsname) );
+    return( (intf) VSinquire (*vs, nelt, interlace, fields, eltsize, vsname) );
 } 	/* VSINQC */
 
 
@@ -547,19 +529,17 @@ nvsinqc(vs, nelt ,interlace, fields, eltsize, vsname)
 **  related: VSfexist--vsfexc--VSFEX
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvsfexc(VDATA **vs, _fcd fields, intn *fieldslen)
+nvsfexc(VDATA **vs, _fcd fields, intf *fieldslen)
 #else
 nvsfexc(vs, fields, fieldslen)
-
-	VDATA 	**vs;
+    VDATA   **vs;
 	_fcd	fields;
-	intn	*fieldslen;
+    intf    *fieldslen;
 #endif
-
 {
-	int32 	stat;
+    intf    stat;
 	char		*flds;
 
     flds = HDf2cstring (fields, (intn)*fieldslen );
@@ -576,18 +556,16 @@ nvsfexc(vs, fields, fieldslen)
 **  related: VSgetid--vsgidc--VSFGID
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvsgidc(HFILEID *f, int32 *vsid)
+nvsgidc(HFILEID *f, intf *vsid)
 #else
 nvsgidc(f, vsid)
-
-	HFILEID		*f;
-	int32			*vsid;
+    HFILEID *f;
+    intf    *vsid;
 #endif
-
 {
-	return( (int32) VSgetid(*f, *vsid) );
+    return( (intf) VSgetid(*f, *vsid) );
 }
 
 /* ------------------------------------------------------------------ */
@@ -598,15 +576,13 @@ nvsgidc(f, vsid)
 
     FRETVAL(void)
 #ifdef PROTOTYPE
-nvssnamc(VDATA **vs, _fcd vsname,intn *vsnamelen)
+nvssnamc(VDATA **vs, _fcd vsname,intf *vsnamelen)
 #else
 nvssnamc(vs, vsname, vsnamelen)
-
-	VDATA  **vs;
+    VDATA  **vs;
 	_fcd   vsname;
-	intn   *vsnamelen;
+    intf   *vsnamelen;
 #endif
-
 {
 	char   *name;
 
@@ -624,15 +600,13 @@ nvssnamc(vs, vsname, vsnamelen)
 
     FRETVAL(void)
 #ifdef PROTOTYPE
-nvssclsc(VDATA **vs, _fcd vsclass, intn *vsclasslen)
+nvssclsc(VDATA **vs, _fcd vsclass, intf *vsclasslen)
 #else
 nvssclsc(vs, vsclass, vsclasslen)
-
-    VDATA	**vs;
+    VDATA   **vs;
     _fcd	vsclass;
-    intn	*vsclasslen;
+    intf    *vsclasslen;
 #endif
-
 {
 	char 	*class;
 
@@ -648,20 +622,18 @@ nvssclsc(vs, vsclass, vsclasslen)
 **  related: VSsetfields--vssfldc--VSFSFLD
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvssfldc(VDATA **vs, _fcd fields, intn *fieldslen)
+nvssfldc(VDATA **vs, _fcd fields, intf *fieldslen)
 #else
 nvssfldc(vs,fields, fieldslen)
-
-	VDATA 	**vs;
+    VDATA   **vs;
 	_fcd	fields;
-	intn	*fieldslen;
+    intf    *fieldslen;
 #endif
-
 {
 	char 	*flds;
-	int32	stat;
+    intf    stat;
 
     flds = HDf2cstring (fields, (intn)*fieldslen);
 	/* trimendblanks(flds); */
@@ -677,18 +649,16 @@ nvssfldc(vs,fields, fieldslen)
 **  related: VSsetinterlace--vssintc--VSFSINT
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvssintc(VDATA **vs, int32 *interlace)
+nvssintc(VDATA **vs, intf *interlace)
 #else
 nvssintc(vs, interlace)
-
-	VDATA  		**vs;
-	int32	 		*interlace;
+    VDATA   **vs;
+    intf    *interlace;
 #endif
-
 {
-	return( (int32) VSsetinterlace (*vs, *interlace) );
+    return( (intf) VSsetinterlace (*vs, *interlace) );
 }
 
 /* ------------------------------------------------------------------ */
@@ -697,21 +667,19 @@ nvssintc(vs, interlace)
 **  related: VSfdefine--vsfdefc--VSFFDEF
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvsfdefc(VDATA **vs, _fcd field, int32 *localtype, int32 *order, intn *fieldlen)
+nvsfdefc(VDATA **vs, _fcd field, intf *localtype, intf *order, intf *fieldlen)
 #else
 nvsfdefc(vs, field, localtype, order, fieldlen)
-
-	VDATA 		**vs;
-	_fcd			field;		
-	int32 		*localtype, *order;
-	intn			*fieldlen;
+    VDATA   **vs;
+    _fcd    field;
+    intf    *localtype, *order;
+    intf    *fieldlen;
 #endif
-
 {
-	int32 	stat;
-	char 		*fld;
+    intf    stat;
+    char    *fld;
 
     fld  = HDf2cstring (field, (intn)*fieldlen);
 	/* trimendblanks(fld); */
@@ -726,19 +694,17 @@ nvsfdefc(vs, field, localtype, order, fieldlen)
 **  related: VSread--vsreadc--VSFREAD
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvsreadc(VDATA **vs, BYTE *buf, int32 *nelt, int32 *interlace)
+nvsreadc(VDATA **vs, BYTE *buf, intf *nelt, intf *interlace)
 #else
 nvsreadc(vs, buf, nelt, interlace)
-
-	VDATA	   	**vs;
-	int32			*nelt, *interlace;
-	BYTE			*buf;
+    VDATA       **vs;
+    BYTE        *buf;
+    intf        *nelt, *interlace;
 #endif
-
 {
-	return( (int32) VSread(*vs, buf, *nelt, *interlace) );
+    return( (intf) VSread(*vs, buf, *nelt, *interlace) );
 }
 
 /* ------------------------------------------------------------------ */
@@ -747,19 +713,17 @@ nvsreadc(vs, buf, nelt, interlace)
 **  related: VSwrite--vswritc--VSFWRIT
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvswritc(VDATA **vs, BYTE *buf, int32 *nelt, int32 *interlace)
+nvswritc(VDATA **vs, BYTE *buf, intf *nelt, intf *interlace)
 #else
 nvswritc(vs, buf, nelt, interlace)
-
-	VDATA	   	**vs;
-	int32			*nelt, *interlace;
-	BYTE			*buf;
+    VDATA       **vs;
+    BYTE        *buf;
+    intf        *nelt, *interlace;
 #endif
-
 {
-	return( (int32) VSwrite(*vs, buf, *nelt, *interlace) );
+    return( (intf) VSwrite(*vs, buf, *nelt, *interlace) );
 }
 
 /* ======================================== */
@@ -773,17 +737,15 @@ nvswritc(vs, buf, nelt, interlace)
 **  related: VSgetinterlace--vsgintc--VSFGINT
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 nvsgintc(VDATA **vs)
 #else
 nvsgintc(vs)
-
-	VDATA 		**vs;
+    VDATA       **vs;
 #endif
-
 {
-	return( (int32) VSgetinterlace(*vs) );
+    return( (intf) VSgetinterlace(*vs) );
 }
 
 /* ------------------------------------------------------------------ */
@@ -792,17 +754,15 @@ nvsgintc(vs)
 **  related: VSelts--vseltsc--VSFELTS
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 nvseltsc(VDATA **vs)
 #else
 nvseltsc(vs)
-
-	VDATA 		**vs;
+    VDATA       **vs;
 #endif
-
 {
-	return( (int32) VSelts (*vs) );
+    return( (intf) VSelts (*vs) );
 }
 
 /* ------------------------------------------------------------------ */
@@ -811,20 +771,17 @@ nvseltsc(vs)
 **  related: VSgetfields--vsgfldc--VSFGFLD
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 nvsgfldc(VDATA **vs, _fcd fields)
 #else
 nvsgfldc(vs, fields)
-
-	VDATA 	**vs;
+    VDATA   **vs;
 	_fcd  	fields;			/* output */
 #endif
-
 {
-	return ( (int32) VSgetfields (*vs, fields) );
-
-}	/* VSGFLDC */
+    return ( (intf) VSgetfields (*vs, fields) );
+}   /* VSGFLDC */
 
 /* ------------------------------------------------------------------ */
 /* 
@@ -832,20 +789,18 @@ nvsgfldc(vs, fields)
 **  related: VSsizeof--vssizc--VSFSIZ
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvssizc(VDATA **vs, _fcd fields, intn *fieldslen)
+nvssizc(VDATA **vs, _fcd fields, intf *fieldslen)
 #else
 nvssizc(vs, fields, fieldslen)
-
-	VDATA 	**vs;
+    VDATA   **vs;
 	_fcd	fields;
-	intn	*fieldslen;
+    intf    *fieldslen;
 #endif
-
 {
 	char 	*flds;
-	int32 	stat;
+    intf    stat;
 
     flds = HDf2cstring (fields, (intn)*fieldslen);
 	/* trimendblanks(flds); */
@@ -860,18 +815,16 @@ nvssizc(vs, fields, fieldslen)
 **  related: Ventries--ventsc--VFENTS
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nventsc(HFILEID *f,int32 *vgid)
+nventsc(HFILEID *f,intf *vgid)
 #else
 nventsc(f,vgid)
-
-	HFILEID *f;
-	int32 * vgid;
+    HFILEID *f;
+    intf    *vgid;
 #endif
-
 {
-	return( (int32) Ventries (*f,*vgid) );
+    return( (intf) Ventries (*f,*vgid) );
 }
 
 /* ======================================================= */
@@ -888,8 +841,7 @@ nsetjjc(void)
 #else
 nsetjjc()
 #endif
-
-{ 
+{
 	setjj(); 
 }
 
@@ -905,8 +857,7 @@ nsetnojjc(void)
 #else
 nsetnojjc()
 #endif
-
-{ 
+{
 	setnojj(); 
 }
 
@@ -916,19 +867,17 @@ nsetnojjc()
 **  related: Vlone--vlonec--VFLONE
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvlonec(HFILEID *f, int32 **idarray, int32 *asize)
+nvlonec(HFILEID *f, intf **idarray, intf *asize)
 #else
 nvlonec(f, idarray, asize)
-
-	HFILEID		*f;
-	int32	**idarray; 			/* output -- an integer array */
-	int32	*asize;
+    HFILEID     *f;
+    intf    **idarray;          /* output -- an integer array */
+    intf    *asize;
 #endif
-
 {
-	return( (int32) Vlone( *f, *idarray, *asize) );
+    return( (intf) Vlone( *f, *idarray, *asize) );
 }
 
 /* ------------------------------------------------------------------ */
@@ -937,17 +886,15 @@ nvlonec(f, idarray, asize)
 **  related: VSlone--vslonec--VSFLONE
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvslonec(HFILEID *f, int32 **idarray, int32 *asize)
+nvslonec(HFILEID *f, intf **idarray, intf *asize)
 #else
 nvslonec(f, idarray, asize)
-
-	HFILEID		*f;
-	int32	**idarray; 		/* output -- an integer array */
-	int32	*asize;
+    HFILEID     *f;
+    intf    **idarray;      /* output -- an integer array */
+    intf    *asize;
 #endif
-
 {
 	return( VSlone( *f, *idarray, *asize) );
 }
@@ -963,28 +910,27 @@ nvslonec(f, idarray, asize)
 **  related: VHstoredata--vhsdc--vhfsd
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvhsdc(HFILEID *f, _fcd field, BYTE *buf, int32 *n, int32 *datatype, _fcd vsname, _fcd vsclass, intn *fieldlen, intn *vsnamelen, intn *vsclasslen)
+nvhsdc(HFILEID *f, _fcd field, BYTE *buf, intf *n, intf *datatype, _fcd vsname,
+    _fcd vsclass, intf *fieldlen, intf *vsnamelen, intf *vsclasslen)
 #else
-nvhsdc(f, field, buf, n, datatype, vsname, vsclass, fieldlen,
-          vsnamelen, vsclasslen)
-
-	HFILEID		*f;
+nvhsdc(f, field, buf, n, datatype, vsname, vsclass, fieldlen, vsnamelen,
+        vsclasslen)
+    HFILEID     *f;
 	_fcd   	field, vsname, vsclass;
-	int32	*n, *datatype;
+    intf    *n, *datatype;
 	BYTE	*buf;
-        intn    *fieldlen, *vsnamelen, *vsclasslen;
+    intf    *fieldlen, *vsnamelen, *vsclasslen;
 #endif
-
 {
-        char *fld, *name, *class;
+    char *fld, *name, *class;
 
-        fld = HDf2cstring(field, *fieldlen);
-        name = HDf2cstring(vsname, *vsnamelen);
-        class = HDf2cstring(vsclass, *vsclasslen);
+    fld = HDf2cstring(field, *fieldlen);
+    name = HDf2cstring(vsname, *vsnamelen);
+    class = HDf2cstring(vsclass, *vsclasslen);
 
-	return( (int32) VHstoredata (*f, fld, buf, *n, *datatype, 
+    return( (intf) VHstoredata (*f, fld, buf, *n, *datatype,
                  name, class));
 }
 
@@ -994,31 +940,30 @@ nvhsdc(f, field, buf, n, datatype, vsname, vsclass, fieldlen,
 **  related: VHstoredatam--vhsdmc--vhfsdm
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvhsdmc(HFILEID *f, _fcd field, BYTE *buf, int32 *n, int32 *datatype,
-        _fcd vsname, _fcd vsclass, int32 *order, intn *fieldlen,
-        intn *vsnamelen, intn *vsclasslen)
+nvhsdmc(HFILEID *f, _fcd field, BYTE *buf, intf *n, intf *datatype,
+        _fcd vsname, _fcd vsclass, intf *order, intf *fieldlen,
+        intf *vsnamelen, intf *vsclasslen)
 #else
 nvhsdmc(f, field, buf, n, datatype, vsname, vsclass, order,
            fieldlen, vsnamelen, vsclasslen)
 
 	HFILEID	*f;
 	_fcd  	field, vsname, vsclass;
-	int32	*n, *datatype, *order;
+    intf    *n, *datatype, *order;
 	BYTE	*buf;
-        intn    *fieldlen, *vsnamelen, *vsclasslen;
+    intf    *fieldlen, *vsnamelen, *vsclasslen;
 #endif
-
 {
-        char *fld, *name, *class;
+    char *fld, *name, *class;
 
-        fld = HDf2cstring(field, *fieldlen);
-        name = HDf2cstring(vsname, *vsnamelen);
-        class = HDf2cstring(vsclass, *vsclasslen);
+    fld = HDf2cstring(field, *fieldlen);
+    name = HDf2cstring(vsname, *vsnamelen);
+    class = HDf2cstring(vsclass, *vsclasslen);
 
-        return( (int32) VHstoredatam (*f, fld , buf, *n, 
-          *datatype, name, class, *order));
+    return( (intf) VHstoredatam (*f, fld , buf, *n,
+      *datatype, name, class, *order));
 }
 
 /* ------------------------------------------------------------------ */
@@ -1027,29 +972,24 @@ nvhsdmc(f, field, buf, n, datatype, vsname, vsclass, order,
 **  related: VHmakegroup--vhmkgpc--vhfmkgp
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvhmkgpc(HFILEID *f, int32 *tagarray, int32 *refarray, int32 *n,
-            _fcd vgname, _fcd vgclass, intn *vgnamelen, 
-            intn *vgclasslen)
+nvhmkgpc(HFILEID *f, intf *tagarray, intf *refarray, intf *n, _fcd vgname,
+    _fcd vgclass, intf *vgnamelen, intf *vgclasslen)
 #else
-nvhmkgpc(f, tagarray, refarray , n, vgname, vgclass, vgnamelen,
-          vgclasslen)
-
-	HFILEID	*f;
+nvhmkgpc(f, tagarray, refarray , n, vgname, vgclass, vgnamelen, vgclasslen)
+    HFILEID *f;
 	_fcd   	vgname, vgclass;
-	int32	*n, *tagarray, *refarray;
-        intn    *vgnamelen, *vgclasslen;
+    intf    *n, *tagarray, *refarray;
+    intf    *vgnamelen, *vgclasslen;
 #endif
-
 {
-        char *gname, *gclass;
+    char *gname, *gclass;
 
-        gname = HDf2cstring(vgname, *vgnamelen);
-        gclass = HDf2cstring(vgclass, *vgclasslen);
+    gname = HDf2cstring(vgname, *vgnamelen);
+    gclass = HDf2cstring(vgclass, *vgclasslen);
 
-
-	return( (int32) VHmakegroup (*f, tagarray, refarray, *n, gname, gclass));
+    return( (intf) VHmakegroup (*f, tagarray, refarray, *n, gname, gclass));
 }
 
 /* ================================================================== */
@@ -1058,20 +998,18 @@ nvhmkgpc(f, tagarray, refarray , n, vgname, vgclass, vgnamelen,
 **  related: Vflocate--vffloc--vflocc
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvflocc(VGROUP **vg, _fcd field, intn *fieldlen)
+nvflocc(VGROUP **vg, _fcd field, intf *fieldlen)
 #else
 nvflocc(vg, field, fieldlen)
-
-	VGROUP	**vg;
+    VGROUP  **vg;
 	_fcd   	field;
-	intn	*fieldlen;
+    intf    *fieldlen;
 #endif
-
 {
     char  *fld;
-    int32 stat;
+    intf  stat;
 
     fld = HDf2cstring (field, (intn)*fieldlen);
 	/* trimendblanks(fld); */
@@ -1087,18 +1025,16 @@ nvflocc(vg, field, fieldlen)
 **  related: Vinqtagref--vinqtrc--vfinqtr
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvinqtrc(VGROUP **vg, int32 *tag, int32 *ref)
+nvinqtrc(VGROUP **vg, intf *tag, intf *ref)
 #else
 nvinqtrc(vg, tag, ref)
-
-	VGROUP	**vg;
-	int32 	*tag, *ref;
+    VGROUP  **vg;
+    intf    *tag, *ref;
 #endif
-
 {
-	return ( (int32) Vinqtagref ( *vg, *tag, *ref) );
+    return ( (intf) Vinqtagref ( *vg, *tag, *ref) );
 }
 /* ------------------------------------------------------------------ */
 /* 
@@ -1106,17 +1042,15 @@ nvinqtrc(vg, tag, ref)
 **  related: Vntagrefs--vntrc--VFNTR
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 nvntrc(VGROUP **vg)
 #else
 nvntrc(vg)
-
-	VGROUP	**vg;
+    VGROUP  **vg;
 #endif
-
 {
-	return ( (int32) Vntagrefs (*vg) );
+    return ( (intf) Vntagrefs (*vg) );
 }
 /* ------------------------------------------------------------------ */
 
@@ -1125,19 +1059,17 @@ nvntrc(vg)
 **  related: Vgettagrefs--vgttrsc--vfgttrs
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvgttrsc(VGROUP **vg, int32 *tagarray, int32 *refarray, int32 *n)
+nvgttrsc(VGROUP **vg, intf *tagarray, intf *refarray, intf *n)
 #else
 nvgttrsc(vg, tagarray, refarray, n)
-
-	VGROUP	**vg;
-	int32		*tagarray, *refarray; 		/* outputs - integer arrays */
-	int32 	*n;
+    VGROUP  **vg;
+    intf    *tagarray, *refarray;       /* outputs - integer arrays */
+    intf    *n;
 #endif
-
 {
-	return ( (int32)  Vgettagrefs (*vg, tagarray, refarray, *n) );
+    return ( (intf)  Vgettagrefs (*vg, tagarray, refarray, *n) );
 }
 
 /* ------------------------------------------------------------------ */
@@ -1146,18 +1078,17 @@ nvgttrsc(vg, tagarray, refarray, n)
 **  related: Vgettagref--vgttrc--vfgttr
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvgttrc(VGROUP **vg, int32 *which, int32 *tag, int32 *ref)
+nvgttrc(VGROUP **vg, intf *which, intf *tag, intf *ref)
 #else
 nvgttrc(vg, which, tag, ref)
-
-	VGROUP	**vg;
-	int32		*which;
-	int32 	*tag, *ref;						/* outputs */
+    VGROUP  **vg;
+    intf    *which;
+    intf    *tag, *ref;                     /* outputs */
 #endif
 {
-	return ( (int32) Vgettagref (*vg, *which, tag, ref) );
+    return ( (intf) Vgettagref (*vg, *which, tag, ref) );
 }
 /* ------------------------------------------------------------------ */
 
@@ -1166,17 +1097,16 @@ nvgttrc(vg, which, tag, ref)
 **  related: Vaddtagref--vadtrc--VFADTR 
 */
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nvadtrc(VGROUP **vg, int32 *tag, int32 *ref)
+nvadtrc(VGROUP **vg, intf *tag, intf *ref)
 #else
 nvadtrc(vg, tag, ref)
-
-	VGROUP	**vg;
-	int32 	*tag, *ref;
+    VGROUP  **vg;
+    intf   *tag, *ref;
 #endif
 {
-	return ( (int32) Vaddtagref ( *vg, *tag, *ref) );
+    return ( (intf) Vaddtagref ( *vg, *tag, *ref) );
 }
 
 /* ------------------------------------------------------------------ */

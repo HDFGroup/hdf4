@@ -2,9 +2,15 @@
 $Header$
 
 $Log$
-Revision 1.2  1992/09/04 22:05:02  georgev
-Fixed "const" problem for MIPSEL.
+Revision 1.3  1992/09/11 14:15:04  koziol
+Changed Fortran stubs' parameter passing to use a new typedef, intf,
+which should be typed to the size of an INTEGER*4 in whatever Fortran
+compiler the C functions need to be compatible with.  (This is mostly
+for the PC and possibly for the Mac)
 
+ * Revision 1.2  1992/09/04  22:05:02  georgev
+ * Fixed "const" problem for MIPSEL.
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -109,6 +115,7 @@ typedef long int          int32;
 typedef unsigned long int uint32;
 typedef int               intn;
 typedef unsigned int      uintn;
+typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef float             float32;
 typedef double            float64;
 #define DFmovmem(from, to, len) memcpy(to, from, len)
@@ -152,6 +159,7 @@ typedef int               intn;
 typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
+typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
@@ -188,6 +196,7 @@ typedef int               intn;
 typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
+typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
@@ -225,6 +234,7 @@ typedef int                intn;
 typedef unsigned int       uintn;
 typedef float              float32;
 typedef double             float64;
+typedef int                intf;     /* size of INTEGERs in Fortran compiler */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
@@ -265,6 +275,7 @@ typedef int             intn;
 typedef unsigned int    uintn;
 typedef float           float32;
 typedef double          float64;
+typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #define DF_CAPFNAMES            /* fortran names are in all caps */
@@ -298,6 +309,7 @@ typedef int                intn;
 typedef unsigned int       uintn;
 typedef float              float32;
 typedef double             float64;
+typedef int                intf;     /* size of INTEGERs in Fortran compiler */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #define _fcdtocp(desc)  ((char *) *((char **) &desc[4]))
 
@@ -337,6 +349,7 @@ typedef int               intn;
 typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
+typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 #define DFmovmem(from, to, len) bcopy(from, to, len)
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
@@ -371,6 +384,7 @@ typedef int             intn;
 typedef unsigned int    uintn;
 typedef float           float32;
 typedef double          float64;
+typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #define _fcdtocp(desc) (desc)
 #define FNAME_POST_UNDERSCORE
@@ -420,6 +434,7 @@ typedef int               intn;
 typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
+typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 #define _fcdtocp(desc) (desc)
 void exit(int status);
 
@@ -477,6 +492,7 @@ typedef int               intn;
 typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
+typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 
 #ifdef OLD_WAY
 #ifdef WIN3

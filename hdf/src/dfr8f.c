@@ -5,9 +5,15 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/09/11 14:15:04  koziol
+Changed Fortran stubs' parameter passing to use a new typedef, intf,
+which should be typed to the size of an INTEGER*4 in whatever Fortran
+compiler the C functions need to be compatible with.  (This is mostly
+for the PC and possibly for the Mac)
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*-----------------------------------------------------------------------------
  * File:    dfr8F.c
@@ -74,7 +80,7 @@ Initial revision
  * Invokes: DFR8setpalette
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 nd8spal(_fcd pal)
 #else
@@ -95,7 +101,7 @@ nd8spal(pal)
  * Invokes: DFR8restart
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 nd8first(void)
 #else
@@ -117,18 +123,18 @@ nd8first()
  * Invokes: DFR8getdims
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nd8igdim(_fcd filename, int32 *xdim, int32 *ydim, int *ispal, int *lenfn)
+nd8igdim(_fcd filename, intf *xdim, intf *ydim, intf *ispal, intf *lenfn)
 #else
 nd8igdim(filename, xdim, ydim, ispal, lenfn)
     _fcd filename;
-    int32 *xdim, *ydim;
-    int *ispal, *lenfn;
+    intf *xdim, *ydim;
+    intf *ispal, *lenfn;
 #endif /* PROTOTYPE */
 {
     char *fn;
-    int ret;
+    intf ret;
 
     fn = HDf2cstring(filename, *lenfn);
     ret =  DFR8getdims(fn, xdim, ydim, ispal);
@@ -150,18 +156,18 @@ nd8igdim(filename, xdim, ydim, ispal, lenfn)
  * Invokes: DFR8getimage
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nd8igimg(_fcd filename, _fcd image, int32 *xdim, int32 *ydim, _fcd pal, int *lenfn)
+nd8igimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, _fcd pal, intf *lenfn)
 #else
 nd8igimg(filename, image, xdim, ydim, pal, lenfn)
     _fcd filename, image, pal;
-    int32 *xdim, *ydim;
-    int *lenfn;
+    intf *xdim, *ydim;
+    intf *lenfn;
 #endif /* PROTOTYPE */
 {
     char *fn;
-    int ret;
+    intf ret;
 
     fn = HDf2cstring(filename, *lenfn);
     ret =  DFR8getimage(fn, (uint8 *)_fcdtocp(image), *xdim, *ydim,
@@ -184,19 +190,19 @@ nd8igimg(filename, image, xdim, ydim, pal, lenfn)
  * Invokes: DFR8putimage
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nd8ipimg(_fcd filename, _fcd image, int32 *xdim, int32 *ydim, int *compress,
-	 int *lenfn)
+nd8ipimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *compress,
+     intf *lenfn)
 #else
 nd8ipimg(filename, image, xdim, ydim, compress, lenfn)
     _fcd filename, image;
-    int32 *xdim, *ydim;
-    int *compress, *lenfn;
+    intf *xdim, *ydim;
+    intf *compress, *lenfn;
 #endif /* PROTOTYPE */
 {
     char *fn;
-    int ret;
+    intf ret;
 
     fn = HDf2cstring(filename, *lenfn);
     ret = DFR8putimage(fn, (VOIDP)_fcdtocp(image), *xdim, *ydim, *compress);
@@ -218,19 +224,19 @@ nd8ipimg(filename, image, xdim, ydim, compress, lenfn)
  * Invokes: DFR8addimage
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nd8iaimg(_fcd filename, _fcd image, int32 *xdim, int32 *ydim, int *compress,
-	 int *lenfn)
+nd8iaimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *compress,
+     intf *lenfn)
 #else
 nd8iaimg(filename, image, xdim, ydim, compress, lenfn)
     _fcd filename, image;
-    int32 *xdim, *ydim;
-    int *compress, *lenfn;
+    intf *xdim, *ydim;
+    intf *compress, *lenfn;
 #endif /* PROTOTYPE */
 {
     char *fn;
-    int ret;
+    intf ret;
 
     fn = HDf2cstring(filename, *lenfn);
     ret = DFR8addimage(fn, (VOIDP)_fcdtocp(image), *xdim, *ydim, *compress);
@@ -249,18 +255,18 @@ nd8iaimg(filename, image, xdim, ydim, compress, lenfn)
  * Remarks: checks if image with this ref exists
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nd8irref(_fcd filename, int32 *ref, int *fnlen)
+nd8irref(_fcd filename, intf *ref, intf *fnlen)
 #else
 nd8irref(filename, ref, fnlen)
     _fcd filename;
-    int32 *ref;
-    int   *fnlen;
+    intf *ref;
+    intf  *fnlen;
 #endif /* PROTOTYPE */
 {
     char *fn;
-    int ret;
+    intf ret;
     uint16 Ref;
     
     Ref = (uint16) *ref;
@@ -284,18 +290,18 @@ nd8irref(filename, ref, fnlen)
  * Remarks: 
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nd8iwref(_fcd filename, int32 *ref, int *fnlen)
+nd8iwref(_fcd filename, intf *ref, intf *fnlen)
 #else
 nd8iwref(filename, ref, fnlen)
     _fcd filename;
-    int32 *ref;
-    int *fnlen;
+    intf *ref;
+    intf *fnlen;
 #endif /* PROTOTYPE */
 {
     char *fn;
-    int ret;
+    intf ret;
     uint16 Ref;
 
     Ref = (uint16) *ref;
@@ -318,17 +324,17 @@ nd8iwref(filename, ref, fnlen)
  * Remarks: 
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nd8inims(_fcd filename, int *fnlen)
+nd8inims(_fcd filename, intf *fnlen)
 #else
 nd8inims(filename, fnlen)
     _fcd filename;
-    int *fnlen;
+    intf *fnlen;
 #endif /* PROTOTYPE */
 {
     char *fn;
-    int ret;
+    intf ret;
 
     fn = HDf2cstring(filename, *fnlen);
     ret = DFR8nimages(fn);
@@ -346,7 +352,7 @@ nd8inims(filename, fnlen)
  * Invokes: DFR8lastref
  *---------------------------------------------------------------------------*/
 
-        FRETVAL(int)
+        FRETVAL(intf)
 #ifdef PROTOTYPE
 nd8lref(void)
 #else
@@ -366,7 +372,7 @@ nd8lref()
  * Remarks: 
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 ndfr8lastref(void)
 #else
@@ -386,7 +392,7 @@ ndfr8lastref()
  * Invokes: DFR8setpalette
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 ndfr8setpalette(_fcd pal)
 #else
@@ -407,7 +413,7 @@ ndfr8setpalette(pal)
  * Invokes: DFR8restart
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 ndfr8restart(void)
 #else

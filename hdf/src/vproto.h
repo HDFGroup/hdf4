@@ -2,9 +2,15 @@
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/09/11 14:15:04  koziol
+Changed Fortran stubs' parameter passing to use a new typedef, intf,
+which should be typed to the size of an INTEGER*4 in whatever Fortran
+compiler the C functions need to be compatible with.  (This is mostly
+for the PC and possibly for the Mac)
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*
 ** from vconv.c
@@ -367,8 +373,8 @@ extern int32 VSwrite
 #endif  /* DF_CAPFNAMES */
 #endif  /* VG_FNAMES */
 
-extern FRETVAL(int32 *) nvatchc
-    PROTO((HFILEID *f, int32 *vgid, _fcd accesstype));
+extern FRETVAL(intf *) nvatchc
+    PROTO((HFILEID *f, intf *vgid, _fcd accesstype));
 
 extern FRETVAL(void) nvdtchc
     PROTO((VGROUP **vg));
@@ -379,38 +385,38 @@ extern FRETVAL(void) nvgnamc
 extern FRETVAL(void) nvgclsc
     PROTO((VGROUP ** vg, _fcd vgclass));
 
-extern FRETVAL(int32) nvinqc
-    PROTO((VGROUP** vg, int32 *nentries, _fcd vgname));
+extern FRETVAL(intf) nvinqc
+    PROTO((VGROUP** vg, intf *nentries, _fcd vgname));
 
-extern FRETVAL(int32) nvgidc
-    PROTO((HFILEID *f, int32 *vgid));
+extern FRETVAL(intf) nvgidc
+    PROTO((HFILEID *f, intf *vgid));
 
-extern FRETVAL(int32) nvgnxtc
-    PROTO((VGROUP **vg, int32 *id));
+extern FRETVAL(intf) nvgnxtc
+    PROTO((VGROUP **vg, intf *id));
 
 extern FRETVAL(void) nvsnamc
-    PROTO((VGROUP **vg, _fcd vgname, intn *vgnamelen));
+    PROTO((VGROUP **vg, _fcd vgname, intf *vgnamelen));
 
 extern FRETVAL(void) nvsclsc
-    PROTO((VGROUP **vg, _fcd vgclass, intn *vgclasslen));
+    PROTO((VGROUP **vg, _fcd vgclass, intf *vgclasslen));
 
-extern FRETVAL(int32) nvinsrtc
-    PROTO((VGROUP **vg, int32 **vobjptr));
+extern FRETVAL(intf) nvinsrtc
+    PROTO((VGROUP **vg, intf **vobjptr));
 
-extern FRETVAL(int32) nvisvgc
-    PROTO((VGROUP **vg, int32 *id));
+extern FRETVAL(intf) nvisvgc
+    PROTO((VGROUP **vg, intf *id));
 
-extern FRETVAL(int32) nvisvsc
-    PROTO((VGROUP **vg, int32 *id));
+extern FRETVAL(intf) nvisvsc
+    PROTO((VGROUP **vg, intf *id));
 
-extern FRETVAL(int32 *) nvsatchc
-    PROTO((HFILEID *f, int32 *vsid, _fcd accesstype));
+extern FRETVAL(intf *) nvsatchc
+    PROTO((HFILEID *f, intf *vsid, _fcd accesstype));
 
 extern FRETVAL(void) nvsdtchc
     PROTO((VDATA **vs));
 
-extern FRETVAL(int32) nvsseekc
-    PROTO((VDATA **vs, int32 *eltpos));
+extern FRETVAL(intf) nvsseekc
+    PROTO((VDATA **vs, intf *eltpos));
 
 extern FRETVAL(void) nvsgnamc
     PROTO((VDATA **vs, _fcd vsname));
@@ -418,52 +424,52 @@ extern FRETVAL(void) nvsgnamc
 extern FRETVAL(void) nvsgclsc
     PROTO((VDATA **vs, _fcd vsclass));
 
-extern FRETVAL(int32) nvsinqc
-    PROTO((VDATA **vs, int32 *nelt ,int32 *interlace, _fcd fields,
-                int32 *eltsize, _fcd vsname));
+extern FRETVAL(intf) nvsinqc
+    PROTO((VDATA **vs, intf *nelt ,intf *interlace, _fcd fields, intf *eltsize,
+        _fcd vsname));
 
-extern FRETVAL(int32) nvsfexc
-    PROTO((VDATA **vs, _fcd fields, intn *fieldslen));
+extern FRETVAL(intf) nvsfexc
+    PROTO((VDATA **vs, _fcd fields, intf *fieldslen));
 
-extern FRETVAL(int32) nvsgidc
-    PROTO((HFILEID *f, int32 *vsid));
+extern FRETVAL(intf) nvsgidc
+    PROTO((HFILEID *f, intf *vsid));
 
 extern FRETVAL(void) nvssnamc
     PROTO((VDATA **vs, _fcd vsname,intn *vsnamelen));
 
 extern FRETVAL(void) nvssclsc
-    PROTO((VDATA **vs, _fcd vsclass, intn *vsclasslen));
+    PROTO((VDATA **vs, _fcd vsclass, intf *vsclasslen));
 
-extern FRETVAL(int32) nvssfldc
-    PROTO((VDATA **vs, _fcd fields, intn *fieldslen));
+extern FRETVAL(intf) nvssfldc
+    PROTO((VDATA **vs, _fcd fields, intf *fieldslen));
 
-extern FRETVAL(int32) nvssintc
-    PROTO((VDATA **vs, int32 *interlace));
+extern FRETVAL(intf) nvssintc
+    PROTO((VDATA **vs, intf *interlace));
 
-extern FRETVAL(int32) nvsfdefc
-    PROTO((VDATA **vs, _fcd field, int32 *localtype, int32 *order,
-                intn *fieldlen));
+extern FRETVAL(intf) nvsfdefc
+    PROTO((VDATA **vs, _fcd field, intf *localtype, intf *order,
+            intf *fieldlen));
 
-extern FRETVAL(int32) nvsreadc
-    PROTO((VDATA **vs, BYTE *buf, int32 *nelt, int32 *interlace));
+extern FRETVAL(intf) nvsreadc
+    PROTO((VDATA **vs, BYTE *buf, intf *nelt, intf *interlace));
 
-extern FRETVAL(int32) nvswritc
-    PROTO((VDATA **vs, BYTE *buf, int32 *nelt, int32 *interlace));
+extern FRETVAL(intf) nvswritc
+    PROTO((VDATA **vs, BYTE *buf, intf *nelt, intf *interlace));
 
-extern FRETVAL(int32) nvsgintc
+extern FRETVAL(intf) nvsgintc
     PROTO((VDATA **vs));
 
-extern FRETVAL(int32) nvseltsc
+extern FRETVAL(intf) nvseltsc
     PROTO((VDATA **vs));
 
-extern FRETVAL(int32) nvsgfldc
+extern FRETVAL(intf) nvsgfldc
     PROTO((VDATA **vs, _fcd fields));
 
-extern FRETVAL(int32) nvssizc
-    PROTO((VDATA **vs, _fcd fields, intn *fieldslen));
+extern FRETVAL(intf) nvssizc
+    PROTO((VDATA **vs, _fcd fields, intf *fieldslen));
 
-extern FRETVAL(int32) nventsc
-    PROTO((HFILEID *f,int32 *vgid));
+extern FRETVAL(intf) nventsc
+    PROTO((HFILEID *f,intf *vgid));
 
 extern FRETVAL(void) nsetjjc
     PROTO((void));
@@ -471,42 +477,41 @@ extern FRETVAL(void) nsetjjc
 extern FRETVAL(void) nsetnojjc
     PROTO((void));
 
-extern FRETVAL(int32) nvlonec
-    PROTO((HFILEID *f, int32 **idarray, int32 *asize));
+extern FRETVAL(intf) nvlonec
+    PROTO((HFILEID *f, intf **idarray, intf *asize));
 
-extern FRETVAL(int32) nvslonec
-    PROTO((HFILEID *f, int32 **idarray, int32 *asize));
+extern FRETVAL(intf) nvslonec
+    PROTO((HFILEID *f, intf **idarray, intf *asize));
 
-extern FRETVAL(int32) nvhsdc
-    PROTO((HFILEID *f, _fcd field, BYTE *buf, int32 *n, int32 *datatype,
-                _fcd vsname, _fcd vsclass, intn *fieldlen, 
-                intn *vsnamelen, intn *vsclasslen));
+extern FRETVAL(intf) nvhsdc
+    PROTO((HFILEID *f, _fcd field, BYTE *buf, intf *n, intf *datatype,
+        _fcd vsname, _fcd vsclass, intf *fieldlen, intf *vsnamelen,
+        intf *vsclasslen));
 
-extern FRETVAL(int32) nvhsdmc
-    PROTO((HFILEID *f, _fcd field, BYTE *buf, int32 *n, int32 *datatype,
-                _fcd vsname, _fcd vsclass, int32 *order, 
-                intn *fieldlen, intn *vsnamelen, intn *vsclasslen));
+extern FRETVAL(intf) nvhsdmc
+    PROTO((HFILEID *f, _fcd field, BYTE *buf, intf *n, intf *datatype,
+        _fcd vsname, _fcd vsclass, intf *order, intf *fieldlen,
+        intf *vsnamelen, intf *vsclasslen));
 
-extern FRETVAL(int32) nvhmkgpc
-    PROTO((HFILEID *f, int32 *tagarray, int32 *refarray, int32 *n,
-                _fcd vgname, _fcd vgclass,  intn *vgnamelen, 
-                intn *vgclasslen));
+extern FRETVAL(intf) nvhmkgpc
+    PROTO((HFILEID *f, intf *tagarray, intf *refarray, intf *n,
+        _fcd vgname, _fcd vgclass,  intf *vgnamelen, intf *vgclasslen));
 
-extern FRETVAL(int32) nvflocc
-    PROTO((VGROUP **vg, _fcd field, intn *fieldlen));
+extern FRETVAL(intf) nvflocc
+    PROTO((VGROUP **vg, _fcd field, intf *fieldlen));
 
-extern FRETVAL(int32) nvinqtrc
-    PROTO((VGROUP **vg, int32 *tag, int32 *ref));
+extern FRETVAL(intf) nvinqtrc
+    PROTO((VGROUP **vg, intf *tag, intf *ref));
 
-extern FRETVAL(int32) nvntrc
+extern FRETVAL(intf) nvntrc
     PROTO((VGROUP **vg));
 
-extern FRETVAL(int32) nvgttrsc
-    PROTO((VGROUP **vg, int32 *tagarray, int32 *refarray, int32 *n));
+extern FRETVAL(intf) nvgttrsc
+    PROTO((VGROUP **vg, intf *tagarray, intf *refarray, intf *n));
 
-extern FRETVAL(int32) nvgttrc
-    PROTO((VGROUP **vg, int32 *which, int32 *tag, int32 *ref));
+extern FRETVAL(intf) nvgttrc
+    PROTO((VGROUP **vg, intf *which, intf *tag, intf *ref));
 
-extern FRETVAL(int32) nvadtrc
-    PROTO((VGROUP **vg, int32 *tag, int32 *ref));
+extern FRETVAL(intf) nvadtrc
+    PROTO((VGROUP **vg, intf *tag, intf *ref));
 

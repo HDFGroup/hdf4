@@ -5,9 +5,15 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/09/11 14:15:04  koziol
+Changed Fortran stubs' parameter passing to use a new typedef, intf,
+which should be typed to the size of an INTEGER*4 in whatever Fortran
+compiler the C functions need to be compatible with.  (This is mostly
+for the PC and possibly for the Mac)
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*-----------------------------------------------------------------------------
  * File:    df24F.c
@@ -80,12 +86,12 @@ static int dimsset = 0;
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nd2reqil(int *il)
+nd2reqil(intf *il)
 #else
 nd2reqil(il)
-    int *il;
+    intf *il;
 #endif /* PROTOTYPE */
 {
     return(DFGRIreqil(*il, IMAGE));
@@ -102,12 +108,12 @@ nd2reqil(il)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nd2sdims(int32 *xdim, int32 *ydim)
+nd2sdims(intf *xdim, intf *ydim)
 #else
 nd2sdims(xdim, ydim)
-    int32 *xdim, *ydim;
+    intf *xdim, *ydim;
 #endif /* PROTOTYPE */
 {
     dimsset = 1;
@@ -129,18 +135,18 @@ nd2sdims(xdim, ydim)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nd2igdim(_fcd filename, int32 *pxdim, int32 *pydim, int *pil, int *fnlen)
+nd2igdim(_fcd filename, intf *pxdim, intf *pydim, intf *pil, intf *fnlen)
 #else
 nd2igdim(filename, pxdim, pydim, pil, fnlen)
     _fcd filename;
-    int32 *pxdim, *pydim;
-    int *pil, *fnlen;
+    intf *pxdim, *pydim;
+    intf *pil, *fnlen;
 #endif /* PROTOTYPE */
 {
     char *fn;
-    int ret;
+    intf ret;
 
     fn = HDf2cstring(filename, *fnlen);
     ret =  DF24getdims(fn, pxdim, pydim, pil);
@@ -162,19 +168,19 @@ nd2igdim(filename, pxdim, pydim, pil, fnlen)
  * Remarks: space is assumed to be xdim * ydim * 3 bytes
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nd2igimg(_fcd filename, _fcd image, int32 *xdim, int32 *ydim, int *fnlen)
+nd2igimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *fnlen)
 #else
 nd2igimg(filename, image, xdim, ydim, fnlen)
     _fcd filename;
     _fcd image;
-    int32 *xdim, *ydim;
-    int *fnlen;
+    intf *xdim, *ydim;
+    intf *fnlen;
 #endif /* PROTOTYPE */
 {
     char *fn;
-    int ret;
+    intf ret;
 
     fn = HDf2cstring(filename, *fnlen);
     ret =  DF24getimage(fn, (VOIDP)_fcdtocp(image), *xdim, *ydim);
@@ -196,20 +202,20 @@ nd2igimg(filename, image, xdim, ydim, fnlen)
  * Remarks: array image is assumed to be xdim * ydim * ncomps bytes
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nd2iaimg(_fcd filename, _fcd image, int32 *xdim, int32 *ydim,
-	 int *fnlen, int *newfile)
+nd2iaimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *fnlen,
+    intf *newfile)
 #else
 nd2iaimg(filename, image, xdim, ydim, fnlen, newfile)
     _fcd filename;
     _fcd image;
-    int32 *xdim, *ydim;
-    int *fnlen, *newfile;
+    intf *xdim, *ydim;
+    intf *fnlen, *newfile;
 #endif /* PROTOTYPE */
 {
     char *fn;
-    int ret;
+    intf ret;
 
     if (!dimsset)
         if (DFGRIsetdims(*xdim, *ydim, 3, IMAGE)<0) return(-1);
@@ -232,12 +238,12 @@ nd2iaimg(filename, image, xdim, ydim, fnlen, newfile)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nd2setil(int *il)
+nd2setil(intf *il)
 #else
 nd2setil(il)
-    int *il;
+    intf *il;
 #endif /* PROTOTYPE */
 {
     return (DFGRIsetil(*il, IMAGE));
@@ -253,7 +259,7 @@ nd2setil(il)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 nd2first(void)
 #else
@@ -274,12 +280,12 @@ nd2first()
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndf24reqil(int *il)
+ndf24reqil(intf *il)
 #else
 ndf24reqil(il)
-    int *il;
+    intf *il;
 #endif /* PROTOTYPE */
 {
     return(DFGRIreqil(*il, IMAGE));
@@ -296,12 +302,12 @@ ndf24reqil(il)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndf24setdims(int32 *xdim, int32 *ydim)
+ndf24setdims(intf *xdim, intf *ydim)
 #else
 ndf24setdims(xdim, ydim)
-    int32 *xdim, *ydim;
+    intf *xdim, *ydim;
 #endif /* PROTOTYPE */
 {
     dimsset = 1;
@@ -318,12 +324,12 @@ ndf24setdims(xdim, ydim)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndf24setil(int *il)
+ndf24setil(intf *il)
 #else
 ndf24setil(il)
-    int *il;
+    intf *il;
 #endif /* PROTOTYPE */
 {
     return (DFGRIsetil(*il, IMAGE));
@@ -339,7 +345,7 @@ ndf24setil(il)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 ndf24restart(void)
 #else
@@ -360,18 +366,18 @@ ndf24restart()
  * Remarks: 
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-nd2irref(_fcd filename, int *ref, int *fnlen)
+nd2irref(_fcd filename, intf *ref, intf *fnlen)
 #else
 nd2irref(filename, ref, fnlen)
     _fcd filename;
-    int *ref;
-    int *fnlen;
+    intf *ref;
+    intf *fnlen;
 #endif /* PROTOTYPE */
 {
     char *fn;
-    int ret;
+    intf ret;
 
     fn = HDf2cstring(filename, *fnlen);
     ret = DFGRreadref(fn, (uint16)*ref);

@@ -2,9 +2,15 @@
 $Header$
 
 $Log$
-Revision 1.3  1992/08/31 16:14:52  chouck
-Added Fortran support for calibration tags
+Revision 1.4  1992/09/11 14:15:04  koziol
+Changed Fortran stubs' parameter passing to use a new typedef, intf,
+which should be typed to the size of an INTEGER*4 in whatever Fortran
+compiler the C functions need to be compatible with.  (This is mostly
+for the PC and possibly for the Mac)
 
+ * Revision 1.3  1992/08/31  16:14:52  chouck
+ * Added Fortran support for calibration tags
+ *
  * Revision 1.2  1992/08/27  19:55:26  likkai
  * change declaration of Vclose: now it returns intn instead of void.
  * change declaration of DFvsetclose: returns intn instead of int.
@@ -530,59 +536,59 @@ extern int32 DFKconvert
 #endif /* DF_CAPFNAMES */
 #endif /* DFAN_FNAMES */
 
-extern FRETVAL(int32) ndaiganl
-  PROTO((_fcd filename, int32 *tag, int32 *ref, int *type, int *fnlen));
+extern FRETVAL(intf) ndaiganl
+    PROTO((_fcd filename, intf *tag, intf *ref, intf *type, intf *fnlen));
 
-extern FRETVAL(int32) ndaigann
-  PROTO((_fcd filename, int32 *tag, int32 *ref, _fcd annotation, int32 *maxlen,
-     int *type, int *fnlen));
+extern FRETVAL(intf) ndaigann
+    PROTO((_fcd filename, intf *tag, intf *ref, _fcd annotation, intf *maxlen,
+        intf *type, intf *fnlen));
 
-extern FRETVAL(int32) ndaipann
-  PROTO((_fcd filename, int32 *tag, int32 *ref, _fcd annotation, int32 *annlen,
-     int *type, int *fnlen));
+extern FRETVAL(intf) ndaipann
+    PROTO((_fcd filename, intf *tag, intf *ref, _fcd annotation, intf *annlen,
+        intf *type, intf *fnlen));
 
-extern FRETVAL(int) ndailist
-  PROTO((_fcd filename, int32 *tag, int32 reflist[], _fcd labellist,
-    int *listsize, int *maxlen, int *startpos, int *fnlen));
+extern FRETVAL(intf) ndailist
+    PROTO((_fcd filename, intf *tag, intf reflist[], _fcd labellist,
+        intf *listsize, intf *maxlen, intf *startpos, intf *fnlen));
 
-extern FRETVAL(uint16) ndalref
-  PROTO((void));
+extern FRETVAL(intf) ndalref
+    PROTO((void));
 
-extern FRETVAL(uint16) ndfanlastref
-  PROTO((void));
+extern FRETVAL(int) ndfanlastref
+    PROTO((void));
 
-extern FRETVAL(int32) ndfanaddfds
-  PROTO((int32 *dfile, _fcd desc, int32 *desclen));
+extern FRETVAL(intf) ndfanaddfds
+    PROTO((intf *dfile, _fcd desc, intf *desclen));
 
-extern FRETVAL(int32) ndfangetfidlen
-  PROTO((int32 *dfile, int *isfirst));
+extern FRETVAL(intf) ndfangetfidlen
+    PROTO((intf *dfile, intf *isfirst));
 
-extern FRETVAL(int32) ndfangetfdslen
-  PROTO((int32 *dfile, int *isfirst));
+extern FRETVAL(intf) ndfangetfdslen
+    PROTO((intf *dfile, intf *isfirst));
 
-extern FRETVAL(int32) ndfangetfid
-  PROTO((int32 *dfile, _fcd id, int32 *maxlen, int *isfirst));
+extern FRETVAL(intf) ndfangetfid
+    PROTO((intf *dfile, _fcd id, intf *maxlen, intf *isfirst));
 
-extern FRETVAL(int32) ndfangetfds
-  PROTO((int32 *dfile, _fcd id, int32 *maxlen, int *isfirst));
+extern FRETVAL(intf) ndfangetfds
+    PROTO((intf *dfile, _fcd id, intf *maxlen, intf *isfirst));
 
-extern FRETVAL(int32) ndaafds
-  PROTO((int32 *dfile, _fcd desc, int32 *desclen));
+extern FRETVAL(intf) ndaafds
+    PROTO((intf *dfile, _fcd desc, intf *desclen));
 
-extern FRETVAL(int32) ndagfidl
-  PROTO((int32 *dfile, int *isfirst));
+extern FRETVAL(intf) ndagfidl
+    PROTO((intf *dfile, intf *isfirst));
 
-extern FRETVAL(int32) ndagfdsl
-  PROTO((int32 *dfile, int *isfirst));
+extern FRETVAL(intf) ndagfdsl
+    PROTO((intf *dfile, intf *isfirst));
 
-extern FRETVAL(int32) ndagfid
-  PROTO((int32 *dfile, _fcd id, int32 *maxlen, int *isfirst));
+extern FRETVAL(intf) ndagfid
+  PROTO((intf *dfile, _fcd id, intf *maxlen, intf *isfirst));
 
-extern FRETVAL(int32) ndagfds
-  PROTO((int32 *dfile, _fcd id, int32 *maxlen, int *isfirst));
+extern FRETVAL(intf) ndagfds
+  PROTO((intf *dfile, _fcd id, intf *maxlen, intf *isfirst));
 
-extern FRETVAL(int32) ndaiafid
-  PROTO((int32 *dfile, _fcd id, int32 *idlen));
+extern FRETVAL(intf) ndaiafid
+  PROTO((intf *dfile, _fcd id, intf *idlen));
 
 /*
 ** from dfr8F.c
@@ -620,46 +626,46 @@ extern FRETVAL(int32) ndaiafid
 #endif /* DF_CAPFNAMES */
 #endif /* DFR8_FNAMES */
 
-extern  FRETVAL(int) nd8spal
+extern  FRETVAL(intf) nd8spal
     PROTO((_fcd pal));
 
-extern  FRETVAL(int) nd8first
+extern  FRETVAL(intf) nd8first
     PROTO((void));
 
-extern  FRETVAL(int) nd8igdim
-    PROTO((_fcd filename, int32 *xdim, int32 *ydim, int *ispal, int *lenfn));
+extern  FRETVAL(intf) nd8igdim
+    PROTO((_fcd filename, intf *xdim, intf *ydim, intf *ispal, intf *lenfn));
 
-extern  FRETVAL(int) nd8igimg
-    PROTO((_fcd filename, _fcd image, int32 *xdim, int32 *ydim,
-                _fcd pal, int *lenfn));
+extern  FRETVAL(intf) nd8igimg
+    PROTO((_fcd filename, _fcd image, intf *xdim, intf *ydim, _fcd pal,
+        intf *lenfn));
 
-extern  FRETVAL(int) nd8ipimg
-    PROTO((_fcd filename, _fcd image, int32 *xdim, int32 *ydim, int *compress,
-                int *lenfn));
+extern  FRETVAL(intf) nd8ipimg
+    PROTO((_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *compress,
+        intf *lenfn));
 
-extern  FRETVAL(int) nd8iaimg
-    PROTO((_fcd filename, _fcd image, int32 *xdim, int32 *ydim, int *compress,
-                int *lenfn));
+extern  FRETVAL(intf) nd8iaimg
+    PROTO((_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *compress,
+        intf *lenfn));
 
-extern  FRETVAL(intn) nd8irref
-    PROTO((_fcd filename, int32 *ref, int *fnlen));
+extern  FRETVAL(intf) nd8irref
+    PROTO((_fcd filename, intf *ref, intf *fnlen));
 
-extern FRETVAL(intn) nd8iwref
-    PROTO((_fcd filename, int32 *ref, int *fnlen));
+extern FRETVAL(intf) nd8iwref
+    PROTO((_fcd filename, intf *ref, intf *fnlen));
 
-extern FRETVAL(int) nd8inims
-    PROTO((_fcd filename, int *fnlen));
+extern FRETVAL(intf) nd8inims
+    PROTO((_fcd filename, intf *fnlen));
 
-extern FRETVAL(int) nd8lref
+extern FRETVAL(intf) nd8lref
     PROTO((void));
 
-extern FRETVAL(int) ndfr8lastref
+extern FRETVAL(intf) ndfr8lastref
     PROTO((void));
 
-extern  FRETVAL(int) ndfr8setpalette
+extern  FRETVAL(intf) ndfr8setpalette
     PROTO((_fcd pal));
 
-extern  FRETVAL(int) ndfr8restart
+extern  FRETVAL(intf) ndfr8restart
     PROTO((void));
 
 /*
@@ -764,140 +770,153 @@ extern  FRETVAL(int) ndfr8restart
 #endif /* DF_CAPFNAMES */
 #endif  /* DFSD_FNAMES */
 
-extern  FRETVAL(int) ndsgdast
-    PROTO((_fcd label, _fcd unit, _fcd format, _fcd coordsys));
+extern FRETVAL(intf) ndsgdisc
+    PROTO((intf *dim, intf *maxsize, void *scale));
 
-extern FRETVAL(int) ndsigdis
-    PROTO((int *dim, _fcd label, _fcd unit, _fcd format, int32 *llabel,
-           int32 *lunit, int32 *lformat));
-
-extern FRETVAL(int) ndsgdisc
-    PROTO((int *dim, int32 *maxsize, void *scale));
-
-extern FRETVAL(int) ndsgrang
+extern FRETVAL(intf) ndsgrang
     PROTO((void *pmax, void *pmin));
 
-extern FRETVAL(int) ndssdims
-    PROTO((int32 *rank, int32 dimsizes[]));
+extern FRETVAL(intf) ndssdims
+    PROTO((intf *rank, intf dimsizes[]));
 
-extern FRETVAL(int) ndssdisc
-    PROTO((int *dim, int32 *dimsize, void *scale));
+extern FRETVAL(intf) ndssdisc
+    PROTO((intf *dim, intf *dimsize, void *scale));
 
-extern FRETVAL(int) ndssrang
+extern FRETVAL(intf) ndssrang
     PROTO((void *max, void *min));
 
-extern FRETVAL(int) ndsclear
+extern FRETVAL(intf) ndsclear
     PROTO((void));
 
-extern FRETVAL(int) ndsslens
-    PROTO((int *maxlen_label, int *maxlen_unit, int *maxlen_format,
-            int *maxlen_coordsys));
+extern FRETVAL(intf) ndsslens
+    PROTO((intf *maxlen_label, intf *maxlen_unit, intf *maxlen_format,
+            intf *maxlen_coordsys));
 
-extern FRETVAL(int) ndsgdiln
-    PROTO((int *dim, int *llabel, int *lunit, int *lformat));
+extern FRETVAL(intf) ndsgdiln
+    PROTO((intf *dim, intf *llabel, intf *lunit, intf *lformat));
 
-extern FRETVAL(int) ndsgdaln
-    PROTO((int *llabel, int *lunit, int *lformat, int *lcoordsys));
+extern FRETVAL(intf) ndsgdaln
+    PROTO((intf *llabel, intf *lunit, intf *lformat, intf *lcoordsys));
 
-extern FRETVAL(int) ndsfirst
+extern FRETVAL(intf) ndsfirst
     PROTO((void));
 
-extern FRETVAL(int) ndspslc
-    PROTO((int32 windims[], void *data, int32 dims[]));
+extern FRETVAL(intf) ndspslc
+    PROTO((intf windims[], void *data, intf dims[]));
 
-extern FRETVAL(int) ndseslc
+extern FRETVAL(intf) ndseslc
     PROTO((void));
 
-extern FRETVAL(int) ndssnt
-    PROTO((int32 *numbertype));
+extern FRETVAL(intf) ndssnt
+    PROTO((intf *numbertype));
 
-extern FRETVAL(int) ndsgnt
-    PROTO((int32 *pnumbertype));
+extern FRETVAL(intf) ndsgnt
+    PROTO((intf *pnumbertype));
 
-extern FRETVAL(int) ndsigdim
-    PROTO((_fcd filename, int32 *prank, int32 sizes[], int32 *maxrank, int32 *lenfn));
+extern FRETVAL(intf) ndsigdim
+    PROTO((_fcd filename, intf *prank, intf sizes[], intf *maxrank, intf *lenfn));
 
-extern FRETVAL(int) ndsigdat
-    PROTO((_fcd filename, int32 *rank, int32 maxsizes[], void *data, int32 *fnlen));
+extern FRETVAL(intf) ndsigdat
+    PROTO((_fcd filename, intf *rank, intf maxsizes[], void *data, intf *fnlen));
 
-extern FRETVAL(int) ndsipdat
-    PROTO((_fcd filename, int32 *rank, int32 dimsizes[], void *data, int32 *fnlen));
+extern FRETVAL(intf) ndsipdat
+    PROTO((_fcd filename, intf *rank, intf dimsizes[], void *data, intf *fnlen));
 
-extern FRETVAL(int) ndsiadat
-    PROTO((_fcd filename, int32 *rank, int32 dimsizes[], void *data, int32 *fnlen));
+extern FRETVAL(intf) ndsiadat
+    PROTO((_fcd filename, intf *rank, intf dimsizes[], void *data, intf *fnlen));
 
-extern FRETVAL(int) ndsigslc
-    PROTO((_fcd filename, int32 winst[], int32 windims[], void *data,
-            int32 dims[], int *fnlen));
+extern FRETVAL(intf) ndsigslc
+    PROTO((_fcd filename, intf winst[], intf windims[], void *data,
+            intf dims[], intf *fnlen));
 
-extern FRETVAL(int) ndsisslc
-    PROTO((_fcd filename, int *fnlen));
+extern FRETVAL(intf) ndsisslc
+    PROTO((_fcd filename, intf *fnlen));
 
-extern FRETVAL(int) ndsirref
-    PROTO((_fcd filename, int32 *ref, int *fnlen));
+extern FRETVAL(intf) ndsirref
+    PROTO((_fcd filename, intf *ref, intf *fnlen));
 
-extern FRETVAL(int) ndslref
+extern FRETVAL(intf) ndslref
     PROTO((void));
 
-extern FRETVAL(int) ndsinum
-    PROTO((_fcd filename, int32 *len));
+extern FRETVAL(intf) ndsinum
+    PROTO((_fcd filename, intf *len));
 
-extern FRETVAL(int) ndsscal
-    PROTO((float64 *cal, float64 *cal_err, float64 *ioff, 
-           float64 *ioff_err, int32 * cal_type));
-
-extern FRETVAL(int) ndsgcal
-         PROTO((float64 *cal, float64 *cal_err, float64 *ioff, 
-                float64 *ioff_err, int32 * cal_type));
-
-extern FRETVAL(int) ndfsdgetdatastrs
+extern FRETVAL(intf) ndfsdgetdatastrs
     PROTO((_fcd label, _fcd unit, _fcd format, _fcd coordsys));
 
-extern FRETVAL(int) ndfsdgetdimscale
-    PROTO((int *dim, int32 *maxsize, void *scale));
+extern FRETVAL(intf) ndfsdgetdimstrs
+    PROTO((intf *dim, _fcd label, _fcd unit, _fcd format));
 
-extern FRETVAL(int) ndfsdgetrange
+extern FRETVAL(intf) ndfsdgetdimscale
+    PROTO((intf *dim, intf *maxsize, void *scale));
+
+extern FRETVAL(intf) ndfsdgetrange
     PROTO((void *pmax, void *pmin));
 
-extern FRETVAL(int) ndfsdsetdims
-    PROTO((int32 *rank, int32 dimsizes[]));
+extern FRETVAL(intf) ndfsdsetdims
+    PROTO((intf *rank, intf dimsizes[]));
 
-extern FRETVAL(int) ndfsdsetdimscale
-    PROTO((int *dim, int32 *dimsize, void *scale));
+extern FRETVAL(intf) ndfsdsetdimscale
+    PROTO((intf *dim, intf *dimsize, void *scale));
 
-extern FRETVAL(int) ndfsdsetrange
+extern FRETVAL(intf) ndfsdsetrange
     PROTO((void *max, void *min));
 
-extern FRETVAL(int) ndfsdclear
+extern FRETVAL(intf) ndfsdclear
     PROTO((void));
 
-extern FRETVAL(int) ndfsdsetlengths
-    PROTO((int *maxlen_label, int *maxlen_unit, int *maxlen_format,
-                int *maxlen_coordsys));
+extern FRETVAL(intf) ndfsdsetlengths
+    PROTO((intf *maxlen_label, intf *maxlen_unit, intf *maxlen_format,
+                intf *maxlen_coordsys));
 
-extern FRETVAL(int) ndfsdgetdimlen
-    PROTO((int* dim, int *llabel, int *lunit, int *lformat));
+extern FRETVAL(intf) ndfsdgetdimlen
+    PROTO((intf *dim, intf *llabel, intf *lunit, intf *lformat));
 
-extern FRETVAL(int) ndfsdgetdatalen
-    PROTO((int *llabel, int *lunit, int *lformat, int *lcoordsys));
+extern FRETVAL(intf) ndfsdgetdatalen
+    PROTO((intf *llabel, intf *lunit, intf *lformat, intf *lcoordsys));
 
-extern FRETVAL(int) ndfsdrestart
+extern FRETVAL(intf) ndfsdrestart
     PROTO((void));
 
-extern FRETVAL(int) ndfsdputslice
-    PROTO((int32 windims[], void *data, int32 dims[]));
+extern FRETVAL(intf) ndfsdputslice
+    PROTO((intf windims[], void *data, intf dims[]));
 
-extern FRETVAL(int) ndfsdendslice
+extern FRETVAL(intf) ndfsdendslice
     PROTO((void));
 
-extern FRETVAL(int) ndfsdsetnt
-    PROTO((int32 *numbertype));
+extern FRETVAL(intf) ndfsdsetnt
+    PROTO((intf *numbertype));
 
-extern FRETVAL(int) ndfsdgetnt
-    PROTO((int32 *pnumbertype));
+extern FRETVAL(intf) ndfsdgetnt
+    PROTO((intf *pnumbertype));
 
-extern FRETVAL(int) ndfsdlastref
+extern FRETVAL(intf) ndfsdlastref
     PROTO((void));
+
+extern FRETVAL(intf) ndsisdis
+    PROTO((intf *dim, _fcd flabel, _fcd funit, _fcd fformat, intf *llabel,
+        intf *lunit, intf *lformat));
+
+extern FRETVAL(intf) ndsigdis
+    PROTO((intf *dim, _fcd label, _fcd unit, _fcd format, intf *llabel,
+           intf *lunit, intf *lformat));
+
+extern FRETVAL(intf) ndsisdas
+    PROTO((_fcd flabel, _fcd funit, _fcd fformat, _fcd fcoordsys,
+        intf *isfortran, intf *llabel, intf *lunit, intf *lformat,
+        intf *lcoordsys));
+
+extern FRETVAL(intf) ndsigdas
+    PROTO((_fcd label, _fcd unit, _fcd format, _fcd coordsys, intf *llabel,
+        intf *lunit, intf *lformat, intf *lcoord));
+
+extern FRETVAL(intf) ndsscal
+    PROTO((float64 *cal, float64 *cal_err, float64 *ioff, float64 *ioff_err,
+        intf *cal_type));
+
+extern FRETVAL(intf) ndsgcal
+    PROTO((float64 *cal, float64 *cal_err, float64 *ioff, float64 *ioff_err,
+        intf *cal_type));
 
 /*
 ** from dfpF.c
@@ -928,31 +947,31 @@ extern FRETVAL(int) ndfsdlastref
 #endif /* DF_CAPFNAMES */
 #endif /* DFP_FNAMES */
 
-extern  FRETVAL(int) ndpigpal
-    PROTO((_fcd filename, _fcd pal, int *fnlen));
+extern  FRETVAL(intf) ndpigpal
+    PROTO((_fcd filename, _fcd pal, intf *fnlen));
 
-extern FRETVAL(int) ndpippal
-    PROTO((_fcd filename, _fcd pal, int *overwrite, _fcd filemode, int *fnlen));
+extern FRETVAL(intf) ndpippal
+    PROTO((_fcd filename, _fcd pal, intf *overwrite, _fcd filemode, intf *fnlen));
 
-extern FRETVAL(int) ndpinpal
-    PROTO((_fcd filename, int *fnlen));
+extern FRETVAL(intf) ndpinpal
+    PROTO((_fcd filename, intf *fnlen));
 
-extern FRETVAL(int) ndpirref
-    PROTO((_fcd filename, uint16 *ref, int *fnlen));
+extern FRETVAL(intf) ndpirref
+    PROTO((_fcd filename, uint16 *ref, intf *fnlen));
 
-extern FRETVAL(int) ndpiwref
-    PROTO((_fcd filename, uint16 *ref, int *fnlen));
+extern FRETVAL(intf) ndpiwref
+    PROTO((_fcd filename, uint16 *ref, intf *fnlen));
 
-extern FRETVAL(int) ndprest
+extern FRETVAL(intf) ndprest
     PROTO((void));
 
-extern FRETVAL(int) ndplref
+extern FRETVAL(intf) ndplref
     PROTO((void));
 
-extern FRETVAL(int) ndfprestart
+extern FRETVAL(intf) ndfprestart
     PROTO((void));
 
-extern FRETVAL(int) ndfplastref
+extern FRETVAL(intf) ndfplastref
     PROTO((void));
 
 /*
@@ -989,42 +1008,42 @@ extern FRETVAL(int) ndfplastref
 #endif /* DF_CAPFNAMES */
 #endif /* DF24_FNAMES */
 
-extern FRETVAL(int) nd2reqil
-    PROTO((int *il));
+extern FRETVAL(intf) nd2reqil
+    PROTO((intf *il));
 
-extern FRETVAL(int) nd2sdims
-    PROTO((int32 *xdim, int32 *ydim));
+extern FRETVAL(intf) nd2sdims
+    PROTO((intf *xdim, intf *ydim));
 
-extern FRETVAL(int) nd2igdim
-    PROTO((_fcd filename, int32 *pxdim, int32 *pydim, int *pil, int *fnlen));
+extern FRETVAL(intf) nd2igdim
+    PROTO((_fcd filename, intf *pxdim, intf *pydim, int *pil, int *fnlen));
 
-extern FRETVAL(int) nd2igimg
-    PROTO((_fcd filename, _fcd image, int32 *xdim, int32 *ydim, int *fnlen));
+extern FRETVAL(intf) nd2igimg
+    PROTO((_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *fnlen));
 
-extern FRETVAL(int) nd2iaimg
-    PROTO((_fcd filename, _fcd image, int32 *xdim, int32 *ydim,
-            int *fnlen, int *newfile));
+extern FRETVAL(intf) nd2iaimg
+    PROTO((_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *fnlen,
+        intf *newfile));
 
-extern FRETVAL(int) nd2setil
-    PROTO((int *il));
+extern FRETVAL(intf) nd2setil
+    PROTO((intf *il));
 
-extern FRETVAL(int) nd2first
+extern FRETVAL(intf) nd2first
     PROTO((void));
 
-extern FRETVAL(int) ndf24reqil
-    PROTO((int *il));
+extern FRETVAL(intf) ndf24reqil
+    PROTO((intf *il));
 
-extern FRETVAL(int) ndf24setdims
-    PROTO((int32 *xdim, int32 *ydim));
+extern FRETVAL(intf) ndf24setdims
+    PROTO((intf *xdim, intf *ydim));
 
-extern FRETVAL(int) ndf24setil
-    PROTO((int *il));
+extern FRETVAL(intf) ndf24setil
+    PROTO((intf *il));
 
-extern FRETVAL(int) ndf24restart
+extern FRETVAL(intf) ndf24restart
     PROTO((void));
 
-extern FRETVAL(int) nd2irref
-    PROTO((_fcd filename, int *ref, int *fnlen));
+extern FRETVAL(intf) nd2irref
+    PROTO((_fcd filename, intf *ref, intf *fnlen));
 
 /*
 ** from dfF.c
@@ -1076,74 +1095,74 @@ extern FRETVAL(int) nd2irref
 #endif /* DF_CAPFNAMES */
 #endif /* DF_FNAMES */
 
-extern FRETVAL(int32) ndfiopen
-    PROTO((_fcd name, int32 *access, int32 *defdds, intn *namelen));
+extern FRETVAL(intf) ndfiopen
+    PROTO((_fcd name, intf *access, intf *defdds, intf *namelen));
 
-extern FRETVAL(int) ndfclose
-    PROTO((int32 *dfile));
+extern FRETVAL(intf) ndfclose
+    PROTO((intf *dfile));
 
-extern FRETVAL(int) ndfdesc
-    PROTO((int32 *dfile, int32 ptr[][4], int32 *begin, int32 *num));
+extern FRETVAL(intf) ndfdesc
+    PROTO((intf *dfile, intf ptr[][4], intf *begin, intf *num));
 
-extern FRETVAL(int) ndfdup
-    PROTO((int32 *dfile, int32 *tag, int32 *ref, int32 *otag, int32 *oref));
+extern FRETVAL(intf) ndfdup
+    PROTO((intf *dfile, intf *tag, intf *ref, intf *otag, intf *oref));
 
-extern FRETVAL(int) ndfdel
-    PROTO((int32 *dfile, int32 *tag, int32 *ref));
+extern FRETVAL(intf) ndfdel
+    PROTO((intf *dfile, intf *tag, intf *ref));
 
-extern FRETVAL(int32) ndfiaccess
-    PROTO((int32 *dfile, int32 *tag, int32 *ref, _fcd access, int32 *acclen));
+extern FRETVAL(intf) ndfiaccess
+    PROTO((intf *dfile, intf *tag, intf *ref, _fcd access, intf *acclen));
 
-extern FRETVAL(int) ndfstart
-    PROTO((int32 *dfile, int32 *tag, int32 *ref, char *access));
+extern FRETVAL(intf) ndfstart
+    PROTO((intf *dfile, intf *tag, intf *ref, char *access));
 
-extern FRETVAL(int32) ndfread
-    PROTO((int32 *dfile, _fcd ptr, int32 *len));
+extern FRETVAL(intf) ndfread
+    PROTO((intf *dfile, _fcd ptr, intf *len));
 
-extern FRETVAL(int32) ndfseek
-    PROTO((int32 *dfile, int32 *offset));
+extern FRETVAL(intf) ndfseek
+    PROTO((intf *dfile, intf *offset));
 
-extern FRETVAL(int32) ndfwrite
-    PROTO((int32 *dfile, _fcd ptr, int32 *len));
+extern FRETVAL(intf) ndfwrite
+    PROTO((intf *dfile, _fcd ptr, intf *len));
 
-extern FRETVAL(int) ndfupdate
-    PROTO((int32 *dfile));
+extern FRETVAL(intf) ndfupdate
+    PROTO((intf *dfile));
 
-extern FRETVAL(int32) ndfget
-    PROTO((int32 *dfile, int32 *tag, int32 *ref, _fcd ptr));
+extern FRETVAL(intf) ndfget
+    PROTO((intf *dfile, intf *tag, intf *ref, _fcd ptr));
 
-extern FRETVAL(int32) ndfput
-    PROTO((int32 *dfile, int32 *tag, int32 *ref, _fcd ptr, int32 *len));
+extern FRETVAL(intf) ndfput
+    PROTO((intf *dfile, intf *tag, intf *ref, _fcd ptr, intf *len));
 
-extern FRETVAL(int) ndfsfind
-    PROTO((int32 *dfile, int32 *tag, int32 *ref));
+extern FRETVAL(intf) ndfsfind
+    PROTO((intf *dfile, intf *tag, intf *ref));
 
-extern FRETVAL(int) ndffind
-    PROTO((int32 *dfile, int32 *itag, int32 *iref, int32 *len));
+extern FRETVAL(intf) ndffind
+    PROTO((intf *dfile, intf *itag, intf *iref, intf *len));
 
-extern FRETVAL(int) ndferrno
+extern FRETVAL(intf) ndferrno
     PROTO((void));
 
-extern FRETVAL(int32) ndfnewref
-    PROTO((int32 *dfile));
+extern FRETVAL(intf) ndfnewref
+    PROTO((intf *dfile));
 
 
-extern FRETVAL(int) ndfnumber
-    PROTO((int32 *dfile, int32 *tag));
+extern FRETVAL(intf) ndfnumber
+    PROTO((intf *dfile, intf *tag));
 
 #ifdef TEMP_OUT
-extern FRETVAL(int) ndfstat
-    PROTO((int32 *dfile, DFdata *dfinfo));
+extern FRETVAL(intf) ndfstat
+    PROTO((intf *dfile, DFdata *dfinfo));
 #endif
 
-extern FRETVAL(int) ndfiishdf
-    PROTO((_fcd name, intn *namelen));
+extern FRETVAL(intf) ndfiishdf
+    PROTO((_fcd name, intf *namelen));
 
 /*
 ** from dfutil.c
 */
 extern uint16 DFfindnextref
-  PROTO((int32 file_id, uint16 tag, uint16 lref));
+  PROTO((intf file_id, uint16 tag, uint16 lref));
 
 /*
 ** from dfutilF.c
@@ -1159,11 +1178,11 @@ extern uint16 DFfindnextref
 #endif /* DF_CAPFNAMES */
 #endif /* DFUTIL_FNAMES */
 
-extern FRETVAL(uint16) ndfindnr
-    PROTO((int32 *dfile, uint16 *tag, uint16 *lref));
+extern FRETVAL(intf) ndfindnr
+    PROTO((intf *dfile, intf *tag, intf *lref));
 
-extern FRETVAL(uint16) ndffindnextref
-    PROTO((int32 *dfile, uint16 *tag, uint16 *lref));
+extern FRETVAL(intf) ndffindnextref
+    PROTO((intf *dfile, intf *tag, intf *lref));
 
 /*
 ** from herrF.c
@@ -1178,7 +1197,7 @@ extern FRETVAL(uint16) ndffindnextref
 #endif  /* HERR_FNAMES */
 
 extern FRETVAL(VOID) nheprnt
-    PROTO((int32 print_levels));
+    PROTO((intf *print_levels));
 
 /*
 ** from hfileF.c
@@ -1194,11 +1213,11 @@ extern FRETVAL(VOID) nheprnt
 #endif /* DF_CAPFNAMES */
 #endif /* HFILE_FNAMES */
 
-extern FRETVAL(int32) nhiopen
-    PROTO((_fcd name, int *access, int16 *defdds, int *namelen));
+extern FRETVAL(intf) nhiopen
+    PROTO((_fcd name, intf *access, intf *defdds, intf *namelen));
 
-extern FRETVAL(intn) nhclose
-    PROTO((int32 *file_id));
+extern FRETVAL(intf) nhclose
+    PROTO((intf *file_id));
 
 /*
 ** from dfufp2im.c

@@ -5,9 +5,15 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/09/11 14:15:04  koziol
+Changed Fortran stubs' parameter passing to use a new typedef, intf,
+which should be typed to the size of an INTEGER*4 in whatever Fortran
+compiler the C functions need to be compatible with.  (This is mostly
+for the PC and possibly for the Mac)
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*-----------------------------------------------------------------------------
  * File:    dfF.c
@@ -98,17 +104,18 @@ Initial revision
  * Method:  Convert filename to C string, call DFopen
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfiopen(_fcd name, int32 *access, int32 *defdds, intn *namelen)
+ndfiopen(_fcd name, intf *access, intf *defdds, intf *namelen)
 #else
 ndfiopen(name, access, defdds, namelen)
     _fcd name;
-    intn *access, *defdds, *namelen;
+    intf *access, *defdds;
+    intf *namelen;
 #endif /* PROTOTYPE */
 {
     char *fn;
-    int32 ret;
+    intf ret;
     
     fn = DFIf2cstring(name, *namelen);
     ret = (int32) DFopen(fn, (intn)*access, (intn)*defdds);
@@ -126,12 +133,12 @@ ndfiopen(name, access, defdds, namelen)
  * Invokes: DFclose
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfclose(int32 *dfile)
+ndfclose(intf *dfile)
 #else
 ndfclose(dfile)
-    int32 *dfile;
+    intf *dfile;
 #endif /* PROTOTYPE */
 {
     return(DFclose((DF *)*dfile));
@@ -148,17 +155,18 @@ ndfclose(dfile)
  * Invokes: DFdesc
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfdesc(int32 *dfile, int32 ptr[][4], int32 *begin, int32 *num)
+ndfdesc(intf *dfile, intf ptr[][4], intf *begin, intf *num)
 #else
 ndfdesc(dfile, ptr, begin, num)
-    int32 *dfile, *begin, *num;
-    int32 ptr[][4];
+    intf *dfile, *begin, *num;
+    intf ptr[][4];
 #endif /* PROTOTYPE */
 {
     DFdesc *ptr1;
-    int i, num_desc;
+    int i;
+    intf num_desc;
 
             /* allocate temporary space */
     ptr1 = (DFdesc *) HDgetspace((uint32)*num * sizeof(DFdesc));
@@ -175,7 +183,7 @@ ndfdesc(dfile, ptr, begin, num)
 
     HDfreespace(ptr1);
 
-    return num_desc;
+    return(num_desc);
 }
 
 
@@ -190,16 +198,15 @@ ndfdesc(dfile, ptr, begin, num)
  * Invokes: DFdup
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfdup(int32 *dfile, int32 *tag, int32 *ref, int32 *otag, int32 *oref)
+ndfdup(intf *dfile, intf *tag, intf *ref, intf *otag, intf *oref)
 #else
 ndfdup(dfile, tag, ref, otag, oref)
-    int32 *dfile;
-    int32 *tag, *ref, *oref, *otag;
+    intf *dfile;
+    intf *tag, *ref, *oref, *otag;
 #endif /* PROTOTYPE */
 {
-
     return(DFdup((DF *)*dfile, (uint16)*tag, (uint16)*ref, (uint16)*otag,
     	   (uint16)*oref));
 }
@@ -215,13 +222,13 @@ ndfdup(dfile, tag, ref, otag, oref)
  * Invokes: DFdel
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfdel(int32 *dfile, int32 *tag, int32 *ref)
+ndfdel(intf *dfile, intf *tag, intf *ref)
 #else
 ndfdel(dfile, tag, ref)
-    int32 *dfile;
-    int32 *tag, *ref;
+    intf *dfile;
+    intf *tag, *ref;
 #endif /* PROTOTYPE */
 {
     return (DFdel((DF *)*dfile, (uint16)*tag, (uint16)*ref));
@@ -239,19 +246,19 @@ ndfdel(dfile, tag, ref)
  * Invokes: DFaccess
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfiaccess(int32 *dfile, int32 *tag, int32 *ref, _fcd access, int32 *acclen)
+ndfiaccess(intf *dfile, intf *tag, intf *ref, _fcd access, intf *acclen)
 #else
 ndfiaccess(dfile, tag, ref, access, acclen)
-    int32 *dfile;
-    int32 *tag, *ref;
+    intf *dfile;
+    intf *tag, *ref;
     _fcd access;
-    int32 *acclen;
+    intf *acclen;
 #endif /* PROTOTYPE */
 {
     char *acc;
-    int32 ret;
+    intf ret;
 
     acc = DFIf2cstring(access, *acclen);
     ret = (int32)DFaccess((DF *) *dfile, (uint16)*tag, (uint16)*ref, acc);
@@ -272,17 +279,16 @@ ndfiaccess(dfile, tag, ref, access, acclen)
  * Invokes: DFaccess
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfstart(int32 *dfile, int32 *tag, int32 *ref, char *access)
+ndfstart(intf *dfile, intf *tag, intf *ref, char *access)
 #else
 ndfstart(dfile, tag, ref, access)
-int32 *dfile;
-int32 *tag, *ref;
-char *access;
+    intf *dfile;
+    intf *tag, *ref;
+    char *access;
 #endif /* PROTOTYPE */
 {
-
     return(DFaccess((DF *)*dfile, (uint16)*tag, (uint16)*ref, access));
 }
 #endif /* 0 */
@@ -298,12 +304,12 @@ char *access;
  * Invokes: DFread
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfread(int32 *dfile, _fcd ptr, int32 *len)
+ndfread(intf *dfile, _fcd ptr, intf *len)
 #else
 ndfread(dfile, ptr, len)
-    int32 *dfile, *len;
+    intf *dfile, *len;
     _fcd ptr;
 #endif /* PROTOTYPE */
 {
@@ -320,15 +326,14 @@ ndfread(dfile, ptr, len)
  * Invokes: DFseek
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfseek(int32 *dfile, int32 *offset)
+ndfseek(intf *dfile, intf *offset)
 #else
 ndfseek(dfile, offset)
-    int32 *dfile, *offset;
+    intf *dfile, *offset;
 #endif /* PROTOTYPE */
 {
-
     return (DFseek((DF *)*dfile, *offset));
 }
 
@@ -344,16 +349,15 @@ ndfseek(dfile, offset)
  * Invokes: DFwrite
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfwrite(int32 *dfile, _fcd ptr, int32 *len)
+ndfwrite(intf *dfile, _fcd ptr, intf *len)
 #else
 ndfwrite(dfile, ptr, len)
-    int32 *dfile, *len;
+    intf *dfile, *len;
     _fcd ptr;
 #endif /* PROTOTYPE */
 {
-
     return (DFwrite((DF *)*dfile, (char *)_fcdtocp(ptr), *len));
 }
 
@@ -366,15 +370,14 @@ ndfwrite(dfile, ptr, len)
  * Invokes: DFupdate
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfupdate(int32 *dfile)
+ndfupdate(intf *dfile)
 #else
 ndfupdate(dfile)
-    int32 *dfile;
+    intf *dfile;
 #endif /* PROTOTYPE */
 {
-
     return (DFupdate((DF *)*dfile));
 }
 
@@ -390,13 +393,13 @@ ndfupdate(dfile)
  * Invokes: DFgetelement
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfget(int32 *dfile, int32 *tag, int32 *ref, _fcd ptr)
+ndfget(intf *dfile, intf *tag, intf *ref, _fcd ptr)
 #else
 ndfget(dfile, tag, ref, ptr)
-    int32 *dfile;
-    int32 *tag, *ref;
+    intf *dfile;
+    intf *tag, *ref;
     _fcd ptr;
 #endif /* PROTOTYPE */
 {
@@ -417,18 +420,17 @@ ndfget(dfile, tag, ref, ptr)
  * Invokes: DFputelement
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfput(int32 *dfile, int32 *tag, int32 *ref, _fcd ptr, int32 *len)
+ndfput(intf *dfile, intf *tag, intf *ref, _fcd ptr, intf *len)
 #else
 ndfput(dfile, tag, ref, ptr, len)
-    int32 *dfile;
-    int32 *tag, *ref;
-    int32 *len;
+    intf *dfile;
+    intf *tag, *ref;
+    intf *len;
     _fcd ptr;
 #endif /* PROTOTYPE */
 {
-
     return (DFputelement((DF *)*dfile, (uint16)*tag, (uint16)*ref,
 	    (char*)_fcdtocp(ptr), *len));
 }
@@ -443,13 +445,13 @@ ndfput(dfile, tag, ref, ptr, len)
  * Invokes: DFsetfind
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfsfind(int32 *dfile, int32 *tag, int32 *ref)
+ndfsfind(intf *dfile, intf *tag, intf *ref)
 #else
 ndfsfind(dfile, tag, ref)
-    int32 *dfile;
-    int32 *tag, *ref;
+    intf *dfile;
+    intf *tag, *ref;
 #endif /* PROTOTYPE */
 {
     return (DFsetfind((DF *) *dfile, (uint16)*tag, (uint16)*ref));
@@ -467,18 +469,18 @@ ndfsfind(dfile, tag, ref)
  * Invokes: DFfind
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndffind(int32 *dfile, int32 *itag, int32 *iref, int32 *len)
+ndffind(intf *dfile, intf *itag, intf *iref, intf *len)
 #else
 ndffind(dfile, itag, iref, len)
-    int32 *dfile;
-    int32 *itag, *iref;
-    int32 *len;
+    intf *dfile;
+    intf *itag, *iref;
+    intf *len;
 #endif /* PROTOTYPE */
 {
     DFdesc *ptr1;
-    int ret;
+    intf ret;
 
     ptr1 = HDgetspace((uint32)sizeof(DFdesc));
     ret = DFfind((DF *) *dfile, ptr1);
@@ -502,7 +504,7 @@ ndffind(dfile, itag, iref, len)
  * Invokes: DFerrno
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 ndferrno(void)
 #else
@@ -521,12 +523,12 @@ ndferrno()
  * Invokes: DFnewref
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int32)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfnewref(int32 *dfile)
+ndfnewref(intf *dfile)
 #else
 ndfnewref(dfile)
-int32 *dfile;
+intf *dfile;
 #endif /* PROTOTYPE */
 {
     return(DFnewref((DF *) *dfile));
@@ -543,13 +545,13 @@ int32 *dfile;
  * Invokes: DFnumber
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfnumber(int32 *dfile, int32 *tag)
+ndfnumber(intf *dfile, intf *tag)
 #else
 ndfnumber(dfile, tag)
-int32 *dfile;
-int32 *tag;
+intf *dfile;
+intf *tag;
 #endif /* PROTOTYPE */
 {
     return(DFnumber((DF *) *dfile, (uint16)*tag));
@@ -566,12 +568,12 @@ int32 *tag;
  * Invokes: DFstat
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfstat(int32 *dfile, DFdata *dfinfo)
+ndfstat(intf *dfile, DFdata *dfinfo)
 #else
 ndfstat(dfile, dfinfo)
-int32 *dfile;
+intf *dfile;
 DFdata *dfinfo;
 #endif /* PROTOTYPE */
 {
@@ -589,17 +591,17 @@ DFdata *dfinfo;
  * Invokes: DFishdf
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfiishdf(_fcd name, intn *namelen)
+ndfiishdf(_fcd name, intf *namelen)
 #else
 ndfiishdf(name, namelen)
-_fcd name;
-intn *namelen;
+    _fcd name;
+    intf *namelen;
 #endif /* PROTOTYPE */
 {
     char *fn;
-    int ret;
+    intf ret;
 
     fn = DFIf2cstring(name, *namelen);
     ret = DFishdf(fn);

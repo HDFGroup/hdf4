@@ -5,9 +5,15 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/09/11 14:15:04  koziol
+Changed Fortran stubs' parameter passing to use a new typedef, intf,
+which should be typed to the size of an INTEGER*4 in whatever Fortran
+compiler the C functions need to be compatible with.  (This is mostly
+for the PC and possibly for the Mac)
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*-----------------------------------------------------------------------------
  * File:    dfutilF.c
@@ -42,14 +48,13 @@ Initial revision
  * Invokes: DFfindnextref
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(uint16)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfindnr(int32 *dfile, uint16 *tag, uint16 *lref)
+ndfindnr(intf *dfile, intf *tag, intf *lref)
 #else
 ndfindnr(dfile, tag, lref)
-     int32 *dfile;
-     uint16 *tag,
-         *lref;
+     intf *dfile;
+     intf *tag, *lref;
 #endif /* PROTOTYPE */
 {
     return(DFfindnextref(*dfile, *tag, *lref));
@@ -71,14 +76,13 @@ CEND7MAX
  * Invokes: DFfindnextref
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(uint16)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndffindnextref(int32 *dfile, uint16 *tag, uint16 *lref)
+ndffindnextref(intf *dfile, intf *tag, intf *lref)
 #else
 ndffindnextref(dfile, tag, lref)
-     int32 *dfile;
-     uint16 *tag,
-         *lref;
+     intf *dfile;
+     intf *tag, *lref;
 #endif /* PROTOTYPE */
 {
     return(DFfindnextref(*dfile, *tag, *lref));

@@ -5,9 +5,15 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/09/11 14:15:04  koziol
+Changed Fortran stubs' parameter passing to use a new typedef, intf,
+which should be typed to the size of an INTEGER*4 in whatever Fortran
+compiler the C functions need to be compatible with.  (This is mostly
+for the PC and possibly for the Mac)
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*-----------------------------------------------------------------------------
  * File:    dfpF.c
@@ -63,18 +69,18 @@ Initial revision
  * Invokes: DFPgetpal
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndpigpal(_fcd filename, _fcd pal, int *fnlen)
+ndpigpal(_fcd filename, _fcd pal, intf *fnlen)
 #else
 ndpigpal(filename, pal, fnlen)
     _fcd filename;
-    int *fnlen;
     _fcd pal;
+    intf *fnlen;
 #endif /* PROTOTYPE */
 {
     char *fn;
-    int ret;
+    intf ret;
 
     fn = HDf2cstring(filename, *fnlen);
     ret =  DFPgetpal(fn, (VOIDP)_fcdtocp(pal));
@@ -100,20 +106,20 @@ ndpigpal(filename, pal, fnlen)
  *          call
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndpippal(_fcd filename, _fcd pal, int *overwrite, _fcd filemode, int *fnlen)
+ndpippal(_fcd filename, _fcd pal, intf *overwrite, _fcd filemode, intf *fnlen)
 #else
 ndpippal(filename, pal, overwrite, filemode, fnlen)
     _fcd filename;
     _fcd pal;
-    int *overwrite;
+    intf *overwrite;
     _fcd filemode;
-    int *fnlen;
+    intf *fnlen;
 #endif /* PROTOTYPE */
 {
     char *fn;
-    int ret;
+    intf ret;
 
     fn = HDf2cstring(filename, *fnlen);
     ret =  DFPputpal(fn, (VOIDP)_fcdtocp(pal), *overwrite,
@@ -132,17 +138,17 @@ ndpippal(filename, pal, overwrite, filemode, fnlen)
  * Invokes: DFPnpals
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndpinpal(_fcd filename, int *fnlen)
+ndpinpal(_fcd filename, intf *fnlen)
 #else
 ndpinpal(filename, fnlen)
     _fcd filename;
-    int *fnlen;
+    intf *fnlen;
 #endif /* PROTOTYPE */
 {
     char *fn;
-    int ret;
+    intf ret;
 
     fn = HDf2cstring(filename, *fnlen);
     ret =  DFPnpals(fn);
@@ -162,18 +168,18 @@ ndpinpal(filename, fnlen)
  * Remarks: checks if palette with this ref exists
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndpirref(_fcd filename, uint16 *ref, int *fnlen)
+ndpirref(_fcd filename, uint16 *ref, intf *fnlen)
 #else
 ndpirref(filename, ref, fnlen)
     _fcd filename;
-    int *fnlen;
     uint16 *ref;
+    intf *fnlen;
 #endif /* PROTOTYPE */
 {
     char *fn;
-    int ret;
+    intf ret;
 
     fn = HDf2cstring(filename, *fnlen);
     ret =  DFPreadref(fn, *ref);
@@ -194,19 +200,19 @@ ndpirref(filename, ref, fnlen)
  *---------------------------------------------------------------------------*/
 
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
-ndpiwref(_fcd filename, uint16 *ref, int *fnlen)
+ndpiwref(_fcd filename, uint16 *ref, intf *fnlen)
 #else
 ndpiwref(filename, ref, fnlen)
     _fcd filename;
     uint16 *ref;
-    int *fnlen;
+    intf *fnlen;
 #endif /* PROTOTYPE */
 {
 
     char *fn;
-    int ret;
+    intf ret;
 
     fn = HDf2cstring(filename, *fnlen);
     ret =  DFPreadref(fn, *ref);
@@ -224,7 +230,7 @@ ndpiwref(filename, ref, fnlen)
  * Remarks: Invokes DFPrestart
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 ndprest(void)
 #else
@@ -247,7 +253,7 @@ ndprest()
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 ndplref(void)
 #else
@@ -268,7 +274,7 @@ ndplref()
  * Remarks: Invokes DFPrestart
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 ndfprestart(void)
 #else
@@ -291,7 +297,7 @@ ndfprestart()
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(int)
+    FRETVAL(intf)
 #ifdef PROTOTYPE
 ndfplastref(void)
 #else
