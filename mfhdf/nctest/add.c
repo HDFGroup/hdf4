@@ -15,6 +15,9 @@
 #include "add.h"
 #include "alloc.h"
 #include "emalloc.h"
+#ifdef HDF
+#include "hdf.h"
+#endif
 
 struct netcdf test;		/*
 				 * in-memory netcdf structure, kept in sync
