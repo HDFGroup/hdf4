@@ -1,11 +1,12 @@
 Compression for HDF SDS
-    There are two new compression functions added to the SD interface in this
-release, SDsetcompress and SDsetnbitdataset.  Both functions are used as
-higher-level routines to access the HCcreate function described earlier.
-SDsetnbitdataset allows for the storage of 1-32 bit integer values (instead of
-being restricted to 8, 16 or 32-bit sizes) in a scientific dataset. 
-SDsetcompress can be used to compress a scientific dataset through the SD
-interface instead of dropping down to the lower-level H interface.
+    There are two new compression functions added to the SD interface in 
+this release, SDsetcompress and SDsetnbitdataset. (SDsetcompress does not 
+yet work correctly.)  Both functions are used as higher-level routines to 
+access the HCcreate function described earlier.  SDsetnbitdataset allows 
+for the storage of 1-32 bit integer values (instead of being restricted 
+to 8, 16 or 32-bit sizes) in a scientific dataset. SDsetcompress can be 
+used to compress a scientific dataset through the SD interface instead 
+of dropping down to the lower-level H interface.
 
 N-bit SDS using SDsetnbitdataset:
 
@@ -74,9 +75,9 @@ N-bit SDS using SDsetnbitdataset:
 
 Compressed SDS data using SDsetcompress:
 
-        The SDsetcompress function call contains a subset of the parameters
-    to the HCcreate function call described earlier and performs the same
-    types of compression.
+        The SDsetcompress function call (not yet working) contains a 
+subset of the parameters to the HCcreate function call described in 
+compression.txt and performs the same types of compression.
 
     The interface to SDsetcompress is described below:
 

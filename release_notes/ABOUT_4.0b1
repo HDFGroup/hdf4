@@ -96,15 +96,20 @@ CONTENTS
      Note that the order is important: libnetcdf.a, then libdf.a 
      and then libjpeg.a.
  
-   o Compression for HDF SDS
-     Two new compression functions have been added to the SD 
-     interface in this release to compress SDS datasets. 
-     One function allows users to compress a scientific 
-     dataset  using RLE encoding or adaptive Huffman  
-     compression algorithms. Another one is for storing 
-     a scientific dataset using integers whose size is any
-     number of bits between 1 and 32 (instead of being restricted 
-     to 8, 16 or 32-bit sizes). 
+   o Compression for HDF SDS (not completely working)
+     Work is almost complete on the addition of two
+     new compression functions to the SD interface. 
+
+     One function, which still has some known bugs, will 
+     allow users to compress a scientific dataset using 
+     any of several compression methods.  Initially two 
+     schemes,  RLE encoding and an adaptive Huffman 
+     compression algorithms, will be available. 
+
+     A second function is available for storing a scientific 
+     dataset using integers whose size is any number of bits 
+     between 1 and 32 (instead of being restricted to 8, 16 
+     or 32-bit sizes). 
 
      A draft of the documentation for these functions is in
             ./comp_SDS.txt
@@ -171,7 +176,7 @@ follow the instructions listed in:
 5. Known problems in compilation,testing and installation
    of HDF4.0b1:
 
-   . On SunOS, tsdmmsf.f fails
+   . On SunOS, tsdmmsf.f in hdf/test/fortest fails
    . On C90, mfhdf/fortran test doesn't configure correctly.
      The adaptive Huffman algorithm does not work right 
      either.  Due to this problem, when running 
@@ -192,6 +197,7 @@ follow the instructions listed in:
      extension only. The fix is not included in the source
      release, but it is avalable in the binary release for 
      the CM5 version.  Please retrieve the fix there. 
+   . SDsetcompress does not work correctly.
 
 6. Installing without FORTRAN support:
    . On UNIX systems without a FORTRAN system installed, 
