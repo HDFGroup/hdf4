@@ -627,7 +627,7 @@ configure:		configure.in
 # site; and 2) clients using broken compilers (c.f. previous note) can't
 # regenerate the dependency list.
 #
-depend:		FORCE
+disabled_depend:		FORCE
 	-incdir=`echo $(INCDIR) | sed s',/,\\\/,g'`; \
 	cc -M $(CPPFLAGS) $(CPPFLAGS_NETCDF) *.c 2> /dev/null | \
 	    awk '{ \
