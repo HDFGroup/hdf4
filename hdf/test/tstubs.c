@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1992/06/02 16:04:38  dilg
-Fixed error in expected return code from DFputelement().
+Revision 1.7  1992/06/30 23:24:53  chouck
+Fixed call to delete file under VMS
 
+ * Revision 1.6  1992/06/02  16:04:38  dilg
+ * Fixed error in expected return code from DFputelement().
+ *
  * Revision 1.5  1992/06/01  19:41:48  dilg
  * Added explicit test for dangling aids.
  *
@@ -59,10 +62,15 @@ main()
     getchar();
 
 #if defined PC || defined VMS
+#ifdef VMS
+    system("del tstubs.hdf;*");
+#else
     system("del tstubs.hdf");
+#endif
 #else
     system("rm tstubs.hdf");
 #endif /* PC || VMS */
+
     printf("\nTesting DFishdf... (should fail with error %d)\n", DFE_BADOPEN);
     ret = DFishdf("tstubs.hdf");
     if (ret == -1) {
