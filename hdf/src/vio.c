@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.18  1993/07/15 01:26:26  koziol
-Final Whammy on the VSet memory Leak bug, mostly for maintenance purposes
+Revision 1.19  1993/07/23 20:49:20  sxu
+Changed 'void' to 'VOID' VSdump, Vinitialize, Vsetzap, Remove_vfile and unpackvs.
 
+ * Revision 1.18  1993/07/15  01:26:26  koziol
+ * Final Whammy on the VSet memory Leak bug, mostly for maintenance purposes
+ *
  * Revision 1.17  1993/07/14  20:53:04  chouck
  * Plugged memory leak on Vdelete() and VSdelete()
  *
@@ -384,9 +387,9 @@ This routine will also initalize the VDATA structure as much as it can.
 */
 
 #ifdef PROTOTYPE
-PRIVATE void vunpackvs (VDATA *vs, uint8 buf[], int32 *size)
+PRIVATE VOID vunpackvs (VDATA *vs, uint8 buf[], int32 *size)
 #else
-PRIVATE void vunpackvs (vs, buf, size)
+PRIVATE VOID vunpackvs (vs, buf, size)
 VDATA   *vs;
 uint8   buf[];
 int32   *size;  /* UNUSED, but retained for compatibility with vpackvs */

@@ -5,11 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.9  1993/05/19 20:05:06  chouck
-Moved general interest VSet info out of vg.h and into hdf.h
-Removed OLD_WAY parts of vproto.h
-Fixed a problem in DFfindnextref()
+Revision 1.10  1993/07/23 20:49:16  sxu
+Changed 'void' to 'VOID' VSdump, Vinitialize, Vsetzap, Remove_vfile and unpackvs.
 
+ * Revision 1.9  1993/05/19  20:05:06  chouck
+ * Moved general interest VSet info out of vg.h and into hdf.h
+ * Removed OLD_WAY parts of vproto.h
+ * Fixed a problem in DFfindnextref()
+ *
  * Revision 1.8  1993/04/26  15:08:29  chouck
  * Fixes for the convex (doesn't like foo(VOID) prototypes)
  * Also added extern "C" { } around prototypes
@@ -973,7 +976,7 @@ char * vsname;
 #ifdef CONVEX
 PUBLIC VOID Vsetzap()
 #else
-PUBLIC VOID Vsetzap(VOID)
+PUBLIC VOID Vsetzap(void)
 #endif
 #else
 PUBLIC VOID Vsetzap()

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.24  1993/07/15 19:38:46  chouck
-More weird characters removed
+Revision 1.25  1993/07/23 20:49:18  sxu
+Changed 'void' to 'VOID' VSdump, Vinitialize, Vsetzap, Remove_vfile and unpackvs.
 
+ * Revision 1.24  1993/07/15  19:38:46  chouck
+ * More weird characters removed
+ *
  * Revision 1.23  1993/07/15  19:00:39  chouck
  * Fixed weird RCS type noise in file
  *
@@ -99,7 +102,7 @@ More weird characters removed
 PRIVATE int32 Load_vfile
   PROTO((HFILEID f));
 
-PRIVATE void Remove_vfile
+PRIVATE VOID Remove_vfile
   PROTO((HFILEID f));
 
 PUBLIC intn vcompare
@@ -413,9 +416,9 @@ VOIDP k;
 /* ---------------------------- Vinitialize ------------------------- */
 
 #ifdef PROTOTYPE
-PUBLIC void Vinitialize(HFILEID f)
+PUBLIC VOID Vinitialize(HFILEID f)
 #else
-PUBLIC void Vinitialize(f)
+PUBLIC VOID Vinitialize(f)
 HFILEID f;
 #endif
 {

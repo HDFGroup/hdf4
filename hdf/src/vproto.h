@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.15  1993/07/14 11:55:53  koziol
-Fixed memory leaks in freeing trees
+Revision 1.16  1993/07/23 20:49:14  sxu
+Changed 'void' to 'VOID' VSdump, Vinitialize, Vsetzap, Remove_vfile and unpackvs.
 
+ * Revision 1.15  1993/07/14  11:55:53  koziol
+ * Fixed memory leaks in freeing trees
+ *
  * Revision 1.14  1993/05/19  20:05:12  chouck
  * Moved general interest VSet info out of vg.h and into hdf.h
  * Removed OLD_WAY parts of vproto.h
@@ -105,7 +108,7 @@ extern int32 VSfexist
 extern int32 VSsizeof
   PROTO((int32 vkey, char _HUGE *fields));
 
-extern void VSdump
+extern VOID VSdump
   PROTO((int32 vkey));
 
 extern void VSsetname
@@ -136,7 +139,7 @@ extern int32 Vfind
 extern int32 VSfind
   PROTO((HFILEID f, char _HUGE *vsname));
 
-extern void Vsetzap
+extern VOID Vsetzap
     PROTO((void));
 
 /*
