@@ -1,14 +1,11 @@
 
   The following is an HDF test files.
 
-        hdfann.hdf
+        hdf-ann-ras.hdf
            2 raster image plus nice annotation. 
  
         jet-stream.hdf
            another nice raster image.
- 
-        polar-snow-ice.hdf
-           This file is for "Ice concentration, polar regions".
  
         sea-ice-vdata.hdf
            HDF Vdata example for "Sea ice motion vectors".
@@ -20,4 +17,17 @@
 	ntcheck.hdf
 	   checks many data types (may reveal portability
            bugs.)
-	   
+	
+        layers.hdf
+	   Serveral raster images inside  this file, it is for layer
+           feature demo.
+
+ 	avhrr-ndvi-060192meta.hdf
+	   Good real world HDF file, includes SDS, Vgroup,Vdata.
+
+	brain.iso.Ras8.hdf
+	   Serveral raster images inside  this file, it is for the demo of
+	   bunch of raster images animation.
+
+A
+	   feature of bunch of raster images.   
