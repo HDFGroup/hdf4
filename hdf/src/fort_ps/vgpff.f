@@ -1869,11 +1869,11 @@ C
          INTEGER id, num_blocks, block_size
 C
       INTERFACE
-        INTEGER FUNCTION vscgetblinfo(id, block_size, num_blocks)
-          !MS$ATTRIBUTES C,reference,alias:'_VSCGETBLINFO' :: vscgetblinfo
+        INTEGER FUNCTION vscgblinfo(id, block_size, num_blocks)
+          !MS$ATTRIBUTES C,reference,alias:'_VSCGBLINFO' :: vscgblinfo
           integer id, block_size, num_blocks
-        END FUNCTION vscgetblinfo
+        END FUNCTION vscgblinfo
       END INTERFACE
-         vsfgetblinfo = vscgetblinfo(id, block_size, num_blocks) 
+         vsfgetblinfo = vscgblinfo(id, block_size, num_blocks) 
          return 
          end

@@ -1834,7 +1834,7 @@ switch (cflags)
 
     int32 sdsid;              /* SDS id               */
     comp_info c_info;         /* compression info     */
-    int32 c_type;              /* compression type definition */
+    comp_coder_t c_type;              /* compression type definition */
 
     int   CASE;
     intf ret;

@@ -3556,7 +3556,7 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 #   define  nvscfcls    FNAME(VSCFCLS)
 #   define  nvscsetblsz FNAME(VSCSETBLSZ)
 #   define  nvscsetnmbl FNAME (VSCSETNMBL)
-#   define  nvscgetblinfo FNAME(VSCGETBLINFO)
+#   define  nvscgblinfo FNAME(VSCGBLINFO)
 #  else                                /* !sl */
 #   define  ndfivopn FNAME(DFIVOPN)
 #   define  ndfvclos FNAME(DFVCLOS)
@@ -3641,7 +3641,7 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 #   define  nvscfcls    FNAME(VSCFCLS)
 #   define  nvscsetblsz FNAME(VSCSETBLSZ)
 #   define  nvscsetnmbl FNAME (VSCSETNMBL)
-#   define  nvscgetblinfo FNAME(VSCGETBLINFO)
+#   define  nvscgblinfo FNAME(VSCGBLINFO)
 #  endif
 #else                           /* !DF_CAPFNAMES */
 # if defined(UNIX386) || (!(defined INTEL86) && !(defined WIN32))
@@ -3728,7 +3728,7 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 #   define  nvscfcls    FNAME(vscfcls)
 #   define  nvscsetblsz FNAME(vscsetblsz)
 #   define  nvscsetnmbl FNAME (vscsetnmbl)
-#   define  nvscgetblinfo FNAME(vscgetblinfo)
+#   define  nvscgblinfo FNAME(vscgblinfo)
 #  else                            /* !sl */
 #   define  ndfivopn FNAME(dfivopn)
 #   define  ndfvclos FNAME(dfvclos)
@@ -3813,7 +3813,7 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 #   define  nvscfcls    FNAME(vscfcls)
 #   define  nvscsetblsz FNAME(vscsetblsz)
 #   define  nvscsetnmbl FNAME (vscsetnmbl)
-#   define  nvscgetblinfo FNAME(vscgetblinfo)
+#   define  nvscgblinfo FNAME(vscgblinfo)
 #  endif
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* VG_FNAMES */
@@ -4091,7 +4091,7 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
     HDFLIBAPI      FRETVAL(intf)nvscsetnmbl
                 (intf *id, intf *num_blocks);
 
-    HDFLIBAPI      FRETVAL(intf)nvscgetblinfo
+    HDFLIBAPI      FRETVAL(intf)nvscgblinfo
                 (intf *id, intf *block_size, intf *num_blocks);
 
 /* 

@@ -823,8 +823,8 @@ C-------------------------------------------------------------------------
          INTEGER function vsfgetblinfo(id, block_size, num_blocks)
 C
          INTEGER id, num_blocks, block_size
-         INTEGER vscgetblinfo
+         INTEGER vscgblinfo
 C
-         vsfgetblinfo = vscgetblinfo(id, block_size, num_blocks) 
+         vsfgetblinfo = vscgblinfo(id, block_size, num_blocks) 
          return 
          end

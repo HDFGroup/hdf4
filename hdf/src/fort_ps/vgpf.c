@@ -1486,7 +1486,7 @@ nvdtrc(intf * vkey, intf * tag, intf * ref)
        return(ret);
 } 
 /*------------------------------------------------------------------------
- *       Name:      vscgetblinfo
+ *       Name:      vscgblinfo
  *       Purpose:   calls VSgetblockinfo
  *       Inputs:    id    -  vdata identifier
  *                  block_size - size of the block
@@ -1496,9 +1496,9 @@ nvdtrc(intf * vkey, intf * tag, intf * ref)
  ---------------------------------------------------------------------*/
      FRETVAL (intf)
 #ifdef PROTOTYPE
-       nvscgetblinfo( intf *id , intf *block_size, intf *num_blocks)
+       nvscgblinfo( intf *id , intf *block_size, intf *num_blocks)
 #else
-       nvscgetblinfo (id, block_size, num_blocks)
+       nvscgblinfo (id, block_size, num_blocks)
                intf   *id;
                intf   *block_size; 
                intf   *num_blocks;
