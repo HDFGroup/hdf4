@@ -7,24 +7,27 @@ Instructions on testing the HDF utility programs:
 
 hdf24to8 -- converts 24-bit raster images to hdf 8-bit images
 
-   Copy head.r24.Z from the testfiles/ directory to the util/ directory
-
-   Uncompress head.r24.Z 
+   Copy head.r24.Z from the testfiles/ directory to the util/ directory.
+   
+   Type: uncompress head.r24.Z
 
    Execute: 
 
-        hdf24to8 head.r24 head8.hdf
+        ./hdf24to8 head.r24 head8.hdf
 
-   View head8.hdf using any visualization tool available (mosaic, collage, etc)
+   View head8.hdf using any visualization tool available (mosaic, collage, etc).
+
+   Delete head.r24 and head8.hdf when you are done.
 
 
 hdfed -- hdf file editor
 
-   Copy the file storm110.hdf from the testfiles/ directory to the util/ directory
+   Copy the file storm110.hdf from the testfiles/ directory to the 
+   util/ directory.
 
    Execute:
 
-        hdfed storm110.hdf
+        ./hdfed storm110.hdf
 
         Running interactively, type the following commands:
 
@@ -42,15 +45,12 @@ hdfed -- hdf file editor
 
 
         Type help and experiment.  Most of the information can be verified
-        with hdfls.  Be sure to type 'close' then 'quit' when you are finished.
+        with hdfls.  Be sure to type 'close' then 'quit' when you are finished
+        and delete storm110.hdf when you are done.
 
-Caution: Hdfed has been revised so that it can dump data of various number
-         types.  This function has been tested on SUN Station, CRAY2 and 
-         CRAY-YMP. 
-
-        copy ntcheck.hdf from the testfiles/ directory to the util/ directory.
+        Copy ntcheck.hdf from the testfiles/ directory to the util/ directory.
   
-          hdfed ntcheck.hdf
+          ./hdfed ntcheck.hdf
 
         ntcheck.hdf will be used as an input file to test the dump function. 
 
@@ -75,17 +75,18 @@ Caution: Hdfed has been revised so that it can dump data of various number
         gives the tag and reference numbers for each object.
 
 	  
-        Look at the data in various objects and verify the data type, eg:
+        Look at the data in various objects and verify the data type.
+        For example:
 
-          prev tag = 702  ref = 2      
+          next tag = 702  ref = 2      
            
-             (if you are past this data object you will receive the message
-              "Reached end of file. Not moved."  In this case, just repeat 
-               the command using prev instead of next.)
+          You will be past this data object and will receive the message
+          "Reached end of file. Not moved."  Repeat the command using prev 
+          instead of next.
                          
           dump -float
 
-          the first 5 lines of output should read as follows:
+          The first 5 lines of output should read as follows:
 
              0:    0.000000e+00   1.000000e+00   2.000000e+00   3.000000e+00
             16:    4.000000e+00   5.000000e+00   6.000000e+00   7.000000e+00
@@ -94,11 +95,11 @@ Caution: Hdfed has been revised so that it can dump data of various number
             64:    4.600000e+01   4.700000e+01   4.800000e+01   4.900000e+01
          	
 
-	  next tag = 702  ref = 6     
+	      next tag = 702  ref = 6     
 
           dump -short
 
-         the first 5 lines of output should read as follows:
+          The first 5 lines of output should read as follows:
   
            0:          0          1          2          3          4          5
           12:          6          7          8          9       6000       6001
@@ -107,11 +108,11 @@ Caution: Hdfed has been revised so that it can dump data of various number
           48:      12004      12005      12006      12007      12008      12009
 
  
-        the following is a cross reference of ref number and data type if you
+        The following is a cross reference of ref number and data type if you
         want to experiment: 
 
            
-          ref		number type
+         ref		number type
 
 
 	  2		DFNT_FLOAT32
@@ -128,7 +129,8 @@ Caution: Hdfed has been revised so that it can dump data of various number
 
 	  8		DFNT_UINT32
 
-        type 'close' and 'quit' when you are finished.
+        Type 'close' and 'quit' when you are finished.
+        Delete ntcheck.hdf.
 
 
 ristosds -- converts a series raster image hdf files into a
@@ -139,7 +141,7 @@ ristosds -- converts a series raster image hdf files into a
 
    Execute:
 
-        ristosds storm*.hdf -o storm.hdf
+        ./ristosds storm*.hdf -o storm.hdf
  
    Compare storm110.hdf with storm.hdf using the following commands:
    
@@ -172,22 +174,24 @@ hdfpack --  compacts an hdf file
    Copy the file test.cdf from the testfiles/ directory.
 
    Execute:
-        hdfpack test.cdf test.pck
-        hdfpack -b test.cdf test.blk
+        ./hdfpack test.cdf test.pck
+        ./hdfpack -b test.cdf test.blk
 
    Use hdfls to get a listing of test.cdf and test.pck.  The only
-       difference between the 2 listings should be that test.pck
-       shouldn't have any special elements and it also shouldn't 
-       have any "Linked Block Indicators."
+   difference between the 2 listings should be that test.pck
+   shouldn't have any special elements and it also shouldn't 
+   have any "Linked Block Indicators."
 
-          hdfls test.cdf
-          hdfls test.pck
+          ./hdfls test.cdf
+          ./hdfls test.pck
 
    The file sizes should be as follows:
 
        test.cdf - 11795 
        test.pck - 6747 
        test.blk - 7599
+  
+   Remove test.cdf, test.blk, and test.pck.
 
 hdftopal/paltohdf  -- converts between a raw palette and an hdf
 
@@ -195,17 +199,19 @@ hdftopal/paltohdf  -- converts between a raw palette and an hdf
 
    Execute:
 
-        paltohdf palette.raw palette.hdf
-        hdftopal palette.hdf palette.raw.new
+        ./paltohdf palette.raw palette.hdf
+        ./hdftopal palette.hdf palette.raw.new
 
    Use hdfls with the '-l' option to examine palette.hdf.
-        It should have an 'Image Palette-8' and an 'Image Palette,'
-        both with length 768 bytes.  They should also have the same
-        reference number.
+   It should have an 'Image Palette-8' and an 'Image Palette,'
+   both with length 768 bytes.  They should also have the same
+   reference number.
 
    Use the Unix utility 'cmp' or something similar to do a byte-for-byte
-        comparison of palette.raw and palette.raw.new.  They should be
-        identical.
+   comparison of palette.raw and palette.raw.new.  They should be
+   identical.
+
+   Remove palette.*.
          
 	
 r8tohdf/hdftor8 -- converts between 8-bit raster images and hdf files
@@ -214,15 +220,15 @@ r8tohdf/hdftor8 -- converts between 8-bit raster images and hdf files
 
    Execute:
 
-        r8tohdf 57 57 storm.hdf storm*.raw
-        r8tohdf 57 57 storm.hdf -p palette.raw -i storm110.raw
-        hdftor8 storm.hdf
+        ./r8tohdf 57 57 storm.hdf storm*.raw
+        ./r8tohdf 57 57 storm.hdf -p palette.raw -i storm110.raw
+        ./hdftor8 storm.hdf
 
    Use hdfls with the '-l' option to examine storm.hdf.  It should
    contain five raster image sets, one of which will be compressed
    under IMCOMP compression.  (If you do not put the '-p' in the
    second r8tohdf command above, you should get an error message.)
-   The non-compressed rasters images should be the same length as
+   The non-compressed raster images should be the same length as
    the raw raster files.  The compressed will be about 25% of that
    size.
 
@@ -230,7 +236,7 @@ r8tohdf/hdftor8 -- converts between 8-bit raster images and hdf files
    comparisons on the raw raster files produced by hdftor8:
              
                 cmp img001-057.057  storm110.raw   
-	        cmp img002-057.057  storm120.raw
+                cmp img002-057.057  storm120.raw
                 cmp img003-057.057  storm130.raw
                 cmp img004-057.057  storm140.raw
 
@@ -241,6 +247,8 @@ r8tohdf/hdftor8 -- converts between 8-bit raster images and hdf files
    produced in the order in which they went into the file, which would be
    increasing numerical order, with the compressed image last.
 
+   Remove storm* and img* when you are done.
+
 
 hdfcomp -- re-compress 8-bit raster hdf file
 
@@ -248,31 +256,37 @@ hdfcomp -- re-compress 8-bit raster hdf file
 
    Execute:
 
-        hdfcomp allstorms.hdf storm*.hdf
-        hdfcomp allcomp.hdf -c storm*.hdf
+        ./hdfcomp allstorms.hdf storm*.hdf
+        ./hdfcomp allcomp.hdf -c storm*.hdf
 
    Use hdfls with the '-l' option to examine the two HDF files.  The first,
-        allstorms.hdf, should simply hold the raster together in one file,
-        with no compression.  You can use hdfls to check the original files.
-        The second file, allcomp.hdf, should hold all the rasters in a
-        compress format.  Run-Length Encoding (RLE) compression will result
-        in modest savings - about 10% to 15% for these files.
+   allstorms.hdf, should simply hold the raster together in one file,
+   with no compression.  You can use hdfls to check the original files.
+   The second file, allcomp.hdf, should hold all the rasters in a
+   compress format.  Run-Length Encoding (RLE) compression will result
+   in modest savings - about 10% to 15% for these files.
+
+   Remove allstorms.hdf and allcomp.hdf.
+
 
 jpeg2hdf/hdf2jpeg
 
    Copy the file jpeg_img.jpg from the testfiles/ directory.
 
    Execute:
-        jpeg2hdf jpeg_img.jpg jpeg.hdf
-        hdf2jpeg jpeg.hdf jpeg2.jpg
+        ./jpeg2hdf jpeg_img.jpg jpeg.hdf
+        ./hdf2jpeg jpeg.hdf jpeg2.jpg
 
    Use hdfls with the '-l' option to examine the HDF file.  It should
-        contain one raster image set, which will be compressed with JPEG
-        compression.  The JPEG compressed image will be 2922 bytes in size.
+   contain one raster image set, which will be compressed with JPEG
+   compression.  The JPEG compressed image will be 2922 bytes in size.
+
    Use the Unix utility 'cmp' or something similar to do byte-for-byte
-        comparisons on the produced raw raster files by hdf2jpeg.  The
-        initial jpeg_img.jpg file should be an exact match for the new
-        jpeg2.jpg file.
+   comparisons on the produced raw raster files by hdf2jpeg.  The
+   initial jpeg_img.jpg file should be an exact match for the new
+   jpeg2.jpg file.
+
+   Remove jpeg.hdf, jpeg_img.jpg, and jpeg2.jpg.
 
 fp2hdf -- converts floating point 2D/3D datasets into hdf SDS or RIS.
 
@@ -323,17 +337,20 @@ fp2hdf -- converts floating point 2D/3D datasets into hdf SDS or RIS.
 
    2. Run:
     
-      fp2hdf ctxtr2 -o ctxtr2.hdf
-      fp2hdf ctxtr3 -o ctxtr3.hdf
-      fp2hdf cb32r2 -o cb32r2.hdf
-      fp2hdf cb32r3 -o cb32r3.hdf
-      fp2hdf cb64r2 -o cb64r2.hdf
-      fp2hdf cb64r3 -o cb64r3.hdf
-      fp2hdf ctxtr2 -o ctxtr2_ris.hdf -raster -e 50 50
-      fp2hdf cb64r2 -o cb64r2_ris.hdf -raster -i 50 50 -f
+      ./fp2hdf ctxtr2 -o ctxtr2.hdf
+      ./fp2hdf ctxtr3 -o ctxtr3.hdf
+      ./fp2hdf cb32r2 -o cb32r2.hdf
+      ./fp2hdf cb32r3 -o cb32r3.hdf
+      ./fp2hdf cb64r2 -o cb64r2.hdf
+      ./fp2hdf cb64r3 -o cb64r3.hdf
+      ./fp2hdf ctxtr2 -o ctxtr2_ris.hdf -raster -e 50 50
+      ./fp2hdf cb64r2 -o cb64r2_ris.hdf -raster -i 50 50 -f
 
-   3. Use hdfls and hdfed/Collage to varify the correctness of
-      the output *.hdf files.
+   3. Use hdfls and hdfed/Collage or hdp to verify the correctness 
+      of the output *.hdf files.  To use the hdp command from the
+      util/ directory, type:
+   
+        ../../mfhdf/dumper/hdp dumpsds <hdf filename>
 
       ctxtr2.hdf -- 2D SDS, display spreadsheet
       ctxtr3.hdf -- 3D SDS, display spreadsheet along z axis.
@@ -344,6 +361,8 @@ fp2hdf -- converts floating point 2D/3D datasets into hdf SDS or RIS.
       ctxtr2_ris.hdf -- RIS, display image
       cb64r2_ris.hdf -- an interpolated RIS, display the image;
                         and a 2D SDS, display spreadsheet.
+   
+   4. Remove ctxtr* and cb*.  
                    
 
 
