@@ -92,7 +92,7 @@ main(int argc, char *argv[])
 
     if (getoutfile == 0 || argc < 1)
       {     /* is -o or outfile missing?    */
-          printf("Bad commend line. \n\n\t\t %s\n", USAGE);
+          printf("Bad command line. \n\n\t\t %s\n", USAGE);
           finishing();
       }
 
