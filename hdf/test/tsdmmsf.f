@@ -2,9 +2,12 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.5  1992/07/08 22:05:20  sxu
-C Changed dsgmaxm() to dsgrang(), and dssmaxm() to dssrang().
+C Revision 1.6  1992/08/31 16:14:15  chouck
+C Added tests for calibration tag stuff
 C
+c Revision 1.5  1992/07/08  22:05:20  sxu
+c Changed dsgmaxm() to dsgrang(), and dssmaxm() to dssrang().
+c
 c Revision 1.4  1992/07/07  21:51:03  chouck
 c Minor error reporting fix
 c
@@ -49,11 +52,15 @@ C
    
       
       integer dsgdata, dsadata, dssdims, dssrang, dsgrang, dssnt
-      integer dssdisc, dsgdisc
+      integer dssdisc, dsgdisc, dsscal, dsgcal
 
       real*8 f64(10,10), tf64(10,10)
       real*8 f64scale(10), tf64scale(10)
       real*8 f64max, f64min, tf64max, tf64min
+
+      real*8 cal,  cale,  ioff,  ioffe
+      real*8 ical, icale, iioff, iioffe
+      integer*4 ctype, ictype
 
       real*4 f32(10,10), tf32(10,10)
       real*4 f32scale(10), tf32scale(10)
@@ -75,7 +82,7 @@ C      byte ti8max, ti8min
       integer*4 i32scale(10), ti32scale(10), i32max, i32min
       integer*4 ti32max, ti32min
 
-      integer i, j, err, err1, err2, err3
+      integer i, j, err, err1, err2, err3, err4
       integer rank, dims(2)
       integer number_failed
       integer DFNT_FLOAT64, DFNT_FLOAT32, DFNT_INT8, DFNT_INT16
@@ -108,6 +115,15 @@ C      i8min = char(0)
       DFNT_INT16 = 22
       DFNT_INT32 = 24
       
+C
+C Set up some calibration info
+C
+      cal   = 10.0
+      cale  = 35.235
+      ioff  = 16.75
+      ioffe = 47.8
+      ctype = DFNT_INT16
+
       print *, 'Creating arrays...'
       
       do 110 i=1,10
@@ -139,9 +155,15 @@ C
       err  = dssnt(DFNT_FLOAT64)
       err1 = dssdisc(1, 10, f64scale)
       err2 = dssrang(f64max, f64min)
+      err4 = dsscal(cal, cale, ioff, ioffe, ctype)
       err3 = dsadata('of.hdf', rank, dims, f64)
       call errchkio(err1, err2, err3, number_failed, 'float64 write')
-      
+
+      if(err4.eq.(-1)) then
+         number_failed = number_failed + 1
+         print *, '>>> Setting calibration failed'
+      endif
+
       err  = dssnt(DFNT_FLOAT32)
       err1 = dssdisc(1, 10, f32scale)
       err2 = dssrang(f32max, f32min)
@@ -173,12 +195,39 @@ C
       err1 = dsgdata('of.hdf', rank, dims, tf64)
       err2 = dsgdisc(1, 10, tf64scale)
       err3 = dsgrang(tf64max, tf64min)
+      err4 = dsgcal(ical, icale, iioff, iioffe, ictype) 
       call errchkio(err1, err2, err3, number_failed, 'float64 read')
+
+      if(err4.eq.(-1)) then
+         number_failed = number_failed + 1
+         print *, '>>> Reading calibration failed'
+      endif
       
+      if((cal.ne.ical).or.(cale.ne.icale)) then
+         if((ioff.ne.iioff).or.(ioff.ne.iioffe)) then
+            if(ctype.ne.ictype) then
+               print *, '>>>Returned calibration values are wrong'
+               print *, ical, icale
+               print *, iioff, iioffe
+               print *, ictype 
+               print *, cal, cale
+               print *, ioff, ioffe
+               print *, ctype
+               number_failed = number_failed + 1
+            endif
+         endif
+      endif
+
       err1 = dsgdata('of.hdf', rank, dims, tf32)
       err2 = dsgdisc(1, 10, tf32scale)
       err3 = dsgrang(tf32max, tf32min)
+      err4 = dsgcal(ical, icale, iioff, iioffe, ictype) 
       call errchkio(err1, err2, err3, number_failed, 'float32 read')
+
+      if(err4.ne.(-1)) then
+         number_failed = number_failed + 1
+         print *, '>>> Read calibration where none stored'
+      endif
       
       err1 = dsgdata('of.hdf', rank, dims, ti8)
       err2 = dsgdisc(1, 10, ti8scale)
