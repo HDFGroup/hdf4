@@ -25,6 +25,9 @@ C     Users:    Fortran stub routine
 C----------------------------------------------------------------------
 
       integer function sfstart(filename, access)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfstart
+	!MS$endif
 
       character*(*) filename
       integer       access
@@ -51,6 +54,9 @@ C     Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function sfend(file_id)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfend
+	!MS$endif
 
       integer       file_id
 C      integer       scend
@@ -74,6 +80,9 @@ C     Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function sfendacc(id)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfendacc
+	!MS$endif
 
       integer       id
 C      integer       scendacc
@@ -98,6 +107,9 @@ C     Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function sffinfo(file_id, datasets, gattr)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sffinfo
+	!MS$endif
 
       integer       file_id, datasets, gattr
 C      integer       scfinfo
@@ -122,6 +134,9 @@ C     Users:    Fortran stub routine
 C----------------------------------------------------------------------
 
       integer function sfselect(file_id, index)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfselect
+	!MS$endif
 
       integer       file_id, index
 C      integer       scselct
@@ -146,6 +161,9 @@ C     Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function sfdimid(id, index)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfdimid
+	!MS$endif
 
       integer       id, index
 C      integer       scdimid
@@ -170,6 +188,9 @@ C     Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function sfgcal(id,cal,cale,ioff,ioffe,nt)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfgcal
+	!MS$endif
 
       integer       id, nt
       real*8    cal, cale, ioff, ioffe
@@ -197,6 +218,9 @@ C     Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function sfscal(id,cal,cale,ioff,ioffe,nt)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfscal
+	!MS$endif
 
       integer       id, nt
       real*8    cal, cale, ioff, ioffe
@@ -225,6 +249,9 @@ C     Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function sfsdscale(id,count, nt, values)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfsdscale
+	!MS$endif
 
       integer       id, count, nt, values
 C      integer       scsdscale
@@ -248,6 +275,9 @@ C     Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function sfgdscale(id, values)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfgdscale
+	!MS$endif
 
       integer       id, values
 C      integer       scgdscale
@@ -272,6 +302,9 @@ C     Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function sfscfill(id, val)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfscfill
+	!MS$endif
 
       integer       id
       character*1   val
@@ -299,6 +332,9 @@ C     Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function sfgcfill(id, val)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfgcfill
+	!MS$endif
 
       integer       id
       character*1   val
@@ -326,6 +362,9 @@ C     Users:    HDF Fortran programmers
 C----------------------------------------------------------------
 
       integer function sfsfill(id, val)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfsfill
+	!MS$endif
 
       integer       id, val
 C      integer       scsfill
@@ -350,6 +389,9 @@ C     Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function sfgfill(id, val)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfgfill
+	!MS$endif
 
       integer       id, val
 C      integer       scgfill
@@ -374,6 +416,9 @@ C     Users:    HDF Fortran programmers
 C----------------------------------------------------------------
 
       integer function sfsrange(id, max, min)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfsrange
+	!MS$endif
 
       integer       id, max, min
 C      integer       scsrange
@@ -398,6 +443,9 @@ C     Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function sfgrange(id, max, min)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfgrange
+	!MS$endif
 
       integer       id, max, min
 C      integer       scgrange
@@ -422,6 +470,9 @@ C     Users:    Fortran stub routine
 C----------------------------------------------------------------------
 
       integer function sfn2index(id, name)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfn2index
+	!MS$endif
 
       character*(*) name
       integer       id
@@ -453,6 +504,9 @@ C     Users:    Fortran stub routine
 C----------------------------------------------------------------------
 
       integer function sfcreate(id, name, nt, rank, dims)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfcreate
+	!MS$endif
 
       character*(*) name
       integer       id, nt, rank
@@ -482,6 +536,9 @@ C Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function  sfsdmstr(id, label, unit, format)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfsdmstr
+	!MS$endif
 
       character*(*) label, unit, format
       integer len, id
@@ -512,6 +569,9 @@ C Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function  sfsdmname(id, name)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfsdmname
+	!MS$endif
 
       character*(*) name
       integer len, id
@@ -541,6 +601,9 @@ C Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function sfsdtstr(id, l, u, f, c)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfsdtstr
+	!MS$endif
 
       character*(*) l, u, f, c
       integer len, id
@@ -572,6 +635,9 @@ C Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function sfgdtstr(id, label, unit, format, coord, mlen)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfgdtstr
+	!MS$endif
 
       character*(*) label, unit, format, coord
       integer len, id, mlen
@@ -602,6 +668,9 @@ C Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function  sfgdmstr(id, label, unit, format, mlen)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfgdmstr
+	!MS$endif
 
       character*(*) label, unit, format
       integer len, id
@@ -632,6 +701,9 @@ C Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function  sfginfo(id, name, rank, dims, nt, nattr)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfginfo
+	!MS$endif
 
       character*(*) name
       integer rank, nt, nattr
@@ -663,6 +735,9 @@ C Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function  sfrcatt(id, index, buf)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfrcatt
+	!MS$endif
 
       character   buf(*)
       integer id, index
@@ -692,6 +767,9 @@ C Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function  sfrnatt(id, index, buf)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfrnatt
+	!MS$endif
 
       integer id, index, buf
 c      integer scrnatt
@@ -718,6 +796,9 @@ C Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function  sfrattr(id, index, buf)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfrattr
+	!MS$endif
 
       character*(*) buf
       integer id, index
@@ -749,6 +830,9 @@ C Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function  sfrdata(id, start,stride, end,values)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfrdata
+	!MS$endif
 
       integer id, start(*), stride(*), end(*), values(*)
 c      integer scrdata
@@ -777,6 +861,9 @@ C Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function  sfwdata(id, start,stride, end,values)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfwdata
+	!MS$endif
 
       integer id, start(*), stride(*), end(*), values(*)
 c      integer scwdata
@@ -805,6 +892,9 @@ C Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function  sfrcdata(id, start,stride, end,values)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfrcdata
+	!MS$endif
 
       integer id, start(*), stride(*), end(*)
       character*(*) values
@@ -836,6 +926,9 @@ C Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function  sfwcdata(id, start,stride, end,values)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfwcdata
+	!MS$endif
 
       integer id, start(*), stride(*), end(*)
       character*(*) values
@@ -866,6 +959,9 @@ C Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function  sfgainfo(id, number, name, nt, count)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfgainfo
+	!MS$endif
 
       character*(*) name
       integer nt, number, len, count
@@ -894,6 +990,9 @@ C Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function  sfgdinfo(id, name, sz, nt, nattr)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfgdinfo
+	!MS$endif
 
       character*(*) name
       integer sz, nt, nattr, len
@@ -922,6 +1021,9 @@ C Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function  sfscatt(id,name,nt,count,data)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfscatt
+	!MS$endif
 
       character*(*) name
       character data(*)
@@ -952,6 +1054,9 @@ C Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
 
       integer function  sfsnatt(id, name, nt, count, data)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfsnatt
+	!MS$endif
 
       character*(*) name
       integer nt, data, count, len
@@ -982,6 +1087,9 @@ C Remarks:  This function should be phased out in the future.
 C----------------------------------------------------------------------
 
       integer function  sfsattr(id, name, nt, count, data)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfsattr
+	!MS$endif
 
       character*(*) name, data
       integer nt, len, count
@@ -1010,6 +1118,9 @@ C     Users:    Fortran stub routine
 C----------------------------------------------------------------------
 
       integer function sffattr(id, name)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sffattr
+	!MS$endif
 
       character*(*) name
       integer       id, len
@@ -1036,6 +1147,9 @@ C     Users:    Fortran stub routine
 C----------------------------------------------------------------------
 
       integer function sfid2ref(id)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfid2ref
+	!MS$endif
 
       integer       id
 C      integer       scid2ref
@@ -1060,6 +1174,9 @@ C     Users:    Fortran stub routine
 C----------------------------------------------------------------------
 
       integer function sfref2index(id, ref)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfref2index
+	!MS$endif
 
       integer       id, ref
 C      integer       scr2idx
@@ -1083,6 +1200,9 @@ C     Users:    Fortran stub routine
 C----------------------------------------------------------------------
 
       integer function sfiscvar(id)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfiscvar
+	!MS$endif
 
       integer       id
 C      integer       sciscvar
@@ -1109,6 +1229,9 @@ C     Users:    Fortran stub routine
 C----------------------------------------------------------------------
 
       integer function sfsextf(id, fname, offset)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfsextf
+	!MS$endif
 
       character*(*) fname
       integer       id, offset, len
@@ -1139,6 +1262,9 @@ C     Users:    Fortran stub routine
 C----------------------------------------------------------------------
 
       integer function sfsnbit(id,start_bit,bit_len,sign_ext,fill_one)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfsnbit
+	!MS$endif
 
       integer       id,start_bit,bit_len,sign_ext,fill_one 
 C      integer       scsnbit
@@ -1163,6 +1289,9 @@ C     Users:    Fortran stub routine
 C----------------------------------------------------------------------
 
       integer function sfsacct(id, acctype)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfsacct
+	!MS$endif
 
       integer       id, acctype
 C      integer       scsacct
@@ -1189,6 +1318,9 @@ C     Users:    Fortran stub routine
 C----------------------------------------------------------------------
 
       integer function sfsdmvc(id, comptype)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfsdmvc
+	!MS$endif
 
       integer       id, comptype
 C      integer       scsdmvc
@@ -1214,6 +1346,9 @@ C     Users:    Fortran stub routine
 C----------------------------------------------------------------------
 
       integer function sfisdmvc(id)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfisdmvc
+	!MS$endif
 
       integer       id
 C      integer       scisdmvc
@@ -1240,6 +1375,9 @@ C     Users:    Fortran stub routine
 C----------------------------------------------------------------------
 
       integer function sfsflmd(file_id, fillmode)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: sfsflmd 
+	!MS$endif
 
       integer       file_id, fillmode
 C      integer       scsflmd
@@ -1272,6 +1410,9 @@ C        Calls:     scgichnk (C stub for SD setchunk function)
 C-------------------------------------------------------------------------
 
          INTEGER function sfgichnk(id, dim_length, comp_flag)
+	     !MS$if defined(BUILD_HDF_DLL)
+	     !MS$attributes dllexport :: sfgichnk 
+	     !MS$endif
 
          INTEGER id, dim_length(*), comp_flag
 C         INTEGER scgichnk 
@@ -1300,6 +1441,9 @@ C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
 
          INTEGER function sfrcchnk(id, start, char_data)
+	     !MS$if defined(BUILD_HDF_DLL)
+	     !MS$attributes dllexport :: sfrcchnk 
+	     !MS$endif
 C
          INTEGER id, start(*)
          CHARACTER*(*) char_data(*)
@@ -1332,6 +1476,9 @@ C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
 
          INTEGER function sfrchnk(id, start, num_data)
+	     !MS$if defined(BUILD_HDF_DLL)
+	     !MS$attributes dllexport :: sfrchnk 
+	     !MS$endif
 C
          INTEGER id, start(*), num_data(*)
 C         INTEGER scrchnk 
@@ -1362,6 +1509,9 @@ C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
 
          INTEGER function sfscchnk(id, maxcache, flags)
+	     !MS$if defined(BUILD_HDF_DLL)
+	     !MS$attributes dllexport :: sfscchnk 
+	     !MS$endif
 C
          INTEGER id, maxcache, flags 
 C         INTEGER scscchnk 
@@ -1414,6 +1564,9 @@ C        Calls:     scschnk (C stub for SD setchunk function)
 C-------------------------------------------------------------------------
 
          INTEGER function sfschnk(id, dim_length, comp_type,comp_prm)
+	     !MS$if defined(BUILD_HDF_DLL)
+	     !MS$attributes dllexport :: sfschnk 
+	     !MS$endif
 
          INTEGER id, dim_length(*), comp_type, comp_prm(*)
 C         INTEGER scschnk 
@@ -1442,6 +1595,9 @@ C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
 
          INTEGER function sfwcchnk(id, start, char_data)
+	     !MS$if defined(BUILD_HDF_DLL)
+	     !MS$attributes dllexport :: sfwcchnk 
+	     !MS$endif
 C
          INTEGER id, start(*) 
          CHARACTER*(*) char_data(*)
@@ -1475,6 +1631,9 @@ C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
 
          INTEGER function sfwchnk(id, start, num_data)
+	     !MS$if defined(BUILD_HDF_DLL)
+	     !MS$attributes dllexport :: sfwchnk 
+	     !MS$endif
 C
          INTEGER id, start(*), num_data(*)
 C         INTEGER scwchnk 
@@ -1515,6 +1674,9 @@ C        Calls:     scscompress (C stub for SD setchunk function)
 C-------------------------------------------------------------------------
 
          INTEGER function sfscompress(id, comp_type,comp_prm)
+	     !MS$if defined(BUILD_HDF_DLL)
+	     !MS$attributes dllexport :: sfscompress 
+	     !MS$endif
 
          INTEGER id, comp_type, comp_prm(*)
 C         INTEGER scscompress 
@@ -1541,6 +1703,9 @@ C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
  
          INTEGER function sfisrcrd(id)
+	     !MS$if defined(BUILD_HDF_DLL)
+	     !MS$attributes dllexport :: sfisrcrd 
+	     !MS$endif
 C
          INTEGER id
  
@@ -1568,6 +1733,9 @@ C        Users:     HDF Fortran programmers
 C------------------------------------------------------------------------- 
                                                                             
          INTEGER function sfsblsz(id, block_size) 
+	     !MS$if defined(BUILD_HDF_DLL)
+	     !MS$attributes dllexport :: sfsblsz 
+	     !MS$endif
 C 
          INTEGER id, block_size
   
