@@ -393,8 +393,12 @@ C     functions
 C
       integer  vhfmkgp
       external vhfmkgp
+      integer  vhfscd
+      external vhfscd
       integer  vhfsd
       external vhfsd
+      integer  vhfscdm
+      external vhfscdm
       integer  vhfsdm
       external vhfsdm
 
@@ -405,6 +409,8 @@ C
       external vsfainf
       integer  vsfatch
       external vsfatch
+      integer  vsfcpak
+      external vsfcpak
       integer  vsfdlte
       external vsfdlte
       integer  vsfdtch
@@ -447,6 +453,12 @@ C
       external vsfnats
       integer  vsfndc
       external vsfndc
+      integer  vsfnpak
+      external vsfnpak
+      integer  vsfrd
+      external vsfrd
+      integer  vsfrdc
+      external vsfrdc
       integer  vsfread
       external vsfread
       integer  vsfsnat
@@ -457,6 +469,8 @@ C
       external vsfscls
       integer  vsfseek
       external vsfseek
+      integer  vsfsextf
+      external vsfsextf
       integer  vsfsfld
       external vsfsfld
       integer  vsfsint
@@ -465,10 +479,12 @@ C
       external vsfsiz
       integer  vsfsnam
       external vsfsnam
+      integer  vsfwrt
+      external vsfwrt
+      integer  vsfwrtc
+      external vsfwrtc
       integer  vsfwrit
       external vsfwrit
-      integer  vsfsextf
-      external vsfsextf
 
 C
 C     Declarations of return values for HDF Vdata Query functions
