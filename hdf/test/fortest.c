@@ -1,6 +1,9 @@
 #include "hdf.h"
 #include "tutils.h"
-
+#ifdef VMS
+#include processes
+#include string
+#endif
 #define NUMOFTESTS 16
 #define VERSION "0.2beta"
 #define BUILDDATE "Mon Feb 8 1993"
@@ -34,8 +37,17 @@ const char* TheDescr;
 void CallFortranTest(TheCall) 
 char* TheCall;
 {
-system(TheCall);
+  static  char TheProc[25];
+
+#ifdef VMS
+  strcpy(TheProc , "run ");   
+  strcat(TheProc, TheCall);
+  system(TheProc);
+#else
+  system(TheCall);
+#endif
 }
+
 main (argc, argv) 
      int argc;
      char* argv[];
@@ -89,7 +101,7 @@ main (argc, argv)
       Summary = 1;
     }
     if ((argc > CLLoop) && (HDstrcmp(argv[CLLoop],"-help")==0)) {
-      printf("Usage: testhdf [-v[erbose] (l[ow]|m[edium]|h[igh]|0-10)] \n");
+      printf("Usage: fortest [-v[erbose] (l[ow]|m[edium]|h[igh]|0-10)] \n");
       printf("               [-[e]x[clude] name+] \n");
       printf("               [-o[nly] name+] \n");
       printf("               [-b[egin] name] \n");
@@ -206,7 +218,11 @@ main (argc, argv)
 
   if(CleanUp) {
     MESSAGE(2,printf("\nCleaning Up...\n\n"););
+#ifndef VMS
     system("rm *.hdf");
+#else
+    system("delete *.hdf;*");
+#endif
   }
 }
 

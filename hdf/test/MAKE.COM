@@ -1,176 +1,76 @@
-$!
-$!
-$! File to build the test files in the HDF test suite
-$!
-$!
-$! The following constants should probably be defined
-$!   only once in the main HDF MAKE.COM...
-$!
-$! define/nolog hdf$lib [-.lib]df
-$! define/nolog hdf$include [-.include]
-$! define/nolog sys$clib sys$library:vaxcrtl
-$!
+!$!
+!$!
+!$! File to build the test files in the HDF test suite
+!$!
+!$!
+!$! The following constants should probably be defined
+!$!   only once in the main HDF MAKE.COM...
+!$!
+!$! define/nolog hdf$lib [-.lib]df
+!$! define/nolog hdf$include [-.include]
+!$! define/nolog sys$clib sys$library:vaxcrtl
+!$!
 $ type sys$input
-  **  Making H level test programs **
-$!
+  **    Making testhdf **
+$ cc/define=VMS/include=hdf$include   testhdf
 $ type sys$input
-        Making tlinkage
-$ cc/define=VMS/include=hdf$include   tlinkage
-$ link tlinkage, hdf$lib/lib, sys$clib/lib
+  **    Making H level test programs **
 $!
+$ cc/define=VMS/include=hdf$include   hfile
+$ cc/define=VMS/include=hdf$include   hfile1
+$ cc/define=VMS/include=hdf$include   hblocks
+$ cc/define=VMS/include=hdf$include   hextelt
+$ cc/define=VMS/include=hdf$include   vers
 $ type sys$input
-        Making thfile
-$ cc/define=VMS/include=hdf$include   thfile
-$ link thfile, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making thfile1
-$ cc/define=VMS/include=hdf$include   thfile1
-$ link thfile1, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making thblocks
-$ cc/define=VMS/include=hdf$include   thblocks
-$ link thblocks, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making thextelt
-$ cc/define=VMS/include=hdf$include   thextelt
-$ link thextelt, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making terr
-$ cc/define=VMS/include=hdf$include   terr
-$ link terr, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making tvers
-$ cc/define=VMS/include=hdf$include   tvers
-$ link tvers, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input 
   **  Making C interface test programs **
 $!
-$ type sys$input
-        Making trig
-$ cc/define=VMS/include=hdf$include   trig
-$ link trig, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making tsdmms
-$ cc/define=VMS/include=hdf$include   tsdmms
-$ link tsdmms, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making tsdnmms
-$ cc/define=VMS/include=hdf$include   tsdnmms
-$ link tsdnmms, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making tsdnt
-$ cc/define=VMS/include=hdf$include   tsdnt
-$ link tsdnt, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making tsdnnt
-$ cc/define=VMS/include=hdf$include   tsdnnt
-$ link tsdnnt, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making tan
-$ cc/define=VMS/include=hdf$include   tan
-$ link tan, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making tanfile
-$ cc/define=VMS/include=hdf$include   tanfile
-$ link tanfile, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making tv1
-$ cc/define=VMS/include=hdf$include   tv1
-$ link tv1, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making tv2
-$ cc/define=VMS/include=hdf$include   tv2
-$ link tv2, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making egchi
-$ cc/define=VMS/include=hdf$include   egchi
-$ link egchi, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making tstubs
-$ cc/define=VMS/include=hdf$include   tstubs
-$ link tstubs, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making tsdstr
-$ cc/define=VMS/include=hdf$include   tsdstr
-$ link tsdstr, hdf$lib/lib, sys$clib/lib
-$!
+$ cc/define=VMS/include=hdf$include   rig
+$ cc/define=VMS/include=hdf$include   sdmms
+$ cc/define=VMS/include=hdf$include   sdnmms
+$ cc/define=VMS/include=hdf$include   an
+$ cc/define=VMS/include=hdf$include   anfile
+$ cc/define=VMS/include=hdf$include   slab
+$ cc/define=VMS/include=hdf$include   sdstr
+$ cc/define=VMS/include=hdf$include   litend
+$ link testhdf,rig,sdmms,sdnmms,an,anfile,sdstr,slab,litend, -
+  hfile, hfile1,hblocks,hextelt,vers,hdf$lib/lib,sys$clib/lib
 $ type sys$input 
   **  Making Fortran interface test programs **
 $!
-$ type sys$input
-        Making tr8F
+$ cc/define=VMS/include=hdf$include   fortest
 $ fortran tr8F.f
-$ link tr8F, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making t24F
 $ fortran t24F.f
-$ link t24F, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making tpF
 $ fortran tpF.f
-$ link tpF, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making tsdmmsF
 $ fortran tsdmmsF.f
-$ link tsdmmsF, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making tsdnmmsF
 $ fortran tsdnmmsF.f
-$ link tsdnmmsF, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making tsdntF
 $ fortran tsdntF.f
-$ link tsdntF, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making tsdnntF
 $ fortran tsdnntF.f
-$ link tsdnntF, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making tanF
 $ fortran tanF.f
-$ link tanF, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making tanfileF
 $ fortran tanfileF.f
-$ link tanfileF, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making egfhi
-$ fortran egfhi.f
-$ link egfhi, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making tstubsF
 $ fortran tstubsF.f
-$ link tstubsF, hdf$lib/lib, sys$clib/lib
-$!
-$ type sys$input
-        Making tsdstrF
 $ fortran tsdstrF.f
-$ link tsdstrF, hdf$lib/lib, sys$clib/lib
+$ fortran slabwf.f
+$ fortran slab1wf.f
+$ fortran slab2wf.f
+$ fortran slab3wf.f
+$ fortran slab4wf.f
+$ link fortest, hdf$lib/lib, sys$clib/lib
+$ link tr8f, hdf$lib/lib, sys$clib/lib
+$ link t24f, hdf$lib/lib, sys$clib/lib
+$ link tpf, hdf$lib/lib, sys$clib/lib
+$ link tsdmmsf, hdf$lib/lib, sys$clib/lib
+$ link tsdnmmsf, hdf$lib/lib, sys$clib/lib
+$ link tsdntf, hdf$lib/lib, sys$clib/lib
+$ link tsdnntf, hdf$lib/lib, sys$clib/lib
+$ link tanf, hdf$lib/lib, sys$clib/lib
+$ link tanfilef, hdf$lib/lib, sys$clib/lib
+$ link tstubsf, hdf$lib/lib, sys$clib/lib
+$ link tsdstrf, hdf$lib/lib, sys$clib/lib
+$ link slabwf, hdf$lib/lib, sys$clib/lib
+$ link slab1wf, hdf$lib/lib, sys$clib/lib
+$ link slab2wf, hdf$lib/lib, sys$clib/lib
+$ link slab3wf, hdf$lib/lib, sys$clib/lib
+$ link slab4wf, hdf$lib/lib, sys$clib/lib
+$ delete *.obj;*
 $!
+
