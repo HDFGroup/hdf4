@@ -940,7 +940,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
     int32       dd_aid;              /* AID for writing the special info */
     uint16      data_tag, data_ref;  /* Tag/ref of the data in the file */
     uint8       local_ptbuf[4];      /* 4 bytes for special header length */
-    uint8       *sp_header = NULL;   /* special element header */
+    uint8       *c_sp_header = NULL;   /* special element header */
     int32       nfields;             /* fields in Vdata */
     int32       interlace;           /* type of interlace */
     int32       vdata_size;          /* size of Vdata */
@@ -1009,6 +1009,13 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
 
                 if (tmpinfo->fill_val != NULL)
                     HDfree(tmpinfo->fill_val);
+
+                if (tmpinfo->comp_sp_tag_header != NULL)
+                    HDfree(tmpinfo->comp_sp_tag_header);
+                if (tmpinfo->cinfo != NULL)
+                    HDfree(tmpinfo->cinfo);
+                if (tmpinfo->minfo != NULL)
+                    HDfree(tmpinfo->minfo);
                 /* free info struct last */
                 HDfree((VOIDP) tmpinfo);
 
@@ -1073,16 +1080,16 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
               HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
           /* Allocate buffer space for rest of special header */
-          if (( sp_header = (uint8 *) HDcalloc(info->sp_tag_header_len,1))==NULL)
+          if (( c_sp_header = (uint8 *) HDcalloc(info->sp_tag_header_len,1))==NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           /* first read special header in */
-          if (Hread(dd_aid, info->sp_tag_header_len, sp_header) == FAIL)
+          if (Hread(dd_aid, info->sp_tag_header_len, c_sp_header) == FAIL)
               HGOTO_ERROR(DFE_READERROR, FAIL);
 
           /* decode first special element header  */
           {
-              uint8      *p = sp_header;
+              uint8      *p = c_sp_header;
 
               /* version info */
               HDmemcpy(&info->version,p,1);      /* 1 byte  */
@@ -1402,6 +1409,12 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
                     HDfree(info->seek_user_indices);
                 if (info->fill_val != NULL)
                     HDfree(info->fill_val);
+                if (info->comp_sp_tag_header != NULL)
+                    HDfree(info->comp_sp_tag_header);
+                if (info->cinfo != NULL)
+                    HDfree(info->cinfo);
+                if (info->minfo != NULL)
+                    HDfree(info->minfo);
 
                 HDfree(info);
 
@@ -1412,8 +1425,8 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
 
     /* Normal function cleanup */
     /* free specail element header */
-    if (sp_header != NULL)
-        HDfree(sp_header);
+    if (c_sp_header != NULL)
+        HDfree(c_sp_header);
 
     /* free allocated space for vdata record */
     if (v_data != NULL)
@@ -1477,7 +1490,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     accrec_t   *access_rec = NULL; /* access record */
     int32       dd_aid     = FAIL; /* AID for writing the special info */
     chunkinfo_t *info      = NULL; /* information for the chunked elt */
-    uint8       *sp_header = NULL; /* special element header */
+    uint8       *c_sp_header = NULL; /* special element header */
     int32       npages     = 1;    /* i.e. number of chunks in element */
     int32       access_aid = FAIL; /* access id */
     uint16      chktbl_ref;        /* the ref of the link structure
@@ -1749,7 +1762,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
       }
 
     /* Allocate buffer space for header */
-    if (( sp_header = (uint8 *) HDcalloc(sp_tag_header_len,1))==NULL)
+    if (( c_sp_header = (uint8 *) HDcalloc(sp_tag_header_len,1))==NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* Calculate length of this special element header itself.
@@ -1771,7 +1784,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
 
     /* encode info into chunked descripton record */
     {
-        uint8      *p = sp_header;
+        uint8      *p = c_sp_header;
         intn        j;
 
         UINT16ENCODE(p, SPECIAL_CHUNKED);        /* 2 bytes */
@@ -1825,7 +1838,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
        plus what is needed for each dimension which is (12 x ndims) bytes.
        plus for fill value 4 bytes + fill_val_len 
        plus in future multiply special headers  = sp_tag_header_len */
-    if (Hwrite(dd_aid, sp_tag_header_len, sp_header) == FAIL)
+    if (Hwrite(dd_aid, sp_tag_header_len, c_sp_header) == FAIL)
         HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
     /* end access to special info stuff in file */
@@ -1912,7 +1925,12 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
                     HDfree(info->seek_pos_chunk);
                 if (info->fill_val != NULL)
                     HDfree(info->fill_val);
-
+                if (info->comp_sp_tag_header != NULL)
+                    HDfree(info->comp_sp_tag_header);
+                if (info->cinfo != NULL)
+                    HDfree(info->cinfo);
+                if (info->minfo != NULL)
+                    HDfree(info->minfo);
                 HDfree(info); /* free spcial info last */
             }
 
@@ -1923,8 +1941,8 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
 
     /* Normal function cleanup */
     /* free special element header */
-    if (sp_header != NULL)
-        HDfree(sp_header);
+    if (c_sp_header != NULL)
+        HDfree(c_sp_header);
 
 #ifdef HAVE_PABLO
     TRACE_OFF(H_mask, ID_HMCcreate);
@@ -3378,6 +3396,12 @@ HMCPcloseAID(accrec_t *access_rec /* IN:  access record of file to close */)
               HDfree(info->seek_user_indices);
           if (info->fill_val != NULL)
               HDfree(info->fill_val);
+          if (info->comp_sp_tag_header != NULL)
+              HDfree(info->comp_sp_tag_header);
+          if (info->cinfo != NULL)
+              HDfree(info->cinfo);
+          if (info->minfo != NULL)
+              HDfree(info->minfo);
           /* finally free up info */
           HDfree(info);
           access_rec->special_info = NULL;
