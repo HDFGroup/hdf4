@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.29  1993/04/26 22:40:32  koziol
-Shortened the long form of the DFR8setcompress and DF24setcompress calls to
-make the Vax happy...
+Revision 1.30  1993/04/26 22:43:08  koziol
+shortened the DF24setcompress and DFR8setcompress calls to make the Vax happy
 
+ * Revision 1.29  1993/04/26  22:40:32  koziol
+ * Shortened the long form of the DFR8setcompress and DF24setcompress calls to
+ * make the Vax happy...
+ *
  * Revision 1.28  1993/04/26  15:08:22  chouck
  * Fixes for the convex (doesn't like foo(VOID) prototypes)
  * Also added extern "C" { } around prototypes
@@ -1077,9 +1080,9 @@ extern FRETVAL(intf) ndaiafid
 #   define ndfr8setpalette   FNAME(DFR8SETPALETTE)
 #   define ndfr8restart  FNAME(DFR8RESTART)
 #   define nd8scomp  FNAME(D8SCOMP)
-#   define ndfr8setcompress FNAME(DFR8SCOMPRESS)
+#   define ndfr8scompress FNAME(DFR8SCOMPRESS)
 #   define nd8sjpeg  FNAME(D8SJPEG)
-#   define ndfr8setjpeg FNAME(DFR8SJPEG)
+#   define ndfr8sjpeg FNAME(DFR8SJPEG)
 #else   /* !DF_CAPFNAMES */
 #   define nd8spal   FNAME(d8spal)
 #   define nd8first  FNAME(d8first)
@@ -1095,9 +1098,9 @@ extern FRETVAL(intf) ndaiafid
 #   define ndfr8setpalette   FNAME(dfr8setpalette)
 #   define ndfr8restart  FNAME(dfr8restart)
 #   define nd8scomp  FNAME(d8scomp)
-#   define ndfr8setcompress FNAME(dfr8scompress)
+#   define ndfr8scompress FNAME(dfr8scompress)
 #   define nd8sjpeg  FNAME(d8sjpeg)
-#   define ndfr8setjpeg FNAME(dfr8sjpeg)
+#   define ndfr8sjpeg FNAME(dfr8sjpeg)
 #endif /* DF_CAPFNAMES */
 #endif /* DFR8_FNAMES */
 
@@ -1527,9 +1530,9 @@ extern FRETVAL(intf) ndfplastref
 #   define nd2irref  FNAME(D2IRREF)
 #   define nd24lref  FNAME(D24LREF)
 #   define nd2scomp  FNAME(D2SCOMP)
-#   define ndf24setcompress FNAME(DF24SETCOMPRESS)
+#   define ndf24scompress FNAME(DF24SCOMPRESS)
 #   define nd2sjpeg  FNAME(D2SJPEG)
-#   define ndf24setjpeg FNAME(DF24SETJPEG)
+#   define ndf24sjpeg FNAME(DF24SJPEG)
 #else
 #   define nd2reqil  FNAME(d2reqil)
 #   define ndf24reqil    FNAME(df24reqil)
@@ -1545,9 +1548,9 @@ extern FRETVAL(intf) ndfplastref
 #   define nd2irref  FNAME(d2irref)
 #   define nd24lref  FNAME(d24lref)
 #   define nd2scomp  FNAME(d2scomp)
-#   define ndf24setcompress FNAME(df24setcompress)
+#   define ndf24scompress FNAME(df24scompress)
 #   define nd2sjpeg  FNAME(d2sjpeg)
-#   define ndf24setjpeg FNAME(df24setjpeg)
+#   define ndf24sjpeg FNAME(df24sjpeg)
 #endif /* DF_CAPFNAMES */
 #endif /* DF24_FNAMES */
 
@@ -1596,13 +1599,13 @@ extern FRETVAL(intf) nd24lref
 extern FRETVAL(intf) nd2scomp
     PROTO((intf *scheme));
 
-extern FRETVAL(intf) ndf24setcompress
+extern FRETVAL(intf) ndf24scompress
     PROTO((intf *scheme));
 
 extern FRETVAL(intf) nd2sjpeg
     PROTO((intf *quality,intf *force_baseline));
 
-extern FRETVAL(intf) ndf24setjpeg
+extern FRETVAL(intf) ndf24sjpeg
     PROTO((intf *quality,intf *force_baseline));
 
 /*
