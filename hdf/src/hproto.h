@@ -2166,7 +2166,7 @@ extern intn ANdestroy(void);
 #  define nmgselct      FNAME(MGSELCT)
 #  define nmgin2ndx     FNAME(MGIN2NDX)
 #  define nmggiinf      FNAME(MGGIINF)
-#  define nmgwcimg      FNAME(MGWRIMG)
+#  define nmgwcimg      FNAME(MGWCIMG)
 #  define nmgrcimg      FNAME(MGRCIMG)
 #  define nmgwrimg      FNAME(MGWRIMG)
 #  define nmgrdimg      FNAME(MGRDIMG)
