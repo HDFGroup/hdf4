@@ -4,7 +4,7 @@ COMPILING A PROGRAM
 Following are instructions for compiling an application program on the 
 platforms supported by HDF, using the binaries that we provide.  For
 Unix, the information on options to specify comes from the configuration 
-files (mh-*) in the HDF source code (under ../HDF4.1r1/config).   
+files (mh-*) in the HDF source code (under ../HDF4.1r3/config).   
 
 In general, you compile your program as shown below.  If your platform is 
 not specified in the section, "INSTRUCTIONS FOR SPECIFIC PLATFORMS", then 
@@ -57,9 +57,6 @@ C:
        -I<path for hdf include directory>\
        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
-FORTRAN:
-    f77 -o <your program> <your program>.f  \
-        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 Dec Alpha/OpenVMS AXP:
 ---------------------
@@ -95,9 +92,7 @@ FORTRAN:
 FreeBSD:
 -------
 C:
-    gcc -ansi -Wall -Wpointer-arith -Wcast-qual -Wcast-align \
-        -Wwrite-strings -Wmissing-prototypes -Wnested-externs -pedantic -O2 \
-        -o <your program> <your program>.c \  
+    cc -ansi -Wall -pedantic -o <your program> <your program>.c \  
         -I<path for hdf include directory> \
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
@@ -105,16 +100,6 @@ FORTRAN:
     f77 -O -Nn802 -Nx400 -o <your program> <your program>.f  \
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
-HP-UX 9.03:
-----------
-C:
-    cc -Ae -O -o <your program> <your program>.c \
-       -I<path for hdf include directory> \
-       -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
-
-FORTRAN:
-    f77 -O -o <your program> <your program>.f  \
-        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
  
 HP-UX 10.2:
 ----------
@@ -125,17 +110,6 @@ C:
 
 FORTRAN:
     f77 -s -o <your program> <your program>.f  \
-        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
- 
-IRIX 5.3:
---------
-C:
-    cc -ansi -O -s -o <your program> <your program>.c  \
-       -I<path for hdf include directory>\
-       -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
- 
-FORTRAN:
-    f77 -O -s -o <your program> <your program>.f  \
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
  
 
@@ -234,12 +208,12 @@ T3E:
 ---
 C:
     
-    cc -X 1 -s -o <your program> <your program>.c \
+    cc -X m -s -o <your program> <your program>.c \
        -I<path for hdf include directory>\
        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
-    f90 -X 1 -Wl"-Dpermok=yes" -Wl"-s" -o <your program> <your program>.f  \
+    f90 -X m -Wl"-Dpermok=yes" -Wl"-s" -o <your program> <your program>.f  \
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 
