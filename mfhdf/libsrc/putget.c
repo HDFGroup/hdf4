@@ -2387,7 +2387,7 @@ ncvoid * *datap ;
 
 	handle->xdrs->x_op = XDR_ENCODE ;
 
-	return( NCrecio(handle, recnum, datap) ) ;
+	return( NCrecio(handle, recnum, (Void **)datap) ) ;
 }
 
 

@@ -553,7 +553,7 @@ vardata(vp, vdims, ncid, varid, fsp)
 		set_indent(4);
 	    }
 	}
-	lastrow = (ir == nrows-1);
+	lastrow = (ir == nrows-1) ? true:false;
 	while (left > 0) {
 	    long toget = left < gulp ? left : gulp;
 	    if (vrank > 0)

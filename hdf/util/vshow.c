@@ -98,7 +98,7 @@ main(int ac, char **av)
     if (ac == 3)
         if (av[2][0] == '-' || av[2][0] == '+')
           {
-              sscanf(&(av[2][1]), "%ld", &vsno);
+              sscanf(&(av[2][1]), "%d", &vsno);
               if (vsno == 0)
                 {
                     printf("FULL DUMP\n");

@@ -265,7 +265,7 @@ main(int argc, char *argv[])
 
     if ((img_buf = (uint8 *) HDmalloc((size_t)(xdim * ydim))) == NULL)
       {
-          printf("Error, cannot allocate space for %ldx%ld image\n", xdim, ydim);
+          printf("Error, cannot allocate space for %dx%d image\n", xdim, ydim);
           return (1);
       }     /* end if */
 
@@ -296,7 +296,7 @@ main(int argc, char *argv[])
           new_ydim = (int32) (img_scale * (float32)ydim);
           if ((scaled_image = (uint8 *) HDmalloc((size_t)(new_xdim * new_ydim))) == NULL)
             {
-                printf("Error, cannot allocate space for %ldx%ld scaled image\n", new_xdim, new_ydim);
+                printf("Error, cannot allocate space for %dx%d scaled image\n", new_xdim, new_ydim);
                 return (1);
             }   /* end if */
           if (!magnify(img_buf, scaled_image, 0, 0, xdim - 1, ydim - 1, xdim, ydim, new_xdim, new_ydim))
@@ -332,7 +332,7 @@ main(int argc, char *argv[])
     /* allocate space for the 24-bit image */
     if ((img24_buf = (uint8 *) HDmalloc((size_t)(xdim * ydim * 3))) == NULL)
       {
-          printf("Error, cannot allocate space for %ldx%ld 24-bit image\n", xdim, ydim);
+          printf("Error, cannot allocate space for %dx%d 24-bit image\n", xdim, ydim);
           return (1);
       }     /* end if */
 
