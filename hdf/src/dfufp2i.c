@@ -1,3 +1,15 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
@@ -171,8 +183,8 @@ int     ct_method,       /* color transform method: 1=EXPAND; 2=INTERP */
         compress;        /* flag: 0 = don't compress; 1=do compression */
 #endif /* PROTOTYPE */
 {
-    struct Input in;
-    struct Output out;
+    Input in;
+    Output out;
 
     in.hdim = hdim;
     in.vdim = vdim;
@@ -213,11 +225,11 @@ int     ct_method,       /* color transform method: 1=EXPAND; 2=INTERP */
  *----------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int process(struct Input *in, struct Output *out)
+int process(Input *in, Output *out)
 #else
 int process(in, out)
-struct Input *in;
-struct Output *out;
+Input *in;
+Output *out;
 #endif /* PROTOTYPE */
 {
     int ret;
@@ -321,10 +333,10 @@ float32 *scale;
 /*  This function is commented out of the code!! */
 #ifdef DEBUG_HDF
 #ifdef PROTOTYPE
-int printinput(struct Input *in)
+int printinput(Input *in)
 #else
 int printinput(in)
-struct Input *in;
+Input *in;
 #endif /* PROTOTYPE */
 {
     int i,j; 
@@ -376,10 +388,10 @@ struct Input *in;
 /*  This function is commented out of the code!! */
 #ifdef DEBUG_HDF
 #ifdef PROTOTYPE
-int printoutput(struct Output *out)
+int printoutput(Output *out)
 #else
 int printoutput(out)
-struct Output *out;
+Output *out;
 #endif /* PROTOTYPE */
 {
     int i,j;
@@ -418,11 +430,11 @@ struct Output *out;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int convert_interp(struct Input *in, struct Output *out)
+int convert_interp(Input *in, Output *out)
 #else
 int convert_interp(in, out)
-struct Input   *in;
-struct Output  *out;
+Input   *in;
+Output  *out;
 #endif /* PROTOTYPE */
 {
     register int j,theval;
@@ -579,11 +591,11 @@ struct Output  *out;
  *---------------------------------------------------------------------------*/
 
 #ifdef  PROTOTYPE
-int pixrep_scaled(struct Input *in, struct Output *out)
+int pixrep_scaled(Input *in, Output *out)
 #else
 int pixrep_scaled(in, out)
-struct Input   *in;
-struct Output  *out;
+Input   *in;
+Output  *out;
 #endif /* PROTOTYPE */
 {
     register int32 j;
@@ -709,11 +721,11 @@ int32 *offsets;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int pixrep_simple(struct Input *in, struct Output *out)
+int pixrep_simple(Input *in, Output *out)
 #else
 int pixrep_simple(in, out)
-struct Input   *in;
-struct Output  *out;
+Input   *in;
+Output  *out;
 #endif /* PROTOTYPE */
 {
     int32 i,j;
