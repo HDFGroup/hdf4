@@ -906,6 +906,24 @@ printGR_ASCII(
 		   ERROR_BREAK_2( "in %s: Printing image's palette information failed for %d'th RI",
 			"printGR_ASCII", (int)ri_index, FAIL );
 
+	       /* Print compression method or "NONE" */
+	       {
+		  comp_coder_t comp_type;         /* Compression flag */
+		  comp_info    c_info;            /* Compression structure */
+
+		  comp_type = COMP_CODE_NONE;  /* reset variables */
+		  HDmemset(&c_info, 0, sizeof(c_info));
+
+		  status = GRgetcompinfo(ri_id, &comp_type, &c_info);
+		  if( status == FAIL )
+		  {
+                     ERROR_CONT_3( "in %s: %s failed for %d'th RI",
+                       "printGR_ASCII", "GRgetcompinfo", (int)ri_index);
+		  }
+		  fprintf(fp, "\t Compression method = %s\n",
+                                        comp_method_txt(comp_type));
+	       }
+
                /* Print image attributes */
                fprintf(fp, "\t Number of attributes = %d\n", (int) nattrs );
                status = print_RIattrs(ri_id, ri_index, nattrs, fp, dumpgr_opts );

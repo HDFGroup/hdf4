@@ -656,6 +656,29 @@ resetSDS(
    }
 }  /* end of resetSDS */
 
+char *comp_method_txt(comp_coder_t comp_type)
+{
+    switch (comp_type)
+    {
+        case COMP_CODE_NONE:
+            return ("NONE");
+        case COMP_CODE_RLE:
+            return ("RLE");
+        case COMP_CODE_NBIT:
+            return ("NBIT");
+        case COMP_CODE_SKPHUFF:
+            return ("SKPHUFF");
+        case COMP_CODE_DEFLATE:
+            return ("DEFLATE");
+        case COMP_CODE_SZIP:
+            return ("SZIP");
+        case COMP_CODE_JPEG:
+            return ("JPEG");
+        default:
+            return ("INVALID");
+    }
+}
+
 /* printSDS_ASCII (yea, not SD_ASCII) prints all of the requested SDSs in
    the file
 */
@@ -795,6 +818,25 @@ intn printSD_ASCII(
 			"printSD_ASCII", "SDidtoref", (int)sds_index, FAIL );
 
             fprintf(fp, "\t Ref. = %d\n", (int) sds_ref);
+
+            /* print compression method or "NONE" */
+            {
+                comp_coder_t comp_type;         /* Compression flag */
+                comp_info    c_info;            /* Compression structure */
+
+                comp_type = COMP_CODE_NONE;  /* reset variables */
+                HDmemset(&c_info, 0, sizeof(c_info));
+
+                status = SDgetcompinfo(sds_id, &comp_type, &c_info);
+                if( status == FAIL )
+                {
+                    resetSDS( &sds_id, sds_index, curr_file_name );
+                    ERROR_CONT_3( "in %s: %s failed for %d'th SDS",
+                       "printSD_ASCII", "SDgetcompress", (int)sds_index );
+                }
+                fprintf(fp, "\t Compression method = %s\n",
+                                        comp_method_txt(comp_type));
+            }
             fprintf(fp, "\t Rank = %d\n\t Number of attributes = %d\n",
                                         (int) rank, (int) nattrs);
 
