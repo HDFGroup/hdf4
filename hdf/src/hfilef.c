@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/02/17 20:49:00  briand
-added FORTRAN stub for Hnumber.
+Revision 1.6  1993/02/18 04:34:52  georgev
+Minor syntax fix.
 
+ * Revision 1.5  1993/02/17  20:49:00  briand
+ * added FORTRAN stub for Hnumber.
+ *
  * Revision 1.4  1993/01/19  05:55:58  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -120,7 +123,7 @@ nhnumber(file_id, tag)
     uint16 tag;
 #endif /* PROTOTYPE */
 {
-    return(Hnumber(*file_id,*tag));
+    return(Hnumber(file_id,tag));
 }
 
 
