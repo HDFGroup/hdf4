@@ -271,7 +271,6 @@ subdir_dummy_target $(SUBDIR_TARGETS):
 	    echo "making \`$$target' in directory `pwd`" && \
 	    echo "" && \
 	    $(MAKE) $(MFLAGS) $(SUBDIR_MACROS) \
-		prefix=$(prefix) exec_prefix=$(exec_prefix) \
 		$$target || exit 1
 	@echo ""
 	@echo "returning to directory `pwd`"

@@ -167,7 +167,6 @@ clean::		port/clean xdr/clean libsrc/clean fortran/clean ncdump/clean \
 SUBDIR_MACROS = CC="$(CC)" \
 	CFLAGS="$(CFLAGS)" \
 	CPP="$(CPP)" \
-	exec_prefix="$(exec_prefix)" \
 	FC="$(FC)" \
     FFLAGS="$(FFLAGS)" 
 
@@ -175,7 +174,6 @@ LOCAL_MACROS  = CC="$(CC)" \
 	CFLAGS="$(CFLAGS)" \
 	CPP="$(CPP)" \
 	CPPFLAGS="$(CPPFLAGS)" \
-	exec_prefix="$(exec_prefix)" \
 	FC="$(FC)" \
     FFLAGS="$(FFLAGS)" 
 
