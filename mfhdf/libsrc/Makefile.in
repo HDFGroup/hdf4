@@ -119,7 +119,7 @@ PROGRAM		= cdftest
 #CFLAGS		= $(CFLAGS_LIB)
 GARBAGE		= $(PROGRAM) test.cdf cdfout.new *.hdf \
                   hdftest hdfout.new
-HEADERS		= netcdf.h mfhdf.h local_nc.h
+HEADERS		= netcdf.h mfhdf.h local_nc.h hdf2netcdf.h
 #XDRFILE	= @XDRFILE@
 #HDF_LIB         = @HDF_LIB@
 #JPEG_LIB        = @JPEG_LIB@
