@@ -25,6 +25,10 @@ HDFLIB=../../develop/lib
 RM=/bin/rm
 RMFLAGS=-f
 
+SRCS= 	nt_rig.c nt_sdstr.c nt_hblocks.c nt_an.c nt_anfile.c \
+        nt_hextelt.c nt_hfile.c nt_hfile1.c nt_vers.c nt_sdmms.c \
+        nt_sdnmms.c nt_slab.c testhdf.c
+
 CTESTS= nt_rig.o nt_sdstr.o nt_hblocks.o nt_an.o nt_anfile.o \
         nt_hextelt.o nt_hfile.o nt_hfile1.o nt_vers.o nt_sdmms.o \
         nt_sdnmms.o nt_slab.o testhdf.o
@@ -50,7 +54,7 @@ all: testhdf
 testhdf: $(CTESTS)
 	$(CC) $(CFLAGS) -o testhdf $(CTESTS) $(HDFLIB)/libdf.a
 
-fortest: ftests fortest.o
+fortest: $(FTESTS) fortest.o
 	$(CC) $(CFLAGS) -o fortest $(TESTF) $(HDFLIB)/libdf.a
 
 ftests: $(FTESTS)
@@ -61,6 +65,8 @@ clean:
 depend: 
 	 makedepend -I$(HDFINC) *.c
 
+saber:	$(SRCS)
+	 #load $(SRCS) -I../include -D$(MACHINE) 
 
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
