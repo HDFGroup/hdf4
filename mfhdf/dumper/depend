@@ -9,7 +9,6 @@ hdp.o: ../../hdf/src//hbitio.h
 hdp.o: ../../hdf/src//hcomp.h
 hdp.o: ../../hdf/src//herr.h
 hdp.o: ../../hdf/src//hproto.h
-hdp.o: ../../hdf/src//vproto.h
 hdp.o: ../../hdf/src//hfile.h
 hdp_dump.o: hdp_dump.c
 hdp_dump.o: ../../mfhdf/libsrc/mfhdf.h
@@ -24,7 +23,6 @@ hdp_dump.o: ../../hdf/src//hbitio.h
 hdp_dump.o: ../../hdf/src//hcomp.h
 hdp_dump.o: ../../hdf/src//herr.h
 hdp_dump.o: ../../hdf/src//hproto.h
-hdp_dump.o: ../../hdf/src//vproto.h
 hdp_dump.o: ../../hdf/src//vg.h
 hdp_dump.o: ../../hdf/src//hfile.h
 hdp_dump.o: ../../hdf/src//tbbt.h
@@ -42,7 +40,6 @@ hdp_list.o: ../../hdf/src//hbitio.h
 hdp_list.o: ../../hdf/src//hcomp.h
 hdp_list.o: ../../hdf/src//herr.h
 hdp_list.o: ../../hdf/src//hproto.h
-hdp_list.o: ../../hdf/src//vproto.h
 hdp_list.o: ../../hdf/src//vg.h
 hdp_list.o: ../../hdf/src//hfile.h
 hdp_list.o: ../../hdf/src//tbbt.h
@@ -60,7 +57,6 @@ hdp_rig.o: ../../hdf/src//hbitio.h
 hdp_rig.o: ../../hdf/src//hcomp.h
 hdp_rig.o: ../../hdf/src//herr.h
 hdp_rig.o: ../../hdf/src//hproto.h
-hdp_rig.o: ../../hdf/src//vproto.h
 hdp_rig.o: ../../hdf/src//vg.h
 hdp_rig.o: ../../hdf/src//hfile.h
 hdp_rig.o: ../../hdf/src//tbbt.h
@@ -78,7 +74,6 @@ hdp_sds.o: ../../hdf/src//hbitio.h
 hdp_sds.o: ../../hdf/src//hcomp.h
 hdp_sds.o: ../../hdf/src//herr.h
 hdp_sds.o: ../../hdf/src//hproto.h
-hdp_sds.o: ../../hdf/src//vproto.h
 hdp_sds.o: ../../hdf/src//vg.h
 hdp_sds.o: ../../hdf/src//hfile.h
 hdp_sds.o: ../../hdf/src//tbbt.h
@@ -94,7 +89,6 @@ hdp_util.o: ../../hdf/src//hbitio.h
 hdp_util.o: ../../hdf/src//hcomp.h
 hdp_util.o: ../../hdf/src//herr.h
 hdp_util.o: ../../hdf/src//hproto.h
-hdp_util.o: ../../hdf/src//vproto.h
 hdp_util.o: ../../hdf/src//hfile.h
 hdp_vd.o: hdp_vd.c
 hdp_vd.o: hdp.h
@@ -107,7 +101,6 @@ hdp_vd.o: ../../hdf/src//hbitio.h
 hdp_vd.o: ../../hdf/src//hcomp.h
 hdp_vd.o: ../../hdf/src//herr.h
 hdp_vd.o: ../../hdf/src//hproto.h
-hdp_vd.o: ../../hdf/src//vproto.h
 hdp_vd.o: ../../hdf/src//hfile.h
 hdp_vg.o: hdp_vg.c
 hdp_vg.o: hdp.h
@@ -120,7 +113,6 @@ hdp_vg.o: ../../hdf/src//hbitio.h
 hdp_vg.o: ../../hdf/src//hcomp.h
 hdp_vg.o: ../../hdf/src//herr.h
 hdp_vg.o: ../../hdf/src//hproto.h
-hdp_vg.o: ../../hdf/src//vproto.h
 hdp_vg.o: ../../hdf/src//hfile.h
 hdp_vg.o: ../../hdf/src//vg.h
 hdp_vg.o: ../../hdf/src//tbbt.h
@@ -135,7 +127,6 @@ show.o: ../../hdf/src//hbitio.h
 show.o: ../../hdf/src//hcomp.h
 show.o: ../../hdf/src//herr.h
 show.o: ../../hdf/src//hproto.h
-show.o: ../../hdf/src//vproto.h
 show.o: ../../hdf/src//hfile.h
 show.o: ../../hdf/src//vg.h
 show.o: ../../hdf/src//tbbt.h

@@ -14,7 +14,6 @@ ncdump.o: ../../hdf/src//hbitio.h
 ncdump.o: ../../hdf/src//hcomp.h
 ncdump.o: ../../hdf/src//herr.h
 ncdump.o: ../../hdf/src//hproto.h
-ncdump.o: ../../hdf/src//vproto.h
 ncdump.o: ../../hdf/src//vg.h
 ncdump.o: ../../hdf/src//hfile.h
 ncdump.o: ../../hdf/src//tbbt.h

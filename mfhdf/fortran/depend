@@ -10,7 +10,6 @@ jackets.o: ../../hdf/src//hbitio.h
 jackets.o: ../../hdf/src//hcomp.h
 jackets.o: ../../hdf/src//herr.h
 jackets.o: ../../hdf/src//hproto.h
-jackets.o: ../../hdf/src//vproto.h
 jackets.o: ../../hdf/src//vg.h
 jackets.o: ../../hdf/src//hfile.h
 jackets.o: ../../hdf/src//tbbt.h
@@ -27,7 +26,6 @@ mfsdf.o: ../../hdf/src//hbitio.h
 mfsdf.o: ../../hdf/src//hcomp.h
 mfsdf.o: ../../hdf/src//herr.h
 mfsdf.o: ../../hdf/src//hproto.h
-mfsdf.o: ../../hdf/src//vproto.h
 mfsdf.o: ../../hdf/src//vg.h
 mfsdf.o: ../../hdf/src//hfile.h
 mfsdf.o: ../../hdf/src//tbbt.h

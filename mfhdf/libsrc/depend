@@ -10,7 +10,6 @@ array.o: ../../hdf/src//hbitio.h
 array.o: ../../hdf/src//hcomp.h
 array.o: ../../hdf/src//herr.h
 array.o: ../../hdf/src//hproto.h
-array.o: ../../hdf/src//vproto.h
 array.o: ../../hdf/src//vg.h
 array.o: ../../hdf/src//hfile.h
 array.o: ../../hdf/src//tbbt.h
@@ -27,7 +26,6 @@ attr.o: ../../hdf/src//hbitio.h
 attr.o: ../../hdf/src//hcomp.h
 attr.o: ../../hdf/src//herr.h
 attr.o: ../../hdf/src//hproto.h
-attr.o: ../../hdf/src//vproto.h
 attr.o: ../../hdf/src//vg.h
 attr.o: ../../hdf/src//hfile.h
 attr.o: ../../hdf/src//tbbt.h
@@ -44,7 +42,6 @@ cdf.o: ../../hdf/src//hbitio.h
 cdf.o: ../../hdf/src//hcomp.h
 cdf.o: ../../hdf/src//herr.h
 cdf.o: ../../hdf/src//hproto.h
-cdf.o: ../../hdf/src//vproto.h
 cdf.o: ../../hdf/src//vg.h
 cdf.o: ../../hdf/src//hfile.h
 cdf.o: ../../hdf/src//tbbt.h
@@ -60,7 +57,6 @@ cdftest.o: ../../hdf/src//hbitio.h
 cdftest.o: ../../hdf/src//hcomp.h
 cdftest.o: ../../hdf/src//herr.h
 cdftest.o: ../../hdf/src//hproto.h
-cdftest.o: ../../hdf/src//vproto.h
 dim.o: dim.c
 dim.o: local_nc.h
 dim.o: netcdf.h
@@ -73,7 +69,6 @@ dim.o: ../../hdf/src//hbitio.h
 dim.o: ../../hdf/src//hcomp.h
 dim.o: ../../hdf/src//herr.h
 dim.o: ../../hdf/src//hproto.h
-dim.o: ../../hdf/src//vproto.h
 dim.o: ../../hdf/src//vg.h
 dim.o: ../../hdf/src//hfile.h
 dim.o: ../../hdf/src//tbbt.h
@@ -90,7 +85,6 @@ error.o: ../../hdf/src//hbitio.h
 error.o: ../../hdf/src//hcomp.h
 error.o: ../../hdf/src//herr.h
 error.o: ../../hdf/src//hproto.h
-error.o: ../../hdf/src//vproto.h
 error.o: ../../hdf/src//vg.h
 error.o: ../../hdf/src//hfile.h
 error.o: ../../hdf/src//tbbt.h
@@ -106,7 +100,6 @@ file.o: ../../hdf/src//hbitio.h
 file.o: ../../hdf/src//hcomp.h
 file.o: ../../hdf/src//herr.h
 file.o: ../../hdf/src//hproto.h
-file.o: ../../hdf/src//vproto.h
 file.o: ../../hdf/src//vg.h
 file.o: ../../hdf/src//hfile.h
 file.o: ../../hdf/src//tbbt.h
@@ -126,7 +119,6 @@ hdfsds.o: ../../hdf/src//hbitio.h
 hdfsds.o: ../../hdf/src//hcomp.h
 hdfsds.o: ../../hdf/src//herr.h
 hdfsds.o: ../../hdf/src//hproto.h
-hdfsds.o: ../../hdf/src//vproto.h
 hdfsds.o: ../../hdf/src//vg.h
 hdfsds.o: ../../hdf/src//hfile.h
 hdfsds.o: ../../hdf/src//tbbt.h
@@ -143,7 +135,6 @@ hdftest.o: ../../hdf/src//hbitio.h
 hdftest.o: ../../hdf/src//hcomp.h
 hdftest.o: ../../hdf/src//herr.h
 hdftest.o: ../../hdf/src//hproto.h
-hdftest.o: ../../hdf/src//vproto.h
 hdftest.o: ../../hdf/src//vg.h
 hdftest.o: ../../hdf/src//hfile.h
 hdftest.o: ../../hdf/src//tbbt.h
@@ -159,7 +150,6 @@ iarray.o: ../../hdf/src//hbitio.h
 iarray.o: ../../hdf/src//hcomp.h
 iarray.o: ../../hdf/src//herr.h
 iarray.o: ../../hdf/src//hproto.h
-iarray.o: ../../hdf/src//vproto.h
 iarray.o: ../../hdf/src//vg.h
 iarray.o: ../../hdf/src//hfile.h
 iarray.o: ../../hdf/src//tbbt.h
@@ -177,7 +167,6 @@ mfsd.o: ../../hdf/src//hbitio.h
 mfsd.o: ../../hdf/src//hcomp.h
 mfsd.o: ../../hdf/src//herr.h
 mfsd.o: ../../hdf/src//hproto.h
-mfsd.o: ../../hdf/src//vproto.h
 mfsd.o: ../../hdf/src//vg.h
 mfsd.o: ../../hdf/src//hfile.h
 mfsd.o: ../../hdf/src//tbbt.h
@@ -193,7 +182,6 @@ nssdc.o: ../../hdf/src//hbitio.h
 nssdc.o: ../../hdf/src//hcomp.h
 nssdc.o: ../../hdf/src//herr.h
 nssdc.o: ../../hdf/src//hproto.h
-nssdc.o: ../../hdf/src//vproto.h
 nssdc.o: ../../hdf/src//vg.h
 nssdc.o: ../../hdf/src//hfile.h
 nssdc.o: ../../hdf/src//tbbt.h
@@ -209,7 +197,6 @@ putget.o: ../../hdf/src//hbitio.h
 putget.o: ../../hdf/src//hcomp.h
 putget.o: ../../hdf/src//herr.h
 putget.o: ../../hdf/src//hproto.h
-putget.o: ../../hdf/src//vproto.h
 putget.o: ../../hdf/src//vg.h
 putget.o: ../../hdf/src//hfile.h
 putget.o: ../../hdf/src//tbbt.h
@@ -226,7 +213,6 @@ putgetg.o: ../../hdf/src//hbitio.h
 putgetg.o: ../../hdf/src//hcomp.h
 putgetg.o: ../../hdf/src//herr.h
 putgetg.o: ../../hdf/src//hproto.h
-putgetg.o: ../../hdf/src//vproto.h
 putgetg.o: ../../hdf/src//vg.h
 putgetg.o: ../../hdf/src//hfile.h
 putgetg.o: ../../hdf/src//tbbt.h
@@ -242,7 +228,6 @@ sharray.o: ../../hdf/src//hbitio.h
 sharray.o: ../../hdf/src//hcomp.h
 sharray.o: ../../hdf/src//herr.h
 sharray.o: ../../hdf/src//hproto.h
-sharray.o: ../../hdf/src//vproto.h
 sharray.o: ../../hdf/src//vg.h
 sharray.o: ../../hdf/src//hfile.h
 sharray.o: ../../hdf/src//tbbt.h
@@ -259,7 +244,6 @@ string.o: ../../hdf/src//hbitio.h
 string.o: ../../hdf/src//hcomp.h
 string.o: ../../hdf/src//herr.h
 string.o: ../../hdf/src//hproto.h
-string.o: ../../hdf/src//vproto.h
 string.o: ../../hdf/src//vg.h
 string.o: ../../hdf/src//hfile.h
 string.o: ../../hdf/src//tbbt.h
@@ -276,7 +260,6 @@ var.o: ../../hdf/src//hbitio.h
 var.o: ../../hdf/src//hcomp.h
 var.o: ../../hdf/src//herr.h
 var.o: ../../hdf/src//hproto.h
-var.o: ../../hdf/src//vproto.h
 var.o: ../../hdf/src//vg.h
 var.o: ../../hdf/src//hfile.h
 var.o: ../../hdf/src//tbbt.h
@@ -293,7 +276,6 @@ xdrposix.o: ../../hdf/src//hbitio.h
 xdrposix.o: ../../hdf/src//hcomp.h
 xdrposix.o: ../../hdf/src//herr.h
 xdrposix.o: ../../hdf/src//hproto.h
-xdrposix.o: ../../hdf/src//vproto.h
 xdrposix.o: ../../hdf/src//vg.h
 xdrposix.o: ../../hdf/src//hfile.h
 xdrposix.o: ../../hdf/src//tbbt.h
@@ -310,7 +292,6 @@ xdrstdio.o: ../../hdf/src//hbitio.h
 xdrstdio.o: ../../hdf/src//hcomp.h
 xdrstdio.o: ../../hdf/src//herr.h
 xdrstdio.o: ../../hdf/src//hproto.h
-xdrstdio.o: ../../hdf/src//vproto.h
 xdrstdio.o: ../../hdf/src//vg.h
 xdrstdio.o: ../../hdf/src//hfile.h
 xdrstdio.o: ../../hdf/src//tbbt.h
