@@ -77,9 +77,9 @@
 #include <stdlib.h>
 #endif /* HAVE_STDLIB */
 
-#ifdef HAVE_STDIO
+#ifdef HAVE_STDIO_H
 #include <stdio.h>
-#endif /* HAVE_STDIO */
+#endif /* HAVE_STDIO_H*/
 
 #ifdef __FMPINTERFACE_PRIVATE
 #include "compat.h"
@@ -108,7 +108,7 @@ typedef	unsigned long long	u_int64_t;
 #endif /* __BIT_TYPES_DEFINED__ */
 
 #define	MAX_PAGE_NUMBER	0xffffffff	/* >= # of pages in a file */
-typedef u_int32_t	pgno_t;         /* page type */
+typedef u_int32_t	pageno_t;         /* page type */
 
 /* internal file access codes */
 #ifndef DFACC_READ
