@@ -992,5 +992,5 @@ nsfref2index(id, ref)
      intf *ref;
 #endif /* PROTOTYPE */
 {
-    return((intf) SDidtoref(*id, (uint16) *ref));
+    return((intf) SDreftoindex(*id, (int32) *ref));
 }
