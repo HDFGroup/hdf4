@@ -335,7 +335,7 @@ DFCIunjpeg(int32 file_id, uint16 tag, uint16 ref, VOIDP image, int32 xdim,
     JDIMENSION lines_read, lines_left;
     JSAMPARRAY buffer;
 
-    if((cinfo_ptr=HDmalloc(sizeof(struct jpeg_decompress_struct)))==NULL)
+    if((cinfo_ptr=HDcalloc(1,sizeof(struct jpeg_decompress_struct)))==NULL)
         HRETURN_ERROR(DFE_NOSPACE,FAIL);
 
     if((jerr_ptr=HDmalloc(sizeof(struct jpeg_error_mgr)))==NULL)
