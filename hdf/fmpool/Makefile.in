@@ -1,0 +1,167 @@
+# Makefile for Shared Memory File Buffer Pool
+
+# Makefile.in is edited by Cygnus configure to produce a custom Makefile.
+
+# Read installation instructions before saying "make" !!
+
+# For compiling with source and object files in different directories.
+srcdir = .
+
+# Where to install the programs and man pages.
+prefix = /usr/local
+exec_prefix = ${prefix}
+bindir = $(exec_prefix)/bin
+libdir = $(exec_prefix)/lib
+includedir = $(prefix)/include
+binprefix =
+manprefix =
+manext = 1
+mandir = $(prefix)/man/man$(manext)
+
+# The following default options are overriden in the makefile fragment
+# section below
+#
+# The name of your C compiler:
+CC= gcc
+
+# You may need to adjust these cc options:
+CFLAGS= -O -I$(srcdir)
+
+# Link-time cc options:
+LDFLAGS= 
+
+# To link any special libraries, add the necessary -l commands here.
+LDLIBS= 
+
+# miscellaneous OS-dependent stuff
+SHELL= /bin/sh
+# linker
+LN= $(CC)
+# file deletion command
+RM = /bin/rm 
+RMFLAGS = -f
+
+# file rename command
+MV= mv
+# library (.a) file creation command
+#AR= ar rc
+AR = ar
+ARFLAGS = rc
+
+# Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
+RANLIB = ranlib
+
+# second step in .a creation (use "touch" if not needed)
+AR2= $(RANLIB)
+
+# installation program
+INSTALL= cp
+INSTALL_PROGRAM= $(INSTALL)
+INSTALL_DATA= $(INSTALL)
+
+# -DPURIFY     -> when using purify
+# -DSTATISTICS -> when you want statistics
+# -DMPOOL_DEBUG -> debugging fmpool_xxx interface
+# -DMP_DEBUG    -> debugging MPxxx interface
+# 
+#AUXFLAGS= -DPURIFY -DSTATISTICS -DMPOOL_DEBUG -DMP_DEBUG -DDEBUG
+#AUXFLAGS= -DPURIFY -DSTATISTICS -DMPOOL_DEBUG -DMP_DEBUG -DCIRCLEQ_DEBUG
+#AUXFLAGS= -DPURIFY -DSTATISTICS -DMP_DEBUG -DDEBUG
+#AUXFLAGS= -DPURIFY -DSTATISTICS -DSTAT_DEBUG
+#AUXFLAGS= -DHAVE_GETRUSAGE -DSTATISTICS
+#AUXFLAGS= -DDEBUG
+AUXFLAGS= 
+
+#----------------- End of configurable options.---------------------------
+
+# source files: FMPOOL library
+LIBSOURCES= fmpool.c fmpio.c
+
+# source files: 
+APPSOURCES= 
+
+SOURCES= $(LIBSOURCES) $(APPSOURCES)
+# files included by source files
+INCLUDES= cdefs.h compat.h fmptypes.h queue.h fmpconf.h fmpio.h fmpool.h 
+
+# documentation, test, and support files
+DOCS= README INSTALL fmpool.1
+
+MKFILES= configure Makefile.in
+CONFIGFILES= 
+OTHERFILES= 
+TESTFILES= test_fmpio.c tfmpio_read.c tfmpio_write.c
+        
+DISTFILES= $(DOCS) $(MKFILES) $(CONFIGFILES) $(SOURCES) $(INCLUDES) \
+        $(OTHERFILES) $(TESTFILES)
+
+LIBOBJECTS= fmpool.o fmpio.o
+
+# object files for sample applications (excluding library files)
+TOBJECTS= test_fmpio.o
+
+
+#### makefile fragment from 'config/' goes here ##############
+## ------------------------ end of makefile fragments--------------------
+
+CL= ${CC} $(CFLAGS) -c -D__FMPINTERFACE_PRIVATE ${AUXFLAGS} -I. 
+
+all: libfmpool.a
+
+libfmpool.a: $(LIBOBJECTS)
+	$(RM) $(RMFLAGS) libfmpool.a
+	$(AR) $(ARFLAGS) libfmpool.a  $(LIBOBJECTS)
+	$(AR2) libfmpool.a
+
+
+tfmp: ${INCLUDES} test_fmpio.c libfmpool.a
+	${CC} $(CFLAGS)  ${AUXFLAGS} -I. -c test_fmpio.c 
+	$(LN) $(LDFLAGS) -o tfmp $(TOBJECTS) libfmpool.a $(LDLIBS)
+
+tfmpr: ${INCLUDES} tfmpio_read.c libfmpool.a
+	${CC} $(CFLAGS)  ${AUXFLAGS} -I. -c tfmpio_read.c
+	$(LN) $(LDFLAGS) -o tfmpr tfmpio_read.o libfmpool.a $(LDLIBS)
+
+tfmpw: ${INCLUDES} tfmpio_write.c libfmpool.a
+	${CC} $(CFLAGS)  ${AUXFLAGS} -I. -c tfmpio_write.c
+	$(LN) $(LDFLAGS) -o tfmpw tfmpio_write.o libfmpool.a $(LDLIBS)
+
+fmpool.o: ${INCLUDES} fmpool.c 
+	${CL} fmpool.c
+
+fmpio.o:  ${INCLUDES} fmpio.c 
+	${CL} fmpio.c
+
+install-lib: libfmpool.a install-headers
+	$(INSTALL_DATA) libfmpool.a $(libdir)/$(binprefix)libfmpool.a
+
+install-headers: fmpio.h
+	$(INSTALL_DATA) $(srcdir)/fmpio.h $(includedir)/fmpio.h
+
+clean:
+	-$(RM) $(RMFLAGS) *.o *.mp core libfmpool.a tfmp
+
+distclean:
+	-$(RM) $(RMFLAGS) *.o *.mp core libfmpool.a tfmp
+	-$(RM) $(RMFLAGS) config.status fmpconf.h
+
+distribute:
+	$(RM) $(RMFLAGS) fmpoolsrc.tar*
+	tar cvf fmpoolsrc.tar $(DISTFILES)
+	compress -v fmpoolsrc.tar
+
+test: tfmp
+	$(RM) $(RMFLAGS) *.mp
+	./run.tests
+	cmp $(srcdir)/test.mp testout.mp
+	cmp $(srcdir)/test1.mp test1out.mp
+
+check: test
+
+# GNU Make likes to know which target names are not really files to be made:
+.PHONY: all install install-lib install-headers clean distribute test check
+
+
+fmpool.o: fmpool.c fmpool.h fmptypes.h fmpconf.h compat.h cdefs.h 
+fmpio.o: fmpio.c fmpool.h fmpio.h fmptypes.h fmpconf.h compat.h cdefs.h 
+
