@@ -385,6 +385,8 @@ Known Problems:
 
    o Currently there is a problem in re-writing data in the middle
      of compressed objects.
+  
+   o VMS gives an error on the test for Little Endian float64.
 
    o If the external element test in hdf/test/testhdf fails
      and there is no subdirectory "testdir" in hdf/test/,
