@@ -68,11 +68,13 @@ typedef NETLONG     netlong;
         typedef u_int ncpos_t ;  /* all unicies */
 #   endif
 #else
-#if defined DOS_FS
-typedef off_t ncpos_t ;
-#else /* macintosh */
-typedef u_long ncpos_t ;
-#endif /* macintosh */
+#  if defined DOS_FS
+      typedef off_t ncpos_t ;
+#  elif defined __APPLE__
+      typedef u_int ncpos_t;
+#  else /* macintosh */
+      typedef u_long ncpos_t ;
+#  endif /* macintosh */
 #endif
 
 typedef struct {
