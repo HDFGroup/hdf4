@@ -1228,6 +1228,7 @@ dvg(dump_info_t *dumpvg_opts,
       and display them */
    while (curr_arg < argc)
    {
+      intn isHDF = TRUE;  /* FALSE, if current file is not HDF file */
       intn skipfile = FALSE;  /* skip the current file when some severe */
            /* failure occurs; otherwise, the list of nodes is not */
            /* completely prepared and will cause a crash in display */
@@ -1239,6 +1240,19 @@ dvg(dump_info_t *dumpvg_opts,
       /* there are times a failure causes continuation without proper
          cleanup, so closeVG ensures of that */
       closeVG( &file_id, &vg_chosen, file_name );
+
+      /* Print an informative message and skip this file if it is not
+         an HDF file */
+      isHDF = Hishdf(file_name);
+      if (isHDF == FALSE)
+      {
+         /* if there are no more files to be processed, print error
+            message, then returns with FAIL */
+         if( curr_arg == argc )
+            {ERROR_GOTO_1( "in dvg: %s is not an HDF file", file_name);}
+         else /* print message, then continue processing the next file */
+            {ERROR_CONT_1( "in dvg: %s is not an HDF file", file_name);}
+      }
 
       /* open current hdf file with error check, if fail, go to next file */
       file_id = Hopen(file_name, DFACC_READ, 0);
@@ -1253,9 +1267,10 @@ dvg(dump_info_t *dumpvg_opts,
             ERROR_CONT_1( "in dvg: Failure in opening file %s", file_name );
       }
 
-      /* initiate VG interface; if fail, close hdf file & go to next file */
+      /* initiate VG interface; if fail, probably something fatal, returns 
+	 with FAIL */
       if (FAIL == Vstart(file_id))
-         ERROR_CONT_1( "in dvg: Vstart failed for file %s\n", file_name);
+         ERROR_GOTO_1( "in dvg: Vstart failed for file %s\n", file_name);
 
       /* compose the list of indices of vgroups to be processed in the current
       file and return the number of items in the list */

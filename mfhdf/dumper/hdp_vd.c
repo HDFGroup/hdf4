@@ -960,82 +960,106 @@ dvd(dump_info_t * dumpvd_opts,
       ERROR_GOTO_0( "Missing input file name.  Please try again.\n" );
 
    while (curr_arg < argc)
-   {	/* Loop until all specified files have been 
-           processed */
+   {	/* Loop until all specified files have been processed */
 
-   /* get file name */
-   HDstrcpy(file_name, argv[curr_arg]); 
+      intn isHDF = TRUE;  /* FALSE, if current file is not HDF file */
 
-   /* record for later use */
-   HDstrcpy( dumpvd_opts->ifile_name, file_name );
-   curr_arg++;
+      /* get file name */
+      HDstrcpy(file_name, argv[curr_arg]); 
 
-   closeVD( &file_id, &vd_chosen, file_name );
+      /* record for later use */
+      HDstrcpy( dumpvd_opts->ifile_name, file_name );
+      curr_arg++;
 
-   /* try opening file */
-   file_id = Hopen(file_name, DFACC_READ, 0);
-   if (file_id == FAIL)
-      ERROR_CONT_1( "in dvd: Hopen failed on file %s\n", file_name);
+      closeVD( &file_id, &vd_chosen, file_name );
 
-   if (FAIL == Vstart(file_id))
-      ERROR_CONT_1( "in dvd: Vstart failed for file %s\n", file_name);
+      /* Print an informative message and skip this file if it is not
+         an HDF file */
+      isHDF = Hishdf(file_name);
+      if (isHDF == FALSE)
+      {
+         /* if there are no more files to be processed, print error
+            message, then returns with FAIL */
+         if( curr_arg == argc )
+            {ERROR_GOTO_1( "in dvd: %s is not an HDF file", file_name);}
+         else /* print message, then continue processing the next file */
+            {ERROR_CONT_1( "in dvd: %s is not an HDF file", file_name);}
+      }
 
-   /* Find out which VDs have been chosen. */
-   num_vd_chosen = choose_vd(dumpvd_opts, &vd_chosen, file_id, &index_error);
+      /* open current hdf file with error check, if fail, go to next file */
+      file_id = Hopen(file_name, DFACC_READ, 0);
+      if (file_id == FAIL)
+      {
+         /* if there are no more files to be processed, print error
+            message, then returns with FAIL */
+         if( curr_arg == argc )
+            {ERROR_GOTO_1( "in dvd: Failure in opening file %s", file_name);}
+         /* otherwise, print message, then continue processing the next file */
+         else
+            ERROR_CONT_1( "in dvd: Failure in opening file %s", file_name );
+      }
 
-   /* if there are no valid indices, move on to the next file */
-   if (index_error && num_vd_chosen == 0)
-      continue;   /* to the next file, closeVG before opening next file
-                     takes care of Vend, Hclose, and free vg_chosen */
+      /* initiate VG interface; if fail, probably something fatal, returns
+	 with FAIL */
+      if (FAIL == Vstart(file_id))
+         ERROR_GOTO_1( "in dvd: Vstart failed for file %s\n", file_name);
 
-   ft = dumpvd_opts->file_type;
-   fp = stdout;	/* default file pointer to the standard output */
-   switch(ft)
-   {
-       case DASCII:  /*    ASCII file   */
+      /* Find out which VDs have been chosen. */
+      num_vd_chosen = choose_vd(dumpvd_opts, &vd_chosen, file_id, &index_error);
 
-	  /* set output file */
-	  if (dumpvd_opts->dump_to_file)
-	     fp = fopen(dumpvd_opts->file_name, "w");
+      /* if there are no valid indices, move on to the next file */
+      if (index_error && num_vd_chosen == 0)
+         continue;   /* to the next file, closeVG before opening next file
+                        takes care of Vend, Hclose, and free vg_chosen */
 
-          status = dumpvd_ascii(dumpvd_opts, file_id, file_name, fp,
-                   num_vd_chosen, flds_chosen, vd_chosen, dumpallfields);
-          if( FAIL == status )
-             ERROR_BREAK_0( "in dvd: dumpvd_ascii returned failure", FAIL );
-          break;
-       case DBINARY:   /*  binary file, not fully tested yet  */
+      ft = dumpvd_opts->file_type;
+      fp = stdout;	/* default file pointer to the standard output */
+      switch(ft)
+      {
+          case DASCII:  /*    ASCII file   */
 
-    	  /* Get output file name.  */
-    	  if (dumpvd_opts->dump_to_file)
-             fp = fopen(dumpvd_opts->file_name, "wb");
+	     /* set output file */
+	     if (dumpvd_opts->dump_to_file)
+	        fp = fopen(dumpvd_opts->file_name, "w");
 
-          status = dumpvd_binary(dumpvd_opts, file_id, file_name, fp,
-                   num_vd_chosen, flds_chosen, vd_chosen, dumpallfields);
-          if( FAIL == status )
-             ERROR_BREAK_0( "in dvd: dumpvd_binary returned failure", FAIL );
+             status = dumpvd_ascii(dumpvd_opts, file_id, file_name, fp,
+                      num_vd_chosen, flds_chosen, vd_chosen, dumpallfields);
+             if( FAIL == status )
+                ERROR_BREAK_0( "in dvd: dumpvd_ascii returned failure", FAIL );
+             break;
+          case DBINARY:   /*  binary file, not fully tested yet  */
 
-          break;
-       default:
-          printf("dumping vdata, unknown ouput file option \n");
-          ret_value = FAIL;
-   }    /* switch for output file   */
+    	     /* Get output file name.  */
+    	     if (dumpvd_opts->dump_to_file)
+                fp = fopen(dumpvd_opts->file_name, "wb");
 
-   if(vd_chosen != NULL)
-   {
-      HDfree(vd_chosen);
-      vd_chosen = NULL;
-   } 
+             status = dumpvd_binary(dumpvd_opts, file_id, file_name, fp,
+                      num_vd_chosen, flds_chosen, vd_chosen, dumpallfields);
+             if( FAIL == status )
+                ERROR_BREAK_0( "in dvd: dumpvd_binary returned failure", FAIL );
 
-   if (dumpvd_opts->dump_to_file)
-      fclose(fp);
+             break;
+          default:
+             printf("dumping vdata, unknown ouput file option \n");
+             ret_value = FAIL;
+      }    /* switch for output file   */
 
-   if (FAIL == Vend(file_id))
-      ERROR_CONT_1( "in dvd: Vend failed on file %s\n", file_name);
+      if(vd_chosen != NULL)
+      {
+         HDfree(vd_chosen);
+         vd_chosen = NULL;
+      } 
 
-   if (FAIL == Hclose(file_id))
-      ERROR_CONT_1( "in dvd: Hclose failed on file %s\n", file_name);
+      if (dumpvd_opts->dump_to_file)
+         fclose(fp);
 
-   file_id = FAIL; /* reset */
+      if (FAIL == Vend(file_id))
+         ERROR_CONT_1( "in dvd: Vend failed on file %s\n", file_name);
+
+      if (FAIL == Hclose(file_id))
+         ERROR_CONT_1( "in dvd: Hclose failed on file %s\n", file_name);
+
+      file_id = FAIL; /* reset */
 
    }	/* while processing files  */
 
@@ -1087,7 +1111,7 @@ do_dumpvd(intn curr_arg,
    if( curr_arg >= argc )
    {
       dumpvd_usage(argc, argv);
-      goto done;
+      ERROR_GOTO_0( "in do_dumpvd: command is incomplete");
    }            /* end if */
 
    /* parse the user's command and store the inputs in dumpvd_opts */
@@ -1101,8 +1125,8 @@ do_dumpvd(intn curr_arg,
 
    /* display data and information as specified in dumpvd_opts */
    status = dvd(&dumpvd_opts, curr_arg, argc, argv, flds_chosen, dumpallfields);
-
-   ret_value = status; /* return status to caller */
+   if( status == FAIL )
+      ERROR_GOTO_0( "in do_dumpvd: dvd failed" );
 
   done:
     if (ret_value == FAIL)
