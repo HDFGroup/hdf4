@@ -25,11 +25,11 @@ $ utils="hdfls,r8tohdf,hdfcomp,hdftor8,hdftopal,hdf8to24,"+-
 "jpeg2hdf,fp2hdf,fptest,he_main,he_cntrl,he_disp,he_file,"  +-
 "paltohdf,hdf24to8,hdfpack,ristosds,vshow,vmake,hdf2jpeg"
 $! "jpeg2hdf,fp2hdf,he_main,he_cntrl,he_disp,he_file"
-$! define/nolog hdf$lib MRLXP4$DKA300:[folk.hdf33.hdf.lib]df.olb
+$! define/nolog hdf$lib MRLXP4$DKA200:[folk.hdf33.hdf.lib]df.olb
 $ define/nolog  sys$clib sys$library:vaxcrtl
 $ cc/define=VMS/include=([-.src],[-.jpeg],[-.zlib]) 'utils
 $ link/exe=hdfed he_main,he_cntrl,he_disp,he_file,'hdflib, -
-   sys$clib/lib, MRLXP4$DKA300:[folk.ovms.hdf.util]helink.opt/option
+   sys$clib/lib, MRLXP4$DKA200:[folk.ovms.hdf.util]helink.opt/option
 $ link hdfls,     'hdflib, sys$clib/lib
 $! link hdfrseq,   'hdflib, sys$clib/lib
 $ link r8tohdf,   'hdflib, sys$clib/lib

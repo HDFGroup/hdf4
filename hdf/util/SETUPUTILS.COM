@@ -16,7 +16,7 @@ $!
 $! set up utilities
 $! change below to the hdf bin directory
 $! 
-$ define/nolog hdf$bin    mrlxp4$dka300:[folk.dev.hdf.util]
+$ define/nolog hdf$bin    mrlxp4$dka200:[folk.dev.hdf.util]
 $!
 $ hdfls     :== $ hdf$bin:hdfls
 $! hdfrseq   :== $ hdf$bin:hdfrseq
