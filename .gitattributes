@@ -16,6 +16,7 @@ hdf/util/testfiles/fp2hdf/h60x75v -text
 hdf/util/testfiles/fp2hdf/pal.hdf -text
 hdf/util/testfiles/fp2hdf/t100x100 -text svneol=unset#application/octet-stream
 hdf/util/testfiles/head.r24.Z -text
+hdf/util/testfiles/jpeg_img.jpg -text
 hdf/util/testfiles/ntcheck.hdf -text
 hdf/util/testfiles/palette.raw -text
 hdf/util/testfiles/storm110.hdf -text

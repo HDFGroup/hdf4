@@ -137,3 +137,19 @@ hdfed
         Type help and experiment.  Most of the information can be verified
         with hdfls.  Be sure to type 'close' then 'quit' when you are finished.
 
+jpeg2hdf/hdf2jpeg
+
+   Copy the file jpeg_img.jpg from the testfiles/ directory.
+
+   Execute:
+        jpeg2hdf jpeg_img.jpg jpeg.hdf
+        hdf2jpeg jpeg.hdf jpeg2.jpg
+
+   Use hdfls with the '-l' option to examine the HDF file.  It should
+        contain one raster image sets, which will be compressed with JPEG
+        compression.  The JPEG compressed image will be 2922 bytes in size.
+   Use the Unix utility 'cmp' or something similar to do byte-for-byte
+        comparisons on the produced raw raster files by hdf2jpeg.  The
+        initial jpeg_img.jpg file should be an exact match for the new
+        jpeg2.jpg file.
+
