@@ -65,7 +65,7 @@ NC *handle ;
 /*
   Return TRUE/FALSE depending on if the given file is a NASA CDF file
 */
-intn
+PRIVATE intn
 Hiscdf(filename)
 const char * filename;
 {
@@ -96,6 +96,50 @@ const char * filename;
         INT32DECODE(bb, magic_num); 
 
         if(magic_num == V2_MAGIC_NUMBER) 
+            ret = TRUE;
+        else 
+            ret = FALSE;
+
+        HI_CLOSE(fp);
+        return(ret);
+    }
+}
+
+
+/*
+  Model after Hiscdf
+*/
+/* -------------------------------- Hisnetcdf -------------------------------- */
+/*
+  Return TRUE if the given file is a netCDF file, FALSE otherwise.
+*/
+PRIVATE intn
+Hisnetcdf(filename)
+const char * filename;
+{
+    
+    char *FUNC = "Hisnetcdf";
+    intn       ret;
+    hdf_file_t fp;
+    uint8      b[4];
+    uint8    * bb = NULL;
+    int32      magic_num;
+  
+    fp = HI_OPEN(filename, DFACC_READ);
+    if (OPENERR(fp)) {
+        return(FALSE);
+    } else {
+        if(HI_READ(fp, b, 4) == FAIL) {
+            HERROR(DFE_READERROR);
+	    HI_CLOSE(fp);
+            return FALSE;
+        }
+
+        bb = &b[0];
+
+        INT32DECODE(bb, magic_num); 
+
+        if(magic_num == NCMAGIC) 
             ret = TRUE;
         else 
             ret = FALSE;
@@ -147,8 +191,13 @@ int mode ;
                 cdf->file_type = HDF_FILE;
             else if(Hiscdf((char *) name))
                 cdf->file_type = CDF_FILE;
-            else
+            else if(Hisnetcdf((char *) name))
                 cdf->file_type = netCDF_FILE;
+	    else{
+		Free(cdf->xdrs);
+		Free(cdf);
+                return(NULL) ;
+	    }
             
 #ifdef DEBUG
             if(cdf->file_type == CDF_FILE)
