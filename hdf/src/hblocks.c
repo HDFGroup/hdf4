@@ -705,10 +705,7 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
     info->link = HLIgetlink(access_rec->file_id,
                             info->link_ref, info->number_blocks);
     if (!info->link)
-      {
-          ret_value = FAIL;
-          goto done;
-      }
+        HGOTO_DONE(FAIL);
     if (info->link->block_list[0].ref)
       {
           info->first_length = Hlength(access_rec->file_id, DFTAG_LINKED,
@@ -1533,11 +1530,67 @@ intn
 HLPendaccess(accrec_t * access_rec)
 {
     CONSTR(FUNC, "HLPendaccess");   /* for HERROR */
-    linkinfo_t *info =          /* special information record */
-        (linkinfo_t *) access_rec->special_info;
     filerec_t  *file_rec =      /* file record */
         HAatom_object(access_rec->file_id);
     intn      ret_value = SUCCEED;
+
+    /* detach the special information record.
+       If no more references to that, free the record */
+    HLPcloseAID(access_rec);
+
+    /* update file and access records */
+    if (HTPendaccess(access_rec->ddid) == FAIL)
+      HGOTO_ERROR(DFE_CANTFLUSH, FAIL);
+
+    /* validate file record */
+    if (BADFREC(file_rec))
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+    /* detach from the file */
+    file_rec->attach--;
+
+    /* free the access record */
+    HDfree(access_rec);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
+}   /* HLPendaccess */
+
+/* ----------------------------- HLPcloseAID ------------------------------ */
+/*
+NAME
+   HLPcloseAID -- close file but keep AID active
+USAGE
+   int32 HLPcloseAID(access_rec)
+   access_t * access_rec;      IN:  access record of file to close
+RETURNS
+   SUCCEED / FAIL
+DESCRIPTION
+   close the file currently being pointed to by this AID but 
+   do *NOT* free the AID.
+
+   This is called by Hnextread() which reuses an AID to point to
+   the 'next' object as requested.  If the current object was an
+   linked object, the linked information needs to be closed before all
+   reference to it is lost.
+
+---------------------------------------------------------------------------*/
+int32
+HLPcloseAID(accrec_t * access_rec)
+{
+#ifdef LATER
+    CONSTR(FUNC, "HLPcloseAID");    /* for HERROR */
+#endif /* LATER */
+    linkinfo_t *info =          /* special information record */
+        (linkinfo_t *) access_rec->special_info;
+    int32      ret_value = SUCCEED;
 
     /* detach the special information record.
        If no more references to that, free the record */
@@ -1558,17 +1611,9 @@ HLPendaccess(accrec_t * access_rec)
           access_rec->special_info = NULL;
       }
 
-    /* update file and access records */
-    if (HTPendaccess(access_rec->ddid) == FAIL)
-      HGOTO_ERROR(DFE_CANTFLUSH, FAIL);
-
-    /* detach from the file */
-    file_rec->attach--;
-
-    /* free the access record */
-    HDfree(access_rec);
-
+#ifdef LATER
 done:
+#endif /* LATER */
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
@@ -1576,8 +1621,8 @@ done:
 
   /* Normal function cleanup */
 
-  return ret_value;
-}   /* HLPendaccess */
+    return ret_value;
+}   /* HLPcloseAID */
 
 /* ------------------------------- HLPinfo -------------------------------- */
 /*

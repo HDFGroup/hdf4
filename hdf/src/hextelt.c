@@ -1016,6 +1016,7 @@ HXPcloseAID(accrec_t * access_rec)
               HI_CLOSE(info->file_external);
           HDfree((VOIDP) info->extern_file_name);
           HDfree((VOIDP) info);
+          access_rec->special_info=NULL;
       }
 
 #ifdef LATER

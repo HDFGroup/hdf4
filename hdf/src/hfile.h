@@ -559,6 +559,9 @@ extern      "C"
     extern intn HLPendaccess
                 (accrec_t * access_rec);
 
+    extern int32 HLPcloseAID
+                (accrec_t * access_rec);
+
     extern int32 HLPinfo
                 (accrec_t * access_rec, sp_info_block_t * info_block);
 

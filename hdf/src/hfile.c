@@ -798,6 +798,11 @@ Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
       {
         switch(access_rec->special)
           {
+          case SPECIAL_LINKED:
+            if (HLPcloseAID(access_rec) == FAIL)
+              HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
+            break;
+
           case SPECIAL_EXT:
             if (HXPcloseAID(access_rec) == FAIL)
               HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
@@ -1725,26 +1730,26 @@ DESCRIPTION
 intn
 Hendaccess(int32 access_id)
 {
-  CONSTR(FUNC, "Hendaccess");		/* for HERROR */
-  filerec_t  *file_rec;		/* file record */
-  accrec_t   *access_rec;		/* access record */
-  intn        ret_value = SUCCEED;
+    CONSTR(FUNC, "Hendaccess");		/* for HERROR */
+    filerec_t  *file_rec;		/* file record */
+    accrec_t   *access_rec;		/* access record */
+    intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-  TRACE_ON(H_mask, ID_Hendaccess);
+    TRACE_ON(H_mask, ID_Hendaccess);
 #endif /* HAVE_PABLO */
 
-  /* check validity of access id */
-  access_rec = HAremove_atom(access_id);
-  if (access_rec==NULL)
-    HGOTO_ERROR(DFE_ARGS, FAIL);
-
-  /* if special elt, call special function */
-  if (access_rec->special)
-    {
-      ret_value = (*access_rec->special_func->endaccess) (access_rec);
-      goto done;
-    }
+    /* clear error stack and check validity of access id */
+    HEclear();
+    if ((access_rec = HAremove_atom(access_id))==NULL)
+      HGOTO_ERROR(DFE_ARGS, FAIL);
+  
+    /* if special elt, call special function */
+    if (access_rec->special)
+      {
+        ret_value = (*access_rec->special_func->endaccess) (access_rec);
+        goto done;
+      } /* end if */
 
     /* check validity of file record */
     file_rec = HAatom_object(access_rec->file_id);
