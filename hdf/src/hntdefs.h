@@ -166,12 +166,21 @@
 	Char pointers = 64 bits
 	Int pointers = 64 bits
 */
-/* T3D (CRAYMPP) native number sizes:
+/* T3D/T3E (CRAYMPP) native number sizes:
 	Char = 8 bits, unsigned
 	Short=32 int=64 long=64 float=32 double=64 bits
 	Long double=64 bits
 	Char pointers = 64 bits
 	Int pointers = 64 bits
+	Big endian, IEEE floating point
+*/
+/* IA64 (IA64) native number sizes:
+	Char = 8 bits, signed
+	Short=16 int=32 long=64 float=32 double=64 bits
+	Long double=64 bits
+	Char pointers = 64 bits
+	Int pointers = 64 bits
+	Little endian, IEEE floating point
 */
 
 #if !defined(UNICOS)

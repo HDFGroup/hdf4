@@ -82,6 +82,7 @@ case "${host}" in
   mips*-sgi-irix4*)       host_makefile_frag=config/mh-irix4 ;;
   i[3456]86-*-linux*)     host_makefile_frag=config/mh-linux ;;
   i[3456]86-*-freebsd*)   host_makefile_frag=config/mh-fbsd ;;
+  ia64-*-*)               host_makefile_frag=config/mh-ia64 ;;
   *-ibm-aix*)             host_makefile_frag=config/mh-aix ;;
   i386-*-solaris2*)       host_makefile_frag=config/mh-solarisx86 ;;
   *-*-solaris2*)          host_makefile_frag=config/mh-solaris ;;
@@ -155,6 +156,7 @@ case "${host}" in
   mips*-sgi-irix4*)       files="mfhdf/libsrc/config/netcdf-irix4.h mfhdf/fortran/config/jackets-irix4.c mfhdf/fortran/config/netcdf-irix4.inc mfhdf/fortran/config/ftest-irix4.f" ;;
   i[3456]86-*-linux*)     files="mfhdf/libsrc/config/netcdf-linux.h mfhdf/fortran/config/jackets-linux.c mfhdf/fortran/config/netcdf-linux.inc mfhdf/fortran/config/ftest-linux.f" ;;
   i[3456]86-*-freebsd*)   files="mfhdf/libsrc/config/netcdf-fbsd.h mfhdf/fortran/config/jackets-fbsd.c mfhdf/fortran/config/netcdf-fbsd.inc mfhdf/fortran/config/ftest-fbsd.f" ;;
+  ia64-*-*)               files="mfhdf/libsrc/config/netcdf-ia64.h mfhdf/fortran/config/jackets-ia64.c mfhdf/fortran/config/netcdf-ia64.inc mfhdf/fortran/config/ftest-ia64.f" ;;
   *-ibm-aix*)             files="mfhdf/libsrc/config/netcdf-aix.h mfhdf/fortran/config/jackets-aix.c mfhdf/fortran/config/netcdf-aix.inc mfhdf/fortran/config/ftest-aix.f" ;;
   i386-*-solaris2*)       files="mfhdf/libsrc/config/netcdf-solarisx86.h mfhdf/fortran/config/jackets-solarisx86.c mfhdf/fortran/config/netcdf-solarisx86.inc mfhdf/fortran/config/ftest-solarisx86.f" ;;
   *-*-solaris2*)          files="mfhdf/libsrc/config/netcdf-solaris.h mfhdf/fortran/config/jackets-solaris.c mfhdf/fortran/config/netcdf-solaris.inc mfhdf/fortran/config/ftest-solaris.f";;

@@ -133,7 +133,7 @@ case $basic_machine in
 		;;
 	# Recognize the basic CPU types with company name.
 	vax-* | tahoe-* | i[3456]86-* | i860-* | m68k-* | m68000-* | m88k-* \
-	      | sparc-* | ns32k-* | fx80-* | arm-* | c[123]* \
+	      | sparc-* | ns32k-* | fx80-* | arm-* | c[123]* | ia64-* \
 	      | mips-* | pyramid-* | tron-* | a29k-* | romp-* | rs6000-* \
 	      | none-* | 580-* | cray2-* | h8300-* | i960-* | xmp-* | ymp-* \
 	      | hppa1.0-* | hppa1.1-* | alpha-* | we32k-* | cydra-* | ns16k-* \

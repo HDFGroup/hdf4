@@ -40,6 +40,7 @@ case "${host}" in
   mips*-sgi-irix4*)       host_makefile_frag=config/mh-irix4 ;;
   i[3456]86-*-linux*)     host_makefile_frag=config/mh-linux ;;
   i[3456]86-*-freebsd*)   host_makefile_frag=config/mh-fbsd ;;
+  ia64-*-*)               host_makefile_frag=config/mh-ia64 ;;
   *-ibm-aix*)             host_makefile_frag=config/mh-aix ;;
   *-*-solaris2*)          host_makefile_frag=config/mh-solaris ;;
   *-sun-*)		          host_makefile_frag=config/mh-sun ;;
@@ -110,6 +111,7 @@ case "${host}" in
   mips*-sgi-irix4*)       files=config/fmpirix4.h ;;
   i[3456]86-*-linux*)     files=config/fmplinux.h ;;
   i[3456]86-*-freebsd*)   files=config/fmpfbsd.h ;;
+  ia64-*-*)               files=config/fmpia64.h ;;
   *-ibm-aix*)             files=config/fmpaix.h ;;
   *-*-solaris2*)          files=config/fmpsolaris.h ;;
   *-sun-*)		          files=config/fmpsun.h ;;
