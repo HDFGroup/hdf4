@@ -570,7 +570,6 @@ xdrposix_getint(xdrs, lp)
     int *lp;
 {
     unsigned char *up = (unsigned char *)lp ;
-    fprintf(stderr, "xdrposix_getint invoked.\n");
 #ifdef CRAY
     *lp = 0 ;
     up += (sizeof(long) - 4) ;
@@ -590,7 +589,6 @@ xdrposix_putint(xdrs, lp)
 {
 
     unsigned char *up = (unsigned char *)lp ;
-    fprintf(stderr, "xdrposix_putint invoked.\n");
 #ifdef SWAP
     netlong mycopy = htonl(*lp);
     up = (unsigned char *)&mycopy;
