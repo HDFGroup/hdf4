@@ -1,15 +1,11 @@
 /*
  FILE
-       comp.c
-       Test HDF compressed data I/O routines
+       bitio.c
+       Test HDF bit-level I/O routines
 
  REMARKS
-        Currently these only really test RLE compression, at not very well
-        at that...
 
  DESIGN
-        These should be written to test all combinations of modeling and
-        encoding layers.
 
  BUGS/LIMITATIONS
 
@@ -19,7 +15,7 @@
        Quincey Koziol
 
  MODIFICATION HISTORY
-   10/19/93 - Threw this header in.
+   10/19/93 - Started coding.
 */
 
 /* $Id$ */
@@ -29,7 +25,7 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 #include "tproto.h"
-#define TESTFILE_NAME "tcomp.hdf"
+#define TESTFILE_NAME "tbitio.hdf"
 
 #define BUFSIZE 4096
 
@@ -48,8 +44,10 @@ static uint8 FAR outbuf2[BUFSIZE],
 extern int num_errs;
 extern int Verbocity;
 
-void test_comp()
+void test_bitio()
 {
+	return;
+#ifdef QAK
     int32 fid, fid1;
     int32 aid1, aid2;
     int32 fileid, length, offset, posn;
@@ -64,8 +62,8 @@ void test_comp()
     for (i=0; i<BUFSIZE; i++)
         outbuf[i] = (char) (i % 256);
     for(i=0; i<BUFSIZE; i++)
-        for(j=0; j<130 && i<BUFSIZE; j++,i++)
-            outbuf2[i]=i;
+	for(j=0; j<130 && i<BUFSIZE; j++,i++)
+	    outbuf[i]=i;
 
     MESSAGE(5,printf("Creating a file %s\n", TESTFILE_NAME););
     fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
@@ -253,4 +251,5 @@ void test_comp()
     MESSAGE(5,printf("Closing the files\n"););
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
+#endif
 }
