@@ -311,7 +311,7 @@ dist: $(DISTFILES)
 message:
 	@echo ""
 	@echo "***********************************************************"
-	@echo " HDF 4.0 library successfully created."
+	@echo " HDF 4.1 library successfully created."
 	@echo ""
 	@echo "***********************************************************"
 	@echo ""
