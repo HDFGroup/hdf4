@@ -8,13 +8,13 @@
 # * For conditions of distribution and use, see the accompanying             *
 # * hdf/COPYING file.                                                        *
 # *                                                                          *
-# ****************************************************************************
+# ***************************************************************************
 #
 # $Id$
 #
 # ##################################################################
 #
-#           MAKEFILE for creating the HDF library, libdf.a,
+#           MAKEFILE for creating the HDF library, libdf.a, on Suns
 #
 # This makefile creates the following FORTRAN and C interfaces 
 # for HDF in a library called "libdf.a": 
@@ -51,15 +51,15 @@
 #   SUN, IBM6000, HP9000, MIPSEL (Dec Mips based machines), ...
 #
 
-#define your sh shell
+# Define your sh shell
 SHELL=/bin/sh
 
 # Define your machine type
-#MACHINE=NEXT
+#MACHINE=UNIX386
 
 # Define your C compiler and flags
-CC= cc
-CFLAGS= -ansi -O
+CC= gcc
+CFLAGS= -ansi -Wall -pedantic -O
 
 # Define your FORTRAN compiler
 FC= f77
@@ -76,7 +76,7 @@ HDFBIN= `pwd`/bin
 
 # Name of library archiver and flags to send
 AR= ar
-ARFLAGS= r
+ARFLAGS= ru
 
 # Name of achive randomizer (use 'touch' if non-existant)
 RANLIB= ranlib
