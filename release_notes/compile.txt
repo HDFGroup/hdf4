@@ -6,39 +6,40 @@ platforms supported by HDF, using the binaries that we provide.  For
 Unix, the information on options to specify comes from the configuration 
 files (mh-*) in the HDF source code (under ../HDF4.1r1/config).   
 
-NOTE: The order of the libraries is important: libmfhdf.a first,
-followed by libdf.a, then libjpeg.a and libz.a.  
-
-In general, you compile your program as follows.  If your platform is not 
-specified in the section, "Instructions For Specific Platforms", then use 
-these instructions.  If you are unable to compile your program on Unix, 
+In general, you compile your program as shown below.  If your platform is 
+not specified in the section, "INSTRUCTIONS FOR SPECIFIC PLATFORMS", then 
+use these instructions.  If you are unable to compile your program on Unix, 
 please check the configuration file for your platform for the correct 
 options.
 
 C:
-     cc -o <your program> <your program>.c -I<path for hdf include directory>\
-        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
+    cc -o <your program> <your program>.c -I<path for hdf include directory>\
+       -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
    or
 
-     cc -o <your program> <your program>.c -I<path for hdf include directory> \
-         <path for libmfhdf.a>  <path for libdf.a> \
-         <path for libjpeg.a> <path for libz.a>
+    cc -o <your program> <your program>.c -I<path for hdf include directory> \
+          <path for libmfhdf.a>  <path for libdf.a> \
+          <path for libjpeg.a> <path for libz.a>
 
 FORTRAN:
-     f77 -o <your program> <your program>.f  \
+    f77 -o <your program> <your program>.f  \
         -I<path for hdf include directory>\
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
    
    or
    
-     f77 -o <your program> <your program>.f  \
-         -I<path for hdf include directory> \
+    f77 -o <your program> <your program>.f  \
+        -I<path for hdf include directory> \
           <path for libmfhdf.a>  <path for libdf.a> \
           <path for libjpeg.a> <path for libz.a>
 
+NOTE: The order of the libraries is important: libmfhdf.a first,
+followed by libdf.a, then libjpeg.a and libz.a.  The libjpeg.a
+library is optional.
 
-Instructions For Specific Platforms:
+INSTRUCTIONS FOR SPECIFIC PLATFORMS
+===================================
 
 Cray C90 or YMP:
 ---------------
@@ -48,27 +49,27 @@ C:
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
-     cf77 -O 1 -s -o <your program> <your program>.f  \
-        -I<path for hdf include directory>\
-        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
+    cf77 -O 1 -s -o <your program> <your program>.f  \
+         -I<path for hdf include directory>\
+         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 Dec Alpha/Digital Unix:
 ----------------------
 C:
-     cc -Olimit 2048 -std1 -o <your program> <your program>.c \
-        -I<path for hdf include directory>\
-        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
+    cc -Olimit 2048 -std1 -o <your program> <your program>.c \
+       -I<path for hdf include directory>\
+       -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
-     f77 -o <your program> <your program>.f  \
+    f77 -o <your program> <your program>.f  \
         -I<path for hdf include directory>\
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 Dec Alpha/OpenVMS AXP:
 ---------------------
-   To compile your programs, prog.c and prog1.for with the HDF library, 
-   mfhdf.olb, df.olb, libjpeg.olb and libz.olb are required whether 
-   your program uses jpeg/gzip or not.
+   To compile your programs, prog.c and prog1.for, with the HDF library, 
+   mfhdf.olb, df.olb, and libz.olb are required.  The libjpeg.olb library 
+   is optional.
 
    cc/opt/nodebug/define=(HDF,VMS)/nolist/include=<dir for include> prog.c
    fort prog1.for
@@ -83,16 +84,12 @@ Dec Alpha/OpenVMS AXP:
 Exemplar:
 --------
 C:
-   It is important to find where the C compiler for HP-UX is 
-   installed on your system and use that.  On our system, 
-   for example, it is in bin/cc: 
-
-     bin/cc -Ae -O -o <your program> <your program>.c \
-            -I<path for hdf include directory> \
-            -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
+    cc -ext -nv -no <your program> <your program>.c \
+       -I<path for hdf include directory> \
+       -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
-    f77 -O -o <your program> <your program>.f  \
+    fc  -sfc -72 -o <your program> <your program>.f  \
         -I<path for hdf include directory>\
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
@@ -122,21 +119,34 @@ FORTRAN:
         -I<path for hdf include directory>\
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
  
-IRIX 6.2_64:
------------
+IRIX 5.3:
+--------
 C:
-     cc -ansi -64 -mips4 -O -s -o <your program> <your program>.c  \
+    cc -ansi -O -s -o <your program> <your program>.c  \
+       -I<path for hdf include directory>\
+       -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
+ 
+FORTRAN:
+    f77 -O -s -o <your program> <your program>.f  \
         -I<path for hdf include directory>\
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
+ 
+
+IRIX 6.x with 64-bit mode:
+---------------------
+C:
+    cc -ansi -64 -mips4 -O -s -o <your program> <your program>.c  \
+       -I<path for hdf include directory>\
+       -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
-     f77 -64 -mips4 -O -s -o <your program> <your program>.f  \
+    f77 -64 -mips4 -O -s -o <your program> <your program>.f  \
         -I<path for hdf include directory>\
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
   
-IRIX_6.2_n32:
-------------
+IRIX 6.x with n32-bit mode:
+--------------------------
 C:
     cc -ansi -n32 -mips3 -O -s -o <your program> <your program>.c \
      -I<path for hdf include directory> \
@@ -155,35 +165,19 @@ C:
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN (A.OUT only):
-     f77 -o <your program> <your program>.f  \
+    f77 -o <your program> <your program>.f  \
         -I<path for hdf include directory>\
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
-
-OpenVMS:
--------
-   To compile your programs, prog.c and prog1.for with the HDF library, 
-   mfhdf.olb, df.olb, libjpeg.olb and libz.olb are required whether 
-   your program uses jpeg/gzip or not.
-
-   cc/opt/nodebug/define=(HDF,VMS)/nolist/include=<dir for include> prog.c
-   fort prog1.for
-   link/nodebug/notraceback/exec=prog.exe  prog.obj, prog1.obj, -
-         <dir for lib>mfhdf/lib -
-         <dir for lib>df/lib, <dir for lib>libjpeg/lib,  -
-         <dir for lib>libz/lib, sys$library:vaxcrtl/lib
-
-   NOTE: The order of the libraries is important: mfhdf.olb first,
-   followed by df.olb then libjpeg.olb and libz.olb.
 
 Solaris:
 -------
    The -lnsl is necessary in order to include the xdr library.
 
 C:
-     cc -Xc -xO2 -o <your program> <your program>.c  \
-        -I<path for hdf include directory>\
-        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz \
-        -L/usr/lib -lnsl
+    cc -Xc -xO2 -o <your program> <your program>.c  \
+       -I<path for hdf include directory>\
+       -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz \
+       -L/usr/lib -lnsl
 
 FORTRAN:
     f77 -O -o <your program> <your program>.f  \
@@ -193,9 +187,9 @@ FORTRAN:
 
 Solaris_x86 (C only):
 --------------------
-     The -lnsl is necessary in order to include the xdr library.
+    The -lnsl is necessary in order to include the xdr library.
 
-        gcc -ansi -O -o <your program> <your program>.c \
+    gcc -ansi -O -o <your program> <your program>.c \
         -I<path for hdf include directory> \
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz  \
         -L/usr/lib -lnsl
@@ -203,9 +197,9 @@ Solaris_x86 (C only):
 SP2 (AIX):
 ---------
 C:
-     xlc -qlanglvl=ansi -O -o <your program> <your program>.c \
-     -I<path for hdf include directory> \
-     -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
+    xlc -qlanglvl=ansi -O -o <your program> <your program>.c \
+        -I<path for hdf include directory> \
+        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
     f77 -O -o <your program> <your program>.f  \
@@ -220,15 +214,23 @@ C:
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
-     f77 -f -o <your program> <your program>.f  \
+    f77 -f -o <your program> <your program>.f  \
         -I<path for hdf include directory>\
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
-VAX/VMS:
--------
-   To compile your programs, prog.c and prog1.for with the HDF library, 
-   mfhdf.olb, df.olb, libjpeg.olb and libz.olb are required whether 
-   your program uses jpeg/gzip or not.
+T3D:
+---
+C (only):
+    cc -Tcray-t3d -X1 -o <your program> <your program>.c \
+       -I<path for hdf include directory>\
+       -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
+
+
+VAX OpenVMS:
+-----------
+   To compile your programs, prog.c and prog1.for, with the HDF library, 
+   mfhdf.olb, df.olb, and libz.olb are required.  The libjpeg.olb library 
+   is optional.
 
    cc/DECC/STANDARD=VAXC/opt/nodebug/define=(HDF,VMS)/nolist/include=<dir for include> prog.c
    fort prog1.for
