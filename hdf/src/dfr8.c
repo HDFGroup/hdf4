@@ -1,3 +1,15 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
@@ -37,32 +49,58 @@ static char RcsId[] = "@(#)$Revision$";
 #include "herr.h"
 #include "dfrig.h"
 
-static int foundRig = -1;       /* -1: don't know if HDF file has RIGs */
-                                /* 0: No RIGs, try for RI8s etc. */
-                                /* 1: RIGs used, ignore RI8s etc. */
-static DFRrig Readrig;          /* information about RIG being read */
-static DFRrig Writerig;         /* information about RIG being written */
-static int Newdata = 0;         /* does Readrig contain fresh data? */
-static uint16 Writeref=0;       /* ref of next image to put in this file */
-static int Newpalette=(-1);     /* -1 = no palette is associated */
-                                /* 0 = palette already written out */
-                                /* 1 = new palette, not yet written out */
-static bool CompressSet=FALSE;  /* Whether the compression parameters have */
-                                /* been set for the next image */
-static int32 CompType=COMP_NONE;/* What compression to use for the next image */
-static comp_info CompInfo;      /* Params for compression to perform */
-static uint8 Palette[768];      /* to store palette for 8-bit images */
-static uint16 Refset=0;         /* Ref of image to get next */
-static uint16 Lastref = 0;      /* Last ref read/written */
-static DFRrig Zrig = {          /* empty RIG for initialization */
-    {0, 0}, {0, 0, {0, 0}, 0, 0, {0, 0}},
-    {0, 0}, {0, 0, {0, 0}, 0, 0, {0, 0}},
-    {0, 0}, {0, 0, {0, 0}, 0, 0, {0, 0}},
+/* Private buffer */
+PRIVATE uint8 *ptbuf = NULL;
+#if 0
+PRIVATE uint8  Palette[768] = "";   /* to store palette for 8-bit images */
+#endif
+PRIVATE uint8 *Palette      = NULL;
+PRIVATE uint16 Refset       = 0;    /* Ref of image to get next */
+PRIVATE uint16 Lastref      = 0;    /* Last ref read/written */
+PRIVATE uint16 Writeref     = 0;    /* ref of next image to put in this file */
+PRIVATE intn   foundRig     = -1;   /* -1: don't know if HDF file has RIGs 
+                                        0: No RIGs, try for RI8s etc. 
+                                        1: RIGs used, ignore RI8s etc. */
+PRIVATE intn   Newdata      = 0;  /* does Readrig contain fresh data? */
+PRIVATE intn   Newpalette   = -1; /* -1 = no palette is associated 
+                                      0 = palette already written out 
+                                      1 = new palette, not yet written out */
+
+PRIVATE bool CompressSet    = FALSE; /* Whether the compression parameters have
+                                       been set for the next image */
+PRIVATE int32 CompType = COMP_NONE; /* What compression to use for the next 
+                                       image */
+PRIVATE comp_info CompInfo;        /* Params for compression to perform */
+PRIVATE DFRrig Readrig  = {        /* information about RIG being read */
+    NULL, 0, 0, (float32)0.0, (float32)0.0,
+    {(float32)0.0, (float32)0.0, (float32)0.0},
+    {(float32)0.0, (float32)0.0, (float32)0.0},
+    {(float32)0.0, (float32)0.0, (float32)0.0},
+    {(float32)0.0, (float32)0.0, (float32)0.0}, 
+    {0, 0}, {0, 0, 0, 0, {0, 0}, {0, 0}},
+    {0, 0}, {0, 0, 0, 0, {0, 0}, {0, 0}},
+    {0, 0}, {0, 0, 0, 0, {0, 0}, {0, 0}},
+};
+PRIVATE DFRrig Writerig = {     /* information about RIG being written */
+    NULL, 0, 0, (float32)0.0, (float32)0.0,
+    {(float32)0.0, (float32)0.0, (float32)0.0},
+    {(float32)0.0, (float32)0.0, (float32)0.0},
+    {(float32)0.0, (float32)0.0, (float32)0.0},
+    {(float32)0.0, (float32)0.0, (float32)0.0}, 
+    {0, 0}, {0, 0, 0, 0, {0, 0}, {0, 0}},
+    {0, 0}, {0, 0, 0, 0, {0, 0}, {0, 0}},
+    {0, 0}, {0, 0, 0, 0, {0, 0}, {0, 0}},
+};
+PRIVATE DFRrig Zrig = {          /* empty RIG for initialization */
+    NULL,
     0, 0, (float32)0.0, (float32)0.0,
     {(float32)0.0, (float32)0.0, (float32)0.0},
     {(float32)0.0, (float32)0.0, (float32)0.0},
     {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0}, NULL
+    {(float32)0.0, (float32)0.0, (float32)0.0}, 
+    {0, 0}, {0, 0, 0, 0, {0, 0}, {0, 0}},
+    {0, 0}, {0, 0, 0, 0, {0, 0}, {0, 0}},
+    {0, 0}, {0, 0, 0, 0, {0, 0}, {0, 0}},
 };
 
 typedef struct R8dim {
@@ -273,6 +311,16 @@ int DFR8setpalette(pal)
     uint8 *pal;
 #endif
 {
+  char *FUNC = "DFR8setpalette";
+
+    /* Check if Palette buffer has been allocated */
+    if (Palette == NULL)
+      {
+        Palette = (uint8 *)HDgetspace(768 * sizeof(uint8));
+        if (Palette == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
+
     if (!pal) {
         Newpalette = -1;       /* no palette */
         Writerig.lut.tag = 0;
@@ -330,6 +378,15 @@ PRIVATE intn DFR8Iputimage(filename, image, xdim, ydim, compress, op)
         HERROR(DFE_ARGS);
         return FAIL;
     }
+
+    /* Check if Palette buffer has been allocated */
+    if (Palette == NULL)
+      {
+        Palette = (uint8 *)HDgetspace(768 * sizeof(uint8));
+        if (Palette == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
+
     pal = (Newpalette>=0) ? Palette : NULL;
     access = op ? DFACC_WRITE : DFACC_CREATE;
 
