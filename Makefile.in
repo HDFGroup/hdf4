@@ -90,6 +90,12 @@ HDFDIR    = hdf
 NETCDFDIR = mfhdf
 SUBDIRS= $(HDFDIR) $(NETCDFDIR)
 
+# Location where the HDF include files are located
+HDFINC= `pwd`/hdf/src
+
+# Location where the HDF library is located
+HDFLIB= `pwd`/hdf/src
+
 #SUBDIRS = "this is set via configure, don't edit this"
 #OTHERS = 
 
@@ -108,7 +114,9 @@ HDF_FLAGS       = \
         ARFLAGS="$(ARFLAGS)" \
         RM="$(RM)" \
         RMFLAGS="$(RMFLAGS)" \
-        MACHINE="$(MACHINE)" 
+        MACHINE="$(MACHINE)" \
+        HDFINC="$(HDFINC)" \
+        HDFLIB="$(HDFLIB)" 
 
 #
 #General rules

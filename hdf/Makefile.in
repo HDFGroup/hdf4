@@ -79,8 +79,8 @@ MANIFEST = Makefile.in
 
 SUBDIRS= src jpeg test util
 
-HDFINC= $(srcdir)/include
-HDFLIB= $(srcdir)/lib
+HDFINC= $(srcdir)/src
+HDFLIB= $(srcdir)/src
 HDFBIN= $(srcdir)/bin
 
 #
@@ -98,9 +98,9 @@ HDF_FLAGS       = \
         ARFLAGS="$(ARFLAGS)" \
         RM="$(RM)" \
         RMFLAGS="$(RMFLAGS)" \
-        MACHINE="$(MACHINE)" 
-#        HDFLIB="$(HDFLIB)" \
-#        HDFINC="$(HDFINC)" \
+        MACHINE="$(MACHINE)" \
+        HDFLIB="$(HDFLIB)" \
+        HDFINC="$(HDFINC)" 
 #	HDFBIN="$(HDFBIN)"	
 
 #

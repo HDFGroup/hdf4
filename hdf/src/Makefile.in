@@ -127,10 +127,10 @@ infodir = $(prefix)/info
 # ==> specify your machine
 #MACHINE=SUN
 
-# ==> specify directories in which to store HDF include files,
+# ==> specify directories where to find inludes and library
 #     HDF library, and HDF utilities
-HDFINC= $(srcdir)/../include
-HDFLIB= $(srcdir)/../lib
+HDFINC= $(srcdir)/../src
+HDFLIB= $(srcdir)/../src
 HDFBIN= $(srcdir)/../bin
 
 # ==> specify where to find the JPEG include files and library
