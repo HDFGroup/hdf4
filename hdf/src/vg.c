@@ -185,9 +185,9 @@ int32 vkey;
 */
 
 #ifdef PROTOTYPE
-PUBLIC int32 VSsetinterlace(int32 vkey, int32 interlace)
+PUBLIC intn VSsetinterlace(int32 vkey, int32 interlace)
 #else
-PUBLIC int32 VSsetinterlace(vkey, interlace)
+PUBLIC intn VSsetinterlace(vkey, interlace)
 int32 vkey;
 int32 interlace;
 #endif
@@ -294,9 +294,9 @@ char  * fields;         /* fieldnames are returned in this var */
 */
 
 #ifdef PROTOTYPE
-PUBLIC int32 VSfexist (int32 vkey, char *fields)
+PUBLIC intn VSfexist (int32 vkey, char *fields)
 #else
-PUBLIC int32 VSfexist (vkey, fields)
+PUBLIC intn VSfexist (vkey, fields)
 int32 vkey;
 char *fields;
 #endif
@@ -650,10 +650,10 @@ char    *vsclass;
 *
 */
 #ifdef PROTOTYPE
-PUBLIC int32 VSinquire (int32 vkey, int32 *nelt, int32 *interlace,
+PUBLIC intn VSinquire (int32 vkey, int32 *nelt, int32 *interlace,
         char *fields, int32 *eltsize, char *vsname)
 #else
-PUBLIC int32 VSinquire (vkey, nelt, interlace, fields, eltsize, vsname)
+PUBLIC intn VSinquire (vkey, nelt, interlace, fields, eltsize, vsname)
 int32 vkey;
 char    *fields, *vsname;
 int32   *nelt, *interlace, *eltsize;

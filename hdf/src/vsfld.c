@@ -125,9 +125,9 @@ int16 x;
 */
 
 #ifdef PROTOTYPE
-PUBLIC int32 VSsetfields (int32 vkey, char *fields)
+PUBLIC intn VSsetfields (int32 vkey, char *fields)
 #else
-PUBLIC int32 VSsetfields (vkey,fields)
+PUBLIC intn VSsetfields (vkey,fields)
 int32 vkey;
 char    *fields;
 #endif
@@ -267,9 +267,9 @@ char    *fields;
 */
 
 #ifdef PROTOTYPE
-PUBLIC int32 VSfdefine (int32 vkey, char *field, int32 localtype, int32 order)
+PUBLIC intn VSfdefine (int32 vkey, char *field, int32 localtype, int32 order)
 #else
-PUBLIC int32 VSfdefine (vkey, field, localtype, order)
+PUBLIC intn VSfdefine (vkey, field, localtype, order)
 int32 vkey;
 char    *field;
 int32   localtype, order;

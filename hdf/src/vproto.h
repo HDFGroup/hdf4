@@ -43,13 +43,13 @@ extern int32 VSelts
 extern int32 VSgetinterlace
   PROTO((int32 vkey));
 
-extern int32 VSsetinterlace
+extern intn VSsetinterlace
   PROTO((int32 vkey, int32 interlace));
 
 extern int32 VSgetfields
   PROTO((int32 vkey, char _HUGE *fields));
 
-extern int32 VSfexist
+extern intn VSfexist
   PROTO((int32 vkey, char _HUGE *fields));
 
 extern int32 VSsizeof
@@ -70,7 +70,7 @@ extern void VSgetname
 extern void VSgetclass
   PROTO((int32 vkey, char _HUGE *vsclass));
 
-extern int32 VSinquire
+extern intn VSinquire
   PROTO((int32 vkey,int32 _HUGE *nelt, int32 _HUGE *interlace,
     char _HUGE *fields, int32 _HUGE *eltsize, char _HUGE *vsname));
 
@@ -132,7 +132,7 @@ extern int32 Vinsert
 extern int32 Vflocate
   PROTO((int32 vkey, char _HUGE *field));
 
-extern int32 Vinqtagref
+extern intn Vinqtagref
   PROTO((int32 vkey, int32 tag, int32 ref));
 
 extern int32 Vntagrefs
@@ -141,7 +141,7 @@ extern int32 Vntagrefs
 extern int32 Vgettagrefs
   PROTO((int32 vkey, int32 _HUGE tagarray[], int32 _HUGE refarray[], int32 n));
 
-extern int32 Vgettagref
+extern intn Vgettagref
   PROTO((int32 vkey, int32 which, int32 _HUGE *tag, int32 _HUGE *ref));
 
 extern int32 VQueryref
@@ -162,10 +162,10 @@ extern int32 Vsetname
 extern int32 Vsetclass
   PROTO((int32 vkey, char _HUGE *vgclass));
 
-extern int32 Visvg
+extern intn Visvg
   PROTO((int32 vkey, int32 id));
 
-extern int32 Visvs
+extern intn Visvs
     PROTO((int32 vkey, int32 id));
 
 extern int32 Vgetid
@@ -180,7 +180,7 @@ extern void Vgetname
 extern void Vgetclass
   PROTO((int32 vkey, char _HUGE *vgclass));
 
-extern int32 Vinquire
+extern intn Vinquire
   PROTO((int32 vkey, int32 _HUGE *nentries, char _HUGE *vgname));
 
 extern int32 Vdelete
@@ -254,10 +254,10 @@ extern int16 VSIZEOF
 extern int16 HDFSIZEOF
     PROTO((int16 x));
 
-extern int32 VSsetfields
+extern intn VSsetfields
   PROTO((int32 vkey, char _HUGE *fields));
 
-extern int32 VSfdefine
+extern intn VSfdefine
   PROTO((int32 vkey, char _HUGE *field, int32 localtype, int32 order));
 
 extern int32 VFnfields 

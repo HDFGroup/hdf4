@@ -941,9 +941,9 @@ char * field;
 * 28-MAR-91 Jason Ng NCSA
 */
 #ifdef PROTOTYPE
-PUBLIC int32 Vinqtagref (int32 vkey, int32 tag, int32 ref)
+PUBLIC intn Vinqtagref (int32 vkey, int32 tag, int32 ref)
 #else
-PUBLIC int32 Vinqtagref (vkey, tag, ref)
+PUBLIC intn Vinqtagref (vkey, tag, ref)
 int32 vkey;
 int32   tag, ref;
 #endif
@@ -1086,9 +1086,9 @@ int32 tagarray[], refarray[];
 *
 */
 #ifdef PROTOTYPE
-PUBLIC int32 Vgettagref (int32 vkey, int32 which, int32 *tag, int32 *ref)
+PUBLIC intn Vgettagref (int32 vkey, int32 which, int32 *tag, int32 *ref)
 #else
-PUBLIC int32 Vgettagref (vkey, which, tag, ref)
+PUBLIC intn Vgettagref (vkey, which, tag, ref)
 int32 vkey;
 int32   which;
 int32   *tag, *ref; /* these are returned */
@@ -1447,9 +1447,9 @@ char *vgclass;
 *
 */
 #ifdef PROTOTYPE
-PUBLIC int32 Visvg (int32 vkey, int32 id)
+PUBLIC intn Visvg (int32 vkey, int32 id)
 #else
-PUBLIC int32 Visvg (vkey, id)
+PUBLIC intn Visvg (vkey, id)
 int32 vkey;
 int32   id;     /* valid id of the entry in question */
 #endif
@@ -1498,9 +1498,9 @@ int32   id;     /* valid id of the entry in question */
 */
 
 #ifdef PROTOTYPE
-PUBLIC int32 Visvs (int32 vkey, int32 id)
+PUBLIC intn Visvs (int32 vkey, int32 id)
 #else
-PUBLIC int32 Visvs (vkey, id)
+PUBLIC intn Visvs (vkey, id)
 int32 vkey;
 int32   id;
 #endif
@@ -1779,9 +1779,9 @@ char    *vgclass;   /* its class name is returned in this var */
 */
 
 #ifdef PROTOTYPE
-PUBLIC int32 Vinquire (int32 vkey, int32 *nentries, char *vgname)
+PUBLIC intn Vinquire (int32 vkey, int32 *nentries, char *vgname)
 #else
-PUBLIC int32 Vinquire (vkey, nentries, vgname)
+PUBLIC intn Vinquire (vkey, nentries, vgname)
 int32 vkey;
 int32   *nentries;
 char        *vgname;
