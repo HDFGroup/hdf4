@@ -1,0 +1,68 @@
+      Install HDF4.0 Beta 1 on Windows NT and Windows 95
+
+Since Windows NT, Windows '95 (Chicago) and Windows 3.1 (with the Win 32s
+extensions) all are designed to run the same 32-bit code, our decision is
+to support only 32-bit libraries and code on the MS-Windows platform.
+Possibly we will support a 16-bit version, but it is not planned for the
+immediate future.
+
+To build the HDF, JPEG and netCDF libraries and utilities, follow these
+instructions:
+
+    1) Create a directory to unpack the library in (\HDF4.0 for example).
+
+    2) Copy the distribution archive to that directory and unpack it using
+        the appropriate archiver options to create a directory hierarchy.
+        This should create a directory called 'dev' which contains several
+        files and directories.
+
+    3) Move makefiles and header files into place:
+        a) Change into the hdf\jpeg\config directory and copy the jwin32.h
+            up into hdf\jpeg\jconfig.h [copy jwin32.h ..\jconfig.h]
+            Also copy the win32jpg.mak up into hdf\jpeg [copy win32jpg.mak ..]
+        b) Change into the mfhdf\libsrc directory and copy win32cdf.h into
+            netcdf.h [copy win32cdf.h netcdf.h]
+
+    4) Start Visual C++ (we use v2.0) and build the following makefiles,
+        in the following order:
+            a) hdf\src\win32hdf.mak
+            b) hdf\jpeg\win32jpg.mak
+            c) hdf\test\win32tst.mak
+            d) all the makefiles (*.mak) in hdf\util
+            e) mfhdf\xdr\win32xdr.mak
+            f) mfhdf\xdr\xdrtest.mak
+            g) mfhdf\util\win32utl.mak
+            h) mfhdf\libsrc\win32cdf.mak
+            i) mfhdf\libsrc\cdftest.mak
+            j) mfhdf\libsrc\hdftest.mak
+            k) mfhdf\nctest\nctest.mak
+            l) mfhdf\ncdump\ncdump.mak
+            m) mfhdf\ncgen\ncgen.mak
+            n) mfhdf\dumper\hdp.mak
+
+    5) To test the distribution libraries, execute the following test
+        applications (may not work on Win 3.1) from a console:
+            a) hdf\test\win32tst.exe
+            b) mfhdf\xdr\xdrtest.exe
+            c) mfhdf\libsrc\cdftest.exe
+            d) mfhdf\libsrc\hdftest.exe
+            e) mfhdf\nctest\nctest.exe
+            
+To use the HDF/JPEG/netCDF library the following locations may need to be
+specified for locating header files:
+    1) hdf\src
+    2) hdf\jpeg
+    3) mfhdf\xdr
+    4) mfhdf\libsrc
+
+Remember that the netCDF part of the library need the HDF library to perform
+some I/O functions and the HDF library may need to be linked into an executable.
+The JPEG library is called by some HDF functions also, and thus may need to
+be linked to an executable also.  The libraries which may need to be linked 
+in are:
+    1) hdf\src\win32hdf.lib
+    2) hdf\jpeg\win32jpg.lib
+    3) mfhdf\libsrc\win32cdf.lib
+    4) mfhdf\xdr\win32xdr.lib
+    5) mfhdf\util\win32utl.lib
+

@@ -1,0 +1,16 @@
+
+
+JPEG Group v5b library
+    Version 4.0 of the HDF-netCDF library now uses v5 of the Independent
+JPEG Group (IJG) JPEG file access library.  For most users of the HDF library,
+this will be completely transparent.  For users who are integrating the HDF
+library into an existing application which uses the IJG's JPEG library, linking
+with the HDF library is now much simpler and should be completely painless.
+The JPEG library will need to be linked with user's applications when raster
+images are being used (whether they are compressed with JPEG or not).
+
+     cc -o <myprog> myprog.c -I<include path> <path for libnetcdf.a> \
+           <path for libdf.a> <path for libjpeg.a>
+
+     Note: order of the libraries is important.
+

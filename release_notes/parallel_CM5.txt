@@ -1,0 +1,64 @@
+CM5 Parallel I/O Extension
+
+    An extension using the parallel I/O in CM5 is added to the SDS
+    interface.  Initial tests have resulted in about 25 MBytes/second
+    IO throughput using the SDA (Scalable Disk Array) file system. The
+    library provides interfaces for both C* and CMF programming
+    languages.
+
+    Read the section "Installing HDF Libraries With CM5 Parallel I/O
+    Extension" for specific installation instructions.
+
+    The parallel I/O interface requires the scientific dataset be
+    stored as external elements and the I/O access type be set to
+    "Parallel" before reading or writing the dataset.  Read the manual
+    pages for SDsetexternalfile and SDsetaccesstype for details.  The
+    mfhdf/CM5/Examples directory contains program examples in C* and
+    CMF.  The extension is coded in C* but used the CMFS library.  It
+    is a bit complex to link it with CMF programs.  The Examples
+    directory also contains a Makefile showing how to compile and link
+    in the runtime libraries.
+
+    New options have been added to hdfls and hdfpack to handle them. A
+    new utility program, hdfunpac, is created for external files
+    handling too. See the man pages for details.
+
+    A note: C* does not support the "nopadding" option that CMF does.
+    CMF programs compiled with "-nopadding" (default is padding) do
+    not work with the parallel I/O extension.
+
+    Please send comments, bugs reports, etc. to acheng@ncsa.uiuc.edu.
+
+
+Installing HDF Libraries With CM5 Parallel I/O Extension
+
+    The current beta version requires two major steps to install the
+    HDF libraries.
+
+    1) Compile and install the ordinary HDF libraries (libdf.a,
+    libnetcdf.a, libjpeg.a), include files and utilities according to
+    the instructions for a Sun Microsystem machine.
+
+    2) To make the HDF library with CM5 parallel IO extension:  There
+    are two new libraries, libdfcm5.a and libnetcdfcm5.a, which are
+    similar to libdf.a and libnetcdf.a.
+
+    Configuration
+
+	configure CM5
+
+    For libdf.a
+
+	make libdf          # create the parallel IO libdf.a
+	# to install it in /usr/local/lib
+	cp src/libdf.a /usr/local/lib/libdfcm5.a
+	ranlib /usr/local/lib/libdfcm5.a
+
+
+    For libnetcdf.a
+
+	(cd libsrc; make )      # compile the library
+	# to install it in /usr/local/lib
+	cp libsrc/libnetcdf.a /usr/local/lib/libnetcdfcm5.a
+	ranlib /usr/local/lib/libnetcdfcm5.a
+
