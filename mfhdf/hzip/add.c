@@ -426,86 +426,86 @@ void add_sd(char *fname,             /* file name */
 #define  FIELD2_NAME      "Mass"          /* contains weight values */
 #define  FIELD3_NAME      "Temperature"   /* contains min and max values */
 #define  FIELDNAME_LIST   "Position,Mass,Temperature" /* No spaces b/w names */
-#define  N_VALS_PER_REC   (ORDER_1 + ORDER_2 + ORDER_3) 	/* number of values per record */
+#define  N_VALS_PER_REC   (ORDER_1 + ORDER_2 + ORDER_3)  /* number of values per record */
 
 void add_vs(char* vs_name,int32 file_id,int32 vgroup_id)
 {
  intn    status_n;       /* returned status_n for functions returning an intn  */
  int32   status_32,      /* returned status_n for functions returning an int32 */
          vdata_ref,      /* reference number of the vdata */
-							 	vdata_id,       /* vdata id */
-								 num_of_records; /* number of records actually written to vdata */
-	int32   attr_n_values   = 3; /* number of values in the vdata attribute */
+         vdata_id,       /* vdata id */
+         num_of_records; /* number of records actually written to vdata */
+ int32   attr_n_values   = 3; /* number of values in the vdata attribute */
  int32   field_n_values  = 4; /* number of values in the field attribute */
-	char    vd_attr[3]      = {'A', 'B', 'C'};/* vdata attribute values*/
+ char    vd_attr[3]      = {'A', 'B', 'C'};/* vdata attribute values*/
  int32   fld_attr[4]     = {2, 4, 6, 8};   /* field attribute values*/
-	float32 data_buf[N_RECORDS][N_VALS_PER_REC]; /* buffer for vdata values */
-	int     i;
+ float32 data_buf[N_RECORDS][N_VALS_PER_REC]; /* buffer for vdata values */
+ int     i;
 
  /* Initialize the VS interface */
  status_n = Vstart (file_id);
-	
+ 
  /* Create a new vdata, set to -1 to create  */
  vdata_ref = -1,    
-	vdata_id = VSattach (file_id, vdata_ref, "w");
-	
-	/* Set name and class name of the vdata */
-	status_32 = VSsetname (vdata_id, vs_name);
-	status_32 = VSsetclass (vdata_id, CLASS_NAME);
-	
-	/* Introduce each field's name, data type, and order */
-	status_n = VSfdefine (vdata_id, FIELD1_NAME, DFNT_FLOAT32, ORDER_1 );
-	status_n = VSfdefine (vdata_id, FIELD2_NAME, DFNT_FLOAT32, ORDER_2 );
-	status_n = VSfdefine (vdata_id, FIELD3_NAME, DFNT_FLOAT32, ORDER_3 );
-	
-	/* Finalize the definition of the fields */
-	status_n = VSsetfields (vdata_id, FIELDNAME_LIST);
-	
+ vdata_id = VSattach (file_id, vdata_ref, "w");
+ 
+ /* Set name and class name of the vdata */
+ status_32 = VSsetname (vdata_id, vs_name);
+ status_32 = VSsetclass (vdata_id, CLASS_NAME);
+ 
+ /* Introduce each field's name, data type, and order */
+ status_n = VSfdefine (vdata_id, FIELD1_NAME, DFNT_FLOAT32, ORDER_1 );
+ status_n = VSfdefine (vdata_id, FIELD2_NAME, DFNT_FLOAT32, ORDER_2 );
+ status_n = VSfdefine (vdata_id, FIELD3_NAME, DFNT_FLOAT32, ORDER_3 );
+ 
+ /* Finalize the definition of the fields */
+ status_n = VSsetfields (vdata_id, FIELDNAME_LIST);
+ 
 /* 
-	* Buffer the data by the record for fully interlaced mode.  Note that the
-	* first three elements contain the three values of the first field, the
-	* fourth element contains the value of the second field, and the last two
-	* elements contain the two values of the third field.
-	*/
-	for (i = 0; i < N_RECORDS; i++)
-	{
-		data_buf[i][0] = (float32)1.0 * i;
-		data_buf[i][1] = (float32)2.0 * i;
-		data_buf[i][2] = (float32)3.0 * i;
-		data_buf[i][3] = (float32)0.1 + i;
-		data_buf[i][4] = 0.0;
-		data_buf[i][5] = 65.0;
-	}
-	
+ * Buffer the data by the record for fully interlaced mode.  Note that the
+ * first three elements contain the three values of the first field, the
+ * fourth element contains the value of the second field, and the last two
+ * elements contain the two values of the third field.
+ */
+ for (i = 0; i < N_RECORDS; i++)
+ {
+  data_buf[i][0] = (float32)1.0 * i;
+  data_buf[i][1] = (float32)2.0 * i;
+  data_buf[i][2] = (float32)3.0 * i;
+  data_buf[i][3] = (float32)0.1 + i;
+  data_buf[i][4] = 0.0;
+  data_buf[i][5] = 65.0;
+ }
+ 
 /* Write the data from data_buf to the vdata with full interlacing mode */
-	num_of_records = VSwrite (vdata_id, (uint8 *)data_buf, N_RECORDS, 
-		FULL_INTERLACE);
-		
-	/* Attach an attribute to the vdata, i.e., indicated by the second parameter */
+ num_of_records = VSwrite (vdata_id, (uint8 *)data_buf, N_RECORDS, 
+  FULL_INTERLACE);
+  
+ /* Attach an attribute to the vdata, i.e., indicated by the second parameter */
  status_n = VSsetattr (vdata_id,_HDF_VDATA,"Myattr",DFNT_CHAR,
-		attr_n_values, vd_attr);
-	
-	/* Attach an attribute to the field 0 */
+  attr_n_values, vd_attr);
+ 
+ /* Attach an attribute to the field 0 */
  status_n = VSsetattr (vdata_id, 0, "Myfattr", DFNT_INT32, 
-		field_n_values, fld_attr);
-	
+  field_n_values, fld_attr);
+ 
  /* Get the reference number of the vdata */
-	vdata_ref = VSfind (file_id, vs_name);
-	
+ vdata_ref = VSfind (file_id, vs_name);
+ 
 #if defined( HZIP_DEBUG)
  printf("add_vs %d\n",vdata_ref); 
 #endif
-	
-	/* add the VS to the vgroup. the tag DFTAG_VS is used */
+ 
+ /* add the VS to the vgroup. the tag DFTAG_VS is used */
  if (vgroup_id)
   status_32 = Vaddtagref (vgroup_id, DFTAG_VS, vdata_ref);
-	
-	/* terminate access to the VSs */
+ 
+ /* terminate access to the VSs */
  status_32 = VSdetach (vdata_id);
-	
+ 
  /* Terminate access to the VS interface */
  status_n = Vend (file_id);
-	
+ 
 }
 
 

@@ -45,6 +45,8 @@ int main(void)
  options_t     options;      /* for hzip  */ 
  static struct fspec fspec;  /* for hdiff  */ 
  int           ret;
+	int32         attr_n_values = 3;  /* number of values in the vg attribute */
+ char          vg_attr[3]    = {'A', 'B', 'C'};/* vg attribute values*/
 
  /* initialize options for hdiff */
  memset(&fspec,0,sizeof(struct fspec));
@@ -75,6 +77,9 @@ int main(void)
   */
  vgroup1_id = Vattach (file_id, vgroup_ref, "w");
  status_32  = Vsetname (vgroup1_id, "g1");
+
+ /* attach an attribute to the vgroup */
+ status_n = Vsetattr (vgroup1_id,"Myattr",DFNT_CHAR,attr_n_values,vg_attr);
  
  /* create the second vgroup */
  vgroup2_id = Vattach (file_id, vgroup_ref, "w");
@@ -223,8 +228,8 @@ int main(void)
  options.verbose=1;
  fspec.verbose  =1;
 #endif
- hzip_addcomp("dset4:HUFF 1",&options);
- hzip_addchunk("dset4:2x2",&options);
+ hzip_addcomp("gr4:GZIP",&options);
+ hzip_addchunk("gr4:20x20",&options);
 
  hzip(FILENAME,FILENAME_OUT,&options);
  hzip_end (&options);

@@ -39,10 +39,10 @@
 
 obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
 {
- unsigned    i;
+ unsigned    i, u;
  char        c;
  size_t      len=strlen(str);
- int         j, n, k, end_obj;
+ int         j, m, n, k, end_obj;
  char        obj[MAX_NC_NAME]; 
  char        scomp[10];
  char        stype[5];
@@ -100,8 +100,12 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
   {
    if ( c==' ') {      /*one more parameter */
     scomp[k]='\0';     /*cut space */
-    stype[0]=str[i+1];
-    stype[1]='\0';
+
+				/* here we could have 1, 2 or 3 digits (2 and 3 in the JPEG case) */
+				for ( m=0,u=i+1; u<len; u++,m++) {
+     stype[m]=str[u];
+				}
+    stype[m]='\0';
     comp->info=atoi(stype);
    }
    else if (i==len-1) { /*no more parameters */

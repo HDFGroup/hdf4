@@ -164,6 +164,8 @@ int copy_sds(int32 sd_in,
    chunk_def_in.comp.comp_type              = COMP_CODE_DEFLATE;
    chunk_def_in.comp.cinfo.deflate.level    = c_info_in.deflate.level;
    break;
+  default:
+   fprintf(stderr,"Error: Unrecognized compression code in %d <%s>\n",comp_type_in,path);
   };
  }
 
@@ -213,226 +215,6 @@ int copy_sds(int32 sd_in,
   };
  }
 
-
-#if !defined (ONE_TABLE)
-
-
-/*-------------------------------------------------------------------------
- * get the compression/chunk info of this object from the table
- * translate to usable info
- * this is done ONLY for the second trip inspection 
- *-------------------------------------------------------------------------
- */
- 
- /* check inspection mode */
- if ( options->trip>0 ) 
- {
-
- if (options->compress==ALL && options->chunk==NONE)
- {
-  comp_type   = options->comp.type;
-  info        = options->comp.info;
- }
- else if (options->compress==SELECTED && options->chunk==NONE)
- {
-  comp        = get_comp(options,path);
-  if (comp!=NULL)
-  {
-   comp_type   = comp->type;
-   info        = comp->info;
-  }
- }
- else if (options->compress==NONE && options->chunk==SELECTED)
- {
-  comp_type   = COMP_CODE_NONE;
-  info        = 1; 
-  chunk_rank  = get_chunk(options,path,chunk_lengths);
-  if (chunk_rank!=-1 )    
-  {
-   assert(chunk_rank==rank);
-   chunk_flags = HDF_CHUNK;
-   /* Define chunk's dimensions */
-   for (i = 0; i < rank; i++) 
-    chunk_def.chunk_lengths[i] = chunk_lengths[i];
-  }
- }
- else if (options->compress==NONE && options->chunk==ALL)
- {
-  comp_type   = COMP_CODE_NONE;
-  info        = 1; 
-  chunk_rank  = options->chunk_rank;
-  /* 
-    this dataset is not possible to chunk with the global parameters
-    do not chunk it
-   */
-  if (chunk_rank!=rank)
-  {
-   chunk_flags = HDF_NONE;
-  }
-  else
-  {
-   chunk_flags = HDF_CHUNK;
-   /* Define chunk's dimensions */
-   for (i = 0; i < rank; i++) 
-    chunk_def.chunk_lengths[i] = options->chunk_def.chunk_lengths[i];
-  }
- }
- else if (options->compress==SELECTED && options->chunk==SELECTED)
- {
-  comp        = get_comp(options,path);
-  if (comp!=NULL)
-  {
-   comp_type   = comp->type;
-   info        = comp->info;
-  }
-  chunk_rank  = get_chunk(options,path,chunk_lengths);
-  if (chunk_rank!=-1 )    
-  {
-   assert(chunk_rank==rank);
-   chunk_flags = HDF_CHUNK;
-   if (comp) 
-   {
-    chunk_flags              = HDF_CHUNK | HDF_COMP;
-    chunk_def.comp.comp_type = comp->type;
-    switch (comp->type)
-    {
-     case COMP_CODE_RLE:
-      break;
-     case COMP_CODE_SKPHUFF:
-      chunk_def.comp.cinfo.skphuff.skp_size = comp->info;
-      break;
-     case COMP_CODE_DEFLATE:
-      chunk_def.comp.cinfo.deflate.level    = comp->info;
-      break;
-    };
-    
-   }
-   /* Define chunk's dimensions */
-   for (i = 0; i < rank; i++) 
-   {
-    chunk_def.chunk_lengths[i] = chunk_lengths[i];
-    /* To use chunking with RLE, Skipping Huffman, and GZIP compression */
-    chunk_def.comp.chunk_lengths[i] = chunk_lengths[i];
-   }
-  }
- }
- else if (options->compress==SELECTED && options->chunk==ALL)
- {
-  comp        = get_comp(options,path);
-  chunk_rank  = options->chunk_rank;
-  /* 
-    this dataset is not possible to chunk with the global parameters
-    do not chunk it
-   */
-  if (chunk_rank!=rank)
-  {
-   chunk_flags = HDF_NONE;
-  }
-  else
-  {
-   if (comp!=NULL) /* we have compression for this one */
-   {
-    /* Define chunk */
-    chunk_flags = HDF_CHUNK | HDF_COMP;
-    for (i = 0; i < rank; i++) 
-     chunk_def.chunk_lengths[i] = options->chunk_def.chunk_lengths[i];
-    chunk_def.comp.comp_type = comp->type;
-    switch (comp->type)
-    {
-    case COMP_CODE_RLE:
-     break;
-    case COMP_CODE_SKPHUFF:
-     chunk_def.comp.cinfo.skphuff.skp_size = comp->info;
-     break;
-    case COMP_CODE_DEFLATE:
-     chunk_def.comp.cinfo.deflate.level    = comp->info;
-     break;
-    };
-   }
-   else  /* we do not have compression for this one */
-   {
-    /* Define chunk */
-    chunk_flags = HDF_CHUNK;
-    for (i = 0; i < rank; i++) 
-     chunk_def.chunk_lengths[i] = options->chunk_def.chunk_lengths[i];;
-   }
-  }
- }
- else if (options->compress==ALL && options->chunk==SELECTED)
- {
-  chunk_rank  = get_chunk(options,path,chunk_lengths);
-  if (chunk_rank!=-1 )    
-  {
-   assert(chunk_rank==rank);
-   /* Define chunk's dimensions */
-   for (i = 0; i < rank; i++) 
-    chunk_def.chunk_lengths[i] = chunk_lengths[i];
-   chunk_flags = HDF_CHUNK | HDF_COMP;
-   chunk_def.comp.comp_type = options->comp.type;
-   switch (options->comp.type)
-   {
-   case COMP_CODE_RLE:
-    break;
-   case COMP_CODE_SKPHUFF:
-    chunk_def.comp.cinfo.skphuff.skp_size = options->comp.info;
-    break;
-   case COMP_CODE_DEFLATE:
-    chunk_def.comp.cinfo.deflate.level    = options->comp.info;
-    break;
-   };
-   for (i = 0; i < rank; i++) 
-   {
-    /* To use chunking with RLE, Skipping Huffman, and GZIP compression */
-    chunk_def.comp.chunk_lengths[i] = chunk_lengths[i];
-   }
-  }
-  else /*compress these with SDsetcompress */
-  {
-   comp_type   = options->comp.type;
-   info        = options->comp.info;
-   chunk_flags = HDF_NONE;
-  }
- }
- else if (options->compress==ALL && options->chunk==ALL)
- {
-  chunk_rank  = options->chunk_rank;
-  /* 
-  this dataset is not possible to chunk with the global parameters
-  do not chunk it
-  */
-  if (chunk_rank!=rank)
-  {
-   chunk_flags = HDF_NONE;
-  }
-  else
-  {
-   /* Define chunk */
-   chunk_flags = HDF_CHUNK | HDF_COMP;
-   for (i = 0; i < rank; i++) 
-    chunk_def.chunk_lengths[i] = options->chunk_def.chunk_lengths[i];
-   chunk_def.comp.comp_type = options->comp.type;
-   switch (options->comp.type)
-   {
-   case COMP_CODE_RLE:
-    break;
-   case COMP_CODE_SKPHUFF:
-    chunk_def.comp.cinfo.skphuff.skp_size = options->comp.info;
-    break;
-   case COMP_CODE_DEFLATE:
-    chunk_def.comp.cinfo.deflate.level    = options->comp.info;
-    break;
-   };
-   for (i = 0; i < rank; i++) 
-   {
-    /* To use chunking with RLE, Skipping Huffman, and GZIP compression */
-    chunk_def.comp.chunk_lengths[i] = options->chunk_def.chunk_lengths[i];
-   }
-  }
- }
- } /* check inspection mode */
-
-#else
-
 /*-------------------------------------------------------------------------
  * get the compression/chunk info of this object from the table
  * translate to usable info
@@ -452,12 +234,6 @@ int copy_sds(int32 sd_in,
                    path          /* path of object IN */
                    );
  } /* check inspection mode */
-
-
-
-#endif /* ONE_TABLE */
-
-
 
 /*-------------------------------------------------------------------------
  * print the PATH, COMP and CHUNK info
@@ -535,8 +311,8 @@ int copy_sds(int32 sd_in,
  /* create output SDS */
  if ((sds_out = SDcreate(sd_out,sds_name,dtype,rank,dimsizes)) == FAIL) {
   fprintf(stderr, "Failed to create new SDS <%s>\n", path);
-  goto out;
   ret=-1;
+  goto out;
  }
 
 /*-------------------------------------------------------------------------
@@ -554,8 +330,8 @@ int copy_sds(int32 sd_in,
   if (SDsetchunk (sds_out, chunk_def, chunk_flags)==FAIL)
   {
    fprintf(stderr, "Error: Failed to set chunk dimensions for <%s>\n", path);
-   goto out;
    ret=-1;
+   goto out;
   }
  }
 
@@ -589,8 +365,8 @@ int copy_sds(int32 sd_in,
   if (SDsetcompress (sds_out, comp_type, &c_info)==FAIL)
   {
    fprintf(stderr, "Error: Failed to set compression for <%s>\n", path);
-   goto out;
    ret=-1;
+   goto out;
   }
  }
  
@@ -598,8 +374,8 @@ int copy_sds(int32 sd_in,
  /* write the data */
  if (SDwritedata(sds_out, start, NULL, edges, buf) == FAIL) {
   fprintf(stderr, "Failed to write to new SDS <%s>\n", path);
-  goto out;
   ret=-1;
+  goto out;
  }
 
 /*-------------------------------------------------------------------------
@@ -608,8 +384,8 @@ int copy_sds(int32 sd_in,
  */ 
  
  if( copy_sds_attrs(sds_id,sds_out,nattrs,options)==FAIL) {
-  goto out;
   ret=-1;
+  goto out;
  }
 
  
@@ -624,32 +400,32 @@ int copy_sds(int32 sd_in,
   /* get dimension handle for input dimension */
   if ((dim_id = SDgetdimid(sds_id, i)) == FAIL) {
    fprintf(stderr, "Failed to get dimension %d of SDS <%s>\n", i, path);
-   goto out;
    ret=-1;
+   goto out;
   }
   /* get dimension handle for output dimension */
   if ((dim_out = SDgetdimid(sds_out, i)) == FAIL) {
    fprintf(stderr, "Failed to get dim_id for dimension %d of SDS <%s>\n", i, path);
-   goto out;
    ret=-1;
+   goto out;
   }
   /* get dimension information for input dimension */
   if (SDdiminfo(dim_id, dim_name, &dim_size, &dtype, &nattrs) == FAIL) {
    fprintf(stderr, "Failed to get info for dimension %d of SDS <%s>\n", i, path);
-   goto out;
    ret=-1;
+   goto out;
   }
   /* set output dimension name */
   if (SDsetdimname(dim_out, dim_name) == FAIL) {
    fprintf(stderr, "Failed to set dimension name %d of SDS <%s>\n", i, path);
-   goto out;
    ret=-1;
+   goto out;
   }
   /* copy attributes */
   if (nattrs && copy_sds_attrs(dim_id, dim_out, nattrs, options) == FAIL) {
    fprintf(stderr, "Failed to copy attributes for dimension %d of of SDS <%s>\n", i, path);
-   goto out;
    ret=-1;
+   goto out;
   }
   /* copy scale information over */
   if (dtype != 0) 
@@ -660,18 +436,18 @@ int copy_sds(int32 sd_in,
 
    if ((dim_buf = (VOIDP) HDmalloc(dim_size * eltsz)) == NULL) {
     fprintf(stderr, "Failed to alloc %d for dimension scale\n", dim_size);
-    goto out;
     ret=-1;
+    goto out;
    }
    if (SDgetdimscale(dim_id, dim_buf) == FAIL) {
     fprintf(stderr, "Failed to get scale info for %s\n", dim_name);
-    goto out;
     ret=-1;
+    goto out;
    }
    if (SDsetdimscale(dim_out, dim_size, dtype, dim_buf) == FAIL) {
     fprintf(stderr, "Failed to set scale info for %s\n", dim_name);
-    goto out;
     ret=-1;
+    goto out;
    }
   }
  }
@@ -688,15 +464,15 @@ int copy_sds(int32 sd_in,
   /* obtain the reference number of the new SDS using its identifier */
   if ((sds_ref = SDidtoref (sds_out)) == FAIL) {
    fprintf(stderr, "Failed to get new SDS reference in <%s>\n", path);
-   goto out;
    ret=-1;
+   goto out;
   }
 
   /* add the SDS to the vgroup. the tag DFTAG_NDG is used */
   if ((status_32 = Vaddtagref (vgroup_id_out_par, TAG_GRP_DSET, sds_ref)) == FAIL) {
    fprintf(stderr, "Failed to add new SDS to group <%s>\n", path);
-   goto out;
    ret=-1;
+   goto out;
   }
  }
 
@@ -868,14 +644,14 @@ int copy_vdata_attribute(int32 in, int32 out, int32 findex, intn attrindex)
  /* Read attribute from input object */
  if (VSgetattr(in, findex, attrindex, values) == FAIL) {
   fprintf(stderr, "Cannot read attribute %s\n", attr_name);
-		if (values) free(values);
+  if (values) free(values);
   return-1;
  }
 
  /* Write attribute to output object */
  if (VSsetattr(out, findex, attr_name, attr_type, n_values, values) == FAIL) {
   fprintf(stderr, "Cannot write attribute %s\n", attr_name);
-		if (values) free(values);
+  if (values) free(values);
   return-1;
  }
 
@@ -919,6 +695,13 @@ int  copy_gr(int32 gr_in,
                dtype,         /* number type of an image */
                n_attrs,       /* number of attributes belong to an image */
                gr_ref;        /* reference number of the output data set */
+               
+ int32         pal_id,        /* palette identifier */
+               pal_out,       /* palette identifier */
+               r_num_entries, 
+               r_data_type, 
+               r_ncomp, 
+               r_interlace_mode; 
  char          gr_name[MAX_GR_NAME]; 
  char          *path=NULL;
  comp_info_t   *comp=NULL;     /* compression info got from table */
@@ -932,6 +715,7 @@ int  copy_gr(int32 gr_in,
  int32         chunk_flags;    /* chunk flags */ 
  int32         chunk_flags_in; /* chunk flags original*/ 
  int           i, j, ret, rank=2;
+ int           has_pal = 0;
  int32         start[2],       /* read start */
                edges[2],       /* read edges */
                numtype,        /* number type */
@@ -939,6 +723,7 @@ int  copy_gr(int32 gr_in,
                nelms,          /* number of elements */
                data_size;
  VOIDP         buf=NULL;
+ uint8         pal_data[256*3];
 
 
 #if !defined (ONE_TABLE)
@@ -989,6 +774,13 @@ int  copy_gr(int32 gr_in,
    chunk_def_in.comp.comp_type              = COMP_CODE_DEFLATE;
    chunk_def_in.comp.cinfo.deflate.level    = c_info_in.deflate.level;
    break;
+  case COMP_CODE_JPEG:
+   chunk_def_in.comp.comp_type                 = COMP_CODE_JPEG;
+   chunk_def_in.comp.cinfo.jpeg.quality        = c_info_in.jpeg.quality;
+   chunk_def_in.comp.cinfo.jpeg.force_baseline = c_info_in.jpeg.force_baseline;
+   break;
+  default:
+   fprintf(stderr,"Error: Unrecognized compression code in %d <%s>\n",comp_type_in,path);
   };
  }
 
@@ -1007,6 +799,9 @@ int  copy_gr(int32 gr_in,
    break;
   case COMP_CODE_DEFLATE:
    info  = c_info_in.deflate.level;
+   break;
+  case COMP_CODE_JPEG:
+   info  = c_info_in.jpeg.quality;
    break;
   };
  chunk_flags = chunk_flags_in;
@@ -1034,6 +829,11 @@ int  copy_gr(int32 gr_in,
   case COMP_CODE_DEFLATE:
    chunk_def.comp.comp_type              = COMP_CODE_DEFLATE;
    chunk_def.comp.cinfo.deflate.level    = c_info_in.deflate.level;
+   break;
+  case COMP_CODE_JPEG:
+   chunk_def.comp.comp_type                 = COMP_CODE_JPEG;
+   chunk_def.comp.cinfo.jpeg.quality        = c_info_in.jpeg.quality;
+   chunk_def.comp.cinfo.jpeg.force_baseline = c_info_in.jpeg.force_baseline;
    break;
   };
  }
@@ -1149,8 +949,8 @@ int  copy_gr(int32 gr_in,
  /* create output GR */
  if ((ri_out = GRcreate(gr_out,gr_name,n_comps,dtype,interlace_mode,dimsizes)) == FAIL) {
   fprintf(stderr, "Failed to create new GR <%s>\n", path);
-  goto out;
   ret=-1;
+  goto out;
  }
 
 
@@ -1169,8 +969,8 @@ int  copy_gr(int32 gr_in,
   if (GRsetchunk (ri_out, chunk_def, chunk_flags)==FAIL)
   {
    fprintf(stderr, "Error: Failed to set chunk dimensions for <%s>\n", path);
-   goto out;
    ret=-1;
+   goto out;
   }
  }
 
@@ -1192,10 +992,14 @@ int  copy_gr(int32 gr_in,
   case COMP_CODE_RLE:         
    break;
   case COMP_CODE_SKPHUFF:     
-   c_info.skphuff.skp_size = info;
+   c_info.skphuff.skp_size    = info;
    break;
   case COMP_CODE_DEFLATE:
-   c_info.deflate.level = info;
+   c_info.deflate.level       = info;
+   break;
+  case COMP_CODE_JPEG:
+   c_info.jpeg.quality        = info;
+   c_info.jpeg.force_baseline = 1;
    break;
   default:
    fprintf(stderr, "Error: Unrecognized compression code %d\n", comp_type);
@@ -1204,17 +1008,16 @@ int  copy_gr(int32 gr_in,
   if (GRsetcompress (ri_out, comp_type, &c_info)==FAIL)
   {
    fprintf(stderr, "Error: Failed to set compression for <%s>\n", path);
-   goto out;
    ret=-1;
+   goto out;
   }
  }
- 
  
  /* write the data */
  if (GRwriteimage(ri_out, start, NULL, edges, buf) == FAIL) {
   fprintf(stderr, "Failed to write to new GR <%s>\n", path);
-  goto out;
   ret=-1;
+  goto out;
  }
 
 /*-------------------------------------------------------------------------
@@ -1223,10 +1026,44 @@ int  copy_gr(int32 gr_in,
  */ 
  
  if( copy_gr_attrs(ri_id,ri_out,n_attrs,options)==FAIL) {
-  goto out;
   ret=-1;
+  goto out;
  }
- 
+
+/*-------------------------------------------------------------------------
+ * check for palette
+ *-------------------------------------------------------------------------
+ */ 
+
+ pal_id = GRgetlutid(ri_id, 0);
+ GRgetlutinfo(pal_id,&r_ncomp,&r_data_type,&r_interlace_mode,&r_num_entries);
+
+ /*check if there is palette data */
+ has_pal=((r_ncomp == 0) || (r_interlace_mode < 0) || (r_num_entries == 0))?0:1;
+
+ if ( has_pal==1 )
+ {
+  GRreqlutil(ri_id, r_interlace_mode);    
+  if ((status_n = GRreadlut(pal_id, pal_data)) == FAIL) {
+   fprintf(stderr, "Failed to get palette data for <%s>\n", path);
+  }
+  
+  if (status_n==SUCCEED)
+  {
+   /* Get the id for the new palette */
+   if ((pal_out = GRgetlutid(ri_out, 0)) == FAIL) {
+    fprintf(stderr, "Failed to get palette ID for <%s>\n", path);
+   }
+   
+   /* Write the palette to file. */
+   if ((status_n = GRwritelut(pal_out,r_ncomp,r_data_type,r_interlace_mode,r_num_entries, 
+    (VOIDP)pal_data)) == FAIL) {
+    fprintf(stderr, "Failed to write palette for <%s>\n", path);
+   }
+  } /* SUCCEED */
+ } /* has_pal==1 */
+
+
 /*-------------------------------------------------------------------------
  * add GR to group, if needed
  *-------------------------------------------------------------------------
@@ -1246,10 +1083,11 @@ int  copy_gr(int32 gr_in,
 
 
 out:
+ 
  /* terminate access to the GRs */
  status_n = GRendaccess(ri_id);
  status_n = GRendaccess(ri_out);
-   
+    
  if (path)
   free(path);
  if (buf)
@@ -1316,7 +1154,7 @@ int copy_vs( int32 infile_id,
   fprintf(stderr, "Failed to name for vdata ref %d\n", ref);
   return-1;
  }
-	if ((status_32 = VSgetclass (vdata_id, vdata_class)) == FAIL ){
+ if ((status_32 = VSgetclass (vdata_id, vdata_class)) == FAIL ){
   fprintf(stderr, "Failed to name for vdata ref %d\n", ref);
   return-1;
  }
@@ -1336,22 +1174,22 @@ int copy_vs( int32 infile_id,
  table_add(table,tag,ref,path,options->verbose&&options->trip==0);
  
 #if defined(HZIP_DEBUG)
-	printf ("\t%s %d\n", path, ref); 
+ printf ("\t%s %d\n", path, ref); 
 #endif
-	
+ 
  if (options->verbose)
  {
   printf(PFORMAT,"","",path);    
  }
-	
-	/* check inspection mode */
+ 
+ /* check inspection mode */
  if ( options->trip==0 ) {
   status_32 = Vdetach (vdata_id);
   if (path) free(path);
   return 0;
  }
-	
-	
+ 
+ 
 /*-------------------------------------------------------------------------
  * get vdata info
  *-------------------------------------------------------------------------
@@ -1360,24 +1198,24 @@ int copy_vs( int32 infile_id,
  if (VSinquire(vdata_id, &n_records, &interlace_mode, fieldname_list, 
   &vdata_size, vdata_name) == FAIL) {
   fprintf(stderr, "Failed to get info for vdata ref %d\n", ref);
-		if (path) free(path);
+  if (path) free(path);
   return-1;
  }
-	
+ 
 #if defined( HZIP_DEBUG)
-	fprintf(stderr, 
+ fprintf(stderr, 
   "Transferring vdata %s: class=%s, %d recs, interlace=%d, size=%d\n\tfields='%s'\n",
   vdata_name, vdata_class, n_records, interlace_mode, vdata_size, 
   fieldname_list);
 #endif
  
-	
-	/*-------------------------------------------------------------------------
-		* create the VS in the output file.  the vdata reference number is set
-		* to -1 for creating and the access mode is "w" for writing 
-		*-------------------------------------------------------------------------
+ 
+ /*-------------------------------------------------------------------------
+  * create the VS in the output file.  the vdata reference number is set
+  * to -1 for creating and the access mode is "w" for writing 
+  *-------------------------------------------------------------------------
   */ 
-	
+ 
  if ((vdata_out  = VSattach (outfile_id, -1, "w")) == FAIL) {
   fprintf(stderr, "Failed to create new VS <%s>\n", path);
   status_32 = VSdetach (vdata_id);
@@ -1387,17 +1225,17 @@ int copy_vs( int32 infile_id,
  if ((status_32 = VSsetname (vdata_out, vdata_name)) == FAIL) {
   fprintf(stderr, "Failed to set name for new VS <%s>\n", path);
   ret=-1;
-		goto out;
+  goto out;
  }
-	if ((status_32 = VSsetclass(vdata_out, vdata_class)) == FAIL) {
+ if ((status_32 = VSsetclass(vdata_out, vdata_class)) == FAIL) {
   fprintf(stderr, "Failed to set class for new VS <%s>\n", path);
   ret=-1;
-		goto out;
+  goto out;
  }
  if (VSsetinterlace(vdata_out, interlace_mode) == FAIL) {
   fprintf(stderr, "Failed to set interlace mode for output vdata\n");
   ret=-1;
-		goto out;
+  goto out;
  }
 
 
@@ -1405,11 +1243,11 @@ int copy_vs( int32 infile_id,
  * define the fields for vdata_out
  *-------------------------------------------------------------------------
  */ 
-	
-	if ((n_fields = VFnfields(vdata_id)) == FAIL ){
+ 
+ if ((n_fields = VFnfields(vdata_id)) == FAIL ){
   fprintf(stderr, "Failed getting fields for VS <%s>\n", path);
   ret=-1;
-		goto out;
+  goto out;
  }
  
  for (i = 0; i < n_fields; i++) {
@@ -1419,33 +1257,33 @@ int copy_vs( int32 infile_id,
   if (VSfdefine(vdata_out, field_name, field_type, field_order) == FAIL) {
    fprintf(stderr, "Error: cannot define fields for VS <%s>\n", path);
    ret=-1;
-			goto out;
-		}
-	}
-	
-	/* Set fields */
+   goto out;
+  }
+ }
+ 
+ /* Set fields */
  if ((status_n = VSsetfields(vdata_out, fieldname_list)) == FAIL) {
-		fprintf(stderr, "Error: cannot define fields for VS <%s>\n", path);
-		ret=-1;
-		goto out;
+  fprintf(stderr, "Error: cannot define fields for VS <%s>\n", path);
+  ret=-1;
+  goto out;
  }
 
-	
+ 
 /*-------------------------------------------------------------------------
  * read, write vdata
  *-------------------------------------------------------------------------
  */ 
 
-	/* Set fields for reading */
+ /* Set fields for reading */
  if ((status_n = VSsetfields(vdata_id, fieldname_list)) == FAIL) {
    fprintf(stderr, "Error: cannot define fields for VS <%s>\n", path);
    ret=-1;
-			goto out;
-		}
+   goto out;
+  }
  if ((buf = (uint8 *)malloc(n_records * vdata_size)) == NULL ){
   fprintf(stderr, "Failed to get memory for new VS <%s>\n", path);
   ret=-1;
-		goto out;
+  goto out;
  }
  if (VSread(vdata_id, buf, n_records, interlace_mode) == FAIL) {
   fprintf(stderr, "Error reading vdata <%s>\n", path);
@@ -1457,62 +1295,62 @@ int copy_vs( int32 infile_id,
   ret=-1;
   goto out;
  }
-	
+ 
 
 /*-------------------------------------------------------------------------
  * read, write attributes
  *-------------------------------------------------------------------------
  */ 
-	
-	if ((n_attrs = VSfnattrs( vdata_id, -1 )) == FAIL ){
+ 
+ if ((n_attrs = VSfnattrs( vdata_id, -1 )) == FAIL ){
   fprintf(stderr, "Failed getting attributes for VS <%s>\n", path);
   ret=-1;
-		goto out;
+  goto out;
  }
  for (i = 0; i < n_attrs; i++) {
   copy_vdata_attribute(vdata_id, vdata_out, -1, i);
  }
-	
+ 
 /*-------------------------------------------------------------------------
  * read, write field attributes
  *-------------------------------------------------------------------------
  */ 
-	 
+  
  for (i = 0; i < n_fields; i++) {
-		if ((n_attrs = VSfnattrs(vdata_id, i)) == FAIL ){
-			fprintf(stderr, "Failed getting fields for VS <%s>\n", path);
-			ret=-1;
-			goto out;
-		}
+  if ((n_attrs = VSfnattrs(vdata_id, i)) == FAIL ){
+   fprintf(stderr, "Failed getting fields for VS <%s>\n", path);
+   ret=-1;
+   goto out;
+  }
   for (j = 0; j < n_attrs; j++) {
    copy_vdata_attribute(vdata_id, vdata_out, i, j);
   }
  }
-	 
+  
 /*-------------------------------------------------------------------------
  * add VS to group, if needed
  *-------------------------------------------------------------------------
  */ 
-	
+ 
  if (vgroup_id_out_par) 
  {
   /* obtain the reference number of the new VS using its identifier */
   if ((vdata_ref = VSfind (outfile_id,vdata_name)) == 0) {
    fprintf(stderr, "Failed to get new VS reference in <%s>\n", path);
   }
-		
+  
   /* add the VS to the vgroup. the tag DFTAG_VS is used */
   if ((status_32 = Vaddtagref (vgroup_id_out_par, DFTAG_VS, vdata_ref)) == FAIL) {
    fprintf(stderr, "Failed to add new VS to group <%s>\n", path);
   }
  }
-	
-	
+ 
+ 
 out:
  /* terminate access to the VSs */
  status_32 = VSdetach (vdata_id);
  status_32 = VSdetach (vdata_out);
-	
+ 
  if (path)
   free(path);
  if (buf)
@@ -1744,6 +1582,10 @@ void options_get_info(options_t      *options,     /* global options */
     case COMP_CODE_DEFLATE:
      chunk_def->comp.cinfo.deflate.level    = obj->comp.info;
      break;
+    case COMP_CODE_JPEG:
+     chunk_def->comp.cinfo.jpeg.quality        = obj->comp.info;
+     chunk_def->comp.cinfo.jpeg.force_baseline = 1;
+    break;
     };
     for (i = 0; i < rank; i++) 
     {
@@ -1802,7 +1644,11 @@ void options_get_info(options_t      *options,     /* global options */
       break;
      case COMP_CODE_DEFLATE:
       chunk_def->comp.cinfo.deflate.level    = obj->comp.info;
-      break;
+      break; 
+     case COMP_CODE_JPEG:
+      chunk_def->comp.cinfo.jpeg.quality        = obj->comp.info;
+      chunk_def->comp.cinfo.jpeg.force_baseline = 1;
+     break;
      };
     }
    } /* comp.type */
@@ -1860,6 +1706,10 @@ void options_get_info(options_t      *options,     /* global options */
    case COMP_CODE_DEFLATE:
     chunk_def->comp.cinfo.deflate.level    = *info;
     break;
+   case COMP_CODE_JPEG:
+    chunk_def->comp.cinfo.jpeg.quality        = *info;;
+    chunk_def->comp.cinfo.jpeg.force_baseline = 1;
+    break;
    };
   }
  } /* else if */
@@ -1906,6 +1756,10 @@ void options_get_info(options_t      *options,     /* global options */
     break;
    case COMP_CODE_DEFLATE:
     chunk_def->comp.cinfo.deflate.level    = *info;
+    break;
+   case COMP_CODE_JPEG:
+    chunk_def->comp.cinfo.jpeg.quality        = *info;;
+    chunk_def->comp.cinfo.jpeg.force_baseline = 1;
     break;
    };
   }

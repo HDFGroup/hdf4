@@ -198,61 +198,54 @@ static
 void usage()
 {
 
-
+ printf(
+  "hzip -i input -o output [-h] [-v] [-t 'comp_info'] [-c 'chunk_info']\n");
+ printf("  -i input          Input HDF File\n");
+ printf("  -o output         Output HDF File\n");
+ printf("  [-h]              Print usage message\n");
+ printf("  [-t 'comp_info']  Compression type: 'comp_info' is a string with the format\n");
+ printf("\t\t     <object list>:<type of compression><parameters>\n");
+ printf("\t\t     <object list> is a comma separated list of object names\n");
+ printf("\t\t        meaning apply compression only to those objects\n");
+ printf("\t\t        '*' means all objects\n");
+ printf("\t\t     <type of compression> can be:\n");
+ printf("\t\t       RLE, for RLE compression\n");
+ printf("\t\t       HUFF, for Huffman\n");
+ printf("\t\t       GZIP, for gzip\n");
+ printf("\t\t       JPEG, for JPEG\n");
+ printf("\t\t       SZIP, for szip\n");
+ printf("\t\t       NONE, to uncompress\n");
+ printf("\t\t     <parameters> is optional compression info\n");
+ printf("\t\t       RLE, no parameter\n");
+ printf("\t\t       HUFF, the skip-size\n");
+ printf("\t\t       GZIP, the deflation level\n");
+ printf("\t\t       JPEG, the quality factor\n");
+ printf("\t\t       SZIP \n");
+ printf("  [-c 'chunk_info'] Apply chunking. 'chunk_info' is a string with the format\n");
+ printf("\t\t     <object list>:<chunk information>\n");
+ printf("\t\t       <object list> is a comma separated list of object names\n");
+ printf("\t\t         meaning apply chunking only to those objects\n");
+ printf("\t\t         '*' means all objects\n");
+ printf("\t\t       <chunk information> is the chunk size of each dimension:\n");
+ printf("\t\t        <dim_1 x dim_2 x ... dim_n> or\n");
+ printf("\t\t        NONE, to unchunk a previous chunked object\n");
+ printf("  -f comp_file      File with compression info in it (instead of the two above options)\n");
+ printf("\n");
+ printf("Examples:\n");
+ printf("\n");
+ printf("1)$hzip -v -i file1.hdf -o file2.hdf -t '*:RLE'\n");
+ printf("  compresses all objects in the file file1.hdf, using RLE compression\n");
+ printf("\n");
+ printf("2)$hzip -v -i file1.hdf -o file2.hdf -t 'A,B,C:HUFF 1' -t 'D,E:RLE' -c 'D,E:10x10'\n");
+ printf("  applies Skipping Huffman compression with skip factor of 1, for objects A, B and C\n");
+ printf("  applies RLE compression for objects D and E.\n");
+ printf("  applies chunking to objects D and E using a chunk size of 10 for the 2 dimensions\n");
+ printf("\n");
+ printf("3)$hzip -v -i file1.hdf -o file2.hdf -t 'A:NONE'\n");
+ printf("  uncompresses object A\n");
+ printf("\n");
+ printf("Note: the use of the verbose option -v is recommended\n");
  exit(1);
 }
-
-
-
-
-
-
-
-#if 0
-
-hzip -i input -o output [-h] [-v] [-t "comp_info"] [-c "chunk_info"]
-  -i input          Input HDF File
-  -o output         Output HDF File
-  [-h]              Print usage message
-  [-t "comp_info"]  Compression type: "comp_info" is a string with the format
-                       "<list of objects> : <type of compression> <compression parameters>"
-                       <list of objects> is a comma separated list of object names, 
-                          meaning apply compression only to those objects. "*" means all objects
-                       <type of compression> can be:
-                         RLE, for RLE compression
-                         HUFF, for Huffman
-                         GZIP, for gzip
-                         JPEG, for JPEG
-                         SZIP, for szip
-                         NONE, for no compression
-                       <compression parameters> is optional compression info 
-                         RLE, no parameter
-                         HUFF, defaults to 1 skip-size
-                         GZIP, defaults to deflation level 1
-                         JPEG, 
-                         SZIP, 
-  [-c "chunk_info"] Apply chunking. "chunk_info" is a string with the format
-                       "<list of objects> : <chunk information>"
-                       <list of objects> is a comma separated list of object names, 
-                          meaning apply chunking only to those objects. "*" means all objects
-                       <chunk information> is the chunk size of each dimension:
-                         <dim_1 x dim_2 x ... dim_n> or
-                         NONE, for no chunking
-  -f comp_file      File with compression info in it (instead of the two above options)
-
-  $hzip -i file1.hdf -o file2.hdf -t "*:RLE"
-compresses all objects in the file file1.hdf, using RLE compression
-
-$hzip -i file1.hdf -o file2.hdf 
--t "A,B,C:HUFF 1" -t "D,E:RLE"
--c "D,E:10x10"
-applies Skipping Huffman compression with skip factor of 1, for objects A, B and C. 
-applies RLE compression for objects D and E.
-applies chunking to objects D and E using a chunk size of 10 for the 2 dimensions.
-$hzip -i file1.hdf -o file2.hdf -t "A:NONE"
-applies no compression to object A. this can be used to uncompress the object, if it is compressed.
-
-
-#endif
 
 

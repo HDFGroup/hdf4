@@ -27,7 +27,7 @@ void vgroup_insert(char* infname, char* outfname,
                    int32 vgroup_id_out, char*path_name, 
                    int32* tags, int32* refs, int npairs, 
                    table_t *table, options_t *options);
-int copy_vgroup_attrs(int32 vg_in, int32 vg_out);
+int copy_vgroup_attrs(int32 vg_in, int32 vg_out, char *path);
 
 
 
@@ -308,7 +308,7 @@ void list_vg(char* infname,char* outfname,int32 infile_id,int32 outfile_id,
     status_32     = Vsetname (vgroup_id_out, vgroup_name);
     status_32     = Vsetclass (vgroup_id_out, vgroup_class);
 
-    copy_vgroup_attrs(vgroup_id, vgroup_id_out);
+    copy_vgroup_attrs(vgroup_id, vgroup_id_out,vgroup_name);
 
     if (options->verbose)
     printf(PFORMAT,"","",vgroup_name);    
@@ -438,7 +438,7 @@ void vgroup_insert(char* infname,char* outfname,int32 infile_id,int32 outfile_id
    status_32     = Vsetname (vgroup_id_out, vgroup_name);
    status_32     = Vsetclass (vgroup_id_out, vgroup_class);
 
-   copy_vgroup_attrs(vgroup_id, vgroup_id_out);
+   copy_vgroup_attrs(vgroup_id, vgroup_id_out,path);
    
    /* insert the created vgroup into its parent */
    vg_index = Vinsert (vgroup_id_out_par, vgroup_id_out);
@@ -794,24 +794,39 @@ int is_reserved(char*vgroup_class)
  */
 
 
-int copy_vgroup_attrs(int32 vg_in, int32 vg_out) 
+int copy_vgroup_attrs(int32 vg_in, int32 vg_out, char *path) 
 {
  int    n_attrs;
  int32  data_type, size,  n_values;
  char   attr_name[MAX_NC_NAME];
  int    i;
- char   *buf;
+ char   *buf=NULL;
 
  /* Get the number of attributes attached to this vgroup.  */
- n_attrs = Vnattrs (vg_in);
+ if((n_attrs = Vnattrs (vg_in))==FAIL) {
+  fprintf(stderr, "Failed to get attributes for <%s>\n", path);
+  return-1;
+ }
  
  for (i = 0; i < n_attrs; i++) 
  {
-  Vattrinfo (vg_in, i, attr_name, &data_type, &n_values, &size);
-  buf = (char *)malloc(size * n_values);
-  Vgetattr (vg_in, i, buf);
-  Vsetattr(vg_out, attr_name, data_type, n_values, buf);
-  free(buf);
+  if((Vattrinfo (vg_in, i, attr_name, &data_type, &n_values, &size))==FAIL) {
+   fprintf(stderr, "Failed to get attribute %d of <%s>\n", i, path);
+   continue;
+  }
+  if ((buf = (char *)malloc(size * n_values))==NULL ) {
+   fprintf(stderr, "Failed to get memory for attribute %d of <%s>\n", i, path);
+   continue;
+  }
+  if((Vgetattr (vg_in, i, buf))==FAIL){
+   fprintf(stderr, "Failed to get attribute %d of <%s>\n", i, path);
+   if (buf) free(buf);
+   continue;
+  }
+  if((Vsetattr(vg_out, attr_name, data_type, n_values, buf))==FAIL){
+   fprintf(stderr, "Failed to set attribute %d of <%s>\n", i, path);
+  }
+  if (buf) free(buf);
  }
  return 1;
 }
