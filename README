@@ -47,12 +47,11 @@ to avoid overwriting say another 'libjpeg.a' that might be
 installed in '/usr/local/lib'. The '-v' option is for verbose 
 output.
 
-If the configure script can't determine your type of computer, 
-give it the name as an argument, for instance './configure sun4'. 
-You can use the script 'config.sub' to test whether a name is 
-recognized; if it is, config.sub translates it to a triplet 
-specifying CPU, vendor, and OS.(e.g hppa1.1-hp-hpux9.03 for 
-an HP900/735 running HPUX9.03).
+If the configure script can't determine your type of computer
+then it probably is a platfrom that is no longer supported.
+If you want to be adventurous see the section 'Dealing with
+Configure Problems' in the INSTALL file. Otherwise send an 
+email to 'hdfhelp@ncsa.uiuc.edu' for further help. 
 
 `configure' is a Bourne-shell (`/bin/sh') script; if your system
 does not recognize this automatically when you run a different 
