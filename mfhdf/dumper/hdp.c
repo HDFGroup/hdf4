@@ -53,14 +53,23 @@ init_dump_opts(dump_info_t * dump_opts)
     dump_opts->by_name.num_items = 0;
     dump_opts->by_class.str_list = NULL; /* no class given */
     dump_opts->by_class.num_items = 0;
-    dump_opts->num_chosen = NO_SPECIFIC; /* no specific dataset requested
-					  default to dump all datasets */
     dump_opts->contents = DVERBOSE;   /* default dump all information */
     dump_opts->dump_to_file = FALSE;          /* don't dump to output file */
     dump_opts->file_type = DASCII;    /* default output is ASCII file */
-    dump_opts->no_cr = FALSE; /* print output aligned, using carriage returns */
     dump_opts->print_pal = FALSE;     /* GR only, don't print palette */
-    dump_opts->interlace = NO_SPECIFIC;     /* GR only, print data using interlace at creation */
+
+    /* no specific dataset requested, default to dump all datasets */
+    dump_opts->num_chosen = NO_SPECIFIC;
+
+    /* print output aligned, using carriage returns */
+    dump_opts->no_cr = FALSE;
+
+    /* print data starting at column 16 unless reset otherwise */
+    dump_opts->indent = 16;
+
+    /* GR only, print data using interlace at creation */
+    dump_opts->interlace = NO_SPECIFIC;
+
     HDstrcpy(dump_opts->file_name, "\0");
 }       /* end init_dump_opts() */
 

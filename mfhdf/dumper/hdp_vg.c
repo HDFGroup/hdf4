@@ -1006,7 +1006,14 @@ vgdumpfull(int32        vg_id,
                 "vgdumpfull", (int) entry_num );
 
       found = 1;
-      if (elem_tag == DFTAG_VG)
+      if( elem_ref == 0 )  /* taken care of ref=0 in tdfr8f and tdf24 for now */
+      {
+         fprintf(fp, "     #%d (Vgroup)\n", (int) entry_num );
+         fprintf(fp, "\ttag = %d;", (int) elem_tag);
+         fprintf(fp, "reference = %d;\n", (int) elem_ref );
+      }
+
+      else if (elem_tag == DFTAG_VG)
       { /* vgroup */
 
          /* get the current vgroup and its information */

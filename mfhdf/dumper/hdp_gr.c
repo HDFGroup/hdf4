@@ -41,7 +41,7 @@ dumpgr_usage(intn  argc,
     printf("\t-h\tDump header only, no annotation for elements nor data\n");
     printf("\t-v\tDump everything including all annotations (default)\n");
     printf("\t-c\tDo not add a carriage return to a long data line\n");
-    printf("\t-p\tDump palette's info and data; only info with -h; only data with -d\n");
+    printf("\t-p\tDump palette data\n");
     printf("\t-o <filename>\tOutput to file <filename>\n");
     printf("\t-b\tBinary format of output\n");
     printf("\t-x\tAscii text format of output (default)\n");
@@ -122,6 +122,10 @@ parse_dumpgr_opts(dump_info_t *dumpgr_opts,
              break;
 
          case 'h':	/* no annotations nor data */
+	     /* make sure -p is not also given */
+	     if( dumpgr_opts->print_pal )
+		ERROR_GOTO_0( "Option -h and -p must not be used together" );
+
              dumpgr_opts->contents = DHEADER;
              (*curr_arg)++;
              break;
@@ -133,6 +137,7 @@ parse_dumpgr_opts(dump_info_t *dumpgr_opts,
 
          case 'c':      /* do not add carriage returns to output data lines */
              dumpgr_opts->no_cr = TRUE;
+             dumpgr_opts->indent = 0; /* so that data is printed at 1st col. */
              (*curr_arg)++;
              break; 
 
@@ -156,6 +161,10 @@ parse_dumpgr_opts(dump_info_t *dumpgr_opts,
              break;
 
          case 'p':   /* dump palette data */
+	     /* make sure -p is not also given */
+	     if( dumpgr_opts->contents == DHEADER )
+		ERROR_GOTO_0( "Option -h and -p must not be used together" );
+
              dumpgr_opts->print_pal = TRUE;
              (*curr_arg)++;
              break;
@@ -250,7 +259,7 @@ grdumpfull(int32        ri_id,
                   "grdumpfull", (int)ri_id );
 
    ret_value = dumpfull( nt, dumpgr_opts->file_type, read_nelts*ncomps, 
-			 buf, 16, dumpgr_opts->no_cr, fp);
+		buf, dumpgr_opts->indent, dumpgr_opts->no_cr, fp);
    if( ret_value == FAIL )
       ERROR_GOTO_2( "in %s: dumpfull failed for ri_id(%d)",
                   "grdumpfull", (int)ri_id );
@@ -438,8 +447,6 @@ print_GRattrs(
       resetBuff(( VOIDP *) &attr_nt_desc ); 
 
       /* display the attribute's values */
-      /* Note that filetype is DASCII since binary format does not contain
-         these information - it's data only */
       fprintf(fp, "\t\t Value = ");
 
       status = dumpfull(attr_nt, dumpgr_opts->file_type, attr_count, 
@@ -518,8 +525,8 @@ print_RIattrs(
 
       /* display the attribute's values then free buffer */
       fprintf(fp, "\t\t Value = ");
-      status = dumpfull(attr_nt, dumpgr_opts->file_type, attr_count, attr_buf, 0, 
-			dumpgr_opts->no_cr, fp);
+      status = dumpfull(attr_nt, dumpgr_opts->file_type, attr_count, 
+			attr_buf, 0, dumpgr_opts->no_cr, fp);
       if( status == FAIL )  /* go to the next attribute */
          ERROR_CONT_3( "in %s: dumpfull failed for %d'th attribute of %d'th RI", 
 			"print_RIattrs", (int)attr_index, (int)ri_index );
@@ -530,6 +537,57 @@ print_RIattrs(
 
    return ret_value;
 } /* end of print_RIattrs */
+
+/* Displays the palette information only.  Note that HDF supports only
+   256 colors.  Each color is defined by its 3 components. Therefore,
+   verifying the value of n_entries and n_comps is not necessary and
+   the buffer to hold the palette data can be static.  However,
+   if more values or colors are added to the model, these parameters
+   must be checked to allocate sufficient space when reading a palette
+   and the palette number should be printed */
+intn print_PaletteInfo(
+        int32 ri_id,
+        int32 num_pals, /* number of palettes, currently only 1 */
+        FILE *fp )
+{
+   int32 pal_id = FAIL,
+         pal_index,
+         data_type,
+         n_comps,
+         n_entries,
+         interlace_mode;
+   intn  status, ret_value = SUCCEED;
+
+   /* display each palette of an RI */
+   for( pal_index = 0; pal_index < num_pals; pal_index++ )
+   {
+      /* Get the identifier of the palette attached to the image. */
+      pal_id = GRgetlutid (ri_id, pal_index);
+      if( pal_id == FAIL ) /* continue to the next palette */
+         ERROR_CONT_2( "in %s: GRgetlutid failed for palette #%d",
+                        "print_PaletteInfo", (int)pal_index);
+
+      /* Obtain and display information about the palette. */
+      status = GRgetlutinfo (pal_id, &n_comps, &data_type, &interlace_mode,
+                            &n_entries);
+      if( status == FAIL ) /* continue to the next palette */
+         ERROR_CONT_2( "in %s: GRgetlutinfo failed for palette #%d",
+                        "print_PaletteInfo", (int)pal_index);
+
+      /* if there are no palette data, print message for both cases:
+         header-only and verbose (data+header) */
+      if( n_entries <= 0 )
+         fprintf( fp, "\t No palette\n");
+
+      /* else, if there are palette data, print header info */
+      else /* have palette data */
+         fprintf (fp, "\t Palette: %d components; %d entries\n",
+                        (int)n_comps, (int)n_entries);
+
+   } /* end of for each palette */
+
+   return( ret_value );
+}  /* end of print_PaletteInfo */
 
 /* Displays the palette data.  Note that HDF supports only 256 colors.
    Each color is defined by its 3 components. Therefore,
@@ -600,7 +658,8 @@ print_Palette(
 
             /* Display the palette data */
             status = dumpfull(data_type, dumpgr_opts->file_type, 
-			n_entries*n_comps, palette_data, 16, dumpgr_opts->no_cr, fp);
+			n_entries*n_comps, palette_data, dumpgr_opts->indent, 
+			dumpgr_opts->no_cr, fp);
             if( status == FAIL )
                ERROR_GOTO_2( "in %s: dumpfull failed for palette #%d",
 			"print_Palette", (int)ri_id );
@@ -735,11 +794,17 @@ printGR_ASCII(
             /* print more image's info */
             fprintf(fp, "\t width=%d; height=%d\n", (int) dimsizes[0], (int) dimsizes[1]);
             fprintf(fp, "\t Ref. = %d\n", (int) ri_ref);
-            fprintf(fp, "\t ncomps = %d\n\t Number of attributes = %d\n", 
-				(int) ncomps, (int) nattrs );
-            fprintf(fp, "\t Interlace mode= %s\n", Il_mode_text(il) );
+            fprintf(fp, "\t ncomps = %d\n\t Interlace mode= %s\n",
+				(int) ncomps, Il_mode_text(il) );
+
+	    /* if palette data is not to be printed, print the palette
+	       info now so it won't be lost after the image data; currently,
+	       only 1 palette per image (second arg.) */
+            if( !dumpgr_opts->print_pal )
+		print_PaletteInfo( ri_id, 1, fp );
 
             /* Print image attributes */
+            fprintf(fp, "\t Number of attributes = %d\n", (int) nattrs );
             status = print_RIattrs(ri_id, ri_index, nattrs, fp, dumpgr_opts );
             if( status == FAIL )
 		ERROR_BREAK_2( "in %s: Printing image's attributes failed for %d'th RI",

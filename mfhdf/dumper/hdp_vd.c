@@ -571,6 +571,7 @@ intn
 dumpvd_ascii(dump_info_t * dumpvd_opts, 
              int32 file_id,
              char  *file_name,
+	     FILE* fp,
              int32 num_vd_chosen, 
              char *flds_chosen[MAXCHOICES],
              int32 *vd_chosen,
@@ -587,7 +588,6 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
    char        vdclass[VSNAMELENMAX];
    char        vdname[VSNAMELENMAX];
    char        fldstring[MAXNAMELEN];
-   FILE       *fp = NULL;
    intn        dumpall = 0;
    file_type_t ft = DASCII;
    vd_info_t   curr_vd;
@@ -602,12 +602,6 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
 #else /* !macintosh */
    char   fields[VSFIELDMAX*FIELDNAMELENMAX];
 #endif /* !macintosh */    
-
-   /* set output file */
-   if (dumpvd_opts->dump_to_file)
-      fp = fopen(dumpvd_opts->file_name, "w");
-   else
-      fp = stdout;
 
    if (dumpvd_opts->contents != DDATA)
    {
@@ -789,6 +783,7 @@ intn
 dumpvd_binary(dump_info_t * dumpvd_opts, 
               int32 file_id,
               char  *file_name,
+	      FILE* fp,
               int32 num_vd_chosen, 
               char *flds_chosen[MAXCHOICES],
               int32 *vd_chosen,
@@ -803,7 +798,6 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
    int32       vdata_tag;
    char        vdclass[VSNAMELENMAX];
    char        vdname[VSNAMELENMAX];
-   FILE       *fp = NULL;
    intn        dumpall = 0;
    file_type_t ft = DBINARY;
    int32       vd_id = FAIL;
@@ -818,12 +812,6 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
 #else /* !macintosh */
     char        fields[VSFIELDMAX*FIELDNAMELENMAX]; 
 #endif /* !macintosh */    
-
-    /* Get output file name.  */
-    if (dumpvd_opts->dump_to_file)
-        fp = fopen(dumpvd_opts->file_name, "wb");
-    else
-        fp = stdout;
 
     vd_chosen_idx = 0;	/* "vd_chosen_idx" is used to index the array of "vd_chosen". */
 
@@ -1011,21 +999,28 @@ dvd(dump_info_t * dumpvd_opts,
                      takes care of Vend, Hclose, and free vg_chosen */
 
    ft = dumpvd_opts->file_type;
+   fp = stdout;	/* default file pointer to the standard output */
    switch(ft)
    {
        case DASCII:  /*    ASCII file   */
 
-          status = dumpvd_ascii(dumpvd_opts, file_id, file_name,
-                                         num_vd_chosen, flds_chosen, 
-                                         vd_chosen, dumpallfields);
+	  /* set output file */
+	  if (dumpvd_opts->dump_to_file)
+	     fp = fopen(dumpvd_opts->file_name, "w");
+
+          status = dumpvd_ascii(dumpvd_opts, file_id, file_name, fp,
+                   num_vd_chosen, flds_chosen, vd_chosen, dumpallfields);
           if( FAIL == status )
              ERROR_BREAK_0( "in dvd", FAIL );
           break;
        case DBINARY:   /*  binary file, not fully tested yet  */
 
-          status = dumpvd_binary(dumpvd_opts, file_id, file_name,
-                                         num_vd_chosen, flds_chosen, 
-                                         vd_chosen, dumpallfields);
+    	  /* Get output file name.  */
+    	  if (dumpvd_opts->dump_to_file)
+             fp = fopen(dumpvd_opts->file_name, "wb");
+
+          status = dumpvd_binary(dumpvd_opts, file_id, file_name, fp,
+                   num_vd_chosen, flds_chosen, vd_chosen, dumpallfields);
           if( FAIL == status )
              ERROR_BREAK_0( "in dvd", FAIL );
 

@@ -336,8 +336,8 @@ char_filter_t;
    separately - 1/23/99 */
 typedef struct
 {
-   filter_t    filter;		/* Which data object to dump */
-   intn      *filter_num;      /* ref #'s or indices to use as filter */
+   filter_t    filter;		/* which data object to dump */
+   intn      *filter_num;       /* ref #'s or indices to use as filter */
    char      **filter_str;      /* names or classes to use as filter */
    number_filter_t by_index;	/* data objects requested by index */
    number_filter_t by_ref;	/* data objects requested by reference number */
@@ -345,10 +345,11 @@ typedef struct
    char_filter_t by_class;	/* data objects requested by class name */
    char_filter_t by_field;	/* data objects requested by field - only VD */
    int32       num_chosen;	/* number of items chosen, totally (-1==ALL) */
-   content_t   contents;        /* What contents to dump */
-   intn        dump_to_file;	/* Whether to dump to a file */
+   content_t   contents;        /* what contents to dump */
+   intn        dump_to_file;	/* whether to dump to a file */
    file_type_t file_type;	/* Is data written in ASCII or binary */
-   intn	       no_cr;	/* Whether carriage return added to output data lines */
+   intn	       no_cr;	/* whether carriage return added to output data lines */
+   intn	       indent;	/* column number where data starts on a line */ 
    char        file_name[MAXFNLEN];/* Name of file to dump into */
    char        ifile_name[MAXFNLEN];/* Name of input file being processed */
 

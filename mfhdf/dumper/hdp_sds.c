@@ -179,7 +179,6 @@ sdsdumpfull( int32        sds_id,
    int32   *left = NULL;
    int32   *start = NULL;
    int32   *edge = NULL;
-   intn     indent = 16;  /* better than in parameter list */
    intn     emptySDS = TRUE;
    file_type_t ft;
    intn     status;
@@ -240,8 +239,8 @@ sdsdumpfull( int32        sds_id,
          ERROR_GOTO_2( "in %s: SDreaddata failed for sds_id(%d)",
 			"sdsdumpfull", (int)sds_id );
 
-      status32 = dumpfull(numtype, ft, read_nelts, buf, indent, 
-			dumpsds_opts->no_cr, fp);
+      status32 = dumpfull(numtype, ft, read_nelts, buf, 
+			dumpsds_opts->indent, dumpsds_opts->no_cr, fp);
       if( FAIL == status32 )
          ERROR_GOTO_2( "in %s: dumpfull failed for sds_id(%d)",
                         "sdsdumpfull", (int)sds_id );
@@ -259,8 +258,9 @@ sdsdumpfull( int32        sds_id,
             ERROR_GOTO_2( "in %s: SDreaddata failed for sds_id(%d)",
                         "sdsdumpfull", (int)sds_id );
 
-         status32 = dumpfull(numtype, ft, read_nelts, buf, indent, 
-			dumpsds_opts->no_cr, fp);
+         status32 = dumpfull(numtype, ft, read_nelts, buf, 
+			dumpsds_opts->indent, dumpsds_opts->no_cr, fp);
+
          if( FAIL == status32 )
             ERROR_GOTO_2( "in %s: dumpfull failed for sds_id(%d)",
                         "sdsdumpfull", (int)sds_id );
