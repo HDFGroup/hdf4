@@ -1580,10 +1580,7 @@ int32  *count;
     }
 
     *count = (*atp)->data->count;
-    if (handle->file_type != HDF_FILE)
-        *nt    = hdf_map_type((*atp)->data->type);
-    else
-        *nt = (*atp)->HDFtype;
+    *nt = (*atp)->HDFtype;
 
     return SUCCEED;
 
