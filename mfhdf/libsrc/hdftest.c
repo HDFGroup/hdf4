@@ -1588,10 +1588,11 @@ char *argv[];
     /* 
      * Test 6. Create a  9x4 SDS of uint16 in file 1 
      *         Write using SDwritedata, read back in using SDreaddata
+     *         Use GZIP compression.
      */
     d_dims[0] = 9;
     d_dims[1] = 4;
-    newsds8 = SDcreate(f1, "DataSetChunked_2D_RLE_1", DFNT_UINT16, 2, d_dims);
+    newsds8 = SDcreate(f1, "DataSetChunked_2D_GZIP_1", DFNT_UINT16, 2, d_dims);
     if(newsds8 == FAIL) 
       {
         fprintf(stderr, "Failed to create a new 2D uint16 data set \n");
@@ -1609,12 +1610,20 @@ char *argv[];
     cdims[0] = 3;
     cdims[1] = 2;
     chunk_def.chunk_lengths = cdims;
-    chunk_def.comp_type = COMP_CODE_RLE;
+#if 0
+    chunk_def.comp_type = COMP_CODE_RLE;   /* RLE */
+
+    chunk_def.comp_type = COMP_CODE_SKPHUFF; /* Skipping Huffman */
+    cinfo.skphuff.skp_size = sizeof(uint16);
+#endif
+    chunk_def.comp_type = COMP_CODE_DEFLATE; /* GZIP */
+    cinfo.deflate.level = 6;
+
     chunk_def.cinfo = &cinfo;
     status = SDsetChunk(newsds8, &chunk_def, SD_CHUNK_COMP);
     if(status == FAIL) 
       {
-        fprintf(stderr, "Failed to create new chunked, RLE Compressed data set\n");
+        fprintf(stderr, "Failed to create new chunked, GZIP Compressed data set\n");
         num_err++;
       }
 
@@ -1690,11 +1699,12 @@ char *argv[];
      * Test 7. Create a new chunked SDS of uint8 in file 1 
      *         Compress using RLE. Write using SDwriteChunk
      *         Read back in using SDreaddata and SDreadChunk. 
+     *         Use Skipping Huffman compression
      */
     d_dims[0] = 2;
     d_dims[1] = 3;
     d_dims[2] = 4;
-    newsds6 = SDcreate(f1, "DataSetChunked_3D_RLE_2", DFNT_UINT8, 3, d_dims);
+    newsds6 = SDcreate(f1, "DataSetChunked_3D_SKIP_HUF_2", DFNT_UINT8, 3, d_dims);
     if(newsds6 == FAIL) 
       {
         fprintf(stderr, "Failed to set a new uint8 3D data set chunked\n");
@@ -1706,12 +1716,16 @@ char *argv[];
     cdims[1] = 1;
     cdims[2] = 4;
     chunk_def.chunk_lengths = cdims;
+#if 0
     chunk_def.comp_type = COMP_CODE_RLE;
+#endif
+    chunk_def.comp_type = COMP_CODE_SKPHUFF; /* Skipping Huffman */
+    cinfo.skphuff.skp_size = sizeof(uint16);
     chunk_def.cinfo = &cinfo;
     status = SDsetChunk(newsds6, &chunk_def, SD_CHUNK_COMP);
     if(status == FAIL) 
       {
-        fprintf(stderr, "Failed to create new chunked, RLE compressed data set\n");
+        fprintf(stderr, "Failed to create new chunked, Skipping Huffman compressed data set\n");
         num_err++;
       }
 
