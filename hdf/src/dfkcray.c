@@ -7738,7 +7738,7 @@ uint32 num_elm, source_stride, dest_stride;
 
 #else /* i.e. not on a cray */
 
-int howdy_sailor; /* prevent empty symbol table messages */
+int cray_dummy; /* prevent empty symbol table messages */
 
 #endif /* UNICOS */
 

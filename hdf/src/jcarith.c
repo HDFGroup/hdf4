@@ -46,6 +46,6 @@ compress_info_ptr cinfo;
 
 #else
 
-int howdy_sailor; /* prevent empty symbol table messages */
+int carth_dummy; /* prevent empty symbol table messages */
 
 #endif /* C_ARITH_CODING_SUPPORTED */

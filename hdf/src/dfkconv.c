@@ -839,7 +839,7 @@ uint32 num_elm, source_stride, dest_stride;
 
 #else
 
-int howdy_sailor; /* prevent empty symbol table messages */
+int convex_dummy; /* prevent empty symbol table messages */
 
 #endif  /* CONVEXNATIVE */
 

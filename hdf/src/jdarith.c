@@ -46,6 +46,6 @@ decompress_info_ptr cinfo;
 
 #else
 
-int howdy_sailor; /* prevent empty symbol table messages */
+int darth_dummy; /* prevent empty symbol table messages */
 
 #endif /* D_ARITH_CODING_SUPPORTED */
