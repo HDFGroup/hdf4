@@ -23,7 +23,7 @@
   2.4.6 Compiling, Testing and Installing
 
   2.5 Platform-specific Notes
-  2.5.1 HPUX(9.03) on PA-RISC
+  2.5.1 Linux v2.2.6 
   2.5.2 Solaris(2.6) on Sparc
   2.5.3 Solaris(2.5.1) on INTEL(x86)
   2.5.4 OpenVMS AXP and OpenVMS VAX
@@ -99,12 +99,13 @@
   VAX OpenVMS v6.2                  -                - 
   IBM PC - Intel Pentium
        Solarisx86 (2.5.1)         GCC 2.7.2.1        -                
-       Linux (elf) (2.0.30)       GCC 2.8.1        g77 2.8.1     
+       Linux (elf) (2.2.26)       GCC 2.8.1        g77 2.8.1     
        FreeBSD (2.2.1)            GCC 2.7.2        f77 2.7.2.1
   PowerPC(Mac-OS-7.6)             MetroWerks
                                   Codewarrior (CW8)  -              
   68k-far/4i/8d(Mac-OS-7.6)         -                -           
-  Windows NT/95                     -                -             
+  Windows NT/95                   MSVC++ 5.0       DEC Visual Fortran 5.0
+  DEC Alpha NT                    MSVC++ 5.0       DEC Visual Fortran 5.0
   T3E (unicosmk 2.0.4.46)         CC 6.2.0.1       f90 3.2.0.0
 
 
@@ -342,11 +343,40 @@
 2.5 Platform-specific Notes
     ========================
 
-    2.5.1 HPUX(9.03) on PA-RISC
-    ---------------------------
-    The distribution has been compiled/tested with the native
-    ANSI-C compiler and Fortran compiler. The binary distribution 
-    was compiled using the native compilers.
+    2.5.1 Linux v2.2.6 
+    ------------------
+    The Fortran tests fail in hdf/test/manf.f.
+
+    Comment out the code in hdf/test/manf.f as shown below to 
+    workaround this problem:
+
+....
+C**************************************************************
+C
+C  man_check_lab_desc:  read and compare label and description
+C                   with expected ones
+C
+C**************************************************************
+      subroutine man_check_lab_desc(fname, tag, ref, label, desc,
+     *                          num_failed)
+
+....
+C ***** Test if the file fname is an HDF file
+C
+C
+      ret = hishdff(fname)
+      if (ret .ne. 1) then
+          num_failed = num_failed + 1
+          write(*,*) 'HISHDFF function failed'
+      endif
+C
+C  The 'hdfstring' call crashes for some reason--commented out
+C
+C      ret = hestringf(0, error_message)
+C       if (ret .ne. 0) then
+C          num_failed = num_failed + 1
+C          write(*,*) 'HESTRINGF function failed'
+C      endif
 
     2.5.2 Solaris(2.6) on Sparc
     ---------------------------
