@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -170,7 +169,7 @@ DFclose(DF * dfile)
     if (DFelstat == DFEL_RESIDENT)
       {
           Hputelement(DFid, acc_tag, acc_ref, (unsigned char *) DFelement, DFelsize);
-          HDfreespace(DFelement);
+          HDfree(DFelement);
       }
     else
         Hendaccess(DFaid);
@@ -469,7 +468,7 @@ DFaccess(DF * dfile, uint16 tag, uint16 ref, char *acc_mode)
    if (((tag != acc_tag) || (ref != acc_ref)) || (accmode != DFelaccmode))
    if (DFelstat == DFEL_RESIDENT) {
    Hputelement(DFid, acc_tag, acc_ref, DFelement, DFelsize);
-   HDfreespace(DFelement);
+   HDfree(DFelement);
    }
    else
    Hendaccess(DFaid);
@@ -796,7 +795,7 @@ DFupdate(DF * dfile)
     /* test
        if (DFelstat == DFEL_RESIDENT) {
        Hputelement(DFid, acc_tag, acc_ref, DFelement, DFelsize);
-       HDfreespace(DFelement);
+       HDfree(DFelement);
        DFIclearacc();
        }
        test */
@@ -871,7 +870,7 @@ DFgetelement(DF * dfile, uint16 tag, uint16 ref, char *ptr)
     /* test
        if (DFelstat == DFEL_RESIDENT) {
        Hputelement(DFid, acc_tag, acc_ref, DFelement, DFelsize);
-       HDfreespace(DFelement);
+       HDfree(DFelement);
        DFIclearacc();
        }
        test */
@@ -918,7 +917,7 @@ DFputelement(DF * dfile, uint16 tag, uint16 ref, char *ptr, int32 len)
     /* test
        if (DFelstat == DFEL_RESIDENT) {
        Hputelement(DFid, acc_tag, acc_ref, DFelement, DFelsize);
-       HDfreespace(DFelement);
+       HDfree(DFelement);
        DFIclearacc();
        }
        test */
@@ -1470,7 +1469,7 @@ DFIgetspace(uint32 qty)
 {
     void       *ret;
 
-    ret = (void *) HDgetspace(qty);
+    ret = (void *) HDmalloc(qty);
     DFerror = HEvalue(1);
     return (ret);
 }
@@ -1479,9 +1478,9 @@ void       *
 DFIfreespace(void *ptr)
 {
 #ifdef MALLOC_CHECK
-    return (HDfreespace(ptr));
+    return (HDfree(ptr));
 #else
-    HDfreespace(ptr);
+    HDfree(ptr);
     return (NULL);
 #endif
 }

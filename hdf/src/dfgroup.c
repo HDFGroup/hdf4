@@ -68,7 +68,7 @@ setgroupREC(DIlist_ptr list_rec)
 
     if (!Group_list)
       {
-          Group_list = (DIlist_ptr *) HDgetspace((uint32) MAX_GROUPS *
+          Group_list = (DIlist_ptr *) HDmalloc((uint32) MAX_GROUPS *
                                                  sizeof(DIlist_ptr));
           if (!Group_list)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -121,14 +121,14 @@ DFdiread(int32 file_id, uint16 tag, uint16 ref)
         HRETURN_ERROR(DFE_INTERNAL, FAIL);
 
     /* allocate a new structure to hold the group */
-    new_list = (DIlist_ptr) HDgetspace((uint32) sizeof(DIlist));
+    new_list = (DIlist_ptr) HDmalloc((uint32) sizeof(DIlist));
     if (!new_list)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    new_list->DIlist = (uint8 *) HDgetspace((uint32) length);
+    new_list->DIlist = (uint8 *) HDmalloc((uint32) length);
     if (!new_list->DIlist)
       {
-          HDfreespace((VOIDP) new_list);
+          HDfree((VOIDP) new_list);
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
@@ -138,8 +138,8 @@ DFdiread(int32 file_id, uint16 tag, uint16 ref)
     /* read in group */
     if (Hgetelement(file_id, tag, ref, (uint8 *) new_list->DIlist) < 0)
       {
-          HDfreespace((VOIDP) new_list->DIlist);
-          HDfreespace((VOIDP) new_list);
+          HDfree((VOIDP) new_list->DIlist);
+          HDfree((VOIDP) new_list);
           HRETURN_ERROR(DFE_READERROR, FAIL);
       }
     return (int32) setgroupREC(new_list);
@@ -178,8 +178,8 @@ DFdiget(int32 list, uint16 *ptag, uint16 *pref)
 
     if (list_rec->current == list_rec->num)
       {
-          HDfreespace((VOIDP) list_rec->DIlist);    /*if all returned, free storage */
-          HDfreespace((VOIDP) list_rec);
+          HDfree((VOIDP) list_rec->DIlist);    /*if all returned, free storage */
+          HDfree((VOIDP) list_rec);
           Group_list[list & 0xffff] = NULL;     /* YUCK! BUG! */
       }
     return SUCCEED;
@@ -227,15 +227,15 @@ DFdisetup(int maxsize)
     CONSTR(FUNC, "DFdisetup");
     DIlist_ptr  new_list;
 
-    new_list = (DIlist_ptr) HDgetspace((uint32) sizeof(DIlist));
+    new_list = (DIlist_ptr) HDmalloc((uint32) sizeof(DIlist));
 
     if (!new_list)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    new_list->DIlist = (uint8 *) HDgetspace((uint32) (maxsize * 4));
+    new_list->DIlist = (uint8 *) HDmalloc((uint32) (maxsize * 4));
     if (!new_list->DIlist)
       {
-          HDfreespace((VOIDP) new_list);
+          HDfree((VOIDP) new_list);
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
@@ -305,8 +305,8 @@ DFdiwrite(int32 file_id, int32 list, uint16 tag, uint16 ref)
 
     ret = Hputelement(file_id, tag, ref, list_rec->DIlist,
                       (int32) list_rec->current * 4);
-    HDfreespace((VOIDP) list_rec->DIlist);
-    HDfreespace((VOIDP) list_rec);
+    HDfree((VOIDP) list_rec->DIlist);
+    HDfree((VOIDP) list_rec);
     Group_list[list & 0xffff] = NULL;   /* YUCK! BUG! */
     return (intn) ret;
 }

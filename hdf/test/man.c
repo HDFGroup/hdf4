@@ -121,7 +121,7 @@ check_fann(char *fname)
       /* allocate space for label */
       if (ann_label == NULL)
         {
-          if ((ann_label = (uint8 *)HDgetspace((ann_len+1)*sizeof(uint8))) 
+          if ((ann_label = (uint8 *)HDmalloc((ann_len+1)*sizeof(uint8))) 
               == NULL)
             {
               printf("Error: failed to allocate space to hold file label \n");
@@ -146,7 +146,7 @@ check_fann(char *fname)
 #ifdef AN_DEBUG
       printf("found ann_len=%d, file label=%s\n", strlen(ann_label),ann_label);
 #endif
-      HDfreespace(ann_label);
+      HDfree(ann_label);
       ann_label = NULL;
     } /* end for nflabs */
 
@@ -171,7 +171,7 @@ check_fann(char *fname)
       /* allocate space for desc */
       if (ann_desc == NULL)
         {
-          if ((ann_desc = (uint8 *)HDgetspace((ann_len+1)*sizeof(uint8))) 
+          if ((ann_desc = (uint8 *)HDmalloc((ann_len+1)*sizeof(uint8))) 
               == NULL)
             {
               printf("Error: failed to allocate space to hold file desc  \n");
@@ -196,15 +196,15 @@ check_fann(char *fname)
 #ifdef AN_DEBUG
       printf("found ann_len=%d, file desc=%s\n", strlen(ann_desc),ann_desc);
 #endif
-      HDfreespace(ann_desc);
+      HDfree(ann_desc);
       ann_desc = NULL;
     } /* end for nfdescs */
 
   /* Clean up */
   if (ann_label != NULL)
-    HDfreespace(ann_label);
+    HDfree(ann_label);
   if (ann_desc != NULL)
-    HDfreespace(ann_desc);
+    HDfree(ann_desc);
 
   /* close file */
   ANend(file_handle);
@@ -308,7 +308,7 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, uint8 *label[], uint8 *desc[
     }
   else
     {
-      if ((dlabels = (int32 *)HDgetspace(num_dlabels * sizeof(int32))) == NULL)
+      if ((dlabels = (int32 *)HDmalloc(num_dlabels * sizeof(int32))) == NULL)
         {
           printf("Error: failed to allocate space to hold data label ids\n");
           exit(1);
@@ -323,7 +323,7 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, uint8 *label[], uint8 *desc[
     }
   else
     {
-      if ((ddescs = (int32 *)HDgetspace(num_ddescs * sizeof(int32))) == NULL)
+      if ((ddescs = (int32 *)HDmalloc(num_ddescs * sizeof(int32))) == NULL)
         {
           printf("Error: failed to allocate space to hold data descs ids\n");
           exit(1);
@@ -361,7 +361,7 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, uint8 *label[], uint8 *desc[
       /* allocate space for label */
       if (ann_label == NULL)
         {
-          if ((ann_label = (uint8 *)HDgetspace((ann_len+1)*sizeof(uint8))) 
+          if ((ann_label = (uint8 *)HDmalloc((ann_len+1)*sizeof(uint8))) 
               == NULL)
             {
               printf("Error: failed to allocate space to hold data label \n");
@@ -386,7 +386,7 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, uint8 *label[], uint8 *desc[
 #ifdef AN_DEBUG
       printf("found data_len=%d, data label=%s\n", strlen(ann_label),ann_label);
 #endif
-      HDfreespace(ann_label);
+      HDfree(ann_label);
       ann_label = NULL;
     } /* end for labels */
 
@@ -408,7 +408,7 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, uint8 *label[], uint8 *desc[
       /* allocate space for descritpion */
       if (ann_desc == NULL)
         {
-          if ((ann_desc = (uint8 *)HDgetspace((ann_len+1)*sizeof(uint8))) 
+          if ((ann_desc = (uint8 *)HDmalloc((ann_len+1)*sizeof(uint8))) 
               == NULL)
             {
               printf("Error: failed to allocate space to hold data desc \n");
@@ -433,17 +433,17 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, uint8 *label[], uint8 *desc[
 #ifdef AN_DEBUG
       printf("found data desclen=%d, desc=%s\n", strlen(ann_desc),ann_desc);
 #endif
-      HDfreespace(ann_desc);
+      HDfree(ann_desc);
       ann_desc = NULL;
     } /* end for descs */
     
   /* free space */
-  HDfreespace(dlabels);
-  HDfreespace(ddescs);
+  HDfree(dlabels);
+  HDfree(ddescs);
   if (ann_label != NULL)
-    HDfreespace(ann_label);
+    HDfree(ann_label);
   if (ann_desc != NULL)
-    HDfreespace(ann_desc);
+    HDfree(ann_desc);
 
   /* close file */
   ANend(file_handle);
@@ -472,9 +472,9 @@ test_man()
   int32   ann_handle;  /* annotation handle */
 
   /***** generate float array and image *****/
-  data     = (float *) HDgetspace(ROWS * COLS * sizeof(float));
-  image    = (uint8 *) HDgetspace(ROWS * COLS * sizeof(char));
-  newimage = (uint8 *) HDgetspace(ROWS * COLS * sizeof(char));
+  data     = (float *) HDmalloc(ROWS * COLS * sizeof(float));
+  image    = (uint8 *) HDmalloc(ROWS * COLS * sizeof(char));
+  newimage = (uint8 *) HDmalloc(ROWS * COLS * sizeof(char));
 
   dimsizes[0] = ROWS;
   dimsizes[1] = COLS;
@@ -615,7 +615,7 @@ test_man()
   ANdestroy();
 #endif
   /* free up space */
-  HDfreespace((VOIDP) data);
-  HDfreespace((VOIDP) image);
-  HDfreespace((VOIDP) newimage);
+  HDfree((VOIDP) data);
+  HDfree((VOIDP) image);
+  HDfree((VOIDP) newimage);
 } /* test_man() */

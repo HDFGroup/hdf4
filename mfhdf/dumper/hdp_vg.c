@@ -271,7 +271,7 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
 	   sort(vg_chosen);
        
 	max_vgs = NUM_VGS;
-	list = (struct node**)HDgetspace(sizeof(struct node*)*max_vgs);
+	list = (struct node**)HDmalloc(sizeof(struct node*)*max_vgs);
 	num_vgs = 0;
 	for (i=0; (vg_ref=Vgetid(file_id,vg_ref))!=-1; i++) { 
 	   int32 skip=FALSE;
@@ -298,7 +298,7 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
 	      max_vgs += NUM_VGS;
 	      list = HDregetspace(list,(uint32)sizeof(struct node)*max_vgs);
            }
-	   list[i] = (struct node*)HDgetspace(sizeof(struct node)); 
+	   list[i] = (struct node*)HDmalloc(sizeof(struct node)); 
 	   num_nodes++;
 	   
 	   switch (dumpvg_opts->contents) {
@@ -313,7 +313,7 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
 		 /* Read in all of the annotations. */
 		 len = DFANgetdesclen(file_name,vg_tag,vg_ref);
 		 if (len!=FAIL) {
-		    label_str = (char *) HDgetspace((uint32) len + 1);
+		    label_str = (char *) HDmalloc((uint32) len + 1);
 		    status = DFANgetdesc(file_name,vg_tag,vg_ref,
 					 label_str,len+1);
 		    label_str[len] = '\0';
@@ -321,7 +321,7 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
 		       printf("\t  Unable to read description.\n");
                     else
 		       printf("\t  Description: %s\n",label_str);
-                    HDfreespace(label_str);
+                    HDfree(label_str);
                  } /* if (len != FAIL) */
 	      case DHEADER: /* header only, no annotations nor data */
 		 if (dumpvg_opts->contents == DHEADER) 
@@ -372,8 +372,8 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode,
    char *tempPtr, *ptr, string[MAXNAMELEN], tempflds[FIELDNAMELENMAX];
 
    num_entries = Vntagrefs(vg_id);
-   aNode->children = (char**)HDgetspace(sizeof(char*)*num_entries);
-   aNode->type = (char**)HDgetspace(sizeof(char*)*num_entries);
+   aNode->children = (char**)HDmalloc(sizeof(char*)*num_entries);
+   aNode->type = (char**)HDmalloc(sizeof(char*)*num_entries);
    
    for (t = 0; t<num_entries; t++) {
       Vgettagref(vg_id, t, &tag, &vsid);
@@ -398,9 +398,9 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode,
             fprintf(fp, "\tname = %s; class = %s\n", vgname, vgclass);
          } 
 	 Vdetach(vgt);
-	 aNode->children[t] = (char*)HDgetspace(sizeof(char)*strlen(vgname));
+	 aNode->children[t] = (char*)HDmalloc(sizeof(char)*strlen(vgname));
 	 strcpy(aNode->children[t], vgname);
-	 aNode->type[t] = (char*)HDgetspace(sizeof(char)*3);
+	 aNode->type[t] = (char*)HDmalloc(sizeof(char)*3);
 	 strcpy(aNode->type[t], "vg");
       } /* if */
       else if (tag == VSDESCTAG) {
@@ -457,10 +457,10 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode,
 
 
 	 VSdetach(vs);
-	 aNode->children[t] = (char*)HDgetspace(sizeof(char)*strlen(vsname));
+	 aNode->children[t] = (char*)HDmalloc(sizeof(char)*strlen(vsname));
 	 strcpy(aNode->children[t], vsname); 
 	 
-	 aNode->type[t] = (char*)HDgetspace(sizeof(char)*3);
+	 aNode->type[t] = (char*)HDmalloc(sizeof(char)*3);
 	 strcpy(aNode->type[t], "vd");
       }
       else {
@@ -471,11 +471,11 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode,
 	    fprintf(fp, "     #%d (%s)\n", (int) t, name);
 	    fprintf(fp, "\ttag = %d; reference = %d;\n", (int) tag, (int) vsid);
 	 }
-	 aNode->children[t] = (char*)HDgetspace(sizeof(char)*4);
+	 aNode->children[t] = (char*)HDmalloc(sizeof(char)*4);
          strcpy(aNode->children[t], "***"); 
 	 tempPtr = (char*)HDgettagname((uint16) tag);
 	 if (!tempPtr) {
-	    aNode->type[t] = (char*)HDgetspace(sizeof(char)*15);
+	    aNode->type[t] = (char*)HDmalloc(sizeof(char)*15);
 	    strcpy(aNode->type[t], "Unknown Object"); 
          }
 	 else

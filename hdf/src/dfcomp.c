@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -93,10 +92,10 @@ DFputcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
               crowsize = xdim * 121 / 120 + 128;
 
               /* allocate buffer for compression */
-              buffer = (uint8 *) HDgetspace((uint32) cisize);
+              buffer = (uint8 *) HDmalloc((uint32) cisize);
               if (!buffer)
                 {
-                    buffer = (uint8 *) HDgetspace((uint32) crowsize);
+                    buffer = (uint8 *) HDmalloc((uint32) crowsize);
                     if (!buffer)
                         HRETURN_ERROR(DFE_NOSPACE, FAIL);
                     buftype = 2;    /* compress and write out row by row */
@@ -145,7 +144,7 @@ DFputcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
               if (buftype == 1)
                 {   /* write out entire image */
                     ret = Hputelement(file_id, tag, ref, buffer, total);
-                    HDfreespace((VOIDP) buffer);
+                    HDfree((VOIDP) buffer);
                 }
               break;
 
@@ -154,14 +153,14 @@ DFputcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
                   HRETURN_ERROR(DFE_ARGS, FAIL);
               cisize = xdim * ydim / 4;     /* IMCOMP always cuts to 1/4 */
 
-              buffer = (uint8 *) HDgetspace((uint32) cisize);
+              buffer = (uint8 *) HDmalloc((uint32) cisize);
               if (!buffer)
                   HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
               DFCIimcomp(xdim, ydim, image, buffer, palette, newpal, 0);
               ret = Hputelement(file_id, tag, ref, buffer, cisize);
 
-              HDfreespace((VOIDP) buffer);
+              HDfree((VOIDP) buffer);
               break;
 
 #ifdef OLD_WAY
@@ -240,10 +239,10 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
           case DFTAG_RLE:
               crowsize = xdim * 121 / 120 + 128;    /* max size of a row */
 
-              buffer = (uint8 *) HDgetspace((uint32) cisize);
+              buffer = (uint8 *) HDmalloc((uint32) cisize);
               if (!buffer)
                 {
-                    buffer = (uint8 *) HDgetspace((uint32) crowsize);
+                    buffer = (uint8 *) HDmalloc((uint32) crowsize);
                     if (!buffer)
                       {
                           Hendaccess(aid);
@@ -258,7 +257,7 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
               out = image;
               if ((n = Hread(aid, buflen, in)) < 0)
                 {
-                    HDfreespace((VOIDP) buffer);
+                    HDfree((VOIDP) buffer);
                     Hendaccess(aid);
                     HRETURN_ERROR(DFE_READERROR, FAIL);
                 }   /* end if */
@@ -278,7 +277,7 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
                           in = buffer;
                           if ((n = Hread(aid, buflen - bufleft, (uint8 *) &in[bufleft])) < 0)
                             {
-                                HDfreespace((VOIDP) buffer);
+                                HDfree((VOIDP) buffer);
                                 Hendaccess(aid);
                                 HRETURN_ERROR(DFE_READERROR, FAIL);
                             }   /* end if */
@@ -288,16 +287,16 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
                 }   /* end for */
 
               Hendaccess(aid);
-              HDfreespace((VOIDP) buffer);
+              HDfree((VOIDP) buffer);
               break;
 
           case DFTAG_IMC:
               crowsize = xdim;  /* size of compressed row */
 
-              buffer = (uint8 *) HDgetspace((uint32) cisize);
+              buffer = (uint8 *) HDmalloc((uint32) cisize);
               if (!buffer)
                 {
-                    buffer = (uint8 *) HDgetspace((uint32) crowsize);
+                    buffer = (uint8 *) HDmalloc((uint32) crowsize);
                     if (!buffer)
                       {
                           Hendaccess(aid);
@@ -311,14 +310,14 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
                 {
                     if (Hread(aid, cisize, buffer) < cisize)
                       {
-                          HDfreespace((VOIDP) buffer);
+                          HDfree((VOIDP) buffer);
                           Hendaccess(aid);
                           HRETURN_ERROR(DFE_READERROR, FAIL);
                       }     /* end if */
-                    /* HDfreespace(buffer); */
+                    /* HDfree(buffer); */
                     Hendaccess(aid);
                     DFCIunimcomp(xdim, ydim, buffer, image);
-                    HDfreespace((VOIDP) buffer);
+                    HDfree((VOIDP) buffer);
                     break;  /* go to end of switch */
                 }   /* end if */
 
@@ -326,7 +325,7 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
               out = image;
               if ((n = Hread(aid, buflen, in)) < 0)
                 {
-                    HDfreespace((VOIDP) buffer);
+                    HDfree((VOIDP) buffer);
                     Hendaccess(aid);
                     HRETURN_ERROR(DFE_READERROR, FAIL);
                 }   /* end if */
@@ -344,7 +343,7 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
                           in = buffer;
                           if ((n = Hread(aid, buflen - bufleft, (uint8 *) &in[bufleft])) < 0)
                             {
-                                HDfreespace((VOIDP) buffer);
+                                HDfree((VOIDP) buffer);
                                 Hendaccess(aid);
                                 HRETURN_ERROR(DFE_READERROR, FAIL);
                             }   /* end if */
@@ -353,7 +352,7 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
                       }     /* end if */
                 }   /* end for */
 
-              HDfreespace((VOIDP) buffer);
+              HDfree((VOIDP) buffer);
               Hendaccess(aid);
               break;
 

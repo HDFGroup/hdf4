@@ -29,11 +29,11 @@ LOCAL ROUTINES
 EXPORTED ROUTINES
   HDmemfill    -- copy a chunk of memory repetitively into another chunk
   HIstrncpy    -- string copy with termination
-  HDspaceleft  -- calculates the amount of space available to HDgetspace
-  HDgetspace   -- dynamicly allocates memory
-  HDregetspace -- dynamicly resize (reallocate) memory
-  HDfreespace  -- free dynamicly allocated memory
-  HDclearspace -- dynamicly allocates memory and clears it to zero
+  HDspaceleft  -- calculates the amount of space available to HDmalloc
+  HDmalloc     -- dynamicly allocates memory
+  HDrealloc    -- dynamicly resize (reallocate) memory
+  HDfree       -- free dynamicly allocated memory
+  HDcalloc     -- dynamicly allocates memory and clears it to zero
   HDstrdup     -- in-library replacement for non-ANSI strdup()
   fmemcpy_big  -- function specific to the PC to copy 32-bits of data
   fmemset_big  -- function specific to the PC to set 32-bits of data
@@ -146,13 +146,13 @@ HIstrncpy(char *dest, const char *source, int32 len)
 #ifdef WIN3
 /*--------------------------------------------------------------------------
  NAME
-    HDspaceleft -- calculates the amount of space available to HDgetspace
+    HDspaceleft -- calculates the amount of space available to HDmalloc
  USAGE
     int32 HDspaceleft(void)
  RETURNS
     Number of bytes able to be allocated on success, FAIL on failure.
  DESCRIPTION
-    Determines the number of bytes able to be allocated through HDgetspace()
+    Determines the number of bytes able to be allocated through HDmalloc()
     and returns that value.
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
@@ -168,13 +168,13 @@ int32 HDspaceleft(void)
 #else /* WIN3 */
 /*--------------------------------------------------------------------------
  NAME
-    HDspaceleft -- calculates the amount of space available to HDgetspace
+    HDspaceleft -- calculates the amount of space available to HDmalloc
  USAGE
     int32 HDspaceleft(void)
  RETURNS
     Number of bytes able to be allocated on success, FAIL on failure.
  DESCRIPTION
-    Determines the number of bytes able to be allocated through HDgetspace()
+    Determines the number of bytes able to be allocated through HDmalloc()
     and returns that value.
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
@@ -223,9 +223,9 @@ int32 HDspaceleft(void)
 #ifdef WIN3
 /*--------------------------------------------------------------------------
  NAME
-    HDgetspace -- dynamicly allocates memory
+    HDmalloc -- dynamicly allocates memory
  USAGE
-    VOIDP HDgetspace(qty)
+    VOIDP HDmalloc(qty)
         uint32 qty;         IN: the (minimum) number of bytes to allocate in
                                 the memory block.
  RETURNS
@@ -238,9 +238,9 @@ int32 HDspaceleft(void)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VOIDP HDgetspace(uint32 qty)
+VOIDP HDmalloc(uint32 qty)
 {
-    char FUNC[]="HDgetspace";
+    char FUNC[]="HDmalloc";
     HGLOBAL hTmp;
     HGLOBAL far *wfpTmp;
 
@@ -255,13 +255,13 @@ VOIDP HDgetspace(uint32 qty)
     *wfpTmp=hTmp;
     wfpTmp++;
     return((void _HUGE *)wfpTmp);
-}   /* end HDgetspace() */
+}   /* end HDmalloc() */
 
 /*--------------------------------------------------------------------------
  NAME
-    HDregetspace -- dynamicly resize (reallocate) memory
+    HDrealloc -- dynamicly resize (reallocate) memory
  USAGE
-    VOIDP HDregetspace(vfp,qty)
+    VOIDP HDrealloc(vfp,qty)
         VOIDP vfp;          IN: pointer to the memory block to resize.
         uint32 qty;         IN: the (minimum) number of bytes to allocate in
                                 the new memory block.
@@ -275,9 +275,9 @@ VOIDP HDgetspace(uint32 qty)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VOIDP HDregetspace(VOIDP vfp, uint32 new_size)
+VOIDP HDrealloc(VOIDP vfp, uint32 new_size)
 {
-    char FUNC[]="HDregetspace";
+    char FUNC[]="HDrealloc";
     HGLOBAL new_handle;         /* handle of the new memory block */
     HGLOBAL hTmp;
     WORD far *wfpTmp;
@@ -301,13 +301,13 @@ VOIDP HDregetspace(VOIDP vfp, uint32 new_size)
       } /* end if */
     else
         HRETURN_ERROR(DFE_NOSPACE,NULL);
-}   /* end HDregetspace() */
+}   /* end HDrealloc() */
 
 /*--------------------------------------------------------------------------
  NAME
-    HDfreespace -- free dynamicly allocated memory
+    HDfree -- free dynamicly allocated memory
  USAGE
-    void HDfreespace(vfp)
+    void HDfree(vfp)
         VOIDP vfp;          IN: pointer to the memory block to free.
  RETURNS
     NULL?
@@ -319,7 +319,7 @@ VOIDP HDregetspace(VOIDP vfp, uint32 new_size)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-void HDfreespace(void *vfp)
+void HDfree(void *vfp)
 {
     HGLOBAL hTmp;
 
@@ -331,14 +331,14 @@ void HDfreespace(void *vfp)
     GlobalUnlock(hTmp);
     GlobalFree(hTmp);
 
-}   /* end HDfreespace() */
+}   /* end HDfree() */
 #else /* !WIN3 */
 
 /*--------------------------------------------------------------------------
  NAME
-    HDgetspace -- dynamicly allocates memory
+    HDmalloc -- dynamicly allocates memory
  USAGE
-    VOIDP HDgetspace(qty)
+    VOIDP HDmalloc(qty)
         uint32 qty;         IN: the (minimum) number of bytes to allocate in
                                 the memory block.
  RETURNS
@@ -351,9 +351,9 @@ void HDfreespace(void *vfp)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VOIDP HDgetspace(uint32 qty)
+VOIDP HDmalloc(uint32 qty)
 {
-    char FUNC[]="HDgetspace";
+    char FUNC[]="HDmalloc";
     char huge *p;
 
 #ifndef TEST_PC
@@ -379,13 +379,13 @@ VOIDP HDgetspace(uint32 qty)
         HERROR(DFE_NOSPACE);
 #endif
     return(p);
-}   /* end HDgetspace() */
+}   /* end HDmalloc() */
 
 /*--------------------------------------------------------------------------
  NAME
-    HDregetspace -- dynamicly resize (reallocate) memory
+    HDrealloc -- dynamicly resize (reallocate) memory
  USAGE
-    VOIDP HDregetspace(vfp,qty)
+    VOIDP HDrealloc(vfp,qty)
         VOIDP vfp;          IN: pointer to the memory block to resize.
         uint32 qty;         IN: the (minimum) number of bytes to allocate in
                                 the new memory block.
@@ -399,9 +399,9 @@ VOIDP HDgetspace(uint32 qty)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VOIDP HDregetspace(VOIDP ptr, uint32 qty)
+VOIDP HDrealloc(VOIDP ptr, uint32 qty)
 {
-    char FUNC[]="HDregetspace";
+    char FUNC[]="HDrealloc";
     uint32 old_size;
     char *p=ptr;
     char *p2;
@@ -433,13 +433,13 @@ VOIDP HDregetspace(VOIDP ptr, uint32 qty)
     else       /* memory was allocated through malloc() */
         free(p);
     return(p2);
-}   /* end HDregetspace() */
+}   /* end HDrealloc() */
 
 /*--------------------------------------------------------------------------
  NAME
-    HDfreespace -- free dynamicly allocated memory
+    HDfree -- free dynamicly allocated memory
  USAGE
-    void HDfreespace(vfp)
+    void HDfree(vfp)
         VOIDP vfp;          IN: pointer to the memory block to free.
  RETURNS
     NULL?
@@ -451,7 +451,7 @@ VOIDP HDregetspace(VOIDP ptr, uint32 qty)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-void HDfreespace(void *ptr)
+void HDfree(void *ptr)
 {
     char *p=ptr;
 
@@ -464,7 +464,7 @@ void HDfreespace(void *ptr)
 #endif
             free(p);
       } /* end if */
-}   /* end HDfreespace() */
+}   /* end HDfree() */
 
 #endif /* WIN3 */
 
@@ -475,9 +475,9 @@ void HDfreespace(void *ptr)
 #ifdef MALLOC_CHECK
 /*--------------------------------------------------------------------------
  NAME
-    HDgetspace -- dynamicly allocates memory
+    HDmalloc -- dynamicly allocates memory
  USAGE
-    VOIDP HDgetspace(qty)
+    VOIDP HDmalloc(qty)
         uint32 qty;         IN: the (minimum) number of bytes to allocate in
                                 the memory block.
  RETURNS
@@ -490,9 +490,9 @@ void HDfreespace(void *ptr)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VOIDP HDgetspace(uint32 qty)
+VOIDP HDmalloc(uint32 qty)
 {
-    char FUNC[]="HDgetspace";
+    char FUNC[]="HDmalloc";
     char *p;
 
     p = (char *) malloc(qty);
@@ -501,13 +501,13 @@ VOIDP HDgetspace(uint32 qty)
         HRETURN_ERROR(DFE_NOSPACE,NULL);
       } /* end if */
     return(p);
-}   /* end HDgetspace() */
+}   /* end HDmalloc() */
 
 /*--------------------------------------------------------------------------
  NAME
-    HDregetspace -- dynamicly resize (reallocate) memory
+    HDrealloc -- dynamicly resize (reallocate) memory
  USAGE
-    VOIDP HDregetspace(vfp,qty)
+    VOIDP HDrealloc(vfp,qty)
         VOIDP vfp;          IN: pointer to the memory block to resize.
         uint32 qty;         IN: the (minimum) number of bytes to allocate in
                                 the new memory block.
@@ -521,9 +521,9 @@ VOIDP HDgetspace(uint32 qty)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VOIDP HDregetspace(VOIDP where, uint32 qty)
+VOIDP HDrealloc(VOIDP where, uint32 qty)
 {
-    char FUNC[]="HDregetspace";
+    char FUNC[]="HDrealloc";
     char *p;
 
     p = (char *) realloc(where, qty);
@@ -532,13 +532,13 @@ VOIDP HDregetspace(VOIDP where, uint32 qty)
         HRETURN_ERROR(DFE_NOSPACE,NULL);
       } /* end if */
     return(p);
-}   /* end HDregetspace() */
+}   /* end HDrealloc() */
 
 /*--------------------------------------------------------------------------
  NAME
-    HDfreespace -- free dynamicly allocated memory
+    HDfree -- free dynamicly allocated memory
  USAGE
-    void HDfreespace(vfp)
+    void HDfree(vfp)
         VOIDP vfp;          IN: pointer to the memory block to free.
  RETURNS
     NULL?
@@ -550,11 +550,11 @@ VOIDP HDregetspace(VOIDP where, uint32 qty)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-void HDfreespace(VOIDP ptr)
+void HDfree(VOIDP ptr)
 {
     if (ptr!=NULL)
         free(ptr);
-}   /* end HDfreespace() */
+}   /* end HDfree() */
 #endif /* MALLOC_CHECK */
 
 #endif /* !PC | PC386 */
@@ -564,9 +564,9 @@ void HDfreespace(VOIDP ptr)
 #if defined MALLOC_CHECK | (defined PC & !defined PC386)
 /*--------------------------------------------------------------------------
  NAME
-    HDclearspace -- dynamicly allocates memory and clears it to zero
+    HDcalloc -- dynamicly allocates memory and clears it to zero
  USAGE
-    VOIDP HDclearspace(n,size)
+    VOIDP HDcalloc(n,size)
         uint32 n;         IN: the number of blocks to allocate
         uint32 size;      IN: the size of the block
  RETURNS
@@ -577,17 +577,17 @@ void HDfreespace(VOIDP ptr)
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
     Acts like calloc().  Instead of doing all the work ourselves, this calls
-    HDgetspace and HDmemset().
+    HDmalloc and HDmemset().
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
 VOIDP
-HDclearspace(uint32 n, uint32 size)
+HDcalloc(uint32 n, uint32 size)
 {
-    char        FUNC[] = "HDclearspace";
+    char        FUNC[] = "HDcalloc";
     VOIDP       p;
 
-    p = HDgetspace(n * size);
+    p = HDmalloc(n * size);
     if (p == NULL)
       {
           HEreport("Attempted to allocate %d blocks of %d bytes", (int) n, (int) size);
@@ -596,7 +596,7 @@ HDclearspace(uint32 n, uint32 size)
     else
         HDmemset(p, 0, n * size);
     return (p);
-}   /* end HDclearspace() */
+}   /* end HDcalloc() */
 #endif /* MALLOC_CHECK */
 
 #if defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL | defined NEXT | defined CONVEX
@@ -621,7 +621,7 @@ HDstrdup(const char *s)
 {
     char       *ret;
 
-    ret = (char *) HDgetspace((uint32) HDstrlen(s) + 1);
+    ret = (char *) HDmalloc((uint32) HDstrlen(s) + 1);
     if (ret == NULL)
         return (NULL);
     HDstrcpy(ret, s);

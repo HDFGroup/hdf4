@@ -76,7 +76,7 @@ ndfivopn(_fcd name, intf * acc_mode, intf * defdds, intf * namelen)
 
     fn = HDf2cstring(name, (intn) *namelen);
     ret = (intf) Vopen(fn, (intn) *acc_mode, (int16) *defdds);
-    HDfreespace(fn);
+    HDfree(fn);
     return (ret);
 }   /* end ndfivopn() */
 
@@ -109,7 +109,7 @@ nvatchc(HFILEID * f, intf * vgid, _fcd accesstype)
     acc = HDf2cstring(accesstype, 1);
 
     vkey = Vattach(*f, *vgid, acc);
-    HDfreespace(acc);
+    HDfree(acc);
 
     return (vkey);
 }
@@ -202,7 +202,7 @@ nvsnamc(intf * vkey, _fcd vgname, intf * vgnamelen)
     name = HDf2cstring(vgname, (intn) *vgnamelen);
     /* trimendblanks(name); */
     ret = (intf) Vsetname(*vkey, name);
-    HDfreespace(name);
+    HDfree(name);
 
     return (ret);
 }
@@ -222,7 +222,7 @@ nvsclsc(intf * vkey, _fcd vgclass, intf * vgclasslen)
     class = HDf2cstring(vgclass, (intn) *vgclasslen);
     /* trimendblanks(class); */
     ret = (intf) Vsetclass(*vkey, class);
-    HDfreespace(class);
+    HDfree(class);
 
     return (ret);
 }
@@ -302,7 +302,7 @@ nvsatchc(HFILEID * f, intf * vsid, _fcd accesstype)
 
     acc = HDf2cstring(accesstype, 1);   /* 'r' or 'w' only */
     vkey = VSattach(*f, *vsid, acc);
-    HDfreespace(acc);
+    HDfree(acc);
 
     return (vkey);
 }
@@ -384,7 +384,7 @@ nvsfexc(intf * vkey, _fcd fields, intf * fieldslen)
     flds = HDf2cstring(fields, (intn) *fieldslen);
     /* trimendblanks(flds); */
     ret = (int32) VSfexist(*vkey, flds);
-    HDfreespace(flds);
+    HDfree(flds);
 
     return (ret);
 }
@@ -404,7 +404,7 @@ nvsfndc(HFILEID * f, _fcd name, intf * namelen)
     cname = HDf2cstring(name, (intn) *namelen);
     /* trimendblanks(flds); */
     ret = (intf) VSfind(*f, cname);
-    HDfreespace(cname);
+    HDfree(cname);
 
     return (ret);
 }
@@ -448,7 +448,7 @@ nvssnamc(intf * vkey, _fcd vsname, intf * vsnamelen)
     name = HDf2cstring(vsname, (intn) *vsnamelen);
     /* trimendblanks (name); */
     ret = (intf) VSsetname(*vkey, name);
-    HDfreespace(name);
+    HDfree(name);
 
     return (ret);
 }
@@ -468,7 +468,7 @@ nvssclsc(intf * vkey, _fcd vsclass, intf * vsclasslen)
     class = HDf2cstring(vsclass, (intn) *vsclasslen);
     /* trimendblanks(class); */
     ret = (intf) VSsetclass(*vkey, class);
-    HDfreespace(class);
+    HDfree(class);
 
     return (ret);
 }
@@ -488,7 +488,7 @@ nvssfldc(intf * vkey, _fcd fields, intf * fieldslen)
     flds = HDf2cstring(fields, (intn) *fieldslen);
     /* trimendblanks(flds); */
     ret = (int32) VSsetfields(*vkey, flds);
-    HDfreespace(flds);
+    HDfree(flds);
 
     return (ret);
 }
@@ -520,7 +520,7 @@ nvsfdefc(intf * vkey, _fcd field, intf * localtype, intf * order, intf * fieldle
     fld = HDf2cstring(field, (intn) *fieldlen);
     /* trimendblanks(fld); */
     ret = (int32) VSfdefine(*vkey, fld, *localtype, *order);
-    HDfreespace(fld);
+    HDfree(fld);
     return (ret);
 }
 
@@ -604,7 +604,7 @@ nvssizc(intf * vkey, _fcd fields, intf * fieldslen)
     flds = HDf2cstring(fields, (intn) *fieldslen);
     /* trimendblanks(flds); */
     ret = VSsizeof(*vkey, flds);
-    HDfreespace(flds);
+    HDfree(flds);
     return (ret);
 }
 
@@ -667,9 +667,9 @@ nvhsdc(HFILEID * f, _fcd field, uint8 *buf, intf * n, intf * datatype, _fcd vsna
     class = HDf2cstring(vsclass, (intn) *vsclasslen);
 
     ret_val = (intf) VHstoredata(*f, fld, buf, *n, *datatype, name, class);
-    HDfreespace(fld);
-    HDfreespace(name);
-    HDfreespace(class);
+    HDfree(fld);
+    HDfree(name);
+    HDfree(class);
 
     return (ret_val);
 }
@@ -693,9 +693,9 @@ nvhsdmc(HFILEID * f, _fcd field, uint8 *buf, intf * n, intf * datatype,
     class = HDf2cstring(vsclass, (intn) *vsclasslen);
 
     ret_val = (intf) VHstoredatam(*f, fld, buf, *n, *datatype, name, class, *order);
-    HDfreespace(fld);
-    HDfreespace(name);
-    HDfreespace(class);
+    HDfree(fld);
+    HDfree(name);
+    HDfree(class);
 
     return (ret_val);
 }
@@ -718,8 +718,8 @@ nvhmkgpc(HFILEID * f, intf * tagarray, intf * refarray, intf * n, _fcd vgname,
 
     ret_val = (intf) VHmakegroup(*f, (int32 *) tagarray, (int32 *) refarray,
                                  *n, gname, gclass);
-    HDfreespace(gname);
-    HDfreespace(gclass);
+    HDfree(gname);
+    HDfree(gclass);
 
     return (ret_val);
 }
@@ -739,7 +739,7 @@ nvflocc(intf * vkey, _fcd field, intf * fieldlen)
     fld = HDf2cstring(field, (intn) *fieldlen);
     /* trimendblanks(fld); */
     ret = (int32) Vflocate(*vkey, fld);
-    HDfreespace(fld);
+    HDfree(fld);
 
     return (ret);
 }

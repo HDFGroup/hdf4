@@ -379,7 +379,7 @@ nssdc_read_cdf(xdrs, handlep)
         while(vxrNext != 0) {
             vix_t * vix;
 
-            vix = (vix_t *)HDgetspace(sizeof(vix_t));
+            vix = (vix_t *)HDmalloc(sizeof(vix_t));
             if(vix == NULL) 
                 HRETURN_ERROR(DFE_NOSPACE,FALSE);
             
@@ -550,7 +550,7 @@ nssdc_read_cdf(xdrs, handlep)
         while(vxrNext != 0) {
             vix_t * vix;
 
-            vix = (vix_t *)HDgetspace(sizeof(vix_t));
+            vix = (vix_t *)HDmalloc(sizeof(vix_t));
             if(vix == NULL) 
                 HRETURN_ERROR(DFE_NOSPACE,FALSE);
             
@@ -691,12 +691,12 @@ nssdc_read_cdf(xdrs, handlep)
             hdftype = hdf_map_type(nctype);
 
             bsize = nctypelen(nctype) * count;
-            tBuf = (char *)HDgetspace((uint32) bsize);
+            tBuf = (char *)HDmalloc((uint32) bsize);
 
             /* convert attrbute values and create attr object */
             DFKconvert((VOIDP) b, (VOIDP) tBuf, hdftype, count, DFACC_READ, 0, 0);
             attr[0] = NC_new_attr(name, nctype, count, tBuf);
-            HDfreespace(tBuf);
+            HDfree(tBuf);
 
             /* make sure we got a vaild attribute */
             if(attr[0] == NULL)
@@ -773,12 +773,12 @@ nssdc_read_cdf(xdrs, handlep)
             hdftype = hdf_map_type(nctype);
 
             bsize = nctypelen(nctype) * count;
-            tBuf = (char *)HDgetspace((uint32) bsize);
+            tBuf = (char *)HDmalloc((uint32) bsize);
 
             /* convert attrbute values and create attr object */
             DFKconvert((VOIDP) b, (VOIDP) tBuf, hdftype, count, DFACC_READ, 0, 0);
             attr[0] = NC_new_attr(name, nctype, count, tBuf);
-            HDfreespace(tBuf);
+            HDfree(tBuf);
 
             /* make sure we got a vaild attribute */
             if(attr[0] == NULL)

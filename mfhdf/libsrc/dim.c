@@ -16,7 +16,7 @@ long size ;
 {
 	NC_dim *ret ;
 
-	ret = (NC_dim *)HDgetspace(sizeof(NC_dim)) ;
+	ret = (NC_dim *)HDmalloc(sizeof(NC_dim)) ;
 	if( ret == NULL )
 		goto alloc_err ;
 
@@ -293,7 +293,7 @@ xdr_NC_dim(xdrs, dpp)
 
 	if( xdrs->x_op == XDR_DECODE )
 	{
-		*dpp = (NC_dim *)HDgetspace(sizeof(NC_dim)) ;
+		*dpp = (NC_dim *)HDmalloc(sizeof(NC_dim)) ;
 		if( *dpp == NULL )
 		{
 			nc_serror("xdr_NC_dim") ;

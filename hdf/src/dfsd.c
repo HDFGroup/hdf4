@@ -693,7 +693,7 @@ DFSDsetdims(intn rank, int32 dimsizes[])
         return FAIL;
 
     /* allocate dimensions */
-    Writesdg.dimsizes = (int32 *) HDgetspace((uint32) (rank * sizeof(int32)));
+    Writesdg.dimsizes = (int32 *) HDmalloc((uint32) (rank * sizeof(int32)));
     if (Writesdg.dimsizes == NULL)
         return FAIL;
 
@@ -871,7 +871,7 @@ DFSDIsetdimstrs(intn dim, const char *label, const char *unit, const char *forma
           if (!Writesdg.dimluf[luf])
             {
                 Writesdg.dimluf[luf] =
-                    (char **) HDgetspace((uint32) Writesdg.rank * sizeof(char *));
+                    (char **) HDmalloc((uint32) Writesdg.rank * sizeof(char *));
                 if (Writesdg.dimluf[luf] == NULL)
                     return FAIL;
                 for (i = 0; i < Writesdg.rank; i++)     /* set allocated pointers to NULL */
@@ -971,7 +971,7 @@ DFSDsetdimscale(intn dim, int32 dimsize, VOIDP scale)
     if (!Writesdg.dimscales)
       {
           Writesdg.dimscales =
-              (uint8 **) HDgetspace((uint32) Writesdg.rank * sizeof(int8 *));
+              (uint8 **) HDmalloc((uint32) Writesdg.rank * sizeof(int8 *));
           if (Writesdg.dimscales == NULL)
               return FAIL;
           for (i = 0; i < Writesdg.rank; i++)   /* set allocated pointers to NULL */
@@ -982,7 +982,7 @@ DFSDsetdimscale(intn dim, int32 dimsize, VOIDP scale)
       {
           /* allocate dimension scale space if necessary */
           Writesdg.dimscales[rdim] =
-              (uint8 *) HDgetspace((uint32) bytesize);
+              (uint8 *) HDmalloc((uint32) bytesize);
           if (Writesdg.dimscales[rdim] == NULL)
               return FAIL;
       }
@@ -1359,7 +1359,7 @@ DFSDstartslice(const char *filename)
       }
 
     /* allocate array for keeping track of dims written */
-    Sddims = (int32 *) HDgetspace((uint32) Writesdg.rank * sizeof(int32));
+    Sddims = (int32 *) HDmalloc((uint32) Writesdg.rank * sizeof(int32));
     if (Sddims == NULL)
       {
           Hclose(Sfile_id);
@@ -1686,7 +1686,7 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
     /* Check if temproray buffer has been allocated */
     if (ptbuf == NULL)
       {
-          ptbuf = (uint8 *) HDgetspace(TBUF_SZ * sizeof(uint8));
+          ptbuf = (uint8 *) HDmalloc(TBUF_SZ * sizeof(uint8));
           if (ptbuf == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
@@ -1705,7 +1705,7 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
           l_nsdghdr->nsdg_t = NULL;
           return SUCCEED;
       }
-    if ((ntb = (DFnsdgle *) HDgetspace(sz_DFnsdgle)) == NULL)
+    if ((ntb = (DFnsdgle *) HDmalloc(sz_DFnsdgle)) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     /* the first node in each table is a dummy node  */
@@ -1715,7 +1715,7 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
     ntb->sdg.ref = 0;
     ntb->next = NULL;
 
-    if ((stb = (DFnsdgle *) HDgetspace(sz_DFnsdgle)) == NULL)
+    if ((stb = (DFnsdgle *) HDmalloc(sz_DFnsdgle)) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     stb->nsdg.tag = DFTAG_NULL;     /* set up and init an sdg table  */
@@ -1747,7 +1747,7 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
                     HRETURN_ERROR(DFE_BADNDG, FAIL);
 
                 /* add a node to the table */
-                if ((new = (DFnsdgle *) HDgetspace(sz_DFnsdgle)) == NULL)
+                if ((new = (DFnsdgle *) HDmalloc(sz_DFnsdgle)) == NULL)
                     HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
                 new->nsdg.tag = DFTAG_NDG;
@@ -1807,7 +1807,7 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
                     HRETURN_ERROR(DFE_BADNDG, FAIL);
 
                 /* insert a new node */
-                if ((new = (DFnsdgle *) HDgetspace(sz_DFnsdgle)) == NULL)
+                if ((new = (DFnsdgle *) HDmalloc(sz_DFnsdgle)) == NULL)
                     HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
                 new->nsdg.tag = DFTAG_SDG;
@@ -1906,8 +1906,8 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
     l_nsdghdr->nsdg_t = ntb->next;
 
     /* Release the first nodes in stb and ntb  */
-    HDfreespace((VOIDP) stb);
-    HDfreespace((VOIDP) ntb);
+    HDfree((VOIDP) stb);
+    HDfree((VOIDP) ntb);
 
     return SUCCEED;
 }   /* end of DFSDsdtnsdg_t   */
@@ -2024,7 +2024,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
     /* Check if temproray buffer has been allocated */
     if (ptbuf == NULL)
       {
-          ptbuf = (uint8 *) HDgetspace(TBUF_SZ * sizeof(uint8));
+          ptbuf = (uint8 *) HDmalloc(TBUF_SZ * sizeof(uint8));
           if (ptbuf == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
@@ -2069,7 +2069,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                     INT16DECODE(p, sdg->rank);
 
                     /* get space for dimensions */
-                    sdg->dimsizes = (int32 *) HDgetspace((uint32) sdg->rank *
+                    sdg->dimsizes = (int32 *) HDmalloc((uint32) sdg->rank *
                                                          sizeof(int32));
                     if (sdg->dimsizes == NULL)
                       {
@@ -2203,24 +2203,24 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                     length = Hlength(file_id, elmt.tag, elmt.ref);
                     if (length == FAIL)
                         return FAIL;
-                    buf = (uint8 *) HDgetspace((uint32) length);
+                    buf = (uint8 *) HDmalloc((uint32) length);
                     if (buf == NULL)
                         return FAIL;
 
                     /* read in luf */
                     if (Hgetelement(file_id, elmt.tag, elmt.ref, buf) == FAIL)
                       {
-                          HDfreespace((VOIDP) buf);
+                          HDfree((VOIDP) buf);
                           return FAIL;
                       }
                     p = buf;
 
                     /* allocate data luf space */
-                    sdg->dataluf[luf] = (char *) HDgetspace((uint32) HDstrlen((char *) p) + 1);
+                    sdg->dataluf[luf] = (char *) HDmalloc((uint32) HDstrlen((char *) p) + 1);
 
                     if (sdg->dataluf[luf] == NULL)
                       {
-                          HDfreespace((VOIDP) buf);
+                          HDfree((VOIDP) buf);
                           return FAIL;
                       }
 
@@ -2230,10 +2230,10 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
 
                     /* get space for dimluf array */
                     sdg->dimluf[luf] =
-                        (char **) HDgetspace((uint32) sdg->rank * sizeof(char *));
+                        (char **) HDmalloc((uint32) sdg->rank * sizeof(char *));
                     if (sdg->dimluf[luf] == NULL)
                       {
-                          HDfreespace((VOIDP) buf);
+                          HDfree((VOIDP) buf);
                           return FAIL;
                       }
 
@@ -2241,16 +2241,16 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                     for (i = 0; i < sdg->rank; i++)
                       {
                           sdg->dimluf[luf][i] = (char *)
-                              HDgetspace((uint32) HDstrlen((char *) p) + 1);
+                              HDmalloc((uint32) HDstrlen((char *) p) + 1);
                           if (sdg->dimluf[luf][i] == NULL)
                             {
-                                HDfreespace((VOIDP) buf);
+                                HDfree((VOIDP) buf);
                                 return FAIL;
                             }
                           HDstrcpy(sdg->dimluf[luf][i], (char *) p);
                           p += HDstrlen(sdg->dimluf[luf][i]) + 1;
                       }
-                    HDfreespace((VOIDP) buf);
+                    HDfree((VOIDP) buf);
                     break;
 
                 case DFTAG_SDS: /* scales */
@@ -2263,7 +2263,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                         return FAIL;
 
                     /* read isscales */
-                    isscales = (uint8 *) HDgetspace((uint32) sdg->rank);
+                    isscales = (uint8 *) HDmalloc((uint32) sdg->rank);
                     if (isscales == NULL)
                       {
                           Hendaccess(aid);
@@ -2277,10 +2277,10 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
 
                     /* allocate scale pointers */
                     sdg->dimscales =
-                        (uint8 **) HDgetspace((uint32) sdg->rank * sizeof(int8 *));
+                        (uint8 **) HDmalloc((uint32) sdg->rank * sizeof(int8 *));
                     if (sdg->dimscales == NULL)
                       {
-                          HDfreespace((VOIDP) isscales);
+                          HDfree((VOIDP) isscales);
                           Hendaccess(aid);
                           return FAIL;
                       }
@@ -2294,10 +2294,10 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
 
                           /* space for scale */
                           sdg->dimscales[i] = (uint8 *)
-                              HDgetspace((uint32) sdg->dimsizes[i] * localNTsize);
+                              HDmalloc((uint32) sdg->dimsizes[i] * localNTsize);
                           if (sdg->dimscales[i] == NULL)
                             {
-                                HDfreespace((VOIDP) isscales);
+                                HDfree((VOIDP) isscales);
                                 Hendaccess(aid);
                                 return FAIL;
                             }
@@ -2308,7 +2308,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                                             (uint8 *) sdg->dimscales[i]);
                                 if (ret == FAIL)
                                   {
-                                      HDfreespace((VOIDP) isscales);
+                                      HDfree((VOIDP) isscales);
                                       Hendaccess(aid);
                                       return FAIL;
                                   }
@@ -2317,10 +2317,10 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                             {   /* conversion necessary */
 
                                 /* allocate conversion buffer */
-                                buf = (uint8 *) HDgetspace((uint32) sdg->dimsizes[i] * fileNTsize);
+                                buf = (uint8 *) HDmalloc((uint32) sdg->dimsizes[i] * fileNTsize);
                                 if (buf == NULL)
                                   {
-                                      HDfreespace((VOIDP) isscales);
+                                      HDfree((VOIDP) isscales);
                                       Hendaccess(aid);
                                       return FAIL;
                                   }
@@ -2330,8 +2330,8 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                                             (int32) (sdg->dimsizes[i] * fileNTsize), buf);
                                 if (ret == FAIL)
                                   {
-                                      HDfreespace((VOIDP) buf);
-                                      HDfreespace((VOIDP) isscales);
+                                      HDfree((VOIDP) buf);
+                                      HDfree((VOIDP) isscales);
                                       Hendaccess(aid);
                                       return FAIL;
                                   }
@@ -2342,10 +2342,10 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                                 DFKconvert((VOIDP) p, (VOIDP) sdg->dimscales[i], numtype,
                                         sdg->dimsizes[i], DFACC_READ, 0, 0);
 
-                                HDfreespace((VOIDP) buf);
+                                HDfree((VOIDP) buf);
                             }
                       }
-                    HDfreespace((VOIDP) isscales);
+                    HDfree((VOIDP) isscales);
                     Hendaccess(aid);
                     break;
 
@@ -2355,7 +2355,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                     if (length == FAIL)
                         return FAIL;
 
-                    sdg->coordsys = (char *) HDgetspace((uint32) length);
+                    sdg->coordsys = (char *) HDmalloc((uint32) length);
                     if (sdg->coordsys == NULL)
                         return FAIL;
 
@@ -2376,7 +2376,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                       {
                           /* conversion needed */
                           /* allocate buffer */
-                          buf = (uint8 *) HDgetspace((uint32) 2 * fileNTsize);
+                          buf = (uint8 *) HDmalloc((uint32) 2 * fileNTsize);
                           if (buf == NULL)
                               return FAIL;
 
@@ -2387,7 +2387,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                           DFKconvert((VOIDP) buf, (VOIDP) &(sdg->max_min[0]), numtype, 2,
                                      DFACC_READ, 0, 0);
 
-                          HDfreespace((VOIDP) buf);
+                          HDfree((VOIDP) buf);
                       }
                     Ismaxmin = 1;
                     break;
@@ -2436,7 +2436,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                               return FAIL;
 
                           /* allocate buffer */
-                          buf = (uint8 *) HDgetspace((uint32) eltSize);
+                          buf = (uint8 *) HDmalloc((uint32) eltSize);
                           if (buf == NULL)
                               return FAIL;
 
@@ -2474,7 +2474,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                                 sdg->cal_type = DFNT_INT16;
 
                             }
-                          HDfreespace((VOIDP) buf);
+                          HDfree((VOIDP) buf);
                       }
                     IsCal = TRUE;
                     break;
@@ -2502,7 +2502,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                               return FAIL;
 
                           /* allocate buffer for conversion  */
-                          buf = (uint8 *) HDgetspace((uint32) eltSize);
+                          buf = (uint8 *) HDmalloc((uint32) eltSize);
                           if (buf == NULL)
                               return FAIL;
 
@@ -2514,7 +2514,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                           DFKconvert((VOIDP) buf, (VOIDP) sdg->fill_value,
                                      numtype, 1, DFACC_READ, 0, 0);
 
-                          HDfreespace((VOIDP) buf);
+                          HDfree((VOIDP) buf);
                       }
                     break;
 
@@ -2582,7 +2582,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
     /* Check if temproray buffer has been allocated */
     if (ptbuf == NULL)
       {
-          ptbuf = (uint8 *) HDgetspace(TBUF_SZ * sizeof(uint8));
+          ptbuf = (uint8 *) HDmalloc(TBUF_SZ * sizeof(uint8));
           if (ptbuf == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
@@ -2701,7 +2701,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
     /* check if there is a scale and write it out */
     if (!Ref.scales)
       {     /* if scale set */
-          Isscales = (uint8 *) HDgetspace((uint32) sdg->rank);
+          Isscales = (uint8 *) HDmalloc((uint32) sdg->rank);
           if (Isscales == NULL)
               return FAIL;
           Ref.scales = (-1);    /* assume there is no scale */
@@ -2733,14 +2733,14 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
           aid = Hstartwrite(file_id, DFTAG_SDS, ref, len);
           if (aid == FAIL)
             {
-                HDfreespace((VOIDP) Isscales);
+                HDfree((VOIDP) Isscales);
                 return FAIL;
             }
 
           /* write Isscales */
           if (Hwrite(aid, (int32) sdg->rank, Isscales) == FAIL)
             {
-                HDfreespace((VOIDP) Isscales);
+                HDfree((VOIDP) Isscales);
                 return FAIL;
             }
 
@@ -2754,17 +2754,17 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
                       if (Hwrite(aid, (int32) (fileNTsize * sdg->dimsizes[j]),
                                  (uint8 *) sdg->dimscales[j]) == FAIL)
                         {
-                            HDfreespace((VOIDP) Isscales);
+                            HDfree((VOIDP) Isscales);
                             return FAIL;
                         }
                   }
                 else
                   {     /* convert and write */
                       /* allocate buffer */
-                      buf = (uint8 *) HDgetspace((uint32) (fileNTsize * sdg->dimsizes[j]));
+                      buf = (uint8 *) HDmalloc((uint32) (fileNTsize * sdg->dimsizes[j]));
                       if (buf == NULL)
                         {
-                            HDfreespace((VOIDP) Isscales);
+                            HDfree((VOIDP) Isscales);
                             return FAIL;
                         }
                       /* convert, all at once */
@@ -2774,18 +2774,18 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
                       if (Hwrite(aid, (int32) (fileNTsize * sdg->dimsizes[j]), buf)
                           == FAIL)
                         {
-                            HDfreespace((VOIDP) Isscales);
-                            HDfreespace((VOIDP) buf);
+                            HDfree((VOIDP) Isscales);
+                            HDfree((VOIDP) buf);
                             return FAIL;
                         }
-                      HDfreespace((VOIDP) buf);
+                      HDfree((VOIDP) buf);
                   }
             }
 
           Ref.scales = ref;
           Hendaccess(aid);
       }
-    HDfreespace((VOIDP) Isscales);
+    HDfree((VOIDP) Isscales);
     Isscales = NULL;
     if (Ref.scales > 0)
         if (DFdiput(GroupID, DFTAG_SDS, (uint16) Ref.scales) < 0)
@@ -2823,7 +2823,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
           else
             {
                 /* allocate buffer */
-                buf = (uint8 *) HDgetspace((uint32) 2 * fileNTsize);    /* max/min is 8 bytes */
+                buf = (uint8 *) HDmalloc((uint32) 2 * fileNTsize);    /* max/min is 8 bytes */
                 if (buf == NULL)
                     return FAIL;
 
@@ -2837,12 +2837,12 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
 
                 if (ret == FAIL)
                   {
-                      HDfreespace((VOIDP) buf);
+                      HDfree((VOIDP) buf);
                       return FAIL;
                   }
 
                 Ref.maxmin = ref;
-                HDfreespace((VOIDP) buf);
+                HDfree((VOIDP) buf);
             }
       }
     if (Ref.maxmin > 0)
@@ -3098,7 +3098,7 @@ DFSDIopen(const char *filename, intn acc_mode)
      */
     if (Lastfile == NULL)
       {
-          Lastfile = (char *) HDgetspace((DF_MAXFNLEN + 1) * sizeof(char));
+          Lastfile = (char *) HDmalloc((DF_MAXFNLEN + 1) * sizeof(char));
           if (Lastfile == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
           /* open file */
@@ -3157,7 +3157,7 @@ DFSDIopen(const char *filename, intn acc_mode)
     /* if read, set up nsdg table */
     if (nsdghdr == NULL)
       {
-          nsdghdr = (DFnsdg_t_hdr *) HDgetspace((uint32) sizeof(DFnsdg_t_hdr));
+          nsdghdr = (DFnsdg_t_hdr *) HDmalloc((uint32) sizeof(DFnsdg_t_hdr));
           if (nsdghdr == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
           nsdghdr->size = 0;
@@ -3426,7 +3426,7 @@ DFSDIclear(DFSsdg * sdg)
  * Returns: 0 on success, FAIL on failure with error set
  * Outputs: actual scientific data in array
  * Users:   DFSDgetdata
- * Invokes: DFSDIgetslice, HDgetspace, HDfreespace, DFSDIopen, Hclose,
+ * Invokes: DFSDIgetslice, HDmalloc, HDfree, DFSDIopen, Hclose,
  *          HERROR, DFSDIsdginfo
  * Method:  Open file, call DFSDIsdginfo to read sdg if necessary, set up
  *          window start and end arrays, call DFSDIgetslice.
@@ -3464,14 +3464,14 @@ DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data,
               return FAIL;
       }
 
-    winst = (int32 *) HDgetspace((uint32) Readsdg.rank * sizeof(int32));
+    winst = (int32 *) HDmalloc((uint32) Readsdg.rank * sizeof(int32));
     if (winst == NULL)
         return FAIL;
 
-    windims = (int32 *) HDgetspace((uint32) Readsdg.rank * sizeof(int32));
+    windims = (int32 *) HDmalloc((uint32) Readsdg.rank * sizeof(int32));
     if (windims == NULL)
       {
-          HDfreespace((VOIDP) winst);
+          HDfree((VOIDP) winst);
           return FAIL;
       }
 
@@ -3483,8 +3483,8 @@ DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data,
 
     ret = DFSDIgetslice(filename, winst, windims, data, maxsizes, isfortran);
     Nextsdg = 1;
-    HDfreespace((VOIDP) winst);
-    HDfreespace((VOIDP) windims);
+    HDfree((VOIDP) winst);
+    HDfree((VOIDP) windims);
 
     return (ret);
 }
@@ -3501,7 +3501,7 @@ DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data,
  * Globals: Writeref
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF users, utilities, other routines
- * Invokes: DFSDIopen, Hclose, HDgetspace, HDfreespace, DFSDIputslice,
+ * Invokes: DFSDIopen, Hclose, HDmalloc, HDfree, DFSDIputslice,
  *          DFSDstartslice, DFSDIendslice
  * Method:  Create file if necessary, allocate arrays, call slice routines
  *---------------------------------------------------------------------------*/
@@ -3669,7 +3669,7 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[],
             }
       }
     /* allocate buffers */
-    wstart = (int32 *) HDgetspace((uint32) 4 * rank * sizeof(int32));
+    wstart = (int32 *) HDmalloc((uint32) 4 * rank * sizeof(int32));
     if (wstart == NULL)
       {
           HCLOSE_RETURN_ERROR(file_id, DFE_NOSPACE, FAIL);
@@ -3721,7 +3721,7 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[],
     aid = Hstartread(file_id, Readsdg.data.tag, Readsdg.data.ref);
     if (aid == FAIL)
       {
-          HDfreespace((VOIDP) wstart);
+          HDfree((VOIDP) wstart);
           Hclose(file_id);
           return FAIL;
       }
@@ -3750,9 +3750,9 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[],
           /* allocate 1 row buffers */
           if (convert)
             {
-                if ((buf = (uint8 *) HDgetspace((uint32) readsize)) == NULL)
+                if ((buf = (uint8 *) HDmalloc((uint32) readsize)) == NULL)
                   {
-                      HDfreespace((VOIDP) wstart);
+                      HDfree((VOIDP) wstart);
                       Hendaccess(aid);
                       HCLOSE_RETURN_ERROR(file_id, DFE_NOSPACE, FAIL);
                   }
@@ -3763,12 +3763,12 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[],
           if (transposed)
             {
                 scatterbuf =
-                    (uint8 *) HDgetspace((uint32) numelements * localNTsize);
+                    (uint8 *) HDmalloc((uint32) numelements * localNTsize);
 
                 if (scatterbuf == NULL)
                   {
-                      HDfreespace((VOIDP) wstart);
-                      HDfreespace((VOIDP) buf);
+                      HDfree((VOIDP) wstart);
+                      HDfree((VOIDP) buf);
                       Hendaccess(aid);
                       HCLOSE_RETURN_ERROR(file_id, DFE_NOSPACE, FAIL);
                   }
@@ -3776,12 +3776,12 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[],
           else
               scatterbuf = NULL;
 
-          offset = (int32 *) HDgetspace((uint32) 3 * rank * sizeof(int32));
+          offset = (int32 *) HDmalloc((uint32) 3 * rank * sizeof(int32));
           if (offset == NULL)
             {
-                HDfreespace((VOIDP) wstart);
-                HDfreespace((VOIDP) buf);
-                HDfreespace((VOIDP) scatterbuf);
+                HDfree((VOIDP) wstart);
+                HDfree((VOIDP) buf);
+                HDfree((VOIDP) scatterbuf);
                 Hendaccess(aid);
                 HCLOSE_RETURN_ERROR(file_id, DFE_NOSPACE, FAIL);
             }
@@ -3900,13 +3900,13 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[],
             }
           while (!done && leastsig > 0);
 
-          HDfreespace((VOIDP) buf);
-          HDfreespace((VOIDP) scatterbuf);
-          HDfreespace((VOIDP) offset);
+          HDfree((VOIDP) buf);
+          HDfree((VOIDP) scatterbuf);
+          HDfree((VOIDP) offset);
       }
 
     Hendaccess(aid);
-    HDfreespace((VOIDP) wstart);
+    HDfree((VOIDP) wstart);
     if (error)
       {
           Hclose(file_id);
@@ -3925,7 +3925,7 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[],
  *          isfortran: 0 for C, 1 for Fortran
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   DFSDputslice
- * Invokes: DFwrite, HDgetspace, HDfreespace,DFKnumout(if conversion
+ * Invokes: DFwrite, HDmalloc, HDfree,DFKnumout(if conversion
         required)
  * Method:  check dimensions for contiguity, convert types if necessary
  *          write to file
@@ -4067,7 +4067,7 @@ DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
           datastride = dims[leastsig] * localNTsize;
           if (convert)
             {
-                buf = (uint8 *) HDgetspace((uint32) writesize);
+                buf = (uint8 *) HDmalloc((uint32) writesize);
                 if (buf == NULL)
                   {
                       Hclose(Sfile_id);
@@ -4080,12 +4080,12 @@ DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
                       ret = Hwrite(Writesdg.aid, writesize, buf);   /* done */
                       if (ret == FAIL)
                         {
-                            HDfreespace((VOIDP) buf);
+                            HDfree((VOIDP) buf);
                             Hclose(Sfile_id);
                             return FAIL;
                         }
                   }
-                HDfreespace((VOIDP) buf);
+                HDfree((VOIDP) buf);
             }
           else
             {   /* !contiguous      */
@@ -4521,7 +4521,7 @@ DFSDstartslab(const char *filename)
               fill_bufsize = sdg_size;
 
           /* Allocate space for fill buffer */
-          if ((fill_buf = (uint8 *) HDgetspace((uint32) fill_bufsize)) == NULL)
+          if ((fill_buf = (uint8 *) HDmalloc((uint32) fill_bufsize)) == NULL)
             {
                 Hendaccess(Writesdg.aid);
                 Hclose(Sfile_id);
@@ -4543,7 +4543,7 @@ DFSDstartslab(const char *filename)
                         {
                             Hendaccess(Writesdg.aid);
                             Hclose(Sfile_id);
-                            HDfreespace((VOIDP) fill_buf);
+                            HDfree((VOIDP) fill_buf);
                             HRETURN_ERROR(DFE_WRITEERROR, FAIL);
                         }
                   }
@@ -4553,13 +4553,13 @@ DFSDstartslab(const char *filename)
             {
                 Hendaccess(Writesdg.aid);
                 Hclose(Sfile_id);
-                HDfreespace((VOIDP) fill_buf);
+                HDfree((VOIDP) fill_buf);
                 HRETURN_ERROR(DFE_WRITEERROR, FAIL);
             }
 
           Writesdg.fill_fixed = TRUE;   /* fill value cannot be changed */
           /* Free up space */
-          HDfreespace((VOIDP) fill_buf);
+          HDfree((VOIDP) fill_buf);
       }
 
     return SUCCEED;
@@ -4683,7 +4683,7 @@ DFSDwriteslab(int32 start[], int32 stride[],
        ** Allocate temporary buffers(3) to hold starting, size,
        **  and file(SDG in file) dimensions
      */
-    startdims = (int32 *) HDgetspace((uint32) 3 * rank * sizeof(int32));
+    startdims = (int32 *) HDmalloc((uint32) 3 * rank * sizeof(int32));
     if (startdims == NULL)
       {
           Hclose(Sfile_id);
@@ -4745,9 +4745,9 @@ DFSDwriteslab(int32 start[], int32 stride[],
           /* If conversion, allocate 1 row buffers */
           if (convert)
             {
-                if ((buf = (uint8 *) HDgetspace((uint32) rowsize)) == NULL)
+                if ((buf = (uint8 *) HDmalloc((uint32) rowsize)) == NULL)
                   {
-                      HDfreespace((VOIDP) startdims);
+                      HDfree((VOIDP) startdims);
                       Hendaccess(aid);
                       Hclose(Sfile_id);
                       HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -4757,11 +4757,11 @@ DFSDwriteslab(int32 start[], int32 stride[],
               buf = NULL;
 
           /* Allocate space for file and data offsets and dimsleft */
-          foffset = (int32 *) HDgetspace((uint32) 3 * rank * sizeof(int32));
+          foffset = (int32 *) HDmalloc((uint32) 3 * rank * sizeof(int32));
           if (foffset == NULL)
             {
-                HDfreespace((VOIDP) startdims);
-                HDfreespace((VOIDP) buf);
+                HDfree((VOIDP) startdims);
+                HDfree((VOIDP) buf);
                 Hendaccess(aid);
                 Hclose(Sfile_id);
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -4866,12 +4866,12 @@ DFSDwriteslab(int32 start[], int32 stride[],
             }
           while (!done && leastsig > 0);
 
-          HDfreespace((VOIDP) buf);
-          HDfreespace((VOIDP) foffset);
+          HDfree((VOIDP) buf);
+          HDfree((VOIDP) foffset);
       }
 
     /* Clean up time.... */
-    HDfreespace((VOIDP) startdims);
+    HDfree((VOIDP) startdims);
 
     if (r_error)
         return FAIL;

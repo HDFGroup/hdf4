@@ -1338,7 +1338,7 @@ int         res;
     /*
      * determine the midpoints between scale values
      */
-    if ((midpt = (float32 *) HDgetspace((unsigned int) (dim * sizeof(float32))))
+    if ((midpt = (float32 *) HDmalloc((unsigned int) (dim * sizeof(float32))))
         == NULL)
       {
           (void) fprintf(stderr, err1);
@@ -1371,7 +1371,7 @@ int         res;
     /*
      * free dynamically allocated memory
      */
-    HDfreespace((char *) midpt);
+    HDfree((char *) midpt);
 
     return (0);
 
@@ -1443,13 +1443,13 @@ struct Raster *im;
     /*
      * allocate dynamic memory for the interpolation ratio buffers
      */
-    if ((hratio = (float32 *) HDgetspace((unsigned int) im->hres *
+    if ((hratio = (float32 *) HDmalloc((unsigned int) im->hres *
                                          sizeof(float32))) == NULL)
       {
           (void) fprintf(stderr, err1);
           goto err;
       }
-    if ((vratio = (float32 *) HDgetspace((unsigned int) im->vres *
+    if ((vratio = (float32 *) HDmalloc((unsigned int) im->vres *
                                          sizeof(float32))) == NULL)
       {
           (void) fprintf(stderr, err1);
@@ -1457,7 +1457,7 @@ struct Raster *im;
       }
     if (in->rank == 3)
       {
-          if ((dratio = (float32 *) HDgetspace((unsigned int) im->dres *
+          if ((dratio = (float32 *) HDmalloc((unsigned int) im->dres *
                                                sizeof(float32))) == NULL)
             {
                 (void) fprintf(stderr, err1);
@@ -1469,13 +1469,13 @@ struct Raster *im;
      * allocate dynamic memory for the pixel location offset/increment
      * buffers
      */
-    if ((hinc = (int *) HDgetspace((unsigned int) im->hres *
+    if ((hinc = (int *) HDmalloc((unsigned int) im->hres *
                                    sizeof(int))) == NULL)
       {
           (void) fprintf(stderr, err1);
           goto err;
       }
-    if ((voff = (int *) HDgetspace((unsigned int) (im->vres + 1) *
+    if ((voff = (int *) HDmalloc((unsigned int) (im->vres + 1) *
                                    sizeof(int))) == NULL)
       {
           (void) fprintf(stderr, err1);
@@ -1483,7 +1483,7 @@ struct Raster *im;
       }
     if (in->rank == 3)
       {
-          if ((doff = (int *) HDgetspace((unsigned int) (im->dres + 1) *
+          if ((doff = (int *) HDmalloc((unsigned int) (im->dres + 1) *
                                          sizeof(int))) == NULL)
             {
                 (void) fprintf(stderr, err1);
@@ -1607,14 +1607,14 @@ struct Raster *im;
     /*
      * free dynamically allocated memory
      */
-    HDfreespace((char *) hratio);
-    HDfreespace((char *) vratio);
+    HDfree((char *) hratio);
+    HDfree((char *) vratio);
     if (in->rank == 3)
-        HDfreespace((char *) dratio);
-    HDfreespace((char *) hinc);
-    HDfreespace((char *) voff);
+        HDfree((char *) dratio);
+    HDfree((char *) hinc);
+    HDfree((char *) voff);
     if (in->rank == 3)
-        HDfreespace((char *) doff);
+        HDfree((char *) doff);
 
     return (0);
 
@@ -1802,7 +1802,7 @@ struct Raster *im;
     /*
      * determine the scale indexes of the horizontal pixel locations
      */
-    if ((hidx = (int *) HDgetspace((unsigned int) (im->hres + 1) * sizeof(int))) == NULL)
+    if ((hidx = (int *) HDmalloc((unsigned int) (im->hres + 1) * sizeof(int))) == NULL)
       {
           (void) fprintf(stderr, err1);
           goto err;
@@ -1814,7 +1814,7 @@ struct Raster *im;
     /*
      * determine the scale indexes of the vertical pixel locations
      */
-    if ((vidx = (int *) HDgetspace((unsigned int) (im->vres + 1) *
+    if ((vidx = (int *) HDmalloc((unsigned int) (im->vres + 1) *
                                    sizeof(int))) == NULL)
       {
           (void) fprintf(stderr, err1);
@@ -1831,7 +1831,7 @@ struct Raster *im;
     didx = &dummy;
     if (in->rank == 3)
       {
-          if ((didx = (int *) HDgetspace((unsigned int) (im->dres + 1) *
+          if ((didx = (int *) HDmalloc((unsigned int) (im->dres + 1) *
                                          sizeof(int))) == NULL)
             {
                 (void) fprintf(stderr, err1);
@@ -1845,7 +1845,7 @@ struct Raster *im;
     /*
      * compute the expanded image
      */
-    if ((pix = (unsigned char *) HDgetspace((unsigned int) (in->dims[0] + 1))) ==
+    if ((pix = (unsigned char *) HDmalloc((unsigned int) (in->dims[0] + 1))) ==
         NULL)
       {
           (void) fprintf(stderr, err1);
@@ -1898,11 +1898,11 @@ struct Raster *im;
     /*
      * free dynamically allocated space
      */
-    HDfreespace((char *) hidx);
-    HDfreespace((char *) vidx);
+    HDfree((char *) hidx);
+    HDfree((char *) vidx);
     if (in->rank == 3)
-        HDfreespace((char *) didx);
-    HDfreespace((char *) pix);
+        HDfree((char *) didx);
+    HDfree((char *) pix);
 
     return (0);
 
@@ -1989,13 +1989,13 @@ process(struct Options *opt)
           /*
            * get the scale for each axis
            */
-          if ((in.hscale = (float32 *) HDgetspace((unsigned int)
+          if ((in.hscale = (float32 *) HDmalloc((unsigned int)
                              ((in.dims[0] + 1) * sizeof(float32)))) == NULL)
             {
                 (void) fprintf(stderr, err2);
                 goto err;
             }
-          if ((in.vscale = (float32 *) HDgetspace((unsigned int)
+          if ((in.vscale = (float32 *) HDmalloc((unsigned int)
                              ((in.dims[1] + 1) * sizeof(float32)))) == NULL)
             {
                 (void) fprintf(stderr, err2);
@@ -2003,7 +2003,7 @@ process(struct Options *opt)
             }
           if (in.rank == 3)
             {
-                if ((in.dscale = (float32 *) HDgetspace((unsigned int)
+                if ((in.dscale = (float32 *) HDmalloc((unsigned int)
                              ((in.dims[2] + 1) * sizeof(float32)))) == NULL)
                   {
                       (void) fprintf(stderr, err2);
@@ -2017,7 +2017,7 @@ process(struct Options *opt)
            * get the input data
            */
           len = in.dims[0] * in.dims[1] * in.dims[2];
-          if ((in.data = (VOIDP) HDgetspace((unsigned int) (len *
+          if ((in.data = (VOIDP) HDmalloc((unsigned int) (len *
                                                  sizeof(float32)))) == NULL)
             {
                 (void) fprintf(stderr, err2);
@@ -2154,7 +2154,7 @@ process(struct Options *opt)
                         }
                   }
                 len = im.hres * im.vres * im.dres;
-                if ((im.image = (unsigned char *) HDgetspace((unsigned
+                if ((im.image = (unsigned char *) HDmalloc((unsigned
                                                          int) len)) == NULL)
                   {
                       (void) fprintf(stderr, err2);
@@ -2223,13 +2223,13 @@ process(struct Options *opt)
           /*
            * free dynamically allocated space
            */
-          HDfreespace((char *) in.hscale);
-          HDfreespace((char *) in.vscale);
+          HDfree((char *) in.hscale);
+          HDfree((char *) in.vscale);
           if (in.rank == 3)
-              HDfreespace((char *) in.dscale);
-          HDfreespace((char *) in.data);
+              HDfree((char *) in.dscale);
+          HDfree((char *) in.data);
           if (opt->to_image == TRUE)
-              HDfreespace((char *) im.image);
+              HDfree((char *) im.image);
       }
 
     return (0);

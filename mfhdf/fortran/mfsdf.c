@@ -58,7 +58,7 @@ nscstart(name, access, namelen)
     fn = HDf2cstring(name, *namelen);
     
     ret = (intf) SDstart(fn, *access);
-    HDfreespace((VOIDP)fn);
+    HDfree((VOIDP)fn);
 
     return(ret);
 }
@@ -205,7 +205,7 @@ nscginfo(id, name, rank, dimsizes, nt, nattr, len)
     int32 rank32, nt32, nattr32;
 
     iname = NULL;
-    if(*len)   iname  = (char *) HDgetspace((uint32)*len + 1);
+    if(*len)   iname  = (char *) HDmalloc((uint32)*len + 1);
 
     status = SDgetinfo((int32) *id, iname, &rank32, cdims, &nt32, &nattr32);
 
@@ -214,7 +214,7 @@ nscginfo(id, name, rank, dimsizes, nt, nattr, len)
 
     HDpackFstring(iname,  _fcdtocp(name),  *len);
 
-    if(iname)  HDfreespace((VOIDP)iname);
+    if(iname)  HDfree((VOIDP)iname);
   
     *rank  = (intf) rank32;
     *nt    = (intf) nt32;
@@ -433,7 +433,7 @@ nscn2index(id, name, namelen)
     
     fn = HDf2cstring(name, *namelen);
     ret = (intf) SDnametoindex(*id, fn);
-    HDfreespace((VOIDP)fn);
+    HDfree((VOIDP)fn);
     return(ret);
 }
 
@@ -468,7 +468,7 @@ nsccreate(id, name, nt, rank, dims, namelen)
     int32 * cdims, i;
     
     fn = HDf2cstring(name, *namelen);
-    cdims = (int32 *) HDgetspace(sizeof(int32) * (*rank));
+    cdims = (int32 *) HDmalloc(sizeof(int32) * (*rank));
     if(!cdims) return FAIL;
 
     for(i = 0; i < *rank; i++)
@@ -476,8 +476,8 @@ nsccreate(id, name, nt, rank, dims, namelen)
 
     ret = (intf) SDcreate(*id, fn, *nt, *rank, cdims);
 
-    HDfreespace((VOIDP)fn);
-    HDfreespace((VOIDP)cdims);
+    HDfree((VOIDP)fn);
+    HDfree((VOIDP)cdims);
     return(ret);
 }
 
@@ -522,9 +522,9 @@ nscsdimstr(id, l, u, f, ll, ul, fl)
         fstr = NULL;
 
     ret = (intf) SDsetdimstrs(*id, lstr, ustr, fstr);
-    if(ll) HDfreespace((VOIDP)lstr);
-    if(ul) HDfreespace((VOIDP)ustr);
-    if(fl) HDfreespace((VOIDP)fstr);
+    if(ll) HDfree((VOIDP)lstr);
+    if(ul) HDfree((VOIDP)ustr);
+    if(fl) HDfree((VOIDP)fstr);
     return(ret);
 }
 
@@ -555,7 +555,7 @@ nscsdimname(id, name, len)
         nstr = NULL;
 
     ret = (intf) SDsetdimname(*id, nstr);
-    if(len) HDfreespace((VOIDP)nstr);
+    if(len) HDfree((VOIDP)nstr);
     return(ret);
 }
 
@@ -607,10 +607,10 @@ nscsdatstr(id, l, u, f, c, ll, ul, fl, cl)
         cstr = NULL;
 
     ret = (intf) SDsetdatastrs(*id, lstr, ustr, fstr, cstr);
-    if(ll) HDfreespace((VOIDP)lstr);
-    if(ul) HDfreespace((VOIDP)ustr);
-    if(fl) HDfreespace((VOIDP)fstr);
-    if(cl) HDfreespace((VOIDP)cstr);
+    if(ll) HDfree((VOIDP)lstr);
+    if(ul) HDfree((VOIDP)ustr);
+    if(fl) HDfree((VOIDP)fstr);
+    if(cl) HDfree((VOIDP)cstr);
     return(ret);
 }
 
@@ -769,9 +769,9 @@ nscgdimstrs(dim, label, unit, format, llabel, lunit, lformat, mlen)
 
     iunit = ilabel = iformat = NULL;
 
-    if(*llabel)  ilabel  = (char *) HDgetspace((uint32)*llabel + 1);
-    if(*lunit)   iunit   = (char *) HDgetspace((uint32)*lunit + 1);
-    if(*lformat) iformat = (char *) HDgetspace((uint32)*lformat + 1);
+    if(*llabel)  ilabel  = (char *) HDmalloc((uint32)*llabel + 1);
+    if(*lunit)   iunit   = (char *) HDmalloc((uint32)*lunit + 1);
+    if(*lformat) iformat = (char *) HDmalloc((uint32)*lformat + 1);
 
     status = SDgetdimstrs(*dim, ilabel, iunit, iformat, *mlen);
 
@@ -779,9 +779,9 @@ nscgdimstrs(dim, label, unit, format, llabel, lunit, lformat, mlen)
     HDpackFstring(iunit,   _fcdtocp(unit),   *lunit);
     HDpackFstring(iformat, _fcdtocp(format), *lformat);
 
-    if(ilabel)  HDfreespace((VOIDP)ilabel);
-    if(iunit)   HDfreespace((VOIDP)iunit);
-    if(iformat) HDfreespace((VOIDP)iformat);
+    if(ilabel)  HDfree((VOIDP)ilabel);
+    if(iunit)   HDfree((VOIDP)iunit);
+    if(iformat) HDfree((VOIDP)iformat);
 
     return status;
 }
@@ -813,10 +813,10 @@ nscgdatstrs(id, label, unit, format, coord, llabel, lunit, lformat, lcoord, len)
 
     iunit = ilabel = iformat = NULL;
 
-    if(*llabel)  ilabel  = (char *) HDgetspace((uint32)*llabel + 1);
-    if(*lunit)   iunit   = (char *) HDgetspace((uint32)*lunit + 1);
-    if(*lformat) iformat = (char *) HDgetspace((uint32)*lformat + 1);
-    if(*lcoord)  icoord  = (char *) HDgetspace((uint32)*lcoord + 1);
+    if(*llabel)  ilabel  = (char *) HDmalloc((uint32)*llabel + 1);
+    if(*lunit)   iunit   = (char *) HDmalloc((uint32)*lunit + 1);
+    if(*lformat) iformat = (char *) HDmalloc((uint32)*lformat + 1);
+    if(*lcoord)  icoord  = (char *) HDmalloc((uint32)*lcoord + 1);
 
     status = SDgetdatastrs(*id, ilabel, iunit, iformat, icoord, *len);
 
@@ -825,10 +825,10 @@ nscgdatstrs(id, label, unit, format, coord, llabel, lunit, lformat, lcoord, len)
     HDpackFstring(iformat, _fcdtocp(format), *lformat);
     HDpackFstring(icoord,  _fcdtocp(coord),  *lcoord);
 
-    if(ilabel)  HDfreespace((VOIDP)ilabel);
-    if(iunit)   HDfreespace((VOIDP)iunit);
-    if(iformat) HDfreespace((VOIDP)iformat);
-    if(icoord)  HDfreespace((VOIDP)icoord);
+    if(ilabel)  HDfree((VOIDP)ilabel);
+    if(iunit)   HDfree((VOIDP)iunit);
+    if(iformat) HDfree((VOIDP)iformat);
+    if(icoord)  HDfree((VOIDP)icoord);
 
     return status;
 }
@@ -861,13 +861,13 @@ nscgainfo(id, number, name, nt, count, len)
     int32   cnt32;
 
     iname = NULL;
-    if(*len)   iname  = (char *) HDgetspace((uint32)*len + 1);
+    if(*len)   iname  = (char *) HDmalloc((uint32)*len + 1);
 
     status = SDattrinfo(*id, *number, iname, &nt32, &cnt32);
 
     HDpackFstring(iname,  _fcdtocp(name),  *len);
 
-    if(iname)  HDfreespace((VOIDP)iname);
+    if(iname)  HDfree((VOIDP)iname);
 
     *nt    = (intf) nt32;
     *count = (intf) cnt32;
@@ -902,13 +902,13 @@ nscgdinfo(id, name, sz, nt, nattr, len)
     int32 sz32, nt32, nattr32;
 
     iname = NULL;
-    if(*len)   iname  = (char *) HDgetspace((uint32)*len + 1);
+    if(*len)   iname  = (char *) HDmalloc((uint32)*len + 1);
 
     status = SDdiminfo(*id, iname, &sz32, &nt32, &nattr32);
 
     HDpackFstring(iname,  _fcdtocp(name),  *len);
 
-    if(iname)  HDfreespace((VOIDP)iname);
+    if(iname)  HDfree((VOIDP)iname);
   
     *nt    = (intf) nt32;
     *sz    = (intf) sz32;
@@ -951,7 +951,7 @@ nscsattr(id, name, nt, count, data, len)
 
     ret = (intf) SDsetattr(*id, an, *nt, *count, data);
 
-    HDfreespace((VOIDP)an);
+    HDfree((VOIDP)an);
     return(ret);
 }
 
@@ -979,7 +979,7 @@ nscfattr(id, name, namelen)
     fn = HDf2cstring(name, *namelen);
     
     ret = (intf) SDfindattr(*id, fn);
-    HDfreespace((VOIDP)fn);
+    HDfree((VOIDP)fn);
 
     return(ret);
 }
@@ -1071,7 +1071,7 @@ nscsextf(id, name, offset, namelen)
     
     fn = HDf2cstring(name, *namelen);
     ret = (intf) SDsetexternalfile(*id, fn, *offset);
-    HDfreespace((VOIDP)fn);
+    HDfree((VOIDP)fn);
     return(ret);
 }
 

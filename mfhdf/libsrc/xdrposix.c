@@ -99,7 +99,7 @@ biobuf *abuf;
 {
     if(abuf == NULL)
         return;
-    HDfreespace((VOIDP)abuf) ;
+    HDfree((VOIDP)abuf) ;
 }
 
 
@@ -110,7 +110,7 @@ int fmode;
 {
     biobuf *biop ;
 
-    biop = (biobuf *)HDgetspace(sizeof(biobuf)) ;
+    biop = (biobuf *)HDmalloc(sizeof(biobuf)) ;
     if(biop == NULL)
         return NULL ;
     biop->fd = fd ;

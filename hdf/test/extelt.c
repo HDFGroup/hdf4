@@ -278,7 +278,7 @@ test_hextelt()
     CHECK(ret, FAIL, "Hclose");
 
 #ifdef QAK
-    HDfreespace((VOIDP) outbuf);
-    HDfreespace((VOIDP) inbuf);
+    HDfree((VOIDP) outbuf);
+    HDfree((VOIDP) inbuf);
 #endif
 }

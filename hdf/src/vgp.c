@@ -135,7 +135,7 @@ Load_vfile(HFILEID f)
     /* Check if vfile buffer has been allocated */
     if (vfile == NULL)
       {
-          vfile = (vfile_t *) HDgetspace(MAX_VFILE * sizeof(vfile_t));
+          vfile = (vfile_t *) HDmalloc(MAX_VFILE * sizeof(vfile_t));
           if (vfile == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
@@ -161,7 +161,7 @@ Load_vfile(HFILEID f)
     while (ret != FAIL)
       {
           HQuerytagref(aid, &tag, &ref);
-          if (NULL == (v = (vginstance_t *) HDgetspace(sizeof(vginstance_t))))
+          if (NULL == (v = (vginstance_t *) HDmalloc(sizeof(vginstance_t))))
             {
                 tbbtdfree(vf->vgtree, vdestroynode, NULL);
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -195,7 +195,7 @@ Load_vfile(HFILEID f)
     while (ret != FAIL)
       {
           HQuerytagref(aid, &tag, &ref);
-          if (NULL == (w = (vsinstance_t *) HDgetspace(sizeof(vsinstance_t))))
+          if (NULL == (w = (vsinstance_t *) HDmalloc(sizeof(vsinstance_t))))
             {
                 tbbtdfree(vf->vgtree, vdestroynode, NULL);
                 tbbtdfree(vf->vstree, vsdestroynode, NULL);
@@ -306,12 +306,12 @@ vdestroynode(VOIDP n)
     vg = ((vginstance_t *) n)->vg;
     if (vg != NULL)
       {
-          HDfreespace((VOIDP) vg->tag);
-          HDfreespace((VOIDP) vg->ref);
-          HDfreespace((VOIDP) vg);
+          HDfree((VOIDP) vg->tag);
+          HDfree((VOIDP) vg->ref);
+          HDfree((VOIDP) vg);
       }
 
-    HDfreespace((VOIDP) n);
+    HDfree((VOIDP) n);
 
 }   /* vdestroynode */
 
@@ -380,7 +380,7 @@ vginstance(HFILEID f, uint16 vgid)
     /* Check if vfile buffer has been allocated */
     if (vfile == NULL)
       {
-          vfile = (vfile_t *) HDgetspace(MAX_VFILE * sizeof(vfile_t));
+          vfile = (vfile_t *) HDmalloc(MAX_VFILE * sizeof(vfile_t));
           if (vfile == NULL)
               HRETURN_ERROR(DFE_NOSPACE, NULL);
           /* zero the space */
@@ -532,8 +532,8 @@ vunpackvg(VGROUP * vg, uint8 buf[], uintn len)
           UINT16DECODE(bb, vg->nvelt);
 
           vg->msize = (vg->nvelt > MAXNVELT ? vg->nvelt : MAXNVELT);
-          vg->tag = (uint16 *) HDgetspace(vg->msize * sizeof(uint16));
-          vg->ref = (uint16 *) HDgetspace(vg->msize * sizeof(uint16));
+          vg->tag = (uint16 *) HDmalloc(vg->msize * sizeof(uint16));
+          vg->ref = (uint16 *) HDmalloc(vg->msize * sizeof(uint16));
 
           if ((vg->tag == NULL) || (vg->ref == NULL))
               return;
@@ -601,7 +601,7 @@ VGROUP _HUGE *VPgetinfo(HFILEID f,uint16 ref)
         HRETURN_ERROR(DFE_INTERNAL,NULL);
  
     /* Get space for the raw Vgroup info */
-    if(( vgpack = (uint8 *) HDgetspace(len)) == NULL)
+    if(( vgpack = (uint8 *) HDmalloc(len)) == NULL)
         HRETURN_ERROR(DFE_NOSPACE,NULL);
  
     /* Get the raw Vgroup info */
@@ -609,7 +609,7 @@ VGROUP _HUGE *VPgetinfo(HFILEID f,uint16 ref)
         HRETURN_ERROR(DFE_NOMATCH,NULL);
        
     /* allocate space for vg */
-    if (NULL == (vg =(VGROUP*) HDgetspace (sizeof(VGROUP)))) 
+    if (NULL == (vg =(VGROUP*) HDmalloc (sizeof(VGROUP)))) 
         HRETURN_ERROR(DFE_NOSPACE,NULL);
        
     /* unpack vgpack into structure vg, and init  */
@@ -619,7 +619,7 @@ VGROUP _HUGE *VPgetinfo(HFILEID f,uint16 ref)
     vg->oref          = ref;
     vg->otag          = DFTAG_VG;
       
-    HDfreespace((VOIDP)vgpack);
+    HDfree((VOIDP)vgpack);
 
     return(vg);
 } /* end VPgetinfo */
@@ -660,7 +660,7 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
     /* Check if vfile buffer has been allocated */
     if (vfile == NULL)
       {
-          vfile = (vfile_t *) HDgetspace(MAX_VFILE * sizeof(vfile_t));
+          vfile = (vfile_t *) HDmalloc(MAX_VFILE * sizeof(vfile_t));
           if (vfile == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
           /* zero the space */
@@ -691,13 +691,13 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
               HRETURN_ERROR(DFE_ARGS, FAIL);
 
           /* allocate space for vg, & zero it out */
-          if ((vg = (VGROUP *) HDgetspace(sizeof(VGROUP))) == NULL)
+          if ((vg = (VGROUP *) HDmalloc(sizeof(VGROUP))) == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
           /* initialize new vg */
           vg->msize = MAXNVELT;
-          vg->tag = (uint16 *) HDgetspace(vg->msize * sizeof(uint16));
-          vg->ref = (uint16 *) HDgetspace(vg->msize * sizeof(uint16));
+          vg->tag = (uint16 *) HDmalloc(vg->msize * sizeof(uint16));
+          vg->ref = (uint16 *) HDmalloc(vg->msize * sizeof(uint16));
 
           if ((vg->tag == NULL) || (vg->ref == NULL))
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -725,7 +725,7 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
           vg->version = VSET_VERSION;
 
           /* attach new vg to file's vgtab  */
-          if (NULL == (v = (vginstance_t *) HDgetspace(sizeof(vginstance_t))))
+          if (NULL == (v = (vginstance_t *) HDmalloc(sizeof(vginstance_t))))
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
           vf->vgtabn++;
@@ -766,7 +766,7 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
           if (len == FAIL)
               return (FAIL);
 
-          vgpack = (uint8 *) HDgetspace(len);
+          vgpack = (uint8 *) HDmalloc(len);
           if (vgpack == NULL)
               return (FAIL);
 
@@ -775,7 +775,7 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
 
           /* allocate space for vg, & zero it out */
 
-          if (NULL == (vg = (VGROUP *) HDgetspace(sizeof(VGROUP))))
+          if (NULL == (vg = (VGROUP *) HDmalloc(sizeof(VGROUP))))
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
           /* unpack vgpack into structure vg, and init  */
@@ -783,7 +783,7 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
           vg->f = f;
           vg->oref = (uint16) vgid;
           vg->otag = DFTAG_VG;
-          HDfreespace((VOIDP) vgpack);
+          HDfree((VOIDP) vgpack);
 #else
           vg=v->vg;
 #endif /* OLD_WAY */
@@ -846,7 +846,7 @@ Vdetach(int32 vkey)
       {
           if ((vg->nvelt == 0) || (vg->marked == 1))
             {
-                vgpack = (uint8 *) HDgetspace((uint32) sizeof(VGROUP) + vg->nvelt * 4);
+                vgpack = (uint8 *) HDmalloc((uint32) sizeof(VGROUP) + vg->nvelt * 4);
                 vpackvg(vg, vgpack, &vgpacksize);
 
                 /*
@@ -857,7 +857,7 @@ Vdetach(int32 vkey)
 
                 if (Hputelement(vg->f, DFTAG_VG, vg->oref, vgpack, vgpacksize) == FAIL)
                     HERROR(DFE_WRITEERROR);
-                HDfreespace((VOIDP) vgpack);
+                HDfree((VOIDP) vgpack);
                 vg->marked = 0;
             }
       }
@@ -867,7 +867,7 @@ Vdetach(int32 vkey)
       /* no reason to check for access... (I hope) -QAK */
       if (vg->marked == 1)
         {
-            vgpack = (uint8 *) HDgetspace((uint32) sizeof(VGROUP) + vg->nvelt * 4);
+            vgpack = (uint8 *) HDmalloc((uint32) sizeof(VGROUP) + vg->nvelt * 4);
             vpackvg(vg, vgpack, &vgpacksize);
 
             /*
@@ -879,7 +879,7 @@ Vdetach(int32 vkey)
 
             if (Hputelement(vg->f, DFTAG_VG, vg->oref, vgpack, vgpacksize) == FAIL)
                 HERROR(DFE_WRITEERROR);
-            HDfreespace((VOIDP) vgpack);
+            HDfree((VOIDP) vgpack);
             vg->marked = 0;
             vg->new = 0;
         }
@@ -1311,9 +1311,9 @@ vinsertpair(VGROUP * vg, uint16 tag, uint16 ref)
       {
           vg->msize *= 2;
           vg->tag = (uint16 *)
-              HDregetspace((VOIDP) vg->tag, vg->msize * sizeof(uint16));
+              HDrealloc((VOIDP) vg->tag, vg->msize * sizeof(uint16));
           vg->ref = (uint16 *)
-              HDregetspace((VOIDP) vg->ref, vg->msize * sizeof(uint16));
+              HDrealloc((VOIDP) vg->ref, vg->msize * sizeof(uint16));
 
           if ((vg->tag == NULL) || (vg->ref == NULL))
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -1356,7 +1356,7 @@ Ventries(HFILEID f, int32 vgid)
     if (len == FAIL)
         HRETURN_ERROR(DFE_NOSUCHTAG, FAIL);
 
-    vgpack = (uint8 *) HDgetspace(len);
+    vgpack = (uint8 *) HDmalloc(len);
     if (vgpack == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
@@ -1365,8 +1365,8 @@ Ventries(HFILEID f, int32 vgid)
 
     vunpackvg(&vg, vgpack, len);
 
-    HDfreespace((VOIDP) vg.tag);
-    HDfreespace((VOIDP) vg.ref);
+    HDfree((VOIDP) vg.tag);
+    HDfree((VOIDP) vg.ref);
 
     return ((int32) vg.nvelt);
 #else
@@ -1543,7 +1543,7 @@ Vgetid(HFILEID f, int32 vgid)
     /* Check if vfile buffer has been allocated */
     if (vfile == NULL)
       {
-          vfile = (vfile_t *) HDgetspace(MAX_VFILE * sizeof(vfile_t));
+          vfile = (vfile_t *) HDmalloc(MAX_VFILE * sizeof(vfile_t));
           if (vfile == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
           /* zero the space */
@@ -1857,7 +1857,7 @@ Vdelete(int32 f, int32 vgid)
     /* Check if vfile buffer has been allocated */
     if (vfile == NULL)
       {
-          vfile = (vfile_t *) HDgetspace(MAX_VFILE * sizeof(vfile_t));
+          vfile = (vfile_t *) HDmalloc(MAX_VFILE * sizeof(vfile_t));
           if (vfile == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
           /* zero the space */

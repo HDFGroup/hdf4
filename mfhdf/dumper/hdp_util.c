@@ -47,12 +47,12 @@ filelist_t *make_file_list(intn curr_arg,intn argc,char *argv[])
     if(curr_arg>argc)   /* consistency check */
         return(NULL);
  
-    ret=(filelist_t *)HDgetspace(sizeof(filelist_t));
+    ret=(filelist_t *)HDmalloc(sizeof(filelist_t));
     if(ret==NULL)
         return(NULL);
-    ret->file_arr=(char **)HDgetspace(sizeof(char *)*((argc-curr_arg)+1));
+    ret->file_arr=(char **)HDmalloc(sizeof(char *)*((argc-curr_arg)+1));
     if(ret->file_arr==NULL) {
-        HDfreespace(ret);
+        HDfree(ret);
         return(NULL);
       } /* end if */
 
@@ -77,9 +77,9 @@ void free_file_list(filelist_t *f_list)
     intn i;
 
     for(i=0; i<f_list->max_files; i++)
-        HDfreespace(f_list->file_arr[i]);
-    HDfreespace(f_list->file_arr);
-    HDfreespace(f_list);
+        HDfree(f_list->file_arr[i]);
+    HDfree(f_list->file_arr);
+    HDfree(f_list);
 }   /* end free_file_list() */
 
 /*
@@ -97,19 +97,19 @@ groupinfo_t *make_group_list(int32 fid,uint16 tag,uint16 ref)
             return(NULL);
         if((nobj=DFdinobj(gid))==FAIL)
             return(NULL);
-        if((ret=(groupinfo_t *)HDgetspace(sizeof(groupinfo_t)))==NULL)
+        if((ret=(groupinfo_t *)HDmalloc(sizeof(groupinfo_t)))==NULL)
             return(NULL);
         ret->max_dds=nobj;
         ret->curr_dd=0;
         if(nobj>0) {
-            if((ret->dd_arr=(DFdi *)HDgetspace(sizeof(DFdi)*nobj))==NULL) {
-                HDfreespace(ret);
+            if((ret->dd_arr=(DFdi *)HDmalloc(sizeof(DFdi)*nobj))==NULL) {
+                HDfree(ret);
                 return(NULL);
               } /* end if */
             for(i=0; i<nobj; i++) {
                 if(DFdiget(gid,&ret->dd_arr[i].tag,&ret->dd_arr[i].ref)==FAIL) {
-                    HDfreespace(ret->dd_arr);
-                    HDfreespace(ret);
+                    HDfree(ret->dd_arr);
+                    HDfree(ret);
                     return(NULL);
                   } /* end if */
               } /* end for */
@@ -133,36 +133,36 @@ groupinfo_t *make_group_list(int32 fid,uint16 tag,uint16 ref)
                 int32 *temp_tag;
                 int32 *temp_ref;
 
-                if((temp_tag=(int32 *)HDgetspace(sizeof(int32)*nobj))==NULL) {
+                if((temp_tag=(int32 *)HDmalloc(sizeof(int32)*nobj))==NULL) {
                     Vdetach(vkey);
                     return(NULL);
                   } /* end if */
-                if((temp_ref=(int32 *)HDgetspace(sizeof(int32)*nobj))==NULL) {
+                if((temp_ref=(int32 *)HDmalloc(sizeof(int32)*nobj))==NULL) {
                     Vdetach(vkey);
-                    HDfreespace(temp_tag);
+                    HDfree(temp_tag);
                     return(NULL);
                   } /* end if */
 
                 if(Vgettagrefs(vkey,temp_tag,temp_ref,nobj)==FAIL) {
                     Vdetach(vkey);
-                    HDfreespace(temp_tag);
-                    HDfreespace(temp_ref);
+                    HDfree(temp_tag);
+                    HDfree(temp_ref);
                     return(NULL);
                   } /* end if */
 
-                if((ret=(groupinfo_t *)HDgetspace(sizeof(groupinfo_t)))==NULL) {
+                if((ret=(groupinfo_t *)HDmalloc(sizeof(groupinfo_t)))==NULL) {
                     Vdetach(vkey);
-                    HDfreespace(temp_tag);
-                    HDfreespace(temp_ref);
+                    HDfree(temp_tag);
+                    HDfree(temp_ref);
                     return(NULL);
                   } /* end if */
                 ret->max_dds=nobj;
                 ret->curr_dd=0;
-                if((ret->dd_arr=(DFdi *)HDgetspace(sizeof(DFdi)*nobj))==NULL) {
+                if((ret->dd_arr=(DFdi *)HDmalloc(sizeof(DFdi)*nobj))==NULL) {
                     Vdetach(vkey);
-                    HDfreespace(temp_tag);
-                    HDfreespace(temp_ref);
-                    HDfreespace(ret);
+                    HDfree(temp_tag);
+                    HDfree(temp_ref);
+                    HDfree(ret);
                     return(NULL);
                   } /* end if */
 
@@ -171,8 +171,8 @@ groupinfo_t *make_group_list(int32 fid,uint16 tag,uint16 ref)
                     ret->dd_arr[i].ref=(uint16)temp_ref[i];
                   } /* end for */
 
-                HDfreespace(temp_tag);
-                HDfreespace(temp_ref);
+                HDfree(temp_tag);
+                HDfree(temp_ref);
               } /* end if */
             else    /* bad vkey? */
                 return(NULL);
@@ -202,8 +202,8 @@ int32 get_group_max(groupinfo_t *g_list)
 
 void free_group_list(groupinfo_t *g_list)
 {
-    HDfreespace(g_list->dd_arr);
-    HDfreespace(g_list);
+    HDfree(g_list->dd_arr);
+    HDfree(g_list);
 }   /* end free_group_list() */
 
 
@@ -225,13 +225,13 @@ objlist_t *make_obj_list(int32 fid,uint32 options)
     if((nobj=Hnumber(fid,DFTAG_WILDCARD))==FAIL)
         return(NULL);
 
-    if((obj_ret=(objlist_t *)HDgetspace(sizeof(objlist_t)))==NULL)
+    if((obj_ret=(objlist_t *)HDmalloc(sizeof(objlist_t)))==NULL)
         return(NULL);
 
     obj_ret->max_obj=nobj;   /* set the number of objects */
     obj_ret->curr_obj=0;
-    if((obj_ret->raw_obj_arr=(objinfo_t *)HDgetspace(sizeof(objinfo_t)*nobj))==NULL) {
-        HDfreespace(obj_ret);
+    if((obj_ret->raw_obj_arr=(objinfo_t *)HDmalloc(sizeof(objinfo_t)*nobj))==NULL) {
+        HDfree(obj_ret);
         return(NULL);
       } /* end if */
 
@@ -242,8 +242,8 @@ objlist_t *make_obj_list(int32 fid,uint32 options)
     aid=Hstartread(fid,DFTAG_WILDCARD,DFREF_WILDCARD);
     if(aid==FAIL) {
         HEprint(stderr,0);
-        HDfreespace(obj_ret->raw_obj_arr);
-        HDfreespace(obj_ret);
+        HDfree(obj_ret->raw_obj_arr);
+        HDfree(obj_ret);
         return(NULL);
       } /* end if */
 
@@ -258,7 +258,7 @@ objlist_t *make_obj_list(int32 fid,uint32 options)
                     obj_ret->raw_obj_arr[n].is_special=0;
 				  } /* end if */
                 else {  /* copy over special information we found */
-                    if((obj_ret->raw_obj_arr[n].spec_info=(sp_info_block_t *)HDgetspace(sizeof(sp_info_block_t)))==NULL)
+                    if((obj_ret->raw_obj_arr[n].spec_info=(sp_info_block_t *)HDmalloc(sizeof(sp_info_block_t)))==NULL)
                         obj_ret->raw_obj_arr[n].is_special=0;
                     else
                         HDmemcpy(obj_ret->raw_obj_arr[n].spec_info,&info,sizeof(sp_info_block_t));
@@ -270,16 +270,16 @@ objlist_t *make_obj_list(int32 fid,uint32 options)
 
     if(Hendaccess(aid)==FAIL) {
         HEprint(stderr,0);
-        HDfreespace(obj_ret->raw_obj_arr);
-        HDfreespace(obj_ret);
+        HDfree(obj_ret->raw_obj_arr);
+        HDfree(obj_ret);
         return(NULL);
       } /* end if */
 
     /* Post-process the list of dd/objects, adding more information */
     /*  Also set up the pointers for the sorted list to be manipulated later */
-    if((obj_ret->srt_obj_arr=(objinfo_t **)HDgetspace(sizeof(objinfo_t *)*nobj))==NULL) {
-        HDfreespace(obj_ret->raw_obj_arr);
-        HDfreespace(obj_ret);
+    if((obj_ret->srt_obj_arr=(objinfo_t **)HDmalloc(sizeof(objinfo_t *)*nobj))==NULL) {
+        HDfree(obj_ret->raw_obj_arr);
+        HDfree(obj_ret);
         return(NULL);
       } /* end if */
 
@@ -296,8 +296,8 @@ objlist_t *make_obj_list(int32 fid,uint32 options)
                         || temp_obj->tag==DFTAG_NDG ||temp_obj->tag==DFTAG_VG) {
                 temp_obj->is_group=TRUE;
                 if((temp_obj->group_info=make_group_list(fid,temp_obj->tag,temp_obj->ref))==NULL) {
-                    HDfreespace(obj_ret->raw_obj_arr);
-                    HDfreespace(obj_ret);
+                    HDfree(obj_ret->raw_obj_arr);
+                    HDfree(obj_ret);
                     return(NULL);
                   } /* end if */
               } /* end if */
@@ -308,7 +308,7 @@ objlist_t *make_obj_list(int32 fid,uint32 options)
             int32 len;
 
             if((len=DFANgetlablen(HDfidtoname(fid),temp_obj->tag,temp_obj->ref))!=FAIL) {
-                if((temp_obj->lab_info=(char *)HDgetspace(len+1))!=NULL) {
+                if((temp_obj->lab_info=(char *)HDmalloc(len+1))!=NULL) {
                     if(DFANgetlabel(HDfidtoname(fid),temp_obj->tag,temp_obj->ref,
                             temp_obj->lab_info,len+1)!=FAIL) {
                         temp_obj->has_label=TRUE;
@@ -321,7 +321,7 @@ objlist_t *make_obj_list(int32 fid,uint32 options)
             int32 len;
 
             if((len=DFANgetdesclen(HDfidtoname(fid),temp_obj->tag,temp_obj->ref))!=FAIL) {
-                if((temp_obj->desc_info=(char *)HDgetspace(len+1))!=NULL) {
+                if((temp_obj->desc_info=(char *)HDmalloc(len+1))!=NULL) {
                     if(DFANgetdesc(HDfidtoname(fid),temp_obj->tag,temp_obj->ref,
                             temp_obj->desc_info,len+1)!=FAIL) {
                         temp_obj->has_desc=TRUE;
@@ -383,15 +383,15 @@ void free_obj_list(objlist_t *o_list)
         if(temp_obj->is_group)
             free_group_list(temp_obj->group_info);
         if(temp_obj->is_special)
-            HDfreespace(temp_obj->spec_info);
+            HDfree(temp_obj->spec_info);
         if(temp_obj->has_label)
-            HDfreespace(temp_obj->lab_info);
+            HDfree(temp_obj->lab_info);
         if(temp_obj->has_desc)
-            HDfreespace(temp_obj->desc_info);
+            HDfree(temp_obj->desc_info);
       } /* end for */
-    HDfreespace(o_list->srt_obj_arr);
-    HDfreespace(o_list->raw_obj_arr);
-    HDfreespace(o_list);
+    HDfree(o_list->srt_obj_arr);
+    HDfree(o_list->raw_obj_arr);
+    HDfree(o_list);
 }   /* end free_obj_list() */
 
 int sort_obj_list_by_tag(const void  *p1, const void *p2)

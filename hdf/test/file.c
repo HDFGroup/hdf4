@@ -69,8 +69,8 @@ test_hfile()
 #ifdef QAK
     uint8      *outbuf, *inbuf;
 
-    outbuf = HDgetspace(BUF_SIZE);
-    inbuf = HDgetspace(BUF_SIZE);
+    outbuf = HDmalloc(BUF_SIZE);
+    inbuf = HDmalloc(BUF_SIZE);
     if (!outbuf || !inbuf)
       {
           fprintf(stderr, "Out of memory!\n");
@@ -250,7 +250,7 @@ test_hfile()
     CHECK(ret, TRUE, "Hishdf");
 
 #ifdef QAK
-    HDfreespace((VOIDP) outbuf);
-    HDfreespace((VOIDP) inbuf);
+    HDfree((VOIDP) outbuf);
+    HDfree((VOIDP) inbuf);
 #endif
 }

@@ -648,7 +648,7 @@ VSlone(HFILEID f, int32 *idarray, int32 asize)
     CONSTR(FUNC, "VSlone");
 
     /* -- allocate space for vdata refs, init to zeroes -- */
-    if (NULL == (lonevdata = (uint8 *) HDgetspace(65000L * sizeof(uint8))))
+    if (NULL == (lonevdata = (uint8 *) HDmalloc(65000L * sizeof(uint8))))
                     HRETURN_ERROR(DFE_NOSPACE, FAIL);
     HDmemset(lonevdata, 0, 65000L * sizeof(uint8));
 
@@ -683,7 +683,7 @@ VSlone(HFILEID f, int32 *idarray, int32 asize)
                 nlone++;
             }
       }
-    HDfreespace((VOIDP) lonevdata);
+    HDfree((VOIDP) lonevdata);
 
     return (nlone);     /* return the TOTAL # of lone vdatas */
 }   /* VSlone */
@@ -714,7 +714,7 @@ Vlone(HFILEID f, int32 *idarray, int32 asize)
     CONSTR(FUNC, "Vlone");
 
     /* -- allocate space for vgroup refs, init to zeroes -- */
-    if (NULL == (lonevg = (uint8 *) HDgetspace(65000L * sizeof(uint8))))
+    if (NULL == (lonevg = (uint8 *) HDmalloc(65000L * sizeof(uint8))))
                     HRETURN_ERROR(DFE_NOSPACE, FAIL);
     HDmemset(lonevg, 0, 65000L * sizeof(uint8));
 
@@ -750,7 +750,7 @@ Vlone(HFILEID f, int32 *idarray, int32 asize)
                 nlone++;
             }
       }
-    HDfreespace((VOIDP) lonevg);
+    HDfree((VOIDP) lonevg);
 
     return (nlone);     /* return the TOTAL # of lone vgroups */
 

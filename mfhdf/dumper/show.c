@@ -136,7 +136,7 @@ dumpvd(int32 vd, int data_only, FILE *fp, char separater[2],
       }
 
     done = 0;
-    bb = (uint8 *) HDgetspace(bufsize); /* Allocate space for the buffer. */
+    bb = (uint8 *) HDmalloc(bufsize); /* Allocate space for the buffer. */
     if (bb == NULL)
       {
           printf("dumpvd malloc error\n");
@@ -351,7 +351,7 @@ dumpvd(int32 vd, int data_only, FILE *fp, char separater[2],
 
     /* ============================================ */
 
-    HDfreespace((VOIDP) bb);
+    HDfree((VOIDP) bb);
     fprintf(fp, "\n\n");
 
     return (1);

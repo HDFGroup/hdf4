@@ -155,19 +155,19 @@ allocate_buffers(void)
 
     for (i = 0; i < NUM_OUTBUFS; i++)
       {
-          outbuf_int8[i] = (int8 *) HDgetspace(BUFSIZE * sizeof(int8));
-          outbuf_uint8[i] = (uint8 *) HDgetspace(BUFSIZE * sizeof(uint8));
-          outbuf_int16[i] = (int16 *) HDgetspace(BUFSIZE * sizeof(int16));
-          outbuf_uint16[i] = (uint16 *) HDgetspace(BUFSIZE * sizeof(uint16));
-          outbuf_int32[i] = (int32 *) HDgetspace(BUFSIZE * sizeof(int32));
-          outbuf_uint32[i] = (uint32 *) HDgetspace(BUFSIZE * sizeof(uint32));
+          outbuf_int8[i] = (int8 *) HDmalloc(BUFSIZE * sizeof(int8));
+          outbuf_uint8[i] = (uint8 *) HDmalloc(BUFSIZE * sizeof(uint8));
+          outbuf_int16[i] = (int16 *) HDmalloc(BUFSIZE * sizeof(int16));
+          outbuf_uint16[i] = (uint16 *) HDmalloc(BUFSIZE * sizeof(uint16));
+          outbuf_int32[i] = (int32 *) HDmalloc(BUFSIZE * sizeof(int32));
+          outbuf_uint32[i] = (uint32 *) HDmalloc(BUFSIZE * sizeof(uint32));
       }     /* end for */
-    inbuf_int8 = (int8 *) HDclearspace(BUFSIZE, sizeof(int8));
-    inbuf_uint8 = (uint8 *) HDclearspace(BUFSIZE, sizeof(uint8));
-    inbuf_int16 = (int16 *) HDclearspace(BUFSIZE, sizeof(int16));
-    inbuf_uint16 = (uint16 *) HDclearspace(BUFSIZE, sizeof(uint16));
-    inbuf_int32 = (int32 *) HDclearspace(BUFSIZE, sizeof(int32));
-    inbuf_uint32 = (uint32 *) HDclearspace(BUFSIZE, sizeof(uint32));
+    inbuf_int8 = (int8 *) HDcalloc(BUFSIZE, sizeof(int8));
+    inbuf_uint8 = (uint8 *) HDcalloc(BUFSIZE, sizeof(uint8));
+    inbuf_int16 = (int16 *) HDcalloc(BUFSIZE, sizeof(int16));
+    inbuf_uint16 = (uint16 *) HDcalloc(BUFSIZE, sizeof(uint16));
+    inbuf_int32 = (int32 *) HDcalloc(BUFSIZE, sizeof(int32));
+    inbuf_uint32 = (uint32 *) HDcalloc(BUFSIZE, sizeof(uint32));
 }   /* allocate_buffers() */
 
 static void
@@ -255,19 +255,19 @@ free_buffers(void)
 
     for (i = 0; i < NUM_OUTBUFS; i++)
       {
-          HDfreespace(outbuf_int8[i]);
-          HDfreespace(outbuf_uint8[i]);
-          HDfreespace(outbuf_int16[i]);
-          HDfreespace(outbuf_uint16[i]);
-          HDfreespace(outbuf_int32[i]);
-          HDfreespace(outbuf_uint32[i]);
+          HDfree(outbuf_int8[i]);
+          HDfree(outbuf_uint8[i]);
+          HDfree(outbuf_int16[i]);
+          HDfree(outbuf_uint16[i]);
+          HDfree(outbuf_int32[i]);
+          HDfree(outbuf_uint32[i]);
       }     /* end for */
-    HDfreespace(inbuf_int8);
-    HDfreespace(inbuf_uint8);
-    HDfreespace(inbuf_int16);
-    HDfreespace(inbuf_uint16);
-    HDfreespace(inbuf_int32);
-    HDfreespace(inbuf_uint32);
+    HDfree(inbuf_int8);
+    HDfree(inbuf_uint8);
+    HDfree(inbuf_int16);
+    HDfree(inbuf_uint16);
+    HDfree(inbuf_int32);
+    HDfree(inbuf_uint32);
 }   /* free_buffers() */
 
 static uint16
@@ -284,7 +284,7 @@ write_data(int32 fid, comp_model_t m_type, model_info * m_info,
             {
             char *s = HDgetNTdesc(ntype);
             printf("Writing data for test %d, ntype=%s, model_type=%d, coder_type=%d\n", (int) test_num, (s == NULL ? "Unknown" : s), (int) m_type, (int) c_type);
-            HDfreespace(s);
+            HDfree(s);
             }
     )
         ret_ref = Hnewref(fid);
@@ -347,7 +347,7 @@ read_data(int32 fid, uint16 ref_num, intn test_num, int32 ntype)
             {
             char *s = HDgetNTdesc(ntype);
             printf("Reading data for test %d, ntype=%s\n", (int) test_num, (s == NULL ? "Unknown" : s));
-            HDfreespace(s);
+            HDfree(s);
             }
     )
 
@@ -408,7 +408,7 @@ read_data(int32 fid, uint16 ref_num, intn test_num, int32 ntype)
 		  printf("byte %i differs, written:%d, read in:%d\n",i,((char *)out_ptr)[i],((char *)in_ptr)[i]);
 	    } /* end for */
 	  )
-          HDfreespace(s);
+          HDfree(s);
           num_errs++;
       }     /* end if */
 

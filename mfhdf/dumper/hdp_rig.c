@@ -88,8 +88,8 @@ intn parse_dumprig_opts(dump_info_t *dumprig_opts, intn *curr_arg,
 		case 'i':	/* dump by index */
 		    dumprig_opts->filter=DINDEX;	
                     (*curr_arg)++;
-		    dumprig_opts->filter_num = (int*)HDgetspace(sizeof(int*)*1000);
-		    string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN);
+		    dumprig_opts->filter_num = (int*)HDmalloc(sizeof(int*)*1000);
+		    string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);
 		    ptr = argv[*curr_arg];
 		    lastItem = 0;
 		    for (i=0; !lastItem; i++) {
@@ -109,8 +109,8 @@ intn parse_dumprig_opts(dump_info_t *dumprig_opts, intn *curr_arg,
                 case 'r':       /* dump by reference */
                     dumprig_opts->filter=DREFNUM;
 		    (*curr_arg)++;
-                    dumprig_opts->filter_num = (int*)HDgetspace(sizeof(int*)*1000);
-		    string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN);
+                    dumprig_opts->filter_num = (int*)HDmalloc(sizeof(int*)*1000);
+		    string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);
 		    ptr = argv[*curr_arg]; 
 		    lastItem = 0;
 		    for (i=0; !lastItem; i++) {
@@ -291,7 +291,7 @@ static intn drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc,
 		8-bit image or 3 for a 24-bit image. */ 
 	     eltsz = DFKNTsize(DFNT_INT8 | DFNT_NATIVE)*ncomps;
              read_nelts = width*height; /* Number of elements to be read in. */
-             image=(VOIDP)HDgetspace(read_nelts*eltsz);  /* Allocate memory. */
+             image=(VOIDP)HDmalloc(read_nelts*eltsz);  /* Allocate memory. */
 	     if ((ret = DFGRIgetimlut((const char*)file_name, image, width, 
 				       height, IMAGE, 0, &compressed, 
 				       &compr_type, &has_pal))==-1) {
@@ -317,7 +317,7 @@ static intn drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc,
 		      ref_found = 1;
 		if (!ref_found) { /* If no match, then the current image is
 				     not what the user wants and so skip it. */
-		   HDfreespace((VOIDP)image);
+		   HDfree((VOIDP)image);
 		   continue;
 		}
 	     } 
@@ -328,7 +328,7 @@ static intn drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc,
 		skip the current image. */
 	     if (((!dumpall) && (i!=rig_chosen[x])) || 
 		 (((ncomps*8)!=model) && (model!=0))) {
-		HDfreespace((VOIDP)image);
+		HDfree((VOIDP)image);
 		continue;
 	     }
 	     x++; 
@@ -375,7 +375,7 @@ static intn drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc,
                        for (cn=0; cn<indent; cn++)   
 			  fprintf(fp, " ");
 		       ret = dumpfull(DFNT_INT8, read_nelts, image, indent,fp);
-		       HDfreespace((VOIDP)image);
+		       HDfree((VOIDP)image);
 		       fprintf(fp, "\n");
 		       fprintf(fp, "\n");
                        break;

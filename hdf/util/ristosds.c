@@ -100,8 +100,8 @@ main(int argc, char *argv[])
 
     /* read in images from all input files.     */
 
-    outdata0 = outdata = (uint8 *) HDgetspace(nimg * w * h * (sizeof(uint8)));
-    indata0 = indata = (uint8 *) HDgetspace(w * h * sizeof(char));
+    outdata0 = outdata = (uint8 *) HDmalloc(nimg * w * h * (sizeof(uint8)));
+    indata0 = indata = (uint8 *) HDmalloc(w * h * sizeof(char));
     infile = *argv_infile;
     ret = DFR8getdims(infile, &w, &h, &ispal);
     if (ispal)

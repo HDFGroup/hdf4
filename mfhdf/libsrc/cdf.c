@@ -116,7 +116,7 @@ int mode ;
         int32 hdf_mode;
         char * FUNC = "NC_new_cdf";
 
-	cdf = (NC *)HDgetspace(sizeof(NC)) ;
+	cdf = (NC *)HDmalloc(sizeof(NC)) ;
 	if( cdf == NULL )
 	{
 		nc_serror("NC_new_cdf") ;
@@ -125,7 +125,7 @@ int mode ;
 
 	cdf->flags = mode ;
 
-	cdf->xdrs = (XDR *)HDgetspace(sizeof(XDR)) ;
+	cdf->xdrs = (XDR *)HDmalloc(sizeof(XDR)) ;
 	if( cdf->xdrs == NULL)
 	{
 		nc_serror("NC_new_cdf: xdrs") ;
@@ -279,7 +279,7 @@ NC *old ;
 {
 	NC *cdf ;
 
-	cdf = (NC *)HDgetspace(sizeof(NC)) ;
+	cdf = (NC *)HDmalloc(sizeof(NC)) ;
 	if( cdf == NULL )
 	{
 		nc_serror("NC_dup_cdf") ;
@@ -288,7 +288,7 @@ NC *old ;
 
 	cdf->flags = old->flags | NC_INDEF ;
 
-	cdf->xdrs = (XDR *)HDgetspace(sizeof(XDR)) ;
+	cdf->xdrs = (XDR *)HDmalloc(sizeof(XDR)) ;
 	if( cdf->xdrs == NULL)
 	{
 		nc_serror("NC_dup_cdf: xdrs") ;
@@ -661,7 +661,7 @@ NC_dim *dim;
 #endif
       
       /* allocate space */
-      val = (int *) HDgetspace(dsize * sizeof(int));
+      val = (int *) HDmalloc(dsize * sizeof(int));
       if(!val) {
           HERROR(DFE_NOSPACE);
           return FAIL;
@@ -682,7 +682,7 @@ NC_dim *dim;
           return FAIL;
       }
       
-      HDfreespace((VOIDP)val);
+      HDfree((VOIDP)val);
 
   }
   
@@ -910,7 +910,7 @@ NC_var **var;
     /* Check if temproray buffer has been allocated */
     if (ptbuf == NULL)
       {
-        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        ptbuf = (uint8 *)HDmalloc(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
@@ -1026,8 +1026,8 @@ NC **handlep;
 #endif
 
   /* allocate tag / ref arrays */
-  tags = (int32 *) HDgetspace(sz * sizeof(int32) + 1);
-  refs = (int32 *) HDgetspace(sz * sizeof(int32) + 1);
+  tags = (int32 *) HDmalloc(sz * sizeof(int32) + 1);
+  refs = (int32 *) HDmalloc(sz * sizeof(int32) + 1);
   if(!tags || !refs) {
       fprintf(stderr, "Out of memory line %d file %s\n", __LINE__, __FILE__);
       return FALSE;
@@ -1108,8 +1108,8 @@ NC **handlep;
   if(status == FAIL)
       HEprint(stdout, 0);
 
-  HDfreespace((VOIDP)tags);
-  HDfreespace((VOIDP)refs);
+  HDfree((VOIDP)tags);
+  HDfree((VOIDP)refs);
 
 #ifdef DEBUG
   fprintf(stderr, "======= Have finished writing top level VGroup #%d\n", status);
@@ -1154,7 +1154,7 @@ int32  vg;
    * Allocate enough space in case everything is a dimension
    */
   count = 0;
-  dimension = (NC_dim **) HDgetspace(sizeof(NC_dim *) * Vntagrefs(vg) + 1);
+  dimension = (NC_dim **) HDmalloc(sizeof(NC_dim *) * Vntagrefs(vg) + 1);
   if(!dimension) {
     fprintf(stderr, "Out of memory line %d file %s\n", __LINE__, __FILE__);
     return FAIL;
@@ -1222,7 +1222,7 @@ int32  vg;
   else
     handle->dims = NULL;
 
-  HDfreespace((VOIDP)dimension);
+  HDfree((VOIDP)dimension);
 
 #if DEBUG
  fprintf(stderr, "Created dimension array %d \n", handle->dims);
@@ -1261,7 +1261,7 @@ int32   vg;
    * Allocate enough space in case everything is an attribute
    */
   count = 0;
-  attributes = (NC_attr **) HDgetspace(sizeof(NC_attr *) * Vntagrefs(vg) + 1);
+  attributes = (NC_attr **) HDmalloc(sizeof(NC_attr *) * Vntagrefs(vg) + 1);
   if(!attributes) {
     fprintf(stderr, "Out of memory line %d file %s\n", __LINE__, __FILE__);
     return NULL;
@@ -1283,7 +1283,7 @@ int32   vg;
           if(!HDstrcmp(class, ATTRIBUTE)) {
               VSinquire(vs, &attr_size, NULL, fields, &vsize, vsname);
               type = hdf_unmap_type(VFfieldtype(vs, 0));
-              values = (char *) HDgetspace(vsize * attr_size + 1);
+              values = (char *) HDmalloc(vsize * attr_size + 1);
               VSsetfields(vs, fields);
               VSread(vs, (uint8 *) values, attr_size, FULL_INTERLACE);
               
@@ -1302,7 +1302,7 @@ int32   vg;
               fprintf(stderr, "Attribute <%s> has type %d and size %d\n", 
                       vsname, type, attr_size);
 #endif
-              HDfreespace((VOIDP)values);
+              HDfree((VOIDP)values);
               count++;
               
           }
@@ -1312,7 +1312,7 @@ int32   vg;
   
   if(count) Array = NC_new_array(NC_ATTRIBUTE, count, (Void *) attributes);
 
-  HDfreespace((VOIDP)attributes);
+  HDfree((VOIDP)attributes);
 
 #if DEBUG
   fprintf(stderr, "Created attribute array %d \n", Array);
@@ -1362,7 +1362,7 @@ int32  vg;
    * Allocate enough space in case everything is a variable
    */
   count = 0;
-  variables = (NC_var **) HDgetspace(sizeof(NC_var *) * Vntagrefs(vg) + 1);
+  variables = (NC_var **) HDmalloc(sizeof(NC_var *) * Vntagrefs(vg) + 1);
   if(!variables) {
     fprintf(stderr, "Out of memory line %d file %s\n", __LINE__, __FILE__);
     return FAIL;
@@ -1371,7 +1371,7 @@ int32  vg;
   /*
    * Allocate enough space in case lots of dimensions
    */
-  dims = (int *) HDgetspace(sizeof(int) * Vntagrefs(vg) + 1);
+  dims = (int *) HDmalloc(sizeof(int) * Vntagrefs(vg) + 1);
   if(!dims) {
     fprintf(stderr, "Out of memory line %d file %s\n", __LINE__, __FILE__);
     return FAIL;
@@ -1536,8 +1536,8 @@ int32  vg;
                        * Deallocate the shape info as it will be recomputed
                        *  at a higher level later
                        */
-                      HDfreespace((VOIDP)vp->shape);
-                      HDfreespace((VOIDP)vp->dsizes);
+                      HDfree((VOIDP)vp->shape);
+                      HDfree((VOIDP)vp->dsizes);
                       
                   } else {
                       /* Not a rec var, don't worry about it */
@@ -1560,8 +1560,8 @@ bad_number_type:
   else
       handle->vars = NULL;
 
-  HDfreespace((VOIDP)variables);
-  HDfreespace((VOIDP)dims);
+  HDfree((VOIDP)variables);
+  HDfree((VOIDP)dims);
   
 #if DEBUG
   fprintf(stderr, "Created variable array %d \n", handle->vars);

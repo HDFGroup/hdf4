@@ -188,7 +188,7 @@ getElement(int desc, char **pdata)
     length = he_desc[desc].length;
 
     /* alloc memory to read the element in */
-    *pdata = (char *) HDgetspace(length);
+    *pdata = (char *) HDmalloc(length);
     if (*pdata == NULL)
         return FAIL;
 
@@ -200,7 +200,7 @@ getElement(int desc, char **pdata)
       }
     if (Hgetelement(fid, he_desc[desc].tag, he_desc[desc].ref, (unsigned char *) (*pdata)) < 0)
       {
-          HDfreespace(*pdata);
+          HDfree(*pdata);
           fprintf(stderr, "Cannot read element.\n");
           return FAIL;
       }
@@ -254,7 +254,7 @@ getTmpName(char **pname)
     if (length <= 0)
         return FAIL;
 
-    *pname = (char *) HDgetspace(length + 1);
+    *pname = (char *) HDmalloc(length + 1);
     HDstrcpy(*pname, s);
 
     return length;
@@ -382,7 +382,7 @@ updateDesc(void)
             {
                 he_grp[he_numGrp].desc = i;
                 he_grp[he_numGrp].size = (int) (he_desc[i].length / sizeof(tag_ref));
-                he_grp[he_numGrp].ddList = (tag_ref_ptr) HDgetspace(he_desc[i].length);
+                he_grp[he_numGrp].ddList = (tag_ref_ptr) HDmalloc(he_desc[i].length);
 
                 if (!he_grp[he_numGrp].ddList)
                   {
@@ -412,7 +412,7 @@ int
 initFile(char *file)
 {
     if (he_file)
-        HDfreespace(he_file);
+        HDfree(he_file);
     he_file = copyStr(file);
 
     if (updateDesc() < 0)
@@ -444,12 +444,12 @@ closeFile(int keep)
       {
           back = backupName(he_file);
           (void) removeFile(back);
-          HDfreespace(back);
+          HDfree(back);
       }
-    HDfreespace(he_file);
+    HDfree(he_file);
     he_file = NULL;
     for (i = 0; i < he_numGrp; i++)
-        HDfreespace(he_grp[i].ddList);
+        HDfree(he_grp[i].ddList);
 
     return HE_OK;
 }
@@ -473,7 +473,7 @@ getR8(int xdim, int ydim, char *image, char *pal, int compress)
             return FAIL;
 
     length = xdim * ydim;
-    buf = (char *) HDgetspace(length);
+    buf = (char *) HDmalloc(length);
 
     if ((fp = fopen(image, "r")) == NULL)
       {
@@ -492,7 +492,7 @@ getR8(int xdim, int ydim, char *image, char *pal, int compress)
           HEprint(stderr, 0);
           return FAIL;
       }
-    HDfreespace(buf);
+    HDfree(buf);
 
     if (updateDesc() < 0)
         return FAIL;
@@ -612,10 +612,10 @@ getCurrRig(int32 *pXdim, int32 *pYdim, char **pPalette, char **pRaster)
           return FAIL;
       }
     if (ispal)
-        *pPalette = (char *) HDgetspace(HE_PALETTE_SZ);
+        *pPalette = (char *) HDmalloc(HE_PALETTE_SZ);
     else
         *pPalette = (char *) NULL;
-    *pRaster = (char *) HDgetspace((*pXdim) * (*pYdim));
+    *pRaster = (char *) HDmalloc((*pXdim) * (*pYdim));
 
     if (DFR8getimage(he_file, (unsigned char *) *pRaster, *pXdim, *pYdim,
                      (unsigned char *) *pPalette) == FAIL)
@@ -638,7 +638,7 @@ putWithTempl(char *template, int n1, int n2, int n3, char *data, int length, int
     if (verbose)
         printf("Writing to file: %s\n", file);
     ret = writeToFile(file, data, length);
-    HDfreespace(file);
+    HDfree(file);
 
     return ret;
 }
@@ -693,11 +693,11 @@ writeElt(char *file, uint16 ref, int elt)
           UINT16DECODE(p, ntRef);
 
           /* set up to write the number type element */
-          ntDesc = (tag_ref_ptr) HDgetspace(sizeof(tag_ref));
+          ntDesc = (tag_ref_ptr) HDmalloc(sizeof(tag_ref));
           ntDesc->tag = ntTag;
           ntDesc->ref = ntRef;
           nt = findDesc(ntDesc);
-          HDfreespace(ntDesc);
+          HDfree(ntDesc);
           writeElt(file, ref, nt);
 
           p -= 2;
@@ -711,7 +711,7 @@ writeElt(char *file, uint16 ref, int elt)
       }
 
     ret = putElement(file, he_desc[elt].tag, ref, data, eltLength);
-    HDfreespace(data);
+    HDfree(data);
     return ret;
 }
 
@@ -848,7 +848,7 @@ getAnn(int ann, int16 tag, int16 ref, char **pBuf)
           len = DFANgetlablen(he_file, tag, ref);
           if (len > 0)
             {
-                *pBuf = (char *) HDgetspace(len + 1);
+                *pBuf = (char *) HDmalloc(len + 1);
                 DFANgetlabel(he_file, tag, ref, *pBuf, len + 1);
             }
           else
@@ -859,7 +859,7 @@ getAnn(int ann, int16 tag, int16 ref, char **pBuf)
           len = DFANgetdesclen(he_file, tag, ref);
           if (len > 0)
             {
-                *pBuf = (char *) HDgetspace(len);
+                *pBuf = (char *) HDmalloc(len);
                 DFANgetdesc(he_file, tag, ref, *pBuf, len);
             }
           else
@@ -901,15 +901,15 @@ readFromFile(char *file, char **pBuf)
       {
           bufLen += HE_BUF_SZ;
           if (bufLen == HE_BUF_SZ)
-              *pBuf = (char *) HDgetspace(bufLen);
+              *pBuf = (char *) HDmalloc(bufLen);
           else
-              *pBuf = (char *) HDregetspace(*pBuf, bufLen);
+              *pBuf = (char *) HDrealloc(*pBuf, bufLen);
           if (*pBuf == NULL)
               return FAIL;
 
           num_read = fread((*pBuf) + soFar, 1, HE_BUF_SZ, fp);
       }
-    *pBuf = (char *) HDregetspace(*pBuf, soFar + 1);
+    *pBuf = (char *) HDrealloc(*pBuf, soFar + 1);
     (*pBuf)[soFar] = '\0';
     fclose(fp);
     return soFar;
@@ -1114,7 +1114,7 @@ catStr(char *s, char *s1)
 {
     char       *t;
 
-    t = (char *) HDgetspace(HDstrlen(s) + HDstrlen(s1) + 1);
+    t = (char *) HDmalloc(HDstrlen(s) + HDstrlen(s1) + 1);
     HDstrcpy(t, s);
     HDstrcat(t, s1);
     return t;
@@ -1125,7 +1125,7 @@ copyStr(char *s)
 {
     char       *t;
 
-    t = (char *) HDgetspace(HDstrlen(s) + 1);
+    t = (char *) HDmalloc(HDstrlen(s) + 1);
     HDstrcpy(t, s);
     return t;
 }
@@ -1246,8 +1246,8 @@ deleteCmd(HE_CMD * cmd)
         deleteCmd(cmd->sub);
     for (i = 0; i < cmd->argc; i++)
         if (cmd->argv[i] != NULL)
-            HDfreespace(cmd->argv[i]);
-    HDfreespace(cmd);
+            HDfree(cmd->argv[i]);
+    HDfree(cmd);
 }
 
 /* -------------- routines to manipulate templates --------------------- */
@@ -1266,7 +1266,7 @@ convertTemplate(char *template, int n1, int n2, int n3, char **pname)
     sprintf(s2, "%1d", n2);
     sprintf(s3, "%1d", n3);
 
-    *pname = t = (char *) HDgetspace(HDstrlen(template) + 61);
+    *pname = t = (char *) HDmalloc(HDstrlen(template) + 61);
 
     while (*template)
         switch (*template)

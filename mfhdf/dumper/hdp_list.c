@@ -203,7 +203,7 @@ static void print_file_label(int32 fid)
     old_len=len=DFANgetfidlen(fid,1);
 
     /* allocate room for a label */
-    if((label=(char *)HDgetspace(len+1))==NULL)
+    if((label=(char *)HDmalloc(len+1))==NULL)
         return;
 
     if(DFANgetfid(fid,label,len+1,1)!=FAIL)
@@ -215,9 +215,9 @@ static void print_file_label(int32 fid)
         if(len>old_len) {
             char *new_label;
 
-            if((new_label=(char *)HDgetspace(len+1))==NULL)
+            if((new_label=(char *)HDmalloc(len+1))==NULL)
                 continue;
-            HDfreespace(label);
+            HDfree(label);
             label=new_label;
             old_len=len;
            } /* end if */
@@ -225,7 +225,7 @@ static void print_file_label(int32 fid)
         if(DFANgetfid(fid,label,len+1,0)!=FAIL)
             printf("File Label #%d: %s\n\n",num++,label);
       } /* end while */
-    HDfreespace(label);
+    HDfree(label);
 }   /* end print_file_label() */
 
 static void print_file_desc(const char *fname,int32 fid)
@@ -238,7 +238,7 @@ static void print_file_desc(const char *fname,int32 fid)
     old_len=len=DFANgetfdslen(fid,1);
 
     /* allocate room for a description */
-    if((desc=(char *)HDgetspace(len+1))==NULL)
+    if((desc=(char *)HDmalloc(len+1))==NULL)
         return;
 
     if(DFANgetfds(fid,desc,len+1,1)!=FAIL)
@@ -250,9 +250,9 @@ static void print_file_desc(const char *fname,int32 fid)
         if(len>old_len) {
             char *new_desc;
 
-            if((new_desc=(char *)HDgetspace(len+1))==NULL)
+            if((new_desc=(char *)HDmalloc(len+1))==NULL)
                 continue;
-            HDfreespace(desc);
+            HDfree(desc);
             desc=new_desc;
             old_len=len;
           } /* end if */
@@ -287,7 +287,7 @@ static void print_file_desc(const char *fname,int32 fid)
                              exit(1);
                          }
                          attr_buf_size = DFKNTsize(attr_nt)*attr_count;
-                         attr_buf =(VOIDP) HDgetspace(attr_buf_size);
+                         attr_buf =(VOIDP) HDmalloc(attr_buf_size);
                          ret=SDreadattr(sd_fid, attr_index, attr_buf);
                          if (ret == FAIL) {
                              printf("Failure in SDfindattr %s\n", fname);
@@ -296,17 +296,17 @@ static void print_file_desc(const char *fname,int32 fid)
                          printf("\t Attr%i: Name = %s\n", (int)attr_index,name);
                          printf("\t\t Type = %s \n\t\t Count= %i\n", 
                                         attr_nt_desc, (int)attr_count);
-                         HDfreespace(attr_nt_desc);     
+                         HDfree(attr_nt_desc);     
                          printf("\t\t Value = ");
                          ret = dumpfull(attr_nt, attr_count, attr_buf, 20, stdout);
                          printf("\n");
-                         HDfreespace((VOIDP)attr_buf);      
+                         HDfree((VOIDP)attr_buf);      
 
 				  } /* end if */
 			  } /* end for */
 		  } /* end if */
 	  } /* end if */
-    HDfreespace(desc);
+    HDfree(desc);
 }   /* end print_file_desc() */
 
 static void print_list_obj(list_info_t *l_opts,objinfo_t *o_info,intn o_num)
@@ -325,7 +325,7 @@ static void print_list_obj(list_info_t *l_opts,objinfo_t *o_info,intn o_num)
 				((s=HDgettagsname(o_info->tag))==NULL ? HDstrdup("Unknown"): s),
 				TAG_FIELD_WIDTH,o_info->tag,REF_FIELD_WIDTH,o_info->ref,
                 INDEX_FIELD_WIDTH,(long)o_info->index);
-			HDfreespace(s);  /* free tagname string */
+			HDfree(s);  /* free tagname string */
             break;
 
         case VDEBUG:    /* debugging output */
@@ -337,7 +337,7 @@ static void print_list_obj(list_info_t *l_opts,objinfo_t *o_info,intn o_num)
                 INDEX_FIELD_WIDTH,(long)o_info->index,
 				OFFSET_FIELD_WIDTH,(long)o_info->offset,
 				LENGTH_FIELD_WIDTH,(long)o_info->length);
-			HDfreespace(s);  /* free tagname string */
+			HDfree(s);  /* free tagname string */
             break;
       } /* end switch */
 	if(l_opts->name==TRUE && o_info->has_label) 
@@ -385,7 +385,7 @@ static void print_list_obj(list_info_t *l_opts,objinfo_t *o_info,intn o_num)
 		    	printf("\t\t%-30s: (tag=%6d) ref=%d\n",
 		    		((s=HDgettagsname(g_obj->tag))==NULL ? HDstrdup("Unknown") : s),
                     g_obj->tag,g_obj->ref);
-			    HDfreespace(s);  /* free tagname string */
+			    HDfree(s);  /* free tagname string */
 		        g_obj=get_next_group(o_info->group_info,1);
 		      } /* end while */
 		 } /* end if */
@@ -460,7 +460,7 @@ void do_list(intn curr_arg,intn argc,char *argv[],dump_opt_t *glob_opts)
 						            o_info->tag);
 						        last_tag=o_info->tag;
 						        printf("\tRef nos: ");
-			                    HDfreespace(s);  /* free tagname string */
+			                    HDfree(s);  /* free tagname string */
 						     } /* end if */
 						    printf("%d ",o_info->ref);
 						  } /* end if */

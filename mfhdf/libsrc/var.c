@@ -18,7 +18,7 @@ const int *dims ;
 {
 	NC_var *ret ;
 
-	ret = (NC_var *)HDgetspace(sizeof(NC_var)) ;
+	ret = (NC_var *)HDmalloc(sizeof(NC_var)) ;
 	if( ret == NULL )
 		goto alloc_err ;
 
@@ -116,7 +116,7 @@ NC_array *dims;
 		var->len = xszof ;
 		goto out ;
 	}
-	shape = (unsigned long *)HDgetspace(ii * sizeof(unsigned long)) ;
+	shape = (unsigned long *)HDmalloc(ii * sizeof(unsigned long)) ;
 	if(shape == NULL)
 	{
 		nc_serror("NC_var_shape") ;
@@ -153,7 +153,7 @@ NC_array *dims;
 	 * Allocate the dsizes array
 	 */
 	ii = var->assoc->count ;
-	dsizes = (unsigned long *)HDgetspace(ii * sizeof(unsigned long)) ;
+	dsizes = (unsigned long *)HDmalloc(ii * sizeof(unsigned long)) ;
 	if(dsizes == NULL)
 	{
 		nc_serror("NC_var_dsizes") ;
@@ -769,7 +769,7 @@ xdr_NC_var(xdrs, vpp)
 
 	if( xdrs->x_op == XDR_DECODE )
 	{
-		*vpp = (NC_var *)HDgetspace(sizeof(NC_var)) ;
+		*vpp = (NC_var *)HDmalloc(sizeof(NC_var)) ;
 		if( *vpp == NULL )
 		{
 			nc_serror("xdr_NC_var") ;

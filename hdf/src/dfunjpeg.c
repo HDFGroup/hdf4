@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -73,7 +72,7 @@ hdf_init_source(struct jpeg_decompress_struct *cinfo_ptr)
 {
     hdf_src_ptr src=(hdf_src_ptr)cinfo_ptr->src;
 
-    if((src->buffer=HDgetspace(sizeof(JOCTET)*INPUT_BUF_SIZE))==NULL)
+    if((src->buffer=HDmalloc(sizeof(JOCTET)*INPUT_BUF_SIZE))==NULL)
         ERREXIT1(cinfo_ptr, JERR_OUT_OF_MEMORY, (int)1);
 
     if((src->aid=Hstartaccess(src->file_id,src->tag,src->ref,DFACC_READ))==FAIL)
@@ -200,7 +199,7 @@ hdf_term_source(struct jpeg_decompress_struct *cinfo_ptr)
     Hendaccess(src->aid);
 
     /* Free the input buffer */
-    HDfreespace(src->buffer);
+    HDfree(src->buffer);
 } /* end hdf_term_source() */
 
 /*-----------------------------------------------------------------------------
@@ -227,7 +226,7 @@ jpeg_HDF_src(struct jpeg_decompress_struct *cinfo_ptr, int32 file_id, uint16 tag
     CONSTR(FUNC, "jpeg_HDF_src");     /* for HERROR */
     hdf_src_ptr src;
 
-    if((src=HDgetspace(sizeof(hdf_source_mgr)))==NULL)
+    if((src=HDmalloc(sizeof(hdf_source_mgr)))==NULL)
         HRETURN_ERROR(DFE_NOSPACE,FAIL);
 
     cinfo_ptr->src=(struct jpeg_source_mgr *)src;
@@ -279,7 +278,7 @@ intn
 jpeg_HDF_src_term(struct jpeg_decompress_struct *cinfo_ptr)
 {
     /* all we need to do for now is to free up the dest. mgr structure */
-    HDfreespace(cinfo_ptr->src);
+    HDfree(cinfo_ptr->src);
 
     return(SUCCEED);
 } /* end jpeg_HDF_src_term() */
@@ -313,10 +312,10 @@ DFCIunjpeg(int32 file_id, uint16 tag, uint16 ref, VOIDP image, int32 xdim,
     JDIMENSION lines_read, lines_left;
     JSAMPARRAY buffer;
 
-    if((cinfo_ptr=HDgetspace(sizeof(struct jpeg_decompress_struct)))==NULL)
+    if((cinfo_ptr=HDmalloc(sizeof(struct jpeg_decompress_struct)))==NULL)
         HRETURN_ERROR(DFE_NOSPACE,FAIL);
 
-    if((jerr_ptr=HDgetspace(sizeof(struct jpeg_error_mgr)))==NULL)
+    if((jerr_ptr=HDmalloc(sizeof(struct jpeg_error_mgr)))==NULL)
         HRETURN_ERROR(DFE_NOSPACE,FAIL);
 
     /* Initialize the error-handling routines */
@@ -355,8 +354,8 @@ DFCIunjpeg(int32 file_id, uint16 tag, uint16 ref, VOIDP image, int32 xdim,
     jpeg_HDF_src_term(cinfo_ptr);
 
     /* Free update memory allocated */
-    HDfreespace(jerr_ptr);
-    HDfreespace(cinfo_ptr);
+    HDfree(jerr_ptr);
+    HDfree(cinfo_ptr);
 
     return (SUCCEED);   /* we must be ok... */
 }   /* end DFCIunjpeg() */

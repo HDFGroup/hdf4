@@ -36,25 +36,25 @@ void        Mem_Display(FILE * fp);
 
 /* Interface functions to access only through macros */
 #if defined(MEM_WHERE)
-void       *mem_HDgetspace(size_t size, char *fil, int lin);
-void       *mem_HDregetspace(void *old_ptr, size_t size, char *fil, int lin);
-void       *mem_HDfreespace(void *ptr, char *fil, int lin);
+void       *mem_HDmalloc(size_t size, char *fil, int lin);
+void       *mem_HDrealloc(void *old_ptr, size_t size, char *fil, int lin);
+void       *mem_HDfree(void *ptr, char *fil, int lin);
 #else
-void       *mem_HDgetspace(size_t size);
-void       *mem_HDregetspace(void *old_ptr, size_t size);
-void       *mem_HDfreespace(void *ptr);
+void       *mem_HDmalloc(size_t size);
+void       *mem_HDrealloc(void *old_ptr, size_t size);
+void       *mem_HDfree(void *ptr);
 #endif
 
 /* Interface macros */
 #if !defined(__MALDEBUG__)
 #if defined(MEM_WHERE)
-#define HDgetspace(a)       mem_HDgetspace((a),__FILE__,__LINE__)
-#define HDregetspace(a,b)   mem_HDregetspace((a),(b),__FILE__,__LINE__)
-#define HDfreespace(a)      mem_HDfreespace((a),__FILE__,__LINE__)
+#define HDmalloc(a)         mem_HDmalloc((a),__FILE__,__LINE__)
+#define HDrealloc(a,b)      mem_HDrealloc((a),(b),__FILE__,__LINE__)
+#define HDfree(a)           mem_HDfree((a),__FILE__,__LINE__)
 #else
-#define HDgetspace(a)       mem_HDgetspace(a)
-#define HDregetspace(a,b)   mem_HDregetspace((a),(b))
-#define HDfreespace(a)      mem_HDfreespace(a)
+#define HDmalloc(a)         mem_HDmalloc(a)
+#define HDrealloc(a,b)      mem_HDrealloc((a),(b))
+#define HDfree(a)           mem_HDfree(a)
 #endif
 #endif
 

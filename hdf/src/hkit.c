@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -105,7 +104,7 @@ HDf2cstring(_fcd fdesc, intn len)
     for(i=len-1; i>=0 && !isgraph(str[i]); i--)
         /*EMPTY*/;
 #endif /* OLD_WAY */
-    cstr = (char *) HDgetspace((uint32) (i + 2));
+    cstr = (char *) HDmalloc((uint32) (i + 2));
     cstr[i + 1] = '\0';
 #ifdef OLD_WAY
     for (; i >= 0; i--)
@@ -245,7 +244,7 @@ HIadd_hash_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
     else
       {
 
-          if ((p = (tag_ref_list_ptr) HDgetspace((uint32) sizeof(tag_ref_list))) == NULL)
+          if ((p = (tag_ref_list_ptr) HDmalloc((uint32) sizeof(tag_ref_list))) == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
           p->objects[0].pblock = pblock;
@@ -619,16 +618,16 @@ HDgettagsname(uint16 tag)
                 {
                     char       *t;
 
-                    t = (char *) HDgetspace(HDstrlen(ret) +
+                    t = (char *) HDmalloc(HDstrlen(ret) +
                                     HDstrlen(tag_descriptions[i].name) + 2);
                     if (t == NULL)
                       {
-                          HDfreespace(ret);
+                          HDfree(ret);
                           HRETURN_ERROR(DFE_NOSPACE, NULL);
                       }     /* end if */
                     HDstrcpy(t, ret);
                     HDstrcat(t, tag_descriptions[i].name);
-                    HDfreespace(ret);
+                    HDfree(ret);
                     ret = t;
                 }   /* end else */
           }     /* end if */
@@ -697,17 +696,17 @@ HDgetNTdesc(int32 nt)
                 {
                     char       *t;
 
-                    t = (char *) HDgetspace(HDstrlen(ret_desc) +
+                    t = (char *) HDmalloc(HDstrlen(ret_desc) +
                                      HDstrlen(nt_descriptions[i].desc) + 2);
                     if (t == NULL)
                       {
-                          HDfreespace(ret_desc);
+                          HDfree(ret_desc);
                           HRETURN_ERROR(DFE_NOSPACE, NULL);
                       }     /* end if */
                     HDstrcpy(t, ret_desc);
                     HDstrcat(t, " ");
                     HDstrcat(t, nt_descriptions[i].desc);
-                    HDfreespace(ret_desc);
+                    HDfree(ret_desc);
                     ret_desc = t;
                 }   /* end else */
               return (ret_desc);

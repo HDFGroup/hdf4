@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -228,7 +227,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
       }
 
     /* set up the special element information and write it to file */
-    access_rec->special_info = (VOIDP) HDgetspace((uint32) sizeof(extinfo_t));
+    access_rec->special_info = (VOIDP) HDmalloc((uint32) sizeof(extinfo_t));
     info = (extinfo_t *) access_rec->special_info;
     if (!info)
       {
@@ -241,56 +240,56 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
           VOIDP       buf;      /* temporary buffer */
 
 #ifdef OLD_WAY
-          buf = (VOIDP) HDgetspace((uint32) data_dd->length);
+          buf = (VOIDP) HDmalloc((uint32) data_dd->length);
           if (!buf)
             {
                 access_rec->used = FALSE;
-                HDfreespace((VOIDP) info);
+                HDfree((VOIDP) info);
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
             }
           if (HI_SEEK(file_rec->file, data_dd->offset) == FAIL)
             {
-                HDfreespace((VOIDP) info);
-                HDfreespace((VOIDP) buf);
+                HDfree((VOIDP) info);
+                HDfree((VOIDP) buf);
                 HRETURN_ERROR(DFE_SEEKERROR, FAIL);
             }
           if (HI_READ(file_rec->file, buf, data_dd->length) == FAIL)
             {
                 access_rec->used = FALSE;
-                HDfreespace((VOIDP) info);
-                HDfreespace((VOIDP) buf);
+                HDfree((VOIDP) info);
+                HDfree((VOIDP) buf);
                 HRETURN_ERROR(DFE_READERROR, FAIL);
             }
 #else  /* OLD_WAY */
-          if ((buf = (VOIDP) HDgetspace((uint32) data_dd->length)) == NULL)
+          if ((buf = (VOIDP) HDmalloc((uint32) data_dd->length)) == NULL)
             {
                 access_rec->used = FALSE;
-                HDfreespace((VOIDP) info);
+                HDfree((VOIDP) info);
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
             }
           if (Hgetelement(file_id, data_dd->tag, data_dd->ref, (VOIDP)buf) == FAIL)
             {
                 access_rec->used = FALSE;
-                HDfreespace((VOIDP) info);
-                HDfreespace((VOIDP) buf);
+                HDfree((VOIDP) info);
+                HDfree((VOIDP) buf);
                 HRETURN_ERROR(DFE_READERROR, FAIL);
             }
 #endif /* OLD_WAY */
           if (HI_SEEK(file_external, offset) == FAIL)
             {
                 access_rec->used = FALSE;
-                HDfreespace((VOIDP) info);
-                HDfreespace((VOIDP) buf);
+                HDfree((VOIDP) info);
+                HDfree((VOIDP) buf);
                 HRETURN_ERROR(DFE_SEEKERROR, FAIL);
             }
           if (HI_WRITE(file_external, buf, data_dd->length) == FAIL)
             {
                 access_rec->used = FALSE;
-                HDfreespace((VOIDP) info);
-                HDfreespace((VOIDP) buf);
+                HDfree((VOIDP) info);
+                HDfree((VOIDP) buf);
                 HRETURN_ERROR(DFE_WRITEERROR, FAIL);
             }
-          HDfreespace((VOIDP) buf);
+          HDfree((VOIDP) buf);
           info->length = data_dd->length;
 
       }
@@ -307,7 +306,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     if (!info->extern_file_name)
       {
           access_rec->used = FALSE;
-          HDfreespace((VOIDP) info);
+          HDfree((VOIDP) info);
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
@@ -326,20 +325,20 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     if ((dd->offset = HPgetdiskblock(file_rec, dd->length, TRUE)) == FAIL)
       {
           access_rec->used = FALSE;
-          HDfreespace((VOIDP) info);
+          HDfree((VOIDP) info);
           HRETURN_ERROR(DFE_INTERNAL, FAIL);
       }     /* end if */
     if (HI_WRITE(file_rec->file, local_ptbuf, dd->length) == FAIL)
       {
           access_rec->used = FALSE;
-          HDfreespace((VOIDP) info);
+          HDfree((VOIDP) info);
           HRETURN_ERROR(DFE_WRITEERROR, FAIL);
       }
 
     if (FAIL == HIupdate_dd(file_rec, access_rec->block, access_rec->idx, FUNC))
       {
           access_rec->used = FALSE;
-          HDfreespace((VOIDP) info);
+          HDfree((VOIDP) info);
           HRETURN_ERROR(DFE_CANTUPDATE, FAIL);
       }
 
@@ -348,7 +347,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
                               access_rec->idx))
       {
           access_rec->used = FALSE;
-          HDfreespace((VOIDP) info);
+          HDfree((VOIDP) info);
           HRETURN_ERROR(DFE_CANTHASH, FAIL);
       }
 
@@ -357,13 +356,13 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
           if (Hdeldd(file_id, data_dd->tag, data_dd->ref) == FAIL)
             {
                 access_rec->used = FALSE;
-                HDfreespace((VOIDP) info);
+                HDfree((VOIDP) info);
                 HRETURN_ERROR(DFE_CANTDELDD, FAIL);
             }   /* end if */
           if (HIdel_hash_dd(file_rec, data_dd->tag, data_dd->ref) == FAIL)
             {
                 access_rec->used = FALSE;
-                HDfreespace((VOIDP) info);
+                HDfree((VOIDP) info);
                 HRETURN_ERROR(DFE_CANTDELHASH, FAIL);
             }   /* end if */
       }
@@ -530,7 +529,7 @@ HXIstaccess(accrec_t * access_rec, int16 acc_mode)
 		access_rec->used = FALSE;
 		HRETURN_ERROR(DFE_READERROR, FAIL);
 	    }
-	  access_rec->special_info = (VOIDP) HDgetspace((uint32) sizeof(extinfo_t));
+	  access_rec->special_info = (VOIDP) HDmalloc((uint32) sizeof(extinfo_t));
 	  info = (extinfo_t *) access_rec->special_info;
 	  if (!info)
 	    {
@@ -543,7 +542,7 @@ HXIstaccess(accrec_t * access_rec, int16 acc_mode)
 	      INT32DECODE(p, info->extern_offset);
 	      INT32DECODE(p, info->length_file_name);
 	  }
-	  info->extern_file_name = (char *) HDgetspace((uint32)
+	  info->extern_file_name = (char *) HDmalloc((uint32)
 						info->length_file_name + 1);
 	  if (!info->extern_file_name)
 	    {
@@ -969,8 +968,8 @@ HXPcloseAID(accrec_t * access_rec)
       {
           if (info->file_open)
               HI_CLOSE(info->file_external);
-          HDfreespace((VOIDP) info->extern_file_name);
-          HDfreespace((VOIDP) info);
+          HDfree((VOIDP) info->extern_file_name);
+          HDfree((VOIDP) info);
       }
 
     return SUCCEED;

@@ -272,7 +272,7 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
         return (SUCCEED);
 
     /* Get space to store the image offsets */
-    if ((img_info = (struct image_info *) HDgetspace(nimages * sizeof(struct image_info))) == NULL)
+    if ((img_info = (struct image_info *) HDmalloc(nimages * sizeof(struct image_info))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
     HDmemset(img_info,0,nimages*sizeof(struct image_info));    
 
@@ -332,7 +332,7 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                       at_info_t *new_attr;  /* attribute to add to the set of local attributes */
                                       int32 at_key;         /* VData key for the attribute */
 
-                                      if((new_attr=(at_info_t *)HDgetspace(sizeof(at_info_t)))==NULL)
+                                      if((new_attr=(at_info_t *)HDmalloc(sizeof(at_info_t)))==NULL)
                                           HRETURN_ERROR(DFE_NOSPACE,FAIL);
                                       new_attr->ref=grp_ref;
                                       new_attr->index=gr_ptr->gattr_count;
@@ -345,7 +345,7 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                             if(VFnfields(at_key)!=1)
                                               {
                                                 VSdetach(at_key);
-                                                HDfreespace(new_attr);
+                                                HDfree(new_attr);
                                                 break;
                                               } /* end if */
                                             new_attr->nt=VFfieldtype(at_key,0);
@@ -356,7 +356,7 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                             /* Get the name of the image */
                                             if(Vgetname(at_key,textbuf)==FAIL)
                                                 sprintf(textbuf,"Attribute #%d",(int)new_attr->index);
-                                            if((new_attr->name=(char *)HDgetspace(HDstrlen(textbuf)+1))==NULL)
+                                            if((new_attr->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
                                                 HRETURN_ERROR(DFE_NOSPACE,FAIL);
                                             HDstrcpy(new_attr->name,textbuf);
                                             tbbtdins(gr_ptr->gattree, (VOIDP) new_attr, NULL);    /* insert the vg instance in B-tree */ 
@@ -507,9 +507,9 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
 
                           if((img_key=Vattach(file_id,img_info[i].grp_ref,"r"))!=FAIL)
                             {
-                                if((new_image=(ri_info_t *)HDgetspace(sizeof(ri_info_t)))==NULL)
+                                if((new_image=(ri_info_t *)HDmalloc(sizeof(ri_info_t)))==NULL)
                                   {
-                                    HDfreespace((VOIDP) img_info);   /* free offsets */
+                                    HDfree((VOIDP) img_info);   /* free offsets */
                                     Hclose(file_id);
                                     HRETURN_ERROR(DFE_NOSPACE,FAIL);
                                   } /* end if */
@@ -520,7 +520,7 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                 /* Get the name of the image */
                                 if(Vgetname(img_key,textbuf)==FAIL)
                                     sprintf(textbuf,"Raster Image #%d",(int)curr_image);
-                                if((new_image->name=(char *)HDgetspace(HDstrlen(textbuf)+1))==NULL)
+                                if((new_image->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
                                     HRETURN_ERROR(DFE_NOSPACE,FAIL);
                                 HDstrcpy(new_image->name,textbuf);
 
@@ -644,7 +644,7 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                                   at_info_t *new_attr;  /* attribute to add to the set of local attributes */
                                                   int32 at_key;         /* VData key for the attribute */
 
-                                                  if((new_attr=(at_info_t *)HDgetspace(sizeof(at_info_t)))==NULL)
+                                                  if((new_attr=(at_info_t *)HDmalloc(sizeof(at_info_t)))==NULL)
                                                       HRETURN_ERROR(DFE_NOSPACE,FAIL);
                                                   new_attr->ref=img_ref;
                                                   new_attr->index=new_image->lattr_count;
@@ -657,7 +657,7 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                                         if(VFnfields(at_key)!=1)
                                                           {
                                                             VSdetach(at_key);
-                                                            HDfreespace(new_attr);
+                                                            HDfree(new_attr);
                                                             break;
                                                           } /* end if */
                                                         new_attr->nt=VFfieldtype(at_key,0);
@@ -668,7 +668,7 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                                         /* Get the name of the image */
                                                         if(Vgetname(at_key,textbuf)==FAIL)
                                                             sprintf(textbuf,"Attribute #%d",(int)new_attr->index);
-                                                        if((new_attr->name=(char *)HDgetspace(HDstrlen(textbuf)+1))==NULL)
+                                                        if((new_attr->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
                                                             HRETURN_ERROR(DFE_NOSPACE,FAIL);
                                                         HDstrcpy(new_attr->name,textbuf);
                                                         tbbtdins(new_image->lattree, (VOIDP) new_attr, NULL);    /* insert the vg instance in B-tree */ 
@@ -703,9 +703,9 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                           if ((GroupID = DFdiread(file_id, DFTAG_RIG, img_info[i].grp_ref)) == FAIL)
                               HRETURN_ERROR(DFE_READERROR, FAIL);
 
-                          if((new_image=(ri_info_t *)HDgetspace(sizeof(ri_info_t)))==NULL)
+                          if((new_image=(ri_info_t *)HDmalloc(sizeof(ri_info_t)))==NULL)
                             {
-                              HDfreespace((VOIDP) img_info);   /* free offsets */
+                              HDfree((VOIDP) img_info);   /* free offsets */
                               Hclose(file_id);
                               HRETURN_ERROR(DFE_NOSPACE,FAIL);
                             } /* end if */
@@ -715,7 +715,7 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
 
                           /* Get the name of the image */
                           sprintf(textbuf,"Raster Image #%d",(int)curr_image);
-                          if((new_image->name=(char *)HDgetspace(HDstrlen(textbuf)+1))==NULL)
+                          if((new_image->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
                               HRETURN_ERROR(DFE_NOSPACE,FAIL);
                           HDstrcpy(new_image->name,textbuf);
 
@@ -842,9 +842,9 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                           char textbuf[VGNAMELENMAX + 1];    /* buffer to store the name in */
                           uint8 GRtbuf[64];         /* local buffer for reading RIG info */
 
-                          if((new_image=(ri_info_t *)HDgetspace(sizeof(ri_info_t)))==NULL)
+                          if((new_image=(ri_info_t *)HDmalloc(sizeof(ri_info_t)))==NULL)
                             {
-                              HDfreespace((VOIDP) img_info);   /* free offsets */
+                              HDfree((VOIDP) img_info);   /* free offsets */
                               Hclose(file_id);
                               HRETURN_ERROR(DFE_NOSPACE,FAIL);
                             } /* end if */
@@ -854,7 +854,7 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
 
                           /* Get the name of the image */
                           sprintf(textbuf,"Raster Image #%d",(int)curr_image);
-                          if((new_image->name=(char *)HDgetspace(HDstrlen(textbuf)+1))==NULL)
+                          if((new_image->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
                               HRETURN_ERROR(DFE_NOSPACE,FAIL);
                           HDstrcpy(new_image->name,textbuf);
 
@@ -927,7 +927,7 @@ intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                 } /* end switch */
       } /* end for */
 
-    HDfreespace((VOIDP) img_info);   /* free offsets */
+    HDfree((VOIDP) img_info);   /* free offsets */
     if (Hclose(file_id) == FAIL)
         HRETURN_ERROR(DFE_CANTCLOSE, FAIL);
     return (SUCCEED);
@@ -971,7 +971,7 @@ int32 GRstart(int32 hdf_file_id)
         HRETURN_ERROR(DFE_TABLEFULL,FAIL);
 
     /* allocate space for the GR information for this file */
-    if((gr_ptr=(gr_info_t *)HDgetspace(sizeof(gr_info_t)))==NULL)
+    if((gr_ptr=(gr_info_t *)HDmalloc(sizeof(gr_info_t)))==NULL)
         HRETURN_ERROR(DFE_NOSPACE,FAIL);
 
     /* Fire up the Vset interface */

@@ -15,7 +15,7 @@ extern char *realloc();
 
 #ifdef HDF
 #define Alloc(theNum, theType) \
-	(theType *)HDgetspace(sizeof(theType) * (theNum))
+	(theType *)HDmalloc(sizeof(theType) * (theNum))
 #else
 #define Alloc(theNum, theType) \
 	(theType *)malloc(sizeof(theType) * (theNum))
@@ -24,14 +24,14 @@ extern char *realloc();
 
 #ifndef NO_STDLIB
 #ifdef HDF
-#define Free(ptr)		HDfreespace((VOIDP)ptr)
+#define Free(ptr)		HDfree((VOIDP)ptr)
 #else
 #define Free(ptr)		free(ptr)
 #endif
 #else
 /* old style free */
 #ifdef HDF
-#define Free(ptr)		(void)HDfreespace((char *)ptr)
+#define Free(ptr)		(void)HDfree((char *)ptr)
 #else
 #define Free(ptr)		(void)free((char *)ptr)
 #endif

@@ -28,7 +28,7 @@ int size;
     if (size == 0)
       return 0;
 #ifdef HDF
-    p = (void *) HDgetspace((uint32)size);
+    p = (void *) HDmalloc((uint32)size);
 #else
     p = (void *) malloc ((unsigned) size);
 #endif
@@ -51,7 +51,7 @@ erealloc (ptr,size)		/* check return from realloc */
 	return 0;
     }
 #ifdef HDF
-    p = (void *) HDregetspace((VOIDP) ptr, (uint32) size);
+    p = (void *) HDrealloc((VOIDP) ptr, (uint32) size);
 #else
     p = (void *) realloc ((char *) ptr, (unsigned) size);
 #endif

@@ -776,7 +776,7 @@ Hendbitaccess(int32 bitfile_id, intn flushbit)
     if (bitfile_rec->mode == 'w')
         if (HIbitflush(bitfile_rec, flushbit, TRUE) == FAIL)
             HERROR(DFE_WRITEERROR);
-    HDfreespace((VOIDP) bitfile_rec->bytea);    /* free the space for the buffer */
+    HDfree((VOIDP) bitfile_rec->bytea);    /* free the space for the buffer */
     bitfile_rec->used = FALSE;
 
     return (Hendaccess(bitfile_rec->acc_id));
@@ -876,13 +876,13 @@ HIget_bitfile_slot(void)
     /* Access records not allocated yet, allocate dynamically and initialize */
     if (!bitfile_records)
       {
-          bitfile_records = (bitrec_t *) HDgetspace(MAX_BITFILE * sizeof(bitrec_t));
+          bitfile_records = (bitrec_t *) HDmalloc(MAX_BITFILE * sizeof(bitrec_t));
           if (!bitfile_records)
               return FAIL;
           for (i = 0; i < MAX_BITFILE; i++)
               bitfile_records[i].used = FALSE;
 
-          if ((bitfile_records[0].bytea = (uint8 *) HDgetspace(BITBUF_SIZE)) == NULL)
+          if ((bitfile_records[0].bytea = (uint8 *) HDmalloc(BITBUF_SIZE)) == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
           bitfile_records[0].used = TRUE;   /* use the first record */
           return (0);
@@ -892,7 +892,7 @@ HIget_bitfile_slot(void)
     for (i = 0; i < MAX_BITFILE; i++)
         if (!bitfile_records[i].used)
           {
-              if ((bitfile_records[i].bytea = (uint8 *) HDgetspace(BITBUF_SIZE)) == NULL)
+              if ((bitfile_records[i].bytea = (uint8 *) HDmalloc(BITBUF_SIZE)) == NULL)
                   HRETURN_ERROR(DFE_NOSPACE, FAIL);
               bitfile_records[i].used = TRUE;
               return (i);

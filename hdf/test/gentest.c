@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -84,7 +83,7 @@ gen_bitio_test(void)
     if ((fid = Hopen(BITIO_NAME, DFACC_CREATE, 0)) == FAIL)
         return (FAIL);
 
-    if ((bit_data = (uint8 *) HDgetspace(BITIO_SIZE1 * sizeof(uint8))) == NULL)
+    if ((bit_data = (uint8 *) HDmalloc(BITIO_SIZE1 * sizeof(uint8))) == NULL)
       {
           Hclose(fid);
           return (FAIL);
@@ -95,12 +94,12 @@ gen_bitio_test(void)
 
     if (FAIL == Hputelement(fid, BITIO_TAG1, BITIO_REF1, bit_data, BITIO_SIZE1))
       {
-          HDfreespace(bit_data);
+          HDfree(bit_data);
           Hclose(fid);
           return (FAIL);
       }     /* end if */
 
-    HDfreespace(bit_data);
+    HDfree(bit_data);
 
     if (FAIL == Hclose(fid))
         return (FAIL);
@@ -138,15 +137,15 @@ gen_nbit_test(void)
     if ((fid = Hopen(NBIT_NAME, DFACC_CREATE, 0)) == FAIL)
         return (FAIL);
 
-    if ((nbit_data = (uint8 *) HDgetspace(NBIT_SIZE1 * sizeof(uint8))) == NULL)
+    if ((nbit_data = (uint8 *) HDmalloc(NBIT_SIZE1 * sizeof(uint8))) == NULL)
       {
           Hclose(fid);
           return (FAIL);
       }     /* end if */
 
-    if ((out_data = (uint8 *) HDgetspace(NBIT_SIZE1 * sizeof(uint8))) == NULL)
+    if ((out_data = (uint8 *) HDmalloc(NBIT_SIZE1 * sizeof(uint8))) == NULL)
       {
-          HDfreespace(nbit_data);
+          HDfree(nbit_data);
           Hclose(fid);
           return (FAIL);
       }     /* end if */
@@ -178,14 +177,14 @@ gen_nbit_test(void)
 
     if (FAIL == Hputelement(fid, NBIT_TAG1, NBIT_REF1, out_data, out_num))
       {
-          HDfreespace(nbit_data);
-          HDfreespace(out_data);
+          HDfree(nbit_data);
+          HDfree(out_data);
           Hclose(fid);
           return (FAIL);
       }     /* end if */
 
-    HDfreespace(nbit_data);
-    HDfreespace(out_data);
+    HDfree(nbit_data);
+    HDfree(out_data);
 
     if (FAIL == Hclose(fid))
         return (FAIL);

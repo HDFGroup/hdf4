@@ -109,7 +109,7 @@ PRIVATE VOID hdf_register_seen_sdg(sdgRef)
 
     if(!sdgTable) {
         sdgMax = 100;
-        sdgTable = (uint16 *) HDgetspace(sdgMax * sizeof(uint16));
+        sdgTable = (uint16 *) HDmalloc(sdgMax * sizeof(uint16));
         sdgCurrent = 0;
     }
     
@@ -117,7 +117,7 @@ PRIVATE VOID hdf_register_seen_sdg(sdgRef)
     
     if(sdgCurrent == sdgMax) {
         sdgMax *= 2;
-        sdgTable = (uint16 *) HDregetspace((VOIDP) sdgTable, sdgMax * sizeof(uint16));
+        sdgTable = (uint16 *) HDrealloc((VOIDP) sdgTable, sdgMax * sizeof(uint16));
     }
 
 } /* hdf_register_seen_sdg */
@@ -173,19 +173,19 @@ PRIVATE intn hdf_read_ndgs(handle)
      *  Allocate the array to store the dimensions
      */
     max_thangs  = 100;
-    dims = (NC_dim **) HDgetspace(sizeof(NC_dim *) * max_thangs);
+    dims = (NC_dim **) HDmalloc(sizeof(NC_dim *) * max_thangs);
     if(!dims) {
         HERROR(DFE_NOSPACE);
         return FALSE;
     }
     
-    vars = (NC_var **) HDgetspace(sizeof(NC_var *) * max_thangs);
+    vars = (NC_var **) HDmalloc(sizeof(NC_var *) * max_thangs);
     if(!vars) {
         HERROR(DFE_NOSPACE);
         return FALSE;
     }
 
-    attrs = (NC_attr **) HDgetspace(sizeof(NC_attr *) * max_thangs);
+    attrs = (NC_attr **) HDmalloc(sizeof(NC_attr *) * max_thangs);
     if(!attrs) {
         HERROR(DFE_NOSPACE);
         return FALSE;
@@ -194,7 +194,7 @@ PRIVATE intn hdf_read_ndgs(handle)
     /* Check if temproray buffer has been allocated */
     if (ptbuf == NULL)
       {
-        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        ptbuf = (uint8 *)HDmalloc(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
@@ -280,11 +280,11 @@ PRIVATE intn hdf_read_ndgs(handle)
                     INT16DECODE(p, rank);
                     
                     /* get space for dimensions */
-                    dimsizes = (int32 *) HDgetspace((uint32) rank * sizeof(int32));
+                    dimsizes = (int32 *) HDmalloc((uint32) rank * sizeof(int32));
                     if (dimsizes == NULL) return FALSE;
-                    vardims = (intn *) HDgetspace((uint32) rank * sizeof(intn));
+                    vardims = (intn *) HDmalloc((uint32) rank * sizeof(intn));
                     if (vardims == NULL) return FALSE;
-                    scaletypes = (int32 *) HDgetspace((uint32) rank * sizeof(int32));
+                    scaletypes = (int32 *) HDmalloc((uint32) rank * sizeof(int32));
                     if (scaletypes == NULL) return FALSE;
                     
                     /* read dimension record */
@@ -481,7 +481,7 @@ PRIVATE intn hdf_read_ndgs(handle)
                 len = Hlength(handle->hdf_file, DFTAG_SDL, lRef);
                 if(len == FAIL) return FALSE;
                 
-                namebuf = (uint8 *) HDgetspace((uint32) len + 3);
+                namebuf = (uint8 *) HDmalloc((uint32) len + 3);
                 if(!namebuf) HRETURN_ERROR(DFE_NOSPACE, FALSE);
                 
                 if(Hgetelement(handle->hdf_file, DFTAG_SDL, lRef, namebuf) == FAIL)
@@ -501,7 +501,7 @@ PRIVATE intn hdf_read_ndgs(handle)
                 len = Hlength(handle->hdf_file, DFTAG_SDU, uRef);
                 if(len == FAIL) return FALSE;
                 
-                unitbuf = (uint8 *) HDgetspace((uint32) len);
+                unitbuf = (uint8 *) HDmalloc((uint32) len);
                 if(!unitbuf) HRETURN_ERROR(DFE_NOSPACE, FALSE);
                 
                 if(Hgetelement(handle->hdf_file, DFTAG_SDU, uRef, unitbuf) == FAIL)
@@ -517,7 +517,7 @@ PRIVATE intn hdf_read_ndgs(handle)
                 len = Hlength(handle->hdf_file, DFTAG_SDS, sRef);
                 if(len == FAIL) return FALSE;
                 
-                scalebuf = (uint8 *) HDgetspace((uint32) len);
+                scalebuf = (uint8 *) HDmalloc((uint32) len);
                 if(!scalebuf) HRETURN_ERROR(DFE_NOSPACE, FALSE);
                 
                 if(Hgetelement(handle->hdf_file, DFTAG_SDS, sRef, scalebuf) == FAIL)
@@ -579,10 +579,10 @@ PRIVATE intn hdf_read_ndgs(handle)
                         /* need to allocate more space */    
                         max_thangs *= 2;
 
-                        dims = (NC_dim **) HDregetspace((VOIDP) dims, sizeof(NC_dim *) * max_thangs);
+                        dims = (NC_dim **) HDrealloc((VOIDP) dims, sizeof(NC_dim *) * max_thangs);
                         if(!dims) HRETURN_ERROR(DFE_NOSPACE, FALSE);
                         
-                        vars = (NC_var **) HDregetspace((VOIDP) vars, sizeof(NC_var *) * max_thangs);
+                        vars = (NC_var **) HDrealloc((VOIDP) vars, sizeof(NC_var *) * max_thangs);
                         if(!vars) HRETURN_ERROR(DFE_NOSPACE, FALSE);
                         
                     }
@@ -635,10 +635,10 @@ PRIVATE intn hdf_read_ndgs(handle)
                         /* need to allocate more space */    
                         max_thangs *= 2;
 
-                        dims = (NC_dim **) HDregetspace((VOIDP)dims, sizeof(NC_dim *) * max_thangs);
+                        dims = (NC_dim **) HDrealloc((VOIDP)dims, sizeof(NC_dim *) * max_thangs);
                         if(!dims) HRETURN_ERROR(DFE_NOSPACE, FALSE);
                         
-                        vars = (NC_var **) HDregetspace((VOIDP)vars, sizeof(NC_var *) * max_thangs);
+                        vars = (NC_var **) HDrealloc((VOIDP)vars, sizeof(NC_var *) * max_thangs);
                         if(!vars) HRETURN_ERROR(DFE_NOSPACE, FALSE);
                         
                     }
@@ -696,7 +696,7 @@ PRIVATE intn hdf_read_ndgs(handle)
                 if(len != FAIL) {
                     char *tBuf;
                     
-                    tBuf = (char *)HDgetspace(sizeof(char) * (len + 1));
+                    tBuf = (char *)HDmalloc(sizeof(char) * (len + 1));
                     if(tBuf != NULL) {
                         
                         status = DFANgetdesc(handle->path, ndgTag, ndgRef, tBuf, len);
@@ -710,7 +710,7 @@ PRIVATE intn hdf_read_ndgs(handle)
                             
                         }
                         
-                        HDfreespace((VOIDP)tBuf);
+                        HDfree((VOIDP)tBuf);
                         
                     }
                 }
@@ -767,10 +767,10 @@ PRIVATE intn hdf_read_ndgs(handle)
                 /* need to allocate more space */    
                 max_thangs *= 2;
                 
-                dims = (NC_dim **) HDregetspace((VOIDP) dims, sizeof(NC_dim *) * max_thangs);
+                dims = (NC_dim **) HDrealloc((VOIDP) dims, sizeof(NC_dim *) * max_thangs);
                 if(!dims) HRETURN_ERROR(DFE_NOSPACE, FALSE);
                 
-                vars = (NC_var **) HDregetspace((VOIDP) vars, sizeof(NC_var *) * max_thangs);
+                vars = (NC_var **) HDrealloc((VOIDP) vars, sizeof(NC_var *) * max_thangs);
                 if(!vars) HRETURN_ERROR(DFE_NOSPACE, FALSE);
                 
             }
@@ -778,12 +778,12 @@ PRIVATE intn hdf_read_ndgs(handle)
             /*
              * De-allocate temporary storage
              */
-            if(namebuf)  HDfreespace((VOIDP)namebuf);
-            if(scalebuf) HDfreespace((VOIDP)scalebuf);
-            if(unitbuf)  HDfreespace((VOIDP)unitbuf);
-            HDfreespace((VOIDP)dimsizes);
-            HDfreespace((VOIDP)vardims);
-            HDfreespace((VOIDP)scaletypes);
+            if(namebuf)  HDfree((VOIDP)namebuf);
+            if(scalebuf) HDfree((VOIDP)scalebuf);
+            if(unitbuf)  HDfree((VOIDP)unitbuf);
+            HDfree((VOIDP)dimsizes);
+            HDfree((VOIDP)vardims);
+            HDfree((VOIDP)scaletypes);
             
             /*
              * Look for the next DataSet
@@ -809,9 +809,9 @@ PRIVATE intn hdf_read_ndgs(handle)
         
     } /* outermost for loop to loop between NDGs and SDGs */
     
-    HDfreespace((VOIDP)dims);
-    HDfreespace((VOIDP)vars);
-    HDfreespace((VOIDP)attrs);
+    HDfree((VOIDP)dims);
+    HDfree((VOIDP)vars);
+    HDfree((VOIDP)attrs);
 
     return TRUE;
 
@@ -852,7 +852,7 @@ NC **handlep;
     if(!status) return FALSE;
 
     /* deallocate SDG-NDG space */
-    if(sdgTable) HDfreespace((VOIDP)sdgTable);
+    if(sdgTable) HDfree((VOIDP)sdgTable);
     sdgTable = NULL;
 
     return TRUE;

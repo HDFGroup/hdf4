@@ -303,7 +303,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
     /*     depend on having it allocated, so this is the best place to put */
     /*     it, not scattered throughout the file. */
     if (ptbuf == NULL)
-        if ((ptbuf = (uint8 *) HDgetspace(TBUF_SZ * sizeof(uint8))) == NULL)
+        if ((ptbuf = (uint8 *) HDmalloc(TBUF_SZ * sizeof(uint8))) == NULL)
                         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     /* Get a space to put the file information.
@@ -525,9 +525,9 @@ Hclose(int32 file_id)
             {
                 next = bl->next;
                 if (bl->ddlist)
-                    HDfreespace((VOIDP) bl->ddlist);
+                    HDfree((VOIDP) bl->ddlist);
                 if (bl)
-                    HDfreespace((VOIDP) bl);
+                    HDfree((VOIDP) bl);
             }
 
           for (i = 0; i < HASH_MASK + 1; i++)
@@ -535,14 +535,14 @@ Hclose(int32 file_id)
                 for (p = file_rec->hash[i]; p; p = q)
                   {
                       q = p->next;
-                      HDfreespace((VOIDP) p);
+                      HDfree((VOIDP) p);
                   }
                 file_rec->hash[i] = NULL;
             }
 
           file_rec->ddhead = (ddblock_t *) NULL;
           if (file_rec->path)
-              HDfreespace(file_rec->path);
+              HDfree(file_rec->path);
           file_rec->path = (char *) NULL;
       }
 
@@ -2903,7 +2903,7 @@ HIinit_file_dds(filerec_t * file_rec, int16 ndds, char *FUNC)
         ndds = MIN_NDDS;
 
     /* allocate the dd block in memory and initialize it */
-    file_rec->ddhead = (ddblock_t *) HDgetspace(sizeof(ddblock_t));
+    file_rec->ddhead = (ddblock_t *) HDmalloc(sizeof(ddblock_t));
     if (file_rec->ddhead == (ddblock_t *) NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
     block = file_rec->ddlast = file_rec->ddhead;
@@ -2922,7 +2922,7 @@ HIinit_file_dds(filerec_t * file_rec, int16 ndds, char *FUNC)
         HRETURN_ERROR(DFE_WRITEERROR, FAIL);
 
     /* allocate and initialize dd list */
-    list = block->ddlist = (dd_t *) HDgetspace((uint32) ndds * DD_SZ);
+    list = block->ddlist = (dd_t *) HDmalloc((uint32) ndds * DD_SZ);
     if (list == (dd_t *) NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
     for (i = 0; i < ndds; i++)
@@ -3604,7 +3604,7 @@ HIget_file_slot(const char *path, char *FUNC)
           /* The array has not been allocated.  Allocating file records
              dynamically. */
 
-          file_records = (filerec_t *) HDgetspace((uint32) MAX_FILE * sizeof(filerec_t));
+          file_records = (filerec_t *) HDmalloc((uint32) MAX_FILE * sizeof(filerec_t));
           if (!file_records)
             {
                 HERROR(DFE_NOSPACE);
@@ -3624,7 +3624,7 @@ HIget_file_slot(const char *path, char *FUNC)
 
           file_records[0].version_set = FALSE;
 
-          file_records[0].path = HDgetspace(HDstrlen(path) + 1);
+          file_records[0].path = HDmalloc(HDstrlen(path) + 1);
           if (file_records[0].path)
               HDstrcpy(file_records[0].path, path);
           return file_records[0].path ? 0 : FAIL;
@@ -3661,7 +3661,7 @@ HIget_file_slot(const char *path, char *FUNC)
     file_records[slot].version_set = FALSE;
 
     if (file_records[slot].path)
-        HDfreespace(file_records[slot].path);
+        HDfree(file_records[slot].path);
     file_records[slot].path = (char *) HDstrdup((char *) path);
     return file_records[slot].path ? slot : FAIL;
 
@@ -3723,7 +3723,7 @@ HIget_access_slot(void)
        Allocate dynamically and initialize */
     if (!access_records)
       {
-          access_records = (accrec_t *) HDgetspace(MAX_ACC * sizeof(accrec_t));
+          access_records = (accrec_t *) HDmalloc(MAX_ACC * sizeof(accrec_t));
           if (!access_records)
               return FAIL;
 #ifdef OLD_WAY
@@ -3781,7 +3781,7 @@ HInew_dd_block(filerec_t * file_rec, int16 ndds, char *FUNC)
         HRETURN_ERROR(DFE_INTERNAL, FAIL);
 
     /* allocate new dd block record and fill in data */
-    if ((block = (ddblock_t *) HDgetspace(sizeof(ddblock_t))) == NULL)
+    if ((block = (ddblock_t *) HDmalloc(sizeof(ddblock_t))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
     block->ndds = ndds;
     block->next = (ddblock_t *) NULL;
@@ -3807,7 +3807,7 @@ HInew_dd_block(filerec_t * file_rec, int16 ndds, char *FUNC)
 
     /* set up the dd list of this dd block and put it in the file
        after the dd block header */
-    list = block->ddlist = (dd_t *) HDgetspace((uint32) ndds * DD_SZ);
+    list = block->ddlist = (dd_t *) HDmalloc((uint32) ndds * DD_SZ);
     if (list == (dd_t *) NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
     for (i = 0; i < ndds; i++)
@@ -3898,7 +3898,7 @@ HIfill_file_rec(filerec_t * file_rec, char *FUNC)
     uint32      end_off = 0;    /* offset of the end of the file */
 
     /* Alloc start of linked list of ddblocks. */
-    file_rec->ddhead = (ddblock_t *) HDgetspace(sizeof(ddblock_t));
+    file_rec->ddhead = (ddblock_t *) HDmalloc(sizeof(ddblock_t));
     if (file_rec->ddhead == (ddblock_t *) NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
@@ -3938,7 +3938,7 @@ HIfill_file_rec(filerec_t * file_rec, char *FUNC)
           /* Now that we know how many dd's are in this block,
              alloc memory for the records. */
           file_rec->ddlast->ddlist =
-              (dd_t *) HDgetspace((uint32) FILE_NDDS(file_rec) * DD_SZ);
+              (dd_t *) HDmalloc((uint32) FILE_NDDS(file_rec) * DD_SZ);
           if (!file_rec->ddlast->ddlist)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
@@ -4005,7 +4005,7 @@ HIfill_file_rec(filerec_t * file_rec, char *FUNC)
             {   /* More ddblocks in the file */
 
                 /* extend the linked list */
-                file_rec->ddlast->next = (ddblock_t *) HDgetspace((uint32) sizeof(ddblock_t));
+                file_rec->ddlast->next = (ddblock_t *) HDmalloc((uint32) sizeof(ddblock_t));
                 if (file_rec->ddlast->next == (ddblock_t *) NULL)
                     HRETURN_ERROR(DFE_NOSPACE, FAIL);
 

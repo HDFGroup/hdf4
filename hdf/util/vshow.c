@@ -190,7 +190,7 @@ main(int ac, char **av)
       {
 
           printf("Lone vdatas:\n");
-          if (NULL == (lonevs = (int32 *) HDgetspace(sizeof(int) * nlone)))
+          if (NULL == (lonevs = (int32 *) HDmalloc(sizeof(int) * nlone)))
             {
                 printf("%s: File has %d lone vdatas but ", av[0], (int) nlone);
                 printf("cannot alloc lonevs space. Quit.\n");
@@ -220,7 +220,7 @@ main(int ac, char **av)
                     vsdumpfull(vs);
                 VSdetach(vs);
             }
-          HDfreespace((VOIDP) lonevs);
+          HDfree((VOIDP) lonevs);
       }
 
     Vend(f);
@@ -330,7 +330,7 @@ vsdumpfull(int32 vs)
       }
 
     done = 0;
-    bb = (uint8 *) HDgetspace(bufsize);
+    bb = (uint8 *) HDmalloc(bufsize);
     if (bb == NULL)
       {
           printf("vsdumpfull malloc error\n");
@@ -441,7 +441,7 @@ vsdumpfull(int32 vs)
 
     /* ============================================ */
 
-    HDfreespace((VOIDP) bb);
+    HDfree((VOIDP) bb);
     printf("\n\n");
 
     return (1);

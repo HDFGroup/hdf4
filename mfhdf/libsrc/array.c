@@ -228,7 +228,7 @@ const void *values ;
 	NC_array *ret ;
 	size_t memlen ;
 
-	ret = (NC_array *)HDgetspace(sizeof(NC_array)) ;
+	ret = (NC_array *)HDmalloc(sizeof(NC_array)) ;
 	if( ret == NULL )
 		goto alloc_err ;
 
@@ -245,7 +245,7 @@ const void *values ;
 #endif
     if( count != 0 )
 	{
-		ret->values = (Void*)HDgetspace(memlen) ;
+		ret->values = (Void*)HDmalloc(memlen) ;
 #ifdef DEBUG
   fprintf(stderr, "NC_new_array(): ret->values=%p, values=%p\n",ret->values,values);
 #endif
@@ -455,7 +455,7 @@ Void *tail ;
 		return(NULL) ;
 	}
 
-	array->values = (Void*)HDregetspace(array->values,
+	array->values = (Void*)HDrealloc(array->values,
 		(array->count +1) * array->szof) ;
 	if(array->values == NULL)
 	{

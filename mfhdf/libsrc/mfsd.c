@@ -888,7 +888,7 @@ int32 nt, rank, *dimsizes;
     }
 
     /* make fake dimensions which may or may not be over-ridden later */
-    dims = (intn *) HDgetspace(rank * sizeof(intn));
+    dims = (intn *) HDmalloc(rank * sizeof(intn));
     if(dims == NULL)
         return FAIL;
 
@@ -966,7 +966,7 @@ int32 nt, rank, *dimsizes;
     handle->flags |= NC_HDIRTY;
 
     /* free dims */
-    HDfreespace((VOIDP)dims);
+    HDfree((VOIDP)dims);
 
     return sdsid;
 
@@ -3493,7 +3493,7 @@ int32 *sizes;
     /* allocate some space for the ragged dimension if needed */
     /* BUG: will need to be changed for ragged records */
     if(var->rag_list == NULL) {
-        var->rag_list = (int32 *) HDgetspace(sizeof(int32) * var->dsizes[0]);
+        var->rag_list = (int32 *) HDmalloc(sizeof(int32) * var->dsizes[0]);
         if(var->rag_list == NULL) return FAIL;
     }
 

@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -122,7 +121,7 @@ nduif2i(int32 *hdim, int32 *vdim, float32 *max, float32 *min, float32 hscale[],
     fn = HDf2cstring(outfile, *lenfn);
     ret = DFUfptoimage(*hdim, *vdim, *max, *min, hscale, vscale, data,
                 _fcdtocp(palette), fn, *ct_method, *hres, *vres, *compress);
-    HDfreespace(fn);
+    HDfree(fn);
     return (ret);
 }
 
@@ -214,12 +213,12 @@ process(Input * in, Output * out)
        *  allocate buffers for output and scales
      */
     if (!in->is_hscale)
-        in->hscale = (float32 *) HDgetspace((uint32) (1 + in->hdim) * sizeof(float32));
+        in->hscale = (float32 *) HDmalloc((uint32) (1 + in->hdim) * sizeof(float32));
     if (!in->is_vscale)
-        in->vscale = (float32 *) HDgetspace((uint32) (1 + in->vdim) * sizeof(float32));
+        in->vscale = (float32 *) HDmalloc((uint32) (1 + in->vdim) * sizeof(float32));
     out->hres = (out->hres <= in->hdim) ? in->hdim : out->hres;
     out->vres = (out->vres <= in->vdim) ? in->vdim : out->vres;
-    out->image = (uint8 *) HDgetspace((uint32) out->hres * out->vres);
+    out->image = (uint8 *) HDmalloc((uint32) out->hres * out->vres);
 
     /*
        *  if necessary, generate x and y scales
@@ -251,10 +250,10 @@ process(Input * in, Output * out)
        *  free allocated space
      */
     if (!in->is_hscale)
-        HDfreespace((char *) in->hscale);
+        HDfree((char *) in->hscale);
     if (!in->is_vscale)
-        HDfreespace((char *) in->vscale);
-    HDfreespace((char *) out->image);
+        HDfree((char *) in->vscale);
+    HDfree((char *) out->image);
     return 0;
 }   /* end of process */
 
@@ -403,12 +402,12 @@ convert_interp(Input * in, Output * out)
     delx = xrange / out->hres;  /* x axis increment in image */
     dely = yrange / out->vres;  /* y axis increment in image */
 
-    dxs = (float32 *) HDgetspace((uint32) sizeof(float32) * out->hres);
+    dxs = (float32 *) HDmalloc((uint32) sizeof(float32) * out->hres);
     /* temp space for dx's */
-    dys = (float32 *) HDgetspace((uint32) sizeof(float32) * out->vres);
+    dys = (float32 *) HDmalloc((uint32) sizeof(float32) * out->vres);
     /* temp space for dy's */
-    xinc = (uint8 *) HDgetspace((uint32) out->hres);
-    yoffs = (int32 *) HDgetspace((uint32) (out->vres + 1) * sizeof(int32));
+    xinc = (uint8 *) HDmalloc((uint32) out->hres);
+    yoffs = (int32 *) HDmalloc((uint32) (out->vres + 1) * sizeof(int32));
     yoffs[0] = 0;
 
     if (range < 0)
@@ -526,10 +525,10 @@ convert_interp(Input * in, Output * out)
                     *p++ = (uint8) theval;
             }
       }
-    HDfreespace((char *) dxs);
-    HDfreespace((char *) dys);
-    HDfreespace((char *) xinc);
-    HDfreespace((char *) yoffs);
+    HDfree((char *) dxs);
+    HDfree((char *) dys);
+    HDfree((char *) xinc);
+    HDfree((char *) yoffs);
     return 0;
 }   /* end of convert_interp */
 
@@ -575,9 +574,9 @@ pixrep_scaled(Input * in, Output * out)
     if (range < 0)
         range = -range;     /* max must be > min */
 
-    hoffsets = (int32 *) HDgetspace((uint32) (out->hres + 1) * sizeof(int32));
-    voffsets = (int32 *) HDgetspace((uint32) (out->vres + 1) * sizeof(int32));
-    pixvals = (uint8 *) HDgetspace((uint32) in->hdim + 1);
+    hoffsets = (int32 *) HDmalloc((uint32) (out->hres + 1) * sizeof(int32));
+    voffsets = (int32 *) HDmalloc((uint32) (out->vres + 1) * sizeof(int32));
+    pixvals = (uint8 *) HDmalloc((uint32) in->hdim + 1);
     compute_offsets(in->hscale, in->hdim, hoffsets, out->hres);
     compute_offsets(in->vscale, in->vdim, voffsets, out->vres);
 
@@ -610,9 +609,9 @@ pixrep_scaled(Input * in, Output * out)
             }
           prevoffset = voffsets[i];
       }
-    HDfreespace((char *) hoffsets);
-    HDfreespace((char *) voffsets);
-    HDfreespace((char *) pixvals);
+    HDfree((char *) hoffsets);
+    HDfree((char *) voffsets);
+    HDfree((char *) pixvals);
     return 0;
 }   /* end of pixrep_scaled */
 
@@ -642,7 +641,7 @@ compute_offsets(float32 *scale, int32 dim, int32 *offsets, int32 res)
     int32       i, j;
     float32    *midpt, pt, delta;
 
-    midpt = (float32 *) HDgetspace((uint32) sizeof(float32) * dim);
+    midpt = (float32 *) HDmalloc((uint32) sizeof(float32) * dim);
 
     for (i = 0; i < dim - 1; i++)
       {     /* compute all midpoints */
@@ -666,7 +665,7 @@ compute_offsets(float32 *scale, int32 dim, int32 *offsets, int32 res)
                 j++;
             }
       }
-    HDfreespace((char *) midpt);
+    HDfree((char *) midpt);
     return 0;
 }   /* end of compute_offsets */
 

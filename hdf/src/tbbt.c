@@ -24,8 +24,8 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hdf.h"
 #define TBBT_INTERNALS
 #include "tbbt.h"
-#define   Alloc(cnt,typ)   (typ *) HDgetspace( (cnt) * sizeof(typ) )
-#define   Free(x)           (HDfreespace((VOIDP)x))
+#define   Alloc(cnt,typ)   (typ *) HDmalloc( (cnt) * sizeof(typ) )
+#define   Free(x)           (HDfree((VOIDP)x))
 
 # define   KEYcmp(k1,k2,a)   (  (NULL!=compar) ? (*compar)( k1, k2, a)         \
                              : HDmemcmp( k1, k2, 0<(a) ? (a) : HDstrlen(k1) )  )

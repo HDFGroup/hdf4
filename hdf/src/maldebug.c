@@ -141,12 +141,12 @@ static void mem_list_delete(MEMHDR *);  /* Delete block from list */
 
 /*----------------------------------------------------------------------
  *
- *  mem_HDgetspace()
+ *  mem_HDmalloc()
  *  Allocate a memory block
  *
  *  Usage:
  *
- *  void *mem_HDgetspace(size_t size)
+ *  void *mem_HDmalloc(size_t size)
  *
  *  Parameters:
  *
@@ -159,7 +159,7 @@ static void mem_list_delete(MEMHDR *);  /* Delete block from list */
  *
  *  Description:
  *
- *  mem_HDgetspace() makes a protected call to HDgetspace()
+ *  mem_HDmalloc() makes a protected call to HDmalloc()
  *
  *  Notes
  *
@@ -169,7 +169,7 @@ static void mem_list_delete(MEMHDR *);  /* Delete block from list */
  */
 
 void       *
-mem_HDgetspace(
+mem_HDmalloc(
 #if defined(MEM_WHERE)
                   size_t size,
                   char *fil,
@@ -184,7 +184,7 @@ mem_HDgetspace(
 
 /* Allocate memory block */
 /* --------------------- */
-    p = HDgetspace(RESERVE_SIZE + size + HEADER_SIZE);
+    p = HDmalloc(RESERVE_SIZE + size + HEADER_SIZE);
     if (p == NULL)
       {
           fprintf(stdaux, "NULL pointer malloc'ed in %s, line %d\n", fil, lin);
@@ -217,12 +217,12 @@ mem_HDgetspace(
 
 /*----------------------------------------------------------------------
  *
- *  mem_HDregetspace()
+ *  mem_HDrealloc()
  *  Reallocate a memory block
  *
  *  Usage:
  *
- *  void *mem_HDregetspace(void *ptr,size_t size)
+ *  void *mem_HDrealloc(void *ptr,size_t size)
  *
  *  Parameters:
  *
@@ -236,7 +236,7 @@ mem_HDgetspace(
  *
  *  Description:
  *
- *  mem_HDregetspace() makes a protected call to HDregetspace().
+ *  mem_HDrealloc() makes a protected call to HDrealloc().
  *
  *  Notes:
  *
@@ -246,7 +246,7 @@ mem_HDgetspace(
  */
 
 void       *
-mem_HDregetspace(
+mem_HDrealloc(
 #if defined(MEM_WHERE)
                     void *ptr,
                     size_t size,
@@ -264,11 +264,11 @@ mem_HDregetspace(
     unsigned char *q;
     int         i;
 #endif
-    char       *FUNC = "HDregetspace";
+    char       *FUNC = "HDrealloc";
 
 /* Check for equivalent to malloc() call, i.e. where ptr==NULL */
     if (ptr == NULL)
-        return (mem_HDgetspace(size
+        return (mem_HDmalloc(size
 #if defined(MEM_WHERE)
                                ,fil, lin
 #endif
@@ -330,7 +330,7 @@ mem_HDregetspace(
 
 /* Reallocate memory block */
 /* ----------------------- */
-    p = (MEMHDR *) HDregetspace(p, RESERVE_SIZE + size + HEADER_SIZE);
+    p = (MEMHDR *) HDrealloc(p, RESERVE_SIZE + size + HEADER_SIZE);
     if (p == NULL)
         return (NULL);
 
@@ -360,12 +360,12 @@ mem_HDregetspace(
 
 /*----------------------------------------------------------------------
  *
- *  mem_HDfreespace()
+ *  mem_HDfree()
  *  Free a memory block
  *
  *  Usage:
  *
- *  void mem_HDfreespace(void   *ptr)
+ *  void mem_HDfree(void   *ptr)
  *
  *  Parameters:
  *
@@ -377,18 +377,18 @@ mem_HDregetspace(
  *
  *  Description:
  *
- *  mem_HDfreespace() frees the specified memory block. The
- *  block must be allocated using mem_HDgetspace() or mem_HDregetspace().
+ *  mem_HDfree() frees the specified memory block. The
+ *  block must be allocated using mem_HDmalloc() or mem_HDrealloc().
  *
  *  Notes
  *
- *  Access this routine using the HDfreespace() macro in maldebug.h
+ *  Access this routine using the HDfree() macro in maldebug.h
  *
  *
  */
 
 void       *
-mem_HDfreespace(
+mem_HDfree(
 #if defined(MEM_WHERE)
                    void *ptr,
                    char *fil,
@@ -404,11 +404,11 @@ mem_HDfreespace(
     unsigned char *q;
     uintn       i;
 #endif
-    char       *FUNC = "HDfreespace";
+    char       *FUNC = "HDfree";
 
 #ifdef PC
     if (ptr == NULL)
-        return (HDfreespace(ptr));
+        return (HDfree(ptr));
 #endif
 
 /* Convert client pointer to header pointer */
@@ -465,7 +465,7 @@ mem_HDfreespace(
 
 /* Free memory block */
 /* ----------------- */
-    return (HDfreespace(p));
+    return (HDfree(p));
 }   /* end mem_free() */
 
 /************************************************************************/

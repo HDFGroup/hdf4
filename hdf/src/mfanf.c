@@ -90,7 +90,7 @@ nacstart(_fcd filename, intf *acc_mode, intf *namelen)
     return FAIL;
 
   ret = ANstart(fn, (int32) *acc_mode);
-  HDfreespace((VOIDP) fn);
+  HDfree((VOIDP) fn);
 
   return (ret);
 } /* nacstart() */
@@ -259,7 +259,7 @@ nafannlist(intf *file_id, intf *atype, intf *etag, intf *eref, intf alist[])
 
   /* create annlist with true int32s to maintain compatibility
   ** with machines that allocate less than 32 bits per int. */
-  if ((tempanlist = (int32 *) HDgetspace(nanns * sizeof(int32))) == NULL)
+  if ((tempanlist = (int32 *) HDmalloc(nanns * sizeof(int32))) == NULL)
     HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
   /* Get list of annoation handles to return */
@@ -272,7 +272,7 @@ nafannlist(intf *file_id, intf *atype, intf *etag, intf *eref, intf alist[])
   for (i = 0; i < nanns; i++)
     alist[i] = tempanlist[i];
 
-  HDfreespace((VOIDP) tempanlist); /* free allocated space */
+  HDfree((VOIDP) tempanlist); /* free allocated space */
 
   return ret;
 } /* nafannlist() */

@@ -142,8 +142,8 @@ const long *coords ;
              * Set up the array strg to hold the fill values
              */
 	    len = (vp->len / vp->HDFsize) * vp->szof;
-            strg = (Void *) HDgetspace(len);
-            strg1 = (Void *) HDgetspace(len);
+            strg = (Void *) HDmalloc(len);
+            strg1 = (Void *) HDmalloc(len);
             attr = NC_findattr(&vp->attrs, _FillValue);
 
             if(attr != NULL)
@@ -199,8 +199,8 @@ const long *coords ;
                 handle->numrecs = *ip + 1;
                 handle->flags |= NC_NDIRTY;
             }
-            HDfreespace((VOIDP)strg);
-            HDfreespace((VOIDP)strg1);
+            HDfree((VOIDP)strg);
+            HDfree((VOIDP)strg1);
 
             return (TRUE);
         }
@@ -727,7 +727,7 @@ NC_var *vp;
     to_do   = chunk_size / vp->HDFsize;     /* number of values in a chunk */
     
     len = to_do * vp->szof;                 /* size of buffer for fill values */
-    values = (Void *) HDgetspace(len);      /* buffer to hold unconv fill vals */
+    values = (Void *) HDmalloc(len);      /* buffer to hold unconv fill vals */
     byte_count = to_do * vp->HDFsize;       /* external buffer size */
 
     if(!attr) {
@@ -758,9 +758,9 @@ NC_var *vp;
 
     /* make sure our tmp buffer is big enough to hold everything */
     if(tBuf_size < byte_count) {
-        if(tBuf) HDfreespace((VOIDP)tBuf);
+        if(tBuf) HDfree((VOIDP)tBuf);
         tBuf_size = byte_count;
-        tBuf = (int8 *) HDgetspace(byte_count);
+        tBuf = (int8 *) HDmalloc(byte_count);
     }
 
     /*
@@ -831,7 +831,7 @@ NC_var *vp;
     fprintf(stderr, "Done with the DATA Vdata returning id %d\n", vsid);
 #endif
 
-    HDfreespace((VOIDP)values);
+    HDfree((VOIDP)values);
     vp->aid = FAIL;
 
     /* added a new object -- make sure we flush the header */
@@ -971,9 +971,9 @@ uint32    count;
 
     /* make sure our tmp buffer is big enough to hold everything */
     if(platntsubclass!=outntsubclass && tBuf_size < byte_count) {
-        if(tBuf) HDfreespace((VOIDP)tBuf);
+        if(tBuf) HDfree((VOIDP)tBuf);
         tBuf_size = byte_count;
-        tBuf = (int8 *) HDgetspace(tBuf_size);
+        tBuf = (int8 *) HDmalloc(tBuf_size);
         if(tBuf == NULL) return FALSE;
     }
     
@@ -1107,9 +1107,9 @@ uint32    count;
     /* make sure our tmp buffer is big enough to hold everything */
     byte_count = count * vp->HDFsize;
     if(tBuf_size < byte_count) {
-        if(tBuf) HDfreespace((VOIDP)tBuf);
+        if(tBuf) HDfree((VOIDP)tBuf);
         tBuf_size = byte_count;
-        tBuf = (int8 *) HDgetspace(tBuf_size);
+        tBuf = (int8 *) HDmalloc(tBuf_size);
         if(tBuf == NULL) return FALSE;
     }
     

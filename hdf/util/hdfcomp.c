@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
         copy_fdesc,         /* flag to indicate to copy file descriptions */
         copy_ilabel,        /* flag to indicate to copy image labels */
         copy_idesc;         /* flag to indicate to copy image descriptions */
-    char *annbuf;           /* buffer to store annotations in */
+    char *annbuf=NULL;      /* buffer to store annotations in */
     uint32 annbuflen=0;     /* length of the annotation buffer */
 
     if (argc < 3) { 
@@ -120,8 +120,8 @@ int main(int argc, char *argv[])
                     while((annlen=DFANgetfidlen(old_fid,isfirst))!=FAIL) {
                         if(annbuflen==0 || annlen>annbuflen) {
                             if(annbuflen!=0)
-                                HDfreespace(annbuf);
-                            if((annbuf=(char *)HDgetspace(annlen))==NULL) {
+                                HDfree(annbuf);
+                            if((annbuf=(char *)HDmalloc(annlen))==NULL) {
                                 printf("Error allocating buffer for annotation, aborting!\n");
                                 exit(1);
                               } /* end if */
@@ -141,8 +141,8 @@ int main(int argc, char *argv[])
                     while((annlen=DFANgetfdslen(old_fid,isfirst))!=FAIL) {
                         if(annbuflen==0 || annlen>annbuflen) {
                             if(annbuflen!=0)
-                                HDfreespace(annbuf);
-                            if((annbuf=(char *)HDgetspace(annlen))==NULL) {
+                                HDfree(annbuf);
+                            if((annbuf=(char *)HDmalloc(annlen))==NULL) {
                                 printf("Error allocating buffer for annotation, aborting!\n");
                                 exit(1);
                               } /* end if */
@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
             /* copy the images over */
             while (DFR8getdims(argv[i], &xdim, &ydim, &ispal) >= 0) {
                 prevref = DFR8lastref();
-                if ((space = (uint8 *) HDgetspace(xdim * ydim)) == NULL) {
+                if ((space = (uint8 *) HDmalloc(xdim * ydim)) == NULL) {
                     printf("Not enough memory to convert image");
                     exit(1);
                 }
@@ -199,8 +199,8 @@ int main(int argc, char *argv[])
                         if((annlen=DFANgetlablen(argv[i],image_tag,prevref))!=FAIL) {
                             if(annbuflen==0 || annlen>annbuflen) {
                                 if(annbuflen!=0)
-                                    HDfreespace(annbuf);
-                                if((annbuf=(char *)HDgetspace(annlen))==NULL) {
+                                    HDfree(annbuf);
+                                if((annbuf=(char *)HDmalloc(annlen))==NULL) {
                                     printf("Error allocating buffer for annotation, aborting!\n");
                                     exit(1);
                                   } /* end if */
@@ -217,8 +217,8 @@ int main(int argc, char *argv[])
                         if((annlen=DFANgetdesclen(argv[i],image_tag,prevref))!=FAIL) {
                             if(annbuflen==0 || annlen>annbuflen) {
                                 if(annbuflen!=0)
-                                    HDfreespace(annbuf);
-                                if((annbuf=(char *)HDgetspace(annlen))==NULL) {
+                                    HDfree(annbuf);
+                                if((annbuf=(char *)HDmalloc(annlen))==NULL) {
                                     printf("Error allocating buffer for annotation, aborting!\n");
                                     exit(1);
                                   } /* end if */
@@ -237,14 +237,14 @@ int main(int argc, char *argv[])
                 ret = DFR8readref(argv[i], prevref);
                 ret = DFR8getdims(argv[i], &xdim, &ydim, &ispal);
 
-                HDfreespace((VOIDP)space);
+                HDfree((VOIDP)space);
             }
         }
     }
 
     Hclose(out_fid); /* remember to close the file */
     if(annbuflen!=0)    /* and free the buffer space */
-        HDfreespace(annbuf);
+        HDfree(annbuf);
 
     return(0);
 }

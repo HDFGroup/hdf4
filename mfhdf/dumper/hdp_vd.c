@@ -92,9 +92,9 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
 		case 'i':	/* dump by index */
 		    dumpvd_opts->filter=DINDEX;	
                     (*curr_arg)++;
-		    string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN);	
+		    string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);	
 		    ptr = argv[*curr_arg];
-		    dumpvd_opts->filter_num = (int*)HDgetspace(sizeof(int)*
+		    dumpvd_opts->filter_num = (int*)HDmalloc(sizeof(int)*
 					      (charcount(ptr, ',')+1));
 		    lastItem = 0;
 		    /* Extract each index from the index list and store it 
@@ -116,9 +116,9 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
                 case 'r':       /* dump by reference */
                     dumpvd_opts->filter=DREFNUM;
 		    (*curr_arg)++;
-		    string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN);	
+		    string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);	
                     ptr = argv[*curr_arg];
-		    dumpvd_opts->filter_num = (int*)HDgetspace(sizeof(int)*
+		    dumpvd_opts->filter_num = (int*)HDmalloc(sizeof(int)*
 					      (charcount(ptr, ',')+1));
                     lastItem = 0;
                     for (i=0; !lastItem; i++) {
@@ -127,7 +127,7 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
                           lastItem = 1;
                        else
                           *tempPtr = '\0';
-		       string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN);	
+		       string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);	
                        strcpy(string, ptr);
                        dumpvd_opts->filter_num[i] = atoi(string);
                        ptr = tempPtr + 1;
@@ -149,7 +149,7 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
 			  lastItem = 1;
 		       else 
 			  *tempPtr = '\0';
-		       string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN);	
+		       string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);	
 		       strcpy(string, ptr);
 		       dumpvd_opts->filter_str[i] = string;
 		       ptr = tempPtr +1;
@@ -169,7 +169,7 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
 			  lastItem = 1;
 		       else
 			  *tempPtr = '\0';
-		       string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN);
+		       string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);
 		       strcpy(string,ptr);
 		       dumpvd_opts->filter_str[i] = string;
 		       ptr = tempPtr + 1;
@@ -192,7 +192,7 @@ intn parse_dumpvd_opts(dump_info_t *dumpvd_opts,intn *curr_arg,intn argc,
 			  lastItem = 1;
 		       else
 			  *tempPtr = '\0';
-		       string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN); 
+		       string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN); 
 		       strcpy(string, ptr); 
 		       flds_chosen[i] = string;
 		       ptr = tempPtr + 1;
@@ -581,7 +581,7 @@ static intn dvd(dump_info_t *dumpvd_opts, intn curr_arg,
 		    /* read in all of the annotations */
 		    len = DFANgetdesclen(file_name,vdata_tag,vdata_ref);
 		    if (len != FAIL) {
-		       label_str = (char *) HDgetspace((uint32) len + 1);
+		       label_str = (char *) HDmalloc((uint32) len + 1);
 		       status = DFANgetdesc(file_name,vdata_tag,vdata_ref,
 					    label_str,len+1);
 		       label_str[len] = '\0';
@@ -589,7 +589,7 @@ static intn dvd(dump_info_t *dumpvd_opts, intn curr_arg,
 		          printf("\t  Unable to read description.\n");
                        else
 		          printf("\t  Description: %s\n",label_str);
-                       HDfreespace(label_str);
+                       HDfree(label_str);
                     } /* if (len != FAIL) */
 	         case DHEADER: /* header only, no annotations nor data */
 		    if (dumpvd_opts->contents == DHEADER) 

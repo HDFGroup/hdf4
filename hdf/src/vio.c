@@ -84,7 +84,7 @@ vsinstance(HFILEID f, uint16 vsid)
     /* Check if vfile buffer has been allocated */
     if (vfile == NULL)
       {
-          vfile = (vfile_t *) HDgetspace(MAX_VFILE * sizeof(vfile_t));
+          vfile = (vfile_t *) HDmalloc(MAX_VFILE * sizeof(vfile_t));
           if (vfile == NULL)
               HRETURN_ERROR(DFE_NOSPACE, NULL);
       }
@@ -357,9 +357,9 @@ vsdestroynode(VOIDP n)
 
     vs = ((vsinstance_t *) n)->vs;
     if (vs != NULL)
-        HDfreespace((VOIDP) vs);
+        HDfree((VOIDP) vs);
 
-    HDfreespace((VOIDP) n);
+    HDfree((VOIDP) n);
 
 }   /* vsdestroynode */
 
@@ -390,14 +390,14 @@ VDATA _HUGE *VSPgetinfo(HFILEID f,uint16 ref)
     uint8       *vspack;
  
     /* allocate space for vs,  & zero it out  */
-    if ( (vs=(VDATA*) HDgetspace (sizeof(VDATA))) == NULL)
+    if ( (vs=(VDATA*) HDmalloc (sizeof(VDATA))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, NULL);
  
     /* need to fetch from file */
-    if ( (vspack= (uint8 *) HDgetspace (sizeof(VWRITELIST))) == NULL)
+    if ( (vspack= (uint8 *) HDmalloc (sizeof(VWRITELIST))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, NULL);
     if (Hgetelement(f,DFTAG_VH,ref,vspack) == FAIL) {
-        HDfreespace((VOIDP)vspack);
+        HDfree((VOIDP)vspack);
         HRETURN_ERROR(DFE_NOVS, NULL);
       } /* end if */
  
@@ -413,7 +413,7 @@ VDATA _HUGE *VSPgetinfo(HFILEID f,uint16 ref)
  
     vs->vm      = (VMBLOCK*) NULL; /* always NULL for "r" */
  
-    HDfreespace((VOIDP)vspack);
+    HDfree((VOIDP)vspack);
  
     return(vs);
 } /* end VSPgetinfo() */
@@ -484,7 +484,7 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
     /* Check if vfile buffer has been allocated */
     if (vfile == NULL)
       {
-          vfile = (vfile_t *) HDgetspace(MAX_VFILE * sizeof(vfile_t));
+          vfile = (vfile_t *) HDmalloc(MAX_VFILE * sizeof(vfile_t));
           if (vfile == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
@@ -508,7 +508,7 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
 
           /* otherwise 'w' */
           /* allocate space for vs,  & zero it out  */
-          if ((vs = (VDATA *) HDgetspace(sizeof(VDATA))) == NULL)
+          if ((vs = (VDATA *) HDmalloc(sizeof(VDATA))) == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
           vs->nvertices = 0;
@@ -520,7 +520,7 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
           if (vs->oref == 0)
             {
                 HERROR(DFE_NOREF);
-                HDfreespace((VOIDP) vs);
+                HDfree((VOIDP) vs);
                 return (FAIL);
             }
 
@@ -542,7 +542,7 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
           vs->aid = 0;
 
           /* attach new vs to file's vstab */
-          if (NULL == (w = (vsinstance_t *) HDgetspace(sizeof(vsinstance_t))))
+          if (NULL == (w = (vsinstance_t *) HDmalloc(sizeof(vsinstance_t))))
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
           vf->vstabn++;
@@ -581,16 +581,16 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
 	    }
 	  else
 	    {   /* allocate space for vs,  & zero it out  */
-		if ((vs = (VDATA *) HDgetspace(sizeof(VDATA))) == NULL)
+		if ((vs = (VDATA *) HDmalloc(sizeof(VDATA))) == NULL)
 		    HRETURN_ERROR(DFE_NOSPACE, FAIL);
 	    }
 
 	  /* need to fetch from file */
-	  if ((vspack = (uint8 *) HDgetspace(sizeof(VWRITELIST))) == NULL)
+	  if ((vspack = (uint8 *) HDmalloc(sizeof(VWRITELIST))) == NULL)
 	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
 	  if (Hgetelement(f, DFTAG_VH, (uint16) vsid, vspack) == FAIL)
 	    {
-		HDfreespace((VOIDP) vspack);
+		HDfree((VOIDP) vspack);
 		HRETURN_ERROR(DFE_NOVS, FAIL);
 	    }	
 
@@ -606,7 +606,7 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
 
 	  vs->vm = (VMBLOCK *) NULL;	/* always NULL for "r" */
 
-	  HDfreespace((VOIDP) vspack);
+	  HDfree((VOIDP) vspack);
 #endif /* OLD_WAY */
 
 	  vs->access = 'r';
@@ -645,16 +645,16 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
 	    }
 	  else
 	    {   /* allocate space */
-		if ((vs = (VDATA *) HDgetspace(sizeof(VDATA))) == NULL)
+		if ((vs = (VDATA *) HDmalloc(sizeof(VDATA))) == NULL)
 		    HRETURN_ERROR(DFE_NOSPACE, FAIL);
 	    }
 
 	  /* need to fetch from file */
-	  if ((vspack = (uint8 *) HDgetspace(sizeof(VWRITELIST))) == NULL)
+	  if ((vspack = (uint8 *) HDmalloc(sizeof(VWRITELIST))) == NULL)
 	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
 	  if (Hgetelement(f, DFTAG_VH, (uint16) vsid, vspack) == FAIL)
 	    {
-		HDfreespace((VOIDP) vspack);
+		HDfree((VOIDP) vspack);
 		HRETURN_ERROR(DFE_NOMATCH, FAIL);
 	    }	/* end if */
 
@@ -669,7 +669,7 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
 	  vs->marked = 0;
 	  vs->vm = (VMBLOCK *) NULL;
 
-      HDfreespace((VOIDP) vspack);
+      HDfree((VOIDP) vspack);
 #endif /* OLD_WAY */
 
 	  vs->access = 'w';
@@ -747,7 +747,7 @@ VSdetach(int32 vkey)
 #endif /* OLD_WAY */
 		Hendaccess(vs->aid);
 #ifdef OLD_WAY
-		HDfreespace((VOIDP) vs);
+		HDfree((VOIDP) vs);
 #endif /* OLD_WAY */
 /*
    not needed if we free all the time
@@ -763,11 +763,11 @@ VSdetach(int32 vkey)
 
     if (vs->marked)
       {	  /* if marked , write out vdata's VSDESC to file */
-	  if ((vspack = (uint8 *) HDgetspace(sizeof(VWRITELIST))) == NULL)
+	  if ((vspack = (uint8 *) HDmalloc(sizeof(VWRITELIST))) == NULL)
 	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
 	  vpackvs(vs, vspack, &vspacksize);
 	  ret = Hputelement(vs->f, VSDESCTAG, vs->oref, vspack, vspacksize);
-	  HDfreespace((VOIDP) vspack);
+	  HDfree((VOIDP) vspack);
 	  if (ret == FAIL)
 	      HRETURN_ERROR(DFE_WRITEERROR, FAIL);
 	  vs->marked = 0;
@@ -775,13 +775,13 @@ VSdetach(int32 vkey)
 
     /* remove all defined symbols */
     for (i = 0; i < vs->nusym; i++)
-        HDfreespace((VOIDP) vs->usym[i].name);
+        HDfree((VOIDP) vs->usym[i].name);
     vs->nusym = 0;
 
     Hendaccess(vs->aid);
 #ifdef OLD_WAY
     w->vs = NULL;   /* detach vs from vsdir */
-    HDfreespace((VOIDP) vs);
+    HDfree((VOIDP) vs);
 #endif /* OLD_WAY */
 
     return (SUCCEED);
@@ -853,7 +853,7 @@ VSgetid(HFILEID f, int32 vsid)
     /* Check if vfile buffer has been allocated */
     if (vfile == NULL)
       {
-          vfile = (vfile_t *) HDgetspace(MAX_VFILE * sizeof(vfile_t));
+          vfile = (vfile_t *) HDmalloc(MAX_VFILE * sizeof(vfile_t));
           if (vfile == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
@@ -1031,7 +1031,7 @@ VSdelete(int32 f, int32 vsid)
     /* Check if vfile buffer has been allocated */
     if (vfile == NULL)
       {
-          vfile = (vfile_t *) HDgetspace(MAX_VFILE * sizeof(vfile_t));
+          vfile = (vfile_t *) HDmalloc(MAX_VFILE * sizeof(vfile_t));
           if (vfile == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }

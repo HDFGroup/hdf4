@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -130,7 +129,7 @@ ndaiganl(_fcd filename, intf * tag, intf * ref, intf * type, intf * fnlen)
 
     fn = HDf2cstring(filename, (intn) *fnlen);
     ret = DFANIgetannlen(fn, (uint16) *tag, (uint16) *ref, (intn) *type);
-    HDfreespace((VOIDP) fn);
+    HDfree((VOIDP) fn);
 
     return (ret);
 }
@@ -159,7 +158,7 @@ ndaigann(_fcd filename, intf * tag, intf * ref, _fcd annotation, intf * maxlen,
     fn = HDf2cstring(filename, (intn) *fnlen);
     ret = DFANIgetann(fn, (uint16) *tag, (uint16) *ref,
              (uint8 *) _fcdtocp(annotation), (int32) *maxlen, (intn) *type);
-    HDfreespace((VOIDP) fn);
+    HDfree((VOIDP) fn);
 
     return (ret);
 }
@@ -188,7 +187,7 @@ ndaipann(_fcd filename, intf * tag, intf * ref, _fcd annotation,
     fn = HDf2cstring(filename, (intn) *fnlen);
     ret = DFANIputann(fn, (uint16) *tag, (uint16) *ref,
              (uint8 *) _fcdtocp(annotation), (int32) *annlen, (intn) *type);
-    HDfreespace((VOIDP) fn);
+    HDfree((VOIDP) fn);
     return (ret);
 }
 
@@ -237,8 +236,8 @@ ndailist(_fcd filename, intf * tag, intf reflist[], _fcd labellist,
     for (i = 0; i < *listsize; i++)
         reflist[i] = tempreflist[i];
 
-    HDfreespace((VOIDP) fn);
-    HDfreespace((VOIDP) tempreflist);
+    HDfree((VOIDP) fn);
+    HDfree((VOIDP) tempreflist);
 
     return (nrefs);
 }

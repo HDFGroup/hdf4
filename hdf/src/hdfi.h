@@ -1220,16 +1220,25 @@ extern uint8 FAR *DFtbuf;
 #define CONSTR(v,s) char v[]=s
 #endif
 
+/* Old-style memory allocation function aliases -QAK */
+#ifdef QAK
+#define HDgetspace HDmalloc
+#define HDclearspace HDcalloc
+#define HDregetspace HDrealloc
+#define HDfreespace HDfree
+#endif /* QAK */
+
 /**************************************************************************
 *  Allocation functions defined differently for PC's under MS-DOS and Windows
 **************************************************************************/
 #if !(defined PC & !defined PC386) & !defined MALLOC_CHECK
-#  define HDgetspace(s)      (malloc(s))
-#  define HDclearspace(a,b)  (calloc(a,b))
-#  define HDfreespace(p)     (free(p))
-#  define HDregetspace(p,s)  (realloc(p,s))
+#  define HDmalloc(s)      (malloc(s))
+#  define HDcalloc(a,b)    (calloc(a,b))
+#  define HDfree(p)        (free(p))
+#  define HDrealloc(p,s)   (realloc(p,s))
 #endif /* PC & !defined PC386 */
-#define HDfreenclear(p) { if((p)!=NULL) HDfreespace(p); p=NULL; }
+/* Macro to free space and clear pointer to NULL */
+#define HDfreenclear(p) { if((p)!=NULL) HDfree(p); p=NULL; }
 
 /**************************************************************************
 *  String functions defined differently under MS Windows
@@ -1251,7 +1260,7 @@ extern uint8 FAR *DFtbuf;
 #  define HDstrncmp(s1,s2,n)    (strncmp((s1),(s2),(n)))
 #  define HDstrncpy(s1,s2,n)    (strncpy((s1),(s2),(n)))
 #  define HDstrchr(s,c)    (strchr((s),(c)))
-/* Can't use on PCs. strdup() uses malloc() and HDgetspace uses halloc() */
+/* Can't use on PCs. strdup() uses malloc() and HDmalloc uses halloc() */
 #if !(defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL | defined NEXT | defined CONVEX)
 #  define HDstrdup(s)      (strdup((s)))
 #endif /* !(VMS | PC) */

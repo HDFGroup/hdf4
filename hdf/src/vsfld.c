@@ -343,7 +343,7 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
     if ((vs->usym[usymid].isize = (int16) DFKNTsize((int32) localtype)) == FAIL)
         HRETURN_ERROR(DFE_BADTYPE, FAIL);
 
-    if ((ss = (char *) HDgetspace(HDstrlen(av[0]) + 1)) == NULL)
+    if ((ss = (char *) HDmalloc(HDstrlen(av[0]) + 1)) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     HDstrcpy(ss, av[0]);

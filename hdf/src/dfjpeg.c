@@ -66,7 +66,7 @@ hdf_init_destination(struct jpeg_compress_struct *cinfo_ptr)
     hdf_dest_ptr dest=(hdf_dest_ptr)cinfo_ptr->dest;
     int32 temp_aid;
 
-    if((dest->buffer=HDgetspace(sizeof(JOCTET)*OUTPUT_BUF_SIZE))==NULL)
+    if((dest->buffer=HDmalloc(sizeof(JOCTET)*OUTPUT_BUF_SIZE))==NULL)
         ERREXIT1(cinfo_ptr, JERR_OUT_OF_MEMORY, (int)1);
 
     /* Create empty JPEG5/GREYJPEG5 tag/ref to indicate the image */
@@ -130,7 +130,7 @@ hdf_term_destination(struct jpeg_compress_struct *cinfo_ptr)
     Hendaccess(dest->aid);
 
     /* Free the output buffer */
-    HDfreespace(dest->buffer);
+    HDfree(dest->buffer);
 
 } /* end hdf_term_destination() */
 
@@ -158,7 +158,7 @@ jpeg_HDF_dest(struct jpeg_compress_struct *cinfo_ptr, int32 file_id, uint16 tag,
     CONSTR(FUNC, "jpeg_HDF_dest");     /* for HERROR */
     hdf_dest_ptr dest;
 
-    if((dest=HDgetspace(sizeof(hdf_destination_mgr)))==NULL)
+    if((dest=HDmalloc(sizeof(hdf_destination_mgr)))==NULL)
         HRETURN_ERROR(DFE_NOSPACE,FAIL);
 
     cinfo_ptr->dest=(struct jpeg_destination_mgr *)dest;
@@ -193,7 +193,7 @@ intn
 jpeg_HDF_dest_term(struct jpeg_compress_struct *cinfo_ptr)
 {
     /* all we need to do for now is to free up the dest. mgr structure */
-    HDfreespace(cinfo_ptr->dest);
+    HDfree(cinfo_ptr->dest);
 
     return(SUCCEED);
 } /* end jpeg_HDF_dest_term() */
@@ -234,10 +234,10 @@ DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim,
     intn row_stride;
     uint8 *image_buffer=(uint8 *)image;
 
-    if((cinfo_ptr=HDgetspace(sizeof(struct jpeg_compress_struct)))==NULL)
+    if((cinfo_ptr=HDmalloc(sizeof(struct jpeg_compress_struct)))==NULL)
         HRETURN_ERROR(DFE_NOSPACE,FAIL);
 
-    if((jerr_ptr=HDgetspace(sizeof(struct jpeg_error_mgr)))==NULL)
+    if((jerr_ptr=HDmalloc(sizeof(struct jpeg_error_mgr)))==NULL)
         HRETURN_ERROR(DFE_NOSPACE,FAIL);
 
     /* Initialize the error-handling routines */
@@ -292,8 +292,8 @@ DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim,
     jpeg_HDF_dest_term(cinfo_ptr);
 
     /* Free update memory allocated */
-    HDfreespace(jerr_ptr);
-    HDfreespace(cinfo_ptr);
+    HDfree(jerr_ptr);
+    HDfree(cinfo_ptr);
 
     return (SUCCEED);   /* we must be ok... */
 }   /* end DFCIjpeg() */

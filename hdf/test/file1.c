@@ -35,8 +35,8 @@ test_hfile1()
 #ifdef QAK
     int32      *files, *accs;
 
-    files = HDgetspace(BIG * sizeof(int32));
-    accs = HDgetspace(BIG * sizeof(int32));
+    files = HDmalloc(BIG * sizeof(int32));
+    accs = HDmalloc(BIG * sizeof(int32));
     if (!files || !accs)
       {
           fprintf(stderr, "Out of memory!\n");
@@ -114,7 +114,7 @@ test_hfile1()
 
     ret = Hclose(files[0]);
 #ifdef QAK
-    HDfreespace((VOIDP) files);
-    HDfreespace((VOIDP) accs);
+    HDfree((VOIDP) files);
+    HDfree((VOIDP) accs);
 #endif
 }

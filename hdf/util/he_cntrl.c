@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -146,7 +145,7 @@ HEnext(HE_CMD * cmd)
     if (predicates[0].key != 0)
       {
           if (he_predicates)
-              HDfreespace(he_predicates);
+              HDfree(he_predicates);
           he_predicates = predicates;
       }
 
@@ -199,7 +198,7 @@ HEprev(HE_CMD * cmd)
     if (predicates[0].key != 0)
       {
           if (he_predicates)
-              HDfreespace(he_predicates);
+              HDfree(he_predicates);
           he_predicates = predicates;
       }
 
@@ -365,7 +364,7 @@ dump(int32 length, int offset, char *format, int raw_flag)
           case 'i':
               {
                   int32 *idata;
-                  idata = (int32 *) HDgetspace(length / 4 * sizeof(int32));
+                  idata = (int32 *) HDmalloc(length / 4 * sizeof(int32));
 
                   DFKconvert((VOIDP) (data + offset), (VOIDP) idata, DFNT_INT32 | raw_flag,
                              length / 4, DFACC_READ, 0, 0);
@@ -380,14 +379,14 @@ dump(int32 length, int offset, char *format, int raw_flag)
                           }
                     }
                   printf("\n");
-                  HDfreespace((VOIDP) idata);
+                  HDfree((VOIDP) idata);
               }
               break;
 
           case 'd':
               {
                   uint32 *idata;
-                  idata = (uint32 *) HDgetspace(length / 4 * sizeof(int32));
+                  idata = (uint32 *) HDmalloc(length / 4 * sizeof(int32));
 
                   DFKconvert((VOIDP) (data + offset), (VOIDP) idata, DFNT_UINT32 | raw_flag,
                              length / 4, DFACC_READ, 0, 0);
@@ -402,13 +401,13 @@ dump(int32 length, int offset, char *format, int raw_flag)
                           }
                     }
                   printf("\n");
-                  HDfreespace((VOIDP) idata);
+                  HDfree((VOIDP) idata);
               }
               break;
           case 'j':
               {
                   int16 *sdata;
-                  sdata = (int16 *) HDgetspace(length / 2 * sizeof(int16));
+                  sdata = (int16 *) HDmalloc(length / 2 * sizeof(int16));
                   DFKconvert((VOIDP) (data + offset), (VOIDP) sdata, DFNT_INT16 | raw_flag,
                              length / 2, DFACC_READ, 0, 0);
 
@@ -423,14 +422,14 @@ dump(int32 length, int offset, char *format, int raw_flag)
                           }
                     }
                   printf("\n");
-                  HDfreespace((VOIDP) sdata);
+                  HDfree((VOIDP) sdata);
               }
               break;
 
           case 's':
               {
                   uint16 *sdata;
-                  sdata = (uint16 *) HDgetspace(length / 2 * sizeof(uint16));
+                  sdata = (uint16 *) HDmalloc(length / 2 * sizeof(uint16));
 
                   DFKconvert((VOIDP) (data + offset), (VOIDP) sdata, DFNT_UINT16 | raw_flag,
                              length / 2, DFACC_READ, 0, 0);
@@ -445,14 +444,14 @@ dump(int32 length, int offset, char *format, int raw_flag)
                           }
                     }
                   printf("\n");
-                  HDfreespace((VOIDP) sdata);
+                  HDfree((VOIDP) sdata);
               }
               break;
 
           case 'b':
               {
                   uint8 *bdata;
-                  bdata = (uint8 *) HDgetspace(length);
+                  bdata = (uint8 *) HDmalloc(length);
 
                   DFKconvert((VOIDP) (data + offset), (VOIDP) bdata, DFNT_UINT8 | raw_flag,
                              length, DFACC_READ, 0, 0);
@@ -467,7 +466,7 @@ dump(int32 length, int offset, char *format, int raw_flag)
                           }
                     }
                   printf("\n");
-                  HDfreespace((VOIDP) bdata);
+                  HDfree((VOIDP) bdata);
               }
               break;
 
@@ -488,7 +487,7 @@ dump(int32 length, int offset, char *format, int raw_flag)
                           }
                     }
                   printf("\n");
-                  HDfreespace((VOIDP) idata);
+                  HDfree((VOIDP) idata);
               }
               break;
 
@@ -509,7 +508,7 @@ dump(int32 length, int offset, char *format, int raw_flag)
                           }
                     }
                   printf("\n");
-                  HDfreespace((VOIDP) idata);
+                  HDfree((VOIDP) idata);
               }
               break;
 
@@ -537,7 +536,7 @@ dump(int32 length, int offset, char *format, int raw_flag)
           case 'f':
               {
                   float32 *fdata;
-                  fdata = (float32 *) HDgetspace(length / 4 * sizeof(float32));
+                  fdata = (float32 *) HDmalloc(length / 4 * sizeof(float32));
 
                   DFKconvert((VOIDP) (data + offset), (VOIDP) fdata, DFNT_FLOAT32 | raw_flag,
                              length / 4, DFACC_READ, 0, 0);
@@ -553,14 +552,14 @@ dump(int32 length, int offset, char *format, int raw_flag)
                           }
                     }
                   printf("\n");
-                  HDfreespace((VOIDP) fdata);
+                  HDfree((VOIDP) fdata);
               }
               break;
 
           case 'e':
               {
                   float64 *fdata;
-                  fdata = (float64 *) HDgetspace(length / 8 * sizeof(float64));
+                  fdata = (float64 *) HDmalloc(length / 8 * sizeof(float64));
 
                   DFKconvert((VOIDP) (data + offset), (VOIDP) fdata, DFNT_FLOAT64 | raw_flag,
                              length / 8, DFACC_READ, 0, 0);
@@ -576,7 +575,7 @@ dump(int32 length, int offset, char *format, int raw_flag)
                           }
                     }
                   printf("\n");
-                  HDfreespace((VOIDP) fdata);
+                  HDfree((VOIDP) fdata);
               }
               break;
 
@@ -586,7 +585,7 @@ dump(int32 length, int offset, char *format, int raw_flag)
 
       }
 
-    HDfreespace(data);
+    HDfree(data);
 
     return HE_OK;
 }
@@ -690,7 +689,7 @@ info(int all, int longout, int group, int label)
       }
     else
       {
-          mark = (int *) HDclearspace(he_numDesc, sizeof(int));
+          mark = (int *) HDcalloc(he_numDesc, sizeof(int));
 
           if (all)
             {
@@ -1145,7 +1144,7 @@ nextWord(char **p)
         s++;
     len = (unsigned) (s - q);
 
-    word = (char *) HDgetspace(len + 1);
+    word = (char *) HDmalloc(len + 1);
     HDstrncpy(word, q, len);
     word[len] = '\0';
 
@@ -1167,7 +1166,7 @@ parseCmd(char **p)
     if (!(**p))
         return NULL;
 
-    cmd = (HE_CMD *) HDclearspace(1, sizeof(HE_CMD));
+    cmd = (HE_CMD *) HDcalloc(1, sizeof(HE_CMD));
     cmd->next = cmd->sub = (HE_CMD *) NULL;
     cmd->argc = 1;
     cmd->argv[0] = nextWord(p);
@@ -1305,7 +1304,7 @@ mkDupCmd(HE_CMD * cmd)
     int i;
     HE_CMD     *dupCmd;
 
-    dupCmd = (HE_CMD *) HDclearspace(1, sizeof(HE_CMD));
+    dupCmd = (HE_CMD *) HDcalloc(1, sizeof(HE_CMD));
     dupCmd->func = cmd->func;
     dupCmd->argc = cmd->argc;
     dupCmd->next = dupCmd->sub = (HE_CMD *) NULL;
@@ -1415,9 +1414,9 @@ int
 resetPred(void)
 {
     if (he_predicates != NULL)
-        HDfreespace(he_predicates);
+        HDfree(he_predicates);
 
-    he_predicates = (HE_PRED *) HDclearspace(2, sizeof(HE_PRED));
+    he_predicates = (HE_PRED *) HDcalloc(2, sizeof(HE_PRED));
     he_predicates[0].key = HEK_GROUP;
     he_predicates[1].key = 0;
 
@@ -1540,7 +1539,7 @@ parsePred(int argc, char *argv[])
     char       *s;
     char       *tok;
 
-    pred = (HE_PRED *) HDclearspace(HE_PRED_SZ, sizeof(HE_PRED));
+    pred = (HE_PRED *) HDcalloc(HE_PRED_SZ, sizeof(HE_PRED));
 
     for (i = 1; i < argc; i++)
       {
@@ -1558,10 +1557,10 @@ parsePred(int argc, char *argv[])
                   {
                       if ((key = findKey(tok)) == HE_NOTFOUND)
                         {
-                            HDfreespace(pred);
+                            HDfree(pred);
                             return NULL;
                         }
-                      HDfreespace(tok);
+                      HDfree(tok);
                   }
 
                 switch (state)
@@ -1571,7 +1570,7 @@ parsePred(int argc, char *argv[])
                           if (!(key & HE_PREDICATE))
                             {
                                 fprintf(stderr, "Parse error: %s.\n", argv[i]);
-                                HDfreespace(pred);
+                                HDfree(pred);
                                 return NULL;
                             }
                           pred[++predNum].key = key & ~(HE_PREDICATE | HE_COMPARATOR);
@@ -1595,7 +1594,7 @@ parsePred(int argc, char *argv[])
                           else
                             {
                                 fprintf(stderr, "Parse error: %s.\n", argv[i]);
-                                HDfreespace(pred);
+                                HDfree(pred);
                                 return NULL;
                             }
                           break;
@@ -1692,7 +1691,7 @@ nextToken(char **p)
         while (*s && !isalnum(*s))
             s++;
 
-    q = tok = (char *) HDgetspace((s - (*p)) + 1);
+    q = tok = (char *) HDmalloc((s - (*p)) + 1);
     while (*p != s)
         *q++ = *(*p)++;
     *q = '\0';

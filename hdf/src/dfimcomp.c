@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -192,7 +191,7 @@ DFCIimcomp(int32 xdim, int32 ydim, uint8 in[], uint8 out[],
     fillin_color(blocks);
     if (color_pt)
       {
-          HDfreespace((VOIDP) color_pt);
+          HDfree((VOIDP) color_pt);
           color_pt = NULL;
       }     /* end if */
 
@@ -307,8 +306,8 @@ init_global(int32 xdim, int32 ydim, VOIDP out, VOIDP out_pal)
     image = (unsigned char *) out;
     new_pal = (unsigned char *) out_pal;
     if (color_pt)
-        HDfreespace((VOIDP) color_pt);
-    color_pt = (struct rgb *) HDgetspace((unsigned) ((xdim * ydim) / 8) *
+        HDfree((VOIDP) color_pt);
+    color_pt = (struct rgb *) HDmalloc((unsigned) ((xdim * ydim) / 8) *
                                          sizeof(struct rgb));
 
     if (image == NULL || color_pt == NULL || new_pal == NULL)
@@ -656,11 +655,11 @@ init(int blocks, int distinct, struct rgb *color_pt)
 
     /* alloc memory */
     if (hist)
-        HDfreespace((VOIDP) hist);
+        HDfree((VOIDP) hist);
     if (distinct_pt)
-        HDfreespace((VOIDP) distinct_pt);
-    hist = (int *) HDgetspace((unsigned) distinct * sizeof(int));
-    distinct_pt = (struct rgb *) HDgetspace((unsigned) distinct *
+        HDfree((VOIDP) distinct_pt);
+    hist = (int *) HDmalloc((unsigned) distinct * sizeof(int));
+    distinct_pt = (struct rgb *) HDmalloc((unsigned) distinct *
                                             sizeof(struct rgb));
 
     for (i = 0; i < distinct; i++)
@@ -689,7 +688,7 @@ init(int blocks, int distinct, struct rgb *color_pt)
       }
 
     /* set up first box */
-    first = (struct box *) HDgetspace(sizeof(struct box));
+    first = (struct box *) HDmalloc(sizeof(struct box));
     for (i = RED; i <= BLUE; i++)
       {
           first->bnd[i][LO] = (float32) 999.9;
@@ -708,21 +707,21 @@ init(int blocks, int distinct, struct rgb *color_pt)
           first->bnd[i][HI] = first->bnd[i][HI] + (float32) EPSILON;
       }     /* end of for i */
 
-    first->pts = (int *) HDgetspace((unsigned) distinct * sizeof(int));
+    first->pts = (int *) HDmalloc((unsigned) distinct * sizeof(int));
     for (i = 0; i < distinct; i++)
         first->pts[i] = i;
     first->nmbr_pts = 2 * blocks;
     first->nmbr_distinct = distinct;
 
-    dummy = (struct box *) HDgetspace(sizeof(struct box));
+    dummy = (struct box *) HDmalloc(sizeof(struct box));
     frontier = dummy;
     dummy->right = first;
     first->left = dummy;
     first->right = NULL;
     dummy->nmbr_pts = 0;
 
-    HDfreespace((VOIDP) first);
-    HDfreespace((VOIDP) dummy);
+    HDfree((VOIDP) first);
+    HDfree((VOIDP) dummy);
 }   /* end of init */
 
 /************************************************************************/
@@ -867,8 +866,8 @@ split_box(struct box * ptr)
     median = find_med(ptr, dim);
 
     /* create 2 child */
-    l_child = (struct box *) HDgetspace(sizeof(struct box));
-    r_child = (struct box *) HDgetspace(sizeof(struct box));
+    l_child = (struct box *) HDmalloc(sizeof(struct box));
+    r_child = (struct box *) HDmalloc(sizeof(struct box));
 
     for (i = RED; i <= BLUE; i++)
         for (j = HI; j <= LO; j++)
@@ -1012,7 +1011,7 @@ find_med(struct box *ptr, int dim)
     int        *rank;
     float32     median;
 
-    rank = (int *) HDgetspace((unsigned) ptr->nmbr_distinct * sizeof(int));
+    rank = (int *) HDmalloc((unsigned) ptr->nmbr_distinct * sizeof(int));
     for (i = 0; i < ptr->nmbr_distinct; i++)
         rank[i] = ptr->pts[i];
 
@@ -1042,7 +1041,7 @@ find_med(struct box *ptr, int dim)
     else
         median = (float32) distinct_pt[rank[prev - 1]].c[dim] + (float32) EPSILON;
 
-    HDfreespace((VOIDP) rank);
+    HDfree((VOIDP) rank);
     return median;
 }   /* end of find_med */
 
@@ -1065,7 +1064,7 @@ classify(struct box * ptr, struct box * child)
     int        *temp;
     int         distinct, total;
 
-    temp = (int *) HDgetspace((unsigned) ptr->nmbr_distinct * sizeof(int));
+    temp = (int *) HDmalloc((unsigned) ptr->nmbr_distinct * sizeof(int));
 
     distinct = 0;
     total = 0;
@@ -1089,11 +1088,11 @@ classify(struct box * ptr, struct box * child)
     /* assign points */
     child->nmbr_pts = total;
     child->nmbr_distinct = distinct;
-    child->pts = (int *) HDgetspace((unsigned) distinct * sizeof(int));
+    child->pts = (int *) HDmalloc((unsigned) distinct * sizeof(int));
     for (i = 0; i < distinct; i++)
         child->pts[i] = temp[i];
 
-    HDfreespace((VOIDP) temp);
+    HDfree((VOIDP) temp);
 
 }   /* end of classify */
 

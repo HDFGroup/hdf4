@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -191,16 +190,16 @@ extern      "C"
                 (void);
 
 #if (defined PC && !defined PC386) || defined MALLOC_CHECK
-    extern VOIDP HDgetspace
+    extern VOIDP HDmalloc
                 (uint32 qty);
 
-    extern VOIDP HDregetspace
+    extern VOIDP HDrealloc
                 (VOIDP where, uint32 qty);
 
-    extern VOIDP HDclearspace
+    extern VOIDP HDcalloc
                 (uint32 n, uint32 size);
 
-    extern void HDfreespace
+    extern void HDfree
                 (VOIDP ptr);
 
 #endif                          /* (defined PC && !defined PC386) || defined MALLOC_CHECK */

@@ -106,7 +106,7 @@ nd2igdim(_fcd filename, intf * pxdim, intf * pydim, intf * pil, intf * fnlen)
 
     fn = HDf2cstring(filename, (intn) *fnlen);
     ret = DF24getdims(fn, (int32 *) pxdim, (int32 *) pydim, (intn *) pil);
-    HDfreespace((VOIDP) fn);
+    HDfree((VOIDP) fn);
     return (ret);
 }
 
@@ -131,7 +131,7 @@ nd2igimg(_fcd filename, _fcd image, intf * xdim, intf * ydim, intf * fnlen)
 
     fn = HDf2cstring(filename, (intn) *fnlen);
     ret = DF24getimage(fn, (VOIDP) _fcdtocp(image), *xdim, *ydim);
-    HDfreespace((VOIDP) fn);
+    HDfree((VOIDP) fn);
     return (ret);
 }
 
@@ -162,7 +162,7 @@ nd2iaimg(_fcd filename, _fcd image, intf * xdim, intf * ydim, intf * fnlen,
     fn = HDf2cstring(filename, (intn) *fnlen);
     ret = DFGRIaddimlut(fn, (VOIDP) _fcdtocp(image), *xdim, *ydim,
                         IMAGE, 1, (intn) *newfile);
-    HDfreespace((VOIDP) fn);
+    HDfree((VOIDP) fn);
     return (ret);
 }
 
@@ -396,7 +396,7 @@ nd2irref(_fcd filename, intf * ref, intf * fnlen)
 
     fn = HDf2cstring(filename, (intn) *fnlen);
     ret = DFGRreadref(fn, (uint16) *ref);
-    HDfreespace((VOIDP) fn);
+    HDfree((VOIDP) fn);
     return (ret);
 }
 
@@ -419,7 +419,7 @@ nd2inimg(_fcd filename, intf * fnlen)
 
     fn = HDf2cstring(filename, (intn) *fnlen);
     ret = DF24nimages(fn);
-    HDfreespace((VOIDP) fn);
+    HDfree((VOIDP) fn);
     return (ret);
 } /* end nd2inimg */
 

@@ -160,11 +160,11 @@ HCIcskphuff_init(accrec_t * access_rec)
     skphuff_info->offset = 0;   /* start at the beginning of the data */
 
     /* allocate pointers to the compression buffers */
-    if ((skphuff_info->left = (uintn **) HDgetspace(sizeof(uintn *) * skphuff_info->skip_size)) == NULL)
+    if ((skphuff_info->left = (uintn **) HDmalloc(sizeof(uintn *) * skphuff_info->skip_size)) == NULL)
                     HRETURN_ERROR(DFE_NOSPACE, FAIL);
-    if ((skphuff_info->right = (uintn **) HDgetspace(sizeof(uintn *) * skphuff_info->skip_size)) == NULL)
+    if ((skphuff_info->right = (uintn **) HDmalloc(sizeof(uintn *) * skphuff_info->skip_size)) == NULL)
                     HRETURN_ERROR(DFE_NOSPACE, FAIL);
-    if ((skphuff_info->up = (uint8 **) HDgetspace(sizeof(uint8 *) * skphuff_info->skip_size)) == NULL)
+    if ((skphuff_info->up = (uint8 **) HDmalloc(sizeof(uint8 *) * skphuff_info->skip_size)) == NULL)
                     HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
 #ifdef TESTING
@@ -173,11 +173,11 @@ HCIcskphuff_init(accrec_t * access_rec)
     /* allocate compression buffer for each skipping byte */
     for (i = 0; i < skphuff_info->skip_size; i++)
       {
-          if ((skphuff_info->left[i] = (uintn *) HDgetspace(sizeof(uintn) * SUCCMAX)) == NULL)
+          if ((skphuff_info->left[i] = (uintn *) HDmalloc(sizeof(uintn) * SUCCMAX)) == NULL)
                           HRETURN_ERROR(DFE_NOSPACE, FAIL);
-          if ((skphuff_info->right[i] = (uintn *) HDgetspace(sizeof(uintn) * SUCCMAX)) == NULL)
+          if ((skphuff_info->right[i] = (uintn *) HDmalloc(sizeof(uintn) * SUCCMAX)) == NULL)
                           HRETURN_ERROR(DFE_NOSPACE, FAIL);
-          if ((skphuff_info->up[i] = (uint8 *) HDgetspace(sizeof(uint8) * TWICEMAX)) == NULL)
+          if ((skphuff_info->up[i] = (uint8 *) HDmalloc(sizeof(uint8) * TWICEMAX)) == NULL)
                           HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }     /* end for */
 
@@ -534,23 +534,23 @@ HCPcgzip_seek(accrec_t * access_rec, int32 offset, int origin)
               HRETURN_ERROR(DFE_CINIT, FAIL);
       }     /* end if */
 
-    if ((tmp_buf = (uint8 *) HDgetspace(TMP_BUF_SIZE)) == NULL)     /* get tmp buffer */
+    if ((tmp_buf = (uint8 *) HDmalloc(TMP_BUF_SIZE)) == NULL)     /* get tmp buffer */
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     while (skphuff_info->offset + TMP_BUF_SIZE < offset)    /* grab chunks */
         if (HCIcskphuff_decode(info, TMP_BUF_SIZE, tmp_buf) == FAIL)
           {
-              HDfreespace(tmp_buf);
+              HDfree(tmp_buf);
               HRETURN_ERROR(DFE_CDECODE, FAIL);
           }     /* end if */
     if (skphuff_info->offset < offset)  /* grab the last chunk */
         if (HCIcskphuff_decode(info, offset - skphuff_info->offset, tmp_buf) == FAIL)
           {
-              HDfreespace(tmp_buf);
+              HDfree(tmp_buf);
               HRETURN_ERROR(DFE_CDECODE, FAIL);
           }     /* end if */
 
-    HDfreespace(tmp_buf);
+    HDfree(tmp_buf);
     return (SUCCEED);
 #endif /* LATER */
     return(FAIL);   /* until this routine is finished */

@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -114,7 +113,7 @@ ndfiopen(_fcd name, intf * acc_mode, intf * defdds, intf * namelen)
 
     fn = DFIf2cstring(name, (intn) *namelen);
     ret = (int32) DFopen(fn, (intn) *acc_mode, (intn) *defdds);
-    HDfreespace((VOIDP) fn);
+    HDfree((VOIDP) fn);
     return (ret);
 }
 
@@ -151,7 +150,7 @@ ndfdesc(intf * dfile, intf ptr[][4], intf * begin, intf * num)
     intf        num_desc;
 
     /* allocate temporary space */
-    ptr1 = (DFdesc *) HDgetspace((uint32) *num * sizeof(DFdesc));
+    ptr1 = (DFdesc *) HDmalloc((uint32) *num * sizeof(DFdesc));
     num_desc = DFdescriptors((DF *) * dfile, ptr1, (intn) *begin, (intn) *num);
 
     /* copy ptr1 array  ptr; note row/column inversion */
@@ -163,7 +162,7 @@ ndfdesc(intf * dfile, intf ptr[][4], intf * begin, intf * num)
           ptr[i][3] = ptr1[i].length;
       }
 
-    HDfreespace((VOIDP) ptr1);
+    HDfree((VOIDP) ptr1);
 
     return (num_desc);
 }
@@ -221,7 +220,7 @@ ndfiaccess(intf * dfile, intf * tag, intf * ref, _fcd acc_mode, intf * acclen)
 
     acc = DFIf2cstring(acc_mode, (intn) *acclen);
     ret = (int32) DFaccess((DF *) * dfile, (uint16) *tag, (uint16) *ref, acc);
-    HDfreespace((VOIDP) acc);
+    HDfree((VOIDP) acc);
     return (ret);
 }
 
@@ -379,14 +378,14 @@ ndffind(intf * dfile, intf * itag, intf * iref, intf * len)
     DFdesc     *ptr1;
     intf        ret;
 
-    ptr1 = (DFdesc *) HDgetspace((uint32) sizeof(DFdesc));
+    ptr1 = (DFdesc *) HDmalloc((uint32) sizeof(DFdesc));
     ret = DFfind((DF *) * dfile, ptr1);
 
     *itag = (int32) (ptr1->tag);
     *iref = (int32) (ptr1->ref);
     *len = ptr1->length;
 
-    HDfreespace((VOIDP) ptr1);
+    HDfree((VOIDP) ptr1);
 
     return (ret);
 }
@@ -471,6 +470,6 @@ ndfiishdf(_fcd name, intf * namelen)
 
     fn = DFIf2cstring(name, (intn) *namelen);
     ret = DFishdf(fn);
-    HDfreespace((VOIDP) fn);
+    HDfree((VOIDP) fn);
     return (ret);
 }

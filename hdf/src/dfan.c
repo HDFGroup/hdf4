@@ -534,7 +534,7 @@ DFANIopen(const char *filename, intn acc_mode)
     /* Check if filename buffer has been allocated */
     if (Lastfile == NULL)
       {
-          Lastfile = (char *) HDgetspace((DF_MAXFNLEN + 1) * sizeof(char));
+          Lastfile = (char *) HDmalloc((DF_MAXFNLEN + 1) * sizeof(char));
           *Lastfile = '\0';     /* initialize with 0-length string */
           if (Lastfile == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -551,12 +551,12 @@ DFANIopen(const char *filename, intn acc_mode)
           for (p = DFANdir[0]; p != NULL; p = q)
             {   /* free linked list space */
                 q = p->next;
-                HDfreespace((VOIDP) p);
+                HDfree((VOIDP) p);
             }
           for (p = DFANdir[1]; p != NULL; p = q)
             {
                 q = p->next;
-                HDfreespace((VOIDP) p);
+                HDfree((VOIDP) p);
             }
           DFANdir[0] = DFANdir[1] = NULL;
       }
@@ -624,7 +624,7 @@ DFANIlocate(int32 file_id, int type, uint16 tag, uint16 ref)
 
           /* allocate directory space.  Note head struct includes 1 entry */
           DFANdir[type] = (DFANdirhead *)
-              HDgetspace(((uint32) sizeof(DFANdirhead) +
+              HDmalloc(((uint32) sizeof(DFANdirhead) +
                           (nanns - 1) * sizeof(DFANdirentry)));
           DFANdir[type]->next = NULL;
           DFANdir[type]->nentries = nanns;
@@ -715,7 +715,7 @@ DFANIaddentry(int type, uint16 annref, uint16 datatag, uint16 dataref)
 
     /* need new list or new node in list */
     /* allocate directory space.  Note head struct includes 1 entry */
-    q = (DFANdirhead *) HDgetspace((uint32) sizeof(DFANdirhead) +
+    q = (DFANdirhead *) HDmalloc((uint32) sizeof(DFANdirhead) +
                               (DFAN_DEFENTRIES - 1) * sizeof(DFANdirentry));
     q->next = NULL;
     q->nentries = DFAN_DEFENTRIES;

@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -678,7 +677,7 @@ DFGRIopen(const char *filename, int acc_mode)
     /* Check if filename buffer has been allocated */
     if (Grlastfile == NULL)
       {
-          Grlastfile = (char *) HDgetspace((DF_MAXFNLEN + 1) * sizeof(char));
+          Grlastfile = (char *) HDmalloc((DF_MAXFNLEN + 1) * sizeof(char));
           *Grlastfile = '\0';   /* initialize to a 0-length string */
           if (Grlastfile == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -1005,7 +1004,7 @@ DFGRIgetimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
 
                       bufsize = Grread.datadesc[type].ydim *
                           Grread.datadesc[type].ncomponents;
-                      buf = (uint8 *) HDgetspace((uint32) bufsize);
+                      buf = (uint8 *) HDmalloc((uint32) bufsize);
                       if (buf == NULL)
                         {
                             Hendaccess(aid);
@@ -1064,7 +1063,7 @@ DFGRIgetimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
                               }
                         }
                       Hendaccess(aid);
-                      HDfreespace((VOIDP) buf);
+                      HDfree((VOIDP) buf);
                       return (Hclose(file_id));
                   }
             }
@@ -1195,7 +1194,7 @@ DFGRIaddimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
     /* Check if filename buffer has been allocated */
     if (Grlastfile == NULL)
       {
-          Grlastfile = (char *) HDgetspace((DF_MAXFNLEN + 1) * sizeof(char));
+          Grlastfile = (char *) HDmalloc((DF_MAXFNLEN + 1) * sizeof(char));
           *Grlastfile = '\0';   /* initialize to a 0-length string */
           if (Grlastfile == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -1223,7 +1222,7 @@ DFGRIaddimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
       {     /* set call */
           if (Grlutdata)
             {
-                HDfreespace((VOIDP) Grlutdata);
+                HDfree((VOIDP) Grlutdata);
                 Grlutdata = NULL;
             }
           Ref.lut = -1;
@@ -1231,7 +1230,7 @@ DFGRIaddimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
               return SUCCEED;
           lutsize = Grwrite.datadesc[LUT].xdim * Grwrite.datadesc[LUT].ydim
               * Grwrite.datadesc[LUT].ncomponents;
-          Grlutdata = (uint8 *) HDgetspace((uint32) lutsize);
+          Grlutdata = (uint8 *) HDmalloc((uint32) lutsize);
           if (Grlutdata == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
           HDmemcpy(Grlutdata, imlut, (uint32) lutsize);
@@ -1273,7 +1272,7 @@ DFGRIaddimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
             {
                 if (Grlutdata == NULL)
                     HRETURN_ERROR(DFE_BADCALL, HDerr(file_id));
-                newlut = (uint8 *) HDgetspace((uint32) lutsize);
+                newlut = (uint8 *) HDmalloc((uint32) lutsize);
             }
           if (DFputcomp(file_id, wtag, wref, (uint8 *) imlut, xdim, ydim,
            (uint8 *) Grlutdata, (uint8 *) newlut, (int16) Grcompr, &Grcinfo)
@@ -1330,7 +1329,7 @@ DFGRIaddimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
     if (Grcompr == DFTAG_IMC)
       {
           Ref.lut = 0;
-          HDfreespace((VOIDP) newlut);
+          HDfree((VOIDP) newlut);
           newlut = NULL;
       }
 

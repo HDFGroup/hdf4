@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -185,7 +184,7 @@ imconv(char *outfile, char *imfile, uint16 compress)
       }
 #endif
 
-    if ((space = (char *) HDgetspace((uint32) xdim * ydim)) == NULL)
+    if ((space = (char *) HDmalloc((uint32) xdim * ydim)) == NULL)
       {
           printf("Not enough memory to convert image\n");
           exit(1);
@@ -206,7 +205,7 @@ imconv(char *outfile, char *imfile, uint16 compress)
           exit(1);
       }
 
-    HDfreespace(space);
+    HDfree(space);
     fclose(fp);
     return (0);
 }

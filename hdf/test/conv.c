@@ -131,19 +131,19 @@ test_conv()
         MESSAGE(6,printf("seeding int8 array\n"););
 
         /* allocate arrays */
-        src_int8=(int8 *)HDgetspace(TEST_SIZE*sizeof(int8));
+        src_int8=(int8 *)HDmalloc(TEST_SIZE*sizeof(int8));
         if(src_int8==NULL) {
-        	CHECK(src_int8,NULL,"HDgetspace");
+        	CHECK(src_int8,NULL,"HDmalloc");
         	return;
           } /* end if */
-        dst_int8=(int8 *)HDgetspace(TEST_SIZE*sizeof(int8));
+        dst_int8=(int8 *)HDmalloc(TEST_SIZE*sizeof(int8));
         if(dst_int8==NULL) {
-        	CHECK(dst_int8,NULL,"HDgetspace");
+        	CHECK(dst_int8,NULL,"HDmalloc");
         	return;
           } /* end if */
-        dst2_int8=(int8 *)HDgetspace(TEST_SIZE*sizeof(int8));
+        dst2_int8=(int8 *)HDmalloc(TEST_SIZE*sizeof(int8));
         if(dst2_int8==NULL) {
-            CHECK(dst2_int8,NULL,"HDgetspace");
+            CHECK(dst2_int8,NULL,"HDmalloc");
             return;
           } /* end if */
 
@@ -197,24 +197,24 @@ test_conv()
             num_errs++;
           } /* end if */
 
-        HDfreespace((VOIDP)src_int8);
-        HDfreespace((VOIDP)dst_int8);
-        HDfreespace((VOIDP)dst2_int8);
+        HDfree((VOIDP)src_int8);
+        HDfree((VOIDP)dst_int8);
+        HDfree((VOIDP)dst2_int8);
 
         MESSAGE(6,printf("seeding %s uint8 array\n",test_name[t]););
-        src_uint8=(uint8 *)HDgetspace(TEST_SIZE*sizeof(uint8));
+        src_uint8=(uint8 *)HDmalloc(TEST_SIZE*sizeof(uint8));
         if(src_uint8==NULL) {
-            CHECK(src_uint8,NULL,"HDgetspace");
+            CHECK(src_uint8,NULL,"HDmalloc");
             return;
           } /* end if */
-        dst_uint8=(uint8 *)HDgetspace(TEST_SIZE*sizeof(uint8));
+        dst_uint8=(uint8 *)HDmalloc(TEST_SIZE*sizeof(uint8));
         if(dst_uint8==NULL) {
-            CHECK(dst_uint8,NULL,"HDgetspace");
+            CHECK(dst_uint8,NULL,"HDmalloc");
             return;
           } /* end if */
-        dst2_uint8=(uint8 *)HDgetspace(TEST_SIZE*sizeof(uint8));
+        dst2_uint8=(uint8 *)HDmalloc(TEST_SIZE*sizeof(uint8));
         if(dst2_uint8==NULL) {
-            CHECK(dst2_uint8,NULL,"HDgetspace");
+            CHECK(dst2_uint8,NULL,"HDmalloc");
             return;
           } /* end if */
 
@@ -269,24 +269,24 @@ test_conv()
             num_errs++;
           } /* end if */
 
-        HDfreespace((VOIDP)src_uint8);
-        HDfreespace((VOIDP)dst_uint8);
-        HDfreespace((VOIDP)dst2_uint8);
+        HDfree((VOIDP)src_uint8);
+        HDfree((VOIDP)dst_uint8);
+        HDfree((VOIDP)dst2_uint8);
 
         MESSAGE(6,printf("seeding %s int16 array\n",test_name[t]););
-        src_int16=(int16 *)HDgetspace(TEST_SIZE*sizeof(int16));
+        src_int16=(int16 *)HDmalloc(TEST_SIZE*sizeof(int16));
         if(src_int16==NULL) {
-            CHECK(src_int16,NULL,"HDgetspace");
+            CHECK(src_int16,NULL,"HDmalloc");
             return;
           } /* end if */
-        dst_int16=(int16 *)HDgetspace(TEST_SIZE*sizeof(int16));
+        dst_int16=(int16 *)HDmalloc(TEST_SIZE*sizeof(int16));
         if(dst_int16==NULL) {
-            CHECK(dst_int16,NULL,"HDgetspace");
+            CHECK(dst_int16,NULL,"HDmalloc");
             return;
           } /* end if */
-        dst2_int16=(int16 *)HDgetspace(TEST_SIZE*sizeof(int16));
+        dst2_int16=(int16 *)HDmalloc(TEST_SIZE*sizeof(int16));
         if(dst2_int16==NULL) {
-            CHECK(dst2_int16,NULL,"HDgetspace");
+            CHECK(dst2_int16,NULL,"HDmalloc");
             return;
           } /* end if */
 
@@ -340,24 +340,24 @@ test_conv()
             num_errs++;
           } /* end if */
 
-        HDfreespace((VOIDP)src_int16);
-        HDfreespace((VOIDP)dst_int16);
-        HDfreespace((VOIDP)dst2_int16);
+        HDfree((VOIDP)src_int16);
+        HDfree((VOIDP)dst_int16);
+        HDfree((VOIDP)dst2_int16);
 
         MESSAGE(6,printf("seeding %s uint16 array\n",test_name[t]););
-        src_uint16=(uint16 *)HDgetspace(TEST_SIZE*sizeof(uint16));
+        src_uint16=(uint16 *)HDmalloc(TEST_SIZE*sizeof(uint16));
         if(src_uint16==NULL) {
-            CHECK(src_uint16,NULL,"HDgetspace");
+            CHECK(src_uint16,NULL,"HDmalloc");
             return;
           } /* end if */
-        dst_uint16=(uint16 *)HDgetspace(TEST_SIZE*sizeof(uint16));
+        dst_uint16=(uint16 *)HDmalloc(TEST_SIZE*sizeof(uint16));
         if(dst_uint16==NULL) {
-            CHECK(dst_uint16,NULL,"HDgetspace");
+            CHECK(dst_uint16,NULL,"HDmalloc");
             return;
           } /* end if */
-        dst2_uint16=(uint16 *)HDgetspace(TEST_SIZE*sizeof(uint16));
+        dst2_uint16=(uint16 *)HDmalloc(TEST_SIZE*sizeof(uint16));
         if(dst2_uint16==NULL) {
-            CHECK(dst2_uint16,NULL,"HDgetspace");
+            CHECK(dst2_uint16,NULL,"HDmalloc");
             return;
           } /* end if */
 
@@ -411,24 +411,24 @@ test_conv()
             num_errs++;
           } /* end if */
 
-        HDfreespace((VOIDP)src_uint16);
-        HDfreespace((VOIDP)dst_uint16);
-        HDfreespace((VOIDP)dst2_uint16);
+        HDfree((VOIDP)src_uint16);
+        HDfree((VOIDP)dst_uint16);
+        HDfree((VOIDP)dst2_uint16);
 
         MESSAGE(6,printf("seeding %s int32 array\n",test_name[t]););
-        src_int32=(int32 *)HDgetspace(TEST_SIZE*sizeof(int32));
+        src_int32=(int32 *)HDmalloc(TEST_SIZE*sizeof(int32));
         if(src_int32==NULL) {
-            CHECK(src_int32,NULL,"HDgetspace");
+            CHECK(src_int32,NULL,"HDmalloc");
             return;
           } /* end if */
-        dst_int32=(int32 *)HDgetspace(TEST_SIZE*sizeof(int32));
+        dst_int32=(int32 *)HDmalloc(TEST_SIZE*sizeof(int32));
         if(dst_int32==NULL) {
-            CHECK(dst_int32,NULL,"HDgetspace");
+            CHECK(dst_int32,NULL,"HDmalloc");
             return;
           } /* end if */
-        dst2_int32=(int32 *)HDgetspace(TEST_SIZE*sizeof(int32));
+        dst2_int32=(int32 *)HDmalloc(TEST_SIZE*sizeof(int32));
         if(dst2_int32==NULL) {
-            CHECK(dst2_int32,NULL,"HDgetspace");
+            CHECK(dst2_int32,NULL,"HDmalloc");
             return;
           } /* end if */
 
@@ -482,24 +482,24 @@ test_conv()
             num_errs++;
           } /* end if */
 
-        HDfreespace((VOIDP)src_int32);
-        HDfreespace((VOIDP)dst_int32);
-        HDfreespace((VOIDP)dst2_int32);
+        HDfree((VOIDP)src_int32);
+        HDfree((VOIDP)dst_int32);
+        HDfree((VOIDP)dst2_int32);
 
         MESSAGE(6,printf("seeding %s uint32 array\n",test_name[t]););
-        src_uint32=(uint32 *)HDgetspace(TEST_SIZE*sizeof(uint32));
+        src_uint32=(uint32 *)HDmalloc(TEST_SIZE*sizeof(uint32));
         if(src_uint32==NULL) {
-            CHECK(src_uint32,NULL,"HDgetspace");
+            CHECK(src_uint32,NULL,"HDmalloc");
             return;
           } /* end if */
-        dst_uint32=(uint32 *)HDgetspace(TEST_SIZE*sizeof(uint32));
+        dst_uint32=(uint32 *)HDmalloc(TEST_SIZE*sizeof(uint32));
         if(dst_uint32==NULL) {
-            CHECK(dst_uint32,NULL,"HDgetspace");
+            CHECK(dst_uint32,NULL,"HDmalloc");
             return;
           } /* end if */
-        dst2_uint32=(uint32 *)HDgetspace(TEST_SIZE*sizeof(uint32));
+        dst2_uint32=(uint32 *)HDmalloc(TEST_SIZE*sizeof(uint32));
         if(dst2_uint32==NULL) {
-            CHECK(dst2_uint32,NULL,"HDgetspace");
+            CHECK(dst2_uint32,NULL,"HDmalloc");
             return;
           } /* end if */
 
@@ -553,24 +553,24 @@ test_conv()
             num_errs++;
           } /* end if */
 
-        HDfreespace((VOIDP)src_uint32);
-        HDfreespace((VOIDP)dst_uint32);
-        HDfreespace((VOIDP)dst2_uint32);
+        HDfree((VOIDP)src_uint32);
+        HDfree((VOIDP)dst_uint32);
+        HDfree((VOIDP)dst2_uint32);
 
         MESSAGE(6,printf("seeding %s float32 array\n",test_name[t]););
-        src_float32=(float32 *)HDgetspace(TEST_SIZE*sizeof(float32));
+        src_float32=(float32 *)HDmalloc(TEST_SIZE*sizeof(float32));
         if(src_float32==NULL) {
-            CHECK(src_float32,NULL,"HDgetspace");
+            CHECK(src_float32,NULL,"HDmalloc");
             return;
           } /* end if */
-        dst_float32=(float32 *)HDgetspace(TEST_SIZE*sizeof(float32));
+        dst_float32=(float32 *)HDmalloc(TEST_SIZE*sizeof(float32));
         if(dst_float32==NULL) {
-            CHECK(dst_float32,NULL,"HDgetspace");
+            CHECK(dst_float32,NULL,"HDmalloc");
             return;
           } /* end if */
-        dst2_float32=(float32 *)HDgetspace(TEST_SIZE*sizeof(float32));
+        dst2_float32=(float32 *)HDmalloc(TEST_SIZE*sizeof(float32));
         if(dst2_float32==NULL) {
-            CHECK(dst2_float32,NULL,"HDgetspace");
+            CHECK(dst2_float32,NULL,"HDmalloc");
             return;
           } /* end if */
 
@@ -736,24 +736,24 @@ printf("src[%d]=%lf, dst[%d]=%lf, dst2[%d]=%lf\n",i,src_float32[i],i,dst_float32
           } /* end if */
 #endif
 
-        HDfreespace((VOIDP)src_float32);
-        HDfreespace((VOIDP)dst_float32);
-        HDfreespace((VOIDP)dst2_float32);
+        HDfree((VOIDP)src_float32);
+        HDfree((VOIDP)dst_float32);
+        HDfree((VOIDP)dst2_float32);
 
         MESSAGE(6,printf("seeding %s float64 array\n",test_name[t]););
-        src_float64=(float64 *)HDgetspace(TEST_SIZE*sizeof(float64));
+        src_float64=(float64 *)HDmalloc(TEST_SIZE*sizeof(float64));
         if(src_float64==NULL) {
-            CHECK(src_float64,NULL,"HDgetspace");
+            CHECK(src_float64,NULL,"HDmalloc");
             return;
           } /* end if */
-        dst_float64=(float64 *)HDgetspace(TEST_SIZE*sizeof(float64));
+        dst_float64=(float64 *)HDmalloc(TEST_SIZE*sizeof(float64));
         if(dst_float64==NULL) {
-            CHECK(dst_float64,NULL,"HDgetspace");
+            CHECK(dst_float64,NULL,"HDmalloc");
             return;
           } /* end if */
-        dst2_float64=(float64 *)HDgetspace(TEST_SIZE*sizeof(float64));
+        dst2_float64=(float64 *)HDmalloc(TEST_SIZE*sizeof(float64));
         if(dst2_float64==NULL) {
-            CHECK(dst2_float64,NULL,"HDgetspace");
+            CHECK(dst2_float64,NULL,"HDmalloc");
             return;
           } /* end if */
 
@@ -917,9 +917,9 @@ printf("src[%d]=%lf, dst[%d]=%lf, dst2[%d]=%lf\n",i,src_float64[i],i,dst_float64
           } /* end if */
 #endif
 
-        HDfreespace((VOIDP)src_float64);
-        HDfreespace((VOIDP)dst_float64);
-        HDfreespace((VOIDP)dst2_float64);
+        HDfree((VOIDP)src_float64);
+        HDfree((VOIDP)dst_float64);
+        HDfree((VOIDP)dst2_float64);
       } /* end for */
 
 }   /* end test_conv() */

@@ -90,28 +90,28 @@ print_item(int32 fid, dd_t *desc_list, intn n)
           len = DFANgetlablen(file_name, desc_list[n].tag, desc_list[n].ref);
           if (len != FAIL)
             {
-                label_str = (char *) HDgetspace((uint32) len + 1);
+                label_str = (char *) HDmalloc((uint32) len + 1);
                 status = DFANgetlabel(file_name, desc_list[n].tag, desc_list[n].ref, label_str, len + 1);
                 label_str[len] = '\0';
                 if (status == FAIL)
                     printf("\t  Unable to read label\n");
                 else
                     printf("\t  Label: %s\n", label_str);
-                HDfreespace(label_str);
+                HDfree(label_str);
             }
 
           /* read in all of the annotations */
           len = DFANgetdesclen(file_name, desc_list[n].tag, desc_list[n].ref);
           if (len != FAIL)
             {
-                label_str = (char *) HDgetspace((uint32) len + 1);
+                label_str = (char *) HDmalloc((uint32) len + 1);
                 status = DFANgetdesc(file_name, desc_list[n].tag, desc_list[n].ref, label_str, len + 1);
                 label_str[len] = '\0';
                 if (status == FAIL)
                     printf("\t  Unable to read description\n");
                 else
                     printf("\t  Description: %s\n", label_str);
-                HDfreespace(label_str);
+                HDfree(label_str);
             }
       }
 
@@ -194,12 +194,12 @@ print_item(int32 fid, dd_t *desc_list, intn n)
                       printf("\tContents: %d items\n", (int) ntagrefs);
                       if (ntagrefs > 0)
                         {
-                            tag_arr = (int32 *) HDgetspace(sizeof(int32) * ntagrefs);
-                            ref_arr = (int32 *) HDgetspace(sizeof(int32) * ntagrefs);
+                            tag_arr = (int32 *) HDmalloc(sizeof(int32) * ntagrefs);
+                            ref_arr = (int32 *) HDmalloc(sizeof(int32) * ntagrefs);
                             if (tag_arr == NULL || ref_arr == NULL)
                               {
-                                  HDfreespace(tag_arr);
-                                  HDfreespace(ref_arr);
+                                  HDfree(tag_arr);
+                                  HDfree(ref_arr);
                               }     /* end if */
                             else
                               {
@@ -214,8 +214,8 @@ print_item(int32 fid, dd_t *desc_list, intn n)
                                                      name, (int) tag_arr[i], (int) ref_arr[i]);
                                           }     /* end for */
                                     }   /* end if */
-                                  HDfreespace(tag_arr);
-                                  HDfreespace(ref_arr);
+                                  HDfree(tag_arr);
+                                  HDfree(ref_arr);
                               }     /* end else */
                         }   /* end if */
                       Vdetach(vkey);
@@ -360,7 +360,7 @@ main(int argc, char *argv[])
           exit(1);
       }
 
-    desc_buf = (dd_t *) HDgetspace(sizeof(dd_t) * MAXBUFF);
+    desc_buf = (dd_t *) HDmalloc(sizeof(dd_t) * MAXBUFF);
 
     while (i < argc)
       {
@@ -430,7 +430,7 @@ main(int argc, char *argv[])
               "Warning:  File may have more DD's than hdfls can display\n");
       }
 
-    HDfreespace(desc_buf);
+    HDfree(desc_buf);
 
     return (0);
 }

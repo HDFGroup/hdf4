@@ -18,7 +18,7 @@ const void *values ;
 {
 	NC_attr *ret ;
 
-	ret = (NC_attr *)HDgetspace(sizeof(NC_attr)) ;
+	ret = (NC_attr *)HDmalloc(sizeof(NC_attr)) ;
 	if( ret == NULL )
 		goto alloc_err ;
 
@@ -500,7 +500,7 @@ xdr_NC_attr(xdrs, app)
 
 	if( xdrs->x_op == XDR_DECODE )
 	{
-		*app = (NC_attr *)HDgetspace(sizeof(NC_attr)) ;
+		*app = (NC_attr *)HDmalloc(sizeof(NC_attr)) ;
 		if( *app == NULL )
 		{
 			nc_serror("xdr_NC_attr") ;

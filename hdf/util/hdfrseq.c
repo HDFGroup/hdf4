@@ -250,9 +250,9 @@ getspace(void)
           oldy = ydim;
 
           if (wheresmall)
-              HDfreespace(wheresmall);
+              HDfree(wheresmall);
 
-          if (NULL == (wheresmall = (char *) HDgetspace(xdim * ydim)))
+          if (NULL == (wheresmall = (char *) HDmalloc(xdim * ydim)))
             {
                 puts(" Cannot allocate memory, fatal error");
                 exit(1);
@@ -278,8 +278,8 @@ getpix(void)
           oldxs = xsize;
           oldys = ysize;
           if (img)
-              HDfreespace(img);
-          if ((img = (unsigned short *) HDgetspace(xdim * ydim * sizeof(short))) == NULL)
+              HDfree(img);
+          if ((img = (unsigned short *) HDmalloc(xdim * ydim * sizeof(short))) == NULL)
             {
                 puts(" Cannot allocate memory, fatal error");
                 exit(1);
@@ -583,7 +583,7 @@ rimage(int usepal)
    *  Send the data for the image with RLE encoding for efficiency.
    *  Encode each line and send it.
  */
-    space = (char *) HDgetspace(ydim + 100);
+    space = (char *) HDmalloc(ydim + 100);
     thisline = wheresmall;
 
     for (i = 0; i < ydim; i++)
@@ -634,7 +634,7 @@ rimage(int usepal)
               exit(0);
       }
 
-    HDfreespace(space);
+    HDfree(space);
     return (0);
 }
 

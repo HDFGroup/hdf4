@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -895,7 +894,7 @@ test_r24(void)
     uint16      ref0, ref1, ref2;
     uint8      *jpeg_24bit_temp;
 
-    jpeg_24bit_temp = (uint8 *) HDgetspace(JPEGX * JPEGY * 3);
+    jpeg_24bit_temp = (uint8 *) HDmalloc(JPEGX * JPEGY * 3);
     if (!jpeg_24bit_temp)
       {
           fprintf(stderr, "Out of memory!\n");
@@ -1419,7 +1418,7 @@ test_r24(void)
           num_errs++;
       }
 
-    HDfreespace((VOIDP) jpeg_24bit_temp);
+    HDfree((VOIDP) jpeg_24bit_temp);
 }
 
 VOID
@@ -1494,32 +1493,32 @@ test_r8(void)
     int         error;
     uint8      *jpeg_8bit_temp;
 
-    im1 = (uint8 *) HDgetspace(XD1 * YD1 * sizeof(uint8));
-    ii1 = (uint8 *) HDgetspace(XD1 * YD1 * sizeof(uint8));
+    im1 = (uint8 *) HDmalloc(XD1 * YD1 * sizeof(uint8));
+    ii1 = (uint8 *) HDmalloc(XD1 * YD1 * sizeof(uint8));
     if (!im1 || !ii1)
       {
           fprintf(stderr, "Out of memory!\n");
           exit(1);
       }
 
-    im2 = (uint8 *) HDgetspace(XD2 * YD2 * sizeof(uint8));
-    ii2 = (uint8 *) HDgetspace(XD2 * YD2 * sizeof(uint8));
+    im2 = (uint8 *) HDmalloc(XD2 * YD2 * sizeof(uint8));
+    ii2 = (uint8 *) HDmalloc(XD2 * YD2 * sizeof(uint8));
     if (!im2 || !ii2)
       {
           fprintf(stderr, "Out of memory!\n");
           exit(1);
       }
 
-    pal1 = (uint8 *) HDgetspace(768 * sizeof(char));
-    pal2 = (uint8 *) HDgetspace(768 * sizeof(char));
-    ipal = (uint8 *) HDgetspace(768 * sizeof(char));
+    pal1 = (uint8 *) HDmalloc(768 * sizeof(char));
+    pal2 = (uint8 *) HDmalloc(768 * sizeof(char));
+    ipal = (uint8 *) HDmalloc(768 * sizeof(char));
     if (!ipal || !pal1 || !pal2)
       {
           fprintf(stderr, "Out of memory!\n");
           exit(1);
       }
 
-    jpeg_8bit_temp = (uint8 *) HDgetspace(JPEGX * JPEGY);
+    jpeg_8bit_temp = (uint8 *) HDmalloc(JPEGX * JPEGY);
     if (!jpeg_8bit_temp)
       {
           fprintf(stderr, "Out of memory!\n");
@@ -1762,14 +1761,14 @@ test_r8(void)
           num_errs++;
       }
 
-    HDfreespace((VOIDP) im1);
-    HDfreespace((VOIDP) ii1);
-    HDfreespace((VOIDP) im2);
-    HDfreespace((VOIDP) ii2);
-    HDfreespace((VOIDP) pal1);
-    HDfreespace((VOIDP) pal2);
-    HDfreespace((VOIDP) ipal);
-    HDfreespace((VOIDP) jpeg_8bit_temp);
+    HDfree((VOIDP) im1);
+    HDfree((VOIDP) ii1);
+    HDfree((VOIDP) im2);
+    HDfree((VOIDP) ii2);
+    HDfree((VOIDP) pal1);
+    HDfree((VOIDP) pal2);
+    HDfree((VOIDP) ipal);
+    HDfree((VOIDP) jpeg_8bit_temp);
 }
 
 void
@@ -1781,9 +1780,9 @@ test_pal(void)
 
     char       *pal1, *pal2, *ipal;
 
-    pal1 = (char *) HDgetspace(768 * sizeof(char));
-    pal2 = (char *) HDgetspace(768 * sizeof(char));
-    ipal = (char *) HDgetspace(768 * sizeof(char));
+    pal1 = (char *) HDmalloc(768 * sizeof(char));
+    pal2 = (char *) HDmalloc(768 * sizeof(char));
+    ipal = (char *) HDmalloc(768 * sizeof(char));
     if (!ipal || !pal1 || !pal2)
       {
           fprintf(stderr, "Out of memory!\n");
@@ -1885,7 +1884,7 @@ test_pal(void)
     for (i = 0; i < 768; i++)
         if (ipal[i] != pal1[i])
             printf("Error at %d, ipal %d pal1 %d\n", i, ipal[i], pal1[i]);
-    HDfreespace((VOIDP) pal1);
-    HDfreespace((VOIDP) pal2);
-    HDfreespace((VOIDP) ipal);
+    HDfree((VOIDP) pal1);
+    HDfree((VOIDP) pal2);
+    HDfree((VOIDP) ipal);
 }

@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -219,7 +218,7 @@ main(int argc, char *argv[])
     if (num_desc == FAIL)
         hdferror();
 
-    dlist = (mydd_t *) HDgetspace(num_desc * sizeof(*dlist));
+    dlist = (mydd_t *) HDmalloc(num_desc * sizeof(*dlist));
     if (dlist == NULL)
         error("\tWow!  That file must be HUGE!\n\tThere isn't enough memory to hold the DD's.\n");
 
@@ -228,7 +227,7 @@ main(int argc, char *argv[])
  */
     data_size = 1048576;    /* 1 MB */
     data = NULL;
-    while ((data = (unsigned char *) HDgetspace(data_size)) == NULL)
+    while ((data = (unsigned char *) HDmalloc(data_size)) == NULL)
         data_size /= 2;     /* okay then, cut request by half */
 
 /*

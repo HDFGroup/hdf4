@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -60,7 +59,7 @@ nhiopen(_fcd name, intf * acc_mode, intf * defdds, intf * namelen)
 
     fn = HDf2cstring(name, (intn) *namelen);
     ret = (intf) Hopen(fn, (intn) *acc_mode, (int16) *defdds);
-    HDfreespace(fn);
+    HDfree(fn);
     return (ret);
 }
 

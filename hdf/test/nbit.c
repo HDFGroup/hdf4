@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -143,8 +142,8 @@ test_nbit1(int32 fid)
     uint8      *outbuf, *inbuf;
     uint8       test_val;
 
-    outbuf = (uint8 *) HDgetspace(NBIT_SIZE1 * sizeof(uint8));
-    inbuf = (uint8 *) HDgetspace(NBIT_SIZE1 * sizeof(uint8));
+    outbuf = (uint8 *) HDmalloc(NBIT_SIZE1 * sizeof(uint8));
+    inbuf = (uint8 *) HDmalloc(NBIT_SIZE1 * sizeof(uint8));
 
     for (i = 0; i < NBIT_SIZE1; i++)    /* fill with pseudo-random data */
         outbuf[i] = (uint8) (i * 3);
@@ -193,8 +192,8 @@ test_nbit1(int32 fid)
                 errors++;
             }
       }
-    HDfreespace(outbuf);
-    HDfreespace(inbuf);
+    HDfree(outbuf);
+    HDfree(inbuf);
     num_errs += errors;
 }
 
@@ -210,8 +209,8 @@ test_nbit2(int32 fid)
     comp_info   c_info;
     int8       *outbuf, *inbuf;
 
-    outbuf = (int8 *) HDgetspace(NBIT_SIZE2 * sizeof(int8));
-    inbuf = (int8 *) HDgetspace(NBIT_SIZE2 * sizeof(int8));
+    outbuf = (int8 *) HDmalloc(NBIT_SIZE2 * sizeof(int8));
+    inbuf = (int8 *) HDmalloc(NBIT_SIZE2 * sizeof(int8));
 
     for (i = 0; i < NBIT_SIZE2; i++)    /* fill with pseudo-random data */
         outbuf[i] = (int8) (((i * 3) % 64) - 32);
@@ -259,8 +258,8 @@ test_nbit2(int32 fid)
                 errors++;
             }
       }
-    HDfreespace(outbuf);
-    HDfreespace(inbuf);
+    HDfree(outbuf);
+    HDfree(inbuf);
     num_errs += errors;
 }
 
@@ -278,9 +277,9 @@ test_nbit3(int32 fid)
     uint16      test_out, test_in;
     uint8      *convbuf;
 
-    outbuf = (uint16 *) HDgetspace(NBIT_SIZE3 * sizeof(uint16));
-    inbuf = (uint16 *) HDgetspace(NBIT_SIZE3 * sizeof(uint16));
-    convbuf = (uint8 *) HDgetspace(NBIT_SIZE3 * DFKNTsize(DFNT_UINT16));
+    outbuf = (uint16 *) HDmalloc(NBIT_SIZE3 * sizeof(uint16));
+    inbuf = (uint16 *) HDmalloc(NBIT_SIZE3 * sizeof(uint16));
+    convbuf = (uint8 *) HDmalloc(NBIT_SIZE3 * DFKNTsize(DFNT_UINT16));
 
     for (i = 0; i < NBIT_SIZE3; i++)    /* fill with pseudo-random data */
         outbuf[i] = (uint16) (i * 3);
@@ -339,9 +338,9 @@ test_nbit3(int32 fid)
           printf("data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i], test_out, inbuf[i], test_in);
 #endif
       }
-    HDfreespace(outbuf);
-    HDfreespace(inbuf);
-    HDfreespace(convbuf);
+    HDfree(outbuf);
+    HDfree(inbuf);
+    HDfree(convbuf);
     num_errs += errors;
 }
 
@@ -359,9 +358,9 @@ test_nbit4(int32 fid)
     int16       test_out, test_in;
     uint8      *convbuf;
 
-    outbuf = (int16 *) HDgetspace(NBIT_SIZE4 * sizeof(int16));
-    inbuf = (int16 *) HDgetspace(NBIT_SIZE4 * sizeof(int16));
-    convbuf = (uint8 *) HDgetspace(NBIT_SIZE4 * DFKNTsize(DFNT_INT16));
+    outbuf = (int16 *) HDmalloc(NBIT_SIZE4 * sizeof(int16));
+    inbuf = (int16 *) HDmalloc(NBIT_SIZE4 * sizeof(int16));
+    convbuf = (uint8 *) HDmalloc(NBIT_SIZE4 * DFKNTsize(DFNT_INT16));
 
     for (i = 0; i < NBIT_SIZE4; i++)    /* fill with pseudo-random data */
         outbuf[i] = (int16) (((i * 3) % (64 * 256)) - (32 * 256));
@@ -423,9 +422,9 @@ test_nbit4(int32 fid)
           printf("data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i], test_out, inbuf[i], test_in);
 #endif
       }
-    HDfreespace(outbuf);
-    HDfreespace(inbuf);
-    HDfreespace(convbuf);
+    HDfree(outbuf);
+    HDfree(inbuf);
+    HDfree(convbuf);
     num_errs += errors;
 }
 
@@ -443,9 +442,9 @@ test_nbit5(int32 fid)
     uint32      test_out, test_in;
     uint8      *convbuf;
 
-    outbuf = (uint32 *) HDgetspace(NBIT_SIZE5 * sizeof(uint32));
-    inbuf = (uint32 *) HDgetspace(NBIT_SIZE5 * sizeof(uint32));
-    convbuf = (uint8 *) HDgetspace(NBIT_SIZE5 * DFKNTsize(DFNT_UINT32));
+    outbuf = (uint32 *) HDmalloc(NBIT_SIZE5 * sizeof(uint32));
+    inbuf = (uint32 *) HDmalloc(NBIT_SIZE5 * sizeof(uint32));
+    convbuf = (uint8 *) HDmalloc(NBIT_SIZE5 * DFKNTsize(DFNT_UINT32));
 
     for (i = 0; i < NBIT_SIZE5; i++)    /* fill with pseudo-random data */
         outbuf[i] = (i * 300000);
@@ -508,9 +507,9 @@ test_nbit5(int32 fid)
           printf("data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i], test_out, inbuf[i], test_in);
 #endif
       }
-    HDfreespace(outbuf);
-    HDfreespace(inbuf);
-    HDfreespace(convbuf);
+    HDfree(outbuf);
+    HDfree(inbuf);
+    HDfree(convbuf);
     num_errs += errors;
 }
 
@@ -528,9 +527,9 @@ test_nbit6(int32 fid)
     int32       test_out, test_in;
     uint8      *convbuf;
 
-    outbuf = (int32 *) HDgetspace(NBIT_SIZE6 * sizeof(int32));
-    inbuf = (int32 *) HDgetspace(NBIT_SIZE6 * sizeof(int32));
-    convbuf = (uint8 *) HDgetspace(NBIT_SIZE6 * DFKNTsize(DFNT_INT32));
+    outbuf = (int32 *) HDmalloc(NBIT_SIZE6 * sizeof(int32));
+    inbuf = (int32 *) HDmalloc(NBIT_SIZE6 * sizeof(int32));
+    convbuf = (uint8 *) HDmalloc(NBIT_SIZE6 * DFKNTsize(DFNT_INT32));
 
     for (i = 0; i < NBIT_SIZE6; i++)    /* fill with pseudo-random data */
         outbuf[i] = ((i * 300001) % ((int32) 16 * 256 * 256 * 256)) - ((int32) 8 * 256 * 256 * 256);
@@ -593,9 +592,9 @@ test_nbit6(int32 fid)
           printf("data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i], test_out, inbuf[i], test_in);
 #endif
       }
-    HDfreespace(outbuf);
-    HDfreespace(inbuf);
-    HDfreespace(convbuf);
+    HDfree(outbuf);
+    HDfree(inbuf);
+    HDfree(convbuf);
     num_errs += errors;
 }
 
@@ -612,8 +611,8 @@ test_nbit7(int32 fid)
     uint8      *outbuf, *inbuf;
     uint8       test_val;
 
-    outbuf = (uint8 *) HDgetspace(NBIT_SIZE7 * sizeof(uint8));
-    inbuf = (uint8 *) HDgetspace(NBIT_SIZE7 * sizeof(uint8));
+    outbuf = (uint8 *) HDmalloc(NBIT_SIZE7 * sizeof(uint8));
+    inbuf = (uint8 *) HDmalloc(NBIT_SIZE7 * sizeof(uint8));
 
     for (i = 0; i < NBIT_SIZE7; i++)    /* fill with pseudo-random data */
         outbuf[i] = (uint8) (i * 3);
@@ -662,8 +661,8 @@ test_nbit7(int32 fid)
                 errors++;
             }
       }
-    HDfreespace(outbuf);
-    HDfreespace(inbuf);
+    HDfree(outbuf);
+    HDfree(inbuf);
     num_errs += errors;
 }
 
@@ -680,8 +679,8 @@ test_nbit8(int32 fid)
     int8       *outbuf, *inbuf;
     int8        test_val;
 
-    outbuf = (int8 *) HDgetspace(NBIT_SIZE8 * sizeof(int8));
-    inbuf = (int8 *) HDgetspace(NBIT_SIZE8 * sizeof(int8));
+    outbuf = (int8 *) HDmalloc(NBIT_SIZE8 * sizeof(int8));
+    inbuf = (int8 *) HDmalloc(NBIT_SIZE8 * sizeof(int8));
 
     for (i = 0; i < NBIT_SIZE8; i++)    /* fill with pseudo-random data */
         outbuf[i] = (int8) ((((i * 3) % 16) - 8) << 2);
@@ -730,8 +729,8 @@ test_nbit8(int32 fid)
                 errors++;
             }
       }
-    HDfreespace(outbuf);
-    HDfreespace(inbuf);
+    HDfree(outbuf);
+    HDfree(inbuf);
     num_errs += errors;
 }
 
@@ -749,9 +748,9 @@ test_nbit9(int32 fid)
     uint16      test_out, test_in;
     uint8      *convbuf;
 
-    outbuf = (uint16 *) HDgetspace(NBIT_SIZE9 * sizeof(uint16));
-    inbuf = (uint16 *) HDgetspace(NBIT_SIZE9 * sizeof(uint16));
-    convbuf = (uint8 *) HDgetspace(NBIT_SIZE9 * DFKNTsize(DFNT_UINT16));
+    outbuf = (uint16 *) HDmalloc(NBIT_SIZE9 * sizeof(uint16));
+    inbuf = (uint16 *) HDmalloc(NBIT_SIZE9 * sizeof(uint16));
+    convbuf = (uint8 *) HDmalloc(NBIT_SIZE9 * DFKNTsize(DFNT_UINT16));
 
     for (i = 0; i < NBIT_SIZE9; i++)    /* fill with pseudo-random data */
         outbuf[i] = (uint16) (i * 3);
@@ -814,9 +813,9 @@ test_nbit9(int32 fid)
           printf("data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i], test_val, inbuf[i], test_in);
 #endif
       }
-    HDfreespace(outbuf);
-    HDfreespace(inbuf);
-    HDfreespace(convbuf);
+    HDfree(outbuf);
+    HDfree(inbuf);
+    HDfree(convbuf);
     num_errs += errors;
 }
 
@@ -834,9 +833,9 @@ test_nbit10(int32 fid)
     int16       test_out, test_in;
     uint8      *convbuf;
 
-    outbuf = (int16 *) HDgetspace(NBIT_SIZE10 * sizeof(int16));
-    inbuf = (int16 *) HDgetspace(NBIT_SIZE10 * sizeof(int16));
-    convbuf = (uint8 *) HDgetspace(NBIT_SIZE10 * DFKNTsize(DFNT_UINT16));
+    outbuf = (int16 *) HDmalloc(NBIT_SIZE10 * sizeof(int16));
+    inbuf = (int16 *) HDmalloc(NBIT_SIZE10 * sizeof(int16));
+    convbuf = (uint8 *) HDmalloc(NBIT_SIZE10 * DFKNTsize(DFNT_UINT16));
 
     for (i = 0; i < NBIT_SIZE10; i++)   /* fill with pseudo-random data */
         outbuf[i] = (int16) ((((i * 3) % (2 * 256)) - (256)) << ((NBIT_OFF10 - NBIT_BITS10) + 1));
@@ -908,9 +907,9 @@ test_nbit10(int32 fid)
           printf("data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i], test_out, inbuf[i], test_in);
 #endif
       }
-    HDfreespace(outbuf);
-    HDfreespace(inbuf);
-    HDfreespace(convbuf);
+    HDfree(outbuf);
+    HDfree(inbuf);
+    HDfree(convbuf);
     num_errs += errors;
 }
 
@@ -928,9 +927,9 @@ test_nbit11(int32 fid)
     uint32      test_out, test_in;
     uint8      *convbuf;
 
-    outbuf = (uint32 *) HDgetspace(NBIT_SIZE11 * sizeof(uint32));
-    inbuf = (uint32 *) HDgetspace(NBIT_SIZE11 * sizeof(uint32));
-    convbuf = (uint8 *) HDgetspace(NBIT_SIZE11 * DFKNTsize(DFNT_UINT32));
+    outbuf = (uint32 *) HDmalloc(NBIT_SIZE11 * sizeof(uint32));
+    inbuf = (uint32 *) HDmalloc(NBIT_SIZE11 * sizeof(uint32));
+    convbuf = (uint8 *) HDmalloc(NBIT_SIZE11 * DFKNTsize(DFNT_UINT32));
 
     for (i = 0; i < NBIT_SIZE11; i++)   /* fill with pseudo-random data */
         outbuf[i] = (i * 304327);
@@ -993,9 +992,9 @@ test_nbit11(int32 fid)
           printf("data at %d, out (%u)%u in (%u)%u\n", i, outbuf[i], test_out, inbuf[i], test_in);
 #endif
       }
-    HDfreespace(outbuf);
-    HDfreespace(inbuf);
-    HDfreespace(convbuf);
+    HDfree(outbuf);
+    HDfree(inbuf);
+    HDfree(convbuf);
     num_errs += errors;
 }
 
@@ -1013,9 +1012,9 @@ test_nbit12(int32 fid)
     int32       test_out, test_in;
     uint8      *convbuf;
 
-    outbuf = (int32 *) HDgetspace(NBIT_SIZE12 * sizeof(int32));
-    inbuf = (int32 *) HDgetspace(NBIT_SIZE12 * sizeof(int32));
-    convbuf = (uint8 *) HDgetspace(NBIT_SIZE12 * DFKNTsize(DFNT_INT32));
+    outbuf = (int32 *) HDmalloc(NBIT_SIZE12 * sizeof(int32));
+    inbuf = (int32 *) HDmalloc(NBIT_SIZE12 * sizeof(int32));
+    convbuf = (uint8 *) HDmalloc(NBIT_SIZE12 * DFKNTsize(DFNT_INT32));
 
     for (i = 0; i < NBIT_SIZE12; i++)   /* fill with pseudo-random data */
         outbuf[i] = (((i * 300001) % ((int32) 4 * 256 * 256 * 256)) - ((int32) 2 * 256 * 256 * 256)) << ((NBIT_OFF10 - NBIT_BITS10) + 1);
@@ -1078,9 +1077,9 @@ test_nbit12(int32 fid)
           printf("data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i], test_out, inbuf[i], test_in);
 #endif
       }
-    HDfreespace(outbuf);
-    HDfreespace(inbuf);
-    HDfreespace(convbuf);
+    HDfree(outbuf);
+    HDfree(inbuf);
+    HDfree(convbuf);
     num_errs += errors;
 }
 

@@ -71,9 +71,9 @@ test_an()
 
 /***** generate float array and image *****/
 
-    data = (float *) HDgetspace(ROWS * COLS * sizeof(float));
-    image = (uint8 *) HDgetspace(ROWS * COLS * sizeof(char));
-    newimage = (uint8 *) HDgetspace(ROWS * COLS * sizeof(char));
+    data = (float *) HDmalloc(ROWS * COLS * sizeof(float));
+    image = (uint8 *) HDmalloc(ROWS * COLS * sizeof(char));
+    newimage = (uint8 *) HDmalloc(ROWS * COLS * sizeof(char));
 
     dimsizes[0] = ROWS;
     dimsizes[1] = COLS;
@@ -134,9 +134,9 @@ test_an()
           check_lab_desc(DFTAG_RIG, refnum, labris, descris);
       }
 
-    HDfreespace((VOIDP) data);
-    HDfreespace((VOIDP) image);
-    HDfreespace((VOIDP) newimage);
+    HDfree((VOIDP) data);
+    HDfree((VOIDP) image);
+    HDfree((VOIDP) newimage);
 }
 
 /****************************************************************
@@ -226,7 +226,7 @@ check_lab_desc(uint16 tag, uint16 ref, char *label, char *desc)
       }
     else
       {
-          indesc = (char *) HDgetspace(indesclen + 1);
+          indesc = (char *) HDmalloc(indesclen + 1);
           ret = DFANgetdesc(TESTFILE, tag, ref, indesc, MAXLEN_DESC);
           RESULT("DFANgetdesc");
           indesc[indesclen] = '\0';
@@ -236,6 +236,6 @@ check_lab_desc(uint16 tag, uint16 ref, char *label, char *desc)
                 printf("\n\tSHOULD BE: %s<<<\n", desc);
                 num_errs++;
             }
-          HDfreespace((VOIDP) indesc);
+          HDfree((VOIDP) indesc);
       }
 }

@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -96,14 +95,14 @@ int32       from_x0, from_y0, from_x1, from_y1, from_width, from_height, to_widt
     wind_height = (from_y1 - from_y0) + 1;
 
 /* allocate room for the x coordinate lookup table */
-    x_coor = (int32 *) HDgetspace((int32) (to_width * sizeof(int32)));
+    x_coor = (int32 *) HDmalloc((int32) (to_width * sizeof(int32)));
     EXCHECK(x_coor == NULL, XCoorFailed);   /* check if malloc() failed */
     temp_val = wind_width / (float64) to_width;
     for (u = 0; u < to_width; u++)  /* calculate the x coordinate lookup table */
         x_coor[u] = ((uint16) ((float64) u * temp_val) + from_x0);
 
 /* allocate room for the array of pointers */
-    y_coor = (uint8 **) HDgetspace((int32) (to_height * sizeof(uint8 *)));
+    y_coor = (uint8 **) HDmalloc((int32) (to_height * sizeof(uint8 *)));
     EXCHECK(y_coor == NULL, YCoorFailed);   /* check if malloc() failed */
     temp_val = wind_height / (float64) to_height;
     for (u = 0; u < to_height; u++)     /* calculate the y coordinates */
@@ -131,12 +130,12 @@ int32       from_x0, from_y0, from_x1, from_y1, from_width, from_height, to_widt
                 buf_off += to_width;    /* advance the buffer offset pointer */
             }   /* end else */
       }     /* end for */
-    HDfreespace((char *) y_coor);
-    HDfreespace((char *) x_coor);
+    HDfree((char *) y_coor);
+    HDfree((char *) x_coor);
     return (TRUE);
 
   YCoorFailed:      /* Failed to allocate memory for the Y coor. lookup table */
-    HDfreespace((VOIDP) x_coor);
+    HDfree((VOIDP) x_coor);
   XCoorFailed:      /* Failed to allocate memory for the X coor. lookup table */
     return (FALSE);
 }   /* end magnify() */
@@ -268,7 +267,7 @@ char       *argv[];
           return (1);
       }     /* end if */
 
-    if ((img_buf = (uint8 *) HDgetspace(xdim * ydim)) == NULL)
+    if ((img_buf = (uint8 *) HDmalloc(xdim * ydim)) == NULL)
       {
           printf("Error, cannot allocate space for %ldx%ld image\n", xdim, ydim);
           return (1);
@@ -276,7 +275,7 @@ char       *argv[];
 
     if (ispal)
       {
-          if ((pal_buf = (uint8 *) HDgetspace(768)) == NULL)
+          if ((pal_buf = (uint8 *) HDmalloc(768)) == NULL)
             {
                 printf("Error, cannot allocate space for image palette\n");
                 return (1);
@@ -299,7 +298,7 @@ char       *argv[];
 
           new_xdim = (int32) (img_scale * xdim);    /* calc. new image's dimensions */
           new_ydim = (int32) (img_scale * ydim);
-          if ((scaled_image = (uint8 *) HDgetspace(new_xdim * new_ydim)) == NULL)
+          if ((scaled_image = (uint8 *) HDmalloc(new_xdim * new_ydim)) == NULL)
             {
                 printf("Error, cannot allocate space for %ldx%ld scaled image\n", new_xdim, new_ydim);
                 return (1);
@@ -309,7 +308,7 @@ char       *argv[];
                 printf("Error scaling image, out of memory or bad dimensions\n");
                 return (1);
             }   /* end if */
-          HDfreespace((VOIDP) img_buf);     /* free the old image */
+          HDfree((VOIDP) img_buf);     /* free the old image */
 
           img_buf = scaled_image;   /* use the new image for further processing */
           xdim = new_xdim;
@@ -335,7 +334,7 @@ char       *argv[];
       }     /* end else */
 
     /* allocate space for the 24-bit image */
-    if ((img24_buf = (uint8 *) HDgetspace(xdim * ydim * 3)) == NULL)
+    if ((img24_buf = (uint8 *) HDmalloc(xdim * ydim * 3)) == NULL)
       {
           printf("Error, cannot allocate space for %ldx%ld 24-bit image\n", xdim, ydim);
           return (1);

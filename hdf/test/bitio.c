@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -222,8 +221,8 @@ test_bitio_read()
     ret = Hendbitaccess(bitid1, 0);
     RESULT("Hbitendaccess");
 
-    test_ptr = (uint8 *) HDgetspace((DATASIZE / 4) * DFKNTsize(DFNT_UINT32));
-    CHECK(test_ptr, NULL, "HDgetspace");
+    test_ptr = (uint8 *) HDmalloc((DATASIZE / 4) * DFKNTsize(DFNT_UINT32));
+    CHECK(test_ptr, NULL, "HDmalloc");
     ret = DFKconvert(inbuf2, test_ptr, DFNT_UINT32, (DATASIZE / 4), DFACC_WRITE, 0, 0);
     CHECK(ret, FAIL, "DFKconvert");
 
@@ -234,7 +233,7 @@ test_bitio_read()
           HEprint(stdout, 0);
           num_errs++;
       }     /* end if */
-    HDfreespace(test_ptr);
+    HDfree(test_ptr);
 
     ret = Hclose(fid);
     RESULT("Hclose");

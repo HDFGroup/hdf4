@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -374,8 +373,8 @@ newSpace(int32 size)
     if (size >= oldSize)
       {
           if (oldSpace != NULL)
-              HDfreespace(oldSpace);
-          if ((oldSpace = (char *) HDgetspace((uint32) size)) == NULL)
+              HDfree(oldSpace);
+          if ((oldSpace = (char *) HDmalloc((uint32) size)) == NULL)
             {
                 puts("Out of memory. Abort.");
                 exit(1);

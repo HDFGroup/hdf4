@@ -123,7 +123,7 @@ annotate(char *editor, int ann)
           else
               len--;
           writeToFile(file, buf, len + 1);
-          HDfreespace(buf);
+          HDfree(buf);
       }
 
 #ifndef VMS
@@ -190,7 +190,7 @@ annotate(char *editor, int ann)
 
     /* clean up
      */
-    HDfreespace(buf);
+    HDfree(buf);
     return ret;
 
 #else
@@ -536,7 +536,7 @@ put(char *template, int verbose)
         return HE_FAIL;
     ret = putWithTempl(template, he_currDesc, length, 1, data, length,
                        verbose);
-    HDfreespace(data);
+    HDfree(data);
 
     return ret;
 }
@@ -615,7 +615,7 @@ putR8(char *image, char *pal, int verbose)
       }
     ret = putWithTempl(image, he_currDesc, (int) xdim, (int) ydim, raster, (int) (xdim * ydim),
                        verbose);
-    HDfreespace(raster);
+    HDfree(raster);
     if (ret < 0)
         return HE_FAIL;
     if (palette != NULL)
@@ -631,7 +631,7 @@ putR8(char *image, char *pal, int verbose)
             }
           ret = putWithTempl(pal, he_currDesc, (int) xdim, (int) ydim, p,
                              HE_PALETTE_SZ, verbose);
-          HDfreespace(palette);
+          HDfree(palette);
           if (ret < 0)
               return HE_FAIL;
       }

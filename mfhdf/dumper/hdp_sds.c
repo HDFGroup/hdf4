@@ -80,8 +80,8 @@ intn parse_dumpsds_opts(dump_info_t *dumpsds_opts,intn *curr_arg,intn argc,char 
 		case 'i':	/* dump by index */
 		    dumpsds_opts->filter=DINDEX;	
                     (*curr_arg)++;
-		    dumpsds_opts->filter_num = (int*)HDgetspace(sizeof(int*)*1000);
-		    string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN);
+		    dumpsds_opts->filter_num = (int*)HDmalloc(sizeof(int*)*1000);
+		    string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);
 		    ptr = argv[*curr_arg];
 		    lastItem = 0;
 		    for (i=0; !lastItem; i++) {
@@ -101,8 +101,8 @@ intn parse_dumpsds_opts(dump_info_t *dumpsds_opts,intn *curr_arg,intn argc,char 
                 case 'r':       /* dump by reference */
                     dumpsds_opts->filter=DREFNUM;
                     (*curr_arg)++; 
-		    dumpsds_opts->filter_num = (int*)HDgetspace(sizeof(int*)*1000);
-		    string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN);
+		    dumpsds_opts->filter_num = (int*)HDmalloc(sizeof(int*)*1000);
+		    string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);
 		    lastItem = 0;
 		    ptr = argv[*curr_arg];
 		    for (i=0; !lastItem; i++) {
@@ -111,7 +111,7 @@ intn parse_dumpsds_opts(dump_info_t *dumpsds_opts,intn *curr_arg,intn argc,char 
 			   lastItem = 1;
 		        else
 			   *tempPtr = '\0';
-		        string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN);
+		        string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);
 			strcpy(string,ptr);
 			dumpsds_opts->filter_num[i] = atoi(string);
 			ptr = tempPtr + 1;
@@ -131,7 +131,7 @@ intn parse_dumpsds_opts(dump_info_t *dumpsds_opts,intn *curr_arg,intn argc,char 
 			  lastItem = 1;
 		       else
 			  *tempPtr = '\0';
-		       string = (char*)HDgetspace(sizeof(char)*MAXNAMELEN);
+		       string = (char*)HDmalloc(sizeof(char)*MAXNAMELEN);
 		       strcpy(string, ptr);
 		       dumpsds_opts->filter_str[i] = string;
 		       ptr = tempPtr + 1;
@@ -428,10 +428,10 @@ int32 sdsdumpfull(int32 sds_id, int32 rank, int32 dimsizes[], int32 nt,
     eltsz = DFKNTsize(nt | DFNT_NATIVE); 
 
     read_nelts = dimsizes[rank-1];
-    buf=(VOIDP)HDgetspace(read_nelts*eltsz);
-    left = (int32 *)HDgetspace(rank * sizeof(int32));
-    start = (int32 *)HDgetspace(rank * sizeof(int32));
-    edge = (int32 *)HDgetspace(rank*sizeof(int32));
+    buf=(VOIDP)HDmalloc(read_nelts*eltsz);
+    left = (int32 *)HDmalloc(rank * sizeof(int32));
+    start = (int32 *)HDmalloc(rank * sizeof(int32));
+    edge = (int32 *)HDmalloc(rank*sizeof(int32));
     for (i=0; i<rank; i++)   {
         start[i] = 0; /* Starting location to read the data. */
         left[i] = dimsizes[i]; 
@@ -474,10 +474,10 @@ int32 sdsdumpfull(int32 sds_id, int32 rank, int32 dimsizes[], int32 nt,
             }
        }    /* for j */
     }  /* while   */
-    HDfreespace((VOIDP)start);
-    HDfreespace((VOIDP)left);
-    HDfreespace((VOIDP)buf);
-    HDfreespace((VOIDP)edge);
+    HDfree((VOIDP)start);
+    HDfree((VOIDP)left);
+    HDfree((VOIDP)buf);
+    HDfree((VOIDP)edge);
     fprintf(fp, "\n");
     return(0);
 } /* sdsdumpfull */
@@ -623,7 +623,7 @@ static intn dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[
                          fprintf(fp,"\nVariable Name = %s\n\t Index = ", name);
 			 fprintf(fp,"%i\n\t Type= %s\n", i, nt_desc);
                      }
-		     HDfreespace(nt_desc);
+		     HDfree(nt_desc);
 		     fprintf(fp,"\t Ref. = %i\n", (int)sd_ref);
                      fprintf(fp,"\t Rank = %i\n\t Number of attributes = %i\n",
                                    (int)rank, (int)nattr);
@@ -641,7 +641,7 @@ static intn dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[
 			 else
 			    fprintf(fp, "\t\t Size = %i\n",(int)dimsizes[j]);
 			 fprintf(fp, "\t\t Type = %s\n",attr_nt_desc); 
-			 HDfreespace(attr_nt_desc);
+			 HDfree(attr_nt_desc);
                          fprintf(fp, "\t\t Number of attributes = %i\n", 
 				 (int)dimnattr[j]);
                      }
@@ -660,7 +660,7 @@ static intn dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[
                              exit(1);
                          }
                          attr_buf_size = DFKNTsize(attr_nt)*attr_count;
-                         attr_buf =(VOIDP) HDgetspace(attr_buf_size);
+                         attr_buf =(VOIDP) HDmalloc(attr_buf_size);
                          ret=SDreadattr(sds_id, attr_index, attr_buf);
                          if (ret == FAIL) {
                              printf("Failure in SDfindattr %s\n", file_name);
@@ -670,12 +670,12 @@ static intn dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[
 				 attr_name);
                          fprintf(fp, "\t\t Type = %s \n\t\t Count= %i\n", 
                                         attr_nt_desc, (int)attr_count);
-                         HDfreespace(attr_nt_desc);
+                         HDfree(attr_nt_desc);
                          fprintf(fp, "\t\t Value = ");
                          ret = dumpfull(attr_nt, attr_count, attr_buf, 20, fp);
                          cn=0;
                          fprintf(fp, "\n");
-                         HDfreespace((VOIDP)attr_buf);
+                         HDfree((VOIDP)attr_buf);
                      }
                       
                      if (dumpsds_opts->contents == DHEADER) break;

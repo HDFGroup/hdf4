@@ -102,7 +102,7 @@ test_little_read(void)
             num_errs++;
           } /* end if */
         else {
-            data_i8=(int8 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int8));
+            data_i8=(int8 *)HDmalloc(dimsizes[0]*dimsizes[1]*sizeof(int8));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_i8);
             RESULT("DFSDgetdata");
 
@@ -110,7 +110,7 @@ test_little_read(void)
                 fprintf(stderr,"INT8 data was incorrect\n");
                 num_errs++;
               } /* end if */
-            HDfreespace((VOIDP)data_i8);
+            HDfree((VOIDP)data_i8);
           } /* end else */
       } /* end else */
 
@@ -130,7 +130,7 @@ test_little_read(void)
             num_errs++;
           } /* end if */
         else {
-            data_u8=(uint8 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(uint8));
+            data_u8=(uint8 *)HDmalloc(dimsizes[0]*dimsizes[1]*sizeof(uint8));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_u8);
             RESULT("DFSDgetdata");
 
@@ -138,7 +138,7 @@ test_little_read(void)
                 fprintf(stderr,"UINT8 data was incorrect\n");
                 num_errs++;
               } /* end if */
-            HDfreespace((VOIDP)data_u8);
+            HDfree((VOIDP)data_u8);
           } /* end else */
       } /* end else */
 
@@ -158,7 +158,7 @@ test_little_read(void)
             num_errs++;
           } /* end if */
         else {
-            data_i16=(int16 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int16));
+            data_i16=(int16 *)HDmalloc(dimsizes[0]*dimsizes[1]*sizeof(int16));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_i16);
             RESULT("DFSDgetdata");
 
@@ -166,7 +166,7 @@ test_little_read(void)
                 fprintf(stderr,"INT16 data was incorrect\n");
                 num_errs++;
               } /* end if */
-            HDfreespace((VOIDP)data_i16);
+            HDfree((VOIDP)data_i16);
           } /* end else */
       } /* end else */
 
@@ -186,7 +186,7 @@ test_little_read(void)
             num_errs++;
           } /* end if */
         else {
-            data_u16=(uint16 *)HDgetspace(dimsizes[0]*
+            data_u16=(uint16 *)HDmalloc(dimsizes[0]*
 		    dimsizes[1]*sizeof(uint16));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_u16);
             RESULT("DFSDgetdata");
@@ -195,7 +195,7 @@ test_little_read(void)
                 fprintf(stderr,"UINT16 data was incorrect\n");
                 num_errs++;
               } /* end if */
-            HDfreespace((VOIDP)data_u16);
+            HDfree((VOIDP)data_u16);
           } /* end else */
       } /* end else */
 
@@ -215,7 +215,7 @@ test_little_read(void)
             num_errs++;
           } /* end if */
         else {
-            data_i32=(int32 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int32));
+            data_i32=(int32 *)HDmalloc(dimsizes[0]*dimsizes[1]*sizeof(int32));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_i32);
             RESULT("DFSDgetdata");
 
@@ -223,7 +223,7 @@ test_little_read(void)
                 fprintf(stderr,"INT32 data was incorrect\n");
                 num_errs++;
               } /* end if */
-            HDfreespace((VOIDP)data_i32);
+            HDfree((VOIDP)data_i32);
           } /* end else */
       } /* end else */
 
@@ -243,7 +243,7 @@ test_little_read(void)
             num_errs++;
           } /* end if */
         else {
-            data_u32=(uint32 *)HDgetspace(dimsizes[0]*dimsizes[1]*
+            data_u32=(uint32 *)HDmalloc(dimsizes[0]*dimsizes[1]*
 		    sizeof(uint32));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_u32);
             RESULT("DFSDgetdata");
@@ -252,7 +252,7 @@ test_little_read(void)
                 fprintf(stderr,"UINT32 data was incorrect\n");
                 num_errs++;
               } /* end if */
-            HDfreespace((VOIDP)data_u32);
+            HDfree((VOIDP)data_u32);
           } /* end else */
       } /* end else */
 
@@ -272,7 +272,7 @@ test_little_read(void)
             num_errs++;
           } /* end if */
         else {
-            data_f32=(float32 *)HDgetspace(dimsizes[0]*dimsizes[1]*
+            data_f32=(float32 *)HDmalloc(dimsizes[0]*dimsizes[1]*
 		    sizeof(float32));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_f32);
             RESULT("DFSDgetdata");
@@ -281,7 +281,7 @@ test_little_read(void)
                 fprintf(stderr,"FLOAT32 data was incorrect\n");
                 num_errs++;
               } /* end if */
-            HDfreespace((VOIDP)data_f32);
+            HDfree((VOIDP)data_f32);
           } /* end else */
       } /* end else */
 
@@ -301,7 +301,7 @@ test_little_read(void)
             num_errs++;
           } /* end if */
         else {
-            data_f64=(float64 *)HDgetspace(dimsizes[0]*dimsizes[1]*
+            data_f64=(float64 *)HDmalloc(dimsizes[0]*dimsizes[1]*
 		    sizeof(float64));
             ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_f64);
             RESULT("DFSDgetdata");
@@ -357,7 +357,7 @@ printf("cd_f64[%d]=%lf, d_f64[%d]=%lf\n",i,cd_f64[i],i,d_f64[i]);
                 num_errs++;
               } /* end if */
 #endif /* Wierd machines */
-            HDfreespace((VOIDP)data_f64);
+            HDfree((VOIDP)data_f64);
           } /* end else */
       } /* end else */
 }   /* end test_little_read */
@@ -486,7 +486,7 @@ test_little_write(void)
             }   /* end if */
           else
             {
-                data_i8 = (int8 *) HDgetspace(dimsizes[0] * dimsizes[1] * sizeof(int8));
+                data_i8 = (int8 *) HDmalloc(dimsizes[0] * dimsizes[1] * sizeof(int8));
                 ret = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP) data_i8);
                 RESULT("DFSDgetdata");
 
@@ -495,7 +495,7 @@ test_little_write(void)
                       fprintf(stderr, "INT8 data was incorrect\n");
                       num_errs++;
                   }     /* end if */
-                HDfreespace((VOIDP) data_i8);
+                HDfree((VOIDP) data_i8);
             }   /* end else */
       }     /* end else */
 
@@ -517,7 +517,7 @@ test_little_write(void)
             }   /* end if */
           else
             {
-                data_u8 = (uint8 *) HDgetspace(dimsizes[0] * dimsizes[1] * sizeof(uint8));
+                data_u8 = (uint8 *) HDmalloc(dimsizes[0] * dimsizes[1] * sizeof(uint8));
                 ret = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP) data_u8);
                 RESULT("DFSDgetdata");
 
@@ -526,7 +526,7 @@ test_little_write(void)
                       fprintf(stderr, "UINT8 data was incorrect\n");
                       num_errs++;
                   }     /* end if */
-                HDfreespace((VOIDP) data_u8);
+                HDfree((VOIDP) data_u8);
             }   /* end else */
       }     /* end else */
 
@@ -548,7 +548,7 @@ test_little_write(void)
             }   /* end if */
           else
             {
-                data_i16 = (int16 *) HDgetspace(dimsizes[0] * dimsizes[1] * sizeof(int16));
+                data_i16 = (int16 *) HDmalloc(dimsizes[0] * dimsizes[1] * sizeof(int16));
                 ret = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP) data_i16);
                 RESULT("DFSDgetdata");
 
@@ -557,7 +557,7 @@ test_little_write(void)
                       fprintf(stderr, "INT16 data was incorrect\n");
                       num_errs++;
                   }     /* end if */
-                HDfreespace((VOIDP) data_i16);
+                HDfree((VOIDP) data_i16);
             }   /* end else */
       }     /* end else */
 
@@ -579,7 +579,7 @@ test_little_write(void)
             }   /* end if */
           else
             {
-                data_u16 = (uint16 *) HDgetspace(dimsizes[0] * dimsizes[1] *
+                data_u16 = (uint16 *) HDmalloc(dimsizes[0] * dimsizes[1] *
                                                  sizeof(uint16));
                 ret = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP) data_u16);
                 RESULT("DFSDgetdata");
@@ -589,7 +589,7 @@ test_little_write(void)
                       fprintf(stderr, "UINT16 data was incorrect\n");
                       num_errs++;
                   }     /* end if */
-                HDfreespace((VOIDP) data_u16);
+                HDfree((VOIDP) data_u16);
             }   /* end else */
       }     /* end else */
 
@@ -611,7 +611,7 @@ test_little_write(void)
             }   /* end if */
           else
             {
-                data_i32 = (int32 *) HDgetspace(dimsizes[0] * dimsizes[1] * sizeof(int32));
+                data_i32 = (int32 *) HDmalloc(dimsizes[0] * dimsizes[1] * sizeof(int32));
                 ret = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP) data_i32);
                 RESULT("DFSDgetdata");
 
@@ -620,7 +620,7 @@ test_little_write(void)
                       fprintf(stderr, "INT32 data was incorrect\n");
                       num_errs++;
                   }     /* end if */
-                HDfreespace((VOIDP) data_i32);
+                HDfree((VOIDP) data_i32);
             }   /* end else */
       }     /* end else */
 
@@ -642,7 +642,7 @@ test_little_write(void)
             }   /* end if */
           else
             {
-                data_u32 = (uint32 *) HDgetspace(dimsizes[0] * dimsizes[1] *
+                data_u32 = (uint32 *) HDmalloc(dimsizes[0] * dimsizes[1] *
                                                  sizeof(uint32));
                 ret = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP) data_u32);
                 RESULT("DFSDgetdata");
@@ -652,7 +652,7 @@ test_little_write(void)
                       fprintf(stderr, "UINT32 data was incorrect\n");
                       num_errs++;
                   }     /* end if */
-                HDfreespace((VOIDP) data_u32);
+                HDfree((VOIDP) data_u32);
             }   /* end else */
       }     /* end else */
 
@@ -674,7 +674,7 @@ test_little_write(void)
             }   /* end if */
           else
             {
-                data_f32 = (float32 *) HDgetspace(dimsizes[0] * dimsizes[1] *
+                data_f32 = (float32 *) HDmalloc(dimsizes[0] * dimsizes[1] *
                                                   sizeof(float32));
                 ret = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP) data_f32);
                 RESULT("DFSDgetdata");
@@ -684,7 +684,7 @@ test_little_write(void)
                       fprintf(stderr, "FLOAT32 data was incorrect\n");
                       num_errs++;
                   }     /* end if */
-                HDfreespace((VOIDP) data_f32);
+                HDfree((VOIDP) data_f32);
             }   /* end else */
       }     /* end else */
 
@@ -706,7 +706,7 @@ test_little_write(void)
             }   /* end if */
           else
             {
-                data_f64 = (float64 *) HDgetspace(dimsizes[0] * dimsizes[1] *
+                data_f64 = (float64 *) HDmalloc(dimsizes[0] * dimsizes[1] *
                                                   sizeof(float64));
                 ret = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP) data_f64);
                 RESULT("DFSDgetdata");
@@ -716,7 +716,7 @@ test_little_write(void)
                       fprintf(stderr, "FLOAT64 data was incorrect\n");
                       num_errs++;
                   }     /* end if */
-                HDfreespace((VOIDP) data_f64);
+                HDfree((VOIDP) data_f64);
             }   /* end else */
       }     /* end else */
 }   /* end test_little_write */

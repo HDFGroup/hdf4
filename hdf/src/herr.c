@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -143,7 +142,7 @@ HEclear(void)
       {
           if (error_stack[error_top - 1].desc)
             {
-                HDfreespace(error_stack[error_top - 1].desc);
+                HDfree(error_stack[error_top - 1].desc);
                 error_stack[error_top - 1].desc = NULL;
             }
       }
@@ -178,7 +177,7 @@ HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_na
 
     if (!error_stack)
       {
-          error_stack = (error_t *) HDgetspace((uint32) sizeof(error_t) * ERR_STACK_SZ);
+          error_stack = (error_t *) HDmalloc((uint32) sizeof(error_t) * ERR_STACK_SZ);
           if (!error_stack)
             {
                 puts("HEpush cannot allocate space.  Unable to continue!!");
@@ -199,7 +198,7 @@ HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_na
           error_stack[error_top].error_code = error_code;
           if (error_stack[error_top].desc)
             {
-                HDfreespace(error_stack[error_top].desc);
+                HDfree(error_stack[error_top].desc);
                 error_stack[error_top].desc = NULL;
             }
           error_top++;
@@ -231,7 +230,7 @@ HEreport(const char *format,...)
 
     if ((error_top < ERR_STACK_SZ + 1) && (error_top > 0))
       {
-          tmp = (char *) HDgetspace(ERR_STRING_SIZE);
+          tmp = (char *) HDmalloc(ERR_STRING_SIZE);
           if (!tmp)
             {
                 HERROR(DFE_NOSPACE);
@@ -239,7 +238,7 @@ HEreport(const char *format,...)
             }
           vsprintf(tmp, format, arg_ptr);
           if (error_stack[error_top - 1].desc)
-              HDfreespace(error_stack[error_top - 1].desc);
+              HDfree(error_stack[error_top - 1].desc);
           error_stack[error_top - 1].desc = tmp;
       }
 

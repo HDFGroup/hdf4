@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -1858,10 +1857,10 @@ DFKlui2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     if (fast_processing)
       {
 #ifdef DOESNT_WORK
-          tmp_dst = (uint8 *) HDgetspace(2 * num_elm);
+          tmp_dst = (uint8 *) HDmalloc(2 * num_elm);
           DFKswap(source, tmp_dst, 2, num_elm);
           ierr = IEG2CRAY(&type, &num_elm, tmp_dst, &bitoff, dest);
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
           if (ierr != 0)
               HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
 #else
@@ -2219,20 +2218,20 @@ DFKlui2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                 dest += dest_stride;
             }   /* end for */
 #else
-          tmp_dst = (uint8 *) HDgetspace(2);
+          tmp_dst = (uint8 *) HDmalloc(2);
           for (i = 0; i < num_elm; i++)
             {
                 DFKswap(source, tmp_dst, 2, 1);
                 ierr = IEG2CRAY(&type, &n_elem, tmp_dst, &bitoff, dest);
                 if (ierr != 0)
                   {
-                      HDfreespace(tmp_dst);
+                      HDfree(tmp_dst);
                       HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
                   }     /* end if */
                 source += source_stride;
                 dest += dest_stride;
             }   /* end for */
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
 #endif
       }     /* end else */
     return (SUCCEED);
@@ -2287,10 +2286,10 @@ DFKlui2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     if (fast_processing)
       {
-          tmp_dst = (uint8 *) HDgetspace(2 * num_elm);
+          tmp_dst = (uint8 *) HDmalloc(2 * num_elm);
           DFKswap(source, tmp_dst, 2, num_elm);
           ierr = IEG2CRAY(&type, &num_elm, tmp_dst, &bitoff, dest);
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
           if (ierr != 0)
               HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
       }     /* end for */
@@ -2323,20 +2322,20 @@ DFKlui2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                 dest += dest_stride;
             }   /* end for */
 #else
-          tmp_dst = (uint8 *) HDgetspace(2);
+          tmp_dst = (uint8 *) HDmalloc(2);
           for (i = 0; i < num_elm; i++)
             {
                 DFKswap(source, tmp_dst, 2, 1);
                 ierr = IEG2CRAY(&type, &n_elem, tmp_dst, &bitoff, dest);
                 if (ierr != 0)
                   {
-                      HDfreespace(tmp_dst);
+                      HDfree(tmp_dst);
                       HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
                   }     /* end if */
                 source += source_stride;
                 dest += dest_stride;
             }   /* end for */
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
 #endif
       }     /* end else */
     return (SUCCEED);
@@ -2379,15 +2378,15 @@ DFKluo2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     if (fast_processing)
       {
 #ifdef DOESNT_WORK
-          tmp_dst = (uint8 *) HDgetspace(2 * num_elm);
+          tmp_dst = (uint8 *) HDmalloc(2 * num_elm);
           ierr = CRAY2IEG(&type, &num_elm, tmp_dst, &bitoff, source);
           if (ierr != 0)
             {
-                HDfreespace(tmp_dst);
+                HDfree(tmp_dst);
                 HRETURN_ERROR(DFE_BADCONV, FAIL);   /* error in Cray conversion */
             }   /* end if */
           DFKswap(tmp_dst, dest, 2, num_elm);
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
 #else
 #ifndef DUFF_luo2i
 #if defined TEST1_luo2i
@@ -2667,20 +2666,20 @@ DFKluo2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                 dest += dest_stride;
             }   /* end for */
 #else
-          tmp_dst = (uint8 *) HDgetspace(2);
+          tmp_dst = (uint8 *) HDmalloc(2);
           for (i = 0; i < num_elm; i++)
             {
                 ierr = CRAY2IEG(&type, &n_elem, tmp_dst, &bitoff, source);
                 if (ierr != 0)
                   {
-                      HDfreespace(tmp_dst);
+                      HDfree(tmp_dst);
                       HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
                   }     /* end if */
                 DFKswap(tmp_dst, dest, 2, 1);
                 source += source_stride;
                 dest += dest_stride;
             }   /* end for */
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
 #endif
       }     /* end else */
     return (SUCCEED);
@@ -2722,15 +2721,15 @@ DFKluo2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     if (fast_processing)
       {
-          tmp_dst = (uint8 *) HDgetspace(2 * num_elm);
+          tmp_dst = (uint8 *) HDmalloc(2 * num_elm);
           ierr = CRAY2IEG(&type, &num_elm, tmp_dst, &bitoff, source);
           if (ierr != 0)
             {
-                HDfreespace(tmp_dst);
+                HDfree(tmp_dst);
                 HRETURN_ERROR(DFE_BADCONV, FAIL);   /* error in Cray conversion */
             }   /* end if */
           DFKswap(tmp_dst, dest, 2, num_elm);
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
       }     /* end if */
     else
       {     /* Generic Stride processing */
@@ -2743,20 +2742,20 @@ DFKluo2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                 dest += dest_stride;
             }   /* end for */
 #else
-          tmp_dst = (uint8 *) HDgetspace(2);
+          tmp_dst = (uint8 *) HDmalloc(2);
           for (i = 0; i < num_elm; i++)
             {
                 ierr = CRAY2IEG(&type, &n_elem, tmp_dst, &bitoff, source);
                 if (ierr != 0)
                   {
-                      HDfreespace(tmp_dst);
+                      HDfree(tmp_dst);
                       HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
                   }     /* end if */
                 DFKswap(tmp_dst, dest, 2, 1);
                 source += source_stride;
                 dest += dest_stride;
             }   /* end for */
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
 #endif
       }     /* end else */
     return (SUCCEED);
@@ -2805,10 +2804,10 @@ DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     if (fast_processing)
       {
 #ifdef DOESNT_WORK
-          tmp_dst = (uint8 *) HDgetspace(4 * num_elm);
+          tmp_dst = (uint8 *) HDmalloc(4 * num_elm);
           DFKswap(source, tmp_dst, 4, num_elm);
           ierr = IEG2CRAY(&type, &num_elm, tmp_dst, &bitoff, dest);
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
           if (ierr != 0)
               HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
 #else
@@ -3105,20 +3104,20 @@ DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                 source += source_stride;
             }   /* end for */
 #else
-          tmp_dst = (uint8 *) HDgetspace(4);
+          tmp_dst = (uint8 *) HDmalloc(4);
           for (i = 0; i < num_elm; i++)
             {
                 DFKswap(source, tmp_dst, 4, 1);
                 ierr = IEG2CRAY(&type, &n_elem, tmp_dst, &bitoff, dest);
                 if (ierr != 0)
                   {
-                      HDfreespace(tmp_dst);
+                      HDfree(tmp_dst);
                       HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
                   }     /* end if */
                 dest += dest_stride;
                 source += source_stride;
             }   /* end for */
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
 #endif
       }     /* end else */
     return (SUCCEED);
@@ -3168,10 +3167,10 @@ DFKlui4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     if (fast_processing)
       {
-          tmp_dst = (uint8 *) HDgetspace(4 * num_elm);
+          tmp_dst = (uint8 *) HDmalloc(4 * num_elm);
           DFKswap(source, tmp_dst, 4, num_elm);
           ierr = IEG2CRAY(&type, &num_elm, tmp_dst, &bitoff, dest);
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
           if (ierr != 0)
               HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
       }     /* end if */
@@ -3202,20 +3201,20 @@ DFKlui4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                 source += source_stride;
             }   /* end for */
 #else
-          tmp_dst = (uint8 *) HDgetspace(4);
+          tmp_dst = (uint8 *) HDmalloc(4);
           for (i = 0; i < num_elm; i++)
             {
                 DFKswap(source, tmp_dst, 4, 1);
                 ierr = IEG2CRAY(&type, &n_elem, tmp_dst, &bitoff, dest);
                 if (ierr != 0)
                   {
-                      HDfreespace(tmp_dst);
+                      HDfree(tmp_dst);
                       HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
                   }     /* end if */
                 dest += dest_stride;
                 source += source_stride;
             }   /* end for */
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
 #endif
       }     /* end else */
     return (SUCCEED);
@@ -3258,15 +3257,15 @@ DFKluo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     if (fast_processing)
       {
 #ifdef DOESNT_WORK
-          tmp_dst = (uint8 *) HDgetspace(4 * num_elm);
+          tmp_dst = (uint8 *) HDmalloc(4 * num_elm);
           ierr = CRAY2IEG(&type, &num_elm, tmp_dst, &bitoff, source);
           if (ierr != 0)
             {
-                HDfreespace(tmp_dst);
+                HDfree(tmp_dst);
                 HRETURN_ERROR(DFE_BADCONV, FAIL);   /* error in Cray conversion */
             }   /* end if */
           DFKswap(tmp_dst, dest, 4, num_elm);
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
 #else
 #ifndef DUFF_luo4i
 #if defined TEST2_luo4i
@@ -3492,20 +3491,20 @@ DFKluo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                 source += source_stride;
             }   /* end for */
 #else
-          tmp_dst = (uint8 *) HDgetspace(4);
+          tmp_dst = (uint8 *) HDmalloc(4);
           for (i = 0; i < num_elm; i++)
             {
                 ierr = CRAY2IEG(&type, &n_elem, tmp_dst, &bitoff, source);
                 if (ierr != 0)
                   {
-                      HDfreespace(tmp_dst);
+                      HDfree(tmp_dst);
                       HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
                   }     /* end if */
                 DFKswap(tmp_dst, dest, 4, num_elm);
                 dest += dest_stride;
                 source += source_stride;
             }   /* end for */
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
 #endif
       }     /* end else */
     return (SUCCEED);
@@ -3548,15 +3547,15 @@ DFKluo4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     if (fast_processing)
       {
-          tmp_dst = (uint8 *) HDgetspace(4 * num_elm);
+          tmp_dst = (uint8 *) HDmalloc(4 * num_elm);
           ierr = CRAY2IEG(&type, &num_elm, tmp_dst, &bitoff, source);
           if (ierr != 0)
             {
-                HDfreespace(tmp_dst);
+                HDfree(tmp_dst);
                 HRETURN_ERROR(DFE_BADCONV, FAIL);   /* error in Cray conversion */
             }   /* end if */
           DFKswap(tmp_dst, dest, 4, num_elm);
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
       }     /* end if */
     else
       {
@@ -3571,20 +3570,20 @@ DFKluo4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                 source += source_stride;
             }   /* end for */
 #else
-          tmp_dst = (uint8 *) HDgetspace(4);
+          tmp_dst = (uint8 *) HDmalloc(4);
           for (i = 0; i < num_elm; i++)
             {
                 ierr = CRAY2IEG(&type, &n_elem, tmp_dst, &bitoff, source);
                 if (ierr != 0)
                   {
-                      HDfreespace(tmp_dst);
+                      HDfree(tmp_dst);
                       HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
                   }     /* end if */
                 DFKswap(tmp_dst, dest, 4, num_elm);
                 dest += dest_stride;
                 source += source_stride;
             }   /* end for */
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
 #endif
       }     /* end else */
     return (SUCCEED);
@@ -3659,10 +3658,10 @@ DFKlui4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     if (fast_processing)
       {
-          tmp_dst = (uint8 *) HDgetspace(4 * num_elm);
+          tmp_dst = (uint8 *) HDmalloc(4 * num_elm);
           DFKswap(source, tmp_dst, 4, num_elm);
           ierr = IEG2CRAY(&type, &num_elm, tmp_dst, &bitoff, dest);
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
           if (ierr != 0)
               HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
       }     /* end if */
@@ -3704,21 +3703,21 @@ DFKlui4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 #else
           float32     tmp_dst2;
 
-          tmp_dst = (uint8 *) HDgetspace(4);
+          tmp_dst = (uint8 *) HDmalloc(4);
           for (i = 0; i < num_elm; i++)
             {
                 DFKswap(source, tmp_dst, 4, 1);
                 ierr = IEG2CRAY(&type, &n_elem, tmp_dst, &bitoff, &tmp_dst2);
                 if (ierr != 0)
                   {
-                      HDfreespace(tmp_dst);
+                      HDfree(tmp_dst);
                       HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
                   }     /* end if */
                 HDmemcpy(dest, &tmp_dst2, 4);
                 source += source_stride;
                 dest += dest_stride;
             }   /* end for */
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
 #endif
       }     /* end else */
     return (SUCCEED);
@@ -3784,15 +3783,15 @@ DFKluo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     if (fast_processing)
       {
-          tmp_dst = (uint8 *) HDgetspace(4 * num_elm);
+          tmp_dst = (uint8 *) HDmalloc(4 * num_elm);
           ierr = CRAY2IEG(&type, &num_elm, tmp_dst, &bitoff, source);
           if (ierr != 0)
             {
-                HDfreespace(tmp_dst);
+                HDfree(tmp_dst);
                 HRETURN_ERROR(DFE_BADCONV, FAIL);   /* error in Cray conversion */
             }   /* end if */
           DFKswap(tmp_dst, dest, 4, num_elm);
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
       }     /* end if */
     else
       {     /* We end up here if we are doing stride based processing */
@@ -3827,21 +3826,21 @@ DFKluo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 #else
           float32     tmp_src;
 
-          tmp_dst = (uint8 *) HDgetspace(4);
+          tmp_dst = (uint8 *) HDmalloc(4);
           for (i = 0; i < num_elm; i++)
             {
                 HDmemcpy(&tmp_src, source, sizeof(float32));
                 ierr = CRAY2IEG(&type, &n_elem, tmp_dst, &bitoff, &tmp_src);
                 if (ierr != 0)
                   {
-                      HDfreespace(tmp_dst);
+                      HDfree(tmp_dst);
                       HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
                   }     /* end if */
                 DFKswap(tmp_dst, dest, 4, 1);
                 source += source_stride;
                 dest += dest_stride;
             }   /* end for */
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
 #endif
       }     /* end else */
     return (SUCCEED);
@@ -3902,10 +3901,10 @@ DFKlui8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     if (fast_processing)
       {
-          tmp_dst = (uint8 *) HDgetspace(8 * num_elm);
+          tmp_dst = (uint8 *) HDmalloc(8 * num_elm);
           DFKswap(source, tmp_dst, 8, num_elm);
           ierr = IEG2CRAY(&type, &num_elm, tmp_dst, &bitoff, dest);
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
           if (ierr != 0)
               HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
       }     /* end if */
@@ -3948,20 +3947,20 @@ DFKlui8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                 dest += dest_stride;
             }   /* end for */
 #else
-          tmp_dst = (uint8 *) HDgetspace(8);
+          tmp_dst = (uint8 *) HDmalloc(8);
           for (i = 0; i < num_elm; i++)
             {
                 DFKswap(source, tmp_dst, 8, 1);
                 ierr = IEG2CRAY(&type, &n_elem, tmp_dst, &bitoff, dest);
                 if (ierr != 0)
                   {
-                      HDfreespace(tmp_dst);
+                      HDfree(tmp_dst);
                       HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
                   }     /* end if */
                 source += source_stride;
                 dest += dest_stride;
             }   /* end for */
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
 #endif
       }     /* end else */
     return (SUCCEED);
@@ -4013,15 +4012,15 @@ DFKluo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     if (fast_processing)
       {
-          tmp_dst = (uint8 *) HDgetspace(8 * num_elm);
+          tmp_dst = (uint8 *) HDmalloc(8 * num_elm);
           ierr = CRAY2IEG(&type, &num_elm, tmp_dst, &bitoff, source);
           if (ierr != 0)
             {
-                HDfreespace(tmp_dst);
+                HDfree(tmp_dst);
                 HRETURN_ERROR(DFE_BADCONV, FAIL);   /* error in Cray conversion */
             }   /* end if */
           DFKswap(tmp_dst, dest, 8, num_elm);
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
       }     /* end if */
     else
       {
@@ -4059,20 +4058,20 @@ DFKluo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                 dest += dest_stride;
             }   /* end for */
 #else
-          tmp_dst = (uint8 *) HDgetspace(8);
+          tmp_dst = (uint8 *) HDmalloc(8);
           for (i = 0; i < num_elm; i++)
             {
                 ierr = CRAY2IEG(&type, &n_elem, tmp_dst, &bitoff, source);
                 if (ierr != 0)
                   {
-                      HDfreespace(tmp_dst);
+                      HDfree(tmp_dst);
                       HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
                   }     /* end if */
                 DFKswap(tmp_dst, dest, 8, 1);
                 source += source_stride;
                 dest += dest_stride;
             }   /* end for */
-          HDfreespace(tmp_dst);
+          HDfree(tmp_dst);
 #endif
       }     /* end else */
     return (SUCCEED);

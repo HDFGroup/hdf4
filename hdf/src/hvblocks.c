@@ -345,7 +345,7 @@ HVcreate(int32 file_id, uint16 tag, uint16 ref)
           access_rec->used = FALSE;
           HRETURN_ERROR(DFE_INTERNAL, FAIL);
       }     /* end if */
-    access_rec->special_info = (VOIDP) HDgetspace((uint32) sizeof(vlnkinfo_t));
+    access_rec->special_info = (VOIDP) HDmalloc((uint32) sizeof(vlnkinfo_t));
     if (!access_rec->special_info)
       {
           access_rec->used = FALSE;
@@ -477,7 +477,7 @@ HVIstaccess(accrec_t * access_rec, int16 acc_mode)
     if(Hread(sinfo_aid, 14, local_ptbuf) == FAIL)
         HRETURN_ERROR(DFE_READERROR, FAIL);
 
-    access_rec->special_info = (VOIDP) HDgetspace((uint32) sizeof(vlnkinfo_t));
+    access_rec->special_info = (VOIDP) HDmalloc((uint32) sizeof(vlnkinfo_t));
     info = (vlnkinfo_t *) access_rec->special_info;
     if (!info)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -499,7 +499,7 @@ HVIstaccess(accrec_t * access_rec, int16 acc_mode)
     info->first_vlnk = HVIgetlink(access_rec->file_id, info->link_ref);
     if (!info->first_vlnk)
       {
-          HDfreespace((VOIDP) info);
+          HDfree((VOIDP) info);
           HRETURN_ERROR(DFE_INTERNAL, FAIL);
       }
 
@@ -516,10 +516,10 @@ HVIstaccess(accrec_t * access_rec, int16 acc_mode)
                   {
                       next = l->next;
                       if (l->block_list)
-                          HDfreespace((VOIDP) l->block_list);
-                      HDfreespace((VOIDP) l);
+                          HDfree((VOIDP) l->block_list);
+                      HDfree((VOIDP) l);
                   }
-                HDfreespace((VOIDP) info);
+                HDfree((VOIDP) info);
                 HRETURN_ERROR(DFE_INTERNAL, FAIL);
             }
           info->last_vlnk = info->last_vlnk->next;
@@ -636,7 +636,7 @@ HVIfreelinks(accrec_t *access_rec)
                           HRETURN_ERROR(DFE_INTERNAL,FAIL);
                     } /* end if */
                 } /* end if */
-              if((buf=(uint8 *)HDgetspace(new_len))==NULL)
+              if((buf=(uint8 *)HDmalloc(new_len))==NULL)
                   HRETURN_ERROR(DFE_NOSPACE,FAIL);
               {
                   uint8      *p;
@@ -660,13 +660,13 @@ HVIfreelinks(accrec_t *access_rec)
                   HRETURN_ERROR(DFE_WRITEERROR, FAIL);
               if(Hendaccess(aid)==FAIL)
                   HRETURN_ERROR(DFE_CANTENDACCESS,FAIL);
-              HDfreespace(buf);
+              HDfree(buf);
           } /* end if */
         next = s_link->next;
-        HDfreespace((VOIDP) s_link->block_list);
-        HDfreespace((VOIDP) s_link);
+        HDfree((VOIDP) s_link->block_list);
+        HDfree((VOIDP) s_link);
       } /* end for */
-    HDfreespace((VOIDP) s_info);
+    HDfree((VOIDP) s_info);
 
     return(SUCCEED);
 }   /* HVIfreelinks */
@@ -700,20 +700,20 @@ HVIgetlink(int32 file_id, uint16 ref)
     uint8      tmp_pbuf[12];    /* temporary buffer for reading block info */
     uint16     v_num;           /* version number of the header */
 
-    if (( new_link = (vlnk_t *) HDgetspace((uint32) sizeof(vlnk_t))) == NULL)
+    if (( new_link = (vlnk_t *) HDmalloc((uint32) sizeof(vlnk_t))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, NULL);
 
     new_link->next = NULL;
 
     if (( access_id = Hstartread(file_id, tag, ref)) == FAIL) 
       {
-          HDfreespace((VOIDP) new_link);
+          HDfree((VOIDP) new_link);
           HRETURN_ERROR(DFE_BADAID, NULL);
       } /* end if */
 
     if( Hread(access_id, 10, tmp_pbuf) == FAIL)
       {
-          HDfreespace((VOIDP) new_link);
+          HDfree((VOIDP) new_link);
           HRETURN_ERROR(DFE_READERROR, NULL);
       }
 
@@ -728,29 +728,29 @@ HVIgetlink(int32 file_id, uint16 ref)
     new_link->dirty=FALSE; /* mark the header as unmodified */
     new_link->max_blocks=(new_link->num_blocks>0 ? new_link->num_blocks : VLINK_START_BLOCKS);
 
-    new_link->block_list = (block_t *) HDgetspace((uint32) new_link->max_blocks
+    new_link->block_list = (block_t *) HDmalloc((uint32) new_link->max_blocks
                                                   * sizeof(block_t));
     if (new_link->block_list == NULL)
       {
-          HDfreespace((VOIDP) new_link);
+          HDfree((VOIDP) new_link);
           HRETURN_ERROR(DFE_NOSPACE, NULL);
       }
     if(new_link->num_blocks>0) 
       {
         /* read block table into buffer */
-        buffer = (uint8 *) HDgetspace((uint32) (DISK_BLOCK_INFO_SIZE * new_link->max_blocks));
+        buffer = (uint8 *) HDmalloc((uint32) (DISK_BLOCK_INFO_SIZE * new_link->max_blocks));
         if (buffer == NULL)
           {
-              HDfreespace((VOIDP) new_link->block_list);
-              HDfreespace((VOIDP) new_link);
+              HDfree((VOIDP) new_link->block_list);
+              HDfree((VOIDP) new_link);
               HRETURN_ERROR(DFE_NOSPACE, NULL);
           }     
 
         if( Hread(access_id, DISK_BLOCK_INFO_SIZE * new_link->num_blocks, buffer) == FAIL)
           {
-              HDfreespace((VOIDP) buffer);
-              HDfreespace((VOIDP) new_link->block_list);
-              HDfreespace((VOIDP) new_link);
+              HDfree((VOIDP) buffer);
+              HDfree((VOIDP) new_link->block_list);
+              HDfree((VOIDP) new_link);
               HRETURN_ERROR(DFE_READERROR, NULL);
           }
 
@@ -765,7 +765,7 @@ HVIgetlink(int32 file_id, uint16 ref)
                 INT32DECODE(p, new_link->block_list[i].len);
           } /* end for */
         }
-        HDfreespace((VOIDP) buffer);
+        HDfree((VOIDP) buffer);
       } /* end if */
     Hendaccess(access_id);
 
@@ -1042,13 +1042,13 @@ HVPwrite(accrec_t * access_rec, int32 length, const VOIDP datap)
               { /* extend the current table */
                   block_t *new_blocks;  /* new block table */
 
-                  new_blocks=(block_t *)HDgetspace(sizeof(block_t)
+                  new_blocks=(block_t *)HDmalloc(sizeof(block_t)
                        *(t_link->max_blocks+VLINK_INC_BLOCKS));
                   if(new_blocks==NULL)
                       HRETURN_ERROR(DFE_NOSPACE,FAIL);
                   HDmemcpy(new_blocks,t_link->block_list,t_link->max_blocks*sizeof(block_t));
                   t_link->max_blocks+=VLINK_INC_BLOCKS;
-                  HDfreespace(t_link->block_list);
+                  HDfree(t_link->block_list);
                   t_link->block_list=new_blocks;
               } /* end if */
             if(blank_block)
@@ -1180,13 +1180,13 @@ printf("t_link->num_blocks=%d, relative_posn=%d\n",(int)t_link->num_blocks,(int)
                           { /* try to expand the block table */
                               block_t *new_blocks;  /* new block table */
 
-                              new_blocks=(block_t *)HDgetspace(sizeof(block_t)
+                              new_blocks=(block_t *)HDmalloc(sizeof(block_t)
                                    *(t_link->max_blocks+VLINK_INC_BLOCKS));
                               if(new_blocks==NULL)
                                   HRETURN_ERROR(DFE_NOSPACE,FAIL);
                               HDmemcpy(new_blocks,t_link->block_list,t_link->max_blocks*sizeof(block_t));
                               t_link->max_blocks+=VLINK_INC_BLOCKS;
-                              HDfreespace(t_link->block_list);
+                              HDfree(t_link->block_list);
                               t_link->block_list=new_blocks;
 
                               t_link->num_blocks++;
@@ -1270,14 +1270,14 @@ HVInewlink(int32 file_id, uint16 link_ref, dd_t *data_ptr)
     CONSTR(FUNC, "HVInewlink"); /* for HERROR */
     vlnk_t     *t_link;         /* ptr to the new header */
 
-    if ((t_link=(vlnk_t *)HDgetspace(sizeof(vlnk_t)))==NULL)
+    if ((t_link=(vlnk_t *)HDmalloc(sizeof(vlnk_t)))==NULL)
         HRETURN_ERROR(DFE_NOSPACE, NULL);
 
-    t_link->block_list = (block_t *) HDgetspace((uint32) VLINK_START_BLOCKS
+    t_link->block_list = (block_t *) HDmalloc((uint32) VLINK_START_BLOCKS
                                                 * sizeof(block_t));
     if (!t_link->block_list)
       {
-          HDfreespace((VOIDP) t_link);
+          HDfree((VOIDP) t_link);
           HRETURN_ERROR(DFE_NOSPACE, NULL);
       }
     t_link->next = NULL;

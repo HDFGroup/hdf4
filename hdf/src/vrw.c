@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -150,8 +149,8 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
       {
           Vtbufsize = nelt * (uint32) hsize;
           if (Vtbuf)
-              HDfreespace((VOIDP) Vtbuf);
-          if ((Vtbuf = (uint8 *) HDgetspace(Vtbufsize)) == NULL)
+              HDfree((VOIDP) Vtbuf);
+          if ((Vtbuf = (uint8 *) HDmalloc(Vtbufsize)) == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
@@ -469,8 +468,8 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
                 /* get a buffer big enough to hold the values */
                 Vtbufsize = chunk * hdf_size;
                 if (Vtbuf)
-                    HDfreespace((VOIDP) Vtbuf);
-                if ((Vtbuf = (uint8 *) HDgetspace(Vtbufsize)) == NULL)
+                    HDfree((VOIDP) Vtbuf);
+                if ((Vtbuf = (uint8 *) HDmalloc(Vtbufsize)) == NULL)
                     HRETURN_ERROR(DFE_NOSPACE, FAIL);
             }
 
@@ -541,8 +540,8 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 	    {
 		Vtbufsize = total_bytes;
 		if (Vtbuf)
-		    HDfreespace((VOIDP) Vtbuf);
-		if ((Vtbuf = (uint8 *) HDgetspace(Vtbufsize)) == NULL)
+		    HDfree((VOIDP) Vtbuf);
+		if ((Vtbuf = (uint8 *) HDmalloc(Vtbufsize)) == NULL)
 		    HRETURN_ERROR(DFE_NOSPACE, FAIL);
 	    }
 

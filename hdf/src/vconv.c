@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -124,7 +123,7 @@ vimakecompat(HFILEID f)
     /* =============================================  */
     /* --- read all vgs and convert each --- */
 
-    vg = (VGROUP *) HDgetspace(sizeof(VGROUP));     /*allocate space for the VGroup */
+    vg = (VGROUP *) HDmalloc(sizeof(VGROUP));     /*allocate space for the VGroup */
     ret = aid = Hstartread(f, (uint16) OLD_VGDESCTAG, DFREF_WILDCARD);
     while (ret != FAIL)
       {
@@ -133,15 +132,15 @@ vimakecompat(HFILEID f)
           if (buf == NULL || bsize > old_bsize)
             {
                 if (buf != NULL)
-                    HDfreespace((VOIDP) buf);
-                if ((buf = (uint8 *) HDgetspace(bsize)) == NULL)
+                    HDfree((VOIDP) buf);
+                if ((buf = (uint8 *) HDmalloc(bsize)) == NULL)
                     HRETURN_ERROR(DFE_NOSPACE, FAIL);
                 old_bsize = bsize;
             }   /* end if */
           ret = Hgetelement(f, (uint16) OLD_VGDESCTAG, ref, (uint8 *) buf);
           if (ret == FAIL)
             {
-                HDfreespace((VOIDP) buf);
+                HDfree((VOIDP) buf);
                 HRETURN_ERROR(DFE_READERROR, 0);
             }   /* end if */
 
@@ -163,14 +162,14 @@ vimakecompat(HFILEID f)
           vpackvg(vg, buf, &bsize);
 
           ret = Hputelement(f, VGDESCTAG, ref, (uint8 *) buf, bsize);
-          HDfreespace((VOIDP) buf);
+          HDfree((VOIDP) buf);
           if (ret == FAIL)
               HRETURN_ERROR(DFE_WRITEERROR, 0);
 
           ret = Hnextread(aid, (uint16) OLD_VGDESCTAG, DFREF_WILDCARD, DF_CURRENT);
       }     /* while */
     Hendaccess(aid);
-    HDfreespace((VOIDP) vg);
+    HDfree((VOIDP) vg);
 
     /* =============================================  */
     /* --- read all vdata descs  and convert each --- */
@@ -178,7 +177,7 @@ vimakecompat(HFILEID f)
 
     old_bsize = 0;  /* reset state variables */
     buf = NULL;
-    vs = (VDATA *) HDgetspace(sizeof(VDATA));   /* allocate space for the VData */
+    vs = (VDATA *) HDmalloc(sizeof(VDATA));   /* allocate space for the VData */
     ret = aid = Hstartread(f, (uint16) OLD_VSDESCTAG, DFREF_WILDCARD);
     while (ret != FAIL)
       {
@@ -188,15 +187,15 @@ vimakecompat(HFILEID f)
           if (buf == NULL || bsize > old_bsize)
             {
                 if (buf != NULL)
-                    HDfreespace((VOIDP) buf);
-                if ((buf = (uint8 *) HDgetspace(bsize)) == NULL)
+                    HDfree((VOIDP) buf);
+                if ((buf = (uint8 *) HDmalloc(bsize)) == NULL)
                     HRETURN_ERROR(DFE_NOSPACE, FAIL);
                 old_bsize = bsize;
             }   /* end if */
           ret = Hgetelement(f, tag, ref, (uint8 *) buf);
           if (ret == FAIL)
             {
-                HDfreespace((VOIDP) buf);
+                HDfree((VOIDP) buf);
                 HRETURN_ERROR(DFE_READERROR, 0);
             }   /* end if */
 
@@ -213,20 +212,20 @@ vimakecompat(HFILEID f)
           ret = Hputelement(f, VSDESCTAG, ref, (uint8 *) buf, bsize);
           if (ret == FAIL)
             {
-                HDfreespace((VOIDP) buf);
+                HDfree((VOIDP) buf);
                 HRETURN_ERROR(DFE_WRITEERROR, 0);
             }   /* end if */
 
           /* duplicate a tag to point to vdata data */
           ret = Hdupdd(f, NEW_VSDATATAG, ref, (uint16) OLD_VSDATATAG, ref);
-          HDfreespace((VOIDP) buf);
+          HDfree((VOIDP) buf);
           if (ret == FAIL)
               HRETURN_ERROR(DFE_DUPDD, 0);
           ret = Hnextread(aid, (uint16) OLD_VSDESCTAG, DFREF_WILDCARD, DF_CURRENT);
       }     /* while */
 
     Hendaccess(aid);
-    HDfreespace((VOIDP) vg);
+    HDfree((VOIDP) vg);
 
     return (1);
 

@@ -279,7 +279,7 @@ HCIwrite_header(filerec_t * file_rec, accrec_t * access_rec,
 #ifdef OLD_WAY
     /* Check if temporary buffer has been allocated */
     if (ptbuf == NULL)
-        if ((ptbuf = (uint8 *) HDgetspace(TBUF_SZ * sizeof(uint8))) == NULL)
+        if ((ptbuf = (uint8 *) HDmalloc(TBUF_SZ * sizeof(uint8))) == NULL)
                         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 #endif
 
@@ -400,7 +400,7 @@ HCIread_header(filerec_t * file_rec, accrec_t * access_rec,
     /* Check if temproray buffer has been allocated */
     if (ptbuf == NULL)
       {
-          ptbuf = (uint8 *) HDgetspace(TBUF_SZ * sizeof(uint8));
+          ptbuf = (uint8 *) HDmalloc(TBUF_SZ * sizeof(uint8));
           if (ptbuf == NULL)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
@@ -584,7 +584,7 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
     printf("HCcreate(): check 2\n");
 #endif
     /* set up the special element information and write it to file */
-    info = (compinfo_t *) HDgetspace(sizeof(compinfo_t));
+    info = (compinfo_t *) HDmalloc(sizeof(compinfo_t));
     access_rec->special_info = (VOIDP) info;
     if (info == NULL)
       {
@@ -652,33 +652,33 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
       {
           VOIDP       buf;      /* temporary buffer */
 
-          if ((buf = (VOIDP) HDgetspace((uint32) data_dd->length)) == NULL)
+          if ((buf = (VOIDP) HDmalloc((uint32) data_dd->length)) == NULL)
             {
                 access_rec->used = FALSE;
-                HDfreespace((VOIDP) info);
+                HDfree((VOIDP) info);
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
             }   /* end if */
 #ifdef OLD_WAY
           if (HI_SEEK(file_rec->file, data_dd->offset) == FAIL)
             {
                 access_rec->used = FALSE;
-                HDfreespace((VOIDP) info);
-                HDfreespace((VOIDP) buf);
+                HDfree((VOIDP) info);
+                HDfree((VOIDP) buf);
                 HRETURN_ERROR(DFE_SEEKERROR, FAIL);
             }   /* end if */
           if (HI_READ(file_rec->file, buf, data_dd->length) == FAIL)
             {
                 access_rec->used = FALSE;
-                HDfreespace((VOIDP) info);
-                HDfreespace((VOIDP) buf);
+                HDfree((VOIDP) info);
+                HDfree((VOIDP) buf);
                 HRETURN_ERROR(DFE_READERROR, FAIL);
             }   /* end if */
 #else  /* OLD_WAY */
           if (Hgetelement(file_id, data_dd->tag, data_dd->ref, buf) == FAIL)
             {
                 access_rec->used = FALSE;
-                HDfreespace((VOIDP) info);
-                HDfreespace((VOIDP) buf);
+                HDfree((VOIDP) info);
+                HDfree((VOIDP) buf);
                 HRETURN_ERROR(DFE_READERROR, FAIL);
             }   /* end if */
 #endif /* OLD_WAY */
@@ -687,18 +687,18 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
           if (HCPwrite(access_rec, data_dd->length, buf) == FAIL)
             {
                 access_rec->used = FALSE;
-                HDfreespace((VOIDP) info);
-                HDfreespace((VOIDP) buf);
+                HDfree((VOIDP) info);
+                HDfree((VOIDP) buf);
                 HRETURN_ERROR(DFE_MODEL, FAIL);
             }   /* end if */
 
-          HDfreespace((VOIDP) buf);
+          HDfree((VOIDP) buf);
 
           /* seek back to the beginning of the data through to the compression layer */
           if (HCPseek(access_rec, 0, DF_START) == FAIL)
             {
                 access_rec->used = FALSE;
-                HDfreespace((VOIDP) info);
+                HDfree((VOIDP) info);
                 HRETURN_ERROR(DFE_MODEL, FAIL);
             }   /* end if */
 
@@ -706,13 +706,13 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
           if (FAIL == Hdeldd(file_id, data_dd->tag, data_dd->ref))
             {
                 access_rec->used = FALSE;
-                HDfreespace((VOIDP) info);
+                HDfree((VOIDP) info);
                 HRETURN_ERROR(DFE_CANTDELDD, FAIL);
             }   /* end if */
           if (FAIL == HIdel_hash_dd(file_rec, data_dd->tag, data_dd->ref))
             {
                 access_rec->used = FALSE;
-                HDfreespace((VOIDP) info);
+                HDfree((VOIDP) info);
                 HRETURN_ERROR(DFE_CANTDELHASH, FAIL);
             }   /* end if */
       }     /* end if */
@@ -764,25 +764,25 @@ HCIstaccess(accrec_t * access_rec, int16 acc_mode)
     info_dd = &access_rec->block->ddlist[access_rec->idx];
 
     /* get the special info record */
-    access_rec->special_info = (VOIDP) HDgetspace(sizeof(compinfo_t));
+    access_rec->special_info = (VOIDP) HDmalloc(sizeof(compinfo_t));
     info = (compinfo_t *) access_rec->special_info;
     if (info == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     if (HCIread_header(file_rec, access_rec, info, info_dd, &c_info, &m_info) == FAIL)
       {
-          HDfreespace(info);
+          HDfree(info);
           HRETURN_ERROR(DFE_COMPINFO, FAIL);
       }     /* end if */
     info->attached = 1;
     if (HCIinit_model(&(info->minfo), info->minfo.model_type, &m_info) == FAIL)
       {
-          HDfreespace(info);
+          HDfree(info);
           HRETURN_ERROR(DFE_MINIT, FAIL);
       }     /* end if */
     if (HCIinit_coder(&(info->cinfo), info->cinfo.coder_type, &c_info) == FAIL)
       {
-          HDfreespace(info);
+          HDfree(info);
           HRETURN_ERROR(DFE_CINIT, FAIL);
       }     /* end if */
 
@@ -1153,7 +1153,7 @@ HCPcloseAID(accrec_t * access_rec)
 
     /* Free the compression information */
     if (--(info->attached) == 0)
-        HDfreespace(info);
+        HDfree(info);
 
     return (SUCCEED);
 }   /* end HCPcloseAID() */

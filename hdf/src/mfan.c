@@ -82,14 +82,14 @@ static char RcsId[] = "@(#)$Revision$";
 VOID
 ANfreedata(VOIDP data)
 {
-  HDfreespace(data);
+  HDfree(data);
 } /* ANfreekey() */
 
 /* free key - used by tbbt routines */
 VOID
 ANfreekey(VOIDP key)
 {
-  HDfreespace(key);
+  HDfree(key);
 } /* ANfreekey() */
 
 /* Following 3 routines are used for debugging purposes to dump 
@@ -426,11 +426,11 @@ ANIaddentry(int32 file_id, ann_type type, uint16 ann_ref,
       }
 
     /* allocate space for key */
-    if ((ann_key = (int32 *)HDgetspace(sizeof(int32))) == NULL)
+    if ((ann_key = (int32 *)HDmalloc(sizeof(int32))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     /* allocate space for ann_id */
-    if ((ann_id = (int32 *)HDgetspace(sizeof(int32))) == NULL)
+    if ((ann_id = (int32 *)HDmalloc(sizeof(int32))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     /* Create 32bit key from type/ref 
@@ -440,7 +440,7 @@ ANIaddentry(int32 file_id, ann_type type, uint16 ann_ref,
     *ann_key = AN_CREATE_KEY(type, ann_ref);
 
     /* Initialize annotation entry */
-    if ((ann_entry = HDgetspace(sizeof(ANentry))) == NULL)
+    if ((ann_entry = HDmalloc(sizeof(ANentry))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     ann_entry->annref  = ann_ref;
@@ -471,7 +471,7 @@ ANIaddentry(int32 file_id, ann_type type, uint16 ann_ref,
     file_entry->an_num[type] += 1;
 
     /* Initialize annotation node */
-    if ((ann_node = HDgetspace(sizeof(ANnode))) == NULL)
+    if ((ann_node = HDmalloc(sizeof(ANnode))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     ann_node->file_id = file_id;
@@ -638,16 +638,16 @@ ANIcreate_ann_tree(int32 file_id, ann_type type)
           }
 
         /* allocate space for key */
-        if ((ann_key = (int32 *)HDgetspace(sizeof(int32))) == NULL)
+        if ((ann_key = (int32 *)HDmalloc(sizeof(int32))) == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
         /* allocate space for ann_id */
-        if ((ann_id = (int32 *)HDgetspace(sizeof(int32))) == NULL)
+        if ((ann_id = (int32 *)HDmalloc(sizeof(int32))) == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
         /* Allocate & Initialize annotation entry 
         *  decode data tag/ref */
-        if ((ann_entry = HDgetspace(sizeof(ANentry))) == NULL)
+        if ((ann_entry = HDmalloc(sizeof(ANentry))) == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
         ann_entry->annref  = ann_ref;
@@ -685,7 +685,7 @@ ANIcreate_ann_tree(int32 file_id, ann_type type)
 #endif /* use tbbt */
 
         /* Initialize annotation node */
-        if ((ann_node = HDgetspace(sizeof(ANnode))) == NULL)
+        if ((ann_node = HDmalloc(sizeof(ANnode))) == NULL)
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
         ann_node->file_id = file_id;
@@ -1045,7 +1045,7 @@ ANIannlen(int32 ann_id)
     int32  ann_key;
     uint16 ann_tag;
     uint16 ann_ref;
-    int32  ann_length;
+    int32  ann_length=(-1);
 
     /* Clear error stack */
     HEclear();
@@ -1591,7 +1591,7 @@ ANstart(const char *filename, int32 acc_mode)
     ANinit();
 
   /* allocate space for file handle */
-  if ((file_id = HDgetspace(sizeof(int32))) == NULL)
+  if ((file_id = HDmalloc(sizeof(int32))) == NULL)
     HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
   /* Open file */
@@ -1600,7 +1600,7 @@ ANstart(const char *filename, int32 acc_mode)
     return FAIL;
 
   /* Intialize file entry */
-  if ((file_entry = HDgetspace(sizeof(ANfile))) == NULL)
+  if ((file_entry = HDmalloc(sizeof(ANfile))) == NULL)
     HRETURN_ERROR(DFE_NOSPACE, FAIL);
   file_entry->access_mode = acc_mode;
   file_entry->an_tree[AN_DATA_LABEL] = NULL;   /* data label ann tree */
@@ -1611,7 +1611,7 @@ ANstart(const char *filename, int32 acc_mode)
   file_entry->an_num[AN_DATA_DESC]  = -1;   
   file_entry->an_num[AN_FILE_LABEL] = -1;   
   file_entry->an_num[AN_FILE_DESC]  = -1;   
-  if ((file_entry->filename = HDgetspace(strlen(filename)+1)) == NULL)
+  if ((file_entry->filename = HDmalloc(strlen(filename)+1)) == NULL)
     HRETURN_ERROR(DFE_NOSPACE, FAIL);
   HDstrcpy(file_entry->filename,filename);
 
@@ -1788,7 +1788,7 @@ ANend(int32 file_id)
 #endif /* use tbbt */
 
   if (file_entry->filename != NULL)
-    HDfreespace(file_entry->filename);  /* free file name */
+    HDfree(file_entry->filename);  /* free file name */
   
   /* NEED to delete trees of annotations attached to node 
   * NOTE: This could be written shorter using a for loop....
@@ -1820,8 +1820,8 @@ ANend(int32 file_id)
             }
 
           /* free data & key */
-          HDfreespace(ann_node);
-          HDfreespace(ann_key);
+          HDfree(ann_node);
+          HDfree(ann_key);
 
           /* delete node from ANndoelist, frees it too */
           if (rb_delete_node(entry) == -1)
@@ -1856,8 +1856,8 @@ ANend(int32 file_id)
             }
 
           /* free data & key */
-          HDfreespace(ann_node);
-          HDfreespace(ann_key);
+          HDfree(ann_node);
+          HDfree(ann_key);
 
           /* delete node from ANndoelist */
           if (rb_delete_node(entry) == -1)
@@ -1892,8 +1892,8 @@ ANend(int32 file_id)
             }
 
           /* free data & key */
-          HDfreespace(ann_node);
-          HDfreespace(ann_key);
+          HDfree(ann_node);
+          HDfree(ann_key);
 
           /* delete node from ANndoelist */
           if (rb_delete_node(entry) == -1)
@@ -1928,8 +1928,8 @@ ANend(int32 file_id)
             }
 
           /* free data & key */
-          HDfreespace(ann_node);
-          HDfreespace(ann_key);
+          HDfree(ann_node);
+          HDfree(ann_key);
 
           /* delete node from ANndoelist */
           if (rb_delete_node(entry) == -1)
@@ -1939,7 +1939,7 @@ ANend(int32 file_id)
       rb_free_tree(file_entry->an_tree[AN_DATA_DESC]); 
     }
 
-  HDfreespace(file_entry);             /* free file entry */
+  HDfree(file_entry);             /* free file entry */
 
   /* Now we can delete the node itself */
   if (rb_delete_node(fentry) == -1)
@@ -1966,8 +1966,8 @@ ANend(int32 file_id)
                                             &ann_key))== NULL)
             HRETURN_ERROR(DFE_BADCALL, FAIL);      
 
-          HDfreespace(ann_node); /* free node */
-          HDfreespace(ann_key);       /* free key */
+          HDfree(ann_node); /* free node */
+          HDfree(ann_key);       /* free key */
 
         } /* end for 'entry */
       /* finally free tree */
@@ -1993,8 +1993,8 @@ ANend(int32 file_id)
                                             &ann_key))== NULL)
             HRETURN_ERROR(DFE_BADCALL, FAIL);      
 
-          HDfreespace(ann_node); /* free node */
-          HDfreespace(ann_key);       /* free key */
+          HDfree(ann_node); /* free node */
+          HDfree(ann_key);       /* free key */
 
         } /* end for 'entry */
       /* finally free tree */
@@ -2020,8 +2020,8 @@ ANend(int32 file_id)
                                             &ann_key))== NULL)
             HRETURN_ERROR(DFE_BADCALL, FAIL);      
 
-          HDfreespace(ann_node); /* free node */
-          HDfreespace(ann_key);       /* free key */
+          HDfree(ann_node); /* free node */
+          HDfree(ann_key);       /* free key */
 
         } /* end for 'entry */
       /* finally free tree */
@@ -2047,8 +2047,8 @@ ANend(int32 file_id)
                                             &ann_key))== NULL)
             HRETURN_ERROR(DFE_BADCALL, FAIL);      
 
-          HDfreespace(ann_node); /* free node */
-          HDfreespace(ann_key);       /* free key */
+          HDfree(ann_node); /* free node */
+          HDfree(ann_key);       /* free key */
 
         } /* end for 'entry */
       /* finally free tree */
@@ -2061,8 +2061,8 @@ ANend(int32 file_id)
     HRETURN_ERROR(DFE_BADCALL, FAIL);      
 
   /* free file data & key */
-  HDfreespace(file_entry);
-  HDfreespace(kp);
+  HDfree(file_entry);
+  HDfree(kp);
 #endif /* use tbbt */
 
   /* Close file and set return value */

@@ -17,14 +17,14 @@ const int *values ;           /* VAX C doesn't like values[] */
 	int *ip ;
 	size_t memlen ;
 
-	ret = (NC_iarray *)HDgetspace(sizeof(NC_iarray)) ;
+	ret = (NC_iarray *)HDmalloc(sizeof(NC_iarray)) ;
 	if( ret == NULL )
 		goto alloc_err ;
 	ret->count = count ;
 	if(count != 0 ) /* allocate */
 	{
 		memlen = count * sizeof(int) ;
-		ret->values = (int *)HDgetspace(memlen) ;
+		ret->values = (int *)HDmalloc(memlen) ;
 		if(ret->values == NULL)
 			goto alloc_err ;
 		if(values != NULL) /* copy them in */
