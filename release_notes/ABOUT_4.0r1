@@ -44,17 +44,20 @@ Important Changes:
       * HDF 4.0 libraries now use v5 of the Independent JPEG Group 
         (IJG) JPEG file access library.
 
-      * HDF 4.0 now supports gzip "deflate" style compression of
-        any object in an HDF file.
+      * Gzip library libz.a is added in HDF4.0r1, in order to 
+        support "deflate" style compression of any object in 
+        HDF files.
 
      Due to these changes, users are required to specify four
      libraries when compiling and linking a program:  libmfhdf.a,
-     libdf.a, libjpeg.a and libz.a.  For example:
+     libdf.a, libjpeg.a and libz.a, even if your program
+     does not use JPEG or GZIP compression.  For example:
 
      For C:
 
         cc -o myprog myprog.c -I<path of include files> \
-              libmfhdf.a libdf.a libjpeg.a libz.a
+              <path of libmfhdf.a> <path of libdf.a> \
+              <path of libjpeg.a> <path of libz.a>
        or
   
         cc -o myprog myprog.c -I<path of include files> \
@@ -62,16 +65,16 @@ Important Changes:
 
      For FORTRAN:
 
-        f77 -o myprog myprog.f <path of library>libmfhdf.a \
-              <path of library>libdf.a <path of library>libjpeg.a \
-              <path of library>libz.a
+        f77 -o myprog myprog.f <path of libmfhdf.a> \
+              <path of libdf.a> <path of libjpeg.a> \
+              <path of libz.a>
        or
    
-        f77-o myprog myprog.f -L <path of libraries> -lmfhdf -ldf \
-              -ljpeg -lz
+        f77 -o myprog myprog.f -L <path of libraries> \
+              -lmfhdf -ldf  -ljpeg -lz
 
-     NOTE: The order of the libraries is important: libmfhdf.a first,
-           then libdf.a, followed by libjpeg.a and libz.a 
+     NOTE: The order of the libraries is important: libmfhdf.a
+           first, then libdf.a, followed by libjpeg.a and libz.a.
      
      This is also discussed in Items 1, 2, and 3 of the New 
      Features and Changes section of this document.
@@ -91,11 +94,11 @@ Important Changes:
      information.
   
   5. Platforms tested on: IRIX (5.3, 6.1 (32 bit and 64 bit)), 
-     SunOS 4.1.4, Solaris (ver 2.3, 2.4, 2.5), Solaris x86, 
+     SunOS 4.1.4, Solaris (ver 2.4, 2.5), Solaris x86, 
      HP-UX, Digital Unix, AIX, LINUX (A.OUT), CM5, YMP,
-     FreeBSD, C90, Exemplar, Open VMS, SP2 (single node only). 
+     FreeBSD, C90, Exemplar, Open VMS, and SP2 (single node only). 
 
-     HDF 4.0 is not yet available on the Macintosh.
+     HDF 4.0 is not yet available on the Macintosh for HDF4.0r1.
 
   6. The HDF 4.0 binaries for each tested platform are available. 
      Unix binaries are located in the bin/ directory.  Binaries for 
@@ -146,21 +149,20 @@ New Features and Changes:
   5. Auto configuration 
      Both the HDF library and netCDF library on Unix systems now use 
      the same configure script and can be configured uniformally with 
-     one command. 
-
-     A consequence of this is that on UNIX systems without FORTRAN 
-     installed, the top level config/mh-<sys> will need to have the 
-     'FC' macros defined to "NONE" for correct configuration. 
-
-     See the README and the INSTALL files at the top level of 
-     HDF4.0r1 for detailed instructions on configuration and 
+     one command. See the README and the INSTALL files at the top 
+     level of HDF4.0r1 for detailed instructions on configuration and 
      installation.
+
+     A consequence of the auto configuration is that on UNIX systems 
+     without FORTRAN installed, the top level config/mh-<sys> will 
+     need to have the 'FC' macros defined to "NONE" for correct 
+     configuration. 
      
   6. New version of dimension record
-     In previous releases of the SDS interface, a vgroup was used to 
-     represent a dimension.  The vgroup had a single field vdata with 
-     a class of "DimVal0.0".  The vdata had <dimension size> number of 
-     records, with each record having a fake value from 
+     In HDF4.0b1 and previous releases of the SDS interface, a vgroup 
+     was used to represent a dimension.  The vgroup had a single field 
+     vdata with a class of "DimVal0.0".  The vdata had <dimension size> 
+     number of records, with each record having a fake value from 
      0, 1, 2 ... , (<dimension size> - 1).  The fake values were not 
      really required and took up a large amount of space. For 
      applications that created large one dimensional array datasets, the 
@@ -255,9 +257,9 @@ New Features and Changes:
      interface for HDF 4.0:  SDsetcompress and SDsetnbitdataset.
 
      SDsetcompress allows users to compress a scientific dataset 
-     using any of several compression methods.  Initially two 
-     schemes, RLE encoding and an adaptive Huffman compression 
-     algorithm, are available. 
+     using any of several compression methods.  Initially three 
+     schemes, RLE encoding, an adaptive Huffman compression 
+     algorithm,  and  gzip 'deflation' compression are available. 
 
      SDsetnbitdataset allows for storing a scientific dataset 
      using integers whose size is any number of bits between 1 and 
@@ -362,7 +364,7 @@ Changes to utilities:
      This is a new utility for external file handling for the
      parallel I/O interface on CM5.
 
-   o /mfhdf/dumper/hdp
+   o mfhdf/dumper/hdp
      Hdp is a new command line utility designed for quick display of 
      contents and data objects.  It can list the contents of hdf files 
      at various levels with different details.  It can also dump the 
@@ -381,9 +383,8 @@ Known Problems:
    o On the C90, hdfed fails inconsistently when opening hdf files
      more than once in the same hdfed session.
 
-   o Gzip doesn't work on 64-bit machines.
-
-   o Currently there is a problem in appending data to compressed objects.
+   o Currently there is a problem in re-writing data in the middle
+     of compressed objects.
 
    o If the external element test in hdf/test/testhdf fails
      and there is no subdirectory "testdir" in hdf/test/,
