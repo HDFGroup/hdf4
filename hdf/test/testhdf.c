@@ -41,6 +41,10 @@ static char RcsId[] = "@(#)$Revision$";
 
  */
 
+#if defined __MWERKS__
+#include <console.h>
+#endif
+
 #define MAXNUMOFTESTS 25
 #define TESTMASTER
 
@@ -127,9 +131,15 @@ main(int argc, char *argv[])
     dbg_file = fopen("test.dbg", "w+");
 #endif
 
+#if defined __MWERKS__
+    argc = ccommand(&argv);
+#endif
+
+#if !(defined MAC || defined __MWERKS__ || defined SYMANTEC_C)
     /* Un-buffer the stdout and stderr */
     setbuf(stderr, NULL);
     setbuf(stdout, NULL);
+#endif
 
     /* Tests are generally arranged from least to most complexity... */
     InitTest("bitvect", test_bitvect, "Bit-Vector routines");
@@ -322,5 +332,6 @@ main(int argc, char *argv[])
 #ifdef TEST_PC
     fclose(dbg_file);
 #endif
+    exit(0);
     return (0);
 }   /* end main() */
