@@ -707,6 +707,8 @@ done:
 
         IMPORTANT:  It is the user's responsibility to see that the 
         separate files are transported with the main file.
+FORTRAN
+	vsfsextf
 
 --------------------------------------------------------------------------- */
 

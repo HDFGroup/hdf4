@@ -595,6 +595,31 @@ nvsfdefc(intf * vkey, _fcd field, intf * localtype, intf * order, intf * fieldle
     return (ret);
 }
 
+/*-----------------------------------------------------------------------------
+ * Name:    vssextfc
+ * Purpose: store data of a Vdata in an external file
+ * Inputs:  id: vdata id
+ *          name: name of external file
+ *          offset: Number of bytes from the beginning of the
+ *                    external file to where the data starts
+ *          namelen: length of name
+ * Returns: 0 on success, -1 on failure with error set
+ *---------------------------------------------------------------------------*/
+
+FRETVAL(intf)
+nvssextfc(intf *id, _fcd name, intf *offset, intf *namelen)
+{
+    char   *fn;
+    intf    ret;
+
+    fn = HDf2cstring(name, *namelen);
+    if (!fn) return(FAIL);
+    ret = (intf) VSsetexternalfile(*id, fn, *offset);
+    HDfree((VOIDP)fn);
+    return(ret);
+}
+
+
 /* ------------------------------------------------------------------ */
 /*
    **  returns the number of fields in a vdata

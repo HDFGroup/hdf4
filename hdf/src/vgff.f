@@ -369,6 +369,27 @@ c     related: VSwrite--vswritc--vsfwrit
       vsfwrit = vswritc (vs, buf, nelts, interlace)
       end
 
+C----------------------------------------------------------------------
+C     Name: vsfsextf
+C     Purpose:  call vssextfc to store data in an external file
+C     Inputs:   vid: vdata id
+C               fname: name of external file
+C               offset: Number of bytes from the beginning of the
+C                       external file to where the data starts
+C     Returns: 0 on success, FAIL on failure with error set
+C     Users:    Fortran stub routine
+C     Related:  VSsetexternalfile--vssextfc--vsfsextf
+C----------------------------------------------------------------------
+
+      integer function vsfsextf(vid, fname, offset)
+
+      character*(*) fname
+      integer       vid, offset, vssextfc
+
+      vsfsextf = vssextfc(vid, fname, offset, len(fname))
+      return
+      end
+
 c     ===========================================
 c     MISCELLANEOUS USEFUL VDATA INQUIRY ROUTINES
 c     ===========================================

@@ -236,6 +236,7 @@ C
       integer vsfsiz
       integer vsfsnam
       integer vsfwrit
+      integer vsfsextf
 
 C
 C	Declarations of return values for HDF Vdata Query functions
