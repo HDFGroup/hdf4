@@ -131,14 +131,25 @@ C	Error Return Codes
      *          DFE_BADATTACH            = -65,
      *          DFE_CANTDETACH           = -66)
 
-C	Logical Constants
+C internal file access codes
 
       integer 	DFACC_READ, DFACC_WRITE, DFACC_CREATE, DFACC_ALL  
+      integer	DFACC_RDONLY, DFACC_RDWR, DFACC_CLOBBER
 
       parameter(DFACC_READ       	 = 1,
      *		DFACC_WRITE      	 = 2,
      *		DFACC_CREATE     	 = 4,
-     *		DFACC_ALL        	 = 7)
+     *		DFACC_ALL        	 = 7,
+     *		DFACC_RDONLY		 = 1,
+     *		DFACC_RDWR		 = 3,
+     *		DFACC_CLOBBER		 = 4)
+
+c	Access types for SDsetaccesstype
+
+      integer	DFACC_DEFAULT, DFACC_SERIAL, DFACC_PARALLEL
+      parameter(DFACC_DEFAULT		= 0,
+     *		DFACC_SERIAL		= 1,
+     *		DFACC_PARALLEL		= 9)
 
 c	Constants for DFSDsetorder
 
@@ -150,7 +161,7 @@ c	Constants for DFSDsetorder
 
 c	Definitions of storage convention
 
-      integer	DFNTF_IEEE, DFNTF_VAX, DFNTF_CRAY, DFNTF_PC   
+      integer	DFNTF_IEEE, DFNTF_VAX, DFNTF_CRAY, DFNTF_PC,
      *		DFNTF_CONVEX, DFNTF_VP
  
       parameter(DFNTF_IEEE             = 1,
@@ -162,7 +173,7 @@ c	Definitions of storage convention
 
 c       Masks for types
 
-      integer   DFNT_HDF, DFNT_NATIVE, DFNT_CUSTOM
+      integer   DFNT_HDF, DFNT_NATIVE, DFNT_CUSTOM, DFNT_LITEND
 
       parameter(DFNT_HDF                 = 0,
      *          DFNT_NATIVE              = 4096,
@@ -357,7 +368,7 @@ c	Tektronix
 
 c	Scientific Data set 
 
-      integer	DFTAG_SDG, DFTAG_SDD, DFTAG_SDS, DFTAG_SDL,
+      integer	DFTAG_SDG, DFTAG_SDD, DFTAG_SD, DFTAG_SDS, DFTAG_SDL,
      *      DFTAG_SDU, DFTAG_SDF, DFTAG_SDM, DFTAG_SDC,
      *		DFTAG_SDT,DFTAG_SDLNK,DFTAG_NDG, 
      *		DFTAG_BREQ,DFTAG_EREQ
@@ -387,7 +398,8 @@ c	VSets
 
 c	compression schemes 
 
-      integer	DFTAG_RLE, DFTAG_IMC, DFTAG_IMCOMP
+      integer	DFTAG_RLE, DFTAG_IMC, DFTAG_IMCOMP, DFTAG_JPEG,
+     *	DFTAG_GREYJPEG
  
       parameter(DFTAG_RLE   	=11,
      *		DFTAG_IMC   	=12,
