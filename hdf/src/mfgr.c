@@ -2833,7 +2833,7 @@ int32 GRreftoindex(int32 grid,uint16 ref)
     HEclear();
 
     /* check the validity of the RI ID */
-    if(!VALIDRIID(grid))
+    if(!VALIDGRID(grid))
         HRETURN_ERROR(DFE_ARGS, FAIL);
     
     /* Get the array index for the grid */
