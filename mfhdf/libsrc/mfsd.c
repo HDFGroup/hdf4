@@ -1498,6 +1498,10 @@ VOIDP data;
     if (nt & DFNT_NATIVE) 
         return FAIL;
 
+    /* Make sure that count is less than MAX_ORDER(Vdata) */
+    if (count > MAX_ORDER)
+       return FAIL;
+
     /* determine what type of ID we've been given */
     if(SDIapfromid(id, &handle, &ap) == FAIL)
         return FAIL;
