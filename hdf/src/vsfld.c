@@ -134,25 +134,16 @@ char    *fields;
     VDATA           *vs;
     char  * FUNC = "VSsetfields";
 
-    if (!VALIDVSID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
+    if (!VALIDVSID(vkey))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
   /* locate vs's index in vstab */
-    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey))))
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vs=w->vs;
-    if (vs == NULL) {
-          HERROR(DFE_ARGS);
-          HEprint(stderr,0);
-          return(FAIL);
-    }
+    if (vs == NULL)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     if((scanattrs(fields, &ac, &av) == FAIL) || (ac == 0))
         HRETURN_ERROR(DFE_BADFIELDS,FAIL);
@@ -286,18 +277,12 @@ int32   localtype, order;
     VDATA           *vs;
     char  * FUNC = "VSfdefine";
 
-    if (!VALIDVSID(vkey)) {
-        HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
-  
+    if (!VALIDVSID(vkey))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
+
   /* locate vs's index in vstab */
-    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
-        HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
-        return(FAIL);
-    }
+    if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey))))
+        HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vs=w->vs;
     if ((vs == NULL) || (scanattrs(field,&ac,&av) == FAIL) || (ac != 1))
