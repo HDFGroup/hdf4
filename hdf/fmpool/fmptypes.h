@@ -131,7 +131,8 @@ typedef u_int32_t	pageno_t;         /* page type */
    default to stdio(1) library i.e. ANSI C buffered I/O */
 
 #ifdef HAVE_STDIO
-#define FMPI_FAIL    NULL
+#define FMPI_OPEN_FAIL    NULL
+#define FMPI_CLOSE_SUCCEED   0
 /* using C buffered file I/O routines to access files */
 typedef FILE *fmp_file_t;
 
@@ -165,7 +166,8 @@ typedef FILE *fmp_file_t;
 #endif /* FILE_IO == HAVE_STDIO */
 
 #ifdef HAVE_FCNTL
-#define FMPI_FAIL    -1
+#define FMPI_OPEN_FAIL    -1
+#define FMPI_CLOSE_SUCCEED   0
 /* using UNIX unbuffered file I/O routines to access files */
 typedef int fmp_file_t;
 
@@ -186,7 +188,8 @@ typedef int fmp_file_t;
 #endif /* FILE_IO == HAVE_FCNTL */
 
 #ifdef HAVE_MACIO
-#define FMPI_FAIL    -1
+#define FMPI_OPEN_FAIL    -1
+#define FMPI_CLOSE_SUCCEED   0
 /* using special routines to redirect to Mac Toolkit I/O */
 typedef short fmp_file_t;
 #   define FMPI_OPEN(x,y)         mopen(x,y)
@@ -201,7 +204,8 @@ typedef short fmp_file_t;
 #endif /* FILE_IO == HAVE_MACIO */
 
 #ifdef HAVE_PCIO
-#define FMPI_FAIL    NULL
+#define FMPI_OPEN_FAIL    NULL
+#define FMPI_CLOSE_SUCCEED   0
 /* using special PC functions to enable reading/writing large chunks */
 typedef FILE *fmp_file_t;
 #   define FMPI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
