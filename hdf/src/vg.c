@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*
 *
@@ -74,8 +77,8 @@ int32 matchnocase (strx, stry)
 	int16		tx,ty;
 	char 		*sx, *sy;
 
-    nx = DFIstrlen(strx);
-    ny = DFIstrlen(stry);
+    nx = HDstrlen(strx);
+    ny = HDstrlen(stry);
 	if (nx != ny) return(FALSE);  /* different lengths */
 
 	for (sx=strx, sy=stry, i=0;i<nx;i++,sx++,sy++) {
@@ -194,7 +197,7 @@ PUBLIC int32 VSgetfields (vs, fields)
 
 {
 	int32 i;
-	char * FUNC = "VSsetfields";
+    char * FUNC = "VSgetfields";
 
 	if (vs==NULL) {
        HERROR(DFE_BADPTR);
@@ -203,9 +206,9 @@ PUBLIC int32 VSgetfields (vs, fields)
 
 	fields[0] = '\0';
 	for (i=0;i<vs->wlist.n;i++) { /* build the comma-separated string */
-		strcat(fields,vs->wlist.name[i]);
+        HDstrcat(fields,vs->wlist.name[i]);
 		if ( i < vs->wlist.n - 1 )
-			strcat(fields,",");
+            HDstrcat(fields,",");
 	}
 
 	return ((int32) vs->wlist.n);
@@ -301,7 +304,7 @@ PUBLIC int32 VSsizeof (vs, fields)
 	for (i=0;i<ac;i++) {
 		for (found=0,j=0;j<vs->wlist.n;j++)
                   /* check fields in vs */
-			if (!strcmp(av[i], vs->wlist.name[j])) {  
+            if (!HDstrcmp(av[i], vs->wlist.name[j])) {
 				totalsize += vs->wlist.esize[j];
 				found=1;
 				break;
@@ -381,12 +384,12 @@ PUBLIC void VSsetname (vs, vsname)
 	char * FUNC = "VSsetname";
 
 	if (vs == NULL) return;
-    if ( DFIstrlen(vsname) > VSNAMELENMAX) {
-		strncpy(vs->vsname, vsname,VSNAMELENMAX);
+    if ( HDstrlen(vsname) > VSNAMELENMAX) {
+        HDstrncpy(vs->vsname, vsname,VSNAMELENMAX);
 		vs->vsname[VSNAMELENMAX]='\0';
 	}
 	else 
-		strcpy(vs->vsname, vsname);
+        HDstrcpy(vs->vsname, vsname);
 	vs->marked = TRUE;
 	return;
 
@@ -414,12 +417,12 @@ PUBLIC void VSsetclass (vs, vsclass)
 	char * FUNC = "VSsetclass";
 
 	if (vs == NULL) return;
-    if ( DFIstrlen(vsclass) > VSNAMELENMAX) {
-		strncpy(vs->vsclass, vsclass,VSNAMELENMAX);
+    if ( HDstrlen(vsclass) > VSNAMELENMAX) {
+        HDstrncpy(vs->vsclass, vsclass,VSNAMELENMAX);
 		vs->vsclass[VSNAMELENMAX]='\0';
 	}
 	else 
-		strcpy(vs->vsclass, vsclass);
+        HDstrcpy(vs->vsclass, vsclass);
 	vs->marked = TRUE;
 	return;
 
@@ -445,7 +448,7 @@ PUBLIC void VSgetname (vs, vsname)
 {
 	char * FUNC = "VSgetname";
 
-	if (vs != NULL) strcpy(vsname, vs->vsname);
+    if (vs != NULL) HDstrcpy(vsname, vs->vsname);
 	return;
 
 } /* VSgetname */
@@ -470,7 +473,7 @@ PUBLIC void VSgetclass (vs, vsclass)
 {
 	char * FUNC = "VSgetclass";
 
-	if (vs != NULL) strcpy(vsclass, vs->vsclass);
+    if (vs != NULL) HDstrcpy(vsclass, vs->vsclass);
 	return;
 
 } /* VSgetclass */
@@ -522,7 +525,7 @@ PUBLIC int32 VSinquire (vs, nelt, interlace, fields, eltsize, vsname)
 	if(eltsize)
 	  *eltsize    =  (int32) VSsizeof (vs,fields);
 	if(vsname)
-	  strcpy(vsname,vs->vsname);
+      HDstrcpy(vsname,vs->vsname);
 
 	return (SUCCEED); /* ok */
 
@@ -563,7 +566,7 @@ PUBLIC int32 VSlone(f, idarray, asize)
 
 
 /* -- allocate space for vdata refs, init to zeroes -- */
-    if (NULL == (lonevdata = (int16*) VGETSPACE ( 65000 * sizeof(int16))))
+    if (NULL == (lonevdata = (int16*) HDgetspace( 65000 * sizeof(int16))))
       { HERROR(DFE_NOSPACE); return(FAIL); }
     for(i=0;i<65000;i++) lonevdata[i] = 0;
 
@@ -595,7 +598,7 @@ PUBLIC int32 VSlone(f, idarray, asize)
             nlone ++;
             }
        }
-    VFREESPACE (lonevdata);
+    HDfreespace(lonevdata);
 
     return (nlone); /* return the TOTAL # of lone vdatas */
 
@@ -636,7 +639,7 @@ PUBLIC int32 Vlone (f, idarray, asize)
 	char * FUNC = "Vlone";
 
 /* -- allocate space for vgroup refs, init to zeroes -- */
-    if (NULL == (lonevg = (int16*) VGETSPACE ( 65000 * sizeof(int16))))
+    if (NULL == (lonevg = (int16*) HDgetspace ( 65000 * sizeof(int16))))
       { HERROR(DFE_NOSPACE); return(FAIL); }
     for(i=0;i<65000;i++) lonevg[i] = 0;
 
@@ -670,7 +673,7 @@ for(i=0;i<65000;i++) {
 		nlone ++;
 		}
    }
-VFREESPACE (lonevg);
+HDfreespace (lonevg);
 
 return (nlone); /* return the TOTAL # of lone vgroups */
 
@@ -706,7 +709,7 @@ int32 Vfind (f, vgname)
 		if (vg==NULL) return(0); 			/* error */
 		Vgetname(vg, name);
 		Vdetach (vg);
-		if (!strcmp(vgname,name)) 
+        if (!HDstrcmp(vgname,name))
                   return ((int32) vg->oref);  /* found the vgroup */
   	}
   	return(0); /* not found */
@@ -741,7 +744,7 @@ int32 VSfind (f, vsname)
 		if (vs==NULL) return(0); 			/* error */
 		VSgetname(vs, name);
 		VSdetach (vs);
-		if (!strcmp(vsname, name)) 
+        if (!HDstrcmp(vsname, name))
                   return ((int32) vs->oref);  /* found the vdata */
   	}
   	return(0); /* not found */

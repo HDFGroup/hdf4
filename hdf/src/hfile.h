@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.4  1992/10/22 22:53:32  chouck
-Added group handle to group interface
+Revision 1.5  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.4  1992/10/22  22:53:32  chouck
+ * Added group handle to group interface
+ *
  * Revision 1.3  1992/10/09  20:49:17  chouck
  * Added some patches to work with ThinkC I/O on the Mac
  *
@@ -43,9 +46,9 @@ Added group handle to group interface
 /* Library version numbers */
 
 #define LIBVER_MAJOR	3
-#define LIBVER_MINOR	2
+#define LIBVER_MINOR    3
 #define LIBVER_RELEASE	0
-#define LIBVER_STRING	"NCSA HDF Version 3.2 Beta Release 2 June 4, 1992"
+#define LIBVER_STRING   "NCSA HDF Version 3.3 Beta Release 1 Nov 1, 1992"
 #define LIBVER_LEN	92	/* 4+4+4+80 = 92 */
 /* end of version tags */
 
@@ -59,8 +62,14 @@ Added group handle to group interface
 #if (FILELIB == UNIXBUFIO)
 /* using C buffered file I/O routines to access files */
 typedef FILE *hdf_file_t;
+#ifdef VMS
+/* For VMS, use "mbc=64" to improve performance     */
+#   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
+                 fopen((p), "r+", "mbc=64") : fopen((p), "r", "mbc=64"))
+#else  /*  !VMS  */
 #   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
                         fopen((p), "r+") : fopen((p), "r"))
+#endif
 #   define HI_CREATE(p)        (fopen((p), "w+"))
 #   define HI_READ(f, b, n)    (((n) == fread((b), 1, (n), (f))) ? \
                                 SUCCEED : FAIL)
@@ -124,6 +133,26 @@ typedef FILE *hdf_file_t;
 #   define HI_SEEKEND(f) (fseek((f), (long)0, SEEK_END))
 #   define HI_TELL(f)  (ftell(f))
 #   define OPENERR(f)  ((f) == (FILE *)NULL)
+#endif /* FILELIB == PCIO */
+
+#if (FILELIB == WINIO)
+/* using special MS Windows functions to enable reading/writing large chunks */
+typedef HFILE hdf_file_t;
+#   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
+                        _lopen((p), READ_WRITE) : _lopen((p), READ))
+#   define HI_CREATE(p)        (_lcreat((p), 0))
+/* Alias the HI_READ and HI_WRITE macros to functions which can handle */
+/*  32-bits of data to read/write */
+#   define HI_READ(f, b, n)    (((int32)(n) == HDfreadbig((b), (n), (f))) ? \
+                                SUCCEED : FAIL)
+#   define HI_WRITE(f, b, n)   (((int32)(n) == HDfwritebig((b), (n), (f))) ? \
+                                SUCCEED : FAIL)
+#   define HI_CLOSE(f) (_lclose(f))
+#   define HI_FLUSH(f) (0)
+#   define HI_SEEK(f, o)       (_llseek((f), (long)(o), SEEK_SET))
+#   define HI_SEEKEND(f) (_llseek((f), (long)0, SEEK_END))
+#   define HI_TELL(f)  (_llseek((f),0l,SEEK_CUR))
+#   define OPENERR(f)  ((f) == (HFILE)HFILE_ERROR)
 #endif /* FILELIB == PCIO */
 
 /* The internal structure used to keep track of the files opened: an

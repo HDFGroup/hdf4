@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*****************************************************************************
 *
@@ -64,7 +67,7 @@ int32 scanattrs (attrs,attrc,attrv)
   char * FUNC = "scanattrs";
   
   s = attrs;
-  slen = DFIstrlen(s);
+  slen = HDstrlen(s);
   nsym = 0;
   
   s0 = s;
@@ -78,7 +81,7 @@ int32 scanattrs (attrs,attrc,attrv)
       nsym++;
       
       if ( len > FIELDNAMELENMAX) len = FIELDNAMELENMAX;
-      HDstrncpy(ss, s0, len + 1);
+      HIstrncpy(ss, s0, len + 1);
       s0 = s+1;
     }
   
@@ -89,7 +92,7 @@ int32 scanattrs (attrs,attrc,attrv)
   nsym++;
   
   if ( len > FIELDNAMELENMAX) len = FIELDNAMELENMAX;
-  HDstrncpy(ss, s0, len + 1);
+  HIstrncpy(ss, s0, len + 1);
   
   /* convert all fields tokens to uppercase */
   for (i = 0; i < nsym; i++) {

@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.8  1992/10/09 20:49:17  chouck
-Added some patches to work with ThinkC I/O on the Mac
+Revision 1.9  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.8  1992/10/09  20:49:17  chouck
+ * Added some patches to work with ThinkC I/O on the Mac
+ *
  * Revision 1.7  1992/09/28  18:24:01  koziol
  * Removed '#define BSD' from NEXT section
  *
@@ -34,25 +37,6 @@ Added some patches to work with ThinkC I/O on the Mac
 #ifndef HDFI_H
 #define HDFI_H
 
-#ifdef OLD_MACHINE_TEST
-/* &&& Replace this line with #define MachineType &&& */
-
-/**IMPORTANT** this is now in the in the makefile */
-#if !defined(SUN) && !defined(SUN386) && !defined(VMS) && !defined(ALLIANT)
-#if !defined(IRIS4) && !defined(MAC) && !defined(UNICOS) && !defined(MIPSEL)
-#if !defined(PC) && !defined(WIN3) && !defined(CONVEX) && !defined(IBM6000)
-#if !defined(APOLLO)
-If there is an error on this line, the machine type is defined wrong or
-not defined.  Somewhere you need to define SUN or some other machine
-among those tested for above.  This definition can occuer in the compile
-line, or in the line above that says /* &&& Replace this line... */,
-or possibly elsewhere if it suits your needs.
-#endif
-#endif
-#endif
-#endif
-#endif /* OLD_MACHINE_TEST */
-
 #ifdef GOT_MACHINE
 #undef GOT_MACHINE
 #endif
@@ -67,33 +51,30 @@ or possibly elsewhere if it suits your needs.
 /*      3 - Cray                                                            */
 /*      4 - Little Endian                                                   */
 /*--------------------------------------------------------------------------*/
-#define        DFMT_SUN        0x1111
-#define        DFMT_ALLIANT    0x1111
-#define        DFMT_IRIS4      0x1111
-#define        DFMT_APOLLO     0x1111
-#define        DFMT_IBM6000    0x1111
-#define        DFMT_HP9000     0x1111
-#define        DFMT_CONVEX     0x1111
-#define        DFMT_UNICOS     0x3331
-#define        DFMT_CTSS       0x3331
-#define        DFMT_VAX        0x2221
-#define        DFMT_MIPSEL     0x4441
-#ifdef OLD_WAY
-#define        DFMT_PC         0x4144  /* note byte swapping ??? */
-                               /* check this... */
-#else
-#define        DFMT_PC         0x4441  /* note byte swapping ??? */
-                               /* check this... */
-#endif
-#define        DFMT_MAC        0x1111
-#define        DFMT_SUN386     0x4441
-#define        DFMT_NEXT       0x1111
+#define     DFMT_SUN            0x1111
+#define     DFMT_ALLIANT        0x1111
+#define     DFMT_IRIS4          0x1111
+#define     DFMT_APOLLO         0x1111
+#define     DFMT_IBM6000        0x1111
+#define     DFMT_HP9000         0x1111
+#define     DFMT_CONVEXNATIVE   0x5511
+#define     DFMT_CONVEX         0x1111
+#define     DFMT_UNICOS         0x3331
+#define     DFMT_CTSS           0x3331
+#define     DFMT_VAX            0x2221
+#define     DFMT_MIPSEL         0x4441
+#define     DFMT_PC             0x4441
+#define     DFMT_MAC            0x1111
+#define     DFMT_SUN386         0x4441
+#define     DFMT_NEXT           0x1111
+#define     DFMT_MOTOROLA       0x1111
 
 /* I/O library constants */
 #define UNIXUNBUFIO 1
 #define UNIXBUFIO   2
 #define MACIO       3
 #define PCIO        4
+#define WINIO       5
 
 #include <stdio.h>
 
@@ -135,6 +116,7 @@ typedef unsigned int      uintn;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef float             float32;
 typedef double            float64;
+#define HUGE              /* This should only be defined to a value on the PC */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
@@ -177,6 +159,7 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+#define HUGE              /* This should only be defined to a value on the PC */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
@@ -214,6 +197,7 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+#define HUGE              /* This should only be defined to a value on the PC */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
@@ -255,6 +239,7 @@ typedef unsigned int       uintn;
 typedef float              float32;
 typedef double             float64;
 typedef int                intf;     /* size of INTEGERs in Fortran compiler */
+#define HUGE              /* This should only be defined to a value on the PC */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
@@ -297,6 +282,7 @@ typedef float           float32;
 typedef double          float64;
 typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 
+#define HUGE              /* This should only be defined to a value on the PC */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #define DF_CAPFNAMES            /* fortran names are in all caps */
 #define FILELIB UNIXBUFIO
@@ -330,6 +316,7 @@ typedef unsigned int       uintn;
 typedef float              float32;
 typedef double             float64;
 typedef int                intf;     /* size of INTEGERs in Fortran compiler */
+#define HUGE              /* This should only be defined to a value on the PC */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #define _fcdtocp(desc)  ((char *) *((char **) &desc[4]))
 
@@ -341,6 +328,11 @@ typedef int                intf;     /* size of INTEGERs in Fortran compiler */
 #include "dfivms.h"
 
 #endif /* VMS */
+
+/* For Convex machines with native format floats */
+#ifdef CONVEXNATIVE
+#   define CONVEX
+#endif
 
 #ifdef CONVEX
 
@@ -358,7 +350,11 @@ Please check your Makefile.
 #define PROTOTYPE					/* to invoke ANSI prototypes */
 #endif	/* PROTOTYPE */
 
+#ifdef CONVEXNATIVE
+#define DF_MT             DFMT_CONVEXNATIVE
+#else
 #define DF_MT             DFMT_CONVEX
+#endif
 typedef void              VOID;
 typedef char              *VOIDP;
 typedef char              *_fcd;
@@ -376,6 +372,7 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+#define HUGE              /* This should only be defined to a value on the PC */
 #define DFmovmem(from, to, len) bcopy(from, to, len)
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
@@ -411,6 +408,7 @@ typedef unsigned int    uintn;
 typedef float           float32;
 typedef double          float64;
 typedef int             intf;     /* size of INTEGERs in Fortran compiler */
+#define HUGE              /* This should only be defined to a value on the PC */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #define _fcdtocp(desc) (desc)
 #define FNAME_POST_UNDERSCORE
@@ -462,6 +460,7 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+#define HUGE              /* This should only be defined to a value on the PC */
 #define _fcdtocp(desc) (desc)
 void exit(int status);
 
@@ -503,9 +502,11 @@ Please check your Makefile.
 #define PROTOTYPE
 #endif  /* !PROTOTYPE */
 
+#ifndef VOID    /* The stupid windows.h header file uses a #define instead of a typedef */
 typedef void              VOID;
-typedef void              *VOIDP;
-typedef char              *_fcd;
+#endif  /* end VOID */
+typedef void              huge *VOIDP;
+typedef char              huge *_fcd;
 typedef int               bool;
 typedef char              char8;
 typedef unsigned char     uchar8;
@@ -520,21 +521,23 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef long              intf;     /* size of INTEGERs in Fortran compiler */
+/* used to force the prototypes in hproto.h to use huge pointers */
+#define HUGE              huge      
 
-#ifdef OLD_WAY
 #ifdef WIN3
 #define DFmovmem(from, to, len) _fmemmove(to, from, len)
 #else   /* !WIN3 */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #endif  /* WIN3 */
-#else
-#define DFmovmem(from, to, len) HDmemcopy(from, to, len)
-#endif
 
 #define _fcdtocp(desc) (desc)
 
 #define register    /* don't mess with the PC compiler's register allocation */
+#ifdef WIN3
+#define FILELIB WINIO
+#else /* !WIN3 */
 #define FILELIB PCIO
+#endif /* WIN3 */
 #endif /* PC */
 
 #ifdef NEXT
@@ -568,11 +571,57 @@ typedef unsigned int      uintn;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef float             float32;
 typedef double            float64;
+#define HUGE              /* This should only be defined to a value on the PC */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
 #endif /* NEXT */
+
+#ifdef MOTOROLA
+
+#ifdef GOT_MACHINE
+If you get an error on this line more than one machine type has been defined.
+Please check your Makefile.
+#endif
+#define GOT_MACHINE
+
+#include <string.h>
+#ifndef __GNUC__
+#include <memory.h>
+#endif /* __GNUC__ */
+#include <unistd.h>
+#include <sys/file.h>               /* for unbuffered i/o stuff */
+#ifndef O_RDONLY
+#include <fcntl.h>              /* for unbuffered i/o stuff */
+#endif /*O_RDONLY*/
+#define DF_MT             DFMT_MOTOROLA
+typedef void              VOID;
+typedef char              *VOIDP;
+typedef char              *_fcd;
+typedef int               bool;
+typedef char              char8;
+typedef unsigned char     uchar8;
+typedef char              int8;
+typedef unsigned char     uint8;
+typedef short int         int16;
+typedef unsigned short int uint16;
+typedef long int          int32;
+typedef unsigned long int uint32;
+typedef int               intn;
+typedef unsigned int      uintn;
+typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+typedef float             float32;
+typedef double            float64;
+#define HUGE              /* This should only be defined to a value on the PC */
+#define DFmovmem(from, to, len) memcpy(to, from, len)
+#define FNAME_POST_UNDERSCORE
+#define _fcdtocp(desc) (desc)
+#define FILELIB UNIXBUFIO
+#ifndef __STDC__
+#define const
+#endif
+#endif /* MOTOROLA */
 
 #ifndef GOT_MACHINE
 No machine type has been defined.  Your Makefile needs to have someing like
@@ -626,9 +675,9 @@ correctly.
 ***************************************************************************/
 #    ifndef DFKMASTER
 #if defined __STDC__ || defined PC
-extern int (*DFKnumin)(void * source, void * dest, uint32 num_elm,
+extern int (*DFKnumin)(void HUGE * source, void HUGE * dest, uint32 num_elm,
             uint32 source_stride,uint32 dest_stride);
-extern int (*DFKnumout)(void * source, void * dest, uint32 num_elm,
+extern int (*DFKnumout)(void HUGE * source, void HUGE * dest, uint32 num_elm,
             uint32 source_stride,uint32 dest_stride);
 #else
 extern int (*DFKnumin)();
@@ -717,15 +766,30 @@ extern uint8 *DFtbuf;
 **************************************************************************/
 
 #ifdef WIN3
-#  define DFIstrlen(s)   (_fstrlen(s))
-#  define DFIstrcpy(s,d) (_fstrcpy((s),(d)))
-#  define DFIstrcmp(s,t) (_fstrcmp((s),(t)))
-#  define DFIstrncmp(s1,s2,n) (_fstrncmp((s1),(s2),(n)))
+#  define HDstrcat(s1,s2)   (_fstrcat((s1),(s2)))
+#  define HDstrcmp(s,t)     (_fstrcmp((s),(t)))
+#  define HDstrcpy(s,d)     (_fstrcpy((s),(d)))
+#  define HDstrlen(s)       (_fstrlen(s))
+#  define HDstrncmp(s1,s2,n)    (_fstrncmp((s1),(s2),(n)))
+#  define HDstrncpy(s1,s2,n)    (_fstrncpy((s1),(s2),(n)))
 #else
-#  define DFIstrlen(s)   (strlen(s))
-#  define DFIstrcpy(s,d) (strcpy((s),(d)))
-#  define DFIstrcmp(s,t) (strcmp((s),(t)))
-#  define DFIstrncmp(s1,s2,n) (strncmp((s1),(s2),(n)))
+#  define HDstrcat(s1,s2)   (strcat((s1),(s2)))
+#  define HDstrcmp(s,t)     (strcmp((s),(t)))
+#  define HDstrcpy(s,d)     (strcpy((s),(d)))
+#  define HDstrlen(s)       (strlen(s))
+#  define HDstrncmp(s1,s2,n)    (strncmp((s1),(s2),(n)))
+#  define HDstrncpy(s1,s2,n)    (strncpy((s1),(s2),(n)))
+#endif /* WIN3 */
+
+
+/**************************************************************************
+*  Memory functions defined differently under MS Windows
+**************************************************************************/
+
+#ifdef WIN3
+#  define HDmemcpy(dst,src,n) (_fmemcpy((dst),(src),(n)))
+#else
+#  define HDmemcpy(dst,src,n) (memcpy((dst),(src),(n)))
 #endif /* WIN3 */
 
 

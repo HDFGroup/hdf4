@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/10/22 22:53:32  chouck
-Added group handle to group interface
+Revision 1.5  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.4  1992/10/22  22:53:32  chouck
+ * Added group handle to group interface
+ *
  * Revision 1.3  1992/09/17  22:06:06  chouck
  * Removed debugging info for calibration tag routines
  *
@@ -37,6 +40,7 @@ Added group handle to group interface
     DFSDgetrange - get max and min of data
     DFSDgetdata - get data values
     DFSDgetNT - get file number type for reading
+    DFSDpre32 - is the current SDS written with HDF versions previous to 3.2?
     DFSDsetlengths - set lengths of label, unit, format strings on gets
     DFSDsetdims - set rank and dim sizes
     DFSDsetdatastrs - set data label, unit, format and coord system
@@ -263,12 +267,12 @@ char *label, *unit, *format, *coordsys;
         lufp = (luf==LABEL) ? label : (luf==UNIT) ? unit : format;
         if (lufp)
             if (Readsdg.dataluf[luf])
-                HDstrncpy(lufp, Readsdg.dataluf[luf], Maxstrlen[luf]);
+                HIstrncpy(lufp, Readsdg.dataluf[luf], Maxstrlen[luf]);
     }
     /* copy coordsys */
     if (coordsys)
         if (Readsdg.coordsys)
-            HDstrncpy(coordsys, Readsdg.coordsys, Maxstrlen[COORDSYS]);
+            HIstrncpy(coordsys, Readsdg.coordsys, Maxstrlen[COORDSYS]);
         else coordsys[0] = '\0';
     return(0);
 }
@@ -328,7 +332,7 @@ char *label, *unit, *format;
                 continue;
             }
             if (Readsdg.dimluf[luf])
-                HDstrncpy(lufp, Readsdg.dimluf[luf][rdim], Maxstrlen[luf]);
+                HIstrncpy(lufp, Readsdg.dimluf[luf][rdim], Maxstrlen[luf]);
         }
     }
     return(0);
@@ -361,10 +365,10 @@ int *llabel, *lunit, *lformat, *lcoordsys;
         HERROR(DFE_BADCALL); return FAIL; 
     }
 
-    *llabel =  Readsdg.dataluf[LABEL] ? DFIstrlen(Readsdg.dataluf[LABEL]) : 0;
-    *lunit =  Readsdg.dataluf[UNIT] ? DFIstrlen(Readsdg.dataluf[UNIT]) : 0;
-    *lformat =  Readsdg.dataluf[FORMAT] ? DFIstrlen(Readsdg.dataluf[FORMAT]) : 0;
-    *lcoordsys =  Readsdg.coordsys ? DFIstrlen(Readsdg.coordsys) : 0;
+    *llabel =  Readsdg.dataluf[LABEL] ? HDstrlen(Readsdg.dataluf[LABEL]) : 0;
+    *lunit =  Readsdg.dataluf[UNIT] ? HDstrlen(Readsdg.dataluf[UNIT]) : 0;
+    *lformat =  Readsdg.dataluf[FORMAT] ? HDstrlen(Readsdg.dataluf[FORMAT]) : 0;
+    *lcoordsys =  Readsdg.coordsys ? HDstrlen(Readsdg.coordsys) : 0;
     return(0);
 }
     
@@ -402,11 +406,11 @@ int *llabel, *lunit, *lformat;
     }
 
     *llabel =  Readsdg.dimluf[LABEL][dim-1] ?
-        DFIstrlen(Readsdg.dimluf[LABEL][dim-1]) : 0;
+        HDstrlen(Readsdg.dimluf[LABEL][dim-1]) : 0;
     *lunit =  Readsdg.dimluf[UNIT][dim-1] ?
-        DFIstrlen(Readsdg.dimluf[UNIT][dim-1]) : 0;
+        HDstrlen(Readsdg.dimluf[UNIT][dim-1]) : 0;
     *lformat =  Readsdg.dimluf[FORMAT][dim-1] ?
-        DFIstrlen(Readsdg.dimluf[FORMAT][dim-1]) : 0;
+        HDstrlen(Readsdg.dimluf[FORMAT][dim-1]) : 0;
     return(0);
 }
 
@@ -467,9 +471,7 @@ void *scale;
 
     p1 = (uint8 *)scale;
     p2 = (uint8 *)(Readsdg.dimscales[rdim]);
-    if (HDmemcopy(p2, p1, dimsize) != 0)     {
-      return(-1);
-    }
+    HDmemcpy(p2, p1, dimsize);
     return(0);
 }
 
@@ -511,12 +513,10 @@ void *pmax, *pmin;
     if (Ismaxmin) {
         p1 = (uint8 *)pmax;
         p2 = (uint8 *)&(Readsdg.max_min[0]);
-        if (HDmemcopy(p2, p1, localNTsize) != 0)
-            return(-1);
+        HDmemcpy(p2, p1, localNTsize);
         p1 = (uint8 *)pmin;
         p2 = &(Readsdg.max_min[localNTsize]);
-        if (HDmemcopy(p2, p1, localNTsize) != 0)
-            return(-1);
+        HDmemcpy(p2, p1, localNTsize);
         return(0);
     } else {
         HERROR(DFE_NOVALS); return FAIL;
@@ -717,18 +717,18 @@ char *label, *unit, *format, *coordsys;
 
 	/* copy string */
         if (lufp) {
-            Writesdg.dataluf[luf] = HDgetspace((uint32) DFIstrlen(lufp)+1);
+            Writesdg.dataluf[luf] = HDgetspace((uint32) HDstrlen(lufp)+1);
             if (Writesdg.dataluf[luf]==NULL) return FAIL;
-            DFIstrcpy(Writesdg.dataluf[luf], lufp);
+            HDstrcpy(Writesdg.dataluf[luf], lufp);
         }
     }
 
     Writesdg.coordsys = HDfreespace(Writesdg.coordsys);
 
     if (coordsys) {
-        Writesdg.coordsys = HDgetspace((uint32) DFIstrlen(coordsys)+1);
+        Writesdg.coordsys = HDgetspace((uint32) HDstrlen(coordsys)+1);
         if (Writesdg.coordsys==NULL) return FAIL;
-        DFIstrcpy(Writesdg.coordsys, coordsys);
+        HDstrcpy(Writesdg.coordsys, coordsys);
     }
 
     /* indicate that label, unit, format and coordsys info modified */
@@ -809,7 +809,7 @@ char *label, *unit, *format;
     for (luf = LABEL; luf <= FORMAT; luf++) {
 	/* set lufp to point to label etc. as apppropriate */
         lufp   = (luf==LABEL) ? label : (luf==UNIT) ? unit  : format;
-        luflen = DFIstrlen(lufp);
+        luflen = HDstrlen(lufp);
 
 	/* allocate space if necessary */
         if (!Writesdg.dimluf[luf]) {
@@ -833,7 +833,7 @@ char *label, *unit, *format;
         if (lufp) {
             Writesdg.dimluf[luf][rdim] = HDgetspace((uint32) luflen + 1);
             if (Writesdg.dimluf[luf][rdim]==NULL) return FAIL;
-            HDstrncpy(Writesdg.dimluf[luf][rdim], lufp, luflen + 1);
+            HIstrncpy(Writesdg.dimluf[luf][rdim], lufp, luflen + 1);
         }
     }
     /* Indicate that this info has not been written to file */
@@ -923,8 +923,7 @@ void *scale;
              /* copy scale */
     p1 = (uint8 *)scale;
     p2 = (uint8 *)Writesdg.dimscales[rdim];
-    if (HDmemcopy(p1, p2, bytesize) != 0)
-        return(-1);
+    HDmemcpy(p1, p2, bytesize);
 
     /* Indicate scales modified */
     Ref.scales = 0;
@@ -970,11 +969,8 @@ void *maxi, *mini;
     p1 = (uint8 *)maxi;
     p2 = (uint8 *)mini;
     
-    if (HDmemcopy(p1, (uint8 *) &(Writesdg.max_min[0]), localNTsize) == FAIL) 
-        return FAIL;
-    if (HDmemcopy(p2, (uint8 *)&(Writesdg.max_min[localNTsize]),
-                                                        localNTsize) == FAIL) 
-        return FAIL;
+    HDmemcpy(p1, (uint8 *) &(Writesdg.max_min[0]), localNTsize);
+    HDmemcpy(p2, (uint8 *)&(Writesdg.max_min[localNTsize]), localNTsize);
 
     Ref.maxmin = 0;
 
@@ -1435,6 +1431,32 @@ int32 *pnumbertype;
         HERROR(DFE_BADNUMTYPE); return FAIL;
     }
     return(0);
+}
+    
+/*--------------------------------------------------------------------
+*
+* Name:	        DFSDpre32
+* Purpose:	Is the current SDS written by HDF previous to 3.2r1
+* Inputs: 	None
+* return:   TRUE (!0) if the SDS was written by 3.1,
+*               FALSE (0) otherwise.
+* Method:   invokes DFSDIisndg, testing isndg in sdg struct
+* Remark:
+*------------------------------------------------------------------- */
+
+#if defined PROTOTYPE
+intn DFSDpre32(void)
+#else
+intn DFSDpre32()
+#endif
+{
+    intn isndg;
+    char *FUNC="DFSDpre32";
+    
+    DFSDIisndg(&isndg);
+    if (isndg == 1)
+        return (FALSE);
+    else return (TRUE);
 }
     
 /******************************************************************************/
@@ -1904,7 +1926,7 @@ DFSsdg *sdg;
             p = buf;
 
             /* allocate data luf space */
-            sdg->dataluf[luf] = HDgetspace((uint32) DFIstrlen((char*)p)+1);
+            sdg->dataluf[luf] = HDgetspace((uint32) HDstrlen((char*)p)+1);
 
             if (sdg->dataluf[luf]==NULL) {
                 buf = HDfreespace(buf);
@@ -1912,8 +1934,8 @@ DFSsdg *sdg;
             }
 
             /* extract data luf */
-            DFIstrcpy(sdg->dataluf[luf], (char*)p);
-            p += DFIstrlen(sdg->dataluf[luf])+1;
+            HDstrcpy(sdg->dataluf[luf], (char*)p);
+            p += HDstrlen(sdg->dataluf[luf])+1;
 
             /* get space for dimluf array */
             sdg->dimluf[luf] =
@@ -1926,13 +1948,13 @@ DFSsdg *sdg;
             /* extract dimension lufs */
             for (i = 0; i < sdg->rank; i++) {
                 sdg->dimluf[luf][i] = 
-                    HDgetspace((uint32) DFIstrlen((char*)p) + 1);
+                    HDgetspace((uint32) HDstrlen((char*)p) + 1);
                 if (sdg->dimluf[luf][i]==NULL) {
                     buf = HDfreespace(buf);
                     return FAIL;
                 }
-                DFIstrcpy(sdg->dimluf[luf][i], (char*)p);
-                p += DFIstrlen(sdg->dimluf[luf][i])+1;
+                HDstrcpy(sdg->dimluf[luf][i], (char*)p);
+                p += HDstrlen(sdg->dimluf[luf][i])+1;
             }
             buf = HDfreespace(buf);
             break;
@@ -2114,7 +2136,7 @@ DFSsdg *sdg;
                 } else {
 
                     /* element is old float based type */
-                    char *buf2;
+                    uint8 *buf2;
 
                     /* allocate translation buffer */
                     buf2 = HDgetspace((uint32) 4 * sizeof(float32));
@@ -2264,11 +2286,11 @@ DFSsdg *sdg;
             
             /* if dataluf non-NULL, set up to write */
             if (sdg->dataluf[luf] && sdg->dataluf[luf][0]) { 
-                len = DFIstrlen(sdg->dataluf[luf])+1;
-                HDstrncpy( (char *)bufp, sdg->dataluf[luf], len);
+                len = HDstrlen(sdg->dataluf[luf])+1;
+                HIstrncpy( (char *)bufp, sdg->dataluf[luf], len);
                 bufp += len;
             } else {                       /* dataluf NULL */
-                HDstrncpy( (char *)bufp, "", (int32) 1 );
+                HIstrncpy( (char *)bufp, "", (int32) 1 );
                 bufp ++;
             }
 
@@ -2277,11 +2299,11 @@ DFSsdg *sdg;
                 for (i=0; i<sdg->rank; i++) {
                     if ( sdg->dimluf[luf][i] &&     
                          sdg->dimluf[luf][i][0] ) {   /* dimluf not NULL */
-                            len = DFIstrlen(sdg->dimluf[luf][i])+1;
-                            HDstrncpy( (char *)bufp, sdg->dimluf[luf][i], len);
+                            len = HDstrlen(sdg->dimluf[luf][i])+1;
+                            HIstrncpy( (char *)bufp, sdg->dimluf[luf][i], len);
                             bufp += len;
                     } else {                        /* dimluf NULL */
-                        HDstrncpy( (char *)bufp, "", (int32) 1 );
+                        HIstrncpy( (char *)bufp, "", (int32) 1 );
                         bufp ++;
                     }
                 }	/* i loop 	*/
@@ -2374,7 +2396,7 @@ DFSsdg *sdg;
     if (!sdg->coordsys || !sdg->coordsys[0]) Ref.coordsys = (-1);
     if (!Ref.coordsys) {
         ret = Hputelement(file_id, DFTAG_SDC, ref, (uint8 *)sdg->coordsys,
-                                (int32) (DFIstrlen(sdg->coordsys)+1));
+                                (int32) (HDstrlen(sdg->coordsys)+1));
         if (ret == FAIL) return FAIL;
         Ref.coordsys = ref;
     }
@@ -2609,7 +2631,7 @@ int access;
     }
 
         /* use reopen if same file as last time - more efficient */
-    if ((DFIstrcmp(Lastfile,filename)) || (access==DFACC_CREATE)) {
+    if ((HDstrcmp(Lastfile,filename)) || (access==DFACC_CREATE)) {
         /* open a new file, delete nsdg table and reset lastnsdg  */
         if (nsdghdr != NULL) 	{
             if (nsdghdr->nsdg_t != NULL) 	{
@@ -2671,7 +2693,7 @@ int access;
         lastnsdg.ref = 0;
     }
     
-    HDstrncpy(Lastfile, filename, DF_MAXFNLEN);
+    HIstrncpy(Lastfile, filename, DF_MAXFNLEN);
     /* remember filename, so reopen may be used next time if same file*/
 
     return(file_id);
@@ -2804,10 +2826,10 @@ char *filename;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFSDIisndg(int32 *isndg)
+int DFSDIisndg(intn *isndg)
 #else
 int DFSDIisndg(isndg)
-int32 *isndg;
+intn *isndg;
 #endif /* PROTOTYPE */
 {
     *isndg = Readsdg.isndg;

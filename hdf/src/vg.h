@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*****************************************************************************
 *  Likkai Ng MAY 91  NCSA
@@ -20,20 +23,15 @@ Initial revision
 *
 ******************************************************************************/
 
+#ifndef _VG_H
+#define _VG_H
 
 #include "hdf.h"
 #include "herr.h"
 
 /* H-level customization jason ng 12-Feb-92 */
-#ifdef OLD_WAY
-#define HFILEID         int32
-#define BYTE			char
-#else
 typedef int32           HFILEID;
 typedef unsigned char   BYTE;
-#endif
-#define VGETSPACE(n)		HDgetspace((uint32)n)
-#define VFREESPACE(m)	HDfreespace((void*)m)
 
 #define QQnewref Hnewref
 #define QQstartread Hstartread 
@@ -356,32 +354,6 @@ typedef struct vfiledir_struct {
 * Does not affect usage by other HDF interfaces.
 */
 
-#ifndef VMS
-
-#define DFopen (HFILEID) DFvsetopen
-#define DFclose DFvsetclose
-
-#define Hopen (HFILEID) DFvsetopen
-#define Hclose DFvsetclose
-
-#else
-
-/*
-  Hopen and DFopen have already been defined in dfivms.h to avoid
-  linker conflicts as the VMS linker is case insensitive
-*/
-
-#undef Hopen
-#undef DFopen
-
-#define DFopen (HFILEID) DFvsetopen
-#define DFclose DFvsetclose
-
-#define Hopen (HFILEID) DFvsetopen
-#define Hclose DFvsetclose
-
-#endif /* VMS */
-
 /* .................................................................. */
 
 /* all these macros should be public for users */
@@ -415,3 +387,6 @@ typedef struct vfiledir_struct {
 #define VSNAME(vs)  ((vs)->vsname)
 
 #include "vproto.h"
+
+#endif /* _VG_H */
+

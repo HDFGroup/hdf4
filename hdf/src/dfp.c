@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*-----------------------------------------------------------------------------
  * File:    dfp.c
@@ -159,7 +162,7 @@ intn DFPputpal(filename, palette, overwrite, filemode)
         return FAIL;
     }
 
-    if (overwrite && strcmp(filename, Lastfile)) {
+    if (overwrite && HDstrcmp(filename, Lastfile)) {
         HERROR(DFE_BADCALL);
         return FAIL;
     }
@@ -393,7 +396,7 @@ int32 DFPIopen(filename, access)
     int32 file_id;
 
         /* use reopen if same file as last time - more efficient */
-    if (strncmp(Lastfile,filename,DF_MAXFNLEN) || (access==DFACC_CREATE)) {
+    if (HDstrncmp(Lastfile,filename,DF_MAXFNLEN) || (access==DFACC_CREATE)) {
                                     /* treat create as different file */
         if ((file_id = Hopen(filename, access, 0)) == FAIL)
            return FAIL;
@@ -403,7 +406,7 @@ int32 DFPIopen(filename, access)
         if ((file_id = Hopen(filename, access, 0)) == FAIL)
            return FAIL;
 
-    strncpy(Lastfile, filename, DF_MAXFNLEN);
+    HDstrncpy(Lastfile, filename, DF_MAXFNLEN);
     /* remember filename, so reopen may be used next time if same file */
 
     return(file_id);

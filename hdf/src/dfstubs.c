@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*
 ** FILE
@@ -1584,56 +1587,6 @@ DF *dfile;
 #ifndef IBM6000
 #include <ctype.h>
 #endif
-
-/*-----------------------------------------------------------------------------
- * Name:    DFIstrncpy
- * Purpose: Copy a given number of bytes from one string to another
- * Inputs:  dest, source: destination and source for copy
- *          len: number of bytes to copy
- * Returns: Address of dest.
- * Users:   HDF systems programmers
- * Remarks:
- *---------------------------------------------------------------------------*/
-
-#if defined PROTOTYPE
-char *DFIstrncpy(register char *dest,register char *source,int len)
-#else
-char *DFIstrncpy(dest, source, len)
-register char *source, *dest;
-int len;
-#endif /* PROTOTYPE */
-{
-    for(; (len-- > 0) && (0!=(*dest++ = *source++));)
-        /* EMPTY */;
-    for(; len-- > 0;)
-        *dest++ = '\0';
-    if (!len) *dest = '\0';
-	return(dest);
-}
-
-/*-----------------------------------------------------------------------------
- * Name:    DFImemcopy
- * Purpose: Copy bytes from one place to another
- * Inputs:  from, to: source and destination for copy
- *          length: number of bytes to copy
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   HDF systems programmers, on machines without memcpy equivalents
- * Remarks: assumes non-overlapping
- *          Intended for machines on which memcppy etc. do not work
- *---------------------------------------------------------------------------*/
-
-#if defined PROTOTYPE
-int DFImemcopy(char *from, char *to, register int length)
-#else
-DFImemcopy( from, to, length)
-char *from, *to;
-register int length;
-#endif /* PROTOTYPE */
-{
-    length++;
-    while (--length) *to++ = *from++;
-    return(0);
-}
 
 #ifdef PC
 #ifdef WIN3

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /* obsolete code for HDF 3.2. 26/march/92 jason ng */
 /* except for the following routines: 
@@ -326,8 +329,8 @@ void oldunpackvg (vg, buf, size)
 	}
 
 	/* retrieve vgname */
-	strcpy(vg->vgname, (char*) bb);
-    bb += ( DFIstrlen(vg->vgname)+1 );
+    HDstrcpy(vg->vgname, (char*) bb);
+    bb += ( HDstrlen(vg->vgname)+1 );
 
 	if (vjv) {
 		sprintf(sjs,"unpackvg: vgname is [%s]\n",vg->vgname);
@@ -396,12 +399,12 @@ void oldunpackvs (vs, buf, size)
 		bb += INT16SIZE;
 	}
 	for (i=0;i<vs->wlist.n;i++) {
-		strcpy(vs->wlist.name[i],  (char*) bb);
-        bb += ( DFIstrlen(vs->wlist.name[i]) + 1 );
+        HDstrcpy(vs->wlist.name[i],  (char*) bb);
+        bb += ( HDstrlen(vs->wlist.name[i]) + 1 );
 	}
 
-	strcpy(vs->vsname, (char*) bb);
-    bb += ( DFIstrlen(vs->vsname) + 1);
+    HDstrcpy(vs->vsname, (char*) bb);
+    bb += ( HDstrlen(vs->vsname) + 1);
 
 	/* **EXTRA**  fill in the machine-dependent size fields */
 	for (i=0;i<vs->wlist.n;i++) {

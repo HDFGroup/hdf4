@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/10/22 22:53:32  chouck
-Added group handle to group interface
+Revision 1.4  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.3  1992/10/22  22:53:32  chouck
+ * Added group handle to group interface
+ *
  * Revision 1.2  1992/09/17  20:02:17  koziol
  * Included Shiming's bugfix to RIG stuff
  *
@@ -69,34 +72,23 @@ static DFRrig Zrig = {         /* empty RIG for initialization */
     {(float32)0.0, (float32)0.0, (float32)0.0}, NULL
 };
 
-#ifdef PERM_OUT
-#ifndef VMS
-int32 DFR8Iopen();
-#else /*VMS*/
-int32 _DFR8Iopen();
-#endif
-#endif
-
 typedef struct R8dim {
     uint16 xd;
     uint16 yd;
 } R8dim;                       /* dimensions of raster-8 image */
 
 /* private functions */
-#ifdef PROTOTYPE
-PRIVATE intn DFR8Iputimage(char *filename, VOIDP image, int32 xdim, int32 ydim,
-                         uint16 compress, int op);
-PRIVATE int DFR8getrig(int32 file_id, uint16 ref, DFRrig *rig);
-PRIVATE int DFR8putrig(int32 file_id, uint16 ref, DFRrig *rig, int wdim);
-PRIVATE int32 DFR8Iopen(char *filename, int access);
-PRIVATE int DFR8Iriginfo(int32 file_id);
-#else
-PRIVATE intn DFR8Iputimage();
-PRIVATE int DFR8getrig();
-PRIVATE int DFR8putrig();
-PRIVATE int32 DFR8Iopen();
-PRIVATE int DFR8Iriginfo();
-#endif
+PRIVATE intn DFR8Iputimage
+    PROTO((char *filename, VOIDP image, int32 xdim, int32 ydim,
+        uint16 compress, int op));
+PRIVATE int DFR8getrig
+    PROTO((int32 file_id, uint16 ref, DFRrig *rig));
+PRIVATE int DFR8putrig
+    PROTO((int32 file_id, uint16 ref, DFRrig *rig, int wdim));
+PRIVATE int32 DFR8Iopen
+    PROTO((char *filename, int access));
+PRIVATE int DFR8Iriginfo
+    PROTO((int32 file_id));
 
 uint8 R8tbuf[512];
 
@@ -115,12 +107,12 @@ uint8 R8tbuf[512];
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFR8getdims(char *filename, int32 *pxdim, int32 *pydim, int *pispal)
+intn DFR8getdims(char *filename, int32 *pxdim, int32 *pydim, intn *pispal)
 #else
 intn DFR8getdims(filename, pxdim, pydim, pispal)
     char *filename;
     int32 *pxdim, *pydim;
-    int *pispal;
+    intn *pispal;
 #endif
 {
     char *FUNC="DFR8getdims";
@@ -314,23 +306,21 @@ PRIVATE intn DFR8Iputimage(filename, image, xdim, ydim, compress, op)
 
     HEclear();
 
-    if (!filename || !*filename || !image
-       || (xdim<=0) || (ydim<=0)) {
-       HERROR(DFE_ARGS);
+    if (!filename || !*filename || !image || (xdim<=0) || (ydim<=0)) {
+        HERROR(DFE_ARGS);
         return FAIL;
     }
     pal = (Newpalette>=0) ? Palette : NULL;
     access = op ? DFACC_WRITE : DFACC_CREATE;
 
-    file_id = DFR8Iopen(filename, access);
-    if (file_id==FAIL) {
-       return FAIL;
-    }
+    if ((file_id=DFR8Iopen(filename, access))==FAIL)
+        return FAIL;
 
-    if (!Writeref) Writeref = Hnewref(file_id);
-    if (Writeref == 0) {
+    if (!Writeref)
+        Writeref = Hnewref(file_id);
+
+    if (Writeref == 0)
        return FAIL;
-    }
 
     /* write out image */
     if (compress) {
@@ -343,7 +333,7 @@ PRIVATE intn DFR8Iputimage(filename, image, xdim, ydim, compress, op)
             Newpalette = 1;    /* write out palette */
         }
     } else {                   /* image need not be compressed */
-        if (Hputelement(file_id, DFTAG_RI, Writeref, 
+        if (Hputelement(file_id, DFTAG_RI, Writeref,
                                      (uint8 *)image, xdim*ydim) == FAIL)
             return(HDerr(file_id));
         Writerig.image.tag = DFTAG_RI;
@@ -369,11 +359,12 @@ PRIVATE intn DFR8Iputimage(filename, image, xdim, ydim, compress, op)
             Writerig.desclut.xdim = 768;
             Writerig.desclut.ncomponents = 1;
         }
-        if (compress!=DFTAG_IMC) Newpalette = 0;
-       /* if IMCOMP, original palette not written out */
+        if (compress!=DFTAG_IMC)
+            Newpalette = 0;
+        /* if IMCOMP, original palette not written out */
 
-       /* put in Raster-8 stuff also, for those who want it */
-       Hdeldd(file_id, DFTAG_IP8, Writeref);
+        /* put in Raster-8 stuff also, for those who want it */
+        Hdeldd(file_id, DFTAG_IP8, Writeref);
         if (Hdupdd(file_id, DFTAG_IP8, Writeref, Writerig.lut.tag,
                   Writerig.lut.ref) == FAIL)
             return(HDerr(file_id));
@@ -381,7 +372,7 @@ PRIVATE intn DFR8Iputimage(filename, image, xdim, ydim, compress, op)
 
     /* Write out RIG */
     if ((Writerig.descimage.xdim==xdim) && (Writerig.descimage.ydim==ydim) &&
-       (Writerig.descimage.compr.tag==compress))
+            (Writerig.descimage.compr.tag==compress))
         wdim = 0;
     else {
         wdim = 1;
@@ -389,13 +380,14 @@ PRIVATE intn DFR8Iputimage(filename, image, xdim, ydim, compress, op)
         Writerig.descimage.ydim = ydim;
         Writerig.descimage.compr.tag = compress;
     }
-    if (DFR8putrig(file_id, Writeref, &Writerig, wdim)
-       == FAIL)                /* writes ID, NT */
+
+    /* write ID, NT */
+    if (DFR8putrig(file_id, Writeref, &Writerig, wdim) == FAIL) 
         return(HDerr(file_id));
 
-    Lastref = Writeref;                /* remember ref written */
+    Lastref = Writeref;     /* remember ref written */
 
-    Writeref = 0;               /* don't know ref to write next */
+    Writeref = 0;           /* don't know ref to write next */
 
     return(Hclose(file_id));
 }
@@ -837,7 +829,7 @@ PRIVATE int32 DFR8Iopen(filename, access)
     int32 file_id;
 
     /* use reopen if same file as last time - more efficient */
-    if (strncmp(Lastfile,filename,DF_MAXFNLEN) || (access==DFACC_CREATE)) {
+    if (HDstrncmp(Lastfile,filename,DF_MAXFNLEN) || (access==DFACC_CREATE)) {
                                /* treat create as different file */
         file_id = Hopen(filename, access, 0);
        if (file_id == FAIL) {
@@ -856,7 +848,7 @@ PRIVATE int32 DFR8Iopen(filename, access)
        }
     }
 
-    strncpy(Lastfile, filename, DF_MAXFNLEN);
+    HDstrncpy(Lastfile, filename, DF_MAXFNLEN);
     /* remember filename, so reopen may be used next time if same file */
     return(file_id);
 }

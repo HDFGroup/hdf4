@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/10/22 22:53:32  chouck
-Added group handle to group interface
+Revision 1.4  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.3  1992/10/22  22:53:32  chouck
+ * Added group handle to group interface
+ *
  * Revision 1.2  1992/10/01  02:54:34  chouck
  * Added function DF24lastref()
  *
@@ -56,6 +59,7 @@ static DFGRrig Grread;         /* information about RIG being read */
 static DFGRrig Grwrite;        /* information about RIG being written */
 static int Grnewdata = 0;      /* does Grread contain fresh data? */
 static int Grcompr = 0;        /* compression scheme to use */
+static comp_info Grcinfo;  	   /* Compression information for each scheme */
 uint8  *Grlutdata=NULL;        /* points to lut, if in memory */
 static uint16 Grrefset=0;      /* Ref of image to get next */
 static uint16 Grlastref = 0;   /* Last ref read/written */
@@ -81,29 +85,18 @@ static DFGRrig Grzrig = {      /* empty RIG for initialization */
 
 uint8 GRtbuf[512];
 
-#ifdef PERM_OUT
-#ifndef VMS
-int32 DFGRIopen();
-#else /*VMS*/
-int32 _DFGRIopen();
-#endif
-#endif
-
 #define LUT     0
 #define IMAGE   1
 
 /* private functions */
-#ifdef PROTOTYPE
-PRIVATE int32 DFGRIopen(char *filename, int access);
-PRIVATE int DFGRIriginfo(int32 file_id);
-PRIVATE int DFGRgetrig(int32 file_id, uint16 ref, DFGRrig *rig);
-PRIVATE int DFGRaddrig(int32 file_id, uint16 ref, DFGRrig *rig);
-#else
-PRIVATE int32 DFGRIopen();
-PRIVATE int DFGRIriginfo();
-PRIVATE int DFGRgetrig();
-PRIVATE int DFGRaddrig();
-#endif
+PRIVATE int32 DFGRIopen
+    PROTO((char *filename, int access));
+PRIVATE int DFGRIriginfo
+    PROTO((int32 file_id));
+PRIVATE int DFGRgetrig
+    PROTO((int32 file_id, uint16 ref, DFGRrig *rig));
+PRIVATE int DFGRaddrig
+    PROTO((int32 file_id, uint16 ref, DFGRrig *rig));
 
 /*-----------------------------------------------------------------------------
  * Name:    DFGRgetlutdims
@@ -256,7 +249,9 @@ int32 xdim, ydim;
 /*-----------------------------------------------------------------------------
  * Name:    DFGRsetcompress
  * Purpose: set compression scheme to use
- * Inputs:  scheme: compression scheme
+ * Inputs:
+ *      scheme - compression scheme
+ *      cinfo - compression information structure
  * Returns: 0 on success, -1 on failure with DFerror set
  * Users:   HDF HLL (high-level library) users, utilities, other routines
  * Invokes: none
@@ -264,13 +259,15 @@ int32 xdim, ydim;
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFGRsetcompress(int scheme)
+int DFGRsetcompress(int32 scheme,comp_info *cinfo)
 #else
-int DFGRsetcompress(scheme)
-int scheme;
+int DFGRsetcompress(scheme,cinfo)
+int32 scheme;
+comp_info *cinfo;
 #endif
 {
-    Grcompr = scheme;
+    Grcompr = scheme;       /* Set the compression scheme */
+    Grcinfo = *cinfo;       /* Set the compression parameters */
     return SUCCEED;
 }
 
@@ -688,7 +685,7 @@ PRIVATE int32 DFGRIopen(filename, access)
     if (file_id == FAIL) return FAIL;
 
     /* use reopen if same file as last time - more efficient */
-    if (strncmp(Grlastfile,filename,DF_MAXFNLEN) || (access==DFACC_CREATE)) {
+    if (HDstrncmp(Grlastfile,filename,DF_MAXFNLEN) || (access==DFACC_CREATE)) {
        /* treat create as different file */
         Grrefset = 0;          /* no ref to get set for this file */
         Grnewdata = 0;
@@ -704,7 +701,7 @@ PRIVATE int32 DFGRIopen(filename, access)
         Grread = Grzrig;        /* no rigs read yet */
     }
 
-    strncpy(Grlastfile, filename, DF_MAXFNLEN);
+    HDstrncpy(Grlastfile, filename, DF_MAXFNLEN);
     /* remember filename, so reopen may be used next time if same file */
     return(file_id);
 }
@@ -744,8 +741,11 @@ int32 file_id;
            aid = Hstartread(file_id, gettag, getref);
        } else {
            aid = Hstartread(file_id, gettag, Grread.data[IMAGE].ref);
-           if (aid != FAIL)
-               Hnextread(aid, gettag, getref, DF_CURRENT);
+           if ((aid != FAIL) &&
+               Hnextread(aid, gettag, getref, DF_CURRENT) == FAIL) {
+               Hendaccess(aid);
+               aid = FAIL;
+           }
        }
        if (aid == FAIL) {
            /* not found */
@@ -1165,8 +1165,7 @@ int DFGRIrestart()
 int DFGRIaddimlut(char *filename, VOIDP imlut, int32 xdim, int32 ydim,
                  int type, int isfortran, int newfile)
 #else
-int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran,
-                 newfile)
+int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran, newfile)
     char *filename;
     int32 xdim, ydim;
     VOIDP imlut;
@@ -1187,18 +1186,16 @@ int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran,
 
     HEclear();
 
-    if (0 != strcmp(Grlastfile,filename)) {  /* if new file, reset dims */
+    if (0 != HDstrcmp(Grlastfile,filename)) {  /* if new file, reset dims */
       Grwrite.datadesc[type].xdim = xdim;
       Grwrite.datadesc[type].ydim = ydim;
       Ref.dims[type] = 0;                  /* indicate set & not written */
     }
     
-    if ((Ref.dims[type] == 0
-	 && (xdim != Grwrite.datadesc[type].xdim
-	     || ydim != Grwrite.datadesc[type].ydim))
-	|| !imlut) {
-      HERROR(DFE_ARGS);
-      return FAIL;
+    if ((Ref.dims[type] == 0 && (xdim != Grwrite.datadesc[type].xdim
+            || ydim != Grwrite.datadesc[type].ydim)) || !imlut) {
+        HERROR(DFE_ARGS);
+        return FAIL;
     }
     
     /* if dims not set, set dimensions */
@@ -1209,19 +1206,21 @@ int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran,
     /* default: ncomps=1, il=0 */
     
     if ((type==LUT) && (filename==NULL)) { /* set call */
-      if (Grlutdata) {
-        HDfreespace(Grlutdata);
-        Grlutdata = NULL;
-      }
-      Ref.lut = -1;
-      if (imlut==NULL)
+        if (Grlutdata) {
+            HDfreespace(Grlutdata);
+            Grlutdata = NULL;
+        }
+        Ref.lut = -1;
+        if (imlut==NULL)
+            return SUCCEED;
+        lutsize = Grwrite.datadesc[LUT].xdim * Grwrite.datadesc[LUT].ydim
+                * Grwrite.datadesc[LUT].ncomponents;
+        Grlutdata = (uint8 *) HDgetspace((uint32)lutsize);
+        if(Grlutdata==NULL)
+            return FAIL;
+        HDmemcpy(Grlutdata, imlut, (int)lutsize);
+        Ref.lut = 0;
         return SUCCEED;
-      lutsize = Grwrite.datadesc[LUT].xdim * Grwrite.datadesc[LUT].ydim
-            * Grwrite.datadesc[LUT].ncomponents;
-      Grlutdata = (uint8 *) HDgetspace((uint32)lutsize);
-      memcpy(Grlutdata, imlut, (int)lutsize);
-      Ref.lut = 0;
-      return SUCCEED;
     }
     
     file_id = DFGRIopen(filename, newfile ? DFACC_CREATE : DFACC_RDWR);
@@ -1232,17 +1231,20 @@ int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran,
     if (!wref)
        return(HDerr(file_id));
 
+    is8bit = (Grwrite.datadesc[IMAGE].ncomponents == 1);
+
     wtag = (type==LUT) ? DFTAG_LUT : Grcompr ? DFTAG_CI : DFTAG_RI;
     Grwrite.data[type].tag = wtag;
 
-    is8bit = (Grwrite.datadesc[IMAGE].ncomponents == 1);
 
     /* write out image/lut */
     if ((type==IMAGE) && Grcompr) {
+#ifdef OLD_WAY
         if (Grwrite.datadesc[IMAGE].ncomponents>1) {
             HERROR(DFE_UNSUPPORTED);
             return(HDerr(file_id));
         }
+#endif
         lutsize = Grwrite.datadesc[LUT].xdim * Grwrite.datadesc[LUT].ydim *
            Grwrite.datadesc[LUT].ncomponents;
         if (Grcompr==DFTAG_IMC) {
@@ -1321,10 +1323,10 @@ int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran,
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFGRIlastref(void)
+uint16 DFGRIlastref(void)
 #else
-int DFGRIlastref()
+uint16 DFGRIlastref()
 #endif
 {
-    return((int) Grlastref);
+    return((uint16) Grlastref);
 }

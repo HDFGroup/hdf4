@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/10/06 16:19:19  chouck
-In Vdatas version 2 LCOAL_INTS were stored as 16bits, not 32bits so
-map_from_old_types() was messing up.
+Revision 1.3  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.2  1992/10/06  16:19:19  chouck
+ * In Vdatas version 2 LCOAL_INTS were stored as 16bits, not 32bits so
+ * map_from_old_types() was messing up.
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -31,11 +34,13 @@ extern vfile_t vfile[];
 /*
     DFvsetopen and DFvsetclose
 */
+#ifdef QAK
 #undef Hopen
 #undef Hclose
 
 #undef DFopen
 #undef DFclose
+#endif
 
 #ifdef VMS /* Redefine Hopen and Hclose for VMS linker */
 #define Hclose _Hclose
@@ -254,31 +259,31 @@ void vpackvs (vs, buf, size)
 	/* save each field length and name - omit the null */
 	for (i=0;i<vs->wlist.n;i++) {
 		b = bb;
-        int16var = DFIstrlen(vs->wlist.name[i]);
+        int16var = HDstrlen(vs->wlist.name[i]);
 		INT16ENCODE(b,int16var);
 		bb+=INT16SIZE;
 
-        DFIstrcpy((char*) bb, vs->wlist.name[i]);
-        bb += DFIstrlen(vs->wlist.name[i]);
+        HDstrcpy((char*) bb, vs->wlist.name[i]);
+        bb += HDstrlen(vs->wlist.name[i]);
 	}
 
 	/* save the vsnamelen and vsname - omit the null */
 	b = bb;
-    int16var = DFIstrlen(vs->vsname);
+    int16var = HDstrlen(vs->vsname);
 	INT16ENCODE(b,int16var);
 	bb+=INT16SIZE;
 
-    DFIstrcpy((char*) bb,vs->vsname);
-    bb += DFIstrlen(vs->vsname);
+    HDstrcpy((char*) bb,vs->vsname);
+    bb += HDstrlen(vs->vsname);
 
 	/* save the vsclasslen and vsclass- omit the null */
 	b = bb;
-    int16var = DFIstrlen(vs->vsclass);
+    int16var = HDstrlen(vs->vsclass);
 	INT16ENCODE(b,int16var);
 	bb+=INT16SIZE;
 
-    DFIstrcpy((char*) bb,vs->vsclass);
-    bb += DFIstrlen(vs->vsclass);
+    HDstrcpy((char*) bb,vs->vsclass);
+    bb += HDstrlen(vs->vsclass);
 
 	/* save the expansion tag/ref pair */
 	b= bb;
@@ -414,7 +419,7 @@ void vunpackvs (vs, buf, size)
 		INT16DECODE(b,int16var); /* this gives the length */
 		bb += INT16SIZE;
 
-                HDstrncpy(vs->wlist.name[i], (char*) bb, int16var + 1);
+        HIstrncpy(vs->wlist.name[i], (char*) bb, int16var + 1);
 		bb += int16var;
 	}
 
@@ -423,7 +428,7 @@ void vunpackvs (vs, buf, size)
 	INT16DECODE(b, int16var); /* this gives the length */
 	bb += INT16SIZE;
 
-        HDstrncpy(vs->vsname, (char*) bb, int16var + 1);
+    HIstrncpy(vs->vsname, (char*) bb, int16var + 1);
 	bb += int16var;
 
 	/* retrieve the vsclass (and vsclasslen)  */
@@ -431,7 +436,7 @@ void vunpackvs (vs, buf, size)
 	INT16DECODE(b, int16var); /* this gives the length */
 	bb += INT16SIZE;
 
-        HDstrncpy(vs->vsclass, (char*) bb, int16var + 1);
+    HIstrncpy(vs->vsclass, (char*) bb, int16var + 1);
 	bb += int16var;
 
 	/* retrieve the expansion tag and ref */
@@ -558,7 +563,7 @@ PUBLIC VDATA * VSattach (f, vsid, accesstype)
 
           /* otherwise 'w' */
           /* allocate space for vs,  & zero it out  */
-          if ( (vs= (VDATA*) VGETSPACE (sizeof(VDATA))) == NULL)
+          if ( (vs= (VDATA*) HDgetspace (sizeof(VDATA))) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, NULL);
 
           vs->nvertices = 0;
@@ -567,7 +572,7 @@ PUBLIC VDATA * VSattach (f, vsid, accesstype)
           vs->nusym = 0;
           
           vs->oref		= vnewref(f);
-          if (vs->oref == 0) {HERROR(DFE_NOREF); VFREESPACE(vs); return(NULL);}
+          if (vs->oref == 0) {HERROR(DFE_NOREF); HDfreespace (vs); return(NULL);}
           
           vs->otag		= VSDESCTAG;
           vs->vsname[0] 	= '\0';
@@ -587,7 +592,7 @@ PUBLIC VDATA * VSattach (f, vsid, accesstype)
           vs->aid		= 0;
           
           /* attach new vs to file's vstab */
-          if ( NULL == (w = (vsinstance_t*) VGETSPACE (sizeof(vsinstance_t)))) 
+          if ( NULL == (w = (vsinstance_t*) HDgetspace (sizeof(vsinstance_t))))
             HRETURN_ERROR(DFE_NOSPACE, NULL);
           
           vf->vstabtail->next = w;
@@ -625,7 +630,7 @@ PUBLIC VDATA * VSattach (f, vsid, accesstype)
         } else {
 
             /* allocate space for vs,  & zero it out  */
-            if ( (vs=(VDATA*) VGETSPACE (sizeof(VDATA))) == NULL) 
+            if ( (vs=(VDATA*) HDgetspace (sizeof(VDATA))) == NULL)
               HRETURN_ERROR(DFE_NOSPACE, NULL);
 
         }
@@ -649,7 +654,7 @@ PUBLIC VDATA * VSattach (f, vsid, accesstype)
 
         vs->aid     = Hstartread(vs->f, VSDATATAG, vs->oref);
         if(vs->aid == FAIL) {
-          VFREESPACE(vs);
+          HDfreespace(vs);
           HRETURN_ERROR(DFE_BADAID, NULL);
         }
 
@@ -676,7 +681,7 @@ PUBLIC VDATA * VSattach (f, vsid, accesstype)
             vs = w->vs;
           } else {
             /* allocate space */
-            if( (vs=(VDATA*) VGETSPACE (sizeof(VDATA))) == NULL) 
+            if( (vs=(VDATA*) HDgetspace(sizeof(VDATA))) == NULL)
               HRETURN_ERROR(DFE_NOSPACE, NULL);
           }
           
@@ -703,7 +708,7 @@ PUBLIC VDATA * VSattach (f, vsid, accesstype)
           
           vs->aid   = Hstartwrite(vs->f, VSDATATAG, vs->oref, 0);
           if(vs->aid == FAIL) { 
-            VFREESPACE(vs); 
+            HDfreespace(vs);
             HRETURN_ERROR(DFE_BADAID, NULL);
           }
           
@@ -775,7 +780,7 @@ PUBLIC void VSdetach (vs)
           if (w->nattach == 0) {
 #if 0
             w->vs = NULL; /* detach vs from vsdir */
-            VFREESPACE (vs);
+            HDfreespace(vs);
 #endif
           }
           Hendaccess (vs->aid);
@@ -801,7 +806,7 @@ PUBLIC void VSdetach (vs)
 	}
 
 	/* remove all defined symbols */
-	for (i=0;i<vs->nusym;i++) VFREESPACE (vs->usym[i].name);
+    for (i=0;i<vs->nusym;i++) HDfreespace(vs->usym[i].name);
 	vs->nusym = 0;
 
 #if 0
@@ -816,7 +821,7 @@ PUBLIC void VSdetach (vs)
                   if (vjv) {
                     sprintf(sjs,"VMBLOCKS total size = %ld\n", totalsize);zj;
                   }
-                  vwhole = (BYTE*) VGETSPACE( totalsize );
+                  vwhole = (BYTE*) HDgetspace( totalsize );
                   if (vwhole==NULL) {
                     sprintf(sjs,"VSdetach: no mem for VWHOLE\n"); zj;
                     return;
@@ -825,14 +830,14 @@ PUBLIC void VSdetach (vs)
                   cursize = 0;
                   t = vs->vm;
                   while (t != NULL) { 
-                    memcpy(&vwhole[cursize], t->mem, t->n);	
-                    VFREESPACE(t->mem);
+                    HDmemcpy(&vwhole[cursize], t->mem, t->n);
+                    HDfreespace(t->mem);
                     cursize+= t->n;
                     t = t->next; 
                   }
                   /* free all VMBLOCKS */
                   t = vs->vm;
-                  while (t != NULL) { p = t; t = t->next; VFREESPACE(p); }
+                  while (t != NULL) { p = t; t = t->next; HDfreespace(p); }
                   vs->vm = (VMBLOCK*) NULL;
                   
                   /* write out vwhole to file as 1 vdata */
@@ -841,14 +846,14 @@ PUBLIC void VSdetach (vs)
                   stat = aid =QQstartwrite(vs->f,VSDATATAG,vs->oref, totalsize);
                   QQwrite(aid,  totalsize , vwhole);
                   QQendaccess (aid);
-                  VFREESPACE (vwhole);
+                  HDfreespace(vwhole);
                   /* END OF VMBLOCK VERSION */ 	}}
 #endif
 
         Hendaccess (vs->aid);
 #if 0
         w->vs = NULL; /* detach vs from vsdir */
-        VFREESPACE (vs);
+        HDfreespace (vs);
 #endif
 	return;
 

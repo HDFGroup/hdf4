@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.2  1992/09/17 19:49:16  koziol
+# Revision 1.3  1992/11/02 16:35:41  koziol
+# Updates from 3.2r2 -> 3.3
+#
+# Revision 1.2  1992/09/17  19:49:16  koziol
 # Made changes for ANSI compilation on the Convex
 #
 # Revision 1.1  1992/08/25  21:40:44  koziol
@@ -103,13 +106,13 @@ HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h dfan.h dfrig.h dfgr.h dfsd.h \
      dfgroup.h dfconvrt.h vg.h df.h dfi.h dfstubs.h dfufp2i.h vproto.h 
 
 CSRCS=hfile.c herr.c hblocks.c hextelt.c hkit.c dfan.c dfr8.c dfcomp.c \
-      dfimcomp.c dfp.c dfgr.c df24.c dfsd.c dfgroup.c dfconv.c dfufp2i.c  \
-      vg.c vrw.c vio.c vparse.c vconv.c vsfld.c vgp.c vhi.c     \
+      dfimcomp.c dfrle.c dfp.c dfgr.c df24.c dfsd.c dfgroup.c dfconv.c  \
+	  dfufp2i.c vg.c vrw.c vio.c vparse.c vconv.c vsfld.c vgp.c vhi.c \
       dfutil.c dfstubs.c
 
 COBJS=hfile.o herr.o hblocks.o hextelt.o hkit.o dfan.o dfr8.o dfcomp.o \
-      dfimcomp.o dfp.o dfgr.o df24.o dfsd.o dfgroup.o dfconv.o dfufp2i.o  \
-      vg.o vrw.o vio.o vparse.o vconv.o vsfld.o vgp.o vhi.o     \
+      dfimcomp.o dfrle.o dfp.o dfgr.o df24.o dfsd.o dfgroup.o dfconv.o \
+	  dfufp2i.o vg.o vrw.o vio.o vparse.o vconv.o vsfld.o vgp.o vhi.o \
       dfutil.o dfstubs.o
 
 FSRCS=hfilef.c herrf.c hfileff.f dfanf.c dfr8f.c dfpf.c df24f.c dfsdf.c \
@@ -146,43 +149,45 @@ libnostub: nofortran
 saber:
 	#load -D$(MACHINE) $(CSRCS) $(TSRCS) -lc
 
-hfile.o: hfile.h hdf.h herr.h hproto.h hdfi.h
+hfile.o: hfile.h hdf.h herr.h hdfi.h
 
-herr.o: hdf.h herr.h hproto.h hdfi.h
+herr.o: hdf.h herr.h hdfi.h
 
-hblocks.o: hfile.h hdf.h herr.h hproto.h hdfi.h
+hblocks.o: hfile.h hdf.h herr.h hdfi.h
 
-hextelt.o: hfile.h hdf.h herr.h hproto.h hdfi.h
+hextelt.o: hfile.h hdf.h herr.h hdfi.h
 
-hkit.o: hfile.h hdf.h herr.h hproto.h  hdfi.h
+hkit.o: hfile.h hdf.h herr.h hdfi.h
 
-dfan.o: hdf.h herr.h dfan.h hproto.h hdfi.h hfile.h
+dfan.o: hdf.h herr.h dfan.h hdfi.h hfile.h
 
-dfanf.o: hdf.h herr.h dfan.h hproto.h hdfi.h
+dfanf.o: hdf.h herr.h dfan.h hdfi.h
 
-dfr8.o: hdf.h herr.h dfrig.h hproto.h hdfi.h
+dfr8.o: hdf.h herr.h dfrig.h hdfi.h
 
-dfr8f.o: hdf.h herr.h dfrig.h hproto.h hdfi.h
+dfr8f.o: hdf.h herr.h dfrig.h hdfi.h
 
-dfcomp.o: hdf.h herr.h dfrig.h hproto.h hdfi.h
+dfcomp.o: hdf.h herr.h dfrig.h hdfi.h
 
-dfimcomp.o: hdf.h herr.h dfrig.h hproto.h hdfi.h
+dfrle.o: hdf.h herr.h dfrig.h hdfi.h
 
-dfp.o: hdf.h herr.h hproto.h hdfi.h
+dfimcomp.o: hdf.h herr.h dfrig.h hdfi.h
 
-dfpf.o: hdf.h herr.h hproto.h hdfi.h
+dfp.o: hdf.h herr.h hdfi.h
 
-dfgr.o: hdf.h herr.h dfgr.h hproto.h hdfi.h
+dfpf.o: hdf.h herr.h hdfi.h
 
-df24.o: hdf.h herr.h dfgr.h hproto.h hdfi.h
+dfgr.o: hdf.h herr.h dfgr.h hdfi.h
 
-df24f.o: hdf.h herr.h dfgr.h hproto.h hdfi.h
+df24.o: hdf.h herr.h dfgr.h hdfi.h
 
-dfsd.o: hdf.h herr.h dfsd.h hproto.h hdfi.h dfconvrt.h dfgroup.h hfile.h
+df24f.o: hdf.h herr.h dfgr.h hdfi.h
 
-dfsdf.o: hdf.h herr.h dfsd.h hproto.h hdfi.h
+dfsd.o: hdf.h herr.h dfsd.h hdfi.h dfconvrt.h dfgroup.h hfile.h
 
-dfgroup.o: hdf.h herr.h hfile.h hproto.h hdfi.h
+dfsdf.o: hdf.h herr.h dfsd.h hdfi.h
+
+dfgroup.o: hdf.h herr.h hfile.h hdfi.h
 
 dfconv.o: hdf.h herr.h hdfi.h
 
@@ -208,9 +213,9 @@ vgp.o: vg.h hdf.h hdfi.h hfile.h
 
 vhi.o: vg.h hdf.h hdfi.h
 
-dfstubs.o: hdf.h herr.h dfstubs.h df.h dfi.h hproto.h hdfi.h
+dfstubs.o: hdf.h herr.h dfstubs.h df.h dfi.h hdfi.h
 
-dff.o: hdf.h herr.h dfstubs.h df.h dfi.h hproto.h hdfi.h
+dff.o: hdf.h herr.h dfstubs.h df.h dfi.h hdfi.h
 
 install_it:
 	-mkdir $(HDFINC)

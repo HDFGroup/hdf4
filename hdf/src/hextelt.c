@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/10/08 19:09:36  chouck
-Changed file_t to hdf_file_t to make strict ANSI compliant
+Revision 1.3  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.2  1992/10/08  19:09:36  chouck
+ * Changed file_t to hdf_file_t to make strict ANSI compliant
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -225,21 +228,21 @@ int32 HXcreate(file_id, tag, ref, extern_file_name)
 
     info->attached = 1;
     info->file_external = file_external;
-    info->extern_file_name = HDgetspace((uint32)DFIstrlen(extern_file_name)+1);
-    HDstrncpy(info->extern_file_name, extern_file_name,
-          DFIstrlen(extern_file_name)+1);
+    info->extern_file_name = HDgetspace((uint32)HDstrlen(extern_file_name)+1);
+    HIstrncpy(info->extern_file_name, extern_file_name,
+          HDstrlen(extern_file_name)+1);
     if (!info->extern_file_name) {
        HERROR(DFE_NOSPACE);
        access_rec->used = FALSE;
        return FAIL;
     }
-    info->length_file_name = DFIstrlen(extern_file_name);
+    info->length_file_name = HDstrlen(extern_file_name);
     {
        uint8 *p = tbuf;
        INT16ENCODE(p, SPECIAL_EXT);
        INT32ENCODE(p, info->length);
        INT32ENCODE(p, info->length_file_name);
-       strcpy((char *) p, (char *)extern_file_name);
+       HDstrcpy((char *) p, (char *)extern_file_name);
     }
     if (HI_SEEKEND(file_rec->file) == FAIL) {
        HERROR(DFE_SEEKERROR);

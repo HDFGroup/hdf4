@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/08/26 19:44:25  chouck
-Moved HDgettagname() into hkit.c and added calibration tag
+Revision 1.3  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.2  1992/08/26  19:44:25  chouck
+ * Moved HDgettagname() into hkit.c and added calibration tag
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -18,7 +21,7 @@ Moved HDgettagname() into hkit.c and added calibration tag
 #include "hfile.h"
 
 /*-----------------------------------------------------------------------------
- * Name:    HDstrncpy
+ * Name:    HIstrncpy
  * Purpose: This function creates a string in dest that is at most
  *          'len' characters long.  The 'len' characters *include* the
  *          NULL terminatior which must be added for historical reasons.
@@ -32,9 +35,9 @@ Moved HDgettagname() into hkit.c and added calibration tag
  *---------------------------------------------------------------------------*/
 
 #if defined PROTOTYPE
-char *HDstrncpy(register char *dest,register char *source,int32 len)
+char HUGE *HIstrncpy(register char *dest,register char *source,int32 len)
 #else
-char *HDstrncpy(dest, source, len)
+char HUGE *HIstrncpy(dest, source, len)
 register char *source, *dest;
 int32 len;
 #endif /* PROTOTYPE */
@@ -47,30 +50,6 @@ int32 len;
         *dest++ = *source++;
     *dest = '\0';       /* Force the last byte be '\0'   */
     return(destp);
-}
-
-/*-----------------------------------------------------------------------------
- * Name:    HDmemcopy
- * Purpose: Copy bytes from one place to another
- * Inputs:  from, to: source and destination for copy
- *          length: number of bytes to copy
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   HDF systems programmers, on machines without memcpy equivalents
- * Remarks: assumes non-overlapping
- *          Intended for machines on which memcppy etc. do not work
- *---------------------------------------------------------------------------*/
-
-#if defined PROTOTYPE
-intn HDmemcopy(uint8 *from, uint8 *to, int32 length)
-#else
-intn HDmemcopy( from, to, length)
-uint8 *from, *to;
-int32 length;
-#endif /* PROTOTYPE */
-{
-    length++;
-    while (--length) *to++ = *from++;
-    return(0);
 }
 
 #ifdef PC
@@ -127,7 +106,7 @@ int32 HDspaceleft(void)
 
 #ifdef PC
 #ifdef WIN3
-void *HDgetspace(uint32 qty)
+void HUGE *HDgetspace(uint32 qty)
 {
     char *FUNC="HDgetspace";
 
@@ -169,7 +148,7 @@ void *HDgetspace(uint32 qty)
     }
 }
 
-void *HDfreespace(void *ptr)
+void HUGE *HDfreespace(void *ptr)
 {
     HANDLE mem_handle;  /* handle of the memory allocated */
     HANDLE *handle_addr;/* pointer to the HANDLE stored in the memory block */
@@ -189,7 +168,7 @@ void *HDfreespace(void *ptr)
     return(NULL);
 }
 #else /* !WIN3 */
-void *HDgetspace(uint32 qty)
+void HUGE *HDgetspace(uint32 qty)
 {
     char *FUNC="HDgetspace";
     char huge *p;
@@ -219,7 +198,7 @@ void *HDgetspace(uint32 qty)
       } /* end else */
 }
 
-void *HDfreespace(void *ptr)
+void HUGE *HDfreespace(void *ptr)
 {
     if(ptr==NULL)
         return(NULL);
@@ -284,9 +263,9 @@ int len;
 }
 
 #if defined PROTOTYPE
-char *HDf2cstring(_fcd fdesc, intn len)
+char HUGE *HDf2cstring(_fcd fdesc, intn len)
 #else
-char *HDf2cstring(fdesc, len)
+char HUGE *HDf2cstring(fdesc, len)
     _fcd fdesc;
     intn len;
 #endif /* PROTOTYPE */
@@ -602,9 +581,9 @@ intn len;
  *        lot of pretty-printing code depends on it.
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-char *HDgettagname(uint16 tag)
+char HUGE *HDgettagname(uint16 tag)
 #else
-char *HDgettagname(tag)
+char HUGE *HDgettagname(tag)
      uint16 tag;
 #endif /* PROTOTYPE */
 {

@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*-----------------------------------------------------------------------------
  * File:    dfrig.h
@@ -18,10 +21,6 @@ Initial revision
 
 #ifndef DFRIG                  /* avoid re-inclusion */
 #define DFRIG
-
-typedef struct {
-    uint16 tag, ref;
-} DFdi;
 
 /* description record: used to describe image data, palette data etc. */
 typedef struct {

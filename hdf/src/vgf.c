@@ -5,12 +5,15 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/09/11 14:15:04  koziol
-Changed Fortran stubs' parameter passing to use a new typedef, intf,
-which should be typed to the size of an INTEGER*4 in whatever Fortran
-compiler the C functions need to be compatible with.  (This is mostly
-for the PC and possibly for the Mac)
+Revision 1.3  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.2  1992/09/11  14:15:04  koziol
+ * Changed Fortran stubs' parameter passing to use a new typedef, intf,
+ * which should be typed to the size of an INTEGER*4 in whatever Fortran
+ * compiler the C functions need to be compatible with.  (This is mostly
+ * for the PC and possibly for the Mac)
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -30,6 +33,8 @@ for the PC and possibly for the Mac)
 #ifndef VG_FNAMES
 #   define VG_FNAMES
 #ifdef DF_CAPFNAMES
+#   define  ndfivopn FNAME(DFIVOPN)
+#	define  ndfvclos FNAME(DFVCLOS)
 #   define  nvatchc  FNAME(VATCHC)
 #   define  nvdtchc  FNAME(VDTCHC)
 #   define  nvgnamc  FNAME(VGNAMC)
@@ -76,6 +81,8 @@ for the PC and possibly for the Mac)
 #   define  nvgttrc  FNAME(VGTTRC)
 #   define  nvadtrc  FNAME(VADTRC)
 #else   /* !DF_CAPFNAMES */
+#   define  ndfivopn FNAME(dfivopn)
+#	define  ndfvclos FNAME(dfvclos)
 #   define  nvatchc  FNAME(vatchc)
 #   define  nvdtchc  FNAME(vdtchc)
 #   define  nvgnamc  FNAME(vgnamc)
@@ -141,7 +148,7 @@ trimendblanks(ss)
 {
     int32 i,n;
 
-    n = DFIstrlen(ss);
+    n = HDstrlen(ss);
 	for(i=n-1;i>=0;i--) {
 		if(ss[i]!=' ') {
 			ss[i+1]='\0';
@@ -153,6 +160,59 @@ trimendblanks(ss)
 /* ================================================== */
 /*  VGROUP routines                                   */
 /* ================================================== */
+
+/*-----------------------------------------------------------------------------
+ * Name:    dfivopn
+ * Purpose: Fortran stub for dfvopen to call DFvsetopen to open HDF file
+ * Inputs:  name: name of file to open
+ *          access: access mode - integer with value DFACC_READ etc.
+ *          defdds: default number of DDs per header block
+ *          namelen: length of name
+ * Returns: 0 on success, -1 on failure with error set
+ * Users:   HDF Fortran programmers
+ * Invokes: Hopen
+ * Method:  Convert filename to C string, call Hopen
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+ndfivopn(_fcd name, intf *access, intf *defdds, intf *namelen)
+#else
+ndfivopn(name, access, defdds, namelen)
+_fcd name;
+intf *access;
+intf *defdds;
+intf *namelen;
+#endif /* PROTOTYPE */
+{
+   char *fn;
+   intf ret;
+
+   fn = HDf2cstring(name, *namelen);
+   ret = (intf) DFvsetopen(fn, *access, *defdds);
+   HDfreespace(fn);
+   return(ret);
+}	/* end ndfivopn() */
+
+/*-----------------------------------------------------------------------------
+ * Name:    dfvclos
+ * Purpose: Call DFvsetclose to close HDF file
+ * Inputs:  file_id: handle to HDF file to close
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ * Invokes: Hclose
+ *---------------------------------------------------------------------------*/
+
+FRETVAL(intf)
+#ifdef PROTOTYPE
+ndfvclos(intf *file_id)
+#else
+ndfvclos(file_id)
+intf *file_id;
+#endif /* PROTOTYPE */
+{
+   return(DFvsetclose(*file_id));
+}	/* ndfvclos() */
 
 /* 
 **  attach to a vgroup and returns its ptr
@@ -175,12 +235,12 @@ nvatchc(f, vgid, accesstype)
     acc = HDf2cstring (accesstype, 1);
 
 	vg = (VGROUP*) Vattach(*f, *vgid, acc);
-	(void) VFREESPACE(acc);
+    (void) HDfreespace(acc);
 
 	if(vg==NULL)
-		return( (int32*) -1);
+        return( (intf *) -1);
 	else 
-		return( (int32*) vg);
+        return( (intf *) vg);
 }
 
 /* ------------------------------------------------------------------ */
@@ -256,7 +316,7 @@ nvinqc(vg, nentries, vgname)
 #endif
 
 {
-    return( (intf) Vinquire(*vg, nentries, vgname) );
+    return( (intf) Vinquire(*vg, (int32 *)nentries, vgname) );
 } /* VINQC */
 
 
@@ -317,7 +377,7 @@ nvsnamc(vg, vgname, vgnamelen)
     name = HDf2cstring (vgname, (intn)*vgnamelen);
 	/* trimendblanks(name); */
 	Vsetname (*vg, name);
-    VFREESPACE (name);
+    HDfreespace (name);
 }
 
 /* ------------------------------------------------------------------ */
@@ -341,7 +401,7 @@ nvsclsc(vg, vgclass, vgclasslen)
     class = HDf2cstring (vgclass, (intn)*vgclasslen);
 	/* trimendblanks(class); */
 	Vsetclass (*vg, class);
-    VFREESPACE(class);
+    HDfreespace (class);
 }
 
 /* ------------------------------------------------------------------ */
@@ -423,11 +483,11 @@ nvsatchc(f, vsid, accesstype)
 
     acc = HDf2cstring (accesstype, 1); /* 'r' or 'w' only */
 	vs =  (VDATA*) VSattach(*f, *vsid, acc);
-    VFREESPACE(acc);
+    HDfreespace(acc);
 	if ( vs == NULL)
-		return((int32*) -1);
+        return((intf *) -1);
 	else 
-		return((int32*) vs);
+        return((intf *) vs);
 }
 
 /* ------------------------------------------------------------------ */
@@ -519,7 +579,8 @@ nvsinqc(vs, nelt ,interlace, fields, eltsize, vsname)
 	_fcd  	fields, vsname;							/* outputs */
 #endif
 {
-    return( (intf) VSinquire (*vs, nelt, interlace, fields, eltsize, vsname) );
+    return( (intf) VSinquire (*vs, (int32 *)nelt, (int32 *)interlace,
+            fields, (int32 *)eltsize, vsname) );
 } 	/* VSINQC */
 
 
@@ -545,7 +606,7 @@ nvsfexc(vs, fields, fieldslen)
     flds = HDf2cstring (fields, (intn)*fieldslen );
 	/* trimendblanks(flds); */
 	stat =  (int32) VSfexist(*vs, flds);
-    VFREESPACE(flds);
+    HDfreespace (flds);
 
 	return (stat);
 }
@@ -589,7 +650,7 @@ nvssnamc(vs, vsname, vsnamelen)
     name = HDf2cstring(vsname, (intn)*vsnamelen);
 	/* trimendblanks (name); */
 	VSsetname (*vs, name);
-    VFREESPACE (name);
+    HDfreespace (name);
 }
 
 /* ------------------------------------------------------------------ */
@@ -613,7 +674,7 @@ nvssclsc(vs, vsclass, vsclasslen)
     class = HDf2cstring (vsclass, (intn)*vsclasslen);
 	/* trimendblanks(class); */
 	VSsetclass (*vs, class);
-    VFREESPACE(class);
+    HDfreespace (class);
 }
 
 /* ------------------------------------------------------------------ */
@@ -638,7 +699,7 @@ nvssfldc(vs,fields, fieldslen)
     flds = HDf2cstring (fields, (intn)*fieldslen);
 	/* trimendblanks(flds); */
 	stat =	(int32) VSsetfields (*vs, flds);
-    VFREESPACE(flds);
+    HDfreespace (flds);
 
 	return(stat);
 }
@@ -684,7 +745,7 @@ nvsfdefc(vs, field, localtype, order, fieldlen)
     fld  = HDf2cstring (field, (intn)*fieldlen);
 	/* trimendblanks(fld); */
 	stat =  (int32) VSfdefine(*vs, fld, *localtype, *order );
-    VFREESPACE(fld);
+    HDfreespace(fld);
 	return (stat);
 }
 
@@ -805,7 +866,7 @@ nvssizc(vs, fields, fieldslen)
     flds = HDf2cstring (fields, (intn)*fieldslen);
 	/* trimendblanks(flds); */
     stat =  VSsizeof(*vs, flds);
-    VFREESPACE(flds);
+    HDfreespace(flds);
 	return (stat);
 }
 
@@ -877,7 +938,7 @@ nvlonec(f, idarray, asize)
     intf    *asize;
 #endif
 {
-    return( (intf) Vlone( *f, *idarray, *asize) );
+    return( (intf) Vlone( *f, (int32 *)*idarray, (int32)*asize) );
 }
 
 /* ------------------------------------------------------------------ */
@@ -896,7 +957,7 @@ nvslonec(f, idarray, asize)
     intf    *asize;
 #endif
 {
-	return( VSlone( *f, *idarray, *asize) );
+    return( VSlone( *f, (int32 *)*idarray, (int32)*asize) );
 }
 
 /*
@@ -989,7 +1050,8 @@ nvhmkgpc(f, tagarray, refarray , n, vgname, vgclass, vgnamelen, vgclasslen)
     gname = HDf2cstring(vgname, *vgnamelen);
     gclass = HDf2cstring(vgclass, *vgclasslen);
 
-    return( (intf) VHmakegroup (*f, tagarray, refarray, *n, gname, gclass));
+    return( (intf) VHmakegroup (*f, (int32 *)tagarray, (int32 *)refarray,
+            *n, gname, gclass));
 }
 
 /* ================================================================== */
@@ -1014,7 +1076,7 @@ nvflocc(vg, field, fieldlen)
     fld = HDf2cstring (field, (intn)*fieldlen);
 	/* trimendblanks(fld); */
 	stat = (int32) Vflocate (*vg, fld);
-    VFREESPACE(fld);
+    HDfreespace(fld);
 
 	return(stat);
 }
@@ -1069,7 +1131,7 @@ nvgttrsc(vg, tagarray, refarray, n)
     intf    *n;
 #endif
 {
-    return ( (intf)  Vgettagrefs (*vg, tagarray, refarray, *n) );
+    return ( (intf)  Vgettagrefs (*vg, (int32 *)tagarray, (int32 *)refarray, *n) );
 }
 
 /* ------------------------------------------------------------------ */
@@ -1088,7 +1150,7 @@ nvgttrc(vg, which, tag, ref)
     intf    *tag, *ref;                     /* outputs */
 #endif
 {
-    return ( (intf) Vgettagref (*vg, *which, tag, ref) );
+    return ( (intf) Vgettagref (*vg, *which, (int32 *)tag, (int32 *)ref) );
 }
 /* ------------------------------------------------------------------ */
 

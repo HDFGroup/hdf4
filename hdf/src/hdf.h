@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.2  1992/08/31 16:16:45  chouck
-Added definition of calibration tag (731)
+Revision 1.3  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.2  1992/08/31  16:16:45  chouck
+ * Added definition of calibration tag (731)
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -22,6 +25,10 @@ Added definition of calibration tag (731)
 #else
 #define    PROTO(x) ()
 #endif
+
+typedef struct {
+    uint16 tag, ref;
+} DFdi;
 
 /* internal file access codes */
 
@@ -62,18 +69,15 @@ Added definition of calibration tag (731)
 #   define NULL (void *)0
 #endif
 
-#ifdef OLD_WAY      /* this is bad, because we typedef VOID, we don't define it */
-                    /* and the typedef was getting overridden by the #define */
-                    /* and not working correctly */
-#ifndef VOID
-#   define VOID char
-#endif
-#endif
-
 /* macros */
 
+#ifdef WIN3
+#define STREQ(s, t) (_fstrcmp((s), (t)) == 0)
+#define NSTREQ(s, t, n) (_fstrncmp((s), (t), (n)) == 0)
+#else
 #define STREQ(s, t) (strcmp((s), (t)) == 0)
 #define NSTREQ(s, t, n) (strncmp((s), (t), (n)) == 0)
+#endif
 
 #ifndef PRIVATE
 #   define PRIVATE static
@@ -156,6 +160,7 @@ Added definition of calibration tag (731)
 #define        DFNTF_VAX       2       /* Vax format */
 #define        DFNTF_CRAY      3       /* Cray format */
 #define        DFNTF_PC        4       /* PC floats - flipped IEEE */
+#define        DFNTF_CONVEX    5       /* CONVEX native format */
 
 /* class info codes for char */
 #define        DFNTC_BYTE      0       /* bitwise/numeric field */
@@ -331,9 +336,10 @@ extern uint8 *tbuf;
 #define DFTAG_VS     ((uint16)1963) /* Vdata Storage */
 
 /* compression schemes */
-#define DFTAG_RLE   ((uint16)11) /* run length encoding */
-#define DFTAG_IMC   ((uint16)12) /* IMCOMP compression */
-#define DFTAG_IMCOMP   ((uint16)12) /* IMCOMP compression */
+#define DFTAG_RLE   ((uint16)11)    /* run length encoding */
+#define DFTAG_IMC   ((uint16)12)    /* IMCOMP compression alias */
+#define DFTAG_IMCOMP ((uint16)12)   /* IMCOMP compression */
+#define DFTAG_JPEG  ((uint16)13)    /* JPEG compression (24-bit data) */
 
 /* SPECIAL CODES */
 #define SPECIAL_LINKED 1
@@ -387,6 +393,7 @@ extern uint8 *tbuf;
 /* Publically accessible functions declarations.  This includes all the
    functions that are used by application programs.  */
 
+#include "hcomp.h"
 #include "hproto.h"
 
 #endif /* HDF_H */

@@ -6,9 +6,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1992/10/09 20:49:17  chouck
-Added some patches to work with ThinkC I/O on the Mac
+Revision 1.8  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.7  1992/10/09  20:49:17  chouck
+ * Added some patches to work with ThinkC I/O on the Mac
+ *
  * Revision 1.6  1992/10/08  19:09:36  chouck
  * Changed file_t to hdf_file_t to make strict ANSI compliant
  *
@@ -146,28 +149,15 @@ Added some patches to work with ThinkC I/O on the Mac
 /*
 ** Prototypes for local functions
 */
-int HIlock
+static int HIlock
   PROTO((int32 file_id));
 
-int HIunlock
+static int HIunlock
   PROTO((int32 file_id));
 
-int HIchangedd
+static int HIchangedd
   PROTO((dd_t *datadd, ddblock_t *block, int idx, int special, 
 	 VOIDP special_info, int32 (**special_func)()));
-
-/*
-int INT32ENCODE(p, i)
-unsigned char *p;
-int32 i;
-{
-char *temp=p;
- *(p) = (i >> 24) & 0xff; (p)++; *(p) = (i >> 16) & 0xff; (p)++; 
-  *(p) = (i >> 8) & 0xff; 
-(p)++;
-*(p) = (i) & 0xff; 
-(p)++; }
-*/
 
 /* Array of file records that contains all relevant
    information on an opened HDF file.
@@ -1070,7 +1060,7 @@ int32 Hstartwrite(file_id, tag, ref, length)
         file_rec->version.majorv = lmajorv;
         file_rec->version.minorv = lminorv;
         file_rec->version.release = lrelease;
-        HDstrncpy(file_rec->version.string, string, 81);
+        HIstrncpy(file_rec->version.string, string, 81);
         file_rec->version.modified = 1;
       }
       
@@ -2048,16 +2038,16 @@ int HDerr(file_id)
    made special.  It actually just fills in the appropriate info
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int HIchangedd(dd_t *datadd, ddblock_t *block, int idx, int special,
+static int HIchangedd(dd_t *datadd, ddblock_t *block, int idx, int16 special,
               VOIDP special_info, int32 (**special_func)())
 #else
-int HIchangedd(datadd, block, idx, special, special_info, special_func)
-    dd_t *datadd;              /* dd that had been converted to special */
-    ddblock_t *block;          /* new dd block of converted dd */
-    int idx;                   /* next dd list index of converted dd */
-    int special;               /* special code of converted dd */
-    VOIDP special_info;                /* special info of converted dd */
-    int32 (**special_func)();  /* special function table of converted dd */
+static int HIchangedd(datadd, block, idx, special, special_info, special_func)
+    dd_t *datadd;               /* dd that had been converted to special */
+    ddblock_t *block;           /* new dd block of converted dd */
+    int idx;                    /* next dd list index of converted dd */
+    int16 special;              /* special code of converted dd */
+    VOIDP special_info;         /* special info of converted dd */
+    int32 (**special_func)();   /* special function table of converted dd */
 #endif
 {
     int i;                     /* temp index */
@@ -2100,7 +2090,8 @@ PRIVATE int HIinit_file_dds(file_rec, ndds, FUNC)
     ddblock_t *block;          /* dd block to intialize */
     uint8 *p;                  /* temp buffer ptr */
     dd_t *list;                /* list of dd */
-    register int i, n;         /* temp ints */
+    register int i;            /* temp ints */
+    register int16 n;
 
     /* 'reasonablize' the value of ndds.  0 means use default */
 
@@ -2171,7 +2162,7 @@ PRIVATE int HIinit_file_dds(file_rec, ndds, FUNC)
     /* write the version string */
 
     /* commented out for version tags
-    if (HI_WRITE(file_rec->file, HDF_VERSION, DFIstrlen(HDF_VERSION)) == FAIL) {
+    if (HI_WRITE(file_rec->file, HDF_VERSION, HDstrlen(HDF_VERSION)) == FAIL) {
         HERROR(DFE_WRITEERROR);
        return FAIL;
     }
@@ -2272,9 +2263,9 @@ VOIDP HIgetspinfo(access_rec, tag, ref)
  losing files taht are still accessed
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int HIlock(int32 file_id)
+static int HIlock(int32 file_id)
 #else
-int HIlock(file_id)
+static int HIlock(file_id)
     int32 file_id;             /* file record id to lock */
 #endif
 {
@@ -2300,9 +2291,9 @@ int HIlock(file_id)
  unlock a previously locked file record
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int HIunlock(int32 file_id)
+static int HIunlock(int32 file_id)
 #else
-int HIunlock(file_id)
+static int HIunlock(file_id)
     int32 file_id;             /* file record to unlock */
 #endif
 {
@@ -2482,8 +2473,8 @@ char string[];
     *majorv = LIBVER_MAJOR;
     *minorv = LIBVER_MINOR;
     *release = LIBVER_RELEASE;
-    HDstrncpy(string, LIBVER_STRING, 81);
-    string[DFIstrlen(string)] = '\0';
+    HIstrncpy(string, LIBVER_STRING, 81);
+    string[HDstrlen(string)] = '\0';
 
     return(SUCCEED);
 }
@@ -2534,8 +2525,8 @@ char string[];
     *majorv = file_rec->version.majorv;
     *minorv = file_rec->version.minorv;
     *release = file_rec->version.release;
-    HDstrncpy(string, file_rec->version.string, 81);
-    string[DFIstrlen(string)] = '\0';
+    HIstrncpy(string, file_rec->version.string, 81);
+    string[HDstrlen(string)] = '\0';
 
     if (majorv == 0) {
         HERROR(DFE_NOMATCH);
@@ -2565,6 +2556,16 @@ char string[];
 ** EXAMPLES
 ** REVISION LOG
 --------------------------------------------------------------------------*/
+#ifdef WIN3
+#ifdef PROTOTYPE
+int32 HDfreadbig(VOIDP buffer,int32 size,HFILE fp)
+#else
+int32 HDfreadbig(buffer,size,fp)
+VOIDP buffer;
+int32 size;
+HFILE fp;
+#endif
+#else /* !WIN3 */
 #ifdef PROTOTYPE
 int32 HDfreadbig(VOIDP buffer,int32 size,FILE *fp)
 #else
@@ -2573,22 +2574,35 @@ VOIDP buffer;
 int32 size;
 FILE *fp;
 #endif
+#endif /* WIN3 */
 {
     uint8 *b;           /* alias for the buffer */
     int32 bytes_read;   /* variable to accumulate the number of bytes read in */
 
     if(size<=UINT_MAX)   /* if the size is small enough read it in all at once */
+#ifdef WIN3
+            bytes_read+=_lread(fp,b,UINT_MAX);
+#else
         bytes_read=fread(buffer,1,(uint16)size,fp);
+#endif
     else {  /* number of bytes to read */
         bytes_read=0;
         b=buffer;
         while(size>UINT_MAX) {
+#ifdef WIN3
+        bytes_read=_lread(fp,buffer,(uint16)size);
+#else
             bytes_read+=fread(b,1,UINT_MAX,fp);
+#endif
             b+=UINT_MAX;
             size-=UINT_MAX;
           } /* end while */
         if(size>0)
+#ifdef WIN3
+            bytes_read+=_lread(fp,b,(uint16)size);
+#else
             bytes_read+=fread(b,1,(uint16)size,fp);
+#endif
       } /* end else */
     return(bytes_read);
 }   /* end HDfreadbig() */
@@ -2613,6 +2627,16 @@ FILE *fp;
 ** EXAMPLES
 ** REVISION LOG
 --------------------------------------------------------------------------*/
+#ifdef WIN3
+#ifdef PROTOTYPE
+int32 HDfwritebig(VOIDP buffer,int32 size,HFILE fp)
+#else
+int32 HDfwritebig(buffer,size,fp)
+VOIDP buffer;
+int32 size;
+HFILE fp;
+#endif
+#else /* !WIN3 */
 #ifdef PROTOTYPE
 int32 HDfwritebig(VOIDP buffer,int32 size,FILE *fp)
 #else
@@ -2621,22 +2645,35 @@ VOIDP buffer;
 int32 size;
 FILE *fp;
 #endif
+#endif /* WIN3 */
 {
     uint8 *b;              /* alias for the buffer */
     int32 bytes_written;   /* variable to accum. the number of bytes written */
 
     if(size<=UINT_MAX)  /* if the size is small enough read it in all at once */
+#ifdef WIN3
+        bytes_written=_lwrite(fp,buffer,(uint16)size);
+#else
         bytes_written=fwrite(buffer,1,(uint16)size,fp);
+#endif
     else {  /* number of bytes to write */
         bytes_written=0;
         b=buffer;
         while(size>UINT_MAX) {
+#ifdef WIN3
+            bytes_written+=_lwrite(fp,b,UINT_MAX);
+#else
             bytes_written+=fwrite(b,1,UINT_MAX,fp);
+#endif
             b+=UINT_MAX;
             size-=UINT_MAX;
           } /* end while */
         if(size>0)
+#ifdef WIN3
+            bytes_written+=_lwrite(fp,b,(uint16)size);
+#else
             bytes_written+=fwrite(b,1,(uint16)size,fp);
+#endif
       } /* end else */
     return(bytes_written);
 }   /* end HDfwritebig() */
@@ -2687,8 +2724,8 @@ PRIVATE int HIget_file_slot(path, FUNC)
 
        file_records[0].version_set = FALSE;
 
-       file_records[0].path = HDgetspace(DFIstrlen(path)+1);
-       HDstrncpy(file_records[0].path, path, DFIstrlen(path)+1);
+       file_records[0].path = HDgetspace(HDstrlen(path)+1);
+       HIstrncpy(file_records[0].path, path, DFIstrlen(path)+1);
        return file_records[0].path ? 0 : FAIL;
     }
 
@@ -2726,8 +2763,8 @@ PRIVATE int HIget_file_slot(path, FUNC)
     file_records[slot].version_set = FALSE;
 
     if (file_records[slot].path) HDfreespace(file_records[slot].path);
-    file_records[slot].path = HDgetspace(DFIstrlen(path)+1);
-    HDstrncpy(file_records[slot].path, path, DFIstrlen(path)+1);
+    file_records[slot].path = HDgetspace(HDstrlen(path)+1);
+    HIstrncpy(file_records[slot].path, path, HDstrlen(path)+1);
     return file_records[slot].path ? slot : FAIL;
 }
 
@@ -3132,7 +3169,7 @@ int32 file_id;
 	UINT32ENCODE(p, file_rec->version.majorv);
 	UINT32ENCODE(p, file_rec->version.minorv);
 	UINT32ENCODE(p, file_rec->version.release);
-	HDstrncpy((char*) p, file_rec->version.string, 80);
+    HIstrncpy((char*) p, file_rec->version.string, 80);
     }
 
     ret = Hputelement(file_id, DFTAG_VERSION, (uint16)1, lversion, 
@@ -3191,7 +3228,7 @@ int32 file_id;
         file_rec->version.majorv = 0;
         file_rec->version.minorv = 0;
         file_rec->version.release = 0;
-        HDstrncpy(file_rec->version.string, "", 81);
+        HIstrncpy(file_rec->version.string, "", 81);
         file_rec->version.modified = 0;
         HERROR(DFE_INTERNAL);
         return(FAIL);
@@ -3202,7 +3239,7 @@ int32 file_id;
         UINT32DECODE(p, file_rec->version.majorv);
         UINT32DECODE(p, file_rec->version.minorv);
         UINT32DECODE(p, file_rec->version.release);
-        HDstrncpy(file_rec->version.string, (char*) p, 80);
+        HIstrncpy(file_rec->version.string, (char*) p, 80);
         file_rec->version.string[80]= '\0';
     }
     file_rec->version.modified = 0;
@@ -3225,15 +3262,8 @@ int32 file_id;
 #include "Strings.h"
 #endif
 
-/*
-
-This is a much cleaner way of doing things but the SGI cc barfs on it
-
-static int hdfc = '????', hdft = '_HDF';
-*/
-
-static int hdfc = ('?' << 24) + ('?' << 16) + ('?' << 8) + ('?');
-static int hdft = ('_' << 24) + ('H' << 16) + ('D' << 8) + ('F');
+static int32 hdfc = 1061109567L;    /* equal to '????' in ascii */
+static int32 hdft = 1600085855L;    /* equal to '_HDF' in ascii */
 
 #ifdef MPW
 hdf_file_t

@@ -2,9 +2,12 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.1  1992/08/25 21:40:44  koziol
-C Initial revision
+C Revision 1.2  1992/11/02 16:35:41  koziol
+C Updates from 3.2r2 -> 3.3
 C
+c Revision 1.1  1992/08/25  21:40:44  koziol
+c Initial revision
+c
 C
 C
 C *-----------------------------------------------------------------------------
@@ -174,8 +177,8 @@ c	Number type info codes
       integer 	DFNT_INT8,  DFNT_UINT8, 
      *		DFNT_INT16, DFNT_UINT16,
      *		DFNT_INT32, DFNT_UINT32, 
-     *		DFNT_INT64, DFNT_UNIT64,
-     *		DFNT_INT128,DFNT_UNIT128
+     *      DFNT_INT64, DFNT_UINT64,
+     *      DFNT_INT128,DFNT_UINT128
  
       parameter(DFNT_INT8	= 20,
      *		DFNT_UINT8	= 21,
@@ -189,7 +192,7 @@ c	Number type info codes
      *		DFNT_UINT128	= 29)
 
       integer 	DFNT_UCHAR8, DFNT_UCHAR, DFNT_CHAR8, 
-     *		DFNT_CHAR,   DFNTCHAR16, DFNT_UCHAR16
+     *      DFNT_CHAR,   DFNT_CHAR16, DFNT_UCHAR16
  
       parameter(DFNT_UCHAR8	= 3,
      *		DFNT_UCHAR	= 3,
@@ -307,7 +310,7 @@ c	Tektronix
 c	Scientific Data set 
 
       integer	DFTAG_SDG, DFTAG_SDD, DFTAG_SDS, DFTAG_SDL,
-     *		DFTAG_SDU, DFTAG_SDF, DFTAG_SDM, DFTAG,SDC,
+     *      DFTAG_SDU, DFTAG_SDF, DFTAG_SDM, DFTAG_SDC,
      *		DFTAG_SDT,DFTAG_SDLNK,DFTAG_NDG, 
      *		DFTAG_BREQ,DFTAG_EREQ
  

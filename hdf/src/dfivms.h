@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.3  1992/10/16 20:47:17  chouck
-Added DFSDpre32
+Revision 1.4  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.3  1992/10/16  20:47:17  chouck
+ * Added DFSDpre32
+ *
  * Revision 1.2  1992/10/16  16:33:07  chouck
  * Added entry for DFtransarrry()
  *
@@ -142,7 +145,6 @@ Added DFSDpre32
 #define DFsetfind _DFsetfind
 #define DFstart _DFstart
 #define DFstat _DFstat
-#define DFtransarray _DFtransarry
 #define DFupdate _DFupdate
 #define DFwrite _DFwrite
 #define DFfindnextref _DFfindnextref

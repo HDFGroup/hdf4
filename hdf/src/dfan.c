@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*-----------------------------------------------------------------------------
  * File:    dfan.c
@@ -340,7 +343,7 @@ char *label;
 #endif 
 {
     return(DFANIputann(filename, tag, ref, (uint8 *)label,
-                (int32)DFIstrlen(label), DFAN_LABEL));
+                (int32)HDstrlen(label), DFAN_LABEL));
 }
 
 
@@ -393,7 +396,7 @@ int32 file_id;
 char *id;
 #endif 
 {
-    return ( DFANIaddfann(file_id, id, (int32)DFIstrlen(id), DFAN_LABEL) );
+    return ( DFANIaddfann(file_id, id, (int32)HDstrlen(id), DFAN_LABEL) );
 }
 
 
@@ -515,7 +518,7 @@ intn access;
     DFANdirhead *p, *q;
 
         /* use reopen if same file as last time - more efficient */
-    if (DFIstrncmp(Lastfile,filename,DF_MAXFNLEN) || (access==DFACC_CREATE)) {
+    if (HDstrncmp(Lastfile,filename,DF_MAXFNLEN) || (access==DFACC_CREATE)) {
                                     /* treat create as different file */
         file_id = Hopen(filename, access, 0); 
         if (file_id == FAIL) 
@@ -537,7 +540,7 @@ intn access;
             return FAIL;
     }
 
-    HDstrncpy(Lastfile, filename, DF_MAXFNLEN);
+    HIstrncpy(Lastfile, filename, DF_MAXFNLEN);
         /* remember filename, so reopen may be used next time if same file */
     return(file_id);
 }

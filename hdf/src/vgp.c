@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/08/27 19:54:56  likkai
-Vclose now returns an (intn) status.
+Revision 1.3  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.2  1992/08/27  19:54:56  likkai
+ * Vclose now returns an (intn) status.
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -143,7 +146,7 @@ PRIVATE int32 Load_vfile (f)
                     vf->vgtabn, tag, ref); zj;
           }
 #endif          
-          if (!(v = (vginstance_t*) VGETSPACE (sizeof(vginstance_t)))) {
+          if (!(v = (vginstance_t*) HDgetspace (sizeof(vginstance_t)))) {
             HERROR(DFE_NOSPACE);
             return(FAIL);
           }
@@ -183,7 +186,7 @@ PRIVATE int32 Load_vfile (f)
                     vf->vstabn, tag,ref); zj;
           }
 #endif
-          if (!(w = (vsinstance_t*) VGETSPACE (sizeof(vsinstance_t)))) {
+          if (!(w = (vsinstance_t*) HDgetspace (sizeof(vsinstance_t)))) {
             HERROR(DFE_NOSPACE);
             return(FAIL);
           }
@@ -250,8 +253,8 @@ PRIVATE void Remove_vfile (f)
     while (vginst) {
         vg1 = vginst->next;
         if (vginst->vg)  {
-            VFREESPACE (vginst->vg);
-            VFREESPACE (vginst); 
+            HDfreespace (vginst->vg);
+            HDfreespace (vginst);
         }
         vginst = vg1;
     }
@@ -260,8 +263,8 @@ PRIVATE void Remove_vfile (f)
     while (vsinst) {
         vs1 = vsinst->next; 
         if (vsinst->vs) {
-            VFREESPACE (vsinst->vs); 
-            VFREESPACE (vsinst); 
+            HDfreespace (vsinst->vs);
+            HDfreespace (vsinst);
         }
         vsinst = vs1; 
     }
@@ -438,21 +441,21 @@ void vpackvg (vg, buf, size)
 
 	/* save the vgnamelen and vgname - omit the null */
 	b= bb;
-    uint16var = DFIstrlen(vg->vgname);
+    uint16var = HDstrlen(vg->vgname);
 	UINT16ENCODE(b,uint16var);
 	bb +=UINT16SIZE;
 
-    DFIstrcpy((char*) bb,vg->vgname);
-    bb +=  DFIstrlen(vg->vgname) ;
+    HDstrcpy((char*) bb,vg->vgname);
+    bb +=  HDstrlen(vg->vgname) ;
 
 	/* save the vgclasslen and vgclass- omit the null */
 	b= bb;
-    uint16var = DFIstrlen(vg->vgclass);
+    uint16var = HDstrlen(vg->vgclass);
 	UINT16ENCODE(b,uint16var);
 	bb +=INT16SIZE;
 
-    DFIstrcpy((char*) bb,vg->vgclass);
-    bb +=  DFIstrlen(vg->vgclass) ;
+    HDstrcpy((char*) bb,vg->vgclass);
+    bb +=  HDstrlen(vg->vgclass) ;
 
 	/* save the expansion tag/ref pair */
 	b= bb;
@@ -548,7 +551,7 @@ void vunpackvg (vg, buf, size)
 	UINT16DECODE(b,uint16var);
 	bb +=UINT16SIZE;
 
-        HDstrncpy(vg->vgname, (char*) bb, (int32) uint16var + 1);
+        HIstrncpy(vg->vgname, (char*) bb, (int32) uint16var + 1);
 	bb += uint16var;
 
 	if (vjv) {
@@ -561,7 +564,7 @@ void vunpackvg (vg, buf, size)
 	UINT16DECODE(b,uint16var);
 	bb +=UINT16SIZE;
         
-        HDstrncpy(vg->vgclass, (char*) bb, (int32) uint16var + 1);
+        HIstrncpy(vg->vgclass, (char*) bb, (int32) uint16var + 1);
 	bb += uint16var;
 
 	b = bb;
@@ -638,7 +641,7 @@ PUBLIC VGROUP *Vattach (f, vgid, accesstype)
           }
           
           /* allocate space for vg, & zero it out */
-          if ( (vg = (VGROUP*) VGETSPACE (sizeof(VGROUP)) ) == NULL) {
+          if ( (vg = (VGROUP*) HDgetspace (sizeof(VGROUP)) ) == NULL) {
             HERROR(DFE_NOSPACE);
             return(NULL);
           }
@@ -661,7 +664,7 @@ PUBLIC VGROUP *Vattach (f, vgid, accesstype)
           vg->version		= VSET_VERSION;
           
           /* attach new vg to file's vgtab  */
-          if ( NULL == (v = (vginstance_t*) VGETSPACE (sizeof(vginstance_t)))) {
+          if ( NULL == (v = (vginstance_t*) HDgetspace (sizeof(vginstance_t)))) {
             HERROR(DFE_NOSPACE);
             return(NULL);
           }
@@ -704,7 +707,7 @@ PUBLIC VGROUP *Vattach (f, vgid, accesstype)
           
           /* allocate space for vg, & zero it out */
           
-          if (NULL == (vg =(VGROUP*) VGETSPACE (sizeof(VGROUP))) ) {
+          if (NULL == (vg =(VGROUP*) HDgetspace (sizeof(VGROUP))) ) {
             HERROR(DFE_NOSPACE);
             return(NULL);
           }
@@ -831,7 +834,7 @@ PUBLIC void Vdetach (vg)
 #endif
   v->vg = NULL;             /* detach vg from vgdir */
   
-  VFREESPACE (vg);
+  HDfreespace (vg);
   
   return; /* ok */
   
@@ -1216,12 +1219,12 @@ PUBLIC void Vsetname (vg, vgname)
   char * FUNC = "Vsetname";
   
   if (vg == NULL) return;
-  if ( DFIstrlen(vgname) > VGNAMELENMAX ) {
-    HDstrncpy(vg->vgname, vgname, VGNAMELENMAX);
+  if ( HDstrlen(vgname) > VGNAMELENMAX ) {
+    HIstrncpy(vg->vgname, vgname, VGNAMELENMAX);
     vg->vgname[VGNAMELENMAX]='\0';
   } 
   else {
-    DFIstrcpy(vg->vgname, vgname);
+    HDstrcpy(vg->vgname, vgname);
   }
   vg->marked = TRUE;
   return;
@@ -1252,12 +1255,12 @@ PUBLIC void Vsetclass (vg, vgclass)
   char * FUNC = "Vsetclass";
   
   if (vg == NULL) return;
-  if ( DFIstrlen(vgclass) > VGNAMELENMAX) {
-    HDstrncpy(vg->vgclass, vgclass,VGNAMELENMAX);
+  if ( HDstrlen(vgclass) > VGNAMELENMAX) {
+    HIstrncpy(vg->vgclass, vgclass,VGNAMELENMAX);
     vg->vgclass[VGNAMELENMAX]='\0';
   }
   else
-    DFIstrcpy(vg->vgclass, vgclass);
+    HDstrcpy(vg->vgclass, vgclass);
   vg->marked = TRUE;
   return;
   
@@ -1452,7 +1455,7 @@ PUBLIC void Vgetname (vg, vgname)
 {
 	char * FUNC = "Vgetname";
 
-    if (vg != NULL) DFIstrcpy(vgname, vg->vgname);
+    if (vg != NULL) HDstrcpy(vgname, vg->vgname);
 	return;
 
 } /* Vgetname */
@@ -1478,7 +1481,7 @@ PUBLIC void Vgetclass (vg, vgclass)
 {
   char * FUNC = "Vgetclass";
   
-  if(vg && vgclass) HDstrncpy(vgclass, vg->vgclass, strlen(vg->vgclass) + 1);
+  if(vg && vgclass) HIstrncpy(vgclass, vg->vgclass, HDstrlen(vg->vgclass) + 1);
   return;
 
 } /* Vgetclass*/
@@ -1517,7 +1520,7 @@ PUBLIC int32 Vinquire (vg, nentries, vgname)
     return(FAIL);
   }
 
-  DFIstrcpy(vgname, vg->vgname);
+  HDstrcpy(vgname, vg->vgname);
   *nentries = vg->nvelt;
   
   return(SUCCEED); 
@@ -1549,8 +1552,10 @@ PUBLIC int32 Vinquire (vg, nentries, vgname)
 * By: Jason Ng 10 Aug 92
 * 
 */
+#ifdef OLD_WAY
 #undef Hopen
 #undef Hclose
+#endif
 
 #ifdef PROTOTYPE
 PUBLIC HFILEID Vopen( char *path, intn access, int16 ndds)

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/10/01 02:54:34  chouck
-Added function DF24lastref()
+Revision 1.3  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.2  1992/10/01  02:54:34  chouck
+ * Added function DF24lastref()
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -112,12 +115,27 @@ int DF24getimage(filename, image, xdim, ydim)
     int32 xdim, ydim;
 #endif
 {
+    char *FUNC="DF24getimage";
     int ret, il;
     int32 tx, ty;
 
+    HEclear();
+
+    if (!filename || !*filename || !image || (xdim<=0) || (ydim<=0)) {
+       HERROR(DFE_ARGS);
+        return FAIL;
+    }
+
     if (!Newdata && DF24getdims(filename, &tx, &ty, &il) == FAIL)
        return FAIL;
+
+    if ((tx > xdim) || (ty > ydim)) {
+       HERROR(DFE_ARGS);
+        return(FAIL);
+    }
+
     ret = DFGRIgetimlut(filename, image, xdim, ydim, IMAGE, 0);
+
     Newdata = 0;
     return(ret);
 }
@@ -162,6 +180,29 @@ int DF24setil(il)
 #endif
 {
     return(DFGRIsetil(il, IMAGE));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    DF24setcompress
+ * Purpose: set compression scheme for 24-bit image
+ * Inputs:
+ *      type - the type of compression to perform on the next image
+ *      cinfo - compression information structure
+ * Returns: 0 on success, -1 on failure with DFerror set
+ * Users:   HDF HLL (high-level library) users, utilities, other routines
+ * Invokes: DFGRsetcompress
+ * Remarks: none
+ *---------------------------------------------------------------------------*/
+
+#ifdef PROTOTYPE
+int DF24setcompress(int32 type,comp_info *cinfo)
+#else
+int DF24setcompres(type,cinfo)
+    int32 type;
+    comp_info *cinfo;
+#endif
+{
+    return(DFGRsetcompress(type, cinfo));
 }
 
 /*-----------------------------------------------------------------------------
@@ -261,9 +302,9 @@ int DF24readref(filename, ref)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int DF24lastref(void)
+uint16 DF24lastref(void)
 #else
-int DF24lastref()
+uint16 DF24lastref()
 #endif
 {
     return DFGRIlastref();

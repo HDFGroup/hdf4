@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /************************************************************************/
 /*  Module Name : imcomp                        */
@@ -97,8 +100,8 @@ PRIVATE VOID classify PROTO((struct box *ptr, struct box *child));
 PRIVATE int next_pt PROTO((int dim, int i, int rank[], int distinct));
 
 /************************************************************************/
-/*  Function: DFCimcomp                                     */
-/*  Purpose : Performs Imcomp Compression                           */
+/*  Function: DFCIimcomp                                                */
+/*  Purpose : Performs Imcomp Compression                               */
 /*  Parameters  :                                                       */
 /*    xdim, ydim - dimensions of image                                  */
 /*                 IT IS ASSUMED THAT THE DIMENSIONS ARE A MULTIPLE OF 4*/
@@ -112,17 +115,17 @@ PRIVATE int next_pt PROTO((int dim, int i, int rank[], int distinct));
 /*    out_pal    - output palette. Consist of PALSIZE color entries.    */
 /*                 each entry is an rgb triple.                         */
 /*    mode       - Either BIT8 or BIT24                                 */
-/*  Returns     : none                          */
+/*  Returns     : none                                                  */
 /*  Called by   : External routines                                     */
 /*  Calls       : init_global(), compress(), cnt_color(), set_palette(),*/
-/*        sel_palette(), map()                                  */
+/*        sel_palette(), map()                                          */
 /************************************************************************/
 
 #ifdef PROTOTYPE
-VOID DFCimcomp(int32 xdim, int32 ydim, uint8 in[], uint8 out[],
+VOID DFCIimcomp(int32 xdim, int32 ydim, uint8 in[], uint8 out[],
               uint8 in_pal[], uint8 out_pal[], int mode)
 #else
-VOID DFCimcomp(xdim, ydim, in, out, in_pal, out_pal, mode)
+VOID DFCIimcomp(xdim, ydim, in, out, in_pal, out_pal, mode)
     int32 xdim, ydim;
     uint8 in[], out[], in_pal[], out_pal[];
     int mode;
@@ -193,27 +196,22 @@ VOID DFCimcomp(xdim, ydim, in, out, in_pal, out_pal, mode)
 
     fillin_color(blocks);
 
-} /* end of DFCimcomp */
-
-
-
-
-
+} /* end of DFCIimcomp */
 
 /************************************************************************/
-/*  Function    : compress                                  */
-/*  Purpose : Given a block of 16 pixels, sets up a 16 bit bitmap   */
+/*  Function    : compress                                              */
+/*  Purpose : Given a block of 16 pixels, sets up a 16 bit bitmap       */
 /*                and assigns a lo and hi color for the block. For block*/
 /*                i, hi color is stored in color_pt[2i] and lo in       */
 /*                color_pt[2i+1]. Each color is then reduced to 15 bits */
 /*                by truncating the lower order 3 bits of each component*/
-/*  Parameter   :                           */
+/*  Parameter   :                                                       */
 /*    raster     - contains the 16 pixels of a block. Each pixel is 3   */
-/*         bytes, 1 byte for each color component               */
-/*    block  - pixel block number                                   */
+/*         bytes, 1 byte for each color component                       */
+/*    block  - pixel block number                                       */
 /*  Returns     : none                                                  */
-/*  Called by   : DFCimcomp()                       */
-/*  Calls       : none                          */
+/*  Called by   : DFCimcomp()                                           */
+/*  Calls       : none                                                  */
 /************************************************************************/
 
 #ifdef PROTOTYPE
@@ -606,7 +604,7 @@ PRIVATE uint32 sqr(x)
 
 
 /************************************************************************/
-/*  Function    : DFCunimcomp                       */
+/*  Function    : DFCIunimcomp                       */
 /*  Purpose : 'Decompresses' the compressed image           */
 /*  Parameter   :                           */
 /*    xdim, ydim - dimensions of image                  */
@@ -619,9 +617,9 @@ PRIVATE uint32 sqr(x)
 /************************************************************************/
 
 #ifdef PROTOTYPE
-VOID DFCunimcomp(int32 xdim, int32 ydim, uint8 in[], uint8 out[])
+VOID DFCIunimcomp(int32 xdim, int32 ydim, uint8 in[], uint8 out[])
 #else
-VOID DFCunimcomp(xdim, ydim, in, out)
+VOID DFCIunimcomp(xdim, ydim, in, out)
     int32 xdim, ydim;
     uint8 in[], out[];
 #endif
@@ -652,7 +650,7 @@ VOID DFCunimcomp(xdim, ydim, in, out)
                }
            }
        } /* end of for x */
-} /* end of DFCunimcomp */
+} /* end of DFCIunimcomp */
 
 
 

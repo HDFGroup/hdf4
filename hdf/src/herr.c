@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*LINTLIBRARY*/
 /*+ herr.c
@@ -74,9 +77,9 @@ int32 error_top = 0;
 *** linear search but efficiency should not be a problem here
 -*/
 #ifdef PROTOTYPE
-char *HEstring(int16 error_code)
+char HUGE *HEstring(int16 error_code)
 #else
-char *HEstring(error_code)
+char HUGE *HEstring(error_code)
     int16 error_code;
 #endif
 {

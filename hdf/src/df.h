@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*-----------------------------------------------------------------------------
  * File:    df.h
@@ -86,13 +89,6 @@ typedef struct DF {
 } DF;
 
 
-typedef struct DFdi {   /* data identifier: specifies data element uniquely */
-    uint16 tag;
-    uint16 ref;
-} DFdi;
-
-
-
 typedef struct DFdata { /* structure for returning status information */
     int32 version;        /* version number of program */
 } DFdata;
@@ -163,9 +159,6 @@ extern int DFerrno
 
 extern int DFIerr
   PROTO((DF *dfile));
-
-extern char *DFIstrncpy
-  PROTO((register char *dest, register char *source, int len));
 
 extern int DFImemcopy
   PROTO((char *from, char *to, register int length));

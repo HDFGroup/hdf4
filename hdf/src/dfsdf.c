@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/09/15 19:42:46  koziol
-Folded in Shming's int changes and the change to fix non-square dimensions
-on datasets
+Revision 1.5  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.4  1992/09/15  19:42:46  koziol
+ * Folded in Shming's int changes and the change to fix non-square dimensions
+ * on datasets
+ *
  * Revision 1.3  1992/09/11  14:15:04  koziol
  * Changed Fortran stubs' parameter passing to use a new typedef, intf,
  * which should be typed to the size of an INTEGER*4 in whatever Fortran
@@ -41,6 +44,8 @@ on datasets
  *  dsfirst:       Call DFSDrestart to get SDGs again from beginning of file
  *  dspslc:        Call DFSDIputslice to write slice to file
  *  dseslc:        Call DFSDendslice to end slice writes, write SDG to file
+ *  dspre32:       Call DFSDpre32 to test if the SDS was  written
+ *                      using HDF library previous to HDF3.2
  *  dssnt:         Call DFSDsetNT to set number type
  *  dsgnt:         Call DFSDgetNT to get number type for reading
  *  dsigdim:       Call DFSDgetdims to get dimensions of next SDG
@@ -64,6 +69,8 @@ on datasets
  *  dfsdrestart_:   Call DFSDrestart to get SDGs again from beginning of file
  *  dfsdputslice_:  Call DFSDIputslice to write slice to file
  *  dfsdendslice_:  Call DFSDendslice to end slice writes, write SDG to file
+ *  dfsdpre32:      Call DFSDpre32 to test if the SDS was  written
+ *                      using HDF library previous to HDF3.2
  *  dfsdsetnt_:     Call DFSDsetNT to set number type
  *  dfsdgetnt_:	    Call DFSDgetNT to get number type
  *  dfsdlastref_:   Call DFSDlastref to get ref of last SDS accessed
@@ -416,6 +423,26 @@ ndseslc()
 
 
 /*-----------------------------------------------------------------------------
+ * Name:    dspre32
+ * Purpose: test if the SDS was  written using HDF library previous 
+ *          to HDF3.2
+ * Returns: TRUE if written by 3.1, FALSE if by 3.2
+ * Users:   HDF Fortran programmers
+ * Method:  Invokes DFSDpre32
+ * Remarks: 0 specifies default value
+ *---------------------------------------------------------------------------*/
+
+        FRETVAL(intf)
+#ifdef PROTOTYPE
+ndspre32(void)
+#else
+ndspre32()
+#endif /* PROTOTYPE */
+{
+    return(DFSDpre32());
+}
+
+/*-----------------------------------------------------------------------------
  * Name:    dssnt
  * Purpose: Call DFSDsetNT to set number type for subsequent calls to
             DFSDputdata, DFSDadddata, DFSDsetdimscales.
@@ -455,7 +482,7 @@ ndsgnt(pnumbertype)
     intf *pnumbertype;
 #endif /* PROTOTYPE */
 {
-    return(DFSDgetNT(pnumbertype));
+    return(DFSDgetNT((int32 *)pnumbertype));
 }
 
 
@@ -488,7 +515,7 @@ ndsigdim(filename, prank, sizes, maxrank, lenfn)
     intf ret;
 
     fn = HDf2cstring(filename, (intn)*lenfn);
-    ret = DFSDgetdims(fn,(intn *) prank, sizes, (intn) *maxrank);
+    ret = DFSDgetdims(fn,(intn *) prank, (int32 *)sizes, (intn) *maxrank);
     DFSDIisndg(&isndg);
     if (isndg) {
         for (i=0; i<((int32)*prank)/2; i++) {
@@ -549,7 +576,7 @@ ndsigdat(filename, rank, maxsizes, data, fnlen)
     	if (cmaxsizes != NULL) return FAIL;
     }
     else	
-        ret = DFSDIgetdata(fn, (intn)*rank, maxsizes, data, 1); /* 1==FORTRAN */
+        ret = DFSDIgetdata(fn, (intn)*rank, (int32 *)maxsizes, data, 1); /* 1==FORTRAN */
     HDfreespace(fn);
     return ret;
 }
@@ -724,7 +751,8 @@ ndsigslc(filename, winst, windims, data, dims, fnlen)
     	if (cwinst != NULL) return FAIL;
     }
     else	
-    	ret = DFSDIgetslice(fn, winst, windims, data, dims, 1);
+        ret = DFSDIgetslice(fn, (int32 *)winst, (int32 *)windims,
+                data, (int32 *)dims, 1);
     HDfreespace(fn);
     return(ret);
 }
@@ -1236,6 +1264,27 @@ ndfsdendslice()
 
 
 /*-----------------------------------------------------------------------------
+ * Name:    dfsdpre32
+ * Purpose: test if the SDS was  written using HDF library previous 
+ *          to HDF3.2
+ * Output:  ispre32 is 0 if written by 3.2, 1 if by 3.1
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ * Method:  Invokes DFSDpre32
+ * Remarks: 0 specifies default value
+ *---------------------------------------------------------------------------*/
+
+        FRETVAL(intf)
+#ifdef PROTOTYPE
+ndfsdpre32(void)
+#else
+ndfsdpre32()
+#endif /* PROTOTYPE */
+{
+    return(DFSDpre32());
+}
+
+/*-----------------------------------------------------------------------------
  * Name:    dfsdsetnt
  * Purpose: Call DFSDsetNT to set number type for subsequent calls to
  *          DFSDputdata, DFSDadddata, DFSDsetdimscales.
@@ -1275,7 +1324,7 @@ ndfsdgetnt(pnumbertype)
     intf *pnumbertype;
 #endif /* PROTOTYPE */
 {
-    return(DFSDgetNT(pnumbertype));
+    return(DFSDgetNT((int32 *)pnumbertype));
 }
 
 /*-----------------------------------------------------------------------------
@@ -1532,5 +1581,5 @@ ndsgcal(cal, cal_err, ioff, ioff_err, cal_type)
      intf   *cal_type;
 #endif /* PROTOTYPE */
 {
-    return DFSDgetcal(cal, cal_err, ioff, ioff_err, cal_type);
+    return DFSDgetcal(cal, cal_err, ioff, ioff_err, (int32 *)cal_type);
 } /* ndsgcal */

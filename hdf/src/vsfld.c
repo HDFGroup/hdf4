@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*****************************************************************************
 * Likkai Ng NCSA Feb 92 - update to use H-routines
@@ -156,10 +159,10 @@ PUBLIC int32 VSsetfields (vs,fields)
     for(i = 0; i < ac; i++) {
       /* --- first look in the reserved symbol table --- */
       for(found = 0, j = 0; j < NRESERVED; j++)
-        if (!strcmp(av[i], rstab[j].name)) {
+        if (!HDstrcmp(av[i], rstab[j].name)) {
           found = 1;
           
-          strcpy( wlist.name[wlist.n],rstab[j].name);
+          HDstrcpy( wlist.name[wlist.n],rstab[j].name);
           order = rstab[j].order;
           wlist.type[wlist.n]  =  rstab[j].type;
           wlist.order[wlist.n] =  order;
@@ -173,10 +176,10 @@ PUBLIC int32 VSsetfields (vs,fields)
       /* --- now look in the user's symbol table --- */
       if(!found) {
         for(found = 0,j = 0; j < vs->nusym; j++)
-          if (!strcmp(av[i], vs->usym[j].name)) {
+          if (!HDstrcmp(av[i], vs->usym[j].name)) {
             found = 1;
             
-            strcpy (wlist.name[wlist.n], vs->usym[j].name);
+            HDstrcpy (wlist.name[wlist.n], vs->usym[j].name);
             order = vs->usym[j].order;
             wlist.type[wlist.n]  = vs->usym[j].type;
             wlist.order[wlist.n] = order;
@@ -210,7 +213,7 @@ PUBLIC int32 VSsetfields (vs,fields)
     }
     
     /* copy from wlist (temp) into vdata */
-    memcpy((VOIDP) &(vs->wlist), (VOIDP) &(wlist), sizeof(wlist));
+    HDmemcpy((VOIDP) &(vs->wlist), (VOIDP) &(wlist), sizeof(wlist));
     
     return(1); /* ok */
     
@@ -225,7 +228,7 @@ PUBLIC int32 VSsetfields (vs,fields)
     rlist.n = 0;
     for (i=0;i<ac;i++) {
       for (found=0, j=0; j<vs->wlist.n; j++)
-        if (!strcmp(av[i], vs->wlist.name[j]) ) { /*  see if field exist */
+        if (!HDstrcmp(av[i], vs->wlist.name[j]) ) { /*  see if field exist */
           found = 1;
           
           rlist.item[rlist.n] = j; /* save as index into wlist->name */
@@ -240,7 +243,7 @@ PUBLIC int32 VSsetfields (vs,fields)
     }
     
     /* copy from rlist (temp) into vdata */
-    memcpy((VOIDP) &(vs->rlist), (VOIDP) &(rlist), sizeof(rlist));
+    HDmemcpy((VOIDP) &(vs->rlist), (VOIDP) &(rlist), sizeof(rlist));
     
     return(SUCCEED);
     
@@ -288,7 +291,7 @@ PUBLIC int32 VSfdefine (vs, field, localtype, order)
    */
   /* --- first look in the reserved symbol table --- */
   for (j=0;j<NRESERVED;j++)
-    if (!strcmp(av[0], rstab[j].name)) {
+    if (!HDstrcmp(av[0], rstab[j].name)) {
       if (localtype != rstab[j].type && order != rstab[j].order) {
         sprintf(sjs,"@VSfdefine warning: predefined field [%s] redefined.\n", av[0]); zj;
         break;
@@ -297,7 +300,7 @@ PUBLIC int32 VSfdefine (vs, field, localtype, order)
 
   /* --- then look in the user's symbol table --- */
   for (replacesym = 0,j = 0; j < vs->nusym; j++)
-    if (!strcmp(av[0], vs->usym[j].name))  {
+    if (!HDstrcmp(av[0], vs->usym[j].name))  {
       if (localtype != rstab[j].type && order != rstab[j].order) {
         sprintf(sjs,"@VSfdefine warning: user field [%s] redefined.\n",av[0]); zj; 
         replacesym = 1;
@@ -315,12 +318,12 @@ PUBLIC int32 VSfdefine (vs, field, localtype, order)
     return(FAIL);
   }
   
-  j  = DFIstrlen(av[0]) + 1;
+  j  = HDstrlen(av[0]) + 1;
   
-  if( (ss = (char*) VGETSPACE (j))==NULL)
+  if( (ss = (char*) HDgetspace (j))==NULL)
     HRETURN_ERROR(DFE_NOSPACE, FAIL);
   
-  strcpy(ss, av[0]);
+  HDstrcpy(ss, av[0]);
   vs->usym[usymid].name  = ss;
   vs->usym[usymid].type  = (int16)localtype;
   vs->usym[usymid].order = (int16)order;

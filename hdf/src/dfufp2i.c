@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*-----------------------------------------------------------------------------c
  *    dfufp2i.c
@@ -190,7 +193,7 @@ int     ct_method,       /* color transform method: 1=EXPAND; 2=INTERP */
     in.data = data;
     in.is_pal = (palette == NULL) ? FALSE : TRUE;
     in.ct_method = ct_method;
-    DFIstrcpy(out.outfile, outfile);  /* get outfile name */
+    HDstrcpy(out.outfile, outfile);  /* get outfile name */
     out.palette = palette;         /* get palette address (may be NULL) */
     out.hres = hres;
     out.vres = vres;

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/10/22 22:53:32  chouck
-Added group handle to group interface
+Revision 1.3  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.2  1992/10/22  22:53:32  chouck
+ * Added group handle to group interface
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -47,7 +50,7 @@ static DIlist_ptr *Group_list = NULL;
 #define GID2REC(i)  ((VALIDGID(i) ? (Group_list[(uint32)(i) & 0xffff]) : NULL))
 
 /*-----------------------------------------------------------------------------
- * Name:    DFdiread
+ * Name:    setgroupREC
  * Purpose: Add a group list into the internal structure and return an ID
  * Inputs:  list_rec: list to remember
  * Returns: FAIL on failure else a group ID to the list

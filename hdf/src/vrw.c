@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /****************************************************************************e
 *
@@ -156,8 +159,8 @@ PUBLIC int32 VSread (vs, buf, nelt, interlace)
 	/* alloc space (Vtbuf) for reading in the raw data from vdata */
         if(Vtbufsize < nelt * hsize) {
           Vtbufsize = nelt * hsize;
-          if(Vtbuf) VFREESPACE(Vtbuf);
-          if((Vtbuf = (BYTE *) VGETSPACE ( Vtbufsize )) == NULL) {
+          if(Vtbuf) HDfreespace(Vtbuf);
+          if((Vtbuf = (BYTE *) HDgetspace ( Vtbufsize )) == NULL) {
             HERROR(DFE_NOSPACE);
             return(FAIL);
           }
@@ -317,7 +320,7 @@ PUBLIC int32 VSread (vs, buf, nelt, interlace)
 		}
 	} /* case (d) */
 /*
-	VFREESPACE (tbuf);
+    HDfreespace (tbuf);
 */
 	return(nv/hsize);
 
@@ -402,15 +405,15 @@ PUBLIC int32 VSwrite (vs, buf, nelt, interlace)
 	/* alloc space (Vtbuf) for writing out the data */
         if(Vtbufsize < nelt * hsize) {
           Vtbufsize = nelt * hsize;
-          if(Vtbuf) VFREESPACE(Vtbuf);
-          if((Vtbuf = (BYTE *) VGETSPACE ( Vtbufsize )) == NULL) {
+          if(Vtbuf) HDfreespace(Vtbuf);
+          if((Vtbuf = (BYTE *) HDgetspace ( Vtbufsize )) == NULL) {
             HERROR(DFE_NOSPACE);
             return(FAIL);
           }
         }
 
 /*
-	if((tbuf = (BYTE *) VGETSPACE ( nelt * hsize)) == NULL) {
+    if((tbuf = (BYTE *) HDgetspace ( nelt * hsize)) == NULL) {
           HERROR(DFE_NOSPACE);
           return(FAIL);
         }
@@ -592,7 +595,7 @@ PUBLIC int32 VSwrite (vs, buf, nelt, interlace)
         }
 
 /*
-	VFREESPACE (tbuf);
+    HDfreespace(tbuf);
 */
 
         if(new_size > vs->nvertices) vs->nvertices = new_size;
@@ -608,7 +611,7 @@ PUBLIC int32 VSwrite (vs, buf, nelt, interlace)
 		vmsize = nelt * hsize;
 		/* sprintf(sjs, "VMBLOCK saved: size=%ld\n", vmsize); zj; */
 
-		vm	= (VMBLOCK*) VGETSPACE(sizeof(VMBLOCK));
+        vm  = (VMBLOCK*) HDgetspace (sizeof(VMBLOCK));
 		if (vm==NULL) { 
 			sprintf(sjs,"VSwrite: alloc vmblock err\n"); zj; 
 			return(0);

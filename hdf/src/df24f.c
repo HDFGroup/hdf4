@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/10/01 02:54:34  chouck
-Added function DF24lastref()
+Revision 1.4  1992/11/02 16:35:41  koziol
+Updates from 3.2r2 -> 3.3
 
+ * Revision 1.3  1992/10/01  02:54:34  chouck
+ * Added function DF24lastref()
+ *
  * Revision 1.2  1992/09/11  14:15:04  koziol
  * Changed Fortran stubs' parameter passing to use a new typedef, intf,
  * which should be typed to the size of an INTEGER*4 in whatever Fortran
@@ -34,6 +37,7 @@ Added function DF24lastref()
  *  d2igdim_: get dimensions of image
  *  d2igimg_: read in image
  *  d2iaimg_: write out image
+ *  d24lref_: last ref number
  *
  * Remarks:A RIG specifies attributes associated with an image - lookup table, 
  *          dimension, compression, color compensation etc.
@@ -121,7 +125,7 @@ nd2igdim(filename, pxdim, pydim, pil, fnlen)
     intf ret;
 
     fn = HDf2cstring(filename, *fnlen);
-    ret =  DF24getdims(fn, pxdim, pydim, pil);
+    ret =  DF24getdims(fn, (int32 *)pxdim, (int32 *)pydim, (intn *)pil);
     HDfreespace(fn);
     return(ret);
 }
@@ -242,7 +246,7 @@ nd2first()
 }
 
 /*-----------------------------------------------------------------------------
- * Name:    df24lref
+ * Name:    d24lref
  * Purpose: return last reference number 
  * Inputs:  
  * Returns: last ref number
