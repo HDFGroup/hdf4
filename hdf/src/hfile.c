@@ -461,12 +461,6 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
 		HIread_version(FSLOT2ID(slot));
 /* end version tags */
     
-#ifdef QAK
-    /* This is a slight kludge, to reset the seek offset after */
-    /* the file's version is written out -QAK */
-    file_rec->f_cur_off=(-1);
-#endif /* QAK */
-
 	return FSLOT2ID(slot);
 }	/* Hopen */
 
@@ -493,6 +487,9 @@ Hclose(int32 file_id)
 	tag_ref_list_ptr p, q;
 	ddblock_t  *bl, *next;		/* current ddblock and next ddblock pointers.
 								   for freeing ddblock linked list */
+
+/* Clear errors and check args and all the boring stuff. */
+	HEclear();
 
 /* convert file id to file rec and check for validity */
 	file_rec = FID2REC(file_id);
@@ -1221,10 +1218,23 @@ Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
  * if access record used to point to an external element we
  * need to close the file before moving on
  */
-	if (access_rec->special == SPECIAL_EXT)
+	if (access_rec->special)
 	  {
-		  if (HXPcloseAID(access_rec) == FAIL)
-			  HRETURN_ERROR(DFE_CANTCLOSE, FAIL);
+          switch(access_rec->special)
+            {
+                case SPECIAL_EXT:
+                  if (HXPcloseAID(access_rec) == FAIL)
+                      HRETURN_ERROR(DFE_CANTCLOSE, FAIL);
+                  break;
+
+                case SPECIAL_COMP:
+                  if (HCPcloseAID(access_rec) == FAIL)
+                      HRETURN_ERROR(DFE_CANTCLOSE, FAIL);
+                  break;
+
+                default:    /* do nothing for other cases currently */
+                    break;
+            } /* end switch */
 	  }
 
 	if (origin == DF_START)

@@ -336,8 +336,6 @@ Hbitwrite(int32 bitid, intn count, uint32 data)
           if (Hwrite(bitfile_rec->acc_id, write_size, bitfile_rec->bytea) == FAIL)
               HRETURN_ERROR(DFE_WRITEERROR, FAIL);
           bitfile_rec->block_offset += write_size;
-          if (bitfile_rec->byte_offset > bitfile_rec->max_offset)
-              bitfile_rec->max_offset = bitfile_rec->byte_offset;
 
 #ifdef TESTING
           printf("Hbitwrite(): max_offset=%d, byte_offset=%d, block_offset=%d\n", bitfile_rec->max_offset, bitfile_rec->byte_offset, bitfile_rec->block_offset);
@@ -377,8 +375,6 @@ Hbitwrite(int32 bitid, intn count, uint32 data)
                 if (Hwrite(bitfile_rec->acc_id, write_size, bitfile_rec->bytea) == FAIL)
                     HRETURN_ERROR(DFE_WRITEERROR, FAIL);
                 bitfile_rec->block_offset += write_size;
-                if (bitfile_rec->byte_offset > bitfile_rec->max_offset)
-                    bitfile_rec->max_offset = bitfile_rec->byte_offset;
 
 #ifdef TESTING
                 printf("Hbitwrite(): max_offset=%d, byte_offset=%d, block_offset=%d\n", bitfile_rec->max_offset, bitfile_rec->byte_offset, bitfile_rec->block_offset);
@@ -405,6 +401,10 @@ Hbitwrite(int32 bitid, intn count, uint32 data)
     /* put any remaining bits into the bits buffer */
     if ((bitfile_rec->count = BITNUM - count) > 0)
         bitfile_rec->bits = (uint8) (data << bitfile_rec->count);
+
+    /* Update the offset in the buffer */
+    if (bitfile_rec->byte_offset > bitfile_rec->max_offset)
+        bitfile_rec->max_offset = bitfile_rec->byte_offset;
 
     return (orig_count);
 }   /* end Hbitwrite() */
@@ -852,7 +852,7 @@ HIbitflush(bitrec_t * bitfile_rec, intn flushbit, intn writeout)
       }     /* end if */
     if (writeout == TRUE)
       {     /* only write data out if necessary */
-          write_size = (intn) (bitfile_rec->bytez - bitfile_rec->bytea);
+          write_size = (intn) MIN((bitfile_rec->bytez - bitfile_rec->bytea),bitfile_rec->max_offset);
 #ifdef TESTING
           printf("HIbitflush(): write_size=%d\n", write_size);
 #endif
