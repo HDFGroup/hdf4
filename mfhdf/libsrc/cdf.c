@@ -2007,7 +2007,6 @@ void hdf_close(handle)
                 dim = Vattach(handle->hdf_file, id, "r");
                 Vgetclass(dim, class);
                 if(!HDstrcmp(class, UDIMENSION)) {
-                    
                     sub_id = -1;
                     while((sub_id = Vgetnext(dim, sub_id)) != FAIL) {
                         if(Visvs(dim, sub_id)) {
@@ -2017,9 +2016,11 @@ void hdf_close(handle)
                             VSgetclass(vs, class);
                             if(!HDstrcmp(class, DIM_VALS) ||
                                !HDstrcmp(class, DIM_VALS01)) {
+                                int32 val = handle->numrecs;
+
                                 VSsetfields(vs, "Values");
                                 VSseek(vs, 0);
-                               if(VSwrite(vs, (unsigned char *)&(handle->numrecs), 1, FULL_INTERLACE) != 1)
+                                if(VSwrite(vs, (uint8 *)&val, 1, FULL_INTERLACE) != 1)
                                HEprint(stderr, 0);  
 
                             }
