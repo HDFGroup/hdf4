@@ -19,7 +19,7 @@ C
 
       real*8  cal, cale, ioff, ioffe
       real*8  eps
-      character* 60  name, l, u, f, c
+      character*50  name, l, u, f, c
       character cdata(6,4), icdata(6,4), cfill, icfill
       character catt(2), icatt(2)
 
