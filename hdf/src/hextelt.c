@@ -252,15 +252,23 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, offset, start_len)
        INT32ENCODE(p, info->length_file_name);
        HDstrcpy((char *) p, (char *)extern_file_name);
     }
+    dd->ref = ref;
+    dd->tag = special_tag;
+    dd->length = 14 + info->length_file_name;
+#ifdef OLD_WAY
     if (HI_SEEKEND(file_rec->file) == FAIL) {
        access_rec->used = FALSE;
        HDfreespace((VOIDP)info);
        HRETURN_ERROR(DFE_SEEKERROR,FAIL);
     }
     dd->offset = HI_TELL(file_rec->file);
-    dd->length = 14 + info->length_file_name;
-    dd->tag = special_tag;
-    dd->ref = ref;
+#else
+    if((dd->offset=HPgetdiskblock(file_rec,dd->length,TRUE))==FAIL) {
+        access_rec->used = FALSE;
+        HDfreespace((VOIDP)info);
+        HRETURN_ERROR(DFE_INTERNAL,FAIL);
+      } /* end if */
+#endif
     if (HI_WRITE(file_rec->file, ptbuf, dd->length) == FAIL) {
        HERROR(DFE_WRITEERROR);
        access_rec->used = FALSE;

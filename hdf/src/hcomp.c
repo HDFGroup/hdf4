@@ -321,6 +321,10 @@ printf("HCIwrite_header(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_le
             break;
       } /* end switch */
 
+    dd->tag=special_tag;
+    dd->ref=ref;
+    dd->length=p - ptbuf;      /* not a constant length */
+#ifdef OLD_WAY
     if(HI_SEEKEND(file_rec->file)==FAIL) {
        access_rec->used=FALSE;
        HRETURN_ERROR(DFE_SEEKERROR,FAIL);
@@ -328,9 +332,12 @@ printf("HCIwrite_header(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_le
 
     /* write compressed special element data to the file */
     dd->offset=HI_TELL(file_rec->file);
-    dd->length=p - ptbuf;      /* not a constant length */
-    dd->tag=special_tag;
-    dd->ref=ref;
+#else
+    if((dd->offset=HPgetdiskblock(file_rec,dd->length,TRUE))==FAIL) {
+       access_rec->used=FALSE;
+       HRETURN_ERROR(DFE_INTERNAL,FAIL);
+      } /* end if */
+#endif
     if(HI_WRITE(file_rec->file, ptbuf, dd->length)==FAIL) {
         access_rec->used=FALSE;
         HRETURN_ERROR(DFE_WRITEERROR,FAIL);
@@ -618,16 +625,23 @@ printf("HCcreate(): check 5, coder_funcs.write=%p\n",info->cinfo.coder_funcs.wri
     UINT16ENCODE(p, (uint16)mtype);    /* specify model type stored */
     ctype=(uint16)coder_type;
     UINT16ENCODE(p, (uint16)ctype);    /* specify coder type stored */
+    dd->tag=special_tag;
+    dd->ref=ref;
+    dd->length=COMP_HEADER_LENGTH;
+#ifdef OLD_WAY
     if(HI_SEEKEND(file_rec->file)==FAIL) {
        access_rec->used=FALSE;
        HRETURN_ERROR(DFE_SEEKERROR,FAIL);
       } /* end if */
+    dd->offset=HI_TELL(file_rec->file);
+#else
+    if((dd->offset=HPgetdiskblock(file_rec,dd->length,TRUE))==FAIL) {
+       access_rec->used=FALSE;
+       HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+      } /* end if */
+#endif
 
     /* write compressed special element data to the file */
-    dd->offset=HI_TELL(file_rec->file);
-    dd->length=COMP_HEADER_LENGTH;
-    dd->tag=special_tag;
-    dd->ref=ref;
     if(HI_WRITE(file_rec->file, ptbuf, dd->length)==FAIL) {
         access_rec->used=FALSE;
         HRETURN_ERROR(DFE_WRITEERROR,FAIL);

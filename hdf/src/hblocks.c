@@ -243,12 +243,19 @@ int32 HLcreate(file_id, tag, ref, block_length, number_blocks)
     link_ref = Hnewref(file_id);
     dd->length = 16;
 
+#ifdef OLD_WAY
     /* write new dd at the end of file */
     if (HI_SEEKEND(file_rec->file) == FAIL) {
        access_rec->used = FALSE;
        HRETURN_ERROR(DFE_SEEKERROR,FAIL);
     }
     dd->offset = HI_TELL(file_rec->file);
+#else
+    if((dd->offset=HPgetdiskblock(file_rec,dd->length,TRUE))==FAIL) {
+       access_rec->used = FALSE;
+       HRETURN_ERROR(DFE_INTERNAL,FAIL);
+      } /* end if */
+#endif
     access_rec->special_info = (VOIDP) HDgetspace((uint32)sizeof(linkinfo_t));
     if (!access_rec->special_info) {
        access_rec->used = FALSE;

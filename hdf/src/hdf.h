@@ -352,6 +352,7 @@ extern uint8 *tbuf;
 #define DFTAG_DIA   ((uint16)105) /* data identifier annotation */
 #define DFTAG_NT    ((uint16)106) /* number type */
 #define DFTAG_MT    ((uint16)107) /* machine type */
+#define DFTAG_FREE  ((uint16)108) /* free space in the file */
 
 /* raster-8 set */
 #define DFTAG_ID8   ((uint16)200) /* 8-bit Image dimension */

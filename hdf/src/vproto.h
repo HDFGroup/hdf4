@@ -254,10 +254,10 @@ extern int16 VSIZEOF
 extern int16 HDFSIZEOF
     PROTO((int16 x));
 
-extern int32 VSsetfields
+extern intn VSsetfields
   PROTO((int32 vkey, char _HUGE *fields));
 
-extern int32 VSfdefine
+extern intn VSfdefine
   PROTO((int32 vkey, char _HUGE *field, int32 localtype, int32 order));
 
 extern int32 VFnfields 

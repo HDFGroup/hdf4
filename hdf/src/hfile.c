@@ -956,13 +956,13 @@ int32 Hstartwrite(file_id, tag, ref, length)
         int32 offset;           /* offset of this data element in file */
 
        /* place the data element at the end of the file and record its offset */
+#ifdef OLD_WAY
         if (HI_SEEKEND(file_rec->file) == FAIL) {
             access_rec->used = FALSE;
             HRETURN_ERROR(DFE_SEEKERROR,FAIL);
         }
         offset = access_rec->block->ddlist[access_rec->idx].offset
                 = HI_TELL(file_rec->file);
-
         if(length>0) {  /* only mark data if there is a positive length */
             /* reserve the space by marking the end of the element */
             if (HI_SEEK(file_rec->file, length-1+offset) == FAIL) {
@@ -974,6 +974,13 @@ int32 Hstartwrite(file_id, tag, ref, length)
                 HRETURN_ERROR(DFE_WRITEERROR,FAIL);
             }
           } /* end if */
+#else
+        if ((offset=HPgetdiskblock(file_rec,length,FALSE)) == FAIL) { 
+	    access_rec->used = FALSE;
+            HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+        }
+        access_rec->block->ddlist[access_rec->idx].offset = offset;
+#endif
 
        /* fill in dd record */
         access_rec->block->ddlist[access_rec->idx].tag = tag;
@@ -1907,6 +1914,9 @@ intn Hdeldd(file_id, tag, ref)
     /* remove it from the hash table */
     if(HIdel_hash_dd(file_rec, tag, ref) == FAIL)
        HRETURN_ERROR(DFE_CANTDELHASH,FAIL);
+
+    if(HPfreediskblock(file_rec, block->ddlist[idx].offset, block->ddlist[idx].length)==FAIL)
+       HRETURN_ERROR(DFE_INTERNAL,FAIL);
 
     return HIupdate_dd(file_rec, block, idx, FUNC);
 
@@ -3114,7 +3124,7 @@ int HInew_dd_block(file_rec, ndds, FUNC)
     int32 offset;              /* offset to the offset of new ddblock */
     uint8 *p;                  /* temp buffer ptr */
     dd_t *list;                /* dd list array of new dd block */
-    int i;                     /* temp integers */
+    intn i;                    /* temp integers */
     int16 n;
 
     /* check integrity of file record */
@@ -3122,8 +3132,7 @@ int HInew_dd_block(file_rec, ndds, FUNC)
         HRETURN_ERROR(DFE_INTERNAL,FAIL);
     
     /* allocate new dd block record and fill in data */
-    block = (ddblock_t *) HDgetspace(sizeof(ddblock_t));
-    if (block == (ddblock_t *) NULL)
+    if ((block = (ddblock_t *) HDgetspace(sizeof(ddblock_t))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE,FAIL);
     block->ndds = ndds;
     block->next = (ddblock_t *) NULL;
@@ -3138,10 +3147,16 @@ int HInew_dd_block(file_rec, ndds, FUNC)
     
     /* put the new dd block at the end of the file */
     
+#ifdef OLD_WAY
     if (HI_SEEKEND(file_rec->file) == FAIL)
         HRETURN_ERROR(DFE_SEEKERROR,FAIL);
     
     nextoffset = HI_TELL(file_rec->file);
+#else
+    if((nextoffset=HPgetdiskblock(file_rec,NDDS_SZ+OFFSET_SZ+(ndds*DD_SZ),TRUE))
+	    == FAIL)
+        HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+#endif
     p = ptbuf;
     INT16ENCODE(p, block->ndds);
     INT32ENCODE(p, (int32)0);
@@ -3164,7 +3179,8 @@ int HInew_dd_block(file_rec, ndds, FUNC)
     /* n is the number of dds that could fit into ptbuf at one time */
     
     n = TBUF_SZ / DD_SZ;
-    if (n > ndds) n = ndds;
+    if (n > ndds) 
+	n = ndds;
     for (i = 0; i < n; i++) {
         UINT16ENCODE(p, (uint16)DFTAG_NULL);
         UINT16ENCODE(p, (uint16)0);
@@ -3175,7 +3191,8 @@ int HInew_dd_block(file_rec, ndds, FUNC)
         if (HI_WRITE(file_rec->file, ptbuf, n*DD_SZ) == FAIL)
             HRETURN_ERROR(DFE_WRITEERROR,FAIL);
         ndds -= n;
-        if (n > ndds) n = ndds;
+        if(n > ndds) 
+	    n = ndds;
     }
     
     /* update previously last ddblock to point to this new dd block */
@@ -3478,6 +3495,92 @@ int32 file_id;
 
 } /* HIread_version */
 
+/* ----------------------------------------------------------------------- 
+
+ NAME
+	HPgetdiskblock --- Get the offset of a free block in the file.
+ USAGE
+	int32 HPgetdiskblock(file_rec, block_size)
+	    filerec_t *file_rec;     IN: ptr to the file record
+	    int32 block_size;        IN: size of the block needed
+	    bool moveto;             IN: whether to move the file position
+					 to the allocated position or leave
+					 it undefined.
+ RETURNS
+	returns offset of block in the file if successful, FAIL (-1) if failed.
+ DESCRIPTION
+        Used to "allocate" space in the file.  Currently, it just appends
+	blocks to the end of the file willy-nilly.  At some point in the
+	future, this could be changed to use a "real" free-list of empty 
+	blocks in the file and dole those out.
+
+-------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+int32 HPgetdiskblock(filerec_t *file_rec, int32 block_size, bool moveto)
+#else
+int32 HPgetdiskblock(file_rec, block_size, moveto)
+filerec_t *file_rec;
+int32 block_size;
+bool moveto;
+#endif
+{
+    char *FUNC="HPgetdiskblock";
+    uint8 temp;
+    int32 ret;
+
+    /* check for valid arguments */
+    if(file_rec==NULL || block_size<0)
+        HRETURN_ERROR(DFE_ARGS,FAIL);
+
+    /* "allocate" space by appending to the end of the file */
+    if(HI_SEEKEND(file_rec->file) == FAIL) 
+        HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+    if((ret=HI_TELL(file_rec->file))==FAIL)
+	HRETURN_ERROR(DFE_BADSEEK,FAIL);
+
+    /* reserve the space by marking the end of the element */
+    if(block_size>0) {
+        if (HI_SEEK(file_rec->file, ret+block_size-1) == FAIL) 
+            HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+        if (HI_WRITE(file_rec->file, &temp, 1) == FAIL) 
+            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+	if(moveto==TRUE)  /* move back to the beginning of the element */
+            if (HI_SEEK(file_rec->file, ret) == FAIL) 
+                HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+      } /* end if */
+    return(ret);
+}   /* HPgetdiskblock() */
+
+/* ----------------------------------------------------------------------- 
+
+ NAME
+	HPfreediskblock --- Release a block in a file to be re-used.
+ USAGE
+	intn HPfreediskblock(file_rec, block_off, block_size)
+	filerec_t *file_rec;     IN: ptr to the file record
+	int32 block_off;         IN: offset of the block to release
+	int32 block_size;        IN: size of the block to release
+ RETURNS
+	returns SUCCEED (0) if successful, FAIL (-1) if failed.
+ DESCRIPTION
+        Used to "release" space in the file.  Currently, it does nothing.
+	At some point in the future, this could be changed to add the block
+	to a "real" free-list of empty blocks in the file and manage those.
+
+-------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+intn HPfreediskblock(filerec_t *file_rec, int32 block_off, int32 block_size)
+#else
+intn HPfreediskblock(file_rec, block_off, block_size)
+filerec_t *file_rec;
+int32 block_off;
+int32 block_size;
+#endif
+{
+    char *FUNC="HPfreediskblock";
+
+    return(SUCCEED);
+}   /* HPfreediskblock() */
 
 /* ----------------------------------------------------------------------- 
 

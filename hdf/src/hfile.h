@@ -387,6 +387,12 @@ extern int HIadd_hash_dd
 extern int HIdel_hash_dd
   PROTO((filerec_t *file_rec, uint16 look_tag, uint16 look_ref));
 
+extern int32 HPgetdiskblock
+  PROTO((filerec_t *file_rec, int32 block_size, bool moveto));
+
+extern intn HPfreediskblock
+  PROTO((filerec_t *file_rec, int32 block_offset, int32 block_size));
+
 /*
 ** from hblocks.c
 */
