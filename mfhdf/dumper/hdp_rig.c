@@ -446,7 +446,7 @@ drig(dump_info_t *dumprig_opts,
             case DBINARY:       /* binary  file  */
                 /* Get the name of the output file. */
                 if (dumprig_opts->dump_to_file)
-                    fp = fopen(dumprig_opts->file_name, "w");
+                    fp = fopen(dumprig_opts->file_name, "wb");
                 else
                     fp = stdout;
 
@@ -627,16 +627,16 @@ done:
 }	/* drig */
 
 intn 
-do_dumprig(intn        curr_arg, 
-           intn        argc, 
-           char       *argv[], 
-           dump_opt_t *glob_opts)
+do_dumprig(intn  curr_arg, 
+           intn  argc, 
+           char *argv[], 
+           intn  help)
 {
     dump_info_t dumprig_opts;	/* dumprig options */
     int         model = 0;
     intn        ret_value = SUCCEED;
 
-    if (glob_opts->help == TRUE)
+    if (help == TRUE)
       {
           dumprig_usage(argc, argv);
           goto done;
@@ -663,14 +663,10 @@ do_dumprig(intn        curr_arg,
       { /* Failure cleanup */
       }
     /* Normal cleanup */
+
     if(dumprig_opts.filter_num != NULL)
       HDfree(dumprig_opts.filter_num);
 
     return ret_value;
 }	/* end do_dumprig() */
-
-
-
-
-
 
