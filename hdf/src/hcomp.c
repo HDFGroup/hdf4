@@ -184,6 +184,9 @@ HCIinit_coder(int16 acc_mode, comp_coder_info_t * cinfo, comp_coder_t coder_type
               break;
 
           case COMP_CODE_SKPHUFF:   /* Skipping Huffman encoding */
+              if(c_info->skphuff.skp_size<1)
+                  HRETURN_ERROR(DFE_BADCODER, FAIL)
+
               cinfo->coder_type = COMP_CODE_SKPHUFF;    /* set the coding type */
               cinfo->coder_funcs = cskphuff_funcs;  /* set the skipping huffman func. ptrs */
 
@@ -192,6 +195,9 @@ HCIinit_coder(int16 acc_mode, comp_coder_info_t * cinfo, comp_coder_t coder_type
               break;
 
           case COMP_CODE_DEFLATE:   /* gzip 'deflate' encoding */
+              if(c_info->deflate.level<1 || c_info->deflate.level>9)
+                  HRETURN_ERROR(DFE_BADCODER, FAIL)
+
               cinfo->coder_type = COMP_CODE_DEFLATE;    /* set the coding type */
               cinfo->coder_funcs = cdeflate_funcs;  /* set the gzip 'deflate' func. ptrs */
 
@@ -781,8 +787,10 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
     /* set up compressed special info structure */
     info->attached = 1;
     info->comp_ref = Htagnewref(file_id,DFTAG_COMPRESSED);  /* get the new reference # */
-    HCIinit_model(DFACC_RDWR, &(info->minfo), model_type, m_info);
-    HCIinit_coder(DFACC_RDWR, &(info->cinfo), coder_type, c_info);
+    if(HCIinit_model(DFACC_RDWR, &(info->minfo), model_type, m_info)==FAIL)
+        HGOTO_ERROR(DFE_MINIT,FAIL);
+    if(HCIinit_coder(DFACC_RDWR, &(info->cinfo), coder_type, c_info)==FAIL)
+        HGOTO_ERROR(DFE_CINIT,FAIL);
 
     if (HCIwrite_header(file_id, info, special_tag, ref, c_info, m_info) == FAIL)
           HGOTO_ERROR(DFE_WRITEERROR, FAIL);
