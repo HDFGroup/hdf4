@@ -19,10 +19,11 @@
 #############################################################################
 #
 # Type of C compiler (default is `cc'):
-# CC=gcc
+# Try 'gcc -ansi' if your cc is not ANSI compatible.
+# CC='gcc -ansi'
 #
 # C compiler flags (default is `-O'):
-CFLAGS=-g
+CFLAGS='-O"
 #
 # C preprocessor flags 
 # CPPFLAGS=-DNDEBUG
