@@ -354,21 +354,29 @@ PUBLIC int32 VSsizeof (int32 vkey, char *fields)
         HRETURN_ERROR(DFE_NOVS,FAIL);
 
     vs=w->vs;
-    if((vs==NULL) || (scanattrs(fields,&ac,&av) < 0) || (ac<1))
+    if(vs==NULL)
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
     totalsize=0;
-    for (i=0;i<ac;i++) {
-        for (found=0,j=0;j<vs->wlist.n;j++) /* check fields in vs */
-            if (!HDstrcmp(av[i], vs->wlist.name[j])) {
-                totalsize += vs->wlist.esize[j];
-                found=1;
-                break;
-            }
-
-        if (!found)
+    if(fields==NULL) {
+        for(j=0; j<vs->wlist.n; j++) /* count fieldsizes in vs */
+            totalsize+=vs->wlist.esize[j];
+      }	/* end if */
+    else {
+        if((scanattrs(fields,&ac,&av) < 0) || (ac<1))
             HRETURN_ERROR(DFE_ARGS,FAIL);
-    }
+        for(i=0; i<ac; i++) {
+            for(found=0,j=0; j<vs->wlist.n; j++) /* check fields in vs */
+                if(!HDstrcmp(av[i], vs->wlist.name[j])) {
+                    totalsize += vs->wlist.esize[j];
+                    found=1;
+                    break;
+                }
+
+            if (!found)
+                HRETURN_ERROR(DFE_ARGS,FAIL);
+          } /* end for */
+      } /* end else */
     return(totalsize);
 } /* VSsizeof */
 
