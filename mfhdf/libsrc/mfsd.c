@@ -4233,7 +4233,7 @@ int32 flags;
       { /* convert fill value */
           /* set number type */
           DFKsetNT(var->HDFtype);
-          DFKnumout((VOID *)fill_val, tBuf, (uint32) fill_val_len, 0, 0);        
+          DFKnumout((VOID *)fill_val, tBuf, (uint32) (fill_val_len/var->HDFsize), 0, 0);        
 
         /* check to see already special.
            Error if already special since doubly special elements are
@@ -4569,7 +4569,7 @@ const VOID *datap;
                             /* set number type */
                             DFKsetNT(var->HDFtype);
                             /* convert it */
-                            DFKnumout((VOID *)datap, tBuf, byte_count, 0, 0);
+                            DFKnumout((VOID *)datap, tBuf, (byte_count/var->HDFsize), 0, 0);
                             /* write it out now */
                             if ((status = HMCwriteChunk(var->aid, origin, tBuf)) 
                                 != FAIL)
@@ -4746,7 +4746,7 @@ VOID *datap;
                                     /* set number type */
                                     DFKsetNT(var->HDFtype);
                                     /* convert chunk */
-                                    DFKnumin(tBuf, datap, byte_count, 0, 0);
+                                    DFKnumin(tBuf, datap, (byte_count/var->HDFsize), 0, 0);
                                     status = SUCCEED;
                                 }
                         } /* end if */
