@@ -1,3 +1,15 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
@@ -31,8 +43,8 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* ------------------------------------------------------------------ */
 
-static void oldunpackvg PROTO((VGROUP *vg,uint8  buf[], int32 *size));
-static void oldunpackvs PROTO((VDATA *vs, uint8 buf[], int32 *size));
+PRIVATE void oldunpackvg PROTO((VGROUP *vg,uint8  buf[], int32 *size));
+PRIVATE void oldunpackvs PROTO((VDATA *vs, uint8 buf[], int32 *size));
 
 /*
 *  this routine checks that the given OPENED file is compatible with

@@ -1,3 +1,15 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
@@ -110,8 +122,11 @@ int32   interlace;
 uint8    buf[];
 #endif
 {
-    register intn isize, order, index;
-    register int16 esize,hsize;
+    register intn isize = 0;
+    register intn order = 0;
+    register intn index = 0;
+    register int16 esize = 0;
+    register int16 hsize = 0;
     register uint8   *b1,*b2;
 	int32 			i,j, nv, offset, type;
 	VWRITELIST 		*w;
@@ -309,7 +324,6 @@ printf("C: from : %d  to: %d esize: %d isize: %d order: %d nt: %d\n",
         }
     } /* case (d) */
 
-    /* HDfreespace ((VOIDP)tbuf); */
     return(nv/hsize);
 } /* VSread */
 
@@ -361,13 +375,14 @@ int32       interlace;
 uint8        buf[];
 #endif
 {
-    register intn  isize, order, index;
-    register int16 esize,hsize;
+    register intn  isize = 0;
+    register intn  order = 0;
+    register intn  index = 0;
+    register int16 esize = 0;
+    register int16 hsize = 0;
     register uint8 *b1,*b2;
-/*
-    register uint8   *tbuf;
-*/
-	int32 		j,type, offset;
+
+    int32 		j,type, offset;
     int16       special;
     int32           position, new_size;
 	VWRITELIST	*w;
@@ -409,12 +424,6 @@ uint8        buf[];
         }
     }
 
-/*
-    if((tbuf = (uint8 *) HDgetspace ( nelt * hsize)) == NULL) {
-          HERROR(DFE_NOSPACE);
-          return(FAIL);
-        }
-*/
 
 	/* 
 		First, convert and repack field(s) from Vtbuf into buf.    
@@ -592,33 +601,6 @@ uint8        buf[];
 
 	vs->marked = 1;
 	return (nelt);
-#endif
-
-#if 0
-	{{ /* THIS VERSION WITH VMBLOCKS */
-		VMBLOCK * vm, *t;
-		int32 vmsize;
-		vmsize = nelt * hsize;
-
-        vm  = (VMBLOCK*) HDgetspace (sizeof(VMBLOCK));
-        if (vm==NULL)
-            HRETURN_ERROR(DFE_NOSPACE,0);
-		vm->mem 	= tbuf;
-		vm->n 	= vmsize;
-		vm->next = NULL;
-
-		t = vs->vm;
-		if (t == NULL) { vs->vm = vm; }
-		else {
-			t = vs->vm;
-			while (t->next != NULL)  t= t->next;
-			t->next = vm;
-			}		
-
-		vs->nvertices += nelt;
-		vs->marked = 1;
-		return (nelt);
-		/* END OF VMBLOCK VERSION */ }}
 #endif
 
 } /* VSwrite */

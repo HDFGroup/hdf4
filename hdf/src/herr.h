@@ -6,7 +6,7 @@
  * 605 E. Springfield, Champaign IL 61820                                   *
  *                                                                          *
  * For conditions of distribution and use, see the accompanying             *
- * hdf/COPYRIGHT file.                                                      *
+ * hdf/COPYING file.                                                      *
  *                                                                          *
  ****************************************************************************/
 
@@ -47,13 +47,8 @@
    same assumptions as HRETURN_ERROR.  IN ADDITION, this macro causes
    the file specified by the id "fid" to be closed */
 
-#define HCLOSE_RETURN_ERROR(hfid, err, ret_val) {HERROR(err); Hclose(hfid); return(ret_val);}
-
-#if 0
-/* Clear the error stack */
-extern int32 error_top;
-#define HEclear() { error_top = (int32)0; }
-#endif
+#define HCLOSE_RETURN_ERROR(hfid, err, ret_val) {HERROR(err); Hclose(hfid); \
+                                                return(ret_val);}
 
 /*
 ======================================================================
