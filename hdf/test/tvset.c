@@ -37,6 +37,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define FNAME2   "tvset2.hdf"
 #define EXTFNM	 "tvsetext.hdf"
 #define EMPTYNM  "tvsempty.hdf"
+#define BLKINFO  "tvsblkinfo.hdf"
 
 #define FIELD1       "FIELD_name_HERE"
 #define FIELD1_UPPER "FIELD_NAME_HERE"
@@ -47,6 +48,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define FL "FLOATS"
 #define MX "STATION_NAME,VALUES,FLOATS"
 #define EMPTY_VDATA "Empty"
+#define APPENDABLE_VDATA "Appendable"
 
 static int32 write_vset_stuff(void);
 static int32 read_vset_stuff(void);
@@ -1670,7 +1672,6 @@ test_vdeletetagref(void)
 
 } /* test_vdeletetagref */
 
-
 static void
 test_emptyvdata(void)
 {
@@ -1849,6 +1850,203 @@ test_emptyvdata(void)
 
 } /* test_emptyvdata() */
 
+/*************************** test_blockinfo ***************************
+
+This test routine creates an hdf file, "Block_info.hdf", and creates
+and writes two vdatas in a way that one of the vdatas will be promoted
+to a linked-block element.
+
+The first vdata is named "Appendable Vdata", contains 10 records, and 
+belongs to a class, named "Linked-block Vdata".  The fields of the vdata 
+include "Field1", "Field2", and "Field3" and all data are integer.  
+"Field1" has an order of 3, "Field2" has an order of 1, and "Field3" has 
+an order of 2.
+
+The second vdata named "Another Vdata", contains 5 records, and also
+belongs to class "Linked-block Vdata".  This vdata has only one field
+of order 1 and its data are integer.
+
+The test writes 5 records to the first vdata, "Appendable Vdata", then
+creates and writes the second vdata, "Another Vdata", then, writes 
+another 5 records to the first vdata.  The purpose of the second vdata 
+is to cause the subsequent write to the first vdata, "Appendable Vdata", 
+to promote the vdata to a linked-block element.
+
+***********************************************************************/
+
+#define FILE_NAME	"Block_info.hdf"
+#define APPENDABLE_VD	"Appendable Vdata"
+#define ANOTHER_VD	"Another Vdata"
+#define CLASS_NAME	"Linked-block Vdata"
+#define FIELD1_NAME	"Field1"	/* contains three integers */
+#define FIELD2_NAME	"Field2"	/* contains one integer */
+#define FIELD3_NAME	"Field3"	/* contains two integers */
+#define	FIELD_NAME_LIST	"Field1,Field2,Field3"
+#define ANOTHER_FD	"Another field"	/* contains one integer */
+#define	ANOTHER_FD_LIST	"Another field"
+#define N_RECORDS	5	/* number of records to be written to the
+				   vdatas at every write */
+#define ORDER_1 	3	/* order of first field of 1st vdata */
+#define ORDER_2 	1	/* order of second field of 1st vdata */
+#define ORDER_3 	2	/* order of third field of 1st vdata */
+#define N_VALS_PER_REC_2   1    /* # of values per record in the 2nd vdata */
+#define N_VALS_PER_REC_1 (ORDER_1+ORDER_2+ORDER_3) /* # of vals/rec. in 1st vd*/
+#define	BLOCK_SIZE	128	/* arbitrary number for block size */
+#define	NUM_BLOCKS	8	/* arbitrary number for number of blocks */
+
+static void
+test_blockinfo(void) 
+{
+   intn	 status_n;	/* returned status for functions returning an intn  */
+   int32 status_32;	/* returned status for functions returning an int32 */
+   int16 rec_num;	/* current record number */
+   int32 file_id, vdata1_id, vdata2_id,
+	 vdata_ref = -1,  /* ref number of a vdata, set to -1 to create  */
+   	 num_of_records,  /* number of records actually written to vdata */
+         data_buf1[N_RECORDS][N_VALS_PER_REC_1], /* for first vdata's data */
+	 data_buf2[N_RECORDS][N_VALS_PER_REC_2], /* for second vdata's data */
+	 block_size, num_blocks; /* retrieved by VSgetblockinfo */
+
+    /* Create the HDF file for data used in this test routine */
+    file_id = Hopen (FILE_NAME, DFACC_CREATE, 0);
+    CHECK(file_id, FAIL, "Hopen");
+
+    /* Initialize the VS interface */
+    status_n = Vstart (file_id);
+    CHECK(status_n, FAIL, "Vstart");
+
+    /* Create the first vdata */
+    vdata1_id = VSattach (file_id, vdata_ref, "w");
+    CHECK(vdata1_id, FAIL, "VSattach");
+
+    /* Set name and class name of the vdata. */
+    status_32 = VSsetname (vdata1_id, APPENDABLE_VD);
+    CHECK(status_32, FAIL, "VSsetname");
+    status_32 = VSsetclass (vdata1_id, CLASS_NAME);
+    CHECK(status_32, FAIL, "VSsetclass");
+
+    /* Introduce each field's name, data type, and order.  This is the first
+      part in defining a field.  */
+    status_n = VSfdefine (vdata1_id, FIELD1_NAME, DFNT_INT32, ORDER_1);
+    CHECK(status_n, FAIL, "VSfdefine");
+    status_n = VSfdefine (vdata1_id, FIELD2_NAME, DFNT_INT32, ORDER_2);
+    CHECK(status_n, FAIL, "VSfdefine");
+    status_n = VSfdefine (vdata1_id, FIELD3_NAME, DFNT_INT32, ORDER_3);
+    CHECK(status_n, FAIL, "VSfdefine");
+
+    /* Finalize the definition of the fields. */
+    status_n = VSsetfields (vdata1_id, FIELD_NAME_LIST);
+    CHECK(status_n, FAIL, "VSsetfields");
+
+    /* 
+     * Buffer the data by the record for fully interlaced mode.  Note that the
+     * first three elements contain the three values of the first field, the
+     * fourth element contains the value of the second field, and the last two
+     * elements contain the two values of the third field.
+     */
+    for (rec_num = 0; rec_num < N_RECORDS; rec_num++)
+    {
+        data_buf1[rec_num][0] = 1 + rec_num;
+        data_buf1[rec_num][1] = 2 + rec_num;
+        data_buf1[rec_num][2] = 3 + rec_num;
+        data_buf1[rec_num][3] = 10 + rec_num;
+        data_buf1[rec_num][4] = 10;
+        data_buf1[rec_num][5] = 65;
+    }
+
+    /* Test for invalid arguments passed in these functions */
+    status_n = VSsetblocksize(vdata1_id, -2);
+    VERIFY(status_n, FAIL, "VSsetblocksize");
+    status_n = VSsetnumblocks(vdata1_id, 0);
+    VERIFY(status_n, FAIL, "VSsetnumblocks");
+
+    /* Set the block size and the number of blocks the first vdata */
+    status_n = VSsetblocksize(vdata1_id, BLOCK_SIZE);
+    CHECK(status_n, FAIL, "VSsetblocksize");
+    status_n = VSsetnumblocks(vdata1_id, NUM_BLOCKS);
+    CHECK(status_n, FAIL, "VSsetnumblocks");
+
+    /* Write the data from data_buf1 to the vdata with full interlacing mode. */
+    num_of_records = VSwrite(vdata1_id, (uint8 *)data_buf1, N_RECORDS, 
+				FULL_INTERLACE);
+    VERIFY(num_of_records, N_RECORDS, "VSwrite:vdata1_id");
+
+    /******************************************************************
+     * Creates and writes another vdata right after APPENDABLE_VDATA.
+     * This will cause the storage of APPENDABLE_VDATA to be promoted to a
+     * linked-block element if a subsequent write to APPENDABLE_VDATA occurs. 
+     ******************************************************************/
+ 
+    /* Create another vdata. */
+    vdata2_id = VSattach (file_id, vdata_ref, "w");
+    CHECK(vdata2_id, FAIL, "VSattach");
+
+    /* Set name and class name of the vdata. */
+    status_32 = VSsetname (vdata2_id, ANOTHER_VD);
+    CHECK(status_32, FAIL, "VSsetname");
+    status_32 = VSsetclass (vdata2_id, CLASS_NAME);
+    CHECK(status_32, FAIL, "VSsetclass");
+
+    /* Define the vdata's field. */
+    status_n = VSfdefine (vdata2_id, ANOTHER_FD, DFNT_INT32, ORDER_2);
+    CHECK(status_n, FAIL, "VSfdefine");
+    status_n = VSsetfields (vdata2_id, ANOTHER_FD_LIST);
+    CHECK(status_n, FAIL, "VSsetfields");
+
+    /* Buffer the data for ANOTHER_VDATA */
+    for (rec_num = 0; rec_num < N_RECORDS; rec_num++)
+    {
+        data_buf2[rec_num][0] = 100 + rec_num;
+    }
+
+    /* Write the data from data_buf2 to the second vdata with full 
+       interlacing mode. */
+    num_of_records = VSwrite(vdata2_id, (uint8 *)data_buf2, N_RECORDS, 
+				FULL_INTERLACE);
+    VERIFY(num_of_records, N_RECORDS, "VSwrite:vdata2_id");
+
+    /******************************************************************
+     * Writes more data to APPENDABLE_VDATA, i.e. first vdata.  Its
+     * storage will be promoted to a linked-block element.
+     ******************************************************************/
+
+    for (rec_num = 0; rec_num < N_RECORDS; rec_num++)
+    {
+        data_buf1[rec_num][0] = 10 + rec_num;
+        data_buf1[rec_num][1] = 20 + rec_num;
+        data_buf1[rec_num][2] = 30 + rec_num;
+        data_buf1[rec_num][3] = 100 + rec_num;
+        data_buf1[rec_num][4] = 100;
+        data_buf1[rec_num][5] = 650;
+    }
+
+    /* Write the data from data_buf1 to the vdata with full interlacing mode. */
+    num_of_records = VSwrite(vdata1_id, (uint8 *)data_buf1, N_RECORDS, 
+				FULL_INTERLACE); 
+    VERIFY(num_of_records, N_RECORDS, "VSwrite:vdata1_id");
+
+    /* Retrieve the first vdata's block size and number of blocks and 
+       verify them */
+    status_n = VSgetblockinfo (vdata1_id, &block_size, &num_blocks);
+    CHECK(status_n, FAIL, "VSsetfields");
+    VERIFY(block_size, BLOCK_SIZE, "VSgetblockinfo");
+    VERIFY(num_blocks, NUM_BLOCKS, "VSgetblockinfo");
+
+    /* Terminate access to the vdatas and to the VS interface, then 
+       close the HDF file. */
+    status_32 = VSdetach (vdata1_id);
+    CHECK(status_32, FAIL, "Vdetach");
+
+    status_32 = VSdetach (vdata2_id);
+    CHECK(status_32, FAIL, "Vdetach");
+
+    status_n = Vend (file_id);
+    CHECK(status_n, FAIL, "Vend");
+
+    status_32 = Hclose (file_id);
+    CHECK(status_32, FAIL, "Hclose");
+} /* test_blockinfo() */
+
 /* main test driver */
 void
 test_vsets(void)
@@ -1874,6 +2072,9 @@ test_vsets(void)
 
     /* test Vdatas with no fields defined */
     test_emptyvdata();
+
+    /* test functionality about set/get linked-block information */
+    test_blockinfo();
 
 }   /* test_vsets */
 
