@@ -60,7 +60,7 @@ SHELL=/bin/sh
 MACHINE=IBM6000
 
 # Define your C compiler and flags
-CC= cc
+CC= xlc
 CFLAGS= -D${MACHINE}  -O
 
 

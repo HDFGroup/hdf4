@@ -576,26 +576,29 @@ char _HUGE *HDgettagsname(uint16 tag)
     CONSTR(FUNC,"HDgettagsname");       /* for HERROR */
     char *ret=NULL;
     intn i;
-
+    
     if(SPECIALTAG(tag)) 
         ret=(char *)HDstrdup("Special ");
     tag=BASETAG(tag);
     for(i=0; i<sizeof(tag_descriptions)/sizeof(tag_descript_t); i++)
         if(tag_descriptions[i].tag==tag) {
             if(ret==NULL)
-               ret=(char *)HDstrdup(tag_descriptions[i].name);
+                ret = (char *) HDstrdup(tag_descriptions[i].name);
             else {
-		        char *t=(char *)HDgetspace(HDstrlen(ret)+HDstrlen(tag_descriptions[i].name)+2);
+                char * t;
+
+                t =(char *)HDgetspace(HDstrlen(ret) + 
+                                      HDstrlen(tag_descriptions[i].name)+2);
                 if(t==NULL) {
                     HDfreespace(ret);
                     HRETURN_ERROR(DFE_NOSPACE,NULL);
-                  } /* end if */
+                } /* end if */
                 HDstrcpy(t,ret);
                 HDstrcat(t,tag_descriptions[i].name);
                 HDfreespace(ret);
-                ret=t;
-              } /* end else */
-          } /* end if */
+                ret = t;
+            } /* end else */
+        } /* end if */
     return(ret);
 }
 
@@ -643,21 +646,24 @@ char _HUGE *HDgetNTdesc(int32 nt)
     intn i;
     char *ret_desc=NULL;
 
+    /* evil hard-coded values */
     if(nt&DFNT_NATIVE)
-	ret_desc=(char *)HDstrdup(nt_descriptions[0].desc); /* evil hard-coded values */
+	ret_desc = (char *) HDstrdup(nt_descriptions[0].desc); 
     else if(nt&DFNT_CUSTOM)
-	ret_desc=(char *)HDstrdup(nt_descriptions[1].desc); /* evil hard-coded values */
+	ret_desc = (char *)HDstrdup(nt_descriptions[1].desc);
     else if(nt&DFNT_LITEND)
-	ret_desc=(char *)HDstrdup(nt_descriptions[2].desc); /* evil hard-coded values */
+	ret_desc = (char *) HDstrdup(nt_descriptions[2].desc); 
 
     nt&=DFNT_MASK;	/* mask off unusual format types */
     for(i=3; i<sizeof(nt_descriptions)/sizeof(nt_descript_t); i++)
 	if(nt_descriptions[i].nt==nt) {
-	    if(ret_desc==NULL)
-	       ret_desc=(char *)HDstrdup(nt_descriptions[i].desc);
+	    if(ret_desc == NULL)
+	       ret_desc = (char *) HDstrdup(nt_descriptions[i].desc);
 	    else {
-		char *t = (char *) HDgetspace(HDstrlen(ret_desc) + 
-                                              HDstrlen(nt_descriptions[i].desc) + 2);
+		char *t;
+                
+                t = (char *) HDgetspace(HDstrlen(ret_desc) + 
+                                        HDstrlen(nt_descriptions[i].desc) + 2);
 		if(t==NULL) {
                     HDfreespace(ret_desc);
 		    HRETURN_ERROR(DFE_NOSPACE,NULL);
