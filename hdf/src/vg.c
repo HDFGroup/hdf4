@@ -336,6 +336,7 @@ char *fields;
         HRETURN_ERROR(DFE_ARGS,FAIL);
     
     /* now check in vs's field table */
+    
     w = &vs->wlist;
     for (i = 0; i < ac; i++) {
         found = 0;
@@ -374,8 +375,7 @@ RETURNS
 DESCRIPTION
         The size is the actual size for the local machine.
 
--------------------------------------------------------------------- */
-
+* ----------------------------------------------------------------- */
 #ifdef PROTOTYPE
 PUBLIC int32 VSsizeof (int32 vkey, char *fields)
 #else
@@ -473,7 +473,6 @@ RETURNS
 DESCRIPTION
         Truncates name to max length of VSNAMELENMAX
 ---------------------------------------------------------- */
-
 
 #ifdef PROTOTYPE
 PUBLIC int32 VSsetname (int32 vkey, char *vsname)
@@ -774,20 +773,6 @@ DESCRIPTION
                  to asize worth of refs.
 --------------------------------------------------------------------- */
 
-/* -------------------------------- Vlone --------------------------------- */
-/*
- * Vlone  - returns an array of refs of all lone vgroups in the file.
- * 	      - returns -1 if error
- *	      - otherwise returns the total number of lone vgroups in the file 
- *
- *			If idarray is too small, routine will only fill idarray with up
- *			 to asize worth of refs.
- *
- *			INPUT idarray: user supplies  an int array.
- *		   INPUT asize: integer specifying how many ints in idarray[];
- *			INPUT f: HDF file pointer.
- *
- */
 
 #ifdef PROTOTYPE
 PUBLIC int32 Vlone (HFILEID f, int32 idarray[], int32 asize)
