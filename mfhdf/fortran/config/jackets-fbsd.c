@@ -34,7 +34,7 @@
 
 struct ncfils {			/* This will be a common block from Fortran */
     double dd;
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64)
+#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__
     int ll;
 #else
     long ll;
@@ -65,7 +65,7 @@ struct ncfils {			/* This will be a common block from Fortran */
 
 struct ncfils {			/* This will be a common block from Fortran */
     double dd;
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64)
+#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__
     int ll;
 #else
     long ll;
@@ -412,7 +412,7 @@ stoig(shorts, ints, dims, basis, ndims)
 }
 #endif /* FORTRAN_HAS_NO_SHORT */
 
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64)
+#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__
 /*
  * Convert multi-dimensional array of NCLONGs stored in ints to packed
  * array of longs, in malloc'ed space.  Returns pointer to longs or NULL
@@ -1065,7 +1065,7 @@ ncvptg_(cdfid, varid, start, count, stride, basis, value, rcode)
 	tmpbasis	= nctypelen(NC_LONG);
     else
 #endif
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64)
+#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__
     if (datatype == NC_LONG)
 	tmpbasis	= sizeof(int);
     else
@@ -1419,7 +1419,7 @@ ncvgtg_(cdfid, varid, start, count, stride, basis, value, rcode)
 	tmpbasis	= nctypelen(NC_LONG);
     else
 #endif
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64)
+#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__
     if (datatype == NC_LONG)
 	tmpbasis	= sizeof(int);
     else

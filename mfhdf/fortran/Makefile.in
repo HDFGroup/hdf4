@@ -145,6 +145,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 
 INCLUDES = -I$(top_srcdir)/hdf/src        \
+         -I$(top_srcdir)/hdf/test       \
          -I$(top_srcdir)/mfhdf/libsrc   \
          -I$(top_srcdir)/mfhdf/port     \
          -I../libsrc
@@ -156,38 +157,49 @@ AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
 #############################################################################
 #############################################################################
 include_HEADERS = netcdf.inc netcdf.f90
-check_PROGRAMS = ftest
+check_PROGRAMS = ftest hdftest
 
 ftest_SOURCES = ftest.f
-ftest_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
-ftest_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+ftest_LDADD = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
+              ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
+
+ftest_DEPENDENCIES = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
+                     $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+
+
+hdftest_SOURCES = hdftest.f
+hdftest_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
+hdftest_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 SUFFIXES = .inc .f90
 
 
 #############################################################################
 #############################################################################
-DISTCLEANFILES = ftest.f jackets.c netcdf.inc netcdf.f90
+DISTCLEANFILES = ftest.f jackets.c netcdf.inc netcdf.f90 *.nc *.hdf testdir/testext.hdf
 subdir = mfhdf/fortran
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/hdf/src/h4config.h
 CONFIG_CLEAN_FILES =
-check_PROGRAMS = ftest$(EXEEXT)
+check_PROGRAMS = ftest$(EXEEXT) hdftest$(EXEEXT)
 am_ftest_OBJECTS = ftest.$(OBJEXT)
 ftest_OBJECTS = $(am_ftest_OBJECTS)
 ftest_LDFLAGS =
+am_hdftest_OBJECTS = hdftest.$(OBJEXT)
+hdftest_OBJECTS = $(am_hdftest_OBJECTS)
+hdftest_LDFLAGS =
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/hdf/src
 F77COMPILE = $(F77) $(AM_FFLAGS) $(FFLAGS)
 F77LD = $(F77)
 F77LINK = $(F77LD) $(AM_FFLAGS) $(FFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(ftest_SOURCES)
+DIST_SOURCES = $(ftest_SOURCES) $(hdftest_SOURCES)
 HEADERS = $(include_HEADERS)
 
 DIST_COMMON = README $(include_HEADERS) $(srcdir)/Makefile.in \
 	Makefile.am
-SOURCES = $(ftest_SOURCES)
+SOURCES = $(ftest_SOURCES) $(hdftest_SOURCES)
 
 all: all-am
 
@@ -204,6 +216,9 @@ clean-checkPROGRAMS:
 ftest$(EXEEXT): $(ftest_OBJECTS) $(ftest_DEPENDENCIES) 
 	@rm -f ftest$(EXEEXT)
 	$(F77LINK) $(ftest_LDFLAGS) $(ftest_OBJECTS) $(ftest_LDADD) $(LIBS)
+hdftest$(EXEEXT): $(hdftest_OBJECTS) $(hdftest_DEPENDENCIES) 
+	@rm -f hdftest$(EXEEXT)
+	$(F77LINK) $(hdftest_LDFLAGS) $(hdftest_OBJECTS) $(hdftest_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
@@ -411,8 +426,20 @@ uninstall-am: uninstall-includeHEADERS uninstall-info-am
 	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
 	uninstall-am uninstall-includeHEADERS uninstall-info-am
 
+
+testdir:
+	-mkdir testdir
 .inc.f90:
 	sed -e 's/^[cC]/!/' -e 's/^     [^ ]/     \&/' < $< > $*.f90
+check:
+	@echo "==================================="
+	@echo "HDF-SD Fortran interfaces tests"
+	@echo "==================================="
+	srcdir="$(srcdir)" ./hdftest
+	@echo "==================================="
+	@echo "HDF-NetCDF Fortran interfaces tests"
+	@echo "==================================="
+	srcdir="$(srcdir)" ./ftest
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

@@ -34,7 +34,7 @@
 
 struct ncfils {			/* This will be a common block from Fortran */
     double dd;
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64)
+#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__
     int ll;
 #else
     long ll;
@@ -65,7 +65,7 @@ struct ncfils {			/* This will be a common block from Fortran */
 
 struct ncfils {			/* This will be a common block from Fortran */
     double dd;
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64)
+#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__
     int ll;
 #else
     long ll;
@@ -412,7 +412,7 @@ stoig(shorts, ints, dims, basis, ndims)
 }
 #endif /* FORTRAN_HAS_NO_SHORT */
 
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64)
+#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__
 /*
  * Convert multi-dimensional array of NCLONGs stored in ints to packed
  * array of longs, in malloc'ed space.  Returns pointer to longs or NULL
@@ -899,7 +899,7 @@ ncvpt1_(cdfid, varid, indices, value, rcode)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64)
+#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__
 #ifdef HDF
     if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long          longs = *(int *)value;
@@ -1013,7 +1013,7 @@ ncvpt_(cdfid, varid, start, count, value, rcode)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64)
+#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__
 #ifdef HDF
     if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long *longs = itol (value, ncount, ndims);
@@ -1124,7 +1124,7 @@ ncvptg_(cdfid, varid, start, count, stride, basis, value, rcode)
 	tmpbasis	= nctypelen(NC_LONG);
     else
 #endif
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64)
+#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__
     if (datatype == NC_LONG)
 	tmpbasis	= sizeof(int);
     else
@@ -1181,7 +1181,7 @@ ncvptg_(cdfid, varid, start, count, stride, basis, value, rcode)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64)
+#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__
 #ifdef HDF
     if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long *longs = itolg (value, ncount, nbasis, ndims);
@@ -1317,7 +1317,7 @@ ncvgt1_(cdfid, varid, indices, value, rcode)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64)
+#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__
 #ifdef HDF
     if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long          longs;
@@ -1459,13 +1459,18 @@ ncvgt_(cdfid, varid, start, count, value, rcode)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64)
+#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__
 #ifdef HDF
     if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long iocount = dimprod (ncount, ndims);	/* product of dimensions */
+/* EIP  We need to use int buffer to read data in on the platforms where long is 8 bytes
 	long *longs = (long *) malloc (iocount * sizeof (long));
 	int *ip;
 	long *lp = longs;
+*/
+	int *longs = (int *) malloc (iocount * sizeof (int));
+	int *ip;
+	int *lp = longs;
 
 	if (longs == NULL) {
 	    *rcode = NC_SYSERR;
@@ -1592,7 +1597,7 @@ ncvgtg_(cdfid, varid, start, count, stride, basis, value, rcode)
 	tmpbasis	= nctypelen(NC_LONG);
     else
 #endif
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64)
+#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__
     if (datatype == NC_LONG)
 	tmpbasis	= sizeof(int);
     else
@@ -1663,7 +1668,7 @@ ncvgtg_(cdfid, varid, start, count, stride, basis, value, rcode)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64)
+#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__
 #ifdef HDF
     if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long iocount = dimprod (ncount, ndims);	/* product of dimensions */
@@ -1829,7 +1834,7 @@ ncapt_(cdfid, varid, attname, datatype, attlen, value, rcode, attnamelen)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64)
+#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__
 #ifdef HDF
     if ((nc_type) *datatype == NC_LONG && handle->file_type!=HDF_FILE) {
 	long *longs = itol (value, attlen, 1);
@@ -1994,12 +1999,17 @@ ncagt_(cdfid, varid, attname, value, rcode, attnamelen)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64)
+#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__
 #ifdef HDF
     if ((nc_type) datatype == NC_LONG && handle->file_type!=HDF_FILE) {
+/* EIP  We need int buffer to read data in on the platfroms where long is 8 bytes
 	long *longs = (long *) malloc (attlen * sizeof (long));
 	int *ip;
 	long *lp = longs;
+*/
+	int *longs = (int *) malloc (attlen * sizeof (int));
+	int *ip;
+	int *lp = longs;
 
 	if (longs == NULL) {
 	    *rcode = NC_SYSERR;
