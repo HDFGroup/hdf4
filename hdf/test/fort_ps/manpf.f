@@ -37,6 +37,12 @@ c	integer afcreate
 
 C      integer dssdims, dsadata, dslref, dsgdims
 C      integer d8aimg, DFR8lastref, d8gimg
+C
+      integer hishdf, hestringf, heprntf
+      character*80 error_message
+      integer fileh
+      character*15 ERR_FILE
+      parameter (ERR_FILE = 'Fortran_err.dat')
 
       integer numberfailed, ISFIRST, NOTFIRST, MAXLENLAB
       integer MAXLEN_DESC, ROWS, COLS, REPS
@@ -302,6 +308,36 @@ C ****** Check file labels/descriptions *******
           print *,'***** ',numberfailed,' TESTS FAILED ***** '
       endif
 
+C ***** Test if the file fname is an HDF file
+C
+C
+      ret = hishdf(TESTFILE)
+      if (ret .ne. 1) then
+          numberfailed = numberfailed + 1
+          write(*,*) "HISHDF function failed"
+      endif
+      ret = hestringf(0, error_message)
+       if (ret .ne. 0) then
+          numberfailed = numberfailed + 1
+          write(*,*) "HESTRINGF function failed"
+      endif
+
+C
+C     Call hishdf with  file not being an hdf file. Call should return
+C     0 
+C
+      ret = hishdf("manf.f")
+      if (ret .ne. 0) then
+          numberfailed = numberfailed + 1
+          write(*,*) "HISHDF function failed"
+      endif
+C
+C *****  end of hishdf test
+C
+      fileh = hopen('nonexist', DFACC_READ,0)
+      ret = heprntf(ERR_FILE, 0)
+      ret = hclose(fileh)
+      ret = heprntf(ERR_FILE, 0)
       return
       end
 
@@ -323,16 +359,12 @@ C**************************************************************
       integer MAXLENLAB, MAXLEN_DESC
       parameter ( MAXLENLAB =    30,
      *            MAXLEN_DESC =  500 )
-      character*15 ERR_FILE
-      parameter (ERR_FILE = 'Fortran_err.dat')
 
 
       integer  inlablen, indesclen, ret
 
       integer affileinfo, afnumann, afannlist, afannlen
       integer afreadann, afstart, afend, afendaccess, hopen, hclose
-      integer hishdf, hestringf, heprntf
-      character*80 error_message
 
       integer fileh, anh
       integer nflabs, nfdescs, nolabs, nodescs
@@ -349,35 +381,7 @@ C**************************************************************
       AN_FILE_LABEL = 2
       AN_FILE_DESC  = 3
 
-C ***** Test if the file fname is an HDF file
-C
-C
-      ret = hishdf(fname)
-      if (ret .ne. 1) then
-          num_failed = num_failed + 1
-          write(*,*) "HISHDF function failed"
-      endif
-      ret = hestringf(0, error_message)
-       if (ret .ne. 0) then
-          num_failed = num_failed + 1
-          write(*,*) "HESTRINGF function failed"
-      endif
-
-C
-C     Call hishdf with  file not being an hdf file. Call should return
-C     0 
-C
-      ret = hishdf("manf.f")
-      if (ret .ne. 0) then
-          num_failed = num_failed + 1
-          write(*,*) "HISHDF function failed"
-      endif
-C
-C *****  end of hishdf test
-C
 C *****start annotation access on file *****
-      fileh = hopen('nonexist', DFACC_READ,0)
-      ret = heprntf(ERR_FILE, 0)
       fileh = hopen(fname, DFACC_READ,0)
       ret = fileh
       call VERIFY(ret, 'hopen', num_failed)
@@ -476,8 +480,6 @@ C ****** close file *******
       call VERIFY(ret, 'afend', num_failed)
       ret = hclose(fileh)
       call VERIFY(ret, 'hclose', num_failed)
-      ret = hclose(fileh)
-      ret = heprntf(ERR_FILE, 0)
 
 
       return

@@ -48,7 +48,7 @@ C-----------------------------------------------------------------------------*/
           !DEC$ ATTRIBUTES reference :: filename
           integer print_levels 
           character*(*) filename
-          integer name_len
+          integer namelen
         END FUNCTION heprntc
       END INTERFACE
       heprntf = heprntc(filename, print_levels, len(filename))
