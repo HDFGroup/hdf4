@@ -32,33 +32,28 @@ CM5 Parallel I/O Extension
 
 Installing HDF Libraries With CM5 Parallel I/O Extension
 
-    The current beta version requires two major steps to install the
-    HDF libraries.
+    It takes two major steps to install the HDF libraries.
 
-    1) Compile and install the ordinary HDF libraries (libdf.a,
-    libnetcdf.a, libjpeg.a), include files and utilities according to
-    the instructions for a Sun Microsystem machine.
+    1) Compile and install the ordinary HDF libraries, include files
+    and utilities according to the instructions for a SunOS machine.
 
     2) To make the HDF library with CM5 parallel IO extension:  There
-    are two new libraries, libdfcm5.a and libnetcdfcm5.a, which are
-    similar to libdf.a and libnetcdf.a.
+    are two new libraries, libdfcm5.a and libmfhdfcm5.a, which are
+    similar to libdf.a and libmfhdf.a.
 
     Configuration
 
-	configure CM5
+	make distclean	        # remove any files created in the previous make
+	./configure CM5
 
-    For libdf.a
+    Compile
 
-	make libdf          # create the parallel IO libdf.a
-	# to install it in /usr/local/lib
-	cp src/libdf.a /usr/local/lib/libdfcm5.a
+	make libdf libmfhdf     # create the two parallel IO libraries
+
+    Install
+	# Install it in system area such as /usr/local/lib
+	cp hdf/src/libdf.a /usr/local/lib/libdfcm5.a
 	ranlib /usr/local/lib/libdfcm5.a
-
-
-    For libnetcdf.a
-
-	(cd libsrc; make )      # compile the library
-	# to install it in /usr/local/lib
-	cp libsrc/libnetcdf.a /usr/local/lib/libnetcdfcm5.a
-	ranlib /usr/local/lib/libnetcdfcm5.a
+	cp mfhdf/libsrc/libmfhdf.a /usr/local/lib/libmfhdfcm5.a
+	ranlib /usr/local/lib/libmfhdfcm5.a
 
