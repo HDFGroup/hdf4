@@ -18,7 +18,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* General HDF includes */
 
-#include "../../mfhdf/libsrc/mfhdf.h"
+#include "hdf.h"
 
 #ifdef H4_HAVE_LIBSZ
 #include "szlib.h"
@@ -852,6 +852,8 @@ HCPsetup_szip_parms( comp_info *c_info, int32 nt, int32 ncomp, int32 ndims, int3
           goto done;
     }
 
+#ifdef notdef
+   /* check this before calling */
     if (cdims == NULL) {
 	/* Contiguous unlimited: compression doesn't work! */
 	if (dims[0] == SD_UNLIMITED)
@@ -860,6 +862,7 @@ HCPsetup_szip_parms( comp_info *c_info, int32 nt, int32 ncomp, int32 ndims, int3
 	    goto done;
 	}
     }
+#endif
  
     /* compute the number of elements in the compressed unit:
         if chunked, compress each chunk. If not, compress whole 
