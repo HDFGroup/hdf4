@@ -99,8 +99,24 @@ DFdi;
 #define NSTREQ(s, t, n) (strncmp((s), (t), (n)) == 0)
 #endif
 
+/* Macro to free space and clear pointer to NULL */
+#define HDfreenclear(p) { if((p)!=NULL) HDfreespace(p); p=NULL; }
+
+/*
+ * Macros used for variable and function scoping in code.....
+ */
+#ifndef EXPORT
+#define EXPORT
+#endif
+#ifndef IMPORT
+#define IMPORT extern
+#endif 
+#ifndef LOCAL
+#define LOCAL  static
+#endif
+
 #ifndef PRIVATE
-#   define PRIVATE static
+#define PRIVATE static
 #endif
 #ifndef PUBLIC
 #define PUBLIC  /* nothing */
