@@ -405,7 +405,9 @@ do_ncdump(path, specp)
             handle = NC_check_id(ncid);
             if (handle->file_type == HDF_FILE)  {
                  vp = NC_hlookupvar(handle, varid) ;
-                 if ((vp->data_tag == DFTAG_SDS) && (vp->data_ref == 0))  
+		/* This is set up to take care of cases where an array has been defined but no data */
+		/* has yet been added.								    */
+                 if ((vp->data_tag == DFTAG_SDS || vp->data_tag == DFTAG_SD) && (vp->data_ref == 0))  
                  isempty = 1;  
             }
 }
