@@ -1111,7 +1111,7 @@ big_barray_ptr ptr;
 
 METHODDEF VOID
 #if defined ( PROTOTYPE ) && ! defined ( CONVEX )
-free_all (VOID)
+free_all (void)
 #else
 free_all ()
 #endif

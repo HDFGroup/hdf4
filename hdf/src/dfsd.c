@@ -1190,7 +1190,7 @@ int32 DFSDndatasets(filename)
 #ifdef CONVEX
 intn DFSDclear()
 #else
-intn DFSDclear(VOID)
+intn DFSDclear(void)
 #endif
 #else
 intn DFSDclear()

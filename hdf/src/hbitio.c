@@ -60,7 +60,7 @@ PRIVATE int HIget_bitfile_slot
     PROTO(());
 #else
 PRIVATE int HIget_bitfile_slot
-    PROTO((VOID));
+    PROTO((void));
 #endif
 
 /* Actualy Function Definitions */
@@ -425,7 +425,7 @@ intn flushbit;              /* how to flush the bits */
 #ifdef CONVEX
 PRIVATE int HIget_bitfile_slot()
 #else
-PRIVATE int HIget_bitfile_slot(VOID)
+PRIVATE int HIget_bitfile_slot(void)
 #endif
 #else
 PRIVATE int HIget_bitfile_slot()

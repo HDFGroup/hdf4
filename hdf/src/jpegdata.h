@@ -606,7 +606,7 @@ struct External_methods_struct {
 #ifdef CONVEX
 	METHOD(VOID, free_all, ());
 #else
-	METHOD(VOID, free_all, (VOID));
+	METHOD(void, free_all, (void));
 #endif
 
 	long max_memory_to_use;	/* maximum amount of memory to use */

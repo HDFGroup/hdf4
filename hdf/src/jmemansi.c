@@ -200,7 +200,7 @@ external_methods_ptr emethods;
 
 GLOBAL VOID
 #if defined ( PROTOTYPE ) && ! defined ( CONVEX )
-jmem_term (VOID)
+jmem_term (void)
 #else
 jmem_term ()
 #endif
