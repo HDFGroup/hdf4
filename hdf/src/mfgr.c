@@ -5166,7 +5166,7 @@ intn GRPshutdown(void)
 /*====================== Chunking Routines ================================*/
 
 /* Debugging */
-#define CHK_DEBUG
+/* #define CHK_DEBUG */
 
 /******************************************************************************
  NAME
