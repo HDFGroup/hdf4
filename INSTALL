@@ -401,6 +401,9 @@
     installation instructions for Windows NT:
       
         $(toplevel)/release_notes/install_winNT.txt.
+
+    To compile your program with HDF libraries, you need to define the
+       architecture as INTEL86 via a /DINTEL86 preprocessor macro. 
  
     2.5.6 CM5 Parallel I/O Extension
     --------------------------------
