@@ -3,7 +3,7 @@
   --------
   1. Obtaining the latest version
 
-  2. Installing HDF/netCDF
+  2. Installing HDF
   2.1 Supported Platforms
   2.2 Third Party Software Requirements
   2.3 System Requirements
@@ -27,12 +27,12 @@
   2.5.3 Solaris(2.5) on INTEL(x86)
   2.5.4 OpenVMS AXP and OpenVMS VAX
   2.5.5 Windows '95 or Windows NT
-  2.5.7 PowerPC/68k(far/4i/8d)- Macintosh OS
-  2.5.8 Exemplar (HP-UX 9.03)
-  2.5.9 SP2 Single node
-  2.5.10 T3D Single node
-  2.5.11 IRIX 6.2
-  2.5.12 DEC Alpha(Digital Unix v4.0)
+  2.5.6 PowerPC/68k(far/4i/8d)- Macintosh OS
+  2.5.7 Exemplar (HP-UX 9.03)
+  2.5.8 SP2 Single node
+  2.5.9 T3D Single node
+  2.5.10 IRIX 6.2
+  2.5.11 DEC Alpha(Digital Unix v4.0)
 
   2.6 Pablo Instrumentation
   2.7 File Cache(Beta release)
@@ -60,10 +60,10 @@
 
      ftp://ftp.ncsa.uiuc.edu/HDF/HDF_Current
 
-2. Installing HDF/netCDF	
-   =====================
+2. Installing HDF	
+   ==============
 
-    For compiling and installing HDF/netCDF libraries, tests and
+    For compiling and installing the HDF libraries, tests and
     utilities on a system, please follow these instructions. 
 
 2.1 Supported Platforms
@@ -73,39 +73,36 @@
   'Platform-specific Notes'.
 
 
-  Platform(OS)            C-Compiler  Fortran-Compiler   libdf.a   libmfhdf.a
-  ------------            ----------  ----------------   -------   -----------
-  Sun4(SunOS 4.1.3)           GCC 2.6.3      f77              X         X
-  Sun4(Solaris 2.5)           CC SC3.0       f77              X         X
-  SGI-Indy(IRIX5.3)           CC 3.19        f77, g77 0.5.19  X         X
-  SGI-PowerChallenge(IRIX6.2_n32)
-                              CC 7.0         f77 7.0          X         X
-  SGI-PowerChallenge(IRIX6.2_64)
-                              CC 7.0         f77 7.0          X         X
-  SGI-Origin(IRIX6.4_n32)     CC 7.1         f77 7.1          X         X
-  SGI-Origin(IRIX6.4_64)      CC 7.1         f77 7.1          X         X
-  HP9000/735(HP-UX 9.03)      CC A.09.77     f77 09.16        X         X
-  HP9000/770(HP-UX B.10.10)   CC A.10.30     f77              X         X
-  Exemplar(HP-UX A.09.03)     CC 6.5         fc 9.5           X         X 
-  Cray C90 (UNICOS 803.2)     -               -               -         - 
-  Cray YMP (UNICOS 9.0.2asC cri.3) -          -               -         -
-  IBM RS6000/AIX (4.1)        -               -               -         - 
-  IBM SP2 (single node, v4.1) XLC 3.1.4.0    f77 3.2.4.2      X         X 
-  DEC Alpha/Digital Unix v3.2 CC             f77              X         X
-  DEC Alpha/OpenVMS AXP v6.2  DECC 5.3       DEC FORTRAN 6.3  X         X
-  VAX OpenVMS v6.2            DECC 5.3       DEC FORTRAN 6.3  X         X
+  Platform(OS)                    C-Compiler       Fortran-Compiler   
+  ------------                    ----------       ---------------- 
+  Sun4(SunOS 4.1.4)               GCC 2.6.3        f77             
+  Sun4(Solaris 2.5)               CC SC3.0         f77            
+  SGI-Indy(IRIX5.3)               CC 3.19          f77, g77 0.5.19
+  SGI-PowerChallenge(IRIX6.2_n32) CC 7.0           f77 7.0  
+  SGI-PowerChallenge(IRIX6.2_64)  CC 7.0           f77 7.0   
+  SGI-Origin(IRIX6.4_n32)         CC 7.1           f77 7.1      
+  SGI-Origin(IRIX6.4_64)          CC 7.1           f77 7.1     
+  HP9000/735(HP-UX 9.03)          CC A.09.77       f77 09.16  
+  HP9000/770(HP-UX B.10.10)       CC A.10.30       f77       
+  Exemplar(HP-UX A.09.03)         CC 6.5           fc 9.5        
+  Cray C90 (UNICOS 803.2)           -                -        
+  Cray YMP (UNICOS 9.0.2asC cri.3)  -                -           
+  IBM RS6000/AIX (4.1)              -                -    
+  IBM SP2 (single node, v4.1)     XLC 3.1.4.0      f77 3.2.4.2       
+  DEC Alpha/Digital Unix v3.2     CC               f77              
+  DEC Alpha/OpenVMS AXP v6.2      DECC 5.3         DEC FORTRAN 6.3  
+  VAX OpenVMS v6.2                DECC 5.3         DEC FORTRAN 6.3  
   IBM PC - Intel Pentium
-       Solarisx86 (2.5)       GCC 2.7.2.1     -               X         X 
-       Linux(a.out) (1.2.4)   GCC            FORTRAN compiler X         X
-                                              2.6.2     
-                                      (FORTRAN to C converter)
-       Linux(elf)  (2.0.27)   GCC 2.7.2.1     -               X         X
-       FreeBSD (2.2)          GCC 2.6.3      f77              X         X
+       Solarisx86 (2.5)           GCC 2.7.2.1        -                
+       Linux(a.out) (1.2.4)       GCC              FORTRAN compiler 2.6.2     
+                                                   (FORTRAN to C converter)
+       Linux(elf)  (2.0.27)       GCC 2.7.2.1        -               
+       FreeBSD (2.2)              GCC 2.6.3        f77             
 
-  PowerPC(Mac-OS-7.6)         Codewarrior 11  -               X         X
-  68k-far/4i/8d(Mac-OS-7.6)   -               -               -         -
-  Windows NT/95               Visual C++ 4.2  -               X         X  
-  T3D (v9.0.2asC)             -               -               -         - 
+  PowerPC(Mac-OS-7.6)             Codewarrior 11     -              
+  68k-far/4i/8d(Mac-OS-7.6)         -                -           
+  Windows NT/95                   Visual C++ 4.2     -             
+  T3D (v9.0.2asC)                   -                -           
 
 2.2  Third Party Software Requirements:
      ==================================
@@ -122,7 +119,7 @@
 2.3 System Requirements
     ===================
 
-    To build both HDF and netCDF library from sources, you need:
+    To build both HDF from sources, you need:
 
       * an ANSI C compiler. The native ANSI compilers on the above 
         platforms are supported. On platforms where no ANSI compiler
@@ -163,7 +160,7 @@
     2.4.2 Layout of configuration files
     -----------------------------------
     The following shows the layout of the files used in the configuration
-    of the HDF/MFHDF distribution..
+    of the HDF distribution.
 
     NOTE: The $(toplevel)/mfhdf/CUSTOMIZE and 
           $(toplevel)/mfhdf/configure(autoconf) files are no longer used 
@@ -417,7 +414,7 @@
     To compile your program with HDF libraries, you need to define the
     architecture as INTEL86 via a /DINTEL86 preprocessor macro. 
  
-    2.5.7 PowerPC/68k(far/4i/8d)- Macintosh OS
+    2.5.6 PowerPC/68k(far/4i/8d)- Macintosh OS
     ------------------------------------------
     ***********************************************************
     *** NOTE Only the PowerPC is supported for this Release ***
@@ -434,8 +431,8 @@
     You need to compile the libraries before you can compile the test 
     programs 'testhdf', 'xdrtest', 'cdftest', 'hdftest' and  'nctest'.
 
-    2.5.7.1 Special Notes
-    ********************
+    2.5.6.1 Special Notes
+    *********************
     1. The test programs are SIOUX applications.
     
     2. When testing 'testhdf' in 'hdf/test' directory make sure
@@ -444,7 +441,7 @@
 
     3. You need at least 8MB of memory to run most of the test programs.
 
-    2.5.7.2 Configuring the Distribution
+    2.5.6.2 Configuring the Distribution
     ************************************
     A. If you have access to a unix box.
 
@@ -478,7 +475,7 @@
        been configured already. You just need to un-stuff and un-binhex
        the distribution.
 
-    2.5.7.3 Building the Distribution
+    2.5.6.3 Building the Distribution
     *********************************
     The distribution needs to be built in the order specified below.
     Both PowerPC and 68k Codewarrior Projects can be found in the 
@@ -514,7 +511,7 @@
                 mfhdf/nctest/nctest.68k-project.hqx
                              nctest.PPC-project.hqx
 
-    2.5.7.4 Testing the Distribution
+    2.5.6.4 Testing the Distribution
     ********************************
     Run the tests in the following order
       
@@ -538,7 +535,7 @@
 
        5. mfhdf/nctest/nctest
 
-    2.5.8 Exemplar
+    2.5.7 Exemplar
     --------------
     When building the software, you must configure the machine as
     follows:
@@ -548,7 +545,7 @@
     Otherwise, the machine will be configured for HP-UX.
         
 
-    2.5.9 SP2 Single node
+    2.5.8 SP2 Single node
     ----------------------
     HDF has been compiled and tested to run in a single node of the SP2
     system.  You can make the library the same way you would on an AIX system.  
@@ -557,8 +554,8 @@
     not support concurrent access of the same HDF file.
 
 
-    2.5.10 T3D Single node
-    ----------------------
+    2.5.9 T3D Single node
+    ---------------------
     ** Not supported with HDF 4.1r1 **
  
     HDF has been ported to the T3D system but only the C interface is
@@ -573,7 +570,7 @@
     does not support concurrent access of the same HDF file.
 
 
-    2.5.11 IRIX 6.2
+    2.5.10 IRIX 6.2
     ---------------
     SGI supports IRIX 6.2 on all their new machines.  HDF version 4.1r1
     was tested on various types of SGI machines running IRIX 6.2.
@@ -591,7 +588,7 @@
     to change the setting for it too.
 
 
-    2.5.12 DEC Alpha(Digital Unix v4.0)
+    2.5.11 DEC Alpha(Digital Unix v4.0)
     ------------------------------------
     The distribution has been compiled/tested with native Digital Unix 
     C and FORTRAN compiliers.
@@ -600,7 +597,7 @@
     will report "Unaligned access ..." messages which can be ignored.
 
 2.6 Pablo Instrumentation
-    ====================
+    =====================
 
     This version of the distribution has support to create an instrumented 
     version of the HDF library(libdf-inst.a). This library along with
@@ -794,8 +791,8 @@
 5. Documentation
    =============
 
-   The HDF 4.1r1 documentation can be found on the NCSA ftp server
-   in the directory /HDF/Documentation/HDF4.1r1/.  The
+   The HDF documentation can be found on the NCSA ftp server
+   in the directory /HDF/Documentation/.  The
    HDF home page is at:
 
       http://hdf.ncsa.uiuc.edu/
