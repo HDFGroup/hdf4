@@ -132,7 +132,7 @@
 2.3 System Requirements
     ===================
 
-    To build both HDF from sources, you need:
+    To build HDF from source, you need:
 
       * an ANSI C compiler. The native ANSI compilers on the above 
         platforms are supported. On platforms where no ANSI compiler
