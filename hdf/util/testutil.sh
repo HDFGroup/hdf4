@@ -5,6 +5,10 @@
 # initialize errors variable
 errors=0
 
+# setup hdfed command which is used often
+HDFED='./hdfed'
+HDFEDCMD="$HDFED -batch"		# use -batch mode for no prompt
+
 echo ""
 echo "======================="
 echo "Utilities tests started"
@@ -41,11 +45,11 @@ if [ $errors -eq 1 ]; then
 fi
 
 # hdfed
-if [ -f hdfed ]; then
+if [ -f $HDFED ]; then
 echo "** Testing hdfed  ***"
 /bin/rm -f storm110.hdf ntcheck.hdf hdfed.tmp
 cp testfiles/storm110.hdf testfiles/ntcheck.hdf .
-./hdfed < hdfed.input1 > hdfed.tmp 2>&1
+$HDFEDCMD < hdfed.input1 > hdfed.tmp 2>&1
 diff hdfed.tmp hdfed.out1 || errors=1
 /bin/rm -f storm110.hdf ntcheck.hdf hdfed.tmp
 else
@@ -61,18 +65,18 @@ if [ $errors -eq 1 ]; then
    echo " "
    echo "/bin/rm -f storm110.hdf ntcheck.hdf hdfed.tmp "
    echo "cp testfiles/storm110.hdf testfiles/ntcheck.hdf . "
-   echo "./hdfed < hdfed.input1 >& hdfed.tmp "
+   echo "$HDFEDCMD < hdfed.input1 >& hdfed.tmp "
    echo "diff hdfed.tmp hdfed.out1 "
    errors=0
 fi
 
 # ristosds
-if [ -f ristosds -a -f hdfed ]; then
+if [ -f ristosds -a -f $HDFED ]; then
 echo "** Testing ristosds  ***"
 /bin/rm -f storm*.hdf hdfed.tmp1
 cp testfiles/storm110.hdf testfiles/storm120.hdf testfiles/storm130.hdf .
 ./ristosds storm*.hdf -o storm.hdf > /dev/null 2>&1
-./hdfed < ristosds.input1 > hdfed.tmp1 2>&1
+$HDFEDCMD < ristosds.input1 > hdfed.tmp1 2>&1
 diff  hdfed.tmp1 ristosds.out1 || errors=1
 /bin/rm -f storm*.hdf hdfed.tmp1
 else
@@ -89,7 +93,7 @@ if [ $errors -eq 1 ]; then
   echo " /bin/rm -f storm*.hdf hdfed.tmp1 "
   echo " cp testfiles/storm110.hdf testfiles/storm120.hdf testfiles/storm130.hdf . "
   echo "./ristosds storm*.hdf -o storm.hdf "
-  echo "./hdfed < ristosds.input1 >& hdfed.tmp1 "
+  echo "$HDFEDCMD < ristosds.input1 >& hdfed.tmp1 "
   echo " diff  hdfed.tmp1 ristosds.out1"
   errors=0
 fi
@@ -260,7 +264,7 @@ if [ $errors -eq 1 ]; then
 fi
 
 # fp2hdf
-if [ -f fp2hdf -a -f hdfls -a -f hdfed ]; then
+if [ -f fp2hdf -a -f hdfls -a -f $HDFED ]; then
 echo "** Testing fp2hdf  ***"
 /bin/rm -f ctxtr* cb* *.hdf hdfls.tmp5 hdfed.tmp6
 ./fptest
@@ -281,7 +285,7 @@ echo "** Testing fp2hdf  ***"
 ./hdfls -l ctxtr2_ris.hdf >> hdfls.tmp5 2>&1
 ./hdfls -l cb64r2_ris.hdf >> hdfls.tmp5 2>&1
 diff  hdfls.tmp5 fp2hdf.out1 || errors=1
-./hdfed < fp2hdf.input1 > hdfed.tmp6 2>&1
+$HDFEDCMD < fp2hdf.input1 > hdfed.tmp6 2>&1
 diff  hdfed.tmp6 fp2hdf.out2 || errors=1
 /bin/rm -f ctxtr* cb* *.hdf hdfls.tmp5 hdfed.tmp6
 else
@@ -314,7 +318,7 @@ if [ $errors -eq 1 ]; then
   echo " ./hdfls -l ctxtr2_ris.hdf >>& hdfls.tmp5 "
   echo " ./hdfls -l cb64r2_ris.hdf >>& hdfls.tmp5 "
   echo " diff hdfls.tmp5 fp2hdf.out1 "
-  echo " ./hdfed < fp2hdf.input1 >& hdfed.tmp6 "
+  echo " $HDFEDCMD < fp2hdf.input1 >& hdfed.tmp6 "
   echo " diff hdfed.tmp6 fp2hdf.out2 "
 fi
 
