@@ -348,7 +348,9 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
+#ifndef HAVE_UNISTD_H
 #define HAVE_UNISTD_H  /* unistd.h - close, fork,..etc */
+#endif
 
 #   define BSD
 #ifndef __GNUC__
