@@ -396,9 +396,9 @@
        Run @make to compile the C test program testhdf and the Fortran test
            programs fortest. 
        Run testhdf. Copy tvattr.hdf to tvattr.dat. Delete *.hdf.
-       Change tsdmmsf.f, tsdnmmsf.f, tsdntf.f and tsdnntf.f following 
-           the instructions given in the comments in these files, 
-           using bytes for 8-bit integers instead of characters.   
+       Change forsupff.f, fortestF.f, tsdmmsf.f, tsdnmmsf.f, tsdntf.f and 
+           tsdnntf.f following the instructions given in the comments, which
+           start with 'For VMS', in these files. 
        Run fortest. 
     Make directories [.lib], [.bin], [.include], use make.com in [.mfhdf.*]
        to compile mfhdf.olb, test programs and utilities ncdump, ncgen and 
