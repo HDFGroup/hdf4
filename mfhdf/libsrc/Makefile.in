@@ -9,7 +9,7 @@ CPPFLAGS	= $(SWAP) $(NETLONG) @CPPFLAGS@
 CFLAGS		= @CFLAGS@ @HDF_INC@
 GARBAGE		= $(PROGRAM) test.cdf cdfout.new *.hdf \
                   hdftest hdfout.new
-HEADERS		= netcdf.h mfhdf.h
+HEADERS		= netcdf.h mfhdf.h local_nc.h
 XDRFILE		= @XDRFILE@
 HDF_LIB         = @HDF_LIB@
 JPEG_LIB        = @JPEG_LIB@
