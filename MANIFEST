@@ -1153,6 +1153,7 @@
 ./mfhdf/hzip/hziptst.hdf
 ./mfhdf/hzip/hziptst_out.hdf
 ./mfhdf/hzip/image24pixel.txt
+./mfhdf/hzip/image24plane.txt
 ./mfhdf/hzip/image8.txt
 ./mfhdf/hzip/info.txt
 ./mfhdf/hzip/test_hrepack.sh
