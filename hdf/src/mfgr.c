@@ -5795,7 +5795,6 @@ GRgetchunkinfo(int32 riid,               /* IN: sds access id */
     return ret_value;
 } /* GRgetchunkinfo() */
 
-#if 0 /* commented out for now -GV */
 
 /******************************************************************************
  NAME
@@ -6182,7 +6181,6 @@ printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_si
     return ret_value;
 } /* GRreadchunk() */
 
-#endif /* commented out for now -GV */
 
 /******************************************************************************
 NAME
