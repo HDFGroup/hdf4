@@ -63,7 +63,7 @@
 /* CONSTANT DEFINITIONS                                                      */
 /*****************************************************************************/
 /* Generally Big-Endian machines */
-#if !defined(VMS) && !defined(INTEL86) && !defined(MIPSEL) && !defined(DEC_ALPHA) && !defined(I860) && !defined(SUN386) && !defined(IA64)
+#if !defined(VMS) && !defined(INTEL86) && !defined(MIPSEL) && !defined(DEC_ALPHA) && !defined(I860) && !defined(SUN386) && !defined(IA64) && !defined(__x86_64__)
 #   if !defined(UNICOS)
 #       define UI8_IN     DFKnb1b   /* Unsigned Integer, 8 bits */
 #       define UI8_OUT    DFKnb1b
@@ -165,7 +165,7 @@
 #       define LF64_OUT   DFKluo8f
 
 #   endif   /* !UNICOS */
-#else  /* must be VMS || INTEL86 || MIPSEL || DEC_ALPHA || I860 || SUN386 || IA64 (Generally, little-endian machines */
+#else  /* must be VMS || INTEL86 || MIPSEL || DEC_ALPHA || I860 || SUN386 || IA64 || Linux64 (Generally, little-endian machines */
 #   define UI8_IN     DFKnb1b   /* Big-Endian IEEE support */
 #   define UI8_OUT    DFKnb1b   /* The s in DFKsb2b is for swap */
 #   define SI16_IN    DFKsb2b
@@ -210,7 +210,7 @@
 #       define LF64_OUT   DFKnb8b
 #   endif   /* VMS */
 
-#endif /* !VMS && !INTEL86 && !MIPS && !DEC_ALPHA && !I860 && !SUN386 && !IA64 */
+#endif /* !VMS && !INTEL86 && !MIPS && !DEC_ALPHA && !I860 && !SUN386 && !IA64 && !Linux64*/
 
 /* All Machines (except the Cray) currently use the same routines */
 /* for Native mode "conversions" */
