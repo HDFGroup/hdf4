@@ -148,8 +148,7 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
 	all-recursive install-data-recursive install-exec-recursive \
 	installdirs-recursive install-recursive uninstall-recursive \
 	check-recursive installcheck-recursive
-DIST_COMMON = README INSTALL Makefile.am Makefile.in THANKS configure \
-	configure.in
+DIST_COMMON = README INSTALL Makefile.am Makefile.in THANKS
 DIST_SUBDIRS = port fortran libsrc ncdump ncgen dumper hdfimport hdiff \
 	hzip pablo nctest xdr
 all: all-recursive
