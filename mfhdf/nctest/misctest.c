@@ -37,7 +37,7 @@ test_nctypelen()
 	error("%s: nctypelen failed for NC_SHORT", pname);
 	nerrs++;
     }
-    if (nctypelen(NC_LONG) != sizeof(long)) {
+    if (nctypelen(NC_LONG) != sizeof(nclong)) {
 	error("%s: nctypelen failed for NC_LONG", pname);
 	nerrs++;
     }

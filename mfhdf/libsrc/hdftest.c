@@ -45,6 +45,7 @@ char *argv[];
         num_err++;
     }
 
+    /* create a 4 by 8 dataset */
     dimsize[0] = 4;
     dimsize[1] = 8;
     newsds = SDcreate(f1, "DataSetAlpha", DFNT_FLOAT32, 2, dimsize);
@@ -282,6 +283,7 @@ char *argv[];
     status = SDsetcal(newsds3, cal, cale, ioff, ioffe, nt);
     CHECK(status, "SDsetcal");
 
+    /* create a record variable */
     dimsize[0] = SD_UNLIMITED;
     dimsize[1] = 6;
     newsds2 = SDcreate(f2, "DataSetBeta", DFNT_INT16, 2, dimsize);

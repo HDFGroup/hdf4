@@ -22,8 +22,10 @@ static int32 hdf_get_vp_aid
  * your bottom layer, the you may need to #define XDRSTDIO
  */
 
+#ifndef HDF
 #define MIN(mm,nn) (((mm) < (nn)) ? (mm) : (nn))
 #define MAX(mm,nn) (((mm) > (nn)) ? (mm) : (nn))
+#endif /* HDF */
 
 /* #define VDEBUG */
 #ifdef VDEBUG
@@ -488,7 +490,11 @@ Void *values ;
 	case NC_SHORT :
 		return( xdr_NCvshort(xdrs, (unsigned)rem/2, (short *)values) ) ;
 	case NC_LONG :
-		return( xdr_long(xdrs, (long *)values) ) ;
+#ifdef __alpha
+		return( xdr_int(xdrs, (nclong *)values) ) ;
+#else
+		return( xdr_long(xdrs, (nclong *)values) ) ;
+#endif
 	case NC_FLOAT :
 		return( xdr_float(xdrs, (float *)values) ) ;
 	case NC_DOUBLE : 
@@ -922,7 +928,7 @@ uint32    count;
 } /* xdr_NCvdata */
 
 
-/* ------------------------- xdr_NCv1data ------------------- */
+/* ------------------------- hdf_xdr_NCv1data ------------------- */
 /*
  * read / write a single datum of type 'type' at 'where'
  * This is designed to replace the xdr based routine of the
@@ -1157,8 +1163,12 @@ Void *values ;
 		} /* else */
 		return(TRUE) ;
 	case NC_LONG :
+#ifdef __alpha
+		xdr_NC_fnct = xdr_int ;
+#else
 		xdr_NC_fnct = xdr_long ;
-		szof = sizeof(long) ;
+#endif
+		szof = sizeof(nclong) ;
 		break ;
 	case NC_FLOAT :
 		xdr_NC_fnct = xdr_float ;
@@ -1329,11 +1339,13 @@ Void *values ;
 	arrayp("edges", vp->assoc->count, edges) ;
 #endif /* VDEBUG */
 
+        if(handle->file_type == HDF_FILE)
+                DFKsetNT(vp->HDFtype);
+
 	if(vp->assoc->count == 0) /* 'scaler' variable */
 	{
             switch(handle->file_type) {
             case HDF_FILE:
-                DFKsetNT(vp->HDFtype);
                 return(
                        hdf_xdr_NCv1data(handle, vp, vp->begin, vp->type, values) ?
                        0 : -1 ) ;

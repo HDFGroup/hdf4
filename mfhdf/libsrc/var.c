@@ -45,7 +45,7 @@ const int *dims ;
         ret->data_offset = 0;      /* Assume data starts at beginning */
         ret->numrecs = 0;
         ret->aid = FAIL;
-        ret->ndg_ref = FAIL;
+        ret->ndg_ref = 0;
         ret->HDFtype = hdf_map_type(type);
         ret->HDFsize = DFKNTsize(ret->HDFtype);
         ret->is_ragged = FALSE;
@@ -166,7 +166,7 @@ NC_array *dims;
 	shp = shape + var->assoc->count - 1 ; /* count is > 0 here */
 	dsp = dsizes + var->assoc->count - 1 ;
 	var->len = (*shp) ? (*shp) : 1 ; /* boundary condition for rec */
-	var->len *= xszof ;
+	var->len = var->len * xszof ;
 	if(dsp != NULL) *dsp = xszof ;
 
 	for( shp--, dsp-- ; shp >= shape ; shp--,dsp--)

@@ -85,6 +85,7 @@ case "${OS}" in
                 LD_XDR=;;
   osf*)         UC_ENSURE(HDF_INC, -DDEC_ALPHA)
 		UC_ENSURE(CPPFLAGS, -DBIG_LONGS)
+		UC_ENSURE(CPPFLAGS, -std1)
                 LD_XDR=;;
   convex*)      UC_ENSURE(HDF_INC, -DCONVEX)
                 LD_XDR=;;

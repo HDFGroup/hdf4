@@ -52,7 +52,7 @@ load_netcdf(rec_start)	/* write out record from in-memory structure */
     long edges[MAX_VAR_DIMS];
     char *charvalp;
     short *shortvalp;
-    long *longvalp;
+    nclong *longvalp;
     float *floatvalp;
     double *doublevalp;
 
@@ -67,7 +67,7 @@ load_netcdf(rec_start)	/* write out record from in-memory structure */
 	shortvalp = (short *) rec_start;
 	break;
       case NC_LONG:
-	longvalp = (long *) rec_start;
+	longvalp = (nclong *) rec_start;
 	break;
       case NC_FLOAT:
 	floatvalp = (float *) rec_start;
@@ -156,7 +156,7 @@ gen_load_c(rec_start)
     char *val_string;
     char *charvalp;
     short *shortvalp;
-    long *longvalp;
+    nclong *longvalp;
     float *floatvalp;
     double *doublevalp;
     extern char *cstrstr(), *ncctype();
@@ -229,7 +229,7 @@ gen_load_c(rec_start)
 		shortvalp = (short *) rec_start;
 		break;
 	      case NC_LONG:
-		longvalp = (long *) rec_start;
+		longvalp = (nclong *) rec_start;
 		break;
 	      case NC_FLOAT:
 		floatvalp = (float *) rec_start;
@@ -331,7 +331,7 @@ gen_load_c(rec_start)
 	    strcat(stmnt, s2);
 	    break;
 	  case NC_LONG:
-	    longvalp = (long *) rec_start;
+	    longvalp = (nclong *) rec_start;
 	    sprintf(s2, "%ld", *longvalp);
 	    strcat(stmnt, s2);
 	    break;
@@ -392,7 +392,7 @@ gen_load_fortran(rec_start)  /* make Fortran to put record */
     char *val_string;
     char *charvalp;
     short *shortvalp;
-    long *longvalp;
+    nclong *longvalp;
     float *floatvalp;
     double *doublevalp;
     extern char *fstring(), *ncctype(), *fstrstr();
@@ -461,7 +461,7 @@ gen_load_fortran(rec_start)  /* make Fortran to put record */
 	    fstrcat(stmnt, s2, &stmnt_len);
 	    break;
 	  case NC_LONG:
-	    longvalp = (long *) rec_start;
+	    longvalp = (nclong *) rec_start;
 	    for (ival = 0; ival < var_len-1; ival++) {
 		sprintf(s2, "%ld, ", *longvalp++);
 		fstrcat(stmnt, s2, &stmnt_len);

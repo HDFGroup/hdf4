@@ -142,11 +142,11 @@ int mode ;
         } else {
             if(Hishdf((char *) name))
                 cdf->file_type = HDF_FILE;
-            if(Hiscdf((char *) name))
+            else if(Hiscdf((char *) name))
                 cdf->file_type = CDF_FILE;
             else
                 cdf->file_type = netCDF_FILE;
-
+            
             if(cdf->file_type == CDF_FILE)
                 printf("Yow!  found a CDF file\n");
         }
@@ -1515,6 +1515,9 @@ int32  vg;
                       
                       /*
                        * Now figure out how many recs have been written
+                       * For a while there was a -1 at the end of this
+                       *   equation.  I don't remember why its there
+                       *   (4-Nov-93)
                        */
                       vp->numrecs = data_count / vp->dsizes[0];
                       
@@ -1991,7 +1994,11 @@ NC_var *vp ;
 			break ;
 		case NC_LONG :
 			alen /= 4 ;
+#ifdef __alpha
+			xdr_NC_fnct = xdr_int ;
+#else
 			xdr_NC_fnct = xdr_long ;
+#endif
 			break ;	
 		case NC_FLOAT :
 			alen /= 4 ;

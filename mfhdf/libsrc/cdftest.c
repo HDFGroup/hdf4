@@ -69,7 +69,7 @@ union getret
 {
     char            by[8] ;
     short           sh[4] ;
-    long            lng[2] ;
+    nclong          lng[2] ;
     float           fl[2] ;
     double          dbl;
 } ;
@@ -88,7 +88,7 @@ double check ;
 		assert( (short)check == got.sh[0] ) ;
 		break ;
 	case NC_LONG :
-		assert( (long)check == got.lng[0] ) ;
+		assert( (nclong)check == got.lng[0] ) ;
 		break ;
 	case NC_FLOAT :
 		assert( (float)check == got.fl[0] ) ;
@@ -357,7 +357,7 @@ long s_edges[] = {NUM_RECS, SIZE_1 - 1};
 char sentence[NUM_RECS* SIZE_1 -1] =
 	"The red death had long devastated the country." ;
 short shs[] = {97, 99} ;
-long birthday = 82555 ;
+nclong birthday = 82555 ;
 #define M_E	2.7182818284590452354
 float e = (float)M_E ;
 double pinot = 3.25 ;

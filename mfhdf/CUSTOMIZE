@@ -22,16 +22,16 @@
 # CC='gcc -traditional'
 #
 # C compiler flags (default is `-O'):
-CFLAGS=-g
+CFLAGS=-O
 #
 # C preprocessor flags 
 # CPPFLAGS=-DNDEBUG
 #
 # Location of HDF include files
-HDF_INC=-I/usr6/koziol/hdf/HDF_SLAB/hdf/include
+HDF_INC=-I/hdf/home/chouck/hdf/40/hdf/include
 #
 # Location of HDF library file
-HDF_LIB=/usr6/koziol/hdf/HDF_SLAB/hdf/lib/libdf.a
+HDF_LIB=/hdf/home/chouck/hdf/40/hdf/lib/libdf.a
 #
 # Installation prefix (default is `..'):
 # prefix=/usr/local/unidata
