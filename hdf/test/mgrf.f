@@ -437,13 +437,13 @@ C
       integer DFACC_CREATE, 
      .        DFACC_READ,
      .        DFACC_WRITE
-      integer DFNT_INT16
+      integer DFNT_INT32
       integer X_LENGTH, Y_LENGTH
       integer X_CH_LENGTH, Y_CH_LENGTH
       parameter (DFACC_CREATE = 4,
      .           DFACC_READ   = 1,
      .           DFACC_WRITE  = 2)
-      parameter (DFNT_INT16   = 22)
+      parameter (DFNT_INT32   = 24)
       parameter (X_LENGTH     = 9,
      .           Y_LENGTH     = 4,
      .           X_CH_LENGTH  = 3,
@@ -472,12 +472,12 @@ C
 C
 C---Data
 C 
-      integer*2 image_data(NCOMP, X_LENGTH, Y_LENGTH)
-      integer*2 image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
+      integer image_data(NCOMP, X_LENGTH, Y_LENGTH)
+      integer image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
 C
 C---Default pixel value
 C
-      integer*2 pixel_value(2)
+      integer pixel_value(2)
 C
 C---Chunking dimension arrays
 C
@@ -563,7 +563,7 @@ C     Define the number of components and dimensions of the image.
 C     Create the data set.
 
       ri_id(i_comp) = mgcreat(gr_id, name(i_comp), NCOMP,
-     .                        DFNT_INT16, il, dims)
+     .                        DFNT_INT32, il, dims)
       if(ri_id(i_comp) .le. 0) then
          print *, 'mgcreat failed to create ', i_comp, 'GR dataset'
          err_grchunk = err_grchunk +1
@@ -578,7 +578,7 @@ C
 C
 C---Fill the image array with the default pixel value
 C
-      status = mgsnatt(ri_id(i_comp), 'FillValue', DFNT_INT16,
+      status = mgsnatt(ri_id(i_comp), 'FillValue', DFNT_INT32,
      .                 ncomp, pixel_value) 
       if(status .ne. 0) then
          print *, 'mgsnatt failed for', i_comp, '-th data set'
@@ -910,7 +910,7 @@ C
 C---Set pixel value
 C
       do 305 i = 1, NCOMP
-           pixel_value(i) = '0'
+           pixel_value(i) = 0
 305   continue
 C
 C   Main loop through different compression types
@@ -1141,13 +1141,13 @@ C
       integer DFACC_CREATE, 
      .        DFACC_READ,
      .        DFACC_WRITE
-      integer DFNT_INT16
+      integer DFNT_INT32
       integer X_LENGTH, Y_LENGTH
       integer X_CH_LENGTH, Y_CH_LENGTH
       parameter (DFACC_CREATE = 4,
      .           DFACC_READ   = 1,
      .           DFACC_WRITE  = 2)
-      parameter (DFNT_INT16   = 22)
+      parameter (DFNT_INT32   = 24)
       parameter (X_LENGTH     = 6,
      .           Y_LENGTH     = 10,
      .           X_CH_LENGTH  = 3,
@@ -1294,7 +1294,7 @@ C     Define the number of components and dimensions of the image.
 C     Create the data set.
 
       ri_id(i_comp) = mgcreat(gr_id, name(i_comp), NCOMP,
-     .                        DFNT_INT16, il, dims)
+     .                        DFNT_INT32, il, dims)
 
 C
 C---Set pixel value
@@ -1305,7 +1305,7 @@ C
 C
 C---Fill the image array with the default pixel value
 C
-      status = mgsnatt(ri_id(i_comp), 'FillValue', DFNT_INT16,
+      status = mgsnatt(ri_id(i_comp), 'FillValue', DFNT_INT32,
      .                 ncomp, pixel_value) 
       if(status .ne. 0) then
          print *, 'mgsnatt failed for', i_comp, '-th data set'
