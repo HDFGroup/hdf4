@@ -2,11 +2,14 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.4  1992/05/04 16:56:44  dilg
-C Added a call to INT() within call to CHAR() to make Cray compiler happy.
-C Changed calls to non-standard function JMOD() to calls to standard function
-C MOD().
+C Revision 1.5  1992/05/29 15:20:58  sxu
+C declare tag's ref's and rank as int16
 C
+c Revision 1.4  1992/05/04  16:56:44  dilg
+c Added a call to INT() within call to CHAR() to make Cray compiler happy.
+c Changed calls to non-standard function JMOD() to calls to standard function
+c MOD().
+c
 c Revision 1.2  1992/04/27  17:20:31  sxu
 c Changed output file name.
 c
@@ -39,7 +42,7 @@ C
 
       integer number_failed, ISFIRST, NOTFIRST, MAXLEN_LAB
       integer MAXLEN_DESC, ROWS, COLS, REPS
-      integer DFTAG_SDG, DFTAG_RIG
+      integer*2 DFTAG_SDG, DFTAG_RIG
 
       parameter ( ISFIRST =        1, 
      *            NOTFIRST =       0, 
@@ -51,8 +54,9 @@ C
      *            COLS =          10,
      *            REPS =           2 )
 
-      integer refnum
-      integer ret, rank
+      integer*2 refnum
+      integer ret
+      integer*2 rank
       integer j, dimsizes(2)
 
       character*30 labsds, labris
@@ -79,14 +83,15 @@ C *** set up object labels and descriptions ***
      *          // CR // '                M N O **END IMAGE DESCR **'
 
 C  *** generate float array and image ***
-
+ 
+      rank = 2
       dimsizes(1)=ROWS 
       dimsizes(2)=COLS
 
       call gen2Dfloat(ROWS, COLS, data)
       call genimage(ROWS, COLS, data, image)
 
-      ret = dssdims(2,dimsizes)
+      ret = dssdims(rank,dimsizes)
       call RESULT(ret, 'dssdims')
 
 C  ***  Write labels and descriptions ***
@@ -95,7 +100,7 @@ C  ***  Write labels and descriptions ***
 
       do 100 j=1,REPS
 C         write out scientific data set 
-          ret = dsadata(TESTFILE, 2,dimsizes, data)
+          ret = dsadata(TESTFILE, rank,dimsizes, data)
           call RESULT(ret, 'dsadata')
 
 C         write out annotations for 2 out of every 3 
