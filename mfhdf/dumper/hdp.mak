@@ -25,6 +25,7 @@ CFG=Win32 Debug
 
 ################################################################################
 # Begin Project
+# PROP Target_Last_Scanned "Win32 Debug"
 CPP=cl.exe
 RSC=rc.exe
 
@@ -41,13 +42,13 @@ RSC=rc.exe
 OUTDIR=.
 INTDIR=.
 
-ALL : $(OUTDIR)/hdp.exe $(OUTDIR)/hdp.bsc
+ALL : .\hdp.exe .\hdp.bsc
 
-# ADD BASE CPP /nologo /ML /W3 /GX /YX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /FR /c
-# ADD CPP /nologo /ML /W3 /GX /O2 /I "..\xdr" /I "..\libsrc" /I "..\..\hdf\src" /I "..\..\hdf\jpeg" /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "HDF" /D "NO_SYS_XDR_INC" /c
+# ADD BASE CPP /nologo /W3 /GX /YX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /FR /c
+# ADD CPP /nologo /W3 /GX /O2 /I "..\xdr" /I "..\libsrc" /I "..\..\hdf\src" /I "..\..\hdf\jpeg" /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "HDF" /D "NO_SYS_XDR_INC" /c
 # SUBTRACT CPP /YX /Fr
-CPP_PROJ=/nologo /ML /W3 /GX /O2 /I "..\xdr" /I "..\libsrc" /I "..\..\hdf\src"\
- /I "..\..\hdf\jpeg" /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "HDF" /D\
+CPP_PROJ=/nologo /W3 /GX /O2 /I "..\xdr" /I "..\libsrc" /I "..\..\hdf\src" /I\
+ "..\..\hdf\jpeg" /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "HDF" /D\
  "NO_SYS_XDR_INC" /Fo$(INTDIR)/ /c 
 CPP_OBJS=
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -59,18 +60,19 @@ BSC32_SBRS= \
 # ADD BSC32 /nologo
 BSC32_FLAGS=/nologo /o$(OUTDIR)/"hdp.bsc" 
 
-$(OUTDIR)/hdp.bsc : $(OUTDIR)  $(BSC32_SBRS)
+.\hdp.bsc : $(OUTDIR)  $(BSC32_SBRS)
 LINK32=link.exe
 DEF_FILE=
 LINK32_OBJS= \
-	$(INTDIR)/hdp_sds.obj \
-	$(INTDIR)/hdp_list.obj \
-	$(INTDIR)/hdp.obj \
-	$(INTDIR)/hdp_util.obj \
-	$(INTDIR)/hdp_vg.obj \
-	$(INTDIR)/show.obj \
-	$(INTDIR)/hdp_vd.obj \
-	$(INTDIR)/hdp_rig.obj
+	.\hdp_sds.obj \
+	.\hdp_list.obj \
+	.\hdp.obj \
+	.\hdp_util.obj \
+	.\hdp_vg.obj \
+	.\show.obj \
+	.\hdp_vd.obj \
+	.\hdp_rig.obj \
+	.\hdp_dump.obj
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NOLOGO /SUBSYSTEM:console /MACHINE:I386
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ..\xdr\win32xdr.lib ..\libsrc\win32cdf.lib ..\..\hdf\src\win32hdf.lib ..\..\hdf\jpeg\win32jpg.lib /NOLOGO /SUBSYSTEM:console /MACHINE:I386
 LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
@@ -80,7 +82,7 @@ LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
  /SUBSYSTEM:console /INCREMENTAL:no /PDB:$(OUTDIR)/"hdp.pdb" /MACHINE:I386\
  /OUT:$(OUTDIR)/"hdp.exe" 
 
-$(OUTDIR)/hdp.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
+.\hdp.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
   $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
@@ -98,14 +100,14 @@ $(OUTDIR)/hdp.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
 OUTDIR=.
 INTDIR=.
 
-ALL : $(OUTDIR)/hdp.exe $(OUTDIR)/hdp.bsc
+ALL : .\hdp.exe .\hdp.bsc
 
-# ADD BASE CPP /nologo /ML /W3 /GX /Zi /YX /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /FR /c
-# ADD CPP /nologo /ML /W3 /GX /Zi /Od /I "..\xdr" /I "..\libsrc" /I "..\..\hdf\src" /I "..\..\hdf\jpeg" /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "HDF" /D "NO_SYS_XDR_INC" /c
+# ADD BASE CPP /nologo /W3 /GX /Zi /YX /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /FR /c
+# ADD CPP /nologo /W3 /GX /Zi /Od /I "..\xdr" /I "..\libsrc" /I "..\..\hdf\src" /I "..\..\hdf\jpeg" /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "HDF" /D "NO_SYS_XDR_INC" /c
 # SUBTRACT CPP /YX /Fr
-CPP_PROJ=/nologo /ML /W3 /GX /Zi /Od /I "..\xdr" /I "..\libsrc" /I\
- "..\..\hdf\src" /I "..\..\hdf\jpeg" /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D\
- "HDF" /D "NO_SYS_XDR_INC" /Fo$(INTDIR)/ /Fd$(OUTDIR)/"hdp.pdb" /c 
+CPP_PROJ=/nologo /W3 /GX /Zi /Od /I "..\xdr" /I "..\libsrc" /I "..\..\hdf\src"\
+ /I "..\..\hdf\jpeg" /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "HDF" /D\
+ "NO_SYS_XDR_INC" /Fo$(INTDIR)/ /Fd$(OUTDIR)/"hdp.pdb" /c 
 CPP_OBJS=
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
@@ -116,18 +118,19 @@ BSC32_SBRS= \
 # ADD BSC32 /nologo
 BSC32_FLAGS=/nologo /o$(OUTDIR)/"hdp.bsc" 
 
-$(OUTDIR)/hdp.bsc : $(OUTDIR)  $(BSC32_SBRS)
+.\hdp.bsc : $(OUTDIR)  $(BSC32_SBRS)
 LINK32=link.exe
 DEF_FILE=
 LINK32_OBJS= \
-	$(INTDIR)/hdp_sds.obj \
-	$(INTDIR)/hdp_list.obj \
-	$(INTDIR)/hdp.obj \
-	$(INTDIR)/hdp_util.obj \
-	$(INTDIR)/hdp_vg.obj \
-	$(INTDIR)/show.obj \
-	$(INTDIR)/hdp_vd.obj \
-	$(INTDIR)/hdp_rig.obj
+	.\hdp_sds.obj \
+	.\hdp_list.obj \
+	.\hdp.obj \
+	.\hdp_util.obj \
+	.\hdp_vg.obj \
+	.\show.obj \
+	.\hdp_vd.obj \
+	.\hdp_rig.obj \
+	.\hdp_dump.obj
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NOLOGO /SUBSYSTEM:console /DEBUG /MACHINE:I386
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ..\xdr\win32xdr.lib ..\libsrc\win32cdf.lib ..\..\hdf\src\win32hdf.lib ..\..\hdf\jpeg\win32jpg.lib /NOLOGO /SUBSYSTEM:console /DEBUG /MACHINE:I386
 LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
@@ -137,7 +140,7 @@ LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
  /SUBSYSTEM:console /INCREMENTAL:yes /PDB:$(OUTDIR)/"hdp.pdb" /DEBUG\
  /MACHINE:I386 /OUT:$(OUTDIR)/"hdp.exe" 
 
-$(OUTDIR)/hdp.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
+.\hdp.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
   $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
@@ -161,7 +164,7 @@ $(OUTDIR)/hdp.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
 
 SOURCE=.\hdp_sds.c
 
-$(INTDIR)/hdp_sds.obj :  $(SOURCE)  $(INTDIR)
+.\hdp_sds.obj :  $(SOURCE)  $(INTDIR)
 
 # End Source File
 ################################################################################
@@ -169,7 +172,7 @@ $(INTDIR)/hdp_sds.obj :  $(SOURCE)  $(INTDIR)
 
 SOURCE=.\hdp_list.c
 
-$(INTDIR)/hdp_list.obj :  $(SOURCE)  $(INTDIR)
+.\hdp_list.obj :  $(SOURCE)  $(INTDIR)
 
 # End Source File
 ################################################################################
@@ -177,7 +180,7 @@ $(INTDIR)/hdp_list.obj :  $(SOURCE)  $(INTDIR)
 
 SOURCE=.\hdp.c
 
-$(INTDIR)/hdp.obj :  $(SOURCE)  $(INTDIR)
+.\hdp.obj :  $(SOURCE)  $(INTDIR)
 
 # End Source File
 ################################################################################
@@ -190,7 +193,7 @@ SOURCE=.\hdp.h
 
 SOURCE=.\hdp_util.c
 
-$(INTDIR)/hdp_util.obj :  $(SOURCE)  $(INTDIR)
+.\hdp_util.obj :  $(SOURCE)  $(INTDIR)
 
 # End Source File
 ################################################################################
@@ -198,7 +201,7 @@ $(INTDIR)/hdp_util.obj :  $(SOURCE)  $(INTDIR)
 
 SOURCE=.\hdp_vg.c
 
-$(INTDIR)/hdp_vg.obj :  $(SOURCE)  $(INTDIR)
+.\hdp_vg.obj :  $(SOURCE)  $(INTDIR)
 
 # End Source File
 ################################################################################
@@ -206,7 +209,7 @@ $(INTDIR)/hdp_vg.obj :  $(SOURCE)  $(INTDIR)
 
 SOURCE=.\show.c
 
-$(INTDIR)/show.obj :  $(SOURCE)  $(INTDIR)
+.\show.obj :  $(SOURCE)  $(INTDIR)
 
 # End Source File
 ################################################################################
@@ -214,7 +217,7 @@ $(INTDIR)/show.obj :  $(SOURCE)  $(INTDIR)
 
 SOURCE=.\hdp_vd.c
 
-$(INTDIR)/hdp_vd.obj :  $(SOURCE)  $(INTDIR)
+.\hdp_vd.obj :  $(SOURCE)  $(INTDIR)
 
 # End Source File
 ################################################################################
@@ -222,7 +225,15 @@ $(INTDIR)/hdp_vd.obj :  $(SOURCE)  $(INTDIR)
 
 SOURCE=.\hdp_rig.c
 
-$(INTDIR)/hdp_rig.obj :  $(SOURCE)  $(INTDIR)
+.\hdp_rig.obj :  $(SOURCE)  $(INTDIR)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\hdp_dump.c
+
+.\hdp_dump.obj :  $(SOURCE)  $(INTDIR)
 
 # End Source File
 # End Group
