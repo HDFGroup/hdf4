@@ -50,7 +50,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define EXTFILE_NAME "tbuffer.dat"
 
 /* Size of data elements to create */
-#define ELEMSIZE 32768
+#define ELEMSIZE 16384
 
 /* define aliases for random number generation */
 #define RAND rand
