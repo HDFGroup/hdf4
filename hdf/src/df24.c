@@ -516,8 +516,10 @@ DF24nimages(const char *filename)
                   if (ncomponents == 3)   /* whew, all that work and we finally found a 24-bit image */
                     nimages++;
                 }   /* end if */
-              else
+              else	{
+              	freeDIGroup(group_id);
                 HGOTO_ERROR(DFE_GETELEM, FAIL);
+              }
             }     /* end if */
         }   /* end while */
     }     /* end while */

@@ -584,6 +584,9 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 
     extern intn DFdiwrite
                 (int32 file_id, int32 list, uint16 tag, uint16 ref);
+                
+    extern void freeDIGroup
+    			(int32 groupID);
 
 /*
    ** from dfp.c

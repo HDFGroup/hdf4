@@ -858,20 +858,30 @@ DFR8getrig(int32 file_id, uint16 ref, DFRrig * rig)
             }     /* end if */
           else
             {
+              freeDIGroup(GroupID);
               ret_value = FAIL;
               goto done;
             }
           if (rig->descimage.ncomponents != 1)
-            HGOTO_ERROR(DFE_BADCALL, FAIL);
+            {
+              freeDIGroup(GroupID);
+              HGOTO_ERROR(DFE_BADCALL, FAIL);
+            }
           if (rig->descimage.nt.tag == 0)
             break;  /* old RIGs */
 
           /* read NT */
           if (Hgetelement(file_id, rig->descimage.nt.tag,
                           rig->descimage.nt.ref, ntstring) == FAIL)
-            HGOTO_ERROR(DFE_GETELEM, FAIL);
+            {
+              freeDIGroup(GroupID);
+              HGOTO_ERROR(DFE_GETELEM, FAIL);
+            }
           if ((ntstring[2] != 8) || (ntstring[1] != DFNT_UCHAR))
-            HGOTO_ERROR(DFE_BADCALL, FAIL);
+            {
+              freeDIGroup(GroupID);
+              HGOTO_ERROR(DFE_BADCALL, FAIL);
+            }
           break;
 
         default:    /* ignore unknown tags */
@@ -1115,7 +1125,10 @@ DFR8nimages(const char *filename)
                     found_8bit = TRUE;
                 }   /* end if */
               else
-                HGOTO_ERROR(DFE_GETELEM, FAIL);
+                {
+                  freeDIGroup(group_id);
+                  HGOTO_ERROR(DFE_GETELEM, FAIL);
+                }
             }     /* end if */
           else
             /* check for the image tag/ref */ if (elt_tag == DFTAG_CI || elt_tag == DFTAG_RI)
@@ -1763,4 +1776,5 @@ intn DFR8Pshutdown(void)
       } /* end if */
     return(SUCCEED);
 } /* end DFR8Pshutdown() */
+
 

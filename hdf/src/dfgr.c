@@ -565,7 +565,10 @@ DFGRgetrig(int32 file_id, uint16 ref, DFGRrig * rig)
                           UINT16DECODE(p, rig->datadesc[type].compr.ref);
                       }
                     else
+                      {
+                    	freeDIGroup(GroupID);
                         HGOTO_ERROR(DFE_READERROR, FAIL);
+                    }
 
                     if (rig->datadesc[type].nt.tag == 0)
                         break;  /* old RIGs */
@@ -573,9 +576,15 @@ DFGRgetrig(int32 file_id, uint16 ref, DFGRrig * rig)
                     /* read NT */
                     if (Hgetelement(file_id, rig->datadesc[type].nt.tag,
                               rig->datadesc[type].nt.ref, ntstring) == FAIL)
+                      {
+                    	freeDIGroup(GroupID);
                         HGOTO_ERROR(DFE_READERROR, FAIL);
+                      }
                     if ((ntstring[2] != 8) || (ntstring[1] != DFNT_UCHAR))
+                      {
+                     	freeDIGroup(GroupID);
                         HGOTO_ERROR(DFE_BADCALL, FAIL);
+                      }
                     break;
                 default:    /* ignore unknown tags */
                     break;
