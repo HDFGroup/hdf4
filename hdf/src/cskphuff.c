@@ -476,8 +476,16 @@ HCIcskphuff_staccess(accrec_t * access_rec, int16 acc_mode)
         info->aid = Hstartbitread(access_rec->file_id, DFTAG_COMPRESSED,
                                   info->comp_ref);
     else
+#ifdef OLD_WAY
         info->aid = Hstartbitwrite(access_rec->file_id, DFTAG_COMPRESSED,
                                    info->comp_ref, info->length);
+#else /* OLD_WAY */
+      {
+        info->aid = Hstartbitwrite(access_rec->file_id, DFTAG_COMPRESSED,
+                                   info->comp_ref, 0);
+        Hbitappendable(info->aid);
+      } /* end else */
+#endif /* OLD_WAY */
 
 #ifdef TESTING
     printf("HCIcskphuff_staccess(): after bitio calls\n");
