@@ -1,0 +1,165 @@
+# ****************************************************************************
+# * NCSA HDF                                                                 *
+# * Software Development Group                                               *
+# * National Center for Supercomputing Applications                          *
+# * University of Illinois at Urbana-Champaign                               *
+# * 605 E. Springfield, Champaign IL 61820                                   *
+# *                                                                          *
+# * For conditions of distribution and use, see the accompanying             *
+# * hdf/COPYING file.                                                        *
+# *                                                                          *
+# ****************************************************************************
+#
+# $Id$
+#
+# ##################################################################
+#
+
+#### Start of system configuration section. ####
+# Set shell so we know what it is
+SHELL = /bin/sh
+
+srcdir = @srcdir@
+VPATH  = @srcdir@
+TOP_SRCDIR = @top_srcdir@
+prefix     = @prefix@
+exec_prefix = @exec_prefix@
+ACDEFS = @DEFS@
+CC     = @CC@
+CFLAGS   = @CFLAGS@
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS  = @LDFLAGS@
+LIBS     = @LIBS@
+FC       = @FC@
+FFLAGS   = @FFLAGS@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+
+MAKEINFO = makeinfo
+TEXI2DVI = texi2dvi
+
+# /usr/local/bin/m4 (GNU version?)
+M4   = @M4@
+# /usr/loal/bin/perl (GNU version?)
+PERL = @PERL@
+
+# Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
+RANLIB = @RANLIB@
+
+# Name of library archiver and flags to send
+AR= ar
+ARFLAGS= r
+
+# Name of achive randomizer (use 'touch' if non-existant)
+#RANLIB= ranlib
+
+# Name of remove utility
+RM= /bin/rm
+RMFLAGS= -f 
+
+# Set for document generation
+MAKEINFO = makeinfo
+TEXI2DVI = texi2dvi
+
+# Directory in which to install scripts.
+bindir = $(exec_prefix)/bin
+
+# Directory in which to install library files.
+libdir = $(prefix)/lib
+
+# Directory in which to install documentation info files.
+infodir = $(prefix)/info
+
+#### End of system configuration section. ####
+
+# ==> specify your machine
+#MACHINE=SUN
+
+# ==> specify your fortran compiler  (Convex: fc)
+#FC=f77 
+#FFLAGS=  -g
+
+# ==> specify your C compiler
+#CC=cc
+
+#CFLAGS=  -g -D${MACHINE}
+
+# ==> For Convex, specify CFLAGS as follows:
+#CFLAGS=  -g -D${MACHINE} $(IFLAGS)
+
+# ==> For IRIS4, specify CFLAGS as follows: 
+#CFLAGS=  -g -D${MACHINE} $(IFLAGS) -ansi
+
+# ==> where is your HDF library (libdf.a) located?
+# ==> where are your hdf.h, hdfi.h and vg.h files located?
+HDFINC=$(srcdir)/../src
+HDFLIB=$(srcdir)/../src
+HDFSRC=$(srcdir)/../src
+HDFBIN=$(srcdir)/../bin
+
+# ==> where is your JPEG library (libjpeg.a) located?
+JPEGLIB=$(srcdir)/../jpeg
+JPEGINC=$(srcdir)/../jpeg
+
+# Utilities
+UTILS = hdf24to8 hdfcomp hdfls hdfpack hdfrseq hdftopal hdftor8 paltohdf \
+        r8tohdf ristosds vcompat vmake vshow hdf8to24 hdf2jpeg jpeg2hdf fp2hdf \
+	hdfunpac
+
+HEOBJ = he_main.o he_cntrl.o he_disp.o he_file.o
+
+all: hdfed utils fp2hdf fptest
+	-if( test \! -d $(HDFBIN)) then (mkdir $(HDFBIN)) fi
+	-cp $(UTILS) hdfed $(HDFBIN)
+
+nofortran: hdfed utils fp2hdf fptest
+
+rebuild:
+	@$(MAKE) all $(HDF_FLAGS) FRC=force_rebuild
+
+rebuildnofortran:
+	@$(MAKE) nofortran $(MFLAGS) $(HDF_FLAGS) FRC=force_rebuild
+
+# Leave this target blank with no actions, the rebuild macros above depend on it
+force_rebuild:
+
+#.c.o: 
+#	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
+#
+#.c.o: 
+#	 $(CC) $(CFLAGS) -c -I$(HDFINC) -I$(JPEGINC) $*.c 
+
+.c.o: he.h he_proto.h $(HDFLIB)/libdf.a $(FRC)
+	$(CC) $(CFLAGS) -c -I$(HDFINC) -I$(JPEGINC) $<
+
+.c: $(HDFLIB)/libdf.a
+	$(CC) $(CFLAGS) -I$(HDFINC) -I$(JPEGINC) $< -o $@ $(HDFLIB)/libdf.a $(GLLIB) $(JPEGLIB)/libjpeg.a
+
+.f: $(HDFLIB)/libdf.a 
+	$(FC) $(FFLAGS) $< $(HDFLIB)/libdf.a -o $@ $(JPEGLIB)/libjpeg.a
+
+hdfed: he.h he_proto.h $(HEOBJ) $(HDFLIB)/libdf.a $(FRC)
+	$(CC) $(CFLAGS) -I$(HDFINC) $(HEOBJ) $(HDFLIB)/libdf.a -o hdfed $(JPEGLIB)/libjpeg.a
+
+utils: $(UTILS) $(HDFLIB)/libdf.a
+
+$(HEOBJ): $(FRC)
+
+$(UTILS): $(FRC)
+
+clean:
+	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed fptest
+
+distclean:
+	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed fptest
+
+depend: 
+	 makedepend -I$(HDFINC) *.c
+
+saber:	$(SRCS)
+	 #load -I$(HDFINC) -D$(MACHINE) $(SRCS) 
+
+
+# DO NOT DELETE THIS LINE -- make depend depends on it.
