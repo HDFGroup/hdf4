@@ -702,12 +702,12 @@ done:
 /* ------------------------- hdf_get_data ------------------- */
 /*
  * Given a variable vgid return the id of a valid data storage
- *
+ * If no data storage is found, hdf_get_data returns DFREF_NONE(0).
  * OLD WAY: Create and fill in the VS as a side effect if it doesn't
  *          exist yet <- not any more
  *
  * NEW WAY: we delay filling until data is  written out -QAK
- *
+ * 
  */
 intn 
 hdf_get_data(handle, vp)
@@ -715,9 +715,9 @@ NC *handle;
 NC_var *vp;
 {
     int32     vg = FAIL;
-    int32     vsid = FAIL;
+    int32     vsid = DFREF_NONE;
     int32     tag, t, n;
-    int       ret_value = FAIL;
+    int       ret_value = DFREF_NONE;
     
 #ifdef DEBUG 
     fprintf(stderr, "hdf_get_data I've been called\n");
@@ -725,13 +725,13 @@ NC_var *vp;
     
     if(NULL == handle) 
       {
-          ret_value = FAIL;
+          ret_value = DFREF_NONE;
           goto done;
       }
 
     if(NULL == vp) 
       {
-          ret_value = FAIL;
+          ret_value = DFREF_NONE;
           goto done;
       }
 
@@ -751,7 +751,7 @@ NC_var *vp;
           vg = Vattach(handle->hdf_file, vp->vgid, "r");
           if(FAIL == vg)
             {
-                ret_value = FAIL;
+                ret_value = DFREF_NONE;
                 goto done;
             }
         
@@ -759,7 +759,7 @@ NC_var *vp;
           n = Vntagrefs(vg);
           if(FAIL == n)
             {
-                ret_value = FAIL;
+                ret_value = DFREF_NONE;
                 goto done;
             }
 
@@ -767,7 +767,7 @@ NC_var *vp;
             {
                 if (FAIL == Vgettagref(vg, t, &tag, &vsid))
                   {
-                      ret_value = FAIL;
+                      ret_value = DFREF_NONE;
                       goto done;
                   }
 
@@ -775,7 +775,7 @@ NC_var *vp;
                   {   /* detach */
                       if (FAIL == Vdetach(vg))
                         {
-                            ret_value = FAIL;
+                            ret_value = DFREF_NONE;
                             goto done;
                         }
                       ret_value = vsid;
@@ -785,7 +785,7 @@ NC_var *vp;
           /* don't forget to let go of vgroup */
           if (FAIL == Vdetach(vg))
             {
-                ret_value = FAIL;
+                ret_value = DFREF_NONE;
                 goto done;
             }
       }
@@ -793,7 +793,7 @@ NC_var *vp;
     /* are we only in read-only mode? */
     if(handle->hdf_mode == DFACC_RDONLY)
       { /* yes, not good */
-          ret_value = FAIL;
+          ret_value = DFREF_NONE;
           goto done;
       }
   
@@ -853,13 +853,13 @@ NC_var *vp;
                              BLOCK_COUNT);
           if(vp->aid == FAIL) 
             {
-                ret_value = FAIL;
+                ret_value = DFREF_NONE;
                 goto done;
             }
 
           if(Hendaccess(vp->aid) == FAIL) 
             {
-                ret_value = FAIL;
+                ret_value = DFREF_NONE;
                 goto done;
             }
       }
@@ -870,14 +870,14 @@ NC_var *vp;
           vg = Vattach(handle->hdf_file, vp->vgid, "w");
           if(vg == FAIL)
             {
-                ret_value = FAIL;
+                ret_value = DFREF_NONE;
                 goto done;
             }
         
           /* add new Vdata to existing Vgroup */
           if (FAIL == Vaddtagref(vg, (int32) DATA_TAG, (int32) vsid))
             {
-                ret_value = FAIL;
+                ret_value = DFREF_NONE;
                 goto done;
             }
 
@@ -885,7 +885,7 @@ NC_var *vp;
           /* detach from the variable's VGroup --- will no longer need it */
           if (FAIL == Vdetach(vg))
             {
-                ret_value = FAIL;
+                ret_value = DFREF_NONE;
                 goto done;
             }
       }
@@ -902,7 +902,7 @@ NC_var *vp;
     ret_value = vsid;
 
 done:
-    if (ret_value == FAIL)
+    if (ret_value == DFREF_NONE)
       { /* Failure cleanup */
           if (vg != FAIL)
             {                
@@ -935,7 +935,7 @@ NC_var    * vp;
     /*
      * Fail if there is no data
      */
-    if(vp->data_ref == 0) 
+    if(vp->data_ref == DFREF_NONE) 
       {
           ret_value = FAIL;
           goto done;
