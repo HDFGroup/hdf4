@@ -212,7 +212,7 @@ pr_att_vals(type, len, vals)
       case NC_LONG:
 	gp.lp = (nclong *) vals;
 	for (iel = 0; iel < len; iel++)
-	  Printf ("%d%s",*gp.lp++,iel<len-1 ? ", " : "");
+	  Printf ("%d%s",(int)*gp.lp++,iel<len-1 ? ", " : "");
 	break;
       case NC_FLOAT:
 	gp.fp = (float *) vals;
@@ -248,6 +248,7 @@ pr_att_vals(type, len, vals)
  */
 char *fixstr(char *str)
 {
+    char *strdup(const char *);
 	char *new_str, *ptr;
 
 	if (!str)
