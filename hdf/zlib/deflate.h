@@ -80,7 +80,7 @@ typedef unsigned IPos;
  */
 
 typedef struct internal_state {
-    z_stream *strm;      /* pointer back to this zlib stream */
+    z_streamp strm;      /* pointer back to this zlib stream */
     int   status;        /* as the name implies */
     Bytef *pending_buf;  /* output still pending */
     Bytef *pending_out;  /* next pending byte to output to the stream */

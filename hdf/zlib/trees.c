@@ -154,7 +154,7 @@ local void copy_block     OF((deflate_state *s, charf *buf, unsigned len,
 
 #else /* DEBUG */
 #  define send_code(s, c, tree) \
-     { if (verbose>1) fprintf(stderr,"\ncd %3d ",(c)); \
+     { if (verbose>2) fprintf(stderr,"\ncd %3d ",(c)); \
        send_bits(s, tree[c].Code, tree[c].Len); }
 #endif
 

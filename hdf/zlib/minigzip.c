@@ -37,7 +37,14 @@
 #ifdef VMS
 #  define unlink delete
 #  define GZ_SUFFIX "-gz"
-#else
+#endif
+#ifdef RISCOS
+#  define unlink remove
+#  define GZ_SUFFIX "-gz"
+#  define fileno(file) file->__file
+#endif
+
+#ifndef GZ_SUFFIX
 #  define GZ_SUFFIX ".gz"
 #endif
 #define SUFFIX_LEN sizeof(GZ_SUFFIX)
