@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/10/08 19:09:36  chouck
+Changed file_t to hdf_file_t to make strict ANSI compliant
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*LINTLIBRARY*/
 /*+ hextelt.c
@@ -26,7 +29,7 @@ typedef struct {
                                   to this information structure */
     int32 length;              /* length of this element */
     int32 length_file_name;    /* length of the external file name */
-    file_t file_external;      /* external file descriptor */
+    hdf_file_t file_external;      /* external file descriptor */
     char *extern_file_name;    /* name of the external file */
 } extinfo_t;
 
@@ -86,7 +89,7 @@ int32 HXcreate(file_id, tag, ref, extern_file_name)
     dd_t *dd;
     ddblock_t *data_block;     /* dd block ptr to exist data element */
     int32 data_idx;            /* dd list index to existing data element */
-    file_t file_external;      /* external file descriptor */
+    hdf_file_t file_external;      /* external file descriptor */
     extinfo_t *info;           /* special element information */
 #ifndef oldspecial
     dd_t *data_dd;             /* dd of existing regular element */
@@ -528,7 +531,7 @@ PRIVATE int32 HXIwrite(access_rec, length, data)
        /* this external file might not be opened with write permission,
           reopen the file and try again */
 
-       file_t f = HI_OPEN(info->extern_file_name, DFACC_WRITE);
+       hdf_file_t f = HI_OPEN(info->extern_file_name, DFACC_WRITE);
        if (OPENERR(f) || HI_SEEK(f, access_rec->posn) == FAIL ||
            HI_WRITE(f, data, length) == FAIL) {
            HERROR(DFE_DENIED);

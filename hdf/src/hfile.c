@@ -6,9 +6,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1992/10/01 20:46:10  chouck
-Fixed a Mac opening problem resulting from access change
+Revision 1.6  1992/10/08 19:09:36  chouck
+Changed file_t to hdf_file_t to make strict ANSI compliant
 
+ * Revision 1.5  1992/10/01  20:46:10  chouck
+ * Fixed a Mac opening problem resulting from access change
+ *
  * Revision 1.4  1992/09/15  21:04:06  chouck
  * Removed DFACC_CREATE problems.  Restored some other changes that had
  * gotten over-written
@@ -216,7 +219,7 @@ PRIVATE int HIget_file_slot
   PROTO((char *path, char *FUNC));
 
 PRIVATE bool HIvalid_magic
-  PROTO((file_t file, char *FUNC));
+  PROTO((hdf_file_t file, char *FUNC));
 
 PRIVATE int HIfill_file_rec
   PROTO((filerec_t *file_rec, char *FUNC));
@@ -324,7 +327,7 @@ int32 Hopen(path, access, ndds)
               This cannot be done on OS (such as the SXOS) where only one
               open is allowed per file at any time. */
 #ifndef NO_MULTI_OPEN
-           file_t f;
+           hdf_file_t f;
 
            f = HI_OPEN(file_rec->path, access);
            if (OPENERR(f)) {
@@ -1934,7 +1937,7 @@ Hishdf(filename)
 #else
 
   bool ret;
-  file_t fp;
+  hdf_file_t fp;
   char b[MAGICLEN];
   
     fp = HI_OPEN(filename, DFACC_READ);
@@ -2732,10 +2735,10 @@ PRIVATE int HIget_file_slot(path, FUNC)
  if the file is a valid HDF file.
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-PRIVATE bool HIvalid_magic(file_t file, char *FUNC)
+PRIVATE bool HIvalid_magic(hdf_file_t file, char *FUNC)
 #else
 PRIVATE bool HIvalid_magic(file, FUNC)
-    file_t file;               /* File handle. */
+    hdf_file_t file;               /* File handle. */
     char *FUNC;                        /* Charge error to calling function. */
 #endif
 {
@@ -3226,10 +3229,10 @@ static int hdfc = '????', hdft = '_HDF';
 static int hdfc = ('?' << 24) + ('?' << 16) + ('?' << 8) + ('?');
 static int hdft = ('_' << 24) + ('H' << 16) + ('D' << 8) + ('F');
 
-file_t
+hdf_file_t
 mopen(char *name, intn flags)
 {
-    file_t volref,rn;
+    hdf_file_t volref,rn;
     OSErr result;
     FInfo fndrInfo;
 
@@ -3256,12 +3259,12 @@ mopen(char *name, intn flags)
     return(rn);  
 }
 
-mclose(file_t rn)
+mclose(hdf_file_t rn)
 {
         return(FSClose(rn));
 }
 
-mread(file_t rn, char *buf, int n)
+mread(hdf_file_t rn, char *buf, int n)
 {
 	OSErr result;
 
@@ -3271,7 +3274,7 @@ mread(file_t rn, char *buf, int n)
         return(n);
 }
 
-mwrite(file_t rn, char *buf, int n)
+mwrite(hdf_file_t rn, char *buf, int n)
 {
     OSErr result;
     
@@ -3281,7 +3284,7 @@ mwrite(file_t rn, char *buf, int n)
     return(n);
 }
 
-mlseek(file_t rn, int n, int m)
+mlseek(hdf_file_t rn, int n, int m)
 {
     OSErr result;
     long pos, oldpos, logEOF;

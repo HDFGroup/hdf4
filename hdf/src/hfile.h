@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/10/08 19:09:36  chouck
+Changed file_t to hdf_file_t to make strict ANSI compliant
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*+ hfile.h
 *** Header for hfile.c, routines for low level data element I/O
@@ -49,7 +52,7 @@ Initial revision
 
 #if (FILELIB == UNIXBUFIO)
 /* using C buffered file I/O routines to access files */
-typedef FILE *file_t;
+typedef FILE *hdf_file_t;
 #   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
                         fopen((p), "r+") : fopen((p), "r"))
 #   define HI_CREATE(p)        (fopen((p), "w+"))
@@ -67,7 +70,7 @@ typedef FILE *file_t;
 
 #if (FILELIB == UNIXUNBUFIO)
 /* using UNIX unbuffered file I/O routines to access files */
-typedef int file_t;
+typedef int hdf_file_t;
 #   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
                         open((p), O_RDWR) : open((p), O_RDONLY))
 #   define HI_CREATE(p)        (open((p), O_RDWR | O_CREAT | O_TRUNC))
@@ -83,7 +86,7 @@ typedef int file_t;
 
 #if (FILELIB == MACIO)
 /* using special routines to redirect to Mac Toolkit I/O */
-typedef short file_t;
+typedef short hdf_file_t;
 #   define HI_OPEN(x,y) mopen(x,y)
 #   define HI_CREATE(name) mopen(name, DFACC_CREATE)
 #   define HI_CLOSE(x) mclose(x)
@@ -99,7 +102,7 @@ typedef short file_t;
 
 #if (FILELIB == PCIO)
 /* using special PC functions to enable reading/writing large chunks */
-typedef FILE *file_t;
+typedef FILE *hdf_file_t;
 #   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
                         fopen((p), "rb+") : fopen((p), "rb"))
 #   define HI_CREATE(p)        (fopen((p), "wb+"))
@@ -161,7 +164,7 @@ typedef struct tag_ref_list_str {
 
 typedef struct filerec_t {
     char *path;                 /* name of file */
-    file_t file;                /* either file descriptor or pointer */
+    hdf_file_t file;            /* either file descriptor or pointer */
     intn access;                /* access mode */
     intn refcount;              /* reference count / times opened */
     struct ddblock_t *ddhead;   /* head of ddblock list */
@@ -324,14 +327,14 @@ extern int32 HXIcloseAID
     PROTO((accrec_t *access_rec));
 	
 #ifdef MAC
-extern file_t mopen
+extern hdf_file_t mopen
 	PROTO((char * filename, intn access));
 	
 extern int mwrite
-	PROTO((file_t rn, char *buf, intn n));
+	PROTO((hdf_file_t rn, char *buf, intn n));
 	
 extern int mlseek
-	PROTO((file_t rn, intn n, intn m));
+	PROTO((hdf_file_t rn, intn n, intn m));
 #endif
 
 #endif /* HFILE_H */
