@@ -19,6 +19,8 @@
 
 #ifndef _FMPIO_H
 #define _FMPIO_H
+
+#ifdef __FMPINTERFACE_PRIVATE
 #include "fmpconf.h"
 #include "fmptypes.h"
 #include "fmpool.h"
@@ -26,12 +28,31 @@
 /* Memory Pool file structure */
 typedef struct mpfile_st 
 {
-  fmp_file_t  fd;    /* file handle */
+  fmp_file_t  fd;  /* file handle */
   pgno_t    curp;  /* current page */
   off_t     poff;  /* offset into current page */
   off_t     foff;  /* current offset into file */
   MPOOL     *mp;   /* memory pool for this file */
 } MPFILE;
+
+#else /* __FMPINTERFACE_PRIVATE */
+/* What we define to the user */
+
+/* Hidden data types */
+typedef void *MPFILE;
+
+/* file access codes (also found in fmptypes.h) */
+#ifndef DFACC_READ
+#define DFACC_READ   1
+#define DFACC_WRITE  2
+#define DFACC_CREATE 4
+#define DFACC_ALL    7
+#define DFACC_RDONLY 1
+#define DFACC_RDWR   3
+#define DFACC_CLOBBER 4
+#endif  /* DFACC_READ */
+
+#endif /* __FMPINTERFACE_PRIVATE */
 
 /* File memory pool fucntions */
 extern MPFILE *MPopen( const char * path, int flags );
