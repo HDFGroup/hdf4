@@ -13,13 +13,26 @@ C
 
       integer access, nt, rank, stat, ival, ivals(1000), i, err
       integer dims(10), start(10), end(10), stride(10), count, nattr
-      integer max, min, num, ref
-
+      integer max, min, num, ref, j, k
+      integer natt(2), inatt(2)
       real fval
 
       real*8  cal, cale, ioff, ioffe
       real*8  eps
-      character* 60  name, l, u, f, c
+      character*60  name, l, u, f, c
+      character cdata(6,4), icdata(6,4), cfill, icfill
+      character catt(2), icatt(2)
+
+      integer sfstart,  sfcreate,  sfendacc, sfend,    sfsfill
+      integer sfrdata,  sfwdata,   sfsattr,  sfdimid,  sfsdmname
+      integer sffinfo,  sfn2index, sfsdmstr, sfsdtstr, sfsdscale
+      integer sfscal,   sfselect,  sfginfo,  sfgdinfo, sfgainfo
+      integer sffattr,  sfrattr,  sfsrange,  sfgrange, sfgfill
+      integer sfgcal,   sfgdscale, sfgdtstr, sfgdmstr
+      integer sfid2ref, sfref2index, sfsdmvc, sfisdmvc
+      integer sfsextf,  hxsdir,    hxscdir
+      integer sfwcdata, sfrcdata,  sfscfill, sfgcfill
+      integer sfscatt,  sfrcatt,   sfsnatt,  sfrnatt
 
       integer SD_UNLIMITED, SD_DIMVAL_BW_INCOMP, DFNT_INT32
       integer SD_DIMVAL_BW_COMP
@@ -27,16 +40,9 @@ C
      +            SD_DIMVAL_BW_INCOMP = 0,
      +            SD_DIMVAL_BW_COMP = 1,
      +            DFNT_INT32 = 24)
-
-
-      integer sfstart,  sfcreate,  sfendacc, sfend,    sfsfill
-      integer sfrdata,  sfwdata,   sfsattr,  sfdimid,  sfsdmname
-      integer sffinfo,  sfn2index, sfsdmstr, sfsdtstr, sfsdscale
-      integer sfscal,   sfselect,  sfginfo,  sfgdinfo, sfgainfo
-      integer sfrattr,  sfsrange,  sfgrange, sfgfill
-      integer sfgcal,   sfgdscale, sfgdtstr, sfgdmstr
-      integer sfid2ref, sfref2index, sfsdmvc, sfisdmvc
-      integer sfsextf,  hxsdir,    hxscdir
+      DATA cfill/'@'/, icfill/' '/
+      DATA catt/'U','S'/, icatt/' ',' '/
+      DATA natt/10,20/, inatt/0,0/
 
 C     create a new file
       err = 0
@@ -492,7 +498,7 @@ C
          err = err + 1
       endif
 
-      stat = hxsdir('nosuch:testdir')
+      stat = hxsdir('nosuch|testdir')
       if(stat.ne.0) then
 	 print *, 'HX set dir (hxscdir) returned', stat
 	 err = err + 1
@@ -645,7 +651,7 @@ C
            print *, 'sfrdata returned', stat
            err = err + 1
       endif
-      do 180 i=0, 24
+      do 180 i=1, 24
           if (ivals(i) .ne. i)  then
               print *,  'wrong value: should be ',i,'  got ',ivals(i)
               err = err + 1
@@ -718,6 +724,153 @@ C     read back dimval_non_compat
       if (stat .lt. 0) then
            print *, 'sfend returned', stat
            err = err + 1
+      endif
+
+C Test char attr, char fill value and char data routines
+C sfscatt,sfrnatt,sfsnatt, sfrnatt,sfwcdata,sfrcdata
+C sfscfill, sfgcfill
+      fid1 = sfstart('test2.hdf', 4)
+      if(fid1 .lt. 1) then
+         print *, 'sfstart returned', fid1
+         err = err + 1
+      endif
+
+      dims(1) = 6
+      dims(2) = 0
+      nt = 4
+      rank = 2
+      sds1 = sfcreate(fid1, 'char_type', nt, rank, dims)
+      if (sds1 .eq. -1) then
+         print *, 'sfcreate returned', sds1
+         err = err + 1
+      endif
+C Set char fill value
+      stat = sfscfill(sds1, cfill)
+      if (stat .ne. 0) then
+         print *, 'sfscfill returned', stat
+         err = err + 1
+      endif
+      start(1) = 0
+      start(2) = 1
+      stride(1) = 1
+      stride(2) = 1
+      end(1) = 6
+      end(2) = 2
+C create the char data
+      do 195 i=1,4
+         do 190 j=1,6
+             cdata(j,i) = 'C'
+             icdata(j,i) = ' '
+190      continue
+195   continue
+C Write a slab of char data
+      stat = sfwcdata(sds1, start, stride, end, cdata)
+      if (stat .ne. 0) then
+          print *, 'sfwdata returned', stat
+          err = err + 1
+      endif
+C Set char attr
+      stat = sfscatt(sds1, 'CharAttr',nt, 2, catt)
+      if(stat.ne.0) then
+         print *, 'sfscatt returned', stat
+         err = err + 1
+      endif
+C Set numeric attr
+      nt = 24
+      stat = sfsnatt(sds1, 'NumericAttr',nt, 2, natt)
+      if(stat.ne.0) then
+         print *, 'sfsnatt returned', stat
+         err = err + 1
+      endif
+      stat = sfendacc(sds1)
+      if(stat .ne. 0) then
+           print *, 'sfendacc returned', stat
+           err = err + 1
+      endif
+C Close file
+      stat = sfend(fid1)
+      if(stat .ne. 0) then
+         print *, 'SDend returned', stat
+         err = err + 1
+      endif
+
+C read back
+      fid1 = sfstart('test2.hdf', 3)
+      if(fid1 .lt. 1) then
+         print *, 'sfstart returned', fid1
+         err = err + 1
+      endif
+      stat = sfn2index(fid1, 'char_type')
+      if (stat .lt. 0) then
+         print *, 'sfn2index returned', stat
+         err = err + 1
+      endif
+      sds2 = sfselect(fid1, stat)
+      if (sds2 .eq. -1) then
+         print *, 'sfselect returned', sds2
+         err = err + 1
+      endif
+      stat = sfginfo(sds2, name, rank, ivals, nt, nattr)
+      if (stat .ne. 0) then
+          print *, 'sfginfo returned', stat
+          err = err + 1
+      endif
+      start(1) = 0
+      start(2) = 0
+      stride(1) = 1
+      stride(2) = 1
+      end(1) = 6
+      end(2) = 3
+C read char data and char fill
+      stat = sfrcdata(sds2, start, stride, end, icdata)
+      do 200 i=1,6
+         if (icdata(i,1) .ne. cfill) then 
+          print *, 'error in read c_fill'
+          err = err + 1
+         endif
+200   continue
+      do 250 i=2,3
+          do 230 j=1,6
+             if (icdata(j,i) .ne. 'C') then
+                 print *, 'error in sfrcdata'
+                 err = err + 1
+             endif
+230       continue
+250   continue
+
+C read char attr
+      stat = sffattr(sds2, 'CharAttr')
+      if (stat .eq. -1) then
+         print *, 'sffattr returned', sds2
+         err = err + 1
+      endif
+      stat = sfrcatt(sds2, stat, icatt)
+      if ((icatt(1) .ne. catt(1)) .or. (icatt(2) .ne. catt(2))) then
+         print *, 'sfrcatt returned', sds2
+         err = err + 1
+      endif
+C read numeric attr
+      stat = sffattr(sds2, 'NumericAttr')
+      if (stat .eq. -1) then
+         print *, 'sffattr returned', sds2
+         err = err + 1
+      endif
+      stat = sfrnatt(sds2, stat, inatt)
+      if ((inatt(1) .ne. natt(1)) .or. (inatt(2) .ne. natt(2))) then
+         print *, 'sfrnatt returned', inatt(1), inatt(2)
+         err = err + 1
+      endif
+
+      stat = sfendacc(sds2)
+      if(stat .ne. 0) then
+           print *, 'sfendacc returned', stat
+           err = err + 1
+      endif
+C Close file
+      stat = sfend(fid1)
+      if(stat .ne. 0) then
+         print *, 'SDend returned', stat
+         err = err + 1
       endif
 
       print *, 'Total errors : ', err

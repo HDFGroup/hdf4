@@ -15,6 +15,7 @@ $ ccc hdp_sds.C
 $ ccc hdp_util.C
 $ ccc hdp_vd.C
 $ ccc hdp_vg.C
+$ ccc hdp_gr.C
 $ ccc show.C
 $ link/nodebug/notraceback/exe=hdp.exe -
     hdp.obj, -
@@ -25,6 +26,7 @@ $ link/nodebug/notraceback/exe=hdp.exe -
     hdp_util.obj, -
     hdp_vd.obj, -
     hdp_vg.obj, -
+    hdp_gr.obj, -
     show.obj, -
     [--.lib]mfhdf/lib,[--.hdf.src]df/lib,[--.hdf.jpeg]libjpeg.olb/lib,  -
     [--.hdf.zlib]libz.olb/lib, -

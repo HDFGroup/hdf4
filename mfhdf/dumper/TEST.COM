@@ -46,4 +46,18 @@ $ hdp dumpvg -n nsamp,tdata.hdf tdata.hdf
 $ hdp dumpvg -c "CDF0.0" tdata.hdf
 $ hdp dumpvg -c "Dim0.0","Var0.0" tdata.hdf
 $ hdp dumpvg -c "Dim0.0","Var0.0" -d tdata.hdf
+$!
+$ dumpgr grtdfui82.hdf
+$ dumpgr -i 0,1,3 grtdfui82.hdf
+$ dumpgr -i 0 grtdfui82.hdf
+$ dumpgr -n Image_array_5 grtdfui82.hdf
+$ dumpgr -r 6,2,3 grtdfui82.hdf
+$ dumpgr -r 6 -d  grtdfui82.hdf
+$ dumpgr -o my.dat grtdfui82.hdf
+$ dumpgr -o mybin.dat  -b grtdfui82.hdf
+$ dumpgr grtdfui83.hdf
+$ dumpgr grtdfui84.hdf
+$ dumpgr grtdfui162.hdf
+$ dumpgr grtdfi322.hdf
+$!
 ~

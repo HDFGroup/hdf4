@@ -39,6 +39,7 @@ $ type sys$input
 $ run ftest
 $ type sys$input
      Run hdftest
+$ create/dir [.testdir]
 $ run hdftest
 $
 $ type sys$input
