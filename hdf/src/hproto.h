@@ -454,6 +454,10 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                  comp_model_t model_type, model_info * m_info,
                  comp_coder_t coder_type, comp_info * c_info);
 
+    HDFLIBAPI intn HCgetcompress
+                (int32 file_id, uint16 data_tag, uint16 data_ref, 
+		 comp_coder_t *coder_type, comp_info * c_info);
+
     HDFLIBAPI int32 HCPquery_encode_header(comp_model_t model_type, model_info * m_info,
              comp_coder_t coder_type, comp_info * c_info);
 
@@ -2706,6 +2710,8 @@ HDFLIBAPI intn GRsetexternalfile(int32 riid,const char *filename,int32 offset);
 HDFLIBAPI intn GRsetaccesstype(int32 riid,uintn accesstype);
 
 HDFLIBAPI intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo);
+
+HDFLIBAPI intn GRgetcompress(int32 riid,int32* comp_type,comp_info *cinfo);
 
 HDFLIBAPI intn GRsetattr(int32 id,const char *name,int32 attr_nt,int32 count,const void * data);
 

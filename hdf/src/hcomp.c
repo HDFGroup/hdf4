@@ -857,6 +857,96 @@ done:
 
 /*--------------------------------------------------------------------------
  NAME
+    HCgetcompress -- Retrieves compression information of an element
+ USAGE
+    int32 HCgetcompress(aid, coder_type, c_info)
+    int32 aid;                  IN: access record ID
+    comp_coder_t* coder_type;   OUT: the type of compression
+    comp_info* c_info;          OUT: ptr to compression information
+                                structure for storing the retrieved info
+ RETURNS
+    SUCCEED/FAIL
+ DESCRIPTION
+    This routine retrieves the compression type and the compression
+    information of the element, identified by 'aid'.  The routine is 
+    used by GRgetcompress and SDgetcompress at this time.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+    July 2001: Added to fix bug #307 - BMR
+--------------------------------------------------------------------------*/
+intn
+HCgetcompress(int32 file_id,
+              uint16 data_tag, uint16 data_ref,
+              comp_coder_t* comp_type,  /* OUT: compression type */
+              comp_info* c_info)        /* OUT: retrieved compression info */
+{
+    CONSTR(FUNC, "HCgetcompress");   /* for HGOTO_ERROR */
+    int32   aid=0, status;
+    accrec_t   *access_rec=NULL;/* access element record */
+    compinfo_t *info=NULL;      /* special element information */
+    model_info  m_info;         /* modeling information - dummy */
+    int32       ret_value=SUCCEED;
+
+#ifdef HAVE_PABLO
+    TRACE_ON(PABLO_mask,ID_HCgetcompress);
+#endif /* HAVE_PABLO */
+
+    /* clear error stack */
+    HEclear();
+
+    /* start read access on the access record of the data element, which
+       is being inquired for its compression information */
+    aid = Hstartread(file_id, data_tag, data_ref);
+
+    /* get the access_rec pointer */
+    access_rec = HAatom_object(aid);
+    if (access_rec == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* if the element is compressed, get the compression info as requested*/
+    if (access_rec->special == SPECIAL_COMP)
+    {
+        info = (compinfo_t *) access_rec->special_info;
+        if (info == NULL) HGOTO_ERROR(DFE_COMPINFO, FAIL);
+
+        status = HCIread_header(access_rec, info, c_info, &m_info);
+        if (status == FAIL) HGOTO_ERROR(DFE_COMPINFO, FAIL);
+
+        /* get the compression type */
+        *comp_type = info->cinfo.coder_type;
+
+    }  /* end if element is compressed */
+
+    /* flag the error when attempting to get compression info on a
+       non-compressed element */
+    else
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* end access to the aid */
+    if (Hendaccess(aid)== FAIL)
+        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+
+done:
+  if(ret_value == FAIL)
+    { /* Error condition cleanup */
+       /* end access to the aid if it's been accessed */
+        if (aid != 0)
+            if (Hendaccess(aid)== FAIL)
+                HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+    } /* end if */
+
+  /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(PABLO_mask,ID_HCgetcompress);
+#endif /* HAVE_PABLO */
+
+  return ret_value;
+} /* HCgetcompress */
+
+/*--------------------------------------------------------------------------
+ NAME
     HCIstaccess -- Start accessing a compressed data element.
  USAGE
     int32 HCIstaccess(access_rec, access)
