@@ -96,7 +96,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #if defined(UNICOS)
 
-#define NOCRAY2IEG
+/* #define NOCRAY2IEG */
 
 PRIVATE VOID DFKswap
     PROTO((VOIDP s, VOIDP d, uintn elem_size, uintn num_elem));
