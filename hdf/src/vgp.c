@@ -193,7 +193,7 @@ HFILEID f;
     tbbtdfree(vf->vgtree, vdestroynode, NULL);
     tbbtdfree(vf->vstree, vsdestroynode, NULL);
 
-	HDmemset(vf,0,sizeof(vfile_t);	/* reset values of structure */
+	HDmemset(vf,0,sizeof(vfile_t));	/* reset values of structure */
 }  /* Remove_vfile */
 
 /* ---------------------------- vcompare ------------------------- */
