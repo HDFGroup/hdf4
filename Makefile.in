@@ -2,47 +2,61 @@
 #
 # Makefile to build HDF & netcdf libraries and utilities...etc
 #
+# NOTE: This Makefile.in is used by the Cygnus 'configure' script to
+#       generate the top level Makefile.
 
-################ Start of system configuration section. #############
+### Start of system configuration section. #############
 
-# Set shell so we know what it is
+# 'srcdir' Gets set to directory this Makefile is found in
+srcdir = .
+
+prefix = /usr/local
+
+exec_prefix = $(prefix)
+tooldir = $(exec_prefix)/$(target)
+
+program_transform_name =
+
+datadir = $(prefix)/lib
+mandir = $(prefix)/man
+man1dir = $(mandir)/man1
+man2dir = $(mandir)/man2
+man3dir = $(mandir)/man3
+man4dir = $(mandir)/man4
+man5dir = $(mandir)/man5
+man6dir = $(mandir)/man6
+man7dir = $(mandir)/man7
+man8dir = $(mandir)/man8
+man9dir = $(mandir)/man9
+docdir = $(datadir)/doc
+
 SHELL = /bin/sh
 
-# Configure subsitutes preset values in for the following macros
-# 'srcdir' Gets set to directory this Makefile is found in
-srcdir = @srcdir@
-VPATH  = @srcdir@
-TOP_SRCDIR = @top_srcdir@
-prefix     = @prefix@
-exec_prefix = @exec_prefix@
-ACDEFS = @DEFS@
-CC     = @CC@
-CFLAGS   = @CFLAGS@
-CPPFLAGS = @CPPFLAGS@
-LDFLAGS  = @LDFLAGS@
-LIBS     = @LIBS@
-FC       = @FC@
-FFLAGS   = @FFLAGS@
-
-INSTALL  = @INSTALL@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@
-INSTALL_DATA    = @INSTALL_DATA@
+INSTALL = $${srcroot}/install.sh -c
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL) -m 644
 
 # /usr/local/bin/m4 (GNU version?)
-M4   = @M4@
-# /usr/loal/bin/perl (GNU version?)
-PERL = @PERL@
+M4   = /usr/local/bin/m4
+# /usr/local/bin/perl (GNU version?)
+PERL = /usr/local/bin/perl
 
 # Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
-RANLIB = @RANLIB@
+RANLIB = ranlib
 
 # Name of library archiver and flags to send, default 'AR=ar', 'ARFLAGS=r'
-AR = @AR@
-ARFLAGS = @ARFLAGS@
+AR = ar
+ARFLAGS = r
 
 # Name of remove utility, default 'RM=/bin/rm', 'RMFLAGS=-f'
-RM = @RM@
-RMFLAGS = @RMFLAGS@
+RM = /bin/rm
+RMFLAGS = -f
+
+AS = as
+CC = gcc
+CFLAGS = -ansi
+FC = f77
+FFLAGS=
 
 # Set for document generation
 MAKEINFO = makeinfo
@@ -60,7 +74,10 @@ libdir = $(prefix)/lib
 # Directory in which to install documentation info files.
 infodir = $(prefix)/info
 
-############## End of system configuration section. ###############
+#### host and target specific makefile fragments come in here.
+###
+
+### End of system configuration section. ###############
 
 PACKAGE	 = @PACKAGE@
 VERSION  = @VERSION@
@@ -72,6 +89,9 @@ HDFDIR    = hdf
 NETCDFDIR = mfhdf
 SUBDIRS= $(HDFDIR) $(NETCDFDIR)
 
+#SUBDIRS = "this is set via configure, don't edit this"
+#OTHERS = 
+
 #
 # Flags to recursively send to make to overide ones inserted by Configure
 #
@@ -79,6 +99,7 @@ SUBDIRS= $(HDFDIR) $(NETCDFDIR)
 HDF_FLAGS       = \
         CC="$(CC)" \
         CFLAGS="$(CFLAGS)" \
+        ACDEFS="$(ACDEFS)" \
         FC="$(FC)" \
         FFLAGS="$(FFLAGS)" \
         RANLIB="$(RANLIB)" \
@@ -88,83 +109,83 @@ HDF_FLAGS       = \
         RMFLAGS="$(RMFLAGS)" \
         MACHINE="$(MACHINE)" 
 
-#        HDFLIB="$(HDFLIB)" \
-#        HDFINC="$(HDFINC)" \
-#	HDFBIN="$(HDFBIN)"	
-
 #
 #General rules
 #
 
 all:	
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="$(SUBDIRS)" _sub
+          SUBDIRS="$(SUBDIRS)" subd
 
 HDF:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="all" \
-          SUBDIRS="$(HDFDIR)" _sub
+          SUBDIRS="$(HDFDIR)" subd
 
 NETCDF:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="all" \
-          SUBDIRS="$(NETCDFDIR)" _sub
+          SUBDIRS="$(NETCDFDIR)" subd
 		
 test:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="$(SUBDIRS)" _sub
+          SUBDIRS="$(SUBDIRS)" subd
 		
-allnofortran: 
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="$(HDFDIR)" _sub
+hdf-allnofortran: 
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="allnofortran" \
+          SUBDIRS="$(HDFDIR)" subd
 
-libnofortran: 
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="$(HDFDIR)" _sub
+hdf-libnofortran: 
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="libnofortran" \
+          SUBDIRS="$(HDFDIR)" subd
 
-libnostub: 
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="$(HDFDIR)" _sub
+hdf-testnofortran: 
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="testnofortran" \
+          SUBDIRS="$(HDFDIR)" subd
 
-allnostub: 
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="$(HDFDIR)" _sub
+hdf-libnostub: 
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="libnostub" \
+          SUBDIRS="$(HDFDIR)" subd
+
+hdf-allnostub: 
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="allnostub" \
+          SUBDIRS="$(HDFDIR)" subd
 
 libdf: 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="$(HDFDIR)" _sub
+          SUBDIRS="$(HDFDIR)" subd
 
-utilities: 
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="$(HDFDIR)" _sub
+hdf-utilities: 
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="utilities" \
+          SUBDIRS="$(HDFDIR)" subd
 
 install:	
 	true
 
 hdfclean:		
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="clean" \
-          SUBDIRS="$(HDFDIR)" _sub
+          SUBDIRS="$(HDFDIR)" subd
 
 netcdfclean:		
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="clean" \
-          SUBDIRS="$(NETCDFDIR)" _sub
+          SUBDIRS="$(NETCDFDIR)" subd
 
 clean:		
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="$(SUBDIRS)" _sub
+          SUBDIRS="$(SUBDIRS)" subd
 
 hdfdistclean:		
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="distclean" \
-          SUBDIRS="$(HDFDIR)" _sub
+          SUBDIRS="$(HDFDIR)" subd
 
 netcdfdistclean:		
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="distclean" \
-          SUBDIRS="$(NETCDFDIR)" _sub
+          SUBDIRS="$(NETCDFDIR)" subd
 
 distclean::	
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="$(SUBDIRS)" _sub
+          SUBDIRS="$(SUBDIRS)" subd
 
 # target for recursive directory make
-_sub:
+subd:
 	@for dir in $(SUBDIRS); do \
           (cd $$dir; echo Making \`$(TARG)\' in `pwd`; \
               $(MAKE) $(MFLAGS) $(HDF_FLAGS) $(TARG)); \

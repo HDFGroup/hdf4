@@ -1,109 +1,110 @@
-dnl Process this file with autoconf to produce a configure script.
-AC_INIT(hdf/jpeg/ansi2knr.c)dnl
-AC_CONFIG_HEADER(config.h)dnl
-AC_REVISION($Revision$)dnl
+##############################################################################
+## This file was taken from the Cygnus Toolkit distribution and used as
+## as a template.
 
-dnl HDF specific varables
-HDF_CUSTOMIZE dnl
-PACKAGE=HDF
-VERSION=HDF4.0
-AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE")
-AC_DEFINE_UNQUOTED(VERSION, "$VERSION")
-AC_SUBST(PACKAGE)
-AC_SUBST(VERSION)
+## This file is a shell script fragment that supplies the information
+## necessary to tailor a template configure script into the configure
+## script appropriate for this directory.  For more information, check
+## any existing configure script.  
 
-dnl Checks for programs.
-AC_PROG_CXX
-AC_PROG_CC
-AC_PROG_CPP
-AC_PROG_INSTALL
-AC_PROG_LEX
-AC_PROG_LN_S
-AC_PROG_MAKE_SET
-AC_PROG_RANLIB
+## Be warned, there are two types of configure.in files.  There are those
+## used by Autoconf, which are macros which are expanded into a configure
+## script by autoconf.  The other sort, of which this is one, is executed
+## by Cygnus configure.  
 
-dnl Fortran compiler 
-FC=f77
-FFLAGS=
-AC_DEFINE_UNQUOTED(FC, "$FC")
-AC_DEFINE_UNQUOTED(FFLAGS, "$FFLAGS")
-AC_SUBST(FC)
-AC_SUBST(FFLAGS)
+## For more information on these two systems, check out the documentation
+## for 'Autoconf' (autoconf.texi) and 'Configure' (configure.texi).  
 
-dnl Archive creator
-AR=ar
-ARFLAGS=r
-AC_DEFINE_UNQUOTED(AR, "$AR")
-AC_DEFINE_UNQUOTED(ARFLAGS, "$ARFLAGS")
-AC_SUBST(AR)
-AC_SUBST(ARFLAGS)
+##############################################################################
 
-dnl remove utility
-RM=/bin/rm
-RMFLAGS=-f
-AC_DEFINE_UNQUOTED(RM, "$RM")
-AC_DEFINE_UNQUOTED(RMFLAGS, "$RMFLAGS")
-AC_SUBST(RM)
-AC_SUBST(RMFLAGS)
+# Right now the JPEG library an netCDF come with their own configure
+# generated from autoconf
+host_libs="hdf/jpeg mfhdf"
 
-dnl Checks for libraries.
+## We assign ${configdirs} this way to remove all embedded newlines.  This
+## is important because configure will choke if they ever get through.
+#
+configdirs=`echo ${host_libs}`
+
+#Directories we want configure to generate Makefiles from Makefile.in
+subdirs="hdf hdf/src hdf/test hdf/util"
+
+################################################################################
+
+srctrigger=move-if-change
+srcname="HDF/netCDF library"
+
+# This gets set non-empty for some net releases of packages.
+appdirs=""
+
+# per-host:
+
+# Work in distributions for each host
+host_makefile_frag=""
+if [ -d ${srcdir}/config ]; then
+case "${host}" in
+  alpha-dec-osf*)         host_makefile_frag=config/mh-alpha ;;
+  mips*-dec-ultrix*)      host_makefile_frag=config/mh-decstation ;;
+  mips*-sgi-irix5*)       host_makefile_frag=config/mh-irix5 ;;
+  mips*-sgi-irix4*)       host_makefile_frag=config/mh-irix4 ;;
+  i[345]86-*-linux*)      host_makefile_frag=config/mh-linux ;;
+  *-ibm-aix*)             host_makefile_frag=config/mh-aix ;;
+  *-*-solaris2*)          host_makefile_frag=config/mh-solaris ;;
+  *-sun-*)		  host_makefile_frag=config/mh-sun ;;
+  *-hp-hpux*)             host_makefile_frag=config/mh-hpux ;;
+  *-convex-bsd*)          host_makefile_frag=config/mh-convex ;;
+  *-cray-unicos*)         host_makefile_frag=config/mh-unicos ;;
+esac
+fi
+
+# Check for valid platfroms before we continue
+if [ "${host_makefile_frag}" = "" ] ; then
+    echo '***' "The HDF/netCDF library is not supported on host ${host}" 1>&2
+    exit 1
+fi
+
+# make sure makefile fragment is there
+if [ ! -f ${srcdir}/${host_makefile_frag} ]; then
+    echo '***' "We are missing makefile fragment ${host_makefile_frag}" 1>&2
+    echo '***' "Please read the installation docs" 1>&2
+    exit 1
+fi
 
 
-dnl Checks for header files.
-AC_HEADER_STDC
-AC_CHECK_HEADERS(fcntl.h limits.h sys/file.h sys/time.h unistd.h)
+# The Solaris /usr/ucb/cc compiler does not appear to work.
+case "${host}" in
+  sparc-sun-solaris2*)
+      if [ "`/usr/bin/which ${CC-cc}`" = "/usr/ucb/cc" ] ; then
+          could_use=
+          [ -d /opt/SUNWspro/bin ] && could_use="/opt/SUNWspro/bin"
+          if [ -d /opt/cygnus/bin ] ; then
+              if [ "$could_use" == "" ] ; then
+                  could_use="/opt/cygnus/bin"
+              else
+                  could_use="$could_use or /opt/cygnus/bin"
+              fi
+          fi
+        if [ "$could_use" = "" ] ; then
+            echo "Warning: compilation may fail because you're using"
+            echo "/usr/ucb/cc.  You should change your PATH or CC "
+            echo "variable and rerun configure."
+        else
+            echo "Warning: compilation may fail because you're using"
+            echo "/usr/ucb/cc, when you should use the C compiler from"
+            echo "$could_use.  You should change your"
+            echo "PATH or CC variable and rerun configure."
+        fi
+      fi
+  ;;
+esac
 
-dnl Checks for typedefs, structures, and compiler characteristics.
-dnl
-dnl if not defined, define off_t to be long
-AC_TYPE_OFF_T
-dnl if not defined, define size_t to be unsigned
-AC_TYPE_SIZE_T
-dnl if have sys/time.h, define TIME_WITH_SYS_TIME
-AC_HEADER_TIME
-dnl if not defined, define const to be empty
-AC_C_CONST
-dnl if bigendian, define WORDS_BIGENDIAN
-AC_C_BIGENDIAN
-dnl if GCC supports inline, define inline tob  __inline
-AC_C_INLINE
-dnl if C type char is unsigned, define __CHAR_UNSIGNED__(unless pre-def by CC)
-AC_C_CHAR_UNSIGNED
-dnl if C compiler supports long double type, define HAVE_LONG_DOUBLE
-AC_C_LONG_DOUBLE
-dnl Check builtin C data types
-AC_CHECK_SIZEOF(char)
-AC_CHECK_SIZEOF(int)
-AC_CHECK_SIZEOF(double)
-AC_CHECK_SIZEOF(float)
-AC_CHECK_SIZEOF(short)
-AC_CHECK_SIZEOF(long)
+# per-target:
 
-dnl Checks for library functions.
-AC_FUNC_MEMCMP
-AC_FUNC_SETVBUF_REVERSED
-AC_TYPE_SIGNAL
-AC_FUNC_VFORK
-AC_FUNC_VPRINTF
-AC_CHECK_FUNCS(gettimeofday strdup strerror strtod strtol)
 
-dnl Checks for System Services
-dnl if system supports file names > 14 chars, define HAVE_LONG_FILE_NAMES
-AC_SYS_LONG_FILE_NAMES
+# post-target:
 
-dnl Checks for Unix Variants(most should be called before any test of CC)
-dnl if AIX box, defines _ALL_SOURCE
-dnl AC_AIX
-dnl if POSIX unix, define _POSIX_SOURCE and add -posix
-dnl AC_ISC_POSIX
-
-dnl Configure netcdf and jpeg distribution
-AC_CONFIG_SUBDIRS(mfhdf hdf/jpeg)
-
-dnl Generate Makefiles for HDF distribution part
-AC_OUTPUT(Makefile \
-        hdf/Makefile\
-        hdf/src/Makefile \
-        hdf/util/Makefile \
-        hdf/test/Makefile)
-
+#
+# Local Variables:
+# fill-column: 131
+# End:
+#
