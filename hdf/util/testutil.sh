@@ -246,7 +246,7 @@ fi
 # fp2hdf
 if [ -f fp2hdf -a -f hdfls -a -f hdfed ]; then
 echo "** Testing fp2hdf  ***"
-/bin/rm -f ctxtr* cb* *.hdf hdfls.tmp5 hdfed.tmp5
+/bin/rm -f ctxtr* cb* *.hdf hdfls.tmp5 hdfed.tmp6
 ./fptest
 ./fp2hdf ctxtr2 -o ctxtr2.hdf
 ./fp2hdf ctxtr3 -o ctxtr3.hdf
@@ -267,7 +267,7 @@ echo "** Testing fp2hdf  ***"
 diff  hdfls.tmp5 fp2hdf.out1 || errors=1
 ./hdfed < fp2hdf.input1 > hdfed.tmp6 2>&1
 diff  hdfed.tmp6 fp2hdf.out2 || errors=1
-/bin/rm -f ctxtr* cb* *.hdf hdfls.tmp5 hdfed.tmp5
+/bin/rm -f ctxtr* cb* *.hdf hdfls.tmp5 hdfed.tmp6
 else
 echo "** fp2hdf, hdfed or hdfls not available ***"
 fi
@@ -277,7 +277,7 @@ if [ $errors -eq 1 ]; then
   echo " fp2hdf might have failed ***"
   echo " please run the following by hand to verify "
   echo " "
-  echo "  /bin/rm -f ctxtr* cb* *.hdf hdfls.tmp5 hdfed.tmp5 "
+  echo "  /bin/rm -f ctxtr* cb* *.hdf hdfls.tmp5 hdfed.tmp6"
   echo " ./fptest "
   echo " ./fp2hdf ctxtr2 -o ctxtr2.hdf "
   echo " ./fp2hdf ctxtr3 -o ctxtr3.hdf "
