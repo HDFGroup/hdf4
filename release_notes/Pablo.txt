@@ -8,7 +8,8 @@ Pablo Instrumentation of HDF
 
     More detailed documentation on how to use the instrumented version of
     the HDF library with Pablo can be found in the Pablo directory 
-    '$(toplevel)/hdf/pablo'. See the provided '$(toplevel)/hdf/pablo/README.Pablo'
+    '$(toplevel)/hdf/pablo'. 
+     See the provided '$(toplevel)/hdf/pablo/README.Pablo'
      and the Postscript file '$(toplevel)/hdf/pablo/Pablo.ps'.
 
     At this time only an instrumented version of the core HDF library libdf.a 
@@ -31,7 +32,9 @@ Pablo Instrumentation of HDF
     #PABLO_FLAGS  = -DHAVE_PABLO
     #PABLO_INCLUDE = -I/hdf2/Pablo/Instrument.HP/include
 
-    After setting these values you must re-run  the top-level 'configure' script. 
+    After setting these values you must re-run the top-level 'configure' script.
+    Make sure that your start from a clean re-build(i.e. 'make clean') after
+    re-running the toplevel 'configure' script and then run 'make'.
     Details on running configure can be found in the section
     'General Configuration/Installation - Unix' found in the top-level 
     installation file '$(toplevel)/INSTALL'.

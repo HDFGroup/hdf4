@@ -12,7 +12,7 @@ File Page Buffering(Beta release)
     a per page basis i.e a memory pool of the file. With regards to the 
     file system, page sizes can be allocated based on the file system page-size 
     or if the user wants in some multiple of the file system page-size. This 
-    allows for fewer pages to be managed along with accommodating the users file 
+    allows for fewer pages to be managed along with accommodating the users file
     usage pattern.
 
     The current version supports setting the page-size and number of pages
@@ -62,7 +62,9 @@ File Page Buffering(Beta release)
     # documentation before enabling this feature.
     #FMPOOL_FLAGS  = -DHAVE_FMPOOL
 
-    After setting these values you must re-run  the toplevel 'configure' script. 
+    After setting these values you must re-run  the toplevel 'configure' script.
+    Make sure that your start from a clean re-build(i.e. 'make clean') after
+    re-running the toplevel 'configure' script and then run 'make'.
     Details on running configure can be found in the section
     'General Configuration/Installation - Unix' in the installation file 
     '$(toplevel)/INSTALL'.
