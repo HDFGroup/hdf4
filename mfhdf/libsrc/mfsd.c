@@ -1263,6 +1263,7 @@ VOIDP    data;
         attr = (NC_attr *) NC_new_attr(name,type,(unsigned)count,data) ;
         if(attr == NULL)
             return FAIL;
+        attr->HDFtype = nt; /* Add HDFtype  */
         *ap = NC_new_array(NC_ATTRIBUTE,(unsigned)1, (Void*)&attr) ;
         if(*ap == NULL)
             return FAIL;
@@ -1275,6 +1276,7 @@ VOIDP    data;
                 *atp = old;
                 return FAIL;
             }
+            (*atp)->HDFtype = nt; /* Add HDFtype  */
             NC_free_attr(old);
         }
         else   {
@@ -1283,15 +1285,14 @@ VOIDP    data;
             }
             /* just add it */
             attr = (NC_attr *) NC_new_attr(name,type,(unsigned)count,data);
+            attr->HDFtype = nt; /* Add HDFtype  */
             if(attr == NULL)
                 return FAIL;
             if(NC_incr_array((*ap), (Void *)&attr) == NULL)
                 return FAIL;
         }
     }
-    /* succeeded. Add HDFtype  */
-    if (attr != NULL)   
-        attr->HDFtype = nt;
+        
     return SUCCEED;
     
 } /* SDIputattr */

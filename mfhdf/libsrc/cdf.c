@@ -629,12 +629,13 @@ NC_dim *dim;
  fprintf(stderr, "handle->hdf_file = %d\n", handle->hdf_file);
 #endif
 
-/*  dsize = dim->size;  */
+/*  dsize = dim->size;  
   if(dsize == NC_UNLIMITED) {
 #ifdef DEBUG
       fprintf(stderr, "Fudging unlimited dimension.\n");
 #endif
   }
+*/
 #if 0
   /* look for variable with the given name */
   if(handle->vars) {
@@ -965,10 +966,13 @@ NC_var **var;
    * by default numbers are converted to IEEE otherwise we need to save the 
    *   machine type in the NT object
    */
+/* external data file may be created on PC
   if((*var)->HDFtype & DFNT_NATIVE)
       outNT = DFKgetPNSC((*var)->HDFtype, DF_MT);
   else
-      outNT = DFNTF_IEEE;
+      outNT = DFNTF_IEEE;  */
+  outNT = ((*var)->HDFtype & DFNT_NATIVE)?  DFKgetPNSC((*var)->HDFtype, DF_MT) :
+          ((*var)->HDFtype & DFNT_LITEND)? DFNTF_PC :  DFNTF_IEEE;
 
   ref = Htagnewref(handle->hdf_file,DFTAG_NT);
   ntstring[0] = DFNT_VERSION;                    /* version */
@@ -1579,7 +1583,10 @@ int32  vg;
                          ((ntstring[3] != DFNTF_NONE) &&
                           (ntstring[3] != DFNTF_IEEE))) {
                           
-                          /* check if in native mode for a different type of machine */
+                          /* check if in native mode for a different type of machine  or external data file is LITEND */
+                          if (ntstring[3] == DFNTF_PC)
+                              HDFtype |= DFNT_LITEND;
+                          else
                           if(ntstring[3] != (uint8)DFKgetPNSC(HDFtype, DF_MT)) {
                               /* 
                                * OK, we have a problem here --- is in native mode

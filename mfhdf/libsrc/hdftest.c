@@ -657,20 +657,20 @@ char *argv[];
         fprintf(stderr, "Failed on SDselect call\n");
           num_err++;
     }
-    status = SDgetinfo(sdid, name, &rank, dimsize, &nt, &nattrs);
+    status = SDgetinfo(sdid, name, (int32 *)&rank, dimsize, &nt, (int32 *)&nattrs);
     CHECK(status, "SDgetinfo");
     if (rank!=2 || dimsize[0]!=4 || dimsize[1]!=6 || nt!=DFNT_INT32) {
         fprintf(stderr, "Failed on SDgetinfo call\n");
           num_err++;
     }
     dimid=SDgetdimid(sdid,0);
-    status = SDdiminfo(dimid, name, &dimsize[0], &nt, &nattrs);
+    status = SDdiminfo(dimid, name, (int32 *)&dimsize[0], &nt, (int32 *)&nattrs);
     if (dimsize[0]!=SD_UNLIMITED || nt!= 0 )  {
           fprintf(stderr, "Failed on SDgetinfo call\n");
           num_err++;
     }
     dimid1=SDgetdimid(sdid,1);
-    status = SDdiminfo(dimid1, name, &dimsize[1], &nt, &nattrs);
+    status = SDdiminfo(dimid1, name, (int32 *)&dimsize[1], &nt, (int32 *)&nattrs);
     if (dimsize[1]!=6 || nt!= DFNT_INT32 )  {
           fprintf(stderr, "Failed on SDgetinfo call\n");
           num_err++;
@@ -709,14 +709,14 @@ char *argv[];
         fprintf(stderr, "Failed on SDselect call\n");
           num_err++;
     }
-    status = SDgetinfo(sdid, name, &rank, dimsize, &nt, &nattrs);
+    status = SDgetinfo(sdid, name, (int32 *)&rank, dimsize, &nt, (int32 *)&nattrs);
     CHECK(status, "SDgetinfo");
     if (rank!=2 || dimsize[0]!=4 || dimsize[1]!=6 || nt!=DFNT_INT32) {
         fprintf(stderr, "Failed on SDgetinfo call\n");
           num_err++;
     }
     dimid1=SDgetdimid(sdid,1);
-    status = SDdiminfo(dimid1, name, &dimsize[1], &nt, &nattrs);
+    status = SDdiminfo(dimid1, name, (int32 *)&dimsize[1], &nt, (int32 *)&nattrs);
     if (dimsize[1]!=6 || nt!= DFNT_INT32 )  {
           fprintf(stderr, "Failed on SDgetinfo call\n");
           num_err++;
