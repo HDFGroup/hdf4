@@ -62,8 +62,8 @@ CFLAGS = -D$(MACHINE)
 	$(CC) -c $(CFLAGS) -I$(HDFINC) $<
 
 all: hdfed utils fptest
-	-if( test \! -d $(HDFBIN)) then (mkdir $(HDFBIN)) fi
-	-cp $(UTILS) hdfed $(HDFBIN)
+#	-if( test \! -d $(HDFBIN)) then (mkdir $(HDFBIN)) fi
+#	-cp $(UTILS) hdfed $(HDFBIN)
 
 nofortran: hdfed utils fptest
 
