@@ -75,7 +75,6 @@ HCIcdeflate_init(accrec_t * access_rec)
     CONSTR(FUNC, "HCIcdeflate_init");
     compinfo_t *info;       /* special element information */
     comp_coder_deflate_info_t *deflate_info;    /* ptr to deflate info */
-    intn        i;          /* local counting var */
 
     info = (compinfo_t *) access_rec->special_info;
 
