@@ -25,8 +25,17 @@ echo "** hdf24to8 or hdftor8 is not available ***"
 fi
 
 if [ $errors -eq 1 ]; then
-   echo " hdf24to8 failed ***"
-   errors=0
+  echo " ********* NOTE ***************"
+  echo " hdf24to8 might have failed ***"
+  echo " please run the following by hand to verify "
+  echo " "
+  echo " /bin/rm -f head.r24 head.r8 head8.hdf img001-263.328 pal001"
+  echo " cp testfiles/head.r24.Z testfiles/head.r8.Z . "
+  echo " uncompress head.r24.Z head.r8.Z "
+  echo " ./hdf24to8 head.r24 head8.hdf "
+  echo " ./hdftor8 head8.hdf "
+  echo " cmp img001-263.328 head.r8 " 
+  errors=0
 fi
 
 # hdfed
@@ -35,14 +44,21 @@ echo "** Testing hdfed  ***"
 /bin/rm -f storm110.hdf ntcheck.hdf hdfed.tmp
 cp testfiles/storm110.hdf testfiles/ntcheck.hdf .
 ./hdfed < hdfed.input1 > hdfed.tmp 2>&1
-diff -w hdfed.tmp hdfed.out1 || errors=1
+diff hdfed.tmp hdfed.out1 || errors=1
 /bin/rm -f storm110.hdf ntcheck.hdf hdfed.tmp
 else
 echo "** hdfed not available ***"
 fi
 
 if [ $errors -eq 1 ]; then
-   echo " hdfed failed ***"
+   echo " ********* NOTE ***************"
+   echo " hdfed might have failed ***"
+   echo " please run the following by hand to verify "
+   echo " "
+   echo "/bin/rm -f storm110.hdf ntcheck.hdf hdfed.tmp "
+   echo "cp testfiles/storm110.hdf testfiles/ntcheck.hdf . "
+   echo "./hdfed < hdfed.input1 >& hdfed.tmp "
+   echo "diff hdfed.tmp hdfed.out1 "
    errors=0
 fi
 
@@ -53,15 +69,23 @@ echo "** Testing ristosds  ***"
 cp testfiles/storm110.hdf testfiles/storm120.hdf testfiles/storm130.hdf .
 ./ristosds storm*.hdf -o storm.hdf > /dev/null 2>&1
 ./hdfed < ristosds.input1 > hdfed.tmp1 2>&1
-diff -w hdfed.tmp1 ristosds.out1 || errors=1
+diff  hdfed.tmp1 ristosds.out1 || errors=1
 /bin/rm -f storm*.hdf hdfed.tmp1
 else
 echo "** ristosds or hdfed not available ***"
 fi
 
 if [ $errors -eq 1 ]; then
-   echo " ristosds failed ***"
-   errors=0
+  echo " ********* NOTE ***************"
+  echo " ristosds might have failed ***"
+  echo " please run the following by hand to verify "
+  echo " "
+  echo " /bin/rm -f storm*.hdf hdfed.tmp1 "
+  echo " cp testfiles/storm110.hdf testfiles/storm120.hdf testfiles/storm130.hdf . "
+  echo "./ristosds storm*.hdf -o storm.hdf "
+  echo "./hdfed < ristosds.input1 >& hdfed.tmp1 "
+  echo " diff  hdfed.tmp1 ristosds.out1"
+  errors=0
 fi
 
 
@@ -74,15 +98,25 @@ cp testfiles/test.hdf .
 ./hdfpack -b test.hdf test.blk
 ./hdfls test.hdf > hdfls.tmp1 2>&1
 ./hdfls test.pck >> hdfls.tmp1 2>&1
-diff -w hdfls.tmp1 hdfpack.out1 || errors=1
+diff  hdfls.tmp1 hdfpack.out1 || errors=1
 /bin/rm -f test.hdf test.blk test.pck hdfls.tmp1
 else
 echo "** hdfpack or hdfls not available ***"
 fi
 
 if [ $errors -eq 1 ]; then
-   echo " hdfpack failed ***"
-   errors=0
+    echo " ********* NOTE ***************"
+    echo " hdfpack might have failed ***"
+    echo " please run the following by hand to verify "
+    echo " "
+    echo "/bin/rm -f test.hdf test.blk test.pck hdfls.tmp1 "
+    echo " cp testfiles/test.hdf . "
+    echo "./hdfpack test.hdf test.pck "
+    echo "./hdfpack -b test.hdf test.blk "
+    echo "./hdfls test.hdf >& hdfls.tmp1 "
+    echo "./hdfls test.pck >>& hdfls.tmp1 "
+    echo " diff hdfls.tmp1 hdfpack.out1 "
+    errors=0
 fi
 
 #hdftopal/paltohdf
@@ -99,7 +133,15 @@ echo "** hdftopal or paltohdf not available ***"
 fi
 
 if [ $errors -eq 1 ]; then
-   echo " hdftopal/paltohdf failed ***"
+  echo " ********* NOTE ***************"
+    echo " hdftopal or paltohdf might have failed ***"
+    echo " please run the following by hand to verify "
+    echo " "
+    echo " /bin/rm -f palette.* "
+    echo " cp testfiles/palette.raw . "
+    echo "./paltohdf palette.raw palette.hdf "
+    echo "./hdftopal palette.hdf palette.raw.new "
+    echo "cmp palette.raw palette.raw.new "
    errors=0
 fi
 
@@ -112,7 +154,7 @@ cp testfiles/storm*.raw testfiles/palette.raw .
 ./r8tohdf 57 57 storm.hdf -p palette.raw -i storm110.raw
 ./hdftor8 storm.hdf
 ./hdfls -l storm.hdf > hdfls.tmp2 2>&1
-diff -w hdfls.tmp2 hdftor8.out1 || errors=1
+diff  hdfls.tmp2 hdftor8.out1 || errors=1
 cmp img001-057.057  storm110.raw || errors=1
 cmp img002-057.057  storm120.raw || errors=1
 cmp img003-057.057  storm130.raw || errors=1
@@ -123,7 +165,21 @@ echo "** r8tohdf, hdftor8 or hdfls not available ***"
 fi
 
 if [ $errors -eq 1 ]; then
-   echo " r8tohdf/hdftor8 failed ***"
+  echo " ********* NOTE ***************"
+    echo " r8tohdf or hdftor8 might have failed ***"
+    echo " please run the following by hand to verify "
+    echo " "
+    echo "/bin/rm -f storm* img* palette.raw hdfls.tmp2 pal005 "
+    echo "cp testfiles/storm*.raw testfiles/palette.raw . "
+    echo "./r8tohdf 57 57 storm.hdf storm*.raw "
+    echo "./r8tohdf 57 57 storm.hdf -p palette.raw -i storm110.raw "
+    echo "./hdftor8 storm.hdf "
+    echo " ./hdfls -l storm.hdf >& hdfls.tmp2 "
+    echo " diff hdfls.tmp2 hdftor8.out1 "
+    echo "cmp img001-057.057  storm110.raw "
+    echo "cmp img002-057.057  storm120.raw "
+    echo "cmp img003-057.057  storm130.raw "
+    echo "cmp img004-057.057  storm140.raw "
    errors=0
 fi
 
@@ -136,14 +192,24 @@ cp testfiles/storm*.hdf .
 ./hdfcomp allcomp.hdf -c storm*.hdf
 ./hdfls -l allstorms.hdf > hdfls.tmp3 2>&1
 ./hdfls -l allcomp.hdf >> hdfls.tmp3 2>&1
-diff -w hdfls.tmp3 hdfcomp.out1 || errors=1
+diff  hdfls.tmp3 hdfcomp.out1 || errors=1
 /bin/rm -f storm*.hdf all*.hdf hdfls.tmp3
 else
 echo "** hdfcomp or hdfls not available ***"
 fi
 
 if [ $errors -eq 1 ]; then
-   echo " hdfcomp failed ***"
+  echo " ********* NOTE ***************"
+    echo " hdfcomp might have failed ***"
+    echo " please run the following by hand to verify "
+    echo " "
+    echo "/bin/rm -f storm*.hdf all*.hdf hdfls.tmp3 "
+    echo "cp testfiles/storm*.hdf . "
+    echo "./hdfcomp allstorms.hdf storm*.hdf "
+    echo "./hdfcomp allcomp.hdf -c storm*.hdf "
+    echo "./hdfls -l allstorms.hdf >& hdfls.tmp3 "
+    echo "./hdfls -l allcomp.hdf >>& hdfls.tmp3 "
+    echo "diff hdfls.tmp3 hdfcomp.out1 "
    errors=0
 fi
 
@@ -155,7 +221,7 @@ cp testfiles/jpeg_img.jpg .
 ./jpeg2hdf jpeg_img.jpg jpeg.hdf
 ./hdf2jpeg jpeg.hdf jpeg2.jpg
 ./hdfls -l jpeg.hdf > hdfls.tmp4 2>&1
-diff -w hdfls.tmp4 jpeg2hdf.out1 || errors=1
+diff  hdfls.tmp4 jpeg2hdf.out1 || errors=1
 cmp jpeg_img.jpg jpeg2.jpg || errors=1
 /bin/rm -f jpeg.hdf jpeg_img.jpg jpeg2.jpg hdfls.tmp4
 else
@@ -163,7 +229,17 @@ echo "** jpeg2hdf, hdf2jpeg or hdfls  not available ***"
 fi
 
 if [ $errors -eq 1 ]; then
-   echo " jpeg2hdf/hdf2jpeg failed ***"
+  echo " ********* NOTE ***************"
+    echo " jpeg2hdf or hdf2jpeg might have failed ***"
+    echo " please run the following by hand to verify "
+    echo " "
+    echo "/bin/rm -f jpeg.hdf jpeg_img.jpg jpeg2.jpg hdfls.tmp4 "
+    echo "cp testfiles/jpeg_img.jpg . "
+    echo "./jpeg2hdf jpeg_img.jpg jpeg.hdf "
+    echo "./hdf2jpeg jpeg.hdf jpeg2.jpg "
+    echo "./hdfls -l jpeg.hdf >& hdfls.tmp4 "
+    echo "diff hdfls.tmp4 jpeg2hdf.out1 "
+    echo "cmp jpeg_img.jpg jpeg2.jpg "
    errors=0
 fi
 
@@ -188,16 +264,40 @@ echo "** Testing fp2hdf  ***"
 ./hdfls -l cb64r3.hdf >> hdfls.tmp5 2>&1
 ./hdfls -l ctxtr2_ris.hdf >> hdfls.tmp5 2>&1
 ./hdfls -l cb64r2_ris.hdf >> hdfls.tmp5 2>&1
-diff -w hdfls.tmp5 fp2hdf.out1 || errors=1
+diff  hdfls.tmp5 fp2hdf.out1 || errors=1
 ./hdfed < fp2hdf.input1 > hdfed.tmp6 2>&1
-diff -w hdfed.tmp6 fp2hdf.out2 || errors=1
+diff  hdfed.tmp6 fp2hdf.out2 || errors=1
 /bin/rm -f ctxtr* cb* *.hdf hdfls.tmp5 hdfed.tmp5
 else
 echo "** fp2hdf, hdfed or hdfls not available ***"
 fi
 
 if [ $errors -eq 1 ]; then
-   echo " fp2hdf failed ***"
+  echo " ********* NOTE ***************"
+  echo " fp2hdf might have failed ***"
+  echo " please run the following by hand to verify "
+  echo " "
+  echo "  /bin/rm -f ctxtr* cb* *.hdf hdfls.tmp5 hdfed.tmp5 "
+  echo " ./fptest "
+  echo " ./fp2hdf ctxtr2 -o ctxtr2.hdf "
+  echo " ./fp2hdf ctxtr3 -o ctxtr3.hdf "
+  echo " ./fp2hdf cb32r2 -o cb32r2.hdf "
+  echo " ./fp2hdf cb32r3 -o cb32r3.hdf "
+  echo " ./fp2hdf cb64r2 -o cb64r2.hdf "
+  echo " ./fp2hdf cb64r3 -o cb64r3.hdf "
+  echo " ./fp2hdf ctxtr2 -o ctxtr2_ris.hdf -raster -e 50 50 "
+  echo " ./fp2hdf cb64r2 -o cb64r2_ris.hdf -raster -i 50 50 -f "
+  echo " ./hdfls -l ctxtr2.hdf >&  hdfls.tmp5 "
+  echo " ./hdfls -l ctxtr3.hdf >>& hdfls.tmp5 "
+  echo " ./hdfls -l cb32r2.hdf >>& hdfls.tmp5 "
+  echo " ./hdfls -l cb32r3.hdf >>& hdfls.tmp5 "
+  echo " ./hdfls -l cb64r2.hdf >>& hdfls.tmp5 "
+  echo " ./hdfls -l cb64r3.hdf >>& hdfls.tmp5 "
+  echo " ./hdfls -l ctxtr2_ris.hdf >>& hdfls.tmp5 "
+  echo " ./hdfls -l cb64r2_ris.hdf >>& hdfls.tmp5 "
+  echo " diff hdfls.tmp5 fp2hdf.out1 "
+  echo " ./hdfed < fp2hdf.input1 >& hdfed.tmp6 "
+  echo " diff hdfed.tmp6 fp2hdf.out2 "
 fi
 
 #
