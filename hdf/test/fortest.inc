@@ -37,10 +37,8 @@ C     9		High:	Highest level.  All information.
      +		VERBO_HI   = 9
      +		)
 
-	integer FAIL, SUCCEED, FALSE, TRUE
+	integer FALSE, TRUE
 	parameter (
-     +		FAIL = -1,
-     +		SUCCEED = 0,
      +		FALSE = 0,
      +		TRUE = 1
      +		)
