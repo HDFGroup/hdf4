@@ -207,7 +207,7 @@ nc_type type ;
 		}
 		break ;
 	default :
-		HDmemset(lo,0xff,hi-lo) ;
+		HDmemset(lo,0xff,len) ;
 		break ;
 	}
 }
