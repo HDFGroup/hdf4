@@ -57,7 +57,10 @@ C:
        -I<path for hdf include directory>\
        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
-
+FORTRAN:
+    f77 -o <your program> <your program>.f  \
+        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
+ 
 Dec Alpha/OpenVMS AXP:
 ---------------------
    To compile your programs, prog.c and prog1.for, with the HDF library, 
@@ -182,8 +185,8 @@ Solaris_x86 (C only):
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz  \
         -L/usr/lib -lnsl
 
-SP2:
-----
+SP:
+---
 C:
     xlc -qlanglvl=ansi -O -o <your program> <your program>.c \
         -I<path for hdf include directory> \
