@@ -31,7 +31,7 @@ CC=cc
 
 # Fortran compilier
 FC = f77
-FFLAGS = -O -Nn802 -Nx400
+FFLAGS = -O
 #FFLAGS = -g
 
 # Name of achive randomizer, usually ranlib (use 'true' if non-existant)
