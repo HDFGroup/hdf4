@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/07/15 21:48:48  sxu
-No change.
+Revision 1.4  1992/08/18 19:56:09  chouck
+Fixed some casting problems for SGI -ansi
 
+ * Revision 1.3  1992/07/15  21:48:48  sxu
+ * No change.
+ *
  * Revision 1.2  1992/07/14  17:50:30  mlivin
  * removed Sun pixrect stuff
  *
@@ -111,7 +114,7 @@ void goTo(desc)
 int oldcf=0;			/* old value of compression flag */
 int oldx=0,oldy=0;		/* old values of xdim and ydim */
 int coldx=0,coldy=0;		/* old values of xdim and ydim for CI8s */
-int xdim=0,ydim=0;  		/* size of image on disk */
+int32 xdim=0,ydim=0;  		/* size of image on disk */
 int xwhere,ywhere;		/* where to put it on the screen */
 int ispal;
 int large;			/* should make images as large as possible */
@@ -122,7 +125,7 @@ int factor;
 
 unsigned char rgb[768];		/* storage for a palette */
 char *wherebig=NULL;	/* where to store small image */
-char *wheresmall=NULL;	/* where to store image-related stuff */
+uint8 *wheresmall = NULL;	/* where to store image-related stuff */
 
 #ifdef PROTOTYPE
 int getSpace(void)
@@ -139,7 +142,7 @@ int getSpace()
 	if (wheresmall)
 	    free(wheresmall);
 	
-	if (NULL == (wheresmall = (char *) HDgetspace(xdim*ydim))) {
+	if (NULL == (wheresmall = (uint8 *) HDgetspace(xdim*ydim))) {
 	    printf(" Cannot allocate memory, fatal error\n");
 	    exit(1);
 	}
@@ -238,8 +241,7 @@ int rImage(usepal)
 #endif
 {
     int i,j,newxsize;
-    unsigned char *space,*thisline;
-    unsigned char *thischar;
+    int8 *thisline, *space, *thischar;
     register unsigned char c;
 
 /*
@@ -254,7 +256,7 @@ int rImage(usepal)
     if (usepal) {
 	(void)printf("\033^M;0;256;768;rseq^");  /* start map */
 
-	thischar = rgb;
+	thischar = (int8 *) rgb;
 	for (j=0; j<768; j++) {
 	    c = *thischar++;
 	    if (c > 31 && c < 123) {
@@ -271,8 +273,8 @@ int rImage(usepal)
 *  Send the data for the image with RLE encoding for efficiency.
 *  Encode each line and send it.
 */
-    space = (unsigned char *) malloc(ydim+128);
-    thisline = (unsigned char *) wheresmall;
+    space    = (int8 *) malloc(ydim+128);
+    thisline = (int8 *) wheresmall;
 
     for (i = 0; i < ydim; i++) {
         newxsize = rleIt(thisline,space,xdim);
