@@ -2,6 +2,11 @@
 #include <stdio.h>
 #include "hdf.h"
 
+#ifdef WIN32
+#include <sys/stat.h>
+#include <fcntl.h>
+#endif
+
 /*
  * Name:
  *      fptest
@@ -122,6 +127,12 @@ main(int argc, char * argv[] )
      * text file - rank 2 & 3
      */
 
+/* For WINDOWS platform, file mode should be set explicitly. 
+   For text mode, set it to Text; for binary mode, set it to BINARY. */
+
+#ifdef WIN32
+     _fmode = _O_TEXT;
+#endif
     sp = fopen("ctxtr2", "w");
     (void) fprintf(sp, "%s\n", text);
     (void) fprintf(sp, "%10d%10d%10d\n", ione, nrow, ncol);
@@ -165,7 +176,9 @@ main(int argc, char * argv[] )
     /*
      * binary 32-bit file - rank 2 & 3
      */
-
+#ifdef WIN32                                                                                       
+   _fmode = _O_BINARY;
+#endif 
 #ifndef UNICOS
     sp = fopen("cb32r2", "w");
     (void) fwrite(fp32, sizeof(int), 1, sp);

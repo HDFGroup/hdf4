@@ -160,6 +160,11 @@
 #include <string.h>
 #include <ctype.h>
 
+#ifdef WIN32
+#include <sys/stat.h>
+#include <fcntl.h>
+#endif
+
 /*
  * global macros
  */
@@ -355,10 +360,15 @@ main(int argc, char *argv[])
     int         token;
     int         state = 0;
 
+    
     const char *err1 = "Invalid number of arguments:  %d.\n";
     const char *err2 = "Error in state table.\n";
     const char *err3 = "No output file given.\n";
     const char *err4 = "Program aborted.\n";
+
+#ifdef WIN32
+	_fmode = _O_BINARY;
+#endif
 
     /*
      * set 'stdout' and 'stderr' to line-buffering mode
@@ -712,7 +722,8 @@ gfloat(char *infile, FILE * strm, float32 *fp32, struct Input *in)
 
     if (in->is_text == TRUE)
       {
-          if (fscanf(strm, "%e", fp32) != 1)
+
+		if (fscanf(strm, "%e", fp32) != 1)
             {
                 (void) fprintf(stderr, err1, infile);
                 goto err;
@@ -720,6 +731,7 @@ gfloat(char *infile, FILE * strm, float32 *fp32, struct Input *in)
       }
     else if (in->is_fp32 == TRUE)
       {
+		
           if (fread((char *) fp32, sizeof(float32), 1, strm) != 1)
             {
                 (void) fprintf(stderr, err1, infile);
@@ -1100,8 +1112,12 @@ gtype(char *infile, struct Input *in, FILE **strm)
                 (void) fprintf(stderr, err2, infile);
                 goto err;
             }
-          if (!HDmemcmp("TEXT", buf, 4) || !HDmemcmp("text", buf, 4))
+          if (!HDmemcmp("TEXT", buf, 4) || !HDmemcmp("text", buf, 4)) {
+#ifdef WIN32
+			  _fmode = _O_TEXT;
+#endif
               in->is_text = TRUE;
+		  }
           else
             {
                 rewind(*strm);
@@ -1120,6 +1136,7 @@ gtype(char *infile, struct Input *in, FILE **strm)
                       (void) fprintf(stderr, err3, infile);
                       goto err;
                   }
+		
             }
       }
 
