@@ -60,7 +60,6 @@ C read and run one test command at a time
 
 	if (CleanUp) call Hsystem(CleanUpCMD)
 
-	stop
 	end
 
 
