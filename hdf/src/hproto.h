@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.6  1992/10/01 02:54:34  chouck
-Added function DF24lastref()
+Revision 1.7  1992/10/08 18:27:07  chouck
+Fixed prototype for DFfindnextref()
 
+ * Revision 1.6  1992/10/01  02:54:34  chouck
+ * Added function DF24lastref()
+ *
  * Revision 1.5  1992/09/15  19:58:20  koziol
  * CHanged major and minor -> majorv and minorv respectively
  *
@@ -1173,7 +1176,7 @@ extern FRETVAL(intf) ndfiishdf
 ** from dfutil.c
 */
 extern uint16 DFfindnextref
-  PROTO((intf file_id, uint16 tag, uint16 lref));
+  PROTO((int32 file_id, uint16 tag, uint16 lref));
 
 /*
 ** from dfutilF.c
