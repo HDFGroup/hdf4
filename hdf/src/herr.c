@@ -113,28 +113,17 @@ HEstring(hdf_err_code_t error_code)
 {
 #ifndef OLD_WAY
     int         i;              /* temp int index */
-    char _HUGE *ret_value = DEFAULT_MESG; /* otherwise, return default message */
 
     /* look for the error_code in error message table */
     for (i = 0; i < ERRMESG_SZ; i++)
         if (error_messages[i].error_code == error_code)
-          {
-            ret_value = error_messages[i].str;
-            break;
-          }
+            return error_messages[i].str;
+
+    /* otherwise, return default message */
+    return DEFAULT_MESG;
 #else
-    ret_value = (error_messages[error_code].str);
+    return (error_messages[error_code].str);
 #endif
-
-done:
-  if(ret_value == NULL)   
-    { /* Error condition cleanup */
-
-    } /* end if */
-
-  /* Normal function cleanup */
-
-  return ret_value;
 } /* HEstring */
 
 /*--------------------------------------------------------------------------
