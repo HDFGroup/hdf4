@@ -39,6 +39,7 @@
  * manipulating a memory pool. This version however is not 
  * compatible with the original Berkley version.
  *
+ * AUTHOR - GeorgeV
  *****************************************************************************/ 
 
 /* $Id$ */
