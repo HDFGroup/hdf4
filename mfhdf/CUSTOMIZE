@@ -22,12 +22,13 @@
 # CC='gcc -traditional'
 #
 # C compiler flags (default is `-O'):
-CFLAGS=-g
+CFLAGS=-O
 #
 # C preprocessor flags 
 # CPPFLAGS=-DNDEBUG
 #
-HDF_HOME=`pwd`/..
+# Location of the HDF home.  Must be an absolute path.
+HDF_HOME=`cd ..; pwd`
 # Location of HDF include files.  Must be an absolute path.
 HDF_INC=-I${HDF_HOME}/hdf/include
 #
