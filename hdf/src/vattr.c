@@ -300,7 +300,13 @@ intn VSsetattr(int32 vsid, int32 findex, const char *attrname,
 #endif /* HAVE_PABLO */
 
      HEclear();
+
+     /* check if id is valid vdata */
      if (HAatom_group(vsid) != VSIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+     /* check for null attribute name */
+     if (attrname == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
      /* locate vs' index in vstab */
@@ -530,8 +536,14 @@ intn VSfindattr(int32 vsid, int32 findex, const char *attrname)
 #endif /* HAVE_PABLO */
 
      HEclear();
+     /* check if id is valid vdata */
      if (HAatom_group(vsid) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
+
+     /* check for null attribute name */
+     if (attrname == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
      /* locate vs' index in vstab */
      if (NULL == (vs_inst = (vsinstance_t *)HAatom_object(vsid)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
@@ -893,7 +905,13 @@ intn Vsetattr(int32 vgid, const char *attrname, int32 datatype,
 #endif /* HAVE_PABLO */
 
     HEclear();
+
+    /* check if id is valid vgroup */
     if (HAatom_group(vgid)!=VGIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* check for null attribute name */
+    if (attrname == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
@@ -1114,8 +1132,15 @@ intn Vfindattr(int32 vgid, const char *attrname)
 #endif /* HAVE_PABLO */
 
     HEclear();
+
+    /* check if id is valid vgroup */
     if (HAatom_group(vgid) != VGIDGROUP)
        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* check for null attribute name */
+    if (attrname == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
     /* locate vg's index in vgtab */
     if (NULL == (v = (vginstance_t *)HAatom_object(vgid)))
        HGOTO_ERROR(DFE_VTAB, FAIL);

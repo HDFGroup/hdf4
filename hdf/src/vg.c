@@ -567,6 +567,10 @@ VSsetname(int32 vkey,        /* IN: Vdata key */
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
+    /* check for null vdata name */
+    if (vsname == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
     /* get vdata instance */
     if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
@@ -637,6 +641,10 @@ VSsetclass(int32 vkey,         /* IN: vdata key */
 
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* check for null vdata class */
+    if (vsclass == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get vdata instance */
@@ -763,6 +771,10 @@ VSgetclass(int32 vkey,    /* IN: vdata key */
 
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* check user allocated space */
+    if (vsclass == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get vdata instance */
@@ -1060,13 +1072,15 @@ Vfind(HFILEID f,          /* IN: file id */
     vginstance_t *v = NULL;
     VGROUP       *vg = NULL;
     int32       ret_value = 0;
-#ifdef LATER
     CONSTR(FUNC, "Vfind");
-#endif
 
 #ifdef HAVE_PABLO
   TRACE_ON(PABLO_mask,ID_Vfind);
 #endif /* HAVE_PABLO */
+
+    /* check for null vgroup name */
+    if (vgname == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* process through Vgroups in file */
     while (FAIL != (vgid = Vgetid(f, vgid)))
@@ -1119,13 +1133,15 @@ VSfind(HFILEID f,          /* IN: file id */
     vsinstance_t *v = NULL;
     VDATA        *vs = NULL;
     int32 ret_value = 0;
-#ifdef LATER
     CONSTR(FUNC, "VSfind");
-#endif
 
 #ifdef HAVE_PABLO
   TRACE_ON(PABLO_mask,ID_VSfind);
 #endif /* HAVE_PABLO */
+
+    /* check for null vdata name */
+    if (vsname == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* process through Vdatas in file */
     while (FAIL != (vsid = VSgetid(f, vsid)))
@@ -1178,13 +1194,15 @@ Vfindclass(HFILEID f,           /* IN: file id */
     vginstance_t *v = NULL;
     VGROUP       *vg = NULL;
     int32       ret_value = 0;
-#ifdef LATER
     CONSTR(FUNC, "Vfindclass");
-#endif
 
 #ifdef HAVE_PABLO
   TRACE_ON(PABLO_mask,ID_Vfindclass);
 #endif /* HAVE_PABLO */
+
+    /* check for null vgroup class */
+    if (vgclass == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* process through Vgroups in file */
     while (FAIL != (vgid = Vgetid(f, vgid)))
@@ -1237,13 +1255,15 @@ VSfindclass(HFILEID f,           /* IN: file id */
     vsinstance_t *v = NULL;
     VDATA        *vs = NULL;
     int32        ret_value = 0;
-#ifdef LATER
-    CONSTR(FUNC, "VSfind");
-#endif
+    CONSTR(FUNC, "VSfindclass");
 
 #ifdef HAVE_PABLO
   TRACE_ON(PABLO_mask,ID_VSfindclass);
 #endif /* HAVE_PABLO */
+
+    /* check for null vdata class */
+    if (vsclass == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* process through Vdatas in file */
     while (FAIL != (vsid = VSgetid(f, vsid)))
