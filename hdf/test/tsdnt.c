@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1992/06/26 20:35:06  chouck
-Changed output names
+Revision 1.7  1992/07/09 15:33:29  mfolk
+Added header that explains what it tests.
 
+ * Revision 1.6  1992/06/26  20:35:06  chouck
+ * Changed output names
+ *
  * Revision 1.4  1992/05/31  15:32:37  mfolk
  * Change type of rank and dims[2] from int to int32 for Convex.
  *
@@ -21,6 +24,19 @@ Changed output names
  * Initial revision
  *
 */
+
+/***********************************************************
+*
+* Test program to test use of different number types in SDS.
+* Creates arrays of all types.
+* Stores arrays in individual files and reads them back. 
+* Stores all arrays in one file and reads them back.
+*
+* NOTE: Native mode not tested in this program.  See tsdnnt.c
+*       for same tests applied to native mode.
+*
+*************************************************************/
+
 #include "hdf.h"
 #include "dfsd.h"
 
