@@ -7561,7 +7561,7 @@ for config_file in $src_files; do
   fi
 done
 
-                                                                                                                                                                                                                                      ac_config_files="$ac_config_files Makefile hdf/Makefile hdf/src/Makefile hdf/test/Makefile hdf/util/Makefile hdf/util/h4cc hdf/util/h4fc hdf/util/testutil.sh man/Makefile mfhdf/Makefile mfhdf/dumper/Makefile mfhdf/dumper/testhdp.sh mfhdf/fortran/Makefile mfhdf/hdfimport/Makefile mfhdf/hdfimport/testutil.sh mfhdf/hdiff/Makefile mfhdf/hrepack/Makefile mfhdf/libsrc/Makefile mfhdf/ncdump/Makefile mfhdf/ncgen/Makefile mfhdf/nctest/Makefile mfhdf/pablo/Makefile mfhdf/port/Makefile"
+                                                                                                                                                                                                                                                ac_config_files="$ac_config_files Makefile hdf/Makefile hdf/src/Makefile hdf/test/Makefile hdf/util/Makefile hdf/util/h4cc hdf/util/h4fc hdf/util/h4redeploy hdf/util/testutil.sh man/Makefile mfhdf/Makefile mfhdf/dumper/Makefile mfhdf/dumper/testhdp.sh mfhdf/fortran/Makefile mfhdf/hdfimport/Makefile mfhdf/hdfimport/testutil.sh mfhdf/hdiff/Makefile mfhdf/hrepack/Makefile mfhdf/libsrc/Makefile mfhdf/ncdump/Makefile mfhdf/ncgen/Makefile mfhdf/nctest/Makefile mfhdf/pablo/Makefile mfhdf/port/Makefile"
 
 
 if test "X$build_xdr" = "Xyes"; then
@@ -8153,6 +8153,7 @@ do
   "hdf/util/Makefile" ) CONFIG_FILES="$CONFIG_FILES hdf/util/Makefile" ;;
   "hdf/util/h4cc" ) CONFIG_FILES="$CONFIG_FILES hdf/util/h4cc" ;;
   "hdf/util/h4fc" ) CONFIG_FILES="$CONFIG_FILES hdf/util/h4fc" ;;
+  "hdf/util/h4redeploy" ) CONFIG_FILES="$CONFIG_FILES hdf/util/h4redeploy" ;;
   "hdf/util/testutil.sh" ) CONFIG_FILES="$CONFIG_FILES hdf/util/testutil.sh" ;;
   "man/Makefile" ) CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
   "mfhdf/Makefile" ) CONFIG_FILES="$CONFIG_FILES mfhdf/Makefile" ;;
@@ -8976,8 +8977,8 @@ if test "$no_create" != yes; then
 fi
 
 
-chmod 755 hdf/util/h5cc
+chmod 755 hdf/util/h4cc hdf/util/h4redeploy
 
 if test "X$BUILD_FORTRAN" = "Xyes"; then
-  chmod 755 hdf/util/h5fc
+  chmod 755 hdf/util/h4fc
 fi

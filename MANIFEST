@@ -440,6 +440,7 @@
 ./hdf/util/gifread.c
 ./hdf/util/h4cc.in
 ./hdf/util/h4fc.in
+./hdf/util/h4redeploy.in
 ./hdf/util/hdf24to8.c
 ./hdf/util/hdf24to8.mak
 ./hdf/util/hdf2gif.c

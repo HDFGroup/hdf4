@@ -605,6 +605,7 @@ AC_CONFIG_FILES([Makefile
                  hdf/util/Makefile
                  hdf/util/h4cc
                  hdf/util/h4fc
+                 hdf/util/h4redeploy
                  hdf/util/testutil.sh
                  man/Makefile
                  mfhdf/Makefile
@@ -629,8 +630,8 @@ fi
 
 AC_OUTPUT
 
-chmod 755 hdf/util/h5cc
+chmod 755 hdf/util/h4cc hdf/util/h4redeploy
 
 if test "X$BUILD_FORTRAN" = "Xyes"; then
-  chmod 755 hdf/util/h5fc
+  chmod 755 hdf/util/h4fc
 fi
