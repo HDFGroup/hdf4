@@ -443,7 +443,7 @@ inpfloat(VOIDP x)
 static int32
 inpchar(VOIDP x)
 {
-    return (scanf("%c ", x));
+    return (scanf("%c ", (char *)x));
 }
 
 #define BUFSIZE 40000
