@@ -26,11 +26,11 @@ extern "C" {
 /* get the list of HDF objects in the file */
 int Hgetlist (const char* fname, dtable_t *list);
 
-int hdiff_list_vg (const char* fname,int32 file_id,dtable_t *table);
-int hdiff_list_gr (const char* fname,int32 file_id,dtable_t *table);
-int hdiff_list_sds(const char* fname,int32 file_id,dtable_t *table);
+int hdiff_list_vg (const char* fname,int32 file_id,int32 sd_id,int32 gr_id,dtable_t *table);
+int hdiff_list_gr (const char* fname,int32 file_id,int32 gr_id,dtable_t *table);
+int hdiff_list_sds(const char* fname,int32 file_id,int32 sd_id,dtable_t *table);
 int hdiff_list_vs (const char* fname,int32 file_id,dtable_t *table);
-int hdiff_list_glb(const char* fname,int32 file_id,dtable_t *table);
+int hdiff_list_glb(const char* fname,int32 file_id,int32 sd_id,int32 gr_id,dtable_t *table);
 int hdiff_list_an (const char* fname,int32 file_id,dtable_t *table);
 
 
@@ -38,12 +38,14 @@ int insert_vg_attrs(int32 vgroup_id,char *path);
 int insert_vg_an(int32 file_id,int32 vgroup_id,char *path);
 
 
-int insert_vg(const char* fname, 
-              int32 file_id, 
-              char*path_name, 
-              int32* tags, 
-              int32* refs, 
-              int npairs, 
+int insert_vg(const char* fname,
+              int32 file_id,
+              int32 sd_id,             /* SD interface identifier */
+              int32 gr_id,             /* GR interface identifier */
+              char*path_name,          /* absolute path for input group name */          
+              int32* in_tags,          /* tag list for parent group */
+              int32* in_refs,          /* ref list for parent group */
+              int npairs,              /* number tag/ref pairs for parent group */
               dtable_t *table);
 
 int  insert_sds(int32 file_id,

@@ -68,7 +68,9 @@ int insert_an_data(int32 file_id,
 
 int Hgetlist (const char* fname, dtable_t *table)
 {
- int32    file_id;
+ int32    file_id, 
+          sd_id, 
+          gr_id;
  int      n_objs=0;
 
  /* open the file for read */
@@ -78,15 +80,35 @@ int Hgetlist (const char* fname, dtable_t *table)
   return FAIL;
  }
 
+ /* initialize the SD interface */
+ if ((sd_id  = SDstart (fname, DFACC_READ))==FAIL){
+  printf( "Could not start SD for <%s>\n",fname);
+  return FAIL;
+ }
+
+ /* initialize the GR interface */
+ if ((gr_id  = GRstart (file_id))==FAIL){
+  printf( "Could not start GR for <%s>\n",fname);
+  return FAIL;
+ }
+
  /* iterate tru HDF interfaces */
- hdiff_list_vg (fname,file_id,table);
- hdiff_list_gr (fname,file_id,table);
- hdiff_list_sds(fname,file_id,table);
+ hdiff_list_vg (fname,file_id,sd_id,gr_id,table);
+ hdiff_list_gr (fname,file_id,gr_id,table);
+ hdiff_list_sds(fname,file_id,sd_id,table);
  hdiff_list_vs (fname,file_id,table);
-	hdiff_list_glb(fname,file_id,table);
+	hdiff_list_glb(fname,file_id,sd_id,gr_id,table);
 	hdiff_list_an (fname,file_id,table);
 
- /* close the HDF files */
+ /* close */
+ if (GRend (gr_id)==FAIL) {
+  printf( "Failed to close GR interface <%s>\n", fname);
+  return FAIL;
+ }
+ if (SDend (sd_id)==FAIL) {
+  printf( "Failed to close SD interface <%s>\n", fname);
+  return FAIL;
+ }
  if (Hclose (file_id) == FAIL ) {
   printf( "Failed to close file <%s>\n", fname);
   return FAIL;
@@ -111,6 +133,8 @@ int Hgetlist (const char* fname, dtable_t *table)
 
 int hdiff_list_vg(const char* fname,
                   int32 file_id,
+                  int32 sd_id,             /* SD interface identifier */
+                  int32 gr_id,             /* GR interface identifier */
                   dtable_t *table)
 {
  int32 vgroup_id,      /* vgroup identifier */
@@ -211,7 +235,7 @@ int hdiff_list_vg(const char* fname,
      refs = (int32 *) malloc(sizeof(int32) * ntagrefs);
      Vgettagrefs(vgroup_id, tags, refs, ntagrefs);
      
-     insert_vg(fname,file_id,vgroup_name,tags,refs,ntagrefs,table);
+     insert_vg(fname,file_id,sd_id,gr_id,vgroup_name,tags,refs,ntagrefs,table);
      
      if (tags ) free (tags);
      if (refs) free (refs);
@@ -250,6 +274,8 @@ int hdiff_list_vg(const char* fname,
 
 int insert_vg(const char* fname,
               int32 file_id,
+              int32 sd_id,             /* SD interface identifier */
+              int32 gr_id,             /* GR interface identifier */
               char*path_name,          /* absolute path for input group name */          
               int32* in_tags,          /* tag list for parent group */
               int32* in_refs,          /* ref list for parent group */
@@ -258,12 +284,10 @@ int insert_vg(const char* fname,
 {
  int32 vgroup_id,             /* vgroup identifier */
        ntagrefs,              /* number of tag/ref pairs in a vgroup */
-       sd_id,                 /* SD interface identifier */
        tag,                   /* temporary tag */
        ref,                   /* temporary ref */
        *tags,                 /* buffer to hold the tag numbers of vgroups   */
-       *refs,                 /* buffer to hold the ref numbers of vgroups   */
-       gr_id;                 /* GR interface identifier */
+       *refs;                 /* buffer to hold the ref numbers of vgroups   */
  char  vgroup_name[VGNAMELENMAX], vgroup_class[VGNAMELENMAX];
  char  *path=NULL;
  int   i;
@@ -317,7 +341,7 @@ int insert_vg(const char* fname,
     refs = (int32 *) malloc(sizeof(int32) * ntagrefs);
     Vgettagrefs(vgroup_id, tags, refs, ntagrefs);
     /* recurse */
-    insert_vg(fname,file_id,path,tags,refs,ntagrefs,table);
+    insert_vg(fname,file_id,sd_id,gr_id,path,tags,refs,ntagrefs,table);
     free (tags);
     free (refs);
    }
@@ -338,38 +362,26 @@ int insert_vg(const char* fname,
   case DFTAG_SD:  /* Scientific Data */
   case DFTAG_SDG: /* Scientific Data Group */
   case DFTAG_NDG: /* Numeric Data Group */
-
-   sd_id  = SDstart(fname, DFACC_RDONLY);
    insert_sds(file_id,sd_id,tag,ref,path_name,table);
-   SDend (sd_id);
-
-   
    break;
    
 /*-------------------------------------------------------------------------
  * Image
  *-------------------------------------------------------------------------
  */   
-   
   case DFTAG_RI:  /* Raster Image */
   case DFTAG_CI:  /* Compressed Image */
   case DFTAG_RIG: /* Raster Image Group */
-
   case DFTAG_RI8:  /* Raster-8 image */
   case DFTAG_CI8:  /* RLE compressed 8-bit image */
   case DFTAG_II8:  /* IMCOMP compressed 8-bit image */
-
-   gr_id  = GRstart(file_id);
    insert_gr(file_id,gr_id,tag,ref,path_name,table);
-   GRend (gr_id);
-   
    break;
 
 /*-------------------------------------------------------------------------
  * Vdata
  *-------------------------------------------------------------------------
  */   
-   
   case DFTAG_VH:  /* Vdata Header */
    insert_vs(file_id,tag,ref,path_name,table,0);
    break;
@@ -393,10 +405,10 @@ int insert_vg(const char* fname,
 
 int hdiff_list_gr(const char* fname,
                   int32 file_id,
+                  int32 gr_id,             /* GR interface identifier */
                   dtable_t *table)
 {
- int32 gr_id,             /* GR interface identifier */
-       ri_id,             /* raster image identifier */
+ int32 ri_id,             /* raster image identifier */
        n_rimages,         /* number of raster images in the file */
        n_file_attrs,      /* number of file attributes */
        ri_index,          /* index of a image */
@@ -408,17 +420,12 @@ int hdiff_list_gr(const char* fname,
        n_attrs;           /* number of attributes belong to an image */
  char  name[MAX_GR_NAME]; /* name of an image */
  
- /* initialize the GR interface */
- gr_id  = GRstart (file_id);
- 
  /* determine the contents of the file */
  if (GRfileinfo (gr_id, &n_rimages, &n_file_attrs)<0)
  {
-  GRend (gr_id);
   return -1;
  }
-
-  
+ 
  for (ri_index = 0; ri_index < n_rimages; ri_index++)
  {
   ri_id = GRselect (gr_id, ri_index);
@@ -445,10 +452,6 @@ int hdiff_list_gr(const char* fname,
   /* terminate access to the current raster image */
   GRendaccess (ri_id);
  }
- 
- /* terminate access to the GR interface */
- GRend (gr_id);
-
  return 0;
 }
 
@@ -465,10 +468,10 @@ int hdiff_list_gr(const char* fname,
 
 int hdiff_list_sds(const char* fname,
                    int32 file_id,
+                   int32 sd_id,                  /* SD interface identifier */
                    dtable_t *table)
 {
- int32 sd_id,                  /* SD interface identifier */
-       sds_id,                 /* dataset identifier */
+ int32 sds_id,                 /* dataset identifier */
        n_datasets,             /* number of datasets in the file */
        n_file_attrs,           /* number of file attributes */
        index,                  /* index of a dataset */
@@ -478,14 +481,10 @@ int hdiff_list_sds(const char* fname,
        rank,                   /* rank */
        n_attrs;                /* number of attributes */
  char  name[MAX_GR_NAME];      /* name of dataset */
- 
- /* initialize the SD interface */
- sd_id  = SDstart (fname, DFACC_READ);
- 
+
  /* determine the number of data sets in the file and the number of file attributes */
  if (SDfileinfo (sd_id, &n_datasets, &n_file_attrs)<0)
  {
-  SDend (sd_id);
   return -1;
  }
 
@@ -510,9 +509,7 @@ int hdiff_list_sds(const char* fname,
   /* terminate access to the current dataset */
   SDendaccess (sds_id);
  }
- 
- /* terminate access to the SD interface */
- SDend (sd_id);
+
  return 0;
 }
 
@@ -638,43 +635,30 @@ int insert_vg_attrs(int32 vg_in,char *path)
 
 int hdiff_list_glb(const char* fname,
                    int32 file_id,
+                   int32 sd_id,                  /* SD interface identifier */
+                   int32 gr_id,                  /* GR interface identifier */
                    dtable_t *table)
 {
- int32 sd_id,                  /* SD interface identifier */
-       gr_id,                  /* GR interface identifier */
-       n_datasets,             /* number of datasets in the file */
+ int32 n_datasets,             /* number of datasets in the file */
        n_file_attrs;           /* number of file attributes */
      
 /*-------------------------------------------------------------------------
  * insert SDS global attributes
  *-------------------------------------------------------------------------
  */ 
- 
- /* initialize the SD interface */
- sd_id  = SDstart (fname, DFACC_READ);
-
  /* determine the number of data sets in the file and the number of file attributes */
  SDfileinfo (sd_id, &n_datasets, &n_file_attrs);
  
  insert_sds_attrs(sd_id,n_file_attrs);
 
- /* terminate access to the SD interface */
- SDend (sd_id);
-
 /*-------------------------------------------------------------------------
  * insert GR global attributes
  *-------------------------------------------------------------------------
  */ 
-
- gr_id  = GRstart(file_id);
-
  /* determine the number of data sets in the file and the number of file attributes */
  GRfileinfo (gr_id, &n_datasets, &n_file_attrs);
  
  insert_gr_attrs(gr_id,n_file_attrs);
-
- /* terminate access to the GR interface */
- GRend (gr_id);
  return 0;
 }
 
