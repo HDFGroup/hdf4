@@ -618,16 +618,16 @@ STEP IV:   TESTING THE BUILD
 
        On Windows Intel Platform:
        
-       Set path to include the DLL files
-       PATH = .
+       Set path to include the DLL files or copy the files to the system
+       directory.
 
        and then run Win32debugtst.bat to test debug version or
        Win32releasetst.bat to test release version.  
         
        On Alpha Platform: 
 
-       Set path to include the DLL files 
-       PATH = .
+       Set path to include the DLL files or copy the files to the system
+       directory. 
 
        and then run Alphadebugtst.bat to test debug version or
        Alphareleasetst.bat to test release version. 
