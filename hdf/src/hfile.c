@@ -150,6 +150,10 @@ extern funclist_t ext_funcs;
    For definition of the compressed data element, see hcomp.c. */
 extern funclist_t comp_funcs;
 
+/* Functions for accessing chunked data elements.
+   For definition of the chunked data element, see hchunk.c. */
+#include "hchunks.h"
+
 #ifdef LATER
 /* Functions for accessing variable-length linked block data elements
    For definition of the big external data element, see hvblocks.c. */
@@ -163,6 +167,7 @@ functab_t   functab[] =
 	{SPECIAL_LINKED, &linked_funcs},
 	{SPECIAL_EXT, &ext_funcs},
 	{SPECIAL_COMP, &comp_funcs},
+	{SPECIAL_CHUNKED, &chunked_funcs},
 #ifdef LATER
 	{SPECIAL_VLINKED, &vlnk_funcs},
 #endif /* LATER */
@@ -816,6 +821,11 @@ Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
   
           case SPECIAL_COMP:
             if (HCPcloseAID(access_rec) == FAIL)
+              HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
+            break;
+
+          case SPECIAL_CHUNKED:
+            if (HMCPcloseAID(access_rec) == FAIL)
               HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
             break;
   
@@ -4078,6 +4088,11 @@ PRIVATE int32 hdft = 1600085855L; /* equal to '_HDF' in ascii */
  * have to reside here but since the Mac routines are the
  * only ones that use them, they reside here..
  */
+
+extern  char *mk_compound_str(int nstr, ...);
+extern  char *base_name(char *path_name, char seperator);
+extern  char *path_name(char *path_name, char seperator);
+extern  char *path_name_destr(char *path_name, char seperator);
 
 /*
  * This returns a compound string created
