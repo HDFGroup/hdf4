@@ -34,24 +34,90 @@ static char RcsId[] = "@(#)$Revision$";
 #include <string.h>
 #include "fmpio.h"
 
-/*-----------------------------------------------------------------------------
+/* global variable, use defaults */
+static fmp cur_fmp = { 0, 0}; 
+
+/******************************************************************************
+NAME
+     MPset - set pagesize and maximum number of pages to cache on next open/create
+
+DESCRIPTION
+     Set the pagesize and maximum number of pages to cache on the next 
+     open/create of a file. 
+
+RETURNS
+     Returns SUCCEED if successful and FAIL otherwise
+
+NOTE
+     Currently 'maxcache' has to be greater than 1. Maybe use special 
+     case of 0 to specify you want to turn page buffering  off.
+******************************************************************************/
+int
+MPset(int pagesize, /* IN: pagesize to use for next open/create */
+      int maxcache, /* IN: max number of pages to cache */
+      int flags     /* IN: */
+)
+{
+  int   ret    = SUCCEED;
+
+  if (pagesize >= MIN_PAGESIZE)
+    cur_fmp.pagesize = (pageno_t)pagesize;
+  else
+    ret = FAIL;
+
+  if (maxcache >= 1)
+    cur_fmp.maxcache = (pageno_t)maxcache;
+  else
+    ret = FAIL;
+
+  return ret;
+} /* MPset() */
+
+/******************************************************************************
+NAME
+     MPget - get last pagesize and max number of pages cached for open/create
+
+DESCRIPTION
+     This gets the last pagesize and maximum number of pages cached for 
+     the last open/create of a file.
+
+RETURNS
+     Returns SUCCEED.
+******************************************************************************/
+int
+MPget(int *pagesize, /* OUT: pagesize to used in last open/create */
+      int *maxcache, /* OUT: max number of pages cached in last open/create */
+      int flags      /* IN: */
+)
+{
+  int   ret    = SUCCEED;
+
+  if (pagesize != NULL)
+    *pagesize = cur_fmp.pagesize;
+  if (maxcache != NULL)
+    *maxcache = cur_fmp.maxcache;
+
+  return ret;
+} /* MPget() */
+
+/******************************************************************************
 NAME
       MPopen - open/create the file and create a memory pool for file
-USAGE
-      MPFILE *MPopen(path, flags)
-      const char *path:   IN: filename
-      int        flags:   IN: DFACC_CREATE, DFACC_READ, DFACC_WRITE,
-                              DFACC_RDWR, DFACC_ALL
-RETURNS
-      Pointer to MPFILE struct if successful and NULL otherwise
+
 DESCRIPTION
       Open/Create the file for reading/writing and create a memory pool for
       the file. Currently we let the library decide whether to use the 
       default PAGESIZE for creating pages and MAXCACHE for number of pages 
       to cache in the pool.
----------------------------------------------------------------------------- */
+
+RETURNS
+      Pointer to MPFILE struct if successful and NULL otherwise
+******************************************************************************/
 MPFILE * 
-MPopen(const char * path, int flags)
+MPopen(const char * path, /* IN: filename */
+       int flags          /* IN: DFACC_CREATE, DFACC_READ, DFACC_WRITE,
+                              DFACC_RDWR, DFACC_ALL */
+)
 {
   MPFILE *mpfs = NULL; /* File struct */
   int   ret    = SUCCEED;
@@ -101,7 +167,8 @@ MPopen(const char * path, int flags)
 
   /* create private memory pool for file 
   * currently we are sharing the pool*/
-  if ((mpfs->mp = fmpool_open(NULL,mpfs->fd,0,0)) == NULL)
+  if ((mpfs->mp = fmpool_open(NULL,mpfs->fd,cur_fmp.pagesize,cur_fmp.maxcache)) 
+      == NULL)
     {
       ret = FAIL;
       goto done;
@@ -112,6 +179,14 @@ MPopen(const char * path, int flags)
   fprintf(stderr,"MPopen: mp->pagesize =%d\n",fmpool_get_pagesize(mpfs->mp));
   fprintf(stderr,"MPopen: mp->lastpagesize=%d\n",fmpool_get_lastpagesize(mpfs->mp));
 #endif
+
+  /* Get system defaults for pagesize and maxcache for the first time
+     when specifed as such(i.e both are 0) */
+  if (cur_fmp.pagesize == 0)
+    cur_fmp.pagesize = (int)fmpool_get_pagesize(mpfs->mp);
+
+  if (cur_fmp.maxcache == 0)
+    cur_fmp.maxcache = (int)fmpool_get_maxcache(mpfs->mp);
 
   done:
   if(ret == FAIL)
@@ -126,20 +201,20 @@ MPopen(const char * path, int flags)
   return mpfs;
 } /* MPopen() */
 
-/*-----------------------------------------------------------------------------
+/******************************************************************************
 NAME
     MPclose - close the file, sync the file memory pool to disk and close it.
-USAGE
-    int MPclose(mpfs)
-    MPFILE *mfps:    IN: File Memory pool handle
-RETURNS
-    Returns SUCCEED on success and FAIL otherwise.
+
 DESCRIPTION
     First sync the file memory pool to disk. Next close the file memory pool.
     Finally close the file
----------------------------------------------------------------------------- */
+
+RETURNS
+    Returns SUCCEED on success and FAIL otherwise.
+******************************************************************************/
 int
-MPclose(MPFILE *mpfs)
+MPclose(MPFILE *mpfs /* IN: File Memory pool handle */
+)
 {
   int ret = SUCCEED;
 
@@ -191,19 +266,19 @@ MPclose(MPFILE *mpfs)
   return ret;
 } /* MPclose() */
 
-/*-----------------------------------------------------------------------------
+/******************************************************************************
 NAME
      MPflush - flush file memory pool to disk 
-USAGE
-     int MPflush(mpfs)
-     MPFILE *mpfs:  IN: File Memory pool handle
-RETURNS
-     Returns SUCCEED on success and FAIL otherwise
+
 DESCRIPTION
      Flushes the file memory pool to disk.
----------------------------------------------------------------------------- */
+
+RETURNS
+     Returns SUCCEED on success and FAIL otherwise
+******************************************************************************/
 int
-MPflush(MPFILE *mpfs)
+MPflush(MPFILE *mpfs /* IN: File Memory pool handle */
+)
 {
   int ret = SUCCEED;
 
@@ -235,30 +310,30 @@ MPflush(MPFILE *mpfs)
   return ret;
 } /* MPflush() */
 
-/*-----------------------------------------------------------------------------
+/******************************************************************************
 NAME
      MPseek - seek to the specified file offset in the memory pool
-USAGE
-     int MPseek(mpfs, offset, whence)
-     MPFILE  *mpfs:    IN: File Memory pool handle
-     off_t   offset:   IN: Offset into the file
-     int     whence:   IN: SEEK_CUR, SEEK_SET, SEEK_END
-RETURNS
-     Returns offset into the file on success and FAIL otherwise.
+
 DESCRIPTION
      Seeks to the correct page in the file depending upon the offset and the
      flag 'whence'. Similiar to the stdio routine. Assumes the flags values
      for SEEK_SET, SEEK_CUR and SEEK_END are universal. May not be true
      for non-Unix OS's.
 
-COMMENTS
+RETURNS
+     Returns offset into the file on success and FAIL otherwise.
+
+NOTE
      Note that it returns an 'int' as opposed to 'off_t'. This is 
      because the HDF library still deals with file offsets in terms of
      signed integers....*sigh*...hopefully this will be changed in a future
      release.
----------------------------------------------------------------------------- */
+******************************************************************************/
 int 
-MPseek(MPFILE *mpfs, off_t offset, int whence )
+MPseek(MPFILE *mpfs, /* IN: File Memory pool handle */
+       off_t offset, /* IN: Offset into the file */
+       int whence    /* IN: SEEK_CUR, SEEK_SET, SEEK_END */
+)
 {
   pageno_t   new_pgno = 0;
   pageno_t   pagesize = 0;
@@ -392,27 +467,27 @@ MPseek(MPFILE *mpfs, off_t offset, int whence )
   return offset;
 } /* MPseek() */
 
-/*-----------------------------------------------------------------------------
+/******************************************************************************
 NAME
      MPread  - read 'nbytes' from file memory pool into 'buf'
-USAGE
-     int MPread(mpfs, buf, nbytes)
-     MPFILE  *mpfs:   IN: File Memory pool handle
-     void    *buf:    IN: User buffer to read data into
-     size_t  nbytes:  IN: number of bytes to read in 
-RETURNS
-     Returns number of bytes read if successful and FAIL otherwise
+
 DESCRIPTION
      This routine handles getting the correct pages to read to satisfy 
      the request. The data is then copied from the memory pool into 
      the user's buffer.
 
-COMMENT
+RETURNS
+     Returns number of bytes read if successful and FAIL otherwise
+
+NOTE
      The memcpy from the buffer pool to the users buffer is an expensive
      operation.
----------------------------------------------------------------------------- */
+******************************************************************************/
 int 
-MPread(MPFILE *mpfs, void *buf, size_t nbytes )
+MPread(MPFILE *mpfs, /* IN: File Memory pool handle */
+       void *buf,    /* IN: User buffer to read data into */
+       size_t nbytes /* IN: number of bytes to read in  */
+)
 {
   size_t nr = 0;
   size_t nbr = 0;
@@ -555,27 +630,27 @@ MPread(MPFILE *mpfs, void *buf, size_t nbytes )
   return nr;
 } /* MPread() */
 
-/*-----------------------------------------------------------------------------
+/******************************************************************************
 NAME
      MPwrite - write 'nbytes' form 'buf' to the file memory pool
-USAGE
-     int MPwrite(mpfs, buf, nbytes)
-     MPFILE  *mpfs:   IN: File Memory pool handle
-     void    *buf:    IN: User buffer to write data from
-     size_t  nbytes:  IN: number of bytes to write out
-RETURNS
-     Returns number of bytes written if successful and FAIL otherwise
+
 DESCRIPTION
      This routine handles getting the correct pages to write to satisfy 
      the request. The data is then copied from the user's buffer to
      the memory pool.
 
-COMMENT
+RETURNS
+     Returns number of bytes written if successful and FAIL otherwise
+
+NOTE
      The memcpy from the the users buffer to the memory pool is an expensive
      operation.
----------------------------------------------------------------------------- */
+******************************************************************************/
 int 
-MPwrite(MPFILE *mpfs, void *buf, size_t nbytes )
+MPwrite(MPFILE *mpfs,  /* IN: File Memory pool handle */
+        void *buf,     /* IN: User buffer to write data from */
+        size_t nbytes  /* IN: number of bytes to write out */
+)
 {
   size_t nw = 0;
   size_t nbw = 0;
