@@ -3800,9 +3800,9 @@ int32 dimid;
         This routine creates a chunked SDS with the specified chunk
         lengths for each dimension according to the structure passed in. 
         Currently only the array(int32) specifiying chunk lengths can be 
-        passed in i.e. 'flags' must be set 'SD_CHUNK_LENGTHS'; 
+        passed in, i.e. 'flags' must be set 'SD_CHUNK_LENGTHS'; 
         
-        In the future maybe a different structure can be used to define
+        In the future a different structure maybe used to define
         a chunk.
 
         The dataset currently cannot have an UNLIMITED dimension.
@@ -3813,6 +3813,31 @@ int32 dimid;
         COMPRESSION support will be added later when doubly 
         special elements are handled more gracefully in the HDF core library.
 
+        e.g. 4x4 array with 2x2 chunks. The array shows the layout of
+             chunks in the chunk array.
+
+            4 ---------------------                                           
+              |         |         |                                                 
+        Y     |  (0,1)  |  (1,1)  |                                       
+        ^     |         |         |                                      
+        |   2 ---------------------                                       
+        |     |         |         |                                               
+        |     |  (0,0)  |  (1,0)  |                                      
+        |     |         |         |                                           
+        |     ---------------------                                         
+        |     0         2         4                                       
+        ---------------> X                                                       
+                                                                                
+        {                                                                    
+        int32  chunk_lengths[2];                                               
+                                                                            
+        .......                                                                    
+        chunk_lengths[0]= 2;                                                     
+        chunk_lengths[1]= 2;                                                     
+        SDsetChunk(sdsid,chunk_lengths, SD_CHUNK_LENGTHS);                      
+         ......                                                                  
+        }                                                                           
+                                                
         NOTE:
            This routine directly calls a Special Chunked Element fcn HMCxxx.
 
@@ -4255,6 +4280,21 @@ int32 sdsid;
 
         'datap' must point to a whole chunk of data.
 
+        e.g. 4x4 array with 2x2 chunks. The array shows the layout of
+             chunks in the chunk array.
+
+            4 ---------------------
+              |         |         |
+        Y     |  (0,1)  |  (1,1)  |
+        ^     |         |         |
+        |   2 ---------------------
+        |     |         |         |
+        |     |  (0,0)  |  (1,0)  |
+        |     |         |         |
+        |     ---------------------
+        |     0         2         4
+        ---------------> X
+       
         NOTE:
            This routine directly calls a Special Chunked Element fcn HMCxxx.
 
@@ -4418,6 +4458,21 @@ const VOID *datap;
 
         'datap' must point to a whole chunk of data.
 
+        e.g. 4x4 array with 2x2 chunks. The array shows the layout of
+             chunks in the chunk array.
+
+            4 ---------------------
+              |         |         |
+        Y     |  (0,1)  |  (1,1)  |
+        ^     |         |         |
+        |   2 ---------------------
+        |     |         |         |
+        |     |  (0,0)  |  (1,0)  |
+        |     |         |         |
+        |     ---------------------
+        |     0         2         4
+        ---------------> X
+
         NOTE:
            This routine directly calls a Special Chunked Element fcn HMCxxx.
 
@@ -4569,7 +4624,7 @@ DESCRIPTION
      Set the maximum number of chunks to cache.
      By default when the SDS is promoted to a chunked element the 
      maximum number of chunks in the cache is set to the number of
-     chunks along the first dimension.
+     chunks along the last dimension.
 
      The values set here affects the current SDS object's caching behaviour.
 
@@ -4582,8 +4637,8 @@ DESCRIPTION
      new 'maxcache' value only if the new 'maxcache' value is greater than the
      current number of chunks in the cache.
 
-     Use flags arguement of 'HDF_PAGEALL' if the whole object is to be cached 
-     in memory otherwise passs in zero(0). Currently you can only
+     Use flags argument of 'HDF_PAGEALL' if the whole object is to be cached 
+     in memory, otherwise pass in zero(0). Currently you can only
      pass in zero.
 
      NOTE:
