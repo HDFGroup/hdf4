@@ -141,8 +141,8 @@ case "${host}" in
   i[345]86-*-freebsd*)    files="mfhdf/libsrc/config/netcdf-fbsd.h mfhdf/fortran/config/jackets-fbsd.c mfhdf/fortran/config/netcdf-fbsd.inc mfhdf/fortran/config/ftest-fbsd.f" ;;
   *-ibm-aix*)             files="mfhdf/libsrc/config/netcdf-aix.h mfhdf/fortran/config/jackets-aix.c mfhdf/fortran/config/netcdf-aix.inc mfhdf/fortran/config/ftest-aix.f" ;;
   i386-*-solaris2*)       files="mfhdf/libsrc/config/netcdf-solarisx86.h mfhdf/fortran/config/jackets-solarisx86.c mfhdf/fortran/config/netcdf-solarisx86.inc mfhdf/fortran/config/ftest-solarisx86.f" ;;
-  *-*-solaris2*)          files= "mfhdf/libsrc/config/netcdf-solaris.h mfhdf/fortran/config/jackets-solaris.c mfhdf/fortran/config/netcdf-solaris.inc mfhdf/fortran/config/ftest-solaris.f";;
-  *-sun-*)		  files= "mfhdf/libsrc/config/netcdf-sun.h mfhdf/fortran/config/jackets-sun.c mfhdf/fortran/config/netcdf-sun.inc mfhdf/fortran/config/ftest-sun.f";;
+  *-*-solaris2*)          files="mfhdf/libsrc/config/netcdf-solaris.h mfhdf/fortran/config/jackets-solaris.c mfhdf/fortran/config/netcdf-solaris.inc mfhdf/fortran/config/ftest-solaris.f";;
+  *-sun-*)		  files="mfhdf/libsrc/config/netcdf-sun.h mfhdf/fortran/config/jackets-sun.c mfhdf/fortran/config/netcdf-sun.inc mfhdf/fortran/config/ftest-sun.f";;
   *-hp-hpux*)             files="mfhdf/libsrc/config/netcdf-hpux.h mfhdf/fortran/config/jackets-hpux.c mfhdf/fortran/config/netcdf-hpux.inc mfhdf/fortran/config/ftest-hpux.f";;
   *-convex-bsd*)          files="mfhdf/libsrc/config/netcdf-convex.h mfhdf/fortran/config/jackets-convex.c mfhdf/fortran/config/netcdf-convex.inc mfhdf/fortran/config/ftest-convex.f" ;;
   *-cray-unicos*)         files="mfhdf/libsrc/config/netcdf-unicos.h mfhdf/fortran/config/jackets-unicos.c mfhdf/fortran/config/netcdf-unicos.inc mfhdf/fortran/config/ftest-unicos.f" ;;
