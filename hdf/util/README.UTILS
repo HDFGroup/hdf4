@@ -74,7 +74,7 @@ r8tohdf/hdftor8
 
    Execute:
         r8tohdf 57 57 storm.hdf storm*.raw
-        r8tohdf 57 57 storm.hdf -p palette.raw -i storm110.raw
+        r8tohdf 57 57 storm.hdf -p palette.raw -c storm110.raw
         hdftor8 storm.hdf
 
    Use hdfls with the '-l' option to examine the HDF file.  It should
