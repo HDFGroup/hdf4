@@ -152,7 +152,7 @@ for arg in $@ ; do
              "$ext" = ".for" -o "$ext" = ".FOR" -o "$ext" = ".F90" ] ; then       
           do_compile="yes"
           compile_args="$compile_args $arg"
-          fname=`basename $arg .c`
+          fname=`basename $arg $ext`
           link_objs="$link_objs $fname.o"
         elif test "x$ext" = "x.o"; then
           if test "x$dash_c" = "xyes"; then
