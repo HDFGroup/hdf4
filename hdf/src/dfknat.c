@@ -1,9 +1,11 @@
-/************************************************************************/
-/* DFCNAT.C                                                             */
-/************************************************************************/
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
+/* $Id$ */
 
 /*------------------------------------------------------------------
- File:  dfcnat.c
+ File:  dfknat.c
 
  Purpose:
     Routines to support "native mode" conversion to and from HDF format

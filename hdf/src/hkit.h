@@ -1,15 +1,8 @@
+/* $Id$ */
+
 /*+ hkit.h
 ***  private header file for hkit routines
 +*/
-/*
-$Header$
-
-$Log$
-Revision 1.1  1993/10/10 22:10:30  koziol
-Moved Tag descriptions into a header file.  Updated compression routines.
-
- *
-*/
 
 #ifndef __HKIT_H
 
