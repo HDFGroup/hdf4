@@ -8,8 +8,8 @@ LIBRARY		= udport
 MAJOR_NO	= 2
 MINOR_NO	= 
 
-CPPFLAGS	= -I. -DNDEBUG -DHDF -DNO_HAVE_PROTOTYPES -Dconst= -DNO_STDARG -DNO_STRERROR
-CFLAGS		= -O
+CPPFLAGS	= -I. -DNDEBUG -DHDF -DNO_STRERROR
+CFLAGS		= -g
 
 PORT_CFORTRAN	= @PORT_CFORTRAN@
 NEED_FORTC	= @NEED_FORTC@
@@ -124,14 +124,14 @@ AR		= ar
 CC		= cc
 CPP		= cc -E
 INCDIR		= $(prefix)/include
-INSTALL		= /bin/install -c
-INSTALL_DATA	= $(INSTALL) -m 664
+INSTALL		= cp
+INSTALL_DATA	= $(INSTALL)
 INSTALL_PROGRAM	= $(INSTALL)
 FC		= f77
 NCDUMP		= @NCDUMP@
 NCGEN		= @NCGEN@
 NEQN		= neqn
-OS		= sunos
+OS		= irix
 SHELL		= /bin/sh
 TBL		= tbl
 

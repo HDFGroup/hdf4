@@ -456,7 +456,7 @@ AC_PROVIDE([$0])dnl
 # Check for FORTRAN compiler.
 #
 define([UC_PROG_FC], [dnl
-AC_PROGRAMS_CHECK(FC, f77 cf77)dnl
+AC_PROGRAMS_CHECK(FC, f77 cf77 fc)dnl
 if test -z "$FC"; then
   UC_NEED_VALUE(FC, [FORTRAN compiler], /bin/f77)dnl
 fi
@@ -561,6 +561,9 @@ OS_ultrix
 #endif
 #ifdef _UNICOS
 OS_unicos
+#endif
+#ifdef __convex__
+OS_convex
 #endif
 CAT_EOF
 OS=`cc -E conftest.c | sed -n '/^OS_/ {
