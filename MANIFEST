@@ -396,6 +396,7 @@
 ./hdf/test/tsdntf.f
 ./hdf/test/tsdstrf.f
 ./hdf/test/tstubsf.f
+./hdf/test/tszip.c
 ./hdf/test/tutils.h
 ./hdf/test/tv1.res
 ./hdf/test/tv2.res
@@ -838,13 +839,18 @@
 ./mfhdf/hdiff/dumplib.h
 ./mfhdf/hdiff/hdiff.c
 ./mfhdf/hdiff/hdiff.h
+./mfhdf/hdiff/hdiff_array.c
+./mfhdf/hdiff/hdiff_array.h
 ./mfhdf/hdiff/hdiff_gattr.c
-./mfhdf/hdiff/hdiff_grdata.c
+./mfhdf/hdiff/hdiff_list.c
+./mfhdf/hdiff/hdiff_list.h
 ./mfhdf/hdiff/hdiff_main.c
+./mfhdf/hdiff/hdiff_mattbl.c
+./mfhdf/hdiff/hdiff_mattbl.h
 ./mfhdf/hdiff/hdiff_misc.c
 ./mfhdf/hdiff/hdiff_sdattr.c
-./mfhdf/hdiff/hdiff_sddata.c
-./mfhdf/hdiff/hdiff_vdata.c
+./mfhdf/hdiff/hdiff_table.c
+./mfhdf/hdiff/hdiff_table.h
 ./mfhdf/hdiff/hdifftst.c
 ./mfhdf/hdiff/testhdiff.sh
 
@@ -885,6 +891,8 @@
 ./mfhdf/hzip/table.c
 ./mfhdf/hzip/table.h
 ./mfhdf/hzip/testhzip.sh
+./mfhdf/hzip/utils.c
+./mfhdf/hzip/utils.h
 ./mfhdf/hzip/verify.c
 ./mfhdf/hzip/verify.h
 ./mfhdf/hzip/zip_all.sh
@@ -910,6 +918,7 @@
 ./mfhdf/libsrc/hdfout.sav
 ./mfhdf/libsrc/hdfsds.c
 ./mfhdf/libsrc/hdftest.c
+./mfhdf/libsrc/hdftest.h
 ./mfhdf/libsrc/hdftest.mak
 ./mfhdf/libsrc/hdftest.project.hqx
 ./mfhdf/libsrc/htons.mar
@@ -1037,11 +1046,14 @@
 ./mfhdf/nctest/nctest.project.hqx
 ./mfhdf/nctest/rec.c
 ./mfhdf/nctest/slabs.c
+./mfhdf/nctest/test_unlim.cdl
+./mfhdf/nctest/test_unlim.nc
 ./mfhdf/nctest/testcdf.h
 ./mfhdf/nctest/tests.h
 ./mfhdf/nctest/val.c
 ./mfhdf/nctest/val.h
 ./mfhdf/nctest/vardef.c
+./mfhdf/nctest/varget_unlim.c
 ./mfhdf/nctest/varget.c
 ./mfhdf/nctest/vargetg.c
 ./mfhdf/nctest/varput.c

@@ -337,6 +337,16 @@ AC_PROG_CC_C_O
 AC_PROG_F77_C_O
 AC_PROG_CXXCPP
 
+dnl This is a bit of a hack. The AC_CHECK_SIZEOF macro is supposed to
+dnl #define a value in a header file. However, we don't use a generated
+dnl header file. So I check the value left over from autoconf's test  is
+dnl >= 8.
+AC_CHECK_SIZEOF([int*])
+
+if test $ac_cv_sizeof_intp -ge 8; then
+  CPPFLAGS="$CPPFLAGS -DBIG_LONGS"
+fi
+
 AC_C_BIGENDIAN([], [CPPFLAGS="$CPPFLAGS -DSWAP"])
 
 dnl Are we building this in debug or production mode? (Remove the -g flag
