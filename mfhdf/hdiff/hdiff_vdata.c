@@ -28,8 +28,8 @@ vdata_diff(int32 fid1, int32 fid2, struct fspec specp,
  int32 i, j, imatch, gfind, sfind;
  int   ret=0;
  
- char  vgname1[65], vgclass1[65], vsname1[65];
- char  vgname2[65], vgclass2[65], vsname2[65];
+ char  vgname1[VSNAMELENMAX], vgclass1[VSNAMELENMAX], vsname1[VSNAMELENMAX];
+ char  vgname2[VSNAMELENMAX], vgclass2[VSNAMELENMAX], vsname2[VSNAMELENMAX];
  
  Vstart(fid1);
  Vstart(fid2);
@@ -313,10 +313,12 @@ vdata_cmp(int32  vs1, int32  vs2,
  int32   i, j, k, iflag, err_cnt;
  int32   nv1, interlace1, vsize1;
  int32   vsotag1, vsoref1;
- char    fields1[150], vsclass1[50], vsname1[50];
+ char    fields1[VSFIELDMAX*FIELDNAMELENMAX];
+ char    vsclass1[VSNAMELENMAX], vsname1[VSNAMELENMAX];
  int32   nv2, interlace2, vsize2;
  int32   vsotag2, vsoref2;
- char    fields2[150], vsclass2[50], vsname2[50];
+ char    fields2[VSFIELDMAX*FIELDNAMELENMAX];
+ char    vsclass2[VSNAMELENMAX], vsname2[VSNAMELENMAX];
  uint8   *buf1, *buf2, *b1, *b2;
  int32   off1[60], off2[60];
  int     ret=0;
