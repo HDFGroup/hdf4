@@ -18,6 +18,10 @@
 static
 void print_dims( int r, int32 *d );
 
+
+int diff_sds_attrs(int32 sds1_id,int32 nattrs1,int32 sds2_id,int32 nattrs2,char* sds1_name);
+
+
 /*
 Examples:
 
@@ -122,9 +126,6 @@ int hdiff(char *fname1, char *fname2, struct fspec fspec)
  
  if (fspec.ga == 1) 
   nfound+=gattr_diff(sd1_id, sd2_id, fspec);
- 
- if (fspec.sa == 1)
-  nfound+=sdattr_diff(sd1_id, sd2_id, fspec);
  
  SDend(sd1_id);
  SDend(sd2_id);
@@ -361,7 +362,6 @@ int diff( char *fname1,
   case DFTAG_SD:  /* Scientific Data */
   case DFTAG_SDG: /* Scientific Data Group */
   case DFTAG_NDG: /* Numeric Data Group */
-   if (fspec.sd == 1)
    nfound=diff_sds(fname1,fname2,ref1,ref2,fspec);
   break;
 
@@ -482,6 +482,11 @@ int diff_sds(char  *fname1,
    return FAIL;
   }
 
+
+ /* flag to compare SDSs */
+ if (specp.sd == 1)
+ {
+
 /*-------------------------------------------------------------------------
  * check for input SDs
  *-------------------------------------------------------------------------
@@ -500,9 +505,6 @@ int diff_sds(char  *fname1,
  /* if var list specified, test for membership */
  if (specp.nlvars > 0 && ! varmember(vlist, sds1_index))
   goto out;
-
-
-
 
 /*-------------------------------------------------------------------------
  * check for different type
@@ -640,8 +642,13 @@ int diff_sds(char  *fname1,
  nfound=array_diff(buf1, buf2, nelms, dtype1, specp.err_limit, 
    max_err_cnt, specp.statistics, 0, 0);
   
-
-
+ } /* flag to compare SDSs */
+ 
+ /* flag to compare SDSs local attributes */
+ if (specp.sa == 1)
+ {
+  diff_sds_attrs(sds1_id,nattrs1,sds2_id,nattrs2,sds1_name);
+ }
  
 /*-------------------------------------------------------------------------
  * close
@@ -659,6 +666,97 @@ out:
  return nfound;
 }
 
+
+
+
+/*-------------------------------------------------------------------------
+ * Function: diff_sds_attrs
+ *
+ * Purpose: compare SDS attributes
+ *
+ * Return: 
+ *
+ * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ *
+ * Date: September 2, 2003
+ *
+ *-------------------------------------------------------------------------
+ */
+
+int diff_sds_attrs(int32 sds1_id,int32 nattrs1,int32 sds2_id,int32 nattrs2,char* sds1_name)
+{
+ int32 dtype1,                 /* SDS data type */
+       nelms1,                 /* number of elements */
+       dtype2,                 /* SDS data type */
+       nelms2;                 /* number of elements */
+ char  attr1_name[MAX_NC_NAME];
+ char  attr2_name[MAX_NC_NAME];
+ VOIDP attr1_buf=NULL;
+ VOIDP attr2_buf=NULL;
+ int   i, cmp;
+
+ if ( nattrs1!=nattrs2) {
+  printf( "Different number of atrributes\n");
+  return -1;
+ }
+
+ /* loop through attributes */
+ for (i = 0; i < nattrs1; i++) 
+ {
+  if (SDattrinfo (sds1_id, i, attr1_name, &dtype1, &nelms1) == FAIL) {
+   printf( "Cannot get info for attribute number %d\n", i);
+   continue;
+  }
+  
+  if (SDattrinfo (sds2_id, i, attr2_name, &dtype2, &nelms2) == FAIL) {
+   printf( "Cannot get info for attribute number %d\n", i);
+   continue;
+  }
+
+  if (dtype1 != dtype2 || nelms1 != nelms2 || (strcmp(attr1_name,attr2_name)!=0)) {
+   printf( "Different information for attribute <%d>\n", i);
+   continue;
+  }
+  
+  attr1_buf = (void *) malloc((unsigned)nelms1*DFKNTsize(dtype1));
+  if (!attr1_buf) {
+   printf("Out of memory!");
+   return -1;
+  }
+  attr2_buf = (void *) malloc((unsigned)nelms2*DFKNTsize(dtype2));
+  if (!attr2_buf) {
+   printf("Out of memory!");
+   return -1;
+  }
+ 
+  if (SDreadattr(sds1_id, i, attr1_buf)==FAIL ) {
+   printf( "Could not read attribute number %d\n", i);
+   continue;
+  }
+  if (SDreadattr(sds2_id, i, attr2_buf)==FAIL ) {
+   printf( "Could not read attribute number %d\n", i);
+   continue;
+  }
+
+
+  cmp = HDmemcmp(attr1_buf,attr2_buf,nelms1*DFKNTsize(dtype1));
+  if (cmp!=0)
+  {
+   printf("\n---------------------------\n");
+   printf ("%s:%s = \n",sds1_name,attr1_name);
+   printf("<<<<\n");
+   pr_att_vals(dtype1, nelms1, attr1_buf);
+   printf (" ;\n");
+   printf(">>>>\n");
+   pr_att_vals(dtype2, nelms2, attr2_buf);
+   printf (" ;\n");
+
+  }
+ 
+ }
+
+ return 1;
+}
 
 
 /*-------------------------------------------------------------------------

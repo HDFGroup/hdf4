@@ -5,6 +5,13 @@ $hdiff hdifftst1.hdf hdifftst2.hdf
 Index: 1,   File1: 1,   File2: 2
 Index: 2,   File1: 1,   File2: 3
 Index: 3,   File1: 1,   File2: 4
+
+---------------------------
+dset1:Valid_range = 
+<<<<
+1.f, 1.f ;
+>>>>
+1.f, 2.f ;
 Index: 1,   File1: 1,   File2: 2
 Index: 2,   File1: 1,   File2: 3
 Index: 3,   File1: 1,   File2: 4
@@ -28,12 +35,3 @@ Vdata Name: vdata3 (Data record comparison)
 Attr Name: File_contents
 < "Storm_track_data1"
 > "Storm_track_data2"
-
----------------------------
-SD Name: dset1
-<<<<
-Dimension: (3, 2) ;
-	dset1:Valid_range = 1.f, 1.f ;
->>>>
-Dimension: (3, 2) ;
-	dset1:Valid_range = 1.f, 2.f ;

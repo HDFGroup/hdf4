@@ -83,6 +83,7 @@ sdattr_diff(int32 sdid1, int32 sdid2, struct fspec specp)
   iret2 = SDgetinfo(varid2, var2.name, &var2.ndims, var2.dims, &var2.type,
    &var2.natts);
   
+#if 1
   iflag = 0;
   if (var1.ndims != var2.ndims || var1.type != var2.type || 
    var1.natts != var2.natts)
@@ -94,6 +95,7 @@ sdattr_diff(int32 sdid1, int32 sdid2, struct fspec specp)
     if (var1.dims[id] != var2.dims[id])
      iflag = 1;
   }
+#endif
   
   if (iflag == 0)    /* check attributes of the sd */
   {
