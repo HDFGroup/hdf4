@@ -39,22 +39,6 @@
 
 #include "vg.h"
 
-#ifdef MAC
- int32 show_help_msg(void);
- int32 vgadd(char *, char *);
- int32 vsadd(char *,char *, char *);
- int32 vsetlink (char *, int, int*, int);
- int32 scanit (char*, char***, int**, int**);
- int32 inpdata ( unsigned char**);  
- int32 compact (char *,char *);
- int32 savfld (char *,int, int);
- int32 savtype (char *,int, int);
- int32 separate(char *ss, char *, int32*);
- void showfmttypes(void);
-
-
-#endif
-
 /*
  * Prototypes of local functions
  */
