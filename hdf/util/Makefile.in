@@ -154,8 +154,8 @@ PROGS = gif2hdf h4cc hdf2gif hdf2jpeg hdf24to8 hdf8to24 hdfcomp hdfed hdfls \
         ristosds vmake vshow 
 
 
-@HDF_BUILD_FORTRAN_TRUE@H4SCRIPTS = h4cc h4fc
-@HDF_BUILD_FORTRAN_FALSE@H4SCRIPTS = h4cc
+@HDF_BUILD_FORTRAN_TRUE@H4SCRIPTS = h4redeploy h4cc h4fc
+@HDF_BUILD_FORTRAN_FALSE@H4SCRIPTS = h4redeploy h4cc
 
 bin_PROGRAMS = $(PROGS) $(H4SCRIPTS)
 
@@ -239,6 +239,10 @@ h4cc_DEPENDENCIES =
 @HDF_BUILD_FORTRAN_TRUE@h4fc_LDADD = 
 @HDF_BUILD_FORTRAN_TRUE@h4fc_DEPENDENCIES = 
 
+h4redeploy_SOURCES = 
+h4redeploy_LDADD = 
+h4redeploy_DEPENDENCIES = 
+
 
 #############################################################################
 #############################################################################
@@ -249,7 +253,7 @@ subdir = hdf/util
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/hdf/src/h4config.h
-CONFIG_CLEAN_FILES = h4cc h4fc testutil.sh
+CONFIG_CLEAN_FILES = h4cc h4fc h4redeploy testutil.sh
 @HDF_BUILD_FORTRAN_TRUE@bin_PROGRAMS = gif2hdf$(EXEEXT) h4cc$(EXEEXT) \
 @HDF_BUILD_FORTRAN_TRUE@	hdf2gif$(EXEEXT) hdf2jpeg$(EXEEXT) \
 @HDF_BUILD_FORTRAN_TRUE@	hdf24to8$(EXEEXT) hdf8to24$(EXEEXT) \
@@ -259,8 +263,8 @@ CONFIG_CLEAN_FILES = h4cc h4fc testutil.sh
 @HDF_BUILD_FORTRAN_TRUE@	hdfunpac$(EXEEXT) jpeg2hdf$(EXEEXT) \
 @HDF_BUILD_FORTRAN_TRUE@	paltohdf$(EXEEXT) r8tohdf$(EXEEXT) \
 @HDF_BUILD_FORTRAN_TRUE@	ristosds$(EXEEXT) vmake$(EXEEXT) \
-@HDF_BUILD_FORTRAN_TRUE@	vshow$(EXEEXT) h4cc$(EXEEXT) \
-@HDF_BUILD_FORTRAN_TRUE@	h4fc$(EXEEXT)
+@HDF_BUILD_FORTRAN_TRUE@	vshow$(EXEEXT) h4redeploy$(EXEEXT) \
+@HDF_BUILD_FORTRAN_TRUE@	h4cc$(EXEEXT) h4fc$(EXEEXT)
 @HDF_BUILD_FORTRAN_FALSE@bin_PROGRAMS = gif2hdf$(EXEEXT) h4cc$(EXEEXT) \
 @HDF_BUILD_FORTRAN_FALSE@	hdf2gif$(EXEEXT) hdf2jpeg$(EXEEXT) \
 @HDF_BUILD_FORTRAN_FALSE@	hdf24to8$(EXEEXT) hdf8to24$(EXEEXT) \
@@ -270,7 +274,8 @@ CONFIG_CLEAN_FILES = h4cc h4fc testutil.sh
 @HDF_BUILD_FORTRAN_FALSE@	hdfunpac$(EXEEXT) jpeg2hdf$(EXEEXT) \
 @HDF_BUILD_FORTRAN_FALSE@	paltohdf$(EXEEXT) r8tohdf$(EXEEXT) \
 @HDF_BUILD_FORTRAN_FALSE@	ristosds$(EXEEXT) vmake$(EXEEXT) \
-@HDF_BUILD_FORTRAN_FALSE@	vshow$(EXEEXT) h4cc$(EXEEXT)
+@HDF_BUILD_FORTRAN_FALSE@	vshow$(EXEEXT) h4redeploy$(EXEEXT) \
+@HDF_BUILD_FORTRAN_FALSE@	h4cc$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
 am_gif2hdf_OBJECTS = gif2hdf.$(OBJEXT) gif2mem.$(OBJEXT) \
@@ -285,6 +290,9 @@ am__h4fc_SOURCES_DIST =
 h4fc_OBJECTS = $(am_h4fc_OBJECTS)
 @HDF_BUILD_FORTRAN_FALSE@h4fc_DEPENDENCIES =
 h4fc_LDFLAGS =
+am_h4redeploy_OBJECTS =
+h4redeploy_OBJECTS = $(am_h4redeploy_OBJECTS)
+h4redeploy_LDFLAGS =
 am_hdf24to8_OBJECTS = hdf24to8.$(OBJEXT)
 hdf24to8_OBJECTS = $(am_hdf24to8_OBJECTS)
 hdf24to8_LDFLAGS =
@@ -359,15 +367,16 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES = $(gif2hdf_SOURCES) $(h4cc_SOURCES) \
-	$(am__h4fc_SOURCES_DIST) $(hdf24to8_SOURCES) $(hdf2gif_SOURCES) \
-	$(hdf2jpeg_SOURCES) $(hdf8to24_SOURCES) $(hdfcomp_SOURCES) \
-	$(hdfed_SOURCES) $(hdfls_SOURCES) $(hdfpack_SOURCES) \
-	$(hdftopal_SOURCES) $(hdftor8_SOURCES) $(hdfunpac_SOURCES) \
-	$(jpeg2hdf_SOURCES) $(paltohdf_SOURCES) $(r8tohdf_SOURCES) \
-	$(ristosds_SOURCES) $(vmake_SOURCES) $(vshow_SOURCES)
+	$(am__h4fc_SOURCES_DIST) $(h4redeploy_SOURCES) \
+	$(hdf24to8_SOURCES) $(hdf2gif_SOURCES) $(hdf2jpeg_SOURCES) \
+	$(hdf8to24_SOURCES) $(hdfcomp_SOURCES) $(hdfed_SOURCES) \
+	$(hdfls_SOURCES) $(hdfpack_SOURCES) $(hdftopal_SOURCES) \
+	$(hdftor8_SOURCES) $(hdfunpac_SOURCES) $(jpeg2hdf_SOURCES) \
+	$(paltohdf_SOURCES) $(r8tohdf_SOURCES) $(ristosds_SOURCES) \
+	$(vmake_SOURCES) $(vshow_SOURCES)
 DIST_COMMON = README $(srcdir)/Makefile.in Makefile.am h4cc.in h4fc.in \
-	testutil.sh.in
-SOURCES = $(gif2hdf_SOURCES) $(h4cc_SOURCES) $(h4fc_SOURCES) $(hdf24to8_SOURCES) $(hdf2gif_SOURCES) $(hdf2jpeg_SOURCES) $(hdf8to24_SOURCES) $(hdfcomp_SOURCES) $(hdfed_SOURCES) $(hdfls_SOURCES) $(hdfpack_SOURCES) $(hdftopal_SOURCES) $(hdftor8_SOURCES) $(hdfunpac_SOURCES) $(jpeg2hdf_SOURCES) $(paltohdf_SOURCES) $(r8tohdf_SOURCES) $(ristosds_SOURCES) $(vmake_SOURCES) $(vshow_SOURCES)
+	h4redeploy.in testutil.sh.in
+SOURCES = $(gif2hdf_SOURCES) $(h4cc_SOURCES) $(h4fc_SOURCES) $(h4redeploy_SOURCES) $(hdf24to8_SOURCES) $(hdf2gif_SOURCES) $(hdf2jpeg_SOURCES) $(hdf8to24_SOURCES) $(hdfcomp_SOURCES) $(hdfed_SOURCES) $(hdfls_SOURCES) $(hdfpack_SOURCES) $(hdftopal_SOURCES) $(hdftor8_SOURCES) $(hdfunpac_SOURCES) $(jpeg2hdf_SOURCES) $(paltohdf_SOURCES) $(r8tohdf_SOURCES) $(ristosds_SOURCES) $(vmake_SOURCES) $(vshow_SOURCES)
 
 all: all-am
 
@@ -381,6 +390,8 @@ Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.s
 h4cc: $(top_builddir)/config.status h4cc.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 h4fc: $(top_builddir)/config.status h4fc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+h4redeploy: $(top_builddir)/config.status h4redeploy.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 testutil.sh: $(top_builddir)/config.status testutil.sh.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
@@ -704,6 +715,9 @@ h4cc:
 
 @HDF_BUILD_FORTRAN_TRUE@h4fc:
 @HDF_BUILD_FORTRAN_TRUE@	@true
+
+h4redeploy:
+	@true
 
 #############################################################################
 #############################################################################

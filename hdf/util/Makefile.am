@@ -14,9 +14,9 @@ PROGS = gif2hdf h4cc hdf2gif hdf2jpeg hdf24to8 hdf8to24 hdfcomp hdfed hdfls \
         ristosds vmake vshow 
 
 if HDF_BUILD_FORTRAN
-H4SCRIPTS = h4cc h4fc
+H4SCRIPTS = h4redeploy h4cc h4fc
 else
-H4SCRIPTS = h4cc
+H4SCRIPTS = h4redeploy h4cc
 endif
 
 bin_PROGRAMS = $(PROGS) $(H4SCRIPTS)
@@ -108,6 +108,13 @@ h4fc_DEPENDENCIES =
 h4fc:
 	@true
 endif
+
+h4redeploy_SOURCES =
+h4redeploy_LDADD =
+h4redeploy_DEPENDENCIES =
+
+h4redeploy:
+	@true
 
 #############################################################################
 ##                   Testing -- Here there be dragons.                     ##
