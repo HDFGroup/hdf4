@@ -220,6 +220,10 @@ test-hdffortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=test-hdffortran \
           SUBDIRS="test" subd
 
+test-utils:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=test-utils \
+          SUBDIRS="util" subd
+
 install:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install-lib \
           SUBDIRS="src jpeg zlib pablo fmpool" subd
@@ -326,6 +330,7 @@ help:
 	@echo "make test-hdf          - run HDF tests " 
 	@echo "make test-hdfnofortran - run HDF tests except the fortran test " 
 	@echo "make test-hdffortran   - run HDF fortran tests only " 
+	@echo "make test-utils        - run utilities test"
 	@echo "make install           - install HDF library, "
 	@echo "                         utilites, and includes " 
 	@echo "make install-libs      - install HDF library and includes " 

@@ -203,6 +203,9 @@ install-prog: all
 		`pwd`/$$p $(bindir)/`$(ECHO) $$p`; \
 	done
 
+test-utils:
+	./testutil.sh
+
 #.c.o: 
 #	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
 #
@@ -268,7 +271,8 @@ help:
 	@echo "make help    - prints this usage section"
 	@echo "make all     - (DEFAULT) makes utilities"
 	@echo "make hdfed   - makes hdfed utilitiy"
-	@echo "make install - install HDF utilites, "
+	@echo "make test-utils  - tests utilities"
+	@echo "make install     - install HDF utilites, "
 	@echo "make clean     - cleans up tests (both C and Fortran)"
 	@echo "make distclean - cleans up HDF tests including"
 	@echo "                 configuration(Makefiles,config.status,..)"
