@@ -198,10 +198,7 @@ fprintf(stderr, "NCcoordck: check 3.6, unfilled=%d\n",unfilled);
                 /*
                  * Write out the values
                  */
-                if (FAIL == DFKsetNT(vp->HDFtype))
-                    return FALSE;
-
-                if (FAIL == DFKnumout(strg, strg1, count, 0, 0))
+                if (FAIL == DFKconvert(strg, strg1, vp->HDFtype, count, DFACC_WRITE, 0, 0))
                     return FALSE;
 
                 for(; unfilled >= 0; unfilled--, vp->numrecs++)
@@ -1126,8 +1123,6 @@ this routine */
     if(vp->data_offset > 0) 
       {
           where += vp->data_offset;
-#define QAK
-#ifdef QAK
           /* if the dataset doesn't exist yet, we need to fill in the dimension scale info */
           if(elem_length <= 0 && (handle->flags & NC_NOFILL) == 0)
           {
@@ -1173,12 +1168,7 @@ this routine */
                    /* convert the fill-values, if necessary */
                    if(convert) 
                    {
-                      if (FAIL == DFKsetNT(vp->HDFtype)) /* added back here -GV */
-                        {
-                            ret_value = FAIL;
-                            goto done;
-                        }
-                      if (FAIL == DFKnumout(tBuf, tBuf, (uint32)new_count, 0, 0))
+                      if (FAIL == DFKconvert(tBuf, tBuf, vp->HDFtype, (uint32)new_count, DFACC_WRITE, 0, 0))
                         {
                             ret_value = FAIL;
                             goto done;
@@ -1208,7 +1198,6 @@ this routine */
 	        SDPfreebuf();  /* free tBuf and tValues if any exists */
 	       /* end of BMR part */
             } /* end if */
-#endif /* QAK */
       } /* end if */
     
 #ifdef DEBUG
@@ -1279,12 +1268,7 @@ this routine */
 		them in the buffer tValues */
                 if(convert)
                 {
-                   if (FAIL == DFKsetNT(vp->HDFtype)) /* added back here -GV */
-                     {
-                         ret_value = FAIL;
-                         goto done;
-                     }    
-                   if (FAIL == DFKnumout(tBuf, tValues, fill_count, 0, 0))
+                   if (FAIL == DFKconvert(tBuf, tValues, vp->HDFtype, fill_count, DFACC_WRITE, 0, 0))
                      {
                          ret_value = FAIL;
                          goto done;
@@ -1380,14 +1364,9 @@ be processed */
                       ret_value = FAIL;
                       goto done;
                   }    
-                if (FAIL == DFKsetNT(vp->HDFtype)) /* added back here -GV */
-                  {
-                      ret_value = FAIL;
-                      goto done;
-                  }
                 /* convert and store new_count elements in tBuf into 
                    the buffer values */
-                if (FAIL == DFKnumin(tBuf, values, (uint32) new_count, 0, 0))
+                if (FAIL == DFKconvert(tBuf, values, vp->HDFtype, (uint32) new_count, DFACC_READ, 0, 0))
                   {
                       ret_value = FAIL;
                       goto done;
@@ -1448,15 +1427,9 @@ be processed */
             elements_left = count;   /* all elements are left to be processed */
             while( elements_left > 0 )
             {
-               if (FAIL == DFKsetNT(vp->HDFtype)) /* added back here -GV */
-               {
-                   ret_value = FAIL;
-                   goto done;
-               }    
-
                /* convert new_count elements in the user's buffer values and 
                   write them into the temporary buffer */
-               if (FAIL == DFKnumout(values, tBuf, (uint32) new_count, 0, 0))
+               if (FAIL == DFKconvert(values, tBuf, vp->HDFtype, (uint32) new_count, DFACC_WRITE, 0, 0))
                {
                    ret_value = FAIL;
                    goto done;
@@ -1564,12 +1537,7 @@ be processed */
                 /* convert the fill-values, if necessary, and store them in the buffer tValues */
                 if(convert) 
                   {
-                      if (FAIL == DFKsetNT(vp->HDFtype)) /* added back here -GV */
-                        {
-                            ret_value = FAIL;
-                            goto done;
-                        }    
-                      if (FAIL == DFKnumout(tBuf, tValues, fill_count, 0, 0))
+                      if (FAIL == DFKconvert(tBuf, tValues, vp->HDFtype, fill_count, DFACC_WRITE, 0, 0))
                         {
                             ret_value = FAIL;
                             goto done;
@@ -1689,6 +1657,7 @@ nssdc_xdr_NCvdata(NC *handle,
     fprintf(stderr, "\tbyte_count %d   vp->HDFsize %d\n", byte_count, vp->HDFsize);
 #endif
 
+#ifdef QAK
     /* Read or write the data into / from values */
     if(handle->xdrs->x_op == XDR_DECODE) {
         status = HI_READ((hdf_file_t) handle->cdf_fp, tBuf, byte_count);
@@ -1708,6 +1677,7 @@ nssdc_xdr_NCvdata(NC *handle,
 #endif /* CDF_WRITE */
 
     }
+#endif /* QAK */
     
 
 #ifdef DEBUG

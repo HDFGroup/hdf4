@@ -5373,15 +5373,8 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
 #endif
     if (convert)
       { /* convert fill value */
-          /* set number type */
-          if (FAIL == DFKsetNT(var->HDFtype))
-            {
-                ret_value    = FAIL;
-                goto done;
-            } 
-
-          if (FAIL == DFKnumout(fill_val, tBuf, 
-                                (uint32) (fill_val_len/var->HDFsize), 0, 0))
+          if (FAIL == DFKconvert(fill_val, tBuf, var->HDFtype,
+                                (uint32) (fill_val_len/var->HDFsize), DFACC_WRITE, 0, 0))
             {
                 ret_value    = FAIL;
                 goto done;
@@ -5739,16 +5732,9 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
         fprintf(stderr,"SDwritechunk: convert, var->HDFsize=%d, var->HDFtype=%d \n",
                 var->HDFsize, var->HDFtype);
 #endif
-                            /* set number type */
-                            if (FAIL == DFKsetNT(var->HDFtype))
-                              {
-                                  ret_value    = FAIL;
-                                  goto done;
-                              } 
-
                             /* convert it */
-                            if (FAIL == DFKnumout(datap, tBuf, 
-                                                  (byte_count/var->HDFsize), 0, 0))
+                            if (FAIL == DFKconvert(datap, tBuf, var->HDFtype,
+                                                  (byte_count/var->HDFsize), DFACC_WRITE, 0, 0))
                               {
                                   ret_value    = FAIL;
                                   goto done;
@@ -5949,16 +5935,9 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
                             if ((ret_value = HMCreadChunk(var->aid, origin, tBuf)) 
                                 != FAIL)
                                 {
-                                    /* set number type */
-                                    if (FAIL == DFKsetNT(var->HDFtype))
-                                      {
-                                          ret_value = FAIL;
-                                          goto done;
-                                      }
-
                                     /* convert chunk */
-                                    if (FAIL == DFKnumin(tBuf, datap, 
-                                                         (byte_count/var->HDFsize), 0, 0))
+                                    if (FAIL == DFKconvert(tBuf, datap, var->HDFtype,
+                                                         (byte_count/var->HDFsize), DFACC_READ, 0, 0))
                                       {
                                           ret_value = FAIL;
                                           goto done;
