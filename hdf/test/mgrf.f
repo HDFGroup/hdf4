@@ -371,7 +371,7 @@ C                        GRchunked1.hdf
 
 C     ----Chunking write/read test
 C          creates the following files:
-C                        GRcompressed.hdf
+C                        GRchunked2.hdf
       err_grwrchunk = 0
       call test_grwrchunk(err_grwrchunk)
       if (err_grwrchunk .ne. 0) then
@@ -383,7 +383,7 @@ C                        GRcompressed.hdf
 C     ----Compression test
 C
 C          creates the following files:
-C                        GRchunked2.hdf
+C                        GRcompressed.hdf
       err_grcompress = 0
       call test_grcompress(err_grcompress)
       if (err_grcompress .ne. 0) then
@@ -786,9 +786,10 @@ C
       subroutine test_grcompress( err_grcompress )
       implicit none
       integer N_COMP_TYPES, N_COMP_ARG, NCOMP
-      parameter(N_COMP_TYPES = 4, N_COMP_ARG =1)
+C      parameter(N_COMP_TYPES = 4, N_COMP_ARG =1)
+      parameter(N_COMP_TYPES = 5, N_COMP_ARG = 2)
       integer MFGR_INTERLACE_PIXEL
-      parameter(NCOMP = 2, MFGR_INTERLACE_PIXEL = 0)
+      parameter(NCOMP = 3, MFGR_INTERLACE_PIXEL = 0)
       integer ri_id(N_COMP_TYPES),
      .        gr_id,
      .        file_id
@@ -813,13 +814,15 @@ C
       integer DFACC_CREATE, 
      .        DFACC_READ,
      .        DFACC_WRITE
-      integer DFNT_INT16
+C      integer DFNT_INT16
+      integer DFNT_CHAR8
       integer X_LENGTH, Y_LENGTH
       integer X_CH_LENGTH, Y_CH_LENGTH
       parameter (DFACC_CREATE = 4,
      .           DFACC_READ   = 1,
      .           DFACC_WRITE  = 2)
-      parameter (DFNT_INT16   = 22)
+C      parameter (DFNT_INT16   = 22)
+      parameter (DFNT_CHAR8   = 4)
       parameter (X_LENGTH     = 9,
      .           Y_LENGTH     = 4,
      .           X_CH_LENGTH  = 3,
@@ -837,23 +840,32 @@ C
      .          COMP_CODE_SKPHUFF,
      .          COMP_CODE_DEFLATE,
      .          SKPHUFF_SKP_SIZE,
-     .          DEFLATE_LEVEL
+     .          DEFLATE_LEVEL,
+     .          COMP_CODE_JPEG,
+     .          JPEG_QUALITY,
+     .          JPEG_COMPATIBILITY
 
       parameter(COMP_CODE_NONE    = 0,
      .          COMP_CODE_RLE     = 1,
      .          COMP_CODE_SKPHUFF = 3,
-     .          COMP_CODE_DEFLATE = 4)
+     .          COMP_CODE_DEFLATE = 4,
+     .          COMP_CODE_JPEG = 6)
       parameter (DEFLATE_LEVEL = 1,
      .           SKPHUFF_SKP_SIZE = 2)
+      parameter (JPEG_QUALITY = 100,
+     .           JPEG_COMPATIBILITY = 1)
 C
 C---Data
 C 
-      integer*2 image_data(NCOMP, X_LENGTH, Y_LENGTH)
-      integer*2 image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
+C      integer*2 image_data(NCOMP, X_LENGTH, Y_LENGTH)
+C      integer*2 image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
+      character image_data(NCOMP, X_LENGTH, Y_LENGTH)
+      character image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
 C
 C---Default pixel value
 C
-      integer*2 pixel_value(2)
+C      integer*2 pixel_value(2)
+      character pixel_value(NCOMP)
 C
 C---We will write/read to four different files corresponding to the
 C   different compression types.
@@ -879,12 +891,18 @@ C
       name(4) = 'Gzcomp_data'    
       comp_type(4) = COMP_CODE_DEFLATE
 C
+C   JPEG compression
+C
+      name(5) = 'Jpcomp_data'    
+      comp_type(5) = COMP_CODE_JPEG
+C
 C  Data initialization
 C 
       do 30 j = 1, Y_LENGTH
          do 20 i = 1, X_LENGTH
            do 10 k = 1, NCOMP
-            image_data(k, i, j) = i + j - 1
+C            image_data(k, i, j) = i + j - 1
+            image_data(k, i, j) = char(i + j - 1)
 10         continue
 20    continue
 30    continue
@@ -894,6 +912,12 @@ C
       do 35 i = 1, N_COMP_ARG
           comp_prm(i) = 0
 35    continue
+C
+C---Set pixel value
+C
+      do 305 i = 1, NCOMP
+           pixel_value(i) = '0'
+305   continue
 C
 C   Main loop through different compression types
 C
@@ -927,21 +951,18 @@ C     Define the number of components and dimensions of the image.
 C     Create the data set.
 
       ri_id(i_comp) = mgcreat(gr_id, name(i_comp), NCOMP,
-     .                        DFNT_INT16, il, dims)
+C     .                        DFNT_INT16, il, dims)
+     .                        DFNT_CHAR8, il, dims)
       if(ri_id(i_comp) .eq. -1) then
          print *, 'mgcreat failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
       endif 
 
 C
-C---Set pixel value
-C
-      pixel_value(1) = 0
-      pixel_value(2) = 0
-C
 C---Fill the image array with the default pixel value
 C
-      status = mgsnatt(ri_id(i_comp), 'FillValue', DFNT_INT16,
+C      status = mgsnatt(ri_id(i_comp), 'FillValue', DFNT_INT16,
+      status = mgsnatt(ri_id(i_comp), 'FillValue', DFNT_CHAR8,
      .                 ncomp, pixel_value) 
       if(status .ne. 0) then
          print *, 'mgsnatt failed for', i_comp, '-th data set'
@@ -953,6 +974,10 @@ C---Set compression
 C
       if (i_comp. eq. 3) comp_prm(1) = SKPHUFF_SKP_SIZE
       if (i_comp. eq. 4) comp_prm(1) =  DEFLATE_LEVEL
+      if (i_comp. eq. 5) then       
+          comp_prm(1) = JPEG_QUALITY
+          comp_prm(2) = JPEG_COMPATIBILITY
+      endif
       status = mgscompress (ri_id(i_comp), 
      .                  comp_type(i_comp),comp_prm)
       if(status .ne. 0) then
@@ -1019,7 +1044,7 @@ C
          print *, 'mgstart failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
       endif 
-      do 2000 i_comp=1, N_COMP_TYPES
+      do 2000 i_comp=1, N_COMP_TYPES - 1
       index = mgn2ndx(gr_id, name(i_comp))
       if(index .eq. -1 ) then
          print *, 'mgn2ndx failed for',  name(i_comp), ' data set'
