@@ -53,8 +53,8 @@ static char RcsId[] = "@(#)$Revision$";
 PRIVATE char **symptr = NULL;   /* array of ptrs to tokens  ? */
 PRIVATE char **sym = NULL;      /* array of tokens ? */
 #else  /* !macintosh */
-PRIVATE char *symptr[50];       /* array of ptrs to tokens  ? */
-PRIVATE char sym[50][FIELDNAMELENMAX + 1];  /* array of tokens ? */
+PRIVATE char *symptr[VSFIELDMAX];       /* array of ptrs to tokens  ? */
+PRIVATE char sym[VSFIELDMAX][FIELDNAMELENMAX + 1];  /* array of tokens ? */
 #endif /* !macintosh */
 PRIVATE intn nsym;              /* token index ? */
 
