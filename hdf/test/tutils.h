@@ -16,7 +16,9 @@ if(x != val) {printf("*** UNEXPECTED VALUE from %s is %d at line %4d in %s\n", w
 } while(0)
 
 #define RESULT(a) \
-do {if (Verbocity>8) printf("   Call to HDF routine: %15s at line %4d in %s returned %d \n",a,__LINE__,__FILE__,(int)ret); \
+do { \
+if (Verbocity>8) printf("   Call to HDF routine: %15s at line %4d in %s returned %d \n",a,__LINE__,__FILE__,(int)ret); \
+if (Verbocity>9) HEreport(stdout,0); \
 if(ret == FAIL) {printf("*** UNEXPECTED RETURN from %s is %d at line %4d in %s\n", a, (int)ret,__LINE__,__FILE__); num_errs++;} \
 } while(0)
 
