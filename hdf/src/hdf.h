@@ -153,7 +153,6 @@ typedef int32 HFILEID;
 #include "hcomp.h"
 #include "herr.h"
 #include "hproto.h"
-#include "vproto.h"
 
 /* For Pablo Instrumentation */
 #ifdef HAVE_PABLO
