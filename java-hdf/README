@@ -1,13 +1,49 @@
-               README for HDF Java Interface and JHV
-               --------------------------------------
+               README for NCSA HDF Java Products Distribution
+               ----------------------------------------------
 
-Contents of this release
-------------------------
+***************************************************************************
+  CONTENTS
+  --------
+  1. Contents of this release
+
+  2. Obtaining the latest version
+
+  3. Installing the HDF Java API and JHV
+  3.1 Supported Platforms
+  3.2 Software Requirements
+
+  3.3 General Configuration/Installation - Unix
+  3.3.1 Overview
+  3.3.2 Layout of distribution
+  3.3.3 Layout of configuration files
+  3.4.4 Running configure
+  3.4.5 Compiling, Testing and Installing
+
+  3.5 Installation Location
+
+  4 Platform-specific Notes
+  4.1 Windows '95 or Windows NT
+  4.2 HPUX
+  4.3 Linux
+  4.4 MacOS
+  4.5 Other platforms
+
+  5. Man pages (javadoc)
+
+  6. Documentation and Release Notes
+
+  7. HELP
+
+*****************************************************************************
+
+
+1.  Contents of this release
+    ========================
 
 This package contains the complete Java interface for the
 HDF 4.1r1 library, and the Java HDF Viewer application.
 
-  Java Interface for HDF:
+  Java HDF Interface (JHI) :
 
        The Java interface for HDF consists of two parts:
             1. Java classes to interface, including 'native methods'
@@ -37,71 +73,256 @@ HDF 4.1r1 library, and the Java HDF Viewer application.
            2.  A java package for 'palette' (look up table) manipulation.
            3.  A small amount of C-code to support data conversion
 
+  For more information, see the on-line documentation at:
 
-Obtaining the latest version
-----------------------------
- The most recent version of the distribution can be obtained from
- the NCSA ftp archive site at:
+     http://hdf.ncsa.uiuc.edu/java-hdf-html/
 
-     ftp://ftp.ncsa.uiuc.edu/HDF/HDF_Current
+2. Obtaining the latest version
+   ============================
 
-Distribution Layout
--------------------
- There are eight subdirectories in this directory:
+    The most recent version of the distribution can be obtained from
+    the NCSA ftp archive site at:
 
-   Config -- contains support for the configure script
+       ftp://ftp.ncsa.uiuc.edu/HDF/Java
+
+    To obtain the latest version of Java, see the web pages at:
+
+       http://java.sun.com/products/jdk/jdk-ports.html
+
+3. Installing JHI and JHV
+   ======================
+
+    For compiling and installing the Java HDF API and JHV
+    on a system, please follow these instructions. 
+
+3.1 Supported Platforms
+    ===================
+
+  This product requires Java Development Kit JDK 1.1.1 or above.
+  Not all platforms support Java at this level yet, and we have
+  not tested all platforms that have JDK 1.1.
+  
+  For PLATFORM specific NOTES see the section below called
+  'Platform-specific Notes'.
+
+  The platforms for which the NCSA Java products have been
+  succesfully compiled and tested are:
+
+  Platform(OS)            C-Compiler  
+  ------------            ---------- 
+  Sun4(Solaris 2.5)           CC 4.0, GCC 2.7.2.1
+  SGI-Indy(IRIX5.3)           CC 3.19, GCC 2.7.2.1
+  SGI-Indy(IRIX6.2)           CC 6.2 
+  IBM PC - Intel Pentium
+       Solarisx86 (2.5)       GCC 2.7.2.1 
+
+  Windows NT/95               Visual C++ 4.2
+
+3.2  Software Requirements:
+     ======================
+
+  This software must be compiled with the HDF 4.1 library.  If
+  HDF is already installed, it is probably not necessary to install 
+  or compile it again.
+
+  This product requires Java JDK 1.1 or above to compile.  It will
+  not work with JDK 1.02.
+
+  To obtain the latest version of Java, see the web pages at:
+
+       http://java.sun.com/products/jdk/jdk-ports.html
 
 
-   bin    -- the jhv invocation script
-   hdficons -- icons used for the jhv browser
-   lib    -- the directory for the compiled classes and native libraries
-   docs   -- the directory for the javadoc documentation pages
-   samples -- some sample hdf files
+3.3 General Configuration/Installation - Unix
+    =========================================
 
-   java   -- source for the java classes in java package 'java.*'
-             This includes several support classes for the jhv.
-   ncsa   -- source for the java classes in java package 'ncsa.hdf.*'
-             This includes the Java HDF interface (ncsa.hdf.hdflib),
-             palette manipulation classes (ncsa.hdf.palette), and
-             the Java HDF Viewer (JHV) (ncsa.hdf.jhv).
-   native -- source for the native (C) support for the java classes.
-             This includes the Java HDF API (hdflib) and support
-             for the jhv (jhvlib).
+    3.3.1 Overview
+    --------------        
+    This distribution uses a gnu 'configure' script to guess the
+    correct configuration.
 
-Software Requirements:
-----------------------
+    The configuration script asks for information which is very 
+    difficult to automatically determine:
 
- This software must be compiled with the HDF 4.1 library.  If
- HDF is already installed, it is not necessary to install or compile
- it again.
+	   1.  The location of the HDF library and include files.
+               This may be a compiled distribution, or previously
+               installed libraries.
+	   2.  The location of the Java Development Kit JDK 1.1.x.
+               This varies across different platforms.
+	   3.  Where to install HDF Java.  This might not be
+	       the same location as the regular HDF library.
 
-System Requirements
--------------------
- To build the HDF Java API and JHV from source, you need:
+    As this is a relatively complex configuration, it is recommended
+    that you inspect the Makefiles to make sure they are correct.
 
-   * an ANSI C compiler.
+   3.3.2 Layout of the distribution
+   --------------------------------
 
-   * Java Development Kit JDK 1.1.x
-     ***This product cannot be compiled with JDK 1.02***
+   There are eight subdirectories in this directory:
 
-Configuring/Testing/Installing 
--------------------------------------------------------------
- See the INSTALL file for instructions on configuring
- and installing for Unix and non-UNIX systems.
+     Config -- contains support for the configure script
 
-DOCUMENTATION/FAQ/HELP
-----------------------
- The HDF 4.1r1 documentation can be found on the NCSA ftp server
- in the directory /HDF/Documentation/HDF4.1r1.  The
- HDF home page is at:
+
+     bin    -- the jhv invocation script
+     hdficons -- icons used for the jhv browser
+     lib    -- the directory for the compiled classes and native libraries
+     docs   -- the directory for the javadoc documentation pages
+     samples -- some sample hdf files
+  
+     java   -- source for the java classes in java package 'java.*'
+               This includes several support classes for the jhv.
+     ncsa   -- source for the java classes in java package 'ncsa.hdf.*'
+               This includes the Java HDF interface (ncsa.hdf.hdflib),
+               palette manipulation classes (ncsa.hdf.palette), and
+               the Java HDF Viewer (JHV) (ncsa.hdf.jhv).
+     native -- source for the native (C) support for the java classes.
+               This includes the Java HDF API (hdflib) and support
+               for the jhv (jhvlib).
+ 
+
+    3.3.3 Layout of configuration files
+    -----------------------------------
+    The following shows the layout of the files used in the configuration
+    of the HDF Java API and JHV distribution.
+
+    $(toplevel)/configure 
+                configure.in (gnu -- used to generate 'configure')
+                Config/config.guess
+                Config/config.sub
+                Config/install-sh
+                Makefile.in
+
+                native/Makefile.in
+                native/hdflib/Makefile.in
+                native/jhv/Makefile.in
+
+                bin/jhv.in  (used to generate the 'jhv' script)
+
+
+    3.3.4 Running configure
+    -----------------------
+    To build both of the libraries contained in this directory,
+    run the ``configure'' script in $(toplevel), e.g.:
+
+	./configure
+
+    If you're using `csh' on an old version of System V, you might need 
+    to type `sh ./configure instead to prevent `csh' from trying to 
+    execute `configure' itself.
+
+    The configuration is saved in the file 'config.cache'.  You can
+    rebuild the Makefiles as many times as you want using this cached 
+    configuration.  If you want to change the configuration, delete
+    the file 'cache.config' and run 'configure' again.
+
+    3.3.4 Compiling, Testing and Installing
+    ---------------------------------------
+    To compile the Java HDF library and JHV type:
+
+        make 
+
+    To find out the available make targets type:
+
+        make help
+
+    To install the libraries, utilities, includes and man pages type: e.g.
+
+        make install
+
+    3.3.5 Installation Location
+    ---------------------------
+
+    The 'configure' script asks for the location of where to install
+    the HDF Java classes, libraries, and support files.
+    If you prefer, you can specify the directory so that `make install'
+    will install the files directly in it.  This is done by giving
+    `configure' the option `--prefix=PATH'.
+
+    eg.  ./configure --prefix=/usr/local/java/hdf
+
+    This will configure the distribution to install the libraries,
+    utilities, and doc files in '/usr/local/java/hdf/lib', 
+    '/usr/local/java/hdf/lib/classes.zip', '/usr/local/java/hdf/bin', 
+    and '/usr/local/java/hdf/docs' respectively.
+
+4  Platform-specific Notes
+    ========================
+
+    4.1 Windows '95 or Windows NT
+    -------------------------------
+    The NCSA HDF Java products should compile on a Windows '95 or 
+    Windows NT machine.  The build procedure depends on your compile
+    environment.
+
+    4.2 HPUX
+    --------
+    The NCSA Java products are not currently available for HPUX.
+
+    Java JDK 1.1 is not available for HPUX 9.0x, it is available for
+    HPUX 10.20.
+
+    In order to use native code from Java, the library must be compiled
+    as a dynamically loadable library.  Unfortunately, no dynamically
+    loadable version of HDF is available for HPUX 10.20, so the Java
+    HDF products are not available for HPUX systems.
+
+    4.3 Linux
+    ---------
+    The NCSA Java products compile but do not execute correctly
+    on Linux.
+
+    4.4 MacOS
+    ---------
+    JDK 1.1 is not available for the MacOS yet. 
+
+    4.5 Other Platforms
+    -------------------
+    The web page at:
+
+       http://java.sun.com/products/jdk/jdk-ports.html
+
+    lists many platforms which support JDK 1.1, including
+    AIX and DEC/OSF.  The NCSA Java products should work on 
+    all these platforms, but we have not actually tested them.
+
+
+5. Man pages (javadoc)
+   ===================
+
+    The `javadoc' utility was used to automatically create manual
+    pages for the NCSA HDF Java products.  The javadoc pages are
+    available on-line at:
+
+       http://hdf.ncsa.uiuc.edu/java-hdf-html/javadocs/
+
+    To generate your own copy of the man pages with 'javadoc', type:
+         make javadocs
+
+6. Release notes and Documentation
+   ===============================
+
+   Release notes, documentation, and FAQs are available on-line at:
+
+       http://hdf.ncsa.uiuc.edu/java-hdf-html/
+
+   The general HDF 4.1r1 documentation can be found on the NCSA ftp 
+   server in the directory /HDF/Documentation/HDF4.1r1/.  The
+   HDF home page is at:
 
       http://hdf.ncsa.uiuc.edu/
 
- An FAQ is available on our ftp server, as well as under
- "Information about HDF" in the home page.
+7. HELP
+   ====
+   If you have any questions or comments, there are several mailing
+   lists that may help:
 
- If you have any questions or comments, or would like to be
- added to or removed from our hdfnews email list, contact us
- at:
+       hdf-java@ncsa.uiuc.edu   --  Java and HDF discussion, help, availability
+       hdfnews@ncsa.uiuc.edu   --  HDF announcments
+       hdfhelp@ncsa.uiuc.edu   --  HDF help, availability
+
+   If you would like to be added to or removed from these email lists, 
+   contact us at:
 
       hdfhelp@ncsa.uiuc.edu
+
+
