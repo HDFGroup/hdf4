@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.14  1993/05/03 21:38:39  chouck
+# Revision 1.15  1993/08/16 22:30:04  koziol
+# Updated for new files
+#
+# Revision 1.14  1993/05/03  21:38:39  chouck
 # Removed purify directive
 #
 # Revision 1.13  1993/05/03  21:32:01  koziol
@@ -154,13 +157,13 @@ CSRCS=hfile.c herr.c hblocks.c hextelt.c hkit.c dfan.c dfr8.c dfcomp.c \
       dfrle.c dfimcomp.c dfjpeg.c dfunjpeg.c dfp.c dfgr.c df24.c dfsd.c \
       dfgroup.c dfconv.c dfufp2i.c vg.c vrw.c vio.c vparse.c vconv.c vsfld.c \
       vgp.c vhi.c dfutil.c dfstubs.c dfknat.c dfkswap.c dfkcray.c dfkvms.c \
-      dfkconv.c dfkfuji.c hbitio.c tbbt.c
+      dfkconv.c dfkfuji.c hbitio.c tbbt.c hdfalloc.c
 
 COBJS=hfile.o herr.o hblocks.o hextelt.o hkit.o dfan.o dfr8.o dfcomp.o \
       dfrle.o dfimcomp.o dfjpeg.o dfunjpeg.o dfp.o dfgr.o df24.o dfsd.o \
       dfgroup.o dfconv.o dfufp2i.o vg.o vrw.o vio.o vparse.o vconv.o vsfld.o \
       vgp.o vhi.o dfutil.o dfstubs.o dfknat.o dfkswap.o dfkcray.o dfkvms.o \
-      dfkconv.o dfkfuji.o hbitio.o tbbt.o
+      dfkconv.o dfkfuji.o hbitio.o tbbt.o hdfalloc.o
 
 FSRCS=hfilef.c herrf.c hfileff.f dfanf.c dfr8f.c dfpf.c df24f.c dfsdf.c \
       vgf.c dff.c dfanff.f df24ff.f dfpff.f dfr8ff.f dfsdff.f vgff.f dfff.f \
