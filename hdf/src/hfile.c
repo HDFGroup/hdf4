@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.16  1993/08/16 21:45:58  koziol
-Wrapped in changes for final, working version on the PC.
+Revision 1.17  1993/09/01 23:16:48  georgev
+Fixed prototypes for MAC.
 
+ * Revision 1.16  1993/08/16  21:45:58  koziol
+ * Wrapped in changes for final, working version on the PC.
+ *
  * Revision 1.15  1993/07/01  20:08:03  chouck
  * Made the hash table use fewer malloc() and free() pairs to improve
  * efficiency and (hopefully) reduce PC memory fragmentation.
@@ -3717,7 +3720,7 @@ mwrite(hdf_file_t rn, char *buf, int32 n)
 }
 
 int32
-mlseek(hdf_file_t rn, int32 n, int m)
+mlseek(hdf_file_t rn, int32 n, intn m)
 {
     OSErr result;
     int32 newEOF;

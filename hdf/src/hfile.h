@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.17  1993/08/16 21:46:02  koziol
-Wrapped in changes for final, working version on the PC.
+Revision 1.18  1993/09/01 23:16:46  georgev
+Fixed prototypes for MAC.
 
+ * Revision 1.17  1993/08/16  21:46:02  koziol
+ * Wrapped in changes for final, working version on the PC.
+ *
  * Revision 1.16  1993/07/01  20:08:07  chouck
  * Made the hash table use fewer malloc() and free() pairs to improve
  * efficiency and (hopefully) reduce PC memory fragmentation.
@@ -424,10 +427,10 @@ extern int32 HXIcloseAID
 extern hdf_file_t mopen
 	PROTO((char * filename, intn access));
 	
-extern int mwrite
-	PROTO((hdf_file_t rn, char *buf, intn n));
+extern int32 mclose
+	PROTO((hdf_file_t rn));
 	
-extern int mlseek
+extern int32 mlseek
 	PROTO((hdf_file_t rn, int32 n, intn m));
 
 extern int32 mread
