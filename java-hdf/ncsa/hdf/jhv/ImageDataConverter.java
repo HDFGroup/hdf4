@@ -82,7 +82,10 @@ public class ImageDataConverter {
 
 	int size = w*h;
 	float[] buffer = new float[size];
-
+	if ((nt & HDFConstants.DFNT_LITEND) != 0) {
+//  this code probably will fail -- use HDFNative?
+		nt -= HDFConstants.DFNT_LITEND;
+	}
 	// where should we  go?
 	switch(nt) {
 	// one bit char
@@ -194,7 +197,6 @@ public class ImageDataConverter {
     public static boolean makeImageData(byte[] data,
 		int nt, int w, int h, int pos,
 		byte[] out) {
-	// System.out.println("Enter ImageDataConverter::makeImageData");
 	boolean retVal = false;
 	retVal = makeImageDataByRange(data,-1.2E+20d,Double.MAX_VALUE,nt,w,h,pos,out);
 	return retVal;

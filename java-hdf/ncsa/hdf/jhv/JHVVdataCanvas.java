@@ -163,6 +163,10 @@ class JHVVdataCanvas extends Canvas implements MouseListener{
 	    int index = vdataFrame.selectedVdataFields[i];
 	    
 	    int datatype = vdataFrame.vdataFieldDatatype[index];
+	    if ((datatype & HDFConstants.DFNT_LITEND) != 0) {
+                        datatype -= HDFConstants.DFNT_LITEND;
+            }
+
 	    int order    = vdataFrame.vdataFieldOrder[index];
 	    String fldName = vdataFrame.vdataFieldName[index];
 	
@@ -318,6 +322,10 @@ class JHVVdataCanvas extends Canvas implements MouseListener{
 	    
 	    // specify read vdata size
 	    int  dataType = vdataFrame.vdataFieldDatatype[i];
+	    if ((dataType & HDFConstants.DFNT_LITEND) != 0) {
+		dataType -= HDFConstants.DFNT_LITEND;
+	    }
+
 	    int  order    = vdataFrame.vdataFieldOrder[i];
 	    	    
 	    int datasize = 1;

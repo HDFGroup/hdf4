@@ -1020,7 +1020,11 @@ public class HDFLibrary {
 		byte[] d1 = new byte[8];
 		boolean rval;
 		rval = SDgetfillvalue( sdsid, d1 );
+		if (rval == false) return(rval);
 		NT = SDInfo[1];
+		if ((NT & HDFConstants.DFNT_LITEND) != 0) {
+			NT -= HDFConstants.DFNT_LITEND;
+		}
 		if ((NT == HDFConstants.DFNT_INT8 ) 
 		 || (NT == HDFConstants.DFNT_CHAR8 )
 		 || (NT == HDFConstants.DFNT_CHAR )
@@ -1118,7 +1122,11 @@ public class HDFLibrary {
 		byte[] d2 = new byte[8];
 		boolean rval;
 		rval = SDgetrange( sdsid, d1, d2);
+		if (rval == false) return(rval);
 		NT = SDInfo[1];
+		if ((NT & HDFConstants.DFNT_LITEND) != 0) {
+			NT -= HDFConstants.DFNT_LITEND;
+		}
 		if ((NT == HDFConstants.DFNT_INT8 ) 
 		 || (NT == HDFConstants.DFNT_CHAR8 )
 		 || (NT == HDFConstants.DFNT_CHAR )

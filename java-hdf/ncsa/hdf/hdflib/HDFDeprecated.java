@@ -162,10 +162,15 @@ public class HDFDeprecated extends HDFLibrary {
         int[] nt = new int[1];
         DFSDgetNT(nt);
 	NT = nt[0];
+	if ((NT & HDFConstants.DFNT_LITEND) != 0) {
+		NT -= HDFConstants.DFNT_LITEND;
+	}
+
 		HDFNativeData convert = new HDFNativeData();
 		byte[] d1 = new byte[8];
 		boolean rval;
 		rval = DFSDgetfillvalue( d1 );
+		if (rval == false) return (rval);
 		if ((NT == HDFConstants.DFNT_INT8 ) 
 		 || (NT == HDFConstants.DFNT_CHAR8 )
 		 || (NT == HDFConstants.DFNT_CHAR )
@@ -233,11 +238,16 @@ public class HDFDeprecated extends HDFLibrary {
         int[] nt = new int[1];
         DFSDgetNT(nt);
 	NT = nt[0];
+	if ((NT & HDFConstants.DFNT_LITEND) != 0) {
+		NT -= HDFConstants.DFNT_LITEND;
+	}
+
 		HDFNativeData convert = new HDFNativeData();
 		byte[] d1 = new byte[8];
 		byte[] d2 = new byte[8];
 		boolean rval;
 		rval = DFSDgetrange( d1, d2);
+		if (rval == false) return(rval);
 		if ((NT == HDFConstants.DFNT_INT8 ) 
                  || (NT == HDFConstants.DFNT_CHAR8 )
                  || (NT == HDFConstants.DFNT_CHAR )

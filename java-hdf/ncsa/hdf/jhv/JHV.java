@@ -402,7 +402,6 @@ int fid;
 		    hdf.Hclose(fid);
 		} catch (Exception e) {
 			infoText.setText("Exception closing file: "+fid);
-		//	System.out.println("Exception closing file: "+fid);
 		}
 	}
     } else {
@@ -553,7 +552,6 @@ int fid;
 	} catch (Exception e) {
 		infoText.setText("Exception opening file: "+this.hdfFile+
                                  "\nPlease check if the file is an hdf file");
-	    //System.out.println("Exception opening file: "+this.hdfFile);
 	}
     }
     }
@@ -1292,7 +1290,6 @@ public String ANfileannotation() throws HDFException {
 	// get the number of the object label
 	int numObjectLabel = hdf.ANnumann(an_id, anntype, (short)tag, (short)ref);
 
-	// System.out.println("Label Number: "+ numObjectLabel);
 
 	if (numObjectLabel == HDFConstants.FAIL)
 	   return new String();
@@ -1311,12 +1308,10 @@ public String ANfileannotation() throws HDFException {
 	   // get ann_id;
 	   int annid = ann_id_list[i];
 
-	   // System.out.println("annid: " + annid);
 
 	   // get the object label length
 	   int objectLabelLen = hdf.ANannlen(annid);
 
-	   // System.out.println("Len="+ objectLabelLen);
 
 	   if (objectLabelLen >0) {
 
@@ -1353,8 +1348,6 @@ public String ANfileannotation() throws HDFException {
 
 	int an_id =  hdf.ANstart(applet_.fid);
 
-	// System.out.println("fid: "+ applet_.fid);
-	// System.out.println("an_id: "+ an_id);
 	if (hdf.ANfileinfo(an_id, fileInfo) == false ) {
 		hdf.ANend(an_id);
 	   return  retStr.toString();
@@ -1362,8 +1355,6 @@ public String ANfileannotation() throws HDFException {
 
 	// get the number of the object desc
 	int numObjectDesc = hdf.ANnumann(an_id, anntype, (short)tag, (short)ref);
-
-	// System.out.println("Desc Number: "+ numObjectDesc);
 
 	if (numObjectDesc == HDFConstants.FAIL)
 	   return new String();
@@ -1382,12 +1373,8 @@ public String ANfileannotation() throws HDFException {
 	   // get ann_id;
 	   int annid = ann_id_list[i];
 
-	   // System.out.println("annid: " + annid);
-
 	   // get the object desc length
 	   int objectDescLen = hdf.ANannlen(annid);
-
-	   // System.out.println("Len="+ objectDescLen);
 
 	   if (objectDescLen >0) {
 
@@ -1894,12 +1881,6 @@ public String ANfileannotation() throws HDFException {
       else
       hasPalette = true;  
     
-    //System.out.println("ncomp: " + lutInfo[0]);
-    //System.out.println("elemt: " + lutInfo[3]);
-    
-    // assign the palette
-    //int lutSize = lutInfo[0] * lutInfo[3] * hdfgr.DFKNTsize(lutInfo[1]);
-    //char[] lutDat = new char[lutSize];
     ************************************************************/
 
     // set interlace to read	
@@ -1953,8 +1934,6 @@ public String ANfileannotation() throws HDFException {
     w = count[0];
     h = count[1];
 
-    // System.out.println("w*h: " + w + "*" + h);
-
     // image data size;
     int dataSize = w*h*ncomp*hdf.DFKNTsize(nt);
     
@@ -1987,7 +1966,10 @@ public String ANfileannotation() throws HDFException {
     String lr         = new String("\t");
     String semicolon  = new String("; ");
     String str = new String(" ");
-    
+
+    if ((NT & HDFConstants.DFNT_LITEND) != 0) {
+        NT -= HDFConstants.DFNT_LITEND;
+    }
     int incr = hdf.DFKNTsize(NT);
     
     switch(NT) {
@@ -2439,7 +2421,7 @@ public void dispHdfSDSimage(int sdid, HDFObjectNode node) throws HDFException {
 			if (image == null) {
 				retStr = "Can't convert image from SDS";
 			} else {
-				retStr = "SDS Dimension Size > 3";
+				retStr = "SDS Dimension Size <= 3";
 			}
 		}
       }
@@ -2614,7 +2596,8 @@ public Image getHdfSDSimage(int sdsid, int rank, int nt, int[] dims,int plane)
 
 	image_ = createRasterImage(output,w,h,imagePalette);
       }
-    } 
+    } else {
+    }
     return image_;
   }
   
@@ -3252,10 +3235,15 @@ public  void dispHdfVdataInfo(int fid, HDFObjectNode node) throws HDFException {
     double max = Double.MIN_VALUE;
     double min = Double.MAX_VALUE;
     int datasize = 1;
+    if ((nt & HDFConstants.DFNT_LITEND) != 0) {
+// will this code work now that it is written in java????
+	nt -= HDFConstants.DFNT_LITEND;
+    }
     try {
       // data size for the original data based on the data number type
       datasize = HDFLibrary.DFKNTsize(nt);
     } catch (HDFException e) {};
+
 
     // extract the dataset to be processed
     for (int i=0; i<size; i++) {
@@ -3312,9 +3300,6 @@ public  void dispHdfVdataInfo(int fid, HDFObjectNode node) throws HDFException {
 	min = Math.min(tmp,min);
 
     }     // for (int i=0; )
-
-    // System.out.println("Max: " + max);
-    // System.out.println("Min: " + min);
 
     double range[] = new double[2];    
     range[0] = min;

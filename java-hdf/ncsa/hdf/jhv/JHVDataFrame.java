@@ -486,6 +486,9 @@ class JHVDataCanvas extends Canvas
     
     // data type of the raw data
     int datatype = imgCanvas.hdfDataType;
+	if ((datatype & HDFConstants.DFNT_LITEND) != 0) {
+		datatype -= HDFConstants.DFNT_LITEND;
+	}
 
     // data size for the original data based on the data number type
 	HDFLibrary hdf = new HDFLibrary();

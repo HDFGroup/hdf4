@@ -1041,7 +1041,6 @@ public class JHVImageCanvas extends Canvas
     }
     
     boolean readFlag = hdf.SDreaddata(sdsid,start,stride,count,hdfData);
-    // System.out.println("readSDS: " + readFlag);
 
     // set data type;
     this.hdfDataType = nt;
@@ -1860,7 +1859,6 @@ public class JHVImageCanvas extends Canvas
 
      // working on horizontal line
      try {
-	// System.out.println(rect);
 	int x = rect.x;
 	int y = rect.y;
 
@@ -2275,8 +2273,13 @@ public void drawRectangle(Rectangle rect) {
 
     // adjust the pos.
     pos += firstPos;
+    int dt = hdfDataType;
+    if ((dt & HDFConstants.DFNT_LITEND) != 0) {
+	dt -= HDFConstants.DFNT_LITEND;
+    }
+
 	
-    switch(hdfDataType) {
+    switch(dt) {
 
 	// one bit char
 	case HDFConstants.DFNT_CHAR:

@@ -158,6 +158,9 @@ public class JHVSDSImageControl extends Frame implements Runnable {
 	double retVal[] = new double[2]; // min. and max.
 	if (data == null)  return retVal;
 
+	if ((datatype & HDFConstants.DFNT_LITEND) != 0) {
+		datatype -= HDFConstants.DFNT_LITEND;
+	}
 	// set default
 	retVal[0] = Double.MAX_VALUE;
 	retVal[1] = Double.MIN_VALUE;
