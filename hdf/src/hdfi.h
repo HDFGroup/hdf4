@@ -559,6 +559,7 @@ Please check your Makefile.
 #endif /* __GNUC__ */
 
 #include <limits.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #define DF_MT   DFMT_MIPSEL
