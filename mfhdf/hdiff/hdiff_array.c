@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,10 +11,8 @@
 
 #include "hdf.h"
 #include "mfhdf.h"
-#include "vg.h"
-
 #include "hdiff.h"
-#include "dumplib.h"
+#include "vgint.h"
 
 
 
@@ -35,132 +34,13 @@ d_min_val1, d_max_val1, d_min_val2, d_max_val2); }
  printf("Range File1: %ld/%ld  File2: %ld/%ld\n", \
 i4_min_val1, i4_max_val1, i4_min_val2, i4_max_val2); }
 
-
-int sddata_diff(int32 sdid1, int32 sdid2, struct fspec specp)
-{
- int32    nvars1;              /* number of variables */
- int32    ngatts1;             /* number of global attributes */
- int      varid1, varid2;      /* variable id */
- struct   ncvar var1, var2;    /* variable */
- int      iv1, iv2;            /* variable number */
- vnode*   vlist = newvlist();  /* list for vars specified with -v option */
- int      k, iret1, iret2;
- int      tot_cnt;
- int      tot_cnt1, tot_cnt2;
- int32    start[MAX_NC_DIMS];
- void     *buf1, *buf2;
- void     *fill1, *fill2;
- int      max_err_cnt, ret=0;
-  
-/*
- * If any vars were specified with -v option, get list of associated
- * variable ids
+/*-------------------------------------------------------------------------
+ * Function: array_diff
+ *
+ * Purpose: memory compare
+ *
+ *-------------------------------------------------------------------------
  */
- for (k=0; k < specp.nlvars; k++) 
- {
-  varid1 = SDnametoindex(sdid1, specp.lvars[k]);
-  varadd(vlist, varid1);
- }
-
- iret1 =  SDfileinfo(sdid1, &nvars1, &ngatts1);
- 
- for (k = 0; k < nvars1; k++)
- {
-  varid1 = SDselect(sdid1, k);
-  
-  /* if var list specified, test for membership */
-  if (specp.nlvars > 0 && ! varmember(vlist, k))
-   continue;
-  
-  iret1 = SDgetinfo(varid1, var1.name, &var1.ndims, var1.dims, &var1.type,
-   &var1.natts);
-  
-  /* check if the given SDS is "fake" dimension scale */
-  if(HDstrncmp(var1.name, "fakeDim", 7) == 0)
-  {
-   continue;  
-  }
-  
-  iv2 = SDnametoindex(sdid2, var1.name);
-  
-  if (iv2 == -1)     /* sd doesn't exist in file2 */
-  {
-   SDendaccess(varid1);
-   ret=1;
-   continue;
-  }
-  
-  varid2 = SDselect(sdid2, iv2);
-  iret2 = SDgetinfo(varid2, var2.name, &var2.ndims, var2.dims, &var2.type,
-   &var2.natts);
-  
-  if (var1.ndims != var2.ndims || var1.type != var2.type) 
-  {
-   SDendaccess(varid1);
-   ret=1;
-   continue;
-  }
-  
-  if (specp.verbose) {
-  printf("SD Name: %s .... Comparing\n", var1.name);
-  }
-  
-  tot_cnt1 = 1;
-  for (iv1 = 0; iv1 < var1.ndims; iv1++) 
-  {
-   start[iv1] = 0;
-   tot_cnt1 *= var1.dims[iv1];
-  }
-  
-  tot_cnt2 = 1;
-  for (iv1 = 0; iv1 < var2.ndims; iv1++) 
-  {
-   start[iv1] = 0;
-   tot_cnt2 *= var2.dims[iv1];
-  }
-  
-  buf1 = (void *) malloc((unsigned) (tot_cnt1*DFKNTsize(var1.type)));
-  buf2 = (void *) malloc((unsigned) (tot_cnt2*DFKNTsize(var2.type)));
-  
-  iret1 = SDreaddata(varid1, start, (int32 *)NULL, var1.dims, buf1);
-  iret2 = SDreaddata(varid2, start, (int32 *)NULL, var2.dims, buf2);
-  
-  fill1 = (void *)malloc((unsigned) (sizeof(double)));
-  fill2 = (void *)malloc((unsigned) (sizeof(double)));
-  
-  iret1 = SDgetfillvalue(varid1, fill1);
-  if (iret1 == FAIL) {
-   free(fill1);
-   fill1 = NULL;
-  }
-  iret2 = SDgetfillvalue(varid2, fill2);
-  if (iret2 == FAIL) {
-   free(fill2);
-   fill2 = NULL;
-  }
-  
-  /*  in case there is a difference in the elements, compare up to the
-  limit of the less one */
-  
-  if (tot_cnt1 > tot_cnt2)
-   tot_cnt = tot_cnt2;
-  else
-   tot_cnt = tot_cnt1; 
-  
-  /* If max_err_cnt is set (i.e. not its default -1), use it otherwise set it
-  to tot_err_cnt so it doesn't trip  */
-  max_err_cnt = (specp.max_err_cnt >= 0) ? specp.max_err_cnt : tot_cnt;
-  ret=array_diff(buf1, buf2, tot_cnt, var1.type, specp.err_limit, 
-   max_err_cnt, specp.statistics, fill1, fill2);
-  free((char *) buf1);
-  free((char *) buf2);
-  
-  SDendaccess(varid1);
-  SDendaccess(varid2);
- }
- return ret;
-}
-
 
 int array_diff(void *buf1, 
                void *buf2, 
@@ -251,7 +131,7 @@ int array_diff(void *buf1,
   d_min_val2 = DBL_MAX;
   break;
  default:
-  error(" bad type - %d\n", type);
+  printf(" bad type - %d\n", type);
  }
  switch(type)
  {
@@ -483,7 +363,7 @@ int array_diff(void *buf1,
   break;
   
  default:
-  error(" bad type - %d\n", type);
+  printf(" bad type - %d\n", type);
   }
   if (statistics) {
    double sqrt_arg;
@@ -506,3 +386,246 @@ int array_diff(void *buf1,
   }
   return (n_diff>0 ? 1 : 0 );
 }
+
+
+/*-------------------------------------------------------------------------
+ * Function: vdata_cmp
+ *
+ * Purpose: memory compare
+ *
+ *-------------------------------------------------------------------------
+ */
+
+
+void
+fmt_print(uint8 *x, int32 type)
+{
+ int16    s = 0;
+ int32    l = 0;
+ float32  f = 0;
+ float64  d = 0;
+ 
+ switch(type) 
+ {
+ case DFNT_CHAR:
+  putchar(*x);
+  break;
+  
+ case DFNT_UINT8:
+ case DFNT_INT8:
+  printf("%02x ", *x);
+  break;
+  
+ case DFNT_UINT16:
+ case DFNT_INT16:
+  HDmemcpy(&s, x, sizeof(int16));
+  printf("%d", s);
+  break;
+  
+ case DFNT_UINT32:
+ case DFNT_INT32:
+  HDmemcpy(&l, x, sizeof(int32));
+  printf("%ld", l);
+  break;
+  
+ case DFNT_FLOAT32:
+  HDmemcpy(&f, x, sizeof(float32));
+  printf("%f", f);
+  break;
+  
+ case DFNT_FLOAT64:
+  HDmemcpy(&d, x, sizeof(float64));
+  printf("%f", f);
+  break;
+  
+ default: 
+  fprintf(stderr,"sorry, type [%d] not supported\n", type); 
+  break;
+  
+ }
+}
+
+
+int
+vdata_cmp(int32  vs1, int32  vs2, 
+          char   *gname, 
+          char   *cname, 
+          int32  max_err_cnt)
+{
+ int32   i, j, k, iflag, err_cnt;
+ int32   nv1, interlace1, vsize1;
+ int32   vsotag1, vsoref1;
+ char    fields1[VSFIELDMAX*FIELDNAMELENMAX];
+ char    vsclass1[VSNAMELENMAX], vsname1[VSNAMELENMAX];
+ int32   nv2, interlace2, vsize2;
+ int32   vsotag2, vsoref2;
+ char    fields2[VSFIELDMAX*FIELDNAMELENMAX];
+ char    vsclass2[VSNAMELENMAX], vsname2[VSNAMELENMAX];
+ uint8   *buf1, *buf2, *b1, *b2;
+ int32   off1[60], off2[60];
+ int     ret=0;
+ DYN_VWRITELIST *w1, *w2;
+ 
+ VSinquire(vs1, &nv1, &interlace1, fields1, &vsize1, vsname1);
+ VSinquire(vs2, &nv2, &interlace2, fields2, &vsize2, vsname2);
+ 
+ vsotag1 = VSQuerytag(vs1);
+ vsoref1 = VSQueryref(vs1);
+ VSgetclass(vs1,vsclass1);
+ 
+ vsotag2 = VSQuerytag(vs2);
+ vsoref2 = VSQueryref(vs2);
+ VSgetclass(vs2,vsclass2);
+ 
+ if (vsotag1 != vsotag2 || nv1 != nv2 || interlace1 != interlace2 ||
+  strcmp(fields1, fields2) != 0 || strcmp(vsclass1, vsclass2) != 0 ||
+  (strcmp(vsclass1, "Attr0.0") != 0 && vsize1 != vsize2))
+ {
+  printf("\n---------------------------\n");
+  printf("Vdata Name: %s <%s/%s> (Different attributes)\n",
+   vsname1, gname, cname);
+  printf("> <%d> nrec=%d interlace=%d fld=[%s] vsize=%d class={%s})\n",
+   vsotag1, nv1, interlace1, fields1, vsize1, vsclass1);
+  printf("< <%d> nrec=%d interlace=%d fld=[%s] vsize=%d class={%s})\n",
+   vsotag2, nv2, interlace2, fields2, vsize2, vsclass2);
+  return 1;
+ }
+ 
+ 
+ /* compare the data */
+ 
+ buf1 = (uint8 *) malloc((unsigned) (nv1 * vsize1));
+ buf2 = (uint8 *) malloc((unsigned) (nv2 * vsize2));
+ if (!buf1 || !buf2) 
+ {
+  printf("Out of memory!");
+  exit(0);
+ }
+ 
+ VSsetfields(vs1, fields1);
+ VSread(vs1, buf1, nv1, interlace1);
+ w1 = (DYN_VWRITELIST*) vswritelist(vs1);
+ 
+ VSsetfields(vs2, fields2);
+ VSread(vs2, buf2, nv2, interlace2);
+ w2 = (DYN_VWRITELIST*) vswritelist(vs2);
+ 
+ b1 = buf1;
+ b2 = buf2;
+ 
+ for (j=0; j < w1->n; j++)
+  off1[j] = DFKNTsize(w1->type[j] | DFNT_NATIVE);
+ 
+ for (j=0; j < w2->n; j++)
+  off2[j] = DFKNTsize(w2->type[j] | DFNT_NATIVE);
+ 
+ iflag = 0;
+ 
+ err_cnt = 0;
+ 
+ if (vsize1 == vsize2)
+ {
+  for (i=0; i<nv1; i++)
+  {
+   if (memcmp(b1, b2, vsize1) == 0)
+   {
+    b1 += vsize1;   
+    b2 += vsize2;
+    continue;
+   }
+   if (iflag == 0)
+   {
+    iflag = 1;         /* there is a difference */
+    printf("\n---------------------------\n");
+    printf("Vdata Name: %s (Data record comparison)\n", 
+     vsname1);
+    ret=1;
+   }
+   
+   printf("> %d: ", i);
+   for (j=0; j<w1->n; j++)
+   {
+    for (k=0; k<w1->order[j]; k++)
+    {
+     fmt_print(b1, w1->type[j]);
+     b1 += off1[j];
+     if (w1->type[j] != DFNT_CHAR)
+      putchar(' ');
+    }
+   }        
+   putchar('\n');
+   printf("< %d: ", i);
+   for (j=0; j<w2->n; j++)
+   {
+    for (k=0; k<w2->order[j]; k++)
+    {
+     fmt_print(b2, w2->type[j]);
+     b2 += off2[j];
+     if (w2->type[j] != DFNT_CHAR)
+      putchar(' ');
+    }
+   }        
+   putchar('\n');
+   
+   if (max_err_cnt > 0)
+   {
+    err_cnt++;
+    if (err_cnt >= max_err_cnt)
+     break;
+   }
+  }
+ }
+ else
+ {
+  printf("****....\n");
+  for (i=0; i<nv1; i++)
+  {
+   if (iflag == 0)
+   {
+    iflag = 1;         /* there is a difference */
+    printf("\n---------------------------\n");
+    printf("Vdata Name: %s (Data record comparison)\n", 
+     vsname1);
+    ret=1;
+   }
+   printf("> %d: ", i);
+   for (j=0; j<w1->n; j++)
+   {
+    for (k=0; k<w1->order[j]; k++)
+    {
+     fmt_print(b1, w1->type[j]);
+     b1 += off1[j];
+     if (w1->type[j] != DFNT_CHAR)
+      putchar(' ');
+    }
+   }  
+   putchar('\n');
+   printf("< %d: ", i);
+   for (j=0; j<w2->n; j++)
+   {
+    for (k=0; k<w2->order[j]; k++)
+    {
+     fmt_print(b2, w2->type[j]);
+     b1 += off2[j];
+     if (w2->type[j] != DFNT_CHAR)
+      putchar(' ');
+    }
+   }  
+   putchar('\n');
+   
+   if (max_err_cnt > 0)
+   {
+    err_cnt++;
+    if (err_cnt >= max_err_cnt)
+     break;
+   }
+  }
+  
+ }
+ 
+ if (buf1)free((char *) buf1);
+ if (buf2)free((char *) buf2);
+
+ return ret;
+}
+
