@@ -16,29 +16,34 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
-/*+
-   FILE
+/*
+FILE
    hbitio.c
    HDF bit level I/O routines
-   REMARKS
+REMARKS
    These functions operate on top of the "H" layer routines
    (i.e. they call Hstartread, Hstartwrite, Hread, Hseek, Hwrite, etc.)
    and depend on them for all actual I/O to data elements in the
    file.  This may be somewhat slow, but it prevents having
    to duplicate code for that access.
-   EXPORTED ROUTINES
-   Hstartbitread - open a dataset for bitfile dataset reading
+EXPORTED ROUTINES
+   Hstartbitread  - open a dataset for bitfile dataset reading
    Hstartbitwrite - open a dataset for bitfile dataset writing
-   Happendable - make a writable dataset appendable
-   Hbitread - read bits from a bitfile dataset
-   Hbitwrite - write bits to a bitfile dataset
-   Hbitseek - seek to a given bit offset in a bitfile dataset
-   Hendbitaccess - close off access to a bitfile dataset
-   AUTHOR
+   Happendable    - make a writable dataset appendable
+   Hbitread       - read bits from a bitfile dataset
+   Hbitwrite      - write bits to a bitfile dataset
+   Hbitseek       - seek to a given bit offset in a bitfile dataset
+   Hendbitaccess  - close off access to a bitfile dataset
+LOCAL ROUTINES
+   HIbitflush         - flush the bits out to a writable bitfile
+   HIget_bitfile_slot - get a free bitfile record slot
+   HIread2write       - switch from reading bits to writing them
+   HIwrite2read       - switch from writing bits to reading them
+AUTHOR
    Quincey Koziol
-   MODIFICATION HISTORY
+MODIFICATION HISTORY
    3/15/92     Starting writing
-   + */
+*/
 
 #define BITMASTER
 #include "hdf.h"
@@ -51,7 +56,6 @@ static char RcsId[] = "@(#)$Revision$";
    where in the data element the current access should start from, etc.
    Allocated dynamically.
    See hbitio.h for definition. */
-
 static struct bitrec_t *bitfile_records = NULL;
 
 /* Local Function Declarations */
@@ -578,7 +582,7 @@ Hbitread(int32 bitid, intn count, uint32 *data)
 
         Converting from a direct bit offset variable to this call looks like:
             Hbitseek(bitid,bit_offset/8,bit_offset%8);
-     REVISION LOG
+REVISION LOG
 --------------------------------------------------------------------------*/
 intn
 Hbitseek(int32 bitid, int32 byte_offset, intn bit_offset)
@@ -861,9 +865,7 @@ HIbitflush(bitrec_t * bitfile_rec, intn flushbit, intn writeout)
 }   /* HIbitflush */
 
 /*--------------------------------------------------------------------------
- HIget_bitfile_slot
-
- get a free bitfile record slot
+ HIget_bitfile_slot - get a free bitfile record slot
 --------------------------------------------------------------------------*/
 PRIVATE int
 HIget_bitfile_slot(void)
