@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.10  1993/08/19 16:45:51  chouck
-Added code and tests for multi-order Vdatas
+Revision 1.11  1993/08/20 19:58:44  chouck
+Had some of the strides backwards in VSread()
 
+ * Revision 1.10  1993/08/19  16:45:51  chouck
+ * Added code and tests for multi-order Vdatas
+ *
  * Revision 1.9  1993/08/16  21:46:47  koziol
  * Wrapped in changes for final, working version on the PC.
  *
@@ -314,8 +317,8 @@ uint8    buf[];
             DFKsetNT(type); 
             for(index = 0; index < order; index++) {
                 DFKnumin (b2, b1, (uint32) nelt, (uint32) isize, (uint32) esize);
-                b1 += isize / order ;
-                b2 += esize / order;
+                b1 += esize / order ;
+                b2 += isize / order;
             }
             b1 += ((nelt - 1) * esize);
         }
@@ -340,9 +343,13 @@ uint8    buf[];
             /* Crrr ? */
             DFKsetNT(type); 
             for(index = 0; index < order; index++) {
+/*
+printf("C: from : %d  to: %d esize: %d isize: %d order: %d nt: %d\n", 
+       (int) b2, (int) b1, (int) esize, (int) isize, (int) order, (int) type);
+*/
                 DFKnumin (b2, b1, (uint32) nelt, (uint32) hsize, (uint32) uvsize);
-                b1 += isize / order;
-                b2 += esize / order;
+                b1 += (int) esize / order;
+                b2 += (int) isize / order;
             }
             offset += esize;
         }
@@ -369,8 +376,8 @@ uint8    buf[];
             DFKsetNT(type); 
             for(index = 0; index < order; index++) {
                 DFKnumin (b2, b1, (uint32) nelt, (uint32) isize, (uint32) uvsize);
-                b1 += isize / order;
-                b2 += esize / order;
+                b1 += esize / order;
+                b2 += isize / order;
             }
             offset += isize;
         }
