@@ -119,7 +119,9 @@ const long *coords ;
             int count, byte_count;
 	    int len;
             
-            if((unfilled = *ip - vp->numrecs) <= 0) return TRUE;
+/* 12/27     if((unfilled = *ip - vp->numrecs) <= 0) return TRUE;   */
+            if((unfilled = *ip - vp->numrecs) < 0) return TRUE;   
+
             
             /* check to see if we are trying to read beyond the end */
             if(handle->xdrs->x_op != XDR_ENCODE)
@@ -157,11 +159,14 @@ const long *coords ;
             byte_count = vp->len;
 	    count = byte_count / vp->HDFsize;
 
-            Hseek(vp->aid, (vp->numrecs + 1) * byte_count, DF_START);
+/* 12/27       Hseek(vp->aid, (vp->numrecs + 1) * byte_count, DF_START); */
+            Hseek(vp->aid, (vp->numrecs) * byte_count, DF_START);
 
 #ifdef DEBUG
+/* 12/27         printf("Filling %d bytes starting at %d\n", 
+                   byte_count * unfilled, (vp->numrecs + 1) * byte_count); */
             printf("Filling %d bytes starting at %d\n", 
-                   byte_count * unfilled, (vp->numrecs + 1) * byte_count);
+                   byte_count * unfilled, (vp->numrecs) * byte_count);
 #endif  
 
             /*
@@ -171,7 +176,9 @@ const long *coords ;
             DFKsetNT(vp->HDFtype);
             DFKnumout(strg, strg1, count, 0, 0);
 
-            for(; unfilled; unfilled--)
+/* 12/27            for(; unfilled; unfilled--)
+                Hwrite(vp->aid, byte_count, (uint8 *) strg1);  */
+            for(; unfilled>=0; unfilled--, vp->numrecs++)
                 Hwrite(vp->aid, byte_count, (uint8 *) strg1);
 
 #ifdef DEBUG
@@ -181,7 +188,7 @@ const long *coords ;
                     vp->numrecs);
 #endif
 
-            vp->numrecs = MAX(vp->numrecs, *ip);
+/* 12/27            vp->numrecs = MAX(vp->numrecs, *ip);    */
             if((*ip + 1) > handle->numrecs) {
                 handle->numrecs = *ip + 1;
                 handle->flags |= NC_NDIRTY;
