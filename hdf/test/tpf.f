@@ -40,7 +40,7 @@ C
       character*1 CR
       character pal1(768), pal2(768), ipal(768)
       integer ret 
-      integer*2  ref1, ref2
+      integer*2  ref1, ref2, newref1, newref2
       integer i
 
 
@@ -49,6 +49,9 @@ C
       CR = char(10)
       number_failed = 0
 
+C
+C Initialize pal1 as {1, 2, 3, 4, 5, ...}
+C Initialize pal2 as {1, 1, 1, 2, 2, 2, ...}
       do 100 i = 0, 255
           pal1(3*i + 1) = char(i)
           pal1(3*i + 2) = char(i) 
@@ -58,6 +61,9 @@ C
           pal2(i + 512 + 1) = char(i) 
 100   continue
 
+C
+C Write out pal1, then pal2.
+C Keep their ref number in ref1 and ref2.
       call MESSAGE(VERBO_HI, 'Putting pal1 in new file.')
       ret = dpppal(TESTFILE, pal1, 0, 'w')
       call VERIFY(ret, 'dpppal', number_failed)
@@ -67,7 +73,6 @@ C
       call VERIFY(ref1*1, 'dplref', number_failed)
 C VERIFY expects an integer, but ref1 is only integer*2.  The
 C expression promotes it to an integer expression.
-C     print *, 'ref1 is ', ref1
 
       call MESSAGE(VERBO_HI, 'Putting pal2 in file')
       ret = dpapal(TESTFILE, pal2)
@@ -76,12 +81,15 @@ C     print *, 'ref1 is ', ref1
       call MESSAGE(VERBO_HI, 'Getting ref2')
       ref2 = dplref()
       call VERIFY(ref2*1, 'dplref', number_failed)
-C     print *, 'ref2 is ', ref2
      
+C
+C Reset the palettes for reading
       call MESSAGE(VERBO_HI, 'Restarting palette interface')
       ret = dprest()
       call VERIFY(ret, 'dprest', number_failed)
 
+C
+C Get palette 1 and match it with pal1
       call MESSAGE(VERBO_HI, 'Reading pal1')
       ret = dpgpal(TESTFILE, ipal)
       call VERIFY(ret, 'dpgpal', number_failed)
@@ -92,11 +100,17 @@ C     print *, 'ref2 is ', ref2
           endif
 200   continue
       
-      call MESSAGE(VERBO_HI, 'Getting ref1')
-      ref1 =  dplref()
-      call VERIFY(ref1*1, 'dplref', number_failed)
-C     print *, 'Last ref is ', ref1
+C
+C verify the ref number is updated correctly too
+      call MESSAGE(VERBO_HI, 'Getting newref1')
+      newref1 =  dplref()
+      if (newref1 .ne. ref1) then
+	print *, 'Error: newref1 is ', newref1, ', should be ', ref1
+	number_failed = number_failed + 1
+      endif
 
+C
+C Get palette 2 and match it with pal2
       call MESSAGE(VERBO_HI, 'Reading pal2.')
       ret = dpgpal(TESTFILE, ipal)
       call VERIFY(ret, 'dpgpal', number_failed)
@@ -107,16 +121,26 @@ C     print *, 'Last ref is ', ref1
           endif
 300   continue
 
+C
+C Again verify the ref number
       call MESSAGE(VERBO_HI, 'Getting ref2')
-      ref2 = dplref()
-      call VERIFY(ref2*1, 'dplref', number_failed)
-C     print *, 'Last ref is ', ref2
+      newref2 =  dplref()
+      if (newref2 .ne. ref2) then
+	print *, 'Error: newref2 is ', newref2, ', should be ', ref2
+	number_failed = number_failed + 1
+      endif
 
+C
+C Check number of palettes
       call MESSAGE(VERBO_HI, 'Getting number of palettes')
       ret = dpnpals(TESTFILE)
-      call VERIFY(ret, 'dpnpals', number_failed)
-C     print *, 'Number of palettes is:', ret
+      if (ret .ne. 2) then
+	print *, 'Error: number of palette is ', ret, ', should be 2'
+	number_failed = number_failed + 1
+      endif
 
+C
+C Explicitly set to palette of ref2 for reading
       call MESSAGE(VERBO_HI, 'Setting read ref to ref2.')
       ret = dprref(TESTFILE, ref2)
       call VERIFY(ret, 'dprref', number_failed)
@@ -124,6 +148,15 @@ C     print *, 'Number of palettes is:', ret
       call MESSAGE(VERBO_HI, 'Reading pal2')
       ret = dpgpal(TESTFILE, ipal)
       call VERIFY(ret, 'dpgpal', number_failed)
+
+      newref2 =  dplref()
+      if (newref2 .ne. ref2) then
+	print *, 'Error: newref2 is ', newref2, ', should be ', ref2
+	number_failed = number_failed + 1
+      endif
+
+C
+C match it with pal2
       do 400 i=1, 768
           if (ipal(i) .ne. pal2(i)) then
               print *,  'Error at ', i, ', ipal:', ipal(i),
@@ -131,15 +164,24 @@ C     print *, 'Number of palettes is:', ret
           endif
 400   continue
 
+C
+C Explicitly set to palette of ref1 for reading
       call MESSAGE(VERBO_HI, 'Setting read ref to ref1.')
       ret = dprref(TESTFILE, ref1)
-
       call VERIFY(ret, 'dprref', number_failed)
-      
+
       call MESSAGE(VERBO_HI, 'Reading pal1')
       ret = dpgpal(TESTFILE, ipal)
       call VERIFY(ret, 'dpgpal', number_failed)
 
+      newref1 =  dplref()
+      if (newref1 .ne. ref1) then
+	print *, 'Error: newref1 is ', newref1, ', should be ', ref1
+	number_failed = number_failed + 1
+      endif
+      
+C
+C match it with pal1
       do 500 i=1, 768
           if (ipal(i) .ne. pal1(i)) then
               print *,  'Error at ', i, ', ipal:', ipal(i),
@@ -147,6 +189,8 @@ C     print *, 'Number of palettes is:', ret
           endif
 500   continue
 
+C
+C Modify the middle chunk of pal1 and replace its file copy.
       call MESSAGE(VERBO_HI, 'Modifying pal1')
       do 600 i=1,256
           pal1(i+256) = char(256-i)
