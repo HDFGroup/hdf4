@@ -848,20 +848,6 @@
 ./mfhdf/hdiff/hdifftst.c
 ./mfhdf/hdiff/testhdiff.sh
 
-./mfhdf/hdiff/testfiles/hdiff_01.txt
-./mfhdf/hdiff/testfiles/hdiff_02.txt
-./mfhdf/hdiff/testfiles/hdiff_03.txt
-./mfhdf/hdiff/testfiles/hdiff_04.txt
-./mfhdf/hdiff/testfiles/hdiff_05.txt
-./mfhdf/hdiff/testfiles/hdiff_06.txt
-./mfhdf/hdiff/testfiles/hdiff_07.txt
-./mfhdf/hdiff/testfiles/hdiff_08.txt
-./mfhdf/hdiff/testfiles/hdiff_09.txt
-./mfhdf/hdiff/testfiles/hdiff_10.txt
-./mfhdf/hdiff/testfiles/hdiff_11.txt
-./mfhdf/hdiff/testfiles/hdifftst1.hdf
-./mfhdf/hdiff/testfiles/hdifftst2.hdf
-
 ./mfhdf/hrepack/Makefile.am
 ./mfhdf/hrepack/Makefile.in
 ./mfhdf/hrepack/hrepack.c
