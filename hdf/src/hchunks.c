@@ -3523,6 +3523,16 @@ HMCPinfo(accrec_t *access_rec,       /* IN: access record of access elemement */
     info_chunk->key        = SPECIAL_CHUNKED;
     info_chunk->chunk_size = (info->chunk_size * info->nt_size); /* phsyical size */
     info_chunk->ndims      = info->ndims; 
+    if (info->flag == SPECIAL_COMP)
+      {
+          info_chunk->comp_type  = (int32)info->comp_type;
+          info_chunk->model_type = (int32)info->model_type;
+      }
+    else
+      {
+          info_chunk->comp_type  = COMP_CODE_NONE;
+          info_chunk->model_type = 0;
+      }
 
     /* allocate space for chunk lengths */
     if (( info_chunk->cdims = (int32 *) HDmalloc(info->ndims*sizeof(int32)))==NULL)
