@@ -61,7 +61,7 @@ MACHINE=SUN
 
 # Define your C compiler and flags
 CC= gcc
-CFLAGS= -ansi -D${MACHINE}  -O
+CFLAGS= -ansi -Wall -pedantic -D${MACHINE}  -O
 
 # Define your FORTRAN compiler
 FC= f77
