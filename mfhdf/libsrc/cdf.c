@@ -2519,6 +2519,12 @@ hdf_read_vars(XDR *xdrs,
                         }
           
                       variables[count] = NC_new_var(vgname, type, ndims, dims);
+		      /* BMR: put back hdf type that was set wrong by 
+			 NC_new_var; please refer to the cvs history of 
+			 bug #172 for reason on this statement - 4/17/2001 
+		      */
+		      variables[count]->HDFtype = HDFtype;
+
                       vp = variables[count];
                       if(NULL == vp) 
                         {

@@ -3049,6 +3049,10 @@ SDIgetcoordvar(NC     *handle, /* IN: file handle */
           goto done;
       }
 
+    /* BMR: put back hdf type that was set wrong by NC_new_var; please refer
+       to the cvs history of bug #172 for reason on this statement - 4/17/01*/
+    var->HDFtype = nt;
+
     /* get a new NDG ref for this sucker */
 #ifdef NOT_YET
     var->ndg_ref = Htagnewref(handle->hdf_file,DFTAG_NDG);
