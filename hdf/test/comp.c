@@ -11,27 +11,22 @@
  ****************************************************************************/
 
 /*
-   FILE
-   comp.c
-   Test HDF compressed data I/O routines
-
-   REMARKS
-   Currently these only really test RLE compression, at not very well
-   at that...
+   FILE - comp.c
+       Test HDF compressed data I/O routines
 
    DESIGN
-   These should be written to test all combinations of modeling and
-   encoding layers.
+       These are written to test all combinations of modeling and
+       encoding layers with different number types.
 
    BUGS/LIMITATIONS
 
    EXPORTED ROUTINES
 
    AUTHOR
-   Quincey Koziol
+       Quincey Koziol
 
    MODIFICATION HISTORY
-   10/19/93 - Threw this header in.
+       10/19/93 - Through this header in.
  */
 
 /* $Id$ */

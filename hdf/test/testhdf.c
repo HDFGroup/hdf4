@@ -146,6 +146,7 @@ main(int argc, char *argv[])
     InitTest("hblocks", test_hblocks, "HBLOCKS");
     InitTest("extelt", test_hextelt, "EXTERNAL ELEMENTS");
     InitTest("comp", test_comp, "COMPRESSED ELEMENTS");
+    InitTest("buffer", test_buffer, "Buffered Elements");
     InitTest("chunks", test_chunks, "Chunks");
 #ifdef LATER
     InitTest("vblocks", test_hvblocks, "Variable Length Linked Blocks");
