@@ -220,7 +220,6 @@ process_tables(FILE * f)
                 case M_SOF9:
                     get_sof(f);
                     return ((JPEG_MARKER) c);
-                    break;
 
 #ifdef QAK
                 case M_DHT:

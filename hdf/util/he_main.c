@@ -1174,6 +1174,7 @@ quit(int status)
               return HE_FAIL;
       }
     exit(status);
+    return(status);	/* never excuted.  Just to shut up some comilers */
 }
 
 int
