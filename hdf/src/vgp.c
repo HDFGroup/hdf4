@@ -5,10 +5,15 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1993/01/19 05:56:22  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.7  1993/02/09 17:59:20  chouck
+Added a fix to Vinsert() to increase the size of a Vgroup dynamically.
+Also fixed a problem in vunpackvg() when reading Vgroups with no
+elements.  A couple minor speed improvements here and there too.
 
+ * Revision 1.6  1993/01/19  05:56:22  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.5  1992/11/30  22:00:01  chouck
  * Added fixes for changing to Vstart and Vend
  *
@@ -514,79 +519,79 @@ void vpackvg (vg, buf, size)
 void vunpackvg (VGROUP *vg, BYTE buf[])
 #else
 void vunpackvg (vg, buf)
-	VGROUP*    	  	vg;	/* vgroup to be loaded with file data */
-	BYTE			buf[]; 	/* must contain a DFTAG_VG data object from file */
+     VGROUP*    	  	vg;	/* vgroup to be loaded with file data */
+     BYTE			buf[]; 	/* must contain a DFTAG_VG data object from file */
 #endif
 {
+    
+    register BYTE    *b, *bb;
+    register intn    i;
+    register uint16  uint16var;
+    char * FUNC = "vunpackvg";
+    
+    bb = &buf[0];
 
-	register BYTE	  *b, *bb;
-	register uint16   i;
-	register uint16	  uint16var;
-	char * FUNC = "vunpackvg";
-
-	bb = &buf[0];
-
-	/* retrieve nvelt */
-	b = bb;
-	UINT16DECODE(b,vg->nvelt);
-	bb+=UINT16SIZE;
-
-    vg->msize = vg->nvelt;
+    /* retrieve nvelt */
+    b = bb;
+    UINT16DECODE(b,vg->nvelt);
+    bb+=UINT16SIZE;
+    
+    vg->msize = (vg->nvelt > MAXNVELT ? vg->nvelt : MAXNVELT);
     vg->tag  = (uint16 *) HDgetspace(vg->msize * sizeof(uint16));
     vg->ref  = (uint16 *) HDgetspace(vg->msize * sizeof(uint16));
-
+    
     if((vg->tag == NULL) || (vg->ref == NULL)) return;
-
+    
     /* retrieve the tags */
-    for (i=0; i<vg->nvelt; i++) {
-		b= bb;
-		UINT16DECODE(b,vg->tag[i]);
-		bb +=UINT16SIZE;
-	}
+    for (i = 0; i < vg->nvelt; i++) {
+        b= bb;
+        UINT16DECODE(b,vg->tag[i]);
+        bb +=UINT16SIZE;
+    }
+    
+    /* retrieve the refs */
+    for (i = 0; i < vg->nvelt; i++) {
+        b= bb;
+        UINT16DECODE(b,vg->ref[i]);
+        bb +=UINT16SIZE;
+    }
 
-	/* retrieve the refs */
-    for (i=0; i<vg->nvelt; i++) {
-		b= bb;
-		UINT16DECODE(b,vg->ref[i]);
-		bb +=UINT16SIZE;
-	}
-
-	/* retrieve vgname (and its len)  */
-	b= bb;
-	UINT16DECODE(b,uint16var);
-	bb +=UINT16SIZE;
-
-        HIstrncpy(vg->vgname, (char*) bb, (int32) uint16var + 1);
-	bb += uint16var;
-
-	if (vjv) {
-		sprintf(sjs,"vunpackvg: vgname is [%s]\n",vg->vgname);
-		zj;
-	}
-
-	/* retrieve vgclass (and its len)  */
-	b= bb;
-	UINT16DECODE(b,uint16var);
-	bb +=UINT16SIZE;
-        
-        HIstrncpy(vg->vgclass, (char*) bb, (int32) uint16var + 1);
-	bb += uint16var;
-
-	b = bb;
-	UINT16DECODE(b,vg->extag); /* retrieve the vg's expansion tag */
-	bb += UINT16SIZE;
-
-	b = bb;
-	UINT16DECODE(b,vg->exref); /* retrieve the vg's expansion ref */
-	bb += UINT16SIZE;
-
-	b = bb;
-	UINT16DECODE(b,vg->version); /* retrieve the vg's version field */
-	bb += UINT16SIZE;
-
-	b = bb;
-	UINT16DECODE(b,vg->more); /* retrieve the vg's more field */
-	bb += UINT16SIZE;
+    /* retrieve vgname (and its len)  */
+    b= bb;
+    UINT16DECODE(b,uint16var);
+    bb +=UINT16SIZE;
+    
+    HIstrncpy(vg->vgname, (char*) bb, (int32) uint16var + 1);
+    bb += uint16var;
+    
+    if (vjv) {
+        sprintf(sjs,"vunpackvg: vgname is [%s]\n",vg->vgname);
+        zj;
+    }
+    
+    /* retrieve vgclass (and its len)  */
+    b= bb;
+    UINT16DECODE(b,uint16var);
+    bb +=UINT16SIZE;
+    
+    HIstrncpy(vg->vgclass, (char*) bb, (int32) uint16var + 1);
+    bb += uint16var;
+    
+    b = bb;
+    UINT16DECODE(b,vg->extag); /* retrieve the vg's expansion tag */
+    bb += UINT16SIZE;
+    
+    b = bb;
+    UINT16DECODE(b,vg->exref); /* retrieve the vg's expansion ref */
+    bb += UINT16SIZE;
+    
+    b = bb;
+    UINT16DECODE(b,vg->version); /* retrieve the vg's version field */
+    bb += UINT16SIZE;
+    
+    b = bb;
+    UINT16DECODE(b,vg->more); /* retrieve the vg's more field */
+    bb += UINT16SIZE;
 
 } /* vunpackvg */
 
@@ -869,66 +874,73 @@ PUBLIC int32 Vinsert (vg, velt)
 #endif
 
 {
-    uint16 u;
-	char * FUNC = "Vinsert";
+    register intn u;
+    char * FUNC = "Vinsert";
+    
+    if (vg == NULL || velt == NULL) {
+        HERROR(DFE_BADPTR);
+        return(FAIL);
+    }
+    
+    if (vg->otag != DFTAG_VG) {
+        HERROR(DFE_ARGS);
+        return(FAIL);
+    }
+    
+    
+    if(vg->nvelt >= vg->msize) {
+        vg->msize *= 2;
+        vg->tag  = (uint16 *) HDregetspace(vg->tag, vg->msize * sizeof(uint16));
+        vg->ref  = (uint16 *) HDregetspace(vg->ref, vg->msize * sizeof(uint16));
+        
+        if((vg->tag == NULL) || (vg->ref == NULL)) {
+            HERROR(DFE_NOSPACE);
+            return(NULL);
+        }  
+    }
+    
+    if ( Get_vfile(vg->f) != Get_vfile(velt->f) ) {
+        HERROR(DFE_DIFFFILES);
+        return(FAIL);
+    }
+    
+    /* check in vstab  or vgtab that velt actually exist in file */
+    
+    switch (velt->otag) {
+    case VSDESCTAG:
+        if (vexistvs (vg->f,velt->oref) == FAIL) 
+            {HERROR(DFE_NOVS); return(FAIL);}
+        break;
+        
+    case DFTAG_VG:
+        if (vexistvg (vg->f,velt->oref) == FAIL) 
+            {HERROR(DFE_NOVS); return(FAIL);}
+        break;
+        
+    default:
+        HERROR(DFE_ARGS);
+        return(FAIL);
+    } /* switch */
 
-	if (vg == NULL || velt == NULL) {
-          HERROR(DFE_BADPTR);
-          return(FAIL);
-        }
-
-	if (vg->otag != DFTAG_VG) {
-          HERROR(DFE_ARGS);
-          return(FAIL);
-        }
-
-        if(vg->nvelt >= vg->msize) {
-          HERROR(DFE_VGSIZE);
-          return(FAIL);
-        }
-
-	if ( Get_vfile(vg->f) != Get_vfile(velt->f) ) {
-          HERROR(DFE_DIFFFILES);
-          return(FAIL);
-        }
-
-	/* check in vstab  or vgtab that velt actually exist in file */
-
-	switch (velt->otag) {
-		case VSDESCTAG:
-			if (vexistvs (vg->f,velt->oref) == FAIL) 
-                  {HERROR(DFE_NOVS); return(FAIL);}
-			break;
-
-		case DFTAG_VG:
-			if (vexistvg (vg->f,velt->oref) == FAIL) 
-                  {HERROR(DFE_NOVS); return(FAIL);}
-			break;
-
-      default:
-          HERROR(DFE_ARGS);
-          return(FAIL);
-	} /* switch */
-
-	/* check and prevent duplicate links */
-    for(u=0; u<vg->nvelt; u++)
+    /* check and prevent duplicate links */
+    for(u = 0; u < vg->nvelt; u++)
         if ( (vg->tag[u] == velt->otag) && (vg->ref[u] == velt->oref) ) {
-           HERROR(DFE_DUPDD);
-           HEreport("Vinsert: duplicate link <%d/%d>", velt->otag,velt->oref);
-           return(FAIL);
-		}
-
-	/* Finally, ok to insert */
-	vinsertpair (vg, velt->otag, velt->oref);
-
-	if (vjv) {
-		sprintf(sjs,"#Vinsert:inserted <%d/%d> at nvelt=%d\n",
-		    velt->otag, velt->oref, vg->nvelt); zj;
-	}
-
-	vg->marked = TRUE;
-	return(vg->nvelt - 1);
-
+            HERROR(DFE_DUPDD);
+            HEreport("Vinsert: duplicate link <%d/%d>", velt->otag,velt->oref);
+            return(FAIL);
+        }
+    
+    /* Finally, ok to insert */
+    vinsertpair (vg, velt->otag, velt->oref);
+    
+    if (vjv) {
+        sprintf(sjs,"#Vinsert:inserted <%d/%d> at nvelt=%d\n",
+                velt->otag, velt->oref, vg->nvelt); zj;
+    }
+    
+    vg->marked = TRUE;
+    return(vg->nvelt - 1);
+    
 } /* Vinsert */
 
 /* ----------------------------- Vflocate -------------------------------- */
@@ -950,21 +962,21 @@ PUBLIC int32 Vflocate (vg, field)
 
 {
     int32   s;
-    uint16  u;
-	VDATA 	*vs;
-	char * FUNC = "Vflocate";
-
-    for (u=0;u<vg->nvelt;u++)  {
+    register intn  u;
+    VDATA 	*vs;
+    char * FUNC = "Vflocate";
+    
+    for (u = 0; u < vg->nvelt; u++)  {
         if (vg->tag[u] != VSDESCTAG) continue;
         vs = (VDATA*) VSattach (vg->f,vg->ref[u],"r");
-		if (vs==NULL) return (FAIL);
-		s = VSfexist (vs, field);
-		VSdetach (vs);
-        if (s==1) return (vg->ref[u]); /* found. return vdata's ref */
-	}
-
-	return (FAIL); /* field not found */
-
+        if (vs == NULL) return (FAIL);
+        s = VSfexist (vs, field);
+        VSdetach (vs);
+        if (s == 1) return (vg->ref[u]); /* found. return vdata's ref */
+    }
+    
+    return (FAIL); /* field not found */
+    
 } /* Vflocate */
 
 /* ----------------------- Vinqtagref ------------------------------------- */
@@ -995,9 +1007,9 @@ PUBLIC int32 Vinqtagref (vg, tag, ref)
     for (i=0; i < vg->nvelt; i++)
         if ((ttag == vg->tag[i]) && (rref == vg->ref[i])) 
             return (TRUE); /* exist */
-
-	return (FALSE); /* does not exist */
-
+    
+    return (FALSE); /* does not exist */
+    
 } /* Vinqtagref */
 
 /* ------------------------- Vntagrefs ------------------------------- */
@@ -1017,10 +1029,10 @@ PUBLIC int32 Vntagrefs (vg)
 #endif
 
 {
-	char * FUNC = "Vntagrefs";
-
-	return ( (vg->otag == DFTAG_VG) ? (int32) vg->nvelt : FAIL);
-
+    char * FUNC = "Vntagrefs";
+    
+    return ( (vg->otag == DFTAG_VG) ? (int32) vg->nvelt : FAIL);
+    
 } /* Vntagrefs */
 
 /* -------------------------- Vgettagrefs ----------------------------- */
@@ -1085,49 +1097,49 @@ PUBLIC int32 Vgettagref (vg, which, tag, ref)
 #endif
 
 {
-	char * FUNC = "Vgettagref";
-
-	if (vg==NULL) return (FAIL);
+    char * FUNC = "Vgettagref";
+    
+    if (vg==NULL) return (FAIL);
     if (which < 0 || which > (int32)(vg->nvelt-1))
-          return (FAIL); /* range err */
-
-        *tag  = (int32) vg->tag[which];
-        *ref  = (int32) vg->ref[which];
-	return (SUCCEED); /* ok */
-
+        return (FAIL); /* range err */
+    
+    *tag  = (int32) vg->tag[which];
+    *ref  = (int32) vg->ref[which];
+    return (SUCCEED); /* ok */
+    
 } /* Vgettagref */
 
 /* ------------------------ Vaddtagref ---------------------------------- */
 /*
-* Inserts a tag/ref pair into the attached vgroup vg.
-* First checks that the tag/ref is unique.
-* If error, returns FAIL or tag/ref is not inserted.
-* If OK, returns the total number of tag/refs in the vgroup (a +ve integer).
-* 28-MAR-91 Jason Ng NCSA.
-*/
+ * Inserts a tag/ref pair into the attached vgroup vg.
+ * First checks that the tag/ref is unique.
+ * If error, returns FAIL or tag/ref is not inserted.
+ * If OK, returns the total number of tag/refs in the vgroup (a +ve integer).
+ * 28-MAR-91 Jason Ng NCSA.
+ */
 
 #ifdef PROTOTYPE
 PUBLIC int32 Vaddtagref (VGROUP *vg, int32 tag, int32 ref)
 #else
 
 PUBLIC int32 Vaddtagref ( vg, tag, ref)
-	VGROUP 	* vg;
-	int32 	tag, ref;
-
+     VGROUP 	* vg;
+     int32 	tag, ref;
+     
 #endif
 
 {
-	int32  n;
-	char * FUNC = "Vaddtagref";
-
-	if (Vinqtagref (vg, tag, ref) == 1) {
-          /* error, already exists */
-          HERROR(DFE_DUPDD);
-          return (FAIL);
-        }
-	n = vinsertpair (vg, (uint16) tag, (uint16) ref);
-	return (n);
-
+    int32  n;
+    char * FUNC = "Vaddtagref";
+    
+    if (Vinqtagref (vg, tag, ref) == 1) {
+        /* error, already exists */
+        HERROR(DFE_DUPDD);
+        return (FAIL);
+    }
+    n = vinsertpair (vg, (uint16) tag, (uint16) ref);
+    return (n);
+    
 } /* Vaddtagref */
 
 /* ------------------------ vinsertpair --------------------------------- */
