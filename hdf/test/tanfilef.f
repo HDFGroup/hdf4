@@ -58,68 +58,68 @@ C
 
       print *, '****** Write file labels *******'
       fid = hopen(TESTFILE, DFACC_CREATE, 0)
-      call RESULT(fid, 'hopen')
+      call RESULT(fid, 'hopen', number_failed)
       ret = daafid(fid, lab1)
-      call RESULT(ret, 'daafid')
+      call RESULT(ret, 'daafid', number_failed)
 
       ret = daafid(fid, lab2)
-      call RESULT(ret, 'daafid')
+      call RESULT(ret, 'daafid', number_failed)
 
       print *, '****** Write file descriptions *******'
       ret = daafds(fid, desc1, len(desc1))
-      call RESULT(ret, 'daafds')
+      call RESULT(ret, 'daafds', number_failed)
 
       ret = daafds(fid, desc2, len(desc2))
-      call RESULT(ret, 'daafds')
+      call RESULT(ret, 'daafds', number_failed)
 
       ret = hclose(fid)
-      call RESULT(ret, 'hclose')
+      call RESULT(ret, 'hclose', number_failed)
 
       print *, '****** Read length of the first file label ****'
       fid = hopen(TESTFILE, DFACC_READ, 0)
-      call RESULT(fid, 'hopen-read')
+      call RESULT(fid, 'hopen-read', number_failed)
       ret = dagfidl(fid, ISFIRST)
-      call RESULT(ret, 'dagfidl')
+      call RESULT(ret, 'dagfidl', number_failed)
       call checklen(ret, lab1,  'label'  )
 
       print *, '******...followed by the label *****'
       ret = dagfid(fid, templab, MAXLEN_LAB, ISFIRST)
 
-      call RESULT(ret, 'dagfid')
+      call RESULT(ret, 'dagfid', number_failed)
       call checklab(lab1, templab, ret, 'label')
 
       print *, '****** Read length of the second file label ****'
       ret = dagfidl(fid, NOFIRST)
-      call RESULT(ret, 'dagfidl')
+      call RESULT(ret, 'dagfidl', number_failed)
       call checklen(ret, lab2, 'label')
 
       print *, '******...followed by the label *****'
       ret = dagfid(fid, templab, MAXLEN_LAB, NOFIRST)
-      call RESULT(ret, 'dagfid')
+      call RESULT(ret, 'dagfid', number_failed)
       call checklab(lab2, templab, ret, 'label')
 
       print *, '****** Read length of the first file description ****'
       ret = dagfdsl(fid, ISFIRST)
-      call RESULT(ret, 'dagfdsl')
+      call RESULT(ret, 'dagfdsl', number_failed)
       call checklen(ret, desc1, 'description' )
 
       print *, '******...followed by the description *****'
       ret = dagfds(fid, tempstr, MAXLEN_DESC, ISFIRST)
-      call RESULT(ret, 'dagfds')
+      call RESULT(ret, 'dagfds', number_failed)
       call checkann(desc1, tempstr, ret, 'description')
 
       print *, '****** Read length of the second file description ****'
       ret = dagfdsl(fid, NOFIRST)
-      call RESULT(ret, 'dagfdsl')
+      call RESULT(ret, 'dagfdsl', number_failed)
       call checklen(ret, desc2, 'description' )
 
       print *, '******...followed by the description *****'
       ret = dagfds(fid, tempstr, MAXLEN_DESC, NOFIRST)
-      call RESULT(ret, 'dagfds')
+      call RESULT(ret, 'dagfds', number_failed)
       call checkann(desc2, tempstr, ret, 'description')
      
       ret = hclose(fid)
-      call RESULT(ret, 'hclose')
+      call RESULT(ret, 'hclose', number_failed)
  
       print *, CR, CR
 
@@ -133,29 +133,6 @@ C
       stop
       end
 
-
-C*******************************************
-C
-C   RESULT
-C
-C*******************************************
-
-      subroutine RESULT(errval, routine)
-      integer errval
-      character*(*)  routine
-
-      integer FAIL
-
-      FAIL = -1
-      if (errval .eq. FAIL) then
-         number_failed = number_failed + 1
-         print *, '    >>>', routine, ' FAILED: ret = ',
-     *               errval, '   <<<'
-      else
-         print *, routine, '  SUCCESSFUL'
-      endif
-      return
-      end
 
 C*********************************************
 C

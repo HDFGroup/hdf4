@@ -68,10 +68,10 @@ C Start here
 
       print *, 'Setting palette 1'
       ret = d8spal(pal1)
-      call RESULT(ret, 'd8spal')
+      call RESULT(ret, 'd8spal',number_failed)
       print *, 'Putting image 1 with pal 1, no compression'
       ret=d8pimg(TESTFILE, im1, 100, 100, 0)
-      call RESULT(ret, 'd8pimg')
+      call RESULT(ret, 'd8pimg',number_failed)
       num_images = num_images + 1
       print *, 'Getting ref1'
       ref1 = d8lref()
@@ -79,7 +79,7 @@ C Start here
       
       print *, 'Putting image 2 with pal 1, REL compression'
       ret=d8aimg(TESTFILE, im2, 321, 111, DFTAG_RLE)
-      call RESULT(ret, 'd8aimg')
+      call RESULT(ret, 'd8aimg',number_failed)
       num_images = num_images + 1
       print *, 'Getting ref2'
       ref2 = d8lref()
@@ -87,10 +87,10 @@ C Start here
       
       print *, 'Setting palette 2'
       ret = d8spal(pal2)
-      call RESULT(ret, 'd8spal')
+      call RESULT(ret, 'd8spal',number_failed)
       print *, 'Putting image 2 with pal 2, IMCOMP  compression'
       ret=d8aimg(TESTFILE, im2, 321, 111, DFTAG_IMCOMP)
-      call RESULT(ret, 'd8aimg')
+      call RESULT(ret, 'd8aimg',number_failed)
       num_images = num_images + 1
       print *, 'Getting ref3'
       ref3 = d8lref()
@@ -105,53 +105,53 @@ C Start here
       endif
       print *, 'Restarting file'
       ret = d8first()
-      call RESULT(ret, 'd8first')
+      call RESULT(ret, 'd8first',number_failed)
       print *, 'Getting dimensions of first image'
       ret=d8gdims(TESTFILE, d1, d2, ispal)
-      call RESULT(ret, 'd8gdims')
+      call RESULT(ret, 'd8gdims',number_failed)
       print *, 'Getting image 1'
       ret=d8gimg(TESTFILE, ii1, 100, 100, ipal)
-      call RESULT(ret, 'd8gimg')
+      call RESULT(ret, 'd8gimg',number_failed)
       call check_im1_pal(100, 100, d1, d2, im1, ii1, pal1, ipal)
       print *, 'Getting dimensions of image2'
       ret=d8gdims(TESTFILE, d1, d2, ispal)
-      call RESULT(ret, 'd8gdims')
+      call RESULT(ret, 'd8gdims',number_failed)
       print *, 'd1= ',d1,' d2= ',d2,' ispal= ', ispal
       print *, 'Getting dimensions of image 3'
       ret=d8gdims(TESTFILE, d1, d2, ispal)
-      call RESULT(ret, ' d8gdims')
+      call RESULT(ret, ' d8gdims',number_failed)
       print *,'d1= ',d1, ' d2= ',d2,' ispal= ',ispal
       print *, 'Getting image 3'
       ret = d8gimg(TESTFILE, ii2, 321, 111, ipal)
-      call RESULT(ret, 'd8gimg')
+      call RESULT(ret, 'd8gimg',number_failed)
 
       print *, 'setting read ref2'
       ret = d8rref(TESTFILE, ref2)
-      call RESULT(ret, 'd8rref')
+      call RESULT(ret, 'd8rref',number_failed)
 
       print *, 'Getting image 2'
       ret = d8gimg(TESTFILE, ii2, 321, 111,ipal)
-      call RESULT(ret, 'd8gimg')
+      call RESULT(ret, 'd8gimg',number_failed)
       call check_im2_pal(321,111,321, 111, im2, ii2, pal1, ipal)
       print *,'Setting write ref1'
       ret = d8wref(TESTFILE, ref1)
-      call RESULT(ret, 'd8wref')
+      call RESULT(ret, 'd8wref',number_failed)
       print *, 'Setting palette 2'
       ret = d8spal(pal2)
-      call RESULT(ret, 'd8spal')
+      call RESULT(ret, 'd8spal',number_failed)
       print *,'Putting image 1 with pal 2, RLE'
       ret = d8aimg(TESTFILE, im1, 100, 100, DFTAG_RLE)
-      call RESULT(ret, 'd8aimg')
+      call RESULT(ret, 'd8aimg',number_failed)
       print *, 'Setting read ref1'
       ret = d8rref(TESTFILE, ref1)
-      call RESULT(ret, 'd8rref')
+      call RESULT(ret, 'd8rref',number_failed)
       print *, 'Getting dimensions of first image'
       ret = d8gdims(TESTFILE, d1, d2, ispal)
-      call RESULT(ret, 'd8gdims')
+      call RESULT(ret, 'd8gdims',number_failed)
       print *, 'd1= ', d1, ' d2= ',d2, ' ispal= ', ispal
       print *, 'Getting image 1'
       ret = d8gimg(TESTFILE, ii1, d1, d2, ipal)
-      call RESULT(ret, 'd8gimg')
+      call RESULT(ret, 'd8gimg',number_failed)
       call check_im1_pal(100, 100, d1, d2, im1, ii1, pal2, ipal)
       print *, CR, CR
 
@@ -164,29 +164,6 @@ C Start here
       stop
       end
 
-C********************************************************
-C
-C RESUTL
-C
-C********************************************************
-
-      subroutine RESULT(errval, routine)
-      integer errval
-      character*(*) routine
-    
-      integer FAIL
-
-      FAIL = -1
-      if (errval .eq. FAIL)   then
-          number_failed = number_failed + 1
-          print *, '   >>> ', routine, '  FAILED: ret = ',
-     *               errval, '   <<<'
-      else 
-          print *, routine, '  SUCEESSFUL'
-      endif
-      return
-      end
-    
 C********************************************************
 C
 C check_im1_pal

@@ -85,7 +85,7 @@ C  *** generate float array and image ***
       call genimage(ROWS, COLS, data, image)
 
       ret = dssdims(rank,dimsizes)
-      call RESULT(ret, 'dssdims')
+      call RESULT(ret, 'dssdims', number_failed)
 
 C  ***  Write labels and descriptions ***
 
@@ -94,26 +94,26 @@ C  ***  Write labels and descriptions ***
       do 100 j=1,REPS
 C         write out scientific data set 
           ret = dsadata(TESTFILE, rank,dimsizes, data)
-          call RESULT(ret, 'dsadata')
+          call RESULT(ret, 'dsadata', number_failed)
 
 C         write out annotations for 2 out of every 3 
           if (mod(j,3) .ne. 0) then 
               refnum = dslref()
               ret = daplab(TESTFILE, DFTAG_SDG, refnum, labsds)
-              call RESULT(ret, 'daplab')
+              call RESULT(ret, 'daplab', number_failed)
               ret = dapdesc(TESTFILE, DFTAG_SDG, refnum, 
      *                                     descsds, len(descsds))
-              call RESULT(ret, 'dapdesc')
+              call RESULT(ret, 'dapdesc', number_failed)
           endif
 
           ret = d8aimg(TESTFILE, image, COLS, ROWS, NULL)
-          call RESULT(ret, 'd8aimg')
+          call RESULT(ret, 'd8aimg', number_failed)
           refnum = DFR8lastref()
           ret = daplab(TESTFILE, DFTAG_RIG, refnum, labris)
-          call RESULT(ret, 'daplab')
+          call RESULT(ret, 'daplab', number_failed)
           ret = dapdesc(TESTFILE,DFTAG_RIG,refnum, descris, 
      *                                                 len(descris))
-          call RESULT(ret, 'dapdesc')
+          call RESULT(ret, 'dapdesc', number_failed)
   100 continue
 
 
@@ -125,7 +125,7 @@ C********  Read labels and descriptions *********
       do 200 j=1,REPS
 
           ret = dsgdims(TESTFILE, rank,dimsizes,3)
-          call RESULT(ret, 'dsgdims')
+          call RESULT(ret, 'dsgdims', number_failed)
           refnum = dslref()
 
 C         read in annotations for 2 out of every 3 
@@ -135,7 +135,7 @@ C         read in annotations for 2 out of every 3
           endif
 
           ret = d8gimg(TESTFILE, newimage, COLS, ROWS, pal)
-          call RESULT(ret, 'd8gimg')
+          call RESULT(ret, 'd8gimg', number_failed)
           refnum = DFR8lastref()
           call check_lab_desc(TESTFILE, DFTAG_RIG, refnum, 
      *                                labris, descris, number_failed)
@@ -228,7 +228,7 @@ C**************************************************************
       character*500 indesc
 
       inlablen =  dagllen(filename, tag, ref)
-      call RESULT(inlablen, 'dagllen')
+      call RESULT(inlablen, 'dagllen', number_failed)
 
       if (inlablen .ne. len(label)) then
           print *,'   >>>BAD LABEL LENGTH.'
@@ -238,7 +238,7 @@ C**************************************************************
       endif
 
       ret = daglab(filename, tag, ref, inlabel, MAXLEN_LAB+1)
-      call RESULT(ret, 'daglab')
+      call RESULT(ret, 'daglab', number_failed)
       if (inlabel .ne. label) then
           print *,'   >>>BAD LABEL.'
           print *,'                        IS: ', inlabel
@@ -247,7 +247,7 @@ C**************************************************************
       endif
 
       indesclen = dagdlen(filename, tag, ref)
-      call RESULT(indesclen, 'dagdlen')
+      call RESULT(indesclen, 'dagdlen', number_failed)
       if (indesclen .ne. len(desc)) then
           print *,'   >>>BAD DESCRIPTION LENGTH.' 
           print *,'                        IS: ', indesclen 
@@ -255,7 +255,7 @@ C**************************************************************
           num_failed = num_failed + 1 
       else 
           ret = dagdesc(filename, tag, ref, indesc, MAXLEN_DESC)
-          call RESULT(ret, 'dagdesc')
+          call RESULT(ret, 'dagdesc', number_failed)
           if (indesc .ne. desc) then
               print *,'   >>>BAD DESCRIPTION.' 
               print *,'                        IS: ', indesc 
@@ -266,29 +266,4 @@ C**************************************************************
 
       return
       end
-
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-C
-C     SUBROUTINE RESULT
-C
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-        subroutine RESULT(errval, routine)
-        integer errval
-        character*(*)  routine
-
-        integer FAIL
-
-        FAIL = -1
-
-        if (errval.eq.FAIL) then
-            num_fail = num_fail + 1
-            print *,'   >>> ', routine, ' FAILED: ret = ', 
-     *                                                  errval, ' <<<'
-        else
-            print *, routine, ' SUCCESSFUL'
-        endif
-
-        return
-        end
-
 

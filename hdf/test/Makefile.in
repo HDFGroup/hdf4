@@ -252,20 +252,24 @@ CTESTS= rig.o sdstr.o blocks.o an.o anfile.o extelt.o file.o file1.o vers.o \
 
 FSRCS= tr8f.f t24f.f tpf.f tanf.f tanfilef.f tsdstrf.f tsdntf.f tsdnntf.f \
         tsdmmsf.f tsdnmmsf.f tstubsf.f \
-        slabwf.f slab1wf.f slab2wf.f slab3wf.f slab4wf.f manf.f fortest.c
+        slabwf.f slab1wf.f slab2wf.f slab3wf.f slab4wf.f manf.f mgrf.f fortest.c
+CFORSUPSRCS = forsupf.c
+FFORSUPSRCS = forsupff.f
 FTESTS= tr8f t24f tpf tanf tanfilef tsdstrf tsdntf tsdnntf \
         tsdmmsf tsdnmmsf tstubsf \
-        slabwf slab1wf slab2wf slab3wf slab4wf manf
-TESTF = fortest.o
+        slabwf slab1wf slab2wf slab3wf slab4wf manf mgrf
 FOBJS = tr8f.o t24f.o tpf.o tanf.o tanfilef.o tsdstrf.o tsdntf.o \
         tsdnntf.o tsdmmsf.o tsdnmmsf.o tstubsf.o fortest.o \
-        slabwf.o slab1wf.o slab2wf.o slab3wf.o slab4wf.o manf.o
+        slabwf.o slab1wf.o slab2wf.o slab3wf.o slab4wf.o manf.o mgrf.o
+CFORSUPOBJS = forsupf.o
+FFORSUPOBJS = forsupff.o
+TESTF = fortest.o
 
 # directory used by extelt test.
 TESTDIR = testdir
 
-$(FTESTS): $(FSRCS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
-	$(FC) $(FFLAGS) $@.f -o $@ $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+$(FTESTS): $(FOBJS) $(CFORSUPOBJS) $(FFORSUPOBJS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+	$(FC) $(FFLAGS) $@.f -o $@ $(CFORSUPOBJS) $(FFORSUPOBJS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
 
 $(FTESTS): $(FRC)
 
@@ -319,6 +323,9 @@ $(ZLIBLIB)/libz.a:
 #
 .c.o: 
 	 $(CC) $(ALL_CFLAGS) -c $*.c 
+
+.f.o:
+	$(FC) $(FFLAGS) -c $*.f 
 
 $(CTESTS) $(TESTF) $(FTESTS): $(FRC)
 

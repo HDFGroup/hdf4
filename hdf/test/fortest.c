@@ -20,13 +20,14 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "hdf.h"
 #include "tutils.h"
+#include "fortest.h"
 #ifdef VMS
 #include processes
 #include string
 #endif
-#define NUMOFTESTS 16
-#define VERSION "0.2beta"
-#define BUILDDATE "Mon Feb 8 1993"
+#define NUMOFTESTS 20
+#define VERSION "4.0beta"
+#define BUILDDATE "Wed Nov 22 1995"
 
 struct TestStruct
   {
@@ -38,7 +39,7 @@ struct TestStruct
   }
 Test[NUMOFTESTS];
 
-void
+int
 InitTest(const char *TheName, const char *TheCall, const char *TheDescr)
 {
     static int  Index = 0;
@@ -48,6 +49,7 @@ InitTest(const char *TheName, const char *TheCall, const char *TheDescr)
     Test[Index].NumErrors = -1;
     Test[Index].SkipFlag = 0;
     Index++;
+    return(Index);
 }
 
 void
@@ -72,27 +74,31 @@ main(int argc, char *argv[])
     int         Summary = 0;
     int         CleanUp = 1;
     int         ret;
+    int         num_tests=0;
     uint32      lmajor, lminor, lrelease;
     char        lstring[81];
+    char        verb_env[81];
+    char        verb_tmp[81];
 
-    InitTest("slab1", "./slab1wf", "");
-    InitTest("slab2", "./slab2wf", "");
-    InitTest("slab3", "./slab3wf", "");
-    InitTest("slab4", "./slab4wf", "");
-    InitTest("slab", "./slabwf", "");
-    InitTest("r24", "./t24f", "");
-    InitTest("an", "./tanf", "");
-    InitTest("anfile", "./tanfilef", "");
-    InitTest("manf", "./manf", "");
-    InitTest("p", "./tpf", "");
-    InitTest("r8", "./tr8f", "");
-    InitTest("sdmms", "./tsdmmsf", "");
-    InitTest("sdnmms", "./tsdnmmsf", "");
-    InitTest("sdnnt", "./tsdnntf", "");
-    InitTest("sdnt", "./tsdntf", "");
-    InitTest("sdstr", "./tsdstrf", "");
+    num_tests=InitTest("slab1", "./slab1wf", "");
+    num_tests=InitTest("slab2", "./slab2wf", "");
+    num_tests=InitTest("slab3", "./slab3wf", "");
+    num_tests=InitTest("slab4", "./slab4wf", "");
+    num_tests=InitTest("slab", "./slabwf", "");
+    num_tests=InitTest("r24", "./t24f", "");
+    num_tests=InitTest("an", "./tanf", "");
+    num_tests=InitTest("anfile", "./tanfilef", "");
+    num_tests=InitTest("manf", "./manf", "");
+    num_tests=InitTest("mgrf", "./mgrf", "");
+    num_tests=InitTest("p", "./tpf", "");
+    num_tests=InitTest("r8", "./tr8f", "");
+    num_tests=InitTest("sdmms", "./tsdmmsf", "");
+    num_tests=InitTest("sdnmms", "./tsdnmmsf", "");
+    num_tests=InitTest("sdnnt", "./tsdnntf", "");
+    num_tests=InitTest("sdnt", "./tsdntf", "");
+    num_tests=InitTest("sdstr", "./tsdstrf", "");
 #ifndef DEC_ALPHA
-    InitTest("stubs", "./tstubsf", "");
+    num_tests=InitTest("stubs", "./tstubsf", "");
 #endif
 
     Verbosity = 4;  /* Default Verbosity is Low */
@@ -139,7 +145,7 @@ main(int argc, char *argv[])
                 printf("This program currently tests the following: \n\n");
                 printf("%16s %s\n", "Name", "Description");
                 printf("%16s %s\n", "----", "-----------");
-                for (Loop = 0; Loop < NUMOFTESTS; Loop++)
+                for (Loop = 0; Loop < num_tests; Loop++)
                   {
                       printf("%16s %s\n", Test[Loop].Name, Test[Loop].Description);
                   }
@@ -157,7 +163,7 @@ main(int argc, char *argv[])
                 Loop = CLLoop + 1;
                 while ((Loop < argc) && (argv[Loop][0] != '-'))
                   {
-                      for (Loop1 = 0; Loop1 < NUMOFTESTS; Loop1++)
+                      for (Loop1 = 0; Loop1 < num_tests; Loop1++)
                         {
                             if (HDstrcmp(argv[Loop], Test[Loop1].Name) == 0)
                                 Test[Loop1].SkipFlag = 1;
@@ -171,12 +177,12 @@ main(int argc, char *argv[])
                 Loop = CLLoop + 1;
                 while ((Loop < argc) && (argv[Loop][0] != '-'))
                   {
-                      for (Loop1 = 0; Loop1 < NUMOFTESTS; Loop1++)
+                      for (Loop1 = 0; Loop1 < num_tests; Loop1++)
                         {
                             if (HDstrcmp(argv[Loop], Test[Loop1].Name) != 0)
                                 Test[Loop1].SkipFlag = 1;
                             if (HDstrcmp(argv[Loop], Test[Loop1].Name) == 0)
-                                Loop1 = NUMOFTESTS;
+                                Loop1 = num_tests;
                         }
                       Loop++;
                   }
@@ -184,14 +190,14 @@ main(int argc, char *argv[])
           if ((argc > CLLoop + 1) && ((HDstrcmp(argv[CLLoop], "-only") == 0) ||
                                       (HDstrcmp(argv[CLLoop], "-o") == 0)))
             {
-                for (Loop = 0; Loop < NUMOFTESTS; Loop++)
+                for (Loop = 0; Loop < num_tests; Loop++)
                   {
                       Test[Loop].SkipFlag = 1;
                   }
                 Loop = CLLoop + 1;
                 while ((Loop < argc) && (argv[Loop][0] != '-'))
                   {
-                      for (Loop1 = 0; Loop1 < NUMOFTESTS; Loop1++)
+                      for (Loop1 = 0; Loop1 < num_tests; Loop1++)
                         {
                             if (HDstrcmp(argv[Loop], Test[Loop1].Name) == 0)
                                 Test[Loop1].SkipFlag = 0;
@@ -203,7 +209,12 @@ main(int argc, char *argv[])
 
     /*  printf("The Verbosity is %d \n",Verbosity); */
 
-    for (Loop = 0; Loop < NUMOFTESTS; Loop++)
+    HDstrcpy(verb_env,FOR_VERB);
+    HDstrcat(verb_env,"=");
+    sprintf(verb_tmp,"%d",Verbosity);
+    HDstrcat(verb_env,verb_tmp);
+    HDputenv(verb_env);
+    for (Loop = 0; Loop < num_tests; Loop++)
       {
           if (Test[Loop].SkipFlag)
             {
@@ -247,7 +258,7 @@ main(int argc, char *argv[])
           printf("Name of Test     Errors Description of Test\n");
           printf("---------------- ------ --------------------------------------\n");
 
-          for (Loop = 0; Loop < NUMOFTESTS; Loop++)
+          for (Loop = 0; Loop < num_tests; Loop++)
             {
                 if (Test[Loop].NumErrors == -1)
                     printf("%16s %6s %s\n", Test[Loop].Name, "N/A",

@@ -53,29 +53,29 @@ C
 
       Print *, 'Putting pal1 in new file.'
       ret = dpppal(TESTFILE, pal1, 0, 'w')
-      call RESULT(ret, 'dpppal')
+      call RESULT(ret, 'dpppal', number_failed)
 
       print *, 'Getting ref1'
       ref1 = dplref()
-C     call RESULT(ref1, 'dplref')
+C     call RESULT(ref1, 'dplref', number_failed)
       print *, 'ref1 is ', ref1
 
       print *, 'Putting pal2 in file'
       ret = dpapal(TESTFILE, pal2)
-      call RESULT(ret, 'dpapal')
+      call RESULT(ret, 'dpapal', number_failed)
 
       print *, 'Getting ref2'
       ref2 = dplref()
-C      call RESULT(ref2, 'dplref')
+C      call RESULT(ref2, 'dplref', number_failed)
       print *, 'ref2 is ', ref2
      
       print *, 'Restarting palette interface'
       ret = dprest()
-      call RESULT(ret, 'dprest')
+      call RESULT(ret, 'dprest', number_failed)
 
       print *, 'Reading pal1'
       ret = dpgpal(TESTFILE, ipal)
-      call RESULT(ret, 'dpgpal')
+      call RESULT(ret, 'dpgpal', number_failed)
       do 200 i=1, 768
           if (ipal(i) .ne. pal1(i))  then
               print *, 'Error at ', i, ', ipal:', ipal(i), 
@@ -85,12 +85,12 @@ C      call RESULT(ref2, 'dplref')
       
       print *, 'Getting ref1'
       ref1 =  dplref()
-C      call RESULT(ref1, 'dplref')
+C      call RESULT(ref1, 'dplref', number_failed)
       print *, 'Last ref is ', ref1
 
       print *, 'Reading pal2.'
       ret = dpgpal(TESTFILE, ipal)
-      call RESULT(ret, 'dpgpal')
+      call RESULT(ret, 'dpgpal', number_failed)
       do 300 i=1, 768
           if (ipal(i) .ne. pal2(i)) then
               print *, 'Error at ', i, ', ipal:', ipal(i),
@@ -100,21 +100,21 @@ C      call RESULT(ref1, 'dplref')
 
       print *, 'Getting ref2'
       ref2 = dplref()
-C      call RESULT(ref2, 'dplref')
+C      call RESULT(ref2, 'dplref', number_failed)
       print *, 'Last ref is ', ref2
 
       print *, 'Getting number of palettes'
       ret = dpnpals(TESTFILE)
-      call RESULT(ret, 'dpnpals')
+      call RESULT(ret, 'dpnpals', number_failed)
       print *, 'Number of palettes is:', ret
 
       print *, 'Setting read ref to ref2.'
       ret = dprref(TESTFILE, ref2)
-      call RESULT(ret, 'dprref')
+      call RESULT(ret, 'dprref', number_failed)
       
       print *, 'Reading pal2'
       ret = dpgpal(TESTFILE, ipal)
-      call RESULT(ret, 'dpgpal')
+      call RESULT(ret, 'dpgpal', number_failed)
       do 400 i=1, 768
           if (ipal(i) .ne. pal2(i)) then
               print *,  'Error at ', i, ', ipal:', ipal(i),
@@ -126,11 +126,11 @@ C      call RESULT(ref2, 'dplref')
          print *, 'ref1 is: ', ref1, ' ref2 is: ',ref2
       ret = dprref(TESTFILE, ref1)
 
-      call RESULT(ret, 'dprref')
+      call RESULT(ret, 'dprref', number_failed)
       
       print *, 'Reading pal1'
       ret = dpgpal(TESTFILE, ipal)
-      call RESULT(ret, 'dpgpal')
+      call RESULT(ret, 'dpgpal', number_failed)
 
       do 500 i=1, 768
           if (ipal(i) .ne. pal1(i)) then
@@ -146,18 +146,18 @@ C      call RESULT(ref2, 'dplref')
 
       print *, 'Setting write ref to ref1'
       ret = dpwref(TESTFILE, ref1)
-      call RESULT(ret, 'dpwref')
+      call RESULT(ret, 'dpwref', number_failed)
       print *, 'Writing pal1'
       ret = dpppal(TESTFILE, pal1, 1, 'a')
-      call RESULT(ret, 'dpppal')
+      call RESULT(ret, 'dpppal', number_failed)
       ret=dplref()
       print *,'last ref is: ', ret
       print *, 'setting read ref to ref1'
       ret = dprref(TESTFILE, ref1)
-      call RESULT(ret, 'dprref')
+      call RESULT(ret, 'dprref', number_failed)
       print *, 'Reading pal1'
       ret = dpgpal(TESTFILE, ipal)
-      call RESULT(ret, 'dpgpal')
+      call RESULT(ret, 'dpgpal', number_failed)
       do 700 i=1, 768
           if (ipal(i) .ne. pal1(i)) then
               print *,  'Error at ', i, ', ipal:', ipal(i),
@@ -175,29 +175,4 @@ C      call RESULT(ref2, 'dplref')
       stop
       end
 
-
-
-
-C*******************************************
-C
-C   RESULT
-C
-C*******************************************
-
-      subroutine RESULT(errval, routine)
-      integer errval
-      character*(*)  routine
-
-      integer FAIL
-
-      FAIL = -1
-      if (errval .eq. FAIL) then
-         number_failed = number_failed + 1
-         print *, '    >>>', routine, ' FAILED: ret = ',
-     *               errval, '   <<<'
-      else
-         print *, routine, '  SUCCESSFUL'
-      endif
-      return
-      end
 
