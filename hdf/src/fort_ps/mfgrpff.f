@@ -41,6 +41,7 @@ C     integer  mgicreat
          INTEGER FUNCTION mgicreat(grid,name,ncomp,nt,il,dimsizes,
      +                             nmlen)
             !MS$ATTRIBUTES C,reference,alias:'_MGICREAT' :: mgicreat
+	      !DEC$ ATTRIBUTES reference :: name
             integer grid, ncomp,nt,il,dimsizes, nmlen
             character*(*) name
          END FUNCTION mgicreat
@@ -69,6 +70,7 @@ C     integer mgin2ndx
       INTERFACE
         INTEGER FUNCTION mgin2ndx(grid,name,nmlen)
           !MS$ATTRIBUTES C,reference,alias:'_MGIN2NDX' :: mgin2ndx
+	    !DEC$ ATTRIBUTES reference :: name
           integer grid, nmlen
           character*(*) name
         END FUNCTION mgin2ndx
@@ -97,6 +99,7 @@ C      integer mgisxfil
       INTERFACE
         INTEGER FUNCTION mgisxfil(riid,filename,offset, nmlen)
           !MS$ATTRIBUTES C,reference,alias:'_MGISXFIL' :: mgisxfil
+	    !DEC$ ATTRIBUTES reference :: filename
           integer riid, offset, nmlen
           character*(*) filename
         END FUNCTION mgisxfil
@@ -129,6 +132,7 @@ C      integer mgiscatt
         INTEGER FUNCTION mgiscatt(riid,name,nt,count,data,
      +                             nmlen)
           !MS$ATTRIBUTES C,reference,alias:'_MGISCATT' :: mgiscatt
+	    !DEC$ ATTRIBUTES reference :: name, data
           integer riid,nt,count, nmlen
           character*(*) name, data
          END FUNCTION mgiscatt
@@ -161,6 +165,7 @@ C      integer mgisattr
         INTEGER FUNCTION mgisattr(riid,name,nt,count,data,
      +                             nmlen)
           !MS$ATTRIBUTES C,reference,alias:'_MGISATTR' :: mgisattr
+	    !DEC$ ATTRIBUTES reference :: name
           integer riid, nt,count,data, nmlen
           character*(*) name
         END FUNCTION mgisattr
@@ -193,6 +198,7 @@ C      INTERFACE
 C        INTEGER FUNCTION mgisattr(riid,name,nt,count,data,
 C     +                             nmlen)
 C          !MS$ATTRIBUTES C,reference,alias:'_MGISATTR' :: mgisattr
+C  	     !DEC$ ATTRIBUTES reference :: name, data
 C          integer riid, nt,count, nmlen
 C          character*(*) name, data
 C        END FUNCTION mgisattr
@@ -219,6 +225,7 @@ C      integer mgifndat
       INTERFACE
         INTEGER FUNCTION mgifndat(riid,name,nmlen)
           !MS$ATTRIBUTES C,reference,alias:'_MGIFNDAT' :: mgifndat
+	    !DEC$ ATTRIBUTES reference :: name
           integer riid, nmlen
           character*(*) name
         END FUNCTION mgifndat
@@ -227,6 +234,96 @@ C      integer mgifndat
       mgfndat = mgifndat(riid, name, len(name))
       return
       end
+C-------------------------------------------------------------------------
+C        Name:      mggichnk
+C        Purpose:   get Info on GR 
+C        Inputs:    riid       - access ID to GR
+C        Outputs:   dim_length - chunk dimensions (if any)
+C                   comp_type: 
+C                               -1 - GR is non-chunked
+C                                0 - GR is chunked without compression
+C                                1 - GR is chunked and compressed 
+C        Returns:   0 on success, -1 on failure
+C        Calls:     mgcgichnk (C stub for GRgetchunkinfo function)
+C-------------------------------------------------------------------------
+
+         INTEGER function mggichnk(riid, dim_length, comp_type)
+
+         INTEGER riid, dim_length(*), comp_type
+C         INTEGER mgcgichnk 
+      INTERFACE
+        INTEGER FUNCTION mgcgichnk(riid, dim_length, comp_type)
+          !MS$ATTRIBUTES C,reference,alias:'_MGCGICHNK' :: mgcgichnk
+          integer riid, dim_length(*), comp_type
+        END FUNCTION mgcgichnk
+      END INTERFACE
+
+         mggichnk = mgcgichnk(riid, dim_length, comp_type)
+         return
+         end
+
+           
+C-------------------------------------------------------------------------
+C        Name:      mgscchnk
+C        Purpose:   set the maximum number of chunks to cache
+C        Inputs:    riid     - access ID to GR
+C                   maxcache - max number of chunks to cache 
+C                   flags    - flags =0, HDF_CACHEALL
+C                              Currently only 0 can be passed.
+C        Returns:   0 on success, -1 on failure
+C        Calls:     mgcscchnk (C stub for GRsetchunkcache function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function mgscchnk(riid, maxcache, flags)
+C
+         INTEGER riid, maxcache, flags 
+C         INTEGER mgcscchnk 
+      INTERFACE
+        INTEGER FUNCTION mgcscchnk(riid,name,nmlen)
+          !MS$ATTRIBUTES C,reference,alias:'_MGCSCCHNK' :: mgcscchnk
+          integer riid, maxcache, flags
+        END FUNCTION mgcscchnk
+      END INTERFACE
+C
+         mgscchnk = mgcscchnk(riid, maxcache, flags) 
+C
+         return 
+         end
+
+           
+
+C-------------------------------------------------------------------------
+C        Name:      mgschnk
+C        Purpose:   make the GR a chunked GR 
+C        Inputs:    riid       - access ID to GR
+C                   dim_length - chunk dimensions
+C                   comp_type  - type of compression         
+C                   comp_prm   - compression parameters array
+C                   Huffman:   comp_prm(1) = skphuff_skp_size
+C                   GZIP:      comp_prm(1) = deflate_level       
+C                                      
+C        Returns:   0 on success, -1 on failure
+C        Calls:     mgcschnk (C stub for GRsetchunk function)
+C-------------------------------------------------------------------------
+
+         INTEGER function mgschnk(riid, dim_length, comp_type,
+     .                            comp_prm)
+
+         INTEGER riid, dim_length(*), comp_type, comp_prm(*)
+C         INTEGER mgcschnk 
+      INTERFACE
+        INTEGER FUNCTION mgcschnk(riid, dim_length, comp_type, comp_prm)
+          !MS$ATTRIBUTES C,reference,alias:'_MGCSCHNK' :: mgcschnk
+          integer riid, dim_length(*), comp_type, comp_prm(*)
+        END FUNCTION mgcschnk
+      END INTERFACE
+
+         mgschnk = mgcschnk(riid, dim_length, comp_type,
+     .                      comp_prm)
+         return
+         end
+
 C---------------------------------------------------------------
       integer function mgstart(fid)
         integer fid
@@ -296,6 +393,7 @@ C        integer mgigiinf
         INTEGER FUNCTION mgigiinf(riid,name,ncomp,nt,il,
      +                            dimsizes,attrs)
           !MS$ATTRIBUTES C,reference,alias:'_MGIGIINF' :: mgigiinf
+	    !DEC$ ATTRIBUTES reference :: name
           integer riid,ncomp,nt,il,dimsizes,attrs
           character*(*) name
         END FUNCTION mgigiinf
@@ -314,6 +412,7 @@ C        integer mgiwcim
         INTEGER FUNCTION mgiwcim(riid,start,stride,count,
      +                            cdata)
           !MS$ATTRIBUTES C,reference,alias:'_MGIWCIM' :: mgiwcim
+	    !DEC$ ATTRIBUTES reference :: cdata
           integer riid,start,stride,count
           character*(*) cdata
         END FUNCTION mgiwcim
@@ -349,6 +448,7 @@ C        integer mgircim
         INTEGER FUNCTION mgircim(riid,start,stride,count,
      +                            cdata)
           !MS$ATTRIBUTES C,reference,alias:'_MGIRCIM' :: mgircim
+	    !DEC$ ATTRIBUTES reference :: cdata
           integer riid,start,stride,count
           character*(*) cdata
         END FUNCTION mgircim
@@ -488,6 +588,7 @@ C        integer mgiwclt
       INTERFACE
         INTEGER FUNCTION mgiwclt(lutid,ncomp,nt,il,nentries,cdata)
           !MS$ATTRIBUTES C,reference,alias:'_MGIWCLT' :: mgiwclt
+	    !DEC$ ATTRIBUTES reference :: cdata
           integer lutid, ncomp, nt, il, nentries
           character*(*) cdata
         END FUNCTION mgiwclt
@@ -520,6 +621,7 @@ C        integer mgirclt
       INTERFACE
         INTEGER FUNCTION mgirclt(lutid,cdata)
           !MS$ATTRIBUTES C,reference,alias:'_MGIRCLT' :: mgirclt
+	    !DEC$ ATTRIBUTES reference :: cdata
           integer lutid
           character*(*) cdata
         END FUNCTION mgirclt
@@ -567,6 +669,7 @@ C        integer mgiainf
       INTERFACE
         INTEGER FUNCTION mgiainf(riid,index,name,nt,count)
           !MS$ATTRIBUTES C,reference,alias:'_MGIAINF' :: mgiainf
+	    !DEC$ ATTRIBUTES reference :: name
           integer riid,index,nt,count
           character*(*) name
         END FUNCTION mgiainf
@@ -595,6 +698,7 @@ C      integer mgigcat
       INTERFACE
         INTEGER FUNCTION mgigcat(riid,index,cdata)
           !MS$ATTRIBUTES C,reference,alias:'_MGIGCAT' :: mgigcat
+	    !DEC$ ATTRIBUTES reference :: cdata
           integer riid,index
           character*(*)  cdata
          END FUNCTION mgigcat
@@ -658,3 +762,36 @@ C      integer mgigatt
       end
 
 
+C-------------------------------------------------------------------------
+C        Name:      mgscompress
+C        Purpose:   compress GR 
+C        Inputs:    riid      - access ID to GR
+C                   comp_type - type of compression
+C                   supports the following compression types:
+C                            ( see hcomp.h  file) 
+C                            COMP_CODE_NONE = 0
+C                            COMP_CODE_RLE =1
+C                            COMP_CODE_SKPHUFF = 3
+C                            COMP_CODE_DEFLATE = 4
+C                   comp_prm  - compression parameters array
+C                   Huffman:   comp_prm(1) = skphuff_skp_size
+C                   GZIP:      comp_prm(1) = deflate_level       
+C        Returns:   0 on success, -1 on failure
+C        Calls:     mgcscompress (C stub for GRsetcompress function)
+C-------------------------------------------------------------------------
+
+         INTEGER function mgscompress(riid, comp_type, comp_prm)
+
+         INTEGER riid, comp_type, comp_prm
+C         INTEGER mgcscompress 
+      INTERFACE
+        INTEGER FUNCTION mgcscompress(riid, comp_type, comp_prm)
+          !MS$ATTRIBUTES C,reference,alias:'_MGCSCOMPRESS'::mgcscompress
+          integer riid, comp_type, comp_prm
+        END FUNCTION mgcscompress
+      END INTERFACE
+
+         mgscompress = mgcscompress(riid, comp_type,
+     .                              comp_prm)
+         return
+         end

@@ -36,6 +36,7 @@ C      integer     vatchc
       INTERFACE
         INTEGER FUNCTION vatchc(f, vgref, accesstype)
           !MS$ATTRIBUTES C,reference,alias:'_VATCHC' :: vatchc
+	    !DEC$ ATTRIBUTES reference :: accesstype
           integer f, vgref
           character*1 accesstype
         END FUNCTION vatchc
@@ -72,6 +73,7 @@ c      integer         vgnamc
       INTERFACE
         INTEGER FUNCTION vgnamc(vg, vgname)
           !MS$ATTRIBUTES C,reference,alias:'_VGNAMC' :: vgnamc
+	    !DEC$ ATTRIBUTES reference :: vgname
           integer vg
           character*(*) vgname
         END FUNCTION vgnamc
@@ -91,6 +93,7 @@ c      integer       vgclsc
       INTERFACE
         INTEGER FUNCTION vgclsc(vg, vgclass)
           !MS$ATTRIBUTES C,reference,alias:'_VGCLSC' :: vgclsc
+	    !DEC$ ATTRIBUTES reference :: vgclass
           integer vg
           character*(*) vgclass
         END FUNCTION vgclsc
@@ -109,6 +112,7 @@ c      integer			vinqc
       INTERFACE
         INTEGER FUNCTION vinqc(vg, nentries, vgname)
           !MS$ATTRIBUTES C,reference,alias:'_VINQC' :: vinqc
+	    !DEC$ ATTRIBUTES reference :: vgname
           integer vg, nentries
           character*(*) vgname
         END FUNCTION vinqc
@@ -162,6 +166,7 @@ c      integer       vsnamc
       INTERFACE
         INTEGER FUNCTION vsnamc(vg, vgname, nmlen)
           !MS$ATTRIBUTES C,reference,alias:'_VSNAMC' :: vsnamc
+	    !DEC$ ATTRIBUTES reference :: vgname
           integer vg, nmlen
           character*(*) vgname
         END FUNCTION vsnamc
@@ -180,6 +185,7 @@ c      integer      vsclsc
       INTERFACE
         INTEGER FUNCTION vsclsc(vg, vgclass, clslen)
           !MS$ATTRIBUTES C,reference,alias:'_VSCLSC' :: vsclsc
+	    !DEC$ ATTRIBUTES reference :: vgclass
           integer vg, clslen
           character*(*) vgclass
         END FUNCTION vsclsc
@@ -287,6 +293,7 @@ c      integer		vsatchc
       INTERFACE
          INTEGER FUNCTION vsatchc(f, vsid, accesstype)
           !MS$ATTRIBUTES C,reference,alias:'_VSATCHC' :: vsatchc
+	    !DEC$ ATTRIBUTES reference :: accesstype
           integer f, vsid
           character*1   accesstype
         END FUNCTION vsatchc
@@ -389,6 +396,7 @@ c      integer       vsgnamc
       INTERFACE
         INTEGER FUNCTION vsgnamc(vs, vsname, nmlen)
           !MS$ATTRIBUTES C,reference,alias:'_VSGNAMC' :: vsgnamc
+	    !DEC$ ATTRIBUTES reference :: vsname
           integer vs, nmlen
           character*(*) vsname
         END FUNCTION vsgnamc
@@ -408,6 +416,7 @@ c      integer       vsgclsc
       INTERFACE
         INTEGER FUNCTION vsgclsc(vs, vsclass, clslen)
           !MS$ATTRIBUTES C,reference,alias:'_VSGCLSC' :: vsgclsc
+	    !DEC$ ATTRIBUTES reference :: vsclass
           integer vs, clslen
           character*(*) vsclass
         END FUNCTION vsgclsc
@@ -428,6 +437,7 @@ c      integer			vsinqc
         INTEGER FUNCTION vsinqc(vs,nvs,il,flds,vsize, vsname,
      +                          fldlen, nmlen)
           !MS$ATTRIBUTES C,reference,alias:'_VSINQC' :: vsinqc
+	    !DEC$ ATTRIBUTES reference :: vsname, flds
           integer vs,nvs,il,vsize, fldlen, nmlen
           character*(*) vsname, flds
         END FUNCTION vsinqc
@@ -448,6 +458,7 @@ c      integer			vsfexc
       INTERFACE
         INTEGER FUNCTION vsfexc(vs, fields, fldslen)
           !MS$ATTRIBUTES C,reference,alias:'_VSFEXC' :: vsfexc
+	    !DEC$ ATTRIBUTES reference :: fields
           integer vs, fldslen
           character*(*) fields
         END FUNCTION vsfexc
@@ -467,6 +478,7 @@ c      integer vsfndc
       INTERFACE
         INTEGER FUNCTION vsfndc(vs, name, nmlen)
           !MS$ATTRIBUTES C,reference,alias:'_VSFNDC' :: vsfndc
+	    !DEC$ ATTRIBUTES reference :: name
           integer vs, nmlen
           character*(*) name
         END FUNCTION vsfndc
@@ -520,6 +532,7 @@ c       integer       vssnamc
       INTERFACE
         INTEGER FUNCTION vssnamc(vs, vsname, nmlen)
           !MS$ATTRIBUTES C,reference,alias:'_VSSNAMC' :: vssnamc
+	    !DEC$ ATTRIBUTES reference :: vsname
           integer vs, nmlen
           character*(*) vsname
         END FUNCTION vssnamc
@@ -539,6 +552,7 @@ c      integer vssclsc
       INTERFACE
         INTEGER FUNCTION vssclsc(vs, vsclass, clslen)
           !MS$ATTRIBUTES C,reference,alias:'_VSSCLSC' :: vssclsc
+	    !DEC$ ATTRIBUTES reference :: vsclass
           integer vs, clslen
           character*(*) vsclass
         END FUNCTION vssclsc
@@ -558,6 +572,7 @@ c      integer		vssfldc
       INTERFACE
         INTEGER FUNCTION vssfldc(vs, fields, fldlen)
           !MS$ATTRIBUTES C,reference,alias:'_VSSFLDC' :: vssfldc
+	    !DEC$ ATTRIBUTES reference :: fields
           integer vs, fldlen
           character*(*) fields
         END FUNCTION vssfldc
@@ -595,6 +610,7 @@ c      integer			vsfdefc
       INTERFACE
         INTEGER FUNCTION vsfdefc(vs, field, localtype, order, fldlen)
           !MS$ATTRIBUTES C,reference,alias:'_VSFDEFC' :: vsfdefc
+	    !DEC$ ATTRIBUTES reference :: field
           integer vs, localtype, order, fldlen
           character*(*) field
         END FUNCTION vsfdefc
@@ -616,6 +632,7 @@ c      integer			vsreadc
       INTERFACE
         INTEGER FUNCTION vsreadc(vs, buf, nelts, interlace)
           !MS$ATTRIBUTES C,reference,alias:'_VSREADC' :: vsreadc
+	    !DEC$ ATTRIBUTES reference :: buf
           integer vs, nelts, interlace
           character*(*) buf
         END FUNCTION vsreadc
@@ -635,6 +652,7 @@ c      integer          vsfirdc
       INTERFACE 
         INTEGER FUNCTION vsfirdc(vsid, buf, nelts, interlace)
           !MS$ATTRIBUTES C,reference,alias:'_VSFIRDC' :: vsfirdc
+	    !DEC$ ATTRIBUTES reference :: buf
           integer vsid, nelts, interlace
 		  character*(*)  buf
         END FUNCTION vsfirdc
@@ -673,6 +691,7 @@ c      integer          vsfiwrc
       INTERFACE
         INTEGER FUNCTION vsfiwrc(vsid, buf, nelts, interlace)
           !MS$ATTRIBUTES C,reference,alias:'_VSFIWRC' :: vsfiwrc
+	    !DEC$ ATTRIBUTES reference :: buf
           integer vsid, nelts, interlace
 		  character*(*) buf
         END FUNCTION vsfiwrc
@@ -711,6 +730,7 @@ C      integer			vswritc
       INTERFACE
         INTEGER FUNCTION vswritc(vsid, buf, nelts, interlace)
           !MS$ATTRIBUTES C,reference,alias:'_VSWRITC' :: vswritc
+	    !DEC$ ATTRIBUTES reference :: buf
           integer vsid, nelts, interlace
           character*(*)     buf
         END FUNCTION vswritc
@@ -740,6 +760,7 @@ c      integer       vssextfc
       INTERFACE
         INTEGER FUNCTION vssextfc(vid, fname, offset, nmlen)
           !MS$ATTRIBUTES C,reference,alias:'_VSSEXTFC' :: vssextfc
+	    !DEC$ ATTRIBUTES reference :: fname
           integer vid, offset, nmlen
           character*(*) fname
         END FUNCTION vssextfc
@@ -780,6 +801,7 @@ C      integer vfifnm
       INTERFACE 
         INTEGER FUNCTION vfifnm(vsid, findex, fname)
           !MS$ATTRIBUTES C,reference,alias:'_VFIFNM' :: vfifnm
+	    !DEC$ ATTRIBUTES reference :: fname
           integer vsid, findex
           character*(*) fname
         END FUNCTION vfifnm
@@ -907,6 +929,7 @@ c      integer			vsgfldc
       INTERFACE
         INTEGER FUNCTION vsgfldc(vs, fields)
           !MS$ATTRIBUTES C,reference,alias:'_VSGFLDC' :: vsgfldc
+	    !DEC$ ATTRIBUTES reference :: fields
           integer vs
           character*(*)   fields
         END FUNCTION vsgfldc
@@ -926,6 +949,7 @@ c      integer			vssizc
       INTERFACE
         INTEGER FUNCTION vssizc(vs, fields, fldslen)
           !MS$ATTRIBUTES C,reference,alias:'_VSSIZC' :: vssizc
+	    !DEC$ ATTRIBUTES reference :: fields
           integer vs, fldslen
           character*(*) fields
         END FUNCTION vssizc
@@ -998,6 +1022,7 @@ C      integer vfindc
       INTERFACE
         INTEGER FUNCTION vfindc(f, name, namelen)
           !MS$ATTRIBUTES C,reference,alias:'_VFINDC' :: vfindc
+	    !DEC$ ATTRIBUTES reference :: name
           integer f, namelen
           character*(*) name
         END FUNCTION vfindc
@@ -1017,6 +1042,7 @@ c      integer vfndclsc
       INTERFACE
         INTEGER FUNCTION vfndclsc(f, class, clslen)
           !MS$ATTRIBUTES C,reference,alias:'_VFNDCLSC' :: vfndclsc
+	    !DEC$ ATTRIBUTES reference :: class
           integer f, clslen
           character*(*) class
         END FUNCTION vfndclsc
@@ -1040,6 +1066,7 @@ c      integer vhsdc
         INTEGER FUNCTION vhsdc(f,field,buf,n,dtype,vsname,vsclass,
      +                         fldlen, nmlen, clslen)
           !MS$ATTRIBUTES C,reference,alias:'_VHSDC' :: vhsdc
+	    !DEC$ ATTRIBUTES reference :: field, vsname, vsclass
           integer f, buf(*),n,dtype,fldlen,nmlen, clslen
           character*(*) field,vsname,vsclass
         END FUNCTION vhsdc
@@ -1064,6 +1091,7 @@ c      integer vhsdmc
         INTEGER FUNCTION vhsdmc(f,field,buf,n,dtype,vsname,vsclass,
      +                         order, fldlen, nmlen, clslen)
           !MS$ATTRIBUTES C,reference,alias:'_VHSDMC' :: vhsdmc
+	    !DEC$ ATTRIBUTES reference :: field,vsname,vsclass
           integer f, buf(*),n,dtype,order, fldlen,nmlen, clslen
           character*(*) field,vsname,vsclass
         END FUNCTION vhsdmc
@@ -1088,6 +1116,7 @@ c      integer vhscdc
         INTEGER FUNCTION vhscdc(f,field,cbuf,n,dtype,vsname,vsclass,
      +                         fldlen, nmlen, clslen)
           !MS$ATTRIBUTES C,reference,alias:'_VHSCDC' :: vhscdc
+	    !DEC$ ATTRIBUTES reference :: field,vsname,vsclass,cbuf
           integer f, n,dtype,fldlen,nmlen, clslen
           character*(*) field,vsname,vsclass
           character cbuf(*)
@@ -1114,6 +1143,7 @@ c      integer vhscdmc
         INTEGER FUNCTION vhscdmc(f,field,cbuf,n,dtype,vsname,vsclass,
      +                         order, fldlen, nmlen, clslen)
           !MS$ATTRIBUTES C,reference,alias:'_VHSCDMC' :: vhscdmc
+	    !DEC$ ATTRIBUTES reference :: field,vsname,vsclass, cbuf
           integer f, n,dtype,order, fldlen,nmlen, clslen
           character*(*) field,vsname,vsclass
           character   cbuf(*)
@@ -1138,6 +1168,7 @@ c      integer 		vhmkgpc
         INTEGER FUNCTION vhmkgpc(f,tagarray, refarray,n,vgname,
      +                         vgclass, nmlen, clslen)
           !MS$ATTRIBUTES C,reference,alias:'_VHMKGPC' :: vhmkgpc
+	    !DEC$ ATTRIBUTES reference :: vgname,vgclass
           integer f, tagarray(*), refarray(*),n,nmlen,clslen
           character*(*) vgname,vgclass
         END FUNCTION vhmkgpc
@@ -1160,6 +1191,7 @@ c      integer 			vflocc
       INTERFACE
         INTEGER FUNCTION vflocc(vg, field, fldlen)
           !MS$ATTRIBUTES C,reference,alias:'_VFLOCC' :: vflocc
+	    !DEC$ ATTRIBUTES reference :: field
           integer vg, fldlen
           character*(*) field
         END FUNCTION vflocc
@@ -1366,6 +1398,7 @@ c      integer			vsqfldsc
       INTERFACE
         INTEGER FUNCTION vsqfldsc(vs, fields, fldslen)
           !MS$ATTRIBUTES C,reference,alias:'_VSQFLDSC' :: vsqfldsc
+	    !DEC$ ATTRIBUTES reference :: fields
           integer vs, fldslen
           character*(*) fields
         END FUNCTION vsqfldsc
@@ -1385,6 +1418,7 @@ c      integer			vsqnamec
       INTERFACE
         INTEGER FUNCTION vsqnamec(vs, name, nmlen)
           !MS$ATTRIBUTES C,reference,alias:'_VSQNAMEC' :: vsqnamec
+	    !DEC$ ATTRIBUTES reference :: name
           integer vs, nmlen
           character*(*) name
         END FUNCTION vsqnamec
@@ -1411,6 +1445,7 @@ c      integer vsfncpk
         INTEGER FUNCTION vsfncpk(vs,ptype,buflds,buf,bufsz,
      +               nrecs,pckfld, fldbuf, bfldslen,pfldlen)
           !MS$ATTRIBUTES C,reference,alias:'_VSFNCPK' :: vsfncpk
+	    !DEC$ ATTRIBUTES reference :: buflds, pckfld
           integer vs,ptype,buf, bufsz,nrecs,fldbuf,bfldslen
           integer pfldlen
           character*(*) buflds, pckfld
@@ -1439,6 +1474,7 @@ c      integer vsfccpk
         INTEGER FUNCTION vsfccpk(vs,ptype,buflds,buf,bufsz,
      +               nrecs,pckfld, fldbuf, bfldslen,pfldlen)
           !MS$ATTRIBUTES C,reference,alias:'_VSFCCPK' :: vsfccpk
+	    !DEC$ ATTRIBUTES reference :: buflds,fldbuf,  pckfld
           integer vs,ptype,buf, bufsz,nrecs,bfldslen
           integer pfldlen
           character*(*) buflds,fldbuf,  pckfld
@@ -1449,3 +1485,77 @@ c      integer vsfccpk
      +                 fldbuf, len(buflds), len(pckfld)) 
       end
 c  
+c     ------------------------------------------------------------
+c     Delete a tag/ref pair in a vgroup.
+c     related: vfdtr()-->vdtrc()-->Vdeletetagref()
+
+      integer function vfdtr	( vg, tag, ref)
+      integer		vg, tag, ref
+C      integer vdtrc				
+      INTERFACE
+        INTEGER FUNCTION vdtrc(vg, tag, ref)
+          !MS$ATTRIBUTES C,reference,alias:'_VDTRC' :: vdtrc
+          integer vg, tag, ref
+        END FUNCTION vdtrc
+      END INTERFACE
+
+      vfdtr = vdtrc  ( vg, tag, ref)
+      end
+C-------------------------------------------------------------------------
+C        Name:      vsffcls 
+C        Purpose:   looks in the file, finds the vdata 
+C                   with the specified class 
+C                   and returns the ref of the vdata with class vdclass 
+C        Inputs:    id       -  file ID
+C                   vdclass  -  class of vdata to find  
+C        Returns:   returns 0 if not found, or error. Otherwise, returns
+C                   the vdata's ref number (a positive integer)
+C        Calls:     vcffcls (C stub for VSfindclass function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function vsffcls(id, vdclass)
+C
+         INTEGER id
+         CHARACTER*(*) vdclass
+C         INTEGER vscfcls 
+      INTERFACE
+        INTEGER FUNCTION vscfcls(id, vdclass, vdclasslen)
+          !MS$ATTRIBUTES C,reference,alias:'_VSCFCLS' :: vscfcls
+	    !DEC$ ATTRIBUTES reference :: vdclass
+          integer id, vdclasslen
+          character*(*) vdclass
+        END FUNCTION vscfcls
+      END INTERFACE
+C
+         vsffcls = vscfcls(id,vdclass, len(vdclass)) 
+
+C
+         return 
+         end
+C-------------------------------------------------------------------------
+C        Name:      vdelete
+C        Purpose:   deletes vgroup from the file 
+C        Inputs:    id       -  file ID
+C                   vgid     -  vgroup identifier
+C        Returns:   returns 0 if successfull, -1 on error
+C        Calls:     vdeletec (C stub for Vdelete function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+         INTEGER function vdelete(id, vgid)
+C
+         INTEGER id, vgid
+
+      INTERFACE
+        INTEGER FUNCTION vdeletec(id, vgid)
+          !MS$ATTRIBUTES C,reference,alias:'_VDELETEC' :: vdeletec
+          integer id, vgid
+        END FUNCTION vdeletec 
+      END INTERFACE
+C
+         vdelete = vdeletec(id, vgid)
+
+C
+         return 
+         end
+
