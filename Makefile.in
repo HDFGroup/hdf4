@@ -109,9 +109,6 @@ PABLO_HINC= `pwd`/hdf/pablo
 # ==> where is your FMPOOL include files
 FMPOOL_INC= `pwd`/hdf/fmpool
 
-#SUBDIRS = "this is set via configure, don't edit this"
-#OTHERS = 
-
 #
 # Flags to recursively send to make to overide ones inserted by Configure
 #
@@ -271,6 +268,8 @@ install:
           SUBDIRS="$(HDFDIR)" subd
 	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=install \
           SUBDIRS="$(NETCDFDIR)" subd
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install \
+          SUBDIRS="$(MANDIR)" subd
 
 install-hdf:	
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install \
@@ -287,6 +286,10 @@ install-hdf-utils:
 install-mfhdf:	
 	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=install \
           SUBDIRS="$(NETCDFDIR)" subd
+
+install-man:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install \
+          SUBDIRS="$(MANDIR)" subd
 
 hdfclean:		
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="clean" \
@@ -349,6 +352,7 @@ help:
 	@echo "make install-hdf-libs  - install HDF library and includes"
 	@echo "make install-hdf-utils - install utilities"
 	@echo "make install-mfhdf     - install netCDF library, utilities and includes"
+	@echo "make install-man       - install HDF man pages"
 	@echo "make clean        - cleans up HDF and NETCDF packages(*.o,libdf.a,..)"
 	@echo "make distclean    - cleans up HDF and NETCDF packages including"
 	@echo "                    configuration(Makefiles,config.status,..)"
