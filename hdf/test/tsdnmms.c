@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/04/28 18:26:38  dilg
-Changed absolute path to relative path for include files.
+Revision 1.3  1992/05/31 15:27:30  mfolk
+Changed rank and dims[2] to int32 to satisfy Convex.
 
+ * Revision 1.2  1992/04/28  18:26:38  dilg
+ * Changed absolute path to relative path for include files.
+ *
  * Revision 1.1  1992/04/27  17:31:08  sxu
  * Initial revision
  *
@@ -61,7 +64,7 @@ uint32 tui32max, tui32min;
 int main()
 {
     int i, j, err, err1, err2, err3;
-    int rank, dims[2];
+    int32 rank, dims[2];
     int number_failed = 0;
 
 
