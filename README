@@ -37,10 +37,10 @@ Distribution Layout
 
 Third Party Software Requirements:
 ---------------------------------
- 1. IJPEG distribution release 6a(libjpeg.a). The "official" site 
-    for this is ftp://ftp.uu.net/graphics/jpeg/jpegsrc.v6a.tar.gz
+ 1. IJPEG distribution release 6b(libjpeg.a). The "official" site 
+    for this is ftp://ftp.uu.net/graphics/jpeg/jpegsrc.v6b.tar.gz
 
- 2. ZLIB 1.0.2(libz.a) distribution.  
+ 2. ZLIB 1.0.4(libz.a) distribution.  
 
  Both of these distributions are included with this distribution
  in 'hdf/jpeg' and 'hdf/zlib'. The HDF/netCDF base distribution
