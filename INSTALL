@@ -514,8 +514,7 @@ foreseeable future.
 
 The instructions which follow assume that you will be using one of 
 the 'zip' files that we provide, either the binary code release
-(HDF41r3.zip or HDF41r3.NOFORTRAN.zip) or the source code release 
-(HDF41r3s.zip).
+(HDF41r3.zip) or the source code release (HDF41r3s.zip).
 
 In building HDF from source code you may select between 
 two build environment options ( with Fortran or without Fortran support
@@ -536,7 +535,7 @@ it is assumed that you have done the following:
 	    c:\					(any drive)
            MyHDFstuff\				(any folder name)
 
-      2. Copy the binary archive (HDF41r3.zip or HDF41r3.NOFORTRAN.zip) 
+      2. Copy the binary archive (HDF41r3.zip) 
       to that directory 
       and unpack it by running WinZip on HDF41r3.zip (the binary archive).
       This should create a directory called 'HDF41r3' which 
