@@ -5,12 +5,16 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/09/11 14:15:04  koziol
-Changed Fortran stubs' parameter passing to use a new typedef, intf,
-which should be typed to the size of an INTEGER*4 in whatever Fortran
-compiler the C functions need to be compatible with.  (This is mostly
-for the PC and possibly for the Mac)
+Revision 1.4  1992/09/15 19:42:46  koziol
+Folded in Shming's int changes and the change to fix non-square dimensions
+on datasets
 
+ * Revision 1.3  1992/09/11  14:15:04  koziol
+ * Changed Fortran stubs' parameter passing to use a new typedef, intf,
+ * which should be typed to the size of an INTEGER*4 in whatever Fortran
+ * compiler the C functions need to be compatible with.  (This is mostly
+ * for the PC and possibly for the Mac)
+ *
  * Revision 1.2  1992/08/31  16:14:52  chouck
  * Added Fortran support for calibration tags
  *
@@ -479,7 +483,8 @@ ndsigdim(filename, prank, sizes, maxrank, lenfn)
 #endif /* PROTOTYPE */
 {
     char *fn;
-    int32 i, tmp, isndg;
+    int32 i, tmp;
+    intn isndg;
     intf ret;
 
     fn = HDf2cstring(filename, (intn)*lenfn);
@@ -519,7 +524,8 @@ ndsigdat(filename, rank, maxsizes, data, fnlen)
     void *data;
 #endif /* PROTOTYPE */
 {
-    int32 i, isndg;
+    int32 i;
+    intn isndg;
     intf ret;
     char *fn;
     int32 *p, *cmaxsizes;
@@ -590,7 +596,7 @@ ndsipdat(filename, rank, dimsizes, data, fnlen)
 
     /* 0, 1 specify create mode, called from FORTRAN program */
     /* In HDF3.2 .hdf files, data and dimsizes are in C order  */
-    ret = DFSDIputdata(fn, (intn)*rank, dimsizes, data, 0, 1);
+    ret = DFSDIputdata(fn, (intn)*rank, cdims, data, 0, 1);
     HDfreespace(fn);
     cdims = HDfreespace((uint32 *)cdims);
     if (cdims != NULL) return FAIL;
@@ -679,7 +685,8 @@ ndsigslc(filename, winst, windims, data, dims, fnlen)
     char *fn;
     intf ret;
     intn rank,i;
-    int32 isndg, *cdims, *cwindims, *cwinst, *p, *wp, *wsp;
+    int32 *cdims, *cwindims, *cwinst, *p, *wp, *wsp;
+    intn isndg;
 
     fn = HDf2cstring(filename, *fnlen);
    
@@ -874,7 +881,7 @@ ndfsdgetdimstrs(dim, label, unit, format)
     _fcd label, unit, format;
 #endif /* PROTOTYPE */
 {
-    int32 isndg;
+    intn isndg;
     intn rank, cdim;
     intf ret;
 
@@ -913,7 +920,7 @@ ndfsdgetdimscale(dim, maxsize, scale)
 #endif /* PROTOTYPE */
 {
 
-    int32 isndg;
+    intn isndg;
     intn  rank, cdim, ret;
 
     ret = DFSDIisndg(&isndg);
@@ -1103,7 +1110,7 @@ ndfsdgetdimlen(dim, llabel, lunit, lformat)
     intf *dim, *llabel, *lunit, *lformat;
 #endif /* PROTOTYPE */
 {
-    int32 isndg;
+    intn isndg;
     intn rank, cdim;
     intf ret;
 
@@ -1324,7 +1331,7 @@ ndsisdis(dim, flabel, funit, fformat, llabel, lunit, lformat)
     char *unit   =  HDf2cstring(funit, *lunit);  
     char *format =  HDf2cstring(fformat, *lformat);
     intf status;
-    int32 isndg;
+    intn isndg;
     intn rank, cdim;
 
     status = DFSDIgetwrank(&rank);
