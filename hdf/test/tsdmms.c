@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/02/26 20:08:43  mfolk
-Initial revision
+Revision 1.2  1992/05/31 15:25:21  mfolk
+Changed declaration of rank and dims[2] to int32 for Convex.
 
+ * Revision 1.1  1992/02/26  20:08:43  mfolk
+ * Initial revision
+ *
 */
 #include "hdf.h"
 #include "dfsd.h"
@@ -50,7 +53,7 @@ uint32 tui32max, tui32min;
 int main()
 {
     int i, j, err, err1, err2, err3;
-    int rank, dims[2];
+    int32 rank, dims[2];
     int number_failed = 0;
 
 
