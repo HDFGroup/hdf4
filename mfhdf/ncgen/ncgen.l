@@ -106,7 +106,8 @@ FloatInf|Infinity|Inf	{    /* float missing values */
 		return (SHORT_CONST);
 	        }
 [+-]?[1-9][0-9]*[lL]?|0[lL]? {
-#ifdef cray	/* machines where longs have more precision than doubles. */
+#if defined cray && ! defined (_CRAYMPP)
+		/* machines where longs have more precision than doubles. */
     		char *ptr;
 		long_val = strtol((char*)yytext, &ptr, 0);
 		if (ptr == (char*)yytext) {
@@ -114,7 +115,8 @@ FloatInf|Infinity|Inf	{    /* float missing values */
 		    yyerror(errstr);
 		}
 		return (LONG_CONST);
-#else		/* machines where doubles have more precision than longs. */
+#else		
+		/* machines where doubles have more precision than longs. */
 		/*
 		 * Because strtol and sscanf with "%ld" may silently give
 		 * bad results from undetected overflow for strings like
@@ -131,10 +133,15 @@ FloatInf|Infinity|Inf	{    /* float missing values */
 		    sprintf(errstr,"bad long constant: %s",(char*)yytext);
 		    yyerror(errstr);
 		}
+
 #if defined __alpha || (_MIPS_SZLONG == 64)
 		if (dd < INT_MIN  ||  dd > INT_MAX) 
 #else
+#if defined (_CRAYMPP)
+		if (dd < -2147483648 || dd > 2147483647)
+#else
 		if (dd < LONG_MIN  ||  dd > LONG_MAX) 
+#endif
 #endif
                 {
 		    double_val = dd;
