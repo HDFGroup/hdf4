@@ -677,36 +677,6 @@ extern      "C"
                 (accrec_t * access_rec, sp_info_block_t * info_block);
 
 /*
-   ** from hvblocks.c
- */
-
-    extern int32 HVPstread
-                (accrec_t * rec);
-
-    extern int32 HVPstwrite
-                (accrec_t * rec);
-
-    extern int32 HVPseek
-                (accrec_t * access_rec, int32 offset, int origin);
-
-    extern int32 HVPinquire
-                (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
-               int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
-                 int16 *pspecial);
-
-    extern int32 HVPread
-                (accrec_t * access_rec, int32 length, void * data);
-
-    extern int32 HVPwrite
-                (accrec_t * access_rec, int32 length, const void * data);
-
-    extern intn HVPendaccess
-                (accrec_t * access_rec);
-
-    extern int32 HVPinfo
-                (accrec_t * access_rec, sp_info_block_t * info_block);
-
-/*
    ** from hchunks.c - should be the same as found in 'hchunks.h'
  */
 #include "hchunks.h"

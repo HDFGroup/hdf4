@@ -459,12 +459,6 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 
 
 /*
-   ** from hvblocks.c
- */
-    extern int32 HVcreate
-                (int32 file_id, uint16 tag, uint16 ref);
-
-/*
    ** from herr.c
  */
     extern const char *HEstring

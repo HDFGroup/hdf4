@@ -157,12 +157,6 @@ extern funclist_t comp_funcs;
    For definition of the chunked data element, see hchunk.c. */
 #include "hchunks.h"
 
-#ifdef LATER
-/* Functions for accessing variable-length linked block data elements
-   For definition of the big external data element, see hvblocks.c. */
-extern funclist_t vlnk_funcs;
-#endif /* LATER */
-
 /* Table of these function tables for accessing special elements.  The first
    member of each record is the speical code for that type of data element. */
 functab_t   functab[] =

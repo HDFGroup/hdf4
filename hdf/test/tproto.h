@@ -43,7 +43,6 @@ void        test_tbbt(void);
 void        test_macros(void);
 void        test_conv(void);
 void        test_nbit(void);
-void        test_hvblocks(void);
 void        test_mgr(void);
 void        test_bitvect(void);
 void        test_chunks(void);
