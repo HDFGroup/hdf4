@@ -172,6 +172,7 @@ extern int32 SDiscoordvar
 #   define nscfattr     FNAME(SCFATTR)
 #   define nsfid2ref  FNAME(SFID2REF)
 #   define nsfref2index FNAME(SFREF2INDEX)
+#   define nsfiscvar   FNAME(SFISCVAR)
 #else   /* DF_CAPFNAMES */
 #   define nscstart    FNAME(scstart)
 #   define nsfend      FNAME(sfend)
@@ -204,6 +205,7 @@ extern int32 SDiscoordvar
 #   define nscfattr    FNAME(scfattr)
 #   define nsfid2ref   FNAME(sfid2ref)
 #   define nsfref2index FNAME(sfref2index)
+#   define nsfiscvar   FNAME(sfiscvar)
 #endif
 #endif
 
