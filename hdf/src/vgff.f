@@ -253,6 +253,18 @@ c     related: VSfexist--vsfexc--vsfex
       vsfex = vsfexc (vs, fields, len(fields))
       end
 
+c     ------------------------------------------------------------
+c     looks for a Vdata with a given name
+c     related: VSfind--vsfind--vsffnd
+
+      integer	function vsffnd (f, name)
+      integer			f
+      character*(*)	name
+      integer                   vsfndc
+
+      vsffnd = vsfndc (f, name, len(name))
+      end
+
 c  ------------------------------------------------------------
 c     gets the id of the next vdata from the file
 c     related: VSgetid--vsgidc--vsfgid
@@ -343,7 +355,7 @@ c     related: VSwrite--vswritc--vsfwrit
       integer	function	vsfwrit (vs, buf, nelts, interlace)
 
       integer			vs, nelts, interlace
-      integer			buf(*)	
+      character*(*)		buf	
       integer			vswritc
 
       vsfwrit = vswritc (vs, buf, nelts, interlace)

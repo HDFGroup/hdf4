@@ -323,6 +323,7 @@ extern int32 VSwrite
 #   define  nvsgclsc FNAME(VSGCLSC)
 #   define  nvsinqc  FNAME(VSINQC)
 #   define  nvsfexc  FNAME(VSFEXC)
+#   define  nvsfndc  FNAME(VSFNDC)
 #   define  nvsgidc  FNAME(VSGIDC)
 #   define  nvssnamc FNAME(VSSNAMC)
 #   define  nvssclsc FNAME(VSSCLSC)
@@ -371,6 +372,7 @@ extern int32 VSwrite
 #   define  nvsgclsc FNAME(vsgclsc)
 #   define  nvsinqc  FNAME(vsinqc)
 #   define  nvsfexc  FNAME(vsfexc)
+#   define  nvsfndc  FNAME(vsfndc)
 #   define  nvsgidc  FNAME(vsgidc)
 #   define  nvssnamc FNAME(vssnamc)
 #   define  nvssclsc FNAME(vssclsc)
@@ -463,6 +465,9 @@ extern FRETVAL(intf) nvsinqc
 
 extern FRETVAL(intf) nvsfexc
     PROTO((intf _HUGE *vkey, _fcd fields, intf _HUGE *fieldslen));
+
+extern FRETVAL(intf) nvsfndc
+    PROTO((HFILEID _HUGE *f, _fcd name, intf _HUGE *namelen));
 
 extern FRETVAL(intf) nvsgidc
     PROTO((HFILEID _HUGE *f, intf _HUGE *vsid));

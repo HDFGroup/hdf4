@@ -551,6 +551,12 @@ extern intn DFANlablist
     PROTO((char _HUGE *filename, uint16 tag, uint16 _HUGE reflist[],
             char _HUGE *labellist, intn listsize, intn maxlen, intn startpos));
 
+extern intn DFANclear
+    PROTO((void));
+
+extern intn DFANIclear
+    PROTO((void));
+
 extern uint16 DFANIlocate
   PROTO((int32 file_id, int type, uint16 tag, uint16 ref));
 

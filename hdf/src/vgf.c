@@ -529,7 +529,32 @@ intf    *fieldslen;
 
 	return (stat);
 }
+/* ------------------------------------------------------------------ */
+/*
+   **  looks for a named Vdata in a file
+   **  related: VSfind--vsfndc--VSFFND
+ */
 
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nvsfndc(HFILEID * f, _fcd name, intf * namelen)
+#else
+nvsfndc(f, name, namelen)
+HFILEID * f;
+_fcd name;
+intf * namelen;
+#endif
+{
+    intf        ret;
+    char       *cname;
+
+    cname = HDf2cstring(name, (intn) *namelen);
+    /* trimendblanks(flds); */
+    ret = (intf) VSfind(*f, cname);
+    HDfreespace(cname);
+
+    return (ret);
+}
 /* ------------------------------------------------------------------ */
 /* 
 **  gets the id of the next vdata from the file

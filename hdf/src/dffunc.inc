@@ -66,6 +66,8 @@ C
 	integer DFANgetfdslen,		dagfdsl
 	integer DFANgetfds,		dagfds
 	integer DFANlastref,		dalref
+        integer daclear
+   
 C
 C	Declarations of return values for HDF Raster Image functions
 C
@@ -159,6 +161,35 @@ C
       integer sfrattr
       integer sfrdata
       integer sfwdata
+
+C
+C       Declarations of return values for HDF Vgroup routines
+C
+
+      integer vfatch
+      integer vfinq
+      integer vfgid
+      integer vfgnxt
+      integer vfinsrt
+      integer vfisvg
+      integer vfisvs
+
+
+C       Declarations of return values for HDF Vdata routines
+C
+
+      integer vsfatch
+      integer vsfseek
+      integer vsfinq
+      integer vsfex
+      integer vsffnd
+      integer vsfgid
+      integer vsfsfld
+      integer vsfsint
+      integer vsffdef
+      integer vsfread
+      integer vsfwrit
+
 
 C End of declarations
 
