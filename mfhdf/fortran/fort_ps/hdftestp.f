@@ -362,13 +362,13 @@ C
       endif
 
       fid2 = sfstart('test1.hdf', 3)
-      if(fid2.ne.-1) then
+      if(fid2.eq.-1) then
           print *, 'Reopen returned', fid2
           err = err + 1
       endif
  
       sds3 = sfselect(fid2, 0)
-      if(sds3.ne.-1) then
+      if(sds3.eq.-1) then
          print *, 'Select returned', sds3
          err = err + 1
       endif
@@ -441,13 +441,13 @@ C
       endif
 
       sds4 = sfselect(fid2, 1)
-      if(sds4.ne.-1) then
+      if(sds4.eq.-1) then
          print *, 'Select #4  returned', sds4
          err = err + 1
       endif
 
       dim2 = sfdimid(sds4, 1)
-      if(dim2.ne.-1) then
+      if(dim2.eq.-1) then
          print *, 'Get dim id #2 returned', dim2
          err = err + 1
       endif
