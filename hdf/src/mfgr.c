@@ -4229,7 +4229,8 @@ intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,void *
     hdf_file_id=ri_ptr->gr_ptr->hdf_file_id;
 
     /* Check if this is compatible with older-style palettes */
-    if(ncomps==3 && nt==DFNT_UINT8 && il==MFGR_INTERLACE_PIXEL && nentries==256)
+    if(ncomps==3 && (nt==DFNT_UINT8 ||nt==DFNT_UCHAR8) && 
+		    il==MFGR_INTERLACE_PIXEL && nentries==256)
       {
           /* Check if LUT exists already */
           if(ri_ptr->lut_tag!=DFTAG_NULL && ri_ptr->lut_ref!=DFREF_WILDCARD)
