@@ -278,8 +278,8 @@ typedef signed char        int8;
 typedef unsigned char      uint8;
 typedef short int          int16;
 typedef unsigned short int uint16;
-typedef long int           int32;
-typedef unsigned long int  uint32;
+typedef int                int32;
+typedef unsigned int       uint32;
 typedef int                intn;
 typedef unsigned int       uintn;
 typedef float              float32;
@@ -1070,21 +1070,21 @@ extern uint8 FAR *DFtbuf;
 **
 **---------------------------------------------------------------*/
 #if defined(FNAME_PRE_UNDERSCORE) && defined(FNAME_POST_UNDERSCORE)
-#ifdef __STDC__
+#if defined __STDC__ | defined CONVEX | defined DECCXX
 #   define FNAME(x)     _##x##_
 #else
 #   define FNAME(x)     _/**/x/**/_
 #endif
 #endif
 #if defined(FNAME_PRE_UNDERSCORE) && !defined(FNAME_POST_UNDERSCORE)
-#ifdef __STDC__
+#if defined __STDC__ | defined CONVEX | defined DECCXX
 #   define FNAME(x)     _##x
 #else
 #   define FNAME(x)     _/**/x
 #endif
 #endif
 #if !defined(FNAME_PRE_UNDERSCORE) && defined(FNAME_POST_UNDERSCORE)
-#ifdef __STDC__
+#if defined __STDC__ | defined CONVEX | defined DECCXX
 #   define FNAME(x)     x##_
 #else
 #   define FNAME(x)     x/**/_
