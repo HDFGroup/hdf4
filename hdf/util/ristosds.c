@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1993/04/19 23:04:43  koziol
-General Code Cleanup to reduce/remove compilation warnings on PC
+Revision 1.5  1993/04/26 16:49:21  chouck
+Minor fixes for the Convex
 
+ * Revision 1.4  1993/04/19  23:04:43  koziol
+ * General Code Cleanup to reduce/remove compilation warnings on PC
+ *
  * Revision 1.3  1993/01/19  06:00:32  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -42,8 +45,11 @@ int main
 int cntimage
     PROTO((char *filename, int32 *p_w, int32 *p_h, int *n_images));
 VOID finishing
-    PROTO((VOID ));
-
+#ifdef CONVEX
+    PROTO(());
+#else
+    PROTO((VOID));
+#endif
 
 #ifdef PROTOTYPE
 main(int argc, char *argv[])
@@ -145,7 +151,7 @@ main(argc, argv)
     return(0);
 }
 
-#ifdef PROTOTYPE
+#if defined ( PROTOTYPE ) && ! defined ( CONVEX )
 VOID finishing(VOID )
 #else
 VOID finishing()

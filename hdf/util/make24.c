@@ -158,7 +158,7 @@ int32 img_xdim,img_ydim;
     return(TRUE);
 }   /* end convert8to24() */
 
-#ifdef PROTOTYPE
+#if defined ( PROTOTYPE ) && ! defined ( CONVEX )
 VOID usage(VOID)
 #else
 VOID usage()

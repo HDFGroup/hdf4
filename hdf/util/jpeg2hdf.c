@@ -424,7 +424,7 @@ static intn DFJPEGaddrig(file_id, ref, ctag)
     return(DFdiwrite(file_id, GroupID, DFTAG_RIG, ref));
 }
 
-#ifdef PROTOTYPE
+#if defined ( PROTOTYPE ) && ! defined ( CONVEX )
 static VOID usage(VOID)
 #else
 static VOID usage()

@@ -50,7 +50,11 @@ int32 separate
   PROTO((char *ss, char *fmt, int32 *num));
 
 int show_help_msg
+#ifdef CONVEX
+    PROTO(());
+#else
     PROTO((VOID));
+#endif
 
 /*
  *  Main entry point
@@ -110,7 +114,7 @@ void showfmttypes() {
 	fprintf(stderr,"\t  f - float \n");
 	}
 
-#ifdef PROTOTYPE
+#if defined ( PROTOTYPE ) && ! defined ( CONVEX )
 int show_help_msg(VOID)
 #else
 int show_help_msg()
