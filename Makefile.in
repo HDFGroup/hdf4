@@ -219,10 +219,10 @@ test-hdfnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="test-hdfnofortran" \
           SUBDIRS="$(HDFDIR)" subd
 
-#hdf-testnofortran:
-#	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-#          SUBDIRS="$(HDFDIR)" subd
-#
+hdf-testnofortran:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="testnofortran" \
+          SUBDIRS="$(HDFDIR)" subd
+
 hdf-libnostub: 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="libnostub" \
           SUBDIRS="$(HDFDIR)" subd
