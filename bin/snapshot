@@ -1,10 +1,4 @@
 #!/bin/sh
-#===========================
-# DO NOT USE THIS COMMAND SCRIPT.
-# This command script is under construction and is not supported.
-# Not all features are working.  Some features may change in the future.
-# Some may even give wrong results.
-#===========================
 # snapshot: Snap shot testing command script for HDF4.
 # This script should be run nightly from cron.  It checks out hdf4
 # from the CVS source tree and compares it against the previous
@@ -55,9 +49,9 @@ ZLIB=$ZLIB_default
 # What compression methods to use?
 METHODS="gzip bzip2"
 
-# Use User's MAKE if set.  Else use generic make.
-#MAKE=${MAKE:-make}
-# Hard set to gmake because dependences are not set correctly for parallel make
+# Hard set to gmake.
+# No parallel make (-j) because dependences are not set correctly for it.
+# Must use gmake for --srcdir support.
 MAKE=gmake
 export MAKE
 
