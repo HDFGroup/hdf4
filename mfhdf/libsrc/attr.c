@@ -497,6 +497,8 @@ xdr_NC_attr(xdrs, app)
 	XDR *xdrs;
 	NC_attr **app;
 {
+    bool_t ret_value;
+
 	if( xdrs->x_op == XDR_FREE)
 	{
 		NC_free_attr((*app)) ;
@@ -515,7 +517,11 @@ xdr_NC_attr(xdrs, app)
 
 	if( !xdr_NC_string(xdrs, &((*app)->name)))
 		return(FALSE) ;
-	return( xdr_NC_array(xdrs, &((*app)->data)) ) ;
+	ret_value = xdr_NC_array(xdrs, &((*app)->data)) ;
+#ifdef HDF
+        (*app)->HDFtype = hdf_map_type(((*app)->data)->type);
+#endif
+	return ret_value;
 }
 
 
