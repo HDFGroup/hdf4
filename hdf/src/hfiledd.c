@@ -122,6 +122,20 @@ static intn HTIunregister_tag_ref(filerec_t * file_rec, dd_t *dd_ptr);
 #define REF_DYNARRAY_START  64
 /* The increment of a ref dynarray */
 #define REF_DYNARRAY_INCR   256
+/* macros to encode and decode a DD */
+#define DDENCODE(p, tag,ref,offset,length) \
+   {UINT16ENCODE(p, tag); \
+    UINT16ENCODE(p, ref); \
+    INT32ENCODE(p, offset); \
+    INT32ENCODE(p, length); \
+   }
+#define DDDECODE(p, tag,ref,offset,length) \
+   {UINT16DECODE(p, tag); \
+    UINT16DECODE(p, ref); \
+    INT32DECODE(p, offset); \
+    INT32DECODE(p, length); \
+   }
+
 
 /******************************************************************************
  NAME
@@ -238,10 +252,8 @@ intn HTPstart(filerec_t *file_rec       /* IN:  File record to store info in */
         p = tbuf;
         for (i = 0; i < ndds; i++, curr_dd_ptr++)
           {
-            UINT16DECODE(p, curr_dd_ptr->tag);
-            UINT16DECODE(p, curr_dd_ptr->ref);
-            INT32DECODE(p, curr_dd_ptr->offset);
-            INT32DECODE(p, curr_dd_ptr->length);
+	    DDDECODE(p, curr_dd_ptr->tag, curr_dd_ptr->ref,
+		curr_dd_ptr->offset, curr_dd_ptr->length);
             curr_dd_ptr->blk=ddcurr;
   
              /* check if maximum ref # exceeded */
@@ -365,7 +377,7 @@ intn HTPinit(filerec_t *file_rec,       /* IN: File record to store info in */
 
     /* Fill the first memory DD block with NIL dd's */
     list[0].tag = DFTAG_NULL;
-    list[0].ref = 0; /* invalid ref */
+    list[0].ref = DFREF_NONE;
     list[0].length = INVALID_LENGTH;
     list[0].offset = INVALID_OFFSET;
     list[0].blk = block;
@@ -377,10 +389,8 @@ intn HTPinit(filerec_t *file_rec,       /* IN: File record to store info in */
   
     /* Fill the first disk DD block with NIL dd's */
     p = tbuf;
-    UINT16ENCODE(p, (uint16) DFTAG_NULL);
-    UINT16ENCODE(p, (uint16) 0); /* invalid ref */
-    INT32ENCODE(p, (int32) INVALID_LENGTH);
-    INT32ENCODE(p, (int32) INVALID_OFFSET);
+    DDENCODE(p, (uint16) DFTAG_NULL, (uint16) DFREF_NONE,
+	(int32) INVALID_LENGTH, (int32) INVALID_OFFSET);
     HDmemfill(p,tbuf,DD_SZ,(uint32)(ndds-1));
 
     /* Write the NIL dd's out into the DD block on disk */
@@ -478,12 +488,7 @@ intn HTPsync(filerec_t *file_rec       /* IN:  File record to store info in */
             list = &block->ddlist[0];	/* start at the first DD, go from there */
             p = tbuf;
             for (i = 0; i < ndds; i++, list++)
-              {
-                UINT16ENCODE(p, list->tag);
-                UINT16ENCODE(p, list->ref);
-                INT32ENCODE(p, list->offset);
-                INT32ENCODE(p, list->length);
-              }	/* end for */
+		DDENCODE(p, list->tag, list->ref, list->offset, list->length);
 
             if (HP_write(file_rec, tbuf, ndds * DD_SZ) == FAIL)
               HGOTO_ERROR(DFE_WRITEERROR, FAIL);
@@ -1069,7 +1074,7 @@ Hnewref(int32 file_id /* IN: File ID the tag/refs are in */)
     CONSTR(FUNC, "Hnewref");
     filerec_t  *file_rec;	   /* file record */
     uint16      ref;		   /* the new ref */
-    uint16      ret_value = 0; /* 0 is invalid ref */
+    uint16      ret_value = DFREF_NONE;
     uint32      i_ref;        /* index for FOR loop */
 
 #ifdef HAVE_PABLO
@@ -1103,7 +1108,7 @@ Hnewref(int32 file_id /* IN: File ID the tag/refs are in */)
       } /* end else */
 
 done:
-  if(ret_value == 0)   /* Zero is invalid ref */
+  if(ret_value == DFREF_NONE)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1139,7 +1144,7 @@ Htagnewref(int32 file_id,/* IN: File ID the tag/refs are in */
     tag_info   *tinfo_ptr; /* pointer to the info for a tag */
     tag_info  **tip_ptr;   /* ptr to the ptr to the info for a tag */
     uint16      base_tag = BASETAG(tag); /* corresponding base tag (if the tag is special) */
-    uint16      ret_value = 0; /* 0 is invalid ref */
+    uint16      ret_value = DFREF_NONE;
 
 #ifdef HAVE_PABLO
   TRACE_ON(PABLO_mask,ID_Htagnewref);
@@ -1639,7 +1644,7 @@ static intn HTInew_dd_block(filerec_t * file_rec)
 
     /* Fill the block with NIL tags */
     list[0].tag = DFTAG_NULL;
-    list[0].ref = 0; /* invalid ref */
+    list[0].ref = DFREF_NONE;
     list[0].length = INVALID_LENGTH;
     list[0].offset = INVALID_OFFSET;
     list[0].blk = block;
@@ -1654,10 +1659,8 @@ static intn HTInew_dd_block(filerec_t * file_rec)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         p = tbuf;
-        UINT16ENCODE(p, (uint16) DFTAG_NULL);
-        UINT16ENCODE(p, (uint16) 0); /* invalid ref */
-        INT32ENCODE(p, (int32) INVALID_LENGTH);
-        INT32ENCODE(p, (int32) INVALID_OFFSET);
+	DDENCODE(p, (uint16) DFTAG_NULL, (uint16) DFREF_NONE,
+	    (int32) INVALID_LENGTH, (int32) INVALID_OFFSET);
         HDmemfill(p,tbuf,DD_SZ,(uint32)(ndds-1));
 
         if (HP_write(file_rec, tbuf, ndds * DD_SZ) == FAIL)
@@ -2049,10 +2052,7 @@ static intn HTIupdate_dd(filerec_t * file_rec, dd_t * dd_ptr)
           HGOTO_ERROR(DFE_SEEKERROR, FAIL);
   
         p = tbuf;
-        UINT16ENCODE(p, dd_ptr->tag);
-        UINT16ENCODE(p, dd_ptr->ref);
-        INT32ENCODE(p, dd_ptr->offset);
-        INT32ENCODE(p, dd_ptr->length);
+	DDENCODE(p, dd_ptr->tag, dd_ptr->ref, dd_ptr->offset, dd_ptr->length);
         if (HP_write(file_rec, tbuf, DD_SZ) == FAIL)
           HGOTO_ERROR(DFE_WRITEERROR, FAIL);
       } /* end else */
