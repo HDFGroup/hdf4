@@ -312,6 +312,8 @@ COPT=-G; JAVAINC2=$JAVAINC/solaris; JAVATARG=i386 ;;
 COPT=-G; JAVAINC2=$JAVAINC/solaris ; JAVATARG=solaris;;
 mips*-sgi-irix5*) LD=$CC; LDOPT=-shared; SLEXT="so";
 COPT=-shared ; JAVAINC2=$JAVAINC/irix; JAVATARG=irix;;
+mips*-sgi-irix6*) LD=$CC; LDOPT=-shared; SLEXT="so";
+COPT=-shared ; JAVAINC2=$JAVAINC/irix; JAVATARG=irix;;
 *-pc-linux*) LD=$CC; LDOPT=-shared; SLEXT="so";
 COPT=-shared ; JAVAINC2=$JAVAINC/genunix; JAVATARG=linux-elf;;
 *) LD=$CC; LDOPT=-G; SLEXT="so";
