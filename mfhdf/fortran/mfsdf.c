@@ -1027,7 +1027,7 @@ nsfref2index(id, ref)
 #ifdef PROTOTYPE
 nsfiscvar(intf *id)
 #else
-nsfiscvarindex(id)
+nsfiscvar(id)
      intf *id;
 #endif /* PROTOTYPE */
 {
