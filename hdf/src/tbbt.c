@@ -33,6 +33,8 @@ static char RcsId[] = "@(#)$Revision$";
 VOID tbbt1dump
 	PROTO((TBBT_NODE *node,intn method));
 
+/* #define TESTING */
+
 /* Returns pointer to end-most (to LEFT or RIGHT) node of tree: */
 #ifdef PROTOTYPE
 static TBBT_NODE *tbbt_end(TBBT_NODE *root, intn side)
@@ -239,16 +241,40 @@ static TBBT_NODE *swapkid( root, ptr, side )
   intn  deep[3];        /* Relative depths of three sub-trees involved. */
   /* 0:ptr->link[Other(side)], 1:kid->link[Other(side)], 2:kid->link[side] */
   TBBT_FLAG ptrflg;     /* New value for ptr->flags (ptr->flags used after set) */
+  TBBT_LEAF plcnt,prcnt,  /* current values of the ptr's and kid's leaf count */
+      klcnt,krcnt;
 
+#ifdef TESTING
+printf("swapkid(): check 1, ptr=%p, ptr->flags=%x, side=%d, kid=%p, kid->flags=%x\n",ptr,ptr->flags,side,kid,kid->flags);
+#endif
     deep[2]= ( deep[1]= 0 ) + Delta(kid,side);
     deep[0]= Max(0,deep[2]) + 1 - Delta(ptr,side);
+#ifdef TESTING
+printf("swapkid(): check 1.5, deep=%d,%d,%d\n",deep[0],deep[1],deep[2]);
+#endif
     kid->Parent= ptr->Parent;
+#ifdef QAK
     ptrflg= SetFlags( ptr, side, Cnt(ptr,side) - Cnt(kid,side) - 1,
-            /*deep[1]-deep[0] */ deep[0]-deep[1], HasChild(ptr,Other(side)) && HasChild(kid,Other(side)) );
+            /*deep[1]-deep[0] */ deep[0]-deep[1], 
+	    HasChild(ptr,Other(side)) && HasChild(kid,Other(side)) );
+#else
+    ptrflg= SetFlags( ptr, side, deep[0],
+	    HasChild(ptr,Other(side)) && HasChild(kid,Other(side)) );
+    plcnt= LeftCnt(ptr);
+    prcnt= RightCnt(ptr);
+    klcnt= LeftCnt(kid);
+    krcnt= RightCnt(kid);
+#endif
     if(  HasChild(kid,Other(side))  ) {
+#ifdef TESTING
+printf("swapkid(): check 2, ptr=%p, side=%d, kid=%p\n",ptr,side,kid);
+#endif
         ptr->link[side]= kid->link[Other(side)];    /* Real child */
         ptr->link[side]->Parent= ptr;
     } else {
+#ifdef TESTING
+printf("swapkid(): check 3, ptr=%p, side=%d, kid=%p\n",ptr,side,kid);
+#endif
         ptr->link[side]= kid;                       /* Thread */
 	}
     /* Update grand parent's pointer: */
@@ -263,10 +289,28 @@ static TBBT_NODE *swapkid( root, ptr, side )
 	}
     ptr->Parent= kid;
     kid->link[Other(side)]= ptr;
+#ifdef QAK
     kid->flags= SetFlags( kid, Other(side),
             Cnt(ptr,Other(side)) + 1 + Cnt(kid,Other(side)),
             deep[2]-1-Max(deep[0],deep[1]), HasChild(kid,side) );
+#else
+    kid->flags= SetFlags( kid, Other(side),
+            deep[2]-1-Max(deep[0],0), HasChild(kid,side) );
+
+    /* update leaf counts */
+    if(side==LEFT) { /* kid's left count doesn't change, nor ptr's r-count */
+        kid->rcnt=prcnt+krcnt+1; /* kid's leafs+former parent's leafs+parent */
+	ptr->lcnt=krcnt;
+      } /* end if */
+    else {  /* kid's right count doesn't change, nor ptr's l-count */
+        kid->lcnt=plcnt+klcnt+1; /* kid's leafs+former parent's leafs+parent */
+	ptr->rcnt=klcnt;
+      } /* end if */
+#endif
     ptr->flags= ptrflg;
+#ifdef TESTING
+printf("swapkid(): check 4, ptr=%p, ptr->flags=%x, ptr->Parent=%p, kid->flags=%x\n",ptr,ptr->flags,ptr->Parent,kid->flags);
+#endif
     return( kid );
 }
 
@@ -285,41 +329,102 @@ static VOID balance( root, ptr, side, added )
 #endif
 {
   intn deeper= added;  /* 1 if sub-tree got longer; -1 if got shorter */
+  intn odelta;
+  intn obal;
 
+#ifdef TESTING
+printf("balance(): side=%d, added=%d\n",side,added);
+#endif
     while(  NULL != ptr  ) {
+	odelta=Delta(ptr,side);     /* delta before the node was added */
+	obal=UnBal(ptr);
+#ifdef TESTING
+printf("balance(): check 0, deeper=%d, ptr=%p, side=%d, odelta=%d, obal=%d\n",deeper,ptr,side,odelta,obal);
+#endif
         if(  LEFT == side  )        /* One more/fewer left child: */
             if(  0 < added  )
-                ptr->flags += (1<<TBBT_BITS);       /* LeftCnt(ptr)++ */
+                ptr->lcnt ++;       /* LeftCnt(ptr)++ */
             else
-                ptr->flags -= (1<<TBBT_BITS);       /* LeftCnt(ptr)-- */
+                ptr->lcnt --;       /* LeftCnt(ptr)-- */
+	else
+            if(  0 < added  )
+                ptr->rcnt ++;       /* RightCnt(ptr)++ */
+            else
+                ptr->rcnt --;       /* RightCnt(ptr)-- */
         if(  0 != deeper  ) {   /* One leg got longer or shorter: */
-            if(  deeper == Delta(ptr,side)  ) { /* Became too unbalanced: */
+            if( deeper == odelta ) { /* Became too unbalanced: */
               TBBT_NODE *kid;
 
+#ifdef TESTING
+printf("balance(): check 1, deeper=%d, ptr=%p\n",deeper,ptr);
+#endif
                 ptr->flags |= TBBT_DOUBLE;  /* Mark node too unbalanced */
                 if(  deeper < 0  )      /* Just removed a node: */
                     side= Other(side);  /* Swap with child from other side. */
                 else                    /* Just inserted a node: */
-                    deeper= 0;          /* Fix will re-shorten sub-tree. */
+		    if(ptr->Parent && UnBal(ptr->Parent)) {
+#ifdef TESTING
+printf("balance(): check 1.2, ptr=%p\n",ptr);
+#endif
+                        deeper= 0;          /* Fix will re-shorten sub-tree. */
+		      }
                 kid= ptr->link[side];
                 if(  Heavy(kid,Other(side))  ) {    /* Double rotate needed: */
+#ifdef TESTING
+printf("balance(): check 1.3, ptr=%p\n",ptr);
+#endif
                     kid= swapkid( root, kid, Other(side) );
                     ptr= swapkid( root, ptr, side );
                 } else {                    /* Just rotate parent and kid: */
+#ifdef TESTING
+printf("balance(): check 1.6, ptr=%p, root=%p, side=%d, ptr->flags=%x, ptr->Parent=%p\n",ptr,root,side,ptr->flags,ptr->Parent);
+#endif
                     if(  HasChild(kid,side)  ) /* In this case, sub-tree gets */
-                        deeper= 0;  /* re-lengthened after a node removed. */
-                    ptr= swapkid( root, ptr, side );
+			if(ptr->Parent && UnBal(ptr->Parent)) {
+#ifdef TESTING
+printf("balance(): check 1.7, ptr->Parent=%p, ptr->Parent->flags=%x\n",ptr->Parent,ptr->Parent->flags);
+#endif
+                            deeper= 0;  /* re-lengthened after a node removed. */
+			  }
+                        ptr= swapkid( root, ptr, side );
                 }
-            } else if(  UnBal(ptr)  ) {     /* Just became balanced: */
+#ifdef TESTING
+printf("balance(): check 1.8, ptr=%p, ptr->Parent=%p\n",ptr,ptr->Parent);
+#endif
+            } else if( obal ) {     /* Just became balanced: */
+#ifdef TESTING
+printf("balance(): check 2, ptr=%p\n",ptr);
+#endif
                 ptr->flags &= ~TBBT_UNBAL;
                 if(  0 < deeper  ) {  /* Shorter of legs lengthened */
+#ifdef TESTING
+printf("balance(): check 2.5\n");
+#endif
 		    ptr->flags|=TBBT_INTERN;  /* Mark as internal node now */
                     deeper= 0;      /* so max length unchanged */
 		  } /* end if */
             } else if(  deeper < 0  ) {     /* Just became unbalanced: */
-                ptr->flags |= TBBT_HEAVY(Other(side));  /* Other side longer */
-                deeper= 0;  /* One of equal legs shortened; max length same */
+#ifdef TESTING
+printf("balance(): check 3, ptr=%p, deeper=%d\n",ptr,deeper);
+#endif
+                if(ptr->link[Other(side)]!=NULL && ptr->link[Other(side)]->Parent==ptr) {
+#ifdef TESTING
+printf("balance(): check 3.2, ptr=%p, deeper=%d\n",ptr,deeper);
+#endif
+                    ptr->flags|=TBBT_HEAVY(Other(side)); /* Other side longer */
+		    if(ptr->Parent)
+			if(ptr->Parent->Rchild==ptr) /* we're the right child */
+			   if(Heavy(ptr->Parent,RIGHT) && LeftCnt(ptr->Parent)==1)
+			       deeper=0;
+			else /* we're the left child */
+			   if(Heavy(ptr->Parent,LEFT))
+			       if(ptr->Parent->Rchild && !UnBal(ptr->Parent->Rchild))
+				   deeper=0;
+		  }
             } else {                        /* Just became unbalanced: */
+#ifdef TESTING
+printf("balance(): check 4, side=%d, lcnt=%d, rcnt=%d\n",side,LeftCnt(ptr),RightCnt(ptr));
+#endif
                 ptr->flags |= TBBT_HEAVY(side); /* 0<deeper: Our side longer */
               } /* end else */
         }
@@ -402,6 +507,8 @@ intn           arg;   /* Third argument for (*compar)() */
     ptr->key= key ? key : item;
     ptr->Parent= parent;
     ptr->flags= 0L;     /* No children on either side */
+    ptr->lcnt=0;
+    ptr->rcnt=0;
     if(  NULL == parent  ) {    /* Adding first node to tree: */
         *root= ptr;
         ptr->Lchild= ptr->Rchild= NULL;
@@ -475,35 +582,91 @@ VOIDP tbbtrem( root, node, kp )
      * replace it with it's previous (or next) node in the tree and delete that
      * previous (next) node (which has one or no children) instead. */
     if(  Intern(node)  ) {              /* Replace with a non-internal node: */
-        if(  Heavy(node,RIGHT)  )       /* Pick "near-leaf" node from the */
+#ifdef TESTING
+printf("tbbtrem(): check 0, node->flags=%x\n",node->flags);
+#endif
+        if(  Heavy(node,RIGHT)  ) {     /* Pick "near-leaf" node from the */
+#ifdef TESTING
+printf("tbbtrem(): check 0.1, right side heavier\n");
+#endif
             side= LEFT;                 /* heavier of the sub-trees. */
-        else if(  Heavy(node,LEFT)  )
+#ifdef QAK
+	    node->flags &= ~(TBBT_HEAVY(RIGHT));
+#endif
+	  }
+        else if(  Heavy(node,LEFT)  ) {
+#ifdef TESTING
+printf("tbbtrem(): check 0.2, left side heavier\n");
+#endif
             side= RIGHT;
-        else        /* If no sub-tree heavier, pick at "random" for "better */
+#ifdef QAK
+	    node->flags &= ~(TBBT_HEAVY(LEFT));
+#endif
+	  }
+        else {      /* If no sub-tree heavier, pick at "random" for "better */
+#ifdef TESTING
+printf("tbbtrem(): check 0.3, NO side heavier\n");
+#endif
             side= (0x10 & *(short *)&node) ? LEFT : RIGHT;      /* balance" */
+#ifdef QAK
+	    node->flags |= TBBT_HEAVY(side);
+	    node->flags &= ~(TBBT_INTERN);
+#endif
+	  }
+#ifdef TESTING
+printf("tbbtrem(): check 0.4, side=%d\n",side);
+#endif
         leaf= tbbt_nbr( next= node, Other(side) );
+#ifdef TESTING
+printf("tbbtrem(): check 0.5, leaf=%p\n",leaf);
+#endif
         par= leaf->Parent;
+#ifdef TESTING
+printf("tbbtrem(): check 0.6, par=%p, next=%p\n",par,next);
+#endif
         if(  par == next  ) {   /* Case 2x: `node' had exactly 2 descendants */
             side= Other(side);  /* Transform this to Case 2 */
             next= leaf->link[side];
         }
+#ifdef TESTING
+printf("tbbtrem(): check 0.7, side=%d, par=%p, next=%p\n",side,par,next);
+#endif
         node->data= leaf->data;
         node->key= leaf->key;
     } else {                /* Node has one or zero children: */
+#ifdef TESTING
+printf("tbbtrem(): check 1\n");
+#endif
         leaf= node;         /* Simply remove THIS node */
         par= leaf->Parent;
         if(  NULL == par  ) { /* Case 3: Remove root (of 1- or 2-node tree) */
             side= (intn)UnBal(node);  /* Which side root has a child on */
+#ifdef TESTING
+printf("tbbtrem(): check 2, side=%d\n",side);
+#endif
             if(  side  ) {  /* Case 3a: Remove root of 2-node tree: */
                 *root= leaf= node->link[side];
+#ifdef TESTING
+printf("tbbtrem(): check 2.5 leaf=%p\n",leaf);
+#endif
                 leaf->Parent= leaf->link[Other(side)]= NULL;
                 leaf->flags= 0; /* No left children, balanced, not internal */
-            } else          /* Case 3b: Remove last node of tree: */
+            } else {        /* Case 3b: Remove last node of tree: */
+#ifdef TESTING
+printf("tbbtrem(): check 3\n");
+#endif
                 *root= NULL;
+	      } /* end else */
             Free( node );
+#ifdef TESTING
+printf("tbbtrem(): check 4\n");
+#endif
             return( data );
         }
         side=  ( par->Rchild == leaf ) ? RIGHT : LEFT;
+#ifdef TESTING
+printf("tbbtrem(): check 4.5 side=%d\n",side);
+#endif
         next= leaf->link[side];
     }
     /* Now the deletion has been reduced to the following cases (and Case 3 has
@@ -528,16 +691,63 @@ VOIDP tbbtrem( root, node, kp )
      * the root falls into Case 3a while removing the only leaf falls into
      * Case 2 (with `next' NULL and `par' the root node). */
     if(  ! UnBal(leaf)  ) {         /* Case 2: `leaf' has no children: */
+#ifdef TESTING
+printf("tbbtrem(): check 5, par->flags=%x par->Parent=%p\n",(unsigned)par->flags,par->Parent);
+#endif
         par->link[side]= leaf->link[side];
         par->flags &= ~( TBBT_INTERN | TBBT_HEAVY(side) );
+#ifdef TESTING
+printf("tbbtrem(): check 5.5, par->flags=%x, par->Parent=%p\n",(unsigned)par->flags,par->Parent);
+#endif
     } else {                        /* Case 1: `leaf' has one child: */
-      TBBT_NODE *n= leaf->link[Other(side)];
+#ifdef OLD_WAY
+        TBBT_NODE *n= leaf->link[Other(side)];
+#ifdef TESTING
+printf("tbbtrem(): check 6\n");
+#endif
         par->link[side]= n;
         n->Parent= par;
         n->link[side]= next;
+#else
+        TBBT_NODE *n;
+
+#ifdef TESTING
+printf("tbbtrem(): check 6, side=%d, leaf=%p, par=%p, next=%p\n",side,leaf,par,next);
+#endif
+        if(HasChild(leaf,side)) {  /* two-in-a-row cases */
+            n=leaf->link[side];
+#ifdef TESTING
+printf("tbbtrem(): check 6.3, n=%p\n",n);
+#endif
+            par->link[side]=n;
+            n->Parent=par;
+	    if(HasChild(n,Other(side))) 
+		while(HasChild(n,Other(side)))
+		    n=n->link[Other(side)];
+            n->link[Other(side)]=par;
+	  } /* end if */
+	else {  /* zig-zag cases */
+            n=leaf->link[Other(side)];
+#ifdef TESTING
+printf("tbbtrem(): check 6.6, n=%p\n",n);
+#endif
+            par->link[side]=n;
+            n->Parent=par;
+	    if(HasChild(n,side)) 
+		while(HasChild(n,side))
+		    n=n->link[side];
+            n->link[side]=next;
+	  } /* end else */
+#endif
     }
     Free( leaf );
+#ifdef TESTING
+printf("tbbtrem(): check 7, par->flags=%x\n",(unsigned)par->flags);
+#endif
     balance( root, par, side, -1 );
+#ifdef TESTING
+printf("tbbtrem(): check 7.5, par=%p, par->lcnt=%d, par->rcnt=%d\n",par,par->lcnt,par->rcnt);
+#endif
 	((TBBT_TREE *)root)->count--;
     return( data );
 }
@@ -651,6 +861,8 @@ TBBT_NODE *node;
 #endif
 {
 	printf("node=%p, key=%p, data=%p, flags=%x\n",node,node->key,node->data,node->flags);
+	printf("Lcnt=%d, Rcnt=%d\n",node->lcnt,node->rcnt);
+printf("*key=%d\n",*(int32 *)(node->key));
 	printf("Lchild=%p, Rchild=%p, Parent=%p\n",node->Lchild,node->Rchild,node->Parent);
 }	/* end tbbtprint() */
 
@@ -701,8 +913,12 @@ TBBT_TREE *tree;
 intn method;
 #endif
 {
-    printf("Number of nodes in the tree: %ld\n",tree->count);
+    if(*(TBBT_NODE **)tree!=NULL) {
+        printf("Number of nodes in the tree: %ld\n",tree->count);
 	tbbt1dump(tree->root,method);
+      } /* end if */
+    else
+	printf("Tree is empty\n");
 }	/* end tbbtdump() */
 
 /* Always returns NULL */
