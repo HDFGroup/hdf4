@@ -548,7 +548,7 @@ rimage(int usepal)
 {
     int         i, j, newxsize;
     char       *space, *thisline, *thischar;
-    register unsigned char c;
+    unsigned char c;
 
 /*
    *  Open the window with the W command
@@ -646,7 +646,7 @@ rimage(int usepal)
 int
 rleit(char *buf, char *bufto, int len)
 {
-    register char *p, *q, *cfoll, *clead;
+    char *p, *q, *cfoll, *clead;
     char       *begp;
     int         i;
 

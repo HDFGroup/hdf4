@@ -155,11 +155,11 @@ RMFLAGS=-f
 
 SRCS= 	rig.c sdstr.c blocks.c an.c anfile.c extelt.c file.c file1.c vers.c \
 	sdmms.c sdnmms.c slab.c litend.c tvset.c comp.c bitio.c tree.c conv.c \
-	nbit.c testhdf.c
+	nbit.c vblocks.c testhdf.c
 
 CTESTS= rig.o sdstr.o blocks.o an.o anfile.o extelt.o file.o file1.o vers.o \
 	sdmms.o sdnmms.o slab.o litend.o tvset.o comp.o bitio.o tree.o conv.o \
-	nbit.o testhdf.o
+	nbit.o vblocks.o testhdf.o
 
 FSRCS= tr8f.f t24f.f tpf.f tanf.f tanfilef.f tsdstrf.f tsdntf.f tsdnntf.f \
         tsdmmsf.f tsdnmmsf.f tstubsf.f \

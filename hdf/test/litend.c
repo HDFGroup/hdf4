@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -25,6 +24,16 @@ static char RcsId[] = "@(#)$Revision$";
 
 #define FILENAME    "litend.dat"
 #define TMPFILE     "temp.hdf"
+
+/* for those machines with imprecise IEEE<-> conversions, this should be */
+/* close enough */
+#define FLOAT64_FUDGE  ((float64)0.00000001)
+
+#ifdef TEST_PC
+#define FAR far
+#else
+#define FAR /* */
+#endif
 
 static int8 FAR cdata_i8[CDIM_Y][CDIM_X];
 static uint8 FAR cdata_u8[CDIM_Y][CDIM_X];
@@ -62,297 +71,295 @@ wrapup_cdata(void)
 VOID
 test_little_read(void)
 {
-    intn        rank;
-    int32       dimsizes[2];
-    int32       numbertype;
-    int8       *data_i8;
-    uint8      *data_u8;
-    int16      *data_i16;
-    uint16     *data_u16;
-    int32      *data_i32;
-    uint32     *data_u32;
-    float32    *data_f32;
-    float64    *data_f64;
-    int         ret;
+    intn rank;
+    int32 dimsizes[2];
+    int32 numbertype;
+    int8 *data_i8;
+    uint8 *data_u8;
+    int16 *data_i16;
+    uint16 *data_u16;
+    int32 *data_i32;
+    uint32 *data_u32;
+    float32 *data_f32;
+    float64 *data_f64;
+    int ret;
 
-    MESSAGE(5, printf("Testing Little-Endian Read Routines\n");
-        );
+    MESSAGE(5,printf("Testing Little-Endian Read Routines\n"););
 
-    MESSAGE(10, printf("Testing Little-Endian INT8 Reading Routines\n");
-        );
+    MESSAGE(10,printf("Testing Little-Endian INT8 Reading Routines\n"););
 
-    ret = DFSDgetdims(FILENAME, &rank, dimsizes, 2);
+    ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
-    if (dimsizes[0] != CDIM_Y || dimsizes[1] != CDIM_X)
-      {
-          fprintf(stderr, "Dimensions for INT8 data were incorrect\n");
-          num_errs++;
-      }     /* end if */
-    else
-      {
-          ret = DFSDgetNT(&numbertype);
-          RESULT("DFSDgetNT");
-          if (numbertype != DFNT_LINT8)
-            {
-                fprintf(stderr, "Numbertype for INT8 data were incorrect\n");
+    if(dimsizes[0]!=CDIM_Y || dimsizes[1]!=CDIM_X) {
+        fprintf(stderr, "Dimensions for INT8 data were incorrect\n");
+        num_errs++;
+      } /* end if */
+    else {
+        ret=DFSDgetNT(&numbertype);
+        RESULT("DFSDgetNT");
+        if(numbertype!=DFNT_LINT8) {
+            fprintf(stderr, "Numbertype for INT8 data were incorrect\n");
+            num_errs++;
+          } /* end if */
+        else {
+            data_i8=(int8 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int8));
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_i8);
+            RESULT("DFSDgetdata");
+
+            if(HDmemcmp(cdata_i8,data_i8,CDIM_X*CDIM_Y*sizeof(int8))) {
+                fprintf(stderr,"INT8 data was incorrect\n");
                 num_errs++;
-            }   /* end if */
-          else
-            {
-                data_i8 = (int8 *) HDgetspace(dimsizes[0] * dimsizes[1] * sizeof(int8));
-                ret = DFSDgetdata(FILENAME, rank, dimsizes, (VOIDP) data_i8);
-                RESULT("DFSDgetdata");
+              } /* end if */
+            HDfreespace((VOIDP)data_i8);
+          } /* end else */
+      } /* end else */
 
-                if (HDmemcmp(cdata_i8, data_i8, CDIM_X * CDIM_Y * sizeof(int8)))
-                  {
-                      fprintf(stderr, "INT8 data was incorrect\n");
-                      num_errs++;
-                  }     /* end if */
-                HDfreespace((VOIDP) data_i8);
-            }   /* end else */
-      }     /* end else */
+    MESSAGE(10,printf("Testing Little-Endian UINT8 Reading Routines\n"););
 
-    MESSAGE(10, printf("Testing Little-Endian UINT8 Reading Routines\n");
-        );
-
-    ret = DFSDgetdims(FILENAME, &rank, dimsizes, 2);
+    ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
-    if (dimsizes[0] != CDIM_Y || dimsizes[1] != CDIM_X)
-      {
-          fprintf(stderr, "Dimensions for UINT8 data were incorrect\n");
-          num_errs++;
-      }     /* end if */
-    else
-      {
-          ret = DFSDgetNT(&numbertype);
-          RESULT("DFSDgetNT");
-          if (numbertype != DFNT_LUINT8)
-            {
-                fprintf(stderr, "Numbertype for UINT8 data were incorrect\n");
+    if(dimsizes[0]!=CDIM_Y || dimsizes[1]!=CDIM_X) {
+        fprintf(stderr, "Dimensions for UINT8 data were incorrect\n");
+        num_errs++;
+      } /* end if */
+    else {
+        ret=DFSDgetNT(&numbertype);
+        RESULT("DFSDgetNT");
+        if(numbertype!=DFNT_LUINT8) {
+            fprintf(stderr, "Numbertype for UINT8 data were incorrect\n");
+            num_errs++;
+          } /* end if */
+        else {
+            data_u8=(uint8 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(uint8));
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_u8);
+            RESULT("DFSDgetdata");
+
+            if(HDmemcmp(cdata_u8,data_u8,CDIM_X*CDIM_Y*sizeof(uint8))) {
+                fprintf(stderr,"UINT8 data was incorrect\n");
                 num_errs++;
-            }   /* end if */
-          else
-            {
-                data_u8 = (uint8 *) HDgetspace(dimsizes[0] * dimsizes[1] * sizeof(uint8));
-                ret = DFSDgetdata(FILENAME, rank, dimsizes, (VOIDP) data_u8);
-                RESULT("DFSDgetdata");
+              } /* end if */
+            HDfreespace((VOIDP)data_u8);
+          } /* end else */
+      } /* end else */
 
-                if (HDmemcmp(cdata_u8, data_u8, CDIM_X * CDIM_Y * sizeof(uint8)))
-                  {
-                      fprintf(stderr, "UINT8 data was incorrect\n");
-                      num_errs++;
-                  }     /* end if */
-                HDfreespace((VOIDP) data_u8);
-            }   /* end else */
-      }     /* end else */
+    MESSAGE(10,printf("Testing Little-Endian INT16 Reading Routines\n"););
 
-    MESSAGE(10, printf("Testing Little-Endian INT16 Reading Routines\n");
-        );
-
-    ret = DFSDgetdims(FILENAME, &rank, dimsizes, 2);
+    ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
-    if (dimsizes[0] != CDIM_Y || dimsizes[1] != CDIM_X)
-      {
-          fprintf(stderr, "Dimensions for INT16 data were incorrect\n");
-          num_errs++;
-      }     /* end if */
-    else
-      {
-          ret = DFSDgetNT(&numbertype);
-          RESULT("DFSDgetNT");
-          if (numbertype != DFNT_LINT16)
-            {
-                fprintf(stderr, "Numbertype for INT16 data were incorrect\n");
+    if(dimsizes[0]!=CDIM_Y || dimsizes[1]!=CDIM_X) {
+        fprintf(stderr, "Dimensions for INT16 data were incorrect\n");
+        num_errs++;
+      } /* end if */
+    else {
+        ret=DFSDgetNT(&numbertype);
+        RESULT("DFSDgetNT");
+        if(numbertype!=DFNT_LINT16) {
+            fprintf(stderr, "Numbertype for INT16 data were incorrect\n");
+            num_errs++;
+          } /* end if */
+        else {
+            data_i16=(int16 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int16));
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_i16);
+            RESULT("DFSDgetdata");
+
+            if(HDmemcmp(cdata_i16,data_i16,CDIM_X*CDIM_Y*sizeof(int16))) {
+                fprintf(stderr,"INT16 data was incorrect\n");
                 num_errs++;
-            }   /* end if */
-          else
-            {
-                data_i16 = (int16 *) HDgetspace(dimsizes[0] * dimsizes[1] * sizeof(int16));
-                ret = DFSDgetdata(FILENAME, rank, dimsizes, (VOIDP) data_i16);
-                RESULT("DFSDgetdata");
+              } /* end if */
+            HDfreespace((VOIDP)data_i16);
+          } /* end else */
+      } /* end else */
 
-                if (HDmemcmp(cdata_i16, data_i16, CDIM_X * CDIM_Y * sizeof(int16)))
-                  {
-                      fprintf(stderr, "INT16 data was incorrect\n");
-                      num_errs++;
-                  }     /* end if */
-                HDfreespace((VOIDP) data_i16);
-            }   /* end else */
-      }     /* end else */
+    MESSAGE(10,printf("Testing Little-Endian UINT16 Reading Routines\n"););
 
-    MESSAGE(10, printf("Testing Little-Endian UINT16 Reading Routines\n");
-        );
-
-    ret = DFSDgetdims(FILENAME, &rank, dimsizes, 2);
+    ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
-    if (dimsizes[0] != CDIM_Y || dimsizes[1] != CDIM_X)
-      {
-          fprintf(stderr, "Dimensions for UINT16 data were incorrect\n");
-          num_errs++;
-      }     /* end if */
-    else
-      {
-          ret = DFSDgetNT(&numbertype);
-          RESULT("DFSDgetNT");
-          if (numbertype != DFNT_LUINT16)
-            {
-                fprintf(stderr, "Numbertype for UINT16 data were incorrect\n");
+    if(dimsizes[0]!=CDIM_Y || dimsizes[1]!=CDIM_X) {
+        fprintf(stderr, "Dimensions for UINT16 data were incorrect\n");
+        num_errs++;
+      } /* end if */
+    else {
+        ret=DFSDgetNT(&numbertype);
+        RESULT("DFSDgetNT");
+        if(numbertype!=DFNT_LUINT16) {
+            fprintf(stderr, "Numbertype for UINT16 data were incorrect\n");
+            num_errs++;
+          } /* end if */
+        else {
+            data_u16=(uint16 *)HDgetspace(dimsizes[0]*
+		    dimsizes[1]*sizeof(uint16));
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_u16);
+            RESULT("DFSDgetdata");
+
+            if(HDmemcmp(cdata_u16,data_u16,CDIM_X*CDIM_Y*sizeof(uint16))) {
+                fprintf(stderr,"UINT16 data was incorrect\n");
                 num_errs++;
-            }   /* end if */
-          else
-            {
-                data_u16 = (uint16 *) HDgetspace(dimsizes[0] *
-                                              dimsizes[1] * sizeof(uint16));
-                ret = DFSDgetdata(FILENAME, rank, dimsizes, (VOIDP) data_u16);
-                RESULT("DFSDgetdata");
+              } /* end if */
+            HDfreespace((VOIDP)data_u16);
+          } /* end else */
+      } /* end else */
 
-                if (HDmemcmp(cdata_u16, data_u16, CDIM_X * CDIM_Y * sizeof(uint16)))
-                  {
-                      fprintf(stderr, "UINT16 data was incorrect\n");
-                      num_errs++;
-                  }     /* end if */
-                HDfreespace((VOIDP) data_u16);
-            }   /* end else */
-      }     /* end else */
+    MESSAGE(10,printf("Testing Little-Endian INT32 Reading Routines\n"););
 
-    MESSAGE(10, printf("Testing Little-Endian INT32 Reading Routines\n");
-        );
-
-    ret = DFSDgetdims(FILENAME, &rank, dimsizes, 2);
+    ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
-    if (dimsizes[0] != CDIM_Y || dimsizes[1] != CDIM_X)
-      {
-          fprintf(stderr, "Dimensions for INT32 data were incorrect\n");
-          num_errs++;
-      }     /* end if */
-    else
-      {
-          ret = DFSDgetNT(&numbertype);
-          RESULT("DFSDgetNT");
-          if (numbertype != DFNT_LINT32)
-            {
-                fprintf(stderr, "Numbertype for INT32 data were incorrect\n");
+    if(dimsizes[0]!=CDIM_Y || dimsizes[1]!=CDIM_X) {
+        fprintf(stderr, "Dimensions for INT32 data were incorrect\n");
+        num_errs++;
+      } /* end if */
+    else {
+        ret=DFSDgetNT(&numbertype);
+        RESULT("DFSDgetNT");
+        if(numbertype!=DFNT_LINT32) {
+            fprintf(stderr, "Numbertype for INT32 data were incorrect\n");
+            num_errs++;
+          } /* end if */
+        else {
+            data_i32=(int32 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int32));
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_i32);
+            RESULT("DFSDgetdata");
+
+            if(HDmemcmp(cdata_i32,data_i32,CDIM_X*CDIM_Y*sizeof(int32))) {
+                fprintf(stderr,"INT32 data was incorrect\n");
                 num_errs++;
-            }   /* end if */
-          else
-            {
-                data_i32 = (int32 *) HDgetspace(dimsizes[0] * dimsizes[1] * sizeof(int32));
-                ret = DFSDgetdata(FILENAME, rank, dimsizes, (VOIDP) data_i32);
-                RESULT("DFSDgetdata");
+              } /* end if */
+            HDfreespace((VOIDP)data_i32);
+          } /* end else */
+      } /* end else */
 
-                if (HDmemcmp(cdata_i32, data_i32, CDIM_X * CDIM_Y * sizeof(int32)))
-                  {
-                      fprintf(stderr, "INT32 data was incorrect\n");
-                      num_errs++;
-                  }     /* end if */
-                HDfreespace((VOIDP) data_i32);
-            }   /* end else */
-      }     /* end else */
+    MESSAGE(10,printf("Testing Little-Endian UINT32 Reading Routines\n"););
 
-    MESSAGE(10, printf("Testing Little-Endian UINT32 Reading Routines\n");
-        );
-
-    ret = DFSDgetdims(FILENAME, &rank, dimsizes, 2);
+    ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
-    if (dimsizes[0] != CDIM_Y || dimsizes[1] != CDIM_X)
-      {
-          fprintf(stderr, "Dimensions for UINT32 data were incorrect\n");
-          num_errs++;
-      }     /* end if */
-    else
-      {
-          ret = DFSDgetNT(&numbertype);
-          RESULT("DFSDgetNT");
-          if (numbertype != DFNT_LUINT32)
-            {
-                fprintf(stderr, "Numbertype for UINT32 data were incorrect\n");
+    if(dimsizes[0]!=CDIM_Y || dimsizes[1]!=CDIM_X) {
+        fprintf(stderr, "Dimensions for UINT32 data were incorrect\n");
+        num_errs++;
+      } /* end if */
+    else {
+        ret=DFSDgetNT(&numbertype);
+        RESULT("DFSDgetNT");
+        if(numbertype!=DFNT_LUINT32) {
+            fprintf(stderr, "Numbertype for UINT32 data were incorrect\n");
+            num_errs++;
+          } /* end if */
+        else {
+            data_u32=(uint32 *)HDgetspace(dimsizes[0]*dimsizes[1]*
+		    sizeof(uint32));
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_u32);
+            RESULT("DFSDgetdata");
+
+            if(HDmemcmp(cdata_u32,data_u32,CDIM_X*CDIM_Y*sizeof(uint32))) {
+                fprintf(stderr,"UINT32 data was incorrect\n");
                 num_errs++;
-            }   /* end if */
-          else
-            {
-                data_u32 = (uint32 *) HDgetspace(dimsizes[0] * dimsizes[1] *
-                                                 sizeof(uint32));
-                ret = DFSDgetdata(FILENAME, rank, dimsizes, (VOIDP) data_u32);
-                RESULT("DFSDgetdata");
+              } /* end if */
+            HDfreespace((VOIDP)data_u32);
+          } /* end else */
+      } /* end else */
 
-                if (HDmemcmp(cdata_u32, data_u32, CDIM_X * CDIM_Y * sizeof(uint32)))
-                  {
-                      fprintf(stderr, "UINT32 data was incorrect\n");
-                      num_errs++;
-                  }     /* end if */
-                HDfreespace((VOIDP) data_u32);
-            }   /* end else */
-      }     /* end else */
+    MESSAGE(10,printf("Testing Little-Endian FLOAT32 Reading Routines\n"););
 
-    MESSAGE(10, printf("Testing Little-Endian FLOAT32 Reading Routines\n");
-        );
-
-    ret = DFSDgetdims(FILENAME, &rank, dimsizes, 2);
+    ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
-    if (dimsizes[0] != CDIM_Y || dimsizes[1] != CDIM_X)
-      {
-          fprintf(stderr, "Dimensions for FLOAT32 data were incorrect\n");
-          num_errs++;
-      }     /* end if */
-    else
-      {
-          ret = DFSDgetNT(&numbertype);
-          RESULT("DFSDgetNT");
-          if (numbertype != DFNT_LFLOAT32)
-            {
-                fprintf(stderr, "Numbertype for FLOAT32 data were incorrect\n");
+    if(dimsizes[0]!=CDIM_Y || dimsizes[1]!=CDIM_X) {
+        fprintf(stderr, "Dimensions for FLOAT32 data were incorrect\n");
+        num_errs++;
+      } /* end if */
+    else {
+        ret=DFSDgetNT(&numbertype);
+        RESULT("DFSDgetNT");
+        if(numbertype!=DFNT_LFLOAT32) {
+            fprintf(stderr, "Numbertype for FLOAT32 data were incorrect\n");
+            num_errs++;
+          } /* end if */
+        else {
+            data_f32=(float32 *)HDgetspace(dimsizes[0]*dimsizes[1]*
+		    sizeof(float32));
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_f32);
+            RESULT("DFSDgetdata");
+
+            if(HDmemcmp(cdata_f32,data_f32,CDIM_X*CDIM_Y*sizeof(float32))) {
+                fprintf(stderr,"FLOAT32 data was incorrect\n");
                 num_errs++;
-            }   /* end if */
-          else
-            {
-                data_f32 = (float32 *) HDgetspace(dimsizes[0] * dimsizes[1] *
-                                                  sizeof(float32));
-                ret = DFSDgetdata(FILENAME, rank, dimsizes, (VOIDP) data_f32);
-                RESULT("DFSDgetdata");
+              } /* end if */
+            HDfreespace((VOIDP)data_f32);
+          } /* end else */
+      } /* end else */
 
-                if (HDmemcmp(cdata_f32, data_f32, CDIM_X * CDIM_Y * sizeof(float32)))
-                  {
-                      fprintf(stderr, "FLOAT32 data was incorrect\n");
-                      num_errs++;
-                  }     /* end if */
-                HDfreespace((VOIDP) data_f32);
-            }   /* end else */
-      }     /* end else */
+    MESSAGE(10,printf("Testing Little-Endian FLOAT64 Reading Routines\n"););
 
-    MESSAGE(10, printf("Testing Little-Endian FLOAT64 Reading Routines\n");
-        );
-
-    ret = DFSDgetdims(FILENAME, &rank, dimsizes, 2);
+    ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
-    if (dimsizes[0] != CDIM_Y || dimsizes[1] != CDIM_X)
-      {
-          fprintf(stderr, "Dimensions for FLOAT64 data were incorrect\n");
-          num_errs++;
-      }     /* end if */
-    else
-      {
-          ret = DFSDgetNT(&numbertype);
-          RESULT("DFSDgetNT");
-          if (numbertype != DFNT_LFLOAT64)
-            {
-                fprintf(stderr, "Numbertype for FLOAT64 data were incorrect\n");
-                num_errs++;
-            }   /* end if */
-          else
-            {
-                data_f64 = (float64 *) HDgetspace(dimsizes[0] * dimsizes[1] *
-                                                  sizeof(float64));
-                ret = DFSDgetdata(FILENAME, rank, dimsizes, (VOIDP) data_f64);
-                RESULT("DFSDgetdata");
+    if(dimsizes[0]!=CDIM_Y || dimsizes[1]!=CDIM_X) {
+        fprintf(stderr, "Dimensions for FLOAT64 data were incorrect\n");
+        num_errs++;
+      } /* end if */
+    else {
+        ret=DFSDgetNT(&numbertype);
+        RESULT("DFSDgetNT");
+        if(numbertype!=DFNT_LFLOAT64) {
+            fprintf(stderr, "Numbertype for FLOAT64 data were incorrect\n");
+            num_errs++;
+          } /* end if */
+        else {
+            data_f64=(float64 *)HDgetspace(dimsizes[0]*dimsizes[1]*
+		    sizeof(float64));
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_f64);
+            RESULT("DFSDgetdata");
 
-                if (HDmemcmp(cdata_f64, data_f64, CDIM_X * CDIM_Y * sizeof(float64)))
-                  {
-                      fprintf(stderr, "FLOAT64 data was incorrect\n");
-                      num_errs++;
-                  }     /* end if */
-                HDfreespace((VOIDP) data_f64);
-            }   /* end else */
-      }     /* end else */
+#if defined CONVEXNATIVE
+#ifdef OLD_WAY
+        if(Verbocity>9) {
+            intn i;
+            uint8 *u8_s=(uint8 *)cdata_f64,
+	        *u8_d2=(uint8 *)data_f64;
+
+            printf("cdata_f64:  ");
+            for(i=0; i<80; i++)
+              printf("%.2x ",u8_s[i]);
+            printf("\ndata_f64: ");
+            for(i=0; i<80; i++)
+              printf("%.2x ",u8_d2[i]);
+            printf("\n");
+        }
+#else /* OLD_WAY */
+{
+	intn i;
+	float64 *cd_f64=(float64 *)cdata_f64,
+		*d_f64=(float64 *)data_f64;
+
+	for(i=0; i<CDIM_X*CDIM_Y; i++) {
+	    if(d_f64[i]<(cd_f64[i]-FLOAT64_FUDGE)
+		|| d_f64[i]>(cd_f64[i]+FLOAT64_FUDGE)) {
+            fprintf(stderr,"FLOAT64 data was incorrect\n");
+printf("cd_f64[%d]=%lf, d_f64[%d]=%lf\n",i,cd_f64[i],i,d_f64[i]);
+{
+            intn j;
+            uint8 *u8_s=(uint8 *)&cd_f64[i],
+	        *u8_d2=(uint8 *)&d_f64[i];
+
+            printf("cdata_f64:  ");
+            for(j=0; j<sizeof(float64); j++)
+              printf("%.2x ",u8_s[j]);
+            printf("\ndata_f64: ");
+            for(j=0; j<sizeof(float64); j++)
+              printf("%.2x ",u8_d2[j]);
+            printf("\n");
+}
+              HEprint(stdout,0);
+              num_errs++;
+            } /* end if */
+	  } /* end for */
+}
+#endif /* OLD_WAY */
+#else
+            if(HDmemcmp(cdata_f64,data_f64,CDIM_X*CDIM_Y*sizeof(float64))) {
+                fprintf(stderr,"FLOAT64 data was incorrect\n");
+                num_errs++;
+              } /* end if */
+#endif /* Wierd machines */
+            HDfreespace((VOIDP)data_f64);
+          } /* end else */
+      } /* end else */
 }   /* end test_little_read */
 
 VOID

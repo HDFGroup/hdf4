@@ -11,7 +11,7 @@
  ****************************************************************************/
 
 #ifdef RCSID
-static char RcsId[] = $Revision$";
+static char RcsId[] = "$Revision$";
 #endif
 
 /* $Id$ */
@@ -28,7 +28,7 @@ uint8 palette[768];
 int32 xdim, ydim;
 int ispal;
 
-main(int argc, char *argv[]) 
+int main(int argc, char *argv[]) 
 {
     int i, ret;
     char *outfile;

@@ -135,7 +135,7 @@ test_nbit1(int32 fid)
 {
     int32       aid1;
     uint16      ref1;
-    register int i;
+    int i;
     int32       ret;
     intn        errors = 0;
     model_info  m_info;
@@ -203,7 +203,7 @@ test_nbit2(int32 fid)
 {
     int32       aid1;
     uint16      ref1;
-    register int i;
+    int i;
     int32       ret;
     intn        errors = 0;
     model_info  m_info;
@@ -269,7 +269,7 @@ test_nbit3(int32 fid)
 {
     int32       aid1;
     uint16      ref1;
-    register int i;
+    int i;
     int32       ret;
     intn        errors = 0;
     model_info  m_info;
@@ -350,7 +350,7 @@ test_nbit4(int32 fid)
 {
     int32       aid1;
     uint16      ref1;
-    register int i;
+    int i;
     int32       ret;
     intn        errors = 0;
     model_info  m_info;
@@ -434,7 +434,7 @@ test_nbit5(int32 fid)
 {
     int32       aid1;
     uint16      ref1;
-    register int i;
+    int i;
     int32       ret;
     intn        errors = 0;
     model_info  m_info;
@@ -519,7 +519,7 @@ test_nbit6(int32 fid)
 {
     int32       aid1;
     uint16      ref1;
-    register int i;
+    int i;
     int32       ret;
     intn        errors = 0;
     model_info  m_info;
@@ -604,7 +604,7 @@ test_nbit7(int32 fid)
 {
     int32       aid1;
     uint16      ref1;
-    register int i;
+    int i;
     int32       ret;
     intn        errors = 0;
     model_info  m_info;
@@ -672,7 +672,7 @@ test_nbit8(int32 fid)
 {
     int32       aid1;
     uint16      ref1;
-    register int i;
+    int i;
     int32       ret;
     intn        errors = 0;
     model_info  m_info;
@@ -740,7 +740,7 @@ test_nbit9(int32 fid)
 {
     int32       aid1;
     uint16      ref1;
-    register int i;
+    int i;
     int32       ret;
     intn        errors = 0;
     model_info  m_info;
@@ -825,7 +825,7 @@ test_nbit10(int32 fid)
 {
     int32       aid1;
     uint16      ref1;
-    register int i;
+    int i;
     int32       ret;
     intn        errors = 0;
     model_info  m_info;
@@ -919,7 +919,7 @@ test_nbit11(int32 fid)
 {
     int32       aid1;
     uint16      ref1;
-    register int i;
+    int i;
     int32       ret;
     intn        errors = 0;
     model_info  m_info;
@@ -1004,7 +1004,7 @@ test_nbit12(int32 fid)
 {
     int32       aid1;
     uint16      ref1;
-    register int i;
+    int i;
     int32       ret;
     intn        errors = 0;
     model_info  m_info;

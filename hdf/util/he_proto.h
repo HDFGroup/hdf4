@@ -158,7 +158,7 @@ int32       getElement
             (int desc, char **pdata);
 
 int         getLine
-            (register char *);
+            (char *);
 
 int         getNewRef
             (char *file, uint16 *pRef);
@@ -197,7 +197,7 @@ int         isGrp
             (uint16 tag);
 
 int         isNumber
-            (register char *s);
+            (char *s);
 
 int         largeSet
             (void);

@@ -84,7 +84,7 @@ int
 main(int argc, char *argv[])
 {
     int         backup = YES;   /* Backup files when opening? */
-    register int i;
+    int i;
     char       *fileName = NULL;
 
     for (i = 1; i < argc; i++)
@@ -349,7 +349,7 @@ updateDesc(void)
     uint32      fid;
     int32       groupID;
     int32       aid, status;
-    register int i, j;
+    int i, j;
 
     if ((fid = Hopen(he_file, DFACC_READ, 0)) == 0)
       {
@@ -431,7 +431,7 @@ initFile(char *file)
 int
 closeFile(int keep)
 {
-    register int i;
+    int i;
     char       *back;
 
     if (!fileOpen())
@@ -506,8 +506,8 @@ setPal(char *pal)
     FILE       *fp;
     char        reds[HE_COLOR_SZ], greens[HE_COLOR_SZ], blues[HE_COLOR_SZ];
     char        palette[HE_PALETTE_SZ];
-    register char *p;
-    register int i;
+    char *p;
+    int i;
     int         ret;
 
     if ((fp = fopen(pal, "r")) == NULL)
@@ -544,7 +544,7 @@ setPal(char *pal)
 int
 findDesc(tag_ref_ptr dd)
 {
-    register int i;
+    int i;
 
     for (i = 0; i < he_numDesc; i++)
         if ((he_desc[i].tag == dd->tag) && (he_desc[i].ref == dd->ref))
@@ -556,7 +556,7 @@ findDesc(tag_ref_ptr dd)
 int
 desc2Grp(int desc)
 {
-    register int i;
+    int i;
 
     for (i = 0; i < he_numGrp; i++)
         if (he_grp[i].desc == desc)
@@ -569,7 +569,7 @@ desc2Grp(int desc)
 int
 hasReference(int desc)
 {
-    register int i, j;
+    int i, j;
 
     for (i = 0; i < he_numGrp; i++)
         for (j = 0; j < he_grp[i].size; j++)
@@ -662,7 +662,7 @@ writeElt(char *file, uint16 ref, int elt)
     int32       eltLength;
     char       *p;
     uint16      rank;
-    register int i;
+    int i;
     uint16      ntTag;
     uint16      ntRef;
     tag_ref_ptr ntDesc;
@@ -739,7 +739,7 @@ putElement(char *file, uint16 tag, uint16 ref, char *data, int32 len)
 int
 writeGrp(char *file)
 {
-    register int i;
+    int i;
     uint16      ref;
     int         grp;
     int         elt;
@@ -1086,7 +1086,7 @@ findOpt(char *word)
 {
     unsigned    len;
     int         found = -1;
-    register int i;
+    int i;
 
     len = HDstrlen(word);
 
@@ -1236,7 +1236,7 @@ HEwait(HE_CMD * cmd)
 void
 deleteCmd(HE_CMD * cmd)
 {
-    register int i;
+    intn i;
 
     if (cmd == NULL)
         return;

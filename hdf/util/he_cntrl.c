@@ -225,7 +225,7 @@ HEprev(HE_CMD * cmd)
 int
 HEdump(HE_CMD * cmd)
 {
-    register int i;
+    int i;
     int         offset = 0, raw = 0;
     char       *format = "-o";
     int32       length = 0;     /* zero is special, means all */
@@ -324,8 +324,8 @@ int
 dump(int32 length, int offset, char *format, int raw_flag)
 {
     int32       eltLength;
-    register int32 i;
-    register int len = 0;
+    int32 i;
+    int len = 0;
     char       *data;
 
     if (!fileOpen())
@@ -364,7 +364,7 @@ dump(int32 length, int offset, char *format, int raw_flag)
 
           case 'i':
               {
-                  register int32 *idata;
+                  int32 *idata;
                   idata = (int32 *) HDgetspace(length / 4 * sizeof(int32));
 
                   DFKconvert((VOIDP) (data + offset), (VOIDP) idata, DFNT_INT32 | raw_flag,
@@ -386,7 +386,7 @@ dump(int32 length, int offset, char *format, int raw_flag)
 
           case 'd':
               {
-                  register uint32 *idata;
+                  uint32 *idata;
                   idata = (uint32 *) HDgetspace(length / 4 * sizeof(int32));
 
                   DFKconvert((VOIDP) (data + offset), (VOIDP) idata, DFNT_UINT32 | raw_flag,
@@ -407,7 +407,7 @@ dump(int32 length, int offset, char *format, int raw_flag)
               break;
           case 'j':
               {
-                  register int16 *sdata;
+                  int16 *sdata;
                   sdata = (int16 *) HDgetspace(length / 2 * sizeof(int16));
                   DFKconvert((VOIDP) (data + offset), (VOIDP) sdata, DFNT_INT16 | raw_flag,
                              length / 2, DFACC_READ, 0, 0);
@@ -429,7 +429,7 @@ dump(int32 length, int offset, char *format, int raw_flag)
 
           case 's':
               {
-                  register uint16 *sdata;
+                  uint16 *sdata;
                   sdata = (uint16 *) HDgetspace(length / 2 * sizeof(uint16));
 
                   DFKconvert((VOIDP) (data + offset), (VOIDP) sdata, DFNT_UINT16 | raw_flag,
@@ -451,7 +451,7 @@ dump(int32 length, int offset, char *format, int raw_flag)
 
           case 'b':
               {
-                  register uint8 *bdata;
+                  uint8 *bdata;
                   bdata = (uint8 *) HDgetspace(length);
 
                   DFKconvert((VOIDP) (data + offset), (VOIDP) bdata, DFNT_UINT8 | raw_flag,
@@ -473,7 +473,7 @@ dump(int32 length, int offset, char *format, int raw_flag)
 
           case 'x':
               {
-                  register intn *idata;
+                  intn *idata;
                   intn        sizeintn;
                   sizeintn = sizeof(intn);
                   idata = (intn *) (data + offset);
@@ -494,7 +494,7 @@ dump(int32 length, int offset, char *format, int raw_flag)
 
           case 'o':
               {
-                  register intn *idata;
+                  intn *idata;
                   intn        sizeintn;
                   sizeintn = sizeof(intn);
                   idata = (intn *) (data + offset);
@@ -515,7 +515,7 @@ dump(int32 length, int offset, char *format, int raw_flag)
 
           case 'a':
               {
-                  register char *cdata;
+                  char *cdata;
                   cdata = (char *) (data + offset);
                   printf("%8d: ", offset);
                   for (i = 0; i < length; i++)
@@ -536,7 +536,7 @@ dump(int32 length, int offset, char *format, int raw_flag)
 
           case 'f':
               {
-                  register float32 *fdata;
+                  float32 *fdata;
                   fdata = (float32 *) HDgetspace(length / 4 * sizeof(float32));
 
                   DFKconvert((VOIDP) (data + offset), (VOIDP) fdata, DFNT_FLOAT32 | raw_flag,
@@ -559,7 +559,7 @@ dump(int32 length, int offset, char *format, int raw_flag)
 
           case 'e':
               {
-                  register float64 *fdata;
+                  float64 *fdata;
                   fdata = (float64 *) HDgetspace(length / 8 * sizeof(float64));
 
                   DFKconvert((VOIDP) (data + offset), (VOIDP) fdata, DFNT_FLOAT64 | raw_flag,
@@ -596,7 +596,7 @@ dump(int32 length, int offset, char *format, int raw_flag)
 int
 HEinfo(HE_CMD * cmd)
 {
-    register int i;
+    int i;
     int         all = NO;
     int         longout = NO;
     int         group = NO;
@@ -654,7 +654,7 @@ info(int all, int longout, int group, int label)
     int         start, end;
     int         d;
     int        *mark;
-    register int i, j;
+    int i, j;
 
     if (!fileOpen())
       {
@@ -829,7 +829,7 @@ int
 recurseDel(int curr)
 {
     int         d, currGrp;
-    register int i;
+    int i;
 
     if (isGrp(he_desc[curr].tag))
       {
@@ -1002,7 +1002,7 @@ findFunc(char *fword)
 {
     unsigned    len;
     int         found = -1;
-    register int i;
+    int i;
 
     len = HDstrlen((const char *) fword);
 
@@ -1039,7 +1039,7 @@ prompt(void)
         printf("hdfed%s ", he_prompt);
     else
       {
-          register int i;
+          int i;
 
           printf("     %s ", he_prompt);
           for (i = he_nestLevel; i; i--)
@@ -1056,7 +1056,7 @@ prompt(void)
 /* always returns with at least a word in p, unless eof */
 /* if eof and p is not empty, return HE_OK, else if no word, return EOF */
 int
-getLine(register char *p)
+getLine(char *p)
 {
     static int  ch = 0;
 
@@ -1128,7 +1128,7 @@ char       *
 nextWord(char **p)
 {
     char       *word;
-    register char *s, *q;
+    char *s, *q;
     unsigned    len;
 
     q = *p;
@@ -1280,7 +1280,7 @@ int         he_numAlias = 0;
 int
 setAlias(char *str, HE_CMD * cmd)
 {
-    register int i;
+    int i;
 
     for (i = 0; i < he_numAlias; i++)
         if (!HDstrcmp(str, he_aliasTab[i].str))
@@ -1302,7 +1302,7 @@ setAlias(char *str, HE_CMD * cmd)
 HE_CMD     *
 mkDupCmd(HE_CMD * cmd)
 {
-    register int i;
+    int i;
     HE_CMD     *dupCmd;
 
     dupCmd = (HE_CMD *) HDclearspace(1, sizeof(HE_CMD));
@@ -1318,7 +1318,7 @@ mkDupCmd(HE_CMD * cmd)
 HE_CMD     *
 findAlias(char *str)
 {
-    register int i;
+    int i;
     HE_CMD     *cmd;
     HE_CMD     *dupCmd;
     HE_CMD     *cmdTail;
@@ -1342,7 +1342,7 @@ findAlias(char *str)
 int
 HEunalias(HE_CMD * cmd)
 {
-    register int a, i, j;
+    int a, i, j;
 
     for (a = 1; a < cmd->argc; a++)
         for (i = 0; i < he_numAlias; i++)
@@ -1362,7 +1362,7 @@ HEunalias(HE_CMD * cmd)
 void
 printAlias(char *word, HE_CMD * cmd)
 {
-    register int j;
+    int j;
 
     printf("%s:", word);
     for (; cmd; cmd = cmd->next)
@@ -1379,7 +1379,7 @@ HEalias(HE_CMD * cmd)
 {
     char       *s;
     char       *word;
-    register int i;
+    int i;
     HE_CMD     *cmdTail;
 
     s = cmd->argv[1];
@@ -1489,7 +1489,7 @@ he_keyTab[] =
 int
 findKey(char *word)
 {
-    register int i;
+    int i;
     unsigned    len;
     int         found = -1;
 
@@ -1518,7 +1518,7 @@ findKey(char *word)
 }
 
 int
-isNumber(register char *s)
+isNumber(char *s)
 {
     for (; *s; s++)
         if (!isdigit((int) *s))
@@ -1536,7 +1536,7 @@ parsePred(int argc, char *argv[])
     int         predNum = -1;
     int         state = 0;
     int         key = 0;
-    register int i;
+    int i;
     char       *s;
     char       *tok;
 
@@ -1677,7 +1677,7 @@ satPred(DFdesc * desc, HE_PRED pred[])
 char       *
 nextToken(char **p)
 {
-    register char *s, *q;
+    char *s, *q;
     char       *tok;
 
     if (!(**p))

@@ -30,7 +30,7 @@ extern int  wait(int);
 int
 HEannotate(HE_CMD * cmd)
 {
-    register int i;
+    int i;
     char       *editor = NULL;
     int         ann = HE_LABEL;
 
@@ -84,7 +84,7 @@ annotate(char *editor, int ann)
     int32       len;            /* length of annotation */
     char       *buf;            /* annotation buffer */
     char       *file;           /* tmp file name */
-    register int i;
+    int i;
     int         ret;
 
     /* check if any hdf file is open
@@ -210,7 +210,7 @@ int
 HEopen(HE_CMD * cmd)
 {
     int         backup = YES;
-    register int i;
+    int i;
     char       *file = NULL;
 
     for (i = 1; i < cmd->argc; i++)
@@ -291,7 +291,7 @@ openFile(char *file, int backup)
 int
 HEclose(HE_CMD * cmd)
 {
-    register int i;
+    int i;
     int         keep = NO;
 
     for (i = 1; i < cmd->argc; i++)
@@ -342,7 +342,7 @@ HErevert(HE_CMD * cmd)
 int
 HEwrite(HE_CMD * cmd)
 {
-    register int i;
+    int i;
     char       *file;
     uint16      ref = 0;
     uint16      tag = 0;
@@ -416,7 +416,7 @@ writ(char *file, uint16 tag, uint16 ref)
 int
 HEgetR8(HE_CMD * cmd)
 {
-    register int i;
+    int i;
     int         xdim = 0, ydim = 0;
     char       *image, *pal = NULL;
     int         compress = 0;
@@ -486,7 +486,7 @@ HEgetR8(HE_CMD * cmd)
 int
 HEput(HE_CMD * cmd)
 {
-    register int i;
+    int i;
     int         verbose = NO;
     char       *template = "elt#.@";
 
@@ -546,7 +546,7 @@ put(char *template, int verbose)
 int
 HEputR8(HE_CMD * cmd)
 {
-    register int i;
+    int i;
     int         verbose = NO;
     char       *image = "img#.@.%";
     char       *pal = "pal#";
@@ -620,7 +620,7 @@ putR8(char *image, char *pal, int verbose)
         return HE_FAIL;
     if (palette != NULL)
       {
-          register int i;
+          int i;
           char        p[HE_PALETTE_SZ];
 
           for (i = 0; i < HE_COLOR_SZ; i++)

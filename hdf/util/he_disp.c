@@ -29,7 +29,7 @@ int
 HEdisplay(HE_CMD * cmd)
 {
 #ifndef IBM6000
-    register int i;
+    int i;
     int         center = 1;
     int         xwhere = 0;
     int         ywhere = 0;
@@ -224,7 +224,7 @@ rImage(int usepal)
 {
     int         i, j, newxsize;
     int8       *thisline, *space, *thischar;
-    register unsigned char c;
+    unsigned char c;
 
 /*
    *  Open the window with the W command
@@ -316,8 +316,8 @@ rImage(int usepal)
 int
 bigImg(unsigned char *targ, unsigned char *src)
 {
-    register int i, j, line;
-    register unsigned char *p, *q, *oldq;
+    int i, j, line;
+    unsigned char *p, *q, *oldq;
 
     for (line = 0; line < ydim; line++)
       {
@@ -346,7 +346,7 @@ bigImg(unsigned char *targ, unsigned char *src)
 int
 rleIt(char *buf, char *bufto, int len)
 {
-    register char *p, *q, *cfoll, *clead;
+    char *p, *q, *cfoll, *clead;
     char       *begp;
     int         i;
 
