@@ -5,11 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.12  1993/09/20 19:56:05  koziol
-Updated the "special element" function pointer array to be a structure
-of function pointers.  This way, function prototypes can be written for the
-functions pointers and some type checking done.
+Revision 1.13  1993/09/21 00:58:36  georgev
+With the new HDstrdup() need casts on the Mac and Convex.
 
+ * Revision 1.12  1993/09/20  19:56:05  koziol
+ * Updated the "special element" function pointer array to be a structure
+ * of function pointers.  This way, function prototypes can be written for the
+ * functions pointers and some type checking done.
+ *
  * Revision 1.11  1993/09/11  18:07:57  koziol
  * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
  * cleaned up some goofy string manipulations in various places.
@@ -287,7 +290,7 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
     info->attached = 1;
     info->file_external = file_external;
     info->extern_offset = f_offset;
-    info->extern_file_name = HDstrdup(extern_file_name);
+    info->extern_file_name = (char *)HDstrdup(extern_file_name);
     if (!info->extern_file_name) {
        HERROR(DFE_NOSPACE);
        access_rec->used = FALSE;

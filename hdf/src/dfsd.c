@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.36  1993/09/11 21:00:18  koziol
-Defined alternate HDstrdup routine for VMS and fixed a couple of HDstrdup
-mistakes.
+Revision 1.37  1993/09/21 00:58:32  georgev
+With the new HDstrdup() need casts on the Mac and Convex.
 
+ * Revision 1.36  1993/09/11  21:00:18  koziol
+ * Defined alternate HDstrdup routine for VMS and fixed a couple of HDstrdup
+ * mistakes.
+ *
  * Revision 1.35  1993/09/11  18:07:46  koziol
  * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
  * cleaned up some goofy string manipulations in various places.
@@ -890,7 +893,7 @@ intn DFSDIsetdatastrs(label, unit, format, coordsys)
 	/* copy string */
         if (lufp) 
           {
-            Writesdg.dataluf[luf] = HDstrdup(lufp);
+            Writesdg.dataluf[luf] = (char *)HDstrdup(lufp);
             if (Writesdg.dataluf[luf] == NULL) 
               return FAIL;
           }
@@ -900,7 +903,7 @@ intn DFSDIsetdatastrs(label, unit, format, coordsys)
 
     if (coordsys) 
       {
-        Writesdg.coordsys = HDstrdup(coordsys);
+        Writesdg.coordsys = (char *)HDstrdup(coordsys);
         if (Writesdg.coordsys == NULL) 
           return FAIL;
       }
@@ -1010,7 +1013,7 @@ intn DFSDIsetdimstrs(dim, label, unit, format)
 	/* copy string */
         if (lufp) 
           {
-            Writesdg.dimluf[luf][rdim] = HDstrdup(lufp);
+            Writesdg.dimluf[luf][rdim] = (char *)HDstrdup(lufp);
             if (Writesdg.dimluf[luf][rdim] == NULL) 
               return FAIL;
           }

@@ -5,11 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.22  1993/09/20 19:56:09  koziol
-Updated the "special element" function pointer array to be a structure
-of function pointers.  This way, function prototypes can be written for the
-functions pointers and some type checking done.
+Revision 1.23  1993/09/21 00:58:37  georgev
+With the new HDstrdup() need casts on the Mac and Convex.
 
+ * Revision 1.22  1993/09/20  19:56:09  koziol
+ * Updated the "special element" function pointer array to be a structure
+ * of function pointers.  This way, function prototypes can be written for the
+ * functions pointers and some type checking done.
+ *
  * Revision 1.21  1993/09/11  18:08:01  koziol
  * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
  * cleaned up some goofy string manipulations in various places.
@@ -3097,7 +3100,7 @@ PRIVATE int HIget_file_slot(path, FUNC)
     file_records[slot].version_set = FALSE;
 
     if (file_records[slot].path) HDfreespace(file_records[slot].path);
-    file_records[slot].path = HDstrdup(path);
+    file_records[slot].path = (char *)HDstrdup(path);
     return file_records[slot].path ? slot : FAIL;
 }
 

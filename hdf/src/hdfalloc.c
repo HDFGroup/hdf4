@@ -322,8 +322,9 @@ VOIDP ptr;
 
 #endif /* !PC | PC386 */
 
-#if defined VMS | (defined PC & !defined PC386)
+#if defined VMS | (defined PC & !defined PC386) | defined macintosh
 /* HDstrdup replacement for strdup() on VMS and PCs under MS-DOS and Windows. */
+/* Also added for Macintosh */
 /* This is needed because of the way memory is allocated */
 char *HDstrdup(const char *s)
 {
@@ -335,7 +336,7 @@ char *HDstrdup(const char *s)
     HDstrcpy(ret,s);
     return(ret);
 } /* end HDstrdup() */
-#endif /* VMS & (PC & !PC386) */
+#endif /* VMS & (PC & !PC386) & macinosh*/
 
 #if defined WIN3 || defined PC
 #ifdef WIN3
