@@ -5,15 +5,18 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/04/27 17:31:08  sxu
-Initial revision
+Revision 1.2  1992/04/28 18:26:38  dilg
+Changed absolute path to relative path for include files.
 
+ * Revision 1.1  1992/04/27  17:31:08  sxu
+ * Initial revision
+ *
  * Revision 1.1  1992/02/26  20:08:43  mfolk
  * Initial revision
  *
 */
-#include "/hdf/home/sxu/3.2tar/src/hdf.h"
-#include "/hdf/home/sxu/3.2tar/src/dfsd.h"
+#include "hdf.h"
+#include "dfsd.h"
 
 float64 f64[10][10], tf64[10][10];
 float64 f64scale[10], tf64scale[10];
