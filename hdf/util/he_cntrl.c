@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.10  1993/01/07 20:40:41  georgev
-Small bug where a comment was inside another comment.
+Revision 1.11  1993/01/16 04:13:59  georgev
+Fixed bug in hdfed
 
+ * Revision 1.10  1993/01/07  20:40:41  georgev
+ * Small bug where a comment was inside another comment.
+ *
  * Revision 1.9  1992/12/21  23:33:37  mfolk
  * Change "dump" routine so that it prints ascii dump 40 characters
  * per line, with no spaces between characters.
@@ -270,18 +273,21 @@ int HEdump(cmd)
 	    {
 	    case HE_HELP:
 		printf("dump [-offset <offset>] [-length <len>]\n"); 
-		printf("\t[-decimal|-octal|-hexidecimal|-float|-ascii]\n");
-		printf("\tDisplay the contents of the current element\n");
-		printf("\t-offset\t\tStart offset\n");
-		printf("\t-length\t\tLength to look at\n");
-		printf("\t-decimal\tDecimal format [32 bit integers]\n");
-		printf("\t-short\tDecimal format   [16 bit integers]\n");
-		printf("\t-byte\tDecimal format    [8 bit integers]\n");
-		printf("\t-octal\t\tOctal format [Default]\n");
-		printf("\t-hexidecimal\tHexidecimal format\n");
-		printf("\t-float\t\tFloat format   [32 bit floats]\n");
-		printf("\t-double\t\tFloat format  [64 bit floats]\n");
-		printf("\t-ascii\t\tAscii format\n");
+		printf("\t[-decimal|-short|-byte|-hexidecimal|-float|-double|-ascii|\n");
+              printf("\t[-udecimal|-ushort|-octal|]\n");
+		printf("\tDisplay the contents of the current object\n");
+		printf("\t-offset            Start offset\n");
+		printf("\t-length            Length (bytes) to look at\n");
+		printf("\t-decimal           Decimal format [32 bit integers]\n");
+		printf("\t-short             Decimal format   [16 bit integers]\n");
+		printf("\t-byte              Decimal format    [8 bit integers]\n");
+		printf("\t-hexidecimal       Hexidecimal format\n");
+		printf("\t-float             Float format   [32 bit floats]\n");
+		printf("\t-double            Float format  [64 bit floats]\n");
+		printf("\t-ascii             Ascii format\n");
+              printf("\t-udecimal          Unsigned Decimal format [32 bit integers]\n");
+              printf("\t-ushort            Unsigned Decimal format   [16 bit integers]\n");
+              printf("\t-octal             Octal format [Default]\n");
 		return HE_OK;
 	    case HE_OFFSET:
 		offset = atoi(cmd->argv[++i]);
@@ -296,11 +302,17 @@ int HEdump(cmd)
 		}
 		break;
 	    case HE_DECIMAL:
-		format = "-d";
+		format = "-i";
 		break;
+            case HE_UDECIMAL:
+                format = "-d";
+                break;
 	    case HE_SHORT:
-		format = "-s";
+		format = "-j";
 		break;
+            case HE_USHORT:
+                format = "-s";
+                break;
 	    case HE_BYTE:
 		format = "-b";
 		break;
@@ -391,14 +403,13 @@ int dump(length, offset, format, raw_flag)
 
     switch(format[1]) {
 
-    case 'd':
+    case 'i':
         {
             register int32 *idata;
-            idata = (int32 *) HDgetspace(length);
+            idata = (int32 *) HDgetspace(length/4*sizeof(int32));
 
-            DFKsetNT(DFNT_INT32 | raw_flag);
-            DFKnumout(data + offset, idata, length / 4, 0, 0);
-
+            DFKconvert((uint8 *)(data+offset), (uint8 *)idata, DFNT_INT32|raw_flag,
+                       length/4, DFACC_READ, 0, 0); 
             printf("%8d: ", offset); 
             for(i = 0; i < length/4; i++) {
                 printf("%11d ", idata[i]);
@@ -409,14 +420,46 @@ int dump(length, offset, format, raw_flag)
         }
         break;
 
-    case 's':
+    case 'd':
+        {
+            register uint32 *idata;
+            idata = (uint32 *) HDgetspace(length/4*sizeof(int32));
+
+            DFKconvert((uint8 *)(data+offset), (uint8 *)idata, DFNT_UINT32|raw_flag,
+                       length/4, DFACC_READ, 0, 0);
+            printf("%8d: ", offset);
+            for(i = 0; i < length/4; i++) {
+                printf("%11u ", idata[i]);
+                if(++len > 4) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 4));}
+            }
+            printf("\n");
+            HDfreespace(idata);
+        }
+        break;
+    case 'j':
         {
             register int16 *sdata;
-            sdata = (int16 *) HDgetspace(length);
+            sdata = (int16 *) HDgetspace(length/2*sizeof(int16));
+            DFKconvert((uint8 *)(data + offset), (uint8 *)sdata, DFNT_INT16|raw_flag,
+                       length/2, DFACC_READ, 0, 0);
 
-            DFKsetNT(DFNT_INT16 | raw_flag);
-            DFKnumout(data + offset, sdata, length/2, 0, 0);
+            printf("%8d: ", offset);
+            for(i = 0; i < length/2; i++) {
+                printf("%10d ", sdata[i]);
+                if(++len > 5) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 2));}
+            }
+            printf("\n");
+            HDfreespace(sdata);
+        }
+        break;
 
+    case 's':
+        {
+            register uint16 *sdata;
+            sdata = (uint16 *) HDgetspace(length/2*sizeof(uint16));
+
+            DFKconvert((uint8 *)(data + offset), (uint8 *)sdata, DFNT_UINT16|raw_flag, 
+                       length/2, DFACC_READ, 0, 0);
             printf("%8d: ", offset); 
             for(i = 0; i < length/2; i++) {
                 printf("%10d ", sdata[i]);
@@ -429,12 +472,11 @@ int dump(length, offset, format, raw_flag)
 
     case 'b':
         {
-            register int8 *bdata;
-            bdata = (int8 *) HDgetspace(length);
+            register uint8 *bdata;
+            bdata = (uint8 *) HDgetspace(length);
           
-            DFKsetNT(DFNT_INT8 | raw_flag);
-            DFKnumout(data + offset, bdata, length, 0, 0); 
-
+            DFKconvert((uint8 *)(data+offset), bdata, DFNT_UINT8|raw_flag,
+                       length, DFACC_READ, 0,0);
             printf("%8d: ", offset); 
             for(i = 0; i < length; i++) {
                 printf("%6d ", bdata[i]);
@@ -447,16 +489,14 @@ int dump(length, offset, format, raw_flag)
         
     case 'x':
         {
-            register int32 *idata;
-            idata = (int32 *) HDgetspace(length);
-
-            DFKsetNT(DFNT_INT32 | raw_flag);
-            DFKnumout(data + offset, idata, length / 4, 0, 0); 
-
+            register intn *idata;
+            intn sizeintn;
+            sizeintn=sizeof(intn);
+            idata= (intn *)(data+offset);
             printf("%8d: ", offset); 
-            for(i = 0; i < length / 4; i++) {
+            for(i = 0; i < length / sizeintn; i++) {
                 printf("%10x ", idata[i]);
-                if(++len > 5) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 4));} 
+                if(++len > 5) {len = 0; printf("\n%8d: ", (offset + (i + 1) * sizeintn));} 
             }
             printf("\n"); 
             HDfreespace(idata);
@@ -465,16 +505,14 @@ int dump(length, offset, format, raw_flag)
 
     case 'o':
         {
-            register int32 *idata;
-            idata = (int32 *) HDgetspace(length);
-            
-            DFKsetNT(DFNT_INT32 | raw_flag);
-            DFKnumout(data + offset, idata, length / 4, 0, 0); 
-            
+            register intn *idata;
+            intn sizeintn;
+            sizeintn=sizeof(intn);
+            idata= (intn *)(data+offset);
             printf("%8d: ", offset);
             for(i = 0; i < length / 4; i++) {
                 printf("%10o ", idata[i]);
-                if(++len > 4) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 4));} 
+                if(++len > 4) {len = 0; printf("\n%8d: ", (offset + (i + 1) * sizeintn));} 
             }
             printf("\n");
             HDfreespace(idata);
@@ -488,7 +526,7 @@ int dump(length, offset, format, raw_flag)
             printf("%8d: ", offset);
             for(i = 0; i < length; i++) {
                 printf("%c", cdata[i]);
-                if(++len > 40) {len = 0; printf("\n%8d: ", (offset + (i + 1)));}    
+                if(++len > 40) {len = 0; printf("\n%8d: ", (offset + (i+1)));}  
             }
             printf("\n");
         }
@@ -497,10 +535,10 @@ int dump(length, offset, format, raw_flag)
     case 'f':
         {
             register float32 *fdata;
-            fdata = (float32 *) HDgetspace(length);
+            fdata = (float32 *) HDgetspace(length/4*sizeof(float32));
   
-            DFKsetNT(DFNT_FLOAT32 | raw_flag);
-            DFKnumout(data + offset, fdata, length / 4, 0, 0); 
+            DFKconvert((uint8 *)(data + offset), (uint8 *)fdata, DFNT_FLOAT32|raw_flag,
+                       length/4, DFACC_READ, 0, 0);
 
             printf("%8d: ", offset);
             for(i = 0; i < length / 4; i++) {
@@ -515,12 +553,12 @@ int dump(length, offset, format, raw_flag)
     case 'e':
         {
             register float64 *fdata;
-            fdata = (float64 *) HDgetspace(length);
+            fdata = (float64 *) HDgetspace(length/8*sizeof(float64));
   
-            DFKsetNT(DFNT_FLOAT32 | raw_flag);
-            DFKnumout(data + offset, fdata, length / 8, 0, 0); 
+            DFKconvert((uint8 *)(data + offset), (uint8 *)fdata, DFNT_FLOAT64|raw_flag,
+                       length/8, DFACC_READ, 0, 0);
 
-            printf("%8d:\t", offset);
+            printf("%8d: ", offset);
             for(i = 0; i < length / 8; i++) {
                 printf("%30e", fdata[i]);
                 if(++len > 1) {len = 0; printf("\n%8d: ", (offset + (i + 1) * 8));}

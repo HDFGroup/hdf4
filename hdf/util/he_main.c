@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.10  1992/12/21 23:31:17  mfolk
-Fixed updateDesc call to DFdiget.  Previously it was missing
-the first parameter, groupID.
+Revision 1.11  1993/01/16 04:14:00  georgev
+Fixed bug in hdfed
 
+ * Revision 1.10  1992/12/21  23:31:17  mfolk
+ * Fixed updateDesc call to DFdiget.  Previously it was missing
+ * the first parameter, groupID.
+ *
  * Revision 1.9  1992/09/17  21:19:36  chouck
  * Fixed backup file name so VMS would be happy.  No backups for PCs
  *
@@ -1095,6 +1098,8 @@ struct {
 {"byte",   HE_BYTE},
 {"short",  HE_SHORT},
 {"double", HE_DOUBLE},
+{"ushort", HE_USHORT},
+{"udecimal",HE_UDECIMAL},
 {"raw",    HE_RAW},
 {NULL, 0},
 };

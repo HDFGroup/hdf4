@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.7  1992/09/11 18:32:51  chouck
-Assorted MAC mungings
+Revision 1.8  1993/01/16 04:13:57  georgev
+Fixed bug in hdfed
 
+ * Revision 1.7  1992/09/11  18:32:51  chouck
+ * Assorted MAC mungings
+ *
  * Revision 1.5  1992/08/18  19:49:33  chouck
  * Include string.h
  *
@@ -46,7 +49,7 @@ Assorted MAC mungings
 #endif /* DEBUG */
 
 #define HE_ARG_SZ 30
-#define HE_DESC_SZ 512
+#define HE_DESC_SZ 8192
 
 #define HE_COLOR_SZ 256
 #define HE_PALETTE_SZ 768
@@ -98,6 +101,9 @@ Assorted MAC mungings
 #define HE_SHORT   34
 #define HE_DOUBLE  35
 #define HE_RAW     36
+ 
+#define HE_USHORT  37
+#define HE_UDECIMAL 38
 
 /* label bits for predicate keys */
 #define HE_PREDICATE 0x8000
