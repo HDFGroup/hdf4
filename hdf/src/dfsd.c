@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.11  1993/01/05 17:53:55  chouck
-DFSDIgetndg() was leaving active AIDs on error
+Revision 1.12  1993/01/06 19:32:23  chouck
+Spelled one of the Hendaccess()s wrong (oops)
 
+ * Revision 1.11  1993/01/05  17:53:55  chouck
+ * DFSDIgetndg() was leaving active AIDs on error
+ *
  * Revision 1.10  1992/12/30  16:09:50  sxu
  * replaced dfsdpre32() with dfsdpre32sdg()
  *  A bug is fixed in DFSDIputndg.LUF: writes out null strings
@@ -1926,7 +1929,7 @@ DFSsdg *sdg;
             
             /* check for any valid NT */
             if (ntstring[1] == DFNT_NONE) {
-                Hendacess(aid);
+                Hendaccess(aid);
                 HRETURN_ERROR(DFE_BADCALL, FAIL);
             }
             
