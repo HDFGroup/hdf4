@@ -7,12 +7,12 @@ integer while the actual parameter was a character or
 a numeric type. This caused problems on some systems, 
 such as VMS and T3D. 
 
-These routines have either been replaced by 2 routines, one 
-for character type parameters and another for numeric type 
-parameters; or, a new routine has been added for char type 
-parameters and the old routine is used for numeric type 
-parameters only. Those routines that were replaced by two 
-routines should be phased out in the future. However, in 
+With HDF 4.0r2 and later releases, these routines have either 
+been replaced by 2 routines, one for character type parameters 
+and another for numeric type parameters; or, a new routine has 
+been added for char type parameters and the old routine is used 
+for numeric type parameters only. Those routines that were replaced 
+by two routines should be phased out in the future. However, in 
 order to not break currently working applications they are 
 still supported. New applications should use the new routines. 
 
