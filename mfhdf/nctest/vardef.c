@@ -245,7 +245,7 @@ printf("\n\n After cast %ld %ld\n", a, b);
 		if (ncvarget1(cdfid, va_id[iv], where, (void *) &val) != -1) {
 /*		    if (val != fillval) {
 */
-                  if (abs(val - fillval) > abs(fillval*EPS32)) {
+          if (fabs((double)(val - fillval)) > fabs((double)(fillval*EPS32))) {
 			error("%s: unwritten float not FILL_FLOAT", pname);
 			nerrs++;
 		    }
@@ -261,7 +261,7 @@ printf("\n\n After cast %ld %ld\n", a, b);
 		if (ncvarget1(cdfid, va_id[iv], where, (void *) &val) != -1) {
 /*		    if (val != fillval) {
 */
-                  if (abs(val - fillval) > abs(fillval*EPS64)) {
+          if (fabs((double)(val - fillval)) > fabs((double)(fillval*EPS64))) {
 			error("%s: unwritten double not FILL_DOUBLE", pname);
 			nerrs++;
 		    }
