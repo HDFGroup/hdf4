@@ -1,137 +1,9 @@
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.37  1993/09/21 00:58:32  georgev
-With the new HDstrdup() need casts on the Mac and Convex.
+/* $Id$ */
 
- * Revision 1.36  1993/09/11  21:00:18  koziol
- * Defined alternate HDstrdup routine for VMS and fixed a couple of HDstrdup
- * mistakes.
- *
- * Revision 1.35  1993/09/11  18:07:46  koziol
- * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
- * cleaned up some goofy string manipulations in various places.
- *
- * Revision 1.34  1993/09/03  15:16:47  chouck
- * Fixed a casting problem for the SGI
- *
- * Revision 1.33  1993/09/02  00:17:51  georgev
- * Fixed large number of casts.
- *
- * Revision 1.32  1993/09/02  00:00:21  georgev
- * Fixed some more prototypes.
- *
- * Revision 1.31  1993/09/01  23:53:38  georgev
- * Fixed some errors in prototypes for DFSD calls.
- *
- * Revision 1.30  1993/08/16  21:45:23  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.29  1993/05/17  15:20:13  georgev
- * Took out some unused varibles in DFSDwriteslab.
- *
- * Revision 1.28  1993/04/26  15:08:15  chouck
- * Fixes for the convex (doesn't like foo(VOID) prototypes)
- * Also added extern "C" { } around prototypes
- *
- * Revision 1.27  1993/04/22  23:00:10  koziol
- * Changed DFR8nimages, DFPnpals to report the correct number of images
- * and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
- *
- * Revision 1.26  1993/04/19  22:47:35  koziol
- * General Code Cleanup to reduce/remove errors on the PC
- *
- * Revision 1.25  1993/04/08  20:08:40  georgev
- * Somehow(?) fill values got broken in hyperslabs. Fixed it. Minor cosmetic
- *  changes also.
- *
- * Revision 1.24  1993/04/06  17:23:33  chouck
- * Added Vset macros
- *
- * Revision 1.23  1993/04/05  22:35:16  koziol
- * Fixed goofups made in haste when patching code.
- *
- * Revision 1.22  1993/03/29  18:38:19  chouck
- * Cleaned up a bunch of casting problems
- *
- * Revision 1.21  1993/03/29  16:47:40  koziol
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.19  1993/02/18  04:21:47  georgev
- * Fixed DFSDsetfillvalue so that users don't clobber their data.
- *
- * Revision 1.18  1993/02/02  00:13:04  georgev
- * Changed Hyperslab interface, added DFSDstartslab(), DFSDendslab().
- * Removed DFSDwritefillvalue().Fixed bug when writing out slabs in 
- * one dimension. Lots of minor changes to.
- *
- * Revision 1.17  1993/01/26  19:42:35  koziol
- * Added support for reading and writing Little-Endian data on all
- * platforms.  This has been tested on: Cray, Sun, and PCs so far.
- *
- * Revision 1.16  1993/01/19  05:55:07  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.15  1993/01/15  22:46:57  georgev
- * Added flag to allow multiple SDS when using hyperslabs.
- *
- * Revision 1.14  1993/01/15  16:50:20  georgev
- * DFSDwritefillvalue works now.
- *
- * Revision 1.13  1993/01/07  21:09:21  georgev
- * Forgot to swith order of HDmemcpy arguments in DFSDgetfillvalue.
- *
- * Revision 1.12  1993/01/06  19:32:23  chouck
- * Spelled one of the Hendaccess()s wrong (oops)
- *
- * Revision 1.11  1993/01/05  17:53:55  chouck
- * DFSDIgetndg() was leaving active AIDs on error
- *
- * Revision 1.10  1992/12/30  16:09:50  sxu
- * replaced dfsdpre32() with dfsdpre32sdg()
- *  A bug is fixed in DFSDIputndg.LUF: writes out null strings
- * when datastrs are set and dimstrs are not.
- *
- * Revision 1.9  1992/12/21  16:56:55  chouck
- * Fixed problem reading old float32 calibration tags
- *
- * Revision 1.8  1992/12/08  20:47:56  georgev
- * Changed order of src/dest for HDmemcpy
- *
- * Revision 1.7  1992/11/12  21:29:12  georgev
- * DFSDgetfillvalue has been fixed
- *
- * Revision 1.6  1992/11/10  20:19:42  georgev
- * Added routines DFSDwriteref, DFSDsetfillvalue, DFSDgetfillvalue
- *  DFSDwritefillvalue, DFSDwriteslab for writing hyperslabs
- *
- * Revision 1.5  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.4  1992/10/22  22:53:32  chouck
- * Added group handle to group interface
- *
- * Revision 1.3  1992/09/17  22:06:06  chouck
- * Removed debugging info for calibration tag routines
- *
- * Revision 1.2  1992/08/27  22:18:42  chouck
- * Added support for calibration tag reading and writing
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*-----------------------------------------------------------------------------
  File:  dfsd.c
 
@@ -142,62 +14,64 @@ With the new HDstrdup() need casts on the Mac and Convex.
     df.c dfgroup.c dfkit.c dfi.h df.h dfsd.h
 
  Public functions:
-    DFSDgetdims - get rank and dim sizes
-    DFSDgetdatastrs - get label, unit, format and coord system of data
-    DFSDgetdimstrs - get label, unit and format for a dimension
-    DFSDgetdatalen - 
-    DFSDgetdimlen -
-    DFSDgetdimscale - get scale for a dimension
-    DFSDgetrange - get max and min of data
-    DFSDgetdata - get data values
-    DFSDgetNT - get file number type for reading
-    DFSDpre32sdg - tests, without calling DFSDsdginfo,  whether or
-             not the SDG/ref written with 3.1
-    DFSDsetlengths - set lengths of label, unit, format strings on gets
-    DFSDsetdims - set rank and dim sizes
-    DFSDsetdatastrs - set data label, unit, format and coord system
-    DFSDsetdimstrs - set dim labels, units and formats
-    DFSDsetdimscale - set scale for a dimension
-    DFSDsetrange - set max and min of data
-    DFSDsetorder - set array order to C or FORTRAN order
-    DFSDsetNT - set number type to be written out
-    DFSDputdata - output data, data info, and display info
-    DFSDrestart - forget info about last file accessed - restart from beginning
-    DFSDndatasets - return number of SDGs in file
-    DFSDclear - forget all info set
-    DFSDlastref - get reference number of last SDG read or written
-    DFSDgetslice - get part of the data, specified as a slice
-    DFSDstartslice - set up to write SD
-    DFSDputslice - write specified number of data items to file
-    DFSDendslice - end of series of writes, write out SDG
-    DFSDwriteref - set reference number to be used in next SDS write slab
+    DFSDgetdims      - get rank and dim sizes
+    DFSDgetdatastrs  - get label, unit, format and coord system of data
+    DFSDgetdimstrs   - get label, unit and format for a dimension
+    DFSDgetdatalen   - 
+    DFSDgetdimlen    -
+    DFSDgetdimscale  - get scale for a dimension
+    DFSDgetrange     - get max and min of data
+    DFSDgetdata      - get data values
+    DFSDgetNT        - get file number type for reading
+    DFSDpre32sdg     - tests, without calling DFSDsdginfo,  whether or
+                       not the SDG/ref written with 3.1
+    DFSDsetlengths   - set lengths of label, unit, format strings on gets
+    DFSDsetdims      - set rank and dim sizes
+    DFSDsetdatastrs  - set data label, unit, format and coord system
+    DFSDsetdimstrs   - set dim labels, units and formats
+    DFSDsetdimscale  - set scale for a dimension
+    DFSDsetrange     - set max and min of data
+    DFSDsetorder     - set array order to C or FORTRAN order
+    DFSDsetNT        - set number type to be written out
+    DFSDputdata      - output data, data info, and display info
+    DFSDrestart      - forget info about last file accessed - restart from 
+                       beginning
+    DFSDndatasets    - return number of SDGs in file
+    DFSDclear        - forget all info set
+    DFSDlastref      - get reference number of last SDG read or written
+    DFSDgetslice     - get part of the data, specified as a slice
+    DFSDstartslice   - set up to write SD
+    DFSDputslice     - write specified number of data items to file
+    DFSDendslice     - end of series of writes, write out SDG
+    DFSDwriteref     - set reference number to be used in next SDS write slab
     DFSDsetfillvalue - set fill value to be used in next SDS written
     DFSDgetfillvalue - return fill value from SDS that is about to be read
-    DFSDstartslab - set up to write slabs
-    DFSDwriteslab - write hyperslab of values
-    DFSDendslab   - end of series of hyperslab writes
+    DFSDstartslab    - set up to write slabs
+    DFSDwriteslab    - write hyperslab of values
+    DFSDendslab      - end of series of hyperslab writes
+    DFSDreadslab     - get part of the data, specified as a slab
 
 Lower level functions:
-    DFSDgetsdg - read SDG into struct
-    DFSDputsdg - write SDG to file
+    DFSDgetsdg  - read SDG into struct
+    DFSDputsdg  - write SDG to file
 
 Private functions:
-    DFSDIopen - open or reopen file
-    DFSDIsdginfo - find next sdg in file
-    DFSDIisndg - was currently read sdg written by HDF3.2
-    DFSDIrefresh -- get info of next sdg if necessary
-    DFSDIgetrrank - get rank of the currently read sdg
-    DFSDIgetwrank - get rank of the sdg to be written
-    DFSDIclear - clear sdg data structure of all info
-    DFSDIgetdata - read data from file
-    DFSDIputdata - write data to file
-    DFSDIgetslice - get slice
-    DFSDIputslice - put slice
-    DFSDIendslice -
+    DFSDIopen      - open or reopen file
+    DFSDIsdginfo   - find next sdg in file
+    DFSDIisndg     - was currently read sdg written by HDF3.2
+    DFSDIrefresh   - get info of next sdg if necessary
+    DFSDIgetrrank  - get rank of the currently read sdg
+    DFSDIgetwrank  - get rank of the sdg to be written
+    DFSDIclear     - clear sdg data structure of all info
+    DFSDIgetdata   - read data from file
+    DFSDIputdata   - write data to file
+    DFSDIgetslice  - get slice
+    DFSDIputslice  - put slice
+    DFSDIendslice  -
     DFSDIsetnsdg_t - set up nsdg table
-    DFSDInextnsdg - get next nsdg from nsdg table
-    DFSDIgetndg - read NDG into struct
-    DFSDIputndg - write NDG to file
+    DFSDInextnsdg  - get next nsdg from nsdg table
+    DFSDIgetndg    - read NDG into struct
+    DFSDIputndg     write NDG to file
 
 Fortran stub functions:
     dsisdas - set data label, unit, format and coord system
@@ -4452,14 +4326,14 @@ DFSDgetfillvalue(fill_value)
 }
 
 /*-----------------------------------------------------------------------------
- * Name:    DFSDgetslab
+ * Name:    DFSDreadslab
  * Purpose: Get slab of data from SDG.  Will sequence to next SDG if
- *          DFSDgetdims, DFSDgetdata or DFSDgetslab not called earlier.
+ *          DFSDgetdims, DFSDgetdata or DFSDreadslab not called earlier.
  * Inputs:  filename: name of HDF file to use
- *          start: array of size = rank of data, containing start of slice
- *          slab_size: array of size rank, containing end of slice
- *          stride:
- *          buffer: array for returning slice
+ *          start: array of size = rank of data, containing start of slab
+ *          slab_size: array of size rank, containing end of slab
+ *          stride: sub sampling stride.
+ *          buffer: array for returning slab
  *          buffer_size: dimensions of array data
  * Returns: 0 on success, FAIL on failure with error set
  * Outputs: slab of data in data
@@ -4472,15 +4346,15 @@ DFSDgetfillvalue(fill_value)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDgetslab(char *filename, int32 start[], int32 slab_size[], 
+intn DFSDreadslab(char *filename, int32 start[], int32 slab_size[], 
                  int32 stride[], VOIDP buffer, int32 buffer_size[])
 #else
-intn DFSDgetslab(filename, start, slab_size, stride, buffer, buffer_size)
+intn DFSDreadslab(filename, start, slab_size, stride, buffer, buffer_size)
      char *filename;
      int32 start[];
      int32 slab_size[];
      int32 stride[];
-     VOID *buffer;
+     VOIDP buffer;
      int32 buffer_size[];
 #endif /* PROTOTYPE */
 {
