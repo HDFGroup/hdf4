@@ -307,14 +307,17 @@ XDRFILE=${XDRFILE-"xdrposix"}
 echo setting the installation prefix
 prefix=`case "${prefix-..}" in 
   /*) echo ${prefix-..}; exit;;
-   *) path=\`pwd\`/${prefix-..}
-        tail=
-        while test -n "$path"; do
-          (cd $path && echo \`pwd\`$rest) 2> /dev/null && exit
-          base=/\`basename "$path"\`
-          tail=/$base$tail
-          path=\`echo "$path" | sed "s/\/$base//"\`
-        done;;
+   *) echo '/usr/local';
+#
+# Made the default prefix '/usr/local/' - GV
+#   *) path=\`pwd\`/${prefix-..}
+#        tail=
+#        while test -n "$path"; do
+#          (cd $path && echo \`pwd\`$rest) 2> /dev/null && exit
+#          base=/\`basename "$path"\`
+#          tail=/$base$tail
+#          path=\`echo "$path" | sed "s/\/$base//"\`
+#        done;;
 esac
 `
 test -z "$exec_prefix" && exec_prefix=$prefix/bin
