@@ -275,21 +275,32 @@ printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_bloc
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
             } /* end if */
 
-          new_data_tag=DFTAG_LINKED;
-          new_data_ref=Htagnewref(file_id,new_data_tag);
-          if(Hdupdd(file_id, new_data_tag, new_data_ref, tag, ref)==FAIL)
-            {
-                HTPendaccess(data_id);
-                HGOTO_ERROR(DFE_CANTUPDATE, FAIL);
+          if(data_off==INVALID_OFFSET || data_len==INVALID_LENGTH)
+            {   /* data object which has been created, but has no data */
+              /* Delete the old data ID */
+              if(HTPdelete(data_id)==FAIL)
+                  HGOTO_ERROR(DFE_CANTDELHASH, FAIL);
+
+              data_id=FAIL; /* reset this so the first block is a "regular" fixed length block */
             } /* end if */
+          else
+            {   /* existing data object with real data in it */
+              new_data_tag=DFTAG_LINKED;
+              new_data_ref=Htagnewref(file_id,new_data_tag);
+              if(Hdupdd(file_id, new_data_tag, new_data_ref, tag, ref)==FAIL)
+                {
+                    HTPendaccess(data_id);
+                    HGOTO_ERROR(DFE_CANTUPDATE, FAIL);
+                } /* end if */
 
-          /* Delete the old data ID */
-          if(HTPdelete(data_id)==FAIL)
-              HGOTO_ERROR(DFE_CANTDELHASH, FAIL);
+              /* Delete the old data ID */
+              if(HTPdelete(data_id)==FAIL)
+                  HGOTO_ERROR(DFE_CANTDELHASH, FAIL);
 
-          /* Attach to the new data ID */
-          if ((data_id=HTPselect(file_rec,new_data_tag,new_data_ref))==FAIL)
-              HGOTO_ERROR(DFE_INTERNAL, FAIL);
+              /* Attach to the new data ID */
+              if ((data_id=HTPselect(file_rec,new_data_tag,new_data_ref))==FAIL)
+                  HGOTO_ERROR(DFE_INTERNAL, FAIL);
+            } /* end else */
       } /* end if */
 
     link_ref = Htagnewref(file_id,DFTAG_LINKED);
@@ -419,6 +430,7 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
     int32       file_id;        /* file ID for the access record */
     uint8       local_ptbuf[16];
     int32       old_posn;       /* position in the access element */
+    intn        no_data;        /* boolean to record whether there actually was data in the current tag/ref */
     intn        ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -461,10 +473,16 @@ printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_bloc
     if ((special_tag = MKSPECIALTAG(data_tag)) == DFTAG_NULL)
         HGOTO_ERROR(DFE_BADDDLIST, FAIL);
 
-    new_data_tag=DFTAG_LINKED;
-    new_data_ref=Htagnewref(file_id,new_data_tag);
-    if(Hdupdd(file_id, new_data_tag, new_data_ref, data_tag, data_ref)==FAIL)
-        HGOTO_ERROR(DFE_CANTUPDATE, FAIL);
+    if(data_off!=INVALID_OFFSET && data_len!=INVALID_LENGTH)
+      {
+        new_data_tag=DFTAG_LINKED;
+        new_data_ref=Htagnewref(file_id,new_data_tag);
+        if(Hdupdd(file_id, new_data_tag, new_data_ref, data_tag, data_ref)==FAIL)
+            HGOTO_ERROR(DFE_CANTUPDATE, FAIL);
+        no_data=FALSE;
+      } /* end if */
+    else
+        no_data=TRUE;
 
     /* Delete the old data ID */
     if(HTPdelete(access_rec->ddid)==FAIL)
@@ -482,11 +500,11 @@ printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_bloc
 
     info = (linkinfo_t *) access_rec->special_info;
     info->attached = 1;
-    info->length = data_len;
+    info->length = (no_data ? 0 : data_len);
 #ifdef QAK
 printf("%s: data_len=%ld, block_length=%ld, number_blocks=%ld\n",FUNC,data_len,block_length,number_blocks);
 #endif /* QAK */
-    info->first_length = data_len;
+    info->first_length = (no_data ? 0 : data_len);
     info->block_length = block_length;
     info->number_blocks = number_blocks;
     info->link_ref = link_ref;
@@ -512,7 +530,7 @@ printf("%s: data_len=%ld, block_length=%ld, number_blocks=%ld\n",FUNC,data_len,b
         HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
     /* allocate info structure and file it in */
-    if ((info->link = HLInewlink(file_id, number_blocks, link_ref, data_ref)) ==NULL)
+    if ((info->link = HLInewlink(file_id, number_blocks, link_ref, (uint16)(no_data ? 0 : data_ref))) ==NULL)
         HGOTO_ERROR(DFE_CANTLINK, FAIL);
 
     /* update access record and file record */
@@ -732,8 +750,7 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
     while (info->last_link->nextref != 0)
       {
           info->last_link->next = HLIgetlink(access_rec->file_id,
-                                             info->last_link->nextref,
-                                             info->number_blocks);
+                 info->last_link->nextref, info->number_blocks);
           if (!info->last_link->next)
             {
                 link_t     *l, *next;
