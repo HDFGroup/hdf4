@@ -414,9 +414,7 @@ int32 sdsdumpfull(int32 sds_id, int32 rank, int32 dimsizes[], int32 nt,
     int32 j,i, ret;
     VOIDP buf; 
     int32 eltsz, read_nelts;
-
     int32 done;    /* number of rows we have done */
-
     int32 *left, *start, *edge;
 
     if (indent>65)  { /* This block is probably not necessary. */
@@ -439,41 +437,57 @@ int32 sdsdumpfull(int32 sds_id, int32 rank, int32 dimsizes[], int32 nt,
     }
     edge[rank-1] = dimsizes[rank-1];
  
-    done = 0; 
     if (rank==1) {   /* If there is only one dimension, then dump the data
 			and the job is done. */
         ret = SDreaddata(sds_id, start, NULL, edge, buf); 
         ret = dumpfull(nt, read_nelts, buf, indent, fp);
         fprintf(fp,"\n"); 
         cn=0;
-        done = 1;
     }
+    else if (rank>1) {
+       done = 0; 
+       while (!done)  {  /* In each iteration, a row in dumped and 
+			    "left[]" is modified accordingly. */
+          ret = SDreaddata(sds_id, start, NULL, edge, buf); 
+          ret = dumpfull(nt, read_nelts, buf, indent, fp);
+          fprintf(fp,"\n");
+          for (cn=0; cn<indent; cn++) 
+	     fprintf(fp, " ");
 
-    while (!done && (rank-2)>=0)  {  /* Dump a row each time and 
-                                        modify left[] accordingly. */
-        ret = SDreaddata(sds_id, start, NULL, edge, buf); 
-        ret = dumpfull(nt, read_nelts, buf, indent, fp);
-        fprintf(fp,"\n");
-        for (cn=0; cn<indent; cn++) 
-	   fprintf(fp, " ");
-	
-        for (j=rank-2; j>=0; j--)  { /* Examine each dimension. */
-             if (--left[j] > 0) {    /* Stay in the same dimension. */
+	  /* Modify the values for "start[]" and "left[]" that are to be used
+	     for dumping the next row. */
+          /* The following index variable "j" starts from "rank-2" because:
+	     (1) the range is from 0 to rank-1;
+	     (2) each element in dimension rank-1 is just an element in a row
+		 which is read in each time, and so we don't have to compute
+		 the "start" of it. */
+          for (j=rank-2; j>=0; j--) { /* Examine each dimension. */
+             if (--left[j] > 0) { /* Proceed in the same dimension; as
+				     long as there are elements in this
+				     dimension, this loop breaks here
+				     After the last element in the current
+				     dimension has been subtracted, we
+				     substract one fro the next lower
+				     dimension and reset "left[j]" to be
+				     the size of dimension j. */
                   start[j]++;
                   break;
              }
-             else     {              /* borrow one from j-1 dimension  */
-                  left[j] = dimsizes[j];
-                  start[j] = 0;
-                  if (j==0) 
-		     done=1;
-                  if (j==rank-2)  {
-                     fprintf(fp, "\n");
-                     for (cn=0; cn<indent; cn++) putc(' ', fp);
-                  }
-            }
-       }    /* for j */
-    }  /* while   */
+             else { /* Nothing left in the current dimension.
+		       So, subtract one from the (j-1)th dimension and
+		       reset the value of "left[j]". */
+                left[j] = dimsizes[j];
+                start[j] = 0;
+                if (j==0) 
+		   done=1;
+                if (j==rank-2)  {
+                   fprintf(fp, "\n");
+                   for (cn=0; cn<indent; cn++) putc(' ', fp);
+                }
+             }
+          }    /* for j */
+       }  /* while   */
+    } /* else */
     HDfree((VOIDP)start);
     HDfree((VOIDP)left);
     HDfree((VOIDP)buf);
