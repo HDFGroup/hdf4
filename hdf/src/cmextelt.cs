@@ -32,7 +32,7 @@ CMgetboolsize()
   }
 }
 
-#ifdef 0
+#ifdef NOT
 int32 CMSDcreate(fid, datasetname, datafilename, nt, rank, dimsizes)
 int32 fid;
 char  *datasetname, *datafilename;
