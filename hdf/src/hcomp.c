@@ -1306,9 +1306,13 @@ HCPcloseAID(accrec_t * access_rec)
         HRETURN_ERROR(DFE_MODEL, FAIL);
 
     /* Free the compression information */
+    /* BMR - reset special_info to NULL after memory is freed; problem shown
+       by the failure when running hdp list with a large file on PC - 12/6/98 */
     if (--(info->attached) == 0)
-        HDfree(info);
-
+    {
+       HDfree(info);
+       access_rec->special_info = NULL;
+    }
     return (ret);
 }   /* end HCPcloseAID() */
 
