@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/08/27 19:55:26  likkai
+change declaration of Vclose: now it returns intn instead of void.
+change declaration of DFvsetclose: returns intn instead of int.
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 #ifndef _H_PROTO
 #define _H_PROTO
@@ -1437,7 +1441,7 @@ extern void Vinitialize
 extern HFILEID Vopen
   PROTO((char *path, intn access, int16 ndds));
 
-extern void Vclose
+extern intn Vclose
   PROTO((HFILEID f));
 
 
@@ -1479,7 +1483,7 @@ extern void vshowvs
 extern vsinstance_t * vsinstance
   PROTO((HFILEID f, int vsid));
 
-extern int DFvsetclose
+extern intn DFvsetclose
   PROTO((HFILEID f));
 
 extern HFILEID DFvsetopen
