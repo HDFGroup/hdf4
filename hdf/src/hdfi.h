@@ -71,22 +71,7 @@
 #endif  /* HAVE_PABLO */
 
 #include <stdio.h>
-
-#ifdef __STDC__
-#define PROTOTYPE
 #include <stdlib.h>
-#endif
-
-#if defined (__cplusplus) || (defined c_plusplus)
-#ifndef PROTOTYPE
-#define PROTOTYPE
-#endif
-#endif
-
-/* Define this for now, the stupid C compiler on the Decstation under */
-/* Ultrix 4.0 doesn't understand ANSI-style function prototypes for function */
-/* pointers in structure definitions */
-#define HPROTO(x) x
 
 #if defined TEST_PC || defined TEST_WIN
 #define FAR far
@@ -113,10 +98,6 @@ If you get an error on this line more than one machine type has been defined.
 Please check your Makefile.
 #endif
 #define GOT_MACHINE
-
-#ifndef PROTOTYPE
-#define PROTOTYPE		/* to invoke ANSI prototypes */
-#endif	/* PROTOTYPE */
 
 #include <limits.h>
 #include <string.h>
@@ -207,9 +188,6 @@ typedef double            float64;
 #else
 #define FILELIB UNIXBUFIO
 #endif
-#ifndef __STDC__
-#define const
-#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -239,9 +217,6 @@ Please check your Makefile.
 #define GOT_MACHINE
 
 #   define BSD
-#ifndef PROTOTYPE
-#define PROTOTYPE       /* to invoke ANSI prototypes */
-#endif  /* PROTOTYPE */
 
 #include <string.h>
 #ifndef __GNUC__
@@ -331,9 +306,6 @@ typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 #define FILELIB PAGEBUFIO  /* enable page buffering */
 #else
 #define FILELIB UNIXBUFIO
-#endif
-#ifndef __STDC__
-#define const
 #endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
@@ -522,18 +494,6 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
-#ifdef OLD_WAY
-
-#include <sys/file.h>               /* for unbuffered i/o stuff */
-#include <stdlib.h>
-
-#define __STDC__                    /* To invoke ANSI compilation */
-
-#ifndef PROTOTYPE
-#define PROTOTYPE                   /* to invoke ANSI prototypes */
-#endif  /* PROTOTYPE */
-
-#endif /* OLD_WAY */
 #include <string.h>
 #include <limits.h>
 #include <sys/types.h>
@@ -626,12 +586,6 @@ typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 #else
 #define FILELIB UNIXBUFIO
 #endif
-#ifndef __STDC__
-#define const
-#undef HPROTO
-#define HPROTO(x) ()
-#define PROTOTYPE
-#endif /* __STDC__ */
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -649,7 +603,6 @@ If you get an error on this line more than one machine type has been defined.
 Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
-#define PROTOTYPE
 
 #include <memory.h>             /* malloc stuff for MPW */
 #include <fcntl.h>              /* unbuffered I/O stuff for MPW */
@@ -763,11 +716,6 @@ Please check your Makefile.
 #endif /* WIN3 || WINNT || WIN32*/
 
 #define DF_MT             DFMT_PC
-
-#ifndef PROTOTYPE
-/* Want prototypes for the PC even if we're not completely ANSI C compliant */
-#define PROTOTYPE
-#endif  /* !PROTOTYPE */
 
 #ifndef VOID    /* The stupid windows.h header file uses a #define instead of a typedef */
 typedef void              VOID;
@@ -944,9 +892,6 @@ typedef double            float64;
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
-#ifndef __STDC__
-#define const
-#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -1024,9 +969,7 @@ If you get an error on this line more than one machine type has been defined.
 Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
-#ifndef PROTOTYPE
-#define PROTOTYPE
-#endif /* !PROTOTYPE */
+
 #include <string.h>
 #include <memory.h>
 #include <sys/types.h>
@@ -1098,9 +1041,6 @@ typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 #define _fcdtocp(desc) (desc)
 #define FNAME_POST_UNDERSCORE
 #define FILELIB UNIXBUFIO
-#ifndef __STDC__
-#define const
-#endif /* __STDC__ */
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -1172,15 +1112,10 @@ correctly.
 *                   Conversion Routine Pointers
 ***************************************************************************/
 #    ifndef DFKMASTER
-#if defined __STDC__ || defined PC
 extern int (*DFKnumin)(void _HUGE * source, void _HUGE * dest, uint32 num_elm,
             uint32 source_stride,uint32 dest_stride);
 extern int (*DFKnumout)(void _HUGE * source, void _HUGE * dest, uint32 num_elm,
             uint32 source_stride,uint32 dest_stride);
-#else
-extern int (*DFKnumin)();
-extern int (*DFKnumout)();
-#endif
 #     endif /* DFKMASTER */
 
 #if 0
@@ -1241,25 +1176,13 @@ extern uint8 FAR *DFtbuf;
 **
 **---------------------------------------------------------------*/
 #if defined(FNAME_PRE_UNDERSCORE) && defined(FNAME_POST_UNDERSCORE)
-#if defined __STDC__ | defined CONVEX | (defined DECCXX | defined __DECCXX)
 #   define FNAME(x)     _##x##_
-#else
-#   define FNAME(x)     _/**/x/**/_
-#endif
 #endif
 #if defined(FNAME_PRE_UNDERSCORE) && !defined(FNAME_POST_UNDERSCORE)
-#if defined __STDC__ | defined CONVEX | (defined DECCXX | defined __DECCXX)
 #   define FNAME(x)     _##x
-#else
-#   define FNAME(x)     _/**/x
-#endif
 #endif
 #if !defined(FNAME_PRE_UNDERSCORE) && defined(FNAME_POST_UNDERSCORE)
-#if defined __STDC__ | defined CONVEX | (defined DECCXX | defined __DECCXX)
 #   define FNAME(x)     x##_
-#else
-#   define FNAME(x)     x/**/_
-#endif
 #endif
 #if !defined(FNAME_PRE_UNDERSCORE) && !defined(FNAME_POST_UNDERSCORE)
 #   define FNAME(x)     x
