@@ -155,9 +155,9 @@ prefix		= ../../..
 #all::		library
 all::         FORCE
 	@if test -z "$(FMPOOL_FLAGS)"; then \
-	  $(MAKE) $(MFLAGS) library; \
+	  $(MAKE) $(MFLAGS) $(LOCAL_MACROS) library; \
 	else		 \
-	  $(MAKE) $(MFLAGS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" library; \
+	  $(MAKE) $(MFLAGS) $(LOCAL_MACROS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" library; \
 	fi
 
 #
@@ -193,9 +193,9 @@ $(PROGRAM):	$(PROGRAM).o library
 
 nhdftest::         FORCE
 	@if test -z "$(FMPOOL_FLAGS)"; then \
-	  $(MAKE) $(MFLAGS) hdftest; \
+	  $(MAKE) $(MFLAGS) $(LOCAL_MACROS) hdftest; \
 	else		 \
-	  $(MAKE) $(MFLAGS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" hdftest; \
+	  $(MAKE) $(MFLAGS) $(LOCAL_MACROS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" hdftest; \
 	fi
 
 hdftest:	hdftest.o library        
@@ -243,6 +243,7 @@ cdftest.oc:	$(CSRCS) cdftest.c
 # Recursive Macros (command-line changes to others aren't supported):
 # ###########################################################################
 SUBDIR_MACROS = CC="$(CC)" \
+	CFLAGS="$(CFLAGS)" \
 	CPP="$(CPP)" \
 	exec_prefix="$(exec_prefix)" \
 	FC="$(FC)" \

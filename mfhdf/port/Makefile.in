@@ -141,11 +141,11 @@ DISTFILES        = COPYRIGHT CUSTOMIZE HISTORY Makefile.in VERSION aclocal.m4 \
 
 all::		FORCE $(PORT_HEADERS)
 	@if [ "$(NEED_FORTC)" = yes ]; then \
-	    $(MAKE) $(MFLAGS) fortc/all; \
+	    $(MAKE) $(MFLAGS) $(SBUDIR_MACROS) fortc/all; \
 	else \
 	    :; \
 	fi
-	@$(MAKE) $(MFLAGS) library
+	@$(MAKE) $(MFLAGS) $(LOCAL_MACROS) library
 
 # We install the portability library modules directly into an installed
 # portability library even though the package using this portability library
@@ -227,6 +227,7 @@ config:               config.c
 # Recursive Macros (command-line changes to others aren't supported):
 # ###########################################################################
 SUBDIR_MACROS = CC="$(CC)" \
+	CFLAGS="$(CFLAGS)" \
 	CPP="$(CPP)" \
 	exec_prefix="$(exec_prefix)" \
 	FC="$(FC)" \

@@ -173,15 +173,15 @@ all::		FORCE
 	NONE*|none*) \
 	    echo 1>&2 "\`$@' not made because no FORTRAN compiler";; \
 	*) \
-	    $(MAKE) $(MFLAGS) nall ; \
+	    $(MAKE) $(MFLAGS) $(LOCAL_MACROS) nall ; \
 	esac
 
 
 nall::         FORCE
 	@if test -z "$(FMPOOL_FLAGS)"; then \
-	  $(MAKE) $(MFLAGS) netcdf.inc $(REMOTE_LIBRARY); \
+	  $(MAKE) $(MFLAGS) $(LOCAL_MACROS) netcdf.inc $(REMOTE_LIBRARY); \
 	else		 \
-	  $(MAKE) $(MFLAGS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" netcdf.inc $(REMOTE_LIBRARY); \
+	  $(MAKE) $(MFLAGS) $(LOCAL_MACROS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" netcdf.inc $(REMOTE_LIBRARY); \
 	fi
 
 test:		FORCE
@@ -189,8 +189,8 @@ test:		FORCE
 	NONE*|none*) \
 	    echo 1>&2 "\`$@' not made because no FORTRAN compiler";; \
 	*) \
-	    $(MAKE) $(MFLAGS) $(PROGRAM); \
-	    $(MAKE) $(MFLAGS) hdftest; \
+	    $(MAKE) $(MFLAGS) $(LOCAL_MACROS) $(PROGRAM); \
+	    $(MAKE) $(MFLAGS) $(LOCAL_MACROS) hdftest; \
 	    ./$(PROGRAM);; \
 	esac
 
@@ -199,7 +199,7 @@ install::	FORCE
 	NONE*|none*) \
 	    echo 1>&2 "\`$@' not made because no FORTRAN compiler";; \
 	*) \
-	    $(MAKE) installed_headers;; \
+	    $(MAKE) $(LOCAL_MACROS) installed_headers;; \
 	esac
 
 $(PROGRAM):	$(REMOTE_LIBRARY)
@@ -225,6 +225,7 @@ $(PROGRAM):	$(REMOTE_LIBRARY)
 # Recursive Macros (command-line changes to others aren't supported):
 # ###########################################################################
 SUBDIR_MACROS = CC="$(CC)" \
+	CFLAGS="$(CFLAGS)" \
 	CPP="$(CPP)" \
 	exec_prefix="$(exec_prefix)" \
 	FC="$(FC)" \

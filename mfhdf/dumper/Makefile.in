@@ -134,9 +134,9 @@ GARBAGE		= $(PROGRAM) *.o
 #all::		$(PROGRAM)
 all::         FORCE
 	@if test -z "$(FMPOOL_FLAGS)"; then \
-	  $(MAKE) $(MFLAGS) $(PROGRAM); \
+	  $(MAKE) $(MFLAGS) $(LOCAL_MACROS) $(PROGRAM); \
 	else		 \
-	  $(MAKE) $(MFLAGS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" $(PROGRAM); \
+	  $(MAKE) $(MFLAGS) $(LOCAL_MACROS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" $(PROGRAM); \
 	fi
 
 
@@ -166,6 +166,7 @@ install::	installed_program installed_manuals
 # Recursive Macros (command-line changes to others aren't supported):
 # ###########################################################################
 SUBDIR_MACROS = CC="$(CC)" \
+	CFLAGS="$(CFLAGS)" \
 	CPP="$(CPP)" \
 	exec_prefix="$(exec_prefix)" \
 	FC="$(FC)" \

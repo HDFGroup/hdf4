@@ -140,7 +140,7 @@ all::         FORCE
 	@if test -z "$(LIBOBJS)"; then \
 	  : true; \
 	else		 \
-	  $(MAKE) $(MFLAGS) $(REMOTE_LIBRARY); \
+	  $(MAKE) $(MFLAGS) $(LOCAL_MACROS) $(REMOTE_LIBRARY); \
 	fi
 
 # The formatted file `$(PROGRAM)_out.new' might differ from the touchstone
@@ -192,6 +192,7 @@ install::
 # Recursive Macros (command-line changes to others aren't supported):
 # ###########################################################################
 SUBDIR_MACROS = CC="$(CC)" \
+	CFLAGS="$(CFLAGS)" \
 	CPP="$(CPP)" \
 	exec_prefix="$(exec_prefix)" \
 	FC="$(FC)" \
