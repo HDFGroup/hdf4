@@ -4,7 +4,7 @@ COMPILING A PROGRAM
 Following are instructions for compiling an application program on the 
 platforms supported by HDF, using the binaries that we provide.  For
 Unix, the information on options to specify comes from the configuration 
-files (mh-*) in the HDF source code (under ../HDF4.1r4/config).   
+files (mh-*) in the HDF source code (under ../HDF4.1r5/config).   
 
 In general, you compile your program as shown below.  If your platform is 
 not specified in the section, "INSTRUCTIONS FOR SPECIFIC PLATFORMS", then 
@@ -226,11 +226,11 @@ Under "Show directories for", select "Library files":
 Under Project->Settings, select folder, Link:
    Add the following libraries to the beginning of the list of
    Object/Library Modules:
-         hd414.lib hm414.lib (single-threaded release version)
-         hd414d.lib hm414d.lib (single-threaded debug version)
+         hd415.lib hm415.lib (single-threaded release version)
+         hd415d.lib hm415d.lib (single-threaded debug version)
 
-         hd414m.lib hm414m.lib (multi-threaded release version)
-         hd414md.lib hm414md.lib (multi-threaded debug version)
+         hd415m.lib hm415m.lib (multi-threaded release version)
+         hd415md.lib hm415md.lib (multi-threaded debug version)
 
 
 
