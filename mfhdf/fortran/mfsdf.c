@@ -955,3 +955,42 @@ nscfattr(id, name, namelen)
 
     return(ret);
 }
+
+/*-----------------------------------------------------------------------------
+ * Name:    sfid2ref
+ * Purpose: call SDidtoref to map an idfindattr to find an attribute
+ * Inputs:  id: variable id
+ * Returns: reference number of a NDG representing this dataset
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfid2ref(intf *id)
+#else
+nsfid2ref(id)
+    intf *id;
+#endif /* PROTOTYPE */
+{
+    return((intf) SDidtoref(*id));
+}
+
+
+/*-----------------------------------------------------------------------------
+ * Name:    sfref2index
+ * Purpose: call SDreftoindex to map a reference number to an index of a dataset
+ * Inputs:  id: file id
+ *          ref: reference number to look up
+ * Returns: reference number of a NDG representing this dataset
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfref2index(intf *id, intf *ref)
+#else
+nsfref2index(id, ref)
+     intf *id;
+     intf *ref;
+#endif /* PROTOTYPE */
+{
+    return((intf) SDidtoref(*id, (uint16) *ref));
+}

@@ -10,7 +10,7 @@
 
       integer access, nt, rank, stat, ival, ivals(1000), i, err
       integer dims(10), start(10), end(10), stride(10), count, nattr
-      integer max, min, num
+      integer max, min, num, ref
 
       real fval
 
@@ -186,6 +186,18 @@ C     create a new file
       stat = sfn2index(fid1, "Alpha")
       if(stat.ne.0) then
          print *, 'Index of Alpha data set is wrong', stat
+         err = err + 1
+      endif
+
+      ref = sfidtoref(sds1)
+      if(ref.eq.0) then
+         print *, 'sfidtoref failed'
+         err = err + 1
+      endif
+
+      stat = sfreftoindex(fid1, ref)
+      if(stat.ne.0) then
+         print *, 'mapping from ref to index failed', stat
          err = err + 1
       endif
 
