@@ -24,187 +24,238 @@ static char RcsId[] = "$Revision$";
 #include <math.h>
 #endif /* MIPSEL */
 
-/* --------------------------------------------------------- 
-   * printing functions copied from vshow.c and used by sdsdumpfull(). 
+/* 
+ * printing functions copied from vshow.c and used by sdsdumpfull(). 
+ *
+ * Please pay attention to the data types used in the print/output routines.
+ * Make sure the data type being dumped matches arguments in 'fwrite()' .etc.
+ *
  */
 
 intn 
-fmtbyte(unsigned char *x, file_type_t ft, FILE * ofp)
+fmtbyte(unsigned char *x, /* assumption: byte is the same as unsigned char */
+        file_type_t    ft, 
+        FILE          *ofp)
 {
-    unsigned int s;
-    if(ft==DASCII)
+    unsigned char s;
+
+    if(ft == DASCII)
       return (fprintf(ofp, "%02x ", (unsigned) *x));
     else
-      { s = (unsigned) * x;
-        return(fwrite(&s, sizeof(unsigned int),1,ofp));
+      { 
+          s = (unsigned char) *x;
+          return(fwrite(&s, sizeof(unsigned char),1,ofp));
       }
 }
 
 intn 
-fmtint8(VOIDP x, file_type_t ft, FILE * ofp)
+fmtint8(VOIDP       x,  /* assumption: int8 is same as signed char */
+        file_type_t ft, 
+        FILE       *ofp)
 {
-    int s;
-    if(ft==DASCII)
-    return (fprintf(ofp, "%d", (int) *((signed char *) x)));
+    int8 s;
+
+    if(ft == DASCII)
+        return (fprintf(ofp, "%d", (int) *((signed char *) x)));
     else
-      {s= (int) *((signed char *) x);
-       return(fwrite(&s, sizeof(int), 1, ofp));
+      {
+          s = (int8) *((signed char *) x);
+          return(fwrite(&s, sizeof(int8), 1, ofp));
       }
 }
 
 intn 
-fmtuint8(VOIDP x, file_type_t ft, FILE * ofp)
+fmtuint8(VOIDP       x, /* assumption: uint8 is same as unsigned char */
+         file_type_t ft, 
+         FILE       *ofp)
 {
     uint8 s;
-    if(ft==DASCII)
-    return (fprintf(ofp, "%u", (unsigned) *((unsigned char *) x)));
+
+    if(ft == DASCII)
+        return (fprintf(ofp, "%u", (unsigned) *((unsigned char *) x)));
     else
-      { s= (unsigned) *((unsigned char *) x);
-        return(fwrite(&s, sizeof(uint8), 1, ofp));
+      { 
+          s = (uint8) *((unsigned char *) x);
+          return(fwrite(&s, sizeof(uint8), 1, ofp));
       } 
 }
 
 intn 
-fmtint16(VOIDP x, file_type_t ft, FILE * ofp)
+fmtint16(VOIDP       x, 
+         file_type_t ft, 
+         FILE       *ofp)
 {
-    int16       s;
+    int16 s;
 
     HDmemcpy(&s, x, sizeof(int16));
-    if(ft==DASCII)
-    return (fprintf(ofp, "%d", (int) s));
+
+    if(ft == DASCII)
+        return (fprintf(ofp, "%d", (int) s));
     else
-    return(fwrite(&s, sizeof(int), 1, ofp));
+        return(fwrite(&s, sizeof(int16), 1, ofp));
 }
 
 intn 
-fmtuint16(VOIDP x, file_type_t ft, FILE * ofp)
+fmtuint16(VOIDP       x, 
+          file_type_t ft, 
+          FILE       *ofp)
 {
     uint16      s;
 
     HDmemcpy(&s, x, sizeof(uint16));
-    if(ft==DASCII)
-    return (fprintf(ofp, "%u", (unsigned) s));
+
+    if(ft == DASCII)
+        return (fprintf(ofp, "%u", (unsigned) s));
     else
-    return(fwrite(&s, sizeof(unsigned), 1, ofp));
+        return(fwrite(&s, sizeof(uint16), 1, ofp));
 }
 
 intn 
-fmtchar(VOIDP x, file_type_t ft, FILE * ofp)
+fmtchar(VOIDP       x, 
+        file_type_t ft, 
+        FILE       *ofp)
 {
     if (isprint(*(unsigned char *) x))
       {
           putc(*((char *) x), ofp);
           return (1);
-      }		/* end if */
+      }		
     else
       {
           putc('\\', ofp);
           return (1 + fprintf(ofp, "%03o", *((uchar8 *) x)));
-      }		/* end else */
+      }		
 }
 
 intn 
-fmtuchar8(VOIDP x, file_type_t ft, FILE * ofp)
-{   unsigned int s;
-    if(ft==DASCII) 
-      return (1 + fprintf(ofp, "%o", *((uchar8 *) x)));
+fmtuchar8(VOIDP       x, /* assumption: uchar8 is same as unsigned char */
+          file_type_t ft, 
+          FILE       *ofp)
+{   
+    uchar8 s;
+
+    if(ft == DASCII) 
+        return (1 + fprintf(ofp, "%o", *((uchar8 *) x)));
     else
-      { s = 1+(*((uchar8 *) x));
-        return(fwrite(&s, sizeof(unsigned int),1, ofp));
+      { 
+          s = (uchar8) *((unsigned char *)x);
+          return(fwrite(&s, sizeof(uchar8),1, ofp));
       }
 }
 
 intn 
-fmtint(VOIDP x, file_type_t ft, FILE * ofp)
+fmtint(VOIDP       x, /* assumption: int is same as 'intn' */
+       file_type_t ft, 
+       FILE       *ofp)
 {
     intn        i;
 
     HDmemcpy(&i, x, sizeof(intn));
-    if(ft==DASCII) 
-    return (fprintf(ofp, "%d", (int) i));
+
+    if(ft == DASCII) 
+        return (fprintf(ofp, "%d", (int) i));
     else
-    return(fwrite(&i, sizeof(int), 1, ofp));
+        return(fwrite(&i, sizeof(intn), 1, ofp));
 }
 
 #define FLOAT32_EPSILON ((float32)1.0e-20)
 intn 
-fmtfloat32(VOIDP x, file_type_t ft, FILE * ofp)
+fmtfloat32(VOIDP       x, 
+           file_type_t ft, 
+           FILE       *ofp)
 {
     float32     fdata;
 
     HDmemcpy(&fdata, x, sizeof(float32));
-    if (fabs(fdata - FILL_FLOAT) <= FLOAT32_EPSILON)
-        return (fprintf(ofp, "FloatInf"));
+
+    if(ft == DASCII)
+      {
+          if (fabs(fdata - FILL_FLOAT) <= FLOAT32_EPSILON)
+              return (fprintf(ofp, "FloatInf"));
+          else
+              return (fprintf(ofp, "%f", fdata));
+      }
     else
-     {if(ft==DASCII)
-       return (fprintf(ofp, "%f", fdata));
-      else
-       {
-       return(fwrite(&fdata, sizeof(float32), 1, ofp));
-       }
-     }
+      {
+          return(fwrite(&fdata, sizeof(float32), 1, ofp));
+      }
 }
 
 intn 
-fmtint32(VOIDP x, file_type_t ft, FILE * ofp)
+fmtint32(VOIDP       x, 
+         file_type_t ft, 
+         FILE       *ofp)
 {
     int32       l;
 
     HDmemcpy(&l, x, sizeof(int32));
-    if(ft==DASCII)
-    return (fprintf(ofp, "%ld", (long) l));
+
+    if(ft == DASCII)
+        return (fprintf(ofp, "%ld", (long) l));
     else
-    return(fwrite(&l, sizeof(int32), 1, ofp));
+        return(fwrite(&l, sizeof(int32), 1, ofp));
 }
 
 intn 
-fmtuint32(VOIDP x, file_type_t ft, FILE * ofp)
+fmtuint32(VOIDP       x, 
+          file_type_t ft, 
+          FILE       *ofp)
 {
     uint32      l;
 
     HDmemcpy(&l, x, sizeof(uint32));
-    if(ft==DASCII)
-    return (fprintf(ofp, "%lu", (unsigned long) l));
+
+    if(ft == DASCII)
+        return (fprintf(ofp, "%lu", (unsigned long) l));
     else
-    return(fwrite(&l, sizeof(unsigned long), 1, ofp));
+        return(fwrite(&l, sizeof(uint32), 1, ofp));
 }
 
 intn 
-fmtshort(VOIDP x, file_type_t ft, FILE * ofp)
+fmtshort(VOIDP       x, 
+         file_type_t ft, 
+         FILE       *ofp)
 {
-    short       s;
+    short s;
 
     HDmemcpy(&s, x, sizeof(short));
-    if(ft==DASCII)
-    return (fprintf(ofp, "%d", (int) s));
+
+    if(ft == DASCII)
+        return (fprintf(ofp, "%d", (int) s));
     else
-    return(fwrite(&s, sizeof(short), 1, ofp));
+        return(fwrite(&s, sizeof(short), 1, ofp));
 }
 
 #define FLOAT64_EPSILON ((float64)1.0e-20)
 intn 
-fmtfloat64(VOIDP x, file_type_t ft, FILE * ofp)
+fmtfloat64(VOIDP       x, 
+           file_type_t ft, 
+           FILE       *ofp)
 {
     float64     d;
 
     HDmemcpy(&d, x, sizeof(float64));
-    if (fabs(d - FILL_DOUBLE) <= FLOAT64_EPSILON)
-        return (fprintf(ofp, "DoubleInf"));
+
+    if(ft == DASCII)
+      {
+          if (fabs(d - FILL_DOUBLE) <= FLOAT64_EPSILON)
+              return (fprintf(ofp, "DoubleInf"));
+          else
+             return (fprintf(ofp, "%f", d));
+      }
     else
-     {if(ft==DASCII)
-        return (fprintf(ofp, "%f", d));
-      else
-        return(fwrite(&d, sizeof(float64), 1, ofp));
-     }
+      {
+          return(fwrite(&d, sizeof(float64), 1, ofp));
+      }
 }
 
 int32 
-dumpfull(int32 nt, 
+dumpfull(int32       nt, 
          file_type_t ft, 
-         int32 cnt, 
-         VOIDP databuf, 
-         intn indent, 
-         FILE * ofp)
+         int32       cnt,     /* number of items in 'databuf' ? */
+         VOIDP       databuf, 
+         intn        indent, 
+         FILE       *ofp)
 {
     intn    i;
     VOIDP   b = NULL;
@@ -213,14 +264,19 @@ dumpfull(int32 nt,
     intn    cn;
     intn    ret_value = SUCCEED;
 
+    /* check inputs */
+    if (NULL == databuf || NULL == ofp)
+      {
+          ret_value = FAIL;
+          goto done;
+      }
+    
     switch (nt & 0xff )
       {
       case DFNT_CHAR:
-          /*  if(ft==DASCII)   */
           fmtfunct = fmtchar;
           break;
       case DFNT_UCHAR:
-          /*  if(ft==DASCII)   */
           fmtfunct = fmtuchar8;
           break;
       case DFNT_UINT8:
@@ -254,17 +310,20 @@ dumpfull(int32 nt,
           break;
       }		/* end switch */
 
+    /* assign to variables used in loop below */
     b = databuf;
-    off = DFKNTsize(nt | DFNT_NATIVE);
+    off = DFKNTsize(nt | DFNT_NATIVE); /* what is offset for data type */
     cn = indent;
 
+    /* check if were are dumping data i.e. items in buffer in 
+       ASCII or Binary mode. */
     if(ft == DASCII)
-      {
+      { /* ASCII */
           if (nt != DFNT_CHAR)
             {
-                for (i = 0; i < cnt; i++)
+                for (i = 0; i < cnt && b != NULL; i++)
                   {
-                      cn += fmtfunct(b, ft, ofp);
+                      cn += fmtfunct(b, ft, ofp); /* dump item to file */
                       b = (char *) b + off;
                       putc(' ', ofp);
                       cn++;
@@ -274,14 +333,13 @@ dumpfull(int32 nt,
                             for (cn = 0; cn < indent; cn++)
                                 putc(' ', ofp);
                         }		/* end if */
-                  }	/* end for */
-            }		/* end if */
-          else
-              /* DFNT_CHAR */
+                  }	/* end for every item in buffer */
+            }		
+          else /* DFNT_CHAR */
             {
-                for (i = 0; i < cnt; i++)
+                for (i = 0; i < cnt && b != NULL; i++)
                   {
-                      cn += fmtfunct(b, ft, ofp);
+                      cn += fmtfunct(b, ft, ofp); /* dump item to file */
                       b = (char *) b + off;
                       if (cn > 65)
                         {
@@ -289,18 +347,20 @@ dumpfull(int32 nt,
                             for (cn = 0; cn < indent; cn++)
                                 putc(' ', ofp);
                         }		/* end if */
-                  }	/* end for */
-            }		/* end else */
-          putc('\n', ofp);
-      }       /* end DASCII  */
-    else         /*  binary   */
+                  }	/* end for every item in buffer */
+            }		/* end else DFNT_CHAR */
+
+          putc('\n', ofp); /* newline */
+
+      } /* end DASCII  */
+    else /*  Binary   */
       {
-          for (i = 0; i < cnt; i++)
+          for (i = 0; i < cnt && b != NULL; i++)
             {
-                cn += fmtfunct(b, ft, ofp);
-                b = (char *) b + off;
+                cn += fmtfunct(b, ft, ofp); /* dump item to file */
+                b = (char *) b + off; /* increment by offset? */
                 cn++;
-            }
+            } /* end for all items in buffer */
       }
 
 done:
@@ -310,4 +370,4 @@ done:
     /* Normal cleanup */
 
     return ret_value;
-}
+} /* dumpfull */
