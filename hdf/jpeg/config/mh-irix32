@@ -8,7 +8,7 @@
 #
 
 ANSI2KNRFLAGS= 
-LDFLAGS= -n32
+LDFLAGS= -n32 -mips3
 LDLIBS= 
 SYSDEPMEM= jmemnobs.o
 RM = /bin/rm 

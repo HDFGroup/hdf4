@@ -128,6 +128,12 @@ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}:${UNAME
     Tek43[0-9][0-9]:UTek:*:*) # Tektronix 4300 system running UTek (BSD)
 	echo m68k-tektronix-bsd
 	exit 0 ;;
+    *:IRIX64:6.*:*)		# IRIX 64 bits OS
+	echo mips-sgi-irix${UNAME_RELEASE}
+	exit 0 ;;
+    *:IRIX:6.*:*)		# IRIX 6.x but not 64 bits OS
+	echo mips-sgi-irix6_32
+	exit 0 ;;
     *:IRIX*:*:*)
 	echo mips-sgi-irix${UNAME_RELEASE}
 	exit 0 ;;

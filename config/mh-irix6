@@ -23,13 +23,15 @@ VERSION  = 4.0
 #CC=gcc
 #CFLAGS=-ansi 
 #
-#Using ANSI compilier
+# Using ANSI compilier
 CC=cc
-CFLAGS=-ansi -s
+# Temporary turned off the -O option which causes an error in
+# the zlib compression code.
+CFLAGS=-ansi -64 -mips4 -O -s
 
 # Fortran compilier
 FC = f77
-FFLAGS = -s
+FFLAGS =-64 -mips4 -O -s
 
 # Name of archive randomizer, usually ranlib (use 'true' if non-existant)
 RANLIB = true
@@ -101,7 +103,7 @@ CFLAGS_NETCDF =
 # CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DBIG_LONGS -std1
 #
 # for IRIX6(64-bit) 
-CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DBIG_LONGS
+CPPFLAGS_HDF  = -ansi -64 -mips4 $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DBIG_LONGS
 #
 # for AIX
 # CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -D_ALL_SOURCE
@@ -109,9 +111,8 @@ CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DBIG_LONGS
 # for Sunos and Linux
 # CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DNO_STRERROR
 #
-# for IRIX6.0 (32-bit mode). If you prefer other 32 bit option like -n32, 
-#  replace '-32' below
-# CPPFLAGS_HDF  = -32 $(FMPOOL_FLAGS) -DNDEBUG -DHDF
+# for IRIX6.x (32-bit mode).
+# CPPFLAGS_HDF  = -n32 -mips3 $(FMPOOL_FLAGS) -DNDEBUG -DHDF
 #
 # normal
 #CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF
@@ -149,12 +150,12 @@ VERSION_NETCDF	= 2.3.2
 CPP_XDR		= -I/usr/include/rpc
 #CPP_XDR =
 
-# If XDR library not present then you need
+# If XDR library not present on the system then you need
+# uncomment the following and comment the one below it
 #XDR_LIBOBJS    = xdr.o xdrfloat.o xdrstdio.o xdrarray.o
 XDR_LIBOBJS     =
 
-# If XDR library not present on the system then you need
-# uncomment the following and comment the one below it
+# Location of library, sometimes the sunos requires -lsun
 LD_XDR		= 
 
 #

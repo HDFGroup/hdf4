@@ -18,30 +18,32 @@
 PACKAGE	 = HDF
 VERSION  = 4.0
 #
-# Machine/OS: SGI/IRIX 6.0 (32-bit mode)
+# Machine/OS: SGI/IRIX 6.x (32-bit mode)
 #
-# If you prefer other 32 bit option like -n32, replace '-32' in
-# the following CFLAGS and FFLAGS. See also the netCDF section
-# dealing with CPPFLAGS_HDF to change the option there also
+# This uses the -n32 and -mips3 options.
+# If you prefer other options like, you may change them in
+# the following CFLAGS and FFLAGS.
+# See also the netCDF section dealing with CPPFLAGS_HDF to
+# change the options there too.
 #
 # Compiliers:
 # For gcc version
 #CC=gcc
 #CFLAGS=-ansi 
 #
-# Using ANSI compilier for 32-bit mode
+# Using ANSI compilier
 CC=cc
-# Temporary turned off the -O option which causes an error in compression
-# test.
-# Temporary turned off -ansi since Irix6 has an error in its
-# system include files, stdio.h, if both "-n32" and "-ansi" flags
-# are used.
-#CFLAGS=-ansi -n32 -O -s
-CFLAGS=-n32 -s
+# Temporary turned off the -O option which causes an error in
+# the zlib compression code.
+# IRIX 6.1 has an error in its system include file, stdio.h,
+# that gives incorrect warning message when both "-n32" and "-ansi"
+# flags are used.
+#CFLAGS=-ansi -n32 -mips3 -O -s
+CFLAGS=-ansi -n32 -mips3 -s
 
-# Fortran compilier for 32-bit mode
+# Fortran compilier
 FC = f77
-FFLAGS = -n32 -s
+FFLAGS =-n32 -mips3 -O -s
 
 # Name of archive randomizer, usually ranlib (use 'true' if non-existant)
 RANLIB = true
@@ -113,7 +115,7 @@ CFLAGS_NETCDF =
 # CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DBIG_LONGS -std1
 #
 # for IRIX6(64-bit) 
-# CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DBIG_LONGS
+# CPPFLAGS_HDF  = -64 -mips4 $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DBIG_LONGS
 #
 # for AIX
 # CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -D_ALL_SOURCE
@@ -121,9 +123,8 @@ CFLAGS_NETCDF =
 # for Sunos and Linux
 # CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DNO_STRERROR
 #
-# for IRIX6.0 (32-bit mode). If you prefer other 32 bit option like -n32, 
-#  replace '-32' below
-CPPFLAGS_HDF  = -n32 $(FMPOOL_FLAGS) -DNDEBUG -DHDF
+# for IRIX6.x (32-bit mode).
+CPPFLAGS_HDF  = -n32 -mips3 $(FMPOOL_FLAGS) -DNDEBUG -DHDF
 #
 # normal
 #CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF
@@ -159,7 +160,7 @@ VERSION_NETCDF	= 2.3.2
 # Location of <xdr.h> if you are using the system
 # one, Else you need to comment it out
 CPP_XDR		= -I/usr/include/rpc
-#CPP_XDR
+#CPP_XDR =
 
 # If XDR library not present on the system then you need
 # uncomment the following and comment the one below it

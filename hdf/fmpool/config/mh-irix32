@@ -13,7 +13,7 @@
 #
 #Using ANSI compilier for 32-bit mode
 CC=cc
-CFLAGS=-ansi -n32
+CFLAGS=-ansi -n32 -mips3
 
 
 # -DPURIFY     -> when using purify
@@ -29,7 +29,7 @@ CFLAGS=-ansi -n32
 #AUXFLAGS= -DDEBUG
 #AUXFLAGS= 
 
-LDFLAGS= -n32
+LDFLAGS= -n32 -mips3
 LDLIBS= 
 
 # Name of archive randomizer, usually ranlib (use 'true' if non-existant)
