@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/04/28 19:36:55  dilg
-Some minor cosmetic changes.
+Revision 1.4  1992/05/07 16:37:55  dilg
+Changed output file name frm "o1" to "tstubs.hdf"
 
+ * Revision 1.3  1992/04/28  19:36:55  dilg
+ * Some minor cosmetic changes.
+ *
  * Revision 1.2  1992/04/28  19:09:29  dilg
  * Corrected incorrect expected return value for DFwrite on line 347.
  *
@@ -50,12 +53,12 @@ main()
     getchar();
 
 #if defined PC || defined VMS
-    system("del o1");
+    system("del tstubs.hdf");
 #else
-    system("rm o1");
+    system("rm tstubs.hdf");
 #endif /* PC || VMS */
     printf("\nTesting DFishdf... (should fail with error %d)\n", DFE_BADOPEN);
-    ret = DFishdf("o1");
+    ret = DFishdf("tstubs.hdf");
     if (ret == -1) {
 	printf("Success:  DFishdf failed with DFerror = %d\n", DFerror);
     } else {
@@ -65,7 +68,7 @@ main()
     }
 
     printf("\nTesting DFopen... (new file)\n");
-    dfile = DFopen("o1", DFACC_WRITE|DFACC_CREATE, 0);
+    dfile = DFopen("tstubs.hdf", DFACC_WRITE|DFACC_CREATE, 0);
     if (dfile == (DF *)NULL) {
 	printf("***ERROR %d opening file.\n", DFerror);
 	exit(1);
@@ -102,7 +105,7 @@ main()
 	printf("Success!\n");
 
     printf("\nTesting DFopen... (existing file)\n");
-    dfile = DFopen("o1", DFACC_WRITE, 0);
+    dfile = DFopen("tstubs.hdf", DFACC_WRITE, 0);
     if (dfile == (DF *)NULL) {
 	printf("***ERROR %d opening file.\n", DFerror);
 	exit(1);
