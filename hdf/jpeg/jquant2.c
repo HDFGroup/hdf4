@@ -240,7 +240,7 @@ prescan_quantize (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
 			 [GETJSAMPLE(ptr[1]) >> C1_SHIFT]
 			 [GETJSAMPLE(ptr[2]) >> C2_SHIFT];
       /* increment, check for overflow and undo increment if so. */
-      if ((int)++(*histp) <= (int)0)
+      if (++(*histp) <= 0)
 	(*histp)--;
       ptr += 3;
     }

@@ -1,7 +1,7 @@
 /*
  * jcmaster.c
  *
- * Copyright (C) 1991-1996, Thomas G. Lane.
+ * Copyright (C) 1991-1997, Thomas G. Lane.
  * This file is part of the Independent JPEG Group's software.
  * For conditions of distribution and use, see the accompanying README file.
  *
@@ -185,8 +185,20 @@ validate_script (j_compress_ptr cinfo)
     Al = scanptr->Al;
     if (cinfo->progressive_mode) {
 #ifdef C_PROGRESSIVE_SUPPORTED
+      /* The JPEG spec simply gives the ranges 0..13 for Ah and Al, but that
+       * seems wrong: the upper bound ought to depend on data precision.
+       * Perhaps they really meant 0..N+1 for N-bit precision.
+       * Here we allow 0..10 for 8-bit data; Al larger than 10 results in
+       * out-of-range reconstructed DC values during the first DC scan,
+       * which might cause problems for some decoders.
+       */
+#if BITS_IN_JSAMPLE == 8
+#define MAX_AH_AL 10
+#else
+#define MAX_AH_AL 13
+#endif
       if (Ss < 0 || Ss >= DCTSIZE2 || Se < Ss || Se >= DCTSIZE2 ||
-	  Ah < 0 || Ah > 13 || Al < 0 || Al > 13)
+	  Ah < 0 || Ah > MAX_AH_AL || Al < 0 || Al > MAX_AH_AL)
 	ERREXIT1(cinfo, JERR_BAD_PROG_SCRIPT, scanno);
       if (Ss == 0) {
 	if (Se != 0)		/* DC and AC together not OK */
@@ -318,7 +330,7 @@ per_scan_setup (j_compress_ptr cinfo)
     /* For noninterleaved scans, it is convenient to define last_row_height
      * as the number of block rows present in the last iMCU row.
      */
-    tmp = (int) ((unsigned)compptr->height_in_blocks % (unsigned)compptr->v_samp_factor);
+    tmp = (int) (compptr->height_in_blocks % compptr->v_samp_factor);
     if (tmp == 0) tmp = compptr->v_samp_factor;
     compptr->last_row_height = tmp;
     
@@ -351,10 +363,10 @@ per_scan_setup (j_compress_ptr cinfo)
       compptr->MCU_blocks = compptr->MCU_width * compptr->MCU_height;
       compptr->MCU_sample_width = compptr->MCU_width * DCTSIZE;
       /* Figure number of non-dummy blocks in last MCU column & row */
-      tmp = (int) ((unsigned)compptr->width_in_blocks % (unsigned)compptr->MCU_width);
+      tmp = (int) (compptr->width_in_blocks % compptr->MCU_width);
       if (tmp == 0) tmp = compptr->MCU_width;
       compptr->last_col_width = tmp;
-      tmp = (int) ((unsigned)compptr->height_in_blocks % (unsigned)compptr->MCU_height);
+      tmp = (int) (compptr->height_in_blocks % compptr->MCU_height);
       if (tmp == 0) tmp = compptr->MCU_height;
       compptr->last_row_height = tmp;
       /* Prepare array describing MCU composition */

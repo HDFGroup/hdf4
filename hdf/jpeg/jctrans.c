@@ -1,7 +1,7 @@
 /*
  * jctrans.c
  *
- * Copyright (C) 1995-1996, Thomas G. Lane.
+ * Copyright (C) 1995-1998, Thomas G. Lane.
  * This file is part of the Independent JPEG Group's software.
  * For conditions of distribution and use, see the accompanying README file.
  *
@@ -129,6 +129,23 @@ jpeg_copy_critical_parameters (j_decompress_ptr srcinfo,
      * instead we rely on jpeg_set_colorspace to have made a suitable choice.
      */
   }
+  /* Also copy JFIF version and resolution information, if available.
+   * Strictly speaking this isn't "critical" info, but it's nearly
+   * always appropriate to copy it if available.  In particular,
+   * if the application chooses to copy JFIF 1.02 extension markers from
+   * the source file, we need to copy the version to make sure we don't
+   * emit a file that has 1.02 extensions but a claimed version of 1.01.
+   * We will *not*, however, copy version info from mislabeled "2.01" files.
+   */
+  if (srcinfo->saw_JFIF_marker) {
+    if (srcinfo->JFIF_major_version == 1) {
+      dstinfo->JFIF_major_version = srcinfo->JFIF_major_version;
+      dstinfo->JFIF_minor_version = srcinfo->JFIF_minor_version;
+    }
+    dstinfo->density_unit = srcinfo->density_unit;
+    dstinfo->X_density = srcinfo->X_density;
+    dstinfo->Y_density = srcinfo->Y_density;
+  }
 }
 
 
@@ -170,7 +187,7 @@ transencode_master_selection (j_compress_ptr cinfo,
   /* We can now tell the memory manager to allocate virtual arrays. */
   (*cinfo->mem->realize_virt_arrays) ((j_common_ptr) cinfo);
 
-  /* Write the datastream header (SOI) immediately.
+  /* Write the datastream header (SOI, JFIF) immediately.
    * Frame and scan headers are postponed till later.
    * This lets application insert special markers after the SOI.
    */
@@ -271,15 +288,12 @@ compress_output (j_compress_ptr cinfo, JSAMPIMAGE input_buf)
   JBLOCKROW buffer_ptr;
   jpeg_component_info *compptr;
 
-  /* Shut compiler up */
-  input_buf=input_buf;
-
   /* Align the virtual buffers for the components used in this scan. */
   for (ci = 0; ci < cinfo->comps_in_scan; ci++) {
     compptr = cinfo->cur_comp_info[ci];
     buffer[ci] = (*cinfo->mem->access_virt_barray)
       ((j_common_ptr) cinfo, coef->whole_image[compptr->component_index],
-       (unsigned)coef->iMCU_row_num * (unsigned)compptr->v_samp_factor,
+       coef->iMCU_row_num * compptr->v_samp_factor,
        (JDIMENSION) compptr->v_samp_factor, FALSE);
   }
 
@@ -292,7 +306,7 @@ compress_output (j_compress_ptr cinfo, JSAMPIMAGE input_buf)
       blkn = 0;			/* index of current DCT block within MCU */
       for (ci = 0; ci < cinfo->comps_in_scan; ci++) {
 	compptr = cinfo->cur_comp_info[ci];
-	start_col = (unsigned)MCU_col_num * (unsigned)compptr->MCU_width;
+	start_col = MCU_col_num * compptr->MCU_width;
 	blockcnt = (MCU_col_num < last_MCU_col) ? compptr->MCU_width
 						: compptr->last_col_width;
 	for (yindex = 0; yindex < compptr->MCU_height; yindex++) {
