@@ -142,7 +142,11 @@ JPEGLIB=$(srcdir)/../jpeg
 FMPOOL_INC=$(srcdir)/../fmpool
 FMPOOL_SRC=$(srcdir)/../fmpool
 
-ALL_CFLAGS= $(CFLAGS) $(PABLO_FLAGS) $(FMPOOL_FLAGS) -I. $(PABLO_INCLUDE) -I$(HDFINC) -I$(JPEGINC) -I$(FMPOOL_INC)
+# ==> specify where to find the gzip zlib include files and library
+ZLIBINC=$(srcdir)/../zlib
+ZLIBLIB=$(srcdir)/../zlib
+
+ALL_CFLAGS= $(CFLAGS) $(PABLO_FLAGS) $(FMPOOL_FLAGS) -I. $(PABLO_INCLUDE) -I$(HDFINC) -I$(JPEGINC) -I$(ZLIBINC) -I$(FMPOOL_INC)
 
 LINTFLAGS=
 SHAR=shar

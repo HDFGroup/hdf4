@@ -257,4 +257,7 @@ cgzip.o: $(HDFSRC)/herr.h $(HDFSRC)/hproto.h $(HDFSRC)/vproto.h
 cgzip.o: $(HDFSRC)/hfile.h $(HDFSRC)/hcompi.h $(FRC)
 dff.c: $(HDFSRC)/dff.c
 dfff.f: $(HDFSRC)/dfff.f
-
+cdeflate.c: $(HDFSRC)/cdeflate.c $(HDFSRC)/cdeflate.h
+cdeflate.o: $(HDFSRC)/hdf.h $(HDFSRC)/hlimits.h $(HDFSRC)/hdfi.h 
+cdeflate.o: $(HDFSRC)/herr.h $(HDFSRC)/hproto.h $(HDFSRC)/vproto.h 
+cdeflate.o: $(HDFSRC)/hfile.h $(HDFSRC)/hcompi.h $(FRC)
