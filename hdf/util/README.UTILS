@@ -1,0 +1,30 @@
+
+Instructions on testing the HDF utility programs.
+
+
+hdf24to8:
+
+   Copy head.r24 in the examples/files directory.  
+
+   Execute: 
+        hdf24to8 head.r24 head8.hdf
+
+   View head8.hdf.
+
+   Not yet tested: error traps
+
+ristosds:
+
+   Copy the three HDF files storm110.hdf, storm120.hdf, and
+   storm130.hdf from the examples/files directory.
+
+   Execute:
+        ristosds storm*.hdf storm.hdf
+ 
+   Use he to compare storm*.hdf with storm.hdf:
+      In storm.hdf tag 702's element should be 38988 bytes.
+      In storm110.hdf tag 302's element should be 12th of
+         this, which is 3249.  (It is a 57x57 image.)
+      Compare the first few numbers in storm110's image
+      with the first few numbers in storm.hdf's SDS.  They
+      should be the same.
