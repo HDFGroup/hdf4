@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.10  1993/03/29 18:38:26  chouck
-Cleaned up a bunch of casting problems
+Revision 1.11  1993/03/29 18:58:30  chouck
+Made vinsertpair() public and added dummy decls to convert and JPeg
+files to prevent 'empty symbol table' messages on the Sun
 
+ * Revision 1.10  1993/03/29  18:38:26  chouck
+ * Cleaned up a bunch of casting problems
+ *
  * Revision 1.9  1993/03/29  16:50:38  koziol
  * Updated JPEG code to new JPEG 4 code.
  * Changed VSets to use Threaded-Balanced-Binary Tree for internal
@@ -67,9 +71,6 @@ PRIVATE vginstance_t *vginstance
 
 PRIVATE void vunpackvg
     PROTO((VGROUP *vg, uint8 buf[]));
-
-PRIVATE int32 vinsertpair
-    PROTO((VGROUP *vg, uint16 tag, uint16 ref));
 
 /*
 * -------------------------------------------------------------------- 

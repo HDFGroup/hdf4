@@ -1023,6 +1023,9 @@ uint32 num_elm, source_stride, dest_stride;
 
     return 0;
 }
+
+#else
+
+int howdy_sailor; /* prevent empty symbol table messages */
+
 #endif /* VMS */
-
-

@@ -6688,6 +6688,10 @@ uint32 num_elm, source_stride, dest_stride;
   return;
 }
 
+#else /* i.e. not on a cray */
+
+int howdy_sailor; /* prevent empty symbol table messages */
+
 #endif /* UNICOS */
 
 

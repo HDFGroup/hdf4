@@ -2,15 +2,19 @@
 $Header$
 
 $Log$
-Revision 1.21  1993/03/29 16:48:06  koziol
-Updated JPEG code to new JPEG 4 code.
-Changed VSets to use Threaded-Balanced-Binary Tree for internal
-	(in memory) representation.
-Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-	to use 32-bit integer keys instead of pointers.
-Backed out speedups for Cray, until I get the time to fix them.
-Fixed a bunch of bugs in the little-endian support in DFSD.
+Revision 1.22  1993/03/29 18:58:26  chouck
+Made vinsertpair() public and added dummy decls to convert and JPeg
+files to prevent 'empty symbol table' messages on the Sun
 
+ * Revision 1.21  1993/03/29  16:48:06  koziol
+ * Updated JPEG code to new JPEG 4 code.
+ * Changed VSets to use Threaded-Balanced-Binary Tree for internal
+ * 	(in memory) representation.
+ * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+ * 	to use 32-bit integer keys instead of pointers.
+ * Backed out speedups for Cray, until I get the time to fix them.
+ * Fixed a bunch of bugs in the little-endian support in DFSD.
+ *
  * Revision 1.19  1993/02/17  20:45:10  briand
  * Added the FORTRAN stub for Hnumber.
  *
@@ -1817,6 +1821,9 @@ extern void Vdetach
 
 extern int Vinsert
   PROTO((VGROUP *vg, VDATA *velt)); /* 2nd arg can also be (VGROUP *) */
+
+extern int32 vinsertpair
+    PROTO((VGROUP *vg, uint16 tag, uint16 ref));
 
 extern int Vflocate
   PROTO((VGROUP *vg, char *field));
