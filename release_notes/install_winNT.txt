@@ -22,6 +22,8 @@ instructions:
             Also copy the win32jpg.mak up into hdf\jpeg [copy win32jpg.mak ..]
         b) Change into the mfhdf\libsrc directory and copy win32cdf.h into
             netcdf.h [copy win32cdf.h netcdf.h]
+        c) Change into the hdf\test directory and create a testdir directory
+            [mkdir testdir]
 
     4) Start Visual C++ (we use v2.0) and build the following makefiles,
         in the following order:
