@@ -30,7 +30,7 @@ Supported Platforms
   Convex Exemplar(HPUX)       CC             f77              X         X
   Cray C90 (UNICOS 803.2)     CC             cf77             X         X
   CM5 (Sun Frontend)          GCC 2.6.3      f77 SC1.0        X         X
-  CM5 (Parallel I/O)          CSTAR 7.1.1    CMF 2.2.11       X         X
+  CM5 (Parallel I/O)          CSTAR 7.2      CMF 2.2.11       X         X
   IBM RS6000/AIX              CC              -               X         X
   DEC Alpha/OSF1/1 v3.0       CC 3.11         -               X         X
   DecStation/MIPSEL           CC              -
