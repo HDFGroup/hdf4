@@ -663,16 +663,21 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 
-#if !defined TEST_PC && !defined TEST_WIN
+#if !defined TEST_PC && !defined TEST_WIN && !defined unix
 #undef FAR
 #endif
 
 #include <fcntl.h>
+#ifdef unix
+#include <sys/types.h>      /* for unbuffered file I/O */
+#include <sys/stat.h>
+#else /* !unix */
 #include <sys\types.h>      /* for unbuffered file I/O */
 #include <sys\stat.h>
 #include <io.h>
-#include <malloc.h>
 #include <conio.h>          /* for debugging getch() calls */
+#endif /* unix */
+#include <malloc.h>
 #include <string.h>         /* for vaious string functions */
 #include <limits.h>         /* for UINT_MAX used in various places */
 #include <stdlib.h>

@@ -325,6 +325,12 @@ static int state_table[17][10] = {
 	ERR,	ERR
 };
 
+/* static local functions */
+static int gtoken(char *s);
+static int process( struct Options *opt);
+static int gfloat(char *infile, FILE *strm, float32 *fp32, struct Input *in);
+static int gint(char *infile, FILE *strm, int *ival, struct Input *in);
+static int isnum(char *s);
 
 /*
  * Name:
@@ -333,9 +339,7 @@ static int state_table[17][10] = {
  * Purpose:
  *	The driver for "fp2hdf".
  */
-int main(argc, argv) 
-int argc;
-char *argv[];
+int main(int argc, char *argv[]) 
 {
 	struct Options opt;
 	int i;
@@ -658,11 +662,7 @@ err:
  *	input format may either be ASCII text , 32-bit native floating point,
  *	or 64-bit native floating point.
  */
-int gfloat(infile, strm, fp32, in)
-char *infile;
-FILE *strm;
-float32 *fp32;
-struct Input *in;
+static int gfloat(char *infile, FILE *strm, float32 *fp32, struct Input *in)
 {
 	float64 fp64;
 
@@ -701,11 +701,7 @@ err:
  *	Read in a single integer value from the input stream.  The input
  *	format may either be ASCII text or a native BCD of type integer.
  */
-int gint(infile, strm, ival, in)
-char *infile;
-FILE *strm;
-int *ival;
-struct Input *in;
+static int gint(char *infile, FILE *strm, int *ival, struct Input *in)
 {
 	const char *err1 = "Unable to get 'int' value from file: %s.\n";
 
@@ -925,8 +921,7 @@ err:
  *	Return the token identifier associated with the command line
  *	argument.
  */
-int gtoken(s)
-char *s;
+static int gtoken(char *s)
 {
 	int len;
 	int token;
@@ -1322,15 +1317,15 @@ struct Input *in;
 struct Raster *im;
 {
 	int i, j, k, m;
-	int *hinc, *voff, *doff;
+	int *hinc, *voff, *doff=NULL;
 	float32 pix;
 	float32 loc;
 	float32 range;
 	float32 ratio;
-	float32 hrange, vrange, drange;
-	float32 hdelta, vdelta, ddelta;
+	float32 hrange, vrange, drange=0;
+	float32 hdelta, vdelta, ddelta=0;
 	float32 t1, t2, t3, t4, t5, t6;
-	float32 *hratio, *vratio, *dratio;
+	float32 *hratio, *vratio, *dratio=NULL;
 	float32 *pt[8];
 	unsigned char *ip = im->image;
 
@@ -1519,8 +1514,7 @@ err:
  *	integer or floating point number.  If it is, a non-zero value
  *	is returned.  A leading (-) to denote sign is acceptable.
  */
-int isnum(s)
-char *s;
+static int isnum(char *s)
 {
 	char *cp;
 	int rval = FALSE;
@@ -1780,8 +1774,7 @@ err:
  * Purpose:
  *	Process each input file.
  */
-int process(opt)
-struct Options *opt;
+static int process( struct Options *opt)
 {
 	struct Input in;
 	struct Raster im;

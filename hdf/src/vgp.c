@@ -260,7 +260,9 @@ PUBLIC VOID vtfreekey(VOIDP k)
 
 PUBLIC intn Vinitialize(HFILEID f)
 {
+#ifdef LATER
     CONSTR(FUNC,"Vinitialize");
+#endif
 
     return(Load_vfile (f));
 }
@@ -269,7 +271,9 @@ PUBLIC intn Vinitialize(HFILEID f)
 
 PUBLIC intn Vfinish (HFILEID f)
 {
+#ifdef LATER
     CONSTR(FUNC,"Vfinish");
+#endif
     
     Remove_vfile (f);
     return(SUCCEED);
@@ -321,7 +325,9 @@ PRIVATE vginstance_t * vginstance (HFILEID f, uint16 vgid)
 */
 int32 vexistvg (HFILEID f, uint16 vgid)
 {
+#ifdef LATER
     CONSTR(FUNC,"vexistvg");
+#endif
   
     if (NULL== (vginstance_t *) vginstance(f,vgid))
         return(FAIL);
@@ -356,7 +362,9 @@ void vpackvg (VGROUP *vg, uint8 buf[], int32 *size)
 {
 	register uint16 	i;
     register uint8      *bb;
+#ifdef LATER
 	CONSTR(FUNC,"vpackvg");
+#endif
 
 	bb = &buf[0];
 
@@ -415,7 +423,9 @@ PRIVATE void vunpackvg (VGROUP *vg, uint8 buf[])
     register uint8   *bb;
     register uintn   u;
     register uint16  uint16var;
+#ifdef LATER
     CONSTR(FUNC,"vunpackvg");
+#endif
     
     bb = &buf[0];
 
@@ -692,7 +702,7 @@ PUBLIC int32 Vinsert (int32 vkey, int32 insertkey)
     vginstance_t  * x;
     register uintn u;
     CONSTR(FUNC,"Vinsert");
-    uint16 newtag, newref;
+    uint16 newtag=0, newref=0;
     int32 newfid;
 
     if (!VALIDVGID(vkey))
@@ -1502,7 +1512,9 @@ PUBLIC intn Vinquire (int32 vkey, int32 *nentries, char *vgname)
 
 PUBLIC HFILEID Vopen( char *path, intn acc_mode, int16 ndds)
 {
+#ifdef LATER
 	CONSTR(FUNC,"Vopen");
+#endif
 	HFILEID  f;
 
   	f = Hopen(path, acc_mode, ndds);
@@ -1533,7 +1545,9 @@ PUBLIC HFILEID Vopen( char *path, intn acc_mode, int16 ndds)
 
 PUBLIC intn Vclose (HFILEID f)
 {
+#ifdef LATER
 	CONSTR(FUNC,"Vclose");
+#endif
 
 	Vfinish (f);
     return(Hclose (f));

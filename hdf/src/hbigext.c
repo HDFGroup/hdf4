@@ -719,8 +719,9 @@ intn HBPendaccess(accrec_t *access_rec)
 --------------------------------------------------------------------------- */
 int32 HBPcloseAID(accrec_t *access_rec)
 {
-
+#ifdef LATER
     CONSTR(FUNC,"HBPcloseAID"); /* for HERROR */
+#endif
     extinfo_t *info =          /* special information record */
        (extinfo_t *)access_rec->special_info;
 

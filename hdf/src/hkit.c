@@ -110,7 +110,9 @@ char _HUGE *HDf2cstring(_fcd fdesc, intn len)
 int HIlookup_dd(filerec_t *file_rec, uint16 look_tag, uint16 look_ref, 
                 ddblock_t **pblock, int32 *pidx)
 { 
+#ifdef LATER
     CONSTR(FUNC,"HIlookup_dd");       /* for HERROR */
+#endif
     register intn tag, ref, key, i;
     register tag_ref_list_ptr p;
     
@@ -240,7 +242,9 @@ int HIadd_hash_dd(filerec_t *file_rec, uint16 look_tag, uint16 look_ref,
 --------------------------------------------------------------------------- */
 int HIdel_hash_dd(filerec_t *file_rec, uint16 look_tag, uint16 look_ref)
 {
+#ifdef LATER
   CONSTR(FUNC,"HIdel_hash_dd");       /* for HERROR */
+#endif
   register intn tag, ref, key, i;
   register tag_ref_list_ptr p;
 

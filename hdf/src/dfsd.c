@@ -1417,17 +1417,17 @@ intn DFSDendslice(void)
 intn DFSDsetNT(int32 numbertype)
 {
     uint8 outNT;
+#ifdef LATER
     CONSTR(FUNC,"DFSDsetNT");
+#endif
 
     HEclear();
 
     outNT = (int8)(DFKisnativeNT(numbertype)? DFKgetPNSC(numbertype, DF_MT) :
                   (DFKislitendNT(numbertype) ? DFNTF_PC : DFNTF_HDFDEFAULT));
     if ((numbertype == Writesdg.numbertype) 
-        && (outNT == Writesdg.filenumsubclass))
-      {
+            && (outNT == Writesdg.filenumsubclass))
         return SUCCEED;
-      }
 
     /* Forget previous numbertype  */
     if (DFSDIclearNT((DFSsdg *)&Writesdg) < 0) 
@@ -1455,7 +1455,9 @@ intn DFSDsetNT(int32 numbertype)
 intn DFSDIclearNT(DFSsdg *sdg)
 {
     intn i;
+#ifdef LATER
     CONSTR(FUNC,"DFSDIclearNT");
+#endif
 
     HEclear();
 
@@ -1944,14 +1946,14 @@ intn DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
     DFdi elmt;
     DFdi nt;
     int32 length;
-    int32 numtype;	/* current number type */
-    int32 fileNTsize;	/* size of this NT as it is in the file */
-    int32 localNTsize;	/* size of this NT as it is in this machine */
+    int32 numtype=0;	/* current number type */
+    int32 fileNTsize=0;	/* size of this NT as it is in the file */
+    int32 localNTsize=0;	/* size of this NT as it is in this machine */
     int32 ret;
     int32 aid;
     int32 GroupID;
-    int8  fileNT;	     /* file number subclass */
-    int8  platnumsubclass;   /* platform number subclass */
+    int8  fileNT=0;	     /* file number subclass */
+    int8  platnumsubclass=0;   /* platform number subclass */
     uint8 ntstring[4];
     uint8 *isscales;
     uint8 *buf;
@@ -3188,16 +3190,16 @@ intn DFSDIsdginfo(int32 file_id)
 intn DFSDIrefresh(char *filename)
 {
       int32 file_id;
+#ifdef LATER
       CONSTR(FUNC,"DFSDIrefresh");
+#endif
 
       HEclear();
-      if (Newdata != 1 || Nextsdg) 
-        { /* if Readsdg not fresh  */
+      if (Newdata != 1 || Nextsdg) { /* if Readsdg not fresh  */
           file_id = DFSDIopen(filename, DFACC_READ); /* open/reopen file */
           if (file_id == FAIL)
               return FAIL;
-          if (DFSDIsdginfo(file_id) < 0) 
-            {      /* reads next SDG from file */
+          if (DFSDIsdginfo(file_id) < 0) {      /* reads next SDG from file */
               Hclose(file_id); 
               return FAIL;   
 		/* on error, close file and return */
@@ -3360,7 +3362,9 @@ intn DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data,
     int32 *winst;
     int32 *windims;
     int32 file_id;
+#ifdef LATER
     CONSTR(FUNC,"DFSDIgetdata");
+#endif
 
     HEclear();
 
@@ -3425,7 +3429,9 @@ intn DFSDIputdata(const char *filename, intn rank, int32 *dimsizes, VOIDP data,
 {
     intn ret;
     int32 file_id;
+#ifdef LATER
     CONSTR(FUNC,"DFSDIputdata");
+#endif
 
     HEclear();
 
@@ -3858,7 +3864,7 @@ intn DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
     int32 fileNT;        /* class of NT for the data to write */
     int32 isnative;
     int32 localNTsize;   /* size of this NT as it occurs in theis machine */
-    int32 ret;           /* return code from DFwrite */
+    int32 ret=FAIL;      /* return code from DFwrite */
     int32 i, j;          /* temporaries */
     int32 numelements;   /* number of elements to write out per row */
     int32 writesize;     /* number of bytes to write out per row */
@@ -4227,7 +4233,9 @@ DFSDsetfillvalue(VOIDP fill_value)
 {
     int32 numtype;      /* current number type  */
     uint32 localNTsize;  /* size of this NT on as it is on this machine  */
+#ifdef LATER
     CONSTR(FUNC,"DFSDsetfillvalue");
+#endif
 
     /* Clear error stack  */
     HEclear();

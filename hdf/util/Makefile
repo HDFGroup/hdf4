@@ -57,7 +57,7 @@ CFLAGS = -D$(MACHINE)
 #CFLAGS=  -g -D$(MACHINE) -ansi
 
 .c.o: he.h he_proto.h $(HDFLIB)/libdf.a
-	$(CC) -c $(CFLAGS) -I$(HDFINC) $(HDFLIB)/libdf.a $(GLLAB)  $<
+	$(CC) -c $(CFLAGS) -I$(HDFINC) $<
 #	$(CC) -c $(CFLAGS) -I$(HDFINC) $(GLLIB)  $<
 
 all: hdfed utils fp2hdf fptest

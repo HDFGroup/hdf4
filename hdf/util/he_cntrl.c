@@ -1303,7 +1303,7 @@ HE_PRED *parsePred(int argc, char *argv[])
     HE_PRED *pred;
     int predNum = -1;
     int state = 0;
-    int key;
+    int key=0;
     register int i;
     char *s;
     char *tok;

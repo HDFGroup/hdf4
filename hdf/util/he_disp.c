@@ -218,7 +218,7 @@ int rImage(int usepal)
 *  Open the window with the W command
 */
 
-    printf("\033^W;%d;%d;%d;%d;0;rseq^",xwhere,ywhere,xdim*factor,ydim*factor);
+    printf("\033^W;%d;%d;%ld;%ld;0;rseq^",xwhere,ywhere,(long)(xdim*factor),(long)(ydim*factor));
 
 /*
 *  If a palette should be used, send it with the M command.

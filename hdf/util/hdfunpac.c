@@ -62,8 +62,6 @@ int main(int argc, char *argv[])
     int32 length;
     int16 special;
 
-    CONSTR(FUNC,"main");
-
     /* Get invocation name of program */
     progname = *argv++;
     argc--;

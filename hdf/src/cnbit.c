@@ -225,7 +225,9 @@ printf("HCIcnbit_init(): 3 - coder_func.write=%p\n",info->cinfo.coder_funcs.writ
 --------------------------------------------------------------------------*/
 PRIVATE int32 HCIcnbit_decode(compinfo_t *info,int32 length,uint8 *buf)
 {
+#ifdef LATER
     CONSTR(FUNC,"HCIcnbit_decode");
+#endif
     comp_coder_nbit_info_t *nbit_info;  /* ptr to n-bit info */
     int32 orig_length;      /* original length to write */
     uint32 input_bits;      /* bits read from the file */
@@ -355,7 +357,9 @@ printf("HCInbit_decode(): i=%d, sign_bit=%d, input_bits=%x\n",i,sign_bit,input_b
 --------------------------------------------------------------------------*/
 PRIVATE int32 HCIcnbit_encode(compinfo_t *info,int32 length,uint8 *buf)
 {
+#ifdef LATER
     CONSTR(FUNC,"HCIcnbit_encode");
+#endif
     comp_coder_nbit_info_t *nbit_info;  /* ptr to n-bit info */
     int32 orig_length;      /* original length to write */
     uint32 output_bits;     /* bits to write to the file */
@@ -416,7 +420,9 @@ printf("HCIcnbit_encode(): mask->length=%d, offset=%d, mask=%x\n",mask_info->len
 --------------------------------------------------------------------------*/
 PRIVATE int32 HCIcnbit_term(compinfo_t *info)
 {
+#ifdef LATER
     CONSTR(FUNC,"HCIcnbit_term");
+#endif
 
     return(SUCCEED);
 }   /* end HCIcnbit_term() */

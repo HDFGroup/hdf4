@@ -59,7 +59,9 @@ PUBLIC int32 VHstoredata (HFILEID f, char *field, uint8 buf[], int32 n, int32 da
 {
   int32	ref;
   int32 order = 1;
+#ifdef LATER
   CONSTR(FUNC,"VHstoredata");
+#endif
   
   ref = (int32) VHstoredatam (f, field, buf, n, datatype, vsname, vsclass, order);
   return (ref);
@@ -95,7 +97,9 @@ PUBLIC int32 VHstoredatam (HFILEID f, char *field, uint8 buf[], int32  n, int32 
     int32 s;
     int32 ref;
     int32 vs;
+#ifdef LATER
     CONSTR(FUNC,"VHstoredatam");
+#endif
     
     vs = VSattach (f,-1,"w");
     if (vs == FAIL)
@@ -153,7 +157,9 @@ PUBLIC int32 VHmakegroup (HFILEID f, int32 tagarray[], int32 refarray[] , int32 
 {
     int32 ref, i, s;
     int32 vg;
+#ifdef LATER
     CONSTR(FUNC,"VHmakegroup");
+#endif
 
     vg = Vattach (f, -1, "w");
     if(vg == FAIL)

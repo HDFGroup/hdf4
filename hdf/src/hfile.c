@@ -703,7 +703,9 @@ intn Hfind(int32 file_id, uint16 search_tag, uint16 search_ref,
 --------------------------------------------------------------------------*/
 intn Hexist(int32 file_id, uint16 search_tag, uint16 search_ref)
 {
+#ifdef LATER
     CONSTR(FUNC,"Hexist");        /* for HERROR */
+#endif
     uint16 find_tag=0,find_ref=0;
     int32 find_offset,find_length;
 
@@ -2031,7 +2033,7 @@ extern CM_DEBUG;
 
 intn Hsetaccesstype(int32 access_id, uintn accesstype)
 {
-    char *FUNC="Hsetacceesstype";                /* for HERROR */
+    CONSTR(FUNC,"Hsetaccesstype");       /* for HERROR */
     accrec_t *access_rec;      /* access record */
 
     /* clear error stack and check validity of this access id */
@@ -2063,6 +2065,7 @@ printf("new access_type is %d\n", accesstype);
     /* if special elt, call special function */
     if (access_rec->special)
     	return(HXPsetaccesstype(access_rec, accesstype));
+    return(SUCCEED);
 }   /* Hsetacceesstype() */
 
 /*==========================================================================
@@ -2502,7 +2505,9 @@ uint16 HDbase_tag(uint16 tag)
 --------------------------------------------------------------------------*/
 intn Hgetlibversion(uint32 *majorv, uint32 *minorv, uint32 *releasev, char *string)
 {
+#ifdef LATER
     CONSTR(FUNC,"Hgetlibversion");
+#endif
 
     HEclear();
 
@@ -3298,7 +3303,9 @@ int32 HPgetdiskblock(filerec_t *file_rec, int32 block_size, intn moveto)
 -------------------------------------------------------------------------*/
 intn HPfreediskblock(filerec_t *file_rec, int32 block_off, int32 block_size)
 {
+#ifdef LATER
     CONSTR(FUNC,"HPfreediskblock");
+#endif
 
     /* shut compiler up */
     file_rec=file_rec; block_off=block_off; block_size=block_size;

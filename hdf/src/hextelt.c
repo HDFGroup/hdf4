@@ -859,8 +859,9 @@ intn HXPendaccess(accrec_t *access_rec)
 --------------------------------------------------------------------------- */
 int32 HXPcloseAID(accrec_t *access_rec)
 {
-
+#ifdef LATER
     CONSTR(FUNC,"HXPcloseAID"); /* for HERROR */
+#endif
     extinfo_t *info =          /* special information record */
        (extinfo_t *)access_rec->special_info;
 

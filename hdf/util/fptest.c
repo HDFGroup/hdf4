@@ -230,4 +230,6 @@ int main()
 				(void) fwrite((char *) &b64r3[k][i][j],
 				    sizeof(float64), 1, sp);
 	(void) fclose(sp);
+	return(0);
 }
+

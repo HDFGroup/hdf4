@@ -79,13 +79,10 @@ intn DFputcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
     int32 total;               /* total compressed bytes produced so far */
     int32 i;
     int32 ret=0;
-    int32 aid;
+    int32 aid=0;
 
-    if (!HDvalidfid(file_id) || !tag || !ref || xdim <= 0 || ydim <= 0 ||
-            !image) {
-       HERROR(DFE_ARGS);
-       return FAIL;
-    }
+    if(!HDvalidfid(file_id) || !tag || !ref || xdim <= 0 || ydim <= 0 || !image)
+         HRETURN_ERROR(DFE_ARGS,FAIL);
 
     switch (scheme) {
         case DFTAG_RLE:     /* RLE compression (8-bit or 24-bit(?) images */
@@ -96,10 +93,8 @@ intn DFputcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
             buffer = (uint8 *) HDgetspace((uint32)cisize);
             if (!buffer) {
                 buffer = (uint8 *) HDgetspace((uint32)crowsize);
-                if (!buffer) {
-                    HERROR(DFE_NOSPACE);
-                    return FAIL;
-                }
+                if (!buffer) 
+                    HRETURN_ERROR(DFE_NOSPACE,FAIL);
                 buftype = 2;        /* compress and write out row by row */
             }
             else    /* can hold whole image, then write */
@@ -132,7 +127,7 @@ intn DFputcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
                 else {                /* buffer too small, */
                                       /* write out what was produced */
                     if (Hwrite(aid, n, buffer) == FAIL) {
-                        ret = -1;       /* flag value */
+                        ret = FAIL;       /* flag value */
                         break;
                     }
                     out = buffer;   /* reset output pointer */
@@ -146,17 +141,13 @@ intn DFputcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
             break;
 
         case DFTAG_IMC:     /* IMCOMP compression (8-bit images) */
-            if (!palette || !newpal) { /* need palette and newpal */
-                HERROR(DFE_ARGS);
-                return FAIL;
-            }
+            if (!palette || !newpal)  /* need palette and newpal */
+                HRETURN_ERROR(DFE_ARGS,FAIL);
             cisize = xdim*ydim/4;  /* IMCOMP always cuts to 1/4 */
 
             buffer = (uint8 *) HDgetspace((uint32)cisize);
-            if (!buffer) {
-                HERROR(DFE_NOSPACE);
-                return FAIL;
-            }
+            if (!buffer) 
+                HRETURN_ERROR(DFE_NOSPACE,FAIL);
 
             DFCIimcomp(xdim, ydim, image, buffer, palette, newpal, 0);
             ret = Hputelement(file_id, tag, ref, buffer, cisize);
@@ -170,8 +161,7 @@ intn DFputcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
             break;
 
         default:                   /* unknown compression scheme */
-            HERROR(DFE_BADSCHEME);
-            return FAIL;
+            HRETURN_ERROR(DFE_BADSCHEME,FAIL);
     }
     return((intn)ret);
 }   /* end DFputcomp() */
@@ -207,24 +197,21 @@ int DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
     int32 n;
     int32 aid;
 
-    if (!HDvalidfid(file_id) || !tag || !ref || xdim <= 0 || ydim <= 0
-            || !image) {
-       HERROR(DFE_ARGS);
-       return FAIL;
-    }
+    if(!HDvalidfid(file_id) || !tag || !ref || xdim <= 0 || ydim <= 0 || !image)
+       HRETURN_ERROR(DFE_ARGS,FAIL);
+
+    /* put this call up here instead of in switch statement, to make the */
+    /* code easier to follow */
+    if(scheme==DFTAG_JPEG || scheme==DFTAG_GREYJPEG) 
+        return(DFCIunjpeg(file_id, tag, ref, (VOIDP)image, xdim, ydim, scheme));
 
     /* Only do this stuff for non-JPEG compressed images */
-    if(scheme!=DFTAG_JPEG && scheme!=DFTAG_GREYJPEG) {
-        aid = Hstartread(file_id, tag, ref);
-        if (aid == FAIL) {
-            HERROR(DFE_NOMATCH);
-            return FAIL;
-        }
-        if (Hinquire(aid, (int32*)NULL, (uint16*)NULL, (uint16*)NULL, &cisize,
-                    (int32*)NULL, (int32*)NULL, (int16*)NULL, (int16*)NULL) == FAIL) {
+    aid = Hstartread(file_id, tag, ref);
+    if (aid == FAIL) 
+        HRETURN_ERROR(DFE_NOMATCH,FAIL);
+    if (Hinquire(aid, (int32*)NULL, (uint16*)NULL, (uint16*)NULL, &cisize,
+            (int32*)NULL, (int32*)NULL, (int16*)NULL, (int16*)NULL) == FAIL) 
            return FAIL;
-        }
-      } /* end if */
 
     switch (scheme) {
         case DFTAG_RLE:
@@ -234,9 +221,8 @@ int DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
             if (!buffer) {
                 buffer = (uint8 *) HDgetspace((uint32)crowsize);
                 if (!buffer) {
-                    HERROR(DFE_NOSPACE);
                     Hendaccess(aid);
-                    return FAIL;
+                    HRETURN_ERROR(DFE_NOSPACE,FAIL);
                   } /* end if */
                 buflen = crowsize;
               } /* end if */
@@ -248,7 +234,7 @@ int DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
             if ((n=Hread(aid, buflen, in))<0) {
                 HDfreespace((VOIDP)buffer);
                 Hendaccess(aid);
-                return(-1);
+                HRETURN_ERROR(DFE_READERROR,FAIL);
               } /* end if */
             totalread = n;
             bufleft = n;
@@ -265,7 +251,7 @@ int DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
                     if ((n=Hread(aid,buflen-bufleft,(uint8 *)&in[bufleft]))<0) {
                         HDfreespace((VOIDP)buffer);
                         Hendaccess(aid);
-                        return FAIL;
+                        HRETURN_ERROR(DFE_READERROR,FAIL);
                       } /* end if */
                     totalread += n;
                     bufleft += n;
@@ -283,9 +269,8 @@ int DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
             if (!buffer) {
                 buffer = (uint8 *) HDgetspace((uint32)crowsize);
                 if (!buffer) {
-                    HERROR(DFE_NOSPACE);
                     Hendaccess(aid);
-                    return FAIL;
+                    HRETURN_ERROR(DFE_NOSPACE,FAIL);
                   } /* end if */
                 buflen = crowsize;
               } /* end if */
@@ -295,7 +280,7 @@ int DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
                 if (Hread(aid, cisize, buffer) < cisize) {
                     HDfreespace((VOIDP)buffer);
                     Hendaccess(aid);
-                    return FAIL;
+                    HRETURN_ERROR(DFE_READERROR,FAIL);
                   } /* end if */
            /* HDfreespace(buffer); */
                 Hendaccess(aid);
@@ -309,7 +294,7 @@ int DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
             if ((n=Hread(aid, buflen, in))<0) {
                 HDfreespace((VOIDP)buffer);
                 Hendaccess(aid);
-                return FAIL;
+                HRETURN_ERROR(DFE_READERROR,FAIL);
               } /* end if */
             totalread = n;
             bufleft = n;
@@ -324,7 +309,7 @@ int DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
                     if ((n=Hread(aid,buflen-bufleft,(uint8 *)&in[bufleft]))<0) {
                         HDfreespace((VOIDP)buffer);
                         Hendaccess(aid);
-                        return FAIL;
+                        HRETURN_ERROR(DFE_READERROR,FAIL);
                       } /* end if */
                     totalread += n;
                     bufleft += n;
@@ -335,15 +320,8 @@ int DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
             Hendaccess(aid);
             break;
 
-        case DFTAG_JPEG:
-        case DFTAG_GREYJPEG:
-            if(DFCIunjpeg(file_id, tag, ref, (VOIDP)image, xdim, ydim, scheme)==FAIL)
-                return(FAIL);
-            break;
-
         default:                 /* unknown scheme */
-            HERROR(DFE_ARGS);
-            return FAIL;
+            HRETURN_ERROR(DFE_ARGS,FAIL);
       } /* end switch */
 
     return SUCCEED;

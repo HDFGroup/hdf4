@@ -184,7 +184,9 @@ int32 DFKqueryNT(void)
 PUBLIC
 int DFKNTsize(int32 number_type)
 {
+#ifdef LATER
     CONSTR(FUNC,"DFKNTsize");
+#endif
 
 	switch (number_type)  {
     	    case DFNT_NUCHAR:	return(SIZE_NUCHAR);

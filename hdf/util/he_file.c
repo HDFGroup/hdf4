@@ -22,6 +22,11 @@ static char RcsId[] = "@(#)$Revision$";
 #   include descrip
 #endif
 
+/* get the prototype for the wait() func. */
+#ifdef SUN
+extern int wait(int);
+#endif /* SUN */
+
 int HEannotate(HE_CMD *cmd)
 {
     register int i;

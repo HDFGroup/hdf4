@@ -647,7 +647,7 @@ int32 DFGRIopen(const char *filename, int acc_mode)
 PRIVATE int DFGRIriginfo(int32 file_id)
 {
     int i, isfirst;
-    uint16 newref=0, newtag, gettag, getref, ref, dummy;
+    uint16 newref=0, newtag=0, gettag, getref, ref, dummy;
     struct {
         uint16 xdim;
         uint16 ydim;
@@ -1054,8 +1054,8 @@ int DFGRIaddimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
     CONSTR(FUNC,"DFGRIaddimlut");
     int32 file_id;
     uint16 wtag, wref;         /* tag of image/lut being written */
-    uint8 *newlut;
-    int32 lutsize;
+    uint8 *newlut=NULL;
+    int32 lutsize=0;
     int is8bit;
     struct {
         uint16 xdim;

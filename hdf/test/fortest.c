@@ -237,5 +237,6 @@ int main (int argc, char *argv[])
     system("delete *.hdf;*");
 #endif
   }
+  return(0);
 }
 

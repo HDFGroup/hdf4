@@ -1231,7 +1231,9 @@ int32 HLPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
 --------------------------------------------------------------------------- */
 intn HLPendaccess(accrec_t *access_rec)
 {
+#ifdef LATER
     CONSTR(FUNC,"HLPendaccess"); /* for HERROR */
+#endif
     linkinfo_t *info =         /* special information record */
        (linkinfo_t *)access_rec->special_info;
     filerec_t *file_rec =      /* file record */

@@ -589,7 +589,9 @@ RETURNS
 PUBLIC intn VSinquire (int32 vkey, int32 *nelt, int32 *interlace,
         char *fields, int32 *eltsize, char *vsname)
 {
+#ifdef LATER
     CONSTR(FUNC,"VSinquire");
+#endif
 
 	if(fields)
         VSgetfields(vkey,fields);
@@ -754,7 +756,9 @@ int32 Vfind (HFILEID f, const char *vgname)
     int32 ret_ref;
     int32 vkey;
     char  name[512];
+#ifdef LATER
     CONSTR(FUNC,"Vfind");
+#endif
     
     while ( -1L != (vgid = Vgetid(f, vgid)) ) {
         vkey = Vattach(f, vgid, "r");
@@ -794,7 +798,9 @@ int32 VSfind (HFILEID f, const char *vsname)
     int32 ret_ref;
     int32 vkey;
     char  name[512];
+#ifdef LATER
     CONSTR(FUNC,"VSfind");
+#endif
     
     while ( -1L != (vsid=VSgetid(f, vsid)) ) {
         vkey = VSattach(f,vsid,"r");
