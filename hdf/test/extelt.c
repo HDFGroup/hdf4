@@ -314,7 +314,7 @@ test_hextelt()
     ret = Hgetelement(fid, (uint16) 1000, (uint16) 5, inbuf);
     VERIFY(ret, FAIL, "Hgetelement");
 
-    ret = HXsetdir("nosuchdir:testdir");
+    ret = HXsetdir("nosuchdir|testdir");
     CHECK(ret, FAIL, "HXsetdir");
 
     MESSAGE(5, printf("Try read it again.  Should not fail this time.\n");

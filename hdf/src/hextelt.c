@@ -83,6 +83,34 @@ EXPORTED ROUTINES
 #include "hdf.h"
 #include "hfile.h"
 
+/* Directory seperator definitions relating to a path. 
+ * Note this does not provide a universal way to recognize
+ * different path name conventions and translate between them */
+#if defined (MAC) || defined (macintosh) || defined(__MWERKS__) || defined (SYMANTEC_C) 
+#define DIR_SEPC  58  /* Integer value of ':' */
+#define DIR_SEPS  ":"
+#else /* not Macintosh */
+#if defined WIN32
+/* DOS-Windows seperator */
+#define DIR_SEPC  92  /* Integer value of '\' */
+#define DIR_SEPS  "\\"
+#else 
+#if defined VMS
+/* VMS */
+#define DIR_SEPC  46  /* Integer value of '.' */
+#define DIR_SEPS  "."
+#else
+/* Unix - POSIX */
+#define DIR_SEPC  47  /* Integer value of '/' */
+#define DIR_SEPS  "/"
+#endif /* !VMS */
+#endif /* !WIN32 */
+#endif /* !Macintosh */
+
+/* directory path seperator from other directory paths */
+#define DIR_PATH_SEPC 124
+#define DIR_PATH_SEPS "|" 
+
 /* extinfo_t -- external elt information structure */
 
 typedef struct
@@ -294,9 +322,11 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     if (!info->extern_file_name)
       HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
+    /* Getting ready to write out special info struct */
     info->length_file_name = HDstrlen(extern_file_name);
     {
         uint8      *p = local_ptbuf;
+    
         INT16ENCODE(p, SPECIAL_EXT);
         INT32ENCODE(p, info->length);
         INT32ENCODE(p, info->extern_offset);
@@ -1291,14 +1321,6 @@ DESCRIPTION
 /* are calculated already.  For now, it works. */
 #define HDstrcpy3(s1, s2, s3, s4)	(HDstrcat(HDstrcat(HDstrcpy(s1, s2),s3),s4))
 
-#if defined (MAC) || defined (macintosh) || defined(__MWERKS__) || defined (SYMANTEC_C) 
-#define DIR_SEPC  58  /* Integer value */
-#define DIR_SEPS  ":"
-#else
-#define DIR_SEPC  92  /* Integer value of '\' */
-#define DIR_SEPS  "\\"
-#endif
-
 PRIVATE
 char *
 HXIbuildfilename(const char *ext_fname, const intn acc_mode)
@@ -1402,7 +1424,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 		    /* extract one extdir component to finalpath */
 		    path_len = 0;
 		    path_pt = finalpath;
-		    while (*dir_pt && *dir_pt != ':'){
+		    while (*dir_pt && *dir_pt != DIR_PATH_SEPC){
 			if (path_len >= MAX_PATH_LEN){
 			    HDfree(finalpath);
 			    HGOTO_ERROR(DFE_NOSPACE, NULL);
@@ -1410,7 +1432,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 			*path_pt++ = *dir_pt++;
 			path_len++;
 		    }
-		    if (*dir_pt == ':') dir_pt++;
+		    if (*dir_pt == DIR_PATH_SEPC) dir_pt++;
 		    *path_pt++ = DIR_SEPC;
 		    path_len++;
 
@@ -1433,7 +1455,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 		    /* extract one HDFEXTDIR component to finalpath */
 		    path_len = 0;
 		    path_pt = finalpath;
-		    while (*dir_pt && *dir_pt != ':'){
+		    while (*dir_pt && *dir_pt != DIR_PATH_SEPC){
 			if (path_len >= MAX_PATH_LEN){
 			    HDfree(finalpath);
 			    HGOTO_ERROR(DFE_NOSPACE, NULL);
@@ -1441,7 +1463,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 			*path_pt++ = *dir_pt++;
 			path_len++;
 		    }
-		    if (*dir_pt == ':') dir_pt++;
+		    if (*dir_pt == DIR_PATH_SEPC) dir_pt++;
 		    *path_pt++ = DIR_SEPC;
 		    path_len++;
 
@@ -1463,7 +1485,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 	    /* See if the file exists */
 	    if (HDstat(fname, &filestat) == 0 )
               {
-		ret_value = (HDstrcpy(finalpath, fname));
+                  ret_value = (HDstrcpy(finalpath, fname));
                 goto done;
               }
 
