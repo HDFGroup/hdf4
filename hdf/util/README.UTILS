@@ -110,4 +110,35 @@ hdfcomp
         compress format.  Run-Length Encoding (RLE) compression will result
         in modest savings - about 10% to 15% for these files.
 
+hdfed
+
+   Copy the file storm110.hdf from the examples/files directory.
+
+   Execute:
+        he storm110.hdf
+
+        Running interactively, type the following commands:
+
+                info -all
+                prev tag = 300
+                info -long
+                dump -decimal
+
+        The latter two commands should result in the following responses:
+
+         (6)    Image Dimensions              : (Tag 300)
+                Ref: 110, Offset: 3459, Length: 20 (bytes)
+
+        0000000  00000 00057 00000 00057 00106 00110 00001 00000
+        0000020  00000 00000
+        0000024
+
+        Type help and experiment.  Most of the information can be verified
+        with hdfls.  Be sure to type 'close' then 'quit' when you are finished.
+
+   CAUTION: This utility is currently using the Unix utility 'od' (octal dump)
+   to examine the contents of the HDF file.  This utility does not exist under
+   PC and Mac environments.  Also, because of the internal storage methods of
+   HDF, little-endian machines will give garbled results.
+
 
