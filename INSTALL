@@ -1,7 +1,7 @@
 
-    Installation instructions for HDF4.2r0-post0 on UNIX and MacOSX platforms
+    Installation instructions for HDF4.2r1 on UNIX and MacOSX platforms
     ====================================================================
-                          December, 2004
+                          February 2005
 
 
 CONTENTS
@@ -28,7 +28,7 @@ CONTENTS
 1. Optional SZIP compression Library
    ==================================
 
-   x HDF4.2r0 may be configured to use the SZIP compression Library.
+   x HDF4.2r1 may be configured to use the SZIP compression Library.
      For more information about the SZIP library, see
 
                http://hdf.ncsa.uiuc.edu/doc_resource/SZIP/ 
@@ -56,21 +56,23 @@ CONTENTS
 3. UNIX and MacOSX configuration and build
    =======================================
 
-   0)  The HDF4.2r0 Library was tested on the following platforms
+   0)  The HDF4.2r1 Library was tested on the following platforms
 
-       AIX 5.1 (32 and 64-bit versions)
+       AIX 5.1, 5.2 (32 and 64-bit versions)
        SunOs 5.7 (32 and 64-bit versions) 
        SunOS 5.8 (32 and 64-bit versions) 
+       SunOS 5.9 (32 and 64-bit versions) 
        HPUX 11.00
-       Linux 2.4 (Rh8,9, SuSE)
+       Linux 2.4 
        IRIX64-6.5 (32 and 64-bit versions)
        MacOSX
-       Crays SV1 and T3E
+       Crays SV1 and T90
        True64 (OSF1 V5.1)
        Windows 2000 and XP
        FeeBSD
        IA32 and IA64
        Altix
+       AMD Opteron
 
        For more information, see the release_notes/RELEASE.txt file, "Platforms
        tested" section.
@@ -79,13 +81,13 @@ CONTENTS
  
    1)  Make sure that the ZLIB and JPEG Libraries are installed on your
        system.
-   2)  Optional: install the SZIP Library. 
-   3)  Extract the source from the hdf4.2r0.tar file and change
-       directory to hdf4.2r0
+   2)  Optional: install the SZIP version 2.0 Library. 
+   3)  Extract the source from the hdf4.2r1.tar file and change
+       directory to hdf4.2r1
 
    To Configure:
 
-   4)  Use the configure command in the top level HDF4 directory hdf4.2r0
+   4)  Use the configure command in the top level HDF4 directory hdf4.2r1
 
        ./configure --with-zlib=/path_to_ZLIB_install_directory 
                    --with-jpeg=/path_to_JPEG_install_directory 
@@ -128,11 +130,11 @@ CONTENTS
         environment variables that have an affect on building the
         library.
 
-    9)  You may build HDF4 in a directory other than hdf4.2r0 by
+    9)  You may build HDF4 in a directory other than hdf4.2r1 by
         using the "srcdir" option. Simply create a build directory and
         type:
 
-        <path_to_hdf4.2r0>/configure ...
+        <path_to_hdf4.2r1>/configure ...
 
         where "..." are your configuration options.
  
