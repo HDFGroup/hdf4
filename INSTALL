@@ -76,36 +76,32 @@
 
   Platform(OS)                    C-Compiler       Fortran-Compiler   
   ------------                    ----------       ---------------- 
-  Sun4(SunOS 4.1.4)               GCC 2.6.3        f77             
+  Sun4(SunOS 4.1.4)               GCC 2.6.3        f77 SC1.0            
   Sun4(Solaris 2.5)               CC SC4.0         f77 SC4.0            
   SGI-Indy(IRIX5.3)               CC 3.19          f77, g77 0.5.19
   SGI-PowerChallenge(IRIX6.2_n32) CC 7.0           f77 7.0  
   SGI-PowerChallenge(IRIX6.2_64)  CC 7.0           f77 7.0   
   SGI-Origin(IRIX6.4_n32)         CC 7.1           f77 7.1      
   SGI-Origin(IRIX6.4_64)          CC 7.1           f77 7.1     
-  HP9000/735(HP-UX 9.03)          CC A.09.77       f77 09.16  
-  HP9000/770(HP-UX B.10.10)       CC A.10.30       f77       
+  HP9000/735(HP-UX 9.03)          CC A.09.84       f77 09.16  
+  HP9000/755(HP-UX B.10.20)       CC A.10.32.03    f77       
   Exemplar(HP-UX A.09.03)         CC 6.5           fc 9.5        
   Cray T90
    CFP  (UNICOS  9.0.2ez u90.127) CC 5.0.5.0       f90 3.0.2.0.2
    IEEE (UNICOS 10.0.0br d10.21 ) CC 5.0.5.0       f90 3.0.2.0.2
   Cray C90 (UNICOS 803.2)           -                -        
-  Cray YMP (UNICOS 9.0.2asC cri.3)  -                -           
-  IBM RS6000/AIX (4.1)              -                -    
-  IBM SP2 (single node, v4.1)     XLC 3.1.4.0      f77 3.2.4.2       
+  IBM SP2 (single node, v4.2.1)   XLC 3.1.4.0      f77 4.1.0.6       
   DEC Alpha/Digital Unix v3.2     CC               f77              
-  DEC Alpha/OpenVMS AXP v6.2      DECC 5.3         DEC FORTRAN 6.3  
-  VAX OpenVMS v6.2                DECC 5.3         DEC FORTRAN 6.3  
+  DEC Alpha/OpenVMS AXP v6.2        -                -  
+  VAX OpenVMS v6.2                  -                - 
   IBM PC - Intel Pentium
        Solarisx86 (2.5)           GCC 2.7.2.1        -                
        Linux(a.out) (1.2.4)       GCC              FORTRAN compiler 2.6.2     
                                                    (FORTRAN to C converter)
-       Linux(elf)  (2.0.27)       GCC 2.7.2.1        -               
        FreeBSD (2.2)              GCC 2.6.3        f77             
-
-  PowerPC(Mac-OS-7.6)             Codewarrior 11     -              
+  PowerPC(Mac-OS-7.6)               -                -              
   68k-far/4i/8d(Mac-OS-7.6)         -                -           
-  Windows NT/95                   Visual C++ 4.2     -             
+  Windows NT/95                     -                -             
   T3E (unicosmk 2.0.2.16)         CC 6.0.2.0       f90 3.0.2.0.2
 
 
