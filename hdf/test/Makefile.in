@@ -224,7 +224,7 @@ JPEGINC=$(srcdir)/../jpeg
 
 MANIFEST = $(DISTFILES)
 
-DISTFILES = Makefile.in bitio.dat litend.dat nbit.dat win32tst.mak \
+DISTFILES = Makefile.in bitio.dat litend.dat nbit.dat tmgr.dat win32tst.mak \
 	$(SRCS) $(FSRCS) $(HDRS)
 
 HDRS= tproto.h tutils.h
