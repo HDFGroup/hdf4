@@ -59,4 +59,7 @@ $ hdp dumpgr grtdfui83.hdf
 $ hdp dumpgr grtdfui84.hdf
 $ hdp dumpgr grtdfui162.hdf
 $ hdp dumpgr grtdfi322.hdf
+$ hdp dumpgr -p image_with_palette.hdf
+$ hdp dumpgr -p -h image_with_palette.hdf
+$ hdp dumpgr -r 2,4 -p -d image_with_palette.hdf
 $ exit
