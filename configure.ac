@@ -48,6 +48,35 @@ AC_MSG_RESULT([done])
 
 AC_CANONICAL_HOST
 
+dnl Some platforms have broken tr, basename, and/or xargs programs. Check
+dnl that it actually does what it's supposed to do. Catch this early
+dnl since configure relies upon tr heavily and there's no use continuing
+dnl if it's broken.
+dnl
+AC_MSG_CHECKING([if tr works])
+TR_TEST="`echo Test | tr 'a-z,' 'A-Z '`"
+if test $TR_TEST != "TEST"; then
+  AC_MSG_ERROR([tr program doesn't work])
+else
+  AC_MSG_RESULT([yes])
+fi
+
+AC_MSG_CHECKING([if basename works])
+BASENAME_TEST="`basename /foo/bar/baz/qux/basename_works`"
+if test $BASENAME_TEST != "basename_works"; then
+  AC_MSG_ERROR([basename program doesn't work])
+else
+  AC_MSG_RESULT([yes])
+fi
+
+AC_MSG_CHECKING([if xargs works])
+XARGS_TEST="`echo /foo/bar/baz/qux/xargs_works | xargs basename`"
+if test $XARGS_TEST != "xargs_works"; then
+  AC_MSG_ERROR([xargs program doesn't work])
+else
+  AC_MSG_RESULT([yes])
+fi
+
 dnl Source any special files that we need. These files normally aren't
 dnl present but can be used by the maintainers to fine tune things like
 dnl turning on debug or profiling flags for the compiler. The search order
@@ -97,6 +126,9 @@ for f in $host_cpu-$host_vendor-$host_os        \
   AC_MSG_RESULT([no])
 done
 if test "X$host_config" != "Xnone"; then
+  CC_BASENAME="`echo $CC | cut -f1 -d' ' | xargs basename 2>/dev/null`"
+  F77_BASENAME="`echo $F77 | cut -f1 -d' ' | xargs basename 2>/dev/null`"
+  CXX_BASENAME="`echo $CXX | cut -f1 -d' ' | xargs basename 2>/dev/null`"
   . $host_config
 fi
 

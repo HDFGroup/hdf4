@@ -1820,6 +1820,42 @@ host_os=`echo $ac_cv_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 
 
 
+echo "$as_me:$LINENO: checking if tr works" >&5
+echo $ECHO_N "checking if tr works... $ECHO_C" >&6
+TR_TEST="`echo Test | tr 'a-z,' 'A-Z '`"
+if test $TR_TEST != "TEST"; then
+  { { echo "$as_me:$LINENO: error: tr program doesn't work" >&5
+echo "$as_me: error: tr program doesn't work" >&2;}
+   { (exit 1); exit 1; }; }
+else
+  echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+fi
+
+echo "$as_me:$LINENO: checking if basename works" >&5
+echo $ECHO_N "checking if basename works... $ECHO_C" >&6
+BASENAME_TEST="`basename /foo/bar/baz/qux/basename_works`"
+if test $BASENAME_TEST != "basename_works"; then
+  { { echo "$as_me:$LINENO: error: basename program doesn't work" >&5
+echo "$as_me: error: basename program doesn't work" >&2;}
+   { (exit 1); exit 1; }; }
+else
+  echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+fi
+
+echo "$as_me:$LINENO: checking if xargs works" >&5
+echo $ECHO_N "checking if xargs works... $ECHO_C" >&6
+XARGS_TEST="`echo /foo/bar/baz/qux/xargs_works | xargs basename`"
+if test $XARGS_TEST != "xargs_works"; then
+  { { echo "$as_me:$LINENO: error: xargs program doesn't work" >&5
+echo "$as_me: error: xargs program doesn't work" >&2;}
+   { (exit 1); exit 1; }; }
+else
+  echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+fi
+
 case "$host_os" in
   aix4.*)       host_os_novers="aix4.x"     ;;
   aix5.*)       host_os_novers="aix5.x"     ;;
@@ -1856,6 +1892,9 @@ echo "${ECHO_T}found" >&6
 echo "${ECHO_T}no" >&6
 done
 if test "X$host_config" != "Xnone"; then
+  CC_BASENAME="`echo $CC | cut -f1 -d' ' | xargs basename 2>/dev/null`"
+  F77_BASENAME="`echo $F77 | cut -f1 -d' ' | xargs basename 2>/dev/null`"
+  CXX_BASENAME="`echo $CXX | cut -f1 -d' ' | xargs basename 2>/dev/null`"
   . $host_config
 fi
 
@@ -3683,7 +3722,7 @@ fi
 
 
 # Provide some information about the compiler.
-echo "$as_me:3686:" \
+echo "$as_me:3725:" \
      "checking for Fortran 77 compiler version" >&5
 ac_compiler=`set X $ac_compile; echo $2`
 { (eval echo "$as_me:$LINENO: \"$ac_compiler --version </dev/null >&5\"") >&5
