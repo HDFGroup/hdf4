@@ -22,8 +22,11 @@
 #define XSIZE	5
 #define YSIZE   6
 #define ZSIZE   4
+/* Added new function for character and byte so we will not overflow; pgcc
+   compiler screamed at VF macro */
+#define VFC(w)  (1000*w[0]+100*w[1]+10*w[2]+w[3])%64 + 48
 /* Any function that maps dimension values 1-1 to values is OK here */
-#define VF(w)  1000*w[0]+100*w[1]+10*w[2]+w[3]
+#define VF(w)  (1000*w[0]+100*w[1]+10*w[2]+w[3])
 #define NVARS   6		/* number of variables */
 
 
@@ -40,6 +43,8 @@ val_stuff(type, v, ii, val)	/* v[ii] = val */
      long val;			/* value to store */
 {
     static char pname[] = "val_stuff";
+#ifdef WRONG_for_PGCC /* This way caused a lot of problems for PGI CC compiler
+                         EIP 2004/12/15 */
     union gp {
 	char cp[1];
 	short sp[1];
@@ -68,6 +73,26 @@ val_stuff(type, v, ii, val)	/* v[ii] = val */
 	break;
     default:
 	error("%s: bad type, test program error", pname);
+#endif /*WRONG_for_PGCC*/
+    switch (type) {
+    case NC_BYTE:
+    case NC_CHAR:
+	((char *)v)[ii] = (char) val;
+	break;
+    case NC_SHORT:
+        ((short *)v)[ii] = (short)val;
+	break;
+    case NC_LONG:
+	((long *)v)[ii] = (nclong)val;
+	break;
+    case NC_FLOAT:
+        ((float *)v)[ii] = (float)val;
+	break;
+    case NC_DOUBLE:
+	((double *)v)[ii] = (double)val;
+	break;
+    default:
+	error("%s: bad type, test program error", pname);
     }
 }
 
@@ -88,6 +113,8 @@ val_diff(type, v, ii, val)	/* v[ii] != val */
      long val;			/* value to compare with */
 {
     static char pname[] = "val_diff";
+#ifdef WRONG_for_PGCC /* This way caused a lot of problems for PGI CC compiler
+                         EIP 2004/12/15 */
     union gp {
 	char cp[1];
 	short sp[1];
@@ -109,6 +136,22 @@ val_diff(type, v, ii, val)	/* v[ii] != val */
 	return (gp->fp[ii] != (float) val);
       case NC_DOUBLE:
 	return (gp->dp[ii] != (double) val);
+      default:
+	error("%s: bad type, test program error", pname);
+	return (-1);
+#endif /*WRONG_for_PGCC*/
+    switch (type) {
+      case NC_BYTE:
+      case NC_CHAR:
+	return (((char*)v)[ii] != (char) val);
+      case NC_SHORT:
+	return (((short*)v)[ii] != (short) val);
+      case NC_LONG:
+	return (((nclong*)v)[ii] != (nclong) val);
+      case NC_FLOAT:
+	return (((float*)v)[ii] != (float) val);
+      case NC_DOUBLE:
+	return (((double*)v)[ii] != (double) val);
       default:
 	error("%s: bad type, test program error", pname);
 	return (-1);
@@ -193,9 +236,8 @@ test_slabs(cdfid)
     }
 
     for (iv = 0; iv < NVARS; iv++) { /* test each type of variable */
-
+        
 	v = emalloc(WSIZE*XSIZE*YSIZE*ZSIZE * nctypelen(va[iv].type));
-
 	/* fill it with values using a function of dimension indices */
 	ii = 0;
 	for (iw=0; iw < WSIZE; iw++) {
@@ -207,13 +249,16 @@ test_slabs(cdfid)
 		    for (iz=0; iz < ZSIZE; iz++) {
 			corner[3] = iz;
 			/* v[ii++] = VF(corner); */
-			val_stuff(va[iv].type, v, ii, VF(corner));
+                        if (va[iv].type == NC_BYTE || va[iv].type == NC_CHAR) 
+			val_stuff(va[iv].type, v, ii, VFC(corner));
+                        else
+                        val_stuff(va[iv].type, v, ii, VF(corner));
 			ii++;
 		    }
 		}
 	    }
 	}
-	
+ 	
 	for (idim = 0; idim < NDIMS; idim++) {
 	    corner[idim] = 0;
 	    edge[idim] = dims[idim].size;
@@ -242,11 +287,22 @@ test_slabs(cdfid)
 	    nerrs++;
 	}
 	/* if (v[0] != VF(point)) */
+        if (va[iv].type == NC_BYTE || va[iv].type == NC_CHAR) {
+
+	if (val_diff(va[iv].type, v, 0, VFC(point))) {
+	    error("%s: ncvarget got wrong value for point", pname);
+	    nerrs++;
+        }
+        }
+        else
+        {
 	if (val_diff(va[iv].type, v, 0, VF(point))) {
 	    error("%s: ncvarget got wrong value for point", pname);
 	    nerrs++;
 	}
-	
+        }
+	 /*endif NC_BYTE || NC_CHAR */
+                
 	/* get an interior vector in each direction */
 	for (idim=0; idim < NDIMS; idim++) {
 	    for (jdim=0; jdim < NDIMS; jdim++) {
@@ -263,10 +319,19 @@ test_slabs(cdfid)
 	    for (ii=corner[idim]; ii <= edge[idim]; ii++) {
 		point[idim] = ii;
 		/* if (v[ii-1] != VF(point)) */
+        if (va[iv].type == NC_BYTE || va[iv].type == NC_CHAR){ 
+		if (val_diff(va[iv].type, v, ii-1, VFC(point))) {
+		    error("%s: ncvarget got wrong value for vector", pname);
+		    nerrs++;
+		}
+                }
+        else
+                {
 		if (val_diff(va[iv].type, v, ii-1, VF(point))) {
 		    error("%s: ncvarget got wrong value for vector", pname);
 		    nerrs++;
 		}
+                }
 	    }
 	}
 
@@ -291,6 +356,20 @@ test_slabs(cdfid)
 			point[idim] = ii;
 			point[jdim] = jj;
 			/* if (v[(ii-1)*edge[jdim]+jj-1] != VF(point)) { */
+        if (va[iv].type == NC_BYTE || va[iv].type == NC_CHAR) {
+			if (val_diff(va[iv].type, v,
+				     (ii-1)*(int)edge[jdim]+jj-1, VFC(point))) {
+			    error("%s: ncvarget got wrong value in plane", pname);
+			    error("idim=%d,jdim=%d,ii=%d,jj=%d",
+				  idim,
+				  jdim,
+				  ii,
+				  jj);
+			    nerrs++;
+			}
+                        }
+         else
+                        {
 			if (val_diff(va[iv].type, v,
 				     (ii-1)*(int)edge[jdim]+jj-1, VF(point))) {
 			    error("%s: ncvarget got wrong value in plane", pname);
@@ -301,6 +380,7 @@ test_slabs(cdfid)
 				  jj);
 			    nerrs++;
 			}
+                        }
 		    }
 		}
 	    }
@@ -333,6 +413,23 @@ test_slabs(cdfid)
 				point[kdim] = kk;
 				/* if (v[((ii-1)*edge[jdim]+jj-1)*
 				   edge[kdim]+kk-1] != VF(point)) { */
+        if (va[iv].type == NC_BYTE || va[iv].type == NC_CHAR) {
+				if (val_diff(va[iv].type,v,
+					     ((ii-1)*(int)edge[jdim]+jj-1)*
+					     (int)edge[kdim]+kk-1,VFC(point))) {
+				    error("%s: ncvarget got wrong value in cube", pname);
+				    error("idim=%d,jdim=%d,kdim=%d,ii=%d,jj=%d,kk=%d",
+					  idim,
+					  jdim,
+					  kdim,
+					  ii,
+					  jj,
+					  kk);
+				    nerrs++;
+				}
+                                }
+         else
+                                {
 				if (val_diff(va[iv].type,v,
 					     ((ii-1)*(int)edge[jdim]+jj-1)*
 					     (int)edge[kdim]+kk-1,VF(point))) {
@@ -346,6 +443,7 @@ test_slabs(cdfid)
 					  kk);
 				    nerrs++;
 				}
+                                }
 			    }
 			}
 		    }
@@ -353,7 +451,7 @@ test_slabs(cdfid)
 	    }
 	}
 	Free((char *)v);
-    }
+   } 
     return nerrs;
 }
 
