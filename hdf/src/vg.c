@@ -812,32 +812,30 @@ VSinquire(int32 vkey,       /* IN: vdata key */
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* hmm....we seem to make an attempt for each value
-       and continute to next even in the case of failure? */
     if (fields) 
       { /* we assume 'fields' space has been pre-allocated by user? */
         status = VSgetfields(vkey, fields);
-        ret_value = (status == FAIL)? FAIL: ret_value;
+        if (status == FAIL) HGOTO_DONE( FAIL );
       }
-    if (nelt)   
+    if (nelt)
       {
         *nelt = VSelts(vkey);
-        ret_value = (*nelt == FAIL)? FAIL: ret_value;
+        if (*nelt == FAIL) HGOTO_DONE( FAIL );
       }
     if (interlace)  
       {
         *interlace = VSgetinterlace(vkey);
-        ret_value = (*interlace == FAIL)? FAIL: ret_value;
+        if (*interlace == FAIL) HGOTO_DONE( FAIL );
       }
-    if (eltsize) 
+    if (eltsize)
       {
         *eltsize = VSsizeof(vkey, fields);
-        ret_value = (*eltsize == FAIL)? FAIL: ret_value;
+        if (*eltsize == FAIL) HGOTO_DONE( FAIL );
       }
     if (vsname)  
       { /* we assume 'vsname' space as been pre-allocated by user? */
         status = VSgetname(vkey, vsname);
-        ret_value = (status == FAIL)? FAIL: ret_value;
+        if (status == FAIL) HGOTO_DONE( FAIL );
       }
 
 done:
