@@ -14,6 +14,9 @@
 
 @SET_MAKE@
 
+#############################################################################
+#############################################################################
+
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
@@ -49,7 +52,7 @@ CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
-CPPFLAGS = @CPPFLAGS@
+CPPFLAGS = "@CPPFLAGS@ $(INCLUDES) $(DEFINES)"
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
@@ -93,7 +96,6 @@ RANLIB = @RANLIB@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
-SWAP = @SWAP@
 TBL = @TBL@
 VERSION = @VERSION@
 YACC = @YACC@
@@ -136,23 +138,33 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-bin_PROGRAMS = ncgen
-man1_MANS = ncgen.1
 
-INCLUDES = -I${top_srcdir}/hdf/src        \
-         -I${top_srcdir}/mfhdf/libsrc   \
-         -I${top_srcdir}/mfhdf/port     \
+INCLUDES = -I$(top_srcdir)/hdf/src        \
+         -I$(top_srcdir)/mfhdf/libsrc   \
+         -I$(top_srcdir)/mfhdf/port     \
          -I../libsrc
 
 DEFINES = -DNDEBUG -DHDF
 
+
+#############################################################################
+#############################################################################
+bin_PROGRAMS = ncgen
+
 ncgen_SOURCES = close.c escapes.c generate.c genlib.c getfill.c init.c      \
                 load.c main.c ncgentab.c
 
-ncgen_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
-ncgen_LDADD = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a @LIBS@
-ncgen_DEPENPENDENCIES = ${top_builddir}/hdf/src/libdf.a ../libsrc/libmfhdf.a
+ncgen_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
+ncgen_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
+
+#############################################################################
+#############################################################################
+man1_MANS = ncgen.1
+
+
+#############################################################################
+#############################################################################
 NCDUMP = ../ncdump/ncdump
 subdir = mfhdf/ncgen
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -161,27 +173,22 @@ CONFIG_CLEAN_FILES =
 bin_PROGRAMS = ncgen$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
-am_ncgen_OBJECTS = ncgen-close.$(OBJEXT) ncgen-escapes.$(OBJEXT) \
-	ncgen-generate.$(OBJEXT) ncgen-genlib.$(OBJEXT) \
-	ncgen-getfill.$(OBJEXT) ncgen-init.$(OBJEXT) \
-	ncgen-load.$(OBJEXT) ncgen-main.$(OBJEXT) \
-	ncgen-ncgentab.$(OBJEXT)
+am_ncgen_OBJECTS = close.$(OBJEXT) escapes.$(OBJEXT) generate.$(OBJEXT) \
+	genlib.$(OBJEXT) getfill.$(OBJEXT) init.$(OBJEXT) \
+	load.$(OBJEXT) main.$(OBJEXT) ncgentab.$(OBJEXT)
 ncgen_OBJECTS = $(am_ncgen_OBJECTS)
 ncgen_DEPENDENCIES = ../libsrc/libmfhdf.a \
-	${top_builddir}/hdf/src/libdf.a
+	$(top_builddir)/hdf/src/libdf.a
 ncgen_LDFLAGS =
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir)
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/ncgen-close.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/ncgen-escapes.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/ncgen-generate.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/ncgen-genlib.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/ncgen-getfill.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/ncgen-init.Po ./$(DEPDIR)/ncgen-load.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/ncgen-main.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/ncgen-ncgentab.Po
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/close.Po ./$(DEPDIR)/escapes.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/generate.Po ./$(DEPDIR)/genlib.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/getfill.Po ./$(DEPDIR)/init.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/load.Po ./$(DEPDIR)/main.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/ncgentab.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -236,15 +243,15 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ncgen-close.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ncgen-escapes.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ncgen-generate.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ncgen-genlib.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ncgen-getfill.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ncgen-init.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ncgen-load.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ncgen-main.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ncgen-ncgentab.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/close.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/escapes.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/generate.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/genlib.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getfill.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/init.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/load.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ncgentab.Po@am__quote@
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
@@ -270,204 +277,6 @@ distclean-depend:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `if test -f '$<'; then $(CYGPATH_W) '$<'; else $(CYGPATH_W) '$(srcdir)/$<'; fi`
-
-ncgen-close.o: close.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ncgen-close.o -MD -MP -MF "$(DEPDIR)/ncgen-close.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o ncgen-close.o `test -f 'close.c' || echo '$(srcdir)/'`close.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ncgen-close.Tpo" "$(DEPDIR)/ncgen-close.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ncgen-close.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='close.c' object='ncgen-close.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ncgen-close.Po' tmpdepfile='$(DEPDIR)/ncgen-close.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ncgen-close.o `test -f 'close.c' || echo '$(srcdir)/'`close.c
-
-ncgen-close.obj: close.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ncgen-close.obj -MD -MP -MF "$(DEPDIR)/ncgen-close.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o ncgen-close.obj `if test -f 'close.c'; then $(CYGPATH_W) 'close.c'; else $(CYGPATH_W) '$(srcdir)/close.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ncgen-close.Tpo" "$(DEPDIR)/ncgen-close.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ncgen-close.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='close.c' object='ncgen-close.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ncgen-close.Po' tmpdepfile='$(DEPDIR)/ncgen-close.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ncgen-close.obj `if test -f 'close.c'; then $(CYGPATH_W) 'close.c'; else $(CYGPATH_W) '$(srcdir)/close.c'; fi`
-
-ncgen-escapes.o: escapes.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ncgen-escapes.o -MD -MP -MF "$(DEPDIR)/ncgen-escapes.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o ncgen-escapes.o `test -f 'escapes.c' || echo '$(srcdir)/'`escapes.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ncgen-escapes.Tpo" "$(DEPDIR)/ncgen-escapes.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ncgen-escapes.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='escapes.c' object='ncgen-escapes.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ncgen-escapes.Po' tmpdepfile='$(DEPDIR)/ncgen-escapes.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ncgen-escapes.o `test -f 'escapes.c' || echo '$(srcdir)/'`escapes.c
-
-ncgen-escapes.obj: escapes.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ncgen-escapes.obj -MD -MP -MF "$(DEPDIR)/ncgen-escapes.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o ncgen-escapes.obj `if test -f 'escapes.c'; then $(CYGPATH_W) 'escapes.c'; else $(CYGPATH_W) '$(srcdir)/escapes.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ncgen-escapes.Tpo" "$(DEPDIR)/ncgen-escapes.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ncgen-escapes.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='escapes.c' object='ncgen-escapes.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ncgen-escapes.Po' tmpdepfile='$(DEPDIR)/ncgen-escapes.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ncgen-escapes.obj `if test -f 'escapes.c'; then $(CYGPATH_W) 'escapes.c'; else $(CYGPATH_W) '$(srcdir)/escapes.c'; fi`
-
-ncgen-generate.o: generate.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ncgen-generate.o -MD -MP -MF "$(DEPDIR)/ncgen-generate.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o ncgen-generate.o `test -f 'generate.c' || echo '$(srcdir)/'`generate.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ncgen-generate.Tpo" "$(DEPDIR)/ncgen-generate.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ncgen-generate.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='generate.c' object='ncgen-generate.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ncgen-generate.Po' tmpdepfile='$(DEPDIR)/ncgen-generate.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ncgen-generate.o `test -f 'generate.c' || echo '$(srcdir)/'`generate.c
-
-ncgen-generate.obj: generate.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ncgen-generate.obj -MD -MP -MF "$(DEPDIR)/ncgen-generate.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o ncgen-generate.obj `if test -f 'generate.c'; then $(CYGPATH_W) 'generate.c'; else $(CYGPATH_W) '$(srcdir)/generate.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ncgen-generate.Tpo" "$(DEPDIR)/ncgen-generate.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ncgen-generate.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='generate.c' object='ncgen-generate.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ncgen-generate.Po' tmpdepfile='$(DEPDIR)/ncgen-generate.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ncgen-generate.obj `if test -f 'generate.c'; then $(CYGPATH_W) 'generate.c'; else $(CYGPATH_W) '$(srcdir)/generate.c'; fi`
-
-ncgen-genlib.o: genlib.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ncgen-genlib.o -MD -MP -MF "$(DEPDIR)/ncgen-genlib.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o ncgen-genlib.o `test -f 'genlib.c' || echo '$(srcdir)/'`genlib.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ncgen-genlib.Tpo" "$(DEPDIR)/ncgen-genlib.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ncgen-genlib.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='genlib.c' object='ncgen-genlib.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ncgen-genlib.Po' tmpdepfile='$(DEPDIR)/ncgen-genlib.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ncgen-genlib.o `test -f 'genlib.c' || echo '$(srcdir)/'`genlib.c
-
-ncgen-genlib.obj: genlib.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ncgen-genlib.obj -MD -MP -MF "$(DEPDIR)/ncgen-genlib.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o ncgen-genlib.obj `if test -f 'genlib.c'; then $(CYGPATH_W) 'genlib.c'; else $(CYGPATH_W) '$(srcdir)/genlib.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ncgen-genlib.Tpo" "$(DEPDIR)/ncgen-genlib.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ncgen-genlib.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='genlib.c' object='ncgen-genlib.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ncgen-genlib.Po' tmpdepfile='$(DEPDIR)/ncgen-genlib.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ncgen-genlib.obj `if test -f 'genlib.c'; then $(CYGPATH_W) 'genlib.c'; else $(CYGPATH_W) '$(srcdir)/genlib.c'; fi`
-
-ncgen-getfill.o: getfill.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ncgen-getfill.o -MD -MP -MF "$(DEPDIR)/ncgen-getfill.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o ncgen-getfill.o `test -f 'getfill.c' || echo '$(srcdir)/'`getfill.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ncgen-getfill.Tpo" "$(DEPDIR)/ncgen-getfill.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ncgen-getfill.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='getfill.c' object='ncgen-getfill.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ncgen-getfill.Po' tmpdepfile='$(DEPDIR)/ncgen-getfill.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ncgen-getfill.o `test -f 'getfill.c' || echo '$(srcdir)/'`getfill.c
-
-ncgen-getfill.obj: getfill.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ncgen-getfill.obj -MD -MP -MF "$(DEPDIR)/ncgen-getfill.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o ncgen-getfill.obj `if test -f 'getfill.c'; then $(CYGPATH_W) 'getfill.c'; else $(CYGPATH_W) '$(srcdir)/getfill.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ncgen-getfill.Tpo" "$(DEPDIR)/ncgen-getfill.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ncgen-getfill.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='getfill.c' object='ncgen-getfill.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ncgen-getfill.Po' tmpdepfile='$(DEPDIR)/ncgen-getfill.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ncgen-getfill.obj `if test -f 'getfill.c'; then $(CYGPATH_W) 'getfill.c'; else $(CYGPATH_W) '$(srcdir)/getfill.c'; fi`
-
-ncgen-init.o: init.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ncgen-init.o -MD -MP -MF "$(DEPDIR)/ncgen-init.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o ncgen-init.o `test -f 'init.c' || echo '$(srcdir)/'`init.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ncgen-init.Tpo" "$(DEPDIR)/ncgen-init.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ncgen-init.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='init.c' object='ncgen-init.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ncgen-init.Po' tmpdepfile='$(DEPDIR)/ncgen-init.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ncgen-init.o `test -f 'init.c' || echo '$(srcdir)/'`init.c
-
-ncgen-init.obj: init.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ncgen-init.obj -MD -MP -MF "$(DEPDIR)/ncgen-init.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o ncgen-init.obj `if test -f 'init.c'; then $(CYGPATH_W) 'init.c'; else $(CYGPATH_W) '$(srcdir)/init.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ncgen-init.Tpo" "$(DEPDIR)/ncgen-init.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ncgen-init.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='init.c' object='ncgen-init.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ncgen-init.Po' tmpdepfile='$(DEPDIR)/ncgen-init.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ncgen-init.obj `if test -f 'init.c'; then $(CYGPATH_W) 'init.c'; else $(CYGPATH_W) '$(srcdir)/init.c'; fi`
-
-ncgen-load.o: load.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ncgen-load.o -MD -MP -MF "$(DEPDIR)/ncgen-load.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o ncgen-load.o `test -f 'load.c' || echo '$(srcdir)/'`load.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ncgen-load.Tpo" "$(DEPDIR)/ncgen-load.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ncgen-load.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='load.c' object='ncgen-load.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ncgen-load.Po' tmpdepfile='$(DEPDIR)/ncgen-load.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ncgen-load.o `test -f 'load.c' || echo '$(srcdir)/'`load.c
-
-ncgen-load.obj: load.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ncgen-load.obj -MD -MP -MF "$(DEPDIR)/ncgen-load.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o ncgen-load.obj `if test -f 'load.c'; then $(CYGPATH_W) 'load.c'; else $(CYGPATH_W) '$(srcdir)/load.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ncgen-load.Tpo" "$(DEPDIR)/ncgen-load.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ncgen-load.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='load.c' object='ncgen-load.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ncgen-load.Po' tmpdepfile='$(DEPDIR)/ncgen-load.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ncgen-load.obj `if test -f 'load.c'; then $(CYGPATH_W) 'load.c'; else $(CYGPATH_W) '$(srcdir)/load.c'; fi`
-
-ncgen-main.o: main.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ncgen-main.o -MD -MP -MF "$(DEPDIR)/ncgen-main.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o ncgen-main.o `test -f 'main.c' || echo '$(srcdir)/'`main.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ncgen-main.Tpo" "$(DEPDIR)/ncgen-main.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ncgen-main.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='main.c' object='ncgen-main.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ncgen-main.Po' tmpdepfile='$(DEPDIR)/ncgen-main.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ncgen-main.o `test -f 'main.c' || echo '$(srcdir)/'`main.c
-
-ncgen-main.obj: main.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ncgen-main.obj -MD -MP -MF "$(DEPDIR)/ncgen-main.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o ncgen-main.obj `if test -f 'main.c'; then $(CYGPATH_W) 'main.c'; else $(CYGPATH_W) '$(srcdir)/main.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ncgen-main.Tpo" "$(DEPDIR)/ncgen-main.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ncgen-main.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='main.c' object='ncgen-main.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ncgen-main.Po' tmpdepfile='$(DEPDIR)/ncgen-main.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ncgen-main.obj `if test -f 'main.c'; then $(CYGPATH_W) 'main.c'; else $(CYGPATH_W) '$(srcdir)/main.c'; fi`
-
-ncgen-ncgentab.o: ncgentab.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ncgen-ncgentab.o -MD -MP -MF "$(DEPDIR)/ncgen-ncgentab.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o ncgen-ncgentab.o `test -f 'ncgentab.c' || echo '$(srcdir)/'`ncgentab.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ncgen-ncgentab.Tpo" "$(DEPDIR)/ncgen-ncgentab.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ncgen-ncgentab.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ncgentab.c' object='ncgen-ncgentab.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ncgen-ncgentab.Po' tmpdepfile='$(DEPDIR)/ncgen-ncgentab.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ncgen-ncgentab.o `test -f 'ncgentab.c' || echo '$(srcdir)/'`ncgentab.c
-
-ncgen-ncgentab.obj: ncgentab.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ncgen-ncgentab.obj -MD -MP -MF "$(DEPDIR)/ncgen-ncgentab.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o ncgen-ncgentab.obj `if test -f 'ncgentab.c'; then $(CYGPATH_W) 'ncgentab.c'; else $(CYGPATH_W) '$(srcdir)/ncgentab.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ncgen-ncgentab.Tpo" "$(DEPDIR)/ncgen-ncgentab.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ncgen-ncgentab.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ncgentab.c' object='ncgen-ncgentab.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ncgen-ncgentab.Po' tmpdepfile='$(DEPDIR)/ncgen-ncgentab.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ncgen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ncgen-ncgentab.obj `if test -f 'ncgentab.c'; then $(CYGPATH_W) 'ncgentab.c'; else $(CYGPATH_W) '$(srcdir)/ncgentab.c'; fi`
 uninstall-info-am:
 
 man1dir = $(mandir)/man1
@@ -693,67 +502,67 @@ uninstall-man: uninstall-man1
 
 
 ncgentab.c ncgentab.h: ncgen.h ncgen.y ncgenyy.c
-	$(YACC) -d ${srcdir}/ncgen.y
+	$(YACC) -d $(srcdir)/ncgen.y
 	mv y.tab.c ncgentab.c
 	mv y.tab.h ncgentab.h
 
 ncgenyy.c: ncgen.l
-	$(LEX) ${srcdir}/ncgen.l
+	$(LEX) $(srcdir)/ncgen.l
 	mv lex.yy.c ncgenyy.c
 
-vms-stuff:	ncgentab.h ncgentab.c ncgenyy.c
-	cp ${srcdir}/ncgentab.h vmstab.h
-	cp ${srcdir}/ncgentab.c vmstab.c
-	cp ${srcdir}/ncgenyy.c vms_yy.c
+check: ncgen $(srcdir)/test0.cdl b-check c-check f-check
 
-check: ncgen ${srcdir}/test0.cdl b-check c-check f-check
-
-#
-# Test the "-b" option of ncgen
-#
-b-check:	ncgen ${srcdir}/test0.cdl test1.cdl
+b-check:	ncgen $(srcdir)/test0.cdl test1.cdl
 	./ncgen -b test1.cdl
-	${NCDUMP} test1.nc > test2.cdl
-	@${DIFF} test1.cdl test2.cdl && \
-	    echo "*** ncgen -b test successful ***"
+	$(NCDUMP) test1.nc > test2.cdl
+	@if $(DIFF) test1.cdl test2.cdl; then                               \
+	  echo "*** ncgen -b test successful ***";                          \
+	else                                                                \
+	  echo "*** ncgen -b test failed ***";                              \
+	fi
 
-#
-# Test the "-c" option of ncgen
-#
 c-check:	test2.cdl ctest0
 	./ctest0        # tests `-c' option, creates ctest0.nc
-	${NCDUMP} -n test1 ctest0.nc > ctest1.cdl
-	@${DIFF} $(DIFF_FLAGS) test1.cdl ctest1.cdl && \
-	    echo "*** $(PROGRAM) -c test successful ***"
+	$(NCDUMP) -n test1 ctest0.nc > ctest1.cdl
+	@if $(DIFF) test1.cdl ctest1.cdl; then                              \
+	  echo "*** ncgen -c test successful ***";                          \
+	else                                                                \
+	  echo "*** ncgen -c test failed  ***";                             \
+	fi
 
-#
-# Test the "-f" option of ncgen
-#
 f-check:	test1.cdl ftest0
-	./ftest0 ; \
-	$(NCDUMP) -n test1 ftest0.nc > ftest1.cdl; \
-	if $(DIFF) $(DIFF_FLAGS) test1.cdl ftest1.cdl; then \
-	  echo "*** ncgen -f test successful ***"; \
-	else \
+	./ftest0
+	$(NCDUMP) -n test1 ftest0.nc > ftest1.cdl
+	@if $(DIFF) test1.cdl ftest1.cdl; then                              \
+	  echo "*** ncgen -f test successful ***";                          \
+	else                                                                \
 	  echo "*** ncgen -f test failed (but roundoff differences are OK) ***"; \
 	fi
 
 ftest0:		ncgen test0.cdl netcdf.inc
-	./ncgen -f -o ftest0.nc ${srcdir}/test0.cdl > test0.f; \
-	  ${F77} ${FFLAGS} -o $@ test0.f ${ncgen_LDADD}
+	./ncgen -f -o ftest0.nc $(srcdir)/test0.cdl > test0.f
+	$(F77) $(FFLAGS) -o $@ test0.f $(LDFLAGS) $(ncgen_LDADD)
 
 netcdf.inc:
 	ln -s ../fortran/$@ .
 
 test1.cdl:	test0.nc
-	${NCDUMP} -n test1 test0.nc > $@
+	$(NCDUMP) -n test1 test0.nc > $@
 
-test0.nc:	ncgen ${srcdir}/test0.cdl
-	./ncgen -b -o test0.nc ${srcdir}/test0.cdl
+test0.nc:	ncgen $(srcdir)/test0.cdl
+	./ncgen -b -o test0.nc $(srcdir)/test0.cdl
 
-ctest0:		ncgen ${srcdir}/test0.cdl
-	./ncgen -c -o ctest0.nc ${srcdir}/test0.cdl > test0.c
-	  ${CC} ${INCLUDES} ${DEFINES} ${CPPFLAGS} ${CFLAGS} -o $@ test0.c ${ncgen_LDADD}
+ctest0:		ncgen $(srcdir)/test0.cdl
+	./ncgen -c -o ctest0.nc $(srcdir)/test0.cdl > test0.c
+	$(COMPILE) -o $@ test0.c $(LDFLAGS) $(ncgen_LDADD)
+
+#############################################################################
+#############################################################################
+
+vms-stuff:	ncgentab.h ncgentab.c ncgenyy.c
+	cp $(srcdir)/ncgentab.h vmstab.h
+	cp $(srcdir)/ncgentab.c vmstab.c
+	cp $(srcdir)/ncgenyy.c vms_yy.c
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

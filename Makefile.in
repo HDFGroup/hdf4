@@ -93,7 +93,6 @@ RANLIB = @RANLIB@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
-SWAP = @SWAP@
 TBL = @TBL@
 VERSION = @VERSION@
 YACC = @YACC@
@@ -136,6 +135,7 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
+
 SUBDIRS = hdf mfhdf man
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4

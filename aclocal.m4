@@ -36,10 +36,7 @@
 
 # serial 10
 
-#### HACK
-#### This is a REALLY BAD THING!!!!!!!!!!!!!!!!
-####
-####AC_PREREQ([2.54])
+AC_PREREQ([2.54])
 
 # Autoconf 2.50 wants to disallow AM_ names.  We explicitly allow
 # the ones we care about.

@@ -336,8 +336,7 @@ AC_PROG_CC_C_O
 AC_PROG_F77_C_O
 AC_PROG_CXXCPP
 
-AC_SUBST([SWAP])
-AC_C_BIGENDIAN([SWAP=""], [SWAP="-DSWAP"])
+AC_C_BIGENDIAN([], [CPPFLAGS="$CPPFLAGS -DSWAP"])
 
 dnl ----------------------------------------------------------------------
 dnl Checks for library functions
