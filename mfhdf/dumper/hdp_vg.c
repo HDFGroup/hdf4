@@ -39,8 +39,8 @@ static intn dvg(dump_info_t * dumpvg_opts, intn curr_arg, intn argc,
 
 int32       Vref_index(int32 file_id, int32 vg_ref);
 
-void        vgdumpfull(int32 vg_id, int32 file_id, FILE * fp, struct node *aNode,
-                       int32 skip);
+void        vgdumpfull(int32 vg_id, int32 file_id, file_type_t ft, 
+                 FILE * fp, struct node *aNode, int32 skip);
 
 int32       Vstr_index(int32 file_id, char filter_str[MAXNAMELEN], int name,
                        int32 *find_ref, int32 *index);
@@ -320,7 +320,7 @@ dvg(dump_info_t * dumpvg_opts, intn curr_arg, intn argc, char *argv[])
                       fprintf(fp, "     tag = %d; reference = %d;\n", (int) vg_tag, (int) vg_ref);
                       fprintf(fp, "     name = %s; class = %s;\n", vgname, vgclass);
                       fprintf(fp, "     number of entries = %d;\n", (int) n);
-
+                      dumpattr(vg_id, 0, 0, dumpvg_opts->file_type, fp);  
                           /* Read in all of the annotations. */
                       len = DFANgetdesclen(file_name, vg_tag, vg_ref);
                       if (len != FAIL)
@@ -347,7 +347,8 @@ dvg(dump_info_t * dumpvg_opts, intn curr_arg, intn argc, char *argv[])
                       dumpvg_opts->contents = save;
                       if ((dumpvg_opts->contents != DDATA) && (!skip))
                           fprintf(fp, "Entries:-\n");
-                      vgdumpfull(vg_id, file_id, fp, list[i], skip);
+                      vgdumpfull(vg_id, file_id, dumpvg_opts->file_type,
+                                  fp, list[i], skip);
                       if (dumpvg_opts->contents == DDATA)
                           fprintf(fp, "\n");
                   }		/* switch */
@@ -395,7 +396,8 @@ dvg(dump_info_t * dumpvg_opts, intn curr_arg, intn argc, char *argv[])
 }	/* dvg */
 
 void 
-vgdumpfull(int32 vg_id, int32 file_id, FILE * fp, struct node *aNode, int32 skip)
+vgdumpfull(int32 vg_id, int32 file_id, file_type_t ft, FILE * fp,  
+            struct node *aNode, int32 skip)
 {
     int32       vgt, vgotag, vgoref;
     int32       t, vsid, ne, tag;
@@ -445,6 +447,7 @@ vgdumpfull(int32 vg_id, int32 file_id, FILE * fp, struct node *aNode, int32 skip
                       fprintf(fp, "reference = %d;\n\tnumber of entries = %d;\n",
                               (int) vgoref, (int) ne);
                       fprintf(fp, "\tname = %s; class = %s\n", vgname, vgclass);
+                      dumpattr(vgt, 0, 0, ft, fp);
                   }
                 Vdetach(vgt);
                 aNode->children[t] = (char *) HDmalloc(sizeof(char) * (HDstrlen(vgname)+1));
@@ -517,7 +520,7 @@ vgdumpfull(int32 vg_id, int32 file_id, FILE * fp, struct node *aNode, int32 skip
                       fprintf(fp, "\trecord size (in bytes) = %d;\n", (int)vsize);
                       fprintf(fp, "\tname = %s; class = %s;\n", vsname, vsclass);
                   }
-
+                fprintf(fp, "\ttotal number of attributes = %d.\n", VSnattrs(vs));
                 VSdetach(vs);
                 aNode->children[t] = (char *) HDmalloc(sizeof(char) * (HDstrlen(vsname)+1));
                 if (aNode->children[t] == NULL)

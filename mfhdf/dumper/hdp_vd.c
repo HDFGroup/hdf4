@@ -271,7 +271,7 @@ do_dumpvd(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts)
 
     if (dvd(&dumpvd_opts, curr_arg, argc, argv, flds_chosen, dumpallfields) == FAIL)
       {
-          printf("Failure in dumping SDS data\n");
+          printf("Failure in dumping Vdata data\n");
           exit(1);
       } 
 
@@ -396,7 +396,7 @@ dvd(dump_info_t * dumpvd_opts, intn curr_arg,
     char       *tempPtr, *ptr, string[MAXNAMELEN];
     char        file_name[MAXFNLEN];
     FILE       *fp=NULL;
-    int         index_error = 0, dumpall = 0;
+    intn         index_error = 0, dumpall = 0, ret;
     file_type_t  ft;
 
     while (curr_arg < argc)
@@ -577,7 +577,7 @@ dvd(dump_info_t * dumpvd_opts, intn curr_arg,
 
                             fprintf(fp, "   record size (in bytes) = %d;\n", (int)vsize);
                             fprintf(fp, "   name = %s; class = %s;\n", vdname, vdclass);
-
+                            ret = dumpattr(vd_id, -1, 1, ft, fp);     
                                 /* read in all of the annotations */
                             len = DFANgetdesclen(file_name, vdata_tag, vdata_ref);
                             if (len != FAIL)

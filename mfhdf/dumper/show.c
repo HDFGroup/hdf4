@@ -36,18 +36,18 @@ dumpvd(int32 vd, file_type_t ft, int data_only, FILE * fp, char separater[2],
     intn       (*vfmtfn[VSFIELDMAX]) (VOIDP ,  file_type_t ft,  FILE *);
     int32       off[VSFIELDMAX];
     int32       order[VSFIELDMAX];
-
+    int32       nattrs[VSFIELDMAX];
     int32       bufsize;		/* size of the buffer we are using */
     int32       chunk;			/* number of rows that will fit in the buffer */
     int32       done;			/* number of rows we have done */
-    int32       count;			/* number of rows to do this time through 
+    int32       count;          /* number of rows to do this time through 
                                            the loop */
-
-    int32       nf;				/* number of fields in this Vdata */
+    int32       nf; 	       	/* number of fields in this Vdata */
     int32       x, display;
     int32       temp, addr_width=0, num_digits, address=0;
     int32       num_flds, cnt1, cnt2;
     int32       cn=0;
+    intn        ret;
 
     VSinquire(vd, &nv, &interlace, fields, &vsize, vdname);
 
@@ -84,6 +84,7 @@ dumpvd(int32 vd, file_type_t ft, int data_only, FILE * fp, char separater[2],
 
               /* Set offset for the next element. */
           off[i] = DFKNTsize(w->type[i] | DFNT_NATIVE);
+          nattrs[i] = VSfnattrs(vd, i);
 
               /* Display the header of a vdata if the user didn't specify the
                  data-only option. */
@@ -92,13 +93,14 @@ dumpvd(int32 vd, file_type_t ft, int data_only, FILE * fp, char separater[2],
 	      {
                 if ((dumpallfields) || (flds_indices[x] == i))
                   {
-                      fprintf(fp, "- field index %d: [%s], type=%d, order=%d\n",
-                              (int) i, w->name[i], w->type[i], w->order[i]);
+                      fprintf(fp, "- field index %d: [%s], type=%d, order=%d, nattrs=%d\n",
+                              (int) i, w->name[i], w->type[i], w->order[i], nattrs[i]);
                       x++;
                   }
 	      }
             }	/* if */
-
+	  /* display attributes */
+          ret = dumpattr(vd, i, 1, ft, fp);
               /* Choose a function for displaying a piece of data of a 
                  particular type. */
           switch (w->type[i])
@@ -375,3 +377,122 @@ dumpvd(int32 vd, file_type_t ft, int data_only, FILE * fp, char separater[2],
     return (1);
 }	/* dumpvd */
 /* ------------------------------------- */
+intn dumpattr(int32 vid, int32 findex, intn isvs,
+      file_type_t ft, FILE *fp)
+{
+   intn i, j, k, cn=0;
+   VDATA *vs;
+   vsinstance_t *vs_inst;
+   VGROUP *vg;
+   vginstance_t *v;
+   intn ret, nattrs, f_nattrs, alloc_flag=0;
+   vs_attr_t *vs_alist;
+   vg_attr_t *v_alist;
+   int32 i_type, i_count, i_size, off;
+   uint8 attrbuf[BUFFER], *buf, *ptr;
+   intn (*vfmtfn)(VOIDP, file_type_t ft, FILE *);
+   char name[FIELDNAMELENMAX+1];
+
+   if (isvs) 
+      nattrs = VSfnattrs(vid, findex);
+   else
+      nattrs = Vnattrs(vid);
+   fprintf(fp, "   %d attributes. \n", nattrs);
+   if (nattrs == 0) 
+       return SUCCEED; /* no attrs */
+   for (i=0; i<nattrs; i++) {
+       if (isvs)
+          ret = VSattrinfo(vid, findex, i, name, &i_type, &i_count, &i_size);
+       else
+          ret = Vattrinfo(vid, i, name, &i_type,&i_count, &i_size);
+       if (ret == FAIL) {
+          fprintf(stderr,">>>dumpattr: failed in getting attr info.\n");
+          continue;
+       }
+       fprintf(fp,"    attr%d: name=%s type=%d count=%d size=%d\n",
+                       i, name, i_type, i_count, i_size);
+       if (i_size > BUFFER) {
+           if (NULL == (buf = HDmalloc(i_size)))  {
+               fprintf(stderr,">>>dumpattr:can't allocate buf.\n");
+               continue;
+           }
+           alloc_flag = 1;
+           if (isvs) 
+               ret = VSgetattr(vid, findex, i, (VOIDP)buf);
+           else
+               ret = Vgetattr(vid, i, (VOIDP)buf);
+           if (ret == FAIL) {
+               fprintf(stderr,">>>dympattr: failed in getting attr.\n");
+               continue;
+           }
+       }
+       else
+       {
+           if (isvs) 
+               ret = VSgetattr(vid, findex, i, (VOIDP)attrbuf);
+           else
+               ret = Vgetattr(vid, i, (VOIDP)attrbuf);
+           if (ret == FAIL) {
+               fprintf(stderr,">>>dympattr: failed in getting attr.\n");
+               continue;
+           }
+       }
+       /* format output */
+       switch (i_type)  {
+           case DFNT_CHAR:
+           case DFNT_UCHAR:
+                vfmtfn = fmtchar;
+                break;
+           case DFNT_UINT8:
+                vfmtfn = fmtuint8;
+                break;
+           case DFNT_INT8:
+                vfmtfn = fmtint8;
+                break;
+           case DFNT_UINT16:
+                vfmtfn = fmtuint16;
+                break;
+           case DFNT_INT16:
+                vfmtfn = fmtint16;
+                break;
+           case DFNT_UINT32:
+                vfmtfn = fmtuint32;
+                break;
+           case DFNT_INT32:
+                vfmtfn = fmtint32;
+                break;
+           case DFNT_FLOAT32:
+                vfmtfn = fmtfloat32;
+                break;
+           case DFNT_FLOAT64:
+                vfmtfn = fmtfloat64;
+                break;
+           default:
+                fprintf(stderr,">>>dumpattr: sorry, type [%d] not supported\n",
+                           (int) i_type);
+                break;
+       }
+       off = DFKNTsize(i_type | DFNT_NATIVE);
+       ptr = (alloc_flag) ? buf : attrbuf;
+       putchar('\t');
+       cn = 0;
+       for (k=0; k<i_count; k++)  {
+           cn += vfmtfn((uint8 *)ptr, ft, fp);
+           ptr += off;
+           putchar(' ');
+           cn++;
+           if (cn > 55)  {
+               putchar('\n');
+               putchar('\t');
+               cn = 0;
+           }
+       }
+       if (cn) putchar('\n');
+       if (alloc_flag) {
+           if ( buf != NULL)
+              HDfree(buf);
+           alloc_flag = 0;
+       }
+   }  /* for i */
+   return SUCCEED;
+}
