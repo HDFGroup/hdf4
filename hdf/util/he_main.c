@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1992/09/11 18:32:51  chouck
-Assorted MAC mungings
+Revision 1.8  1992/09/15 19:34:24  chouck
+Fixed minor typo
 
+ * Revision 1.7  1992/09/11  18:32:51  chouck
+ * Assorted MAC mungings
+ *
  * Revision 1.6  1992/08/25  20:49:45  chouck
  * Fixed backup name generation so its easier to open non-local files
  *
@@ -504,7 +507,7 @@ int getR8(xdim, ydim, image, pal, compress)
     int xdim, ydim;
     char *image;
     char *pal;
-    int comp;
+    int compress;
 #endif
 {
     FILE *fp;
