@@ -82,7 +82,7 @@
   SGI-Indy(IRIX6.2_64)        CC 7.0         f77 7.0          X         X
   HP9000/735(HP-UX 9.03)      CC A.09.77     f77 09.16        X         X
   HP9000/770(HP-UX B.10.10)   CC A.10.30     f77              X         X
-  Exemplar(HPUX A.09.03)      CC             f77              X         X 
+  Exemplar(HP-UX A.09.03)     CC 6.5         f77 9.5          X         X 
   Cray C90 (UNICOS 803.2)     -               -               -         - 
   Cray YMP (UNICOS 9.0.2asC cri.3) -          -               -         -
   CM5 (Parallel I/O, 4.1.3_U1)CSTAR 7.2      CMF 2.1          X         X 
@@ -551,13 +551,13 @@
 
     2.5.8 Exemplar
     --------------
+    When building the software, you must configure the machine as
+    follows:
 
-    You need to change the compiler in dev/config/mh-hpux to use /bin/cc. 
-    Otherwise, the default will be the CONVEX C compiler.
+        ./configure -v --host=c2-convex-bsd
 
-    The linker on Exemplar does not like relative pathnames, such as '..'.
-    Change 'srcdir' and 'TOP_SRCDIR' in the top Makefile.in, 
-    ./hdf/Makefile.in, and ./mfhdf/Makefile.in to absolute pathnames.
+    Otherwise, the machine will be configured for HP-UX.
+        
 
     2.5.9 SP2 Single node
     ----------------------
