@@ -2,7 +2,8 @@ This directory contains a beta test version of hdp -- an HDF dumper.
 File hdp.txt explains hdp commands and command options. Hdp will be
 automatically compiled and installed when you run 'make' and
 'make install' from the top level. There is no auto-test available 
-yet. A group of .hdf files are included for testing.  
+yet. A file named TEST and a group of .hdf files are included for 
+testing.  
 
 Please send your bug reports, comments and suggestions to 
 hdfhelp@ncsa.uiuc.edu.
