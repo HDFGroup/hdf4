@@ -3794,35 +3794,35 @@ int32 dimid;
 
 /******************************************************************************
  NAME
-        SDsetChunk   -- create chunked SDS
+      SDsetChunk   -- create chunked SDS
 
  DESCRIPTION
-        This routine creates a chunked SDS with the specified chunk
-        lengths for each dimension according to the structure passed in. 
-        Currently only the array(int32) specifiying chunk lengths can be 
-        passed in, i.e. 'flags' must be set 'SD_CHUNK_LENGTHS'; 
-        
-        In the future a different structure maybe used to define
-        a chunk.
+      This routine creates a chunked SDS with the specified chunk
+      lengths for each dimension according to the structure passed in. 
 
-        The dataset currently cannot have an UNLIMITED dimension.
+      The simplist structure is the array(int32) specifiying chunk 
+      lengths with the 'flags' argument set to 'SD_CHUNK_LENGTHS';
 
-        The dataset currently cannot be special already. 
-        i.e. NBIT, COMPRESSION, or EXTERNAL.
+      The dataset currently cannot be special already.  i.e. NBIT,
+      COMPRESSION, or EXTERNAL.
 
-        COMPRESSION is set by using the 'SD_CHUNK_DEF' structure
-        to set the appropriate compression info. The info is
-        the same as that set in 'SDsetcompress()'.
+      COMPRESSION is set by using the 'SD_CHUNK_DEF' structure to set the
+      appropriate compression information. The information is the same as 
+      that set in 'SDsetcompress()'.
 
-        The relevant fields of SD_CHUNK_DEF structure looks like:
+      The relevant fields of SD_CHUNK_DEF structure are:
 
-            int32     *chunk_lengths;  Chunk lengths along each dimension 
-            int32      comp_type;      Compression type 
-            comp_info  *cinfo;         Compression info struct 
+      int32     *chunk_lengths;  Chunk lengths along each dimension
+      int32      comp_type;      Compression type
+      comp_info  *cinfo;         Compression info struct
 
-        See example in pseudo-C below for further usage.
+      The 'flags' argument' is set to 'SD_CHUNK_COMP'.
 
-        The maximum number of Chunks in an HDF file is 65,535.
+      See example in pseudo-C below for further usage.
+
+      The maximum number of Chunks in an HDF file is 65,535.
+
+      The dataset currently cannot have an UNLIMITED dimension.
 
         e.g. 4x4 array with 2x2 chunks. The array shows the layout of
              chunks in the chunk array.
