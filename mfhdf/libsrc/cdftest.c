@@ -36,7 +36,7 @@ static char mrcsid[] = "$Id$";
 extern int errno ;
 #endif
 
-#define FNAME		"test.cdf"
+#define FILENAME		"test.cdf"
 #define	NUM_DIMS 	3
 #define DONT_CARE	-1
 /* make these numbers big when you want to give this a real workout */
@@ -99,7 +99,7 @@ double check ;
 	}
 }
 
-char *fname = FNAME ;
+char *fname = FILENAME ;
 
 
 int num_dims = NUM_DIMS ;
