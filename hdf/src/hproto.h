@@ -2275,6 +2275,15 @@ extern intn ANdestroy(void);
 #  define nmggnatt      FNAME(MGGNATT)
 #  define nmggattr      FNAME(MGGATTR)
 #  define nmgifndat     FNAME(MGIFNDAT)
+# define nmgcgichnk        FNAME(MGCGICHNK)
+# define nmgcrcchnk        FNAME(MGCRCCHNK)
+# define nmgcrchnk         FNAME(MGCRCHNK)
+# define nmgcscchnk        FNAME(MGCSCCHNK)
+# define nmgcschnk         FNAME(MGCSCHNK)
+# define nmgcwcchnk        FNAME(MGCWCCHNK)
+# define nmgcwchnk         FNAME(MGCWCHNK)
+# define nmgcscompress     FNAME(MGCSCOMPRESS)
+# define nmglt2rf         FNAME(MGLT2RF)
 #else  /* !DF_CAPFNAMES */
 #  define nmgstart      FNAME(mgstart)
 #  define nmgfinfo      FNAME(mgfinfo)
@@ -2307,6 +2316,16 @@ extern intn ANdestroy(void);
 #  define nmggnatt      FNAME(mggnatt)
 #  define nmggattr      FNAME(mggattr)
 #  define nmgifndat     FNAME(mgifndat)
+# define nmgcgichnk        FNAME(mgcgichnk)
+# define nmgcrcchnk        FNAME(mgcrcchnk)
+# define nmgcrchnk         FNAME(mgcrchnk)
+# define nmgcscchnk        FNAME(mgcscchnk)
+# define nmgcschnk         FNAME(mgcschnk)
+# define nmgcwcchnk        FNAME(mgcwcchnk)
+# define nmgcwchnk         FNAME(mgcwchnk)
+# define nmgcscompress     FNAME(mgcscompress)
+# define nmglt2rf         FNAME(mglt2rf)
+
 #endif /* DF_CAPFNAMES */
 #endif /* MFGR_FNAMES */
 
@@ -2405,6 +2424,33 @@ nmggattr(intf * riid, intf *index, void * data);
 
 extern FRETVAL(intf)
 nmgifndat(intf * riid, _fcd name, intf *nlen);
+
+     extern FRETVAL (intf)
+     nmgcgichnk(intf *id, intf *dim_length, intf *flags);
+
+    extern FRETVAL (intf)
+       nmgcrcchnk(intf *id, intf *start, _fcd char_data);
+
+    extern FRETVAL (intf)
+       nmgcrchnk(intf *id, intf *start, VOIDP num_data);
+
+    extern FRETVAL (intf)
+       nmgcscchnk(intf *id, intf *maxcache, intf *flags);
+
+    extern FRETVAL (intf)
+      nmgcschnk(intf *id, intf *dim_length, intf *comp_type,
+                intf *comp_prm);
+    extern FRETVAL (intf)
+       nmgcwcchnk(intf *id, intf *start, _fcd char_data);
+
+    extern FRETVAL (intf)
+       nmgcwchnk(intf *id, intf *start, VOIDP num_data);
+
+    extern FRETVAL (intf)
+       nmgcscompress(intf *id, intf *comp_type, intf *comp_prm);
+
+    extern FRETVAL (intf)
+       nmglt2rf(intf *id);
 
 /* Multi-file Raster C-routines found in mfgr.c */
 extern intn rigcompare(void * k1, void * k2, intn cmparg);
