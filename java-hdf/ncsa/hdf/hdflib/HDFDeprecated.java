@@ -11,8 +11,6 @@
 
 package ncsa.hdf.hdflib;
 
-import ncsa.hdf.hdflib.*;
-
 import java.io.*;
 import java.net.*;
 import java.lang.*;
@@ -165,7 +163,6 @@ public class HDFDeprecated extends HDFLibrary {
 	if ((NT & HDFConstants.DFNT_LITEND) != 0) {
 		NT -= HDFConstants.DFNT_LITEND;
 	}
-
 		HDFNativeData convert = new HDFNativeData();
 		byte[] d1 = new byte[8];
 		boolean rval;
@@ -241,7 +238,6 @@ public class HDFDeprecated extends HDFLibrary {
 	if ((NT & HDFConstants.DFNT_LITEND) != 0) {
 		NT -= HDFConstants.DFNT_LITEND;
 	}
-
 		HDFNativeData convert = new HDFNativeData();
 		byte[] d1 = new byte[8];
 		byte[] d2 = new byte[8];

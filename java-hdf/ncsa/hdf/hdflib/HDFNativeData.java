@@ -57,6 +57,7 @@ public static double byteToDouble( byte[] data, int start)  {
 	dval = byteToDouble(start,1,data);
 	return(dval[0]);
 }
+/*
 public static native byte[] byteToByte( int start, int len, byte[] data ); /* ??? */
 	
 public static native byte[] intToByte( int start, int len, int[] data);

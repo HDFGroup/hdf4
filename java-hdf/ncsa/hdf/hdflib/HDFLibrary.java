@@ -11,8 +11,6 @@
 
 package ncsa.hdf.hdflib;
 
-import ncsa.hdf.hdflib.*;
-
 import java.io.*;
 import java.net.*;
 import java.lang.*;
@@ -409,6 +407,20 @@ public class HDFLibrary {
      *  @return the file info:  args[0] = n_datasets, args[1] = n_file_attrs
      */
     public native boolean GRfileinfo(int grid, int [] args) throws HDFException;
+
+    /**
+     *  @param sdsid <b>IN</b>: the SD identifier returned by SDselect
+     *  @param c_info <b>OUT</b>: HDFChunkInfo, the chunking info
+     *  @param flag <b>OUT</b>: int[1], the type of chunking
+     *
+     *  @return c_info contains information about the chunking method,
+     *  flags[0] == the chunking flags
+     *
+     *  <p><b>NOTE:</b>The chunking algorithm-specific information is
+     *  passed in an appropriate sub-class of HDFChunkInfo.
+     */
+    public native boolean GRgetchunkinfo( int sdsid, HDFChunkInfo chunk_def,
+		int[] flag) throws HDFException;
     
     public native int GRselect( int grid, int index) throws HDFException;
     
@@ -595,8 +607,6 @@ public class HDFLibrary {
 
     public native short  GRluttoref( int pal_id) throws HDFException;
 
-    public native boolean GRsetaccesstype(int ri_id, int access_mode) throws HDFException;
-
     /**
      *  @param id <b>IN</b>: the GR identifier returned by GRstart
      *  @param attr_name <b>IN</b>: the name of the attribute
@@ -648,7 +658,18 @@ public class HDFLibrary {
     	data = theArray.byteify();
     	return GRsetattr(gr_id, attr_name, data_type, count, data);
     }
+    /**
+     *  @param sdsid <b>IN</b>: the SD identifier returned by SDselect
+     *  @param c_info <b>IN</b>: HDFChunkInfo, the chunking info
+     *  @param flags <b>IN</b>: the type of chunking
+     *
+     *  <p><b>NOTE:</b>The chunking algorithm-specific information is
+     *  passed in an appropriate sub-class of HDFChunkInfo.
+     */
+    public native boolean GRsetchunk( int sdsid, HDFChunkInfo chunk_def,
+		int flags) throws HDFException;
 
+    public native int GRsetchunkcache( int sdsid, int maxcache, int flags) throws HDFException;
     /**
      *  @param ri_id <b>IN</b>: the GR identifier returned by GRstart
      *  @param comp_type <b>IN</b>: the type of compression
@@ -735,8 +756,6 @@ public class HDFLibrary {
     	return GRwritelut(pal_id, ncomp, data_type, interlace, num_entries, 
     		data);
     }
-
-    public native int HDputc(byte abyte, int h_id) throws HDFException;
 
     public native boolean HDFclose(int file_id) throws HDFException;
 
@@ -2019,7 +2038,7 @@ public class HDFLibrary {
      *
      *  @return findex[0] = the index
      */
-    public native int  Vfindex( int id,  String name, int[] findex) throws HDFException;
+    public native int  VSfindex( int id,  String name, int[] findex) throws HDFException;
 
     public native int  VSfindattr( int id, int index, String name) throws HDFException;
 

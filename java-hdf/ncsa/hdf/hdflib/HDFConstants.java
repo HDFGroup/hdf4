@@ -131,7 +131,6 @@ public interface HDFConstants {
 	public static final int  DFNT_UINT64   =  27;
 	public static final int  DFNT_INT128   =  28;
 	public static final int  DFNT_UINT128  =  30;
-
 	public static final int  DFNT_LITEND =  0x00004000;
 
 	/** FAIL */

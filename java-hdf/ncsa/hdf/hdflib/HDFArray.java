@@ -174,8 +174,6 @@ ex.printStackTrace();
 	return _barray;
 }
 
-
-
 /**
  *  Given a one-dimensional array of numbers, convert it to a java
  *  array of the shape and size passed to the constructor.
@@ -328,9 +326,7 @@ ex.printStackTrace();
 
 	return _theArray;
 }
-
 }
-
 
 /**
   * This class is used by HDFArray to discover the shape and type of an
@@ -445,6 +441,4 @@ ex.printStackTrace();
 			System.out.println(i+":  start "+dimstart[i]+": len "+dimlen[i]+" current "+currentindex[i]+" bytetoindex "+bytetoindex[i]+" object "+objs[i]+" otype "+ss);
 		}
 	}
-
-
 }
