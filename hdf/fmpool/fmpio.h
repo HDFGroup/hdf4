@@ -13,6 +13,7 @@
 /*****************************************************************************
  * File: fmpio.h
  *
+ * AUTHOR - GeorgeV
  *****************************************************************************/ 
 
 /* $Id$ */
@@ -50,6 +51,8 @@ typedef struct fmp_st {
 
 #define MIN_PAGESIZE  512
 
+#define MP_PAGEALL    0x01  /* page the whole file i.e. no limit on 'maxcache' */
+
 #else /* __FMPINTERFACE_PRIVATE */
 /* What we define to the user */
 
@@ -70,27 +73,36 @@ typedef void *MPFILE;
 #endif /* __FMPINTERFACE_PRIVATE */
 
 /* File memory pool fucntions */
+
 /******************************************************************************
 NAME
      MPset - set pagesize and maximum number of pages to cache on next open/create
 
 DESCRIPTION
      Set the pagesize and maximum number of pages to cache on the next 
-     open/create of a file. 
+     open/create of a file. A pagesize that is a power of 2 is recommended.
+
+     The values set here only affect the next open/creation of a file and
+     do not change a particular file's paging behaviour after it has been
+     opened or created. This maybe changed in a later release.
+
+     Use flags arguement of 'MP_PAGEALL' if the whole file is to be cached 
+     in memory otherwise passs in zero.
 
 RETURNS
      Returns SUCCEED if successful and FAIL otherwise
 
 NOTE
      Currently 'maxcache' has to be greater than 1. Maybe use special 
-     case of 0 to specify you want to turn page buffering  off.
+     case of 0 to specify you want to turn page buffering off or use
+     the flags arguement.
 
-Assumptions
-     None
+     Current memory usage overhead for the Memory Pool is approximately
+     ~(2k + maxcache*(28+pagesize) + npages*20) bytes.
 ******************************************************************************/
 extern int     MPset(int pagesize, /* IN: pagesize to use for next open/create */
                      int maxcache, /* IN: max number of pages to cache */
-                     int flags     /* IN: */ );
+                     int flags     /* IN: flags = 0, MP_PAGEALL */);
 
 /******************************************************************************
 NAME

@@ -17,16 +17,20 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*+
-   File Memory pool level stdio I/O routines
+   File Memory Pool level stdio I/O routines 
 
    Routines
    --------
+   MPset    - set pagesize and maximum number of pages to cache on next open/create
+   MPget    - get last pagesize and max number of pages cached for open/create
    MPopen   - open/create the file and create a memory pool for file
    MPclose  - close the file, sync the file memory pool to disk and close it.
    MPflush  - flush file memory pool to disk 
    MPseek   - seek to the specified file offset in the memory pool
    MPread   - read data from file memory pool into user's buffer
    MPwrite  - write data from user's buffer to file memory pool 
+
+   AUTHOR - GeorgeV
 
  +*/
 
@@ -43,32 +47,50 @@ NAME
 
 DESCRIPTION
      Set the pagesize and maximum number of pages to cache on the next 
-     open/create of a file. 
+     open/create of a file. A pagesize that is a power of 2 is recommended.
+
+     The values set here only affect the next open/creation of a file and
+     do not change a particular file's paging behaviour after it has been
+     opened or created. This maybe changed in a later release.
+
+     Use flags arguement of 'MP_PAGEALL' if the whole file is to be cached 
+     in memory otherwise passs in zero.
 
 RETURNS
      Returns SUCCEED if successful and FAIL otherwise
 
 NOTE
      Currently 'maxcache' has to be greater than 1. Maybe use special 
-     case of 0 to specify you want to turn page buffering  off.
+     case of 0 to specify you want to turn page buffering off or use
+     the flags arguement. 
+
+     Current memory usage overhead for the Memory Pool is approximately
+     ~(2k + maxcache*(28+pagesize) + npages*20) bytes.
 ******************************************************************************/
 int
 MPset(int pagesize, /* IN: pagesize to use for next open/create */
       int maxcache, /* IN: max number of pages to cache */
-      int flags     /* IN: */
+      int flags     /* IN: flags = 0, MP_PAGEALL */
 )
 {
   int   ret    = SUCCEED;
 
+  /* set pagesize on next open/create */
   if (pagesize >= MIN_PAGESIZE)
     cur_fmp.pagesize = (pageno_t)pagesize;
   else
     ret = FAIL;
 
-  if (maxcache >= 1)
-    cur_fmp.maxcache = (pageno_t)maxcache;
-  else
-    ret = FAIL;
+  /* set for number of pages to cache on next open/create */
+  if (flags != MP_PAGEALL)
+    { /* set user limit for number of pages to cache */
+      if (maxcache >= 1)
+        cur_fmp.maxcache = (pageno_t)maxcache;
+      else
+        ret = FAIL;
+    }
+  else /* we want to cache the whole file */
+    cur_fmp.maxcache = (pageno_t)MAX_PAGE_NUMBER - 1;
 
   return ret;
 } /* MPset() */
