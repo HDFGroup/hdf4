@@ -25,9 +25,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1993/10/06 20:27:53  koziol
-More compression fixed, and folded Doug's suggested change into VSappendable.
+Revision 1.2.2.1  1993/10/10 22:10:36  koziol
+Moved Tag descriptions into a header file.  Updated compression routines.
 
+ * Revision 1.2  1993/10/06  20:27:53  koziol
+ * More compression fixed, and folded Doug's suggested change into VSappendable.
+ *
  * Revision 1.1  1993/09/30  19:05:21  koziol
  * Added basic compressing functionality for special tags.
  *
@@ -267,7 +270,7 @@ int32 HCPmstdio_write(access_rec, length, data)
     HCPmstdio_inquire -- Inquire information about the access record and data element.
 
  USAGE
-    int32 HCPinquire(access_rec,pfile_id,ptag,pref,plength,poffset,pposn,
+    int32 HCPmstdio_inquire(access_rec,pfile_id,ptag,pref,plength,poffset,pposn,
             paccess,pspecial)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 *pfile_id;        OUT: ptr to file id
@@ -355,3 +358,4 @@ int32 HCPmstdio_endaccess(access_rec)
         HRETURN_ERROR(DFE_CODER,FAIL);
     return(ret);
 }   /* HCPmstdio_endaccess() */
+
