@@ -160,6 +160,8 @@ DESCRIPTION
 
    The AID which refers to this new external element, is returned upon
    successiful execution.  FAIL is returned if any error is encountered.
+FORTRAN
+   None
 
 --------------------------------------------------------------------------*/
 int32
@@ -1255,6 +1257,9 @@ DESCRIPTION
    If error encountered during setup, previous value of createdir
    is not changed.
 
+FORTRAN
+   hxscdir
+
 --------------------------------------------------------------------------*/
 intn
 HXsetcreatedir(const char *dir)
@@ -1308,6 +1313,9 @@ DESCRIPTION
    If dir is NULL, the directory variable is unset.
    If error encountered during setup, previous value of extdir
    is not changed.
+
+FORTRAN
+   hxsdir
 
 --------------------------------------------------------------------------*/
 intn
