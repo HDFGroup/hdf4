@@ -75,7 +75,7 @@ print_item(int32 fid, dd_t *desc_list, intn n)
     int32       len;
     char       *name, *label_str;
 
-    printf("\tRef no %6d\t%8ld bytes\n", desc_list[n].ref, desc_list[n].length);
+    printf("\tRef no %6d\t%8d bytes\n", desc_list[n].ref, desc_list[n].length);
 
     /* print out labels and annotations if desired */
     if (labels)
@@ -585,7 +585,7 @@ main(int argc, char *argv[])
                 for (j = 0; j < n; j++)
                   {
                       printf("%6d) tag %6d ref %6d ", j, desc_buf[j].tag, desc_buf[j].ref);
-                      printf(" offset %10ld length %10ld\n", desc_buf[j].offset, desc_buf[j].length);
+                      printf(" offset %10d length %10d\n", desc_buf[j].offset, desc_buf[j].length);
                   }
             }
 
