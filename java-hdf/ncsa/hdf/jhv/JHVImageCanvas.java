@@ -1843,10 +1843,11 @@ public class JHVImageCanvas extends Canvas
 
     // keep the mouse position
     currentDragArea = new Rectangle(x+tx, y+ty, 0,0);
-
+    // check to see if the mouse is on the image	
+    checkMousePosition(x,y);
     if (imagePlotMode == JHVImageFrame.RADIAL_PLOT)  // radial plots
-  	// radial plots test
-    	radialPlots(new Rectangle(0,x-starty,1, 0 )); 
+	if (mouseOnImageFlag)  // radial plots test
+    		radialPlots(new Rectangle(0,x-starty,1, 0 )); 
     else if (imagePlotMode == JHVImageFrame.HISTOGRAM_PLOT)
 	     plotHistogram(new Rectangle(1,1));
     
