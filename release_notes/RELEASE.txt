@@ -46,7 +46,7 @@ o HDF4 has an optional SZIP compression; please refer to the INSTALL
   for information regarding commercial use. 
 
   For more information about SZIP compression
-  see http://hdf.ncsa.uiuc.edu/HDF5/doc_resource/SZIP/ and 
+  see http://hdf.ncsa.uiuc.edu/doc_resource/SZIP/ and 
   the "HDF4 Reference Manual" entries for the GRsetcompress and 
   SDsetcompress functions. 
 
@@ -55,6 +55,15 @@ o The following new tools have been added
       hrepack
       hdiff
       hdfimport
+
+  See "HDF4 Reference Manual" in the HDF 4.2r0 documentation set for more
+  information.
+
+o Helper scripts to facilitate HDF4 installation and compilation were added:
+  
+      h4cc   - to compile C application with the HDF4 Libraries
+      h4fc   - to compiler Fortran applications with the HDF4 Libraries
+      h4redeploy - to fix binary installation
 
   See "HDF4 Reference Manual" in the HDF 4.2r0 documentation set for more
   information.
@@ -113,6 +122,8 @@ Bugs fixed since HDF4.1r5
 Documentation
 ==============
 
+    Entries for new utilities hdiff, hrepack, hdfimport and helper
+    scripts h4cc, h4fc, and h4redeply were added to the Reference Manual.
 
 Platforms Tested
 ================
@@ -174,10 +185,23 @@ Known problems
 
 1. SZIP Library is not available for Crays SV1 and T3E
    Fortran APIs do not support SZIP compression.
+
 2. NetCDF tests nctest (C) and ftest (Fortran) fail to read from NetCDF 3.5 files
+
 3. On Linux RH8 64-bit SZIP tests fail if library is compiled in production
    mode. All tests pass in the debug mode.
+
 4. This release doesn't support VMS system.
+
 5. On Linux with gcc compilers Fortran NetCDF APIs cannot read attributes, variables,
    and dimensions when name contain spaces.
 
+6. HDF4 Library cannot be built with PGI compilers.
+
+7. N-Bit compression is not supported with Fortran APIs.
+
+8. On IA64 systems with Intel compilers make check (N-Bit test) fails in 
+   the hdf/test directory. It is a known Intel compiler optimization problem.
+   Test passes when -O0 flag is used with ecc.
+
+9. Using both fill-value and compression on SD datasets doesn't work.
