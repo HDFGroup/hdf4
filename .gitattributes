@@ -22,16 +22,3 @@ hdf/util/testfiles/storm130.raw -text svneol=unset#application/octet-stream
 hdf/util/testfiles/storm140.raw -text svneol=unset#application/octet-stream
 hdf/util/testfiles/test.cdf -text
 hdf/util/testfiles/test.hdf -text
-mfhdf/dumper/ctxtr2r.hdf -text
-mfhdf/dumper/star.hdf -text
-mfhdf/dumper/swf32.hdf -text
-mfhdf/dumper/swi16.hdf -text
-mfhdf/dumper/swi8.hdf -text
-mfhdf/dumper/tdata.hdf -text
-mfhdf/dumper/tdf24.hdf -text
-mfhdf/dumper/tdfr8f.hdf -text
-mfhdf/dumper/test.hdf -text
-mfhdf/dumper/tvset.hdf -text
-mfhdf/libsrc/test.nc -text
-mfhdf/libsrc/test_cdf.sav -text
-mfhdf/xdr/test_xdr.sav svneol=native#unset
