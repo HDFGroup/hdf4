@@ -89,6 +89,7 @@ HCIcdeflate_init(accrec_t * access_rec)
     /* initialize compression context */
     deflate_info->deflate_context.zalloc=(alloc_func)Z_NULL;
     deflate_info->deflate_context.zfree=(free_func)Z_NULL;
+    deflate_info->deflate_context.opaque=NULL;
     deflate_info->deflate_context.data_type=Z_BINARY;
 
     /* Allocate compression I/O buffer */
@@ -634,9 +635,8 @@ HCPcdeflate_endaccess(accrec_t * access_rec)
     info = (compinfo_t *) access_rec->special_info;
 
     /* flush out buffer */
-    if (access_rec->access&DFACC_WRITE)
-        if (HCIcdeflate_term(info,access_rec->access) == FAIL)
-            HRETURN_ERROR(DFE_CTERM, FAIL);
+    if (HCIcdeflate_term(info,access_rec->access) == FAIL)
+        HRETURN_ERROR(DFE_CTERM, FAIL);
 
     /* close the compressed data AID */
     if (Hendaccess(info->aid) == FAIL)
