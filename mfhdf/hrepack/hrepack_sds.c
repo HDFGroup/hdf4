@@ -297,7 +297,7 @@ int copy_sds(int32 sd_in,
  if ( options->trip>0 ) 
  {
   int count=1, nchunks;
-  int maxchunk=USHRT_MAX;
+  int maxchunk=INT_MAX;
   if ( (chunk_flags == HDF_CHUNK) || (chunk_flags == (HDF_CHUNK | HDF_COMP)) )
   {
    for (j = 0; j < rank; j++) {
