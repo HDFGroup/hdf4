@@ -73,7 +73,7 @@ static char RcsId[] = "@(#)$Revision$";
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-int gen_bitio_test(VOID)
+int gen_bitio_test(void)
 {
     int32 fid;          /* file ID of bitio HDF file */
     uint8 *bit_data;    /* pointer to the data to store in the datafile */
@@ -120,7 +120,7 @@ int gen_bitio_test(VOID)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-int gen_nbit_test(VOID)
+int gen_nbit_test(void)
 {
     int32 fid;          /* file ID of n-bit HDF file */
     uint8 *nbit_data;   /* pointer to the initial data */
