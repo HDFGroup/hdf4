@@ -164,8 +164,7 @@ char    *fields;
    *   read list cuz there is nothing there to read yet...
    */
     if(vs->access == 'w' && vs->nvertices == 0) {
-        wlist=(VWRITELIST *)HDgetspace(sizeof(VWRITELIST));
-        HDmemcpy(wlist,&(vs->wlist),sizeof(VWRITELIST));
+        wlist = &(vs->wlist);  /* use a shorter name to make code cleaner */
         wlist->ivsize = 0;
         wlist->n      = 0;
         for(i = 0; i < ac; i++) {
@@ -222,21 +221,16 @@ char    *fields;
             wlist->off[i] = (int16)j;
             j += wlist->isize[i];
         }
-    
-    /* copy from wlist (temp) into vdata */
-        HDmemcpy((VOIDP) &(vs->wlist), (VOIDP) wlist, sizeof(VWRITELIST));
-
-        HDfreespace((VOIDP)wlist);     /* free up the writelist */
+        
         return(SUCCEED); /* ok */
-  } /* writing to empty vdata */
-
-  /*
-   *   No matter the access mode, if there are elements in the VData
-   *      we should set the read list
-   */
+    } /* writing to empty vdata */
+    
+    /*
+     *   No matter the access mode, if there are elements in the VData
+     *      we should set the read list
+     */
     if(vs->nvertices > 0) {
-        rlist=(VREADLIST *)HDgetspace(sizeof(VREADLIST));
-        HDmemcpy(rlist,&(vs->rlist),sizeof(VREADLIST));
+        rlist = &(vs->rlist);
         rlist->n = 0;
         for (i = 0; i < ac; i++) {
             found = FALSE;
@@ -251,10 +245,6 @@ char    *fields;
             if (!found)       /* field does not exist - error */
                 HRETURN_ERROR(DFE_BADFIELDS,FAIL);
         }
-        
-        /* copy from rlist (temp) into vdata */
-        HDmemcpy((VOIDP) &(vs->rlist), (VOIDP) rlist, sizeof(VREADLIST));
-        HDfreespace((VOIDP)rlist);     /* free the readlist */
         
         return(SUCCEED);
         
