@@ -148,7 +148,7 @@ dumpvd(int32       vd,
 
           /* Choose a function for displaying a piece of data of a 
              particular type. */
-          switch (w->type[i])
+          switch (w->type[i] & 0xff)
             {
             case DFNT_CHAR:
 	    case DFNT_UCHAR:
@@ -601,7 +601,7 @@ dumpattr(int32 vid,
             }
 
           /* format output */
-          switch (i_type)  
+          switch (i_type & 0xff)  
             {
             case DFNT_CHAR:
             case DFNT_UCHAR:
