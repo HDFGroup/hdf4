@@ -58,40 +58,40 @@
  * pool is handed an opaque MPOOL cookie which stores all of this information.
  */
 
-/* Current Hash table size. Page numbers start with 0 
-* Going try start with 1 (i.e 0 will denote invalid page number) */
-#define	HASHSIZE	128
-#define	HASHKEY(pgno)	((pgno -1) % HASHSIZE)
+/* Current Hash table size. Page numbers start with 1 
+* (i.e 0 will denote invalid page number) */
+#define	HASHSIZE	    128
+#define	HASHKEY(pgno)  ((pgno -1) % HASHSIZE)
 
 /* Default pagesize and max # of pages to cache */
 #define DEF_PAGESIZE   8192
-#define DEF_MAXCACHE   2
+#define DEF_MAXCACHE   1
 
 /* The BKT structures are the elements of the queues. */
 typedef struct _bkt 
 {
   CIRCLEQ_ENTRY(_bkt) hq;	/* hash queue */
   CIRCLEQ_ENTRY(_bkt) q;	/* lru queue */
-  void    *page;		/* page */
-  pageno_t   pgno;		/* page number */
+  void    *page;            /* page */
+  pageno_t   pgno;          /* page number */
 
-#define	MPOOL_DIRTY	0x01	/* page needs to be written */
-#define	MPOOL_PINNED	0x02	/* page is pinned into memory */
-  u_int8_t flags;		/* flags */
+#define	MPOOL_DIRTY	 0x01   /* page needs to be written */
+#define	MPOOL_PINNED 0x02   /* page is pinned into memory */
+  u_int8_t flags;           /* flags */
 } BKT;
 
 /* The element structure for every page referenced(read/written) in file */
 typedef struct _lelem
 {
   CIRCLEQ_ENTRY(_lelem) hl;	/* hash list */
-  pageno_t        pgno;           /* page number */
+  pageno_t        pgno;         /* page number */
 #ifdef STATISTICS
-  u_int32_t	elemhit;        /* # of hits on page */
+  u_int32_t	elemhit;            /* # of hits on page */
 #endif
 #define ELEM_READ       0x01
 #define ELEM_WRITTEN    0x02
 #define ELEM_SYNC       0x03
-  u_int8_t      eflags;         /* 0, 1= read, 2=written */
+  u_int8_t      eflags;         /* 1= read, 2=written, 3=synced */
 } L_ELEM;
 
 #define	MPOOL_EXTEND    0x10	/* increase number of pages 
@@ -110,8 +110,8 @@ typedef struct MPOOL
   u_int32_t	pagesize;		      /* file page size */
   fmp_file_t    fd;			      /* file handle */
   void (*pgin) __P((void *, pageno_t, void *)); /* page in conversion routine */
-  void (*pgout) __P((void *, pageno_t, void *));/* page out conversion routine */
-  void	*pgcookie;                          /* cookie for page in/out routines */
+  void (*pgout) __P((void *, pageno_t, void *));/* page out conversion routine*/
+  void	*pgcookie;                         /* cookie for page in/out routines */
 #ifdef STATISTICS
   u_int32_t	listhit;                /* # of list hits */
   u_int32_t	listalloc;              /* # of list elems allocated */
