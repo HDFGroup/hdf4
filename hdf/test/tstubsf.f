@@ -2,10 +2,14 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.3  1992/04/29 17:00:06  dilg
-C Changed VAX FORTRAN initialization statements to standard FORTRAN 'data'
-C statements.
+C Revision 1.4  1992/05/07 16:37:55  dilg
+C Fixed problem with "Hit <return> to continue"
+C Changed output file name from "o2" to "tstubsF.hdf"
 C
+c Revision 1.3  1992/04/29  17:00:06  dilg
+c Changed VAX FORTRAN initialization statements to standard FORTRAN 'data'
+c statements.
+c
 c Revision 1.2  1992/04/28  19:36:55  dilg
 c Some minor cosmetic changes.
 c
@@ -65,8 +69,9 @@ C
       print *, '">>>Failure".  An error count is kept and printed'
       print *, 'out at the end.'
       print *, ' '
-      print *, 'Hit any alpha key and <return> to continue.'
-      read *, in
+      print *, 'Hit <return> to continue.'
+      read(5,100) in
+ 100  format(a)
       in(1:20) = '                    '
 
       print *, ' '
@@ -81,20 +86,20 @@ C
 
       print *, ' '
       print *, 'Testing dfishdf... (should fail)'
-      ret = dfishdf('o2')
+      ret = dfishdf('tstubsF.hdf')
       dfenum = dferrno()
       if (ret .eq. -1) then
         print *, 'Success:  dfishdf failed with DFerror = ', dfenum
       else
 	print *, '>>>Failure:  Non-existent file looks like HDF file.'
-	print *, '   Maybe there was a pre-existing file named "o2"'
+	print *, '   Maybe there was a pre-existing file named "tstubsF.hdf"'
 	print *, '   DFerror = ', dfenum
 	nerrors = nerrors + 1
       endif
 
       print *, ' '
       print *, 'Testing dfopen... (new file)'
-      dfile = dfopen('o2', 6, 0)
+      dfile = dfopen('tstubsF.hdf', 6, 0)
       dfenum = dferrno()
       if (dfile .eq. 0) then
 	print *, '>>>Failure:  Error ', dfenum, ' opening file.'
@@ -129,7 +134,7 @@ C
 
       print *, ' '
       print *, 'Testing dfopen... (existing file)'
-      dfile = dfopen('o2', 2, 0)
+      dfile = dfopen('tstubsF.hdf', 2, 0)
       dfenum = dferrno()
       if (dfile .eq. 0) then
 	print *, '>>>Failure:  Error ', dfenum, ' opening file.'
