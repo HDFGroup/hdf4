@@ -1,0 +1,106 @@
+
+                          ABOUT HDF 4.1 Release 5 
+                               November 2001 
+
+INTRODUCTION
+
+This document describes the differences between HDF 4.1r4 and
+HDF 4.1r5.  It is written for people who are familiar with
+previous releases of HDF and wish to migrate to HDF 4.1r5.
+
+The HDF 4.1r5 documentation can be found on the NCSA ftp server 
+(ftp.ncsa.uiuc.edu) in the directory:
+
+     /HDF/HDF/Documentation/HDF4.1r5/
+
+First-time HDF users are encouraged to read the FAQ in this
+release for more information about HDF.  Users can also look
+at the home page for HDF at:
+
+     http://hdf.ncsa.uiuc.edu/
+
+If you have any questions or comments, please send them to:
+
+     hdfhelp@ncsa.uiuc.edu
+
+CONTENTS
+
+- New Features and Changes
+- Platforms Tested
+
+New Features and Changes:
+========================
+
+o The following Vdata routines were added:
+
+     VSsetblocksize/vsfsetblsz -- sets the block size of the 
+                                  linked-block element.
+     VSsetnumblocks/vsfsetnmbl -- sets the number of blocks for 
+                                  a linked-block element.
+     VSgetblockinfo/vsfgetblinfo -- retrieves the block size and the number 
+                                    of blocks of a linked-block element.
+
+o  Two routines were added to get compression information for the SD and
+   GR interfaces, including chunked elements: SDgetcompress/sfgcompress 
+   and GRgetcompress/mggcompress. 
+
+   Note: 
+
+   - For a JPEG image, GRgetcompress only returns the compression type, not 
+     the compression information (i.e, quantity and force_baseline).  This 
+     information is not currently retrievable.
+
+   - Getting compression type for JPEG chunked images is not working yet.
+
+o  "hdp dumpgr" has a new option, -pd, to print palette data only.  Also,
+   whenever option -p or -pd is given, only palettes are printed, and no 
+   images or file attributes. 
+
+o  A new FORTRAN function, heprntf (HEprint), was added.  It takes two
+   arguments: file name and level.  If the file name string has 0 length,
+   then error messages will be printed to standard output. 
+
+o  On Windows, the unresolved symbol (error_top) error has been fixed when 
+   calling HEclear and linking with the DLL.  Users who want to use the HDF 
+   DLL should define HDFAPDLL in their applications.  Simply go to Project 
+   Settings and add HDFAPDLL as the predefined constant.
+
+o  A memory leak in the netCDF portion of the HDF/mfhdf distribution
+   was fixed. 
+
+o  The "#define NULL" was removed since ANSI C compilers are required to
+   define NULL.
+
+o  When using "hdp dumpgr", data was being printed in the range of 0-250
+   when it should have been between 0-168.  This problem is now fixed.
+
+Please refer to the bugs_fixed.txt file for more details on bugs that were 
+fixed.
+
+
+Platforms Tested:
+================
+
+HDF 4.1 Release 5 has been tested on the following platforms:
+
+   Cray SV1 10.0.0.8
+   Cray T3E sn6711 2.0.5.55                     
+   Compaq Tru64 Unix (OSF1) 5.1
+   DEC Alpha/OpenVMS AXP 7.2-1
+   FreeBSD 4.4
+   HP-UX B.11.00 
+   IBM SP 4.3
+   IRIX 6.5 
+   IRIX64 6.5 (-n32, -64)
+   Linux 2.2.18smp
+   Solaris 2.7, 2.8
+   Windows NT/98/2000
+
+For more information on the platforms that were tested and for
+which we provide pre-compiled binaries, please refer to the following
+web page (accessible from the HDF home page):
+
+     http://hdf.ncsa.uiuc.edu/platforms.html
+
+
+
