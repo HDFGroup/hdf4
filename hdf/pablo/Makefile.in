@@ -172,12 +172,12 @@ pablohdf::		FORCE
 	    $(MAKE) $(MFLAGS) $(HDF_FLAGS) libdf-inst.a;; \
 	esac
 
-libdf-inst.a: $(PCOBJS) $(PFOBJS)
+libdf-inst.a: $(HDFLIB)/libdf.a $(PCOBJS) $(PFOBJS)
 	-$(RM) $(RMFLAGS) libdf-inst.a
 	$(AR) rcuv libdf-inst.a $(HOBJS) $(PCOBJS) $(PFOBJS)
 	$(RANLIB) libdf-inst.a
 
-pablonofortran: $(PCOBJS) 
+pablonofortran: $(HDFLIB)/libdf.a $(PCOBJS) 
 	-$(RM) $(RMFLAGS) libdf-inst.a
 	$(AR) rcuv libdf-inst.a $(HOBJS) $(PCOBJS)
 	$(RANLIB) libdf-inst.a
