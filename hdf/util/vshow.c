@@ -522,7 +522,7 @@ intn dumpattr(int32 vid, intn full, intn isvs)
           printf("     %d attributes:  attr_tag/ref     attr_of_field\n",
                        nattrs);
           for (i=0; i<nattrs; i++)  {
-             if (vs_alist->findex != ENTIRE_VDATA)
+             if (vs_alist->findex != _HDF_ENTIRE_VDATA)
                  printf("     %d:               %d/%d               %d\n",
                  i, vs_alist->atag, vs_alist->aref,vs_alist->findex);
              else
@@ -533,15 +533,18 @@ intn dumpattr(int32 vid, intn full, intn isvs)
          return SUCCEED;
       }
       printf("%d attributes:\n", nattrs);
-      for (j=ENTIRE_VDATA; j<vs->wlist.n; j++) { /* ENTIRE_VDATA is -1 */
-          f_nattrs = VSfnattrs(vid, j);
+      for (j=-1; j<vs->wlist.n; j++)  
+      {	  int32 temp;
+
+	  temp = (j == -1)? _HDF_ENTIRE_VDATA : j;
+          f_nattrs = VSfnattrs(vid, temp);
           if (f_nattrs == 0) continue;  /* no attr for this field */
-          if (j == ENTIRE_VDATA)
-             printf("   Attrs of vdata:\n");
-          else 
-             printf("   Attrs of field %d:\n", j);
+          if (j == -1)
+              printf("   Attrs of vdata:\n");
+          else
+  	      printf("   Attrs of field %d:\n", j);
           for (i = 0; i<f_nattrs; i++)  {   /* dump the attrs */
-              ret = VSattrinfo(vid, j, i, name, &i_type, &i_count, &i_size);
+              ret = VSattrinfo(vid, temp, i, name, &i_type, &i_count, &i_size);
               if (ret == FAIL) {
                  printf(">>>dumpattr: failed in getting attr info.\n");
                  continue;
@@ -554,14 +557,14 @@ intn dumpattr(int32 vid, intn full, intn isvs)
                      continue;
                   }
                   alloc_flag = 1;
-                  if ( ret = VSgetattr(vid, j, i, (VOIDP)buf)) {
+                  if ( ret = VSgetattr(vid, temp, i, (VOIDP)buf)) {
                      printf(">>>dympattr: failed in VSgetattr.\n");
                      continue;
                   }
               }
               else 
               {
-                 if ( ret = VSgetattr(vid, j, i, (VOIDP)attrbuf)) {
+                 if ( ret = VSgetattr(vid, temp, i, (VOIDP)attrbuf)) {
                      printf(">>>dympattr: failed in VSgetattr.\n");
                      continue;
                   }
