@@ -18,9 +18,11 @@ static char RcsId[] = "@(#)$Revision$";
 
 /***********************************************************
 *
-* Test program: Stores annotations in a file
+* Test program:  manf
+*
+* Stores annotations in a file using Multi-file interface
 * Writes several SDSs and corresponding RISs to a file.
-* Writes labels and descriptions for all but the first three SDSs.
+* Writes labels and descriptions for all 2 out of 3 SDSs.
 * Writes labels and descriptions for all RISs.
 *
 *************************************************************/
@@ -30,20 +32,20 @@ static char RcsId[] = "@(#)$Revision$";
 #include "tproto.h"
 #include "mfan.h"
 
-#define ISFIRST    (int)1
-#define NOTFIRST   (int)0
-#define MAXLEN_LAB     50
-#define MAXLEN_DESC  1000
-#define ROWS           10
-#define COLS           10
-#define REPS            3   /* number of data sets to write to file */
+#define MAXLEN_LAB    50
+#define MAXLEN_DESC  500
+#define ROWS          10
+#define COLS          10
+#define REPS           3   /* number of data sets to write to file */
 
+/* File labels/desriptions to write */
 static uint8 *file_lab[2] = {"File label #1: aaa", "File label #2: bbbbbb"};
 static uint8 *file_desc[2]= {"File Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 13"
                            "\n        14 15 16 17 18 19 20 **END FILE DESCR**\n",
                            "File Descr #2: A B C D E F G H I J K L \n"
                            "               M N O  **END FILE DESCR**\n"};
 
+/* Data labels /descriptions to write */
 static uint8 *labsds[2] = {"Object label #1:  sds", 
                           "Object label #1.1:sds"};
 static uint8 *labris[2] = {"Object label #2:  image", 
@@ -64,18 +66,19 @@ static VOID
 genimage (int height, int width, float *data, uint8 *image);
 
 static VOID 
-check_lab_desc (char *fname, uint16 tag, uint16 ref, char *label[], char *desc[]);
+check_lab_desc (char *fname, uint16 tag, uint16 ref,uint8*label[],uint8 *desc[]);
 
+static VOID
+check_fann(char *fname);
 
 /****************************************************************
 **
 **  check_fann:  Check file labels and descriptions in file
 **
 ****************************************************************/
-static int
+static VOID
 check_fann(char *fname)
 {
-
   int32 ret;
   int32 file_handle;
   int32 ann_handle;
@@ -83,9 +86,9 @@ check_fann(char *fname)
   intn  num_dlabels, num_ddescs;
   intn  *dlabels, *ddescs;
   int32 ann_len;
-  uint8  *ann_label = NULL;
-  uint8  *ann_desc = NULL;
-  int i;
+  uint8 *ann_label = NULL;
+  uint8 *ann_desc = NULL;
+  intn  i;
 
   /* open file again */
   ret = file_handle = ANstart(fname, DFACC_READ);
@@ -112,7 +115,7 @@ check_fann(char *fname)
       /* check ann length */
       if (ann_len != (int32) HDstrlen(file_lab[i]))
         {
-          printf("\t>>>BAD LABEL LENGTH.\n\t    IS: %d\n\tSHOULD BE: %d<<<\n",
+          printf("\t>>>BAD FILE LABEL LENGTH.\n\t    IS: %d\n\tSHOULD BE: %d<<<\n",
                  (int) ann_len, (int) HDstrlen(file_lab[i]));
           num_errs++;
         }
@@ -123,7 +126,7 @@ check_fann(char *fname)
           if ((ann_label = (uint8 *)HDgetspace((ann_len+1)*sizeof(uint8))) 
               == NULL)
             {
-              printf("Error: failed to allocate space to hold data label \n");
+              printf("Error: failed to allocate space to hold file label \n");
               exit(1);
             }
           HDmemset(ann_label,'\0', ann_len+1);
@@ -132,16 +135,18 @@ check_fann(char *fname)
       /* read label */
       ret = ANreadann(ann_handle, ann_label, ann_len+1);
       RESULT("ANreadann");
+      ret = ANendaccess(ann_handle);
+      RESULT("ANendaccess");      
       
       /* check label */
-      if (HDstrncmp(ann_label, file_lab[i],ann_len+1) != 0)
+      if (HDstrncmp((const char *)ann_label, (const char *)file_lab[i],ann_len+1) != 0)
         {
-          printf("\t>>>BAD LABEL. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n",
+          printf("\t>>>BAD FILE LABEL. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n",
                  ann_label, file_lab[i]);
           num_errs++;
         }
 #ifdef AN_DEBUG
-      printf("found data_len=%d, data label=%s\n", strlen(ann_label),ann_label);
+      printf("found ann_len=%d, file label=%s\n", strlen(ann_label),ann_label);
 #endif
       HDfreespace(ann_label);
       ann_label = NULL;
@@ -160,7 +165,7 @@ check_fann(char *fname)
       /* check ann length */
       if (ann_len != (int32) HDstrlen(file_desc[i]))
         {
-          printf("\t>>>BAD LABEL LENGTH.\n\t    IS: %d\n\tSHOULD BE: %d<<<\n",
+          printf("\t>>>BAD FILE DESC LENGTH.\n\t    IS: %d\n\tSHOULD BE: %d<<<\n",
                  (int) ann_len, (int) HDstrlen(file_desc[i]));
           num_errs++;
         }
@@ -171,30 +176,33 @@ check_fann(char *fname)
           if ((ann_desc = (uint8 *)HDgetspace((ann_len+1)*sizeof(uint8))) 
               == NULL)
             {
-              printf("Error: failed to allocate space to hold data label \n");
+              printf("Error: failed to allocate space to hold file desc  \n");
               exit(1);
             }
           HDmemset(ann_desc,'\0', ann_len+1);
         }
       
-      /* read label */
+      /* read desc */
       ret = ANreadann(ann_handle, ann_desc, ann_len+1);
       RESULT("ANreadann");
-      
-      /* check label */
-      if (HDstrncmp(ann_desc, file_desc[i],ann_len+1) != 0)
+      ret = ANendaccess(ann_handle);
+      RESULT("ANendaccess");      
+            
+      /* check desc */
+      if (HDstrncmp((const char *)ann_desc,(const char *)file_desc[i],ann_len+1) != 0)
         {
-          printf("\t>>>BAD LABEL. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n",
+          printf("\t>>>BAD FILE DESC. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n",
                  ann_desc, file_desc[i]);
           num_errs++;
         }
 #ifdef AN_DEBUG
-      printf("found data_len=%d, data label=%s\n", strlen(ann_desc),ann_desc);
+      printf("found ann_len=%d, file desc=%s\n", strlen(ann_desc),ann_desc);
 #endif
       HDfreespace(ann_desc);
       ann_desc = NULL;
     } /* end for nfdescs */
 
+  /* Clean up */
   if (ann_label != NULL)
     HDfreespace(ann_label);
   if (ann_desc != NULL)
@@ -204,7 +212,6 @@ check_fann(char *fname)
   ANend(file_handle);
 } /* check_fann() */
 
-
 /****************************************************************
 **
 **  gen2Dfloat:  generate 2-D data array
@@ -213,8 +220,8 @@ check_fann(char *fname)
 static      VOID
 gen2Dfloat(int height, int width, float *data)
 {
-  int         i, j;
-  float      *pdata;
+  int    i, j;
+  float  *pdata;
 
   /* store one value per row, increasing by one for each row */
   pdata = data;
@@ -232,9 +239,9 @@ gen2Dfloat(int height, int width, float *data)
 static      VOID
 genimage(int height, int width, float *data, uint8 *image)
 {
-  int         i, limit;
-  float      *pdata, max, min, multiplier;
-  uint8      *pimage;
+  int    i, limit;
+  float  *pdata, max, min, multiplier;
+  uint8  *pimage;
 
   limit = height * width;
   pdata = data;
@@ -259,20 +266,19 @@ genimage(int height, int width, float *data, uint8 *image)
 **
 ****************************************************************/
 static      VOID
-check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label[], char *desc[])
+check_lab_desc(char *fname, uint16 tag, uint16 ref, uint8 *label[], uint8 *desc[])
 {
   int32 inlablen, indesclen;
-  char  inlabel[MAXLEN_LAB], *indesc;
-
+  char  *indesc;
   int32 ret;
   int32 file_handle;
   int32 ann_handle;
   int32 nflabs, nfdescs, nolabs, nodescs;
   intn  num_dlabels, num_ddescs;
-  intn  *dlabels, *ddescs;
+  int32  *dlabels, *ddescs;
   int32 ann_len;
-  char  *ann_label = NULL;
-  char  *ann_desc = NULL;
+  uint8  *ann_label = NULL;
+  uint8  *ann_desc = NULL;
   int i;
 
   /* open file again */
@@ -299,7 +305,7 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label[], char *desc[])
   printf("There Are %d Data Descriptions For Tag=%d, Ref=%d \n", 
          num_ddescs, tag, ref);
 #endif
-  /* allocate space for list of annotation id's with this tag/ref */
+  /* allocate space for list of label annotation id's with this tag/ref */
   if (num_dlabels == 0)
     {
       printf("Error: no data labels found\n");
@@ -307,13 +313,14 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label[], char *desc[])
     }
   else
     {
-      if ((dlabels = (intn *)HDgetspace(num_dlabels * sizeof(intn))) == NULL)
+      if ((dlabels = (int32 *)HDgetspace(num_dlabels * sizeof(int32))) == NULL)
         {
           printf("Error: failed to allocate space to hold data label ids\n");
           exit(1);
         }
     }
 
+  /* allocate space for list of description annotation id's with this tag/ref */
   if (num_ddescs == 0)
     {
       printf("Error: no data descriptions found\n");
@@ -321,20 +328,21 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label[], char *desc[])
     }
   else
     {
-      if ((ddescs = (intn *)HDgetspace(num_ddescs * sizeof(intn))) == NULL)
+      if ((ddescs = (int32 *)HDgetspace(num_ddescs * sizeof(int32))) == NULL)
         {
           printf("Error: failed to allocate space to hold data descs ids\n");
           exit(1);
         }
     }
 
-  /* get list of annotations id's with this tag/ref */
-  ret = ANannlist(file_handle, AN_DATA_LABEL, tag, ref,dlabels);
+  /* get list of label annotations id's with this tag/ref */
+  ret = ANannlist(file_handle, AN_DATA_LABEL, tag, ref, dlabels);
   RESULT("ANannlist");
   if (ret != num_dlabels)
     printf("Error:ret!=nlabels there are %d data labels for tag=%d,ref=%d \n", 
            num_dlabels, tag, ref);
 
+  /* get list of description annotations id's with this tag/ref */
   ret = ANannlist(file_handle, AN_DATA_DESC, tag, ref, ddescs);
   RESULT("ANannlist");
   if (ret != num_ddescs)
@@ -350,7 +358,7 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label[], char *desc[])
       /* check ann length */
       if (ann_len != (int32) HDstrlen(label[i]))
         {
-          printf("\t>>>BAD LABEL LENGTH.\n\t    IS: %d\n\tSHOULD BE: %d<<<\n",
+          printf("\t>>>BAD DATA LABEL LENGTH.\n\t    IS: %d\n\tSHOULD BE: %d<<<\n",
                  (int) ann_len, (int) HDstrlen(label[i]));
           num_errs++;
         }
@@ -358,7 +366,7 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label[], char *desc[])
       /* allocate space for label */
       if (ann_label == NULL)
         {
-          if ((ann_label = (char *)HDgetspace((ann_len+1)*sizeof(char))) 
+          if ((ann_label = (uint8 *)HDgetspace((ann_len+1)*sizeof(uint8))) 
               == NULL)
             {
               printf("Error: failed to allocate space to hold data label \n");
@@ -370,11 +378,13 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label[], char *desc[])
       /* read label */
       ret = ANreadann(dlabels[i], ann_label, ann_len+1);
       RESULT("ANreadann");
-      
+      ret = ANendaccess(dlabels[i]);
+      RESULT("ANendaccess");      
+
       /* check label */
-      if (HDstrncmp(ann_label, label[i], ann_len+1) != 0)
+      if (HDstrncmp((const char *)ann_label, (const char *)label[i], ann_len+1) != 0)
         {
-          printf("\t>>>BAD LABEL. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n",
+          printf("\t>>>BAD DATA LABEL. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n",
                  ann_label, label[i]);
           num_errs++;
         }
@@ -395,7 +405,7 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label[], char *desc[])
       /* check desc length */
       if (ann_len != (int32) HDstrlen(desc[i]))
         {
-          printf("\t>>>BAD DESC LENGTH.\n\t    IS: %d\n\tSHOULD BE: %d<<<\n",
+          printf("\t>>>BAD DATA DESC LENGTH.\n\t    IS: %d\n\tSHOULD BE: %d<<<\n",
                  (int) ann_len, (int) HDstrlen(desc[i]));
           num_errs++;
         }
@@ -403,7 +413,7 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label[], char *desc[])
       /* allocate space for descritpion */
       if (ann_desc == NULL)
         {
-          if ((ann_desc = (char *)HDgetspace((ann_len+1)*sizeof(char))) 
+          if ((ann_desc = (uint8 *)HDgetspace((ann_len+1)*sizeof(uint8))) 
               == NULL)
             {
               printf("Error: failed to allocate space to hold data desc \n");
@@ -415,11 +425,13 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label[], char *desc[])
       /* read description */
       ret = ANreadann(ddescs[i], ann_desc, ann_len+1);
       RESULT("ANreadann");
+      ret = ANendaccess(ddescs[i]);
+      RESULT("ANendaccess");      
 
       /* check desc */
-      if (HDstrncmp(ann_desc, desc[i], ann_len) != 0)
+      if (HDstrncmp((const char *)ann_desc, (const char *)desc[i], ann_len) != 0)
         {
-          printf("\t>>>BAD DESC. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n",
+          printf("\t>>>BAD DATA DESC. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n",
                  ann_desc, desc[i]);
           num_errs++;
         }
@@ -429,7 +441,6 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label[], char *desc[])
       HDfreespace(ann_desc);
       ann_desc = NULL;
     } /* end for descs */
-
     
   /* free space */
   HDfreespace(dlabels);
@@ -443,11 +454,17 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label[], char *desc[])
   ANend(file_handle);
 } /* check_lab_desc() */
 
-
+/****************************************************************
+**
+**  test_man(): Main annotation test routine
+** 
+**  NOTES: Keep in mind the order in which labels/descriptiosn
+**         are written to the file to make sense of the indices
+**         returned by ANfileinfo().
+****************************************************************/
 void
 test_man()
 {
-
   uint8  pal[768];
   uint8  *image, *newimage;
   uint16 refnum;
@@ -459,7 +476,6 @@ test_man()
   int32   file_handle; /* file handle */
   int32   ann_handle;  /* annotation handle */
   ann_type    antype;      /* annotation type */
-
 
   /***** generate float array and image *****/
   data     = (float *) HDgetspace(ROWS * COLS * sizeof(float));
@@ -608,4 +624,4 @@ test_man()
   HDfreespace((VOIDP) data);
   HDfreespace((VOIDP) image);
   HDfreespace((VOIDP) newimage);
-} /* main() */
+} /* test_man() */

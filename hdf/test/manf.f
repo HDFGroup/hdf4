@@ -15,7 +15,8 @@ C
       program manf
 C
 C
-C  Test program: stores annotations in a file.
+C  Test program: stores annotations in a file using fortran multi-file
+C                annotation interface.
 C                Writes several SDSs and corresponding RISs to a file.
 C                Writes labels and descriptions for all 2 out of 3 SDS
 C                Writes labels and descriptions for all RISs.
@@ -23,7 +24,6 @@ C
 C  Input file:   none
 C  Output files: manf.hdf
 C
-
       integer afstart, afend, afcreate, affcreate
       integer afwriteann, afendaccess
 
@@ -118,7 +118,7 @@ C  *** start annotation on file ***
 C  *** write file 2 labels/ 2 descriptions ***
       anhandle = affcreate(fhandle, AN_FILE_LABEL)
       ret = anhandle
-      call RESULT(ret, 'afcreatef')
+      call RESULT(ret, 'affcreate')
       ret = afwriteann(anhandle,lab2,len(lab2))
       call RESULT(ret, 'afwriteann')
       ret = afendaccess(anhandle)
@@ -126,7 +126,7 @@ C  *** write file 2 labels/ 2 descriptions ***
 
       anhandle = affcreate(fhandle, AN_FILE_LABEL)
       ret = anhandle
-      call RESULT(ret, 'afcreatef')
+      call RESULT(ret, 'affcreate')
       ret = afwriteann(anhandle,lab1,len(lab1))
       call RESULT(ret, 'afwriteann')
       ret = afendaccess(anhandle)
@@ -134,7 +134,7 @@ C  *** write file 2 labels/ 2 descriptions ***
 
       anhandle = affcreate(fhandle, AN_FILE_DESC)
       ret = anhandle
-      call RESULT(ret, 'afcreatef')
+      call RESULT(ret, 'affcreate')
       ret = afwriteann(anhandle,desc2,len(desc2))
       call RESULT(ret, 'afwriteann')
       ret = afendaccess(anhandle)
@@ -142,7 +142,7 @@ C  *** write file 2 labels/ 2 descriptions ***
 
       anhandle = affcreate(fhandle, AN_FILE_DESC)
       ret = anhandle
-      call RESULT(ret, 'afcreatef')
+      call RESULT(ret, 'affcreate')
       ret = afwriteann(anhandle,desc1,len(desc1))
       call RESULT(ret, 'afwriteann')
       ret = afendaccess(anhandle)
@@ -258,6 +258,7 @@ C ******  read in annotations for 2 out of every 3
               call check_lab_desc(TESTFILE, DFTAG_SDG, refnum, 
      *                            labsds2, descsds2, numberfailed)
           endif
+
 C ****    read annotations for images
           ret = d8gimg(TESTFILE, newimage, COLS, ROWS, pal)
           call RESULT(ret, 'd8gimg')
@@ -407,6 +408,8 @@ C ***** Look for label in list ******
 
          ret = afreadann(dlabels(j), inlabel, MAXLENLAB+1)
          call RESULT(ret, 'afreadann')
+         ret = afendaccess(dlabels(j))
+         call RESULT(ret, 'afendaccess')
 
          if (inlabel .eq. label) then
             found = 1
@@ -441,6 +444,8 @@ C ***** look for description in list
 
          ret = afreadann(ddescs(j), indesc, MAXLEN_DESC+1)
          call RESULT(ret, 'afreadann')
+         ret = afendaccess(ddescs(j))
+         call RESULT(ret, 'afendaccess')
 
          if (indesc .eq. desc) then
             found = 1
@@ -519,6 +524,8 @@ C ***** Read file label **********
 
       ret = afreadann(annh, flabel, fannlen+1)
       call RESULT(ret, 'afreadann')
+      ret = afendaccess(annh)
+      call RESULT(ret, 'afendaccess')
 
       if (fannlen .ne. len(label)) then
          print *,'   >>>BAD LABEL LENGTH.'
@@ -543,6 +550,8 @@ C **** Read file description *****
 
       ret = afreadann(annh, fdesc, fannlen+1)
       call RESULT(ret, 'afreadann')
+      ret = afendaccess(annh)
+      call RESULT(ret, 'afendaccess')
 
       if (fannlen .ne. len(desc)) then
           print *,'   >>>BAD DESCRIPTION LENGTH.' 
