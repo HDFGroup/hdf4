@@ -49,6 +49,8 @@ FOBJS=hfilef.o herrf.o hfileff.o dfanf.o dfr8f.o dfpf.o df24f.o dfsdf.o\
       vgf.o dff.o dfanff.o df24ff.o dfpff.o dfr8ff.o dfsdff.o vgff.o dfff.o\
       dfutilf.o dfufp2if.o mfanf.o mfanff.o
 
+FINCS=dffunc.inc hdf.inc
+
 #JFSRCS= jdmain.c jcmain.c jrdjfif.c jrdgif.c jrdppm.c jrdrle.c jrdtarga.c \
 #        jwrjfif.c jwrgif.c jwrppm.c jwrrle.c jwrtarga.c
 #

@@ -161,7 +161,7 @@ saber:
 
 .installed: libdf.a
 	-if (test \! -d $(HDFINC)) then (mkdir $(HDFINC) ) fi
-	-cp $(HDRS) $(HDFINC)
+	-cp $(HDRS) $(FINCS) $(HDFINC)
 	-if (test \! -d $(HDFLIB)) then (mkdir $(HDFLIB) ) fi
 	-cp libdf.a $(HDFLIB)
 	-$(RANLIB) $(HDFLIB)/libdf.a
