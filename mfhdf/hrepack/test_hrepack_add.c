@@ -42,7 +42,7 @@ static void set_chunk_def( int32 comp_type,
  *  GR - Multifile General Raster Image Interface,
  *  optionally inserting the image into the group VGROUP_ID
  *
- * Return: void
+ * Return: int
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -51,14 +51,14 @@ static void set_chunk_def( int32 comp_type,
  *-------------------------------------------------------------------------
  */
 
-void add_gr_ffile(const char* name_file,
+int add_gr_ffile(const char* name_file,
+                  int32 gr_id,
                   const char* gr_name,
                   int32 interlace_mode,
                   int32 file_id,
                   int32 vgroup_id)
 {
- int32  gr_id,          /* GR interface identifier */
-        ri_id,          /* raster image identifier */
+ int32  ri_id,          /* raster image identifier */
         gr_ref,         /* reference number of the GR image */
         start[2],       /* start position to write for each dimension */
         edges[2],       /* number of elements to be written along each dimension */
@@ -83,17 +83,11 @@ void add_gr_ffile(const char* name_file,
   dim_gr[0] = X_LENGTH;
   dim_gr[1] = Y_LENGTH;
   
-  
-  /* initialize the GR interface */
-  if ((gr_id = GRstart (file_id))== FAIL)
-  {
-   printf("Error: Could not start GR interface\n");
-  }
-  
   /* create the raster image array */
   if ((ri_id = GRcreate (gr_id, gr_name, N_COMPS, data_type, interlace_mode, dim_gr))== FAIL)
   {
    printf("Error: Could not create GR <%s>\n", gr_name);
+   return FAIL;
   }
   
   /* define the size of the data to be written */
@@ -113,6 +107,7 @@ void add_gr_ffile(const char* name_file,
   if(GRsetattr(ri_id, "Myattr", DFNT_UINT8, n_values, (VOIDP)attr_values)==FAIL)
   {
    printf("Error: Could not write attributes for GR <%s>\n", gr_name);
+   return FAIL;
   }
   
   /* obtain the reference number of the GR using its identifier */
@@ -128,6 +123,7 @@ void add_gr_ffile(const char* name_file,
    if (Vaddtagref (vgroup_id, TAG_GRP_IMAGE, gr_ref)==FAIL)
    {
     printf("Error: Could not add GR <%s> to group\n", gr_name);
+    return FAIL;
    }
   }
    
@@ -135,17 +131,12 @@ void add_gr_ffile(const char* name_file,
    if (GRendaccess (ri_id)==FAIL)
    {
     printf("Error: Could not close GR <%s>\n", gr_name);
+    return FAIL;
    }
-   
-   /* terminate access to the GR interface */
-   if (GRend (gr_id)==FAIL)
-   {
-    printf("Error: Could not close GR interface\n");
-   }
-   
-   
+ 
    /* add an annotation and label to the object */
-   add_an(file_id, DFTAG_RI, gr_ref);
+   if (add_an(file_id, DFTAG_RI, gr_ref)<0)
+    return FAIL;
 
  }  /* read data */
 
@@ -155,7 +146,7 @@ void add_gr_ffile(const char* name_file,
   image_data=NULL;
  }
 
-
+ return SUCCESS;
 }
 
 
@@ -166,7 +157,7 @@ void add_gr_ffile(const char* name_file,
  *  GR - Multifile General Raster Image Interface,
  *  optionally inserting the image into the group VGROUP_ID
  *
- * Return: void
+ * Return: int
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -179,15 +170,15 @@ void add_gr_ffile(const char* name_file,
 #define X_DIM_GR     60
 #define Y_DIM_GR     400
 
-void add_gr(const char* gr_name,     /* gr name */
+int add_gr(const char* gr_name,     /* gr name */
             int32 file_id,           /* file ID */
+            int32 gr_id,             /* GR ID */
             int32 vgroup_id,         /* group ID */
             int32 chunk_flags,       /* chunk flags */
             comp_coder_t comp_type,  /* compression flag */
             comp_info *comp_info     /* compression structure */ )
 {
- int32  gr_id,          /* GR interface identifier */
-        ri_id,          /* raster image identifier */
+ int32  ri_id,          /* raster image identifier */
         gr_ref,         /* reference number of the GR image */
         start[2],       /* start position to write for each dimension */
         edges[2],       /* number of elements to be written along each dimension */
@@ -244,16 +235,11 @@ void add_gr(const char* gr_name,     /* gr name */
   break;
  }
  
- /* initialize the GR interface */
- if ((gr_id = GRstart (file_id))== FAIL)
- {
-  printf("Error: Could not start GR interface\n");
- }
- 
  /* create the raster image array */
  if ((ri_id = GRcreate (gr_id, gr_name, ncomps, data_type, interlace_mode, dim_gr))== FAIL)
  {
   printf("Error: Could not create GR <%s>\n", gr_name);
+  return FAIL;
  }
 
  /* set chunk */
@@ -306,6 +292,7 @@ void add_gr(const char* gr_name,     /* gr name */
   if(GRsetchunk (ri_id, chunk_def, chunk_flags)==FAIL)
   {
    printf("Error: Could not set chunk for GR <%s>\n", gr_name);
+   return FAIL;
   }
  }
  
@@ -316,6 +303,7 @@ void add_gr(const char* gr_name,     /* gr name */
   if(GRsetcompress (ri_id, comp_type, comp_info)==FAIL)
   {
    printf("Error: Could not set compress for GR <%s>\n", gr_name);
+   return FAIL;
   }
  }
 
@@ -329,6 +317,7 @@ void add_gr(const char* gr_name,     /* gr name */
  if (GRwriteimage(ri_id, start, NULL, edges, (VOIDP)data)==FAIL)
  {
   printf("Error: Could not set write GR <%s>\n", gr_name);
+  return FAIL;
  }
    
  /* obtain the reference number of the GR using its identifier */
@@ -343,22 +332,21 @@ void add_gr(const char* gr_name,     /* gr name */
   if (Vaddtagref (vgroup_id, TAG_GRP_IMAGE, gr_ref)==FAIL)
   {
    printf("Error: Could not add GR <%s> to group\n", gr_name);
+   return FAIL;
   }
  
  /* terminate access to the raster image */
  if (GRendaccess (ri_id)==FAIL)
  {
   printf("Error: Could not close GR <%s>\n", gr_name);
- }
- 
- /* terminate access to the GR interface */
- if (GRend (gr_id)==FAIL)
- {
-  printf("Error: Could not close GR interface\n");
+  return FAIL;
  }
 
  /* add an annotation and label to the object */
- add_an(file_id, DFTAG_RI, gr_ref);
+ if (add_an(file_id, DFTAG_RI, gr_ref)<0)
+  return FAIL;
+
+ return SUCCESS;
  
 }
 
@@ -367,7 +355,7 @@ void add_gr(const char* gr_name,     /* gr name */
  *
  * Purpose: utility function to write global attributes
  *
- * Return: void
+ * Return: int
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -376,11 +364,12 @@ void add_gr(const char* gr_name,     /* gr name */
  *-------------------------------------------------------------------------
  */
 
-void add_glb_attrs(const char *fname,
-                   int32 file_id)
+int add_glb_attrs(const char *fname,
+                   int32 file_id,
+                   int32 sd_id,
+                   int32 gr_id)
+                   
 {
- int32 sd_id,                  /* SD interface identifier */
-       gr_id;                  /* GR interface identifier */
  uint8 attr_values[2]={1,2};
  int   n_values=2;
      
@@ -388,32 +377,24 @@ void add_glb_attrs(const char *fname,
  * make SDS global attributes
  *-------------------------------------------------------------------------
  */ 
- 
- /* initialize the SD interface */
- sd_id  = SDstart (fname, DFACC_WRITE);
-
  /* assign an attribute to the SD */
  if (SDsetattr(sd_id, "MySDgattr", DFNT_UINT8, n_values, (VOIDP)attr_values)==FAIL){
   printf("Could not set SDS attr\n");
+  return FAIL;
  }
-
- /* terminate access to the SD interface */
- SDend (sd_id);
 
 /*-------------------------------------------------------------------------
  * make GR global attributes
  *-------------------------------------------------------------------------
  */ 
 
- gr_id  = GRstart(file_id);
- 
  /* assign an attribute to the GR */
  if (GRsetattr(gr_id, "MyGRgattr", DFNT_UINT8, n_values, (VOIDP)attr_values)==FAIL){
   printf("Could not set GR attr\n");
+  return FAIL;
  }
 
- /* terminate access to the GR interface */
- GRend (gr_id);
+ return SUCCESS;
 }
 
 
@@ -424,7 +405,7 @@ void add_glb_attrs(const char *fname,
  *  DFR8 - Single-file 8-Bit Raster Image Interface,
  *  optionally inserting the image into the group VGROUP_ID
  *
- * Return: void
+ * Return: int
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -433,7 +414,7 @@ void add_glb_attrs(const char *fname,
  *-------------------------------------------------------------------------
  */
 
-void add_r8(const char* image_file,
+int add_r8(const char* image_file,
             const char *fname,
             int32 file_id,
             int32 vgroup_id)
@@ -454,11 +435,13 @@ void add_r8(const char* image_file,
   /* add a palette */
   if (DFR8setpalette(pal_rgb)==FAIL){
    printf( "Could not set palette for image\n");
+   return FAIL;
   }
 
   /* write the image */
   if (DFR8addimage(fname, image_data, X_LENGTH, Y_LENGTH, 0)==FAIL){
    printf( "Could not write palette for image\n");
+   return FAIL;
   }
   
   /* obtain the reference number of the RIS8 */
@@ -472,10 +455,12 @@ void add_r8(const char* image_file,
   if (vgroup_id)
    if (Vaddtagref (vgroup_id, TAG_GRP_IMAGE, ri_ref)==FAIL){
    printf( "Could not add image to group\n");
+   return FAIL;
   }
 
   /* add an annotation and label to the object */
-  add_an(file_id, TAG_GRP_IMAGE, ri_ref);
+  if (add_an(file_id, TAG_GRP_IMAGE, ri_ref)<0)
+   return FAIL;
  }
 
  if ( image_data )
@@ -484,6 +469,7 @@ void add_r8(const char* image_file,
   image_data=NULL;
  }
 
+ return SUCCESS;
 }
 
 
@@ -494,7 +480,7 @@ void add_r8(const char* image_file,
  *  DF24 - Single-file 24-Bit Raster Image Interface,
  *  optionally inserting the image into the group VGROUP_ID
  *
- * Return: void
+ * Return: int
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -503,7 +489,7 @@ void add_r8(const char* image_file,
  *-------------------------------------------------------------------------
  */
 
-void add_r24(const char* image_file,
+int add_r24(const char* image_file,
              const char *fname,
              int32 file_id,
              intn il,
@@ -525,11 +511,13 @@ void add_r24(const char* image_file,
   /* set pixel interlace */
   if (DF24setil(il)==FAIL){
    printf( "Could not set interlace for image\n");
+   return FAIL;
   }
 
   /* write the image */
   if (DF24addimage(fname, image_data, X_LENGTH, Y_LENGTH)==FAIL){
    printf( "Could not write image\n");
+   return FAIL;
   }
   
   /* obtain the reference number of the RIS24 */
@@ -543,10 +531,12 @@ void add_r24(const char* image_file,
   if (vgroup_id)
    if (Vaddtagref (vgroup_id, TAG_GRP_IMAGE, ri_ref)==FAIL){
    printf( "Could not set group for image\n");
+   return FAIL;
   }
 
   /* add an annotation and label to the object */
-  add_an(file_id, TAG_GRP_IMAGE, ri_ref);
+  if (add_an(file_id, TAG_GRP_IMAGE, ri_ref)<0)
+   return FAIL;
  }
 
  if ( image_data )
@@ -555,6 +545,7 @@ void add_r24(const char* image_file,
   image_data=NULL;
  }
 
+ return SUCCESS;
 }
 
 
@@ -568,7 +559,7 @@ void add_r24(const char* image_file,
  *   1)inserting the SD into the group VGROUP_ID
  *   2)making the dataset chunked and/or compressed
  *
- * Return: void
+ * Return: int
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -584,8 +575,9 @@ void add_r24(const char* image_file,
 #define Z_DIM      2
 
 
-void add_sd(const char *fname,       /* file name */
+int add_sd(const char *fname,       /* file name */
             int32 file_id,           /* file ID */
+            int32 sd_id,             /* SD id */
             const char* sds_name,    /* sds name */
             int32 vgroup_id,         /* group ID */
             int32 chunk_flags,       /* chunk flags */
@@ -593,8 +585,7 @@ void add_sd(const char *fname,       /* file name */
             comp_info *comp_info     /* compression structure */ )
 
 {
- int32  sd_id,        /* SD interface identifier */
-        sds_id,       /* data set identifier */
+ int32  sds_id,       /* data set identifier */
         sds_ref,      /* reference number of the data set */
         dim_sds[2],   /* dimension of the data set */
         rank = 2,     /* rank of the data set array */
@@ -658,12 +649,13 @@ void add_sd(const char *fname,       /* file name */
 /* initialize dimension scales */
  for (i=0; i < X_DIM; i++) data_X[i] = i;
  for (i=0; i < Y_DIM; i++) data_Y[i] = 0.1 * i;
-
- /* initialize the SD interface */
- sd_id = SDstart (fname, DFACC_WRITE);
  
  /* create the SDS */
- sds_id = SDcreate (sd_id, sds_name, DFNT_INT32, rank, dim_sds);
+ if ((sds_id = SDcreate (sd_id, sds_name, DFNT_INT32, rank, dim_sds))<0)
+ {
+   printf( "Could not create SDS <%s>\n",sds_name);
+   return FAIL;
+ }
 
  /* set chunk */
  if ( (chunk_flags == HDF_CHUNK) || (chunk_flags == (HDF_CHUNK | HDF_COMP)) )
@@ -787,19 +779,12 @@ void add_sd(const char *fname,       /* file name */
   printf( "Failed to end SDS <%s>\n", sds_name);
   goto fail;
  } 
- 
- /* terminate access to the SD interface */
- if (SDend (sd_id)==FAIL){
-  printf( "Failed to end SD <%s>\n", sds_name);
-  exit(1);
- } 
 
- return;
+ return SUCCESS;
 
 fail:
  SDendaccess (sds_id);
- SDend (sd_id);
- exit(1);
+ return FAIL;
 }
 
 
@@ -812,7 +797,7 @@ fail:
  *   1)inserting the SD into the group VGROUP_ID
  *   2)making the dataset chunked and/or compressed
  *
- * Return: void
+ * Return: int
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -821,8 +806,9 @@ fail:
  *-------------------------------------------------------------------------
  */
 
-void add_sd3d(const char *fname,       /* file name */
+int add_sd3d(const char *fname,       /* file name */
               int32 file_id,           /* file ID */
+              int32  sd_id,            /* SD interface identifier */
               const char* sds_name,    /* sds name */
               int32 vgroup_id,         /* group ID */
               int32 chunk_flags,       /* chunk flags */
@@ -830,8 +816,7 @@ void add_sd3d(const char *fname,       /* file name */
               comp_info *comp_info     /* compression structure */ )
 
 {
- int32  sd_id,        /* SD interface identifier */
-        sds_id,       /* data set identifier */
+ int32  sds_id,       /* data set identifier */
         sds_ref,      /* reference number of the data set */
         dim_sds[3],   /* dimension of the data set */
         rank = 3,     /* rank of the data set array */
@@ -862,16 +847,17 @@ void add_sd3d(const char *fname,       /* file name */
     data[k][j][i] = (i + j) + 1;
  }
  
- /* initialize the SD interface */
- sd_id = SDstart (fname, DFACC_WRITE);
- 
  /* set the size of the SDS's dimension */
  dim_sds[0] = Z_DIM;
  dim_sds[1] = Y_DIM;
  dim_sds[2] = X_DIM;
  
  /* create the SDS */
- sds_id = SDcreate (sd_id, sds_name, DFNT_INT32, rank, dim_sds);
+ if ((sds_id = SDcreate (sd_id, sds_name, DFNT_INT32, rank, dim_sds))<0)
+ {
+   printf( "Could not create SDS <%s>\n",sds_name);
+   return FAIL;
+ }
 
  /* set chunk */
  if ( (chunk_flags == HDF_CHUNK) || (chunk_flags == (HDF_CHUNK | HDF_COMP)) )
@@ -932,18 +918,11 @@ void add_sd3d(const char *fname,       /* file name */
   goto fail;
  } 
  
- /* terminate access to the SD interface */
- if (SDend (sd_id)==FAIL){
-  printf( "Failed to end SD <%s>\n", sds_name);
-  exit(1);
- } 
-
- return;
+ return SUCCESS;
 
 fail:
  SDendaccess (sds_id);
- SDend (sd_id);
- exit(1);
+ return FAIL;
 }
 
 
@@ -954,7 +933,7 @@ fail:
  *  VS - Vdata Interface,
  *  optionally inserting the VS into the group VGROUP_ID
  *
- * Return: void
+ * Return: int
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -975,7 +954,7 @@ fail:
 #define  FIELDNAME_LIST   "Position,Mass,Temperature" /* No spaces b/w names */
 #define  N_VALS_PER_REC   (ORDER_1 + ORDER_2 + ORDER_3)  /* number of values per record */
 
-void add_vs(const char* vs_name,
+int add_vs(const char* vs_name,
             int32 file_id,
             int32 vgroup_id)
 {
@@ -999,9 +978,11 @@ void add_vs(const char* vs_name,
  /* Set name and class name of the vdata */
  if (VSsetname (vdata_id, vs_name)==FAIL){
   printf( "Could not set name for VS\n");
+  return FAIL;
  }
  if (VSsetclass (vdata_id, CLASS_NAME)==FAIL){
   printf( "Could not set class for VS\n");
+  return FAIL;
  }
  
  /* Introduce each field's name, data type, and order */
@@ -1012,6 +993,7 @@ void add_vs(const char* vs_name,
  /* Finalize the definition of the fields */
  if (VSsetfields (vdata_id, FIELDNAME_LIST)==FAIL){
   printf( "Could not set fields for VS\n");
+  return FAIL;
  }
  
 /* 
@@ -1033,18 +1015,21 @@ void add_vs(const char* vs_name,
 /* Write the data from data_buf to the vdata with full interlacing mode */
  if (VSwrite (vdata_id, (uint8 *)data_buf, N_RECORDS,FULL_INTERLACE)==FAIL){
   printf( "Could not write VS\n");
+  return FAIL;
  }
   
  /* Attach an attribute to the vdata, i.e., indicated by the second parameter */
  if (VSsetattr (vdata_id,_HDF_VDATA,"Myattr",DFNT_CHAR,
   attr_n_values, vd_attr)==FAIL){
   printf( "Could not set attr for VS\n");
+  return FAIL;
  }
  
  /* Attach an attribute to the field 0 */
  if (VSsetattr (vdata_id, 0, "Myfattr", DFNT_INT32, 
   field_n_values, fld_attr)==FAIL){
   printf( "Could not set attr for VS\n");
+  return FAIL;
  }
  
  /* Obtain the tag and ref number of the vdata */
@@ -1059,20 +1044,26 @@ void add_vs(const char* vs_name,
  if (vgroup_id)
   if (Vaddtagref (vgroup_id, vdata_tag, vdata_ref)==FAIL){
   printf( "Could not set group for VS\n");
+  return FAIL;
  }
  
  /* terminate access to the VSs */
  if (VSdetach (vdata_id)==FAIL){
   printf( "Could not detach VS\n");
+  return FAIL;
  }
  
  /* Terminate access to the VS interface */
  if (Vend (file_id)==FAIL){
   printf( "Could not end VS\n");
+  return FAIL;
  }
 
  /* add an annotation and label to the vdata */
- add_an(file_id, vdata_tag, vdata_ref);
+ if (add_an(file_id, vdata_tag, vdata_ref)<0)
+  return FAIL;
+
+ return SUCCESS;
 }
 
 
@@ -1081,7 +1072,7 @@ void add_vs(const char* vs_name,
  *
  * Purpose: utility function to write a file AN
  *
- * Return: void
+ * Return: int
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -1096,7 +1087,7 @@ void add_vs(const char* vs_name,
 #define  DATA_DESC_TXT  "This is a data annotation"
 
 
-void add_file_an(int32 file_id)
+int add_file_an(int32 file_id)
 {
  int32 an_id,        /* AN interface identifier */
        file_label_id,/* file label identifier */
@@ -1120,6 +1111,7 @@ void add_file_an(int32 file_id)
  /* Write the annotations to the file label */
  if (ANwriteann (file_label_id,FILE_LABEL_TXT,strlen (FILE_LABEL_TXT))==FAIL){
   printf( "Could not write AN\n");
+  return FAIL;
  }
 
  /* Create file description */
@@ -1128,6 +1120,7 @@ void add_file_an(int32 file_id)
  /* Write the annotation to the file description */
  if (ANwriteann (file_desc_id, FILE_DESC_TXT, strlen (FILE_DESC_TXT))==FAIL){
   printf( "Could not write AN\n");
+  return FAIL;
  }
 
 /*-------------------------------------------------------------------------
@@ -1140,6 +1133,7 @@ void add_file_an(int32 file_id)
  vgroup_id = Vattach (file_id, -1, "w");
  if (Vsetname (vgroup_id, "an_group")==FAIL){
   printf( "Could not set name for VG\n");
+  return FAIL;
  }
  
  /* Obtain the tag and ref number of the vgroup */
@@ -1152,6 +1146,7 @@ void add_file_an(int32 file_id)
  /* Write the annotation text to the data label */
  if (ANwriteann (data_label_id, DATA_LABEL_TXT, strlen (DATA_LABEL_TXT))==FAIL){
   printf( "Could not write AN\n");
+  return FAIL;
  }
  
  /* Create the data description for the vgroup identified by its tag and ref number */
@@ -1160,14 +1155,17 @@ void add_file_an(int32 file_id)
  /* Write the annotation text to the data description */
  if (ANwriteann (data_desc_id, DATA_DESC_TXT, strlen (DATA_DESC_TXT))==FAIL){
   printf( "Could not write AN\n");
+  return FAIL;
  }
  
  /* Teminate access to the vgroup and to the V interface */
  if (Vdetach (vgroup_id)==FAIL){
   printf( "Could not detach VG\n");
+  return FAIL;
  }
  if (Vend (file_id)==FAIL){
   printf( "Could not end VG\n");
+  return FAIL;
  }
  
  /* Terminate access to each annotation explicitly */
@@ -1176,12 +1174,16 @@ void add_file_an(int32 file_id)
      ANendaccess (data_label_id)==FAIL||
      ANendaccess (data_desc_id)==FAIL){
   printf( "Could not end AN\n");
+  return FAIL;
  }
  
  /* Terminate access to the AN interface */
  if (ANend (an_id)==FAIL==FAIL){
   printf( "Could not end AN\n");
+  return FAIL;
  }
+
+ return SUCCESS;
 }
 
 
@@ -1191,7 +1193,7 @@ void add_file_an(int32 file_id)
  *
  * Purpose: utility function to write a AN
  *
- * Return: void
+ * Return: int
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -1201,7 +1203,7 @@ void add_file_an(int32 file_id)
  */
 
 
-void add_an(int32 file_id, int32 tag, int32 ref)
+int add_an(int32 file_id, int32 tag, int32 ref)
 {
  int32 an_id,        /* AN interface identifier */
        data_label_id,  /* data label identifier */
@@ -1221,6 +1223,7 @@ void add_an(int32 file_id, int32 tag, int32 ref)
  /* Write the annotation text to the data label */
  if (ANwriteann (data_label_id, DATA_LABEL_TXT, strlen (DATA_LABEL_TXT))==FAIL){
   printf("Error: writing data label in tag %d ref %d\n", tag, ref);
+  return FAIL;
  }
  
  /* Create the data description for the object identified by its tag and ref number */
@@ -1229,18 +1232,23 @@ void add_an(int32 file_id, int32 tag, int32 ref)
  /* Write the annotation text to the data description */
  if (ANwriteann (data_desc_id, DATA_DESC_TXT, strlen (DATA_DESC_TXT))==FAIL){
   printf("Error: writing data label in tag %d ref %d\n", tag, ref);
+  return FAIL;
  }
  
  /* Terminate access to each annotation explicitly */
  if (ANendaccess (data_label_id)==FAIL||
      ANendaccess (data_desc_id)==FAIL){
   printf( "Failed to close AN\n");
+  return FAIL;
  }
  
  /* Terminate access to the AN interface */
  if (ANend (an_id)==FAIL){
   printf( "Failed to close AN\n");
+  return FAIL;
  }
+
+ return SUCCESS;
 }
 
 
@@ -1251,7 +1259,7 @@ void add_an(int32 file_id, int32 tag, int32 ref)
  *
  * Purpose: utility function to write a palette
  *
- * Return: void
+ * Return: int
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -1261,14 +1269,16 @@ void add_an(int32 file_id, int32 tag, int32 ref)
  */
 
 
-void add_pal(const char* fname)
+int add_pal(const char* fname)
 {
  uint8  palette_data[256*3];
  
  if (DFPaddpal(fname,palette_data)==FAIL){
   printf( "Failed to write palette in <%s>\n", fname);
+  return FAIL;
  }
  
+ return SUCCESS;
 }
 
 
@@ -1345,7 +1355,7 @@ int read_data(const char* file_name)
  * Purpose: utility function to write with SZIPed SDSs
  *  SD - Multifile Scientific Data Interface,
  *
- * Return: void
+ * Return: int
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -1354,8 +1364,9 @@ int read_data(const char* file_name)
  *-------------------------------------------------------------------------
  */
 
-void add_sd_szip(const char *fname,       /* file name */
+int add_sd_szip(const char *fname,       /* file name */
                  int32 file_id,           /* file ID */
+                 int32 sd_id,             /* SD interface identifier */
                  const char* sds_name,    /* sds name */
                  int32 vgroup_id,         /* group ID */
                  int32 chunk_flags,       /* chunk flags */
@@ -1366,8 +1377,7 @@ void add_sd_szip(const char *fname,       /* file name */
                  )
 
 {
- int32  sd_id,        /* SD interface identifier */
-        sds_id,       /* data set identifier */
+ int32  sds_id,       /* data set identifier */
         sds_ref,      /* reference number of the data set */
         rank = 2;     /* rank of the data set array */
  comp_coder_t          comp_type;        /* compression flag */
@@ -1393,19 +1403,12 @@ void add_sd_szip(const char *fname,       /* file name */
 #else
   printf("Warning: SZIP compression not available\n");
 #endif
-
- /* initialize the SD interface */
- sd_id = SDstart (fname, DFACC_WRITE);
- if (sd_id < 0) {
-   printf( "SDstart failed for file <%s>\n",fname);
-   goto fail;
- }
  
  /* create the SDS */
  sds_id = SDcreate (sd_id, sds_name, nt, rank, dim);
  if (sds_id < 0) {
    printf( "SDcreate failed for file <%s>\n",sds_name);
-   goto fail;
+   return FAIL;
  }
 
  /* set chunk */
@@ -1458,19 +1461,12 @@ void add_sd_szip(const char *fname,       /* file name */
   printf( "Failed to end SDS <%s>\n",sds_name);
   goto fail;
  }
- 
- /* terminate access to the SD interface */
- if (SDend (sd_id)==FAIL) {
-  printf( "Failed to set chunk for SDS <%s>\n",sds_name);
-  exit(1);
- }
 
- return;
+ return SUCCESS;
 
 fail:
  SDendaccess (sds_id);
- SDend (sd_id);
- exit(1);
+ return FAIL;
 }
 
 
@@ -1480,7 +1476,7 @@ fail:
  * Purpose: utility function to write several SZIPed SDSs
  *  SD - Multifile Scientific Data Interface,
  *
- * Return: void
+ * Return: int
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -1493,8 +1489,9 @@ fail:
 #define XD1     60
 #define YD1     40
 
-void add_sd_szip_all(const char *fname,       /* file name */
+int add_sd_szip_all(const char *fname,       /* file name */
                      int32 file_id,           /* file ID */
+                     int32 sd_id,             /* SD interface identifier */
                      int32 vgroup_id          /* group ID */
                      )
 {
@@ -1507,9 +1504,11 @@ void add_sd_szip_all(const char *fname,       /* file name */
    for (i = 0; i < XD1; i++)
     buf[j][i] = (int32) (i + j) + 1;
   }
-  add_sd_szip(fname,file_id,"dset32szip",vgroup_id,HDF_NONE,DFNT_INT32,bpp,dim,buf);
+  if (add_sd_szip(fname,file_id,sd_id,"dset32szip",vgroup_id,HDF_NONE,DFNT_INT32,bpp,dim,buf)<0)
+   return FAIL;
  }
 
+ return SUCCESS;
 }
 
 /*-------------------------------------------------------------------------

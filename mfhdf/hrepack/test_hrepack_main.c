@@ -73,9 +73,11 @@ int main(void)
                vgroup2_id,   /* vgroup identifier */
                vgroup3_id,   /* vgroup identifier */
                vgroup_img_id,/* vgroup identifier */
-               file_id;      /* HDF file identifier, same for V interface */
+               file_id,      /* HDF file identifier, same for V interface */
+               gr_id,        /* GR interface identifier */
+               sd_id;        /* SD interface identifier */
  options_t     options;      /* for hrepack  */ 
- static diff_opt_t fspec;  /* for hdiff  */ 
+ diff_opt_t    fspec;        /* for hdiff  */ 
  int           verbose=0;
  int32         attr_n_values = 3;  /* number of values in the vg attribute */
  char          vg_attr[3]    = {'A', 'B', 'C'};/* vg attribute values*/
@@ -96,13 +98,32 @@ int main(void)
  * create a file with SDSs, images , groups and vdatas
  *-------------------------------------------------------------------------
  */
-       
+      
  /* create a HDF file */
- file_id = Hopen (FILENAME, DFACC_CREATE, 0);
-  
+ if ((file_id = Hopen (FILENAME, DFACC_CREATE, 0))<0)
+ {
+  printf("Error: Could not create file <%s>\n",FILENAME);
+  return 1;
+ }
+
+ /* initialize the SD interface */
+ if ((sd_id = SDstart (FILENAME, DFACC_RDWR))== FAIL)
+ {
+  printf("Error: Could not start SD interface\n");
+  return 1;
+ }
+
+ /* initialize the GR interface */
+ if ((gr_id = GRstart (file_id))== FAIL)
+ {
+  printf("Error: Could not start GR interface\n");
+  return 1;
+ }
+
  /* initialize the V interface */
  if (Vstart (file_id)==FAIL){
   printf( "Could not start VG\n");
+  return 1;
  }
 
 
@@ -117,39 +138,46 @@ int main(void)
  vgroup1_id = Vattach (file_id, -1, "w");
  if (Vsetname (vgroup1_id, "g1")==FAIL){
   printf( "Could not name group\n");
+  return 1;
  }
 
  /* attach an attribute to the vgroup */
  if (Vsetattr (vgroup1_id,"Myattr",DFNT_CHAR,attr_n_values,vg_attr)==FAIL){
   printf( "Could set group attributes\n");
+  return 1;
  }
  
  /* create the second vgroup */
  vgroup2_id = Vattach (file_id, -1, "w");
  if (Vsetname (vgroup2_id, "g2")==FAIL){
   printf( "Could not name group\n");
+  return 1;
  }
 
  /* create the 3rd vgroup */
  vgroup3_id = Vattach (file_id, -1, "w");
  if (Vsetname (vgroup3_id, "g3")==FAIL){
   printf( "Could not name group\n");
+  return 1;
  }
 
  /* insert the second vgroup into the first vgroup using its identifier */
  if (Vinsert (vgroup1_id, vgroup2_id)==FAIL){
   printf( "Could not insert VG\n");
+  return 1;
  }
 
  /* insert the 3rd vgroup into the 2nd vgroup using its identifier */
  if (Vinsert (vgroup2_id, vgroup3_id)==FAIL){
   printf( "Could not insert VG\n");
+  return 1;
  }
 
  /* create the 4th vgroup, for images */
  vgroup_img_id = Vattach (file_id, -1, "w");
  if (Vsetname (vgroup_img_id, "images")==FAIL){
   printf( "Could not name group\n");
+  return 1;
  }
  
 /*-------------------------------------------------------------------------
@@ -161,13 +189,20 @@ int main(void)
  /* add non chunked, non compressed sds */
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_NONE;
- add_sd(FILENAME,file_id,"dset1",vgroup1_id,chunk_flags,comp_type,NULL);
- add_sd(FILENAME,file_id,"dset2",vgroup2_id,chunk_flags,comp_type,NULL);
- add_sd(FILENAME,file_id,"dset3",vgroup3_id,chunk_flags,comp_type,NULL);
- add_sd(FILENAME,file_id,"dset4",0,chunk_flags,comp_type,NULL);
- add_sd(FILENAME,file_id,"dset5",0,chunk_flags,comp_type,NULL);
- add_sd(FILENAME,file_id,"dset6",0,chunk_flags,comp_type,NULL);
- add_sd3d(FILENAME,file_id,"dset7",0,chunk_flags,comp_type,NULL);
+ if (add_sd(FILENAME,file_id,sd_id,"dset1",vgroup1_id,chunk_flags,comp_type,NULL)<0)
+  return 1;
+ if (add_sd(FILENAME,file_id,sd_id,"dset2",vgroup2_id,chunk_flags,comp_type,NULL)<0)
+  return 1;
+ if (add_sd(FILENAME,file_id,sd_id,"dset3",vgroup3_id,chunk_flags,comp_type,NULL)<0)
+  return 1;
+ if (add_sd(FILENAME,file_id,sd_id,"dset4",0,chunk_flags,comp_type,NULL)<0)
+  return 1;
+ if (add_sd(FILENAME,file_id,sd_id,"dset5",0,chunk_flags,comp_type,NULL)<0)
+  return 1;
+ if (add_sd(FILENAME,file_id,sd_id,"dset6",0,chunk_flags,comp_type,NULL)<0)
+  return 1;
+ if (add_sd3d(FILENAME,file_id,sd_id,"dset7",0,chunk_flags,comp_type,NULL)<0)
+  return 1;
 
 
 /*-------------------------------------------------------------------------
@@ -181,12 +216,13 @@ int main(void)
  /* add a chunked, non compressed sds */
  chunk_flags = HDF_CHUNK;
  comp_type   = COMP_CODE_NONE;
- add_sd(FILENAME,file_id,"dset_chunk",0,chunk_flags,comp_type,NULL);
+ add_sd(FILENAME,file_id,sd_id,"dset_chunk",0,chunk_flags,comp_type,NULL);
 
  /* add a chunked-compressed sds with SDsetchunk */
  chunk_flags = HDF_CHUNK | HDF_COMP;
  comp_type   = COMP_CODE_DEFLATE;
- add_sd(FILENAME,file_id,"dset_chunk_comp",0,chunk_flags,comp_type,&comp_info);
+ if (add_sd(FILENAME,file_id,sd_id,"dset_chunk_comp",0,chunk_flags,comp_type,&comp_info)<0)
+  return 1;
 
 /*-------------------------------------------------------------------------
  * GZIP
@@ -196,7 +232,8 @@ int main(void)
  /* add some non chunked, compressed sds */
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_DEFLATE;
- add_sd(FILENAME,file_id,"dset_gzip",0,chunk_flags,comp_type,&comp_info);
+ if (add_sd(FILENAME,file_id,sd_id,"dset_gzip",0,chunk_flags,comp_type,&comp_info)<0)
+  return 1;
 
 /*-------------------------------------------------------------------------
  * RLE
@@ -206,7 +243,8 @@ int main(void)
  /* add some non chunked, compressed sds */
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_RLE;
- add_sd(FILENAME,file_id,"dset_rle",0,chunk_flags,comp_type,&comp_info);
+ if (add_sd(FILENAME,file_id,sd_id,"dset_rle",0,chunk_flags,comp_type,&comp_info)<0)
+  return 1;
 
 /*-------------------------------------------------------------------------
  * HUFF
@@ -216,7 +254,8 @@ int main(void)
  /* add some non chunked, compressed sds */
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_SKPHUFF;
- add_sd(FILENAME,file_id,"dset_huff",0,chunk_flags,comp_type,&comp_info);
+ if (add_sd(FILENAME,file_id,sd_id,"dset_huff",0,chunk_flags,comp_type,&comp_info)<0)
+  return 1;
 
 #if defined (H4_HAVE_LIBSZ)
 /*-------------------------------------------------------------------------
@@ -226,9 +265,11 @@ int main(void)
  if (SZ_encoder_enabled()) {
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_SZIP;
- add_sd(FILENAME,file_id,"dset_szip",0,chunk_flags,comp_type,&comp_info);
+ if (add_sd(FILENAME,file_id,sd_id,"dset_szip",0,chunk_flags,comp_type,&comp_info)<0)
+  return 1;
   
- add_sd_szip_all(FILENAME,file_id,0);
+ if (add_sd_szip_all(FILENAME,file_id,sd_id,0)<0)
+  return 1;
  }
  
 #endif
@@ -237,15 +278,20 @@ int main(void)
  * add some RIS24 images to the file
  *-------------------------------------------------------------------------
  */
- add_r24(DATA_FILE2,FILENAME,file_id,DFIL_PIXEL,vgroup_img_id); /* Pixel Interlacing */
- add_r24(DATA_FILE3,FILENAME,file_id,DFIL_PLANE,vgroup_img_id); /* Scan Plane Interlacing */
+ /* Pixel Interlacing */
+ if (add_r24(DATA_FILE2,FILENAME,file_id,DFIL_PIXEL,vgroup_img_id)<0)
+  return 1; 
+ /* Scan Plane Interlacing */
+ if (add_r24(DATA_FILE3,FILENAME,file_id,DFIL_PLANE,vgroup_img_id)<0)
+  return 1;  
 
 
 /*-------------------------------------------------------------------------
  * add some RIS8 images to the file
  *-------------------------------------------------------------------------
  */ 
- add_r8(DATA_FILE1,FILENAME,file_id,vgroup_img_id);
+ if (add_r8(DATA_FILE1,FILENAME,file_id,vgroup_img_id)<0)
+  return 1; 
 
 /*-------------------------------------------------------------------------
  * add some GR images to the file with compression/chunking
@@ -259,7 +305,8 @@ int main(void)
 
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_NONE;
- add_gr("gr_none",file_id,0,chunk_flags,comp_type,&comp_info);
+ if (add_gr("gr_none",file_id,gr_id,0,chunk_flags,comp_type,&comp_info)<0)
+  return 1; 
 
 
 /*-------------------------------------------------------------------------
@@ -269,7 +316,8 @@ int main(void)
 
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_DEFLATE;
- add_gr("gr_gzip",file_id,0,chunk_flags,comp_type,&comp_info);
+ if (add_gr("gr_gzip",file_id,gr_id,0,chunk_flags,comp_type,&comp_info)<0)
+  return 1; 
 
 /*-------------------------------------------------------------------------
  * SZIP
@@ -281,7 +329,8 @@ int main(void)
  if (SZ_encoder_enabled()) {
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_SZIP;
- add_gr("gr_szip",file_id,0,chunk_flags,comp_type,&comp_info);
+ if (add_gr("gr_szip",file_id,gr_id,0,chunk_flags,comp_type,&comp_info)<0)
+  return 1; 
  }
 
 #endif
@@ -292,8 +341,10 @@ int main(void)
  *-------------------------------------------------------------------------
  */ 
 
- add_gr_ffile(DATA_FILE1,"gr_8bit",0,file_id,0);
- add_gr_ffile(DATA_FILE2,"gr_24bit",0,file_id,0);
+ if (add_gr_ffile(DATA_FILE1,gr_id,"gr_8bit",0,file_id,0)<0)
+  return 1; 
+ if (add_gr_ffile(DATA_FILE2,gr_id,"gr_24bit",0,file_id,0)<0)
+  return 1; 
 
 
 /*-------------------------------------------------------------------------
@@ -302,28 +353,35 @@ int main(void)
  *-------------------------------------------------------------------------
  */ 
 
- add_vs("vdata1",file_id,vgroup1_id);
- add_vs("vdata2",file_id,vgroup2_id);
- add_vs("vdata3",file_id,vgroup3_id);
- add_vs("vdata4",file_id,0);
+ if (add_vs("vdata1",file_id,vgroup1_id)<0)
+  return 1; 
+ if (add_vs("vdata2",file_id,vgroup2_id)<0)
+  return 1; 
+ if (add_vs("vdata3",file_id,vgroup3_id)<0)
+  return 1; 
+ if (add_vs("vdata4",file_id,0)<0)
+  return 1; 
 
 /*-------------------------------------------------------------------------
  * add some global attributes to the file
  *-------------------------------------------------------------------------
  */ 
- add_glb_attrs(FILENAME,file_id);
+ if (add_glb_attrs(FILENAME,file_id,sd_id,gr_id)<0)
+  return 1; 
 
 /*-------------------------------------------------------------------------
  * add annotations to the file
  *-------------------------------------------------------------------------
  */ 
- add_file_an(file_id);
+ if (add_file_an(file_id)<0)
+  return 1; 
 
 /*-------------------------------------------------------------------------
  * add a palette to the file
  *-------------------------------------------------------------------------
  */ 
- add_pal(FILENAME);
+ if (add_pal(FILENAME)<0)
+  return 1; 
 
 /*-------------------------------------------------------------------------
  * end
@@ -336,17 +394,33 @@ int main(void)
      Vdetach (vgroup3_id)==FAIL ||
      Vdetach (vgroup_img_id)==FAIL){
   printf( "Could not close group\n");
+  return 1;
  }
  
  /* terminate access to the V interface */
  if (Vend (file_id)==FAIL){
   printf( "Could not end VG\n");
+  return 1;
  }
 
+ /* terminate access to the GR interface */
+ if (GRend (gr_id)==FAIL)
+ {
+  printf("Error: Could not close GR interface\n");
+  return 1;
+ }
+ /* terminate access to the SD interface */
+ if (SDend (sd_id)==FAIL)
+ {
+  printf("Error: Could not close SD interface\n");
+  return 1;
+ }
  /* close the HDF file */
  if (Hclose (file_id)==FAIL){
   printf( "Could not close file\n");
+  return 1;
  }
+   
 
 /*-------------------------------------------------------------------------
  * TESTS:
