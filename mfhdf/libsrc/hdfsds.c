@@ -38,6 +38,7 @@
 PRIVATE intn       sdgCurrent;
 PRIVATE intn       sdgMax;
 PRIVATE uint16     *sdgTable;
+PRIVATE uint8      *ptbuf = NULL;
 
 intn hdf_query_seen_sdg
     PROTO((uint16 ndgRef));
@@ -106,7 +107,6 @@ VOID hdf_register_seen_sdg(sdgRef)
  * Loop through all of the NDGs in the file and create data structures for 
  *  them
  *
- * NOTE: DFtbuf is a global temporary buffer defined in hdfi.h
  */
 #ifdef PROTOTYPE
 intn hdf_read_ndgs(NC *handle)
@@ -169,7 +169,14 @@ intn hdf_read_ndgs(handle)
         HERROR(DFE_NOSPACE);
         return FALSE;
     }
-    
+
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
 
     /* no dimensions or variables yet */
     current_dim = 0;
@@ -247,8 +254,8 @@ intn hdf_read_ndgs(handle)
                         return FALSE;
                     
                     /* read rank */
-                    if (Hread(aid1, (int32) 2, DFtbuf) == FAIL) return FALSE;
-                    p = DFtbuf;
+                    if (Hread(aid1, (int32) 2, ptbuf) == FAIL) return FALSE;
+                    p = ptbuf;
                     INT16DECODE(p, rank);
                     
                     /* get space for dimensions */
@@ -260,14 +267,14 @@ intn hdf_read_ndgs(handle)
                     if (scaletypes == NULL) return FALSE;
                     
                     /* read dimension record */
-                    if (Hread(aid1, (int32) 4 * rank, DFtbuf) == FAIL) return FALSE;
-                    p = DFtbuf;
+                    if (Hread(aid1, (int32) 4 * rank, ptbuf) == FAIL) return FALSE;
+                    p = ptbuf;
                     for (i = 0; i < rank; i++)
                         INT32DECODE(p, dimsizes[i]);
                     
                     /* read tag/ref of NT */
-                    if (Hread(aid1,(int32) 4,  DFtbuf) == FAIL) return FALSE;
-                    p = DFtbuf;
+                    if (Hread(aid1,(int32) 4,  ptbuf) == FAIL) return FALSE;
+                    p = ptbuf;
                     UINT16DECODE(p, ntTag);
                     UINT16DECODE(p, ntRef);
                     
@@ -280,8 +287,8 @@ intn hdf_read_ndgs(handle)
                     
                     /* read in scale NTs */
                     for(i = 0; i < rank; i++) {
-                        if (Hread(aid1,(int32) 4,  DFtbuf) == FAIL) return FALSE;
-                        p = DFtbuf;
+                        if (Hread(aid1,(int32) 4,  ptbuf) == FAIL) return FALSE;
+                        p = ptbuf;
                         UINT16DECODE(p, ntTag);
                         UINT16DECODE(p, ntRef);
                         
@@ -321,13 +328,13 @@ intn hdf_read_ndgs(handle)
                      * DFTAG_CAL => 'scale_factor', 'add_offset', 'scale_factor_err', 
                      *              'add_offset_err'
                      */
-                    if (Hgetelement(handle->hdf_file, tmpTag, tmpRef, DFtbuf) == FAIL)
+                    if (Hgetelement(handle->hdf_file, tmpTag, tmpRef, ptbuf) == FAIL)
                         return FALSE;
                     
                     if (Hlength(handle->hdf_file, tmpTag, tmpRef) == 36) {
                         /* DFNT_FLOAT64 based calibration */
                         
-                        DFKconvert((VOIDP)DFtbuf, 
+                        DFKconvert((VOIDP)ptbuf, 
                                    (VOIDP) tBuf, 
                                    DFNT_FLOAT64, 4, DFACC_READ, 0, 0);
                         
@@ -358,7 +365,7 @@ intn hdf_read_ndgs(handle)
                     } else {
                         /* DFNT_FLOAT32 based calibration */
 
-                        DFKconvert((VOIDP)DFtbuf, 
+                        DFKconvert((VOIDP)ptbuf, 
                                    (VOIDP)tBuf, 
                                    DFNT_FLOAT32, 4, DFACC_READ, 0, 0);
                         
@@ -393,10 +400,10 @@ intn hdf_read_ndgs(handle)
                     
                 case DFTAG_SDM:        /* valid range info */
                     
-                    if (Hgetelement(handle->hdf_file, tmpTag, tmpRef, DFtbuf) == FAIL)
+                    if (Hgetelement(handle->hdf_file, tmpTag, tmpRef, ptbuf) == FAIL)
                         return FALSE;
                     
-                    DFKconvert((VOIDP)DFtbuf, 
+                    DFKconvert((VOIDP)ptbuf, 
                                (VOIDP)tBuf, 
                                HDFtype, 2, DFACC_READ, 0, 0);
                     
@@ -417,12 +424,12 @@ intn hdf_read_ndgs(handle)
                 case DFTAG_SDLNK:
                     if(ndgTag == DFTAG_SDG) continue;
 
-                    if (Hgetelement(handle->hdf_file, tmpTag, tmpRef, DFtbuf) == FAIL) {
+                    if (Hgetelement(handle->hdf_file, tmpTag, tmpRef, ptbuf) == FAIL) {
                         return FALSE;
                     } else {
                         uint16 sdgTag, sdgRef;
 
-                        p = DFtbuf;
+                        p = ptbuf;
                         
                         /* the first two are for the NDG tag/ref */
                         UINT16DECODE(p, sdgTag);
