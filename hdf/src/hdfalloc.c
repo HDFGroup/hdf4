@@ -322,7 +322,7 @@ VOIDP ptr;
 
 #endif /* !PC | PC386 */
 
-#if defined VMS | (defined PC & !defined PC386) | defined macintosh
+#if defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL
 /* HDstrdup replacement for strdup() on VMS and PCs under MS-DOS and Windows. */
 /* Also added for Macintosh */
 /* This is needed because of the way memory is allocated */
