@@ -73,7 +73,7 @@ char _HUGE *HDf2cstring(_fcd fdesc, intn len)
     int i;
 
     str = _fcdtocp(fdesc);
-    for(i=len-1;i>=0 && (!isascii(str[i]) || !isgraph(str[i])); i--)
+    for(i=len-1;i>=0 && ((str[i]&0x80) || !isgraph(str[i])); i--)
         /*EMPTY*/;
     cstr = (char *)HDgetspace((uint32)(i+2));
     cstr[i+1] = '\0';

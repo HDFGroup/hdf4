@@ -572,7 +572,7 @@ VOIDP HDclearspace(uint32 n,uint32 size)
 } /* end HDclearspace() */
 #endif /* MALLOC_CHECK */
 
-#if defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL | defined NEXT
+#if defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL | defined NEXT | defined CONVEX
 /*--------------------------------------------------------------------------
  NAME
     HDstrdup -- in-library replacement for non-ANSI strdup()

@@ -38,8 +38,6 @@ VOID tbbt1dump
 /* Returns pointer to end-most (to LEFT or RIGHT) node of tree: */
 static TBBT_NODE *tbbt_end(TBBT_NODE *root, intn side)
 {
-    if(  NULL == root  )
-        return( root );
     while(  HasChild( root, side )  ) {
         root= root->link[side];
     }
@@ -48,15 +46,11 @@ static TBBT_NODE *tbbt_end(TBBT_NODE *root, intn side)
 
 TBBT_NODE *tbbtfirst(TBBT_NODE *root)
 {
-	if(root==NULL)
-		return(NULL);
     return(  tbbt_end( root, LEFT )  );
 }
 
 TBBT_NODE *tbbtlast(TBBT_NODE *root)
 {
-	if(root==NULL)
-		return(NULL);
     return(  tbbt_end( root, RIGHT )  );
 }
 
@@ -90,16 +84,12 @@ static TBBT_NODE *tbbt_nbr(TBBT_NODE * ptr, intn  side )
 /* Returns pointer to node with previous key value: */
 TBBT_NODE *tbbtnext( TBBT_NODE *node )
 {
-	if(node==NULL)
-		return(NULL);
     return(  tbbt_nbr( node, RIGHT )  );
 }
 
 /* Returns pointer to node with next key value: */
 TBBT_NODE *tbbtprev( TBBT_NODE *node)
 {
-	if(node==NULL)
-		return(NULL);
     return(  tbbt_nbr( node, LEFT )  );
 }
 
@@ -112,8 +102,6 @@ TBBT_NODE *tbbtfind(TBBT_NODE *root,VOIDP key, intn (*compar) (VOIDP,VOIDP,intn)
     TBBT_NODE *parent= NULL;
     intn       cmp= 1;
 
-	if(root==NULL)
-		return(NULL);
     if(ptr) {
         intn side;
 
@@ -435,8 +423,6 @@ TBBT_NODE *tbbtins(TBBT_NODE **root,VOIDP item,VOIDP key,intn (*compar)
     intn cmp;
     TBBT_NODE *ptr, *parent;
 
-	if(*root==NULL)
-		return(NULL);
     if(NULL != tbbtfind( *root, (key ? key : item), compar, arg, &parent )
             || NULL == ( ptr= Alloc(1,TBBT_NODE) ) )
         return( NULL );
@@ -797,9 +783,7 @@ VOID tbbt1dump(TBBT_NODE *node,intn method)
 
 VOID tbbtdump(TBBT_TREE *tree,intn method)
 {
-	if(tree==NULL)
-		return;
-    if(*(TBBT_NODE **)tree!=NULL) {
+    if(tree!=NULL && *(TBBT_NODE **)tree!=NULL) {
         printf("Number of nodes in the tree: %ld\n",tree->count);
 	tbbt1dump(tree->root,method);
       } /* end if */

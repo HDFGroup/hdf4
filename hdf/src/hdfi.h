@@ -474,13 +474,18 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
+#ifdef OLD_WAY
+
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #include <stdlib.h>
 
 #define __STDC__                    /* To invoke ANSI compilation */
+
 #ifndef PROTOTYPE
 #define PROTOTYPE                   /* to invoke ANSI prototypes */
 #endif  /* PROTOTYPE */
+
+#endif /* OLD_WAY */
 
 /* For Convex machines with native format floats */
 #ifdef CONVEXNATIVE
@@ -1218,7 +1223,7 @@ extern uint8 FAR *DFtbuf;
 #  define HDstrncpy(s1,s2,n)    (strncpy((s1),(s2),(n)))
 #  define HDstrchr(s,c)    (strchr((s),(c)))
 /* Can't use on PCs. strdup() uses malloc() and HDgetspace uses halloc() */
-#if !(defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL | defined NEXT)
+#if !(defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL | defined NEXT | defined CONVEX)
 #  define HDstrdup(s)      (strdup((s)))
 #endif /* !(VMS | PC) */
 #endif /* WIN3 */
