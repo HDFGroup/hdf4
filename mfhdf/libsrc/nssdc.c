@@ -77,7 +77,7 @@
 /*
   UnMap a data type.  I.e. go from a CDF type to an NC_<type>
 */
-int
+nc_type
   cdf_unmap_type(type)
 int type;
 {
@@ -104,7 +104,7 @@ int type;
     case CDF_EPOCH       :
         return NC_DOUBLE;
     default:
-        return FAIL;
+        return (nc_type) FAIL;	/* need to return a better (legal) value */
   }
 
 } /* cdf_unmap_type */
@@ -126,7 +126,8 @@ nssdc_read_cdf(xdrs, handlep)
     char   * FUNC = "nssdc_read_cdf";
     hdf_file_t fp;
     intn     i, j;
-    int32    rank, current_var, nctype, current_dim, hdftype;
+    int32    rank, current_var, current_dim, hdftype;
+    nc_type  nctype;
     intn     dims[MAX_VAR_DIMS];
     int32    dim_sz[MAX_VAR_DIMS];
     NC_dim * dim_rec[MAX_VAR_DIMS];

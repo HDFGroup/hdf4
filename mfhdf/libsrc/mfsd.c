@@ -3093,8 +3093,8 @@ printf("SDsetcompress(): dataset doesn't exist\n");
             return FAIL;
       } /* end if */
     status=(intn)HCcreate(handle->hdf_file,(uint16)DATA_TAG,
-            (uint16) var->data_ref,COMP_MODEL_STDIO,&m_info,type,
-             c_info);
+            (uint16) var->data_ref,COMP_MODEL_STDIO,&m_info,
+	    (comp_coder_t)type, c_info);
 
 #ifdef SDDEBUG
 printf("SDsetcompress(): HCcreate() status=%d\n",(intn)status);

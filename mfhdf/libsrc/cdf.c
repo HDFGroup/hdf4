@@ -412,13 +412,13 @@ xdr_cdf(xdrs, handlep)
     switch((*handlep)->file_type) {
     case HDF_FILE:
         return(hdf_xdr_cdf(xdrs, handlep));
-        break;
+        /*break;*/
     case netCDF_FILE:
         return(NC_xdr_cdf(xdrs, handlep));
-        break;
+        /*break;*/
     case CDF_FILE:
         return(nssdc_xdr_cdf(xdrs, handlep));
-        break;
+        /*break;*/
     default:
         return FALSE;
     }
@@ -542,7 +542,7 @@ void hdf_close
 */
 int
   hdf_map_type(type)
-int type;
+nc_type type;
 {
 
   switch(type) {
@@ -571,7 +571,7 @@ int type;
 **  The HDF type may be in DFNT_NATIVE mode, so only look at the 
 **    bottom bits
 */
-int
+nc_type
   hdf_unmap_type(type)
 int type;
 {
@@ -593,7 +593,7 @@ int type;
   case DFNT_FLOAT64     :
     return NC_DOUBLE;
   default:
-    return FAIL;
+    return (nc_type)FAIL;	/* need a better legal nc_type value */
   }
 
 } /* hdf_unmap_type */
@@ -1382,7 +1382,8 @@ int32   vg;
 {
 
   char vsname[100], fields[100], *values, class[128];
-  int count, type, t, n;
+  int count, t, n;
+  nc_type type;
   NC_attr **attributes;
   NC_array *Array = NULL;
   int32 vs, tag, id, vsize, attr_size, nt;
@@ -1493,7 +1494,8 @@ int32  vg;
   int32 data_count, HDFtype, tag, id;
   int32 n, sub_id, entries, ndg_ref, rag_ref;
 
-  register int     type, t, i;
+  register int     t, i;
+  register nc_type type;
   register int32   var, sub;
 
   count = 0;
@@ -1543,7 +1545,7 @@ int32  vg;
                * We have found a VGroup representing a Variable
                */
               ndims = 0;
-              type = 0;
+              type = NC_UNSPECIFIED;
               data_ref = 0;
               data_count = 0;
               rag_ref = 0;

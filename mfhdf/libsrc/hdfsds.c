@@ -151,7 +151,8 @@ PRIVATE intn hdf_read_ndgs(handle)
     uint16 ndgTag, ndgRef;
     uint16 sddRef, lRef, uRef, fRef, sRef, sdRef;
     uint16 tmpTag, tmpRef;
-    int16  rank, type;
+    int16  rank;
+    nc_type  type;
     int32  *dimsizes, *scaletypes, HDFtype;
     intn   dim, max_thangs, current_dim, current_var, current_attr;
     intn   *vardims;

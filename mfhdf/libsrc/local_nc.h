@@ -548,9 +548,9 @@ extern int32 hdf_get_vp_aid
     PROTO((NC *handle, NC_var *vp));
 
 extern int hdf_map_type
-    PROTO((int ));
+    PROTO((nc_type ));
 
-extern int hdf_unmap_type
+extern nc_type hdf_unmap_type
     PROTO((int ));
 
 extern int hdf_get_ref
