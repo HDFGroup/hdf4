@@ -310,9 +310,9 @@ AM_CONDITIONAL(HDF_BUILD_XDR, test "X$build_xdr" = "Xyes")
 
 dnl For Solaris and Fuji systems, add the -nsl for XDR support
 case "${host}" in
-  *-solaris*)           LIBS="$LIBS -lnsl"  ;;
-  S370-fujitsu-sysv*)   LIBS="$LIBS -lnsl"  ;;
-  *)                    ;;
+  *-solaris*|*-hp-hpux*|S370-fujitsu-sysv*)
+    LIBS="$LIBS -lnsl"  ;;
+  *) ;;
 esac
 
 dnl ======================================================================

@@ -62,7 +62,6 @@
 ./hdf/Makefile.in
 ./hdf/README
 ./hdf/README.33r4
-./hdf/build.inc
 
 ./hdf/fmpool/Makefile.in
 ./hdf/fmpool/README
@@ -570,10 +569,7 @@
 ./mfhdf/README.HDF.33
 ./mfhdf/THANKS
 ./mfhdf/VERSION
-./mfhdf/aclocal.m4
 ./mfhdf/build.bat
-./mfhdf/configure
-./mfhdf/configure.in
 ./mfhdf/macros.mk
 ./mfhdf/make.com
 ./mfhdf/mfhdf.mak
