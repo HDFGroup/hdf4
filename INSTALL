@@ -1,6 +1,7 @@
 
-This is a draft of the installation instructions for HDF4.2r0-Beta.
-                   September 20, 2003
+    Installation instructions for HDF4.2r0 on UNIX  and MACOSX platforms
+    ====================================================================
+                          December 1, 2003
 
 0. Third Party Software Requirements
    =================================
@@ -9,17 +10,14 @@ This is a draft of the installation instructions for HDF4.2r0-Beta.
      for this is ftp://ftp.uu.net/graphics/jpeg/jpegsrc.v6b.tar.gz
 
    x ZLIB 1.1.4(libz.a) Source code and binaries may be downloaded from
-     http://www.gzip.org/.
+     http://www.gzip.org/ or from the NCSA ftp server  
+     ftp://hdf.ncsa.uiuc.edu/gzip/
 
-   x jpegsrc.v6b.tar and zlib-1.1.4.tar files  may be found on the NCSA
-     ftp server (ftp.ncsa.uiuc.edu) in the directory:
-
-        /HDF/pub/outgoing/hdf4/4.2-Beta/ 
 
 1. Optional SZIP compression Library
    ==================================
 
-   x HDF4.2r0-Beta may be configured to use SZIP compression Library.
+   x HDF4.2r0 may be configured to use SZIP compression Library.
      For more information about SZIP Library see
 
                http://hdf.ncsa.uiuc.edu/HDF5/doc_resource/SZIP/ 
@@ -29,34 +27,39 @@ This is a draft of the installation instructions for HDF4.2r0-Beta.
      for information regarding commercial use.
      
      HDF provides tar source ball and precompiled binaries from the NCSA ftp server 
-     (ftp.ncsa.uiuc.edu) in the directory:
+     (ftp.ncsa.uiuc.edu) in the directories:
 
-         /HDF/pub/outgoing/hdf4/4.2-Beta/szip 
+         ftp://hdf.ncsa.uiuc.edu/HDF/HDF_Current/tar
+         ftp://hdf.ncsa.uiuc.edu/HDF/HDF_Current/bin 
 
 2. UNIX and MacOSX configuration and build
    =======================================
 
-   0)  The HDF4r2.0-Beta Library was tested on the following platforms
+   0)  The HDF4r2.0 Library was tested on the following platforms
 
        AIX 5.1 (32 and 64-bit versions)
        SunOs 5.7 (32 and 64-bit versions) 
        SunOS 5.8 (32 and 64-bit versions) 
        HPUX 11.00
-       Linux 2.4 (Rh7,8)
+       Linux 2.4 (Rh7,8,9)
        IRIX64-6.5 (32 and 64-bit versions)
        MacOSX
+       Crays SV1 and T3E
+       True64
+
+       For more information see release_notes/RELEASE.txt file.
       
    Before you start:
  
    1)  Make sure that ZLIB and JPEG Libraries are installed on your
        system.
    2)  Optional: install SZIP Library. 
-   3)  Extract source from the hdf4r2.0-Beta.tar file and change
-       directory to hdf4r2.0-Beta
+   3)  Extract source from the hdf4r2.0.tar file and change
+       directory to hdf4r2.0
 
    To Configure:
 
-   4)  Use configure command in the top level HDF4 directory hdf4r2.0-Beta
+   4)  Use configure command in the top level HDF4 directory hdf4r2.0
 
        ./configure --with-zlib=/path_to_ZLIB_install_directory 
                    --with-jpeg=/path_to_JPEG_install_directory 
@@ -97,11 +100,11 @@ This is a draft of the installation instructions for HDF4.2r0-Beta.
         environment variables that have an affect on building the
         library.
 
-    9)  You may build hdf4 in a directory other than hdf4r2.0-Beta by
+    9)  You may build hdf4 in a directory other than hdf4r2.0 by
         using the "srcdir" option. Simply create a build directory and
         type:
 
-        <path_to_hdf4r2.0-Beta>/configure ...
+        <path_to_hdf4r2.0>/configure ...
 
         where "..." are your configuration options.
  
