@@ -79,16 +79,16 @@ or
   Sun4(Solaris 2.4)           CC SC3.0       f77 SC3.0        X         X
   Sun4(Solaris 2.5)           CC SC3.0       f77              X         X
   SGI-Indy(IRIX5.3)           CC             f77              X         X
-  SGI-Indy(IRIX6.1_32)        CC 6.1         f77 6.1          X         X
+  SGI-Indy(IRIX6.1_n32)       CC 6.1         f77 6.1          X         X
   SGI-Indy(IRIX6.1_64)        CC 6.1         f77 6.1          X         X
   HP9000/735(HPUX 9.03)       CC             f77              X         X
-  Exemplar(HPUX)              CC (for HPUX)  f77              X         X
+  Exemplar(HPUX 9.03)         CC (for HPUX)  f77              X         X
   Cray C90 (UNICOS 803.2)     CC             cf77             X         X
   Cray YMP (UNICOS 803.2)     CC             cf77             X         X
   CM5 (Sun Frontend)          GCC 2.6.3      f77 SC1.0        X         X
   CM5 (Parallel I/O)          CSTAR 7.2      CMF 2.2.11       X         X
-  IBM RS6000/AIX v3.2         xlc            f77              X         X
-  IBM SP2 (single node)       xlc            f77              X         X
+  IBM RS6000/AIX v4.0         GCC            g77              X         X
+  IBM SP2 (single node)        -              -               -         -   
   DEC Alpha/Digital Unix v3.2 CC             f77              X         X
   DEC Alpha/OpenVMS AXP v6.2  DECC 5.3       DEC FORTRAN      X         X
   Fujitsu UXP/M-1800(SYS_V-4.0) CC            -               X         X
@@ -102,10 +102,10 @@ or
                                              2.6.2
                                  (Fortran to C converter)
 
-  PowerPC(Mac-OS-7.5)         Codewarrior 8    -              X         X
-  68k-far/4i/8d(Mac-OS-7.5)   Codewarrior 8    -              X         X
-  Windows NT/95               Visual C++ 4.0   -              X         X  
-  VAX/VMS                        -             -              -         -  
+  PowerPC(Mac-OS-7.5)         Codewarrior 8   -               X         X
+  68k-far/4i/8d(Mac-OS-7.5)   Codewarrior 8   -               X         X
+  Windows NT/95               Visual C++ 4.0  -               X         X  
+  VAX/VMS                       -             -               -         -  
 
 2.2  Third Party Software Requirements:
      ==================================
@@ -410,6 +410,16 @@ or
     They have been run through the Macintosh BinHex utility program. 
     You need to compile the libraries before you can compile the test 
     programs 'testhdf', 'xdrtest', 'cdftest', 'hdftest' and  'nctest'.
+
+    2.5.9 Exemplar
+    --------------
+    You need to change the compiler in dev/config/mh-hpux to use /bin/cc. 
+    Otherwise, the default will be the CONVEX C compiler.
+
+    The linker on Exemplar does not like relative pathnames, such as '..'.
+    Change 'srcdir' and 'TOP_SRCDIR' in the top Makefile.in, ./hdf/Makefile.in, 
+    and ./mfhdf/Makefile.in to absolute pathnames.
+
 
     2.5.8.1 Special Notes
     ********************
