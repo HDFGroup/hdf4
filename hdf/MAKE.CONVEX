@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.5  1992/08/26 16:25:18  sxu
+# Revision 1.6  1992/09/18 17:47:42  sxu
+# Removed __STDC__ define
+#
+# Revision 1.5  1992/08/26  16:25:18  sxu
 # Added SHELL
 #
 # Revision 1.4  1992/08/12  22:30:23  dilg
@@ -75,7 +78,7 @@ MACHINE=CONVEX
 
 # Define your C compiler and flags
 CC= cc
-CFLAGS= -D${MACHINE} -D__STDC__
+CFLAGS= -D${MACHINE} 
 
 # Define your FORTRAN compiler
 FC= f77
