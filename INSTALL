@@ -18,7 +18,7 @@
    ==================================
 
    x HDF4.2r0 may be configured to use the SZIP compression Library.
-     For more information about the SZIP library see
+     For more information about the SZIP library, see
 
                http://hdf.ncsa.uiuc.edu/doc_resource/SZIP/ 
 
@@ -28,17 +28,17 @@
      
 2. HDF4 Source code and precompiled binaries
    ==========================================
-     HDF provides tar source ball and precompiled binaries from the NCSA ftp server 
-     (ftp.ncsa.uiuc.edu) in the directories:
+     HDF provides "tar source ball" and precompiled binaries from 
+     the NCSA ftp server (ftp.ncsa.uiuc.edu) in the directories:
 
          ftp://hdf.ncsa.uiuc.edu/HDF/HDF_Current/tar
          ftp://hdf.ncsa.uiuc.edu/HDF/HDF_Current/bin 
 
    IMPORTANT:
    ==========
-   HDF4 prebuild binaries come with the SZIP compression. In order to use
+   HDF4 prebuilt binaries come with the SZIP compression. In order to use
    the binaries install SZIP Library on your system. You may download SZIP
-   precompilerd binaries from 
+   precompiled binaries from 
          http://hdf.ncsa.uiuc.edu/doc_resource/SZIP
 
 
@@ -61,7 +61,7 @@
        IA32 and IA64
        Altrix
 
-       For more information see the release_notes/RELEASE.txt file, "Platforms
+       For more information, see the release_notes/RELEASE.txt file, "Platforms
        tested" section.
       
    Before you start:
@@ -84,14 +84,14 @@
        * Please note that when szlib option is not used, SZIP Library will not
          be configured in and SZIP compression will not be enabled.
        * If your system has ZLIB and/or JPEG libraries installed under a
-         system library directory (such as /use/lib), configure will
+         system library directory (such as /usr/lib), configure will
          automatically find the library. In this case, the corresponding
          configure flag may be ommitted.
        * Note that --prefix defines where the installation path is.
          This version has the default set as /usr/local which is different
 	 from previous versions.
 
-    To Build and test:
+    To Build and Test:
 
     5)  To build the library
 
@@ -101,7 +101,7 @@
 
         gmake check >& check.out
 
-    To install:
+    To Install:
 
     7)  To install the HDF4 library and tools
 
@@ -112,13 +112,13 @@
         configure: 
  
         setenv CC   "foo -flags"
-        setenv F77  "fffoo -flgas"
+        setenv F77  "fffoo -flags"
  
         See the configure help page (configure --help) for a list of
         environment variables that have an affect on building the
         library.
 
-    9)  You may build hdf4 in a directory other than hdf4.2r0 by
+    9)  You may build HDF4 in a directory other than hdf4.2r0 by
         using the "srcdir" option. Simply create a build directory and
         type:
 
