@@ -171,11 +171,14 @@ int id ;
 				return(-1) ;
 			handle->flags &= ~(NC_NDIRTY | NC_HDIRTY) ;
 		}
-		else if(handle->flags & NC_NDIRTY)
+		else if(handle->flags & NC_NDIRTY) 
 		{
 			if(!xdr_numrecs(handle->xdrs, handle) )
 				return(-1) ;
-			handle->flags &= ~(NC_NDIRTY) ;
+#ifdef HDF
+			if (!(handle->is_hdf))
+#endif
+                        handle->flags &= ~(NC_NDIRTY) ;
 		}
 	} else /* read only */
 	{
