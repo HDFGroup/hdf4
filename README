@@ -51,3 +51,13 @@ To install the libraries, utilities, includes and man pages type: e.g.
         ./make install
 
 See the INSTALL file for detail instructions on configuring and installation.
+
+There are four subdirectories in this directory:
+
+config -- contains machine dependent makefile fragments. 
+hdf    -- contains the source code for the HDF 'base library', the 
+          the multi_file annotation interface, the multi_file raster
+          image interface, HDF command line utilities (hdp, an hdf dumper
+          is in mfhdf/), and a test suite.
+mfhdf  -- contains the netCDF/HDF part of HDF.
+man    -- man page(s) for HDF.
