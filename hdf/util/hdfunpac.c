@@ -29,6 +29,12 @@ static char RcsId[] = "@(#)$Revision$";
 **		   Default is "DataFile".
 */
 
+#ifdef IBM6000
+#ifndef _POSIX_SOURCE
+#define _POSIX_SOURCE
+#endif /* Posix already defined */
+#endif /* on IBM */
+
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
@@ -58,7 +64,7 @@ int main(int argc, char *argv[])
 
     uint16 tag;
     uint16 ref;
-    off_t offset, fileoffset;
+    int32 offset, fileoffset;
     int32 length;
     int16 special;
 
