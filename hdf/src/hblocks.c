@@ -224,7 +224,7 @@ HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length,
     accrec_t   *access_rec=NULL;/* access record */
     int         slot;           /* slot in access records */
     int32       dd_aid;         /* AID for writing the special info */
-    linkinfo_t *info;           /* information for the linked blocks elt */
+    linkinfo_t *info = NULL;   /* information for the linked blocks elt */
     uint16      link_ref;       /* the ref of the link structure
                                    (block table) */
     atom_t      data_id;        /* dd ID of existing regular element */
@@ -341,11 +341,14 @@ HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length,
     access_rec->appendable = FALSE;     /* start data as non-appendable */
     file_rec->attach++;
 
-    ret_value=HAregister_atom(AIDGROUP,access_rec);
+    /* set return value */
+    ret_value = HAregister_atom(AIDGROUP,access_rec);
 
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
+        if (info != NULL)
+            HDfree(info);
         if(access_rec!=NULL)
             HDfree(access_rec);
     } /* end if */
@@ -518,6 +521,8 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
+        if(access_rec->special_info != NULL)
+            HDfree(access_rec->special_info);
         if(access_rec!=NULL)
             HDfree(access_rec);
 
@@ -612,7 +617,7 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
 {
     CONSTR(FUNC, "HLIstaccess");    /* for HERROR */
     filerec_t  *file_rec;       /* file record */
-    linkinfo_t *info;           /* information about data elt */
+    linkinfo_t *info = NULL;           /* information about data elt */
     int32       dd_aid;         /* AID for writing the special info */
     uint16      data_tag, data_ref;  /* Tag/ref of the data in the file */
     uint8       local_ptbuf[14];
@@ -701,7 +706,9 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
                             info->link_ref, info->number_blocks);
     if (!info->link)
       {
+#if 0
           HDfree((VOIDP) info);
+#endif
           ret_value = FAIL;
           goto done;
       }
@@ -712,7 +719,9 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
           if (info->first_length == FAIL)
             {
                 HDfree((VOIDP) info->link);
+#if 0
                 HDfree((VOIDP) info);
+#endif
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
             }
       }
@@ -736,7 +745,9 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
                           HDfree((VOIDP) l->block_list);
                       HDfree((VOIDP) l);
                   }
+#if 0
                 HDfree((VOIDP) info);
+#endif
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
             }
           info->last_link = info->last_link->next;
@@ -750,7 +761,8 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
-
+        if(access_rec->special_info != NULL)
+            HDfree(access_rec->special_info);
     } /* end if */
 
   /* Normal function cleanup */
@@ -828,13 +840,15 @@ PRIVATE link_t *
 HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
 {
     CONSTR(FUNC, "HLIgetlink");     /* for HERROR */
-    int32       access_id;      /* access record id */
-    uint8      *buffer;
-    uint16      tag = DFTAG_LINKED;
-    link_t     *ret_value = NULL; /* FAIL */
+    int32    access_id;      /* access record id */
+    uint8    *buffer = NULL;
+    uint16   tag     = DFTAG_LINKED;
+    link_t   *new_link  = NULL;
+    link_t   *ret_value = NULL; /* FAIL */
 
     /* allocate necessary memory for block table */
-    link_t     *new_link = (link_t *) HDmalloc((uint32) sizeof(link_t));
+    new_link = (link_t *) HDmalloc((uint32) sizeof(link_t));
+
     if (new_link == NULL)
         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
@@ -842,7 +856,9 @@ HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
                                                   * sizeof(block_t));
     if (new_link->block_list == NULL)
       {
+#if 0
           HDfree((VOIDP) new_link);
+#endif
           HGOTO_ERROR(DFE_NOSPACE, NULL);
       }
     new_link->next = (link_t *) NULL;
@@ -851,8 +867,10 @@ HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
     buffer = (uint8 *) HDmalloc((uint32) (2 + 2 * number_blocks));
     if (buffer == NULL)
       {
+#if 0
           HDfree((VOIDP) new_link->block_list);
           HDfree((VOIDP) new_link);
+#endif
           HGOTO_ERROR(DFE_NOSPACE, NULL);
       }     
 
@@ -860,9 +878,11 @@ HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
     if (access_id == FAIL ||
         Hread(access_id, 2 + 2 * number_blocks, (VOIDP)buffer) == FAIL)
       {
+#if 0
           HDfree((VOIDP) buffer);
           HDfree((VOIDP) new_link->block_list);
           HDfree((VOIDP) new_link);
+#endif
           HGOTO_ERROR(DFE_READERROR, NULL);
       }
 
@@ -875,17 +895,24 @@ HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
             UINT16DECODE(p, new_link->block_list[i].ref);
     }
     Hendaccess(access_id);
+#if 0
     HDfree((VOIDP) buffer);
-
+#endif
+    /* set return value */
     ret_value = new_link;
 
 done:
   if(ret_value == NULL)   
     { /* Error condition cleanup */
-
+        if (new_link->block_list != NULL)
+            HDfree(new_link->block_list);
+        if (new_link != NULL)
+            HDfree(new_link);
     } /* end if */
 
   /* Normal function cleanup */
+  if (buffer != NULL)
+      HDfree(buffer);
 
   return ret_value;
 }   /* HLIgetlink */
@@ -1378,12 +1405,13 @@ HLInewlink(int32 file_id, int32 number_blocks,
 {
     CONSTR(FUNC, "HLInewlink");     /* for HERROR */
     int32       link_id;        /* access record id of new link */
-    uint8      *buf;            /* temp buffer */
+    uint8      *buf       = NULL;            /* temp buffer */
+    link_t     *t_link    = NULL;
     link_t     *ret_value = NULL; /* FAIL */
 
     /* set up new link record in memory */
     /* new link record */
-    link_t     *t_link = (link_t *) HDmalloc((uint32) sizeof(link_t));
+    t_link = (link_t *) HDmalloc((uint32) sizeof(link_t));
 
     if (!t_link)
         HGOTO_ERROR(DFE_NOSPACE, NULL);
@@ -1392,7 +1420,9 @@ HLInewlink(int32 file_id, int32 number_blocks,
                                                 * sizeof(block_t));
     if (!t_link->block_list)
       {
+#if 0
           HDfree((VOIDP) t_link);
+#endif
           HGOTO_ERROR(DFE_NOSPACE, NULL);
       }
     t_link->next = NULL;
@@ -1401,8 +1431,10 @@ HLInewlink(int32 file_id, int32 number_blocks,
     link_id = Hstartwrite(file_id, DFTAG_LINKED, link_ref, 2 + 2 * number_blocks);
     if (link_id == FAIL)
       {
+#if 0
           HDfree((VOIDP) t_link->block_list);
           HDfree((VOIDP) t_link);
+#endif
           HGOTO_ERROR(DFE_WRITEERROR, NULL);
       }
     {   /* CC */
@@ -1412,8 +1444,10 @@ HLInewlink(int32 file_id, int32 number_blocks,
         p = buf = (uint8 *) HDmalloc((uint32) (2 + 2 * number_blocks));
         if (!buf)
           {
+#if 0
               HDfree((VOIDP) t_link->block_list);
               HDfree((VOIDP) t_link);
+#endif
               HGOTO_ERROR(DFE_NOSPACE, NULL);
           }
 
@@ -1433,23 +1467,33 @@ HLInewlink(int32 file_id, int32 number_blocks,
     /* write the link */
     if (Hwrite(link_id, 2 + 2 * number_blocks, (VOIDP)buf) == FAIL)
       {
+#if 0
           HDfree((VOIDP) buf);
           HDfree((VOIDP) t_link->block_list);
           HDfree((VOIDP) t_link);
+#endif
           HGOTO_ERROR(DFE_WRITEERROR, NULL);
       }
+#if 0
     HDfree((VOIDP) buf);
+#endif
     Hendaccess(link_id);
 
+    /* set return value */
     ret_value = t_link;
 
 done:
   if(ret_value == NULL)   
     { /* Error condition cleanup */
-
+        if (t_link->block_list != NULL)
+            HDfree(t_link->block_list);
+        if (t_link != NULL)
+            HDfree(t_link);
     } /* end if */
 
   /* Normal function cleanup */
+  if (buf != NULL)
+      HDfree(buf);
 
   return ret_value;
 }   /* HLInewlink */
