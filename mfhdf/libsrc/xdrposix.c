@@ -583,7 +583,7 @@ static inline_t *
 #if (_MIPS_SZLONG == 64)
 static long *
 #else
-#if (defined __sun && _LP64)
+#if (defined __sun && defined _LP64)
 static rpc_inline_t *
 #else
 #if (defined  __alpha)
