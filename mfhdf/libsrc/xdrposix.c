@@ -40,8 +40,12 @@ typedef NETLONG     netlong;
 #   if defined MSDOS || defined WINNT || defined WIN32
 #       include <io.h>
 #   else
-#       if !(defined(macintosh) || defined (SYMANTEC_C))
+#       if defined (__MWERKS__)
 #            include <unistd.h>
+#       else
+#           if !(defined(macintosh) || defined (SYMANTEC_C))
+#               include <unistd.h>
+#           endif
 #       endif
 #   endif
 #   include <fcntl.h>
@@ -360,11 +364,6 @@ xdrposix_create(xdrs, fd, fmode, op)
 {
 
     biobuf *biop = new_biobuf(fd, fmode) ;
-#if 0
-#if !(defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__))
-
-#endif /* !macintosh */
-#endif
 #ifdef XDRDEBUG
 fprintf(stderr,"xdrposix_create(): xdrs=%p, fd=%d, fmode=%d, op=%d\n",xdrs,fd,fmode,(int)op);
 fprintf(stderr,"xdrposix_create(): after new_biobuf(), biop=%p\n",biop);
@@ -388,13 +387,6 @@ fprintf(stderr,"xdrposix_create(): before rdbuf()\n");
 #endif
     /* else, read the first bufferful */
     return( rdbuf(biop) ) ;
-#if 0
-#if !(defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__)) 
-
-#else /* macintosh */
-    return 0; /* Just return since we don't handle XDR files */
-#endif /* macintosh */
-#endif
 }
 
 /*
@@ -663,7 +655,6 @@ fprintf(stderr,"NCxdrfile_create(): XDR=%p, path=%s, ncmode=%d\n",xdrs,path,ncmo
 #endif
 #if defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__) 
     fd = open(path, fmode);
-    /* fd = 1;  We fake a file descriptor for error purposes */
 #else /* !macintosh  */
     fd = open(path, fmode, 0666) ;
 #endif /* !macintosh */

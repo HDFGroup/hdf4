@@ -41,11 +41,6 @@ NC *handle ;
               return ;
       NC_free_xcdf(handle) ;
       xdr_destroy(handle->xdrs) ;
-#if 0
-#if !(defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__))  /* We don't handle xdr files yet */
-
-#endif /* !macintosh */
-#endif
       Free(handle->xdrs) ;
 
 #ifdef HDF
@@ -229,11 +224,6 @@ int mode ;
                   { /* Need to free allocated structures */
                     NC_free_xcdf(cdf) ;
                     xdr_destroy(cdf->xdrs) ;
-#if 0
-#if !(defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__))/* We don't handle xdr files yet */
-
-#endif /* !macintosh */
-#endif
                     Free(cdf->xdrs) ;
                     Free(cdf) ;
                     return(NULL);
@@ -251,22 +241,17 @@ int mode ;
             cdf->hdf_mode = hdf_mode;
             cdf->vgid = 0;
 
-#if 0            
             HDstrncpy(cdf->path, name, FILENAME_MAX);
-#endif
+#if 0            
             HDmemcpy(cdf->path, name, FILENAME_MAX);
+#endif
             
 #ifdef DEBUG
             printf("value returned from Hopen() : %d\n", cdf->hdf_file);
 #endif
             break;
         case netCDF_FILE:
-#if 0
-#if defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__)
-            /* for mac we don't handle XDR files */
-            return (NULL);
-#endif /* macintosh */
-#endif
+            /* Nothing */
             break;
         case CDF_FILE:
 #ifdef DEBUG
