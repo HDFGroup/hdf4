@@ -220,7 +220,8 @@ Load_vfile(HFILEID f)
           tbbtdins(vf->vgtree, (VOIDP) v, NULL);    /* insert the vg instance in B-tree */
           ret = Hnextread(aid, DFTAG_VG, DFREF_WILDCARD, DF_CURRENT);
       }
-    Hendaccess(aid);
+    if (aid != FAIL)
+        Hendaccess(aid);
 
     /* load all the vs's  tag/refs from file */
     vf->vstabn = 0;
@@ -251,7 +252,8 @@ Load_vfile(HFILEID f)
           tbbtdins(vf->vstree, (VOIDP) w, NULL);    /* insert the vg instance in B-tree */
           ret = Hnextread(aid, VSDESCTAG, DFREF_WILDCARD, DF_CURRENT);
       }
-    Hendaccess(aid);
+    if (aid != FAIL)
+        Hendaccess(aid);
 
     /* file may be incompatible with vset version 2.x. Need to check it */
     if (((int32) 0 == vf->vgtabn) && ((int32) 0 == vf->vstabn))

@@ -133,26 +133,34 @@ vicheckcompat(HFILEID f)
     /* locate any OLD vgs */
     aid = Hstartread(f, (uint16) OLD_VGDESCTAG, DFREF_WILDCARD);
     if (aid != FAIL)
+      {
         foundold++;
-    Hendaccess(aid);
+        Hendaccess(aid);
+      }
 
     /* locate any OLD vdatas */
     aid = Hstartread(f, (uint16) OLD_VSDESCTAG, DFREF_WILDCARD);
     if (aid != FAIL)
+      {
         foundold++;
-    Hendaccess(aid);
+        Hendaccess(aid);
+      }
 
     /* locate any NEW vgs */
     aid = Hstartread(f, NEW_VGDESCTAG, DFREF_WILDCARD);
     if (aid != FAIL)
+      {
         foundnew++;
-    Hendaccess(aid);
+        Hendaccess(aid);
+      }
 
     /* locate any NEW vdatas */
     aid = Hstartread(f, NEW_VSDESCTAG, DFREF_WILDCARD);
     if (aid != FAIL)
+      {
         foundnew++;
-    Hendaccess(aid);
+        Hendaccess(aid);
+      }
 
     if (foundold == 0)  /* has no old vset elements */
         return (1);     /* just assume compatible */
