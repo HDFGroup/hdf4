@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1993/08/28 02:00:17  georgev
-Mac fix. No strdup().
+Revision 1.9  1993/09/01 23:35:13  georgev
+Added defines for THINK_C.
 
+ * Revision 1.8  1993/08/28  02:00:17  georgev
+ * Mac fix. No strdup().
+ *
  * Revision 1.7  1993/08/18  16:00:52  chouck
  * Restored changes from version 1.5 that had gotten blown away (grumble grumble)
  *
@@ -90,7 +93,7 @@ int32 scanattrs (attrs,attrc,attrv)
   register char   *s, *s0, *ss;
   register intn   i, slen, len;
   char * FUNC = "scanattrs";
-#ifndef macintosh
+#if !defined(macintosh) | !defined(THINK_C)
   char * saved_string = HDstrdup(attrs);
 #else /* macintosh */
   char * saved_string;
