@@ -801,7 +801,7 @@ VSinquire(int32 vkey,       /* IN: vdata key */
           int32 *eltsize,   /* OUT: total size of all fields in bytes */
           char *vsname      /* OUT: name of vdata */)
 {
-  intn ret_value = FAIL;
+  intn ret_value = SUCCEED;
   intn status;
   CONSTR(FUNC, "VSinquire");
 
@@ -814,31 +814,31 @@ VSinquire(int32 vkey,       /* IN: vdata key */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* obtain the value for each parameter although the previous one
-       fails; ret_value should be SUCCEED unless all parameters fail */
+       fails; ret_value should be FAIL if any of the parameters fails */
     if (fields)
       { /* we assume 'fields' space has been pre-allocated by user? */
         status = VSgetfields(vkey, fields);
-        ret_value = (status != FAIL)? SUCCEED: ret_value;
+        ret_value = (status == FAIL)? FAIL: ret_value;
       }
     if (nelt)
       {
         *nelt = VSelts(vkey);
-        ret_value = (*nelt != FAIL)? SUCCEED: ret_value;
+        ret_value = (*nelt == FAIL)? FAIL: ret_value;
       }
     if (interlace)
       {
         *interlace = VSgetinterlace(vkey);
-        ret_value = (*interlace != FAIL)? SUCCEED: ret_value;
+        ret_value = (*interlace == FAIL)? FAIL: ret_value;
       }
     if (eltsize)
       {
         *eltsize = VSsizeof(vkey, fields);
-        ret_value = (*eltsize != FAIL)? SUCCEED: ret_value;
+        ret_value = (*eltsize == FAIL)? FAIL: ret_value;
       }
     if (vsname)
       { /* we assume 'vsname' space as been pre-allocated by user? */
         status = VSgetname(vkey, vsname);
-        ret_value = (status != FAIL)? SUCCEED: ret_value;
+        ret_value = (status == FAIL)? FAIL: ret_value;
       }
 
 done:
