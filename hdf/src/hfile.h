@@ -556,6 +556,9 @@ extern      "C"
     HDFLIBAPI intn HPfreediskblock
                 (filerec_t * file_rec, int32 block_offset, int32 block_size);
 
+    HDFLIBAPI int32 HDcheck_empty
+                (int32 file_id, uint16 tag, uint16 ref, intn *emptySDS);
+
     HDFLIBAPI int32 HDget_special_info
                 (int32 access_id, sp_info_block_t * info_block);
 
@@ -682,6 +685,9 @@ extern      "C"
 
     HDFLIBAPI int32 HCPinfo
                 (accrec_t * access_rec, sp_info_block_t * info_block);
+
+    HDFLIBAPI int32 get_comp_len
+	        (accrec_t* access_rec);
 
 /*
    ** from hchunks.c - should be the same as found in 'hchunks.h'

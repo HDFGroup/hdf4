@@ -67,7 +67,6 @@ status = SDcheckempty(sdsid, emptySDS);
 #ifdef HDF
 #include "mfhdf.h"
 #include "hfile.h"
-#include "hchunks.h" /* include here for now */
 
 /* for Chunk debugging */
 /*
@@ -6272,13 +6271,22 @@ SDsetchunkcache(int32 sdsid,     /* IN: access aid to mess with */
  AUTHOR
 	bmribler - 9-01-98
         
+ MODIFICATION
+    bmribler - 9/29/2004
+        When the SDS is not a special element, we only need to check
+        its data ref# to decide whether it has data written, but
+        when the SDS is a special element, it still has a valid
+        data ref# even though it doesn't have data, we'll then need
+        to perform a more detailed check.  Added more detailed checks.
+
 ******************************************************************************/
 int32
 SDcheckempty(int32 sdsid,  /* IN: dataset ID */
 	     intn  *emptySDS /* TRUE if SDS is empty */)
 {
-    NC     *handle = NULL;
-    NC_var *var = NULL;
+    CONSTR(FUNC, "SDcheckempty");	/* for HGOTO_ERROR */
+    NC     *handle = NULL;		/* file record struct */
+    NC_var *var = NULL;			/* variable record struct */
     int32   ret_value = SUCCEED;
 
 #ifdef SDDEBUG
@@ -6307,15 +6315,23 @@ SDcheckempty(int32 sdsid,  /* IN: dataset ID */
         goto done;
       }
 
-    /* if the SDS has been written with data, a storage is created 
-	for the SDS data, and var->data_ref will contain this storage's 
-	reference number, not 0 */
-    if( var->data_ref != 0 )
-      {
-        *emptySDS = FALSE;
-        goto done;
-      }
-    *emptySDS = TRUE;  /* SDS is not written with data */
+    /* assume that the SDS is not empty until proving otherwise */
+    *emptySDS = FALSE;
+
+    /* if the data ref# of the SDS is 0, it indicates that the SDS has 
+	not been written with data because no storage is created 
+	for the SDS data */
+    if (var->data_ref == 0)
+    {
+        *emptySDS = TRUE;
+    }
+    else
+    { /* data_ref is not 0, so must check on special SDSs to determine if
+	 the SDS is empty */
+	ret_value = HDcheck_empty(handle->hdf_file, var->data_tag, 
+				  var->data_ref, emptySDS);
+	if (ret_value == FAIL) HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    } /* var->data_ref != 0 */
 
 done:
     if (ret_value == FAIL)

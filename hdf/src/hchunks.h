@@ -259,6 +259,10 @@ extern      "C"
          int16 *paccess,        /* OUT: access mode; */
          int16 *pspecial        /* OUT: special code; */);
 
+    extern int32 HMCPgetnumrecs
+        (accrec_t * access_rec, /* IN:  access record to return info about */
+         int32 *num_recs        /* OUT: length of the chunked elt */);
+
 #endif /* _HCHUNKS_MAIN_ */
 
 #if defined c_plusplus || defined __cplusplus

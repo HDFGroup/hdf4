@@ -82,6 +82,7 @@ static char RcsId[] = "@(#)$Revision$";
    Hgetfileversion -- return version info on HDF file
    HPgetdiskblock  -- Get the offset of a free block in the file.
    HPfreediskblock -- Release a block in a file to be re-used.
+   HDcheck_empty   -- determines if an element has been written with data
    HDget_special_info -- get information about a special element
    HDset_special_info -- reset information about a special element
 
@@ -4164,6 +4165,98 @@ done:
 
   return ret_value;
 } /* end HP_write() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    HDcheck_empty -- determines if an element has been written with data
+ USAGE
+    int32 HDcheck_empty(file_id, tag, ref, *emptySDS)
+    int32 file_id;             IN: id of file
+    uint16 tag;                IN: tag of data element
+    uint16 ref;                IN: ref of data element
+    intn *emptySDS;	      OUT: TRUE if data element is empty 
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    If the data element is SPECIAL_CHUNKED, calls HMCPgetnumrecs to get the
+    data length, or if the data element is SPECIAL_COMP, lets Hinquire
+    retrieve the data length via macro HQuerylength.
+
+    Uses the data length to determine the value for 'emptySDS'.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+    10-30-2004 BMR: This function was added for SDcheckempty
+--------------------------------------------------------------------------*/
+int32
+HDcheck_empty(int32 file_id, uint16 tag, uint16 ref,
+	      intn  *emptySDS /* TRUE if data element is empty */)
+{
+    CONSTR(FUNC, "HDcheck_empty");	/* for HERROR */
+    accrec_t*   access_rec=NULL;	/* access element record */
+    int32	aid;			/* access id */
+    int32       length;			/* length of the element's data */
+    int32       ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+  TRACE_ON(PABLO_mask,ID_HDcheck_empty);
+#endif /* HAVE_PABLO */
+
+    /* clear error stack */
+    HEclear();
+
+    /* start read access on the access record of the data element, which
+       is being inquired about */
+    aid = Hstartread(file_id, tag, ref);
+
+    /* get the access_rec pointer */
+    access_rec = HAatom_object(aid);
+    if (access_rec == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* if the element is chunked, call HMCPgetnumrecs to get the
+        number of records */
+    if (access_rec->special == SPECIAL_CHUNKED)
+    {
+	/* get the access_rec pointer */
+	access_rec = HAatom_object(aid);
+	if (access_rec == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
+
+        ret_value = HMCPgetnumrecs(access_rec, &length);
+        if (ret_value == FAIL) HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    }
+
+    /* otherwise, let Hinquire retrieve the data length via macro 
+	HQuerylength */
+    else /* if (access_rec->special == SPECIAL_COMP) */
+    {
+	ret_value = HQuerylength(aid, &length);
+	if (ret_value == FAIL) HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    } 
+
+    /* end access to the aid appropriately */
+    if (Hendaccess(aid)== FAIL)
+        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+
+    if (length == 0)
+	*emptySDS = TRUE;
+    else
+	*emptySDS = FALSE;
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(PABLO_mask, ID_HDcheck_empty);
+#endif /* HAVE_PABLO */
+
+  return ret_value;
+} /* end HDcheck_empty() */
 
 #ifdef HAVE_FMPOOL
 /******************************************************************************

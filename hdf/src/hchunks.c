@@ -223,6 +223,7 @@ EXPORTED ROUTINES
    HMCPinquire     -- Hinquire for chunked element
    HMCPendacess    -- close a chunked element AID
    HMCPinfo        -- return info about a chunked element
+   HMCPgetnumrecs  -- get the number of records in a chunked element
 
    TBBT helper rotuines
    -------------------
@@ -3816,3 +3817,55 @@ HMCPinquire(accrec_t *access_rec,  /* IN:  access record to return info about */
 
     return ret_value;
 }   /* HMCPinquire */
+
+/* -------------------------------------------------------------------------
+NAME
+   HMCPgetnumrecs -- get the number of records in a chunked element
+DESCRIPTION
+   Retrieves the number of records in a chunked element.  
+   This function was originally added for SDcheckempty/HDcheckempty to 
+   determine whether a chunked SDS has been written with data.
+RETURNS
+   SUCCEED/FAIL - FAIL when num_recs is NULL
+AUTHOR
+   bmribler - 10/3/2004
+---------------------------------------------------------------------------*/
+int32
+HMCPgetnumrecs(accrec_t* access_rec,	/* access record */
+               int32 *num_recs		/* OUT: length of the chunked elt */)
+{
+    CONSTR(FUNC, "HMCPgetnumrecs");	/* for HGOTO_ERROR */
+    chunkinfo_t *chunk_info = NULL;	/* chunked element information record */
+    int32       ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+    TRACE_ON(PABLO_mask,ID_HMCPgetnumrecs);
+#endif /* HAVE_PABLO */
+
+    /* Check args */
+    if (access_rec == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* get the special info from the given record */
+    chunk_info = (chunkinfo_t *) access_rec->special_info;
+    if (chunk_info == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    if (num_recs)
+        *num_recs = chunk_info->num_recs;
+    else
+	ret_value = FAIL;
+
+  done:
+    if(ret_value == FAIL)   
+      { /* Error condition cleanup */
+
+      } /* end if */
+
+    /* Normal function cleanup */
+#ifdef HAVE_PABLO
+        TRACE_OFF(PABLO_mask, ID_HMCPgetnumrecs);
+#endif /* HAVE_PABLO */
+
+    return ret_value;
+}   /* HMCPgetnumrecs */
+
