@@ -32,7 +32,7 @@ OBJS		= $(PROGRAM).o
 LD_XDR		= 
 LD_NETCDF	= libnetcdf.a
 LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB)
-prefix		= /nfs/hdf/home/chouck/hdf
+prefix		= /hdf/home/chouck/hdf
 
 all::		library
 
@@ -103,8 +103,8 @@ cdftest.oc:	$(CSRCS) cdftest.c
 ############################################################################
 # General Macros:
 ############################################################################
-prefix		= /nfs/hdf/home/chouck/hdf
-exec_prefix	= /nfs/hdf/home/chouck/hdf/bin
+prefix		= /hdf/home/chouck/hdf
+exec_prefix	= /hdf/home/chouck/hdf/bin
 AR		= ar
 CC		= cc
 CPP		= cc -E

@@ -1,8 +1,11 @@
 /***************************************************************************
  *
- *
+ * This file contains the code to read old SDS objects out of HDF files
+ *  an pretend that they are netCDF / mutli-file SDS data objects
  *
  **************************************************************************/
+
+#define DEBUG
 
 /*
 
@@ -71,9 +74,9 @@ intn hdf_query_seen_sdg(ndgRef)
  *    so we don't read it twice
  */
 #ifdef PROTOTYPE
-Void hdf_register_seen_sdg(uint16 sdgRef)
+VOID hdf_register_seen_sdg(uint16 sdgRef)
 #else
-Void hdf_register_seen_sdg(sdgRef)
+VOID hdf_register_seen_sdg(sdgRef)
      uint16 sdgRef;
 #endif
 {
@@ -94,17 +97,17 @@ Void hdf_register_seen_sdg(sdgRef)
 } /* hdf_register_seen_sdg */
 
 
-/* -------------------------- hdf_read_ndg_dims --------------------------- */
+/* -------------------------- hdf_read_ndgs ------------------------------- */
 /*
- * Loop through all of the NDGs in the file and create fake dimensions for
- *   each one.
+ * Loop through all of the NDGs in the file and create data structures for 
+ *  them
  *
  * NOTE: DFtbuf is a global temporary buffer defined in hdfi.h
  */
 #ifdef PROTOTYPE
-intn hdf_read_sds_dims(NC *handle)
+intn hdf_read_ndgs(NC *handle)
 #else
-intn hdf_read_sds_dims(handle)
+intn hdf_read_ndgs(handle)
      NC *handle;
 #endif
 {
@@ -703,8 +706,7 @@ intn hdf_read_sds_dims(handle)
             
             
             current_var++;
-            
-            if(current_dim == max_thangs) {
+            if(current_var == max_thangs) {
                 /* need to allocate more space */    
                 max_thangs *= 2;
                 
@@ -756,7 +758,7 @@ intn hdf_read_sds_dims(handle)
 
     return TRUE;
 
-} /* hdf_read_sds_dims */
+} /* hdf_read_ndgs */
 
 
 /* --------------------------- hdf_read_sds_cdf --------------------------- */
@@ -775,13 +777,6 @@ NC **handlep;
     int32  status;
     NC     *handle;
     
-    /*
-     * walk though and see what "dimensions" are being defined. 
-     *
-     * NOTE: we need to fudge all of the dimensions first
-     *
-     */
-
     /* 
      * go through and treat each SDS as a separate varibiable 
      */
@@ -796,7 +791,7 @@ NC **handlep;
     handle = (*handlep);
     if(!handle) return FALSE;
 
-    status = hdf_read_sds_dims(handle);
+    status = hdf_read_ndgs(handle);
     if(!status) return FALSE;
 
     /* deallocate SDG-NDG space */

@@ -229,9 +229,9 @@
  * applications and utilities.  However, nothing is statically allocated to
  * these sizes internally.
  */
-#define MAX_NC_DIMS 512		 /* max dimensions per file */
+#define MAX_NC_DIMS 5000		 /* max dimensions per file */
 #define MAX_NC_ATTRS 512	 /* max global or per variable attributes */
-#define MAX_NC_VARS 512		 /* max variables per file */
+#define MAX_NC_VARS 5000		 /* max variables per file */
 #define MAX_NC_NAME 256		 /* max length of a name */
 #define MAX_VAR_DIMS MAX_NC_DIMS /* max per variable dimensions */
 
