@@ -1,3 +1,14 @@
+HDF4.0r1p1
+==========
+1. Fixed a bug in SDS interface which caused a wrong
+   number of records for UNLIMITED dimensions when 
+   ncsync was called to write data to hdf files. 
+2. A bug has been fixed in the UNLIMITED dimension record 
+   to improve backward compatibility.
+3. Parameter 'class' in vffndcls() has been changed to 
+   'vgclass' to avoid conflicts with C++ reserved word 
+   'class'.
+
 HDF4.0r1
 ========
 1. Fixed Fortran character string hanling under UNICOS. 
