@@ -19,7 +19,7 @@ C *
 C   *
 C***************************************************
 C
-C $Id$ 
+C $Id$
 C
 C **************************************************
 C *
@@ -84,7 +84,20 @@ C
        vsffdat = vsfcfda(vsid, findex, attrnm, 
      +                   len(attrnm))
        end 
-C --------------- vfsnatt -------------------------
+C ------------------- vsfainf -------------------------
+C    vsfainf -- get attribute info
+C    VSattrinfo -- vsfcain -- vsfainf
+C
+       integer function vsfainf(vsid, findex, aindex, attrname,
+     +         dtype, count, size)
+       integer vsid, findex, aindex, dtype, count, size
+       character*(*) attrname
+       integer vsfcain
+
+       vsfainf = vsfcain(vsid, findex, aindex, attrname,
+     +                   dtype, count, size, len(attrname))
+       end 
+C ------------------- vfsnatt -------------------------
 C    vfsnatt -- set a numeric attr for a vgroup
 C    Vsetattr -- vfcsatt -- vfsnatt 
 C

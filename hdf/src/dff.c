@@ -112,7 +112,7 @@ ndfiopen(_fcd name, intf * acc_mode, intf * defdds, intf * namelen)
     intf        ret;
 
     fn = DFIf2cstring(name, (intn) *namelen);
-    ret = (int32) DFopen(fn, (intn) *acc_mode, (intn) *defdds);
+    ret = (intf) DFopen(fn, (intn) *acc_mode, (intn) *defdds);
     HDfree((VOIDP) fn);
     return (ret);
 }
@@ -222,7 +222,7 @@ ndfiaccess(intf * dfile, intf * tag, intf * ref, _fcd acc_mode, intf * acclen)
     intf        ret;
 
     acc = DFIf2cstring(acc_mode, (intn) *acclen);
-    ret = (int32) DFaccess((DF *) * dfile, (uint16) *tag, (uint16) *ref, acc);
+    ret = (intf) DFaccess((DF *) * dfile, (uint16) *tag, (uint16) *ref, acc);
     HDfree((VOIDP) acc);
     return (ret);
 }

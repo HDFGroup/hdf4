@@ -151,7 +151,7 @@ ndpinpal(_fcd filename, intf * fnlen)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndpirref(_fcd filename, uint16 *ref, intf * fnlen)
+ndpirref(_fcd filename, intf *ref, intf * fnlen)
 {
     char       *fn;
     intf        ret;
@@ -159,7 +159,7 @@ ndpirref(_fcd filename, uint16 *ref, intf * fnlen)
     fn = HDf2cstring(filename, (intn) *fnlen);
     if (!fn)
 	return(-1);
-    ret = DFPreadref(fn, *ref);
+    ret = DFPreadref(fn, (uint16) *ref);
     HDfree((VOIDP) fn);
     return (ret);
 }
@@ -176,7 +176,7 @@ ndpirref(_fcd filename, uint16 *ref, intf * fnlen)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndpiwref(_fcd filename, uint16 *ref, intf * fnlen)
+ndpiwref(_fcd filename, intf *ref, intf * fnlen)
 {
 
     char       *fn;
@@ -185,7 +185,7 @@ ndpiwref(_fcd filename, uint16 *ref, intf * fnlen)
     fn = HDf2cstring(filename, (intn) *fnlen);
     if (!fn)
 	return(-1);
-    ret = DFPreadref(fn, *ref);
+    ret = DFPreadref(fn, (uint16) *ref);
     HDfree((VOIDP) fn);
     return (ret);
 }

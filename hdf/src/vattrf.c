@@ -11,7 +11,7 @@
  ****************************************************************/
 
 #ifdef RCSID
-static char RcsId[] = "@(#)$";
+static char RcsId[] = "@(#)$Revision$";
 #endif
 
 /* $Id$ */
@@ -148,22 +148,40 @@ nvsfcfda(intf *vsid, intf *findex, _fcd attrnm, intf *attrnmlen)
 
 /* ---------------------------------------------------------
  * vsfainf -- get attribute info
- * VSattrinfo -- vsfainf
+ * VSattrinfo -- vsfcain -- vsfainf
  */
 
 FRETVAL(intf)
-nvsfainf(intf *vsid, intf *findex, intf *aindex, _fcd attrname,
-         intf *dtype, intf *count, intf *size)
+nvsfcain(intf *vsid, intf *findex, intf *aindex, _fcd attrname,
+         intf *dtype, intf *count, intf *size, intf *attrnamelen)
 {
-    intf ret;
+    CONSTR(FUNC, "vsfainf");
+    intf ret = FAIL;
+    /* temporary variables */
     int32 cfindex;
+    int32 tdtype, tcount, tsize;
+    char  *tattrname;
 
     cfindex = (*findex == -1)? (int32)_HDF_VDATA : *findex;
+    /* Allocate space for fortran strings */
+    tattrname = (char *) HDmalloc(*attrnamelen + 1);
+    if (!tattrname)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+
     ret = (intf) VSattrinfo((int32) *vsid, (int32) cfindex, (int32) *aindex,
-          _fcdtocp(attrname), (int32 *) dtype, (int32 *) count, 
-          (int32 *) size);
+          tattrname, &tdtype, &tcount, &tsize);
+    if (ret != FAIL){
+	/* move values from temporary space to fortran variables */
+	*dtype = tdtype;
+	*count = tcount;
+	*size = tsize;
+	/* convert C-string results back to Fortran strings */
+	HDpackFstring(tattrname, _fcdtocp(attrname), (intn) *attrnamelen);
+    }
+    HDfree(tattrname);
     return(ret);
 }
+
 
 /* ---------------------------------------------------------
  * vsfgnat -- get values of a numeric attribute 
@@ -310,7 +328,7 @@ FRETVAL(intf)
 nvfgnatt(intf *vgid, intf *aindex, intf *values)
 {
     intf ret;
-    ret = (intf) Vgetattr((int32) *vgid, (int32) *aindex,
+    ret = (intf) Vgetattr((int32) *vgid, *aindex,
                     (VOIDP) values);
     return(ret);
 }

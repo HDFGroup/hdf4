@@ -93,7 +93,7 @@ ndfivopn(_fcd name, intf * acc_mode, intf * defdds, intf * namelen)
 FRETVAL(intf)
 ndfvclos(intf * file_id)
 {
-    return (Vclose(*file_id));
+    return (Vclose((int32)*file_id));
 }   /* ndfvclos() */
 
 /*
@@ -102,7 +102,7 @@ ndfvclos(intf * file_id)
  */
 
 FRETVAL(intf)
-nvatchc(HFILEID * f, intf * vgid, _fcd accesstype)
+nvatchc(intf * f, intf * vgid, _fcd accesstype)
 {
     int32       vkey;
     char       *acc;
@@ -110,10 +110,10 @@ nvatchc(HFILEID * f, intf * vgid, _fcd accesstype)
     acc = HDf2cstring(accesstype, 1);
     if (!acc) return(FAIL);
 
-    vkey = Vattach(*f, *vgid, acc);
+    vkey = Vattach((int32)*f, *vgid, acc);
     HDfree(acc);
 
-    return (vkey);
+    return ((intf)vkey);
 }
 
 /* ------------------------------------------------------------------ */
@@ -184,9 +184,9 @@ nvdelete(intf * f, intf * vkey)
  */
 
 FRETVAL(intf)
-nvgidc(HFILEID * f, intf * vgid)
+nvgidc(intf * f, intf * vgid)
 {
-    return ((intf) Vgetid(*f, *vgid));
+    return ((intf) Vgetid((int32)*f, *vgid));
 }
 
 /* ------------------------------------------------------------------ */
@@ -273,9 +273,9 @@ nvisvgc(intf * vkey, intf * id)
  */
 
 FRETVAL(intf)
-nvfstart(HFILEID * f)
+nvfstart(intf * f)
 {
-    return (Vstart(*f));
+    return (Vstart((int32) *f));
 }   /* nvfstart */
 
 /* ------------------------------------------------------------------ */
@@ -284,9 +284,9 @@ nvfstart(HFILEID * f)
  */
 
 FRETVAL(intf)
-nvfend(HFILEID * f)
+nvfend(intf * f)
 {
-    return ((intf) Vend(*f));
+    return ((intf) Vend((int32) *f));
 }   /* nvfend */
 
 /* ------------------------------------------------------------------ */
@@ -311,10 +311,10 @@ nvisvsc(intf * vkey, intf * id)
  */
 
 FRETVAL(intf)
-nvsatchc(HFILEID * f, intf * vsid, _fcd accesstype)
+nvsatchc(intf * f, intf * vsid, _fcd accesstype)
 {
     /* need not HDf2cstring since only first char is accessed. */
-    return(VSattach(*f, *vsid, _fcdtocp(accesstype)));
+    return(VSattach((int32) *f, *vsid, _fcdtocp(accesstype)));
 }
 
 /* ------------------------------------------------------------------ */
@@ -445,25 +445,29 @@ nvsinqc(intf * vkey, intf * nelt, intf * interlace, _fcd fields, intf * eltsize,
     char	*tfields = NULL;
     char	*tvsname = NULL;
     intn	status;
+    int32	tnelt, til, teltsz;
 
     /* Allocate space for fortran strings */
     tfields = (char *) HDmalloc(*fieldslen + 1);
     if (!tfields)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
     tvsname = (char *) HDmalloc(*vsnamelen + 1);
-    if (!tfields){
+    if (!tvsname){
         HDfree(tfields);
         HRETURN_ERROR(DFE_NOSPACE, FAIL)
     }
     
     /* the following contains error for nelt, interlace and eltsize */
     /* if int32 and intf are different in size. */
-    status = VSinquire(*vkey, (int32 *) nelt, (int32 *) interlace,
-                  tfields, (int32 *) eltsize, tvsname);
-    
-    /* convert C-string results back to Fortran strings */
-    HDpackFstring(tfields, _fcdtocp(fields), (intn) *fieldslen);
-    HDpackFstring(tvsname, _fcdtocp(vsname), (intn) *vsnamelen);
+    status = VSinquire(*vkey, &tnelt, &til, tfields, &teltsz, tvsname);
+    if (status != FAIL){
+	*nelt = tnelt;
+	*interlace = til;
+	*eltsize = teltsz;
+	/* convert C-string results back to Fortran strings */
+	HDpackFstring(tfields, _fcdtocp(fields), (intn) *fieldslen);
+	HDpackFstring(tvsname, _fcdtocp(vsname), (intn) *vsnamelen);
+    }
     HDfree(tfields);
     HDfree(tvsname);
 
@@ -498,7 +502,7 @@ nvsfexc(intf * vkey, _fcd fields, intf * fieldslen)
  */
 
 FRETVAL(intf)
-nvsfndc(HFILEID * f, _fcd name, intf * namelen)
+nvsfndc(intf * f, _fcd name, intf * namelen)
 {
     intf        ret;
     char       *cname;
@@ -519,7 +523,7 @@ nvsfndc(HFILEID * f, _fcd name, intf * namelen)
  */
 
 FRETVAL(intf)
-nvsgidc(HFILEID * f, intf * vsid)
+nvsgidc(intf * f, intf * vsid)
 {
     return ((intf) VSgetid(*f, *vsid));
 }
@@ -531,7 +535,7 @@ nvsgidc(HFILEID * f, intf * vsid)
  */
 
 FRETVAL(intf)
-nvsdltc(HFILEID * f, intf * vsid)
+nvsdltc(intf * f, intf * vsid)
 {
     return ((intf) VSdelete(*f, *vsid));
 }
@@ -888,7 +892,7 @@ nvssizc(intf * vkey, _fcd fields, intf * fieldslen)
  */
 
 FRETVAL(intf)
-nventsc(HFILEID * f, intf * vgid)
+nventsc(intf * f, intf * vgid)
 {
     return ((intf) Ventries(*f, *vgid));
 }
@@ -900,7 +904,7 @@ nventsc(HFILEID * f, intf * vgid)
  */
 
 FRETVAL(intf)
-nvlonec(HFILEID * f, intf * idarray, intf * asize)
+nvlonec(intf * f, intf * idarray, intf * asize)
 {
     return ((intf) Vlone(*f, (int32 *)idarray, (int32) *asize));
 }
@@ -912,7 +916,7 @@ nvlonec(HFILEID * f, intf * idarray, intf * asize)
  */
 
 FRETVAL(intf)
-nvslonec(HFILEID * f, intf * idarray, intf * asize)
+nvslonec(intf * f, intf * idarray, intf * asize)
 {
     return (VSlone(*f, (int32 *)idarray, (int32) *asize));
 }
@@ -924,7 +928,7 @@ nvslonec(HFILEID * f, intf * idarray, intf * asize)
  */
 
 FRETVAL(intf)
-nvfindc(HFILEID * f, _fcd name, intf * namelen)
+nvfindc(intf * f, _fcd name, intf * namelen)
 {
     char *tmp_name;
     intf ret;
@@ -941,11 +945,11 @@ nvfindc(HFILEID * f, _fcd name, intf * namelen)
 /* ------------------------------------------------------------------ */
 /*
    **  gets the ref # of a vgroup for a given class
-   **  related: Vfindclass--vfndclsc--VFNDCLS
+   **  related: Vfindclass--vfclassc--VFNDCLS
  */
 
 FRETVAL(intf)
-nvfndclsc(HFILEID * f, _fcd vgclass, intf * classlen)
+nvfndclsc(intf * f, _fcd vgclass, intf * classlen)
 {
     char *t_class;
     intf ret;
@@ -971,7 +975,7 @@ nvfndclsc(HFILEID * f, _fcd vgclass, intf * classlen)
  */
 
 FRETVAL(intf)
-nvhsdc(HFILEID * f, _fcd field, uint8 *buf, intf * n, intf * datatype, _fcd vsname,
+nvhsdc(intf * f, _fcd field, uint8 *buf, intf * n, intf * datatype, _fcd vsname,
        _fcd vsclass, intf * fieldlen, intf * vsnamelen, intf * vsclasslen)
 {
     char       *fld, *name, *tclass;
@@ -1005,7 +1009,7 @@ nvhsdc(HFILEID * f, _fcd field, uint8 *buf, intf * n, intf * datatype, _fcd vsna
  */
 
 FRETVAL(intf)
-nvhscdc(HFILEID * f, _fcd field, _fcd cbuf, intf * n, intf * datatype, _fcd vsname,
+nvhscdc(intf * f, _fcd field, _fcd cbuf, intf * n, intf * datatype, _fcd vsname,
        _fcd vsclass, intf * fieldlen, intf * vsnamelen, intf * vsclasslen)
 {
     if ((*datatype != DFNT_CHAR) && (*datatype != DFNT_UCHAR))
@@ -1021,7 +1025,7 @@ nvhscdc(HFILEID * f, _fcd field, _fcd cbuf, intf * n, intf * datatype, _fcd vsna
  */
 
 FRETVAL(intf)
-nvhscdmc(HFILEID * f, _fcd field, _fcd cbuf, intf * n, intf * datatype,
+nvhscdmc(intf * f, _fcd field, _fcd cbuf, intf * n, intf * datatype,
         _fcd vsname, _fcd vsclass, intf * order, intf * fieldlen,
         intf * vsnamelen, intf * vsclasslen)
 {
@@ -1038,7 +1042,7 @@ nvhscdmc(HFILEID * f, _fcd field, _fcd cbuf, intf * n, intf * datatype,
  */
 
 FRETVAL(intf)
-nvhsdmc(HFILEID * f, _fcd field, uint8 *buf, intf * n, intf * datatype,
+nvhsdmc(intf * f, _fcd field, uint8 *buf, intf * n, intf * datatype,
         _fcd vsname, _fcd vsclass, intf * order, intf * fieldlen,
         intf * vsnamelen, intf * vsclasslen)
 {
@@ -1076,7 +1080,7 @@ nvhsdmc(HFILEID * f, _fcd field, uint8 *buf, intf * n, intf * datatype,
  */
 
 FRETVAL(intf)
-nvhmkgpc(HFILEID * f, intf * tagarray, intf * refarray, intf * n, _fcd vgname,
+nvhmkgpc(intf * f, intf * tagarray, intf * refarray, intf * n, _fcd vgname,
          _fcd vgclass, intf * vgnamelen, intf * vgclasslen)
 {
     char       *gname, *gclass;

@@ -119,11 +119,18 @@ nd8igdim(_fcd filename, intf * xdim, intf * ydim, intf * ispal, intf * lenfn)
 {
     char       *fn;
     intf        ret;
+    int32	txdim, tydim;
+    intn	tispal;
 
     fn = HDf2cstring(filename, (intn) *lenfn);
     if (!fn)
 	return(-1);
-    ret = DFR8getdims(fn, (int32 *) xdim, (int32 *) ydim, (intn *) ispal);
+    ret = DFR8getdims(fn, &txdim, &tydim, &tispal);
+    if (ret != FAIL){
+	*xdim = txdim;
+	*ydim = tydim;
+	*ispal = tispal;
+    }
     HDfree((VOIDP) fn);
     return (ret);
 }
