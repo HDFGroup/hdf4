@@ -13,7 +13,10 @@ static char RcsId[] = "$Id$";
  * $Header$
  *
  * $Log$
- * Revision 1.2  1993/04/19 23:04:07  koziol
+ * Revision 1.3  1993/05/05 22:24:20  georgev
+ * Fixed some cast problems on the Mac.
+ *
+ * Revision 1.2  1993/04/19  23:04:07  koziol
  * General Code Cleanup to reduce/remove compilation warnings on PC
  *
  * Revision 1.1  1993/04/15  20:00:37  koziol
@@ -386,13 +389,13 @@ slabwf32()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0], scplnf32);
+    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplnf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1], scrowf32);
+    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2], sccolf32);
+    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccolf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* 
@@ -401,11 +404,11 @@ slabwf32()
     */
 
     /* Set max, min range */
-    ret = DFSDsetrange(&maxf32, &minf32);
+    ret = DFSDsetrange((VOIDP)&maxf32, (VOIDP)&minf32);
     CHECK(ret, FAIL, "DFSDsetrange");
 
     /* Set fill value */
-    ret = DFSDsetfillvalue(&fillf32);
+    ret = DFSDsetfillvalue((VOIDP)&fillf32);
     CHECK(ret, FAIL, "DFSDsetfillvalue");
 
     ret = DFSDstartslab(swf32);
@@ -413,27 +416,27 @@ slabwf32()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw1);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw1);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw2);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw2);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw3);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw3);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw4);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw4);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw5);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw5);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -443,11 +446,11 @@ slabwf32()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swf32, start_dims, size_dims, sdata, stride);
+    ret = DFSDgetslice(swf32, start_dims, size_dims,(VOIDP) sdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     /* Get fill value */
-    ret = DFSDgetfillvalue((float32 *)&lfill);
+    ret = DFSDgetfillvalue((VOIDP)&lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != fillf32) 
        num_err += 1;
@@ -511,13 +514,13 @@ slabwf64()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0], scplnf64);
+    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplnf64);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1], scrowf64);
+    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowf64);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2], sccolf64);
+    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccolf64);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* 
@@ -526,11 +529,11 @@ slabwf64()
     */
 
     /* Set max, min range */
-    ret = DFSDsetrange(&maxf64, &minf64);
+    ret = DFSDsetrange((VOIDP)&maxf64, (VOIDP)&minf64);
     CHECK(ret, FAIL, "DFSDsetrange");
 
     /* Set fill value */
-    ret = DFSDsetfillvalue(&fillf64);
+    ret = DFSDsetfillvalue((VOIDP)&fillf64);
     CHECK(ret, FAIL, "DFSDsetfillvalue");
 
     ret = DFSDstartslab(swf64);
@@ -538,27 +541,27 @@ slabwf64()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw1f64);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw1f64);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw2f64);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw2f64);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw3f64);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw3f64);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw4f64);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw4f64);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw5f64);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw5f64);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -568,11 +571,11 @@ slabwf64()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swf64, start_dims, size_dims, sdata, stride);
+    ret = DFSDgetslice(swf64, start_dims, size_dims,(VOIDP) sdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     /* Get fill value */
-    ret = DFSDgetfillvalue((float64 *)&lfill);
+    ret = DFSDgetfillvalue((VOIDP)&lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != fillf64) 
        num_err += 1;
@@ -637,13 +640,13 @@ slabwin()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0], scplnin);
+    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplnin);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1], scrowin);
+    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowin);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2], sccolin);
+    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccolin);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* 
@@ -652,11 +655,11 @@ slabwin()
     */
 
     /* Set max, min range */
-    ret = DFSDsetrange(&maxin, &minin);
+    ret = DFSDsetrange((VOIDP)&maxin,(VOIDP) &minin);
     CHECK(ret, FAIL, "DFSDsetrange");
 
     /* Set fill value */
-    ret = DFSDsetfillvalue(&fillin);
+    ret = DFSDsetfillvalue((VOIDP)&fillin);
     CHECK(ret, FAIL, "DFSDsetfillvalue");
 
     ret = DFSDstartslab(swin);
@@ -664,27 +667,27 @@ slabwin()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw1in);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw1in);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw2in);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw2in);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw3in);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw3in);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw4in);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw4in);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw5in);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw5in);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -694,11 +697,11 @@ slabwin()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swin, start_dims, size_dims, sdata, stride);
+    ret = DFSDgetslice(swin, start_dims, size_dims,(VOIDP) sdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     /* Get fill value */
-    ret = DFSDgetfillvalue((intn *)&lfill);
+    ret = DFSDgetfillvalue((VOIDP)&lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != fillin) 
        num_err += 1;
@@ -763,13 +766,13 @@ slabwuin()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0], scplnuin);
+    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplnuin);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1], scrowuin);
+    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowuin);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2], sccoluin);
+    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccoluin);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* 
@@ -778,11 +781,11 @@ slabwuin()
     */
 
     /* Set max, min range */
-    ret = DFSDsetrange(&maxuin, &minuin);
+    ret = DFSDsetrange((VOIDP)&maxuin, (VOIDP)&minuin);
     CHECK(ret, FAIL, "DFSDsetrange");
 
     /* Set fill value */
-    ret = DFSDsetfillvalue(&filluin);
+    ret = DFSDsetfillvalue((VOIDP)&filluin);
     CHECK(ret, FAIL, "DFSDsetfillvalue");
 
     ret = DFSDstartslab(swuin);
@@ -790,27 +793,27 @@ slabwuin()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw1uin);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw1uin);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw2uin);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw2uin);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw3uin);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw3uin);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw4uin);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw4uin);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw5uin);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw5uin);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -820,11 +823,11 @@ slabwuin()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swuin, start_dims, size_dims, sdata, stride);
+    ret = DFSDgetslice(swuin, start_dims, size_dims,(VOIDP) sdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     /* Get fill value */
-    ret = DFSDgetfillvalue((uintn *)&lfill);
+    ret = DFSDgetfillvalue((VOIDP)&lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != filluin) 
        num_err += 1;
@@ -889,13 +892,13 @@ slabwi32()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0], scplni32);
+    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplni32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1], scrowi32);
+    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowi32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2], sccoli32);
+    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccoli32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* 
@@ -904,11 +907,11 @@ slabwi32()
     */
 
     /* Set max, min range */
-    ret = DFSDsetrange(&maxi32, &mini32);
+    ret = DFSDsetrange((VOIDP)&maxi32,(VOIDP) &mini32);
     CHECK(ret, FAIL, "DFSDsetrange");
 
     /* Set fill value */
-    ret = DFSDsetfillvalue(&filli32);
+    ret = DFSDsetfillvalue((VOIDP)&filli32);
     CHECK(ret, FAIL, "DFSDsetfillvalue");
 
     ret = DFSDstartslab(swi32);
@@ -916,27 +919,27 @@ slabwi32()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw1i32);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw1i32);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw2i32);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw2i32);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw3i32);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw3i32);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw4i32);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw4i32);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw5i32);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw5i32);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -946,11 +949,11 @@ slabwi32()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swi32, start_dims, size_dims, sdata, stride);
+    ret = DFSDgetslice(swi32, start_dims, size_dims,(VOIDP) sdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     /* Get fill value */
-    ret = DFSDgetfillvalue((int32 *)&lfill);
+    ret = DFSDgetfillvalue((VOIDP)&lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != filli32) 
        num_err += 1;
@@ -1015,13 +1018,13 @@ slabwui32()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0], scplnui32);
+    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplnui32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1], scrowui32);
+    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowui32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2], sccolui32);
+    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccolui32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* 
@@ -1030,11 +1033,11 @@ slabwui32()
     */
 
     /* Set max, min range */
-    ret = DFSDsetrange(&maxui32, &minui32);
+    ret = DFSDsetrange((VOIDP)&maxui32, (VOIDP)&minui32);
     CHECK(ret, FAIL, "DFSDsetrange");
 
     /* Set fill value */
-    ret = DFSDsetfillvalue(&fillui32);
+    ret = DFSDsetfillvalue((VOIDP)&fillui32);
     CHECK(ret, FAIL, "DFSDsetfillvalue");
 
     ret = DFSDstartslab(swui32);
@@ -1042,27 +1045,27 @@ slabwui32()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw1ui32);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw1ui32);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw2ui32);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw2ui32);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw3ui32);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw3ui32);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw4ui32);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw4ui32);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw5ui32);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw5ui32);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -1072,11 +1075,11 @@ slabwui32()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swui32, start_dims, size_dims, sdata, stride);
+    ret = DFSDgetslice(swui32, start_dims, size_dims,(VOIDP) sdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     /* Get fill value */
-    ret = DFSDgetfillvalue((uint32 *)&lfill);
+    ret = DFSDgetfillvalue((VOIDP)&lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != fillui32) 
        num_err += 1;
@@ -1141,13 +1144,13 @@ slabwi16()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0], scplni16);
+    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplni16);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1], scrowi16);
+    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowi16);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2], sccoli16);
+    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccoli16);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* 
@@ -1156,11 +1159,11 @@ slabwi16()
     */
 
     /* Set max, min range */
-    ret = DFSDsetrange(&maxi16, &mini16);
+    ret = DFSDsetrange((VOIDP)&maxi16, (VOIDP)&mini16);
     CHECK(ret, FAIL, "DFSDsetrange");
 
     /* Set fill value */
-    ret = DFSDsetfillvalue(&filli16);
+    ret = DFSDsetfillvalue((VOIDP)&filli16);
     CHECK(ret, FAIL, "DFSDsetfillvalue");
 
     ret = DFSDstartslab(swi16);
@@ -1168,27 +1171,27 @@ slabwi16()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw1i16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw1i16);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw2i16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw2i16);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw3i16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw3i16);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw4i16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw4i16);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw5i16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw5i16);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -1198,11 +1201,11 @@ slabwi16()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swi16, start_dims, size_dims, sdata, stride);
+    ret = DFSDgetslice(swi16, start_dims, size_dims,(VOIDP) sdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     /* Get fill value */
-    ret = DFSDgetfillvalue((int16 *)&lfill);
+    ret = DFSDgetfillvalue((VOIDP)&lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != filli16) 
        num_err += 1;
@@ -1266,13 +1269,13 @@ slabwui16()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0], scplnui16);
+    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplnui16);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1], scrowui16);
+    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowui16);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2], sccolui16);
+    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccolui16);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* 
@@ -1281,11 +1284,11 @@ slabwui16()
     */
 
     /* Set max, min range */
-    ret = DFSDsetrange(&maxui16, &minui16);
+    ret = DFSDsetrange((VOIDP)&maxui16, (VOIDP)&minui16);
     CHECK(ret, FAIL, "DFSDsetrange");
 
     /* Set fill value */
-    ret = DFSDsetfillvalue(&fillui16);
+    ret = DFSDsetfillvalue((VOIDP)&fillui16);
     CHECK(ret, FAIL, "DFSDsetfillvalue");
 
     ret = DFSDstartslab(swui16);
@@ -1293,27 +1296,27 @@ slabwui16()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw1ui16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw1ui16);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw2ui16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw2ui16);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw3ui16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw3ui16);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw4ui16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw4ui16);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw5ui16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw5ui16);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -1323,11 +1326,11 @@ slabwui16()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swui16, start_dims, size_dims, sdata, stride);
+    ret = DFSDgetslice(swui16, start_dims, size_dims,(VOIDP) sdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     /* Get fill value */
-    ret = DFSDgetfillvalue((uint16 *)&lfill);
+    ret = DFSDgetfillvalue((VOIDP)&lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != fillui16) 
        num_err += 1;
@@ -1391,13 +1394,13 @@ slabwi8()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0], scplni8);
+    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplni8);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1], scrowi8);
+    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowi8);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2], sccoli8);
+    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccoli8);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* 
@@ -1406,11 +1409,11 @@ slabwi8()
     */
 
     /* Set max, min range */
-    ret = DFSDsetrange(&maxi8, &mini8);
+    ret = DFSDsetrange((VOIDP)&maxi8, (VOIDP)&mini8);
     CHECK(ret, FAIL, "DFSDsetrange");
 
     /* Set fill value */
-    ret = DFSDsetfillvalue(&filli8);
+    ret = DFSDsetfillvalue((VOIDP)&filli8);
     CHECK(ret, FAIL, "DFSDsetfillvalue");
 
     ret = DFSDstartslab(swi8);
@@ -1418,27 +1421,27 @@ slabwi8()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw1i8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw1i8);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw2i8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw2i8);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw3i8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw3i8);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw4i8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw4i8);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw5i8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw5i8);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -1448,11 +1451,11 @@ slabwi8()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swi8, start_dims, size_dims, sdata, stride);
+    ret = DFSDgetslice(swi8, start_dims, size_dims,(VOIDP) sdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     /* Get fill value */
-    ret = DFSDgetfillvalue((int8 *)&lfill);
+    ret = DFSDgetfillvalue((VOIDP)&lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != filli8) 
        num_err += 1;
@@ -1516,13 +1519,13 @@ slabwui8()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0], scplnui8);
+    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplnui8);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1], scrowui8);
+    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowui8);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2], sccolui8);
+    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccolui8);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* 
@@ -1531,11 +1534,11 @@ slabwui8()
     */
 
     /* Set max, min range */
-    ret = DFSDsetrange(&maxui8, &minui8);
+    ret = DFSDsetrange((VOIDP)&maxui8, (VOIDP)&minui8);
     CHECK(ret, FAIL, "DFSDsetrange");
 
     /* Set fill value */
-    ret = DFSDsetfillvalue(&fillui8);
+    ret = DFSDsetfillvalue((VOIDP)&fillui8);
     CHECK(ret, FAIL, "DFSDsetfillvalue");
 
     ret = DFSDstartslab(swui8);
@@ -1543,27 +1546,27 @@ slabwui8()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw1ui8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw1ui8);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw2ui8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw2ui8);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw3ui8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw3ui8);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw4ui8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw4ui8);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw5ui8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw5ui8);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -1573,11 +1576,11 @@ slabwui8()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swui8, start_dims, size_dims, sdata, stride);
+    ret = DFSDgetslice(swui8, start_dims, size_dims,(VOIDP) sdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     /* Get fill value */
-    ret = DFSDgetfillvalue((uint8 *)&lfill);
+    ret = DFSDgetfillvalue((VOIDP)&lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != fillui8) 
        num_err += 1;
@@ -1632,17 +1635,17 @@ slab1w()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0], scplnf32);
+    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplnf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1], scrowf32);
+    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2], sccolf32);
+    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccolf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* Set fill value */
-    ret = DFSDsetfillvalue(&fillf32);
+    ret = DFSDsetfillvalue((VOIDP)&fillf32);
     CHECK(ret, FAIL, "DFSDsetfillvalue");
     MESSAGE(10,printf("\n        slab1w: Setting fill value =%f \n", fillf32););
 
@@ -1651,7 +1654,7 @@ slab1w()
     */
 
     /* Set max, min range */
-    ret = DFSDsetrange(&maxf32, &minf32);
+    ret = DFSDsetrange((VOIDP)&maxf32,(VOIDP) &minf32);
     CHECK(ret, FAIL, "DFSDsetrange");
 
     ret = DFSDstartslab(sw1);
@@ -1659,17 +1662,17 @@ slab1w()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw1);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw1);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw3);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw3);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw5);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw5);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -1704,7 +1707,7 @@ slab2w()
     CHECK(ret, FAIL, "DFSDgetdims");
 
     /* Get fill value */
-    ret = DFSDgetfillvalue((float32 *)&lfill);
+    ret = DFSDgetfillvalue((VOIDP)&lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
 
     MESSAGE(10,printf("\n       fill value =: %f \n", lfill););
@@ -1721,12 +1724,12 @@ slab2w()
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw2);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw2);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slabw4);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw4);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -1736,7 +1739,7 @@ slab2w()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0]  = 2; size_dims[1]  = 3; size_dims[2]  = 4;
     stride[0]     = 2; stride[1]     = 3; stride[2]     = 4;
-    ret = DFSDgetslice(sw1, start_dims, size_dims, sdata, stride);
+    ret = DFSDgetslice(sw1, start_dims, size_dims,(VOIDP) sdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     if (no_err != 0)
@@ -1790,13 +1793,13 @@ slab3w()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0], scplnf32);
+    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplnf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1], scrowf32);
+    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2], sccolf32);
+    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccolf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* 
@@ -1804,7 +1807,7 @@ slab3w()
     */
 
     /* Set max, min range */
-    ret = DFSDsetrange(&maxf32, &minf32);
+    ret = DFSDsetrange((VOIDP)&maxf32,(VOIDP) &minf32);
     CHECK(ret, FAIL, "DFSDsetrange");
 
     ret = DFSDstartslab(sw3);
@@ -1812,122 +1815,122 @@ slab3w()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab20);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab20);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab21);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab21);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 3; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab22);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab22);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 3; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab23);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab23);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 3; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab24);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab24);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 2; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab6);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab6);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 2; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab7);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab7);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 2; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab8);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab9);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab9);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab10);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab10);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab16);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab17);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab17);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab18);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab18);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab19);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab19);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab11);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab11);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab12);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab12);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab13);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab13);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab14);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab14);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab15);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab15);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab1);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab1);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab2);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab2);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab3);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab3);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab4);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab4);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, slab5);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab5);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -1937,7 +1940,7 @@ slab3w()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(sw3, start_dims, size_dims, adata, stride);
+    ret = DFSDgetslice(sw3, start_dims, size_dims,(VOIDP) adata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     if (no_err != 0)
@@ -1992,17 +1995,17 @@ slab4w()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0], scplnf32);
+    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplnf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1], scrowf32);
+    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2], sccolf32);
+    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccolf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
 	/* Set max, min range */
-    ret = DFSDsetrange(&maxf32, &minf32);
+    ret = DFSDsetrange((VOIDP)&maxf32,(VOIDP) &minf32);
     CHECK(ret, FAIL, "DFSDsetrange");
 
     ret = DFSDstartslab(sw4);
@@ -2011,7 +2014,7 @@ slab4w()
     /* write out all the data to hdf file */
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
-    ret = DFSDwriteslab(start_dims, stride, size_dims, fdata);
+    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) fdata);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -2021,7 +2024,7 @@ slab4w()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(sw4, start_dims, size_dims, bdata, stride);
+    ret = DFSDgetslice(sw4, start_dims, size_dims,(VOIDP) bdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     if (no_err != 0)

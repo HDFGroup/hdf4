@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1993/04/19 23:04:02  koziol
-General Code Cleanup to reduce/remove compilation warnings on PC
+Revision 1.3  1993/05/05 22:24:15  georgev
+Fixed some cast problems on the Mac.
 
+ * Revision 1.2  1993/04/19  23:04:02  koziol
+ * General Code Cleanup to reduce/remove compilation warnings on PC
+ *
  * Revision 1.1  1993/04/15  20:00:33  koziol
  * Re-named the new tests for MS-DOS compatibility
  *
@@ -131,130 +134,130 @@ void test_sdnmms()
     RESULT("DFSDsetNT");
     ret=DFSDsetdimscale(1, (int32)10, (VOIDP)f64scale);
     RESULT("DFSDsetdimscale");
-    ret=DFSDsetrange(&f64max, &f64min);
+    ret=DFSDsetrange((VOIDP)&f64max, (VOIDP)&f64min);
     RESULT("DFSDsetrange");
-    ret = DFSDadddata("nntcheck.hdf", rank, dims, f64);
+    ret = DFSDadddata("nntcheck.hdf", rank, dims, (VOIDP)f64);
     RESULT("DFSDadddata");
 
     ret=DFSDsetNT(DFNT_NFLOAT32);
     RESULT("DFSDsetNT");
     ret=DFSDsetdimscale(1, (int32)10, (VOIDP)f32scale);
     RESULT("DFSDsetdimscale");
-    ret=DFSDsetrange(&f32max, &f32min);
+    ret=DFSDsetrange((VOIDP)&f32max, (VOIDP)&f32min);
     RESULT("DFSDsetrange");
-    ret = DFSDadddata("nntcheck.hdf", rank, dims, f32);
+    ret = DFSDadddata("nntcheck.hdf", rank, dims, (VOIDP)f32);
     RESULT("DFSDadddata");
 
     ret=DFSDsetNT(DFNT_NINT8);
     RESULT("DFSDsetNT");
     ret=DFSDsetdimscale(1, (int32)10, (VOIDP)i8scale);
     RESULT("DFSDsetdimscale");
-    ret=DFSDsetrange(&i8max, &i8min);
+    ret=DFSDsetrange((VOIDP)&i8max, (VOIDP)&i8min);
     RESULT("DFSDsetrange");
-    ret = DFSDadddata("nntcheck.hdf", rank, dims, i8);
+    ret = DFSDadddata("nntcheck.hdf", rank, dims,(VOIDP) i8);
     RESULT("DFSDadddata");
 
     ret=DFSDsetNT(DFNT_NUINT8);
     RESULT("DFSDsetNT");
     ret=DFSDsetdimscale(1, (int32)10, (VOIDP)ui8scale);
     RESULT("DFSDsetdimscale");
-    ret=DFSDsetrange(&ui8max, &ui8min);
+    ret=DFSDsetrange((VOIDP)&ui8max,(VOIDP) &ui8min);
     RESULT("DFSDsetrange");
-    ret = DFSDadddata("nntcheck.hdf", rank, dims, ui8);
+    ret = DFSDadddata("nntcheck.hdf", rank, dims,(VOIDP) ui8);
     RESULT("DFSDadddata");
 
     ret=DFSDsetNT(DFNT_NINT16);
     RESULT("DFSDsetNT");
     ret=DFSDsetdimscale(1, (int32)10, (VOIDP)i16scale);
     RESULT("DFSDsetdimscale");
-    ret=DFSDsetrange(&i16max, &i16min);
+    ret=DFSDsetrange((VOIDP)&i16max,(VOIDP) &i16min);
     RESULT("DFSDsetrange");
-    ret= DFSDadddata("nntcheck.hdf", rank, dims, i16);
+    ret= DFSDadddata("nntcheck.hdf", rank, dims,(VOIDP) i16);
     RESULT("DFSDadddata");
 
     ret=DFSDsetNT(DFNT_NUINT16);
     RESULT("DFSDsetNT");
     ret=DFSDsetdimscale(1, (int32)10, (VOIDP)ui16scale);
     RESULT("DFSDsetdimscale");
-    ret=DFSDsetrange(&ui16max, &ui16min);
+    ret=DFSDsetrange((VOIDP)&ui16max, (VOIDP)&ui16min);
     RESULT("DFSDsetrange");
-    ret= DFSDadddata("nntcheck.hdf", rank, dims, ui16);
+    ret= DFSDadddata("nntcheck.hdf", rank, dims,(VOIDP) ui16);
     RESULT("DFSDadddata");
 
     ret=DFSDsetNT(DFNT_NINT32);
     RESULT("DFSDsetNT");
     ret=DFSDsetdimscale(1, (int32)10, (VOIDP)i32scale);
     RESULT("DFSDsetdimscale");
-    ret=DFSDsetrange(&i32max, &i32min);
+    ret=DFSDsetrange((VOIDP)&i32max,(VOIDP) &i32min);
     RESULT("DFSDsetrange");
-    ret= DFSDadddata("nntcheck.hdf", rank, dims, i32);
+    ret= DFSDadddata("nntcheck.hdf", rank, dims,(VOIDP) i32);
     RESULT("DFSDadddata");
 
     ret=DFSDsetNT(DFNT_NUINT32);
     RESULT("DFSDsetNT");
     ret= DFSDsetdimscale(1, (int32)10, (VOIDP)ui32scale);
     RESULT("DFSDsetdimscale");
-    ret=DFSDsetrange(&ui32max, &ui32min);
+    ret=DFSDsetrange((VOIDP)&ui32max, (VOIDP)&ui32min);
     RESULT("DFSDsetrange");
-    ret= DFSDadddata("nntcheck.hdf", rank, dims, ui32);
+    ret= DFSDadddata("nntcheck.hdf", rank, dims,(VOIDP) ui32);
     RESULT("DFSDadddata");
 
     MESSAGE(5,printf("Reading arrays from single file...\n"););
 
-    ret= DFSDgetdata("nntcheck.hdf", rank, dims, tf64);
+    ret= DFSDgetdata("nntcheck.hdf", rank, dims,(VOIDP) tf64);
     RESULT("DFSDgetdata");
     ret= DFSDgetdimscale(1, (int32)10, (VOIDP)tf64scale);
     RESULT("DFSDgetdimscale");
-    ret= DFSDgetrange(&tf64max, &tf64min);
+    ret= DFSDgetrange((VOIDP)&tf64max, (VOIDP)&tf64min);
     RESULT("DFSDgetrange");
 
-    ret= DFSDgetdata("nntcheck.hdf", rank, dims, tf32);
+    ret= DFSDgetdata("nntcheck.hdf", rank, dims,(VOIDP) tf32);
     RESULT("DFSDgetdata");
     ret= DFSDgetdimscale(1, (int32)10, (VOIDP)tf32scale);
     RESULT("DFSDgetdimscale");
-    ret= DFSDgetrange(&tf32max, &tf32min);
+    ret= DFSDgetrange((VOIDP)&tf32max, (VOIDP)&tf32min);
     RESULT("DFSDgetrange");
 
-    ret= DFSDgetdata("nntcheck.hdf", rank, dims, ti8);
+    ret= DFSDgetdata("nntcheck.hdf", rank, dims,(VOIDP) ti8);
     RESULT("DFSDgetdata");
     ret= DFSDgetdimscale(1, (int32)10, (VOIDP)ti8scale);
     RESULT("DFSDgetdimscale");
-    ret= DFSDgetrange(&ti8max, &ti8min);
+    ret= DFSDgetrange((VOIDP)&ti8max, (VOIDP)&ti8min);
     RESULT("DFSDgetrange");
 
-    ret= DFSDgetdata("nntcheck.hdf", rank, dims, tui8);
+    ret= DFSDgetdata("nntcheck.hdf", rank, dims,(VOIDP) tui8);
     RESULT("DFSDgetdata");
     ret= DFSDgetdimscale(1, (int32)10, (VOIDP)tui8scale);
     RESULT("DFSDgetdimscale");
-    ret= DFSDgetrange(&tui8max, &tui8min);
+    ret= DFSDgetrange((VOIDP)&tui8max, (VOIDP)&tui8min);
     RESULT("DFSDgetrange");
 
-    ret= DFSDgetdata("nntcheck.hdf", rank, dims, ti16);
+    ret= DFSDgetdata("nntcheck.hdf", rank, dims,(VOIDP) ti16);
     RESULT("DFSDgetdata");
     ret= DFSDgetdimscale(1, (int32)10, (VOIDP)ti16scale);
     RESULT("DFSDgetdimscale");
-    ret= DFSDgetrange(&ti16max, &ti16min);
+    ret= DFSDgetrange((VOIDP)&ti16max,(VOIDP) &ti16min);
     RESULT("DFSDgetrange");
 
-    ret= DFSDgetdata("nntcheck.hdf", rank, dims, tui16);
+    ret= DFSDgetdata("nntcheck.hdf", rank, dims,(VOIDP) tui16);
     RESULT("DFSDgetdata");
     ret= DFSDgetdimscale(1, (int32)10, (VOIDP)tui16scale);
     RESULT("DFSDgetdimscale");
-    ret= DFSDgetrange(&tui16max, &tui16min);
+    ret= DFSDgetrange((VOIDP)&tui16max,(VOIDP) &tui16min);
     RESULT("DFSDgetrange");
 
-    ret= DFSDgetdata("nntcheck.hdf", rank, dims, ti32);
+    ret= DFSDgetdata("nntcheck.hdf", rank, dims,(VOIDP) ti32);
     RESULT("DFSDgetdata");
     ret= DFSDgetdimscale(1, (int32)10, (VOIDP)ti32scale);
     RESULT("DFSDgetdimscale");
-    ret= DFSDgetrange(&ti32max, &ti32min);
+    ret= DFSDgetrange((VOIDP)&ti32max,(VOIDP) &ti32min);
     RESULT("DFSDgetrange");
 
-    ret= DFSDgetdata("nntcheck.hdf", rank, dims, tui32);
+    ret= DFSDgetdata("nntcheck.hdf", rank, dims,(VOIDP) tui32);
     RESULT("DFSDgetdata");
     ret= DFSDgetdimscale(1, (int32)10, (VOIDP)tui32scale);
     RESULT("DFSDgetdimscale");
-    ret= DFSDgetrange(&tui32max, &tui32min);
+    ret= DFSDgetrange((VOIDP)&tui32max, (VOIDP)&tui32min);
     RESULT("DFSDgetrange");
 
     MESSAGE(5,printf("Checking arrays from single file...\n\n"););

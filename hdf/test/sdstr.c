@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1993/04/19 23:04:03  koziol
-General Code Cleanup to reduce/remove compilation warnings on PC
+Revision 1.3  1993/05/05 22:24:17  georgev
+Fixed some cast problems on the Mac.
 
+ * Revision 1.2  1993/04/19  23:04:03  koziol
+ * General Code Cleanup to reduce/remove compilation warnings on PC
+ *
  * Revision 1.1  1993/04/15  20:00:35  koziol
  * Re-named the new tests for MS-DOS compatibility
  *
@@ -102,10 +105,10 @@ void test_tsdstr()
     ret = DFSDsetdimstrs(2, dimlabels[1], dimunits[1], dimfmts[1]);
     RESULT("DFSDsetdimstrs");
 
-    ret = DFSDputdata("sdstrings.hdf", rank, dims, f32);
+    ret = DFSDputdata("sdstrings.hdf", rank, dims, (VOIDP)f32);
     RESULT("DFSDputdata");
 
-    ret = DFSDgetdata("sdstrings.hdf", rank, dims, tf32);
+    ret = DFSDgetdata("sdstrings.hdf", rank, dims, (VOIDP)tf32);
     RESULT("DFSDgetdata");
 
     ret = DFSDgetdatastrs(in_datalabel, in_dataunit, in_datafmt, in_coordsys);

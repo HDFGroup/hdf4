@@ -67,7 +67,7 @@ VOID test_little_read()
           } /* end if */
         else {
             data_i8=(int8 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int8));
-            ret=DFSDgetdata(FILENAME,rank,dimsizes,data_i8);
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_i8);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_i8,data_i8,CDIM_X*CDIM_Y*sizeof(int8))) {
@@ -93,7 +93,7 @@ VOID test_little_read()
           } /* end if */
         else {
             data_u8=(uint8 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(uint8));
-            ret=DFSDgetdata(FILENAME,rank,dimsizes,data_u8);
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_u8);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_u8,data_u8,CDIM_X*CDIM_Y*sizeof(uint8))) {
@@ -119,7 +119,7 @@ VOID test_little_read()
           } /* end if */
         else {
             data_i16=(int16 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int16));
-            ret=DFSDgetdata(FILENAME,rank,dimsizes,data_i16);
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_i16);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_i16,data_i16,CDIM_X*CDIM_Y*sizeof(int16))) {
@@ -146,7 +146,7 @@ VOID test_little_read()
         else {
             data_u16=(uint16 *)HDgetspace(dimsizes[0]*
 		    dimsizes[1]*sizeof(uint16));
-            ret=DFSDgetdata(FILENAME,rank,dimsizes,data_u16);
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_u16);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_u16,data_u16,CDIM_X*CDIM_Y*sizeof(uint16))) {
@@ -172,7 +172,7 @@ VOID test_little_read()
           } /* end if */
         else {
             data_i32=(int32 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int32));
-            ret=DFSDgetdata(FILENAME,rank,dimsizes,data_i32);
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_i32);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_i32,data_i32,CDIM_X*CDIM_Y*sizeof(int32))) {
@@ -199,7 +199,7 @@ VOID test_little_read()
         else {
             data_u32=(uint32 *)HDgetspace(dimsizes[0]*dimsizes[1]*
 		    sizeof(uint32));
-            ret=DFSDgetdata(FILENAME,rank,dimsizes,data_u32);
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_u32);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_u32,data_u32,CDIM_X*CDIM_Y*sizeof(uint32))) {
@@ -226,7 +226,7 @@ VOID test_little_read()
         else {
             data_f32=(float32 *)HDgetspace(dimsizes[0]*dimsizes[1]*
 		    sizeof(float32));
-            ret=DFSDgetdata(FILENAME,rank,dimsizes,data_f32);
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_f32);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_f32,data_f32,CDIM_X*CDIM_Y*sizeof(float32))) {
@@ -253,7 +253,7 @@ VOID test_little_read()
         else {
             data_f64=(float64 *)HDgetspace(dimsizes[0]*dimsizes[1]*
 		    sizeof(float64));
-            ret=DFSDgetdata(FILENAME,rank,dimsizes,data_f64);
+            ret=DFSDgetdata(FILENAME,rank,dimsizes,(VOIDP)data_f64);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_f64,data_f64,CDIM_X*CDIM_Y*sizeof(float64))) {
@@ -288,56 +288,56 @@ VOID test_little_write()
     RESULT("DFSDsetdims");
     ret=DFSDsetNT(DFNT_LINT8);
     RESULT("DFSDsetNT");
-    ret=DFSDadddata(TMPFILE, rank, dimsizes, cdata_i8);
+    ret=DFSDadddata(TMPFILE, rank, dimsizes,(VOIDP) cdata_i8);
     RESULT("DFSDadddata");
 
     ret=DFSDsetdims(2,dimsizes);
     RESULT("DFSDsetdims");
     ret=DFSDsetNT(DFNT_LUINT8);
     RESULT("DFSDsetNT");
-    ret=DFSDadddata(TMPFILE, rank, dimsizes, cdata_u8);
+    ret=DFSDadddata(TMPFILE, rank, dimsizes,(VOIDP) cdata_u8);
     RESULT("DFSDadddata");
 
     ret=DFSDsetdims(2,dimsizes);
     RESULT("DFSDsetdims");
     ret=DFSDsetNT(DFNT_LINT16);
     RESULT("DFSDsetNT");
-    ret=DFSDadddata(TMPFILE, rank, dimsizes, cdata_i16);
+    ret=DFSDadddata(TMPFILE, rank, dimsizes,(VOIDP) cdata_i16);
     RESULT("DFSDadddata");
 
     ret=DFSDsetdims(2,dimsizes);
     RESULT("DFSDsetdims");
     ret=DFSDsetNT(DFNT_LUINT16);
     RESULT("DFSDsetNT");
-    ret=DFSDadddata(TMPFILE, rank, dimsizes, cdata_u16);
+    ret=DFSDadddata(TMPFILE, rank, dimsizes,(VOIDP) cdata_u16);
     RESULT("DFSDadddata");
 
     ret=DFSDsetdims(2,dimsizes);
     RESULT("DFSDsetdims");
     ret=DFSDsetNT(DFNT_LINT32);
     RESULT("DFSDsetNT");
-    ret=DFSDadddata(TMPFILE, rank, dimsizes, cdata_i32);
+    ret=DFSDadddata(TMPFILE, rank, dimsizes,(VOIDP) cdata_i32);
     RESULT("DFSDadddata");
 
     ret=DFSDsetdims(2,dimsizes);
     RESULT("DFSDsetdims");
     ret=DFSDsetNT(DFNT_LUINT32);
     RESULT("DFSDsetNT");
-    ret=DFSDadddata(TMPFILE, rank, dimsizes, cdata_u32);
+    ret=DFSDadddata(TMPFILE, rank, dimsizes,(VOIDP) cdata_u32);
     RESULT("DFSDadddata");
 
     ret=DFSDsetdims(2,dimsizes);
     RESULT("DFSDsetdims");
     ret=DFSDsetNT(DFNT_LFLOAT32);
     RESULT("DFSDsetNT");
-    ret=DFSDadddata(TMPFILE, rank, dimsizes, cdata_f32);
+    ret=DFSDadddata(TMPFILE, rank, dimsizes,(VOIDP) cdata_f32);
     RESULT("DFSDadddata");
 
     ret=DFSDsetdims(2,dimsizes);
     RESULT("DFSDsetdims");
     ret=DFSDsetNT(DFNT_LFLOAT64);
     RESULT("DFSDsetNT");
-    ret=DFSDadddata(TMPFILE, rank, dimsizes, cdata_f64);
+    ret=DFSDadddata(TMPFILE, rank, dimsizes,(VOIDP) cdata_f64);
     RESULT("DFSDadddata");
 
     ret=DFSDrestart();
@@ -358,7 +358,7 @@ VOID test_little_write()
           } /* end if */
         else {
             data_i8=(int8 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int8));
-            ret=DFSDgetdata(TMPFILE,rank,dimsizes,data_i8);
+            ret=DFSDgetdata(TMPFILE,rank,dimsizes,(VOIDP)data_i8);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_i8,data_i8,CDIM_X*CDIM_Y*sizeof(int8))) {
@@ -384,7 +384,7 @@ VOID test_little_write()
           } /* end if */
         else {
             data_u8=(uint8 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(uint8));
-            ret=DFSDgetdata(TMPFILE,rank,dimsizes,data_u8);
+            ret=DFSDgetdata(TMPFILE,rank,dimsizes,(VOIDP)data_u8);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_u8,data_u8,CDIM_X*CDIM_Y*sizeof(uint8))) {
@@ -410,7 +410,7 @@ VOID test_little_write()
           } /* end if */
         else {
             data_i16=(int16 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int16));
-            ret=DFSDgetdata(TMPFILE,rank,dimsizes,data_i16);
+            ret=DFSDgetdata(TMPFILE,rank,dimsizes,(VOIDP)data_i16);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_i16,data_i16,CDIM_X*CDIM_Y*sizeof(int16))) {
@@ -437,7 +437,7 @@ VOID test_little_write()
         else {
             data_u16=(uint16 *)HDgetspace(dimsizes[0]*dimsizes[1]*
 		   sizeof(uint16));
-            ret=DFSDgetdata(TMPFILE,rank,dimsizes,data_u16);
+            ret=DFSDgetdata(TMPFILE,rank,dimsizes,(VOIDP)data_u16);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_u16,data_u16,CDIM_X*CDIM_Y*sizeof(uint16))) {
@@ -463,7 +463,7 @@ VOID test_little_write()
           } /* end if */
         else {
             data_i32=(int32 *)HDgetspace(dimsizes[0]*dimsizes[1]*sizeof(int32));
-            ret=DFSDgetdata(TMPFILE,rank,dimsizes,data_i32);
+            ret=DFSDgetdata(TMPFILE,rank,dimsizes,(VOIDP)data_i32);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_i32,data_i32,CDIM_X*CDIM_Y*sizeof(int32))) {
@@ -490,7 +490,7 @@ VOID test_little_write()
         else {
             data_u32=(uint32 *)HDgetspace(dimsizes[0]*dimsizes[1]*
 		    sizeof(uint32));
-            ret=DFSDgetdata(TMPFILE,rank,dimsizes,data_u32);
+            ret=DFSDgetdata(TMPFILE,rank,dimsizes,(VOIDP)data_u32);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_u32,data_u32,CDIM_X*CDIM_Y*sizeof(uint32))) {
@@ -517,7 +517,7 @@ VOID test_little_write()
         else {
             data_f32=(float32 *)HDgetspace(dimsizes[0]*dimsizes[1]*
 		    sizeof(float32));
-            ret=DFSDgetdata(TMPFILE,rank,dimsizes,data_f32);
+            ret=DFSDgetdata(TMPFILE,rank,dimsizes,(VOIDP)data_f32);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_f32,data_f32,CDIM_X*CDIM_Y*sizeof(float32))) {
@@ -544,7 +544,7 @@ VOID test_little_write()
         else {
             data_f64=(float64 *)HDgetspace(dimsizes[0]*dimsizes[1]*
 		    sizeof(float64));
-            ret=DFSDgetdata(TMPFILE,rank,dimsizes,data_f64);
+            ret=DFSDgetdata(TMPFILE,rank,dimsizes,(VOIDP)data_f64);
             RESULT("DFSDgetdata");
 
             if(HDmemcmp(cdata_f64,data_f64,CDIM_X*CDIM_Y*sizeof(float64))) {
