@@ -23,10 +23,11 @@
  * Remarks: none
  *----------------------------------------------------------------------------*/
 
-#ifndef MFAN_H  /* avoid re-inclusion */
-#define MFAN_H
+#ifndef _MFAN_H  /* avoid re-inclusion */
+#define _MFAN_H
 
 #include "hdf.h"
+
 #ifdef HAVE_RBTREE
 #include "rb.h"  /* Red-Black tree routines */
 #else /* use tbbt */
@@ -117,4 +118,4 @@ PRIVATE intn    num_anns   = 0;    /* total number of annotations
 
 #endif /* !MFAN_C */
 
-#endif /* DFAN_H */
+#endif /* _MFAN_H */

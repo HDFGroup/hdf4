@@ -96,7 +96,6 @@ Fortran stub functions:
 
 #include "hdf.h"
 #include "dfsd.h"
-#include "hfile.h"
 
 /* MMM: make this definition correct and move to hfile.h, or wherever. */
 #define DF_NOFILE 0

@@ -79,7 +79,6 @@ MODIFICATION HISTORY
 /* General HDF includes */
 #define COMPRESS_MASTER
 #include "hdf.h"
-#include "hfile.h"
 
 /* HDF compression includes */
 #include "hcompi.h"     /* Internal definitions for compression */

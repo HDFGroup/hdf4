@@ -58,6 +58,7 @@
 #define MACIO       3
 #define PCIO        4
 #define WINIO       5
+#define PAGEBUFIO   6
 
 #if defined(IBM6000) || defined(_AIX)
 #define _POSIX_SOURCE
@@ -137,7 +138,7 @@ typedef double            float64;
 #define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
-#define FILELIB UNIXBUFIO
+#define FILELIB PAGEBUFIO
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -191,7 +192,7 @@ typedef double            float64;
 #define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
-#define FILELIB UNIXBUFIO
+#define FILELIB PAGEBUFIO
 #ifndef __STDC__
 #define const
 #endif
@@ -1131,6 +1132,7 @@ extern int (*DFKnumout)();
 #endif
 #     endif /* DFKMASTER */
 
+#if 0
 /*****************************************************************
 *  Create DFtbuf: a temporary buffer used when a small amount of
 *  memory is needed, as when small conversions are done
@@ -1144,6 +1146,7 @@ extern int (*DFKnumout)();
 extern uint8 FAR *DFtbuf;
 #endif /*HMASTER*/
 #endif 
+#endif /* if 0 */
 
 /*----------------------------------------------------------------
 ** MACRO FCALLKEYW for any special fortran-C stub keyword

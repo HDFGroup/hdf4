@@ -26,6 +26,8 @@
 #ifndef __MFGR_H
 #define __MFGR_H
 
+#include "hdf.h"
+#include "hfile.h"
 #include "tbbt.h"       /* Get tbbt routines */
 
 /* Interlace types available */

@@ -26,6 +26,8 @@
 #ifndef __HCOMP_H
 #define __HCOMP_H
 
+#include "hlimits.h"
+
 /* For determining which type of modeling is being done */
 typedef enum
   {
@@ -50,8 +52,10 @@ comp_coder_t;
 #define COMP_RLE        11
 #define COMP_IMCOMP     12
 
+#if 0
 /* Set the following macro to the value the highest compression scheme is */
 #define COMP_MAX_COMP   12
+#endif
 
 #ifndef COMPRESS_MASTER
 extern uint16 compress_map[];

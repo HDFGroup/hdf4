@@ -34,14 +34,13 @@ EXPORTED ROUTINES
 
 ************************************************************************/
 
-#include "hdf.h"
 #include "vg.h"
-#include "hfile.h"
 
 #ifndef MIN
 #define MIN(a,b)     ((a) < (b) ? (a) : (b))
 #endif /* MIN */
 
+#if 0
 /*
  * Private conversion buffer stuff
  * VDATA_BUFFER_MAX is the largest buffer that can be allocated for
@@ -52,6 +51,8 @@ EXPORTED ROUTINES
  * BUG: the final Vtbuf never gets freed
  */
 #define VDATA_BUFFER_MAX 1000000
+#endif /* if 0 */
+
 PRIVATE uint32 Vtbufsize = 0;
 PRIVATE uint8 *Vtbuf = NULL;
 

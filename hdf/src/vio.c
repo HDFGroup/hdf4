@@ -54,7 +54,6 @@ EXPORTED ROUTINES
 *************************************************************************/
 
 #include "vg.h"
-#include "hfile.h"
 
 /* Private Function Prototypes */
 PRIVATE VOID vunpackvs

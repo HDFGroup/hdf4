@@ -18,6 +18,8 @@
    + */
 
 #ifndef __HKIT_H
+#include "hdf.h"
+#include "hfile.h"
 
 /* tag_messages is the list of tag descriptions in the system, kept as
    tag-description pairs.  To look up a description, a linear search is

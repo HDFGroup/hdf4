@@ -30,9 +30,18 @@
 #define _VG_H
 
 #include "hdf.h"
+#include "hlimits.h"
+#include "hfile.h"
 
 /* Include file for Threaded, Balanced Binary Tree implementation */
 #include "tbbt.h"
+
+#if 0
+/* maximum number of files (number of slots for file records) */
+#ifndef MAX_VFILE
+#   define MAX_VFILE MAX_FILE
+#endif
+#endif
 
 /*
    * definition of the 2 data elements of the vset.

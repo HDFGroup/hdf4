@@ -147,8 +147,6 @@ MODIFICATION HISTORY
  */
 
 #define MFGR_MASTER
-#include "hdf.h"
-#include "hfile.h"
 #include "mfgr.h"       /* Multi-file raster information */
 
 /* Local pre-processor macros */

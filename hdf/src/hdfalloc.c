@@ -21,7 +21,6 @@ static char RcsId[] = "@(#)$Revision$";
 #define __MALDEBUG__
 #endif
 #include "hdf.h"
-#include "hfile.h"
 
 /*
 LOCAL ROUTINES

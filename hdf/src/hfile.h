@@ -19,13 +19,16 @@
 #ifndef HFILE_H
 #define HFILE_H
 
+#include "hlimits.h"
+
+#if 0
 /* ------------------------------ Constants ------------------------------- */
 /* Maximum number of files (number of slots for file records) */
 #ifndef MAX_FILE
 #if defined PC && !(defined PC386 || defined UNIX386)
 #   define MAX_FILE 8
 #else  /* !PC */
-#   define MAX_FILE 16
+#   define MAX_FILE 64
 #endif /* !PC */
 #endif /* MAX_FILE */
 
@@ -43,17 +46,6 @@
 #   define MAX_ACC 256
 #endif /* MAX_ACC */
 
-/* Magic cookie for HDF data files */
-#define MAGICLEN 4  /* length */
-#define HDFMAGIC "\016\003\023\001"     /* ^N^C^S^A */
-
-/* sizes of elements in a file.  This is necessary because
-   the size of variables need not be the same as in the file
-   (cannot use sizeof) */
-#define DD_SZ 12    /* 2+2+4+4 */
-#define NDDS_SZ 2
-#define OFFSET_SZ 4
-
 /* ndds (number of dd's in a block) default,
    so user need not specify */
 #ifndef DEF_NDDS
@@ -68,17 +60,36 @@
 /* largest number that will fit into 16-bit word ref variable */
 #define MAX_REF ((uint16)32767)
 
+/* length of block and number of blocks for converting 'appendable' data */
+/* elements into linked blocks (will eventually be replaced by the newer */
+/* variable-length blocks */
+#define HDF_APPENDABLE_BLOCK_LEN 4096
+#define HDF_APPENDABLE_BLOCK_NUM 16
+
+/* hashing information */
+#define HASH_MASK       0xff
+#define HASH_BLOCK_SIZE 100
+
+#endif /* if 0 */
+
+
+/* Magic cookie for HDF data files */
+#define MAGICLEN 4  /* length */
+#define HDFMAGIC "\016\003\023\001"     /* ^N^C^S^A */
+
+/* sizes of elements in a file.  This is necessary because
+   the size of variables need not be the same as in the file
+   (cannot use sizeof) */
+#define DD_SZ 12    /* 2+2+4+4 */
+#define NDDS_SZ 2
+#define OFFSET_SZ 4
+
 /* invalid offset & length to indicate a partially defined element 
 * written to the HDF file i.e. can handle the case where the the
 * element is defined but not written out */
 #define INVALID_OFFSET 0xFFFFFFFF
 #define INVALID_LENGTH 0xFFFFFFFF
 
-/* length of block and number of blocks for converting 'appendable' data */
-/* elements into linked blocks (will eventually be replaced by the newer */
-/* variable-length blocks */
-#define HDF_APPENDABLE_BLOCK_LEN 4096
-#define HDF_APPENDABLE_BLOCK_NUM 16
 
 /* ----------------------------- Version Tags ----------------------------- */
 /* Library version numbers */
@@ -224,6 +235,22 @@ typedef HFILE hdf_file_t;
 #   define OPENERR(f)  ((f) == (HFILE)HFILE_ERROR)
 #endif /* FILELIB == WINNTIO */
 
+#if (FILELIB == PAGEBUFIO)
+#include "fmpio.h"
+/* using page buffered file I/O routines to access files */
+typedef MPFILE *hdf_file_t;
+#   define HI_OPEN(p, a)        (MPopen((p), (a)))
+#   define HI_CREATE(p)         (MPopen((p), DFACC_CREATE))
+#   define HI_CLOSE(f)          (MPclose(f))
+#   define HI_FLUSH(f)          (MPflush(f))
+#   define HI_READ(f, b, n)     (MPread((f), (char *)(b), (n)))
+#   define HI_WRITE(f, b, n)    (MPwrite((f), (char *)(b), (n)))
+#   define HI_SEEK(f, o)        (MPseek((f), (off_t)(o), SEEK_SET))
+#   define HI_SEEKEND(f)        (MPseek((f), (off_t)0, SEEK_END))
+#   define HI_TELL(f)           (MPseek((f), (off_t)0, SEEK_CUR))
+#   define OPENERR(f)           ((f) == (MPFILE *)NULL)
+#endif /* FILELIB == PAGEBUFIO */
+
 /* ----------------------- Internal Data Structures ----------------------- */
 /* The internal structure used to keep track of the files opened: an
    array of filerec_t structures, each has a linked list of ddblock_t.
@@ -333,9 +360,6 @@ typedef struct ddblock_t
   }
 ddblock_t;
 
-/* hashing information */
-#define HASH_MASK       0xff
-#define HASH_BLOCK_SIZE 100
 /* tag/ref structure */
 typedef struct tag_ref_str
   {
@@ -700,6 +724,9 @@ extern      "C"
 
     extern intn HXPsetaccesstype
                 (accrec_t * access_rec);
+
+    extern intn HXPshutdown
+                (void);
 
 /*
    ** from hcomp.c

@@ -38,7 +38,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* General HDF includes */
 #include "hdf.h"
-#include "hfile.h"
 
 #define CNBIT_MASTER
 #define CODER_CLIENT

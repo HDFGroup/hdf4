@@ -83,7 +83,6 @@ EXPORTED ROUTINES
 
 #include <ctype.h>  /* for tolower() */
 #include "vg.h"
-#include "hfile.h"
 
 /* Prototypes */
 extern VOID vprint(VOIDP k1);

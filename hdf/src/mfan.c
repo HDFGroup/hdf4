@@ -88,9 +88,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #ifndef MFAN_C  /* define main annoation source file */
 #define MFAN_C
-#include "hdf.h"
-#include "hdfi.h"
-#include "hfile.h"
+
 #include "mfan.h"
 
 /* Function Prototypes */
@@ -2600,7 +2598,6 @@ ANid2tagref(int32 ann_id, uint16 *tag, uint16 *ref)
     int32  file_id;
     int32  type;
     int32  ann_key;
-    uint16 ann_tag;
     uint16 ann_ref;
 
     /* Clear error stack */

@@ -27,6 +27,8 @@
 #ifndef __HCOMPI_H
 #define __HCOMPI_H
 
+#include "hfile.h"
+
 /* Modeling information */
 
 /* structure for storing modeling information */

@@ -57,7 +57,6 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
-#include "hfile.h"
 #include "dfan.h"
 
 PRIVATE uint16 Lastref = 0;     /* Last ref read/written */

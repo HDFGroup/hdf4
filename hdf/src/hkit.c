@@ -17,8 +17,6 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 #include <ctype.h>
-#include "hdf.h"
-#include "hfile.h"
 #include "hkit.h"
 
 /*

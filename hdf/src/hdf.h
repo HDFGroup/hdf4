@@ -17,6 +17,7 @@
 #define HDF_H
 
 #include "hdfi.h"
+#include "hlimits.h"
 
 /* Internal DF structure */
 typedef struct
@@ -350,6 +351,7 @@ typedef enum
     /* maximum size of the atomic data types */
 #       define MAX_NT_SIZE      16
 
+#if 0
 /* tbuf used as a temporary buffer for small jobs.  The size is
    preferably > 512 but MUST be > ~256.  It is advised that if an
    arbitrarily large buffer (> 100 bytes) is require, dynamic space be
@@ -362,6 +364,7 @@ typedef enum
 #   define TBUF_SZ 1024
 #endif /* !macintosh */
 #endif
+#endif /* if 0 */
 
 #if 0   /* replaced with dynamic memory */
 extern uint8 *tbuf;
@@ -472,7 +475,10 @@ extern uint8 *tbuf;
 
 /* PARAMETERS */
 
+#if 0
+/* ------------- File name max lenght(annotations) ------------ */
 #define DF_MAXFNLEN 256
+#endif
 
 /* .................................................................. */
 
@@ -514,6 +520,7 @@ extern uint8 *tbuf;
              (int32*)   NULL,   (int16*) NULL,  (int16*)  special))
 
 /* ----------------------------- VSet Defines ----------------------------- */
+#if 0
 /*
    * some max lengths
    *
@@ -531,19 +538,6 @@ extern uint8 *tbuf;
 #define VSNAMELENMAX        64  /* vdata name  : 64 chars max */
 #define VGNAMELENMAX        64  /* vgroup name : 64 chars max */
 
-/* maximum number of files (number of slots for file records) */
-
-#ifndef MAX_VFILE
-#   define MAX_VFILE 16
-#endif
-
-/*
-   * interlacing supported by the vset.
- */
-
-#define FULL_INTERLACE  0
-#define NO_INTERLACE    1
-
 /*
  * default max no of objects in a vgroup
  * VGroup will grow dynamically if needed
@@ -560,7 +554,16 @@ extern uint8 *tbuf;
 #define MAX_ORDER          32000
 #define MAX_FIELD_SIZE     32000
 
-/* type of ID to send to Hlevel */
+#endif /* if 0 */
+
+/*
+   * interlacing supported by the vset.
+ */
+
+#define FULL_INTERLACE  0
+#define NO_INTERLACE    1
+
+/* type for File ID to send to Hlevel from Vxx interface */
 typedef int32 HFILEID;
 
 /*

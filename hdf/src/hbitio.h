@@ -23,10 +23,14 @@
 #ifndef __HBITIO_H
 #define __HBITIO_H
 
+#include "hlimits.h"
+
+#if 0
 /* maximum number of bitfile access elements */
 /* (can be less than the MAX_ACC defined in hfile.h, but never greater) */
 #ifndef MAX_BITFILE
 #   define MAX_BITFILE 16
+#endif
 #endif
 
 #define SLOT2BITID(s) ((((uint32)BITTYPE & 0xffff) << 16) | ((s) & 0xffff))

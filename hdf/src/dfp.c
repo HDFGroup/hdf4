@@ -33,7 +33,6 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
-#include "hfile.h"
 
 PRIVATE uint16 Readref = 0;
 PRIVATE uint16 Writeref = 0;

@@ -45,10 +45,23 @@ EXPORTED ROUTINES
 #include <varargs.h>
 #endif
 
-#define FUNC_NAME_LEN   32
-
 /* We use a stack to hold the errors plus we keep track of the function,
    file and line where the error occurs. */
+
+#if 0
+#define FUNC_NAME_LEN   32
+
+/* error_stack is the error stack.  error_top is the stack top pointer, 
+   and points tothe next available slot on the stack */
+#ifndef ERR_STACK_SZ
+#   define ERR_STACK_SZ 10
+#endif
+
+/* max size of a stored error description */
+#ifndef ERR_STRING_SIZE
+#   define ERR_STRING_SIZE 512
+#endif
+#endif /* if 0 */
 
 /* the structure of the error stack element */
 typedef struct error_t
@@ -66,17 +79,6 @@ typedef struct error_t
   }
 error_t;
 
-/* error_stack is the error stack.  error_top is the stack top pointer, and points to
-   the next available slot on the stack */
-
-#ifndef ERR_STACK_SZ
-#   define ERR_STACK_SZ 10
-#endif
-
-/* max size of a stored error description */
-#ifndef ERR_STRING_SIZE
-#   define ERR_STRING_SIZE 512
-#endif
 
 /* pointer to the structure to hold error messages */
 PRIVATE error_t *error_stack = NULL;
