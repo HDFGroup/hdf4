@@ -26,9 +26,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.25  1993/04/08 20:44:27  koziol
-Minor Cray tweaks.
+Revision 1.26  1993/04/13 21:40:09  georgev
+Fixed cast problem for qsort on SGI's.
 
+ * Revision 1.25  1993/04/08  20:44:27  koziol
+ * Minor Cray tweaks.
+ *
  * Revision 1.24  1993/04/06  17:24:39  chouck
  * Added some fixes for the Vset stuff
  *
@@ -167,14 +170,14 @@ intn
 char * file_name;    /* name of current file being listed */
 
 int compare
-  PROTO((const VOIDP , const VOIDP));
+  PROTO((const VOID *, const VOID *));
 int main
   PROTO((int, char **));
 int lprint
   PROTO((dd_t *, int));
 
 #ifdef PROTOTYPE
-int compare(const VOIDP aa, const VOIDP bb)
+int compare(const VOID * aa, const VOID * bb)
 #else
 int compare(aa, bb)
 const VOIDP aa, bb;
