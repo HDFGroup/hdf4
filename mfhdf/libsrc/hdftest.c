@@ -195,9 +195,11 @@ char *argv[];
     uint8   inbuf_u8[2][3][4];   /* uint8 Data array read from from file */
     uint8   inbuf[32];           /* input buffer */
     uint8   ru8_data[4];         /* chunk input buffer */
-    int32   rcdims[3];           /* for SDgetChunkInfo() */
+    int32   *rcdims;             /* for SDgetChunkInfo() */
     uint16  fill_u16 = 0;        /* fill value */
-    SD_CHUNK_DEF chunk_def;      /* Chunk defintion */
+    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    int32   cflags;              /* chunk flags */
     comp_info cinfo;             /* compression info */
 #endif /* CHUNK_TEST */
     int32 index, ival, sdid;
@@ -938,9 +940,9 @@ char *argv[];
 
     /* Create chunked SDS 
        chunk is 3x2 which will create 6 chunks */
-    cdims[0] = 3;
-    cdims[1] = 2;
-    status = SDsetChunk(newsds8, cdims, SD_CHUNK_LENGTHS);
+    cdims[0] = chunk_def.chunk_lengths[0] = 3;
+    cdims[1] = chunk_def.chunk_lengths[1] = 2;
+    status = SDsetChunk(newsds8, chunk_def, HDF_CHUNK);
     if(status == FAIL) 
       {
         fprintf(stderr, "Failed to create new chunked data set\n");
@@ -991,24 +993,20 @@ char *argv[];
           }
       }
     /* Get chunk lengths */
-    status = SDgetChunkInfo(newsds8, rcdims, SD_CHUNK_LENGTHS);
+    status = SDgetChunkInfo(newsds8, &rchunk_def, &cflags);
     if(status == FAIL) 
       {
         fprintf(stderr, "SDgetChunkInfo failed \n");
         num_err++;
       }
 
-    if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1])
+    rcdims = rchunk_def.chunk_lengths;
+
+    /* check chunk lengths and to see if SDS is chunked */
+    if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
       {
         fprintf(stderr, "SDgetChunkInfo returned wrong values\n");
         num_err++;
-      }
-
-    /* check to see if SDS is chunked */
-    status = SDisChunked(newsds8);
-    if (status != 1)
-      {
-          fprintf(stderr,"SDisChunked does think SDS is chunked\n");
       }
 
     /* Close down this SDS*/    
@@ -1038,9 +1036,9 @@ char *argv[];
 
     /* Create chunked SDS 
        chunk is 3x2 which will create 6 chunks */
-    cdims[0] = 3;
-    cdims[1] = 2;
-    status = SDsetChunk(newsds7, cdims, SD_CHUNK_LENGTHS);
+    cdims[0] = chunk_def.chunk_lengths[0] = 3;
+    cdims[1] = chunk_def.chunk_lengths[1] = 2;
+    status = SDsetChunk(newsds7, chunk_def, HDF_CHUNK);
     if(status == FAIL) 
       {
         fprintf(stderr, "Failed to create new chunked data set\n");
@@ -1115,24 +1113,20 @@ char *argv[];
           }
       }
     /* Get chunk lengths */
-    status = SDgetChunkInfo(newsds7, rcdims, SD_CHUNK_LENGTHS);
+    status = SDgetChunkInfo(newsds7, &rchunk_def, &cflags);
     if(status == FAIL) 
       {
         fprintf(stderr, "SDgetChunkInfo failed \n");
         num_err++;
       }
 
-    if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1])
+    rcdims = rchunk_def.chunk_lengths;
+
+    /* check chunk lengths and see if SDS is chunked */
+    if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
       {
         fprintf(stderr, "SDgetChunkInfo returned wrong values\n");
         num_err++;
-      }
-
-    /* check to see if SDS is chunked */
-    status = SDisChunked(newsds7);
-    if (status != 1)
-      {
-          fprintf(stderr,"SDisChunked does think SDS is chunked\n");
       }
 
     /* Close down this SDS*/    
@@ -1161,10 +1155,10 @@ char *argv[];
     CHECK(status, "SDsetfillvalue");
 
     /* Set chunking */
-    cdims[0] = 1;
-    cdims[1] = 2;
-    cdims[2] = 3;
-    status = SDsetChunk(newsds4, cdims, SD_CHUNK_LENGTHS);
+    cdims[0] = chunk_def.chunk_lengths[0] = 1;
+    cdims[1] = chunk_def.chunk_lengths[1] = 2;
+    cdims[2] = chunk_def.chunk_lengths[2] = 3;
+    status = SDsetChunk(newsds4, chunk_def, HDF_CHUNK);
     if(status == FAIL) 
       {
         fprintf(stderr, "Failed to create new chunked data set\n");
@@ -1213,12 +1207,6 @@ char *argv[];
               }
           }
       }
-    /* check to see if SDS is chunked */
-    status = SDisChunked(newsds4);
-    if (status != 1)
-      {
-          fprintf(stderr,"SDisChunked does think SDS is chunked\n");
-      }
 
     /* Close down SDS*/    
     status = SDendaccess(newsds4);
@@ -1244,10 +1232,10 @@ char *argv[];
     CHECK(status, "SDsetfillvalue");
 
     /* Set chunking, chunk is 1x2x3 */
-    cdims[0] = 1;
-    cdims[1] = 2;
-    cdims[2] = 3;
-    status = SDsetChunk(newsds5, cdims, SD_CHUNK_LENGTHS);
+    cdims[0] = chunk_def.chunk_lengths[0] = 1;
+    cdims[1] = chunk_def.chunk_lengths[1] = 2;
+    cdims[2] = chunk_def.chunk_lengths[2] = 3;
+    status = SDsetChunk(newsds5, chunk_def, HDF_CHUNK);
     if(status == FAIL) 
       {
         fprintf(stderr, "Failed to create new chunked data set\n");
@@ -1304,14 +1292,17 @@ char *argv[];
           }
       }
     /* Check chunk info */
-    status = SDgetChunkInfo(newsds5, rcdims, SD_CHUNK_LENGTHS);
+    status = SDgetChunkInfo(newsds5, &rchunk_def, &cflags);
     if(status == FAIL) 
       {
         fprintf(stderr, "SDgetChunkInfo failed \n");
         num_err++;
       }
 
-    if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cdims[2] != rcdims[2])
+    rcdims = rchunk_def.chunk_lengths;
+
+    if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cdims[2] != rcdims[2] 
+        || cflags != HDF_CHUNK)
       {
         fprintf(stderr, "SDgetChunkInfo returned wrong values\n");
         num_err++;
@@ -1336,10 +1327,10 @@ char *argv[];
       }
 
     /* Set chunking, chunk is 1x1x4 */
-    cdims[0] = 1;
-    cdims[1] = 1;
-    cdims[2] = 4;
-    status = SDsetChunk(newsds6, cdims, SD_CHUNK_LENGTHS);
+    cdims[0] = chunk_def.chunk_lengths[0] = 1;
+    cdims[1] = chunk_def.chunk_lengths[1] = 1;
+    cdims[2] = chunk_def.chunk_lengths[2] = 4;
+    status = SDsetChunk(newsds6, chunk_def, HDF_CHUNK);
     if(status == FAIL) 
       {
         fprintf(stderr, "Failed to create new chunked data set\n");
@@ -1607,20 +1598,18 @@ char *argv[];
     /* Create chunked SDS 
        chunk is 3x2 which will create 6 chunks.
        Use GZIP compression */
-    cdims[0] = 3;
-    cdims[1] = 2;
-    chunk_def.chunk_lengths = cdims;
+    cdims[0] = chunk_def.comp.chunk_lengths[0] = 3;
+    cdims[1] = chunk_def.comp.chunk_lengths[1] = 2;
 #if 0
-    chunk_def.comp_type = COMP_CODE_RLE;   /* RLE */
+    chunk_def.comp.comp_type = COMP_CODE_RLE;   /* RLE */
 
-    chunk_def.comp_type = COMP_CODE_SKPHUFF; /* Skipping Huffman */
-    cinfo.skphuff.skp_size = sizeof(uint16);
+    chunk_def.comp.comp_type = COMP_CODE_SKPHUFF; /* Skipping Huffman */
+    chunk_def.comp.cinfo.skphuff.skp_size = sizeof(uint16);
 #endif
-    chunk_def.comp_type = COMP_CODE_DEFLATE; /* GZIP */
-    cinfo.deflate.level = 6;
+    chunk_def.comp.comp_type = COMP_CODE_DEFLATE; /* GZIP */
+    chunk_def.comp.cinfo.deflate.level = 6;
 
-    chunk_def.cinfo = &cinfo;
-    status = SDsetChunk(newsds8, &chunk_def, SD_CHUNK_COMP);
+    status = SDsetChunk(newsds8, chunk_def, HDF_CHUNK | HDF_COMP);
     if(status == FAIL) 
       {
         fprintf(stderr, "Failed to create new chunked, GZIP Compressed data set\n");
@@ -1671,24 +1660,21 @@ char *argv[];
           }
       }
     /* Get chunk lengths */
-    status = SDgetChunkInfo(newsds8, rcdims, SD_CHUNK_LENGTHS);
+    status = SDgetChunkInfo(newsds8, &rchunk_def, &cflags);
     if(status == FAIL) 
       {
         fprintf(stderr, "SDgetChunkInfo failed \n");
         num_err++;
       }
 
-    if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1])
+    rcdims = rchunk_def.comp.chunk_lengths;
+
+    /* check chunk lengths and see if SDS is compressed and chunked */
+    if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] 
+        || cflags != (HDF_CHUNK | HDF_COMP))
       {
         fprintf(stderr, "SDgetChunkInfo returned wrong values\n");
         num_err++;
-      }
-
-    /* check to see if SDS is chunked */
-    status = SDisChunked(newsds8);
-    if (status != 1)
-      {
-          fprintf(stderr,"SDisChunked does not think SDS is chunked\n");
       }
 
     /* Close down this SDS*/    
@@ -1712,17 +1698,16 @@ char *argv[];
       }
 
     /* Set chunking, chunk is 1x1x4 */
-    cdims[0] = 1;
-    cdims[1] = 1;
-    cdims[2] = 4;
-    chunk_def.chunk_lengths = cdims;
+    cdims[0] = chunk_def.comp.chunk_lengths[0] = 1;
+    cdims[1] = chunk_def.comp.chunk_lengths[1] = 1;
+    cdims[2] = chunk_def.comp.chunk_lengths[2] = 4;
 #if 0
-    chunk_def.comp_type = COMP_CODE_RLE;
+    chunk_def.comp.comp_type = COMP_CODE_RLE;
 #endif
-    chunk_def.comp_type = COMP_CODE_SKPHUFF; /* Skipping Huffman */
-    cinfo.skphuff.skp_size = sizeof(uint16);
-    chunk_def.cinfo = &cinfo;
-    status = SDsetChunk(newsds6, &chunk_def, SD_CHUNK_COMP);
+    chunk_def.comp.comp_type = COMP_CODE_SKPHUFF; /* Skipping Huffman */
+    chunk_def.comp.cinfo.skphuff.skp_size = sizeof(uint16);
+
+    status = SDsetChunk(newsds6, chunk_def, HDF_CHUNK | HDF_COMP);
     if(status == FAIL) 
       {
         fprintf(stderr, "Failed to create new chunked, Skipping Huffman compressed data set\n");
@@ -1969,23 +1954,19 @@ char *argv[];
     /* Create chunked SDS 
        chunk is 2x2 which will create 9 chunks.
        Use NBIT compression */
-    cdims[0] = 2;
-    cdims[1] = 2;
-    chunk_def.chunk_lengths = cdims;
-    chunk_def.start_bit = 6;
-    chunk_def.bit_len   = 7;
-    chunk_def.sign_ext  = FALSE;
-    chunk_def.fill_one  = FALSE;
-    status = SDsetChunk(newsds, &chunk_def, SD_CHUNK_NBIT);
+    cdims[0] = chunk_def.nbit.chunk_lengths[0] = 2;
+    cdims[1] = chunk_def.nbit.chunk_lengths[1] = 2;
+    chunk_def.nbit.start_bit = 6;
+    chunk_def.nbit.bit_len   = 7;
+    chunk_def.nbit.sign_ext  = FALSE;
+    chunk_def.nbit.fill_one  = FALSE;
+    status = SDsetChunk(newsds, chunk_def, HDF_CHUNK | HDF_NBIT);
     if(status == FAIL) 
       {
         fprintf(stderr, "Failed to create new chunked, NBIT data set\n");
         num_err++;
       }
-#if 0
-    status = SDsetnbitdataset(newsds,6,7,FALSE,FALSE);
-    CHECK(status, "SDsetnbitdataset");
-#endif
+
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
     status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);

@@ -3797,28 +3797,39 @@ int32 dimid;
       SDsetChunk  -- make SDS a chunked SDS
 
  DESCRIPTION
-      This routine makes the SDS a chunked SDS according to the structure 
-      passed in for the chunk defintion. 
-
-      The simplist structure is the array(int32) specifiying chunk 
-      lengths for each dimension where the 'flags' argument set to 
-      'SD_CHUNK_LENGTHS';
+      This routine makes the SDS a chunked SDS according to the chunk
+      definiton passed in.
 
       The dataset currently cannot be special already.  i.e. NBIT,
       COMPRESSED, or EXTERNAL. This is an Error.
 
-      COMPRESSION is set by using the 'SD_CHUNK_DEF' structure to set the
+      The defintion of the HDF_CHUNK_DEF union with relvant fields is:
+
+      typedef union hdf_chunk_def_u
+      {
+         int32   chunk_lengths[MAX_VAR_DIMS];  Chunk lengths along each dimension
+
+         struct 
+          {   
+            int32     chunk_lengths[MAX_VAR_DIMS]; Chunk lengths along each dimension
+            int32     comp_type;                   Compression type 
+            comp_info cinfo;                       Compression info struct 
+          }comp;
+
+      } HDF_CHUNK_DEF
+
+      The variable agruement 'flags' is a bit-or'd value which can currently be
+      'HDF_CHUNK' or 'HDF_CHUNK | HDF_COMP'.
+
+      The simplist is the 'chunk_lengths' array specifiying chunk 
+      lengths for each dimension where the 'flags' argument set to 
+      'HDF_CHUNK';
+
+      COMPRESSION is set by using the 'HDF_CHUNK_DEF' union to set the
       appropriate compression information along with the required chunk lengths
       for each dimension. The compression information is the same as 
-      that set in 'SDsetcompress()'.
-
-      The relevant fields of SD_CHUNK_DEF structure are:
-
-        int32     *chunk_lengths;  Chunk lengths along each dimension
-        int32      comp_type;      Compression type
-        comp_info *cinfo;          Compression info struct
-
-      The 'flags' argument' is set to 'SD_CHUNK_COMP'.
+      that set in 'SDsetcompress()'. The bit-or'd 'flags' argument' is set to 
+      'HDF_CHUNK | HDF_COMP'.
 
       See the example in pseudo-C below for further usage.
 
@@ -3852,36 +3863,33 @@ int32 dimid;
 
         --Without compression--:
         {                                                                    
-        int32  chunk_lengths[2];                                               
+        HDF_CHUNK_DEF chunk_def;
                                                                             
         .......                                                                    
         -- Set chunk lengths --                                                    
-        chunk_lengths[0]= 2;                                                     
-        chunk_lengths[1]= 2; 
+        chunk_def.chunk_lengths[0]= 2;                                                     
+        chunk_def.chunk_lengths[1]= 2; 
+
         -- Set Chunking -- 
-        SDsetChunk(sdsid,chunk_lengths, SD_CHUNK_LENGTHS);                      
+        SDsetChunk(sdsid, chunk_def, HDF_CHUNK);                      
          ......                                                                  
         }                                                                           
 
         --With compression--:
         {                                                                    
-        int32        chunk_lengths[2];                                               
-        comp_info    cinfo;
-        SD_CHUNK_DEF chunk_def;
+        HDF_CHUNK_DEF chunk_def;
                                                                             
         .......                
         -- Set chunk lengths first --                                                    
-        chunk_lengths[0]= 2;                                                     
-        chunk_lengths[1]= 2;
-        chunk_def.chunk_lengths = chunk_lengths;
+        chunk_def.chunk_lengths[0]= 2;                                                     
+        chunk_def.chunk_lengths[1]= 2;
 
         -- Set compression --
-        cinfo.deflate.level = 9;
-        chunk_def.comp_type = COMP_CODE_DEFLATE;
-        chunk_def.cinfo = &cinfo;
+        chunk_def.comp.cinfo.deflate.level = 9;
+        chunk_def.comp.comp_type = COMP_CODE_DEFLATE;
 
         -- Set Chunking with Compression --
-        SDsetChunk(sdsid, &chunk_def, SD_CHUNK_COMP);                      
+        SDsetChunk(sdsid, chunk_def, HDF_CHUNK | HDF_COMP);                      
          ......                                                                  
         }                                                                           
 
@@ -3896,15 +3904,15 @@ int32 dimid;
 ******************************************************************************/
 intn 
 #ifdef PROTOTYPE
-SDsetChunk(int32 sdsid,     /* IN: sds access id */
-           VOID *chunk_def, /* IN: chunk definition */
-           int32 flags      /* IN: flags */)
+SDsetChunk(int32 sdsid,             /* IN: sds access id */
+           HDF_CHUNK_DEF chunk_def, /* IN: chunk definition */
+           int32 flags              /* IN: flags */)
 #else
 SDsetChunk(sdsid,     /* IN: sds access id */
            chunk_def, /* IN: chunk definition */
            flags      /* IN: flags */)
 int32 sdsid;
-VOID *chunk_def;
+HDF_CHUNK_DEF chunk_def;
 int32 flags;
 #endif
 {
@@ -3912,7 +3920,7 @@ int32 flags;
     NC_var   * var    = NULL;        /* SDS variable */
     NC_attr ** fill_attr = NULL;     /* fill value attribute */
     HCHUNK_DEF  chunk[1];            /* H-level chunk defintion */
-    SD_CHUNK_DEF *cdef   = NULL;     /* SD Chunk definition */
+    HDF_CHUNK_DEF *cdef   = NULL;    /* SD Chunk definition */
     model_info minfo;                /* dummy model info struct */
     comp_info  cinfo;                /* compression info - NBIT */
     int32      *cdims    = NULL;     /* array of chunk lengths */
@@ -3932,14 +3940,7 @@ int32 flags;
 #ifdef CHK_DEBUG
     fprintf(stderr,"SDsetChunk: called  \n");
 #endif
-    /* Check args, flags currently can only be 'SD_CHUNK_LENGTHS' 
-       SD_CHUNK_COMP and SD_CHUNK_NBIT */
-    if (chunk_def == NULL || (flags != SD_CHUNK_LENGTHS && flags != SD_CHUNK_COMP
-        && flags != SD_CHUNK_NBIT))
-      {
-        status = FAIL;
-        goto done;
-      }
+    /* Check some args */
 
     /* get file handle and verify it is an HDF file 
        we only handle dealing with SDS only not coordinate variables */
@@ -3961,36 +3962,36 @@ int32 flags;
     /* Decide type of defintion passed in  */
     switch (flags)
       {
-      case SD_CHUNK_LENGTHS:
-          /* cast chunk_def to array of int32,*/
-          cdims = (int32 *)chunk_def;
+      case HDF_CHUNK: /* case where chunk_def only has chunk lengths */
+          cdef  = (HDF_CHUNK_DEF *)&chunk_def;
+          cdims = cdef->chunk_lengths;
           chunk[0].chunk_flag = 0;  /* nothing set for this now */
           chunk[0].comp_type = 0; /* nothing set */
           chunk[0].model_type = 0; /* nothing set */
-          chunk[0].cinfo = NULL; /* nothing set */
-          chunk[0].minfo = NULL; /* nothing set */
-          break;
-      case SD_CHUNK_COMP:
-          cdef  = (SD_CHUNK_DEF *)chunk_def;
-          cdims = cdef->chunk_lengths;
-          chunk[0].chunk_flag = SPECIAL_COMP;  /* Compression */
-          chunk[0].comp_type  = cdef->comp_type; 
-          chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
-          chunk[0].cinfo = cdef->cinfo; 
+          chunk[0].cinfo = &cinfo; /* dummy */
           chunk[0].minfo = &minfo; /* dummy */
           break;
-      case SD_CHUNK_NBIT:
-          cdef  = (SD_CHUNK_DEF *)chunk_def;
-          cdims = cdef->chunk_lengths;
+      case (HDF_CHUNK | HDF_COMP):
+          cdef  = (HDF_CHUNK_DEF *)&chunk_def;
+          cdims = cdef->comp.chunk_lengths;
+          chunk[0].chunk_flag = SPECIAL_COMP;  /* Compression */
+          chunk[0].comp_type  = cdef->comp.comp_type; 
+          chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
+          chunk[0].cinfo = &cdef->comp.cinfo; 
+          chunk[0].minfo = &minfo; /* dummy */
+          break;
+      case (HDF_CHUNK | HDF_NBIT):
+          cdef  = (HDF_CHUNK_DEF *)&chunk_def;
+          cdims = cdef->nbit.chunk_lengths;
           chunk[0].chunk_flag = SPECIAL_COMP;  /* NBIT is a type of compression */
           chunk[0].comp_type  = COMP_CODE_NBIT;
           chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
           /* set up n-bit parameters */
           cinfo.nbit.nt        = var->HDFtype;
-          cinfo.nbit.sign_ext  = cdef->sign_ext;
-          cinfo.nbit.fill_one  = cdef->fill_one;
-          cinfo.nbit.start_bit = cdef->start_bit;
-          cinfo.nbit.bit_len   = cdef->bit_len;
+          cinfo.nbit.sign_ext  = cdef->nbit.sign_ext;
+          cinfo.nbit.fill_one  = cdef->nbit.fill_one;
+          cinfo.nbit.start_bit = cdef->nbit.start_bit;
+          cinfo.nbit.bit_len   = cdef->nbit.bit_len;
           chunk[0].cinfo = &cinfo; 
           chunk[0].minfo = &minfo; /* dummy */
           break;
@@ -4022,10 +4023,10 @@ int32 flags;
       } /* end if */
 
     /* Now start setting chunk info */
-#ifdef CHK_DEBUG
-    fprintf(stderr,"SDsetChunk: got data ref  \n");
-#endif
     ndims = var->assoc->count; /* set number of dims i.e. rank */
+#ifdef CHK_DEBUG
+    fprintf(stderr,"SDsetChunk: got data ref, ndims =%d  \n",ndims);
+#endif
 
     /* allocate space for chunk dimensions */
     if ((chunk[0].pdims = (DIM_DEF *)HDmalloc(ndims*sizeof(DIM_DEF))) == NULL)
@@ -4047,6 +4048,7 @@ int32 flags;
             { /* UNLIMITED dimension case */
 #ifdef CHK_DEBUG
     fprintf(stderr,"SDsetChunk: unlimited dimension case  \n");
+    fflush(stderr);
 #endif
                 status = FAIL;
                 goto done;
@@ -4054,16 +4056,24 @@ int32 flags;
 
 #ifdef CHK_DEBUG
     fprintf(stderr,"SDsetChunk: (int32) var->shape[%d]=%d\n",i,(int32) var->shape[i]);
+    fflush(stderr);
 #endif
           /* set chunk lengths */
           if (cdims[i] >= 1)
               chunk[0].pdims[i].chunk_length = cdims[i];
           else
             { /* chunk length is less than 1 */
+#ifdef CHK_DEBUG
+    fprintf(stderr,"SDsetChunk: chunk length less than 1, cdims[%d]=%d \n",i,cdims[i]);
+    fflush(stderr);
+#endif
                 status = FAIL;
                 goto done;
             }
-          
+#ifdef CHK_DEBUG
+    fprintf(stderr,"SDsetChunk: cdims[%d]=%d \n",i,cdims[i]);
+    fflush(stderr);
+#endif          
           /* Data distribution along dimensions */
           chunk[0].pdims[i].distrib_type = 1;     /* default BLOCK */
 
@@ -4076,6 +4086,7 @@ int32 flags;
 
 #ifdef CHK_DEBUG
     fprintf(stderr,"SDsetChunk: var->HDFsize=%d\n",var->HDFsize);
+    fflush(stderr);
 #endif
     /* allocate space for fill value whose number type is the same as
        the dataset */
@@ -4127,6 +4138,9 @@ int32 flags;
             } /* end if */
       } /* end if */
 
+#ifdef CHK_DEBUG
+    fprintf(stderr,"SDsetChunk: get ready to create, convert=%d\n",convert);
+#endif
     if (convert)
       { /* convert fill value */
           /* set number type */
@@ -4195,13 +4209,26 @@ int32 flags;
 
 /******************************************************************************
  NAME
-        SDgetChunkInfo -- get Info on Chunked SDS
+     SDgetChunkInfo -- get Info on SDS
 
  DESCRIPTION
-        This routine currently only handles as input an array to
-        hold the chunk_lengths for each dimension. The only
-        valid flag is 'SD_CHUNK_LENGTHS' which fills an
-        array(int32) of chunk lengths for each dimension.
+     This routine gets any special information on the SDS. If its chunked,
+     chunked and compressed or just a regular SDS. Currently it will only
+     fill the array of chunk lengths for each dimension as specified in
+     the 'HDF_CHUNK_DEF' union. You can pass in a NULL for 'chunk_def'
+     if don't want the chunk lengths for each dimension.
+     If successfull it will return a bit-or'd value in 'flags' indicating 
+     if the SDS is  chunked(HDF_CHUNK), chunked and compressed(HDF_CHUNK | HDF_COMP) 
+     or non-chunked(HDF_NONE).
+ 
+     e.g. 4x4 array - Pseudo-C
+     {
+     HDF_CHUNK_DEF rchunk_def;
+     int32   cflags;
+     ...
+     SDgetChunkInfo(sdsid, &rchunk_def, &cflags);
+     ...
+     }
 
  RETURNS
         SUCCEED/FAIL
@@ -4211,32 +4238,26 @@ int32 flags;
 ******************************************************************************/
 intn 
 #ifdef PROTOTYPE
-SDgetChunkInfo(int32 sdsid,      /* IN: sds access id */
-               VOID *chunk_def,  /* IN/OUT: chunk definition */
-               int32 flags       /* IN: flags */)
+SDgetChunkInfo(int32 sdsid,               /* IN: sds access id */
+               HDF_CHUNK_DEF *chunk_def,  /* IN/OUT: chunk definition */
+               int32 *flags               /* IN/OUT: flags */)
 #else
 SDgetChunkInfo(sdsid,     /* IN: sds access id */
                chunk_def, /* IN/OUT: chunk definition */
-               flags      /* IN: flags */)
+               flags      /* IN/OUT: flags */)
 int32 sdsid;
-VOID *chunk_def;
-int32 flags;
+HDF_CHUNK_DEF *chunk_def;
+int32 *flags;
 #endif
 {
     NC       * handle = NULL;        /* file handle */
     NC_var   * var    = NULL;        /* SDS variable */
-    int32     *cdims     = NULL;     /* array of chunk lengths */
     sp_info_block_t info_block;      /* special info block */
     int16      special;              /* Special code */
     intn       i;                    /* loop variable */
     intn       status = SUCCEED;     /* return value */
 
-    /* Check args, flags currently can only be 'SD_CHUNK_LENGTHS' */
-    if (chunk_def == NULL || flags != SD_CHUNK_LENGTHS)
-      {
-        status = FAIL;
-        goto done;
-      }
+    /* Check args */
 
     /* get file handle and verify it is an HDF file 
        we only handle dealing with SDS only not coordinate variables */
@@ -4255,10 +4276,6 @@ int32 flags;
         goto done;
       }
 
-    /* cast chunk_def to array of int32,
-       valid only if 'flags' == 1 */
-    cdims = (int32 *)chunk_def;
-
     /* inquire about element */
     status = Hinquire(var->aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
     if (status != FAIL)
@@ -4266,19 +4283,41 @@ int32 flags;
           if (special == SPECIAL_CHUNKED)
             { /* get info about chunked element */
              if ((status = HDget_special_info(var->aid, &info_block)) != FAIL)
-               {   /* we assume user has allocat space for chunk lengths */
-                   /* copy chunk lengths over */
-                   for (i = 0; i < info_block.ndims; i++)
+               {   /* Does user want chunk lengths back? */
+                   if (chunk_def != NULL)
                      {
-                         cdims[i] = info_block.cdims[i];
+                         /* we assume user has allocat space for chunk lengths */
+                         /* copy chunk lengths over */
+                         for (i = 0; i < info_block.ndims; i++)
+                           {
+                               chunk_def->chunk_lengths[i] = info_block.cdims[i];
+                           }
                      }
                    /* dont forget to free up info is special info block 
                       This space was allocated by the library */
                    HDfree(info_block.cdims);
+
+                   /* Need to check to see if compressed 
+                      but for now just set 'HDF_CHUNK'.
+                    */
+                   switch(info_block.comp_type)
+                     {
+                     case COMP_CODE_NONE:
+                         *flags = HDF_CHUNK;
+                         break;
+                     case COMP_CODE_NBIT:
+                         *flags = (HDF_CHUNK | HDF_NBIT);
+                         break;
+                     default:
+                         *flags = (HDF_CHUNK | HDF_COMP);
+                         break;
+                     }
                }
             }
           else /* not special chunked element */
-              status = FAIL;
+            {
+              *flags = 0; /* regular SDS */
+            }
       }
 
   done:
@@ -4291,68 +4330,6 @@ int32 flags;
     return status;
 } /* SDgetChunkInfo() */
 
-/******************************************************************************
- NAME
-        SDisChunked  -- Is this SDS chunked
-
- DESCRIPTION
-        This routine checks to see if the SDS is a Chunked SDS.
-
- RETURNS
-        1->Yes, 0->No, -1(FAIL)->Error
-
- AUTHOR 
-       -GeorgeV
-******************************************************************************/
-intn 
-#ifdef PROTOTYPE
-SDisChunked(int32 sdsid /* IN: sds access id */)
-#else
-SDisChunked(sdsid     /* IN: sds access id */)
-int32 sdsid;
-#endif
-{
-    NC       * handle = NULL;        /* file handle */
-    NC_var   * var    = NULL;        /* SDS variable */
-    intn       status = 0;           /* return value, default is false */
-    int16      special;              /* Special code */
-
-    /* get file handle and verify it is an HDF file 
-       we only handle dealing with SDS only not coordinate variables */
-    handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL || handle->file_type != HDF_FILE || handle->vars == NULL)
-      {
-        status = FAIL;
-        goto done;
-      }
-
-    /* get variable from id */
-    var = SDIget_var(handle, sdsid);
-    if(var == NULL)
-      {
-        status = FAIL;
-        goto done;
-      }
-
-    /* inquire about element */
-    status = Hinquire(var->aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
-    if (status != FAIL)
-      {
-          if (special == SPECIAL_CHUNKED)
-              status = 1; /* True */
-          else
-              status = 0; /* False */
-      }
-    
-  done:
-    if (status == FAIL)
-      { /* Failure cleanup */
-
-      }
-    /* Normal cleanup */
-
-    return status;
-} /* SDisChunked()*/
 
 /******************************************************************************
  NAME
@@ -4688,7 +4665,7 @@ DESCRIPTION
 
      The cache contains the Least Recently Used(LRU cache replacment policy) 
      chunks. This routine allows the setting of maximum number of chunks that 
-     can be cached.
+     can be cached, 'maxcache'.
 
      The performance of the SDxxx interface with chunking is greatly
      affected by the users access pattern over the dataset and by
@@ -4713,7 +4690,7 @@ DESCRIPTION
      new 'maxcache' value only if the new 'maxcache' value is greater than the
      current number of chunks in the cache.
 
-     Use flags argument of 'HDF_PAGEALL' if the whole object is to be cached 
+     Use flags argument of 'HDF_CACHEALL' if the whole object is to be cached 
      in memory, otherwise pass in zero(0). Currently you can only
      pass in zero.
 
@@ -4733,11 +4710,11 @@ intn
 #ifdef PROTOTYPE
 SDsetChunkCache(int32 sdsid,     /* IN: access aid to mess with */
                 int32 maxcache,  /* IN: max number of chunks to cache */
-                int32 flags      /* IN: flags = 0, HDF_PAGEALL */)
+                int32 flags      /* IN: flags = 0, HDF_CACHEALL */)
 #else
 SDsetChunkCache(sdsid,     /* IN: access aid to mess with */
                 maxcache,  /* IN: max number of chunks to cache */
-                flags      /* IN: flags = 0, HDF_PAGEALL */)
+                flags      /* IN: flags = 0, HDF_CACHEALL */)
 int32 sdsid;
 int32 maxcache;
 int32 flags;
@@ -4755,7 +4732,7 @@ int32 flags;
         goto done;
       }
 
-    if (flags != 0 && flags != HDF_PAGEALL)
+    if (flags != 0 && flags != HDF_CACHEALL)
       {
         status = FAIL;
         goto done;
