@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/05/28 17:31:32  chouck
-Changed output file names
+Revision 1.4  1992/05/31 15:32:37  mfolk
+Change type of rank and dims[2] from int to int32 for Convex.
 
+ * Revision 1.3  1992/05/28  17:31:32  chouck
+ * Changed output file names
+ *
  * Revision 1.2  1992/03/24  20:42:04  sxu
  * Changed output file names
  *
@@ -29,8 +32,8 @@ uint32 ui32[10][10], tui32[10][10];
 int main()
 {
     int i, j, err;
-    int rank;
-    int dims[2];
+    int32 rank;
+    int32 dims[2];
     int number_failed = 0;
 
     rank = 2;
