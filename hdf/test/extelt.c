@@ -113,6 +113,9 @@ test_hextelt()
         );
     aid2 = HXcreate(fid, 1001, 2, "t3.hdf", (int32) 8, (int32) 4);
     CHECK(aid2, FAIL, "HXcreate");
+    ret = Hendaccess(aid2);
+    CHECK(ret, FAIL, "Hendaccess");
+
 
     ret = Hgetelement(fid, (uint16) 1001, (uint16) 2, inbuf);
     if (ret != 4)
@@ -133,8 +136,10 @@ test_hextelt()
           errors++;
       }
 
+#ifdef QAK
     ret = Hendaccess(aid2);
     CHECK(ret, FAIL, "Hendaccess");
+#endif
 
     MESSAGE(5, printf("Verifying data that was stored to file #2\n");
         );

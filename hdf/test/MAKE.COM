@@ -1,36 +1,36 @@
-! ****************************************************************************
-! * NCSA HDF                                                                 *
-! * Software Development Group                                               *
-! * National Center for Supercomputing Applications                          *
-! * University of Illinois at Urbana-Champaign                               *
-! * 605 E. Springfield, Champaign IL 61820                                   *
-! *                                                                          *
-! * For conditions of distribution and use, see the accompanying             *
-! * hdf/COPYING file.                                                        *
-! *                                                                          *
-! ***************************************************************************
-!
-! $Id$
-!$!
-!$!
-!$! File to build the test files in the HDF test suite
-!$!
-!$!
-!$! The following constants should probably be defined
-!$!   only once in the main HDF MAKE.COM...
-!$!
+$! ****************************************************************************
+$! * NCSA HDF                                                                 *
+$! * Software Development Group                                               *
+$! * National Center for Supercomputing Applications                          *
+$! * University of Illinois at Urbana-Champaign                               *
+$! * 605 E. Springfield, Champaign IL 61820                                   *
+$! *                                                                          *
+$! * For conditions of distribution and use, see the accompanying             *
+$! * hdf/COPYING file.                                                        *
+$! *                                                                          *
+$! ***************************************************************************
+$!
+$! Id: MAKE.COM,v 1.9 1996/01/18 05:09:44 sxu Exp $
+$!
+$!
+$! File to build the test files in the HDF test suite
+$!
+$!
+$! The following constants should probably be defined
+$!   only once in the main HDF MAKE.COM...
+$!
 $ hdflib= "[-.src]df/lib,[-.jpeg]libjpeg/lib,[-.zlib]libz/lib"
-!$ define/nolog hdf$include ([-.src],[-.jpeg],[-.zlib])
+$! define/nolog hdf$include ([-.src],[-.jpeg],[-.zlib])
 $ define/nolog sys$clib sys$library:vaxcrtl
-$ ccopt= "/include=([-.src],[-.jpeg],[-.zlib])/define=VMS"
+$ ccopt= "/include=([-.src],[-.jpeg],[-.zlib])/opt/nodebug/define=VMS"
 
-!$!
+$!
 $ type sys$input
   **    Making testhdf **
 $ cc 'ccopt   testhdf
 $ type sys$input
   **    Making H level test programs **
-!$!
+$!
 $ cc 'ccopt   file
 $ cc 'ccopt   file1
 $ cc 'ccopt   blocks
@@ -38,7 +38,7 @@ $ cc 'ccopt   extelt
 $ cc 'ccopt   vers
 $ type sys$input
   **  Making C interface test programs **
-!$!
+$!
 $ cc 'ccopt   rig
 $ cc 'ccopt   sdmms
 $ cc 'ccopt   sdnmms
@@ -55,13 +55,16 @@ $ cc 'ccopt   comp
 $ cc 'ccopt   man
 $ cc 'ccopt   mgr.c
 $ cc 'ccopt   nbit
+$ cc 'ccopt   tbv
+$ cc 'ccopt   gentest
 
-$ link testhdf,rig,sdmms,sdnmms,an,anfile,sdstr,slab,litend, -
+$ link/nodebug testhdf,rig,sdmms,sdnmms,an,anfile,sdstr,slab,litend, -
   file,file1,blocks,extelt,vers,tvset,conv,tree,bitio,comp,man,mgr.obj, -
-  nbit, 'hdflib
+  nbit, tbv, 'hdflib
+$ link/nodebug gentest, 'hdflib, sys$library:vaxcrtl/lib
 $ type sys$input 
   **  Making Fortran interface test programs **
-!$!
+$!
 $ cc 'ccopt   fortest.c
 $ cc 'ccopt   forsupf.c
 $ fortran tr8F.f
@@ -82,6 +85,8 @@ $ fortran slab3wf.f
 $ fortran slab4wf.f
 $ fortran egfhi.f
 $ fortran forsupff.f
+$ fortran manf.f
+$ fortran mgrf.f
 $ link fortest, forsupff, forsupf, 'hdflib, sys$clib/lib
 $ link tr8f, forsupff, forsupf, 'hdflib, sys$clib/lib
 $ link t24f,forsupff, forsupf, 'hdflib, sys$clib/lib
@@ -99,8 +104,10 @@ $ link slab1wf,forsupff, forsupf, 'hdflib, sys$clib/lib
 $ link slab2wf,forsupff, forsupf, 'hdflib, sys$clib/lib
 $ link slab3wf,forsupff, forsupf, 'hdflib, sys$clib/lib
 $ link slab4wf,forsupff, forsupf, 'hdflib, sys$clib/lib
+$ link manf,forsupff, forsupf, 'hdflib, sys$clib/lib
+$ link mgrf,forsupff, forsupf, 'hdflib, sys$clib/lib
 $ link egfhi,forsupff, forsupf, 'hdflib, sys$clib/lib
-!$ delete *.obj;*
-!$!
+$! delete *.obj;*
+$!
 
 
