@@ -337,10 +337,10 @@ typedef struct tag_info_str
 /* For determining what the last file operation was */
 typedef enum
   {
-      OP_UNKNOWN = 0,   /* Don't know what the last operation was (after fopen frex) */
-      OP_SEEK,          /* Last operation was a seek */
-      OP_WRITE,         /* Last operation was a write */
-      OP_READ           /* Last operation was a read */
+      H4_OP_UNKNOWN = 0,   /* Don't know what the last operation was (after fopen frex) */
+      H4_OP_SEEK,          /* Last operation was a seek */
+      H4_OP_WRITE,         /* Last operation was a write */
+      H4_OP_READ           /* Last operation was a read */
   }
 fileop_t;
 
