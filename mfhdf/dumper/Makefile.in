@@ -144,7 +144,7 @@ debug:  $(PROGRAM)  ../libsrc/libmfhdf.a
 
 
 test: hdp
-	sh -x testhdp.sh
+	sh testhdp.sh
 
 install::	installed_program installed_manuals
 install-utils::	installed_program
