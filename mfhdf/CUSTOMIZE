@@ -19,7 +19,7 @@
 #############################################################################
 #
 # Type of C compiler (default is `cc'):
-#CC=gcc
+# CC=gcc
 #
 # C compiler flags (default is `-O'):
 CFLAGS=-g

@@ -682,14 +682,17 @@ case "${OS}" in
     esac
   done
 
-#                UC_ENSURE(CPPFLAGS, -D_HPUX_SOURCE)
-                  for arg in -Aa; do
+                if test "$GCC" = 1; then
+                        DUMMY=
+                else
+                          for arg in -Aa; do
     case "$CPPFLAGS" in
       *$arg*) ;;
       *)      CPPFLAGS="${CPPFLAGS-} $arg";;
     esac
   done
- # should only do if cc NOT gcc
+
+                fi
                 LD_XDR=;;
   osf*)           for arg in -DDEC_ALPHA; do
     case "$HDF_INC" in
