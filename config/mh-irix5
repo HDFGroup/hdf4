@@ -25,7 +25,10 @@ VERSION  = 4.0
 #
 #Using ANSI compilier
 CC=cc
+#CFLAGS=-ansi -O -s -pedantic -fullwarn -wlint,-p -woff 828,841,822
+#CFLAGS=-ansi -O -s -pedantic -fullwarn -wlint,-p -woff 828,841,822,826,852,813
 CFLAGS=-ansi -O -s
+#CFLAGS=-ansi -g
 
 # Fortran compilier
 FC = f77
