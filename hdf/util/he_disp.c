@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/08/18 19:56:09  chouck
-Fixed some casting problems for SGI -ansi
+Revision 1.5  1992/08/24 21:59:44  sxu
+*** empty log message ***
 
+ * Revision 1.4  1992/08/18  19:56:09  chouck
+ * Fixed some casting problems for SGI -ansi
+ *
  * Revision 1.3  1992/07/15  21:48:48  sxu
  * No change.
  *

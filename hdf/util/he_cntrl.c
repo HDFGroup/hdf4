@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1992/08/18 19:49:46  chouck
-Added casts to string calls
+Revision 1.6  1992/08/24 21:59:44  sxu
+*** empty log message ***
 
+ * Revision 1.5  1992/08/18  19:49:46  chouck
+ * Added casts to string calls
+ *
  * Revision 1.4  1992/07/31  21:10:24  chouck
  * Use in-house print routines rather than fork() a call to od
  *
