@@ -38,6 +38,10 @@ case "${OS}" in
                 LD_XDR=;;
   hpux*)        UC_ENSURE(HDF_INC, -DHP9000)
                 LD_XDR=;;
+  osf*)         UC_ENSURE(HDF_INC, -DDEC_ALPHA)
+                LD_XDR=;;
+  convex*)      UC_ENSURE(HDF_INC, -DCONVEX)
+                LD_XDR=;;
   *)		LD_XDR=;;
 esac
 UC_ENSURE(DEFS, ${CPP_XDR-})dnl
