@@ -54,6 +54,7 @@
 
 JAVAC           = @JAVAC@
 JAVADOC         = @JAVADOC@
+JAVADOC_IMAGES         = @JAVADOC_IMAGES@
 JAR         	= @JAR@
 FIND            = @FIND@
 JAVADOC_FLAGS   = -version -author 
@@ -93,7 +94,21 @@ PACKAGES = \
 	ncsa.hdf.server \
 	ncsa.hdf.awt.layer \
 	ncsa.hdf.jhv \
-	ncsa.hdf.io \
+	ncsa.hdf.awt.palette \
+	ncsa.hdf.awt.animation \
+	ncsa.hdf.util.encoder \
+	ncsa.hdf.awt \
+	ncsa.hdf.awt.event \
+	ncsa.hdf.awt.plots
+
+DOCPACKAGES = \
+	ncsa.hdf.hdflib \
+	ncsa.hdf.awt.image \
+	ncsa.hdf.util \
+	ncsa.hdf.util.decoder \
+	ncsa.hdf.message \
+	ncsa.hdf.awt.layer \
+	ncsa.hdf.jhv \
 	ncsa.hdf.awt.palette \
 	ncsa.hdf.awt.animation \
 	ncsa.hdf.util.encoder \
@@ -140,14 +155,12 @@ install-info: install-javadocs
 
 install-doc: install-javadocs
 
-install-javadocs: javadocs
+javadocs: javadocs
 	-mkdir -p $(DOCDIR);
-	$(JAVADOC) -sourcepath $(CLASSPATH) -d $(DOCDIR) $(JAVADOC_FLAGS) $(PACKAGES)
-	-mkdir -p $(DOCDIR)/images;
-	cp docs/images/*.gif $(DOCDIR)/images;
+	$(JAVADOC) -sourcepath $(CLASSPATH) -d $(DOCDIR) $(JAVADOC_FLAGS) $(DOCPACKAGES)
+	-ln -s $(JAVADOC_IMAGES) $(DOCDIR)/images;
 
-javadocs:
-	$(JAVADOC) -sourcepath $(CLASSPATH) -d ./docs $(JAVADOC_FLAGS) $(PACKAGES)
+install-javadocs: javadocs
 
 uninstall-javadocs:
 	rm -rf $(DOCDIR)/*
