@@ -19,41 +19,44 @@
 #ifndef HFILE_H
 #define HFILE_H
 
-/* Maximum number of files (number of slots for file records) */
-#ifndef MAX_FILE
-#ifdef PC
-#   define MAX_FILE 8
-#else /* !PC */
-#   define MAX_FILE 16
-#endif /* !PC */
-#endif /* MAX_FILE */
+/* maximum number of files (number of slots for file records) */
 
-/* Maximum number of access elements */
+#ifndef MAX_FILE
+#if defined PC && !defined PC386
+#   define MAX_FILE 8
+#else
+#   define MAX_FILE 16
+#endif
+#endif
+
+/* maximum number of access elements */
+
 #ifndef MAX_ACC
 #   define MAX_ACC 256
-#endif /* MAX_ACC */
+#endif
 
 /* Magic cookie for HDF data files */
+
 #define MAGICLEN 4             /* length */
 #define HDFMAGIC "\016\003\023\001" /* ^N^C^S^A */
 
 /* version tags */
 /* Library version numbers */
 
-#define LIBVER_MAJOR	3
+#define LIBVER_MAJOR    3
 #define LIBVER_MINOR    3
-#define LIBVER_RELEASE	2
-#define LIBVER_STRING   "NCSA HDF Version 3.3 Release 2, Novermber 1993"
+#define LIBVER_RELEASE  4
+#define LIBVER_STRING   "NCSA HDF Version 3.3 Release 3, February 1994"
 #define LIBVSTR_LEN    80      /* length of version string  */
-#define LIBVER_LEN	92	/* 4+4+4+80 = 92 */
+#define LIBVER_LEN  92  /* 4+4+4+80 = 92 */
 /* end of version tags */
 
 /* FILELIB -- file library to use for file access: 1 stdio, 2 fcntl
-   default to stdio library i.e. UNIX buffered I/O */
+   default to stdio library */
 
 #ifndef FILELIB
 #   define FILELIB UNIXBUFIO /* UNIX buffered I/O is the default */
-#endif /* FILELIB */
+#endif
 
 #if (FILELIB == UNIXBUFIO)
 /* using C buffered file I/O routines to access files */
@@ -61,12 +64,16 @@ typedef FILE *hdf_file_t;
 #ifdef VMS
 /* For VMS, use "mbc=64" to improve performance     */
 #   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
-                                fopen((p), "r+", "mbc=64") : \
-                                fopen((p), "r", "mbc=64"))
+                 fopen((p), "r+", "mbc=64") : fopen((p), "r", "mbc=64"))
 #else  /*  !VMS  */
+#ifdef PC386
 #   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
-                                fopen((p), "r+") : fopen((p), "r"))
-#endif /* !VMS */
+                        fopen((p), "rb+") : fopen((p), "rb"))
+#else /* !PC386 */
+#   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
+                        fopen((p), "r+") : fopen((p), "r"))
+#endif /* PC386 */
+#endif /* VMS */
 #ifdef PC386
 #   define HI_CREATE(p)        (fopen((p), "wb+"))
 #else /* PC386 */
@@ -76,51 +83,51 @@ typedef FILE *hdf_file_t;
                                 SUCCEED : FAIL)
 #   define HI_WRITE(f, b, n)   (((n) == fwrite((b), 1, (n), (f))) ? \
                                 SUCCEED : FAIL)
-#   define HI_CLOSE(f)   (fclose(f))
-#   define HI_FLUSH(f)   (fflush(f)==0 ? SUCCEED : FAIL)
-#   define HI_SEEK(f,o)  (fseek((f), (long)(o), SEEK_SET)==0 ? SUCCEED : FAIL)
-#   define HI_SEEKEND(f) (fseek((f), (long)0, SEEK_END)==0 ? SUCCEED : FAIL)
-#   define HI_TELL(f)    (ftell(f))
-#   define OPENERR(f)    ((f) == (FILE *)NULL)
+#   define HI_CLOSE(f) (fclose(f))
+#   define HI_FLUSH(f) (fflush(f)==0 ? SUCCEED : FAIL)
+#   define HI_SEEK(f, o)       (fseek((f), (long)(o), SEEK_SET))
+#   define HI_SEEKEND(f) (fseek((f), (long)0, SEEK_END))
+#   define HI_TELL(f)  (ftell(f))
+#   define OPENERR(f)  ((f) == (FILE *)NULL)
 #endif /* FILELIB == UNIXBUFIO */
 
 #if (FILELIB == UNIXUNBUFIO)
 /* using UNIX unbuffered file I/O routines to access files */
 typedef int hdf_file_t;
 #   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
-                                    open((p), O_RDWR) : open((p), O_RDONLY))
-#   define HI_CREATE(p)         (open((p), O_RDWR | O_CREAT | O_TRUNC))
-#   define HI_CLOSE(f)          (close(f))
-#   define HI_FLUSH(f)          (SUCCEED)
-#   define HI_READ(f, b, n)     (read((f), (char *)(b), (n)))
-#   define HI_WRITE(f, b, n)    (write((f), (char *)(b), (n)))
-#   define HI_SEEK(f, o)        (lseek((f), (off_t)(o), SEEK_SET))
-#   define HI_SEEKEND(f)        (lseek((f), (off_t)0, SEEK_END))
-#   define HI_TELL(f)           (lseek((f), (off_t)0, SEEK_CUR))
-#   define OPENERR(f)           (f < 0)
+                        open((p), O_RDWR) : open((p), O_RDONLY))
+#   define HI_CREATE(p)        (open((p), O_RDWR | O_CREAT | O_TRUNC))
+#   define HI_CLOSE(f) (close(f))
+#   define HI_FLUSH(f) (SUCCEED)
+#   define HI_READ(f, b, n)    (read((f), (char *)(b), (n)))
+#   define HI_WRITE(f, b, n)   (write((f), (char *)(b), (n)))
+#   define HI_SEEK(f, o)       (lseek((f), (off_t)(o), SEEK_SET))
+#   define HI_SEEKEND(f) (lseek((f), (off_t)0, SEEK_END))
+#   define HI_TELL(f)  (lseek((f), (off_t)0, SEEK_CUR))
+#   define OPENERR(f)  (f < 0)
 #endif /* FILELIB == UNIXUNBUFIO */
 
 #if (FILELIB == MACIO)
 /* using special routines to redirect to Mac Toolkit I/O */
 typedef short hdf_file_t;
-#   define HI_OPEN(x,y)         mopen(x,y)
-#   define HI_CREATE(name)      mopen(name, DFACC_CREATE)
-#   define HI_CLOSE(x)          mclose(x)
-#   define HI_FLUSH(a)          (SUCCEED)
-#   define HI_READ(a,b,c)       mread(a, (char *) b, (int32) c)
-#   define HI_WRITE(a,b,c)      mwrite(a, (char *) b, (int32) c)
-#   define HI_SEEK(x,y)         mlseek(x, (int32 )y, 0)
-#   define HI_SEEKEND(x)        mlseek(x, 0L, 2)
-#   define HI_TELL(x)           mlseek(x,0L,1)
-#   define DF_OPENERR(f)	    ((f) == -1)
-#   define OPENERR(f)           (f < 0)
+#   define HI_OPEN(x,y) mopen(x,y)
+#   define HI_CREATE(name) mopen(name, DFACC_CREATE)
+#   define HI_CLOSE(x) mclose(x)
+#   define HI_FLUSH(a) (SUCCEED)
+#   define HI_READ(a,b,c) mread(a, (char *) b, (int32) c)
+#   define HI_WRITE(a,b,c) mwrite(a, (char *) b, (int32) c)
+#   define HI_SEEK(x,y) mlseek(x, (int32 )y, 0)
+#   define HI_SEEKEND(x) mlseek(x, 0L, 2)
+#   define HI_TELL(x) mlseek(x,0L,1)
+#   define DF_OPENERR(f)    ((f) == -1)
+#   define OPENERR(f)  (f < 0)
 #endif /* FILELIB == MACIO */
 
 #if (FILELIB == PCIO)
 /* using special PC functions to enable reading/writing large chunks */
 typedef FILE *hdf_file_t;
 #   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
-                                fopen((p), "rb+") : fopen((p), "rb"))
+                        fopen((p), "rb+") : fopen((p), "rb"))
 #   define HI_CREATE(p)        (fopen((p), "wb+"))
 /* Alias the HI_READ and HI_WRITE macros to functions which can handle */
 /*  32-bits of data to read/write */
@@ -128,19 +135,19 @@ typedef FILE *hdf_file_t;
                                 SUCCEED : FAIL)
 #   define HI_WRITE(f, b, n)   (((int32)(n) == HDfwritebig((b), (n), (f))) ? \
                                 SUCCEED : FAIL)
-#   define HI_CLOSE(f)          (fclose(f))
-#   define HI_FLUSH(f)          (fflush(f)==0 ? SUCCEED : FAIL)
-#   define HI_SEEK(f,o)  (fseek((f), (long)(o), SEEK_SET)==0 ? SUCCEED : FAIL)
-#   define HI_SEEKEND(f) (fseek((f), (long)0, SEEK_END)==0 ? SUCCEED : FAIL)
-#   define HI_TELL(f)           (ftell(f))
-#   define OPENERR(f)           ((f) == (FILE *)NULL)
+#   define HI_CLOSE(f) (fclose(f))
+#   define HI_FLUSH(f) (fflush(f)==0 ? SUCCEED : FAIL)
+#   define HI_SEEK(f, o)       (fseek((f), (long)(o), SEEK_SET))
+#   define HI_SEEKEND(f) (fseek((f), (long)0, SEEK_END))
+#   define HI_TELL(f)  (ftell(f))
+#   define OPENERR(f)  ((f) == (FILE *)NULL)
 #endif /* FILELIB == PCIO */
 
 #if (FILELIB == WINIO)
 /* using special MS Windows functions to enable reading/writing large chunks */
 typedef HFILE hdf_file_t;
 #   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
-                                _lopen((p), READ_WRITE) : _lopen((p), READ))
+                        _lopen((p), READ_WRITE) : _lopen((p), READ))
 #   define HI_CREATE(p)        (_lcreat((p), 0))
 /* Alias the HI_READ and HI_WRITE macros to functions which can handle */
 /*  32-bits of data to read/write */
@@ -148,39 +155,58 @@ typedef HFILE hdf_file_t;
                                 SUCCEED : FAIL)
 #   define HI_WRITE(f, b, n)   (((int32)(n) == HDfwritebig((b), (n), (f))) ? \
                                 SUCCEED : FAIL)
-#   define HI_CLOSE(f)          (_lclose(f))
-#   define HI_FLUSH(f)          (0)
-#   define HI_SEEK(f, o)        (_llseek((f), (long)(o), SEEK_SET))
-#   define HI_SEEKEND(f)        (_llseek((f), (long)0, SEEK_END))
-#   define HI_TELL(f)           (_llseek((f),0l,SEEK_CUR))
-#   define OPENERR(f)           ((f) == (HFILE)HFILE_ERROR)
+#   define HI_CLOSE(f) (_lclose(f))
+#   define HI_FLUSH(f) (0)
+#   define HI_SEEK(f, o)       (_llseek((f), (long)(o), SEEK_SET))
+#   define HI_SEEKEND(f) (_llseek((f), (long)0, SEEK_END))
+#   define HI_TELL(f)  (_llseek((f),0l,SEEK_CUR))
+#   define OPENERR(f)  ((f) == (HFILE)HFILE_ERROR)
 #endif /* FILELIB == WINIO */
+
+#if (FILELIB == WINNTIO)
+/* using special Windows NT functions to enable reading/writing large chunks */
+typedef HFILE hdf_file_t;
+#   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
+                        _lopen((p), OF_READWRITE) : _lopen((p), OF_READ))
+#   define HI_CREATE(p)        (_lcreat((p), 0))
+#   define HI_READ(f, b, n)    (((int32)(n) == _hread((f), (b), (n))) ? \
+                                SUCCEED : FAIL)
+#   define HI_WRITE(f, b, n)   (((int32)(n) == _hwrite((f), (b), (n))) ? \
+                                SUCCEED : FAIL)
+#   define HI_CLOSE(f) (_lclose(f)==0 ? SUCCEED : FAIL)
+#   define HI_FLUSH(f) (0)
+#   define HI_SEEK(f, o)       (_llseek((f), (long)(o), 0))
+#   define HI_SEEKEND(f) (_llseek((f), (long)0, 2))
+#   define HI_TELL(f)  (_llseek((f),0l,1))
+#   define OPENERR(f)  ((f) == (HFILE)HFILE_ERROR)
+#endif /* FILELIB == WINNTIO */
 
 /* The internal structure used to keep track of the files opened: an
    array of filerec_t structures, each has a linked list of ddblock_t.
    Each ddblock_t struct points to an array of dd_t structs. */
 
 /* record of each data decsriptor */
+
 typedef struct dd_t {
-    uint16 tag;       /* Tag number of element */
-    uint16 ref;       /* Reference number of element */
-    int32  length;    /* length of dd */
-    int32  offset;    /* offset to next dd */
+    uint16 tag;
+    uint16 ref;
+    int32 length;
+    int32 offset;
 } dd_t;
 
 /* version tags */
 typedef struct version_t {
-    uint32 majorv;		/* major version number */
-    uint32 minorv;		/* minor version number */
-    uint32 release;		/* release number */
-    char string[LIBVSTR_LEN+1];	/* optional text description, len 80+1 */
-    int16 modified;		/* indicates file was modified */
+    uint32 majorv;      /* major version number */
+    uint32 minorv;      /* minor version number */
+    uint32 release;     /* release number */
+    char string[LIBVSTR_LEN+1]; /* optional text description, len 80+1 */
+    int16 modified;     /* indicates file was modified */
 } version_t;
 
 /* record of a block of data descriptors, mirrors structure of a HDF file.  */
 typedef struct ddblock_t {
-    int16  ndds;                /* number of dd's in this block */
-    int32  nextoffset;          /* offset to the next ddblock in the file */
+    int16 ndds;                /* number of dd's in this block */
+    int32 nextoffset;          /* offset to the next ddblock in the file */
     struct ddblock_t *next;    /* pointer to the next ddblock in memory */
     struct ddblock_t *prev;    /* Pointer to previous ddblock. */
     struct dd_t *ddlist;       /* pointer to array of dd's */
@@ -189,7 +215,6 @@ typedef struct ddblock_t {
 /* hashing information */
 #define HASH_MASK       0xff
 #define HASH_BLOCK_SIZE 100
-/* tag/ref structure */
 typedef struct tag_ref_str {
   intn        tag;              /* tag for this element */
   intn        ref;              /* ref for this element */
@@ -197,92 +222,100 @@ typedef struct tag_ref_str {
   int32       pidx;             /* this object's index into dd block */
 } tag_ref, *tag_ref_ptr;
 
-/* tag/ref list structure */
 typedef struct tag_ref_list_str {
     int         count;                      /* number of objects */
     tag_ref     objects[HASH_BLOCK_SIZE];   /* DDs */
-    struct tag_ref_list_str *next;          /* next one in the list */
+    struct tag_ref_list_str *next;  /* next one in the list */
 } tag_ref_list, *tag_ref_list_ptr;
 
-/* File record structure */
+
 typedef struct filerec_t {
-    char      *path;            /* name of file */
+    char *path;                 /* name of file */
     hdf_file_t file;            /* either file descriptor or pointer */
-    uint16    maxref;           /* highest ref in this file */
-    intn      access;           /* access mode */
-    intn      refcount;         /* reference count / times opened */
-    intn      attach;           /* number of access elts attached */
-    intn      version_set;      /* version tag stuff */
-    version_t version;		/* file version info */
-    /* fast lookup of empty dd stuff */
-    int32             null_idx;   /* index into null_block of NULL entry */
-    struct ddblock_t *null_block; /* last block a NULL entry was found in */
+    intn access;                /* access mode */
+    intn refcount;              /* reference count / times opened */
     struct ddblock_t *ddhead;   /* head of ddblock list */
     struct ddblock_t *ddlast;   /* end of ddblock list */
+    uint16 maxref;              /* highest ref in this file */
+    intn attach;                /* number of access elts attached */
+
+    /* version tag stuff */
+    intn version_set;
+    version_t version;      /* file version info */
+    
+    /* fast lookup of empty dd stuff */
+    struct ddblock_t *null_block; /* last block a NULL entry was found in */
+    int32             null_idx;   /* index into null_block of NULL entry */
+
     /* hash table stuff */
     tag_ref_list_ptr hash[HASH_MASK + 1];  /* hashed table of tag / refs */
+
 } filerec_t;
 
 /* Each access element is associated with a tag/ref to keep track of
    the dd it is pointing at.  To facilitate searching for next dd's,
    instead of pointing directly to the dd, we point to the ddblock and
    index into the ddlist of that ddblock. */
+
 typedef struct accrec_t {
-    bool appendable;            /* whether appends to the data are allowed */
-    bool flush;                 /* whether the DD for this data should be flushed */
-                                /* when Hendaccess() is called */
-    intn used;                  /* whether the access record is used */
-    int16 access;               /* access codes */
-    int16 special;              /* special element ? */
     int32 file_id;              /* id of attached file */
+    struct ddblock_t *block;    /* ptr to ddblock that contains dd */
     int32 idx;                  /* index of dd into *block */
     int32 posn;                 /* seek position with respect to */
                                 /* start of element */
-    VOIDP special_info;         /* special element info? */
-    struct ddblock_t *block;    /* ptr to ddblock that contains dd */
-    struct funclist_t *special_func; /* ptr to special function? */
+    int16 access;               /* access codes */
+    intn used;                  /* whether the access record is used */
+    bool appendable;            /* whether appends to the data are allowed */
+    bool flush;                 /* whether the DD for this data should be flushed */
+                                /* when Hendaccess() is called */
+    int16 special;
+    VOIDP special_info;
+    struct funclist_t *special_func;
 } accrec_t;
 
 /* a function table record for accessing special data elements.
    special data elements of a key could be accessed through the list
    of functions in array pointed to by tab. */
 typedef struct funclist_t {
-    int32 (*stread)  PROTO((accrec_t *rec));
+    int32 (*stread) PROTO((accrec_t *rec));
     int32 (*stwrite) PROTO((accrec_t *rec));
-    int32 (*seek)    PROTO((accrec_t *access_rec, int32 offset, intn origin));
-    int32 (*inquire) PROTO((accrec_t *access_rec, int32 *pfile_id, 
-                             uint16 *ptag, uint16 *pref, int32 *plength, 
-                             int32 *poffset, int32 *pposn, int16 *paccess, 
-                             int16 *pspecial));
-    int32 (*read)    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
-    int32 (*write)   PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+    int32 (*seek) PROTO((accrec_t *access_rec, int32 offset, intn origin));
+    int32 (*inquire) PROTO((accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
+                     uint16 *pref, int32 *plength, int32 *poffset,
+                     int32 *pposn, int16 *paccess, int16 *pspecial));
+    int32 (*read) PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+    int32 (*write) PROTO((accrec_t *access_rec, int32 length, VOIDP data));
     int32 (*endaccess) PROTO((accrec_t *access_rec));
 } funclist_t;
 
 typedef struct functab_t {
-    int16       key;            /* the key for this type of special elt */
+    int16 key;                 /* the key for this type of special elt */
     funclist_t *tab;            /* table of accessing functions */
 } functab_t;
 
 /* sizes of elements in a file.  This is necessary because
    the size of variables need not be the same as in the file
    (cannot use sizeof) */
+
 #define DD_SZ 12               /* 2+2+4+4 */
 #define NDDS_SZ 2
 #define OFFSET_SZ 4
 
 /* ndds (number of dd's in a block) default,
    so user need not specify */
+
 #ifndef DEF_NDDS
 #   define DEF_NDDS 16
-#endif /* DEF_NDDS */
+#endif
 
 /* ndds minimum, to prevent excessive overhead of very small dd-blocks */
+
 #ifndef MIN_NDDS
 #   define MIN_NDDS 4
-#endif /* MIN_NDDS */
+#endif
 
 /* largest number that will fit into 16-bit word ref variable */
+
 #define MAX_REF ((uint16)32767)
 
 /* macros */
@@ -303,31 +336,45 @@ typedef struct functab_t {
 #define BITTYPE   10        /* For bit-accesses */
 #define FSLOT2ID(s) ((((uint32)FIDTYPE & 0xffff) << 16) | ((s) & 0xffff))
 #define VALIDFID(i) (((((uint32)(i) >> 16) & 0xffff) == FIDTYPE) && \
-                     (((uint32)(i) & 0xffff) < MAX_FILE))
+                    (((uint32)(i) & 0xffff) < MAX_FILE))
 #define FID2SLOT(i) (VALIDFID(i) ? (uint32)(i) & 0xffff : -1)
-#define FID2REC(i)  ((VALIDFID(i) ? &(file_records[(uint32)(i) & 0xffff]) : \
-                      NULL))
+#define FID2REC(i) ((VALIDFID(i) ? &(file_records[(uint32)(i) & 0xffff]) : NULL))
 #define ASLOT2ID(s) ((((uint32)AIDTYPE & 0xffff) << 16) | ((s) & 0xffff))
 #define VALIDAID(i) (((((uint32)(i) >> 16) & 0xffff) == AIDTYPE) && \
-                     (((uint32)(i) & 0xffff) < MAX_ACC) && \
-                     (access_records))
+                    (((uint32)(i) & 0xffff) < MAX_ACC) && \
+                    (access_records))
 #define AID2SLOT(i) (VALIDAID(i) ? (uint32)(i) & 0xffff : -1)
-#define AID2REC(i)  ((VALIDAID(i) ? &(access_records[(uint32)(i) & 0xffff]) :\
-                     NULL))
-#define NO_ID       (uint32) 0
+#define AID2REC(i) ((VALIDAID(i) ? &(access_records[(uint32)(i) & 0xffff]) : NULL))
 
-/* a tag is special if its tag belongs to a special set.  This test can be
-   just ((t)==SPECIAL1 || (t)==SPECIAL2), or a full blown function.
-   right now, no special tags yet */
-#define BASETAG(t)      (HDbase_tag(t))
-#define SPECIALTAG(t)   (HDis_special_tag(t))
+#define NO_ID     (uint32) 0
+
+/* The HDF tag space is divided as follows based on the 2 highest bits:
+   00: NCSA reserved ordinary tags
+   01: NCSA reserved special tags
+   10, 11: User tags.
+
+   It is relatively cheap to operate with special tags within the NCSA
+   reserved tags range. For users to specify special tags and their
+   corresponding ordinary tag, the pair has to be added to the
+   special_table in hfile.c and SPECIAL_TABLE must be defined. */
+
+#ifdef SPECIAL_TABLE
+#define BASETAG(t) (HDbase_tag(t))
+#define SPECIALTAG(t) (HDis_special_tag(t))
 #define MKSPECIALTAG(t) (HDmake_special_tag(t))
+#else
+#define BASETAG(t)      ((~(t) & 0x8000) ? ((t) & ~0x4000) : (t))
+#define SPECIALTAG(t)   ((~(t) & 0x8000) && ((t) & 0x4000))
+#define MKSPECIALTAG(t) ((~(t) & 0x8000) ? ((t) | 0x4000) : DFTAG_NULL)
+#endif /*SPECIAL_TABLE */
 
 /* access records array.  defined in hfile.c */
+
 extern accrec_t *access_records;
 
 /* file records array.  defined in hfile.c */
-#if defined(macintosh) | defined(THINK_C) | defined(DMEM) /* Dynamic memory */
+
+#if defined(macintosh) | defined(THINK_C)
 extern filerec_t *file_records;
 #else /* !macintosh */
 extern filerec_t file_records[];
@@ -336,7 +383,8 @@ extern filerec_t file_records[];
 /* */
 #define FILE_NDDS(file_rec) ((file_rec)->ddlast->ndds)
 
-/* 
+
+/*
 ** Functions to get information of special elt from other access records.
 **   defined in hfile.c
 ** These should really be HD... routines, but they are only used within
@@ -461,13 +509,13 @@ extern int32 HCPcloseAID
 
 #ifdef MAC
 extern hdf_file_t mopen
-	PROTO((char * filename, intn access));
-	
+    PROTO((char * filename, intn access));
+    
 extern int32 mclose
-	PROTO((hdf_file_t rn));
-	
+    PROTO((hdf_file_t rn));
+    
 extern int32 mlseek
-	PROTO((hdf_file_t rn, int32 n, intn m));
+    PROTO((hdf_file_t rn, int32 n, intn m));
 
 extern int32 mread
     PROTO((hdf_file_t rn, char *buf, int32 n));
@@ -475,11 +523,10 @@ extern int32 mread
 extern int32 mwrite
     PROTO((hdf_file_t rn, char *buf, int32 n));
 
-#endif /* MAC */
+#endif
 
 #if defined c_plusplus || defined __cplusplus
 }
 #endif /* c_plusplus || __cplusplus */
 
 #endif /* HFILE_H */
-

@@ -38,7 +38,7 @@
 /* Define the number of elements in the buffered array */
 #define BITBUF_SIZE 4096
 /* Macro to define the number of bits cached in the 'bits' variable */
-#define BITNUM      (sizeof(uint8)*8)
+#define BITNUM      sizeof(uint8)
 
 typedef struct bitrec_t {
 #ifdef OLD_WAY

@@ -64,7 +64,7 @@ char *argv[];
     if(argc<3)
         usage();
 
-    if((jfif_char=HDstrchr(argv[2],'#'))==NULL)
+    if((jfif_char=(char *)HDstrchr((const char *)argv[2],(int)'#'))==(char *)NULL)
         HDstrcpy(jfif_name,argv[2]);        /* copy the JPEG file name */
     else {
         if(jfif_char>argv[2]) {   /* copy initial portion */

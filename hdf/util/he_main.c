@@ -67,6 +67,9 @@ static char RcsId[] = "@(#)$Revision$";
 /* ------ he.c ------- main() main HDF interfacing routines */
 #include "he.h"
 #include "herr.h"
+#ifdef PC386
+#include <process.h>
+#endif
 
 /* the return status of last command executed */
 int he_status = HE_OK;
@@ -385,7 +388,8 @@ int updateDesc(void)
 int updateDesc()
 #endif
 {
-  uint32 fid, groupID;
+  uint32 fid;
+  int32 groupID;
   int32 aid, status;
   register int i, j;
   
@@ -393,7 +397,7 @@ int updateDesc()
     printf("failed opening\n");
     HEprint(stdout, 0);
     return FAIL;
-  }    
+  }
   
   aid = Hstartread(fid, DFTAG_WILDCARD, DFREF_WILDCARD);
   if(aid == FAIL) {
@@ -506,6 +510,7 @@ int getR8(xdim, ydim, image, pal, compress)
     FILE *fp;
     int32 length;
     char *buf;
+    int ret;
 
     if (!fileOpen())
     {
@@ -525,14 +530,14 @@ int getR8(xdim, ydim, image, pal, compress)
 	fprintf(stderr,"Error opening image file: %s.\n", image);
 	return FAIL;
     }
-    if (fread(buf, xdim, ydim, fp) < ydim)
+    if ((ret = fread(buf, xdim, ydim, fp)) < ydim)
     {
 	fprintf(stderr,"Error reading image file: %s.\n", image);
 	return FAIL;
     }
     fclose(fp);
 
-    if (DFR8addimage(he_file, buf, xdim, ydim, compress) < 0)
+    if ((ret = DFR8addimage(he_file, buf, xdim, ydim, compress)) < 0)
     {
 	HEprint(stderr, 0);
 	return FAIL;
@@ -557,15 +562,16 @@ int setPal(pal)
     char palette[HE_PALETTE_SZ];
     register char *p;
     register int i;
+    int ret;
 
     if ((fp = fopen(pal, "r")) == NULL)
     {
 	fprintf(stderr,"Error opening palette file: %s.\n", pal);
 	return FAIL;
     }
-    if (fread(reds, 1, HE_COLOR_SZ, fp) < HE_COLOR_SZ ||
-	fread(greens, 1, HE_COLOR_SZ, fp) < HE_COLOR_SZ ||
-	fread(blues, 1, HE_COLOR_SZ, fp) < HE_COLOR_SZ)
+    if ((ret = fread(reds, 1, HE_COLOR_SZ, fp)) < HE_COLOR_SZ ||
+	(ret = fread(greens, 1, HE_COLOR_SZ, fp)) < HE_COLOR_SZ ||
+	(ret = fread(blues, 1, HE_COLOR_SZ, fp)) < HE_COLOR_SZ)
     {
 	fprintf(stderr, "Error reading palette file: %s.\n", pal);
 	return FAIL;
@@ -786,7 +792,7 @@ int writeElt(file, ref, elt)
       p -= 2;
       UINT16ENCODE(p, ref);
       /* do the NT of scales */
-      for (i = 0; i < rank; i++) {
+      for (i = 0; (uint16)i < rank; i++) {
         p += 2;
         UINT16ENCODE(p, ref);
       }
@@ -1200,6 +1206,9 @@ int HEhelp(dummy)
      HE_CMD *dummy;
 #endif
 {
+    /* shut compiler up */
+    dummy=dummy;
+
     help();
     return HE_OK;
 }

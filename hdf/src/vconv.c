@@ -43,8 +43,8 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* ------------------------------------------------------------------ */
 
-PRIVATE void oldunpackvg PROTO((VGROUP *vg,uint8  buf[], int32 *size));
-PRIVATE void oldunpackvs PROTO((VDATA *vs, uint8 buf[], int32 *size));
+static void oldunpackvg PROTO((VGROUP *vg,uint8  buf[], int32 *size));
+static void oldunpackvs PROTO((VDATA *vs, uint8 buf[], int32 *size));
 
 /*
 *  this routine checks that the given OPENED file is compatible with
@@ -312,7 +312,9 @@ int32*      size;   /* ignored, but included to look like packvg() */
 {
     uint8       *bb;
     uint32       i;
+#ifdef LATER
 	char * FUNC = "oldunpackvg";
+#endif
 
     *size = *size; /* dummy, so that compiler thinks it is used  */
 
@@ -346,7 +348,9 @@ uint8        buf[];
 {
     uint8   *bb;
 	int16    i;
+#ifdef LATER
 	char * FUNC = "oldunpackvs";
+#endif
 
     *size = *size; /* dummy */
 

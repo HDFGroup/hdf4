@@ -17,6 +17,9 @@
 #endif
 
 #ifndef       NO_SYS_XDR_INC
+#ifdef VMS
+#    define  STDC_INCLUDES
+#endif   /* VMS */
 #include	<rpc/types.h>
 #include	<rpc/xdr.h>
 #else
@@ -58,9 +61,10 @@
 #define DIM_VALS          "DimVal0.0" 
 #define CDF               "CDF0.0"
 #define DATA              "Data0.0"
-#define ATTR_FIELD_NAME   "Values"
+#define ATTR_FIELD_NAME   "VALUES"
 
-#define BLOCK_SIZE  64    /* multiplier for bytes in linked blocks */
+#define BLOCK_MULT  64    /* multiplier for bytes in linked blocks */
+#define MAX_BLOCK_SIZE  65536    /* maximum size of block in linked blocks */
 #define BLOCK_COUNT 128   /* size of linked block pointer objects  */
 
 #endif
@@ -128,6 +132,7 @@ typedef struct {
         uint16 data_tag;  /* tag of the variable's data storage (if exists) */
         uint16 ndg_ref;   /* ref of ndg for this dataset */
         intn   data_offset; /* non-traditional data may not begin at 0 */
+        int32  block_size;  /* size of the blocks for unlimited dim. datasets */
         int numrecs;  /* number of records this has been filled to */
         int32 aid;    /* aid for DFTAG_SD data */
         int32 HDFtype; /* type of this variable as HDF thinks */
@@ -165,15 +170,14 @@ extern char *cdf_routine_name ; /* defined in lerror.c */
                        /*  C D L 1 */
 #define	NCLINKMAGIC	0x43444c01
 
-/* if have HDF this will already be defined */
-#ifndef HDF
+#ifndef HDF /* HDF has already worked out if we have prototypes */
 #undef PROTO
 #ifndef NO_HAVE_PROTOTYPES 
 #   define	PROTO(x)	x
 #else
 #   define	PROTO(x)	()
 #endif
-#endif /* HDF */
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -462,8 +466,8 @@ extern int hdf_read_sds_cdf
     PROTO((XDR *,NC **));
 
 extern int NCgenio
-    PROTO((NC *handle,int varid,const int32 *start,const int32*count,
-        const int32 *stride,const int32 *imap,Void *values));
+    PROTO((NC *handle, int varid, const long *start, const long *count,
+        const long *stride, const long *imap,Void *values));
 
 extern int NC_var_shape
     PROTO((NC_var *var,NC_array *dims));

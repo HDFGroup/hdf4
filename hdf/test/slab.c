@@ -11,10 +11,10 @@
  ****************************************************************************/
 
 #ifdef RCSID
-static char RcsId[] = "$Id$";
+static char RcsId[] = "@(#)$Revision$";
 #endif
 
-/* $Id */
+/* $Id$ */
 
 /***************************************************************************
 *
@@ -336,8 +336,10 @@ static uint8 FAR ui8data[2][3][4] =
 /* Output files */
 static char FAR *swf32  = "swf32.hdf";
 static char FAR *swf64  = "swf64.hdf";
+#ifndef PC386
 static char FAR *swin = "swin.hdf";
 static char FAR *swuin = "swuin.hdf";
+#endif
 static char FAR *swi32 = "swi32.hdf";
 static char FAR *swui32 = "swui32.hdf";
 static char FAR *swi16 = "swi16.hdf";

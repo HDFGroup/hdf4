@@ -51,7 +51,7 @@ nc_fill(type, num, datp, fill_val)
 {
     char *char_valp;		/* pointers used to accumulate data values */
     short *short_valp;
-    long *long_valp;
+    nclong *long_valp;
     float *float_valp;
     double *double_valp;
 
@@ -64,7 +64,7 @@ nc_fill(type, num, datp, fill_val)
 	short_valp = (short *) datp;
 	break;
       case NC_LONG:
-	long_valp = (long *) datp;
+	long_valp = (nclong *) datp;
 	break;
       case NC_FLOAT:
 	float_valp = (float *) datp;
@@ -114,7 +114,7 @@ nc_putfill(type, val, gval)
 	gval->shortv = *(short *)val;
 	return;
       case NC_LONG:
-	gval->longv = *(long *)val;
+	gval->longv = *(nclong *)val;
 	return;
       case NC_FLOAT:
 	gval->floatv = *(float *)val;

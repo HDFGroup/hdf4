@@ -34,15 +34,15 @@ static char RcsId[] = "@(#)$Revision$";
 /* Static variables for JPEG compression (eventually these need to be stored */
 /* in the JPEG structure to hand around (to allow the routines to be */
 /* re-entrant)) */
-PRIVATE int32 img_file_id = 0; /* File ID for the HDF file */
-PRIVATE uint16 img_tag = 0;    /* tag number of the image to write out */
-PRIVATE uint16 img_ref = 0;    /* reference number of the image to write out */
-PRIVATE int32 jdata_aid = 0;   /* AID for writing out chunks of the image */
-PRIVATE int32 img_xdim = 0;    /* X and Y dimensions of the image to compress */
-PRIVATE int32 img_ydim = 0;
-PRIVATE int32 byte_count = 0;   /* count of bytes emitted with emite_byte() */
-PRIVATE uint8 *img_ptr = NULL;  /* Pointer to the image to compress */
-PRIVATE intn img_scheme = 0;/* What type of image comp. are we doing? 24 or 8 bit */
+PRIVATE int32 img_file_id;  /* File ID for the HDF file */
+PRIVATE uint16 img_tag;     /* tag number of the image to write out */
+PRIVATE uint16 img_ref;     /* reference number of the image to write out */
+PRIVATE int32 jdata_aid;    /* AID for writing out chunks of the image */
+PRIVATE int32 img_xdim,     /* X and Y dimensions of the image to compress */
+    img_ydim;
+PRIVATE int32 byte_count;   /* count of bytes emitted with emite_byte() */
+PRIVATE uint8 *img_ptr;     /* Pointer to the image to compress */
+PRIVATE intn img_scheme;    /* What type of image comp. are we doing? 24 or 8 bit */
 
 /****************************************************************************/
 /* Routines for taking JPEG information and writing it back to the HDF file */

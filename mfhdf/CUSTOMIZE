@@ -22,17 +22,19 @@
 # CC='gcc -traditional'
 #
 # C compiler flags (default is `-O'):
-CFLAGS=-g
+CFLAGS=-O
 #
 # C preprocessor flags 
 # CPPFLAGS=-DNDEBUG
 #
-# Location of HDF include files
-HDF_INC=-I/usr6/koziol/hdf/HDF_SLAB/hdf/include
+# Location of the HDF home.  Must be an absolute path.
+HDF_HOME=`cd ..; pwd`
+# Location of HDF include files.  Must be an absolute path.
+HDF_INC=-I${HDF_HOME}/hdf/include
 #
-# Location of HDF library file
-HDF_LIB=/usr6/koziol/hdf/HDF_SLAB/hdf/lib/libdf.a
-#
+# Location of HDF library file.  Must be an absolute path.
+HDF_LIB=${HDF_HOME}/hdf/lib/libdf.a
+
 # Installation prefix (default is `..'):
 # prefix=/usr/local/unidata
 #

@@ -12,6 +12,7 @@
 #
 # $Id$
 #
+#
 # ##################################################################
 #
 #           MAKEFILE for creating the HDF library, libdf.a, on SGIs
@@ -127,15 +128,11 @@ libdf:
 
 utilities:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="src util" _sub
+          SUBDIRS="util" _sub
 
 tests:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="src test" _sub
-
-testnofortran:
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
-          SUBDIRS="src test" _sub message 
+          SUBDIRS="test" _sub
 
 #install:      $(INSTALL_DIRS)
 #	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
@@ -145,6 +142,13 @@ clean:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
           SUBDIRS="src util test" _sub
 	$(RM) $(RMFLAGS) core *.log
+
+distclean:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
+          SUBDIRS="src util test" _sub
+	$(RM) $(RMFLAGS) core *.log
+	$(RM) -rf bin lib include
+
 
 _sub:
 	@for dir in $(SUBDIRS); do \

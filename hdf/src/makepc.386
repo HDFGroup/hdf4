@@ -8,16 +8,18 @@
 # * For conditions of distribution and use, see the accompanying             *
 # * hdf/COPYING file.                                                        *
 # *                                                                          *
-# ****************************************************************************
+# ***************************************************************************
 #
 # $Id$
+#
+#
 #
 # ##################################################################
 #
 #           MAKEFILE for creating the HDF library, libdf.a,
 #
 # This makefile creates the following FORTRAN and C interfaces 
-# for HDF in a library called "df.lib":
+# for HDF in a library called "df.lib": 
 #
 #              DFR8   (8-bit raster image sets)
 #              DF24   (24-bit raster image sets)
@@ -66,8 +68,8 @@ IFLAGS=   /i=$(INCDIR) /i=.
 
 # ==> specify your C compiler
 CC=wcc386
-CFLAGS=  /ms /w4 /Od /d2 /s $(IFLAGS) /zc /ze
-#CFLAGS= /ms /w4 /Oneatx /s $(IFLAGS) /zc /ze
+#CFLAGS=  /D$(MACHINE) /ms /w4 /Oneatx /s $(IFLAGS) /zc /ze
+CFLAGS=  /ms /w4 /Oneatx /s $(IFLAGS) /zc /ze
 
 # ==> specify your Macro-Assembler compiler
 MM = ml
@@ -89,23 +91,20 @@ RMFLAGS=
 LINTFLAGS=
 
 HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h dfan.h dfrig.h dfgr.h dfsd.h &
-     dfgroup.h vg.h df.h dfi.h dfstubs.h dfutil.h hconv.h tbbt.h hcompi.h &
-     mstdio.h clre.h cnbit.h hbitio.h
+     dfgroup.h vg.h df.h dfi.h dfstubs.h dfutil.h hconv.h tbbt.h
 
 CSRCS=hfile.c herr.c hblocks.c hextelt.c hkit.c dfan.c dfr8.c dfcomp.c &
       dfrle.c dfimcomp.c dfjpeg.c dfunjpeg.c dfp.c dfgr.c df24.c dfsd.c &
       dfgroup.c dfconv.c dfufp2i.c vg.c vrw.c vio.c vparse.c vconv.c vsfld.c &
       vgp.c vhi.c dfutil.c dfstubs.c dfknat.c dfkswap.c dfkcray.c dfkvms.c &
-      dfkconv.c dfkfuji.c tbbt.c hdfalloc.c maldebug.c hcomp.c mstdio.c &
-      crle.c cnbit.c hbitio.c
+      dfkconv.c dfkfuji.c tbbt.c hdfalloc.c maldebug.c
 
 COBJS=hfile.obj herr.obj hblocks.obj hextelt.obj hkit.obj dfan.obj dfr8.obj &
         dfcomp.obj dfrle.obj dfimcomp.obj dfjpeg.obj dfunjpeg.obj dfp.obj &
         dfgr.obj df24.obj dfsd.obj dfgroup.obj dfconv.obj dfufp2i.obj vg.obj &
         vrw.obj vio.obj vparse.obj vconv.obj vsfld.obj vgp.obj vhi.obj &
         dfutil.obj dfstubs.obj dfknat.obj dfkswap.obj dfkcray.obj dfkvms.obj &
-        dfkconv.obj dfkfuji.obj tbbt.obj hdfalloc.obj maldebug.obj hcomp.obj &
-        mstdio.obj crle.obj cnbit.obj hbitio.obj
+        dfkconv.obj dfkfuji.obj tbbt.obj hdfalloc.obj maldebug.obj
 
 FSRCS=hfilef.c herrf.c dfanf.c dfr8f.c dfpf.c df24f.c dfsdf.c vgf.c dff.c &
       dfutilf.c hfileff.f dfanff.f df24ff.f dfpff.f dfr8ff.f dfsdff.f vgff.f &
@@ -154,10 +153,8 @@ JOBJS= $(CLIBOBJECTS) $(DLIBOBJECTS) $(COMOBJECTS)
     $(MM) $(MFLAGS) /Fo $^@ $[@ >$^&.err
 
 all: df.lib install note
-    %null
 
 allnostub: libnostub install note
-    %null
 
 df.lib: $(COBJS) $(FOBJS) $(JOBJS)
     del df.lib
@@ -178,12 +175,6 @@ note:
 	@echo "***********************************************************"
 	@echo ""
 
-
-hdf.h : hdfi.h
-    %null
-
-hcompi.h : mstdio.h crle.h cnbit.h
-    %null
 
 hfile.obj: hfile.c hfile.h hdf.h herr.h hdfi.h
 
@@ -265,17 +256,7 @@ vhi.obj: vhi.c vg.h hdf.h hdfi.h
 
 tbbt.obj: tbbt.c tbbt.h hdfi.h
 
-hbitio.obj: hbitio.c hbitio.h hdfi.h
-
 maldebug.obj : maldebug.c maldebug.h hdfi.h
-
-hcomp.obj : hcomp.c hdfi.h hcompi.h
-
-mstdio.obj : mstdio.c hdfi.h hcompi.h mstdio.h
-
-crle.obj : crle.c hdfi.h hcompi.h crle.h
-
-cnbit.obj : cnbit.c hdfi.h hcompi.h cnbit.h
 
 dfstubs.obj: dfstubs.c hdf.h herr.h dfstubs.h df.h dfi.h hdfi.h
 
