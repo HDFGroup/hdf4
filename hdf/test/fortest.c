@@ -1,3 +1,9 @@
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
+/* $Id$ */
+
 #include "hdf.h"
 #include "tutils.h"
 #ifdef VMS
