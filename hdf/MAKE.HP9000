@@ -150,7 +150,7 @@ saber:
 
 clean:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
-          SUBDIRS="src util test dumper" _sub
+          SUBDIRS="src util test" _sub
 	$(RM) $(RMFLAGS) core *.log
 
 distclean:
