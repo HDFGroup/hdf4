@@ -76,10 +76,9 @@ N-bit SDS using SDsetnbitdataset:
 
 Compressed SDS data using SDsetcompress:
 
-        The SDsetcompress function call (not yet working) contains a 
-subset of the parameters to the HCcreate function call described in 
-compression.txt and performs the same types of compression. SDsetcompress
-will be available in next release. 
+        The SDsetcompress function call contains a subset of the parameters to
+the HCcreate function call described in compression.txt and performs the same
+types of compression.
 
     The interface to SDsetcompress is described below:
 
@@ -116,4 +115,6 @@ will be available in next release.
     16-bit unsigned integers from memory into a compressed representation on
     disk.
 
-
+    Currently, SDsetcompress is limited to creating new datasets or appending
+    new slices/slabs onto existing datasets.  Overwriting existing data in a
+    dataset will be supported at some point in the future.
