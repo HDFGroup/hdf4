@@ -52,7 +52,9 @@ all: testhdf fortest
 .c.o: 
 	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
 
-all: testhdf
+all: testhdf fortest
+
+nofortran: testhdf
 
 testhdf: $(CTESTS) $(HDFLIB)/libdf.a
 	$(CC) $(CFLAGS) -o testhdf $(CTESTS) $(HDFLIB)/libdf.a
