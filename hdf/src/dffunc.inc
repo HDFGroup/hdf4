@@ -13,25 +13,29 @@ C
 	integer DFSDdsetdimscale,	dssdisc
 	integer DFSDsetdatastrs,	dssdast
 	integer DFSDsetmaxmin,		dssmaxm
+	integer DFSDsetrange,		dssrang
 	integer DFSDputdata,		dspdata
 	integer DFSDadddata,		dsadata
 	integer DFSDclear,		dsclear
 	integer DFSDstartslice,		dssslc
 	integer DFSDputslice,		dspslc
-	integer DFSDendslice,		dsseslc
+	integer DFSDendslice,		dseslc
 	integer DFSDgetdims,		dsgdims
 	integer DFSDgetdata,		dsgdata
 	integer DFSDgetdimstrs,		dsgdist
 	integer DFSDgetdimscale,	dsgdisc
 	integer DFSDgetdatastrs,	dsgdast
 	integer DFSDgetmaxmin,		dsgmaxm
+	integer DFSDgetrange,		dsgrang
+	integer DFSDgetdimlen,		dsgdiln
+	integer DFSDgetdatalen,		dsgdaln
 	integer DFSDreadref,		dsrref
 	integer DFSDrestart,		dsfirst
 	integer DFSDgetslice,		dsgslc
 	integer DFSDsetNT,		dssnt
 	integer DFSDgetNT,		dsgnt
 	integer DFSDsetorder,		dssodr
-	integer DFSDnumber
+	integer DFSDnumber,		dsnum
 	integer DFSDlastref,		dslref
         integer dsp32sd,
         integer dsscal
@@ -52,7 +56,7 @@ C
 	integer DFANgetfid,		dagfid
 	integer DFANgetfdslen,		dagfdsl
 	integer DFANgetfds,		dagfds
-	integer DFANlastref
+	integer DFANlastref,		dalref
 C
 C	Declarations of return values for HDF Raster Image functions
 C
@@ -62,17 +66,24 @@ C
 	integer DFR8getdims,		d8gdims
 	integer DFR8getimage,		d8gimg
 	integer DFR8readref,		d8rref
+	integer DFR8writeref,		d8wref
 	integer DFR8restart,		d8first
-	integer DFR8nimages
-	integer DFR8lastref
+	integer DFR8nimages,            d8nims
+	integer DFR8lastref,            d8lref
+	integer DFR8scompress,          d8scomp
+	integer DFR8sjpeg,              d8sjpeg
 
-	integer DFR24setil,		d2setil
-	integer DFR24addimage,		d2iaimg
-	integer DFR24getdims,		d2igimg
-	integer DFR24readref,		d2rref
-	integer DFR24restart,		d24first
-	integer DFR24requil,		d2reqil
+	integer DF24setil,		d2setil
+	integer DF24addimage,		d2aimg
+	integer DF24getimage,		d2gimg
+	integer DF24getdims,		d2gdims
+	integer DF24setdims,		d2sdims
+	integer DF24readref,		d2rref
+	integer DF24restart,		d2first
+	integer DF24reqil,		d2reqil
         integer d24lref
+	integer DF24scompress,          d2scomp
+	integer DF24sjpeg,              d2sjpeg
 
 	integer DFPaddpal,		dpapal
 	integer DFPgetpal,		dpgpal

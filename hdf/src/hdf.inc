@@ -2,9 +2,12 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.3  1993/06/18 16:44:23  georgev
-C Deleted 'bogus' function
+C Revision 1.4  1993/07/27 14:04:47  koziol
+C Updated for v3.3
 C
+# Revision 1.3  1993/06/18  16:44:23  georgev
+# Deleted 'bogus' function
+#
 # Revision 1.2  1993/05/12  16:25:32  chouck
 # Added SUCCEED and FAIL parameters
 #
@@ -127,10 +130,17 @@ C	Error Return Codes
      *          DFE_VTAB                 = -57,
      *          DFE_BADAID               = -58)
 
-      integer   DFE_OPENAID,    DFE_BADCONV
+      integer   DFE_OPENAID, DFE_BADCONV, DFE_GENAPP, DFE_CANTFLUSH,
+     *          DFE_BADTYPE, DFE_SYMSIZE, DFE_BADATTACH, DFE_CANTDETACH
 
       parameter(DFE_OPENAID              = -59,
-     *          DFE_BADCONV              = -60)
+     *          DFE_BADCONV              = -60,
+     *          DFE_GENAPP               = -61,
+     *          DFE_CANTFLUSH            = -62,
+     *          DFE_BADTYPE              = -63,
+     *          DFE_SYMSIZE              = -64,
+     *          DFE_BADATTACH            = -65,
+     *          DFE_CANTDETACH           = -66)
 
 C	Logical Constants
 
@@ -152,12 +162,14 @@ c	Constants for DFSDsetorder
 c	Definitions of storage convention
 
       integer	DFNTF_IEEE, DFNTF_VAX, DFNTF_CRAY, DFNTF_PC   
-     *		
+     *		DFNTF_CONVEX, DFNTF_VP
  
       parameter(DFNTF_IEEE             = 1,
      *		DFNTF_VAX              = 2,
      *		DFNTF_CRAY             = 3,
-     *		DFNTF_PC               = 4)
+     *		DFNTF_PC               = 4,
+     *		DFNTF_CONVEX           = 5,
+     *		DFNTF_VP               = 6)
 
 c       Masks for types
 
@@ -165,7 +177,8 @@ c       Masks for types
 
       parameter(DFNT_HDF                 = 0,
      *          DFNT_NATIVE              = 4096,
-     *          DFNT_CUSTOM              = 8192)
+     *          DFNT_CUSTOM              = 8192,
+     *          DFNT_LITEND              = 16384)
 
 c	Number type info codes 
 
@@ -246,6 +259,42 @@ c	Number type info codes
      *		DFNT_NCHAR	= 4100,
      *		DFNT_NCHAR16	= 4138,
      *		DFNT_NUCHAR16	= 4139)
+
+      integer	DFNT_LFLOAT32, DFNT_LFLOAT, DFNT_LFLOAT64,
+     *		DFNT_LDOUBLE,  DFNT_LFLOAT128
+
+      parameter(DFNT_LFLOAT32	= 16389,
+     *		DFNT_LFLOAT	= 16389,
+     *		DFNT_LFLOAT64	= 16390,
+     *		DFNT_LDOUBLE	= 16390,
+     *		DFNT_LFLOAT128	= 16391)
+
+      integer 	DFNT_LINT8,  DFNT_LUINT8, 
+     *		DFNT_LINT16, DFNT_LUINT16,
+     *		DFNT_LINT32, DFNT_LUINT32, 
+     *		DFNT_LINT64, DFNT_LUINT64,
+     *		DFNT_LINT128,DFNT_LUINT128
+ 
+      parameter(DFNT_LINT8	= 16404,
+     *		DFNT_LUINT8	= 16405,
+     *		DFNT_LINT16	= 16406,
+     *		DFNT_LUINT16	= 16407,
+     *		DFNT_LINT32	= 16408,
+     *		DFNT_LUINT32	= 16409,
+     *		DFNT_LINT64	= 16410,
+     *		DFNT_LUINT64	= 16411,
+     *		DFNT_LINT128	= 16412,
+     *		DFNT_LUINT128	= 16413)
+
+      integer 	DFNT_LUCHAR8, DFNT_LUCHAR, DFNT_LCHAR8, 
+     *		DFNT_LCHAR,   DFNT_LCHAR16, DFNT_LUCHAR16
+ 
+      parameter(DFNT_LUCHAR8	= 16387,
+     *		DFNT_LUCHAR	= 16387,
+     *		DFNT_LCHAR8	= 16388,
+     *		DFNT_LCHAR	= 16388,
+     *		DFNT_LCHAR16	= 16426,
+     *		DFNT_LUCHAR16	= 16427)
 
 c	tags and refs
 
@@ -353,7 +402,9 @@ c	compression schemes
  
       parameter(DFTAG_RLE   	=11,
      *		DFTAG_IMC   	=12,
-     *		DFTAG_IMCOMP   	=12)
+     *		DFTAG_IMCOMP   	=12,
+     *		DFTAG_JPEG   	=13,
+     *		DFTAG_GREYJPEG 	=14)
 
 c	SPECIAL CODES 
 
@@ -374,6 +425,16 @@ C       Statndard return codes
  
       parameter(SUCCEED         = 0,
      *		FAIL     	= -1)
+
+
+c	Compression Types 
+
+      integer	COMP_NONE, COMP_RLE, COMP_IMCOMP, COMP_JPEG
+
+      parameter(COMP_NONE	= 0,
+     *		COMP_RLE	= 11,
+     *		COMP_IMCOMP	= 12,
+     * 		COMP_JPEG	= 2)
 
 
 c******************End of dfconstants.f***************************
