@@ -15,7 +15,7 @@ static char sccsid[] = "@(#)xdr_stdio.c 1.16 87/08/11 Copyr 1984 Sun Micro";
 
 #include <stdio.h>
 #include "types.h"
-#if !(defined MSDOS && defined VMS)
+#if !(defined MSDOS || defined VMS)
 #     ifndef macintosh
 #        include <netinet/in.h>		/* for htonl() */
 #     else /* Macintosh equivalent */
