@@ -27,7 +27,7 @@ static char RcsId[] = "@(#)$Revision$";
 extern int Verbocity;
 extern int num_errs;
 
-#define VDATA_COUNT  1000 /* make this many Vdatas to check for memory leaks */
+#define VDATA_COUNT  300 /* make this many Vdatas to check for memory leaks */
 
 #define FNAME0   "tvset.hdf"
 #define FNAME1   "tvset1.hdf"

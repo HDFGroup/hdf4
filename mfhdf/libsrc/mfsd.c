@@ -48,8 +48,8 @@ based?  Right now, it is zero based.
 
 */
 
-#include "mfhdf.h"
 #include "local_nc.h"
+#include "mfhdf.h"
 #include "hfile.h"
 
 PRIVATE NC_dim * SDIget_dim
