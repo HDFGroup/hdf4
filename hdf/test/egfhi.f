@@ -2,9 +2,12 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.4  1992/06/16 15:39:42  chouck
-C HP is really picky about things not extending into column 72
+C Revision 1.5  1992/11/30 22:01:15  chouck
+C Added fix for Vstart() and Vend()
 C
+c Revision 1.4  1992/06/16  15:39:42  chouck
+c HP is really picky about things not extending into column 72
+c
 c Revision 1.3  1992/05/28  16:43:32  chouck
 c Fixed line continuation characters to make RS/6000 happy
 c
@@ -57,8 +60,8 @@ c  It forces an error message whenever a variable is not decalred.
 
 c	--- declare the HDF and VSET routines used. This is compulsory!
 
-	external HOPEN, HCLOSE ,VHFSD, VHFSDM, VHFMKGP
-	integer	HOPEN ,VHFSD, VHFSDM, VHFMKGP
+	external HOPEN, HCLOSE ,VHFSD, VHFSDM, VHFMKGP, VFSTART, VFEND
+	integer	HOPEN, VHFSD, VHFSDM, VHFMKGP
 
 	integer 	f, i, j 
 	integer  vs1, vs2, vs3, vg
@@ -91,6 +94,7 @@ c	------ generate some data -------
 c	------- open hdf file ------
         
 	f = HOPEN ('egfhi.hdf'//char(0), FULLACC, 0)
+        call VFSTART (f)
 
 c	------- store 100 floats as one field in one vdata  ------
 	vs1 = VHFSD (f, 'MP', rdata, 100, REALTYPE,  
@@ -143,6 +147,7 @@ c ------ make a vgroup that has links to all the above vdatas ----
 		print *, 'created vgroup that links all the 3 vdatas'
 	endif
 c	--- all done. close the file ---
+	call VFEND (f)
 	call HCLOSE (f)
 
 	print *,' '
