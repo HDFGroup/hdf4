@@ -188,6 +188,11 @@ typedef struct
   }
 objlist_t;
 
+/* hdp.c */
+extern int32 VShdfsize(int32 vkey, char *fields);
+extern intn VSattrhdfsize(int32 vsid, int32 findex, intn attrindex,int32 *size);
+extern intn Vattrhdfsize(int32 vsid, intn attrindex, int32 *size);
+
 /* hdp_list.c */
 extern intn print_data_labels(const char *fname, int32 an_id, uint16 tag, uint16 ref);
 extern intn print_data_descs(const char *fname, int32 an_id, uint16 tag, uint16 ref);
