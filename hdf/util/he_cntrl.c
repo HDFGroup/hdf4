@@ -235,7 +235,7 @@ HEdump(HE_CMD * cmd)
               {
                   case HE_HELP:
                       printf("dump [-offset <offset>] [-length <len>]\n");
-                      printf("\t[-decimal|-short|-byte|-hexidecimal|-float|-double|-ascii|\n");
+                      printf("\t[-decimal|-short|-byte|-hexadecimal|-float|-double|-ascii|\n");
                       printf("\t[-udecimal|-ushort|-octal|]\n");
                       printf("\tDisplay the contents of the current object\n");
                       printf("\t-offset            Start offset\n");
@@ -243,7 +243,7 @@ HEdump(HE_CMD * cmd)
                       printf("\t-decimal           Decimal format [32 bit integers]\n");
                       printf("\t-short             Decimal format   [16 bit integers]\n");
                       printf("\t-byte              Decimal format    [8 bit integers]\n");
-                      printf("\t-hexidecimal       Hexidecimal format\n");
+                      printf("\t-hexadecimal       Hexadecimal format\n");
                       printf("\t-float             Float format   [32 bit floats]\n");
                       printf("\t-double            Float format  [64 bit floats]\n");
                       printf("\t-ascii             Ascii format\n");
