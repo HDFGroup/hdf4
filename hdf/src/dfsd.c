@@ -2171,8 +2171,8 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
   uint16      inref;
   intn        moretags;
   intn        found;
-  DFnsdgle   *ntb;
-  DFnsdgle   *stb;
+  DFnsdgle   *ntb = NULL;
+  DFnsdgle   *stb = NULL;
   DFnsdgle   *new;
   DFnsdgle   *nf;
   DFnsdgle   *nr;
@@ -2433,8 +2433,10 @@ done:
 
   /* Normal function cleanup */
   /* Release the first nodes in stb and ntb  */
-  HDfree((VOIDP) stb);
-  HDfree((VOIDP) ntb);
+  if (stb != NULL)
+    HDfree((VOIDP) stb);
+  if (ntb != NULL)
+    HDfree((VOIDP) ntb);
 
   return ret_value;
 }   /* end of DFSDsdtnsdg_t   */
