@@ -34,6 +34,7 @@ void test_vers();
 void test_slab();
 void test_litend();
 void test_vsets();
+void test_tbbt();
 
 #endif
 

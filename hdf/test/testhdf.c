@@ -103,6 +103,7 @@ main (argc, argv)
   InitTest("slabs",test_slab,"HYPERSLAB INTERFACE");
   InitTest("litend",test_litend,"LITTLE-ENDIAN INTERFACE");
   InitTest("vset",test_vsets,"VSET Interface Test");
+  InitTest("tbbt",test_tbbt,"Threaded Balanced Trees\n");
 
 
   Verbocity = 4; /* Default Verbocity is Low */
