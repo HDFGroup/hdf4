@@ -2659,8 +2659,8 @@ main(int argc, char *argv[])
         if ((idata[i] != 100 + (i-12)) ||
             (idata[i+12] != 100 + (i-12))) 
           {
-           fprintf(stderr, "wrong value: should be %d, got %d %d\n",
-                           100 + i-12, (int)idata[i], (int)idata[i+12]);
+           fprintf(stderr, "line %d, wrong value: should be %d, got %d %d\n",
+                           __LINE__,100 + i-12, (int)idata[i], (int)idata[i+12]);
            num_err++;
           }
       }
@@ -2669,8 +2669,8 @@ main(int argc, char *argv[])
       {
         if (idata[i] ==fillval) 
           {
-           fprintf(stderr, "wrong value: should not be %d, got %d\n",
-                           (int)fillval, (int)idata[i]);
+           fprintf(stderr, "line %d, wrong value: should not be %d, got %d\n",
+                           __LINE__,(int)fillval, (int)idata[i]);
            num_err++;
           }
       }
@@ -2702,8 +2702,8 @@ main(int argc, char *argv[])
       {
         if (idata[i] != (100 + (i-12)))  
           {
-           fprintf(stderr, "wrong value: should be %d, got %d \n",
-                           100 + i-12, (int)idata[i]);
+           fprintf(stderr, "line %d, wrong value: should be %d, got %d \n",
+                           __LINE__, 100 + i-12, (int)idata[i]);
            num_err++;
           }
       }
@@ -2712,8 +2712,8 @@ main(int argc, char *argv[])
       {
         if (idata[i] != fillval) 
           {
-           fprintf(stderr, "wrong value: should be %d, got %d\n",
-                           (int)fillval, (int)idata[i]);
+           fprintf(stderr, "line %d, wrong value: should be %d, got %d\n",
+                           __LINE__, (int)fillval, (int)idata[i]);
            num_err++;
           }
       }
@@ -2830,8 +2830,8 @@ main(int argc, char *argv[])
       {
         if ((idata[i] != (i-12)) || (idata[i+12] != (i-12))) 
           {
-           fprintf(stderr, "wrong value for %d: should be %d, got %d\n",
-                           i-12, (int)idata[i], (int)idata[i+12]);
+           fprintf(stderr, "line %d, wrong value for %d: should be %d, got %d\n",
+                           __LINE__, i-12, (int)idata[i], (int)idata[i+12]);
            num_err++;
           }
       }
@@ -2840,8 +2840,8 @@ main(int argc, char *argv[])
       {
         if (idata[i] !=fillval) 
           {
-           fprintf(stderr, "wrong value: should be %d, got %d\n",
-                           (int)fillval, (int)idata[i]);
+           fprintf(stderr, "line %d, wrong value: should be %d, got %d\n",
+                           __LINE__, (int)fillval, (int)idata[i]);
            num_err++;
           }
       }
@@ -2982,8 +2982,8 @@ main(int argc, char *argv[])
       {
         if (idata[i] != i) 
           {
-           fprintf(stderr, "wrong value: should be %d, got %d\n",
-                           i, (int)idata[i]);
+           fprintf(stderr, "line %d, wrong value: should be %d, got %d\n",
+                           __LINE__, i, (int)idata[i]);
            num_err++;
           }
       }
