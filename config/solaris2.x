@@ -108,10 +108,10 @@ case $CC_BASENAME in
     ;;
 
   *)
-    CFLAGS="$CFLAGS -Xc -xO2"
+    CFLAGS="$CFLAGS -Xc"
     DEBUG_CFLAGS="-g -v"
     DEBUG_CPPFLAGS=
-    PROD_CFLAGS="-O"
+    PROD_CFLAGS="-xO2"
     PROD_CPPFLAGS=
     PROFILE_CFLAGS="-pg"
     PROFILE_CPPFLAGS=
