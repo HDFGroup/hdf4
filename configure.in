@@ -45,6 +45,7 @@ if [ -d ${srcdir}/config ]; then
 case "${host}" in
   alpha-dec-osf*)         host_makefile_frag=config/mh-alpha ;;
   mips*-dec-ultrix*)      host_makefile_frag=config/mh-decstation ;;
+  mips*-sgi-irix6*)       host_makefile_frag=config/mh-irix6 ;;
   mips*-sgi-irix5*)       host_makefile_frag=config/mh-irix5 ;;
   mips*-sgi-irix4*)       host_makefile_frag=config/mh-irix4 ;;
   i[345]86-*-linux*)      host_makefile_frag=config/mh-linux ;;
