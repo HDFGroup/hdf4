@@ -142,7 +142,7 @@ Platforms Tested
 HDF 4.2 Release 0 has been tested on the following platforms:
 
     AIX 5.1  (32 and 64-bit)      xlc 6.0.0.2
-                                  xlf 8.1.0.3
+                                  xlf 8.1.1
     Cray T3E sn6606 2.0.6.08      Cray Standard C Version 6.6.0.2
                                   Cray Fortran Version 3.6.0.2
     Cray SV1 sn9617 10.0.1.2      Cray Standard C Version 6.6.0.2
