@@ -208,7 +208,7 @@ typedef union hdf_chunk_def_u
 
 /******************************************************************************
  NAME
-      SDsetChunk   -- make SDS a chunked SDS
+      SDsetchunk   -- make SDS a chunked SDS
 
  DESCRIPTION
       This routine makes the SDS a chunked SDS according to the chunk
@@ -252,7 +252,7 @@ typedef union hdf_chunk_def_u
       affected by the users access pattern over the dataset and by
       the maximum number of chunks set in the chunk cache. The cache contains 
       the Least Recently Used(LRU cache replacment policy) chunks. See the
-      routine SDsetmaxcache() for further info on the chunk cache and how 
+      routine SDsetchunkcache() for further info on the chunk cache and how 
       to set the maximum number of chunks in the chunk cache. A default chunk 
       cache is always created.
 
@@ -282,7 +282,7 @@ typedef union hdf_chunk_def_u
         chunk_def.chunk_lengths[1]= 2; 
 
         -- Set Chunking -- 
-        SDsetChunk(sdsid, chunk_def, HDF_CHUNK);                      
+        SDsetchunk(sdsid, chunk_def, HDF_CHUNK);                      
          ......                                                                  
         }                                                                           
 
@@ -300,21 +300,21 @@ typedef union hdf_chunk_def_u
         chunk_def.comp.comp_type = COMP_CODE_DEFLATE;
 
         -- Set Chunking with Compression --
-        SDsetChunk(sdsid, chunk_def, HDF_CHUNK | HDF_COMP);                      
+        SDsetchunk(sdsid, chunk_def, HDF_CHUNK | HDF_COMP);                      
          ......                                                                  
         }                                                                           
 
  RETURNS
         SUCCEED/FAIL
 ******************************************************************************/
-extern intn SDsetChunk
+extern intn SDsetchunk
     (int32 sdsid,             /* IN: sds access id */
      HDF_CHUNK_DEF chunk_def, /* IN: chunk definition */
      int32 flags              /* IN: flags */);
 
 /******************************************************************************
  NAME
-     SDgetChunkInfo -- get Info on SDS
+     SDgetchunkinfo -- get Info on SDS
 
  DESCRIPTION
      This routine gets any special information on the SDS. If its chunked,
@@ -336,21 +336,21 @@ extern intn SDsetChunk
      int32   cflags;
      ...
      rchunk_def.chunk_lengths = rcdims;
-     SDgetChunkInfo(sdsid, &rchunk_def, &cflags);
+     SDgetchunkinfo(sdsid, &rchunk_def, &cflags);
      ...
      }
 
  RETURNS
         SUCCEED/FAIL
 ******************************************************************************/
-extern intn SDgetChunkInfo
+extern intn SDgetchunkinfo
     (int32 sdsid,              /* IN: sds access id */
      HDF_CHUNK_DEF *chunk_def, /* IN/OUT: chunk definition */
      int32 *flags              /* IN/OUT: flags */);
 
 /******************************************************************************
  NAME
-     SDwriteChunk  -- write the specified chunk to the SDS
+     SDwritechunk  -- write the specified chunk to the SDS
 
  DESCRIPTION
      This routine writes a whole chunk of data to the chunked SDS 
@@ -363,19 +363,19 @@ extern intn SDgetChunkInfo
 
      'datap' must point to a whole chunk of data.
 
-     See SDsetChunk() for a description of the organization of chunks in an SDS.
+     See SDsetchunk() for a description of the organization of chunks in an SDS.
 
  RETURNS
         SUCCEED/FAIL
 ******************************************************************************/
-extern intn SDwriteChunk
+extern intn SDwritechunk
     (int32 sdsid,      /* IN: sds access id */
      int32 *origin,    /* IN: origin of chunk to write */
      const VOID *datap /* IN: buffer for data */);
 
 /******************************************************************************
  NAME
-     SDreadChunk   -- read the specified chunk to the SDS
+     SDreadchunk   -- read the specified chunk to the SDS
 
  DESCRIPTION
      This routine reads a whole chunk of data from the chunked SDS
@@ -388,19 +388,19 @@ extern intn SDwriteChunk
 
      'datap' must point to a whole chunk of data.
 
-     See SDsetChunk() for a description of the organization of chunks in an SDS.
+     See SDsetchunk() for a description of the organization of chunks in an SDS.
 
  RETURNS
         SUCCEED/FAIL
 ******************************************************************************/
-extern intn SDreadChunk
+extern intn SDreadchunk
     (int32 sdsid,      /* IN: sds access id */
      int32 *origin,    /* IN: origin of chunk to read */
      VOID  *datap      /* IN/OUT: buffer for data */);
 
 /******************************************************************************
 NAME
-     SDsetChunkCache -- maximum number of chunks to cache 
+     SDsetchunkcache -- maximum number of chunks to cache 
 
 DESCRIPTION
      Set the maximum number of chunks to cache.
@@ -442,7 +442,7 @@ RETURNS
      Returns the 'maxcache' value for the chunk cache if successful 
      and FAIL otherwise
 ******************************************************************************/
-extern intn SDsetChunkCache
+extern intn SDsetchunkcache
     (int32 sdsid,     /* IN: sds access id */
      int32 maxcache,  /* IN: max number of chunks to cache */
      int32 flags      /* IN: flags = 0, HDF_CACHEALL */);

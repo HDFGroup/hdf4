@@ -3865,7 +3865,7 @@ int32 dimid;
 
 /******************************************************************************
  NAME
-      SDsetChunk  -- make SDS a chunked SDS
+      SDsetchunk  -- make SDS a chunked SDS
 
  DESCRIPTION
       This routine makes the SDS a chunked SDS according to the chunk
@@ -3912,7 +3912,7 @@ int32 dimid;
       affected by the users access pattern over the dataset and by
       the maximum number of chunks set in the chunk cache. The cache contains 
       the Least Recently Used(LRU cache replacment policy) chunks. See the
-      routine SDsetmaxcache() for further info on the chunk cache and how 
+      routine SDsetchunkcache() for further info on the chunk cache and how 
       to set the maximum number of chunks in the chunk cache. A default chunk 
       cache is always created.
 
@@ -3942,7 +3942,7 @@ int32 dimid;
         chunk_def.chunk_lengths[1]= 2; 
 
         -- Set Chunking -- 
-        SDsetChunk(sdsid, chunk_def, HDF_CHUNK);                      
+        SDsetchunk(sdsid, chunk_def, HDF_CHUNK);                      
          ......                                                                  
         }                                                                           
 
@@ -3960,7 +3960,7 @@ int32 dimid;
         chunk_def.comp.comp_type = COMP_CODE_DEFLATE;
 
         -- Set Chunking with Compression --
-        SDsetChunk(sdsid, chunk_def, HDF_CHUNK | HDF_COMP);                      
+        SDsetchunk(sdsid, chunk_def, HDF_CHUNK | HDF_COMP);                      
          ......                                                                  
         }                                                                           
 
@@ -3975,11 +3975,11 @@ int32 dimid;
 ******************************************************************************/
 intn 
 #ifdef PROTOTYPE
-SDsetChunk(int32 sdsid,             /* IN: sds access id */
+SDsetchunk(int32 sdsid,             /* IN: sds access id */
            HDF_CHUNK_DEF chunk_def, /* IN: chunk definition */
            int32 flags              /* IN: flags */)
 #else
-SDsetChunk(sdsid,     /* IN: sds access id */
+SDsetchunk(sdsid,     /* IN: sds access id */
            chunk_def, /* IN: chunk definition */
            flags      /* IN: flags */)
 int32 sdsid;
@@ -4285,11 +4285,11 @@ int32 flags;
         HDfree(chunk[0].pdims);
 
     return status;
-} /* SDsetChunk */
+} /* SDsetchunk */
 
 /******************************************************************************
  NAME
-     SDgetChunkInfo -- get Info on SDS
+     SDgetchunkinfo -- get Info on SDS
 
  DESCRIPTION
      This routine gets any special information on the SDS. If its chunked,
@@ -4306,7 +4306,7 @@ int32 flags;
      HDF_CHUNK_DEF rchunk_def;
      int32   cflags;
      ...
-     SDgetChunkInfo(sdsid, &rchunk_def, &cflags);
+     SDgetchunkinfo(sdsid, &rchunk_def, &cflags);
      ...
      }
 
@@ -4318,11 +4318,11 @@ int32 flags;
 ******************************************************************************/
 intn 
 #ifdef PROTOTYPE
-SDgetChunkInfo(int32 sdsid,               /* IN: sds access id */
+SDgetchunkinfo(int32 sdsid,               /* IN: sds access id */
                HDF_CHUNK_DEF *chunk_def,  /* IN/OUT: chunk definition */
                int32 *flags               /* IN/OUT: flags */)
 #else
-SDgetChunkInfo(sdsid,     /* IN: sds access id */
+SDgetchunkinfo(sdsid,     /* IN: sds access id */
                chunk_def, /* IN/OUT: chunk definition */
                flags      /* IN/OUT: flags */)
 int32 sdsid;
@@ -4413,12 +4413,12 @@ int32 *flags;
     /* Normal cleanup */
 
     return status;
-} /* SDgetChunkInfo() */
+} /* SDgetchunkinfo() */
 
 
 /******************************************************************************
  NAME
-     SDwriteChunk   -- write the specified chunk to the SDS
+     SDwritechunk   -- write the specified chunk to the SDS
 
  DESCRIPTION
      This routine writes a whole chunk of data to the chunked SDS 
@@ -4431,7 +4431,7 @@ int32 *flags;
 
      'datap' must point to a whole chunk of data.
 
-     See SDsetChunk() for a description of the organization of chunks in an SDS.
+     See SDsetchunk() for a description of the organization of chunks in an SDS.
 
      NOTE:
            This routine directly calls a Special Chunked Element fcn HMCxxx.
@@ -4444,11 +4444,11 @@ int32 *flags;
 ******************************************************************************/
 intn 
 #ifdef PROTOTYPE
-SDwriteChunk(int32 sdsid,      /* IN: access aid to SDS */
+SDwritechunk(int32 sdsid,      /* IN: access aid to SDS */
              int32 *origin,    /* IN: origin of chunk to write */
              const VOID *datap /* IN: buffer for data */)
 #else
-SDwriteChunk(sdsid,    /* IN: access aid to SDS */
+SDwritechunk(sdsid,    /* IN: access aid to SDS */
              origin,   /* IN: origin of chunk to write */
              datap     /* IN: buffer for data */)
 int32 sdsid;
@@ -4590,11 +4590,11 @@ const VOID *datap;
     /* Normal cleanup */
 
     return status;
-} /* SDwriteChunk() */
+} /* SDwritechunk() */
 
 /******************************************************************************
  NAME
-     SDreadChunk   -- read the specified chunk to the SDS
+     SDreadchunk   -- read the specified chunk to the SDS
 
  DESCRIPTION
      This routine reads a whole chunk of data from the chunked SDS
@@ -4607,7 +4607,7 @@ const VOID *datap;
 
      'datap' must point to a whole chunk of data.
 
-     See SDsetChunk() for a description of the organization of chunks in an SDS.
+     See SDsetchunk() for a description of the organization of chunks in an SDS.
 
      NOTE:
          This routine directly calls a Special Chunked Element fcn HMCxxx.
@@ -4620,11 +4620,11 @@ const VOID *datap;
 ******************************************************************************/
 intn 
 #ifdef PROTOTYPE
-SDreadChunk(int32 sdsid,   /* IN: access aid to SDS */
+SDreadchunk(int32 sdsid,   /* IN: access aid to SDS */
             int32 *origin, /* IN: origin of chunk to write */
             VOID *datap    /* IN/OUT: buffer for data */)
 #else
-SDreadChunk(sdsid,    /* IN: access aid to SDS */
+SDreadchunk(sdsid,    /* IN: access aid to SDS */
             origin,   /* IN: origin of chunk to write */
             datap     /* IN/OUT: buffer for data */)
 int32 sdsid;
@@ -4765,11 +4765,11 @@ VOID *datap;
     /* Normal cleanup */
 
     return status;
-} /* SDreadChunk() */
+} /* SDreadchunk() */
 
 /******************************************************************************
 NAME
-     SDsetChunkCache - maximum number of chunks to cache 
+     SDsetchunkcache - maximum number of chunks to cache 
 
 DESCRIPTION
      Set the maximum number of chunks to cache.
@@ -4805,7 +4805,7 @@ DESCRIPTION
      in memory, otherwise pass in zero(0). Currently you can only
      pass in zero.
 
-     See SDsetChunk() for a description of the organization of chunks in an SDS.
+     See SDsetchunk() for a description of the organization of chunks in an SDS.
      
      NOTE:
           This routine directly calls a Special Chunked Element fcn HMCxxx.
@@ -4819,11 +4819,11 @@ AUTHOR
 ******************************************************************************/
 intn
 #ifdef PROTOTYPE
-SDsetChunkCache(int32 sdsid,     /* IN: access aid to mess with */
+SDsetchunkcache(int32 sdsid,     /* IN: access aid to mess with */
                 int32 maxcache,  /* IN: max number of chunks to cache */
                 int32 flags      /* IN: flags = 0, HDF_CACHEALL */)
 #else
-SDsetChunkCache(sdsid,     /* IN: access aid to mess with */
+SDsetchunkcache(sdsid,     /* IN: access aid to mess with */
                 maxcache,  /* IN: max number of chunks to cache */
                 flags      /* IN: flags = 0, HDF_CACHEALL */)
 int32 sdsid;
@@ -4891,6 +4891,6 @@ int32 flags;
     /* Normal cleanup */
 
     return status;
-} /* SDsetChunkCache() */
+} /* SDsetchunkcache() */
 
 #endif /* HDF */
