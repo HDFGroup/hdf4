@@ -23,6 +23,26 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hdf.h"
 #include "hfile.h"
 
+/*
+LOCAL ROUTINES
+  None
+EXPORTED ROUTINES
+  HDmemfill    -- copy a chunk of memory repetitively into another chunk
+  HIstrncpy    -- string copy with termination
+  HDspaceleft  -- calculates the amount of space available to HDgetspace
+  HDgetspace   -- dynamicly allocates memory
+  HDregetspace -- dynamicly resize (reallocate) memory
+  HDfreespace  -- free dynamicly allocated memory
+  HDclearspace -- dynamicly allocates memory and clears it to zero
+  HDstrdup     -- in-library replacement for non-ANSI strdup()
+  fmemcpy_big  -- function specific to the PC to copy 32-bits of data
+  fmemset_big  -- function specific to the PC to set 32-bits of data
+  fmemcmp_big  -- function specific to the PC to compare 32-bits of data
+  memcpy_big   -- function specific to the PC to copy 32-bits of data(WIN3)
+  memset_big   -- function specific to the PC to set 32-bits of data(WIN3)
+  memcmp_big   -- function specific to the PC to compare 32-bits of data(WIN3)
+*/
+
 /*--------------------------------------------------------------------------
  NAME
     HDmemfill -- copy a chunk of memory repetitively into another chunk

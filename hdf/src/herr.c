@@ -21,6 +21,16 @@ static char RcsId[] = "@(#)$Revision$";
 /* -------------------------------- herr.c -------------------------------- */
 /*
    HDF error handling / reporting routines
+
+LOCAL ROUTINES
+  None
+EXPORTED ROUTINES
+  HEstring -- return error description
+  HEclear  -- clear the error stack
+  HEpush   -- push an error onto the stack
+  HEreport -- give a more detailed error description
+  HEprint  -- print values from the error stack
+  HEvalue  -- return a error off of the error stack
  */
 
 #define _H_ERR_MASTER_
@@ -40,7 +50,6 @@ static char RcsId[] = "@(#)$Revision$";
    file and line where the error occurs. */
 
 /* the structure of the error stack element */
-
 typedef struct error_t
   {
       hdf_err_code_t error_code;	/* Error number */
@@ -75,25 +84,23 @@ int32       error_top = 0;
 #endif
 
 /* size of error message table */
-
 #define ERRMESG_SZ (sizeof(error_messages) / sizeof(error_messages[0]))
 
-/* ------------------------------------------------------------------------
-
-   NAME
+/*------------------------------------------------------------------------
+NAME
    HEstring -- return error description
-   USAGE
+USAGE
    char * HEstring(error_code)
    int16  error_code;      IN: the numerical value of this error
-   RETURNS
+RETURNS
    An error description string
-   DESCRIPTION
+DESCRIPTION
    Return a textual description of the given error.  These strings
    are statically declared and should not be free()ed by the user.
    If no string can be found to describe this error a generic
    default message is returned.
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 const char _HUGE *
 HEstring(hdf_err_code_t error_code)
 {
@@ -101,31 +108,28 @@ HEstring(hdf_err_code_t error_code)
     int         i;		/* temp int index */
 
     /* look for the error_code in error message table */
-
     for (i = 0; i < ERRMESG_SZ; i++)
 	if (error_messages[i].error_code == error_code)
 	    return error_messages[i].str;
 
     /* otherwise, return default message */
-
     return DEFAULT_MESG;
 #else
     return (error_messages[error_code].str);
 #endif
-}
+} /* HEstring */
 
-/* --------------------------------------------------------------------------
-
-   NAME
+/*--------------------------------------------------------------------------
+NAME
    HEclear -- clear the error stack
-   USAGE
+USAGE
    VOID HEclear(VOID)
-   RETURNS
+RETURNS
    NONE
-   DESCRIPTION
+DESCRIPTION
    Remove all currently reported errors from the error stack
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 VOID
 HEclear(void)
 {
@@ -143,21 +147,20 @@ HEclear(void)
 		error_stack[error_top - 1].desc = NULL;
 	    }
       }
-}
+} /* HEclear */
 
-/* -------------------------------------------------------------------------
-
-   NAME
+/*-------------------------------------------------------------------------
+NAME
    HEpush -- push an error onto the stack
-   USAGE
+USAGE
    VOID HEpush(error_code, func_name, file_name, line)
    int16  error_code;      IN: the numerical value of this error
    char * func_name;       IN: function where the error happened
    char * file_name;       IN: file name of offending function
    int    line;            IN: line number of the reporting statment
-   RETURNS
+RETURNS
    NONE
-   DESCRIPTION
+DESCRIPTION
    push a new error onto stack.  If stack is full, error 
    is ignored.  assumes that the character strings 
    (function_name and file_name) referred are in some 
@@ -165,7 +168,7 @@ HEclear(void)
    to the strings.  blank out the description field so 
    that a description is reported  only if REreport is called
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 VOID
 HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_name, intn line)
 {
@@ -203,21 +206,20 @@ HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_na
       }
 }	/* HEpush */
 
-/* -------------------------------------------------------------------------
-
-   NAME
+/*-------------------------------------------------------------------------
+NAME
    HEreport -- give a more detailed error description
-   USAGE
+USAGE
    VOID HEreport(format, ....)
    char * format;           IN: printf style print statement
-   RETURNS
+RETURNS
    NONE
-   DESCRIPTION
+DESCRIPTION
    Using printf and the variable number of args facility allow the
    library to specify a more detailed description of a given
    error condition
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 VOID
 HEreport(const char *format,...)
 {
@@ -243,24 +245,23 @@ HEreport(const char *format,...)
 
     va_end(arg_ptr);
     return;
-}
+} /* HEreport */
 
-/* -------------------------------------------------------------------------
-
-   NAME
+/*-------------------------------------------------------------------------
+NAME
    HEprint -- print values from the error stack
-   USAGE
+USAGE
    VOID HEprint(stream, levels)
    FILE * stream;      IN: file to print error message to
    int32  level;       IN: level at which to start printing
-   RETURNS
+RETURNS
    NONE
-   DESCRIPTION
+DESCRIPTION
    Print part of the error stack to a given file.  If level == 0
    the entire stack is printed.  If an extra description has been
    added (via HEreport) it is printed too.
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 VOID
 HEprint(FILE * stream, int32 print_levels)
 {
@@ -268,7 +269,6 @@ HEprint(FILE * stream, int32 print_levels)
 	print_levels = error_top;
 
     /* print the errors starting from most recent */
-
     for (print_levels--; print_levels >= 0; print_levels--)
       {
 	  fprintf(stream, "HDF error: (%d) <%s>\n\tDetected in %s() [%s line %d]\n",
@@ -280,7 +280,7 @@ HEprint(FILE * stream, int32 print_levels)
 	  if (error_stack[print_levels].desc)
 	      fprintf(stream, "\t%s\n", error_stack[print_levels].desc);
       }
-}
+} /* HEprint */
 
 /* ------------------------------- HEvalue -------------------------------- */
 /*
@@ -303,4 +303,4 @@ HEvalue(int32 level)
 	return (int16) error_stack[error_top - level].error_code;
     else
 	return DFE_NONE;
-}
+} /* HEvalue */

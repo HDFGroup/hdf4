@@ -22,6 +22,63 @@ static char RcsId[] = "@(#)$Revision$";
 * Part of the vertex-set interface.
 * VGROUPs are handled by routines in here.
 *
+
+LOCAL ROUTINES
+ Load_vfile   -- loads vgtab table with info of all vgroups in file.
+ Remove_vfile -- removes the file ptr from the vfile[] table. 
+ vginstance   -- Looks thru vgtab for vgid and return the addr of the vg 
+                  instance where vgid is found. 
+ vunpackvg    -- Unpacks the fields from a buf (ie a DFTAG_VG data object 
+                  just read in from the HDF file), into a VGROUP structure vg.
+
+EXPORTED ROUTINES
+ Following 4 routines are solely for B-tree routines.
+ vcompare     -- Compares two B-tree keys for equality.  Similar to memcmp.
+ vprint       -- Prints out the key and reference number of VDatas and Vgroups
+ vdestroynode -- Frees B-Tree nodes
+ vtfreekey    -- Frees B-Tree index (actually doesn't anything at all)
+
+ Vinitialize  --
+ Vfinish      --
+ vexistvg     -- Tests if a vgroup with id "vgid" is in the file's vgtab.
+ vpackvg      -- Extracts fields from a VGROUP struct "vg" and packs the 
+                  fields into array buf in preparation for storage in the 
+                  HDF file.
+ Vattach      -- Attaches to an existing vgroup or creates a new vgroup.
+ Vdetach      -- Detaches access to vg.    
+ Vinsert      -- Inserts a velt (vs or vg) into a vg 
+ Vflocate     -- Checks to see if the given field exists in a vdata 
+                  belonging to this vgroup.
+ Vinqtagref   -- Checks whether the given tag/ref pair already exists 
+                  in the vgroup.
+ Vntagrefs    -- Returns the number (0 or +ve integer) of tag/ref pairs 
+                  in a vgroup.
+ Vgettagrefs  -- Returns n tag/ref pairs from the vgroup into the 
+                  caller-supplied arrays(tagrarray and refarray).
+ Vgettagref   -- Returns a specified tag/ref pair from the vgroup.
+ VQuerytag    -- Return the tag of this Vgroup.
+ VQueryref    -- Return the ref of this Vgroup.
+ Vaddtagref   -- Inserts a tag/ref pair into the attached vgroup vg.
+ vinsertpair  -- Inserts a tag/ref pair into the attached vgroup vg.
+ Ventries     -- Returns the num of entries (+ve integer) in the vgroup vgid.
+ Vsetname     -- Gives a name to the VGROUP vg.
+ Vsetclass    -- Assigns a class name to the VGROUP vg.
+ Visvg        -- Tests if the given entry in the vgroup vg is a VGROUP.
+ Visvs        -- Checks if an id in a vgroup refers to a VDATA.
+ Vgetid       -- Given a vgroup's id, returns the next vgroup's id in the file.
+ Vgetnext     -- Given the id of an entry from a vgroup vg, looks in vg 
+                  for the next entry after it, and returns its id.
+ Vgetname     -- Returns the vgroup's name.
+ Vgetclass    -- Returns the vgroup's class name .
+ Vinquire     -- General inquiry routine for VGROUP. 
+ Vopen        -- This routine opens the HDF file and initializes it for 
+                  Vset operations.(i.e." Hopen(); Vinitialize(f)").
+ Vclose       -- This routine closes the HDF file, after it has freed 
+                  all memory and updated the file.
+                  (i.e." Vfinish(f); Hclose(f);").
+ Vdelete      -- Remove a Vgroup from its file.  This function will both 
+                  remove the Vgoup from the internal Vset data structures 
+                  as well as from the file.
 *************************************************************************/
 
 #include "vg.h"
@@ -773,9 +830,7 @@ Vinsert(int32 vkey, int32 insertkey)
 
     newfid = FAIL;
     if (VALIDVSID(insertkey))
-      {
-
-	  /* locate vs's index in vstab */
+      {   /* locate vs's index in vstab */
 	  if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(insertkey), (uint16) VSID2SLOT(insertkey))))
 	      HRETURN_ERROR(DFE_NOVS, FAIL);
 
@@ -785,15 +840,11 @@ Vinsert(int32 vkey, int32 insertkey)
 	  newtag = DFTAG_VH;
 	  newref = w->vs->oref;
 	  newfid = w->vs->f;
-
       }
     else
       {
-
 	  if (VALIDVGID(insertkey))
-	    {
-
-		/* locate vs's index in vgtab */
+	    {   /* locate vs's index in vgtab */
 		if (NULL == (x = (vginstance_t *) vginstance(VGID2VFILE(insertkey), (uint16) VGID2SLOT(insertkey))))
 		    HRETURN_ERROR(DFE_NOVS, FAIL);
 
@@ -803,9 +854,7 @@ Vinsert(int32 vkey, int32 insertkey)
 		newtag = DFTAG_VG;
 		newref = x->vg->oref;
 		newfid = x->vg->f;
-
 	    }
-
       }
 
     /* make sure we found something */

@@ -25,6 +25,32 @@ static char RcsId[] = "@(#)$Revision$";
 * PRIVATE functions manipulate vsdir and are used only within this file.
 * PRIVATE data structures in here pertain to vdatas in vsdir only.
 *
+
+LOCAL ROUTINES
+ None
+EXPORTED ROUTINES
+ map_from_old_types -- Convert an old type (i.e. LOCAL_INT to DFNT_ based types)
+
+ vinstance     -- Looks thru vstab for vsid and return the addr of the vdata 
+                   instance where vsid is found.
+ vexistvs      -- Tests if a vdata with id vsid is in the file's vstab.
+ vpackvs       -- Packs a VDATA structure into a compact form suitable for 
+                   storing in the HDF file.
+ vunpackvs     -- Convert a packed form(from HDF file) to a VDATA structure.
+                   This routine will also initalize the VDATA structure as 
+                   much as it can.
+ vsdestroynode -- Frees B-Tree nodes.
+ VSattach      -- Attaches/Creates a new vs in vg depending on "vsid" value.
+ VSdetach      -- Detaches vs from vstab.
+ VSappendable  -- Make it possible to append unlimitedly to an existing VData.
+ VSgetid       -- Returns the id of the next VDATA from the file.
+ VSQuerytag    -- Return the 'otag' of the given Vdata.
+ VSQueryref    -- Return the ref of the given Vdata.
+ vswritelist   -- Return the writelist of a Vdata.
+ VSgetversion  -- Return the version number of a Vdata.
+ VSdelete      -- Remove a Vdata from its file.  This function will both 
+                   remove the Vdata from the internal Vset data structures 
+                   as well as from the file.
 *************************************************************************/
 
 #include "vg.h"
@@ -388,7 +414,6 @@ vsdestroynode(VOIDP n)
    in all cases, set the marked flag to 0.
    returns NULL if error.
    *************************************************************** */
-
 PUBLIC int32 
 VSattach(HFILEID f, int32 vsid, const char *accesstype)
 {
@@ -477,7 +502,6 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
       }		/* end of case where vsid is -1 */
 
     /*  --------  VSID IS NON_NEGATIVE ------------- */
-
     if (acc_mode == 'r')
       {		/* reading an existing vdata */
 
@@ -496,12 +520,9 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
 		vs = w->vs;
 	    }
 	  else
-	    {
-
-		/* allocate space for vs,  & zero it out  */
+	    {   /* allocate space for vs,  & zero it out  */
 		if ((vs = (VDATA *) HDgetspace(sizeof(VDATA))) == NULL)
 		    HRETURN_ERROR(DFE_NOSPACE, FAIL);
-
 	    }
 
 	  /* need to fetch from file */
@@ -511,7 +532,7 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
 	    {
 		HDfreespace((VOIDP) vspack);
 		HRETURN_ERROR(DFE_NOVS, FAIL);
-	    }	/* end if */
+	    }	
 
 	  vs->wlist.n = vs->rlist.n = 0;
 
@@ -560,8 +581,7 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
 		vs = w->vs;
 	    }
 	  else
-	    {
-		/* allocate space */
+	    {   /* allocate space */
 		if ((vs = (VDATA *) HDgetspace(sizeof(VDATA))) == NULL)
 		    HRETURN_ERROR(DFE_NOSPACE, FAIL);
 	    }
@@ -604,11 +624,9 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
 
 	  HDfreespace((VOIDP) vspack);
 	  return (w->key);
-
       }		/* end of case where vsid is positive, and "w"  */
 
     return (FAIL);
-
 }	/* VSattach */
 
 /* ------------------------ VSdetach ----------------------------- */
@@ -630,7 +648,6 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
    if (nattach is 0)   just free vs from vstab.
 
    *************************************************************** */
-
 PUBLIC int32 
 VSdetach(int32 vkey)
 {
@@ -660,7 +677,6 @@ VSdetach(int32 vkey)
     /* --- case where access was 'r' --- */
     if (vs->access == 'r')
       {
-
 	  if (w->nattach == 0)
 	    {
 		w->vs = NULL;	/* detach vs from vsdir */
@@ -679,7 +695,7 @@ VSdetach(int32 vkey)
 	HRETURN_ERROR(DFE_CANTDETACH, FAIL);
 
     if (vs->marked)
-      {		/* if marked , write out vdata's VSDESC to file */
+      {	  /* if marked , write out vdata's VSDESC to file */
 	  if ((vspack = (uint8 *) HDgetspace(sizeof(VWRITELIST))) == NULL)
 	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
 	  vpackvs(vs, vspack, &vspacksize);
@@ -700,7 +716,6 @@ VSdetach(int32 vkey)
     HDfreespace((VOIDP) vs);
 
     return (SUCCEED);
-
 }	/* VSdetach */
 
 /* -------------------------- VSappendable -------------------------------- */
@@ -712,7 +727,6 @@ VSdetach(int32 vkey)
  * undocumented 
  *
  */
-
 PUBLIC int32 
 VSappendable(int32 vkey, int32 blk)
 {
@@ -807,10 +821,8 @@ VSgetid(HFILEID f, int32 vsid)
 
 /* -------------- Return the otag of a VData----------------- */
 /*
-
    Return the 'otag' of the given Vdata
    Return FAIL on failure
-
  */
 
 PUBLIC
@@ -842,17 +854,13 @@ VSQuerytag(int32 vkey)
       }
 
     return ((int32) vs->otag);
-
 }	/* VSQuerytag */
 
 /* -------------- Return the oref of a VData----------------- */
 /*
-
    Return the ref of the given Vdata
    Return FAIL on failure
-
  */
-
 PUBLIC
 int32 
 VSQueryref(int32 vkey)
@@ -882,11 +890,9 @@ VSQueryref(int32 vkey)
       }
 
     return ((int32) vs->oref);
-
 }	/* VSQueryref */
 
 /* -------------- Return the writelist of a VData----------------- */
-
 VWRITELIST _HUGE *
 vswritelist(int32 vkey)
 {
@@ -934,14 +940,12 @@ VSgetversion(int32 vkey)
 
 /* ------------------------------- VSdelete -------------------------------- */
 /*
-
    Remove a Vdata from its file.  This function will both remove the Vdata
    from the internal Vset data structures as well as from the file.
 
    (i.e. it calls tbbt_delete() and Hdeldd())
 
    Return FAIL / SUCCEED
-
  */
 int32
 VSdelete(int32 f, int32 vsid)
@@ -987,5 +991,4 @@ VSdelete(int32 f, int32 vsid)
     Hdeldd(f, DFTAG_VH, (uint16) vsid);
 
     return SUCCEED;
-
 }	/* VSdelete */

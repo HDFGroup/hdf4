@@ -20,6 +20,23 @@ static char RcsId[] = "@(#)$Revision$";
 * vsetf.c
 * Part of the HDF VSet interface.
 *
+
+LOCAL ROUTINES
+
+EXPORTED ROUTINES
+ VSIZEOF      -- returns the machine size of a field type.
+ HDFSIZEOF    -- returns the HDF file size of a field type.
+ VSsetfields  -- sets the fields in a vdata for reading or writing.
+                 Truncates each field to max length of FIELDNAMELENMAX.
+ VSfdefine    -- Defines a (one) new field within the vdata.
+ VFnfields    -- Return the number of fields in this Vdata.
+ VFfieldname  -- Return the name of the given field in this Vdata. 
+ VFfieldtype  -- Return the type of the given field in this Vdata.
+ VFfieldisize -- Return the internal (i.e. in memory) size of the given 
+                  field in this Vdata. 
+ VFfieldesize -- Return the external (i.e. on disk) size of the given 
+                  field in this Vdata.
+ VFfieldorder -- Return the order of the given field in this Vdata.
 ************************************************************************/
 
 #include "vg.h"
@@ -120,7 +137,6 @@ HDFSIZEOF(int16 x)
    ** RETURNS FAIL if error, and SUCCEED if ok.
    ** truncates each field to max length of  FIELDNAMELENMAX.
  */
-
 PUBLIC intn 
 VSsetfields(int32 vkey, const char *fields)
 {
@@ -271,7 +287,6 @@ VSsetfields(int32 vkey, const char *fields)
    ** return FAIL if error
    ** return SUCCEED if success
  */
-
 PUBLIC intn 
 VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
 {
@@ -347,8 +362,6 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
     return (SUCCEED);
 }	/* VSfdefine */
 
-/* ------------------------------------------------------------------ */
-
 /* ------------------------------------------------------------------------ */
 /* erstwhile macros - Use these for accessing user-defined fields in a vdata. */
 /*
@@ -363,12 +376,9 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
 
 /* ------------------------------ VFnfields ------------------------------- */
 /*
-
    Return the number of fields in this Vdata
    Return FAIL on failure
-
  */
-
 PUBLIC
 int32 
 VFnfields(int32 vkey)
@@ -398,20 +408,16 @@ VFnfields(int32 vkey)
       }
 
     return ((int32) vs->wlist.n);
-
 }	/* VFnfields */
 
 /* ----------------------------- VFfieldname ------------------------------ */
 /*
-
    Return the name of the given field in this Vdata.
    This is just a pointer to the string in local memory and is only guarenteed
    to be valid as long as we are VSattached() to this Vdata
 
    Return NULL on failure
-
  */
-
 PUBLIC
 char       *
 VFfieldname(int32 vkey, int32 index)
@@ -446,13 +452,10 @@ VFfieldname(int32 vkey, int32 index)
 
 /* ----------------------------- VFfieldtype ------------------------------ */
 /*
-
    Return the type of the given field in this Vdata.
 
    Return FAIL on failure
-
  */
-
 PUBLIC
 int32 
 VFfieldtype(int32 vkey, int32 index)
@@ -487,13 +490,10 @@ VFfieldtype(int32 vkey, int32 index)
 
 /* ----------------------------- VFfieldisize ------------------------------ */
 /*
-
    Return the internal (i.e. in memory) size of the given field in this Vdata.
 
    Return FAIL on failure
-
  */
-
 PUBLIC
 int32 
 VFfieldisize(int32 vkey, int32 index)
@@ -528,13 +528,10 @@ VFfieldisize(int32 vkey, int32 index)
 
 /* ----------------------------- VFfieldesize ------------------------------ */
 /*
-
    Return the external (i.e. on disk) size of the given field in this Vdata.
 
    Return FAIL on failure
-
  */
-
 PUBLIC
 int32 
 VFfieldesize(int32 vkey, int32 index)
@@ -569,13 +566,10 @@ VFfieldesize(int32 vkey, int32 index)
 
 /* ----------------------------- VFfieldorder ------------------------------ */
 /*
-
    Return the order of the given field in this Vdata.
 
    Return FAIL on failure
-
  */
-
 PUBLIC
 int32 
 VFfieldorder(int32 vkey, int32 index)
@@ -605,5 +599,4 @@ VFfieldorder(int32 vkey, int32 index)
       }
 
     return ((int32) vs->wlist.order[index]);
-
 }	/* VFfieldorder */

@@ -18,24 +18,35 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*
-   FILE
+FILE
    mstdio.c
    HDF stdio-like modeling I/O routines
 
-   REMARKS
+REMARKS
    Basically a NOP interface, it just calls the encoding layer.
 
-   DESIGN
+DESIGN
    Just pass the data to the encoding layer, reporting errors.
 
-   EXPORTED ROUTINES
+EXPORTED ROUTINES
    None of these routines are designed to be called by other users except
    for the top layer of the compression routines.
 
-   AUTHOR
+    HCPmstdio_stread    -- start read access for compressed file
+    HCPmstdio_stwrite   -- start write access for compressed file
+    HCPmstdio_seek      -- Seek to offset within the data element
+    HCPmstdio_read      -- Read in a portion of data from a compressed 
+                            data element.
+    HCPmstdio_write     -- Write out a portion of data from a compressed 
+                            data element.
+    HCPmstdio_inquire   -- Inquire information about the access record 
+                            and data element.
+    HCPmstdio_endaccess -- Close the compressed data element
+
+AUTHOR
    Quincey Koziol
 
-   MODIFICATION HISTORY
+MODIFICATION HISTORY
    9/28/93     Starting writing specs & coding prototype
    10/09/93    Finished testing.  First version done.
  */

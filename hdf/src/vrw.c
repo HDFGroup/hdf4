@@ -22,6 +22,17 @@ static char RcsId[] = "@(#)$Revision$";
 * Part of the HDF VSet interface.
 * This module handles reading and writing of Vdatas.
 *
+
+LOCAL ROUTINES
+ None
+EXPORTED ROUTINES
+ VSseek  -- Seeks to an element boundary within a vdata i.e. 2nd element.
+ VSread  -- Reads a specified number of elements' worth of data from a vdata.
+             Data will be returned to you interlaced in the way you specified.
+ VSwrite -- Writes a specified number of elements' worth of data to a vdata.
+	     You must specify how your data in your buffer is interlaced.
+             Creates an aid, and writes it out if this is the first time.
+
 ************************************************************************/
 
 #include "hdf.h"
@@ -83,11 +94,9 @@ VSseek(int32 vkey, int32 eltpos)
 	HRETURN_ERROR(DFE_BADSEEK, FAIL);
 
     return (eltpos);
-
 }	/* VSseek */
 
 /* ------------------------------------------------------------------------ */
-
 /*
    VSread
    Reads a specified number of elements' worth of data from a vdata.
@@ -95,7 +104,6 @@ VSseek(int32 vkey, int32 eltpos)
    RETURNS FAIL if error
    RETURNS the number of elements read (0 or a +ve integer).
  */
-
 PUBLIC int32 
 VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 {
@@ -179,7 +187,6 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 
     /* ----------------------------------------------------------------- */
     /* CASE  (E): Only a single field in the Vdata */
-
     if (w->n == 1)
       {
 	  b1 = buf;
@@ -193,7 +200,6 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 
     /* ----------------------------------------------------------------- */
     /* CASE  (A):  user=none, vdata=full */
-
     if (interlace == NO_INTERLACE && vs->interlace == FULL_INTERLACE)
       {
 	  b1 = buf;
@@ -315,9 +321,7 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
    NEW
    create an aid, and write out if this is the first time.
    (otherwise) subsequent writes result in link-blocks.
-
  */
-
 PUBLIC int32 
 VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 {
@@ -440,7 +444,6 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 
        --------------------------------------------------------------------- */
     /* CASE  (E + C): Easy to unroll case */
-
     if ((w->n == 1) || (interlace == FULL_INTERLACE && vs->interlace == FULL_INTERLACE))
       {
 
@@ -599,7 +602,6 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 	  /* CASE  (D):  user=full, vdata=none */
 	  else if (interlace == FULL_INTERLACE && vs->interlace == NO_INTERLACE)
 	    {
-
 		offset = 0;
 		for (j = 0; j < w->n; j++)
 		  {
@@ -633,7 +635,6 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
     vs->marked = 1;
 
     return (nelt);
-
 }	/* VSwrite */
 
 /* ------------------------------------------------------------------ */

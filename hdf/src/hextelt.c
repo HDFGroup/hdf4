@@ -30,7 +30,23 @@ static char RcsId[] = "@(#)$Revision$";
    take an existing file with some data in it and create an HDF file
    which has a pointer to that data.
 
-   ------------------------------------------------------------------------- */
+ LOCAL ROUTINES
+   None
+ EXPORTED ROUTINES
+   HXcreate         -- create an external element
+   HXPsetaccesstype -- set the access type of the external file
+   HXIstaccess      -- set up AID to access an ext elem
+   HXPstread        -- open an access record for reading
+   HXPstwrite       -- open an access record for reading
+   HXPseek          -- set the seek position
+   HXPread          -- read some data out of an external file
+   HXPwrite         -- write some data out to an external file
+   HXPinquire       -- retreive information about an external element
+   HXPendacess      -- close file, free AID
+   HXPcloseAID      -- close file but keep AID active
+   HXPinfo          -- return info about an external element
+   HXPreset         -- replace the current external info with new info
+------------------------------------------------------------------------- */
 
 #include "hdf.h"
 #include "hfile.h"
@@ -58,7 +74,6 @@ PRIVATE int32 HXIstaccess
 /* ext_funcs -- table of the accessing functions of the external
    data element function modules.  The position of each function in
    the table is standard */
-
 funclist_t  ext_funcs =
 {
     HXPstread,
@@ -72,11 +87,10 @@ funclist_t  ext_funcs =
     HXPreset,
 };
 
-/* ------------------------------------------------------------------------ 
-
-   NAME
+/*------------------------------------------------------------------------ 
+NAME
    HXcreate -- create an external element
-   USAGE
+USAGE
    int32 HXcreate(file_id, tag, ref, ext_name, offset, len)
    int32  file_id;      IN: file ID for HDF file
    int16  tag;          IN: tag number for external elem
@@ -84,10 +98,10 @@ funclist_t  ext_funcs =
    char * ext_name;     IN: external file name
    int32  offset;       IN: offset where elem should start in ext file
    int32  len;          IN: current len of element if already in
-   ext file (see desc below)
-   RETURNS
+                            ext file (see desc below)
+RETURNS
    returns AID to external element or FAIL
-   DESCRIPTION
+DESCRIPTION
    Create a data element in an external file.  If that 
    file already exists, we will simply *modify* that file, 
    not delete it and start over.  Offset and start_len 
@@ -102,7 +116,7 @@ funclist_t  ext_funcs =
    Return an AID to the newly created external element, FAIL 
    on error.
 
-   -------------------------------------------------------------------------- */
+--------------------------------------------------------------------------*/
 int32
 HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, int32 offset, int32 start_len)
 {
@@ -144,7 +158,6 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
 
 		/* abort since we cannot convert the data element to an external
 		   data element */
-
 		access_rec->used = FALSE;
 		HRETURN_ERROR(DFE_CANTMOD, FAIL);
 	    }
@@ -342,19 +355,18 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     return ASLOT2ID(slot);
 }
 
-/* ------------------------------------------------------------------------ 
-
-   NAME
+/*------------------------------------------------------------------------ 
+NAME
    HXPsetaccesstype -- set the access type of the external file
-   USAGE
+USAGE
    intn HXPsetaccesstype(access_rec)
-   accrec_t *access_rec IN/OUT: access record of the external element
-   RETURNS
+   accrec_t *access_rec   IN/OUT: access record of the external element
+RETURNS
    SUCCEED if no error, else FAIL
-   DESCRIPTION
+DESCRIPTION
    Open the external file according to the access type specified.
 
-   -------------------------------------------------------------------------- */
+--------------------------------------------------------------------------*/
 intn
 HXPsetaccesstype(accrec_t * access_rec)
 {
@@ -367,6 +379,7 @@ HXPsetaccesstype(accrec_t * access_rec)
 
     /* clear error stack and validate args */
     HEclear();
+
     /* sanity check */
     if (!access_rec)
 	HRETURN_ERROR(DFE_ARGS, FAIL);
@@ -421,23 +434,22 @@ HXPsetaccesstype(accrec_t * access_rec)
 
 /* ----------------------------- HXIstaccess ------------------------------ */
 /*
-
-   NAME
+NAME
    HXIstaccess -- set up AID to access an ext elem
-   USAGE
+USAGE
    int32 HXIstaccess(access_rec, acc_mode)
    access_t * access_rec;   IN: access record to fill in
-   int16      acc_mode;       IN: access mode
-   RETURNS
+   int16      acc_mode;     IN: access mode
+RETURNS
    The AID of the access record on success FAIL on error.
-   DESCRIPTION
+DESCRIPTION
    Calls to HXIstread and HXIstwrite resolve to this function.
    Given an active AID fill in all of the special information.
    If this information has already been read in for a different
    element use that else we must go out to the HDF file and 
    pull in the information ourselves
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 PRIVATE int32
 HXIstaccess(accrec_t * access_rec, int16 acc_mode)
 {
@@ -464,19 +476,12 @@ HXIstaccess(accrec_t * access_rec, int16 acc_mode)
     access_rec->special_info = HIgetspinfo(access_rec,
 					   info_dd->tag, info_dd->ref);
     if (access_rec->special_info)
-      {
-
-	  /* found it from other access records */
-
+      {   /* found it from other access records */
 	  info = (extinfo_t *) access_rec->special_info;
 	  info->attached++;
-
       }
     else
-      {
-
-	  /* look for information in the file */
-
+      {   /* look for information in the file */
 	  if (HI_SEEK(file_rec->file, info_dd->offset + 2) == FAIL)
 	    {
 		access_rec->used = FALSE;
@@ -531,26 +536,23 @@ HXIstaccess(accrec_t * access_rec, int16 acc_mode)
       }
 
     file_rec->attach++;
-
     return ASLOT2ID(access_rec - access_records);
-
 }	/* HXIstaccess */
 
 /* ------------------------------ HXPstread ------------------------------- */
 /*
-
-   NAME
+NAME
    HXPstread -- open an access record for reading
-   USAGE
+USAGE
    int32 HXPstread(access_rec)
    access_t * access_rec;   IN: access record to fill in
-   RETURNS
+RETURNS
    The AID of the access record on success FAIL on error.
-   DESCRIPTION
+DESCRIPTION
    Calls to HXIstaccess to fill in the access rec for 
    reading
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 int32
 HXPstread(accrec_t * rec)
 {
@@ -559,18 +561,17 @@ HXPstread(accrec_t * rec)
 
 /* ------------------------------ HXPstwrite ------------------------------- */
 /*
-
-   NAME
+NAME
    HXPstwrite -- open an access record for reading
-   USAGE
+USAGE
    int32 HXPstwrite(access_rec)
    access_t * access_rec;   IN: access record to fill in
-   RETURNS
+RETURNS
    The AID of the access record on success FAIL on error.
-   DESCRIPTION
+DESCRIPTION
    Calls to HXIstaccess to fill in the access rec for writing
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 int32
 HXPstwrite(accrec_t * rec)
 {
@@ -579,20 +580,19 @@ HXPstwrite(accrec_t * rec)
 
 /* ------------------------------ HXPseek ------------------------------- */
 /*
-
-   NAME
+NAME
    HXPseek -- set the seek posn
-   USAGE
+USAGE
    int32 HXPseek(access_rec, offset, origin)
    access_t * access_rec;      IN: access record to mess with
    int32      offset;          IN: seek offset
    int32      origin;          IN: where we should calc the offset from
-   RETURNS
+RETURNS
    SUCCEED / FAIL
-   DESCRIPTION
+DESCRIPTION
    Set the seek posn in the given external element
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 int32
 HXPseek(accrec_t * access_rec, int32 offset, int origin)
 {
@@ -615,17 +615,16 @@ HXPseek(accrec_t * access_rec, int32 offset, int origin)
 
 /* ------------------------------ HXPread ------------------------------- */
 /*
-
-   NAME
+NAME
    HXPread -- read some data out of an external file
-   USAGE
+USAGE
    int32 HXPseek(access_rec, length, data)
    access_t * access_rec;      IN: access record to mess with
    int32      length;          IN: number of bytes to read
    VOIDP      data;            IN: buffer for data
-   RETURNS
+RETURNS
    The number of bytes read or FAIL on error
-   DESCRIPTION
+DESCRIPTION
    Read in some data from an external file.  If length is zero
    read until the end of the element.  It is assumed that the
    data buffer is big enough to store the data.
@@ -634,7 +633,7 @@ HXPseek(accrec_t * access_rec, int32 offset, int origin)
    us off the end of what has been written -- should only read 
    until the end.
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 int32
 HXPread(accrec_t * access_rec, int32 length, VOIDP data)
 {
@@ -691,28 +690,26 @@ HXPread(accrec_t * access_rec, int32 length, VOIDP data)
     access_rec->posn += length;
 
     return length;
-
 }	/* HXPread */
 
 /* ------------------------------ HXPwrite ------------------------------- */
 /*
-
-   NAME
+NAME
    HXPwrite -- write some data out to an external file
-   USAGE
+USAGE
    int32 HXPwrite(access_rec, length, data)
    access_t * access_rec;      IN: access record to mess with
    int32      length;          IN: number of bytes to read
    VOIDP      data;            IN: buffer of data
-   RETURNS
+RETURNS
    The number of bytes written or FAIL on error
-   DESCRIPTION
+DESCRIPTION
    Write out some data to an external file.  
 
    It looks like this will allow us to write to a file even if we only 
    have a read AID for it.   Is that really the behavior that we want?
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 int32
 HXPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
 {
@@ -774,7 +771,6 @@ HXPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
 		HI_CLOSE(info->file_external);
 
 		/* if okay, substitute the file descriptor */
-
 		info->file_external = f;
 	    }
       }
@@ -799,15 +795,13 @@ HXPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
       }
 
     return length;
-
 }	/* HXPwrite */
 
 /* ------------------------------ HXPinquire ------------------------------ */
 /*
-
-   NAME
+NAME
    HXPinquire -- retreive information about an external element
-   USAGE
+USAGE
    int32 HXPinquire(access_rec, file, tag, ref, len, off, pos, acc, sp)
    access_t * access_rec;      IN:  access record to return info about
    uint16   * file;            OUT: file ID;
@@ -818,15 +812,15 @@ HXPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
    int32    * pos;             OUT: current position in element;
    int16    * acc;             OUT: access mode;
    int16    * sp;              OUT: special code;
-   RETURNS
+RETURNS
    SUCCEED
-   DESCRIPTION
+DESCRIPTION
    Return interesting information about an external element.
    NULL can be passed for any of the OUT parameters if their
    value is not needed.
    BUG: The offset returned is not correct.
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 int32
 HXPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
 	   uint16 *pref, int32 *plength, int32 *poffset,
@@ -856,23 +850,21 @@ HXPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
 	*pspecial = access_rec->special;
 
     return SUCCEED;
-
 }	/* HXPinquire */
 
 /* ----------------------------- HXPendaccess ----------------------------- */
 /*
-
-   NAME
+NAME
    HXPendacess -- close file, free AID
-   USAGE
+USAGE
    intn HXPendaccess(access_rec)
    access_t * access_rec;      IN:  access record to close
-   RETURNS
+RETURNS
    SUCCEED / FAIL
-   DESCRIPTION
+DESCRIPTION
    Close the file pointed to by the current AID and free the AID
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 intn
 HXPendaccess(accrec_t * access_rec)
 {
@@ -894,20 +886,18 @@ HXPendaccess(accrec_t * access_rec)
     access_rec->used = FALSE;
 
     return SUCCEED;
-
 }	/* HXPendaccess */
 
 /* ----------------------------- HXPcloseAID ------------------------------ */
 /*
-
-   NAME
+NAME
    HXPcloseAID -- close file but keep AID active
-   USAGE
+USAGE
    int32 HXPcloseAID(access_rec)
    access_t * access_rec;      IN:  access record of file to close
-   RETURNS
+RETURNS
    SUCCEED / FAIL
-   DESCRIPTION
+DESCRIPTION
    close the file currently being pointed to by this AID but 
    do *NOT* free the AID.
 
@@ -916,7 +906,7 @@ HXPendaccess(accrec_t * access_rec)
    external object, the external file needs to be closed before all
    reference to it is lost.
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 int32
 HXPcloseAID(accrec_t * access_rec)
 {
@@ -942,18 +932,15 @@ HXPcloseAID(accrec_t * access_rec)
 
 /* ------------------------------- HXPinfo -------------------------------- */
 /*
-
-   NAME
+NAME
    HXPinfo -- return info about an external element
-   USAGE
+USAGE
    int32 HXPinfo(access_rec, info_block)
-   accrec_t        * access_rec;
-   IN: access record of element
-   sp_info_block_t * info_block; 
-   OUT: information about the special element 
-   RETURNS
+   accrec_t        * access_rec; IN: access record of element
+   sp_info_block_t * info_block; OUT: information about the special element 
+RETURNS
    SUCCEED / FAIL
-   DESCRIPTION
+DESCRIPTION
    Return information about the given external element.  Info_block is
    assumed to be non-NULL.  Do not make a copy of the path, just have
    the info_block copy point to our local copy.
@@ -982,18 +969,15 @@ HXPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
 
 /* ------------------------------- HXPreset ------------------------------- */
 /*
-
-   NAME
+NAME
    HXPreset -- replace the current external info with new info
-   USAGE
+USAGE
    int32 HXPreset(access_rec, info_block)
-   accrec_t        * access_rec;
-   IN: access record of element
-   sp_info_block_t * info_block; 
-   IN: information about the special element 
-   RETURNS
+   accrec_t        * access_rec;   IN: access record of element
+   sp_info_block_t * info_block;   IN: information about the special element 
+RETURNS
    SUCCEED / FAIL
-   DESCRIPTION
+DESCRIPTION
    Reset information about the given external element.  Info_block is
    assumed to be non-NULL. 
 
@@ -1002,7 +986,7 @@ HXPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
    file name.  This is useful for when a file has changed places.
    The offset and length are assumed to be the same.
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 int32
 HXPreset(accrec_t * access_rec, sp_info_block_t * info_block)
 {
@@ -1069,5 +1053,4 @@ HXPreset(accrec_t * access_rec, sp_info_block_t * info_block)
 	return FAIL;
 
     return SUCCEED;
-
 }	/* HXPreset */

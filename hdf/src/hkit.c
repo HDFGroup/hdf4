@@ -22,23 +22,42 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hfile.h"
 #include "hkit.h"
 
+/*
+LOCAL ROUTINES
+  None
+EXPORTED ROUTINES
+  HDc2fstr      -- convert a C string into a Fortran string IN PLACE
+  HDf2sstring   -- convert a Fortran string to a C string
+  HIlookup_dd   -- find the dd record for an element
+  HIadd_hash_dd -- add a dd to the hash table
+  HIdel_hash_dd -- remove a dd from the hash table
+  HIfind_dd     -- find the dd record for an element
+  HIcount_dd    -- counts the dd's of a certain type in file
+  HDflush       -- flush the HDF file
+  HDpackFstring -- convert a C string into a Fortran string
+  HDgettagname  -- return a text description of a tag
+  HDgettagsname -- return a text name of a tag
+  HDgettagnum   -- return the tag number for a text description of a tag
+  HDgetNTdesc   -- return a text description of a number-type
+  HDfidtoname   -- return the filename the file ID corresponds to
+*/
+
 /* ------------------------------- HDc2fstr ------------------------------- */
 /*
-
-   NAME
+NAME
    HDc2fstr -- convert a C string into a Fortran string IN PLACE
-   USAGE
+USAGE
    intn HDc2fstr(str, len)
    char * str;       IN: string to convert
    intn   len;       IN: length of Fortran string
-   RETURNS
+RETURNS
    SUCCEED
-   DESCRIPTION
+DESCRIPTION
    Change a C string (NULL terminated) into a Fortran string.
    Basically, all that is done is that the NULL is ripped out
    and the string is padded with spaces
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 intn 
 HDc2fstr(char *str, intn len)
 {
@@ -53,21 +72,20 @@ HDc2fstr(char *str, intn len)
 
 /* ----------------------------- HDf2sstring ------------------------------ */
 /*
-
-   NAME
+NAME
    HDf2sstring -- convert a Fortran string to a C string
-   USAGE
+USAGE
    char * HDf2cstring(fdesc, len)
    _fcd  fdesc;     IN: Fortran string descriptor
    intn  len;       IN: length of Fortran string
-   RETURNS
+RETURNS
    SUCCEED
-   DESCRIPTION
+DESCRIPTION
    Chop off trailing blanks off of a Fortran string and
    move it into a newly allocated C string.  It is up
    to the user to free this string.
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 char _HUGE *
 HDf2cstring(_fcd fdesc, intn len)
 {
@@ -86,19 +104,18 @@ HDf2cstring(_fcd fdesc, intn len)
 
 /* ----------------------------- HIlookup_dd ------------------------------ */
 /*
-
-   NAME
+NAME
    HIlookup_dd -- find the dd record for an element
-   USAGE
+USAGE
    int HIlookup_dd(file_rec, tag, ref, block, idx)
    filerec_t *  file_rec;       IN:  file record to search
    uint16       tag;            IN:  tag of element to find
    uint16       ref;            IN:  ref of element to find
    ddblock_t ** block;          OUT: block element is in
    int32     *  idx;            OUT: element's index in block
-   RETURNS
+RETURNS
    SUCCEED / FAIL
-   DESCRIPTION
+DESCRIPTION
    find the dd with tag and ref, by returning the block 
    where the dd resides and the index of the dd in the 
    ddblock ddlist.
@@ -108,7 +125,7 @@ HDf2cstring(_fcd fdesc, intn len)
    sent to this routine (i.e. to get the 'next' widget 
    get passed off to HIfind_dd().
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 int 
 HIlookup_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
 	    ddblock_t ** pblock, int32 *pidx)
@@ -144,9 +161,7 @@ HIlookup_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
 	    }
       }
 
-    /*
-     * Try looking for the special version of this tag
-     */
+    /* Try looking for the special version of this tag */
     tag = (intn) MKSPECIALTAG(look_tag);
     key = tag + ref;
 
@@ -164,29 +179,27 @@ HIlookup_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
       }
 
     return FAIL;
-
 }	/* HIlookup_dd */
 
 /* ---------------------------- HIadd_hash_dd ----------------------------- */
 /*
-
-   NAME
+NAME
    HIadd_hash_dd -- add a dd to the hash table
-   USAGE        
+USAGE        
    int HIadd_hash_dd(file_rec, tag, ref, block, idx)
    filerec_t  * file_rec;       IN:  file record
    uint16       tag;            IN:  tag of element to add
    uint16       ref;            IN:  ref of element to add
    ddblock_t  * block;          OUT: block element is in
    int32        idx;            OUT: element's index in block
-   RETURNS
+RETURNS
    SUCCEED / FAIL
-   DESCRIPTION
+DESCRIPTION
    Stick an new element into the file's hash table.  The hash table 
    is keyed on the low order bits of (tag + ref) and gives a quick
    means of mapping tag and ref to the DD record for this element
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 int 
 HIadd_hash_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
 	      ddblock_t * pblock, int32 pidx)
@@ -237,21 +250,20 @@ HIadd_hash_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
 
 /* ---------------------------- HIdel_hash_dd ----------------------------- */
 /*
-
-   NAME
+NAME
    HIdel_hash_dd -- remove a dd from the hash table
-   USAGE        
+USAGE        
    int HIdel_hash_dd(file_rec, tag, ref)
    filerec_t  * file_rec;       IN:  file record
    uint16       tag;            IN:  tag of element to delete
    uint16       ref;            IN:  ref of element to delete
-   RETURNS
+RETURNS
    SUCCEED
-   DESCRIPTION
+DESCRIPTION
    Remove an element from the hash table.  Return succeed even
    if the element does not exist in the table
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 int 
 HIdel_hash_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref)
 {
@@ -283,28 +295,26 @@ HIdel_hash_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref)
       }
 
     return SUCCEED;
-
 }	/* HIdel_hash_dd */
 
 /* ----------------------------- HIfind_dd ------------------------------ */
 /*
-
-   NAME
+NAME
    HIfind_dd -- find the dd record for an element
-   USAGE
+USAGE
    int HIfind_dd(file_rec, tag, ref, block, idx, direction)
    filerec_t *  file_rec;       IN:  file record to search
    uint16       tag;            IN:  tag of element to find
    uint16       ref;            IN:  ref of element to find
    ddblock_t ** block;          IN:  block to start search
-   OUT: block element is in
+                                OUT: block element is in
    int32     *  idx;            IN:  index to start search
-   OUT: element's index in block
+                                OUT: element's index in block
    intn         direction;      IN:  direction to search 
    (DF_FORWARD / DF_BACKWARD)
-   RETURNS
+RETURNS
    SUCCEED / FAIL
-   DESCRIPTION
+DESCRIPTION
    find the dd with tag and ref, by returning the block 
    where the dd resides and the index of the dd in the 
    ddblock ddlist.  This is a more powerful, but slower 
@@ -314,7 +324,7 @@ HIdel_hash_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref)
    index we can handle searches like "give me the next widget"
    or "give me the previous thing with ref = 3"
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 int 
 HIfind_dd(uint16 look_tag, uint16 look_ref, ddblock_t ** pblock, int32 *pidx,
 	  intn direction)
@@ -329,16 +339,14 @@ HIfind_dd(uint16 look_tag, uint16 look_ref, ddblock_t ** pblock, int32 *pidx,
     special_tag = MKSPECIALTAG(look_tag);
 
     if (direction == DF_FORWARD)
-      {		/* search forward through the DD list */
+      {   /* search forward through the DD list */
 	  /* start searching on the next dd */
 	  idx = (intn) *pidx + 1;
 	  for (block = *pblock; block; block = block->next)
 	    {
-
 		list = block->ddlist;
 		for (; idx < block->ndds; idx++)
 		  {
-
 		      /* skip the empty dd's */
 		      if (list[idx].tag == DFTAG_NULL && look_tag != DFTAG_NULL)
 			  continue;
@@ -349,7 +357,6 @@ HIfind_dd(uint16 look_tag, uint16 look_ref, ddblock_t ** pblock, int32 *pidx,
 			  && (look_ref == DFREF_WILDCARD
 			      || list[idx].ref == look_ref))
 			{
-
 			    /* we have a match !! */
 			    *pblock = block;
 			    *pidx = idx;
@@ -362,16 +369,14 @@ HIfind_dd(uint16 look_tag, uint16 look_ref, ddblock_t ** pblock, int32 *pidx,
 	    }	/* end for */
       }		/* end if */
     else if (direction == DF_BACKWARD)
-      {		/* search backward through the DD list */
+      {	  /* search backward through the DD list */
 	  /* start searching on the previous dd */
 	  idx = (intn) *pidx - 1;
 	  for (block = *pblock; block;)
 	    {
-
 		list = block->ddlist;
 		for (; idx >= 0; idx--)
 		  {
-
 		      /* skip the empty dd's */
 		      if (list[idx].tag == DFTAG_NULL && look_tag != DFTAG_NULL)
 			  continue;
@@ -398,32 +403,29 @@ HIfind_dd(uint16 look_tag, uint16 look_ref, ddblock_t ** pblock, int32 *pidx,
       }		/* end if */
 
     /* nothing found or bad direction */
-
     return (FAIL);
-
 }	/* HIfind_dd */
 
 /* ----------------------------- HIcount_dd ------------------------------ */
 /*
-
-   NAME
+NAME
    HIcount_dd -- counts the dd's of a certain type in file
-   USAGE
+USAGE
    intn HIcount_dd(file_rec, tag, ref, all_cnt, real_cnt)
    filerec_t *  file_rec;       IN:  file record to search
    uint16       tag;            IN:  tag of element to find
-   (can be DFTAG_WILDCARD)
+                                     (can be DFTAG_WILDCARD)
    uint16       ref;            IN:  ref of element to find
-   (can be DFREF_WILDCARD)
+                                     (can be DFREF_WILDCARD)
    uintn       *all_cnt;        OUT: Count of all the tag/ref pairs
-   found, including DFTAG_NULL and
-   DFTAG_FREE
-   uintn       *real_cnt;            OUT: Count of all the tag/ref pairs
-   found, excluding DFTAG_NULL and
-   DFTAG_FREE
-   RETURNS
+                                     found, including DFTAG_NULL and
+                                     DFTAG_FREE
+   uintn       *real_cnt;       OUT: Count of all the tag/ref pairs
+                                     found, excluding DFTAG_NULL and 
+                                     DFTAG_FREE
+RETURNS
    SUCCEED / FAIL
-   DESCRIPTION
+DESCRIPTION
    Counts the number of tag/ref pairs in a file.
 
    This routine keeps track of and returns to the user the number
@@ -433,7 +435,7 @@ HIfind_dd(uint16 look_tag, uint16 look_ref, ddblock_t ** pblock, int32 *pidx,
    This routine always counts the total tag/refs in the file, no
    provision is made for partial searches.
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 intn 
 HIcount_dd(filerec_t * file_rec, uint16 cnt_tag, uint16 cnt_ref,
 	   uintn *all_cnt, uintn *real_cnt)
@@ -464,9 +466,7 @@ HIcount_dd(filerec_t * file_rec, uint16 cnt_tag, uint16 cnt_ref,
 		  || (special_tag != DFTAG_NULL && special_tag != DFTAG_FREE
 		      && list[idx].tag == special_tag))
 		 && (cnt_ref == DFREF_WILDCARD || list[idx].ref == cnt_ref))
-		  {
-
-		      /* we have a match !! */
+		  { /* we have a match !! */
 		      t_real_cnt++;
 		  }	/* end if */
 	    }	/* end for */
@@ -475,20 +475,18 @@ HIcount_dd(filerec_t * file_rec, uint16 cnt_tag, uint16 cnt_ref,
     *all_cnt = t_all_cnt;
     *real_cnt = t_real_cnt;
     return (SUCCEED);
-
 }	/* HIcount_dd */
 
 /* ------------------------------- HDflush -------------------------------- */
 /*
-
-   NAME
+NAME
    HDflush -- flush the HDF file
-   USAGE
+USAGE
    intn HDflush(fid)
    int32 fid;            IN: file ID
-   RETURNS
+RETURNS
    SUCCEED / FAIL
-   DESCRIPTION
+DESCRIPTION
    Force the system to flush the HDF file stream
 
    This should be primarily used for debugging
@@ -497,14 +495,13 @@ HIcount_dd(filerec_t * file_rec, uint16 cnt_tag, uint16 cnt_ref,
    outine just returns SUCCEED always on a MAC w/o 
    really doing anything.
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 intn 
 HDflush(int32 file_id)
 {
     CONSTR(FUNC, "HDflush");	/* for HERROR */
 
 #ifndef MAC
-
     filerec_t  *file_rec;
 
     file_rec = FID2REC(file_id);
@@ -512,26 +509,23 @@ HDflush(int32 file_id)
 	HRETURN_ERROR(DFE_ARGS, FAIL);
 
     fflush(file_rec->file);
-
 #endif /* MAC */
 
     return SUCCEED;
-
 }	/* HDflush */
 
 /* ---------------------------- HDpackFstring ----------------------------- */
 /*
-
-   NAME
+NAME
    HDpackFstring -- convert a C string into a Fortran string
-   USAGE
+USAGE
    intn HDpackFstring(src, dest, len)
    char * src;          IN:  source string
    char * dest;         OUT: destination
    intn   len;          IN:  length of string
-   RETURNS
+RETURNS
    SUCCEED / FAIL
-   DESCRIPTION
+DESCRIPTION
    given a NULL terminated C string 'src' convert it to
    a space padded Fortran string 'dest' of length 'len'
 
@@ -539,11 +533,10 @@ HDflush(int32 file_id)
    it in place and this one copies.  We should probably only
    support one of these.
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 intn 
 HDpackFstring(char *src, char *dest, intn len)
 {
-
     intn        sofar;
 
     for (sofar = 0; (sofar < len) && (*src != '\0'); sofar++)
@@ -553,23 +546,21 @@ HDpackFstring(char *src, char *dest, intn len)
 	*dest++ = ' ';
 
     return SUCCEED;
-
 }	/* HDpackFstring */
 
 /* ----------------------------- HDgettagdesc ----------------------------- */
 /*
-
-   NAME
+NAME
    HDgettagname -- return a text description of a tag
-   USAGE
+USAGE
    char * HDgettagname(tag)
    uint16   tag;          IN: tag of element to find
-   RETURNS
+RETURNS
    Descriptive text or NULL
-   DESCRIPTION
+DESCRIPTION
    Map a tag to a statically allocated text description of it.
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 const char _HUGE *
 HDgettagname(uint16 tag)
 {
@@ -579,23 +570,22 @@ HDgettagname(uint16 tag)
 	if (tag_descriptions[i].tag == tag)
 	    return (tag_descriptions[i].desc);
     return (NULL);
-}
+} /* HDgettagname */
 
 /* ----------------------------- HDgettagsname ----------------------------- */
 /*
-
-   NAME
+NAME
    HDgettagsname -- return a text name of a tag
-   USAGE
+USAGE
    char * HDgettagsname(tag)
    uint16   tag;          IN: tag of element to find
-   RETURNS
+RETURNS
    Descriptive text or NULL
-   DESCRIPTION
+DESCRIPTION
    Map a tag to a dynamically allocated text name of it.
    Checks for special elements now.
 
-   --------------------------------------------------------------------------- */
+--------------------------------------------------------------------------- */
 char _HUGE *
 HDgettagsname(uint16 tag)
 {
@@ -629,22 +619,21 @@ HDgettagsname(uint16 tag)
 		}	/* end else */
 	  }	/* end if */
     return (ret);
-}
+}  /* HDgettagsname */
 
 /* ----------------------------- HDgettagnum ------------------------------ */
 /*
-
-   NAME
+NAME
    HDgettagnum -- return the tag number for a text description of a tag
-   USAGE
+USAGE
    intn HDgettagnum(tag_name)
    char *   tag_name;         IN: name of tag to find
-   RETURNS
+RETURNS
    Tag number (>=0) on success or FAIL on failure
-   DESCRIPTION
+DESCRIPTION
    Map a tag name to a statically allocated tag number for it.
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 intn 
 HDgettagnum(const char *tag_name)
 {
@@ -654,22 +643,21 @@ HDgettagnum(const char *tag_name)
 	if (0 == HDstrcmp(tag_descriptions[i].name, tag_name))
 	    return (tag_descriptions[i].tag);
     return (FAIL);
-}
+} /* HDgettagnum */
 
 /* ----------------------------- HDgetNTdesc ----------------------------- */
 /*
-
-   NAME
+NAME
    HDgetNTdesc -- return a text description of a number-type
-   USAGE
+USAGE
    char * HDgetNTdesc(nt)
    int32   nt;          IN: tag of element to find
-   RETURNS
+RETURNS
    Descriptive text or NULL
-   DESCRIPTION
+DESCRIPTION
    Map a number-type to a dynamically allocated text description of it.
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 char _HUGE *
 HDgetNTdesc(int32 nt)
 {
@@ -715,20 +703,19 @@ HDgetNTdesc(int32 nt)
 
 /* ------------------------------- HDfidtoname ------------------------------ */
 /*
-
-   NAME
+NAME
    HDfidtoname -- return the filename the file ID corresponds to
-   USAGE
+USAGE
    const char _HUGE * HDfidtoname(fid)
    int32 fid;            IN: file ID
-   RETURNS
+RETURNS
    SUCCEED - pointer to filename / FAIL - NULL
-   DESCRIPTION
+DESCRIPTION
    Map a file ID to the filename used to get it.  This is useful for 
    mixing old style single-file interfaces (which take filenames) and
    newer interfaces which use file IDs.
 
-   --------------------------------------------------------------------------- */
+---------------------------------------------------------------------------*/
 const char _HUGE *
 HDfidtoname(int32 file_id)
 {
