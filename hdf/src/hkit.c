@@ -63,8 +63,12 @@ HDc2fstr(char *str, intn len)
 {
     int         i;
 
-    for (i = 0; (str[i]); i++)
-        /* EMPTY */ ;
+#ifdef OLD_WAY
+    for(i=0; (str[i]); i++)
+        /* EMPTY */;
+#else /* OLD_WAY */
+    i=HDstrlen(str);
+#endif /* OLD_WAY */
     for (; i < len; i++)
         str[i] = ' ';
     return SUCCEED;
@@ -93,12 +97,22 @@ HDf2cstring(_fcd fdesc, intn len)
     int         i;
 
     str = _fcdtocp(fdesc);
+#ifdef OLD_WAY
     for (i = len - 1; i >= 0 && ((str[i] & 0x80) || !isgraph(str[i])); i--)
         /*EMPTY */ ;
+#else /* OLD_WAY */
+    /* This should be equivalent to the above test -QAK */
+    for(i=len-1; i>=0 && !isgraph(str[i]); i--)
+        /*EMPTY*/;
+#endif /* OLD_WAY */
     cstr = (char *) HDgetspace((uint32) (i + 2));
     cstr[i + 1] = '\0';
+#ifdef OLD_WAY
     for (; i >= 0; i--)
         cstr[i] = str[i];
+#else /* OLD_WAY */
+    HDmemcpy(cstr,str,i);
+#endif /* OLD_WAY */
     return cstr;
 }   /* HDf2cstring */
 
