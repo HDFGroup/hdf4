@@ -25,9 +25,12 @@
 $Header$
 
 $Log$
-Revision 1.13  1993/01/14 19:09:07  chouck
-Added routine Hfidinquire() to get info about an open file
+Revision 1.14  1993/01/15 16:52:32  georgev
+Wrong declaration for dswfv()
 
+ * Revision 1.13  1993/01/14  19:09:07  chouck
+ * Added routine Hfidinquire() to get info about an open file
+ *
  * Revision 1.12  1993/01/05  04:06:38  georgev
  * Added Fortran hyperslab C stubs
  *
@@ -806,7 +809,7 @@ extern  FRETVAL(intf) ndfr8restart
 #   define ndswref           FNAME(DSWREF)
 #   define ndssfv            FNAME(DSSFV)
 #   define ndsgfv            FNAME(DSGFV)
-#   define ndswf             FNAME(DSWF)
+#   define ndswfv            FNAME(DSWFV)
 #   define ndswslab          FNAME(DSWSLAB)
 #else
 #   define ndsgdast  FNAME(dsgdast)
@@ -859,7 +862,7 @@ extern  FRETVAL(intf) ndfr8restart
 #   define ndswref          FNAME(dswref)
 #   define ndssfv            FNAME(dssfv)
 #   define ndsgfv            FNAME(dsgfv)
-#   define ndswf             FNAME(dswf)
+#   define ndswfv            FNAME(dswfv)
 #   define ndswslab          FNAME(dswslab)
 #endif /* DF_CAPFNAMES */
 #endif  /* DFSD_FNAMES */
