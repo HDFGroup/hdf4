@@ -121,6 +121,9 @@ o Dumping compressed Vdatas with vshow or hdp is not working.
 
 o Reading or writing compressed images with the GR interface is not working.
 
+o With the GR interface, you cannot create a raster image without writing data 
+  to it.
+
 
 Important Fixes:
 ===============
