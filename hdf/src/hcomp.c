@@ -196,7 +196,11 @@ HCIinit_coder(int16 acc_mode, comp_coder_info_t * cinfo, comp_coder_t coder_type
               break;
 
           case COMP_CODE_DEFLATE:   /* gzip 'deflate' encoding */
+   /* valid deflate levels are from 0 to 9, this error checking
+      caused the problem in HDF4r1.2 , fixed by Apu Kapadia    
               if(c_info->deflate.level<1 || c_info->deflate.level>9)
+   */
+              if(c_info->deflate.level<0 || c_info->deflate.level>9)
                   HRETURN_ERROR(DFE_BADCODER, FAIL)
 
               cinfo->coder_type = COMP_CODE_DEFLATE;    /* set the coding type */
@@ -400,7 +404,10 @@ HCPencode_header(uint8 *p, comp_model_t model_type, model_info * m_info,
               break;
 
           case COMP_CODE_DEFLATE:   /* Deflation coding stores deflation level */
+              /* valid deflate levels are from 0 to 9
               if(c_info->deflate.level<1 || c_info->deflate.level>9)
+              */
+              if(c_info->deflate.level<0 || c_info->deflate.level>9)
                   HRETURN_ERROR(DFE_BADCODER, FAIL)
 
               /* specify deflation level */
