@@ -1188,7 +1188,8 @@ C
 C---GR interface functions
 C
       integer mgstart, mgcreat, mgsnatt,
-     .        mgrdimg, mgn2ndx, mgselct, mgendac, mgend, mgfinfo
+     .        mgrdimg, mgn2ndx, mgselct, mgendac, mgend, mgfinfo,
+     .        mggcompress
 C
 C---GR chunking functions 
 C
@@ -1215,7 +1216,9 @@ C
 C---Compression types and parameters arrays 
 C
       integer comp_type(N_COMP_TYPES), comp_type_out(N_COMP_TYPES)
+      integer comp_typegr
       integer comp_prm(N_COMP_ARG)
+      integer comp_prm_out(N_COMP_ARG)
 C
 C---Compression parameters
 C
@@ -1230,8 +1233,8 @@ C
      .          COMP_CODE_RLE     = 1,
      .          COMP_CODE_SKPHUFF = 3,
      .          COMP_CODE_DEFLATE = 4)
-      parameter (DEFLATE_LEVEL = 1,
-     .           SKPHUFF_SKP_SIZE = 2)
+      parameter (DEFLATE_LEVEL = 6,
+     .           SKPHUFF_SKP_SIZE = 3)
 C
 C---Data
 C 
@@ -1488,6 +1491,44 @@ C
          err_grwrchunk = err_grwrchunk +1
          goto 2000 
       endif 
+      status = mggcompress(ri_id(i_comp), comp_typegr, comp_prm_out)
+      if (status .eq. -1) then
+      print *, 'mggcompress failed for', i, ' -th dataset'
+         err_grwrchunk = err_grwrchunk +1
+      endif
+      
+            if (name(i_comp) .eq. 'Nocomp_data') then
+                if (comp_typegr .ne. COMP_CODE_NONE) then
+            print *, 'wrong compression type for Nocomp_data dataset'
+                err_grwrchunk = err_grwrchunk +1
+                endif
+            endif
+            if (name(i_comp) .eq. 'Rlcomp_data') then
+                if (comp_typegr .ne. COMP_CODE_RLE) then
+            print *, 'wrong compression type for Rlcomp_data dataset'
+                err_grwrchunk = err_grwrchunk +1
+                endif
+            endif
+            if (name(i_comp) .eq. 'Hucomp_data') then
+                if (comp_typegr .ne. COMP_CODE_SKPHUFF) then
+            print *, 'wrong compression type for Hucomp_data dataset'
+                err_grwrchunk = err_grwrchunk +1
+                endif
+                if (comp_prm_out(1). ne. skphuff_skp_size) then
+         print *, 'wrong compression parameter for Hucomp_data dataset'
+                err_grwrchunk = err_grwrchunk +1
+                endif
+
+            endif
+            if (name(i_comp) .eq. 'Gzcomp_data') then
+                if (comp_typegr .ne. COMP_CODE_DEFLATE) then
+          print *, 'wrong compression type for Gzcomp_data dataset'
+                endif
+                if (comp_prm_out(1). ne. deflate_level) then
+          print *, 'wrong compression parameter for Gzcomp_data dataset'
+                err_grwrchunk = err_grwrchunk +1
+                endif
+            endif
 C
 C     Read the stored data to the image array.
 C
