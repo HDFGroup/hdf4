@@ -1261,6 +1261,7 @@ DESCRIPTION
 /* for end-of-line two extra times, or even use memcpy since the string lengths */
 /* are calculated already.  For now, it works. */
 #define HDstrcpy3(s1, s2, s3, s4)	(HDstrcat(HDstrcat(HDstrcpy(s1, s2),s3),s4))
+#define HDstrcpy4(s1, s2, s3, s4, s5)	(HDstrcat(HDstrcat(HDstrcat(HDstrcpy(s1, s2),s3),s4),s5))
 
 PRIVATE
 char *
@@ -1297,6 +1298,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
     
     switch (acc_mode){
     case DFACC_CREATE: {			/* Creating a new external element */
+#ifndef macintosh
         if ( *fname == DIR_SEPC ) {	/* Absolute Pathname */
             ret_value = (HDstrcpy(finalpath, fname));
             goto done;
@@ -1331,21 +1333,83 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
             ret_value = (HDstrcpy(finalpath, fname));
             goto done;
         }
+#else		/* macintosh */
+
+		/* Absolute Pathname */
+		char* dirptr;
+        if ( ( *fname != DIR_SEPC ) && ((dirptr = strchr(fname, DIR_SEPC)) != NULL) )	 {	
+        	/* This may seem a bit of overkill, but without it we can't determine if the mac path   */
+        	/* (testdir:test.hdf) is absolute or relative. For example, myHD:testdir:test.hdf would */
+        	/* be absolute. How do you tell without checking it out?                                */
+        	FSSpec tmpSpec;
+        	Str255 VolName;
+        	memset(VolName, 0, sizeof(Str255));
+        	strncpy((char*)VolName, fname, dirptr-fname+1);
+        	c2pstr((char*)VolName);
+        	/* verify that the first item is a good volume name*/
+        	if (FSMakeFSSpec(0,0,VolName, &tmpSpec) == noErr)		{
+	            ret_value = (HDstrcpy(finalpath, fname));
+	            goto done;
+	        }
+	    }
+        
+        /* Relative Pathname */
+
+        /* try function variable */
+        if (extcreatedir) {
+            path_len = (int)HDstrlen(extcreatedir);
+
+            if (1 + fname_len + 1 + path_len + 1 > MAX_PATH_LEN )
+                HGOTO_ERROR(DFE_NOSPACE, NULL);
+
+            ret_value = (HDstrcpy4(finalpath, DIR_SEPS, extcreatedir, DIR_SEPS, fname));
+
+            goto done;
+        }
+
+        /* try Envrironment Variable */
+        if (HDFEXTCREATEDIR) {
+            path_len = (int)HDstrlen(HDFEXTCREATEDIR);
+
+            if (1 + fname_len + 1 + path_len + 1 > MAX_PATH_LEN )
+                HGOTO_ERROR(DFE_NOSPACE, NULL);
+
+            ret_value = (HDstrcpy4(finalpath, DIR_SEPS, HDFEXTCREATEDIR, DIR_SEPS, fname));
+             goto done;
+        }
+
+        /* try Head File Directory */
+        /* Don't have Head File information now.  Continue */
+
+        /* Just return the ext_fname */
+        ret_value = (HDstrcpy(finalpath, fname));
+
+        goto done;
+
+#endif		/* macintosh */
         /* break; */
     } /*DFACC_CREATE */
     case DFACC_OLD:{			/* Locating an old external element */
+#ifndef macintosh
         if ( *fname == DIR_SEPC ) {	/* Absolute Pathname */
+#else
+		char* dirptr;
+        if ( ( *fname != DIR_SEPC ) && ((dirptr = strchr(fname, DIR_SEPC)) != NULL) )	 {	
+#endif
             if (HDstat(fname, &filestat) == 0){
                 ret_value = (HDstrcpy(finalpath, fname));
                 goto done;
             }
+#ifndef macintosh
             else if (!extdir && !HDFEXTDIR) {
                 HGOTO_ERROR(DFE_FNF, NULL);
             }
             /* strip the pathname component */
             fname = HDstrrchr(fname, DIR_SEPC) + 1;
             fname_len = (int)HDstrlen(fname);
-
+#else
+			/* don't do this on the mac... it could be a relative path. */
+#endif
             /* continue to Relative Pathname */
         }
 
