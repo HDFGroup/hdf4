@@ -1,13 +1,13 @@
 Fortner Software LLC ("Fortner") created the reference implementation for
-Windows of the HDF 4.1r2 library, providing C-language bindings to all
-4.1r2 features.
+Windows of the HDF 4.1r3 library, providing C-language bindings to all
+4.1r3 features.
 
-The HDF 4.1r2 for Windows library resolves the following previously
+The HDF 4.1r3 for Windows library resolves the following previously
 reported Windows-related matters (see comments in the source files for more
 details):  an ncdump problem with large files, and several problems
 with building the HDF libraries.
 
-The Windows reference implementation of the 4.1r2 library was implemented
+The Windows reference implementation of the 4.1r3 library was implemented
 and tested on a Pentium PC running Windows95 4.00.950 using Microsoft
 Developers Studio 97 Visual C++ Version 5.00.   The library has also been
 run on Pentium PC running WindowsNT version 4.0.  
