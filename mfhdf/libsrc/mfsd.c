@@ -56,6 +56,8 @@ status = SDend(fid);
 
 status = SDisdimval_bwcomp(dimid);
 
+status = SDcheckempty(sdsid, emptySDS);
+
  NOTE: This file needs to have the comments cleaned up for most of the
        functions here. -GV 9/10/97
 
@@ -6125,5 +6127,69 @@ SDsetchunkcache(int32 sdsid,     /* IN: access aid to mess with */
 
     return ret_value;
 } /* SDsetchunkcache() */
+
+
+/******************************************************************************
+ NAME
+	SDcheckempty -- checks whether an SDS is empty
+
+ DESCRIPTION
+    Given an sdsid, set the second parameter, emptySDS, to TRUE if the 
+    SDS has not been written with data, and FALSE, otherwise. 
+
+ RETURNS
+	SUCCEED/FAIL
+
+ AUTHOR
+	bmribler - 9-01-98
+        
+******************************************************************************/
+int32
+SDcheckempty(int32 sdsid,  /* IN: dataset ID */
+	     intn  *emptySDS /* TRUE if SDS is empty */)
+{
+    NC     *handle = NULL;
+    NC_var *var = NULL;
+    int32   ret_value = SUCCEED;
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDcheckempty: I've been called\n");
+#endif
+
+    /* get the handle */
+    handle = SDIhandle_from_id(sdsid, SDSTYPE);
+    if(handle == NULL) 
+      {
+        ret_value = FAIL;
+        goto done;
+      }
+
+    /* get the variable */
+    var = SDIget_var(handle, sdsid);
+    if(var == NULL)
+      {
+        ret_value = FAIL;
+        goto done;
+      }
+
+    /* if the SDS has been written with data, a storage is created 
+	for the SDS data, and var->data_ref will contain this storage's 
+	reference number, not 0 */
+    if( var->data_ref != 0 )
+      {
+        *emptySDS = FALSE;
+        goto done;
+      }
+    *emptySDS = TRUE;  /* SDS is not written with data */
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+
+    return ret_value;
+} /* SDcheckempty */
 
 #endif /* HDF */
