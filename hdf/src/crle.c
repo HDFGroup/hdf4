@@ -649,7 +649,7 @@ HCPcrle_write(accrec_t * access_rec, int32 length, const VOIDP data)
     /*  1 - append onto the end */
     /*  2 - start at the beginning and rewrite (at least) the whole dataset */
     if ((info->length != rle_info->offset)
-        && !(rle_info->offset != 0 && length <= (info->length-rle_info->offset)))
+        && (rle_info->offset != 0 && length <= (info->length-rle_info->offset)))
         HRETURN_ERROR(DFE_UNSUPPORTED, FAIL);
 
     if (HCIcrle_encode(info, length, data) == FAIL)
