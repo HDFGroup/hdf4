@@ -41,6 +41,7 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 #include "tproto.h"
+#include "hfile.h"
 
 #define TESTFILE_NAME "tcomp.hdf"
 
@@ -76,10 +77,11 @@ COMP_CODE_SKPHUFF
 int32 test_ntypes[]={
 DFNT_INT8 ,DFNT_UINT8 ,DFNT_INT16 ,DFNT_UINT16 ,DFNT_INT32 ,DFNT_UINT32 };
 
-#define NUM_OUTBUFS 3	/* the number of different output buffers to test */
+#define NUM_OUTBUFS 4	/* the number of different output buffers to test */
 /* outbuf #1 is all zeros (very easy to compress) */
 /* outbuf #2 is a fibonacci sequence (very hard to compress) */
 /* outbuf #3 is random data (also hard to compress) */
+/* outbuf #4 is random in the low byte and mostly static in the upper byte(s) */
 static int8 FAR *outbuf_int8[NUM_OUTBUFS];
 static uint8 FAR *outbuf_uint8[NUM_OUTBUFS];
 static int16 FAR *outbuf_int16[NUM_OUTBUFS];
@@ -158,8 +160,6 @@ static void allocate_buffers(void)
 
 static void init_buffers(void)
 {
-	uint32 last_fib,curr_fib,next_fib;
-	intn r;
 	intn i,j;
 
 	for(i=0; i<NUM_OUTBUFS; i++) {
@@ -174,30 +174,57 @@ static void init_buffers(void)
 				break;
 
 			case 1: /* fibonacci sequence */
-				for(j=0,last_fib=0,curr_fib=1; j<BUFSIZE; j++) {
-					outbuf_int8[i][j]=(int8)curr_fib;
-					outbuf_uint8[i][j]=(uint8)curr_fib;
-					outbuf_int16[i][j]=(int16)curr_fib;
-					outbuf_uint16[i][j]=(uint16)curr_fib;
-					outbuf_int32[i][j]=(int32)curr_fib;
-					outbuf_uint32[i][j]=(uint32)curr_fib;
-					next_fib=curr_fib+last_fib;
-					last_fib=curr_fib;
-					curr_fib=next_fib;
-				  }	/* end for */
+				{
+					uint32 last_fib,curr_fib,next_fib;
+
+					for(j=0,last_fib=0,curr_fib=1; j<BUFSIZE; j++) {
+						outbuf_int8[i][j]=(int8)curr_fib;
+						outbuf_uint8[i][j]=(uint8)curr_fib;
+						outbuf_int16[i][j]=(int16)curr_fib;
+						outbuf_uint16[i][j]=(uint16)curr_fib;
+						outbuf_int32[i][j]=(int32)curr_fib;
+						outbuf_uint32[i][j]=(uint32)curr_fib;
+						next_fib=curr_fib+last_fib;
+						last_fib=curr_fib;
+						curr_fib=next_fib;
+					  }	/* end for */
+				  }	/* end case */
 				break;
 
 			case 2: /* random #'s */
-				SEED(time(NULL));
-				for(j=0; j<BUFSIZE; j++) {
-					r=RAND();
-					outbuf_int8[i][j]=(int8)(r-RAND_MAX/2);
-					outbuf_uint8[i][j]=(uint8)r;
-					outbuf_int16[i][j]=(int16)(r-RAND_MAX/2);
-					outbuf_uint16[i][j]=(uint16)r;
-					outbuf_int32[i][j]=(int32)(r-RAND_MAX/2);
-					outbuf_uint32[i][j]=(uint32)r;
-				  }	/* end for */
+				{
+					intn r;
+
+					SEED(time(NULL));
+					for(j=0; j<BUFSIZE; j++) {
+						r=RAND();
+						outbuf_int8[i][j]=(int8)(r-RAND_MAX/2);
+						outbuf_uint8[i][j]=(uint8)r;
+						outbuf_int16[i][j]=(int16)(r-RAND_MAX/2);
+						outbuf_uint16[i][j]=(uint16)r;
+						outbuf_int32[i][j]=(int32)(r-RAND_MAX/2);
+						outbuf_uint32[i][j]=(uint32)r;
+					  }	/* end for */
+				  }	/* end case */
+				break;
+
+			case 3: /* random in the low byte and static in the upper */
+				{
+					uint32 r;
+
+					SEED(time(NULL));
+					for(j=0; j<BUFSIZE; j++) {
+						r=(uint32)RAND();
+						r&=(uint32)0xff;	/* make the lower byte random */
+						r|=(uint32)(((j/4)%4)<<8);	/* make the upper bytes change slowly */
+						outbuf_int8[i][j]=(int8)r;
+						outbuf_uint8[i][j]=(uint8)r;
+						outbuf_int16[i][j]=(int16)r;
+						outbuf_uint16[i][j]=(uint16)r;
+						outbuf_int32[i][j]=(int32)r;
+						outbuf_uint32[i][j]=(uint32)r;
+					  }	/* end for */
+				  }	/* end case */
 				break;
 		  }	/* end switch */
 	  }	/* end for */
@@ -232,7 +259,7 @@ static uint16 write_data(int32 fid,comp_model_t m_type,model_info *m_info,
 	int32 write_size;
 	VOIDP data_ptr;
 
-	MESSAGE(8, printf("Writing data for test %d, ntype=%d, model_type=%d, coder_type=%d\n",(int)test_num,(int)ntype,(int)m_type,(int)c_type);)
+	MESSAGE(8, { char *s=HDgetNTdesc(ntype); printf("Writing data for test %d, ntype=%s, model_type=%d, coder_type=%d\n",(int)test_num,(s==NULL ?"Unknown" : s),(int)m_type,(int)c_type); HDfreespace(s); } )
 	ret_ref=Hnewref(fid);
 	aid=HCcreate(fid,COMP_TAG,ret_ref,m_type,m_info,c_type,c_info);
     CHECK(aid, FAIL, "HCcreate");
@@ -284,7 +311,7 @@ static void read_data(int32 fid,uint16 ref_num,intn test_num,int32 ntype)
 	VOIDP out_ptr;
 	VOIDP in_ptr;
 
-	MESSAGE(8, printf("Reading data for test %d, ntype=%d\n",(int)test_num,(int)ntype);)
+	MESSAGE(8, {char *s=HDgetNTdesc(ntype); printf("Reading data for test %d, ntype=%s\n",(int)test_num,(s==NULL ? "Unknown" : s)); HDfreespace(s);} )
 
 	aid=Hstartread(fid,COMP_TAG,ref_num);
     CHECK(aid, FAIL, "Hstartread");
@@ -377,6 +404,18 @@ void test_comp(void)
 
 					ref_num=write_data(fid,test_models[model_num],&m_info,test_coders[coder_num],&c_info,test_num,test_ntypes[ntype_num]);
 					read_data(fid,ref_num,test_num,test_ntypes[ntype_num]);
+MESSAGE(6,
+{
+int32 aid;
+sp_info_block_t info_block;
+
+aid=Hstartread(fid,COMP_TAG,ref_num);
+HDget_special_info(aid,&info_block);
+Hendaccess(aid);
+printf("size of original HDF element=%ld\n",(long)Hlength(fid,COMP_TAG,ref_num));
+printf("size of compressed HDF element=%ld\n",(long)info_block.comp_size);
+}
+)
                   } /* end for */
               } /* end for */
           } /* end for */

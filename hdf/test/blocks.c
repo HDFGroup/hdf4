@@ -17,9 +17,11 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 #include "tproto.h"
-#define TESTFILE_NAME "t.hdf"
+#define TESTFILE_NAME "tblocks.hdf"
 
 #define BUFSIZE 4096
+
+#define HLCONVERT_TAG 1500
 
 static uint8 FAR outbuf[BUFSIZE],
     FAR inbuf[BUFSIZE];
@@ -27,7 +29,7 @@ static uint8 FAR outbuf[BUFSIZE],
 void test_hblocks()
 {
     int32 fid, fid1;
-    int32 aid1, aid2;
+    int32 aid, aid1, aid2;
     int32 fileid, length, offset, posn;
     uint16 tag, ref;
     int16 acc_mode, special;
@@ -239,9 +241,44 @@ void test_hblocks()
     ret = Hclose(fid1);
     CHECK(ret, FAIL, "Hclose");
 
+    MESSAGE(5, printf("Testing HLconvert function\n"); );
+    fid = Hopen(TESTFILE_NAME, DFACC_WRITE, 0);
+    CHECK(fid, FAIL, "Hopen");
 
-#ifdef QAK
-    HDfreespace((VOIDP)outbuf);
-    HDfreespace((VOIDP)inbuf);
-#endif
+    ref = Hnewref(fid);
+    CHECK(ret, FAIL, "Hnewref");
+
+    aid=Hstartwrite(fid,HLCONVERT_TAG,ref,5);
+    CHECK(aid, FAIL, "Hstartwrite");
+
+    ret=Hwrite(aid,4,outbuf);
+    CHECK(ret,FAIL,"Hwrite");
+
+    ret=HLconvert(aid,256,10);
+    CHECK(ret,FAIL,"HLconvert");
+
+    ret=Hwrite(aid,508,&outbuf[4]);
+    CHECK(ret,FAIL,"Hwrite");
+
+    ret=Hendaccess(aid);
+    CHECK(ret,FAIL,"Hendaccess");
+
+    aid=Hstartread(fid,HLCONVERT_TAG,ref);
+    CHECK(aid, FAIL, "Hstartwrite");
+
+    ret=Hread(aid,512,inbuf);
+    CHECK(ret,FAIL,"Hwrite");
+
+    ret=Hendaccess(aid);
+    CHECK(ret,FAIL,"Hendaccess");
+
+    ret = Hclose(fid1);
+    CHECK(ret, FAIL, "Hclose");
+
+    if(HDmemcmp(inbuf, outbuf,512)) {
+      fprintf(stderr, "Error when reading data from HLconvert buffer\n");
+      errors++;
+    }
+
+    num_errs+=errors;	/* increment global error count */
 }
