@@ -90,6 +90,41 @@ C     include '[-.src]hdf.inc'
       end
 
 C------------------------------------------------------------------------------
+C Name: VRFY
+C Purpose:  Report on success of HDF routines, using verbosity
+C Inputs:   
+C       errval: value to check for error
+C       routine: name of routine tested
+C       num_failed: running sum of the number of failures
+C Returns: none
+C Users:    HDF Fortran programmers
+C Invokes: none
+C-----------------------------------------------------------------------------
+      subroutine VRFY(errval, routine, num_failed)
+      implicit none
+C For VMS uncomment next line and comment out the line after next
+C     include '[-.src]hdf.inc'
+      include '../src/hdf.inc'
+      include 'fortest.inc'
+
+      integer errval
+      character*(*)  routine
+      integer num_failed
+
+      if (errval .eq. FAIL) then
+          num_failed = num_failed + 1
+          print *, '    >>> ', routine, ' FAILED: ret = ',
+     *           errval, '    <<<'
+      else 
+          if (verbosity .ge. VERBO_HI) then
+              print *, routine, ' SUCCESSFUL'
+          endif
+      endif
+
+      return
+      end
+
+C------------------------------------------------------------------------------
 C Name: MESSAGE
 C Purpose:  Print something, depending on the verbosity level
 C Inputs:   
@@ -311,6 +346,7 @@ C		integer hisystem
       INTERFACE 
 	   INTEGER FUNCTION hisystem(cmd, cmdlen)
 	     !MS$ATTRIBUTES C, reference,alias:'_HISYSTEM' :: hisystem
+	     !DEC$ ATTRIBUTES reference :: cmd
 	     character*(*) cmd
 	     integer cmdlen
 	   END FUNCTION hisystem
