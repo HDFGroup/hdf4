@@ -227,8 +227,8 @@ int deflateInit2 (strm, level, method, windowBits, memLevel, strategy)
         deflateEnd (strm);
         return Z_MEM_ERROR;
     }
-    s->d_buf = (ushf *) &(s->pending_buf[s->lit_bufsize]);
-    s->l_buf = (uchf *) &(s->pending_buf[3*s->lit_bufsize]);
+    s->d_buf = (ushf *) &(s->pending_buf[2*s->lit_bufsize]);
+    s->l_buf = (uchf *) &(s->pending_buf[s->lit_bufsize]);
     /* We overlay pending_buf and d_buf+l_buf. This works since the average
      * output size for (length,distance) codes is <= 32 bits (worst case
      * is 15+15+13=33).
