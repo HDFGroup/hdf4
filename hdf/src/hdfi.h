@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.27  1993/06/15 18:22:00  chouck
-Made a little smarter at guessing machine types
+Revision 1.28  1993/08/03 15:49:14  chouck
+Cleaned up a bunch of Vset code
 
+ * Revision 1.27  1993/06/15  18:22:00  chouck
+ * Made a little smarter at guessing machine types
+ *
  * Revision 1.26  1993/05/17  15:23:37  georgev
  * HP9000 did not like the 'signed char' for int8.
  *
@@ -1085,6 +1088,7 @@ extern uint8 *DFtbuf;
 #  define HDstrncmp(s1,s2,n)    (_fstrncmp((s1),(s2),(n)))
 #  define HDstrncpy(s1,s2,n)    (_fstrncpy((s1),(s2),(n)))
 #  define HDstrchr(s,c)    (_fstrchr((s),(c)))
+#  define HDstrdup(s)      (_fstrdup((s)))
 #else
 #  define HDstrcat(s1,s2)   (strcat((s1),(s2)))
 #  define HDstrcmp(s,t)     (strcmp((s),(t)))
@@ -1093,6 +1097,7 @@ extern uint8 *DFtbuf;
 #  define HDstrncmp(s1,s2,n)    (strncmp((s1),(s2),(n)))
 #  define HDstrncpy(s1,s2,n)    (strncpy((s1),(s2),(n)))
 #  define HDstrchr(s,c)    (strchr((s),(c)))
+#  define HDstrdup(s)      (strdup((s)))
 #endif /* WIN3 */
 
 
