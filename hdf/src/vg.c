@@ -497,6 +497,9 @@ RETURNS
    SUCCEED/FAIL
 DESCRIPTION
    Truncates name to max length of VSNAMELENMAX
+   If new name is longer than the current name set new_h_sz,
+      so that VSdetach will delete the original vdata header
+      and write a new header. 
 ----------------------------------------------------------*/
 int32 
 VSsetname(int32 vkey, const char *vsname)
@@ -504,7 +507,7 @@ VSsetname(int32 vkey, const char *vsname)
     vsinstance_t *w;
     VDATA      *vs;
     CONSTR(FUNC, "VSsetname");
-    int         slen;
+    int         curr_len, slen;
     int32       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -521,6 +524,7 @@ VSsetname(int32 vkey, const char *vsname)
     vs = w->vs;
     if (vs == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
+    curr_len = HDstrlen(vs->vsname);
 
     if ((slen = HDstrlen(vsname)) > VSNAMELENMAX)
       {
@@ -530,6 +534,8 @@ VSsetname(int32 vkey, const char *vsname)
     else
         HDstrcpy(vs->vsname, vsname);
     vs->marked = TRUE;
+    if (curr_len < slen) 
+        vs->new_h_sz = TRUE;
 
 done:
   if(ret_value == FAIL)   
@@ -556,6 +562,9 @@ RETURNS
    SUCCEED/FAIL
 DESCRIPTION
    Truncates class name to max length of VSNAMELENMAX
+   If new class is longer than the current class set new_h_sz,
+      so that VSdetach will delete the original vdata header
+      and write a new header.
 ----------------------------------------------------------*/
 int32 
 VSsetclass(int32 vkey, const char *vsclass)
@@ -563,7 +572,7 @@ VSsetclass(int32 vkey, const char *vsclass)
     vsinstance_t *w;
     VDATA      *vs;
     CONSTR(FUNC, "VSsetclass");
-    int         slen;
+    int         curr_len, slen;
     int32       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -580,7 +589,7 @@ VSsetclass(int32 vkey, const char *vsclass)
     vs = w->vs;
     if (vs == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
-
+    curr_len = HDstrlen(vs->vsclass);
     if ((slen = HDstrlen(vsclass)) > VSNAMELENMAX)
       {
           HDstrncpy(vs->vsclass, vsclass, VSNAMELENMAX);
@@ -589,6 +598,8 @@ VSsetclass(int32 vkey, const char *vsclass)
     else
         HDstrcpy(vs->vsclass, vsclass);
     vs->marked = TRUE;
+    if (curr_len < slen)
+        vs->new_h_sz = TRUE;
 
 done:
   if(ret_value == FAIL)   

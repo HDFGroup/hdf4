@@ -51,7 +51,7 @@ HCSRCS=hfile.c herr.c hblocks.c hextelt.c hkit.c hdfalloc.c hcomp.c \
     cskphuff.c cdeflate.c bitvect.c atom.c hfiledd.c dynarray.c linklist.c \
     glist.c hchunks.c mcache.c 
 
-VCSRCS=vg.c vrw.c vio.c vparse.c vconv.c vsfld.c vgp.c vhi.c 
+VCSRCS=vg.c vrw.c vio.c vparse.c vconv.c vsfld.c vgp.c vhi.c vattr.c
 
 #DFCSRCS=dfan.c dfr8.c dfcomp.c dfrle.c dfimcomp.c dfjpeg.c dfunjpeg.c dfp.c \
 #        dfgr.c df24.c dfsd.c dfgroup.c dfconv.c dfufp2i.c \
@@ -75,7 +75,7 @@ HCOBJS=hfile.o herr.o hblocks.o hextelt.o hkit.o hdfalloc.o hcomp.o \
     hbitio.o tbbt.o crle.o cnbit.o mstdio.o cnone.o cskphuff.o cdeflate.o \
     bitvect.o atom.o hfiledd.o dynarray.o linklist.o glist.o hchunks.o mcache.o
 
-VCOBJS=vg.o vrw.o vio.o vparse.o vconv.o vsfld.o vgp.o vhi.o 
+VCOBJS=vg.o vrw.o vio.o vparse.o vconv.o vsfld.o vgp.o vhi.o vattr.o
 
 #DFCOBJS=dfan.o dfr8.o dfcomp.o dfrle.o dfimcomp.o dfjpeg.o dfunjpeg.o dfp.o \
 #        dfgr.o df24.o dfsd.o dfgroup.o dfconv.o dfufp2i.o \

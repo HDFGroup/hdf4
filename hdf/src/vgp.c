@@ -92,7 +92,7 @@ PRIVATE intn Load_vfile
 PRIVATE intn Remove_vfile
             (HFILEID f);
 
-PRIVATE void vunpackvg
+PRIVATE intn vunpackvg
             (VGROUP * vg, uint8 buf[], intn len);
 
 PRIVATE intn VIstart(void);
@@ -370,6 +370,8 @@ vdestroynode(VOIDP n)
       {
           HDfree((VOIDP) vg->tag);
           HDfree((VOIDP) vg->ref);
+          if (vg->alist != NULL)
+             HDfree((VOIDP) vg->alist);
           HDfree((VOIDP) vg);
       }
 
@@ -548,9 +550,14 @@ vexistvg(HFILEID f, uint16 vgid)
    *    Fields of VGROUP  that gets stored in HDF as a DFTAG_VG data object:
    *            int16           nvelt (no of entries )
    *            char            vgname[MAXVGNAMELEN]
-   *     char     vgclass[MAXVGNAMELEN]
+   *            char     vgclass[MAXVGNAMELEN]
    *            int16           tag[1..nvelt]
    *            int16           ref[1..nvelt]
+   *    (fields for version 4) 
+   *            uint32   flags
+   *    (if bit0 of flags is set, the vg has attributes )
+   *            int32    nattrs
+   *            vg_attr_t alist[1..nattrs]
  */
 /* ==================================================================== */
 
@@ -563,15 +570,22 @@ vexistvg(HFILEID f, uint16 vgid)
    *  NO RETURN VALUES.
  */
 
-void
+intn
 vpackvg(VGROUP * vg, uint8 buf[], int32 *size)
 {
-#ifdef LATER
+/* #ifdef LATER  */
     CONSTR(FUNC, "vpackvg");
-#endif
+/* #endif  */
+
     uint16 i;
     uint8 *bb;
+    int32 ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_vpackvg);
+#endif /* HAVE_PABLO */
+
+    HEclear();
     bb = &buf[0];
 
     /* save nvelt */
@@ -601,6 +615,19 @@ vpackvg(VGROUP * vg, uint8 buf[], int32 *size)
     UINT16ENCODE(bb, vg->extag);    /* the vg's expansion tag */
     UINT16ENCODE(bb, vg->exref);    /* the vg's expansion ref */
 
+    if (vg->flags)  {   /* save the flag and update version num */
+       if (vg->version < VSET_NEW_VERSION)   
+          vg->version = VSET_NEW_VERSION;
+       UINT32ENCODE(bb, vg->flags);
+       if (vg->flags & VG_ATTR_SET)  {   /* save the attrs */
+          INT32ENCODE(bb, vg->nattrs);
+          for (i=0; i<vg->nattrs; i++)  {
+              UINT16ENCODE(bb, vg->alist[i].atag);
+              UINT16ENCODE(bb, vg->alist[i].aref);
+          }
+       }
+    }
+       
     /*  save the vg's version field */
     UINT16ENCODE(bb, vg->version);
 
@@ -613,6 +640,19 @@ vpackvg(VGROUP * vg, uint8 buf[], int32 *size)
     /* but since files have been created with */
     /* it there (and the size calc. wrong) it */
     /* has to be left alone -QAK */
+done:
+    if (ret_value == FAIL)
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(V_mask, ID_vpackvg);
+#endif /* HAVE_PABLO */
+ 
+  return ret_value;
+
 }   /* vpackvg */
 
 /* ==================================================================== */
@@ -628,16 +668,23 @@ vpackvg(VGROUP * vg, uint8 buf[], int32 *size)
    *
  */
 
-PRIVATE void
+PRIVATE intn
 vunpackvg(VGROUP * vg, uint8 buf[], intn len)
 {
-#ifdef LATER
+/* #ifdef LATER  */
     CONSTR(FUNC, "vunpackvg");
-#endif
+/* #endif  */
     uint8 *bb;
     uintn u;
     uint16 uint16var;
+    intn i;
+    int32 ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_vunpackvg);
+#endif /* HAVE_PABLO */
+
+    HEclear();
     /* '5' is a magic number, the exact amount of space for 2 uint16's */
     /* the magic number _should_ be '4', but the size of the Vgroup */
     /* information is incorrectly calculated (in vpackvg() above) when the */
@@ -650,16 +697,16 @@ vunpackvg(VGROUP * vg, uint8 buf[], intn len)
     bb = &buf[0];
 
     /* retrieve nvelt */
-    if (vg->version <= 3)
+    if (vg->version <= 4)
       {     /* current Vset version number */
           UINT16DECODE(bb, vg->nvelt);
 
           vg->msize = (vg->nvelt > MAXNVELT ? vg->nvelt : MAXNVELT);
           vg->tag = (uint16 *) HDmalloc(vg->msize * sizeof(uint16));
           vg->ref = (uint16 *) HDmalloc(vg->msize * sizeof(uint16));
-
+    
           if ((vg->tag == NULL) || (vg->ref == NULL))
-              return;
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           /* retrieve the tags */
           for (u = 0; u < vg->nvelt; u++)
@@ -683,7 +730,34 @@ vunpackvg(VGROUP * vg, uint8 buf[], intn len)
 
           UINT16DECODE(bb, vg->extag);  /* retrieve the vg's expansion tag */
           UINT16DECODE(bb, vg->exref);  /* retrieve the vg's expansion ref */
+          if (vg->version == VSET_NEW_VERSION) {
+             UINT32DECODE(bb, vg->flags);  /* retrieve new features in
+                                               version 4, or higher */
+             if (vg->flags & VG_ATTR_SET)   {   /* the vg has attrs */
+                 INT32DECODE(bb, vg->nattrs); 
+                 if (NULL == (vg->alist = HDmalloc(vg->nattrs * 
+                                  sizeof(vg_attr_t))))
+                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
+                 for (i=0; i<vg->nattrs; i++) {
+                     UINT16DECODE(bb, vg->alist[i].atag);
+                     UINT16DECODE(bb, vg->alist[i].aref);
+                 } /* for */
+             }  /* attributes set */
+          }  /* new version */
       }     /* end if */
+done: 
+    if (ret_value == FAIL)
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(V_mask, ID_vunpackvg);
+#endif /* HAVE_PABLO */
+
+  return ret_value;
+
 }   /* vunpackvg */
 
 /*--------------------------------------------------------------------------
@@ -709,7 +783,7 @@ vunpackvg(VGROUP * vg, uint8 buf[], intn len)
 VGROUP *VPgetinfo(HFILEID f,uint16 ref)
 {
     CONSTR(FUNC, "VPgetinfo");
-	VGROUP         *vg;
+    VGROUP         *vg;
     uint8          *vgpack;
     intn          len;
     VGROUP *ret_value = NULL; /* FAIL */
@@ -736,7 +810,11 @@ VGROUP *VPgetinfo(HFILEID f,uint16 ref)
     vg->new_vg        = 0;
     vg->oref          = ref;
     vg->otag          = DFTAG_VG;
-    vunpackvg(vg,vgpack,len);
+    vg->flags         = 0;
+    vg->nattrs        = 0;
+    vg->alist         = NULL;
+    if (FAIL == vunpackvg(vg,vgpack,len))
+         HGOTO_ERROR(DFE_INTERNAL, NULL);
       
     HDfree((VOIDP)vgpack);
 
@@ -841,6 +919,9 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
           vg->exref = 0;
           vg->more = 0;
           vg->version = VSET_VERSION;
+          vg->flags = 0;     /* for new features of vset version 4. */
+          vg->nattrs = 0;
+          vg->alist = NULL;
 
           /* attach new vg to file's vgtab  */
           if (NULL == (v = (vginstance_t *) HDmalloc(sizeof(vginstance_t))))
@@ -943,9 +1024,11 @@ Vdetach(int32 vkey)
       /* no reason to check for access... (I hope) -QAK */
       if (vg->marked == 1)
         {
-            if (( vgpack = (uint8 *) HDmalloc((uint32) sizeof(VGROUP) + vg->nvelt * 4 + 1))==NULL)
+           if (NULL==(vgpack=(uint8 *)HDmalloc((uint32)sizeof(VGROUP)+
+                   vg->nvelt*4 + vg->nattrs*sizeof(vg_attr_t) + 1)))
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
-            vpackvg(vg, vgpack, &vgpacksize);
+            if (FAIL == vpackvg(vg, vgpack, &vgpacksize))
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
             /*
              *  For now attempt to blow away the old one.  This is a total HACK

@@ -54,8 +54,8 @@ EXPORTED ROUTINES
 #include "vg.h"
 
 /* Private Function Prototypes */
-PRIVATE VOID vunpackvs
-            (VDATA * vs, uint8 buf[]);
+PRIVATE intn vunpackvs
+            (VDATA * vs, uint8 buf[], int32 len);
 
 /* vpackvs is prototyped in vg.h since vconv.c needs to call it */
 
@@ -126,6 +126,12 @@ CONTENTS of VS stored in HDF file with tag VSDESCTAG:
     uint16       off[1..nfields] (internal offset of each field)
     char        fname[1..nfields][FIELDNAMELENMAX]
     char        vsname[VSNAMELENMAX]
+    char        vsclass[VSNAMELENMAX]
+    uint16      extag, exref
+    uint32      flags (for vset version 4 or higher )
+    int32       nattrs (if bit0 of flags is set)
+    uint16      atags[1..nattrs], arefs[1..nattrs]
+    int16       version, more
 ****/
 
 /* ------------------------------- vpackvs ----------------------------------- */
@@ -153,12 +159,20 @@ CONTENTS of VS stored in HDF file with tag DFTAG_VH:
    convert a vs struct to a vspack suitable for storage in a HDF file
  */
 
-void
+intn
 vpackvs(VDATA * vs, uint8 buf[], int32 *size)
 {
+    CONSTR(FUNC, "vpackvg");
+
     int32 i;
     uint8 *bb;
+    intn  ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_vpackvs);
+#endif /* HAVE_PABLO */
+
+    HEclear();
     bb = &buf[0];
 
     /* save the interlace */
@@ -209,10 +223,27 @@ vpackvs(VDATA * vs, uint8 buf[], int32 *size)
 
     /* save the expansion tag/ref pair */
     UINT16ENCODE(bb, vs->extag);
-
     UINT16ENCODE(bb, vs->exref);
 
-    /* save the version field - init to version_2 now */
+    /* save the version field - to version_3 now if no new feature */
+    INT16ENCODE(bb, vs->version);
+
+    /* save the 'more' field - NONE now */
+    INT16ENCODE(bb, vs->more);
+
+    if (vs->flags != 0)   {  /* save the flags and update version # */
+       UINT32ENCODE(bb, vs->flags);
+       if (vs->flags & VS_ATTR_SET) { /* save attributes */
+          INT32ENCODE(bb, vs->nattrs);
+          for (i=0; i<vs->nattrs; i++)  {
+              INT32ENCODE(bb, vs->alist[i].findex);
+              UINT16ENCODE(bb, vs->alist[i].atag);
+              UINT16ENCODE(bb, vs->alist[i].aref);
+          }   /* for */
+       }  /* attr set */ 
+    }     /* flags set */   
+   /* duplicate 'version' and 'more' - for new version of libraries */
+   /* see the documentation in vattr.c */
     INT16ENCODE(bb, vs->version);
 
     /* save the 'more' field - NONE now */
@@ -220,6 +251,19 @@ vpackvs(VDATA * vs, uint8 buf[], int32 *size)
 
     *size = (int32) (bb - buf) + 1;
     *bb = 0;
+done:
+    if (ret_value == FAIL)
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(V_mask, ID_vpackvs);
+#endif /* HAVE_PABLO */
+
+  return ret_value;
+
 }   /* vpackvs */
 
 /* ----------------------------- vunpackvs ------------------------------------- */
@@ -228,85 +272,127 @@ vpackvs(VDATA * vs, uint8 buf[], int32 *size)
    This routine will also initalize the VDATA structure as much as it can.
  */
 
-PRIVATE     VOID
-vunpackvs(VDATA * vs, uint8 buf[])
+PRIVATE     intn
+vunpackvs(VDATA * vs, uint8 buf[], int32 len)
 {
+    CONSTR(FUNC, "vunpackvs");
     uint8      *bb;
     int32       i;
-    int16       int16var;
+    int16       int16var, temp;
+    int32       ret_value = SUCCEED;
 
+#ifdef HAVE_PABLO
+  TRACE_ON(V_mask, ID_vunpackvs);
+#endif /* HAVE_PABLO */
+
+    HEclear();
+    /* '5' is a magic number, the exact amount of space for 2 uint16's *
+/
+    /* the magic number _should_ be '4', but the size of the Vdata */
+    /* information is incorrectly calculated (in vpackvs() above) when t
+he */
+    /* info is written to the file and it's too late to change it now :-
+( */
+    /* get version number first -- this is different from version 3
+       vdata interface */
+    bb = &buf[len - 5];
+    UINT16DECODE(bb, vs->version); /* retrieve the vg's version field */
+    UINT16DECODE(bb, vs->more);     /* retrieve the vg's more field */
     bb = &buf[0];
 
-    /* retrieve interlace */
-    INT16DECODE(bb, vs->interlace);
+    if (vs->version <= 4)   { 
+       /* retrieve interlace */
+       INT16DECODE(bb, vs->interlace);
+       /* retrieve nvertices */
+       INT32DECODE(bb, vs->nvertices);
+       /* retrieve tore ivsize */
+       UINT16DECODE(bb, vs->wlist.ivsize);
+       /* retrieve nfields */
+       INT16DECODE(bb, vs->wlist.n);
+       /* Can't really check for malloc failure... -QAK */
+       vs->wlist.type=HDmalloc(sizeof(int16)*vs->wlist.n);
+       for (i = 0; i < vs->wlist.n; i++)   /* retrieve the type */
+           INT16DECODE(bb, vs->wlist.type[i]);
+       vs->wlist.isize=HDmalloc(sizeof(uint16)*vs->wlist.n);
+       for (i = 0; i < vs->wlist.n; i++)   /* retrieve the isize */
+           UINT16DECODE(bb, vs->wlist.isize[i]);
 
-    /* retrieve nvertices */
-    INT32DECODE(bb, vs->nvertices);
+        vs->wlist.off=HDmalloc(sizeof(uint16)*vs->wlist.n);
+        for (i = 0; i < vs->wlist.n; i++)   /* retrieve the offset */
+            UINT16DECODE(bb, vs->wlist.off[i]);
 
-    /* retrieve tore ivsize */
-    UINT16DECODE(bb, vs->wlist.ivsize);
+        vs->wlist.order=HDmalloc(sizeof(uint16)*vs->wlist.n);
+        for (i = 0; i < vs->wlist.n; i++)   /* retrieve the order */
+            UINT16DECODE(bb, vs->wlist.order[i]);
 
-    /* retrieve nfields */
-    INT16DECODE(bb, vs->wlist.n);
+        /* retrieve the field names (and each field name's length)  */
+        vs->wlist.name=HDmalloc(sizeof(char *)*vs->wlist.n);
+        for (i = 0; i < vs->wlist.n; i++) {
+            INT16DECODE(bb, int16var);    /* this gives the length */
+            vs->wlist.name[i]=HDmalloc((int16var+1)*sizeof(char));
+            HIstrncpy(vs->wlist.name[i], (char *) bb, int16var + 1);
+            bb += int16var;
+        }
 
-    /* Can't really check for malloc failure... -QAK */
-    vs->wlist.type=HDmalloc(sizeof(int16)*vs->wlist.n);
-    for (i = 0; i < vs->wlist.n; i++)   /* retrieve the type */
-        INT16DECODE(bb, vs->wlist.type[i]);
+       /* retrieve the vsname (and vsnamelen)  */
+       INT16DECODE(bb, int16var);  /* this gives the length */
 
-    vs->wlist.isize=HDmalloc(sizeof(uint16)*vs->wlist.n);
-    for (i = 0; i < vs->wlist.n; i++)   /* retrieve the isize */
-        UINT16DECODE(bb, vs->wlist.isize[i]);
+       HIstrncpy(vs->vsname, (char *) bb, int16var + 1);
+       bb += int16var;
 
-    vs->wlist.off=HDmalloc(sizeof(uint16)*vs->wlist.n);
-    for (i = 0; i < vs->wlist.n; i++)   /* retrieve the offset */
-        UINT16DECODE(bb, vs->wlist.off[i]);
+       /* retrieve the vsclass (and vsclasslen)  */
+       INT16DECODE(bb, int16var);  /* this gives the length */
 
-    vs->wlist.order=HDmalloc(sizeof(uint16)*vs->wlist.n);
-    for (i = 0; i < vs->wlist.n; i++)   /* retrieve the order */
-        UINT16DECODE(bb, vs->wlist.order[i]);
+       HIstrncpy(vs->vsclass, (char *) bb, int16var + 1);
+       bb += int16var;
 
-    /* retrieve the field names (and each field name's length)  */
-    vs->wlist.name=HDmalloc(sizeof(char *)*vs->wlist.n);
-    for (i = 0; i < vs->wlist.n; i++)
-      {
-          INT16DECODE(bb, int16var);    /* this gives the length */
+       /* retrieve the expansion tag and ref */
+       UINT16DECODE(bb, vs->extag);
+       UINT16DECODE(bb, vs->exref);
 
-          vs->wlist.name[i]=HDmalloc((int16var+1)*sizeof(char));
-          HIstrncpy(vs->wlist.name[i], (char *) bb, int16var + 1);
-          bb += int16var;
-      }
-
-    /* retrieve the vsname (and vsnamelen)  */
-    INT16DECODE(bb, int16var);  /* this gives the length */
-
-    HIstrncpy(vs->vsname, (char *) bb, int16var + 1);
-    bb += int16var;
-
-    /* retrieve the vsclass (and vsclasslen)  */
-    INT16DECODE(bb, int16var);  /* this gives the length */
-
-    HIstrncpy(vs->vsclass, (char *) bb, int16var + 1);
-    bb += int16var;
-
-    /* retrieve the expansion tag and ref */
-    UINT16DECODE(bb, vs->extag);
-    UINT16DECODE(bb, vs->exref);
-
-    /* retrieve the version field */
-    INT16DECODE(bb, vs->version);
-
-    /* retrieve the 'more' field */
-    INT16DECODE(bb, vs->more);
-
-    if (vs->version <= VSET_OLD_TYPES)
-        for (i = 0; i < vs->wlist.n; i++)   /* save the type */
+       /* retrieve the middle version field */
+       INT16DECODE(bb, temp);
+       if (temp != vs->version) 
+           HGOTO_ERROR(DFE_BADVH, FAIL);
+       /* retrieve the 'more' field */
+       INT16DECODE(bb, temp);
+       if (temp != vs->more) 
+           HGOTO_ERROR(DFE_BADVH, FAIL);
+       if (vs->version == VSET_NEW_VERSION) { /* new features exist */
+           UINT32DECODE(bb, vs->flags);
+           if (vs->flags & VS_ATTR_SET)  {    /* get attr info */
+              INT32DECODE(bb, vs->nattrs);
+if (NULL==(vs->alist=(vs_attr_t *)HDmalloc(vs->nattrs*sizeof(vs_attr_t))))
+                  HGOTO_ERROR(DFE_NOSPACE, FAIL);
+              for (i=0; i<vs->nattrs; i++)  {
+                  INT32DECODE(bb, vs->alist[i].findex);
+                  UINT16DECODE(bb, vs->alist[i].atag); 
+                  UINT16DECODE(bb, vs->alist[i].aref); 
+              }  /* for */
+           }     /* attr set */
+       }   /* new version */
+       if (vs->version <= VSET_OLD_TYPES)
+          for (i = 0; i < vs->wlist.n; i++)   /* save the type */
             vs->wlist.type[i] = map_from_old_types(vs->wlist.type[i]);
-
     /* --- EXTRA --- fill in the machine-dependent size fields */
-    vs->wlist.esize=HDmalloc(sizeof(uint16)*vs->wlist.n);
-    for (i = 0; i < vs->wlist.n; i++)
-        vs->wlist.esize[i] = (uint16) (vs->wlist.order[i] * DFKNTsize((int32) vs->wlist.type[i] | (int32) DFNT_NATIVE));
+       vs->wlist.esize=HDmalloc(sizeof(uint16)*vs->wlist.n);
+       for (i = 0; i < vs->wlist.n; i++)
+           vs->wlist.esize[i] = (uint16) (vs->wlist.order[i] *
+              DFKNTsize((int32) vs->wlist.type[i] | (int32) DFNT_NATIVE));
+    }  /* if version <= 4 */
+done:
+    if (ret_value == FAIL)
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(V_mask, ID_vunpackvs);
+#endif /* HAVE_PABLO */
+
+  return ret_value;
+
 
 }   /* vunpackvs */
 
@@ -325,7 +411,6 @@ vsdestroynode(VOIDP n)
     vs = ((vsinstance_t *) n)->vs;
     if (vs != NULL)
       {
-
         /* Free the dynamicly allocated VData fields */
         for(i=0; i<vs->wlist.n; i++)
             HDfree(vs->wlist.name[i]);
@@ -335,10 +420,10 @@ vsdestroynode(VOIDP n)
         HDfree(vs->wlist.isize);
         HDfree(vs->wlist.order);
         HDfree(vs->wlist.esize);
-
         if(vs->rlist.item!=NULL)
             HDfree(vs->rlist.item);
-
+        if (vs->alist != NULL)
+            HDfree(vs->alist);
         HDfree((VOIDP) vs);
       } /* end if */
 
@@ -398,7 +483,11 @@ VDATA *VSPgetinfo(HFILEID f,uint16 ref)
     vs->marked  = 0;
     vs->nusym   = 0;
     vs->usym=NULL;
-    vunpackvs (vs,vspack);
+    vs->flags = 0;
+    vs->nattrs = 0;
+    vs->alist = NULL;
+    if (FAIL == vunpackvs (vs,vspack, vh_length))
+       HGOTO_ERROR(DFE_INTERNAL, NULL);
  
     HDfree((VOIDP)vspack);
  
@@ -524,13 +613,15 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
           vs->access = 'w';
           vs->f = f;
           vs->marked = 0;
-
+          vs->new_h_sz = 0;
           vs->vsclass[0] = '\0';
           vs->extag = 0;
           vs->exref = 0;
           vs->more = 0;
           vs->version = VSET_VERSION;
-
+          vs->flags = 0;
+          vs->nattrs = 0;
+          vs->alist = NULL;
           vs->aid = 0;
 
           /* attach new vs to file's vstab */
@@ -586,6 +677,7 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
                 HGOTO_ERROR(DFE_BADAID, FAIL);
 
               vs->instance = w;
+              vs->new_h_sz = 0;
 
               /* attach vs to vsdir  at the vdata instance w */
               w->nattach = 1;
@@ -677,14 +769,20 @@ VSdetach(int32 vkey)
 
     if (vs->marked)
       {	  /* if marked , write out vdata's VSDESC to file */
-        if ((vspack = (uint8 *) HDmalloc(sizeof(VWRITELIST) + 1)) == NULL)
+        if ((vspack = (uint8 *) HDmalloc(sizeof(VWRITELIST) + 
+           vs->nattrs*sizeof(vs_attr_t) + sizeof(VDATA) + 1)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
-        vpackvs(vs, vspack, &vspacksize);
+        if (FAIL == vpackvs(vs, vspack, &vspacksize))
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+          /* the old one should be blown away if VH size changed  */
+        if (vs->new_h_sz)
+            Hdeldd(vs->f, DFTAG_VH, vs->oref);
         ret = Hputelement(vs->f, VSDESCTAG, vs->oref, vspack, vspacksize);
         HDfree((VOIDP) vspack);
         if (ret == FAIL)
             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
         vs->marked = 0;
+        vs->new_h_sz = 0;
       }
 
     /* remove all defined symbols */
@@ -934,7 +1032,7 @@ vswritelist(int32 vkey)
     vsinstance_t *w;
     VDATA      *vs;
     DYN_VWRITELIST *ret_value = NULL; /* FAIL */
-    CONSTR(FUNC, "VSgetversion");
+    CONSTR(FUNC, "VSwritelist");
 
     if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, NULL);

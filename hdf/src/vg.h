@@ -88,6 +88,16 @@ typedef struct dyn_write_struct
   }
 DYN_VWRITELIST;
 
+typedef struct dyn_vsattr_struct
+   {
+      int32       findex;   /* which field this attr belongs to */
+      uint16      atag, aref; /* tag/ref pair of the attr     */
+   } vs_attr_t;
+typedef struct dyn_vgattr_struct
+   {
+      uint16      atag, aref; /* tag/ref pair of the attr     */
+   } vg_attr_t;
+
 typedef struct dyn_read_struct
   {
       intn        n;            /* # fields to read */
@@ -112,10 +122,14 @@ struct vgroup_desc
       char        vgname[VGNAMELENMAX + 1];     /* S name of this vgroup */
       char        vgclass[VGNAMELENMAX + 1];    /* S class name of this vgroup */
       intn        marked;       /* =1 if new info has been added to vgroup */
-      intn        new_vg;          /* =1 if this is a new Vgroup */
+      intn        new_vg;       /* =1 if this is a new Vgroup */
       uint16      extag, exref; /* expansion tag-ref */
-      int16       version, more;    /* version and "more" field */
       intn        msize;        /* max size of storage arrays */
+      uint32      flags;        /* indicate which version of VG should
+                                   be written to the file */
+      int32       nattrs;       /* number of attributes */
+      vg_attr_t  *alist;     /* index of attributes */
+      int16       version, more;    /* version and "more" field */
   };
 /* VGROUP */
 
@@ -139,11 +153,17 @@ struct vdata_desc
       int16       nusym;
       SYMDEF      *usym;
       intn        marked;       /* =1 if new info has been added to vdata */
+      intn        new_h_sz;     /* =1 if VH size changed, due to new attrs etc. */
       intn        islinked;     /* =1 if vdata is a linked-block in file */
 
       uint16      extag, exref; /* expansion tag-ref */
+      uint32      flags;     /* bit 0 -- has attr
+                                bit 1 -- "large field"
+                                bit 2 -- "interlaced data is appendable"
+                                bit 3-15  -- unused.   */
+      intn        nattrs;
+      vs_attr_t   *alist;    /* attribute list */
       int16       version, more;    /* version and "more" field */
-
       int32       aid;          /* access id - for LINKED blocks */
       struct vs_instance_struct *instance;  /* ptr to the intance struct for this VData */
   };                            /* VDATA */
@@ -163,7 +183,8 @@ struct vdata_desc
 #define VSDATATAG       NEW_VSDATATAG
 #define _HDF_VSPACK 0
 #define _HDF_VSUNPACK 1
-
+#define VG_ATTR_SET 0x00000001  /* this vgroup has attribute(s) */
+#define VS_ATTR_SET 0x00000001  /* this vdata has attribute(s) */
 /* .................................................................. */
 /* Private data structures. Unlikely to be of interest to applications */
 /*
@@ -222,6 +243,7 @@ vfile_t;
 #define VATOM_HASH_SIZE 256
 
 /* .................................................................. */
+#define VSET_NEW_VERSION 4  /* if attr or other new features are set */
 #define VSET_VERSION   3    /* DO NOT CHANGE!! */
 #define VSET_OLD_TYPES 2    /* All version <= 2 use old type mappings */
 
@@ -246,13 +268,13 @@ extern      "C"
     extern DYN_VWRITELIST *vswritelist
                 (int32 vskey);
 
-    extern void vpackvg
+    extern intn vpackvg
                 (VGROUP * vg, uint8 buf[], int32 * size);
 
     extern int32 vinsertpair
                 (VGROUP * vg, uint16 tag, uint16 ref);
 
-    extern void vpackvs
+    extern intn vpackvs
                 (VDATA * vs, uint8 buf[], int32 * size);
 
     extern VGROUP *VPgetinfo

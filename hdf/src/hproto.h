@@ -2478,6 +2478,42 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 #define VSQueryname(vs, name) \
         (VSinquire (vs, (int32 *) NULL, (int32*) NULL, (char*) NULL, (int32*) NULL, (char*) name))
 
+/* 
+   ** from vattr.c
+ */
+   extern intn Vsetattr
+                (int32 vgid,  char *attrname, int32 datatype,
+                 int32 count, VOIDP values);
+   extern intn Vnattrs
+                (int32 vgid);
+   extern intn Vfindattr
+                (int32 vgid, char *attrname);
+   extern intn Vattrinfo
+                (int32 vgid, intn attrindex, char *name, 
+                 int32 *datatype, int32 *count);
+   extern intn Vgetattr
+                (int32 vgid, intn attrindex, VOIDP values);
+   extern int32 Vgetversion
+                (int32 vgid);
+   extern intn VSfindex
+                 (int32 vsid, char *fieldname, int32 *fldindex);
+   extern intn VSsetattr
+                (int32 vsid, int32 findex, char *attrname,
+                 int32 datatype, int32 count, VOIDP values);
+   extern intn VSnattrs
+                (int32 vsid);
+   extern intn VSfnattrs
+                (int32 vsid, int32 findex);
+   extern intn VSfindattr
+                (int32 vsid, int32 findex, char *attrname);
+   extern intn VSattrinfo
+                (int32 vsid, int32 findex, intn attrindex,
+                 char *name, int32 *datatype, int32 *count);
+   extern intn VSgetattr
+                (int32 vsid, int32 findex, intn attrindex,
+                  VOIDP values);
+   extern intn VSisattr
+                (int32 vsid);
 /*
    ** from vconv.c
  */

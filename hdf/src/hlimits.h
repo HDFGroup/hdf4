@@ -180,8 +180,10 @@ bout one image */
 ibute */
 #define RIGATTRCLASS "RIATTR0.0C"  /* class of a Vdata containing an att
 ribute */
-
-/* classes of the Vdatas/Vgroups created by the SD interface, from local_nc.h  */
+/* Vdata and Vgroup attributes use the same class as that of SD attr,
+ *  _HDF_ATTRIBUTE  "Attr0.0"  8/1/96 */
+/* classes of the Vdatas/Vgroups created by the SD interface, from 
+   local_nc.h  */
 #define _HDF_ATTRIBUTE         "Attr0.0" 
         /* class of a Vdata containing SD interface attribute */
 #define _HDF_VARIABLE          "Var0.0"

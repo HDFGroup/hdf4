@@ -244,7 +244,7 @@ typedef enum
       DFE_BADVSCLASS,           /* Cannot set VData class */
       DFE_VSWRITE,              /* Error writing to VData */
       DFE_VSREAD,               /* Error reading from VData */
-
+      DFE_BADVH,                /* Error in VData Header */
 /* High-level Vdata/Vset errors */
       DFE_VSCANTCREATE,         /* Cannot create VData */
       DFE_VGCANTCREATE,         /* Cannot create VGroup */
