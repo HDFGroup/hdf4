@@ -95,7 +95,7 @@ char**av;
     }
     Vinquire(vg,&n, vgname);
     Vgetclass(vg, vgclass); 
-    if (DFIstrlen(vgname)==0)  strcat(vgname,"NoName");
+    if (HDstrlen(vgname)==0)  strcat(vgname,"NoName");
     printf("\nvg:%d <%d/%d> (%s {%s}) has %d entries:\n",
            nvg, vg->otag, vg->oref, vgname, vgclass,n);
     
@@ -112,7 +112,7 @@ char**av;
         }
 
         VSinquire(vs, &nv,&interlace, fields, &vsize, vsname);
-        if (DFIstrlen(vsname)==0)  strcat(vsname,"NoName");
+        if (HDstrlen(vsname)==0)  strcat(vsname,"NoName");
         VSgetclass(vs,vsclass); 
         printf("  vs:%d <%d/%d> nv=%d i=%d fld [%s] vsize=%d (%s {%s})\n",
                 t, vs->otag, vs->oref, nv, interlace, fields, vsize, vsname, vsclass);
@@ -133,7 +133,7 @@ char**av;
           }
           
           Vinquire(vgt, &ne, vgname);
-          if (DFIstrlen(vgname)==0)  strcat(vgname,"NoName");
+          if (HDstrlen(vgname)==0)  strcat(vgname,"NoName");
           Vgetclass(vgt, vgclass);
           printf("  vg:%d <%d/%d> ne=%d (%s {%s})\n",
                  t, vgt->otag, vgt->oref, ne,  vgname, vgclass );
@@ -159,7 +159,7 @@ char**av;
   if(nlone > 0) {
 
     printf("Lone vdatas:\n");
-    if (NULL == (lonevs = (int32 *) VGETSPACE (sizeof(int)*nlone))) {
+    if (NULL == (lonevs = (int32 *) HDgetspace (sizeof(int)*nlone))) {
       printf("%s: File has %d lone vdatas but ",av[0],nlone ); 
       printf("cannot alloc lonevs space. Quit.\n"); 
       exit(0);
@@ -173,7 +173,7 @@ char**av;
         continue;
       }
       VSinquire (vs, &nv,&interlace, fields, &vsize, vsname);
-      if (DFIstrlen(vsname)==0)  strcat(vsname,"NoName");
+      if (HDstrlen(vsname)==0)  strcat(vsname,"NoName");
       VSgetclass (vs, vsclass);
       printf("L vs:%d <%d/%d> nv=%d i=%d fld [%s] vsize=%d (%s {%s})\n",
               vsid, vs->otag, vs->oref, nv, interlace, fields, vsize, vsname, vsclass);
@@ -181,7 +181,7 @@ char**av;
       else if (fulldump && vsno==vs->oref) vsdumpfull(vs);
       VSdetach(vs);
     }
-    VFREESPACE (lonevs);
+    HDfreespace (lonevs);
   }
 
   Hclose(f);
@@ -258,7 +258,7 @@ int32 vsdumpfull(vs) VDATA * vs;
   int32 nf;
   
   VSinquire(vs, &nv,&interlace, fields, &vsize, vsname);
-  bb = (BYTE *) VGETSPACE (nv*vsize);
+  bb = (BYTE *) HDgetspace (nv*vsize);
   if(bb==NULL) { 
     printf("vsdumpfull malloc error\n");
     return(0); 
@@ -338,7 +338,7 @@ int32 vsdumpfull(vs) VDATA * vs;
   
   /* ============================================ */
   
-  VFREESPACE (bb);
+  HDfreespace (bb);
   printf("\n\n");
   
   return(1);
