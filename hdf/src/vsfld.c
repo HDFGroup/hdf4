@@ -769,7 +769,7 @@ NAME
               interlaced fields.
 USAGE
     intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
-         VOIDP buf, int32 bufsz, intn n_records, char *fields, ...)
+         VOIDP buf, intn bufsz, intn n_records, char *fields, VOIDP fldbufpt[])
     int32 vsid; IN: vdata id.
     intn packtype; IN: 
          _HDF_VSPACK(0) -- pack field values into vdata buf;
@@ -778,13 +778,13 @@ USAGE
          fields in buf to write to or read from vdata. NULL 
          stands for all fields in the vdata.
     VOIDP buf; IN: buffer for vdata values.
-    int32 bufsz; IN: buf size in byte.
+    intn bufsz; IN: buf size in byte.
     intn n_records; IN: number of records to pack or unpack.
     char *fields; IN: 
          names of the fields to be pack/unpack. It may be a 
          subset of the fields_in_buf. NULL stands for all 
          fields in buf. 
-    ... : variable length argument list; IN: buffers of fields data.
+    VOIDP fldbufpt[]; IN: array of pointers to field buffers.
 RETURNS
     SUCCEED(0) on success; FIAL(-1) otherwise.
 DESCRIPTION
@@ -803,7 +803,7 @@ DESCRIPTION
 /*---------------------------------------------------------*/
 
 intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
-         VOIDP buf, int32 bufsz, intn n_records, char *fields, ...)
+         VOIDP buf, intn bufsz, intn n_records, char *fields, VOIDP fldbufpt[])
 {
     CONSTR(FUNC, "VSfpack");
 
@@ -893,7 +893,6 @@ intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
        /* check bufsz */
     if (bufsz < b_rec_size * n_records)
         HGOTO_ERROR(DFE_NOTENOUGH, FAIL);
-    va_start(ap, fields);
     if (fields != NULL) { /* convert field names into tokens. */
         if (scanattrs(fields, &ac, &av) == FAIL )
             HGOTO_ERROR(DFE_BADFIELDS, FAIL);
@@ -933,7 +932,7 @@ intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
                 HGOTO_ERROR(DFE_BADFIELDS, FAIL); 
             fmsizes[i] = w->esize[blist.idx[j]];
             foffs[i] = blist.offs[j];
-            fbufps[i] = va_arg(ap, VOIDP);
+	    fbufps[i] = fldbufpt[i];
             if (fbufps[i] == NULL)  
                 HGOTO_ERROR(DFE_BADPTR,FAIL);  
         }
@@ -943,12 +942,11 @@ intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
         for (i=0; i < ac; i++)   {
             fmsizes[i] = w->esize[blist.idx[i]];
             foffs[i] = blist.offs[i];
-            fbufps[i] = va_arg(ap, VOIDP);
+	    fbufps[i] = fldbufpt[i];
             if (fbufps[i] == NULL)  
                 HGOTO_ERROR(DFE_BADPTR,FAIL); 
         }
      }
-    va_end(ap);
     if (packtype == _HDF_VSPACK ) {
         /* memory copy fields data to vdata buf */    
         for (i=0; i<n_records; i++)   {

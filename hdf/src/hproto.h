@@ -2737,8 +2737,8 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 
     extern intn VSfpack
                 (int32 vsid, intn packtype, char *fields_in_buf,
-                VOIDP buf, int32 bufsz, intn n_records, 
-                char *fields, ...);
+                VOIDP buf, intn bufsz, intn n_records, 
+                char *fields, VOIDP fldbufpt[]);
 
 /*
    ** from vrw.c
