@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/07/31 21:10:24  chouck
-Use in-house print routines rather than fork() a call to od
+Revision 1.5  1992/08/18 19:49:46  chouck
+Added casts to string calls
 
+ * Revision 1.4  1992/07/31  21:10:24  chouck
+ * Use in-house print routines rather than fork() a call to od
+ *
  * Revision 1.3  1992/07/15  21:48:48  sxu
  * No change.
  *
@@ -914,10 +917,10 @@ HE_FUNC findFunc(word)
     int found = -1;
     register int i;
 
-    len = strlen(word);
+    len = strlen((const char *) word);
 
     for (i = 0; he_funcTab[i].str; i++)
-	if (!strncmp(he_funcTab[i].str, word, len))
+	if (!strncmp(he_funcTab[i].str, (const char *) word, len))
 	{
 	    /* check for exact match */
 	    if (strlen(he_funcTab[i].str) == len)
