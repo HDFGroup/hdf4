@@ -5185,7 +5185,7 @@ intn GRPshutdown(void)
       This routine makes the GR a chunked GR according to the chunk
       definiton passed in.
 
-      The dataset currently cannot be special already.  i.e. NBIT,
+      The image currently cannot be special already.  i.e. NBIT,
       COMPRESSED, or EXTERNAL. This is an Error.
 
       The defintion of the HDF_CHUNK_DEF union with relvant fields is:
@@ -5220,10 +5220,8 @@ intn GRPshutdown(void)
 
       The maximum number of Chunks in an HDF file is 65,535.
 
-      The dataset currently cannot have an UNLIMITED dimension.
-
       The performance of the GRxxx interface with chunking is greatly
-      affected by the users access pattern over the dataset and by
+      affected by the users access pattern over the image and by
       the maximum number of chunks set in the chunk cache. The cache contains 
       the Least Recently Used(LRU cache replacment policy) chunks. See the
       routine GRsetchunkcache() for further info on the chunk cache and how 
@@ -5288,27 +5286,27 @@ intn GRPshutdown(void)
         -GeorgeV
 ******************************************************************************/
 intn 
-GRsetchunk(int32 riid,             /* IN: raster access id */
+GRsetchunk(int32 riid,              /* IN: raster access id */
            HDF_CHUNK_DEF chunk_def, /* IN: chunk definition */
            int32 flags              /* IN: flags */)
 {
     CONSTR(FUNC, "GRsetchunk");
-    ri_info_t *ri_ptr = NULL;          /* ptr to the image to work with */
-    HCHUNK_DEF  chunk[1];            /* H-level chunk defintion */
+    ri_info_t     *ri_ptr = NULL;    /* ptr to the image to work with */
+    HCHUNK_DEF     chunk[1];         /* H-level chunk defintion */
     HDF_CHUNK_DEF *cdef   = NULL;    /* GR Chunk definition */
     model_info minfo;                /* dummy model info struct */
     comp_info  cinfo;                /* compression info - NBIT */
     int32      *cdims    = NULL;     /* array of chunk lengths */
-    uintn      pixel_mem_size,       /* size of a pixel in memory */
-               pixel_disk_size;      /* size of a pixel on disk */
+    uintn      pixel_mem_size;       /* size of a pixel in memory */
+    uintn      pixel_disk_size;      /* size of a pixel on disk */
     VOIDP      fill_pixel = NULL;    /* converted value for the filled pixel */
     int32      at_index;             /* attribute index for the fill value */
     int32      ndims    = 0;         /* # dimensions i.e. rank */
     uint8      nlevels  = 1;         /* default # levels is 1 */
     intn       i;                    /* loop variable */
-    int32 hdf_file_id;          /* HDF file ID */
-    gr_info_t *gr_ptr;          /* ptr to the file GR information for this image */
-    intn       ret_value = SUCCEED;     /* return value */
+    int32      hdf_file_id;          /* HDF file ID */
+    gr_info_t *gr_ptr;               /* ptr to the file GR information for this image */
+    intn       ret_value = SUCCEED;  /* return value */
 
 #ifdef HAVE_PABLO
     TRACE_ON(GR_mask, ID_GRsetchunk);
@@ -5331,18 +5329,18 @@ GRsetchunk(int32 riid,             /* IN: raster access id */
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     /* initialize important values */
-    gr_ptr=ri_ptr->gr_ptr;
-    hdf_file_id=gr_ptr->hdf_file_id;
+    gr_ptr = ri_ptr->gr_ptr;
+    hdf_file_id = gr_ptr->hdf_file_id;
 
     /* Test if the tag/ref pair has been assigned yet 
        Note that HMCcreate() needs to do the Hstartaccess on
        the special tag/ref pair that is created. If another
        GRxx routine does it then the special element cannot be
        created. Special elements require 'lazy' DD creation. */
-    if(ri_ptr->img_tag==DFTAG_NULL || ri_ptr->img_ref==DFREF_WILDCARD)
+    if(ri_ptr->img_tag == DFTAG_NULL || ri_ptr->img_ref == DFREF_WILDCARD)
       {
-        ri_ptr->img_tag=DFTAG_RI;
-        ri_ptr->img_ref=Htagnewref(hdf_file_id,ri_ptr->img_tag);
+        ri_ptr->img_tag = DFTAG_RI;
+        ri_ptr->img_ref = Htagnewref(hdf_file_id,ri_ptr->img_tag);
       } /* end if */
 
 #ifdef CHK_DEBUG
@@ -5390,7 +5388,7 @@ GRsetchunk(int32 riid,             /* IN: raster access id */
           goto done;
       }
 
-    /* initialize datset/chunk sizes using CHUNK defintion structure */
+    /* initialize image/chunk sizes using CHUNK defintion structure */
     chunk[0].chunk_size = 1;
     chunk[0].num_dims = ndims;
     for (i = 0; i < ndims; i++)
@@ -5463,9 +5461,10 @@ GRsetchunk(int32 riid,             /* IN: raster access id */
     /* create correct disk version of fill pixel */
     if(ri_ptr->fill_value != NULL)
       {
-          DFKconvert(ri_ptr->fill_value,fill_pixel,
-                     ri_ptr->img_dim.nt,ri_ptr->img_dim.ncomps,
-                     DFACC_WRITE,0,0);
+          if (FAIL == DFKconvert(ri_ptr->fill_value,fill_pixel,
+                                 ri_ptr->img_dim.nt,ri_ptr->img_dim.ncomps,
+                                 DFACC_WRITE,0,0))
+              HGOTO_ERROR(DFE_INTERNAL,FAIL); 
       } /* end if */
     else  /* create default pixel fill value of all zero components */
       {
@@ -5479,9 +5478,10 @@ GRsetchunk(int32 riid,             /* IN: raster access id */
 #ifdef QAK
                 printf("%s: check 6.6, found a fill value, nt=%d, ncomps=%d\n",FUNC,(int)ri_ptr->img_dim.nt,(int)ri_ptr->img_dim.ncomps);
 #endif /* QAK */
-                DFKconvert(ri_ptr->fill_value,fill_pixel,
-                           ri_ptr->img_dim.nt,ri_ptr->img_dim.ncomps,
-                           DFACC_WRITE,0,0);
+                if (FAIL == DFKconvert(ri_ptr->fill_value,fill_pixel,
+                                       ri_ptr->img_dim.nt,ri_ptr->img_dim.ncomps,
+                                       DFACC_WRITE,0,0))
+                    HGOTO_ERROR(DFE_INTERNAL,FAIL);
             } /* end if */
           else
               HDmemset(fill_pixel,0,pixel_disk_size);
@@ -5498,12 +5498,12 @@ GRsetchunk(int32 riid,             /* IN: raster access id */
        not yet handled. HMCcreate should catch this....*/
     /* Create GR as chunked element  */
     ret_value = HMCcreate(hdf_file_id, /* HDF file handle */
-                       (uint16)ri_ptr->img_tag,/* Data tag */
-                       (uint16)ri_ptr->img_ref,/* Data ref */
-                       nlevels,                /* nlevels */
-                       pixel_disk_size,        /* fill value length */
-                       (VOID *)fill_pixel,     /* fill value */
-                       (HCHUNK_DEF *)chunk     /* chunk definition */);
+                          (uint16)ri_ptr->img_tag,/* Data tag */
+                          (uint16)ri_ptr->img_ref,/* Data ref */
+                          nlevels,                /* nlevels */
+                          pixel_disk_size,        /* fill value length */
+                          (VOID *)fill_pixel,     /* fill value */
+                          (HCHUNK_DEF *)chunk     /* chunk definition */);
 
 #ifdef CHK_DEBUG
     fprintf(stderr,"GRsetchunk: ret_value =%d \n", ret_value);
@@ -5514,7 +5514,10 @@ GRsetchunk(int32 riid,             /* IN: raster access id */
       { /* close old aid and set new one
          ..hmm......this is for the doubly specail hack */
           if((ri_ptr->img_aid != 0) && (ri_ptr->img_aid != FAIL))
-              Hendaccess(ri_ptr->img_aid);
+            {
+              if (FAIL == Hendaccess(ri_ptr->img_aid))
+                  HGOTO_ERROR(DFE_INTERNAL,FAIL);
+            }
 
           ri_ptr->img_aid = ret_value; /* set new access id */
           ret_value = SUCCEED; /* re-set to successful */
@@ -5524,7 +5527,7 @@ GRsetchunk(int32 riid,             /* IN: raster access id */
     fprintf(stderr,"GRsetchunk: ri_ptr->img_aid =%d \n", ri_ptr->img_aid);
 #endif
 
-  done:
+done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
 
@@ -5580,11 +5583,11 @@ GRgetchunkinfo(int32 riid,               /* IN: sds access id */
                int32 *flags              /* IN/OUT: flags */)
 {
     CONSTR(FUNC, "GRgetchunkinfo");
-    ri_info_t *ri_ptr = NULL;          /* ptr to the image to work with */
-    sp_info_block_t info_block;      /* special info block */
-    int16      special;              /* Special code */
-    intn       i;                    /* loop variable */
-    intn       ret_value = SUCCEED;     /* return value */
+    ri_info_t      *ri_ptr = NULL;        /* ptr to the image to work with */
+    sp_info_block_t info_block;           /* special info block */
+    int16           special;              /* Special code */
+    intn            i;                    /* loop variable */
+    intn            ret_value = SUCCEED;  /* return value */
 
 #ifdef HAVE_PABLO
     TRACE_ON(GR_mask, ID_GRgetchunkinfo);
@@ -5673,6 +5676,7 @@ GRgetchunkinfo(int32 riid,               /* IN: sds access id */
     return ret_value;
 } /* GRgetchunkinfo() */
 
+#if 0 /* commented out for now -GV */
 
 /******************************************************************************
  NAME
@@ -5706,15 +5710,15 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
              const VOID *datap /* IN: buffer for data */)
 {
     CONSTR(FUNC, "GRwritechunk");
-    ri_info_t *ri_ptr = NULL;          /* ptr to the image to work with */
-    uintn      pixel_mem_size,       /* size of a pixel in memory */
-               pixel_disk_size;      /* size of a pixel on disk */
+    ri_info_t *ri_ptr = NULL;   /* ptr to the image to work with */
+    uintn      pixel_mem_size,  /* size of a pixel in memory */
+               pixel_disk_size; /* size of a pixel on disk */
     VOID      *img_data = NULL; /* buffer used for conversion */
     int16      special;         /* Special code */
     int32      csize;           /* phsical chunk size */
     sp_info_block_t info_block; /* special info block */
     uint32     byte_count;      /* bytes to write */
-    uint8      platnumsubclass;  /* the machine type of the current platform */
+    int8       platnumsubclass; /* the machine type of the current platform */
     uintn      convert;         /* whether to convert or not */
     intn       i;
     intn       switch_interlace = FALSE;/* whether the memory interlace needs to be switched around */
@@ -5783,7 +5787,8 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
 
                       /* figure out if data needs to be converted */
                       /* Get number-type and conversion information */
-                      platnumsubclass = (uint8)DFKgetPNSC(ri_ptr->img_dim.nt & (~DFNT_LITEND), DF_MT);
+                      if (FAIL == (platnumsubclass = DFKgetPNSC(ri_ptr->img_dim.nt & (~DFNT_LITEND), DF_MT)))
+                          HGOTO_ERROR(DFE_INTERNAL,FAIL);
 #ifdef QAK
 printf("%s: file_nt_subclass=%x, platnumsubclass=%x\n",FUNC,(unsigned)ri_ptr->img_dim.file_nt_subclass,(unsigned)platnumsubclass);
 printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_size,(unsigned)pixel_disk_size);
@@ -5810,18 +5815,23 @@ printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_si
                                   if((pixel_buf = HDmalloc(pixel_mem_size*csize)) == NULL)
                                       HGOTO_ERROR(DFE_NOSPACE,FAIL);
 
-                                  GRIil_convert((VOID *)datap,ri_ptr->img_dim.il,pixel_buf,MFGR_INTERLACE_PIXEL,
-                                                info_block.cdims,ri_ptr->img_dim.ncomps,ri_ptr->img_dim.nt);
+                                  if (FAIL == GRIil_convert((VOID *)datap,ri_ptr->img_dim.il,pixel_buf,MFGR_INTERLACE_PIXEL,
+                                                            info_block.cdims,ri_ptr->img_dim.ncomps,ri_ptr->img_dim.nt))
+                                      HGOTO_ERROR(DFE_INTERNAL,FAIL);
                                   
                                   /* convert the pixel data into the HDF disk format */
-                                  DFKconvert(pixel_buf,img_data,ri_ptr->img_dim.nt,
-                                             ri_ptr->img_dim.ncomps*csize,DFACC_WRITE,0,0);
+                                  if (FAIL == DFKconvert(pixel_buf,img_data,ri_ptr->img_dim.nt,
+                                                         ri_ptr->img_dim.ncomps*csize,DFACC_WRITE,0,0))
+                                      HGOTO_ERROR(DFE_INTERNAL,FAIL);
                                   
                                   HDfree(pixel_buf);
                               } /* end if */
                             else /* convert the pixel data into the HDF disk format */
-                                DFKconvert((VOID *)datap,img_data,ri_ptr->img_dim.nt,
-                                           ri_ptr->img_dim.ncomps*csize,DFACC_WRITE,0,0);
+                              {
+                                  if (FAIL == DFKconvert((VOID *)datap,img_data,ri_ptr->img_dim.nt,
+                                                         ri_ptr->img_dim.ncomps*csize,DFACC_WRITE,0,0))
+                                      HGOTO_ERROR(DFE_INTERNAL,FAIL);
+                              }
                         }
                       else /* no conversion necessary, just use the user's buffer */
                           img_data = (VOID *)datap;
@@ -5889,15 +5899,15 @@ GRreadchunk(int32 riid,    /* IN: access aid to GR */
             VOID *datap    /* IN/OUT: buffer for data */)
 {
     CONSTR(FUNC, "GRreadchunk");
-    ri_info_t *ri_ptr = NULL;          /* ptr to the image to work with */
-    uintn      pixel_mem_size,       /* size of a pixel in memory */
-               pixel_disk_size;      /* size of a pixel on disk */
+    ri_info_t *ri_ptr = NULL;   /* ptr to the image to work with */
+    uintn      pixel_mem_size;  /* size of a pixel in memory */
+    uintn      pixel_disk_size; /* size of a pixel on disk */
     VOID      *img_data = NULL; /* buffer used for conversion */
     int16      special;         /* Special code */
     int32      csize;           /* phsical chunk size */
     sp_info_block_t info_block; /* special info block */
     uint32     byte_count;      /* bytes to read */
-    uint8      platnumsubclass;  /* the machine type of the current platform */
+    int8       platnumsubclass; /* the machine type of the current platform */
     uintn      convert;         /* whether to convert or not */
     intn       i;
     intn       switch_interlace = FALSE;/* whether the memory interlace needs to be switched around */
@@ -5966,13 +5976,14 @@ GRreadchunk(int32 riid,    /* IN: access aid to GR */
 
                       /* figure out if data needs to be converted */
                       /* Get number-type and conversion information */
-                      platnumsubclass = (uint8)DFKgetPNSC(ri_ptr->img_dim.nt & (~DFNT_LITEND), DF_MT);
+                      if (FAIL ==(platnumsubclass = DFKgetPNSC(ri_ptr->img_dim.nt & (~DFNT_LITEND), DF_MT)))
+                          HGOTO_ERROR(DFE_INTERNAL,FAIL);
 #ifdef QAK
 printf("%s: file_nt_subclass=%x, platnumsubclass=%x\n",FUNC,(unsigned)ri_ptr->img_dim.file_nt_subclass,(unsigned)platnumsubclass);
 printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_size,(unsigned)pixel_disk_size);
 #endif /* QAK */
-                     convert = (ri_ptr->img_dim.file_nt_subclass != platnumsubclass) ||
-                            	(pixel_mem_size != pixel_disk_size);  /* is conversion necessary? */
+                       convert = (ri_ptr->img_dim.file_nt_subclass != platnumsubclass) 
+                                 ||	(pixel_mem_size != pixel_disk_size);  /* is conversion necessary? */
 
                       /* check interlace */
                       if(ri_ptr->img_dim.il != MFGR_INTERLACE_PIXEL)
@@ -5989,8 +6000,10 @@ printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_si
                             if ((ret_value = HMCreadChunk(ri_ptr->img_aid, origin, img_data)) 
                                 != FAIL)
                                 {
-                                    DFKconvert(img_data,datap,ri_ptr->img_dim.nt,
-                                               ri_ptr->img_dim.ncomps*csize,DFACC_READ,0,0);
+                                    if (FAIL == DFKconvert(img_data,datap,ri_ptr->img_dim.nt,
+                                                           ri_ptr->img_dim.ncomps*csize,DFACC_READ,0,0))
+                                        HGOTO_ERROR(DFE_INTERNAL,FAIL);
+
                                     ret_value = SUCCEED;
                                 }
                         } /* end if */
@@ -6014,8 +6027,9 @@ printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_si
                             if((pixel_buf = HDmalloc(pixel_mem_size*csize)) == NULL)
                                 HGOTO_ERROR(DFE_NOSPACE,FAIL);
 
-                            GRIil_convert(datap,MFGR_INTERLACE_PIXEL,pixel_buf,ri_ptr->im_il,
-                                          info_block.cdims,ri_ptr->img_dim.ncomps,ri_ptr->img_dim.nt);
+                            if (FAIL == GRIil_convert(datap,MFGR_INTERLACE_PIXEL,pixel_buf,ri_ptr->im_il,
+                                                      info_block.cdims,ri_ptr->img_dim.ncomps,ri_ptr->img_dim.nt))
+                                HGOTO_ERROR(DFE_INTERNAL,FAIL);
 
                             HDmemcpy(datap,pixel_buf,pixel_mem_size*csize);
 
@@ -6049,6 +6063,8 @@ printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_si
     return ret_value;
 } /* GRreadchunk() */
 
+#endif /* commented out for now -GV */
+
 /******************************************************************************
 NAME
      GRsetchunkcache - maximum number of chunks to cache 
@@ -6061,7 +6077,7 @@ DESCRIPTION
      can be cached, 'maxcache'.
 
      The performance of the GRxxx interface with chunking is greatly
-     affected by the users access pattern over the dataset and by
+     affected by the users access pattern over the image and by
      the maximum number of chunks set in the chunk cache. The number chunks 
      that can be set in the cache is process memory limited. It is a good 
      idea to always set the maximum number of chunks in the cache as the 
@@ -6107,7 +6123,7 @@ GRsetchunkcache(int32 riid,     /* IN: access aid to mess with */
     CONSTR(FUNC, "GRsetchunkcache");
     ri_info_t *ri_ptr = NULL;        /* ptr to the image to work with */
     int16      special;              /* Special code */
-    intn      ret_value = SUCCEED;
+    intn       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
     TRACE_ON(GR_mask, ID_GRsetchunkcache);

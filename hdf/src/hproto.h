@@ -2469,7 +2469,7 @@ typedef union hdf_chunk_def_u
       This routine makes the GR a chunked GR according to the chunk
       definition passed in.
 
-      The dataset currently cannot be special already.  i.e. NBIT,
+      The image currently cannot be special already.  i.e. NBIT,
       COMPRESSED, or EXTERNAL. This is an Error.
 
       The defintion of the HDF_CHUNK_DEF union with relvant fields is:
@@ -2501,10 +2501,8 @@ typedef union hdf_chunk_def_u
 
       The maximum number of Chunks in an HDF file is 65,535.
 
-      The dataset currently cannot have an UNLIMITED dimension.
-
       The performance of the GRxxx interface with chunking is greatly
-      affected by the users access pattern over the dataset and by
+      affected by the users access pattern over the image and by
       the maximum number of chunks set in the chunk cache. The cache contains 
       the Least Recently Used(LRU cache replacment policy) chunks. See the
       routine GRsetchunkcache() for further info on the chunk cache and how 
@@ -2603,6 +2601,8 @@ extern intn GRgetchunkinfo
      HDF_CHUNK_DEF *chunk_def, /* IN/OUT: chunk definition */
      int32 *flags              /* IN/OUT: flags */);
 
+#if 0 /* commented out for now -GV */
+
 /******************************************************************************
  NAME
      GRwritechunk  -- write the specified chunk to the GR
@@ -2653,6 +2653,8 @@ extern intn GRreadchunk
      int32 *origin,    /* IN: origin of chunk to read */
      VOID  *datap      /* IN/OUT: buffer for data */);
 
+#endif /* commented out for now -GV */
+
 /******************************************************************************
 NAME
      GRsetchunkcache -- maximum number of chunks to cache 
@@ -2665,7 +2667,7 @@ DESCRIPTION
      can be cached, 'maxcache'.
 
      The performance of the GRxxx interface with chunking is greatly
-     affected by the users access pattern over the dataset and by
+     affected by the users access pattern over the image and by
      the maximum number of chunks set in the chunk cache. The number chunks 
      that can be set in the cache is process memory limited. It is a good 
      idea to always set the maximum number of chunks in the cache as the 
