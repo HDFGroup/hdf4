@@ -26,6 +26,16 @@ typedef struct
   }
 DFdi;
 
+/* For annotations */
+/* enumerated types of the varous annotation types */
+typedef enum 
+{ 
+    AN_DATA_LABEL = 0, /* Data label */
+    AN_DATA_DESC,      /* Data description */
+    AN_FILE_LABEL,     /* File label */
+    AN_FILE_DESC       /* File description */
+} ann_type;
+
 /* internal file access codes */
 
 #define DFACC_READ 1
