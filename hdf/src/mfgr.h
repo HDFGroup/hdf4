@@ -31,13 +31,10 @@
 #include "tbbt.h"       /* Get tbbt routines */
 
 /* Interlace types available */
-typedef enum
-  {
-      MFGR_INTERLACE_PIXEL = 0, /* pixel interlacing scheme */
-      MFGR_INTERLACE_LINE,      /* line interlacing scheme */
-      MFGR_INTERLACE_COMPONENT  /* component interlacing scheme */
-  }
-gr_interlace_t;
+typedef int16 gr_interlace_t;
+#define MFGR_INTERLACE_PIXEL		0    /* pixel interlacing scheme */
+#define MFGR_INTERLACE_LINE		1    /* line interlacing scheme */
+#define MFGR_INTERLACE_COMPONENT 	2    /* component interlacing scheme */
 
 #if defined MFGR_MASTER | defined MFGR_TESTER
 
