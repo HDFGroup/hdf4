@@ -43,6 +43,7 @@ $CMD dumpvd -c "Test object","No class specified" tvset.hdf
 $CMD dumpvd -f B tvset.hdf
 $CMD dumpvd -f "STATION_NAME","FLOATS" tvset.hdf
 $CMD dumpvd -f "STATION_NAME","FLOATS" -d tvset.hdf
+$CMD dumpvd tvattr.hdf
 
 # Test command dumpvg
 $CMD dumpvg tvset.hdf
@@ -56,6 +57,7 @@ $CMD dumpvg -n nsamp,tdata.hdf tdata.hdf
 $CMD dumpvg -c CDF0.0 tdata.hdf
 $CMD dumpvg -c Dim0.0,Var0.0 tdata.hdf
 $CMD dumpvg -c Dim0.0,Var0.0 -d tdata.hdf
+$CMD dumpvg tvattr.hdf
 
 #Test command dumpgr
 $CMD dumpgr grtdfui82.hdf
