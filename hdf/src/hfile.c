@@ -1,137 +1,40 @@
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.27.2.1  1993/10/10 22:10:22  koziol
-Moved Tag descriptions into a header file.  Updated compression routines.
+/* $Id$  */
 
- * Revision 1.27  1993/10/06  20:27:45  koziol
- * More compression fixed, and folded Doug's suggested change into VSappendable.
- *
- * Revision 1.26  1993/10/04  20:02:56  koziol
- * Updated error reporting in H-Layer routines, and added more error codes and
- * compression stuff.
- *
- * Revision 1.25  1993/09/28  18:44:19  koziol
- * Fixed various things the Sun's pre-processor didn't like.
- *
- * Revision 1.24  1993/09/28  18:04:36  koziol
- * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
- * tag handling.  Added new compression special tag type.
- *
- * Revision 1.23  1993/09/21  00:58:37  georgev
- * With the new HDstrdup() need casts on the Mac and Convex.
- *
- * Revision 1.22  1993/09/20  19:56:09  koziol
- * Updated the "special element" function pointer array to be a structure
- * of function pointers.  This way, function prototypes can be written for the
- * functions pointers and some type checking done.
- *
- * Revision 1.21  1993/09/11  18:08:01  koziol
- * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
- * cleaned up some goofy string manipulations in various places.
- *
- * Revision 1.20  1993/09/08  20:55:37  georgev
- * Added #defines for THINK_C.
- *
- * Revision 1.19  1993/09/08  18:29:24  koziol
- * Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
- *
- * Revision 1.18  1993/09/03  14:10:13  koziol
- * Saved debugging info.
- *
- * Revision 1.17  1993/09/01  23:16:48  georgev
- * Fixed prototypes for MAC.
- *
- * Revision 1.16  1993/08/16  21:45:58  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.15  1993/07/01  20:08:03  chouck
- * Made the hash table use fewer malloc() and free() pairs to improve
- * efficiency and (hopefully) reduce PC memory fragmentation.
- *
- * Revision 1.14  1993/05/03  21:32:14  koziol
- * First half of fixes to make Purify happy
- *
- * Revision 1.13  1993/04/22  20:24:13  koziol
- * Added new Hfind() routine to hfile.c which duplicates older DFsetfind/DFfind
- * utility...
- *
- * Revision 1.11  1993/04/14  21:39:18  georgev
- * Had to add some VOIDP casts to some functions to make the compiler happy.
- *
- * Revision 1.10  1993/01/19  05:55:52  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.9  1993/01/14  19:09:07  chouck
- * Added routine Hfidinquire() to get info about an open file
- *
- * Revision 1.8  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.7  1992/10/09  20:49:17  chouck
- * Added some patches to work with ThinkC I/O on the Mac
- *
- * Revision 1.6  1992/10/08  19:09:36  chouck
- * Changed file_t to hdf_file_t to make strict ANSI compliant
- *
- * Revision 1.5  1992/10/01  20:46:10  chouck
- * Fixed a Mac opening problem resulting from access change
- *
- * Revision 1.4  1992/09/15  21:04:06  chouck
- * Removed DFACC_CREATE problems.  Restored some other changes that had
- * gotten over-written
- *
- * Revision 1.3  1992/09/11  16:43:24  chouck
- * Minor Mac fix
- *
- * Revision 1.2  1992/08/26  19:44:25  chouck
- * Moved HDgettagname() into hkit.c and added calibration tag
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*LINTLIBRARY*/
 /*+
  FILE
        hfile.c
        HDF low level file I/O routines
  EXPORTED ROUTINES
-       Hopen -- open or create a HDF file
-       Hclose -- close HDF file
-       Hstartread -- locate and position a read access elt on a tag/ref
-       Hnextread -- locate and position a read access elt on next tag/ref.
-       Hinquire -- inquire stats of an access elt
+       Hopen       -- open or create a HDF file
+       Hclose      -- close HDF file
+       Hstartread  -- locate and position a read access elt on a tag/ref
+       Hnextread   -- locate and position a read access elt on next tag/ref.
+       Hinquire    -- inquire stats of an access elt
        Hstartwrite -- set up a WRITE access elt for a write
        Happendable -- attempt make a dataset appendable
-       Hseek -- position an access element to an offset in data element
-       Hread -- read the next segment from data element
-       Hwrite -- write next data segment to data element
-       Hendaccess -- to dispose of an access element
+       Hseek       -- position an access element to an offset in data element
+       Hread       -- read the next segment from data element
+       Hwrite      -- write next data segment to data element
+       Hendaccess  -- to dispose of an access element
        Hgetelement -- read in a data element
-       Hlength -- returns length of a data element
-       Htrunc -- truncate a dataset to a length
-       Hoffset -- get offset of data element in the file
+       Hlength     -- returns length of a data element
+       Htrunc      -- truncate a dataset to a length
+       Hoffset     -- get offset of data element in the file
        Hputelement -- writes a data element
-       Hdupdd -- duplicate a data descriptor
-       Hdeldd -- delete a data descriptor
-       Hnewref -- returns a ref that is guaranteed to be unique in the file
-       Hishdf -- tells if a file is an HDF file
-       Hsync -- sync file with memory
-       Hnumber -- count number of occurrances of tag/ref in file
-       Hgetlibversion -- return version info on current HDF library
+       Hdupdd      -- duplicate a data descriptor
+       Hdeldd      -- delete a data descriptor
+       Hnewref     -- returns a ref that is guaranteed to be unique in the file
+       Hishdf      -- tells if a file is an HDF file
+       Hsync       -- sync file with memory
+       Hnumber     -- count number of occurrances of tag/ref in file
+       Hgetlibversion  -- return version info on current HDF library
        Hgetfileversion -- return version info on HDF file
- AUTHOR
-       Chin_Chau Low
- MODIFICATION HISTORY
-	12/12/91 Doug Ilg  Changed implementation of version tags.  Added
-			   Hgetlibversion() and Hgetfileversion() (public) and
-			   HIread_version() and HIupdate_version() (PRIVATE).
+
 +*/
 
 #define HMASTER
@@ -140,18 +43,6 @@ Moved Tag descriptions into a header file.  Updated compression routines.
 #include "herr.h"
 #include "hfile.h"
 
-/*
-** Prototypes for local functions
-*/
-static int HIlock
-  PROTO((int32 file_id));
-
-static int HIunlock
-  PROTO((int32 file_id));
-
-static int HIchangedd
-  PROTO((dd_t *datadd, ddblock_t *block, int idx, int16 special,
-	 VOIDP special_info, funclist_t *special_func));
 
 /* Array of file records that contains all relevant
    information on an opened HDF file.
@@ -211,25 +102,35 @@ functab_t functab[] = {
 /*
 ** Declaration of private functions.
 */
-PRIVATE int HIget_file_slot
+PRIVATE intn HIlock
+  PROTO((int32 file_id));
+
+PRIVATE intn HIunlock
+  PROTO((int32 file_id));
+
+PRIVATE intn HIchangedd
+  PROTO((dd_t *datadd, ddblock_t *block, intn idx, int16 special,
+	 VOIDP special_info, funclist_t *special_func));
+
+PRIVATE intn HIget_file_slot
   PROTO((char *path, char *FUNC));
 
 PRIVATE bool HIvalid_magic
   PROTO((hdf_file_t file, char *FUNC));
 
-PRIVATE int HIfill_file_rec
+PRIVATE intn HIfill_file_rec
   PROTO((filerec_t *file_rec, char *FUNC));
 
-PRIVATE int HIinit_file_dds
+PRIVATE intn HIinit_file_dds
   PROTO((filerec_t *file_rec, int16 ndds, char *FUNC));
 
 PRIVATE funclist_t *HIget_function_table 
   PROTO((accrec_t *access_rec, char *FUNC));
 
-PRIVATE int HIupdate_version
+PRIVATE intn HIupdate_version
   PROTO((int32));
 
-PRIVATE int HIread_version
+PRIVATE intn HIread_version
   PROTO((int32));
 
 /*--------------------------------------------------------------------------
@@ -290,42 +191,39 @@ int32 Hopen(path, access, ndds)
     int vtag = 0;		/* write version tag? */
 
     /* Clear errors and check args and all the boring stuff. */
-
     HEclear();
-    if (!path || ((access & DFACC_ALL) != access))
+    if (!path || ((access & DFACC_ALL) != access)) 
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* Get a space to put the file information.
-       HIget_file_slot() also copies path into the record. */
-
+     * HIget_file_slot() also copies path into the record. */
     slot = HIget_file_slot(path, FUNC);
-    if (slot == FAIL)   /* The slots are full. */
-       HRETURN_ERROR(DFE_TOOMANY,FAIL);
+    if (slot == FAIL) 
+       HRETURN_ERROR(DFE_TOOMANY, FAIL); /* The slots are full. */
+
     file_rec = &(file_records[slot]);
-
     if (file_rec->refcount) {
-       /* File is already opened, check that permission is okay. */
+    /* File is already opened, check that permission is okay. */
 
-        /* If this request is to create a new file and file is still
-          in use, return error. */
-       if (access == DFACC_CREATE)
-           HRETURN_ERROR(DFE_ALROPEN,FAIL);
+    /* If this request is to create a new file and file is still
+     * in use, return error. */
+    if (access == DFACC_CREATE) 
+       HRETURN_ERROR(DFE_ALROPEN,FAIL);
 
-       if ((access & DFACC_WRITE) && !(file_rec->access & DFACC_WRITE)) {
-           /* If the request includes writing, and if original open does not
-              provide for write, then try to reopen file for writing.
-              This cannot be done on OS (such as the SXOS) where only one
-              open is allowed per file at any time. */
+    if ((access & DFACC_WRITE) && !(file_rec->access & DFACC_WRITE)) {
+       /* If the request includes writing, and if original open does not
+          provide for write, then try to reopen file for writing.
+          This cannot be done on OS (such as the SXOS) where only one
+          open is allowed per file at any time. */
 #ifndef NO_MULTI_OPEN
            hdf_file_t f;
 
            f = HI_OPEN(file_rec->path, access);
-           if (OPENERR(f))
+           if (OPENERR(f)) 
                HRETURN_ERROR(DFE_DENIED,FAIL);
 
            /* Replace file_rec->file with new file pointer and
               close old one. */
-
            if (HI_CLOSE(file_rec->file) == FAIL) {
                HI_CLOSE(f);
                HRETURN_ERROR(DFE_CANTCLOSE,FAIL);
@@ -333,16 +231,15 @@ int32 Hopen(path, access, ndds)
            file_rec->file = f;
 #else /* NO_MULTI_OPEN */
            HRETURN_ERROR(DFE_DENIED,FAIL);
+           return FAIL;
 #endif /* NO_MULTI_OPEN */
        }
 
        /* There is now one more open to this file. */
-
        file_rec->refcount++;
-
     } else {
 
-        /* Flag to see if file is new and needs to be set up. */
+       /* Flag to see if file is new and needs to be set up. */
        bool new_file=FALSE;
 
        /* Open the file, fill in the blanks and all the good stuff. */
@@ -354,36 +251,32 @@ int32 Hopen(path, access, ndds)
                if (access & DFACC_WRITE) {
                    /* Seems like the file is not there, try to create it. */
                    new_file = TRUE;
-               } else
+               } else 
                    HRETURN_ERROR(DFE_BADOPEN,FAIL);
+
            } else {
                /* Open existing file successfully. */
-
                file_rec->access = access | DFACC_READ;
 
                /* Check to see if file is a HDF file. */
-
                if (!HIvalid_magic(file_rec->file, FUNC)) {
                    HI_CLOSE(file_rec->file);
                    HRETURN_ERROR(DFE_NOTDFFILE,FAIL);
                }
 
                /* Read in all the relevant data descriptor records. */
-
                if (HIfill_file_rec(file_rec, FUNC) == FAIL) {
                    HI_CLOSE(file_rec->file);
                    HRETURN_ERROR(DFE_BADOPEN,FAIL);
                }
            }
        }
-
        /* do *not* use else here */
 
        if (access == DFACC_CREATE || new_file) {
-           /* create the file */
-
+        /* create the file */
         /* version tags */
-            vtag = 1;
+         vtag = 1;
         /* end version tags */
 
            file_rec->file = HI_CREATE(path);
@@ -392,13 +285,15 @@ int32 Hopen(path, access, ndds)
 
            /* set up the newly created (and empty) file with
               the magic cookie and initial data descriptor records */
+           if (HI_WRITE(file_rec->file, HDFMAGIC, MAGICLEN) == FAIL) 
+               HRETURN_ERROR(DFE_WRITEERROR,FAIL);
 
-           if (HI_WRITE(file_rec->file, HDFMAGIC, MAGICLEN) == FAIL)
+           if (HI_FLUSH(file_rec->file) == FAIL)  /* flush the cookie */
                HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-           if (HI_FLUSH(file_rec->file) == FAIL)   /* flush the cookie */
+
+           if (HIinit_file_dds(file_rec, ndds, FUNC) == FAIL) 
                HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-           if (HIinit_file_dds(file_rec, ndds, FUNC) == FAIL)
-               HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+
            file_rec->maxref = 0;
            file_rec->access = new_file ? access | DFACC_READ : DFACC_ALL;
        }
@@ -2233,10 +2128,10 @@ int HDerr(file_id)
    made special.  It actually just fills in the appropriate info
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-static int HIchangedd(dd_t *datadd, ddblock_t *block, int idx, int16 special,
+PRIVATE int HIchangedd(dd_t *datadd, ddblock_t *block, int idx, int16 special,
               VOIDP special_info, funclist_t *special_func)
 #else
-static int HIchangedd(datadd, block, idx, special, special_info, special_func)
+PRIVATE int HIchangedd(datadd, block, idx, special, special_info, special_func)
     dd_t *datadd;               /* dd that had been converted to special */
     ddblock_t *block;           /* new dd block of converted dd */
     int idx;                    /* next dd list index of converted dd */
@@ -2441,9 +2336,9 @@ VOIDP HIgetspinfo(access_rec, tag, ref)
  losing files taht are still accessed
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-static int HIlock(int32 file_id)
+PRIVATE int HIlock(int32 file_id)
 #else
-static int HIlock(file_id)
+PRIVATE int HIlock(file_id)
     int32 file_id;             /* file record id to lock */
 #endif
 {
@@ -2466,9 +2361,9 @@ static int HIlock(file_id)
  unlock a previously locked file record
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-static int HIunlock(int32 file_id)
+PRIVATE int HIunlock(int32 file_id)
 #else
-static int HIunlock(file_id)
+PRIVATE int HIunlock(file_id)
     int32 file_id;             /* file record to unlock */
 #endif
 {
@@ -2541,7 +2436,7 @@ typedef struct special_table_t {
     uint16 special_tag;
 } special_table_t;
 
-static special_table_t special_table[] = {
+PRIVATE special_table_t special_table[] = {
 {0x8010, 0x4000 | 0x8010},             /* dummy */
 };
 
@@ -3423,8 +3318,8 @@ intn  *attach;
 #include "Strings.h"
 #endif
 
-static int32 hdfc = 1061109567L;    /* equal to '????' in ascii */
-static int32 hdft = 1600085855L;    /* equal to '_HDF' in ascii */
+PRIVATE int32 hdfc = 1061109567L;    /* equal to '????' in ascii */
+PRIVATE int32 hdft = 1600085855L;    /* equal to '_HDF' in ascii */
 
 #ifdef MPW
 hdf_file_t
@@ -3458,7 +3353,7 @@ mopen(char *name, intn flags)
 }
 #else
 
-static Str255 pname;
+PRIVATE Str255 pname;
 
 hdf_file_t
 mopen(char *name, intn flags)
