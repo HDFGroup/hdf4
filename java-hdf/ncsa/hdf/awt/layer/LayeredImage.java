@@ -124,6 +124,7 @@ public class LayeredImage extends Frame
 
         filterSlider = new Slider();
         filterSlider.setSliderRange(0,255);
+        filterSlider.setSliderValue(255);
         filterSlider.setBounds(getInsets().left+455,getInsets().top+330,95,25);
         add(filterSlider);
 
@@ -228,11 +229,11 @@ public class LayeredImage extends Frame
         else if (target.equals(applyButton))
         {
             ImageFilter filter = null;
-            double f = -1;
+            double f = 0;
 
             // check to see if slider changed
             if (filterSlider.sliderChanged())
-                f = filterSlider.getValue();
+                f = 100-filterSlider.getValue();
 
             Color transColor = layerPane.getImageBackground();
             filter = (ImageFilter)new AlphaFilter(transColor,(float)f);
