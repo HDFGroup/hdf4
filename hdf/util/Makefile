@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.6  1992/08/05 21:27:55  chouck
+# Revision 1.7  1992/08/12 15:58:11  sxu
+# Removed redundant -I for CONVEX
+#
+# Revision 1.6  1992/08/05  21:27:55  chouck
 # Added support for moving utils to HDFBIN
 #
 # Revision 1.5  1992/07/31  21:20:39  chouck
@@ -48,7 +51,7 @@ HDFBIN = ../bin
 CFLAGS = -D$(MACHINE) -I$(HDFINC) 
 
 # ==> For Convex, specify CFLAGS as follows:
-# CFLAGS=  -g -D$(MACHINE) -I$(INCDIR)  -L$(LIBDIR) -D__STDC__
+# CFLAGS=  -g -D$(MACHINE) -D__STDC__
 
 .c.o: he.h he_proto.h
 	$(CC) -c $(CFLAGS) -I$(HDFINC) $(HDFLIB)/libdf.a $<
