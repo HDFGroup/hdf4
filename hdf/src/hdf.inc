@@ -421,8 +421,10 @@ c	SPECIAL CODES
 c	PARAMETERS 
 
       integer	DF_MAXFNLEN
+      integer   SD_UNLIMITED
 
-      parameter(DF_MAXFNLEN	= 256)
+      parameter(DF_MAXFNLEN	= 256,
+     *		SD_UNLIMITED	= 0)
 
 
 C       Statndard return codes       
