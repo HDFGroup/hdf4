@@ -1212,9 +1212,11 @@ nvsqfintr(intf * vkey, intf * interlace)
 FRETVAL(intf)
 nvsqfldsc(intf * vkey, _fcd fields, intf *fieldslen)
 {
-    char       *fld= HDf2cstring(fields, (intn) *fieldslen);
+    char       *fld;
     intf        ret;
 
+    fld= HDf2cstring(fields, (intn) *fieldslen);
+    if (!fld) return(FAIL);
     ret = (intf) VSQueryfields((int32) *vkey, fld);
     HDfree(fld);
 
@@ -1248,52 +1250,83 @@ nvsqfvsiz(intf * vkey, intf * size)
 FRETVAL(intf)
 nvsqnamec(intf * vkey, _fcd name, intf *namelen)
 {
-    char       *nam= HDf2cstring(name, (intn) *namelen);
+    char       *nam;
     intf        ret;
 
-    /* trimendblanks(nam); */
+    nam= HDf2cstring(name, (intn) *namelen);
+    if (!nam) return(FAIL);
     ret = (intf) VSQueryname((int32) *vkey, nam);
     HDfree(nam);
 
     return (ret);
 }
+
+
 /* ------------------------------------------------------------------ */
 FRETVAL(intf)
 nvsfccpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz,
         intf *nrecs, _fcd pckfld, _fcd fldbuf, intf *buflds_len, intf *fld_len)
 {      
-    char  *flds_in_buf=HDf2cstring(buflds, (intn) *buflds_len);
-    char  *afield = HDf2cstring(pckfld, (intn) *fld_len);
+    char  *flds_in_buf;
+    char  *afield;
     intf ret;
   
-    if (strcmp(flds_in_buf,"\0") == 0) 
+    flds_in_buf=HDf2cstring(buflds, (intn) *buflds_len);
+    if (!flds_in_buf){
+	return(FAIL);
+    }
+    afield = HDf2cstring(pckfld, (intn) *fld_len);
+    if (!afield) {
+	HDfree(flds_in_buf);
+	return(FAIL);
+    }
+    if (*flds_in_buf == '\0'){
+	HDfree(flds_in_buf);
         flds_in_buf = NULL;
-    if (strcmp(afield, "\0") == 0)
+    }
+    if (*afield == '\0'){
+	HDfree(afield);
         afield = NULL;
+    }
     ret = VSfpack((int32)*vs, (int32)*packtype, flds_in_buf, (VOIDP)buf, 
          (int32)*bufsz, (int32)*nrecs, afield, (VOIDP)_fcdtocp(fldbuf));
-    HDfree(flds_in_buf);
-    HDfree(afield);
+
+    if (flds_in_buf) HDfree(flds_in_buf);
+    if (afield) HDfree(afield);
     return(ret);
 }
+
+
 /* ------------------------------------------------------------------ */
 FRETVAL(intf)
 nvsfncpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz,
         intf *nrecs, _fcd pckfld, intf *fldbuf, intf *buflds_len, intf *fld_len)
 {     
-    char  *flds_in_buf=HDf2cstring(buflds, (intn) *buflds_len);
-    char  *afield=HDf2cstring(pckfld, (intn) *fld_len);
+    char  *flds_in_buf;
+    char  *afield;
     intf ret;
-   
-    if (strcmp(flds_in_buf,"\0") == 0)
-       flds_in_buf = NULL;
-    if (strcmp(afield, "\0") == 0)
-       afield = NULL;
+  
+    flds_in_buf=HDf2cstring(buflds, (intn) *buflds_len);
+    if (!flds_in_buf){
+	return(FAIL);
+    }
+    afield = HDf2cstring(pckfld, (intn) *fld_len);
+    if (!afield) {
+	HDfree(flds_in_buf);
+	return(FAIL);
+    }
+    if (*flds_in_buf == '\0'){
+	HDfree(flds_in_buf);
+        flds_in_buf = NULL;
+    }
+    if (*afield == '\0'){
+	HDfree(afield);
+        afield = NULL;
+    }
     ret = VSfpack((int32)*vs, (int32)*packtype, flds_in_buf, (VOIDP)buf, 
                   (int32)*bufsz, (int32)*nrecs, afield, (VOIDP)fldbuf);
-    HDfree(flds_in_buf); 
-    HDfree(afield);
+
+    if (flds_in_buf) HDfree(flds_in_buf);
+    if (afield) HDfree(afield);
     return(ret);
 }
- 
-
