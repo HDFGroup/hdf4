@@ -379,6 +379,8 @@ C
       external vfgttrs
       integer  vfgver
       external vfgver
+      integer  vfind
+      external vfind
       integer  vfinq
       external vfinq
       integer  vfinqtr
@@ -506,7 +508,21 @@ C
       external vsfwrtc
       integer  vsfwrit
       external vsfwrit
-
+C
+C     Declarations of return values for HDF Vdata Field Functions
+C
+      external vffesiz
+      integer  vffesiz 
+      external vffisiz
+      integer  vffisiz
+      external vffname
+      integer  vffname
+      external vffordr
+      integer  vffordr
+      external vfftype
+      integer  vfftype
+      external vfnflds
+      integer  vfnflds
 C
 C     Declarations of return values for HDF Vdata Query functions
 C
