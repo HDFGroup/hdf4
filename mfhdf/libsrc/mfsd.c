@@ -50,6 +50,9 @@ status = SDisdimval_bwcomp(dimid);
 */
 
 #include "local_nc.h"
+#ifdef VMS
+#include <stat.h>
+#endif
 
 #ifdef HDF
 #include "mfhdf.h"
@@ -228,7 +231,7 @@ int32 SDstart(name, HDFmode)
 
     intn   cdfid;
     int32  fid;
-    intn   NCmode;
+    intn   NCmode, ret;
     NC   * handle;
 #if !(defined (MAC) || defined (macintosh) || defined(__MWERKS__) || defined (SYMANTEC_C))
     struct stat tmp_stat;
@@ -242,7 +245,7 @@ int32 SDstart(name, HDFmode)
     ncopts = 0;
 
     /* if file doesn't exist, make it an HDF file and create it */
-    if(HDstat(name, &tmp_stat)==(-1)) 
+    if((ret = HDstat((char *)name, &tmp_stat))==(-1)) 
         HDFmode|=DFACC_CREATE;
 
     if(HDFmode & DFACC_WRITE)
