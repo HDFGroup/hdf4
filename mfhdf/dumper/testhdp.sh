@@ -98,9 +98,9 @@ FINISH()
 {
     if [ $nerrors -eq 0 ]
     then
-	MESG 0 "All tests passed"
+	MESG 0 "All hdp tests passed"
     else
-	MESG 0 "Tests failed: $nerrors"
+	MESG 0 "hdp tests failed: $nerrors"
     fi
     exit $nerrors
 }
@@ -146,6 +146,8 @@ do
     shift
 done
     
+# Print a beginning banner
+MESG 0 "Running hdp tests"
 
 # Test command list
 MESG 3 Test command list
