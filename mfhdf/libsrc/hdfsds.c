@@ -699,7 +699,7 @@ PRIVATE intn hdf_read_ndgs(handle)
                     vars[current_var]->data_tag = DFTAG_SDS;  /* not normal data */
                     vars[current_var]->data_ref = sRef;
                     vars[current_var]->HDFtype  = scaletypes[dim];
-                    vars[current_var]->ndg_ref  = Hnewref(handle->hdf_file);
+                    vars[current_var]->ndg_ref  = Htagnewref(handle->hdf_file,DFTAG_NDG);
 
                     /*
                      * See if a scales record has been stored and if there have

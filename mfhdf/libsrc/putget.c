@@ -772,7 +772,7 @@ NC_var *vp;
      * --------------------------------------
      */
 
-    vsid = Hnewref(handle->hdf_file);
+    vsid = Htagnewref(handle->hdf_file,DATA_TAG);
 #ifdef DEBUG
     fprintf(stderr, "--- Allocating new data storage szof=%d, to_do=%d\n",(int)vp->szof, (int)to_do);
     fprintf(stderr, "byte_count=%d\n", (int)byte_count);

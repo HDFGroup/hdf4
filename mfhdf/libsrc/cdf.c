@@ -899,7 +899,7 @@ NC_var **var;
   else
       outNT = DFNTF_IEEE;
 
-  ref = Hnewref(handle->hdf_file);
+  ref = Htagnewref(handle->hdf_file,DFTAG_NT);
   ntstring[0] = DFNT_VERSION;                    /* version */
   ntstring[1] = (uint8)((*var)->HDFtype & 0xff); /* type */
   ntstring[2] = (uint8)((*var)->HDFsize * 8);    /* width (in bits) */

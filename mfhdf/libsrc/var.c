@@ -285,7 +285,7 @@ const int dims[] ;
 	if( NC_var_shape(*var, handle->dims) != -1)
 	{
 #ifdef HDF
-            (*var)->ndg_ref = Hnewref(handle->hdf_file);
+            (*var)->ndg_ref = Htagnewref(handle->hdf_file,DFTAG_NDG);
 #endif            
             return(handle->vars->count -1) ;
 	}

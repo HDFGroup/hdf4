@@ -934,7 +934,7 @@ int32 nt, rank, *dimsizes;
     var->HDFsize = DFKNTsize(nt);
     var->cdf = handle; /* set cdf before calling NC_var_shape */
     /* get a new NDG ref for this sucker */
-    var->ndg_ref = Hnewref(handle->hdf_file);
+    var->ndg_ref = Htagnewref(handle->hdf_file,DFTAG_NDG);
 
     /* set ragged status */
     var->is_ragged = is_ragged;
@@ -2290,7 +2290,7 @@ int32    id, nt;
         return FAIL;
     
     /* get a new NDG ref for this sucker */
-    var->ndg_ref = Hnewref(handle->hdf_file);
+    var->ndg_ref = Htagnewref(handle->hdf_file,DFTAG_NDG);
 
     /* add it to the handle */
     if(handle->vars->count >= MAX_NC_VARS)
@@ -2861,7 +2861,7 @@ intn SDsetexternalfile(int32 id, char *filename, int32 offset)
         length = var->len;
 
         /* element doesn't exist so we need a reference number */
-        var->data_ref = Hnewref(handle->hdf_file);
+        var->data_ref = Htagnewref(handle->hdf_file,DATA_TAG);
         if(var->data_ref == 0)
             return FAIL;
 
@@ -2967,7 +2967,7 @@ printf("SDsetnbitdata(): dataset doesn't exist\n");
 #endif
 
         /* element doesn't exist so we need a reference number */
-        var->data_ref=Hnewref(handle->hdf_file);
+        var->data_ref=Htagnewref(handle->hdf_file,DATA_TAG);
         if(var->data_ref == 0)
             return FAIL;
       } /* end if */
@@ -3045,7 +3045,7 @@ printf("SDsetnbitdata(): dataset doesn't exist\n");
 #endif
 
         /* element doesn't exist so we need a reference number */
-        var->data_ref=Hnewref(handle->hdf_file);
+        var->data_ref=Htagnewref(handle->hdf_file,DATA_TAG);
         if(var->data_ref == 0)
             return FAIL;
       } /* end if */
