@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.36  1993/09/21 16:19:04  georgev
-Added an ansi cast to strlen().
+Revision 1.37  1993/09/27 20:59:49  briand
+Added MIPSEL to the list for strdup
 
+ * Revision 1.36  1993/09/21  16:19:04  georgev
+ * Added an ansi cast to strlen().
+ *
  * Revision 1.35  1993/09/15  19:41:16  georgev
  * Added #define for Mac for local HDstrdup().
  *
@@ -1164,7 +1167,7 @@ extern uint8 FAR *DFtbuf;
 #  define HDstrncpy(s1,s2,n)    (strncpy((s1),(s2),(n)))
 #  define HDstrchr(s,c)    (strchr((s),(c)))
 /* Can't use on PCs. strdup() uses malloc() and HDgetspace uses halloc() */
-#if !(defined VMS | (defined PC & !defined PC386) | defined macintosh)
+#if !(defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL)
 #  define HDstrdup(s)      (strdup((s)))
 #endif /* !(VMS | PC) */
 #endif /* WIN3 */
