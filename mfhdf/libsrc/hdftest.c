@@ -4072,7 +4072,7 @@ main(int argc, char *argv[])
     status = test_szip_compression();  /* defined in tszip.c */
     num_errs = num_errs + status;
 
-    printf("num_errs == %d\n", num_errs);
+    printf("num_err == %d\n", num_errs);
 
     exit(num_errs);
     return num_errs;
