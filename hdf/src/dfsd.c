@@ -5,11 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.10  1992/12/30 16:09:50  sxu
-replaced dfsdpre32() with dfsdpre32sdg()
- A bug is fixed in DFSDIputndg.LUF: writes out null strings
-when datastrs are set and dimstrs are not.
+Revision 1.11  1993/01/05 17:53:55  chouck
+DFSDIgetndg() was leaving active AIDs on error
 
+ * Revision 1.10  1992/12/30  16:09:50  sxu
+ * replaced dfsdpre32() with dfsdpre32sdg()
+ *  A bug is fixed in DFSDIputndg.LUF: writes out null strings
+ * when datastrs are set and dimstrs are not.
+ *
  * Revision 1.9  1992/12/21  16:56:55  chouck
  * Fixed problem reading old float32 calibration tags
  *
@@ -1881,38 +1884,57 @@ DFSsdg *sdg;
                 return FAIL;
             
             /* read rank */
-            if (Hread(aid, (int32) 2, DFtbuf) == FAIL) return FAIL;
+            if (Hread(aid, (int32) 2, DFtbuf) == FAIL)  {
+                Hendaccess(aid);
+                return FAIL;
+            }
             p = DFtbuf;
             INT16DECODE(p, sdg->rank);
             
             /* get space for dimensions */
             sdg->dimsizes = (int32 *) HDgetspace((uint32) sdg->rank *
                                                  sizeof(int32));
-            if (sdg->dimsizes == NULL) return FAIL;
+            if (sdg->dimsizes == NULL) {
+                Hendaccess(aid);
+                return FAIL;
+            }
 
             /* read dimension record */
-            if (Hread(aid, (int32) 4 * sdg->rank,DFtbuf) == FAIL) return FAIL;
+            if (Hread(aid, (int32) 4 * sdg->rank,DFtbuf) == FAIL) {
+                Hendaccess(aid);
+                return FAIL;
+            }
+
             p = DFtbuf;
             for (i=0; i<sdg->rank; i++)
                 INT32DECODE(p, sdg->dimsizes[i]);
             
             /* read tag/ref of NT */
-            if (Hread(aid,(int32) 4,  DFtbuf) == FAIL) return FAIL;
+            if (Hread(aid,(int32) 4,  DFtbuf) == FAIL) {
+                Hendaccess(aid);
+                return FAIL;
+            }
             p = DFtbuf;
             UINT16DECODE(p, nt.tag);
             UINT16DECODE(p, nt.ref);
             
             /* read actual NT */
-            if (Hgetelement(file_id, nt.tag, nt.ref, ntstring) == FAIL)
+            if (Hgetelement(file_id, nt.tag, nt.ref, ntstring) == FAIL) {
+                Hendaccess(aid);
                 return FAIL;
+            }
             
             /* check for any valid NT */
-            if (ntstring[1] == DFNT_NONE) 
+            if (ntstring[1] == DFNT_NONE) {
+                Hendacess(aid);
                 HRETURN_ERROR(DFE_BADCALL, FAIL);
+            }
             
             /* if looking for an SDG type must be FLOAT32 */
-            if (tag == DFTAG_SDG && ntstring[1] != DFNT_FLOAT32)
+            if (tag == DFTAG_SDG && ntstring[1] != DFNT_FLOAT32) {
+                Hendaccess(aid);
                 HRETURN_ERROR(DFE_BADCALL, FAIL);
+            }
                 
             /* set NT info */
             numtype = ntstring[1];
@@ -1920,6 +1942,7 @@ DFSsdg *sdg;
             platnumsubclass = DFKgetPNSC(numtype, DF_MT);
             if ((fileNT != DFNTF_HDFDEFAULT) &&
                 (fileNT != platnumsubclass))    {
+                Hendaccess(aid);
                 HERROR(DFE_BADCALL); return FAIL;
             }
             if (fileNT != DFNTF_HDFDEFAULT) /* if native */
@@ -1933,22 +1956,31 @@ DFSsdg *sdg;
 
             /* read and check all scale NTs */
             for (i=0; i < sdg->rank; i++) {
-                if (Hread(aid, (int32) 4, DFtbuf) == FAIL) return FAIL;
+                if (Hread(aid, (int32) 4, DFtbuf) == FAIL) {
+                    Hendaccess(aid);
+                    return FAIL;
+                }
                 p = DFtbuf;
                 UINT16DECODE(p, nt.tag);
                 UINT16DECODE(p, nt.ref);
                     
                 /* read NT itself */
-                if (Hgetelement(file_id, nt.tag,nt.ref, ntstring) == FAIL)
-                        return FAIL;
+                if (Hgetelement(file_id, nt.tag,nt.ref, ntstring) == FAIL) {
+                    Hendaccess(aid);
+                    return FAIL;
+                }
 
                 /* check for any valid NT */
-                if (ntstring[1] == DFNT_NONE) 
+                if (ntstring[1] == DFNT_NONE) {
+                    Hendaccess(aid);
                     HRETURN_ERROR(DFE_BADCALL, FAIL);
+                }
             
                 /* if looking for an SDG type must be FLOAT32 */
-                if (tag == DFTAG_SDG && ntstring[1] != DFNT_FLOAT32)
+                if (tag == DFTAG_SDG && ntstring[1] != DFNT_FLOAT32) {
+                    Hendaccess(aid);
                     HRETURN_ERROR(DFE_BADCALL, FAIL);
+                }
 
             }
             Hendaccess(aid);
@@ -2026,15 +2058,21 @@ DFSsdg *sdg;
 
             /* read isscales */
             isscales = HDgetspace((uint32) sdg->rank);
-            if (isscales == NULL) return FAIL;
-            if (Hread(aid, (int32) sdg->rank, isscales) == FAIL) 
+            if (isscales == NULL) {
+                Hendaccess(aid);
                 return FAIL;
+            }
+            if (Hread(aid, (int32) sdg->rank, isscales) == FAIL) {
+                Hendaccess(aid);
+                return FAIL;
+            }
 
             /* allocate scale pointers */
             sdg->dimscales = 
                 (uint8 **) HDgetspace((uint32) sdg->rank * sizeof(int8 *));
             if (sdg->dimscales == NULL) {
                 HDfreespace(isscales);
+                Hendaccess(aid);
                 return FAIL;
             }
 
@@ -2048,6 +2086,7 @@ DFSsdg *sdg;
                     HDgetspace((uint32) sdg->dimsizes[i] * localNTsize);
                 if (sdg->dimscales[i]==NULL) {
                     HDfreespace(isscales);
+                    Hendaccess(aid);
                     return FAIL;
                 }
 
@@ -2056,6 +2095,7 @@ DFSsdg *sdg;
                                 (uint8 *) sdg->dimscales[i]);
                     if (ret == FAIL) { 
                         HDfreespace(isscales);
+                        Hendaccess(aid);
                         return FAIL;
                     }
                 } else {                      /* conversion necessary */
@@ -2064,6 +2104,7 @@ DFSsdg *sdg;
                     buf = HDgetspace((uint32)sdg->dimsizes[i] * fileNTsize);
                     if (buf == NULL) {
                         HDfreespace(isscales);
+                        Hendaccess(aid);
                         return FAIL;
                     }
 
@@ -2073,6 +2114,7 @@ DFSsdg *sdg;
                     if (ret == FAIL) {
                         buf = HDfreespace(buf);
                         HDfreespace(isscales);
+                        Hendaccess(aid);
                         return FAIL;
                     }
                             
