@@ -1,4 +1,4 @@
-      Install HDF4.1 Release 2 on Windows NT and Windows 95
+      Install HDF4.1 Release 2 on Windows NT and Windows 95, and Alpha NT.
 
 Since Windows NT, Windows '95 (Chicago) and Windows 3.1
 (with the Win 32s extensions) all are designed to run the same 32-bit code, our 
@@ -10,16 +10,15 @@ The instructions which follow assume that you will be using one of
 the 'zip' files that we provide, either the binary code release
 (hdf41r2.zip) or the source code release (hdf41r2s.zip).
 In building HDF from source code you may select between 
-three build environment options depending on your
+two build environment options depending on your
 application and environment needs.  Each option has it's own zip file:
 
-Option I, (select Win32min.zip)
-Minimal configuration :  HDF library only, no fortran
 
-Option II, (select Win32nof.zip)
-Test and Utility configuration : HDF library, tests, and utilities, no fortran
+Option I, (select Win32nof.zip)
+Test and Utility configuration : HDF library, tests, and utilities, no fortran,
+available for Win32 Intel platform only.
 
-Option III, (select Win32full.zip)
+Option II, (select Win32full.zip)
 Full configuration : HDF library, tests, and utilities, with fortran
 This version has been built and tested using DEC Visual Fortran on both
 the Win32 Intel platform and the Win32 Alpha platform.
@@ -28,7 +27,7 @@ the Win32 Intel platform and the Win32 Alpha platform.
 
 Building from Binary Code Release (hdf41r2.zip)
 ===============================================
-To install the HDF, JPEG, zlib and netCDF libraries and utilities, 
+To install the HDF, JPEG, zlib and mfhdf libraries and utilities, 
 it is assumed that you have done the following:
       
 
@@ -66,10 +65,12 @@ Building from Source Code Release (hdf41r2s.zip)
 
 STEP I:  Preconditions
 
-To build the HDF, JPEG, zlib and netCDF libraries and utilities, 
+To build the HDF, JPEG, zlib and mfhdf libraries and utilities, 
 it is assumed that you have done the following:
       
-      1. Installed MicroSoft Developer Studio and Visual C++ 5.0.
+      1. Installed MicroSoft Developer Studio, and Visual C++ 5.0.
+         Visual Fortran 5.0 is needed if you are going to build the
+         full HDF Library with Fortran support.
 
       2. Set up a directory structure to unpack the library. For 
       example: 
@@ -82,7 +83,7 @@ it is assumed that you have done the following:
       create a directory  hierarchy.
          
       Run WinZip on HDF41r2s.zip (the entire source tree).
-      This should create a directory called 'dev' which 
+      This should create a directory called 'HDF41r2' which 
       contains several files and directories.
       
       ( Note for those using the Win32 Alpha platform:
@@ -90,85 +91,24 @@ it is assumed that you have done the following:
         you can download the needed executables from: 
         http://www.cdrom.com/pub/infozip ) 
        
-
-      4. Replace the contents of two text files with platform 
-         specific file contents.
-
-      copy C:\MyHDFstuff\dev\hdf\jpeg\config\jwin32.h  C:\MyHDFstuff\dev\hdf\jpeg\jconfig.h
-      copy C:\MyHDFstuff\dev\mfhdf\libsrc\win32cdf.h C:\MyHDFstuff\dev\mfhdf\libsrc\netcdf.h
-
-
 STEP II: Select Installation type and Build.
 
-You may select one of 3 ways to build the HDF library and 
+You may select one of 2 ways to build the HDF library and 
 utilities, depending on your environment and application needs.
 
-Option I, (select Win32min.zip)
-Minimal configuration :  HDF library only, no fortran
-
-Option II, (select Win32nof.zip)
+Option I, (select Win32nof.zip)
 Test and Utility configuration : HDF library, tests, and utilities, no fortran
 
-Option III, (select Win32full.zip)
+Option II, (select Win32full.zip)
 Full configuration : HDF library, tests, and utilities, with fortran
 
 
 
-STEP III: Follow Instructions for Option I, II, or III
-
-INSTRUCTIONS FOR OPTION I, MINIMAL INSTALLATION           
-
-   *** This is the minimal installation to build an application
-   *** using the HDF libraries in a Windows project.
-   
-                       
-              1. Run WinZip on 
-               c:\myHDFstuff\dev\win32min.zip
-               This archive contains a Developer Studio project "MFHDF41r2"
-               which, when expanded and built, will provide:
+STEP III: Follow Instructions for Option I, or II
 
 
-                  c:\			(any drive)
-                    MyHDFstuff\	        (any folder)
-                       dev\	        (created by HDF41r2s.zip)
- 	               dev\MFHDF41r2.dsp	(created by Win32min.zip;
-                                                 a MicroSoft Developer Studio 97(tm) project file)
-
-      	               dev\MFHDF41r2.dsw	(created by Win32min.zip;
-                                                 a MicroSoft Developer Studio 97(tm) workspace file)
-
-                       dev\install_NT_95.txt 	(created by Win32min.zip; this readme file)
-                       dev\hdf\hdf.dsp     	(created by Win32min.zip; project file)
-                       dev\mfhdf\mfhdf.dsp 	(created by Win32min.zip; profile file)
-                       dev\jpeg.dsp        	(created by Win32min.zip; project file)
-                       dev\xdr.dsp         	(created by Win32min.zip; project file)
-                       dev\zlib.dsp        	(created by Win32min.zip; project file)
-
-               
-              2. Open  c:\myHDFstuff\dev\MFHDF41r2.dsw workspace in Microsoft Developer Studio 97
-               and Visual C++ 5.0.(Service Pack 3 installed but not required).
-               You will be able to add your own source files to this project at a later point.
-               (NOTE: You should be able to open MFHDF41r2.dsw in MicroSoft Developer
-                       Studio as a workspace suitable for developing a project that 
-                       uses the HDF libraries as static libraries)
- 
-	      3. Select "Build", then Select "Set Active Configuration".
-                 Select "mfhdf -- Win32Debug" as active configuration.
-                 Select "Build" and "Build mfhdf.lib" to
-                 build the Debug version of the mfhdf static library.
-	         The 5 sub projects are all built as static libraries.
-  
-              4. Select "Build", then Select "Set Active Configuration".
-               Select "mfhdf -- Win32Release" as active configuration.
-               Select "Build" and "Build mfhdf.lib" to
-               build the Release version of the mfhdf static library.
-               The 5 sub projects are all built as static libraries.
-	
-              5. Add your own projects and source files to the Developers Studio
-	      project, to use the static libraries just built.
-
-
-INSTRUCTIONS FOR OPTION II, TEST AND UTILITY INSTALLATION, NO FORTRAN
+INSTRUCTIONS FOR OPTION I, TEST AND UTILITY INSTALLATION, NO FORTRAN
+                 (Win32 Intel platform only)
 
 	*** Builds hdf library, hdf utilities, 
 	*** test programs and batch files. No fortran code.
@@ -177,35 +117,53 @@ INSTRUCTIONS FOR OPTION II, TEST AND UTILITY INSTALLATION, NO FORTRAN
            Unpack dev\win32nof.zip in directory dev\
            
             Run WinZip on 
-               c:\myHDFstuff\dev\Win32nof.zip
-               This archive contains a Developer Studio project "dev" and two batch
-               files. 40 project files (*.dsp files) will be created when 
+               c:\myHDFstuff\HDF41r2\Win32nof.zip
+               This archive contains a Developer Studio project "dev" and 
+               two batch files. 
+               40 project files (*.dsp files) will be created when 
                Win32nof.zip is expanded.
 
-         2. Open  c:\myHDFstuff\dev\dev.dsw to begin building the Developer Studio project.
+         2. Invoke Microsoft Visial C++ 5.0, go to "File" and select
+            "Open Workspace" option. 
+            Then open  c:\myHDFstuff\HDF41r2\dev.dsw workspace. 
 
 	 3. Select "Build", then Select "Set Active Configuration".
             Select "dev -- Win32Debug" as active configuration.
             Select "Build" and "Build dev.exe" to
-            build the Debug version of the dev tree.
+            build the Debug version of the HDF41r2 tree.
 
 	 4. Select "Build", then Select "Set Active Configuration".
             Select "dev -- Win32Release" as active configuration.
             Select "Build" and "Build dev.exe" to
-            build the Release version of the dev tree.
+            build the Release version of the HDF41r2 tree.
 	
-         5. In command prompt window run the test batch commands
-       win32noftst.bat in directory dev\.
+         5. In command prompt window run the test batch file 
+            win32noftst.bat in directory HDF41r2\.
 
-         6. If all tests passed, run the installation batch commands
-       win32ins.bat in directory dev\. These commands will create
-       subdirectories bin\, include\ and lib\ in dev\.
-
-
-
+         6. If all tests passed, run the installation batch file 
+       win32ins.bat in directory HDF41r2\. Commands in this file will create
+       subdirectories bin\, include\ and lib\ in HDF41r2\. The bin dirctory
+       will contain the HDF utilities, the include directory will contain 
+       header files, and the lib directory will contain:
+               jpeg.lib     - JPEG Library
+               jpegd.lib    - JPEG Library with DEBUG option
+               libsrc.lib   - multi-file SDS Inteface routines
+               libsrcd.lib  - multi-file SDS Inteface routines with DEBUG option
+               src.lib      - multi-file Vdata Interface
+                                         Vgroup Interface
+                                         AN Interface
+                                         GR Interface routines
+               srcd.lib     - multi-file Vdata Interface
+                                         Vgroup Interface
+                                         AN Interface
+                                         GR Interface routines with DEBUG option
+               xdr.lib      - XDR Library
+               xdrd.lib     - XDR Library with DEBUG option
+               zlib.lib     - GNU Zip Library 
+               zlibd.lib    - GNU Zip Library with DEBUG option 
   
 
-INSTRUCTIONS FOR OPTION III, FULL INSTALLATION WITH FORTRAN
+INSTRUCTIONS FOR OPTION II, FULL INSTALLATION WITH FORTRAN
 
         
 	*** Builds the hdf library, hdf utility programs, test programs,
@@ -213,16 +171,18 @@ INSTRUCTIONS FOR OPTION III, FULL INSTALLATION WITH FORTRAN
         *** compiled with Digital Visual Fortran on either a Win32 Intel
         *** machine or a Win32 Alpha machine.
 
-	1. Unpack dev\Win32full.zip in directory dev\. 
+	1. Unpack HDF41r2\Win32full.zip in directory HDF41r2\. 
          
-        2. Open  c:\myHDFstuff\dev\dev.dsw to begin building the Developer Studio project.
+        2. Invoke Microsoft Visial C++ 5.0, go to "File" and select
+           "Open Workspace" option. 
+           Then open  c:\myHDFstuff\HDF41r2\dev.dsw workspace. 
 
         3. Select "Build", then Select "Set Active Configuration".
            Select as the active configuration "dev -- Win32Debug" 
            if you have a Win32 Intel processor OR 
            select "dev-Win32AlphaDbg" if you have a Win32 Alpha processor. 
            Select "Build" and "Build dev.exe" to
-           build the Debug version of the dev tree.
+           build the Debug version of the HDF41r2 tree.
            You will see that Digital Visual Fortran compiler is invoked
            by Visual C++ Development environment in compiling the fortran code.
 
@@ -231,19 +191,35 @@ INSTRUCTIONS FOR OPTION III, FULL INSTALLATION WITH FORTRAN
            if you have a Win32 Intel processor OR
            select "dev-Win32AlphaRel" if you have a Win32 Alpha processor.
            Select "Build" and "Build dev.exe" to
-           build the Release version of the dev tree.
+           build the Release version of the HDF41r2 tree.
 		
-        5. In command prompt window run the test batch command which
-       resides in the dev directory.
+        5. In command prompt window run the test batch file which
+       resides in the HDF41r2 directory.
        Run win32tst.bat if you have a Win32 Intel platform OR 
        run win32ALPHAtst.bat if you have the Win32 Alpha platform.
 
-	6. If all tests passed, run the installation batch command which
-       resides in the dev directory
+	6. If all tests passed, run the installation batch file which
+       resides in the HDF41r2 directory
        Run win32ins.bat if you have a Win32 Intel platform OR
        run win32ALPHAins.bat if you have a Win32 Alpha platform.
-       These commands will create
-       subdirectories bin\, include\ and lib\ in dev\.
+       Commands in these files will create
+       subdirectories bin\, include\ and lib\ in HDF41r2\. The bin dirctory
+       will contain the HDF utilities, include directory will contain 
+       header files, and the lib directory will contain:
+               jpeg.lib     - JPEG Library
+               jpegd.lib    - JPEG Library with DEBUG option
+               libsrc.lib   - multi-file SDS Inteface routines
+               libsrcd.lib  - multi-file SDS Inteface routines with DEBUG option               src.lib      - multi-file Vdata Interface
+                                         Vgroup Interface
+                                         AN Interface
+                                         GR Interface routines
+               srcd.lib     - multi-file Vdata Interface
+                                         Vgroup Interface
+                                         AN Interface
+               xdrd.lib     - XDR Library with DEBUG option
+               zlib.lib     - GNU Zip Library 
+               zlibd.lib    - GNU Zip Library with DEBUG option
+ 
 
 
 STEP IV:
@@ -266,26 +242,26 @@ for more information on compiling an application with the HDF libraries.
 
 MORE HELPFUL POINTERS
 =====================
-(as described in terms of installing the minimal configuration)
+(as described in terms of installing the  nofortran configuration)
 
-Here are some notes that may be of help is you are not familiar
+Here are some notes that may be of help if you are not familiar
 with using the Visual C++ Development Environment.
 
 Project name and location issues: 
-         The files in Win32min.zip must end up in the dev\ directory
+         The files in Win32nof.zip must end up in the HDF41r2\ directory
          installed by HDF41r2s.zip
 
-         If you must install MFHDF41r2.dsw and MFHDF41r2.dsp in 
-         another directory, relative to dev\ , you will be asked to
+         If you must install dev.dsw and dev.dsp in 
+         another directory, relative to HDF41r2\ , you will be asked to
 	 locate the above 5 sub-project files, when you open the
-	 project MFHDF41r1.dsw.
+	 project dev.dsw.
 	 
-	 If you want to rename MFHDF41R2 (the entire project),
+	 If you want to rename dev (the entire project),
 	 you will need to modify two files
-	 MFHDF41r1.dsw and MFHDF41r2.dsp as text
+	 dev.dsw and dev.dsp as text
 	 (contrary to the explicit warnings in the files).
 
-	 You can also modify MFHDF41r1.dsw and MFHDF41r2.dsp
+	 You can also modify dev.dsw and dev.dsp
 	 as text, to allow these 2 files to be installed
 	 in another directory.
 
@@ -293,7 +269,7 @@ Project name and location issues:
 
   Settings... details:
   If you create your own project, the necessary settings can be
-  read from the MFHDF41r2.dsp file(as text), or from the
+  read from the dev.dsp file(as text), or from the
   Project Settings in the Developer Studio project settings 
 dialog.
 
