@@ -302,6 +302,31 @@ intn Hfind(int32 file_id,       /* IN: file ID to search in */
                                 /*  DF_BACKWARD searches backward from the current location */
 );
 
+
+/************************************************************************
+NAME
+   HDreuse_tagref -- reuse a data descriptor preserving tag/ref
+
+DESCRIPTION
+   Reuses the data descriptor of tag/ref in the dd list of the file.
+   This routine is unsafe and may leave a file in a condition that is
+   not usable by some routines.  Use with care. Not valid for
+   special elments right now. Used for allowing the data to change
+   and move somewhere else in the file for non-special elements.
+   Must be carefully if apply to higher-level objects like GR's and SDS
+   that are comprised of other objects. 
+   Usefull when re-writing simple elements whose size changes while
+   preserving the original tag/ref of the element since other elements
+   might refer to this element by tag/ref e.g. in a Vgroup.
+
+RETURNS
+   returns SUCCEED (0) if successful, FAIL (-1) otherwise
+************************************************************************/
+intn 
+HDreuse_tagref(int32 file_id, /* IN: id of file */
+               uint16 tag,    /* IN: tag of data descriptor to reuse */
+               uint16 ref     /* IN: ref of data descriptor to reuse */ );
+
 /******************************************************************************
  NAME
      Hdeldd - Delete a data descriptor

@@ -356,8 +356,9 @@ intn HTPinit(filerec_t *file_rec,       /* IN: File record to store info in */
 
     /* Fill the first memory DD block with NIL dd's */
     list[0].tag = DFTAG_NULL;
-    list[0].ref = 0;
-    list[0].length = list[0].offset = 0;
+    list[0].ref = 0; /* invalid ref */
+    list[0].length = INVALID_LENGTH;
+    list[0].offset = INVALID_OFFSET;
     list[0].blk = block;
     HDmemfill(&list[1],&list[0],sizeof(dd_t),(uint32)(ndds-1));
 
@@ -368,9 +369,9 @@ intn HTPinit(filerec_t *file_rec,       /* IN: File record to store info in */
     /* Fill the first disk DD block with NIL dd's */
     p = tbuf;
     UINT16ENCODE(p, (uint16) DFTAG_NULL);
-    UINT16ENCODE(p, (uint16) 0);
-    INT32ENCODE(p, (int32) 0);
-    INT32ENCODE(p, (int32) 0);
+    UINT16ENCODE(p, (uint16) 0); /* invalid ref */
+    INT32ENCODE(p, (int32) INVALID_LENGTH);
+    INT32ENCODE(p, (int32) INVALID_OFFSET);
     HDmemfill(p,tbuf,DD_SZ,(uint32)(ndds-1));
 
     /* Write the NIL dd's out into the DD block on disk */
@@ -591,8 +592,11 @@ atom_t HTPcreate(filerec_t *file_rec,   /* IN: File record to store info in */
     /* Insert DD information into the DD list in memory */
     dd_ptr->tag=tag;
     dd_ptr->ref=ref;
+    /* the following assures object defintion in DD list 
+       without data written for object. */
     dd_ptr->offset=INVALID_OFFSET;
     dd_ptr->length=INVALID_LENGTH;
+
     /* dd_ptr->blk should already be correctly set */
 
     /* Update the disk, etc. */
@@ -771,8 +775,11 @@ done:
 
  DESCRIPTION
     Updates a tag/ref in the file, allowing the length and/or offset to be
-    modified. Note: "INVALID_OFFSET" & "INVALID_LENGTH" are used to indicate
-    that the length or offset (respectively) is unchanged.
+    modified. 
+
+    Note: a value of '-2' for both 'length' and 'offset' are used to indicate
+    that the length or offset (respectively) is unchanged and should
+    remain the same. Kind of ugly but works for now.
 
  RETURNS
     Returns SUCCEED if successful and FAIL otherwise
@@ -784,8 +791,9 @@ intn HTPupdate(atom_t ddid,             /* IN: DD id to update */
 )
 {
     CONSTR(FUNC, "HTPupdate");  /* for HERROR */
-    dd_t *dd_ptr;               /* ptr to the DD info for the tag/ref */
-    int32 ret_value=SUCCEED;
+    dd_t *dd_ptr    = NULL;     /* ptr to the DD info for the tag/ref */
+    int32 dont_change = -2;     /* initialize to '-2' */
+    int32 ret_value = SUCCEED;
 
     HEclear();
     /* Retrieve the atom's object, so we can update the DD */
@@ -793,9 +801,9 @@ intn HTPupdate(atom_t ddid,             /* IN: DD id to update */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* Update the tag/ref in memory */
-    if(new_len!=INVALID_LENGTH)
+    if(new_len != dont_change)
         dd_ptr->length=new_len;
-    if(new_off!=INVALID_OFFSET)
+    if(new_off != dont_change)
         dd_ptr->offset=new_off;
 
     /* Update the disk, etc. */
@@ -1235,6 +1243,69 @@ done:
     return ret_value;
 }	/* end Hfind() */
 
+/************************************************************************
+NAME
+   HDreuse_tagref -- reuse a data descriptor preserving tag/ref
+
+DESCRIPTION
+   Reuses the data descriptor of tag/ref in the dd list of the file.
+   This routine is unsafe and may leave a file in a condition that is
+   not usable by some routines.  Use with care. Not valid for
+   special elments right now. Used for allowing the data to change
+   and move somewhere else in the file for non-special elements.
+   Must be carefully if apply to higher-level objects like GR's and SDS
+   that are comprised of other objects.
+   Usefull when re-writing simple elements whose size changes while
+   preserving the original tag/ref of the element since other elements
+   might refer to this element by tag/ref e.g. in a Vgroup.
+
+RETURNS
+   returns SUCCEED (0) if successful, FAIL (-1) otherwise
+************************************************************************/
+intn 
+HDreuse_tagref(int32 file_id, /* IN: id of file */
+               uint16 tag,    /* IN: tag of data descriptor to reuse */
+               uint16 ref     /* IN: ref of data descriptor to reuse */ )
+{
+  CONSTR(FUNC, "HDreusedd");   /* for HERROR */
+  filerec_t  *file_rec = NULL; /* file record */
+  atom_t      ddid;            /* ID for the DD */
+  intn        ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+  TRACE_ON(H_mask, ID_HDreuse_tagref);
+#endif /* HAVE_PABLO */
+
+  /* clear error stack and check validity of file record id */
+  HEclear();
+
+  file_rec = HAatom_object(file_id);
+  if (BADFREC(file_rec) || tag == DFTAG_WILDCARD || ref == DFREF_WILDCARD)
+    HGOTO_ERROR(DFE_ARGS, FAIL);
+
+  /* look for the dd to reuse */
+  if ((ddid = HTPselect(file_rec, tag, ref)) == FAIL)
+    HGOTO_ERROR(DFE_NOMATCH, FAIL);
+
+  /* reuse the dd by setting the offset and length to
+     INVALID_OFFSET and INVALID_LENGTH*/
+  if (HTPupdate(ddid,INVALID_OFFSET, INVALID_LENGTH) == FAIL)
+    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(H_mask, ID_HDreuse_tagref);
+#endif /* HAVE_PABLO */
+
+  return ret_value;
+}	/* end HDreuse_tagref */
+
 /*--------------------------------------------------------------------------
 NAME
    Hdeldd -- delete a data descriptor
@@ -1475,8 +1546,9 @@ static intn HTInew_dd_block(filerec_t * file_rec)
 
     /* Fill the block with NIL tags */
     list[0].tag = DFTAG_NULL;
-    list[0].ref = 0;
-    list[0].length = list[0].offset = 0;
+    list[0].ref = 0; /* invalid ref */
+    list[0].length = INVALID_LENGTH;
+    list[0].offset = INVALID_OFFSET;
     list[0].blk = block;
     HDmemfill(&list[1],&list[0],sizeof(dd_t),(uint32)ndds-1);
   
@@ -1490,9 +1562,9 @@ static intn HTInew_dd_block(filerec_t * file_rec)
 
         p = tbuf;
         UINT16ENCODE(p, (uint16) DFTAG_NULL);
-        UINT16ENCODE(p, (uint16) 0);
-        INT32ENCODE(p, (int32) 0);
-        INT32ENCODE(p, (int32) 0);
+        UINT16ENCODE(p, (uint16) 0); /* invalid ref */
+        INT32ENCODE(p, (int32) INVALID_LENGTH);
+        INT32ENCODE(p, (int32) INVALID_OFFSET);
         HDmemfill(p,tbuf,DD_SZ,(uint32)(ndds-1));
 
         if (HP_write(file_rec, tbuf, ndds * DD_SZ) == FAIL)
