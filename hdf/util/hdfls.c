@@ -26,10 +26,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1992/03/11 20:53:33  chouck
-Use HDgettagname() to look up tag names.  Change the tag/ref look
-up routines to use Hiquire() and Hnextread instead of DFdescriptors()
+Revision 1.7  1992/03/18 17:49:26  chouck
+Added Hendaccess() call so that Hclose() will not FAIL
+,
 
+ * Revision 1.6  1992/03/11  20:53:33  chouck
+ * Use HDgettagname() to look up tag names.  Change the tag/ref look
+ * up routines to use Hiquire() and Hnextread instead of DFdescriptors()
+ *
  * Revision 1.5  1992/02/29  18:58:36  sxu
  * add header
  *
@@ -187,9 +191,12 @@ char *argv[];
 	
 	lprint(desc, n);
 
+	if(Hendaccess(aid) == FAIL) {
+	  HEprint(stderr, 0);
+	}
+
         if (Hclose(fid) == FAIL) {
-/* BUG:  This is failing, but I don't know why */
-/*	  HEprint(stderr, 0); */
+	  HEprint(stderr, 0);
 	}
 
         i++;
