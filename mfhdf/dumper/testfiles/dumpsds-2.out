@@ -5,14 +5,12 @@ File name: swf32.hdf
 
 Dimension Variable Name = fakeDim2
 	 Index = 2
-	 Type= 32-bit floating point
+	 Scale Type= 32-bit floating point
 	 Ref. = 5
 	 Rank = 1
 	 Number of attributes = 3
 	 Dim0: Name=fakeDim2
 		 Size = 4
-		 Type = number-type not set
-		 Number of attributes = 3
 	 Attr0: Name = long_name
 		 Type = 8-bit signed char 
 		 Count= 6
