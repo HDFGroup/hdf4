@@ -92,6 +92,7 @@ MPopen(const char * path, int flags)
       break;
     }
 
+  mpfs->oflags = flags;
   mpfs->curp = 0; /* set current page to none */
   mpfs->curpr = 0;
   mpfs->poff = 0;
@@ -153,13 +154,15 @@ MPclose(MPFILE *mpfs)
   fprintf(stderr,"MPclose: mp->npages =%d\n",fmpool_get_npages(mpfs->mp));
   fprintf(stderr,"MPclose: mp->lastpagesize =%d\n",fmpool_get_lastpagesize(mpfs->mp));
 #endif
-  /* sync pages and then close mpool*/
-  if (fmpool_sync(mpfs->mp) == RET_ERROR)
-    {
-      ret = FAIL;
-      goto done;
+  /* Don't sync the file for Read only access */
+  if (mpfs->oflags != DFACC_READ)
+    { /* sync pages and then close mpool*/
+      if (fmpool_sync(mpfs->mp) == RET_ERROR)
+        {
+          ret = FAIL;
+          goto done;
+        }
     }
-
 #ifdef STATISTICS
   fmpool_stat(mpfs->mp);
 #endif 
