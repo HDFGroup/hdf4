@@ -84,7 +84,6 @@
 #define NDDS_SZ 2
 #define OFFSET_SZ 4
 
->>>>>>> /tmp/T4001005
 /* invalid offset & length to indicate a partially defined element 
 * written to the HDF file i.e. can handle the case where the the
 * element is defined but not written out */
