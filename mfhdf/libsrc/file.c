@@ -886,7 +886,7 @@ int fillmode ;
 			 * so do a sync
 			 */
 #ifdef HDF       /* save the original x_op  */
-                 intn  xdr_op = handle->xdrs->x_op;
+                 enum xdr_op  xdr_op = handle->xdrs->x_op;
                  
                      if (handle->flags & NC_RDWR)   /* make sure we can write */
                          handle->xdrs->x_op = XDR_ENCODE; /*  to the file */

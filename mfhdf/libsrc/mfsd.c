@@ -4199,7 +4199,6 @@ int32 flags;
         default:
             status = FAIL;
             goto done;
-            break;
         }
       }
 

@@ -731,7 +731,7 @@ PRIVATE intn hdf_read_ndgs(handle)
                  *   stored with it.  
                  */
                 if(new_dim || (scalebuf && scalebuf[dim])) {
-                    int stype;
+                    nc_type stype;
                     if ((stype = hdf_unmap_type(scaletypes[dim])) == FAIL)
                       {
 #ifdef DEBUG
