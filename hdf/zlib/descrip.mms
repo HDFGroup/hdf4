@@ -21,9 +21,12 @@ libz.olb : libz.olb($(OBJS))
 
 example.exe : example.obj libz.olb
               link example,libz.olb/lib
-
 minigzip.exe : minigzip.obj libz.olb
-              link minigzip,libz.olb/lib,x11vms:xvmsutils.olb/lib
+              link minigzip,libz.olb/lib,sys$library:xlib.olb/lib
+#minigzip.exe : minigzip.obj libz.olb
+#              link minigzip,libz.olb/lib,sys$library:decwindows.olb/lib
+#minigzip.exe : minigzip.obj libz.olb
+#              link minigzip,libz.olb/lib,x11vms:xvmsutils.olb/lib
 
 clean : 
 	delete *.obj;*,libz.olb;*
