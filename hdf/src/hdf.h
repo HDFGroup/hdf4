@@ -98,6 +98,7 @@ typedef struct {
 #define DFNT_NATIVE   0x00001000    /* native format        */
 #define DFNT_CUSTOM   0x00002000    /* custom format        */
 #define DFNT_LITEND   0x00004000    /* Little Endian format */
+#define DFNT_MASK     0x00000fff    /* format mask */
 
 /* type info codes */
 

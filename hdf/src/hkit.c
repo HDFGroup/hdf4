@@ -591,6 +591,7 @@ intn HDgettagnum(const char *tag_name)
 --------------------------------------------------------------------------- */
 char _HUGE *HDgetNTdesc(int32 nt)
 {
+    CONSTR(FUNC,"HDgetNTdesc");       /* for HERROR */
     intn i;
     char _HUGE *ret_desc=NULL;
 
