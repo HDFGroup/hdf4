@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.1  1992/07/14 20:08:47  dilg
+# Revision 1.2  1992/07/15 19:36:00  chouck
+# Modified to conform to having a top level Makefile
+#
+# Revision 1.1  1992/07/14  20:08:47  dilg
 # Initial revision
 #
 #
@@ -10,6 +13,11 @@ UTILS = hdf24to8 hdfcomp hdfls hdfpack hdfrseq hdftopal hdftor8 paltohdf \
         r8tohdf ristosds vcompat vmake vshow
 
 HEOBJ = he_main.o he_cntrl.o he_disp.o he_file.o
+
+#
+# These values will typically be over ridden by values specified in
+#   top level HDF 
+#
 
 # ==> Uncomment the line with your system type on it.
 MACHINE = SUN
@@ -24,21 +32,25 @@ MACHINE = SUN
 #MACHINE = PC
 #MACHINE = HP9000
 
-LIBDIR = ../lib
-INCDIR = ../include
+HDFLIB = ../lib
+HDFINC = ../include
 
-CFLAGS = -D$(MACHINE) -I$(INCDIR) -L$(LIBDIR)
-
+CFLAGS = -D$(MACHINE) -I$(HDFINC)
 
 .c.o: he.h he_proto.h
-	$(CC) -c $(CFLAGS) $<
+	$(CC) -c $(CFLAGS) -I$(HDFINC) $(HDFLIB)/libdf.a $<
 
 all: hdfed utils
 
-hdfed: he.h he_proto.h $(HEOBJ)
-	$(CC) $(CFLAGS) $(HEOBJ) -ldf -o hdfed
+nofortran: all
 
-.c: $(LIBDIR)/libdf.a
-	cc $(CFLAGS) $< -o $@ -ldf
+hdfed: he.h he_proto.h $(HEOBJ)
+	$(CC) $(CFLAGS) -I$(HDFINC) $(HEOBJ) $(HDFLIB)/libdf.a -o hdfed
+
+.c: $(HDFLIB)/libdf.a
+	cc $(CFLAGS) -I$(HDFINC) $< -o $@ $(HDFLIB)/libdf.a
 
 utils: $(UTILS)
+
+clean:
+	-$(RM) $(RMFLAGS) *.o
