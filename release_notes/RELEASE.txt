@@ -216,3 +216,5 @@ o  Using both fill-value and compression on SD datasets doesn't work.
 
 o  --prefix defines where the installation path is.  This version has
    the default set as /usr/local which is different from previous versions.
+
+o  New utilities hdiff and hrepack are not available for Windows 2000.
