@@ -2658,18 +2658,17 @@ void HPend(void)
     DFR8Pshutdown();
     DFGRPshutdown();
     DFSDPshutdown();
-#endif /* OLD_WAY */
-
-    /* can't issue errors if you're free'ing the error stack. */
     GRPshutdown();
     VSPfreebuf();
     VPshutdown();
-    DFANPshutdown();
     ANdestroy();
-    HPbitshutdown();
+    DFANPshutdown();
+#endif /* OLD_WAY */
 
+    /* can't issue errors if you're free'ing the error stack. */
     HULdestroy_list(cleanup_list);    /* clear the list of interface cleanup routines */
 
+    HPbitshutdown();
     HXPshutdown();
     Hshutdown();
     HEshutdown();

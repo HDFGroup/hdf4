@@ -311,7 +311,7 @@ extern uint16 atype2tag(ann_type atype);
 
 extern ann_type tag2atype(uint16 atag);
 
-extern int32 ANdestroy(void);
+extern intn ANdestroy(void);
 #endif /* !MFAN_C */
 
 #endif /* _MFAN_H */

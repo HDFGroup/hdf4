@@ -2151,7 +2151,7 @@ extern uint16 atype2tag(ann_type atype);
 
 extern ann_type tag2atype(uint16 atag);
 
-extern int32 ANdestroy(void);
+extern intn ANdestroy(void);
 
 /* for Multi-file fortran GR interface */
 #ifndef MFGR_FNAMES
@@ -2713,7 +2713,7 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 /*
    ** from vrw.c
  */
-    extern intn VSPfreebuf(void);
+    extern intn VSPshutdown(void);
 
     extern int32 VSseek
                 (int32 vkey, int32 eltpos);

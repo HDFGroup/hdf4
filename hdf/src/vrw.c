@@ -58,11 +58,11 @@ PRIVATE uint8 *Vtbuf = NULL;
 
 /*--------------------------------------------------------------------------
  NAME
-    VSPfreebuf
+    VSPshutdown
  PURPOSE
     Free the Vtbuf buffer.
  USAGE
-    intn VSPfreebuf()
+    intn VSPshutdown()
  RETURNS
     Returns SUCCEED/FAIL
  DESCRIPTION
@@ -73,7 +73,7 @@ PRIVATE uint8 *Vtbuf = NULL;
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn VSPfreebuf(void)
+intn VSPshutdown(void)
 {
   intn  ret_value = SUCCEED;
 
@@ -85,7 +85,7 @@ intn VSPfreebuf(void)
     } /* end if */
 
   return ret_value;
-} /* end VSPfreebuf() */
+} /* end VSPshutdown() */
 
 /* --------------------------- VSseek -------------------------------------- */
 

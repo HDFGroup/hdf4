@@ -95,6 +95,8 @@ PRIVATE intn Remove_vfile
 PRIVATE void vunpackvg
             (VGROUP * vg, uint8 buf[], intn len);
 
+PRIVATE intn VIstart(void);
+
 /*
    * --------------------------------------------------------------------
    * PRIVATE  data structure and routines.
@@ -109,6 +111,9 @@ PRIVATE void vunpackvg
  */
 
 TBBT_TREE *vtree=NULL;
+
+/* Whether we've installed the library termination function yet for this interface */
+PRIVATE intn library_terminate = FALSE;
 
 /* -------------------------- Get_vfile ------------------------ */
 /*
@@ -415,6 +420,12 @@ Vinitialize(HFILEID f)
 #endif /* HAVE_PABLO */
 
     HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(VIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
     if (Load_vfile(f) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
@@ -2248,6 +2259,50 @@ done:
 
   return ret_value;
 }   /* Vdelete */
+
+/*--------------------------------------------------------------------------
+ NAME
+    VIstart
+ PURPOSE
+    V-level initialization routine
+ USAGE
+    intn VIstart()
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    Register the shut-down routines (VPshutdown & VSPshutdown) for call
+    with atexit.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+PRIVATE intn VIstart(void)
+{
+    CONSTR(FUNC, "VIstart");    /* for HERROR */
+    intn        ret_value = SUCCEED;
+
+    /* Don't call this routine again... */
+    library_terminate = TRUE;
+
+    /* Install atexit() library cleanup routine */
+    if (HPregister_term_func(&VPshutdown) != 0)
+      HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
+    /* Install atexit() library cleanup routine */
+    if (HPregister_term_func(&VSPshutdown) != 0)
+      HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+    return(ret_value);
+} /* end VIstart() */
 
 /*--------------------------------------------------------------------------
  NAME

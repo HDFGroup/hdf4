@@ -164,6 +164,9 @@ MODIFICATION HISTORY
  */
 static TBBT_TREE *gr_tree=NULL;
 
+/* Whether we've installed the library termination function yet for this interface */
+PRIVATE intn library_terminate = FALSE;
+
 PRIVATE intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr);
 
 PRIVATE intn GRIupdateRIG(int32 hdf_file_id,ri_info_t *img_ptr);
@@ -171,6 +174,8 @@ PRIVATE intn GRIupdateRIG(int32 hdf_file_id,ri_info_t *img_ptr);
 PRIVATE intn GRIupdateRI(int32 hdf_file_id,ri_info_t *img_ptr);
 
 PRIVATE intn GRIup_attr_data(int32 hdf_file_id,at_info_t *attr_ptr);
+
+PRIVATE intn GRIstart(void);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -1362,6 +1367,11 @@ int32 GRstart(int32 hdf_file_id)
 #endif /* HAVE_PABLO */
     /* clear error stack and check validity of file id */
     HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(GRIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
     /* check the validity of the file ID */
     if(!HDvalidfid(hdf_file_id))
@@ -4822,6 +4832,45 @@ done:
 #endif /* HAVE_PABLO */
   return ret_value;
 } /* end GRfindattr() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRIstart
+ PURPOSE
+    GR-level initialization routine
+ USAGE
+    intn GRIstart()
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    Register the shut-down routine (GRPshutdown) for call with atexit
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+PRIVATE intn GRIstart(void)
+{
+    CONSTR(FUNC, "GRIstart");    /* for HERROR */
+    intn        ret_value = SUCCEED;
+
+    /* Don't call this routine again... */
+    library_terminate = TRUE;
+
+    /* Install atexit() library cleanup routine */
+    if (HPregister_term_func(&GRPshutdown) != 0)
+      HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+    return(ret_value);
+} /* end GRIstart() */
 
 /*--------------------------------------------------------------------------
  NAME

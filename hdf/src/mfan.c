@@ -91,6 +91,9 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "mfan.h"
 
+/* Whether we've installed the library termination function yet for this interface */
+PRIVATE intn library_terminate = FALSE;
+
 /* Function Prototypes */
 extern VOID ANfreedata(VOIDP data);
 extern VOID ANfreekey(VOIDP key);
@@ -99,6 +102,7 @@ extern VOID dumpentryKey(VOID *key, VOID *data);
 extern VOID dumpfileKey(VOID *key, VOID *data);
 extern intn ANIfidcmp(VOIDP i, VOIDP j, intn value);
 extern intn ANIanncmp(VOIDP i, VOIDP j, intn value);
+PRIVATE intn ANIstart(void);
 
 /*-----------------------------------------------------------------------------
  *                          Internal Routines
@@ -266,13 +270,16 @@ ANIanncmp(VOIDP i, VOIDP j, intn value)
 PRIVATE int32
 ANinit(void)
 {
-#ifdef LATER
   CONSTR(FUNC, "ANinit");
-#endif /* LATER */
   int32 ret_value = SUCCEED;
     
   /* Clear error stack */
   HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(ANIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 #ifdef HAVE_RBTREE
   /* Check to see if we need to create RB tree for file id's */
@@ -309,18 +316,57 @@ done:
   return ret_value;
 } /* ANinit() */
 
+/*--------------------------------------------------------------------------
+ NAME
+    ANIstart
+ PURPOSE
+    AN-level initialization routine
+ USAGE
+    intn ANIstart()
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    Register the shut-down routine (ANPshutdown) for call with atexit
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+PRIVATE intn ANIstart(void)
+{
+    CONSTR(FUNC, "ANIstart");    /* for HERROR */
+    intn        ret_value = SUCCEED;
+
+    /* Don't call this routine again... */
+    library_terminate = TRUE;
+
+    /* Install atexit() library cleanup routine */
+    if (HPregister_term_func(&ANdestroy) != 0)
+      HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+    return(ret_value);
+} /* end ANIstart() */
+
 /* ------------------------------- ANdestroy -------------------------------- 
  NAME
 	ANdestroy -- Un-Initialize Annotation Interface
  USAGE
-	int32 ANdestroy(void)
+	intn ANdestroy(void)
 
  RETURNS
         SUCCEED or FAIL
  DESCRIPTION
         Unallocates global annotaton node list and file list.
 --------------------------------------------------------------------------- */
-int32
+intn
 ANdestroy(void)
 {
 #ifdef LATER

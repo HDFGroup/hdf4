@@ -73,16 +73,16 @@ PRIVATE DFANdirhead *DFANdir[2] =
 {NULL,                          /* object labels       */
  NULL                           /* object descriptions */
 };
+
+/* Whether we've installed the library termination function yet for this interface */
+PRIVATE intn library_terminate = FALSE;
+
 /*
    ** Prototypes for local functions
  */
 
-#ifndef VMS
-PRIVATE int32 DFANIopen
-            (const char *filename, intn acc_mode);
-#else  /*VMS */
-PRIVATE int32 _DFANIopen();
-#endif
+PRIVATE int32 DFANIopen(const char *filename, intn acc_mode);
+PRIVATE intn DFANIstart(void);
 
 /*-----------------------------------------------------------------------------
  * HDF object (i.e. tag/ref) label and description input routines
@@ -680,7 +680,7 @@ intn DFANclear(void)
   TRACE_ON(DFAN_mask, ID_DFANclear);
 #endif /* HAVE_PABLO */
 
-  ret_value = (DFANIclear());
+  ret_value = DFANIclear();
 
 #ifdef HAVE_PABLO
   TRACE_OFF(DFAN_mask, ID_DFANclear);
@@ -714,8 +714,16 @@ intn DFANclear(void)
 intn
 DFANIclear(void)
 {
+    CONSTR(FUNC, "DFANIclear");
   DFANdirhead *p, *q;
   intn ret_value = SUCCEED;
+
+    HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFANIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
   for (p=DFANdir[0]; p!=NULL; p=q) {  /* free linked list space */
     q = p->next;
@@ -728,6 +736,14 @@ DFANIclear(void)
   DFANdir[0] = DFANdir[1] = NULL;
 
   Lastref = 0;
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
 
   return ret_value;
 }
@@ -759,6 +775,13 @@ DFANIopen(const char *filename, intn acc_mode)
   DFANdirhead *p, *q;
   int32      ret_value = SUCCEED;
 
+    HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFANIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   /* Check if filename buffer has been allocated */
   if (Lastfile == NULL)
     {
@@ -772,12 +795,8 @@ DFANIopen(const char *filename, intn acc_mode)
   if (HDstrncmp(Lastfile, filename, DF_MAXFNLEN) || (acc_mode == DFACC_CREATE))
     {
       /* treat create as different file */
-      file_id = Hopen(filename, acc_mode, 0);
-      if (file_id == FAIL)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+      if (( file_id = Hopen(filename, acc_mode, 0))== FAIL)
+          HGOTO_ERROR(DFE_BADOPEN,FAIL);
 
       for (p = DFANdir[0]; p != NULL; p = q)
         {   /* free linked list space */
@@ -793,12 +812,8 @@ DFANIopen(const char *filename, intn acc_mode)
     }
   else
     {
-      file_id = Hopen(filename, acc_mode, 0);
-      if (file_id == FAIL)
-        {
-          ret_value = FAIL;
-          goto done;
-        }
+      if (( file_id = Hopen(filename, acc_mode, 0))== FAIL)
+          HGOTO_ERROR(DFE_BADOPEN,FAIL);
     }
 
   HIstrncpy(Lastfile, filename, DF_MAXFNLEN);
@@ -858,6 +873,11 @@ DFANIlocate(int32 file_id, int type, uint16 tag, uint16 ref)
 
   HEclear();
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFANIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   anntag = (uint16) ((type == DFAN_LABEL) ? DFTAG_DIL : DFTAG_DIA);
 
   /* if no directory for this type of annotation, make one */
@@ -865,28 +885,22 @@ DFANIlocate(int32 file_id, int type, uint16 tag, uint16 ref)
     {
       nanns = Hnumber(file_id, anntag);
       if (nanns == 0)
-        {
-          ret_value = 0;
-          goto done;
-        }
+        HGOTO_ERROR(DFE_INTERNAL, 0);
 
       /* allocate directory space.  Note head struct includes 1 entry */
       DFANdir[type] = (DFANdirhead *)
         HDmalloc(((uint32) sizeof(DFANdirhead) +
                   (nanns - 1) * sizeof(DFANdirentry)));
       if (DFANdir[type] == NULL)
-	HGOTO_ERROR(DFE_NOSPACE, 0);
+        HGOTO_ERROR(DFE_NOSPACE, 0);
       DFANdir[type]->next = NULL;
       DFANdir[type]->nentries = nanns;
 
       /* fill directory table */
-      aid = Hstartread(file_id, anntag, DFREF_WILDCARD);
-      if (aid == FAIL)
+      if (( aid = Hstartread(file_id, anntag, DFREF_WILDCARD))== FAIL)
         {
-          Hendaccess(aid);
-          ret_value = 0;
-          goto done;
-        }
+          HGOTO_ERROR(DFE_BADAID, 0);
+        } /* end if */
       else
         more_anns = SUCCEED;
 
@@ -895,16 +909,10 @@ DFANIlocate(int32 file_id, int type, uint16 tag, uint16 ref)
           if (FAIL == Hinquire(aid, (int32 *) NULL, (uint16 *) NULL, &annref,
                                (int32 *) NULL, (int32 *) NULL, (int32 *) NULL,
                                (int16 *) NULL, (int16 *) NULL))
-            {
-              ret_value = 0;
-              goto done;
-            }
+                HGOTO_ERROR(DFE_INTERNAL, 0);
 
           if ((int32) FAIL == Hread(aid, (int32) 4, datadi))
-            {
-              ret_value = 0;
-              goto done;
-            }
+                HGOTO_ERROR(DFE_READERROR, 0);
 
           /* get data tag/ref */
           DFANdir[type]->entries[i].annref = annref;
@@ -918,20 +926,15 @@ DFANIlocate(int32 file_id, int type, uint16 tag, uint16 ref)
     }
 
   if (!tag)
-    {
-      ret_value = 1; /* used to generate directory without search */
-      goto done;
-    }
+    HGOTO_DONE(1);
 
   /* find annotation that goes with this tag/ref */
   for (p = (DFANdirhead *) DFANdir[type]; p != NULL; p = p->next)
     for (i = 0; i < p->nentries; i++)
       if (p->entries[i].annref != 0)
         if ((p->entries[i].dataref == ref) && (p->entries[i].datatag == tag))
-          {
-            ret_value = (p->entries[i].annref);
-            goto done; /* double loop to break out of */
-          }
+            HGOTO_DONE(p->entries[i].annref);
+
   HERROR(DFE_NOMATCH);
 
 done:
@@ -970,6 +973,13 @@ DFANIaddentry(int type, uint16 annref, uint16 datatag, uint16 dataref)
   DFANdirhead *p, *q;
   int         ret_value = SUCCEED;
 
+    HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFANIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   /* move to last entry in list */
   for (p = DFANdir[type]; (p != NULL) && (p->next != NULL); p = p->next)
     ;
@@ -982,8 +992,7 @@ DFANIaddentry(int type, uint16 annref, uint16 datatag, uint16 dataref)
             p->entries[i].annref = annref;  /* store entry */
             p->entries[i].datatag = datatag;
             p->entries[i].dataref = dataref;
-            ret_value = SUCCEED;
-            goto done;
+            HGOTO_DONE(SUCCEED);
           }
     }
 
@@ -1046,36 +1055,30 @@ DFANIgetannlen(const char *filename, uint16 tag, uint16 ref, int type)
   int32       ret_value = SUCCEED;
 
   HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFANIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if (!tag)
     HGOTO_ERROR(DFE_BADTAG,FAIL);
 
   if (!ref)
     HGOTO_ERROR(DFE_BADREF,FAIL);
 
-  file_id = DFANIopen(filename, DFACC_READ);
-  if (file_id == FAIL)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+  if (( file_id = DFANIopen(filename, DFACC_READ))== FAIL)
+    HGOTO_ERROR(DFE_BADOPEN,FAIL);
 
     /* get ref of annotation of tag/ref */
   annref = DFANIlocate(file_id, type, tag, ref);
   if (annref == 0)
-    {
-      Hclose(file_id);
-      ret_value = FAIL;
-      goto done;
-    }
+    HCLOSE_GOTO_ERROR(file_id,DFE_INTERNAL,FAIL);
   anntag = (uint16) ((type == DFAN_LABEL) ? DFTAG_DIL : DFTAG_DIA);   /* set type tag */
 
   annlength = Hlength(file_id, anntag, annref) - 4;   /* 4=len of data tag/ref */
   if (annlength == FAIL)
-    {
-      Hclose(file_id);
-      ret_value = FAIL;
-      goto done;
-    }
+    HCLOSE_GOTO_ERROR(file_id,DFE_BADLEN,FAIL);
   Lastref = annref;   /* remember ref last accessed */
   if (Hclose(file_id) == FAIL)    /* close file */
     ret_value = FAIL;
@@ -1127,6 +1130,12 @@ DFANIgetann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
   intn        ret_value = SUCCEED;
 
   HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFANIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if (!ann)
     HGOTO_ERROR(DFE_BADPTR,FAIL);
 
@@ -1136,40 +1145,26 @@ DFANIgetann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
   if (!ref)
     HGOTO_ERROR(DFE_BADREF,FAIL);
 
-  file_id = DFANIopen(filename, DFACC_READ);
-  if (file_id == FAIL)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+  if (( file_id = DFANIopen(filename, DFACC_READ))== FAIL)
+    HGOTO_ERROR(DFE_BADOPEN,FAIL);
 
   /* get annref and anntag of annotation of tag/ref */
   annref = DFANIlocate(file_id, type, tag, ref);
   if (annref == 0)
-    {
-      Hclose(file_id);
-      ret_value = FAIL;
-      goto done;
-    }
+    HCLOSE_GOTO_ERROR(file_id,DFE_INTERNAL,FAIL);
   anntag = (uint16) ((type == DFAN_LABEL) ? DFTAG_DIL : DFTAG_DIA);
 
     /* find DD for that annotation */
   aid = Hstartread(file_id, anntag, annref);
   if (aid == FAIL)
-    {
-      Hendaccess(aid);
-      Hclose(file_id);
-      ret_value = FAIL;
-      goto done;
-    }
+      HCLOSE_GOTO_ERROR(file_id,DFE_BADAID,FAIL);
+
   if (FAIL == Hinquire(aid, (int32 *) NULL, (uint16 *) NULL, (uint16 *) NULL, 
                        &annlen, (int32 *) NULL, (int32 *) NULL, (int16 *) NULL, 
                        (int16 *) NULL))
     {
       Hendaccess(aid);
-      Hclose(file_id);
-      ret_value = FAIL;
-      goto done;
+      HCLOSE_GOTO_ERROR(file_id,DFE_INTERNAL,FAIL);
     }
   annlen -= 4;    /* first four bytes were tag/ref, so they don't count */
 
@@ -1190,16 +1185,12 @@ DFANIgetann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
   if ((int32) FAIL == Hread(aid, (int32) 4, datadi))
     {     /* go past tag/ref */
       Hendaccess(aid);
-      Hclose(file_id);
-      ret_value = FAIL;
-      goto done;
+      HCLOSE_GOTO_ERROR(file_id,DFE_READERROR,FAIL);
     }
   if ((int32) FAIL == Hread(aid, annlen, ann))
     {     /* read the annotation */
       Hendaccess(aid);
-      Hclose(file_id);
-      ret_value = FAIL;
-      goto done;
+      HCLOSE_GOTO_ERROR(file_id,DFE_READERROR,FAIL);
     }
   if (type == DFAN_LABEL)
     ann[annlen] = '\0';     /* terminate string properly */
@@ -1255,6 +1246,12 @@ DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
   intn        ret_value = SUCCEED;
 
   HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFANIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if (!ann)
     HGOTO_ERROR(DFE_BADPTR,FAIL);
 
@@ -1264,12 +1261,8 @@ DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
   if (!ref)
     HGOTO_ERROR(DFE_BADREF,FAIL);
 
-  file_id = DFANIopen(filename, DFACC_RDWR);
-  if (file_id == 0)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+  if (( file_id = DFANIopen(filename, DFACC_RDWR))== 0)
+    HGOTO_ERROR(DFE_BADOPEN,FAIL);
 
   anntag = (uint16) ((type == DFAN_LABEL) ? DFTAG_DIL : DFTAG_DIA);
 
@@ -1279,11 +1272,7 @@ DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
     {
       annref = Htagnewref(file_id,anntag);
       if (annref == 0)
-        {
-          Hclose(file_id);
-          ret_value = FAIL;
-          goto done;
-        }
+        HCLOSE_GOTO_ERROR(file_id,DFE_NOREF,FAIL);
       newflag = 1;  /* remember to add ann tag/ref to directory */
     }
 
@@ -1296,8 +1285,7 @@ DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
         {
           Hclose(file_id);
           HEreport("Unable to replace old annotation");
-          ret_value = FAIL;
-          goto done;
+          HGOTO_DONE(FAIL);
         }
     }
 
@@ -1307,9 +1295,7 @@ DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
   if (aid == FAIL)
     {
       Hendaccess(aid);
-      Hclose(file_id);
-      ret_value = FAIL;
-      goto done;
+      HCLOSE_GOTO_ERROR(file_id,DFE_BADAID,FAIL);
     }
 
   /* write annotation */
@@ -1317,17 +1303,11 @@ DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
   UINT16ENCODE(ptr, tag);
   UINT16ENCODE(ptr, ref);
   if ((int32) FAIL == Hwrite(aid, (int32) 4, datadi))
-    {
-      Hclose(file_id);
-      ret_value = FAIL;
-      goto done;
-    }
+      HCLOSE_GOTO_ERROR(file_id,DFE_WRITEERROR,FAIL);
   if ((int32) FAIL == Hwrite(aid, annlen, ann))
     {     /* then write the annotation */
       Hendaccess(aid);
-      Hclose(file_id);
-      ret_value = FAIL;
-      goto done;
+      HCLOSE_GOTO_ERROR(file_id,DFE_WRITEERROR,FAIL);
     }
 
   /* put annotation tag/ref into directory if new */
@@ -1336,9 +1316,7 @@ DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
       if (FAIL == DFANIaddentry(type, annref, tag, ref))
         {
           Hendaccess(aid);
-          Hclose(file_id);
-          ret_value = FAIL;
-          goto done;
+          HCLOSE_GOTO_ERROR(file_id,DFE_INTERNAL,FAIL);
         }
     }
 
@@ -1404,18 +1382,19 @@ DFANIlablist(const char *filename, uint16 tag, uint16 reflist[],
 
   HEclear();
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFANIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if (!reflist || !labellist)
     HGOTO_ERROR(DFE_BADPTR,FAIL);
 
   if (!tag)
     HGOTO_ERROR(DFE_BADTAG,FAIL);
 
-  file_id = DFANIopen(filename, DFACC_READ);
-  if (file_id == 0)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+  if (( file_id = DFANIopen(filename, DFACC_READ))== 0)
+    HGOTO_ERROR(DFE_BADOPEN,FAIL);
 
     /* clear labellist.  pad with blanks for Fortran; add null for C  */
   if (isfortran)
@@ -1426,29 +1405,18 @@ DFANIlablist(const char *filename, uint16 tag, uint16 reflist[],
     /* find all refs for this tag; store them in reflist */
   nrefs = (intn) Hnumber(file_id, tag);   /* how many times is tag in file? */
   if (nrefs == FAIL)
-    {
-      Hclose(file_id);
-      ret_value = FAIL;
-      goto done;
-    }
+    HCLOSE_GOTO_ERROR(file_id,DFE_NOMATCH,FAIL);
 
   aid = Hstartread(file_id, tag, DFREF_WILDCARD);     /* set search for refs */
   if (aid == FAIL)
-    {
-      Hendaccess(aid);
-      Hclose(file_id);
-      ret_value = FAIL;
-      goto done;
-    }
+    HCLOSE_GOTO_ERROR(file_id,DFE_BADAID,FAIL);
 
   for (i = 0, j = 0; i < nrefs && j < listsize; i++)
     {
       if (HQuerytagref(aid, (uint16 *) NULL, &ref) == FAIL)
         {
           Hendaccess(aid);
-          Hclose(file_id);
-          ret_value = FAIL;
-          goto done;
+          HCLOSE_GOTO_ERROR(file_id,DFE_NOMATCH,FAIL);
         }
       if (i >= startpos - 1)
         reflist[j++] = ref;   /* store next ref in reflist */
@@ -1467,9 +1435,7 @@ DFANIlablist(const char *filename, uint16 tag, uint16 reflist[],
           if (0 == DFANIlocate(file_id, DFAN_LABEL, 0, 0))
             {
               Hendaccess(aid);
-              Hclose(file_id);
-              ret_value = FAIL;
-              goto done;
+              HCLOSE_GOTO_ERROR(file_id,DFE_INTERNAL,FAIL);
             }
         }
 
@@ -1486,18 +1452,11 @@ DFANIlablist(const char *filename, uint16 tag, uint16 reflist[],
 
                   aid = Hstartread(file_id, DFTAG_DIL, p->entries[i].annref);
                   if (aid == FAIL)
-                    {
-                      Hendaccess(aid);
-                      Hclose(file_id);
-                      ret_value = FAIL;
-                      goto done;
-                    }
+                      HCLOSE_GOTO_ERROR(file_id,DFE_BADAID,FAIL);
                   if ((int32) FAIL == Hread(aid, (int32) 4, labeldi))
                     {     /* data tag/ref */
                       Hendaccess(aid);
-                      Hclose(file_id);
-                      ret_value = FAIL;
-                      goto done;
+                      HCLOSE_GOTO_ERROR(file_id,DFE_READERROR,FAIL);
                     }
                   /* look for corresponding ref in reflist */
                   for (k = 0; k < nrefs && p->entries[i].dataref != reflist[k]; k++)
@@ -1512,9 +1471,7 @@ DFANIlablist(const char *filename, uint16 tag, uint16 reflist[],
                       if (len == FAIL)
                         {
                           Hendaccess(aid);
-                          Hclose(file_id);
-                          ret_value = FAIL;
-                          goto done;
+                          HCLOSE_GOTO_ERROR(file_id,DFE_READERROR,FAIL);
                         }
                       /* ret now contains actual length read */
                       /* pad with blanks for Fortran; add null for C */
@@ -1572,6 +1529,12 @@ DFANIaddfann(int32 file_id, char *ann, int32 annlen, int type)
   int         ret_value = SUCCEED;
 
   HEclear();
+
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFANIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if (!ann)
     HGOTO_ERROR(DFE_BADPTR,FAIL);
 
@@ -1579,17 +1542,11 @@ DFANIaddfann(int32 file_id, char *ann, int32 annlen, int type)
 
   annref = Htagnewref(file_id,anntag);
   if (annref == 0)
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+    HGOTO_ERROR(DFE_NOREF,FAIL);
 
     /* write out annotation */
   if (FAIL == Hputelement(file_id, anntag, annref, (uint8 *) ann, annlen))
-    {
-      ret_value = FAIL;
-      goto done;
-    }
+    HGOTO_ERROR(DFE_PUTELEM,FAIL);
 
   Lastref = annref;   /* remember ref last accessed */
 
@@ -1635,6 +1592,11 @@ DFANIgetfannlen(int32 file_id, int type, int isfirst)
 
   HEclear();
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFANIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
     /* Identify tag for this "type" of access; determine which ref to key on. */
   if (type == DFAN_LABEL)
     {
@@ -1648,17 +1610,12 @@ DFANIgetfannlen(int32 file_id, int type, int isfirst)
     }
   aid = Hstartread(file_id, anntag, annref);
   if (aid == FAIL)
-    {
-      Hendaccess(aid);
-      ret_value = FAIL;
-      goto done;
-    }
+    HGOTO_ERROR(DFE_BADAID, FAIL);
   if (FAIL == Hinquire(aid, (int32 *) NULL, (uint16 *) NULL, &annref, &length,
                        (int32 *) NULL, (int32 *) NULL, (int16 *) NULL, (int16 *) NULL))
     {
       Hendaccess(aid);
-      ret_value = FAIL;
-      goto done;
+      HGOTO_ERROR(DFE_NOMATCH, FAIL);
     }
   if (type == DFAN_LABEL)     /* prepare for next call */
     Next_label_ref = annref;
@@ -1719,6 +1676,11 @@ DFANIgetfann(int32 file_id, char *ann, int32 maxlen, int type,
 
   HEclear();
 
+    /* Perform global, one-time initialization */
+    if (library_terminate == FALSE)
+        if(DFANIstart()==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
   if (!ann)
     HGOTO_ERROR(DFE_BADPTR,FAIL);
 
@@ -1734,27 +1696,20 @@ DFANIgetfann(int32 file_id, char *ann, int32 maxlen, int type,
       annref = (uint16) ((isfirst == 1) ? DFREF_WILDCARD : Next_desc_ref);
     }
 
-  aid = Hstartread(file_id, anntag, annref);
-  if (aid == FAIL)
-    {
-      Hendaccess(aid);
-      ret_value = FAIL;
-      goto done;
-    }
+  if (( aid = Hstartread(file_id, anntag, annref))== FAIL)
+    HGOTO_ERROR(DFE_BADAID, FAIL);
   if (FAIL == Hinquire(aid, (int32 *) NULL, (uint16 *) NULL, &annref, &length,
                    (int32 *) NULL, (int32 *) NULL, (int16 *) NULL, (int16 *) NULL))
     {
       Hendaccess(aid);
-      ret_value = FAIL;
-      goto done;
+      HGOTO_ERROR(DFE_NOMATCH, FAIL);
     }
   length = (length > maxlen) ? maxlen : length;   /* truncate if too long */
 
   if ((int32) FAIL == Hread(aid, length, (uint8 *) ann))  /* get the annotation */
     {
       Hendaccess(aid);
-      ret_value = FAIL;
-      goto done;
+      HGOTO_ERROR(DFE_READERROR, FAIL);
     }
 
   if (length > maxlen - 1)
@@ -1779,8 +1734,7 @@ DFANIgetfann(int32 file_id, char *ann, int32 maxlen, int type,
                            (int16 *) NULL, (int16 *) NULL))
         {
           Hendaccess(aid);
-          ret_value = FAIL;
-          goto done;
+          HGOTO_ERROR(DFE_NOMATCH, FAIL);
         }
       if (type == DFAN_LABEL)
         Next_label_ref = annref;
@@ -1802,6 +1756,45 @@ done:
 
   return ret_value;
 }
+
+/*--------------------------------------------------------------------------
+ NAME
+    DFANIstart
+ PURPOSE
+    DFAN-level initialization routine
+ USAGE
+    intn DFANIstart()
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    Register the shut-down routine (DFANPshutdown) for call with atexit
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+PRIVATE intn DFANIstart(void)
+{
+    CONSTR(FUNC, "DFANIstart");    /* for HERROR */
+    intn        ret_value = SUCCEED;
+
+    /* Don't call this routine again... */
+    library_terminate = TRUE;
+
+    /* Install atexit() library cleanup routine */
+    if (HPregister_term_func(&DFANPshutdown) != 0)
+      HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+    return(ret_value);
+} /* end DFANIstart() */
 
 /*--------------------------------------------------------------------------
  NAME
