@@ -33,7 +33,7 @@ void test_tsdstr();
 void test_vers();
 void test_slab();
 void test_litend();
-VOID test_vsets();
+void test_vsets();
 void test_tbbt();
 void test_conv();
 
