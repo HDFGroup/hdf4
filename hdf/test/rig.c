@@ -798,7 +798,7 @@ intn fuzz_factor;
 	}
 }	/* end fuzzy_memcmp() */
 
-#ifdef ALPHA
+#ifdef DEC_ALPHA
 #define JPEG_FUZZ 13
 #else
 #define JPEG_FUZZ 1
