@@ -90,7 +90,7 @@ HDF 4.1 Release 2 has been tested on the following platforms:
 
    Cray T90 (CFP, IEEE)            IRIX 6.2 
    Cray T3E                        IRIX64 6.4 (-n32, -64)
-   DEC Alpha/Digital Unix          Linux RedHat 
+   DEC Alpha/Digital Unix          Linux (elf) 
    Exemplar                        Solaris  
    FreeBSD                         Solaris x86 
    HP-UX 9.03                      SP2 
@@ -101,7 +101,7 @@ HDF 4.1 Release 2 has been tested on the following platforms:
    releases are not available with this release of HDF4.1r2.  Separate 
    releases for these platforms will be available in the near future. 
 
-For more information on the platforms that were tested on and for
+For more information on the platforms that were tested and for
 which we provide pre-compiled binaries, please refer to the following
 web page (accessible from the HDF home page):
 
@@ -110,10 +110,17 @@ web page (accessible from the HDF home page):
 Known Problems:
 ==============
 
-o
+o Writing n-bit datasets from FORTRAN with the SD interface is not working.
 
-See the ./release_notes/known_problems.txt file for more 
-information on known problems in this release.
+o SDgetchunkinfo does not return compression coding or modeling type.
+
+o Using both fill-values and compression on SD datasets is not currently
+  working; don't use one or the other.
+
+o Dumping compressed Vdatas with vshow or hdp is not working.
+
+o Reading or writing compressed images with the GR interface is not working.
+
 
 Important Fixes:
 ===============
