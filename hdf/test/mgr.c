@@ -4263,6 +4263,310 @@ static void test_get_compress(int flag)
 
 } /* end test_get_compress */
 
+/*--------------------------------------------------------------------------
+    The test routine test_mgr_chunk_compress is added when bug# 307 was 
+    fixed.
+
+    test_mgr_chunk_compress tests the new functionality, getting 
+    compression information of compressed chunked image data.  It 
+        + creates the file CHKCOMPFILE and adds four compressed chunked 
+	  images to it, then closes the file.
+        + re-opens the file, then reads and verifies each chunked image's
+          compression information
+        The first image is only chunked and not compressed.
+        The last three chunked images are compressed using the following
+        methods in that order: RLE, Skipping Huffman, Deflate.
+        For simplicity, all four images use the same data sample.
+    Note: At this time JPEG is not working correctly for chunked images,
+    but when it is, its tests should be added to this routines (and to 
+    test_mgr_chunkwr_pixelone as well) appropriately, i.e. another image 
+    should be added to the image list.
+
+ -BMR (Oct 7, 01)
+--------------------------------------------------------------------------*/
+
+static void 
+test_mgr_chunk_compress()
+{
+#define  CHKCOMPFILE  "gr_chunkcomp.hdf"
+#define  X_LENGTH     10    /* number of columns in the image */
+#define  Y_LENGTH     6     /* number of rows in the image */
+#define  N_COMPS      3     /* number of components in the image */
+#define  N_IMAGES     4     /* number of images tested used - 5 comp. methods */
+
+   /************************* Variable declaration **************************/
+
+   intn  status;         /* status for functions returning an intn */
+   int32 file_id,        /* HDF file identifier */
+         gr_id,          /* GR interface identifier */
+         ri_id[N_IMAGES],       /* raster image identifier */
+         origin[2],      /* start position to write for each dimension */
+         dim_sizes[2],   /* dimension sizes of the image array */
+         interlace_mode, /* interlace mode of the image */
+         data_type,      /* data type of the image data */
+         comp_flag,      /* compression flag */
+         index,
+         img_num;
+   int32 start[2],
+         stride[2],
+         edge[2];
+   comp_info cinfo;    /* Compression parameters - union */
+
+   comp_coder_t comp_type;
+   int16 data_out[3*Y_LENGTH*X_LENGTH];
+   char *image_name[] = { "Image_NO", "Image_RL", "Image_Sk", "Image_DF"};
+   HDF_CHUNK_DEF chunk_def[N_IMAGES];
+   int16 chunk_buf[18];
+
+   int16 chunk00[] = {        110, 111, 112, 120, 121, 122,
+                              130, 131, 132, 140, 141, 142,
+                              150, 151, 152, 160, 161, 162 };
+ 
+   int16 chunk01[] = {    210, 211, 212, 220, 221, 222,
+                          230, 231, 232, 240, 241, 242,
+                          250, 251, 252, 260, 261, 262};
+ 
+   int16 chunk14[] = {    1010, 1011, 1012, 1020, 1021, 1022,
+                          1030, 1031, 1032, 1040, 1041, 1042,
+                          1050, 1051, 1052, 1060, 1061, 1062};
+
+   int16 data[]    = {
+                110, 111, 112, 120, 121, 122, 210, 211, 212, 220, 221, 222, 0, 
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 130, 131, 132, 140, 
+                141, 142, 230, 231, 232, 240, 241, 242, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 150, 151, 152, 160, 161, 162, 250, 251, 
+                252, 260, 261, 262, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                1010, 1011, 1012, 1020, 1021, 1022, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1030, 1031, 1032, 1040, 1041, 
+                1042, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                0, 1050, 1051, 1052, 1060, 1061, 1062 }; 
+
+
+   /********************** End of variable declaration **********************/
+   /*
+   * Create and open the file.
+   */
+   file_id = Hopen (CHKCOMPFILE, DFACC_CREATE, 0);
+   CHECK(file_id, FAIL, "Hopen");
+
+   /*
+   * Initialize the GR interface.
+   */
+   gr_id = GRstart (file_id);
+   CHECK(gr_id, FAIL, "GRstart");
+
+   /*
+   * Set the data type, interlace mode, and dimensions of the image.
+   */
+   data_type = DFNT_INT16;
+   interlace_mode = MFGR_INTERLACE_PIXEL;
+   dim_sizes[0] = Y_LENGTH;
+   dim_sizes[1] = X_LENGTH;
+
+   for (img_num = 0; img_num < N_IMAGES; img_num++ ) {  
+
+   /*
+   * Create the raster image array.
+   */
+   ri_id[img_num] = GRcreate (gr_id, image_name[img_num], N_COMPS, data_type, 
+                     interlace_mode, dim_sizes);
+   CHECK(ri_id[img_num], FAIL, "GRcreate");
+
+   /* 
+   * Create chunked image array.
+   */
+   switch (img_num) {
+	case 0: 
+		comp_flag = HDF_CHUNK;
+		chunk_def[img_num].chunk_lengths[0] = 3;
+		chunk_def[img_num].chunk_lengths[1] = 2;
+		break;
+	case 1 :
+		comp_flag = HDF_CHUNK | HDF_COMP;
+		chunk_def[img_num].comp.chunk_lengths[0] = 3;
+		chunk_def[img_num].comp.chunk_lengths[1] = 2;
+		chunk_def[img_num].comp.comp_type = COMP_CODE_RLE;
+		break;
+	case 2 :
+		comp_flag = HDF_CHUNK | HDF_COMP;
+		chunk_def[img_num].comp.chunk_lengths[0] = 3;
+		chunk_def[img_num].comp.chunk_lengths[1] = 2;
+		chunk_def[img_num].comp.comp_type = COMP_CODE_SKPHUFF;
+		chunk_def[img_num].comp.cinfo.skphuff.skp_size = 2;
+		break;
+	case 3 :
+		comp_flag = HDF_CHUNK | HDF_COMP;
+		chunk_def[img_num].comp.chunk_lengths[0] = 3;
+		chunk_def[img_num].comp.chunk_lengths[1] = 2;
+		chunk_def[img_num].comp.comp_type = COMP_CODE_DEFLATE;
+		chunk_def[img_num].comp.cinfo.deflate.level = 6;
+		break;
+#ifdef NOT_WORKING
+	/* JPEG compression for chunked images is not working correctly 
+	   yet.  Add test here when it is */
+	case 4 :
+		comp_flag = HDF_CHUNK | HDF_COMP;
+		chunk_def[img_num].comp.chunk_lengths[0] = 3;
+		chunk_def[img_num].comp.chunk_lengths[1] = 2;
+		chunk_def[img_num].comp.comp_type = COMP_CODE_JPEG;
+		chunk_def[img_num].comp.cinfo.jpeg.quality = 5;
+		chunk_def[img_num].comp.cinfo.jpeg.force_baseline = 8;
+		break;
+#endif
+	default:
+		printf("Error\n");
+		break;
+
+   } /* end switch */
+    
+   status = GRsetchunk(ri_id[img_num], chunk_def[img_num], comp_flag);
+   CHECK(status, FAIL, "GRsetchunk");
+
+   /*
+   * Write first data chunk ( 0, 0 ). 
+   */
+   origin[0] = origin[1] = 0;
+   status = GRwritechunk(ri_id[img_num], origin, (VOIDP)chunk00);
+   CHECK(status, FAIL, "GRwritechunk");
+
+   /*
+   * Write second data chunk ( 0, 1 ). 
+   */
+   origin[0] = 0; origin[1] = 1;
+   status = GRwritechunk(ri_id[img_num], origin, (VOIDP)chunk01);
+   CHECK(status, FAIL, "GRwritechunk");
+
+   /*
+   * Write third data chunk ( 1, 4 ). 
+   */
+   origin[0] = 1; origin[1] = 4;
+   status = GRwritechunk(ri_id[img_num], origin, (VOIDP)chunk14);
+   CHECK(status, FAIL, "GRwritechunk");
+   /*
+   * Read third chunk back.
+   */
+   origin[0] = 1; origin[1] = 4;
+   status = GRreadchunk(ri_id[img_num], origin, (VOIDP)chunk_buf);
+   CHECK(status, FAIL, "GRreadchunk");
+
+   /*
+   * Terminate access to the GR interface and close the HDF file.
+   */
+   status = GRendaccess (ri_id[img_num]);
+   CHECK(status, FAIL, "GRendaccess");
+ }  /* end for*/
+
+   status = GRend (gr_id);
+   CHECK(status, FAIL, "GRend");
+   status = Hclose (file_id);
+   CHECK(status, FAIL, "Hclose");
+
+    /* 
+    * Open the file.
+    */
+
+    file_id = Hopen (CHKCOMPFILE, DFACC_WRITE, 0); 
+    CHECK(file_id, FAIL, "Hopen");
+
+   /*
+   * Initialize the GR interface.
+   */
+   gr_id = GRstart (file_id);
+   CHECK(gr_id, FAIL, "GRstart");
+
+   for (img_num = 0; img_num < N_IMAGES; img_num++ ) {  
+
+   /*
+   * Find the index of the specified image.
+   */
+   index = GRnametoindex(gr_id, image_name[img_num]);
+   CHECK(index, FAIL, "GRnametoindex");
+   
+   /* 
+   * Select the image.
+   */
+   ri_id[img_num] = GRselect(gr_id, index);
+   CHECK(ri_id[img_num], FAIL, "GRselect");
+
+   /*
+   * Get and verify the image's compression information
+   */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+
+    status = GRgetcompress(ri_id[img_num], &comp_type, &cinfo);
+    CHECK(status, FAIL, "GRsetcompress");
+    switch (img_num) {
+	case 0: 
+	    VERIFY(comp_type, COMP_CODE_NONE, "GRgetcompress");
+	    break;
+	case 1 :
+	    VERIFY(comp_type, COMP_CODE_RLE, "GRgetcompress");
+	    break;
+	case 2 :
+	    VERIFY(comp_type, COMP_CODE_SKPHUFF, "GRgetcompress");
+	    VERIFY(cinfo.skphuff.skp_size, 
+		   chunk_def[img_num].comp.cinfo.skphuff.skp_size, "GRgetcompress");
+	    break;
+	case 3 :
+	    VERIFY(comp_type, COMP_CODE_DEFLATE, "GRgetcompress");
+	    VERIFY(cinfo.deflate.level, 
+		   chunk_def[img_num].comp.cinfo.deflate.level, "GRgetcompress");
+	    break;
+#ifdef NOT_WORKING
+	/* JPEG is not working correctly yet.  Add test here when it is */
+	case 4 :  /* only return comp type for JPEG */
+	    VERIFY(comp_type, COMP_CODE_JPEG, "GRgetcompress");
+	    break;
+#endif
+	default:
+	    printf("Error\n");
+	    break;
+   } /* end switch */
+
+   /*
+   * Read third chunk back.
+   */
+   origin[0] = 1; origin[1] = 4;
+   status = GRreadchunk(ri_id[img_num], origin, (VOIDP)chunk_buf);
+   CHECK(status, FAIL, "GRreadchunk");
+   if (0 != HDmemcmp(chunk_buf, chunk14 , sizeof(chunk14)))
+      {
+            MESSAGE(3, printf("Error in reading chunk at line %d\n",__LINE__););
+            MESSAGE(3, printf("Image #%d\n", (int)img_num););
+            num_errs++;
+      } /* end if */
+   /*
+   * Read the whole image.
+   */
+   start[0] = start[1] = 0;
+   stride[0] = stride[1] = 1;
+   edge[0] = Y_LENGTH;
+   edge[1] = X_LENGTH;
+   status = GRreadimage(ri_id[img_num], start, stride, edge, (VOIDP)data_out);
+   CHECK(status, FAIL, "GRreadimage");
+   if (0!= HDmemcmp(data_out, data, sizeof(data)))
+      {
+            MESSAGE(3, printf("%d: Error reading data for the whole image\n",__LINE__););
+            MESSAGE(3, printf("%d: Compression method\n", (int)img_num););
+            num_errs++;
+      } /* end if */
+
+   status = GRendaccess (ri_id[img_num]);
+   CHECK(status, FAIL, "GRendaccess");
+
+   } /* end for */    
+   /*
+   * Terminate access to the GR interface and close the HDF file.
+   */
+   status = GRend (gr_id);
+   CHECK(status, FAIL, "GRend");
+   status = Hclose (file_id);
+   CHECK(status, FAIL, "Hclose");
+}  /* end of test_mgr_chunk_compress */
+
+
 /****************************************************************
 **
 **  test_mgr_compress(): Multi-file Raster Compression tests
@@ -4272,6 +4576,7 @@ static void test_get_compress(int flag)
 **      B. Create/Read/Write 8-bit JPEG compressed Image
 **      C. Create/Read/Write 24-bit JPEG compressed Image
 **      D. Retrieve various compression information of compressed Image
+**	E. Retrieve various compression info. of compressed, chunked images
 ** 
 ****************************************************************/
 static void
@@ -4644,7 +4949,7 @@ test_mgr_chunkwr_pixelone()
     *                COMP_CODE_DEFLATE
     * and PIXEL interlace mode.
     */                    
-#define  FILE_NAME     "ChunkedGR.hdf"
+#define  CHUNKFILE     "ChunkedGR.hdf"
 #define  X_LENGTH      10    /* number of columns in the image */
 #define  Y_LENGTH      6     /* number of rows in the image */
 #define  N_COMPS       3     /* number of components in the image */
@@ -4701,7 +5006,7 @@ test_mgr_chunkwr_pixelone()
    /*
    * Create and open the file.
    */
-   file_id = Hopen (FILE_NAME, DFACC_WRITE, 0);
+   file_id = Hopen (CHUNKFILE, DFACC_WRITE, 0);
    CHECK(file_id, FAIL, "Hopen");
 
    /*
@@ -4813,7 +5118,7 @@ test_mgr_chunkwr_pixelone()
     * Open the file.
     */
 
-    file_id = Hopen (FILE_NAME, DFACC_WRITE, 0); 
+    file_id = Hopen (CHUNKFILE, DFACC_WRITE, 0); 
     CHECK(file_id, FAIL, "Hopen");
 
    /*
@@ -4835,6 +5140,7 @@ test_mgr_chunkwr_pixelone()
    */
    ri_id[i] = GRselect(gr_id, index);
    CHECK(ri_id[i], FAIL, "GRselect");
+
    /*
    * Read third chunk back.
    */
@@ -5152,6 +5458,7 @@ test_mgr_chunkwr(void)
     MESSAGE(6, printf("Testing GR chunking WRITE/READ\n"););
     
     test_mgr_chunkwr_pixelone();
+    test_mgr_chunk_compress();
     test_mgr_chunkwr_pixel(0);
     test_mgr_chunkwr_pixel(1);
     test_mgr_chunkwr_pixel(2);
