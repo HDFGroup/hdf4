@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.26  1993/05/17 15:23:37  georgev
-HP9000 did not like the 'signed char' for int8.
+Revision 1.27  1993/06/15 18:22:00  chouck
+Made a little smarter at guessing machine types
 
+ * Revision 1.26  1993/05/17  15:23:37  georgev
+ * HP9000 did not like the 'signed char' for int8.
+ *
  * Revision 1.25  1993/05/12  16:40:49  chouck
  * Made int8 a 'singed char' because on some platforms (e.g. SGI) char can
  * be unisgned by default
@@ -152,7 +155,11 @@ HP9000 did not like the 'signed char' for int8.
 #endif
 #endif
 
-#ifdef SUN
+#if defined(SUN) || defined(sun)
+
+#ifndef SUN
+#define SUN
+#endif
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
@@ -208,7 +215,11 @@ typedef double            float64;
 #endif /* SUN */
 
 
-#ifdef IBM6000
+#if defined(IBM6000) || defined(_AIX)
+
+#ifndef IBM6000
+#define IBM6000
+#endif
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
@@ -260,7 +271,12 @@ typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 
 #endif /* IBM6000 */
 
-#ifdef HP9000
+
+#if defined(HP9000) || defined(hpux)
+
+#ifndef HP9000
+#define HP9000
+#endif
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
@@ -309,7 +325,11 @@ typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 #endif /* HP9000 */
 
 
-#ifdef IRIS4
+#if defined(IRIS4) || defined(sgi)
+
+#ifndef IRIS4
+#define IRIS4
+#endif
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
@@ -358,7 +378,12 @@ typedef int                intf;     /* size of INTEGERs in Fortran compiler */
 
 #endif /* IRIS4 */
 
-#ifdef UNICOS
+
+#if defined(UNICOS) || defined(_UNICOS)
+
+#ifndef UNICOS
+#define UNICOS
+#endif
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
@@ -408,6 +433,7 @@ typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 #define CHAR_IS_UNSIGNED
 
 #endif /* UNICOS */
+
 
 #ifdef VMS
 
@@ -461,7 +487,12 @@ typedef int                intf;     /* size of INTEGERs in Fortran compiler */
 #   define CONVEX
 #endif
 
-#ifdef CONVEX
+
+#if defined(CONVEX) || defined(__convex__)
+
+#ifndef CONVEX
+#define CONVEX
+#endif
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
@@ -700,7 +731,12 @@ typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 
 #endif /* PC */
 
-#ifdef NEXT
+
+#if defined(NEXT) || defined(NeXT)
+
+#ifndef NEXT
+#define NEXT
+#endif
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
@@ -747,6 +783,7 @@ typedef double            float64;
 #define INCLUDES_ARE_ANSI
 
 #endif /* NEXT */
+
 
 #ifdef MOTOROLA
 
@@ -800,6 +837,7 @@ typedef double            float64;
 
 #endif /* MOTOROLA */
 
+
 #ifdef DEC_ALPHA
 
 #ifdef GOT_MACHINE
@@ -846,6 +884,7 @@ typedef double            float64;
 #endif
 
 #endif /* DEC_ALPHA */
+
 
 #ifdef VP
 
