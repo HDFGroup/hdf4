@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/07/15 21:48:48  sxu
- Added changes for CONVEX
+Revision 1.4  1992/08/06 14:27:57  mlivin
+made it append all RIGs to file, not crush the given output file
 
+ * Revision 1.3  1992/07/15  21:48:48  sxu
+ *  Added changes for CONVEX
+ *
  * Revision 1.2  1992/07/01  20:14:53  mlivin
  * cleaned up some little things
  *
@@ -205,7 +208,6 @@ char *imfile;
 uint16 compress;
 #endif /* PROTOTYPE */
 {
-    static int first=1;                 /* is this first image? */
     int ret;
     char *space;
     FILE *fp;
@@ -233,12 +235,7 @@ uint16 compress;
         exit(1);
     }
 
-    if (first) {
-        ret = DFR8putimage(outfile, space, xdim, ydim, compress);
-        first = 0;
-    }
-    else
-        ret = DFR8addimage(outfile, space, xdim, ydim, compress);
+    ret = DFR8addimage(outfile, space, xdim, ydim, compress);
 
     if (ret < 0) {
         printf(" Error: %d, in writing image %s\n", HEvalue(1), imfile);
