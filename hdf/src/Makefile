@@ -3,9 +3,6 @@
 #
 # ##################################################################
 #
-#                   NCSA HDF Version 3.3 release Beta 1
-#                            January 1993
-#
 #           MAKEFILE for creating the HDF library, libdf.a,
 #
 # This makefile creates the following FORTRAN and C interfaces 
