@@ -32,19 +32,19 @@ hrepack_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 TESTS = test_hrepack
 check_PROGRAMS = test_hrepack
 
-hziptst_SOURCES = hrepack.c hrepack_an.c hrepack_cmp.c hrepack_gr.c         \
-                  hrepack_list.c hrepack_lsttable.c hrepack_opttable.c      \
-                  hrepack_pal.c hrepack_parse.c hrepack_sds.c               \
-                  hrepack_sdutil.c hrepack_utils.c hrepack_vg.c             \
-                  hrepack_vs.c test_hrepack_add.c test_hrepack_main.c       \
-                  test_hrepack_verify.c ../hdiff/dumplib.c ../hdiff/hdiff.c \
-                  ../hdiff/hdiff_array.c ../hdiff/hdiff_gattr.c             \
-                  ../hdiff/hdiff_gr.c ../hdiff/hdiff_list.c                 \
-                  ../hdiff/hdiff_mattbl.c ../hdiff/hdiff_misc.c             \
-                  ../hdiff/hdiff_sds.c ../hdiff/hdiff_table.c               \
-                  ../hdiff/hdiff_vs.c
-hziptst_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
-hziptst_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+test_hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_cmp.c hrepack_gr.c    \
+                       hrepack_list.c hrepack_lsttable.c hrepack_opttable.c \
+                       hrepack_pal.c hrepack_parse.c hrepack_sds.c          \
+                       hrepack_sdutil.c hrepack_utils.c hrepack_vg.c        \
+                       hrepack_vs.c test_hrepack_add.c test_hrepack_main.c  \
+                       test_hrepack_verify.c ../hdiff/dumplib.c             \
+                       ../hdiff/hdiff.c ../hdiff/hdiff_array.c              \
+                       ../hdiff/hdiff_gattr.c ../hdiff/hdiff_gr.c           \
+                       ../hdiff/hdiff_list.c ../hdiff/hdiff_mattbl.c        \
+                       ../hdiff/hdiff_misc.c ../hdiff/hdiff_sds.c           \
+                       ../hdiff/hdiff_table.c ../hdiff/hdiff_vs.c
+test_hrepack_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
+test_hrepack_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 noinst_PROGRAMS = hrepack_check
 
