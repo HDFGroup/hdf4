@@ -723,7 +723,14 @@ intn direction;
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
 intn Hexist(int32 file_id, uint16 search_tag, uint16 search_ref)
+#else
+intn Hexist(file_id, search_tag, search_ref)
+     int32 file_id;
+     uint16 search_tag;
+     uint16 search_ref;
+#endif
 {
     char *FUNC="Hexist";        /* for HERROR */
     uint16 find_tag=0,find_ref=0;
