@@ -741,6 +741,7 @@ test_mgr_init()
     MESSAGE(8, printf("Try checking out an existing file\n"););
 
     /* Ok, now check an existing file */
+
     fid=Hopen(DATAFILE,DFACC_READ,0);
     CHECK(fid,FAIL,"Hopen");
 
