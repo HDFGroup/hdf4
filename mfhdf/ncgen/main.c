@@ -37,6 +37,9 @@ main(argc, argv)
 int argc;
 char *argv[];
 {
+    extern int optind;
+    extern int opterr;
+    extern char *optarg;
     int c;
     FILE *fp;
 

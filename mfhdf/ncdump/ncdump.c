@@ -511,6 +511,9 @@ main(argc, argv)
 int argc;
 char *argv[];
 {
+    extern int optind;
+    extern int opterr;
+    extern char *optarg;
     static struct fspec fspec =	/* defaults, overridden on command line */
       {
 	  0,			/* construct netcdf name from file name */
