@@ -67,14 +67,14 @@ opendir(char *dirname)
 	short			vRefNum;
 	long			dirID;
 	char			*dname;
-	DIR				*temp;
+	DIR				*temp = NULL;
 	char			path_temp[MAXPATHLEN+1];	/*	Temporary area for building pathname	*/
 
 	/*	Save the current path	*/
 	pb.ioCompletion	= nil;
 	pb.ioNamePtr	= nil;
 	
-	if (dd_errno = PBHGetVol(&pb, false))
+	if ((dd_errno = PBHGetVol(&pb, false)) != noErr)
 		return nil;
 
 	vRefNum	= pb.ioWDVRefNum;
@@ -125,7 +125,7 @@ opendir(char *dirname)
 	cpb.dirInfo.ioFDirIndex		= -1;
 	cpb.dirInfo.ioDrDirID		= dirID;
 
-	if (dd_errno = PBGetCatInfo(&cpb, false))
+	if ((dd_errno = PBGetCatInfo(&cpb, false)) != noErr)
 		return nil;
 
 	/*	Temporarily CD to the parent directory	*/
@@ -134,7 +134,7 @@ opendir(char *dirname)
 	pb.ioVRefNum				= pb.ioWDVRefNum;
 	pb.ioWDDirID				= cpb.dirInfo.ioDrParID;
 	
-	if (dd_errno = PBHSetVol(&pb, false))
+	if ((dd_errno = PBHSetVol(&pb, false)) != noErr)
 		return nil;
 
 	/*	This is the common code for all three cases above	*/
@@ -170,7 +170,11 @@ opendir(char *dirname)
 			}
 
           /*	Try and open the directory	*/
-          temp = hopendir(path_temp, 0, 0);
+          if ((vRefNum != 0) && (dirID != 0))		{
+	          temp = hopendir(path_temp, vRefNum, dirID);
+	      }
+	      if (temp == NULL)
+	          temp = hopendir(path_temp, 0, 0);
       }
 	else
 		/*	If this call wasn't passed a pathname, then we call hopendir() with nil to
@@ -185,7 +189,7 @@ opendir(char *dirname)
 	pb.ioVRefNum				= vRefNum;
 	pb.ioWDDirID				= dirID;
 	
-	if (dd_errno = PBHSetVol(&pb, false))
+	if ((dd_errno = PBHSetVol(&pb, false)) != noErr)
       {
           /*	If this call failed, then get rid of the structures created by hopendir()	*/
           closedir(temp);
@@ -235,15 +239,6 @@ hopendir(char *dirname, short vRefNum, long dirID)
 	HLock((char **)curh);
 	cur		= *curh;
 
-        /* Make sure the path ends in a ':' */
-        if (dirname != nil)             {
-                while ((isspace(dirname[dirname[0]])) && (dirname[0] > 0))
-                        dirname[0]--;
-
-                if ((dirname[dirname[0]] != ':') && (dirname[0]<255))
-                        dirname[++dirname[0]] = ':';
-        }
-
 	/*	If we're supposed to open anything but the current directory, set the current
 	 *	working directory to the desired directory.
 	 */
@@ -254,15 +249,24 @@ hopendir(char *dirname, short vRefNum, long dirID)
           pb.ioVRefNum				= vRefNum;
           pb.ioWDDirID				= dirID;
 		
-          if (dd_errno = PBHSetVol(&pb, false))
-          	;	// Don't fail. First try a local change.
-//              goto failure_exit;
-          else /* Fortner supplied fix 8/26/97 */
-            {  /* make vRefNum and dirId valid */
+          if ((dd_errno = PBHSetVol(&pb, false)) != noErr)		{
+              /* a trailing colon could cause trouble */
+	          if (dirname[dirname[0]] == ':')		{
+	              dirname[0]--;
+		          dd_errno = PBHSetVol(&pb, false);
+		          dirname[0]++;
+		      }
+		  }
+
+          if (dd_errno == noErr)	
+            {  /* make vRefNum and dirId valid & up-to-date */
+            	pb.ioNamePtr = NULL;
+         		dd_errno = PBHGetVol(&pb, false);
                 vRefNum = pb.ioVRefNum;
                 dirID = pb.ioWDDirID;
             }
       }
+
 
 	cur->dd_buf	= nil;
 	
@@ -273,7 +277,7 @@ hopendir(char *dirname, short vRefNum, long dirID)
 	cpb.dirInfo.ioFDirIndex		= -1;
 	cpb.dirInfo.ioDrDirID		= dirID;
 	
-	if (dd_errno = PBGetCatInfo(&cpb, false))
+	if ((dd_errno = PBGetCatInfo(&cpb, false)) != noErr)
 		goto failure_exit;
 
 	/*	Save the directory info	*/
@@ -473,7 +477,7 @@ readdir(DIR *dirp)
           cpb.dirInfo.ioFDirIndex		= dirp->dd_off;
           cpb.dirInfo.ioDrDirID		= dirp->dd_fd;
 
-          if (dd_errno = PBGetCatInfo(&cpb, false))
+          if ((dd_errno = PBGetCatInfo(&cpb, false)) != noErr)
 			{
                 DisposHandle((Handle) meh);
                 return nil;
@@ -547,7 +551,7 @@ hgetwd(short vRefNum, long startDirID, char *path, int max_path_len, char *sep)
 		pb.dirInfo.ioFDirIndex	= -1;
 		pb.dirInfo.ioDrDirID	= curDirID;
 		
-		if (err = PBGetCatInfo(&pb, false))
+		if ((err = PBGetCatInfo(&pb, false)) != noErr)
           {
               DisposPtr((Ptr) temp_path);
               return err;
@@ -647,11 +651,11 @@ getwd(char *path)
 	pb.ioCompletion	= nil;
 	pb.ioNamePtr	= nil;
 	
-	if (dd_errno = PBHGetVol(&pb, false))
+	if ((dd_errno = PBHGetVol(&pb, false)) != noErr)
 		return nil;
 
 	/*	Transform it into a path	*/
-	if (dd_errno = hgetwd(pb.ioWDVRefNum, pb.ioWDDirID, path, MAXPATHLEN-1, dd_separator))
+	if ((dd_errno = hgetwd(pb.ioWDVRefNum, pb.ioWDDirID, path, MAXPATHLEN-1, dd_separator)) != noErr)
 		return nil;
 
 	return path;
@@ -673,7 +677,7 @@ getwd(char *path)
 char *
 pathdir(DIR *dirp, char *path)
 {
-	if (dd_errno = hgetwd(dirp->dd_volume, dirp->dd_fd, path, MAXPATHLEN-1, dd_separator))
+	if ((dd_errno = hgetwd(dirp->dd_volume, dirp->dd_fd, path, MAXPATHLEN-1, dd_separator)) != noErr)
 		return nil;
 
 	return path;
