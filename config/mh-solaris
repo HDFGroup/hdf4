@@ -5,13 +5,13 @@
 #CC=gcc
 #CFLAGS=-ansi 
 #
-#Using ANSI compilier
+#Using ANSI compilier also needs LIBSX = -lm(see below)
 CC=cc
-CFLAGS= -Xa
+CFLAGS= -Xa -O
 
 # Fortran compilier
 FC = f77
-FFLAGS =
+FFLAGS = -O
 
 # Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
 RANLIB = touch
@@ -25,7 +25,7 @@ RM = /bin/rm
 RMFLAGS = -f
 
 # Extra libraris like '-lm' for fabs() 
-LIBS = -lm
+LIBSX = -lm
 
 # ------------ Macros for Pablo Instrumentation  --------------------
 # Uncomment the following lines to create a Pablo Instrumentation
