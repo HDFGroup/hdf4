@@ -95,7 +95,7 @@ char**av;
     }
     Vinquire(vg,&n, vgname);
     Vgetclass(vg, vgclass); 
-    if (strlen(vgname)==0)  strcat(vgname,"NoName");
+    if (DFIstrlen(vgname)==0)  strcat(vgname,"NoName");
     printf("\nvg:%d <%d/%d> (%s {%s}) has %d entries:\n",
            nvg, vg->otag, vg->oref, vgname, vgclass,n);
     
@@ -112,7 +112,7 @@ char**av;
         }
 
         VSinquire(vs, &nv,&interlace, fields, &vsize, vsname);
-        if (strlen(vsname)==0)  strcat(vsname,"NoName");
+        if (DFIstrlen(vsname)==0)  strcat(vsname,"NoName");
         VSgetclass(vs,vsclass); 
         printf("  vs:%d <%d/%d> nv=%d i=%d fld [%s] vsize=%d (%s {%s})\n",
                 t, vs->otag, vs->oref, nv, interlace, fields, vsize, vsname, vsclass);
@@ -133,7 +133,7 @@ char**av;
           }
           
           Vinquire(vgt, &ne, vgname);
-          if (strlen(vgname)==0)  strcat(vgname,"NoName");
+          if (DFIstrlen(vgname)==0)  strcat(vgname,"NoName");
           Vgetclass(vgt, vgclass);
           printf("  vg:%d <%d/%d> ne=%d (%s {%s})\n",
                  t, vgt->otag, vgt->oref, ne,  vgname, vgclass );
@@ -173,7 +173,7 @@ char**av;
         continue;
       }
       VSinquire (vs, &nv,&interlace, fields, &vsize, vsname);
-      if (strlen(vsname)==0)  strcat(vsname,"NoName");
+      if (DFIstrlen(vsname)==0)  strcat(vsname,"NoName");
       VSgetclass (vs, vsclass);
       printf("L vs:%d <%d/%d> nv=%d i=%d fld [%s] vsize=%d (%s.%s)\n",
               vsid, vs->otag, vs->oref, nv, interlace, fields, vsize, vsname, vsclass);

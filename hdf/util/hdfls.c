@@ -26,9 +26,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.11  1992/04/24 15:38:25  koziol
-PC port
+Revision 1.12  1992/05/26 21:00:08  koziol
+Folded Jason's Mac port and Linted code into the main version
 
+ * Revision 1.11  1992/04/24  15:38:25  koziol
+ * PC port
+ *
  * Revision 1.10  1992/03/27  15:39:28  chouck
  * Can now handle multiple command line options
  *
@@ -93,6 +96,14 @@ PC port
 */
 #include "hdf.h"
 #include "hfile.h"
+
+#ifdef MAC
+/* this isn't worth putting in hdfi.h */
+/* otherwise, need to include stdlib.h, which */
+/* in turn requires other includes - very messy, trust me */ 
+void qsort(void *base, size_t nmemb, size_t size, 
+        int (*compar) (const void*, const void *));
+#endif
 
 #define MAXBUFF 2000
 

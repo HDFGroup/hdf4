@@ -1,4 +1,3 @@
-
 /*****************************************************************************
 *
 * vmake.c
@@ -38,7 +37,7 @@
 * 
 ******************************************************************************/
 
-#include <vg.h>
+#include "vg.h"
 
 #ifdef MAC
  int32 show_help_msg(void);
@@ -267,7 +266,7 @@ printf("vsadd: ref is %d\n",ref);
 	  strcat(allfields,",");
      }
 
-  i=strlen(allfields); allfields[i-1]='\0'; /* remove last comma */
+  i=DFIstrlen(allfields); allfields[i-1]='\0'; /* remove last comma */
 
   VSsetname(vs,vsname);
   stat = VSsetfields(vs,allfields);
@@ -383,7 +382,7 @@ int32 inpdata (bp) unsigned char**bp; {
 
  
  compact(string,ss);
- ns = strlen(ss); ss[ns++] = ','; 
+ ns = DFIstrlen(ss); ss[ns++] = ',';
 
  p1 = p2 = 0;
  for(i=0;i<ns;i++) {
@@ -412,7 +411,7 @@ int32 inpdata (bp) unsigned char**bp; {
  } /* scanit */
 
  int32 compact (ss,dd) char *ss, *dd; {
-	int i,t,n = strlen(ss);
+    int i,t,n = DFIstrlen(ss);
 	for(t=0,i=0;i<n;i++) if(ss[i]!=' ') { dd[t++] = ss[i]; }
 	dd[t] = '\0';
 	return (1);
@@ -441,7 +440,7 @@ int32 savtype (ss,p1,p2) char *ss; int p1,p2; {
 int32 separate(ss,fmt,num) char *ss; char *fmt; int*num; {
 	int32 i,n;
 	i=0;
-	n=strlen(ss);
+    n=DFIstrlen(ss);
 	while(i<n) {
 	  if(ss[i]<'0' ||  ss[i] >'9') break; 
 	  i++;

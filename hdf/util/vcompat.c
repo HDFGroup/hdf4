@@ -3,7 +3,7 @@
 *			  NCSA HDF version 3.2beta
 *			     February 29, 1992
 *
-* NCSA HDF Version 3.10r5 source code and documentation are in the public
+* NCSA HDF Version 3.2 source code and documentation are in the public
 * domain.  Specifically, we give to the public domain all rights for future
 * licensing of the source code, all resale rights, and all publishing rights.
 * 
@@ -26,9 +26,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/04/24 15:38:25  koziol
-PC port
+Revision 1.4  1992/05/26 21:00:08  koziol
+Folded Jason's Mac port and Linted code into the main version
 
+ * Revision 1.3  1992/04/24  15:38:25  koziol
+ * PC port
+ *
  * Revision 1.2  1992/02/29  18:58:36  sxu
  * add header
  *
@@ -37,6 +40,7 @@ PC port
  *
 */
 #include <stdio.h>
+#include "vg.h"
 
 main (ac,av) int ac; char**av; {
 
