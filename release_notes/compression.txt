@@ -5,8 +5,9 @@ library which allows any data-object to be compressed using a variety of
 algorithms.  This new feature of the library is completely transparent to
 users once the data has been compressed initially - further data written
 to an object or read from it are compressed or decompressed internally to
-the library without user intervention.  Currently only two compression
-algorithms are supported: Run-Length Encoding (RLE) and adaptive Huffman.
+the library without user intervention.  Currently only three compression
+algorithms are supported: Run-Length Encoding (RLE), adaptive Huffman,
+and an LZ-77 dictionary coder (the gzip 'deflation' algorithm).
 Plans for future algorithms include an Lempel/Ziv-78 dictionary coding,
 an arithmetic coder and a faster Huffman algorithm.
     The public interface for this new feature is contained in one new
