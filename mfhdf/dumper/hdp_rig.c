@@ -194,6 +194,8 @@ do_dumprig(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts)
           printf("Failure in dumping RIG data\n");
           exit(1);
       }
+    if(dumprig_opts.filter_num != NULL)
+      HDfree(dumprig_opts.filter_num);
 }	/* end do_dumprig() */
 
 static intn 
@@ -269,6 +271,12 @@ drig(dump_info_t * dumprig_opts, intn curr_arg, intn argc,
 
           x = 0;	/* Used as the index of the array of "rig_chosen[x]". */
           printf("ndsets=%d, dumpall=%d, num_chosen=%d\n",(int)ndsets,(int)dumpall,(int)dumprig_opts->num_chosen);
+
+          for(i=0; i<dumprig_opts->num_chosen; i++)
+             { if((rig_chosen[i] >= ndsets)||(rig_chosen[i]<0))
+                printf("\nThe index %d is out of range\n",rig_chosen[i]);
+             }
+
           for (i = 0; i < ndsets && (dumpall!=0 || x<dumprig_opts->num_chosen); i++)
             {	/* Examine all RIGs. */
                 int         indent = 5, compressed, has_pal;
@@ -322,7 +330,7 @@ drig(dump_info_t * dumprig_opts, intn curr_arg, intn argc,
                        is not what the user wants or if the user has specified a 
                        model and the model of the current image is not that one, then
                        skip the current image. */
-                if (((dumprig_opts->filter == DINDEX) && (i != rig_chosen[x++])) || 
+                if (((dumprig_opts->filter == DINDEX) && (i != rig_chosen[x])) || 
                     (((ncomps * 8) != model) && (model != 0)))
                   {
                       HDfree((VOIDP) image);
@@ -374,6 +382,10 @@ drig(dump_info_t * dumprig_opts, intn curr_arg, intn argc,
                       HDfree((VOIDP) image);
                       break;
                   }		/* switch  */
+
+          if(i == rig_chosen[x])
+            x++;
+
             }	/* for ndsets  */
           if (rig_chosen!=NULL)
             {

@@ -274,6 +274,10 @@ do_dumpvd(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts)
           printf("Failure in dumping SDS data\n");
           exit(1);
       } 
+
+	if(dumpvd_opts.filter_num != NULL)
+	  HDfree(dumpvd_opts.filter_num);
+
 }	/* end do_dumpvd() */
 
 void 

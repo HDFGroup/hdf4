@@ -1,4 +1,4 @@
-/****************************************************************************
+/**********************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
  * National Center for Supercomputing Applications                          *
@@ -200,6 +200,8 @@ parse_dumpsds_opts(dump_info_t * dumpsds_opts, intn *curr_arg, intn argc, char *
 void 
 do_dumpsds(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts)
 {
+    int32 i;
+    char tempPtr;
     dump_info_t dumpsds_opts;	/* dumpsds options */
 
     if (glob_opts->help == TRUE)
@@ -220,6 +222,13 @@ do_dumpsds(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts)
           printf("Failure in dumping SDS data\n");
           exit(1);
       }
+
+	if ( dumpsds_opts.filter_num != NULL )
+           HDfree( dumpsds_opts.filter_num);
+
+        if( dumpsds_opts.filter_str != NULL)
+          HDfree(dumpsds_opts.filter_str);
+
 }	/* end do_dumpsds() */
 
 int32 
