@@ -87,18 +87,6 @@ it is assumed that you have done the following:
       This should create a directory called 'HDF42r0' which 
       contains several files and directories.
       
-Note: If you are building from the UNIX source code, then you will
-      need to replace the jconfig.h and netcdf.h file as follows
-      ( this assumes that the HDF Library tree resides 
-      under HDF42r0 directory ):
- 
-      copy C:\MyHDFstuff\HDF42r0\hdf\jpeg\config\jwin32.h
-                                 C:\MyHDFstuff\HDF42r0\hdf\jpeg\jconfig.h
-      copy C:\MyHDFstuff\HDF42r0\mfhdf\libsrc\win32cdf.h
-                                 C:\MyHDFstuff\HDF42r0\mfhdf\libsrc\netcdf.h
-
-You do not need to do this if you are using the HDF42r0s.zip file! 
-
 STEP II: Select Installation type and Build.
 
 You may select one of 2 ways to build the HDF libraries and 
@@ -147,8 +135,8 @@ Note that the instructions are the same for both Options I and II.
            you will see that the Digital Visual Fortran compiler is invoked
            by the Visual C++ Development environment in compiling the fortran code.
 
-           NOTE: "all" is a dummy target. You will get a link error when   
-           "all.exe." is built : 
+           NOTE when using Win32.zip: "all" is a dummy target. 
+           You will get a link error when   "all.exe." is built : 
                  LINK: error LNK2001: unresolved external symbol _WinMainCRTStartup.....
                  all.exe - 2 error(s), ....
 
@@ -164,13 +152,12 @@ Note that the instructions are the same for both Options I and II.
 
            c:\MyHDFstuff\HDF42r0\Windows\lib\debug\singlethreaded -
 
-              HD420d.lib - HDF static library (inludes JPEG and GZIP libraries) 
+              HD420d.lib - HDF static library 
               HM420d.lib - MFHDF static library
 
            c:\MyHDFstuff\HDF42r0\Windows\lib\debug\multithreaded -
 
               HD420md.lib - HDF multi-threaded DLL import library 
-                            (inludes JPEG and GZIP libraries)
               HM420md.lib - MFHDF multi-threaded DLL import library 
 
            c:\MyHDFstuff\HDF42r0\Windows\DLL\debug
@@ -187,13 +174,12 @@ Note that the instructions are the same for both Options I and II.
  
            c:\MyHDFstuff\HDF42r0\Windows\lib\release\singlethreaded - 
  
-              HD420.lib - HDF static library (inludes JPEG and GZIP libraries)
+              HD420.lib - HDF static library 
               HM420.lib - MFHDF static library
 
            c:\MyHDFstuff\HDF42r0\Windows\lib\release\multithreaded - 
  
               HD420m.lib - HDF multi-threaded DLL import library 
-                            (inludes JPEG and GZIP libraries)
               HM420m.lib - MFHDF multi-threaded DLL import library
  
            c:\MyHDFstuff\HDF42r0\Windows\DLL\release 
@@ -240,10 +226,6 @@ STEP V:  INSTALLATION
            dlllib  - multi-threaded libraries and DLLs 
            include - include files
  
-Note:  There is an error in the debug version of the hdp tool.  It will show an
-       alert box with the error and 3 buttons.  This is a known problem.  The release
-       version is fine.
-
 STEP VI:  
 
 BUILDING AN APPLICATION USING THE HDF LIBRARY - SOME HELPFUL POINTERS
