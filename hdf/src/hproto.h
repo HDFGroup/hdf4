@@ -157,7 +157,7 @@ extern      "C"
     extern intn HDvalidfid
                 (int32 file_id);
 
-    extern const char _HUGE *HDgettagname
+    extern const char _HUGE *HDgettagdesc
                 (uint16 tag);
 
     extern char _HUGE *HDgettagsname
@@ -1989,12 +1989,15 @@ extern intn GRfileinfo(int32 grid,int32 *n_datasets,int32 *n_attrs);
 
 extern intn GRend(int32 grid);
 
+extern int32 GRcreate(int32 grid,char *name,int32 ncomp,int32 nt,int32 il,
+    int32 dimsizes[2]);
+
 extern int32 GRselect(int32 grid,int32 index);
 
 extern int32 GRnametoindex(int32 grid,char *name);
 
 extern intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
-    int32 *dimsizes,int32 *n_attr);
+    int32 dimsizes[2],int32 *n_attr);
 
 extern intn GRwriteimage(int32 riid,int32 start[2],int32 stride[2],
     int32 count[2],VOIDP data);

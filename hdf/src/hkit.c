@@ -34,7 +34,7 @@ EXPORTED ROUTINES
   HIcount_dd    -- counts the dd's of a certain type in file
   HDflush       -- flush the HDF file
   HDpackFstring -- convert a C string into a Fortran string
-  HDgettagname  -- return a text description of a tag
+  HDgettagdesc  -- return a text description of a tag
   HDgettagsname -- return a text name of a tag
   HDgettagnum   -- return the tag number for a text description of a tag
   HDgetNTdesc   -- return a text description of a number-type
