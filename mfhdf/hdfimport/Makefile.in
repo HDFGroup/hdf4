@@ -14,6 +14,9 @@
 
 @SET_MAKE@
 
+#############################################################################
+#############################################################################
+
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
@@ -49,7 +52,7 @@ CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
-CPPFLAGS = @CPPFLAGS@
+CPPFLAGS = $(INCLUDES) $(DEFINES) @CPPFLAGS@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
@@ -135,7 +138,6 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-bin_PROGRAMS = hdfimport
 
 INCLUDES = -I${top_srcdir}/hdf/src        \
          -I${top_srcdir}/mfhdf/libsrc   \
@@ -144,11 +146,19 @@ INCLUDES = -I${top_srcdir}/hdf/src        \
 
 DEFINES = -DNDEBUG -DHDF
 
+
+#############################################################################
+#############################################################################
+bin_PROGRAMS = hdfimport
+
 hdfimport_SOURCES = hdfimport.c
 hdfimport_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
 hdfimport_LDADD = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a @LIBS@
 hdfimport_DEPENPENDENCIES = ${top_builddir}/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
+
+#############################################################################
+#############################################################################
 check_PROGRAMS = hdfimporttest
 
 hdfimporttest_SOURCES = hdfimporttest.c
