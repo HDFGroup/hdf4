@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.11  1993/05/03 21:32:04  koziol
-First half of fixes to make Purify happy
+Revision 1.12  1993/09/01 23:21:22  georgev
+Fixed cast for HDfreespace().
 
+ * Revision 1.11  1993/05/03  21:32:04  koziol
+ * First half of fixes to make Purify happy
+ *
  * Revision 1.10  1993/04/22  22:59:58  koziol
  * Changed DFR8nimages, DFPnpals to report the correct number of images
  * and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
@@ -1083,7 +1086,7 @@ int DFGRIgetimlut(filename, imlut, xdim, ydim, type, isfortran)
                     }
                 }
                Hendaccess(aid);
-	       HDfreespace(buf);
+	       HDfreespace((VOIDP)buf);
                 return(Hclose(file_id));
             }
         }
