@@ -206,7 +206,7 @@ test_chunks()
     int32      nseek = 0;
 #endif
     int32       ret;
-    CHUNK_DEF   chunk[1];       /* Chunk definition, see 'hchunks.h' */
+    HCHUNK_DEF   chunk[1];       /* Chunk definition, see 'hchunks.h' */
     int32       dims[5];
     int32      fill_val_len = 1;
     uint8      fill_val_u8 = 0;      /* test 6 */
@@ -272,7 +272,7 @@ test_chunks()
                       1,chunk[0].pdims[1].chunk_length););
 
     /* Create element     tag, ref,  nlevels, fill_len, fill,  chunk array */
-    aid1 = HMCcreate(fid, 1020, 2, 1, fill_val_len, &fill_val_u8, (CHUNK_DEF *)chunk);
+    aid1 = HMCcreate(fid, 1020, 2, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
 
 #if 0
@@ -465,7 +465,7 @@ test_chunks()
                       1,chunk[0].pdims[1].chunk_length););
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
-    aid1 = HMCcreate(fid, 1020, 3, 1, fill_val_len, &fill_val_u8, (CHUNK_DEF *)chunk);
+    aid1 = HMCcreate(fid, 1020, 3, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
 
     /* Try writing to 2 chunk in the element */
@@ -594,7 +594,7 @@ test_chunks()
                       1,chunk[0].pdims[1].chunk_length););
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
-    aid1 = HMCcreate(fid, 1020, 5, 1, fill_val_len, &fill_val_u8, (CHUNK_DEF *)chunk);
+    aid1 = HMCcreate(fid, 1020, 5, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
 
     /* write 16 bytes out */
@@ -724,7 +724,7 @@ test_chunks()
                       2,chunk[0].pdims[2].chunk_length););
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
-    aid1 = HMCcreate(fid, 1020, 6, 1, fill_val_len, &fill_val_u8, (CHUNK_DEF *)chunk);
+    aid1 = HMCcreate(fid, 1020, 6, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
 
     /* write only 112 bytes out */
@@ -896,7 +896,7 @@ test_chunks()
                       2,chunk[0].pdims[2].chunk_length););
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
-    aid1 = HMCcreate(fid, 1020, 7, 1, fill_val_len, &fill_val_u8, (CHUNK_DEF *)chunk);
+    aid1 = HMCcreate(fid, 1020, 7, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
 
     /* Set max chunks to cache to 3x4 = 12 chunks */
@@ -1067,11 +1067,11 @@ test_chunks()
                       2,chunk[0].pdims[2].chunk_length););
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
-    aid1 = HMCcreate(fid, 1020, 12, 1, fill_val_len, &fill_val_u8, (CHUNK_DEF *)chunk);
+    aid1 = HMCcreate(fid, 1020, 12, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
-    aid2 = HMCcreate(fid, 1020, 18, 1, fill_val_len, &fill_val_u8, (CHUNK_DEF *)chunk);
+    aid2 = HMCcreate(fid, 1020, 18, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
 
     /* write 24 bytes out */
@@ -1442,7 +1442,7 @@ test_chunks()
                       2,chunk[0].pdims[2].chunk_length););
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
-    aid1 = HMCcreate(fid, 1020, 14, 1, fill_val_len, &fill_val_u16, (CHUNK_DEF *)chunk);
+    aid1 = HMCcreate(fid, 1020, 14, 1, fill_val_len, &fill_val_u16, (HCHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
 
     /* write 48 bytes out */
@@ -1568,7 +1568,7 @@ test_chunks()
                       2,chunk[0].pdims[2].chunk_length););
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
-    aid1 = HMCcreate(fid, 1020, 15, 1, fill_val_len, &fill_val_f32, (CHUNK_DEF *)chunk);
+    aid1 = HMCcreate(fid, 1020, 15, 1, fill_val_len, &fill_val_f32, (HCHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
 
     if (aid1 == FAIL)
@@ -1712,7 +1712,7 @@ test_chunks()
                       3,chunk[0].pdims[3].chunk_length););
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
-    aid1 = HMCcreate(fid, 1020, 9, 1, fill_val_len, &fill_val_u8, (CHUNK_DEF *)chunk);
+    aid1 = HMCcreate(fid, 1020, 9, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
 
     /* write 5000 bytes out */
@@ -1862,7 +1862,7 @@ test_chunks()
 #endif
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
-    aid1 = HMCcreate(fid, 1020, 10, 1, fill_val_len, &fill_val_u8, (CHUNK_DEF *)chunk);
+    aid1 = HMCcreate(fid, 1020, 10, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
 
     for (j = 0; j < 12000; j++)
@@ -2036,7 +2036,7 @@ test_chunks()
                       1,chunk[0].pdims[1].chunk_length););
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
-    aid1 = HMCcreate(fid, 1020, 20, 1, fill_val_len, &fill_val_u8, (CHUNK_DEF *)chunk);
+    aid1 = HMCcreate(fid, 1020, 20, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
 
     /* write 16 bytes out */
@@ -2172,11 +2172,11 @@ test_chunks()
                       2,chunk[0].pdims[2].chunk_length););
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
-    aid1 = HMCcreate(fid, 1020, 21, 1, fill_val_len, &fill_val_u8, (CHUNK_DEF *)chunk);
+    aid1 = HMCcreate(fid, 1020, 21, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
-    aid2 = HMCcreate(fid, 1020, 22, 1, fill_val_len, &fill_val_u8, (CHUNK_DEF *)chunk);
+    aid2 = HMCcreate(fid, 1020, 22, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
 
     /* write 24 bytes out */
