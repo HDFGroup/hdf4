@@ -1115,13 +1115,18 @@
 ./mfhdf/hdiff/dumplib.h
 ./mfhdf/hdiff/hdiff.c
 ./mfhdf/hdiff/hdiff.h
+./mfhdf/hdiff/hdiff_array.c
+./mfhdf/hdiff/hdiff_array.h
 ./mfhdf/hdiff/hdiff_gattr.c
+./mfhdf/hdiff/hdiff_list.c
+./mfhdf/hdiff/hdiff_list.h
 ./mfhdf/hdiff/hdiff_main.c
+./mfhdf/hdiff/hdiff_mattbl.c
+./mfhdf/hdiff/hdiff_mattbl.h
 ./mfhdf/hdiff/hdiff_misc.c
 ./mfhdf/hdiff/hdiff_sdattr.c
-./mfhdf/hdiff/hdiff_sddata.c
-./mfhdf/hdiff/hdiff_grdata.c
-./mfhdf/hdiff/hdiff_vdata.c
+./mfhdf/hdiff/hdiff_table.c
+./mfhdf/hdiff/hdiff_table.h
 ./mfhdf/hdiff/hdifftst.c
 ./mfhdf/hdiff/testhdiff.sh
 
@@ -1146,24 +1151,26 @@
 ./mfhdf/hzip/copy.h
 ./mfhdf/hzip/hdfzip.c
 ./mfhdf/hzip/hdfzip_main.c
+./mfhdf/hzip/hdfzipck.c
 ./mfhdf/hzip/hdfziptst_main.c
 ./mfhdf/hzip/hzip.h
 ./mfhdf/hzip/hziptst.hdf
 ./mfhdf/hzip/hziptst_out.hdf
 ./mfhdf/hzip/image24pixel.txt
 ./mfhdf/hzip/image8.txt
+./mfhdf/hzip/info.txt
 ./mfhdf/hzip/list.c
 ./mfhdf/hzip/pal_rgb.h
 ./mfhdf/hzip/parse.c
 ./mfhdf/hzip/parse.h
 ./mfhdf/hzip/table.c
+./mfhdf/hzip/table.h
+./mfhdf/hzip/testhzip.sh
+./mfhdf/hzip/utils.c
+./mfhdf/hzip/utils.h
 ./mfhdf/hzip/verify.c
 ./mfhdf/hzip/verify.h
-./mfhdf/hzip/table.h
-./mfhdf/hzip/hdfzipck.c
-./mfhdf/hzip/testhzip.sh
 ./mfhdf/hzip/zip_all.sh
-./mfhdf/hzip/info.txt
 
 
 ./mfhdf/libsrc/alloc.h
