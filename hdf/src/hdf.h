@@ -618,4 +618,7 @@ typedef int32 HFILEID;
 /* Misc. macros for backward compability */
 #define HDgettagname(tag)   HDgettagdesc(tag)
 
+/* This is also defined in fmpio.h */
+#define MP_PAGEALL    0x01  /* page the whole file i.e. no limit on 'maxcache'*/
+
 #endif /* HDF_H */
