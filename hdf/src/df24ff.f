@@ -2,9 +2,12 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.1  1992/08/25 21:40:44  koziol
-C Initial revision
+C Revision 1.2  1992/11/06 20:25:17  chouck
+C Made names lower-case for Absoft Fortran on the Mac
 C
+c Revision 1.1  1992/08/25  21:40:44  koziol
+c Initial revision
+c
 C
 C------------------------------------------------------------------------------
 C File:     df24Ff.f
@@ -15,10 +18,10 @@ C   d2gdims: get dimensions of image
 C   d2gimg: read in image
 C   d2aimg: write out image
 C   d2rref: set reference number to be used for next get
-C   DF24getdims:  get dimensions of image
-C   DF24getimage: read in image
-C   DF24getimage: write out image
-C   DF24readref:  set reference number to be used for next get
+C   df24getdims:  get dimensions of image
+C   df24getimage: read in image
+C   df24getimage: write out image
+C   df24readref:  set reference number to be used for next get
 C
 C Remarks:  A RIG specifies attributes associated with an image - lookup table, 
 C           dimension, compression, color compensation etc.
@@ -121,7 +124,7 @@ CEND7MAX
 
 
 C------------------------------------------------------------------------------
-C Name: DF24getdims
+C Name: df24getdims
 C Purpose:  get dimensions of next image RIG
 C Inputs:   name: name of HDF file
 C           xdim, ydim: locations for returning x,y dimensions
@@ -133,17 +136,17 @@ C Invokes: d2igdim
 C Remarks: none
 C----------------------------------------------------------------------------*/
 
-      integer function DF24getdims(name, xdim, ydim, il)
+      integer function df24getdims(name, xdim, ydim, il)
       character*(*) name
       integer xdim, ydim, il, d2igdim
 
-      DF24getdims = d2igdim(name, xdim, ydim, il, len(name))
+      df24getdims = d2igdim(name, xdim, ydim, il, len(name))
       return
       end
 
 
 C------------------------------------------------------------------------------
-C Name: DF24getimage
+C Name: df24getimage
 C Purpose:  get image from next RIG
 C Inputs:   name: name of HDF file
 C           image: pointer to space to return image
@@ -154,17 +157,17 @@ C Invokes: d2igimg
 C Remarks: space is assumed to be xdim * ydim * 3 bytes
 C----------------------------------------------------------------------------*/
 
-      integer function DF24getimage(name, image, xdim, ydim)
+      integer function df24getimage(name, image, xdim, ydim)
       character*(*) name, image
       integer xdim, ydim, d2igimg
 
-      DF24getimage = d2igimg(name, image, xdim, ydim, len(name))
+      df24getimage = d2igimg(name, image, xdim, ydim, len(name))
       return
       end
 
 
 C------------------------------------------------------------------------------
-C Name: DF24addimage
+C Name: df24addimage
 C Purpose:  Write out image
 C Inputs:   filename: name of HDF file
 C           image: image to write
@@ -175,19 +178,19 @@ C Invokes: d2iaimg
 C Remarks: array image is assumed to be xdim * ydim * ncomps bytes
 C----------------------------------------------------------------------------*/
 
-      integer function DF24addimage(name, image, xdim, ydim)
+      integer function df24addimage(name, image, xdim, ydim)
       character*(*) name, image
       integer xdim, ydim, d2iaimg
 
-      DF24addimage = d2iaimg(name, image, xdim, ydim, len(name), 0)
+      df24addimage = d2iaimg(name, image, xdim, ydim, len(name), 0)
       return
       end
 
-      integer function DF24putimage(name, image, xdim, ydim)
+      integer function df24putimage(name, image, xdim, ydim)
       character*(*) name, image
       integer xdim, ydim, d2iaimg
 
-      DF24putimage = d2iaimg(name, image, xdim, ydim, len(name), 1)
+      df24putimage = d2iaimg(name, image, xdim, ydim, len(name), 1)
       return
       end
 
