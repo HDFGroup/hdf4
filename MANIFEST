@@ -1124,7 +1124,6 @@
 ./mfhdf/hdiff/hdiff_mattbl.c
 ./mfhdf/hdiff/hdiff_mattbl.h
 ./mfhdf/hdiff/hdiff_misc.c
-./mfhdf/hdiff/hdiff_sdattr.c
 ./mfhdf/hdiff/hdiff_table.c
 ./mfhdf/hdiff/hdiff_table.h
 ./mfhdf/hdiff/hdifftst.c
