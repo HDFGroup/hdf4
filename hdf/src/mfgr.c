@@ -131,9 +131,9 @@ int32 GRsetexternalfile(int32 riid,char *filename,int32 offset)
     - Makes the image data of an RI into an external element special element.
 intn GRsetaccesstype(int32 riid,uintn accesstype)
     - Sets the access for an RI to be either serial or parallel I/O.
-intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo)
+intn GRsetcompress(int32 riid,comp_coder_t comp_type,comp_info *cinfo)
     - Makes the image data of an RI into a compressed special element.
-intn GRgetcompress(int32 riid,int32* comp_type,comp_info *cinfo)
+intn GRgetcompress(int32 riid,comp_coder_t* comp_type,comp_info *cinfo)
     - Retrieves the compression information of a raster image's data.
 
 Attribute Functions:
@@ -4527,9 +4527,9 @@ done:
 
  USAGE
     intn GRsetcompress(riid,comp_type,cinfo)
-        int32 riid;         IN: RI ID from GRselect/GRcreate
-        int32 comp_type;    IN: type of compression, from list in hcomp.h
-        comp_info *cinfo;   IN: compression specific information
+        int32 riid;         	IN: RI ID from GRselect/GRcreate
+        comp_coder_t comp_type;	IN: type of compression
+        comp_info *cinfo;   	IN: compression specific information
 
  RETURNS
     SUCCEED/FAIL
@@ -4543,7 +4543,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo)
+intn GRsetcompress(int32 riid,comp_coder_t comp_type,comp_info *cinfo)
 {
     CONSTR(FUNC, "GRsetcompress");   /* for HERROR */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
@@ -4560,7 +4560,8 @@ intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
     /* Check the validity of the compression type */
-    if ((comp_type < 0 || comp_type >= COMP_CODE_INVALID) && comp_type!=COMP_CODE_JPEG)
+    if ((comp_type < COMP_CODE_NONE || comp_type >= COMP_CODE_INVALID) 
+	&& comp_type!=COMP_CODE_JPEG)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate RI's object in hash table */
@@ -4623,9 +4624,9 @@ done:
 
  USAGE
     intn GRgetcompress(riid,comp_type,cinfo)
-        int32 riid;         IN: RI ID from GRselect/GRcreate
-        int32* comp_type;   OUT: type of compression
-        comp_info* cinfo;   OUT: retrieved compression information
+        int32 riid;		   IN: RI ID from GRselect/GRcreate
+        comp_coder_t* comp_type;   OUT: type of compression
+        comp_info* cinfo;	   OUT: retrieved compression information
 
  RETURNS
     SUCCEED/FAIL
@@ -4646,7 +4647,7 @@ done:
  REVISION LOG
     July 2001: Added to fix bug #307 - BMR
 --------------------------------------------------------------------------*/
-intn GRgetcompress(int32 riid, comp_coder_t * comp_type, comp_info* cinfo)
+intn GRgetcompress(int32 riid, comp_coder_t* comp_type, comp_info* cinfo)
 {
     CONSTR(FUNC, "GRgetcompress");   /* for HGOTO_ERROR */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */

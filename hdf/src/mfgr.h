@@ -115,7 +115,7 @@ typedef struct ri_info {
     uintn use_buf_drvr;         /* access to image needs to be through the buffered special element driver */
     uintn use_cr_drvr;          /* access to image needs to be through the compressed raster special element driver */
     uintn comp_img;             /* whether to compress image data */
-    int32 comp_type;            /* compression type */
+    comp_coder_t comp_type;     /* compression type */
     comp_info cinfo;            /* compression information */
     uintn ext_img;              /* whether to make image data external */
     char *ext_name;             /* name of the external file */
