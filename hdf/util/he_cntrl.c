@@ -5,9 +5,15 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1992/09/11 18:32:51  chouck
-Assorted MAC mungings
+Revision 1.9  1992/12/21 23:33:37  mfolk
+Change "dump" routine so that it prints ascii dump 40 characters
+per line, with no spaces between characters.
+Also added /*EMPTY*/ before the semicolon in a couple of for
+looks in HEalias to make codecenter stop complaining.
 
+ * Revision 1.8  1992/09/11  18:32:51  chouck
+ * Assorted MAC mungings
+ *
  * Revision 1.6  1992/08/24  21:59:44  sxu
  * *** empty log message ***
  *
@@ -478,8 +484,8 @@ int dump(length, offset, format, raw_flag)
             cdata = (char *) (data + offset); 
             printf("%8d: ", offset);
             for(i = 0; i < length; i++) {
-                printf("%5c ", cdata[i]);
-                if(++len > 9) {len = 0; printf("\n%8d: ", (offset + (i + 1)));}    
+                printf("%c", cdata[i]);
+                if(++len > 40) {len = 0; printf("\n%8d: ", (offset + (i + 1)));}    
             }
             printf("\n");
         }
@@ -1320,9 +1326,11 @@ int HEalias(cmd)
 	printAlias(word, cmd);
 	return HE_OK;
     }
-    for (cmdTail = cmd; cmdTail->next;  cmdTail = cmdTail->next);
+    for (cmdTail = cmd; cmdTail->next;  cmdTail = cmdTail->next)/*EMPTY*/
+        ;
     while (cmdTail->next = parseCmd(&s))
-	for (; cmdTail->next;  cmdTail = cmdTail->next);
+	for (; cmdTail->next;  cmdTail = cmdTail->next)/*EMPTY*/
+            ;
     return setAlias(word, cmd);
 }
 
