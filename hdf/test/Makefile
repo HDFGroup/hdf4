@@ -27,11 +27,12 @@ RMFLAGS=-f
 
 SRCS= 	rig.c sdstr.c hblocks.c an.c anfile.c \
         hextelt.c hfile.c hfile1.c vers.c sdmms.c \
-        sdnmms.c slab.c litend.c testhdf.c
+        sdnmms.c slab.c litend.c testhdf.c egchi.c \
+        tv1.c tv2.c
 
-CTESTS= rig.o sdstr.o hblocks.o an.o anfile.o \
+CTESTS= egchi.o rig.o sdstr.o hblocks.o an.o anfile.o \
         hextelt.o hfile.o hfile1.o vers.o sdmms.o \
-        sdnmms.o slab.o litend.o testhdf.o
+        sdnmms.o slab.o litend.o tv1.o tv2.o testhdf.o 
 
 FTESTS= tr8f t24f tpf tanf tanfilef tsdstrf tsdntf tsdnntf \
         tsdmmsf tsdnmmsf tstubsf \
@@ -63,7 +64,7 @@ fortest: $(FTESTS) $(HDFLIB)/libdf.a fortest.o
 ftests: $(FTESTS)
 
 clean: 
-	 -$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) fortest
+	 -$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) fortest core
 
 depend: 
 	 makedepend -I$(HDFINC) *.c
