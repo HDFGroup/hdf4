@@ -9,9 +9,9 @@
 #
 #       Name            Version
 #       ----            -------
-#       aclocal           1.6
+#       aclocal           1.7.7
+#       automake          1.7.7
 #       autoheader        2.53
-#       automake          1.6
 #       autoconf          2.53
 #
 echo /usr/bin/autoreconf -v
