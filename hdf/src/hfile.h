@@ -415,6 +415,8 @@ typedef struct sp_info_block_t
       /* variable-length linked blocks */
       int32       min_block;    /* the minimum block size */
 
+    /* Chunked elements */
+      int32       chunk_size;   /* logical size of chunks */
   }
 sp_info_block_t;
 
@@ -673,6 +675,11 @@ extern      "C"
 
     extern int32 HVPinfo
                 (accrec_t * access_rec, sp_info_block_t * info_block);
+
+/*
+   ** from hchunks.c - should be the same as found in 'hchunks.h'
+ */
+#include "hchunks.h"
 
 #if defined (MAC) || defined (macintosh) || defined(__MWERKS__) || defined (SYMANTEC_C)
     extern hdf_file_t mopen
