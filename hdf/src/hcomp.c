@@ -96,7 +96,7 @@ PRIVATE int32 HCIwrite_header
 
 PRIVATE int32 HCIinit_model
     PROTO((comp_model_info_t *minfo,comp_model_t model_type,
-            model_info *model_info));
+            model_info *m_info));
 
 /* comp_funcs -- struct of accessing functions for the compressed
    data element function modules.  The position of each function in
