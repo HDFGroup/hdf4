@@ -392,7 +392,9 @@ Please check your Makefile.
 #define DF_MT   DFMT_UNICOS
 typedef void            VOID;
 typedef void            *VOIDP;
+#ifdef OLD_WAY /* May need to be included on other machines than the C-90 */
 typedef char            *_fcd;
+#endif /* OLD_WAY */
 typedef signed char     char8;
 typedef unsigned char   uchar8;
 typedef signed char     int8;
