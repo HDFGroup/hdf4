@@ -59,7 +59,7 @@ CFLAGS = -D$(MACHINE)
 	$(CC) -c $(CFLAGS) -I$(HDFINC) $(HDFLIB)/libdf.a $(GLLAB)  $<
 #	$(CC) -c $(CFLAGS) -I$(HDFINC) $(GLLIB)  $<
 
-all: hdfed utils fp2hdf fptest fptestf
+all: hdfed utils fp2hdf fptest
 	-if( test \! -d $(HDFBIN)) then (mkdir $(HDFBIN)) fi
 	-cp $(UTILS) hdfed $(HDFBIN)
 
@@ -77,7 +77,7 @@ hdfed: he.h he_proto.h $(HEOBJ) $(HDFLIB)/libdf.a
 utils: $(UTILS) $(HDFLIB)/libdf.a
 
 clean:
-	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed fptest fptestf
+	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed fptest
 
 distclean:
-	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed fptest fptestf
+	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed fptest
