@@ -1542,7 +1542,7 @@ DFKui4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           for (i = 0; i < num_elm; i++)
             {
                 HDmemcpy(&tmp_src, source, sizeof(float32));
-                bitoff = ((unsigned int)source) >> BITOFF;
+                bitoff = 0;
                 ierr = IEG2CRAY(&type, &n_elem, &tmp_src, &bitoff, tmp_dst);
                 if (ierr != 0)
                     HRETURN_ERROR(DFE_BADCONV, FAIL);   /* error in Cray conversion */
@@ -1654,7 +1654,7 @@ DFKuo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           for (i = 0; i < num_elm; i++)
             {
                 HDmemcpy(&tmp_src, source, sizeof(float32));
-                bitoff = ((unsigned int)dest) >> BITOFF;
+                bitoff = ((unsigned int)&tmp_src) >> BITOFF;
                 ierr = CRAY2IEG(&type, &n_elem, tmp_dst, &bitoff, &tmp_src);
                 if (ierr != 0)
                     HRETURN_ERROR(DFE_BADCONV, FAIL);   /* error in Cray conversion */
