@@ -5295,6 +5295,8 @@ DFSDstartslab(const char *filename)
   int32       fill_bufsize = 16384;   /* Chosen for the PC */
   int32       odd_size;
   uint8      *fill_buf;
+  uint8       platnumsubclass;
+  uint8       outNT;          /* file number type subclass */
   intn       ret_value = SUCCEED;
   CONSTR(FUNC, "DFSDstartslab");
 
@@ -5365,10 +5367,33 @@ DFSDstartslab(const char *filename)
           HCLOSE_GOTO_ERROR(Sfile_id,DFE_NOSPACE, FAIL);
         }
 
-      /* Intialize buffer to fill value */
-      for (i = 0; i < fill_bufsize; i = i + localNTsize)
-        HDmemcpy(&(fill_buf[i]), Writesdg.fill_value, localNTsize);
+      /* Get number types and compare */
+      outNT = Writesdg.filenumsubclass;
+      platnumsubclass = (uint8)DFKgetPNSC(Writesdg.numbertype, (int32)DF_MT);
 
+      if (platnumsubclass != outNT)
+        {   /* conversion  */
+          /* Allocate buffer  */
+          uint8       buf2[DFSD_MAXFILL_LEN];
+
+          /* Convert from native to IEEE  */
+          DFKconvert((VOIDP)&Writesdg.fill_value, (VOIDP) buf2,
+                     Writesdg.numbertype, 1, DFACC_WRITE, 0, 0);
+
+          /* Intialize buffer to fill value */
+          for (i = 0; i < fill_bufsize; i = i + localNTsize)
+              HDmemcpy(&(fill_buf[i]), buf2, localNTsize);
+
+        }
+      else /* no conversion */
+        {
+            /* Intialize buffer to fill value */
+            for (i = 0; i < fill_bufsize; i = i + localNTsize)
+                HDmemcpy(&(fill_buf[i]), Writesdg.fill_value, localNTsize);
+        }
+
+
+      /* Write fill values */
       if (sdg_size <= fill_bufsize)
         odd_size = sdg_size;
       else
