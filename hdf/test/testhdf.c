@@ -309,12 +309,12 @@ main(int argc, char *argv[])
       {
           MESSAGE(2, printf("\nCleaning Up...\n\n");
               );
-#ifdef PC
+#if defined PC && !defined UNIX386
           remove("*.hdf");
           remove("*.tmp");
-#else
+#else   /* OLD_WAY */
           system("rm -f *.hdf *.tmp");
-#endif
+#endif  /* OLD_WAY */
       }     /* end if */
 #ifdef TEST_PC
     fclose(dbg_file);
