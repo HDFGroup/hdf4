@@ -17,7 +17,7 @@ For example, 10 characters, or 2 32-bit integers.
 
 Any number of attributes can be assigned to a vgroup, a vdata 
 (entire vdata) or any field of a vdata.  An attribute name should be 
-unique in its domain.  For example, a field attribute name 
+unique in its scope.  For example, a field attribute name 
 should be unique among all attributes of that field. 
 
 Attributes in HDF files
