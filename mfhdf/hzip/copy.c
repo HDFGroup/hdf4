@@ -36,7 +36,7 @@ int copy_gr_attrs(int32 ri_id,
                   int32 nattrs,          
                   options_t *options);
 
-int copy_vdata_attribute(int32 in, int32 out, int field, int attr);
+int copy_vdata_attribute(int32 in, int32 out, int32 findex, intn attrindex);
 
 
 void options_get_info(options_t      *options,     /* global options */
@@ -849,14 +849,14 @@ int copy_gr_attrs(int32 ri_id,
  *-------------------------------------------------------------------------
  */
 
-int copy_vdata_attribute(int32 in, int32 out, int field, int attr)
+int copy_vdata_attribute(int32 in, int32 out, int32 findex, intn attrindex)
 {
  char   attr_name[MAX_NC_NAME];
  int32  n_values, attr_size, attr_type;
  VOIDP  *values=NULL;
 
  /* Get attribute information */
- VSattrinfo(in, field, 0, attr_name, &attr_type, &n_values, &attr_size);
+ VSattrinfo(in, findex, attrindex, attr_name, &attr_type, &n_values, &attr_size);
 
  /* Allocate space for attribute values */
  if ((values = (VOIDP)malloc(attr_size * n_values)) == NULL) {
@@ -866,19 +866,20 @@ int copy_vdata_attribute(int32 in, int32 out, int field, int attr)
  }
 
  /* Read attribute from input object */
- if (VSgetattr(in, field, 0, values) == FAIL) {
+ if (VSgetattr(in, findex, attrindex, values) == FAIL) {
   fprintf(stderr, "Cannot read attribute %s\n", attr_name);
+		if (values) free(values);
   return-1;
  }
 
  /* Write attribute to output object */
- if (VSsetattr(out, field, attr_name, attr_type, n_values, values) == FAIL) {
+ if (VSsetattr(out, findex, attr_name, attr_type, n_values, values) == FAIL) {
   fprintf(stderr, "Cannot write attribute %s\n", attr_name);
+		if (values) free(values);
   return-1;
  }
 
- if (values)
-  free(values);
+ if (values) free(values);
 
  return 1;
 }
@@ -1283,6 +1284,7 @@ int copy_vs( int32 infile_id,
              options_t *options,
              table_t *table)
 {
+ intn  status_n;              /* returned status_n for functions returning an intn  */
  int32 status_32,             /* returned status_n for functions returning an int32 */
        vdata_id,              /* vdata identifier */
        vdata_out,             /* vdata identifier */
@@ -1301,10 +1303,23 @@ int copy_vs( int32 infile_id,
  int   i, j, ret=1;
 
 
+/*-------------------------------------------------------------------------
+ * attach the vdata, gets its name and class
+ *-------------------------------------------------------------------------
+ */ 
 
- vdata_id  = VSattach (infile_id, ref, "r");
- status_32 = VSgetname  (vdata_id, vdata_name);
- status_32 = VSgetclass (vdata_id, vdata_class);
+ if ((vdata_id  = VSattach (infile_id, ref, "r")) == FAIL ){
+  fprintf(stderr, "Failed to attach vdata ref %d\n", ref);
+  return-1;
+ }
+ if ((status_32 = VSgetname  (vdata_id, vdata_name)) == FAIL ){
+  fprintf(stderr, "Failed to name for vdata ref %d\n", ref);
+  return-1;
+ }
+	if ((status_32 = VSgetclass (vdata_id, vdata_class)) == FAIL ){
+  fprintf(stderr, "Failed to name for vdata ref %d\n", ref);
+  return-1;
+ }
  
  /* ignore reserved HDF groups/vdatas */
  if(vdata_class != NULL) {
@@ -1321,130 +1336,183 @@ int copy_vs( int32 infile_id,
  table_add(table,tag,ref,path,options->verbose&&options->trip==0);
  
 #if defined(HZIP_DEBUG)
-   printf ("\t%s %d\n", path, ref); 
+	printf ("\t%s %d\n", path, ref); 
 #endif
-
+	
  if (options->verbose)
  {
   printf(PFORMAT,"","",path);    
  }
-
-  /* check inspection mode */
+	
+	/* check inspection mode */
  if ( options->trip==0 ) {
   status_32 = Vdetach (vdata_id);
   if (path) free(path);
   return 0;
  }
-
-
+	
+	
 /*-------------------------------------------------------------------------
- * get vdata
+ * get vdata info
  *-------------------------------------------------------------------------
  */ 
  
  if (VSinquire(vdata_id, &n_records, &interlace_mode, fieldname_list, 
   &vdata_size, vdata_name) == FAIL) {
   fprintf(stderr, "Failed to get info for vdata ref %d\n", ref);
+		if (path) free(path);
   return-1;
  }
-
+	
 #if defined( HZIP_DEBUG)
-  fprintf(stderr, 
+	fprintf(stderr, 
   "Transferring vdata %s: class=%s, %d recs, interlace=%d, size=%d\n\tfields='%s'\n",
   vdata_name, vdata_class, n_records, interlace_mode, vdata_size, 
   fieldname_list);
 #endif
  
-
-/*-------------------------------------------------------------------------
- * create the VS in the output file.  the vdata reference number is set
- * to -1 for creating and the access mode is "w" for writing 
- *-------------------------------------------------------------------------
- */ 
-
+	
+	/*-------------------------------------------------------------------------
+		* create the VS in the output file.  the vdata reference number is set
+		* to -1 for creating and the access mode is "w" for writing 
+		*-------------------------------------------------------------------------
+  */ 
+	
  if ((vdata_out  = VSattach (outfile_id, -1, "w")) == FAIL) {
   fprintf(stderr, "Failed to create new VS <%s>\n", path);
   status_32 = VSdetach (vdata_id);
   if (path) free(path);
   return -1;
  }
-
- status_32  = VSsetname (vdata_out, vdata_name);
- status_32  = VSsetclass(vdata_out, vdata_class);
- 
+ if ((status_32 = VSsetname (vdata_out, vdata_name)) == FAIL) {
+  fprintf(stderr, "Failed to set name for new VS <%s>\n", path);
+  ret=-1;
+		goto out;
+ }
+	if ((status_32 = VSsetclass(vdata_out, vdata_class)) == FAIL) {
+  fprintf(stderr, "Failed to set class for new VS <%s>\n", path);
+  ret=-1;
+		goto out;
+ }
  if (VSsetinterlace(vdata_out, interlace_mode) == FAIL) {
   fprintf(stderr, "Failed to set interlace mode for output vdata\n");
-  if (path) free(path);
-  return -1;
+  ret=-1;
+		goto out;
  }
 
-  
+
 /*-------------------------------------------------------------------------
- * read, write
+ * define the fields for vdata_out
  *-------------------------------------------------------------------------
  */ 
+	
+	if ((n_fields = VFnfields(vdata_id)) == FAIL ){
+  fprintf(stderr, "Failed getting fields for VS <%s>\n", path);
+  ret=-1;
+		goto out;
+ }
  
- n_fields = VFnfields(vdata_id);
-#if defined( HZIP_DEBUG)
-  fprintf(stderr, "Number of fields = %d\n", n_fields);
-#endif
- buf = (uint8 *)malloc(n_records * vdata_size);
  for (i = 0; i < n_fields; i++) {
   field_name = VFfieldname(vdata_id, i);
   field_type = VFfieldtype(vdata_id, i);
   field_order = VFfieldorder(vdata_id, i);
-  VSfdefine(vdata_out, field_name, field_type, field_order);
-  n_attrs = VSfnattrs(vdata_id, i);
+  if (VSfdefine(vdata_out, field_name, field_type, field_order) == FAIL) {
+   fprintf(stderr, "Error: cannot define fields for VS <%s>\n", path);
+   ret=-1;
+			goto out;
+		}
+	}
+	
+	/* Set fields */
+ if ((status_n = VSsetfields(vdata_out, fieldname_list)) == FAIL) {
+		fprintf(stderr, "Error: cannot define fields for VS <%s>\n", path);
+		ret=-1;
+		goto out;
+ }
+
+	
+/*-------------------------------------------------------------------------
+ * read, write vdata
+ *-------------------------------------------------------------------------
+ */ 
+
+	/* Set fields for reading */
+ if ((status_n = VSsetfields(vdata_id, fieldname_list)) == FAIL) {
+   fprintf(stderr, "Error: cannot define fields for VS <%s>\n", path);
+   ret=-1;
+			goto out;
+		}
+ if ((buf = (uint8 *)malloc(n_records * vdata_size)) == NULL ){
+  fprintf(stderr, "Failed to get memory for new VS <%s>\n", path);
+  ret=-1;
+		goto out;
+ }
+ if (VSread(vdata_id, buf, n_records, interlace_mode) == FAIL) {
+  fprintf(stderr, "Error reading vdata <%s>\n", path);
+  ret=-1;
+  goto out;
+ }
+ if (VSwrite(vdata_out, buf, n_records, interlace_mode) == FAIL) {
+  fprintf(stderr, "Error writing vdata <%s>\n", path);
+  ret=-1;
+  goto out;
+ }
+	
+
+/*-------------------------------------------------------------------------
+ * read, write attributes
+ *-------------------------------------------------------------------------
+ */ 
+	
+	if ((n_attrs = VSfnattrs( vdata_id, -1 )) == FAIL ){
+  fprintf(stderr, "Failed getting attributes for VS <%s>\n", path);
+  ret=-1;
+		goto out;
+ }
+ for (i = 0; i < n_attrs; i++) {
+  copy_vdata_attribute(vdata_id, vdata_out, -1, i);
+ }
+	
+/*-------------------------------------------------------------------------
+ * read, write field attributes
+ *-------------------------------------------------------------------------
+ */ 
+	 
+ for (i = 0; i < n_fields; i++) {
+		if ((n_attrs = VSfnattrs(vdata_id, i)) == FAIL ){
+			fprintf(stderr, "Failed getting fields for VS <%s>\n", path);
+			ret=-1;
+			goto out;
+		}
   for (j = 0; j < n_attrs; j++) {
    copy_vdata_attribute(vdata_id, vdata_out, i, j);
   }
  }
- /* Set fields for reading */
- VSsetfields(vdata_id, fieldname_list);
- VSsetfields(vdata_out, fieldname_list);
- n_attrs = VSnattrs(vdata_id);
- for (i = 0; i < n_attrs; i++) {
-  copy_vdata_attribute(vdata_id, vdata_out, -1, i);
- }
- 
- /* Read into buffer, then write */
- if (VSread(vdata_id, buf, n_records, interlace_mode) == FAIL) {
-  fprintf(stderr, "Error reading vdata %s\n", vdata_name);
-  ret=-1;
-  goto out;
- }
-
- if (VSwrite(vdata_out, buf, n_records, interlace_mode) == FAIL) {
-  fprintf(stderr, "Error writing vdata %s\n", vdata_name);
-  ret=-1;
-  goto out;
- }
- 
- 
+	 
 /*-------------------------------------------------------------------------
  * add VS to group, if needed
  *-------------------------------------------------------------------------
  */ 
-
+	
  if (vgroup_id_out_par) 
  {
   /* obtain the reference number of the new VS using its identifier */
   if ((vdata_ref = VSfind (outfile_id,vdata_name)) == 0) {
    fprintf(stderr, "Failed to get new VS reference in <%s>\n", path);
   }
-
+		
   /* add the VS to the vgroup. the tag DFTAG_VS is used */
   if ((status_32 = Vaddtagref (vgroup_id_out_par, DFTAG_VS, vdata_ref)) == FAIL) {
    fprintf(stderr, "Failed to add new VS to group <%s>\n", path);
   }
  }
-
-
+	
+	
 out:
  /* terminate access to the VSs */
  status_32 = VSdetach (vdata_id);
  status_32 = VSdetach (vdata_out);
-   
+	
  if (path)
   free(path);
  if (buf)

@@ -74,7 +74,7 @@ int list(char* infname, char* outfname, options_t *options)
  int32    infile_id;
  int32    outfile_id;
  intn     status_n;  
- int      i, j;
+ int      i;
  char*    err;
 
  /* init table */

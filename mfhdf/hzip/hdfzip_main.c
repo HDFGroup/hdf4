@@ -31,7 +31,7 @@ int main(int argc, char **argv)
  char        *infile  = NULL;
  char        *outfile = NULL;
  options_t   options;            /*the global options */
- int         i, j, ii, jj, k;
+ int         i;
 
 
  /* initialize options, -t table and -c table  */

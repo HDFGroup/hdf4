@@ -21,15 +21,11 @@
 #define HZIP_DEBUG  /* turn on for verbose output of hzip and hdiff */
 #endif
 
-
-
 #define FILENAME         "hziptst.hdf"
 #define FILENAME_OUT     "hziptst_out.hdf"
 #define DATA_FILE1       "image8.txt"
 #define DATA_FILE2       "image24pixel.txt"
 char    *progname;       /* for error messages */
-
-
 
 int main(void)
 {
@@ -48,14 +44,14 @@ int main(void)
  comp_info     comp_info;    /* compression structure */ 
  options_t     options;      /* for hzip  */ 
  static struct fspec fspec;  /* for hdiff  */ 
- int           ret, i;
+ int           ret;
 
  /* initialize options for hdiff */
  memset(&fspec,0,sizeof(struct fspec));
  fspec.ga = 1;    /* compare global attributes */
  fspec.sa = 1;    /* compare SD local attributes */
  fspec.sd = 1;    /* compare SD data */
- fspec.vd = 0;    /* compare Vdata */
+ fspec.vd = 1;    /* compare Vdata */
 
 /*-------------------------------------------------------------------------
  * create FILENAME with SDSs, images , groups and vdatas
@@ -107,13 +103,11 @@ int main(void)
  /* add non chunked, non compressed sds */
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_NONE;
-#if 0
+#if 1
  add_sd(FILENAME,"dset1",vgroup1_id,chunk_flags,comp_type,NULL);
  add_sd(FILENAME,"dset2",vgroup2_id,chunk_flags,comp_type,NULL);
  add_sd(FILENAME,"dset3",vgroup3_id,chunk_flags,comp_type,NULL);
 #endif
-
-
  add_sd(FILENAME,"dset4",0,chunk_flags,comp_type,NULL);
 
 
@@ -125,7 +119,7 @@ int main(void)
  *-------------------------------------------------------------------------
  */ 
 
-#if 0
+#if 1
  /* add a chunked, non compressed sds */
  chunk_flags = HDF_CHUNK;
  comp_type   = COMP_CODE_NONE;
@@ -149,7 +143,7 @@ int main(void)
  *-------------------------------------------------------------------------
  */ 
 
-#if 0
+#if 1
  add_r24(FILENAME,DATA_FILE2,vgroup_img_id);
  add_r24(FILENAME,DATA_FILE2,0);
 #endif
@@ -160,7 +154,7 @@ int main(void)
  *-------------------------------------------------------------------------
  */ 
 
-#if 0
+#if 1
  add_gr(DATA_FILE1,"gr1",file_id,vgroup1_id);
  add_gr(DATA_FILE2,"gr2",file_id,vgroup2_id);
  add_gr(DATA_FILE1,"gr3",file_id,vgroup3_id);
@@ -171,8 +165,7 @@ int main(void)
  * add some RIS8 images to the file
  *-------------------------------------------------------------------------
  */ 
-#if 0
-
+#if 1
  add_r8(FILENAME,DATA_FILE1,vgroup_img_id);
  add_r8(FILENAME,DATA_FILE1,0);
 #endif
@@ -184,14 +177,12 @@ int main(void)
  *-------------------------------------------------------------------------
  */ 
 
-#if 0
-
+#if 1
  add_vs("vdata1",file_id,vgroup1_id);
  add_vs("vdata2",file_id,vgroup2_id);
  add_vs("vdata3",file_id,vgroup3_id);
- 
- add_vs("vdata4",file_id,0);
 #endif
+ add_vs("vdata4",file_id,0);
 
 /*-------------------------------------------------------------------------
  * end
@@ -217,161 +208,6 @@ int main(void)
  *-------------------------------------------------------------------------
  */
 
-/*-------------------------------------------------------------------------
- * test1: copy all high-level objects, no compression / no chunking
- *-------------------------------------------------------------------------
- */
-
-#if 0
-
- TESTING("copy all objects with no compression / no chunking");
- 
- /* with empty options table this just copies all high-level objects*/
- hzip_init (&options);
-#if defined (HZIP_DEBUG)
- options.verbose=1; /* turn on (off) the hzip verbose mode */
- fspec.verbose  =0;
- if (options.verbose) printf("\n");
-#endif
- hzip(FILENAME,FILENAME_OUT,&options);
- hzip_end (&options);
- ret=hdiff(FILENAME,FILENAME_OUT,fspec);
- if (ret==0) PASSED() else H5_FAILED();
-
-/*-------------------------------------------------------------------------
- * test2: compress selected objects / no chunking
- *-------------------------------------------------------------------------
- */
-
- TESTING("compress selected objects / no chunking");
- 
- /* compress -t "dset4:GZIP 6" */
- hzip_init (&options);
-#if defined (HZIP_DEBUG)
- options.verbose=1; 
- fspec.verbose  =0;
- if (options.verbose) printf("\n");
-#endif
- hzip_addcomp("dset4:GZIP 6",&options);
- hzip(FILENAME,FILENAME_OUT,&options);
- hzip_end (&options);
- ret=hdiff(FILENAME,FILENAME_OUT,fspec);
- if (ret==0) PASSED() else H5_FAILED();
-
-
-/*-------------------------------------------------------------------------
- * test3: no compress  / chunking
- *-------------------------------------------------------------------------
- */
-
- TESTING("no compress /  chunking selected ");
- 
- /* compress -c "dset4:2x2" */
- hzip_init (&options);
-#if defined (HZIP_DEBUG)
- options.verbose=1;
- fspec.verbose  =0;
- if (options.verbose) printf("\n");
-#endif
- hzip(FILENAME,FILENAME_OUT,&options);
- hzip_end (&options);
- ret=hdiff(FILENAME,FILENAME_OUT,fspec);
- if (ret==0) PASSED() else H5_FAILED();
- 
-#endif
-
-
-/*-------------------------------------------------------------------------
- * test0: no options
- *-------------------------------------------------------------------------
- */
-
-#if 0
-
-
- TESTING("no options");
- hzip_init (&options);
-#if defined (HZIP_DEBUG)
- printf("\n-----------------------------------------------------\n");
- options.verbose=1;
- fspec.verbose  =0;
-#endif
- hzip(FILENAME,FILENAME_OUT,&options);
- hzip_end (&options);
- ret=hdiff(FILENAME,FILENAME_OUT,fspec);
- if (ret==0) PASSED() else H5_FAILED();
-
-#endif
-
-/*-------------------------------------------------------------------------
- * test1: compress -t "*:GZIP 6"  -c "*:2x2" 
- *-------------------------------------------------------------------------
- */
-
-#if 0
-
- TESTING("-t '*:GZIP 6' -c '*:2x2' ");
- hzip_init (&options);
-#if defined (HZIP_DEBUG)
- printf("\n-----------------------------------------------------\n");
- options.verbose=1;
- fspec.verbose  =0;
-#endif
- hzip_addcomp("*:GZIP 6",&options);
- hzip_addchunk("*:2x2",&options);
- hzip(FILENAME,FILENAME_OUT,&options);
- hzip_end (&options);
- ret=hdiff(FILENAME,FILENAME_OUT,fspec);
- if (ret==0) PASSED() else H5_FAILED();
-
-#endif
-
-/*-------------------------------------------------------------------------
- * test2: compress -c "*:2x2" -t "dset4:GZIP 6" 
- *-------------------------------------------------------------------------
- */
-
-#if 0
-
- TESTING("-t 'dset4:GZIP 6' -c '*:2x2' ");
- hzip_init (&options);
-#if defined (HZIP_DEBUG)
- printf("\n-----------------------------------------------------\n");
- options.verbose=1;
- fspec.verbose  =0;
-#endif
- hzip_addcomp("dset4:GZIP 6",&options);
- hzip_addchunk("*:2x2",&options);
- hzip(FILENAME,FILENAME_OUT,&options);
- hzip_end (&options);
- ret=hdiff(FILENAME,FILENAME_OUT,fspec);
- if (ret==0) PASSED() else H5_FAILED();
-
-#endif
-
-
-/*-------------------------------------------------------------------------
- * test3: compress -c "*:2x2" -t "dset4:GZIP 6" 
- *-------------------------------------------------------------------------
- */
-
-#if 0
-
- TESTING("-t 'dset4:GZIP 6' -c '*:2x2' ");
- hzip_init (&options);
-#if defined (HZIP_DEBUG)
- printf("\n-----------------------------------------------------\n");
- options.verbose=1;
- fspec.verbose  =0;
-#endif
- hzip_addcomp("dset4:GZIP 6",&options);
- hzip_addchunk("*:2x2",&options);
- hzip(FILENAME,FILENAME_OUT,&options);
- hzip_end (&options);
- ret=hdiff(FILENAME,FILENAME_OUT,fspec);
- if (ret==0) PASSED() else H5_FAILED();
-
-#endif
 
 /*-------------------------------------------------------------------------
  * test1a:  
@@ -380,21 +216,15 @@ int main(void)
 
 #if 1
 
- 
-
  TESTING("compressing SELECTED, chunking SELECTED");
  hzip_init (&options);
 #if defined (HZIP_DEBUG)
  printf("\n-----------------------------------------------------\n");
  options.verbose=1;
- fspec.verbose  =0;
+ fspec.verbose  =1;
 #endif
- /*hzip_addcomp("gr4:HUFF 1",&options);
- hzip_addchunk("gr4:2x2",&options);*/
-
  hzip_addcomp("dset4:HUFF 1",&options);
  hzip_addchunk("dset4:2x2",&options);
-
 
  hzip(FILENAME,FILENAME_OUT,&options);
  hzip_end (&options);
@@ -403,11 +233,9 @@ int main(void)
 
 #endif
 
-
-
-
-
  
  return 0;
 }
+
+
 

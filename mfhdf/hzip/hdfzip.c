@@ -105,7 +105,7 @@ void hzip_addcomp(char* str, options_t *options)
  obj_list_t      *obj_list=NULL;     /*one object list for the -t and -c option entry */
  comp_info_t     comp;               /*compression info for the current -t option entry */
  int             n_objs;             /*number of objects in the current -t or -c option entry */
- int             ret, i;
+ int             i;
 
 
  /* parse the -t option */
@@ -181,7 +181,7 @@ void hzip_addchunk(char* str, options_t *options)
  int             n_objs;             /*number of objects in the current -t or -c option entry */
  int32           chunk_lengths[MAX_VAR_DIMS]; /* chunk lengths along each dimension */
  int             chunk_rank;         /*global rank for chunks */
- int             ret, i, j;
+ int             i, j;
 
  
  /* parse the -c option */
@@ -255,10 +255,6 @@ void hzip_addchunk(char* str, options_t *options)
 void print_options(options_t *options)
 {
  int   i, k;
- char* path;
- int   comp_type, rank;
-
- 
  
 #if 1
  
@@ -328,9 +324,6 @@ void print_options(options_t *options)
    path);                                  /*name*/
 
  }
-
-
-
 
 #endif
  

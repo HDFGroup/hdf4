@@ -84,7 +84,7 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
   }
  }
  /* nothing after : */
- if (end_obj+1==len)
+ if (end_obj+1==(int)len)
  {
   if (obj_list) free(obj_list);
   printf("%s\nError: Invalid compression type\n",str);
@@ -221,7 +221,7 @@ obj_list_t* parse_chunk(char *str, int *n_objs, int32 *chunk_lengths, int *chunk
  }
 
  /* nothing after : */
- if (end_obj+1==len)
+ if (end_obj+1==(int)len)
  {
   if (obj_list) free(obj_list);
   printf("%s\nError: Invalid chunking\n",str);
