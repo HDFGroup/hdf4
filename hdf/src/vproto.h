@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.12  1993/04/26 15:08:32  chouck
-Fixes for the convex (doesn't like foo(VOID) prototypes)
-Also added extern "C" { } around prototypes
+Revision 1.13  1993/04/26 17:16:22  chouck
+Fixed minor problem with C++ statements
 
+ * Revision 1.12  1993/04/26  15:08:32  chouck
+ * Fixes for the convex (doesn't like foo(VOID) prototypes)
+ * Also added extern "C" { } around prototypes
+ *
  * Revision 1.11  1993/04/22  16:05:55  chouck
  * Minor Vset fixes
  *
@@ -896,7 +899,7 @@ extern FRETVAL(intf) nvadtrc
     PROTO((intf _HUGE *vkey, intf _HUGE *tag, intf _HUGE *ref));
 
 #ifdef __cplusplus
-extern "C" {
+}
 #endif
 
 #endif
