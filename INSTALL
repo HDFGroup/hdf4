@@ -11,7 +11,7 @@
 
    x ZLIB 1.1.4(libz.a) Source code and binaries may be downloaded from
      http://www.gzip.org/ or from the NCSA ftp server  
-     ftp://hdf.ncsa.uiuc.edu/gzip/
+     ftp://hdf.ncsa.uiuc.edu/lib-external/gzip/
 
 
 1. Optional SZIP compression Library

@@ -19,9 +19,9 @@ The following sections discuss in details installation procedures.
            prebuild binaries.
 
            ZLIB, JPEG and SZIP libraries for windows can be found on the HDF FTP
-           server ftp://hdf.ncsa.uiuc.edu/gzip/bin/windows
-                  ftp://hdf.ncsa.uiuc.edu/jpeg/jpeg-6b.exe (archive file)
-                  ftp://hdf.ncsa.uiuc.edu/szip/bin/windows
+           server ftp://hdf.ncsa.uiuc.edu/lib-external/gzip/bin/windows
+                  ftp://hdf.ncsa.uiuc.edu/lib-external/jpeg/jpeg-6b.exe (archive file)
+                  ftp://hdf.ncsa.uiuc.edu/lib-external/szip/bin/windows
 
 Building from Binary Code Release (HDF42r0.zip)
 ===============================================
