@@ -3116,6 +3116,9 @@ printf("%s: check 15.5, local_offset=%ld\n",FUNC,(long)local_offset);
             } /* end else */
           ri_ptr->data_modified=TRUE;
       } /* end else */
+    /* if we've allocated a temporary buffer, free it */
+    if(convert || switch_interlace==TRUE)
+        HDfree(img_data);
 
     /* mark the image as being modified */
     ri_ptr->data_modified=TRUE;
