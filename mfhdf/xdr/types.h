@@ -8,7 +8,13 @@
 
 #define bool_t  int
 #define enum_t  int
+#ifdef FALSE
+#undef FALSE
+#endif /* FALSE */
 #define FALSE   (0)
+#ifdef TRUE
+#undef TRUE
+#endif /* TRUE */
 #define TRUE    (1)
 #define __dontcare__    -1
 #ifndef NULL
