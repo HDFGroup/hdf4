@@ -10,8 +10,6 @@
 
 #define SD_UNLIMITED NC_UNLIMITED
 
-#define SDDEBUG
-
 #ifdef __cplusplus
 extern "C" {
 #endif
