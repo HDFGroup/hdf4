@@ -212,6 +212,10 @@ int cdfid ;
 	NC *handle ;
 	char path[FILENAME_MAX + 1] ;
 	unsigned flags ;
+#ifdef HDF
+        intn   is_hdf;
+        int32  fid;
+#endif
 
 	cdf_routine_name = "ncabort" ;
 
@@ -251,14 +255,17 @@ int cdfid ;
 		}
 	}
 
-#ifndef HDF
-	NC_free_cdf(handle) ; /* calls fclose */
-#else
-        if(!handle->is_hdf) NC_free_cdf(handle);  /* calls fclose */
-#endif
 
 #ifdef HDF
-        if(!handle->is_hdf) {
+        is_hdf = handle->is_hdf;
+        fid = handle->hdf_file;
+#endif
+
+	NC_free_cdf(handle) ; /* calls fclose */
+
+
+#ifdef HDF
+        if(!is_hdf) {
 #endif
           if(flags & (NC_INDEF | NC_CREAT))
             {
@@ -269,8 +276,10 @@ int cdfid ;
         } else {
           if(flags & NC_CREAT)
             {
-              if( remove(path) != 0 )
-                nc_serror("couldn't remove filename \"%s\"", path) ;
+                Vend(fid);
+                Hclose(fid);
+                if( remove(path) != 0 )
+                    nc_serror("couldn't remove filename \"%s\"", path) ;
             }
         }
 #endif
