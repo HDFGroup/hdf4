@@ -562,10 +562,10 @@ C
       external hglibver
       integer  hgfilver
       external hgfilver
-      integer  hishdf
-      external hishdf
-      integer  hestring
-      external hestring
+      integer  hishdff
+      external hishdff
+      integer  hestringf
+      external hestringf
       
 
 C
