@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.9  1993/08/16 21:46:47  koziol
-Wrapped in changes for final, working version on the PC.
+Revision 1.10  1993/08/19 16:45:51  chouck
+Added code and tests for multi-order Vdatas
 
+ * Revision 1.9  1993/08/16  21:46:47  koziol
+ * Wrapped in changes for final, working version on the PC.
+ *
  * Revision 1.8  1993/04/14  21:39:33  georgev
  * Had to add some VOIDP casts to some functions to make the compiler happy.
  *
@@ -156,7 +159,7 @@ int32   interlace;
 uint8    buf[];
 #endif
 {
-    register intn isize;
+    register intn isize, order, index;
     register int16 esize,hsize;
     register uint8   *b1,*b2;
 	int32 			i,j, nv, offset, type;
@@ -173,7 +176,7 @@ uint8    buf[];
         return(FAIL);
     }
   
-  /* locate vs's index in vstab */
+    /* locate vs's index in vstab */
     if(NULL==(wi=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
         HERROR(DFE_NOVS);
         HEprint(stderr, 0);
@@ -189,12 +192,7 @@ uint8    buf[];
         HERROR(DFE_ARGS);
         return(FAIL);
     }
-/* Allow people to read when they have write access 
-    if(vs->access != 'r') {
-        HERROR(DFE_BADACC);
-        return(FAIL);
-    }
-*/
+
     if(vs->nvertices == 0)  {
         HERROR(DFE_ARGS);
         return(FAIL);
@@ -210,11 +208,11 @@ uint8    buf[];
         return(FAIL);
     }
 
-	w = &(vs->wlist);
-	r = &(vs->rlist);
-	hsize = vs->wlist.ivsize; 		/* size as stored in HDF */
-
-	/* alloc space (Vtbuf) for reading in the raw data from vdata */
+    w = &(vs->wlist);
+    r = &(vs->rlist);
+    hsize = vs->wlist.ivsize; 		/* size as stored in HDF */
+    
+    /* alloc space (Vtbuf) for reading in the raw data from vdata */
     if(Vtbufsize < nelt * hsize) {
         Vtbufsize = nelt * hsize;
         if(Vtbuf)
@@ -222,150 +220,165 @@ uint8    buf[];
         if((Vtbuf = (uint8 *) HDgetspace ( Vtbufsize )) == NULL) {
             HERROR(DFE_NOSPACE);
             return(FAIL);
-          }
+        }
     }
 
-	/* ================ start reading ============================== */
-	/* ================ start reading ============================== */
-
+    /* ================ start reading ============================== */
+    /* ================ start reading ============================== */
+    
     nv = Hread (vs->aid, nelt * hsize, (uint8*) Vtbuf);
-
-	if ( nv != nelt*hsize ) {
+    
+    if ( nv != nelt * hsize ) {
         HERROR(DFE_READERROR);
         HEreport("Tried to read %d, only read %d", nelt * hsize, nv);
         return FAIL;
     }
+    
+    /* ================ done reading =============================== */
+    /* ================ done reading =============================== */
+    
+    
+    /* 
+      Now, convert and repack field(s) from Vtbuf into buf.    
+      
+      This section of the code deals with interlacing. In all cases
+      the items for each of the fields are converted and shuffled 
+      around from the internal buffer "Vtbuf" to the user's buffer 
+      "buf".  
+      
+      There are 5 cases :
+      (A) user=NO_INTERLACE   & vdata=FULL_INTERLACE) 
+      (B) user=NO_INTERLACE   & vdata=NO_INTERLACE) 
+      (C) user=FULL_INTERLACE & vdata=FULL_INTERLACE) 
+      (D) user=FULL_INTERLACE & vadat=NO_INTERLACE) 
+      (E) SPECIAL CASE when field has order>1. 
+      
+      Cases (A)-(D) handles multiple fields.
+      Case (E) handles reading from a Vdata with a single field.      
+      */
+    
+    /* ----------------------------------------------------------------- */
+    /* CASE  (E): Only a single field in the Vdata */
+    
+    if (w->n == 1) {
+        b1 = buf;
+        b2 = Vtbuf;
+        type = w->type[0];
+        
+        /* Errr WORKS */
+        DFKsetNT(type); 
+        DFKnumin (b2, b1, (uint32) w->order[0] * nelt, 0, 0);
 
-	/* ================ done reading =============================== */
-	/* ================ done reading =============================== */
+        return(nelt);
 
-
-	/* 
-		Now, convert and repack field(s) from Vtbuf into buf.    
-
-		This section of the code deals with interlacing. In all cases
-		the items for each of the fields are converted and shuffled 
-		around from the internal buffer "Vtbuf" to the user's buffer 
-		"buf".  
-
-		There are 5 cases :
-		(A) user=NO_INTERLACE   & vdata=FULL_INTERLACE) 
-  		(B) user=NO_INTERLACE   & vdata=NO_INTERLACE) 
-  		(C) user=FULL_INTERLACE & vdata=FULL_INTERLACE) 
-		(D) user=FULL_INTERLACE & vadat=NO_INTERLACE) 
-		(E) SPECIAL CASE when field has order>1. 
-
-		Cases (A)-(D) handles multiple fields of order 1.
-		Case (E) handles one field of order>1. Interlace is
-		irrelevant in this case. The case where there are 
-		multiple fields of order>1 is prevented from
-		existing by VSsetfields explicitly checking for this.
-				
-	*/
-
-	/* ----------------------------------------------------------------- */
-	/* CASE  (E): Special Case For one field with order >1 only */
-
-	if (w->n == 1 && w->order[0] > 1) {
-		b1 = buf;
-		b2 = Vtbuf;
-		esize = w->esize[0];
-		isize = w->isize[0];
-		type = w->type[0];
-
-		/* Errr WORKS */
-		DFKsetNT(type); 
-        Knumin (b2, b1, (uint32) w->order[0] * nelt, (uint32) isize/w->order[0],
-                        (uint32) esize/w->order[0]);
     } /* case (e) */
 
-	/* ----------------------------------------------------------------- */
-	/* CASE  (A):  user=none, vdata=full */
-
-	else if (interlace==NO_INTERLACE && vs->interlace==FULL_INTERLACE) {
-		b1 = buf;
-		for (j=0;j<r->n;j++) {
-			i     = r->item[j];
-			b2    = Vtbuf + w->off[i];
-			type  = w->type[i];
-            isize = w->isize[i];        /* QAK */
-			esize = w->esize[i];
-
-			/* Arrr ? */
-			DFKsetNT(type); 
-			Knumin (b2, b1, (uint32) w->order[0] * nelt, 
-                                (uint32) isize/w->order[0],
-                                (uint32) esize/w->order[0]);
-			b1 += (nelt * esize);
-		}
+    
+    /* ----------------------------------------------------------------- */
+    /* CASE  (A):  user=none, vdata=full */
+    
+    if (interlace==NO_INTERLACE && vs->interlace==FULL_INTERLACE) {
+        b1 = buf;
+        for(j = 0; j < r->n; j++) {
+            i     = r->item[j];
+            b2    = Vtbuf + w->off[i];
+            type  = w->type[i];
+            isize = w->isize[i];
+            esize = w->esize[i];
+            order = w->order[i];
+            
+            /* Arrr ? */
+            DFKsetNT(type); 
+            for(index = 0; index < order; index++) {
+                DFKnumin (b2, b1, (uint32) nelt, (uint32) hsize, (uint32) esize);
+                b2 += isize / order;
+                b1 += esize / order;
+            }
+            b1 += ((nelt - 1) * esize);
+        }
     } /* case (a) */
-
-	/* ----------------------------------------------------------------- */
-	/* CASE  (B):  user=none, vdata=none */
-	else if (interlace==NO_INTERLACE && vs->interlace==NO_INTERLACE) {
-		b1 = buf;
-		for (j=0;j<r->n;j++) {
-			i     = r->item[j];
-			b2    = Vtbuf + w->off[i] * nelt;
-			type  = w->type[i];
-			esize = w->esize[i];
-			isize = w->isize[i];
-
-			/* Brrr ? */
-			DFKsetNT(type); 
-            Knumin (b2, b1, (uint32) nelt, (uint32) isize, (uint32) esize);
-			b1 += (nelt * esize);
-		}
-	} /* case (b) */
-
-	/* ----------------------------------------------------------------- */
-	/* CASE  (C):  iu=full, iv=full */
-	else if (interlace==FULL_INTERLACE && vs->interlace==FULL_INTERLACE) {
-		for (uvsize=0, j=0;j<r->n;j++)
-			uvsize += w->esize[r->item[j]];
-
-		for (offset=0,j=0;j<r->n;j++) {
-			i     = r->item[j];
-			b1    = buf + offset;
-			b2    = Vtbuf + w->off[i];
-			type  = w->type[r->item[j]];
-			esize = w->esize[i];
-            /* isize = w->isize[i]; QAK */
-
-			/* Crrr WORKS  */
-			DFKsetNT(type); 
-            Knumin (b2, b1, (uint32) nelt, (uint32) hsize, (uint32) uvsize);
-			offset += esize;
+    
+    /* ----------------------------------------------------------------- */
+    /* CASE  (B):  user=none, vdata=none */
+    else if (interlace==NO_INTERLACE && vs->interlace==NO_INTERLACE) {
+        b1 = buf;
+        for(j = 0; j < r->n; j++) {
+            i     = r->item[j];
+            b2    = Vtbuf + w->off[i] * nelt;
+            type  = w->type[i];
+            esize = w->esize[i];
+            isize = w->isize[i];
+            order = w->order[i];
+            
+            /* Brrr ? */
+            DFKsetNT(type); 
+            for(index = 0; index < order; index++) {
+                DFKnumin (b2, b1, (uint32) nelt, (uint32) isize, (uint32) esize);
+                b1 += isize / order ;
+                b2 += esize / order;
+            }
+            b1 += ((nelt - 1) * esize);
+        }
+    } /* case (b) */
+    
+    /* ----------------------------------------------------------------- */
+    /* CASE  (C):  iu=full, iv=full */
+    else if (interlace==FULL_INTERLACE && vs->interlace==FULL_INTERLACE) {
+        for (uvsize=0, j=0;j<r->n;j++)
+            uvsize += w->esize[r->item[j]];
+        
+        offset = 0;
+        for(j = 0; j < r->n; j++) {
+            i     = r->item[j];
+            b1    = buf + offset;
+            b2    = Vtbuf + w->off[i];
+            type  = w->type[r->item[j]];
+            esize = w->esize[i];
+            isize = w->isize[i];
+            order = w->order[i];
+            
+            /* Crrr ? */
+            DFKsetNT(type); 
+            for(index = 0; index < order; index++) {
+                DFKnumin (b2, b1, (uint32) nelt, (uint32) hsize, (uint32) uvsize);
+                b1 += isize / order;
+                b2 += esize / order;
+            }
+            offset += esize;
         }
     } /* case (c) */
+    
+    
+    /* ----------------------------------------------------------------- */
+    /* CASE  (D):  user=full, vdata=none */
+    else if(interlace==FULL_INTERLACE && vs->interlace==NO_INTERLACE) {
+        
+        for (uvsize=0, j=0;j<r->n;j++)
+            uvsize += w->esize[r->item[j]];
+        
+        offset = 0;
+        for(j = 0; j < r->n; j++) {
+            i     = r->item[j];
+            b1    = buf + offset;
+            b2    = Vtbuf + w->off[i] * nelt;
+            type  = w->type[i];
+            isize = w->isize[i];
+            order = w->order[i];
+            
+            /* Drrr ? */
+            DFKsetNT(type); 
+            for(index = 0; index < order; index++) {
+                DFKnumin (b2, b1, (uint32) nelt, (uint32) isize, (uint32) uvsize);
+                b1 += isize / order;
+                b2 += esize / order;
+            }
+            offset += isize;
+        }
+    } /* case (d) */
 
+    /* HDfreespace ((VOIDP)tbuf); */
+    return(nv/hsize);
 
-	/* ----------------------------------------------------------------- */
-	/* CASE  (D):  user=full, vdata=none */
-	else if(interlace==FULL_INTERLACE && vs->interlace==NO_INTERLACE) {
-
-		for (uvsize=0, j=0;j<r->n;j++)
-			uvsize += w->esize[r->item[j]];
-
-		for (offset=0,j=0;j<r->n;j++) {
-			i     = r->item[j];
-			b1    = buf + offset;
-			b2    = Vtbuf + w->off[i] * nelt;
-			type  = w->type[i];
-			isize = w->isize[i];
-
-			/* Drrr ? */
-			DFKsetNT(type); 
-			Knumin (b2, b1, (uint32) nelt, 
-                                (uint32) isize, 
-                                (uint32) uvsize);
-			offset +=isize;
-		}
-	} /* case (d) */
-/*
-    HDfreespace ((VOIDP)tbuf);
-*/
-	return(nv/hsize);
 } /* VSread */
 
 #ifndef WIN3
@@ -416,7 +429,7 @@ int32       interlace;
 uint8        buf[];
 #endif
 {
-    register intn  isize;
+    register intn  isize, order, index;
     register int16 esize,hsize;
     register uint8 *b1,*b2;
 /*
@@ -503,110 +516,129 @@ uint8        buf[];
         (D) user=FULL_INTERLACE & vadat=NO_INTERLACE)
 		(E) SPECIAL CASE when field has order>1. 
 
-		Cases (A)-(D) handles multiple fields of order 1.
-		Case (E) handles one field of order>1. Interlace is
-		irrelevant in this case. The case where there are 
-		multiple fields of order>1 is prevented from
-		existing by VSsetfields explicitly checking for this.
+		Cases (A)-(D) handles multiple fields
+		Case (E) handles single field Vdatas
 
     --------------------------------------------------------------------- */
-	/* CASE  (E): Special Case For one field with order >1 only */
-
-	if (w->n == 1 && w->order[0] > 1) {
-		b1    = buf;
-		b2    = Vtbuf;
-		esize = w->esize[0];
-		isize = w->isize[0];
-		type  = w->type[0];
-
-	/* Ewww WORKS */
+    /* CASE  (E): Special Case For single field Vdatas */
+    
+    if (w->n == 1) {
+        b1    = buf;
+        b2    = Vtbuf;
+        esize = w->esize[0];
+        isize = w->isize[0];
+        type  = w->type[0];
+        
+	/* Ewww ? */
         DFKsetNT(type); 
-        Knumout(b1, b2, (uint32) w->order[0] * nelt,
-                        (uint32) esize/w->order[0],(uint32) isize/w->order[0]);
-	} /* case (e) */
+        DFKnumout(b1, b2, (uint32) w->order[0] * nelt, (uint32) 0, (uint32) 0);
 
-	/* ----------------------------------------------------------------- */
-	/* CASE  (A):  user=none, vdata=full */
-	else if (interlace==NO_INTERLACE && vs->interlace==FULL_INTERLACE) {
-
-		b1 = buf;
-        for (j=0; j<w->n; j++) {
-			b2    = Vtbuf + w->off[j];
-			type  = w->type[j];
-			esize = w->esize[j];
-
-			/* Awww ? */
-			DFKsetNT(type); 
-            Knumout (b1, b2, (uint32) nelt, (uint32) esize, (uint32) hsize);
-			b1 += (nelt * esize);
-		}
-
-	} /* case (a) */
-
-	/* --------------------------------------------------------------------- */
-	/* CASE  (B):  user=none, vdata=none */
-	else if (interlace==NO_INTERLACE && vs->interlace==NO_INTERLACE) {
-
-		b1 = buf;
-        for (j=0; j<w->n; j++) {
-			b2    = Vtbuf + w->off[j] * nelt;
-			type  = w->type[j];
-			esize = w->esize[j];
-			isize = w->isize[j];
-
-			/* Bwww ? works sometimes */
-			DFKsetNT(type); 
-            Knumout (b1, b2, (uint32) nelt, (uint32) esize, (uint32) isize);
-			b1 += (nelt * esize);
-		}
-
-	} /* case (b) */
-
-	/* ----------------------------------------------------------------- */
-	/* CASE  (C):  user=full, vdata=full */
-	else if (interlace==FULL_INTERLACE && vs->interlace==FULL_INTERLACE) {
-        for (uvsize=0, j=0; j<w->n; j++)
-			uvsize += w->esize[j];
-
-        for (offset=0,j=0; j<w->n; j++) {
-			b1    = buf + offset;
-			b2    = Vtbuf + w->off[j];
-			type  = w->type[j];
-			esize = w->esize[j];
-			isize = w->isize[j];
-
-			/* Cwww WORKS  */
-			DFKsetNT(type); 
-            Knumout (b1, b2, (uint32) nelt, (uint32) uvsize, (uint32) hsize);
-			offset += esize;
-		}
-	} /* case (c) */
-
-	/* ----------------------------------------------------------------- */
-	/* CASE  (D):  user=full, vdata=none */
-	else if (interlace==FULL_INTERLACE && vs->interlace==NO_INTERLACE) {
-
-        for (uvsize=0, j=0; j<w->n; j++)
-			uvsize += w->esize[j];
-
-        for (offset=0,j=0; j<w->n; j++) {
-			b1    = buf  + offset;
-			b2    = Vtbuf + w->off[j] * nelt;
-			type  = w->type[j];
-			isize = w->isize[j];
-			esize = w->esize[j];
-
-			/* Dwww ? */
-			DFKsetNT(type); 
-            Knumout (b1, b2, (uint32) nelt, (uint32) uvsize, (uint32) isize);
-			offset +=esize;
-		}
-	} /* case (d) */
-
-
-	/* ================ start writing ============================== */
-	/* ================ start writing ============================== */
-
+    } /* case (e) */
+    
+    /* ----------------------------------------------------------------- */
+    /* CASE  (A):  user=none, vdata=full */
+    else if (interlace == NO_INTERLACE && vs->interlace == FULL_INTERLACE) {
+        
+        b1 = buf;
+        for(j = 0; j < w->n; j++) {
+            b2    = Vtbuf + w->off[j];
+            type  = w->type[j];
+            esize = w->esize[j];
+            order = w->order[j];
+            
+            /* Awww ? */
+            DFKsetNT(type); 
+            for(index = 0; index < order; index++) {
+                Knumout (b1, b2, (uint32) nelt, (uint32) esize, (uint32) hsize);
+                b1 += esize / order;
+                b2 += isize / order;
+            }
+            b1 += ((nelt - 1) * esize);
+        }
+        
+    } /* case (a) */
+    
+    /* --------------------------------------------------------------------- */
+    /* CASE  (B):  user=none, vdata=none */
+    else if (interlace == NO_INTERLACE && vs->interlace == NO_INTERLACE) {
+        
+        b1 = buf;
+        for(j = 0; j < w->n; j++) {
+            b2    = Vtbuf + w->off[j] * nelt;
+            type  = w->type[j];
+            esize = w->esize[j];
+            isize = w->isize[j];
+            order = w->order[j];
+            
+            /* Bwww ? works sometimes */
+            DFKsetNT(type);  
+            for(index = 0; index < order; index++) {
+                Knumout (b1, b2, (uint32) nelt, (uint32) esize, (uint32) isize);
+                b2 += isize / order;
+                b1 += esize / order;
+            }
+            b1 += ((nelt - 1) * esize);
+        }
+        
+    } /* case (b) */
+    
+    /* ----------------------------------------------------------------- */
+    /* CASE  (C):  user=full, vdata=full */
+    else if (interlace==FULL_INTERLACE && vs->interlace==FULL_INTERLACE) {
+        for(uvsize = 0, j = 0; j < w->n; j++)
+            uvsize += w->esize[j];
+        
+        offset = 0;
+        for(j = 0; j < w->n; j++) {
+            b1    = buf + offset;
+            b2    = Vtbuf + w->off[j];
+            type  = w->type[j];
+            esize = w->esize[j];
+            isize = w->isize[j];
+            order = w->order[j];
+            
+            /* Cwww WORKS  */
+            DFKsetNT(type); 
+            for(index = 0; index < order; index++) {
+                Knumout (b1, b2, (uint32) nelt, (uint32) uvsize, (uint32) hsize);
+                b2 += isize / order;
+                b1 += esize / order;
+            }
+            offset += esize;
+        }
+    } /* case (c) */
+    
+    /* ----------------------------------------------------------------- */
+    /* CASE  (D):  user=full, vdata=none */
+    else if (interlace==FULL_INTERLACE && vs->interlace==NO_INTERLACE) {
+        
+        for(uvsize=0, j=0; j<w->n; j++)
+            uvsize += w->esize[j];
+        
+        offset = 0;
+        for(j = 0; j < w->n; j++) {
+            b1    = buf  + offset;
+            b2    = Vtbuf + w->off[j] * nelt;
+            type  = w->type[j];
+            isize = w->isize[j];
+            esize = w->esize[j];
+            order = w->order[j];
+            
+            /* Dwww ? */
+            DFKsetNT(type); 
+            for(index = 0; index < order; index++) {
+                Knumout (b1, b2, (uint32) nelt, (uint32) uvsize, (uint32) isize);
+                b2 += isize / order;
+                b1 += esize / order;
+            }
+            offset +=esize;
+        }
+    } /* case (d) */
+    
+    
+    /* ================ start writing ============================== */
+    /* ================ start writing ============================== */
+    
 #if 1
     if (vs->aid == 0) { /* aid not allocated yet */
         vs->aid = Hstartwrite (vs->f,VSDATATAG, vs->oref, (int32) nelt * hsize);

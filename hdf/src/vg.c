@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.12  1993/08/16 21:46:34  koziol
-Wrapped in changes for final, working version on the PC.
+Revision 1.13  1993/08/19 16:45:47  chouck
+Added code and tests for multi-order Vdatas
 
+ * Revision 1.12  1993/08/16  21:46:34  koziol
+ * Wrapped in changes for final, working version on the PC.
+ *
  * Revision 1.10  1993/07/23  20:49:16  sxu
  * Changed 'void' to 'VOID' VSdump, Vinitialize, Vsetzap, Remove_vfile and unpackvs.
  *
@@ -401,47 +404,47 @@ int32 vkey;
 char  *fields;
 #endif
 {
-	int32 	totalsize, ac, i,j,found;
-	char   	**av;
+    int32 	totalsize, ac, i,j,found;
+    char   	**av;
     vsinstance_t    *w;
     VDATA           *vs;
     char * FUNC = "VSsizeof";
-
+    
     if (!VALIDVSID(vkey)) {
         HERROR(DFE_ARGS);
         HEprint(stderr, 0);
         return(FAIL);
     }
-  
-  /* locate vg's index in vgtab */
+    
+    /* locate vg's index in vgtab */
     if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
         HERROR(DFE_NOVS);
         HEprint(stderr, 0);
         return(FAIL);
     }
-
+    
     vs=w->vs;
     if((vs==NULL) || (scanattrs(fields,&ac,&av) < 0) || (ac<1)) {
         HERROR(DFE_ARGS);
         return(FAIL);
     }
-
-	totalsize=0;
-	for (i=0;i<ac;i++) {
+    
+    totalsize=0;
+    for (i=0;i<ac;i++) {
         for (found=0,j=0;j<vs->wlist.n;j++) /* check fields in vs */
             if (!HDstrcmp(av[i], vs->wlist.name[j])) {
-				totalsize += vs->wlist.esize[j];
-				found=1;
-				break;
-			}
-
-		if (!found) {
+                totalsize += vs->wlist.esize[j];
+                found=1;
+                break;
+            }
+        
+        if (!found) {
             HERROR(DFE_ARGS);
             HEreport("VSsizeof:[%s] not in vs", av[i]);
-			return(FAIL);
-		}
-	}
-	return(totalsize);
+            return(FAIL);
+        }
+    }
+    return(totalsize);
 } /* VSsizeof */
 
 /* ================================================================== */

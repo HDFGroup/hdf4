@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.11  1993/08/17 18:56:18  chouck
-Redid some changes from version 1.9
+Revision 1.12  1993/08/19 16:45:52  chouck
+Added code and tests for multi-order Vdatas
 
+ * Revision 1.11  1993/08/17  18:56:18  chouck
+ * Redid some changes from version 1.9
+ *
  * Revision 1.9  1993/08/03  15:49:25  chouck
  * Cleaned up a bunch of Vset code
  *
@@ -216,7 +219,7 @@ char    *fields;
                     order = vs->usym[j].order;
                     wlist.type[wlist.n]  = vs->usym[j].type;
                     wlist.order[wlist.n] = order;
-                    wlist.esize[wlist.n] = (int16)(order * DFKNTsize(vs->usym[j].type | DFNT_NATIVE));
+                    wlist.esize[wlist.n] = (int16) order * DFKNTsize(vs->usym[j].type | DFNT_NATIVE);
                     wlist.isize[wlist.n] = order * vs->usym[j].isize;
                     wlist.ivsize+= (int16)(wlist.isize[wlist.n]);
                     wlist.n++;
@@ -233,9 +236,9 @@ char    *fields;
                         order = rstab[j].order;
                         wlist.type[wlist.n]  =  rstab[j].type;
                         wlist.order[wlist.n] =  order;
-                        wlist.esize[wlist.n] =  (int16)(order * DFKNTsize(rstab[j].type | DFNT_NATIVE));
+                        wlist.esize[wlist.n] =  (int16) order * DFKNTsize(rstab[j].type | DFNT_NATIVE);
                         wlist.isize[wlist.n] =  order * rstab[j].isize;
-                        wlist.ivsize  += (int16)(wlist.isize[wlist.n]);
+                        wlist.ivsize+= (int16)(wlist.isize[wlist.n]);
                         wlist.n++;
                         break;
                     }
@@ -246,9 +249,11 @@ char    *fields;
     
     /* *********************************************************** */
     /* ensure fields with order > 1 are alone  */
+#ifdef CHOUCK
         for (i = 0; i < wlist.n; i++)
             if (wlist.order[i] > 1 && wlist.n != 1)
                 HRETURN_ERROR(DFE_BADORDER,FAIL);
+#endif /* CHOUCK */
 
     /* *********************************************************** */
     /* compute and save the fields' offsets */

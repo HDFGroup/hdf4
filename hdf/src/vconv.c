@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1993/08/16 21:46:32  koziol
-Wrapped in changes for final, working version on the PC.
+Revision 1.7  1993/08/19 16:45:45  chouck
+Added code and tests for multi-order Vdatas
 
+ * Revision 1.6  1993/08/16  21:46:32  koziol
+ * Wrapped in changes for final, working version on the PC.
+ *
  * Revision 1.5  1993/04/19  22:48:23  koziol
  * General Code Cleanup to reduce/remove errors on the PC
  *
@@ -384,18 +387,19 @@ uint8        buf[];
 
     for (i=0;i<vs->wlist.n;i++)    /* retrieve the order */
         INT16DECODE(bb,vs->wlist.order[i]);
-
-	for (i=0;i<vs->wlist.n;i++) {
+    
+    for (i=0;i<vs->wlist.n;i++) {
         HDstrcpy(vs->wlist.name[i],(char*)bb);
         bb += ( HDstrlen(vs->wlist.name[i]) + 1 );
-	}
-
+    }
+    
     HDstrcpy(vs->vsname, (char*) bb);
     bb += ( HDstrlen(vs->vsname) + 1);
 
-	/* **EXTRA**  fill in the machine-dependent size fields */
+    /* **EXTRA**  fill in the machine-dependent size fields */
     for (i=0;i<vs->wlist.n;i++)
-        vs->wlist.esize[i]=(int16)(vs->wlist.order[i]*SIZEOF((int16)vs->wlist.type[i]));
+        vs->wlist.esize[i]=(int16)vs->wlist.order[i] * (SIZEOF((int16)vs->wlist.type[i]));
+
 } /* oldunpackvs */
 
 /* ------------------------------------------------------------------ */

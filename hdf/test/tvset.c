@@ -24,13 +24,15 @@ int32 write_vset_stuff() {
     int32 tags[10], refs[10];
     int32 vg1, vg2, vg3, vg4;
     int32 vs1, vs2, vs3, vs4;
-    int32 count, i, num;
+    int32 count, i, j, num;
     int32   ibuf[1000]; /* integer buffer */
     float32 fbuf[1000]; /* floating point buffer */
     char    gbuf[1000]; /* generic buffer */
     char  * name;
     char  * p;
-
+    char8   c;
+    float32 f;
+    
     fid = Hopen(FNAME0, DFACC_CREATE, 100);
     if(fid == FAIL) {
         num_errs++;
@@ -148,8 +150,13 @@ int32 write_vset_stuff() {
     VSsetname (vs1, name);
     VSsetclass(vs1, "Test object");
     VSfdefine(vs1, FIELD1, DFNT_FLOAT32, 1);
-    VSsetfields(vs1,FIELD1);
+    status = VSsetfields(vs1,FIELD1);
+    if(status == FAIL) {
+        num_errs++;
+        printf(">>> Vsetfields failed for %s\n", name);
+    }
     
+
     /* create some bogus data */
     for(i = 0, count = 100; i < count; i++) fbuf[i] = i;
     
@@ -164,8 +171,12 @@ int32 write_vset_stuff() {
     VSsetname (vs1, name);
     VSsetclass(vs1, "Test object");
     VSfdefine(vs1, FIELD2, DFNT_INT32, 2);
-    VSsetfields(vs1,FIELD2);
-    
+    status = VSsetfields(vs1,FIELD2);
+    if(status == FAIL) {
+        num_errs++;
+        printf(">>> Vsetfields failed for %s\n", name);
+    }
+
     /* create some bogus data */
     for(i = 0, count = 100; i < 2 * count; i++) ibuf[i] = i;
     
@@ -182,8 +193,12 @@ int32 write_vset_stuff() {
     VSsetclass(vs1, "No class specified");
     VSfdefine(vs1, "A", DFNT_FLOAT32, 1);
     VSfdefine(vs1, "B", DFNT_INT32, 1);
-    VSsetfields(vs1, "A, B");
-    
+    status = VSsetfields(vs1, "A, B");
+    if(status == FAIL) {
+        num_errs++;
+        printf(">>> Vsetfields failed for %s\n", name);
+    }
+
     /* create some bogus data */
     p = gbuf;
     for(i = 0, count = 100; i < count; i++) {
@@ -196,6 +211,46 @@ int32 write_vset_stuff() {
     VSwrite(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
     VSdetach(vs1);
     MESSAGE(5,printf("created VDATA %s with %d elements\n", name, count););
+
+
+#define ST "STATION_NAME"
+#define VL "VALUES"
+#define FL "FLOATS"
+#define MX "STATION_NAME,VALUES,FLOATS"
+
+    /* mixed order Vdata */
+    vs1 = VSattach(fid, -1, "w");
+    name = "Multi-Order Vdata";
+    VSsetname (vs1, name);
+    VSsetclass(vs1, "No class specified");
+    VSfdefine(vs1, ST, DFNT_CHAR8, 2);
+    VSfdefine(vs1, VL, DFNT_INT32, 3);
+    VSfdefine(vs1, FL, DFNT_FLOAT32, 1);
+    status = VSsetfields(vs1, MX);
+    if(status == FAIL) {
+        num_errs++;
+        printf(">>> Vsetfields failed for %s\n", name);
+    }
+
+    /* create some bogus data */
+    p = gbuf;
+    c = 'a';
+    j = 0;
+    f = 15.5;
+    for(i = 0, count = 10; i < count; i++) {
+        HDmemcpy(p, &c, sizeof(char8));   p += sizeof(char8); c++;
+        HDmemcpy(p, &c, sizeof(char8));   p += sizeof(char8); c++;
+        HDmemcpy(p, &j, sizeof(int32));   p += sizeof(int32); j++;
+        HDmemcpy(p, &j, sizeof(int32));   p += sizeof(int32); j++;
+        HDmemcpy(p, &j, sizeof(int32));   p += sizeof(int32); j++;
+        HDmemcpy(p, &f, sizeof(float32)); p += sizeof(float32); f += 0.5;
+    }
+    
+    /* store it */
+    VSwrite(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
+    VSdetach(vs1);
+    MESSAGE(5,printf("created VDATA %s with %d elements\n", name, count););
+
 
     Vend(fid);
     Hclose(fid);
@@ -217,6 +272,10 @@ int32 read_vset_stuff() {
     int32   vg1, vg2;
     int32   vs1, vs2;
     int32   status, num, i, count, intr, sz;
+    float32 fl_expected;
+    int32   in_expected;
+    char8   c_expected;
+    
 
     fid = Hopen(FNAME0, DFACC_RDONLY, 0);
     if(fid == FAIL) {
@@ -509,6 +568,193 @@ int32 read_vset_stuff() {
             printf(">>> Mixed float value %d was expecting %d got %f\n", i, i, fl);
         }
     }
+
+    VSdetach(vs1);
+
+    /* Move to the next one (multi-order) */
+    ref = VSgetid(fid, ref);
+    if(ref == FAIL) {
+        num_errs++;
+        printf(">>> VSgetid was unable to find multi-order Vdata\n");
+    }
+
+    /* read in the first data and verify metadata and contents */
+    vs1 = VSattach(fid, ref, "r");
+
+    VSgetname (vs1, name);
+    VSgetclass(vs1, class);
+
+    if(HDstrcmp(name, "Multi-Order Vdata")) {
+        num_errs++;
+        printf(">>> Got bogus Vdata name (VSgetname) : %s\n", name);
+    }
+
+    if(HDstrcmp(class, "No class specified")) {
+        num_errs++;
+        printf(">>> Got bogus Vdata class : %s\n", class);
+    }
+
+    status = VSinquire(vs1, &count, &intr, fields, &sz, name);
+    if(status == FAIL) {
+        num_errs++;
+        printf(">>> VSinquire failed on multi-order Vdata\n");
+    }
+    
+    if(count != 10) {
+        num_errs++;
+        printf(">>> Got wrong count %d expecting 10\n", count);
+    }
+
+    if(HDstrcmp(fields, MX)) {
+        num_errs++;
+        printf(">>> Got bogus field name %s\n", fields);
+    }
+    
+
+    /* 
+     * verify - read in all fields 
+     */
+
+
+    /* read it */
+    VSsetfields(vs1, fields);
+    for(i = 0; i < 1000; i++) gbuf[i] = 0;
+    VSread(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
+
+    p = gbuf;
+    fl_expected = 15.5;
+    in_expected = 0;
+    c_expected = 'a';
+    
+    for(i = 0; i < count; i++) {
+        float32 fl;
+        int32   in;
+        char8   c;
+        
+
+        /* read and verify characters */
+        HDmemcpy(&c, p, sizeof(char8)); p += sizeof(char8);
+
+        if(c != c_expected) {
+            num_errs++;
+            printf(">>> Multi-order char value %d.0 was expecting %c got %c\n", i, c_expected, c);
+        }
+        c_expected++;
+
+        HDmemcpy(&c, p, sizeof(char8)); p += sizeof(char8);
+
+        if(c != c_expected) {
+            num_errs++;
+            printf(">>> Multi-order char value %d.1 was expecting %c got %c\n", i, c_expected, c);
+        }
+        c_expected++;
+
+        /* read and verify integers */
+        HDmemcpy(&in, p, sizeof(int32));   p += sizeof(int32);
+        
+        if(in != in_expected) {
+            num_errs++;
+            printf(">>> Multi-order int value %d.0 was expecting %d got %d\n", i, in_expected, in);
+        }
+        in_expected++;
+        HDmemcpy(&in, p, sizeof(int32));   p += sizeof(int32);
+        
+        if(in != in_expected) {
+            num_errs++;
+            printf(">>> Multi-order int value %d.1 was expecting %d got %d\n", i, in_expected, in);
+        }
+        in_expected++;
+        HDmemcpy(&in, p, sizeof(int32));   p += sizeof(int32);
+        
+        if(in != in_expected) {
+            num_errs++;
+            printf(">>> Multi-order int value %d.2 was expecting %d got %d\n", i, in_expected, in);
+        }
+        in_expected++;
+
+        /* read and verify floating point value */
+        HDmemcpy(&fl, p, sizeof(float32)); p += sizeof(float32);
+
+        if(fl != fl_expected) {
+            num_errs++;
+            printf(">>> Multi-order float value %d was expecting %f got %f\n", i, fl_expected, fl);
+        }
+        fl_expected += 0.5;
+
+    }
+
+
+    /* 
+     * verify - just read in the character field with FULL_INTERLACE 
+     */
+
+    /* read it */
+    VSseek(vs1, 0);
+    VSsetfields(vs1, ST);
+    for(i = 0; i < 1000; i++) gbuf[i] = 0;
+    VSread(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
+
+    p = gbuf;
+    c_expected = 'a';
+    
+    for(i = 0; i < count; i++) {
+        char8   c;
+        
+        /* read and verify characters */
+        HDmemcpy(&c, p, sizeof(char8)); p += sizeof(char8);
+
+        if(c != c_expected) {
+            num_errs++;
+            printf(">>> FULL_INTERLACE read char value %d.0 (%c) got %c %d\n", i, c_expected, c, c);
+        }
+        c_expected++;
+
+        HDmemcpy(&c, p, sizeof(char8)); p += sizeof(char8);
+
+        if(c != c_expected) {
+            num_errs++;
+            printf(">>> FULL_INTERLACE read char value %d.1 (%c) %c got %c %d\n", i, c_expected, c, c);
+        }
+        c_expected++;
+
+    }
+
+
+    /* 
+     * verify - just read in the character field with NO_INTERLACE 
+     */
+
+    /* read it */
+    VSseek(vs1, 0);
+    VSsetfields(vs1, ST);
+    for(i = 0; i < 1000; i++) gbuf[i] = 0;
+    VSread(vs1, (unsigned char *) gbuf, count, NO_INTERLACE);
+
+    p = gbuf;
+    c_expected = 'a';
+    
+    for(i = 0; i < count; i++) {
+        char8   c;
+        
+        /* read and verify characters */
+        HDmemcpy(&c, p, sizeof(char8)); p += sizeof(char8);
+
+        if(c != c_expected) {
+            num_errs++;
+            printf(">>> NO_INTERLACE read char value %d.0 (%c) got %c\n", i, c_expected, c);
+        }
+        c_expected++;
+
+        HDmemcpy(&c, p, sizeof(char8)); p += sizeof(char8);
+
+        if(c != c_expected) {
+            num_errs++;
+            printf(">>> NO_INTERLACE read char value %d.1 (%c) %c got %c\n", i, c_expected, c);
+        }
+        c_expected++;
+
+    }
+
 
     VSdetach(vs1);
 

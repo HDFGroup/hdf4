@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.20  1993/08/16 21:46:43  koziol
-Wrapped in changes for final, working version on the PC.
+Revision 1.21  1993/08/19 16:45:49  chouck
+Added code and tests for multi-order Vdatas
 
+ * Revision 1.20  1993/08/16  21:46:43  koziol
+ * Wrapped in changes for final, working version on the PC.
+ *
  * Revision 1.19  1993/07/23  20:49:20  sxu
  * Changed 'void' to 'VOID' VSdump, Vinitialize, Vsetzap, Remove_vfile and unpackvs.
  *
@@ -301,8 +304,9 @@ uint8        buf[];
     for (i=0;i<vs->wlist.n;i++)     /* save the type */
         INT16ENCODE(bb,vs->wlist.type[i]);
 
-    for (i=0;i<vs->wlist.n;i++)     /* save the isize */
-        INT16ENCODE(bb,vs->wlist.isize[i]);
+    /* save the isize */
+    for (i=0;i<vs->wlist.n;i++)     
+        INT16ENCODE(bb, vs->wlist.isize[i]);
 
     for (i=0;i<vs->wlist.n;i++)     /* save the offset */
         INT16ENCODE(bb,vs->wlist.off[i]);
@@ -436,9 +440,9 @@ int32   *size;  /* UNUSED, but retained for compatibility with vpackvs */
         INT16DECODE(bb,int16var); /* this gives the length */
 
         HIstrncpy(vs->wlist.name[i], (char*) bb, int16var + 1);
-		bb += int16var;
-	}
-
+        bb += int16var;
+    }
+    
 	/* retrieve the vsname (and vsnamelen)  */
     INT16DECODE(bb, int16var); /* this gives the length */
 
@@ -465,11 +469,10 @@ int32   *size;  /* UNUSED, but retained for compatibility with vpackvs */
         for (i = 0; i < vs->wlist.n; i++)   /* save the type */
             vs->wlist.type[i] = map_from_old_types(vs->wlist.type[i]);
         
-	/* --- EXTRA --- fill in the machine-dependent size fields */
+    /* --- EXTRA --- fill in the machine-dependent size fields */
     for (i = 0; i < vs->wlist.n; i++)
-          vs->wlist.esize[i] = (int16)(vs->wlist.order[i] *
-                DFKNTsize(vs->wlist.type[i] | DFNT_NATIVE));
-        
+        vs->wlist.esize[i] = (int16) vs->wlist.order[i] * DFKNTsize(vs->wlist.type[i] | DFNT_NATIVE);
+    
 } /* vunpackvs */
 
 /* ---------------------------- vsdestroynode ------------------------- */
