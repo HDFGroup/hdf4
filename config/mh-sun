@@ -21,7 +21,7 @@ VERSION  = 4.0
 # Compiliers:
 # For gcc version
 CC=gcc
-CFLAGS=-ansi -O
+CFLAGS=-ansi  
 #CFLAGS=-ansi -Wall -pedantic -g
 #
 #Using ANSI compilier
@@ -30,7 +30,7 @@ CFLAGS=-ansi -O
 
 # Fortran compilier
 FC = f77
-FFLAGS =
+FFLAGS = -f
 
 # Name of achive randomizer, usually ranlib (use 'true' if non-existant)
 RANLIB = ranlib
