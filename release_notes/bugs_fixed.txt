@@ -1,7 +1,7 @@
 HDF4.1b
 =======
 1. If you opened a file in read only mode with the SD interface,
-   it create the file if the file did not exist. This has been fixed.
+   it would create the file if the file did not exist. This has been fixed.
 2. There was a problem with GRstart, which caused GRend to
    trigger a segmentation fault when it was called twice.
    This has been fixed.
