@@ -180,44 +180,44 @@ int32 fmtchar(x) char*x;
 int32 fmtint(x) 
      char* x;
 {	
-  int *i;
-  i = (int *) x;
-  cn += printf("%d", *i); 
+  int i = 0;
+  HDmemcpy(&i, x, 4);
+  cn += printf("%d", i); 
   return(1);  
 }
 
 int32 fmtfloat(x) 
      char* x;
 {
-  float *f;
-  f = (float *) x;
-  cn += printf("%f", *f); 
-  return(1);  
+  float f = 0;
+  HDmemcpy(&f, x, 4);
+  cn += printf("%f", f); 
+  return(1); 
 }
 
 int32 fmtlong(x) 
      char* x;   
 {	
-  long *l;
-  l = (long *) x;
-  cn += printf("%ld", *l);
+  long l = 0;
+  HDmemcpy(&l, x, 4);
+  cn += printf("%ld", l);
   return(1);  
 }
 
 int32 fmtshort(x) 
      char* x;   
 {	
-  short *s;
-  s = (short *) x;
-  cn += printf("%d", *s);
+  short s = 0;
+  HDmemcpy(&s, x, 2);
+  cn += printf("%d", s);
   return(1);  
 }
 
 int32 fmtdouble(x) char*x;
 {	
-  double *d;
-  d = (double *) x;
-  cn += printf("%f", *d); 
+  double d = 0;
+  HDmemcpy(&d, x, 8);
+  cn += printf("%f", d);
   return(1);  
 }
 
