@@ -43,15 +43,16 @@
 This package contains the complete Java interface for the
 HDF 4.1r2 library, and the Java HDF Viewer application.
 
-** Note:  The JHI will not compile with the HDF 4.2.r1 due to a 
+** Note:  The JHI will not compile with the HDF 4.1.r1 due to a 
 slight change in the include files.  Be sure the Makefile points
 to the current version of HDF.  **
 
   Java HDF Interface (JHI) :
 
        The Java interface for HDF consists of two parts:
-            1. Java classes to interface, including 'native methods'
-               and support for Java Exceptions, and data conversion.
+            1. Java classes to interface with the standard HDF library, 
+               including 'native methods' and support for Java Exceptions, 
+               and data conversion.
             2. C-library that uses the Java Native Method Interface
                (JNI) to implement the Java calls to the HDF library.
 
@@ -68,7 +69,7 @@ to the current version of HDF.  **
   Java HDF Viewer (JHV):
 
        The JHV is a Java application to browse HDF files.  The
-       JHV uses the Java Interface for HDF.  Thd JHV is a standalone
+       JHV uses the Java Interface for HDF.  The JHV is a standalone
        application, it cannot be used as a network loadable applet.
 
   For more information, see the on-line documentation at:
@@ -104,7 +105,7 @@ to the current version of HDF.  **
   'Platform-specific Notes'.
 
   The platforms for which the NCSA Java products have been
-  succesfully compiled and tested are:
+  successfully compiled and tested are:
 
   Platform(OS)            
   ------------           
@@ -258,8 +259,7 @@ to the current version of HDF.  **
     --------
     The NCSA Java products are not currently available for HPUX.
 
-    Java JDK 1.1 is not available for HPUX 9.0x, it is available for
-    HPUX 10.20.
+    Java JDK 1.1 is not available for HPUX 9.0x, only for HPUX 10.20.
 
     In order to use native code from Java, the library must be compiled
     as a dynamically loadable library.  Unfortunately, no dynamically
@@ -309,7 +309,7 @@ to the current version of HDF.  **
     For this platform, the linker program is set, the options (in 
     this case '-G' generates a dynamic library), and the shared library
     extension (in this case, the files are called '*.so') and the
-    location of the JNI C header files (JAVAINC2).  The congigure
+    location of the JNI C header files (JAVAINC2). 
 
     For a new platform, the Makefile needs to be changed to use the
     appropriate settings and paths.  It may be necessary to consult
@@ -338,8 +338,8 @@ to the current version of HDF.  **
 
        http://hdf.ncsa.uiuc.edu/java-hdf-html/
 
-   The general HDF 4.1r1 documentation can be found on the NCSA ftp 
-   server in the directory /HDF/Documentation/HDF4.1r1/.  The
+   The general HDF 4.1r2 documentation can be found on the NCSA ftp 
+   server in the directory /HDF/Documentation/HDF4.1r2/.  The
    HDF home page is at:
 
       http://hdf.ncsa.uiuc.edu/
