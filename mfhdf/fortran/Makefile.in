@@ -65,6 +65,8 @@ install::	FORCE
 
 $(PROGRAM):	$(REMOTE_LIBRARY)
 
+include ../port/master.mk
+
 jackets.c:	fortc1.sed fortc2.sed common.m4 jackets.src $(OS).m4
 	./fortc -L . -O $(OS) jackets.src > $@
 
@@ -86,8 +88,6 @@ hdftest:        hdftest.f $(LIBRARY)
 		echo "The above differences are OK if small"; \
 		exit 0; \
 	    fi
-
-include ../port/master.mk
 
 $(PROGRAM).o:	netcdf.inc
 jackets.o:	../libsrc/netcdf.h
