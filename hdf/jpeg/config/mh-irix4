@@ -1,4 +1,4 @@
-# This makefile fragemnt will override the default options found at the top
+# This makefile fragment will override the default options found at the top
 # of the 'Makefile' in the jpeg source directory. See 'Makefile.in'
 # for discussion of the various options.
 #
@@ -12,6 +12,7 @@ RMFLAGS = -f
 MV= mv
 AR = ar
 ARFLAGS = rc
+AR2 = true
 
 # The following segment should not really be the fragments but I 
 # couldn't find a way to avoid this.-GV
