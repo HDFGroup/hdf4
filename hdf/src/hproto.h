@@ -2421,9 +2421,10 @@ extern int32 GRfindattr(int32 id,const char *name);
 
 extern intn GRPshutdown(void);
 
-/*=== Chunking Routines, same as in mfhdf.h - need to move to common place  ====*/
+/*=== HDF_CHUNK_DEF same as in mfhdf.h - moved here  ====*/
 
-/* Bit - flags used for SDsetchunk() and SDgetChunkInfo() */
+/* Bit flags used for SDsetchunk(), SDgetchunkinfo() 
+   GRsetchunk() and GRgetchunkinfo(). Note that GRs do not support NBIT */
 #define HDF_NONE    0x0
 #define HDF_CHUNK   0x1
 #define HDF_COMP    0x3
@@ -2432,7 +2433,7 @@ extern intn GRPshutdown(void);
 /* Cache flags */
 #define HDF_CACHEALL 0x1
 
-/* Chunk Defintion */
+/* Chunk Defintion, Note that GRs need only 2 dimensions for the chunk_lengths */
 typedef union hdf_chunk_def_u
 {
     /* Chunk Lengths only */
@@ -2448,16 +2449,17 @@ typedef union hdf_chunk_def_u
     }comp;
         
     struct 
-    { /* For NBIT */
+    { /* For NBIT, Used by SDS and not by GR */
         int32 chunk_lengths[MAX_VAR_DIMS]; /* chunk lengths along each dimension */
-        intn  start_bit;
-        intn  bit_len;
-        intn  sign_ext;
-        intn  fill_one;
+        intn  start_bit; /* offset of the start bit in the data */
+        intn  bit_len;   /* number of bits to store */
+        intn  sign_ext;  /* whether to sign extend or not */
+        intn  fill_one;  /* whether to fill with 1's or not (0's) */
     } nbit;
 
 } HDF_CHUNK_DEF;
 
+/*=== GR Chunking Routines  ====*/
 
 /******************************************************************************
  NAME
