@@ -38,6 +38,8 @@ VOID tbbt1dump
 /* Returns pointer to end-most (to LEFT or RIGHT) node of tree: */
 static TBBT_NODE *tbbt_end(TBBT_NODE *root, intn side)
 {
+    if(root==NULL)
+        return(NULL);
     while(  HasChild( root, side )  ) {
         root= root->link[side];
     }
