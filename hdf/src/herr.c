@@ -17,9 +17,10 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*LINTLIBRARY*/
-/*+ herr.c
-*** error routines
-+*/
+/* -------------------------------- herr.c -------------------------------- */
+/*
+   HDF error handling / reporting routines
+*/
 
 #define _H_ERR_MASTER_
 
@@ -76,10 +77,24 @@ int32 error_top = 0;
 
 #define ERRMESG_SZ (sizeof(error_messages) / sizeof(error_messages[0]))
 
-/*- HEstring
-*** returns the error message associated with error_code, uses a
-*** linear search but efficiency should not be a problem here
--*/
+
+/* ------------------------------- HEstring ------------------------------- */
+/*
+
+ NAME
+	HEstring -- return error description
+ USAGE
+	char * HEstring(error_code)
+        int16  error_code;      IN: the numerical value of this error
+ RETURNS
+        An error description string
+ DESCRIPTION
+       Return a textual description of the given error.  These strings
+       are statically declared and should not be free()ed by the user.
+       If no string can be found to describe this error a generic
+       default message is returned.
+
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 char _HUGE *HEstring(int16 error_code)
 #else
@@ -100,9 +115,20 @@ char _HUGE *HEstring(error_code)
     return DEFAULT_MESG;
 }
 
-/*- HEclear
-*** clears the error stack
--*/
+
+/* ------------------------------- HEclear -------------------------------- */
+/*
+
+ NAME
+	HEclear -- clear the error stack
+ USAGE
+	VOID HEclear(VOID)
+ RETURNS
+        NONE
+ DESCRIPTION
+        Remove all currently reported errors from the error stack
+
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 VOID HEclear(void)
 #else
@@ -122,15 +148,29 @@ VOID HEclear()
     }
 }
 
-/*- HEpush
-*** push a new error onto stack.  If stack is full, error is ignored.
-*** assumes that the character strings (function_name and file_name) referred
-***  are in some semi-permanent storage, so it just saves the pointer to
-***  the strings.
-*** blank out the description field so that a description is reported
-***  only if REreport is called
-***
--*/
+
+/* -------------------------------- HEpush -------------------------------- */
+/*
+
+ NAME
+	HEpush -- push an error onto the stack
+ USAGE
+	VOID HEpush(error_code, func_name, file_name, line)
+        int16  error_code;      IN: the numerical value of this error
+        char * func_name;       IN: function where the error happened
+        char * file_name;       IN: file name of offending function
+        int    line;            IN: line number of the reporting statment
+ RETURNS
+        NONE
+ DESCRIPTION
+        push a new error onto stack.  If stack is full, error 
+        is ignored.  assumes that the character strings 
+        (function_name and file_name) referred are in some 
+        semi-permanent storage, so it just saves the pointer 
+        to the strings.  blank out the description field so 
+        that a description is reported  only if REreport is called
+
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 VOID HEpush(int16 error_code, char *function_name, char *file_name, int line)
 #else
@@ -169,16 +209,30 @@ VOID HEpush(error_code, function_name, file_name, line)
        }
        error_top++;
     }
-}
+} /* HEpush */
 
 
-/* ====================================================================== */
-/* Write a nicely formatted string to a log file */
+/* ------------------------------- HEreport ------------------------------- */
+/*
+
+ NAME
+	HEreport -- give a more detailed error description
+ USAGE
+	VOID HEreport(format, ....)
+        char * format;           IN: printf style print statement
+ RETURNS
+        NONE
+ DESCRIPTION
+        Using printf and the variable number of args facility allow the
+        library to specify a more detailed description of a given
+        error condition
+
+--------------------------------------------------------------------------- */
 #if defined PROTOTYPE
 VOID HEreport(char *format, ...) {
   va_list arg_ptr;
   char *tmp;
-  char *FUNC="HEreport";   /* name of function if HIalloc fails */
+  char *FUNC="HEreport";
 
   va_start(arg_ptr, format);
 
@@ -201,7 +255,7 @@ VOID HEreport(char *format, ...) {
 VOID HEreport(va_alist)
 va_dcl
 {
-  char *FUNC="HEreport";   /* name of function if HIalloc fails */
+  char *FUNC="HEreport";
   char *tmp;
   char * format;
   va_list arg_ptr;
@@ -245,9 +299,23 @@ va_dcl
 #endif /* PROTOTYPE */
 
 
-/*- HEprint
-*** print a number of error, starting from the error_top of the stack
--*/
+/* ------------------------------- HEprint -------------------------------- */
+/*
+
+ NAME
+	HEprint -- print values from the error stack
+ USAGE
+	VOID HEprint(stream, levels)
+        FILE * stream;      IN: file to print error message to
+        int32  level;       IN: level at which to start printing
+ RETURNS
+        NONE
+ DESCRIPTION
+        Print part of the error stack to a given file.  If level == 0
+        the entire stack is printed.  If an extra description has been
+        added (via HEreport) it is printed too.
+
+--------------------------------------------------------------------------- */ 
 #ifdef PROTOTYPE
 VOID HEprint(FILE *stream, int32 print_levels)
 #else
@@ -274,9 +342,21 @@ VOID HEprint(stream, print_levels)
     }
 }
 
-/*- HEvalue
-*** return the nth most recent error
--*/
+
+/* ------------------------------- HEvalue -------------------------------- */
+/*
+
+ NAME
+	HEvalue -- return a error off of the error stack
+ USAGE
+	int16 HEvalue(level)
+        int32 level;           IN: level of the error stack to return
+ RETURNS
+        Error code or DFE_NONE if no error
+ DESCRIPTION
+        Return the error code of a single error out of the error stack
+
+--------------------------------------------------------------------------- */ 
 #ifdef PROTOTYPE
 int16 HEvalue(int32 level)
 #else

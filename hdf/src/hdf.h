@@ -377,6 +377,11 @@ extern uint8 *tbuf;
 #define DFTAG_T105  ((uint16)603) /* TEK 4105 data */
 
 /* Scientific Data set */
+/*
+  Objects of tag 721 are never actually written to the file.  The tag is 
+  needed to make things easier mixing DFSD and SD style objects in the
+  same file 
+*/
 #define DFTAG_SDG   ((uint16)700) /* Scientific Data Group */
 #define DFTAG_SDD   ((uint16)701) /* Scientific Data DimRec */
 #define DFTAG_SD    ((uint16)702) /* Scientific Data */
@@ -389,9 +394,11 @@ extern uint8 *tbuf;
 #define DFTAG_SDT   ((uint16)709) /* Transpose */
 #define DFTAG_SDLNK ((uint16)710) /* Links related to the dataset */
 #define DFTAG_NDG   ((uint16)720) /* Numeric Data Group */
+                                  /* tag 721 reserved chouck 24-Nov-93 */
 #define DFTAG_CAL   ((uint16)731) /* Calibration information */
 #define DFTAG_FV    ((uint16)732) /* Fill Value information */
 #define DFTAG_BREQ  ((uint16)799) /* Beginning of required tags   */
+#define DFTAG_SDRAG ((uint16)781) /* List of ragged array line lengths */
 #define DFTAG_EREQ  ((uint16)780) /* Current end of the range   */
 
 /* VSets */

@@ -17,33 +17,33 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*LINTLIBRARY*/
-/*+ hblocks .c
- routines to implement linked-block elements
-+*/
-/*
-[[ (since we no longer have a way to generate special tags from
-    normal tags, we no longer provide the conversion. LCC 7jun91)
+/* ------------------------------ hblocks.c ------------------------------- 
+  routines to implement linked-block elements
+
   Linked element in HDF files created in two ways
   -- created from the start or
   -- converted from a normal data element
-]]
 
   A linked-block element is a special element.
-[[ (This part is not true any more, LCC 7jun91)
+
   Special elements are
   flagged with a set high-bit in their tag.  Thus, a tag t has
   BASETAG == t & 0x7f and is a special tag if t & 0x80 != 0x00
-]]
+
   The first 16 bits of the meta-element that this tag/ref points to
   tells us what type of special element this is.  If these 16 bits is
   SPECIAL_LINKED, then it contains information about the linked blocks.
   After this 16 bits, 32 bit which is the length of each block, after
   which is the information header:
 
-  -----------------------------------------------------------------------
+  ----------------------------------------------------------------------
   | # blocks in | tag/ref of | tag/ref of blocks list .......          |
   | this header | next header|                                         |
-  -----------------------------------------------------------------------
+  ----------------------------------------------------------------------
+
+  For now, HLcreate() has the best description of what the on-disk
+  representation of a linked block element looks like.
+
 */
 
 #include "hdf.h"
@@ -100,11 +100,39 @@ funclist_t linked_funcs = {
     HLPendaccess,
 };
 
-/*- HLcreate
- creates a linked block special data element
- Took out all portions for converting a normal data elt to
- a linked block data elt.  LCC 11jun91
--*/
+
+/* ------------------------------- HLcreate ------------------------------- */
+/*
+
+ NAME
+	HLcreate -- create a linked block element
+ USAGE
+	int32 HLcreate(fid, tag, ref, blocklen, numblocks)
+        int32   fid;         IN: file to put linked block element in
+        uint16  tag;         IN: tag of element
+        uint16  ref;         IN: ref of element
+        int32   blocklen;    IN: length of standard block
+        int32   numblocks;   IN: number of blocks per block list
+ RETURNS
+        The AID of newly created linked block element, FAIL on error.
+ DESCRIPTION
+        This routine takes an HDF element and promotes it into a linked
+        block element.  Basically, the element becomes a linked list
+        allowing easy appending.  If the element already exists, it
+        is promoted to being a linked block element, otherwise a new
+        element is created.
+
+        All of the pieces of the linked list are the same size (blocklen)
+        except for the first one which stays the size of the element
+        at the time HLcreate was called.
+
+        numblocks gives the number of linked list objects in each
+        block header.  
+
+        The ideal setting for numblocks and blocklen are very data
+        and application depedent.
+
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length,
               int32 number_blocks)
@@ -287,10 +315,30 @@ int32 HLcreate(file_id, tag, ref, block_length, number_blocks)
     return ASLOT2ID(slot);
 }
 
-/*---------------------------------------------------------------------------
- HDinqblockinfo - Given an aid, return special info for linked-block
-		  element in space provided.  This function works like
-		  HDinquire().
+
+/* ---------------------------- HDinqblockinfo ---------------------------- */
+/*
+ 
+ NAME
+	HDinqblockinfo -- return info about linked blocks
+ USAGE
+	int32 HDinqblockinfo(aid, length, flength, blen, nblocks)
+        int32   aid;          IN:  aid of element
+        int32 * length;       OUT: total element length
+        int32 * flength;      OUT: length of first element
+        int32 * blen;         OUT: length of block elements
+        int32 * nblocks;      OUT: number of blocks per block header
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Given an aid, return low level special info for linked-block
+        element in space provided.  This function works like HDinquire()
+        but provides more low level info than HLPinquire.  NULL can
+        be passed for any non-interesting entries.
+
+        hdfpack is the only application that I know of which uses 
+        this function.
+
 ---------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
 int HDinqblockinfo(int32 aid, int32 *length, int32 *first_length,
@@ -322,11 +370,29 @@ int32 *length, *first_length, *block_length, *number_blocks;
         *number_blocks = ((linkinfo_t *)(arec->special_info))->number_blocks;
 
     return(SUCCEED);
-}
 
-/*- HLIstaccess
- start access to the special linked block data elt
--*/
+} /* HDinqblockinfo */
+
+
+/* ----------------------------- HLIstaccess ------------------------------ */
+/*
+ 
+ NAME
+	HLIstaccess -- set up AID to access a linked block elem
+ USAGE
+	int32 HLIstaccess(access_rec, access)
+        access_t * access_rec;   IN: access record to fill in
+        int16      access;       IN: access mode
+ RETURNS
+        The AID of the access record on success FAIL on error.
+ DESCRIPTION
+        Calls to HLIstread and HLIstwrite resolve to this function.
+        Given an active AID fill in all of the special information.
+        If this information has already been read in for a different
+        element use that else we must go out to the HDF file and 
+        pull in the information ourselves
+
+----------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
 PRIVATE int32 HLIstaccess(accrec_t *access_rec, int16 access)
 #else
@@ -347,13 +413,12 @@ PRIVATE int32 HLIstaccess(access_rec, access)
 
 
     /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
+    if (ptbuf == NULL) {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, NULL);
-      }
-
+            HRETURN_ERROR(DFE_NOSPACE, NULL);
+    }
+    
     /* set up some data in access record */
     access_rec->special = SPECIAL_LINKED;
     access_rec->posn = 0;
@@ -436,12 +501,25 @@ PRIVATE int32 HLIstaccess(access_rec, access)
     file_rec->attach++;
 
     return ASLOT2ID(access_rec - access_records);
-}
 
-/*- HLPstread
- start read on special linked block data element
- just calls HLIstaccess
--*/
+} /* HLIstaccess */
+
+
+/* ------------------------------ HLPstread ------------------------------- */
+/*
+
+ NAME
+	HLPstread -- open an access record for reading
+ USAGE
+	int32 HLPstread(access_rec)
+        access_t * access_rec;   IN: access record to fill in
+ RETURNS
+        The AID of the access record on success FAIL on error.
+ DESCRIPTION
+        Calls to HLIstaccess to fill in the access rec for 
+        reading
+
+--------------------------------------------------------------------------- */ 
 #ifdef PROTOTYPE
 int32 HLPstread(accrec_t *access_rec)
 #else
@@ -450,12 +528,24 @@ int32 HLPstread(access_rec)
 #endif
 {
     return HLIstaccess(access_rec, DFACC_READ);
-}
+} /* HLPstread */
 
-/*- HLPstwrite
- start write on a special linked block data element
- calls HLIstaccess
--*/
+
+/* ------------------------------ HLPstwrite ------------------------------- */
+/*
+
+ NAME
+	HLPstwrite -- open an access record for writing
+ USAGE
+	int32 HLPstwrite(access_rec)
+        access_t * access_rec;   IN: access record to fill in
+ RETURNS
+        The AID of the access record on success FAIL on error.
+ DESCRIPTION
+        Calls to HLIstaccess to fill in the access rec for 
+        writing
+
+--------------------------------------------------------------------------- */ 
 #ifdef PROTOTYPE
 int32 HLPstwrite(accrec_t *access_rec)
 #else
@@ -464,11 +554,28 @@ int32 HLPstwrite(access_rec)
 #endif
 {
     return HLIstaccess(access_rec, DFACC_WRITE);
-}
+} /* HLPstwrite */
 
-/*- HLIgetlink
- get link information
--*/
+
+/* ------------------------------ HLIgetlink ------------------------------ */
+/*
+
+ NAME
+	HLIgetlink -- get link information
+ USAGE
+	link_t * HLIgetlink(fid, ref, num_blocks)
+        int32  file_id;             IN: the file
+        uint16 ref;                 IN: ref number of the link table
+        int32  num_blocks;          IN: number of blocks in the table
+ RETURNS
+        A pointer to a link_t or NULL.
+ DESCRIPTION
+        Read a block table out of the file and return a pointer to
+        the internal table representing it.
+
+        It seems that num_blocks is redundant.
+
+--------------------------------------------------------------------------- */ 
 #ifdef PROTOTYPE
 PRIVATE link_t *HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
 #else
@@ -525,11 +632,26 @@ PRIVATE link_t * HLIgetlink(file_id, ref, number_blocks)
     HDfreespace((VOIDP)buffer);
 
     return link;
-}
 
-/*- HLPseek
- set position of next access into data elt
--*/
+} /* HLIgetlink */
+
+
+/* ------------------------------- HLPseek -------------------------------- */
+/*
+
+ NAME
+	HLPseek -- set the seek posn
+ USAGE
+	int32 HLPseek(access_rec, offset, origin)
+        access_t * access_rec;      IN: access record to mess with
+        int32      offset;          IN: seek offset
+        int32      origin;          IN: where we should calc the offset from
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Set the seek posn in the given linked block element
+
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 HLPseek(accrec_t *access_rec, int32 offset, int origin)
 #else
@@ -559,11 +681,30 @@ int32 HLPseek(access_rec, offset, origin)
     access_rec->posn = offset;
 
     return SUCCEED;
-}
 
-/*- HLPread
- read data from elt into data buffer
--*/
+} /* HLPseek */
+
+
+/* ------------------------------- HLPread -------------------------------- */
+/*
+
+ NAME
+	HLPread -- read some data out of a linked block element
+ USAGE
+	int32 HLPseek(access_rec, length, data)
+        access_t * access_rec;      IN: access record to mess with
+        int32      length;          IN: number of bytes to read
+        VOIDP      data;            IN: buffer for data
+ RETURNS
+        The number of bytes read or FAIL on error
+ DESCRIPTION
+        Read in some data from a linked block element.  If length 
+        is zero read until the end of the element.  It is assumed 
+        that the data buffer is big enough to store the data.
+        If length would take us off the end of the element only
+        read what has been written.
+
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 HLPread(accrec_t *access_rec, int32 length, VOIDP datap)
 #else
@@ -674,11 +815,28 @@ int32 HLPread(access_rec, length, datap)
 
     access_rec->posn += bytes_read;
     return bytes_read;
-}
 
-/*- HLPwrite
- write out data into linked block data elt
--*/
+} /* HLPread  */
+
+
+/* ------------------------------- HLPwrite ------------------------------- */
+/*
+
+ NAME
+	HLPwrite -- write out some data to a linked block
+ USAGE
+	int32 HLPseek(access_rec, length, data)
+        access_t * access_rec;      IN: access record to mess with
+        int32      length;          IN: number of bytes to read
+        VOIDP      data;            IN: buffer for data
+ RETURNS
+        The number of bytes written or FAIL on error
+ DESCRIPTION
+        Write out some data from a linked block element.  If we write
+        passed the end of the existing element new blocks are created
+        as needed.
+
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 HLPwrite(accrec_t *access_rec, int32 length, VOIDP datap)
 #else
@@ -717,12 +875,11 @@ int32 HLPwrite(access_rec, length, datap)
 
 
     /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
+    if (ptbuf == NULL) {
         ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, NULL);
-      }
+            HRETURN_ERROR(DFE_NOSPACE, NULL);
+    }
 
     /* determine linked block and position to start writing into */
 
@@ -940,12 +1097,28 @@ int32 HLPwrite(access_rec, length, datap)
     /* return SUCCEED; */
     /* if wrong # bytes written, FAIL has already been returned */
     return bytes_written;
-}
 
-/*- HLInewlink
- create a new link/block table in memory and in file
- returns ptr to the new link/block table
--*/
+} /* HLPwrite */
+
+
+/* ------------------------------ HLInewlink ------------------------------ */
+/*
+
+ NAME
+	HLInewlink -- write out some data to a linked block
+ USAGE
+        link_t * HLInewlink(fid, nblocks, link_ref, first_block_ref)
+        int32  fid;               IN: file ID
+        int32  nblocks;           IN: number of blocks in the table
+        uint16 link_ref;          IN: ref number for the table
+        uint16 first_block_ref;   IN: ref number for first block
+ RETURNS
+        A pointer to a new link/block table or NULL
+ DESCRIPTION
+        Create a new link/block table in memory and in file returns 
+        ptr to the new link/block table.
+
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 PRIVATE link_t *HLInewlink(int32 file_id, int32 number_blocks,
                           uint16 link_ref, uint16 first_block_ref)
@@ -959,7 +1132,7 @@ PRIVATE link_t *HLInewlink(file_id, number_blocks, link_ref, first_block_ref)
 {
     char *FUNC="HLInewlink";   /* for HERROR */
     int32 link_id;             /* access record id of new link */
-    uint8 *buf;                 /* temp buffer */
+    uint8 *buf;                /* temp buffer */
 
     /* set up new link record in memory */
 
@@ -1023,11 +1196,34 @@ PRIVATE link_t *HLInewlink(file_id, number_blocks, link_ref, first_block_ref)
     Hendaccess(link_id);
 
     return link;
-}
 
-/*- HLPinquire
+} /* HLInewlink */
 
--*/
+
+/* ------------------------------ HLPinquire ------------------------------ */
+/*
+
+ NAME
+	HLPinquire -- Hinquire for linked blocks
+ USAGE
+	int32 HLPinquire(access_rec, fid, tag, ref, len, off, pos, acc, sp)
+        access_t * access_rec;      IN:  access record to return info about
+        uint16   * file;            OUT: file ID;
+        uint16   * tag;             OUT: tag of info record;
+        uint16   * ref;             OUT: ref of info record;
+        int32    * len;             OUT: length of element;
+        int32    * off;             OUT: offset of element -- meaningless
+        int32    * pos;             OUT: current position in element;
+        int16    * acc;             OUT: access mode;
+        int16    * sp;              OUT: special code;
+ RETURNS
+        SUCCEED
+ DESCRIPTION
+        Return interesting information about a linked block element.
+        NULL can be passed for any of the OUT parameters if their
+        value is not needed.
+
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 HLPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
                 uint16 *pref, int32 *plength, int32 *poffset, int32 *pposn,
@@ -1054,20 +1250,36 @@ int32 HLPinquire(access_rec, pfile_id, ptag, pref, plength, poffset,
     /* fill in the variables if they are present */
 
     if (pfile_id) *pfile_id = access_rec->file_id;
-    if (ptag) *ptag = info_dd->tag;
-    if (pref) *pref = info_dd->ref;
-    if (plength) *plength = info->length;
-    if (poffset) *poffset = 0; /* meaningless */
-    if (pposn) *pposn = access_rec->posn;
-    if (paccess) *paccess = access_rec->access;
+    if (ptag)     *ptag = info_dd->tag;
+    if (pref)     *pref = info_dd->ref;
+    if (plength)  *plength = info->length;
+    if (poffset)  *poffset = 0; /* meaningless */
+    if (pposn)    *pposn = access_rec->posn;
+    if (paccess)  *paccess = access_rec->access;
     if (pspecial) *pspecial = access_rec->special;
 
     return SUCCEED;
-}
 
-/*- HLIendaccess
+} /* HLPinquire */
 
--*/
+
+/* ----------------------------- HLIendaccess ----------------------------- */
+/*
+
+ NAME
+	HXIendacess -- close a linked block AID
+ USAGE
+	int32 HLIendaccess(access_rec)
+        access_t * access_rec;      IN:  access record to close
+ RETURNS
+        SUCCEED / FAIL
+ DESCRIPTION
+        Free up all of the space used to store information about a
+        linked block element.  Information is flushed to disk as
+        it is created so this routine does NOT have to write anything
+        out.
+
+--------------------------------------------------------------------------- */
 #ifdef PROTOTYPE
 int32 HLPendaccess(accrec_t *access_rec)
 #else
@@ -1108,4 +1320,7 @@ int32 HLPendaccess(access_rec)
     access_rec->used = FALSE;
 
     return SUCCEED;
-}
+
+} /* HLIendaccess */
+
+
