@@ -35,11 +35,6 @@ static char RcsId[] = "@(#)$Revision$";
 #include <varargs.h>
 #endif
 
-/* for some weird reason, this is not in our include files */
-#if defined SUN
-extern int vsprintf(char *buf, const char *format, va_list arg);
-#endif
-
 /* We use a stack to hold the errors plus we keep track of the function,
    file and line where the error occurs.*/
 
