@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.5  1992/09/18 21:54:35  koziol
-Added the __STDC__ back to the Convex section
+Revision 1.6  1992/09/25 15:42:46  koziol
+Added 'const' fix for the HP9000 and added NeXT support in
+(use -DNEXT on the compile line for the makefile)
 
+ * Revision 1.5  1992/09/18  21:54:35  koziol
+ * Added the __STDC__ back to the Convex section
+ *
  * Revision 1.4  1992/09/17  19:49:16  koziol
  * Made changes for ANSI compilation on the Convex
  *
@@ -77,6 +81,7 @@ or possibly elsewhere if it suits your needs.
 #endif
 #define        DFMT_MAC        0x1111
 #define        DFMT_SUN386     0x4441
+#define        DFMT_NEXT       0x1111
 
 /* I/O library constants */
 #define UNIXUNBUFIO 1
@@ -206,6 +211,9 @@ typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
+#ifndef __STDC__
+#define const
+#endif
 #endif /* HP9000 */
 
 
@@ -522,6 +530,43 @@ typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 #define FILELIB PCIO
 #endif /* PC */
 
+#ifdef NEXT
+
+#ifdef GOT_MACHINE
+If you get an error on this line more than one machine type has been defined.
+Please check your Makefile.
+#endif
+#define GOT_MACHINE
+
+#   define BSD
+#include <string.h>
+#ifndef __GNUC__
+#include <memory.h>
+#endif /* __GNUC__ */
+#include <sys/file.h>               /* for unbuffered i/o stuff */
+#define DF_MT             DFMT_NEXT
+typedef void              VOID;
+typedef char              *VOIDP;
+typedef char              *_fcd;
+typedef int               bool;
+typedef char              char8;
+typedef unsigned char     uchar8;
+typedef char              int8;
+typedef unsigned char     uint8;
+typedef short int         int16;
+typedef unsigned short int uint16;
+typedef long int          int32;
+typedef unsigned long int uint32;
+typedef int               intn;
+typedef unsigned int      uintn;
+typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+typedef float             float32;
+typedef double            float64;
+#define DFmovmem(from, to, len) memcpy(to, from, len)
+#define FNAME_POST_UNDERSCORE
+#define _fcdtocp(desc) (desc)
+#define FILELIB UNIXBUFIO
+#endif /* NEXT */
 
 #ifndef GOT_MACHINE
 No machine type has been defined.  Your Makefile needs to have someing like
