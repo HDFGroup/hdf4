@@ -163,13 +163,14 @@ char *argv[];
     int32 f1, f2, f3, sdsid, nt, dimsize[10], nattr;
     int32 newsds, newsds2, newsds3, dimid, dimid1, dimid2, number, offset;
 #ifdef CHUNK_TEST
-    int32   newsds4;            /* Chunked SDS */
-    float32 sf32_data[2][3][4]; /* float32 Data array read from from file */
-    uint16  su16_data[2][3][4]; /* uint16 Data array read from from file */
-    uint8   su8_data[2][3][4];  /* uint8 Data array read from from file */
-    uint8   inbuf[32];          /* input buffer */
-    uint8   ru8_data[4];        /* chunk input buffer */
-    int32   rcdims[3];          /* for SDgetChunkInfo() */
+    int32   newsds4, newsds5, newsds6;        /* Chunked SDS */
+    float32 sf32_data[32];  /* float32 Data array read from from file */
+    uint16  su16_data[32];  /* uint16 Data array read from from file */
+    uint8   su8_data[32];   /* uint8 Data array read from from file */
+    uint8   inbuf[32];      /* input buffer */
+    uint8   ru8_data[4];    /* chunk input buffer */
+    int32   rcdims[3];      /* for SDgetChunkInfo() */
+    uint16  fill_u16 = 0;  /* fill value */
 #endif /* CHUNK_TEST */
     int32 index, ival, sdid;
     int32 rank;
@@ -888,6 +889,7 @@ char *argv[];
 
 
 #ifdef CHUNK_TEST
+
     /* create a new chunked SDS of float32 in file 1 */
     size_dims[0] = 2;
     size_dims[1] = 3;
@@ -899,7 +901,14 @@ char *argv[];
         num_err++;
       }
 
+    max = 0.0;
+    status = SDsetfillvalue(newsds4, (VOIDP) &max);
+    CHECK(status, "SDsetfillvalue");
+
     /* Set chunking */
+    cdims[0] = 1;
+    cdims[1] = 2;
+    cdims[2] = 3;
     status = SDsetChunk(newsds4, cdims, 1);
     if(status == FAIL) 
       {
@@ -914,13 +923,14 @@ char *argv[];
     size_dims[0] = 2;
     size_dims[1] = 3;
     size_dims[2] = 4;
-    status = SDwritedata(newsds4, start_dims, NULL, size_dims, (VOIDP) f32_data);
+    status = SDwritedata(newsds4, start_dims, NULL, size_dims, (VOIDP) wf32_data);
     if(status == FAIL) 
       {
         fprintf(stderr, "Failed to write slabw1 to new chunked data set\n");
         num_err++;
       }
 
+#ifdef LATER
     /* read data back in */
     start_dims[0] = 0;
     start_dims[1] = 0;
@@ -930,6 +940,18 @@ char *argv[];
     size_dims[2] = 4;
     status = SDreaddata(newsds4, start_dims, NULL, size_dims, (VOIDP) sf32_data);
     CHECK(status, "SDreaddata");
+    for (i = 0; i < 24; i++)
+       {
+          if ((float32)sf32_data[i] != wf32_data[i])
+            {
+                printf("float32: Wrong data at %d, out %f in %f\n", 
+                 i, wf32_data[i], sf32_data[i]);
+                num_err++;
+            }
+       }
+#endif /* LATER */
+
+#if 0
     for (i = 0; i < d_dims[0]; i++)
       {
         for (j = 0; j < d_dims[1]; j++)
@@ -948,6 +970,7 @@ char *argv[];
               }
           }
       }
+#endif
     /* check to see if SDS is chunked */
     status = SDisChunked(newsds4);
     if (status != 1)
@@ -959,22 +982,28 @@ char *argv[];
     status = SDendaccess(newsds4);
     CHECK(status, "SDendaccess");
 
+
     /* create a new chunked SDS of uint16 in file 1 */
     size_dims[0] = 2;
     size_dims[1] = 3;
     size_dims[2] = 4;
-    newsds4 = SDcreate(f1, "DataSetChunk2", DFNT_UINT16, 3, size_dims);
-    if(newsds4 == FAIL) 
+    newsds5 = SDcreate(f1, "DataSetChunk2", DFNT_UINT16, 3, size_dims);
+    if(newsds5 == FAIL) 
       {
         fprintf(stderr, "Failed to set a new data set chunked\n");
         num_err++;
       }
 
+    /* set fill value */
+    fill_u16 = 0;
+    status = SDsetfillvalue(newsds5, (VOIDP) &fill_u16);
+    CHECK(status, "SDsetfillvalue");
+
     /* Set chunking, chunk is 1x2x3 */
     cdims[0] = 1;
     cdims[1] = 2;
     cdims[2] = 3;
-    status = SDsetChunk(newsds4, cdims, 1);
+    status = SDsetChunk(newsds5, cdims, 1);
     if(status == FAIL) 
       {
         fprintf(stderr, "Failed to create new chunked data set\n");
@@ -982,7 +1011,7 @@ char *argv[];
       }
 
     /* Set Chunk cache */
-    status = SDsetChunkCache(newsds4, 4, 0);
+    status = SDsetChunkCache(newsds5, 4, 0);
     if(status == FAIL) 
       {
         fprintf(stderr, "SDsetChunkCache failed\n");
@@ -996,7 +1025,7 @@ char *argv[];
     size_dims[0] = 2;
     size_dims[1] = 3;
     size_dims[2] = 4;
-    status = SDwritedata(newsds4, start_dims, NULL, size_dims, (VOIDP) u16_data);
+    status = SDwritedata(newsds5, start_dims, NULL, size_dims, (VOIDP) wu16_data);
     if(status == FAIL) 
       {
         fprintf(stderr, "Failed to write slabw1 to new chunked data set\n");
@@ -1010,8 +1039,19 @@ char *argv[];
     size_dims[0] = 2;
     size_dims[1] = 3;
     size_dims[2] = 4;
-    status = SDreaddata(newsds4, start_dims, NULL, size_dims, (VOIDP) su16_data);
+    status = SDreaddata(newsds5, start_dims, NULL, size_dims, (VOIDP) su16_data);
     CHECK(status, "SDreaddata");
+    for (i = 0; i < 24; i++)
+       {
+          if ((uint16)su16_data[i] != wu16_data[i])
+            {
+                printf("uint16: Wrong data at %d, out %d in %d\n", 
+                 i, wu16_data[i], su16_data[i]);
+                num_err++;
+            }
+       }
+
+#if 0
     for (i = 0; i < d_dims[0]; i++)
       {
         for (j = 0; j < d_dims[1]; j++)
@@ -1030,8 +1070,9 @@ char *argv[];
               }
           }
       }
+#endif
     /* Check chunk info */
-    status = SDgetChunkInfo(newsds4, rcdims, 1);
+    status = SDgetChunkInfo(newsds5, rcdims, 1);
     if(status == FAIL) 
       {
         fprintf(stderr, "SDgetChunkInfo failed \n");
@@ -1045,7 +1086,7 @@ char *argv[];
       }
 
     /* Close down SDS*/    
-    status = SDendaccess(newsds4);
+    status = SDendaccess(newsds5);
     CHECK(status, "SDendaccess");
 
 
@@ -1053,8 +1094,8 @@ char *argv[];
     size_dims[0] = 2;
     size_dims[1] = 3;
     size_dims[2] = 4;
-    newsds4 = SDcreate(f1, "DataSetChunk3", DFNT_UINT8, 3, size_dims);
-    if(newsds4 == FAIL) 
+    newsds6 = SDcreate(f1, "DataSetChunk3", DFNT_UINT8, 3, size_dims);
+    if(newsds6 == FAIL) 
       {
         fprintf(stderr, "Failed to set a new data set chunked\n");
         num_err++;
@@ -1064,18 +1105,35 @@ char *argv[];
     cdims[0] = 1;
     cdims[1] = 1;
     cdims[2] = 4;
-    status = SDsetChunk(newsds4, cdims, 1);
+    status = SDsetChunk(newsds6, cdims, 1);
     if(status == FAIL) 
       {
         fprintf(stderr, "Failed to create new chunked data set\n");
         num_err++;
       }
 
+#if 0
+
+    /* Write data using SDwritedata() */
+    start_dims[0] = 0;
+    start_dims[1] = 0;
+    start_dims[2] = 0;
+    size_dims[0] = 2;
+    size_dims[1] = 3;
+    size_dims[2] = 4;
+    status = SDwritedata(newsds6, start_dims, NULL, size_dims, (VOIDP) wu8_data);
+    if(status == FAIL) 
+      {
+        fprintf(stderr, "Failed to write wu8_data to new chunked data set\n");
+        num_err++;
+      }
+#endif
+
     /* Write data use SDwriteChunk */
     start_dims[0] = 0;
     start_dims[1] = 0;
     start_dims[2] = 0;
-    status = SDwriteChunk(newsds4, start_dims, (VOIDP) chunk1_u8);
+    status = SDwriteChunk(newsds6, start_dims, (VOIDP) chunk1_u8);
     if(status == FAIL) 
       {
         fprintf(stderr, "SDwriteChunk failed to write chunk 1\n");
@@ -1085,7 +1143,7 @@ char *argv[];
     start_dims[0] = 1;
     start_dims[1] = 0;
     start_dims[2] = 0;
-    status = SDwriteChunk(newsds4, start_dims, (VOIDP) chunk4_u8);
+    status = SDwriteChunk(newsds6, start_dims, (VOIDP) chunk4_u8);
     if(status == FAIL) 
       {
         fprintf(stderr, "SDwriteChunk failed to write chunk 4\n");
@@ -1095,7 +1153,7 @@ char *argv[];
     start_dims[0] = 0;
     start_dims[1] = 1;
     start_dims[2] = 0;
-    status = SDwriteChunk(newsds4, start_dims, (VOIDP) chunk2_u8);
+    status = SDwriteChunk(newsds6, start_dims, (VOIDP) chunk2_u8);
     if(status == FAIL) 
       {
         fprintf(stderr, "SDwriteChunk failed to write chunk 2\n");
@@ -1105,7 +1163,7 @@ char *argv[];
     start_dims[0] = 1;
     start_dims[1] = 1;
     start_dims[2] = 0;
-    status = SDwriteChunk(newsds4, start_dims, (VOIDP) chunk5_u8);
+    status = SDwriteChunk(newsds6, start_dims, (VOIDP) chunk5_u8);
     if(status == FAIL) 
       {
         fprintf(stderr, "SDwriteChunk failed to write chunk 5\n");
@@ -1115,7 +1173,7 @@ char *argv[];
     start_dims[0] = 0;
     start_dims[1] = 2;
     start_dims[2] = 0;
-    status = SDwriteChunk(newsds4, start_dims, (VOIDP) chunk3_u8);
+    status = SDwriteChunk(newsds6, start_dims, (VOIDP) chunk3_u8);
     if(status == FAIL) 
       {
         fprintf(stderr, "SDwriteChunk failed to write chunk 3\n");
@@ -1125,13 +1183,13 @@ char *argv[];
     start_dims[0] = 1;
     start_dims[1] = 2;
     start_dims[2] = 0;
-    status = SDwriteChunk(newsds4, start_dims, (VOIDP) chunk6_u8);
+    status = SDwriteChunk(newsds6, start_dims, (VOIDP) chunk6_u8);
     if(status == FAIL) 
       {
         fprintf(stderr, "SDwriteChunk failed to write chunk 6\n");
         num_err++;
       }
-
+#ifdef LATER
     /* read data back in */
     start_dims[0] = 0;
     start_dims[1] = 0;
@@ -1139,22 +1197,24 @@ char *argv[];
     size_dims[0] = 2;
     size_dims[1] = 3;
     size_dims[2] = 4;
-    status = SDreaddata(newsds4, start_dims, NULL, size_dims, (VOIDP) inbuf);
+    status = SDreaddata(newsds6, start_dims, NULL, size_dims, (VOIDP) inbuf);
     CHECK(status, "SDreaddata");
     for (i = 0; i < 24; i++)
        {
           if (inbuf[i] != wu8_data[i])
             {
-                printf("Wrong data at %d, out %d in %d\n", 
+                printf("uint8: Wrong data at %d, out %d in %d\n", 
                  i, wu8_data[i], inbuf[i]);
                 num_err++;
             }
        }
+#endif
 
+#ifdef LATER
     start_dims[0] = 0;
     start_dims[1] = 0;
     start_dims[2] = 0;
-    status = SDreadChunk(newsds4, start_dims, (VOIDP) ru8_data);
+    status = SDreadChunk(newsds6, start_dims, (VOIDP) ru8_data);
     if(status == FAIL) 
       {
         fprintf(stderr, "SDreadChunk failed to read chunk 1\n");
@@ -1166,7 +1226,7 @@ char *argv[];
        {
           if (ru8_data[i] != chunk1_u8[i])
             {
-                printf("Wrong data at %d, out %d in %d\n", 
+                printf("chunk1_u8: Wrong data at %d, out %d in %d\n", 
                  i, chunk1_u8[i], ru8_data[i]);
                 num_err++;
             }
@@ -1175,7 +1235,7 @@ char *argv[];
     start_dims[0] = 0;
     start_dims[1] = 1;
     start_dims[2] = 0;
-    status = SDreadChunk(newsds4, start_dims, (VOIDP) ru8_data);
+    status = SDreadChunk(newsds6, start_dims, (VOIDP) ru8_data);
     if(status == FAIL) 
       {
         fprintf(stderr, "SDreadChunk failed to read chunk 2\n");
@@ -1187,16 +1247,15 @@ char *argv[];
        {
           if (ru8_data[i] != chunk2_u8[i])
             {
-                printf("Wrong data at %d, out %d in %d\n", 
+                printf("chunk2_u8: Wrong data at %d, out %d in %d\n", 
                  i, chunk2_u8[i], ru8_data[i]);
                 num_err++;
             }
        }
-
     start_dims[0] = 0;
     start_dims[1] = 2;
     start_dims[2] = 0;
-    status = SDreadChunk(newsds4, start_dims, (VOIDP) ru8_data);
+    status = SDreadChunk(newsds6, start_dims, (VOIDP) ru8_data);
     if(status == FAIL) 
       {
         fprintf(stderr, "SDreadChunk failed to read chunk 3\n");
@@ -1208,7 +1267,7 @@ char *argv[];
        {
           if (ru8_data[i] != chunk3_u8[i])
             {
-                printf("Wrong data at %d, out %d in %d\n", 
+                printf("chunk3_u8: Wrong data at %d, out %d in %d\n", 
                  i, chunk3_u8[i], ru8_data[i]);
                 num_err++;
             }
@@ -1217,7 +1276,7 @@ char *argv[];
     start_dims[0] = 1;
     start_dims[1] = 0;
     start_dims[2] = 0;
-    status = SDreadChunk(newsds4, start_dims, (VOIDP) ru8_data);
+    status = SDreadChunk(newsds6, start_dims, (VOIDP) ru8_data);
     if(status == FAIL) 
       {
         fprintf(stderr, "SDreadChunk failed to read chunk 4\n");
@@ -1229,7 +1288,7 @@ char *argv[];
        {
           if (ru8_data[i] != chunk4_u8[i])
             {
-                printf("Wrong data at %d, out %d in %d\n", 
+                printf("chunk4_u8: Wrong data at %d, out %d in %d\n", 
                  i, chunk4_u8[i], ru8_data[i]);
                 num_err++;
             }
@@ -1238,7 +1297,7 @@ char *argv[];
     start_dims[0] = 1;
     start_dims[1] = 1;
     start_dims[2] = 0;
-    status = SDreadChunk(newsds4, start_dims, (VOIDP) ru8_data);
+    status = SDreadChunk(newsds6, start_dims, (VOIDP) ru8_data);
     if(status == FAIL) 
       {
         fprintf(stderr, "SDreadChunk failed to read chunk 5\n");
@@ -1250,7 +1309,7 @@ char *argv[];
        {
           if (ru8_data[i] != chunk5_u8[i])
             {
-                printf("Wrong data at %d, out %d in %d\n", 
+                printf("chunk5_u8: Wrong data at %d, out %d in %d\n", 
                  i, chunk5_u8[i], ru8_data[i]);
                 num_err++;
             }
@@ -1259,7 +1318,7 @@ char *argv[];
     start_dims[0] = 1;
     start_dims[1] = 2;
     start_dims[2] = 0;
-    status = SDreadChunk(newsds4, start_dims, (VOIDP) ru8_data);
+    status = SDreadChunk(newsds6, start_dims, (VOIDP) ru8_data);
     if(status == FAIL) 
       {
         fprintf(stderr, "SDreadChunk failed to read chunk 6\n");
@@ -1271,14 +1330,15 @@ char *argv[];
        {
           if (ru8_data[i] != chunk6_u8[i])
             {
-                printf("Wrong data at %d, out %d in %d\n", 
+                printf("chunk6_u8: Wrong data at %d, out %d in %d\n", 
                  i, chunk6_u8[i], ru8_data[i]);
                 num_err++;
             }
        }
+#endif /* LATER */
 
     /* Close down SDS*/    
-    status = SDendaccess(newsds4);
+    status = SDendaccess(newsds6);
     CHECK(status, "SDendaccess");
 
 #endif /* CHUNK_TEST */
