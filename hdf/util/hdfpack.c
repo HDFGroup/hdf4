@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/07/15 21:48:48  sxu
-Added changes for CONVEX
+Revision 1.4  1993/01/12 20:02:14  chouck
+Last object was not always getting moved over correctly
 
+ * Revision 1.3  1992/07/15  21:48:48  sxu
+ * Added changes for CONVEX
+ *
  * Revision 1.2  1992/07/01  17:16:17  dilg
  * Changed option "-#" to "-d#" and added option "-t#" to change the size of
  * the linked block table entries.  Cleaned up code a bit.
@@ -177,7 +180,7 @@ char *argv[];
     if (infile == FAIL)
 	hdferror();
 
-    outfile = Hopen(fname[1], DFACC_CREATE | DFACC_WRITE, ndds);
+    outfile = Hopen(fname[1], DFACC_CREATE, ndds);
 
     if (outfile == FAIL)
 	hdferror();
@@ -185,9 +188,8 @@ char *argv[];
 /*
 **   See how many data elements there
 **   are and make room for their DD's
-**   (Subtract one for machine type.)
 */
-    num_desc = Hnumber(infile, DFTAG_WILDCARD) - 1;
+    num_desc = Hnumber(infile, DFTAG_WILDCARD);
     if (num_desc == FAIL)
 	hdferror();
 
@@ -211,18 +213,33 @@ char *argv[];
 	printf("MAJOR PROBLEM: Hstartread for DD's; line %d\n", __LINE__);
 	hdferror();
     }
-    for (i=0; i<num_desc; i++) {
+    for(i = 0; i < num_desc; i++) {
+
+        /*
+         * Get data about the current one
+         */ 
 	Hinquire(aid, NULL, &dlist[i].tag, &dlist[i].ref, &dlist[i].length,
 		 &dlist[i].offset, NULL, NULL, &dlist[i].special);
+
+        /*
+         * Move to the next one
+         */
 	stat = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
-	if (stat == FAIL){
+
+        /*
+         * Fail if there are none left and we expect more
+         */
+	if ((stat == FAIL) && (i + 1 < num_desc)) {
 	    printf("MAJOR PROBLEM: DDs; only got %d of %d; line %d\n",i,num_desc,__LINE__);
 	    hdferror();
         }
     }
+
+    /*
+     * Close the access element
+     */
     stat = Hendaccess(aid);
-    if (stat == FAIL)
-        hdferror();
+    if (stat == FAIL) hdferror();
 
 /*
 **   Sort DD's by offset to make it easy to
