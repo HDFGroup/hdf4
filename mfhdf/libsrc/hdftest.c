@@ -909,7 +909,7 @@ char *argv[];
     cdims[0] = 1;
     cdims[1] = 2;
     cdims[2] = 3;
-    status = SDsetChunk(newsds4, cdims, 1);
+    status = SDsetChunk(newsds4, cdims, SD_CHUNK_LENGTHS);
     if(status == FAIL) 
       {
         fprintf(stderr, "Failed to create new chunked data set\n");
@@ -1003,7 +1003,7 @@ char *argv[];
     cdims[0] = 1;
     cdims[1] = 2;
     cdims[2] = 3;
-    status = SDsetChunk(newsds5, cdims, 1);
+    status = SDsetChunk(newsds5, cdims, SD_CHUNK_LENGTHS);
     if(status == FAIL) 
       {
         fprintf(stderr, "Failed to create new chunked data set\n");
@@ -1072,7 +1072,7 @@ char *argv[];
       }
 #endif
     /* Check chunk info */
-    status = SDgetChunkInfo(newsds5, rcdims, 1);
+    status = SDgetChunkInfo(newsds5, rcdims, SD_CHUNK_LENGTHS);
     if(status == FAIL) 
       {
         fprintf(stderr, "SDgetChunkInfo failed \n");
@@ -1105,7 +1105,7 @@ char *argv[];
     cdims[0] = 1;
     cdims[1] = 1;
     cdims[2] = 4;
-    status = SDsetChunk(newsds6, cdims, 1);
+    status = SDsetChunk(newsds6, cdims, SD_CHUNK_LENGTHS);
     if(status == FAIL) 
       {
         fprintf(stderr, "Failed to create new chunked data set\n");

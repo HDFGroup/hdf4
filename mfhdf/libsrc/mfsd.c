@@ -3765,15 +3765,15 @@ int32 dimid;
 
 /*====================== Chunking Routines ================================*/
 
-/*-------------------------------------------------------------------------
+/******************************************************************************
  NAME
-        SDsetChunk   - create chunked SDS
+        SDsetChunk   -- create chunked SDS
 
  DESCRIPTION
         This routine creates a chunked SDS with the specified chunk
         lengths for each dimension according to the structure passed in. 
         Currently only the array(int32) specifiying chunk lengths can be 
-        passed in. 'flags' must be set 1; 
+        passed in i.e. 'flags' must be set 'SD_CHUNK_LENGTHS'; 
         
         In the future maybe a different structure can be used to define
         a chunk.
@@ -3788,12 +3788,13 @@ int32 dimid;
 
         NOTE:
            This routine directly calls a Special Chunked Element fcn HMCxxx.
+
  RETURNS
         SUCCEED/FAIL
 
  AUTHOR 
-        -GV
---------------------------------------------------------------------------- */
+        -GeorgeV
+******************************************************************************/
 intn 
 #ifdef PROTOTYPE
 SDsetChunk(int32 sdsid,     /* IN: sds access id */
@@ -3824,8 +3825,8 @@ int32 flags;
 #ifdef CHK_DEBUG
     fprintf(stderr,"SDsetChunk: called  \n");
 #endif
-    /* Check args, flags currently can only be '1' */
-    if (chunk_def == NULL || flags != 1)
+    /* Check args, flags currently can only be 'SD_CHUNK_LENGTHS' */
+    if (chunk_def == NULL || flags != SD_CHUNK_LENGTHS)
       {
         status = FAIL;
         goto done;
@@ -4004,21 +4005,22 @@ int32 flags;
     return status;
 } /* SDsetChunk */
 
-/*-------------------------------------------------------------------------
+/******************************************************************************
  NAME
         SDgetChunkInfo -- get Info on Chunked SDS
 
  DESCRIPTION
         This routine currently only handles as input an array to
         hold the chunk_lengths for each dimension. The only
-        valid flag is '1'.
+        valid flag is 'SD_CHUNK_LENGTHS' which fills an
+        array(int32) of chunk lengths for each dimension.
 
  RETURNS
         SUCCEED/FAIL
 
  AUTHOR 
-        -GV
---------------------------------------------------------------------------- */
+        -GeorgeV
+******************************************************************************/
 intn 
 #ifdef PROTOTYPE
 SDgetChunkInfo(int32 sdsid,      /* IN: sds access id */
@@ -4041,8 +4043,8 @@ int32 flags;
     intn       i;                    /* loop variable */
     intn       status = SUCCEED;     /* return value */
 
-    /* Check args, flags currently can only be '1' */
-    if (chunk_def == NULL || flags != 1)
+    /* Check args, flags currently can only be 'SD_CHUNK_LENGTHS' */
+    if (chunk_def == NULL || flags != SD_CHUNK_LENGTHS)
       {
         status = FAIL;
         goto done;
@@ -4101,20 +4103,22 @@ int32 flags;
     return status;
 } /* SDgetChunkInfo() */
 
-/*-------------------------------------------------------------------------
+/******************************************************************************
  NAME
         SDisChunked  -- Is this SDS chunked
 
  DESCRIPTION
         This routine checks to see if the SDS is a Chunked SDS.
+
  RETURNS
         1->True, 0->False, -1(FAIL)->Error
+
  AUTHOR 
-       -GV
---------------------------------------------------------------------------- */
+       -GeorgeV
+******************************************************************************/
 intn 
 #ifdef PROTOTYPE
-SDisChunked(int32 sdsid     /* IN: sds access id */)
+SDisChunked(int32 sdsid /* IN: sds access id */)
 #else
 SDisChunked(sdsid     /* IN: sds access id */)
 int32 sdsid;
@@ -4163,23 +4167,30 @@ int32 sdsid;
 } /* SDisChunked()*/
 
 
-/*-------------------------------------------------------------------------
+/******************************************************************************
  NAME
-        SDwriteChunk   - write the specified chunk to the SDS
+        SDwriteChunk   -- write the specified chunk to the SDS
 
  DESCRIPTION
-        This routine writes a whole chunk of data to the chunk 
-        specified by 'origin' for the given SDS.
-        Origin specifies the co-ordinates according to the chunk
-        position in the chunk array.
+        This routine writes a whole chunk of data to the chunked SDS 
+        specified by chunk 'origin' for the given SDS and can be used
+        instead of SDwritedata() when this information is known. This
+        routine has less overhead and is much faster than using SDwritedata().
+
+        Origin specifies the co-ordinates of the chunk according to the chunk
+        position in the overall chunk array.
+
+        'datap' must point to a whole chunk of data.
 
         NOTE:
            This routine directly calls a Special Chunked Element fcn HMCxxx.
+
  RETURNS
         SUCCEED/FAIL
+
  AUTHOR 
-       -GV
---------------------------------------------------------------------------- */
+       -GeorgeV
+******************************************************************************/
 intn 
 #ifdef PROTOTYPE
 SDwriteChunk(int32 sdsid,      /* IN: access aid to SDS */
@@ -4309,23 +4320,30 @@ const VOID *datap;
     return status;
 } /* SDwriteChunk() */
 
-/*-------------------------------------------------------------------------
+/******************************************************************************
  NAME
-        SDreadChunk   - read the specified chunk to the SDS
+        SDreadChunk   -- read the specified chunk to the SDS
 
  DESCRIPTION
-        This routine reads a whole chunk of data to the chunk 
-        specified by 'origin' for the given SDS.
-        Origin specifies the co-ordinates according to the chunk
-        position in the chunk array.
+        This routine reads a whole chunk of data from the chunked SDS
+        specified by chunk 'origin' for the given SDS and can be used
+        instead of SDreaddata() when this information is known. This
+        routine has less overhead and is much faster than using SDreaddata().
+
+        Origin specifies the co-ordinates of the chunk according to the chunk
+        position in the overall chunk array.
+
+        'datap' must point to a whole chunk of data.
 
         NOTE:
            This routine directly calls a Special Chunked Element fcn HMCxxx.
+
  RETURNS
         SUCCEED/FAIL
+
  AUTHOR 
-       -GV
---------------------------------------------------------------------------- */
+       -GeorgeV
+******************************************************************************/
 intn 
 #ifdef PROTOTYPE
 SDreadChunk(int32 sdsid,   /* IN: access aid to SDS */
@@ -4456,29 +4474,41 @@ VOID *datap;
     return status;
 } /* SDreadChunk() */
 
-/*-------------------------------------------------------------------------
+/******************************************************************************
 NAME
      SDsetChunkCache - maximum number of chunks to cache 
 
 DESCRIPTION
      Set the maximum number of chunks to cache.
+     By default when the SDS is promoted to a chunked element the 
+     maximum number of chunks in the cache is set to the number of
+     chunks along the first dimension.
 
-     The values set here affects the current object's caching behaviour.
-     The cache only only grow up if the cache is max'd out and otherwise
-     it will be set the value 'maxcache' if the current number of chunks
-     cached is less than 'maxcache'.
+     The values set here affects the current SDS object's caching behaviour.
+
+     If the chunk cache is full and 'maxcache' is greater then the
+     current 'maxcache' value, then the chunk cache is reset to the new
+     'maxcache' value, else the chunk cache remains at the current
+     'maxcache' value.
+
+     If the chunk cache is not full, then the chunk cache is set to the
+     new 'maxcache' value only if the new 'maxcache' value is greater than the
+     current number of chunks in the cache.
 
      Use flags arguement of 'HDF_PAGEALL' if the whole object is to be cached 
-     in memory otherwise passs in zero.
+     in memory otherwise passs in zero(0). Currently you can only
+     pass in zero.
 
      NOTE:
           This routine directly calls a Special Chunked Element fcn HMCxxx.
+
 RETURNS
-     Returns number of 'maxcache' if successful and FAIL otherwise
+     Returns the 'maxcache' value for the chunk cache if successful 
+     and FAIL otherwise
 
 AUTHOR 
-      -GV
---------------------------------------------------------------------------- */
+      -GeorgeV
+******************************************************************************/
 intn
 #ifdef PROTOTYPE
 SDsetChunkCache(int32 sdsid,     /* IN: access aid to mess with */
@@ -4499,7 +4529,13 @@ int32 flags;
     intn      status = SUCCEED;
 
     /* Check args */
-    if (maxcache < 1)
+    if (maxcache < 1 )
+      {
+        status = FAIL;
+        goto done;
+      }
+
+    if (flags != 0 && flags != HDF_PAGEALL)
       {
         status = FAIL;
         goto done;

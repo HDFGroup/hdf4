@@ -27,14 +27,12 @@
 #include "local_nc.h"
 #endif /* OLD_WAY */
 
-/* use this as marker for unlimited dimension */
-#define SD_UNLIMITED NC_UNLIMITED
+#define SD_UNLIMITED NC_UNLIMITED /* use this as marker for unlimited dimension */
 #define SD_NOFILL    NC_NOFILL
 #define SD_FILL      NC_FILL
 #define SD_DIMVAL_BW_COMP   1
 #define SD_DIMVAL_BW_INCOMP  0
-/* marker for ragged dimension */
-#define SD_RAGGED    -1
+#define SD_RAGGED    -1  /* marker for ragged dimension */
 
 #ifdef __cplusplus
 extern "C" {
@@ -172,31 +170,150 @@ extern intn SDisdimval_bwcomp
 
 /*====================== Chunking Routines ================================*/
 
+/* flag used for SDsetChunk() and SDgetChunkInfo() */
+#define SD_CHUNK_LENGTHS 0x1
+
+/* Cache flags */
+#define HDF_PAGEALL 0x1
+
+
+/******************************************************************************
+ NAME
+        SDsetChunk   -- create chunked SDS
+
+ DESCRIPTION
+        This routine creates a chunked SDS with the specified chunk
+        lengths for each dimension according to the structure passed in. 
+        Currently only the array(int32) specifiying chunk lengths can be 
+        passed in i.e. 'flags' must be set 'SD_CHUNK_LENGTHS'; 
+        
+        In the future maybe a different structure can be used to define
+        a chunk.
+
+        The dataset currently cannot have an UNLIMITED dimension.
+
+        The dataset currently cannot be special already. 
+        i.e. NBIT, COMPRESSION, or EXTERNAL.
+
+        COMPRESSION support will be added later when doubly 
+        special elements are handled more gracefully in the HDF core library.
+
+ RETURNS
+        SUCCEED/FAIL
+******************************************************************************/
 extern intn SDsetChunk
     (int32 sdsid,     /* IN: sds access id */
      VOID *chunk_def, /* IN: chunk definition */
      int32 flags      /* IN: flags */);
 
+/******************************************************************************
+ NAME
+        SDgetChunkInfo -- get Info on Chunked SDS
+
+ DESCRIPTION
+        This routine currently only handles as input an array to
+        hold the chunk_lengths for each dimension. The only
+        valid flag is 'SD_CHUNK_LENGTHS' which fills an
+        array(int32) of chunk lengths for each dimension.
+
+ RETURNS
+        SUCCEED/FAIL
+******************************************************************************/
 extern intn SDgetChunkInfo
     (int32 sdsid,      /* IN: sds access id */
      VOID *chunk_def,  /* IN/OUT: chunk definition */
      int32 flags       /* IN: flags */);
 
+/******************************************************************************
+ NAME
+        SDisChunked  -- Is this SDS chunked
+
+ DESCRIPTION
+        This routine checks to see if the SDS is a Chunked SDS.
+
+ RETURNS
+        1->True, 0->False, -1(FAIL)->Error
+******************************************************************************/
 extern intn SDisChunked
     (int32 sdsid     /* IN: sds access id */);
 
+/******************************************************************************
+ NAME
+        SDwriteChunk  -- write the specified chunk to the SDS
+
+ DESCRIPTION
+        This routine writes a whole chunk of data to the chunked SDS 
+        specified by chunk 'origin' for the given SDS and can be used
+        instead of SDwritedata() when this information is known. This
+        routine has less overhead and is much faster than using SDwritedata().
+
+        Origin specifies the co-ordinates of the chunk according to the chunk
+        position in the overall chunk array.
+
+        'datap' must point to a whole chunk of data.
+
+ RETURNS
+        SUCCEED/FAIL
+******************************************************************************/
 extern intn SDwriteChunk
-    (int32 sdsid,      /* IN: access aid to SDS */
+    (int32 sdsid,      /* IN: sds access id */
      int32 *origin,    /* IN: origin of chunk to write */
      const VOID *datap /* IN: buffer for data */);
 
+/******************************************************************************
+ NAME
+        SDreadChunk   -- read the specified chunk to the SDS
+
+ DESCRIPTION
+        This routine reads a whole chunk of data from the chunked SDS
+        specified by chunk 'origin' for the given SDS and can be used
+        instead of SDreaddata() when this information is known. This
+        routine has less overhead and is much faster than using SDreaddata().
+
+        Origin specifies the co-ordinates of the chunk according to the chunk
+        position in the overall chunk array.
+
+        'datap' must point to a whole chunk of data.
+
+ RETURNS
+        SUCCEED/FAIL
+******************************************************************************/
 extern intn SDreadChunk
-    (int32 sdsid,      /* IN: access aid to SDS */
+    (int32 sdsid,      /* IN: sds access id */
      int32 *origin,    /* IN: origin of chunk to read */
      VOID  *datap      /* IN/OUT: buffer for data */);
 
+/******************************************************************************
+NAME
+     SDsetChunkCache -- maximum number of chunks to cache 
+
+DESCRIPTION
+     Set the maximum number of chunks to cache.
+     By default when the SDS is promoted to a chunked element the 
+     maximum number of chunks in the cache is set to the number of
+     chunks along the first dimension.
+
+     The values set here affects the current object's caching behaviour.
+
+     If the chunk cache is full and 'maxcache' is greater then the
+     current 'maxcache' value, then the chunk cache is reset to the new
+     'maxcache' value, else the chunk cache remains at the current
+     'maxcache' value.
+
+     If the chunk cache is not full, then the chunk cache is set to the
+     new 'maxcache' value only if the new 'maxcache' value is greater than the
+     current number of chunks in the cache.
+
+     Use flags arguement of 'HDF_PAGEALL' if the whole object is to be cached 
+     in memory otherwise passs in zero(0). Currently you can only
+     pass in zero.
+
+RETURNS
+     Returns the 'maxcache' value for the chunk cache if successful 
+     and FAIL otherwise
+******************************************************************************/
 extern intn SDsetChunkCache
-    (int32 sdsid,     /* IN: access aid to mess with */
+    (int32 sdsid,     /* IN: sds access id */
      int32 maxcache,  /* IN: max number of pages to cache */
      int32 flags      /* IN: flags = 0, HDF_PAGEALL */);
 
