@@ -6,7 +6,7 @@
  * 605 E. Springfield, Champaign IL 61820                                   *
  *                                                                          *
  * For conditions of distribution and use, see the accompanying             *
- * hdf/COPYING file.                                                        *
+ * hdf/COPYING file.                                                      *
  *                                                                          *
  ****************************************************************************/
 
@@ -15,6 +15,7 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 /* $Id$ */
+
 
 #include <ctype.h>
 #ifdef MALDEBUG
@@ -377,7 +378,7 @@ VOIDP src;
 uint32 len;
 #endif
 {
-    uint8 *s,d;             /* alias for the buffers */
+    uint8 *s,*d;             /* alias for the buffers */
 
     if(len<=UINT_MAX)   /* if the size is small enough copy all at once */
         return(_fmemcpy(dst,src,(size_t)len));

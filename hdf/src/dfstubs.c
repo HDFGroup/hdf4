@@ -44,7 +44,6 @@ static char RcsId[] = "@(#)$Revision$";
 ** AUTHOR
 **	Doug Ilg
 */
-
 #include "dfstubs.h"
 #include "df.h"
 
@@ -77,16 +76,14 @@ static char RcsId[] = "@(#)$Revision$";
 /*
  *  Important Internal Variables
  */
-PRIVATE DF *DFlist = NULL;         /* pointer to list of open DFs */
+static DF *DFlist=NULL;         /* pointer to list of open DFs */
 #ifdef PERM_OUT
-PRIVATE int DFinuse = 0;           /* How many are currently in use */
-PRIVATE uint16 DFmaxref = 0;         /* which is the largest ref used? */
-PRIVATE unsigned char *DFreflist=NULL; /* list of refs in use */
-PRIVATE char patterns[] = {0x80, 0x40, 0x20, 0x10, 0x08,
+static int DFinuse=0;           /* How many are currently in use */
+static uint16 DFmaxref;         /* which is the largest ref used? */
+static unsigned char *DFreflist=NULL; /* list of refs in use */
+static char patterns[] = {0x80, 0x40, 0x20, 0x10, 0x08,
                                        0x04, 0x02, 0x01};
 #endif /* PERM_OUT */
-/* Private buffer */
-PRIVATE uint8 *ptbuf = NULL;
 
 /*
 ** NAME
@@ -1217,14 +1214,6 @@ DF *dfile;
         return(-1);
     }
 
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
-        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
-        if (ptbuf == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, NULL);
-      }
-
     dfile->list= (DFdle *) DFIgetspace(sizeof(DFdle));
     /* includes one DD - unused */
     CKMALLOC( dfile->list, -1);
@@ -1245,8 +1234,8 @@ DF *dfile;
 #else /*DF_STRUCTOK*/
         {
             register  char *p;
-            p = ptbuf;
-            CKREAD( ptbuf, 6, 1, dfile->file, -1);     /* 6 = size of header */
+            p = DFtbuf;
+            CKREAD( DFtbuf, 6, 1, dfile->file, -1);     /* 6 = size of header */
             INT16READ( p, ddh.dds);
             INT32READ( p, ddh.next);
         }
@@ -1271,8 +1260,8 @@ DF *dfile;
 #else /*DF_STRUCTOK*/
             {
                 register  char *p;
-                p = ptbuf;
-                CKREAD( ptbuf, n*12, 1, dfile->file, -1);  /* 12=size of DD */
+                p = DFtbuf;
+                CKREAD( DFtbuf, n*12, 1, dfile->file, -1);  /* 12=size of DD */
                 for (i=0; i<n; i++) {
                     UINT16READ( p, list->dd[i].tag);
                     UINT16READ( p, list->dd[i].ref);
@@ -1602,7 +1591,7 @@ DF *dfile;
 #include <ctype.h>
 #endif
 
-#ifdef PC
+#if defined(PC) & !defined(PC386)
 #ifdef WIN3
 int32 DFIspaceleft(void)
 {

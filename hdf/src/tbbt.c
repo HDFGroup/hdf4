@@ -6,7 +6,7 @@
  * 605 E. Springfield, Champaign IL 61820                                   *
  *                                                                          *
  * For conditions of distribution and use, see the accompanying             *
- * hdf/COPYING file.                                                        *
+ * hdf/COPYING file.                                                      *
  *                                                                          *
  ****************************************************************************/
 
@@ -44,8 +44,8 @@ TBBT_NODE *root;
 intn side;
 #endif
 {
-    if(  NULL == root  )
-        return( root );
+    if(root==NULL)
+	return(NULL);
     while(  HasChild( root, side )  ) {
         root= root->link[side];
     }
@@ -179,6 +179,8 @@ VOIDP          key;   /* Pointer to key value to find node with */
 TBBT_NODE    **pp;    /* Address of buffer for pointer to parent node */
 #endif
 {
+	if(tree==NULL)
+		return(NULL);
     return(  tbbtfind( tree->root, key, tree->compar, tree->cmparg, pp )  );
 }
 
@@ -294,8 +296,13 @@ printf("swapkid(): check 3, ptr=%p, side=%d, kid=%p\n",ptr,side,kid);
             Cnt(ptr,Other(side)) + 1 + Cnt(kid,Other(side)),
             deep[2]-1-Max(deep[0],deep[1]), HasChild(kid,side) );
 #else
+#if defined macintosh | defined THINK_C /* Macro substitution limit on Mac*/
+    kid->flags= SetFlags( kid, ( 1 + 2 - (side) ),
+            deep[2]-1-Max(deep[0],0), HasChild(kid,side) );
+#else /* !macintosh */
     kid->flags= SetFlags( kid, Other(side),
             deep[2]-1-Max(deep[0],0), HasChild(kid,side) );
+#endif /* !macintosh */
 
     /* update leaf counts */
     if(side==LEFT) { /* kid's left count doesn't change, nor ptr's r-count */
@@ -545,6 +552,8 @@ VOIDP     key;       /* Pointer to key value for new node (or NULL) */
 {
     TBBT_NODE *ret_node; /* the node to return */
 
+    if(tree==NULL)
+	return(NULL);
     ret_node=tbbtins( &(tree->root), item, key, tree->compar, tree->cmparg );
     if(ret_node!=NULL)
 	tree->count++;
@@ -577,7 +586,9 @@ VOIDP tbbtrem( root, node, kp )
   intn  side;       /* `leaf' is `side' child of `par' */
   VOIDP data;       /* Saved pointer to data item of deleted node */
 
-    if(  NULL == node  )
+	if(root==NULL)
+		return(NULL);
+    if( NULL == node  )
         return( NULL ); /* Argument couldn't find node to delete */
     data= node->data;   /* Save pointer to data item to be returned at end */
     if(  NULL != kp  )
@@ -917,12 +928,12 @@ TBBT_TREE *tree;
 intn method;
 #endif
 {
-    if(*(TBBT_NODE **)tree!=NULL) {
+    if(tree!=NULL && *(TBBT_NODE **)tree!=NULL) {
         printf("Number of nodes in the tree: %ld\n",tree->count);
-	tbbt1dump(tree->root,method);
+	    tbbt1dump(tree->root,method);
       } /* end if */
     else
-	printf("Tree is empty\n");
+	    printf("Tree is empty\n");
 }	/* end tbbtdump() */
 
 /* Always returns NULL */
@@ -935,6 +946,8 @@ VOID     (*fd)(/* void *item */); /* Routine to free data items */
 VOID     (*fk)(/* void *key */);  /* Routine to free key values */
 #endif
 {
+	if(tree==NULL)
+		return(NULL);
     tbbtfree( &tree->root, fd, fk );
     Free( tree );
     return( NULL );
@@ -952,5 +965,5 @@ TBBT_TREE *tree;                  /* Pointer to tree description record */
     if(tree==NULL)
         return(-1);
     else
-	return(tree->count);
+        return(tree->count);
 }

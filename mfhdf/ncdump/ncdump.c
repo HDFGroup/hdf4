@@ -9,8 +9,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include "local_nc.h"
 
-#include <netcdf.h>
 #include "ncdump.h"
 #include "dumplib.h"
 #include "vardata.h"
@@ -143,7 +143,7 @@ pr_att_vals(type, len, vals)
     union {
 	char *cp;
 	short *sp;
-	long *lp;
+	nclong *lp;
 	float *fp;
 	double *dp;
     } gp;
@@ -210,7 +210,7 @@ pr_att_vals(type, len, vals)
 	  Printf ("%ds%s",*gp.sp++,iel<len-1 ? ", " : "");
 	break;
       case NC_LONG:
-	gp.lp = (long *) vals;
+	gp.lp = (nclong *) vals;
 	for (iel = 0; iel < len; iel++)
 	  Printf ("%ld%s",*gp.lp++,iel<len-1 ? ", " : "");
 	break;
@@ -260,6 +260,8 @@ do_ncdump(path, specp)
     int ia;			/* attribute number */
     int iv;			/* variable number */
     int is_coord;		/* true if variable is a coordinate variable */
+    int isempty = 0;           /* true if an old hdf dim has no scale values */
+
     int ncid = ncopen(path, NC_NOWRITE); /* netCDF id */
     vnode* vlist = newvlist();	/* list for vars specified with -v option */
 
@@ -388,6 +390,24 @@ do_ncdump(path, specp)
 	     * or if it is a record variable and at least one record has
 	     * been written.
 	     */
+#ifdef HDF
+            /* skip the dimension vars which have dim strings only.  */
+{
+      NC *handle ;
+      NC_var *vp;
+      NC_var *NC_hlookupvar() ;          
+
+            isempty = 0;
+            handle = NC_check_id(ncid);
+            if (handle->is_hdf)  {
+                 vp = NC_hlookupvar(handle, varid) ;
+                 if ((vp->data_tag == DFTAG_SDS) && (vp->data_ref == 0))  
+                 isempty = 1;  
+            }
+}
+
+#endif            
+            if (isempty) continue;
 	    if (var.ndims == 0
 		|| var.dims[0] != xdimid
 		|| dims[xdimid].size != 0) {
@@ -562,7 +582,7 @@ char *argv[];
 	  make_lvars (optarg, &fspec);
 	  break;
 	case 'd':		/* specify precision for floats */
-	  set_sigdigs(optarg, &fspec);
+	  set_sigdigs(optarg);
 	  break;
 	case '?':
 	  usage();

@@ -155,8 +155,8 @@ int annotate(editor, ann)
         /* this is the child */
     {
      intn ret_status;
-     static $DESCRIPTOR (input_file, file);
-     static $DESCRIPTOR (output_file, file);
+     $DESCRIPTOR (input_file, file);
+     $DESCRIPTOR (output_file, file);
      ret_status = TPU$EDIT(&input_file, &output_file);
      fprintf( "TPU$EDIT return status: %d. \n",ret_status);
      exit(0);
@@ -197,8 +197,11 @@ int annotate(editor, ann)
 
 #else
 
+    /* shutp compiler up */
+    editor=editor; ann=ann;
+
 	return 1;
-	
+
 #endif /* ndef MAC & PC */
 
 }

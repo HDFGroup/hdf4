@@ -98,4 +98,3 @@
 #endif /* !FUNC_CONV */
 
 #endif /* !DFCONVRT_H */
-

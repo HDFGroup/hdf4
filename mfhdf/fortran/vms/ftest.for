@@ -9,6 +9,7 @@ c
       program ftest
       
       include 'netcdf.inc'
+      external nccre, ncopn, ncddef, ncdid, ncvdef, ncvid, nctlen
 
 c     name of first test cdf
       character*31 name
@@ -34,12 +35,12 @@ c     variable used to control error-handling behavior
       integer ncopts
       integer dimsiz(MAXNCDIM)
 C      allowable roundoff 
-      real epsilon
+C      real epsilon
       common /dims/timedim, latdim, londim, leveldim, lendim,
      + dimsiz
       data name/'test.cdf'/
       data name2/'copy.cdf'/
-      data epsilon /.000001/
+C      data epsilon /.000001/
       
 100   format(' --- Testing ', a, ' ...')
 c     set error-handling to verbose and non-fatal
@@ -110,6 +111,7 @@ c
       subroutine tncacpy(iname, oname)
       character*31 iname, oname
       include 'netcdf.inc'
+      external nccre, ncopn, ncddef, ncdid, ncvdef, ncvid, nctlen
       integer ndims, nvars, natts, recdim, iret
       character*31 vname, attnam
       integer attype, attlen
@@ -176,7 +178,7 @@ c
      +        iret)
          if (attlen .gt. mattlen) then
             write (*,*) 'global attribute too big!', attlen, mattlen
-            call exit
+            call exit(0)
          else if (attype .eq. NCBYTE) then
             call ncagt (outcdf, NCBYTE, attnam, bytval, iret)
          else if (attype .eq. NCCHAR) then
@@ -210,7 +212,7 @@ c
      +                   iret)
             if (attlen .gt. mattlen) then
                write (*,*) 'variable ', i,  'attribute too big !'
-               call exit
+               call exit(0)
             else 
                if (attype .eq. NCBYTE) then
                   call ncagt (outcdf, i, attnam, bytval, 
@@ -275,6 +277,7 @@ c
       subroutine tncadel (cdfname)
       character*31 cdfname
       include 'netcdf.inc'
+      external nccre, ncopn, ncddef, ncdid, ncvdef, ncvid, nctlen
       
       integer  bid, sid, lid, fid, did, cid, chid
       common /vars/bid, sid, lid, fid, did, cid, chid
@@ -317,6 +320,7 @@ c     subroutine to test ncagt and ncagtc
 
       subroutine tncagt(cdfname)
       include 'netcdf.inc'
+      external nccre, ncopn, ncddef, ncdid, ncvdef, ncvid, nctlen
       character*31 cdfname
             
 c     maximum length of an attribute
@@ -369,7 +373,7 @@ c     get attribute type and length
      +        iret)
          if (attlen .gt. mattlen) then
             write (*,*) 'global attribute too big!'
-            call exit
+            call exit(0)
          else if (attype .eq. NCBYTE) then
             call ncagt (cdfid, NCBYTE, attnam, bytval, iret)
          else if (attype .eq. NCCHAR) then
@@ -401,7 +405,7 @@ c
      +                   iret)
             if (attlen .gt. mattlen) then
                write (*,*) 'variable ', i,  'attribute too big !'
-               call exit
+               call exit(0)
             else 
                if (attype .eq. NCBYTE) then
                   call ncagt (cdfid, i, attnam, bytval, 
@@ -459,6 +463,7 @@ c     subroutine to test ncapt
 c
       subroutine tncapt (cdfid)
       include 'netcdf.inc'
+      external nccre, ncopn, ncddef, ncdid, ncvdef, ncvid, nctlen
       integer cdfid
 
 c attribute vectors
@@ -576,6 +581,7 @@ c
 
       subroutine tncddef(cdfid)
       include 'netcdf.inc'
+      external nccre, ncopn, ncddef, ncdid, ncvdef, ncvid, nctlen
       integer cdfid
 
 c     sizes of dimensions of 'test.cdf' and 'copy.cdf'
@@ -606,6 +612,7 @@ c     and ncainq
 c
       subroutine tncinq(cdfname)
       include 'netcdf.inc'
+      external nccre, ncopn, ncddef, ncdid, ncvdef, ncvid, nctlen
       character*31 cdfname
 
 c     netCDF id
@@ -747,6 +754,7 @@ c     ncendf
 
       subroutine tncredf(cdfname)
       include 'netcdf.inc'
+      external nccre, ncopn, ncddef, ncdid, ncvdef, ncvid, nctlen
       character*31 cdfname
       character*31 attname(2,7)
       character*31 gattnam(2)
@@ -780,6 +788,7 @@ c
 
       subroutine tncvdef(cdfid)
       include 'netcdf.inc'
+      external nccre, ncopn, ncddef, ncdid, ncvdef, ncvid, nctlen
       integer cdfid
 
 c     function to define a netCDF variable
@@ -850,6 +859,7 @@ c     subroutine to test ncvgt and ncvgtc
 c
       subroutine tncvgt(cdfname)
       include 'netcdf.inc'
+      external nccre, ncopn, ncddef, ncdid, ncvdef, ncvid, nctlen
       character*31 cdfname
 
       integer ndims, times, lats, lons, levels, lenstr
@@ -980,6 +990,7 @@ c
       
       subroutine tncvgt1(cdfname)
       include 'netcdf.inc'
+      external nccre, ncopn, ncddef, ncdid, ncvdef, ncvid, nctlen
       character*31 cdfname
 
       integer cdfid, iret
@@ -1054,6 +1065,7 @@ c     subroutine to test ncvpt and ncvptc
 c
       subroutine tncvpt(cdfname)
       include 'netcdf.inc'
+      external nccre, ncopn, ncddef, ncdid, ncvdef, ncvid, nctlen
       character*31 cdfname
 
 c     size of dimensions
@@ -1154,6 +1166,7 @@ c
       
       subroutine tncvpt1(cdfname)
       include 'netcdf.inc'
+      external nccre, ncopn, ncddef, ncdid, ncvdef, ncvid, nctlen
       character*31 cdfname
 
 

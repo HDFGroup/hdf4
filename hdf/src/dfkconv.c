@@ -295,7 +295,7 @@ uint32 num_elm, source_stride, dest_stride;
 
       /* extract exponent */
       exp = (source[0] << 1) | (source[1] >> 4); 
-      if (exp) {       
+      if (exp) {
           /* 
            * non-zero exponent 
            */
@@ -409,6 +409,7 @@ uint32 num_elm, source_stride, dest_stride;
           /* copy sign, MSBs of exponent */
           dest[0] = source[0];
 	  dest[1] = source[1] - 0x20;	/* subtracts 2 from exponent */
+	  if(dest[1]>=0xe0) dest[0]--;  /* borrow from next exp. byte */
           /* copy mantissa */
           dest[2] = source[2];
           dest[3] = source[3];
@@ -501,7 +502,7 @@ uint32 num_elm, source_stride, dest_stride;
   for(i = 0; i < num_elm; i++) {
 
       /* extract exponent */
-      exp = (uint8)(source[4] << 1) | (uint8)(source[3] >> 7);
+      exp = (uint8)(source[3] << 1) | (uint8)(source[2] >> 7);
       if (exp) {       
           /* 
            * non-zero exponent 
@@ -587,7 +588,7 @@ uint32 num_elm, source_stride, dest_stride;
   for(i = 0; i < num_elm; i++) {
       
       /* extract exponent */
-      exp = (source[3] << 1) | (source[2] >> 7);
+      exp = (source[0] << 1) | (source[1] >> 7);
 
       if(!exp && !source[3]) {
           /* 
@@ -600,11 +601,11 @@ uint32 num_elm, source_stride, dest_stride;
            * Normal value
            */
 
-          dest[0] = source[3] - (uint8)1; /* subtracts 2 from exponent */
           /* copy mantissa, LSB of exponent */
+          dest[0] = source[3];
           dest[1] = source[2];
           dest[2] = source[1];
-          dest[3] = source[0];
+          dest[3] = source[0] - (uint8)1; /* subtracts 2 from exponent */
 
       }
       else if(exp) {
@@ -782,7 +783,7 @@ uint32 num_elm, source_stride, dest_stride;
   for(i = 0; i < num_elm; i++) {
       
       /* extract exponent */
-      exp = (source[7] << 1) | (source[6] >> 4);
+      exp = (source[0] << 1) | (source[1] >> 4);
 
       if(!exp && !source[7]) {
           /* 
@@ -795,16 +796,17 @@ uint32 num_elm, source_stride, dest_stride;
           /*
            * Normal value
            */
-          /* copy sign, MSBs of exponent */
-          dest[0] = source[7];
-          dest[1] = source[6] - 0x20;   /* subtracts 2 from exponent */
           /* copy mantissa */
+          dest[0] = source[7];
+          dest[1] = source[6];
           dest[2] = source[5];
           dest[3] = source[4];
           dest[4] = source[3];
           dest[5] = source[2];
-          dest[6] = source[1];
+          /* copy sign, MSBs of exponent */
+          dest[6] = source[1] - 0x20;   /* subtracts 2 from exponent */
           dest[7] = source[0];
+	  if(dest[6]>=0xe0) dest[7]--;  /* borrow from next exp. byte */
       }
       else if(exp) {
           register intn shft;

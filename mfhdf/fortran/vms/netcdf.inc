@@ -23,7 +23,7 @@ c     Largest Negative value
       parameter(FILBYTE = 128)
       parameter(FILCHAR = 0)
       parameter(FILSHORT = 32768)
-      parameter(FILLONG = -2147483648)
+      parameter(FILLONG = -2147483647)
 c     IEEE Infinity 
       parameter(FILFLOAT = XDRFINF)
       parameter(FILDOUB = XDRDINF)

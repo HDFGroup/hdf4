@@ -10,7 +10,8 @@ C* hdf/COPYING file.                                                        *
 C*                                                                          *
 C****************************************************************************
 C
-C $Id$ 
+C $Id$
+C
 C
 C------------------------------------------------------------------------------
 C File:     dfsdFf.f
@@ -40,6 +41,7 @@ C   dfsdreadref:    set up next ref to read
 C   dfsdnumber:     return number of SDGs in the file
 C   dswref:         set up next ref to write
 C   dssslab:        set up write to SDS
+C   dsrslab:        set up to read from SDS
 C Remarks: none
 C------------------------------------------------------------------------------
 
@@ -593,6 +595,31 @@ C------------------------------------------------------------------------------
 
       dssslab = dsisslab(filename, len(filename))
  
+      return
+      end
+
+C------------------------------------------------------------------------------
+C Name:     dsrslab
+C Purpose:  call dsirslab to get slab from SDS
+C Inputs:   fname: name of HDF file
+C           start: array of size = rank of data, containing start of slab
+C           slab_size: array of size rank, containing end of slab
+C           stride: sub sampling stride.
+C           buffer: array for returning slab
+C           buffer_size: dimensions of array data
+C Returns:  0 on success, -1 on failure with DFerror set
+C Users:    HDF Fortran programmers
+C Invokes:  dsirslab
+C------------------------------------------------------------------------------
+
+      integer function dsrslab(fname, start, slabsize, stride, buffer,
+     +                         buffersize)
+      character*(*) fname
+      integer start, slabsize, stride, buffer, buffersize, dsirslab
+
+      dsrslab = dsirslab(fname, len(fname), start, slabsize, stride, 
+     +                   buffer, buffersize)
+
       return
       end
 
