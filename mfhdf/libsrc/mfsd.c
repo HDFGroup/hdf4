@@ -2834,6 +2834,9 @@ intn  len;
 
         IMPORTANT:  This will only work on datasets stored in HDF files.
 
+FORTRAN
+	sfsextf
+
 --------------------------------------------------------------------------- */
 
 intn SDsetexternalfile(int32 id, char *filename, int32 offset)
