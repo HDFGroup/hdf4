@@ -44,7 +44,7 @@ const int *dims ;
         ret->data_tag = DATA_TAG;  /* Assume normal data unless set   */
         ret->data_offset = 0;      /* Assume data starts at beginning */
         ret->numrecs = 0;
-        ret->aid = 0;
+        ret->aid = FAIL;
         ret->HDFtype = hdf_map_type(type);
         ret->HDFsize = DFKNTsize(ret->HDFtype);
 #endif

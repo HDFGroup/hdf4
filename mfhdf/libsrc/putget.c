@@ -111,7 +111,15 @@ const long *coords ;
 	    int len;
             
             if((unfilled = *ip - vp->numrecs) <= 0) return TRUE;
+            
+            /* check to see if we are trying to read beyond the end */
+            if(handle->xdrs->x_op != XDR_ENCODE)
+                goto bad ;
+            /* else */
 
+            /* make sure we can write to this sucker */
+            if(vp->aid == FAIL && hdf_get_vp_aid(handle, vp) == FALSE) return(FALSE);
+            
             /*
              * Set up the array strg to hold the fill values
              */
@@ -581,10 +589,9 @@ int32   type;
  *  exist yet
  */
 int 
-  hdf_get_data(handle, vp, type)
+  hdf_get_data(handle, vp)
 NC *handle;
 NC_var *vp;
-nc_type type;
 {
     NC_attr **attr;
     int32 vg;
@@ -696,13 +703,50 @@ nc_type type;
     fprintf(stderr, "Done with the DATA Vdata returning id %d\n", vsid);
 #endif
 
-    vp->aid = NULL;
+    vp->aid = FAIL;
             
     return vsid;
 
 } /* hdf_get_data */
 
-/* ------------------------- xdr_NCvdata ------------------- */
+
+/* ---------------------------- hdf_get_vp_aid ---------------------------- */
+/*
+
+  Return an AID for the current variable.  Return FALSE on error TRUE on success
+
+*/
+int32
+hdf_get_vp_aid(handle, vp)
+NC        * handle;
+NC_var    * vp;
+{
+
+    /* attach to proper data storage*/
+    if(!vp->data_ref)
+        vp->data_ref = hdf_get_data(handle, vp);
+        
+    /*
+     * Fail if there is no data
+     */
+    if(vp->data_ref == NULL) return(FALSE);
+
+    if(handle->hdf_mode == DFACC_RDONLY)
+        vp->aid = Hstartread(handle->hdf_file, vp->data_tag, vp->data_ref);
+    else
+        vp->aid = Hstartwrite(handle->hdf_file, vp->data_tag, vp->data_ref, 0);
+    
+    if(vp->aid == FAIL) {
+        HEprint(stderr, 0);
+        return(FALSE);
+    }
+
+    return(TRUE);
+
+} /* hdf_get_vp_aid */
+
+ 
+/* --------------------------- hdf_xdr_NCvdata ---------------------------- */
 /*
  *  Read / write 'count' items of contiguous data of type 'type' at 'where'
  *
@@ -734,50 +778,39 @@ uint32    count;
     fprintf(stderr, "Where = %d  count = %d\n", where, count);
 #endif
     
-    if(!vp->aid) {
-        /* attach to proper data storage*/
-        if(!vp->data_ref)
-            vp->data_ref = hdf_get_data(handle, vp, type);
-        
+    if(vp->aid == FAIL && hdf_get_vp_aid(handle, vp) == FALSE) {
         /*
          * Fail if there is no data *AND* we were trying to read...
-         * Otherwise, we should probabally blank out the storage...
+         * Otherwise, we should fill with the fillvalue
          */
         if(vp->data_ref == NULL) 
             if(handle->hdf_mode == DFACC_RDONLY) {
                 if(vp->data_tag == DATA_TAG) {
                     NC_attr ** attr;
                     int len;
-
+                    
                     attr = NC_findattr(&vp->attrs, _FillValue);
                     len = (vp->len / vp->HDFsize) * vp->szof;       
                     if(attr != NULL)
                         hdf_fill_array(values, len, (*attr)->data->values, vp->type);
                     else 
                         NC_arrayfill(values, len, vp->type);
-
+                    
                 }
                 return TRUE;
             } else {
                 return FALSE;
             }
-
-        if((vp->data_offset < 0) && (handle->hdf_mode == DFACC_RDONLY)) {
-            /* blank the memory */
-            HDmemset(values, (char) 0, count * vp->szof);
-            return TRUE;
-        }
-        
-        if(handle->hdf_mode == DFACC_RDONLY)
-            vp->aid = Hstartread(handle->hdf_file, vp->data_tag, vp->data_ref);
-        else
-            vp->aid = Hstartwrite(handle->hdf_file, vp->data_tag, vp->data_ref, 0);
-        
-        if(vp->aid == FAIL) {
-            HEprint(stderr, 0);
-            return(FALSE);
-        }
     }
+
+#if 0    
+    if((vp->data_offset < 0) && (handle->hdf_mode == DFACC_RDONLY)) {
+        /* blank the memory */
+        HDmemset(values, (char) 0, count * vp->szof);
+        return TRUE;
+    }
+#endif    
+
     
     /* 
      * It may be the case that the current does NOT begin at the start of the

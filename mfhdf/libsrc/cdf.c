@@ -1568,9 +1568,9 @@ void hdf_close(handle)
         for(i = 0; i < tmp->count; i++) {
             vp = (NC_var **) vars;
 
-            if((*vp)->aid)
+            if((*vp)->aid != FAIL)
                 Hendaccess((*vp)->aid);
-            (*vp)->aid = NULL;
+            (*vp)->aid = FAIL;
 
             vars += tmp->szof;
         }
