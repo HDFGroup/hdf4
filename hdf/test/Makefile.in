@@ -274,7 +274,7 @@ clean:
 
 distclean: 
 	 -$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) *.o fortest core \
-	*.hdf  ptesthdf qtesthdf gentest
+	*.hdf  ptesthdf qtesthdf gentest config.status Makefile
 
 depend: 
 	 makedepend -I$(HDFINC) *.c

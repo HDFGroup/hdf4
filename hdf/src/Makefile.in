@@ -221,7 +221,7 @@ clean:
 	-$(RM) $(RMFLAGS) *.o
 
 distclean:
-	-$(RM) $(RMFLAGS) *.o libdf.a
+	-$(RM) $(RMFLAGS) *.o libdf.a config.status Makefile
 
 lint: $(SRCS) $(R8SRCS)
 	$(LINT) $(LINTFLAGS) $(SRCS)

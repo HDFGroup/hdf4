@@ -172,7 +172,7 @@ distclean:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
           SUBDIRS="src jpeg util test" subd
 	$(RM) $(RMFLAGS) core *.log
-	$(RM) -rf bin lib include
+	$(RM) -rf bin lib include config.status Makefile
 
 # for recusive make in subdirs
 subd:

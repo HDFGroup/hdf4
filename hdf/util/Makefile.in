@@ -148,7 +148,7 @@ clean:
 	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed fptest
 
 distclean:
-	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed fptest
+	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed fptest config.status Makefile
 
 depend: 
 	 makedepend -I$(HDFINC) *.c
