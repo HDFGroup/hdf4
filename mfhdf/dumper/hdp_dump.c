@@ -48,27 +48,19 @@ fmtuint8(VOIDP x, FILE * ofp)
 intn 
 fmtint16(VOIDP x, FILE * ofp)
 {
-#ifdef OLD_WAY
 	int16       s;
 
 	HDmemcpy(&s, x, sizeof(int16));
 	return (fprintf(ofp, "%d", (int) s));
-#else
-	return (fprintf(ofp, "%d", (int) *((int16 *) x)));
-#endif /* OLD_WAY */
 }
 
 intn 
 fmtuint16(VOIDP x, FILE * ofp)
 {
-#ifdef OLD_WAY
 	uint16      s;
 
 	HDmemcpy(&s, x, sizeof(uint16));
 	return (fprintf(ofp, "%u", (unsigned) s));
-#else
-	return (fprintf(ofp, "%u", (unsigned) *((uint16 *) x)));
-#endif /* OLD_WAY */
 }
 
 intn 
@@ -95,21 +87,16 @@ fmtuchar8(VOIDP x, FILE * ofp)
 intn 
 fmtint(VOIDP x, FILE * ofp)
 {
-#ifdef OLD_WAY
 	intn        i;
 
-	HDmemcpy(&i, x, sizeof(int));
+	HDmemcpy(&i, x, sizeof(intn));
 	return (fprintf(ofp, "%d", (int) i));
-#else
-	return (fprintf(ofp, "%d", (int) *((intn *) x)));
-#endif /* OLD_WAY */
 }
 
 #define FLOAT32_EPSILON ((float32)1.0e-20)
 intn 
 fmtfloat32(VOIDP x, FILE * ofp)
 {
-#ifdef OLD_WAY
 	float32     f;
 
 	HDmemcpy(&f, x, sizeof(float32));
@@ -117,58 +104,39 @@ fmtfloat32(VOIDP x, FILE * ofp)
 		return (fprintf(ofp, "FloatInf"));
 	else
 		return (fprintf(ofp, "%f", f));
-#else
-	if (fabs((double) (*(float32 *) x - FILL_FLOAT)) <= FLOAT32_EPSILON)
-		return (fprintf(ofp, "FloatInf"));
-	else
-		return (fprintf(ofp, "%f", (float) *((float32 *) x)));
-#endif /* OLD_WAY */
 }
 
 intn 
 fmtint32(VOIDP x, FILE * ofp)
 {
-#ifdef OLD_WAY
 	int32       l;
 
 	HDmemcpy(&l, x, sizeof(int32));
 	return (fprintf(ofp, "%ld", (long) l));
-#else
-	return (fprintf(ofp, "%ld", (long) *((int32 *) x)));
-#endif /* OLD_WAY */
 }
 
 intn 
 fmtuint32(VOIDP x, FILE * ofp)
 {
-#ifdef OLD_WAY
 	uint32      l;
 
 	HDmemcpy(&l, x, sizeof(uint32));
 	return (fprintf(ofp, "%lu", (unsigned long) l));
-#else
-	return (fprintf(ofp, "%lu", (unsigned long) *((uint32 *) x)));
-#endif /* OLD_WAY */
 }
 
 intn 
 fmtshort(VOIDP x, FILE * ofp)
 {
-#ifdef OLD_WAY
 	short       s;
 
 	HDmemcpy(&s, x, sizeof(short));
 	return (fprintf(ofp, "%d", (int) s));
-#else
-	return (fprintf(ofp, "%d", (int) *((short *) x)));
-#endif /* OLD_WAY */
 }
 
 #define FLOAT64_EPSILON ((float64)1.0e-20)
 intn 
 fmtfloat64(VOIDP x, FILE * ofp)
 {
-#ifdef OLD_WAY
 	float64     d;
 
 	HDmemcpy(&d, x, sizeof(float64));
@@ -176,12 +144,6 @@ fmtfloat64(VOIDP x, FILE * ofp)
 		return (fprintf(ofp, "DoubleInf"));
 	else
 		return (fprintf(ofp, "%f", d));
-#else
-	if (fabs((double) (*(float64 *) x - FILL_DOUBLE)) <= FLOAT64_EPSILON)
-		return (fprintf(ofp, "DoubleInf"));
-	else
-		return (fprintf(ofp, "%f", (double) *((float64 *) x)));
-#endif /* OLD_WAY */
 }
 
 int32 
