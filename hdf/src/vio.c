@@ -590,6 +590,10 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
 
           vs->instance = w;
 
+          /* Make VData appendable by default */
+          if (FAIL == VSappendable(w->key,VDEFAULTBLKSIZE))
+              HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
           ret_value = (w->key);
           goto done;
       }     /* end of case where vsid is -1 */
@@ -816,7 +820,8 @@ VSappendable(int32 vkey, int32 blk)
     else
         blksize = VDEFAULTBLKSIZE;
 
-    Hendaccess(vs->aid);
+    if(vs->aid!=0)
+        Hendaccess(vs->aid);
 
     vs->aid = HLcreate(vs->f, VSDATATAG, vs->oref, blksize, VDEFAULTNBLKS);
     if (vs->aid == FAIL)
