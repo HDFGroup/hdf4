@@ -94,7 +94,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* Some static data buffers */
 static uint8  outbuf[BUFSIZE],  /* output data buffer */
-              inbuf[BUFSIZE];   /* input data buffer */
+    inbuf[BUFSIZE];   /* input data buffer */
 
 /* used to verify data in Test 2. */
 static uint8  outbuf_2[16] = {0,0,2,3,0,0,6,7,8,9,0,0,12,13,0,0};
@@ -161,14 +161,15 @@ test_chunks()
 
     /*
       1.First test simple writing of 2-D element with no ghost/partial chunks.
-        Set dimension to 4x4 array with 4 chunks 
-        where each chunk is 2x2.
-        Write out 12 bytes to all 4 chunks with only partial writes
-        to the last 2 chunks..
-        Write again to last 2 chunks with whole data chunks 
-     */
+      Set dimension to 4x4 array with 4 chunks 
+      where each chunk is 2x2.
+      Write out 12 bytes to all 4 chunks with only partial writes
+      to the last 2 chunks..
+      Write again to last 2 chunks with whole data chunks 
+      */
     chunk[0].num_dims   = 2; /* 2-D */
     chunk[0].chunk_size = 4; /* 2x2 = 4 bytes */
+    chunk[0].nt_size    = 1; /* number type size */
     chunk[0].chunk_flag = 0; /* nothing set */
 
     chunk[0].pdims[0].dim_length   = 4;
@@ -181,14 +182,14 @@ test_chunks()
 
     MESSAGE(5, printf("Create a new element as a 2-D chunked element\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                        0,chunk[0].pdims[0].dim_length, 
-                        0,chunk[0].pdims[0].chunk_length););
+                      0,chunk[0].pdims[0].dim_length, 
+                      0,chunk[0].pdims[0].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                        1,chunk[0].pdims[1].dim_length, 
-                        1,chunk[0].pdims[1].chunk_length););
+                      1,chunk[0].pdims[1].dim_length, 
+                      1,chunk[0].pdims[1].chunk_length););
 
-    /* Create element     tag, ref,  nlevels, data_len, chunk array */
-    aid1 = HMCcreate(fid, 1020, 2, 1, 16, fill_val_len, &fill_val, (CHUNK_DEF *)chunk);
+    /* Create element     tag, ref,  nlevels, fill_len, fill,  chunk array */
+    aid1 = HMCcreate(fid, 1020, 2, 1, fill_val_len, &fill_val, (CHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
 
     /* write 12 bytes out */
@@ -342,9 +343,9 @@ test_chunks()
 
     /* 
        2. Now create a new chunked 2-D element with same parameters
-          before but write to 2 chunks of element using whole chunks.
-          The rest of he data should contain fill values.
-     */
+       before but write to 2 chunks of element using whole chunks.
+       The rest of he data should contain fill values.
+       */
 
     /* Open file for writing again */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
@@ -352,14 +353,14 @@ test_chunks()
 
     MESSAGE(5, printf("Create another new element as a 2-D chunked element\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                        0,chunk[0].pdims[0].dim_length, 
-                        0,chunk[0].pdims[0].chunk_length););
+                      0,chunk[0].pdims[0].dim_length, 
+                      0,chunk[0].pdims[0].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                        1,chunk[0].pdims[1].dim_length, 
-                        1,chunk[0].pdims[1].chunk_length););
+                      1,chunk[0].pdims[1].dim_length, 
+                      1,chunk[0].pdims[1].chunk_length););
 
-    /* Create element     tag, ref,  nlevels, data_len, chunk array */
-    aid1 = HMCcreate(fid, 1020, 3, 1, 16, fill_val_len, &fill_val, (CHUNK_DEF *)chunk);
+    /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
+    aid1 = HMCcreate(fid, 1020, 3, 1, fill_val_len, &fill_val, (CHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
 
     /* Try writing to 2 chunk in the element */
@@ -452,14 +453,15 @@ test_chunks()
 
 
     /* 
-      3. Create a new element but now there will be partial chunks
-         because chunk lengths are not an even multiple of dimesion lengths.
-         Set dimension to 4x4 array with 4 chunks where each chunk is 3x2 = 6 bytes.
-         Real data size is 16 bytes, size with chunks is 
-         6 bytes x 4 chunks = 24 bytes 
-    */
+       3. Create a new element but now there will be partial chunks
+       because chunk lengths are not an even multiple of dimesion lengths.
+       Set dimension to 4x4 array with 4 chunks where each chunk is 3x2 = 6 bytes.
+       Real data size is 16 bytes, size with chunks is 
+       6 bytes x 4 chunks = 24 bytes 
+       */
     chunk[0].num_dims   = 2;
     chunk[0].chunk_size = 6; /* 3x2 = 6 bytes */
+    chunk[0].nt_size    = 1; /* number type size */
 
     chunk[0].pdims[0].dim_length   = 4;
     chunk[0].pdims[0].chunk_length = 3;  /* made this 3 */
@@ -475,14 +477,14 @@ test_chunks()
 
     MESSAGE(5, printf("Create another new element as a 2-D chunked element\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                        0,chunk[0].pdims[0].dim_length, 
-                        0,chunk[0].pdims[0].chunk_length););
+                      0,chunk[0].pdims[0].dim_length, 
+                      0,chunk[0].pdims[0].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                        1,chunk[0].pdims[1].dim_length, 
-                        1,chunk[0].pdims[1].chunk_length););
+                      1,chunk[0].pdims[1].dim_length, 
+                      1,chunk[0].pdims[1].chunk_length););
 
-    /* Create element     tag, ref,  nlevels, data_len, chunk array */
-    aid1 = HMCcreate(fid, 1020, 5, 1, 16, fill_val_len, &fill_val, (CHUNK_DEF *)chunk);
+    /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
+    aid1 = HMCcreate(fid, 1020, 5, 1, fill_val_len, &fill_val, (CHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
 
     /* write 16 bytes out */
@@ -568,15 +570,17 @@ test_chunks()
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
 
+
     /* 
-      4. Now create 3-D chunked element with no partial chunks.
-         Write to only part of the chunked element. The rest
-         should be filled with fill values.
-         Set dimension to 4x6x8 array with 8 chunks 
-         where each chunk is 2x3x4= 24 bytes , total data size 192 bytes 
-    */
+       4. Now create 3-D chunked element with no partial chunks.
+       Write to only part of the chunked element. The rest
+       should be filled with fill values.
+       Set dimension to 4x6x8 array with 8 chunks 
+       where each chunk is 2x3x4= 24 bytes , total data size 192 bytes 
+       */
     chunk[0].num_dims   = 3;
     chunk[0].chunk_size = 24; /* 2x3x4 bytes */
+    chunk[0].nt_size    = 1; /* number type size */
 
     chunk[0].pdims[0].dim_length   = 4;
     chunk[0].pdims[0].chunk_length = 2;  
@@ -596,17 +600,17 @@ test_chunks()
 
     MESSAGE(5, printf("Create another new element as a 3-D chunked element(192 bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                        0,chunk[0].pdims[0].dim_length, 
-                        0,chunk[0].pdims[0].chunk_length););
+                      0,chunk[0].pdims[0].dim_length, 
+                      0,chunk[0].pdims[0].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                        1,chunk[0].pdims[1].dim_length, 
-                        1,chunk[0].pdims[1].chunk_length););
+                      1,chunk[0].pdims[1].dim_length, 
+                      1,chunk[0].pdims[1].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                        2,chunk[0].pdims[2].dim_length, 
-                        2,chunk[0].pdims[2].chunk_length););
+                      2,chunk[0].pdims[2].dim_length, 
+                      2,chunk[0].pdims[2].chunk_length););
 
-    /* Create element     tag, ref,  nlevels, data_len, chunk array */
-    aid1 = HMCcreate(fid, 1020, 6, 1, 192, fill_val_len, &fill_val, (CHUNK_DEF *)chunk);
+    /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
+    aid1 = HMCcreate(fid, 1020, 6, 1, fill_val_len, &fill_val, (CHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
 
     /* write only 112 bytes out */
@@ -625,7 +629,7 @@ test_chunks()
     CHECK(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the files\n");
-        );
+            );
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
 
@@ -730,14 +734,15 @@ test_chunks()
     CHECK(ret, FAIL, "Hclose");
 
     /* 
-      5. Now create another 3-D chunked element with partial chunks.
-         Write to part of element, rest is filled with fill value.
-         Set dimension to 4x6x8 array with 8 chunks , real data 192 bytes
-         where each chunk is 3x4x5= 60 bytes , 
-         data size with chunks is 60 bytes x 8 chunks = 480 bytes 
-    */
+       5. Now create another 3-D chunked element with partial chunks.
+       Write to part of element, rest is filled with fill value.
+       Set dimension to 4x6x8 array with 8 chunks , real data 192 bytes
+       where each chunk is 3x4x5= 60 bytes , 
+       data size with chunks is 60 bytes x 8 chunks = 480 bytes 
+       */
     chunk[0].num_dims   = 3;
     chunk[0].chunk_size = 60; /* 3x4x5 = 60 bytes */
+    chunk[0].nt_size    = 1; /* number type size */
 
     chunk[0].pdims[0].dim_length   = 4;
     chunk[0].pdims[0].chunk_length = 3;  
@@ -760,17 +765,17 @@ test_chunks()
 
     MESSAGE(5, printf("Create another new element as a 3-D chunked element(192bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                        0,chunk[0].pdims[0].dim_length, 
-                        0,chunk[0].pdims[0].chunk_length););
+                      0,chunk[0].pdims[0].dim_length, 
+                      0,chunk[0].pdims[0].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                        1,chunk[0].pdims[1].dim_length, 
-                        1,chunk[0].pdims[1].chunk_length););
+                      1,chunk[0].pdims[1].dim_length, 
+                      1,chunk[0].pdims[1].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                        2,chunk[0].pdims[2].dim_length, 
-                        2,chunk[0].pdims[2].chunk_length););
+                      2,chunk[0].pdims[2].dim_length, 
+                      2,chunk[0].pdims[2].chunk_length););
 
-    /* Create element     tag, ref,  nlevels, data_len, chunk array */
-    aid1 = HMCcreate(fid, 1020, 7, 1, 192, fill_val_len, &fill_val, (CHUNK_DEF *)chunk);
+    /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
+    aid1 = HMCcreate(fid, 1020, 7, 1, fill_val_len, &fill_val, (CHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
 
     /* Set max chunks to cache to 3x4 = 12 chunks */
@@ -887,14 +892,15 @@ test_chunks()
 
 
     /* 
-      6. Create 4-D element with partial chunks.
-         Write only half the data out(5,000 bytes)
-         Set dimension to 10x10x10x10 array  real data 10,000 bytes .
-         120 chunks whit chunks of 2x3x4x5 = 120 bytes,
-         data size with chunks is 120 bytes x 120 chunks = 14,400 bytes 
-    */
+       6. Create 4-D element with partial chunks.
+       Write only half the data out(5,000 bytes)
+       Set dimension to 10x10x10x10 array  real data 10,000 bytes .
+       120 chunks whit chunks of 2x3x4x5 = 120 bytes,
+       data size with chunks is 120 bytes x 120 chunks = 14,400 bytes 
+       */
     chunk[0].num_dims   = 4;
     chunk[0].chunk_size = 120;
+    chunk[0].nt_size    = 1; /* number type size */
 
     chunk[0].pdims[0].dim_length   = 10;
     chunk[0].pdims[0].chunk_length = 2;
@@ -918,20 +924,20 @@ test_chunks()
 
     MESSAGE(5, printf("Create another new element as a 4-D chunked element\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                        0,chunk[0].pdims[0].dim_length, 
-                        0,chunk[0].pdims[0].chunk_length););
+                      0,chunk[0].pdims[0].dim_length, 
+                      0,chunk[0].pdims[0].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                        1,chunk[0].pdims[1].dim_length, 
-                        1,chunk[0].pdims[1].chunk_length););
+                      1,chunk[0].pdims[1].dim_length, 
+                      1,chunk[0].pdims[1].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                        2,chunk[0].pdims[2].dim_length, 
-                        2,chunk[0].pdims[2].chunk_length););
+                      2,chunk[0].pdims[2].dim_length, 
+                      2,chunk[0].pdims[2].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                        3,chunk[0].pdims[3].dim_length, 
-                        3,chunk[0].pdims[3].chunk_length););
+                      3,chunk[0].pdims[3].dim_length, 
+                      3,chunk[0].pdims[3].chunk_length););
 
-    /* Create element     tag, ref,  nlevels, data_len, chunk array */
-    aid1 = HMCcreate(fid, 1020, 9, 1, 10000, fill_val_len, &fill_val, (CHUNK_DEF *)chunk);
+    /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
+    aid1 = HMCcreate(fid, 1020, 9, 1, fill_val_len, &fill_val, (CHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
 
     /* write 5000 bytes out */
@@ -1047,18 +1053,20 @@ test_chunks()
     MESSAGE(5, printf("Closing the file\n"););
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
-
+#if 0
+#endif
 #if 0
 
     /* 
-      7. The rest of the tests here are commented out
-         They are some extra high order tests to replicate
-         some test done on EOS-DEM data  -GV.....
-         Set dimension to 12000x12000 array with 2,500 chunks 
-         whith chunk of 240x240 = 57,600 bytes
-    */
+       7. The rest of the tests here are commented out
+       They are some extra high order tests to replicate
+       some test done on EOS-DEM data  -GV.....
+       Set dimension to 12000x12000 array with 2,500 chunks 
+       whith chunk of 240x240 = 57,600 bytes
+       */
     chunk[0].num_dims   = 2;
     chunk[0].chunk_size = 57600;
+    chunk[0].nt_size    = 1; /* number type size */
 
     chunk[0].pdims[0].dim_length   = 12000;
     chunk[0].pdims[0].chunk_length = 240;
@@ -1074,8 +1082,8 @@ test_chunks()
     CHECK(fid, FAIL, "Hopen");
 #endif
 
-    /* Create element     tag, ref,  nlevels, data_len, chunk array */
-    aid1 = HMCcreate(fid, 1020, 10, 1, 144000000, fill_val_len, &fill_val, (CHUNK_DEF *)chunk);
+    /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
+    aid1 = HMCcreate(fid, 1020, 10, 1, fill_val_len, &fill_val, (CHUNK_DEF *)chunk);
     CHECK(aid1, FAIL, "HMCcreate");
 
     for (j = 0; j < 12000; j++)
@@ -1096,7 +1104,7 @@ test_chunks()
     CHECK(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the files\n");
-        );
+            );
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
 
@@ -1205,12 +1213,12 @@ test_chunks()
     CHECK(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the files\n");
-        );
+            );
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
 #endif
 
-done:
+  done:
     /* Don't forget to free dimensions allocate for chunk definition */
     if (chunk[0].pdims != NULL)
         HDfree(chunk[0].pdims);
