@@ -2,9 +2,14 @@
 $Header$
 
 $Log$
-Revision 1.10  1993/04/22 16:05:52  chouck
-Minor Vset fixes
+Revision 1.11  1993/05/19 20:05:09  chouck
+Moved general interest VSet info out of vg.h and into hdf.h
+Removed OLD_WAY parts of vproto.h
+Fixed a problem in DFfindnextref()
 
+ * Revision 1.10  1993/04/22  16:05:52  chouck
+ * Minor Vset fixes
+ *
  * Revision 1.9  1993/04/19  22:48:28  koziol
  * General Code Cleanup to reduce/remove errors on the PC
  *
@@ -63,36 +68,6 @@ Minor Vset fixes
 /* Include file for Threaded, Balanced Binary Tree implementation */
 #include "tbbt.h"
 
-/* H-level customization jason ng 12-Feb-92 */
-typedef int32           HFILEID;
-
-/* 
-* interlacing supported by the vset. 
-*/
-
-#define FULL_INTERLACE	0
-#define NO_INTERLACE    1
-
-/* 
-* some max lengths 
-*
-* Except for FIELDNAMELENMAX, change these as you please, they 
-* affect memory only, not the file. 
-*
-*/
-
-#define FIELDNAMELENMAX     16  /* fieldname   : 16 chars max */
-
-#define VSFIELDMAX          20  /* max no of fields per vdata */
-#define VSNAMELENMAX		64	/* vdata name  : 64 chars max */    
-#define VGNAMELENMAX		64	/* vgroup name : 64 chars max */ 
-
-/* maximum number of files (number of slots for file records) */
-
-#ifndef MAX_VFILE
-#   define MAX_VFILE 16
-#endif
-
 /*
 * definition of the 2 data elements of the vset.
 */
@@ -101,7 +76,6 @@ typedef struct vgroup_desc     	VGROUP;
 typedef struct vdata_desc       VDATA;
 
 typedef VDATA VSUBGROUP;
-
 
 /*
 * -----------------------------------------------------------------
@@ -151,8 +125,6 @@ typedef struct read_struct
         V G R O U P     definition     
 *  ----------------------------------------------- 
 */
-
-#define MAXNVELT  64		/* max no of objects in a vgroup */
 
 struct vgroup_desc
 { 
@@ -262,13 +234,6 @@ struct vdata_desc {
 #define LOCAL_SHORTSIZE  	sizeof(short)
 #define LOCAL_DOUBLESIZE  	sizeof(double)
 
-/* need to tune these to vertex boundary later.  Jason Ng 6-APR-92 */
-#define VDEFAULTBLKSIZE    1024
-#define VDEFAULTNBLKS      32
-
-/* Max order of a field in a Vdata */
-#define MAX_ORDER          32000
-
 /* .................................................................. */
 /* Private data structures. Unlikely to be of interest to applications */
 /* 
@@ -351,24 +316,6 @@ typedef struct vfiledir_struct {
 
 /* .................................................................. */
 
-/* all these macros should be public for users */
-/* macros for VSinquire */
-
-#define VSQuerycount(vs, count) \
-        (VSinquire (vs, (int32 *) count, (int32*) NULL, (char*) NULL, (int32*) NULL, (char*) NULL))
-
-#define VSQueryinterlace(vs, intr) \
-        (VSinquire (vs, (int32 *) NULL, (int32*) intr, (char*) NULL, (int32*) NULL, (char*) NULL))
-
-#define VSQueryfields(vs, flds) \
-        (VSinquire (vs, (int32 *) NULL, (int32*) NULL, (char*) flds, (int32*) NULL, (char*) NULL))
-
-#define VSQueryvsize(vs, size) \
-        (VSinquire (vs, (int32 *) NULL, (int32*) NULL, (char*) NULL, (int32*) size, (char*) NULL))
-
-#define VSQueryname(vs, name) \
-        (VSinquire (vs, (int32 *) NULL, (int32*) NULL, (char*) NULL, (int32*) size, (char*) name))
-
 /*
  *   Macros to provide fast access to the name and class of a Vset
  *     element.  The information returned is only guarenteed to be
@@ -384,17 +331,35 @@ typedef struct vfiledir_struct {
 
 #define VSCLASS(vs) ((vs)->vsclass)
 #define VSNAME(vs)  ((vs)->vsname)
-#endif /* OLD_MACROS */
 
-#include "vproto.h"
-
-#define Vstart(f)          Vinitialize((f))
-#define Vend(f)            Vfinish((f))
-
-#ifdef OLD_MACROS
 #define DFvsetopen(x,y,z)  Vopen((x),(y),(z))
 #define DFvsetclose(x)     Vclose((x))
 #endif /* OLD_MACROS */
+
+
+/*
+ * Routines public to the VSet layer
+ */
+extern vsinstance_t _HUGE * vsinstance
+    PROTO((HFILEID f, uint16 vsid));
+
+extern VWRITELIST _HUGE * vswritelist
+    PROTO((int32 vskey));
+
+extern void oldunpackvg
+  PROTO((VGROUP _HUGE *vg, uint8 _HUGE buf[], int32 _HUGE *size));
+
+extern void oldunpackvs
+  PROTO((VDATA _HUGE *vs, uint8 _HUGE buf[], int32 _HUGE *size));
+
+extern void vpackvg
+  PROTO((VGROUP _HUGE *vg, uint8 _HUGE buf[], int32 _HUGE *size));
+
+extern int32 vinsertpair
+  PROTO((VGROUP _HUGE *vg, uint16 tag, uint16 ref));
+
+extern void vpackvs
+    PROTO((VDATA _HUGE *vs, uint8 _HUGE buf[], int32 _HUGE *size));
 
 #endif /* _VG_H */
 

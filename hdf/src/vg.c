@@ -5,10 +5,15 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1993/04/26 15:08:29  chouck
-Fixes for the convex (doesn't like foo(VOID) prototypes)
-Also added extern "C" { } around prototypes
+Revision 1.9  1993/05/19 20:05:06  chouck
+Moved general interest VSet info out of vg.h and into hdf.h
+Removed OLD_WAY parts of vproto.h
+Fixed a problem in DFfindnextref()
 
+ * Revision 1.8  1993/04/26  15:08:29  chouck
+ * Fixes for the convex (doesn't like foo(VOID) prototypes)
+ * Also added extern "C" { } around prototypes
+ *
  * Revision 1.7  1993/04/19  22:48:26  koziol
  * General Code Cleanup to reduce/remove errors on the PC
  *
@@ -148,7 +153,7 @@ int32 vkey;
     }
 
     vs=w->vs;
-    if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
+    if ((vs == NULL) || (vs->otag != DFTAG_VH)) {
           HERROR(DFE_ARGS);
           HEprint(stderr,0);
           return(FAIL);
@@ -720,38 +725,34 @@ int32   idarray[];       /* array to contain the refs */
 int32   asize;            /* input: size of idarray */
 #endif
 {
-    uint8   *lonevdata; /* lcl wrk area: stores flags of vdatas */
-	int32 	i,vgid, vsid, vstag;
-#ifdef OLD_WAY
-	VGROUP 	* vg;
-#else
-    int32   vkey;
-#endif
-	int32 	nlone; /* total number of lone vdatas */
-	char * FUNC = "VSlone";
-
-
+    uint8  *lonevdata; /* lcl wrk area: stores flags of vdatas */
+    int32  i, vgid, vsid, vstag;
+    int32  vkey;
+    int32  nlone; /* total number of lone vdatas */
+    char * FUNC = "VSlone";
+    
+    
 /* -- allocate space for vdata refs, init to zeroes -- */
     if (NULL == (lonevdata = (uint8 *) HDgetspace( 65000L * sizeof(uint8)))) {
         HERROR(DFE_NOSPACE);
         return(FAIL);
     }
     HDmemset(lonevdata,0,65000L*sizeof(uint8));
-
-/* -- look for all vdatas in the file, and flag (1) each -- */
+    
+    /* -- look for all vdatas in the file, and flag (1) each -- */
     vsid = -1;
     while( -1L != (vsid = VSgetid (f, vsid)))   /* until no more vdatas */
         lonevdata[vsid ] = 1;
-
+    
 /* -- Look through all vgs, searching for vdatas -- */
-/* -- increment its index in lonevdata if found -- */
+    /* -- increment its index in lonevdata if found -- */
     vgid = -1;
     while( -1L != (vgid = Vgetid (f, vgid))) { /* until no more vgroups */
 #ifdef OLD_WAY
         vg = (VGROUP*) Vattach(f,vgid,"r");
-        for (i=0; i< Vntagrefs(vg); i++) {
+        for (i=0; i < Vntagrefs(vg); i++) {
             Vgettagref (vg, i, &vstag, &vsid);
-            if (vstag==VSDESCTAG)
+            if (vstag == (int32) DFTAG_VH)
                 lonevdata[vsid]++;
         }
         Vdetach(vg);
@@ -759,7 +760,7 @@ int32   asize;            /* input: size of idarray */
         vkey = Vattach(f,vgid,"r");
         for (i=0; i< Vntagrefs(vkey); i++) {
             Vgettagref (vkey, i, &vstag, &vsid);
-            if (vstag==VSDESCTAG)
+            if (vstag == (int32) DFTAG_VH)
                 lonevdata[vsid]=0;
         }
         Vdetach(vkey);
@@ -836,7 +837,7 @@ int32   asize;            /* input: size of idarray */
         id = -1;
         for (i=0; i< Vntagrefs(vg); i++) {
             Vgettagref (vg, i, &vstag, &id);
-            if (vstag==VGDESCTAG)
+            if (vstag == DFTAG_VG)
                 lonevg[id]++;
         }
         Vdetach(vg);
@@ -845,7 +846,7 @@ int32   asize;            /* input: size of idarray */
         id = -1;
         for (i=0; i< Vntagrefs(vkey); i++) {
             Vgettagref (vkey, i, &vstag, &id);
-            if (vstag==VGDESCTAG)
+            if (vstag == DFTAG_VG)
                 lonevg[id]=0;
         }
         Vdetach(vkey);

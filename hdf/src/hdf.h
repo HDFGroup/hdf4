@@ -2,10 +2,15 @@
 $Header$
 
 $Log$
-Revision 1.10  1993/04/22 20:24:02  koziol
-Added new Hfind() routine to hfile.c which duplicates older DFsetfind/DFfind
-utility...
+Revision 1.11  1993/05/19 20:05:03  chouck
+Moved general interest VSet info out of vg.h and into hdf.h
+Removed OLD_WAY parts of vproto.h
+Fixed a problem in DFfindnextref()
 
+ * Revision 1.10  1993/04/22  20:24:02  koziol
+ * Added new Hfind() routine to hfile.c which duplicates older DFsetfind/DFfind
+ * utility...
+ *
  * Revision 1.9  1993/04/22  16:05:50  chouck
  * Minor Vset fixes
  *
@@ -474,6 +479,71 @@ extern uint8 *tbuf;
              (uint16*) NULL,	(int32*) NULL,	(int32*)  NULL,	  \
              (int32*) 	NULL,	(int16*) NULL,	(int16*)  special))
 
+/* ----------------------------- VSet Defines ----------------------------- */
+/* 
+* some max lengths 
+*
+* Except for FIELDNAMELENMAX, change these as you please, they 
+* affect memory only, not the file. 
+*
+*/
+
+#define FIELDNAMELENMAX     16  /* fieldname   : 16 chars max */
+
+#define VSFIELDMAX          20  /* max no of fields per vdata */
+#define VSNAMELENMAX		64	/* vdata name  : 64 chars max */    
+#define VGNAMELENMAX		64	/* vgroup name : 64 chars max */ 
+
+/* maximum number of files (number of slots for file records) */
+
+#ifndef MAX_VFILE
+#   define MAX_VFILE 16
+#endif
+
+/* 
+* interlacing supported by the vset. 
+*/
+
+#define FULL_INTERLACE	0
+#define NO_INTERLACE    1
+
+/* 
+ * default max no of objects in a vgroup 
+ * VGroup will grow dynamically if needed 
+ */
+#define MAXNVELT       64 
+
+/* 
+ * Defaults for linked block operations with Vsets
+ */
+#define VDEFAULTBLKSIZE    1024
+#define VDEFAULTNBLKS      32
+
+/* Max order of a field in a Vdata */
+#define MAX_ORDER          32000
+
+/* type of ID to send to Hlevel */
+typedef int32           HFILEID;
+
+/* 
+ * macros for VSinquire 
+ * all these macros should be public for users 
+ */
+#define VSQuerycount(vs, count) \
+        (VSinquire (vs, (int32 *) count, (int32*) NULL, (char*) NULL, (int32*) NULL, (char*) NULL))
+
+#define VSQueryinterlace(vs, intr) \
+        (VSinquire (vs, (int32 *) NULL, (int32*) intr, (char*) NULL, (int32*) NULL, (char*) NULL))
+
+#define VSQueryfields(vs, flds) \
+        (VSinquire (vs, (int32 *) NULL, (int32*) NULL, (char*) flds, (int32*) NULL, (char*) NULL))
+
+#define VSQueryvsize(vs, size) \
+        (VSinquire (vs, (int32 *) NULL, (int32*) NULL, (char*) NULL, (int32*) size, (char*) NULL))
+
+#define VSQueryname(vs, name) \
+        (VSinquire (vs, (int32 *) NULL, (int32*) NULL, (char*) NULL, (int32*) size, (char*) name))
+
 /* .................................................................. */
 
 /* Publically accessible functions declarations.  This includes all the
@@ -481,9 +551,12 @@ extern uint8 *tbuf;
 
 #include "hcomp.h"
 #include "hproto.h"
+#include "vproto.h"
 
 /* these may eventaully evolve into real-life functions but not yet */
 #define HDFopen(f,a,d)      Hopen((f), (a), (d))
 #define HDFclose(f,a,d)     Hclose((f), (a), (d))
+#define Vstart(f)           Vinitialize((f))
+#define Vend(f)             Vfinish((f))
 
 #endif /* HDF_H */

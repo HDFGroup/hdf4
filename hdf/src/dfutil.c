@@ -5,9 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1993/05/11 16:57:06  koziol
-Fixed two leaking AID places.
+Revision 1.5  1993/05/19 20:05:00  chouck
+Moved general interest VSet info out of vg.h and into hdf.h
+Removed OLD_WAY parts of vproto.h
+Fixed a problem in DFfindnextref()
 
+ * Revision 1.4  1993/05/11  16:57:06  koziol
+ * Fixed two leaking AID places.
+ *
  * Revision 1.3  1993/04/19  22:47:51  koziol
  * General Code Cleanup to reduce/remove errors on the PC
  *
@@ -79,9 +84,10 @@ uint16 DFfindnextref(file_id, tag, lref)
     if (aid == FAIL) 
         return (uint16)FAIL;
 
-    if (Hnextread(aid, tag, DFREF_WILDCARD, DF_CURRENT) == FAIL) 
-        return (uint16)FAIL;
-
+    if(lref != DFREF_WILDCARD)
+        if (Hnextread(aid, tag, DFREF_WILDCARD, DF_CURRENT) == FAIL) 
+            return (uint16)FAIL;
+    
     if (HQuerytagref(aid, &newtag, &newref) == FAIL)
         return (uint16)FAIL;
 
