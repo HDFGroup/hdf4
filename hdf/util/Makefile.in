@@ -104,7 +104,7 @@ JPEGLIB=$(srcdir)/../jpeg
 JPEGINC=$(srcdir)/../jpeg
 
 # Utilities
-UTILS = hdf24to8 hdfcomp hdfls hdfpack hdfrseq hdftopal hdftor8 paltohdf \
+UTILS = hdf24to8 hdfcomp hdfls hdfpack hdftopal hdftor8 paltohdf \
         r8tohdf ristosds vcompat vmake vshow hdf8to24 hdf2jpeg jpeg2hdf fp2hdf \
 	hdfunpac
 
