@@ -284,6 +284,10 @@ TEST dumpgr-9.out dumpgr grtdfui83.hdf
 TEST dumpgr-10.out dumpgr grtdfui84.hdf
 TEST dumpgr-11.out dumpgr grtdfui162.hdf
 TEST dumpgr-12.out dumpgr grtdfi322.hdf
+# Added 13, 14, and 15 to test new option -p that prints palette
+TEST dumpgr-13.out dumpgr -p Image_with_Palette.hdf
+TEST dumpgr-14.out dumpgr -p -h Image_with_Palette.hdf
+TEST dumpgr-15.out dumpgr -r 2,4 -p -d Image_with_Palette.hdf
 else
 MESG 3 "$TestName <<<SKIPPED>>>"
 fi
