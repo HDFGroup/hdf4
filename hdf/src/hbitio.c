@@ -296,13 +296,25 @@ intn
 Hbitwrite(int32 bitid, intn count, uint32 data)
 {
     CONSTR(FUNC, "Hbitwrite");  /* for HERROR */
-    bitrec_t   *bitfile_rec;    /* access record */
+    static int32 last_bit_id=(-1); /* the bit ID of the last bitfile_record accessed */
+    static bitrec_t   *bitfile_rec=NULL; /* access record */
     intn        orig_count = count;     /* keep track of orig, number of bits to output */
 
     /* clear error stack and check validity of file id */
     HEclear();
 
-    if (count <= 0 || (bitfile_rec = HAatom_object(bitid)) == NULL)
+    if (count <= 0)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    /* cache the bitfile_record since this routine gets called so many times */
+    if(bitid!=last_bit_id)
+      {
+/* This needs a mutex semaphore when we go to a multi-threaded version of the library -QAK */
+        bitfile_rec = HAatom_object(bitid);
+        last_bit_id=bitid;
+      } /* end if */
+
+    if (bitfile_rec == NULL)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     /* Check for write access */
@@ -423,7 +435,8 @@ intn
 Hbitread(int32 bitid, intn count, uint32 *data)
 {
     CONSTR(FUNC, "Hbitread");   /* for HERROR */
-    bitrec_t   *bitfile_rec;    /* access record */
+    static int32 last_bit_id=(-1); /* the bit ID of the last bitfile_record accessed */
+    static bitrec_t   *bitfile_rec=NULL;    /* access record */
     uint32 l;
     uint32      b = 0;          /* bits to return */
     uint16      orig_count;     /* the original number of bits to read in */
@@ -432,7 +445,18 @@ Hbitread(int32 bitid, intn count, uint32 *data)
     /* clear error stack and check validity of file id */
     HEclear();
 
-    if (count <= 0 || (bitfile_rec = HAatom_object(bitid)) == NULL)
+    if (count <= 0)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    /* cache the bitfile_record since this routine gets called so many times */
+    if(bitid!=last_bit_id)
+      {
+/* This needs a mutex semaphore when we go to a multi-threaded version of the library -QAK */
+        bitfile_rec = HAatom_object(bitid);
+        last_bit_id=bitid;
+      } /* end if */
+
+    if (bitfile_rec == NULL)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     /* Check for write access */
