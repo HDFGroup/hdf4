@@ -263,6 +263,9 @@ do_ncdump(path, specp)
     int ncid = ncopen(path, NC_NOWRITE); /* netCDF id */
     vnode* vlist = newvlist();	/* list for vars specified with -v option */
 
+    /* don't crash on error */
+    ncopts = 0;
+
     if (ncid == -1) { 
         error("ncopen failed on %s", path);
         return;
