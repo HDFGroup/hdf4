@@ -473,7 +473,7 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode,
 	 }
 	 aNode->children[t] = (char*)HDmalloc(sizeof(char)*4);
          strcpy(aNode->children[t], "***"); 
-	 tempPtr = (char*)HDgettagname((uint16) tag);
+	 tempPtr = (char*)HDgettagdesc((uint16) tag);
 	 if (!tempPtr) {
 	    aNode->type[t] = (char*)HDmalloc(sizeof(char)*15);
 	    strcpy(aNode->type[t], "Unknown Object"); 
