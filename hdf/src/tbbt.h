@@ -56,45 +56,19 @@ struct tbbt_node
 #else                           /* !macintosh */
 # define  Cnt(node,s)   ( LEFT==(s) ? LeftCnt(node) : RightCnt(node) )
 #endif                          /* !macintosh */
-#ifdef QAK
-# define  HasChild(n,s) ( TBBT_CHILD(s) & (n)->flags )
-# define  Heavy(n,s)    ( TBBT_HEAVY(s) & (n)->flags )
-# define  Intern(n)     ( TBBT_INTERN & (n)->flags )
-# define  UnBal(n)      ( TBBT_UNBAL & (n)->flags )
-#else
 # define  HasChild(n,s) ( Cnt(n,s)>0 )
 # define  Heavy(n,s)    ( (s) & (LeftCnt(n)>RightCnt(n) ? LEFT : \
                  LeftCnt(n)==RightCnt(n) ? 0 : RIGHT))
 # define  Intern(n)     ( LeftCnt(n) && RightCnt(n) )
 # define  UnBal(n)      ( LeftCnt(n)>RightCnt(n) ? LEFT : \
                  LeftCnt(n)==RightCnt(n) ? 0 : RIGHT)
-#endif
 # define  Double(n)     ( TBBT_DOUBLE & (n)->flags )
 # define  Other(side)   ( LEFT + RIGHT - (side) )
-#ifdef QAK
-# define  Delta(n,s)    (  ( Heavy(n,s) ? 1 : -1 )                          \
-                            *  ( Double(n) ? 2 : UnBal(n) ? 1 : 0 )  )
-#if defined macintosh || defined MAC || defined __MWERKS__ || defined SYMANTEC_C     /* There is a limit to recursive
-                                               macro substitution */
-# define  SetFlags(n,s,c,b,i)   (  ( -2<(b) && (b)<2 ? 0 : TBBT_DOUBLE )   \
-    |  ( 0>(b) ? TBBT_HEAVY(s) : (b)>0 ? TBBT_HEAVY( 1 + 2 - (s)) : 0 )    \
-    |  ( ( LEFT==(s) ? (c) : LeftCnt(n) ) << TBBT_BITS )                   \
-    |  ( (i) ? TBBT_INTERN : 0 )  )
-#else                           /* !macintosh */
-# define  SetFlags(n,s,c,b,i)   (  ( -2<(b) && (b)<2 ? 0 : TBBT_DOUBLE )   \
-    |  ( 0>(b) ? TBBT_HEAVY(s) : (b)>0 ? TBBT_HEAVY(Other(s)) : 0 )        \
-    |  ( ( LEFT==(s) ? (c) : LeftCnt(n) ) << TBBT_BITS )                   \
-    |  ( (i) ? TBBT_INTERN : 0 )  )
-#endif                          /* !macintosh */
-/* n=node, s=LEFT/RIGHT, c=`s' descendant count, b=balance(s), i=internal */
-/* SetFlags( ptr, LEFT, Cnt(RIGHT,kid), -2, YES ) */
-#else
 # define  Delta(n,s)    (  ( Heavy(n,s) ? 1 : -1 )                          \
                             *  ( Double(n) ? 2 : UnBal(n) ? 1 : 0 )  )
 # define  SetFlags(n,s,b,i)   (  ( -2<(b) && (b)<2 ? 0 : TBBT_DOUBLE )   \
     |  ( 0>(b) ? TBBT_HEAVY(s) : (b)>0 ? TBBT_HEAVY(Other(s)) : 0 )        \
     |  ( (i) ? TBBT_INTERN : 0 )  )
-#endif
   };
 
 /* Pointer to the tbbt node free list */
@@ -106,10 +80,16 @@ struct tbbt_tree
   {
       TBBT_NODE  *root;
       unsigned long count;      /* The number of nodes in the tree currently */
+      uintn       fast_compare; /* use a faster in-line compare (with casts) instead of function call */
       intn        (*compar) (VOIDP k1, VOIDP k2, intn cmparg);
       intn        cmparg;
 #endif                          /* TBBT_INTERNALS */
   };
+
+/* Define the "fast compare" values */
+#define TBBT_FAST_UINT16_COMPARE    1
+#define TBBT_FAST_INT32_COMPARE     2
+
 #ifndef TBBT_INTERNALS
 typedef TBBT_NODE **TBBT_TREE;
 #endif /* TBBT_INTERNALS */
@@ -170,16 +150,18 @@ extern      "C"
 #endif                          /* c_plusplus || __cplusplus */
 
     TBBT_TREE  *tbbtdmake
-                (intn (*compar) (VOIDP, VOIDP, intn), intn arg);
+                (intn (*compar) (VOIDP, VOIDP, intn), intn arg, uintn fast_compare);
 /* Allocates and initializes an empty threaded, balanced, binary tree and
  * returns a pointer to the control structure for it.  You can also create
  * empty trees without this function as long as you never use tbbtd* routines
  * (tbbtdfind, tbbtdins, tbbtdfree) on them.
  * Examples:
  *     int keycmp();
- *     TBBT_ROOT *root= tbbtmake( keycmp, (int)keysiz );
+ *     TBBT_ROOT *root= tbbtdmake( keycmp, (int)keysiz , 0);
  * or
- *     void *root= tbbtmake( strcmp, 0 );
+ *     void *root= tbbtdmake( strcmp, 0 , 0);
+ * or
+ *     void *root= tbbtdmake( keycmp, (int)keysiz , TBBT_FAST_UINT16_COMPARE);
  * or
  *     TBBT_NODE *root= NULL;        (* Don't use tbbtd* routines *)
  * `cmp' is the routine to be used to compare two key values [in tbbtdfind()
@@ -195,6 +177,10 @@ extern      "C"
  * (only newer, ANSI-influenced C compilers are likely to be able to make this
  * kind of assumption).  You can also use a key comparison routine that expects
  * pointers to data items rather than key values.
+ *  The "fast compare" option is for keys of simple numeric types (currently
+ *      uint16 and int32) and avoids the function call for faster searches in
+ *      some cases.  The key comparison routine is still required for some
+ *      insertion routines which use it.
  *
  * Most of the other routines expect a pointer to a root node of a tree, not
  * a pointer to the tree's control structure (only tbbtdfind(), tbbtdins(),

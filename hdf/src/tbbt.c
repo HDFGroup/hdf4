@@ -27,8 +27,8 @@ static char RcsId[] = "@(#)$Revision$";
 #define   Alloc(cnt,typ)   (typ *) HDmalloc( (cnt) * sizeof(typ) )
 #define   Free(x)           (HDfree((VOIDP)x))
 
-# define   KEYcmp(k1,k2,a)   (  (NULL!=compar) ? (*compar)( k1, k2, a)         \
-                             : HDmemcmp( k1, k2, 0<(a) ? (a) : (intn)HDstrlen(k1) )  )
+# define   KEYcmp(k1,k2,a) ((NULL!=compar) ? (*compar)( k1, k2, a) \
+                 : HDmemcmp( k1, k2, 0<(a) ? (a) : (intn)HDstrlen(k1) )  )
 
 VOID        tbbt1dump
             (TBBT_NODE * node, intn method);
@@ -115,6 +115,7 @@ tbbtprev(TBBT_NODE * node)
 }
 
 /* tbbtfind -- Look up a node in a tree based on a key value */
+/* tbbtffind is based on this routine - fix bugs in both places! */
 /* Returns a pointer to the found node (or NULL) */
 TBBT_NODE  *
 tbbtfind(TBBT_NODE * root, VOIDP key,
@@ -142,6 +143,59 @@ tbbtfind(TBBT_NODE * root, VOIDP key,
     return ((0 == cmp) ? ptr : NULL);
 }
 
+/* tbbtffind -- Look up a node in a tree based on a key value */
+/* This routine is based on tbbtfind (fix bugs in both places!) */
+/* Returns a pointer to the found node (or NULL) */
+TBBT_NODE  *
+tbbtffind(TBBT_NODE * root, VOIDP key, uintn fast_compare, TBBT_NODE ** pp)
+{
+    TBBT_NODE  *ptr = root;
+    TBBT_NODE  *parent = NULL;
+    intn        cmp = 1;
+
+    switch(fast_compare)
+      {
+        case TBBT_FAST_UINT16_COMPARE:
+            if (ptr)
+              {
+                  intn        side;
+
+                  while (0 != (cmp = (*(uint16 *)key - *(uint16 *)ptr->key)))
+                    {
+                        parent = ptr;
+                        side = (cmp < 0) ? LEFT : RIGHT;
+                        if (!HasChild(ptr, side))
+                            break;
+                        ptr = ptr->link[side];
+                    }
+              }
+            if (NULL != pp)
+                *pp = parent;
+            return ((0 == cmp) ? ptr : NULL);
+
+        case TBBT_FAST_INT32_COMPARE:
+            if (ptr)
+              {
+                  intn        side;
+
+                  while (0 != (cmp = (*(int32 *)key - *(int32 *)ptr->key)))
+                    {
+                        parent = ptr;
+                        side = (cmp < 0) ? LEFT : RIGHT;
+                        if (!HasChild(ptr, side))
+                            break;
+                        ptr = ptr->link[side];
+                    }
+              }
+            if (NULL != pp)
+                *pp = parent;
+            return ((0 == cmp) ? ptr : NULL);
+
+        default:
+            return(NULL);
+    } /* end switch */
+} /* tbbtffind() */
+
 /* tbbtdfind -- Look up a node in a "described" tree based on a key value */
 /* Returns a pointer to the found node (or NULL) */
 TBBT_NODE  *
@@ -149,7 +203,10 @@ tbbtdfind(TBBT_TREE * tree, VOIDP key, TBBT_NODE ** pp)
 {
     if (tree == NULL)
         return (NULL);
-    return (tbbtfind(tree->root, key, tree->compar, tree->cmparg, pp));
+    if(tree->fast_compare!=0)
+        return (tbbtffind(tree->root, key, tree->fast_compare, pp));
+    else
+        return (tbbtfind(tree->root, key, tree->compar, tree->cmparg, pp));
 }
 
 /* tbbtless -- Find a node in a tree which is less than a key, */
@@ -659,7 +716,7 @@ tbbtrem(TBBT_NODE ** root, TBBT_NODE * node, VOIDP *kp)
 /* tbbtdmake - Allocate a new tree description record for an empty tree */
 /* Returns a pointer to the description record */
 TBBT_TREE  *
-tbbtdmake(intn (*cmp) (VOIDP /* k1 */, VOIDP /* k2 */, intn /* arg */), intn arg)
+tbbtdmake(intn (*cmp) (VOIDP /* k1 */, VOIDP /* k2 */, intn /* arg */), intn arg, uintn fast_compare)
 {
     TBBT_TREE  *tree = Alloc(1, TBBT_TREE);
 
@@ -667,6 +724,7 @@ tbbtdmake(intn (*cmp) (VOIDP /* k1 */, VOIDP /* k2 */, intn /* arg */), intn arg
         return (NULL);
     tree->root = NULL;
     tree->count = 0;
+    tree->fast_compare=fast_compare;
     tree->compar = cmp;
     tree->cmparg = arg;
     return (tree);
