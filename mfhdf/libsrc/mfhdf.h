@@ -19,8 +19,13 @@
 #define HDF 1
 #endif
 
+/* change this back if it causes problems on other machines than the Alhpa-QAK */
+#ifdef OLD_WAY
 #include "hdf.h"
 #include "netcdf.h"
+#else /* OLD_WAY */
+#include "local_nc.h"
+#endif /* OLD_WAY */
 
 /* use this as marker for unlimited dimension */
 #define SD_UNLIMITED NC_UNLIMITED
