@@ -688,6 +688,7 @@ c               _HDF_VSUNPACK(1) for unpacking
       integer vs, bufsz, nrecs
       integer buf, fldbuf
       character*(*) buflds, pckfld
+      integer vsfncpk
       
       vsfnpak = vsfncpk(vs,packtype,buflds,buf,bufsz,nrecs,pckfld,
      +                 fldbuf, len(buflds), len(pckfld)) 
@@ -706,6 +707,7 @@ c               _HDF_VSUNPACK(1) for unpacking
       integer vs, bufsz, nrecs
       integer buf
       character*(*) buflds, pckfld, fldbuf
+      integer vsfccpk
       
       vsfcpak = vsfccpk(vs,packtype,buflds,buf,bufsz,nrecs,pckfld,
      +                 fldbuf, len(buflds), len(pckfld)) 
