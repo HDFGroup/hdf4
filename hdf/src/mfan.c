@@ -1805,9 +1805,7 @@ done:
 
 /*--------------------------------------------------------------------------
  NAME
-    ANfileinfo
- PURPOSE
-    Report high-level information about the ANxxx interface for a given file.
+    ANfileinfo - Report high-level information about the ANxxx interface for a given file.
  USAGE
     intn ANfileinfo(an_id, n_file_label, n_file_desc, n_obj_label, n_obj_desc)
         int32 an_id;        IN:  annotation interface id
@@ -2597,7 +2595,7 @@ ANannlist(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref,
 
  COMMENTS, BUGS, ASSUMPTIONS
  EXAMPLES
- REVISION LOG
+ REVISION LOG 
  *------------------------------------------------------------------------*/
 EXPORT int32
 ANannlen(int32 ann_id)
@@ -3001,6 +2999,7 @@ tag2atype(uint16 atag)
     case DFTAG_FD:  atype = AN_FILE_DESC;  break;
     case DFTAG_DIL: atype = AN_DATA_LABEL; break;
     case DFTAG_DIA: atype = AN_DATA_DESC;  break;
+    /* This will cause warnings on some compiliers */
     default: atype = -1;
     } /* switch */
   return atype;
