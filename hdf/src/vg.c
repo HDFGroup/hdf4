@@ -1,64 +1,8 @@
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.15  1993/09/30 19:05:25  koziol
-Added basic compressing functionality for special tags.
-
- * Revision 1.14  1993/09/28  18:04:53  koziol
- * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
- * tag handling.  Added new compression special tag type.
- *
- * Revision 1.13  1993/08/19  16:45:47  chouck
- * Added code and tests for multi-order Vdatas
- *
- * Revision 1.12  1993/08/16  21:46:34  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.10  1993/07/23  20:49:16  sxu
- * Changed 'void' to 'VOID' VSdump, Vinitialize, Vsetzap, Remove_vfile and unpackvs.
- *
- * Revision 1.9  1993/05/19  20:05:06  chouck
- * Moved general interest VSet info out of vg.h and into hdf.h
- * Removed OLD_WAY parts of vproto.h
- * Fixed a problem in DFfindnextref()
- *
- * Revision 1.8  1993/04/26  15:08:29  chouck
- * Fixes for the convex (doesn't like foo(VOID) prototypes)
- * Also added extern "C" { } around prototypes
- *
- * Revision 1.7  1993/04/19  22:48:26  koziol
- * General Code Cleanup to reduce/remove errors on the PC
- *
- * Revision 1.6  1993/04/14  21:39:27  georgev
- * Had to add some VOIDP casts to some functions to make the compiler happy.
- *
- * Revision 1.5  1993/04/06  17:23:40  chouck
- * Added Vset macros
- *
- * Revision 1.4  1993/03/29  16:50:28  koziol
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.3  1993/01/19  05:56:12  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.2  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
+/* $Id$ */
 
 /*
 *
