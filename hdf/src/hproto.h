@@ -4070,33 +4070,33 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
     HDFLIBAPI      FRETVAL(intf) nvsqfnelt
                 (intf * vkey, intf * nelt);
 
-    HDFLIBAPI      FRETVAL(intf)nvsqfintr
+    HDFLIBAPI      FRETVAL(intf) nvsqfintr
                 (intf * vkey, intf * interlace);
 
-    HDFLIBAPI      FRETVAL(intf)nvsqfldsc
+    HDFLIBAPI      FRETVAL(intf) nvsqfldsc
                 (intf * vkey, _fcd fields, intf *fieldslen);
 
-    HDFLIBAPI      FRETVAL(intf)nvsqfvsiz
+    HDFLIBAPI      FRETVAL(intf) nvsqfvsiz
                 (intf * vkey, intf * size);
 
-    HDFLIBAPI      FRETVAL(intf)nvsqnamec  
+    HDFLIBAPI      FRETVAL(intf) nvsqnamec  
                 (intf * vkey, _fcd name, intf *namelen);
 
-    HDFLIBAPI      FRETVAL(intf)nvsfccpk
+    HDFLIBAPI      FRETVAL(intf) nvsfccpk
                 (intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz,
         intf *nrecs, _fcd pckfld, _fcd fldbuf, intf *buflds_len, intf *fld_len);
 
-    HDFLIBAPI      FRETVAL(intf)nvsfncpk
+    HDFLIBAPI      FRETVAL(intf) nvsfncpk
                 (intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz,
         intf *nrecs, _fcd pckfld, intf *fldbuf, intf *buflds_len, intf *fld_len);
 
-    HDFLIBAPI      FRETVAL(intf)nvscsetblsz
+    HDFLIBAPI      FRETVAL(intf) nvscsetblsz
                 (intf *id, intf *block_size);
 
-    HDFLIBAPI      FRETVAL(intf)nvscsetnmbl
+    HDFLIBAPI      FRETVAL(intf) nvscsetnmbl
                 (intf *id, intf *num_blocks);
 
-    HDFLIBAPI      FRETVAL(intf)nvscgblinfo
+    HDFLIBAPI      FRETVAL(intf) nvscgblinfo
                 (intf *id, intf *block_size, intf *num_blocks);
 
 /* 
