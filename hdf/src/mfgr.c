@@ -139,6 +139,13 @@ intn GRgetattr(int32 dimid|riid|grid,int32 index,VOIDP data)
 int32 GRfindattr(int32 dimid|riid|grid,char *name)
     - Get the index of an attribute with a given name for an object.
 
+Chunking Functions:
+     GRsetchunk     -- make GR a chunked GR
+     GRgetchunkinfo -- get Info on GR
+     GRwritechunk   -- write the specified chunk to the GR
+     GRreadchunk    -- read the specified chunk to the GR
+     GRsetchunkcache -- maximum number of chunks to cache 
+
 LOCAL ROUTINES
 intn GRIil_convert(const VOIDP inbuf,gr_interlace_t inil,VOIDP outbuf,
         gr_interlace_t outil,int32 dims[2],int32 ncomp,int32 nt);
@@ -5168,6 +5175,8 @@ intn GRPshutdown(void)
 /* Debugging */
 /* #define CHK_DEBUG */
 
+/* NOTE: the definition of the union HDF_CHUNK_DEF can be found in hproto.h */
+
 /******************************************************************************
  NAME
       GRsetchunk  -- make GR a chunked GR
@@ -5361,20 +5370,9 @@ GRsetchunk(int32 riid,             /* IN: raster access id */
           chunk[0].cinfo = &cdef->comp.cinfo; 
           chunk[0].minfo = &minfo; /* dummy */
           break;
-      case (HDF_CHUNK | HDF_NBIT):
-          cdef  = (HDF_CHUNK_DEF *)&chunk_def;
-          cdims = cdef->nbit.chunk_lengths;
-          chunk[0].chunk_flag = SPECIAL_COMP;  /* NBIT is a type of compression */
-          chunk[0].comp_type  = COMP_CODE_NBIT;   /* Nbit compression? */
-          chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
-          /* set up n-bit parameters */
-          cinfo.nbit.nt        = ri_ptr->img_dim.nt;
-          cinfo.nbit.sign_ext  = cdef->nbit.sign_ext;
-          cinfo.nbit.fill_one  = cdef->nbit.fill_one;
-          cinfo.nbit.start_bit = cdef->nbit.start_bit;
-          cinfo.nbit.bit_len   = cdef->nbit.bit_len;
-          chunk[0].cinfo = &cinfo; 
-          chunk[0].minfo = &minfo; /* dummy */
+      case (HDF_CHUNK | HDF_NBIT): /* don't support NBIT for GRs */
+          ret_value = FAIL;
+          goto done;
           break;
       default:
           ret_value = FAIL;
@@ -5578,8 +5576,8 @@ GRsetchunk(int32 riid,             /* IN: raster access id */
 ******************************************************************************/
 intn 
 GRgetchunkinfo(int32 riid,               /* IN: sds access id */
-               HDF_CHUNK_DEF *chunk_def,  /* IN/OUT: chunk definition */
-               int32 *flags               /* IN/OUT: flags */)
+               HDF_CHUNK_DEF *chunk_def, /* IN/OUT: chunk definition */
+               int32 *flags              /* IN/OUT: flags */)
 {
     CONSTR(FUNC, "GRgetchunkinfo");
     ri_info_t *ri_ptr = NULL;          /* ptr to the image to work with */
@@ -5646,7 +5644,9 @@ GRgetchunkinfo(int32 riid,               /* IN: sds access id */
                      case COMP_CODE_NONE:
                          *flags = HDF_CHUNK;
                          break;
-                     case COMP_CODE_NBIT:
+                     case COMP_CODE_NBIT: 
+                         /* is this an error? 
+                            NBIT can't be set in GRsetchunk(). */
                          *flags = (HDF_CHUNK | HDF_NBIT);
                          break;
                      default:
@@ -5701,7 +5701,7 @@ GRgetchunkinfo(int32 riid,               /* IN: sds access id */
        -GeorgeV
 ******************************************************************************/
 intn 
-GRwritechunk(int32 riid,      /* IN: access aid to GR */
+GRwritechunk(int32 riid,       /* IN: access aid to GR */
              int32 *origin,    /* IN: origin of chunk to write */
              const VOID *datap /* IN: buffer for data */)
 {
@@ -5884,7 +5884,7 @@ printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_si
        -GeorgeV
 ******************************************************************************/
 intn 
-GRreadchunk(int32 riid,   /* IN: access aid to GR */
+GRreadchunk(int32 riid,    /* IN: access aid to GR */
             int32 *origin, /* IN: origin of chunk to write */
             VOID *datap    /* IN/OUT: buffer for data */)
 {
@@ -6005,6 +6005,7 @@ printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_si
                       /*    requested interlace scheme. */
                       /* Note: This is implemented in a horribly ugly & slow manner, but I'm */
                       /*        in a bit of a hurry right now - QAK */
+                      /* I took this code from GRwrite() and put it here - GV */
                       if(ri_ptr->im_il != MFGR_INTERLACE_PIXEL)
                         {
                             VOIDP pixel_buf;  /* buffer for the pixel interlaced data */
@@ -6100,11 +6101,11 @@ AUTHOR
 ******************************************************************************/
 intn
 GRsetchunkcache(int32 riid,     /* IN: access aid to mess with */
-                int32 maxcache,  /* IN: max number of chunks to cache */
-                int32 flags      /* IN: flags = 0, HDF_CACHEALL */)
+                int32 maxcache, /* IN: max number of chunks to cache */
+                int32 flags     /* IN: flags = 0, HDF_CACHEALL */)
 {
     CONSTR(FUNC, "GRsetchunkcache");
-    ri_info_t *ri_ptr = NULL;          /* ptr to the image to work with */
+    ri_info_t *ri_ptr = NULL;        /* ptr to the image to work with */
     int16      special;              /* Special code */
     intn      ret_value = SUCCEED;
 
@@ -6154,8 +6155,8 @@ GRsetchunkcache(int32 riid,     /* IN: access aid to mess with */
     ret_value = Hinquire(ri_ptr->img_aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
     if (ret_value != FAIL)
       {
-          if (special == SPECIAL_CHUNKED)
-                ret_value = HMCsetMaxcache(ri_ptr->img_aid, maxcache, flags); /* set cache*/
+          if (special == SPECIAL_CHUNKED) /* set cache*/
+              ret_value = HMCsetMaxcache(ri_ptr->img_aid, maxcache, flags); 
           else
               ret_value = FAIL;
       }
