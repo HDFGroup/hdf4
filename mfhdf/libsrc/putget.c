@@ -1276,6 +1276,7 @@ Void *values ;
                                 offset, vp->type, 
                                 (uint32)*edges, values))
                 return(-1) ;
+            vp->numrecs = MAX(vp->numrecs, (*start + *edges));
         } else 
 #endif
           {
