@@ -5,9 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/12/18 15:46:32  mfolk
+added the line "access_rec->posn += bytes_read", because the linked
+block read routine did not update the read pointer properly.  This
+addition was at line 733, in function HLIread.
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*LINTLIBRARY*/
 /*+ hblocks .c
@@ -731,6 +736,7 @@ PRIVATE int32 HLIread(access_rec, length, data)
 #endif
     } while (length > 0);      /* if still somemore to read in, repeat */
 
+    access_rec->posn += bytes_read;
     return bytes_read;
 }
 
