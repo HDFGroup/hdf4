@@ -363,12 +363,12 @@ intn DFPreadref(filename, ref)
  RETURNS
     SUCCEED on success, FAIL on failure.
  DESCRIPTION
-    Sets the ref # of the next palette to write to a file
+    Sets the ref # of the next palette to write to a file.  The filename is
+    ignored -- this is probably a bug.  No matter what file the next palette
+    is written to, it will have the reference number ref.
  GLOBAL VARIABLES
     Writeref
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
+
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
 intn DFPwriteref(char *filename, uint16 ref)
