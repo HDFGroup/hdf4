@@ -26,9 +26,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.18  1992/07/09 01:18:57  koziol
-More PC fixes
+Revision 1.19  1992/07/15 21:48:48  sxu
+No change
 
+ * Revision 1.18  1992/07/09  01:18:57  koziol
+ * More PC fixes
+ *
  * Revision 1.17  1992/07/08  15:39:42  chouck
  * Removed return(0) at end of main().  Took out some debugging
  * info from the -t option
