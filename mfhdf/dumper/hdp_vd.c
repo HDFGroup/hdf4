@@ -530,7 +530,7 @@ static intn dvd(dump_info_t *dumpvd_opts, intn curr_arg,
 	      int32 z, lastItem, count=0;
 	      switch (dumpvd_opts->contents) {
 	         case DVERBOSE: /* dump all information */
-                    fprintf(fp, "Vdata: %d\n", (int) i+1);
+                    fprintf(fp, "Vdata: %d\n", (int) i);
 		    fprintf(fp, "   tag = %d; ", (int) vdata_tag);
 		    fprintf(fp, "reference = %d;\n", (int) vdata_ref);
 		    fprintf(fp, "   number of records = %d; ",

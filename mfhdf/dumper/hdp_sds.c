@@ -617,11 +617,11 @@ static intn dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[
                      if (isdimvar) {
                          fprintf(fp,"\nDimension Variable Name = %s\n\t ",
 				 name); 
-			 fprintf(fp,"Index = %i\n\t Type= %s\n", i+1, nt_desc);
+			 fprintf(fp,"Index = %i\n\t Type= %s\n", i, nt_desc);
                      } 
 		     else {
                          fprintf(fp,"\nVariable Name = %s\n\t Index = ", name);
-			 fprintf(fp,"%i\n\t Type= %s\n", i+1, nt_desc);
+			 fprintf(fp,"%i\n\t Type= %s\n", i, nt_desc);
                      }
 		     HDfreespace(nt_desc);
 		     fprintf(fp,"\t Ref. = %i\n", (int)sd_ref);

@@ -304,7 +304,7 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
 	   switch (dumpvg_opts->contents) {
 	      case DVERBOSE: /* dump all information */
 		 fprintf(fp, "\n");
-	         fprintf(fp, "\nVgroup:%d\n", (int) i+1);
+	         fprintf(fp, "\nVgroup:%d\n", (int) i);
 		 fprintf(fp, "     tag = %d; reference = %d;\n",
 		         (int)vg_tag, (int)vg_ref);
 		 fprintf(fp, "     name = %s; class = %s;\n", vgname, vgclass);
@@ -345,10 +345,10 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
 /*
 	 printf("\n\n\n");
 	 for (y=0; y<num_nodes; y++) {
-	    printf("Index = %d;\n", list[y]->index+1);
+	    printf("Index = %d;\n", list[y]->index);
 	    printf("Name = %s;\n", list[y]->name);
 	    for (i=0; list[y]->children[i]!=NULL; i++) {
-	       printf("   #%d: %s;", i+1, list[y]->children[i]);
+	       printf("   #%d: %s;", i, list[y]->children[i]);
                printf(" type = %s;\n", list[y]->type[i]);   
 	    }
 	    printf("\n");
@@ -358,8 +358,8 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
       
 	 if (dumpvg_opts->contents!=DDATA) {
 	    printf("\n\nGraphical representation of the file:-\n");
-	    printf("\n   vg#: vgroup;   vd: vdata;   ");
-	    printf("~v: non-vgroup/non-vdata object\n\n");
+	    printf("(vg#: vgroup;   vd: vdata;   ");
+	    printf("~v: non-vgroup/non-vdata object)\n\n");
 	    for (y=0; y<num_nodes; y++) {
 	       int32 firstchild=FALSE;;
 	       level = -1;
@@ -403,7 +403,7 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, node *aNode, int32 skip)
          Vgetclass(vgt,vgclass);
 	 if (!skip) {
             fprintf(fp, "     #%d (Vgroup)\n\ttag = %d;",
-		    (int) t+1, (int) vgotag);
+		    (int) t, (int) vgotag);
 	    fprintf(fp, "reference = %d;\n\tnumber of entries = %d;\n",
 	            (int)vgoref, (int)ne);
             fprintf(fp, "\tname = %s; class = %s\n", vgname, vgclass);
@@ -429,7 +429,7 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, node *aNode, int32 skip)
 
 
 	 if (!skip) {
-	    fprintf(fp, "     #%d (Vdata)\n", (int) t+1);
+	    fprintf(fp, "     #%d (Vdata)\n", (int) t);
 	    fprintf(fp, "\ttag = %d; ", (int) vsotag);
 	    fprintf(fp, "reference = %d; \n", (int) vsoref);
 	    fprintf(fp, "\tnumber of records = %d; ", (int) nv);
@@ -478,7 +478,7 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, node *aNode, int32 skip)
 	 if (!name)
 	    name = "Unknown Tag";
          if (!skip) {
-	    fprintf(fp, "     #%d (%s)\n", (int) t+1, name);
+	    fprintf(fp, "     #%d (%s)\n", (int) t, name);
 	    fprintf(fp, "\ttag = %d; reference = %d;\n", (int) tag, (int) vsid);
 	 }
 	 aNode->type[t] = (char*)malloc(sizeof(char)*MAXNAMELEN);
@@ -507,7 +507,7 @@ void display(node *ptr, int32 level, node **list, int32 num_nodes, int32 firstch
 	 printf("\t");
    if (level>0)
       printf("-- ");
-   printf("vg%d ", ptr->index+1);
+   printf("vg%d ", ptr->index);
    if (ptr->children[0]==NULL)
       printf("\n");
    if (!ptr->displayed) {
@@ -533,7 +533,7 @@ void display(node *ptr, int32 level, node **list, int32 num_nodes, int32 firstch
 	       for (z=0; z<num; z++)
 		  printf("\t");
             printf("-- ");
-	    /* printf("%s%d ", ptr->type[i], i+1); */
+	    /* printf("%s%d ", ptr->type[i], i); */
 	    printf("%s  \n", ptr->type[i]);
 	    newline = FALSE;
 	 }
