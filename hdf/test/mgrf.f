@@ -472,12 +472,12 @@ C
 C
 C---Data
 C 
-      integer image_data(NCOMP, X_LENGTH, Y_LENGTH)
-      integer image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
+      integer*4 image_data(NCOMP, X_LENGTH, Y_LENGTH)
+      integer*4 image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
 C
 C---Default pixel value
 C
-      integer pixel_value(2)
+      integer*4 pixel_value(2)
 C
 C---Chunking dimension arrays
 C
@@ -855,12 +855,12 @@ C
 C
 C---Data
 C 
-      integer image_data(NCOMP, X_LENGTH, Y_LENGTH)
-      integer image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
+      integer*4 image_data(NCOMP, X_LENGTH, Y_LENGTH)
+      integer*4 image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
 C
 C---Default pixel value
 C
-      integer pixel_value(NCOMP)
+      integer*4 pixel_value(NCOMP)
 C
 C---We will write/read to four different files corresponding to the
 C   different compression types.
@@ -1176,20 +1176,20 @@ C
 C
 C---Data
 C 
-      integer chunk11(NCOMP* X_CH_LENGTH*Y_CH_LENGTH)
-      integer chunk21(NCOMP* X_CH_LENGTH*Y_CH_LENGTH)
-      integer chunk52(NCOMP* X_CH_LENGTH*Y_CH_LENGTH)
-      integer chunk52_out(NCOMP* X_CH_LENGTH*Y_CH_LENGTH)
-      integer data_org(NCOMP* X_LENGTH*Y_LENGTH)
+      integer*4 chunk11(NCOMP* X_CH_LENGTH*Y_CH_LENGTH)
+      integer*4 chunk21(NCOMP* X_CH_LENGTH*Y_CH_LENGTH)
+      integer*4 chunk52(NCOMP* X_CH_LENGTH*Y_CH_LENGTH)
+      integer*4 chunk52_out(NCOMP* X_CH_LENGTH*Y_CH_LENGTH)
+      integer*4 data_org(NCOMP* X_LENGTH*Y_LENGTH)
        
-      integer image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
-      integer data_arr(NCOMP,X_LENGTH,Y_LENGTH)
+      integer*4 image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
+      integer*4 data_arr(NCOMP,X_LENGTH,Y_LENGTH)
       integer n_images, n_file_attrs
       equivalence (data_org(1), data_arr(1,1,1))
 C
 C---Default pixel value
 C
-      integer pixel_value(3)
+      integer*4 pixel_value(3)
 C
 C---Chunking dimension arrays
 C
