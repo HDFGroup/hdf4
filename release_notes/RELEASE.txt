@@ -35,12 +35,17 @@ CONTENTS
 New Features and Changes:
 ========================
 
-o ZLIB and JPEG libraries were removed from the HDF4 distribution source.
-  Please read INSTALL in the top HDF4 directory for instructions
-  how to build HDF4 Library and applications.
+o IMPORTANT: HDF4 HAS A NEW CONFIGURATION 
 
-o HDF4 has an optional SZIP compression; please refer to the INSTALL 
-  file for instructions how to build with/without the SZIP Library.
+  ZLIB and JPEG libraries were removed from the HDF4 distribution source.
+  ZLIB and JPEG have to be installed on the system before HDF4 library
+  can be built or HDF4 precompiled binaries can be used.
+  Please read INSTALL in the top HDF4 directory for instructions
+  how to build the HDF4 library and applications.
+
+o HDF4 has an optional SZIP compression method; in order to use SZIP compression,
+  SZIP library has to be installed on the system. Please refer to the INSTALL 
+  file for instructions on how to build with/without the SZIP Library.
   SZIP in HDF4 is free for non-commercial use; 
   see http://hdf.ncsa.uiuc.edu/doc_resource/SZIP/Commercial_szip.html 
   for information regarding commercial use. 
@@ -50,6 +55,12 @@ o HDF4 has an optional SZIP compression; please refer to the INSTALL
   the "HDF4 Reference Manual" entries for the GRsetcompress and 
   SDsetcompress functions. 
 
+o IMPORTANT note about prebuild binaries:
+
+  NCSA precompiled binaries has SZIP compression method enabled for all platforms
+  except Crays T3E and SV1 and Linux 2.4 SuSE x86_64. To use the binaries download
+  the SZIP library from http://hdf.ncsa.uiuc.edu/doc_resource/SZIP/
+
 o The following new tools have been added
 
       hrepack
@@ -58,6 +69,8 @@ o The following new tools have been added
 
   See "HDF4 Reference Manual" in the HDF 4.2r0 documentation set for more
   information.
+
+o fp2hdf is removed. It is replaced with hdfimport.
 
 o Helper scripts to facilitate HDF4 installation and compilation were added:
   
@@ -78,6 +91,7 @@ o HDF4 was ported to the following platforms
       Linux 2.4 RH8 and RH9 
       Linux 2.4 RH8 64-bit, SuSE 64-bit
       Linux 2.4 ia64
+      Linux 2.4 SGI (Altrix)
 
 
 Bugs fixed since HDF4.1r5
@@ -87,36 +101,33 @@ Bugs fixed since HDF4.1r5
         -g to suppress the data of global (or file) attributes
         -l to suppress the data of local attributes
 
-2. The problem where hdp failed on very long file name has been
+2. The problem where hdp failed on a very long file name has been
    fixed. (bug #693)
 
 3. The problem where VSinquire failed when being called on a vdata
-   that has no fields defined, has been fixed. (bug #626)
+   that had no fields defined, has been fixed. (bug #626)
 
-4. A user attempted to change the values of VGNAMELENMAX and VSNAMELENMAX
-   to 256 for her own use, but the hdp output showed that the change was
-   not in effect.  This problem is now fixed. (bug #606)
+4. When the values of VGNAMELENMAX and VSNAMELENMAX are changed
+   the hdp output doesn't reflect the change. This problem is 
+   now fixed. (bug #606)
 
-5. hdp dumpvg failed sometimes when reading a file that has a vgroup 
+5. hdp dumpvg sometimes failed when reading a file that had a vgroup 
    being inserted into another.  This has been fixed. (bug #477)
 
-6. fp2hdf when used with -p option did the opposite of what it was supposed
-   to do with palette files. This problem is now fixed. (bug #800). However
-   the utility hdfimport should be used in the future instead of fp2hdf.
-
-7. hdf2gif failed when a user tried it on JPEG compressed images. (Bug #601).
+6. hdf2gif failed when a user tried it on JPEG compressed images. (Bug #601).
    The problem is now fixed. An error message is displayed if the image is not
    8-bit. If the image is 24-bit, the message suggests using hdf2jpeg.
 
-8. ncdump failed to read NetCDF files 3.5 when there were more than one variable
+7. ncdump failed to read NetCDF files 3.5 when there was more than one variable
    with unlimited dimensions. Fixed.
 
-9. NetCDF part of the HDF4 Library was not ported to Compaq True64 system. Fixed.
+8. The NetCDF part of the HDF4 library was not ported to Compaq True64 system. 
+   Fixed.
 
-10. The hdp commands dumpsds, dumpgr, dumpvd, and dumpvg now display an 
+9. The hdp commands dumpsds, dumpgr, dumpvd, and dumpvg now display an 
     informative message when a non-HDF file is given as input. (Bug #817)
 
-11. The compilation warnings and error on the macro HDFclose are fixed.
+10. The compilation warnings and error on the macro HDFclose are fixed.
     (Bug #818)
 
 Documentation
@@ -147,10 +158,10 @@ HDF 4.2 Release 0 has been tested on the following platforms:
                                   Intel(R) C++ Version 7.1
                                   Intel(R) Fortran Compiler Version 7.1
     Linux 2.4.20-20.9 (RH9)       gcc 3.2.2
-    Linux 2.4.21-2.9.5ws (64-bit) gcc version 3.2.3 20030502 (Red Hat Linux 3.2.3-16)
+    Linux 2.4.21-2.9.5ws x86_64   gcc version 3.2.3 20030502 (Red Hat Linux 3.2.3-16)
                                   g77 based on gcc version 3.2.3
-    Linux 2.4.19-SMP #1           gcc version 3.3.2 (SuSE Linux)
-                                  gcc version 3.3.2
+    Linux 2.4.19-SMP #1 x86_64    gcc version 3.3.2 (SuSE Linux)
+                                  g77 version 3.3.2
     OSF1 V5.1                     Compaq C V6.4-014
 				  Compaq Fortran V5.5-1877
     SunOS 5.7(32 and 64 bit)      WorkShop Compilers 5.0 98/12/15 C 5.0
@@ -161,8 +172,7 @@ HDF 4.2 Release 0 has been tested on the following platforms:
     SunOS 5.8(32 and 64 bit)      Sun WorkShop 6 update 2 C 5.3
      (Solaris 2.8)                Sun WorkShop 6 update 2 Fortran 77 5.3 
 
-    IA-32 Linux 2.4.9             gcc 2.96
-                                  Intel(R) C++ Version 7.0
+    IA-32 Linux 2.4.9-31pctr      Intel(R) C++ Version 7.0
                                   Intel(R) Fortran Compiler Version 7.0
                                   
     IA-64 Linux 2.4.16 ia64       Intel(R) C++ Version 7.0
@@ -171,6 +181,8 @@ HDF 4.2 Release 0 has been tested on the following platforms:
                                   Intel(R) Fortran Compiler Version 7.1
                                   gcc 3.2
                                   g77 GNU Fortran (GCC 3.2) 3.2
+    IA-64 Linux 2.4.21-sgi        Intel(R) C++  Version 7.1
+    (Altrix)                      Intel(R) Fortran Compiler Version 7.1
     Windows 2000 (NT5.0)          MSVC++ 6.0
                                   DEC Visual Fortran 6.0
                                   Intel C and F90 compilers version 7.1
