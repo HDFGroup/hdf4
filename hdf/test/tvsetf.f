@@ -30,7 +30,7 @@ C Output file: tvsetf1.hdf
       include 'fortest.inc'
 
       integer number_failed
-      character*(*) myname
+      character*20 myname
       parameter (myname = 'vsetf')
 
       integer hopen,  vfatch,  vfgid,   vfgnxt, vfinsrt

@@ -20,7 +20,7 @@ C and dimension strings.
 C To avoid the '\0' inserted by HDstrncpy, compare the first 14
 C characters of output and input strings in subroutine compare()
       integer num_failed
-      character*(*) myname
+      character*20 myname
       parameter (myname = 'sdstr')
 
       integer rank, i, j, ret, err

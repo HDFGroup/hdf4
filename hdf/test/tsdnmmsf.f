@@ -32,7 +32,7 @@ C   a couple of calls to char().  If you search on the string
 C   VMS you should be able to find all of the necessary changes.
 C
       integer number_failed
-      character*(*) myname
+      character*20 myname
       parameter (myname = 'sdnmms')
    
       integer dsgdata, dsadata, dssdims, dssrang, dsgrang, dssnt

@@ -34,7 +34,7 @@ C
       include 'fortest.inc'
 
       integer number_failed
-      character*(*) myname
+      character*20  myname
       parameter (myname = 'sdnnt')
 
       integer dspdata, dsgdata, dsadata, dssdims, dssnt

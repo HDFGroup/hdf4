@@ -30,7 +30,7 @@ C
 C
 
       integer number_failed
-      character*(*) myname
+      character*20 myname
       parameter (myname = 'p')
 
       integer dpppal, dpapal, dprest, dpgpal, dpnpals

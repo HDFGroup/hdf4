@@ -22,7 +22,7 @@ C Output files: slabwf.hdf, slab1wf, slab4wf
       include 'fortest.inc'
 
       integer num_err
-      character*(*) myname
+      character*20 myname
       parameter (myname = 'slab')
 
       integer dssdims, dssdisc, dssdist, dssfill

@@ -25,7 +25,7 @@ C Output file: tdf24f.hdf
 C
 C
       integer number_failed
-      character*(*) myname
+      character*20 myname
       parameter (myname = 'r24')
 
       integer d2setil, d2reqil, d2pimg, d2aimg

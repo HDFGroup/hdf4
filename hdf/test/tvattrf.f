@@ -38,8 +38,9 @@ C Output file: tvattrf.hdf
       include 'fortest.inc'
 
       integer number_failed
-      character*(*) testname, ifn, ofn
-      parameter (testname = 'vattrf',
+
+      character*20 myname, ifn, ofn
+      parameter (myname = 'vattrf',
      +           ifn = 'tvattr.dat' ,
      +           ofn = 'tvattrf.hdf'
      +          )  
@@ -84,7 +85,7 @@ C Output file: tvattrf.hdf
       DATA vsbuf/200/
       DATA iattrc/' '/
 
-      call ptestban('Testing', testname)
+      call ptestban('Testing', myname)
 C      number_failed = 0
 C Open the file 
       fid1 = hopen(ifn, DFACC_RDWR, 0)

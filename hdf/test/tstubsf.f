@@ -17,7 +17,7 @@ C
       include 'fortest.inc'
 
       integer nerrors
-      character*(*) myname
+      character*20  myname
       parameter (myname = 'stubs')
 
       character ar0*10

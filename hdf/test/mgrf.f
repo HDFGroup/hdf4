@@ -24,7 +24,7 @@ C
       include 'fortest.inc'
 
       integer num_err
-      character*(*) myname
+      character*20 myname
       parameter (myname = 'mgrf')
 
       integer hopen, hclose

@@ -33,7 +33,7 @@ C
       include 'fortest.inc'
 
       integer number_failed
-      character*(*) myname
+      character*20 myname
       parameter (myname = 'an')
 
       integer daplab, dapdesc  

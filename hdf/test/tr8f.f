@@ -24,7 +24,7 @@ C Input file: none
 C Output file: tdfr8f.hdf
 C
       integer number_failed
-      character*(*) myname
+      character*20 myname
       parameter (myname = 'r8')
 
       integer d8spal, d8pimg, d8aimg, d8gdims, d8nims

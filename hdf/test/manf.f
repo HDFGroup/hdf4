@@ -28,7 +28,7 @@ C
       include 'fortest.inc'
 
       integer number_failed
-      character*(*) myname
+      character*20 myname
       parameter (myname = 'manf')
 
       integer afstart, afend, afcreate, affcreate
