@@ -591,7 +591,9 @@ Void *values ;
 
 
 PRIVATE int32 tBuf_size = 0;
+PRIVATE int32 tValues_size = 0;
 PRIVATE int8  *tBuf = NULL;
+PRIVATE int8  *tValues = NULL;
 
 #ifdef HDF
 /* ------------------------------ SDPfreebuf ------------------------------ */
@@ -606,6 +608,13 @@ intn SDPfreebuf()
           tBuf=NULL;
           tBuf_size=0;
       } /* end if */
+    if(tValues!=NULL)
+      {
+          HDfree(tValues);
+          tValues=NULL;
+          tValues_size=0;
+      } /* end if */
+
     return(SUCCEED);
 }
 #endif /* HDF */
@@ -693,7 +702,9 @@ NC_var *vp;
     NC_attr **attr;
     int32 vg;
     int32 vsid, nvalues, status, tag, t, n;
-    register Void *values;
+#ifdef OLD_WAY
+    register Void *values;  
+#endif
     int32 byte_count, len;
     int32 to_do, done, chunk_size;
     
@@ -754,16 +765,26 @@ NC_var *vp;
     to_do   = chunk_size / vp->HDFsize;     /* number of values in a chunk */
     
     len = to_do * vp->szof;                 /* size of buffer for fill values */
-    values = (Void *) HDmalloc(len);      /* buffer to hold unconv fill vals */
+#ifdef OLD_WAY
+    values = (Void *) HDmalloc(len);    /* buffer to hold unconv fill vals */
+#else
+    if (tValues_size < len ) {
+        if (tValues) HDfree((VOIDP)tValues);
+        tValues_size = len;
+        tValues = HDmalloc(len);
+        if (tValues == NULL)
+           return FALSE;
+    }
+#endif
     byte_count = to_do * vp->HDFsize;       /* external buffer size */
 
     if(!attr) {
-        NC_arrayfill(values, len, vp->type);
+        NC_arrayfill((VOIDP)tValues, len, vp->type);
     } else {
 #ifdef OLD_WAY
-        hdf_fill_array(values, len, (*attr)->data->values, vp->type);
+        hdf_fill_array((VOIDP)tValues, len, (*attr)->data->values, vp->type);
 #else
-        HDmemfill(values,(*attr)->data->values,vp->szof,to_do);
+        HDmemfill((VOIDP)tValues,(*attr)->data->values,vp->szof,to_do);
 #endif /* OLD_WAY */
     }
     
@@ -788,13 +809,15 @@ NC_var *vp;
         if(tBuf) HDfree((VOIDP)tBuf);
         tBuf_size = byte_count;
         tBuf = (int8 *) HDmalloc(byte_count);
+        if (tBuf == NULL) 
+            return FALSE;
     }
 
     /*
      * Do numerical conversions
      */
     DFKsetNT(vp->HDFtype);
-    DFKnumout((uint8 *) values, tBuf, (uint32) to_do, 0, 0);
+    DFKnumout((uint8 *) tValues, tBuf, (uint32) to_do, 0, 0);
 
     /*
      * Write out the values
@@ -858,7 +881,10 @@ NC_var *vp;
     fprintf(stderr, "Done with the DATA Vdata returning id %d\n", vsid);
 #endif
 
-    HDfree((VOIDP)values);
+#ifdef OLD_WAY
+    HDfree((VOIDP)values);   
+#endif
+
     vp->aid = FAIL;
 
     /* added a new object -- make sure we flush the header */
