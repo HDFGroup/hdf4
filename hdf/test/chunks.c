@@ -1046,7 +1046,7 @@ test_chunks(void)
 
     chunk[0].pdims[2].dim_length   = 4;
     chunk[0].pdims[2].chunk_length = 4;
-    chunk[0].pdims[2].distrib_type = 1;
+    chunk[0].pdims[2].distrib_type = 0; /* NONE */
 
     /* set fill value to 1 */
     fill_val_u8 = 1;
@@ -1422,7 +1422,7 @@ test_chunks(void)
 
     chunk[0].pdims[2].dim_length   = 4;
     chunk[0].pdims[2].chunk_length = 4;
-    chunk[0].pdims[2].distrib_type = 1;
+    chunk[0].pdims[2].distrib_type = 0; /* NONE */
 
     fill_val_len = 2;
     fill_val_u16 = 0;
@@ -1547,7 +1547,7 @@ test_chunks(void)
 
     chunk[0].pdims[2].dim_length   = 4;
     chunk[0].pdims[2].chunk_length = 4;
-    chunk[0].pdims[2].distrib_type = 1;
+    chunk[0].pdims[2].distrib_type = 0; /* NONE */
 
     fill_val_len = 4;
     fill_val_f32 = 0.0;
@@ -2169,7 +2169,7 @@ test_chunks(void)
 
     chunk[0].pdims[2].dim_length   = 4;
     chunk[0].pdims[2].chunk_length = 4;
-    chunk[0].pdims[2].distrib_type = 1;
+    chunk[0].pdims[2].distrib_type = 0; /* NONE */
 
     /* set fill value to 1 */
     fill_val_u8 = 1;

@@ -140,7 +140,7 @@ static char RcsId[] = "@(#)$Revision$";
    Fields for each dimension: (12 x ndims bytes)
    --------------------------------------
    distrib_type   - type of data distribution along this dimension (32 bit field)
-                    1 - Block
+                    0->None, 1->Block
                     Currently only block distribution is supported.
    dim_length     - length of this dimension. (4 bytes)
    chunk_length   - length of the chunk along this dimension (4 bytes)

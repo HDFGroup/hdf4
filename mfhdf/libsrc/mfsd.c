@@ -4105,8 +4105,12 @@ int32 flags;
     fprintf(stderr,"SDsetChunk: cdims[%d]=%d \n",i,cdims[i]);
     fflush(stderr);
 #endif          
-          /* Data distribution along dimensions */
-          chunk[0].pdims[i].distrib_type = 1;     /* default BLOCK */
+          /* Data distribution along dimensions 
+          *  Check dimension length agains chunk length */
+          if (cdims[i] == (int32)var->shape[i])
+              chunk[0].pdims[i].distrib_type = 0;     /* NONE */
+          else
+              chunk[0].pdims[i].distrib_type = 1;     /* BLOCK */
 
           /* compute chunk size */
           chunk[0].chunk_size *= cdims[i];
