@@ -567,7 +567,7 @@ VOIDP data;
 #ifdef BIG_LONGS
     long     Start[MAX_VAR_DIMS], End[MAX_VAR_DIMS], Stride[MAX_VAR_DIMS];
 #else
-    int32    *Start, *End, *Stride;
+    long    *Start, *End, *Stride;
 #endif
 
 #ifdef SDDEBUG
@@ -628,9 +628,9 @@ VOIDP data;
 
 #else
 
-    Start  = start;
-    End    = end;
-    Stride = stride;
+    Start  = (long *)start;
+    End    = (long *)end;
+    Stride = (long *)stride;
 
 #endif
 
@@ -1685,7 +1685,7 @@ VOIDP data;
 #ifdef BIG_LONGS
     long     Start[MAX_VAR_DIMS], End[MAX_VAR_DIMS], Stride[MAX_VAR_DIMS];
 #else
-    int32    *Start, *End, *Stride;
+    long    *Start, *End, *Stride;
 #endif
 
 #ifdef SDDEBUG
@@ -1747,9 +1747,9 @@ VOIDP data;
 
 #else
 
-    Start  = start;
-    End    = end;
-    Stride = stride;
+    Start  = (long *)start;
+    End    = (long *)end;
+    Stride = (long *)stride;
 
 #endif
 
