@@ -1256,7 +1256,11 @@ extern int (*DFKnumout)(void * source, void * dest, uint32 num_elm,
 #define HDgetenv(s1)            (getenv(s1))
 #define HDputenv(s1)            (putenv(s1))
 #define HDltoa(v)               (ltoa(v))
+#if defined (SUN) && defined(__GNUC__)
+#define HDatexit(f)             (0) /* we punt on the SUN using gcc */
+#else /* !SUN & GCC */
 #define HDatexit(f)             (atexit(f))
+#endif /* !SUN & GCC */
 
 /* Compatibility #define for V3.3, should be taken out by v4.0 - QAK */
 #define DFSDnumber DFSDndatasets
