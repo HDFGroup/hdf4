@@ -20,7 +20,7 @@ LD_NETCDF	= ../libsrc/libnetcdf.a
 OBJS		=  ncdump.o vardata.o dumplib.o
 LD_XDR		= @LD_XDR@
 LD_NETCDF	= -L../libsrc -lnetcdf
-LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(JPEG_LIB) -lm
+LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(JPEG_LIB) $(LIBSX)
 prefix		= ../../..
 GARBAGE		= $(PROGRAM) test0.nc test1.nc test1.cdl test2.cdl
 

@@ -26,7 +26,7 @@ LD_NETCDF	= ../libsrc/libnetcdf.a @HDF_LIB@ @JPEG_LIB@
 OBJS		= main.o generate.o load.o ncgentab.o escapes.o \
 		  getfill.o init.o close.o genlib.o
 LD_XDR		= @LD_XDR@
-LIBS		= $(LD_NETCDF) $(LD_XDR)
+LIBS		= $(LD_NETCDF) $(LD_XDR) $(LIBSX)
 LEX		= @LEX@
 YACC		= @YACC@
 prefix		= ../../..
