@@ -43,8 +43,8 @@ C Output file: tvattrf.hdf
      +           ifn = 'tvattr.dat' ,
      +           ofn = 'tvattrf.hdf'
      +          )  
-      integer vsffidx, vsfsat, vsfscat, vsfnat
-      integer vsffnat, vsffdat, vsfainf, vsfgat
+      integer vsffidx, vsfsat, vsfscat, vsfnatt
+      integer vsffnat, vsffdat, vsfainf, vsfgatt
       integer vsfgcat, vsfisat, vfnflds
       integer vfsatt, vfscatt, vfnatts
       integer vffdatt, vfainfo, vfgatt, vfgcatt
@@ -110,7 +110,7 @@ C Open the file
          call MESSAGE(1, 'Wrong number of fields of vsname1')
          number_failed = number_failed + 1
       endif
-      nattrs = vsfnat(vsid)
+      nattrs = vsfnatt(vsid)
       if (nattrs .ne. 6) then
          call MESSAGE(1, 'Wrong number of total attrs for vsname1')
          number_failed = number_failed + 1
@@ -132,6 +132,7 @@ C get the 0th attr
          call MESSAGE(1, 'Wrong info of char attr for vsname1')
          number_failed = number_failed + 1
       endif
+      iattrc = '          '
       ret = vsfgcat(vsid, findex, aindex, iattrc)
       call VERIFY(ret, 'vsfgcat', number_failed)
 C      if ((iattrc(1) .ne. 'm') .or. (iattrc(2) .ne. 'N') 
@@ -149,12 +150,12 @@ C get the 1st attr of fld 0
          call MESSAGE(1, 'Wrong findex of fldname1 of  vsname1')
          number_failed = number_failed + 1
       endif
-      ret = vsfgat(vsid, findex, aindex, iattrg)
-      call VERIFY(ret, 'vsfgat1', number_failed)
+      ret = vsfgatt(vsid, findex, aindex, iattrg)
+      call VERIFY(ret, 'vsfgatt1', number_failed)
       if (dabs(iattrg(1)-GATTR1) .gt. dabs(geps * GATTR1)) 
      +          then
-       call MESSAGE(1,'Wrong double attr for vsname1')
-       number_failed = number_failed + 1
+         call MESSAGE(1, 'Wrong double attr for vsname1')
+         number_failed = number_failed + 1
       print *, 'should be: ',GATTR1,' get: ',iattrg(1)
       endif
       ret = vsfdtch(vsid)
@@ -254,6 +255,7 @@ C vgroup attrs
       call VERIFY(ret, 'vfgid', number_failed)
       vgid = vfatch(fid1, vgref, 'w')
       call VERIFY(ret, 'vfatch', number_failed)
+      iattrc = '          '
       ret = vfgcatt(vgid, 0, iattrc)
       call VERIFY(ret, 'vfgcatt', number_failed)
 C      if (iattrc(1) .ne. 'a' .or. iattrc(2) .ne. 't'
@@ -276,6 +278,7 @@ C vdata attrs
       call VERIFY(ret, 'vsffnd', number_failed)
       vsid = vsfatch(fid1, vsref, 'w')
       call VERIFY(ret, 'vsfatch', number_failed)
+      iattrc = '          '
       ret = vsfgcat(vsid, ENTIRE_VDATA, 0, iattrc)
       call VERIFY(ret, 'vsfgcat', number_failed)
 C      if (iattrc(1) .ne. 'a' .or. iattrc(2) .ne. 't'
@@ -285,8 +288,8 @@ C     +     .or. iattrc(3) .ne. '2') then
          number_failed = number_failed + 1
          print *, iattrc, 'at2'
       endif
-      ret = vsfgat(vsid, 0, 0, iattrr)
-      call VERIFY(ret, 'vsfgat2', number_failed)
+      ret = vsfgatt(vsid, 0, 0, iattrr)
+      call VERIFY(ret, 'vsfgatt2', number_failed)
       if (abs(iattrr(1)-RATTR1) .gt. abs(RATTR1*feps)) 
      +          then
          call MESSAGE(1, 'Wrong values of real attr for vs')
