@@ -31,11 +31,11 @@ VERSION  = 4.0
 #
 # Using ANSI compilier for 32-bit mode
 CC=cc
-CFLAGS=-ansi -32 -O -s
+CFLAGS=-ansi -n32
 
 # Fortran compilier for 32-bit mode
 FC = f77
-FFLAGS = -32 -O -s
+FFLAGS = -n32
 
 # Name of archive randomizer, usually ranlib (use 'true' if non-existant)
 RANLIB = true
@@ -117,7 +117,7 @@ CFLAGS_NETCDF =
 #
 # for IRIX6.0 (32-bit mode). If you prefer other 32 bit option like -n32, 
 #  replace '-32' below
-CPPFLAGS_HDF  = -32 $(FMPOOL_FLAGS) -DNDEBUG -DHDF
+CPPFLAGS_HDF  = -n32 $(FMPOOL_FLAGS) -DNDEBUG -DHDF
 #
 # normal
 #CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF
