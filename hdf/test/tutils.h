@@ -19,20 +19,20 @@
 #ifndef TESTMASTER
 extern
 #endif
-int num_errs
+int         num_errs
 #ifdef TESTMASTER
-=0
+= 0
 #endif
-    ,Verbosity
+,           Verbosity
 #ifdef TESTMASTER
-=0
+= 0
 #endif
-;
+           ;
 
 #ifdef TEST_PC
 #define FAR far
 #else
-#define FAR /* */
+#define FAR	/* */
 #endif /* TEST_PC */
 
 /* Used to make certain a return value _is_not_ a value */

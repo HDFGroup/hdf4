@@ -16,17 +16,17 @@
 #include "jmemsys.h"
 
 #ifdef INCLUDES_ARE_ANSI
-#include <stdlib.h>		/* to declare malloc(), free() */
+#include <stdlib.h>	/* to declare malloc(), free() */
 #else
-extern VOID * malloc (size_t size);
-extern VOID free (VOID *ptr);
+extern VOID *malloc(size_t size);
+extern VOID free(VOID * ptr);
 #endif
 
-#ifndef SEEK_SET		/* pre-ANSI systems may not define this; */
-#define SEEK_SET  0		/* if not, assume 0 is correct */
+#ifndef SEEK_SET	/* pre-ANSI systems may not define this; */
+#define SEEK_SET  0	/* if not, assume 0 is correct */
 #endif
 
-#ifdef DONT_USE_B_MODE		/* define mode parameters for fopen() */
+#ifdef DONT_USE_B_MODE	/* define mode parameters for fopen() */
 #define READ_BINARY	"r"
 #define RW_BINARY	"w+"
 #else
@@ -34,11 +34,9 @@ extern VOID free (VOID *ptr);
 #define RW_BINARY	"w+b"
 #endif
 
-
-static external_methods_ptr methods; /* saved for access to error_exit */
+static external_methods_ptr methods;	/* saved for access to error_exit */
 
 static long total_used;		/* total memory requested so far */
-
 
 /*
  * Selection of a file name for a temporary file.
@@ -56,8 +54,8 @@ static long total_used;		/* total memory requested so far */
  *      Note that double quotes are needed in the text of the macro.
  *      With most make systems you have to put single quotes around the
  *      -D construct to preserve the double quotes.
- *	(Amiga SAS C has trouble with ":" and such in command-line options,
- *	so we've put in a special case for the preferred Amiga temp directory.)
+ *      (Amiga SAS C has trouble with ":" and such in command-line options,
+ *      so we've put in a special case for the preferred Amiga temp directory.)
  *
  *  2.  If you need to change the file name as well as its location,
  *      you can override the TEMP_FILE_NAME macro.  (Note that this is
@@ -72,55 +70,55 @@ static long total_used;		/* total memory requested so far */
  *      will cause the temp files to be removed if you stop the program early.
  */
 
-#ifndef TEMP_DIRECTORY		/* so can override from Makefile */
+#ifndef TEMP_DIRECTORY	/* so can override from Makefile */
 #ifdef AMIGA
-#define TEMP_DIRECTORY  "JPEGTMP:"  /* recommended setting for Amiga */
+#define TEMP_DIRECTORY  "JPEGTMP:"	/* recommended setting for Amiga */
 #else
-#define TEMP_DIRECTORY  "/usr/tmp/" /* recommended setting for Unix */
+#define TEMP_DIRECTORY  "/usr/tmp/"	/* recommended setting for Unix */
 #endif
 #endif
 
-static int next_file_num;	/* to distinguish among several temp files */
+static int  next_file_num;	/* to distinguish among several temp files */
 
 #ifdef NO_MKTEMP
 
-#ifndef TEMP_FILE_NAME		/* so can override from Makefile */
+#ifndef TEMP_FILE_NAME	/* so can override from Makefile */
 #define TEMP_FILE_NAME  "%sJPG%03d.TMP"
 #endif
 
-LOCAL VOID
-select_file_name (char * fname)
+LOCAL       VOID
+select_file_name(char *fname)
 {
-  FILE * tfile;
+    FILE       *tfile;
 
-  /* Keep generating file names till we find one that's not in use */
-  for (;;) {
-    next_file_num++;		/* advance counter */
-    sprintf(fname, TEMP_FILE_NAME, TEMP_DIRECTORY, next_file_num);
-    if ((tfile = fopen(fname, READ_BINARY)) == NULL)
-      break;
-    fclose(tfile);		/* oops, it's there; close tfile & try again */
-  }
+    /* Keep generating file names till we find one that's not in use */
+    for (;;)
+      {
+	  next_file_num++;	/* advance counter */
+	  sprintf(fname, TEMP_FILE_NAME, TEMP_DIRECTORY, next_file_num);
+	  if ((tfile = fopen(fname, READ_BINARY)) == NULL)
+	      break;
+	  fclose(tfile);	/* oops, it's there; close tfile & try again */
+      }
 }
 
-#else /* ! NO_MKTEMP */
+#else  /* ! NO_MKTEMP */
 
 /* Note that mktemp() requires the initial filename to end in six X's */
-#ifndef TEMP_FILE_NAME		/* so can override from Makefile */
+#ifndef TEMP_FILE_NAME	/* so can override from Makefile */
 #define TEMP_FILE_NAME  "%sJPG%dXXXXXX"
 #endif
 
-LOCAL VOID
-select_file_name (char * fname)
+LOCAL       VOID
+select_file_name(char *fname)
 {
-  next_file_num++;		/* advance counter */
-  sprintf(fname, TEMP_FILE_NAME, TEMP_DIRECTORY, next_file_num);
-  mktemp(fname);		/* make sure file name is unique */
-  /* mktemp replaces the trailing XXXXXX with a unique string of characters */
+    next_file_num++;	/* advance counter */
+    sprintf(fname, TEMP_FILE_NAME, TEMP_DIRECTORY, next_file_num);
+    mktemp(fname);	/* make sure file name is unique */
+    /* mktemp replaces the trailing XXXXXX with a unique string of characters */
 }
 
 #endif /* NO_MKTEMP */
-
 
 /*
  * Memory allocation and freeing are controlled by the regular library
@@ -128,23 +126,22 @@ select_file_name (char * fname)
  */
 
 GLOBAL VOIDP
-jget_small (size_t sizeofobject)
+jget_small(size_t sizeofobject)
 {
-  total_used += sizeofobject;
-  return (VOID *) malloc(sizeofobject);
+    total_used += sizeofobject;
+    return (VOID *) malloc(sizeofobject);
 }
 
-GLOBAL VOID
-jfree_small (VOIDP object)
+GLOBAL      VOID
+jfree_small(VOIDP object)
 {
-  free(object);
+    free(object);
 }
 
 /*
  * We assume NEED_FAR_POINTERS is not defined and so the separate entry points
  * jget_large, jfree_large are not needed.
  */
-
 
 /*
  * This routine computes the total memory space available for allocation.
@@ -155,15 +152,14 @@ jfree_small (VOIDP object)
  */
 
 #ifndef DEFAULT_MAX_MEM		/* so can override from makefile */
-#define DEFAULT_MAX_MEM		1000000L /* default: one megabyte */
+#define DEFAULT_MAX_MEM		1000000L	/* default: one megabyte */
 #endif
 
 GLOBAL long
-jmem_available (long min_bytes_needed, long max_bytes_needed)
+jmem_available(long min_bytes_needed, long max_bytes_needed)
 {
-  return methods->max_memory_to_use - total_used;
+    return methods->max_memory_to_use - total_used;
 }
-
 
 /*
  * Backing store (temporary file) management.
@@ -172,62 +168,58 @@ jmem_available (long min_bytes_needed, long max_bytes_needed)
  * with these routines if you have plenty of virtual memory; see jmemnobs.c.
  */
 
+METHODDEF   VOID
+read_backing_store(backing_store_ptr info, VOIDP buffer_address,
+		   long file_offset, long byte_count)
+{
+    if (fseek(info->temp_file, file_offset, SEEK_SET))
+	ERREXIT(methods, "fseek failed on temporary file");
+    if (JFREAD(info->temp_file, buffer_address, byte_count)
+	!= (size_t) byte_count)
+	ERREXIT(methods, "fread failed on temporary file");
+}
 
-METHODDEF VOID
-read_backing_store (backing_store_ptr info, VOIDP buffer_address,
+METHODDEF   VOID
+write_backing_store(backing_store_ptr info, VOIDP buffer_address,
 		    long file_offset, long byte_count)
 {
-  if (fseek(info->temp_file, file_offset, SEEK_SET))
-    ERREXIT(methods, "fseek failed on temporary file");
-  if (JFREAD(info->temp_file, buffer_address, byte_count)
-      != (size_t) byte_count)
-    ERREXIT(methods, "fread failed on temporary file");
+    if (fseek(info->temp_file, file_offset, SEEK_SET))
+	ERREXIT(methods, "fseek failed on temporary file");
+    if (JFWRITE(info->temp_file, buffer_address, byte_count)
+	!= (size_t) byte_count)
+	ERREXIT(methods, "fwrite failed on temporary file --- out of disk space?");
 }
 
-
-METHODDEF VOID
-write_backing_store (backing_store_ptr info, VOIDP buffer_address,
-		     long file_offset, long byte_count)
+METHODDEF   VOID
+close_backing_store(backing_store_ptr info)
 {
-  if (fseek(info->temp_file, file_offset, SEEK_SET))
-    ERREXIT(methods, "fseek failed on temporary file");
-  if (JFWRITE(info->temp_file, buffer_address, byte_count)
-      != (size_t) byte_count)
-    ERREXIT(methods, "fwrite failed on temporary file --- out of disk space?");
-}
-
-
-METHODDEF VOID
-close_backing_store (backing_store_ptr info)
-{
-  fclose(info->temp_file);	/* close the file */
-  unlink(info->temp_name);	/* delete the file */
+    fclose(info->temp_file);	/* close the file */
+    unlink(info->temp_name);	/* delete the file */
 /* If your system doesn't have unlink(), use remove() instead.
  * remove() is the ANSI-standard name for this function, but if
  * your system was ANSI you'd be using jmemansi.c, right?
  */
 }
 
-
-GLOBAL VOID
-jopen_backing_store (backing_store_ptr info, long total_bytes_needed)
+GLOBAL      VOID
+jopen_backing_store(backing_store_ptr info, long total_bytes_needed)
 {
-  char tracemsg[TEMP_NAME_LENGTH+40];
+    char        tracemsg[TEMP_NAME_LENGTH + 40];
 
-  select_file_name(info->temp_name);
-  if ((info->temp_file = fopen(info->temp_name, RW_BINARY)) == NULL) {
-    /* hack to get around ERREXIT's inability to handle string parameters */
-    sprintf(tracemsg, "Failed to create temporary file %s", info->temp_name);
-    ERREXIT(methods, tracemsg);
-  }
-  info->read_backing_store = read_backing_store;
-  info->write_backing_store = write_backing_store;
-  info->close_backing_store = close_backing_store;
-  /* hack to get around TRACEMS' inability to handle string parameters */
-  sprintf(tracemsg, "Using temp file %s", info->temp_name);
-  TRACEMS(methods, 1, tracemsg);
+    select_file_name(info->temp_name);
+    if ((info->temp_file = fopen(info->temp_name, RW_BINARY)) == NULL)
+      {
+	  /* hack to get around ERREXIT's inability to handle string parameters */
+	  sprintf(tracemsg, "Failed to create temporary file %s", info->temp_name);
+	  ERREXIT(methods, tracemsg);
+      }
+    info->read_backing_store = read_backing_store;
+    info->write_backing_store = write_backing_store;
+    info->close_backing_store = close_backing_store;
+    /* hack to get around TRACEMS' inability to handle string parameters */
+    sprintf(tracemsg, "Using temp file %s", info->temp_name);
+    TRACEMS(methods, 1, tracemsg);
 }
-
 
 /*
  * These routines take care of any system-dependent initialization and
@@ -235,17 +227,17 @@ jopen_backing_store (backing_store_ptr info, long total_bytes_needed)
  * once.
  */
 
-GLOBAL VOID
-jmem_init (external_methods_ptr emethods)
+GLOBAL      VOID
+jmem_init(external_methods_ptr emethods)
 {
-  methods = emethods;		/* save struct addr for error exit access */
-  emethods->max_memory_to_use = DEFAULT_MAX_MEM;
-  total_used = 0;
-  next_file_num = 0;
+    methods = emethods;		/* save struct addr for error exit access */
+    emethods->max_memory_to_use = DEFAULT_MAX_MEM;
+    total_used = 0;
+    next_file_num = 0;
 }
 
-GLOBAL VOID
-jmem_term (VOID)
+GLOBAL      VOID
+jmem_term(VOID)
 {
-  /* no work */
+    /* no work */
 }

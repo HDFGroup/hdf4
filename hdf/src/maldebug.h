@@ -25,24 +25,24 @@
 #define _MALDEBUG_H
 
 /* Compilation options */
-#define MEM_LIST		/* Build internal list */
-#define MEM_WHERE		/* Keep track of memory block source */
-#define MEM_HEADER		/* Keep headers and footers around for each block */
+#define MEM_LIST	/* Build internal list */
+#define MEM_WHERE	/* Keep track of memory block source */
+#define MEM_HEADER	/* Keep headers and footers around for each block */
 #define MEM_COMP_FREE	/* Complement the space free'd */
 
 /* Interface functions */
-unsigned long	Mem_Used(void);
-void		Mem_Display(FILE *fp);
+unsigned long Mem_Used(void);
+void        Mem_Display(FILE * fp);
 
 /* Interface functions to access only through macros */
 #if defined(MEM_WHERE)
-void	*mem_HDgetspace(size_t size, char *fil, int lin);
-void	*mem_HDregetspace(void *old_ptr, size_t size, char *fil, int lin);
-void	*mem_HDfreespace(void *ptr, char *fil, int lin);
+void       *mem_HDgetspace(size_t size, char *fil, int lin);
+void       *mem_HDregetspace(void *old_ptr, size_t size, char *fil, int lin);
+void       *mem_HDfreespace(void *ptr, char *fil, int lin);
 #else
-void	*mem_HDgetspace(size_t size);
-void	*mem_HDregetspace(void *old_ptr, size_t size);
-void	*mem_HDfreespace(void *ptr);
+void       *mem_HDgetspace(size_t size);
+void       *mem_HDregetspace(void *old_ptr, size_t size);
+void       *mem_HDfreespace(void *ptr);
 #endif
 
 /* Interface macros */
@@ -59,4 +59,3 @@ void	*mem_HDfreespace(void *ptr);
 #endif
 
 #endif /* _MALDEBUG_H */
-

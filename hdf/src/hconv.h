@@ -1,3 +1,4 @@
+
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -91,9 +92,9 @@
 /* Generally Big-Endian machines */
 #if !defined(VMS) && !defined(PC) && !defined(MIPSEL) && !defined(DEC_ALPHA) && !defined(I860)
 #   if !defined(UNICOS)
-#       define UI8_IN     DFKnb1b    /* Unsigned Integer, 8 bits */
+#       define UI8_IN     DFKnb1b	/* Unsigned Integer, 8 bits */
 #       define UI8_OUT    DFKnb1b
-#       define SI16_IN    DFKnb2b    /* S = Signed */
+#       define SI16_IN    DFKnb2b	/* S = Signed */
 #       define SI16_OUT   DFKnb2b
 #       define UI16_IN    DFKnb2b
 #       define UI16_OUT   DFKnb2b
@@ -102,23 +103,23 @@
 #       define UI32_IN    DFKnb4b
 #       define UI32_OUT   DFKnb4b
 #   if defined(CONVEXNATIVE)
-#       define F32_IN     DFKci4f    /* CONVEX stuff */
+#       define F32_IN     DFKci4f	/* CONVEX stuff */
 #       define F32_OUT    DFKco4f
 #       define F64_IN     DFKci8f
 #       define F64_OUT    DFKco8f
 #   elif defined(VP)
-#       define F32_IN     DFKpi4f    /* Fujitsu VP stuff */
+#       define F32_IN     DFKpi4f	/* Fujitsu VP stuff */
 #       define F32_OUT    DFKpo4f
 #       define F64_IN     DFKpi8f
 #       define F64_OUT    DFKpo8f
-#   else    /* !CONVEXNATIVE */
-#       define F32_IN     DFKnb4b    /* Float, 32 bits */
+#   else	/* !CONVEXNATIVE */
+#       define F32_IN     DFKnb4b	/* Float, 32 bits */
 #       define F32_OUT    DFKnb4b
 #       define F64_IN     DFKnb8b
 #       define F64_OUT    DFKnb8b
-#   endif   /* CONVEXNATIVE */
+#   endif	/* CONVEXNATIVE */
 
-#       define LUI8_IN    DFKnb1b    /* Little Endian Unsigned Integer, 8 bits */
+#       define LUI8_IN    DFKnb1b	/* Little Endian Unsigned Integer, 8 bits */
 #       define LUI8_OUT   DFKnb1b
 #       define LSI16_IN   DFKsb2b
 #       define LSI16_OUT  DFKsb2b
@@ -129,24 +130,24 @@
 #       define LUI32_IN   DFKsb4b
 #       define LUI32_OUT  DFKsb4b
 #       if defined(CONVEXNATIVE)
-#           define LF32_IN  DFKlci4f    /* CONVEX little-endian routines */
+#           define LF32_IN  DFKlci4f	/* CONVEX little-endian routines */
 #           define LF32_OUT DFKlco4f
 #           define LF64_IN  DFKlci8f
 #           define LF64_OUT DFKlco8f
 #       elif defined(VP)
-#           define LF32_IN   DFKlpi4f   /* Fujitsu VP little-endian routines */
+#           define LF32_IN   DFKlpi4f	/* Fujitsu VP little-endian routines */
 #           define LF32_OUT  DFKlpo4f
 #           define LF64_IN   DFKlpi8f
 #           define LF64_OUT  DFKlpo8f
-#       else    /* !CONVEXNATIVE */
+#       else	/* !CONVEXNATIVE */
 #           define LF32_IN  DFKsb4b
 #           define LF32_OUT DFKsb4b
 #           define LF64_IN  DFKsb8b
 #           define LF64_OUT DFKsb8b
-#       endif   /* CONVEXNATIVE */
+#       endif	/* CONVEXNATIVE */
 
-#   else  /* UNICOS */
-#       define UI8_IN     DFKnb1b    /* Big-Endian IEEE support */
+#   else	/* UNICOS */
+#       define UI8_IN     DFKnb1b	/* Big-Endian IEEE support */
 #       define UI8_OUT    DFKnb1b
 #       define SI16_IN    DFKui2s
 #       define SI16_OUT   DFKuo2s
@@ -161,7 +162,7 @@
 #       define F64_IN     DFKui8f
 #       define F64_OUT    DFKuo8f
 
-#       define LUI8_IN    DFKnb1b    /* Little-endian IEEE support */
+#       define LUI8_IN    DFKnb1b	/* Little-endian IEEE support */
 #       define LUI8_OUT   DFKnb1b
 #       define LSI16_IN   DFKlui2s
 #       define LSI16_OUT  DFKluo2s
@@ -176,11 +177,11 @@
 #       define LF64_IN    DFKlui8f
 #       define LF64_OUT   DFKluo8f
 
-#   endif /* !UNICOS */
-#else /* must be VMS || PC || MIPSEL || DEC_ALPHA || I860 (Generally, little-endian machines */
-#   define UI8_IN     DFKnb1b   /* Big-Endian IEEE support */
-#   define UI8_OUT    DFKnb1b   /* The s in DFKsb2b is for swap */
-#   define SI16_IN    DFKsb2b  
+#   endif	/* !UNICOS */
+#else  /* must be VMS || PC || MIPSEL || DEC_ALPHA || I860 (Generally, little-endian machines */
+#   define UI8_IN     DFKnb1b	/* Big-Endian IEEE support */
+#   define UI8_OUT    DFKnb1b	/* The s in DFKsb2b is for swap */
+#   define SI16_IN    DFKsb2b
 #   define SI16_OUT   DFKsb2b
 #   define UI16_IN    DFKsb2b
 #   define UI16_OUT   DFKsb2b
@@ -193,14 +194,14 @@
 #       define F32_OUT    DFKvo4f
 #       define F64_IN     DFKvi8f
 #       define F64_OUT    DFKvo8f
-#   else  /* !VMS */
+#   else	/* !VMS */
 #       define F32_IN     DFKsb4b
 #       define F32_OUT    DFKsb4b
 #       define F64_IN     DFKsb8b
 #       define F64_OUT    DFKsb8b
-#   endif /* VMS */
+#   endif	/* VMS */
 
-#   define LUI8_IN    DFKnb1b   /* Little-Endian IEEE support */
+#   define LUI8_IN    DFKnb1b	/* Little-Endian IEEE support */
 #   define LUI8_OUT   DFKnb1b
 #   define LSI16_IN   DFKnb2b
 #   define LSI16_OUT  DFKnb2b
@@ -215,12 +216,12 @@
 #       define LF32_OUT    DFKlvo4f
 #       define LF64_IN     DFKlvi8f
 #       define LF64_OUT    DFKlvo8f
-#   else  /* !VMS */
+#   else	/* !VMS */
 #       define LF32_IN    DFKnb4b
 #       define LF32_OUT   DFKnb4b
 #       define LF64_IN    DFKnb8b
 #       define LF64_OUT   DFKnb8b
-#   endif /* VMS */
+#   endif	/* VMS */
 
 #endif /* !VMS && !PC && !MIPS && !DEC_ALPHA */
 
@@ -241,7 +242,7 @@
 #     define NF32_OUT   DFKnb4b
 #     define NF64_IN    DFKnb8b
 #     define NF64_OUT   DFKnb8b
-#else	/* UNICOS */
+#else  /* UNICOS */
 #     define NUI8_IN    DFKnb1b
 #     define NUI8_OUT   DFKnb1b
 #     define NSI16_IN   DFKnb8b
@@ -256,22 +257,22 @@
 #     define NF32_OUT   DFKnb8b
 #     define NF64_IN    DFKnb8b
 #     define NF64_OUT   DFKnb8b
-#endif	/* UNICOS */
+#endif /* UNICOS */
 
 /*****************************************************************************/
 /* STRUCTURE DEFINTIONS                                                      */
 /*****************************************************************************/
 union fpx
-{
-     float f;
-     long  l;
-};
+  {
+      float       f;
+      long        l;
+  };
 
-union float_uint_uchar {
-    float32 f;
-    int32 i;
-    unsigned char c[4];
-};
+union float_uint_uchar
+  {
+      float32     f;
+      int32       i;
+      unsigned char c[4];
+  };
 
 #endif /* _HCONV_H */
-

@@ -14,7 +14,6 @@
 
 #ifdef D_ARITH_CODING_SUPPORTED
 
-
 /*
  * The arithmetic coding option of the JPEG standard specifies Q-coding,
  * which is covered by patents held by IBM (and possibly AT&T and Mitsubishi).
@@ -26,21 +25,21 @@
  * We're not happy about it either.
  */
 
-
 /*
  * The method selection routine for arithmetic entropy decoding.
  */
 
-GLOBAL VOID
-jseldarithmetic (decompress_info_ptr cinfo)
+GLOBAL      VOID
+jseldarithmetic(decompress_info_ptr cinfo)
 {
-  if (cinfo->arith_code) {
-    ERREXIT(cinfo->emethods, "Sorry, there are legal restrictions on arithmetic coding");
-  }
+    if (cinfo->arith_code)
+      {
+	  ERREXIT(cinfo->emethods, "Sorry, there are legal restrictions on arithmetic coding");
+      }
 }
 
 #else
 
-int darth_dummy; /* prevent empty symbol table messages */
+int         darth_dummy;	/* prevent empty symbol table messages */
 
 #endif /* D_ARITH_CODING_SUPPORTED */

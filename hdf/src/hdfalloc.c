@@ -51,37 +51,40 @@ static char RcsId[] = "@(#)$Revision$";
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VOIDP HDmemfill(VOIDP dest,const VOIDP src,uint32 item_size,uint32 num_items)
+VOIDP 
+HDmemfill(VOIDP dest, const VOIDP src, uint32 item_size, uint32 num_items)
 {
-    uint32 copy_size;   /* size of the buffer to copy */
-    uint32 copy_items;  /* number of items currently copying */
-    uint32 items_left;  /* number of items left to copy */
-    uint8 *curr_dest;   /* ptr into the 'dest' memory where we are currently */
+    uint32      copy_size;	/* size of the buffer to copy */
+    uint32      copy_items;	/* number of items currently copying */
+    uint32      items_left;	/* number of items left to copy */
+    uint8      *curr_dest;	/* ptr into the 'dest' memory where we are currently */
 
     /* minimal error check for 0 sized array or item size */
-    if(num_items>0 && item_size>0) {
-        HDmemcpy(dest,src,item_size);   /* copy first item */
+    if (num_items > 0 && item_size > 0)
+      {
+	  HDmemcpy(dest, src, item_size);	/* copy first item */
 
-        copy_size=item_size;
-        copy_items=1;
-        items_left=num_items-1;
-        curr_dest=((uint8 *)dest)+item_size;
+	  copy_size = item_size;
+	  copy_items = 1;
+	  items_left = num_items - 1;
+	  curr_dest = ((uint8 *) dest) + item_size;
 
-        /* copy until we've copied at least half of the items */
-        while(items_left>=copy_items) {
+	  /* copy until we've copied at least half of the items */
+	  while (items_left >= copy_items)
+	    {
 
-            HDmemcpy(curr_dest,dest,copy_size); /* copy the current chunk */
-            curr_dest+=copy_size;       /* move the offset for the next chunk */
-            items_left-=copy_items;     /* decrement the number of items left */
+		HDmemcpy(curr_dest, dest, copy_size);	/* copy the current chunk */
+		curr_dest += copy_size;		/* move the offset for the next chunk */
+		items_left -= copy_items;	/* decrement the number of items left */
 
-            copy_size*=2;   /* increase the size of the chunk to copy */
-            copy_items*=2;  /* increase the count of items we are copying */
-          } /* end while */
-        if(items_left>0)   /* if there are any items left to copy */
-            HDmemcpy(curr_dest,dest,items_left*item_size);
-      } /* end if */
-    return(dest);
-}   /* end HDmemfill() */
+		copy_size *= 2;		/* increase the size of the chunk to copy */
+		copy_items *= 2;	/* increase the count of items we are copying */
+	    }	/* end while */
+	  if (items_left > 0)	/* if there are any items left to copy */
+	      HDmemcpy(curr_dest, dest, items_left * item_size);
+      }		/* end if */
+    return (dest);
+}	/* end HDmemfill() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -103,18 +106,21 @@ VOIDP HDmemfill(VOIDP dest,const VOIDP src,uint32 item_size,uint32 num_items)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-char _HUGE *HIstrncpy(register char *dest,register const char *source,int32 len)
+char _HUGE *
+HIstrncpy(register char *dest, register const char *source, int32 len)
 {
-    char *destp;
+    char       *destp;
 
     destp = dest;
     if (len == 0)
-        return(destp);
-    for(; (len > 1) && (*source != '\0'); len--)
-        *dest++ = *source++;
-    *dest = '\0';       /* Force the last byte be '\0'   */
-    return(destp);
-}   /* end HIstrncpy() */
+	return (destp);
+    for (; (len > 1) && (*source != '\0'); len--)
+	*dest++ = *source++;
+    *dest = '\0';	/* Force the last byte be '\0'   */
+    return (destp);
+}	/* end HIstrncpy() */
+/* *INDENT-OFF* */
+/* GNU indent 1.9.1 urps on this section, so turn off indenting for now -QAK */
 
 #if defined PC && !defined PC386
 #ifdef WIN3
@@ -533,6 +539,8 @@ void HDfreespace(VOIDP ptr)
 
 #endif /* !PC | PC386 */
 
+/* *INDENT-ON* */
+
 #if defined MALLOC_CHECK | (defined PC & !defined PC386)
 /*--------------------------------------------------------------------------
  NAME
@@ -553,20 +561,22 @@ void HDfreespace(VOIDP ptr)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VOIDP HDclearspace(uint32 n,uint32 size)
+VOIDP 
+HDclearspace(uint32 n, uint32 size)
 {
-    char FUNC[]="HDclearspace";
-    VOIDP p;
+    char        FUNC[] = "HDclearspace";
+    VOIDP       p;
 
-    p=HDgetspace(n*size);
-    if (p==NULL) {
-        HEreport("Attempted to allocate %d blocks of %d bytes", (int)n,(int)size);
-        HRETURN_ERROR(DFE_NOSPACE,NULL);
-      } /* end if */
+    p = HDgetspace(n * size);
+    if (p == NULL)
+      {
+	  HEreport("Attempted to allocate %d blocks of %d bytes", (int) n, (int) size);
+	  HRETURN_ERROR(DFE_NOSPACE, NULL);
+      }		/* end if */
     else
-        HDmemset(p,0,n*size);
-    return(p);
-} /* end HDclearspace() */
+	HDmemset(p, 0, n * size);
+    return (p);
+}	/* end HDclearspace() */
 #endif /* MALLOC_CHECK */
 
 #if defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL | defined NEXT | defined CONVEX
@@ -586,18 +596,19 @@ VOIDP HDclearspace(uint32 n,uint32 size)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-char *HDstrdup(const char *s)
+char       *
+HDstrdup(const char *s)
 {
-    char *ret;
+    char       *ret;
 
-    ret=(char *)HDgetspace((uint32)HDstrlen(s)+1);
-    if(ret==NULL)
-        return(NULL);
-    HDstrcpy(ret,s);
-    return(ret);
-} /* end HDstrdup() */
+    ret = (char *) HDgetspace((uint32) HDstrlen(s) + 1);
+    if (ret == NULL)
+	return (NULL);
+    HDstrcpy(ret, s);
+    return (ret);
+}	/* end HDstrdup() */
 
-#endif /* VMS & (PC & !PC386) & macinosh*/
+#endif /* VMS & (PC & !PC386) & macinosh */
 
 #if defined WIN3 || defined PC
 #ifdef WIN3
@@ -620,26 +631,29 @@ char *HDstrdup(const char *s)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VOIDP fmemcpy_big(VOIDP dst,VOIDP src,uint32 len)
+VOIDP 
+fmemcpy_big(VOIDP dst, VOIDP src, uint32 len)
 {
-    uint8 *s,d;             /* alias for the buffers */
+    uint8      *s, d;		/* alias for the buffers */
 
-    if(len<=UINT_MAX)   /* if the size is small enough copy all at once */
-        return(_fmemcpy(dst,src,(size_t)len));
-    else {  /* number of bytes to read */
-        s=(uint8 *)src;
-        d=(uint8 *)dst;
-        while(len>UINT_MAX) {
-            _fmemcpy(d,s,UINT_MAX);
-            s+=UINT_MAX;
-            d+=UINT_MAX;
-            len-=UINT_MAX;
-          } /* end while */
-        if(len>0)
-            _fmemcpy(d,s,(size_t)len);
-      } /* end else */
-    return(dst);
-}   /* end fmemcpy_big() */
+    if (len <= UINT_MAX)	/* if the size is small enough copy all at once */
+	return (_fmemcpy(dst, src, (size_t) len));
+    else
+      {		/* number of bytes to read */
+	  s = (uint8 *) src;
+	  d = (uint8 *) dst;
+	  while (len > UINT_MAX)
+	    {
+		_fmemcpy(d, s, UINT_MAX);
+		s += UINT_MAX;
+		d += UINT_MAX;
+		len -= UINT_MAX;
+	    }	/* end while */
+	  if (len > 0)
+	      _fmemcpy(d, s, (size_t) len);
+      }		/* end else */
+    return (dst);
+}	/* end fmemcpy_big() */
 
 /*--------------------------------------------------------------------------
 
@@ -660,24 +674,27 @@ VOIDP fmemcpy_big(VOIDP dst,VOIDP src,uint32 len)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VOIDP fmemset_big(VOIDP src,intn c,uint32 len)
+VOIDP 
+fmemset_big(VOIDP src, intn c, uint32 len)
 {
-    uint8 *s;               /* alias for the buffers */
+    uint8      *s;		/* alias for the buffers */
 
-    if(len<=UINT_MAX)   /* if the size is small enough copy all at once */
-        return(_fmemset(src,c,(size_t)len));
-    else {  /* number of bytes to read */
-        s=(uint8 *)src;
-        while(len>UINT_MAX) {
-            _fmemset(s,c,UINT_MAX);
-            s+=UINT_MAX;
-            len-=UINT_MAX;
-          } /* end while */
-        if(len>0)
-            _fmemset(s,c,(size_t)len);
-      } /* end else */
-    return(src);
-}   /* end fmemset_big() */
+    if (len <= UINT_MAX)	/* if the size is small enough copy all at once */
+	return (_fmemset(src, c, (size_t) len));
+    else
+      {		/* number of bytes to read */
+	  s = (uint8 *) src;
+	  while (len > UINT_MAX)
+	    {
+		_fmemset(s, c, UINT_MAX);
+		s += UINT_MAX;
+		len -= UINT_MAX;
+	    }	/* end while */
+	  if (len > 0)
+	      _fmemset(s, c, (size_t) len);
+      }		/* end else */
+    return (src);
+}	/* end fmemset_big() */
 
 /*--------------------------------------------------------------------------
 
@@ -700,28 +717,31 @@ VOIDP fmemset_big(VOIDP src,intn c,uint32 len)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn fmemcmp_big(VOIDP s1,VOIDP s2,uint32 len)
+intn 
+fmemcmp_big(VOIDP s1, VOIDP s2, uint32 len)
 {
-    intn ret_val;
+    intn        ret_val;
 
-    if(len<=UINT_MAX)   /* if the size is small enough copy all at once */
-        return(_fmemcmp(s1,s2,(size_t)len));
-    else {  /* number of bytes to read */
-        while(len>UINT_MAX) {
-            ret_val=_fmemcmp(s1,s2,UINT_MAX);
-            if(ret_val!=0)
-                return(ret_val);
-            ((uint8 huge *)s1)+=UINT_MAX;
-            ((uint8 huge *)s2)+=UINT_MAX;
-            len-=UINT_MAX;
-          } /* end while */
-        if(len>0)
-            return(_fmemcmp(s1,s2,(size_t)len));
-      } /* end else */
-    return(0);
-}   /* end fmemcmp_big() */
+    if (len <= UINT_MAX)	/* if the size is small enough copy all at once */
+	return (_fmemcmp(s1, s2, (size_t) len));
+    else
+      {		/* number of bytes to read */
+	  while (len > UINT_MAX)
+	    {
+		ret_val = _fmemcmp(s1, s2, UINT_MAX);
+		if (ret_val != 0)
+		    return (ret_val);
+		((uint8 huge *) s1) += UINT_MAX;
+		((uint8 huge *) s2) += UINT_MAX;
+		len -= UINT_MAX;
+	    }	/* end while */
+	  if (len > 0)
+	      return (_fmemcmp(s1, s2, (size_t) len));
+      }		/* end else */
+    return (0);
+}	/* end fmemcmp_big() */
 
-#else   /* !WIN3 */
+#else  /* !WIN3 */
 
 /*--------------------------------------------------------------------------
 
@@ -742,26 +762,29 @@ intn fmemcmp_big(VOIDP s1,VOIDP s2,uint32 len)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VOIDP memcpy_big(VOIDP dst,VOIDP src,uint32 len)
+VOIDP 
+memcpy_big(VOIDP dst, VOIDP src, uint32 len)
 {
-    uint8 *s,*d;             /* alias for the buffers */
+    uint8      *s, *d;		/* alias for the buffers */
 
-    if(len<=UINT_MAX)   /* if the size is small enough copy all at once */
-        return(memcpy(dst,src,(size_t)len));
-    else {  /* number of bytes to read */
-        s=(uint8 *)src;
-        d=(uint8 *)dst;
-        while(len>UINT_MAX) {
-            memcpy(d,s,UINT_MAX);
-            s+=UINT_MAX;
-            d+=UINT_MAX;
-            len-=UINT_MAX;
-          } /* end while */
-        if(len>0)
-            memcpy(d,s,(size_t)len);
-      } /* end else */
-    return(dst);
-}   /* end memcpy_big() */
+    if (len <= UINT_MAX)	/* if the size is small enough copy all at once */
+	return (memcpy(dst, src, (size_t) len));
+    else
+      {		/* number of bytes to read */
+	  s = (uint8 *) src;
+	  d = (uint8 *) dst;
+	  while (len > UINT_MAX)
+	    {
+		memcpy(d, s, UINT_MAX);
+		s += UINT_MAX;
+		d += UINT_MAX;
+		len -= UINT_MAX;
+	    }	/* end while */
+	  if (len > 0)
+	      memcpy(d, s, (size_t) len);
+      }		/* end else */
+    return (dst);
+}	/* end memcpy_big() */
 
 /*--------------------------------------------------------------------------
 
@@ -782,24 +805,27 @@ VOIDP memcpy_big(VOIDP dst,VOIDP src,uint32 len)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VOIDP memset_big(VOIDP src,intn c,uint32 len)
+VOIDP 
+memset_big(VOIDP src, intn c, uint32 len)
 {
-    uint8 *s;               /* alias for the buffers */
+    uint8      *s;		/* alias for the buffers */
 
-    if(len<=UINT_MAX)   /* if the size is small enough copy all at once */
-        return(memset(src,c,(size_t)len));
-    else {  /* number of bytes to read */
-        s=(uint8 *)src;
-        while(len>UINT_MAX) {
-            memset(s,c,UINT_MAX);
-            s+=UINT_MAX;
-            len-=UINT_MAX;
-          } /* end while */
-        if(len>0)
-            memset(s,c,(size_t)len);
-      } /* end else */
-    return(src);
-}   /* end memset_big() */
+    if (len <= UINT_MAX)	/* if the size is small enough copy all at once */
+	return (memset(src, c, (size_t) len));
+    else
+      {		/* number of bytes to read */
+	  s = (uint8 *) src;
+	  while (len > UINT_MAX)
+	    {
+		memset(s, c, UINT_MAX);
+		s += UINT_MAX;
+		len -= UINT_MAX;
+	    }	/* end while */
+	  if (len > 0)
+	      memset(s, c, (size_t) len);
+      }		/* end else */
+    return (src);
+}	/* end memset_big() */
 
 /*--------------------------------------------------------------------------
 
@@ -822,28 +848,30 @@ VOIDP memset_big(VOIDP src,intn c,uint32 len)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn memcmp_big(VOIDP s1,VOIDP s2,uint32 len)
+intn 
+memcmp_big(VOIDP s1, VOIDP s2, uint32 len)
 {
-    uint8 *t1=(uint8 *)s1,
-        *t2=(uint8 *)s2;
-    intn ret_val;
+    uint8      *t1 = (uint8 *) s1, *t2 = (uint8 *) s2;
+    intn        ret_val;
 
-    if(len<=UINT_MAX)   /* if the size is small enough copy all at once */
-        return(memcmp(t1,t2,(size_t)len));
-    else {  /* number of bytes to read */
-        while(len>UINT_MAX) {
-            ret_val=memcmp(t1,t2,UINT_MAX);
-            if(ret_val!=0)
-                return(ret_val);
-            t1+=UINT_MAX;
-            t2+=UINT_MAX;
-            len-=UINT_MAX;
-          } /* end while */
-        if(len>0)
-            return(memcmp(t1,t2,(size_t)len));
-      } /* end else */
-    return(0);
-}   /* end memcmp_big() */
-#endif  /* WIN3 */
+    if (len <= UINT_MAX)	/* if the size is small enough copy all at once */
+	return (memcmp(t1, t2, (size_t) len));
+    else
+      {		/* number of bytes to read */
+	  while (len > UINT_MAX)
+	    {
+		ret_val = memcmp(t1, t2, UINT_MAX);
+		if (ret_val != 0)
+		    return (ret_val);
+		t1 += UINT_MAX;
+		t2 += UINT_MAX;
+		len -= UINT_MAX;
+	    }	/* end while */
+	  if (len > 0)
+	      return (memcmp(t1, t2, (size_t) len));
+      }		/* end else */
+    return (0);
+}	/* end memcmp_big() */
+#endif /* WIN3 */
 
-#endif  /* WIN3 | PC */
+#endif /* WIN3 | PC */

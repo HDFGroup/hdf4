@@ -25,61 +25,63 @@ static char RcsId[] = "@(#)$Revision$";
 #define SCRY 900
 
 /* HEdisplay -- stub function for displaying an image using ICR */
-int HEdisplay(HE_CMD *cmd)
+int 
+HEdisplay(HE_CMD * cmd)
 {
 #ifndef IBM6000
     register int i;
-    int center = 1;
-    int xwhere = 0;
-    int ywhere = 0;
-    int factor = 1;
-    int large = 0;
+    int         center = 1;
+    int         xwhere = 0;
+    int         ywhere = 0;
+    int         factor = 1;
+    int         large = 0;
 
     for (i = 1; i < cmd->argc; i++)
 	if (cmd->argv[i][0] == '-')
-	    switch (findOpt(cmd->argv[i] + 1)) 
-	    {
-	    case HE_HELP:
-		printf("display [-position <xpos> <ypos>] [-expansion <exp>] [-large]\n");
-		printf("\t-position\tImage position on console screen\n");
-		printf("\t-expansion\tImage expansion factor\n");
-		printf("\t-large\t\tMake image as large as posible\n");
-		return HE_OK;
-	    case HE_POSITION:
-		center = 0;
-		xwhere = atoi(cmd->argv[++i]);
-		ywhere = atoi(cmd->argv[++i]);
-		if ((xwhere < 0) || (xwhere > SCRX) ||
-		    (ywhere < 0) || (ywhere > SCRY))
-		{
-		    fprintf(stderr, "Invalid position.\n");
-		    return HE_FAIL;
-		}
-		break;
+	    switch (findOpt(cmd->argv[i] + 1))
+	      {
+		  case HE_HELP:
+		      printf("display [-position <xpos> <ypos>] [-expansion <exp>] [-large]\n");
+		      printf("\t-position\tImage position on console screen\n");
+		      printf("\t-expansion\tImage expansion factor\n");
+		      printf("\t-large\t\tMake image as large as posible\n");
+		      return HE_OK;
+		  case HE_POSITION:
+		      center = 0;
+		      xwhere = atoi(cmd->argv[++i]);
+		      ywhere = atoi(cmd->argv[++i]);
+		      if ((xwhere < 0) || (xwhere > SCRX) ||
+			  (ywhere < 0) || (ywhere > SCRY))
+			{
+			    fprintf(stderr, "Invalid position.\n");
+			    return HE_FAIL;
+			}
+		      break;
 
-	    case HE_EXPANSION:
-		factor = atoi(cmd->argv[++i]);
-		if (factor < 1) factor = 1;
-		break;
+		  case HE_EXPANSION:
+		      factor = atoi(cmd->argv[++i]);
+		      if (factor < 1)
+			  factor = 1;
+		      break;
 
-	    case HE_LARGE:
-		large = 1;
-		break;
-	    case HE_NOTFOUND:
-		unkOpt(cmd->argv[i]);
-		return HE_FAIL;
-	    case HE_AMBIG:
-		ambigOpt(cmd->argv[i]);
-		return HE_FAIL;
-	    default:
-		irrOpt(cmd->argv[i]);
-		return HE_FAIL;
-	    }
+		  case HE_LARGE:
+		      large = 1;
+		      break;
+		  case HE_NOTFOUND:
+		      unkOpt(cmd->argv[i]);
+		      return HE_FAIL;
+		  case HE_AMBIG:
+		      ambigOpt(cmd->argv[i]);
+		      return HE_FAIL;
+		  default:
+		      irrOpt(cmd->argv[i]);
+		      return HE_FAIL;
+	      }
 	else
-	{
-	    unkArg(cmd->argv[i]);
-	    return HE_FAIL;
-	}
+	  {
+	      unkArg(cmd->argv[i]);
+	      return HE_FAIL;
+	  }
     return display(center, xwhere, ywhere, factor, large);
 #else
     printf("Display routines do not work on this platform.\n");
@@ -87,7 +89,8 @@ int HEdisplay(HE_CMD *cmd)
 #endif
 }
 
-void goTo(int desc)
+void 
+goTo(int desc)
 {
     /* goto element of he_desc[desc] */
     /* ask swami */
@@ -96,43 +99,46 @@ void goTo(int desc)
     DFR8readref(he_file, he_desc[desc].ref);
 }
 
+#ifndef IBM6000		/* Skip it all */
 
-#ifndef IBM6000  /* Skip it all */
-
-int oldcf=0;			/* old value of compression flag */
-int32 oldx=0,oldy=0;		/* old values of xdim and ydim */
-int coldx=0,coldy=0;		/* old values of xdim and ydim for CI8s */
-int32 xdim=0,ydim=0;  		/* size of image on disk */
-int xwhere,ywhere;		/* where to put it on the screen */
-int ispal;
-int large;			/* should make images as large as possible */
-int center;			/* should center the images */
-int oldxs=0,oldys=0;		/* old sizes */
-int xsize=0,ysize=0;		/* what final size on screen, after blow-up */
-int factor;
+int         oldcf = 0;		/* old value of compression flag */
+int32       oldx = 0, oldy = 0;	/* old values of xdim and ydim */
+int         coldx = 0, coldy = 0;	/* old values of xdim and ydim for CI8s */
+int32       xdim = 0, ydim = 0;	/* size of image on disk */
+int         xwhere, ywhere;	/* where to put it on the screen */
+int         ispal;
+int         large;		/* should make images as large as possible */
+int         center;		/* should center the images */
+int         oldxs = 0, oldys = 0;	/* old sizes */
+int         xsize = 0, ysize = 0;	/* what final size on screen, after blow-up */
+int         factor;
 
 unsigned char rgb[768];		/* storage for a palette */
-char *wherebig=NULL;	/* where to store small image */
-uint8 *wheresmall = NULL;	/* where to store image-related stuff */
+char       *wherebig = NULL;	/* where to store small image */
+uint8      *wheresmall = NULL;	/* where to store image-related stuff */
 
-int getSpace(void)
+int 
+getSpace(void)
 {
     /*  
      *  Don't allocate anything if the image is the same size as before.
      */
-    if (oldx != xdim || oldy != ydim) {
-	oldx = xdim; oldy = ydim;
+    if (oldx != xdim || oldy != ydim)
+      {
+	  oldx = xdim;
+	  oldy = ydim;
 
-	if (wheresmall)
-	    HDfreespace(wheresmall);
-	
-	if (NULL == (wheresmall = (uint8 *) HDgetspace(xdim*ydim))) {
-	    printf(" Cannot allocate memory, fatal error\n");
-	    exit(1);
-	}
-	
-    }
-    return(0);
+	  if (wheresmall)
+	      HDfreespace(wheresmall);
+
+	  if (NULL == (wheresmall = (uint8 *) HDgetspace(xdim * ydim)))
+	    {
+		printf(" Cannot allocate memory, fatal error\n");
+		exit(1);
+	    }
+
+      }
+    return (0);
 }
 
 /*************************************************************************/
@@ -141,27 +147,31 @@ int getSpace(void)
  *  locally.  
  *
  */
-int largeSet(void)
+int 
+largeSet(void)
 {
     int
-	tmp;
+                tmp;
 
-    if (large) {
-	factor = (int)(SCRX/xdim);	/* how much blow-up can we do? */
-				/* calculate expansion factor  */
-	tmp = (int)(SCRY/ydim);
+    if (large)
+      {
+	  factor = (int) (SCRX / xdim);		/* how much blow-up can we do? */
+	  /* calculate expansion factor  */
+	  tmp = (int) (SCRY / ydim);
 
-	/* take minimum expansion factor */
-	if (factor > tmp) factor = tmp;
-    }
-    
-    xsize = (int)(factor*xdim);	/* re-calculate actual pixel dimensions */
-    ysize = (int)(factor*ydim);
+	  /* take minimum expansion factor */
+	  if (factor > tmp)
+	      factor = tmp;
+      }
 
-    return(factor > 1);		/* is expansion necessary? */
+    xsize = (int) (factor * xdim);	/* re-calculate actual pixel dimensions */
+    ysize = (int) (factor * ydim);
+
+    return (factor > 1);	/* is expansion necessary? */
 }
 
-int display(int c, int x, int y, int f, int l)
+int 
+display(int c, int x, int y, int f, int l)
 {
 
     center = c;
@@ -170,119 +180,129 @@ int display(int c, int x, int y, int f, int l)
     factor = f;
     large = l;
 
-    if (!isRig(he_desc[he_currDesc].tag)) {
+    if (!isRig(he_desc[he_currDesc].tag))
+      {
 
-	fprintf(stderr, "Current element not a image group.\n");
-	return HE_FAIL;
-    }
+	  fprintf(stderr, "Current element not a image group.\n");
+	  return HE_FAIL;
+      }
 
     goTo(he_currDesc);
 
-    if (DFR8getdims(he_file, &xdim, &ydim, &ispal)<0) {
-	fprintf(stderr, "Error getting image group.\n");
-	return HE_FAIL;
-    }
+    if (DFR8getdims(he_file, &xdim, &ydim, &ispal) < 0)
+      {
+	  fprintf(stderr, "Error getting image group.\n");
+	  return HE_FAIL;
+      }
 
     if (he_remote)
-	getSpace();		/* get space for image in mem */
-
+	getSpace();	/* get space for image in mem */
 
 /*
-*  Try to successfully load the palette and image from the file
-*/
-    if (DFR8getimage(he_file, wheresmall, xdim, ydim, rgb) < 0) {
-	fprintf(stderr, "Error getting image group.\n");
-	return HE_FAIL;
-    }
+   *  Try to successfully load the palette and image from the file
+ */
+    if (DFR8getimage(he_file, wheresmall, xdim, ydim, rgb) < 0)
+      {
+	  fprintf(stderr, "Error getting image group.\n");
+	  return HE_FAIL;
+      }
 
-    if (he_remote) 
+    if (he_remote)
 	rImage(ispal);	/* display remote image with [palette] */
 
     return HE_OK;
 
 }
 
-
 /*****************************************************************************/
 /*  rimage
-*  Remote display of the image using the ICR.
-*  Just print the codes to stdout using the protocol.
-*/
-int rImage(int usepal)
+   *  Remote display of the image using the ICR.
+   *  Just print the codes to stdout using the protocol.
+ */
+int 
+rImage(int usepal)
 {
-    int i,j,newxsize;
-    int8 *thisline, *space, *thischar;
+    int         i, j, newxsize;
+    int8       *thisline, *space, *thischar;
     register unsigned char c;
 
 /*
-*  Open the window with the W command
-*/
+   *  Open the window with the W command
+ */
 
-    printf("\033^W;%d;%d;%ld;%ld;0;rseq^",xwhere,ywhere,(long)(xdim*factor),(long)(ydim*factor));
-
-/*
-*  If a palette should be used, send it with the M command.
-*/
-    if (usepal) {
-	(void)printf("\033^M;0;256;768;rseq^");  /* start map */
-
-	thischar = (int8 *) rgb;
-	for (j=0; j<768; j++) {
-	    c = *thischar++;
-	    if (c > 31 && c < 123) {
-		putchar(c);
-	    }
-	    else {
-		putchar((c>>6)+123);
-		putchar((c & 0x3f) + 32);
-	    }
-	}
-    }
+    printf("\033^W;%d;%d;%ld;%ld;0;rseq^", xwhere, ywhere, (long) (xdim * factor), (long) (ydim * factor));
 
 /*
-*  Send the data for the image with RLE encoding for efficiency.
-*  Encode each line and send it.
-*/
-    space    = (int8 *) HDgetspace(ydim+128);
+   *  If a palette should be used, send it with the M command.
+ */
+    if (usepal)
+      {
+	  (void) printf("\033^M;0;256;768;rseq^");	/* start map */
+
+	  thischar = (int8 *) rgb;
+	  for (j = 0; j < 768; j++)
+	    {
+		c = *thischar++;
+		if (c > 31 && c < 123)
+		  {
+		      putchar(c);
+		  }
+		else
+		  {
+		      putchar((c >> 6) + 123);
+		      putchar((c & 0x3f) + 32);
+		  }
+	    }
+      }
+
+/*
+   *  Send the data for the image with RLE encoding for efficiency.
+   *  Encode each line and send it.
+ */
+    space = (int8 *) HDgetspace(ydim + 128);
     thisline = (int8 *) wheresmall;
 
-    for (i = 0; i < ydim; i++) {
-        newxsize = rleIt((char *) thisline, (char *) space, (int) xdim);
-	thisline += xdim;	/* increment to next line */
+    for (i = 0; i < ydim; i++)
+      {
+	  newxsize = rleIt((char *) thisline, (char *) space, (int) xdim);
+	  thisline += xdim;	/* increment to next line */
 
-        (void)printf("\033^R;0;%d;%d;%d;rseq^",i*factor,factor,newxsize); 
+	  (void) printf("\033^R;0;%d;%d;%d;rseq^", i * factor, factor, newxsize);
 
-        thischar = space;
-        for (j = 0; j < newxsize; j++) {
+	  thischar = space;
+	  for (j = 0; j < newxsize; j++)
+	    {
 
 /***********************************************************************/
 /*  Encoding of bytes:
-*
-*  123 precedes #'s 0-63
-*  124 precedes #'s 64-127
-*  125 precedes #'s 128-191
-*  126 precedes #'s 192-255
-*  overall:  realchar = (specialchar - 123)*64 + (char-32)
-*            specialchar = r div 64 + 123
-*            char = r mod 64 + 32
-*/
+   *
+   *  123 precedes #'s 0-63
+   *  124 precedes #'s 64-127
+   *  125 precedes #'s 128-191
+   *  126 precedes #'s 192-255
+   *  overall:  realchar = (specialchar - 123)*64 + (char-32)
+   *            specialchar = r div 64 + 123
+   *            char = r mod 64 + 32
+ */
 /***********************************************************************/
 
-	    c = *thischar++;      /* get byte to send */
+		c = *thischar++;	/* get byte to send */
 
-	    if (c > 31 && c < 123) {
-		putchar(c);
+		if (c > 31 && c < 123)
+		  {
+		      putchar(c);
+		  }
+		else
+		  {
+		      putchar((c >> 6) + 123);
+		      putchar((c & 0x3f) + 32);
+		  }
 	    }
-	    else {
-		putchar((c>>6)+123);
-		putchar((c & 0x3f) + 32);
-	    }
-        }
-    }
+      }
 
 /*
-*  pause for the user
-*/
+   *  pause for the user
+ */
 
     HDfreespace(space);
     return HE_OK;
@@ -290,89 +310,98 @@ int rImage(int usepal)
 
 /*****************************************************************************/
 /* expandimg
-*  copy an image memory to memory, expanding byte by byte to get a larger image.
-*  no aliasing, just byte replication
-*/
-int bigImg(unsigned char *targ, unsigned char *src)
+   *  copy an image memory to memory, expanding byte by byte to get a larger image.
+   *  no aliasing, just byte replication
+ */
+int 
+bigImg(unsigned char *targ, unsigned char *src)
 {
-    register int i,j,line;
-    register unsigned char *p,*q,*oldq;
+    register int i, j, line;
+    register unsigned char *p, *q, *oldq;
 
-    for (line = 0; line < ydim; line++) {
-	p = src+line*xdim;
-	oldq = q = targ+line*xsize*factor;
+    for (line = 0; line < ydim; line++)
+      {
+	  p = src + line * xdim;
+	  oldq = q = targ + line * xsize * factor;
 
-	for (i=0; i<xdim; i++,p++)
-	    for (j=0; j<factor; j++)
-		*q++ = *p;
-		
-	for (i=1; i<factor ; i++) {
-        HDmemcpy(q,oldq,xsize); /* make one copy of the line */
-	    q += xsize;
-	}
+	  for (i = 0; i < xdim; i++, p++)
+	      for (j = 0; j < factor; j++)
+		  *q++ = *p;
 
-    }
+	  for (i = 1; i < factor; i++)
+	    {
+		HDmemcpy(q, oldq, xsize);	/* make one copy of the line */
+		q += xsize;
+	    }
+
+      }
     return HE_OK;
 }
 
-
 /********************************************************************/
 /*  rleit
-*  compress the data to go out with a simple run-length encoded scheme.
-*
-*/
-int rleIt(char *buf, char *bufto, int len)
+   *  compress the data to go out with a simple run-length encoded scheme.
+   *
+ */
+int 
+rleIt(char *buf, char *bufto, int len)
 {
-    register char *p,*q,*cfoll,*clead;
-    char *begp;
-    int i;
+    register char *p, *q, *cfoll, *clead;
+    char       *begp;
+    int         i;
 
     p = buf;
-    cfoll = bufto;		/* place to copy to */
+    cfoll = bufto;	/* place to copy to */
     clead = cfoll + 1;
-	
-    begp = p;
-    while (len > 0) {		/* encode stuff until gone */
 
-	q = p + 1;
-	i = len-1;
-	while (*p == *q && i+120 > len && i) {
-	    q++;
-	    i--;
-	}
-		
-	if (q > p + 2) {	/* three in a row */
-	    if (p > begp) {
-		*cfoll = (char)(p - begp);
-		cfoll = clead;
+    begp = p;
+    while (len > 0)
+      {		/* encode stuff until gone */
+
+	  q = p + 1;
+	  i = len - 1;
+	  while (*p == *q && i + 120 > len && i)
+	    {
+		q++;
+		i--;
 	    }
-	    *cfoll++ = (char)(128 | (q-p)); /* len of seq */
-	    *cfoll++ = *p;	/* char of seq */
-	    len -= (int)(q-p);		/* subtract len of seq */
-	    p = q;
-	    clead = cfoll+1;
-	    begp = p;
-	}
-	else {
-	    *clead++ = *p++;	/* copy one char */
-	    len--;
-	    if (p > begp + 120) {
-		*cfoll = (char)(p - begp);
-		cfoll = clead++;
+
+	  if (q > p + 2)
+	    {	/* three in a row */
+		if (p > begp)
+		  {
+		      *cfoll = (char) (p - begp);
+		      cfoll = clead;
+		  }
+		*cfoll++ = (char) (128 | (q - p));	/* len of seq */
+		*cfoll++ = *p;	/* char of seq */
+		len -= (int) (q - p);	/* subtract len of seq */
+		p = q;
+		clead = cfoll + 1;
 		begp = p;
 	    }
-	}
-	
-    }
-/*
-*  fill in last bytecount
-*/
-    if (p > begp) 
-	*cfoll = (char)(p - begp);
-    else
-	clead--;		/* don't need count position */
+	  else
+	    {
+		*clead++ = *p++;	/* copy one char */
+		len--;
+		if (p > begp + 120)
+		  {
+		      *cfoll = (char) (p - begp);
+		      cfoll = clead++;
+		      begp = p;
+		  }
+	    }
 
-    return((int)(clead - bufto)); /* how many stored as encoded */
+      }
+/*
+   *  fill in last bytecount
+ */
+    if (p > begp)
+	*cfoll = (char) (p - begp);
+    else
+	clead--;	/* don't need count position */
+
+    return ((int) (clead - bufto));	/* how many stored as encoded */
 }
 
 #endif /* IBM6000 */

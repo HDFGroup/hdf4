@@ -32,8 +32,8 @@
 #define ASSERT(e) {if(!(e)){fprintf(stderr,"Assertion failed: file %s, line %d\n",__FILE__,__LINE__);exit(1);}}
 #define NOT_REACHED() {fprintf(stderr,"Should not reach: file %s, line %d\n",__FILE__,__LINE__);exit(1);}
 #else
-#define ASSERT(e)		/* empty assertion */
-#define NOT_REACHED()		/* empty */
+#define ASSERT(e)	/* empty assertion */
+#define NOT_REACHED()	/* empty */
 #endif /* DEBUG */
 
 #define HE_ARG_SZ 30
@@ -121,42 +121,54 @@
 
 typedef int (*HE_FUNC) (void *);
 
-typedef struct he_cmd {
-    int argc;
-    char *argv[HE_ARG_SZ];
-    HE_FUNC func;
-    struct he_cmd *sub, *next;
-} HE_CMD;
+typedef struct he_cmd
+  {
+      int         argc;
+      char       *argv[HE_ARG_SZ];
+      HE_FUNC     func;
+      struct he_cmd *sub, *next;
+  }
+HE_CMD;
 
-typedef struct he_pred {
-    int key, Comp, argType;
-    union {
-	int i;
-	char *str;
-    } arg;
-} HE_PRED;
+typedef struct he_pred
+  {
+      int         key, Comp, argType;
+      union
+	{
+	    int         i;
+	    char       *str;
+	}
+      arg;
+  }
+HE_PRED;
 
-typedef struct DFdesc_str {
-  uint16 tag, ref;
-  int32  length, offset;
-} DFdesc, *DFdesc_ptr;
+typedef struct DFdesc_str
+  {
+      uint16      tag, ref;
+      int32       length, offset;
+  }
+DFdesc     , *DFdesc_ptr;
 
-typedef struct tag_ref_struct {
-  uint16 tag;
-  uint16 ref;
-} tag_ref, *tag_ref_ptr;
+typedef struct tag_ref_struct
+  {
+      uint16      tag;
+      uint16      ref;
+  }
+tag_ref    , *tag_ref_ptr;
 
-typedef struct he_group {
-  int         desc;
-  int         size;
-  tag_ref_ptr ddList;
-} HE_GROUP;
+typedef struct he_group
+  {
+      int         desc;
+      int         size;
+      tag_ref_ptr ddList;
+  }
+HE_GROUP;
 
-extern int he_status;
-extern int he_numDesc;
-extern int he_currDesc;
-extern int he_numGrp;
-extern int he_remote;
+extern int  he_status;
+extern int  he_numDesc;
+extern int  he_currDesc;
+extern int  he_numGrp;
+extern int  he_remote;
 extern char *he_file;
 extern DFdesc he_desc[];
 extern HE_GROUP he_grp[];
@@ -180,7 +192,3 @@ extern HE_GROUP he_grp[];
 #include "he_proto.h"
 
 /* end of he.h */
-
-
-
-

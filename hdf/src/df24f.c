@@ -48,8 +48,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define LUT     0
 #define IMAGE   1
 
-static int dimsset = 0;
-
+static int  dimsset = 0;
 
 /*-----------------------------------------------------------------------------
  * Name:    d2reqil
@@ -61,10 +60,10 @@ static int dimsset = 0;
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-nd2reqil(intf *il)
+FRETVAL(intf)
+nd2reqil(intf * il)
 {
-    return(DFGRIreqil((intn)*il, (intn)IMAGE));
+    return (DFGRIreqil((intn) *il, (intn) IMAGE));
 }
 
 /*-----------------------------------------------------------------------------
@@ -78,13 +77,12 @@ nd2reqil(intf *il)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-nd2sdims(intf *xdim, intf *ydim)
+FRETVAL(intf)
+nd2sdims(intf * xdim, intf * ydim)
 {
     dimsset = 1;
-    return(DFGRIsetdims(*xdim, *ydim, 3, IMAGE));
+    return (DFGRIsetdims(*xdim, *ydim, 3, IMAGE));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    d2igdim
@@ -100,18 +98,17 @@ nd2sdims(intf *xdim, intf *ydim)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-nd2igdim(_fcd filename, intf *pxdim, intf *pydim, intf *pil, intf *fnlen)
+FRETVAL(intf)
+nd2igdim(_fcd filename, intf * pxdim, intf * pydim, intf * pil, intf * fnlen)
 {
-    char *fn;
-    intf ret;
+    char       *fn;
+    intf        ret;
 
-    fn = HDf2cstring(filename, (intn)*fnlen);
-    ret =  DF24getdims(fn, (int32 *)pxdim, (int32 *)pydim, (intn *)pil);
-    HDfreespace((VOIDP)fn);
-    return(ret);
+    fn = HDf2cstring(filename, (intn) *fnlen);
+    ret = DF24getdims(fn, (int32 *) pxdim, (int32 *) pydim, (intn *) pil);
+    HDfreespace((VOIDP) fn);
+    return (ret);
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    d2igimg
@@ -126,18 +123,17 @@ nd2igdim(_fcd filename, intf *pxdim, intf *pydim, intf *pil, intf *fnlen)
  * Remarks: space is assumed to be xdim * ydim * 3 bytes
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-nd2igimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *fnlen)
+FRETVAL(intf)
+nd2igimg(_fcd filename, _fcd image, intf * xdim, intf * ydim, intf * fnlen)
 {
-    char *fn;
-    intf ret;
+    char       *fn;
+    intf        ret;
 
-    fn = HDf2cstring(filename, (intn)*fnlen);
-    ret =  DF24getimage(fn, (VOIDP)_fcdtocp(image), *xdim, *ydim);
-    HDfreespace((VOIDP)fn);
-    return(ret);
+    fn = HDf2cstring(filename, (intn) *fnlen);
+    ret = DF24getimage(fn, (VOIDP) _fcdtocp(image), *xdim, *ydim);
+    HDfreespace((VOIDP) fn);
+    return (ret);
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    d2iaimg
@@ -152,23 +148,23 @@ nd2igimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *fnlen)
  * Remarks: array image is assumed to be xdim * ydim * ncomps bytes
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-nd2iaimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *fnlen,
-    intf *newfile)
+FRETVAL(intf)
+nd2iaimg(_fcd filename, _fcd image, intf * xdim, intf * ydim, intf * fnlen,
+	 intf * newfile)
 {
-    char *fn;
-    intf ret;
+    char       *fn;
+    intf        ret;
 
     if (!dimsset)
-        if (DFGRIsetdims(*xdim, *ydim, 3, IMAGE)<0) return(-1);
+	if (DFGRIsetdims(*xdim, *ydim, 3, IMAGE) < 0)
+	    return (-1);
 
-    fn = HDf2cstring(filename, (intn)*fnlen);
-    ret = DFGRIaddimlut(fn, (VOIDP)_fcdtocp(image), *xdim, *ydim,
-            IMAGE, 1, (intn)*newfile);
-    HDfreespace((VOIDP)fn);
-    return(ret);
+    fn = HDf2cstring(filename, (intn) *fnlen);
+    ret = DFGRIaddimlut(fn, (VOIDP) _fcdtocp(image), *xdim, *ydim,
+			IMAGE, 1, (intn) *newfile);
+    HDfreespace((VOIDP) fn);
+    return (ret);
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    d2setil
@@ -180,10 +176,10 @@ nd2iaimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *fnlen,
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-nd2setil(intf *il)
+FRETVAL(intf)
+nd2setil(intf * il)
 {
-    return (DFGRIsetil((intn)*il, IMAGE));
+    return (DFGRIsetil((intn) *il, IMAGE));
 }
 
 /*-----------------------------------------------------------------------------
@@ -196,7 +192,7 @@ nd2setil(intf *il)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 nd2first(void)
 {
     return (DFGRIrestart());
@@ -212,7 +208,7 @@ nd2first(void)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 nd2lref(void)
 {
     return (DFGRIlastref());
@@ -231,17 +227,18 @@ nd2lref(void)
  *          must be called.
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-nd2scomp(intf *scheme)
+FRETVAL(intf)
+nd2scomp(intf * scheme)
 {
-    comp_info cinfo;   /* Structure containing compression parameters */
+    comp_info   cinfo;		/* Structure containing compression parameters */
 
-    if(*scheme==COMP_JPEG) {  /* check for JPEG compression and set defaults */
-        cinfo.jpeg.quality=75;
-        cinfo.jpeg.force_baseline=1;
-      } /* end if */
-    return (DF24setcompress((int32)*scheme,&cinfo));
-}   /* end d2scomp() */
+    if (*scheme == COMP_JPEG)
+      {		/* check for JPEG compression and set defaults */
+	  cinfo.jpeg.quality = 75;
+	  cinfo.jpeg.force_baseline = 1;
+      }		/* end if */
+    return (DF24setcompress((int32) *scheme, &cinfo));
+}	/* end d2scomp() */
 
 /*-----------------------------------------------------------------------------
  * Name:    d2sjpeg
@@ -255,15 +252,15 @@ nd2scomp(intf *scheme)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-nd2sjpeg(intf *quality,intf *force_baseline)
+FRETVAL(intf)
+nd2sjpeg(intf * quality, intf * force_baseline)
 {
-    comp_info cinfo;   /* Structure containing compression parameters */
+    comp_info   cinfo;		/* Structure containing compression parameters */
 
-    cinfo.jpeg.quality=(intn)*quality;
-    cinfo.jpeg.force_baseline=(intn)*force_baseline;
-    return (DF24setcompress((int32)COMP_JPEG,&cinfo));
-}   /* end d2sjpeg() */
+    cinfo.jpeg.quality = (intn) *quality;
+    cinfo.jpeg.force_baseline = (intn) *force_baseline;
+    return (DF24setcompress((int32) COMP_JPEG, &cinfo));
+}	/* end d2sjpeg() */
 
 /*-----------------------------------------------------------------------------
  * Name:    df24reqil
@@ -275,10 +272,10 @@ nd2sjpeg(intf *quality,intf *force_baseline)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndf24reqil(intf *il)
+FRETVAL(intf)
+ndf24reqil(intf * il)
 {
-    return(DFGRIreqil((intn)*il, IMAGE));
+    return (DFGRIreqil((intn) *il, IMAGE));
 }
 
 /*-----------------------------------------------------------------------------
@@ -292,11 +289,11 @@ ndf24reqil(intf *il)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndf24setdims(intf *xdim, intf *ydim)
+FRETVAL(intf)
+ndf24setdims(intf * xdim, intf * ydim)
 {
     dimsset = 1;
-    return(DFGRIsetdims(*xdim, *ydim, 3, IMAGE));
+    return (DFGRIsetdims(*xdim, *ydim, 3, IMAGE));
 }
 
 /*-----------------------------------------------------------------------------
@@ -309,10 +306,10 @@ ndf24setdims(intf *xdim, intf *ydim)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndf24setil(intf *il)
+FRETVAL(intf)
+ndf24setil(intf * il)
 {
-    return (DFGRIsetil((intn)*il, IMAGE));
+    return (DFGRIsetil((intn) *il, IMAGE));
 }
 
 /*-----------------------------------------------------------------------------
@@ -325,7 +322,7 @@ ndf24setil(intf *il)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndf24restart(void)
 {
     return (DFGRIrestart());
@@ -344,17 +341,18 @@ ndf24restart(void)
  *          must be called.
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndf24scompress(intf *scheme)
+FRETVAL(intf)
+ndf24scompress(intf * scheme)
 {
-    comp_info cinfo;   /* Structure containing compression parameters */
+    comp_info   cinfo;		/* Structure containing compression parameters */
 
-    if(*scheme==COMP_JPEG) {  /* check for JPEG compression and set defaults */
-        cinfo.jpeg.quality=75;
-        cinfo.jpeg.force_baseline=1;
-      } /* end if */
-    return (DF24setcompress((int32)*scheme,&cinfo));
-}   /* end df24setcompress() */
+    if (*scheme == COMP_JPEG)
+      {		/* check for JPEG compression and set defaults */
+	  cinfo.jpeg.quality = 75;
+	  cinfo.jpeg.force_baseline = 1;
+      }		/* end if */
+    return (DF24setcompress((int32) *scheme, &cinfo));
+}	/* end df24setcompress() */
 
 /*-----------------------------------------------------------------------------
  * Name:    df24sjpeg
@@ -368,15 +366,15 @@ ndf24scompress(intf *scheme)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndf24sjpeg(intf *quality,intf *force_baseline)
+FRETVAL(intf)
+ndf24sjpeg(intf * quality, intf * force_baseline)
 {
-    comp_info cinfo;   /* Structure containing compression parameters */
+    comp_info   cinfo;		/* Structure containing compression parameters */
 
-    cinfo.jpeg.quality=(intn)*quality;
-    cinfo.jpeg.force_baseline=(intn)*force_baseline;
-    return (DF24setcompress((int32)COMP_JPEG,&cinfo));
-}   /* end df24setjpeg() */
+    cinfo.jpeg.quality = (intn) *quality;
+    cinfo.jpeg.force_baseline = (intn) *force_baseline;
+    return (DF24setcompress((int32) COMP_JPEG, &cinfo));
+}	/* end df24setjpeg() */
 
 /*-----------------------------------------------------------------------------
  * Name:    d2irref
@@ -390,14 +388,14 @@ ndf24sjpeg(intf *quality,intf *force_baseline)
  * Remarks: 
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-nd2irref(_fcd filename, intf *ref, intf *fnlen)
+FRETVAL(intf)
+nd2irref(_fcd filename, intf * ref, intf * fnlen)
 {
-    char *fn;
-    intf ret;
+    char       *fn;
+    intf        ret;
 
-    fn = HDf2cstring(filename, (intn)*fnlen);
-    ret = DFGRreadref(fn, (uint16)*ref);
-    HDfreespace((VOIDP)fn);
-    return(ret);
+    fn = HDf2cstring(filename, (intn) *fnlen);
+    ret = DFGRreadref(fn, (uint16) *ref);
+    HDfreespace((VOIDP) fn);
+    return (ret);
 }

@@ -12,7 +12,6 @@
 
 #include "jinclude.h"
 
-
 /* Default do-nothing progress monitoring routine.
  * This can be overridden by a user interface that wishes to
  * provide progress monitoring; just set methods->progress_monitor
@@ -25,9 +24,9 @@
  * is in cinfo->total_passes, and the number of passes already completed is
  * in cinfo->completed_passes.  Thus the fraction of work completed may be
  * estimated as
- *		completed_passes + (loopcounter/looplimit)
- *		------------------------------------------
- *				total_passes
+ *              completed_passes + (loopcounter/looplimit)
+ *              ------------------------------------------
+ *                              total_passes
  * ignoring the fact that the passes may not be equal amounts of work.
  *
  * When decompressing, the total_passes figure is an estimate that may be
@@ -35,15 +34,16 @@
  * passes are skipped.
  */
 
-METHODDEF VOID
-d_progress_monitor (decompress_info_ptr cinfo, long loopcounter, long looplimit)
+METHODDEF   VOID
+d_progress_monitor(decompress_info_ptr cinfo, long loopcounter, long looplimit)
 {
-  /* do nothing */
+    /* do nothing */
     /* shut compiler up */
-    cinfo=cinfo; loopcounter=loopcounter; looplimit=looplimit;
+    cinfo = cinfo;
+    loopcounter = loopcounter;
+    looplimit = looplimit;
 
 }
-
 
 /*
  * Reload the input buffer after it's been emptied, and return the next byte.
@@ -63,28 +63,27 @@ d_progress_monitor (decompress_info_ptr cinfo, long loopcounter, long looplimit)
  */
 
 METHODDEF int
-d_read_jpeg_data (decompress_info_ptr cinfo)
+d_read_jpeg_data(decompress_info_ptr cinfo)
 {
-  cinfo->next_input_byte = cinfo->input_buffer + MIN_UNGET;
+    cinfo->next_input_byte = cinfo->input_buffer + MIN_UNGET;
 
-  cinfo->bytes_in_buffer = (int) JFREAD(cinfo->input_file,
-					cinfo->next_input_byte,
-					JPEG_BUF_SIZE);
-  
-  if (cinfo->bytes_in_buffer <= 0) {
-    WARNMS(cinfo->emethods, "Premature EOF in JPEG file");
-    cinfo->next_input_byte[0] = (char) 0xFF;
-    cinfo->next_input_byte[1] = (char) 0xD9; /* EOI marker */
-    cinfo->bytes_in_buffer = 2;
-  }
+    cinfo->bytes_in_buffer = (int) JFREAD(cinfo->input_file,
+					  cinfo->next_input_byte,
+					  JPEG_BUF_SIZE);
 
-  return JGETC(cinfo);
+    if (cinfo->bytes_in_buffer <= 0)
+      {
+	  WARNMS(cinfo->emethods, "Premature EOF in JPEG file");
+	  cinfo->next_input_byte[0] = (char) 0xFF;
+	  cinfo->next_input_byte[1] = (char) 0xD9;	/* EOI marker */
+	  cinfo->bytes_in_buffer = 2;
+      }
+
+    return JGETC(cinfo);
 }
 
-
-
 /* Default parameter setup for decompression.
- *
+
  * User interfaces that don't choose to use this routine must do their
  * own setup of all these parameters.  Alternately, you can call this
  * to establish defaults and then alter parameters selectively.  This
@@ -111,56 +110,58 @@ d_read_jpeg_data (decompress_info_ptr cinfo)
  * cleanup.
  */
 
-GLOBAL VOID
-j_d_defaults (decompress_info_ptr cinfo, intn standard_buffering)
+GLOBAL      VOID
+j_d_defaults(decompress_info_ptr cinfo, intn standard_buffering)
 /* NB: the external methods must already be set up. */
 {
-  short i;
+    short       i;
 
-  /* Initialize pointers as needed to mark stuff unallocated. */
-  /* Outer application may fill in default tables for abbreviated files... */
-  cinfo->comp_info = NULL;
-  for (i = 0; i < NUM_QUANT_TBLS; i++)
-    cinfo->quant_tbl_ptrs[i] = NULL;
-  for (i = 0; i < NUM_HUFF_TBLS; i++) {
-    cinfo->dc_huff_tbl_ptrs[i] = NULL;
-    cinfo->ac_huff_tbl_ptrs[i] = NULL;
-  }
-  cinfo->colormap = NULL;
+    /* Initialize pointers as needed to mark stuff unallocated. */
+    /* Outer application may fill in default tables for abbreviated files... */
+    cinfo->comp_info = NULL;
+    for (i = 0; i < NUM_QUANT_TBLS; i++)
+	cinfo->quant_tbl_ptrs[i] = NULL;
+    for (i = 0; i < NUM_HUFF_TBLS; i++)
+      {
+	  cinfo->dc_huff_tbl_ptrs[i] = NULL;
+	  cinfo->ac_huff_tbl_ptrs[i] = NULL;
+      }
+    cinfo->colormap = NULL;
 
-  /* Default to RGB output */
-  /* UI can override by changing out_color_space */
-  cinfo->out_color_space = CS_RGB;
-  cinfo->jpeg_color_space = CS_UNKNOWN;
-  /* Setting any other value in jpeg_color_space overrides heuristics in */
-  /* jrdjfif.c.  That might be useful when reading non-JFIF JPEG files, */
-  /* but ordinarily the UI shouldn't change it. */
-  
-  /* Default to no gamma correction of output */
-  cinfo->output_gamma = 1.0;
-  
-  /* Default to no color quantization */
-  cinfo->quantize_colors = FALSE;
-  /* but set reasonable default parameters for quantization, */
-  /* so that turning on quantize_colors is sufficient to do something useful */
-  cinfo->two_pass_quantize = TRUE;
-  cinfo->use_dithering = TRUE;
-  cinfo->desired_number_of_colors = 256;
-  
-  /* Default to no smoothing */
-  cinfo->do_block_smoothing = FALSE;
-  cinfo->do_pixel_smoothing = FALSE;
-  
-  /* Allocate memory for input buffer, unless outer application provides it. */
-  if (standard_buffering) {
-    cinfo->input_buffer = (char *) (*cinfo->emethods->alloc_small)
-					((size_t) (JPEG_BUF_SIZE + MIN_UNGET));
-    cinfo->bytes_in_buffer = 0;	/* initialize buffer to empty */
-  }
+    /* Default to RGB output */
+    /* UI can override by changing out_color_space */
+    cinfo->out_color_space = CS_RGB;
+    cinfo->jpeg_color_space = CS_UNKNOWN;
+    /* Setting any other value in jpeg_color_space overrides heuristics in */
+    /* jrdjfif.c.  That might be useful when reading non-JFIF JPEG files, */
+    /* but ordinarily the UI shouldn't change it. */
 
-  /* Install standard buffer-reloading method (outer code may override). */
-  cinfo->methods->read_jpeg_data = d_read_jpeg_data;
+    /* Default to no gamma correction of output */
+    cinfo->output_gamma = 1.0;
 
-  /* Install default do-nothing progress monitoring method. */
-  cinfo->methods->progress_monitor = d_progress_monitor;
+    /* Default to no color quantization */
+    cinfo->quantize_colors = FALSE;
+    /* but set reasonable default parameters for quantization, */
+    /* so that turning on quantize_colors is sufficient to do something useful */
+    cinfo->two_pass_quantize = TRUE;
+    cinfo->use_dithering = TRUE;
+    cinfo->desired_number_of_colors = 256;
+
+    /* Default to no smoothing */
+    cinfo->do_block_smoothing = FALSE;
+    cinfo->do_pixel_smoothing = FALSE;
+
+    /* Allocate memory for input buffer, unless outer application provides it. */
+    if (standard_buffering)
+      {
+	  cinfo->input_buffer = (char *) (*cinfo->emethods->alloc_small)
+	      ((size_t) (JPEG_BUF_SIZE + MIN_UNGET));
+	  cinfo->bytes_in_buffer = 0;	/* initialize buffer to empty */
+      }
+
+    /* Install standard buffer-reloading method (outer code may override). */
+    cinfo->methods->read_jpeg_data = d_read_jpeg_data;
+
+    /* Install default do-nothing progress monitoring method. */
+    cinfo->methods->progress_monitor = d_progress_monitor;
 }

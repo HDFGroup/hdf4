@@ -47,7 +47,7 @@ static char RcsId[] = "@(#)$Revision$";
 #   define ndplref   FNAME(DPLREF)
 #   define ndfprestart   FNAME(DFPRESTART)
 #   define ndfplastref   FNAME(DFPLASTREF)
-#else   /* !DF_CAPNAMES */
+#else  /* !DF_CAPNAMES */
 #   define ndpigpal  FNAME(dpigpal)
 #   define ndpippal  FNAME(dpippal)
 #   define ndpinpal  FNAME(dpinpal)
@@ -70,18 +70,17 @@ static char RcsId[] = "@(#)$Revision$";
  * Invokes: DFPgetpal
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndpigpal(_fcd filename, _fcd pal, intf *fnlen)
+FRETVAL(intf)
+ndpigpal(_fcd filename, _fcd pal, intf * fnlen)
 {
-    char *fn;
-    intf ret;
+    char       *fn;
+    intf        ret;
 
-    fn = HDf2cstring(filename, (intn)*fnlen);
-    ret =  DFPgetpal(fn, (VOIDP)_fcdtocp(pal));
-    HDfreespace((VOIDP)fn);
-    return(ret);
+    fn = HDf2cstring(filename, (intn) *fnlen);
+    ret = DFPgetpal(fn, (VOIDP) _fcdtocp(pal));
+    HDfreespace((VOIDP) fn);
+    return (ret);
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dpippal
@@ -100,19 +99,18 @@ ndpigpal(_fcd filename, _fcd pal, intf *fnlen)
  *          call
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndpippal(_fcd filename, _fcd pal, intf *overwrite, _fcd filemode, intf *fnlen)
+FRETVAL(intf)
+ndpippal(_fcd filename, _fcd pal, intf * overwrite, _fcd filemode, intf * fnlen)
 {
-    char *fn;
-    intf ret;
+    char       *fn;
+    intf        ret;
 
-    fn = HDf2cstring(filename, (intn)*fnlen);
-    ret =  DFPputpal(fn, (VOIDP)_fcdtocp(pal), (intn)*overwrite,
-            (char*)_fcdtocp(filemode));
-    HDfreespace((VOIDP)fn);
-    return(ret);
+    fn = HDf2cstring(filename, (intn) *fnlen);
+    ret = DFPputpal(fn, (VOIDP) _fcdtocp(pal), (intn) *overwrite,
+		    (char *) _fcdtocp(filemode));
+    HDfreespace((VOIDP) fn);
+    return (ret);
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dpinpal
@@ -123,18 +121,17 @@ ndpippal(_fcd filename, _fcd pal, intf *overwrite, _fcd filemode, intf *fnlen)
  * Invokes: DFPnpals
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndpinpal(_fcd filename, intf *fnlen)
+FRETVAL(intf)
+ndpinpal(_fcd filename, intf * fnlen)
 {
-    char *fn;
-    intf ret;
+    char       *fn;
+    intf        ret;
 
-    fn = HDf2cstring(filename, (intn)*fnlen);
-    ret =  DFPnpals(fn);
-    HDfreespace((VOIDP)fn);
-    return(ret);
+    fn = HDf2cstring(filename, (intn) *fnlen);
+    ret = DFPnpals(fn);
+    HDfreespace((VOIDP) fn);
+    return (ret);
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dpirref
@@ -147,18 +144,17 @@ ndpinpal(_fcd filename, intf *fnlen)
  * Remarks: checks if palette with this ref exists
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndpirref(_fcd filename, uint16 *ref, intf *fnlen)
+FRETVAL(intf)
+ndpirref(_fcd filename, uint16 *ref, intf * fnlen)
 {
-    char *fn;
-    intf ret;
+    char       *fn;
+    intf        ret;
 
-    fn = HDf2cstring(filename, (intn)*fnlen);
-    ret =  DFPreadref(fn, *ref);
-    HDfreespace((VOIDP)fn);
-    return(ret);
+    fn = HDf2cstring(filename, (intn) *fnlen);
+    ret = DFPreadref(fn, *ref);
+    HDfreespace((VOIDP) fn);
+    return (ret);
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dpiwref
@@ -171,20 +167,18 @@ ndpirref(_fcd filename, uint16 *ref, intf *fnlen)
  * Invokes: DFPwriteref
  *---------------------------------------------------------------------------*/
 
-
-    FRETVAL(intf)
-ndpiwref(_fcd filename, uint16 *ref, intf *fnlen)
+FRETVAL(intf)
+ndpiwref(_fcd filename, uint16 *ref, intf * fnlen)
 {
 
-    char *fn;
-    intf ret;
+    char       *fn;
+    intf        ret;
 
-    fn = HDf2cstring(filename, (intn)*fnlen);
-    ret =  DFPreadref(fn, *ref);
-    HDfreespace((VOIDP)fn);
-    return(ret);
+    fn = HDf2cstring(filename, (intn) *fnlen);
+    ret = DFPreadref(fn, *ref);
+    HDfreespace((VOIDP) fn);
+    return (ret);
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dprest
@@ -195,13 +189,12 @@ ndpiwref(_fcd filename, uint16 *ref, intf *fnlen)
  * Remarks: Invokes DFPrestart
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndprest(void)
 {
 
-    return(DFPrestart());
+    return (DFPrestart());
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dplref
@@ -214,13 +207,12 @@ ndprest(void)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndplref(void)
 {
 
-    return(DFPlastref());
+    return (DFPlastref());
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfprestart
@@ -231,13 +223,12 @@ ndplref(void)
  * Remarks: Invokes DFPrestart
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndfprestart(void)
 {
 
-    return(DFPrestart());
+    return (DFPrestart());
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfplastref
@@ -250,9 +241,9 @@ ndfprestart(void)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndfplastref(void)
 {
 
-    return(DFPlastref());
+    return (DFPlastref());
 }

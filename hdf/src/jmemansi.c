@@ -1,3 +1,4 @@
+
 /*
  * jmemansi.c  (jmemsys.c)
  *
@@ -16,21 +17,19 @@
 #include "jmemsys.h"
 
 #ifdef INCLUDES_ARE_ANSI
-#include <stdlib.h>		/* to declare malloc(), free() */
+#include <stdlib.h>	/* to declare malloc(), free() */
 #else
-extern VOID * malloc (size_t size);
-extern VOID free (VOID *ptr);
+extern VOID *malloc(size_t size);
+extern VOID free(VOID * ptr);
 #endif
 
-#ifndef SEEK_SET		/* pre-ANSI systems may not define this; */
-#define SEEK_SET  0		/* if not, assume 0 is correct */
+#ifndef SEEK_SET	/* pre-ANSI systems may not define this; */
+#define SEEK_SET  0	/* if not, assume 0 is correct */
 #endif
 
-
-static external_methods_ptr methods; /* saved for access to error_exit */
+static external_methods_ptr methods;	/* saved for access to error_exit */
 
 static long total_used;		/* total memory requested so far */
-
 
 /*
  * Memory allocation and freeing are controlled by the regular library
@@ -38,23 +37,22 @@ static long total_used;		/* total memory requested so far */
  */
 
 GLOBAL VOIDP
-jget_small (size_t sizeofobject)
+jget_small(size_t sizeofobject)
 {
-  total_used += sizeofobject;
-  return (VOID *) malloc(sizeofobject);
+    total_used += sizeofobject;
+    return (VOID *) malloc(sizeofobject);
 }
 
-GLOBAL VOID
-jfree_small (VOIDP object)
+GLOBAL      VOID
+jfree_small(VOIDP object)
 {
-  free(object);
+    free(object);
 }
 
 /*
  * We assume NEED_FAR_POINTERS is not defined and so the separate entry points
  * jget_large, jfree_large are not needed.
  */
-
 
 /*
  * This routine computes the total memory space available for allocation.
@@ -65,15 +63,14 @@ jfree_small (VOIDP object)
  */
 
 #ifndef DEFAULT_MAX_MEM		/* so can override from makefile */
-#define DEFAULT_MAX_MEM		1000000L /* default: one megabyte */
+#define DEFAULT_MAX_MEM		1000000L	/* default: one megabyte */
 #endif
 
 GLOBAL long
-jmem_available (long min_bytes_needed, long max_bytes_needed)
+jmem_available(long min_bytes_needed, long max_bytes_needed)
 {
-  return methods->max_memory_to_use - total_used;
+    return methods->max_memory_to_use - total_used;
 }
-
 
 /*
  * Backing store (temporary file) management.
@@ -82,40 +79,36 @@ jmem_available (long min_bytes_needed, long max_bytes_needed)
  * with these routines if you have plenty of virtual memory; see jmemnobs.c.
  */
 
+METHODDEF   VOID
+read_backing_store(backing_store_ptr info, VOIDP buffer_address,
+		   long file_offset, long byte_count)
+{
+    if (fseek(info->temp_file, file_offset, SEEK_SET))
+	ERREXIT(methods, "fseek failed on temporary file");
+    if (JFREAD(info->temp_file, buffer_address, byte_count)
+	!= (size_t) byte_count)
+	ERREXIT(methods, "fread failed on temporary file");
+}
 
-METHODDEF VOID
-read_backing_store (backing_store_ptr info, VOIDP buffer_address,
+METHODDEF   VOID
+write_backing_store(backing_store_ptr info, VOIDP buffer_address,
 		    long file_offset, long byte_count)
 {
-  if (fseek(info->temp_file, file_offset, SEEK_SET))
-    ERREXIT(methods, "fseek failed on temporary file");
-  if (JFREAD(info->temp_file, buffer_address, byte_count)
-      != (size_t) byte_count)
-    ERREXIT(methods, "fread failed on temporary file");
+    if (fseek(info->temp_file, file_offset, SEEK_SET))
+	ERREXIT(methods, "fseek failed on temporary file");
+    if (JFWRITE(info->temp_file, buffer_address, byte_count)
+	!= (size_t) byte_count)
+	ERREXIT(methods, "fwrite failed on temporary file --- out of disk space?");
 }
 
-
-METHODDEF VOID
-write_backing_store (backing_store_ptr info, VOIDP buffer_address,
-		     long file_offset, long byte_count)
+METHODDEF   VOID
+close_backing_store(backing_store_ptr info)
 {
-  if (fseek(info->temp_file, file_offset, SEEK_SET))
-    ERREXIT(methods, "fseek failed on temporary file");
-  if (JFWRITE(info->temp_file, buffer_address, byte_count)
-      != (size_t) byte_count)
-    ERREXIT(methods, "fwrite failed on temporary file --- out of disk space?");
+    fclose(info->temp_file);
+    /* Since this implementation uses tmpfile() to create the file,
+     * no explicit file deletion is needed.
+     */
 }
-
-
-METHODDEF VOID
-close_backing_store (backing_store_ptr info)
-{
-  fclose(info->temp_file);
-  /* Since this implementation uses tmpfile() to create the file,
-   * no explicit file deletion is needed.
-   */
-}
-
 
 /*
  * Initial opening of a backing-store object.
@@ -125,16 +118,15 @@ close_backing_store (backing_store_ptr info)
  * indeed, we can't even find out the actual name of the temp file.
  */
 
-GLOBAL VOID
-jopen_backing_store (backing_store_ptr info, long total_bytes_needed)
+GLOBAL      VOID
+jopen_backing_store(backing_store_ptr info, long total_bytes_needed)
 {
-  if ((info->temp_file = tmpfile()) == NULL)
-    ERREXIT(methods, "Failed to create temporary file");
-  info->read_backing_store = read_backing_store;
-  info->write_backing_store = write_backing_store;
-  info->close_backing_store = close_backing_store;
+    if ((info->temp_file = tmpfile()) == NULL)
+	ERREXIT(methods, "Failed to create temporary file");
+    info->read_backing_store = read_backing_store;
+    info->write_backing_store = write_backing_store;
+    info->close_backing_store = close_backing_store;
 }
-
 
 /*
  * These routines take care of any system-dependent initialization and
@@ -142,16 +134,16 @@ jopen_backing_store (backing_store_ptr info, long total_bytes_needed)
  * once.
  */
 
-GLOBAL VOID
-jmem_init (external_methods_ptr emethods)
+GLOBAL      VOID
+jmem_init(external_methods_ptr emethods)
 {
-  methods = emethods;		/* save struct addr for error exit access */
-  emethods->max_memory_to_use = DEFAULT_MAX_MEM;
-  total_used = 0;
+    methods = emethods;		/* save struct addr for error exit access */
+    emethods->max_memory_to_use = DEFAULT_MAX_MEM;
+    total_used = 0;
 }
 
-GLOBAL VOID
-jmem_term (void)
+GLOBAL      VOID
+jmem_term(void)
 {
-  /* no work */
+    /* no work */
 }

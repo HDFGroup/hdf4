@@ -1,3 +1,4 @@
+
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -68,7 +69,7 @@ static char RcsId[] = "@(#)$Revision$";
 #   define ndfnumber FNAME(DFNUMBER)
 #   define ndfstat   FNAME(DFSTAT)
 #   define ndfiishdf FNAME(DFIISHDF)
-#else   /* !DF_CAPFNAMES */
+#else  /* !DF_CAPFNAMES */
 #   define ndfiaccess   FNAME(dfiaccess)
 #   define ndfiopen  FNAME(dfiopen)
 #   define ndfclose  FNAME(dfclose)
@@ -105,18 +106,17 @@ static char RcsId[] = "@(#)$Revision$";
  * Method:  Convert filename to C string, call DFopen
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfiopen(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
+FRETVAL(intf)
+ndfiopen(_fcd name, intf * acc_mode, intf * defdds, intf * namelen)
 {
-    char *fn;
-    intf ret;
-    
-    fn = DFIf2cstring(name, (intn)*namelen);
-    ret = (int32) DFopen(fn, (intn)*acc_mode, (intn)*defdds);
-    HDfreespace((VOIDP)fn);
-    return(ret);
-}
+    char       *fn;
+    intf        ret;
 
+    fn = DFIf2cstring(name, (intn) *namelen);
+    ret = (int32) DFopen(fn, (intn) *acc_mode, (intn) *defdds);
+    HDfreespace((VOIDP) fn);
+    return (ret);
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    dfclose
@@ -127,12 +127,11 @@ ndfiopen(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
  * Invokes: DFclose
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfclose(intf *dfile)
+FRETVAL(intf)
+ndfclose(intf * dfile)
 {
-    return(DFclose((DF *)*dfile));
+    return (DFclose((DF *) * dfile));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfdesc
@@ -144,31 +143,30 @@ ndfclose(intf *dfile)
  * Invokes: DFdesc
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfdesc(intf *dfile, intf ptr[][4], intf *begin, intf *num)
+FRETVAL(intf)
+ndfdesc(intf * dfile, intf ptr[][4], intf * begin, intf * num)
 {
-    DFdesc *ptr1;
-    int i;
-    intf num_desc;
+    DFdesc     *ptr1;
+    int         i;
+    intf        num_desc;
 
-            /* allocate temporary space */
-    ptr1 = (DFdesc *) HDgetspace((uint32)*num * sizeof(DFdesc));
-    num_desc = DFdescriptors((DF*)*dfile, ptr1, (intn)*begin, (intn)*num);
-    
+    /* allocate temporary space */
+    ptr1 = (DFdesc *) HDgetspace((uint32) *num * sizeof(DFdesc));
+    num_desc = DFdescriptors((DF *) * dfile, ptr1, (intn) *begin, (intn) *num);
+
     /* copy ptr1 array  ptr; note row/column inversion */
-    for (i=0; i<num_desc; i++)
-    {
-        ptr[i][0] = (int32)ptr1[i].tag;
-        ptr[i][1] = (int32)ptr1[i].ref;
-        ptr[i][2] = ptr1[i].offset;
-        ptr[i][3] = ptr1[i].length;
-    }
+    for (i = 0; i < num_desc; i++)
+      {
+	  ptr[i][0] = (int32) ptr1[i].tag;
+	  ptr[i][1] = (int32) ptr1[i].ref;
+	  ptr[i][2] = ptr1[i].offset;
+	  ptr[i][3] = ptr1[i].length;
+      }
 
-    HDfreespace((VOIDP)ptr1);
+    HDfreespace((VOIDP) ptr1);
 
-    return(num_desc);
+    return (num_desc);
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfdup
@@ -181,13 +179,12 @@ ndfdesc(intf *dfile, intf ptr[][4], intf *begin, intf *num)
  * Invokes: DFdup
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfdup(intf *dfile, intf *tag, intf *ref, intf *otag, intf *oref)
+FRETVAL(intf)
+ndfdup(intf * dfile, intf * tag, intf * ref, intf * otag, intf * oref)
 {
-    return(DFdup((DF *)*dfile, (uint16)*tag, (uint16)*ref, (uint16)*otag,
-    	   (uint16)*oref));
+    return (DFdup((DF *) * dfile, (uint16) *tag, (uint16) *ref, (uint16) *otag,
+		  (uint16) *oref));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfdel
@@ -199,12 +196,11 @@ ndfdup(intf *dfile, intf *tag, intf *ref, intf *otag, intf *oref)
  * Invokes: DFdel
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfdel(intf *dfile, intf *tag, intf *ref)
+FRETVAL(intf)
+ndfdel(intf * dfile, intf * tag, intf * ref)
 {
-    return (DFdel((DF *)*dfile, (uint16)*tag, (uint16)*ref));
+    return (DFdel((DF *) * dfile, (uint16) *tag, (uint16) *ref));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfiaccess
@@ -217,18 +213,17 @@ ndfdel(intf *dfile, intf *tag, intf *ref)
  * Invokes: DFaccess
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfiaccess(intf *dfile, intf *tag, intf *ref, _fcd acc_mode, intf *acclen)
+FRETVAL(intf)
+ndfiaccess(intf * dfile, intf * tag, intf * ref, _fcd acc_mode, intf * acclen)
 {
-    char *acc;
-    intf ret;
+    char       *acc;
+    intf        ret;
 
-    acc = DFIf2cstring(acc_mode, (intn)*acclen);
-    ret = (int32)DFaccess((DF *) *dfile, (uint16)*tag, (uint16)*ref, acc);
-    HDfreespace((VOIDP)acc);
-    return(ret);
+    acc = DFIf2cstring(acc_mode, (intn) *acclen);
+    ret = (int32) DFaccess((DF *) * dfile, (uint16) *tag, (uint16) *ref, acc);
+    HDfreespace((VOIDP) acc);
+    return (ret);
 }
-
 
 #if 0
 /*-----------------------------------------------------------------------------
@@ -242,10 +237,10 @@ ndfiaccess(intf *dfile, intf *tag, intf *ref, _fcd acc_mode, intf *acclen)
  * Invokes: DFaccess
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfstart(intf *dfile, intf *tag, intf *ref, char *acc_mode)
+FRETVAL(intf)
+ndfstart(intf * dfile, intf * tag, intf * ref, char *acc_mode)
 {
-    return(DFaccess((DF *)*dfile, (uint16)*tag, (uint16)*ref, acc_mode));
+    return (DFaccess((DF *) * dfile, (uint16) *tag, (uint16) *ref, acc_mode));
 }
 #endif /* 0 */
 
@@ -260,10 +255,10 @@ ndfstart(intf *dfile, intf *tag, intf *ref, char *acc_mode)
  * Invokes: DFread
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfread(intf *dfile, _fcd ptr, intf *len)
+FRETVAL(intf)
+ndfread(intf * dfile, _fcd ptr, intf * len)
 {
-    return (DFread((DF *) *dfile, (char *)_fcdtocp(ptr), *len));
+    return (DFread((DF *) * dfile, (char *) _fcdtocp(ptr), *len));
 }
 
 /*-----------------------------------------------------------------------------
@@ -276,12 +271,11 @@ ndfread(intf *dfile, _fcd ptr, intf *len)
  * Invokes: DFseek
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfseek(intf *dfile, intf *offset)
+FRETVAL(intf)
+ndfseek(intf * dfile, intf * offset)
 {
-    return (DFseek((DF *)*dfile, *offset));
+    return (DFseek((DF *) * dfile, *offset));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfwrite
@@ -294,10 +288,10 @@ ndfseek(intf *dfile, intf *offset)
  * Invokes: DFwrite
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfwrite(intf *dfile, _fcd ptr, intf *len)
+FRETVAL(intf)
+ndfwrite(intf * dfile, _fcd ptr, intf * len)
 {
-    return (DFwrite((DF *)*dfile, (char *)_fcdtocp(ptr), *len));
+    return (DFwrite((DF *) * dfile, (char *) _fcdtocp(ptr), *len));
 }
 
 /*-----------------------------------------------------------------------------
@@ -309,12 +303,11 @@ ndfwrite(intf *dfile, _fcd ptr, intf *len)
  * Invokes: DFupdate
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfupdate(intf *dfile)
+FRETVAL(intf)
+ndfupdate(intf * dfile)
 {
-    return (DFupdate((DF *)*dfile));
+    return (DFupdate((DF *) * dfile));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfget
@@ -327,13 +320,12 @@ ndfupdate(intf *dfile)
  * Invokes: DFgetelement
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfget(intf *dfile, intf *tag, intf *ref, _fcd ptr)
+FRETVAL(intf)
+ndfget(intf * dfile, intf * tag, intf * ref, _fcd ptr)
 {
-    return (DFgetelement((DF *)*dfile, (uint16)*tag, (uint16)*ref,
-    	    (char *)_fcdtocp(ptr)));
+    return (DFgetelement((DF *) * dfile, (uint16) *tag, (uint16) *ref,
+			 (char *) _fcdtocp(ptr)));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfput
@@ -347,11 +339,11 @@ ndfget(intf *dfile, intf *tag, intf *ref, _fcd ptr)
  * Invokes: DFputelement
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfput(intf *dfile, intf *tag, intf *ref, _fcd ptr, intf *len)
+FRETVAL(intf)
+ndfput(intf * dfile, intf * tag, intf * ref, _fcd ptr, intf * len)
 {
-    return (DFputelement((DF *)*dfile, (uint16)*tag, (uint16)*ref,
-	    (char*)_fcdtocp(ptr), *len));
+    return (DFputelement((DF *) * dfile, (uint16) *tag, (uint16) *ref,
+			 (char *) _fcdtocp(ptr), *len));
 }
 
 /*-----------------------------------------------------------------------------
@@ -364,12 +356,11 @@ ndfput(intf *dfile, intf *tag, intf *ref, _fcd ptr, intf *len)
  * Invokes: DFsetfind
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfsfind(intf *dfile, intf *tag, intf *ref)
+FRETVAL(intf)
+ndfsfind(intf * dfile, intf * tag, intf * ref)
 {
-    return (DFsetfind((DF *) *dfile, (uint16)*tag, (uint16)*ref));
+    return (DFsetfind((DF *) * dfile, (uint16) *tag, (uint16) *ref));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dffind
@@ -382,24 +373,23 @@ ndfsfind(intf *dfile, intf *tag, intf *ref)
  * Invokes: DFfind
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndffind(intf *dfile, intf *itag, intf *iref, intf *len)
+FRETVAL(intf)
+ndffind(intf * dfile, intf * itag, intf * iref, intf * len)
 {
-    DFdesc *ptr1;
-    intf ret;
+    DFdesc     *ptr1;
+    intf        ret;
 
-    ptr1 = (DFdesc *) HDgetspace((uint32)sizeof(DFdesc));
-    ret = DFfind((DF *) *dfile, ptr1);
+    ptr1 = (DFdesc *) HDgetspace((uint32) sizeof(DFdesc));
+    ret = DFfind((DF *) * dfile, ptr1);
 
-    *itag  = (int32)(ptr1->tag);
-    *iref = (int32)(ptr1->ref);
+    *itag = (int32) (ptr1->tag);
+    *iref = (int32) (ptr1->ref);
     *len = ptr1->length;
 
-    HDfreespace((VOIDP)ptr1);
+    HDfreespace((VOIDP) ptr1);
 
-    return(ret);
+    return (ret);
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dferrno
@@ -410,10 +400,10 @@ ndffind(intf *dfile, intf *itag, intf *iref, intf *len)
  * Invokes: DFerrno
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndferrno(void)
 {
-    return(DFerrno());
+    return (DFerrno());
 }
 
 /*-----------------------------------------------------------------------------
@@ -425,12 +415,11 @@ ndferrno(void)
  * Invokes: DFnewref
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfnewref(intf *dfile)
+FRETVAL(intf)
+ndfnewref(intf * dfile)
 {
-    return(DFnewref((DF *) *dfile));
+    return (DFnewref((DF *) * dfile));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfnumber
@@ -442,12 +431,11 @@ ndfnewref(intf *dfile)
  * Invokes: DFnumber
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfnumber(intf *dfile, intf *tag)
+FRETVAL(intf)
+ndfnumber(intf * dfile, intf * tag)
 {
-    return(DFnumber((DF *) *dfile, (uint16)*tag));
+    return (DFnumber((DF *) * dfile, (uint16) *tag));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfstat
@@ -459,12 +447,11 @@ ndfnumber(intf *dfile, intf *tag)
  * Invokes: DFstat
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfstat(intf *dfile, DFdata *dfinfo)
+FRETVAL(intf)
+ndfstat(intf * dfile, DFdata * dfinfo)
 {
-    return(DFstat((DF *) *dfile, dfinfo));
+    return (DFstat((DF *) * dfile, dfinfo));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfiishdf
@@ -476,15 +463,14 @@ ndfstat(intf *dfile, DFdata *dfinfo)
  * Invokes: DFishdf
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfiishdf(_fcd name, intf *namelen)
+FRETVAL(intf)
+ndfiishdf(_fcd name, intf * namelen)
 {
-    char *fn;
-    intf ret;
+    char       *fn;
+    intf        ret;
 
-    fn = DFIf2cstring(name, (intn)*namelen);
+    fn = DFIf2cstring(name, (intn) *namelen);
     ret = DFishdf(fn);
-    HDfreespace((VOIDP)fn);
-    return(ret);
+    HDfreespace((VOIDP) fn);
+    return (ret);
 }
-

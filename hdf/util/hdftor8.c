@@ -1,3 +1,4 @@
+
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -25,7 +26,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #define PALETTE_SIZE	768	/* size of palette array */
 #define COLOR_SIZE	256	/* size of palette color array */
-                                /* COLOR_SIZE == PALETTE_SIZE / 3 */
+				/* COLOR_SIZE == PALETTE_SIZE / 3 */
 
 #define INTERACTIVE	'i'	/* interactive option */
 #define RASTER_FILE	'r'	/* raster filename template */
@@ -36,110 +37,121 @@ static char RcsId[] = "@(#)$Revision$";
 #define TEMPLATE_XDIM	'@'	/* image x dim positions */
 #define TEMPLATE_YDIM	'%'	/* image y dim positions */
 
-const char D_RASTER_TEM[]="img#-@.%"; /* default raster file name template */
-const char D_PALETTE_TEM[]="pal#";    /*  default palette file name template */
+const char  D_RASTER_TEM[] = "img#-@.%";	/* default raster file name template */
+const char  D_PALETTE_TEM[] = "pal#";	/*  default palette file name template */
 
-int interactive;		/* interactive option */
-int verbose;			/* verbose option */
+int         interactive;	/* interactive option */
+int         verbose;		/* verbose option */
 
-int main
-    (int argc, char *argv[]);
-void putRaster
-    (const char *template, int32 xdim, int32 ydim, int imageNumber, uint8 *image);
-void putPalette
-    (const char *template, int imageNumber, uint8 *palette);
-void convert
-    (const char *template, int imageNumber, int32 xdim, int32 ydim, char *stringOut);
-void fillStr
-    (const char **template, char **stringOut, char *string, char specialChar);
-char *newSpace
-    (int32 size);
-char *getTemplate
-    (char *type, int imageNumber);
+int         main
+            (int argc, char *argv[]);
+void        putRaster
+            (const char *template, int32 xdim, int32 ydim, int imageNumber, uint8 *image);
+void        putPalette
+            (const char *template, int imageNumber, uint8 *palette);
+void        convert
+            (const char *template, int imageNumber, int32 xdim, int32 ydim, char *stringOut);
+void        fillStr
+            (const char **template, char **stringOut, char *string, char specialChar);
+char       *newSpace
+            (int32 size);
+char       *getTemplate
+            (char *type, int imageNumber);
 
-
-int main(int argc, char *argv[])
+int 
+main(int argc, char *argv[])
 {
-    int i, imageNumber, ispal, err_val;
-    int32 xdim, ydim;
-    char *hdfFile;
-    uint8 *image, palette[PALETTE_SIZE];
+    int         i, imageNumber, ispal, err_val;
+    int32       xdim, ydim;
+    char       *hdfFile;
+    uint8      *image, palette[PALETTE_SIZE];
     const char *rasterTemplate = NULL, *paletteTemplate = NULL;
 
-    if (argc < 2) {
-        printf("%s,  version: 1.1   date: July 1, 1992\n", argv[0]);
-        printf("\tThis utility extracts all raster-8 images and/or\n");
-        printf("\tpalettes from an HDF file and stores them in two sets of\n");
-        printf("\tfiles containing only images and palettes, respectively.\n");
-        printf("Usage:\n");
-        printf("hdftor8 hdf_file [-i] [-v] [-r image_file] [-p pal_file]\n");
-        printf("\t-i: interactive (specify filenames interactively)\n");
-        printf("\t-v: verbose (provide descriptive messages)\n");
-        printf("\tImages and palettes are placed in the specified files\n");
-        printf("\tThe names of these files may contain special characters\n");
-        printf("\t\twhich will be replaced by numbers:\n");
-        printf("\t #    replace with image or palette number\n");
-        printf("\t @    replace with x dim of image\n");
-        printf("\t %%    replace with y dim of image\n");
-        printf("\tIf not specified, image filename defaults to img#-@.%%\n");
-        printf("\tIf not specified, palette filename defaults to pal.#\n\n");
-        exit(1);
-    }
+    if (argc < 2)
+      {
+	  printf("%s,  version: 1.1   date: July 1, 1992\n", argv[0]);
+	  printf("\tThis utility extracts all raster-8 images and/or\n");
+	  printf("\tpalettes from an HDF file and stores them in two sets of\n");
+	  printf("\tfiles containing only images and palettes, respectively.\n");
+	  printf("Usage:\n");
+	  printf("hdftor8 hdf_file [-i] [-v] [-r image_file] [-p pal_file]\n");
+	  printf("\t-i: interactive (specify filenames interactively)\n");
+	  printf("\t-v: verbose (provide descriptive messages)\n");
+	  printf("\tImages and palettes are placed in the specified files\n");
+	  printf("\tThe names of these files may contain special characters\n");
+	  printf("\t\twhich will be replaced by numbers:\n");
+	  printf("\t #    replace with image or palette number\n");
+	  printf("\t @    replace with x dim of image\n");
+	  printf("\t %%    replace with y dim of image\n");
+	  printf("\tIf not specified, image filename defaults to img#-@.%%\n");
+	  printf("\tIf not specified, palette filename defaults to pal.#\n\n");
+	  exit(1);
+      }
 
     hdfFile = argv[1];
 
-    for (i = 2; i < argc; i++) {
-        if (*argv[i] == '-') {
-            switch (argv[i][1]) {
-            case INTERACTIVE :
-                interactive = TRUE;
-                break;
-            case RASTER_FILE :
-                rasterTemplate = argv[++i];
-                break;
-            case PALETTE_FILE :
-                paletteTemplate = argv[++i];
-                break;
-            case VERBOSE :
-                verbose = TRUE;
-                break;
-            default :
-                printf("Illegal option: %s, skipping...\n", argv[i]);
-                break;
-            }
-        }
-        else
-            printf("Illegal option: %s, skipping...\n", argv[i]);
-    }
+    for (i = 2; i < argc; i++)
+      {
+	  if (*argv[i] == '-')
+	    {
+		switch (argv[i][1])
+		  {
+		      case INTERACTIVE:
+			  interactive = TRUE;
+			  break;
+		      case RASTER_FILE:
+			  rasterTemplate = argv[++i];
+			  break;
+		      case PALETTE_FILE:
+			  paletteTemplate = argv[++i];
+			  break;
+		      case VERBOSE:
+			  verbose = TRUE;
+			  break;
+		      default:
+			  printf("Illegal option: %s, skipping...\n", argv[i]);
+			  break;
+		  }
+	    }
+	  else
+	      printf("Illegal option: %s, skipping...\n", argv[i]);
+      }
 
     if (!rasterTemplate && !interactive)
-        rasterTemplate = D_RASTER_TEM;
+	rasterTemplate = D_RASTER_TEM;
     if (!paletteTemplate && !interactive)
-        paletteTemplate = D_PALETTE_TEM;
+	paletteTemplate = D_PALETTE_TEM;
 
-    for(imageNumber = 1;!DFR8getdims(hdfFile, &xdim, &ydim, &ispal);) {
-        image = (uint8 *)newSpace(xdim * ydim);
-        if (verbose) {
-            if (ispal)
-                printf("Getting image and palette %d.\n", imageNumber);
-            else
-                printf("Getting image %d.\n", imageNumber);
-            printf("Image dimensions : %ld * %ld\n", xdim, ydim);
-        }
-        if (!DFR8getimage(hdfFile, image, xdim, ydim, palette)) {
-            putRaster(rasterTemplate, xdim, ydim, imageNumber, image);
-            if(ispal) putPalette(paletteTemplate, imageNumber, palette);
-            imageNumber++;
-        }
-        else break;
-    }
+    for (imageNumber = 1; !DFR8getdims(hdfFile, &xdim, &ydim, &ispal);)
+      {
+	  image = (uint8 *) newSpace(xdim * ydim);
+	  if (verbose)
+	    {
+		if (ispal)
+		    printf("Getting image and palette %d.\n", imageNumber);
+		else
+		    printf("Getting image %d.\n", imageNumber);
+		printf("Image dimensions : %ld * %ld\n", xdim, ydim);
+	    }
+	  if (!DFR8getimage(hdfFile, image, xdim, ydim, palette))
+	    {
+		putRaster(rasterTemplate, xdim, ydim, imageNumber, image);
+		if (ispal)
+		    putPalette(paletteTemplate, imageNumber, palette);
+		imageNumber++;
+	    }
+	  else
+	      break;
+      }
 
     err_val = HEvalue(1);
-    if ((err_val != DFE_NOMATCH) && (err_val != DFE_NONE)) {
-        if (verbose) HEprint(stderr, 0);
-        exit(1);
-    }
-    return(0);
+    if ((err_val != DFE_NOMATCH) && (err_val != DFE_NONE))
+      {
+	  if (verbose)
+	      HEprint(stderr, 0);
+	  exit(1);
+      }
+    return (0);
 }
 
 /*
@@ -154,40 +166,44 @@ int main(int argc, char *argv[])
  *        imageNumber : (need I say more?)
  *        image : pointer to image array
  */
-void putRaster(const char *template, int32 xdim, int32 ydim, int imageNumber,
-	       uint8 *image)
+void 
+putRaster(const char *template, int32 xdim, int32 ydim, int imageNumber,
+	  uint8 *image)
 {
-    FILE *fd;
-    char fileName[DF_MAXFNLEN];
+    FILE       *fd;
+    char        fileName[DF_MAXFNLEN];
 
-
-    if (!template)                /* can assume interactive (see main) */
-        template = (char *)getTemplate("image", imageNumber);
+    if (!template)	/* can assume interactive (see main) */
+	template = (char *) getTemplate("image", imageNumber);
 
     convert(template, imageNumber, xdim, ydim, fileName);
 
     if (verbose)
-        printf("Writing into image file : %s\n",fileName);
+	printf("Writing into image file : %s\n", fileName);
 
 #ifdef PC
-    if ((fd = fopen(fileName, "wb")) == NULL) {
-        puts("Unable to open file. Exiting...");
-        exit(1);
-    }
+    if ((fd = fopen(fileName, "wb")) == NULL)
+      {
+	  puts("Unable to open file. Exiting...");
+	  exit(1);
+      }
 #else
-    if ((fd = fopen(fileName, "w")) == NULL) {
-        puts("Unable to open file. Exiting...");
-        exit(1);
-    }
+    if ((fd = fopen(fileName, "w")) == NULL)
+      {
+	  puts("Unable to open file. Exiting...");
+	  exit(1);
+      }
 #endif
-    if (fwrite(image, (int)xdim, (int)ydim, fd) != (unsigned)ydim) {
-        puts("Unable to write to file. Exiting...");
-        exit(1);
-    }
-    if (fclose(fd)) {
-        puts("Unable to close file. Exiting...");
-         exit(1);
-    }
+    if (fwrite(image, (int) xdim, (int) ydim, fd) != (unsigned) ydim)
+      {
+	  puts("Unable to write to file. Exiting...");
+	  exit(1);
+      }
+    if (fclose(fd))
+      {
+	  puts("Unable to close file. Exiting...");
+	  exit(1);
+      }
 }
 
 /*
@@ -200,54 +216,62 @@ void putRaster(const char *template, int32 xdim, int32 ydim, int imageNumber,
  *        imageNumber : Yes, the number of the image
  *        palette : pointer to the palette array
  */
-void putPalette(const char *template, int imageNumber, uint8 *palette)
+void 
+putPalette(const char *template, int imageNumber, uint8 *palette)
 {
-    int i;
-    FILE *fd;
-    char fileName[DF_MAXFNLEN], reds[COLOR_SIZE];
-    char greens[COLOR_SIZE], blues[COLOR_SIZE];
+    int         i;
+    FILE       *fd;
+    char        fileName[DF_MAXFNLEN], reds[COLOR_SIZE];
+    char        greens[COLOR_SIZE], blues[COLOR_SIZE];
 
-    if (!template)		/* can assume interactive (see main) */
-        template = (char *)getTemplate("palette", imageNumber);
+    if (!template)	/* can assume interactive (see main) */
+	template = (char *) getTemplate("palette", imageNumber);
 
     convert(template, imageNumber, (int32) 1, (int32) 768, fileName);
 
     if (verbose)
-        printf("Writing into palette file : %s\n", fileName);
+	printf("Writing into palette file : %s\n", fileName);
 
 #ifdef PC
-    if ((fd = fopen(fileName, "wb")) == NULL) {
-        puts("Unable to open file. Exiting...");
-        exit(1);
-    }
+    if ((fd = fopen(fileName, "wb")) == NULL)
+      {
+	  puts("Unable to open file. Exiting...");
+	  exit(1);
+      }
 #else
-    if ((fd = fopen(fileName, "w")) == NULL) {
-        puts("Unable to open file. Exiting...");
-        exit(1);
-    }
+    if ((fd = fopen(fileName, "w")) == NULL)
+      {
+	  puts("Unable to open file. Exiting...");
+	  exit(1);
+      }
 #endif
 
-    for(i = 0; i < COLOR_SIZE; i++) {
-        reds[i] = *palette++;
-        greens[i] = *palette++;
-        blues[i] = *palette++;
-    }
-    if (fwrite(reds, 1, COLOR_SIZE, fd) != COLOR_SIZE) {
-        printf("Unable to write to file. Exiting...");
-        exit(1);
-    }
-    if (fwrite(greens, 1, COLOR_SIZE, fd) != COLOR_SIZE) {
-        printf("Unable to write to file. Exiting...");
-        exit(1);
-    }
-    if (fwrite(blues, 1, COLOR_SIZE, fd) != COLOR_SIZE) {
-        printf("Unable to write to file. Exiting...");
-        exit(1);
-    }
-    if (fclose(fd)) {
-        printf("Unable to close file. Exiting...");
-        exit(1);
-    }
+    for (i = 0; i < COLOR_SIZE; i++)
+      {
+	  reds[i] = *palette++;
+	  greens[i] = *palette++;
+	  blues[i] = *palette++;
+      }
+    if (fwrite(reds, 1, COLOR_SIZE, fd) != COLOR_SIZE)
+      {
+	  printf("Unable to write to file. Exiting...");
+	  exit(1);
+      }
+    if (fwrite(greens, 1, COLOR_SIZE, fd) != COLOR_SIZE)
+      {
+	  printf("Unable to write to file. Exiting...");
+	  exit(1);
+      }
+    if (fwrite(blues, 1, COLOR_SIZE, fd) != COLOR_SIZE)
+      {
+	  printf("Unable to write to file. Exiting...");
+	  exit(1);
+      }
+    if (fclose(fd))
+      {
+	  printf("Unable to close file. Exiting...");
+	  exit(1);
+      }
 }
 
 /*
@@ -265,30 +289,33 @@ void putPalette(const char *template, int imageNumber, uint8 *palette)
  * OUTPUT:
  *        stringOut : the concocted file name
  */
-void convert(const char *template, int imageNumber, int32 xdim, int32 ydim,
-	     char *stringOut)
+void 
+convert(const char *template, int imageNumber, int32 xdim, int32 ydim,
+	char *stringOut)
 {
-    char numStr[20], xStr[20], yStr[20];
+    char        numStr[20], xStr[20], yStr[20];
 
     sprintf(numStr, "%3d", imageNumber);
     sprintf(xStr, "%3ld", xdim);
     sprintf(yStr, "%3ld", ydim);
 
-    for(;(*template);) {
-        switch (*template) {
-        case TEMPLATE_NUMBER :
-            fillStr(&template, &stringOut, numStr, TEMPLATE_NUMBER);
-            break;
-        case TEMPLATE_XDIM :
-            fillStr(&template, &stringOut, xStr, TEMPLATE_XDIM);
-            break;
-        case TEMPLATE_YDIM :
-            fillStr(&template, &stringOut, yStr, TEMPLATE_YDIM);
-            break;
-        default :
-            *stringOut++ = *template++;
-        }
-    }
+    for (; (*template);)
+      {
+	  switch (*template)
+	    {
+		case TEMPLATE_NUMBER:
+		    fillStr(&template, &stringOut, numStr, TEMPLATE_NUMBER);
+		    break;
+		case TEMPLATE_XDIM:
+		    fillStr(&template, &stringOut, xStr, TEMPLATE_XDIM);
+		    break;
+		case TEMPLATE_YDIM:
+		    fillStr(&template, &stringOut, yStr, TEMPLATE_YDIM);
+		    break;
+		default:
+		    *stringOut++ = *template++;
+	    }
+      }
     *stringOut = '\0';
 }
 
@@ -309,17 +336,19 @@ void convert(const char *template, int imageNumber, int32 xdim, int32 ydim,
  * BUG: Both the pointer to the template string and the pointer to the
  *        comverted string are moved to after the position of the conversion.
  */
-void fillStr(const char **template, char **stringOut, char *string, char specialChar)
+void 
+fillStr(const char **template, char **stringOut, char *string, char specialChar)
 {
-    int templateLen, stringLen, i;
+    int         templateLen, stringLen, i;
 
-    for(templateLen = 1; *(++(*template)) == specialChar; templateLen++);
+    for (templateLen = 1; *(++(*template)) == specialChar; templateLen++) ;
     stringLen = HDstrlen(string);
 
-    for(i = templateLen - stringLen; i > 0; i--)
-        *(*stringOut)++ = '0';
+    for (i = templateLen - stringLen; i > 0; i--)
+	*(*stringOut)++ = '0';
 
-    for(;(*string);) *(*stringOut)++ = *string++;
+    for (; (*string);)
+	*(*stringOut)++ = *string++;
 }
 
 /*
@@ -336,19 +365,23 @@ void fillStr(const char **template, char **stringOut, char *string, char special
  *        a second call cannot be made while the space is still
  *        in use (somewhere else).
  */
-char *newSpace(int32 size)
+char       *
+newSpace(int32 size)
 {
-    static int32 oldSize = 0;        /* must be static */
-    static char *oldSpace = NULL; /* must be static */
+    static int32 oldSize = 0;	/* must be static */
+    static char *oldSpace = NULL;	/* must be static */
 
-    if (size >= oldSize) {
-        if (oldSpace != NULL) HDfreespace(oldSpace);
-        if ((oldSpace = (char *) HDgetspace((uint32) size)) == NULL) {
-            puts("Out of memory. Abort.");
-            exit(1);
-        }
-        oldSize = size;
-    }
+    if (size >= oldSize)
+      {
+	  if (oldSpace != NULL)
+	      HDfreespace(oldSpace);
+	  if ((oldSpace = (char *) HDgetspace((uint32) size)) == NULL)
+	    {
+		puts("Out of memory. Abort.");
+		exit(1);
+	    }
+	  oldSize = size;
+      }
 
     return oldSpace;
 }
@@ -368,12 +401,13 @@ char *newSpace(int32 size)
  *        a second call cannot be made while the template is still
  *        in use (somewhere else).
  */
-char *getTemplate(char *type, int imageNumber)
+char       *
+getTemplate(char *type, int imageNumber)
 {
     static char template[DF_MAXFNLEN];
 
     printf("This is %s %d.\nWhat template would you like?\n",
-           type, imageNumber);
+	   type, imageNumber);
     scanf("%s", template);
     return template;
 }

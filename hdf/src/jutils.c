@@ -13,15 +13,13 @@
 
 #include "jinclude.h"
 
-
 GLOBAL long
-jround_up (long a, long b)
+jround_up(long a, long b)
 /* Compute a rounded up to next multiple of b; a >= 0, b > 0 */
 {
-  a += b-1;
-  return a - (a % b);
+    a += b - 1;
+    return a - (a % b);
 }
-
 
 #ifdef QAK
 /* On normal machines we can apply MEMCOPY() and MEMZERO() to sample arrays
@@ -36,7 +34,7 @@ jround_up (long a, long b)
 #ifndef NEED_FAR_POINTERS	/* normal case, same as regular macros */
 #define FMEMCOPY(dest,src,size)	MEMCOPY(dest,src,size)
 #define FMEMZERO(target,size)	MEMZERO(target,size)
-#else				/* 80x86 case, define if we can */
+#else  /* 80x86 case, define if we can */
 #ifdef USE_FMEM
 #define FMEMCOPY(dest,src,size)	_fmemcpy((VOID FAR *)(dest), (const VOID FAR *)(src), (size_t)(size))
 #define FMEMZERO(target,size)	_fmemset((VOID FAR *)(target), 0, (size_t)(size))
@@ -44,77 +42,77 @@ jround_up (long a, long b)
 #endif
 #endif
 
-
-GLOBAL VOID
-jcopy_sample_rows (JSAMPARRAY input_array, int source_row,
-		   JSAMPARRAY output_array, int dest_row,
-		   int num_rows, long num_cols)
+GLOBAL      VOID
+jcopy_sample_rows(JSAMPARRAY input_array, int source_row,
+		  JSAMPARRAY output_array, int dest_row,
+		  int num_rows, long num_cols)
 /* Copy some rows of samples from one place to another.
  * num_rows rows are copied from input_array[source_row++]
  * to output_array[dest_row++]; these areas should not overlap.
  * The source and destination arrays must be at least as wide as num_cols.
  */
 {
-  register JSAMPROW inptr, outptr;
+    register JSAMPROW inptr, outptr;
 #ifdef HDmemcpy
-  register size_t count = (size_t) (num_cols * SIZEOF(JSAMPLE));
+    register size_t count = (size_t) (num_cols * SIZEOF(JSAMPLE));
 #else
-  register long count;
+    register long count;
 #endif
-  register int row;
+    register int row;
 
-  input_array += source_row;
-  output_array += dest_row;
+    input_array += source_row;
+    output_array += dest_row;
 
-  for (row = num_rows; row > 0; row--) {
-    inptr = *input_array++;
-    outptr = *output_array++;
+    for (row = num_rows; row > 0; row--)
+      {
+	  inptr = *input_array++;
+	  outptr = *output_array++;
 #ifdef HDmemcpy
-    HDmemcpy(outptr, inptr, count);
+	  HDmemcpy(outptr, inptr, count);
 #else
-    for (count = num_cols; count > 0; count--)
-      *outptr++ = *inptr++;	/* needn't bother with GETJSAMPLE() here */
+	  for (count = num_cols; count > 0; count--)
+	      *outptr++ = *inptr++;	/* needn't bother with GETJSAMPLE() here */
 #endif
-  }
+      }
 }
 
-
-GLOBAL VOID
-jcopy_block_row (JBLOCKROW input_row, JBLOCKROW output_row, long num_blocks)
+GLOBAL      VOID
+jcopy_block_row(JBLOCKROW input_row, JBLOCKROW output_row, long num_blocks)
 /* Copy a row of coefficient blocks from one place to another. */
 {
 #ifdef HDmemcpy
-  HDmemcpy(output_row, input_row, num_blocks * (DCTSIZE2 * SIZEOF(JCOEF)));
+    HDmemcpy(output_row, input_row, num_blocks * (DCTSIZE2 * SIZEOF(JCOEF)));
 #else
-  register JCOEFPTR inptr, outptr;
-  register long count;
+    register JCOEFPTR inptr, outptr;
+    register long count;
 
-  inptr = (JCOEFPTR) input_row;
-  outptr = (JCOEFPTR) output_row;
-  for (count = num_blocks * DCTSIZE2; count > 0; count--) {
-    *outptr++ = *inptr++;
-  }
+    inptr = (JCOEFPTR) input_row;
+    outptr = (JCOEFPTR) output_row;
+    for (count = num_blocks * DCTSIZE2; count > 0; count--)
+      {
+	  *outptr++ = *inptr++;
+      }
 #endif
 }
 
-
-GLOBAL VOID
-jzero_far (VOIDP target, size_t bytestozero)
+GLOBAL      VOID
+jzero_far(VOIDP target, size_t bytestozero)
 /* Zero out a chunk of FAR memory. */
 /* This might be sample-array data, block-array data, or alloc_medium data. */
 {
 #ifdef QAK
 #ifdef FMEMZERO
-  FMEMZERO(target, bytestozero);
+    FMEMZERO(target, bytestozero);
 #else
-  register char FAR * ptr = (char FAR *) target;
-  register size_t count;
+    register char FAR *ptr = (char FAR *) target;
+    register size_t count;
 
-  for (count = bytestozero; count > 0; count--) {
-    *ptr++ = 0;
-  }
+    for (count = bytestozero; count > 0; count--)
+      {
+	  *ptr++ = 0;
+      }
 #endif
 #else
-  HDmemset(target, 0, bytestozero);
+    HDmemset(target, 0, bytestozero);
 #endif
 }

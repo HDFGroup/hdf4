@@ -22,37 +22,33 @@
 
 #include "jinclude.h"
 #ifdef INCLUDES_ARE_ANSI
-#include <stdlib.h>		/* to declare exit() */
+#include <stdlib.h>	/* to declare exit() */
 #endif
 
-#ifndef EXIT_FAILURE		/* define exit() codes if not provided */
+#ifndef EXIT_FAILURE	/* define exit() codes if not provided */
 #define EXIT_FAILURE  1
 #endif
 
+static external_methods_ptr methods;	/* saved for access to message_parm, free_all */
 
-static external_methods_ptr methods; /* saved for access to message_parm, free_all */
-
-
-METHODDEF VOID
-trace_message (const char *msgtext)
+METHODDEF   VOID
+trace_message(const char *msgtext)
 {
-  fprintf(stderr, msgtext,
-	  methods->message_parm[0], methods->message_parm[1],
-	  methods->message_parm[2], methods->message_parm[3],
-	  methods->message_parm[4], methods->message_parm[5],
-	  methods->message_parm[6], methods->message_parm[7]);
-  fprintf(stderr, "\n");
+    fprintf(stderr, msgtext,
+	    methods->message_parm[0], methods->message_parm[1],
+	    methods->message_parm[2], methods->message_parm[3],
+	    methods->message_parm[4], methods->message_parm[5],
+	    methods->message_parm[6], methods->message_parm[7]);
+    fprintf(stderr, "\n");
 }
 
-
-METHODDEF VOID
-error_exit (const char *msgtext)
+METHODDEF   VOID
+error_exit(const char *msgtext)
 {
-  (*methods->trace_message) (msgtext);
-  (*methods->free_all) ();	/* clean up memory allocation */
-  exit(EXIT_FAILURE);
+    (*methods->trace_message) (msgtext);
+    (*methods->free_all) ();	/* clean up memory allocation */
+    exit(EXIT_FAILURE);
 }
-
 
 /*
  * The method selection routine for simple error handling.
@@ -60,22 +56,22 @@ error_exit (const char *msgtext)
  * to install the necessary method pointers in the supplied struct.
  */
 
-GLOBAL VOID
-jselerror (external_methods_ptr emethods)
+GLOBAL      VOID
+jselerror(external_methods_ptr emethods)
 {
-  methods = emethods;		/* save struct addr for later access */
+    methods = emethods;		/* save struct addr for later access */
 
-  emethods->error_exit = error_exit;
-  emethods->trace_message = trace_message;
+    emethods->error_exit = error_exit;
+    emethods->trace_message = trace_message;
 
-  emethods->trace_level = 0;	/* default = no tracing */
+    emethods->trace_level = 0;	/* default = no tracing */
 
-  emethods->num_warnings = 0;	/* no warnings emitted yet */
-  /* By default, the first corrupt-data warning will be displayed,
-   * but additional ones will appear only if trace level is at least 3.
-   * A corrupt data file could generate many warnings, so it's a good idea
-   * to suppress additional messages except at high tracing levels.
-   */
-  emethods->first_warning_level = 0;
-  emethods->more_warning_level = 3;
+    emethods->num_warnings = 0;		/* no warnings emitted yet */
+    /* By default, the first corrupt-data warning will be displayed,
+     * but additional ones will appear only if trace level is at least 3.
+     * A corrupt data file could generate many warnings, so it's a good idea
+     * to suppress additional messages except at high tracing levels.
+     */
+    emethods->first_warning_level = 0;
+    emethods->more_warning_level = 3;
 }

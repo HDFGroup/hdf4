@@ -10,7 +10,6 @@
  * Edit these declarations as needed (or add -D flags to the Makefile).
  */
 
-
 /*
  * These symbols indicate the properties of your machine or compiler.
  * The conditional definitions given may do the right thing already,
@@ -28,18 +27,17 @@
  * In that case, -DHAVE_STDC in the Makefile is a convenient solution.)
  */
 
-#ifdef __STDC__			/* if compiler claims to be ANSI, believe it */
+#ifdef __STDC__		/* if compiler claims to be ANSI, believe it */
 #define HAVE_STDC
 #endif
-
 
 /* Does your compiler support function prototypes? */
 /* (If not, you also need to use ansi2knr, see SETUP) */
 
-#ifdef HAVE_STDC		/* ANSI C compilers always have prototypes */
+#ifdef HAVE_STDC	/* ANSI C compilers always have prototypes */
 #define PROTOTYPE
 #else
-#ifdef __cplusplus		/* So do C++ compilers */
+#ifdef __cplusplus	/* So do C++ compilers */
 #define PROTOTYPE
 #endif
 #endif
@@ -47,7 +45,7 @@
 /* Does your compiler support the declaration "unsigned char" ? */
 /* How about "unsigned short" ? */
 
-#ifdef HAVE_STDC		/* ANSI C compilers must support both */
+#ifdef HAVE_STDC	/* ANSI C compilers must support both */
 #define HAVE_UNSIGNED_CHAR
 #define HAVE_UNSIGNED_SHORT
 #endif
@@ -77,7 +75,6 @@
 #define NEED_FAR_POINTERS
 #endif
 
-
 /* The next three symbols only affect the system-dependent user interface
  * modules (jcmain.c, jdmain.c).  You can ignore these if you are supplying
  * your own user interface code.
@@ -89,12 +86,12 @@
  * head of jcmain.c or jdmain.c.
  */
 
-#ifdef MSDOS			/* two-file style is needed for PCs */
-#ifndef USE_SETMODE		/* unless you have setmode() */
+#ifdef MSDOS	/* two-file style is needed for PCs */
+#ifndef USE_SETMODE	/* unless you have setmode() */
 #define TWO_FILE_COMMANDLINE
 #endif
 #endif
-#ifdef THINK_C			/* it's needed for Macintosh too */
+#ifdef THINK_C	/* it's needed for Macintosh too */
 #define TWO_FILE_COMMANDLINE
 #endif
 
@@ -115,20 +112,18 @@
 
 /* #define DONT_USE_B_MODE */
 
-
 /* If you're getting bored, that's the end of the symbols you HAVE to
  * worry about.  Go fix the makefile and compile.
  */
-
 
 /* If your compiler supports inline functions, define INLINE
  * as the inline keyword; otherwise define it as empty.
  */
 
-#if defined __GNUC__ & !defined NEXT /* for instance, GNU C knows about inline */
+#if defined __GNUC__ & !defined NEXT	/* for instance, GNU C knows about inline */
 #define INLINE __inline__
 #endif
-#ifndef INLINE			/* default is to define it as empty */
+#ifndef INLINE	/* default is to define it as empty */
 #define INLINE
 #endif
 
@@ -138,18 +133,16 @@
  * In that case you need only comment out these definitions.
  */
 
-#undef FALSE			/* in case these macros already exist */
+#undef FALSE	/* in case these macros already exist */
 #undef TRUE
-#define FALSE	0		/* values of bool */
+#define FALSE	0	/* values of bool */
 #define TRUE	1
 
 /* This defines the size of the I/O buffers for entropy compression
  * and decompression; you could reduce it if memory is tight.
  */
 
-#define JPEG_BUF_SIZE	4096 /* bytes */
-
-
+#define JPEG_BUF_SIZE	4096	/* bytes */
 
 /* These symbols determine the JPEG functionality supported. */
 
@@ -164,28 +157,27 @@
 /* Arithmetic coding is unsupported for legal reasons.  Complaints to IBM. */
 
 /* Encoder capability options: */
-#undef  C_ARITH_CODING_SUPPORTED    /* Arithmetic coding back end? */
-#undef  C_MULTISCAN_FILES_SUPPORTED /* Multiple-scan JPEG files?  (NYI) */
-#define ENTROPY_OPT_SUPPORTED	    /* Optimization of entropy coding parms? */
-#define INPUT_SMOOTHING_SUPPORTED   /* Input image smoothing option? */
+#undef  C_ARITH_CODING_SUPPORTED	/* Arithmetic coding back end? */
+#undef  C_MULTISCAN_FILES_SUPPORTED	/* Multiple-scan JPEG files?  (NYI) */
+#define ENTROPY_OPT_SUPPORTED	/* Optimization of entropy coding parms? */
+#define INPUT_SMOOTHING_SUPPORTED	/* Input image smoothing option? */
 /* Decoder capability options: */
-#undef  D_ARITH_CODING_SUPPORTED    /* Arithmetic coding back end? */
-#define D_MULTISCAN_FILES_SUPPORTED /* Multiple-scan JPEG files? */
-#define BLOCK_SMOOTHING_SUPPORTED   /* Block smoothing during decoding? */
+#undef  D_ARITH_CODING_SUPPORTED	/* Arithmetic coding back end? */
+#define D_MULTISCAN_FILES_SUPPORTED	/* Multiple-scan JPEG files? */
+#define BLOCK_SMOOTHING_SUPPORTED	/* Block smoothing during decoding? */
 #define QUANT_1PASS_SUPPORTED	/* 1-pass color quantization? */
 #define QUANT_2PASS_SUPPORTED	/* 2-pass color quantization? */
 /* these defines indicate which JPEG file formats are allowed */
-#define JFIF_SUPPORTED		/* JFIF or "raw JPEG" files */
+#define JFIF_SUPPORTED	/* JFIF or "raw JPEG" files */
 #undef  JTIFF_SUPPORTED		/* JPEG-in-TIFF (not yet implemented) */
 /* these defines indicate which image (non-JPEG) file formats are allowed */
-#define GIF_SUPPORTED		/* GIF image file format */
-/* #define RLE_SUPPORTED */	/* RLE image file format (by default, no) */
-#define PPM_SUPPORTED		/* PPM/PGM image file format */
+#define GIF_SUPPORTED	/* GIF image file format */
+				/* #define RLE_SUPPORTED *//* RLE image file format (by default, no) */
+#define PPM_SUPPORTED	/* PPM/PGM image file format */
 #define TARGA_SUPPORTED		/* Targa image file format */
-#undef  TIFF_SUPPORTED		/* TIFF image file format (not yet impl.) */
+#undef  TIFF_SUPPORTED	/* TIFF image file format (not yet impl.) */
 
 /* more capability options later, no doubt */
-
 
 /*
  * Define exactly one of these three symbols to indicate whether you want
@@ -205,8 +197,6 @@
 #define EIGHT_BIT_SAMPLES
 #undef  TWELVE_BIT_SAMPLES
 #undef  SIXTEEN_BIT_SAMPLES
-
-
 
 /*
  * The remaining definitions don't need to be hand-edited in most cases.
@@ -230,13 +220,13 @@
 typedef unsigned char JSAMPLE;
 #define GETJSAMPLE(value)  (value)
 
-#else /* not HAVE_UNSIGNED_CHAR */
+#else  /* not HAVE_UNSIGNED_CHAR */
 #ifdef CHAR_IS_UNSIGNED
 
 typedef char JSAMPLE;
 #define GETJSAMPLE(value)  (value)
 
-#else /* not CHAR_IS_UNSIGNED */
+#else  /* not CHAR_IS_UNSIGNED */
 
 typedef char JSAMPLE;
 #define GETJSAMPLE(value)  ((value) & 0xFF)
@@ -249,7 +239,6 @@ typedef char JSAMPLE;
 #define CENTERJSAMPLE	128
 
 #endif /* EIGHT_BIT_SAMPLES */
-
 
 #ifdef TWELVE_BIT_SAMPLES
 /* JSAMPLE should be the smallest type that will hold the values 0..4095. */
@@ -264,7 +253,6 @@ typedef short JSAMPLE;
 
 #endif /* TWELVE_BIT_SAMPLES */
 
-
 #ifdef SIXTEEN_BIT_SAMPLES
 /* JSAMPLE should be the smallest type that will hold the values 0..65535. */
 
@@ -273,7 +261,7 @@ typedef short JSAMPLE;
 typedef unsigned short JSAMPLE;
 #define GETJSAMPLE(value)  (value)
 
-#else /* not HAVE_UNSIGNED_SHORT */
+#else  /* not HAVE_UNSIGNED_SHORT */
 
 /* If int is 32 bits this'll be horrendously inefficient storage-wise.
  * But since we don't actually support 16-bit samples (ie lossless coding) yet,
@@ -290,7 +278,6 @@ typedef unsigned int JSAMPLE;
 
 #endif /* SIXTEEN_BIT_SAMPLES */
 
-
 /* Here we define the representation of a DCT frequency coefficient.
  * This should be a signed 16-bit value; "short" is usually right.
  * It's important that this be exactly 16 bits, no more and no less;
@@ -298,4 +285,3 @@ typedef unsigned int JSAMPLE;
  */
 
 typedef int16 JCOEF;
-

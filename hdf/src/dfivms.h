@@ -176,4 +176,4 @@
 #define Hclose          _Hclose
 #define Hopen           _Hopen
 
-#endif  /* DFIVMS_H */
+#endif /* DFIVMS_H */

@@ -1,3 +1,4 @@
+
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -87,25 +88,26 @@ static char RcsId[] = "@(#)$Revision$";
  * Invokes: DFSDgetdimscale
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndsgdisc(intf *dim, intf *maxsize, VOIDP scale)
+FRETVAL(intf)
+ndsgdisc(intf * dim, intf * maxsize, VOIDP scale)
 {
-    intn rank, cdim;
-    intf ret;
-    intn isndg;
+    intn        rank, cdim;
+    intf        ret;
+    intn        isndg;
 
     ret = DFSDIisndg(&isndg);
-    if (isndg) 	{
-        ret = DFSDIgetrrank(&rank);
-        if (rank < *dim)
-            return FAIL;
-        cdim = rank - (intn)*dim + 1;
-    }
-    else cdim = (intn)*dim;
+    if (isndg)
+      {
+	  ret = DFSDIgetrrank(&rank);
+	  if (rank < *dim)
+	      return FAIL;
+	  cdim = rank - (intn) *dim + 1;
+      }
+    else
+	cdim = (intn) *dim;
 
-    return(DFSDgetdimscale(cdim, *maxsize, scale));
+    return (DFSDgetdimscale(cdim, *maxsize, scale));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dsgrang
@@ -117,12 +119,11 @@ ndsgdisc(intf *dim, intf *maxsize, VOIDP scale)
  * Invokes: DFSDgetrange
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndsgrang(VOIDP pmax, VOIDP pmin)
 {
-    return(DFSDgetrange(pmax, pmin));
+    return (DFSDgetrange(pmax, pmin));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dssdims
@@ -134,25 +135,26 @@ ndsgrang(VOIDP pmax, VOIDP pmin)
  * Invokes: DFSDsetdims
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndssdims(intf *rank, intf dimsizes[])
+FRETVAL(intf)
+ndssdims(intf * rank, intf dimsizes[])
 {
-    int32 i, *cdims, *p;
-    intf ret;
+    int32       i, *cdims, *p;
+    intf        ret;
 
-    p = (int32 *)HDgetspace((uint32)((*rank)*sizeof(int32)));
-    if (p == NULL) return FAIL;
+    p = (int32 *) HDgetspace((uint32) ((*rank) * sizeof(int32)));
+    if (p == NULL)
+	return FAIL;
     cdims = p;
-    for (i=1; i <=  *rank ; i++)	{
-        *p = dimsizes[*rank - i];
-        p++;
-    }
-   
-    ret = DFSDsetdims((intn)*rank, cdims);
-    HDfreespace((VOIDP)cdims);
-    return(ret);
-}
+    for (i = 1; i <= *rank; i++)
+      {
+	  *p = dimsizes[*rank - i];
+	  p++;
+      }
 
+    ret = DFSDsetdims((intn) *rank, cdims);
+    HDfreespace((VOIDP) cdims);
+    return (ret);
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    dssdisc
@@ -165,19 +167,19 @@ ndssdims(intf *rank, intf dimsizes[])
  * Invokes: DFSDsetdimscale
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndssdisc(intf *dim, intf *dimsize, VOIDP scale)
+FRETVAL(intf)
+ndssdisc(intf * dim, intf * dimsize, VOIDP scale)
 {
-    int cdim, ret;
-    intn rank;
+    int         cdim, ret;
+    intn        rank;
 
     ret = DFSDIgetwrank(&rank);
-    if (rank < *dim) return FAIL;
-    cdim = rank - (intn)*dim + 1;
+    if (rank < *dim)
+	return FAIL;
+    cdim = rank - (intn) *dim + 1;
 
-    return(DFSDsetdimscale(cdim, *dimsize, scale));
+    return (DFSDsetdimscale(cdim, *dimsize, scale));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dssrang
@@ -189,12 +191,11 @@ ndssdisc(intf *dim, intf *dimsize, VOIDP scale)
  * Remarks: Max and Min are set only for next SDG, reset to NULL after
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndssrang(VOIDP max, VOIDP min)
 {
-    return(DFSDsetrange(max, min));
+    return (DFSDsetrange(max, min));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dsclear
@@ -205,12 +206,11 @@ ndssrang(VOIDP max, VOIDP min)
  * Invokes: DFSDclear
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndsclear(void)
 {
-    return(DFSDclear());
+    return (DFSDclear());
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dsslens
@@ -221,14 +221,13 @@ ndsclear(void)
  * Invokes: DFSDsetlengths
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndsslens(intf *maxlen_label, intf *maxlen_unit, intf *maxlen_format,
-     intf *maxlen_coordsys)
+FRETVAL(intf)
+ndsslens(intf * maxlen_label, intf * maxlen_unit, intf * maxlen_format,
+	 intf * maxlen_coordsys)
 {
-    return(DFSDsetlengths((intn)*maxlen_label, (intn)*maxlen_unit,
-            (intn)*maxlen_format, (intn)*maxlen_coordsys));
+    return (DFSDsetlengths((intn) *maxlen_label, (intn) *maxlen_unit,
+			   (intn) *maxlen_format, (intn) *maxlen_coordsys));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dsgdiln
@@ -240,32 +239,34 @@ ndsslens(intf *maxlen_label, intf *maxlen_unit, intf *maxlen_format,
  * Invokes: DFSDgetdimlen
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndsgdiln(intf *dim, intf *llabel, intf *lunit, intf *lformat)
+FRETVAL(intf)
+ndsgdiln(intf * dim, intf * llabel, intf * lunit, intf * lformat)
 {
-    intn rank, cdim;
-    intf ret;
-    intn isndg;
-    intn cllabel, clunit, clformat;     /* convert between intf and intn */
+    intn        rank, cdim;
+    intf        ret;
+    intn        isndg;
+    intn        cllabel, clunit, clformat;	/* convert between intf and intn */
 
     ret = DFSDIisndg(&isndg);
-    if (isndg) 	{
-        ret = DFSDIgetrrank(&rank);
-        if (rank < *dim)
-            return FAIL;
-        cdim = rank - (intn)*dim + 1;
-    }
-    else cdim = (intn)*dim;
+    if (isndg)
+      {
+	  ret = DFSDIgetrrank(&rank);
+	  if (rank < *dim)
+	      return FAIL;
+	  cdim = rank - (intn) *dim + 1;
+      }
+    else
+	cdim = (intn) *dim;
 
-    ret=(intf)DFSDgetdimlen(cdim, &cllabel, &clunit, &clformat);
-    if(ret!=FAIL) {     /* if ok, copy the values over */
-        *llabel=cllabel;
-        *lunit=clunit;
-        *lformat=clformat;
-      } /* end if */
-    return(ret);
+    ret = (intf) DFSDgetdimlen(cdim, &cllabel, &clunit, &clformat);
+    if (ret != FAIL)
+      {		/* if ok, copy the values over */
+	  *llabel = cllabel;
+	  *lunit = clunit;
+	  *lformat = clformat;
+      }		/* end if */
+    return (ret);
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dsgdaln
@@ -276,22 +277,22 @@ ndsgdiln(intf *dim, intf *llabel, intf *lunit, intf *lformat)
  * Invokes: DFSDgetdatalen
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndsgdaln(intf *llabel, intf *lunit, intf *lformat, intf *lcoordsys)
+FRETVAL(intf)
+ndsgdaln(intf * llabel, intf * lunit, intf * lformat, intf * lcoordsys)
 {
-    intf ret;
-    intn cllabel, clunit, clformat, clcoordsys;
+    intf        ret;
+    intn        cllabel, clunit, clformat, clcoordsys;
 
-    ret=(intf)DFSDgetdatalen(&cllabel, &clunit, &clformat, &clcoordsys);
-    if(ret!=FAIL) {
-        *llabel=cllabel;
-        *lunit=clunit;
-        *lformat=clformat;
-        *lcoordsys=clcoordsys;
-      } /* end if */
-    return(ret);
+    ret = (intf) DFSDgetdatalen(&cllabel, &clunit, &clformat, &clcoordsys);
+    if (ret != FAIL)
+      {
+	  *llabel = cllabel;
+	  *lunit = clunit;
+	  *lformat = clformat;
+	  *lcoordsys = clcoordsys;
+      }		/* end if */
+    return (ret);
 }
-
 
 /*----------------------------------------------------------------------------- 
  * Name:    dsfirst * Purpose: Call DFSDrestart to get SDGs again from the beginning
@@ -301,13 +302,12 @@ ndsgdaln(intf *llabel, intf *lunit, intf *lformat, intf *lcoordsys)
  * Invokes: DFSDrestart
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndsfirst(void)
 {
 
-    return(DFSDrestart());
+    return (DFSDrestart());
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dspslc
@@ -320,33 +320,35 @@ ndsfirst(void)
  * Invokes: DFSDIputslice
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndspslc(intf windims[], VOIDP data, intf dims[])
 {
-    int32 *cdims, *cwindims, *p, *wp;
-    intn i, rank;
-    intf ret;
+    int32      *cdims, *cwindims, *p, *wp;
+    intn        i, rank;
+    intf        ret;
 
     ret = DFSDIgetwrank(&rank);
-    wp = (int32 *)HDgetspace((uint32)(rank*sizeof(int32)));
-    if (wp == NULL) return FAIL;
+    wp = (int32 *) HDgetspace((uint32) (rank * sizeof(int32)));
+    if (wp == NULL)
+	return FAIL;
     cwindims = wp;
-    p = (int32 *)HDgetspace((uint32)(rank*sizeof(int32)));
-    if (p == NULL) return FAIL;
+    p = (int32 *) HDgetspace((uint32) (rank * sizeof(int32)));
+    if (p == NULL)
+	return FAIL;
     cdims = p;
-    for (i=1; i <=  rank ; i++)	{  /* reverse dims & windims */
-        *p = dims[rank - i];
-        p++;
-        *wp = windims[rank - i];
-        wp++;
-    }
-   
-    ret = DFSDIputslice(cwindims, data, cdims, 1);
-    HDfreespace((VOIDP)cdims);
-    HDfreespace((VOIDP)cwindims);
-    return(ret);
-}
+    for (i = 1; i <= rank; i++)
+      {		/* reverse dims & windims */
+	  *p = dims[rank - i];
+	  p++;
+	  *wp = windims[rank - i];
+	  wp++;
+      }
 
+    ret = DFSDIputslice(cwindims, data, cdims, 1);
+    HDfreespace((VOIDP) cdims);
+    HDfreespace((VOIDP) cwindims);
+    return (ret);
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    dseslc
@@ -357,13 +359,12 @@ ndspslc(intf windims[], VOIDP data, intf dims[])
  * Invokes: DFSDIendslice
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndseslc(void)
 {
 
-    return(DFSDIendslice(1));
+    return (DFSDIendslice(1));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dssnt
@@ -376,10 +377,10 @@ ndseslc(void)
  * Remarks: 0 specifies default value
  *---------------------------------------------------------------------------*/
 
-        FRETVAL(intf)
-ndssnt(intf *numbertype)
+FRETVAL(intf)
+ndssnt(intf * numbertype)
 {
-    return(DFSDsetNT(*numbertype));
+    return (DFSDsetNT(*numbertype));
 }
 
 /*----------------------------------------------------------------------------
@@ -392,12 +393,11 @@ ndssnt(intf *numbertype)
  * Remarks: 0 specifies default value
  *---------------------------------------------------------------------------*/
 
-        FRETVAL(intf)
-ndsgnt(intf *pnumbertype)
+FRETVAL(intf)
+ndsgnt(intf * pnumbertype)
 {
-    return(DFSDgetNT((int32 *)pnumbertype));
+    return (DFSDgetNT((int32 *) pnumbertype));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dsigdim
@@ -412,29 +412,30 @@ ndsgnt(intf *pnumbertype)
  * Invokes: DFSDgetdims
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndsigdim(_fcd filename, intf *prank, intf sizes[], intf *maxrank,
-     intf *lenfn)
+FRETVAL(intf)
+ndsigdim(_fcd filename, intf * prank, intf sizes[], intf * maxrank,
+	 intf * lenfn)
 {
-    char *fn;
-    int32 i, tmp;
-    intn isndg;
-    intf ret;
+    char       *fn;
+    int32       i, tmp;
+    intn        isndg;
+    intf        ret;
 
-    fn = HDf2cstring(filename, (intn)*lenfn);
-    ret = DFSDgetdims(fn,(intn *) prank, (int32 *)sizes, (intn) *maxrank);
+    fn = HDf2cstring(filename, (intn) *lenfn);
+    ret = DFSDgetdims(fn, (intn *) prank, (int32 *) sizes, (intn) *maxrank);
     DFSDIisndg(&isndg);
-    if (isndg) {
-        for (i=0; i<((int32)*prank)/2; i++) {
-            tmp = sizes[i];
-            sizes[i] = sizes[(int32)*prank -i -1];
-            sizes[(int32)*prank -i -1] = tmp;
-        }
-    }
+    if (isndg)
+      {
+	  for (i = 0; i < ((int32) *prank) / 2; i++)
+	    {
+		tmp = sizes[i];
+		sizes[i] = sizes[(int32) *prank - i - 1];
+		sizes[(int32) *prank - i - 1] = tmp;
+	    }
+      }
     HDfreespace(fn);
     return ret;
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dsigdat
@@ -448,38 +449,41 @@ ndsigdim(_fcd filename, intf *prank, intf sizes[], intf *maxrank,
  * Invokes: DFSDIgetdata,DFSDIrefresh,DFSDIisndg
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndsigdat(_fcd filename, intf *rank, intf maxsizes[], VOIDP data, intf *fnlen)
+FRETVAL(intf)
+ndsigdat(_fcd filename, intf * rank, intf maxsizes[], VOIDP data, intf * fnlen)
 {
-    int32 i;
-    intn isndg;
-    intf ret;
-    char *fn;
-    int32 *p, *cmaxsizes;
-    
-    fn = HDf2cstring(filename, (intn) *fnlen);
-      /* if DFSDgetdims has not be called call DFSDIsdginfo to */
-      /* refresh Readsdg       */
-    if (DFSDIrefresh(fn)<0) return FAIL;
-    ret = DFSDIisndg(&isndg);
-    if (isndg)	{
-    	p = (int32 *)HDgetspace((uint32)((*rank)*sizeof(int32)));
-    	if (p == NULL) return FAIL;
-        cmaxsizes = p;
+    int32       i;
+    intn        isndg;
+    intf        ret;
+    char       *fn;
+    int32      *p, *cmaxsizes;
 
-    	for (i=1; i <=  *rank ; i++)	{
-            *p = maxsizes[*rank - i];
-            p++;
-        }
-    	ret = DFSDIgetdata(fn, (intn)*rank, cmaxsizes, data, 1);
-    	HDfreespace((VOIDP)cmaxsizes);
-    }
-    else	
-        ret = DFSDIgetdata(fn, (intn)*rank, (int32 *)maxsizes, data, 1); /* 1==FORTRAN */
+    fn = HDf2cstring(filename, (intn) *fnlen);
+    /* if DFSDgetdims has not be called call DFSDIsdginfo to */
+    /* refresh Readsdg       */
+    if (DFSDIrefresh(fn) < 0)
+	return FAIL;
+    ret = DFSDIisndg(&isndg);
+    if (isndg)
+      {
+	  p = (int32 *) HDgetspace((uint32) ((*rank) * sizeof(int32)));
+	  if (p == NULL)
+	      return FAIL;
+	  cmaxsizes = p;
+
+	  for (i = 1; i <= *rank; i++)
+	    {
+		*p = maxsizes[*rank - i];
+		p++;
+	    }
+	  ret = DFSDIgetdata(fn, (intn) *rank, cmaxsizes, data, 1);
+	  HDfreespace((VOIDP) cmaxsizes);
+      }
+    else
+	ret = DFSDIgetdata(fn, (intn) *rank, (int32 *) maxsizes, data, 1);	/* 1==FORTRAN */
     HDfreespace(fn);
     return ret;
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dsipdat
@@ -494,32 +498,33 @@ ndsigdat(_fcd filename, intf *rank, intf maxsizes[], VOIDP data, intf *fnlen)
  * Invokes: DFSDIputdata
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndsipdat(_fcd filename, intf *rank, intf dimsizes[], VOIDP data, intf *fnlen)
+FRETVAL(intf)
+ndsipdat(_fcd filename, intf * rank, intf dimsizes[], VOIDP data, intf * fnlen)
 {
-    char *fn;
-    int32 i, *cdims, *p;
-    intf ret;
+    char       *fn;
+    int32       i, *cdims, *p;
+    intf        ret;
 
-	/* reverse the dimsizes first  */
-    p = (int32 *)HDgetspace((uint32)((*rank)*sizeof(int32)));
-    if (p == NULL) return FAIL;
+    /* reverse the dimsizes first  */
+    p = (int32 *) HDgetspace((uint32) ((*rank) * sizeof(int32)));
+    if (p == NULL)
+	return FAIL;
     cdims = p;
-    for (i=1; i <=  *rank ; i++)	{
-        *p = dimsizes[*rank - i];
-        p++;
-    }
+    for (i = 1; i <= *rank; i++)
+      {
+	  *p = dimsizes[*rank - i];
+	  p++;
+      }
     fn = HDf2cstring(filename, (intn) *fnlen);
 
     /* 0, 1 specify create mode, called from FORTRAN program */
     /* In HDF3.2 .hdf files, data and dimsizes are in C order  */
-    ret = DFSDIputdata(fn, (intn)*rank, cdims, data, 0, 1);
+    ret = DFSDIputdata(fn, (intn) *rank, cdims, data, 0, 1);
     HDfreespace(fn);
-    HDfreespace((VOIDP)cdims);
+    HDfreespace((VOIDP) cdims);
 
-    return(ret);
+    return (ret);
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dsiadat
@@ -534,31 +539,32 @@ ndsipdat(_fcd filename, intf *rank, intf dimsizes[], VOIDP data, intf *fnlen)
  * Invokes: DFSDIputdata
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndsiadat(_fcd filename, intf *rank, intf dimsizes[], VOIDP data, intf *fnlen)
+FRETVAL(intf)
+ndsiadat(_fcd filename, intf * rank, intf dimsizes[], VOIDP data, intf * fnlen)
 {
-    char *fn;
-    int32 i,  *cdims, *p;
-    intf ret;
+    char       *fn;
+    int32       i, *cdims, *p;
+    intf        ret;
 
     /* reverse the dimsizes first  */
-    p = (int32 *)HDgetspace((uint32)((*rank)*sizeof(int32)));
-    if (p == NULL) return FAIL;
+    p = (int32 *) HDgetspace((uint32) ((*rank) * sizeof(int32)));
+    if (p == NULL)
+	return FAIL;
     cdims = p;
-    for (i=1; i <=  *rank ; i++) {
-    	*p = dimsizes[*rank - i];
-    	p++;
-    }
+    for (i = 1; i <= *rank; i++)
+      {
+	  *p = dimsizes[*rank - i];
+	  p++;
+      }
     fn = HDf2cstring(filename, (intn) *fnlen);
-   
+
     /* 1, 1 specify create mode, called from FORTRAN program */
     /* In HDF3.2 .hdf files, data and dimsizes are in C order  */
-    ret = DFSDIputdata(fn, (intn)*rank, cdims, data, 1, 1);
+    ret = DFSDIputdata(fn, (intn) *rank, cdims, data, 1, 1);
     HDfreespace(fn);
-    HDfreespace((VOIDP)cdims);
-    return(ret);
+    HDfreespace((VOIDP) cdims);
+    return (ret);
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dsigslc
@@ -575,55 +581,60 @@ ndsiadat(_fcd filename, intf *rank, intf dimsizes[], VOIDP data, intf *fnlen)
  * Invokes: DFSDIgetslice
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndsigslc(_fcd filename, intf winst[], intf windims[], VOIDP data, intf dims[],
-    intf *fnlen)
+	 intf * fnlen)
 {
-    char *fn;
-    intf ret;
-    intn rank,i;
-    int32 *cdims, *cwindims, *cwinst, *p, *wp, *wsp;
-    intn isndg;
+    char       *fn;
+    intf        ret;
+    intn        rank, i;
+    int32      *cdims, *cwindims, *cwinst, *p, *wp, *wsp;
+    intn        isndg;
 
-    fn = HDf2cstring(filename, (intn)*fnlen);
-   
-      /* if DFSDgetdims has not be called call DFSDIsdginfo to */
-      /* refresh Readsdg       */
-    if (DFSDIrefresh(fn)<0) return FAIL;
- 
+    fn = HDf2cstring(filename, (intn) *fnlen);
+
+    /* if DFSDgetdims has not be called call DFSDIsdginfo to */
+    /* refresh Readsdg       */
+    if (DFSDIrefresh(fn) < 0)
+	return FAIL;
+
     ret = DFSDIisndg(&isndg);
-    if (isndg)	{
-	ret = DFSDIgetrrank(&rank);
-    	p = (int32 *)HDgetspace((uint32)(rank*sizeof(int32)));
-    	if (p == NULL) return FAIL;
-        cdims = p;
-    	wp = (int32 *)HDgetspace((uint32)(rank*sizeof(int32)));
-    	if (wp == NULL) return FAIL;
-        cwindims = wp;
-    	wsp = (int32 *)HDgetspace((uint32)(rank*sizeof(int32)));
-    	if (wsp == NULL) return FAIL;
-        cwinst = wsp;
+    if (isndg)
+      {
+	  ret = DFSDIgetrrank(&rank);
+	  p = (int32 *) HDgetspace((uint32) (rank * sizeof(int32)));
+	  if (p == NULL)
+	      return FAIL;
+	  cdims = p;
+	  wp = (int32 *) HDgetspace((uint32) (rank * sizeof(int32)));
+	  if (wp == NULL)
+	      return FAIL;
+	  cwindims = wp;
+	  wsp = (int32 *) HDgetspace((uint32) (rank * sizeof(int32)));
+	  if (wsp == NULL)
+	      return FAIL;
+	  cwinst = wsp;
 
-    	for (i=1; i <=  rank ; i++)	{
-            *p = dims[rank - i];
-            p++;
-            *wp = windims[rank - i];
-            wp++;
-            *wsp = winst[rank - i];
-            wsp++;
-        }
-    	ret = DFSDIgetslice(fn, cwinst, cwindims, data, cdims, 1);
-    	HDfreespace((VOIDP)cdims);
-    	HDfreespace((VOIDP)cwindims);
-    	HDfreespace((VOIDP)cwinst);
-    }
-    else	
-        ret = DFSDIgetslice(fn, (int32 *)winst, (int32 *)windims,
-                data, (int32 *)dims, 1);
+	  for (i = 1; i <= rank; i++)
+	    {
+		*p = dims[rank - i];
+		p++;
+		*wp = windims[rank - i];
+		wp++;
+		*wsp = winst[rank - i];
+		wsp++;
+	    }
+	  ret = DFSDIgetslice(fn, cwinst, cwindims, data, cdims, 1);
+	  HDfreespace((VOIDP) cdims);
+	  HDfreespace((VOIDP) cwindims);
+	  HDfreespace((VOIDP) cwinst);
+      }
+    else
+	ret = DFSDIgetslice(fn, (int32 *) winst, (int32 *) windims,
+			    data, (int32 *) dims, 1);
     HDfreespace(fn);
-    return(ret);
+    return (ret);
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dsisslc
@@ -635,16 +646,16 @@ ndsigslc(_fcd filename, intf winst[], intf windims[], VOIDP data, intf dims[],
  * Invokes: DFSDstartslice
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndsisslc(_fcd filename, intf *fnlen)
+FRETVAL(intf)
+ndsisslc(_fcd filename, intf * fnlen)
 {
-    char *fn;
-    intf ret;
+    char       *fn;
+    intf        ret;
 
-    fn = HDf2cstring(filename, (intn)*fnlen);
+    fn = HDf2cstring(filename, (intn) *fnlen);
     ret = DFSDstartslice(fn);
     HDfreespace(fn);
-    return(ret);
+    return (ret);
 }
 
 /*-----------------------------------------------------------------------------
@@ -658,16 +669,16 @@ ndsisslc(_fcd filename, intf *fnlen)
  * Invokes: DFSDstartslice
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndsirref(_fcd filename, intf *ref, intf *fnlen)
+FRETVAL(intf)
+ndsirref(_fcd filename, intf * ref, intf * fnlen)
 {
-    char *fn;
-    intf ret;
+    char       *fn;
+    intf        ret;
 
-    fn = HDf2cstring(filename, (intn)*fnlen);
+    fn = HDf2cstring(filename, (intn) *fnlen);
     ret = DFSDreadref(fn, (uint16) *ref);
     HDfreespace(fn);
-    return(ret);
+    return (ret);
 }
 
 /*-----------------------------------------------------------------------------
@@ -681,12 +692,11 @@ ndsirref(_fcd filename, intf *ref, intf *fnlen)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndslref(void)
 {
-    return(DFSDlastref());
+    return (DFSDlastref());
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dsinum
@@ -699,19 +709,18 @@ ndslref(void)
  * Method:  convert string, call DFSDndatasets
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndsinum(_fcd filename, intf *len)
+FRETVAL(intf)
+ndsinum(_fcd filename, intf * len)
 {
-    char *cname;
-    intf status;
+    char       *cname;
+    intf        status;
 
     cname = HDf2cstring(filename, (intn) *len);
     status = DFSDndatasets(cname);
     HDfreespace(cname);
 
-    return(status);
+    return (status);
 }
-
 
 /*------------------------------------------------------------------------------
 * Name:     dsip32s
@@ -726,17 +735,17 @@ ndsinum(_fcd filename, intf *len)
 * Users:    HDF Fortran programmers
 *------------------------------------------------------------------------------*/
 
-      FRETVAL(intf)
-ndsip32s(_fcd filename, intf *ref, intf *ispre32, intf *len)
-{ 
-    char *cname;
-    intf status;
-    
+FRETVAL(intf)
+ndsip32s(_fcd filename, intf * ref, intf * ispre32, intf * len)
+{
+    char       *cname;
+    intf        status;
+
     cname = HDf2cstring(filename, (intn) *len);
-    status = DFSDpre32sdg(cname, (uint16)*ref, (intn *)ispre32);
+    status = DFSDpre32sdg(cname, (uint16) *ref, (intn *) ispre32);
 
     HDfreespace(cname);
-    return(status);
+    return (status);
 }
 
 /*-----------------------------------------------------------------------------
@@ -748,13 +757,12 @@ ndsip32s(_fcd filename, intf *ref, intf *ispre32, intf *len)
  * Invokes: DFSDgetdatastrs
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndfsdgetdatastrs(_fcd label, _fcd unit, _fcd format, _fcd coordsys)
 {
-    return(DFSDgetdatastrs((char *)_fcdtocp(label), (char *)_fcdtocp(unit),
-			 (char *)_fcdtocp(format), (char *)_fcdtocp(coordsys)));
+    return (DFSDgetdatastrs((char *) _fcdtocp(label), (char *) _fcdtocp(unit),
+		   (char *) _fcdtocp(format), (char *) _fcdtocp(coordsys)));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfsdgetdimstrs
@@ -765,25 +773,27 @@ ndfsdgetdatastrs(_fcd label, _fcd unit, _fcd format, _fcd coordsys)
  * Invokes: DFSDgetdimstrs
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfsdgetdimstrs(intf *dim, _fcd label, _fcd unit, _fcd format)
+FRETVAL(intf)
+ndfsdgetdimstrs(intf * dim, _fcd label, _fcd unit, _fcd format)
 {
-    intn isndg;
-    intn rank, cdim;
-    intf ret;
+    intn        isndg;
+    intn        rank, cdim;
+    intf        ret;
 
     ret = DFSDIisndg(&isndg);
-    if (isndg) 	{
-        ret = DFSDIgetrrank(&rank);
-    	if (rank < *dim) return FAIL;
-        cdim = rank - (intn)*dim + 1;
-    }
-    else cdim = (intn)*dim;
+    if (isndg)
+      {
+	  ret = DFSDIgetrrank(&rank);
+	  if (rank < *dim)
+	      return FAIL;
+	  cdim = rank - (intn) *dim + 1;
+      }
+    else
+	cdim = (intn) *dim;
 
-    return(DFSDgetdimstrs(cdim, (char *)_fcdtocp(label),
-			  (char *)_fcdtocp(unit), (char *)_fcdtocp(format)));
+    return (DFSDgetdimstrs(cdim, (char *) _fcdtocp(label),
+		       (char *) _fcdtocp(unit), (char *) _fcdtocp(format)));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfsdgetdimscale
@@ -796,24 +806,26 @@ ndfsdgetdimstrs(intf *dim, _fcd label, _fcd unit, _fcd format)
  * Invokes: DFSDgetdimscale
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfsdgetdimscale(intf *dim, intf *maxsize, VOIDP scale)
+FRETVAL(intf)
+ndfsdgetdimscale(intf * dim, intf * maxsize, VOIDP scale)
 {
 
-    intn isndg;
-    intn  rank, cdim, ret;
+    intn        isndg;
+    intn        rank, cdim, ret;
 
     ret = DFSDIisndg(&isndg);
-    if (isndg) 	{
-        ret = DFSDIgetrrank(&rank);
-    	if (rank < *dim) return FAIL;
-        cdim = rank - (intn)*dim + 1;
-    }
-    else cdim = (intn)*dim;
+    if (isndg)
+      {
+	  ret = DFSDIgetrrank(&rank);
+	  if (rank < *dim)
+	      return FAIL;
+	  cdim = rank - (intn) *dim + 1;
+      }
+    else
+	cdim = (intn) *dim;
 
-    return(DFSDgetdimscale(cdim, *maxsize, scale));
+    return (DFSDgetdimscale(cdim, *maxsize, scale));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfsdgetrange
@@ -825,12 +837,11 @@ ndfsdgetdimscale(intf *dim, intf *maxsize, VOIDP scale)
  * Invokes: DFSDgetrange
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndfsdgetrange(VOIDP pmax, VOIDP pmin)
 {
-    return(DFSDgetrange(pmax, pmin));
+    return (DFSDgetrange(pmax, pmin));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfsdsetdims
@@ -842,26 +853,27 @@ ndfsdgetrange(VOIDP pmax, VOIDP pmin)
  * Invokes: DFSDsetdims
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfsdsetdims(intf *rank, intf dimsizes[])
+FRETVAL(intf)
+ndfsdsetdims(intf * rank, intf dimsizes[])
 {
 
-    int32 i, *cdims, *p;
-    intf ret;
+    int32       i, *cdims, *p;
+    intf        ret;
 
-    p = (int32 *)HDgetspace((uint32)((*rank)*sizeof(int32)));
-    if (p == NULL) return FAIL;
+    p = (int32 *) HDgetspace((uint32) ((*rank) * sizeof(int32)));
+    if (p == NULL)
+	return FAIL;
     cdims = p;
-    for (i=1; i <=  *rank ; i++)	{
-        *p = dimsizes[*rank - i];
-        p++;
-    }
-   
-    ret = DFSDsetdims((intn)*rank, cdims);
-    HDfreespace((VOIDP)cdims);
-    return(ret);
-}
+    for (i = 1; i <= *rank; i++)
+      {
+	  *p = dimsizes[*rank - i];
+	  p++;
+      }
 
+    ret = DFSDsetdims((intn) *rank, cdims);
+    HDfreespace((VOIDP) cdims);
+    return (ret);
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    dfsdsetdimscale
@@ -874,19 +886,19 @@ ndfsdsetdims(intf *rank, intf dimsizes[])
  * Invokes: DFSDsetdimscale
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfsdsetdimscale(intf *dim, intf *dimsize, VOIDP scale)
+FRETVAL(intf)
+ndfsdsetdimscale(intf * dim, intf * dimsize, VOIDP scale)
 {
-    intn rank, cdim;
-    intf ret;
+    intn        rank, cdim;
+    intf        ret;
 
     ret = DFSDIgetwrank(&rank);
-    if (rank < *dim) return FAIL;
-    cdim = rank - (intn)*dim + 1;
+    if (rank < *dim)
+	return FAIL;
+    cdim = rank - (intn) *dim + 1;
 
-    return(DFSDsetdimscale(cdim, *dimsize, scale));
+    return (DFSDsetdimscale(cdim, *dimsize, scale));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfsdsetrange
@@ -898,12 +910,11 @@ ndfsdsetdimscale(intf *dim, intf *dimsize, VOIDP scale)
  * Remarks: Max and Min are set only for next SDG, reset to NULL after
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndfsdsetrange(VOIDP max, VOIDP min)
 {
-    return(DFSDsetrange(max, min));
+    return (DFSDsetrange(max, min));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfsdclear
@@ -914,12 +925,11 @@ ndfsdsetrange(VOIDP max, VOIDP min)
  * Invokes: DFSDclear
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndfsdclear(void)
 {
-    return(DFSDclear());
+    return (DFSDclear());
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfsdsetlengths
@@ -930,14 +940,13 @@ ndfsdclear(void)
  * Invokes: DFSDsetlengths
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfsdsetlengths(intf *maxlen_label, intf *maxlen_unit, intf *maxlen_format,
-        intf *maxlen_coordsys)
+FRETVAL(intf)
+ndfsdsetlengths(intf * maxlen_label, intf * maxlen_unit, intf * maxlen_format,
+		intf * maxlen_coordsys)
 {
-    return(DFSDsetlengths((intn)*maxlen_label, (intn)*maxlen_unit,
-            (intn)*maxlen_format, (intn)*maxlen_coordsys));
+    return (DFSDsetlengths((intn) *maxlen_label, (intn) *maxlen_unit,
+			   (intn) *maxlen_format, (intn) *maxlen_coordsys));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfsdgetdimlen
@@ -949,31 +958,34 @@ ndfsdsetlengths(intf *maxlen_label, intf *maxlen_unit, intf *maxlen_format,
  * Invokes: DFSDgetdimlen
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfsdgetdimlen(intf *dim, intf *llabel, intf *lunit, intf *lformat)
+FRETVAL(intf)
+ndfsdgetdimlen(intf * dim, intf * llabel, intf * lunit, intf * lformat)
 {
-    intn isndg;
-    intn rank, cdim;
-    intf ret;
-    intn cllabel, clunit, clformat;     /* convert between intf and intn */
+    intn        isndg;
+    intn        rank, cdim;
+    intf        ret;
+    intn        cllabel, clunit, clformat;	/* convert between intf and intn */
 
     ret = DFSDIisndg(&isndg);
-    if (isndg) 	{
-        ret = DFSDIgetrrank(&rank);
-    	if (rank < *dim) return FAIL;
-        cdim = rank - (intn)*dim + 1;
-    }
-    else cdim = (intn)*dim;
+    if (isndg)
+      {
+	  ret = DFSDIgetrrank(&rank);
+	  if (rank < *dim)
+	      return FAIL;
+	  cdim = rank - (intn) *dim + 1;
+      }
+    else
+	cdim = (intn) *dim;
 
-    ret=(intf)DFSDgetdimlen(cdim, &cllabel, &clunit, &clformat);
-    if(ret!=FAIL) {     /* if ok, copy the values over */
-        *llabel=cllabel;
-        *lunit=clunit;
-        *lformat=clformat;
-      } /* end if */
-    return(ret);
+    ret = (intf) DFSDgetdimlen(cdim, &cllabel, &clunit, &clformat);
+    if (ret != FAIL)
+      {		/* if ok, copy the values over */
+	  *llabel = cllabel;
+	  *lunit = clunit;
+	  *lformat = clformat;
+      }		/* end if */
+    return (ret);
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfsdgetdatalen
@@ -984,20 +996,21 @@ ndfsdgetdimlen(intf *dim, intf *llabel, intf *lunit, intf *lformat)
  * Invokes: DFSDgetdatalen
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfsdgetdatalen(intf *llabel, intf *lunit, intf *lformat, intf *lcoordsys)
+FRETVAL(intf)
+ndfsdgetdatalen(intf * llabel, intf * lunit, intf * lformat, intf * lcoordsys)
 {
-    intf ret;
-    intn cllabel, clunit, clformat, clcoordsys;
+    intf        ret;
+    intn        cllabel, clunit, clformat, clcoordsys;
 
-    ret=(intf)DFSDgetdatalen(&cllabel, &clunit, &clformat, &clcoordsys);
-    if(ret!=FAIL) {
-        *llabel=cllabel;
-        *lunit=clunit;
-        *lformat=clformat;
-        *lcoordsys=clcoordsys;
-      } /* end if */
-    return(ret);
+    ret = (intf) DFSDgetdatalen(&cllabel, &clunit, &clformat, &clcoordsys);
+    if (ret != FAIL)
+      {
+	  *llabel = cllabel;
+	  *lunit = clunit;
+	  *lformat = clformat;
+	  *lcoordsys = clcoordsys;
+      }		/* end if */
+    return (ret);
 }
 
 /*-----------------------------------------------------------------------------
@@ -1009,12 +1022,11 @@ ndfsdgetdatalen(intf *llabel, intf *lunit, intf *lformat, intf *lcoordsys)
  * Invokes: DFSDrestart
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndfsdrestart(void)
 {
-    return(DFSDrestart());
+    return (DFSDrestart());
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfsdputslice
@@ -1028,31 +1040,34 @@ ndfsdrestart(void)
  * Invokes: DFSDIputslice
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndfsdputslice(intf windims[], VOIDP data, intf dims[])
 {
-    intn rank, i;
-    intf ret;
-    int32 *cdims, *cwindims, *p, *wp;
+    intn        rank, i;
+    intf        ret;
+    int32      *cdims, *cwindims, *p, *wp;
 
     ret = DFSDIgetwrank(&rank);
-    wp = (int32 *)HDgetspace((uint32)((rank)*sizeof(int32)));
-    if (wp == NULL) return FAIL;
+    wp = (int32 *) HDgetspace((uint32) ((rank) * sizeof(int32)));
+    if (wp == NULL)
+	return FAIL;
     cwindims = wp;
-    p = (int32 *)HDgetspace((uint32)((rank)*sizeof(int32)));
-    if (p == NULL) return FAIL;
+    p = (int32 *) HDgetspace((uint32) ((rank) * sizeof(int32)));
+    if (p == NULL)
+	return FAIL;
     cdims = p;
-    for (i=1; i <=  rank ; i++)	{  /* reverse dims & windims */
-        *p = dims[rank - i];
-        p++;
-        *wp = windims[rank - i];
-        wp++;
-    }
-   
+    for (i = 1; i <= rank; i++)
+      {		/* reverse dims & windims */
+	  *p = dims[rank - i];
+	  p++;
+	  *wp = windims[rank - i];
+	  wp++;
+      }
+
     ret = DFSDIputslice(cwindims, data, cdims, 1);
-    HDfreespace((VOIDP)cdims);
-    HDfreespace((VOIDP)cwindims);
-    return(ret);
+    HDfreespace((VOIDP) cdims);
+    HDfreespace((VOIDP) cwindims);
+    return (ret);
 }
 
 /*-----------------------------------------------------------------------------
@@ -1064,12 +1079,11 @@ ndfsdputslice(intf windims[], VOIDP data, intf dims[])
  * Invokes: DFSDIendslice
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndfsdendslice(void)
 {
-    return(DFSDIendslice(1));
+    return (DFSDIendslice(1));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfsdsetnt
@@ -1082,10 +1096,10 @@ ndfsdendslice(void)
  * Remarks: 0 specifies default value
  *---------------------------------------------------------------------------*/
 
-        FRETVAL(intf)
-ndfsdsetnt(intf *numbertype)
+FRETVAL(intf)
+ndfsdsetnt(intf * numbertype)
 {
-    return(DFSDsetNT(*numbertype));
+    return (DFSDsetNT(*numbertype));
 }
 
 /*-----------------------------------------------------------------------------
@@ -1098,10 +1112,10 @@ ndfsdsetnt(intf *numbertype)
  * Remarks: 0 specifies default value
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndfsdgetnt(intf *pnumbertype)
+FRETVAL(intf)
+ndfsdgetnt(intf * pnumbertype)
 {
-    return(DFSDgetNT((int32 *)pnumbertype));
+    return (DFSDgetNT((int32 *) pnumbertype));
 }
 
 /*-----------------------------------------------------------------------------
@@ -1115,10 +1129,10 @@ ndfsdgetnt(intf *pnumbertype)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndfsdlastref(void)
 {
-    return(DFSDlastref());
+    return (DFSDlastref());
 }
 
 /*-----------------------------------------------------------------------------
@@ -1138,21 +1152,22 @@ ndfsdlastref(void)
  * Method:  
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndsisdis(intf *dim, _fcd flabel, _fcd funit, _fcd fformat,
-     intf *llabel, intf *lunit, intf *lformat)
+FRETVAL(intf)
+ndsisdis(intf * dim, _fcd flabel, _fcd funit, _fcd fformat,
+	 intf * llabel, intf * lunit, intf * lformat)
 {
-    char *label  =  HDf2cstring(flabel, (intn)*llabel);
-    char *unit   =  HDf2cstring(funit, (intn)*lunit);
-    char *format =  HDf2cstring(fformat, (intn)*lformat);
-    intf status;
-    intn rank, cdim;
+    char       *label = HDf2cstring(flabel, (intn) *llabel);
+    char       *unit = HDf2cstring(funit, (intn) *lunit);
+    char       *format = HDf2cstring(fformat, (intn) *lformat);
+    intf        status;
+    intn        rank, cdim;
 
     status = DFSDIgetwrank(&rank);
 
-    if (rank < *dim) return FAIL;
-    cdim = rank - (intn)*dim + 1;
-    
+    if (rank < *dim)
+	return FAIL;
+    cdim = rank - (intn) *dim + 1;
+
     status = DFSDIsetdimstrs(cdim, label, unit, format);
 
     HDfreespace(label);
@@ -1172,38 +1187,47 @@ ndsisdis(intf *dim, _fcd flabel, _fcd funit, _fcd fformat,
  * Invokes: DFSDgetdimstrs
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndsigdis(intf *dim, _fcd label, _fcd unit, _fcd format, intf *llabel,
-         intf *lunit, intf *lformat)
+FRETVAL(intf)
+ndsigdis(intf * dim, _fcd label, _fcd unit, _fcd format, intf * llabel,
+	 intf * lunit, intf * lformat)
 {
-    char *ilabel, *iunit, *iformat;
-    intn rank, cdim;
-    intf ret;
-    intn isndg, status;
+    char       *ilabel, *iunit, *iformat;
+    intn        rank, cdim;
+    intf        ret;
+    intn        isndg, status;
 
     ret = DFSDIisndg(&isndg);
-    if (isndg) 	{
-        ret = DFSDIgetrrank(&rank);
-    	if (rank < *dim) return FAIL;
-        cdim = rank - (intn)*dim + 1;
-    }
-    else cdim = (intn)*dim;
+    if (isndg)
+      {
+	  ret = DFSDIgetrrank(&rank);
+	  if (rank < *dim)
+	      return FAIL;
+	  cdim = rank - (intn) *dim + 1;
+      }
+    else
+	cdim = (intn) *dim;
 
     iunit = ilabel = iformat = NULL;
 
-    if(*llabel)  ilabel  = (char *) HDgetspace((uint32)*llabel + 1);
-    if(*lunit)   iunit   = (char *) HDgetspace((uint32)*lunit + 1);
-    if(*lformat) iformat = (char *) HDgetspace((uint32)*lformat + 1);
+    if (*llabel)
+	ilabel = (char *) HDgetspace((uint32) *llabel + 1);
+    if (*lunit)
+	iunit = (char *) HDgetspace((uint32) *lunit + 1);
+    if (*lformat)
+	iformat = (char *) HDgetspace((uint32) *lformat + 1);
 
     status = DFSDgetdimstrs(cdim, ilabel, iunit, iformat);
 
-    HDpackFstring(ilabel,  _fcdtocp(label),  (intn)*llabel);
-    HDpackFstring(iunit,   _fcdtocp(unit),   (intn)*lunit);
-    HDpackFstring(iformat, _fcdtocp(format), (intn)*lformat);
+    HDpackFstring(ilabel, _fcdtocp(label), (intn) *llabel);
+    HDpackFstring(iunit, _fcdtocp(unit), (intn) *lunit);
+    HDpackFstring(iformat, _fcdtocp(format), (intn) *lformat);
 
-    if(ilabel)  HDfreespace(ilabel);
-    if(iunit)   HDfreespace(iunit);
-    if(iformat) HDfreespace(iformat);
+    if (ilabel)
+	HDfreespace(ilabel);
+    if (iunit)
+	HDfreespace(iunit);
+    if (iformat)
+	HDfreespace(iformat);
 
     return status;
 }
@@ -1222,18 +1246,18 @@ ndsigdis(intf *dim, _fcd label, _fcd unit, _fcd format, intf *llabel,
  * Method:  Stores values in global structure Writesdg
  * Remarks: 
  *---------------------------------------------------------------------------*/
-    FRETVAL(intf)
-ndsisdas(_fcd flabel, _fcd funit, _fcd fformat, _fcd fcoordsys, intf *isfortran,
-     intf *llabel, intf *lunit, intf *lformat, intf *lcoordsys)
+FRETVAL(intf)
+ndsisdas(_fcd flabel, _fcd funit, _fcd fformat, _fcd fcoordsys, intf * isfortran,
+	 intf * llabel, intf * lunit, intf * lformat, intf * lcoordsys)
 {
-    char *label    =  HDf2cstring(flabel, (intn)*llabel);
-    char *unit     =  HDf2cstring(funit, (intn)*lunit);
-    char *format   =  HDf2cstring(fformat, (intn)*lformat);
-    char *coordsys =  HDf2cstring(fcoordsys, (intn)*lcoordsys);
-    intf status;
+    char       *label = HDf2cstring(flabel, (intn) *llabel);
+    char       *unit = HDf2cstring(funit, (intn) *lunit);
+    char       *format = HDf2cstring(fformat, (intn) *lformat);
+    char       *coordsys = HDf2cstring(fcoordsys, (intn) *lcoordsys);
+    intf        status;
 
     /* shut compiler up */
-    isfortran=isfortran;
+    isfortran = isfortran;
 
     status = DFSDIsetdatastrs(label, unit, format, coordsys);
 
@@ -1243,7 +1267,7 @@ ndsisdas(_fcd flabel, _fcd funit, _fcd fformat, _fcd fcoordsys, intf *isfortran,
     HDfreespace(coordsys);
 
     return status;
-} /* ndsisdas */
+}	/* ndsisdas */
 
 /*-----------------------------------------------------------------------------
  * Name:    dsigdas
@@ -1254,31 +1278,39 @@ ndsisdas(_fcd flabel, _fcd funit, _fcd fformat, _fcd fcoordsys, intf *isfortran,
  * Invokes: DFSDgetdatastrs
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndsigdas(_fcd label, _fcd unit, _fcd format, _fcd coordsys, intf *llabel,
-        intf *lunit, intf *lformat, intf *lcoord)
+FRETVAL(intf)
+ndsigdas(_fcd label, _fcd unit, _fcd format, _fcd coordsys, intf * llabel,
+	 intf * lunit, intf * lformat, intf * lcoord)
 {
-    char *ilabel, *iunit, *iformat, *icoord;
-    intf status;
+    char       *ilabel, *iunit, *iformat, *icoord;
+    intf        status;
 
     iunit = ilabel = iformat = icoord = NULL;
 
-    if(*llabel)  ilabel  = (char *) HDgetspace((uint32)*llabel + 1);
-    if(*lunit)   iunit   = (char *) HDgetspace((uint32)*lunit + 1);
-    if(*lformat) iformat = (char *) HDgetspace((uint32)*lformat + 1);
-    if(*lcoord)  icoord  = (char *) HDgetspace((uint32)*lcoord + 1);
+    if (*llabel)
+	ilabel = (char *) HDgetspace((uint32) *llabel + 1);
+    if (*lunit)
+	iunit = (char *) HDgetspace((uint32) *lunit + 1);
+    if (*lformat)
+	iformat = (char *) HDgetspace((uint32) *lformat + 1);
+    if (*lcoord)
+	icoord = (char *) HDgetspace((uint32) *lcoord + 1);
 
     status = DFSDgetdatastrs(ilabel, iunit, iformat, icoord);
-    
-    HDpackFstring(ilabel,  _fcdtocp(label),    (intn)*llabel);
-    HDpackFstring(iunit,   _fcdtocp(unit),     (intn)*lunit);
-    HDpackFstring(iformat, _fcdtocp(format),   (intn)*lformat);
-    HDpackFstring(icoord,  _fcdtocp(coordsys), (intn)*lcoord);
 
-    if(ilabel)  HDfreespace(ilabel);
-    if(iunit)   HDfreespace(iunit);
-    if(iformat) HDfreespace(iformat);
-    if(icoord)  HDfreespace(icoord);
+    HDpackFstring(ilabel, _fcdtocp(label), (intn) *llabel);
+    HDpackFstring(iunit, _fcdtocp(unit), (intn) *lunit);
+    HDpackFstring(iformat, _fcdtocp(format), (intn) *lformat);
+    HDpackFstring(icoord, _fcdtocp(coordsys), (intn) *lcoord);
+
+    if (ilabel)
+	HDfreespace(ilabel);
+    if (iunit)
+	HDfreespace(iunit);
+    if (iformat)
+	HDfreespace(iformat);
+    if (icoord)
+	HDfreespace(icoord);
 
     return status;
 
@@ -1294,12 +1326,12 @@ ndsigdas(_fcd label, _fcd unit, _fcd format, _fcd coordsys, intf *llabel,
  * Users:   HDF Fortran programmers
  * Invokes: DFSDgetdatastrs
  *---------------------------------------------------------------------------*/
-    FRETVAL(intf)
+FRETVAL(intf)
 ndsscal(float64 *cal, float64 *cal_err, float64 *ioff, float64 *ioff_err,
-         intf * cal_type)
+	intf * cal_type)
 {
     return DFSDsetcal(*cal, *cal_err, *ioff, *ioff_err, *cal_type);
-} /* ndsscal */
+}	/* ndsscal */
 
 /*-----------------------------------------------------------------------------
  * Name:    dsgcal
@@ -1312,12 +1344,12 @@ ndsscal(float64 *cal, float64 *cal_err, float64 *ioff, float64 *ioff_err,
  * Invokes: DFSDgetdatastrs
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndsgcal(float64 *cal, float64 *cal_err, float64 *ioff, float64 *ioff_err,
-         intf * cal_type)
+	intf * cal_type)
 {
-    return DFSDgetcal(cal, cal_err, ioff, ioff_err, (int32 *)cal_type);
-} /* ndsgcal */
+    return DFSDgetcal(cal, cal_err, ioff, ioff_err, (int32 *) cal_type);
+}	/* ndsgcal */
 
 /*-----------------------------------------------------------------------------
  * Name:    dsiwref
@@ -1330,16 +1362,16 @@ ndsgcal(float64 *cal, float64 *cal_err, float64 *ioff, float64 *ioff_err,
  * Invokes:
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndsiwref(_fcd filename, intf *fnlen, intf *ref)
+FRETVAL(intf)
+ndsiwref(_fcd filename, intf * fnlen, intf * ref)
 {
-    char *fn;
-    intf ret;
+    char       *fn;
+    intf        ret;
 
-    fn = HDf2cstring(filename, (intn)*fnlen);
+    fn = HDf2cstring(filename, (intn) *fnlen);
     ret = DFSDwriteref(fn, (uint16) *ref);
     HDfreespace(fn);
-    return(ret);
+    return (ret);
 }
 
 /*-----------------------------------------------------------------------------
@@ -1351,7 +1383,7 @@ ndsiwref(_fcd filename, intf *fnlen, intf *ref)
  * Invokes: DFSDsetfillvalue
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndssfill(VOIDP fill_value)
 {
     return DFSDsetfillvalue(fill_value);
@@ -1366,7 +1398,7 @@ ndssfill(VOIDP fill_value)
  * Invokes: DFSDgetfillvalue
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndsgfill(VOIDP fill_value)
 {
     return DFSDgetfillvalue(fill_value);
@@ -1383,15 +1415,15 @@ ndsgfill(VOIDP fill_value)
  * Remarks:
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndsisslab(_fcd filename, intf *fnlen )
+FRETVAL(intf)
+ndsisslab(_fcd filename, intf * fnlen)
 {
-    char *fn;
-    intf ret;
+    char       *fn;
+    intf        ret;
 
-    fn = HDf2cstring(filename, (intn)*fnlen);
+    fn = HDf2cstring(filename, (intn) *fnlen);
     if (fn == NULL)
-      return FAIL;
+	return FAIL;
     ret = DFSDstartslab(fn);
     HDfreespace(fn);
     return ret;
@@ -1409,42 +1441,42 @@ ndsisslab(_fcd filename, intf *fnlen )
  * Invokes: DFSDIgetwrank, HDgetspace, HDfreespace, HDf2cstring, DFSDwriteslab
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndswslab(intf start[], intf stride[],
-         intf count[], VOIDP data)
+	 intf count[], VOIDP data)
 {
-    int32 *lstart, *lstride, *lcount, *aptr, *bptr, *cptr;
-    intn i, rank;
-    intf ret;
+    int32      *lstart, *lstride, *lcount, *aptr, *bptr, *cptr;
+    intn        i, rank;
+    intf        ret;
 
     /*
-    ** Lets reverse the order for the arrays since we
-    ** are going from fortran to C
-    */
+       ** Lets reverse the order for the arrays since we
+       ** are going from fortran to C
+     */
     ret = DFSDIgetwrank(&rank);
     if (ret == FAIL)
-      return FAIL;
+	return FAIL;
 
-    aptr = (int32 *)HDgetspace((uint32)(3*rank*sizeof(int32)));
+    aptr = (int32 *) HDgetspace((uint32) (3 * rank * sizeof(int32)));
     if (aptr == NULL)
-      return FAIL;
+	return FAIL;
 
-    lstart  = aptr;
+    lstart = aptr;
     lstride = bptr = aptr + rank;
-    lcount  = cptr = bptr + rank;
+    lcount = cptr = bptr + rank;
 
-    for (i = 1; i <=  rank ; i++)
-      {  /* reverse start, stride & count */
-        *aptr = start[rank - i];
-        aptr++;
-        *bptr = stride[rank - i];
-        bptr++;
-        *cptr = count[rank - i];
-        cptr++;
+    for (i = 1; i <= rank; i++)
+      {		/* reverse start, stride & count */
+	  *aptr = start[rank - i];
+	  aptr++;
+	  *bptr = stride[rank - i];
+	  bptr++;
+	  *cptr = count[rank - i];
+	  cptr++;
       }
 
     ret = DFSDwriteslab(lstart, lstride, lcount, data);
-    HDfreespace((VOIDP)lstart);
+    HDfreespace((VOIDP) lstart);
 
     return ret;
 }
@@ -1459,7 +1491,7 @@ ndswslab(intf start[], intf stride[],
  * Remarks:
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 ndseslab()
 {
     return DFSDendslab();
@@ -1480,54 +1512,60 @@ ndseslab()
  * Invokes: DFSDreadslab
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-ndsirslab(_fcd filename, intf *fnlen, intf start[], intf slab_size[], 
-          intf stride[], VOIDP buffer, intf buffer_size[])
+FRETVAL(intf)
+ndsirslab(_fcd filename, intf * fnlen, intf start[], intf slab_size[],
+	  intf stride[], VOIDP buffer, intf buffer_size[])
 {
-    char *fn;
-    intf ret;
-    intn rank,i;
-    int32 *cbuffer_size, *cslab_size, *cstart, *p, *wp, *wsp;
-    intn isndg;
+    char       *fn;
+    intf        ret;
+    intn        rank, i;
+    int32      *cbuffer_size, *cslab_size, *cstart, *p, *wp, *wsp;
+    intn        isndg;
 
     /* Convert "filename" to fortran string */
-    fn = HDf2cstring(filename, (intn)*fnlen);
-    if (fn == NULL) return FAIL;
-   
-    /* If DFSDgetdims has not be called call DFSDIsdginfo to refresh Readsdg */ 
-    if (DFSDIrefresh(fn)<0) return FAIL;
- 
+    fn = HDf2cstring(filename, (intn) *fnlen);
+    if (fn == NULL)
+	return FAIL;
+
+    /* If DFSDgetdims has not be called call DFSDIsdginfo to refresh Readsdg */
+    if (DFSDIrefresh(fn) < 0)
+	return FAIL;
+
     ret = DFSDIisndg(&isndg);
-    if (isndg)	{
-	    ret = DFSDIgetrrank(&rank);
-    	p = (int32 *)HDgetspace((uint32)(rank*sizeof(int32)));
-    	if (p == NULL) return FAIL;
-        cbuffer_size = p;
-    	wp = (int32 *)HDgetspace((uint32)(rank*sizeof(int32)));
-    	if (wp == NULL) return FAIL;
-        cslab_size = wp;
-    	wsp = (int32 *)HDgetspace((uint32)(rank*sizeof(int32)));
-    	if (wsp == NULL) return FAIL;
-        cstart = wsp;
+    if (isndg)
+      {
+	  ret = DFSDIgetrrank(&rank);
+	  p = (int32 *) HDgetspace((uint32) (rank * sizeof(int32)));
+	  if (p == NULL)
+	      return FAIL;
+	  cbuffer_size = p;
+	  wp = (int32 *) HDgetspace((uint32) (rank * sizeof(int32)));
+	  if (wp == NULL)
+	      return FAIL;
+	  cslab_size = wp;
+	  wsp = (int32 *) HDgetspace((uint32) (rank * sizeof(int32)));
+	  if (wsp == NULL)
+	      return FAIL;
+	  cstart = wsp;
 
-    	for (i=1; i <=  rank ; i++)	{
-            *p = buffer_size[rank - i];
-            p++;
-            *wp = slab_size[rank - i];
-            wp++;
-            *wsp = start[rank - i];
-            wsp++;
-        }
-    	ret =DFSDreadslab(fn, cstart, cslab_size, (int32 *)stride, buffer, 
-                         cbuffer_size);
-    	HDfreespace((VOIDP)cstart);
-    	HDfreespace((VOIDP)cslab_size);
-    	HDfreespace((VOIDP)cbuffer_size);
-    }
-    else	
-        ret = DFSDreadslab(fn, (int32 *)start, (int32 *)slab_size,
-                (int32 *)stride, buffer, (int32 *)buffer_size);
+	  for (i = 1; i <= rank; i++)
+	    {
+		*p = buffer_size[rank - i];
+		p++;
+		*wp = slab_size[rank - i];
+		wp++;
+		*wsp = start[rank - i];
+		wsp++;
+	    }
+	  ret = DFSDreadslab(fn, cstart, cslab_size, (int32 *) stride, buffer,
+			     cbuffer_size);
+	  HDfreespace((VOIDP) cstart);
+	  HDfreespace((VOIDP) cslab_size);
+	  HDfreespace((VOIDP) cbuffer_size);
+      }
+    else
+	ret = DFSDreadslab(fn, (int32 *) start, (int32 *) slab_size,
+			   (int32 *) stride, buffer, (int32 *) buffer_size);
     HDfreespace(fn);
-    return(ret);
+    return (ret);
 }
-

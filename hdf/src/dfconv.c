@@ -112,69 +112,69 @@ static char RcsId[] = "@(#)$Revision$";
 /*                                                                           */
 /*****************************************************************************/
 
-
 #include <ctype.h>
-#define DFKMASTER  /* Define this for the prototypes for DFKnumin/out */
+#define DFKMASTER	/* Define this for the prototypes for DFKnumin/out */
 #include "hdf.h"
 #include "hconv.h"
 
 /*
-**  Static function prototypes
-*/
+   **  Static function prototypes
+ */
 PRIVATE int DFKInoset
-    (VOIDP source, VOIDP dest, uint32 num_elm,uint32 source_stride,
-            uint32 dest_stride);
+            (VOIDP source, VOIDP dest, uint32 num_elm, uint32 source_stride,
+	     uint32 dest_stride);
 
 /*
-**  Conversion Routine Pointer Definitions
-*/
-int (*DFKnumin)
-        HPROTO((VOIDP source, VOIDP dest, uint32 num_elm,
-                uint32 source_stride, uint32 dest_stride)) = DFKInoset;
-int (*DFKnumout)
-        HPROTO((VOIDP source, VOIDP dest, uint32 num_elm,
-                uint32 source_stride, uint32 dest_stride)) = DFKInoset;
+   **  Conversion Routine Pointer Definitions
+ */
+int         (*DFKnumin)
+            HPROTO((VOIDP source, VOIDP dest, uint32 num_elm,
+		    uint32 source_stride, uint32 dest_stride)) = DFKInoset;
+int         (*DFKnumout)
+            HPROTO((VOIDP source, VOIDP dest, uint32 num_elm,
+		    uint32 source_stride, uint32 dest_stride)) = DFKInoset;
 
 /************************************************************
  * If the programmer forgot to call DFKsetntype, then let
  * them know about it.
  * Should this be PUBLIC or PRIVATE
  ************************************************************/
-PRIVATE int DFKInoset(VOIDP source, VOIDP dest, uint32 num_elm, 
-	uint32 source_stride, uint32 dest_stride)
+PRIVATE int
+DFKInoset(VOIDP source, VOIDP dest, uint32 num_elm,
+	  uint32 source_stride, uint32 dest_stride)
 {
-  CONSTR(FUNC,"DFKInoset");
+    CONSTR(FUNC, "DFKInoset");
 
-  HEclear();
+    HEclear();
 
     /* shut the compiler up about not using the arguments */
-    source=source;
-    dest=dest;
-    num_elm=num_elm;
-    source_stride=source_stride;
-    dest_stride=dest_stride;
+    source = source;
+    dest = dest;
+    num_elm = num_elm;
+    source_stride = source_stride;
+    dest_stride = dest_stride;
 
-  /* If this is causing a problem for you, call DFKsetntype */
-  HERROR(DFE_BADCONV);
-  return FAIL;
+    /* If this is causing a problem for you, call DFKsetntype */
+    HERROR(DFE_BADCONV);
+    return FAIL;
 }
-
 
 /*****************************************************************************
  * Routines that depend on the above information
  *****************************************************************************/
 
-PRIVATE int32 g_ntype = DFNT_NONE;   /* Holds current number type. */
-                                    /* Initially not set.         */
+PRIVATE int32 g_ntype = DFNT_NONE;	/* Holds current number type. */
+				    /* Initially not set.         */
 
 /************************************************************ 
 * DFKqueryNT()
 *   Determine the current conversion settings 
  ************************************************************/
 PUBLIC
-int32 DFKqueryNT(void) 
+int32
+DFKqueryNT(void)
 {
-  return g_ntype;
+    return g_ntype;
 }
 
 /************************************************************
@@ -182,62 +182,95 @@ int32 DFKqueryNT(void)
  *   Determine the size, given the number type
  ************************************************************/
 PUBLIC
-int DFKNTsize(int32 number_type)
+int
+DFKNTsize(int32 number_type)
 {
 #ifdef LATER
-    CONSTR(FUNC,"DFKNTsize");
+    CONSTR(FUNC, "DFKNTsize");
 #endif
 
-	switch (number_type)  {
-    	    case DFNT_NUCHAR:	return(SIZE_NUCHAR);
-    	    case DFNT_NCHAR:	return(SIZE_NCHAR);
-    	    case DFNT_NINT8:	return(SIZE_NINT8);
-            case DFNT_NUINT8:   return(SIZE_NUINT8);
+    switch (number_type)
+      {
+	  case DFNT_NUCHAR:
+	      return (SIZE_NUCHAR);
+	  case DFNT_NCHAR:
+	      return (SIZE_NCHAR);
+	  case DFNT_NINT8:
+	      return (SIZE_NINT8);
+	  case DFNT_NUINT8:
+	      return (SIZE_NUINT8);
 
-    	    case DFNT_NINT16:	return(SIZE_NINT16);
-            case DFNT_NUINT16:  return(SIZE_NUINT16);
+	  case DFNT_NINT16:
+	      return (SIZE_NINT16);
+	  case DFNT_NUINT16:
+	      return (SIZE_NUINT16);
 
-    	    case DFNT_NINT32:   return(SIZE_NINT32);
-            case DFNT_NUINT32:  return(SIZE_NUINT32);
+	  case DFNT_NINT32:
+	      return (SIZE_NINT32);
+	  case DFNT_NUINT32:
+	      return (SIZE_NUINT32);
 
-            case DFNT_NFLOAT32: return(SIZE_NFLOAT32);
+	  case DFNT_NFLOAT32:
+	      return (SIZE_NFLOAT32);
 
-            case DFNT_NFLOAT64: return(SIZE_NFLOAT64);
+	  case DFNT_NFLOAT64:
+	      return (SIZE_NFLOAT64);
 
-            case DFNT_LUCHAR:   return(SIZE_LUCHAR);
-            case DFNT_LCHAR:    return(SIZE_LCHAR);
-            case DFNT_LINT8:    return(SIZE_LINT8);
-            case DFNT_LUINT8:   return(SIZE_LUINT8);
+	  case DFNT_LUCHAR:
+	      return (SIZE_LUCHAR);
+	  case DFNT_LCHAR:
+	      return (SIZE_LCHAR);
+	  case DFNT_LINT8:
+	      return (SIZE_LINT8);
+	  case DFNT_LUINT8:
+	      return (SIZE_LUINT8);
 
-            case DFNT_LINT16:   return(SIZE_LINT16);
-            case DFNT_LUINT16:  return(SIZE_LUINT16);
+	  case DFNT_LINT16:
+	      return (SIZE_LINT16);
+	  case DFNT_LUINT16:
+	      return (SIZE_LUINT16);
 
-            case DFNT_LINT32:   return(SIZE_LINT32);
-            case DFNT_LUINT32:  return(SIZE_LUINT32);
+	  case DFNT_LINT32:
+	      return (SIZE_LINT32);
+	  case DFNT_LUINT32:
+	      return (SIZE_LUINT32);
 
-            case DFNT_LFLOAT32: return(SIZE_LFLOAT32);
+	  case DFNT_LFLOAT32:
+	      return (SIZE_LFLOAT32);
 
-            case DFNT_LFLOAT64: return(SIZE_LFLOAT64);
+	  case DFNT_LFLOAT64:
+	      return (SIZE_LFLOAT64);
 
-            case DFNT_UCHAR:    return(SIZE_UCHAR);
-            case DFNT_CHAR:     return(SIZE_CHAR);
-            case DFNT_INT8:     return(SIZE_INT8);
-            case DFNT_UINT8:    return(SIZE_UINT8);
+	  case DFNT_UCHAR:
+	      return (SIZE_UCHAR);
+	  case DFNT_CHAR:
+	      return (SIZE_CHAR);
+	  case DFNT_INT8:
+	      return (SIZE_INT8);
+	  case DFNT_UINT8:
+	      return (SIZE_UINT8);
 
-    	    case DFNT_INT16:	return(SIZE_INT16);
-            case DFNT_UINT16:   return(SIZE_UINT16);
+	  case DFNT_INT16:
+	      return (SIZE_INT16);
+	  case DFNT_UINT16:
+	      return (SIZE_UINT16);
 
-    	    case DFNT_INT32:	return(SIZE_INT32);
-            case DFNT_UINT32:   return(SIZE_UINT32);
+	  case DFNT_INT32:
+	      return (SIZE_INT32);
+	  case DFNT_UINT32:
+	      return (SIZE_UINT32);
 
-            case DFNT_FLOAT32:  return(SIZE_FLOAT32);
+	  case DFNT_FLOAT32:
+	      return (SIZE_FLOAT32);
 
-            case DFNT_FLOAT64:  return(SIZE_FLOAT64);
+	  case DFNT_FLOAT64:
+	      return (SIZE_FLOAT64);
 
-    	    default: break;
-  	}	/* switch	*/
-  		/* hdf default format   */
-  return FAIL;
+	  default:
+	      break;
+      }		/* switch       */
+    /* hdf default format   */
+    return FAIL;
 }
 
 /************************************************************
@@ -245,95 +278,118 @@ int DFKNTsize(int32 number_type)
  *   Set the number type for future conversion calls
  ************************************************************/
 PUBLIC
-intn DFKsetNT(int32 ntype)
+intn
+DFKsetNT(int32 ntype)
 {
-  CONSTR(FUNC,"DFKsetNT");
+    CONSTR(FUNC, "DFKsetNT");
 
-  HEclear();
+    HEclear();
 
-  g_ntype = ntype;
+    g_ntype = ntype;
 
-  switch(ntype) {
-    case DFNT_CHAR8:
-    case DFNT_UCHAR8:
-    case DFNT_INT8:    
-    case DFNT_UINT8:   DFKnumin  = UI8_IN;
-                       DFKnumout = UI8_OUT;
-                       return 0;
-    case DFNT_INT16:   DFKnumin  = SI16_IN;
-                       DFKnumout = SI16_OUT;
-                       return 0;
-    case DFNT_UINT16:  DFKnumin  = UI16_IN;
-                       DFKnumout = UI16_OUT;
-                       return 0;
-    case DFNT_INT32:   DFKnumin  = SI32_IN;
-                       DFKnumout = SI32_OUT;
-                       return 0;
-    case DFNT_UINT32:  DFKnumin  = UI32_IN;
-                       DFKnumout = UI32_OUT;
-                       return 0;
-    case DFNT_FLOAT32: DFKnumin  = F32_IN;
-                       DFKnumout = F32_OUT;
-                       return 0;
-    case DFNT_FLOAT64: DFKnumin  = F64_IN;
-                       DFKnumout = F64_OUT;
-                       return 0;
+    switch (ntype)
+      {
+	  case DFNT_CHAR8:
+	  case DFNT_UCHAR8:
+	  case DFNT_INT8:
+	  case DFNT_UINT8:
+	      DFKnumin = UI8_IN;
+	      DFKnumout = UI8_OUT;
+	      return 0;
+	  case DFNT_INT16:
+	      DFKnumin = SI16_IN;
+	      DFKnumout = SI16_OUT;
+	      return 0;
+	  case DFNT_UINT16:
+	      DFKnumin = UI16_IN;
+	      DFKnumout = UI16_OUT;
+	      return 0;
+	  case DFNT_INT32:
+	      DFKnumin = SI32_IN;
+	      DFKnumout = SI32_OUT;
+	      return 0;
+	  case DFNT_UINT32:
+	      DFKnumin = UI32_IN;
+	      DFKnumout = UI32_OUT;
+	      return 0;
+	  case DFNT_FLOAT32:
+	      DFKnumin = F32_IN;
+	      DFKnumout = F32_OUT;
+	      return 0;
+	  case DFNT_FLOAT64:
+	      DFKnumin = F64_IN;
+	      DFKnumout = F64_OUT;
+	      return 0;
 
-    /* 
-     * NATIVE MODE 'CONVERSIONS'
-     */
-    case DFNT_NCHAR: 
-    case DFNT_NINT8:
-    case DFNT_NUCHAR:
-    case DFNT_NUINT8:   DFKnumin  = NUI8_IN;
-                        DFKnumout = NUI8_OUT;
-                        return 0;
-    case DFNT_NINT16:   DFKnumin  = NSI16_IN;
-                        DFKnumout = NSI16_OUT;
-                        return 0;
-    case DFNT_NUINT16:  DFKnumin  = NUI16_IN;
-                        DFKnumout = NUI16_OUT;
-                        return 0;
-    case DFNT_NINT32:   DFKnumin  = NSI32_IN;
-                        DFKnumout = NSI32_OUT;
-                        return 0;
-    case DFNT_NUINT32:  DFKnumin  = NUI32_IN;
-                        DFKnumout = NUI32_OUT;
-                        return 0;
-    case DFNT_NFLOAT32: DFKnumin  = NF32_IN;
-                        DFKnumout = NF32_OUT;
-                        return 0;
-    case DFNT_NFLOAT64: DFKnumin  = NF64_IN;
-                        DFKnumout = NF64_OUT;
-                        return 0;
+	      /* 
+	       * NATIVE MODE 'CONVERSIONS'
+	       */
+	  case DFNT_NCHAR:
+	  case DFNT_NINT8:
+	  case DFNT_NUCHAR:
+	  case DFNT_NUINT8:
+	      DFKnumin = NUI8_IN;
+	      DFKnumout = NUI8_OUT;
+	      return 0;
+	  case DFNT_NINT16:
+	      DFKnumin = NSI16_IN;
+	      DFKnumout = NSI16_OUT;
+	      return 0;
+	  case DFNT_NUINT16:
+	      DFKnumin = NUI16_IN;
+	      DFKnumout = NUI16_OUT;
+	      return 0;
+	  case DFNT_NINT32:
+	      DFKnumin = NSI32_IN;
+	      DFKnumout = NSI32_OUT;
+	      return 0;
+	  case DFNT_NUINT32:
+	      DFKnumin = NUI32_IN;
+	      DFKnumout = NUI32_OUT;
+	      return 0;
+	  case DFNT_NFLOAT32:
+	      DFKnumin = NF32_IN;
+	      DFKnumout = NF32_OUT;
+	      return 0;
+	  case DFNT_NFLOAT64:
+	      DFKnumin = NF64_IN;
+	      DFKnumout = NF64_OUT;
+	      return 0;
 
-    /*
-     * Little Endian Conversions
-     */
-    case DFNT_LCHAR:
-    case DFNT_LINT8:
-    case DFNT_LUCHAR:
-    case DFNT_LUINT8:   DFKnumin  = LUI8_IN;
-                        DFKnumout = LUI8_OUT;
-                        return 0;
-    case DFNT_LINT16:   DFKnumin  = LSI16_IN;
-                        DFKnumout = LSI16_OUT;
-                        return 0;
-    case DFNT_LUINT16:  DFKnumin  = LUI16_IN;
-                        DFKnumout = LUI16_OUT;
-                        return 0;
-    case DFNT_LINT32:   DFKnumin  = LSI32_IN;
-                        DFKnumout = LSI32_OUT;
-                        return 0;
-    case DFNT_LUINT32:  DFKnumin  = LUI32_IN;
-                        DFKnumout = LUI32_OUT;
-                        return 0;
-    case DFNT_LFLOAT32: DFKnumin  = LF32_IN;
-                        DFKnumout = LF32_OUT;
-                        return 0;
-    case DFNT_LFLOAT64: DFKnumin  = LF64_IN;
-                        DFKnumout = LF64_OUT;
-                        return 0;
+	      /*
+	       * Little Endian Conversions
+	       */
+	  case DFNT_LCHAR:
+	  case DFNT_LINT8:
+	  case DFNT_LUCHAR:
+	  case DFNT_LUINT8:
+	      DFKnumin = LUI8_IN;
+	      DFKnumout = LUI8_OUT;
+	      return 0;
+	  case DFNT_LINT16:
+	      DFKnumin = LSI16_IN;
+	      DFKnumout = LSI16_OUT;
+	      return 0;
+	  case DFNT_LUINT16:
+	      DFKnumin = LUI16_IN;
+	      DFKnumout = LUI16_OUT;
+	      return 0;
+	  case DFNT_LINT32:
+	      DFKnumin = LSI32_IN;
+	      DFKnumout = LSI32_OUT;
+	      return 0;
+	  case DFNT_LUINT32:
+	      DFKnumin = LUI32_IN;
+	      DFKnumout = LUI32_OUT;
+	      return 0;
+	  case DFNT_LFLOAT32:
+	      DFKnumin = LF32_IN;
+	      DFKnumout = LF32_OUT;
+	      return 0;
+	  case DFNT_LFLOAT64:
+	      DFKnumin = LF64_IN;
+	      DFKnumout = LF64_OUT;
+	      return 0;
 
 /* No conversion routines are specified for DFNT_custom.  User must provide. */
 /* Users should call DFCV_SetCustomIn() and DFCV_SetCustomOut() if they      */
@@ -341,32 +397,33 @@ intn DFKsetNT(int32 ntype)
 /* distinguish between multiple 'custom' conversion routines.  HDF only      */
 /* knows such routines as type 'DFNT_CUSTOM'.                                */
 
-    case DFNT_CUSTOM:  g_ntype = DFNT_CUSTOM;
-                       return 0;
-    default:           HERROR(DFE_BADCONV);
-                       return FAIL;
-  }
+	  case DFNT_CUSTOM:
+	      g_ntype = DFNT_CUSTOM;
+	      return 0;
+	  default:
+	      HERROR(DFE_BADCONV);
+	      return FAIL;
+      }
 }
-
 
 /*****************************************************************************
  * The following routine provides an easy method for the user to setup custom
  * conversion routines....
  *****************************************************************************/
 PUBLIC
-int DFKsetcustom(
-  int (*DFKcustin)HPROTO((VOIDP source, VOIDP dest, uint32 num_elm,
-		   uint32 source_stride, uint32 dest_stride)), 
-  int (*DFKcustout)HPROTO((VOIDP source, VOIDP dest, uint32 num_elm, 
-		    uint32 source_stride, uint32 dest_stride))
+int
+DFKsetcustom(
+  int         (*DFKcustin) HPROTO((VOIDP source, VOIDP dest, uint32 num_elm,
+				 uint32 source_stride, uint32 dest_stride)),
+ int         (*DFKcustout) HPROTO((VOIDP source, VOIDP dest, uint32 num_elm,
+				   uint32 source_stride, uint32 dest_stride))
 )
 {
-  DFKnumin = DFKcustin;
-  DFKnumout = DFKcustout;
-  DFKsetNT(DFNT_CUSTOM);   /* Keep HDF from getting confused */
-  return 0;
-} 
-
+    DFKnumin = DFKcustin;
+    DFKnumout = DFKcustout;
+    DFKsetNT(DFNT_CUSTOM);	/* Keep HDF from getting confused */
+    return 0;
+}
 
 /*------------------------------------------------------------------
  * Name:    DFKisnativeNT
@@ -378,9 +435,10 @@ int DFKsetcustom(
  * Remarks:
  *------------------------------------------------------------------*/
 
-int32 DFKisnativeNT(int32 numbertype)
+int32
+DFKisnativeNT(int32 numbertype)
 {
-    return ((DFNT_NATIVE & numbertype)>0 ? 1 : 0 );
+    return ((DFNT_NATIVE & numbertype) > 0 ? 1 : 0);
 }
 
 /*------------------------------------------------------------------
@@ -393,9 +451,10 @@ int32 DFKisnativeNT(int32 numbertype)
  * Remarks:
  *------------------------------------------------------------------*/
 
-int32 DFKislitendNT(int32 numbertype)
+int32
+DFKislitendNT(int32 numbertype)
 {
-    return ((DFNT_LITEND & numbertype)>0 ? 1 : 0 );
+    return ((DFNT_LITEND & numbertype) > 0 ? 1 : 0);
 }
 
 /************************************************************
@@ -415,41 +474,44 @@ int32 DFKislitendNT(int32 numbertype)
  * int  * desttype    the specifid type of the converted data, ie DFNTF_VAX...
  * int  * size        the number (total) of BYTES to convert
  ************************************************************/
-int DFconvert(uint8 *source,uint8 *dest,int ntype,int sourcetype,int desttype,
-        int32 size)
-{ 
-  register uint32 num_elm;
-  CONSTR(FUNC,"DFconvert");
+int
+DFconvert(uint8 *source, uint8 *dest, int ntype, int sourcetype, int desttype,
+	  int32 size)
+{
+    register uint32 num_elm;
+    CONSTR(FUNC, "DFconvert");
 
-  HEclear();
+    HEclear();
 
-  if(DFKsetNT(ntype) == FAIL) {
-    HERROR(DFE_BADCONV);
-    return FAIL;
-  }
+    if (DFKsetNT(ntype) == FAIL)
+      {
+	  HERROR(DFE_BADCONV);
+	  return FAIL;
+      }
 
-  if(sourcetype == desttype) { 
-    HDmemcpy(dest, source, size);
-    return 0;
-  }
+    if (sourcetype == desttype)
+      {
+	  HDmemcpy(dest, source, size);
+	  return 0;
+      }
 
-  num_elm = size / 4;
+    num_elm = size / 4;
 
 /* Check to see if they want to covert numbers in from the disk */
-  if(sourcetype == DFNTF_IEEE && (desttype == DFNTF_VAX || 
-				  desttype == DFNTF_CRAY || 
-				  desttype == DFNTF_PC      ) )
-    return (DFKnumin)((VOIDP)source, (VOIDP)dest, num_elm, 0, 0);
+    if (sourcetype == DFNTF_IEEE && (desttype == DFNTF_VAX ||
+				     desttype == DFNTF_CRAY ||
+				     desttype == DFNTF_PC))
+	return (DFKnumin) ((VOIDP) source, (VOIDP) dest, num_elm, 0, 0);
 
 /* Check to see if they want to convert numbers out to disk */
-  if(desttype == DFNTF_IEEE && (sourcetype == DFNTF_VAX || 
-				sourcetype == DFNTF_CRAY || 
-				sourcetype == DFNTF_PC     ) )
-    return DFKnumout((VOIDP)source, (VOIDP)dest, num_elm, 0, 0);
+    if (desttype == DFNTF_IEEE && (sourcetype == DFNTF_VAX ||
+				   sourcetype == DFNTF_CRAY ||
+				   sourcetype == DFNTF_PC))
+	return DFKnumout((VOIDP) source, (VOIDP) dest, num_elm, 0, 0);
 
 /* Return an error because they did not specify valid translation codes */
-  HERROR(DFE_BADCONV);
-  return FAIL;
+    HERROR(DFE_BADCONV);
+    return FAIL;
 }
 
 /*------------------------------------------------------------------
@@ -466,51 +528,59 @@ int DFconvert(uint8 *source,uint8 *dest,int ntype,int sourcetype,int desttype,
  * Remarks:
  *------------------------------------------------------------------*/
 
-int8 DFKgetPNSC(int32 numbertype, int32 machinetype)
+int8
+DFKgetPNSC(int32 numbertype, int32 machinetype)
 {
-    switch (numbertype) {
-        case DFNT_FLOAT32:
-        case DFNT_FLOAT64:
-        case DFNT_FLOAT128: return (int8)((machinetype>>8) & 0x0f);
+    switch (numbertype)
+      {
+	  case DFNT_FLOAT32:
+	  case DFNT_FLOAT64:
+	  case DFNT_FLOAT128:
+	      return (int8) ((machinetype >> 8) & 0x0f);
 
-        case DFNT_INT8:
-        case DFNT_UINT8:
-        case DFNT_INT16:
-        case DFNT_UINT16:
-        case DFNT_INT32:
-        case DFNT_UINT32:
-        case DFNT_INT64:
-        case DFNT_UINT64:
-        case DFNT_INT128:
-        case DFNT_UINT128: return (int8)((machinetype>>4) & 0x0f);
+	  case DFNT_INT8:
+	  case DFNT_UINT8:
+	  case DFNT_INT16:
+	  case DFNT_UINT16:
+	  case DFNT_INT32:
+	  case DFNT_UINT32:
+	  case DFNT_INT64:
+	  case DFNT_UINT64:
+	  case DFNT_INT128:
+	  case DFNT_UINT128:
+	      return (int8) ((machinetype >> 4) & 0x0f);
 
-        case DFNT_CHAR8:
-        case DFNT_UCHAR8:
-        case DFNT_CHAR16:
-        case DFNT_UCHAR16: return (int8)(machinetype & 0x0f);
+	  case DFNT_CHAR8:
+	  case DFNT_UCHAR8:
+	  case DFNT_CHAR16:
+	  case DFNT_UCHAR16:
+	      return (int8) (machinetype & 0x0f);
 
+	  case DFNT_NFLOAT32:
+	  case DFNT_NFLOAT64:
+	  case DFNT_NFLOAT128:
+	      return (int8) ((machinetype >> 8) & 0x0f);
 
-        case DFNT_NFLOAT32:
-        case DFNT_NFLOAT64:
-        case DFNT_NFLOAT128: return (int8)((machinetype>>8) & 0x0f);
+	  case DFNT_NINT8:
+	  case DFNT_NUINT8:
+	  case DFNT_NINT16:
+	  case DFNT_NUINT16:
+	  case DFNT_NINT32:
+	  case DFNT_NUINT32:
+	  case DFNT_NINT64:
+	  case DFNT_NUINT64:
+	  case DFNT_NINT128:
+	  case DFNT_NUINT128:
+	      return (int8) ((machinetype >> 4) & 0x0f);
 
-        case DFNT_NINT8:
-        case DFNT_NUINT8:
-        case DFNT_NINT16:
-        case DFNT_NUINT16:
-        case DFNT_NINT32:
-        case DFNT_NUINT32:
-        case DFNT_NINT64:
-        case DFNT_NUINT64:
-        case DFNT_NINT128:
-        case DFNT_NUINT128: return (int8)((machinetype>>4) & 0x0f);
-
-        case DFNT_NCHAR8:
-        case DFNT_NUCHAR8:
-        case DFNT_NCHAR16:
-        case DFNT_NUCHAR16: return (int8)(machinetype & 0x0f);
-        default: return FAIL;
-    }
+	  case DFNT_NCHAR8:
+	  case DFNT_NUCHAR8:
+	  case DFNT_NCHAR16:
+	  case DFNT_NUCHAR16:
+	      return (int8) (machinetype & 0x0f);
+	  default:
+	      return FAIL;
+      }
 }
 
 /*----------------------------------------------------------------------------
@@ -527,21 +597,21 @@ int8 DFKgetPNSC(int32 numbertype, int32 machinetype)
 * Method:  Calls DFKsetNT, then call DFnumin or DFnumout
 *---------------------------------------------------------------------------*/
 
-int32 DFKconvert(VOIDP source, VOIDP dest, int32 ntype, int32 num_elm,
-	 	 int16 acc_mode, int32 source_stride, int32 dest_stride)
+int32
+DFKconvert(VOIDP source, VOIDP dest, int32 ntype, int32 num_elm,
+	   int16 acc_mode, int32 source_stride, int32 dest_stride)
 
 {
-    int ret;
+    int         ret;
 
     DFKsetNT(ntype);
-    if (acc_mode == DFACC_READ) 
-        ret = DFKnumin(source, dest, num_elm, source_stride, dest_stride);
+    if (acc_mode == DFACC_READ)
+	ret = DFKnumin(source, dest, num_elm, source_stride, dest_stride);
     else
-        ret = DFKnumout(source, dest, num_elm, source_stride, dest_stride);
-    return(ret);
+	ret = DFKnumout(source, dest, num_elm, source_stride, dest_stride);
+    return (ret);
 }
 
 /*****************************************************************************
  * Miscellaneous Other Conversion Routines
  *****************************************************************************/
-

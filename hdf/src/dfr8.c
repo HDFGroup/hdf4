@@ -49,72 +49,102 @@ static char RcsId[] = "@(#)$Revision$";
 #include "dfrig.h"
 
 /* Private Variables */
-PRIVATE uint8 *Palette      = NULL;
-PRIVATE uint16 Refset       = 0;    /* Ref of image to get next */
-PRIVATE uint16 Lastref      = 0;    /* Last ref read/written */
-PRIVATE uint16 Writeref     = 0;    /* ref of next image to put in this file */
-PRIVATE intn   foundRig     = -1;   /* -1: don't know if HDF file has RIGs
-                                        0: No RIGs, try for RI8s etc.
-                                        1: RIGs used, ignore RI8s etc. */
-PRIVATE intn   Newdata      = 0;  /* does Readrig contain fresh data? */
-PRIVATE intn   Newpalette   = -1; /* -1 = no palette is associated
-                                      0 = palette already written out
-                                      1 = new palette, not yet written out */
+PRIVATE uint8 *Palette = NULL;
+PRIVATE uint16 Refset = 0;	/* Ref of image to get next */
+PRIVATE uint16 Lastref = 0;	/* Last ref read/written */
+PRIVATE uint16 Writeref = 0;	/* ref of next image to put in this file */
+PRIVATE intn foundRig = -1;	/* -1: don't know if HDF file has RIGs
+				   0: No RIGs, try for RI8s etc.
+				   1: RIGs used, ignore RI8s etc. */
+PRIVATE intn Newdata = 0;	/* does Readrig contain fresh data? */
+PRIVATE intn Newpalette = -1;	/* -1 = no palette is associated
+				   0 = palette already written out
+				   1 = new palette, not yet written out */
 
-PRIVATE intn CompressSet    = FALSE; /* Whether the compression parameters have
-                                       been set for the next image */
-PRIVATE int32 CompType = COMP_NONE; /* What compression to use for the next
-                                       image */
-PRIVATE comp_info CompInfo;         /* Params for compression to perform */
-PRIVATE char Lastfile[DF_MAXFNLEN]; /* last file opened */
-PRIVATE DFRrig Readrig  = {         /* information about RIG being read */
-    NULL, 0, 0, (float32)0.0, (float32)0.0,
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {0, 0}, {0, 0, 0, 0, {0, 0}, {0, 0}},
-    {0, 0}, {0, 0, 0, 0, {0, 0}, {0, 0}},
-    {0, 0}, {0, 0, 0, 0, {0, 0}, {0, 0}},
+PRIVATE intn CompressSet = FALSE;	/* Whether the compression parameters have
+					   been set for the next image */
+PRIVATE int32 CompType = COMP_NONE;	/* What compression to use for the next
+					   image */
+PRIVATE comp_info CompInfo;	/* Params for compression to perform */
+PRIVATE char Lastfile[DF_MAXFNLEN];	/* last file opened */
+PRIVATE DFRrig Readrig =
+{				/* information about RIG being read */
+    NULL, 0, 0, (float32) 0.0, (float32) 0.0,
+    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
+    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
+    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
+    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
+    {0, 0},
+    {0, 0, 0, 0,
+     {0, 0},
+     {0, 0}},
+    {0, 0},
+    {0, 0, 0, 0,
+     {0, 0},
+     {0, 0}},
+    {0, 0},
+    {0, 0, 0, 0,
+     {0, 0},
+     {0, 0}},
 };
-PRIVATE DFRrig Writerig = {     /* information about RIG being written */
-    NULL, 0, 0, (float32)0.0, (float32)0.0,
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {0, 0}, {0, 0, 0, 0, {0, 0}, {0, 0}},
-    {0, 0}, {0, 0, 0, 0, {0, 0}, {0, 0}},
-    {0, 0}, {0, 0, 0, 0, {0, 0}, {0, 0}},
+PRIVATE DFRrig Writerig =
+{				/* information about RIG being written */
+    NULL, 0, 0, (float32) 0.0, (float32) 0.0,
+    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
+    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
+    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
+    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
+    {0, 0},
+    {0, 0, 0, 0,
+     {0, 0},
+     {0, 0}},
+    {0, 0},
+    {0, 0, 0, 0,
+     {0, 0},
+     {0, 0}},
+    {0, 0},
+    {0, 0, 0, 0,
+     {0, 0},
+     {0, 0}},
 };
-PRIVATE DFRrig Zrig = {          /* empty RIG for initialization */
+PRIVATE DFRrig Zrig =
+{				/* empty RIG for initialization */
     NULL,
-    0, 0, (float32)0.0, (float32)0.0,
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {0, 0}, {0, 0, 0, 0, {0, 0}, {0, 0}},
-    {0, 0}, {0, 0, 0, 0, {0, 0}, {0, 0}},
-    {0, 0}, {0, 0, 0, 0, {0, 0}, {0, 0}},
+    0, 0, (float32) 0.0, (float32) 0.0,
+    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
+    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
+    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
+    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
+    {0, 0},
+    {0, 0, 0, 0,
+     {0, 0},
+     {0, 0}},
+    {0, 0},
+    {0, 0, 0, 0,
+     {0, 0},
+     {0, 0}},
+    {0, 0},
+    {0, 0, 0, 0,
+     {0, 0},
+     {0, 0}},
 };
 
 /* private functions */
 PRIVATE intn DFR8Iputimage
-    (const char *filename,VOIDP image,int32 xdim,int32 ydim,uint16 compress,
-            intn append);
+            (const char *filename, VOIDP image, int32 xdim, int32 ydim, uint16 compress,
+	     intn append);
 
 PRIVATE int32 DFR8Iopen
-    (const char *filename, intn acc_mode);
+            (const char *filename, intn acc_mode);
 
 PRIVATE intn DFR8Iriginfo
-    (int32 file_id);
+            (int32 file_id);
 
 PRIVATE intn DFR8getrig
-    (int32 file_id, uint16 ref, DFRrig *rig);
+            (int32 file_id, uint16 ref, DFRrig * rig);
 
 PRIVATE intn DFR8putrig
-    (int32 file_id, uint16 ref, DFRrig *rig, intn wdim);
+            (int32 file_id, uint16 ref, DFRrig * rig, intn wdim);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -140,28 +170,30 @@ PRIVATE intn DFR8putrig
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn DFR8setcompress(int32 type,comp_info *cinfo)
+intn
+DFR8setcompress(int32 type, comp_info * cinfo)
 {
-    CONSTR(FUNC,"DFR8setcompress");
+    CONSTR(FUNC, "DFR8setcompress");
 
-    if(type==COMP_NONE) { /* quick check for no compression */
-        CompType=0;
-        return(SUCCEED);
-      } /* end if */
+    if (type == COMP_NONE)
+      {		/* quick check for no compression */
+	  CompType = 0;
+	  return (SUCCEED);
+      }		/* end if */
 
-    if(type<0 || type>COMP_MAX_COMP || compress_map[type]==0)
-        HRETURN_ERROR(DFE_BADSCHEME, FAIL);
+    if (type < 0 || type > COMP_MAX_COMP || compress_map[type] == 0)
+	HRETURN_ERROR(DFE_BADSCHEME, FAIL);
 
-    CompressSet=TRUE;
+    CompressSet = TRUE;
 
     /* map JPEG compression into correct type of JPEG compression */
-    if(type==COMP_JPEG) 
-        CompType=DFTAG_GREYJPEG;
-    else    /* otherwise, just use mapped tag */
-        CompType=compress_map[type];
-    CompInfo=(*cinfo);
-    return(SUCCEED);
-}   /* end DFR8setcompress() */
+    if (type == COMP_JPEG)
+	CompType = DFTAG_GREYJPEG;
+    else	/* otherwise, just use mapped tag */
+	CompType = compress_map[type];
+    CompInfo = (*cinfo);
+    return (SUCCEED);
+}	/* end DFR8setcompress() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -185,30 +217,31 @@ intn DFR8setcompress(int32 type,comp_info *cinfo)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn DFR8getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pispal)
+intn
+DFR8getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pispal)
 {
-    CONSTR(FUNC,"DFR8getdims");
-    int32 file_id;
+    CONSTR(FUNC, "DFR8getdims");
+    int32       file_id;
 
     HEclear();
 
-    if(!filename || !*filename || !pxdim || !pydim)
-        HRETURN_ERROR(DFE_ARGS,FAIL);
+    if (!filename || !*filename || !pxdim || !pydim)
+	HRETURN_ERROR(DFE_ARGS, FAIL);
 
-    if((file_id=DFR8Iopen(filename, DFACC_READ))== FAIL)
-        HRETURN_ERROR(DFE_BADOPEN,FAIL);
+    if ((file_id = DFR8Iopen(filename, DFACC_READ)) == FAIL)
+	HRETURN_ERROR(DFE_BADOPEN, FAIL);
 
-    if(DFR8Iriginfo(file_id)==FAIL)     /* reads next RIG or RI8 from file */
-        return(HDerr(file_id));     /* on error, close file and return -1 */
+    if (DFR8Iriginfo(file_id) == FAIL)	/* reads next RIG or RI8 from file */
+	return (HDerr(file_id));	/* on error, close file and return -1 */
 
     Newdata = 1;
     *pxdim = Readrig.descimage.xdim;
     *pydim = Readrig.descimage.ydim;
-    if(pispal)
-        *pispal = Readrig.lut.tag ? 1 : 0; /* is there a palette */
+    if (pispal)
+	*pispal = Readrig.lut.tag ? 1 : 0;	/* is there a palette */
 
-    return(Hclose(file_id));
-}   /* end DFR8getdims() */
+    return (Hclose(file_id));
+}	/* end DFR8getdims() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -238,61 +271,68 @@ intn DFR8getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pispal)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn DFR8getimage(const char *filename,uint8 *image,int32 xdim,int32 ydim,uint8 *pal)
+intn
+DFR8getimage(const char *filename, uint8 *image, int32 xdim, int32 ydim, uint8 *pal)
 {
-    CONSTR(FUNC,"DFR8getimage");
-    int32 file_id;
+    CONSTR(FUNC, "DFR8getimage");
+    int32       file_id;
 
     HEclear();
 
-    if (!filename || !*filename || !image || (xdim<=0) || (ydim<=0))
-        HRETURN_ERROR(DFE_ARGS,FAIL);
+    if (!filename || !*filename || !image || (xdim <= 0) || (ydim <= 0))
+	HRETURN_ERROR(DFE_ARGS, FAIL);
 
-    if ((file_id = DFR8Iopen(filename, DFACC_READ))== FAIL)
-       HRETURN_ERROR(DFE_BADOPEN,FAIL);
+    if ((file_id = DFR8Iopen(filename, DFACC_READ)) == FAIL)
+	HRETURN_ERROR(DFE_BADOPEN, FAIL);
 
-    if (!Newdata) {            /* if Readrig not fresh */
-        if (DFR8Iriginfo(file_id) == FAIL) /*reads next RIG or RI8 from file */
-            return(HDerr(file_id)); /* on error, close file and return -1 */
-      } /* end if */
-    Newdata = 0;               /* read new RIG next time */
+    if (!Newdata)
+      {		/* if Readrig not fresh */
+	  if (DFR8Iriginfo(file_id) == FAIL)	/*reads next RIG or RI8 from file */
+	      return (HDerr(file_id));	/* on error, close file and return -1 */
+      }		/* end if */
+    Newdata = 0;	/* read new RIG next time */
 
     if ((Readrig.descimage.xdim > xdim) || (Readrig.descimage.ydim > ydim))
-        HRETURN_ERROR(DFE_ARGS,HDerr(file_id));
+	HRETURN_ERROR(DFE_ARGS, HDerr(file_id));
 
     /* read image */
-    if (Readrig.descimage.compr.tag) { /* compressed image */
-        if (DFgetcomp(file_id, Readrig.image.tag, Readrig.image.ref, image,
-                     Readrig.descimage.xdim, Readrig.descimage.ydim,
-                     Readrig.descimage.compr.tag) == FAIL)
-            return(HDerr(file_id));
-      } /* end if */
-    else {                   /* non-compressed raster image */
-        if(Hgetelement(file_id,Readrig.image.tag,Readrig.image.ref,image)==FAIL)
-            return(HDerr(file_id));
-      } /* end else */
+    if (Readrig.descimage.compr.tag)
+      {		/* compressed image */
+	  if (DFgetcomp(file_id, Readrig.image.tag, Readrig.image.ref, image,
+			Readrig.descimage.xdim, Readrig.descimage.ydim,
+			Readrig.descimage.compr.tag) == FAIL)
+	      return (HDerr(file_id));
+      }		/* end if */
+    else
+      {		/* non-compressed raster image */
+	  if (Hgetelement(file_id, Readrig.image.tag, Readrig.image.ref, image) == FAIL)
+	      return (HDerr(file_id));
+      }		/* end else */
 
-    if (xdim > Readrig.descimage.xdim) {
-       int32 off1, off2;
-       int32 x, y;
+    if (xdim > Readrig.descimage.xdim)
+      {
+	  int32       off1, off2;
+	  int32       x, y;
 
-       off1 = (Readrig.descimage.ydim - 1) * xdim;
-       off2 = (Readrig.descimage.ydim - 1) * Readrig.descimage.xdim;
-       for (y = Readrig.descimage.ydim - 1; y > 0; y-- ) {
-            for (x = Readrig.descimage.xdim - 1; x >= 0; x--)
-                image[off1+x] = image[off2+x];
-            off1 -= xdim;
-            off2 -= Readrig.descimage.xdim;
-         }  /* end for */
-      } /* end for */
+	  off1 = (Readrig.descimage.ydim - 1) * xdim;
+	  off2 = (Readrig.descimage.ydim - 1) * Readrig.descimage.xdim;
+	  for (y = Readrig.descimage.ydim - 1; y > 0; y--)
+	    {
+		for (x = Readrig.descimage.xdim - 1; x >= 0; x--)
+		    image[off1 + x] = image[off2 + x];
+		off1 -= xdim;
+		off2 -= Readrig.descimage.xdim;
+	    }	/* end for */
+      }		/* end for */
 
-    if (pal && Readrig.lut.tag) {       /* read palette */
-        if (Hgetelement(file_id, Readrig.lut.tag,Readrig.lut.ref,pal) == FAIL)
-            return(HDerr(file_id));
-      } /* end if */
+    if (pal && Readrig.lut.tag)
+      {		/* read palette */
+	  if (Hgetelement(file_id, Readrig.lut.tag, Readrig.lut.ref, pal) == FAIL)
+	      return (HDerr(file_id));
+      }		/* end if */
 
-    return(Hclose(file_id));
-}   /* end DFR8getimage() */
+    return (Hclose(file_id));
+}	/* end DFR8getimage() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -314,31 +354,35 @@ intn DFR8getimage(const char *filename,uint8 *image,int32 xdim,int32 ydim,uint8 
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn DFR8setpalette(uint8 *pal)
+intn
+DFR8setpalette(uint8 *pal)
 {
-    CONSTR(FUNC,"DFR8setpalette");
+    CONSTR(FUNC, "DFR8setpalette");
 
     /* Check if Palette buffer has been allocated */
-    if (Palette == NULL) {
-        Palette = (uint8 *)HDgetspace(768 * sizeof(uint8));
-        if(Palette == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      } /* end if */
+    if (Palette == NULL)
+      {
+	  Palette = (uint8 *) HDgetspace(768 * sizeof(uint8));
+	  if (Palette == NULL)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }		/* end if */
 
-    if (!pal) {
-        Newpalette = -1;       /* no palette */
-        Writerig.lut.tag = 0;
-        Writerig.lut.ref = 0;   /* forget tag/ref of previous palette */
-        Writerig.desclut.xdim = 0;
-        Writerig.desclut.ncomponents = 0;
-      } /* end if */
-    else {                   /* store palette */
-        HDmemcpy(Palette,pal,768);
-        Newpalette = 1;
-      } /* end else */
+    if (!pal)
+      {
+	  Newpalette = -1;	/* no palette */
+	  Writerig.lut.tag = 0;
+	  Writerig.lut.ref = 0;		/* forget tag/ref of previous palette */
+	  Writerig.desclut.xdim = 0;
+	  Writerig.desclut.ncomponents = 0;
+      }		/* end if */
+    else
+      {		/* store palette */
+	  HDmemcpy(Palette, pal, 768);
+	  Newpalette = 1;
+      }		/* end else */
 
-    return(SUCCEED);
-}   /* end DFR8setpalette() */
+    return (SUCCEED);
+}	/* end DFR8setpalette() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -367,127 +411,138 @@ intn DFR8setpalette(uint8 *pal)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
-                         uint16 compress, intn append)
+PRIVATE intn
+DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
+	      uint16 compress, intn append)
 {
-    CONSTR(FUNC,"DFR8Iputimage");
-    intn acc_mode;            /* create if op 0, write if op 1 */
-    int32 file_id;
-    uint16 r8tag;           /* RIG and raster tags of image being written */
-    uint8 *pal;             /* pointer to palette to be written */
-    uint8 newpal[768];      /* Imcomp creates new palette to be associated*/
-    intn wdim;              /* have dimensions already been written out? */
+    CONSTR(FUNC, "DFR8Iputimage");
+    intn        acc_mode;	/* create if op 0, write if op 1 */
+    int32       file_id;
+    uint16      r8tag;		/* RIG and raster tags of image being written */
+    uint8      *pal;		/* pointer to palette to be written */
+    uint8       newpal[768];	/* Imcomp creates new palette to be associated */
+    intn        wdim;		/* have dimensions already been written out? */
 
     HEclear();
 
-    if (!filename || !*filename || !image || (xdim<=0) || (ydim<=0))
-        HRETURN_ERROR(DFE_ARGS,FAIL);
+    if (!filename || !*filename || !image || (xdim <= 0) || (ydim <= 0))
+	HRETURN_ERROR(DFE_ARGS, FAIL);
 
     /* Check if Palette buffer has been allocated */
-    if (Palette == NULL) {
-        Palette = (uint8 *)HDgetspace(768 * sizeof(uint8));
-        if (Palette == NULL)
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      } /* end if */
+    if (Palette == NULL)
+      {
+	  Palette = (uint8 *) HDgetspace(768 * sizeof(uint8));
+	  if (Palette == NULL)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }		/* end if */
 
-    pal = (Newpalette>=0) ? Palette : NULL;
+    pal = (Newpalette >= 0) ? Palette : NULL;
     acc_mode = append ? DFACC_WRITE : DFACC_CREATE;
 
-    if ((file_id=DFR8Iopen(filename, acc_mode))==FAIL)
-        HRETURN_ERROR(DFE_BADOPEN,FAIL);
+    if ((file_id = DFR8Iopen(filename, acc_mode)) == FAIL)
+	HRETURN_ERROR(DFE_BADOPEN, FAIL);
 
     if (!Writeref)
-        if ((Writeref = Hnewref(file_id))== 0)
-            HRETURN_ERROR(DFE_NOREF,FAIL);
+	if ((Writeref = Hnewref(file_id)) == 0)
+	    HRETURN_ERROR(DFE_NOREF, FAIL);
 
     /* write out image */
-    if (compress || CompressSet) {
-        /* if a compression type has been set, check if it's the same */
-        if(CompressSet==FALSE || (compress>1 && (int32)compress!=CompType &&
-                !(compress==COMP_JPEG && CompType==DFTAG_GREYJPEG))) {
-            if(compress>COMP_MAX_COMP || compress_map[compress]==0)
-                HRETURN_ERROR(DFE_BADSCHEME, FAIL);
-            /* map JPEG compression into correct type of JPEG compression */
-            if(compress==COMP_JPEG) {
-                CompType=DFTAG_GREYJPEG;
-                /* set up some sane JPEG params */
-                CompInfo.jpeg.quality=75;
-                CompInfo.jpeg.force_baseline=TRUE;
-              } /* end if */
-            else    /* otherwise, just use mapped tag */
-                CompType=compress_map[compress];
-          } /* end if */
-        if (DFputcomp(file_id, DFTAG_CI, Writeref, (uint8*)image, xdim, ydim,
-                     pal, (uint8*)newpal, (int16)CompType, &CompInfo) == FAIL)
-            HRETURN_ERROR(DFE_WRITEERROR,HDerr(file_id));
-        Writerig.image.tag = DFTAG_CI;
-        if (CompType==DFTAG_IMC) {
-            pal = newpal;      /* Imcomp creates new pal */
-            Newpalette = 1;    /* write out palette */
-          } /* end if */
-      } /* end if */
-    else {                   /* image need not be compressed */
-        if(Hputelement(file_id,DFTAG_RI,Writeref,(uint8 *)image,xdim*ydim)==FAIL)
-            HRETURN_ERROR(DFE_PUTELEM,HDerr(file_id));
-        Writerig.image.tag = DFTAG_RI;
-      } /* end else */
+    if (compress || CompressSet)
+      {
+	  /* if a compression type has been set, check if it's the same */
+	  if (CompressSet == FALSE || (compress > 1 && (int32) compress != CompType &&
+		    !(compress == COMP_JPEG && CompType == DFTAG_GREYJPEG)))
+	    {
+		if (compress > COMP_MAX_COMP || compress_map[compress] == 0)
+		    HRETURN_ERROR(DFE_BADSCHEME, FAIL);
+		/* map JPEG compression into correct type of JPEG compression */
+		if (compress == COMP_JPEG)
+		  {
+		      CompType = DFTAG_GREYJPEG;
+		      /* set up some sane JPEG params */
+		      CompInfo.jpeg.quality = 75;
+		      CompInfo.jpeg.force_baseline = TRUE;
+		  }	/* end if */
+		else	/* otherwise, just use mapped tag */
+		    CompType = compress_map[compress];
+	    }	/* end if */
+	  if (DFputcomp(file_id, DFTAG_CI, Writeref, (uint8 *) image, xdim, ydim,
+		pal, (uint8 *) newpal, (int16) CompType, &CompInfo) == FAIL)
+	      HRETURN_ERROR(DFE_WRITEERROR, HDerr(file_id));
+	  Writerig.image.tag = DFTAG_CI;
+	  if (CompType == DFTAG_IMC)
+	    {
+		pal = newpal;	/* Imcomp creates new pal */
+		Newpalette = 1;		/* write out palette */
+	    }	/* end if */
+      }		/* end if */
+    else
+      {		/* image need not be compressed */
+	  if (Hputelement(file_id, DFTAG_RI, Writeref, (uint8 *) image, xdim * ydim) == FAIL)
+	      HRETURN_ERROR(DFE_PUTELEM, HDerr(file_id));
+	  Writerig.image.tag = DFTAG_RI;
+      }		/* end else */
     Writerig.image.ref = Writeref;
     Writerig.descimage.ncomponents = 1;
-    Writerig.aspectratio = (float32)1.0;
+    Writerig.aspectratio = (float32) 1.0;
 
     /* Write out Raster-8 tags for those who want it */
-    if(CompType!=DFTAG_GREYJPEG) {
-        r8tag = (uint16)(CompType ?
-           ((CompType==DFTAG_RLE) ? DFTAG_CI8 : DFTAG_II8) : DFTAG_RI8);
-        if(Hdupdd(file_id,r8tag,Writeref,Writerig.image.tag,Writeref) == FAIL)
-            HRETURN_ERROR(DFE_NOFREEDD,HDerr(file_id));
-      } /* end if */
+    if (CompType != DFTAG_GREYJPEG)
+      {
+	  r8tag = (uint16) (CompType ?
+	     ((CompType == DFTAG_RLE) ? DFTAG_CI8 : DFTAG_II8) : DFTAG_RI8);
+	  if (Hdupdd(file_id, r8tag, Writeref, Writerig.image.tag, Writeref) == FAIL)
+	      HRETURN_ERROR(DFE_NOFREEDD, HDerr(file_id));
+      }		/* end if */
 
     /* Write out palette */
-    if (pal) {                 /* if there is a palette */
-        if (Newpalette==1) {   /* write palette */
-            if(Hputelement(file_id,DFTAG_LUT,Writeref,pal,(int32)768) == FAIL)
-                HRETURN_ERROR(DFE_PUTELEM,HDerr(file_id));
-            Writerig.lut.tag = DFTAG_LUT;
-            Writerig.lut.ref = Writeref;
-            Writerig.desclut.xdim = 768;
-            Writerig.desclut.ncomponents = 1;
-          } /* end if */
-        if (CompType!=DFTAG_IMC)
-            Newpalette = 0;
-        /* if IMCOMP, original palette not written out */
+    if (pal)
+      {		/* if there is a palette */
+	  if (Newpalette == 1)
+	    {	/* write palette */
+		if (Hputelement(file_id, DFTAG_LUT, Writeref, pal, (int32) 768) == FAIL)
+		    HRETURN_ERROR(DFE_PUTELEM, HDerr(file_id));
+		Writerig.lut.tag = DFTAG_LUT;
+		Writerig.lut.ref = Writeref;
+		Writerig.desclut.xdim = 768;
+		Writerig.desclut.ncomponents = 1;
+	    }	/* end if */
+	  if (CompType != DFTAG_IMC)
+	      Newpalette = 0;
+	  /* if IMCOMP, original palette not written out */
 
-        /* put in Raster-8 stuff also, for those who want it */
-        Hdeldd(file_id, DFTAG_IP8, Writeref);
-        if (Hdupdd(file_id, DFTAG_IP8, Writeref, Writerig.lut.tag,
-                  Writerig.lut.ref) == FAIL)
-            HRETURN_ERROR(DFE_NOFREEDD,HDerr(file_id));
-      } /* end if */
+	  /* put in Raster-8 stuff also, for those who want it */
+	  Hdeldd(file_id, DFTAG_IP8, Writeref);
+	  if (Hdupdd(file_id, DFTAG_IP8, Writeref, Writerig.lut.tag,
+		     Writerig.lut.ref) == FAIL)
+	      HRETURN_ERROR(DFE_NOFREEDD, HDerr(file_id));
+      }		/* end if */
 
     /* Write out RIG */
-    if ((Writerig.descimage.xdim==xdim) && (Writerig.descimage.ydim==ydim) &&
-            (Writerig.descimage.compr.tag==(uint16)CompType))
-        wdim = 0;
-    else {
-        wdim = 1;
-        Writerig.descimage.xdim = xdim;
-        Writerig.descimage.ydim = ydim;
-        Writerig.descimage.compr.tag = (uint16)CompType;
-        Writerig.descimage.compr.ref = Writeref;
-      } /* end else */
+    if ((Writerig.descimage.xdim == xdim) && (Writerig.descimage.ydim == ydim) &&
+	(Writerig.descimage.compr.tag == (uint16) CompType))
+	wdim = 0;
+    else
+      {
+	  wdim = 1;
+	  Writerig.descimage.xdim = xdim;
+	  Writerig.descimage.ydim = ydim;
+	  Writerig.descimage.compr.tag = (uint16) CompType;
+	  Writerig.descimage.compr.ref = Writeref;
+      }		/* end else */
 
     /* write ID, NT */
     if (DFR8putrig(file_id, Writeref, &Writerig, wdim) == FAIL)
-        HRETURN_ERROR(DFE_WRITEERROR,HDerr(file_id));
+	HRETURN_ERROR(DFE_WRITEERROR, HDerr(file_id));
 
-    Lastref = Writeref;     /* remember ref written */
+    Lastref = Writeref;		/* remember ref written */
 
-    Writeref = 0;           /* don't know ref to write next */
-    CompressSet=FALSE;      /* Reset Compression flag and type */
-    CompType=COMP_NONE;
+    Writeref = 0;	/* don't know ref to write next */
+    CompressSet = FALSE;	/* Reset Compression flag and type */
+    CompType = COMP_NONE;
 
-    return(Hclose(file_id));
-}   /* end DFR8Iputimage() */
+    return (Hclose(file_id));
+}	/* end DFR8Iputimage() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -511,11 +566,12 @@ PRIVATE intn DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn DFR8putimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
-                uint16 compress)
+intn
+DFR8putimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
+	     uint16 compress)
 {
-    return(DFR8Iputimage(filename, image, xdim, ydim, compress, 0));
-}   /* end DFR8putimage() */
+    return (DFR8Iputimage(filename, image, xdim, ydim, compress, 0));
+}	/* end DFR8putimage() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -540,11 +596,12 @@ intn DFR8putimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn DFR8addimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
-                uint16 compress)
+intn
+DFR8addimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
+	     uint16 compress)
 {
-    return(DFR8Iputimage(filename, image, xdim, ydim, compress, 1));
-}   /* end DFR8addimage() */
+    return (DFR8Iputimage(filename, image, xdim, ydim, compress, 1));
+}	/* end DFR8addimage() */
 
 /*****************************************************************************/
 /* This is the next lower layer - procedures to get and put a RIG. */
@@ -569,74 +626,78 @@ intn DFR8addimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn DFR8getrig(int32 file_id, uint16 ref, DFRrig *rig)
+PRIVATE intn
+DFR8getrig(int32 file_id, uint16 ref, DFRrig * rig)
 {
-    CONSTR(FUNC,"DFR8getrig");
-    uint16 elt_tag;
-    uint16 elt_ref;
-    uint8 ntstring[4];
-    int32 GroupID;
-    uint8 R8tbuf[64];
+    CONSTR(FUNC, "DFR8getrig");
+    uint16      elt_tag;
+    uint16      elt_ref;
+    uint8       ntstring[4];
+    int32       GroupID;
+    uint8       R8tbuf[64];
 
     HEclear();
 
     if (!HDvalidfid(file_id) || !ref || !rig)
-        HRETURN_ERROR(DFE_ARGS,FAIL);
+	HRETURN_ERROR(DFE_ARGS, FAIL);
 
     /* read RIG into memory */
-    if((GroupID = DFdiread(file_id, DFTAG_RIG, ref)) == FAIL)
-        HRETURN_ERROR(DFE_BADGROUP,FAIL);
+    if ((GroupID = DFdiread(file_id, DFTAG_RIG, ref)) == FAIL)
+	HRETURN_ERROR(DFE_BADGROUP, FAIL);
 
-    *rig = Zrig;               /* fill rig with zeroes */
-    while (DFdiget(GroupID, &elt_tag, &elt_ref) != FAIL) {
-       /*get next tag/ref from RIG */
-        switch (elt_tag) {     /* process tag/ref */
-            case DFTAG_CI:
-            case DFTAG_RI:
-                rig->image.tag = elt_tag; /* put tag/ref in struct */
-                rig->image.ref = elt_ref;
-                break;
+    *rig = Zrig;	/* fill rig with zeroes */
+    while (DFdiget(GroupID, &elt_tag, &elt_ref) != FAIL)
+      {
+	  /*get next tag/ref from RIG */
+	  switch (elt_tag)
+	    {	/* process tag/ref */
+		case DFTAG_CI:
+		case DFTAG_RI:
+		    rig->image.tag = elt_tag;	/* put tag/ref in struct */
+		    rig->image.ref = elt_ref;
+		    break;
 
-            case DFTAG_LUT:
-                rig->lut.tag = elt_tag;
-                rig->lut.ref = elt_ref;
-                break;
+		case DFTAG_LUT:
+		    rig->lut.tag = elt_tag;
+		    rig->lut.ref = elt_ref;
+		    break;
 
-            case DFTAG_ID:     /* read description info */
-                if (Hgetelement(file_id, elt_tag, elt_ref,R8tbuf) != FAIL) {
-                    uint8 *p;
+		case DFTAG_ID:		/* read description info */
+		    if (Hgetelement(file_id, elt_tag, elt_ref, R8tbuf) != FAIL)
+		      {
+			  uint8      *p;
 
-                    p = R8tbuf;
-                    INT32DECODE(p, rig->descimage.xdim);
-                    INT32DECODE(p, rig->descimage.ydim);
-                    UINT16DECODE(p, rig->descimage.nt.tag);
-                    UINT16DECODE(p, rig->descimage.nt.ref);
-                    INT16DECODE(p, rig->descimage.ncomponents);
-                    INT16DECODE(p, rig->descimage.interlace);
-                    UINT16DECODE(p, rig->descimage.compr.tag);
-                    UINT16DECODE(p, rig->descimage.compr.ref);
-                  } /* end if */
-                else
-                    return FAIL;
-                if (rig->descimage.ncomponents!=1)
-                    HRETURN_ERROR(DFE_BADCALL,FAIL);
-                if (rig->descimage.nt.tag==0)
-                    break; /* old RIGs */
+			  p = R8tbuf;
+			  INT32DECODE(p, rig->descimage.xdim);
+			  INT32DECODE(p, rig->descimage.ydim);
+			  UINT16DECODE(p, rig->descimage.nt.tag);
+			  UINT16DECODE(p, rig->descimage.nt.ref);
+			  INT16DECODE(p, rig->descimage.ncomponents);
+			  INT16DECODE(p, rig->descimage.interlace);
+			  UINT16DECODE(p, rig->descimage.compr.tag);
+			  UINT16DECODE(p, rig->descimage.compr.ref);
+		      }		/* end if */
+		    else
+			return FAIL;
+		    if (rig->descimage.ncomponents != 1)
+			HRETURN_ERROR(DFE_BADCALL, FAIL);
+		    if (rig->descimage.nt.tag == 0)
+			break;	/* old RIGs */
 
-               /* read NT */
-                if (Hgetelement(file_id, rig->descimage.nt.tag,
-                               rig->descimage.nt.ref, ntstring) == FAIL)
-                    HRETURN_ERROR(DFE_GETELEM,FAIL);
-                if ((ntstring[2]!=8) || (ntstring[1]!=DFNT_UCHAR))
-                    HRETURN_ERROR(DFE_BADCALL,FAIL);
-                break;
+		    /* read NT */
+		    if (Hgetelement(file_id, rig->descimage.nt.tag,
+				    rig->descimage.nt.ref, ntstring) == FAIL)
+			HRETURN_ERROR(DFE_GETELEM, FAIL);
+		    if ((ntstring[2] != 8) || (ntstring[1] != DFNT_UCHAR))
+			HRETURN_ERROR(DFE_BADCALL, FAIL);
+		    break;
 
-            default:           /* ignore unknown tags */
-                break;
-          } /* end switch */
-      } /* end while */
-    return(SUCCEED);
-}   /* end DFR8getrig() */
+		default:	/* ignore unknown tags */
+		    break;
+	    }	/* end switch */
+      }		/* end while */
+    return (SUCCEED);
+}	/* end DFR8getrig() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -659,77 +720,80 @@ PRIVATE intn DFR8getrig(int32 file_id, uint16 ref, DFRrig *rig)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn DFR8putrig(int32 file_id, uint16 ref, DFRrig *rig, intn wdim)
+PRIVATE intn
+DFR8putrig(int32 file_id, uint16 ref, DFRrig * rig, intn wdim)
 {
-    CONSTR(FUNC,"DFR8putrig");
-    static uint16 prevdimref=0; /*ref of previous dimension record, to reuse */
-    R8dim im8dim;
-    uint8 ntstring[4];
-    int32 GroupID;
-    uint8 R8tbuf[64];
+    CONSTR(FUNC, "DFR8putrig");
+    static uint16 prevdimref = 0;	/*ref of previous dimension record, to reuse */
+    R8dim       im8dim;
+    uint8       ntstring[4];
+    int32       GroupID;
+    uint8       R8tbuf[64];
 
     HEclear();
 
     if (!HDvalidfid(file_id) || !ref)
-        HRETURN_ERROR(DFE_ARGS,FAIL);
+	HRETURN_ERROR(DFE_ARGS, FAIL);
 
-    if (!rig->descimage.nt.tag) {   /* construct and write out NT */
-        ntstring[0] = DFNT_VERSION; /* version */
-        ntstring[1] = DFNT_UCHAR; /* type */
-        ntstring[2] = 8;       /* width: RIG data is 8-bit chars */
-        ntstring[3] = DFNTC_BYTE; /* class: data are numeric values */
-        if (Hputelement(file_id, DFTAG_NT, ref, ntstring, (int32) 4)  == FAIL)
-            HRETURN_ERROR(DFE_PUTELEM,FAIL);
-        rig->descimage.nt.tag = DFTAG_NT;
-        rig->descimage.nt.ref = ref;
-      } /* end if */
+    if (!rig->descimage.nt.tag)
+      {		/* construct and write out NT */
+	  ntstring[0] = DFNT_VERSION;	/* version */
+	  ntstring[1] = DFNT_UCHAR;	/* type */
+	  ntstring[2] = 8;	/* width: RIG data is 8-bit chars */
+	  ntstring[3] = DFNTC_BYTE;	/* class: data are numeric values */
+	  if (Hputelement(file_id, DFTAG_NT, ref, ntstring, (int32) 4) == FAIL)
+	      HRETURN_ERROR(DFE_PUTELEM, FAIL);
+	  rig->descimage.nt.tag = DFTAG_NT;
+	  rig->descimage.nt.ref = ref;
+      }		/* end if */
 
-    im8dim.xd = (uint16)rig->descimage.xdim;
-    im8dim.yd = (uint16)rig->descimage.ydim;
-    if (wdim) {
-        uint8 *p;
+    im8dim.xd = (uint16) rig->descimage.xdim;
+    im8dim.yd = (uint16) rig->descimage.ydim;
+    if (wdim)
+      {
+	  uint8      *p;
 
-        p = R8tbuf;
-        INT32ENCODE(p, rig->descimage.xdim);
-        INT32ENCODE(p, rig->descimage.ydim);
-        UINT16ENCODE(p, rig->descimage.nt.tag);
-        UINT16ENCODE(p, rig->descimage.nt.ref);
-        INT16ENCODE(p, rig->descimage.ncomponents);
-        INT16ENCODE(p, rig->descimage.interlace);
-        UINT16ENCODE(p, rig->descimage.compr.tag);
-        UINT16ENCODE(p, rig->descimage.compr.ref);
-        if(Hputelement(file_id, DFTAG_ID, ref, R8tbuf,(int32)(p-R8tbuf))==FAIL)
-            HRETURN_ERROR(DFE_PUTELEM,FAIL);
+	  p = R8tbuf;
+	  INT32ENCODE(p, rig->descimage.xdim);
+	  INT32ENCODE(p, rig->descimage.ydim);
+	  UINT16ENCODE(p, rig->descimage.nt.tag);
+	  UINT16ENCODE(p, rig->descimage.nt.ref);
+	  INT16ENCODE(p, rig->descimage.ncomponents);
+	  INT16ENCODE(p, rig->descimage.interlace);
+	  UINT16ENCODE(p, rig->descimage.compr.tag);
+	  UINT16ENCODE(p, rig->descimage.compr.ref);
+	  if (Hputelement(file_id, DFTAG_ID, ref, R8tbuf, (int32) (p - R8tbuf)) == FAIL)
+	      HRETURN_ERROR(DFE_PUTELEM, FAIL);
 
-       /* write out ID8 */
-        p = R8tbuf;
-        UINT16ENCODE(p, im8dim.xd);
-        UINT16ENCODE(p, im8dim.yd);
-        if (Hputelement(file_id, DFTAG_ID8, ref, R8tbuf, (int32) 4) == FAIL)
-            HRETURN_ERROR(DFE_PUTELEM,FAIL);
-        prevdimref = ref;
-      } /* end if */
+	  /* write out ID8 */
+	  p = R8tbuf;
+	  UINT16ENCODE(p, im8dim.xd);
+	  UINT16ENCODE(p, im8dim.yd);
+	  if (Hputelement(file_id, DFTAG_ID8, ref, R8tbuf, (int32) 4) == FAIL)
+	      HRETURN_ERROR(DFE_PUTELEM, FAIL);
+	  prevdimref = ref;
+      }		/* end if */
     if (!prevdimref)
-        HRETURN_ERROR(DFE_ARGS,FAIL);
+	HRETURN_ERROR(DFE_ARGS, FAIL);
 
     /* prepare to start writing rig */
     /* ### NOTE: the second parameter to this call may go away */
     if ((GroupID = DFdisetup(10)) == FAIL)
-       HRETURN_ERROR(DFE_GROUPSETUP,FAIL);        /* max 10 tag/refs in set */
+	HRETURN_ERROR(DFE_GROUPSETUP, FAIL);	/* max 10 tag/refs in set */
 
     /* add tag/ref to RIG - image description, image and palette */
     if (DFdiput(GroupID, DFTAG_ID, prevdimref) == FAIL)
-       HRETURN_ERROR(DFE_PUTGROUP,FAIL);
+	HRETURN_ERROR(DFE_PUTGROUP, FAIL);
 
     if (DFdiput(GroupID, rig->image.tag, rig->image.ref) == FAIL)
-       HRETURN_ERROR(DFE_PUTGROUP,FAIL);
+	HRETURN_ERROR(DFE_PUTGROUP, FAIL);
 
     if (rig->lut.ref && DFdiput(GroupID, rig->lut.tag, rig->lut.ref) == FAIL)
-       HRETURN_ERROR(DFE_PUTGROUP,FAIL);
+	HRETURN_ERROR(DFE_PUTGROUP, FAIL);
 
     /* write out RIG */
-    return(DFdiwrite(file_id, GroupID, DFTAG_RIG, ref));
-}   /* end DFR8putrig() */
+    return (DFdiwrite(file_id, GroupID, DFTAG_RIG, ref));
+}	/* end DFR8putrig() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -748,124 +812,137 @@ PRIVATE intn DFR8putrig(int32 file_id, uint16 ref, DFRrig *rig, intn wdim)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn DFR8nimages(const char *filename)
+intn
+DFR8nimages(const char *filename)
 {
-    CONSTR(FUNC,"DFR8nimages");
-    int32 file_id;
-    int32 group_id;         /* group ID for looking at RIG's */
-    uint16 elt_tag,elt_ref; /* tag/ref of items in a RIG */
-    intn curr_image;        /* current image gathering information about */
-    intn nimages;           /* total number of potential images */
-    int32 nrig,nri8,nci8;   /* number of RIGs, RI8s, and CI8s */
-    int32 *img_off;         /* storage for an array of image offsets */
-    uint16 rig_tag,rig_ref; /* storage for tag/ref pairs of RIGs */
-    intn found_8bit;        /* indicates whether a RIG is an 8-bit RIG */
-    uint16 find_tag,find_ref;   /* storage for tag/ref pairs found */
-    int32 find_off,find_len;    /* storage for offset/lengths of tag/refs found */
-    uint8 GRtbuf[64];       /* local buffer to read the ID element into */
-    intn i,j;               /* local counting variable */
+    CONSTR(FUNC, "DFR8nimages");
+    int32       file_id;
+    int32       group_id;	/* group ID for looking at RIG's */
+    uint16      elt_tag, elt_ref;	/* tag/ref of items in a RIG */
+    intn        curr_image;	/* current image gathering information about */
+    intn        nimages;	/* total number of potential images */
+    int32       nrig, nri8, nci8;	/* number of RIGs, RI8s, and CI8s */
+    int32      *img_off;	/* storage for an array of image offsets */
+    uint16      rig_tag, rig_ref;	/* storage for tag/ref pairs of RIGs */
+    intn        found_8bit;	/* indicates whether a RIG is an 8-bit RIG */
+    uint16      find_tag, find_ref;	/* storage for tag/ref pairs found */
+    int32       find_off, find_len;	/* storage for offset/lengths of tag/refs found */
+    uint8       GRtbuf[64];	/* local buffer to read the ID element into */
+    intn        i, j;		/* local counting variable */
 
     HEclear();
 
     /* should use reopen if same file as last time - more efficient */
     file_id = DFR8Iopen(filename, DFACC_READ);
     if (file_id == FAIL)
-       HRETURN_ERROR(DFE_BADOPEN,FAIL);
+	HRETURN_ERROR(DFE_BADOPEN, FAIL);
 
     /* In a completely psychotic file, there could be RIGs with no corresponding
-        RI8s and also RI8s with no corresponding RIGs, so assume the worst
-        case and then run through them all to eliminate matched pairs */
-    nrig=Hnumber(file_id, DFTAG_RIG);   /* count the number of RIGS */
-    if(nrig==FAIL)
-       HRETURN_ERROR(DFE_INTERNAL,FAIL);
-    nri8=Hnumber(file_id, DFTAG_RI8);   /* add the number of RI8 and CI8s */
-    if(nri8==FAIL)
-       HRETURN_ERROR(DFE_INTERNAL,FAIL);
-    nci8=Hnumber(file_id, DFTAG_CI8);
-    if(nci8==FAIL)
-       HRETURN_ERROR(DFE_INTERNAL,FAIL);
-    nimages=(intn)(nrig+nri8+nci8);
+       RI8s and also RI8s with no corresponding RIGs, so assume the worst
+       case and then run through them all to eliminate matched pairs */
+    nrig = Hnumber(file_id, DFTAG_RIG);		/* count the number of RIGS */
+    if (nrig == FAIL)
+	HRETURN_ERROR(DFE_INTERNAL, FAIL);
+    nri8 = Hnumber(file_id, DFTAG_RI8);		/* add the number of RI8 and CI8s */
+    if (nri8 == FAIL)
+	HRETURN_ERROR(DFE_INTERNAL, FAIL);
+    nci8 = Hnumber(file_id, DFTAG_CI8);
+    if (nci8 == FAIL)
+	HRETURN_ERROR(DFE_INTERNAL, FAIL);
+    nimages = (intn) (nrig + nri8 + nci8);
 
     /* if there are no images just close the file and get out */
-    if(nimages == 0) {
-        if (Hclose(file_id) == FAIL)
-            return FAIL;
-        return(nimages);
-    }
+    if (nimages == 0)
+      {
+	  if (Hclose(file_id) == FAIL)
+	      return FAIL;
+	  return (nimages);
+      }
 
     /* Get space to store the image offsets */
-    if((img_off=(int32 *)HDgetspace(nimages*sizeof(int32)))==NULL)
-        HRETURN_ERROR(DFE_NOSPACE,FAIL);
+    if ((img_off = (int32 *) HDgetspace(nimages * sizeof(int32))) == NULL)
+	            HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     /* go through the RIGs looking for 8-bit images */
-    curr_image=0;
-    find_tag=find_ref=0;
-    while(Hfind(file_id,DFTAG_RIG,DFREF_WILDCARD,&find_tag,&find_ref,&find_off,&find_len,DF_FORWARD)==SUCCEED) {
-        /* read RIG into memory */
-        if ((group_id=DFdiread(file_id, DFTAG_RIG,find_ref)) == FAIL)
-            HRETURN_ERROR(DFE_INTERNAL,FAIL);
-        found_8bit=FALSE;       /* initialize to no 8-bit image found */
-        rig_tag=rig_ref=0;      /* initialize bogus tag/ref */
-        while(!DFdiget(group_id, &elt_tag, &elt_ref)) {  /* get next tag/ref */
-            if(elt_tag==DFTAG_ID) {     /* just look for ID tags to get the number of components */
-                if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL) {
-                    int32 temp;             /* temporary holding variable */
-                    int32 ncomponents;      /* number of image components */
-                    uint8 *p;
+    curr_image = 0;
+    find_tag = find_ref = 0;
+    while (Hfind(file_id, DFTAG_RIG, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len, DF_FORWARD) == SUCCEED)
+      {
+	  /* read RIG into memory */
+	  if ((group_id = DFdiread(file_id, DFTAG_RIG, find_ref)) == FAIL)
+	      HRETURN_ERROR(DFE_INTERNAL, FAIL);
+	  found_8bit = FALSE;	/* initialize to no 8-bit image found */
+	  rig_tag = rig_ref = 0;	/* initialize bogus tag/ref */
+	  while (!DFdiget(group_id, &elt_tag, &elt_ref))
+	    {	/* get next tag/ref */
+		if (elt_tag == DFTAG_ID)
+		  {	/* just look for ID tags to get the number of components */
+		      if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL)
+			{
+			    int32       temp;	/* temporary holding variable */
+			    int32       ncomponents;	/* number of image components */
+			    uint8      *p;
 
-                    p = GRtbuf;
-                    INT32DECODE(p, temp);
-                    INT32DECODE(p, temp);
-                    UINT16DECODE(p, temp);
-                    UINT16DECODE(p, temp);
-                    INT16DECODE(p, ncomponents);
-                    if(ncomponents==1)     /* whew, all that work and we finally found an 8-bit image */
-                        found_8bit=TRUE;
-                  } /* end if */
-                else
-                    HRETURN_ERROR(DFE_GETELEM,FAIL);
-              } /* end if */
-            else    /* check for the image tag/ref */
-                if(elt_tag==DFTAG_CI || elt_tag==DFTAG_RI) {    /* keep for later */
-                    rig_tag=elt_tag;
-                    rig_ref=elt_ref;
-                  } /* end if */
-          } /* end while */
-        if(found_8bit) {    /* check for finding an 8-bit RIG */
-            if(rig_tag>0 && rig_ref>0) {    /* make certain we found an image */
-                img_off[curr_image]=Hoffset(file_id,rig_tag,rig_ref);  /* store offset */
-                curr_image++;
-              } /* end if */
-          } /* end if */
-      } /* end while */
+			    p = GRtbuf;
+			    INT32DECODE(p, temp);
+			    INT32DECODE(p, temp);
+			    UINT16DECODE(p, temp);
+			    UINT16DECODE(p, temp);
+			    INT16DECODE(p, ncomponents);
+			    if (ncomponents == 1)	/* whew, all that work and we finally found an 8-bit image */
+				found_8bit = TRUE;
+			}	/* end if */
+		      else
+			  HRETURN_ERROR(DFE_GETELEM, FAIL);
+		  }	/* end if */
+		else
+		    /* check for the image tag/ref */ if (elt_tag == DFTAG_CI || elt_tag == DFTAG_RI)
+		  {	/* keep for later */
+		      rig_tag = elt_tag;
+		      rig_ref = elt_ref;
+		  }	/* end if */
+	    }	/* end while */
+	  if (found_8bit)
+	    {	/* check for finding an 8-bit RIG */
+		if (rig_tag > 0 && rig_ref > 0)
+		  {	/* make certain we found an image */
+		      img_off[curr_image] = Hoffset(file_id, rig_tag, rig_ref);		/* store offset */
+		      curr_image++;
+		  }	/* end if */
+	    }	/* end if */
+      }		/* end while */
 
     /* go through the RI8s */
-    find_tag=find_ref=0;
-    while(Hfind(file_id,DFTAG_RI8,DFREF_WILDCARD,&find_tag,&find_ref,&find_off,&find_len,DF_FORWARD)==SUCCEED) {
-        img_off[curr_image]=find_off;  /* store offset */
-        curr_image++;
-      } /* end while */
+    find_tag = find_ref = 0;
+    while (Hfind(file_id, DFTAG_RI8, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len, DF_FORWARD) == SUCCEED)
+      {
+	  img_off[curr_image] = find_off;	/* store offset */
+	  curr_image++;
+      }		/* end while */
 
     /* go through the CI8s */
-    find_tag=find_ref=0;
-    while(Hfind(file_id,DFTAG_CI8,DFREF_WILDCARD,&find_tag,&find_ref,&find_off,&find_len,DF_FORWARD)==SUCCEED) {
-        img_off[curr_image]=find_off;  /* store offset */
-        curr_image++;
-      } /* end while */
+    find_tag = find_ref = 0;
+    while (Hfind(file_id, DFTAG_CI8, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len, DF_FORWARD) == SUCCEED)
+      {
+	  img_off[curr_image] = find_off;	/* store offset */
+	  curr_image++;
+      }		/* end while */
 
-    nimages=curr_image;     /* reset the number of images we really have */
-    for(i=1; i<curr_image; i++) {   /* go through the images looking for duplicates */
-        for(j=0; j<i; j++) {
-            if(img_off[i]==img_off[j])
-                nimages--;  /* if duplicate found, decrement the number of images */
-          } /* end for */
-      } /* end for */
+    nimages = curr_image;	/* reset the number of images we really have */
+    for (i = 1; i < curr_image; i++)
+      {		/* go through the images looking for duplicates */
+	  for (j = 0; j < i; j++)
+	    {
+		if (img_off[i] == img_off[j])
+		    nimages--;	/* if duplicate found, decrement the number of images */
+	    }	/* end for */
+      }		/* end for */
 
-    HDfreespace((VOIDP)img_off);       /* free offsets */
+    HDfreespace((VOIDP) img_off);	/* free offsets */
     if (Hclose(file_id) == FAIL)
-       HRETURN_ERROR(DFE_CANTCLOSE,FAIL);
-    return(nimages);
-}   /* end DFR8nimages() */
+	HRETURN_ERROR(DFE_CANTCLOSE, FAIL);
+    return (nimages);
+}	/* end DFR8nimages() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -885,27 +962,28 @@ intn DFR8nimages(const char *filename)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn DFR8readref(const char *filename, uint16 ref)
+intn
+DFR8readref(const char *filename, uint16 ref)
 {
-    CONSTR(FUNC,"DFR8readref");
-    int32 file_id;
-    int32 aid;
+    CONSTR(FUNC, "DFR8readref");
+    int32       file_id;
+    int32       aid;
 
     HEclear();
 
-    if((file_id = DFR8Iopen(filename, DFACC_READ))== FAIL)
-        HRETURN_ERROR(DFE_BADOPEN,FAIL);
+    if ((file_id = DFR8Iopen(filename, DFACC_READ)) == FAIL)
+	HRETURN_ERROR(DFE_BADOPEN, FAIL);
 
     if ((aid = Hstartread(file_id, DFTAG_RIG, ref)) == FAIL
-            && (aid = Hstartread(file_id, DFTAG_RI8, ref)) == FAIL
-            && (aid = Hstartread(file_id, DFTAG_CI8, ref)) == FAIL)
-       HRETURN_ERROR(DFE_NOMATCH,HDerr(file_id));
+	&& (aid = Hstartread(file_id, DFTAG_RI8, ref)) == FAIL
+	&& (aid = Hstartread(file_id, DFTAG_CI8, ref)) == FAIL)
+	HRETURN_ERROR(DFE_NOMATCH, HDerr(file_id));
 
     Refset = ref;
     Newdata = 0;
     Hendaccess(aid);
-    return(Hclose(file_id));
-}   /* end DFR8readref() */
+    return (Hclose(file_id));
+}	/* end DFR8readref() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -924,16 +1002,17 @@ intn DFR8readref(const char *filename, uint16 ref)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn DFR8writeref(const char *filename, uint16 ref)
+intn
+DFR8writeref(const char *filename, uint16 ref)
 {
     HEclear();
 
     /* shut compiler up */
-    filename=filename;
+    filename = filename;
 
     Writeref = ref;
-    return(SUCCEED);
-}   /* end DFR8writeref() */
+    return (SUCCEED);
+}	/* end DFR8writeref() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -950,11 +1029,12 @@ intn DFR8writeref(const char *filename, uint16 ref)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn DFR8restart(void)
+intn
+DFR8restart(void)
 {
     Lastfile[0] = '\0';
-    return(SUCCEED);
-}   /* end DFR8restart() */
+    return (SUCCEED);
+}	/* end DFR8restart() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -971,10 +1051,11 @@ intn DFR8restart(void)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-uint16 DFR8lastref(void)
+uint16
+DFR8lastref(void)
 {
-    return(Lastref);
-}   /* end DFR8lastref() */
+    return (Lastref);
+}	/* end DFR8lastref() */
 
 /*************************************************************************/
 /*----------------------- Internal routines -----------------------------*/
@@ -999,34 +1080,37 @@ uint16 DFR8lastref(void)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32 DFR8Iopen(const char *filename, intn acc_mode)
+PRIVATE int32
+DFR8Iopen(const char *filename, intn acc_mode)
 {
-    CONSTR(FUNC,"DFR8Iopen");
-    int32 file_id;
+    CONSTR(FUNC, "DFR8Iopen");
+    int32       file_id;
 
     /* use reopen if same file as last time - more efficient */
-    if (HDstrncmp(Lastfile,filename,DF_MAXFNLEN) || (acc_mode==DFACC_CREATE)) {
-                               /* treat create as different file */
-        if ((file_id = Hopen(filename, acc_mode, 0))== FAIL)
-            HRETURN_ERROR(DFE_BADOPEN,FAIL);
-        foundRig = -1;         /* don't know if any RIGs in file */
-        Refset = 0;            /* no ref to get set for this file */
-        Newdata = 0;
-        Readrig = Zrig;                /* blank out read/write RIGs */
-        Writerig = Zrig;
-        if (Newpalette!=(-1))
-            Newpalette = 1; /* need to write out palette */
-      } /* end if */
-    else {
-        if ((file_id = Hopen(filename, acc_mode, 0))== FAIL)
-            HRETURN_ERROR(DFE_BADOPEN,FAIL);
-      } /* end else */
+    if (HDstrncmp(Lastfile, filename, DF_MAXFNLEN) || (acc_mode == DFACC_CREATE))
+      {
+	  /* treat create as different file */
+	  if ((file_id = Hopen(filename, acc_mode, 0)) == FAIL)
+	      HRETURN_ERROR(DFE_BADOPEN, FAIL);
+	  foundRig = -1;	/* don't know if any RIGs in file */
+	  Refset = 0;	/* no ref to get set for this file */
+	  Newdata = 0;
+	  Readrig = Zrig;	/* blank out read/write RIGs */
+	  Writerig = Zrig;
+	  if (Newpalette != (-1))
+	      Newpalette = 1;	/* need to write out palette */
+      }		/* end if */
+    else
+      {
+	  if ((file_id = Hopen(filename, acc_mode, 0)) == FAIL)
+	      HRETURN_ERROR(DFE_BADOPEN, FAIL);
+      }		/* end else */
 
     /* remember filename, so reopen may be used next time if same file */
     HDstrncpy(Lastfile, filename, DF_MAXFNLEN);
 
-    return(file_id);
-}   /* end DFR8Iopen() */
+    return (file_id);
+}	/* end DFR8Iopen() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -1047,135 +1131,160 @@ PRIVATE int32 DFR8Iopen(const char *filename, intn acc_mode)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn DFR8Iriginfo(int32 file_id)
+PRIVATE intn
+DFR8Iriginfo(int32 file_id)
 {
-    CONSTR(FUNC,"DFR8riginfo");
-    uint16 riref=0, ciref=0;
-    int32 aid=FAIL;
-    uint16 ref;
-    uint8 R8tbuf[64];
+    CONSTR(FUNC, "DFR8riginfo");
+    uint16      riref = 0, ciref = 0;
+    int32       aid = FAIL;
+    uint16      ref;
+    uint8       R8tbuf[64];
 
     HEclear();
     /* find next rig */
-    if (foundRig) {            /* either RIGs present or don't know */
-        if (!Refset && Readrig.image.ref)
-            aid = Hstartread(file_id, DFTAG_RIG, Readrig.image.ref);
-        do {
-            if (Refset)
-                aid = Hstartread(file_id, DFTAG_RIG, Refset);
-            else {
-                if (!Readrig.image.ref)
-                    aid = Hstartread(file_id, DFTAG_RIG, DFREF_WILDCARD);
-                else {
-                    if (aid != FAIL && Hnextread(aid, DFTAG_RIG, DFREF_WILDCARD,
-                            DF_CURRENT) == FAIL) {
-                        Hendaccess(aid);
-                        aid = FAIL;
-                      } /* end if */
-                  } /* end else */
-              } /* end else */
-            if (aid == FAIL) {
-                if (foundRig==1)     /*RIGs present, but no more to return */
-                    HRETURN_ERROR(DFE_NOMATCH,FAIL);
-                foundRig = 0; /* No RIGs present in file */
-              } /* end if */
+    if (foundRig)
+      {		/* either RIGs present or don't know */
+	  if (!Refset && Readrig.image.ref)
+	      aid = Hstartread(file_id, DFTAG_RIG, Readrig.image.ref);
+	  do
+	    {
+		if (Refset)
+		    aid = Hstartread(file_id, DFTAG_RIG, Refset);
+		else
+		  {
+		      if (!Readrig.image.ref)
+			  aid = Hstartread(file_id, DFTAG_RIG, DFREF_WILDCARD);
+		      else
+			{
+			    if (aid != FAIL && Hnextread(aid, DFTAG_RIG, DFREF_WILDCARD,
+							 DF_CURRENT) == FAIL)
+			      {
+				  Hendaccess(aid);
+				  aid = FAIL;
+			      }		/* end if */
+			}	/* end else */
+		  }	/* end else */
+		if (aid == FAIL)
+		  {
+		      if (foundRig == 1)	/*RIGs present, but no more to return */
+			  HRETURN_ERROR(DFE_NOMATCH, FAIL);
+		      foundRig = 0;	/* No RIGs present in file */
+		  }	/* end if */
 
-           /* RIG found */
-            if(aid != FAIL) {
-                Hinquire(aid, (int32*)NULL, (uint16*)NULL, &ref,
-                        (int32*)NULL, (int32*)NULL, (int32*)NULL,
-                        (int16*)NULL, (int16*)NULL);
-                if (DFR8getrig(file_id, ref, &Readrig) == FAIL) {
-                    if (Refset || (HEvalue(1) != DFE_BADCALL)) {
-                        Refset = 0;
-                        Hendaccess(aid);
-                        HRETURN_ERROR(DFE_BADRIG,FAIL);
-                      } /* end if */
-                    Readrig.image.ref = ref;
-                  } /* end if */
-                else {
-                    foundRig = 1;
-                    Refset = 0;
-                  } /* end else */
-              } /* end if */
-          } while ( (aid != FAIL) && (HEvalue(1) == DFE_BADCALL));
-        if(aid != FAIL)
-            Hendaccess(aid);
-      } /* end if */
-    if (Refset || !foundRig) { /* No RIGs present, look for RI8 and CI8 */
-       /* look for Refset if DFR8ref called, else look for next ref */
-        if (Refset)
-            aid = Hstartread(file_id, DFTAG_RI8, Refset);
-        else {
-            if (Readrig.image.ref) {
-                aid = Hstartread(file_id, DFTAG_RI8, Readrig.image.ref);
-                if (aid != FAIL && Hnextread(aid, DFTAG_RI8, DFREF_WILDCARD,
-                        DF_CURRENT) == FAIL) {
-                    Hendaccess(aid);
-                    aid = FAIL;
-                  } /* end if */
-              } /* end if */
-            else
-               aid = Hstartread(file_id, DFTAG_RI8, DFREF_WILDCARD);
-          } /* end else */
-        if (aid != FAIL) {
-            Hinquire(aid, (int32*)NULL, (uint16*)NULL, &riref,
-                    (int32*)NULL, (int32*)NULL, (int32*)NULL,
-                    (int16*)NULL, (int16*)NULL);
-            Hendaccess(aid);
-          } /* end if */
+		/* RIG found */
+		if (aid != FAIL)
+		  {
+		      Hinquire(aid, (int32 *) NULL, (uint16 *) NULL, &ref,
+			     (int32 *) NULL, (int32 *) NULL, (int32 *) NULL,
+			       (int16 *) NULL, (int16 *) NULL);
+		      if (DFR8getrig(file_id, ref, &Readrig) == FAIL)
+			{
+			    if (Refset || (HEvalue(1) != DFE_BADCALL))
+			      {
+				  Refset = 0;
+				  Hendaccess(aid);
+				  HRETURN_ERROR(DFE_BADRIG, FAIL);
+			      }		/* end if */
+			    Readrig.image.ref = ref;
+			}	/* end if */
+		      else
+			{
+			    foundRig = 1;
+			    Refset = 0;
+			}	/* end else */
+		  }	/* end if */
+	    }
+	  while ((aid != FAIL) && (HEvalue(1) == DFE_BADCALL));
+	  if (aid != FAIL)
+	      Hendaccess(aid);
+      }		/* end if */
+    if (Refset || !foundRig)
+      {		/* No RIGs present, look for RI8 and CI8 */
+	  /* look for Refset if DFR8ref called, else look for next ref */
+	  if (Refset)
+	      aid = Hstartread(file_id, DFTAG_RI8, Refset);
+	  else
+	    {
+		if (Readrig.image.ref)
+		  {
+		      aid = Hstartread(file_id, DFTAG_RI8, Readrig.image.ref);
+		      if (aid != FAIL && Hnextread(aid, DFTAG_RI8, DFREF_WILDCARD,
+						   DF_CURRENT) == FAIL)
+			{
+			    Hendaccess(aid);
+			    aid = FAIL;
+			}	/* end if */
+		  }	/* end if */
+		else
+		    aid = Hstartread(file_id, DFTAG_RI8, DFREF_WILDCARD);
+	    }	/* end else */
+	  if (aid != FAIL)
+	    {
+		Hinquire(aid, (int32 *) NULL, (uint16 *) NULL, &riref,
+			 (int32 *) NULL, (int32 *) NULL, (int32 *) NULL,
+			 (int16 *) NULL, (int16 *) NULL);
+		Hendaccess(aid);
+	    }	/* end if */
 
-        if (Refset)
-            aid = Hstartread(file_id, DFTAG_CI8, Refset);
-        else {
-            if (Readrig.image.ref) {
-                aid = Hstartread(file_id, DFTAG_CI8, Readrig.image.ref);
-                if (aid != FAIL && Hnextread(aid, DFTAG_CI8, DFREF_WILDCARD,
-                        DF_CURRENT) == FAIL) {
-                    Hendaccess(aid);
-                    aid = FAIL;
-                  } /* end if */
-              } /* end if */
-            else
-               aid = Hstartread(file_id, DFTAG_CI8, DFREF_WILDCARD);
-          } /* end else */
-        if (aid != FAIL) {
-            Hinquire(aid, (int32*)NULL, (uint16*)NULL, &ciref,
-                    (int32*)NULL, (int32*)NULL, (int32*)NULL,
-                    (int16*)NULL, (int16*)NULL);
-            Hendaccess(aid);
-          } /* end if */
+	  if (Refset)
+	      aid = Hstartread(file_id, DFTAG_CI8, Refset);
+	  else
+	    {
+		if (Readrig.image.ref)
+		  {
+		      aid = Hstartread(file_id, DFTAG_CI8, Readrig.image.ref);
+		      if (aid != FAIL && Hnextread(aid, DFTAG_CI8, DFREF_WILDCARD,
+						   DF_CURRENT) == FAIL)
+			{
+			    Hendaccess(aid);
+			    aid = FAIL;
+			}	/* end if */
+		  }	/* end if */
+		else
+		    aid = Hstartread(file_id, DFTAG_CI8, DFREF_WILDCARD);
+	    }	/* end else */
+	  if (aid != FAIL)
+	    {
+		Hinquire(aid, (int32 *) NULL, (uint16 *) NULL, &ciref,
+			 (int32 *) NULL, (int32 *) NULL, (int32 *) NULL,
+			 (int16 *) NULL, (int16 *) NULL);
+		Hendaccess(aid);
+	    }	/* end if */
 
-        Refset = 0;
-        if (!riref && !ciref)
-            HRETURN_ERROR(DFE_NOMATCH,FAIL);
-        if ((!ciref) || (riref && (riref<ciref))) {     /* next image is RI8 */
-            Readrig.image.ref = riref;
-            Readrig.image.tag = DFTAG_RI8;
-          } /* end if */
-        else {  /* next image is CI8 */
-            Readrig.image.ref = ciref;
-            Readrig.image.tag = DFTAG_CI8;
-            Readrig.descimage.compr.tag = DFTAG_RLE;
-          } /* end else */
+	  Refset = 0;
+	  if (!riref && !ciref)
+	      HRETURN_ERROR(DFE_NOMATCH, FAIL);
+	  if ((!ciref) || (riref && (riref < ciref)))
+	    {	/* next image is RI8 */
+		Readrig.image.ref = riref;
+		Readrig.image.tag = DFTAG_RI8;
+	    }	/* end if */
+	  else
+	    {	/* next image is CI8 */
+		Readrig.image.ref = ciref;
+		Readrig.image.tag = DFTAG_CI8;
+		Readrig.descimage.compr.tag = DFTAG_RLE;
+	    }	/* end else */
 
-        if(Hgetelement(file_id, DFTAG_ID8, Readrig.image.ref, R8tbuf) != FAIL) {
-            uint8 *p;
+	  if (Hgetelement(file_id, DFTAG_ID8, Readrig.image.ref, R8tbuf) != FAIL)
+	    {
+		uint8      *p;
 
-            p = R8tbuf;
-            UINT16DECODE(p, Readrig.descimage.xdim);
-            UINT16DECODE(p, Readrig.descimage.ydim);
-          } /* end if */
-        else
-           HRETURN_ERROR(DFE_GETELEM,FAIL);
+		p = R8tbuf;
+		UINT16DECODE(p, Readrig.descimage.xdim);
+		UINT16DECODE(p, Readrig.descimage.ydim);
+	    }	/* end if */
+	  else
+	      HRETURN_ERROR(DFE_GETELEM, FAIL);
 
-        if ((aid = Hstartread(file_id, DFTAG_IP8, Readrig.image.ref)) != FAIL) {
-            Readrig.lut.tag = DFTAG_IP8;
-            Readrig.lut.ref = Readrig.image.ref;
+	  if ((aid = Hstartread(file_id, DFTAG_IP8, Readrig.image.ref)) != FAIL)
+	    {
+		Readrig.lut.tag = DFTAG_IP8;
+		Readrig.lut.ref = Readrig.image.ref;
 
-            Hendaccess(aid);
-          } /* end if */
-      } /* end if */
-    Lastref = Readrig.image.ref; /* remember ref read */
-    return(SUCCEED);
-}   /* end DFR8Iriginfo() */
+		Hendaccess(aid);
+	    }	/* end if */
+      }		/* end if */
+    Lastref = Readrig.image.ref;	/* remember ref read */
+    return (SUCCEED);
+}	/* end DFR8Iriginfo() */

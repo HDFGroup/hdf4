@@ -1,3 +1,4 @@
+
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -38,7 +39,7 @@
 #define	DF_DYNAMIC
 
 /* modify this line if structures cannot be read/written as is */
-#undef	DF_STRUCTOK		/* leave it this way - hdfsh expects it */
+#undef	DF_STRUCTOK	/* leave it this way - hdfsh expects it */
 
 #ifdef PERM_OUT
 /* Current version number */
@@ -52,7 +53,7 @@
 #ifdef IRIS4
 #undef DF_STRUCTOK
 #include <sys/types.h>
-#include <sys/file.h>               /* for unbuffered i/o stuff */
+#include <sys/file.h>	/* for unbuffered i/o stuff */
 #ifndef DFmovmem
 #define	DFmovmem(from, to, len) bcopy(from, to, len)
 #endif /* DFmovmem */
@@ -65,19 +66,18 @@
 #define INT16WRITE(p, x)    { *p++ = (x>>8) & 255; *p++ = x & 255; }
 #define INT32WRITE(p, x)    { *p++ = (x>>24) & 255; *p++ = (x>>16) & 255;   \
                                 *p++ = (x>>8) & 255; *p++ = x & 255; }
-#endif /*DF_STRUCTOK*/
+#endif /*DF_STRUCTOK */
 #define DF_CREAT(name, prot) creat(name, prot)
 #ifndef DF_MT
 #define DF_MT   DFMT_IRIS4
 #endif /* DF_MT  */
-#endif /*IRIS4*/
+#endif /*IRIS4 */
 
-
-#ifdef IBM6000  /* NOTE: IBM6000 defines are same as for SUN */
+#ifdef IBM6000	/* NOTE: IBM6000 defines are same as for SUN */
 #if ! defined mc68010 && ! defined mc68020 && ! defined mc68030
 #undef DF_STRUCTOK
 #endif
-#include <sys/file.h>               /* for unbuffered i/o stuff */
+#include <sys/file.h>	/* for unbuffered i/o stuff */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #ifndef DF_STRUCTOK
 #define UINT16READ(p, x) { x = ((*p++) & 255)<<8; x |= (*p++) & 255; }
@@ -88,30 +88,29 @@
 #define INT16WRITE(p, x) { *p++ = (x>>8) & 255; *p++ = x & 255; }
 #define INT32WRITE(p, x) { *p++ = (x>>24) & 255; *p++ = (x>>16) & 255;  \
             *p++ = (x>>8) & 255; *p++ = x & 255; }
-#endif /*DF_STRUCTOK*/
+#endif /*DF_STRUCTOK */
 #define DF_CREAT(name, prot) creat(name, prot)
 #define DF_MT   DFMT_IBM6000
-#endif /*IBM6000*/
-
+#endif /*IBM6000 */
 
 #ifdef MAC
-#undef DF_BUFFIO		/* use unbuffered i/o */
-#include <memory.h>             /* malloc stuff for MPW 3.0 */
-#include <fcntl.h>              /* unbuffered IO stuff for MPW 3.0 */
-#ifdef THINK_C                  /* for LightSpeed C */
+#undef DF_BUFFIO	/* use unbuffered i/o */
+#include <memory.h>	/* malloc stuff for MPW 3.0 */
+#include <fcntl.h>	/* unbuffered IO stuff for MPW 3.0 */
+#ifdef THINK_C	/* for LightSpeed C */
 #include <unix.h>
-#else /*THINK_C                   MPW, possibly others */
-#include <Files.h>              /* for unbuffered i/o stuff */
-#endif /*THINK_C*/
-#define	DF_CAPFNAMES            /* fortran names are in all caps */
-#define DF_DYNAMIC		/* use dynamic allocation */
-#ifdef THINK_C                   /* LightSpeed C does not have memcpy */
+#else  /*THINK_C                   MPW, possibly others */
+#include <Files.h>	/* for unbuffered i/o stuff */
+#endif /*THINK_C */
+#define	DF_CAPFNAMES	/* fortran names are in all caps */
+#define DF_DYNAMIC	/* use dynamic allocation */
+#ifdef THINK_C	/* LightSpeed C does not have memcpy */
 #define DFmovmem(from, to, len) DFImemcopy(from, to, len)
-#else /*THINK_C*/
+#else  /*THINK_C */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
-#endif /*THINK_C*/
-#define malloc(x)   NewPtr((Size)   (x))    /* don't use malloc on the Mac */
-#define free(x)     DisposPtr((Ptr) (x))    /* don't use free on the Nac   */ 
+#endif /*THINK_C */
+#define malloc(x)   NewPtr((Size)   (x))	/* don't use malloc on the Mac */
+#define free(x)     DisposPtr((Ptr) (x))	/* don't use free on the Nac   */
 #undef DF_STRUCTOK
 #define UINT16READ(p, x) { x = ((*p++) & 255)<<8; x |= (*p++) & 255; }
 #define INT16READ(p, x) { x = (*p++)<<8; x |= (*p++) & 255; }
@@ -123,17 +122,17 @@
             *p++ = (x>>8) & 255; *p++ = x & 255; }
 #define DF_CREAT(name, prot) mopen(name, O_WRONLY|O_TRUNC|O_CREAT)
 #define DF_MT   DFMT_MAC
-#endif /*MAC*/
+#endif /*MAC */
 
 #ifdef VMS
-/*#undef DF_BUFFIO should be buff !!!!*/
+/*#undef DF_BUFFIO should be buff !!!! */
    /* use only unbuff i/o - buff doesn't work! */
-#ifndef DFopen                  /* avoid double includes */
+#ifndef DFopen	/* avoid double includes */
 /* #include "dfivms.h" */
-#endif /*DFopen*/
+#endif /*DFopen */
 #undef DF_STRUCTOK
-#define DF_CAPFNAMES            /* fortran names are in all caps */
-#include <file.h>               /* for unbuffered i/o stuff */
+#define DF_CAPFNAMES	/* fortran names are in all caps */
+#include <file.h>	/* for unbuffered i/o stuff */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #ifndef DF_STRUCTOK
 #define UINT16READ(p, x) { x = ((*p++) & 255)<<8; x |= (*p++) & 255; }
@@ -144,16 +143,16 @@
 #define INT16WRITE(p, x) { *p++ = (x>>8) & 255; *p++ = x & 255; }
 #define INT32WRITE(p, x) { *p++ = (x>>24) & 255; *p++ = (x>>16) & 255;  \
             *p++ = (x>>8) & 255; *p++ = x & 255; }
-#endif /*DF_STRUCTOK*/
+#endif /*DF_STRUCTOK */
 #define DF_CREAT(name, prot) creat(name, prot)
 #define DF_MT   DFMT_VAX
-#endif /*VMS*/
+#endif /*VMS */
 
 #ifdef APOLLO
 #if ! defined mc68010 && ! defined mc68020 && ! defined mc68030
 #undef DF_STRUCTOK
 #endif
-#include <sys/file.h>               /* for unbuffered i/o stuff */
+#include <sys/file.h>	/* for unbuffered i/o stuff */
 #define int8 char
 #define uint8 unsigned char
 #define int16 short int
@@ -171,15 +170,14 @@
 #define INT16WRITE(p, x) { *p++ = (x>>8) & 255; *p++ = x & 255; }
 #define INT32WRITE(p, x) { *p++ = (x>>24) & 255; *p++ = (x>>16) & 255;  \
             *p++ = (x>>8) & 255; *p++ = x & 255; }
-#endif /*DF_STRUCTOK*/
+#endif /*DF_STRUCTOK */
 #define DF_CREAT(name, prot) creat(name, prot)
 #define DF_MT   DFMT_APOLLO
-#endif /*APOLLO*/
-
+#endif /*APOLLO */
 
 /*--------------------------------------------------------------------------*/
 /*                      Flexibility parameters                              */
-#ifdef MAC			/* MAC specific file manager calls */
+#ifdef MAC	/* MAC specific file manager calls */
 #	define DF_OPEN(x,y) mopen(x,y)
 #	define DF_CLOSE(x) mclose(x)
 #	define DF_SEEK(x,y,z) mlseek(x,y,z)
@@ -187,12 +185,12 @@
 #	define DF_TELL(x) mlseek(x,0L,1)
 #	define DF_READ(a,b,c,d) mread(d,a,b*c)
 #	define DF_WRITE(a,b,c,d) mwrite(d,a,b*c)
-#	define DF_FLUSH(a)			/* no need to flush */
-#	define DF_RDACCESS 0		/* dummy */
-#	define DF_WRACCESS 0		/* dummy */
+#	define DF_FLUSH(a)	/* no need to flush */
+#	define DF_RDACCESS 0	/* dummy */
+#	define DF_WRACCESS 0	/* dummy */
 #	define DF_OPENERR(f)	((f) == -1)
-#else /* !MAC */
-#ifdef DF_BUFFIO            /* set all calls to do buffered I/O */
+#else  /* !MAC */
+#ifdef DF_BUFFIO	/* set all calls to do buffered I/O */
 #define DF_OPEN(x,y) fopen(x,y)
 #define DF_CLOSE(x) fclose(x)
 #define DF_SEEK(x,y,z) fseek(x,y,z)
@@ -205,12 +203,12 @@
 #ifdef PC
 #define DF_RDACCESS "rb"
 #define DF_WRACCESS "rb+"
-#else /*PC*/
+#else  /*PC */
 #define DF_RDACCESS "r"
 #define DF_WRACCESS "r+"
-#endif /*PC*/
+#endif /*PC */
 
-#else /*DF_BUFFIO         unbuffered i/o */
+#else  /*DF_BUFFIO         unbuffered i/o */
 #ifdef PC
 #ifdef WIN3
 #define DF_OPEN(x,y) _lopen((LPSTR)(x),(int)(y))
@@ -221,7 +219,7 @@
 #define DF_READ(a,b,c,d) _lread((int)(d),(LPSTR)(a),(WORD)((WORD)(b)*(WORD)(c)))
 #define DF_WRITE(a,b,c,d) _lwrite((int)(d),(LPSTR)(a),(WORD)((WORD)(b)*(WORD)(c)))
 #define DF_OPENERR(f)   ((f) == -1)
-#define DF_FLUSH(a)                             /* no need to flush */
+#define DF_FLUSH(a)	/* no need to flush */
 #define DF_RDACCESS OF_READ
 #define DF_WRACCESS OF_READWRITE
 #else
@@ -233,7 +231,7 @@
 #define DF_READ(a,b,c,d) read(d,a,b*c)
 #define DF_WRITE(a,b,c,d) write(d,a,b*c)
 #define DF_OPENERR(f)   ((f) == -1)
-#define DF_FLUSH(a)                             /* no need to flush */
+#define DF_FLUSH(a)	/* no need to flush */
 #define DF_RDACCESS O_RDONLY | O_BINARY
 #define DF_WRACCESS O_RDWR | O_BINARY
 #endif
@@ -246,19 +244,18 @@
 #define DF_READ(a,b,c,d) read(d,a,b*c)
 #define DF_WRITE(a,b,c,d) write(d,a,b*c)
 #define DF_OPENERR(f)	((f) == -1)
-#define DF_FLUSH(a)                             /* no need to flush */
+#define DF_FLUSH(a)	/* no need to flush */
 #define DF_RDACCESS O_RDONLY
 #define DF_WRACCESS O_RDWR
 #endif /* PC */
 #endif /* DF_BUFFIO */
 #endif /* !MAC */
 
-
     /* if not allocating memory dynamically, need buffer for compression */
 #ifndef DF_DYNAMIC
 #define DF_TBUF
 #define DF_TBUFSZ	10000	/* buffer size */
-#endif /*DF_DYNAMIC*/
+#endif /*DF_DYNAMIC */
 
     /* if reading/writing structures not ok, need buffer for conversion */
 #ifdef PERM_OUT
@@ -266,19 +263,19 @@
 #ifndef DF_STRUCTOK
 #define DF_TBUF
 #define DF_TBUFSZ	512	/* buffer size can be smaller */
-#endif /*DF_STRUCTOK*/
-#endif /*DF_TBUF*/
+#endif /*DF_STRUCTOK */
+#endif /*DF_TBUF */
 
 /* 
-MACRO FCALLKEYW for any special fortran-C stub keyword
+   MACRO FCALLKEYW for any special fortran-C stub keyword
 
-MacIntosh MPW LS-fortran needs pascal since it can interface best with
-pascal functions
-*/
-#if defined(MAC)		/* with LS FORTRAN */
+   MacIntosh MPW LS-fortran needs pascal since it can interface best with
+   pascal functions
+ */
+#if defined(MAC)	/* with LS FORTRAN */
 #   define FCALLKEYW	pascal
-#else /* !MAC */
-#   define FCALLKEYW	/*NONE*/
+#else  /* !MAC */
+#   define FCALLKEYW	/*NONE */
 #endif
 
 #ifndef PC
@@ -287,10 +284,10 @@ pascal functions
 #ifndef IBM6000
 #ifndef CONVEX
 #ifndef UNICOS
-char *strncpy();
-char *strcpy();
-char *memcpy();
-char *malloc();
+char       *strncpy();
+char       *strcpy();
+char       *memcpy();
+char       *malloc();
 #endif /* !UNICOS */
 #endif /* !CONVEX */
 #endif /* !IBM6000 */
@@ -299,18 +296,16 @@ char *malloc();
 #endif /* !PC */
 #endif /* PERM_OUT */
 
-
 /*--------------------------------------------------------------------------*/
 /*                          Size parameters                                 */
 #ifdef PERM_OUT
-#define DF_MAXDFS           32  /* How many DF's can be open at once */
-#define DF_DEFAULTDDS       16  /* How many DD's a file has by default */
-#define DF_MAXFNLEN         256 /* maximum length of filename parameters */
+#define DF_MAXDFS           32	/* How many DF's can be open at once */
+#define DF_DEFAULTDDS       16	/* How many DD's a file has by default */
+#define DF_MAXFNLEN         256		/* maximum length of filename parameters */
 #endif /* PERM_OUT */
 
 #ifndef FILE
 #include <stdio.h>
-#endif /*FILE*/
+#endif /*FILE */
 
 #endif /* DFI_H */
-

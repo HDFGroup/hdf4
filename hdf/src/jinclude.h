@@ -23,7 +23,6 @@
 /* QAK */
 #include "hdf.h"
 
-
 /*
  * Normally the __STDC__ macro can be taken as indicating that the system
  * include files conform to the ANSI C standard.  However, if you are running
@@ -39,7 +38,7 @@
 
 #if defined macintosh | defined VMS | defined THINK_C
 #define INCLUDES_ARE_ANSI	/* Added for Mac, MPW does not define __STDC__ 
-                               Doesn't work with THINK_C(ANSI) yet */
+				   Doesn't work with THINK_C(ANSI) yet */
 #endif /* macintosh, MPW */
 
 /*
@@ -64,7 +63,7 @@
 #include <sys/types.h>
 #endif /* I860 */
 #endif
-#ifdef __SASC			/* Amiga SAS C provides it in stddef.h. */
+#ifdef __SASC	/* Amiga SAS C provides it in stddef.h. */
 #include <stddef.h>
 #endif
 
@@ -76,7 +75,7 @@
  * we always use this SIZEOF() macro in place of using sizeof() directly.
  */
 
-#undef SIZEOF			/* in case you included X11/xmd.h */
+#undef SIZEOF	/* in case you included X11/xmd.h */
 #define SIZEOF(object)	((size_t) sizeof(object))
 
 /*
@@ -110,4 +109,3 @@
 #include "jpegdata.h"
 
 #endif /* JINCLUDE_H */
-

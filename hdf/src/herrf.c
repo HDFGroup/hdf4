@@ -48,9 +48,8 @@ static char RcsId[] = "@(#)$Revision$";
  *          Instead it prints automatically to stdout.
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(VOID)
-nheprnt(intf *print_levels)
+FRETVAL(VOID)
+nheprnt(intf * print_levels)
 {
     HEprint(stderr, *print_levels);
 }
-

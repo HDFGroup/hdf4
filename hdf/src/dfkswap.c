@@ -1,3 +1,4 @@
+
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -62,348 +63,374 @@ static char RcsId[] = "@(#)$Revision$";
 /* DFKsb2b()                                                */
 /* -->Byte swapping for 2 byte data items                   */
 /************************************************************/
-int DFKsb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
-		   uint32 dest_stride)
+int
+DFKsb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+	uint32 dest_stride)
 {
-  int fast_processing = 0;              /* Default is not fast processing */
-  int in_place = 0;                     /* Inplace must be detected */
-  register uint32 i;            
-  uint8 buf[2];                          /* Inplace processing buffer */
-  uint8 * source = (uint8*)s;
-  uint8 * dest = (uint8*)d;
-  CONSTR(FUNC,"DFKsb2b");
+    int         fast_processing = 0;	/* Default is not fast processing */
+    int         in_place = 0;	/* Inplace must be detected */
+    register uint32 i;
+    uint8       buf[2];		/* Inplace processing buffer */
+    uint8      *source = (uint8 *) s;
+    uint8      *dest = (uint8 *) d;
+    CONSTR(FUNC, "DFKsb2b");
 
-  HEclear();
+    HEclear();
 
-  if(num_elm == 0){                          /* No elements is an error. */
-    HERROR(DFE_BADCONV);
-    return FAIL;
-  }
-
-  /* Determine if faster array processing is appropriate */
-  if(source_stride == 0 && dest_stride == 0)
-    fast_processing = 1;
-
-  /* Determine if the conversion should be inplace */
-  if(source == dest)
-    in_place = 1;
-
-  if(fast_processing) 
-    if(!in_place) {
-      for(i = 0; i < num_elm; i++) {
-        dest[0] = source[1];
-        dest[1] = source[0];
-        dest += 2;
-        source += 2;
+    if (num_elm == 0)
+      {		/* No elements is an error. */
+	  HERROR(DFE_BADCONV);
+	  return FAIL;
       }
-      return 0;
-    }
-    else { 
-      for(i = 0; i < num_elm; i++) {
-        buf[0] = source[1];
-        buf[1] = source[0];
-        dest[0] = buf[0];
-        dest[1] = buf[1];
-        dest += 2;
-        source += 2;
-      }
-      return 0;
-    }
-  
-  /* Generic stride processing */
-  if(!in_place)
-    for(i = 0; i < num_elm; i++) {
-      dest[0] = source[1];
-      dest[1] = source[0];
-      dest += dest_stride;
-      source += source_stride;
-    }
-  else
-    for(i = 0; i < num_elm; i++) {
-      buf[0] = source[1];
-      buf[1] = source[0];
-      dest[0] = buf[0];
-      dest[1] = buf[1];
-      dest += dest_stride;
-      source += source_stride;
-    }
-  return 0;
+
+    /* Determine if faster array processing is appropriate */
+    if (source_stride == 0 && dest_stride == 0)
+	fast_processing = 1;
+
+    /* Determine if the conversion should be inplace */
+    if (source == dest)
+	in_place = 1;
+
+    if (fast_processing)
+	if (!in_place)
+	  {
+	      for (i = 0; i < num_elm; i++)
+		{
+		    dest[0] = source[1];
+		    dest[1] = source[0];
+		    dest += 2;
+		    source += 2;
+		}
+	      return 0;
+	  }
+	else
+	  {
+	      for (i = 0; i < num_elm; i++)
+		{
+		    buf[0] = source[1];
+		    buf[1] = source[0];
+		    dest[0] = buf[0];
+		    dest[1] = buf[1];
+		    dest += 2;
+		    source += 2;
+		}
+	      return 0;
+	  }
+
+    /* Generic stride processing */
+    if (!in_place)
+	for (i = 0; i < num_elm; i++)
+	  {
+	      dest[0] = source[1];
+	      dest[1] = source[0];
+	      dest += dest_stride;
+	      source += source_stride;
+	  }
+    else
+	for (i = 0; i < num_elm; i++)
+	  {
+	      buf[0] = source[1];
+	      buf[1] = source[0];
+	      dest[0] = buf[0];
+	      dest[1] = buf[1];
+	      dest += dest_stride;
+	      source += source_stride;
+	  }
+    return 0;
 }
 
 /************************************************************/
 /* DFKsb4b()                                                */
 /* -->Byte swapping for 4 byte data items                   */
 /************************************************************/
-int DFKsb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
-		   uint32 dest_stride)
+int
+DFKsb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+	uint32 dest_stride)
 {
-  int fast_processing = 0;              /* Default is not fast processing */
-  int in_place = 0;                     /* Inplace must be detected */
-  register uint32 i;            
-  uint8 buf[4];                          /* Inplace processing buffer */
-  uint8 * source = (uint8*)s;
-  uint8 * dest = (uint8*)d;
-  CONSTR(FUNC,"DFKsb4b");
+    int         fast_processing = 0;	/* Default is not fast processing */
+    int         in_place = 0;	/* Inplace must be detected */
+    register uint32 i;
+    uint8       buf[4];		/* Inplace processing buffer */
+    uint8      *source = (uint8 *) s;
+    uint8      *dest = (uint8 *) d;
+    CONSTR(FUNC, "DFKsb4b");
 #ifdef TEST3_sb4b
-  uint32 *lp_dest;
-  uint32 *lp_src;
+    uint32     *lp_dest;
+    uint32     *lp_src;
 #endif
 
-  HEclear();
+    HEclear();
 
-  if(num_elm == 0){                         /* No elements is an error. */
-    HERROR(DFE_BADCONV);
-    return FAIL;
-  }
+    if (num_elm == 0)
+      {		/* No elements is an error. */
+	  HERROR(DFE_BADCONV);
+	  return FAIL;
+      }
 
-  /* Determine if faster array processing is appropriate */
-  if(source_stride == 0 && dest_stride == 0)
-    fast_processing = 1;
+    /* Determine if faster array processing is appropriate */
+    if (source_stride == 0 && dest_stride == 0)
+	fast_processing = 1;
 
-  /* Determine if the conversion should be inplace */
-  if(source == dest)
-    in_place = 1;
+    /* Determine if the conversion should be inplace */
+    if (source == dest)
+	in_place = 1;
 
-  if(fast_processing) 
-    if(!in_place) {
+    if (fast_processing)
+	if (!in_place)
+	  {
 #ifndef DUFF_sb4b
 #ifdef TEST1_sb4b
-    source+=3;
+	      source += 3;
 #endif
 #ifdef TEST3_sb4b
-    lp_dest=(uint32 *)dest;
-    lp_src=(uint32 *)source;
+	      lp_dest = (uint32 *) dest;
+	      lp_src = (uint32 *) source;
 #endif
-      for(i = 0; i < num_elm; i++) {
+	      for (i = 0; i < num_elm; i++)
+		{
 #if defined TEST3_sb4b
-        *lp_dest++ = ((lp_src[0]&0x000000ff)<<24) |
-                    ((lp_src[0]&0x0000ff00)<<8) |
-                    ((lp_src[0]&0x00ff0000)>>8) |
-                    ((lp_src[0]&0xff000000)>>24);
-        lp_src++;
+		    *lp_dest++ = ((lp_src[0] & 0x000000ff) << 24) |
+			((lp_src[0] & 0x0000ff00) << 8) |
+			((lp_src[0] & 0x00ff0000) >> 8) |
+			((lp_src[0] & 0xff000000) >> 24);
+		    lp_src++;
 #else
-        dest[0] = source[3];
-        dest[1] = source[2];
-        dest[2] = source[1];
-        dest[3] = source[0];
-        dest += 4;
-        source += 4;
+		    dest[0] = source[3];
+		    dest[1] = source[2];
+		    dest[2] = source[1];
+		    dest[3] = source[0];
+		    dest += 4;
+		    source += 4;
 #endif
-      }
-#else   /* DUFF_sb4b */
-        register uint32 n=(num_elm+7)/8;
-
-        switch(num_elm%8) {
-            case 0:
-                do{
-                    dest[0] = source[3];
-                    dest[1] = source[2];
-                    dest[2] = source[1];
-                    dest[3] = source[0];
-                    dest += 4;
-                    source += 4;
-            case 7:
-                    dest[0] = source[3];
-                    dest[1] = source[2];
-                    dest[2] = source[1];
-                    dest[3] = source[0];
-                    dest += 4;
-                    source += 4;
-            case 6:
-                    dest[0] = source[3];
-                    dest[1] = source[2];
-                    dest[2] = source[1];
-                    dest[3] = source[0];
-                    dest += 4;
-                    source += 4;
-            case 5:
-                    dest[0] = source[3];
-                    dest[1] = source[2];
-                    dest[2] = source[1];
-                    dest[3] = source[0];
-                    dest += 4;
-                    source += 4;
-            case 4:
-                    dest[0] = source[3];
-                    dest[1] = source[2];
-                    dest[2] = source[1];
-                    dest[3] = source[0];
-                    dest += 4;
-                    source += 4;
-            case 3:
-                    dest[0] = source[3];
-                    dest[1] = source[2];
-                    dest[2] = source[1];
-                    dest[3] = source[0];
-                    dest += 4;
-                    source += 4;
-            case 2:
-                    dest[0] = source[3];
-                    dest[1] = source[2];
-                    dest[2] = source[1];
-                    dest[3] = source[0];
-                    dest += 4;
-                    source += 4;
-            case 1:
-                    dest[0] = source[3];
-                    dest[1] = source[2];
-                    dest[2] = source[1];
-                    dest[3] = source[0];
-                    dest += 4;
-                    source += 4;
-                } while(--n>0);
 		}
-#endif  /* DUFF_sb4b */
-      return 0;
-    }
-    else {
-      for(i = 0; i < num_elm; i++) {
-        buf[0] = source[3];
-        buf[1] = source[2];
-        buf[2] = source[1];
-        buf[3] = source[0];
-        dest[0] = buf[0];
-        dest[1] = buf[1];
-        dest[2] = buf[2];
-        dest[3] = buf[3];
-        dest += 4;
-        source += 4;
-      }
-      return 0;
-    }
-  
-  /* Generic stride processing */
-  if(!in_place)
-    for(i = 0; i < num_elm; i++) {
-      dest[0] = source[3];
-      dest[1] = source[2];
-      dest[2] = source[1];
-      dest[3] = source[0];
-      dest += dest_stride;
-      source += source_stride;
-    }
-  else
-    for(i = 0; i < num_elm; i++) {
-      buf[0] = source[3];
-      buf[1] = source[2];
-      buf[2] = source[1];
-      buf[3] = source[0];
-      dest[0] = buf[0];
-      dest[1] = buf[1];
-      dest[2] = buf[2];
-      dest[3] = buf[3];
-      dest += dest_stride;
-      source += source_stride;
-    }
-  return 0;
+#else  /* DUFF_sb4b */
+	      register uint32 n = (num_elm + 7) / 8;
+
+	      switch (num_elm % 8)
+		{
+		    case 0:
+			do
+			  {
+			      dest[0] = source[3];
+			      dest[1] = source[2];
+			      dest[2] = source[1];
+			      dest[3] = source[0];
+			      dest += 4;
+			      source += 4;
+		    case 7:
+			      dest[0] = source[3];
+			      dest[1] = source[2];
+			      dest[2] = source[1];
+			      dest[3] = source[0];
+			      dest += 4;
+			      source += 4;
+		    case 6:
+			      dest[0] = source[3];
+			      dest[1] = source[2];
+			      dest[2] = source[1];
+			      dest[3] = source[0];
+			      dest += 4;
+			      source += 4;
+		    case 5:
+			      dest[0] = source[3];
+			      dest[1] = source[2];
+			      dest[2] = source[1];
+			      dest[3] = source[0];
+			      dest += 4;
+			      source += 4;
+		    case 4:
+			      dest[0] = source[3];
+			      dest[1] = source[2];
+			      dest[2] = source[1];
+			      dest[3] = source[0];
+			      dest += 4;
+			      source += 4;
+		    case 3:
+			      dest[0] = source[3];
+			      dest[1] = source[2];
+			      dest[2] = source[1];
+			      dest[3] = source[0];
+			      dest += 4;
+			      source += 4;
+		    case 2:
+			      dest[0] = source[3];
+			      dest[1] = source[2];
+			      dest[2] = source[1];
+			      dest[3] = source[0];
+			      dest += 4;
+			      source += 4;
+		    case 1:
+			      dest[0] = source[3];
+			      dest[1] = source[2];
+			      dest[2] = source[1];
+			      dest[3] = source[0];
+			      dest += 4;
+			      source += 4;
+			  }
+			while (--n > 0);
+		}
+#endif /* DUFF_sb4b */
+	      return 0;
+	  }
+	else
+	  {
+	      for (i = 0; i < num_elm; i++)
+		{
+		    buf[0] = source[3];
+		    buf[1] = source[2];
+		    buf[2] = source[1];
+		    buf[3] = source[0];
+		    dest[0] = buf[0];
+		    dest[1] = buf[1];
+		    dest[2] = buf[2];
+		    dest[3] = buf[3];
+		    dest += 4;
+		    source += 4;
+		}
+	      return 0;
+	  }
+
+    /* Generic stride processing */
+    if (!in_place)
+	for (i = 0; i < num_elm; i++)
+	  {
+	      dest[0] = source[3];
+	      dest[1] = source[2];
+	      dest[2] = source[1];
+	      dest[3] = source[0];
+	      dest += dest_stride;
+	      source += source_stride;
+	  }
+    else
+	for (i = 0; i < num_elm; i++)
+	  {
+	      buf[0] = source[3];
+	      buf[1] = source[2];
+	      buf[2] = source[1];
+	      buf[3] = source[0];
+	      dest[0] = buf[0];
+	      dest[1] = buf[1];
+	      dest[2] = buf[2];
+	      dest[3] = buf[3];
+	      dest += dest_stride;
+	      source += source_stride;
+	  }
+    return 0;
 }
 
 /************************************************************/
 /* DFKsb8b()                                                */
 /* -->Byte swapping for 8 byte data items                   */
 /************************************************************/
-int DFKsb8b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
-		   uint32 dest_stride)
+int
+DFKsb8b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+	uint32 dest_stride)
 {
-  int fast_processing = 0;              /* Default is not fast processing */
-  int in_place = 0;                     /* Inplace must be detected */
-  register uint32 i;            
-  uint8 buf[8];                          /* Inplace processing buffer */
-  uint8 * source = (uint8*)s;
-  uint8 * dest = (uint8*)d;
-    CONSTR(FUNC,"DFKsb8b");
+    int         fast_processing = 0;	/* Default is not fast processing */
+    int         in_place = 0;	/* Inplace must be detected */
+    register uint32 i;
+    uint8       buf[8];		/* Inplace processing buffer */
+    uint8      *source = (uint8 *) s;
+    uint8      *dest = (uint8 *) d;
+    CONSTR(FUNC, "DFKsb8b");
 
     HEclear();
 
-  if(num_elm == 0){                         /* No elements is an error. */
-    HERROR(DFE_BADCONV);
-    return FAIL;
-  }
-
-  /* Determine if faster array processing is appropriate */
-  if(source_stride == 0 && dest_stride == 0)
-    fast_processing = 1;
-
-  /* Determine if the conversion should be inplace */
-  if(source == dest)
-    in_place = 1;
-
-  if(fast_processing) 
-    if(!in_place) {
-      for(i = 0; i < num_elm; i++) {
-        dest[0] = source[7];
-        dest[1] = source[6];
-        dest[2] = source[5];
-        dest[3] = source[4];
-        dest[4] = source[3];
-        dest[5] = source[2];
-        dest[6] = source[1];
-        dest[7] = source[0];
-        dest += 8;
-        source += 8;
+    if (num_elm == 0)
+      {		/* No elements is an error. */
+	  HERROR(DFE_BADCONV);
+	  return FAIL;
       }
-      return 0;
-    }
-    else {
-      for(i = 0; i < num_elm; i++) {
-        buf[0] = source[7];
-        buf[1] = source[6];
-        buf[2] = source[5];
-        buf[3] = source[4];
-        buf[4] = source[3];
-        buf[5] = source[2];
-        buf[6] = source[1];
-        buf[7] = source[0];
-        dest[0] = buf[0];
-        dest[1] = buf[1];
-        dest[2] = buf[2];
-        dest[3] = buf[3];
-        dest[4] = buf[4];
-        dest[5] = buf[5];
-        dest[6] = buf[6];
-        dest[7] = buf[7];
-        dest += 8;
-        source += 8;
-      }
-      return 0;
-    }
-  
-  /* Generic stride processing */
-  if(!in_place)
-    for(i = 0; i < num_elm; i++) {
-      dest[0] = source[7];
-      dest[1] = source[6];
-      dest[2] = source[5];
-      dest[3] = source[4];
-      dest[4] = source[3];
-      dest[5] = source[2];
-      dest[6] = source[1];
-      dest[7] = source[0];
-      dest += dest_stride;
-      source += source_stride;
-    }
-  else
-    for(i = 0; i < num_elm; i++) {
-      buf[0] = source[7];
-      buf[1] = source[6];
-      buf[2] = source[5];
-      buf[3] = source[4];
-      buf[4] = source[3];
-      buf[5] = source[2];
-      buf[6] = source[1];
-      buf[7] = source[0];
-      dest[0] = buf[0];
-      dest[1] = buf[1];
-      dest[2] = buf[2];
-      dest[3] = buf[3];
-      dest[4] = buf[4];
-      dest[5] = buf[5];
-      dest[6] = buf[6];
-      dest[7] = buf[7];
-      dest += dest_stride;
-      source += source_stride;
-    }
 
-  return 0;
+    /* Determine if faster array processing is appropriate */
+    if (source_stride == 0 && dest_stride == 0)
+	fast_processing = 1;
+
+    /* Determine if the conversion should be inplace */
+    if (source == dest)
+	in_place = 1;
+
+    if (fast_processing)
+	if (!in_place)
+	  {
+	      for (i = 0; i < num_elm; i++)
+		{
+		    dest[0] = source[7];
+		    dest[1] = source[6];
+		    dest[2] = source[5];
+		    dest[3] = source[4];
+		    dest[4] = source[3];
+		    dest[5] = source[2];
+		    dest[6] = source[1];
+		    dest[7] = source[0];
+		    dest += 8;
+		    source += 8;
+		}
+	      return 0;
+	  }
+	else
+	  {
+	      for (i = 0; i < num_elm; i++)
+		{
+		    buf[0] = source[7];
+		    buf[1] = source[6];
+		    buf[2] = source[5];
+		    buf[3] = source[4];
+		    buf[4] = source[3];
+		    buf[5] = source[2];
+		    buf[6] = source[1];
+		    buf[7] = source[0];
+		    dest[0] = buf[0];
+		    dest[1] = buf[1];
+		    dest[2] = buf[2];
+		    dest[3] = buf[3];
+		    dest[4] = buf[4];
+		    dest[5] = buf[5];
+		    dest[6] = buf[6];
+		    dest[7] = buf[7];
+		    dest += 8;
+		    source += 8;
+		}
+	      return 0;
+	  }
+
+    /* Generic stride processing */
+    if (!in_place)
+	for (i = 0; i < num_elm; i++)
+	  {
+	      dest[0] = source[7];
+	      dest[1] = source[6];
+	      dest[2] = source[5];
+	      dest[3] = source[4];
+	      dest[4] = source[3];
+	      dest[5] = source[2];
+	      dest[6] = source[1];
+	      dest[7] = source[0];
+	      dest += dest_stride;
+	      source += source_stride;
+	  }
+    else
+	for (i = 0; i < num_elm; i++)
+	  {
+	      buf[0] = source[7];
+	      buf[1] = source[6];
+	      buf[2] = source[5];
+	      buf[3] = source[4];
+	      buf[4] = source[3];
+	      buf[5] = source[2];
+	      buf[6] = source[1];
+	      buf[7] = source[0];
+	      dest[0] = buf[0];
+	      dest[1] = buf[1];
+	      dest[2] = buf[2];
+	      dest[3] = buf[3];
+	      dest[4] = buf[4];
+	      dest[5] = buf[5];
+	      dest[6] = buf[6];
+	      dest[7] = buf[7];
+	      dest += dest_stride;
+	      source += source_stride;
+	  }
+
+    return 0;
 }
-

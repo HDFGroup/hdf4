@@ -19,23 +19,26 @@ static char RcsId[] = "@(#)$Revision$";
 #include <stdio.h>
 #include "vg.h"
 
-int main (int ac,char **av)
+int 
+main(int ac, char **av)
 {
 
-if (ac!=2) { 
-	fprintf(stderr,"%s: converts HDF vset v1.0 files to v2.0\n",av[0]);
-	fprintf(stderr,"Usage: %s hdf-file\n",av[0]);
-	exit(0);
-	}
+    if (ac != 2)
+      {
+	  fprintf(stderr, "%s: converts HDF vset v1.0 files to v2.0\n", av[0]);
+	  fprintf(stderr, "Usage: %s hdf-file\n", av[0]);
+	  exit(0);
+      }
 
-if ( 0 == vcheckcompat(av[1]) ) {
-	vmakecompat (av[1]);
-	fprintf(stderr,"file [%s] is now compatible\n", av[1]);
-	}
-else
-	fprintf(stderr,"file [%s] already compatible with r2.0\n",av[1]);
+    if (0 == vcheckcompat(av[1]))
+      {
+	  vmakecompat(av[1]);
+	  fprintf(stderr, "file [%s] is now compatible\n", av[1]);
+      }
+    else
+	fprintf(stderr, "file [%s] already compatible with r2.0\n", av[1]);
 
-    return(0);
-} /* main */
+    return (0);
+}	/* main */
 
 /* ------------------------------------------------------------------ */

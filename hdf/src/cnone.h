@@ -28,49 +28,53 @@
 #define __CNONE_H
 
 #if defined c_plusplus || defined __cplusplus
-extern "C" {
-#endif /* c_plusplus || __cplusplus */
+extern      "C"
+{
+#endif				/* c_plusplus || __cplusplus */
 
 /*
-** from cnone.c
-*/
+   ** from cnone.c
+ */
 
-extern int32 HCPcnone_stread
-    (accrec_t *rec);
+    extern int32 HCPcnone_stread
+                (accrec_t * rec);
 
-extern int32 HCPcnone_stwrite
-    (accrec_t *rec);
+    extern int32 HCPcnone_stwrite
+                (accrec_t * rec);
 
-extern int32 HCPcnone_seek
-    (accrec_t *access_rec, int32 offset, int origin);
+    extern int32 HCPcnone_seek
+                (accrec_t * access_rec, int32 offset, int origin);
 
-extern int32 HCPcnone_inquire
-    (accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
-            int32 *plength, int32 *poffset,int32 *pposn, int16 *paccess,
-            int16 *pspecial);
+    extern int32 HCPcnone_inquire
+                (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
+	       int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
+		 int16 *pspecial);
 
-extern int32 HCPcnone_read
-    (accrec_t *access_rec, int32 length, VOIDP data);
+    extern int32 HCPcnone_read
+                (accrec_t * access_rec, int32 length, VOIDP data);
 
-extern int32 HCPcnone_write
-    (accrec_t *access_rec, int32 length, const VOIDP data);
+    extern int32 HCPcnone_write
+                (accrec_t * access_rec, int32 length, const VOIDP data);
 
-extern intn HCPcnone_endaccess
-    (accrec_t *access_rec);
+    extern intn HCPcnone_endaccess
+                (accrec_t * access_rec);
 
 #if defined c_plusplus || defined __cplusplus
 }
-#endif /* c_plusplus || __cplusplus */
+#endif				/* c_plusplus || __cplusplus */
 
 /* "none" [en|de]coding information */
-typedef struct {
-    intn space_holder;      /* merely a space holder so compilers don't barf */
- } comp_coder_none_info_t;
+typedef struct
+{
+    intn        space_holder;	/* merely a space holder so compilers don't barf */
+}
+comp_coder_none_info_t;
 
 #ifndef CNONE_MASTER
-extern funclist_t cnone_funcs;     /* functions to perform run-length encoding */
+extern funclist_t cnone_funcs;	/* functions to perform run-length encoding */
 #else
-funclist_t cnone_funcs={    /* functions to perform run-length encoding */
+funclist_t  cnone_funcs =
+{				/* functions to perform run-length encoding */
     HCPcnone_stread,
     HCPcnone_stwrite,
     HCPcnone_seek,
@@ -78,7 +82,7 @@ funclist_t cnone_funcs={    /* functions to perform run-length encoding */
     HCPcnone_read,
     HCPcnone_write,
     HCPcnone_endaccess
-  };
+};
 #endif
 
 #endif /* __CNONE_H */

@@ -18,73 +18,74 @@
 #ifndef TBBT_H
 #define TBBT_H
 
-#ifdef lint         /* lint always complains but may complain more if... */
-# define   TBBT_INTERNALS   /* TBBT_INTERNALS not always defined */
+#ifdef lint	/* lint always complains but may complain more if... */
+# define   TBBT_INTERNALS	/* TBBT_INTERNALS not always defined */
 #endif /* lint */
 
-typedef   struct tbbt_node  TBBT_NODE;
+typedef struct tbbt_node TBBT_NODE;
 
 /* Threaded node structure */
-struct tbbt_node {
-  VOIDP     data;      /* Pointer to user data to be associated with node */
-  VOIDP     key;       /* Field to sort nodes on */
+struct tbbt_node
+  {
+      VOIDP       data;		/* Pointer to user data to be associated with node */
+      VOIDP       key;		/* Field to sort nodes on */
 
 #ifdef TBBT_INTERNALS
 # define   PARENT  0
 # define   LEFT    1
 # define   RIGHT   2
-  TBBT_NODE *link[3];   /* Pointers to parent, left child, and right child */
+      TBBT_NODE  *link[3];	/* Pointers to parent, left child, and right child */
 # define  Parent    link[PARENT]
 # define  Lchild    link[LEFT]
 # define  Rchild    link[RIGHT]
 # define  TBBT_FLAG unsigned long
 # define  TBBT_LEAF unsigned long
-  TBBT_FLAG  flags;     /* Combination of the following bit fields: */
-# define  TBBT_HEAVY(s) s   /* If the `s' sub-tree is deeper than the other */
-# define  TBBT_DOUBLE   4   /* If "heavy" sub-tree is two levels deeper */
-# define  TBBT_INTERN   8   /* If node is internal (has two children) */
+      TBBT_FLAG   flags;	/* Combination of the following bit fields: */
+# define  TBBT_HEAVY(s) s	/* If the `s' sub-tree is deeper than the other */
+# define  TBBT_DOUBLE   4	/* If "heavy" sub-tree is two levels deeper */
+# define  TBBT_INTERN   8	/* If node is internal (has two children) */
 # define  TBBT_UNBAL    ( TBBT_HEAVY(LEFT) | TBBT_HEAVY(RIGHT) )
 # define  TBBT_FLAGS    ( TBBT_UNBAL | TBBT_INTERN | TBBT_DOUBLE )
 # define  TBBT_CHILD(s) ( TBBT_INTERN | TBBT_HEAVY(s) )
-  TBBT_LEAF  lcnt;      /* count of left children */
-  TBBT_LEAF  rcnt;      /* count of right children */
-# define  LeftCnt(node) ( (node)->lcnt )  /* Left descendants */
-# define  RightCnt(node) ( (node)->rcnt )  /* Left descendants */
-#if defined macintosh | defined THINK_C /* Macro substitution limit */
+      TBBT_LEAF   lcnt;		/* count of left children */
+      TBBT_LEAF   rcnt;		/* count of right children */
+# define  LeftCnt(node) ( (node)->lcnt )	/* Left descendants */
+# define  RightCnt(node) ( (node)->rcnt )	/* Left descendants */
+#if defined macintosh | defined THINK_C		/* Macro substitution limit */
 # define  Cnt(node,s)   ( 1==(s) ? LeftCnt(node) : RightCnt(node) )
-#else  /* !macintosh */
+#else				/* !macintosh */
 # define  Cnt(node,s)   ( LEFT==(s) ? LeftCnt(node) : RightCnt(node) )
-#endif /* !macintosh */
+#endif				/* !macintosh */
 #ifdef QAK
 # define  HasChild(n,s) ( TBBT_CHILD(s) & (n)->flags )
 # define  Heavy(n,s)    ( TBBT_HEAVY(s) & (n)->flags )
-# define  Intern(n)     ( TBBT_INTERN & (n)->flags ) 
-# define  UnBal(n)      ( TBBT_UNBAL & (n)->flags ) 
+# define  Intern(n)     ( TBBT_INTERN & (n)->flags )
+# define  UnBal(n)      ( TBBT_UNBAL & (n)->flags )
 #else
 # define  HasChild(n,s) ( Cnt(n,s)>0 )
 # define  Heavy(n,s)    ( (s) & (LeftCnt(n)>RightCnt(n) ? LEFT : \
-				 LeftCnt(n)==RightCnt(n) ? 0 : RIGHT)) 
+				 LeftCnt(n)==RightCnt(n) ? 0 : RIGHT))
 # define  Intern(n)     ( LeftCnt(n) && RightCnt(n) )
 # define  UnBal(n)      ( LeftCnt(n)>RightCnt(n) ? LEFT : \
-				 LeftCnt(n)==RightCnt(n) ? 0 : RIGHT) 
-#endif 
+				 LeftCnt(n)==RightCnt(n) ? 0 : RIGHT)
+#endif
 # define  Double(n)     ( TBBT_DOUBLE & (n)->flags )
 # define  Other(side)   ( LEFT + RIGHT - (side) )
 #ifdef QAK
 # define  Delta(n,s)    (  ( Heavy(n,s) ? 1 : -1 )                          \
                             *  ( Double(n) ? 2 : UnBal(n) ? 1 : 0 )  )
-#if defined macintosh | defined THINK_C /* There is a limit to recursive
-                                    macro substitution */
+#if defined macintosh | defined THINK_C		/* There is a limit to recursive
+						   macro substitution */
 # define  SetFlags(n,s,c,b,i)   (  ( -2<(b) && (b)<2 ? 0 : TBBT_DOUBLE )   \
     |  ( 0>(b) ? TBBT_HEAVY(s) : (b)>0 ? TBBT_HEAVY( 1 + 2 - (s)) : 0 )    \
     |  ( ( LEFT==(s) ? (c) : LeftCnt(n) ) << TBBT_BITS )                   \
     |  ( (i) ? TBBT_INTERN : 0 )  )
-#else /* !macintosh */
+#else				/* !macintosh */
 # define  SetFlags(n,s,c,b,i)   (  ( -2<(b) && (b)<2 ? 0 : TBBT_DOUBLE )   \
     |  ( 0>(b) ? TBBT_HEAVY(s) : (b)>0 ? TBBT_HEAVY(Other(s)) : 0 )        \
     |  ( ( LEFT==(s) ? (c) : LeftCnt(n) ) << TBBT_BITS )                   \
     |  ( (i) ? TBBT_INTERN : 0 )  )
-#endif /* !macintosh */
+#endif				/* !macintosh */
 /* n=node, s=LEFT/RIGHT, c=`s' descendant count, b=balance(s), i=internal */
 /* SetFlags( ptr, LEFT, Cnt(RIGHT,kid), -2, YES ) */
 #else
@@ -94,18 +95,19 @@ struct tbbt_node {
     |  ( 0>(b) ? TBBT_HEAVY(s) : (b)>0 ? TBBT_HEAVY(Other(s)) : 0 )        \
     |  ( (i) ? TBBT_INTERN : 0 )  )
 #endif
-};
-typedef   struct tbbt_tree  TBBT_TREE;
+  };
+typedef struct tbbt_tree TBBT_TREE;
 /* Threaded tree structure */
-struct tbbt_tree {
-  TBBT_NODE *root;
-  unsigned long count;  /* The number of nodes in the tree currently */
-  intn     (*compar) HPROTO((VOIDP k1,VOIDP k2,intn cmparg));
-  intn     cmparg;
-#endif /* TBBT_INTERNALS */
-};
+struct tbbt_tree
+  {
+      TBBT_NODE  *root;
+      unsigned long count;	/* The number of nodes in the tree currently */
+      intn        (*compar) HPROTO((VOIDP k1, VOIDP k2, intn cmparg));
+      intn        cmparg;
+#endif				/* TBBT_INTERNALS */
+  };
 #ifndef TBBT_INTERNALS
-typedef   TBBT_NODE   **TBBT_TREE;
+typedef TBBT_NODE **TBBT_TREE;
 #endif /* TBBT_INTERNALS */
 
 /* Return maximum of two scalar values (use arguments w/o side effects): */
@@ -157,11 +159,12 @@ typedef   TBBT_NODE   **TBBT_TREE;
  */
 
 #if defined c_plusplus || defined __cplusplus
-extern "C" {
-#endif /* c_plusplus || __cplusplus */
+extern      "C"
+{
+#endif				/* c_plusplus || __cplusplus */
 
-TBBT_TREE *tbbtdmake
-    (intn (*compar)HPROTO((VOIDP ,VOIDP ,intn)), intn arg );
+    TBBT_TREE  *tbbtdmake
+                (intn (*compar) HPROTO((VOIDP, VOIDP, intn)), intn arg);
 /* Allocates and initializes an empty threaded, balanced, binary tree and
  * returns a pointer to the control structure for it.  You can also create
  * empty trees without this function as long as you never use tbbtd* routines
@@ -214,11 +217,11 @@ TBBT_TREE *tbbtdmake
  * of ANY tree.  Never use tbbtdfree() except on a tbbtdmake()d tree.
  */
 
-TBBT_NODE *tbbtdfind
-    (TBBT_TREE *tree, VOIDP key, TBBT_NODE **pp);
-TBBT_NODE *tbbtfind
-    (TBBT_NODE *root,VOIDP key, intn (*cmp)HPROTO((VOIDP,VOIDP,intn)),
-        intn arg, TBBT_NODE **pp);
+    TBBT_NODE  *tbbtdfind
+                (TBBT_TREE * tree, VOIDP key, TBBT_NODE ** pp);
+    TBBT_NODE  *tbbtfind
+                (TBBT_NODE * root, VOIDP key, intn (*cmp) HPROTO((VOIDP, VOIDP, intn)),
+		 intn arg, TBBT_NODE ** pp);
 /* Locate a node based on the key given.  A pointer to the node in the tree
  * with a key value matching `key' is returned.  If no such node exists, NULL
  * is returned.  Whether a node is found or not, if `pp' is not NULL, `*pp'
@@ -230,8 +233,8 @@ TBBT_NODE *tbbtfind
  * out using tbbtdmake().
  */
 
-TBBT_NODE *tbbtindx
-    ( TBBT_NODE *root, int32 indx );
+    TBBT_NODE  *tbbtindx
+                (TBBT_NODE * root, int32 indx);
 /* Locate the node that has `indx' nodes with lesser key values.  This is like
  * an array lookup with the first item in the list having index 0.  For large
  * values of `indx', this call is much faster than tbbtfirst() followed by
@@ -239,18 +242,18 @@ TBBT_NODE *tbbtindx
  * as fast as) `tbbtfirst(root)'.
  */
 
-TBBT_NODE *tbbtdins
-    (TBBT_TREE *tree, VOIDP item, VOIDP key);
-TBBT_NODE *tbbtins
-    (TBBT_NODE **root,VOIDP item,VOIDP key, intn (*cmp)HPROTO((VOIDP,VOIDP,intn)), intn arg );
+    TBBT_NODE  *tbbtdins
+                (TBBT_TREE * tree, VOIDP item, VOIDP key);
+    TBBT_NODE  *tbbtins
+                (TBBT_NODE ** root, VOIDP item, VOIDP key, intn (*cmp) HPROTO((VOIDP, VOIDP, intn)), intn arg);
 /* Insert a new node to the tree having a key value of `key' and a data pointer
  * of `item'.  If a node already exists in the tree with key value `key' or if
  * malloc() fails, NULL is returned (no node is inserted), otherwise a pointer
  * to the inserted node is returned.  `cmp' and `arg' are as for tbbtfind().
  */
 
-VOIDP tbbtrem
-    (TBBT_NODE **root, TBBT_NODE *node, VOIDP *kp );
+    VOIDP       tbbtrem
+                (TBBT_NODE ** root, TBBT_NODE * node, VOIDP *kp);
 /* Remove the node pointed to by `node' from the tree with root `root'.  The
  * data pointer for the deleted node is returned.  If the second argument is
  * NULL, NULL is returned.  If `kp' is not NULL, `*kp' is set to point to the
@@ -260,10 +263,10 @@ VOIDP tbbtrem
  *     data= tbbtrem( &tree->root, tbbtdfind(tree,key), NULL );
  */
 
-TBBT_NODE *tbbtfirst
-    (TBBT_NODE *root);
-TBBT_NODE *tbbtlast
-    (TBBT_NODE *root );
+    TBBT_NODE  *tbbtfirst
+                (TBBT_NODE * root);
+    TBBT_NODE  *tbbtlast
+                (TBBT_NODE * root);
 /* Returns a pointer to node from the tree with the lowest(first)/highest(last)
  * key value.  If the tree is empy NULL is returned.  Examples:
  *     node= tbbtfirst(*tree);
@@ -272,19 +275,19 @@ TBBT_NODE *tbbtlast
  *     node= tbbtlast(node);        (* Last node in a sub-tree *)
  */
 
-TBBT_NODE *tbbtnext
-    (TBBT_NODE *node);
-TBBT_NODE *tbbtprev
-    (TBBT_NODE *node);
+    TBBT_NODE  *tbbtnext
+                (TBBT_NODE * node);
+    TBBT_NODE  *tbbtprev
+                (TBBT_NODE * node);
 /* Returns a pointer the node from the tree with the next highest (previous
  * lowest) key value relative to the node pointed to by `node'.  If `node'
  * points the last (first) node of the tree, NULL is returned.
  */
 
-TBBT_TREE *tbbtdfree
-    (TBBT_TREE *tree, VOID (*fd)(VOIDP), VOID (*fk)(VOIDP));
-VOID tbbtfree
-    (TBBT_NODE **root, VOID (*fd)(VOIDP), VOID (*fk)(VOIDP));
+    TBBT_TREE  *tbbtdfree
+                (TBBT_TREE * tree, VOID(*fd) (VOIDP), VOID(*fk) (VOIDP));
+    VOID        tbbtfree
+                (TBBT_NODE ** root, VOID(*fd) (VOIDP), VOID(*fk) (VOIDP));
 /* Frees up an entire tree.  `fd' is a pointer to a function that frees/
  * destroys data items, and `fk' is the same for key values.
  *     void free();
@@ -297,25 +300,24 @@ VOID tbbtfree
  * tbbtfree() always sets `root' to be NULL.
  */
 
-VOID tbbtprint
-	(TBBT_NODE *node);
+    VOID        tbbtprint
+                (TBBT_NODE * node);
 /* Prints out the data in a node */
 
-VOID tbbtdump
-	(TBBT_TREE *tree, intn method);
+    VOID        tbbtdump
+                (TBBT_TREE * tree, intn method);
 /* Prints an entire tree.  The method variable determines which sort of
  * traversal is used:
- *	-1 : Pre-Order Traversal
- *	 1 : Post-Order Traversal
- *	 0 : In-Order Traversal 
+ *      -1 : Pre-Order Traversal
+ *       1 : Post-Order Traversal
+ *       0 : In-Order Traversal 
  */
 
-long tbbtcount
-	(TBBT_TREE *tree);
+    long        tbbtcount
+                (TBBT_TREE * tree);
 
 #if defined c_plusplus || defined __cplusplus
 }
-#endif /* c_plusplus || __cplusplus */
+#endif				/* c_plusplus || __cplusplus */
 
-#endif /* TBBT_H */
-
+#endif				/* TBBT_H */

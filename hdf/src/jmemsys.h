@@ -1,3 +1,4 @@
+
 /*
  * jmemsys.h
  *
@@ -32,8 +33,8 @@
  * On an 80x86 machine using small-data memory model, these manage near heap.
  */
 
-EXTERN VOIDP jget_small (size_t sizeofobject);
-EXTERN VOID jfree_small (VOIDP object);
+EXTERN VOIDP jget_small(size_t sizeofobject);
+EXTERN VOID jfree_small(VOIDP object);
 
 /*
  * These two functions are used to allocate and release large chunks of
@@ -43,8 +44,8 @@ EXTERN VOID jfree_small (VOIDP object);
  */
 
 #ifdef NEED_FAR_POINTERS	/* typically not needed except on 80x86 */
-EXTERN VOIDP jget_large (size_t sizeofobject);
-EXTERN VOID jfree_large (VOIDP object);
+EXTERN VOIDP jget_large(size_t sizeofobject);
+EXTERN VOID jfree_large(VOIDP object);
 #else
 #define jget_large(sizeofobject)	jget_small(sizeofobject)
 #define jfree_large(object)		jfree_small(object)
@@ -80,8 +81,7 @@ EXTERN VOID jfree_large (VOIDP object);
  * Conversely, zero may be returned to always use the minimum amount of memory.
  */
 
-EXTERN long jmem_available (long min_bytes_needed, long max_bytes_needed);
-
+EXTERN long jmem_available(long min_bytes_needed, long max_bytes_needed);
 
 /*
  * This structure holds whatever state is needed to access a single
@@ -92,22 +92,24 @@ EXTERN long jmem_available (long min_bytes_needed, long max_bytes_needed);
 
 #define TEMP_NAME_LENGTH   64	/* max length of a temporary file's name */
 
-typedef struct backing_store_struct * backing_store_ptr;
+typedef struct backing_store_struct *backing_store_ptr;
 
-typedef struct backing_store_struct {
-	/* Methods for reading/writing/closing this backing-store object */
-	METHOD(VOID, read_backing_store, (backing_store_ptr info,
-					  VOIDP buffer_address,
-					  long file_offset, long byte_count));
-	METHOD(VOID, write_backing_store, (backing_store_ptr info,
-					   VOIDP buffer_address,
-					   long file_offset, long byte_count));
-	METHOD(VOID, close_backing_store, (backing_store_ptr info));
-	/* Private fields for system-dependent backing-store management */
-	/* For a typical implementation with temp files, we might need: */
-	FILE * temp_file;	/* stdio reference to temp file */
-	char temp_name[TEMP_NAME_LENGTH]; /* name of temp file */
-      } backing_store_info;
+typedef struct backing_store_struct
+  {
+      /* Methods for reading/writing/closing this backing-store object */
+      METHOD(VOID, read_backing_store, (backing_store_ptr info,
+					VOIDP buffer_address,
+					long file_offset, long byte_count));
+      METHOD(VOID, write_backing_store, (backing_store_ptr info,
+					 VOIDP buffer_address,
+					 long file_offset, long byte_count));
+      METHOD(VOID, close_backing_store, (backing_store_ptr info));
+      /* Private fields for system-dependent backing-store management */
+      /* For a typical implementation with temp files, we might need: */
+      FILE       *temp_file;	/* stdio reference to temp file */
+      char        temp_name[TEMP_NAME_LENGTH];	/* name of temp file */
+  }
+backing_store_info;
 
 /*
  * Initial opening of a backing-store object.  This must fill in the
@@ -117,9 +119,8 @@ typedef struct backing_store_struct {
  * take an error exit.)
  */
 
-EXTERN VOID jopen_backing_store (backing_store_ptr info,
-				    long total_bytes_needed);
-
+EXTERN VOID jopen_backing_store(backing_store_ptr info,
+				long total_bytes_needed);
 
 /*
  * These routines take care of any system-dependent initialization and
@@ -131,11 +132,10 @@ EXTERN VOID jopen_backing_store (backing_store_ptr info,
  * if that happens.
  */
 
-EXTERN VOID jmem_init (external_methods_ptr emethods);
+EXTERN VOID jmem_init(external_methods_ptr emethods);
 
-EXTERN VOID jmem_term (void);
+EXTERN VOID jmem_term(void);
 
 #endif /* JMEMSYS !=MEM_DOS */
 
 #endif /* JMEMSYS_H */
-

@@ -19,15 +19,13 @@
 #include "jmemsys.h"
 
 #ifdef INCLUDES_ARE_ANSI
-#include <stdlib.h>		/* to declare malloc(), free() */
+#include <stdlib.h>	/* to declare malloc(), free() */
 #else
-extern VOIDP malloc (size_t size);
-extern VOID free (VOID *ptr);
+extern VOIDP malloc(size_t size);
+extern VOID free(VOID * ptr);
 #endif
 
-
-static external_methods_ptr methods; /* saved for access to error_exit */
-
+static external_methods_ptr methods;	/* saved for access to error_exit */
 
 /*
  * Memory allocation and freeing are controlled by the regular library
@@ -35,15 +33,15 @@ static external_methods_ptr methods; /* saved for access to error_exit */
  */
 
 GLOBAL VOIDP
-jget_small (size_t sizeofobject)
+jget_small(size_t sizeofobject)
 {
-  return (VOID *) malloc(sizeofobject);
+    return (VOID *) malloc(sizeofobject);
 }
 
-GLOBAL VOID
-jfree_small (VOIDP object)
+GLOBAL      VOID
+jfree_small(VOIDP object)
 {
-  free(object);
+    free(object);
 }
 
 /*
@@ -51,30 +49,27 @@ jfree_small (VOIDP object)
  * jget_large, jfree_large are not needed.
  */
 
-
 /*
  * This routine computes the total memory space available for allocation.
  * Here we always say, "we got all you want bud!"
  */
 
 GLOBAL long
-jmem_available (long min_bytes_needed, long max_bytes_needed)
+jmem_available(long min_bytes_needed, long max_bytes_needed)
 {
-  return max_bytes_needed;
+    return max_bytes_needed;
 }
-
 
 /*
  * Backing store (temporary file) management.
  * This should never be called and we just error out.
  */
 
-GLOBAL VOID
-jopen_backing_store (backing_store_ptr info, long total_bytes_needed)
+GLOBAL      VOID
+jopen_backing_store(backing_store_ptr info, long total_bytes_needed)
 {
-  ERREXIT(methods, "Backing store not supported");
+    ERREXIT(methods, "Backing store not supported");
 }
-
 
 /*
  * These routines take care of any system-dependent initialization and
@@ -82,15 +77,15 @@ jopen_backing_store (backing_store_ptr info, long total_bytes_needed)
  * once.
  */
 
-GLOBAL VOID
-jmem_init (external_methods_ptr emethods)
+GLOBAL      VOID
+jmem_init(external_methods_ptr emethods)
 {
-  methods = emethods;		/* save struct addr for error exit access */
-  emethods->max_memory_to_use = 0;
+    methods = emethods;		/* save struct addr for error exit access */
+    emethods->max_memory_to_use = 0;
 }
 
-GLOBAL VOID
-jmem_term (VOID)
+GLOBAL      VOID
+jmem_term(VOID)
 {
-  /* no work */
+    /* no work */
 }

@@ -1,3 +1,4 @@
+
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -51,18 +52,17 @@ static char RcsId[] = "@(#)$Revision$";
  * Method:  Convert filename to C string, call Hopen
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-nhiopen(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
+FRETVAL(intf)
+nhiopen(_fcd name, intf * acc_mode, intf * defdds, intf * namelen)
 {
-    char *fn;
-    intf ret;
-    
-    fn = HDf2cstring(name, (intn)*namelen);
-    ret = (intf) Hopen(fn, (intn)*acc_mode, (int16)*defdds);
-    HDfreespace(fn);
-    return(ret);
-}
+    char       *fn;
+    intf        ret;
 
+    fn = HDf2cstring(name, (intn) *namelen);
+    ret = (intf) Hopen(fn, (intn) *acc_mode, (int16) *defdds);
+    HDfreespace(fn);
+    return (ret);
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    hclose
@@ -73,12 +73,11 @@ nhiopen(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
  * Invokes: Hclose
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
-nhclose(intf *file_id)
+FRETVAL(intf)
+nhclose(intf * file_id)
 {
-    return(Hclose(*file_id));
+    return (Hclose(*file_id));
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    hnumber
@@ -89,12 +88,8 @@ nhclose(intf *file_id)
  * Invokes: Hnumber
  *---------------------------------------------------------------------------*/
 
-    FRETVAL(intf)
+FRETVAL(intf)
 nhnumber(int32 file_id, uint16 tag)
 {
-    return(Hnumber(file_id,tag));
+    return (Hnumber(file_id, tag));
 }
-
-
-
-

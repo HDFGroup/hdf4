@@ -17,25 +17,25 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*
- FILE
-       crle.c
-       HDF run-length encoding I/O routines
+   FILE
+   crle.c
+   HDF run-length encoding I/O routines
 
- REMARKS
+   REMARKS
 
- DESIGN
+   DESIGN
 
- EXPORTED ROUTINES
-    None of these routines are designed to be called by other users except
-    for the modeling layer of the compression routines.
+   EXPORTED ROUTINES
+   None of these routines are designed to be called by other users except
+   for the modeling layer of the compression routines.
 
- AUTHOR
-       Quincey Koziol
+   AUTHOR
+   Quincey Koziol
 
- MODIFICATION HISTORY
-    9/28/93     Starting writing specs & coding prototype.
-    10/09/93    Finished testing.  First version done.
-*/
+   MODIFICATION HISTORY
+   9/28/93     Starting writing specs & coding prototype.
+   10/09/93    Finished testing.  First version done.
+ */
 
 /* General HDF includes */
 #include "hdf.h"
@@ -44,28 +44,28 @@ static char RcsId[] = "@(#)$Revision$";
 #define CRLE_MASTER
 #define CODER_CLIENT
 /* HDF compression includes */
-#include "hcompi.h"         /* Internal definitions for compression */
+#include "hcompi.h"	/* Internal definitions for compression */
 
 /* internal defines */
-#define TMP_BUF_SIZE    8192    /* size of throw-away buffer */
-#define RUN_MASK        0x80    /* bit mask for run-length control bytes */
-#define COUNT_MASK      0x7f    /* bit mask for count of run or mix */
+#define TMP_BUF_SIZE    8192	/* size of throw-away buffer */
+#define RUN_MASK        0x80	/* bit mask for run-length control bytes */
+#define COUNT_MASK      0x7f	/* bit mask for count of run or mix */
 
 /* declaration of the functions provided in this module */
 PRIVATE int32 HCIcrle_staccess
-    (accrec_t *access_rec, int16 acc_mode);
+            (accrec_t * access_rec, int16 acc_mode);
 
 PRIVATE int32 HCIcrle_init
-    (accrec_t *access_rec);
+            (accrec_t * access_rec);
 
 PRIVATE int32 HCIcrle_decode
-    (compinfo_t *info,int32 length,uint8 *buf);
+            (compinfo_t * info, int32 length, uint8 *buf);
 
 PRIVATE int32 HCIcrle_encode
-    (compinfo_t *info,int32 length,uint8 *buf);
+            (compinfo_t * info, int32 length, uint8 *buf);
 
 PRIVATE int32 HCIcrle_term
-    (compinfo_t *info);
+            (compinfo_t * info);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -86,27 +86,28 @@ PRIVATE int32 HCIcrle_term
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32 HCIcrle_init(accrec_t *access_rec)
+PRIVATE int32
+HCIcrle_init(accrec_t * access_rec)
 {
-    CONSTR(FUNC,"HCIcrle_init");
-    compinfo_t *info;                   /* special element information */
-    comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
+    CONSTR(FUNC, "HCIcrle_init");
+    compinfo_t *info;		/* special element information */
+    comp_coder_rle_info_t *rle_info;	/* ptr to RLE info */
 
-    info=(compinfo_t *)access_rec->special_info;
-    if(Hseek(info->aid,0,DF_START)==FAIL)   /* seek to beginning of element */
-        HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+    info = (compinfo_t *) access_rec->special_info;
+    if (Hseek(info->aid, 0, DF_START) == FAIL)	/* seek to beginning of element */
+	HRETURN_ERROR(DFE_SEEKERROR, FAIL);
 
-    rle_info= &(info->cinfo.coder_info.rle_info);
+    rle_info = &(info->cinfo.coder_info.rle_info);
 
     /* Initialize RLE state information */
-    rle_info->rle_state=RLE_INIT;       /* start in initial state */
-    rle_info->buf_pos=0;            /* start at the beginning of the buffer */
-    rle_info->last_byte=(uintn)RLE_NIL;    /* start with no code in the last byte */
-    rle_info->second_byte=(uintn)RLE_NIL;  /* start with no code here too */
-    rle_info->offset=0;             /* offset into the file */
+    rle_info->rle_state = RLE_INIT;	/* start in initial state */
+    rle_info->buf_pos = 0;	/* start at the beginning of the buffer */
+    rle_info->last_byte = (uintn) RLE_NIL;	/* start with no code in the last byte */
+    rle_info->second_byte = (uintn) RLE_NIL;	/* start with no code here too */
+    rle_info->offset = 0;	/* offset into the file */
 
-    return(SUCCEED);
-}   /* end HCIcrle_init() */
+    return (SUCCEED);
+}	/* end HCIcrle_init() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -129,59 +130,66 @@ PRIVATE int32 HCIcrle_init(accrec_t *access_rec)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32 HCIcrle_decode(compinfo_t *info,int32 length,uint8 *buf)
+PRIVATE int32
+HCIcrle_decode(compinfo_t * info, int32 length, uint8 *buf)
 {
-    CONSTR(FUNC,"HCIcrle_decode");
-    comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
-    int32 orig_length;      /* original length to write */
-    uintn dec_len;           /* length to decode */
-    intn c;                 /* character to hold a byte read in */
+    CONSTR(FUNC, "HCIcrle_decode");
+    comp_coder_rle_info_t *rle_info;	/* ptr to RLE info */
+    int32       orig_length;	/* original length to write */
+    uintn       dec_len;	/* length to decode */
+    intn        c;		/* character to hold a byte read in */
 
-    rle_info= &(info->cinfo.coder_info.rle_info);
+    rle_info = &(info->cinfo.coder_info.rle_info);
 
-    orig_length=length;     /* save this for later */
-    while(length>0) {   /* decode until we have all the bytes we need */
-        if(rle_info->rle_state==RLE_INIT) { /* need to figure out RUN or MIX state */
-            if((c=HDgetc(info->aid))==FAIL)
-                HRETURN_ERROR(DFE_READERROR,FAIL);
-            if(c&RUN_MASK) {   /* run byte */
-                rle_info->rle_state=RLE_RUN;    /* set to run state */
-                rle_info->buf_length=(c&COUNT_MASK)+RLE_MIN_RUN; /* run length */
-                if((rle_info->last_byte=HDgetc(info->aid))==FAIL)
-                    HRETURN_ERROR(DFE_READERROR,FAIL);
-              } /* end if */
-            else {      /* mix byte */
-                rle_info->rle_state=RLE_MIX;    /* set to mix state */
-                rle_info->buf_length=(c&COUNT_MASK)+RLE_MIN_MIX; /* mix length */
-                if(Hread(info->aid,rle_info->buf_length,rle_info->buffer)==FAIL)
-                    HRETURN_ERROR(DFE_READERROR,FAIL);
-                rle_info->buf_pos=0;
-              } /* end else */
-          } /* end if */
-        else {  /* RUN or MIX states */
-            if(length>rle_info->buf_length)  /* still need more data */
-                dec_len=rle_info->buf_length;
-            else        /* only grab "length" bytes */
-                dec_len=(uintn)length;
+    orig_length = length;	/* save this for later */
+    while (length > 0)
+      {		/* decode until we have all the bytes we need */
+	  if (rle_info->rle_state == RLE_INIT)
+	    {	/* need to figure out RUN or MIX state */
+		if ((c = HDgetc(info->aid)) == FAIL)
+		    HRETURN_ERROR(DFE_READERROR, FAIL);
+		if (c & RUN_MASK)
+		  {	/* run byte */
+		      rle_info->rle_state = RLE_RUN;	/* set to run state */
+		      rle_info->buf_length = (c & COUNT_MASK) + RLE_MIN_RUN;	/* run length */
+		      if ((rle_info->last_byte = HDgetc(info->aid)) == FAIL)
+			  HRETURN_ERROR(DFE_READERROR, FAIL);
+		  }	/* end if */
+		else
+		  {	/* mix byte */
+		      rle_info->rle_state = RLE_MIX;	/* set to mix state */
+		      rle_info->buf_length = (c & COUNT_MASK) + RLE_MIN_MIX;	/* mix length */
+		      if (Hread(info->aid, rle_info->buf_length, rle_info->buffer) == FAIL)
+			  HRETURN_ERROR(DFE_READERROR, FAIL);
+		      rle_info->buf_pos = 0;
+		  }	/* end else */
+	    }	/* end if */
+	  else
+	    {	/* RUN or MIX states */
+		if (length > rle_info->buf_length)	/* still need more data */
+		    dec_len = rle_info->buf_length;
+		else	/* only grab "length" bytes */
+		    dec_len = (uintn) length;
 
-            if(rle_info->rle_state==RLE_RUN)
-                HDmemset(buf,rle_info->last_byte,dec_len);  /* copy the run */
-            else {
-                HDmemcpy(buf,&(rle_info->buffer[rle_info->buf_pos]),dec_len);
-                rle_info->buf_pos+=dec_len;
-              } /* end else */
+		if (rle_info->rle_state == RLE_RUN)
+		    HDmemset(buf, rle_info->last_byte, dec_len);	/* copy the run */
+		else
+		  {
+		      HDmemcpy(buf, &(rle_info->buffer[rle_info->buf_pos]), dec_len);
+		      rle_info->buf_pos += dec_len;
+		  }	/* end else */
 
-            rle_info->buf_length-=dec_len;
-            if(rle_info->buf_length<=0) /* check for running out of bytes */
-                rle_info->rle_state=RLE_INIT;   /* get the next status byte */
-            length-=dec_len;    /* decrement the bytes to get */
-            buf+=dec_len;       /* in case we need more bytes */
-          } /* end else */
-      } /* end while */
+		rle_info->buf_length -= dec_len;
+		if (rle_info->buf_length <= 0)	/* check for running out of bytes */
+		    rle_info->rle_state = RLE_INIT;	/* get the next status byte */
+		length -= dec_len;	/* decrement the bytes to get */
+		buf += dec_len;		/* in case we need more bytes */
+	    }	/* end else */
+      }		/* end while */
 
-    rle_info->offset+=orig_length;  /* incr. abs. offset into the file */
-    return(SUCCEED);
-}   /* end HCIcrle_decode() */
+    rle_info->offset += orig_length;	/* incr. abs. offset into the file */
+    return (SUCCEED);
+}	/* end HCIcrle_decode() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -204,94 +212,104 @@ PRIVATE int32 HCIcrle_decode(compinfo_t *info,int32 length,uint8 *buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32 HCIcrle_encode(compinfo_t *info,int32 length,uint8 *buf)
+PRIVATE int32
+HCIcrle_encode(compinfo_t * info, int32 length, uint8 *buf)
 {
-    CONSTR(FUNC,"HCIcrle_encode");
-    comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
-    int32 orig_length;      /* original length to write */
-    intn c;                 /* character to hold a byte read in */
+    CONSTR(FUNC, "HCIcrle_encode");
+    comp_coder_rle_info_t *rle_info;	/* ptr to RLE info */
+    int32       orig_length;	/* original length to write */
+    intn        c;		/* character to hold a byte read in */
 
-    rle_info= &(info->cinfo.coder_info.rle_info);
+    rle_info = &(info->cinfo.coder_info.rle_info);
 
-    orig_length=length;     /* save this for later */
-    while(length>0) {   /* encode until we stored all the bytes */
-        switch(rle_info->rle_state) {
-            case RLE_INIT:  /* initial encoding state */
-                rle_info->rle_state=RLE_MIX;    /* shift to MIX state */
-                rle_info->last_byte=rle_info->buffer[0]= *buf;
-                rle_info->buf_length=1;
-                rle_info->buf_pos=1;
-                buf++;
-                length--;
-                break;
+    orig_length = length;	/* save this for later */
+    while (length > 0)
+      {		/* encode until we stored all the bytes */
+	  switch (rle_info->rle_state)
+	    {
+		case RLE_INIT:		/* initial encoding state */
+		    rle_info->rle_state = RLE_MIX;	/* shift to MIX state */
+		    rle_info->last_byte = rle_info->buffer[0] = *buf;
+		    rle_info->buf_length = 1;
+		    rle_info->buf_pos = 1;
+		    buf++;
+		    length--;
+		    break;
 
-            case RLE_RUN:
-                /* check for end of run */
-                if(*buf!=rle_info->last_byte) {
-                    rle_info->rle_state=RLE_MIX;
-                    c=RUN_MASK|(rle_info->buf_length-RLE_MIN_RUN);
-                    if(HDputc((uint8)c,info->aid)==FAIL)
-                        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-                    if(HDputc((uint8)rle_info->last_byte,info->aid)==FAIL)
-                        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-                    rle_info->last_byte=rle_info->buffer[0]= *buf;
-                    rle_info->buf_length=1;
-                    rle_info->buf_pos=1;
-                  } /* end if */
-                else {  /* run is continuing */
-                    rle_info->buf_length++;
-                    if(rle_info->buf_length>=RLE_MAX_RUN) {    /* check for too long */
-                        c=RUN_MASK|(rle_info->buf_length-RLE_MIN_RUN);
-                        if(HDputc((uint8)c,info->aid)==FAIL)
-                            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-                        if(HDputc((uint8)rle_info->last_byte,info->aid)==FAIL)
-                            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-                        rle_info->rle_state=RLE_INIT;
-                        rle_info->second_byte=rle_info->last_byte=(uintn)RLE_NIL;
-                      } /* end if */
-                  } /* end else */
-                buf++;
-                length--;
-                break;
+		case RLE_RUN:
+		    /* check for end of run */
+		    if (*buf != rle_info->last_byte)
+		      {
+			  rle_info->rle_state = RLE_MIX;
+			  c = RUN_MASK | (rle_info->buf_length - RLE_MIN_RUN);
+			  if (HDputc((uint8) c, info->aid) == FAIL)
+			      HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+			  if (HDputc((uint8) rle_info->last_byte, info->aid) == FAIL)
+			      HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+			  rle_info->last_byte = rle_info->buffer[0] = *buf;
+			  rle_info->buf_length = 1;
+			  rle_info->buf_pos = 1;
+		      }		/* end if */
+		    else
+		      {		/* run is continuing */
+			  rle_info->buf_length++;
+			  if (rle_info->buf_length >= RLE_MAX_RUN)
+			    {	/* check for too long */
+				c = RUN_MASK | (rle_info->buf_length - RLE_MIN_RUN);
+				if (HDputc((uint8) c, info->aid) == FAIL)
+				    HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+				if (HDputc((uint8) rle_info->last_byte, info->aid) == FAIL)
+				    HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+				rle_info->rle_state = RLE_INIT;
+				rle_info->second_byte = rle_info->last_byte = (uintn) RLE_NIL;
+			    }	/* end if */
+		      }		/* end else */
+		    buf++;
+		    length--;
+		    break;
 
-            case RLE_MIX:   /* mixed bunch of bytes */
-                /* check for run */
-                if(*buf==rle_info->last_byte && *buf==rle_info->second_byte) {
-                    rle_info->rle_state=RLE_RUN;    /* shift to RUN state */
-                    if(rle_info->buf_length>(RLE_MIN_RUN-1)) {  /* check for mixed data to write */
-                        if(HDputc((uint8)((rle_info->buf_length-RLE_MIN_MIX)-(RLE_MIN_RUN-1)),info->aid)==FAIL)
-                            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-                        if(Hwrite(info->aid,(rle_info->buf_length-(RLE_MIN_RUN-1)),rle_info->buffer)==FAIL)
-                            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-                      } /* end if */
-                    rle_info->buf_length=RLE_MIN_RUN;
-                  } /* end if */
-                else {  /* continue MIX */
-                    rle_info->second_byte=rle_info->last_byte;
-                    rle_info->last_byte=rle_info->buffer[rle_info->buf_pos]= *buf;
-                    rle_info->buf_length++;
-                    rle_info->buf_pos++;
-                    if(rle_info->buf_length>=RLE_BUF_SIZE) {    /* check for too long */
-                        if(HDputc((uint8)(rle_info->buf_length-RLE_MIN_MIX),info->aid)==FAIL)
-                            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-                        if(Hwrite(info->aid,rle_info->buf_length,rle_info->buffer)==FAIL)
-                            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-                        rle_info->rle_state=RLE_INIT;
-                        rle_info->second_byte=rle_info->last_byte=(uintn)RLE_NIL;
-                      } /* end if */
-                  } /* end else */
-                buf++;
-                length--;
-                break;
+		case RLE_MIX:	/* mixed bunch of bytes */
+		    /* check for run */
+		    if (*buf == rle_info->last_byte && *buf == rle_info->second_byte)
+		      {
+			  rle_info->rle_state = RLE_RUN;	/* shift to RUN state */
+			  if (rle_info->buf_length > (RLE_MIN_RUN - 1))
+			    {	/* check for mixed data to write */
+				if (HDputc((uint8) ((rle_info->buf_length - RLE_MIN_MIX) - (RLE_MIN_RUN - 1)), info->aid) == FAIL)
+				    HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+				if (Hwrite(info->aid, (rle_info->buf_length - (RLE_MIN_RUN - 1)), rle_info->buffer) == FAIL)
+				    HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+			    }	/* end if */
+			  rle_info->buf_length = RLE_MIN_RUN;
+		      }		/* end if */
+		    else
+		      {		/* continue MIX */
+			  rle_info->second_byte = rle_info->last_byte;
+			  rle_info->last_byte = rle_info->buffer[rle_info->buf_pos] = *buf;
+			  rle_info->buf_length++;
+			  rle_info->buf_pos++;
+			  if (rle_info->buf_length >= RLE_BUF_SIZE)
+			    {	/* check for too long */
+				if (HDputc((uint8) (rle_info->buf_length - RLE_MIN_MIX), info->aid) == FAIL)
+				    HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+				if (Hwrite(info->aid, rle_info->buf_length, rle_info->buffer) == FAIL)
+				    HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+				rle_info->rle_state = RLE_INIT;
+				rle_info->second_byte = rle_info->last_byte = (uintn) RLE_NIL;
+			    }	/* end if */
+		      }		/* end else */
+		    buf++;
+		    length--;
+		    break;
 
-            default:
-                HRETURN_ERROR(DFE_INTERNAL,FAIL);
-          } /* end switch */
-      } /* end while */
+		default:
+		    HRETURN_ERROR(DFE_INTERNAL, FAIL);
+	    }	/* end switch */
+      }		/* end while */
 
-    rle_info->offset+=orig_length;  /* incr. abs. offset into the file */
-    return(SUCCEED);
-}   /* end HCIcrle_encode() */
+    rle_info->offset += orig_length;	/* incr. abs. offset into the file */
+    return (SUCCEED);
+}	/* end HCIcrle_encode() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -312,38 +330,40 @@ PRIVATE int32 HCIcrle_encode(compinfo_t *info,int32 length,uint8 *buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32 HCIcrle_term(compinfo_t *info)
+PRIVATE int32
+HCIcrle_term(compinfo_t * info)
 {
-    CONSTR(FUNC,"HCIcrle_term");
-    comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
-    intn c;                 /* character to hold a byte read in */
+    CONSTR(FUNC, "HCIcrle_term");
+    comp_coder_rle_info_t *rle_info;	/* ptr to RLE info */
+    intn        c;		/* character to hold a byte read in */
 
-    rle_info= &(info->cinfo.coder_info.rle_info);
+    rle_info = &(info->cinfo.coder_info.rle_info);
 
-    switch(rle_info->rle_state) {
-        case RLE_RUN:
-            c=RUN_MASK|(rle_info->buf_length-RLE_MIN_RUN);
-            if(HDputc((uint8)c,info->aid)==FAIL)
-                HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-            if(HDputc((uint8)rle_info->last_byte,info->aid)==FAIL)
-                HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-            break;
+    switch (rle_info->rle_state)
+      {
+	  case RLE_RUN:
+	      c = RUN_MASK | (rle_info->buf_length - RLE_MIN_RUN);
+	      if (HDputc((uint8) c, info->aid) == FAIL)
+		  HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+	      if (HDputc((uint8) rle_info->last_byte, info->aid) == FAIL)
+		  HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+	      break;
 
-        case RLE_MIX:   /* mixed bunch of bytes */
-            if(HDputc((uint8)((rle_info->buf_length-RLE_MIN_MIX)),info->aid)==FAIL)
-                HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-            if(Hwrite(info->aid,rle_info->buf_length,rle_info->buffer)==FAIL)
-                HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-            break;
+	  case RLE_MIX:	/* mixed bunch of bytes */
+	      if (HDputc((uint8) ((rle_info->buf_length - RLE_MIN_MIX)), info->aid) == FAIL)
+		  HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+	      if (Hwrite(info->aid, rle_info->buf_length, rle_info->buffer) == FAIL)
+		  HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+	      break;
 
-        default:
-            HRETURN_ERROR(DFE_INTERNAL,FAIL);
-      } /* end switch */
-    rle_info->rle_state=RLE_INIT;
-    rle_info->second_byte=rle_info->last_byte=(uintn)RLE_NIL;
+	  default:
+	      HRETURN_ERROR(DFE_INTERNAL, FAIL);
+      }		/* end switch */
+    rle_info->rle_state = RLE_INIT;
+    rle_info->second_byte = rle_info->last_byte = (uintn) RLE_NIL;
 
-    return(SUCCEED);
-}   /* end HCIcrle_term() */
+    return (SUCCEED);
+}	/* end HCIcrle_term() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -365,24 +385,25 @@ PRIVATE int32 HCIcrle_term(compinfo_t *info)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32 HCIcrle_staccess(accrec_t *access_rec, int16 acc_mode)
+PRIVATE int32
+HCIcrle_staccess(accrec_t * access_rec, int16 acc_mode)
 {
-    CONSTR(FUNC,"HCIcrle_staccess");
-    compinfo_t *info;                   /* special element information */
+    CONSTR(FUNC, "HCIcrle_staccess");
+    compinfo_t *info;		/* special element information */
 
-    info=(compinfo_t *)access_rec->special_info;
+    info = (compinfo_t *) access_rec->special_info;
 
-    if(acc_mode==DFACC_READ)
-        info->aid=Hstartread(access_rec->file_id,DFTAG_COMPRESSED,
-                info->comp_ref);
-    else 
-        info->aid=Hstartwrite(access_rec->file_id,DFTAG_COMPRESSED,
-                info->comp_ref,info->length);
+    if (acc_mode == DFACC_READ)
+	info->aid = Hstartread(access_rec->file_id, DFTAG_COMPRESSED,
+			       info->comp_ref);
+    else
+	info->aid = Hstartwrite(access_rec->file_id, DFTAG_COMPRESSED,
+				info->comp_ref, info->length);
 
-    if(info->aid==FAIL)
-        HRETURN_ERROR(DFE_DENIED,FAIL);
-    return(HCIcrle_init(access_rec));   /* initialize the RLE info */
-}   /* end HCIcrle_staccess() */
+    if (info->aid == FAIL)
+	HRETURN_ERROR(DFE_DENIED, FAIL);
+    return (HCIcrle_init(access_rec));	/* initialize the RLE info */
+}	/* end HCIcrle_staccess() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -403,15 +424,16 @@ PRIVATE int32 HCIcrle_staccess(accrec_t *access_rec, int16 acc_mode)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-int32 HCPcrle_stread(accrec_t *access_rec)
+int32
+HCPcrle_stread(accrec_t * access_rec)
 {
-    CONSTR(FUNC,"HCPcrle_stread");
-    int32 ret;
+    CONSTR(FUNC, "HCPcrle_stread");
+    int32       ret;
 
-    if((ret=HCIcrle_staccess(access_rec, DFACC_READ))==FAIL)
-        HRETURN_ERROR(DFE_CINIT,FAIL);
-    return(ret);
-}   /* HCPcrle_stread() */
+    if ((ret = HCIcrle_staccess(access_rec, DFACC_READ)) == FAIL)
+	HRETURN_ERROR(DFE_CINIT, FAIL);
+    return (ret);
+}	/* HCPcrle_stread() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -432,15 +454,16 @@ int32 HCPcrle_stread(accrec_t *access_rec)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-int32 HCPcrle_stwrite(accrec_t *access_rec)
+int32
+HCPcrle_stwrite(accrec_t * access_rec)
 {
-    CONSTR(FUNC,"HCPcrle_stwrite");
-    int32 ret;
+    CONSTR(FUNC, "HCPcrle_stwrite");
+    int32       ret;
 
-    if((ret=HCIcrle_staccess(access_rec, DFACC_WRITE))==FAIL)
-        HRETURN_ERROR(DFE_CINIT,FAIL);
-    return(ret);
-}   /* HCPcrle_stwrite() */
+    if ((ret = HCIcrle_staccess(access_rec, DFACC_WRITE)) == FAIL)
+	HRETURN_ERROR(DFE_CINIT, FAIL);
+    return (ret);
+}	/* HCPcrle_stwrite() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -466,44 +489,48 @@ int32 HCPcrle_stwrite(accrec_t *access_rec)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-int32 HCPcrle_seek(accrec_t *access_rec, int32 offset, int origin)
+int32
+HCPcrle_seek(accrec_t * access_rec, int32 offset, int origin)
 {
-    CONSTR(FUNC,"HCPcrle_seek");
-    compinfo_t *info;                   /* special element information */
-    comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
-    uint8 *tmp_buf;                 /* pointer to throw-away buffer */
+    CONSTR(FUNC, "HCPcrle_seek");
+    compinfo_t *info;		/* special element information */
+    comp_coder_rle_info_t *rle_info;	/* ptr to RLE info */
+    uint8      *tmp_buf;	/* pointer to throw-away buffer */
 
     /* shut compiler up */
-    origin=origin;
+    origin = origin;
 
-    info=(compinfo_t *)access_rec->special_info;
-    rle_info= &(info->cinfo.coder_info.rle_info);
+    info = (compinfo_t *) access_rec->special_info;
+    rle_info = &(info->cinfo.coder_info.rle_info);
 
-    if(offset<rle_info->offset) {    /* need to seek from the beginning */
-        if(access_rec->access==DFACC_WRITE && rle_info->rle_state!=RLE_INIT)
-            if(HCIcrle_term(info)==FAIL)
-                HRETURN_ERROR(DFE_CTERM,FAIL);
-        if(HCIcrle_init(access_rec)==FAIL)
-            HRETURN_ERROR(DFE_CINIT,FAIL);
-      } /* end if */
+    if (offset < rle_info->offset)
+      {		/* need to seek from the beginning */
+	  if (access_rec->access == DFACC_WRITE && rle_info->rle_state != RLE_INIT)
+	      if (HCIcrle_term(info) == FAIL)
+		  HRETURN_ERROR(DFE_CTERM, FAIL);
+	  if (HCIcrle_init(access_rec) == FAIL)
+	      HRETURN_ERROR(DFE_CINIT, FAIL);
+      }		/* end if */
 
-    if((tmp_buf=(uint8 *)HDgetspace(TMP_BUF_SIZE))==NULL)   /* get tmp buffer */
-        HRETURN_ERROR(DFE_NOSPACE,FAIL);
+    if ((tmp_buf = (uint8 *) HDgetspace(TMP_BUF_SIZE)) == NULL)		/* get tmp buffer */
+	HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    while(rle_info->offset+TMP_BUF_SIZE<offset)     /* grab chunks */
-        if(HCIcrle_decode(info,TMP_BUF_SIZE,tmp_buf)==FAIL) {
-            HDfreespace(tmp_buf);
-            HRETURN_ERROR(DFE_CDECODE,FAIL);
-          } /* end if */
-    if(rle_info->offset<offset)             /* grab the last chunk */
-        if(HCIcrle_decode(info,offset-rle_info->offset,tmp_buf)==FAIL) {
-            HDfreespace(tmp_buf);
-            HRETURN_ERROR(DFE_CDECODE,FAIL);
-          } /* end if */
+    while (rle_info->offset + TMP_BUF_SIZE < offset)	/* grab chunks */
+	if (HCIcrle_decode(info, TMP_BUF_SIZE, tmp_buf) == FAIL)
+	  {
+	      HDfreespace(tmp_buf);
+	      HRETURN_ERROR(DFE_CDECODE, FAIL);
+	  }	/* end if */
+    if (rle_info->offset < offset)	/* grab the last chunk */
+	if (HCIcrle_decode(info, offset - rle_info->offset, tmp_buf) == FAIL)
+	  {
+	      HDfreespace(tmp_buf);
+	      HRETURN_ERROR(DFE_CDECODE, FAIL);
+	  }	/* end if */
 
     HDfreespace(tmp_buf);
-    return(SUCCEED);
-}   /* HCPcrle_seek() */
+    return (SUCCEED);
+}	/* HCPcrle_seek() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -526,18 +553,19 @@ int32 HCPcrle_seek(accrec_t *access_rec, int32 offset, int origin)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-int32 HCPcrle_read(accrec_t *access_rec, int32 length, VOIDP data)
+int32
+HCPcrle_read(accrec_t * access_rec, int32 length, VOIDP data)
 {
-    CONSTR(FUNC,"HCPcrle_read");
-    compinfo_t *info;                   /* special element information */
+    CONSTR(FUNC, "HCPcrle_read");
+    compinfo_t *info;		/* special element information */
 
-    info=(compinfo_t *)access_rec->special_info;
+    info = (compinfo_t *) access_rec->special_info;
 
-    if(HCIcrle_decode(info,length,data)==FAIL)
-        HRETURN_ERROR(DFE_CDECODE,FAIL);
+    if (HCIcrle_decode(info, length, data) == FAIL)
+	HRETURN_ERROR(DFE_CDECODE, FAIL);
 
-    return(length);
-}   /* HCPcrle_read() */
+    return (length);
+}	/* HCPcrle_read() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -560,27 +588,28 @@ int32 HCPcrle_read(accrec_t *access_rec, int32 length, VOIDP data)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-int32 HCPcrle_write(accrec_t *access_rec, int32 length, const VOIDP data)
+int32
+HCPcrle_write(accrec_t * access_rec, int32 length, const VOIDP data)
 {
-    CONSTR(FUNC,"HCPcrle_write");
-    compinfo_t *info;               /* special element information */
-    comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
+    CONSTR(FUNC, "HCPcrle_write");
+    compinfo_t *info;		/* special element information */
+    comp_coder_rle_info_t *rle_info;	/* ptr to RLE info */
 
-    info=(compinfo_t *)access_rec->special_info;
-    rle_info= &(info->cinfo.coder_info.rle_info);
+    info = (compinfo_t *) access_rec->special_info;
+    rle_info = &(info->cinfo.coder_info.rle_info);
 
     /* Don't allow random write in a dataset unless: */
     /*  1 - append onto the end */
     /*  2 - start at the beginning and rewrite (at least) the whole dataset */
-    if((info->length!=rle_info->offset)
-            && (rle_info->offset!=0 || length<info->length))
-        HRETURN_ERROR(DFE_UNSUPPORTED,FAIL);
+    if ((info->length != rle_info->offset)
+	&& (rle_info->offset != 0 || length < info->length))
+	HRETURN_ERROR(DFE_UNSUPPORTED, FAIL);
 
-    if(HCIcrle_encode(info,length,data)==FAIL)
-        HRETURN_ERROR(DFE_CENCODE,FAIL);
+    if (HCIcrle_encode(info, length, data) == FAIL)
+	HRETURN_ERROR(DFE_CENCODE, FAIL);
 
-    return(length);
-}   /* HCPcrle_write() */
+    return (length);
+}	/* HCPcrle_write() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -611,16 +640,24 @@ int32 HCPcrle_write(accrec_t *access_rec, int32 length, const VOIDP data)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-int32 HCPcrle_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
-                        uint16 *pref, int32 *plength, int32 *poffset,
-                        int32 *pposn, int16 *paccess, int16 *pspecial)
+int32
+HCPcrle_inquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
+		uint16 *pref, int32 *plength, int32 *poffset,
+		int32 *pposn, int16 *paccess, int16 *pspecial)
 {
     /* shut compiler up */
-    access_rec=access_rec; pfile_id=pfile_id; ptag=ptag; pref=pref; plength=plength;
-    poffset=poffset; pposn=pposn; paccess=paccess; pspecial=pspecial;
+    access_rec = access_rec;
+    pfile_id = pfile_id;
+    ptag = ptag;
+    pref = pref;
+    plength = plength;
+    poffset = poffset;
+    pposn = pposn;
+    paccess = paccess;
+    pspecial = pspecial;
 
-    return(SUCCEED);
-}   /* HCPcrle_inquire() */
+    return (SUCCEED);
+}	/* HCPcrle_inquire() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -641,24 +678,24 @@ int32 HCPcrle_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn HCPcrle_endaccess(accrec_t *access_rec)
+intn
+HCPcrle_endaccess(accrec_t * access_rec)
 {
-    CONSTR(FUNC,"HCPcrle_endaccess");
-    compinfo_t *info;               /* special element information */
-    comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
+    CONSTR(FUNC, "HCPcrle_endaccess");
+    compinfo_t *info;		/* special element information */
+    comp_coder_rle_info_t *rle_info;	/* ptr to RLE info */
 
-    info=(compinfo_t *)access_rec->special_info;
-    rle_info= &(info->cinfo.coder_info.rle_info);
+    info = (compinfo_t *) access_rec->special_info;
+    rle_info = &(info->cinfo.coder_info.rle_info);
 
     /* flush out RLE buffer */
-    if(access_rec->access==DFACC_WRITE && rle_info->rle_state!=RLE_INIT)
-        if(HCIcrle_term(info)==FAIL)
-            HRETURN_ERROR(DFE_CTERM,FAIL);
+    if (access_rec->access == DFACC_WRITE && rle_info->rle_state != RLE_INIT)
+	if (HCIcrle_term(info) == FAIL)
+	    HRETURN_ERROR(DFE_CTERM, FAIL);
 
     /* close the compressed data AID */
-    if(Hendaccess(info->aid)==FAIL)
-	    HRETURN_ERROR(DFE_CANTCLOSE,FAIL);
+    if (Hendaccess(info->aid) == FAIL)
+	HRETURN_ERROR(DFE_CANTCLOSE, FAIL);
 
-    return(SUCCEED);
-}   /* HCPcrle_endaccess() */
-
+    return (SUCCEED);
+}	/* HCPcrle_endaccess() */

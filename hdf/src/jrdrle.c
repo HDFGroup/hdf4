@@ -29,16 +29,14 @@
 
 #include <rle.h>
 
-
 /*
  * load_image assumes that JSAMPLE has the same representation as rle_pixel,
  * to wit, "unsigned char".  Hence we can't cope with 12- or 16-bit samples.
  */
 
 #ifndef EIGHT_BIT_SAMPLES
-  Sorry, this code only copes with 8-bit JSAMPLEs. /* deliberate syntax err */
+Sorry, this code only copes with 8 - bit JSAMPLEs.	/* deliberate syntax err */
 #endif
-
 
 /*
  * We support the following types of RLE files:
@@ -51,7 +49,11 @@
  * For now, we ignore any alpha channel in the image.
  */
 
-typedef enum { GRAYSCALE, PSEUDOCOLOR, TRUECOLOR, DIRECTCOLOR } rle_kind;
+typedef enum
+  {
+      GRAYSCALE, PSEUDOCOLOR, TRUECOLOR, DIRECTCOLOR
+  }
+rle_kind;
 
 static rle_kind visual;		/* actual type of input file */
 
@@ -63,7 +65,7 @@ static rle_kind visual;		/* actual type of input file */
  */
 
 static big_sarray_ptr image;	/* single array for GRAYSCALE/PSEUDOCOLOR */
-static big_sarray_ptr red_channel; /* three arrays for TRUECOLOR/DIRECTCOLOR */
+static big_sarray_ptr red_channel;	/* three arrays for TRUECOLOR/DIRECTCOLOR */
 static big_sarray_ptr green_channel;
 static big_sarray_ptr blue_channel;
 static long cur_row_number;	/* last row# read from virtual array */
@@ -71,96 +73,104 @@ static long cur_row_number;	/* last row# read from virtual array */
 static rle_hdr header;		/* Input file information */
 static rle_map *colormap;	/* RLE colormap, if any */
 
-
 /*
  * Read the file header; return image size and component count.
  */
 
-METHODDEF VOID
-input_init (compress_info_ptr cinfo)
+METHODDEF   VOID
+input_init(compress_info_ptr cinfo)
 {
-  long width, height;
+    long        width, height;
 
-  /* Use RLE library routine to get the header info */
-  header.rle_file = cinfo->input_file;
-  switch (rle_get_setup(&header)) {
-  case RLE_SUCCESS:
-    /* A-OK */
-    break;
-  case RLE_NOT_RLE:
-    ERREXIT(cinfo->emethods, "Not an RLE file");
-    break;
-  case RLE_NO_SPACE:
-    ERREXIT(cinfo->emethods, "Insufficient memory for RLE header");
-    break;
-  case RLE_EMPTY:
-    ERREXIT(cinfo->emethods, "Empty RLE file");
-    break;
-  case RLE_EOF:
-    ERREXIT(cinfo->emethods, "Premature EOF in RLE header");
-    break;
-  default:
-    ERREXIT(cinfo->emethods, "Bogus RLE error code");
-    break;
-  }
+    /* Use RLE library routine to get the header info */
+    header.rle_file = cinfo->input_file;
+    switch (rle_get_setup(&header))
+      {
+	  case RLE_SUCCESS:
+	      /* A-OK */
+	      break;
+	  case RLE_NOT_RLE:
+	      ERREXIT(cinfo->emethods, "Not an RLE file");
+	      break;
+	  case RLE_NO_SPACE:
+	      ERREXIT(cinfo->emethods, "Insufficient memory for RLE header");
+	      break;
+	  case RLE_EMPTY:
+	      ERREXIT(cinfo->emethods, "Empty RLE file");
+	      break;
+	  case RLE_EOF:
+	      ERREXIT(cinfo->emethods, "Premature EOF in RLE header");
+	      break;
+	  default:
+	      ERREXIT(cinfo->emethods, "Bogus RLE error code");
+	      break;
+      }
 
-  /* Figure out what we have, set private vars and return values accordingly */
-  
-  width  = header.xmax - header.xmin + 1;
-  height = header.ymax - header.ymin + 1;
-  header.xmin = 0;		/* realign horizontally */
-  header.xmax = width-1;
+    /* Figure out what we have, set private vars and return values accordingly */
 
-  cinfo->image_width      = width;
-  cinfo->image_height     = height;
-  cinfo->data_precision   = 8;  /* we can only handle 8 bit data */
+    width = header.xmax - header.xmin + 1;
+    height = header.ymax - header.ymin + 1;
+    header.xmin = 0;	/* realign horizontally */
+    header.xmax = width - 1;
 
-  if (header.ncolors == 1 && header.ncmap == 0) {
-    visual     = GRAYSCALE;
-    TRACEMS(cinfo->emethods, 1, "Gray-scale RLE file");
-  } else if (header.ncolors == 1 && header.ncmap == 3) {
-    visual     = PSEUDOCOLOR;
-    colormap   = header.cmap;
-    TRACEMS1(cinfo->emethods, 1, "Colormapped RLE file with map of length %d",
-	     1 << header.cmaplen);
-  } else if (header.ncolors == 3 && header.ncmap == 3) {
-    visual     = TRUECOLOR;
-    colormap   = header.cmap;
-    TRACEMS1(cinfo->emethods, 1, "Full-color RLE file with map of length %d",
-	     1 << header.cmaplen);
-  } else if (header.ncolors == 3 && header.ncmap == 0) {
-    visual     = DIRECTCOLOR;
-    TRACEMS(cinfo->emethods, 1, "Full-color RLE file");
-  } else
-    ERREXIT(cinfo->emethods, "Can't handle this RLE setup");
-  
-  switch (visual) {
-  case GRAYSCALE:
-    /* request one big array to hold the grayscale image */
-    image = (*cinfo->emethods->request_big_sarray) (width, height, 1L);
-    cinfo->in_color_space   = CS_GRAYSCALE;
-    cinfo->input_components = 1;
-    break;
-  case PSEUDOCOLOR:
-    /* request one big array to hold the pseudocolor image */
-    image = (*cinfo->emethods->request_big_sarray) (width, height, 1L);
-    cinfo->in_color_space   = CS_RGB;
-    cinfo->input_components = 3;
-    break;
-  case TRUECOLOR:
-  case DIRECTCOLOR:
-    /* request three big arrays to hold the RGB channels */
-    red_channel   = (*cinfo->emethods->request_big_sarray) (width, height, 1L);
-    green_channel = (*cinfo->emethods->request_big_sarray) (width, height, 1L);
-    blue_channel  = (*cinfo->emethods->request_big_sarray) (width, height, 1L);
-    cinfo->in_color_space   = CS_RGB;
-    cinfo->input_components = 3;
-    break;
-  }
+    cinfo->image_width = width;
+    cinfo->image_height = height;
+    cinfo->data_precision = 8;	/* we can only handle 8 bit data */
 
-  cinfo->total_passes++;	/* count file reading as separate pass */
+    if (header.ncolors == 1 && header.ncmap == 0)
+      {
+	  visual = GRAYSCALE;
+	  TRACEMS(cinfo->emethods, 1, "Gray-scale RLE file");
+      }
+    else if (header.ncolors == 1 && header.ncmap == 3)
+      {
+	  visual = PSEUDOCOLOR;
+	  colormap = header.cmap;
+	  TRACEMS1(cinfo->emethods, 1, "Colormapped RLE file with map of length %d",
+		   1 << header.cmaplen);
+      }
+    else if (header.ncolors == 3 && header.ncmap == 3)
+      {
+	  visual = TRUECOLOR;
+	  colormap = header.cmap;
+	  TRACEMS1(cinfo->emethods, 1, "Full-color RLE file with map of length %d",
+		   1 << header.cmaplen);
+      }
+    else if (header.ncolors == 3 && header.ncmap == 0)
+      {
+	  visual = DIRECTCOLOR;
+	  TRACEMS(cinfo->emethods, 1, "Full-color RLE file");
+      }
+    else
+	ERREXIT(cinfo->emethods, "Can't handle this RLE setup");
+
+    switch (visual)
+      {
+	  case GRAYSCALE:
+	      /* request one big array to hold the grayscale image */
+	      image = (*cinfo->emethods->request_big_sarray) (width, height, 1L);
+	      cinfo->in_color_space = CS_GRAYSCALE;
+	      cinfo->input_components = 1;
+	      break;
+	  case PSEUDOCOLOR:
+	      /* request one big array to hold the pseudocolor image */
+	      image = (*cinfo->emethods->request_big_sarray) (width, height, 1L);
+	      cinfo->in_color_space = CS_RGB;
+	      cinfo->input_components = 3;
+	      break;
+	  case TRUECOLOR:
+	  case DIRECTCOLOR:
+	      /* request three big arrays to hold the RGB channels */
+	      red_channel = (*cinfo->emethods->request_big_sarray) (width, height, 1L);
+	      green_channel = (*cinfo->emethods->request_big_sarray) (width, height, 1L);
+	      blue_channel = (*cinfo->emethods->request_big_sarray) (width, height, 1L);
+	      cinfo->in_color_space = CS_RGB;
+	      cinfo->input_components = 3;
+	      break;
+      }
+
+    cinfo->total_passes++;	/* count file reading as separate pass */
 }
-
 
 /*
  * Read one row of pixels.
@@ -168,95 +178,92 @@ input_init (compress_info_ptr cinfo)
  * the virtual array(s).
  */
 
-
-METHODDEF VOID
-get_grayscale_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
+METHODDEF   VOID
+get_grayscale_row(compress_info_ptr cinfo, JSAMPARRAY pixel_row)
 /* This is used for GRAYSCALE images */
 {
-  JSAMPROW inputrows[1];	/* a pseudo JSAMPARRAY structure */
+    JSAMPROW    inputrows[1];	/* a pseudo JSAMPARRAY structure */
 
-  cur_row_number--;		/* work down in array */
-  
-  inputrows[0] = *((*cinfo->emethods->access_big_sarray)
-			(image, cur_row_number, FALSE));
+    cur_row_number--;	/* work down in array */
 
-  jcopy_sample_rows(inputrows, 0, pixel_row, 0, 1, cinfo->image_width);
+    inputrows[0] = *((*cinfo->emethods->access_big_sarray)
+		     (image, cur_row_number, FALSE));
+
+    jcopy_sample_rows(inputrows, 0, pixel_row, 0, 1, cinfo->image_width);
 }
 
-
-METHODDEF VOID
-get_pseudocolor_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
+METHODDEF   VOID
+get_pseudocolor_row(compress_info_ptr cinfo, JSAMPARRAY pixel_row)
 /* This is used for PSEUDOCOLOR images */
 {
-  long col;
-  JSAMPROW image_ptr, ptr0, ptr1, ptr2;
-  int val;
+    long        col;
+    JSAMPROW    image_ptr, ptr0, ptr1, ptr2;
+    int         val;
 
-  cur_row_number--;		/* work down in array */
-  
-  image_ptr = *((*cinfo->emethods->access_big_sarray)
-		(image, cur_row_number, FALSE));
+    cur_row_number--;	/* work down in array */
 
-  ptr0 = pixel_row[0];
-  ptr1 = pixel_row[1];
-  ptr2 = pixel_row[2];
-  
-  for (col = cinfo->image_width; col > 0; col--) {
-    val = GETJSAMPLE(*image_ptr++);
-    *ptr0++ = colormap[val      ] >> 8;
-    *ptr1++ = colormap[val + 256] >> 8;
-    *ptr2++ = colormap[val + 512] >> 8;
-  }
+    image_ptr = *((*cinfo->emethods->access_big_sarray)
+		  (image, cur_row_number, FALSE));
+
+    ptr0 = pixel_row[0];
+    ptr1 = pixel_row[1];
+    ptr2 = pixel_row[2];
+
+    for (col = cinfo->image_width; col > 0; col--)
+      {
+	  val = GETJSAMPLE(*image_ptr++);
+	  *ptr0++ = colormap[val] >> 8;
+	  *ptr1++ = colormap[val + 256] >> 8;
+	  *ptr2++ = colormap[val + 512] >> 8;
+      }
 }
 
-
-METHODDEF VOID
-get_truecolor_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
+METHODDEF   VOID
+get_truecolor_row(compress_info_ptr cinfo, JSAMPARRAY pixel_row)
 /* This is used for TRUECOLOR images */
 /* The colormap consists of 3 independent lookup tables */
 {
-  long col;
-  JSAMPROW red_ptr, green_ptr, blue_ptr, ptr0, ptr1, ptr2;
-  
-  cur_row_number--;		/* work down in array */
-  
-  red_ptr   = *((*cinfo->emethods->access_big_sarray)
+    long        col;
+    JSAMPROW    red_ptr, green_ptr, blue_ptr, ptr0, ptr1, ptr2;
+
+    cur_row_number--;	/* work down in array */
+
+    red_ptr = *((*cinfo->emethods->access_big_sarray)
 		(red_channel, cur_row_number, FALSE));
-  green_ptr = *((*cinfo->emethods->access_big_sarray)
-		(green_channel, cur_row_number, FALSE));
-  blue_ptr  = *((*cinfo->emethods->access_big_sarray)
-		(blue_channel, cur_row_number, FALSE));
-  
-  ptr0 = pixel_row[0];
-  ptr1 = pixel_row[1];
-  ptr2 = pixel_row[2];
-  
-  for (col = cinfo->image_width; col > 0; col--) {
-    *ptr0++ = colormap[GETJSAMPLE(*red_ptr++)        ] >> 8;
-    *ptr1++ = colormap[GETJSAMPLE(*green_ptr++) + 256] >> 8;
-    *ptr2++ = colormap[GETJSAMPLE(*blue_ptr++)  + 512] >> 8;
-  }
+    green_ptr = *((*cinfo->emethods->access_big_sarray)
+		  (green_channel, cur_row_number, FALSE));
+    blue_ptr = *((*cinfo->emethods->access_big_sarray)
+		 (blue_channel, cur_row_number, FALSE));
+
+    ptr0 = pixel_row[0];
+    ptr1 = pixel_row[1];
+    ptr2 = pixel_row[2];
+
+    for (col = cinfo->image_width; col > 0; col--)
+      {
+	  *ptr0++ = colormap[GETJSAMPLE(*red_ptr++)] >> 8;
+	  *ptr1++ = colormap[GETJSAMPLE(*green_ptr++) + 256] >> 8;
+	  *ptr2++ = colormap[GETJSAMPLE(*blue_ptr++) + 512] >> 8;
+      }
 }
 
-
-METHODDEF VOID
-get_directcolor_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
+METHODDEF   VOID
+get_directcolor_row(compress_info_ptr cinfo, JSAMPARRAY pixel_row)
 /* This is used for DIRECTCOLOR images */
 {
-  JSAMPROW inputrows[3];	/* a pseudo JSAMPARRAY structure */
+    JSAMPROW    inputrows[3];	/* a pseudo JSAMPARRAY structure */
 
-  cur_row_number--;		/* work down in array */
-  
-  inputrows[0] = *((*cinfo->emethods->access_big_sarray)
-			(red_channel, cur_row_number, FALSE));
-  inputrows[1] = *((*cinfo->emethods->access_big_sarray)
-			(green_channel, cur_row_number, FALSE));
-  inputrows[2] = *((*cinfo->emethods->access_big_sarray)
-			(blue_channel, cur_row_number, FALSE));
+    cur_row_number--;	/* work down in array */
 
-  jcopy_sample_rows(inputrows, 0, pixel_row, 0, 3, cinfo->image_width);
+    inputrows[0] = *((*cinfo->emethods->access_big_sarray)
+		     (red_channel, cur_row_number, FALSE));
+    inputrows[1] = *((*cinfo->emethods->access_big_sarray)
+		     (green_channel, cur_row_number, FALSE));
+    inputrows[2] = *((*cinfo->emethods->access_big_sarray)
+		     (blue_channel, cur_row_number, FALSE));
+
+    jcopy_sample_rows(inputrows, 0, pixel_row, 0, 3, cinfo->image_width);
 }
-
 
 /*
  * Load the color channels into separate arrays.  We have to do
@@ -268,84 +275,86 @@ get_directcolor_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
  * subsequent calls go straight to the row-reading routine.
  */
 
-METHODDEF VOID
-load_image (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
+METHODDEF   VOID
+load_image(compress_info_ptr cinfo, JSAMPARRAY pixel_row)
 {
-  long row;
-  rle_pixel *rle_row[3];
-  
-  /* Read the RLE data into our virtual array(s).
-   * We assume here that (a) rle_pixel is represented the same as JSAMPLE,
-   * and (b) we are not on a machine where FAR pointers differ from regular.
-   */
-  RLE_CLR_BIT(header, RLE_ALPHA); /* don't read the alpha channel */
+    long        row;
+    rle_pixel  *rle_row[3];
 
-  switch (visual) {
-  case GRAYSCALE:
-  case PSEUDOCOLOR:
-    for (row = 0; row < cinfo->image_height; row++) {
-      (*cinfo->methods->progress_monitor) (cinfo, row, cinfo->image_height);
-      /*
-       * Read a row of the image directly into our big array.
-       * Too bad this doesn't seem to return any indication of errors :-(.
-       */
-      rle_row[0] = (rle_pixel *) *((*cinfo->emethods->access_big_sarray)
-					(image, row, TRUE));
-      rle_getrow(&header, rle_row);
-    }
-    break;
-  case TRUECOLOR:
-  case DIRECTCOLOR:
-    for (row = 0; row < cinfo->image_height; row++) {
-      (*cinfo->methods->progress_monitor) (cinfo, row, cinfo->image_height);
-      /*
-       * Read a row of the image directly into our big arrays.
-       * Too bad this doesn't seem to return any indication of errors :-(.
-       */
-      rle_row[0] = (rle_pixel *) *((*cinfo->emethods->access_big_sarray)
-					(red_channel, row, TRUE));
-      rle_row[1] = (rle_pixel *) *((*cinfo->emethods->access_big_sarray)
-					(green_channel, row, TRUE));
-      rle_row[2] = (rle_pixel *) *((*cinfo->emethods->access_big_sarray)
-					(blue_channel, row, TRUE));
-      rle_getrow(&header, rle_row);
-    }
-    break;
-  }
-  cinfo->completed_passes++;
-  
-  /* Set up to call proper row-extraction routine in future */
-  switch (visual) {
-  case GRAYSCALE:
-    cinfo->methods->get_input_row = get_grayscale_row;
-    break;
-  case PSEUDOCOLOR:
-    cinfo->methods->get_input_row = get_pseudocolor_row;
-    break;
-  case TRUECOLOR:
-    cinfo->methods->get_input_row = get_truecolor_row;
-    break;
-  case DIRECTCOLOR:
-    cinfo->methods->get_input_row = get_directcolor_row;
-    break;
-  }
+    /* Read the RLE data into our virtual array(s).
+     * We assume here that (a) rle_pixel is represented the same as JSAMPLE,
+     * and (b) we are not on a machine where FAR pointers differ from regular.
+     */
+    RLE_CLR_BIT(header, RLE_ALPHA);	/* don't read the alpha channel */
 
-  /* And fetch the topmost (bottommost) row */
-  cur_row_number = cinfo->image_height;
-  (*cinfo->methods->get_input_row) (cinfo, pixel_row);   
+    switch (visual)
+      {
+	  case GRAYSCALE:
+	  case PSEUDOCOLOR:
+	      for (row = 0; row < cinfo->image_height; row++)
+		{
+		    (*cinfo->methods->progress_monitor) (cinfo, row, cinfo->image_height);
+		    /*
+		     * Read a row of the image directly into our big array.
+		     * Too bad this doesn't seem to return any indication of errors :-(.
+		     */
+		    rle_row[0] = (rle_pixel *) * ((*cinfo->emethods->access_big_sarray)
+						  (image, row, TRUE));
+		    rle_getrow(&header, rle_row);
+		}
+	      break;
+	  case TRUECOLOR:
+	  case DIRECTCOLOR:
+	      for (row = 0; row < cinfo->image_height; row++)
+		{
+		    (*cinfo->methods->progress_monitor) (cinfo, row, cinfo->image_height);
+		    /*
+		     * Read a row of the image directly into our big arrays.
+		     * Too bad this doesn't seem to return any indication of errors :-(.
+		     */
+		    rle_row[0] = (rle_pixel *) * ((*cinfo->emethods->access_big_sarray)
+						  (red_channel, row, TRUE));
+		    rle_row[1] = (rle_pixel *) * ((*cinfo->emethods->access_big_sarray)
+						(green_channel, row, TRUE));
+		    rle_row[2] = (rle_pixel *) * ((*cinfo->emethods->access_big_sarray)
+						  (blue_channel, row, TRUE));
+		    rle_getrow(&header, rle_row);
+		}
+	      break;
+      }
+    cinfo->completed_passes++;
+
+    /* Set up to call proper row-extraction routine in future */
+    switch (visual)
+      {
+	  case GRAYSCALE:
+	      cinfo->methods->get_input_row = get_grayscale_row;
+	      break;
+	  case PSEUDOCOLOR:
+	      cinfo->methods->get_input_row = get_pseudocolor_row;
+	      break;
+	  case TRUECOLOR:
+	      cinfo->methods->get_input_row = get_truecolor_row;
+	      break;
+	  case DIRECTCOLOR:
+	      cinfo->methods->get_input_row = get_directcolor_row;
+	      break;
+      }
+
+    /* And fetch the topmost (bottommost) row */
+    cur_row_number = cinfo->image_height;
+    (*cinfo->methods->get_input_row) (cinfo, pixel_row);
 }
-
 
 /*
  * Finish up at the end of the file.
  */
 
-METHODDEF VOID
-input_term (compress_info_ptr cinfo)
+METHODDEF   VOID
+input_term(compress_info_ptr cinfo)
 {
-  /* no work (we let free_all release the workspace) */
+    /* no work (we let free_all release the workspace) */
 }
-
 
 /*
  * The method selection routine for RLE format input.
@@ -355,12 +364,12 @@ input_term (compress_info_ptr cinfo)
  * calling the appropriate method selection routine.
  */
 
-GLOBAL VOID
-jselrrle (compress_info_ptr cinfo)
+GLOBAL      VOID
+jselrrle(compress_info_ptr cinfo)
 {
-  cinfo->methods->input_init    = input_init;
-  cinfo->methods->get_input_row = load_image; /* until first call */
-  cinfo->methods->input_term    = input_term;
+    cinfo->methods->input_init = input_init;
+    cinfo->methods->get_input_row = load_image;		/* until first call */
+    cinfo->methods->input_term = input_term;
 }
 
 #endif /* RLE_SUPPORTED */

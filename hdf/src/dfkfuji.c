@@ -98,56 +98,61 @@ static char RcsId[] = "@(#)$Revision$";
 #define pi4f_impl 0x00800000
 #define pi4f_sign 0x80000000
 #define pi4f_tiss 0x007fffff
-                                                         
-int DFKpi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
-		   uint32 dest_stride)
+
+int
+DFKpi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+	uint32 dest_stride)
 {
-  int32 i,k, ibs, ibe, ibt;
+    int32       i, k, ibs, ibe, ibt;
 
-  uint8 * source = (uint8*)s;
-  uint8 * dest = (uint8*)d;
-  uint32 *buf;
-  char *FUNC="DFKpi4f";
+    uint8      *source = (uint8 *) s;
+    uint8      *dest = (uint8 *) d;
+    uint32     *buf;
+    char       *FUNC = "DFKpi4f";
 
-  HEclear();
+    HEclear();
 
-  if(num_elm == 0){   /* No elements is an error */
-    HERROR(DFE_BADCONV);
-    return FAIL;
-  }
+    if (num_elm == 0)
+      {		/* No elements is an error */
+	  HERROR(DFE_BADCONV);
+	  return FAIL;
+      }
 
-  if(source_stride == 0 && dest_stride == 0)
-      source_stride = dest_stride = 4;
+    if (source_stride == 0 && dest_stride == 0)
+	source_stride = dest_stride = 4;
 
-  for(i = 0; i < num_elm; i++) {
+    for (i = 0; i < num_elm; i++)
+      {
 
-    buf = (uint32*)source;
-    ibt =   *buf;
-    ibs =   *buf          &  pi4f_sign;
-    ibe  = ( *buf >> 23 )  &  pi4f_last;
+	  buf = (uint32 *) source;
+	  ibt = *buf;
+	  ibs = *buf & pi4f_sign;
+	  ibe = (*buf >> 23) & pi4f_last;
 
-    if( ibe != 0 )  {
-      if( ibe == 255 ) { 
-	ibe = 378;
-	ibt = pi4f_tiss;
-      } 
-      ibe = ibe - 127 + 256 +1;
-      k = ibe%4;
-      ibe = ibe/4;
-      if( k != 0 ) 
-	ibe = ibe + 1;
-      ibe = ibe << 24 ;
-      ibt = (ibt & pi4f_tiss) | pi4f_impl ;
-      if (k != 0)
-	ibt = ( ibt + (1 << (3-k) )  ) >> (4-k);
-    }
+	  if (ibe != 0)
+	    {
+		if (ibe == 255)
+		  {
+		      ibe = 378;
+		      ibt = pi4f_tiss;
+		  }
+		ibe = ibe - 127 + 256 + 1;
+		k = ibe % 4;
+		ibe = ibe / 4;
+		if (k != 0)
+		    ibe = ibe + 1;
+		ibe = ibe << 24;
+		ibt = (ibt & pi4f_tiss) | pi4f_impl;
+		if (k != 0)
+		    ibt = (ibt + (1 << (3 - k))) >> (4 - k);
+	    }
 
-    buf = (uint32*)dest;
-    *buf = ibs | ibe | ibt;                            
-    source += source_stride;
-    dest   += dest_stride;
-  }
-  return 0;
+	  buf = (uint32 *) dest;
+	  *buf = ibs | ibe | ibt;
+	  source += source_stride;
+	  dest += dest_stride;
+      }
+    return 0;
 }
 
 /************************************************************/
@@ -161,58 +166,63 @@ int DFKpi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 #define   po4f_tis   0x00FFFFFF
 #define   po4f_etis  0x007FFFFF
 
-int DFKpo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
-		   uint32 dest_stride)
+int
+DFKpo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+	uint32 dest_stride)
 {
 
-  int32 i, ibs, ibe, ibt, it, k;
+    int32       i, ibs, ibe, ibt, it, k;
 
-  uint8 * source = (uint8*)s;
-  uint8 * dest = (uint8*)d;
-  char *FUNC="DFKpi4f";
-  uint32 *buf;
-  uint8 exp;
+    uint8      *source = (uint8 *) s;
+    uint8      *dest = (uint8 *) d;
+    char       *FUNC = "DFKpi4f";
+    uint32     *buf;
+    uint8       exp;
 
-  HEclear();
+    HEclear();
 
-  if(num_elm == 0 ){		/* No elements is an error */
-    HERROR(DFE_BADCONV);
-    return FAIL;
-  }
+    if (num_elm == 0)
+      {		/* No elements is an error */
+	  HERROR(DFE_BADCONV);
+	  return FAIL;
+      }
 
-  if(source_stride == 0 && dest_stride == 0)
-    source_stride = dest_stride = 4;
+    if (source_stride == 0 && dest_stride == 0)
+	source_stride = dest_stride = 4;
 
-  for(i = 0; i < num_elm; i++) {
+    for (i = 0; i < num_elm; i++)
+      {
 
-    buf = (uint32*)source;
-    ibs = *buf  & po4f_sign;
-    ibe = *buf  & po4f_exp;
-    ibt = *buf  & po4f_tis;
-    it = ibt << 8;
+	  buf = (uint32 *) source;
+	  ibs = *buf & po4f_sign;
+	  ibe = *buf & po4f_exp;
+	  ibt = *buf & po4f_tis;
+	  it = ibt << 8;
 
-    for(k = 0;  (k < 5) && (it >= 0);  k++ ) 
-      it = it << 1;
+	  for (k = 0; (k < 5) && (it >= 0); k++)
+	      it = it << 1;
 
-    if( k < 4 ) {
-      ibt = (it >> 8) & po4f_etis;
-      ibe = (ibe >> 22) - 256 + 127 - k - 1;
-      if( ibe < 0 )
-	ibe = ibt = 0;
-      if( ibe >= 255 ) {
-	ibe = 255;                                                
-	ibt = 0;                                                 
-      }                                                              
-      ibe = ibe << 23;
-    }
+	  if (k < 4)
+	    {
+		ibt = (it >> 8) & po4f_etis;
+		ibe = (ibe >> 22) - 256 + 127 - k - 1;
+		if (ibe < 0)
+		    ibe = ibt = 0;
+		if (ibe >= 255)
+		  {
+		      ibe = 255;
+		      ibt = 0;
+		  }
+		ibe = ibe << 23;
+	    }
 
-    /* put result into dest */
-    buf = (uint32*)dest;
-    *buf = ibs | ibe | ibt;                            
-    source += source_stride;
-    dest   += dest_stride;
-  }
-  return 0;
+	  /* put result into dest */
+	  buf = (uint32 *) dest;
+	  *buf = ibs | ibe | ibt;
+	  source += source_stride;
+	  dest += dest_stride;
+      }
+    return 0;
 
 }
 
@@ -222,90 +232,97 @@ int DFKpo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 /* ie IEEE64->IBM64                                         */
 /************************************************************/
 
-#define pi8f_impl 0x00100000 
+#define pi8f_impl 0x00100000
 #define pi8f_sign 0x80000000
-#define pi8f_maxl 0x00ffffff 
+#define pi8f_maxl 0x00ffffff
 #define pi8f_expn 0x7ff00000
 #define pi8f_tiss 0x000fffff
 #define pi8f_maxr 0xffffffff
 
-int DFKpi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
-		   uint32 dest_stride)
+int
+DFKpi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+	uint32 dest_stride)
 {
-  uint8 * source = (uint8*)s;
-  uint8 * dest   = (uint8*)d;
-  char *FUNC="DFKpi8f"; 
-  int i;
-  int32 ibs,ibe,ibt1,ibt2,isht,k;
-  int32 *buf;
+    uint8      *source = (uint8 *) s;
+    uint8      *dest = (uint8 *) d;
+    char       *FUNC = "DFKpi8f";
+    int         i;
+    int32       ibs, ibe, ibt1, ibt2, isht, k;
+    int32      *buf;
 
-  HEclear();
+    HEclear();
 
-  if(num_elm == 0) {		/* No elements is an error */ 
-    HERROR(DFE_BADCONV);
-    return FAIL;
-  }
-
-  if(source_stride == 0 && dest_stride == 0)
-    source_stride = dest_stride = 8;
-
-  for ( i = 0; i < num_elm ; i++) {
-
-    buf  = (int32*)source;
-    ibs  = *buf & pi8f_sign;
-    ibe  = *buf & pi8f_expn;
-    ibt1 = *buf & pi8f_tiss;
-    ibt2 = *(buf+1);
-
-    if (ibe != 0) {
-
-      ibe = (ibe >> 20) - 1023 + 256 + 1;
-      k = 0;                                                                    
-      if (ibe > 508) k = 2;                                                     
-      if (ibe <   0) k = 1; 
-
-      switch (k) {
-
-      case 1:
-	ibe = ibt1 = ibt2 = 0;
-	break;
-
-      case 2:
-	ibe = 127;
-	ibt1 = pi8f_maxl;
-	ibt2 = pi8f_maxr;
-	break;
-
-      default:
-	isht = ibe % 4 -  1;
-	ibe = ibe >> 2 ; 
-	if ( isht != -1)
-	  ibe += 1;
-	else
-	  isht = 3;
-
-	ibt1 |=  pi8f_impl;
-	if (isht != 0 ) {
-	  ibt1 = ( ibt1 << isht ) |  (ibt2 >> 32-isht);
-	  ibt2 = ibt2 << isht;
-	}
-	break;
+    if (num_elm == 0)
+      {		/* No elements is an error */
+	  HERROR(DFE_BADCONV);
+	  return FAIL;
       }
-      ibe = ibe << 24;
 
-    } /* ibe != 0 */
+    if (source_stride == 0 && dest_stride == 0)
+	source_stride = dest_stride = 8;
 
-    /* put number into destination array */
-    buf  = (int32*)dest;
-    *buf = ibs | ibe | ibt1;
-    *(buf+1) = ibt2;
+    for (i = 0; i < num_elm; i++)
+      {
 
-    source += source_stride;
-    dest   += dest_stride;
-  }
-  return 0;
+	  buf = (int32 *) source;
+	  ibs = *buf & pi8f_sign;
+	  ibe = *buf & pi8f_expn;
+	  ibt1 = *buf & pi8f_tiss;
+	  ibt2 = *(buf + 1);
+
+	  if (ibe != 0)
+	    {
+
+		ibe = (ibe >> 20) - 1023 + 256 + 1;
+		k = 0;
+		if (ibe > 508)
+		    k = 2;
+		if (ibe < 0)
+		    k = 1;
+
+		switch (k)
+		  {
+
+		      case 1:
+			  ibe = ibt1 = ibt2 = 0;
+			  break;
+
+		      case 2:
+			  ibe = 127;
+			  ibt1 = pi8f_maxl;
+			  ibt2 = pi8f_maxr;
+			  break;
+
+		      default:
+			  isht = ibe % 4 - 1;
+			  ibe = ibe >> 2;
+			  if (isht != -1)
+			      ibe += 1;
+			  else
+			      isht = 3;
+
+			  ibt1 |= pi8f_impl;
+			  if (isht != 0)
+			    {
+				ibt1 = (ibt1 << isht) | (ibt2 >> 32 - isht);
+				ibt2 = ibt2 << isht;
+			    }
+			  break;
+		  }
+		ibe = ibe << 24;
+
+	    }	/* ibe != 0 */
+
+	  /* put number into destination array */
+	  buf = (int32 *) dest;
+	  *buf = ibs | ibe | ibt1;
+	  *(buf + 1) = ibt2;
+
+	  source += source_stride;
+	  dest += dest_stride;
+      }
+    return 0;
 }
-
 
 /************************************************************/
 /* DFKpo8f()                                                */
@@ -314,97 +331,125 @@ int DFKpi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 /************************************************************/
 #define  po8f_exp   0x7f000000
 #define  po8f_sign  0x80000000
-#define  po8f_tiss  0x00FFFFFF 
-#define  po8f_nrm   0x00f00000 
-static int32 take[4] = {0x007fffff, 0x003fffff, 0x001fffff, 0x000fffff};
-static int32 look[4] = {0x00800000, 0x00400000, 0x00200000, 0x00100000};
-int DFKpo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
-		   uint32 dest_stride)
+#define  po8f_tiss  0x00FFFFFF
+#define  po8f_nrm   0x00f00000
+static int32 take[4] =
+{0x007fffff, 0x003fffff, 0x001fffff, 0x000fffff};
+static int32 look[4] =
+{0x00800000, 0x00400000, 0x00200000, 0x00100000};
+int
+DFKpo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+	uint32 dest_stride)
 {
-  uint8 * source = (uint8*)s;
-  uint8 * dest = (uint8*)d;
-  int32 ibs, ibe, ibt1, ibt2, it, isht;
-  int i,k;
-  int32 *buf;
-  double *tmp;
-  char *FUNC="DFKpo8f";
-  union {
-    struct { 
-      int long i1;
-      int long i2;
-    } sti;
-    struct { 
-      double r;
-    } str;
-  } un;
+    uint8      *source = (uint8 *) s;
+    uint8      *dest = (uint8 *) d;
+    int32       ibs, ibe, ibt1, ibt2, it, isht;
+    int         i, k;
+    int32      *buf;
+    double     *tmp;
+    char       *FUNC = "DFKpo8f";
+    union
+      {
+	  struct
+	    {
+		int long    i1;
+		int long    i2;
+	    }
+	  sti;
+	  struct
+	    {
+		double      r;
+	    }
+	  str;
+      }
+    un;
 
-  HEclear();
+    HEclear();
 
-  if(num_elm == 0){		/* No elements is an error */
-    HERROR(DFE_BADCONV);
-    return FAIL;
-  }
-
-  if(source_stride == 0 && dest_stride == 0)
-    source_stride = dest_stride = 8;
-
-  for (i = 0; i < num_elm; i++) {
-
-    buf = (int32*)source;
-    ibs  = *buf & po8f_sign;
-    ibe  = *buf & po8f_exp;
-    ibt1 = *buf & po8f_tiss;
-    ibt2 = *(buf+1);
-
-    if  ( (ibt1 == 0) && (ibt2 == 0) )                                          
-      ibe = 0 ;                                                                
-    else {
-
-      if ( (ibe != 0) && ( (ibt1 & po8f_nrm) == 0 ) ) {
-	un.sti.i1 = *buf;
-	un.sti.i2 = *(buf+1) ;
-	un.str.r  = un.str.r + 0e0 ;
-	ibe  = un.sti.i1 & po8f_exp ;
-	ibt1 = un.sti.i1 & po8f_tiss ;
-	ibt2 = un.sti.i2 ;
+    if (num_elm == 0)
+      {		/* No elements is an error */
+	  HERROR(DFE_BADCONV);
+	  return FAIL;
       }
 
-      if      ((ibt1 & look[0]) != 0 )
-	{ k = 3 ; ibt1 =  ibt1 & take[0] ; }
-      else if ((ibt1 & look[1]) != 0 )
-	{ k = 2 ; ibt1 =  ibt1 & take[1] ; }
-      else if ((ibt1 & look[2]) != 0 )
-	{ k = 1 ; ibt1 =  ibt1 & take[2] ; }
-      else if ((ibt1 & look[3]) != 0 )
-	{ k = 0 ;  ibt1 =  ibt1 & take[3] ; }
-      else k = 4;
+    if (source_stride == 0 && dest_stride == 0)
+	source_stride = dest_stride = 8;
 
-      /* mantissa */
-      if  (k < 4) {
-	if (k != 0) {
-	  /* shift with rounding */
-	    it   = (ibt2 & 65535) + (1 << (k-1)) ;
-	    ibt2 = ( (ibt2 >> 16) & 65535 )  +  (it >> 16) ;
-	    ibt1 = ibt1 + (ibt2 >> 16) ;
-	    /* rounded */
-	    ibt2 = ( (ibt2 & 65535) << (16-k) ) | ( (it & 65535) >> k) ;
-	    it   = ibt1 << (32 - k) ;
-	    ibt1 = ibt1 >> k ;
-	    ibt2 = ibt2 | it;
-	  }                                                                      
+    for (i = 0; i < num_elm; i++)
+      {
 
-	/*  exponent */                                                       
-	ibe = ( (ibe >> 22)  - 256 + 1023 + k - 4 ) << 20 ;                    
-      } 
-    }
-    /* put number into destination array */
-    buf = (int32*)dest;
-    *buf     = ibs | ibe | ibt1;
-    *(buf+1) = ibt2;
-    source += source_stride;
-    dest   += dest_stride;
-  }
-  return 0;
+	  buf = (int32 *) source;
+	  ibs = *buf & po8f_sign;
+	  ibe = *buf & po8f_exp;
+	  ibt1 = *buf & po8f_tiss;
+	  ibt2 = *(buf + 1);
+
+	  if ((ibt1 == 0) && (ibt2 == 0))
+	      ibe = 0;
+	  else
+	    {
+
+		if ((ibe != 0) && ((ibt1 & po8f_nrm) == 0))
+		  {
+		      un.sti.i1 = *buf;
+		      un.sti.i2 = *(buf + 1);
+		      un.str.r = un.str.r + 0e0;
+		      ibe = un.sti.i1 & po8f_exp;
+		      ibt1 = un.sti.i1 & po8f_tiss;
+		      ibt2 = un.sti.i2;
+		  }
+
+		if ((ibt1 & look[0]) != 0)
+		  {
+		      k = 3;
+		      ibt1 = ibt1 & take[0];
+		  }
+		else if ((ibt1 & look[1]) != 0)
+		  {
+		      k = 2;
+		      ibt1 = ibt1 & take[1];
+		  }
+		else if ((ibt1 & look[2]) != 0)
+		  {
+		      k = 1;
+		      ibt1 = ibt1 & take[2];
+		  }
+		else if ((ibt1 & look[3]) != 0)
+		  {
+		      k = 0;
+		      ibt1 = ibt1 & take[3];
+		  }
+		else
+		    k = 4;
+
+		/* mantissa */
+		if (k < 4)
+		  {
+		      if (k != 0)
+			{
+			    /* shift with rounding */
+			    it = (ibt2 & 65535) + (1 << (k - 1));
+			    ibt2 = ((ibt2 >> 16) & 65535) + (it >> 16);
+			    ibt1 = ibt1 + (ibt2 >> 16);
+			    /* rounded */
+			    ibt2 = ((ibt2 & 65535) << (16 - k)) | ((it & 65535) >> k);
+			    it = ibt1 << (32 - k);
+			    ibt1 = ibt1 >> k;
+			    ibt2 = ibt2 | it;
+			}
+
+		      /*  exponent */
+		      ibe = ((ibe >> 22) - 256 + 1023 + k - 4) << 20;
+		  }
+	    }
+	  /* put number into destination array */
+	  buf = (int32 *) dest;
+	  *buf = ibs | ibe | ibt1;
+	  *(buf + 1) = ibt2;
+	  source += source_stride;
+	  dest += dest_stride;
+      }
+    return 0;
 }
 
 /************************************************************/
@@ -421,63 +466,68 @@ int DFKpo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 #define LPI4F_MASKB 0x00ff00ff
 #define LPI4F_MASKC 0xffff0000
 #define LPI4F_MASKD 0x0000ffff
-                                                         
-int DFKlpi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
-		   uint32 dest_stride)
+
+int
+DFKlpi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+	 uint32 dest_stride)
 {
-    int32 i,k, ibs, ibe, ibt;
-    uint8 * source = (uint8*)s;
-    uint8 * dest = (uint8*)d;
-    uint32 *buf;
-    uint32 temp;
-    char *FUNC="DFKpi4f";
+    int32       i, k, ibs, ibe, ibt;
+    uint8      *source = (uint8 *) s;
+    uint8      *dest = (uint8 *) d;
+    uint32     *buf;
+    uint32      temp;
+    char       *FUNC = "DFKpi4f";
 
     HEclear();
 
-    if(num_elm == 0){   /* No elements is an error */
-        HERROR(DFE_BADCONV);
-        return FAIL;
-    }
+    if (num_elm == 0)
+      {		/* No elements is an error */
+	  HERROR(DFE_BADCONV);
+	  return FAIL;
+      }
 
-    if(source_stride == 0 && dest_stride == 0)
-        source_stride = dest_stride = 4;
+    if (source_stride == 0 && dest_stride == 0)
+	source_stride = dest_stride = 4;
 
-    for(i = 0; i < num_elm; i++) {
+    for (i = 0; i < num_elm; i++)
+      {
 
 #ifdef OLD_WAY
-        buf = (uint32*)source;
+	  buf = (uint32 *) source;
 #else
-        buf = (uint32*)source;
-        temp = ((*buf & LPI4F_MASKA)>>8) | ((*buf & LPI4F_MASKB)<<8);
-        temp = ((temp & LPI4F_MASKC)>>16) | ((temp & LPI4F_MASKD)<<16);
+	  buf = (uint32 *) source;
+	  temp = ((*buf & LPI4F_MASKA) >> 8) | ((*buf & LPI4F_MASKB) << 8);
+	  temp = ((temp & LPI4F_MASKC) >> 16) | ((temp & LPI4F_MASKD) << 16);
 #endif
 
-        ibt =   temp;
-        ibs =   temp          &  lpi4f_sign;
-        ibe  = ( temp >> 23 )  &  lpi4f_last;
+	  ibt = temp;
+	  ibs = temp & lpi4f_sign;
+	  ibe = (temp >> 23) & lpi4f_last;
 
-        if( ibe != 0 )  {
-            if( ibe == 255 ) {
-                ibe = 378;
-                ibt = lpi4f_tiss;
-              } /* end if */
-            ibe = ibe - 127 + 256 +1;
-            k = ibe%4;
-            ibe = ibe/4;
-            if( k != 0 )
-                ibe = ibe + 1;
-            ibe = ibe << 24 ;
-            ibt = (ibt & lpi4f_tiss) | lpi4f_impl ;
-            if (k != 0)
-                ibt = ( ibt + (1 << (3-k) )  ) >> (4-k);
-          } /* end if */
+	  if (ibe != 0)
+	    {
+		if (ibe == 255)
+		  {
+		      ibe = 378;
+		      ibt = lpi4f_tiss;
+		  }	/* end if */
+		ibe = ibe - 127 + 256 + 1;
+		k = ibe % 4;
+		ibe = ibe / 4;
+		if (k != 0)
+		    ibe = ibe + 1;
+		ibe = ibe << 24;
+		ibt = (ibt & lpi4f_tiss) | lpi4f_impl;
+		if (k != 0)
+		    ibt = (ibt + (1 << (3 - k))) >> (4 - k);
+	    }	/* end if */
 
-        buf = (uint32*)dest;
-        *buf = ibs | ibe | ibt;
-        source += source_stride;
-        dest   += dest_stride;
-      } /* end for */
-  return 0;
+	  buf = (uint32 *) dest;
+	  *buf = ibs | ibe | ibt;
+	  source += source_stride;
+	  dest += dest_stride;
+      }		/* end for */
+    return 0;
 }
 
 /************************************************************/
@@ -495,64 +545,69 @@ int DFKlpi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 #define LPO4F_MASKC 0xffff0000
 #define LPO4F_MASKD 0x0000ffff
 
-int DFKlpo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
-		   uint32 dest_stride)
+int
+DFKlpo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+	 uint32 dest_stride)
 {
-    int32 i, ibs, ibe, ibt, it, k;
-    uint8 * source = (uint8*)s;
-    uint8 * dest = (uint8*)d;
-    char *FUNC="DFKpi4f";
-    uint32 *buf;
-    uint32 temp;
-    uint8 exp;
+    int32       i, ibs, ibe, ibt, it, k;
+    uint8      *source = (uint8 *) s;
+    uint8      *dest = (uint8 *) d;
+    char       *FUNC = "DFKpi4f";
+    uint32     *buf;
+    uint32      temp;
+    uint8       exp;
 
     HEclear();
 
-    if(num_elm == 0 ){        /* No elements is an error */
-        HERROR(DFE_BADCONV);
-        return FAIL;
-      } /* end if */
+    if (num_elm == 0)
+      {		/* No elements is an error */
+	  HERROR(DFE_BADCONV);
+	  return FAIL;
+      }		/* end if */
 
-    if(source_stride == 0 && dest_stride == 0)
-        source_stride = dest_stride = 4;
+    if (source_stride == 0 && dest_stride == 0)
+	source_stride = dest_stride = 4;
 
-    for(i = 0; i < num_elm; i++) {
+    for (i = 0; i < num_elm; i++)
+      {
 
-        buf = (uint32*)source;
-        ibs = *buf  & lpo4f_sign;
-        ibe = *buf  & lpo4f_exp;
-        ibt = *buf  & lpo4f_tis;
-        it = ibt << 8;
+	  buf = (uint32 *) source;
+	  ibs = *buf & lpo4f_sign;
+	  ibe = *buf & lpo4f_exp;
+	  ibt = *buf & lpo4f_tis;
+	  it = ibt << 8;
 
-        for(k = 0;  (k < 5) && (it >= 0);  k++ )
-            it = it << 1;
+	  for (k = 0; (k < 5) && (it >= 0); k++)
+	      it = it << 1;
 
-        if( k < 4 ) {
-            ibt = (it >> 8) & lpo4f_etis;
-            ibe = (ibe >> 22) - 256 + 127 - k - 1;
-            if( ibe < 0 )
-                ibe = ibt = 0;
-            if( ibe >= 255 ) {
-                ibe = 255;
-                ibt = 0;
-              } /* end if */
-            ibe = ibe << 23;
-          } /* end if */
+	  if (k < 4)
+	    {
+		ibt = (it >> 8) & lpo4f_etis;
+		ibe = (ibe >> 22) - 256 + 127 - k - 1;
+		if (ibe < 0)
+		    ibe = ibt = 0;
+		if (ibe >= 255)
+		  {
+		      ibe = 255;
+		      ibt = 0;
+		  }	/* end if */
+		ibe = ibe << 23;
+	    }	/* end if */
 
-        /* put result into dest */
-        buf = (uint32*)dest;
+	  /* put result into dest */
+	  buf = (uint32 *) dest;
 #ifdef OLD_WAY
-        *buf = ibs | ibe | ibt;
+	  *buf = ibs | ibe | ibt;
 #else
-        temp = ibs | ibe | ibt;
-        temp = ((temp & LPO4F_MASKA)>>8) | ((temp & LPO4F_MASKB)<<8);
-        temp = ((temp & LPO4F_MASKC)>>16) | ((temp & LPO4F_MASKD)<<16);
-        *buf = temp;
+	  temp = ibs | ibe | ibt;
+	  temp = ((temp & LPO4F_MASKA) >> 8) | ((temp & LPO4F_MASKB) << 8);
+	  temp = ((temp & LPO4F_MASKC) >> 16) | ((temp & LPO4F_MASKD) << 16);
+	  *buf = temp;
 #endif
-        source += source_stride;
-        dest   += dest_stride;
-      } /* end for */
-  return 0;
+	  source += source_stride;
+	  dest += dest_stride;
+      }		/* end for */
+    return 0;
 }
 
 /************************************************************/
@@ -572,97 +627,102 @@ int DFKlpo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 #define LPI8F_MASKC 0xffff0000
 #define LPI8F_MASKD 0x0000ffff
 
-int DFKlpi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
-		   uint32 dest_stride)
+int
+DFKlpi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+	 uint32 dest_stride)
 {
-    uint8 * source = (uint8*)s;
-    uint8 * dest   = (uint8*)d;
-    char *FUNC="DFKpi8f";
-    intn i;
-    int32 ibs,ibe,ibt1,ibt2,isht,k;
-    uint32 *buf;
-    uint32 temp;
+    uint8      *source = (uint8 *) s;
+    uint8      *dest = (uint8 *) d;
+    char       *FUNC = "DFKpi8f";
+    intn        i;
+    int32       ibs, ibe, ibt1, ibt2, isht, k;
+    uint32     *buf;
+    uint32      temp;
 
     HEclear();
 
-    if(num_elm == 0) {        /* No elements is an error */
-        HERROR(DFE_BADCONV);
-        return FAIL;
-      } /* end if */
+    if (num_elm == 0)
+      {		/* No elements is an error */
+	  HERROR(DFE_BADCONV);
+	  return FAIL;
+      }		/* end if */
 
-    if(source_stride == 0 && dest_stride == 0)
-        source_stride = dest_stride = 8;
+    if (source_stride == 0 && dest_stride == 0)
+	source_stride = dest_stride = 8;
 
-    for ( i = 0; i < num_elm ; i++) {
+    for (i = 0; i < num_elm; i++)
+      {
 #ifdef OLD_WAY
-        buf  = (int32*)source;
-        ibs  = *buf & lpi8f_sign;
-        ibe  = *buf & lpi8f_expn;
-        ibt1 = *buf & lpi8f_tiss;
-        ibt2 = *(buf+1);
+	  buf = (int32 *) source;
+	  ibs = *buf & lpi8f_sign;
+	  ibe = *buf & lpi8f_expn;
+	  ibt1 = *buf & lpi8f_tiss;
+	  ibt2 = *(buf + 1);
 #else
-        buf  = (uint32*)source; /* be careful of 32-bit word swapping below */
-        temp = ((*(buf+1) & LPI8F_MASKA)>>8) | ((*(buf+1) & LPI8F_MASKB)<<8);
-        temp = ((temp & LPI8F_MASKC)>>16) | ((temp & LPI8F_MASKD)<<16);
-        ibs  = temp & lpi8f_sign;
-        ibe  = temp & lpi8f_expn;
-        ibt1 = temp & lpi8f_tiss;
+	  buf = (uint32 *) source;	/* be careful of 32-bit word swapping below */
+	  temp = ((*(buf + 1) & LPI8F_MASKA) >> 8) | ((*(buf + 1) & LPI8F_MASKB) << 8);
+	  temp = ((temp & LPI8F_MASKC) >> 16) | ((temp & LPI8F_MASKD) << 16);
+	  ibs = temp & lpi8f_sign;
+	  ibe = temp & lpi8f_expn;
+	  ibt1 = temp & lpi8f_tiss;
 
-        temp = ((*buf & LPI8F_MASKA)>>8) | ((*buf & LPI8F_MASKB)<<8);
-        temp = ((temp & LPI8F_MASKC)>>16) | ((temp & LPI8F_MASKD)<<16);
-        ibt2 = temp;
+	  temp = ((*buf & LPI8F_MASKA) >> 8) | ((*buf & LPI8F_MASKB) << 8);
+	  temp = ((temp & LPI8F_MASKC) >> 16) | ((temp & LPI8F_MASKD) << 16);
+	  ibt2 = temp;
 #endif
 
-        if (ibe != 0) {
+	  if (ibe != 0)
+	    {
 
-            ibe = (ibe >> 20) - 1023 + 256 + 1;
-            k = 0;
-            if (ibe > 508)
-                k = 2;
-            if (ibe <   0)
-                k = 1;
+		ibe = (ibe >> 20) - 1023 + 256 + 1;
+		k = 0;
+		if (ibe > 508)
+		    k = 2;
+		if (ibe < 0)
+		    k = 1;
 
-            switch (k) {
+		switch (k)
+		  {
 
-                case 1:
-                    ibe = ibt1 = ibt2 = 0;
-                    break;
+		      case 1:
+			  ibe = ibt1 = ibt2 = 0;
+			  break;
 
-                case 2:
-                    ibe = 127;
-                    ibt1 = lpi8f_maxl;
-                    ibt2 = lpi8f_maxr;
-                    break;
+		      case 2:
+			  ibe = 127;
+			  ibt1 = lpi8f_maxl;
+			  ibt2 = lpi8f_maxr;
+			  break;
 
-                default:
-                    isht = ibe % 4 -  1;
-                    ibe = ibe >> 2 ;
-                    if ( isht != -1)
-                        ibe += 1;
-                    else
-                        isht = 3;
+		      default:
+			  isht = ibe % 4 - 1;
+			  ibe = ibe >> 2;
+			  if (isht != -1)
+			      ibe += 1;
+			  else
+			      isht = 3;
 
-                    ibt1 |=  lpi8f_impl;
-                    if (isht != 0 ) {
-                        ibt1 = ( ibt1 << isht ) |  (ibt2 >> 32-isht);
-                        ibt2 = ibt2 << isht;
-                      } /* end if */
-                    break;
-              } /* end switch */
-            ibe = ibe << 24;
-          } /* ibe != 0 */
+			  ibt1 |= lpi8f_impl;
+			  if (isht != 0)
+			    {
+				ibt1 = (ibt1 << isht) | (ibt2 >> 32 - isht);
+				ibt2 = ibt2 << isht;
+			    }	/* end if */
+			  break;
+		  }	/* end switch */
+		ibe = ibe << 24;
+	    }	/* ibe != 0 */
 
-        /* put number into destination array */
-        buf  = (uint32*)dest;
-        *buf = ibs | ibe | ibt1;
-        *(buf+1) = ibt2;
+	  /* put number into destination array */
+	  buf = (uint32 *) dest;
+	  *buf = ibs | ibe | ibt1;
+	  *(buf + 1) = ibt2;
 
-        source += source_stride;
-        dest   += dest_stride;
-      } /* end for */
+	  source += source_stride;
+	  dest += dest_stride;
+      }		/* end for */
     return 0;
 }
-
 
 /************************************************************/
 /* DFKlpo8f()                                               */
@@ -678,121 +738,140 @@ int DFKlpi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 #define LPO8F_MASKB 0x00ff00ff
 #define LPO8F_MASKC 0xffff0000
 #define LPO8F_MASKD 0x0000ffff
- 
-static int32 ltake[4] = {0x007fffff, 0x003fffff, 0x001fffff, 0x000fffff};
-static int32 llook[4] = {0x00800000, 0x00400000, 0x00200000, 0x00100000};
 
-int DFKlpo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
-		   uint32 dest_stride)
+static int32 ltake[4] =
+{0x007fffff, 0x003fffff, 0x001fffff, 0x000fffff};
+static int32 llook[4] =
+{0x00800000, 0x00400000, 0x00200000, 0x00100000};
+
+int
+DFKlpo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+	 uint32 dest_stride)
 {
-    uint8 * source = (uint8*)s;
-    uint8 * dest = (uint8*)d;
-    int32 ibs, ibe, ibt1, ibt2, it, isht;
-    int i,k;
-    int32 *buf;
-    uint32 temp;
-    double *tmp;
-    char *FUNC="DFKpo8f";
-    union {
-        struct {
-          int long i1;
-          int long i2;
-        } sti;
-        struct {
-          double r;
-        } str;
-    } un;
+    uint8      *source = (uint8 *) s;
+    uint8      *dest = (uint8 *) d;
+    int32       ibs, ibe, ibt1, ibt2, it, isht;
+    int         i, k;
+    int32      *buf;
+    uint32      temp;
+    double     *tmp;
+    char       *FUNC = "DFKpo8f";
+    union
+      {
+	  struct
+	    {
+		int long    i1;
+		int long    i2;
+	    }
+	  sti;
+	  struct
+	    {
+		double      r;
+	    }
+	  str;
+      }
+    un;
 
     HEclear();
 
-    if(num_elm == 0) {     /* No elements is an error */
-        HERROR(DFE_BADCONV);
-        return FAIL;
-    }
+    if (num_elm == 0)
+      {		/* No elements is an error */
+	  HERROR(DFE_BADCONV);
+	  return FAIL;
+      }
 
-    if(source_stride == 0 && dest_stride == 0)
-        source_stride = dest_stride = 8;
+    if (source_stride == 0 && dest_stride == 0)
+	source_stride = dest_stride = 8;
 
-    for (i = 0; i < num_elm; i++) {
+    for (i = 0; i < num_elm; i++)
+      {
 
-        buf = (int32*)source;
-        ibs  = *buf & lpo8f_sign;
-        ibe  = *buf & lpo8f_exp;
-        ibt1 = *buf & lpo8f_tiss;
-        ibt2 = *(buf+1);
+	  buf = (int32 *) source;
+	  ibs = *buf & lpo8f_sign;
+	  ibe = *buf & lpo8f_exp;
+	  ibt1 = *buf & lpo8f_tiss;
+	  ibt2 = *(buf + 1);
 
-        if  ( (ibt1 == 0) && (ibt2 == 0) )
-            ibe = 0 ;
-        else {
+	  if ((ibt1 == 0) && (ibt2 == 0))
+	      ibe = 0;
+	  else
+	    {
 
-            if ( (ibe != 0) && ( (ibt1 & lpo8f_nrm) == 0 ) ) {
-                un.sti.i1 = *buf;
-                un.sti.i2 = *(buf+1) ;
-                un.str.r  = un.str.r + 0e0 ;
-                ibe  = un.sti.i1 & lpo8f_exp ;
-                ibt1 = un.sti.i1 & lpo8f_tiss ;
-                ibt2 = un.sti.i2 ;
-              } /* end if */
+		if ((ibe != 0) && ((ibt1 & lpo8f_nrm) == 0))
+		  {
+		      un.sti.i1 = *buf;
+		      un.sti.i2 = *(buf + 1);
+		      un.str.r = un.str.r + 0e0;
+		      ibe = un.sti.i1 & lpo8f_exp;
+		      ibt1 = un.sti.i1 & lpo8f_tiss;
+		      ibt2 = un.sti.i2;
+		  }	/* end if */
 
-            if((ibt1 & llook[0]) != 0 ) {
-                k = 3 ;
-                ibt1 =  ibt1 & ltake[0] ;
-              } /* end if */
-            else if((ibt1 & llook[1]) != 0 ) {
-                k = 2 ;
-                ibt1 =  ibt1 & ltake[1] ;
-              } /* end if */
-            else if((ibt1 & llook[2]) != 0 ) {
-                k = 1 ;
-                ibt1 =  ibt1 & ltake[2] ;
-              } /* end if */
-            else if((ibt1 & llook[3]) != 0 ) {
-                k = 0 ;
-                ibt1 =  ibt1 & ltake[3] ;
-              } /* end if */
-            else
-                k = 4;
+		if ((ibt1 & llook[0]) != 0)
+		  {
+		      k = 3;
+		      ibt1 = ibt1 & ltake[0];
+		  }	/* end if */
+		else if ((ibt1 & llook[1]) != 0)
+		  {
+		      k = 2;
+		      ibt1 = ibt1 & ltake[1];
+		  }	/* end if */
+		else if ((ibt1 & llook[2]) != 0)
+		  {
+		      k = 1;
+		      ibt1 = ibt1 & ltake[2];
+		  }	/* end if */
+		else if ((ibt1 & llook[3]) != 0)
+		  {
+		      k = 0;
+		      ibt1 = ibt1 & ltake[3];
+		  }	/* end if */
+		else
+		    k = 4;
 
-            /* mantissa */
-            if  (k < 4) {
-                if (k != 0) {   /* shift with rounding */
-                    it   = (ibt2 & 65535) + (1 << (k-1)) ;
-                    ibt2 = ( (ibt2 >> 16) & 65535 )  +  (it >> 16) ;
-                    ibt1 = ibt1 + (ibt2 >> 16) ;
-                    /* rounded */
-                    ibt2 = ( (ibt2 & 65535) << (16-k) ) | ( (it & 65535) >> k) ;
-                    it   = ibt1 << (32 - k) ;
-                    ibt1 = ibt1 >> k ;
-                    ibt2 = ibt2 | it;
-                  } /* end if */
+		/* mantissa */
+		if (k < 4)
+		  {
+		      if (k != 0)
+			{	/* shift with rounding */
+			    it = (ibt2 & 65535) + (1 << (k - 1));
+			    ibt2 = ((ibt2 >> 16) & 65535) + (it >> 16);
+			    ibt1 = ibt1 + (ibt2 >> 16);
+			    /* rounded */
+			    ibt2 = ((ibt2 & 65535) << (16 - k)) | ((it & 65535) >> k);
+			    it = ibt1 << (32 - k);
+			    ibt1 = ibt1 >> k;
+			    ibt2 = ibt2 | it;
+			}	/* end if */
 
-                /*  exponent */
-                ibe = ( (ibe >> 22)  - 256 + 1023 + k - 4 ) << 20 ;
-              } /* end if */
-          } /* end else */
-        /* put number into destination array */
-        buf = (int32*)dest;
+		      /*  exponent */
+		      ibe = ((ibe >> 22) - 256 + 1023 + k - 4) << 20;
+		  }	/* end if */
+	    }	/* end else */
+	  /* put number into destination array */
+	  buf = (int32 *) dest;
 #ifdef OLD_WAY
-        *buf     = ibs | ibe | ibt1;
-        *(buf+1) = ibt2;
+	  *buf = ibs | ibe | ibt1;
+	  *(buf + 1) = ibt2;
 #else
-        temp = ibs | ibe | ibt1;
-        temp = ((temp & LPO8F_MASKA)>>8) | ((temp & LPO8F_MASKB)<<8);
-        temp = ((temp & LPO8F_MASKC)>>16) | ((temp & LPO8F_MASKD)<<16);
-        *(buf+1) = temp;        /* make certain to swap this also! */
-        temp = ibt2;
-        temp = ((temp & LPO8F_MASKA)>>8) | ((temp & LPO8F_MASKB)<<8);
-        temp = ((temp & LPO8F_MASKC)>>16) | ((temp & LPO8F_MASKD)<<16);
-        *buf = temp;
+	  temp = ibs | ibe | ibt1;
+	  temp = ((temp & LPO8F_MASKA) >> 8) | ((temp & LPO8F_MASKB) << 8);
+	  temp = ((temp & LPO8F_MASKC) >> 16) | ((temp & LPO8F_MASKD) << 16);
+	  *(buf + 1) = temp;	/* make certain to swap this also! */
+	  temp = ibt2;
+	  temp = ((temp & LPO8F_MASKA) >> 8) | ((temp & LPO8F_MASKB) << 8);
+	  temp = ((temp & LPO8F_MASKC) >> 16) | ((temp & LPO8F_MASKD) << 16);
+	  *buf = temp;
 #endif
-        source += source_stride;
-        dest   += dest_stride;
-      } /* end for */
-  return 0;
+	  source += source_stride;
+	  dest += dest_stride;
+      }		/* end for */
+    return 0;
 }
 
 #else
 
-int fuji_dummy; /* prevent empty symbol table messages */
+int         fuji_dummy;		/* prevent empty symbol table messages */
 
 #endif /* VP */

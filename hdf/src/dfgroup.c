@@ -36,11 +36,13 @@ static char RcsId[] = "@(#)$Revision$";
 
 #define MAX_GROUPS 8
 
-typedef struct DIlist_struct {
-    uint8   *DIlist;
-    intn    num;
-    intn    current;
-} DIlist, *DIlist_ptr;
+typedef struct DIlist_struct
+  {
+      uint8      *DIlist;
+      intn        num;
+      intn        current;
+  }
+DIlist     , *DIlist_ptr;
 
 static DIlist_ptr *Group_list = NULL;
 
@@ -61,32 +63,34 @@ static DIlist_ptr *Group_list = NULL;
 PRIVATE int32
 setgroupREC(DIlist_ptr list_rec)
 {
-    CONSTR(FUNC,"setgroupREC");
-    int32 i;
+    CONSTR(FUNC, "setgroupREC");
+    int32       i;
 
-    if (!Group_list) {
-        Group_list = (DIlist_ptr *) HDgetspace((uint32) MAX_GROUPS *
-                                               sizeof(DIlist_ptr));
-        if (!Group_list)
-            HRETURN_ERROR(DFE_NOSPACE, FAIL);
+    if (!Group_list)
+      {
+	  Group_list = (DIlist_ptr *) HDgetspace((uint32) MAX_GROUPS *
+						 sizeof(DIlist_ptr));
+	  if (!Group_list)
+	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
 #ifndef OLD_WAY
-        for (i = 0; i < MAX_GROUPS; i++)
-            Group_list[i] = NULL;
+	  for (i = 0; i < MAX_GROUPS; i++)
+	      Group_list[i] = NULL;
 #else
-        HDmemset(Group_list,0,MAX_GROUPS*sizeof(DIlist_ptr));
+	  HDmemset(Group_list, 0, MAX_GROUPS * sizeof(DIlist_ptr));
 #endif
 
-    }
+      }
 
     for (i = 0; i < MAX_GROUPS; i++)
-        if (!Group_list[i]) {
-            Group_list[i] = list_rec;
-            return GSLOT2ID(i);
-        }
+	if (!Group_list[i])
+	  {
+	      Group_list[i] = list_rec;
+	      return GSLOT2ID(i);
+	  }
 
     HRETURN_ERROR(DFE_INTERNAL, FAIL);
-} /* setgroupREC */
+}	/* setgroupREC */
 
 /*-----------------------------------------------------------------------------
  * Name:    DFdiread
@@ -99,43 +103,45 @@ setgroupREC(DIlist_ptr list_rec)
  * Remarks: assumes tag is a group
  *---------------------------------------------------------------------------*/
 
-int32 DFdiread(int32 file_id, uint16 tag, uint16 ref)
+int32
+DFdiread(int32 file_id, uint16 tag, uint16 ref)
 {
-    DIlist_ptr new_list;
-    CONSTR(FUNC,"DFdiread");
-    int32 length;
+    DIlist_ptr  new_list;
+    CONSTR(FUNC, "DFdiread");
+    int32       length;
 
     HEclear();
 
     if (!HDvalidfid(file_id))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+	HRETURN_ERROR(DFE_ARGS, FAIL);
 
     /* Find the group. */
     length = Hlength(file_id, tag, ref);
     if (length == FAIL)
-        HRETURN_ERROR(DFE_INTERNAL, FAIL);
+	HRETURN_ERROR(DFE_INTERNAL, FAIL);
 
     /* allocate a new structure to hold the group */
     new_list = (DIlist_ptr) HDgetspace((uint32) sizeof(DIlist));
-    if(!new_list)
-        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+    if (!new_list)
+	HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
+    new_list->DIlist = (uint8 *) HDgetspace((uint32) length);
+    if (!new_list->DIlist)
+      {
+	  HDfreespace((VOIDP) new_list);
+	  HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
 
-    new_list->DIlist = (uint8 *) HDgetspace((uint32)length);
-    if (!new_list->DIlist) {
-        HDfreespace((VOIDP)new_list);
-        HRETURN_ERROR(DFE_NOSPACE, FAIL);
-    }
-
-    new_list->num = (intn)(length / 4);
-    new_list->current = 0;           /* no DIs returned so far */
+    new_list->num = (intn) (length / 4);
+    new_list->current = 0;	/* no DIs returned so far */
 
     /* read in group */
-    if (Hgetelement(file_id, tag, ref, (uint8 *)new_list->DIlist)<0) {
-        HDfreespace((VOIDP)new_list->DIlist);
-        HDfreespace((VOIDP)new_list);
-        HRETURN_ERROR(DFE_READERROR, FAIL);
-    }
+    if (Hgetelement(file_id, tag, ref, (uint8 *) new_list->DIlist) < 0)
+      {
+	  HDfreespace((VOIDP) new_list->DIlist);
+	  HDfreespace((VOIDP) new_list);
+	  HRETURN_ERROR(DFE_READERROR, FAIL);
+      }
     return (int32) setgroupREC(new_list);
 }
 
@@ -151,32 +157,33 @@ int32 DFdiread(int32 file_id, uint16 tag, uint16 ref)
  * Remarks: frees Dilist space when all DIs returned
  *---------------------------------------------------------------------------*/
 
-intn DFdiget(int32 list, uint16 *ptag, uint16 *pref)
+intn
+DFdiget(int32 list, uint16 *ptag, uint16 *pref)
 {
-    CONSTR(FUNC,"DFdiget");
+    CONSTR(FUNC, "DFdiget");
     uint8      *p;
-    DIlist_ptr list_rec;
+    DIlist_ptr  list_rec;
 
     list_rec = GID2REC(list);
 
     if (!list_rec)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+	HRETURN_ERROR(DFE_ARGS, FAIL);
     if (list_rec->current >= list_rec->num)
-        HRETURN_ERROR(DFE_INTERNAL, FAIL);
+	HRETURN_ERROR(DFE_INTERNAL, FAIL);
 
     /* compute address of Ndi'th di */
     p = (uint8 *) list_rec->DIlist + 4 * list_rec->current++;
     UINT16DECODE(p, *ptag);
     UINT16DECODE(p, *pref);
 
-    if (list_rec->current == list_rec->num) {
-        HDfreespace((VOIDP)list_rec->DIlist);/*if all returned, free storage */
-        HDfreespace((VOIDP)list_rec);
-        Group_list[list & 0xffff] = NULL;  /* YUCK! BUG! */
-    }
+    if (list_rec->current == list_rec->num)
+      {
+	  HDfreespace((VOIDP) list_rec->DIlist);	/*if all returned, free storage */
+	  HDfreespace((VOIDP) list_rec);
+	  Group_list[list & 0xffff] = NULL;	/* YUCK! BUG! */
+      }
     return SUCCEED;
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    DFdinobj
@@ -188,19 +195,19 @@ intn DFdiget(int32 list, uint16 *ptag, uint16 *pref)
  * Invokes: none
  * Remarks: nuttin'
  *---------------------------------------------------------------------------*/
-intn DFdinobj(int32 list)
+intn
+DFdinobj(int32 list)
 {
-    CONSTR(FUNC,"DFdinobj");
-    DIlist_ptr list_rec;
+    CONSTR(FUNC, "DFdinobj");
+    DIlist_ptr  list_rec;
 
     list_rec = GID2REC(list);
 
     if (!list_rec)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+	HRETURN_ERROR(DFE_ARGS, FAIL);
 
-    return(list_rec->num);
-} /* DFdinobj() */
-
+    return (list_rec->num);
+}	/* DFdinobj() */
 
 /*-----------------------------------------------------------------------------
  * Name:    DFdisetup
@@ -214,23 +221,25 @@ intn DFdinobj(int32 list)
  *          space, possibly just use a big block of static space
  *---------------------------------------------------------------------------*/
 
-int32 DFdisetup(int maxsize)
+int32
+DFdisetup(int maxsize)
 {
-    CONSTR(FUNC,"DFdisetup");
-    DIlist_ptr new_list;
+    CONSTR(FUNC, "DFdisetup");
+    DIlist_ptr  new_list;
 
     new_list = (DIlist_ptr) HDgetspace((uint32) sizeof(DIlist));
 
     if (!new_list)
-        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+	HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    new_list->DIlist = (uint8 *) HDgetspace((uint32)(maxsize * 4));
-    if (!new_list->DIlist) {
-        HDfreespace((VOIDP)new_list);
-        HRETURN_ERROR(DFE_NOSPACE, FAIL);
-    }
+    new_list->DIlist = (uint8 *) HDgetspace((uint32) (maxsize * 4));
+    if (!new_list->DIlist)
+      {
+	  HDfreespace((VOIDP) new_list);
+	  HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
 
-    new_list->num     = maxsize;
+    new_list->num = maxsize;
     new_list->current = 0;
 
     return setgroupREC(new_list);
@@ -246,18 +255,19 @@ int32 DFdisetup(int maxsize)
  * Remarks: arg is tag/ref rather than DI for convenience
  *---------------------------------------------------------------------------*/
 
-intn DFdiput(int32 list, uint16 tag, uint16 ref)
+intn
+DFdiput(int32 list, uint16 tag, uint16 ref)
 {
-    CONSTR(FUNC,"DFdiput");
-    uint8 *p;
-    DIlist_ptr list_rec;
-    
+    CONSTR(FUNC, "DFdiput");
+    uint8      *p;
+    DIlist_ptr  list_rec;
+
     list_rec = GID2REC(list);
 
     if (!list_rec)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+	HRETURN_ERROR(DFE_ARGS, FAIL);
     if (list_rec->current >= list_rec->num)
-        HRETURN_ERROR(DFE_INTERNAL, FAIL);
+	HRETURN_ERROR(DFE_INTERNAL, FAIL);
 
     /* compute address of Ndi'th di to put tag/ref in */
     p = (uint8 *) list_rec->DIlist + 4 * list_rec->current++;
@@ -278,25 +288,25 @@ intn DFdiput(int32 list, uint16 tag, uint16 ref)
  * Remarks: frees storage for Dilist
  *---------------------------------------------------------------------------*/
 
-intn DFdiwrite(int32 file_id, int32 list, uint16 tag, uint16 ref)
+intn
+DFdiwrite(int32 file_id, int32 list, uint16 tag, uint16 ref)
 {
-    CONSTR(FUNC,"DFdiwrite");
-    int32 ret;                   /* return value */
-    DIlist_ptr list_rec;
+    CONSTR(FUNC, "DFdiwrite");
+    int32       ret;		/* return value */
+    DIlist_ptr  list_rec;
 
     if (!HDvalidfid(file_id))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+	HRETURN_ERROR(DFE_ARGS, FAIL);
 
     list_rec = GID2REC(list);
 
     if (!list_rec)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+	HRETURN_ERROR(DFE_ARGS, FAIL);
 
     ret = Hputelement(file_id, tag, ref, list_rec->DIlist,
-                      (int32)list_rec->current * 4);
-    HDfreespace((VOIDP)list_rec->DIlist);
-    HDfreespace((VOIDP)list_rec);
-    Group_list[list & 0xffff] = NULL;  /* YUCK! BUG! */
-    return (intn)ret;
+		      (int32) list_rec->current * 4);
+    HDfreespace((VOIDP) list_rec->DIlist);
+    HDfreespace((VOIDP) list_rec);
+    Group_list[list & 0xffff] = NULL;	/* YUCK! BUG! */
+    return (intn) ret;
 }
-
