@@ -87,6 +87,7 @@ check_fann(char *fname)
   uint8 *ann_label = NULL;
   uint8 *ann_desc = NULL;
   intn  i;
+  intn indx;
 
   /* open file again */
   ret = file_handle = ANstart(fname, DFACC_READ);
@@ -103,7 +104,8 @@ check_fann(char *fname)
   /* read file labels */
   for (i = 0; i < nflabs; i++)
     { /* select file label */
-      ann_handle = ret = ANselect(file_handle, i, AN_FILE_LABEL);
+      indx = i+1;
+      ann_handle = ret = ANselect(file_handle, indx, AN_FILE_LABEL);
       RESULT("ANselect");
 
       /* get file label length */
@@ -153,7 +155,8 @@ check_fann(char *fname)
   /* read file descriptions */
   for (i = 0; i < nfdescs; i++)
     { /* select file label */
-      ann_handle = ret = ANselect(file_handle, i, AN_FILE_DESC);
+      indx = i +1;
+      ann_handle = ret = ANselect(file_handle, indx, AN_FILE_DESC);
       RESULT("ANselect");
 
       /* get file label length */

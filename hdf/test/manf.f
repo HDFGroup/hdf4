@@ -275,8 +275,8 @@ C ****** Check file labels/descriptions *******
       print *, CR, CR
       print *,'*** Reading file labels and descriptions ***'
 
-      call check_fan(TESTFILE, 0, lab1, desc1, numberfailed)
-      call check_fan(TESTFILE, 1, lab2, desc2, numberfailed)
+      call check_fan(TESTFILE, 1, lab1, desc1, numberfailed)
+      call check_fan(TESTFILE, 2, lab2, desc2, numberfailed)
 
       if ( numberfailed .eq. 0 ) then
           print *, CR, CR
