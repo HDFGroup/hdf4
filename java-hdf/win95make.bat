@@ -1,10 +1,9 @@
 @ECHO OFF
 
 @REM set up your java home directory. You need java 1.1.1 or above.
-@SET JAVAHOME=c:\jdk1.1.3
+@SET JAVAHOME=c:\jdk1.1.5
 
-@REM you do not need to set your jhv home directory unless you move
-@REM the jhv run script "win95make.bat" away from your_jhv_home.
+@REM set up your JHV home directory.
 @SET JHVHOME=.
 
 @REM Do not make changes under this line unless you know what you are doing.
@@ -29,15 +28,28 @@ GOTO :BUILD
 
 :BUILD
 mkdir %JHVHOME%\classes
-SET CLASSPATH=%JAVAHOME%\lib;%JHVHOME%\classes;
+SET CLASSPATH=%JAVAHOME%\lib;%JHVHOME%\classes
 @CLS
 @ECHO ON
 @ECHO compiling, please wait ....
+
 %JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\hdflib\*.java
+%JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\util\*.java
+%JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\util\decoder\*.java
+%JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\util\encoder\*.java
+%JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\awt\event\*.java
+%JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\awt\*.java
+%JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\awt\image\*.java
+%JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\awt\palette\*.java
+%JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\awt\animation\*.java
+%JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\awt\plots\*.java
+%JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\awt\layer\*.java
+%JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\message\*.java
 %JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\jhv\*.java
-%JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\palette\*.java
-%JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\java\awt\*.java
-%JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\java\awt\image\*.java
-%JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\java\util\*.java
+
+REM @ECHO need JSDK classes to compile the ncsa.hdf.server package
+REM SET CLASSPATH=%JAVAHOME%\lib;%JHVHOME%\classes;C:\Jsdk\lib\classes.zip
+REM %JAVAHOME%\bin\javac -d %JHVHOME%\classes %JHVHOME%\ncsa\hdf\server\*.java
+
 @ECHO compiling is done
 :END
