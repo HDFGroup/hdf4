@@ -25,7 +25,6 @@ LOCAL ROUTINES
 
 EXPORTED ROUTINES
  VSIZEOF      -- returns the machine size of a field type.
- HDFSIZEOF    -- returns the HDF file size of a field type.
  VSsetfields  -- sets the fields in a vdata for reading or writing.
                  Truncates each field to max length of FIELDNAMELENMAX.
  VSfdefine    -- Defines a (one) new field within the vdata.
@@ -47,34 +46,6 @@ EXPORTED ROUTINES
    ** ==================================================================
    * */
 
-/*
-   stores sizes of local machine's known types
- */
-
-PRIVATE int16 local_sizetab[] =
-{
-    LOCAL_UNTYPEDSIZE,
-    LOCAL_CHARSIZE,
-    LOCAL_INTSIZE,
-    LOCAL_FLOATSIZE,
-    LOCAL_LONGSIZE,
-    LOCAL_BYTESIZE,
-    LOCAL_SHORTSIZE,
-    LOCAL_DOUBLESIZE
-};
-
-PRIVATE int16 hdf_sizetab[] =
-{
-    SIZE_UCHAR8,                /* untyped */
-    SIZE_CHAR8,                 /* text char */
-    SIZE_INT32,                 /* maps 16 bits (in mem) to 32 bits (in file) */
-    SIZE_FLOAT32,               /* float */
-    SIZE_INT32,                 /* long */
-    SIZE_UCHAR8,                /* byte (non-text) */
-    SIZE_INT16,                 /* short */
-    SIZE_FLOAT64                /* double */
-};
-
 PRIVATE SYMDEF rstab[] =
 {
     {"PX", DFNT_FLOAT32, SIZE_FLOAT32, 1},
@@ -92,44 +63,6 @@ PRIVATE SYMDEF rstab[] =
 };
 
 #define NRESERVED ( sizeof(rstab)/sizeof(SYMDEF) )
-#define LOCALSIZETAB_SIZE sizeof(local_sizetab)/sizeof(int)
-#define HDFSIZETAB_SIZE sizeof(hdf_sizetab)/sizeof(int)
-
-/*
- ** returns the machine size of a field type
- ** returns FAIL if error
- */
-int16
-VSIZEOF(int16 x)
-{
-    if (x < 0 || x > LOCALSIZETAB_SIZE - 1)
-      {
-          return (FAIL);
-      }
-    else
-      {
-          return (local_sizetab[x]);
-      }
-}   /* VSIZEOF */
-
-/*
- ** returns the HDF file size of a field type
- ** returns FAIL if error.
- ** USE ONLY FOR BACKWARD COMPATABILITY
- */
-int16
-HDFSIZEOF(int16 x)
-{
-
-    if (x < 0 || x > HDFSIZETAB_SIZE - 1)
-      {
-          return (FAIL);
-      }
-    else
-      {
-          return (hdf_sizetab[x]);
-      }
-}   /* HDFSIZEOF */
 
 /* ------------------------------------------------------------------ */
 /*
@@ -228,7 +161,7 @@ VSsetfields(int32 vkey, const char *fields)
                           found = TRUE;
 
                             
-                          if((wlist->name[wlist->n]=HDmalloc(sizeof(char)*(HDstrlen(vs->usym[j].name)+1)))==NULL)
+                          if((wlist->name[wlist->n]=HDstrdup(vs->usym[j].name))==NULL)
                             {
                               HDfree(wlist->esize);
                               HDfree(wlist->name);
@@ -238,7 +171,6 @@ VSsetfields(int32 vkey, const char *fields)
                               HDfree(wlist->type);
                               HRETURN_ERROR(DFE_NOSPACE,FAIL);
                             } /* end if */
-                          HDstrcpy(wlist->name[wlist->n], vs->usym[j].name);
                           order = vs->usym[j].order;
                           wlist->type[wlist->n] = vs->usym[j].type;
                           wlist->order[wlist->n] = order;
@@ -270,7 +202,7 @@ VSsetfields(int32 vkey, const char *fields)
                             {
                                 found = TRUE;
 
-                                if((wlist->name[wlist->n]=HDmalloc(sizeof(char)*(HDstrlen(rstab[j].name)+1)))==NULL)
+                                if((wlist->name[wlist->n]=HDstrdup(rstab[j].name))==NULL)
                                   {
                                     HDfree(wlist->esize);
                                     HDfree(wlist->name);
@@ -280,7 +212,6 @@ VSsetfields(int32 vkey, const char *fields)
                                     HDfree(wlist->type);
                                     HRETURN_ERROR(DFE_NOSPACE,FAIL);
                                   } /* end if */
-                                HDstrcpy(wlist->name[wlist->n], rstab[j].name);
                                 order = rstab[j].order;
                                 wlist->type[wlist->n] = rstab[j].type;
                                 wlist->order[wlist->n] = order;
@@ -354,7 +285,6 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
 {
     char      **av;
     int32       ac;
-    char       *ss;
     int16       usymid, replacesym;
     intn j;
     vsinstance_t *w;
@@ -372,12 +302,15 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
     if ((vs == NULL) || (scanattrs(field, &ac, &av) == FAIL) || (ac != 1))
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
+    /* The order of a variable is stored in a 16-bit number, so have to keep this limit -QAK */
     if (order < 1 || order > MAX_ORDER)
         HRETURN_ERROR(DFE_BADORDER, FAIL);
 
     /*
      ** check for any duplicates
      */
+#ifdef QAK
+/* It's OK to over-ride pre-defined symbols with the user's own -QAK */
     /* --- first look in the reserved symbol table --- */
     for (j = 0; j < NRESERVED; j++)
         if (!HDstrcmp(av[0], rstab[j].name))
@@ -385,6 +318,7 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
               if (localtype != rstab[j].type && order != rstab[j].order)
                   break;
           }
+#endif /* QAK */
 
     /* --- then look in the user's symbol table --- */
     for (replacesym = 0, j = 0; j < vs->nusym; j++)
@@ -400,22 +334,31 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
     if (replacesym)
         usymid = (int16) j;     /* new definition will replace old at this index */
     else
-        usymid = vs->nusym;
+      {
+          SYMDEF *tmp_sym=vs->usym;  /* temp. pointer to the new symdef list */
+
+          usymid = vs->nusym;
+          /* use temporary pointer in case we run out of memory, so we don't loose original list */
+          if((tmp_sym=(SYMDEF *)HDrealloc(tmp_sym,sizeof(SYMDEF)*(usymid+1)))==NULL)
+              HRETURN_ERROR(DFE_NOSPACE,FAIL);
+          vs->usym=tmp_sym;
+      } /* end else */
 
     if ((vs->usym[usymid].isize = (int16) DFKNTsize((int32) localtype)) == FAIL)
         HRETURN_ERROR(DFE_BADTYPE, FAIL);
 
-    if ((ss = (char *) HDmalloc(HDstrlen(av[0]) + 1)) == NULL)
+    /* Copy the symbol [field] information */
+    if ((vs->usym[usymid].name = (char *) HDstrdup(av[0]) ) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
-
-    HDstrcpy(ss, av[0]);
-    vs->usym[usymid].name = ss;
     vs->usym[usymid].type = (int16) localtype;
     vs->usym[usymid].order = (int16) order;
 
+#ifdef OLD_WAY
+/* Now we are dynamicly allocating the symbol table, so no overflow -QAK */
     /* prevent user-symbol table overflow */
     if (vs->nusym >= VSFIELDMAX)
         HRETURN_ERROR(DFE_SYMSIZE, FAIL);
+#endif /* OLD_WAY */
 
     /* increment vs->nusym only if no user field has been redefined */
     if (!replacesym)
