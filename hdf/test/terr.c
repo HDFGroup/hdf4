@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/05/31 17:43:29  mfolk
-Put in a semicolon I accidentally deleted in last change.
+Revision 1.5  1992/05/31 19:07:09  mfolk
+*** empty log message ***
 
+ * Revision 1.4  1992/05/31  17:43:29  mfolk
+ * Put in a semicolon I accidentally deleted in last change.
+ *
  * Revision 1.3  1992/05/29  21:52:19  mfolk
  * Added some casts to make it compile without warnings on Convex.
  *
