@@ -1929,6 +1929,8 @@ intn GRend(int32 grid)
                 HGOTO_ERROR(DFE_NOVALS,FAIL);
             if(Vsetname(GroupID,GR_NAME)==FAIL)
                 HGOTO_ERROR(DFE_BADVSNAME,FAIL);
+            if(Vsetclass(GroupID,GR_NAME)==FAIL)
+                HGOTO_ERROR(DFE_BADVSNAME,FAIL);
           } /* end if */
         else
           {
