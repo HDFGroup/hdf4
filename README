@@ -1,5 +1,5 @@
-               README for HDF/netCDF 4.0 library
-               ---------------------------------
+               README for HDF/netCDF 4.0 Distribution
+               --------------------------------------
 
 It is now possible to automatically configure and build both the
 HDF library and netCDF library with one command. The following is a
@@ -16,7 +16,7 @@ utilities, include and man files in '/usr/local/hdf/lib','/usr/local/hdf/bin',
 '/usr/local/hdf/include' and '/usr/local/hdf/man' respectively. The
 default 'prefix' is '/usr/local'. It is advisable to use something
 like the above to avoid overwriting say another 'libjpeg.a' that might be
-installed in '/usr/local/lib'.
+installed in '/usr/local/lib'. The '-v' option is for verbose output.
 
 If the configure script can't determine your type of computer, give it
 the name as an argument, for instance ``./configure sun4''.  You can
