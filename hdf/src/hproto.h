@@ -350,7 +350,7 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 
 #endif /* defined MALLOC_CHECK */
 
-#if defined VMS || defined macintosh || defined MAC || defined __MWERKS__ || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000
+#if defined VMS || defined macintosh || defined MAC || defined __MWERKS__ || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000 || defined __SUNPRO_C
     extern char *HDstrdup
                 (const char *s);
 

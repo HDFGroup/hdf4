@@ -65,7 +65,7 @@ main(int argc, char *argv[])
     char        lstring[81];
     char        verb_env[81];
     char        verb_tmp[81];
-    FILE	*cmdfile, *fopen();
+    FILE	*cmdfile;
     char	*cmdfilename="fortest.arg";
 
 

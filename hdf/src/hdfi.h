@@ -83,7 +83,7 @@
  * Define options for each platform
  *-------------------------------------------------------------------------*/
 
-#if (defined(SUN) || defined(sun) || defined(__sun__)) & !defined(__i386)
+#if (defined(SUN) || defined(sun) || defined(__sun__) || defined(__SUNPRO_C)) & !defined(__i386)
 #ifdef __STDC__
 #define ANSISUN
 #else /* __STDC__ */
@@ -103,9 +103,6 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
-#ifdef QAK
-#include <ctype.h>
-#endif /* QAK */
 #include <unistd.h>                 /* for some file I/O stuff */
 #include <sys/time.h>
 #include <sys/file.h>               /* for unbuffered i/o stuff */
@@ -1232,7 +1229,7 @@ extern int (*DFKnumout)(void * source, void * dest, uint32 num_elm,
 #  define HDstrrchr(s,c)        (strrchr((s),(c)))
 #  define HDstrtol(s,e,b)       (strtol((s),(e),(b)))
 /* non-standard function, not defined on the following mahcines - */
-#if !(defined VMS || defined macintosh || defined MAC || defined __MWERKS__ || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000)
+#if !(defined VMS || defined macintosh || defined MAC || defined __MWERKS__ || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000 || defined __SUNPRO_C)
 #  define HDstrdup(s)      ((char *)strdup((const char *)(s)))
 #endif /* !(VMS | etc..) */
 

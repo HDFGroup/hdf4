@@ -94,7 +94,7 @@ static const char *test_name[] =
 #define EPS64          ((float64)1.0E-14)
 #define EPS32          ((float32)1.0E-7)
 void
-test_conv()
+test_conv(void)
 {
     clock_t c1,c2,c3,c4;
     uint8 *src_uint8,

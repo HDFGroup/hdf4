@@ -829,7 +829,7 @@ VSlone(HFILEID f, int32 *idarray, int32 asize)
 
     /* -- check in lonevdata: it's a lone vdata if its flag is still 1 -- */
     nlone = 0;
-    for (i = 0; i < MAX_REF; i++)
+    for (i = 0; i < (int32)MAX_REF; i++)
       {
         if (lonevdata[i])
           {
@@ -913,7 +913,7 @@ Vlone(HFILEID f, int32 *idarray, int32 asize)
 
     /* -- check in lonevg: it's a lone vgroup if its flag is still 1 -- */
     nlone = 0;
-    for (i = 0; i < MAX_REF; i++)
+    for (i = 0; i < (int32)MAX_REF; i++)
       {
         if (lonevg[i])
           {

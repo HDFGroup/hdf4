@@ -395,7 +395,9 @@ do_ncdump(path, specp)
 {
       NC *handle ;
       NC_var *vp;
+#ifdef OLD_WAY
       NC_var *NC_hlookupvar() ;          
+#endif /* OLD_WAY */
 
             isempty = 0;
             handle = NC_check_id(ncid);

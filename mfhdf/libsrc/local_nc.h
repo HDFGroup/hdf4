@@ -559,6 +559,9 @@ extern int hdf_get_ref
 extern int hdf_create_dim_vdata
     PROTO((XDR *,NC *,NC_dim *));
 
+extern int hdf_create_compat_dim_vdata
+    PROTO((XDR *xdrs, NC *handle, NC_dim *dim, int32 dimval_ver));
+
 extern int hdf_write_attr
     PROTO((XDR *,NC *,NC_attr **));
 
@@ -609,6 +612,9 @@ extern int NCgenio
 
 extern int NC_var_shape
     PROTO((NC_var *var,NC_array *dims));
+
+extern nc_type cdf_unmap_type
+    PROTO((int type));
 
 extern bool_t nssdc_read_cdf
     PROTO((XDR *xdrs, NC **handlep));

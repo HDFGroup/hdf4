@@ -621,7 +621,7 @@ vpackvg(VGROUP * vg, uint8 buf[], int32 *size)
        UINT32ENCODE(bb, vg->flags);
        if (vg->flags & VG_ATTR_SET)  {   /* save the attrs */
           INT32ENCODE(bb, vg->nattrs);
-          for (i=0; i<vg->nattrs; i++)  {
+          for (i=0; i<(uint16)vg->nattrs; i++)  {
               UINT16ENCODE(bb, vg->alist[i].atag);
               UINT16ENCODE(bb, vg->alist[i].aref);
           }

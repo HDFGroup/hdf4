@@ -33,7 +33,7 @@ typedef struct tag_descript_t
 tag_descript_t;
 
 /* stringizing macro */
-#if defined MIPSEL | defined KNRSUN
+#if defined MIPSEL | defined KNRSUN | defined __SUNPRO_C
 #define string(x) #x
 #else
 #define string(x) "x"

@@ -472,11 +472,11 @@ main(int argc, char *argv[])
     if (process(&opt))
         goto err;
 
-    exit(0);
+    return(0);
 
   err:
     (void) fprintf(stderr, err4);
-    exit(1);
+    return(1);
 }
 
 /*
@@ -1130,8 +1130,7 @@ gtype(char *infile, struct Input *in, FILE **strm)
  *      Print a helpful summary of command usage and features.
  */
 void
-help(name)
-char       *name;
+help(char *name)
 {
     (void) printf("Name:\n");
     (void) printf("\t%s\n\n", name);
@@ -1655,9 +1654,7 @@ isnum(char *s)
  *      the user-specified mean value.
  */
 void
-mean(in, opt)
-struct Input *in;
-struct Options *opt;
+mean(struct Input *in,struct Options * opt)
 {
     float32     delta, delta_max, delta_min;
 
@@ -2230,8 +2227,7 @@ process(struct Options *opt)
  *      Print a summary of command usage.
  */
 void
-usage(name)
-char       *name;
+usage(char *name)
 {
     (void) fprintf(stderr, "\nUsage:\t%s -h[elp], OR\n", name);
     (void) fprintf(stderr, "\t%s <infile> [<infile>...] ", name);

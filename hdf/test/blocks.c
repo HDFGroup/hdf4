@@ -26,7 +26,7 @@ static char RcsId[] = "@(#)$Revision$";
 static uint8  outbuf[BUFSIZE],  inbuf[BUFSIZE];
 
 void
-test_hblocks()
+test_hblocks(void)
 {
     int32       fid, fid1;
     int32       aid, aid1, aid2;

@@ -360,7 +360,7 @@ nvsqtag(intf * vkey)
     return ((intf)VSQuerytag((int32)*vkey));
 }
 
-/* ------------------------------------------------------
+/* ----------------------------------------------------------------- */
 /*
    **  get the version # of a vdata
    **  related: VSgetversion--vsgver--

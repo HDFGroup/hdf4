@@ -255,7 +255,7 @@ HDcalloc(uint32 n, uint32 size)
 }   /* end HDcalloc() */
 #endif /* MALLOC_CHECK */
 
-#if defined VMS || defined macintosh || defined MAC || defined __MWERKS__ || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000
+#if defined VMS || defined macintosh || defined MAC || defined __MWERKS__ || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000 || __SUNPRO_C
 /*--------------------------------------------------------------------------
  NAME
     HDstrdup -- in-library replacement for non-ANSI strdup()

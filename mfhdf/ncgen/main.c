@@ -6,9 +6,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#ifdef VMS
 #include <stdlib.h>
-#endif
 
 #ifdef __hpux
 #include <locale.h>
@@ -25,6 +23,13 @@ int netcdf_flag;
 char *netcdf_name = NULL;	/* name of output netCDF file to write */
 
 extern FILE *yyin, *yyout;
+
+void usage()
+{
+    derror("Usage: %s [ -b ] [ -c ] [ -f ] [ -o outfile]  [ file ... ]",
+	   progname);
+    exit(8);
+}
 
 int
 main(argc, argv)
@@ -114,9 +119,3 @@ char *argv[];
 #endif
 }
 
-usage()
-{
-    derror("Usage: %s [ -b ] [ -c ] [ -f ] [ -o outfile]  [ file ... ]",
-	   progname);
-    exit(8);
-}

@@ -47,7 +47,7 @@ static VOID check_lab_desc
             (uint16 tag, uint16 ref, char *label, char *desc);
 
 void
-test_an()
+test_an(void)
 {
     char        labsds[MAXLEN_LAB], labris[MAXLEN_LAB], descsds[MAXLEN_DESC],
                 descris[MAXLEN_DESC];

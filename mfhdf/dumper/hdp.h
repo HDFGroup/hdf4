@@ -35,7 +35,9 @@ intn        vinit_done
 
 /* Global Definitions */
 #define MAXCHOICES 50
+#ifndef MAXNAMELEN
 #define MAXNAMELEN 100
+#endif /* !MAXNAMELEN */
 #define MAXCLASSLEN 100
 #define MAXRANK 100
 #define MAXFNLEN 256
@@ -226,6 +228,9 @@ extern intn fmtuint32(VOIDP x, file_type_t ft, FILE * ofp);
 extern intn fmtfloat32(VOIDP x, file_type_t ft, FILE * ofp);
 extern intn fmtfloat64(VOIDP x, file_type_t ft, FILE * ofp);
 extern int32 dumpfull(int32 nt, file_type_t ft, int32 cnt, VOIDP databuf, intn indent, FILE * ofp);
+
+/* show.c */
+extern intn dumpattr(int32 vid, int32 findex, intn isvs, file_type_t ft, FILE *fp);
 
 /* hdp_util.c */
 	/* misc. functions */

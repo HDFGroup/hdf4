@@ -378,7 +378,7 @@ test_bitio_seek(void)
 }   /* test_bitio_seek() */
 
 void
-test_bitio()
+test_bitio(void)
 {
     test_bitio_read();
     test_bitio_write();

@@ -159,8 +159,8 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
     intn isize = 0;
     intn order = 0;
     intn index = 0;
-    uint16 esize = 0;
-    uint16 hsize = 0;
+    intn esize = 0;
+    intn hsize = 0;
     uint8 *b1, *b2;
     int32  i, j, nv, offset, type;
     DYN_VWRITELIST *w;
@@ -395,7 +395,7 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
     intn isize = 0;
     intn order = 0;
     intn index = 0;
-    uint16 esize = 0;
+    intn esize = 0;
     uint8 *src, *dest, *Src;
 
     int32       j, type, offset;
@@ -465,7 +465,7 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
      *  AND we are incresing its size
      */
     HQueryposition(vs->aid, &position);
-    new_size = (position / vs->wlist.ivsize) + nelt;
+    new_size = (position / (intn)vs->wlist.ivsize) + nelt;
 
 #ifdef OLD_WAY
     if ((vs->nvertices > 0) && (new_size > vs->nvertices))

@@ -31,7 +31,8 @@ C
       integer mgstart, mgfinfo, mgend, mgcreat, mgselct 
       integer mgn2ndx, mggiinf, mgwrimg, mgrdimg, mgendac
       integer mgid2rf, mgr2idx, mgrltil, mgrimil, mggltid
-      integer mgglinf, mgwrlut, mgwclut, mgrdlut, mgrclut
+c     integer mgwrlut, mgrdlut
+      integer mgglinf, mgwclut, mgrclut
       integer mgsattr, mgatinf, mggattr, mgfndat
       integer mgscatt, mgsnatt, mggcatt, mggnatt
       integer mgwcimg, mgrcimg

@@ -32,7 +32,7 @@ static int  checkann
             (const char *oldstr, const char *newstr, int32 ret, const char *type, int32 testflag);
 
 void
-test_anfile()
+test_anfile(void)
 {
     char        lab1[MAXLEN_LAB], lab2[MAXLEN_LAB], desc1[MAXLEN_DESC], desc2[MAXLEN_DESC],
                 tempstr[MAXLEN_DESC];

@@ -29,7 +29,7 @@
  *      data element value = row value + column value [+ plane value, if rank=3]
  */
 int
-main()
+main(int argc, char * argv[])
 {
     int         nrow = 3, ncol = 4, npln = 5, ione = 1;
     int         i, j, k;

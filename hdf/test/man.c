@@ -559,7 +559,7 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[],
 ** 10. Clean up.
 ****************************************************************/
 void
-test_man()
+test_man(void)
 {
     uint8  pal[768];
     uint8  *image = NULL;

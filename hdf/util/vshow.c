@@ -39,28 +39,31 @@ static char *RcsId[] = "@(#)$Revision$";
 
 static int  condensed;
 
-int32       vsdumpfull
+static int32 vsdumpfull
             (int32 vs);
 
-int32 fmtbyte
+static int32 fmtbyte
             (char *x);
-int32 fmtchar
-            (char *x);
-
-int32 fmtint
+static int32 fmtchar
             (char *x);
 
-int32 fmtfloat
+static int32 fmtint
             (char *x);
 
-int32 fmtlong
+static int32 fmtfloat
             (char *x);
 
-int32 fmtshort
+static int32 fmtlong
             (char *x);
 
-int32 fmtdouble
+static int32 fmtshort
             (char *x);
+
+static int32 fmtdouble
+            (char *x);
+
+static intn dumpattr
+            (int32 vid, intn full, intn isvs);
 
 int
 main(int ac, char **av)
@@ -272,14 +275,14 @@ static int32 cn = 0;
 
 /* ------------------------------------------------ */
 /* printing functions used by vsdumpfull(). */
-int32
+static int32
 fmtbyte(char *x)
 {
     cn += printf("%02x ", *x);
     return (1);
 }
 
-int32
+static int32
 fmtchar(char *x)
 {
     cn++;
@@ -287,7 +290,7 @@ fmtchar(char *x)
     return (1);
 }
 
-int32
+static int32
 fmtint(char *x)
 {
     int         i = 0;
@@ -296,7 +299,7 @@ fmtint(char *x)
     return (1);
 }
 
-int32
+static int32
 fmtfloat(char *x)
 {
     float       f = 0;
@@ -305,7 +308,7 @@ fmtfloat(char *x)
     return (1);
 }
 
-int32
+static int32
 fmtlong(char *x)
 {
     long        l = 0;
@@ -314,7 +317,7 @@ fmtlong(char *x)
     return (1);
 }
 
-int32
+static int32
 fmtshort(char *x)
 {
     short       s = 0;
@@ -323,7 +326,7 @@ fmtshort(char *x)
     return (1);
 }
 
-int32
+static int32
 fmtdouble(char *x)
 {
     double      d = 0;
@@ -336,7 +339,7 @@ fmtdouble(char *x)
 
 /* ------------------------------------------------ */
 
-int32
+static int32
 vsdumpfull(int32 vs)
 {
     char        vsname[100], fields[VSFIELDMAX*FIELDNAMELENMAX];
@@ -487,7 +490,7 @@ vsdumpfull(int32 vs)
 
 }   /* vsdumpfull */
 /* ------------------------------------------------ */
-intn dumpattr(int32 vid, intn full, intn isvs)
+static intn dumpattr(int32 vid, intn full, intn isvs)
 {
    intn i, j, k, cn=0;
    VDATA *vs;

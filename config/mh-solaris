@@ -25,10 +25,12 @@ VERSION  = 4.0
 #
 #Using ANSI compilier also needs LIBSX = -lm(see below)
 CC=cc
-CFLAGS= -Xa -O
+#CFLAGS= -Xc -xO2 -g -v
+CFLAGS= -Xc -xO2
 
 # Fortran compilier
 FC = f77
+#FFLAGS = -g
 FFLAGS = -O
 
 # Name of achive randomizer, usually ranlib (use 'true' if non-existant)

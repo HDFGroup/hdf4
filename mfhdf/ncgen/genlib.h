@@ -40,7 +40,7 @@ extern void	*erealloc	PROTO((
 				       void *ptr,
 				       int size
 				       ));
-extern int      usage           PROTO((
+extern void     usage           PROTO((
                                        void
                                        ));
 

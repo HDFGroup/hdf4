@@ -193,7 +193,7 @@ static uint8  u8_data[2][3][4] =
  * -GeorgeV
  */
 void
-test_chunks()
+test_chunks(void)
 {
     int32       fid;
     int32       aid1, aid2;

@@ -13,6 +13,9 @@
 #include "dumplib.h"
 #include "vardata.h"
 
+static void annotate
+    PROTO((struct ncvar *vp,struct fspec *fsp,long cor[], long iel));
+
 #define	STREQ(a, b)	(*(a) == *(b) && strcmp((a), (b)) == 0)
 
 /*

@@ -32,7 +32,7 @@ static char RcsId[] = "@(#)$Revision$";
 static uint8  outbuf[BUF_SIZE],  inbuf[BUF_SIZE];
 
 void
-test_hextelt()
+test_hextelt(void)
 {
     int32       fid, fid1;
     int32       aid1, aid2;

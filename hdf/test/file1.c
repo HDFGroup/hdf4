@@ -238,7 +238,7 @@ test_ref_limits(void)
 } /* end test_ref_limits() */
 
 void
-test_hfile1()
+test_hfile1(void)
 {
     test_file_limits();
     test_ref_limits();
