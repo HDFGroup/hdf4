@@ -25,8 +25,8 @@
   4.1 Windows '95 or Windows NT
   4.2 HPUX
   4.3 Linux
-  4.4 MacOS
-  4.5 Other platforms
+  4.4 Other platforms
+  4.4.1  Compiling for a new platform
 
   5. Man pages (javadoc)
 
@@ -41,7 +41,11 @@
     ========================
 
 This package contains the complete Java interface for the
-HDF 4.1r1 library, and the Java HDF Viewer application.
+HDF 4.1r2 library, and the Java HDF Viewer application.
+
+** Note:  The JHI will not compile with the HDF 4.2.r1 due to a 
+slight change in the include files.  Be sure the Makefile points
+to the current version of HDF.  **
 
   Java HDF Interface (JHI) :
 
@@ -102,22 +106,23 @@ HDF 4.1r1 library, and the Java HDF Viewer application.
   The platforms for which the NCSA Java products have been
   succesfully compiled and tested are:
 
-  Platform(OS)            C-Compiler  
-  ------------            ---------- 
-  Sun4(Solaris 2.5)           CC 4.0, GCC 2.7.2.1
-  SGI-Indy(IRIX5.3)           CC 3.19, GCC 2.7.2.1
-  SGI-Indy(IRIX6.2)           CC 6.2 
+  Platform(OS)            
+  ------------           
+  Sun4(Solaris 2.5)     
+  SGI-Indy(IRIX5.3)    
+  SGI-Indy(IRIX6.2)   
   IBM PC - Intel Pentium
-       Solarisx86 (2.5)       GCC 2.7.2.1 
-
-  Windows NT/95               Visual C++ 4.2
+     Windows NT/95  
+     Linux           
+     Solarisx86 (2.5) 
 
 3.2  Software Requirements:
      ======================
 
-  This software must be compiled with the HDF 4.1 library.  If
+  This software must be compiled with the HDF 4.1r2 library.  If
   HDF is already installed, it is probably not necessary to install 
-  or compile it again.
+  or compile it again.  However, it is necessary to generate the
+  Java loadable version of the HDF library.
 
   This product requires Java JDK 1.1 or above to compile.  It will
   not work with JDK 1.02.
@@ -160,7 +165,6 @@ HDF 4.1r1 library, and the Java HDF Viewer application.
      bin    -- the jhv invocation script
      lib    -- the directory for the compiled classes, native libraries
                and icons used for the jhv browser
-     docs   -- the directory for the javadoc documentation pages
      samples -- some sample hdf files
      ncsa   -- source codes for the java class packages including ncsa.hdf.awt,
                ncsa.hdf.hdflib, ncsa.hdf.io, ncsa.hdf.jhv, ncsa.hdf.message,
@@ -220,6 +224,11 @@ HDF 4.1r1 library, and the Java HDF Viewer application.
 
         make install
 
+    To create the 'javadoc' pages, type:
+
+	make javadocs
+
+
     3.3.5 Installation Location
     ---------------------------
 
@@ -236,7 +245,7 @@ HDF 4.1r1 library, and the Java HDF Viewer application.
     '/usr/local/java/hdf/lib/classes.zip', '/usr/local/java/hdf/bin', 
     and '/usr/local/java/hdf/docs' respectively.
 
-4  Platform-specific Notes
+4.  Platform-specific Notes
     ========================
 
     4.1 Windows '95 or Windows NT
@@ -259,23 +268,56 @@ HDF 4.1r1 library, and the Java HDF Viewer application.
 
     4.3 Linux
     ---------
-    The NCSA Java products compile but do not execute correctly
-    on Linux.
+    The NCSA Java products require the latest patched release of the
+    JDK, JDK 1.1.3v2-1.  See: 
+        http://www.blackdown.org/java-linux.html
 
-    4.4 MacOS
-    ---------
-    JDK 1.1 is not available for the MacOS yet. 
-
-    4.5 Other Platforms
+    4.4 Other Platforms
     -------------------
+
+    The HDF Java products should work for any platform that meets the
+    two requirements:
+
+       1.  The HDF 4.2r3 library must run on the platform
+       2.  JDK 1.1 or later must be available
+
     The web page at:
 
        http://java.sun.com/products/jdk/jdk-ports.html
 
     lists many platforms which support JDK 1.1, including
-    AIX and DEC/OSF.  The NCSA Java products should work on 
-    all these platforms, but we have not actually tested them.
+    Macintosh, AIX, DEC/OSF, and DEC VMS.  The NCSA Java products 
+    should theoretically work on all these platforms, but we have 
+    not actually tested them.
 
+    4.4.1  Compiling for a new platform
+    -----------------------------------
+
+    The Java HDF Interface links to the HDF library using the Java
+    Native Interface.  On most platforms, this requires that the HDF 
+    library be linked so that it can be dynamically linked by the
+    Java runtime.  The details of how to link the C library are
+    platform dependent.
+
+    The compiler switches for the platforms tested at NCSA are in the
+    files "configure.in" and "configure".  E.g., for solaris, the 
+    following options are set:
+
+	LD=$CC; LDOPT=-G; SLEXT="so";
+        COPT=-G; JAVAINC2=$JAVAINC/solaris ; JAVATARG=solaris;;
+
+    For this platform, the linker program is set, the options (in 
+    this case '-G' generates a dynamic library), and the shared library
+    extension (in this case, the files are called '*.so') and the
+    location of the JNI C header files (JAVAINC2).  The congigure
+
+    For a new platform, the Makefile needs to be changed to use the
+    appropriate settings and paths.  It may be necessary to consult
+    the vendor's documentation to determine these parameters.
+
+    It may also be necessary to adjust the JAVAINC, JAVALIB,
+    and CLASSPATH variables in the Makefile, so that they
+    point to the required Java support on the platform.
 
 5. Man pages (javadoc)
    ===================

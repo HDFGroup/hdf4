@@ -841,60 +841,60 @@ CLASSPATH="$JAVACLASSES":"$HERE"
 
 
 SERVERCLASSES=""
-JAVASERVERPATH_FOUND=1
-echo $ac_n "checking "java server extension"""... $ac_c" 1>&6
-echo "configure:847: checking "java server extension"" >&5
-if eval "test \"`echo '$''{'ac_cv_lib_JAVASERVERPATH'+set}'`\" = set"; then
-  echo $ac_n "(cached) $ac_c" 1>&6
-else
-  JAVASERVERPATH_FOUND=0
-fi
 
-echo "$ac_t""$ac_cv_lib_JAVASERVERPATH" 1>&6
-if test $JAVASERVERPATH_FOUND -eq 1; then
-	JAVASERVERPATH=$ac_cv_lib_JAVASERVERPATH;
-	CLASSPATH="$JAVASERVERPATH":"$CLASSPATH"
-	SERVERCLASSES="ncsa/hdf/server/FileServlet.class ncsa/hdf/server/HDFServer.class "
-
-fi
-
-WANT_SERVER=0;
-if test $JAVASERVERPATH_FOUND -ne 1; then
-	echo "Do you want to use the HDF Java Servelet (requires the Java Server Extension)? y/n"
-	read USE_SERVER
-	case $USE_SERVER in
-	"y")
-		WANT_SERVER=1;;
-	*)
-		WANT_SERVER=0;;
-	esac
-fi
-
-if test $WANT_SERVER -eq 1; then
-
-until test $JAVASERVERPATH_FOUND -eq 1 ; do
-	JAVASERVER=""
-	while test -z "$JAVASERVER" ; do
-		echo "Please type the CLASSPATH of the JDK 1.1 Java Server Extension classes "
-		echo "(e.g., /usr/java/JDSK/classes.zip)? "
-		read JAVASERVER
-		BNAME=`basename $JAVASERVER`
-		if test $BNAME = "classes.zip" ; then
-			if test -f $JAVASERVER ; then
-				JAVASERVERPATH_FOUND=1
-			fi
-		elif test $BNAME = "classes" ; then
-			if test -d $JAVASERVER ; then
-				JAVASERVERPATH_FOUND=1
-			fi 
-		fi
-	done 
-done
-SERVERCLASSES="ncsa/hdf/server/FileServlet.class ncsa/hdf/server/HDFServer.class "
-echo "Adding Java classes from "$JAVASERVER" to CLASSPATH"
-CLASSPATH="$JAVASERVER":"$CLASSPATH";
-ac_cv_lib_JAVASERVERPATH=$JAVASERVER;
-fi
+JAVASERVERPATH_FOUND=0
+#
+# commented out for now -- not advertised in this release
+#
+# JAVASERVERPATH_FOUND=1
+# AC_CACHE_CHECK("java server extension",ac_cv_lib_JAVASERVERPATH,JAVASERVERPATH_FOUND=0)
+# if test $JAVASERVERPATH_FOUND -eq 1; then
+# 	JAVASERVERPATH=$ac_cv_lib_JAVASERVERPATH;
+# 	CLASSPATH="$JAVASERVERPATH":"$CLASSPATH"
+# 	SERVERCLASSES="ncsa/hdf/server/FileServlet.class ncsa/hdf/server/HDFServer.class "
+# 
+# fi
+# 
+# WANT_SERVER=0;
+# if test $JAVASERVERPATH_FOUND -ne 1; then
+# 	echo "Do you want to use the HDF Java Servelet (requires the Java Server Extension)? [y/n]"
+# 	read USE_SERVER
+# 	case $USE_SERVER in
+# 	"y")
+# 		WANT_SERVER=1;;
+# 	*)
+# 		WANT_SERVER=0;;
+# 	esac
+# fi
+# 
+# if test $WANT_SERVER -eq 1; then
+# 
+# until test $JAVASERVERPATH_FOUND -eq 1 ; do
+# 	JAVASERVER=""
+# 	while test -z "$JAVASERVER" ; do
+# 		echo "Please type the CLASSPATH of the JDK 1.1 Java Server Extension classes "
+# 		echo "(e.g., /usr/java/JDSK/classes.zip)? "
+# 		read JAVASERVER
+# 		BNAME=`basename $JAVASERVER`
+# 		if test $BNAME = "classes.zip" ; then
+# 			if test -f $JAVASERVER ; then
+# 				JAVASERVERPATH_FOUND=1
+# 			fi
+# 		elif test $BNAME = "classes" ; then
+# 			if test -d $JAVASERVER ; then
+# 				JAVASERVERPATH_FOUND=1
+# 			fi 
+# 		fi
+# 	done 
+# done
+# SERVERCLASSES="ncsa/hdf/server/FileServlet.class ncsa/hdf/server/HDFServer.class "
+# echo "Adding Java classes from "$JAVASERVER" to CLASSPATH"
+# CLASSPATH="$JAVASERVER":"$CLASSPATH";
+# ac_cv_lib_JAVASERVERPATH=$JAVASERVER;
+# fi
+#
+#  end of server feature
+#
 
 echo "CLASSPATH is "$CLASSPATH
 
