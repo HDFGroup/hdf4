@@ -170,10 +170,6 @@ typedef struct
 	              has_desc:1;	/* flag to indicate item has a desc. */
 	  groupinfo_t *group_info;	/* pointer to group information */
 	  sp_info_block_t *spec_info;	/* pointer to special element information */
-	  char       *lab_info;		/* label data */
-	  int32       lab_len;		/* label length */
-	  char       *desc_info;	/* description data */
-	  int32       desc_len;		/* description length */
   }
 objinfo_t;
 #define CHECK_SPECIAL   0x0001	/* Look for spec. elem. when building dd list */

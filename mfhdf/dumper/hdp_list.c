@@ -48,7 +48,10 @@ list_usage(intn argc, char *argv[])
     printf("\t-of\tPrint items in the order found in the file\n");
     printf("\t-og\tPrint items in group order\n");
     printf("\t-ot\tPrint items in tag order (default)\n");
+#if 0 /* No longer possible since objects can have more than one label 
+       * -GV 6/12/97 */
     printf("\t-on\tPrint items in name or label order\n");
+#endif
 }	/* end list_usage() */
 
 static void 
@@ -159,10 +162,12 @@ parse_list_opts(list_info_t * list_opts, intn curr_arg, intn argc, char *argv[])
                             list_opts->order = OFILE;	/* ordering is by file */
                             break;
 
+#if 0 /* No longer possible since objects can have more than one label 
+       * -GV 6/12/97 */
                         case 'n':
                             list_opts->order = ONAME;	/* ordering is by name */
                             break;
-
+#endif
                         default:
                             printf("ERROR: Invalid list ordering!\n");
                             return (FAIL);
@@ -444,15 +449,18 @@ print_list_obj(list_info_t * l_opts, objinfo_t * o_info, intn o_num, int32 an_id
           HDfree(s);	/* free tagname string */
           break;
       }		/* end switch */
-    if (l_opts->name == TRUE && o_info->has_label){
-        ann_num = ANnumann(an_id, AN_DATA_LABEL,o_info->tag, o_info->ref);
+
+    ann_num = ANnumann(an_id, AN_DATA_LABEL,o_info->tag, o_info->ref);
+    if (l_opts->name == TRUE && ann_num > 0 ){
         ann_list = HDmalloc(ann_num*sizeof(int32));
         retn = ANannlist(an_id,AN_DATA_LABEL,o_info->tag, o_info->ref, ann_list);
 
         for(i=0; i<ann_num; i++){
-        ann_id = *ann_list+i;
+        ann_id = ann_list[i];
         ann_length =  ANannlen(ann_id);
         buf= HDmalloc((ann_length+1) * sizeof(char));
+        if (buf != NULL)
+            buf[ann_length] = '\0';
         ANreadann(ann_id, buf, ann_length+1);
         printf("%*s%s\n", LABEL_FIELD_WIDTH, "Name/Label=", buf);
         HDfree(buf);
@@ -462,17 +470,18 @@ print_list_obj(list_info_t * l_opts, objinfo_t * o_info, intn o_num, int32 an_id
     if (l_opts->class == TRUE)
       {
       }		/* end if */
-    if (l_opts->desc == TRUE && o_info->has_desc){
-        ann_num = ANnumann(an_id, AN_DATA_DESC, o_info->tag, o_info->ref);
+
+    ann_num = ANnumann(an_id, AN_DATA_DESC, o_info->tag, o_info->ref);
+    if (l_opts->desc == TRUE && ann_num > 0 ){
         ann_list = HDmalloc(ann_num*sizeof(int32));
-       
-        retn = ANannlist(an_id,AN_DATA_DESC, o_info->tag, o_info->ref, ann_list)
-;
+        retn = ANannlist(an_id,AN_DATA_DESC, o_info->tag, o_info->ref, ann_list);
 
         for(i=0; i<ann_num; i++){
-        ann_id = *ann_list+i;
+        ann_id = ann_list[i];
         ann_length =  ANannlen(ann_id);
         buf= HDmalloc((ann_length+1) * sizeof(char));
+        if (buf != NULL)
+            buf[ann_length] = '\0';
         ANreadann(ann_id, buf, ann_length+1);
         printf("%*s%s\n", LABEL_FIELD_WIDTH, "Description=", buf);
         HDfree(buf);

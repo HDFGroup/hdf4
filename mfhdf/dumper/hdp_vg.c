@@ -322,22 +322,208 @@ dvg(dump_info_t * dumpvg_opts, intn curr_arg, intn argc, char *argv[])
                       fprintf(fp, "     number of entries = %d;\n", (int) n);
                       dumpattr(vg_id, 0, 0, dumpvg_opts->file_type, fp);  
                           /* Read in all of the annotations. */
-                      len = DFANgetdesclen(file_name, vg_tag, vg_ref);
-                      if (len != FAIL)
-                        {
-                            if (( label_str = (char *) HDmalloc((uint32) len + 1)) == NULL)
-                              {
-                                  printf("Not enough memory!\n");
-                                  exit(-1);
-                              }
-                            status = DFANgetdesc(file_name, vg_tag, vg_ref, label_str, len + 1);
-                            label_str[len] = '\0';
-                            if (status == FAIL)
-                                printf("\t  Unable to read description.\n");
-                            else
-                                printf("\t  Description: %s\n", label_str);
-                            HDfree(label_str);
-                        }	/* if (len != FAIL) */
+                            {
+                                /* Re-vamped label annotation handling to use new ANxxx interface 
+                                 *  -georgev 6/11/97 */
+                                int32  file_handle = FAIL;
+                                int32  an_handle   = FAIL;
+                                int32  *dlabels    = NULL;
+                                char   *ann_label  = NULL;
+                                int32  ann_len;
+                                intn   num_dlabels;
+                                uint16 atag;
+                                uint16 aref;
+
+                                /* start Annotation inteface */
+                                if ((an_handle = ANstart(file_id)) == FAIL)
+                                  {
+                                      /* continue */
+                                      goto done_alabel;
+                                  }
+
+                                /* Get number of data labels with this tag/ref */
+                                num_dlabels = ANnumann(an_handle, AN_DATA_LABEL, vg_tag, vg_ref);
+#ifdef AN_DEBUG
+                                fprintf(stderr,"VG has %d labels \n", num_dlabels);
+#endif
+
+                                if (num_dlabels != 0)
+                                  {
+                                      /* allocate space for list of label annotation id's with this tag/ref */
+                                      if ((dlabels = (int32 *)HDmalloc(num_dlabels * sizeof(int32))) == NULL)
+                                        {
+#ifdef AN_DEBUG
+                                            fprintf(stderr,"failed to allocate space for %d labels \n", num_dlabels);
+#endif
+                                            goto done_alabel;
+                                        }
+
+                                      /* get list of label annotations id's with this tag/ref */
+                                      if (ANannlist(an_handle, AN_DATA_LABEL, vg_tag, vg_ref, dlabels) != num_dlabels)
+                                        {
+#ifdef AN_DEBUG
+                                            fprintf(stderr,"failed to get %d label list \n", num_dlabels);
+#endif
+                                            goto done_alabel;
+                                        }
+
+                                      /* loop through label list */
+                                      for (i = 0; i < num_dlabels; i++)
+                                        {
+                                            if ((ann_len = ANannlen(dlabels[i])) == FAIL)
+                                              {
+#ifdef AN_DEBUG
+                                                  fprintf(stderr,"failed to get %d label  length \n", i);
+#endif
+                                                  continue;
+                                              }
+        
+                                            /* allocate space for label */
+                                            if (ann_label == NULL)
+                                              {
+                                                  if ((ann_label = (char *)HDmalloc((ann_len+1)*sizeof(char))) == NULL)
+                                                    {
+#ifdef AN_DEBUG
+                                                        fprintf(stderr,"failed to allocate space for label %d \n", i);
+#endif
+                                                        continue;
+                                                    }
+                                                  HDmemset(ann_label,'\0', ann_len+1);
+                                              }
+      
+                                            /* read label */
+                                            if (ANreadann(dlabels[i], ann_label, ann_len+1) == FAIL)
+                                              {
+#ifdef AN_DEBUG
+                                                  fprintf(stderr,"failed to read %d label \n", i);
+#endif
+                                                  continue;
+                                              }
+
+                                            printf("\t  label: %s\n", ann_label);
+
+                                            /* end access */
+                                            ANendaccess(dlabels[i]);
+
+                                            /* free buffer */
+                                            if(ann_label != NULL)
+                                              {
+                                                  HDfree(ann_label);
+                                                  ann_label = NULL;
+                                              }
+                                        }
+
+                                  } /* end if labels */
+
+                              done_alabel:
+                                if(dlabels != NULL)
+                                    HDfree(dlabels);
+
+                                if(an_handle != FAIL)
+                                    ANend(an_handle);
+
+                            }
+
+                            {
+                                /* Re-vamped desc annotation handling to use new ANxxx interface 
+                                 *  -georgev 6/11/97 */
+                                int32  file_handle = FAIL;
+                                int32  an_handle   = FAIL;
+                                int32  *ddescs    = NULL;
+                                char   *ann_desc  = NULL;
+                                int32  ann_len;
+                                intn   num_ddescs;
+                                uint16 atag;
+                                uint16 aref;
+                                char   hremark[30] = "";
+
+                                /* start Annotation inteface */
+                                if ((an_handle = ANstart(file_id)) == FAIL)
+                                  {
+                                      goto done_adesc;
+                                  }
+                                /* Get number of data descs with this tag/ref */
+                                num_ddescs = ANnumann(an_handle, AN_DATA_DESC, vg_tag, vg_ref);
+#ifdef AN_DEBUG
+                                fprintf(stderr,"VG has %d descs \n", num_ddescs);
+#endif
+                                if (num_ddescs != 0)
+                                  {
+                                      /* allocate space for list of desc annotation id's with this tag/ref */
+                                      if ((ddescs = (int32 *)HDmalloc(num_ddescs * sizeof(int32))) == NULL)
+                                        {
+#ifdef AN_DEBUG
+                                            fprintf(stderr,"failed to allocate space for %d descs \n", num_ddescs);
+#endif
+                                            goto done_adesc;
+                                        }
+
+                                      /* get list of desc annotations id's with this tag/ref */
+                                      if (ANannlist(an_handle, AN_DATA_DESC, vg_tag, vg_ref, ddescs) != num_ddescs)
+                                        {
+#ifdef AN_DEBUG
+                                            fprintf(stderr,"failed to get %d descs list \n", num_ddescs);
+#endif
+                                            goto done_adesc;
+                                        }
+
+                                      /* loop through desc list */
+                                      for (i = 0; i < num_ddescs; i++)
+                                        {
+                                            if ((ann_len = ANannlen(ddescs[i])) == FAIL)
+                                              {
+#ifdef AN_DEBUG
+                                                  fprintf(stderr,"failed to get %d desc  length \n", i);
+#endif
+                                                  continue;
+                                              }
+        
+                                            /* allocate space for desc */
+                                            if (ann_desc == NULL)
+                                              {
+                                                  if ((ann_desc = (char *)HDmalloc((ann_len+1)*sizeof(char))) == NULL)
+                                                    {
+#ifdef AN_DEBUG
+                                                        fprintf(stderr,"failed to allocate space for desc %d \n", i);
+#endif
+                                                        continue;
+                                                    }
+                                                  HDmemset(ann_desc,'\0', ann_len+1);
+                                              }
+      
+                                            /* read desc */
+                                            if (ANreadann(ddescs[i], ann_desc, ann_len+1) == FAIL)
+                                              {
+#ifdef AN_DEBUG
+                                                  fprintf(stderr,"failed to read %d desc \n", i);
+#endif
+                                                  continue;
+                                              }
+
+                                            printf("\t  Description: %s\n", ann_desc);
+
+                                            /* end access */
+                                            ANendaccess(ddescs[i]);
+
+                                            /* free buffer */
+                                            if(ann_desc != NULL)
+                                              {
+                                                  HDfree(ann_desc);
+                                                  ann_desc = NULL;
+                                              }
+                                        }
+
+                                  } /* end if descs */
+
+                              done_adesc:
+                                if(ddescs != NULL)
+                                    HDfree(ddescs);
+
+                                if(an_handle != FAIL)
+                                    ANend(an_handle);
+
+                            }
+
 
                   case DHEADER:	/* header only, no annotations nor data */
                       if (dumpvg_opts->contents == DHEADER)

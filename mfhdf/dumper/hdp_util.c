@@ -367,45 +367,14 @@ make_obj_list(int32 fid, uint32 options)
 
               /* check for a annotations */
           if (options & CHECK_LABEL)
-            {	/* are we looking for annotations ? */
-                int32       len;
+            {	/* are we looking for annotations ? 
+                * No longer checked here, now checked in print_list_obj() -GV  */
+            }		/* end if */
 
-                if ((len = DFANgetlablen(HDfidtoname(fid), temp_obj->tag, temp_obj->ref)) != FAIL)
-                  {
-                      if ((temp_obj->lab_info = (char *) HDmalloc(len + 1)) != NULL)
-                        {
-                            if (DFANgetlabel(HDfidtoname(fid), temp_obj->tag, temp_obj->ref,
-                                             temp_obj->lab_info, len + 1) != FAIL)
-                              {
-                                  temp_obj->has_label = TRUE;
-                                  temp_obj->lab_len = len;
-                              }		/* end if */
-                        }	/* end if */
-                      else
-                          printf("Failure to allocate memory \n");
-
-                  }		/* end if */
-            }	/* end if */
           if (options & CHECK_DESC)
-            {	/* are we looking for annotations ? */
-                int32       len;
-
-                if ((len = DFANgetdesclen(HDfidtoname(fid), temp_obj->tag, temp_obj->ref)) != FAIL)
-                  {
-                      if ((temp_obj->desc_info = (char *) HDmalloc(len + 1)) != NULL)
-                        {
-                            if (DFANgetdesc(HDfidtoname(fid), temp_obj->tag, temp_obj->ref,
-                                            temp_obj->desc_info, len + 1) != FAIL)
-                              {
-                                  temp_obj->has_desc = TRUE;
-                                  temp_obj->desc_len = len;
-                              }		/* end if */
-                        }	/* end if */
-                      else
-                          printf("Failure to allocate memory \n");
-
-                  }		/* end if */
-            }	/* end if */
+            {	/* are we looking for annotations ? 
+                 * No longer checked here, now checked in print_list_obj() -GV */
+            }		/* end if */
       }		/* end for */
 
 	/* Loop once more to figure out the index information */
@@ -468,10 +437,6 @@ free_obj_list(objlist_t * o_list)
               free_group_list(temp_obj->group_info);
           if (temp_obj->is_special)
               HDfree(temp_obj->spec_info);
-          if (temp_obj->has_label)
-              HDfree(temp_obj->lab_info);
-          if (temp_obj->has_desc)
-              HDfree(temp_obj->desc_info);
       }		/* end for */
     HDfree(o_list->srt_obj_arr);
     HDfree(o_list->raw_obj_arr);
@@ -495,6 +460,8 @@ sort_obj_list_by_tag(const void *p1, const void *p2)
     return (0);
 }	/* end sort_obj_info_by_tag() */
 
+#if 0 /* No longer possible since objects can have more than one label 
+       * -GV 6/12/97 */
 int 
 sort_obj_list_by_name(const void *p1, const void *p2)
 {
@@ -517,16 +484,19 @@ sort_obj_list_by_name(const void *p1, const void *p2)
               return (0);
       }		/* end else */
 }	/* end sort_obj_info_by_tag() */
+#endif
 
 void 
 sort_obj_list(objlist_t * o_list, sort_t sort_type)
 {
     switch (sort_type)
       {
+#if 0 /* No longer possible since objects can have more than one label 
+       * -GV 6/12/97 */
       case ONAME:	/* sort by name order */
           qsort(o_list->srt_obj_arr, o_list->max_obj, sizeof(objinfo_t *), sort_obj_list_by_name);
           break;
-
+#endif
       case OGROUP:		/* sort by group order */
           break;	/* not currently implemented */
 
