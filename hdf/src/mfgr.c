@@ -2803,6 +2803,11 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],vo
     void * *img_data;            /* pointer to the converted image data to write */
     uintn pixel_mem_size,       /* size of a pixel in memory */
         pixel_disk_size;        /* size of a pixel on disk */
+    uint16 scheme;	/* compression scheme used for JPEG images */
+    uint32     comp_config;
+    comp_coder_t comp_type; 
+    comp_info cinfo;
+    intn status;
     intn convert=FALSE;         /* true if machine NT != NT to be written */
     uint8 platnumsubclass;      /* class of this NT for this platform */
     intn new_image=FALSE;       /* whether we are writing a new image out */
@@ -2854,6 +2859,34 @@ printf("%s: data=%p\n",FUNC,data);
     gr_ptr=ri_ptr->gr_ptr;
     hdf_file_id=gr_ptr->hdf_file_id;
 
+    comp_type = COMP_CODE_NONE;
+    scheme = ri_ptr->img_dim.comp_tag;
+    if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5
+            || scheme==DFTAG_JPEG || scheme==DFTAG_GREYJPEG)
+    {
+	comp_type = COMP_CODE_JPEG;
+	cinfo.jpeg.quality = 0;
+	cinfo.jpeg.force_baseline = 0;
+    }
+    else
+    {
+	/* use lower-level routine to get the compression information */
+	status = HCPgetcompress(ri_ptr->gr_ptr->hdf_file_id,
+                        ri_ptr->img_tag, ri_ptr->img_ref,
+                        &comp_type, &cinfo);
+    }
+    if (comp_type != COMP_CODE_NONE) {
+	    /* Check that the compression encoder is available */
+	    HCget_config_info(comp_type, &comp_config);
+	    if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
+		/* coder not present?? */
+		     HGOTO_ERROR(DFE_BADCODER,FAIL); 
+	    }
+	    if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
+		/* encoder not present?? */
+		     HGOTO_ERROR(DFE_NOENCODER,FAIL); 
+	    }
+    }
 #ifdef QAK
 printf("%s: stride[XDIM,YDIM]=%ld, %ld\n",FUNC,stride[XDIM],stride[YDIM]);
 printf("%s: start[XDIM,YDIM]=%ld, %ld\n",FUNC,start[XDIM],start[YDIM]);
@@ -3362,6 +3395,11 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],voi
     uintn pixel_mem_size;       /* size of a pixel in memory */
     intn convert;               /* true if machine NT != NT to be written */
     uint8 platnumsubclass;      /* class of this NT for this platform */
+    uint16 scheme;	/* compression scheme used for JPEG images */
+    uint32     comp_config;
+    comp_coder_t comp_type; 
+    comp_info cinfo;
+    intn status;
     intn  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -3402,6 +3440,34 @@ fprintf(stderr,"%s: data=%p\n",FUNC,data);
     gr_ptr=ri_ptr->gr_ptr;
     hdf_file_id=gr_ptr->hdf_file_id;
 
+    comp_type = COMP_CODE_NONE;
+    scheme = ri_ptr->img_dim.comp_tag;
+    if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5
+            || scheme==DFTAG_JPEG || scheme==DFTAG_GREYJPEG)
+    {
+	comp_type = COMP_CODE_JPEG;
+	cinfo.jpeg.quality = 0;
+	cinfo.jpeg.force_baseline = 0;
+    }
+    else
+    {
+	/* use lower-level routine to get the compression information */
+	status = HCPgetcompress(ri_ptr->gr_ptr->hdf_file_id,
+                        ri_ptr->img_tag, ri_ptr->img_ref,
+                        &comp_type, &cinfo);
+    }
+    if (comp_type != COMP_CODE_NONE) {
+	    /* Check that the compression encoder is available */
+	    HCget_config_info(comp_type, &comp_config);
+	    if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
+		/* coder not present?? */
+		     HGOTO_ERROR(DFE_BADCODER,FAIL); 
+	    }
+	    if ((comp_config & COMP_DECODER_ENABLED) == 0) {
+		/* decoder not present?? */
+		     HGOTO_ERROR(DFE_NOENCODER,FAIL); 
+	    }
+    }
     if(stride[XDIM]==1 && stride[YDIM]==1)
       { /* solid block of data */
           solid_block=TRUE;
@@ -6162,8 +6228,8 @@ GRgetchunkinfo(int32 riid,               /* IN: sds access id */
  DESCRIPTION
      This routine writes a whole chunk of data to the chunked GR 
      specified by chunk 'origin' for the given GR and can be used
-     instead of GRwritedata() when this information is known. This
-     routine has less overhead and is much faster than using GRwritedata().
+     instead of GRwriteimage() when this information is known. This
+     routine has less overhead and is much faster than using GRwriteimage().
 
      Origin specifies the co-ordinates of the chunk according to the chunk
      position in the overall chunk array.
@@ -6198,6 +6264,11 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
     int8       platnumsubclass; /* the machine type of the current platform */
     uintn      convert;         /* whether to convert or not */
     intn       i;
+    uint16 scheme;	/* compression scheme used for JPEG images */
+    uint32     comp_config;
+    comp_coder_t comp_type; 
+    comp_info cinfo;
+    intn       status;
     intn       switch_interlace = FALSE;/* whether the memory interlace needs to be switched around */
     intn       ret_value = SUCCEED;
 
@@ -6238,8 +6309,36 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
 #ifdef CHK_DEBUG
     fprintf(stderr,"%s: ri_ptr->img_aid =%d \n", FUNC, ri_ptr->img_aid);
 #endif
+    comp_type = COMP_CODE_NONE;
+    scheme = ri_ptr->img_dim.comp_tag;
+    if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5
+            || scheme==DFTAG_JPEG || scheme==DFTAG_GREYJPEG)
+    {
+	comp_type = COMP_CODE_JPEG;
+	cinfo.jpeg.quality = 0;
+	cinfo.jpeg.force_baseline = 0;
+    }
+    else
+    {
+	/* use lower-level routine to get the compression information */
+	status = HCPgetcompress(ri_ptr->gr_ptr->hdf_file_id,
+                        ri_ptr->img_tag, ri_ptr->img_ref,
+                        &comp_type, &cinfo);
+    }
+    if (comp_type != COMP_CODE_NONE) {
+	    /* Check that the compression encoder is available */
+	    HCget_config_info(comp_type, &comp_config);
+	    if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
+		/* coder not present?? */
+		     HGOTO_ERROR(DFE_BADCODER,FAIL); 
+	    }
+	    if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
+		/* encoder not present?? */
+		     HGOTO_ERROR(DFE_NOENCODER,FAIL); 
+	    } 
+   }
 
-    /* inquire about element */
+   /* inquire about element */
     ret_value = Hinquire(ri_ptr->img_aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
     if (ret_value != FAIL)
       {
@@ -6388,6 +6487,11 @@ GRreadchunk(int32 riid,    /* IN: access aid to GR */
     int8       platnumsubclass; /* the machine type of the current platform */
     uintn      convert;         /* whether to convert or not */
     intn       i;
+    uint16 scheme;	/* compression scheme used for JPEG images */
+    uint32     comp_config;
+    comp_coder_t comp_type; 
+    comp_info cinfo;
+    intn       status;
     intn       switch_interlace = FALSE;/* whether the memory interlace needs to be switched around */
     intn       ret_value = SUCCEED;
 
@@ -6429,6 +6533,34 @@ GRreadchunk(int32 riid,    /* IN: access aid to GR */
     fprintf(stderr,"%s: ri_ptr->img_aid =%d \n", FUNC, ri_ptr->img_aid);
 #endif
 
+    comp_type = COMP_CODE_NONE;
+    scheme = ri_ptr->img_dim.comp_tag;
+    if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5
+            || scheme==DFTAG_JPEG || scheme==DFTAG_GREYJPEG)
+    {
+	comp_type = COMP_CODE_JPEG;
+	cinfo.jpeg.quality = 0;
+	cinfo.jpeg.force_baseline = 0;
+    }
+    else
+    {
+	/* use lower-level routine to get the compression information */
+	status = HCPgetcompress(ri_ptr->gr_ptr->hdf_file_id,
+                        ri_ptr->img_tag, ri_ptr->img_ref,
+                        &comp_type, &cinfo);
+    }
+    if (comp_type != COMP_CODE_NONE) {
+	    /* Check that the compression encoder is available */
+	    HCget_config_info(comp_type, &comp_config);
+	    if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
+		/* coder not present?? */
+		     HGOTO_ERROR(DFE_BADCODER,FAIL); 
+	    }
+	    if ((comp_config & COMP_DECODER_ENABLED) == 0) {
+		/* decoder not present?? */
+		     HGOTO_ERROR(DFE_NOENCODER,FAIL); 
+	    } 
+   }
     /* inquire about element */
     ret_value = Hinquire(ri_ptr->img_aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
     if (ret_value != FAIL)

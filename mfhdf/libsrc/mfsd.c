@@ -725,10 +725,15 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
            int32 *end,    /* IN:  number of values to read per dimension */
            void *  data    /* OUT: data buffer */)
 {
+    CONSTR(FUNC, "SDreaddata");    /* for HGOTO_ERROR */
     NC     *handle = NULL;
     NC_dim *dim = NULL;
     intn    varid;
     int32   status;
+    comp_coder_t comp_type;
+    comp_info c_info;
+    uint32  comp_config;
+    NC_var * tvar;
 #ifdef BIG_LONGS
     long    Start[MAX_VAR_DIMS];
     long    End[MAX_VAR_DIMS];
@@ -771,6 +776,28 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
         ret_value = FAIL;
         goto done;
       }
+
+    /* Check compression method is enabled */
+    tvar = SDIget_var(handle, sdsid);
+    if(tvar == NULL)
+     {
+            ret_value = FAIL;
+            goto done;
+     }
+    status = HCPgetcompress(handle->hdf_file, tvar->data_tag, tvar->data_ref, 
+		&comp_type, &c_info);
+
+    if (status != FAIL) {
+	    HCget_config_info( comp_type , &comp_config);
+	    if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
+		/* coder not present?? */
+		    HGOTO_ERROR(DFE_NOENCODER, FAIL);
+	    }
+	    if ((comp_config & COMP_DECODER_ENABLED) == 0) {
+		/* decoder not present?? */
+		HGOTO_ERROR(DFE_BADCODER, FAIL);
+	    }
+    }
 
     /* get ready to read */
     handle->xdrs->x_op = XDR_DECODE ;
@@ -2171,6 +2198,10 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
     CONSTR(FUNC, "SDwritedata");    /* for HGOTO_ERROR */
     intn    varid;
     int32   status;
+    comp_coder_t comp_type;
+    comp_info c_info;
+    uint32  comp_config;
+    NC_var *tvar;
     NC     *handle = NULL;
     NC_dim *dim = NULL;
 #ifdef BIG_LONGS
@@ -2217,6 +2248,29 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
           ret_value = FAIL;
           goto done;
       }
+
+      tvar = SDIget_var(handle, sdsid);
+
+      if(tvar == NULL)
+         {
+              ret_value = FAIL;
+              goto done;
+      }
+    /* Check compression method is enabled */
+    status = HCPgetcompress(handle->hdf_file, tvar->data_tag, tvar->data_ref, 
+		&comp_type, &c_info);
+
+    if (status != FAIL) {
+	    HCget_config_info( comp_type , &comp_config);
+	    if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
+		/* coder not present?? */
+		    HGOTO_ERROR(DFE_NOENCODER, FAIL);
+	    }
+	    if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
+		/* encoder not present?? */
+		HGOTO_ERROR(DFE_BADCODER, FAIL);
+	    }
+    }
 
     /* get ready to write */
     handle->xdrs->x_op = XDR_ENCODE;
@@ -5875,6 +5929,10 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
     int8       platntsubclass;  /* the machine type of the current platform */
     int8       outntsubclass;   /* the data's machine type */
     uintn      convert;         /* whether to convert or not */
+    comp_coder_t comp_type;
+    comp_info c_info;
+    uint32  comp_config;
+    int32 status;
     intn       i;
     sp_info_block_t info_block; /* special info block */
     static uint32 tBuf_size = 0; /* statc conversion buffer size */
@@ -5900,6 +5958,7 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
         goto done;
       }
 
+
     /* get variable from id */
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
@@ -5914,6 +5973,22 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
         ret_value = FAIL;
         goto done;
       }
+
+    /* Check compression method is enabled */
+    status = HCPgetcompress(handle->hdf_file, var->data_tag, var->data_ref, 
+		&comp_type, &c_info);
+
+    if (status != FAIL) {
+	    HCget_config_info( comp_type , &comp_config);
+	    if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
+		/* coder not present?? */
+		    HGOTO_ERROR(DFE_NOENCODER, FAIL);
+	    }
+	    if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
+		/* encoder not present?? */
+		HGOTO_ERROR(DFE_BADCODER, FAIL);
+	    }
+    }
 
     /* inquire about element */
     ret_value = Hinquire(var->aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
@@ -6073,6 +6148,10 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
     int8       platntsubclass;  /* the machine type of the current platform */
     int8       outntsubclass;   /* the data's machine type */
     uintn      convert;         /* whether to convert or not */
+    comp_coder_t comp_type;
+    comp_info c_info;
+    uint32  comp_config;
+    int32 status;
     intn       i;
     sp_info_block_t info_block; /* special info block */
     static uint32 tBuf_size = 0; /* statc conversion buffer size */
@@ -6112,6 +6191,22 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
         ret_value = FAIL;
         goto done;
       }
+
+    /* Check compression method is enabled */
+    status = HCPgetcompress(handle->hdf_file, var->data_tag, var->data_ref, 
+		&comp_type, &c_info);
+
+    if (status != FAIL) {
+	    HCget_config_info( comp_type , &comp_config);
+	    if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
+		/* coder not present?? */
+		    HGOTO_ERROR(DFE_NOENCODER, FAIL);
+	    }
+	    if ((comp_config & COMP_DECODER_ENABLED) == 0) {
+		/* decoder not present?? */
+		HGOTO_ERROR(DFE_BADCODER, FAIL);
+	    }
+    }
 
     /* inquire about element */
     ret_value = Hinquire(var->aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
