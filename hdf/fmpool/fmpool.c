@@ -65,6 +65,82 @@ static int  mpool_write __P((MPOOL *, BKT *));
 
 /*-----------------------------------------------------------------------------
 NAME
+
+USAGE
+
+DESCRIPTION
+
+---------------------------------------------------------------------------- */
+pageno_t
+mpool_get_npages(mp)
+  MPOOL *mp; /* MPOOL cookie */
+{
+  if(mp != NULL)
+    return mp->npages;
+  else
+    return 0;
+} /* mpool_get_npages */
+
+/*-----------------------------------------------------------------------------
+NAME
+
+USAGE
+
+DESCRIPTION
+
+---------------------------------------------------------------------------- */
+pageno_t
+mpool_get_pagesize(mp)
+  MPOOL *mp; /* MPOOL cookie */
+{
+  if (mp != NULL)
+    return mp->pagesize;
+  else
+    return 0;
+} /* mpool_get_pagesize */
+
+/*-----------------------------------------------------------------------------
+NAME
+
+USAGE
+
+DESCRIPTION
+
+---------------------------------------------------------------------------- */
+pageno_t
+mpool_get_lastpagesize(mp)
+  MPOOL *mp; /* MPOOL cookie */
+{
+  if (mp != NULL)
+    return mp->lastpagesize;
+  else
+    return 0;
+} /* mpool_get_lastpagesize */
+
+/*-----------------------------------------------------------------------------
+NAME
+
+USAGE
+
+DESCRIPTION
+
+---------------------------------------------------------------------------- */
+int
+mpool_set_lastpagesize(mp, lastpagesize)
+  MPOOL *mp; /* MPOOL cookie */
+  pageno_t lastpagesize;
+{
+
+  if (lastpagesize > mp->pagesize || lastpagesize < 0)
+    return RET_ERROR;
+  else
+    mp->lastpagesize = lastpagesize;
+
+  return RET_SUCCESS;
+} /* mpool_set_lastpagesize */
+
+/*-----------------------------------------------------------------------------
+NAME
    mpool_open -- Open a memory pool on the given file
 USAGE
   MPOOL *mpool_open(key, fd, pagesize, maxcache)
@@ -106,7 +182,8 @@ mpool_open(key, fd, pagesize, maxcache)
   int          len    = 0;    /* file length */
   int          ret    = RET_SUCCESS;
   int          entry;         /* index into hash table */
-  pageno_t       pageno;
+  pageno_t     pageno;
+  pageno_t     lastpagesize;
 
 
   /*
@@ -172,15 +249,18 @@ mpool_open(key, fd, pagesize, maxcache)
   /* Initialize max # of pages to cache and number of pages in file */
   mp->maxcache = (pageno_t)maxcache;
   mp->npages   = len / pagesize;
+  lastpagesize = len % pagesize;
 
   /* Adjust for when file is not multiple of whole page sizes */
-  if (len % pagesize) 
+  if (lastpagesize) 
     {
-      mp->lastpagesize = len % pagesize; /* odd size of last page */
+      mp->lastpagesize = lastpagesize; /* odd size of last page */
       (mp->npages)++;
     }
-  else 
-    mp->lastpagesize = pagesize; 
+  else if (!lastpagesize && len != 0)
+    mp->lastpagesize = pagesize; /* even multiple of pagesizes */
+  else
+    mp->lastpagesize = 0; /* 1st page */
 
   /* Set pagesize and file handle */
   mp->pagesize = pagesize;
@@ -200,9 +280,6 @@ mpool_open(key, fd, pagesize, maxcache)
 #ifdef STATISTICS
       lp->elemhit = (u_int32_t)0;
       ++(mp->listalloc);
-#endif
-#ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"mpool_open: pageno=%d, lhead=%08x\n",pageno,lhead);
 #endif
       CIRCLEQ_INSERT_HEAD(lhead, lp, hl); /* add to list */
     } /* end for pageno */
