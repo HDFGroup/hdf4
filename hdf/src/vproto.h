@@ -196,6 +196,8 @@ extern      "C"
     extern int32 Vdelete
                 (int32 f, int32 ref);
 
+    extern intn VPshutdown(void);
+
 /*
    ** from vparse.c
  */

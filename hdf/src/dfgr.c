@@ -1357,3 +1357,31 @@ DFGRIlastref(void)
 {
     return ((uint16) Grlastref);
 }
+
+/*--------------------------------------------------------------------------
+ NAME
+    DFGRPshutdown
+ PURPOSE
+    Terminate various static buffers.
+ USAGE
+    intn DFGRshutdown()
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    Free various buffers allocated in the DFGR routines.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    Should only ever be called by the "atexit" function HDFend
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn DFGRPshutdown(void)
+{
+    if(Grlastfile!=NULL)
+      {
+          HDfree(Grlastfile);
+          Grlastfile=NULL;
+      } /* end if */
+    return(SUCCEED);
+} /* end DFGRPshutdown() */
+

@@ -1305,3 +1305,31 @@ DFR8Iriginfo(int32 file_id)
     Lastref = Readrig.image.ref;    /* remember ref read */
     return (SUCCEED);
 }   /* end DFR8Iriginfo() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    DFR8Pshutdown
+ PURPOSE
+    Terminate various static buffers.
+ USAGE
+    intn DFR8shutdown()
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    Free various buffers allocated in the DFR8 routines.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    Should only ever be called by the "atexit" function HDFend
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn DFR8Pshutdown(void)
+{
+    if(Palette!=NULL)
+      {
+          HDfree(Palette);
+          Palette=NULL;
+      } /* end if */
+    return(SUCCEED);
+} /* end DFR8Pshutdown() */
+

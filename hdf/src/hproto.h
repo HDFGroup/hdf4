@@ -339,6 +339,8 @@ extern      "C"
     extern int32 Hendbitaccess
                 (int32 bitfile_id, intn flushbit);
 
+    extern intn HPbitshutdown(void);
+
 /*
    ** from dfcomp.c
  */
@@ -472,6 +474,8 @@ extern      "C"
     extern uint16 DFR8lastref
                 (void);
 
+    extern intn DFR8Pshutdown(void);
+
 /*
    ** from dfgr.c
  */
@@ -545,6 +549,8 @@ extern      "C"
     extern intn DFGRIaddimlut
                 (const char _HUGE * filename, VOIDP imlut, int32 xdim, int32 ydim, intn type,
                  intn isfortran, intn newfile);
+
+    extern intn DFGRPshutdown(void);
 
 /*
    ** from df24.c
@@ -673,6 +679,8 @@ extern      "C"
     extern int32 DFANIgetfann
                 (int32 file_id, char _HUGE * ann, int32 maxlen, int type, int isfirst);
 
+    extern intn DFANPshutdown(void);
+
 /*
    ** from dfsd.c
  */
@@ -796,6 +804,8 @@ extern      "C"
     extern int  DFSDreadslab
                 (const char *filename, int32 _HUGE start[], int32 _HUGE slab_size[],
              int32 _HUGE stride[], VOIDP buffer, int32 _HUGE buffer_size[]);
+
+    extern intn DFSDPshutdown(void);
 
 /*
    ** from dfconv.c

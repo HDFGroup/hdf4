@@ -556,11 +556,11 @@ DFANIclear(void)
 
         for (p=DFANdir[0]; p!=NULL; p=q) {  /* free linked list space */
             q = p->next;
-            HDfreespace((VOIDP) p);
+            HDfree((VOIDP) p);
         }
         for (p=DFANdir[1]; p!=NULL; p=q) {
             q = p->next;
-            HDfreespace((VOIDP) p);
+            HDfree((VOIDP) p);
         }
         DFANdir[0] = DFANdir[1] = NULL;
 
@@ -1506,3 +1506,33 @@ DFANIgetfann(int32 file_id, char *ann, int32 maxlen, int type,
     Hendaccess(aid);
     return (length);    /* return length of label */
 }
+
+/*--------------------------------------------------------------------------
+ NAME
+    DFANPshutdown
+ PURPOSE
+    Terminate various static buffers.
+ USAGE
+    intn DFANPshutdown()
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    Free various buffers allocated in the DFAN routines.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    Should only ever be called by the "atexit" function HDFend
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn DFANPshutdown(void)
+{
+    DFANIclear();   /* frees the directory lists */
+
+    if(Lastfile!=NULL)
+      {
+          HDfree(Lastfile);
+          Lastfile=NULL;
+      } /* end if */
+    return(SUCCEED);
+} /* end DFANPshutdown() */
+

@@ -963,3 +963,31 @@ HIwrite2read(bitrec_t * bitfile_rec)
         HRETURN_ERROR(DFE_INTERNAL, FAIL);
     return (SUCCEED);
 }   /* HIwrite2read */
+
+/*--------------------------------------------------------------------------
+ NAME
+    HPbitshutdown
+ PURPOSE
+    Terminate various static buffers.
+ USAGE
+    intn HPbitshutdown()
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    Free various buffers allocated in the Hbit routines.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    Should only ever be called by the "atexit" function HDFend
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn HPbitshutdown(void)
+{
+    if(bitfile_records!=NULL)
+      {
+          HDfree(bitfile_records);
+          bitfile_records=NULL;
+      } /* end if */
+    return(SUCCEED);
+} /* end HPbitshutdown() */
+

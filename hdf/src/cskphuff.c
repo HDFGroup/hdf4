@@ -363,10 +363,24 @@ HCIcskphuff_term(compinfo_t * info)
     CONSTR(FUNC, "HCIcskphuff_term");
 #endif /* endif LATER */
     comp_coder_skphuff_info_t *skphuff_info;    /* ptr to skipping Huffman info */
+    intn i;                 /* local counting variable */
 
     skphuff_info = &(info->cinfo.coder_info.skphuff_info);
 
     skphuff_info->skip_pos = 0;
+
+    /* Free the buffers we allocated */
+    for (i = 0; i < skphuff_info->skip_size; i++)
+      {
+          HDfree(skphuff_info->left[i]);
+          HDfree(skphuff_info->right[i]);
+          HDfree(skphuff_info->up[i]);
+      }     /* end for */
+
+    /* Free the buffer arrays */
+    HDfree(skphuff_info->left);
+    HDfree(skphuff_info->right);
+    HDfree(skphuff_info->up);
 
     return (SUCCEED);
 }   /* end HCIcskphuff_term() */
@@ -707,10 +721,9 @@ HCPcskphuff_endaccess(accrec_t * access_rec)
 
     info = (compinfo_t *) access_rec->special_info;
 
-    /* flush out RLE buffer */
-    if (access_rec->access&DFACC_WRITE)
-        if (HCIcskphuff_term(info) == FAIL)
-            HRETURN_ERROR(DFE_CTERM, FAIL);
+    /* Clean up the skipping huffman data structures */
+    if (HCIcskphuff_term(info) == FAIL)
+        HRETURN_ERROR(DFE_CTERM, FAIL);
 
     /* close the compressed data AID */
     if (Hendbitaccess(info->aid, 0) == FAIL)

@@ -4956,3 +4956,62 @@ DFSDendslab(void)
 
     return ret;
 }
+
+/*--------------------------------------------------------------------------
+ NAME
+    DFSDPshutdown
+ PURPOSE
+    Terminate various static buffers.
+ USAGE
+    intn DFSDshutdown()
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    Free various buffers allocated in the DFSD routines.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    Should only ever be called by the "atexit" function HDFend
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn DFSDPshutdown(void)
+{
+    DFSDIclear(&Readsdg);
+    DFSDIclear(&Writesdg);
+
+    /* old nsdg table should be reset next time  */
+    if (nsdghdr != NULL)
+      {
+          if (nsdghdr->nsdg_t != NULL)
+            {
+                DFnsdgle   *rear, *front;
+
+                rear = nsdghdr->nsdg_t;
+                front = rear->next;
+                while (rear != NULL)
+                  {
+                      HDfree(rear);
+                      rear = front;
+                      if (rear != NULL)
+                          front = rear->next;
+                  }
+                lastnsdg.tag = DFTAG_NULL;
+                lastnsdg.ref = 0;
+            }
+          HDfreenclear(nsdghdr);
+      }
+
+    if(ptbuf!=NULL)
+      {
+          HDfree(ptbuf);
+          ptbuf=NULL;
+      } /* end if */
+
+    if(Lastfile!=NULL)
+      {
+          HDfree(Lastfile);
+          Lastfile=NULL;
+      } /* end if */
+    return(SUCCEED);
+} /* end DFSDPshutdown() */
+

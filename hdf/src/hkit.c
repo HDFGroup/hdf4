@@ -765,6 +765,13 @@ void HDFend(void)
 
     /* can't issue errors if you're free'ing the error stack. */
     VSPfreebuf();
+    VPshutdown();
+    DFSDPshutdown();
+    DFR8Pshutdown();
+    DFANPshutdown();
+    DFGRPshutdown();
+    ANdestroy();
+    HPbitshutdown();
     Hshutdown();
     HEshutdown();
 } /* end HDFend() */

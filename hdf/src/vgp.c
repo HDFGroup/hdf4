@@ -1886,3 +1886,31 @@ Vdelete(int32 f, int32 vgid)
 
     return SUCCEED;
 }   /* Vdelete */
+
+/*--------------------------------------------------------------------------
+ NAME
+    VPshutdown
+ PURPOSE
+    Terminate various static buffers.
+ USAGE
+    intn VPshutdown()
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    Free various buffers allocated in the V routines.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    Should only ever be called by the "atexit" function HDFend
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn VPshutdown(void)
+{
+    if(vfile!=NULL)
+      {
+          HDfree(vfile);
+          vfile=NULL;
+      } /* end if */
+    return(SUCCEED);
+} /* end VPshutdown() */
+
