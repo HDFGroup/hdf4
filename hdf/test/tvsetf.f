@@ -33,12 +33,13 @@ C Output file: tvsetf1.hdf
       character*(*) myname
       parameter (myname = "vsetf")
 
-      integer hopen,vfatch,vfgid,vfgnxt,vfinsrt
-      integer vfgttrs,vfadtr, hclose, vsfatch
-      integer vsffdef,vsffnd,vsfgid
-      integer vsfinq,vsfsfld
+      integer hopen,  vfatch,  vfgid,   vfgnxt, vfinsrt
+      integer vfgttrs,vfadtr,  hclose,  vsfatch
+      integer vsffdef,vsffnd,  vsfgid
+      integer vsfinq, vsfsfld
       integer vfisvs, vsfcpak, vsfnpak, vsfrd
-      integer vsfrdc,vsfwrt, vsfwrtc,vhfscd, vhfscdm
+      integer vsfrdc, vsfwrt,  vsfwrtc, vhfscd, vhfscdm
+
       integer*4 fid1, vgid1, vgid2, vsid1, vsid2
       integer*4 vgref1, vsref1, vsref2, vref
       integer vsize, found
