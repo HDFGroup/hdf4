@@ -427,6 +427,12 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (int32 aid, int32 *length, int32 *first_length, int32 *block_length,
                  int32 *number_blocks);
 
+    HDFLIBAPI intn HLsetblockinfo
+                (int32 aid, int32 block_size, int32 num_blocks);
+
+    HDFLIBAPI intn HLgetblockinfo
+                (int32 aid, int32* block_size, int32* num_blocks);
+
 /*
    ** from hextelt.c
  */
@@ -3196,6 +3202,15 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
 
     HDFLIBAPI int32 VSfindclass
                 (HFILEID f, const char  * vsclass);
+
+    HDFLIBAPI intn VSsetblocksize
+                (int32 vkey, int32 block_size);
+
+    HDFLIBAPI intn VSsetnumblocks
+                (int32 vkey, int32 num_blocks);
+
+    HDFLIBAPI intn VSgetblockinfo
+                (int32 vkey, int32* block_size, int32* num_blocks);
 
     HDFLIBAPI void Vsetzap
                 (void);

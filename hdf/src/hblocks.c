@@ -1803,10 +1803,10 @@ done:
 
 /*--------------------------------------------------------------------------
 NAME
-   Hsetblocksize -- set the block length of a linked-block element
+   HLsetblocksize -- set the block length of a linked-block element
 
 USAGE
-   intn Hsetblockinfo(
+   intn HLsetblockinfo(
    int32 aid		IN: access record id
    int32 block_size	IN: length to be used for each linked-block 
    int32 num_blocks	IN: number of blocks the element will have
@@ -1815,7 +1815,7 @@ RETURNS
    SUCCEED / FAIL
 
 DESCRIPTION
-   Hsetblocksize sets (accrec_t).block_size and (accrec_t).num_blocks
+   HLsetblocksize sets (accrec_t).block_size and (accrec_t).num_blocks
    to block_size and num_blocks, respectively.  An error will occur, if
    either of the parameters is a 0 or a negative number, that is not
    -1, which is used to indicate that the respective field is not to be
@@ -1830,16 +1830,16 @@ MODIFICATION
 
 --------------------------------------------------------------------------*/
 intn
-Hsetblockinfo(int32 aid,	/* access record id */
+HLsetblockinfo(int32 aid,	/* access record id */
               int32 block_size, /* length to be used for each linked-block */
               int32 num_blocks) /* number of blocks the element will have */
 {
-    CONSTR(FUNC, "Hsetblockinfo");  	/* for HERROR */
+    CONSTR(FUNC, "HLsetblockinfo");  	/* for HERROR */
     accrec_t   *access_rec;               /* access record */
     intn	ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_Hsetblockinfo);
+    TRACE_ON(PABLO_mask,ID_HLsetblockinfo);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -1876,19 +1876,19 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_Hsetblockinfo);
+    TRACE_OFF(PABLO_mask, ID_HLsetblockinfo);
 #endif /* HAVE_PABLO */
 
     return ret_value;
-}       /* end Hsetblockinfo */
+}       /* end HLsetblockinfo */
 
 /*--------------------------------------------------------------------------
 NAME
-   Hgetblocksize -- get the block size and the number of blocks of a 
+   HLgetblocksize -- get the block size and the number of blocks of a 
 		    linked-block element
 
 USAGE
-   intn Hgetblockinfo(aid, block_size, num_blocks)
+   intn HLgetblockinfo(aid, block_size, num_blocks)
    int32  aid		IN: access record id
    int32* block_size	OUT: the returned block size of each linked-block 
    int32* num_blocks	OUT: the returned number of blocks of the element
@@ -1897,7 +1897,7 @@ RETURNS
    SUCCEED / FAIL
 
 DESCRIPTION
-   Hgetblocksize retrieves the values of (accrec_t).block_size and 
+   HLgetblocksize retrieves the values of (accrec_t).block_size and 
    (accrec_t).num_blocks to block_size and num_blocks, respectively.  
    A NULL can be passed in for an unwanted value.
 
@@ -1909,16 +1909,16 @@ MODIFICATION
 
 --------------------------------------------------------------------------*/
 intn
-Hgetblockinfo(int32 aid,	/* access record id */
+HLgetblockinfo(int32 aid,	/* access record id */
               int32* block_size, /* length being used for each linked-block */
               int32* num_blocks) /* number of blocks the element will have */
 {
-    CONSTR(FUNC, "Hgetblockinfo");  /* for HERROR */
+    CONSTR(FUNC, "HLgetblockinfo");  /* for HERROR */
     accrec_t   *access_rec;               /* access record */
     intn	ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_Hgetblockinfo);
+    TRACE_ON(PABLO_mask,ID_HLgetblockinfo);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -1942,9 +1942,9 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(PABLO_mask, ID_Hgetblockinfo);
+    TRACE_OFF(PABLO_mask, ID_HLgetblockinfo);
 #endif /* HAVE_PABLO */
 
     return ret_value;
-}       /* end Hgetblockinfo */
+}       /* end HLgetblockinfo */
 

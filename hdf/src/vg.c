@@ -44,6 +44,10 @@ EXPORTED ROUTINES
                        the vgroup with the specified class
      VSfindclass    -- looks in the file and returns the ref of the vdata 
                        with specified class
+     VSsetblocksize -- sets the block size of the linked-block element.
+     VSsetnumblocks -- sets the number of blocks for a linked-block element.
+     VSgetblockinfo -- retrieves the block size and the number of blocks 
+		       of a linked-block element.
      Vsetzap        -- maintaind for back compatibility
 PRIVATE FUNCTIONS
      matchnocase    -- compares to strings, ignoring case
@@ -1348,7 +1352,7 @@ VSsetblocksize(	int32 vkey, /* IN: vdata key */
       HGOTO_ERROR(DFE_ARGS,FAIL);
 
     /* internal routine handles the actual setting */
-    if (Hsetblockinfo(vs->aid, block_size, -1) == FAIL)
+    if (HLsetblockinfo(vs->aid, block_size, -1) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
@@ -1419,7 +1423,7 @@ VSsetnumblocks( int32 vkey, /* IN: vdata key */
       HGOTO_ERROR(DFE_ARGS,FAIL);
 
     /* internal routine handles the actual setting */
-    if (Hsetblockinfo(vs->aid, -1, num_blocks) == FAIL)
+    if (HLsetblockinfo(vs->aid, -1, num_blocks) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
@@ -1490,7 +1494,7 @@ VSgetblockinfo(int32 vkey, /* IN: vdata id */
       HGOTO_ERROR(DFE_ARGS,FAIL);
 
     /* internal routine handles the actual retrieval */
-    if (Hgetblockinfo(vs->aid, block_size, num_blocks) == FAIL)
+    if (HLgetblockinfo(vs->aid, block_size, num_blocks) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
