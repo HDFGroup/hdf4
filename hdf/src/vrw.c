@@ -84,6 +84,9 @@ intn VSPshutdown(void)
       Vtbufsize = 0;
     } /* end if */
 
+  /* Clear the local buffers in vio.c */
+  VSPhshutdown();
+
   return ret_value;
 } /* end VSPshutdown() */
 
@@ -467,29 +470,6 @@ VSwrite(int32 vkey, const uint8 buf[], int32 nelt, int32 interlace)
      */
     HQueryposition(vs->aid, &position);
     new_size = (position / (intn)vs->wlist.ivsize) + nelt;
-
-#ifdef OLD_WAY
-    if ((vs->nvertices > 0) && (new_size > vs->nvertices))
-      {
-          int16       special;
-
-          HQueryspecial(vs->aid, &special);
-          if (!special)
-            {
-
-                int32       blk_size;
-
-                blk_size = ((new_size*vs->wlist.ivsize) > VDEFAULTBLKSIZE ? (new_size*vs->wlist.ivsize) : VDEFAULTBLKSIZE);
-
-                Hendaccess(vs->aid);
-                vs->aid = HLcreate(vs->f, VSDATATAG, vs->oref,
-                                   blk_size, VDEFAULTNBLKS);
-
-                /* seek back to correct point */
-                j = Hseek(vs->aid, position, DF_START);
-            }
-      }
-#endif /* OLD_WAY */
 
     /* this should really be cached in the Vdata structure */
     for (int_size = 0, j = 0; j < w->n; j++)

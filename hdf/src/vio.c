@@ -57,7 +57,205 @@ EXPORTED ROUTINES
 PRIVATE intn vunpackvs
             (VDATA * vs, uint8 buf[], int32 len);
 
+/* Temporary buffer for I/O */
+PRIVATE uint32 Vhbufsize = 0;
+PRIVATE uint8 *Vhbuf = NULL;
+
+/* Pointers to the VDATA & vsinstance node free lists */
+static VDATA *vdata_free_list=NULL;
+static vsinstance_t *vsinstance_free_list=NULL;
+
 /* vpackvs is prototyped in vg.h since vconv.c needs to call it */
+
+/*--------------------------------------------------------------------------
+ NAME
+    VSIget_vdata_node -- allocate a new VDATA record
+ USAGE
+    VDATA *VSIget_vdata_node(void)
+ RETURNS
+    returns VDATA record pointer or NULL if failed.
+ DESCRIPTION
+    Return an pointer to a new VDATA to use for a new VSID.
+
+--------------------------------------------------------------------------*/
+VDATA *VSIget_vdata_node(void)
+{
+    CONSTR(FUNC, "VSIget_vdata_node");
+    VDATA   *ret_value = NULL;
+  
+    HEclear();
+
+    /* Grab from free list if possible */
+    if(vdata_free_list!=NULL)
+      {
+        ret_value=vdata_free_list;
+        vdata_free_list=vdata_free_list->next;
+      } /* end if */
+    else
+      {
+        if((ret_value=(VDATA *)HDmalloc(sizeof(VDATA)))==NULL)
+            HGOTO_ERROR(DFE_NOSPACE, NULL);
+      } /* end else */
+
+    /* Initialize to zeros */
+    HDmemset(ret_value,0,sizeof(VDATA));
+
+done:
+  if(ret_value == NULL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return(ret_value);
+}	/* VSIget_vdata_node */
+
+/******************************************************************************
+ NAME
+     VSIrelease_vdata_node - Releases a vdata node
+
+ DESCRIPTION
+    Puts an VDATA node into the free list
+
+ RETURNS
+    No return value
+
+*******************************************************************************/
+void VSIrelease_vdata_node(VDATA *vs)
+{
+#ifdef LATER
+    CONSTR(FUNC, "VSIrelease_vdata_node");	/* for HERROR */
+#endif /* LATER */
+
+    /* Insert the atom at the beginning of the free list */
+    vs->next=vdata_free_list;
+    vdata_free_list=vs;
+}   /* end VSIrelease_vdata_node() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    VSIget_vsinstance_node -- allocate a new vsinstance_t record
+ USAGE
+    vsinstance_t *VSIget_vsinstance_node(void)
+ RETURNS
+    returns vsinstance_t pointer or NULL if failed.
+ DESCRIPTION
+    Return an pointer to a new VDATA to use for a new VSID.
+
+--------------------------------------------------------------------------*/
+vsinstance_t *VSIget_vsinstance_node(void)
+{
+    CONSTR(FUNC, "VSIget_vsinstance_node");
+    vsinstance_t   *ret_value = NULL;
+  
+    HEclear();
+
+    /* Grab from free list if possible */
+    if(vsinstance_free_list!=NULL)
+      {
+        ret_value=vsinstance_free_list;
+        vsinstance_free_list=vsinstance_free_list->next;
+      } /* end if */
+    else
+      {
+        if((ret_value=(vsinstance_t *)HDmalloc(sizeof(vsinstance_t)))==NULL)
+            HGOTO_ERROR(DFE_NOSPACE, NULL);
+      } /* end else */
+
+    /* Initialize to zeros */
+    HDmemset(ret_value,0,sizeof(vsinstance_t));
+
+done:
+  if(ret_value == NULL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return(ret_value);
+}	/* VSIget_vsinstance_node */
+
+/******************************************************************************
+ NAME
+     VSIrelease_vsinstance_node - Releases a vsinstance node
+
+ DESCRIPTION
+    Puts a vsinstance node into the free list
+
+ RETURNS
+    No return value
+
+*******************************************************************************/
+void VSIrelease_vsinstance_node(vsinstance_t *vs)
+{
+#ifdef LATER
+    CONSTR(FUNC, "VSIrelease_vsinstance_node");	/* for HERROR */
+#endif /* LATER */
+
+    /* Insert the atom at the beginning of the free list */
+    vs->next=vsinstance_free_list;
+    vsinstance_free_list=vs;
+}   /* end VSIrelease_vsinstance_node() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    VSPhshutdown
+ PURPOSE
+    Free the Vhbuf buffer.
+ USAGE
+    intn VSPhshutdown()
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    For completeness, when the VSet interface is shut-down, free the Vhbuf.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    Should only ever be called by the "atexit" function HDFend
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn VSPhshutdown(void)
+{
+    intn  ret_value = SUCCEED;
+    VDATA *v;
+    vsinstance_t *vs;
+
+    /* Release the vdata free-list if it exists */
+    if(vdata_free_list!=NULL)
+      {
+        while(vdata_free_list!=NULL)
+          {
+            v=vdata_free_list;
+            vdata_free_list=vdata_free_list->next;
+            HDfree(v);
+          } /* end while */
+      } /* end if */
+
+    /* Release the vsinstance free-list if it exists */
+    if(vsinstance_free_list!=NULL)
+      {
+        while(vsinstance_free_list!=NULL)
+          {
+            vs=vsinstance_free_list;
+            vsinstance_free_list=vsinstance_free_list->next;
+            HDfree(vs);
+          } /* end while */
+      } /* end if */
+
+  if(Vhbuf!=NULL)
+    {
+      HDfree(Vhbuf);
+      Vhbuf=NULL;
+      Vhbufsize = 0;
+    } /* end if */
+
+  /* free the parsing buffer */
+  VPparse_shutdown();
+
+  return ret_value;
+} /* end VSPhshutdown() */
 
 /* ------------------------------------------------------------------ */
 /*
@@ -167,6 +365,7 @@ vpackvs(VDATA * vs, uint8 buf[], int32 *size)
 #endif /* LATER */
 
     int32 i;
+    int16 slen;
     uint8 *bb;
     intn  ret_value = SUCCEED;
 
@@ -205,23 +404,26 @@ vpackvs(VDATA * vs, uint8 buf[], int32 *size)
     /* save each field length and name - omit the null */
     for (i = 0; i < vs->wlist.n; i++)
       {
-          INT16ENCODE(bb, HDstrlen(vs->wlist.name[i]));
+          slen=HDstrlen(vs->wlist.name[i]);
+          INT16ENCODE(bb, slen);
 
           HDstrcpy((char *) bb, vs->wlist.name[i]);
-          bb += HDstrlen(vs->wlist.name[i]);
+          bb += slen;
       }
 
     /* save the vsnamelen and vsname - omit the null */
-    INT16ENCODE(bb, HDstrlen(vs->vsname));
+    slen=HDstrlen(vs->vsname);
+    INT16ENCODE(bb, slen);
 
     HDstrcpy((char *) bb, vs->vsname);
-    bb += HDstrlen(vs->vsname);
+    bb += slen;
 
     /* save the vsclasslen and vsclass- omit the null */
-    INT16ENCODE(bb, HDstrlen(vs->vsclass));
+    slen=HDstrlen(vs->vsclass);
+    INT16ENCODE(bb, slen);
 
     HDstrcpy((char *) bb, vs->vsclass);
-    bb += HDstrlen(vs->vsclass);
+    bb += slen;
 
     /* save the expansion tag/ref pair */
     UINT16ENCODE(bb, vs->extag);
@@ -314,20 +516,26 @@ vunpackvs(VDATA * vs, uint8 buf[], int32 len)
        /* retrieve nfields */
        INT16DECODE(bb, int16var);
        vs->wlist.n=(intn)int16var;
-       /* Can't really check for malloc failure... -QAK */
-       vs->wlist.type=HDmalloc(sizeof(int16)*(size_t)vs->wlist.n);
+
+      /* Can't really check for malloc failure... -QAK */
+      /* Allocate buffer to hold all the int16/uint16 arrays */
+      vs->wlist.bptr=HDmalloc(sizeof(uint16)*(size_t)(vs->wlist.n*5));
+
+      /* Use buffer to support the other arrays */
+      vs->wlist.type=(int16 *)vs->wlist.bptr;
+      vs->wlist.off=(uint16 *)vs->wlist.type+vs->wlist.n;
+      vs->wlist.isize=vs->wlist.off+vs->wlist.n;
+      vs->wlist.order=vs->wlist.isize+vs->wlist.n;
+      vs->wlist.esize=vs->wlist.order+vs->wlist.n;
        for (i = 0; i < vs->wlist.n; i++)   /* retrieve the type */
            INT16DECODE(bb, vs->wlist.type[i]);
-       vs->wlist.isize=HDmalloc(sizeof(uint16)*(size_t)vs->wlist.n);
        for (i = 0; i < vs->wlist.n; i++)   /* retrieve the isize */
            UINT16DECODE(bb, vs->wlist.isize[i]);
 
-        vs->wlist.off=HDmalloc(sizeof(uint16)*(size_t)vs->wlist.n);
-        for (i = 0; i < vs->wlist.n; i++)   /* retrieve the offset */
+       for (i = 0; i < vs->wlist.n; i++)   /* retrieve the offset */
             UINT16DECODE(bb, vs->wlist.off[i]);
 
-        vs->wlist.order=HDmalloc(sizeof(uint16)*(size_t)vs->wlist.n);
-        for (i = 0; i < vs->wlist.n; i++)   /* retrieve the order */
+       for (i = 0; i < vs->wlist.n; i++)   /* retrieve the order */
             UINT16DECODE(bb, vs->wlist.order[i]);
 
         /* retrieve the field names (and each field name's length)  */
@@ -367,7 +575,7 @@ vunpackvs(VDATA * vs, uint8 buf[], int32 len)
            UINT32DECODE(bb, vs->flags);
            if (vs->flags & VS_ATTR_SET)  {    /* get attr info */
               INT32DECODE(bb, vs->nattrs);
-if (NULL==(vs->alist=(vs_attr_t *)HDmalloc(vs->nattrs*sizeof(vs_attr_t))))
+                if (NULL==(vs->alist=(vs_attr_t *)HDmalloc(vs->nattrs*sizeof(vs_attr_t))))
                   HGOTO_ERROR(DFE_NOSPACE, FAIL);
               for (i=0; i<vs->nattrs; i++)  {
                   INT32DECODE(bb, vs->alist[i].findex);
@@ -380,7 +588,6 @@ if (NULL==(vs->alist=(vs_attr_t *)HDmalloc(vs->nattrs*sizeof(vs_attr_t))))
           for (i = 0; i < vs->wlist.n; i++)   /* save the type */
             vs->wlist.type[i] = map_from_old_types((intn)vs->wlist.type[i]);
     /* --- EXTRA --- fill in the machine-dependent size fields */
-       vs->wlist.esize=HDmalloc(sizeof(uint16)*(size_t)vs->wlist.n);
        for (i = 0; i < vs->wlist.n; i++)
            vs->wlist.esize[i] = (uint16) (vs->wlist.order[i] *
               DFKNTsize((int32) vs->wlist.type[i] | (int32) DFNT_NATIVE));
@@ -420,20 +627,15 @@ vsdestroynode(VOIDP n)
         for(i=0; i<vs->wlist.n; i++)
             HDfree(vs->wlist.name[i]);
         HDfree(vs->wlist.name);
-        HDfree(vs->wlist.type);
-        HDfree(vs->wlist.off);
-        HDfree(vs->wlist.isize);
-        HDfree(vs->wlist.order);
-        HDfree(vs->wlist.esize);
+        HDfree(vs->wlist.bptr);
         if(vs->rlist.item!=NULL)
             HDfree(vs->rlist.item);
         if (vs->alist != NULL)
             HDfree(vs->alist);
-        HDfree((VOIDP) vs);
+        VSIrelease_vdata_node(vs);
       } /* end if */
 
-    HDfree((VOIDP) n);
-
+    VSIrelease_vsinstance_node((vsinstance_t *)n);
 }   /* vsdestroynode */
 
 /*--------------------------------------------------------------------------
@@ -460,41 +662,32 @@ VDATA *VSPgetinfo(HFILEID f,uint16 ref)
 {
     CONSTR(FUNC, "VSPgetinfo");
 	VDATA 		*vs;  			 /* new vdata to be returned */
-    uint8       *vspack;
     int32       vh_length;      /* length of the vdata header */
     VDATA *ret_value = NULL; /* FAIL */
  
-    /* allocate space for vs,  & zero it out  */
-    if ( (vs=(VDATA*) HDmalloc (sizeof(VDATA))) == NULL)
+    if ((vs = VSIget_vdata_node()) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, NULL);
  
     /* need to fetch from file */
     if ((vh_length= Hlength (f,DFTAG_VH,ref))==FAIL)
         HGOTO_ERROR(DFE_BADLEN, NULL);
-    if ( (vspack= (uint8 *) HDmalloc (vh_length)) == NULL)
-        HGOTO_ERROR(DFE_NOSPACE, NULL);
-    if (Hgetelement(f,DFTAG_VH,ref,vspack) == FAIL) {
-        HDfree((VOIDP)vspack);
-        HGOTO_ERROR(DFE_NOVS, NULL);
+    if(vh_length>Vhbufsize)
+      {
+        Vhbufsize = vh_length;
+        if (Vhbuf)
+            HDfree((VOIDP) Vhbuf);
+        if ((Vhbuf = (uint8 *) HDmalloc(Vhbufsize)) == NULL)
+            HGOTO_ERROR(DFE_NOSPACE, NULL);
       } /* end if */
- 
-    vs->wlist.n = vs->rlist.n = 0;
-    vs->rlist.item=NULL;
+    if (Hgetelement(f,DFTAG_VH,ref,Vhbuf) == FAIL)
+        HGOTO_ERROR(DFE_NOVS, NULL);
  
     /* unpack the vs, then init all other fields in it */
     vs->otag    = DFTAG_VH;
     vs->oref    = ref;
     vs->f   = f;
-    vs->marked  = 0;
-    vs->nusym   = 0;
-    vs->usym=NULL;
-    vs->flags = 0;
-    vs->nattrs = 0;
-    vs->alist = NULL;
-    if (FAIL == vunpackvs (vs,vspack, vh_length))
+    if (FAIL == vunpackvs (vs,Vhbuf, vh_length))
        HGOTO_ERROR(DFE_INTERNAL, NULL);
- 
-    HDfree((VOIDP)vspack);
  
     ret_value = (vs);
 
@@ -593,44 +786,24 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
 
           /* otherwise 'w' */
           /* allocate space for vs,  & zero it out  */
-          if ((vs = (VDATA *) HDmalloc(sizeof(VDATA))) == NULL)
+          if ((vs = VSIget_vdata_node()) == NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
-
-          vs->nvertices = 0;
-          vs->wlist.n = vs->rlist.n = 0;
-          vs->rlist.item=NULL;
-          vs->islinked = FALSE;
-          vs->nusym = 0;
-          vs->usym=NULL;
 
           vs->otag = DFTAG_VH;
           vs->oref = Hnewref(f);
           if (vs->oref == 0)
             {
-                HERROR(DFE_NOREF);
-                HDfree((VOIDP) vs);
-                ret_value = (FAIL);
-                goto done;
+                VSIrelease_vdata_node(vs);
+                HGOTO_ERROR(DFE_NOREF, FAIL);
             }
 
-          vs->vsname[0] = '\0';
           vs->interlace = FULL_INTERLACE;   /* DEFAULT */
           vs->access = 'w';
           vs->f = f;
-          vs->marked = 0;
-          vs->new_h_sz = 0;
-          vs->vsclass[0] = '\0';
-          vs->extag = 0;
-          vs->exref = 0;
-          vs->more = 0;
           vs->version = VSET_VERSION;
-          vs->flags = 0;
-          vs->nattrs = 0;
-          vs->alist = NULL;
-          vs->aid = 0;
 
           /* attach new vs to file's vstab */
-          if (NULL == (w = (vsinstance_t *) HDmalloc(sizeof(vsinstance_t))))
+          if (NULL == (w = VSIget_vsinstance_node()))
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           vf->vstabn++;
@@ -733,7 +906,6 @@ int32
 VSdetach(int32 vkey)
 {
     int32       i, ret, vspacksize;
-    uint8      *vspack;
     vsinstance_t *w;
     VDATA      *vs;
     int32      ret_value = SUCCEED;
@@ -774,16 +946,24 @@ VSdetach(int32 vkey)
 
     if (vs->marked)
       {	  /* if marked , write out vdata's VSDESC to file */
-        if ((vspack = (uint8 *) HDmalloc(sizeof(VWRITELIST) + 
-           (size_t)vs->nattrs*sizeof(vs_attr_t) + sizeof(VDATA) + 1)) == NULL)
-            HGOTO_ERROR(DFE_NOSPACE, FAIL);
-        if (FAIL == vpackvs(vs, vspack, &vspacksize))
+        size_t need=sizeof(VWRITELIST) + 
+           (size_t)vs->nattrs*sizeof(vs_attr_t) + sizeof(VDATA) + 1;
+        
+        if(need>Vhbufsize)
+          {
+            Vhbufsize = need;
+            if (Vhbuf)
+                HDfree((VOIDP) Vhbuf);
+            if ((Vhbuf = (uint8 *) HDmalloc(Vhbufsize)) == NULL)
+                HGOTO_ERROR(DFE_NOSPACE, FAIL);
+          } /* end if */
+
+        if (FAIL == vpackvs(vs, Vhbuf, &vspacksize))
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
           /* the old one should be blown away if VH size changed  */
         if (vs->new_h_sz)
             Hdeldd(vs->f, DFTAG_VH, vs->oref);
-        ret = Hputelement(vs->f, VSDESCTAG, vs->oref, vspack, vspacksize);
-        HDfree((VOIDP) vspack);
+        ret = Hputelement(vs->f, VSDESCTAG, vs->oref, Vhbuf, vspacksize);
         if (ret == FAIL)
             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
         vs->marked = 0;
@@ -829,9 +1009,6 @@ done:
 int32 
 VSappendable(int32 vkey, int32 blk)
 {
-#ifdef OLD_WAY
-    int32       blksize,curr_size=0;
-#endif /* OLD_WAY */
     vsinstance_t *w;
     VDATA      *vs;
     int32      ret_value = SUCCEED;
@@ -855,29 +1032,10 @@ VSappendable(int32 vkey, int32 blk)
     if ((vs == NULL) || (vs->otag != VSDESCTAG))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-#ifdef OLD_WAY
-    if(vs->nvertices!=0)
-        curr_size = vs->nvertices * vs->wlist.ivsize;
-
-    if (blk > 0)
-        blksize = blk;
-    else if (vs->nvertices!=0 && (curr_size > VDEFAULTBLKSIZE))
-        blksize = curr_size;
-    else
-        blksize = VDEFAULTBLKSIZE;
-
-    if(vs->aid!=0)
-        Hendaccess(vs->aid);
-
-    vs->aid = HLcreate(vs->f, VSDATATAG, vs->oref, blksize, VDEFAULTNBLKS);
-    if (vs->aid == FAIL)
-        ret_value = FAIL;
-#else /* OLD_WAY */
     if(vs->aid==0)
         vs->aid = Hstartaccess(vs->f, VSDATATAG, vs->oref, DFACC_RDWR|DFACC_APPENDABLE);
     else
         ret_value = Happendable(vs->aid);
-#endif /* OLD_WAY */
 
 done:
   if(ret_value == FAIL)   

@@ -201,9 +201,9 @@ vimakecompat(HFILEID f)
     /* =============================================  */
     /* --- read all vgs and convert each --- */
 
-    vg = (VGROUP *) HDmalloc(sizeof(VGROUP));     /*allocate space for the VGroup */
-    if (!vg)
-	HRETURN_ERROR(DFE_NOSPACE, 0);
+    /* allocate space for vg */
+    if (NULL == (vg =VIget_vgroup_node()))
+        HRETURN_ERROR(DFE_NOSPACE, 0);
     ret = aid = Hstartread(f, (uint16) OLD_VGDESCTAG, DFREF_WILDCARD);
     while (ret != FAIL)
       {
@@ -249,7 +249,7 @@ vimakecompat(HFILEID f)
           ret = Hnextread(aid, (uint16) OLD_VGDESCTAG, DFREF_WILDCARD, DF_CURRENT);
       }     /* while */
     Hendaccess(aid);
-    HDfree((VOIDP) vg);
+    VIrelease_vgroup_node(vg);
 
     /* =============================================  */
     /* --- read all vdata descs  and convert each --- */
@@ -257,9 +257,8 @@ vimakecompat(HFILEID f)
 
     old_bsize = 0;  /* reset state variables */
     buf = NULL;
-    vs = (VDATA *) HDmalloc(sizeof(VDATA));   /* allocate space for the VData */
-    if (!vs)
-	HRETURN_ERROR(DFE_NOSPACE, 0);
+    if ((vs = VSIget_vdata_node()) == NULL)
+        HRETURN_ERROR(DFE_NOSPACE, 0);
     ret = aid = Hstartread(f, (uint16) OLD_VSDESCTAG, DFREF_WILDCARD);
     while (ret != FAIL)
       {
@@ -307,7 +306,7 @@ vimakecompat(HFILEID f)
       }     /* while */
 
     Hendaccess(aid);
-    HDfree((VOIDP) vg);
+    VSIrelease_vdata_node(vs);
 
     return (1);
 

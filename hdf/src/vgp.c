@@ -115,6 +115,146 @@ TBBT_TREE *vtree=NULL;
 /* Whether we've installed the library termination function yet for this interface */
 PRIVATE intn library_terminate = FALSE;
 
+/* Temporary buffer for I/O */
+PRIVATE uint32 Vgbufsize = 0;
+PRIVATE uint8 *Vgbuf = NULL;
+
+/* Pointers to the VGROUP & vginstance node free lists */
+static VGROUP *vgroup_free_list=NULL;
+static vginstance_t *vginstance_free_list=NULL;
+
+/*--------------------------------------------------------------------------
+ NAME
+    VIget_vgroup_node -- allocate a new VGROUP record
+ USAGE
+    VGROUP *VIget_vgroup_node(void)
+ RETURNS
+    returns VGROUP record pointer or NULL if failed.
+ DESCRIPTION
+    Return an pointer to a new VGROUP to use for a new VGID.
+
+--------------------------------------------------------------------------*/
+VGROUP *VIget_vgroup_node(void)
+{
+    CONSTR(FUNC, "VIget_vgroup_node");
+    VGROUP   *ret_value = NULL;
+  
+    HEclear();
+
+    /* Grab from free list if possible */
+    if(vgroup_free_list!=NULL)
+      {
+        ret_value=vgroup_free_list;
+        vgroup_free_list=vgroup_free_list->next;
+      } /* end if */
+    else
+      {
+        if((ret_value=(VGROUP *)HDmalloc(sizeof(VGROUP)))==NULL)
+            HGOTO_ERROR(DFE_NOSPACE, NULL);
+      } /* end else */
+
+    /* Initialize to zeros */
+    HDmemset(ret_value,0,sizeof(VGROUP));
+
+done:
+  if(ret_value == NULL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return(ret_value);
+}	/* VIget_vgroup_node */
+
+/******************************************************************************
+ NAME
+     VIrelease_vgroup_node - Releases a vgroup node
+
+ DESCRIPTION
+    Puts an VGROUP node into the free list
+
+ RETURNS
+    No return value
+
+*******************************************************************************/
+void VIrelease_vgroup_node(VGROUP *vg)
+{
+#ifdef LATER
+    CONSTR(FUNC, "VIrelease_vgroup_node");	/* for HERROR */
+#endif /* LATER */
+
+    /* Insert the atom at the beginning of the free list */
+    vg->next=vgroup_free_list;
+    vgroup_free_list=vg;
+}   /* end VIrelease_vgroup_node() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    VIget_vginstance_node -- allocate a new vginstance_t record
+ USAGE
+    vginstance_t *VIget_vginstance_node(void)
+ RETURNS
+    returns vginstance_t pointer or NULL if failed.
+ DESCRIPTION
+    Return an pointer to a new vginstance to use for a new VGID.
+
+--------------------------------------------------------------------------*/
+vginstance_t *VIget_vginstance_node(void)
+{
+    CONSTR(FUNC, "VIget_vginstance_node");
+    vginstance_t   *ret_value = NULL;
+  
+    HEclear();
+
+    /* Grab from free list if possible */
+    if(vginstance_free_list!=NULL)
+      {
+        ret_value=vginstance_free_list;
+        vginstance_free_list=vginstance_free_list->next;
+      } /* end if */
+    else
+      {
+        if((ret_value=(vginstance_t *)HDmalloc(sizeof(vginstance_t)))==NULL)
+            HGOTO_ERROR(DFE_NOSPACE, NULL);
+      } /* end else */
+
+    /* Initialize to zeros */
+    HDmemset(ret_value,0,sizeof(vginstance_t));
+
+done:
+  if(ret_value == NULL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return(ret_value);
+}	/* VIget_vginstance_node */
+
+/******************************************************************************
+ NAME
+     VIrelease_vginstance_node - Releases a vginstance node
+
+ DESCRIPTION
+    Puts a vginstance node into the free list
+
+ RETURNS
+    No return value
+
+*******************************************************************************/
+void VIrelease_vginstance_node(vginstance_t *vg)
+{
+#ifdef LATER
+    CONSTR(FUNC, "VIrelease_vginstance_node");	/* for HERROR */
+#endif /* LATER */
+
+    /* Insert the vsinstance at the beginning of the free list */
+    vg->next=vginstance_free_list;
+    vginstance_free_list=vg;
+}   /* end VIrelease_vginstance_node() */
+
 /* -------------------------- Get_vfile ------------------------ */
 /*
    Looks in the TBBT vtree for the file ID of the file.
@@ -205,7 +345,7 @@ Load_vfile(HFILEID f)
     while (ret != FAIL)
       {
           HQuerytagref(aid, &tag, &ref);
-          if (NULL == (v = (vginstance_t *) HDmalloc(sizeof(vginstance_t))))
+          if (NULL == (v = VIget_vginstance_node()))
             {
                 tbbtdfree(vf->vgtree, vdestroynode, NULL);
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -215,8 +355,6 @@ Load_vfile(HFILEID f)
           v->key = (int32) ref;   /* set the key for the node */
           v->ref = (uintn) ref;
           v->vg = VPgetinfo(f,ref);  /* get the header information */
-          v->nattach = 0;
-          v->nentries = 0;
           tbbtdins(vf->vgtree, (VOIDP) v, NULL);    /* insert the vg instance in B-tree */
           ret = Hnextread(aid, DFTAG_VG, DFREF_WILDCARD, DF_CURRENT);
       }
@@ -236,7 +374,8 @@ Load_vfile(HFILEID f)
     while (ret != FAIL)
       {
           HQuerytagref(aid, &tag, &ref);
-          if (NULL == (w = (vsinstance_t *) HDmalloc(sizeof(vsinstance_t))))
+          /* attach new vs to file's vstab */
+          if (NULL == (w = VSIget_vsinstance_node()))
             {
                 tbbtdfree(vf->vgtree, vdestroynode, NULL);
                 tbbtdfree(vf->vstree, vsdestroynode, NULL);
@@ -372,11 +511,10 @@ vdestroynode(VOIDP n)
           HDfree((VOIDP) vg->ref);
           if (vg->alist != NULL)
              HDfree((VOIDP) vg->alist);
-          HDfree((VOIDP) vg);
+          VIrelease_vgroup_node(vg);
       }
 
-    HDfree((VOIDP) n);
-
+    VIrelease_vginstance_node((vginstance_t *)n);
 }   /* vdestroynode */
 
 /* ---------------------------- vfdestroynode ------------------------- */
@@ -578,6 +716,7 @@ vpackvg(VGROUP * vg, uint8 buf[], int32 *size)
 #endif
 
     uintn  i;
+    int16 slen;
     uint8 *bb;
     int32 ret_value = SUCCEED;
 
@@ -600,16 +739,18 @@ vpackvg(VGROUP * vg, uint8 buf[], int32 *size)
         UINT16ENCODE(bb, vg->ref[i]);
 
     /* save the vgnamelen and vgname - omit the null */
-    UINT16ENCODE(bb, HDstrlen(vg->vgname));
+    slen=HDstrlen(vg->vgname);
+    UINT16ENCODE(bb, slen);
 
     HDstrcpy((char *) bb, vg->vgname);
-    bb += HDstrlen(vg->vgname);
+    bb += slen;
 
     /* save the vgclasslen and vgclass- omit the null */
-    UINT16ENCODE(bb, HDstrlen(vg->vgclass));
+    slen=HDstrlen(vg->vgclass);
+    UINT16ENCODE(bb, slen);
 
     HDstrcpy((char *) bb, vg->vgclass);
-    bb += HDstrlen(vg->vgclass);
+    bb += slen;
 
     /* save the expansion tag/ref pair */
     UINT16ENCODE(bb, vg->extag);    /* the vg's expansion tag */
@@ -739,8 +880,7 @@ vunpackvg(VGROUP * vg, uint8 buf[], intn len)
                                                version 4, or higher */
              if (vg->flags & VG_ATTR_SET)   {   /* the vg has attrs */
                  INT32DECODE(bb, vg->nattrs); 
-                 if (NULL == (vg->alist = HDmalloc(vg->nattrs * 
-                                  sizeof(vg_attr_t))))
+                 if (NULL == (vg->alist = HDmalloc(vg->nattrs * sizeof(vg_attr_t))))
                      HGOTO_ERROR(DFE_NOSPACE, FAIL);
                  for (i=0; i<vg->nattrs; i++) {
                      UINT16DECODE(bb, vg->alist[i].atag);
@@ -788,7 +928,6 @@ VGROUP *VPgetinfo(HFILEID f,uint16 ref)
 {
     CONSTR(FUNC, "VPgetinfo");
     VGROUP         *vg;
-    uint8          *vgpack;
     intn          len;
     VGROUP *ret_value = NULL; /* FAIL */
           
@@ -797,31 +936,30 @@ VGROUP *VPgetinfo(HFILEID f,uint16 ref)
     if (( len = Hlength(f, DFTAG_VG, (uint16) ref)) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL,NULL);
  
-    /* Get space for the raw Vgroup info */
-    if(( vgpack = (uint8 *) HDmalloc(len)) == NULL)
-        HGOTO_ERROR(DFE_NOSPACE,NULL);
- 
+    if(len>Vgbufsize)
+      {
+        Vgbufsize = len;
+        if (Vgbuf)
+            HDfree((VOIDP) Vgbuf);
+        if ((Vgbuf = (uint8 *) HDmalloc(Vgbufsize)) == NULL)
+            HGOTO_ERROR(DFE_NOSPACE, NULL);
+      } /* end if */
+
     /* Get the raw Vgroup info */
-    if (Hgetelement(f, DFTAG_VG, (uint16)ref, vgpack) == (int32)FAIL) 
+    if (Hgetelement(f, DFTAG_VG, (uint16)ref, Vgbuf) == (int32)FAIL) 
         HGOTO_ERROR(DFE_NOMATCH,NULL);
        
     /* allocate space for vg */
-    if (NULL == (vg =(VGROUP*) HDmalloc (sizeof(VGROUP)))) 
+    if (NULL == (vg =VIget_vgroup_node()))
         HGOTO_ERROR(DFE_NOSPACE,NULL);
        
     /* unpack vgpack into structure vg, and init  */
     vg->f             = f;
-    vg->new_vg        = 0;
     vg->oref          = ref;
     vg->otag          = DFTAG_VG;
-    vg->flags         = 0;
-    vg->nattrs        = 0;
-    vg->alist         = NULL;
-    if (FAIL == vunpackvg(vg,vgpack,len))
+    if (FAIL == vunpackvg(vg,Vgbuf,len))
          HGOTO_ERROR(DFE_INTERNAL, NULL);
       
-    HDfree((VOIDP)vgpack);
-
     ret_value = vg;
 
 done:
@@ -895,7 +1033,7 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
               HGOTO_ERROR(DFE_ARGS, FAIL);
 
           /* allocate space for vg, & zero it out */
-          if ((vg = (VGROUP *) HDmalloc(sizeof(VGROUP))) == NULL)
+          if ((vg = VIget_vgroup_node()) == NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           /* initialize new vg */
@@ -906,8 +1044,6 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
           if ((vg->tag == NULL) || (vg->ref == NULL))
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-          vg->nvelt = 0;
-          vg->vgname[0] = '\0';
           vg->f = f;
           vg->otag = DFTAG_VG;
           vg->oref = Hnewref(f);    /* create a new unique ref for it */
@@ -918,17 +1054,10 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
 
           vg->marked = 1;
           vg->new_vg = 1;
-          vg->vgclass[0] = '\0';
-          vg->extag = 0;
-          vg->exref = 0;
-          vg->more = 0;
           vg->version = VSET_VERSION;
-          vg->flags = 0;     /* for new features of vset version 4. */
-          vg->nattrs = 0;
-          vg->alist = NULL;
 
           /* attach new vg to file's vgtab  */
-          if (NULL == (v = (vginstance_t *) HDmalloc(sizeof(vginstance_t))))
+          if (NULL == (v = VIget_vginstance_node()))
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           vf->vgtabn++;
@@ -936,7 +1065,6 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
           v->ref = (uintn)vg->oref;
           v->vg = vg;
           v->nattach = 1;
-          v->nentries = 0;
           tbbtdins(vf->vgtree, (VOIDP) v, NULL);    /* insert the vg instance in B-tree */
 
           ret_value=HAregister_atom(VGIDGROUP,v);
@@ -1003,7 +1131,6 @@ Vdetach(int32 vkey)
     CONSTR(FUNC, "Vdetach");
     VGROUP     *vg;
     int32       vgpacksize;
-    uint8      *vgpack;
     vginstance_t *v;
     int32      ret_value = SUCCEED;
 
@@ -1028,10 +1155,19 @@ Vdetach(int32 vkey)
       /* no reason to check for access... (I hope) -QAK */
       if (vg->marked == 1)
         {
-           if (NULL==(vgpack=(uint8 *)HDmalloc(sizeof(VGROUP)+
-                   (size_t)vg->nvelt*4 + (size_t)vg->nattrs*sizeof(vg_attr_t) + 1)))
-                HGOTO_ERROR(DFE_NOSPACE, FAIL);
-            if (FAIL == vpackvg(vg, vgpack, &vgpacksize))
+           size_t need;
+
+           need=sizeof(VGROUP)+ (size_t)vg->nvelt*4 + (size_t)vg->nattrs*sizeof(vg_attr_t) + 1;
+           if(need>Vgbufsize)
+             {
+               Vgbufsize = need;
+               if (Vgbuf)
+                   HDfree((VOIDP) Vgbuf);
+               if ((Vgbuf = (uint8 *) HDmalloc(Vgbufsize)) == NULL)
+                   HGOTO_ERROR(DFE_NOSPACE, NULL);
+             } /* end if */
+
+            if (FAIL == vpackvg(vg, Vgbuf, &vgpacksize))
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
             /*
@@ -1041,9 +1177,8 @@ Vdetach(int32 vkey)
             if(!vg->new_vg)
                 Hdeldd(vg->f, DFTAG_VG, vg->oref);
 
-            if (Hputelement(vg->f, DFTAG_VG, vg->oref, vgpack, vgpacksize) == FAIL)
+            if (Hputelement(vg->f, DFTAG_VG, vg->oref, Vgbuf, vgpacksize) == FAIL)
                 HERROR(DFE_WRITEERROR);
-            HDfree((VOIDP) vgpack);
             vg->marked = 0;
             vg->new_vg = 0;
         }
@@ -2422,6 +2557,31 @@ done:
 --------------------------------------------------------------------------*/
 intn VPshutdown(void)
 {
+    VGROUP *v;
+    vginstance_t *vg;
+
+    /* Release the vdata free-list if it exists */
+    if(vgroup_free_list!=NULL)
+      {
+        while(vgroup_free_list!=NULL)
+          {
+            v=vgroup_free_list;
+            vgroup_free_list=vgroup_free_list->next;
+            HDfree(v);
+          } /* end while */
+      } /* end if */
+
+    /* Release the vginstance free-list if it exists */
+    if(vginstance_free_list!=NULL)
+      {
+        while(vginstance_free_list!=NULL)
+          {
+            vg=vginstance_free_list;
+            vginstance_free_list=vginstance_free_list->next;
+            HDfree(vg);
+          } /* end while */
+      } /* end if */
+
     if(vtree!=NULL)
       {
           /* Free the vfile tree */
@@ -2433,6 +2593,14 @@ intn VPshutdown(void)
 
           vtree=NULL;
       } /* end if */
+
+  if(Vgbuf!=NULL)
+    {
+      HDfree(Vgbuf);
+      Vgbuf=NULL;
+      Vgbufsize = 0;
+    } /* end if */
+
     return(SUCCEED);
 } /* end VPshutdown() */
 

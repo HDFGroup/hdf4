@@ -58,16 +58,16 @@ PRIVATE char sym[VSFIELDMAX][FIELDNAMELENMAX + 1];  /* array of tokens ? */
 #endif /* !macintosh */
 PRIVATE intn nsym;              /* token index ? */
 
-int32
-scanattrs(const char *attrs, int32 *attrc, char ***attrv)
+/* Temporary buffer for I/O */
+PRIVATE uint32 Vpbufsize = 0;
+PRIVATE uint8 *Vpbuf = NULL;
 
+int32 scanattrs(const char *attrs, int32 *attrc, char ***attrv)
 {
+    CONSTR(FUNC, "scanattrs");
     char *s, *s0, *ss;
     intn len;
-#if defined(macintosh) || defined(MAC) || defined(__MWERKS__) || defined(SYMANTEC_C) || defined(DMEM)   /* Dynamic memory */
-    CONSTR(FUNC, "scanattrs");
-#endif
-    char       *saved_string = (char *) HDstrdup(attrs);
+    size_t slen = HDstrlen(attrs)+1;
 
 #if defined(macintosh) || defined(MAC) || defined(__MWERKS__) || defined(SYMANTEC_C) || defined(DMEM)   /* Dynamic memory */
     intn i;
@@ -96,7 +96,17 @@ scanattrs(const char *attrs, int32 *attrc, char ***attrv)
 
 #endif /* macintosh */
 
-    s = saved_string;
+    if(slen>Vpbufsize)
+      {
+        Vpbufsize = slen;
+        if (Vpbuf)
+            HDfree((VOIDP) Vpbuf);
+        if ((Vpbuf = (uint8 *) HDmalloc(Vpbufsize)) == NULL)
+            HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      } /* end if */
+
+    HDstrcpy((char *)Vpbuf,attrs);
+    s = (char *)Vpbuf;
     nsym = 0;
 
     s0 = s;
@@ -159,10 +169,34 @@ scanattrs(const char *attrs, int32 *attrc, char ***attrv)
     *attrc = nsym;
     *attrv = (char **) symptr;
 
-    HDfree(saved_string);
-
     return (SUCCEED);   /* ok */
-
 }   /* scanattrs */
+
+/*--------------------------------------------------------------------------
+ NAME
+    VPparse_shutdown
+ PURPOSE
+    Free the Vpbuf buffer.
+ USAGE
+    intn VPparse_shutdown()
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    For completeness, when the VSet interface is shut-down, free the Vpbuf.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    Should only ever be called by the "atexit" function HDFend
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+void VPparse_shutdown(void)
+{
+    if(Vpbuf!=NULL)
+      {
+        HDfree(Vpbuf);
+        Vpbuf=NULL;
+        Vpbufsize = 0;
+      } /* end if */
+} /* end VSPhshutdown() */
 
 /* ------------------------------------------------------------------ */
