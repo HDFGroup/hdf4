@@ -62,7 +62,7 @@ static char RcsId[] = "@(#)$Revision$";
 
  **************************************************************************/
 
-#if (defined __MWERKS__) || (defined MPW)
+#if (defined macintosh) || (defined MPW)
 #define HDF  /* Need this for the Macintosh, avoid putting on compile line */
 #endif
 

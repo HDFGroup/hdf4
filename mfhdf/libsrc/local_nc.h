@@ -10,14 +10,14 @@
  *	netcdf library 'private' data structures, objects and interfaces
  */
 
-#if (defined __MWERKS__) || (defined MPW)
+#if (defined macintosh) || (defined MPW) || (defined __MWERKS__)
 #ifndef HDF
 #define HDF  /* For Mac we need to define this, to avoid putting on compile line */
 #endif
 #define NO_SYS_XDR_INC /* use stuff in "::xdr" */
 #define NO_ACCESS
 #define NO_GETPID
-#endif /* __MWERKS__ */
+#endif /* non command line compilers */
 
 #include	<stddef.h> /* size_t */
 #include	<stdio.h> /* FILENAME_MAX */
@@ -43,7 +43,7 @@
 #endif /* __ultrix */
 #include	<rpc/xdr.h>
 #else    /* NO_SYS_XDR_INC */
-#if defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__)
+#if defined(macintosh) || defined (SYMANTEC_C)
      /* For the mac reference types.h specifically
         because we don't want it to pick up the system one */
 #include      "::xdr:types.h"  /* "../xdr/types.h" */

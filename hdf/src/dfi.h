@@ -88,7 +88,7 @@
 #define DF_MT   DFMT_IBM6000
 #endif /*IBM6000 */
 
-#if defined (MAC) || defined (macintosh) || defined(__MWERKS__) || defined (SYMANTEC_C)
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
 #undef DF_BUFFIO    /* use unbuffered i/o */
 #include <memory.h>     /* malloc stuff for MPW 3.0 */
 #include <fcntl.h>  /* unbuffered IO stuff for MPW 3.0 */
@@ -172,7 +172,7 @@
 
 /*--------------------------------------------------------------------------*/
 /*                      Flexibility parameters                              */
-#if defined (MAC) || defined (macintosh) || defined(__MWERKS__) || defined (SYMANTEC_C)  /* MAC specific file manager calls */
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)  /* MAC specific file manager calls */
 #   define DF_OPEN(x,y) mopen(x,y)
 #   define DF_CLOSE(x) mclose(x)
 #   define DF_SEEK(x,y,z) mlseek(x,y,z)

@@ -711,7 +711,7 @@ extern      "C"
  */
 #include "hchunks.h"
 
-#if defined (MAC) || defined (macintosh) || defined(__MWERKS__) || defined (SYMANTEC_C)
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
     extern hdf_file_t mopen
                 (char *filename, intn access);
 

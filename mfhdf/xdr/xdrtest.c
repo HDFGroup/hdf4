@@ -8,7 +8,7 @@
  *  'xdr_vector' is not used by the netCDF, it is used here for convenience.
  */
 #include <stdio.h>
-#if (defined macintosh || defined __MWERKS__ || defined SYMANTEC_C || defined MAC)
+#if (defined macintosh || defined SYMANTEC_C || defined MAC)
 #define NO_SYS_XDR_INC /* use local "xdr.h" */
 #	include "types.h"
 #else /* not macintosh */

@@ -51,7 +51,7 @@ struct tbbt_node
       TBBT_LEAF   rcnt;         /* count of right children */
 # define  LeftCnt(node) ( (node)->lcnt )    /* Left descendants */
 # define  RightCnt(node) ( (node)->rcnt )   /* Left descendants */
-#if defined macintosh || defined MAC || defined __MWERKS__ || defined SYMANTEC_C     /* Macro substitution limit */
+#if defined macintosh || defined MAC || defined SYMANTEC_C     /* Macro substitution limit */
 # define  Cnt(node,s)   ( 1==(s) ? LeftCnt(node) : RightCnt(node) )
 #else                           /* !macintosh */
 # define  Cnt(node,s)   ( LEFT==(s) ? LeftCnt(node) : RightCnt(node) )

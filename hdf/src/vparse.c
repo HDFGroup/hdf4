@@ -30,7 +30,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #define ISCOMMA(c) ( (c==',') ? 1:0 )
 
-#if defined(macintosh) || defined(MAC) || defined(__MWERKS__) || defined(SYMANTEC_C) || defined(DMEM)   /* Dynamic memory */
+#if defined(macintosh) || defined(MAC) || defined(SYMANTEC_C) || defined(DMEM)   /* Dynamic memory */
 PRIVATE char **symptr = NULL;   /* array of ptrs to tokens  ? */
 PRIVATE char **sym = NULL;      /* array of tokens ? */
 #else  /* !macintosh */
@@ -78,7 +78,7 @@ scanattrs(const char *attrs,
     intn len;
     size_t slen = HDstrlen(attrs)+1;
 
-#if defined(macintosh) || defined(MAC) || defined(__MWERKS__) || defined(SYMANTEC_C) || defined(DMEM)   /* Dynamic memory */
+#if defined(macintosh) || defined(MAC) || defined(SYMANTEC_C) || defined(DMEM)   /* Dynamic memory */
     intn i;
 
     /* Lets allocate space for ptrs to tokens and tokens */

@@ -48,7 +48,7 @@ typedef NETLONG     netlong;
 #   include <fcntl.h>
 #endif
 
-#if defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__)
+#if defined(macintosh) || defined (SYMANTEC_C)
 #include <types.h>
 #else
 #include <sys/types.h>
@@ -61,7 +61,7 @@ typedef NETLONG     netlong;
 		       * <rpc/xdr.h> */
 #include "mfhdf.h"
 
-#if !(defined DOS_FS || defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__))
+#if !(defined DOS_FS || defined(macintosh) || defined (SYMANTEC_C))
 #   if defined VMS
         typedef u_long ncpos_t;  /* size of u_long is 32 for DECC AXP */
 #   else 
@@ -70,9 +70,9 @@ typedef NETLONG     netlong;
 #else
 #if defined DOS_FS
 typedef off_t ncpos_t ;
-#else /* macintosh w/ MWERKS */
+#else /* macintosh */
 typedef u_long ncpos_t ;
-#endif /* macintosh w/ MWERKS */
+#endif /* macintosh */
 #endif
 
 typedef struct {
@@ -648,7 +648,7 @@ fprintf(stderr,"NCxdrfile_create(): XDR=%p, path=%s, ncmode=%d\n",xdrs,path,ncmo
     if(_fmode != O_BINARY)
         _fmode = O_BINARY ;
 #endif
-#if defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__) 
+#if defined(macintosh) || defined (SYMANTEC_C)
     fd = open(path, fmode);
 #else /* !macintosh  */
     fd = open(path, fmode, 0666) ;

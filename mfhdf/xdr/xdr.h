@@ -9,7 +9,7 @@
 #ifndef __XDR_HEADER__
 #define __XDR_HEADER__
 
-#if defined __MWERKS__
+#if defined(__MWERKS__)	// non-command line compiler
 #ifndef HDF
 #define HDF
 #endif

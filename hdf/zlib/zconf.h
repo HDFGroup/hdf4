@@ -83,7 +83,8 @@
 #endif
 
 /* Some Mac compilers merge all .h files incorrectly: */
-#if defined(__MWERKS__) || defined(applec) ||defined(THINK_C) ||defined(__SC__)
+/* Note: Metrowerks also makes a Windows compiler. */
+#if (defined(macintosh) && defined(__MWERKS__)) || defined(applec) ||defined(THINK_C) ||defined(__SC__)
 #  define NO_DUMMY_DECL
 #endif
 

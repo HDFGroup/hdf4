@@ -2174,7 +2174,7 @@ Hishdf(const char *filename)
   CONSTR(FUNC, "Hishdf");
 #endif /* LATER */
 
-#if defined(VMS) || defined(MAC) || defined(macintosh) || defined (__MWERKS__) || defined(SYMANTEC_C)
+#if defined(VMS) || defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
   int32       fid;
   intn   ret_value = TRUE;
 
@@ -4230,7 +4230,7 @@ done:
 #endif /* HAVE_FMPOOL */
 
 /* -------------------------- MAC Specific Stuff -------------------------- */
-#if defined(MAC) || defined (__MWERKS__) || defined(macintosh) || defined(SYMANTEC_C)
+#if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
 /*
    *  Macintosh file stubs for HDF
    *

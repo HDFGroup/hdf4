@@ -27,7 +27,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define TESTREF_NAME "tref.hdf"
 /* Change the define below for Maximum 'refs' tested on 
    the Macintosh if the 'hfile1' tests starts to croak */
-#if defined macintosh || defined MAC || defined __MWERKS__ || defined SYMANTEC_C
+#if defined macintosh || defined MAC || defined SYMANTEC_C
 #define     MAX_REF_TESTED 5000
 #else
 #define     MAX_REF_TESTED MAX_REF

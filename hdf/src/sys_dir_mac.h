@@ -23,7 +23,7 @@
 #ifndef	__sys_dirent_h
 #define	__sys_dirent_h
 
-#if defined(MAC) || defined (__MWERKS__) || defined(macintosh) || defined(SYMANTEC_C)
+#if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
 
 #include <Files.h>
 
@@ -44,5 +44,5 @@ struct	dirent {
 
 #define	DIRSIZ(dp) sizeof(struct dirent)
 
-#endif /* defined(MAC) || defined (__MWERKS__) || defined(macintosh) || defined(SYMANTEC_C)  */
+#endif /* defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)  */
 #endif	/* !__sys_dirent_h */
