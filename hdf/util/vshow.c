@@ -222,7 +222,7 @@ int32 fmtshort(x) char*x;
 		}
 
 int32 fmtdouble(x) char*x;
-{	float adouble;
+{	double adouble;
 		movebytes(x, &adouble, sizeof(double)); cn += printf("%f",adouble); 
 		return(1);  
 		}
