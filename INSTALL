@@ -346,14 +346,23 @@ or
 
     *NO* Fortran support is included in this distribution.
 
-    Codewarrior Projects can be found in the following directories. 
+    Codewarrior Projects can be found with this distrbution.
     They have been run through the Macintosh BinHex utility program. 
     You need to compile the libraries before you can compile the test 
     programs 'testhdf', 'xdrtest', 'cdftest', 'hdftest' and  'nctest'.
 
-    Note that the test programs are SIOUX applications.
-    You need at least 8MB of memory to run the test programs.
+    Special Notes
+    *************
+    1. The test programs are SIOUX applications.
+    
+    2. When testing 'testhdf' in 'hdf/test' directory make sure
+       that a directory called 'testdir' exists in the 'hdf/test'.
+       This directory is used the the external elment test.
 
+    3. You need at least 8MB of memory to run most of the test programs.
+
+    Codewarrior Projects can be found in the following directories:
+ 
     $(toplevel)/
                 hdf/zlib/zlib.68k-project.hqx
                          zlib.PPC-project.hqx
@@ -366,6 +375,8 @@ or
 
                 hdf/test/testhdf.68k-project.hqx
                          testhdf.68k-project.hqx
+
+                hdf/test/testdir(need to create this if it does not exist)
     
                 mfhdf/xdr/xdrlib.68k-project.hqx
                           xdrlib.PPC-project.hqx
