@@ -106,6 +106,11 @@ c     test ncacpy
 c     test ncadel
       write(*, 100) 'ncadel'
       call tncadel(name2)
+
+c     test reading from NetCDF file
+      write(*, 100) 'NetCDF read'
+      call tread_netcdf()
+
       end
 c
 c     subroutine to test ncacpy
@@ -1220,3 +1225,190 @@ c
       call ncclos (ncid, iret)
       return
       end
+
+C        This routine reads varaibales and global attributes from
+C        the REAL NetCDF file test_nc.nc. The file was created by NetCDF v3.5 
+C        from the file test_nc.cdl that can be found in the mfhdf/fortran
+C        directory. Please do not generate test_nc.nc file from the test_nc.cdl
+C        using HDF4 ncgen. HDF4 ncgen generated HDF4 file!
+
+         subroutine tread_netcdf()
+         include 'netcdf.inc'
+
+C        Variables declarations
+
+         character*10 FILENAME
+         integer status, ncid, var_id
+         integer time(12), date(12), start(3), count(3), int_attr(5)
+         real a(3,2), float_attr(3)
+         double precision c(3), double_attr(3)
+         integer*2 b(2,3,12), short_attr(2)
+         integer i, j, k, dlen
+         character*10 description
+
+C        Arrays to read data to.
+
+         integer time_val(12), date_val(12), int_attr_val(5)
+         integer*2 b_val(2,3,12), short_attr_val(2)
+         real a_val(3,2), float_attr_val(3)
+         double precision c_val(3), double_attr_val(3)
+         real epsilon
+         double precision depsilon
+
+C        Arrays initialization
+         DATA time_val /1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12/
+         DATA date_val /840116, 840214, 840316, 840415, 840516, 840615, 
+     +              840716, 840816, 840915, 841016, 841115, 841216/
+         DATA a_val /1.0, 2.0, 3.0, 4.0, 5.0, 6.0/
+         DATA b_val /1, 1, 2, 2, 3, 3,
+     +           4, 4, 5, 5, 6, 6,
+     +           7, 7, 8, 8, 9, 9,
+     +           10, 10, 11, 11, 12, 12,
+     +           13, 13, 14, 14, 15, 15,
+     +           16, 16, 17, 17, 18, 18,
+     +           19, 19, 20, 20, 21, 22,
+     +           23, 23, 24, 24, 25, 25, 
+     +           26, 26, 27, 27, 28, 28,
+     +           29, 29, 30, 30, 31, 31,
+     +           32, 32, 33, 33, 34, 34,
+     +           35, 35, 36, 36, 37, 37/
+         DATA c_val /2.0, 3.0, 100/
+         DATA int_attr_val /-100, 200, -300, 400, -500/
+         DATA float_attr_val /1.0, 2.0, 3.0/
+         DATA short_attr_val /0, 1/
+         DATA double_attr_val /-1.0, 2.0, -7.0/
+         DATA epsilon /1.E-6/
+         DATA depsilon /1.E-12/
+         
+C        Modify filename to accomodate SRCDIR configure option
+
+         FILENAME = 'test_nc.nc'
+         dlen = 10
+         ncid = ncopn(FILENAME, NCNOWRIT, status)
+         if (status .ne.0) then
+             write(*,*) 'ncopn failed'
+             goto 1000
+         endif
+
+         var_id = ncvid(ncid, 'time', status)
+         start(1) = 1 
+         count(1) = 12
+         call ncvgt(ncid, var_id, start, count, time, status)
+         if (status .ne. 0) write(*,*) 
+     +      'ncvgt failed for 32-bit integer variable time'
+         do i = 1, 12
+            if( time(i) .ne. time_val(i) ) 
+     +      write(*,*) 'Wrong time value at index  ', i 
+         enddo
+
+         var_id = ncvid(ncid, 'c', status)
+         start(1) = 1 
+         count(1) = 3
+         call ncvgt(ncid, var_id, start, count, c, status)
+         if (status .ne. 0) write(*,*)
+     +      'ncvgt failed for 64-bit float variable c'
+         do i = 1, 3
+            if( abs(c(i) - c_val(i)) .gt. depsilon ) 
+     +      write(*,*) 'Wrong c value at index  ', i 
+         enddo
+
+         var_id = ncvid(ncid, 'date', status)
+         start(1) = 1 
+         count(1) = 12
+         call ncvgt(ncid, var_id, start, count, date, status)
+         if (status .ne. 0) write(*,*) 
+     +      'ncvgt failed for 32-bit integer variable date'
+         do i = 1, 12
+            if( date(i) .ne. date_val(i) ) 
+     +      write(*,*) 'Wrong date value at index  ', i 
+         enddo
+
+
+         var_id = ncvid(ncid, 'a', status)
+         start(1) = 1 
+         start(2) = 1
+         count(1) = 3
+         count(2) = 2
+         call ncvgt(ncid, var_id, start, count, a, status)
+         if (status .ne. 0) write(*,*) 
+     +      'ncvgt failed for 32-bit real variable a'
+         do i = 1, 2
+            do j = 1, 3 
+            if( abs(a(j,i) - a_val(j,i)) .gt. epsilon ) 
+     +      write(*,*) 'Wrong a value at indecies  ', j, ',', i 
+            enddo
+         enddo
+
+
+         var_id = ncvid(ncid, 'b', status)
+         start(1) = 1 
+         start(2) = 1
+         start(3) = 1
+         count(1) = 2 
+         count(2) = 3
+         count(3) = 12
+         call ncvgt(ncid, var_id, start, count, b, status)
+         if (status .ne. 0) write(*,*) 
+     +      'ncvgt failed for 16-bit integer variable b'
+         do i = 1, 12
+            do j = 1, 3 
+               do k = 1, 2
+               if( b(k,j,i) .ne.  b_val(k,j,i)) 
+     +         write(*,*) 
+     +        'Wrong b value at indecies  ', k, ',', j, ',', i 
+               enddo
+            enddo
+         enddo
+
+
+C read global attributes
+
+         call ncagt(ncid, NCGLOBAL, 'int_attr', int_attr, status)
+         if (status .ne. 0) 
+     +   write(*,*) 'ncagt failed for 32-bit integer attribute int_attr'
+         do i = 1, 5
+            if( int_attr(i) .ne. int_attr_val(i) ) 
+     +      write(*,*) 'Wrong int_attr value at index  ', i 
+         enddo
+
+
+         call ncagt(ncid, NCGLOBAL, 'float_attr', float_attr, status)
+         if (status .ne. 0) 
+     +   write(*,*) 'ncagt failed for 32-bit float attribute float_attr'
+         do i = 1, 3 
+            if( abs(float_attr(i) - float_attr_val(i)) .gt. epsilon ) 
+     +      write(*,*) 'Wrong float_attr value at index  ', i 
+         enddo
+
+         call ncagt(ncid, NCGLOBAL, 'double_attr', double_attr, status)
+         if (status .ne. 0) 
+     +   write(*,*) 
+     +   'ncagt failed for 64-bit float attribute double_attr'
+         do i = 1, 3 
+            if( abs(double_attr(i) - double_attr_val(i)) .gt. depsilon ) 
+     +      write(*,*) 'Wrong double_attr value at index  ', i 
+         enddo
+
+
+         call ncagt(ncid, NCGLOBAL, 'short_attr', short_attr, status)
+         if (status .ne. 0) 
+     +   write(*,*) 
+     +   'ncagt failed for 16-bit integer attribute double_attr'
+         do i = 1, 2 
+            if( short_attr(i) .ne. short_attr_val(i) ) 
+     +      write(*,*) 'Wrong short_attr value at index  ', i 
+         enddo
+
+
+         call ncagtc(ncid, NCGLOBAL, 'Description', description, 
+     +               dlen, status)
+         if (status .ne. 0) 
+     +   write(*,*) 
+     +   'ncagt failed for character attribute Description'
+         if (description .ne. 'Attributes') 
+     +   write(*,*) 'Wrong values of the character attribute' 
+
+
+1000     continue
+         return
+         end

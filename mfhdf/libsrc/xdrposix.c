@@ -68,11 +68,13 @@ typedef NETLONG     netlong;
         typedef u_int ncpos_t ;  /* all unicies */
 #   endif
 #else
-#if defined DOS_FS
-typedef off_t ncpos_t ;
-#else /* macintosh */
-typedef u_long ncpos_t ;
-#endif /* macintosh */
+#  if defined DOS_FS
+      typedef off_t ncpos_t ;
+#  elif defined __APPLE__
+      typedef u_int ncpos_t;
+#  else /* macintosh */
+      typedef u_long ncpos_t ;
+#  endif /* macintosh */
 #endif
 
 typedef struct {
@@ -286,7 +288,7 @@ int nbytes;
 
 static bool_t   xdrposix_getlong();
 static bool_t   xdrposix_putlong();
-#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64
+#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__
 static bool_t   xdrposix_getint();
 static bool_t   xdrposix_putint();
 #endif
@@ -303,10 +305,14 @@ static long *    xdrposix_inline();
 #if (defined __sun && defined _LP64)
 static rpc_inline_t *    xdrposix_inline();
 #else
+#if (defined __x86_64__ )
+static int32_t *    xdrposix_inline();
+#else
 #if (defined __alpha )
 static int *    xdrposix_inline();
 #else
 static netlong *    xdrposix_inline(); 
+#endif
 #endif
 #endif
 #endif
@@ -330,9 +336,11 @@ static struct xdr_ops   xdrposix_ops = {
     xdrposix_getpos,    /* get offset in the stream */
     xdrposix_setpos,    /* set offset in the stream */
     xdrposix_inline,    /* prime stream for inline macros */
-#if (defined __sun && defined _LP64)
+#if (defined __sun && defined _LP64) || defined __x86_64__
     xdrposix_destroy,   /* destroy stream */
+#ifndef __x86_64__
     NULL,               /* no xdr_control function defined */
+#endif
     /* Solaris 64-bit (arch=v9) has 64 bits long and 32 bits int. */
     /* It defines the two extra entries for get/put int. here */
     xdrposix_getint,   /* deserialize a 32-bit int */
@@ -465,7 +473,7 @@ xdrposix_getlong(xdrs, lp)
 #endif
 {
     unsigned char *up = (unsigned char *)lp ;
-#if (defined CRAY || defined AIX5L64 )  
+#if (defined CRAY || defined AIX5L64)   
     *lp = 0 ;
     up += (sizeof(long) - 4) ;
 #endif
@@ -589,7 +597,11 @@ static rpc_inline_t *
 #if (defined  __alpha)
 static int* 
 #else
+#if (defined  __x86_64__)
+static int32_t * 
+#else
 static netlong * 
+#endif
 #endif
 #endif
 #endif
@@ -614,7 +626,7 @@ int
     return (NULL);
 }
 
-#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 
+#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64  || defined __x86_64__
 
 static bool_t
 xdrposix_getint(xdrs, lp)
@@ -653,7 +665,7 @@ xdrposix_putint(xdrs, lp)
         return (FALSE);
     return (TRUE);
 }
-#endif
+#endif /* end of xdrposix_put(get)int */
 
 int
 NCxdrfile_sync(xdrs)
