@@ -1,10 +1,11 @@
 HDF4.1r5
 ========
 1. The following VS routines are added as requested (bug #267):
-     VSsetblocksize -- sets the block size of the linked-block element.
-     VSsetnumblocks -- sets the number of blocks for a linked-block element.
-     VSgetblockinfo -- retrieves the block size and the number of blocks
-                       of a linked-block element.
+     VSsetblocksize/vsfsetblsz -- sets the block size of the linked-block element.
+     VSsetnumblocks/vsfsetnmbl -- sets the number of blocks for 
+                                  a linked-block element.
+     VSgetblockinfo/vsfgetblinfo -- retrieves the block size and the 
+                                    number of blocks of a linked-block element.
 
 2. When using SDsetdimscale to set the data type for a dimension to 
    an unsigned type, the type became signed inadvertently (bug #172).  
@@ -30,10 +31,16 @@ HDF4.1r5
    now returns FAIL instead of causing segnmentation fault. (bug #514)
 
 9. Two routines are added to get compression information for the SD and
-   GR interfaces: SDgetcompress and GRgetcompress. (bug #307)  Note that, 
+   GR interfaces: SDgetcompress/sfgcompress and GRgetcompress/mggcompress. 
+   (bug #307)  
+   Note that, 
    for a JPEG image, GRgetcompress only returns the compression type, not 
    the compression information (i.e, quantity and force_baseline) because 
    these information are not retrievable.
+
+10.  Added new fortran function heprntf (HEprint) that takes two
+     arguments: file name and level. If file name string has 0 length
+     error messages will be printed to the standart output. 
 
 HDF4.1r4
 ========
