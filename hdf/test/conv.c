@@ -44,6 +44,11 @@ typedef int clock_t;
 #define UINT_MAX USI_MAX
 #endif /* I860 */
 
+/* last ditch attempt do define this value... */
+#ifndef UINT_MAX
+#define UINT_MAX (unsigned)(-1)
+#endif
+
 /* Substitute bogus value if CLOCKS_PER_SEC is unavailable */
 #ifndef CLOCKS_PER_SEC
 #define CLOCKS_PER_SEC -1
