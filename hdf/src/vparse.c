@@ -1,61 +1,9 @@
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.14  1993/09/15 19:43:18  georgev
-Took out hack for strdup on MAC.
+/* $Id$ */
 
- * Revision 1.13  1993/09/11  21:37:39  koziol
- * Fixed weird HIstrncpy error in scanattrs
- *
- * Revision 1.12  1993/09/11  18:08:15  koziol
- * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
- * cleaned up some goofy string manipulations in various places.
- *
- * Revision 1.11  1993/09/09  20:54:14  chouck
- * Need to cast HDstrdup() call on Convex
- *
- * Revision 1.10  1993/09/08  20:58:07  georgev
- * Cleaned up some Global space only for the Mac.
- *
- * Revision 1.9  1993/09/01  23:35:13  georgev
- * Added defines for THINK_C.
- *
- * Revision 1.8  1993/08/28  02:00:17  georgev
- * Mac fix. No strdup().
- *
- * Revision 1.7  1993/08/18  16:00:52  chouck
- * Restored changes from version 1.5 that had gotten blown away (grumble grumble)
- *
- * Revision 1.6  1993/08/16  21:46:45  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.5  1993/08/03  15:49:22  chouck
- * Cleaned up a bunch of Vset code
- *
- * Revision 1.4  1993/03/29  16:50:46  koziol
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.3  1993/01/19  05:56:29  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.2  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*****************************************************************************
 *
 * vparse.c

@@ -1,89 +1,38 @@
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.14  1993/09/30 19:04:50  koziol
-Added basic compressing functionality for special tags.
+/* $Id$ */
 
- * Revision 1.13  1993/09/28  18:04:09  koziol
- * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
- * tag handling.  Added new compression special tag type.
- *
- * Revision 1.12  1993/09/01  23:21:22  georgev
- * Fixed cast for HDfreespace().
- *
- * Revision 1.11  1993/05/03  21:32:04  koziol
- * First half of fixes to make Purify happy
- *
- * Revision 1.10  1993/04/22  22:59:58  koziol
- * Changed DFR8nimages, DFPnpals to report the correct number of images
- * and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
- *
- * Revision 1.8  1993/04/05  22:35:06  koziol
- * Fixed goofups made in haste when patching code.
- *
- * Revision 1.7  1993/03/29  18:38:16  chouck
- * Cleaned up a bunch of casting problems
- *
- * Revision 1.6  1993/03/29  16:47:26  koziol
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.5  1993/01/19  05:54:26  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.4  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.3  1992/10/22  22:53:32  chouck
- * Added group handle to group interface
- *
- * Revision 1.2  1992/10/01  02:54:34  chouck
- * Added function DF24lastref()
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*-----------------------------------------------------------------------------
- * File:    dfgr.c
- * Purpose: read and write general raster images
- * Invokes: df.c, dfkit.c, dfcomp.c, dfgroup.c, dfgr.h
+ * File:     dfgr.c
+ * Purpose:  read and write general raster images
+ * Invokes:  df.c, dfkit.c, dfcomp.c, dfgroup.c, dfgr.h
  * Contents:
- *  DFGRgetlutdims: get dimensions of lookup table
- *  DFGRreqlutil: use this interlace when returning lookup table
- *  DFGRgetlut: read in lookup table
- *  DFGRgetimdims: get dimensions of image
- *  DFGRreqimil: use this interlace when returning image
- *  DFGRgetimage: read in image
- *  DFGRsetcompress: specify compression scheme to be used
- *  DFGRsetlutdims: set dimensions of lookup table
- *  DFGRsetlut: set lookup table to write out with subsequent images
- *  DFGRaddlut: write out lookup table
- *  DFGRsetimdims: set dimensions of image
- *  DFGRaddimage: write out image
+ *  DFGRgetlutdims  : get dimensions of lookup table
+ *  DFGRreqlutil    : use this interlace when returning lookup table
+ *  DFGRgetlut      : read in lookup table
+ *  DFGRgetimdims   : get dimensions of image
+ *  DFGRreqimil     : use this interlace when returning image
+ *  DFGRgetimage    : read in image
+ *  DFGRsetcompress : specify compression scheme to be used
+ *  DFGRsetlutdims  : set dimensions of lookup table
+ *  DFGRsetlut      : set lookup table to write out with subsequent images
+ *  DFGRaddlut      : write out lookup table
+ *  DFGRsetimdims   : set dimensions of image
+ *  DFGRaddimage    : write out image
  *
- *  DFGRgetrig: read in raster image group
- *  DFGRaddrig: write out raster image group
+ *  DFGRgetrig  : read in raster image group
+ *  DFGRaddrig  : write out raster image group
  *
- *  DFGRIopen: open/reopen file
- *  DFGRIriginfo: obtain info about next RIG
- *  DFGRIgetdims: get dimensions of lut/iamge
- *  DFGRIreqil: get lut/image with this interlace
- *  DFGRIgetimlut: get image/lut
- *  DFGRIsetdims: set image/lut dimensions
- *  DFGRIaddimlut: write out image/lut
+ *  DFGRIopen      : open/reopen file
+ *  DFGRIriginfo   : obtain info about next RIG
+ *  DFGRIgetdims   : get dimensions of lut/iamge
+ *  DFGRIreqil     : get lut/image with this interlace
+ *  DFGRIgetimlut  : get image/lut
+ *  DFGRIsetdims   : set image/lut dimensions
+ *  DFGRIaddimlut  : write out image/lut
  * Remarks: A RIG specifies attributes associated with an image - lookup table,
-
  *          dimension, compression, color compensation etc.
  *---------------------------------------------------------------------------*/
 

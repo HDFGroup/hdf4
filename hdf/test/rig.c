@@ -1,3 +1,9 @@
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
+/* $Id$ */
+
 #include "tproto.h"
 
 #define XSIZE 13
