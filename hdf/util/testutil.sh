@@ -27,6 +27,8 @@ fi
 if [ $errors -eq 1 ]; then
   echo " ********* NOTE ***************"
   echo " hdf24to8 might have failed ***"
+  echo " The above errors could be formatting "
+  echo " problems which can be ignored "
   echo " please run the following by hand to verify "
   echo " "
   echo " /bin/rm -f head.r24 head.r8 head8.hdf img001-263.328 pal001"
@@ -53,6 +55,8 @@ fi
 if [ $errors -eq 1 ]; then
    echo " ********* NOTE ***************"
    echo " hdfed might have failed ***"
+  echo " The above errors could be formatting "
+  echo " problems which can be ignored "
    echo " please run the following by hand to verify "
    echo " "
    echo "/bin/rm -f storm110.hdf ntcheck.hdf hdfed.tmp "
@@ -78,6 +82,8 @@ fi
 if [ $errors -eq 1 ]; then
   echo " ********* NOTE ***************"
   echo " ristosds might have failed ***"
+  echo " The above errors could be formatting "
+  echo " problems which can be ignored "
   echo " please run the following by hand to verify "
   echo " "
   echo " /bin/rm -f storm*.hdf hdfed.tmp1 "
@@ -107,6 +113,8 @@ fi
 if [ $errors -eq 1 ]; then
     echo " ********* NOTE ***************"
     echo " hdfpack might have failed ***"
+  echo " The above errors could be formatting "
+  echo " problems which can be ignored "
     echo " please run the following by hand to verify "
     echo " "
     echo "/bin/rm -f test.hdf test.blk test.pck hdfls.tmp1 "
@@ -135,6 +143,8 @@ fi
 if [ $errors -eq 1 ]; then
   echo " ********* NOTE ***************"
     echo " hdftopal or paltohdf might have failed ***"
+  echo " The above errors could be formatting "
+  echo " problems which can be ignored "
     echo " please run the following by hand to verify "
     echo " "
     echo " /bin/rm -f palette.* "
@@ -167,6 +177,8 @@ fi
 if [ $errors -eq 1 ]; then
   echo " ********* NOTE ***************"
     echo " r8tohdf or hdftor8 might have failed ***"
+  echo " The above errors could be formatting "
+  echo " problems which can be ignored "
     echo " please run the following by hand to verify "
     echo " "
     echo "/bin/rm -f storm* img* palette.raw hdfls.tmp2 pal005 "
@@ -201,6 +213,8 @@ fi
 if [ $errors -eq 1 ]; then
   echo " ********* NOTE ***************"
     echo " hdfcomp might have failed ***"
+  echo " The above errors could be formatting "
+  echo " problems which can be ignored "
     echo " please run the following by hand to verify "
     echo " "
     echo "/bin/rm -f storm*.hdf all*.hdf hdfls.tmp3 "
@@ -231,6 +245,8 @@ fi
 if [ $errors -eq 1 ]; then
   echo " ********* NOTE ***************"
     echo " jpeg2hdf or hdf2jpeg might have failed ***"
+  echo " The above errors could be formatting "
+  echo " problems which can be ignored "
     echo " please run the following by hand to verify "
     echo " "
     echo "/bin/rm -f jpeg.hdf jpeg_img.jpg jpeg2.jpg hdfls.tmp4 "
@@ -275,6 +291,8 @@ fi
 if [ $errors -eq 1 ]; then
   echo " ********* NOTE ***************"
   echo " fp2hdf might have failed ***"
+  echo " The above errors could be formatting "
+  echo " problems which can be ignored "
   echo " please run the following by hand to verify "
   echo " "
   echo "  /bin/rm -f ctxtr* cb* *.hdf hdfls.tmp5 hdfed.tmp6"
