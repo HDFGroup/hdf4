@@ -89,6 +89,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define MFAN_C
 
 #include "mfan.h"
+#include "atom.h"
 
 /* Whether we've installed the library termination function yet for this interface */
 PRIVATE intn library_terminate = FALSE;
@@ -393,8 +394,12 @@ ANIaddentry(int32 an_id, ann_type type, uint16 ann_ref,
     HEclear();
 
     /* Valid file id */
+#if 0
     if (an_id == FAIL)
         HGOTO_ERROR(DFE_BADCALL, FAIL);
+#endif
+    if (HAatom_group(an_id)!=FIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* First find file node from file tree */
     if ((entry = tbbtdfind(ANfilelist, &an_id, NULL)) == NULL)
@@ -546,8 +551,12 @@ ANIcreate_ann_tree(int32 an_id, ann_type type)
     HEclear();
 
     /* Valid file id */
+#if 0
     if (an_id == FAIL)
         HGOTO_ERROR(DFE_BADCALL, FAIL);
+#endif
+    if (HAatom_group(an_id)!=FIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* First find file node from file tree */
     if ((entry = tbbtdfind(ANfilelist, &an_id, NULL)) == NULL)
@@ -744,8 +753,13 @@ ANIfind(int32 an_id, ann_type type, uint16 ann_ref)
     HEclear();
 
     /* Valid file id */
+#if 0
     if (an_id == FAIL)
         HGOTO_ERROR(DFE_BADCALL, FAIL);
+#endif
+    if (HAatom_group(an_id)!=FIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
 
     /* First find file node from file tree */
     if ((entry = tbbtdfind(ANfilelist, &an_id, NULL)) == NULL)
@@ -828,8 +842,12 @@ ANInumann(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref)
     HEclear();
 
     /* Valid file id */
+#if 0
     if (an_id == FAIL)
         HGOTO_ERROR(DFE_BADCALL, FAIL);
+#endif
+    if (HAatom_group(an_id)!=FIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* First find file node from file tree */
     if ((entry = tbbtdfind(ANfilelist, &an_id, NULL)) == NULL)
@@ -908,8 +926,12 @@ ANIannlist(int32 an_id, ann_type type, uint16 elem_tag, uint16 elem_ref,
     HEclear();
 
     /* Valid file id */
+#if 0
     if (an_id == FAIL)
         HGOTO_ERROR(DFE_BADCALL, FAIL);
+#endif
+    if (HAatom_group(an_id)!=FIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* First find file node from file tree */
     if ((entry = tbbtdfind(ANfilelist, &an_id, NULL)) == NULL)
@@ -984,9 +1006,7 @@ ANIannlen(int32 ann_id)
     /* Clear error stack */
     HEclear();
 
-    /* Valid annotation id */
-
-    /* First find file node from file tree */
+    /* First find file node from annotation node tree */
     if ((entry = tbbtdfind(ANnodelist, &ann_id, NULL)) == NULL)
         HE_REPORT_GOTO("failed to find ann_id", FAIL);
 
@@ -1085,7 +1105,6 @@ ANIreadann(int32 ann_id, char *ann, int32 maxlen)
     /* Clear error stack */
     HEclear();
 
-    /* Valid annotation id */
     /* First find file node from file tree */
     if ((entry = tbbtdfind(ANnodelist, &ann_id, NULL)) == NULL)
         HE_REPORT_GOTO("failed to find ann_id", FAIL);
@@ -1239,7 +1258,6 @@ ANIwriteann(int32 ann_id, const char *ann, int32 ann_len)
     /* Clear error stack */
     HEclear();
 
-    /* Valid annotation id */
     /* First find node from ann_id tree */
     if ((entry = tbbtdfind(ANnodelist, &ann_id, NULL)) == NULL)
         HE_REPORT_GOTO("failed to find ann_id", FAIL);
@@ -1393,8 +1411,12 @@ ANIcreate(int32 file_id, uint16 elem_tag, uint16 elem_ref, ann_type type )
     HEclear();
   
     /* Valid file id */
+#if 0
     if (file_id == FAIL)
         HGOTO_ERROR(DFE_BADCALL, FAIL);
+#endif
+    if (HAatom_group(file_id)!=FIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* deal with type */
     switch((ann_type)type)
@@ -1479,8 +1501,12 @@ ANstart(int32 file_id)
     HEclear();
 
     /* check for valid file id */
+#if 0
     if (file_id == FAIL)
         HGOTO_ERROR(DFE_BADCALL, FAIL);
+#endif
+    if (HAatom_group(file_id)!=FIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Check to see if we need to call ANInit, needs to moved to 
      * overall initialization call */
@@ -1579,8 +1605,12 @@ ANfileinfo(int32 an_id, int32 *n_file_label, int32 *n_file_desc,
     HEclear();
 
     /* Valid file id */
+#if 0
     if (an_id == FAIL)
         HGOTO_ERROR(DFE_BADCALL, FAIL);
+#endif
+    if (HAatom_group(an_id)!=FIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* First find file node from file tree */
     if ((entry = tbbtdfind(ANfilelist, &an_id, NULL)) == NULL)
@@ -1671,8 +1701,12 @@ ANend(int32 an_id)
     HEclear();
 
     /* Valid file id */
+#if 0
     if (an_id == FAIL)
         HGOTO_ERROR(DFE_BADCALL, FAIL);
+#endif
+    if (HAatom_group(an_id)!=FIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* First find file node from file tree */
     if ((fentry = tbbtdfind(ANfilelist, &an_id, NULL)) == NULL)
@@ -1959,8 +1993,12 @@ ANselect(int32 an_id, int32 index, ann_type type)
     HEclear();
 
     /* Valid file id */
+#if 0
     if (an_id == FAIL)
         HGOTO_ERROR(DFE_BADCALL, FAIL);
+#endif
+    if (HAatom_group(an_id)!=FIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* First find file node from file tree */
     if ((fentry = tbbtdfind(ANfilelist, &an_id, NULL)) == NULL)
@@ -2270,8 +2308,12 @@ ANget_tagref(int32 an_id, int32 index, ann_type type, uint16 *tag, uint16 *ref)
     HEclear();
 
     /* Valid file id */
+#if 0
     if (an_id == FAIL)
         HGOTO_ERROR(DFE_BADCALL, FAIL);
+#endif
+    if (HAatom_group(an_id)!=FIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* First find file node from file tree */
     if ((fentry = tbbtdfind(ANfilelist, &an_id, NULL)) == NULL)
@@ -2442,8 +2484,12 @@ ANtagref2id(int32 an_id, uint16 ann_tag, uint16 ann_ref)
     HEclear();
 
     /* Valid file id */
+#if 0
     if (an_id == FAIL)
         HGOTO_ERROR(DFE_BADCALL, FAIL);
+#endif
+    if (HAatom_group(an_id)!=FIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* First find file node from file tree */
     if ((entry = tbbtdfind(ANfilelist, &an_id, NULL)) == NULL)
@@ -2557,7 +2603,7 @@ tag2atype(uint16 atag)
       case DFTAG_DIL: atype = AN_DATA_LABEL; break;
       case DFTAG_DIA: atype = AN_DATA_DESC;  break;
           /* This will cause warnings on some compiliers */
-      default: atype = -1;
+      default: atype = AN_UNDEF;
       } /* switch */
     return atype;
 } /* tag2atype */
