@@ -446,7 +446,9 @@ DFGRreadref(const char *filename, uint16 ref)
     CONSTR(FUNC, "DFGRreadref");
     intn    ret_value = SUCCEED;
     int32   file_id=(-1);
+#ifdef OLD_WAY
     int32   aid;
+#endif /* OLD_WAY */
 
     HEclear();
 
@@ -458,11 +460,17 @@ DFGRreadref(const char *filename, uint16 ref)
     if ((file_id = DFGRIopen(filename, DFACC_READ))== FAIL)
         HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
+#ifdef OLD_WAY
     if ((aid = Hstartread(file_id, DFTAG_RIG, ref)) == FAIL)
         HGOTO_ERROR(DFE_BADAID, FAIL);
 
     if (Hendaccess(aid)==FAIL)
         HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+#else /* OLD_WAY */
+    if (Hexist(file_id, DFTAG_RIG, ref) == FAIL)
+        HGOTO_ERROR(DFE_BADAID, FAIL);
+
+#endif /* OLD_WAY */
 
     Grrefset = ref;
     ret_value= Hclose(file_id);
@@ -846,7 +854,7 @@ DFGRIriginfo(int32 file_id)
             {   /* not found */
                 if (gettag == DFTAG_RIG)
                   {     /* were looking for RIGs */
-                      if ((Grread.data[IMAGE].tag == DFTAG_RI)  /* file has Rigs */
+                      if ((Grread.data[IMAGE].tag == DFTAG_RI)  /* file has RIGs */
                           || (Grread.data[IMAGE].tag == DFTAG_CI))
                           HGOTO_DONE(FAIL);  /* no more to return */
                       gettag = DFTAG_RI8;   /* if no RIGs in file, look for RI8s */
@@ -909,7 +917,11 @@ DFGRIriginfo(int32 file_id)
           Grread.datadesc[LUT].ncomponents = 3;
       }
 
+#ifdef OLD_WAY
     Grlastref = Grread.data[IMAGE].ref;     /* remember ref read */
+#else /* OLD_WAY */
+    Grlastref = newref;     /* remember ref read */
+#endif /* OLD_WAY */
 
 done:
   if(ret_value == FAIL)   
@@ -999,7 +1011,7 @@ done:
 int
 DFGRIreqil(intn il, intn type)
 {
-    CONSTR(FUNC, "DFGRreadref");
+    CONSTR(FUNC, "DFGRIreqil");
     intn    ret_value = SUCCEED;
 
     HEclear();
@@ -1315,7 +1327,7 @@ done:
 int
 DFGRIrestart(void)
 {
-    CONSTR(FUNC, "DFGRreadref");
+    CONSTR(FUNC, "DFGRIrestart");
     intn    ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
@@ -1363,6 +1375,7 @@ DFGRIaddimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
     CONSTR(FUNC, "DFGRIaddimlut");
     int32       file_id=(-1);
     uint16      wtag, wref;     /* tag of image/lut being written */
+    uint16      rigref;         /* ref # for the RIG */
     uint8      *newlut = NULL;
     int32       lutsize = 0;
     int         is8bit;
@@ -1491,7 +1504,9 @@ DFGRIaddimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
           Ref.lut = wref;
       }
 
-    if (DFGRaddrig(file_id, wref, &Grwrite) == FAIL)    /* writes ID, NT */
+    if (( rigref = Htagnewref(file_id,DFTAG_RIG))==0)
+        HGOTO_ERROR(DFE_INTERNAL,FAIL);
+    if (DFGRaddrig(file_id, rigref, &Grwrite) == FAIL)    /* writes ID, NT */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     if (is8bit)
@@ -1514,7 +1529,11 @@ DFGRIaddimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
           newlut = NULL;
       }
 
+#ifdef OLD_WAY
     Grlastref = wref;   /* remember the last ref */
+#else /* OLD_WAY */
+    Grlastref = rigref;   /* remember the last ref */
+#endif /* OLD_WAY */
 
     wref = 0;   /* don't know ref to write next */
 
