@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.33  1993/09/28 18:44:36  koziol
-Fixed various things the Sun's pre-processor didn't like.
+Revision 1.34  1993/09/28 19:10:15  koziol
+Made Vinquire check parameter values for NULL before updating them.
 
+ * Revision 1.33  1993/09/28  18:44:36  koziol
+ * Fixed various things the Sun's pre-processor didn't like.
+ *
  * Revision 1.32  1993/09/28  18:04:59  koziol
  * Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
  * tag handling.  Added new compression special tag type.
@@ -1913,8 +1916,10 @@ char        *vgname;
         return(FAIL);
       } /* end if */
 
-    HDstrcpy(vgname, vg->vgname);
-    *nentries = vg->nvelt;
+    if(vgname!=NULL)
+        HDstrcpy(vgname, vg->vgname);
+    if(nentries!=NULL)
+        *nentries = vg->nvelt;
   
     return(SUCCEED);
 } /* Vinquire */
