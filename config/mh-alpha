@@ -24,6 +24,22 @@ ARFLAGS = ru
 RM = /bin/rm
 RMFLAGS = -f
 
+# ------------ Macros for Pablo Instrumentation  --------------------
+# Uncomment the following lines to create a Pablo Instrumentation
+# version of the HDF core library called 'libdf-inst.a'
+# See the documentation in the directory 'hdf/pablo' for further 
+# information about Pablo and what platforms it is supported on
+# before enabling.
+
+#PABLO_FLAGS  = -DHAVE_PABLO
+
+# ------------ Macros for Shared Memory File Buffer Pool(fmpool) ------
+# Uncomment the following lines to enable shared memory file buffer pool
+# version of the HDF core library libdf.a. Please read the
+# documentation before enabling this feature.
+
+#FMPOOL_FLAGS  = -DHAVE_FMPOOL
+
 # ------------ General Macros for NETCDF --------------------
 # Operating system, Used in fortran directory to generate fortran
 # wrappers. Possible values are osf, aix, hpux, irix, sunos, ultrix
