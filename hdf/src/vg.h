@@ -81,6 +81,23 @@ typedef struct write_struct
   }
 VWRITELIST;
 
+typedef struct dyn_write_struct
+  {
+      intn        n;        /* S actual # fields in element */
+      int16       ivsize;   /* S size of element as stored in vdata */
+      char        **name;   /* S name of each field */
+
+#ifdef QAK
+      int16       *len;     /* S length of each fieldname */
+#endif /* QAK */
+      int16       *type;    /* S field type */
+      int16       *off;     /* S field offset in element in vdata */
+      int16       *isize;   /* S internal (HDF) size [incl order] */
+      int16       *order;   /* S order of field */
+      int16       *esize;   /*  external (local machine) size [incl order] */
+  }
+DYN_VWRITELIST;
+
 typedef struct read_struct
   {
       intn        n;            /* # fields to read */
@@ -129,7 +146,7 @@ struct vdata_desc
       char        vsclass[VSNAMELENMAX + 1];    /* S class name of this vdata */
       int16       interlace;    /* S  interlace as in file */
       int32       nvertices;    /* S  #vertices in this vdata */
-      VWRITELIST  wlist;
+      DYN_VWRITELIST  wlist;
       VREADLIST   rlist;
       int16       nusym;
       SYMDEF      usym[VSFIELDMAX];
@@ -327,7 +344,7 @@ extern      "C"
     extern vginstance_t _HUGE *vginstance
             (HFILEID f, uint16 vgid);
 
-    extern VWRITELIST _HUGE *vswritelist
+    extern DYN_VWRITELIST _HUGE *vswritelist
                 (int32 vskey);
 
     extern void vpackvg

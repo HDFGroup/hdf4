@@ -538,8 +538,11 @@ functab_t;
 #define SPECIALTAG(t)   (HDis_special_tag(t))
 #define MKSPECIALTAG(t) (HDmake_special_tag(t))
 #else
+/* This macro converts a (potentially) special tag into a normal tag */
 #define BASETAG(t)      (uint16)((~(t) & 0x8000) ? ((t) & ~0x4000) : (t))
+/* This macro checks if a tag is special */
 #define SPECIALTAG(t)   (uint16)((~(t) & 0x8000) && ((t) & 0x4000))
+/* This macro (potentially) converts a regular tag into a special tag */
 #define MKSPECIALTAG(t) (uint16)((~(t) & 0x8000) ? ((t) | 0x4000) : DFTAG_NULL)
 #endif /*SPECIAL_TABLE */
 

@@ -187,7 +187,9 @@ DFPputpal(const char *filename, VOIDP palette, intn overwrite, const char *filem
     if (Hputelement(file_id, DFTAG_IP8, Lastref, (uint8 *) palette, (int32) 768) < 0)
         return (HDerr(file_id));
 
-    Hdupdd(file_id, DFTAG_LUT, Lastref, DFTAG_IP8, Lastref);
+    /* Check for the tag/ref before creating it willy-nilly */
+    if(Hexist(file_id,DFTAG_LUT,Lastref)==FAIL)
+        Hdupdd(file_id, DFTAG_LUT, Lastref, DFTAG_IP8, Lastref);
 
     return (Hclose(file_id));
 }   /* end DFPputpal() */

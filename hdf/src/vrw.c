@@ -141,7 +141,7 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
     int16 hsize = 0;
     uint8 *b1, *b2;
     int32       i, j, nv, offset, type;
-    VWRITELIST *w;
+    DYN_VWRITELIST *w;
     VREADLIST  *r;
     int32       uvsize;         /* size of "element" as NEEDED by user */
     vsinstance_t *wi;
@@ -363,7 +363,7 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
     int32       position, new_size;
     int32       status;
     int32       total_bytes;    /* total number of bytes that need to be written out */
-    VWRITELIST *w;
+    DYN_VWRITELIST *w;
     int32       int_size;       /* size of "element" as needed by user in memory */
     intn        hdf_size = 0;   /* size of record in HDF file */
     vsinstance_t *wi;
@@ -390,7 +390,7 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
     if (-1L == vexistvs(vs->f, vs->oref))
         HRETURN_ERROR(DFE_NOVS, FAIL);
 
-    w = (VWRITELIST *) & vs->wlist;
+    w = & vs->wlist;
     if (w->n == 0)
       {
           HERROR(DFE_NOVS);
@@ -400,8 +400,6 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 
     if (interlace != NO_INTERLACE && interlace != FULL_INTERLACE)
         HRETURN_ERROR(DFE_ARGS, FAIL);
-
-    w = (VWRITELIST *) & vs->wlist;
 
     hdf_size = w->ivsize;   /* as stored in HDF file */
     total_bytes = hdf_size * nelt;

@@ -158,7 +158,7 @@ ptbuf should not assume that the buffer is longer than that. */
 PRIVATE uint8 *ptbuf = NULL;
 
 /* The default state of the file DD caching */
-PRIVATE intn default_cache=FALSE;
+PRIVATE intn default_cache=TRUE;
 
 /* Whether we've installed the atexit function yet */
 PRIVATE intn atexit_installed=FALSE;
@@ -2219,25 +2219,23 @@ int32
 Hlength(int32 file_id, uint16 tag, uint16 ref)
 {
 CONSTR(FUNC, "Hlength");    /* for HERROR */
-int32       access_id;      /* access record id */
-int32       length;         /* length of elt inquired */
-int         ret;            /* return code */
+filerec_t  *file_rec;       /* file record */
+ddblock_t  *block;          /* DDB containing DD of  element */
+int32       idx;            /* index into DDB i.e. DD of element */
 
 /* clear error stack */
 HEclear();
 
-/* get access record, inquire about lebngth and then dispose of
-   access record */
-access_id = Hstartread(file_id, tag, ref);
-if (access_id == FAIL)
+file_rec = FID2REC(file_id);
+if(BADFREC(file_rec))
 	HRETURN_ERROR(DFE_ARGS, FAIL);
 
-if ((ret = HQuerylength(access_id, &length)) == FAIL)
-	HERROR(DFE_INTERNAL);
-Hendaccess(access_id);
+block = file_rec->ddhead;
+idx   = -1;
+if(HIlookup_dd(file_rec,tag,ref,&block,&idx)==FAIL)
+	HRETURN_ERROR(DFE_INTERNAL, FAIL);
 
-return length;
-
+return (block->ddlist[idx].length);
 }   /* end Hlength */
 
 /*--------------------------------------------------------------------------
@@ -2316,7 +2314,6 @@ int32       idx;            /* index into dd list for old dd */
 int32       new_idx;        /* index into dd list for new dd */
 
 /* clear error stack and check validity of file id */
-
 HEclear();
 file_rec = FID2REC(file_id);
 if (BADFREC(file_rec))

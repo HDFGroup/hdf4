@@ -146,7 +146,7 @@ VSsetfields(int32 vkey, const char *fields)
     int16       order;
     int32       value;
     VREADLIST  *rlist;
-    VWRITELIST *wlist;
+    DYN_VWRITELIST *wlist;
     vsinstance_t *w;
     VDATA      *vs;
     CONSTR(FUNC, "VSsetfields");
@@ -175,12 +175,51 @@ VSsetfields(int32 vkey, const char *fields)
      */
     if (vs->access == 'w' && vs->nvertices == 0)
       {
-          wlist = &(vs->wlist);     /* use a shorter name to make code cleaner */
+          wlist=&(vs->wlist);
           wlist->ivsize = 0;
           wlist->n = 0;
+
+          /* allocate space for the internal WRITELIST structures */
+          if((wlist->type=HDmalloc(sizeof(int16)*ac))==NULL)
+              HRETURN_ERROR(DFE_NOSPACE,NULL);
+          if((wlist->isize=HDmalloc(sizeof(int16)*ac))==NULL)
+            {
+              HDfree(wlist->type);
+              HRETURN_ERROR(DFE_NOSPACE,NULL);
+            } /* end if */
+          if((wlist->off=HDmalloc(sizeof(int16)*ac))==NULL)
+            {
+              HDfree(wlist->isize);
+              HDfree(wlist->type);
+              HRETURN_ERROR(DFE_NOSPACE,NULL);
+            } /* end if */
+          if((wlist->order=HDmalloc(sizeof(int16)*ac))==NULL)
+            {
+              HDfree(wlist->off);
+              HDfree(wlist->isize);
+              HDfree(wlist->type);
+              HRETURN_ERROR(DFE_NOSPACE,NULL);
+            } /* end if */
+          if((wlist->name=HDmalloc(sizeof(char *)*ac))==NULL)
+            {
+              HDfree(wlist->order);
+              HDfree(wlist->off);
+              HDfree(wlist->isize);
+              HDfree(wlist->type);
+              HRETURN_ERROR(DFE_NOSPACE,NULL);
+            } /* end if */
+          if((wlist->esize=HDmalloc(sizeof(int16)*ac))==NULL)
+            {
+              HDfree(wlist->name);
+              HDfree(wlist->order);
+              HDfree(wlist->off);
+              HDfree(wlist->isize);
+              HDfree(wlist->type);
+              HRETURN_ERROR(DFE_NOSPACE,NULL);
+            } /* end if */
+
           for (i = 0; i < ac; i++)
             {
-
                 found = FALSE;
                 /* --- first look in the user's symbol table --- */
                 for (j = 0; j < vs->nusym; j++)
@@ -188,6 +227,17 @@ VSsetfields(int32 vkey, const char *fields)
                       {
                           found = TRUE;
 
+                            
+                          if((wlist->name[wlist->n]=HDmalloc(sizeof(char)*(HDstrlen(vs->usym[j].name)+1)))==NULL)
+                            {
+                              HDfree(wlist->esize);
+                              HDfree(wlist->name);
+                              HDfree(wlist->order);
+                              HDfree(wlist->off);
+                              HDfree(wlist->isize);
+                              HDfree(wlist->type);
+                              HRETURN_ERROR(DFE_NOSPACE,NULL);
+                            } /* end if */
                           HDstrcpy(wlist->name[wlist->n], vs->usym[j].name);
                           order = vs->usym[j].order;
                           wlist->type[wlist->n] = vs->usym[j].type;
@@ -220,6 +270,16 @@ VSsetfields(int32 vkey, const char *fields)
                             {
                                 found = TRUE;
 
+                                if((wlist->name[wlist->n]=HDmalloc(sizeof(char)*(HDstrlen(rstab[j].name)+1)))==NULL)
+                                  {
+                                    HDfree(wlist->esize);
+                                    HDfree(wlist->name);
+                                    HDfree(wlist->order);
+                                    HDfree(wlist->off);
+                                    HDfree(wlist->isize);
+                                    HDfree(wlist->type);
+                                    HRETURN_ERROR(DFE_NOSPACE,NULL);
+                                  } /* end if */
                                 HDstrcpy(wlist->name[wlist->n], rstab[j].name);
                                 order = rstab[j].order;
                                 wlist->type[wlist->n] = rstab[j].type;
@@ -234,14 +294,6 @@ VSsetfields(int32 vkey, const char *fields)
                 if (!found)     /* field is not a defined field - error  */
                     HRETURN_ERROR(DFE_BADFIELDS, FAIL);
             }
-
-          /* *********************************************************** */
-          /* ensure fields with order > 1 are alone  */
-#ifdef CHOUCK
-          for (i = 0; i < wlist->n; i++)
-              if (wlist->order[i] > 1 && wlist->n != 1)
-                  HRETURN_ERROR(DFE_BADORDER, FAIL);
-#endif /* CHOUCK */
 
           /* *********************************************************** */
           /* compute and save the fields' offsets */
@@ -279,7 +331,6 @@ VSsetfields(int32 vkey, const char *fields)
             }
 
           return (SUCCEED);
-
       }     /* setting read list */
 
     return (FAIL);

@@ -463,6 +463,7 @@ HIcount_dd(filerec_t * file_rec, uint16 cnt_tag, uint16 cnt_ref,
     /* search for special version also */
     special_tag = MKSPECIALTAG(cnt_tag);
 
+#ifdef OLD_WAY
     for (block = file_rec->ddhead; block != NULL; block = block->next)
       {
           t_all_cnt += block->ndds;
@@ -484,6 +485,105 @@ HIcount_dd(filerec_t * file_rec, uint16 cnt_tag, uint16 cnt_ref,
 		  }	/* end if */
 	    }	/* end for */
       }		/* end for */
+#else /* OLD_WAY */
+    switch(cnt_tag)
+      {
+          case DFTAG_WILDCARD:
+              for (block = file_rec->ddhead; block != NULL; block = block->next)
+                {
+                    t_all_cnt += block->ndds;
+
+                    list = block->ddlist;
+                    for (idx = 0; idx < block->ndds; idx++)
+                      {
+                          /* skip the empty dd's */
+                          if (list[idx].tag == DFTAG_NULL || list[idx].tag == DFTAG_FREE)
+                              continue;
+
+                          if ((cnt_ref == DFREF_WILDCARD || list[idx].ref == cnt_ref))
+                                t_real_cnt++;
+                  }	/* end for */
+                }		/* end for */
+              break;
+
+          case DFTAG_NULL:
+          case DFTAG_FREE:
+              for (block = file_rec->ddhead; block != NULL; block = block->next)
+                {
+                    t_all_cnt += block->ndds;
+
+                    list = block->ddlist;
+                    for (idx = 0; idx < block->ndds; idx++)
+                          if ((list[idx].tag == cnt_tag
+                            || (special_tag != DFTAG_NULL && list[idx].tag == special_tag))
+                           && (cnt_ref == DFREF_WILDCARD || list[idx].ref == cnt_ref))
+                                t_real_cnt++;
+                }		/* end for */
+              break;
+
+          default:
+              if(special_tag==DFTAG_NULL)
+                {
+                  for (block = file_rec->ddhead; block != NULL; block = block->next)
+                    {
+                        t_all_cnt += block->ndds;
+
+                        list = block->ddlist;
+                        for (idx = 0; idx < block->ndds; idx++)
+                            if (list[idx].tag == cnt_tag
+                             && (list[idx].ref == cnt_ref || cnt_ref == DFREF_WILDCARD))
+                                  t_real_cnt++;
+                    }		/* end for */
+                } /* end if */
+              else
+                {
+                  if(cnt_ref==DFREF_WILDCARD)
+                    {
+                      for (block = file_rec->ddhead; block != NULL; block = block->next)
+                        {
+                            t_all_cnt += block->ndds;
+
+                            list = block->ddlist;
+#ifdef QAK
+                            for (idx = 0; idx < block->ndds; idx++)
+                                  if (list[idx].tag == cnt_tag || list[idx].tag == special_tag)
+                                      t_real_cnt++;
+#else /* QAK */
+                            idx=0;
+                            if(block->ndds%2 == 1)
+                                if (list[idx].tag == cnt_tag || list[idx].tag == special_tag)
+                                  {
+                                    t_real_cnt++;
+                                    idx++;
+                                  } /* end if */
+                            for (; idx < block->ndds; idx++)
+                              {
+                                  if (list[idx].tag == cnt_tag || list[idx].tag == special_tag)
+                                      t_real_cnt++;
+                                  idx++;
+                                  if (list[idx].tag == cnt_tag || list[idx].tag == special_tag)
+                                      t_real_cnt++;
+                              } /* end for */
+#endif /* QAK */
+                        }		/* end for */
+                    } /* end if */
+                  else
+                    {
+                      for (block = file_rec->ddhead; block != NULL; block = block->next)
+                        {
+                            t_all_cnt += block->ndds;
+
+                            list = block->ddlist;
+                            for (idx = 0; idx < block->ndds; idx++)
+                                if ((list[idx].tag == cnt_tag || list[idx].tag == special_tag)
+                                   && list[idx].ref == cnt_ref)
+                                      t_real_cnt++;
+                        }		/* end for */
+                    } /* end else */
+                } /* end else */
+              break;
+      } /* end switch */
+#endif /* OLD_WAY */
 
     *all_cnt = t_all_cnt;
     *real_cnt = t_real_cnt;

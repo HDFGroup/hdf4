@@ -277,7 +277,7 @@ VSfexist(int32 vkey, char *fields)
 {
     char      **av, *s;
     int32       ac, i, j, found;
-    VWRITELIST *w;
+    DYN_VWRITELIST *w;
     vsinstance_t *wi;
     VDATA      *vs;
     CONSTR(FUNC, "VSfexist");
@@ -401,7 +401,7 @@ VOID
 VSdump(int32 vkey)
 {
 #ifdef OLD_WAY
-    VWRITELIST *w;
+    DYN_VWRITELIST *w;
     int32       i;
     CONSTR(FUNC, "VSdump");
 
@@ -417,7 +417,7 @@ VSdump(int32 vkey)
     sprintf(sjs, "@nv=%ld\n ", vs->nvertices);
     zj;
 
-    w = (VWRITELIST *) & vs->wlist;
+    w = (DYN_VWRITELIST *) & vs->wlist;
     sprintf(sjs, "@vsize(hdf)=%d fields=%d [%s]\n", w->ivsize, w->n, vs->vsname);
     zj;
 

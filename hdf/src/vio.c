@@ -291,23 +291,30 @@ vunpackvs(VDATA * vs, uint8 buf[])
     /* retrieve nfields */
     INT16DECODE(bb, vs->wlist.n);
 
+    /* Can't really check for malloc failure... -QAK */
+    vs->wlist.type=HDmalloc(sizeof(int16)*vs->wlist.n);
     for (i = 0; i < vs->wlist.n; i++)   /* retrieve the type */
         INT16DECODE(bb, vs->wlist.type[i]);
 
+    vs->wlist.isize=HDmalloc(sizeof(int16)*vs->wlist.n);
     for (i = 0; i < vs->wlist.n; i++)   /* retrieve the isize */
         INT16DECODE(bb, vs->wlist.isize[i]);
 
+    vs->wlist.off=HDmalloc(sizeof(int16)*vs->wlist.n);
     for (i = 0; i < vs->wlist.n; i++)   /* retrieve the offset */
         INT16DECODE(bb, vs->wlist.off[i]);
 
+    vs->wlist.order=HDmalloc(sizeof(int16)*vs->wlist.n);
     for (i = 0; i < vs->wlist.n; i++)   /* retrieve the order */
         INT16DECODE(bb, vs->wlist.order[i]);
 
     /* retrieve the field names (and each field name's length)  */
+    vs->wlist.name=HDmalloc(sizeof(char *)*vs->wlist.n);
     for (i = 0; i < vs->wlist.n; i++)
       {
           INT16DECODE(bb, int16var);    /* this gives the length */
 
+          vs->wlist.name[i]=HDmalloc((int16var+1)*sizeof(char));
           HIstrncpy(vs->wlist.name[i], (char *) bb, int16var + 1);
           bb += int16var;
       }
@@ -339,6 +346,7 @@ vunpackvs(VDATA * vs, uint8 buf[])
             vs->wlist.type[i] = map_from_old_types(vs->wlist.type[i]);
 
     /* --- EXTRA --- fill in the machine-dependent size fields */
+    vs->wlist.esize=HDmalloc(sizeof(int16)*vs->wlist.n);
     for (i = 0; i < vs->wlist.n; i++)
         vs->wlist.esize[i] = (int16) (vs->wlist.order[i] * DFKNTsize((int32) vs->wlist.type[i] | (int32) DFNT_NATIVE));
 
@@ -354,10 +362,27 @@ VOID
 vsdestroynode(VOIDP n)
 {
     VDATA      *vs;
+    intn i;
 
     vs = ((vsinstance_t *) n)->vs;
     if (vs != NULL)
+      {
+
+        /* Free the dynamicly allocated VData fields */
+        for(i=0; i<vs->wlist.n; i++)
+            HDfree(vs->wlist.name[i]);
+        HDfree(vs->wlist.name);
+#ifdef QAK
+        HDfree(vs->wlist.len);
+#endif /* QAK */
+        HDfree(vs->wlist.type);
+        HDfree(vs->wlist.off);
+        HDfree(vs->wlist.isize);
+        HDfree(vs->wlist.order);
+        HDfree(vs->wlist.esize);
+
         HDfree((VOIDP) vs);
+      } /* end if */
 
     HDfree((VOIDP) n);
 
@@ -960,7 +985,7 @@ VSQueryref(int32 vkey)
 }	/* VSQueryref */
 
 /* -------------- Return the writelist of a VData----------------- */
-VWRITELIST _HUGE *
+DYN_VWRITELIST _HUGE *
 vswritelist(int32 vkey)
 {
     vsinstance_t *w;
