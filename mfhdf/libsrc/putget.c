@@ -748,7 +748,7 @@ NC_var *vp;
     fprintf(stderr, "--- Allocating new data storage szof=%d, to_do=%d\n",(int)vp->szof, (int)to_do);
     fprintf(stderr, "byte_count=%d\n", (int)byte_count);
 #endif  
-    vp->aid = Hstartwrite(handle->hdf_file, DATA_TAG, vsid, byte_count);
+    vp->aid = Hstartwrite(handle->hdf_file, DATA_TAG, vsid, vp->len);
 
     if(vp->aid == FAIL) return NULL;
 
