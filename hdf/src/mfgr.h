@@ -137,6 +137,8 @@ typedef struct ri_info {
     dim_info_t lut_dim;         /* palette dimension information */
     uint16  img_tag,img_ref;    /* tag & ref of the image data */
     uint16  lut_tag,lut_ref;    /* tag & ref of the palette data */
+    gr_interlace_t im_il;       /* interlace of image when next read (default PIXEL) */
+    gr_interlace_t lut_il;      /* interlace of LUT when next read (default PIXEL) */
     uintn data_modified;        /* whether the image or palette data has been modified */
     uintn meta_modified;        /* whether the image or palette meta-info has been modified */
     uintn attr_modified;        /* whether the attributes have been modified */
