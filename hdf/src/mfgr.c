@@ -4270,6 +4270,12 @@ intn GRsetattr(int32 id,char *name,int32 attr_nt,int32 count,VOIDP data)
 printf("%s: entering\n",FUNC);
 printf("%s: id=%ld, name=%p, data=%p, count=%ld\n",FUNC,(long)id,name,data,(long)count);
 #endif /* QAK */
+    /* Make sure that count is less than MAX_ORDER(Vdata)
+           and total size is less than MAX_FIELD_SIZE(Vdata) */
+    if ((count > MAX_ORDER) ||
+        ((count * DFKNTsize(attr_nt)) > MAX_FIELD_SIZE))
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
     /* check the validity of the args */
     if (HAatom_group(id)!=RIIDGROUP && HAatom_group(id)!=GRIDGROUP || data==NULL || name==NULL
             || count<=0 || DFKNTsize(attr_nt)==FAIL)
