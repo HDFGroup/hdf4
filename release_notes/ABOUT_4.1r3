@@ -101,15 +101,28 @@ web page (accessible from the HDF home page):
 
      http://hdf.ncsa.uiuc.edu/platforms.html
 
+
 Known Problems:
 ==============
+
+o On Alpha OpenVMS version 6.2, the DF.OLB and MFHDF.OLB Libraries 
+  should be created with optimization turned off. Otherwise hdftest 
+  fails (the sfgichnk function returns incorrect information).
+
+o On VAX Open VMS 6.2, the ncgen utility core dumps and an error occurs
+  when reading GR image data with user-defined fill values.
+
+o If you encounter problems building on a platform, please be sure to
+  check the INSTALL file at the top of the HDF source tree, in case 
+  these problems are documented in section 2.5, Platform-specific Notes.
+
 
 Acknowledgements:
 ================
 
 Fortner Software LLC ("Fortner") created the reference implementations
-for the Macintosh of the HDF 4.1r3 library.  For more information, please 
-refer to the macintosh.txt and windows.txt files in the 
-./release_notes/ directory.
+for the Macintosh and Windows NT/95 of the HDF 4.1r3 library.  For more 
+information, please refer to the macintosh.txt and windows.txt files in 
+the ./release_notes/ directory.
 
 
