@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.10  1993/03/29 16:47:10  koziol
+# Revision 1.11  1993/04/08 20:42:43  koziol
+# Minor Cray tweaks
+#
+# Revision 1.10  1993/03/29  16:47:10  koziol
 # Updated JPEG code to new JPEG 4 code.
 # Changed VSets to use Threaded-Balanced-Binary Tree for internal
 # 	(in memory) representation.
@@ -371,7 +374,7 @@ jwrtarga.o : jwrtarga.c jinclude.h jconfig.h jpegdata.h
 jmemsys.o : jmemsys.c jinclude.h jconfig.h jpegdata.h jmemsys.h
 
 install_it:
-	-mkdir $(HDFINC)
+	-if(!(-e $(HDFINC))) mkdir $(HDFINC)
 	-cp $(HDRS) $(JINCS) $(HDFINC)
 	-mkdir $(HDFLIB)
 	-cp libdf.a $(HDFLIB)
