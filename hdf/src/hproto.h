@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.31  1993/04/27 21:01:00  georgev
-Changed fortran stubs interface for hyperslabs, made them different
-than the C names.
+Revision 1.32  1993/04/28 22:02:06  koziol
+Fixed typo in ndfsdwslab macro
 
+ * Revision 1.31  1993/04/27  21:01:00  georgev
+ * Changed fortran stubs interface for hyperslabs, made them different
+ * than the C names.
+ *
  * Revision 1.30  1993/04/26  22:43:08  koziol
  * shortened the DF24setcompress and DFR8setcompress calls to make the Vax happy
  *
@@ -1220,7 +1223,7 @@ extern FRETVAL(intf) ndfr8sjpeg
 #   define ndfsdsfill        FNAME(DFSDSFILL)
 #   define ndfsdgfill        FNAME(DFSDGFILL)
 #   define ndfsdsslab        FNAME(DFSDSSLAB)
-#   define ndfsdweslab       FNAME(DFSDWSLAB)
+#   define ndfsdwslab        FNAME(DFSDWSLAB)
 #   define ndfsdeslab        FNAME(DFSDESLAB)
 #else
 #   define ndsgdast  FNAME(dsgdast)
