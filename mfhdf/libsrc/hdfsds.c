@@ -1139,6 +1139,7 @@ hdf_read_ndgs(NC *handle)
                              */
                             if((scalebuf) && (scalebuf[dim])) 
                               {
+                                  vars[current_var]->numrecs = dimsizes[dim];
                                   vars[current_var]->data_offset = scale_offset;
                                   scale_offset += dimsizes[dim] * DFKNTsize(scaletypes[dim]);
                               } 
