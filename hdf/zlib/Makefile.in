@@ -134,7 +134,10 @@ example: example.o libz.a
 minigzip: minigzip.o libz.a
 	$(CC) $(CFLAGS) -o $@ minigzip.o $(LDFLAGS)
 
-clean distclean:
+clean:
+	rm -f *.o example minigzip libz.a foo.gz
+
+distclean:
 	rm -f *.o example minigzip libz.a foo.gz config.status Makefile
 
 zip:
