@@ -3057,6 +3057,25 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
     extern int32 Vdelete
                 (int32 f, int32 ref);
 
+/*******************************************************************************
+NAME
+   Vdeletetagref - delete tag/ref pair in Vgroup
+
+DESCRIPTION
+    Deletes the given tag/ref pair from the Vgroup.  If the given tag/ref pair 
+    does not exist in the vgroup the routine will return FAIL. Users should use 
+    Vinqtagref() to check if the tag/ref pair exists before deleting.
+
+RETURNS
+    Returns SUCCEED if the tag/ref pair is deleted from Vgroup and
+    FAIL if unsuccessful.
+
+*******************************************************************************/
+intn
+Vdeletetagref(int32 vkey, /* IN: vgroup key */ 
+              int32 tag,  /* IN: tag to delete in vgroup */
+              int32 ref   /* IN: ref to delete in vgroup */);
+
     extern intn VPshutdown(void);
 
 /*

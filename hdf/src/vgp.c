@@ -96,6 +96,7 @@ EXPORTED ROUTINES
  Vdelete      -- Remove a Vgroup from its file.  This function will both 
                   remove the Vgoup from the internal Vset data structures 
                   as well as from the file.
+ Vdeletetagref - delete tag/ref pair in Vgroup
 
  NOTE: Another pass needs to made through this file to update some of
        the comments about certain sections of the code. -GV 9/8/97
@@ -394,7 +395,7 @@ Load_vfile(HFILEID f /* IN: file handle */)
         HGOTO_DONE(SUCCEED);
 
     /* load all the vg's  tag/refs from file */
-    vf->vgtabn = 0;
+    vf->vgtabn = 0; /* intialize to number of current entries to zero */
     vf->vgtree = tbbtdmake(vcompare, sizeof(int32));
     if (vf->vgtree == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -402,24 +403,30 @@ Load_vfile(HFILEID f /* IN: file handle */)
     ret = aid = Hstartread(f, DFTAG_VG, DFREF_WILDCARD);
     while (ret != FAIL)
       {
+          /* get tag/ref for this vgroup */
           HQuerytagref(aid, &tag, &ref);
+
+          /* get a vgroup struct to fill */
           if (NULL == (v = VIget_vginstance_node()))
             {
                 tbbtdfree(vf->vgtree, vdestroynode, NULL);
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
             }
 
-          vf->vgtabn++;
+          vf->vgtabn++; /* increment number of vgroups found in file */
+
           v->key = (int32) ref;   /* set the key for the node */
           v->ref = (uintn) ref;
 
-          v->vg = VPgetinfo(f,ref);  /* get the header information */
+          /* get the header information */
+          v->vg = VPgetinfo(f,ref);  
           if (v->vg == NULL)
               HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
           /* insert the vg instance in B-tree */
           tbbtdins(vf->vgtree, (VOIDP) v, NULL); 
 
+          /* get next vgroup */
           ret = Hnextread(aid, DFTAG_VG, DFREF_WILDCARD, DF_CURRENT);
       }
 
@@ -438,6 +445,7 @@ Load_vfile(HFILEID f /* IN: file handle */)
     ret = aid = Hstartread(f, VSDESCTAG, DFREF_WILDCARD);
     while (ret != FAIL)
       {
+          /* get tag/ref for this vdata */
           HQuerytagref(aid, &tag, &ref);
 
           /* attach new vs to file's vstab */
@@ -448,11 +456,13 @@ Load_vfile(HFILEID f /* IN: file handle */)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
             }
 
-          vf->vstabn++;
+          vf->vstabn++; /* increment number of vdatas found in file */
+
           w->key = (int32) ref;   /* set the key for the node */
           w->ref = (uintn)ref;
 
-          w->vs = VSPgetinfo(f,ref);  /* get the header information */
+          /* get the header information */
+          w->vs = VSPgetinfo(f,ref);  
           if (w->vs == NULL)
               HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
@@ -462,6 +472,7 @@ Load_vfile(HFILEID f /* IN: file handle */)
           /* insert the vg instance in B-tree */
           tbbtdins(vf->vstree, (VOIDP) w, NULL);    
 
+          /* get next vdata */
           ret = Hnextread(aid, VSDESCTAG, DFREF_WILDCARD, DF_CURRENT);
       }
 
@@ -1555,11 +1566,12 @@ NAME
 
 DESCRIPTION
    Checks to see if the given field exists in a vdata belonging to this vgroup.
-   If found, returns the ref of the vdata.
-   If not found, or error, returns FAIL
+
    28-MAR-91 Jason Ng NCSA
 
 RETURNS
+   If found, returns the ref of the vdata.
+   If not found, or error, returns FAIL
 
 *******************************************************************************/
 int32
@@ -1690,6 +1702,129 @@ done:
 
   return ret_value;
 }   /* Vinqtagref */
+
+/*******************************************************************************
+ NAME
+   Vdeletetagref - delete tag/ref pair in Vgroup
+
+ DESCRIPTION
+    Deletes the given tag/ref pair from the Vgroup.  If the given tag/ref pair 
+    does not exist in the vgroup the routine will return FAIL. Users should use 
+    Vinqtagref() to check if the tag/ref pair exists before deleting.
+
+ RETURNS
+    Returns SUCCEED if the tag/ref pair is deleted from Vgroup and
+    FAIL if unsuccessful.
+
+ Author -GeorgeV 10/10/97
+*******************************************************************************/
+intn
+Vdeletetagref(int32 vkey, /* IN: vgroup key */ 
+              int32 tag,  /* IN: tag to delete in vgroup */
+              int32 ref   /* IN: ref to delete in vgroup */) 
+{
+    uintn         i,j;       /* loop indices */
+    uint16        ttag;      /* tag for comparison */
+    uint16        rref;      /* ref for comparison */
+    vginstance_t *v  = NULL; /* vgroup instance struct */
+    VGROUP       *vg = NULL; /* in-memory vgroup struct */
+    intn          ret_value = SUCCEED;
+    CONSTR(FUNC, "Vdeletetagref");
+
+   /* NOTE: Move the following comments to the DESCRIPTION of the
+            fcn when the issue with duplicate tag/refs is decided.
+
+    If duplicate tag/ref pairs exist, then it deletes the first occurence.
+    If the case of duplicate tag/ref pairs the user can call Vinqtagref() 
+    to see if there are more occurences and then delete them. */
+
+#ifdef HAVE_PABLO
+    TRACE_ON(V_mask, ID_Vdeletetagref);
+#endif /* HAVE_PABLO */
+
+    /* clear error stack */
+    HEclear();
+
+    /* check if vgroup is valid */
+    if (HAatom_group(vkey) != VGIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* get instance of vgroup */
+    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+
+    /* get vgroup itself and check */
+    vg = v->vg;
+    if (vg == NULL)
+        HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+    /* set comparsion tag/ref pair */
+    ttag = (uint16) tag;
+    rref = (uint16) ref;
+
+    /* look through elements in vgroup */
+    for (i = 0; i < (uintn)vg->nvelt; i++)
+      { /* see if element tag/ref matches search tag/ref */
+          if ((ttag == vg->tag[i]) && (rref == vg->ref[i]))
+            { /* found tag/ref pair to delete. 
+                 If duplicate tag/ref pairs exist, then it deletes 
+                 the first occurence. If the case of duplicate tag/ref 
+                 pairs the user can call Vinqtagref() to see if there 
+                 are more occurences and then delete them.*/
+
+                /* check if element found is last one in vgroup */
+                if ( i != ((uintn)vg->nvelt - 1))
+                  { /* Basically shifts the contents of the array down by one. 
+                       This method will preserve the order without using
+                       extra memory for storage etc. If speed/performance
+                       is an issue you can use memove()/memcpy(). */
+                      for (j = i; j < (uintn)vg->nvelt - 1; j++)
+                        {
+                            vg->tag[j] = vg->tag[j+1];
+                            vg->ref[j] = vg->ref[j+1];
+                        }
+#if 0
+                      /* This method is quick but does not preserve the
+                         order of elements in a vgroup.
+                         swap i'th element with last one. */
+                      vg->tag[i] = vg->tag[(uintn)vg->nvelt - 1];
+                      vg->ref[i] = vg->ref[(uintn)vg->nvelt - 1];
+#endif
+
+                  }
+                /* else if last one , do nothing and allow the 
+                   number of elements to be decrementd. */
+
+                /* reset last ones, just to be sure  */
+                vg->tag[(uintn)vg->nvelt - 1] = DFTAG_NULL;
+                vg->ref[(uintn)vg->nvelt - 1] = 0; /* invalid ref */
+
+                vg->nvelt--; /* decrement number of elements in vgroup */
+                vg->marked = TRUE; /* mark vgroup as changed. 
+                                      forces re-writing of new vgroup. */
+                ret_value = SUCCEED;
+                goto done; /* we are done */
+            } /* if found */
+      } /* for all items in vgroup */
+
+    /* reaching here means tag/ref pair not found. The user
+       should have used Vinqtagref() before calling this fcn. 
+       Oh well...*/
+    ret_value = FAIL;
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+#ifdef HAVE_PABLO
+  TRACE_OFF(V_mask, ID_Vdeletetagref);
+#endif /* HAVE_PABLO */
+
+  return ret_value;
+}   /* Vdeletetagref */
 
 /*******************************************************************************
 NAME
