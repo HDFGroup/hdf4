@@ -1,3 +1,24 @@
+HDF4.0b2
+========
+1. To avoid conflicts with C++, field name 'new' in vgroup_desc 
+   of vg.h is changed to 'new_vg', and in accrec_t 'new' of 
+   hfile.h is changed to 'new_elem'.
+2. Fixed the max number of fields of vdata in vparse.c, vshow.c 
+   and show.c (in mfhdf/dumper/). Now vshow and hdp can dump
+   VSFIELDMAX number of fields. 
+3. Fixed platform number subclass problem when external data file was
+   written in Little_endian format (IBM-PC). 
+4. Fixed the core-dump on some machines when writing large number of 
+   big SDS by holding the buffer instead of freeing it every time.
+5. The max number of files which can be open at one time was defined
+   in hdf.h, hfile.h and netcdf.h. Now there is only one definition
+   by MAX_FILE in hdf/src/hlimits.h.
+6. A bug in SDsetnbitdataset is fixed. 
+7. Uninitialized memory reads in SDIputattr and hdf_create_dim_vdata
+    are fixed. 
+
+HDF4.0b1
+========
 1. Added support to unsigned integers for attributes.
 2. Bug fixed in SDsetdimscale if dim strings or other attributes already
    assigned to that dimension and if the size of the number type

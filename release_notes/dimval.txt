@@ -1,3 +1,6 @@
+             New Version of Dimension Values
+             ===============================
+
 HDF4.0b1 and previous releases use a vgroup to represent a dimension.
 The vgroup has a single field vdata with class "DimVal0.0".
 The vdata has <dimension size> number of records, each record has a 
@@ -15,7 +18,8 @@ distinguish it from the old version.
 However, existing tools and utilities which were compiled with the old
 version can't recognize the new dimesions of hdf files created using
 HDF4.0b2 or later version. This could cause problems for HDF users.
-To solve this problem, we are going to implement a transitional policy.
+To solve this problem, we are planning to implement a transitional 
+policy:
 
 1. Starting from HDF4.0b2 both versions of the dimension will be
    created by default. The old tools recognize the "DimVal0.0" 
