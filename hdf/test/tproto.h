@@ -23,5 +23,6 @@ void test_slab();
 void test_litend();
 void test_vsets();
 void test_comp();
+void test_bitio();
 
 #endif
