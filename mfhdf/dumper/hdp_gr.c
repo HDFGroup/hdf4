@@ -603,6 +603,10 @@ intn print_PaletteInfo(
          ERROR_CONT_2( "in %s: GRgetlutid failed for palette #%d",
                         "print_PaletteInfo", (int)pal_index);
 
+/* Changed to reflect GRgetlutinfo returning FAIL when there is no palette
+ * for a RIG - QAK 2/1/01
+ */
+#ifdef OLD_WAY
       /* Obtain and display information about the palette. */
       status = GRgetlutinfo (pal_id, &n_comps, &data_type, &interlace_mode,
                             &n_entries);
@@ -619,6 +623,20 @@ intn print_PaletteInfo(
       else /* have palette data */
          fprintf (fp, "\t Palette: %d components; %d entries\n",
                         (int)n_comps, (int)n_entries);
+#else /* OLD_WAY */
+      /* Obtain and display information about the palette. */
+      status = GRgetlutinfo (pal_id, &n_comps, &data_type, &interlace_mode,
+                            &n_entries);
+      /* if there are no palette data, print message for both cases:
+         header-only and verbose (data+header) */
+      if( status == FAIL )
+         fprintf( fp, "\t No palette\n");
+
+      /* else, if there are palette data, print header info */
+      else /* have palette data */
+         fprintf (fp, "\t Palette: %d components; %d entries\n",
+                        (int)n_comps, (int)n_entries);
+#endif /* OLD_WAY */
 
    } /* end of for each palette */
 
@@ -656,6 +674,10 @@ print_Palette(
          ERROR_CONT_2( "in %s: GRgetlutid failed for palette #%d", 
 			"print_Palette", (int)pal_index);
 
+/* Changed to reflect GRgetlutinfo returning FAIL when there is no palette
+ * for a RIG - QAK 2/1/01
+ */
+#ifdef OLD_WAY
       /* Obtain and display information about the palette. */
       status = GRgetlutinfo (pal_id, &n_comps, &data_type, &interlace_mode,
                             &n_entries);
@@ -670,6 +692,19 @@ print_Palette(
          if( dumpgr_opts->contents != DDATA )
             fprintf( fp, "\t No palette data\n");
       }
+#else /* OLD_WAY */
+      /* Obtain and display information about the palette. */
+      status = GRgetlutinfo (pal_id, &n_comps, &data_type, &interlace_mode,
+                            &n_entries);
+   
+      /* if there are no palette data, print message for both cases:   
+         header-only and verbose (data+header) */
+      if( status == FAIL )
+      {
+         if( dumpgr_opts->contents != DDATA )
+            fprintf( fp, "\t No palette data\n");
+      }
+#endif /* OLD_WAY */
       /* else, if there are palette data, print header info when not 
          data-only and print palette data when not header-only */
       else /* have palette data */
