@@ -1,0 +1,80 @@
+
+                          ABOUT HDF 4.2 Release 0-Beta
+                               September 2003
+
+INTRODUCTION
+
+This document describes the differences between HDF 4.1r5 and
+HDF 4.2r0-Beta.  It is written for people who are familiar with
+previous releases of HDF and wish to migrate to HDF 4.2r0-Beta
+
+The HDF 4.2r0-Beta documentation can be found on the NCSA ftp server 
+(ftp.ncsa.uiuc.edu) in the directory:
+
+     /HDF/pub/outgoing/hdf4/4.2-Beta/
+
+First-time HDF users are encouraged to read the FAQ in this
+release for more information about HDF.  Users can also look
+at the home page for HDF at:
+
+     http://hdf.ncsa.uiuc.edu/
+
+If you have any questions or comments, please send them to:
+
+     hdfhelp@ncsa.uiuc.edu
+
+CONTENTS
+
+- New Features and Changes
+- Platforms Tested
+
+New Features and Changes:
+========================
+
+o ZLIB and JPEG libraries were removed from the HDF4 distribution source.
+  Please read INSTALL-4.2r0-Beta in the top HDF4 directory for instructions
+  how to build HDF4 Library and applications.
+
+o HDF4 has an optional SZIP compression; please refer to the INSTALL-4.2r0-Beta 
+  file for instructions how to build with/without SZIP
+  Library and to the ???? file for the SZIP License information. 
+
+  For more information about SZIP compression
+  see http://hdf.ncsa.uiuc.edu/HDF5/doc_resource/SZIP/ and "HDF4 Reference Manual"
+  descriptions of the GRsetcompress and SDsetcompress functions. 
+
+o The following new tools have been added
+
+      hrepack
+      hdiff
+      hdfimport
+
+  See "HDF4 Reference Manual" in the HDF 4.2r0-Beta documentation set for more
+  information.
+
+o HDF4 was ported to the following platforms
+
+      AIX 5.1 64-bit version
+      MacOSX
+      Linux 2.4 RH8 and RH9
+
+Please refer to the bugs_fixed.txt file for more details on bugs that were 
+fixed.
+
+
+Platforms Tested:
+================
+
+HDF 4.2 Release 0-Beta has been tested on the following platforms:
+
+   FreeBSD 4.9
+   HP-UX B.11.00 
+   AIX 5.1 (32 and 64-bit)
+   IRIX64 6.5 (-n32, -64)
+   Linux 2.4
+   Solaris 2.7, 2.8 (32 and 64-bit)
+   MacOSX
+
+   No precompiled binaries is available for this release.
+
+
