@@ -83,7 +83,7 @@ val_stuff(type, v, ii, val)	/* v[ii] = val */
         ((short *)v)[ii] = (short)val;
 	break;
     case NC_LONG:
-	((long *)v)[ii] = (nclong)val;
+	((nclong *)v)[ii] = (nclong)val;
 	break;
     case NC_FLOAT:
         ((float *)v)[ii] = (float)val;
