@@ -92,9 +92,11 @@ infodir = $(prefix)/info
 PCHDRS=ProcIDs.h ProcTrace.h
 PCSRCS=PabloHDF.c PabloHDF_RT.c PabloHDF_SDDF.c
 PCOBJS=PabloHDF.o PabloHDF_RT.o PabloHDF_SDDF.o
+PFSRCS=PabloHDFff.f
+PFOBJS=PabloHDFff.o
 PFINCS=PabloHDF.inc ProcTrace.inc
-POBJS=PabloHDF.o PabloHDF_RT.o PabloHDF_SDDF.o
-PSRCS= $(PCHDRS) $(PCSRCS) $(PFINCS)
+POBJS=PabloHDF.o PabloHDF_RT.o PabloHDF_SDDF.o PabloHDFff.o
+PSRCS= $(PCHDRS) $(PCSRCS) $(PFINCS) $(PFSRCS)
 
 TARGETLIB = libdf-inst.a
 
