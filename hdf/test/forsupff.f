@@ -34,6 +34,8 @@ C Invokes: none
 C------------------------------------------------------------------------------
       subroutine RESULT(errval, routine, num_failed)
       implicit none
+C For VMS uncomment next line and comment out the line after next
+C     include '[-.src]hdf.inc'
       include '../src/hdf.inc'
       include 'fortest.inc'
 
@@ -65,6 +67,8 @@ C Invokes: none
 C------------------------------------------------------------------------------
       subroutine VERIFY(errval, routine, num_failed)
       implicit none
+C For VMS uncomment next line and comment out the line after next
+C     include '[-.src]hdf.inc'
       include '../src/hdf.inc'
       include 'fortest.inc'
 
@@ -177,6 +181,8 @@ C
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       subroutine errchkio(err1, err2, err3, num_err, msg)
       implicit none
+C For VMS uncomment next line and comment out the line after next
+C     include '[-.src]hdf.inc'
       include '../src/hdf.inc'
       include 'fortest.inc'
 
