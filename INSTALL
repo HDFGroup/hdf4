@@ -24,6 +24,7 @@
 
   2.5 Platform-specific Notes
   2.5.1 Solaris on Sparc
+  2.5.1a Solaris on 64-bit Sparc
   2.5.2 Solaris on INTEL(x86)
   2.5.3 OpenVMS AXP on DEC Alpha
   2.5.4 Windows 98/NT/2000
@@ -85,6 +86,8 @@
 
   Platform(OS)                    C-Compiler       Fortran-Compiler   
   ------------                    ----------       ---------------- 
+  Sun4(Solaris 2.8)               Sun WorkShop 6   -
+                                  Compilers C 5.2  
   Sun4(Solaris 2.7)               WorkShop         WorkShop Compilers 5.0
                                   Compilers C 5.0  FORTRAN 77 5.0         
   Sun4(Solaris 2.6)               WorkShop         WorkShop Compilers 5.0
@@ -353,6 +356,19 @@
          -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz \
          -L/usr/lib -lnsl
 
+    2.5.1a Solaris on 64-bit Sparc
+    ------------------------------
+    The distribution was tested for the 64-bit Sparc architecture on
+    Solaris 2.8.  The configure script should auto-detect the correct
+    CPU architecture and enable 64-bit support automatically.  If the
+    64-bit support is not detected correctly, run configure as follows:
+        ./configure -v --host=sparc64-sun-solaris2
+    To compile the distribution in 32-bit mode on a 64-bit machine, run
+    configure as follows:
+        ./configure -v --host=sparc-sun-solaris2
+
+    To change compiler flags, etc. the config/mh-solaris64 configuration
+    file must be modified, instead of the normal config/mh-solaris file.
 
     2.5.2 Solaris on INTEL(x86)
     ---------------------------
