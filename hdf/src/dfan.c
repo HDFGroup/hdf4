@@ -88,13 +88,24 @@ PRIVATE int32 _DFANIopen();
  *---------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
- * Name:    DFANgetlablen
- * Purpose: get length of label of tag/ref
- * Inputs:  filename: name of HDF file
- *          tag, ref: tag/ref of item of which we want label
- * Returns: length of label on success, -1 on failure with DFerror set
- * Users:   HDF HLL users, utilities, other routines
- * Invokes: DFANIgetannlen
+ NAME
+       DFANgetlablen -- get length of label of tag/ref 
+ USAGE
+       int32 DFANgetlablen(filename, tag, ref)
+       char *filename;     IN: filename: name of HDF file 
+       uint16 tag;         IN: tag of data object assigned the label 
+       uint16 ref;         IN: reference number of the data object assigned 
+                               the label
+ RETURNS
+       length of label on success, FAIL (-1) otherwise
+ DESCRIPTION
+       Calls DFANIgetannlen to get label length.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+       This routine should be used to insure that there is enough space 
+       allocated for a label before actually reading it.
+ EXAMPLES
+ REVISION LOG
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
@@ -108,17 +119,27 @@ int32 DFANgetlablen(filename, tag, ref)
     return(DFANIgetannlen(filename, tag, ref, DFAN_LABEL));
 }
 
-
-/*-----------------------------------------------------------------------------
- * Name:    DFANgetlabel
- * Purpose: get label of tag/ref
- * Inputs:  filename: name of HDF file
- *          tag, ref: tag/ref of item of which we want label
- *          label: space to return label in
- *          maxlen: size of space to return label in
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   HDF HLL users, utilities, other routines
- * Invokes: DFANIgetann
+/*--------------------------------------------------------------------------
+ NAME
+       DFANgetlabel -- get label of object identified by tag/ref
+ USAGE
+       int DFANgetlabel(filename, tag, ref, label, maxlen)
+       char *filename;   IN: name of HDF file
+       uint16 tag;       IN: tag of object of assigned the label 
+       uint16 ref;       IN: ref number of object of assigned the label 
+       char *label;      OUT: buffer allocated to hold the label 
+       int32 maxlen;     IN: size of buffer allocated to hold the label 
+ RETURNS
+       SUCCEED (0) if successful and FAIL (-1) otherwise
+ DESCRIPTION
+       Invokes DFANIgetann to get label
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+       The value of maxlen must be at least one greater than the
+       anticipated length of the label, because a NULL byte is appended
+       to the annotation
+ EXAMPLES
+ REVISION LOG
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
@@ -136,15 +157,25 @@ int32 maxlen;
 }
 
 
-/*-----------------------------------------------------------------------------
- * Name:    DFANgetdesclen
- * Purpose: get length of description of tag/ref
- * Inputs:  filename: name of HDF file
- *          tag, ref: tag/ref of item of which we want description
- * Returns: length of description on success, -1 on failure with DFerror set
- * Users:   HDF HLL users, utilities, other routines
- * Invokes: DFANIgetannlen
- *---------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------
+ NAME
+       DFANgetdesclen -- get length of description of tag/ref
+ USAGE
+       int32 DFANgetdesclen(filename, tag, ref)
+       char *filename;  IN: name of HDF file
+       uint16 tag;      IN: tag of item of which we want description
+       uint16 ref;      IN: ref number of item of which we want description
+ RETURNS
+       Length of description if successful, and FAIL (-1) otherwise
+ DESCRIPTION
+       Calls DFANIgetannlen to get description length
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+       This routine should be used to insure that there is enough space
+       allocated for a description before actually reading it.
+ EXAMPLES
+ REVISION LOG
+ *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 int32 DFANgetdesclen(char *filename, uint16 tag, uint16 ref)
@@ -158,17 +189,29 @@ uint16 tag, ref;
 }
 
 
-/*-----------------------------------------------------------------------------
- * Name:    DFANgetdesc
- * Purpose: get description of tag/ref
- * Inputs:  filename: name of HDF file
- *          tag, ref: tag/ref of item of which we want description
- *          desc: space to return description in
- *          maxlen: size of space to return description in
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   HDF HLL users, utilities, other routines
- * Invokes: DFANIgetann
- *---------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------
+ NAME
+       DFANgetdesc -- Reads the description assigned to the data object 
+                      with the given tag and reference number.
+ USAGE
+       int DFANgetdesc(filename, tag, ref, desc, maxlen)
+       char * filename; IN: name of HDF file
+       uint16 tag;      IN: tag of object of assigned the label
+       uint16 ref;      IN: ref number of object of assigned the label
+       char *desc;      OUT: buffer allocated to hold the description
+       int32 maxlen;    IN: size of buffer allocated to hold the description
+ RETURNS
+       SUCCEED (0) if successful and FAIL (-1) otherwise
+ DESCRIPTION
+       Invokes DFANIgetann to get description
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+       The value of maxlen must be at least one greater than the
+       anticipated length of the description, because a NULL byte is
+       appended to the annotation
+ EXAMPLES
+ REVISION LOG
+ *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 int DFANgetdesc(char *filename, uint16 tag, uint16 ref, char *desc,
@@ -189,15 +232,28 @@ int32 maxlen;
  * File ID and description input routines
  *---------------------------------------------------------------------------*/
 
-/*-----------------------------------------------------------------------------
- * Name:    DFANgetfidlen
- * Purpose: get length of next file ID
- * Inputs:  file_id: pointer to HDF file
- *          isfirst: 1: start with first one; 0: get length of next one
- * Returns: On success: length of next file ID; On failure: -1, with DFerror set
- * Users:   HDF HLL users, utilities, other routines
- * Invokes: DFANIgetfannlen
- *---------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------
+ NAME
+       DFANgetfidlen -- get length of file label
+ USAGE
+       int32 DFANgetfidlen(file_id, isfirst)
+       int32 file_id;    IN: HDF file label returned by Hopen
+       int isfirst;      IN: 1 to read the first label in the file
+                             0 to read the next label in the file 
+ RETURNS
+       Length of file label if successful, and FAIL (-1) otherwise
+ DESCRIPTION
+       Calls DFANIgetfannlen to get label length
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+       When first called for a given file, DFANgetfidlen returns the
+       length of the first file label.  In order to get the lengths
+       of successive labels, you must call DFANgetfid between calls
+       to DFANgetfidlen.  Otherwise, successive calls to DFANgetfidlen
+       will return the length of the same file label.
+ EXAMPLES
+ REVISION LOG
+ *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 int32 DFANgetfidlen(int32 file_id, int isfirst)
@@ -211,43 +267,65 @@ int isfirst;
 }
 
 
-/*-----------------------------------------------------------------------------
- * Name:    DFANgetfid
- * Purpose: get next file ID
- * Inputs:  file_id: pointer to HDF file
- *          id: label
- *          maxlen: max allowable length for label
- *          isfirst: 1: start with first one; 0: get next one
- * Returns: On success: length of label; On failure: -1, with DFerror set
- * Users:   HDF HLL users, utilities, other routines
- * Invokes: DFANIgetfann
- * Remarks: If maxlen not great enough, label is truncated to maxlen-1 chars
+/*--------------------------------------------------------------------------
+ NAME
+       DFANgetfid -- get next file label
+ USAGE
+       int32 DFANgetfid(file_id, label, maxlen, isfirst)
+       int32 file_id;   IN: HDF file label returned by Hopen
+       char *label;     OUT: buffer allocated to hold the label 
+       int32 maxlen;    IN: size of buffer allocated to hold the label 
+       int isfirst;     IN: 0 to read the next label in the file;
+                            1 to read the first label in the file
+ RETURNS
+       On success, length of label; FAIL (-1) otherwise
+ DESCRIPTION
+       Invokes DFANIgetfann to get label
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+       If maxlen is not great enough, the label is truncated to 
+       maxlen-1 characters.
+ EXAMPLES
+ REVISION LOG
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int32 DFANgetfid(int32 file_id, char *id, int32 maxlen, int isfirst)
+int32 DFANgetfid(int32 file_id, char *label, int32 maxlen, int isfirst)
 #else
-int32 DFANgetfid(file_id, id, maxlen, isfirst)
+int32 DFANgetfid(file_id, label, maxlen, isfirst)
 int32 file_id;
-char *id;
+char *label;
 int32 maxlen;
 int isfirst;
 #endif 
 {
-     return ( DFANIgetfann(file_id, id, maxlen, DFAN_LABEL, isfirst) );
+     return ( DFANIgetfann(file_id, label, maxlen, DFAN_LABEL, isfirst) );
 }
 
 
 
-/*-----------------------------------------------------------------------------
- * Name:    DFANgetfdslen
- * Purpose: get length of next file description
- * Inputs:  file_id: pointer to HDF file
- *          isfirst: 1: start with first one; 0: get length of next one
- * Returns: On success: length of next file ID; On failure: -1, with DFerror set
- * Users:   HDF HLL users, utilities, other routines
- * Invokes: DFANIgetfannlen
- *---------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------
+ NAME
+       DFANgetfdslen -- get length of file description
+ USAGE
+       int32 DFANgetfdslen(file_id, isfirst)
+       int32 file_id;    IN: HDF file description returned by Hopen
+       int isfirst;      IN: 1 to read the first description in the file
+                             0 to read the next description in the file 
+ RETURNS
+       Length of file description if successful, and FAIL (-1) otherwise
+ DESCRIPTION
+       Calls DFANIgetfannlen to get description length
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+       When first called for a given file, DFANgetfdslen returns the
+       length of the first file description.  In order to get the lengths
+       of successive descriptions, you must call DFANgetfds between calls
+       to DFANgetfdslen.  Otherwise, successive calls to DFANgetfdslen
+       will return the length of the same file description.
+ EXAMPLES
+ REVISION LOG
+ *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 int32 DFANgetfdslen(int32 file_id, int isfirst)
@@ -261,19 +339,27 @@ int32 DFANgetfdslen(file_id, isfirst)
 }
 
 
-/*-----------------------------------------------------------------------------
- * Name:    DFANgetfds
- * Purpose: get next file description
- * Inputs:  file_id: pointer to HDF file
- *          desc: description
- *          maxlen: max allowable length for description
- *          isfirst: 1: start with first one; 0: get next one
- * Returns: On success: length of description;
- *          On failure: -1, with DFerror set
- * Users:   HDF HLL users, utilities, other routines
- * Invokes: DFANIgetfann
- * Remarks: If maxlen not great enough, description is truncated to
- *          maxlen-1 chars
+
+/*--------------------------------------------------------------------------
+ NAME
+       DFANgetfds -- get next file description
+ USAGE
+       int32 DFANgetfds(file_id, desc, maxlen, isfirst)
+       int32 file_id;  IN: HDF file description returned by Hopen
+       char *desc;     OUT: buffer allocated to hold the description 
+       int32 maxlen;   IN: size of buffer allocated to hold the description 
+       int isfirst;    IN: 0 to read the next description in the file;
+                           1 to read the first description in the file
+ RETURNS
+       On success, length of description; FAIL (-1) otherwise
+ DESCRIPTION
+       Invokes DFANIgetfann to get description
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+       If maxlen is not great enough, the description is truncated to 
+       maxlen-1 characters.
+ EXAMPLES
+ REVISION LOG
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
@@ -295,16 +381,26 @@ int isfirst;
  * HDF object (i.e. tag/ref) label and description output routines
  *---------------------------------------------------------------------------*/
 
-/*-----------------------------------------------------------------------------
- * Name:    DFANputlabel
- * Purpose: put label of tag/ref
- * Inputs:  filename: name of HDF file
- *          tag, ref: tag/ref of item of which this is the label
- *          label: label to write to file
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   HDF HLL users, utilities, other routines
- * Invokes: DFANIputann
- *---------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------
+ NAME
+       DFANputlabel -- Assign a label to the data object with the given
+                       tag and reference number
+ USAGE
+       int DFANputlabel(filename, tag, ref, label)
+       char *filename;  IN: name of HDF file
+       uint16 tag;      IN: tag of item to be assigned the label
+       uint16 ref;      IN: reference number of item to be assigned the label
+       char *label;     IN: label to write to file; a single string of
+                            NULL-terminated text
+ RETURNS
+       SUCCEED (0) if successful and FAIL (-1) otherwise
+ DESCRIPTION
+       Invokes DFANIgetfann to write out label
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+ *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 int DFANputlabel(char *filename, uint16 tag, uint16 ref, char *label)
@@ -320,17 +416,30 @@ char *label;
 }
 
 
-/*-----------------------------------------------------------------------------
- * Name:    DFANputdesc
- * Purpose: put description of tag/ref
- * Inputs:  filename: name of HDF file
- *          tag, ref: tag/ref of item of which this is the description
- *          desc: description to write to file
- *          desclen: length of description
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   HDF HLL users, utilities, other routines
- * Invokes: DFANIputann
- *---------------------------------------------------------------------------*/
+
+/*--------------------------------------------------------------------------
+ NAME
+       DFANputdesc -- Assign a description to the data object with the given
+                      tag and reference number
+ USAGE
+       int DFANputdesc(filename, tag, ref, desc, desclen)
+       char *filename;   IN: name of HDF file
+       uint16 tag;       IN: tag of item to be assigned the description
+       uint16 ref;       IN: ref number of item to be assigned description
+       char *desc;       IN: description to write to file; a single string
+                             of NULL-terminated text
+       int32 desclen;  IN: length of description
+ RETURNS
+       SUCCEED (0) if successful and FAIL (-1) otherwise
+ DESCRIPTION
+       Invokes DFANIgetfann to write out description
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+       The parameter desc can contain any sequence of ASCII characters.
+       It does not have to be a string.
+ EXAMPLES
+ REVISION LOG
+ *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 int DFANputdesc(char *filename, uint16 tag, uint16 ref, char *desc,
@@ -351,15 +460,23 @@ int32 desclen;
  * File ID and description output routines
  *---------------------------------------------------------------------------*/
 
-/*-----------------------------------------------------------------------------
- * Name:    DFANaddfid
- * Purpose: add file file ID
- * Inputs:  file_id: pointer to HDF file
- *          id: ID to write to file
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   HDF HLL users, utilities, other routines
- * Invokes: DFANIadfile_idann
- *---------------------------------------------------------------------------*/
+
+/*--------------------------------------------------------------------------
+ NAME
+       DFANaddfid -- Write a file label to a file
+ USAGE
+       int DFANaddfid(file_id, id)
+       int32 file_id;   IN: file identifier 
+       char *id;        IN: label to write to file
+ RETURNS
+       SUCCEED (0) if successful and FAIL (-1) otherwise
+ DESCRIPTION
+       Invokes DFANIaddfann to write out label
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+ *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 int DFANaddfid(int32 file_id, char *id)
@@ -373,16 +490,26 @@ char *id;
 }
 
 
-/*-----------------------------------------------------------------------------
- * Name:    DFANaddfds
- * Purpose: add file file ID
- * Inputs:  file_id: pointer to HDF file
- *          desc: description to write to file
- *          desclen: length of description
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   HDF HLL users, utilities, other routines
- * Invokes: DFANIadfile_idann
- *---------------------------------------------------------------------------*/
+
+/*--------------------------------------------------------------------------
+ NAME
+       DFANaddfds -- Write a file description to a file
+ USAGE
+       int DFANaddfds(file_id, desc, desclen)
+       int32 file_id;   IN: file identifier 
+       char *desc;      IN: description to write to file
+       int32 desclen;   IN: length of description
+ RETURNS
+       SUCCEED (0) if successful and FAIL (-1) otherwise
+ DESCRIPTION
+       Invokes DFANIaddfann to write out description
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+       The parameter desc can contain any sequence of ASCII characters.
+       It does not have to be a string.
+ EXAMPLES
+ REVISION LOG
+ *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 int DFANaddfds(int32 file_id, char *desc, int32 desclen)
@@ -401,17 +528,21 @@ int32 desclen;
  * Miscellaneous other routines
  *---------------------------------------------------------------------------*/
 
-/*-----------------------------------------------------------------------------
- * Name:    DFANlastref
- * Purpose: Return last ref written or read
- * Inputs:  none
- * Globals: Lastref
- * Returns: ref on success, -1 on error with DFerror set
- * Users:   HDF users, utilities, other routines
- * Invokes: none
- * Method:  return Lastref
- * Remarks: none
- *---------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------
+ NAME
+       DFANlastref -- Return the reference number of the annotation last
+                      written or read
+ USAGE
+       uint16 DFANlastref()
+ RETURNS
+       Reference number if successful and FAIL (-1) otherwise
+ DESCRIPTION
+ GLOBAL VARIABLES
+       Lastref
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+ *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 uint16 DFANlastref(void)
@@ -423,26 +554,36 @@ uint16 DFANlastref()
 }
 
 
-/*-----------------------------------------------------------------------------
- * Name:    DFANlablist
- * Purpose: Return list of refs and labels for a given tag
- * Inputs:  filename: name of HDF file
- *          tag: tag to get list of refs and labels for
- *          reflist: array to place refs in
- *          labellist: array of strings to place labels in
- *          listsize: size of ref and label lists
- *          maxlen: maximum length allowed for label
- *          startpos: beginning from the startpos'th entry, upto listsize
- *              entries will be returned.
- * Returns: number of entries on success, -1 on error with DFerror set
- * Users:   HDF users, utilities, other routines
- * Invokes: DFANIlablist
- * Method:  call DFANIlablist
- * Remarks: Revised 04/17/90 so that it returns all ref numbers for
- *          the given tag, rather than just those that have labels.
- *          Where there is no corresponding label, the position in
- *          labellist is zero filled (C) or blank filled (Fortran).
- *---------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------
+ NAME
+       DFANlablist -- Return list of refs and labels for a given tag
+ USAGE
+       int DFANlablist(filename, tag, reflist, labellist, 
+                                                listsize, maxlen, startpos)
+       char *filename;   IN: name of HDF file
+       uint16 tag;       IN: tag to use when searching for ref numbers 
+                             and labels
+       uint16 reflist[]; OUT: array allocated to place ref numbers in
+       char *labellist;  OUT: array of strings allocated to place labels in
+       int listsize;     IN: size of ref number list and label list
+       int maxlen;       IN: maximum length allocated for label
+       int startpos;     IN: Starting position.  Beginning from the 
+                             startpos'th entry, up to listsize entries 
+                             will be returned.
+ RETURNS
+       Number of ref numbers found if successful and FAIL (-1) otherwise
+ DESCRIPTION
+       Invokes DFANIlablist to get label list.
+       Where there is no corresponding label, the position in
+       labellist is zero filled (C) or blank filled (Fortran).
+       Revised 04/17/90 so that it returns all ref numbers for
+       the given tag, rather than just those that have labels.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+       Revised 04/17/90.  (See DESCRIPTION.)
+ *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 int DFANlablist(char *filename, uint16 tag, uint16 reflist[], char *labellist,
@@ -466,17 +607,25 @@ int maxlen, startpos;
 /******************************************************************************/
 
 
-/*-----------------------------------------------------------------------------
- * Name:    DFANIopen
- * Purpose: open or reopen a file
- * Inputs:  filename: name of file to open
- *          access : access mode
- * Returns: file pointer on success, NULL on failure with DFerror set
- * Users:   HDF systems programmers, other DFP routines
- * Invokes: DFopen
- * Remarks: This is a hook for someday providing more efficient ways to
- *          reopen a file, to avoid re-reading all the headers
- *---------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------
+ NAME
+       DFANIopen -- open or reopen a file
+ USAGE
+       PRIVATE int32 DFANIopen(filename, access)
+       char *filename;  IN: name of file to open
+       intn access;     IN: access mode
+ RETURNS
+       File identifier if successful and NULL on failure.
+ DESCRIPTION
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+        This is a hook for someday providing more efficient ways to
+        reopen a file, to avoid re-reading all the headers
+
+ EXAMPLES
+ REVISION LOG
+       
+ *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 PRIVATE int32 DFANIopen(char *filename, intn access)
@@ -527,18 +676,32 @@ intn access;
 }
 
 
-/*-----------------------------------------------------------------------------
- * Name:    DFANIlocate
- * Purpose: get ref of annotation of given data tag/ref
- * Inputs:  file_id: pointer to HDF file
- *          type: DFAN_LABEL for labels, DFAN_DESC for descriptions
- *          tag, ref: tag/ref of item of which we want ref of annotation
- * Returns: ref of annotation on success, 0 on failure with DFerror set
- * Users:   DFANIgetann, DFANIputann, DFANIgetannlen
- * Invokes: DFaccess, DFnumber, DFread, DFIfind
- * Bugs:    When FORTRAN calls this routine with type "label", the string
- *          returned is incorrect in length by one character
- *---------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------
+ NAME
+       DFANIlocate -- get ref of annotation of given data tag/ref
+ USAGE
+       uint16 DFANIlocate(file_id, type, tag, ref)
+       int32 file_id:   IN: pointer to HDF file
+       int type:        IN: DFAN_LABEL for labels, DFAN_DESC for descriptions
+       uint16 tag, ref: IN: tag/ref of item for which we want ref of 
+                            annotation
+
+ RETURNS
+        ref of annotation on if successful; 0 otherwise
+ DESCRIPTION
+       Searches through directory for annotations with given tag/ref.  (If 
+       there is no directory, it creates one.)
+
+ GLOBAL VARIABLES
+       
+ COMMENTS, BUGS, ASSUMPTIONS
+       BUG: When FORTRAN calls this routine with type "label", the string
+       returned is incorrect in length by one character
+ EXAMPLES
+       
+ REVISION LOG
+       
+ *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 uint16 DFANIlocate(int32 file_id, int type, uint16 tag, uint16 ref)
@@ -615,16 +778,24 @@ uint16 tag, ref;
 }
 
 
-/*-----------------------------------------------------------------------------
- * Name:    DFANIaddentry
- * Purpose: add entry to annotation directory
- * Inputs:  type: DFAN_LABEL for labels, DFAN_DESC for descriptions
- *          annref: tag/ref of annotation
- *          datatag, dataref: tag/ref of item of which this is annotation
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   DFANIputann
- * Invokes: none
- *---------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------
+ NAME
+       DFANIaddentry -- add entry to annotation directory
+ USAGE
+       int type:        IN: DFAN_LABEL for labels, DFAN_DESC for descriptions
+       uint16 annref:   IN: ref of annotation
+       uint16 datatag,: IN: tag of item of which this is annotation
+       uint16 dataref;  IN: ref of item of which this is annotation 
+       
+ RETURNS
+       SUCCEED (0) if successful and FAIL (-1) otherwise
+ DESCRIPTION
+       Moves to end of directory and appends entry.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+ *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 int DFANIaddentry(int type, uint16 annref, uint16 datatag, uint16 dataref)
@@ -672,16 +843,25 @@ int type;
 }
 
 
-/*-----------------------------------------------------------------------------
- * Name:    DFANIgetannlen
- * Purpose: get length of annotation of tag/ref
- * Inputs:  filename: name of HDF file
- *          tag, ref: tag/ref of item of which we want annotation
- *          type: DFAN_LABEL for labels, DFAN_DESC for descriptions
- * Returns: length of annotation on success, -1 on failure with DFerror set
- * Users:   HDF HLL users, utilities, other routines
- * Invokes: DFANIopen, DFANIlocate, DFIerr, DFclose, DFIfind
- *---------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------
+ NAME
+       DFANIgetannlen -- get length of annotation of tag/ref
+ USAGE
+       int32 DFANIgetannlen(filename, tag, ref, type)
+       char *filename;   IN: name of HDF file
+       int32 tag, ref;   IN: tag/ref of item of which we want annotation
+       int type;         IN: DFAN_LABEL for labels, DFAN_DESC for descriptions
+ RETURNS
+       length of annotation if successful and FAIL (-1) otherwise
+ DESCRIPTION
+       Calls DFANIlocate to get ref of annotation.
+       Calls Hlength to get its length.
+ GLOBAL VARIABLES
+       Lastref
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+ *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 int32 DFANIgetannlen(char *filename, uint16 tag, uint16 ref, int type)
@@ -722,18 +902,29 @@ int type;
 }
 
 
-/*-----------------------------------------------------------------------------
- * Name:    DFANIgetann
- * Purpose: get annotation of tag/ref
- * Inputs:  filename: name of HDF file
- *          tag, ref: tag/ref of item of which we want annotation
- *          ann: space to return annotation in
- *          maxlen: size of space to return annotation in
- *          type: DFAN_LABEL for labels, DFAN_DESC for descriptions
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   HDF HLL users, utilities, other routines
- * Invokes: DFANIopen, DFANIlocate, DFIerr, DFclose, DFaccess, DFIfind, DFread
- *---------------------------------------------------------------------------*/
+
+/*--------------------------------------------------------------------------
+ NAME
+       DFANIgetann -- get annotation of tag/ref
+ USAGE
+       intn DFANIgetann(filename, tag, ref, ann, maxlen, type)
+       char *filename;   IN: name of HDF file
+       uint16 tag, ref;  IN: tag/ref of item of which we want annotation
+       uint8 *ann;       OUT: space to return annotation in
+       int32 maxlen;     IN: size of space to return annotation in
+       int type;         IN: DFAN_LABEL for labels, DFAN_DESC for descriptions
+
+ RETURNS
+       SUCCEED (0) if successful and FAIL (-1) otherwise
+ DESCRIPTION
+       Gets tag and ref of annotation.  Finds DD for that annotation.
+       Reads the annotation, taking care of NULL terminator, if necessary.
+ GLOBAL VARIABLES
+       Lastref.
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+ *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 intn DFANIgetann(char *filename, uint16 tag, uint16 ref, uint8 *ann,
@@ -803,19 +994,30 @@ int type;
 }
 
 
-/*-----------------------------------------------------------------------------
- * Name:    DFANIputann
- * Purpose: put annotation of tag/ref into file
- * Inputs:  filename: name of HDF file
- *          tag, ref: tag/ref of item of which this is the annotation
- *          ann: annotation to write to file
- *          annlen: length of annotation
- *          type: DFAN_LABEL for labels, DFAN_DESC for descriptions
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   HDF HLL users, utilities, other routines
- * Invokes: DFANIopen, DFANIlocate, DFANIaddentry, DFIerr, DFclose, DFnewref,
- *          DFaccess, DFwrite
- *---------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------
+ NAME
+       DFANIputann -- put annotation of tag/ref into file
+ USAGE
+       intn DFANIputann(filename, tag, ref, ann, annlen, type)
+       char *filename;   IN: name of HDF file
+       uint16 tag, ref;  IN: tag/ref of item of which this is the annotation
+       uint8 *ann;       IN: space to return annotation in
+       int32 annlen;     IN: length of annotation
+       int type;         IN: DFAN_LABEL for labels, DFAN_DESC for descriptions
+
+ RETURNS
+       SUCCEED (0) if successful and FAIL (-1) otherwise
+ DESCRIPTION
+       Checks for pre-existence of annotation, replacing old one if it 
+       exists. Writes out annotation, and updates directory..
+ GLOBAL VARIABLES
+       Lastref.
+ COMMENTS, BUGS, ASSUMPTIONS
+       If the given object already has this type of annotation, it replaces
+       the old annotation with this one.
+ EXAMPLES
+ REVISION LOG
+ *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 intn DFANIputann(char *filename, uint16 tag, uint16 ref, uint8 *ann,
@@ -899,23 +1101,36 @@ int type;
 }
 
 
-/*-----------------------------------------------------------------------------
- * Name:    DFANIlablist
- * Purpose: Return list of refs and labels for a given tag
- * Inputs:  filename: name of HDF file
- *          tag: tag to get list of refs and labels for
- *          reflist: array to place refs in
- *          labellist: array of strings to place labels in
- *          listsize: size of ref and label lists
- *          maxlen: maximum length allowed for label
- *          startpos: position in list from which on to return listsize entries
- *          isfortran: 0 if C, 1 if Fortran
- * Returns: number of entries on success, -1 on error with DFerror set
- * Users:   DFANlablist
- * Invokes: DFANIopen, DFIerr, DFclose, DFANIlocate, DFaccess, DFread
- * Method:  search directory
- * Remarks: none
- *---------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------
+ NAME
+       DFANIlablist -- Return list of refs and labels for a given tag
+ USAGE
+       int DFANlablist(filename, tag, reflist, labellist,
+                                                listsize, maxlen, startpos)
+       char *filename;   IN: name of HDF file
+       uint16 tag;       IN: tag to use when searching for ref numbers
+                             and labels
+       uint16 reflist[]; OUT: array allocated to place ref numbers in
+       char *labellist;  OUT: array of strings allocated to place labels in
+       int listsize;     IN: size of ref number list and label list
+       int maxlen;       IN: maximum length allocated for label
+       int startpos;     IN: Starting position.  Beginning from the
+                             startpos'th entry, up to listsize entries
+                             will be returned.
+       int isfortran: 0 if C, 1 if Fortran
+ RETURNS
+       Number of ref numbers found if successful and FAIL (-1) otherwise
+ DESCRIPTION
+       Where there is no corresponding label, the position in
+       labellist is zero filled (C) or blank filled (Fortran).
+       Revised 04/17/90 so that it returns all ref numbers for
+       the given tag, rather than just those that have labels.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+       Revised 04/17/90.  (See DESCRIPTION.)
+ *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 int DFANIlablist(char *filename, uint16 tag, uint16 reflist[], 
@@ -1034,17 +1249,25 @@ int listsize, maxlen, startpos, isfortran;
 }
 
 
-/*-----------------------------------------------------------------------------
- * Name:    DFANIaddfann
- * Purpose: add file annotation (file ID or file description)
- * Inputs:  file_id: pointer to HDF file
- *          ann: annotation to write to file
- *          annlen: length of annotation
- *          type: DFAN_LABEL for labels, DFAN_DESC for descriptions
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   HDF HLL users, utilities, other routines
- * Invokes: HDF general purpose routines
- *---------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------
+ NAME
+       DFANaddfann -- Write a file label or description to a file
+ USAGE
+       int DFANaddfid(file_id, id)
+       int32 file_id;  IN: pointer to HDF file 
+       char *ann;      IN: annotation to write to file
+       int32 annlen:   IN: length of annotation 
+       int type:       IN: DFAN_LABEL for labels, DFAN_DESC for descriptions
+ RETURNS
+       SUCCEED (0) if successful and FAIL (-1) otherwise
+ DESCRIPTION
+       Calls Hputelement to putput the annotation.
+ GLOBAL VARIABLES
+       Lastref
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+ *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 int DFANIaddfann(int32 file_id, char *ann, int32 annlen, int type)
@@ -1076,16 +1299,27 @@ int DFANIaddfann(file_id, ann, annlen, type)
 }
 
 
-/*-----------------------------------------------------------------------------
- * Name:    DFANIgetfannlen
- * Purpose: get length of next file annotation (file ID or file description)
- * Inputs:  file_id: pointer to HDF file
- *          type: DFAN_LABEL for labels, DFAN_DESC for descriptions
- *          isfirst: 1: start with first one; 0: get next one
- * Returns: On success: length of annotation; On failure: -1, with DFerror set
- * Users:   HDF HLL users, utilities, other routines
- * Invokes: HDF general purpose routines
- *---------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------
+ NAME
+       DFANIgetfannlen -- get length of next file annotation
+ USAGE
+       int32 DFANIgetannlen(filename, tag, ref, type)
+       int32 file_id;   IN: id of HDF file
+       int type;        IN: DFAN_LABEL for labels, DFAN_DESC for descriptions
+       int isfirst;     IN: 1: start with first one; 0: get next one
+ RETURNS
+       length of annotation if successful and FAIL (-1) otherwise
+ DESCRIPTION
+       Uses isfirst and Next_label_ref (or Next_desc_ref) to determine
+       which annotation to pick up next. 
+ GLOBAL VARIABLES
+       Lastref
+       Next_label_ref
+       Next_desc_ref
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+ *------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
 int32 DFANIgetfannlen(int32 file_id, int type, int isfirst)
@@ -1135,21 +1369,30 @@ int isfirst;
     }
 }
 
-/*-----------------------------------------------------------------------------
- * Name:    DFANIgetfann
- * Purpose: get next file annotation (file ID or file description)
- * Inputs:  file_id: pointer to HDF file
- *          ann: annotation to write to file
- *          annlen: length of annotation
- *          maxlen: max allowable length for annotation
- *          type: DFAN_LABEL for labels, DFAN_DESC for descriptions
- *          isfirst: 1: start with first one; 0: get next one
- * Returns: On success: length of annotation; On failure: -1, with DFerror set
- * Users:   HDF HLL users, utilities, other routines
- * Invokes: HDF general purpose routines
- * Remarks: If maxlen not great enough, ann is truncated to maxlen-1 chars
- * Bugs:    If ref is high possible ref value, setting of Next_label_ref or
-            Next_desc_ref behave unpredictably. 
+/*--------------------------------------------------------------------------
+ NAME
+       DFANIgetfann -- get next file annotation (file ID or file description)
+ USAGE
+       intn DFANIgetfann(filename, tag, ref, ann, maxlen, type)
+       int32 file_id;    IN: id of HDF file
+       uint8 *ann;       OUT: space to return annotation in
+       int32 annlen;     IN: size of space to return annotation in
+       int type;         IN: DFAN_LABEL for labels, DFAN_DESC for descriptions
+       int isfirst;      IN: 1: start with first one; 0: get next one
+
+ RETURNS
+       Length of annotation if successful and FAIL (-1) otherwise
+ DESCRIPTION
+       Gets tag and ref of annotation.  Finds DD for that annotation.
+       Reads the annotation, taking care of NULL terminator, if necessary.
+ GLOBAL VARIABLES
+       Lastref, Next_desc_ref, Next_label_ref
+ COMMENTS, BUGS, ASSUMPTIONS
+       If maxlen not great enough, ann is truncated to maxlen-1 chars
+       BUG: If ref is high possible ref value, setting of Next_label_ref 
+            or Next_desc_ref behave unpredictably.
+ EXAMPLES
+ REVISION LOG
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
