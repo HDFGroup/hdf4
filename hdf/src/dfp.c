@@ -5,8 +5,9 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1993/04/19 22:47:22  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.5  1993/04/22 23:00:03  koziol
+Changed DFR8nimages, DFPnpals to report the correct number of images
+and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
 
  * Revision 1.3  1993/01/19  05:54:47  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
@@ -176,14 +177,17 @@ intn DFPputpal(filename, palette, overwrite, filemode)
 
     file_id = DFPIopen(filename,
                       (*filemode=='w') ? DFACC_CREATE : DFACC_WRITE);
-    if (file_id==FAIL) return FAIL;
+    if (file_id==FAIL)
+        return FAIL;
 
-        /* if we want to overwrite, Lastref is the ref to write.  If not, if
-            Writeref is set, we use that ref.  If not we get a fresh ref. The
-            ref to write is placed in Lastref */
+    /* if we want to overwrite, Lastref is the ref to write.  If not, if
+        Writeref is set, we use that ref.  If not we get a fresh ref. The
+        ref to write is placed in Lastref */
 
-    if (!overwrite) Lastref = (uint16)(Writeref ? Writeref : Hnewref(file_id));
-    if (Lastref == 0) return FAIL;
+    if (!overwrite)
+        Lastref = (uint16)(Writeref ? Writeref : Hnewref(file_id));
+    if (Lastref == 0)
+        return FAIL;
 
     Writeref = 0;           /* don't know ref to write after this */
 
@@ -216,7 +220,6 @@ int DFPaddpal(filename, palette)
     VOIDP palette;
 #endif
 {
-
     return(DFPputpal(filename, palette, 0, "a"));
 }
 
@@ -227,7 +230,7 @@ int DFPaddpal(filename, palette)
  * Inputs:  filename: name of HDF file
  * Returns: number of palettes on success, -1 on failure with DFerror set
  * Users:   HDF programmers, other routines and utilities
- * Invokes: DFPIopen, DFclose, DFnumber
+ * Invokes: DFPIopen, Hclose, Hnumber, Hfind
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
@@ -239,28 +242,65 @@ int DFPnpals(filename)
 {
     char *FUNC="DFPnpals";
     int32 file_id;
-    int npals1, npals2, npals;
+    intn curr_pal;          /* current palette count */
+    intn nip8, nlut,        /* number of IP8s & number of LUTs */
+        npals;              /* total number of palettes */
+    uint16 find_tag,find_ref;   /* storage for tag/ref pairs found */
+    int32 find_off,find_len;    /* storage for offset/lengths of tag/refs found */
+    int32 *pal_off;         /* storage for an array of palette offsets */
+    intn i,j;               /* local counting variable */
 
     HEclear();
 
     /* should use reopen if same file as last time - more efficient */
     file_id = DFPIopen(filename, DFACC_READ);
-    if (file_id==FAIL) return FAIL;
+    if (file_id==FAIL)
+        return FAIL;
 
-    npals1 = Hnumber(file_id, DFTAG_IP8);       /* count number of IPs */
-    if (npals1 == FAIL)
+    nip8 = Hnumber(file_id, DFTAG_IP8);       /* count number of IPs */
+    if (nip8 == FAIL)
        return(HDerr(file_id));
-    npals2 = Hnumber(file_id, DFTAG_LUT);       /* count number of LUTs */
-    if (npals2 == FAIL)
+    nlut = Hnumber(file_id, DFTAG_LUT);       /* count number of LUTs */
+    if (nlut == FAIL)
        return(HDerr(file_id));
+    npals = nip8 + nlut;
 
-    npals = npals1 + npals2;
+    /* Get space to store the palette offsets */
+    if((pal_off=(int32 *)HDgetspace(npals*sizeof(int32)))==NULL) {
+        HERROR(DFE_NOSPACE);
+        return(FAIL);
+      } /* end if */
 
-    if (Hclose(file_id) == FAIL) return FAIL;
+    /* go through the IP8s */
+    curr_pal=0;
+    find_tag=find_ref=0;
+    while(Hfind(file_id,DFTAG_IP8,DFREF_WILDCARD,&find_tag,&find_ref,&find_off,&find_len,DF_FORWARD)==SUCCEED) {
+        pal_off[curr_pal]=find_off;  /* store offset */
+        curr_pal++;
+      } /* end while */
+
+    /* go through the LUTs */
+    find_tag=find_ref=0;
+    while(Hfind(file_id,DFTAG_LUT,DFREF_WILDCARD,&find_tag,&find_ref,&find_off,&find_len,DF_FORWARD)==SUCCEED) {
+        pal_off[curr_pal]=find_off;  /* store offset */
+        curr_pal++;
+      } /* end while */
+
+    npals=curr_pal;     /* reset the number of palettes we really have */
+    for(i=1; i<curr_pal; i++) {   /* go through the palettes looking for duplicates */
+        for(j=0; j<i; j++) {
+            if(pal_off[i]==pal_off[j])
+                npals--;  /* if duplicate found, decrement the number of palettes */
+          } /* end for */
+      } /* end for */
+
+    HDfreespace(pal_off);       /* free offsets */
+
+    if (Hclose(file_id) == FAIL)
+        return FAIL;
 
     return(npals);
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    DFPreadref

@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.19  1993/04/21 16:20:11  chouck
-Changed ALPHA -> DEC_ALPHA to avoid conflict with GL libraries
+Revision 1.20  1993/04/22 23:00:18  koziol
+Changed DFR8nimages, DFPnpals to report the correct number of images
+and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
 
+ * Revision 1.19  1993/04/21  16:20:11  chouck
+ * Changed ALPHA -> DEC_ALPHA to avoid conflict with GL libraries
+ *
  * Revision 1.18  1993/04/19  22:47:58  koziol
  * General Code Cleanup to reduce/remove errors on the PC
  *
@@ -1045,5 +1049,8 @@ extern uint8 *DFtbuf;
 # define HDmemset(dst,c,n)     (memset((dst),(c),(n)))
 # define HDmemcmp(dst,src,n)   (memcmp((dst),(src),(n)))
 #endif /* WIN3 | PC */
+
+/* Compatibility #define for V3.3, should be taken out by v4.0 - QAK */
+#define DFSDnumber DFSDndatasets
 
 #endif /* HDFI_H */

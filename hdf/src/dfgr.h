@@ -2,10 +2,14 @@
 $Header$
 
 $Log$
-Revision 1.3  1993/01/19 05:54:29  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.4  1993/04/22 23:00:00  koziol
+Changed DFR8nimages, DFPnpals to report the correct number of images
+and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
 
+ * Revision 1.3  1993/01/19  05:54:29  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.2  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -50,5 +54,9 @@ typedef struct {
         ccnred[3], ccngrren[3], ccnblue[3], ccnwhite[3];
     char *cf;                       /* color format */
 } DFGRrig;
+
+/* Library-developer functions */
+extern int32 DFGRIopen
+    PROTO((char *filename, int access));
 
 #endif /* DFGR_H */

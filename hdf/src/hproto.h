@@ -2,9 +2,9 @@
 $Header$
 
 $Log$
-Revision 1.26  1993/04/22 20:24:26  koziol
-Added new Hfind() routine to hfile.c which duplicates older DFsetfind/DFfind
-utility...
+Revision 1.27  1993/04/22 23:00:22  koziol
+Changed DFR8nimages, DFPnpals to report the correct number of images
+and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
 
  * Revision 1.24  1993/04/13  21:45:24  georgev
  * Fixed preproccessor error on HPUX with #elif.
@@ -541,6 +541,9 @@ extern int DF24addimage
 extern int DF24putimage
   PROTO((char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
 
+extern int DF24nimages
+  PROTO((char _HUGE *filename));
+
 extern int DF24readref
   PROTO((char _HUGE *filename, uint16 ref));
 
@@ -684,7 +687,7 @@ extern int DFSDadddata
 extern int DFSDrestart
     PROTO((void));
 
-extern int32 DFSDnumber
+extern int32 DFSDndatasets
     PROTO((char _HUGE *filename));
 
 extern int DFSDclear

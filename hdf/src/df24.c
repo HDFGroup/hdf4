@@ -5,10 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/01/19 05:53:58  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.6  1993/04/22 22:59:55  koziol
+Changed DFR8nimages, DFPnpals to report the correct number of images
+and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
 
+ * Revision 1.5  1993/01/19  05:53:58  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.4  1992/12/11  20:08:03  georgev
  * Added state variables last_xdim, last_ydim to fix
  * problems with DF24getimage after a DFgetdims call
@@ -39,9 +43,9 @@ port.  Lots of minor annoyances fixed.
  *  DF24putimage: write image to a file
  *  DF24readref: set ref of 24-bit RIG to get next
  *  DF24lastref: return reference number of last RIG read or written
+ *  DF24nimages: get number of images in file
  * Missing:
  *  DF24writeref: set ref of 24-bit RIG to write next
- *  DF24nimages: get number of images in file
  *
  * Remarks: A RIG specifies attributes associated with an image- lookup table,
  *          dimension, compression, color compensation etc.
@@ -295,6 +299,75 @@ int DF24putimage(filename, image, xdim, ydim)
     return(DFGRIaddimlut(filename, image, xdim, ydim, IMAGE, 0, 1));
 }
 
+
+/*-----------------------------------------------------------------------------
+ * Name:    DF24nimages
+ * Purpose: How many 24-bit raster images are present in this file?
+ * Inputs:  filename: name of HDF file
+ * Returns: number of images  on success, -1 on failure with DFerror set
+ * Users:   HDF programmers, other routines and utilities
+ * Invokes: DFGRIopen, Hclose, Hnumber, Hfind, Hoffset
+ * Remarks: the number is the number of unique 24-bit images in the file.
+ *---------------------------------------------------------------------------*/
+
+#ifdef PROTOTYPE
+int DF24nimages(char *filename)
+#else
+int DF24nimages(filename)
+    char *filename;
+#endif
+{
+    char *FUNC="DF24nimages";
+    int32 file_id;
+    int32 group_id;         /* group ID for looking at RIG's */
+    uint16 elt_tag,elt_ref; /* tag/ref of items in a RIG */
+    intn nimages;           /* total number of potential images */
+    uint16 find_tag,find_ref;   /* storage for tag/ref pairs found */
+    int32 find_off,find_len;    /* storage for offset/lengths of tag/refs found */
+    uint8 GRtbuf[64];       /* local buffer to read the ID element into */
+
+    HEclear();
+
+    /* should use reopen if same file as last time - more efficient */
+    file_id = DFGRIopen(filename, DFACC_READ);
+    if (file_id == FAIL)
+       return FAIL;
+
+    /* go through the RIGs looking for 24-bit images */
+    nimages=0;
+    find_tag=find_ref=0;
+    while(Hfind(file_id,DFTAG_RIG,DFREF_WILDCARD,&find_tag,&find_ref,&find_off,&find_len,DF_FORWARD)==SUCCEED) {
+        /* read RIG into memory */
+        if ((group_id=DFdiread(file_id, DFTAG_RIG,find_ref)) == FAIL) {
+            HERROR(DFE_INTERNAL);
+            return(FAIL);
+          } /* end if */
+        while(!DFdiget(group_id, &elt_tag, &elt_ref)) {  /* get next tag/ref */
+            if(elt_tag==DFTAG_ID) {     /* just look for ID tags to get the number of components */
+                if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL) {
+                    int32 temp;             /* temporary holding variable */
+                    int32 ncomponents;      /* number of image components */
+                    uint8 *p;
+
+                    p = GRtbuf;
+                    INT32DECODE(p, temp);
+                    INT32DECODE(p, temp);
+                    UINT16DECODE(p, temp);
+                    UINT16DECODE(p, temp);
+                    INT16DECODE(p, ncomponents);
+                    if(ncomponents==3)     /* whew, all that work and we finally found a 24-bit image */
+                        nimages++;
+                  } /* end if */
+                else
+                    return(FAIL);
+              } /* end if */
+          } /* end while */
+      } /* end while */
+
+    if (Hclose(file_id) == FAIL)
+       return FAIL;
+    return(nimages);
+}   /* end DF24nimages() */
 
 /*-----------------------------------------------------------------------------
  * Name:    DF24readref

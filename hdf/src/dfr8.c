@@ -5,8 +5,9 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1993/04/19 22:47:27  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.9  1993/04/22 23:00:05  koziol
+Changed DFR8nimages, DFPnpals to report the correct number of images
+and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
 
  * Revision 1.7  1993/03/29  16:47:32  koziol
  * Updated JPEG code to new JPEG 4 code.
@@ -758,13 +759,13 @@ PRIVATE int DFR8putrig(file_id, ref, rig, wdim)
 
 /*-----------------------------------------------------------------------------
  * Name:    DFR8nimages
- * Purpose: How many images are present in this file?
+ * Purpose: How many 8-bit raster images are present in this file?
  * Inputs:  filename: name of HDF file
  * Returns: number of images  on success, -1 on failure with DFerror set
  * Users:   HDF programmers, other routines and utilities
- * Invokes: DFR8Iopen, DFclose, DFnumber
- * Remarks: the number is the number of RIGs if RIGs are present
- *          If not, it is the number of RI8s + number of CI8s
+ * Invokes: DFR8Iopen, Hclose, Hnumber, Hfind, Hoffset
+ * Remarks: the number is the number of unique 8-bit images in the file
+ *          (not counting 8-bit SDS datasets).
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
@@ -776,7 +777,18 @@ int DFR8nimages(filename)
 {
     char *FUNC="DFR8nimages";
     int32 file_id;
-    int nimages=0;
+    int32 group_id;         /* group ID for looking at RIG's */
+    uint16 elt_tag,elt_ref; /* tag/ref of items in a RIG */
+    intn curr_image,        /* current image gathering information about */
+        nimages,            /* total number of potential images */
+        nrig,nri8,nci8;     /* number of RIGs, RI8s, and CI8s */
+    int32 *img_off;         /* storage for an array of image offsets */
+    uint16 rig_tag,rig_ref; /* storage for tag/ref pairs of RIGs */
+    bool found_8bit;        /* indicates whether a RIG is an 8-bit RIG */
+    uint16 find_tag,find_ref;   /* storage for tag/ref pairs found */
+    int32 find_off,find_len;    /* storage for offset/lengths of tag/refs found */
+    uint8 GRtbuf[64];       /* local buffer to read the ID element into */
+    intn i,j;               /* local counting variable */
 
     HEclear();
 
@@ -785,23 +797,97 @@ int DFR8nimages(filename)
     if (file_id == FAIL)
        return FAIL;
 
-    /* find next rig */
-    if (foundRig) {            /* either RIGs present or don't know */
-        nimages = Hnumber(file_id, DFTAG_RIG); /* count number of RIGs */
-        if (nimages>0) {
-            foundRig = 1;
-            if (Hclose(file_id) == FAIL)
-               return FAIL;
-            return(nimages);
-        }
-        foundRig = 0;
-    }
-    nimages = Hnumber(file_id, DFTAG_RI8);
-    nimages += Hnumber(file_id, DFTAG_CI8);
+    /* In a completely psychotic file, there could be RIGs with no corresponding
+        RI8s and also RI8s with no corresponding RIGs, so assume the worst
+        case and then run through them all to eliminate matched pairs */
+    nrig=Hnumber(file_id, DFTAG_RIG);   /* count the number of RIGS */
+    if(nrig==FAIL)
+       return FAIL;
+    nri8=Hnumber(file_id, DFTAG_RI8);   /* add the number of RI8 and CI8s */
+    if(nri8==FAIL)
+       return FAIL;
+    nci8=Hnumber(file_id, DFTAG_CI8);
+    if(nci8==FAIL)
+       return FAIL;
+    nimages=nrig+nri8+nci8;
+
+    /* Get space to store the image offsets */
+    if((img_off=(int32 *)HDgetspace(nimages*sizeof(int32)))==NULL) {
+        HERROR(DFE_NOSPACE);
+        return(FAIL);
+      } /* end if */
+
+    /* go through the RIGs looking for 8-bit images */
+    curr_image=0;
+    find_tag=find_ref=0;
+    while(Hfind(file_id,DFTAG_RIG,DFREF_WILDCARD,&find_tag,&find_ref,&find_off,&find_len,DF_FORWARD)==SUCCEED) {
+        /* read RIG into memory */
+        if ((group_id=DFdiread(file_id, DFTAG_RIG,find_ref)) == FAIL) {
+            HERROR(DFE_INTERNAL);
+            return(FAIL);
+          } /* end if */
+        found_8bit=FALSE;       /* initialize to no 8-bit image found */
+        rig_tag=rig_ref=0;      /* initialize bogus tag/ref */
+        while(!DFdiget(group_id, &elt_tag, &elt_ref)) {  /* get next tag/ref */
+            if(elt_tag==DFTAG_ID) {     /* just look for ID tags to get the number of components */
+                if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL) {
+                    int32 temp;             /* temporary holding variable */
+                    int32 ncomponents;      /* number of image components */
+                    uint8 *p;
+
+                    p = GRtbuf;
+                    INT32DECODE(p, temp);
+                    INT32DECODE(p, temp);
+                    UINT16DECODE(p, temp);
+                    UINT16DECODE(p, temp);
+                    INT16DECODE(p, ncomponents);
+                    if(ncomponents==1)     /* whew, all that work and we finally found an 8-bit image */
+                        found_8bit=TRUE;
+                  } /* end if */
+                else
+                    return(FAIL);
+              } /* end if */
+            else    /* check for the image tag/ref */
+                if(elt_tag==DFTAG_CI || elt_tag==DFTAG_RI) {    /* keep for later */
+                    rig_tag=elt_tag;
+                    rig_ref=elt_ref;
+                  } /* end if */
+          } /* end while */
+        if(found_8bit) {    /* check for finding an 8-bit RIG */
+            if(rig_tag>0 && rig_ref>0) {    /* make certain we found an image */
+                img_off[curr_image]=Hoffset(file_id,rig_tag,rig_ref);  /* store offset */
+                curr_image++;
+              } /* end if */
+          } /* end if */
+      } /* end while */
+
+    /* go through the RI8s */
+    find_tag=find_ref=0;
+    while(Hfind(file_id,DFTAG_RI8,DFREF_WILDCARD,&find_tag,&find_ref,&find_off,&find_len,DF_FORWARD)==SUCCEED) {
+        img_off[curr_image]=find_off;  /* store offset */
+        curr_image++;
+      } /* end while */
+
+    /* go through the CI8s */
+    find_tag=find_ref=0;
+    while(Hfind(file_id,DFTAG_CI8,DFREF_WILDCARD,&find_tag,&find_ref,&find_off,&find_len,DF_FORWARD)==SUCCEED) {
+        img_off[curr_image]=find_off;  /* store offset */
+        curr_image++;
+      } /* end while */
+
+    nimages=curr_image;     /* reset the number of images we really have */
+    for(i=1; i<curr_image; i++) {   /* go through the images looking for duplicates */
+        for(j=0; j<i; j++) {
+            if(img_off[i]==img_off[j])  
+                nimages--;  /* if duplicate found, decrement the number of images */
+          } /* end for */
+      } /* end for */
+
+    HDfreespace(img_off);       /* free offsets */
     if (Hclose(file_id) == FAIL)
        return FAIL;
     return(nimages);
-}
+}   /* end DFR8nimages() */
 
 /*-----------------------------------------------------------------------------
  * Name:    DFR8readref

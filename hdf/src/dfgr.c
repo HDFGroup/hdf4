@@ -5,8 +5,9 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.9  1993/04/19 22:47:12  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.10  1993/04/22 22:59:58  koziol
+Changed DFR8nimages, DFPnpals to report the correct number of images
+and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
 
  * Revision 1.8  1993/04/05  22:35:06  koziol
  * Fixed goofups made in haste when patching code.
@@ -105,14 +106,14 @@ static DFGRrig Grzrig = {      /* empty RIG for initialization */
     {(float32)0.0, (float32)0.0, (float32)0.0}, NULL
 };
 
+#ifdef QAK
 uint8 GRtbuf[512];
+#endif
 
 #define LUT     0
 #define IMAGE   1
 
 /* private functions */
-PRIVATE int32 DFGRIopen
-    PROTO((char *filename, int access));
 PRIVATE int DFGRIriginfo
     PROTO((int32 file_id));
 PRIVATE int DFGRgetrig
@@ -144,7 +145,6 @@ int32 *pxdim, *pydim;
 int *pncomps, *pil;
 #endif
 {
-
     return(DFGRIgetdims(filename, pxdim, pydim, pncomps, pil, LUT));
 }
 
@@ -191,7 +191,6 @@ VOIDP lut;
 int32 xdim, ydim;
 #endif
 {
-
     /* 0 == C */
     return(DFGRIgetimlut(filename, lut, xdim, ydim, LUT, 0));
 }
@@ -322,7 +321,8 @@ int32 xdim, ydim;
 int ncomps, il;
 #endif
 {
-    if (DFGRIsetil(il, LUT) < 0) return FAIL;
+    if (DFGRIsetil(il, LUT) < 0)
+        return FAIL;
     return(DFGRIsetdims(xdim, ydim, ncomps, LUT));
 }
 
@@ -397,7 +397,8 @@ int32 xdim, ydim;
 int ncomps, il;
 #endif
 {
-    if (DFGRIsetil(il, IMAGE) < 0) return FAIL;
+    if (DFGRIsetil(il, IMAGE) < 0)
+        return FAIL;
     return(DFGRIsetdims(xdim, ydim, ncomps, IMAGE));
 }
 
@@ -509,6 +510,7 @@ PRIVATE int DFGRgetrig(file_id, ref, rig)
     uint8 ntstring[4];
     int type;
     int32 GroupID;
+    uint8 GRtbuf[64];       /* local buffer for reading RIG info */
 
     HEclear();
     if (!HDvalidfid(file_id) || !ref) {
@@ -591,6 +593,7 @@ PRIVATE int DFGRaddrig(file_id, ref, rig)
     uint8 ntstring[4];
     int32 lutsize;
     int32 GroupID;
+    uint8 GRtbuf[64];       /* local buffer for reading RIG info */
 
     HEclear();
 
@@ -703,9 +706,9 @@ PRIVATE int DFGRaddrig(file_id, ref, rig)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-PRIVATE int32 DFGRIopen(char *filename, int access)
+int32 DFGRIopen(char *filename, int access)
 #else
-PRIVATE int32 DFGRIopen(filename, access)
+int32 DFGRIopen(filename, access)
     char *filename;
     int access;
 #endif

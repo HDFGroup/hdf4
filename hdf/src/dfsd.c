@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.26  1993/04/19 22:47:35  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.27  1993/04/22 23:00:10  koziol
+Changed DFR8nimages, DFPnpals to report the correct number of images
+and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
 
+ * Revision 1.26  1993/04/19  22:47:35  koziol
+ * General Code Cleanup to reduce/remove errors on the PC
+ *
  * Revision 1.25  1993/04/08  20:08:40  georgev
  * Somehow(?) fill values got broken in hyperslabs. Fixed it. Minor cosmetic
  *  changes also.
@@ -126,7 +130,7 @@ General Code Cleanup to reduce/remove errors on the PC
     DFSDsetNT - set number type to be written out
     DFSDputdata - output data, data info, and display info
     DFSDrestart - forget info about last file accessed - restart from beginning
-    DFSDnumber - return number of SDGs in file
+    DFSDndatasets - return number of SDGs in file
     DFSDclear - forget all info set
     DFSDlastref - get reference number of last SDG read or written
     DFSDgetslice - get part of the data, specified as a slice
@@ -1220,7 +1224,7 @@ intn DFSDrestart()
 }
     
 /*-----------------------------------------------------------------------------
- * Name:    DFSDnumber
+ * Name:    DFSDndatasets
  * Purpose: Return number of NSDGs in file
  * Inputs:  filename - name of HDF file
  * Globals: none
@@ -1232,15 +1236,15 @@ intn DFSDrestart()
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int32 DFSDnumber(char *filename)
+int32 DFSDndatasets(char *filename)
 #else
-int32 DFSDnumber(filename)
+int32 DFSDndatasets(filename)
      char *filename;
 #endif /* PROTOTYPE */
 {
     int32 file_id;
     int32 nsdgs=0;
-    char *FUNC="DFSDnumber";
+    char *FUNC="DFSDndatasets";
 
     HEclear();
 
