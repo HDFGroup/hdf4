@@ -361,7 +361,7 @@ C**************************************************************
       integer  inlablen, indesclen, ret
 
       integer affileinfo, afnumann, afannlist, afannlen, afreadann
-      integer afstart, afend
+      integer afstart, afend, afendaccess
 
       integer fileh
       integer nflabs, nfdescs, nolabs, nodescs
@@ -490,7 +490,7 @@ C************************************************************
      *            MAXLEN_FDESC =  100 )
 
       integer affileinfo, afselect, afannlen, afreadann
-      integer afstart, afend
+      integer afstart, afend, afendaccess
 
       integer ret
       integer fileh, annh
