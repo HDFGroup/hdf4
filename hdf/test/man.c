@@ -104,7 +104,7 @@ check_fann(char *fname)
   /* read file labels */
   for (i = 0; i < nflabs; i++)
     { /* select file label */
-      indx = i+1;
+      indx = i;
       ann_handle = ret = ANselect(file_handle, indx, AN_FILE_LABEL);
       RESULT("ANselect");
 
@@ -155,7 +155,7 @@ check_fann(char *fname)
   /* read file descriptions */
   for (i = 0; i < nfdescs; i++)
     { /* select file label */
-      indx = i +1;
+      indx = i;
       ann_handle = ret = ANselect(file_handle, indx, AN_FILE_DESC);
       RESULT("ANselect");
 
