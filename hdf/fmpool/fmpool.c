@@ -61,17 +61,19 @@ static BKT *fmpool_bkt   __P((MPOOL *));
 static BKT *fmpool_look  __P((MPOOL *, pageno_t));
 static int  fmpool_write __P((MPOOL *, BKT *));
 
-/*-----------------------------------------------------------------------------
+/******************************************************************************
 NAME
-
-USAGE
+    fmpool_get_npages - returns current number of pages in file.
 
 DESCRIPTION
+    Finds current number of pages in file.
 
----------------------------------------------------------------------------- */
+RETURNS
+    Returns current number of pages in file.
+******************************************************************************/
 pageno_t
 fmpool_get_npages(mp)
-  MPOOL *mp; /* MPOOL cookie */
+  MPOOL *mp; /* IN: MPOOL cookie */
 {
   if(mp != NULL)
     return mp->npages;
@@ -79,17 +81,39 @@ fmpool_get_npages(mp)
     return 0;
 } /* fmpool_get_npages */
 
-/*-----------------------------------------------------------------------------
+/******************************************************************************
 NAME
-
-USAGE
+    fmpool_get_maxcache - returns current number of pages cached.
 
 DESCRIPTION
+    Finds current number of pages cached for file.
 
----------------------------------------------------------------------------- */
+RETURNS
+    Returns current number of pages cached.
+******************************************************************************/
+pageno_t
+fmpool_get_maxcache(mp)
+  MPOOL *mp; /* IN: MPOOL cookie */
+{
+  if (mp != NULL)
+    return mp->maxcache;
+  else
+    return 0;
+} /* fmpool_get_maxcache */
+
+/******************************************************************************
+NAME
+    fmpool_get_pagsize - returns pagesize for file
+
+DESCRIPTION
+    Finds current pagesize used for file.
+
+RETURNS
+    returns pagesize for file.
+******************************************************************************/
 pageno_t
 fmpool_get_pagesize(mp)
-  MPOOL *mp; /* MPOOL cookie */
+  MPOOL *mp; /* IN: MPOOL cookie */
 {
   if (mp != NULL)
     return mp->pagesize;
@@ -97,17 +121,19 @@ fmpool_get_pagesize(mp)
     return 0;
 } /* fmpool_get_pagesize */
 
-/*-----------------------------------------------------------------------------
+/******************************************************************************
 NAME
-
-USAGE
+     fmpool_get_lastpagsize - returns pagesize of last page in file.
 
 DESCRIPTION
+     Finds the size of the last page in the file.
 
----------------------------------------------------------------------------- */
+RETURNS
+     returns the pagesize of the last page in the file.
+******************************************************************************/
 pageno_t
 fmpool_get_lastpagesize(mp)
-  MPOOL *mp; /* MPOOL cookie */
+  MPOOL *mp; /* IN: MPOOL cookie */
 {
   if (mp != NULL)
     return mp->lastpagesize;
@@ -115,18 +141,20 @@ fmpool_get_lastpagesize(mp)
     return 0;
 } /* fmpool_get_lastpagesize */
 
-/*-----------------------------------------------------------------------------
+/******************************************************************************
 NAME
-
-USAGE
+     fmpool_set_lastpagesize - set the pagesize of the last page in the file.
 
 DESCRIPTION
+     Set the pagesize of the last page in the file.
 
----------------------------------------------------------------------------- */
+RETURNS
+     Returns RET_SUCCESS if successful and RET_ERROR otherwise.
+******************************************************************************/
 int
 fmpool_set_lastpagesize(mp, lastpagesize)
-  MPOOL *mp; /* MPOOL cookie */
-  pageno_t lastpagesize;
+  MPOOL *mp;             /* IN: MPOOL cookie */
+  pageno_t lastpagesize; /* IN: pagesize to set for last page */
 {
 
   if (lastpagesize > mp->pagesize || lastpagesize < 0)
@@ -137,39 +165,33 @@ fmpool_set_lastpagesize(mp, lastpagesize)
   return RET_SUCCESS;
 } /* fmpool_set_lastpagesize */
 
-/*-----------------------------------------------------------------------------
+/******************************************************************************
 NAME
    fmpool_open -- Open a memory pool on the given file
-USAGE
-  MPOOL *fmpool_open(key, fd, pagesize, maxcache)
-  void   *key;       IN: byte string used as handle to share buffers 
-  int    fd;         IN: seekable file descriptor 
-  pageno_t pagesize;   IN: size in bytes of the pages to break the file up into 
-  pageno_t maxcache;   IN: maximum number of pages to cache at any time 
 
-RETURNS
-   A memory pool cookie if successful else NULL
 DESCRIPTION
-   Initialize a memory pool. Currently we handle only file descriptors
-   and not file pointers or other types of file handles.
+   Initialize a memory pool. 
    We try to find the length of the file using either the stat() calls
    or seeking to the end of the file and getting the offset. We take
    special note of the size of the lastpage when the file size is not even
    multiple of page sizes.
 
- NOTE: We don't have much use for the page in/out filters as we rely
-       on the interfaces above us to fill the page and we allow the user
-       to arbitrarily change the pagesize from one invocation to another.
-       This deviates from the original Berkely implemntation.
+RETURNS
+   A memory pool cookie if successful else NULL
 
- COMMENT: the key string byte for sharing buffers is not implemented
----------------------------------------------------------------------------- */
+NOTE: We don't have much use for the page in/out filters as we rely
+      on the interfaces above us to fill the page and we allow the user
+      to arbitrarily change the pagesize from one invocation to another.
+      This deviates from the original Berkely implemntation.
+
+      The key string byte for sharing buffers is not implemented
+******************************************************************************/
 MPOOL *
 fmpool_open(key, fd, pagesize, maxcache)
-  void       *key;     /* byte string used as handle to share buffers */
-  fmp_file_t fd;       /* seekable file handle */
-  pageno_t     pagesize; /* size in bytes of the pages to break the file up into */
-  pageno_t     maxcache; /* maximum number of pages to cache at any time */
+  void       *key;     /* IN:byte string used as handle to share buffers */
+  fmp_file_t fd;       /* IN: seekable file handle */
+  pageno_t     pagesize; /* IN: size in bytes of the pages to break the file up into */
+  pageno_t     maxcache; /* IN: maximum number of pages to cache at any time */
 {
 #ifdef _POSIX_SOURCE
   struct stat sb; /* file status info */
@@ -332,49 +354,38 @@ done:
   return (mp);
 } /* fmpool_open () */
 
-/*-----------------------------------------------------------------------------
+/******************************************************************************
 NAME
    fmpool_filter -- Initialize input/output filters.
-USAGE
-  void fmpool_filter(mp, pgin, pgout, pgcookie)
-  MPOOL *mp;                                    IN: MPOOL cookie
-  void (*pgin) __P((void *, pageno_t, void *));   IN: page in filter 
-  void (*pgout) __P((void *, pageno_t, void *));  IN: page out filter 
-  void *pgcookie;                               IN: filter cookie 
-RETURNS
-   Nothing
+
 DESCRIPTION
    Initialize input/output filters for user page processing.
 
-   NOTE: the filters must now handle the case where the page
-          is the last page which may not be a full 'pagesize' so
-          the filters must check for this.
+RETURNS
+   Nothing
 
-   COMMENT: We don't use these yet.
----------------------------------------------------------------------------- */
+NOTE: the filters must now handle the case where the page
+      is the last page which may not be a full 'pagesize' so
+      the filters must check for this.
+
+      We don't use these yet.
+******************************************************************************/
 void
 fmpool_filter(mp, pgin, pgout, pgcookie)
-  MPOOL *mp;                                   /* MPOOL cookie */
-  void (*pgin) __P((void *, pageno_t, void *));  /* page in filter */
-  void (*pgout) __P((void *, pageno_t, void *)); /* page out filter */
-  void *pgcookie;                              /* filter cookie */
+  MPOOL *mp;                                     /* IN: MPOOL cookie */
+  void (*pgin) __P((void *, pageno_t, void *));  /* IN: page in filter */
+  void (*pgout) __P((void *, pageno_t, void *)); /* IN: page out filter */
+  void *pgcookie;                                /* IN: filter cookie */
 {
   mp->pgin     = pgin;
   mp->pgout    = pgout;
   mp->pgcookie = pgcookie;
 } /* fmpool_filter() */
 
-/*-----------------------------------------------------------------------------
+/******************************************************************************
 NAME
    fmpool_new -- get a new page of memory
-USAGE
-   void *fmpool_new(mp, pgnoaddr, pagesize, flags)
-   MPOOL *mp;         IN: MPOOL cookie 
-   pageno_t *pgnoaddr;  IN/OUT:address of newly created page 
-   pageno_t pagesize;   IN:page size for last page
-   u_int32_t flags;       IN:MPOOL_EXTEND or 0 
-RETURNS
-   Returns the new page if succesfula and NULL otherwise
+
 DESCRIPTION
     Get a new page of memory. This is where we get new pages for the file.
     This will only return a full page of memory and 
@@ -386,15 +397,17 @@ DESCRIPTION
                 *pgnoaddr = (npages -1)
     'flags' = MPOOL_EXTEND, set page to *pgnoaddr and
                 npages = *pgnoaddr + 1
-
     All returned pages are pinned.
----------------------------------------------------------------------------- */	
+
+RETURNS
+    Returns the new page if succesfula and NULL otherwise
+******************************************************************************/
 void *
 fmpool_new(mp, pgnoaddr, pagesize, flags)
-  MPOOL     *mp;       /* MPOOL cookie */
-  pageno_t    *pgnoaddr; /* address of newly create page */
-  pageno_t    pagesize;  /* page size for last page*/
-  u_int32_t flags;     /* MPOOL_EXTEND or 0 */
+  MPOOL     *mp;         /* IN: MPOOL cookie */
+  pageno_t    *pgnoaddr; /* IN/OUT: address of newly create page */
+  pageno_t    pagesize;  /* IN: page size for last page*/
+  u_int32_t flags;       /* IN:MPOOL_EXTEND or 0 */
 {
   struct _hqh  *head  = NULL; /* head of an entry in hash chain */
   struct _lhqh *lhead = NULL; /* head of an entry in list hash chain */
@@ -505,26 +518,22 @@ done:
   return (bp->page);
 } /* fmpool_new() */
 
-/*-----------------------------------------------------------------------------
+/******************************************************************************
 NAME
    fmpool_get - get a specified page by page number.
-USAGE
-   void *fmpool_get(mp, pgno, flags)
-   MPOOL *mp;      IN: MPOOL cookie 
-   pageno_t pgno;    IN: page number 
-   u_int32_t flags;	   IN: not used? 
-RETURNS
-   The specifed page if successful and NULL otherwise
+
 DESCRIPTION
     Get a page specified by 'pgno'. If the page is not cached then
     we need to create a new page. All returned pages are pinned.
 
----------------------------------------------------------------------------- */
+RETURNS
+   The specifed page if successful and NULL otherwise
+******************************************************************************/
 void *
 fmpool_get(mp, pgno, flags)
-  MPOOL     *mp;    /* MPOOL cookie */
-  pageno_t    pgno;   /* page number */
-  u_int32_t flags;  /* XXX not used? */
+  MPOOL     *mp;    /* IN: MPOOL cookie */
+  pageno_t    pgno; /* IN: page number */
+  u_int32_t flags;  /* IN: XXX not used? */
 {
   struct _hqh  *head  = NULL; /* head of lru queue */
   struct _lhqh *lhead = NULL; /* head of an entry in list hash chain */
@@ -733,25 +742,22 @@ done:
   return (bp->page);
 } /* fmpool_get() */
 
-/*-----------------------------------------------------------------------------
+/******************************************************************************
 NAME
    fmpool_put -- put a page back into the memory buffer pool
-USAGE
-   int fmpool_put(mp, page, flags)
-   MPOOL *mp;     IN: MPOOL cookie 
-   void *page;    IN: page to put 
-   u_int32_t flags;   IN: flags = 0, MPOOL_DIRTY 
-RETURNS
-   RET_SUCCESS if succesful and RET_ERROR otherwise
+
 DESCRIPTION
     Return a page to the buffer pool. Unpin it and mark it 
     appropriately i.e. MPOOL_DIRTY
----------------------------------------------------------------------------- */
+
+RETURNS
+    RET_SUCCESS if succesful and RET_ERROR otherwise
+******************************************************************************/
 int
 fmpool_put(mp, page, flags)
-  MPOOL     *mp;    /* MPOOL cookie */
-  void      *page;   /* page to put */
-  u_int32_t flags;  /* flags = 0, MPOOL_DIRTY */
+  MPOOL     *mp;    /* IN: MPOOL cookie */
+  void      *page;  /* IN: page to put */
+  u_int32_t flags;  /* IN: flags = 0, MPOOL_DIRTY */
 {
   struct _lhqh *lhead = NULL; /* head of an entry in list hash chain */
   L_ELEM       *lp    = NULL;
@@ -807,21 +813,20 @@ done:
   return (RET_SUCCESS);
 } /* fmpool_put () */
 
-/*-----------------------------------------------------------------------------
+/******************************************************************************
 NAME
    fmpool_close - close the memory buffer pool
-USAGE
-   int fmpool_close(mp)
-   MPOOL *mp;  IN: MPOOL cookie 
-RETURNS
-   RET_SUCCESS if succesful and RET_ERROR otherwise   
+
 DESCRIPTION
    Close the buffer pool.  Frees the buffer pool.
    Does not sync the buffer pool.
----------------------------------------------------------------------------- */
+
+RETURNS
+   RET_SUCCESS if succesful and RET_ERROR otherwise   
+******************************************************************************/
 int
 fmpool_close(mp)
-  MPOOL *mp; /* MPOOL cookie */
+  MPOOL *mp; /* IN: MPOOL cookie */
 {
   L_ELEM  *lp = NULL;
   BKT     *bp = NULL;   /* bucket element */
@@ -873,20 +878,19 @@ done:
   return (RET_SUCCESS);
 } /* fmpool_close() */
 
-/*-----------------------------------------------------------------------------
+/******************************************************************************
 NAME
    fmpool_sync -- sync the memory buffer pool
-USAGE
-   int fmpool_sync(mp)
-   MPOOL *mp; IN: MPOOL cookie 
-RETURNS
-   RET_SUCCESS if succesful and RET_ERROR otherwise   
+
 DESCRIPTION
    Sync the pool to disk. Does NOT Free the buffer pool.
----------------------------------------------------------------------------- */
+
+RETURNS
+   RET_SUCCESS if succesful and RET_ERROR otherwise   
+******************************************************************************/
 int
 fmpool_sync(mp)
-  MPOOL *mp; /* MPOOL cookie */
+  MPOOL *mp; /* IN: MPOOL cookie */
 {
   BKT *bp = NULL; /* bucket element */
   int ret = RET_SUCCESS;
@@ -932,32 +936,29 @@ done:
 } /* fmpool_sync() */
 
 #if 0
-/*-----------------------------------------------------------------------------
+/******************************************************************************
 NAME
    fmpool_page_sync -- write the specified page to disk given its page number
-USAGE
-   int fmpool_page_sync(mp, pgno, flags)
-   MPOOL *mp;     IN: MPOOL cookie 
-   pageno_t pgno;   IN: page number 
-   u_int32_t flags;	  IN: not used? 
-RETURNS
-   RET_SUCCESS if succesful and RET_ERROR otherwise   
+
 DESCRIPTION
    Write a cached page to disk given it's page number
    If the page is not cached return an error.
-  
-  COMMENT: No longer used.
-           This was mainly used in the case where we extend the file.
-           We need to mark the current file size by writing out
-           the last page(or part of it) otherwise mpool_get() on
-           an intermediate page between the current end of the file
-           and the new end of file will fail.
----------------------------------------------------------------------------- */
+
+RETURNS
+   RET_SUCCESS if succesful and RET_ERROR otherwise     
+
+NOTE: No longer used.
+      This was mainly used in the case where we extend the file.
+      We need to mark the current file size by writing out
+      the last page(or part of it) otherwise mpool_get() on
+      an intermediate page between the current end of the file
+      and the new end of file will fail.
+******************************************************************************/
 int
 fmpool_page_sync(mp, pgno, flags)
-  MPOOL     *mp;     /* MPOOL cookie */
-  pageno_t    pgno;    /* page number */
-  u_int32_t flags;	  /* XXX not used? */
+  MPOOL     *mp;     /* IN: MPOOL cookie */
+  pageno_t    pgno;  /* IN: page number */
+  u_int32_t flags;   /* IN: XXX not used? */
 {
   struct _lhqh *lhead = NULL; /* head of an entry in list hash chain */
   L_ELEM       *lp    = NULL;
@@ -1103,26 +1104,25 @@ done:
 } /* fmpool_page_sync() */
 #endif
 
-/*-----------------------------------------------------------------------------
+/******************************************************************************
 NAME
    fmpool_bkt - Get a page from the cache (or create one).
-USAGE
-   static BKT * fmpool_bkt(mp)
-   MPOOL *mp;  IN: MPOOL cookie 
+
+DESCRIPTION
+   Private routine. Get a page from the cache (or create one).
+
 RETURNS
    A page if successful and NULL otherwise.
-DESCRIPTION
-  Private routine. Get a page from the cache (or create one).
        
-  COMMENT: Note that the size of the page allocated is equal to
-           sizeof(bucket element) + pagesize. We only return the
-           pagesize fragment to the user. The only caveat here is
-           that a user could inadvertently clobber the bucket element
-           information by writing out of the page size bounds.
----------------------------------------------------------------------------- */
+NOTE: Note that the size of the page allocated is equal to
+      sizeof(bucket element) + pagesize. We only return the
+      pagesize fragment to the user. The only caveat here is
+      that a user could inadvertently clobber the bucket element
+      information by writing out of the page size bounds.
+******************************************************************************/
 static BKT *
 fmpool_bkt(mp)
-  MPOOL *mp;  /* MPOOL cookie */
+  MPOOL *mp;  /* IN: MPOOL cookie */
 {
   struct _hqh *head = NULL;  /* head of hash chain */
   BKT         *bp   = NULL;  /* bucket element */
@@ -1203,22 +1203,20 @@ done:
   return (bp); /* return only the pagesize fragement */
 } /* fmpool_bkt() */
 
-/*-----------------------------------------------------------------------------
+/******************************************************************************
 NAME
    fmpool_write - write a page to disk given it's bucket handle.
-USAGE
-   static int fmpool_write(mp, bp)
-   MPOOL *mp;     IN: MPOOL cookie 
-   BKT *bp;       IN: bucket element 
-RETURNS
-   RET_SUCCESS if succesful and RET_ERROR otherwise   
+
 DESCRIPTION
    Private routine. Write a page to disk given it's bucket handle.
----------------------------------------------------------------------------- */
+
+RETURNS
+   RET_SUCCESS if succesful and RET_ERROR otherwise    
+******************************************************************************/
 static int
 fmpool_write(mp, bp)
-  MPOOL *mp;     /* MPOOL cookie */
-  BKT *bp;       /* bucket element */
+  MPOOL *mp;     /* IN: MPOOL cookie */
+  BKT *bp;       /* IN: bucket element */
 {
   struct _lhqh *lhead = NULL; /* head of an entry in list hash chain */
   L_ELEM       *lp   = NULL;
@@ -1331,22 +1329,20 @@ done:
   return (RET_SUCCESS);
 } /* fmpool_write() */
 
-/*-----------------------------------------------------------------------------
+/******************************************************************************
 NAME
    fmpool_look - lookup a page in the cache.
-USAGE
-   static BKT *fmpool_look(mp, pgno)
-   MPOOL *mp;    IN: MPOOL cookie 
-   pageno_t pgno;  IN: page to look up in cache 
-RETURNS
-   Page if successfull and NULL othewise.
+
 DESCRIPTION
    Private routine. Lookup a page in the cache and return pointer to it.
----------------------------------------------------------------------------- */
+
+RETURNS
+   Page if successfull and NULL othewise.
+******************************************************************************/
 static BKT *
 fmpool_look(mp, pgno)
-  MPOOL *mp;    /* MPOOL cookie */
-  pageno_t pgno;  /* page to look up in cache */
+  MPOOL *mp;     /* IN: MPOOL cookie */
+  pageno_t pgno; /* IN: page to look up in cache */
 {
   struct _hqh *head = NULL; /* head of hash chain */
   BKT         *bp   = NULL; /* bucket element */
@@ -1398,16 +1394,16 @@ done:
 
 #ifdef STATISTICS
 #ifdef HAVE_GETRUSAGE
-/*-----------------------------------------------------------------------------
+/******************************************************************************
 NAME
    myrusage - print some process usage statistics
-USAGE
-   void myrusage()
-RETURNS
-   Nothing
+
 DESCRIPTION
    prints some process usage statistics to STDERR
----------------------------------------------------------------------------- */
+
+RETURNS
+   Nothing
+******************************************************************************/
 void
 myrusage()
 {
@@ -1428,20 +1424,19 @@ myrusage()
 }
 #endif /* HAVE_GETRUSAGE */
 
-/*-----------------------------------------------------------------------------
+/******************************************************************************
 NAME
    fmpool_stat - print out cache statistics
-USAGE
-   void fmpool_stat(mp)
-   MPOOL *mp; IN: MPOOL cookie 
-RETURNS
-   Nothing
+
 DESCRIPTION
    Print out cache statistics to STDERR.
----------------------------------------------------------------------------- */
+
+RETURNS
+   Nothing
+******************************************************************************/
 void
 fmpool_stat(mp)
-  MPOOL *mp; /* MPOOL cookie */
+  MPOOL *mp; /* IN: MPOOL cookie */
 {
   struct _lhqh *lhead = NULL; /* head of an entry in list hash chain */
   BKT          *bp    = NULL; /* bucket element */

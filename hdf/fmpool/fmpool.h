@@ -128,18 +128,194 @@ typedef struct MPOOL
 } MPOOL;
 
 __BEGIN_DECLS
-MPOOL	*fmpool_open __P((void *, fmp_file_t, pageno_t, pageno_t));
-void	 fmpool_filter __P((MPOOL *, void (*)(void *, pageno_t, void *),
-                           void (*)(void *, pageno_t, void *), void *));
-void	*fmpool_new __P((MPOOL *, pageno_t *, pageno_t, u_int32_t));
-void	*fmpool_get __P((MPOOL *, pageno_t, u_int32_t));
-int	 fmpool_put __P((MPOOL *, void *, u_int32_t));
-int	 fmpool_sync __P((MPOOL *));
-int	 fmpool_close __P((MPOOL *));
-int	 fmpool_set_lastpagesize __P((MPOOL *,pageno_t));
-pageno_t  fmpool_get_lastpagesize __P((MPOOL *));
-pageno_t  fmpool_get_pagesize __P((MPOOL *));
-pageno_t  fmpool_get_npages __P((MPOOL *));
+/******************************************************************************
+NAME
+   fmpool_open -- Open a memory pool on the given file
+
+DESCRIPTION
+   Initialize a memory pool. 
+   We try to find the length of the file using either the stat() calls
+   or seeking to the end of the file and getting the offset. We take
+   special note of the size of the lastpage when the file size is not even
+   multiple of page sizes.
+
+RETURNS
+   A memory pool cookie if successful else NULL
+
+NOTE: We don't have much use for the page in/out filters as we rely
+      on the interfaces above us to fill the page and we allow the user
+      to arbitrarily change the pagesize from one invocation to another.
+      This deviates from the original Berkely implemntation.
+
+      The key string byte for sharing buffers is not implemented
+******************************************************************************/
+MPOOL *fmpool_open __P((void *key, /* IN:byte string used as handle to share buffers */
+                        fmp_file_t fd, /* IN: seekable file handle */
+                        pageno_t pagesize, /* IN: size in bytes of the pages to break the file up into */
+                        pageno_t maxcache /* IN: maximum number of pages to cache at any time */));
+
+/******************************************************************************
+NAME
+   fmpool_filter -- Initialize input/output filters.
+
+DESCRIPTION
+   Initialize input/output filters for user page processing.
+
+RETURNS
+   Nothing
+
+NOTE: the filters must now handle the case where the page
+      is the last page which may not be a full 'pagesize' so
+      the filters must check for this.
+
+      We don't use these yet.
+******************************************************************************/
+void	 fmpool_filter __P((MPOOL *mp, /* IN: MPOOL cookie */
+                            void (*pgin)(void *, pageno_t, void *) ,/* IN: page in filter */
+                            void (*pgout)(void *, pageno_t, void *) , /* IN: page out filter */
+                            void * pgcookie /* IN: filter cookie */));
+
+/******************************************************************************
+NAME
+   fmpool_new -- get a new page of memory
+
+DESCRIPTION
+    Get a new page of memory. This is where we get new pages for the file.
+    This will only return a full page of memory and 
+    if the last page is and odd size the user must keep track
+    of this as only 'lastpagesize' bytes will be written out
+    and as a result if the user fills the last page and
+    'lastpagesize' != 'pagesize' the user will lose data.
+    'flags' = 0, increase number of pages by 1 and return
+                *pgnoaddr = (npages -1)
+    'flags' = MPOOL_EXTEND, set page to *pgnoaddr and
+                npages = *pgnoaddr + 1
+    All returned pages are pinned.
+
+RETURNS
+    Returns the new page if succesfula and NULL otherwise
+******************************************************************************/
+void	*fmpool_new __P((MPOOL *mp, /* IN: MPOOL cookie */
+                         pageno_t *pgnoaddr, /* IN/OUT: address of newly create page */
+                         pageno_t pagesize, /* IN: page size for last page*/
+                         u_int32_t flags /* IN:MPOOL_EXTEND or 0 */));
+
+
+/******************************************************************************
+NAME
+   fmpool_get - get a specified page by page number.
+
+DESCRIPTION
+    Get a page specified by 'pgno'. If the page is not cached then
+    we need to create a new page. All returned pages are pinned.
+
+RETURNS
+   The specifed page if successful and NULL otherwise
+******************************************************************************/
+void	*fmpool_get __P((MPOOL *mp, /* IN: MPOOL cookie */
+                         pageno_t pgno, /* IN: page number */
+                         u_int32_t flags /* IN: XXX not used? */));
+
+/******************************************************************************
+NAME
+   fmpool_put -- put a page back into the memory buffer pool
+
+DESCRIPTION
+    Return a page to the buffer pool. Unpin it and mark it 
+    appropriately i.e. MPOOL_DIRTY
+
+RETURNS
+    RET_SUCCESS if succesful and RET_ERROR otherwise
+******************************************************************************/
+int	 fmpool_put __P((MPOOL *mp, /* IN: MPOOL cookie */
+                         void *page, /* IN: page to put */ 
+                         u_int32_t flags /* IN: flags = 0, MPOOL_DIRTY */));
+
+/******************************************************************************
+NAME
+   fmpool_sync -- sync the memory buffer pool
+
+DESCRIPTION
+   Sync the pool to disk. Does NOT Free the buffer pool.
+
+RETURNS
+   RET_SUCCESS if succesful and RET_ERROR otherwise   
+******************************************************************************/
+int	 fmpool_sync __P((MPOOL *mp /* IN: MPOOL cookie */));
+
+/******************************************************************************
+NAME
+   fmpool_close - close the memory buffer pool
+
+DESCRIPTION
+   Close the buffer pool.  Frees the buffer pool.
+   Does not sync the buffer pool.
+
+RETURNS
+   RET_SUCCESS if succesful and RET_ERROR otherwise   
+******************************************************************************/
+int	 fmpool_close __P((MPOOL *mp /* IN: MPOOL cookie */));
+
+/******************************************************************************
+NAME
+     fmpool_set_lastpagesize - set the pagesize of the last page in the file.
+
+DESCRIPTION
+     Set the pagesize of the last page in the file.
+
+RETURNS
+     Returns RET_SUCCESS if successful and RET_ERROR otherwise.
+******************************************************************************/
+int  fmpool_set_lastpagesize __P((MPOOL *, /* IN: MPOOL cookie */
+                               pageno_t /* IN: pagesize to set for last page */));
+
+/******************************************************************************
+NAME
+     fmpool_get_lastpagsize - returns pagesize of last page in file.
+
+DESCRIPTION
+     Finds the size of the last page in the file.
+
+RETURNS
+     returns the pagesize of the last page in the file.
+******************************************************************************/
+pageno_t  fmpool_get_lastpagesize __P((MPOOL *mp /* IN: MPOOL cookie */));
+
+/******************************************************************************
+NAME
+    fmpool_get_pagsize - returns pagesize for file
+
+DESCRIPTION
+    Finds current pagesize used for file.
+
+RETURNS
+    returns pagesize for file.
+******************************************************************************/
+pageno_t  fmpool_get_pagesize __P((MPOOL *mp /* IN: MPOOL cookie */));
+
+/******************************************************************************
+NAME
+    fmpool_get_maxcache - returns current number of pages cached.
+
+DESCRIPTION
+    Finds current number of pages cached for file.
+
+RETURNS
+    Returns current number of pages cached.
+******************************************************************************/
+pageno_t  fmpool_get_maxcache __P((MPOOL *mp /* IN: MPOOL cookie */));
+
+/******************************************************************************
+NAME
+    fmpool_get_npages - returns current number of pages in file.
+
+DESCRIPTION
+    Finds current number of pages in file.
+
+RETURNS
+    Returns current number of pages in file.
+******************************************************************************/
+pageno_t  fmpool_get_npages __P((MPOOL *mp /* IN: MPOOL cookie */));
 #ifdef STATISTICS
 void	 fmpool_stat __P((MPOOL *));
 #endif /* STATISTICS */
