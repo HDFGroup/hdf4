@@ -389,16 +389,19 @@ int32 dumpfull(int32 nt,int32 cnt,VOIDP databuf,intn indent,FILE *ofp)
 
        case DFNT_UINT8:
             fmtfunct = fmtuint8;
+            break;
        case DFNT_INT8:
             fmtfunct = fmtint8;
             break;
        case DFNT_UINT16:
             fmtfunct = fmtuint16;
+            break;
        case DFNT_INT16:
             fmtfunct = fmtint16;
             break;
        case DFNT_UINT32:
             fmtfunct = fmtuint32;
+            break;
        case DFNT_INT32:
             fmtfunct = fmtint32;
             break;
