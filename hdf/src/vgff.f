@@ -537,6 +537,40 @@ c     related: VHstoredatam--vhsdmc--vhfsdm
       end
 
 c     ------------------------------------------------------------
+c     store a simple char dataset in a vdata
+c     related: VHstoredata--vhscdc--vhfscd
+
+      integer function vhfscd(f,field,cbuf,n,dtype,vsname,vsclass)
+      integer           f
+      character*(*)  field
+      character      cbuf(*)
+      integer           n, dtype
+      character*(*)  vsname, vsclass
+      integer vhscdc
+
+      vhfscd = vhscdc(f,field,cbuf,n,dtype,vsname,vsclass,
+     1            len(field), len(vsname), len(vsclass))
+      end
+
+c     ------------------------------------------------------------
+c     store an aggregate char dataset in a vadata
+c     related: VHstoredatam--vhscdmc--vhfscdm
+
+      integer function vhfscdm (f,field,cbuf,n,dtype,vsname,
+     1            vsclass,order)
+      integer                   f
+      character*(*)  field
+      character              cbuf(*)
+      integer                   n, dtype, order
+      character*(*)  vsname, vsclass
+      integer vhscdmc
+
+      vhfscdm = vhscdmc (f, field, cbuf, n, dtype, vsname,
+     1          vsclass, order, len(field), len(vsname), 
+     1          len(vsclass))
+      end
+
+c     ------------------------------------------------------------
 c     make a new vgroup given several tag/ref pairs
 c     related: VHmakegroup--vhmkgpc--vhfmkgp
 
@@ -642,4 +676,38 @@ c     related: VSQueryname--vsqnamec--vsqfname
       end
 
 c     ============================================================
+c     pack values of a numeric field into data buf
+c     related: VSfpack--vsfncpk--vsfnpak
+c     Use ' ' (blank char) for buflds if the the data buf contains
+c         all fields of the vdata
+c     paktype = _HDF_VSPACK(0) for packing
+c               _HDF_VSUNPACK(1) for unpacking
 
+      integer function vsfnpak(vs,packtype,buflds,buf,bufsz,
+     +                        nrecs,pckfld,fldbuf)
+      integer vs, paktype,bufsz, nrecs
+      integer buf, fldbuf
+      character*(*) buflds, pckfld
+      
+      vsfnpak = vsfncpk(vs,packtype,buflds,buf,bufsz,nrecs,pckfld,
+     +                 fldbuf, len(buflds), len(pckfld)) 
+      end
+
+c     ============================================================
+c     pack values of a char field into data buf
+c     related: VSfpack--vsfccpk--vsfcpak
+c     Use ' ' (blank char) for buflds if the the data buf contains
+c         all fields of the vdata
+c     paktype = _HDF_VSPACK(0) for packing
+c               _HDF_VSUNPACK(1) for unpacking
+
+      integer function vsfcpak(vs,packtype,buflds,buf,bufsz,
+     +                        nrecs,pckfld,fldbuf)
+      integer vs, paktype,bufsz, nrecs
+      integer buf
+      character*(*) buflds, pckfld, fldbuf
+      
+      vsfcpak = vsfccpk(vs,packtype,buflds,buf,bufsz,nrecs,pckfld,
+     +                 fldbuf, len(buflds), len(pckfld)) 
+      end
+c  

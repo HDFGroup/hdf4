@@ -2166,6 +2166,8 @@ extern intn ANdestroy(void);
 #  define nmgselct      FNAME(MGSELCT)
 #  define nmgin2ndx     FNAME(MGIN2NDX)
 #  define nmggiinf      FNAME(MGGIINF)
+#  define nmgwcimg      FNAME(MGWRIMG)
+#  define nmgrcimg      FNAME(MGRCIMG)
 #  define nmgwrimg      FNAME(MGWRIMG)
 #  define nmgrdimg      FNAME(MGRDIMG)
 #  define nmgendac      FNAME(MGENDAC)
@@ -2179,8 +2181,11 @@ extern intn ANdestroy(void);
 #  define nmgrdlut      FNAME(MGRDLUT)
 #  define nmgisxfil     FNAME(MGISXFIL)
 #  define nmgssctp      FNAME(MGSACTP)
+#  define nmgiscatt     FNAME(MGISCATT)
 #  define nmgisattr     FNAME(MGISATTR)
 #  define nmgatinf      FNAME(MGATINF)
+#  define nmggcatt      FNAME(MGGCATT)
+#  define nmggnatt      FNAME(MGGNATT)
 #  define nmggattr      FNAME(MGGATTR)
 #  define nmgifndat     FNAME(MGIFNDAT)
 #else  /* !DF_CAPFNAMES */
@@ -2191,6 +2196,8 @@ extern intn ANdestroy(void);
 #  define nmgselct      FNAME(mgselct)
 #  define nmgin2ndx     FNAME(mgin2ndx)
 #  define nmggiinf      FNAME(mggiinf)
+#  define nmgwcimg      FNAME(mgwcimg)
+#  define nmgrcimg      FNAME(mgrcimg)
 #  define nmgwrimg      FNAME(mgwrimg)
 #  define nmgrdimg      FNAME(mgrdimg)
 #  define nmgendac      FNAME(mgendac)
@@ -2204,8 +2211,11 @@ extern intn ANdestroy(void);
 #  define nmgrdlut      FNAME(mgrdlut)
 #  define nmgisxfil     FNAME(mgisxfil)
 #  define nmgssctp      FNAME(mgsactp)
+#  define nmgiscatt     FNAME(mgiscatt)
 #  define nmgisattr     FNAME(mgisattr)
 #  define nmgatinf      FNAME(mgatinf)
+#  define nmggcatt      FNAME(mggcatt)
+#  define nmggnatt      FNAME(mggnatt)
 #  define nmggattr      FNAME(mggattr)
 #  define nmgifndat     FNAME(mgifndat)
 #endif /* DF_CAPFNAMES */
@@ -2274,10 +2284,19 @@ extern FRETVAL(intf)
 nmgsactp(intf * riid, intf *accesstype);
 
 extern FRETVAL(intf)
+nmgiscatt(intf * riid, _fcd name, intf *nt, intf *count, _fcd data, intf *nlen);
+
+extern FRETVAL(intf)
 nmgisattr(intf * riid, _fcd name, intf *nt, intf *count, VOIDP data, intf *nlen);
 
 extern FRETVAL(intf)
 nmgatinf(intf * riid, intf *index, _fcd name, intf *nt, intf *count);
+
+extern FRETVAL(intf)
+nmggcatt(intf * riid, intf *index, _fcd data);
+
+extern FRETVAL(intf)
+nmggnatt(intf * riid, intf *index, VOIDP data);
 
 extern FRETVAL(intf)
 nmggattr(intf * riid, intf *index, VOIDP data);
@@ -2775,7 +2794,11 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 #   define  nvffisiz FNAME(VFFISIZ)
 #   define  nvffesiz FNAME(VFFESIZ)
 #   define  nvffordr FNAME(VFFORDR)
+#   define  nvsfrdc  FNAME(VSFRDC)
+#   define  nvsfrd   FNAME(VSFRD)
 #   define  nvsreadc FNAME(VSREADC)
+#   define  nvsfwrt  FNAME(VSFWRT)
+#   define  nvsfwrtc FNAME(VSFWRTC)
 #   define  nvswritc FNAME(VSWRITC)
 #   define  nvsgintc FNAME(VSGINTC)
 #   define  nvseltsc FNAME(VSELTSC)
@@ -2786,7 +2809,9 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 #   define  nvslonec FNAME(VSLONEC)
 #   define  nvfindc  FNAME(VFINDC)
 #   define  nvfndclsc FNAME(VFNDCLSC)
+#   define  nvhscdc  FNAME(VHSCDC)
 #   define  nvhsdc   FNAME(VHSDC)
+#   define  nvhscdmc FNAME(VHSCDMC)
 #   define  nvhsdmc  FNAME(VHSDMC)
 #   define  nvhmkgpc FNAME(VHMKGPC)
 #   define  nvflocc  FNAME(VFLOCC)
@@ -2805,6 +2830,8 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 #   define  nvsqfldsc   FNAME(VSQFLDSC)
 #   define  nvsqfvsiz   FNAME(VSQFVSIZ)
 #   define  nvsqnamec   FNAME(VSQNAMEC)
+#   define  nvsfccpk    FNAME(VSFCCPK)
+#   define  nvsfncpk    FNAME(VSFNCPK)
 #else                           /* !DF_CAPFNAMES */
 #   define  ndfivopn FNAME(dfivopn)
 #   define  ndfvclos FNAME(dfvclos)
@@ -2847,7 +2874,11 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 #   define  nvffisiz FNAME(vffisiz)
 #   define  nvffesiz FNAME(vffesiz)
 #   define  nvffordr FNAME(vffordr)
+#   define  nvsfrdc  FNAME(vsfrdc)
+#   define  nvsfrd   FNAME(vsfrd)
 #   define  nvsreadc FNAME(vsreadc)
+#   define  nvsfwrtc FNAME(vsfwrtc)
+#   define  nvsfwrt  FNAME(vsfwrt)
 #   define  nvswritc FNAME(vswritc)
 #   define  nvsgintc FNAME(vsgintc)
 #   define  nvseltsc FNAME(vseltsc)
@@ -2858,7 +2889,9 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 #   define  nvslonec FNAME(vslonec)
 #   define  nvfindc  FNAME(vfindc)
 #   define  nvfndclsc FNAME(vfndclsc)
+#   define  nvhscdc  FNAME(vhscdc)
 #   define  nvhsdc   FNAME(vhsdc)
+#   define  nvhscdmc  FNAME(vhscdmc)
 #   define  nvhsdmc  FNAME(vhsdmc)
 #   define  nvhmkgpc FNAME(vhmkgpc)
 #   define  nvflocc  FNAME(vflocc)
@@ -2877,6 +2910,8 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 #   define  nvsqfldsc   FNAME(vsqfldsc)
 #   define  nvsqfvsiz   FNAME(vsqfvsiz)
 #   define  nvsqnamec   FNAME(vsqnamec)
+#   define  nvsfccpk    FNAME(vsfccpk)
+#   define  nvsfncpk    FNAME(vsfncpk)
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* VG_FNAMES */
 
@@ -3006,8 +3041,24 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
     extern      FRETVAL(intf) nvffordr
                 (intf  * vkey, intf  *index);
 
+    extern      FRETVAL(intf) nvsfrdc
+                (intf  * vkey, _fcd  cbuf, intf  * nelt,
+                 intf  * interlace);
+
+    extern      FRETVAL(intf) nvsfrd
+                (intf  * vkey, intf  * buf, intf  * nelt,
+                 intf  * interlace);
+
     extern      FRETVAL(intf) nvsreadc
                 (intf  * vkey, uint8  * buf, intf  * nelt,
+                 intf  * interlace);
+
+    extern      FRETVAL(intf) nvsfwrtc
+                (intf  * vkey, _fcd  cbuf, intf  * nelt,
+                 intf  * interlace);
+
+    extern      FRETVAL(intf) nvsfwrt
+                (intf  * vkey, intf  * buf, intf  * nelt,
                  intf  * interlace);
 
     extern      FRETVAL(intf) nvswritc
@@ -3041,15 +3092,29 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
     extern      FRETVAL(intf) nvfndclsc
                 (HFILEID  * f, _fcd vgclass, intf  * classlen);
 
+    extern      FRETVAL(intf) nvhscdc
+                (HFILEID  * f, _fcd field, _fcd  cbuf, intf  * n, 
+                 intf  * datatype, _fcd vsname, _fcd vsclass, 
+                 intf  * fieldlen, intf  * vsnamelen,
+                 intf  * vsclasslen);
+
     extern      FRETVAL(intf) nvhsdc
-                (HFILEID  * f, _fcd field, uint8  * buf, intf  * n, intf  * datatype,
-    _fcd vsname, _fcd vsclass, intf  * fieldlen, intf  * vsnamelen,
+                (HFILEID  * f, _fcd field, uint8  * buf, intf  * n, 
+                 intf  * datatype, _fcd vsname, _fcd vsclass, 
+                 intf  * fieldlen, intf  * vsnamelen,
+                 intf  * vsclasslen);
+
+    extern      FRETVAL(intf) nvhscdmc
+                (HFILEID  * f, _fcd field, _fcd  cbuf, intf  * n,
+                 intf  * datatype, _fcd vsname, _fcd vsclass, 
+                 intf  * order, intf  * fieldlen, intf * vsnamelen,
                  intf  * vsclasslen);
 
     extern      FRETVAL(intf) nvhsdmc
-                (HFILEID  * f, _fcd field, uint8  * buf, intf  * n, intf  * datatype,
-       _fcd vsname, _fcd vsclass, intf  * order, intf  * fieldlen,
-                 intf  * vsnamelen, intf  * vsclasslen);
+                (HFILEID  * f, _fcd field, uint8  * buf, intf  * n,
+                 intf  * datatype, _fcd vsname, _fcd vsclass, 
+                 intf  * order, intf  * fieldlen, intf * vsnamelen,
+                 intf  * vsclasslen);
 
     extern      FRETVAL(intf) nvhmkgpc
                 (HFILEID  * f, intf  * tagarray, intf  * refarray, intf  * n,

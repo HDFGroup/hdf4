@@ -76,7 +76,7 @@ C       offset: offset in file to move image to
 C Returns: SUCCEED/FAIL
 C Users:    HDF Fortran programmers
 C Invokes: mgisxfil
-C------------------------------------------------------------------------------
+C-------------------------------------------------------------
 
       integer function mgsxfil(riid, filename, offset)
       character*(*) filename
@@ -86,7 +86,53 @@ C------------------------------------------------------------------------------
       return
       end
 
-C------------------------------------------------------------------------------
+C-------------------------------------------------------------
+C Name: mgscatt
+C Purpose:  Add a char type attribute to a raster image
+C Inputs:   
+C       riid: RI ID of image
+C       name: the name of the attribute
+C       nt: the number-type of the attribute
+C       count: the number of values in the attribute
+C       data: the data for the attribute
+C Returns: SUCCEED/FAIL
+C Users:    HDF Fortran programmers
+C Invokes: mgiscatt
+C-------------------------------------------------------------
+
+      integer function mgscatt(riid, name, nt, count, data)
+      character*(*) name
+      character*(*) data
+      integer riid, mgisattr, nt, count
+
+      mgscatt = mgiscatt(riid, name, nt, count, data, len(name))
+      return
+      end
+
+C-------------------------------------------------------------
+C Name: mgsnatt
+C Purpose:  Add a numeric attribute to a raster image
+C Inputs:   
+C       riid: RI ID of image
+C       name: the name of the attribute
+C       nt: the number-type of the attribute
+C       count: the number of values in the attribute
+C       data: the data for the attribute
+C Returns: SUCCEED/FAIL
+C Users:    HDF Fortran programmers
+C Invokes: mgisattr
+C-------------------------------------------------------------
+
+      integer function mgsnatt(riid, name, nt, count, data)
+      character*(*) name
+      integer data
+      integer riid, mgisattr, nt, count
+
+      mgsnatt = mgisattr(riid, name, nt, count, data, len(name))
+      return
+      end
+
+C-------------------------------------------------------------
 C Name: mgsattr
 C Purpose:  Add an attribute to a raster image
 C Inputs:   
@@ -98,7 +144,7 @@ C       data: the data for the attribute
 C Returns: SUCCEED/FAIL
 C Users:    HDF Fortran programmers
 C Invokes: mgisattr
-C------------------------------------------------------------------------------
+C-------------------------------------------------------------
 
       integer function mgsattr(riid, name, nt, count, data)
       character*(*) name
@@ -108,8 +154,7 @@ C------------------------------------------------------------------------------
       mgsattr = mgisattr(riid, name, nt, count, data, len(name))
       return
       end
-
-C------------------------------------------------------------------------------
+C---------------------------------------------------------------
 C Name: mgfndat
 C Purpose:  Locate an attribute for a raster image
 C Inputs:   

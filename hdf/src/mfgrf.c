@@ -45,8 +45,11 @@ static char RcsId[] = "@(#)$Revision$";
  *  mgsxfil:    Call GRsetexternalfile to move an image into an external file
  *  mgsactp:    Call GRsetaccesstype to set the access type for an image
  *  mgscomp:    Call GRsetcompress to compress an image in the file [Later]
- *  mgsattr:    Call GRsetattr to write an attribute for an object
+ *  mgisattr:    Call GRsetattr to write an attribute for an object
+ *  mgiscatt:   Call GRsetattr to write a char attribute for an obj.
  *  mgatinf:    Call GRattrinfo get information about an attribute
+ *  mggcatt:    Call GRgetattr to read a char attribute from the file
+ *  mggnatt:    Call GRgetattr to read a numeric attribute from the file
  *  mggattr:    Call GRgetattr to read an attribute from the file
  *  mgfndat:    Call GRfindattr to get the index of an attribute for a name
  * Remarks: 
@@ -235,6 +238,26 @@ nmggiinf(intf * riid, _fcd name, intf *ncomp, intf *nt, intf *il, intf *dimsizes
 }   /* end mggiinf() */
 
 /*-----------------------------------------------------------------------------
+ * Name:    mgwcimg
+ * Purpose: Call mgwrimg to write char type image data to the file
+ * Inputs:
+ *      riid: RI ID of the image
+ *      start: the starting location of the image data to write
+ *      stride: the stride of image data to write
+ *      count: the number of pixels in each dimension to write
+ *      data: the image data (pixels) to write out
+ * Returns: SUCCEED on success, FAIL on failure
+ * Users:   HDF Fortran programmers
+ * Invokes: GRwriteimage
+ *---------------------------------------------------------------------------*/
+
+FRETVAL(intf)
+nmgwcimg(intf * riid, intf *start, intf *stride, intf *count, _fcd data)
+{
+    return(nmgwrimg(riid, start, stride, count, _fcdtocp(data)));
+}   /* end mgwcimg() */
+
+/*-----------------------------------------------------------------------------
  * Name:    mgwrimg
  * Purpose: Call GRwriteimage to write image data to the file
  * Inputs:
@@ -262,6 +285,26 @@ nmgwrimg(intf * riid, intf *start, intf *stride, intf *count, VOIDP data)
 
     return((intf)GRwriteimage((int32)*riid, t_start, t_stride, t_count, data));
 }   /* end mgwrimg() */
+
+/*-----------------------------------------------------------------------------
+ * Name:    mgrcimg
+ * Purpose: Call mgrdimg to read char type image data from a file
+ * Inputs:
+ *      riid: RI ID of the image
+ *      start: the starting location of the image data to read
+ *      stride: the stride of image data to read
+ *      count: the number of pixels in each dimension to read
+ *      data: the image data (pixels) to read out
+ * Returns: SUCCEED on success, FAIL on failure
+ * Users:   HDF Fortran programmers
+ * Invokes: GRreadimage
+ *---------------------------------------------------------------------------*/
+
+FRETVAL(intf)
+nmgrcimg(intf * riid, intf *start, intf *stride, intf *count, VOIDP data)
+{
+    return(nmgrdimg(riid, start, stride, count, _fcdtocp(data)));
+}   /* end mgrcimg() */
 
 /*-----------------------------------------------------------------------------
  * Name:    mgrdimg
@@ -506,6 +549,26 @@ nmgsactp(intf * riid, intf *accesstype)
 }   /* end mgsactp() */
 
 /*-----------------------------------------------------------------------------
+ * Name:    mgiscatt
+ * Purpose: Call mgisatt to store a char attribute about an image
+ * Inputs:
+ *      riid: RI ID of the image
+ *      name: the name of the attribute
+ *      nt: the number-type of the attribute
+ *      count: the number of values in the attribute
+ *      data: the data for the attribute
+ *      nlen: the length of the name
+ * Returns: SUCCEED on success, FAIL on failure
+ * Users:   HDF Fortran programmers
+ * Invokes: GRsetattr
+ *---------------------------------------------------------------------------*/
+FRETVAL(intf)
+nmgiscatt(intf * riid, _fcd name, intf *nt, intf *count, _fcd data, intf *nlen)
+{
+    return(nmgisattr(riid, name, nt, count, (VOIDP) _fcdtocp(data),
+                    nlen));
+}   /* end mgiscatt() */
+/*-----------------------------------------------------------------------------
  * Name:    mgisattr
  * Purpose: Call GRsetattr to store an attribute about an image
  * Inputs:
@@ -565,6 +628,42 @@ nmgatinf(intf * riid, intf *index, _fcd name, intf *nt, intf *count)
 }   /* end mgatinf() */
 
 /*-----------------------------------------------------------------------------
+ * Name:    mggcatt
+ * Purpose: Call mggnatt to get a char attribute
+ * Inputs:
+ *      riid: RI ID of the image
+ *      index: the index of the attribute
+ *      data: the data for the attribute
+ * Returns: SUCCEED on success, FAIL on failure
+ * Users:   HDF Fortran programmers
+ * Invokes: GRgetattr
+ *---------------------------------------------------------------------------*/
+
+FRETVAL(intf)
+nmggcatt(intf * riid, intf *index, _fcd data)
+{
+    return(nmggnatt(riid, index, (VOIDP) _fcdtocp(data)));
+}   /* end mggcatt() */
+
+/*-----------------------------------------------------------------------------
+ * Name:    mggnatt
+ * Purpose: Call GRgetattr to get a numeric attribute
+ * Inputs:
+ *      riid: RI ID of the image
+ *      index: the index of the attribute
+ *      data: the data for the attribute
+ * Returns: SUCCEED on success, FAIL on failure
+ * Users:   HDF Fortran programmers
+ * Invokes: GRgetattr
+ *---------------------------------------------------------------------------*/
+
+FRETVAL(intf)
+nmggnatt(intf * riid, intf *index, VOIDP data)
+{
+    return((intf)GRgetattr((int32)*riid,(int32)*index,data));
+}   /* end mggnatt() */
+
+/*-----------------------------------------------------------------------------
  * Name:    mggattr
  * Purpose: Call GRgetattr to get an attribute
  * Inputs:
@@ -574,6 +673,7 @@ nmgatinf(intf * riid, intf *index, _fcd name, intf *nt, intf *count)
  * Returns: SUCCEED on success, FAIL on failure
  * Users:   HDF Fortran programmers
  * Invokes: GRgetattr
+ * Remarks: This routine is replaced by mggcatt and mggmatt
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)

@@ -702,6 +702,29 @@ nvffordr(intf * vkey, intf * index)
 
 /* ------------------------------------------------------------------ */
 /*
+   **  reads records from a vdata into a char buffer
+   **  related: VSread--vsfrdc
+ */
+
+FRETVAL(intf)
+nvsfrdc(intf * vkey, _fcd cbuf, intf * nelt, intf * interlace)
+{
+    return ((intf) VSread(*vkey, (uint8 *) _fcdtocp(cbuf), *nelt, *interlace));
+}
+/* ------------------------------------------------------------------ */
+/*
+   **  reads records from a vdata into integer buffer 
+   **  related: VSread--vsfrd
+ */
+
+FRETVAL(intf)
+nvsfrd(intf * vkey, intf *buf, intf * nelt, intf * interlace)
+{
+    return ((intf) VSread(*vkey, (uint8 *) buf, *nelt, *interlace));
+}
+
+/* ------------------------------------------------------------------ */
+/*
    **  reads from a vdata
    **  related: VSread--vsreadc--VSFREAD
  */
@@ -714,7 +737,32 @@ nvsreadc(intf * vkey, uint8 *buf, intf * nelt, intf * interlace)
 
 /* ------------------------------------------------------------------ */
 /*
-   **  writes to a vdata
+   **  writes to a vdata from a char buffer
+   **  related: VSwrite--vsfwrtc
+ */
+
+FRETVAL(intf)
+nvsfwrtc(intf * vkey, _fcd cbuf, intf * nelt, intf * interlace)
+{
+    return ((intf) VSwrite(*vkey, (uint8 *) _fcdtocp(cbuf), *nelt, 
+            *interlace));
+}
+
+/* ------------------------------------------------------------------ */
+/*
+   **  writes to a vdata from an integer buffer
+   **  related: VSwrite--vsfwrt
+ */
+
+FRETVAL(intf)
+nvsfwrt(intf * vkey, intf *buf, intf * nelt, intf * interlace)
+{
+    return ((intf) VSwrite(*vkey, (uint8 *)buf, *nelt, *interlace));
+}
+
+/* ------------------------------------------------------------------ */
+/*
+   **  writes to a vdata 
    **  related: VSwrite--vswritc--VSFWRIT
  */
 
@@ -869,7 +917,7 @@ nvfndclsc(HFILEID * f, _fcd vgclass, intf * classlen)
    ** ==================================================================
  */
 
-/*
+/*----------------------------------------------------------
    **  store a simple dataset in a vdata
    **  related: VHstoredata--vhsdc--vhfsd
  */
@@ -903,6 +951,38 @@ nvhsdc(HFILEID * f, _fcd field, uint8 *buf, intf * n, intf * datatype, _fcd vsna
     return (ret_val);
 }
 
+/*----------------------------------------------------------
+   **  store a simple char dataset in a vdata
+   **  related: VHstoredata--vhscdc--vhfscd
+ */
+
+FRETVAL(intf)
+nvhscdc(HFILEID * f, _fcd field, _fcd cbuf, intf * n, intf * datatype, _fcd vsname,
+       _fcd vsclass, intf * fieldlen, intf * vsnamelen, intf * vsclasslen)
+{
+    if ((*datatype != DFNT_CHAR) && (*datatype != DFNT_UCHAR))
+        return FAIL;
+    return (nvhsdc(f, field, (uint8 *) _fcdtocp(cbuf), n, datatype,
+                  vsname, vsclass, fieldlen, vsnamelen, vsclasslen));
+}
+
+/* ------------------------------------------------------------------ */
+/*
+   **  store an aggregate char dataset in a vdata
+   **  related: VHstoredatam--vhscdmc--vhfscdm
+ */
+
+FRETVAL(intf)
+nvhscdmc(HFILEID * f, _fcd field, _fcd cbuf, intf * n, intf * datatype,
+        _fcd vsname, _fcd vsclass, intf * order, intf * fieldlen,
+        intf * vsnamelen, intf * vsclasslen)
+{
+    if ((*datatype != DFNT_CHAR) && (*datatype != DFNT_UCHAR))
+        return FAIL;
+    return (nvhsdmc(f, field, (uint8 *) _fcdtocp(cbuf), n, datatype,
+            vsname, vsclass, order, fieldlen, vsnamelen, vsclasslen));
+}
+
 /* ------------------------------------------------------------------ */
 /*
    **  store an aggregate dataset in a vdata
@@ -921,22 +1001,24 @@ nvhsdmc(HFILEID * f, _fcd field, uint8 *buf, intf * n, intf * datatype,
     if (!fld) return(FAIL);
     name = HDf2cstring(vsname, (intn) *vsnamelen);
     if (!name){
-	HDfree(fld);
-	return(FAIL);
+        HDfree(fld);
+        return(FAIL);
     }
     tclass = HDf2cstring(vsclass, (intn) *vsclasslen);
     if (!tclass){
-	HDfree(fld);
-	HDfree(name);
-	return(FAIL);
+        HDfree(fld);
+        HDfree(name);
+        return(FAIL);
     }
 
-    ret_val = (intf) VHstoredatam(*f, fld, buf, *n, *datatype, name, tclass, *order);
+    ret_val = (intf) VHstoredatam(*f, fld, buf, *n, *datatype, name, 
+                        tclass, *order);
     HDfree(fld);
     HDfree(name);
     HDfree(tclass);
 
     return (ret_val);
+
 }
 
 /* ------------------------------------------------------------------ */
@@ -1176,3 +1258,42 @@ nvsqnamec(intf * vkey, _fcd name, intf *namelen)
     return (ret);
 }
 /* ------------------------------------------------------------------ */
+FRETVAL(intf)
+nvsfccpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz,
+        intf *nrecs, _fcd pckfld, _fcd fldbuf, intf *buflds_len, intf *fld_len)
+{      
+    char  *flds_in_buf=HDf2cstring(buflds, (intn) *buflds_len);
+    char  *afield = HDf2cstring(pckfld, (intn) *fld_len);
+    intf ret;
+  
+    if (strcmp(flds_in_buf,"\0") == 0) 
+        flds_in_buf = NULL;
+    if (strcmp(afield, "\0") == 0)
+        afield = NULL;
+    ret = VSfpack((int32)*vs, (int32)*packtype, flds_in_buf, (VOIDP)buf, 
+         (int32)*bufsz, (int32)*nrecs, afield, (VOIDP)_fcdtocp(fldbuf));
+    HDfree(flds_in_buf);
+    HDfree(afield);
+    return(ret);
+}
+/* ------------------------------------------------------------------ */
+FRETVAL(intf)
+nvsfncpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz,
+        intf *nrecs, _fcd pckfld, intf *fldbuf, intf *buflds_len, intf *fld_len)
+{     
+    char  *flds_in_buf=HDf2cstring(buflds, (intn) *buflds_len);
+    char  *afield=HDf2cstring(pckfld, (intn) *fld_len);
+    intf ret;
+   
+    if (strcmp(flds_in_buf,"\0") == 0)
+       flds_in_buf = NULL;
+    if (strcmp(afield, "\0") == 0)
+       afield = NULL;
+    ret = VSfpack((int32)*vs, (int32)*packtype, flds_in_buf, (VOIDP)buf, 
+                  (int32)*bufsz, (int32)*nrecs, afield, (VOIDP)fldbuf);
+    HDfree(flds_in_buf); 
+    HDfree(afield);
+    return(ret);
+}
+ 
+
