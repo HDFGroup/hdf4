@@ -15,9 +15,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1993/10/06 20:27:22  koziol
-More compression fixed, and folded Doug's suggested change into VSappendable.
+Revision 1.4.2.1  1993/10/10 22:10:03  koziol
+Moved Tag descriptions into a header file.  Updated compression routines.
 
+ * Revision 1.4  1993/10/06  20:27:22  koziol
+ * More compression fixed, and folded Doug's suggested change into VSappendable.
+ *
  * Revision 1.3  1993/10/04  20:02:36  koziol
  * Updated error reporting in H-Layer routines, and added more error codes and
  * compression stuff.
@@ -74,15 +77,24 @@ extern int32 HCPcrle_endaccess
 #define RLE_BUF_SIZE    128
 /* NIL code for run bytes */
 #define RLE_NIL         (-1)
+/* minimum length of run */
+#define RLE_MIN_RUN     3
+/* maximum length of run */
+#define RLE_MAX_RUN     (RLE_BUF_SIZE+RLE_MIN_RUN-1)
+/* minimum length of mix */
+#define RLE_MIN_MIX     1
 
-/* RLE coding information */
+/* RLE [en|de]coding information */
 typedef struct {
     uint32 offset;          /* offset in the file */
     uint8 buffer[RLE_BUF_SIZE];     /* buffer for storing RLE bytes */
-    intn  buf_pos;          /* offset into the buffer */
+    intn buf_length;        /* number of bytes in buffer */
+    intn buf_pos;           /* offset into the buffer */
     intn last_byte,         /* the last byte stored in the buffer */
         second_byte;        /* the second to last byte stored in the buffer */
-    enum {RUN=0,            /* buffer up to the current position is a run */
+    enum {INIT,             /* initial state, need to read a byte to determine
+                                next state */
+        RUN,                /* buffer up to the current position is a run */
         MIX}                /* buffer up to the current position is a mix */
 	    rle_state;          /* state of the buffer storage */
  } comp_coder_rle_info_t;
@@ -102,3 +114,4 @@ funclist_t crle_funcs={    /* functions to perform run-length encoding */
 #endif
 
 #endif /* __CRLE_H */
+
