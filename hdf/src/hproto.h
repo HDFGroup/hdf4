@@ -2,10 +2,14 @@
 $Header$
 
 $Log$
-Revision 1.27  1993/04/22 23:00:22  koziol
-Changed DFR8nimages, DFPnpals to report the correct number of images
-and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
+Revision 1.28  1993/04/26 15:08:22  chouck
+Fixes for the convex (doesn't like foo(VOID) prototypes)
+Also added extern "C" { } around prototypes
 
+ * Revision 1.27  1993/04/22  23:00:22  koziol
+ * Changed DFR8nimages, DFPnpals to report the correct number of images
+ * and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
+ *
  * Revision 1.24  1993/04/13  21:45:24  georgev
  * Fixed preproccessor error on HPUX with #elif.
  *
@@ -91,6 +95,10 @@ and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
 */
 #ifndef _H_PROTO
 #define _H_PROTO
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*
 ** from hfile.c 
@@ -222,7 +230,11 @@ extern char _HUGE *HIstrncpy
   PROTO((register char _HUGE *dest, register char _HUGE *source, int32 len));
 
 extern int32 HDspaceleft
+#ifdef CONVEX
+  PROTO(());
+#else
   PROTO((VOID));
+#endif
 
 extern VOIDP HDgetspace
   PROTO((uint32 qty));
@@ -1795,5 +1807,9 @@ extern int DFUfptoimage
 #ifdef PERM_OUT
 #include "vproto.h"
 #endif /* PERM_OUT */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _H_PROTO */

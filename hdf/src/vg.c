@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1993/04/19 22:48:26  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.8  1993/04/26 15:08:29  chouck
+Fixes for the convex (doesn't like foo(VOID) prototypes)
+Also added extern "C" { } around prototypes
 
+ * Revision 1.7  1993/04/19  22:48:26  koziol
+ * General Code Cleanup to reduce/remove errors on the PC
+ *
  * Revision 1.6  1993/04/14  21:39:27  georgev
  * Had to add some VOIDP casts to some functions to make the compiler happy.
  *
@@ -965,7 +969,11 @@ char * vsname;
 */
 
 #ifdef PROTOTYPE
+#ifdef CONVEX
+PUBLIC VOID Vsetzap()
+#else
 PUBLIC VOID Vsetzap(VOID)
+#endif
 #else
 PUBLIC VOID Vsetzap()
 #endif

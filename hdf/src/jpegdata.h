@@ -600,7 +600,12 @@ struct External_methods_struct {
 						bool writable));
 	METHOD(VOID, free_big_sarray, (big_sarray_ptr ptr));
 	METHOD(VOID, free_big_barray, (big_barray_ptr ptr));
+
+#ifdef CONVEX
+	METHOD(VOID, free_all, ());
+#else
 	METHOD(VOID, free_all, (VOID));
+#endif
 
 	long max_memory_to_use;	/* maximum amount of memory to use */
 };

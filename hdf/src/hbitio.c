@@ -37,8 +37,13 @@
 static struct bitrec_t *bitfile_records = NULL;
 
 /* Local Function Declarations */
+#ifdef CONVEX
+PRIVATE int HIget_bitfile_slot
+    PROTO(());
+#else
 PRIVATE int HIget_bitfile_slot
     PROTO((VOID));
+#endif
 
 /* Actualy Function Definitions */
 
@@ -422,7 +427,11 @@ intn flushbit;              /* how to flush the bits */
  get a free bitfile record slot
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
+#ifdef CONVEX
+PRIVATE int HIget_bitfile_slot()
+#else
 PRIVATE int HIget_bitfile_slot(VOID)
+#endif
 #else
 PRIVATE int HIget_bitfile_slot()
 #endif

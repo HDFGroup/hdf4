@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.11  1993/04/22 16:05:55  chouck
-Minor Vset fixes
+Revision 1.12  1993/04/26 15:08:32  chouck
+Fixes for the convex (doesn't like foo(VOID) prototypes)
+Also added extern "C" { } around prototypes
 
+ * Revision 1.11  1993/04/22  16:05:55  chouck
+ * Minor Vset fixes
+ *
  * Revision 1.10  1993/04/19  22:48:39  koziol
  * General Code Cleanup to reduce/remove errors on the PC
  *
@@ -50,6 +54,9 @@ Minor Vset fixes
 /*
 ** from vconv.c
 */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern int32 vicheckcompat
   PROTO((HFILEID f));
@@ -887,5 +894,10 @@ extern FRETVAL(intf) nvgttrc
 
 extern FRETVAL(intf) nvadtrc
     PROTO((intf _HUGE *vkey, intf _HUGE *tag, intf _HUGE *ref));
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #endif
 

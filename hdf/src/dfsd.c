@@ -5,10 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.27  1993/04/22 23:00:10  koziol
-Changed DFR8nimages, DFPnpals to report the correct number of images
-and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
+Revision 1.28  1993/04/26 15:08:15  chouck
+Fixes for the convex (doesn't like foo(VOID) prototypes)
+Also added extern "C" { } around prototypes
 
+ * Revision 1.27  1993/04/22  23:00:10  koziol
+ * Changed DFR8nimages, DFPnpals to report the correct number of images
+ * and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
+ *
  * Revision 1.26  1993/04/19  22:47:35  koziol
  * General Code Cleanup to reduce/remove errors on the PC
  *
@@ -1273,7 +1277,11 @@ int32 DFSDndatasets(filename)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
+#ifdef CONVEX
+intn DFSDclear()
+#else
 intn DFSDclear(VOID)
+#endif
 #else
 intn DFSDclear()
 #endif /* PROTOTYPE */
