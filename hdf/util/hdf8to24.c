@@ -58,7 +58,16 @@ comp_info cinfo;        /* compression structure */
 *  Calls    :
 *  Called by    :
 **********************************************************************/
+#ifdef PROTOTYPE
 intn magnify(uint8 *from_buffer,uint8 *to_buffer,int32 from_x0,
+	int32 from_y0, int32 from_x1, int32 from_y1, int32 from_width,
+	int32 from_height, int32 to_width, int32 to_height)
+#else
+intn magnify(from_buffer,to_buffer,from_x0,from_y0,from_x1,from_y1,from_width,
+	from_height, to_width, to_height)
+uint8 *from_buffer,*to_buffer;
+int32 from_x0, from_y0, from_x1, from_y1, from_width, from_height, to_width, to_height;
+#endif
 {
     uint8 *buf_off,     /* the current offset into the magnified data */
         *last_buf,      /* pointer to the last useful magnified line */
@@ -139,7 +148,14 @@ XCoorFailed:    /* Failed to allocate memory for the X coor. lookup table */
 *  Calls    :
 *  Called by    :
 **********************************************************************/
+#ifdef PROTOTYPE
 intn convert8to24(uint8 *img8_buf,uint8 *img24_buf,int32 img_xdim,
+	int32 img_ydim)
+#else
+intn convert8to24(img8_buf,img24_buf,img_xdim,img_ydim)
+uint8 *img8_buf,*img24_buf;
+int32 img_xdim, img_ydim;
+#endif
 {
     uint32 pixels;      /* local counting variable */
 
