@@ -79,7 +79,7 @@ HDF 4.1 Release 2 has been tested on the following platforms:
    Cray T3E 1.6.2.60               Linux RedHat 4.2
    DEC Alpha/Digital Unix 4.08     Macintosh 8.0
    DEC Alpha OpenVMS 6.2 and 7.1   Solaris 2.5
-   Exemplar                        Solaris x86 2.5
+   Exemplar                        Solaris x86 2.5.1
    FreeBSD 2.2                     SunOS 4.1.4
    HP-UX 9.03                      VAX OpenVMS 7.1
    HP-UX 10.2                      Windows NT/95
