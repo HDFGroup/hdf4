@@ -42,7 +42,7 @@ RSC=rc.exe
 OUTDIR=.
 INTDIR=.
 
-ALL : $(OUTDIR)/win32tst.exe $(OUTDIR)/win32tst.bsc
+ALL : $(OUTDIR)/testhdf.exe $(OUTDIR)/testhdf.bsc
 
 # ADD BASE CPP /nologo /W3 /GX /YX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /FR /c
 # ADD CPP /nologo /W3 /GX /O2 /I "..\src" /I "..\jpeg" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /c
@@ -57,9 +57,9 @@ BSC32_SBRS= \
 	
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
-BSC32_FLAGS=/nologo /o$(OUTDIR)/"win32tst.bsc" 
+BSC32_FLAGS=/nologo /o$(OUTDIR)/"testhdf.bsc" 
 
-$(OUTDIR)/win32tst.bsc : $(OUTDIR)  $(BSC32_SBRS)
+$(OUTDIR)/testhdf.bsc : $(OUTDIR)  $(BSC32_SBRS)
 LINK32=link.exe
 DEF_FILE=
 LINK32_OBJS= \
@@ -91,10 +91,10 @@ LINK32_OBJS= \
 LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
  advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib\
  odbccp32.lib ..\src\win32hdf.lib ..\jpeg\win32jpg.lib /NOLOGO\
- /SUBSYSTEM:console /INCREMENTAL:no /PDB:$(OUTDIR)/"win32tst.pdb" /MACHINE:I386\
- /OUT:$(OUTDIR)/"win32tst.exe" 
+ /SUBSYSTEM:console /INCREMENTAL:no /PDB:$(OUTDIR)/"testhdf.pdb" /MACHINE:I386\
+ /OUT:$(OUTDIR)/"testhdf.exe" 
 
-$(OUTDIR)/win32tst.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
+$(OUTDIR)/testhdf.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
   $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
@@ -112,7 +112,7 @@ $(OUTDIR)/win32tst.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
 OUTDIR=.
 INTDIR=.
 
-ALL : $(OUTDIR)/win32tst.exe $(OUTDIR)/win32tst.bsc
+ALL : $(OUTDIR)/testhdf.exe $(OUTDIR)/testhdf.bsc
 
 # ADD BASE CPP /nologo /W3 /GX /Zi /YX /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /FR /c
 # ADD CPP /nologo /W3 /GX /Z7 /Od /I "..\src" /I "..\jpeg" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /c
@@ -127,9 +127,9 @@ BSC32_SBRS= \
 	
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
-BSC32_FLAGS=/nologo /o$(OUTDIR)/"win32tst.bsc" 
+BSC32_FLAGS=/nologo /o$(OUTDIR)/"testhdf.bsc" 
 
-$(OUTDIR)/win32tst.bsc : $(OUTDIR)  $(BSC32_SBRS)
+$(OUTDIR)/testhdf.bsc : $(OUTDIR)  $(BSC32_SBRS)
 LINK32=link.exe
 DEF_FILE=
 LINK32_OBJS= \
@@ -161,10 +161,10 @@ LINK32_OBJS= \
 LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
  advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib\
  odbccp32.lib ..\src\win32hdf.lib ..\jpeg\win32jpg.lib /NOLOGO\
- /SUBSYSTEM:console /INCREMENTAL:yes /PDB:$(OUTDIR)/"win32tst.pdb" /DEBUG\
- /MACHINE:I386 /OUT:$(OUTDIR)/"win32tst.exe" 
+ /SUBSYSTEM:console /INCREMENTAL:yes /PDB:$(OUTDIR)/"testhdf.pdb" /DEBUG\
+ /MACHINE:I386 /OUT:$(OUTDIR)/"testhdf.exe" 
 
-$(OUTDIR)/win32tst.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
+$(OUTDIR)/testhdf.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
   $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
