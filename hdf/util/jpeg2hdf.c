@@ -445,7 +445,7 @@ static intn DFJPEGaddrig(file_id, ref, ctag)
 }
 
 #if defined ( PROTOTYPE ) && ! defined ( CONVEX )
-static VOID usage(VOID)
+static VOID usage(void)
 #else
 static VOID usage()
 #endif

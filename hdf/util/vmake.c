@@ -72,7 +72,7 @@ int show_help_msg
 #ifdef CONVEX
     PROTO(());
 #else
-    PROTO((VOID));
+    PROTO((void));
 #endif
 
 /*
@@ -134,7 +134,7 @@ void showfmttypes() {
 }
 
 #if defined ( PROTOTYPE ) && ! defined ( CONVEX )
-int show_help_msg(VOID)
+int show_help_msg(void)
 #else
      int show_help_msg()
 #endif

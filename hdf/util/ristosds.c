@@ -41,7 +41,7 @@ VOID finishing
 #ifdef CONVEX
     PROTO(());
 #else
-    PROTO((VOID));
+    PROTO((void));
 #endif
 
 #ifdef PROTOTYPE
@@ -146,7 +146,7 @@ main(argc, argv)
 }
 
 #if defined ( PROTOTYPE ) && ! defined ( CONVEX )
-VOID finishing(VOID )
+VOID finishing(void )
 #else
 VOID finishing()
 #endif
