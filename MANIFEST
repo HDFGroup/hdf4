@@ -1093,7 +1093,6 @@
 ./mfhdf/hdfimport/testutil.sh
 
 ./mfhdf/hdiff/Makefile.in
-./mfhdf/hdiff/do.sh
 ./mfhdf/hdiff/dumplib.c
 ./mfhdf/hdiff/dumplib.h
 ./mfhdf/hdiff/hdiff.c
@@ -1126,15 +1125,11 @@
 ./mfhdf/hzip/add.h
 ./mfhdf/hzip/copy.c
 ./mfhdf/hzip/copy.h
-./mfhdf/hzip/do.sh
 ./mfhdf/hzip/hdfzip.c
 ./mfhdf/hzip/hdfzip_main.c
-./mfhdf/hzip/hdfziptst.c
 ./mfhdf/hzip/hdfziptst_main.c
 ./mfhdf/hzip/hzip.h
 ./mfhdf/hzip/hziptst.hdf
-./mfhdf/hzip/hziptst1.hdf
-./mfhdf/hzip/hziptst1_out.hdf
 ./mfhdf/hzip/hziptst_out.hdf
 ./mfhdf/hzip/image24pixel.txt
 ./mfhdf/hzip/image8.txt
