@@ -15,9 +15,9 @@ File attributes:
 	 Attr2: Name = Test clean format
 		 Type = 8-bit signed char 
 		 Count= 65
-		 Value = A tab <	>, a CR <
-                         >, several nulls < ... >, and one more t
-                         ab <	>
+		 Value = 
+A tab <	>, a CR <
+>, several nulls < ... >, and one more tab <	>
 
 Dimension Variable Name = fakeDim0
 	 Index = 0
