@@ -3,17 +3,7 @@ Expected output for './hdp dumpgr -p Image_with_Palette.hdf'
 #############################
 File name: Image_with_Palette.hdf 
 
-	 Image  Name = Image with Palette
-	 Index = 0
-	 Type= 8-bit unsigned integer
-	 width=5; height=5
-	 Ref. = 2
-	 ncomps = 2
-	 Interlace mode= PIXEL
-	 Number of attributes = 0
-	 Data : 
-                1 2 2 3 3 4 4 5 5 6 2 3 3 4 4 5 5 6 6 7 3 4 4 5 5 
-                6 6 7 7 8 4 5 5 6 6 7 7 8 8 9 5 6 6 7 7 8 8 9 9 10 
+	 Raster Image Ref. = 2
 	 Palette: 3 components; 256 entries
 	 Palette Data: 
                 0 0 8 1 0 8 2 0 8 3 0 8 4 0 8 5 0 8 6 0 8 7 0 8 8 
@@ -56,17 +46,7 @@ File name: Image_with_Palette.hdf
                 249 0 8 250 0 8 251 0 8 252 0 8 253 0 8 254 0 8 255 
                 0 8 
 
-	 Image  Name = Second Image w/pal
-	 Index = 1
-	 Type= 8-bit unsigned integer
-	 width=5; height=5
-	 Ref. = 3
-	 ncomps = 2
-	 Interlace mode= PIXEL
-	 Number of attributes = 0
-	 Data : 
-                1 2 2 3 3 4 4 5 5 6 2 3 3 4 4 5 5 6 6 7 3 4 4 5 5 
-                6 6 7 7 8 4 5 5 6 6 7 7 8 8 9 5 6 6 7 7 8 8 9 9 10 
+	 Raster Image Ref. = 3
 	 Palette: 3 components; 256 entries
 	 Palette Data: 
                 2 4 8 2 4 8 2 4 8 2 4 8 2 4 8 2 4 8 2 4 8 2 4 8 2 
@@ -101,15 +81,5 @@ File name: Image_with_Palette.hdf
                 8 2 4 8 2 4 8 2 4 8 2 4 8 2 4 8 2 4 8 2 4 8 2 4 8 
                 2 4 8 2 4 8 2 4 8 2 4 8 2 4 8 2 4 8 
 
-	 Image  Name = Last Image: no pal
-	 Index = 2
-	 Type= 8-bit unsigned integer
-	 width=5; height=5
-	 Ref. = 4
-	 ncomps = 2
-	 Interlace mode= PIXEL
-	 Number of attributes = 0
-	 Data : 
-                1 2 2 3 3 4 4 5 5 6 2 3 3 4 4 5 5 6 6 7 3 4 4 5 5 
-                6 6 7 7 8 4 5 5 6 6 7 7 8 8 9 5 6 6 7 7 8 8 9 9 10 
+	 Raster Image Ref. = 4
 	 No palette data
