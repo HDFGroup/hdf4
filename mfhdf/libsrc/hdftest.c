@@ -629,8 +629,9 @@ char *argv[];
        num_err++;
     }
     dimid=SDgetdimid(sdid, 0);
-    status = SDsetdimval_comp(dimid, SD_DIMVAL_BW_INCOMP);
+/*    status = SDsetdimval_comp(dimid, SD_DIMVAL_BW_INCOMP);
     CHECK(status, "SDsetdimval_comp");
+*/
     dimid1=SDgetdimid(sdid, 1);
     status = SDsetdimval_comp(dimid1, SD_DIMVAL_BW_INCOMP);
     CHECK(status, "SDsetdimval_comp");

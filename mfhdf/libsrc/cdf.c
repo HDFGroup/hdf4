@@ -727,8 +727,8 @@ int32 dimval_ver;
 
     if (dimval_ver != DIMVAL_VERSION00)
           return FAIL;
-    dsize = dim->size;
-    if (dsize <= 0)
+    dsize = (dim->size == NC_UNLIMITED)? 1 : dim->size;
+    if (dsize < 0)
             return FAIL;
        /* create a fake one */
 #ifdef DEBUG
@@ -741,8 +741,11 @@ int32 dimval_ver;
               HERROR(DFE_NOSPACE);
               return FAIL;
      }
-     for(i = 0; i < dsize; i++)
-              val[i] = i;
+     if (dim->size == NC_UNLIMITED)  {
+              *val = handle->numrecs;
+     }
+     else
+          for(i = 0; i < dsize; i++) val[i] = i;
      ref = VHstoredata(handle->hdf_file, "Values", (void *)val,
                    dsize, DFNT_INT32, dim->name->values, DIM_VALS);
      if(ref == FAIL) {
@@ -1271,13 +1274,13 @@ int32  vg;
 	     if(vs == FAIL) HEprint(stdout, 0);
              VSgetclass(vs, vsclass);
 	     if(!HDstrcmp(vsclass, DIM_VALS)) {
-                 VSQuerycount(vs, &dim_size);   
-                 if (HDstrcmp(vgclass, UDIMENSION))  /* not unlimited dim */
-                     is_dimval = TRUE;
+                 is_dimval = TRUE;
+                 if (HDstrcmp(vgclass, UDIMENSION))  /* not unlimited di
+m */
+                     VSQuerycount(vs, &dim_size);   
              }
-             if ((!HDstrcmp(vsclass, DIM_VALS01)) ||
-                 (!HDstrcmp(vsclass, DIM_VALS) &&
-                  !HDstrcmp(vgclass, UDIMENSION))) {
+             if ((!HDstrcmp(vsclass, DIM_VALS01)) || 
+                 (!HDstrcmp(vgclass, UDIMENSION))) { /* DIM_VALS && UDIMENSION */
 	          int32 val;	/* needs a temp var since handle->numrecs */
 				/* may not be an int32 */
                   VSsetfields(vs, "Values");
@@ -1292,11 +1295,11 @@ int32  vg;
                        dim_size = NC_UNLIMITED;
                        handle->numrecs = val;
                   }
-                  else  {  /* dimval01 */
+                  else  
                       dim_size = val;
-                      is_dimval01 = TRUE;
-                  }
              }  /* VSread */
+             if (!HDstrcmp(vsclass, DIM_VALS01)) /* dimval01  */
+                 is_dimval01 = TRUE;
              VSdetach(vs); 
              /* Is it the second dim vs of a compatible dim? */
              found = FALSE;
@@ -1972,7 +1975,9 @@ void hdf_close(handle)
     int32 vg, dim;
     int32 vs;
     char class[128];
-    
+   
+    CONSTR(FUNC,"hdf_close"); 
+
 #ifdef DEBUG
     fprintf(stderr,"hdf_close, I've been called\n");
 #endif
@@ -2010,11 +2015,17 @@ void hdf_close(handle)
                             if(vs == FAIL) HEprint(stdout, 0);
                             
                             VSgetclass(vs, class);
-                            if(!HDstrcmp(class, DIM_VALS)) {
+                            if(!HDstrcmp(class, DIM_VALS) ||
+                               !HDstrcmp(class, DIM_VALS01)) {
+                               uint8 nrecs[4];
+                               uint8 *nrecsp;
+
                                 VSsetfields(vs, "Values");
                                 VSseek(vs, 0);
-                                if(VSwrite(vs, (uint8 *) &(handle->numrecs), 1, FULL_INTERLACE) != 1) 
-                                    HEprint(stderr, 0);  
+                               nrecsp = &nrecs[0];
+                               INT32ENCODE(nrecsp, handle->numrecs);
+                               if(VSwrite(vs, nrecs, 1, FULL_INTERLACE)!= 1)
+                               HEprint(stderr, 0);  
 
                             }
                             VSdetach(vs);
