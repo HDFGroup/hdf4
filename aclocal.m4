@@ -83,3 +83,22 @@ else
   AC_MSG_RESULT(no)
 fi], [AC_MSG_RESULT(no)])])
 
+dnl Set the value of a variable.  Use the environment if possible; otherwise
+dnl set it to a default value.  Call the substitute routine.
+dnl
+define([HDF_DEFAULT], [dnl
+$1=${$1-"$2"}
+AC_SUBST([$1])
+])
+
+dnl Get shell-variable override values for local customizations.
+dnl
+define([HDF_CUSTOMIZE], [dnl
+AC_BEFORE([$0], [HDF_DEFAULT])dnl
+if [[ -r CUSTOMIZE ]]; then
+  echo reading configuration customizations
+  . ./CUSTOMIZE
+fi
+])
+
+

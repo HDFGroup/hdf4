@@ -86,10 +86,11 @@ HDF_FLAGS       = \
         ARFLAGS="$(ARFLAGS)" \
         RM="$(RM)" \
         RMFLAGS="$(RMFLAGS)" \
-        MACHINE="$(MACHINE)" \
-        HDFLIB="$(HDFLIB)" \
-        HDFINC="$(HDFINC)" \
-	HDFBIN="$(HDFBIN)"	
+        MACHINE="$(MACHINE)" 
+
+#        HDFLIB="$(HDFLIB)" \
+#        HDFINC="$(HDFINC)" \
+#	HDFBIN="$(HDFBIN)"	
 
 #
 #General rules
@@ -98,6 +99,14 @@ HDF_FLAGS       = \
 all:	
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(SUBDIRS)" _sub
+
+HDF:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="all" \
+          SUBDIRS="$(HDFDIR)" _sub
+
+NETCDF:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="all" \
+          SUBDIRS="$(NETCDFDIR)" _sub
 		
 test:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
@@ -130,9 +139,25 @@ utilities:
 install:	
 	true
 
+hdfclean:		
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="clean" \
+          SUBDIRS="$(HDFDIR)" _sub
+
+netcdfclean:		
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="clean" \
+          SUBDIRS="$(NETCDFDIR)" _sub
+
 clean:		
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(SUBDIRS)" _sub
+
+hdfdistclean:		
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="distclean" \
+          SUBDIRS="$(HDFDIR)" _sub
+
+netcdfdistclean:		
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="distclean" \
+          SUBDIRS="$(NETCDFDIR)" _sub
 
 distclean::	
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
