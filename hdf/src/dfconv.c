@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/01/26 19:42:18  koziol
-Added support for reading and writing Little-Endian data on all
-platforms.  This has been tested on: Cray, Sun, and PCs so far.
+Revision 1.6  1993/02/16 18:47:26  koziol
+Cray Speedups
 
+ * Revision 1.5  1993/01/26  19:42:18  koziol
+ * Added support for reading and writing Little-Endian data on all
+ * platforms.  This has been tested on: Cray, Sun, and PCs so far.
+ *
  * Revision 1.4  1993/01/19  05:54:16  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -52,7 +55,7 @@ platforms.  This has been tested on: Cray, Sun, and PCs so far.
     DFKui4f -  Unicos routine for importing 32 bit floats   
     DFKuo4f -  Unicos routine for exporting 32 bit floats  
     DFKui8f -  Unicos routine for importing 64 bit floats 
-    DFKuo64f-  Unicos routine for exporting 64 bit floats
+    DFKuo8f -  Unicos routine for exporting 64 bit floats
     DFKlui2i-  Unicos routine for importing little-endian 16 bit unsigned ints
     DFKlui2s-  Unicos routine for importing little-endian 16 bit signed ints
     DFKluo2i-  Unicos routine for exporting little-endian 16 bit ints (both)
@@ -79,6 +82,10 @@ platforms.  This has been tested on: Cray, Sun, and PCs so far.
     DFKlco4f-  Convex routine for exporting little-endian 32 bit floats
     DFKlci8f-  Convex routine for importing little-endian 64 bit floats
     DFKlco8f-  Convex routine for exporting little-endian 64 bit floats
+    DFKpi4f -  VP routine for importing 32 bit floats
+    DFKpo4f -  VP routine for exporting 32 bit floats
+    DFKpi8f -  VP routine for importing 64 bit floats
+    DFKpo8f -  VP routine for exporting 64 bit floats
 
  Other PUBLIC functions:
     DFKmachineNTsize - Determine size in machine, given number type
@@ -126,10 +133,67 @@ platforms.  This has been tested on: Cray, Sun, and PCs so far.
 #include "herr.h"
 #include "hconv.h"
 
+#undef PRIVATE
+#define PRIVATE /* */
+
+#define TEST
+#ifdef TEST
+#define TEST3_sb4b
+
+#define TEST2_ui2i
+#define TEST2_ui2s
+#define TEST1_uo2i
+#define TEST2_ui4i
+#define TEST2_ui4s
+#define TEST1_uo4i
+#define TEST1_ui4f
+#define TEST1_uo4f
+#define TEST1_ui8f
+#define TEST1_uo8f
+
+#define TEST2_lui2i
+#define TEST2_lui2s
+#define TEST1_luo2i
+#define TEST2_lui4i
+#define TEST2_lui4s
+#define TEST2_luo4i
+#define TEST1_lui4f
+#define TEST1_luo4f
+#define TEST1_lui8f
+#define TEST1_luo8f
+#endif
+
+/*#define DUFF */
+#ifdef DUFF
+#define DUFF_sb4b
+
+#define DUFF_ui2i
+#define DUFF_ui2s
+#define DUFF_uo2i
+#define DUFF_ui4i
+#define DUFF_ui4s
+#define DUFF_uo4i
+#define DUFF_ui4f
+#define DUFF_uo4f
+#define DUFF_ui8f
+#define DUFF_uo8f
+
+#define DUFF_lui2i
+#define DUFF_lui2s
+#define DUFF_luo2i
+#define DUFF_lui4i
+#define DUFF_lui4s
+#define DUFF_luo4i
+#define DUFF_lui4f
+#define DUFF_luo4f
+#define DUFF_lui8f
+#define DUFF_luo8f
+#endif
+
 /*
 **  Static function prototypes
 */
-static int DFKInoset
+PRIVATE int DFKInoset
     PROTO((VOIDP source, VOIDP dest, uint32 num_elm,uint32 source_stride,
             uint32 dest_stride));
 
@@ -540,6 +604,8 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
   char *FUNC="DFKsb4b";
+  uint32 *lp_dest;
+  uint32 *lp_src;
 
   HEclear();
 
@@ -558,14 +624,106 @@ uint32 num_elm, source_stride, dest_stride;
 
   if(fast_processing) 
     if(!in_place) {
+#ifndef DUFF_sb4b
+#ifdef TEST1_sb4b
+    source+=3;
+#endif
+#ifdef TEST3_sb4b
+    lp_dest=(uint32 *)dest;
+    lp_src=(uint32 *)source;
+#endif
       for(i = 0; i < num_elm; i++) {
+#if defined TEST3_sb4b
+        *lp_dest++ = ((lp_src[0]&0x000000ff)<<24) |
+                    ((lp_src[0]&0x0000ff00)<<8) |
+                    ((lp_src[0]&0x00ff0000)>>8) |
+                    ((lp_src[0]&0xff000000)>>24);
+        lp_src++;
+#elif defined TEST2_sb4b
+        *dest++ = source[3];
+        *dest++ = source[2];
+        *dest++ = source[1];
+        *dest++ = source[0];
+        source += 4;
+#elif defined TEST1_sb4b
+        *dest++ = *source--;
+        *dest++ = *source--;
+        *dest++ = *source--;
+        *dest++ = *source;
+        source += 7;
+#else
         dest[0] = source[3];
         dest[1] = source[2];
         dest[2] = source[1];
         dest[3] = source[0];
         dest += 4;
         source += 4;
+#endif
       }
+#else   /* DUFF_sb4b */
+        register uint32 n=(num_elm+7)/8;
+
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    dest[0] = source[3];
+                    dest[1] = source[2];
+                    dest[2] = source[1];
+                    dest[3] = source[0];
+                    dest += 4;
+                    source += 4;
+            case 7:
+                    dest[0] = source[3];
+                    dest[1] = source[2];
+                    dest[2] = source[1];
+                    dest[3] = source[0];
+                    dest += 4;
+                    source += 4;
+            case 6:
+                    dest[0] = source[3];
+                    dest[1] = source[2];
+                    dest[2] = source[1];
+                    dest[3] = source[0];
+                    dest += 4;
+                    source += 4;
+            case 5:
+                    dest[0] = source[3];
+                    dest[1] = source[2];
+                    dest[2] = source[1];
+                    dest[3] = source[0];
+                    dest += 4;
+                    source += 4;
+            case 4:
+                    dest[0] = source[3];
+                    dest[1] = source[2];
+                    dest[2] = source[1];
+                    dest[3] = source[0];
+                    dest += 4;
+                    source += 4;
+            case 3:
+                    dest[0] = source[3];
+                    dest[1] = source[2];
+                    dest[2] = source[1];
+                    dest[3] = source[0];
+                    dest += 4;
+                    source += 4;
+            case 2:
+                    dest[0] = source[3];
+                    dest[1] = source[2];
+                    dest[2] = source[1];
+                    dest[3] = source[0];
+                    dest += 4;
+                    source += 4;
+            case 1:
+                    dest[0] = source[3];
+                    dest[1] = source[2];
+                    dest[2] = source[1];
+                    dest[3] = source[0];
+                    dest += 4;
+                    source += 4;
+                } while(--n>0);
+		}
+#endif  /* DUFF_sb4b */
       return 0;
     }
     else {
@@ -750,11 +908,16 @@ uint32 num_elm, source_stride, dest_stride;
 
 #if defined(UNICOS)
 
+#define UI2I_MASKA  0xffff000000000000
+#define UI2I_MASKB  0x0000ffff00000000
+#define UI2I_MASKC  0x00000000ffff0000
+#define UI2I_MASKD  0x000000000000ffff
+
 /************************************************************/
 /* DFKui2i()                                                */
 /* -->Unicos routine for importing 2 byte data items        */ 
 /* (**) This routine converts two byte IEEE to eight byte   */
-/*      Cray little endian integer.                         */
+/*      Cray big endian integer.                            */
 /************************************************************/
 #ifdef PROTOTYPE
 PRIVATE int DFKui2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
@@ -772,6 +935,8 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
   long * lptr_dest = (long*)dest;
+    long *lp_dest;
+    unsigned long *lp_src;
   char *FUNC="DFKui2i";
 
   HEclear();
@@ -785,7 +950,82 @@ uint32 num_elm, source_stride, dest_stride;
   if(source_stride == 0 && dest_stride == 0) 
       fast_processing = 1;            
 
-  if(fast_processing) {
+    if(fast_processing) {
+#ifndef DUFF_ui2i
+#if defined TEST2_ui2i
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm%4;
+
+        n=num_elm/4;
+        lp_dest=(long *)dest;
+        lp_src=(unsigned long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long));
+        for(i = 0; i < n; i++) {
+            lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+            lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+            lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+            lp_dest[3]=lp_src[0]&UI2I_MASKD;
+            lp_dest+=4;
+            lp_src++;
+          } /* end for */
+        switch(odd_man_out) {
+            case 3:
+                lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                break;
+
+            case 2:
+                lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                break;
+
+            case 1:
+                lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                break;
+
+            default:
+                break;
+          } /* end switch */
+#elif defined TEST1_ui2i
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm%4;
+
+        n=num_elm/4;
+        lp_dest=(long *)dest;
+        lp_src=(unsigned long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long));
+        for(i = 0; i < n; i++) {
+            *lp_dest++=(lp_src[0]&UI2I_MASKA)>>48;
+            *lp_dest++=(lp_src[0]&UI2I_MASKB)>>32;
+            *lp_dest++=(lp_src[0]&UI2I_MASKC)>>16;
+            *lp_dest++=lp_src[0]&UI2I_MASKD;
+            lp_src++;
+          } /* end for */
+        switch(odd_man_out) {
+            case 3:
+                *lp_dest++=(lp_src[0]&UI2I_MASKA)>>48;
+                *lp_dest++=(lp_src[0]&UI2I_MASKB)>>32;
+                *lp_dest++=(lp_src[0]&UI2I_MASKC)>>16;
+                break;
+
+            case 2:
+                *lp_dest++=(lp_src[0]&UI2I_MASKA)>>48;
+                *lp_dest++=(lp_src[0]&UI2I_MASKB)>>32;
+                break;
+
+            case 1:
+                *lp_dest++=(lp_src[0]&UI2I_MASKA)>>48;
+                break;
+
+            default:
+                break;
+          } /* end switch */
+#else
     for(i = 0; i < num_elm; i++) {
       lptr_dest[0] = 0x0000000000000000;
       dest[6] = source[0];
@@ -794,6 +1034,157 @@ uint32 num_elm, source_stride, dest_stride;
       lptr_dest++;
       dest = (uint8*)lptr_dest;
     }
+#endif
+#else   /* DUFF_ui2i */
+        uintn n;
+        int odd_man_out;        /* By default there are even num_elm */
+
+        lp_dest=(long *)dest;
+        lp_src=(unsigned long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long));
+
+        odd_man_out = num_elm%4;
+
+        num_elm/=4;
+        n=(num_elm+7)/8;
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+#ifdef QAK
+            case 15:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 14:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 13:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 12:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 11:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 10:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 9:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 8:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+#endif
+            case 7:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 6:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 5:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 4:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 3:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 2:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 1:
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+                } while(--n>0);
+		}
+        switch(odd_man_out) {
+            case 3:
+                lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                break;
+
+            case 2:
+                lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                break;
+
+            case 1:
+                lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                break;
+
+            default:
+                break;
+          } /* end switch */
+#endif  /* DUFF_ui2i */
   }
   else { /* Generic stride processing */
     for(i = 0; i < num_elm; i++) {
@@ -811,6 +1202,15 @@ uint32 num_elm, source_stride, dest_stride;
   }
   return 0;
 }
+
+#define UI2S_MASKA  0xffff000000000000
+#define UI2S_MASKB  0x0000ffff00000000
+#define UI2S_MASKC  0x00000000ffff0000
+#define UI2S_MASKD  0x000000000000ffff
+#define UI2S_MASKE  0x8000000000000000
+#define UI2S_MASKF  0x0000800000000000
+#define UI2S_MASKG  0x0000000080000000
+#define UI2S_MASKH  0x0000000000008000
 
 /************************************************************/
 /* DFKui2s()                                                */
@@ -834,6 +1234,8 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
   long * lptr_dest = (long*)dest;
+    long *lp_dest;
+    unsigned long *lp_src;
   char *FUNC="DFKui2s";
 
   HEclear();
@@ -848,6 +1250,121 @@ uint32 num_elm, source_stride, dest_stride;
       fast_processing = 1;            
 
   if(fast_processing) {
+#ifndef DUFF_ui2s
+#if defined TEST2_ui2s
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm%4;
+
+        n=num_elm/4;
+        lp_dest=(long *)dest;
+        lp_src=(unsigned long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long));
+        for(i = 0; i < n; i++) {
+            if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                lp_dest[0] = 0xffffffffffffffff;
+            lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+            if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                lp_dest[1] = 0xffffffffffffffff;
+            lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+            if(lp_src[0] & UI2S_MASKG)      /* Can't forget to extend sign */
+                lp_dest[2] = 0xffffffffffffffff;
+            lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+            if(lp_src[0] & UI2S_MASKH)      /* Can't forget to extend sign */
+                lp_dest[3] = 0xffffffffffffffff;
+            lp_dest[3]=lp_src[0]&UI2I_MASKD;
+            lp_dest+=4;
+            lp_src++;
+          } /* end for */
+        switch(odd_man_out) {
+            case 3:
+                if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                    lp_dest[0] = 0xffffffffffffffff;
+                lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                    lp_dest[1] = 0xffffffffffffffff;
+                lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                if(lp_src[0] & UI2S_MASKG)      /* Can't forget to extend sign */
+                    lp_dest[2] = 0xffffffffffffffff;
+                lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                break;
+
+            case 2:
+                if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                    lp_dest[0] = 0xffffffffffffffff;
+                lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                    lp_dest[1] = 0xffffffffffffffff;
+                lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                break;
+
+            case 1:
+                if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                    lp_dest[0] = 0xffffffffffffffff;
+                lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                break;
+
+            case 0:
+                break;
+          } /* end switch */
+#elif defined TEST1_ui2s
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm%4;
+
+        n=num_elm/4;
+        lp_dest=(long *)dest;
+        lp_src=(unsigned long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long));
+        for(i = 0; i < n; i++) {
+            if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                *lp_dest = 0xffffffffffffffff;
+            *lp_dest++=(lp_src[0]&UI2I_MASKA)>>48;
+            if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                *lp_dest = 0xffffffffffffffff;
+            *lp_dest++=(lp_src[0]&UI2I_MASKB)>>32;
+            if(lp_src[0] & UI2S_MASKG)      /* Can't forget to extend sign */
+                *lp_dest = 0xffffffffffffffff;
+            *lp_dest++=(lp_src[0]&UI2I_MASKC)>>16;
+            if(lp_src[0] & UI2S_MASKH)      /* Can't forget to extend sign */
+                *lp_dest = 0xffffffffffffffff;
+            *lp_dest++=lp_src[0]&UI2I_MASKD;
+            lp_src++;
+          } /* end for */
+        switch(odd_man_out) {
+            case 3:
+                if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                    *lp_dest = 0xffffffffffffffff;
+                *lp_dest++=(lp_src[0]&UI2I_MASKA)>>48;
+                if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                    *lp_dest = 0xffffffffffffffff;
+                *lp_dest++=(lp_src[0]&UI2I_MASKB)>>32;
+                if(lp_src[0] & UI2S_MASKG)      /* Can't forget to extend sign */
+                    *lp_dest = 0xffffffffffffffff;
+                *lp_dest++=(lp_src[0]&UI2I_MASKC)>>16;
+                break;
+
+            case 2:
+                if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                    *lp_dest = 0xffffffffffffffff;
+                *lp_dest++=(lp_src[0]&UI2I_MASKA)>>48;
+                if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                    *lp_dest = 0xffffffffffffffff;
+                *lp_dest++=(lp_src[0]&UI2I_MASKB)>>32;
+                break;
+
+            case 1:
+                if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                    *lp_dest = 0xffffffffffffffff;
+                *lp_dest++=(lp_src[0]&UI2I_MASKA)>>48;
+                break;
+
+            case 0:
+                break;
+          } /* end switch */
+#else
     for(i = 0; i < num_elm; i++) {
       if((source[0] & 0x80))           /* Can't forget to extend sign */
 	lptr_dest[0] = 0xffffffffffffffff;
@@ -859,6 +1376,297 @@ uint32 num_elm, source_stride, dest_stride;
       lptr_dest++;
       dest = (uint8*)lptr_dest;
     }
+#endif
+#else   /* DUFF_ui2s */
+        uintn n;
+        int odd_man_out;        /* By default there are even num_elm */
+
+        lp_dest=(long *)dest;
+        lp_src=(unsigned long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long));
+
+        odd_man_out = num_elm%4;
+
+        num_elm/=4;
+        n=(num_elm+7)/8;
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    if(lp_src[0] & UI2S_MASKG)      /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    if(lp_src[0] & UI2S_MASKH)      /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+#ifdef QAK
+            case 15:
+                    if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    if(lp_src[0] & UI2S_MASKG)      /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    if(lp_src[0] & UI2S_MASKH)      /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 14:
+                    if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    if(lp_src[0] & UI2S_MASKG)      /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    if(lp_src[0] & UI2S_MASKH)      /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 13:
+                    if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    if(lp_src[0] & UI2S_MASKG)      /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    if(lp_src[0] & UI2S_MASKH)      /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 12:
+                    if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    if(lp_src[0] & UI2S_MASKG)      /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    if(lp_src[0] & UI2S_MASKH)      /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 11:
+                    if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    if(lp_src[0] & UI2S_MASKG)      /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    if(lp_src[0] & UI2S_MASKH)      /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 10:
+                    if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    if(lp_src[0] & UI2S_MASKG)      /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    if(lp_src[0] & UI2S_MASKH)      /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 9:
+                    if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    if(lp_src[0] & UI2S_MASKG)      /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    if(lp_src[0] & UI2S_MASKH)      /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 8:
+                    if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    if(lp_src[0] & UI2S_MASKG)      /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    if(lp_src[0] & UI2S_MASKH)      /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+#endif
+            case 7:
+                    if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    if(lp_src[0] & UI2S_MASKG)      /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    if(lp_src[0] & UI2S_MASKH)      /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 6:
+                    if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    if(lp_src[0] & UI2S_MASKG)      /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    if(lp_src[0] & UI2S_MASKH)      /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 5:
+                    if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    if(lp_src[0] & UI2S_MASKG)      /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    if(lp_src[0] & UI2S_MASKH)      /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 4:
+                    if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    if(lp_src[0] & UI2S_MASKG)      /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    if(lp_src[0] & UI2S_MASKH)      /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 3:
+                    if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    if(lp_src[0] & UI2S_MASKG)      /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    if(lp_src[0] & UI2S_MASKH)      /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 2:
+                    if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    if(lp_src[0] & UI2S_MASKG)      /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    if(lp_src[0] & UI2S_MASKH)      /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+            case 1:
+                    if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                    if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                    if(lp_src[0] & UI2S_MASKG)      /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                    if(lp_src[0] & UI2S_MASKH)      /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=lp_src[0]&UI2I_MASKD;
+                    lp_dest+=4;
+                    lp_src++;
+                } while(--n>0);
+		}
+        switch(odd_man_out) {
+            case 3:
+                if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                    lp_dest[0] = 0xffffffffffffffff;
+                lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                    lp_dest[1] = 0xffffffffffffffff;
+                lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                if(lp_src[0] & UI2S_MASKG)      /* Can't forget to extend sign */
+                    lp_dest[2] = 0xffffffffffffffff;
+                lp_dest[2]=(lp_src[0]&UI2I_MASKC)>>16;
+                break;
+
+            case 2:
+                if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                    lp_dest[0] = 0xffffffffffffffff;
+                lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                if(lp_src[0] & UI2S_MASKF)      /* Can't forget to extend sign */
+                    lp_dest[1] = 0xffffffffffffffff;
+                lp_dest[1]=(lp_src[0]&UI2I_MASKB)>>32;
+                break;
+
+            case 1:
+                if(lp_src[0] & UI2S_MASKE)      /* Can't forget to extend sign */
+                    lp_dest[0] = 0xffffffffffffffff;
+                lp_dest[0]=(lp_src[0]&UI2I_MASKA)>>48;
+                break;
+
+            case 0:
+                break;
+          } /* end switch */
+#endif  /* DUFF_ui2s */
   }
   else { /* Generic stride processing */
     for(i = 0; i < num_elm; i++) {
@@ -887,6 +1695,8 @@ uint32 num_elm, source_stride, dest_stride;
   return 0;
 }
 
+#define UO2I_MASK 0x000000000000ffff
+
 /************************************************************/
 /* DFKuo2i()                                                */
 /* -->Unicos routine for exporting 2 byte data items        */ 
@@ -900,12 +1710,14 @@ uint8 * source, * dest;
 uint32 num_elm, source_stride, dest_stride;
 #endif /* PROTOTYPE */
 {
-  register uint32 i;
+  register uintn i;
   int fast_processing=0;
 #ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
+    long *lp_dest;
+    long *lp_src;
     char *FUNC="DFKuo2i";
 
     HEclear();
@@ -920,12 +1732,183 @@ uint32 num_elm, source_stride, dest_stride;
       fast_processing = 1;            
 
   if(fast_processing) {
+#ifndef DUFF_uo2i
+#if defined TEST1_uo2i
+    int odd_man_out;        /* By default there are even num_elm */
+    intn n;
+
+    odd_man_out = num_elm%4;
+
+    n=num_elm/4;
+    lp_dest=(long *)dest;
+    lp_src=(long *)source;
+    for(i = 0; i < n; i++) {
+        *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                    ((lp_src[1]&UO2I_MASK)<<32) |
+                    ((lp_src[2]&UO2I_MASK)<<16) |
+                    (lp_src[3]&UO2I_MASK);
+        lp_src+=4;
+    }
+    switch(odd_man_out) {   /* clean up leftovers */
+        case 3:
+            *lp_dest=((lp_src[0]&UO2I_MASK)<<48) |
+                        ((lp_src[1]&UO2I_MASK)<<32) |
+                        ((lp_src[2]&UO2I_MASK)<<16);
+            break;
+
+        case 2:
+            *lp_dest=((lp_src[0]&UO2I_MASK)<<48) |
+                        ((lp_src[1]&UO2I_MASK)<<32);
+            break;
+
+        case 1:
+            *lp_dest=(lp_src[0]&UO2I_MASK)<<48;
+            break;
+
+        default:
+            break;
+      } /* end switch */
+#else
     for(i = 0; i < num_elm; i++) {
       dest[0] = source[6];
       dest[1] = source[7];
       dest += 2;
       source += 8;
     }
+#endif
+#else   /* DUFF_uo2i */
+        uintn n;
+        int odd_man_out;        /* By default there are even num_elm */
+
+        odd_man_out = num_elm%4;
+
+        num_elm/=4;
+        n=(num_elm+7)/8;
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+#ifdef QAK
+            case 15:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 14:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 13:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 12:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 11:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 10:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 9:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 8:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+#endif
+            case 7:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 6:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 5:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 4:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 3:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 2:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+            case 1:
+                    *lp_dest++=((lp_src[0]&UO2I_MASK)<<48) |
+                                ((lp_src[1]&UO2I_MASK)<<32) |
+                                ((lp_src[2]&UO2I_MASK)<<16) |
+                                (lp_src[3]&UO2I_MASK);
+                    lp_src+=4;
+                } while(--n>0);
+		}
+
+        switch(odd_man_out) {   /* clean up leftovers */
+            case 3:
+                *lp_dest=((lp_src[0]&UO2I_MASK)<<48) |
+                            ((lp_src[1]&UO2I_MASK)<<32) |
+                            ((lp_src[2]&UO2I_MASK)<<16);
+                break;
+
+            case 2:
+                *lp_dest=((lp_src[0]&UO2I_MASK)<<48) |
+                            ((lp_src[1]&UO2I_MASK)<<32);
+                break;
+
+            case 1:
+                *lp_dest=(lp_src[0]&UO2I_MASK)<<48;
+                break;
+
+            default:
+                break;
+          } /* end switch */
+#endif  /* DUFF_uo2i */
   }
   else { /* Generic Stride processing */
     for(i = 0; i < num_elm; i++){
@@ -937,6 +1920,9 @@ uint32 num_elm, source_stride, dest_stride;
   }
   return 0;
 }
+
+#define UI4I_MASKA 0xffffffff00000000
+#define UI4I_MASKB 0x00000000ffffffff
 
 /************************************************************/
 /* DFKui4i()                                                */
@@ -958,6 +1944,8 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
   long * lptr_dest = (long*)dest;
+    long *lp_dest;
+    unsigned long *lp_src;
   char *FUNC="DFKui4i";
 
   HEclear();
@@ -967,36 +1955,181 @@ uint32 num_elm, source_stride, dest_stride;
     return FAIL;
   }
 
-  if(source_stride == 0 && dest_stride == 0) {
-    fast_processing = 1;
-  }
+    if(source_stride == 0 && dest_stride == 0)
+        fast_processing = 1;
   
-  if(fast_processing)
-    for(i = 0; i < num_elm; i++) {
-      lptr_dest[0] = 0;
-      dest[4] = source[0];
-      dest[5] = source[1];
-      dest[6] = source[2];
-      dest[7] = source[3];
-      source += 4;
-      lptr_dest ++;
-      dest = (uint8 *)lptr_dest;
-    }
-  else 
-    for(i = 0; i < num_elm; i++) {
-      dest[0] = 0;
-      dest[1] = 0;
-      dest[2] = 0;
-      dest[3] = 0;
-      dest[4] = source[0];
-      dest[5] = source[1];
-      dest[6] = source[2];
-      dest[7] = source[3];
-      dest += dest_stride;
-      source += source_stride;
-    }
+    if(fast_processing) {
+#ifndef DUFF_ui4i
+#if defined TEST2_ui4i
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm % 2;
+
+        n=num_elm/2;
+        lp_dest=(long *)dest;
+        lp_src=(unsigned long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long)); /* initialize to zeros */
+        for(i = 0; i < n; i++) {
+            lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+            lp_dest[1]=lp_src[0]&UI4I_MASKB;
+            lp_dest+=2;
+            lp_src++;
+          } /* end for */
+        if(odd_man_out)
+            *lp_dest=(lp_src[0]&UI4I_MASKA)>>32;
+#elif defined TEST1_ui4i
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm % 2;
+
+        n=num_elm/2;
+        lp_dest=(long *)dest;
+        lp_src=(unsigned long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long)); /* initialize to zeros */
+        for(i = 0; i < n; i++) {
+            *lp_dest++=(lp_src[0]&UI4I_MASKA)>>32;
+            *lp_dest++=lp_src[0]&UI4I_MASKB;
+            lp_src++;
+          } /* end for */
+        if(odd_man_out)
+            *lp_dest++=(lp_src[0]&UI4I_MASKA)>>32;
+#else
+        for(i = 0; i < num_elm; i++) {
+            lptr_dest[0]=0;
+            dest[4] = source[0];
+            dest[5] = source[1];
+            dest[6] = source[2];
+            dest[7] = source[3];
+            source += 4;
+            lptr_dest ++;
+            dest = (uint8 *)lptr_dest;
+          } /* end for */
+#endif
+#else   /* DUFF_ui4i */
+        uintn n;
+        int odd_man_out;        /* By default there are even num_elm */
+
+        lp_dest=(long *)dest;
+        lp_src=(unsigned long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long)); /* initialize to zeros */
+
+        odd_man_out = num_elm % 2;
+
+        num_elm/=2;
+        n=(num_elm+7)/8;
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+#ifdef QAK
+            case 15:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 14:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 13:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 12:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 11:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 10:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 9:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 8:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+#endif
+            case 7:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 6:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 5:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 4:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 3:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 2:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 1:
+                    lp_dest[0]=(lp_src[0]&UI4I_MASKA)>>32;
+                    lp_dest[1]=lp_src[0]&UI4I_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+                } while(--n>0);
+		}
+        if(odd_man_out)
+            *lp_dest=(lp_src[0]&UI4I_MASKA)>>32;
+#endif  /* DUFF_ui4i */
+      } /* end if */
+    else {
+        for(i = 0; i < num_elm; i++) {
+            dest[0] = 0;
+            dest[1] = 0;
+            dest[2] = 0;
+            dest[3] = 0;
+            dest[4] = source[0];
+            dest[5] = source[1];
+            dest[6] = source[2];
+            dest[7] = source[3];
+            dest += dest_stride;
+            source += source_stride;
+          } /* end for */
+      } /* end else */
   return 0;
 }
+
+#define UI4S_MASKA 0xffffffff00000000
+#define UI4S_MASKB 0x00000000ffffffff
+#define UI4S_MASKC 0x8000000000000000
+#define UI4S_MASKD 0x0000000080000000
 
 /************************************************************/
 /* DFKui4s()                                                */
@@ -1018,6 +2151,8 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
   long * lptr_dest = (long*)dest;
+    long *lp_dest;
+    long *lp_src;
   char *FUNC="DFKui4s";
 
   HEclear();
@@ -1027,37 +2162,257 @@ uint32 num_elm, source_stride, dest_stride;
     return FAIL;
   }
 
-  if(source_stride == 0 && dest_stride == 0) {
+  if(source_stride == 0 && dest_stride == 0)
     fast_processing = 1;
-  }
   
-  if(fast_processing)
-    for(i = 0; i < num_elm; i++) {
-      if((source[0] & 0x80))            /* Can't forget to sign extend */
-	lptr_dest[0] = 0xffffffffffffffff;
-      else
-	lptr_dest[0] = 0x0000000000000000;
-      dest[4] = source[0];
-      dest[5] = source[1];
-      dest[6] = source[2];
-      dest[7] = source[3];
-      source += 4;
-      lptr_dest ++;
-      dest = (uint8 *)lptr_dest;
-    }
+    if(fast_processing) {
+#ifndef DUFF_ui4s
+#if defined TEST2_ui4s
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm % 2;
+
+        n=num_elm/2;
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long)); /* initialize to zeros */
+        for(i = 0; i < n; i++) {
+            if(lp_src[0] & UI4S_MASKC)            /* Can't forget to sign extend */
+                lp_dest[0] = 0xffffffffffffffff;
+            lp_dest[0]=(lp_src[0]&UI4S_MASKA)>>32;
+            if(lp_src[0] & UI4S_MASKD)            /* Can't forget to sign extend */
+                lp_dest[1] = 0xffffffffffffffff;
+            lp_dest[1]=lp_src[0]&UI4S_MASKB;
+            lp_dest+=2;
+            lp_src++;
+          } /* end for */
+        if(odd_man_out) {
+            if(lp_src[0] & UI4S_MASKC)            /* Can't forget to sign extend */
+                *lp_dest = 0xffffffffffffffff;
+            *lp_dest=(lp_src[0]&UI4S_MASKA)>>32;
+          } /* end if */
+#elif defined TEST1_ui4s
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm % 2;
+
+        n=num_elm/2;
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long)); /* initialize to zeros */
+        for(i = 0; i < n; i++) {
+            if(lp_src[0] & UI4S_MASKC)            /* Can't forget to sign extend */
+                *lp_dest = 0xffffffffffffffff;
+            *lp_dest++=(lp_src[0]&UI4S_MASKA)>>32;
+            if(lp_src[0] & UI4S_MASKD)            /* Can't forget to sign extend */
+                *lp_dest = 0xffffffffffffffff;
+            *lp_dest++=lp_src[0]&UI4S_MASKB;
+            lp_src++;
+          } /* end for */
+        if(odd_man_out) {
+            if(lp_src[0] & UI4S_MASKC)            /* Can't forget to sign extend */
+                *lp_dest = 0xffffffffffffffff;
+            *lp_dest++=(lp_src[0]&UI4S_MASKA)>>32;
+          } /* end if */
+#else
+        for(i = 0; i < num_elm; i++) {
+            if((source[0] & 0x80))            /* Can't forget to sign extend */
+                lptr_dest[0] = 0xffffffffffffffff;
+            else
+                lptr_dest[0] = 0x0000000000000000;
+            dest[4] = source[0];
+            dest[5] = source[1];
+            dest[6] = source[2];
+            dest[7] = source[3];
+            source += 4;
+            lptr_dest ++;
+            dest = (uint8 *)lptr_dest;
+        }
+#endif
+#else   /* DUFF_ui4s */
+        uintn n;
+        int odd_man_out;        /* By default there are even num_elm */
+
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long)); /* initialize to zeros */
+
+        odd_man_out = num_elm % 2;
+
+        num_elm/=2;
+        n=(num_elm+7)/8;
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    if(lp_src[0] & UI4S_MASKC)            /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI4S_MASKA)>>32;
+                    if(lp_src[0] & UI4S_MASKD)            /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=lp_src[0]&UI4S_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+#ifdef QAK
+            case 15:
+                    if(lp_src[0] & UI4S_MASKC)            /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI4S_MASKA)>>32;
+                    if(lp_src[0] & UI4S_MASKD)            /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=lp_src[0]&UI4S_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 14:
+                    if(lp_src[0] & UI4S_MASKC)            /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI4S_MASKA)>>32;
+                    if(lp_src[0] & UI4S_MASKD)            /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=lp_src[0]&UI4S_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 13:
+                    if(lp_src[0] & UI4S_MASKC)            /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI4S_MASKA)>>32;
+                    if(lp_src[0] & UI4S_MASKD)            /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=lp_src[0]&UI4S_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 12:
+                    if(lp_src[0] & UI4S_MASKC)            /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI4S_MASKA)>>32;
+                    if(lp_src[0] & UI4S_MASKD)            /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=lp_src[0]&UI4S_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 11:
+                    if(lp_src[0] & UI4S_MASKC)            /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI4S_MASKA)>>32;
+                    if(lp_src[0] & UI4S_MASKD)            /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=lp_src[0]&UI4S_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 10:
+                    if(lp_src[0] & UI4S_MASKC)            /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI4S_MASKA)>>32;
+                    if(lp_src[0] & UI4S_MASKD)            /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=lp_src[0]&UI4S_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 9:
+                    if(lp_src[0] & UI4S_MASKC)            /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI4S_MASKA)>>32;
+                    if(lp_src[0] & UI4S_MASKD)            /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=lp_src[0]&UI4S_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 8:
+                    if(lp_src[0] & UI4S_MASKC)            /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI4S_MASKA)>>32;
+                    if(lp_src[0] & UI4S_MASKD)            /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=lp_src[0]&UI4S_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+#endif
+            case 7:
+                    if(lp_src[0] & UI4S_MASKC)            /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI4S_MASKA)>>32;
+                    if(lp_src[0] & UI4S_MASKD)            /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=lp_src[0]&UI4S_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 6:
+                    if(lp_src[0] & UI4S_MASKC)            /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI4S_MASKA)>>32;
+                    if(lp_src[0] & UI4S_MASKD)            /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=lp_src[0]&UI4S_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 5:
+                    if(lp_src[0] & UI4S_MASKC)            /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI4S_MASKA)>>32;
+                    if(lp_src[0] & UI4S_MASKD)            /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=lp_src[0]&UI4S_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 4:
+                    if(lp_src[0] & UI4S_MASKC)            /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI4S_MASKA)>>32;
+                    if(lp_src[0] & UI4S_MASKD)            /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=lp_src[0]&UI4S_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 3:
+                    if(lp_src[0] & UI4S_MASKC)            /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI4S_MASKA)>>32;
+                    if(lp_src[0] & UI4S_MASKD)            /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=lp_src[0]&UI4S_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 2:
+                    if(lp_src[0] & UI4S_MASKC)            /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI4S_MASKA)>>32;
+                    if(lp_src[0] & UI4S_MASKD)            /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=lp_src[0]&UI4S_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+            case 1:
+                    if(lp_src[0] & UI4S_MASKC)            /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&UI4S_MASKA)>>32;
+                    if(lp_src[0] & UI4S_MASKD)            /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=lp_src[0]&UI4S_MASKB;
+                    lp_dest+=2;
+                    lp_src++;
+                } while(--n>0);
+		}
+        if(odd_man_out) {
+            if(lp_src[0] & UI4S_MASKC)            /* Can't forget to sign extend */
+                *lp_dest = 0xffffffffffffffff;
+            *lp_dest=(lp_src[0]&UI4S_MASKA)>>32;
+          } /* end if */
+#endif  /* DUFF_ui4s */
+      } /* end if */
   else 
     for(i = 0; i < num_elm; i++) {
-      if((source[0] & 0x80)) {          /* Can't forget to sign extend */
-	dest[0] = 0xff;
-	dest[1] = 0xff;
-	dest[2] = 0xff;
-	dest[3] = 0xff;
+      if(source[0] & 0x80) {          /* Can't forget to sign extend */
+        dest[0] = 0xff;
+        dest[1] = 0xff;
+        dest[2] = 0xff;
+        dest[3] = 0xff;
       }
       else {
-	dest[0] = 0;
-	dest[1] = 0;
-	dest[2] = 0;
-	dest[3] = 0;
+        dest[0] = 0;
+        dest[1] = 0;
+        dest[2] = 0;
+        dest[3] = 0;
       }
       dest[4] = source[0];
       dest[5] = source[1];
@@ -1068,6 +2423,8 @@ uint32 num_elm, source_stride, dest_stride;
     }
   return 0;
 }
+
+#define UO4I_MASK 0x00000000ffffffff
 
 /************************************************************/
 /* DFKuo4i()                                                */
@@ -1084,11 +2441,13 @@ uint32 num_elm, source_stride, dest_stride;
 #endif /* PROTOTYPE */
 {
   int fast_processing=0;
-  register uint32 i;
+  register uintn i;
 #ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
+    long *lp_dest;
+    long *lp_src;
   char *FUNC="DFKuo4i";
 
   HEclear();
@@ -1102,7 +2461,25 @@ uint32 num_elm, source_stride, dest_stride;
     fast_processing = 1;
   }
   
-  if(fast_processing)
+  if(fast_processing) {
+
+#ifndef DUFF_uo4i
+#if defined TEST1_uo4i
+    int odd_man_out;        /* By default there are even num_elm */
+    intn n;
+
+    odd_man_out = num_elm % 2;
+
+    n=num_elm/2;
+    lp_dest=(long *)dest;
+    lp_src=(long *)source;
+    for(i = 0; i < n; i++) {
+        *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+        lp_src+=2;
+    }
+    if(odd_man_out)
+        *lp_dest=(lp_src[0]&UO4I_MASK)<<32;
+#else
     for(i = 0; i < num_elm; i++) {
       dest[0] = source[4];
       dest[1] = source[5];
@@ -1111,6 +2488,76 @@ uint32 num_elm, source_stride, dest_stride;
       dest += 4;
       source += 8;
     }
+#endif
+#else   /* DUFF_uo4i */
+        uintn n;
+        int odd_man_out;        /* By default there are even num_elm */
+
+        odd_man_out = num_elm % 2;
+
+        num_elm/=2;
+        n=(num_elm+7)/8;
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+#ifdef QAK
+            case 15:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 14:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 13:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 12:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 11:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 10:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 9:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 8:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+#endif
+            case 7:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 6:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 5:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 4:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 3:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 2:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+            case 1:
+                    *lp_dest++=((lp_src[0]&UO4I_MASK)<<32)|(lp_src[1]&UO4I_MASK);
+                    lp_src+=2;
+                } while(--n>0);
+		}
+        if(odd_man_out)
+            *lp_dest++=(lp_src[0]&UO4I_MASK)<<32;
+
+#endif  /* DUFF_uo4i */
+  }
   else 
     for(i = 0; i < num_elm; i++) {
       dest[0] = source[4];
@@ -1123,10 +2570,14 @@ uint32 num_elm, source_stride, dest_stride;
   return 0;
 }
 
-#define UI4_MASKA 0x8000000000000000
-#define UI4_MASKB 0x7f80000000000000
-#define UI4_MASKC 0x007fffff00000000
-#define UI4_MASKD 0x0000800000000000
+#define UI4F_MASKA 0x8000000000000000
+#define UI4F_MASKB 0x7f80000000000000
+#define UI4F_MASKC 0x007fffff00000000
+#define UI4F_MASKD 0x0000800000000000
+#define UI4F_MASKE 0x0000000080000000
+#define UI4F_MASKF 0x000000007f800000
+#define UI4F_MASKG 0x00000000007fffff
+#define UI4F_MASKH 0x0000000000008000
 
 /************************************************************/
 /* DFKui4f()                                                */
@@ -1159,7 +2610,7 @@ uint32 dest_stride;
 {
   int fast_processing = 0;              /* By default not array processed */
   int odd_man_out = 0;                  /* By default there are even num_elm */
-  register int i,j;
+  int i,j,n;
   long buf1;                            /* This is a temporary stride buf */
   long buf2;                            /* This is a temporary stride buf */
   uint8 * dud1 = (uint8*)&buf1;         /* Dummy pointer to buf1 for strides */
@@ -1181,91 +2632,273 @@ uint32 dest_stride;
   }
 
   /* Find out if it is OK to use faster array processing */
-  if(source_stride == 0 && dest_stride == 0) {
-      fast_processing = 1;            
-    if((num_elm % 2))                   /* If this is true, we have odd num */
-      odd_man_out = 1;
-  }
+  if(source_stride == 0 && dest_stride == 0)
+      fast_processing = 1;
 
-  if(fast_processing) {
-    num_elm = num_elm / 2;
-    for(i = 0; i < num_elm; i++) {
-      if(*(float*)lptr_src != 0) {
-	*lptr_dest = (((*lptr_src & UI4_MASKA) |
-		       ((*lptr_src & UI4_MASKB) >> 7) +
-		       (16258 << 48)) |     
-		      (((*lptr_src & UI4_MASKC) >> 8) | (UI4_MASKD)));
-	if(((*lptr_src & 0xffffffff00000000) << 1)== 0)
-	  *lptr_dest = 0;
-      }
-      else
-	*lptr_dest = *lptr_src;
-      lptr_dest++;
-      if(*(float*)lptr_src != 0) {
-	*lptr_dest = ((((((*lptr_src << 32) & UI4_MASKA)) |
-			(((*lptr_src <<32) & UI4_MASKB) >> 7) +
-			(16258 << 48)) |     
-		       ((((*lptr_src << 32) & UI4_MASKC) >> 8) |(UI4_MASKD))));
-	if(((*lptr_src & 0x00000000ffffffff) << 33)== 0)
-	  *lptr_dest = 0;
-      }
-      else
-	*lptr_dest = *lptr_src;
-      lptr_src++;
-      lptr_dest++;
-    }
-    if(odd_man_out){
-      if(((float*)lptr_src)[0] != 0) {
-	lptr_dest[0] = ((((lptr_src[0]) & UI4_MASKA) |
-		       (((lptr_src[0]) & UI4_MASKB) >> 7) + (16258 << 48)) |
-		      ((((lptr_src[0]) & UI4_MASKC) >> 8) | (UI4_MASKD)));
-	if(((lptr_src[0] & 0xffffffff00000000) << 1)== 0)
-	  lptr_dest[0] = 0;
-      }
-      else
-	*lptr_dest = *lptr_src;
-    }
-  }
-  else { /* We end up here if we are doing stride based processing */
-    buf1 = 0;
-    for(i = 0; i < num_elm; i++) {
-      dud1[0] = source[0];               /* Loop would be less efficient */
-      dud1[1] = source[1];
-      dud1[2] = source[2];
-      dud1[3] = source[3];
+    if(fast_processing) {
+#ifndef DUFF_ui4f
+#if defined TEST1_ui4f
+        odd_man_out = num_elm%2 ;
+        n = num_elm / 2;
+        for(i = 0; i < n; i++) {
+            lptr_dest[0] = ((*lptr_src & UI4F_MASKA) |
+                    ((*lptr_src & UI4F_MASKB) >> 7) + (16258 << 48)) |
+                    (((*lptr_src & UI4F_MASKC) >> 8) | (UI4F_MASKD));
+            lptr_dest[1] = ((((*lptr_src & UI4F_MASKE)) |
+                    ((*lptr_src & UI4F_MASKF) >> 7) + (16258 << 16)) |
+                    (((*lptr_src & UI4F_MASKG) >> 8) |(UI4F_MASKH))) << 32;
+            lptr_dest+=2;
+            lptr_src++;
+          } /* end for */
+        if(odd_man_out) {
+            lptr_dest[0] = (((lptr_src[0]) & UI4F_MASKA) |
+                (((lptr_src[0]) & UI4F_MASKB) >> 7) + (16258 << 48)) |
+                ((((lptr_src[0]) & UI4F_MASKC) >> 8) | (UI4F_MASKD));
+          } /* end if */
+#else
+        if((num_elm % 2))                   /* If this is true, we have odd num */
+          odd_man_out = 1;
+        num_elm = num_elm / 2;
+        for(i = 0; i < num_elm; i++) {
+            if(*(float*)lptr_src != 0) {
+                *lptr_dest = (((*lptr_src & UI4F_MASKA) |
+                        ((*lptr_src & UI4F_MASKB) >> 7) +
+                        (16258 << 48)) |
+                        (((*lptr_src & UI4F_MASKC) >> 8) | (UI4F_MASKD)));
+                if(((*lptr_src & 0xffffffff00000000) << 1)== 0)
+                    *lptr_dest = 0;
+              } /* end if */
+            else
+                *lptr_dest = *lptr_src;
+            lptr_dest++;
+            if(*(float*)lptr_src != 0) {
+                *lptr_dest = ((((((*lptr_src << 32) & UI4F_MASKA)) |
+                        (((*lptr_src <<32) & UI4F_MASKB) >> 7) +
+                        (16258 << 48)) |
+                        ((((*lptr_src << 32) & UI4F_MASKC) >> 8) |(UI4F_MASKD))));
+                if(((*lptr_src & 0x00000000ffffffff) << 33)== 0)
+                    *lptr_dest = 0;
+              } /* end if */
+            else
+                *lptr_dest = *lptr_src;
+            lptr_src++;
+            lptr_dest++;
+          } /* end for */
+        if(odd_man_out) {
+            if(((float*)lptr_src)[0] != 0) {
+                lptr_dest[0] = ((((lptr_src[0]) & UI4F_MASKA) |
+                    (((lptr_src[0]) & UI4F_MASKB) >> 7) + (16258 << 48)) |
+                    ((((lptr_src[0]) & UI4F_MASKC) >> 8) | (UI4F_MASKD)));
+                if(((lptr_src[0] & 0xffffffff00000000) << 1)== 0)
+                    lptr_dest[0] = 0;
+              } /* end if */
+            else
+                *lptr_dest = *lptr_src;
+          } /* end if */
+#endif
+#else   /* DUFF_ui4f */
+        odd_man_out = num_elm % 2;
 
-      if((float)buf1 != 0) {
-	buf2 = (((buf1 & UI4_MASKA) |
-		       ((buf1 & UI4_MASKB) >> 7) +
-		       (16258 << 48)) |     
-		      (((buf1 & UI4_MASKC) >> 8) | (UI4_MASKD)));
-	if((buf1 << 1)== 0)
-	  buf2 = 0;
-      }
-      else
-	buf2 = buf1;
+        num_elm/=2;
+        n=(num_elm+7)/8;
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    lptr_dest[0] = ((*lptr_src & UI4F_MASKA) |
+                            ((*lptr_src & UI4F_MASKB) >> 7) + (16258 << 48)) |
+                            (((*lptr_src & UI4F_MASKC) >> 8) | (UI4F_MASKD));
+                    lptr_dest[1] = ((((*lptr_src & UI4F_MASKE)) |
+                            ((*lptr_src & UI4F_MASKF) >> 7) + (16258 << 16)) |
+                            (((*lptr_src & UI4F_MASKG) >> 8) |(UI4F_MASKH))) << 32;
+                    lptr_dest+=2;
+                    lptr_src++;
+#ifdef QAK
+            case 15:
+                    lptr_dest[0] = ((*lptr_src & UI4F_MASKA) |
+                            ((*lptr_src & UI4F_MASKB) >> 7) + (16258 << 48)) |
+                            (((*lptr_src & UI4F_MASKC) >> 8) | (UI4F_MASKD));
+                    lptr_dest[1] = ((((*lptr_src & UI4F_MASKE)) |
+                            ((*lptr_src & UI4F_MASKF) >> 7) + (16258 << 16)) |
+                            (((*lptr_src & UI4F_MASKG) >> 8) |(UI4F_MASKH))) << 32;
+                    lptr_dest+=2;
+                    lptr_src++;
+            case 14:
+                    lptr_dest[0] = ((*lptr_src & UI4F_MASKA) |
+                            ((*lptr_src & UI4F_MASKB) >> 7) + (16258 << 48)) |
+                            (((*lptr_src & UI4F_MASKC) >> 8) | (UI4F_MASKD));
+                    lptr_dest[1] = ((((*lptr_src & UI4F_MASKE)) |
+                            ((*lptr_src & UI4F_MASKF) >> 7) + (16258 << 16)) |
+                            (((*lptr_src & UI4F_MASKG) >> 8) |(UI4F_MASKH))) << 32;
+                    lptr_dest+=2;
+                    lptr_src++;
+            case 13:
+                    lptr_dest[0] = ((*lptr_src & UI4F_MASKA) |
+                            ((*lptr_src & UI4F_MASKB) >> 7) + (16258 << 48)) |
+                            (((*lptr_src & UI4F_MASKC) >> 8) | (UI4F_MASKD));
+                    lptr_dest[1] = ((((*lptr_src & UI4F_MASKE)) |
+                            ((*lptr_src & UI4F_MASKF) >> 7) + (16258 << 16)) |
+                            (((*lptr_src & UI4F_MASKG) >> 8) |(UI4F_MASKH))) << 32;
+                    lptr_dest+=2;
+                    lptr_src++;
+            case 12:
+                    lptr_dest[0] = ((*lptr_src & UI4F_MASKA) |
+                            ((*lptr_src & UI4F_MASKB) >> 7) + (16258 << 48)) |
+                            (((*lptr_src & UI4F_MASKC) >> 8) | (UI4F_MASKD));
+                    lptr_dest[1] = ((((*lptr_src & UI4F_MASKE)) |
+                            ((*lptr_src & UI4F_MASKF) >> 7) + (16258 << 16)) |
+                            (((*lptr_src & UI4F_MASKG) >> 8) |(UI4F_MASKH))) << 32;
+                    lptr_dest+=2;
+                    lptr_src++;
+            case 11:
+                    lptr_dest[0] = ((*lptr_src & UI4F_MASKA) |
+                            ((*lptr_src & UI4F_MASKB) >> 7) + (16258 << 48)) |
+                            (((*lptr_src & UI4F_MASKC) >> 8) | (UI4F_MASKD));
+                    lptr_dest[1] = ((((*lptr_src & UI4F_MASKE)) |
+                            ((*lptr_src & UI4F_MASKF) >> 7) + (16258 << 16)) |
+                            (((*lptr_src & UI4F_MASKG) >> 8) |(UI4F_MASKH))) << 32;
+                    lptr_dest+=2;
+                    lptr_src++;
+            case 10:
+                    lptr_dest[0] = ((*lptr_src & UI4F_MASKA) |
+                            ((*lptr_src & UI4F_MASKB) >> 7) + (16258 << 48)) |
+                            (((*lptr_src & UI4F_MASKC) >> 8) | (UI4F_MASKD));
+                    lptr_dest[1] = ((((*lptr_src & UI4F_MASKE)) |
+                            ((*lptr_src & UI4F_MASKF) >> 7) + (16258 << 16)) |
+                            (((*lptr_src & UI4F_MASKG) >> 8) |(UI4F_MASKH))) << 32;
+                    lptr_dest+=2;
+                    lptr_src++;
+            case 9:
+                    lptr_dest[0] = ((*lptr_src & UI4F_MASKA) |
+                            ((*lptr_src & UI4F_MASKB) >> 7) + (16258 << 48)) |
+                            (((*lptr_src & UI4F_MASKC) >> 8) | (UI4F_MASKD));
+                    lptr_dest[1] = ((((*lptr_src & UI4F_MASKE)) |
+                            ((*lptr_src & UI4F_MASKF) >> 7) + (16258 << 16)) |
+                            (((*lptr_src & UI4F_MASKG) >> 8) |(UI4F_MASKH))) << 32;
+                    lptr_dest+=2;
+                    lptr_src++;
+            case 8:
+                    lptr_dest[0] = ((*lptr_src & UI4F_MASKA) |
+                            ((*lptr_src & UI4F_MASKB) >> 7) + (16258 << 48)) |
+                            (((*lptr_src & UI4F_MASKC) >> 8) | (UI4F_MASKD));
+                    lptr_dest[1] = ((((*lptr_src & UI4F_MASKE)) |
+                            ((*lptr_src & UI4F_MASKF) >> 7) + (16258 << 16)) |
+                            (((*lptr_src & UI4F_MASKG) >> 8) |(UI4F_MASKH))) << 32;
+                    lptr_dest+=2;
+                    lptr_src++;
+#endif
+            case 7:
+                    lptr_dest[0] = ((*lptr_src & UI4F_MASKA) |
+                            ((*lptr_src & UI4F_MASKB) >> 7) + (16258 << 48)) |
+                            (((*lptr_src & UI4F_MASKC) >> 8) | (UI4F_MASKD));
+                    lptr_dest[1] = ((((*lptr_src & UI4F_MASKE)) |
+                            ((*lptr_src & UI4F_MASKF) >> 7) + (16258 << 16)) |
+                            (((*lptr_src & UI4F_MASKG) >> 8) |(UI4F_MASKH))) << 32;
+                    lptr_dest+=2;
+                    lptr_src++;
+            case 6:
+                    lptr_dest[0] = ((*lptr_src & UI4F_MASKA) |
+                            ((*lptr_src & UI4F_MASKB) >> 7) + (16258 << 48)) |
+                            (((*lptr_src & UI4F_MASKC) >> 8) | (UI4F_MASKD));
+                    lptr_dest[1] = ((((*lptr_src & UI4F_MASKE)) |
+                            ((*lptr_src & UI4F_MASKF) >> 7) + (16258 << 16)) |
+                            (((*lptr_src & UI4F_MASKG) >> 8) |(UI4F_MASKH))) << 32;
+                    lptr_dest+=2;
+                    lptr_src++;
+            case 5:
+                    lptr_dest[0] = ((*lptr_src & UI4F_MASKA) |
+                            ((*lptr_src & UI4F_MASKB) >> 7) + (16258 << 48)) |
+                            (((*lptr_src & UI4F_MASKC) >> 8) | (UI4F_MASKD));
+                    lptr_dest[1] = ((((*lptr_src & UI4F_MASKE)) |
+                            ((*lptr_src & UI4F_MASKF) >> 7) + (16258 << 16)) |
+                            (((*lptr_src & UI4F_MASKG) >> 8) |(UI4F_MASKH))) << 32;
+                    lptr_dest+=2;
+                    lptr_src++;
+            case 4:
+                    lptr_dest[0] = ((*lptr_src & UI4F_MASKA) |
+                            ((*lptr_src & UI4F_MASKB) >> 7) + (16258 << 48)) |
+                            (((*lptr_src & UI4F_MASKC) >> 8) | (UI4F_MASKD));
+                    lptr_dest[1] = ((((*lptr_src & UI4F_MASKE)) |
+                            ((*lptr_src & UI4F_MASKF) >> 7) + (16258 << 16)) |
+                            (((*lptr_src & UI4F_MASKG) >> 8) |(UI4F_MASKH))) << 32;
+                    lptr_dest+=2;
+                    lptr_src++;
+            case 3:
+                    lptr_dest[0] = ((*lptr_src & UI4F_MASKA) |
+                            ((*lptr_src & UI4F_MASKB) >> 7) + (16258 << 48)) |
+                            (((*lptr_src & UI4F_MASKC) >> 8) | (UI4F_MASKD));
+                    lptr_dest[1] = ((((*lptr_src & UI4F_MASKE)) |
+                            ((*lptr_src & UI4F_MASKF) >> 7) + (16258 << 16)) |
+                            (((*lptr_src & UI4F_MASKG) >> 8) |(UI4F_MASKH))) << 32;
+                    lptr_dest+=2;
+                    lptr_src++;
+            case 2:
+                    lptr_dest[0] = ((*lptr_src & UI4F_MASKA) |
+                            ((*lptr_src & UI4F_MASKB) >> 7) + (16258 << 48)) |
+                            (((*lptr_src & UI4F_MASKC) >> 8) | (UI4F_MASKD));
+                    lptr_dest[1] = ((((*lptr_src & UI4F_MASKE)) |
+                            ((*lptr_src & UI4F_MASKF) >> 7) + (16258 << 16)) |
+                            (((*lptr_src & UI4F_MASKG) >> 8) |(UI4F_MASKH))) << 32;
+                    lptr_dest+=2;
+                    lptr_src++;
+            case 1:
+                    lptr_dest[0] = ((*lptr_src & UI4F_MASKA) |
+                            ((*lptr_src & UI4F_MASKB) >> 7) + (16258 << 48)) |
+                            (((*lptr_src & UI4F_MASKC) >> 8) | (UI4F_MASKD));
+                    lptr_dest[1] = ((((*lptr_src & UI4F_MASKE)) |
+                            ((*lptr_src & UI4F_MASKF) >> 7) + (16258 << 16)) |
+                            (((*lptr_src & UI4F_MASKG) >> 8) |(UI4F_MASKH))) << 32;
+                    lptr_dest+=2;
+                    lptr_src++;
+                } while(--n>0);
+		}
+        if(odd_man_out) {
+            lptr_dest[0] = (((lptr_src[0]) & UI4F_MASKA) |
+                (((lptr_src[0]) & UI4F_MASKB) >> 7) + (16258 << 48)) |
+                ((((lptr_src[0]) & UI4F_MASKC) >> 8) | (UI4F_MASKD));
+          } /* end if */
+#endif  /* DUFF_ui4f */
+      } /* end if */
+    else { /* We end up here if we are doing stride based processing */
+        buf1 = 0;
+        for(i = 0; i < num_elm; i++) {
+            dud1[0] = source[0];               /* Loop would be less efficient */
+            dud1[1] = source[1];
+            dud1[2] = source[2];
+            dud1[3] = source[3];
 
-      dest[0] = dud2[0];            /* Loop would be less efficient */
-      dest[1] = dud2[1];
-      dest[2] = dud2[2];
-      dest[3] = dud2[3];
-      dest[4] = dud2[4];
-      dest[5] = dud2[5];
-      dest[6] = dud2[6];
-      dest[7] = dud2[7];
+            if((float)buf1 != 0) {
+                buf2 = (((buf1 & UI4F_MASKA) |
+                        ((buf1 & UI4F_MASKB) >> 7) +
+                        (16258 << 48)) |
+                        (((buf1 & UI4F_MASKC) >> 8) | (UI4F_MASKD)));
+                if((buf1 << 1)== 0)
+                    buf2 = 0;
+              } /* end if */
+            else
+                buf2 = buf1;
 
-      source += source_stride;
-      dest += dest_stride;
-    }
-  }
+            dest[0] = dud2[0];            /* Loop would be less efficient */
+            dest[1] = dud2[1];
+            dest[2] = dud2[2];
+            dest[3] = dud2[3];
+            dest[4] = dud2[4];
+            dest[5] = dud2[5];
+            dest[6] = dud2[6];
+            dest[7] = dud2[7];
+
+            source += source_stride;
+            dest += dest_stride;
+          } /* end for */
+      } /* end else */
   return;
 }
 
 
-#define UO4_MASKA (0x8000000000000000)
-#define UO4_MASKB (0x7fff000000000000)
-#define UO4_MASKC (0x00007fffff000000)
-#define UO4_MASKD (0x0000000000800000)
+#define UO4F_MASKA (0x8000000000000000)
+#define UO4F_MASKB (0x7fff000000000000)
+#define UO4F_MASKC (0x00007fffff000000)
+#define UO4F_MASKD (0x0000000000800000)
+#define UO4F_MASKE (0xffffffff00000000)
 
 /************************************************************/
 /* DFKuo4f()                                                */
@@ -1295,7 +2928,7 @@ uint32 num_elm, source_stride, dest_stride;
 {
   int fast_processing = 0;              /* By default not array processed */
   int odd_man_out = 0;                  /* By default there are even num_elm */
-  register int i,j;
+  int i,j,n;
   long buf1;                            /* This is a temporary stride buf */
   long buf2;                            /* This is a temporary stride buf */
   uint8 * dud1 = (uint8*)&buf1;         /* Dummy pointer to buf1 for strides */
@@ -1317,82 +2950,296 @@ uint32 num_elm, source_stride, dest_stride;
   }
 
   /* Find out if it is OK to use faster array processing */
-  if(source_stride == 0 && dest_stride == 0) {
+  if(source_stride == 0 && dest_stride == 0)
       fast_processing = 1;            
-    if((num_elm % 2))                   /* If this is true, we have odd num */
-      odd_man_out = 1;
-  }
 
-  if(fast_processing) {
-    for(i = 0; i < (int)(num_elm/2); i++) {
-      buf1 = lptr_src[0];
-      buf2 = lptr_src[1];
-      if(buf1 != 0) 
-	buf1 = (((buf1 & UO4_MASKA) | 
-		 ((((buf1 & UO4_MASKB) >> 48) - 16258) << 55)) +
-		(((buf1 & UO4_MASKC) + 
-		  ((buf1 & UO4_MASKD) << 1)) << 8));
-      else
-	buf1 = 0;
-      if(buf2 != 0) 
-	buf2 = ((((buf2 & UO4_MASKA) | 
-		  ((((buf2 & UO4_MASKB) >> 48) - 16258) << 55)) +
-		 (((buf2 & UO4_MASKC) + 
-		   ((buf2 & UO4_MASKD) << 1)) << 8)) >> 32);
-      else
-        buf2 = 0;
-      lptr_dest[0] = ((buf1 & 0xffffffff00000000) | 
-		      (buf2 & 0x00000000ffffffff));
-      lptr_src ++;
-      lptr_src ++;
-      lptr_dest ++;
-    }
-    if(odd_man_out){
-      if(lptr_src[0] != 0)
-    lptr_dest[0] = (((lptr_src[0] & UO4_MASKA) | 
-		       ((((lptr_src[0] & UO4_MASKB) >> 48) - 16258) << 55)) +
-		      (((lptr_src[0] & UO4_MASKC) + 
-			((lptr_src[0] & UO4_MASKD) << 1)) << 8));
-      else
-	lptr_dest[0] = 0;
-    }
-  }
-  else { /* We end up here if we are doing stride based processing */
-    buf1 = 0;
-    for(i = 0; i < num_elm; i++) {
-      dud1[0] = source[0];               /* Loop would be less efficient */
-      dud1[1] = source[1];
-      dud1[2] = source[2];
-      dud1[3] = source[3];
-      dud1[4] = source[4];
-      dud1[5] = source[5];
-      dud1[6] = source[6];
-      dud1[7] = source[7];
-      
-      if((float)buf1 != 0) 
-	buf2 = (((buf1 & UO4_MASKA) | 
-		 ((((buf1 & UO4_MASKB) >> 48) -16258) << 55)) +
-		(((buf1 & UO4_MASKC) + ((buf1 & UO4_MASKD) << 1)) << 8));
-      else
-	buf2 = buf1;
+    if(fast_processing) {
+#ifndef DUFF_uo4f
+#if defined TEST1_uo4f
+        odd_man_out = num_elm%2;
+        n=num_elm/2;
+        for(i = 0; i < n; i++) {
+            lptr_dest[0] = ((((lptr_src[0] & UO4F_MASKA) |
+                    ((((lptr_src[0] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                    (((lptr_src[0] & UO4F_MASKC) +
+                    ((lptr_src[0] & UO4F_MASKD) << 1)) << 8)) & UO4F_MASKE) |
+                    (((((lptr_src[1] & UO4F_MASKA) |
+                    ((((lptr_src[1] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                    (((lptr_src[1] & UO4F_MASKC) +
+                    ((lptr_src[1] & UO4F_MASKD) << 1)) << 8))&UO4F_MASKE)>>32);
+            lptr_src+=2;
+            lptr_dest++;
+          } /* end for */
+        if(odd_man_out)
+            lptr_dest[0] = (((lptr_src[0] & UO4F_MASKA) |
+                    ((((lptr_src[0] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                    (((lptr_src[0] & UO4F_MASKC) +
+                    ((lptr_src[0] & UO4F_MASKD) << 1)) << 8));
+#else
+        if((num_elm % 2))                   /* If this is true, we have odd num */
+          odd_man_out = 1;
+        for(i = 0; i < (int)(num_elm/2); i++) {
+            buf1 = lptr_src[0];
+            buf2 = lptr_src[1];
+            if(buf1 != 0)
+                buf1 = (((buf1 & UO4F_MASKA) |
+                        ((((buf1 & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                        (((buf1 & UO4F_MASKC) +
+                        ((buf1 & UO4F_MASKD) << 1)) << 8));
+            else
+                buf1 = 0;
+            if(buf2 != 0)
+                buf2 = ((((buf2 & UO4F_MASKA) |
+                        ((((buf2 & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                        (((buf2 & UO4F_MASKC) +
+                        ((buf2 & UO4F_MASKD) << 1)) << 8)) >> 32);
+            else
+                buf2 = 0;
+            lptr_dest[0]=((buf1&0xffffffff00000000)|(buf2&0x00000000ffffffff));
+            lptr_src ++;
+            lptr_src ++;
+            lptr_dest ++;
+          } /* end for */
+        if(odd_man_out) {
+            if(lptr_src[0] != 0)
+                lptr_dest[0] = (((lptr_src[0] & UO4F_MASKA) |
+                        ((((lptr_src[0] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                        (((lptr_src[0] & UO4F_MASKC) +
+                        ((lptr_src[0] & UO4F_MASKD) << 1)) << 8));
+            else
+                lptr_dest[0] = 0;
+          } /* end if */
+#endif
+#else   /* DUFF_uo4f */
+        odd_man_out = num_elm % 2;
 
-      dest[0] = dud2[0];            /* Loop would be less efficient */
-      dest[1] = dud2[1];
-      dest[2] = dud2[2];
-      dest[3] = dud2[3];
+        num_elm/=2;
+        n=(num_elm+7)/8;
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    lptr_dest[0] = ((((lptr_src[0] & UO4F_MASKA) |
+                            ((((lptr_src[0] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & UO4F_MASKC) +
+                            ((lptr_src[0] & UO4F_MASKD) << 1)) << 8)) & UO4F_MASKE) |
+                            (((((lptr_src[1] & UO4F_MASKA) |
+                            ((((lptr_src[1] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & UO4F_MASKC) +
+                            ((lptr_src[1] & UO4F_MASKD) << 1)) << 8))&UO4F_MASKE)>>32);
+                    lptr_src+=2;
+                    lptr_dest++;
+#ifdef QAK
+            case 15:
+                    lptr_dest[0] = ((((lptr_src[0] & UO4F_MASKA) |
+                            ((((lptr_src[0] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & UO4F_MASKC) +
+                            ((lptr_src[0] & UO4F_MASKD) << 1)) << 8)) & UO4F_MASKE) |
+                            (((((lptr_src[1] & UO4F_MASKA) |
+                            ((((lptr_src[1] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & UO4F_MASKC) +
+                            ((lptr_src[1] & UO4F_MASKD) << 1)) << 8))&UO4F_MASKE)>>32);
+                    lptr_src+=2;
+                    lptr_dest++;
+            case 14:
+                    lptr_dest[0] = ((((lptr_src[0] & UO4F_MASKA) |
+                            ((((lptr_src[0] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & UO4F_MASKC) +
+                            ((lptr_src[0] & UO4F_MASKD) << 1)) << 8)) & UO4F_MASKE) |
+                            (((((lptr_src[1] & UO4F_MASKA) |
+                            ((((lptr_src[1] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & UO4F_MASKC) +
+                            ((lptr_src[1] & UO4F_MASKD) << 1)) << 8))&UO4F_MASKE)>>32);
+                    lptr_src+=2;
+                    lptr_dest++;
+            case 13:
+                    lptr_dest[0] = ((((lptr_src[0] & UO4F_MASKA) |
+                            ((((lptr_src[0] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & UO4F_MASKC) +
+                            ((lptr_src[0] & UO4F_MASKD) << 1)) << 8)) & UO4F_MASKE) |
+                            (((((lptr_src[1] & UO4F_MASKA) |
+                            ((((lptr_src[1] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & UO4F_MASKC) +
+                            ((lptr_src[1] & UO4F_MASKD) << 1)) << 8))&UO4F_MASKE)>>32);
+                    lptr_src+=2;
+                    lptr_dest++;
+            case 12:
+                    lptr_dest[0] = ((((lptr_src[0] & UO4F_MASKA) |
+                            ((((lptr_src[0] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & UO4F_MASKC) +
+                            ((lptr_src[0] & UO4F_MASKD) << 1)) << 8)) & UO4F_MASKE) |
+                            (((((lptr_src[1] & UO4F_MASKA) |
+                            ((((lptr_src[1] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & UO4F_MASKC) +
+                            ((lptr_src[1] & UO4F_MASKD) << 1)) << 8))&UO4F_MASKE)>>32);
+                    lptr_src+=2;
+                    lptr_dest++;
+            case 11:
+                    lptr_dest[0] = ((((lptr_src[0] & UO4F_MASKA) |
+                            ((((lptr_src[0] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & UO4F_MASKC) +
+                            ((lptr_src[0] & UO4F_MASKD) << 1)) << 8)) & UO4F_MASKE) |
+                            (((((lptr_src[1] & UO4F_MASKA) |
+                            ((((lptr_src[1] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & UO4F_MASKC) +
+                            ((lptr_src[1] & UO4F_MASKD) << 1)) << 8))&UO4F_MASKE)>>32);
+                    lptr_src+=2;
+                    lptr_dest++;
+            case 10:
+                    lptr_dest[0] = ((((lptr_src[0] & UO4F_MASKA) |
+                            ((((lptr_src[0] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & UO4F_MASKC) +
+                            ((lptr_src[0] & UO4F_MASKD) << 1)) << 8)) & UO4F_MASKE) |
+                            (((((lptr_src[1] & UO4F_MASKA) |
+                            ((((lptr_src[1] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & UO4F_MASKC) +
+                            ((lptr_src[1] & UO4F_MASKD) << 1)) << 8))&UO4F_MASKE)>>32);
+                    lptr_src+=2;
+                    lptr_dest++;
+            case 9:
+                    lptr_dest[0] = ((((lptr_src[0] & UO4F_MASKA) |
+                            ((((lptr_src[0] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & UO4F_MASKC) +
+                            ((lptr_src[0] & UO4F_MASKD) << 1)) << 8)) & UO4F_MASKE) |
+                            (((((lptr_src[1] & UO4F_MASKA) |
+                            ((((lptr_src[1] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & UO4F_MASKC) +
+                            ((lptr_src[1] & UO4F_MASKD) << 1)) << 8))&UO4F_MASKE)>>32);
+                    lptr_src+=2;
+                    lptr_dest++;
+            case 8:
+                    lptr_dest[0] = ((((lptr_src[0] & UO4F_MASKA) |
+                            ((((lptr_src[0] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & UO4F_MASKC) +
+                            ((lptr_src[0] & UO4F_MASKD) << 1)) << 8)) & UO4F_MASKE) |
+                            (((((lptr_src[1] & UO4F_MASKA) |
+                            ((((lptr_src[1] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & UO4F_MASKC) +
+                            ((lptr_src[1] & UO4F_MASKD) << 1)) << 8))&UO4F_MASKE)>>32);
+                    lptr_src+=2;
+                    lptr_dest++;
+#endif
+            case 7:
+                    lptr_dest[0] = ((((lptr_src[0] & UO4F_MASKA) |
+                            ((((lptr_src[0] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & UO4F_MASKC) +
+                            ((lptr_src[0] & UO4F_MASKD) << 1)) << 8)) & UO4F_MASKE) |
+                            (((((lptr_src[1] & UO4F_MASKA) |
+                            ((((lptr_src[1] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & UO4F_MASKC) +
+                            ((lptr_src[1] & UO4F_MASKD) << 1)) << 8))&UO4F_MASKE)>>32);
+                    lptr_src+=2;
+                    lptr_dest++;
+            case 6:
+                    lptr_dest[0] = ((((lptr_src[0] & UO4F_MASKA) |
+                            ((((lptr_src[0] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & UO4F_MASKC) +
+                            ((lptr_src[0] & UO4F_MASKD) << 1)) << 8)) & UO4F_MASKE) |
+                            (((((lptr_src[1] & UO4F_MASKA) |
+                            ((((lptr_src[1] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & UO4F_MASKC) +
+                            ((lptr_src[1] & UO4F_MASKD) << 1)) << 8))&UO4F_MASKE)>>32);
+                    lptr_src+=2;
+                    lptr_dest++;
+            case 5:
+                    lptr_dest[0] = ((((lptr_src[0] & UO4F_MASKA) |
+                            ((((lptr_src[0] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & UO4F_MASKC) +
+                            ((lptr_src[0] & UO4F_MASKD) << 1)) << 8)) & UO4F_MASKE) |
+                            (((((lptr_src[1] & UO4F_MASKA) |
+                            ((((lptr_src[1] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & UO4F_MASKC) +
+                            ((lptr_src[1] & UO4F_MASKD) << 1)) << 8))&UO4F_MASKE)>>32);
+                    lptr_src+=2;
+                    lptr_dest++;
+            case 4:
+                    lptr_dest[0] = ((((lptr_src[0] & UO4F_MASKA) |
+                            ((((lptr_src[0] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & UO4F_MASKC) +
+                            ((lptr_src[0] & UO4F_MASKD) << 1)) << 8)) & UO4F_MASKE) |
+                            (((((lptr_src[1] & UO4F_MASKA) |
+                            ((((lptr_src[1] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & UO4F_MASKC) +
+                            ((lptr_src[1] & UO4F_MASKD) << 1)) << 8))&UO4F_MASKE)>>32);
+                    lptr_src+=2;
+                    lptr_dest++;
+            case 3:
+                    lptr_dest[0] = ((((lptr_src[0] & UO4F_MASKA) |
+                            ((((lptr_src[0] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & UO4F_MASKC) +
+                            ((lptr_src[0] & UO4F_MASKD) << 1)) << 8)) & UO4F_MASKE) |
+                            (((((lptr_src[1] & UO4F_MASKA) |
+                            ((((lptr_src[1] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & UO4F_MASKC) +
+                            ((lptr_src[1] & UO4F_MASKD) << 1)) << 8))&UO4F_MASKE)>>32);
+                    lptr_src+=2;
+                    lptr_dest++;
+            case 2:
+                    lptr_dest[0] = ((((lptr_src[0] & UO4F_MASKA) |
+                            ((((lptr_src[0] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & UO4F_MASKC) +
+                            ((lptr_src[0] & UO4F_MASKD) << 1)) << 8)) & UO4F_MASKE) |
+                            (((((lptr_src[1] & UO4F_MASKA) |
+                            ((((lptr_src[1] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & UO4F_MASKC) +
+                            ((lptr_src[1] & UO4F_MASKD) << 1)) << 8))&UO4F_MASKE)>>32);
+                    lptr_src+=2;
+                    lptr_dest++;
+            case 1:
+                    lptr_dest[0] = ((((lptr_src[0] & UO4F_MASKA) |
+                            ((((lptr_src[0] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & UO4F_MASKC) +
+                            ((lptr_src[0] & UO4F_MASKD) << 1)) << 8)) & UO4F_MASKE) |
+                            (((((lptr_src[1] & UO4F_MASKA) |
+                            ((((lptr_src[1] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & UO4F_MASKC) +
+                            ((lptr_src[1] & UO4F_MASKD) << 1)) << 8))&UO4F_MASKE)>>32);
+                    lptr_src+=2;
+                    lptr_dest++;
+                } while(--n>0);
+		}
+        if(odd_man_out)
+            lptr_dest[0] = (((lptr_src[0] & UO4F_MASKA) |
+                    ((((lptr_src[0] & UO4F_MASKB) >> 48) - 16258) << 55)) +
+                    (((lptr_src[0] & UO4F_MASKC) +
+                    ((lptr_src[0] & UO4F_MASKD) << 1)) << 8));
+#endif  /* DUFF_uo4f */
+      } /* end if */
+    else { /* We end up here if we are doing stride based processing */
+        buf1 = 0;
+        for(i = 0; i < num_elm; i++) {
+            dud1[0] = source[0];               /* Loop would be less efficient */
+            dud1[1] = source[1];
+            dud1[2] = source[2];
+            dud1[3] = source[3];
+            dud1[4] = source[4];
+            dud1[5] = source[5];
+            dud1[6] = source[6];
+            dud1[7] = source[7];
 
-      source += source_stride;
-      dest += dest_stride;
-    }
-  }
+            if((float)buf1 != 0)
+                buf2 = (((buf1 & UO4F_MASKA) |
+                        ((((buf1 & UO4F_MASKB) >> 48) -16258) << 55)) +
+                        (((buf1 & UO4F_MASKC) + ((buf1 & UO4F_MASKD) << 1)) << 8));
+            else
+                buf2 = buf1;
+
+            dest[0] = dud2[0];            /* Loop would be less efficient */
+            dest[1] = dud2[1];
+            dest[2] = dud2[2];
+            dest[3] = dud2[3];
+
+            source += source_stride;
+            dest += dest_stride;
+          } /* end for */
+      } /* end else */
   return;
 }
 
-#define UI8_MASKA 0x8000000000000000
-#define UI8_MASKB 0x7ff0000000000000
-#define UI8_MASKC 0x000fffffffffffff
-#define UI8_MASKD 0x0000000000000008
-#define UI8_MASKE 0x0000800000000000
+#define UI8F_MASKA 0x8000000000000000
+#define UI8F_MASKB 0x7ff0000000000000
+#define UI8F_MASKC 0x000fffffffffffff
+#define UI8F_MASKD 0x0000000000000008
+#define UI8F_MASKE 0x0000800000000000
 
 /************************************************************/
 /* DFKui8f()                                                */
@@ -1409,7 +3256,7 @@ uint32 num_elm, source_stride, dest_stride;
 #endif /* PROTOTYPE */
 {
   int fast_processing = 0;              /* By default not array processed */
-  register int i,j;
+  int i,j,n;
   long buf;                             /* This is a temporary stride buf */
   uint8 * dud = (uint8*)&buf;           /* Dummy pointer to buf1 for strides */
 #ifdef PROTOTYPE
@@ -1432,64 +3279,211 @@ uint32 num_elm, source_stride, dest_stride;
   if(source_stride == 0 && dest_stride == 0) 
     fast_processing = 1;            
 
-  if(fast_processing)
-    for(i = 0; i < num_elm; i ++) {
-      if (lptr_src[0] != 0) {
-	lptr_dest[0] = (((lptr_src[0] & UI8_MASKA) |
-			 ((lptr_src[0] & UI8_MASKB) >> 4) + (15362 << 48)) |
-			((((lptr_src[0] & UI8_MASKC) + 
-			   ((lptr_src[0] & UI8_MASKD) << 1)) >> 5) | 
-			 (UI8_MASKE)) );
-	if ((lptr_dest[0] << 1) == 0) 
-	  lptr_dest[0] = 0;
-      }
-      else 
-	lptr_dest[0] = 0;
-      lptr_src++;
-      lptr_dest++;
-    }
-  else 
-    for(i = 0; i < num_elm; i ++) {
-      dud[0] = source[0];
-      dud[1] = source[1];
-      dud[2] = source[2];
-      dud[3] = source[3];
-      dud[4] = source[4];
-      dud[5] = source[5];
-      dud[6] = source[6];
-      dud[7] = source[7];
+    if(fast_processing) {
+#ifndef DUFF_ui8f
+#if defined TEST2_ui8f
+        n=num_elm;
+        for(i = 0; i < n; i ++) {
+            buf=lptr_src[0];
+            lptr_dest[0] = ((buf & UI8F_MASKA) |
+                    ((buf & UI8F_MASKB) >> 4) + (15362 << 48)) |
+                    ((((buf & UI8F_MASKC) +
+                    ((buf & UI8F_MASKD) << 1)) >> 5) | UI8F_MASKE);
+            lptr_src++;
+            lptr_dest++;
+          } /* end for */
+#elif defined TEST1_ui8f
+        n=num_elm;
+        for(i = 0; i < n; i ++) {
+            lptr_dest[0] = ((lptr_src[0] & UI8F_MASKA) |
+                    ((lptr_src[0] & UI8F_MASKB) >> 4) + (15362 << 48)) |
+                    ((((lptr_src[0] & UI8F_MASKC) +
+                    ((lptr_src[0] & UI8F_MASKD) << 1)) >> 5) | UI8F_MASKE);
+            lptr_src++;
+            lptr_dest++;
+          } /* end for */
+#else
+        for(i = 0; i < num_elm; i ++) {
+            if (lptr_src[0] != 0) {
+                lptr_dest[0] = (((lptr_src[0] & UI8F_MASKA) |
+                        ((lptr_src[0] & UI8F_MASKB) >> 4) + (15362 << 48)) |
+                        ((((lptr_src[0] & UI8F_MASKC) +
+                        ((lptr_src[0] & UI8F_MASKD) << 1)) >> 5) |
+                        (UI8F_MASKE)) );
+                if((lptr_dest[0] << 1) == 0)
+                    lptr_dest[0] = 0;
+              } /* end if */
+            else
+                lptr_dest[0] = 0;
+            lptr_src++;
+            lptr_dest++;
+          } /* end for */
+#endif
+#else   /* DUFF_ui8f */
+        n=(num_elm+7)/8;
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    lptr_dest[0] = ((lptr_src[0] & UI8F_MASKA) |
+                            ((lptr_src[0] & UI8F_MASKB) >> 4) + (15362 << 48)) |
+                            ((((lptr_src[0] & UI8F_MASKC) +
+                            ((lptr_src[0] & UI8F_MASKD) << 1)) >> 5) | UI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+#ifdef QAK
+            case 15:
+                    lptr_dest[0] = ((lptr_src[0] & UI8F_MASKA) |
+                            ((lptr_src[0] & UI8F_MASKB) >> 4) + (15362 << 48)) |
+                            ((((lptr_src[0] & UI8F_MASKC) +
+                            ((lptr_src[0] & UI8F_MASKD) << 1)) >> 5) | UI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 14:
+                    lptr_dest[0] = ((lptr_src[0] & UI8F_MASKA) |
+                            ((lptr_src[0] & UI8F_MASKB) >> 4) + (15362 << 48)) |
+                            ((((lptr_src[0] & UI8F_MASKC) +
+                            ((lptr_src[0] & UI8F_MASKD) << 1)) >> 5) | UI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 13:
+                    lptr_dest[0] = ((lptr_src[0] & UI8F_MASKA) |
+                            ((lptr_src[0] & UI8F_MASKB) >> 4) + (15362 << 48)) |
+                            ((((lptr_src[0] & UI8F_MASKC) +
+                            ((lptr_src[0] & UI8F_MASKD) << 1)) >> 5) | UI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 12:
+                    lptr_dest[0] = ((lptr_src[0] & UI8F_MASKA) |
+                            ((lptr_src[0] & UI8F_MASKB) >> 4) + (15362 << 48)) |
+                            ((((lptr_src[0] & UI8F_MASKC) +
+                            ((lptr_src[0] & UI8F_MASKD) << 1)) >> 5) | UI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 11:
+                    lptr_dest[0] = ((lptr_src[0] & UI8F_MASKA) |
+                            ((lptr_src[0] & UI8F_MASKB) >> 4) + (15362 << 48)) |
+                            ((((lptr_src[0] & UI8F_MASKC) +
+                            ((lptr_src[0] & UI8F_MASKD) << 1)) >> 5) | UI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 10:
+                    lptr_dest[0] = ((lptr_src[0] & UI8F_MASKA) |
+                            ((lptr_src[0] & UI8F_MASKB) >> 4) + (15362 << 48)) |
+                            ((((lptr_src[0] & UI8F_MASKC) +
+                            ((lptr_src[0] & UI8F_MASKD) << 1)) >> 5) | UI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 9:
+                    lptr_dest[0] = ((lptr_src[0] & UI8F_MASKA) |
+                            ((lptr_src[0] & UI8F_MASKB) >> 4) + (15362 << 48)) |
+                            ((((lptr_src[0] & UI8F_MASKC) +
+                            ((lptr_src[0] & UI8F_MASKD) << 1)) >> 5) | UI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 8:
+                    lptr_dest[0] = ((lptr_src[0] & UI8F_MASKA) |
+                            ((lptr_src[0] & UI8F_MASKB) >> 4) + (15362 << 48)) |
+                            ((((lptr_src[0] & UI8F_MASKC) +
+                            ((lptr_src[0] & UI8F_MASKD) << 1)) >> 5) | UI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+#endif
+            case 7:
+                    lptr_dest[0] = ((lptr_src[0] & UI8F_MASKA) |
+                            ((lptr_src[0] & UI8F_MASKB) >> 4) + (15362 << 48)) |
+                            ((((lptr_src[0] & UI8F_MASKC) +
+                            ((lptr_src[0] & UI8F_MASKD) << 1)) >> 5) | UI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 6:
+                    lptr_dest[0] = ((lptr_src[0] & UI8F_MASKA) |
+                            ((lptr_src[0] & UI8F_MASKB) >> 4) + (15362 << 48)) |
+                            ((((lptr_src[0] & UI8F_MASKC) +
+                            ((lptr_src[0] & UI8F_MASKD) << 1)) >> 5) | UI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 5:
+                    lptr_dest[0] = ((lptr_src[0] & UI8F_MASKA) |
+                            ((lptr_src[0] & UI8F_MASKB) >> 4) + (15362 << 48)) |
+                            ((((lptr_src[0] & UI8F_MASKC) +
+                            ((lptr_src[0] & UI8F_MASKD) << 1)) >> 5) | UI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 4:
+                    lptr_dest[0] = ((lptr_src[0] & UI8F_MASKA) |
+                            ((lptr_src[0] & UI8F_MASKB) >> 4) + (15362 << 48)) |
+                            ((((lptr_src[0] & UI8F_MASKC) +
+                            ((lptr_src[0] & UI8F_MASKD) << 1)) >> 5) | UI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 3:
+                    lptr_dest[0] = ((lptr_src[0] & UI8F_MASKA) |
+                            ((lptr_src[0] & UI8F_MASKB) >> 4) + (15362 << 48)) |
+                            ((((lptr_src[0] & UI8F_MASKC) +
+                            ((lptr_src[0] & UI8F_MASKD) << 1)) >> 5) | UI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 2:
+                    lptr_dest[0] = ((lptr_src[0] & UI8F_MASKA) |
+                            ((lptr_src[0] & UI8F_MASKB) >> 4) + (15362 << 48)) |
+                            ((((lptr_src[0] & UI8F_MASKC) +
+                            ((lptr_src[0] & UI8F_MASKD) << 1)) >> 5) | UI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 1:
+                    lptr_dest[0] = ((lptr_src[0] & UI8F_MASKA) |
+                            ((lptr_src[0] & UI8F_MASKB) >> 4) + (15362 << 48)) |
+                            ((((lptr_src[0] & UI8F_MASKC) +
+                            ((lptr_src[0] & UI8F_MASKD) << 1)) >> 5) | UI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+                } while(--n>0);
+		}
+#endif  /* DUFF_ui8f */
+      } /* end if */
+    else
+        for(i = 0; i < num_elm; i ++) {
+            dud[0] = source[0];
+            dud[1] = source[1];
+            dud[2] = source[2];
+            dud[3] = source[3];
+            dud[4] = source[4];
+            dud[5] = source[5];
+            dud[6] = source[6];
+            dud[7] = source[7];
 
-      if (buf != 0) {
-	buf = (((buf & UI8_MASKA) | ((buf & UI8_MASKB) >> 4) + (15362 << 48)) |
-	       ((((buf & UI8_MASKC) + ((buf & UI8_MASKD) << 1)) >> 5) | 
-		(UI8_MASKE)) );
-	if ((buf << 1) == 0) 
-	  buf = 0;
-      }
-      else 
-	buf = 0;
+            if (buf != 0) {
+                buf = (((buf & UI8F_MASKA) |
+                        ((buf & UI8F_MASKB) >> 4) + (15362 << 48)) |
+                        ((((buf & UI8F_MASKC) + ((buf & UI8F_MASKD) << 1)) >> 5) |
+                        (UI8F_MASKE)) );
+                if ((buf << 1) == 0)
+                    buf = 0;
+              } /* end if */
+            else
+                buf = 0;
 
-      dest[0] = dud[0];
-      dest[1] = dud[1];
-      dest[2] = dud[2];
-      dest[3] = dud[3];
-      dest[4] = dud[4];
-      dest[5] = dud[5];
-      dest[6] = dud[6];
-      dest[7] = dud[7];
+            dest[0] = dud[0];
+            dest[1] = dud[1];
+            dest[2] = dud[2];
+            dest[3] = dud[3];
+            dest[4] = dud[4];
+            dest[5] = dud[5];
+            dest[6] = dud[6];
+            dest[7] = dud[7];
 
-      source += source_stride;
-      dest += dest_stride;
-    }
+            source += source_stride;
+            dest += dest_stride;
+          } /* end for */
   return;
 }
 
-#define UO8_MASKA 0x8000000000000000
-#define UO8_MASKB 0x7fff000000000000
-#define UO8_MASKC 0x00007fffffffffff
+#define UO8F_MASKA 0x8000000000000000
+#define UO8F_MASKB 0x7fff000000000000
+#define UO8F_MASKC 0x00007fffffffffff
 
 /************************************************************/
-/* DFKuo64f()                                               */
+/* DFKuo8f()                                                */
 /* -->Unicos routine for exporting 64 bit floats            */
 /************************************************************/
 
@@ -1504,7 +3498,7 @@ uint32 num_elm, source_stride, dest_stride;
 {
   int fast_processing = 0;              /* By default not array processed */
   int odd_man_out = 0;                  /* By default there are even num_elm */
-  register int i,j;
+  int i,j,n;
   long buf;                             /* This is a temporary stride buf */
   uint8 * dud = (uint8*)&buf;           /* Dummy pointer to buf1 for strides */
 #ifdef PROTOTYPE
@@ -1527,57 +3521,184 @@ uint32 num_elm, source_stride, dest_stride;
   if(source_stride == 0 && dest_stride == 0)
       fast_processing = 1;            
 
-  if(fast_processing)
-    for(i = 0; i < num_elm; i ++) {
-      if (lptr_src[0] != 0) 
-    lptr_dest[0] = (((lptr_src[0] & UO8_MASKA) |
-             (((((lptr_src[0] & UO8_MASKB) >> 48) - 15362) << 53) >> 1)) +
-            ((lptr_src[0] & UO8_MASKC) << 5));
-      else 
-	lptr_dest[0] = 0;
-      lptr_src++;
-      lptr_dest++;
-    }
-  else 
-    for(i = 0; i < num_elm; i ++) {
-      dud[0] = source[0];
-      dud[1] = source[1];
-      dud[2] = source[2];
-      dud[3] = source[3];
-      dud[4] = source[4];
-      dud[5] = source[5];
-      dud[6] = source[6];
-      dud[7] = source[7];
+    if(fast_processing) {
+#ifndef DUFF_uo8f
+#if defined TEST1_uo8f
+        n=num_elm;
+        for(i = 0; i < n; i ++) {
+            lptr_dest[0] = ((lptr_src[0] & UO8F_MASKA) |
+                    (((((lptr_src[0] & UO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                    ((lptr_src[0] & UO8F_MASKC) << 5);
+            lptr_src++;
+            lptr_dest++;
+          } /* end for */
+#else
+        for(i = 0; i < num_elm; i ++) {
+            if (lptr_src[0] != 0)
+                lptr_dest[0] = (((lptr_src[0] & UO8F_MASKA) |
+                        (((((lptr_src[0] & UO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                        ((lptr_src[0] & UO8F_MASKC) << 5));
+            else
+                lptr_dest[0] = 0;
+            lptr_src++;
+            lptr_dest++;
+          } /* end for */
+#endif
+#else   /* DUFF_uo8f */
+        n=(num_elm+7)/8;
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    lptr_dest[0] = ((lptr_src[0] & UO8F_MASKA) |
+                            (((((lptr_src[0] & UO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & UO8F_MASKC) << 5);
+                    lptr_src++;
+                    lptr_dest++;
+#ifdef QAK
+            case 15:
+                    lptr_dest[0] = ((lptr_src[0] & UO8F_MASKA) |
+                            (((((lptr_src[0] & UO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & UO8F_MASKC) << 5);
+                    lptr_src++;
+                    lptr_dest++;
+            case 14:
+                    lptr_dest[0] = ((lptr_src[0] & UO8F_MASKA) |
+                            (((((lptr_src[0] & UO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & UO8F_MASKC) << 5);
+                    lptr_src++;
+                    lptr_dest++;
+            case 13:
+                    lptr_dest[0] = ((lptr_src[0] & UO8F_MASKA) |
+                            (((((lptr_src[0] & UO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & UO8F_MASKC) << 5);
+                    lptr_src++;
+                    lptr_dest++;
+            case 12:
+                    lptr_dest[0] = ((lptr_src[0] & UO8F_MASKA) |
+                            (((((lptr_src[0] & UO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & UO8F_MASKC) << 5);
+                    lptr_src++;
+                    lptr_dest++;
+            case 11:
+                    lptr_dest[0] = ((lptr_src[0] & UO8F_MASKA) |
+                            (((((lptr_src[0] & UO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & UO8F_MASKC) << 5);
+                    lptr_src++;
+                    lptr_dest++;
+            case 10:
+                    lptr_dest[0] = ((lptr_src[0] & UO8F_MASKA) |
+                            (((((lptr_src[0] & UO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & UO8F_MASKC) << 5);
+                    lptr_src++;
+                    lptr_dest++;
+            case 9:
+                    lptr_dest[0] = ((lptr_src[0] & UO8F_MASKA) |
+                            (((((lptr_src[0] & UO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & UO8F_MASKC) << 5);
+                    lptr_src++;
+                    lptr_dest++;
+            case 8:
+                    lptr_dest[0] = ((lptr_src[0] & UO8F_MASKA) |
+                            (((((lptr_src[0] & UO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & UO8F_MASKC) << 5);
+                    lptr_src++;
+                    lptr_dest++;
+#endif
+            case 7:
+                    lptr_dest[0] = ((lptr_src[0] & UO8F_MASKA) |
+                            (((((lptr_src[0] & UO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & UO8F_MASKC) << 5);
+                    lptr_src++;
+                    lptr_dest++;
+            case 6:
+                    lptr_dest[0] = ((lptr_src[0] & UO8F_MASKA) |
+                            (((((lptr_src[0] & UO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & UO8F_MASKC) << 5);
+                    lptr_src++;
+                    lptr_dest++;
+            case 5:
+                    lptr_dest[0] = ((lptr_src[0] & UO8F_MASKA) |
+                            (((((lptr_src[0] & UO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & UO8F_MASKC) << 5);
+                    lptr_src++;
+                    lptr_dest++;
+            case 4:
+                    lptr_dest[0] = ((lptr_src[0] & UO8F_MASKA) |
+                            (((((lptr_src[0] & UO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & UO8F_MASKC) << 5);
+                    lptr_src++;
+                    lptr_dest++;
+            case 3:
+                    lptr_dest[0] = ((lptr_src[0] & UO8F_MASKA) |
+                            (((((lptr_src[0] & UO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & UO8F_MASKC) << 5);
+                    lptr_src++;
+                    lptr_dest++;
+            case 2:
+                    lptr_dest[0] = ((lptr_src[0] & UO8F_MASKA) |
+                            (((((lptr_src[0] & UO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & UO8F_MASKC) << 5);
+                    lptr_src++;
+                    lptr_dest++;
+            case 1:
+                    lptr_dest[0] = ((lptr_src[0] & UO8F_MASKA) |
+                            (((((lptr_src[0] & UO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & UO8F_MASKC) << 5);
+                    lptr_src++;
+                    lptr_dest++;
+                } while(--n>0);
+		}
+#endif  /* DUFF_uo8f */
+      } /* end if */
+    else
+        for(i = 0; i < num_elm; i ++) {
+            dud[0] = source[0];
+            dud[1] = source[1];
+            dud[2] = source[2];
+            dud[3] = source[3];
+            dud[4] = source[4];
+            dud[5] = source[5];
+            dud[6] = source[6];
+            dud[7] = source[7];
 
-      if (buf != 0) {
-    buf = (((buf & UO8_MASKA) |                             /* sign bit */
-        (((((buf & UO8_MASKB) >> 48) - 15362) << 53) >> 1)) |   /* exp */
-           ((buf & UO8_MASKC) << 5));                       /* mantissa */
-      }
-      else 
-	buf = 0;
+            if (buf != 0) {
+                buf = (((buf & UO8F_MASKA) |                             /* sign bit */
+                        (((((buf & UO8F_MASKB) >> 48) - 15362) << 53) >> 1)) |   /* exp */
+                        ((buf & UO8F_MASKC) << 5));                       /* mantissa */
+              } /* end if */
+            else
+                buf = 0;
 
-      dest[0] = dud[0];
-      dest[1] = dud[1];
-      dest[2] = dud[2];
-      dest[3] = dud[3];
-      dest[4] = dud[4];
-      dest[5] = dud[5];
-      dest[6] = dud[6];
-      dest[7] = dud[7];
+            dest[0] = dud[0];
+            dest[1] = dud[1];
+            dest[2] = dud[2];
+            dest[3] = dud[3];
+            dest[4] = dud[4];
+            dest[5] = dud[5];
+            dest[6] = dud[6];
+            dest[7] = dud[7];
 
-      source += source_stride;
-      dest += dest_stride;
-    }
+            source += source_stride;
+            dest += dest_stride;
+          } /* end for */
   return;
 }
 
+#define LUI2I_MASKA1 0xff00000000000000
+#define LUI2I_MASKA2 0x00ff000000000000
+#define LUI2I_MASKB1 0x0000ff0000000000
+#define LUI2I_MASKB2 0x000000ff00000000
+#define LUI2I_MASKC1 0x00000000ff000000
+#define LUI2I_MASKC2 0x0000000000ff0000
+#define LUI2I_MASKD1 0x000000000000ff00
+#define LUI2I_MASKD2 0x00000000000000ff
+
 /* QAK */
 /************************************************************/
-/* DFKlui2i()                                                */
+/* DFKlui2i()                                               */
 /* -->Unicos routine for importing 2 byte data items        */ 
 /* (**) This routine converts two byte little-endian IEEE   */
-/*      to eight byte Cray little endian integer.           */
+/*      to eight byte Cray big endian integer.              */
 /************************************************************/
 #ifdef PROTOTYPE
 PRIVATE int DFKlui2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
@@ -1595,6 +3716,8 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
   long * lptr_dest = (long*)dest;
+    long *lp_dest;
+    long *lp_src;
   char *FUNC="DFKui2i";
 
   HEclear();
@@ -1609,6 +3732,101 @@ uint32 num_elm, source_stride, dest_stride;
       fast_processing = 1;            
 
   if(fast_processing) {
+#ifndef DUFF_lui2i
+#if defined TEST2_lui2i
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm%4;
+
+        n=num_elm/4;
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long));
+        for(i = 0; i < n; i++) {
+            lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                    ((lp_src[0]&LUI2I_MASKA2)>>40);
+            lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                    ((lp_src[0]&LUI2I_MASKB2)>>24);
+            lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                    ((lp_src[0]&LUI2I_MASKC2)>>8);
+            lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                    ((lp_src[0]&LUI2I_MASKD2)<<8);
+            lp_dest+=4;
+            lp_src++;
+          } /* end for */
+        switch(odd_man_out) {
+            case 3:
+                lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2I_MASKA2)>>40);
+                lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                        ((lp_src[0]&LUI2I_MASKB2)>>24);
+                lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                        ((lp_src[0]&LUI2I_MASKC2)>>8);
+                break;
+
+            case 2:
+                lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2I_MASKA2)>>40);
+                lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                        ((lp_src[0]&LUI2I_MASKB2)>>24);
+                break;
+
+            case 1:
+                lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2I_MASKA2)>>40);
+                break;
+
+            default:
+                break;
+          } /* end switch */
+#elif defined TEST1_lui2i
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm%4;
+
+        n=num_elm/4;
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long));
+        for(i = 0; i < n; i++) {
+            *lp_dest++=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                    ((lp_src[0]&LUI2I_MASKA2)>>40);
+            *lp_dest++=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                    ((lp_src[0]&LUI2I_MASKB2)>>24);
+            *lp_dest++=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                    ((lp_src[0]&LUI2I_MASKC2)>>8);
+            *lp_dest++=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                    ((lp_src[0]&LUI2I_MASKD2)<<8);
+            lp_src++;
+          } /* end for */
+        switch(odd_man_out) {
+            case 3:
+                *lp_dest++=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2I_MASKA2)>>40);
+                *lp_dest++=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                        ((lp_src[0]&LUI2I_MASKB2)>>24);
+                *lp_dest++=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                        ((lp_src[0]&LUI2I_MASKC2)>>8);
+                break;
+
+            case 2:
+                *lp_dest++=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2I_MASKA2)>>40);
+                *lp_dest++=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                        ((lp_src[0]&LUI2I_MASKB2)>>24);
+                break;
+
+            case 1:
+                *lp_dest++=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2I_MASKA2)>>40);
+                break;
+
+            default:
+                break;
+          } /* end switch */
+#else
     for(i = 0; i < num_elm; i++) {
       lptr_dest[0] = 0x0000000000000000;
       dest[6] = source[1];
@@ -1617,6 +3835,227 @@ uint32 num_elm, source_stride, dest_stride;
       lptr_dest++;
       dest = (uint8*)lptr_dest;
     }
+#endif
+#else   /* DUFF_lui2i */
+        uintn n;
+        int odd_man_out;        /* By default there are even num_elm */
+
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long));
+
+        odd_man_out = num_elm % 4;
+
+        num_elm/=4;
+        n=(num_elm+7)/8;
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+#ifdef QAK
+            case 15:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 14:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 13:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 12:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 11:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 10:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 9:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 8:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+#endif
+            case 7:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 6:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 5:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 4:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 3:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 2:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 1:
+                    lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2I_MASKA2)>>40);
+                    lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2I_MASKB2)>>24);
+                    lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2I_MASKC2)>>8);
+                    lp_dest[3]=((lp_src[0]&LUI2I_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2I_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+                } while(--n>0);
+		}
+        switch(odd_man_out) {
+            case 3:
+                lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2I_MASKA2)>>40);
+                lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                        ((lp_src[0]&LUI2I_MASKB2)>>24);
+                lp_dest[2]=((lp_src[0]&LUI2I_MASKC1)>>24) |
+                        ((lp_src[0]&LUI2I_MASKC2)>>8);
+                break;
+
+            case 2:
+                lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2I_MASKA2)>>40);
+                lp_dest[1]=((lp_src[0]&LUI2I_MASKB1)>>40) |
+                        ((lp_src[0]&LUI2I_MASKB2)>>24);
+                break;
+
+            case 1:
+                lp_dest[0]=((lp_src[0]&LUI2I_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2I_MASKA2)>>40);
+                break;
+
+            default:
+                break;
+          } /* end switch */
+#endif  /* DUFF_lui2i */
   }
   else { /* Generic stride processing */
     for(i = 0; i < num_elm; i++) {
@@ -1634,6 +4073,19 @@ uint32 num_elm, source_stride, dest_stride;
   }
   return 0;
 }
+
+#define LUI2S_MASKA1 0xff00000000000000
+#define LUI2S_MASKA2 0x00ff000000000000
+#define LUI2S_MASKB1 0x0000ff0000000000
+#define LUI2S_MASKB2 0x000000ff00000000
+#define LUI2S_MASKC1 0x00000000ff000000
+#define LUI2S_MASKC2 0x0000000000ff0000
+#define LUI2S_MASKD1 0x000000000000ff00
+#define LUI2S_MASKD2 0x00000000000000ff
+#define LUI2S_MASKE  0x0080000000000000
+#define LUI2S_MASKF  0x0000008000000000
+#define LUI2S_MASKG  0x0000000000800000
+#define LUI2S_MASKH  0x0000000000000080
 
 /************************************************************/
 /* DFKlui2s()                                                */
@@ -1657,6 +4109,8 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
   long * lptr_dest = (long*)dest;
+    long *lp_dest;
+    long *lp_src;
   char *FUNC="DFKui2s";
 
   HEclear();
@@ -1671,6 +4125,141 @@ uint32 num_elm, source_stride, dest_stride;
       fast_processing = 1;            
 
   if(fast_processing) {
+#ifndef DUFF_lui2s
+#if defined TEST2_lui2s
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm%4;
+
+        n=num_elm/4;
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long));
+        for(i = 0; i < n; i++) {
+            if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                lp_dest[0] = 0xffffffffffffffff;
+            lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                    ((lp_src[0]&LUI2S_MASKA2)>>40);
+            if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                lp_dest[1] = 0xffffffffffffffff;
+            lp_dest[1]=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                    ((lp_src[0]&LUI2S_MASKB2)>>24);
+            if(lp_src[0] & LUI2S_MASKG)     /* Can't forget to extend sign */
+                lp_dest[2] = 0xffffffffffffffff;
+            lp_dest[2]=((lp_src[0]&LUI2S_MASKC1)>>24) |
+                    ((lp_src[0]&LUI2S_MASKC2)>>8);
+            if(lp_src[0] & LUI2S_MASKH)     /* Can't forget to extend sign */
+                lp_dest[3] = 0xffffffffffffffff;
+            lp_dest[3]=((lp_src[0]&LUI2S_MASKD1)>>8) |
+                    ((lp_src[0]&LUI2S_MASKD2)<<8);
+            lp_dest+=4;
+            lp_src++;
+          } /* end for */
+        switch(odd_man_out) {
+            case 3:
+                if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                    lp_dest[0] = 0xffffffffffffffff;
+                lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2S_MASKA2)>>40);
+                if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                    lp_dest[1] = 0xffffffffffffffff;
+                lp_dest[1]=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                        ((lp_src[0]&LUI2S_MASKB2)>>24);
+                if(lp_src[0] & LUI2S_MASKG)     /* Can't forget to extend sign */
+                    lp_dest[2] = 0xffffffffffffffff;
+                lp_dest[2]=((lp_src[0]&LUI2S_MASKC1)>>24) |
+                        ((lp_src[0]&LUI2S_MASKC2)>>8);
+                break;
+
+            case 2:
+                if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                    lp_dest[0] = 0xffffffffffffffff;
+                lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2S_MASKA2)>>40);
+                if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                    lp_dest[1] = 0xffffffffffffffff;
+                lp_dest[1]=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                        ((lp_src[0]&LUI2S_MASKB2)>>24);
+                break;
+
+            case 1:
+                if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                    lp_dest[0] = 0xffffffffffffffff;
+                lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2S_MASKA2)>>40);
+                break;
+
+            default:
+                break;
+          } /* end switch */
+#elif defined TEST1_lui2s
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm%4;
+
+        n=num_elm/4;
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long));
+        for(i = 0; i < n; i++) {
+            if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                *lp_dest = 0xffffffffffffffff;
+            *lp_dest++=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                    ((lp_src[0]&LUI2S_MASKA2)>>40);
+            if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                *lp_dest = 0xffffffffffffffff;
+            *lp_dest++=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                    ((lp_src[0]&LUI2S_MASKB2)>>24);
+            if(lp_src[0] & LUI2S_MASKG)     /* Can't forget to extend sign */
+                *lp_dest = 0xffffffffffffffff;
+            *lp_dest++=((lp_src[0]&LUI2S_MASKC1)>>24) |
+                    ((lp_src[0]&LUI2S_MASKC2)>>8);
+            if(lp_src[0] & LUI2S_MASKH)     /* Can't forget to extend sign */
+                *lp_dest = 0xffffffffffffffff;
+            *lp_dest++=((lp_src[0]&LUI2S_MASKD1)>>8) |
+                    ((lp_src[0]&LUI2S_MASKD2)<<8);
+            lp_src++;
+          } /* end for */
+        switch(odd_man_out) {
+            case 3:
+                if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                    *lp_dest = 0xffffffffffffffff;
+                *lp_dest++=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2S_MASKA2)>>40);
+                if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                    *lp_dest = 0xffffffffffffffff;
+                *lp_dest++=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                        ((lp_src[0]&LUI2S_MASKB2)>>24);
+                if(lp_src[0] & LUI2S_MASKG)     /* Can't forget to extend sign */
+                    *lp_dest = 0xffffffffffffffff;
+                *lp_dest++=((lp_src[0]&LUI2S_MASKC1)>>24) |
+                        ((lp_src[0]&LUI2S_MASKC2)>>8);
+                break;
+
+            case 2:
+                if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                    *lp_dest = 0xffffffffffffffff;
+                *lp_dest++=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2S_MASKA2)>>40);
+                if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                    *lp_dest = 0xffffffffffffffff;
+                *lp_dest++=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                        ((lp_src[0]&LUI2S_MASKB2)>>24);
+                break;
+
+            case 1:
+                if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                    *lp_dest = 0xffffffffffffffff;
+                *lp_dest++=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2S_MASKA2)>>40);
+                break;
+
+            default:
+                break;
+          } /* end switch */
+#else
     for(i = 0; i < num_elm; i++) {
       if((source[1] & 0x80))           /* Can't forget to extend sign */
 	lptr_dest[0] = 0xffffffffffffffff;
@@ -1682,6 +4271,367 @@ uint32 num_elm, source_stride, dest_stride;
       lptr_dest++;
       dest = (uint8*)lptr_dest;
     }
+#endif
+#else   /* DUFF_lui2s */
+        uintn n;
+        int odd_man_out;        /* By default there are even num_elm */
+
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long));
+
+        odd_man_out = num_elm % 4;
+
+        num_elm/=4;
+        n=(num_elm+7)/8;
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2S_MASKA2)>>40);
+                    if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2S_MASKB2)>>24);
+                    if(lp_src[0] & LUI2S_MASKG)     /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=((lp_src[0]&LUI2S_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2S_MASKC2)>>8);
+                    if(lp_src[0] & LUI2S_MASKH)     /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=((lp_src[0]&LUI2S_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2S_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+#ifdef QAK
+            case 15:
+                    if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2S_MASKA2)>>40);
+                    if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2S_MASKB2)>>24);
+                    if(lp_src[0] & LUI2S_MASKG)     /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=((lp_src[0]&LUI2S_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2S_MASKC2)>>8);
+                    if(lp_src[0] & LUI2S_MASKH)     /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=((lp_src[0]&LUI2S_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2S_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 14:
+                    if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2S_MASKA2)>>40);
+                    if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2S_MASKB2)>>24);
+                    if(lp_src[0] & LUI2S_MASKG)     /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=((lp_src[0]&LUI2S_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2S_MASKC2)>>8);
+                    if(lp_src[0] & LUI2S_MASKH)     /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=((lp_src[0]&LUI2S_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2S_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 13:
+                    if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2S_MASKA2)>>40);
+                    if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2S_MASKB2)>>24);
+                    if(lp_src[0] & LUI2S_MASKG)     /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=((lp_src[0]&LUI2S_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2S_MASKC2)>>8);
+                    if(lp_src[0] & LUI2S_MASKH)     /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=((lp_src[0]&LUI2S_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2S_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 12:
+                    if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2S_MASKA2)>>40);
+                    if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2S_MASKB2)>>24);
+                    if(lp_src[0] & LUI2S_MASKG)     /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=((lp_src[0]&LUI2S_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2S_MASKC2)>>8);
+                    if(lp_src[0] & LUI2S_MASKH)     /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=((lp_src[0]&LUI2S_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2S_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 11:
+                    if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2S_MASKA2)>>40);
+                    if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2S_MASKB2)>>24);
+                    if(lp_src[0] & LUI2S_MASKG)     /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=((lp_src[0]&LUI2S_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2S_MASKC2)>>8);
+                    if(lp_src[0] & LUI2S_MASKH)     /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=((lp_src[0]&LUI2S_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2S_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 10:
+                    if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2S_MASKA2)>>40);
+                    if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2S_MASKB2)>>24);
+                    if(lp_src[0] & LUI2S_MASKG)     /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=((lp_src[0]&LUI2S_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2S_MASKC2)>>8);
+                    if(lp_src[0] & LUI2S_MASKH)     /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=((lp_src[0]&LUI2S_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2S_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 9:
+                    if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2S_MASKA2)>>40);
+                    if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2S_MASKB2)>>24);
+                    if(lp_src[0] & LUI2S_MASKG)     /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=((lp_src[0]&LUI2S_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2S_MASKC2)>>8);
+                    if(lp_src[0] & LUI2S_MASKH)     /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=((lp_src[0]&LUI2S_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2S_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 8:
+                    if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2S_MASKA2)>>40);
+                    if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2S_MASKB2)>>24);
+                    if(lp_src[0] & LUI2S_MASKG)     /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=((lp_src[0]&LUI2S_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2S_MASKC2)>>8);
+                    if(lp_src[0] & LUI2S_MASKH)     /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=((lp_src[0]&LUI2S_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2S_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+#endif
+            case 7:
+                    if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2S_MASKA2)>>40);
+                    if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2S_MASKB2)>>24);
+                    if(lp_src[0] & LUI2S_MASKG)     /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=((lp_src[0]&LUI2S_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2S_MASKC2)>>8);
+                    if(lp_src[0] & LUI2S_MASKH)     /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=((lp_src[0]&LUI2S_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2S_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 6:
+                    if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2S_MASKA2)>>40);
+                    if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2S_MASKB2)>>24);
+                    if(lp_src[0] & LUI2S_MASKG)     /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=((lp_src[0]&LUI2S_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2S_MASKC2)>>8);
+                    if(lp_src[0] & LUI2S_MASKH)     /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=((lp_src[0]&LUI2S_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2S_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 5:
+                    if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2S_MASKA2)>>40);
+                    if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2S_MASKB2)>>24);
+                    if(lp_src[0] & LUI2S_MASKG)     /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=((lp_src[0]&LUI2S_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2S_MASKC2)>>8);
+                    if(lp_src[0] & LUI2S_MASKH)     /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=((lp_src[0]&LUI2S_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2S_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 4:
+                    if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2S_MASKA2)>>40);
+                    if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2S_MASKB2)>>24);
+                    if(lp_src[0] & LUI2S_MASKG)     /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=((lp_src[0]&LUI2S_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2S_MASKC2)>>8);
+                    if(lp_src[0] & LUI2S_MASKH)     /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=((lp_src[0]&LUI2S_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2S_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 3:
+                    if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2S_MASKA2)>>40);
+                    if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2S_MASKB2)>>24);
+                    if(lp_src[0] & LUI2S_MASKG)     /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=((lp_src[0]&LUI2S_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2S_MASKC2)>>8);
+                    if(lp_src[0] & LUI2S_MASKH)     /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=((lp_src[0]&LUI2S_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2S_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 2:
+                    if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2S_MASKA2)>>40);
+                    if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2S_MASKB2)>>24);
+                    if(lp_src[0] & LUI2S_MASKG)     /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=((lp_src[0]&LUI2S_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2S_MASKC2)>>8);
+                    if(lp_src[0] & LUI2S_MASKH)     /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=((lp_src[0]&LUI2S_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2S_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+            case 1:
+                    if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                            ((lp_src[0]&LUI2S_MASKA2)>>40);
+                    if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                            ((lp_src[0]&LUI2S_MASKB2)>>24);
+                    if(lp_src[0] & LUI2S_MASKG)     /* Can't forget to extend sign */
+                        lp_dest[2] = 0xffffffffffffffff;
+                    lp_dest[2]=((lp_src[0]&LUI2S_MASKC1)>>24) |
+                            ((lp_src[0]&LUI2S_MASKC2)>>8);
+                    if(lp_src[0] & LUI2S_MASKH)     /* Can't forget to extend sign */
+                        lp_dest[3] = 0xffffffffffffffff;
+                    lp_dest[3]=((lp_src[0]&LUI2S_MASKD1)>>8) |
+                            ((lp_src[0]&LUI2S_MASKD2)<<8);
+                    lp_dest+=4;
+                    lp_src++;
+                } while(--n>0);
+		}
+        switch(odd_man_out) {
+            case 3:
+                if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                    lp_dest[0] = 0xffffffffffffffff;
+                lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2S_MASKA2)>>40);
+                if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                    lp_dest[1] = 0xffffffffffffffff;
+                lp_dest[1]=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                        ((lp_src[0]&LUI2S_MASKB2)>>24);
+                if(lp_src[0] & LUI2S_MASKG)     /* Can't forget to extend sign */
+                    lp_dest[2] = 0xffffffffffffffff;
+                lp_dest[2]=((lp_src[0]&LUI2S_MASKC1)>>24) |
+                        ((lp_src[0]&LUI2S_MASKC2)>>8);
+                break;
+
+            case 2:
+                if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                    lp_dest[0] = 0xffffffffffffffff;
+                lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2S_MASKA2)>>40);
+                if(lp_src[0] & LUI2S_MASKF)     /* Can't forget to extend sign */
+                    lp_dest[1] = 0xffffffffffffffff;
+                lp_dest[1]=((lp_src[0]&LUI2S_MASKB1)>>40) |
+                        ((lp_src[0]&LUI2S_MASKB2)>>24);
+                break;
+
+            case 1:
+                if(lp_src[0] & LUI2S_MASKE)     /* Can't forget to extend sign */
+                    lp_dest[0] = 0xffffffffffffffff;
+                lp_dest[0]=((lp_src[0]&LUI2S_MASKA1)>>56) |
+                        ((lp_src[0]&LUI2S_MASKA2)>>40);
+                break;
+
+            default:
+                break;
+          } /* end switch */
+#endif  /* DUFF_lui2s */
   }
   else { /* Generic stride processing */
     for(i = 0; i < num_elm; i++) {
@@ -1710,9 +4660,13 @@ uint32 num_elm, source_stride, dest_stride;
   return 0;
 }
 
+#define LUO2I_MASKA 0x00000000000000ff
+#define LUO2I_MASKB 0x000000000000ff00
+
 /************************************************************/
-/* DFKuo2i()                                                */
-/* -->Unicos routine for exporting 2 byte data items        */ 
+/* DFKluo2i()                                               */
+/* -->Unicos routine for exporting 2 byte little-endian     */
+/*      data items                                          */
 /************************************************************/
 #ifdef PROTOTYPE
 PRIVATE int DFKluo2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
@@ -1729,6 +4683,8 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
+    long *lp_dest;
+    long *lp_src;
     char *FUNC="DFKuo2i";
 
     HEclear();
@@ -1743,12 +4699,262 @@ uint32 num_elm, source_stride, dest_stride;
       fast_processing = 1;            
 
   if(fast_processing) {
+#ifndef DUFF_luo2i
+#if defined TEST1_luo2i
+    int odd_man_out;        /* By default there are even num_elm */
+    intn n;
+
+    odd_man_out = num_elm%4;
+
+    n=num_elm/4;
+    lp_dest=(long *)dest;
+    lp_src=(long *)source;
+    for(i = 0; i < n; i++) {
+        *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                    ((lp_src[0]&LUO2I_MASKB)<<40) |
+                    ((lp_src[1]&LUO2I_MASKA)<<40) |
+                    ((lp_src[1]&LUO2I_MASKB)<<24) |
+                    ((lp_src[2]&LUO2I_MASKA)<<24) |
+                    ((lp_src[2]&LUO2I_MASKB)<<8) |
+                    ((lp_src[3]&LUO2I_MASKA)<<8) |
+                    ((lp_src[3]&LUO2I_MASKB)>>8);
+        lp_src+=4;
+    }
+    switch(odd_man_out) {   /* clean up leftovers */
+        case 3:
+            *lp_dest=((lp_src[0]&LUO2I_MASKA)<<56) |
+                        ((lp_src[0]&LUO2I_MASKB)<<40) |
+                        ((lp_src[1]&LUO2I_MASKA)<<40) |
+                        ((lp_src[1]&LUO2I_MASKB)<<24) |
+                        ((lp_src[2]&LUO2I_MASKA)<<24) |
+                        ((lp_src[2]&LUO2I_MASKB)<<8);
+            break;
+
+        case 2:
+            *lp_dest=((lp_src[0]&LUO2I_MASKA)<<56) |
+                        ((lp_src[0]&LUO2I_MASKB)<<40) |
+                        ((lp_src[1]&LUO2I_MASKA)<<40) |
+                        ((lp_src[1]&LUO2I_MASKB)<<24);
+            break;
+
+        case 1:
+            *lp_dest=((lp_src[0]&LUO2I_MASKA)<<56) |
+                        ((lp_src[0]&LUO2I_MASKB)<<40);
+            break;
+
+        case 0:
+            break;
+      } /* end switch */
+#else
     for(i = 0; i < num_elm; i++) {
       dest[0] = source[7];
       dest[1] = source[6];
       dest += 2;
       source += 8;
     }
+#endif
+#else   /* DUFF_luo2i */
+        uintn n;
+        int odd_man_out;        /* By default there are even num_elm */
+
+        odd_man_out = num_elm % 4;
+
+        num_elm/=4;
+        n=(num_elm+7)/8;
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+#ifdef QAK
+            case 15:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 14:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 13:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 12:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 11:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 10:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 9:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 8:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+#endif
+            case 7:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 6:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 5:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 4:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 3:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 2:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+            case 1:
+                    *lp_dest++=((lp_src[0]&LUO2I_MASKA)<<56) |
+                                ((lp_src[0]&LUO2I_MASKB)<<40) |
+                                ((lp_src[1]&LUO2I_MASKA)<<40) |
+                                ((lp_src[1]&LUO2I_MASKB)<<24) |
+                                ((lp_src[2]&LUO2I_MASKA)<<24) |
+                                ((lp_src[2]&LUO2I_MASKB)<<8) |
+                                ((lp_src[3]&LUO2I_MASKA)<<8) |
+                                ((lp_src[3]&LUO2I_MASKB)>>8);
+                    lp_src+=4;
+                } while(--n>0);
+		}
+        switch(odd_man_out) {   /* clean up leftovers */
+            case 3:
+                *lp_dest=((lp_src[0]&LUO2I_MASKA)<<56) |
+                            ((lp_src[0]&LUO2I_MASKB)<<40) |
+                            ((lp_src[1]&LUO2I_MASKA)<<40) |
+                            ((lp_src[1]&LUO2I_MASKB)<<24) |
+                            ((lp_src[2]&LUO2I_MASKA)<<24) |
+                            ((lp_src[2]&LUO2I_MASKB)<<8);
+                break;
+
+            case 2:
+                *lp_dest=((lp_src[0]&LUO2I_MASKA)<<56) |
+                            ((lp_src[0]&LUO2I_MASKB)<<40) |
+                            ((lp_src[1]&LUO2I_MASKA)<<40) |
+                            ((lp_src[1]&LUO2I_MASKB)<<24);
+                break;
+
+            case 1:
+                *lp_dest=((lp_src[0]&LUO2I_MASKA)<<56) |
+                            ((lp_src[0]&LUO2I_MASKB)<<40);
+                break;
+
+            default:
+                break;
+          } /* end switch */
+#endif  /* DUFF_luo2i */
   }
   else { /* Generic Stride processing */
     for(i = 0; i < num_elm; i++){
@@ -1761,9 +4967,19 @@ uint32 num_elm, source_stride, dest_stride;
   return 0;
 }
 
+#define LUI4I_MASKA 0xff00000000000000
+#define LUI4I_MASKB 0x00ff000000000000
+#define LUI4I_MASKC 0x0000ff0000000000
+#define LUI4I_MASKD 0x000000ff00000000
+#define LUI4I_MASKE 0x00000000ff000000
+#define LUI4I_MASKF 0x0000000000ff0000
+#define LUI4I_MASKG 0x000000000000ff00
+#define LUI4I_MASKH 0x00000000000000ff
+
 /************************************************************/
-/* DFKlui4i()                                                */
-/* -->Unicos routine for importing 4 byte unsigned ints     */
+/* DFKlui4i()                                               */
+/* -->Unicos routine for importing 4 byte little-endian     */
+/*      unsigned ints                                       */
 /************************************************************/
 #ifdef PROTOTYPE
 PRIVATE int DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
@@ -1781,6 +4997,8 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
   long * lptr_dest = (long*)dest;
+  long *lp_dest;
+  long *lp_src;
   char *FUNC="DFKui4i";
 
   HEclear();
@@ -1794,7 +5012,62 @@ uint32 num_elm, source_stride, dest_stride;
     fast_processing = 1;
   }
   
-  if(fast_processing)
+    if(fast_processing) {
+#ifndef DUFF_lui4i
+#if defined TEST2_lui4i
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm % 2;
+
+        n=num_elm/2;
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long)); /* initialize to zeros */
+        for(i = 0; i < n; i++) {
+            lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                        (lp_src[0]&LUI4I_MASKB)>>40 |
+                        (lp_src[0]&LUI4I_MASKC)>>24 |
+                        (lp_src[0]&LUI4I_MASKD)>>8;
+            lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                        (lp_src[0]&LUI4I_MASKF)>>8 |
+                        (lp_src[0]&LUI4I_MASKG)<<8 |
+                        (lp_src[0]&LUI4I_MASKH)<<24;
+            lp_dest+=2;
+            lp_src++;
+          } /* end for */
+        if(odd_man_out)
+            *lp_dest=(lp_src[0]&LUI4I_MASKA)>>56 |
+                        (lp_src[0]&LUI4I_MASKB)>>40 |
+                        (lp_src[0]&LUI4I_MASKC)>>24 |
+                        (lp_src[0]&LUI4I_MASKD)>>8;
+#elif defined TEST1_lui4i
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm % 2;
+
+        n=num_elm/2;
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long)); /* initialize to zeros */
+        for(i = 0; i < n; i++) {
+            *lp_dest++=(lp_src[0]&LUI4I_MASKA)>>56 |
+                        (lp_src[0]&LUI4I_MASKB)>>40 |
+                        (lp_src[0]&LUI4I_MASKC)>>24 |
+                        (lp_src[0]&LUI4I_MASKD)>>8;
+            *lp_dest++=(lp_src[0]&LUI4I_MASKE)>>24 |
+                        (lp_src[0]&LUI4I_MASKF)>>8 |
+                        (lp_src[0]&LUI4I_MASKG)<<8 |
+                        (lp_src[0]&LUI4I_MASKH)<<24;
+            lp_src++;
+          } /* end for */
+        if(odd_man_out)
+            *lp_dest++=(lp_src[0]&LUI4I_MASKA)>>56 |
+                        (lp_src[0]&LUI4I_MASKB)>>40 |
+                        (lp_src[0]&LUI4I_MASKC)>>24 |
+                        (lp_src[0]&LUI4I_MASKD)>>8;
+#else
     for(i = 0; i < num_elm; i++) {
       lptr_dest[0] = 0;
       dest[4] = source[3];
@@ -1805,6 +5078,208 @@ uint32 num_elm, source_stride, dest_stride;
       lptr_dest ++;
       dest = (uint8 *)lptr_dest;
     }
+#endif
+#else   /* DUFF_lui4i */
+        uintn n;
+        int odd_man_out;        /* By default there are even num_elm */
+
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long)); /* initialize to zeros */
+
+        odd_man_out = num_elm % 2;
+
+        num_elm/=2;
+        n=(num_elm+7)/8;
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+#ifdef QAK
+            case 15:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 14:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 13:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 12:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 11:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 10:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 9:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 8:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+#endif
+            case 7:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 6:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 5:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 4:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 3:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 2:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 1:
+                    lp_dest[0]=(lp_src[0]&LUI4I_MASKA)>>56 |
+                                (lp_src[0]&LUI4I_MASKB)>>40 |
+                                (lp_src[0]&LUI4I_MASKC)>>24 |
+                                (lp_src[0]&LUI4I_MASKD)>>8;
+                    lp_dest[1]=(lp_src[0]&LUI4I_MASKE)>>24 |
+                                (lp_src[0]&LUI4I_MASKF)>>8 |
+                                (lp_src[0]&LUI4I_MASKG)<<8 |
+                                (lp_src[0]&LUI4I_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+                } while(--n>0);
+		}
+        if(odd_man_out)
+            *lp_dest=(lp_src[0]&LUI4I_MASKA)>>56 |
+                        (lp_src[0]&LUI4I_MASKB)>>40 |
+                        (lp_src[0]&LUI4I_MASKC)>>24 |
+                        (lp_src[0]&LUI4I_MASKD)>>8;
+#endif  /* DUFF_lui4i */
+      } /* end if */
   else 
     for(i = 0; i < num_elm; i++) {
       dest[0] = 0;
@@ -1820,6 +5295,17 @@ uint32 num_elm, source_stride, dest_stride;
     }
   return 0;
 }
+
+#define LUI4S_MASKA 0xff00000000000000
+#define LUI4S_MASKB 0x00ff000000000000
+#define LUI4S_MASKC 0x0000ff0000000000
+#define LUI4S_MASKD 0x000000ff00000000
+#define LUI4S_MASKE 0x00000000ff000000
+#define LUI4S_MASKF 0x0000000000ff0000
+#define LUI4S_MASKG 0x000000000000ff00
+#define LUI4S_MASKH 0x00000000000000ff
+#define LUI4S_MASKI 0x0000008000000000
+#define LUI4S_MASKJ 0x0000000000000080
 
 /************************************************************/
 /* DFKlui4s()                                                */
@@ -1841,6 +5327,8 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
   long * lptr_dest = (long*)dest;
+  long *lp_dest;
+  long *lp_src;
   char *FUNC="DFKui4s";
 
   HEclear();
@@ -1854,7 +5342,76 @@ uint32 num_elm, source_stride, dest_stride;
     fast_processing = 1;
   }
   
-  if(fast_processing)
+  if(fast_processing) {
+#ifndef DUFF_lui4s
+#if defined TEST2_lui4s
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm % 2;
+
+        n=num_elm/2;
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long)); /* initialize to zeros */
+        for(i = 0; i < n; i++) {
+            if(lp_src[0] & LUI4S_MASKI)     /* Can't forget to sign extend */
+                lp_dest[0] = 0xffffffffffffffff;
+            lp_dest[0]=(lp_src[0]&LUI4S_MASKA)>>56 |
+                        (lp_src[0]&LUI4S_MASKB)>>40 |
+                        (lp_src[0]&LUI4S_MASKC)>>24 |
+                        (lp_src[0]&LUI4S_MASKD)>>8;
+            if(lp_src[0] & LUI4S_MASKJ)     /* Can't forget to sign extend */
+                lp_dest[1] = 0xffffffffffffffff;
+            lp_dest[1]=(lp_src[0]&LUI4S_MASKE)>>24 |
+                        (lp_src[0]&LUI4S_MASKF)>>8 |
+                        (lp_src[0]&LUI4S_MASKG)<<8 |
+                        (lp_src[0]&LUI4S_MASKH)<<24;
+            lp_dest+=2;
+            lp_src++;
+          } /* end for */
+        if(odd_man_out) {
+            if(lp_src[0] & LUI4S_MASKI)     /* Can't forget to sign extend */
+                lp_dest[0] = 0xffffffffffffffff;
+            lp_dest[0]=(lp_src[0]&LUI4S_MASKA)>>56 |
+                        (lp_src[0]&LUI4S_MASKB)>>40 |
+                        (lp_src[0]&LUI4S_MASKC)>>24 |
+                        (lp_src[0]&LUI4S_MASKD)>>8;
+          } /* end if */
+#elif defined TEST1_lui4s
+        int odd_man_out;        /* By default there are even num_elm */
+        intn n;
+
+        odd_man_out = num_elm % 2;
+
+        n=num_elm/2;
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long)); /* initialize to zeros */
+        for(i = 0; i < n; i++) {
+            if(lp_src[0] & LUI4S_MASKI)     /* Can't forget to sign extend */
+                lp_dest[0] = 0xffffffffffffffff;
+            *lp_dest++=(lp_src[0]&LUI4S_MASKA)>>56 |
+                        (lp_src[0]&LUI4S_MASKB)>>40 |
+                        (lp_src[0]&LUI4S_MASKC)>>24 |
+                        (lp_src[0]&LUI4S_MASKD)>>8;
+            if(lp_src[0] & LUI4S_MASKJ)     /* Can't forget to sign extend */
+                lp_dest[0] = 0xffffffffffffffff;
+            *lp_dest++=(lp_src[0]&LUI4S_MASKE)>>24 |
+                        (lp_src[0]&LUI4S_MASKF)>>8 |
+                        (lp_src[0]&LUI4S_MASKG)<<8 |
+                        (lp_src[0]&LUI4S_MASKH)<<24;
+            lp_src++;
+          } /* end for */
+        if(odd_man_out) {
+            if(lp_src[0] & LUI4S_MASKI)     /* Can't forget to sign extend */
+                lp_dest[0] = 0xffffffffffffffff;
+            *lp_dest++=(lp_src[0]&LUI4S_MASKA)>>56 |
+                        (lp_src[0]&LUI4S_MASKB)>>40 |
+                        (lp_src[0]&LUI4S_MASKC)>>24 |
+                        (lp_src[0]&LUI4S_MASKD)>>8;
+          } /* end if */
+#else
     for(i = 0; i < num_elm; i++) {
       if((source[3] & 0x80))            /* Can't forget to sign extend */
 	lptr_dest[0] = 0xffffffffffffffff;
@@ -1868,6 +5425,275 @@ uint32 num_elm, source_stride, dest_stride;
       lptr_dest ++;
       dest = (uint8 *)lptr_dest;
     }
+#endif
+#else   /* DUFF_lui4s */
+        uintn n;
+        int odd_man_out;        /* By default there are even num_elm */
+
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        HDmemset(lp_dest,0,num_elm*sizeof(long)); /* initialize to zeros */
+
+        odd_man_out = num_elm % 2;
+
+        num_elm/=2;
+        n=(num_elm+7)/8;
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    if(lp_src[0] & LUI4S_MASKI)     /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&LUI4S_MASKA)>>56 |
+                                (lp_src[0]&LUI4S_MASKB)>>40 |
+                                (lp_src[0]&LUI4S_MASKC)>>24 |
+                                (lp_src[0]&LUI4S_MASKD)>>8;
+                    if(lp_src[0] & LUI4S_MASKJ)     /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&LUI4S_MASKE)>>24 |
+                                (lp_src[0]&LUI4S_MASKF)>>8 |
+                                (lp_src[0]&LUI4S_MASKG)<<8 |
+                                (lp_src[0]&LUI4S_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+#ifdef QAK
+            case 15:
+                    if(lp_src[0] & LUI4S_MASKI)     /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&LUI4S_MASKA)>>56 |
+                                (lp_src[0]&LUI4S_MASKB)>>40 |
+                                (lp_src[0]&LUI4S_MASKC)>>24 |
+                                (lp_src[0]&LUI4S_MASKD)>>8;
+                    if(lp_src[0] & LUI4S_MASKJ)     /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&LUI4S_MASKE)>>24 |
+                                (lp_src[0]&LUI4S_MASKF)>>8 |
+                                (lp_src[0]&LUI4S_MASKG)<<8 |
+                                (lp_src[0]&LUI4S_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 14:
+                    if(lp_src[0] & LUI4S_MASKI)     /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&LUI4S_MASKA)>>56 |
+                                (lp_src[0]&LUI4S_MASKB)>>40 |
+                                (lp_src[0]&LUI4S_MASKC)>>24 |
+                                (lp_src[0]&LUI4S_MASKD)>>8;
+                    if(lp_src[0] & LUI4S_MASKJ)     /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&LUI4S_MASKE)>>24 |
+                                (lp_src[0]&LUI4S_MASKF)>>8 |
+                                (lp_src[0]&LUI4S_MASKG)<<8 |
+                                (lp_src[0]&LUI4S_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 13:
+                    if(lp_src[0] & LUI4S_MASKI)     /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&LUI4S_MASKA)>>56 |
+                                (lp_src[0]&LUI4S_MASKB)>>40 |
+                                (lp_src[0]&LUI4S_MASKC)>>24 |
+                                (lp_src[0]&LUI4S_MASKD)>>8;
+                    if(lp_src[0] & LUI4S_MASKJ)     /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&LUI4S_MASKE)>>24 |
+                                (lp_src[0]&LUI4S_MASKF)>>8 |
+                                (lp_src[0]&LUI4S_MASKG)<<8 |
+                                (lp_src[0]&LUI4S_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 12:
+                    if(lp_src[0] & LUI4S_MASKI)     /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&LUI4S_MASKA)>>56 |
+                                (lp_src[0]&LUI4S_MASKB)>>40 |
+                                (lp_src[0]&LUI4S_MASKC)>>24 |
+                                (lp_src[0]&LUI4S_MASKD)>>8;
+                    if(lp_src[0] & LUI4S_MASKJ)     /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&LUI4S_MASKE)>>24 |
+                                (lp_src[0]&LUI4S_MASKF)>>8 |
+                                (lp_src[0]&LUI4S_MASKG)<<8 |
+                                (lp_src[0]&LUI4S_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 11:
+                    if(lp_src[0] & LUI4S_MASKI)     /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&LUI4S_MASKA)>>56 |
+                                (lp_src[0]&LUI4S_MASKB)>>40 |
+                                (lp_src[0]&LUI4S_MASKC)>>24 |
+                                (lp_src[0]&LUI4S_MASKD)>>8;
+                    if(lp_src[0] & LUI4S_MASKJ)     /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&LUI4S_MASKE)>>24 |
+                                (lp_src[0]&LUI4S_MASKF)>>8 |
+                                (lp_src[0]&LUI4S_MASKG)<<8 |
+                                (lp_src[0]&LUI4S_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 10:
+                    if(lp_src[0] & LUI4S_MASKI)     /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&LUI4S_MASKA)>>56 |
+                                (lp_src[0]&LUI4S_MASKB)>>40 |
+                                (lp_src[0]&LUI4S_MASKC)>>24 |
+                                (lp_src[0]&LUI4S_MASKD)>>8;
+                    if(lp_src[0] & LUI4S_MASKJ)     /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&LUI4S_MASKE)>>24 |
+                                (lp_src[0]&LUI4S_MASKF)>>8 |
+                                (lp_src[0]&LUI4S_MASKG)<<8 |
+                                (lp_src[0]&LUI4S_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 9:
+                    if(lp_src[0] & LUI4S_MASKI)     /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&LUI4S_MASKA)>>56 |
+                                (lp_src[0]&LUI4S_MASKB)>>40 |
+                                (lp_src[0]&LUI4S_MASKC)>>24 |
+                                (lp_src[0]&LUI4S_MASKD)>>8;
+                    if(lp_src[0] & LUI4S_MASKJ)     /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&LUI4S_MASKE)>>24 |
+                                (lp_src[0]&LUI4S_MASKF)>>8 |
+                                (lp_src[0]&LUI4S_MASKG)<<8 |
+                                (lp_src[0]&LUI4S_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 8:
+                    if(lp_src[0] & LUI4S_MASKI)     /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&LUI4S_MASKA)>>56 |
+                                (lp_src[0]&LUI4S_MASKB)>>40 |
+                                (lp_src[0]&LUI4S_MASKC)>>24 |
+                                (lp_src[0]&LUI4S_MASKD)>>8;
+                    if(lp_src[0] & LUI4S_MASKJ)     /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&LUI4S_MASKE)>>24 |
+                                (lp_src[0]&LUI4S_MASKF)>>8 |
+                                (lp_src[0]&LUI4S_MASKG)<<8 |
+                                (lp_src[0]&LUI4S_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+#endif
+            case 7:
+                    if(lp_src[0] & LUI4S_MASKI)     /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&LUI4S_MASKA)>>56 |
+                                (lp_src[0]&LUI4S_MASKB)>>40 |
+                                (lp_src[0]&LUI4S_MASKC)>>24 |
+                                (lp_src[0]&LUI4S_MASKD)>>8;
+                    if(lp_src[0] & LUI4S_MASKJ)     /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&LUI4S_MASKE)>>24 |
+                                (lp_src[0]&LUI4S_MASKF)>>8 |
+                                (lp_src[0]&LUI4S_MASKG)<<8 |
+                                (lp_src[0]&LUI4S_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 6:
+                    if(lp_src[0] & LUI4S_MASKI)     /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&LUI4S_MASKA)>>56 |
+                                (lp_src[0]&LUI4S_MASKB)>>40 |
+                                (lp_src[0]&LUI4S_MASKC)>>24 |
+                                (lp_src[0]&LUI4S_MASKD)>>8;
+                    if(lp_src[0] & LUI4S_MASKJ)     /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&LUI4S_MASKE)>>24 |
+                                (lp_src[0]&LUI4S_MASKF)>>8 |
+                                (lp_src[0]&LUI4S_MASKG)<<8 |
+                                (lp_src[0]&LUI4S_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 5:
+                    if(lp_src[0] & LUI4S_MASKI)     /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&LUI4S_MASKA)>>56 |
+                                (lp_src[0]&LUI4S_MASKB)>>40 |
+                                (lp_src[0]&LUI4S_MASKC)>>24 |
+                                (lp_src[0]&LUI4S_MASKD)>>8;
+                    if(lp_src[0] & LUI4S_MASKJ)     /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&LUI4S_MASKE)>>24 |
+                                (lp_src[0]&LUI4S_MASKF)>>8 |
+                                (lp_src[0]&LUI4S_MASKG)<<8 |
+                                (lp_src[0]&LUI4S_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 4:
+                    if(lp_src[0] & LUI4S_MASKI)     /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&LUI4S_MASKA)>>56 |
+                                (lp_src[0]&LUI4S_MASKB)>>40 |
+                                (lp_src[0]&LUI4S_MASKC)>>24 |
+                                (lp_src[0]&LUI4S_MASKD)>>8;
+                    if(lp_src[0] & LUI4S_MASKJ)     /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&LUI4S_MASKE)>>24 |
+                                (lp_src[0]&LUI4S_MASKF)>>8 |
+                                (lp_src[0]&LUI4S_MASKG)<<8 |
+                                (lp_src[0]&LUI4S_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 3:
+                    if(lp_src[0] & LUI4S_MASKI)     /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&LUI4S_MASKA)>>56 |
+                                (lp_src[0]&LUI4S_MASKB)>>40 |
+                                (lp_src[0]&LUI4S_MASKC)>>24 |
+                                (lp_src[0]&LUI4S_MASKD)>>8;
+                    if(lp_src[0] & LUI4S_MASKJ)     /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&LUI4S_MASKE)>>24 |
+                                (lp_src[0]&LUI4S_MASKF)>>8 |
+                                (lp_src[0]&LUI4S_MASKG)<<8 |
+                                (lp_src[0]&LUI4S_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 2:
+                    if(lp_src[0] & LUI4S_MASKI)     /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&LUI4S_MASKA)>>56 |
+                                (lp_src[0]&LUI4S_MASKB)>>40 |
+                                (lp_src[0]&LUI4S_MASKC)>>24 |
+                                (lp_src[0]&LUI4S_MASKD)>>8;
+                    if(lp_src[0] & LUI4S_MASKJ)     /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&LUI4S_MASKE)>>24 |
+                                (lp_src[0]&LUI4S_MASKF)>>8 |
+                                (lp_src[0]&LUI4S_MASKG)<<8 |
+                                (lp_src[0]&LUI4S_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+            case 1:
+                    if(lp_src[0] & LUI4S_MASKI)     /* Can't forget to sign extend */
+                        lp_dest[0] = 0xffffffffffffffff;
+                    lp_dest[0]=(lp_src[0]&LUI4S_MASKA)>>56 |
+                                (lp_src[0]&LUI4S_MASKB)>>40 |
+                                (lp_src[0]&LUI4S_MASKC)>>24 |
+                                (lp_src[0]&LUI4S_MASKD)>>8;
+                    if(lp_src[0] & LUI4S_MASKJ)     /* Can't forget to sign extend */
+                        lp_dest[1] = 0xffffffffffffffff;
+                    lp_dest[1]=(lp_src[0]&LUI4S_MASKE)>>24 |
+                                (lp_src[0]&LUI4S_MASKF)>>8 |
+                                (lp_src[0]&LUI4S_MASKG)<<8 |
+                                (lp_src[0]&LUI4S_MASKH)<<24;
+                    lp_dest+=2;
+                    lp_src++;
+                } while(--n>0);
+		}
+        if(odd_man_out) {
+            if(lp_src[0] & LUI4S_MASKI)     /* Can't forget to sign extend */
+                lp_dest[0] = 0xffffffffffffffff;
+            lp_dest[0]=(lp_src[0]&LUI4S_MASKA)>>56 |
+                        (lp_src[0]&LUI4S_MASKB)>>40 |
+                        (lp_src[0]&LUI4S_MASKC)>>24 |
+                        (lp_src[0]&LUI4S_MASKD)>>8;
+          } /* end if */
+#endif  /* DUFF_lui4s */
+      } /* end if */
   else 
     for(i = 0; i < num_elm; i++) {
       if((source[3] & 0x80)) {          /* Can't forget to sign extend */
@@ -1892,6 +5718,18 @@ uint32 num_elm, source_stride, dest_stride;
   return 0;
 }
 
+#if defined TEST2_luo4i | defined (DUFF_luo4i)
+#define LUO4I_MASKA 0x00000000ff00ff00
+#define LUO4I_MASKB 0x0000000000ff00ff
+#define LUO4I_MASKC 0xffff0000ffff0000
+#define LUO4I_MASKD 0x0000ffff0000ffff
+#elif defined TEST1_luo4i
+#define LUO4I_MASKA 0x00000000ff000000
+#define LUO4I_MASKB 0x0000000000ff0000
+#define LUO4I_MASKC 0x000000000000ff00
+#define LUO4I_MASKD 0x00000000000000ff
+#endif
+
 /************************************************************/
 /* DFKluo4i()                                                */
 /* -->Unicos routine for exporting 4 byte data items        */ 
@@ -1907,11 +5745,13 @@ uint32 num_elm, source_stride, dest_stride;
 #endif /* PROTOTYPE */
 {
   int fast_processing=0;
-  register uint32 i;
+  register uintn i;
 #ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
 #endif /* PROTOTYPE */
+  long *lp_dest;
+  long *lp_src;
   char *FUNC="DFKuo4i";
 
   HEclear();
@@ -1925,7 +5765,58 @@ uint32 num_elm, source_stride, dest_stride;
     fast_processing = 1;
   }
   
-  if(fast_processing)
+  if(fast_processing) {
+#ifndef DUFF_luo4i
+#if defined TEST2_luo4i
+    int odd_man_out = 0;        /* By default there are even num_elm */
+    intn n;
+
+    if(num_elm % 2)             /* If this is true, we have odd num */
+      odd_man_out = 1;
+
+    n=num_elm/2;
+    lp_dest=(long *)dest;
+    lp_src=(long *)source;
+    for(i = 0; i < n; i++) {
+        *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) | ((lp_src[0]&LUO4I_MASKB)<<40) |
+                   ((lp_src[1]&LUO4I_MASKA)>>8) | ((lp_src[1]&LUO4I_MASKB)>>8);
+        *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) | ((*lp_dest&LUO4I_MASKD)<<16);
+        lp_src+=2;
+    }
+    if(odd_man_out) {
+        *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) | ((lp_src[0]&LUO4I_MASKB)<<40);
+        *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) | ((*lp_dest&LUO4I_MASKD)<<16);
+      } /* end if */
+#elif defined TEST1_luo4i
+    int odd_man_out = 0;        /* By default there are even num_elm */
+    intn n;
+
+    if(num_elm % 2)             /* If this is true, we have odd num */
+      odd_man_out = 1;
+
+    n=num_elm/2;
+    lp_dest=(long *)dest;
+    lp_src=(long *)source;
+    for(i = 0; i < n; i++) {
+    *lp_dest++=((lp_src[0]&LUO4I_MASKA)<<8) |
+                   ((lp_src[0]&LUO4I_MASKB)<<24) |
+                   ((lp_src[0]&LUO4I_MASKC)<<40) |
+                   ((lp_src[0]&LUO4I_MASKD)<<56) |
+                   ((lp_src[1]&LUO4I_MASKA)>>24) |
+                   ((lp_src[1]&LUO4I_MASKB)>>8) |
+                   ((lp_src[1]&LUO4I_MASKC)<<8) |
+                   ((lp_src[1]&LUO4I_MASKD)<<24);
+        lp_src+=2;
+    }
+    if(odd_man_out) {
+        dest=(uint8 *)lp_dest;
+        source=(uint8 *)lp_src;
+        dest[0] = source[7];
+        dest[1] = source[6];
+        dest[2] = source[5];
+        dest[3] = source[4];
+      } /* end if */
+#else
     for(i = 0; i < num_elm; i++) {
       dest[0] = source[7];
       dest[1] = source[6];
@@ -1934,6 +5825,160 @@ uint32 num_elm, source_stride, dest_stride;
       dest += 4;
       source += 8;
     }
+#endif
+#else   /* DUFF_luo4i */
+        register uintn n;
+        int odd_man_out = 0;        /* By default there are even num_elm */
+
+        if(num_elm % 2)             /* If this is true, we have odd num */
+          odd_man_out = 1;
+
+        num_elm/=2;
+        n=(num_elm+7)/8;
+        lp_dest=(long *)dest;
+        lp_src=(long *)source;
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)>>8);
+                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+                    lp_src+=2;
+#ifdef QAK
+            case 15:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)>>8);
+                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+                    lp_src+=2;
+            case 14:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)>>8);
+                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+                    lp_src+=2;
+            case 13:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)>>8);
+                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+                    lp_src+=2;
+            case 12:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)>>8);
+                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+                    lp_src+=2;
+            case 11:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)>>8);
+                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+                    lp_src+=2;
+            case 10:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)>>8);
+                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+                    lp_src+=2;
+            case 9:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)>>8);
+                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+                    lp_src+=2;
+            case 8:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)>>8);
+                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+                    lp_src+=2;
+#endif
+            case 7:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)>>8);
+                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+                    lp_src+=2;
+            case 6:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)>>8);
+                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+                    lp_src+=2;
+            case 5:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)>>8);
+                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+                    lp_src+=2;
+            case 4:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)>>8);
+                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+                    lp_src+=2;
+            case 3:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)>>8);
+                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+                    lp_src+=2;
+            case 2:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)>>8);
+                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+                    lp_src+=2;
+            case 1:
+                    *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                                ((lp_src[0]&LUO4I_MASKB)<<40) |
+                                ((lp_src[1]&LUO4I_MASKA)>>8) |
+                                ((lp_src[1]&LUO4I_MASKB)>>8);
+                    *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                                ((*lp_dest&LUO4I_MASKD)<<16);
+                    lp_src+=2;
+                } while(--n>0);
+		}
+        if(odd_man_out) {
+            *lp_dest=((lp_src[0]&LUO4I_MASKA)<<24) |
+                    ((lp_src[0]&LUO4I_MASKB)<<40);
+            *lp_dest++=((*lp_dest&LUO4I_MASKC)>>16) |
+                    ((*lp_dest&LUO4I_MASKD)<<16);
+          } /* end if */
+#endif  /* DUFF_luo4i */
+  }
   else 
     for(i = 0; i < num_elm; i++) {
       dest[0] = source[7];
@@ -1946,20 +5991,19 @@ uint32 num_elm, source_stride, dest_stride;
   return 0;
 }
 
-#ifdef OLD_WAY
-#define UI4_MASKA 0x8000000000000000
-#define UI4_MASKB 0x7f80000000000000
-#define UI4_MASKC 0x007fffff00000000
-#define UI4_MASKD 0x0000800000000000
-#else
-#define LUI4_MASKA  0x0000008000000000
-#define LUI4_MASKB1 0x0000007f00000000
-#define LUI4_MASKB2 0x0000800000000000
-#define LUI4_MASKC1 0x00007f0000000000
-#define LUI4_MASKC2 0x00ff000000000000
-#define LUI4_MASKC3 0xff00000000000000
-#define LUI4_MASKD  0x0000800000000000
-#endif
+#define LUI4F_MASKA  0x0000008000000000
+#define LUI4F_MASKB1 0x0000007f00000000
+#define LUI4F_MASKB2 0x0000800000000000
+#define LUI4F_MASKC1 0x00007f0000000000
+#define LUI4F_MASKC2 0x00ff000000000000
+#define LUI4F_MASKC3 0xff00000000000000
+#define LUI4F_MASKD  0x0000800000000000
+#define LUI4F_MASKE  0x0000000000000080
+#define LUI4F_MASKF1 0x000000000000007f
+#define LUI4F_MASKF2 0x0000000000008000
+#define LUI4F_MASKG1 0x0000000000007f00
+#define LUI4F_MASKG2 0x0000000000ff0000
+#define LUI4F_MASKG3 0x00000000ff000000
 
 /************************************************************/
 /* DFKlui4f()                                                */
@@ -1992,7 +6036,7 @@ uint32 dest_stride;
 {
   int fast_processing = 0;              /* By default not array processed */
   int odd_man_out = 0;                  /* By default there are even num_elm */
-  register int i,j;
+  int i,j,n;
   long buf1;                            /* This is a temporary stride buf */
   long buf2;                            /* This is a temporary stride buf */
   uint8 * dud1 = (uint8*)&buf1;         /* Dummy pointer to buf1 for strides */
@@ -2014,26 +6058,56 @@ uint32 dest_stride;
     }
 
     /* Find out if it is OK to use faster array processing */
-    if(source_stride == 0 && dest_stride == 0) {
+    if(source_stride == 0 && dest_stride == 0)
         fast_processing = 1;
-        if((num_elm % 2))           /* If this is true, we have odd num */
-            odd_man_out = 1;
-    }
 
     if(fast_processing) {
+#ifndef DUFF_lui4f
+#if defined TEST1_lui4f
+        odd_man_out = num_elm%2;
+        n = num_elm / 2;
+        for(i = 0; i < n; i++) {
+            lptr_dest[0] = (((*lptr_src & LUI4F_MASKA)<<24) |/* Sign bit */
+                    (((*lptr_src & LUI4F_MASKB1) << 17) |  /* Exp. */
+                    ((*lptr_src & LUI4F_MASKB2) << 1)) +
+                    (16258 << 48)) |
+                    (((*lptr_src & LUI4F_MASKC1) |         /* Mantissa */
+                     ((*lptr_src & LUI4F_MASKC2) >>16) |
+                     ((*lptr_src & LUI4F_MASKC3) >>32)) | LUI4F_MASKD);
+            lptr_dest[1] = (((*lptr_src & LUI4F_MASKE) <<56) |/* Sign bit */
+                    (((*lptr_src & LUI4F_MASKF1) << 49) |  /* Exp. */
+                    ((*lptr_src  & LUI4F_MASKF2) << 33)) +
+                    (16258 << 48)) |
+                    ((((*lptr_src & LUI4F_MASKG1) <<32) |         /* Mantissa */
+                     ((*lptr_src & LUI4F_MASKG2) <<16)|
+                     (*lptr_src & LUI4F_MASKG3)) | LUI4F_MASKD);
+            lptr_src++;
+            lptr_dest+=2;
+          } /* end for */
+        if(odd_man_out)
+            lptr_dest[0] = (((lptr_src[0] & LUI4F_MASKA)<<24) |/* Sign bit */
+                    (((lptr_src[0] & LUI4F_MASKB1) << 17) |  /* Exp. */
+                    ((lptr_src[0] & LUI4F_MASKB2) << 1)) +
+                    (16258 << 48)) |
+                    (((lptr_src[0] & LUI4F_MASKC1) |         /* Mantissa */
+                     ((lptr_src[0] & LUI4F_MASKC2) >>16) |
+                     ((lptr_src[0] & LUI4F_MASKC3) >>32)) | LUI4F_MASKD);
+#else
+        if((num_elm % 2))           /* If this is true, we have odd num */
+            odd_man_out = 1;
         num_elm = num_elm / 2;
         for(i = 0; i < num_elm; i++) {
             if(*(float*)lptr_src != 0) {
                 if(((*lptr_src & 0xffffffff00000000) << 1)== 0)
                     *lptr_dest = 0;
                 else 
-                    *lptr_dest = (((*lptr_src & LUI4_MASKA)<<24) |/* Sign bit */
-                            (((*lptr_src & LUI4_MASKB1) << 17) |  /* Exp. */
-                            ((*lptr_src & LUI4_MASKB2) << 1)) +
+                    *lptr_dest = (((*lptr_src & LUI4F_MASKA)<<24) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKB1) << 17) |  /* Exp. */
+                            ((*lptr_src & LUI4F_MASKB2) << 1)) +
                             (16258 << 48)) |
-                            (((*lptr_src & LUI4_MASKC1) |         /* Mantissa */
-                             ((*lptr_src & LUI4_MASKC2) >>16) |
-                             ((*lptr_src & LUI4_MASKC3) >>32)) | LUI4_MASKD);
+                            (((*lptr_src & LUI4F_MASKC1) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKC2) >>16) |
+                             ((*lptr_src & LUI4F_MASKC3) >>32)) | LUI4F_MASKD);
             }
             else
                 *lptr_dest = *lptr_src;
@@ -2042,13 +6116,13 @@ uint32 dest_stride;
                 if(((*lptr_src & 0x00000000ffffffff) << 33)== 0)
                     *lptr_dest = 0;
                 else
-                    *lptr_dest = ((((*lptr_src << 32) & LUI4_MASKA)<<24) |/* Sign bit */
-                            ((((*lptr_src << 32) & LUI4_MASKB1) << 17) |  /* Exp. */
-                            (((*lptr_src <<32 ) & LUI4_MASKB2) << 1)) +
+                    *lptr_dest = ((((*lptr_src << 32) & LUI4F_MASKA)<<24) |/* Sign bit */
+                            ((((*lptr_src << 32) & LUI4F_MASKB1) << 17) |  /* Exp. */
+                            (((*lptr_src <<32 ) & LUI4F_MASKB2) << 1)) +
                             (16258 << 48)) |
-                            ((((*lptr_src << 32) & LUI4_MASKC1) |         /* Mantissa */
-                             (((*lptr_src << 32) & LUI4_MASKC2) >>16) |
-                             (((*lptr_src << 32) & LUI4_MASKC3) >>32)) | LUI4_MASKD);
+                            ((((*lptr_src << 32) & LUI4F_MASKC1) |         /* Mantissa */
+                             (((*lptr_src << 32) & LUI4F_MASKC2) >>16) |
+                             (((*lptr_src << 32) & LUI4F_MASKC3) >>32)) | LUI4F_MASKD);
             }
             else
                 *lptr_dest = *lptr_src;
@@ -2060,17 +6134,310 @@ uint32 dest_stride;
                 if(((lptr_src[0] & 0xffffffff00000000) << 1)== 0)
                     lptr_dest[0] = 0;
                 else
-                    lptr_dest[0] = (((lptr_src[0] & LUI4_MASKA)<<24) |/* Sign bit */
-                            (((lptr_src[0] & LUI4_MASKB1) << 17) |  /* Exp. */
-                            ((lptr_src[0] & LUI4_MASKB2) << 1)) +
+                    lptr_dest[0] = (((lptr_src[0] & LUI4F_MASKA)<<24) |/* Sign bit */
+                            (((lptr_src[0] & LUI4F_MASKB1) << 17) |  /* Exp. */
+                            ((lptr_src[0] & LUI4F_MASKB2) << 1)) +
                             (16258 << 48)) |
-                            (((lptr_src[0] & LUI4_MASKC1) |         /* Mantissa */
-                             ((lptr_src[0] & LUI4_MASKC2) >>16) |
-                             ((lptr_src[0] & LUI4_MASKC3) >>32)) | LUI4_MASKD);
+                            (((lptr_src[0] & LUI4F_MASKC1) |         /* Mantissa */
+                             ((lptr_src[0] & LUI4F_MASKC2) >>16) |
+                             ((lptr_src[0] & LUI4F_MASKC3) >>32)) | LUI4F_MASKD);
             }
             else
                 *lptr_dest = *lptr_src;
         }
+#endif
+#else   /* DUFF_lui4f */
+        odd_man_out = num_elm % 2;
+
+        num_elm/=2;
+        n=(num_elm+7)/8;
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    lptr_dest[0] = (((*lptr_src & LUI4F_MASKA)<<24) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKB1) << 17) |  /* Exp. */
+                            ((*lptr_src & LUI4F_MASKB2) << 1)) +
+                            (16258 << 48)) |
+                            (((*lptr_src & LUI4F_MASKC1) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKC2) >>16) |
+                             ((*lptr_src & LUI4F_MASKC3) >>32)) | LUI4F_MASKD);
+                    lptr_dest[1] = (((*lptr_src & LUI4F_MASKE) <<56) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKF1) << 49) |  /* Exp. */
+                            ((*lptr_src  & LUI4F_MASKF2) << 33)) +
+                            (16258 << 48)) |
+                            ((((*lptr_src & LUI4F_MASKG1) <<32) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKG2) <<16)|
+                             (*lptr_src & LUI4F_MASKG3)) | LUI4F_MASKD);
+                    lptr_src++;
+                    lptr_dest+=2;
+#ifdef QAK
+            case 15:
+                    lptr_dest[0] = (((*lptr_src & LUI4F_MASKA)<<24) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKB1) << 17) |  /* Exp. */
+                            ((*lptr_src & LUI4F_MASKB2) << 1)) +
+                            (16258 << 48)) |
+                            (((*lptr_src & LUI4F_MASKC1) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKC2) >>16) |
+                             ((*lptr_src & LUI4F_MASKC3) >>32)) | LUI4F_MASKD);
+                    lptr_dest[1] = (((*lptr_src & LUI4F_MASKE) <<56) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKF1) << 49) |  /* Exp. */
+                            ((*lptr_src  & LUI4F_MASKF2) << 33)) +
+                            (16258 << 48)) |
+                            ((((*lptr_src & LUI4F_MASKG1) <<32) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKG2) <<16)|
+                             (*lptr_src & LUI4F_MASKG3)) | LUI4F_MASKD);
+                    lptr_src++;
+                    lptr_dest+=2;
+            case 14:
+                    lptr_dest[0] = (((*lptr_src & LUI4F_MASKA)<<24) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKB1) << 17) |  /* Exp. */
+                            ((*lptr_src & LUI4F_MASKB2) << 1)) +
+                            (16258 << 48)) |
+                            (((*lptr_src & LUI4F_MASKC1) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKC2) >>16) |
+                             ((*lptr_src & LUI4F_MASKC3) >>32)) | LUI4F_MASKD);
+                    lptr_dest[1] = (((*lptr_src & LUI4F_MASKE) <<56) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKF1) << 49) |  /* Exp. */
+                            ((*lptr_src  & LUI4F_MASKF2) << 33)) +
+                            (16258 << 48)) |
+                            ((((*lptr_src & LUI4F_MASKG1) <<32) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKG2) <<16)|
+                             (*lptr_src & LUI4F_MASKG3)) | LUI4F_MASKD);
+                    lptr_src++;
+                    lptr_dest+=2;
+            case 13:
+                    lptr_dest[0] = (((*lptr_src & LUI4F_MASKA)<<24) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKB1) << 17) |  /* Exp. */
+                            ((*lptr_src & LUI4F_MASKB2) << 1)) +
+                            (16258 << 48)) |
+                            (((*lptr_src & LUI4F_MASKC1) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKC2) >>16) |
+                             ((*lptr_src & LUI4F_MASKC3) >>32)) | LUI4F_MASKD);
+                    lptr_dest[1] = (((*lptr_src & LUI4F_MASKE) <<56) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKF1) << 49) |  /* Exp. */
+                            ((*lptr_src  & LUI4F_MASKF2) << 33)) +
+                            (16258 << 48)) |
+                            ((((*lptr_src & LUI4F_MASKG1) <<32) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKG2) <<16)|
+                             (*lptr_src & LUI4F_MASKG3)) | LUI4F_MASKD);
+                    lptr_src++;
+                    lptr_dest+=2;
+            case 12:
+                    lptr_dest[0] = (((*lptr_src & LUI4F_MASKA)<<24) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKB1) << 17) |  /* Exp. */
+                            ((*lptr_src & LUI4F_MASKB2) << 1)) +
+                            (16258 << 48)) |
+                            (((*lptr_src & LUI4F_MASKC1) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKC2) >>16) |
+                             ((*lptr_src & LUI4F_MASKC3) >>32)) | LUI4F_MASKD);
+                    lptr_dest[1] = (((*lptr_src & LUI4F_MASKE) <<56) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKF1) << 49) |  /* Exp. */
+                            ((*lptr_src  & LUI4F_MASKF2) << 33)) +
+                            (16258 << 48)) |
+                            ((((*lptr_src & LUI4F_MASKG1) <<32) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKG2) <<16)|
+                             (*lptr_src & LUI4F_MASKG3)) | LUI4F_MASKD);
+                    lptr_src++;
+                    lptr_dest+=2;
+            case 11:
+                    lptr_dest[0] = (((*lptr_src & LUI4F_MASKA)<<24) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKB1) << 17) |  /* Exp. */
+                            ((*lptr_src & LUI4F_MASKB2) << 1)) +
+                            (16258 << 48)) |
+                            (((*lptr_src & LUI4F_MASKC1) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKC2) >>16) |
+                             ((*lptr_src & LUI4F_MASKC3) >>32)) | LUI4F_MASKD);
+                    lptr_dest[1] = (((*lptr_src & LUI4F_MASKE) <<56) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKF1) << 49) |  /* Exp. */
+                            ((*lptr_src  & LUI4F_MASKF2) << 33)) +
+                            (16258 << 48)) |
+                            ((((*lptr_src & LUI4F_MASKG1) <<32) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKG2) <<16)|
+                             (*lptr_src & LUI4F_MASKG3)) | LUI4F_MASKD);
+                    lptr_src++;
+                    lptr_dest+=2;
+            case 10:
+                    lptr_dest[0] = (((*lptr_src & LUI4F_MASKA)<<24) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKB1) << 17) |  /* Exp. */
+                            ((*lptr_src & LUI4F_MASKB2) << 1)) +
+                            (16258 << 48)) |
+                            (((*lptr_src & LUI4F_MASKC1) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKC2) >>16) |
+                             ((*lptr_src & LUI4F_MASKC3) >>32)) | LUI4F_MASKD);
+                    lptr_dest[1] = (((*lptr_src & LUI4F_MASKE) <<56) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKF1) << 49) |  /* Exp. */
+                            ((*lptr_src  & LUI4F_MASKF2) << 33)) +
+                            (16258 << 48)) |
+                            ((((*lptr_src & LUI4F_MASKG1) <<32) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKG2) <<16)|
+                             (*lptr_src & LUI4F_MASKG3)) | LUI4F_MASKD);
+                    lptr_src++;
+                    lptr_dest+=2;
+            case 9:
+                    lptr_dest[0] = (((*lptr_src & LUI4F_MASKA)<<24) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKB1) << 17) |  /* Exp. */
+                            ((*lptr_src & LUI4F_MASKB2) << 1)) +
+                            (16258 << 48)) |
+                            (((*lptr_src & LUI4F_MASKC1) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKC2) >>16) |
+                             ((*lptr_src & LUI4F_MASKC3) >>32)) | LUI4F_MASKD);
+                    lptr_dest[1] = (((*lptr_src & LUI4F_MASKE) <<56) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKF1) << 49) |  /* Exp. */
+                            ((*lptr_src  & LUI4F_MASKF2) << 33)) +
+                            (16258 << 48)) |
+                            ((((*lptr_src & LUI4F_MASKG1) <<32) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKG2) <<16)|
+                             (*lptr_src & LUI4F_MASKG3)) | LUI4F_MASKD);
+                    lptr_src++;
+                    lptr_dest+=2;
+            case 8:
+                    lptr_dest[0] = (((*lptr_src & LUI4F_MASKA)<<24) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKB1) << 17) |  /* Exp. */
+                            ((*lptr_src & LUI4F_MASKB2) << 1)) +
+                            (16258 << 48)) |
+                            (((*lptr_src & LUI4F_MASKC1) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKC2) >>16) |
+                             ((*lptr_src & LUI4F_MASKC3) >>32)) | LUI4F_MASKD);
+                    lptr_dest[1] = (((*lptr_src & LUI4F_MASKE) <<56) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKF1) << 49) |  /* Exp. */
+                            ((*lptr_src  & LUI4F_MASKF2) << 33)) +
+                            (16258 << 48)) |
+                            ((((*lptr_src & LUI4F_MASKG1) <<32) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKG2) <<16)|
+                             (*lptr_src & LUI4F_MASKG3)) | LUI4F_MASKD);
+                    lptr_src++;
+                    lptr_dest+=2;
+#endif
+            case 7:
+                    lptr_dest[0] = (((*lptr_src & LUI4F_MASKA)<<24) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKB1) << 17) |  /* Exp. */
+                            ((*lptr_src & LUI4F_MASKB2) << 1)) +
+                            (16258 << 48)) |
+                            (((*lptr_src & LUI4F_MASKC1) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKC2) >>16) |
+                             ((*lptr_src & LUI4F_MASKC3) >>32)) | LUI4F_MASKD);
+                    lptr_dest[1] = (((*lptr_src & LUI4F_MASKE) <<56) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKF1) << 49) |  /* Exp. */
+                            ((*lptr_src  & LUI4F_MASKF2) << 33)) +
+                            (16258 << 48)) |
+                            ((((*lptr_src & LUI4F_MASKG1) <<32) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKG2) <<16)|
+                             (*lptr_src & LUI4F_MASKG3)) | LUI4F_MASKD);
+                    lptr_src++;
+                    lptr_dest+=2;
+            case 6:
+                    lptr_dest[0] = (((*lptr_src & LUI4F_MASKA)<<24) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKB1) << 17) |  /* Exp. */
+                            ((*lptr_src & LUI4F_MASKB2) << 1)) +
+                            (16258 << 48)) |
+                            (((*lptr_src & LUI4F_MASKC1) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKC2) >>16) |
+                             ((*lptr_src & LUI4F_MASKC3) >>32)) | LUI4F_MASKD);
+                    lptr_dest[1] = (((*lptr_src & LUI4F_MASKE) <<56) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKF1) << 49) |  /* Exp. */
+                            ((*lptr_src  & LUI4F_MASKF2) << 33)) +
+                            (16258 << 48)) |
+                            ((((*lptr_src & LUI4F_MASKG1) <<32) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKG2) <<16)|
+                             (*lptr_src & LUI4F_MASKG3)) | LUI4F_MASKD);
+                    lptr_src++;
+                    lptr_dest+=2;
+            case 5:
+                    lptr_dest[0] = (((*lptr_src & LUI4F_MASKA)<<24) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKB1) << 17) |  /* Exp. */
+                            ((*lptr_src & LUI4F_MASKB2) << 1)) +
+                            (16258 << 48)) |
+                            (((*lptr_src & LUI4F_MASKC1) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKC2) >>16) |
+                             ((*lptr_src & LUI4F_MASKC3) >>32)) | LUI4F_MASKD);
+                    lptr_dest[1] = (((*lptr_src & LUI4F_MASKE) <<56) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKF1) << 49) |  /* Exp. */
+                            ((*lptr_src  & LUI4F_MASKF2) << 33)) +
+                            (16258 << 48)) |
+                            ((((*lptr_src & LUI4F_MASKG1) <<32) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKG2) <<16)|
+                             (*lptr_src & LUI4F_MASKG3)) | LUI4F_MASKD);
+                    lptr_src++;
+                    lptr_dest+=2;
+            case 4:
+                    lptr_dest[0] = (((*lptr_src & LUI4F_MASKA)<<24) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKB1) << 17) |  /* Exp. */
+                            ((*lptr_src & LUI4F_MASKB2) << 1)) +
+                            (16258 << 48)) |
+                            (((*lptr_src & LUI4F_MASKC1) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKC2) >>16) |
+                             ((*lptr_src & LUI4F_MASKC3) >>32)) | LUI4F_MASKD);
+                    lptr_dest[1] = (((*lptr_src & LUI4F_MASKE) <<56) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKF1) << 49) |  /* Exp. */
+                            ((*lptr_src  & LUI4F_MASKF2) << 33)) +
+                            (16258 << 48)) |
+                            ((((*lptr_src & LUI4F_MASKG1) <<32) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKG2) <<16)|
+                             (*lptr_src & LUI4F_MASKG3)) | LUI4F_MASKD);
+                    lptr_src++;
+                    lptr_dest+=2;
+            case 3:
+                    lptr_dest[0] = (((*lptr_src & LUI4F_MASKA)<<24) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKB1) << 17) |  /* Exp. */
+                            ((*lptr_src & LUI4F_MASKB2) << 1)) +
+                            (16258 << 48)) |
+                            (((*lptr_src & LUI4F_MASKC1) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKC2) >>16) |
+                             ((*lptr_src & LUI4F_MASKC3) >>32)) | LUI4F_MASKD);
+                    lptr_dest[1] = (((*lptr_src & LUI4F_MASKE) <<56) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKF1) << 49) |  /* Exp. */
+                            ((*lptr_src  & LUI4F_MASKF2) << 33)) +
+                            (16258 << 48)) |
+                            ((((*lptr_src & LUI4F_MASKG1) <<32) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKG2) <<16)|
+                             (*lptr_src & LUI4F_MASKG3)) | LUI4F_MASKD);
+                    lptr_src++;
+                    lptr_dest+=2;
+            case 2:
+                    lptr_dest[0] = (((*lptr_src & LUI4F_MASKA)<<24) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKB1) << 17) |  /* Exp. */
+                            ((*lptr_src & LUI4F_MASKB2) << 1)) +
+                            (16258 << 48)) |
+                            (((*lptr_src & LUI4F_MASKC1) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKC2) >>16) |
+                             ((*lptr_src & LUI4F_MASKC3) >>32)) | LUI4F_MASKD);
+                    lptr_dest[1] = (((*lptr_src & LUI4F_MASKE) <<56) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKF1) << 49) |  /* Exp. */
+                            ((*lptr_src  & LUI4F_MASKF2) << 33)) +
+                            (16258 << 48)) |
+                            ((((*lptr_src & LUI4F_MASKG1) <<32) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKG2) <<16)|
+                             (*lptr_src & LUI4F_MASKG3)) | LUI4F_MASKD);
+                    lptr_src++;
+                    lptr_dest+=2;
+            case 1:
+                    lptr_dest[0] = (((*lptr_src & LUI4F_MASKA)<<24) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKB1) << 17) |  /* Exp. */
+                            ((*lptr_src & LUI4F_MASKB2) << 1)) +
+                            (16258 << 48)) |
+                            (((*lptr_src & LUI4F_MASKC1) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKC2) >>16) |
+                             ((*lptr_src & LUI4F_MASKC3) >>32)) | LUI4F_MASKD);
+                    lptr_dest[1] = (((*lptr_src & LUI4F_MASKE) <<56) |/* Sign bit */
+                            (((*lptr_src & LUI4F_MASKF1) << 49) |  /* Exp. */
+                            ((*lptr_src  & LUI4F_MASKF2) << 33)) +
+                            (16258 << 48)) |
+                            ((((*lptr_src & LUI4F_MASKG1) <<32) |         /* Mantissa */
+                             ((*lptr_src & LUI4F_MASKG2) <<16)|
+                             (*lptr_src & LUI4F_MASKG3)) | LUI4F_MASKD);
+                    lptr_src++;
+                    lptr_dest+=2;
+                } while(--n>0);
+		}
+        if(odd_man_out)
+            lptr_dest[0] = (((lptr_src[0] & LUI4F_MASKA)<<24) |/* Sign bit */
+                    (((lptr_src[0] & LUI4F_MASKB1) << 17) |  /* Exp. */
+                    ((lptr_src[0] & LUI4F_MASKB2) << 1)) +
+                    (16258 << 48)) |
+                    (((lptr_src[0] & LUI4F_MASKC1) |         /* Mantissa */
+                     ((lptr_src[0] & LUI4F_MASKC2) >>16) |
+                     ((lptr_src[0] & LUI4F_MASKC3) >>32)) | LUI4F_MASKD);
+#endif  /* DUFF_lui4f */
     }
     else { /* We end up here if we are doing stride based processing */
         buf1 = 0;
@@ -2081,10 +6448,10 @@ uint32 dest_stride;
             dud1[3] = source[0];
 
             if((float)buf1 != 0) {
-                buf2 = (((buf1 & UI4_MASKA) |
-                        ((buf1 & UI4_MASKB) >> 7) +
+                buf2 = (((buf1 & UI4F_MASKA) |
+                        ((buf1 & UI4F_MASKB) >> 7) +
                         (16258 << 48)) |
-                        (((buf1 & UI4_MASKC) >> 8) | (UI4_MASKD)));
+                        (((buf1 & UI4F_MASKC) >> 8) | (UI4F_MASKD)));
                 if((buf1 << 1)== 0)
                     buf2 = 0;
             }
@@ -2107,6 +6474,15 @@ uint32 dest_stride;
   return;
 }
 
+
+#define LUO4F_MASKA 0x8000000000000000
+#define LUO4F_MASKB 0x7fff000000000000
+#define LUO4F_MASKC 0x00007fffff000000
+#define LUO4F_MASKD 0x0000000000800000
+#define LUO4F_MASKE 0xff00ff00ff00ff00
+#define LUO4F_MASKF 0x00ff00ff00ff00ff
+#define LUO4F_MASKG 0xffff0000ffff0000
+#define LUO4F_MASKH 0x0000ffff0000ffff
 
 /************************************************************/
 /* DFKluo4f()                                                */
@@ -2136,7 +6512,7 @@ uint32 num_elm, source_stride, dest_stride;
 {
   int fast_processing = 0;              /* By default not array processed */
   int odd_man_out = 0;                  /* By default there are even num_elm */
-  register int i,j;
+  int i,j,n;
   long buf1;                            /* This is a temporary stride buf */
   long buf2;                            /* This is a temporary stride buf */
   uint8 * dud1 = (uint8*)&buf1;         /* Dummy pointer to buf1 for strides */
@@ -2158,28 +6534,54 @@ uint32 num_elm, source_stride, dest_stride;
   }
 
   /* Find out if it is OK to use faster array processing */
-  if(source_stride == 0 && dest_stride == 0) {
+  if(source_stride == 0 && dest_stride == 0)
       fast_processing = 1;            
-    if((num_elm % 2))                   /* If this is true, we have odd num */
-      odd_man_out = 1;
-  }
 
     if(fast_processing) {
+#ifndef DUFF_luo4f
+#if defined TEST1_luo4f
+        odd_man_out = num_elm%2;
+        n=num_elm/2;
+        for(i = 0; i < n; i++) {
+            buf1 = (((lptr_src[0] & LUO4F_MASKA) |
+                    ((((lptr_src[0] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                    (((lptr_src[0] & LUO4F_MASKC) +
+                    ((lptr_src[0] & LUO4F_MASKD) << 1)) << 8)) |
+                    ((((lptr_src[1] & LUO4F_MASKA) |
+                    ((((lptr_src[1] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                    (((lptr_src[1] & LUO4F_MASKC) +
+                    ((lptr_src[1] & LUO4F_MASKD) << 1)) << 8)) >> 32);
+            buf1 = ((buf1 & LUO4F_MASKE)>>8) | ((buf1 & LUO4F_MASKF)<<8);
+            lptr_dest[0] = ((buf1 & LUO4F_MASKG)>>16) | ((buf1 & LUO4F_MASKH)<<16);
+            lptr_src+=2;
+            lptr_dest ++;
+        }
+        if(odd_man_out) {
+            buf1 = ((lptr_src[0] & LUO4F_MASKA) |
+                    ((((lptr_src[0]  & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                    (((lptr_src[0]  & LUO4F_MASKC) +
+                    ((lptr_src[0]  & LUO4F_MASKD) << 1)) << 8);
+            buf1 = ((buf1 & LUO4F_MASKE)>>8) | ((buf1 & LUO4F_MASKF)<<8);
+            lptr_dest[0] = ((buf1 & LUO4F_MASKG)>>16) | ((buf1 & LUO4F_MASKH)<<16);
+        }
+#else
+        if((num_elm % 2))                   /* If this is true, we have odd num */
+          odd_man_out = 1;
         for(i = 0; i < (int)(num_elm/2); i++) {
             buf1 = lptr_src[0];
             buf2 = lptr_src[1];
             if(buf1 != 0)
-                buf1 = (((buf1 & UO4_MASKA) |
-                        ((((buf1 & UO4_MASKB) >> 48) - 16258) << 55)) +
-                        (((buf1 & UO4_MASKC) +
-                        ((buf1 & UO4_MASKD) << 1)) << 8));
+                buf1 = (((buf1 & LUO4F_MASKA) |
+                        ((((buf1 & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                        (((buf1 & LUO4F_MASKC) +
+                        ((buf1 & LUO4F_MASKD) << 1)) << 8));
             else
                 buf1 = 0;
             if(buf2 != 0)
-                buf2 = ((((buf2 & UO4_MASKA) |
-                        ((((buf2 & UO4_MASKB) >> 48) - 16258) << 55)) +
-                        (((buf2 & UO4_MASKC) +
-                        ((buf2 & UO4_MASKD) << 1)) << 8)) >> 32);
+                buf2 = ((((buf2 & LUO4F_MASKA) |
+                        ((((buf2 & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                        (((buf2 & LUO4F_MASKC) +
+                        ((buf2 & LUO4F_MASKD) << 1)) << 8)) >> 32);
             else
                 buf2 = 0;
             lptr_dest[0] = (((buf1 & 0xff00000000000000) >>24) |
@@ -2197,10 +6599,10 @@ uint32 num_elm, source_stride, dest_stride;
         if(odd_man_out) {
             buf1 = lptr_src[0];
             if(buf1 != 0) {
-                buf1 = ((buf1 & UO4_MASKA) |
-                        ((((buf1 & UO4_MASKB) >> 48) - 16258) << 55)) +
-                        (((buf1 & UO4_MASKC) +
-                        ((buf1 & UO4_MASKD) << 1)) << 8);
+                buf1 = ((buf1 & LUO4F_MASKA) |
+                        ((((buf1 & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                        (((buf1 & LUO4F_MASKC) +
+                        ((buf1 & LUO4F_MASKD) << 1)) << 8);
                 lptr_dest[0] = ((buf1 & 0xff00000000000000) >>24) |
                                ((buf1 & 0x00ff000000000000) >>8) |
                                ((buf1 & 0x0000ff0000000000) <<8) |
@@ -2209,6 +6611,235 @@ uint32 num_elm, source_stride, dest_stride;
             else
                 lptr_dest[0] = 0;
         }
+#endif
+#else   /* DUFF_luo4f */
+        odd_man_out = num_elm % 2;
+
+        num_elm/=2;
+        n=(num_elm+7)/8;
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    buf1 = (((lptr_src[0] & LUO4F_MASKA) |
+                            ((((lptr_src[0] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & LUO4F_MASKC) +
+                            ((lptr_src[0] & LUO4F_MASKD) << 1)) << 8)) |
+                            ((((lptr_src[1] & LUO4F_MASKA) |
+                            ((((lptr_src[1] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & LUO4F_MASKC) +
+                            ((lptr_src[1] & LUO4F_MASKD) << 1)) << 8)) >> 32);
+                    buf1 = ((buf1 & LUO4F_MASKE)>>8) | ((buf1 & LUO4F_MASKF)<<8);
+                    lptr_dest[0] = ((buf1 & LUO4F_MASKG)>>16) | ((buf1 & LUO4F_MASKH)<<16);
+                    lptr_src+=2;
+                    lptr_dest ++;
+#ifdef QAK
+            case 15:
+                    buf1 = (((lptr_src[0] & LUO4F_MASKA) |
+                            ((((lptr_src[0] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & LUO4F_MASKC) +
+                            ((lptr_src[0] & LUO4F_MASKD) << 1)) << 8)) |
+                            ((((lptr_src[1] & LUO4F_MASKA) |
+                            ((((lptr_src[1] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & LUO4F_MASKC) +
+                            ((lptr_src[1] & LUO4F_MASKD) << 1)) << 8)) >> 32);
+                    buf1 = ((buf1 & LUO4F_MASKE)>>8) | ((buf1 & LUO4F_MASKF)<<8);
+                    lptr_dest[0] = ((buf1 & LUO4F_MASKG)>>16) | ((buf1 & LUO4F_MASKH)<<16);
+                    lptr_src+=2;
+                    lptr_dest ++;
+            case 14:
+                    buf1 = (((lptr_src[0] & LUO4F_MASKA) |
+                            ((((lptr_src[0] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & LUO4F_MASKC) +
+                            ((lptr_src[0] & LUO4F_MASKD) << 1)) << 8)) |
+                            ((((lptr_src[1] & LUO4F_MASKA) |
+                            ((((lptr_src[1] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & LUO4F_MASKC) +
+                            ((lptr_src[1] & LUO4F_MASKD) << 1)) << 8)) >> 32);
+                    buf1 = ((buf1 & LUO4F_MASKE)>>8) | ((buf1 & LUO4F_MASKF)<<8);
+                    lptr_dest[0] = ((buf1 & LUO4F_MASKG)>>16) | ((buf1 & LUO4F_MASKH)<<16);
+                    lptr_src+=2;
+                    lptr_dest ++;
+            case 13:
+                    buf1 = (((lptr_src[0] & LUO4F_MASKA) |
+                            ((((lptr_src[0] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & LUO4F_MASKC) +
+                            ((lptr_src[0] & LUO4F_MASKD) << 1)) << 8)) |
+                            ((((lptr_src[1] & LUO4F_MASKA) |
+                            ((((lptr_src[1] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & LUO4F_MASKC) +
+                            ((lptr_src[1] & LUO4F_MASKD) << 1)) << 8)) >> 32);
+                    buf1 = ((buf1 & LUO4F_MASKE)>>8) | ((buf1 & LUO4F_MASKF)<<8);
+                    lptr_dest[0] = ((buf1 & LUO4F_MASKG)>>16) | ((buf1 & LUO4F_MASKH)<<16);
+                    lptr_src+=2;
+                    lptr_dest ++;
+            case 12:
+                    buf1 = (((lptr_src[0] & LUO4F_MASKA) |
+                            ((((lptr_src[0] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & LUO4F_MASKC) +
+                            ((lptr_src[0] & LUO4F_MASKD) << 1)) << 8)) |
+                            ((((lptr_src[1] & LUO4F_MASKA) |
+                            ((((lptr_src[1] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & LUO4F_MASKC) +
+                            ((lptr_src[1] & LUO4F_MASKD) << 1)) << 8)) >> 32);
+                    buf1 = ((buf1 & LUO4F_MASKE)>>8) | ((buf1 & LUO4F_MASKF)<<8);
+                    lptr_dest[0] = ((buf1 & LUO4F_MASKG)>>16) | ((buf1 & LUO4F_MASKH)<<16);
+                    lptr_src+=2;
+                    lptr_dest ++;
+            case 11:
+                    buf1 = (((lptr_src[0] & LUO4F_MASKA) |
+                            ((((lptr_src[0] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & LUO4F_MASKC) +
+                            ((lptr_src[0] & LUO4F_MASKD) << 1)) << 8)) |
+                            ((((lptr_src[1] & LUO4F_MASKA) |
+                            ((((lptr_src[1] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & LUO4F_MASKC) +
+                            ((lptr_src[1] & LUO4F_MASKD) << 1)) << 8)) >> 32);
+                    buf1 = ((buf1 & LUO4F_MASKE)>>8) | ((buf1 & LUO4F_MASKF)<<8);
+                    lptr_dest[0] = ((buf1 & LUO4F_MASKG)>>16) | ((buf1 & LUO4F_MASKH)<<16);
+                    lptr_src+=2;
+                    lptr_dest ++;
+            case 10:
+                    buf1 = (((lptr_src[0] & LUO4F_MASKA) |
+                            ((((lptr_src[0] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & LUO4F_MASKC) +
+                            ((lptr_src[0] & LUO4F_MASKD) << 1)) << 8)) |
+                            ((((lptr_src[1] & LUO4F_MASKA) |
+                            ((((lptr_src[1] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & LUO4F_MASKC) +
+                            ((lptr_src[1] & LUO4F_MASKD) << 1)) << 8)) >> 32);
+                    buf1 = ((buf1 & LUO4F_MASKE)>>8) | ((buf1 & LUO4F_MASKF)<<8);
+                    lptr_dest[0] = ((buf1 & LUO4F_MASKG)>>16) | ((buf1 & LUO4F_MASKH)<<16);
+                    lptr_src+=2;
+                    lptr_dest ++;
+            case 9:
+                    buf1 = (((lptr_src[0] & LUO4F_MASKA) |
+                            ((((lptr_src[0] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & LUO4F_MASKC) +
+                            ((lptr_src[0] & LUO4F_MASKD) << 1)) << 8)) |
+                            ((((lptr_src[1] & LUO4F_MASKA) |
+                            ((((lptr_src[1] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & LUO4F_MASKC) +
+                            ((lptr_src[1] & LUO4F_MASKD) << 1)) << 8)) >> 32);
+                    buf1 = ((buf1 & LUO4F_MASKE)>>8) | ((buf1 & LUO4F_MASKF)<<8);
+                    lptr_dest[0] = ((buf1 & LUO4F_MASKG)>>16) | ((buf1 & LUO4F_MASKH)<<16);
+                    lptr_src+=2;
+                    lptr_dest ++;
+            case 8:
+                    buf1 = (((lptr_src[0] & LUO4F_MASKA) |
+                            ((((lptr_src[0] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & LUO4F_MASKC) +
+                            ((lptr_src[0] & LUO4F_MASKD) << 1)) << 8)) |
+                            ((((lptr_src[1] & LUO4F_MASKA) |
+                            ((((lptr_src[1] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & LUO4F_MASKC) +
+                            ((lptr_src[1] & LUO4F_MASKD) << 1)) << 8)) >> 32);
+                    buf1 = ((buf1 & LUO4F_MASKE)>>8) | ((buf1 & LUO4F_MASKF)<<8);
+                    lptr_dest[0] = ((buf1 & LUO4F_MASKG)>>16) | ((buf1 & LUO4F_MASKH)<<16);
+                    lptr_src+=2;
+                    lptr_dest ++;
+#endif
+            case 7:
+                    buf1 = (((lptr_src[0] & LUO4F_MASKA) |
+                            ((((lptr_src[0] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & LUO4F_MASKC) +
+                            ((lptr_src[0] & LUO4F_MASKD) << 1)) << 8)) |
+                            ((((lptr_src[1] & LUO4F_MASKA) |
+                            ((((lptr_src[1] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & LUO4F_MASKC) +
+                            ((lptr_src[1] & LUO4F_MASKD) << 1)) << 8)) >> 32);
+                    buf1 = ((buf1 & LUO4F_MASKE)>>8) | ((buf1 & LUO4F_MASKF)<<8);
+                    lptr_dest[0] = ((buf1 & LUO4F_MASKG)>>16) | ((buf1 & LUO4F_MASKH)<<16);
+                    lptr_src+=2;
+                    lptr_dest ++;
+            case 6:
+                    buf1 = (((lptr_src[0] & LUO4F_MASKA) |
+                            ((((lptr_src[0] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & LUO4F_MASKC) +
+                            ((lptr_src[0] & LUO4F_MASKD) << 1)) << 8)) |
+                            ((((lptr_src[1] & LUO4F_MASKA) |
+                            ((((lptr_src[1] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & LUO4F_MASKC) +
+                            ((lptr_src[1] & LUO4F_MASKD) << 1)) << 8)) >> 32);
+                    buf1 = ((buf1 & LUO4F_MASKE)>>8) | ((buf1 & LUO4F_MASKF)<<8);
+                    lptr_dest[0] = ((buf1 & LUO4F_MASKG)>>16) | ((buf1 & LUO4F_MASKH)<<16);
+                    lptr_src+=2;
+                    lptr_dest ++;
+            case 5:
+                    buf1 = (((lptr_src[0] & LUO4F_MASKA) |
+                            ((((lptr_src[0] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & LUO4F_MASKC) +
+                            ((lptr_src[0] & LUO4F_MASKD) << 1)) << 8)) |
+                            ((((lptr_src[1] & LUO4F_MASKA) |
+                            ((((lptr_src[1] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & LUO4F_MASKC) +
+                            ((lptr_src[1] & LUO4F_MASKD) << 1)) << 8)) >> 32);
+                    buf1 = ((buf1 & LUO4F_MASKE)>>8) | ((buf1 & LUO4F_MASKF)<<8);
+                    lptr_dest[0] = ((buf1 & LUO4F_MASKG)>>16) | ((buf1 & LUO4F_MASKH)<<16);
+                    lptr_src+=2;
+                    lptr_dest ++;
+            case 4:
+                    buf1 = (((lptr_src[0] & LUO4F_MASKA) |
+                            ((((lptr_src[0] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & LUO4F_MASKC) +
+                            ((lptr_src[0] & LUO4F_MASKD) << 1)) << 8)) |
+                            ((((lptr_src[1] & LUO4F_MASKA) |
+                            ((((lptr_src[1] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & LUO4F_MASKC) +
+                            ((lptr_src[1] & LUO4F_MASKD) << 1)) << 8)) >> 32);
+                    buf1 = ((buf1 & LUO4F_MASKE)>>8) | ((buf1 & LUO4F_MASKF)<<8);
+                    lptr_dest[0] = ((buf1 & LUO4F_MASKG)>>16) | ((buf1 & LUO4F_MASKH)<<16);
+                    lptr_src+=2;
+                    lptr_dest ++;
+            case 3:
+                    buf1 = (((lptr_src[0] & LUO4F_MASKA) |
+                            ((((lptr_src[0] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & LUO4F_MASKC) +
+                            ((lptr_src[0] & LUO4F_MASKD) << 1)) << 8)) |
+                            ((((lptr_src[1] & LUO4F_MASKA) |
+                            ((((lptr_src[1] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & LUO4F_MASKC) +
+                            ((lptr_src[1] & LUO4F_MASKD) << 1)) << 8)) >> 32);
+                    buf1 = ((buf1 & LUO4F_MASKE)>>8) | ((buf1 & LUO4F_MASKF)<<8);
+                    lptr_dest[0] = ((buf1 & LUO4F_MASKG)>>16) | ((buf1 & LUO4F_MASKH)<<16);
+                    lptr_src+=2;
+                    lptr_dest ++;
+            case 2:
+                    buf1 = (((lptr_src[0] & LUO4F_MASKA) |
+                            ((((lptr_src[0] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & LUO4F_MASKC) +
+                            ((lptr_src[0] & LUO4F_MASKD) << 1)) << 8)) |
+                            ((((lptr_src[1] & LUO4F_MASKA) |
+                            ((((lptr_src[1] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & LUO4F_MASKC) +
+                            ((lptr_src[1] & LUO4F_MASKD) << 1)) << 8)) >> 32);
+                    buf1 = ((buf1 & LUO4F_MASKE)>>8) | ((buf1 & LUO4F_MASKF)<<8);
+                    lptr_dest[0] = ((buf1 & LUO4F_MASKG)>>16) | ((buf1 & LUO4F_MASKH)<<16);
+                    lptr_src+=2;
+                    lptr_dest ++;
+            case 1:
+                    buf1 = (((lptr_src[0] & LUO4F_MASKA) |
+                            ((((lptr_src[0] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[0] & LUO4F_MASKC) +
+                            ((lptr_src[0] & LUO4F_MASKD) << 1)) << 8)) |
+                            ((((lptr_src[1] & LUO4F_MASKA) |
+                            ((((lptr_src[1] & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                            (((lptr_src[1] & LUO4F_MASKC) +
+                            ((lptr_src[1] & LUO4F_MASKD) << 1)) << 8)) >> 32);
+                    buf1 = ((buf1 & LUO4F_MASKE)>>8) | ((buf1 & LUO4F_MASKF)<<8);
+                    lptr_dest[0] = ((buf1 & LUO4F_MASKG)>>16) | ((buf1 & LUO4F_MASKH)<<16);
+                    lptr_src+=2;
+                    lptr_dest ++;
+                } while(--n>0);
+		}
+        if(odd_man_out) {
+            buf1 = ((lptr_src[0] & LUO4F_MASKA) |
+                    ((((lptr_src[0]  & LUO4F_MASKB) >> 48) - 16258) << 55)) +
+                    (((lptr_src[0]  & LUO4F_MASKC) +
+                    ((lptr_src[0]  & LUO4F_MASKD) << 1)) << 8);
+            buf1 = ((buf1 & LUO4F_MASKE)>>8) | ((buf1 & LUO4F_MASKF)<<8);
+            lptr_dest[0] = ((buf1 & LUO4F_MASKG)>>16) | ((buf1 & LUO4F_MASKH)<<16);
+        }
+#endif  /* DUFF_luo4f */
     }
     else { /* We end up here if we are doing stride based processing */
         buf1 = 0;
@@ -2223,9 +6854,9 @@ uint32 num_elm, source_stride, dest_stride;
             dud1[7] = source[7];
       
             if((float)buf1 != 0)
-                buf2 = (((buf1 & UO4_MASKA) |
-                        ((((buf1 & UO4_MASKB) >> 48) -16258) << 55)) +
-                        (((buf1 & UO4_MASKC) + ((buf1 & UO4_MASKD) << 1)) << 8));
+                buf2 = (((buf1 & LUO4F_MASKA) |
+                        ((((buf1 & LUO4F_MASKB) >> 48) -16258) << 55)) +
+                        (((buf1 & LUO4F_MASKC) + ((buf1 & LUO4F_MASKD) << 1)) << 8));
             else
                 buf2 = buf1;
 
@@ -2241,26 +6872,24 @@ uint32 num_elm, source_stride, dest_stride;
     return;
 }
 
-#ifdef OLD_WAY
-#define UI8_MASKA 0x8000000000000000
-#define UI8_MASKB 0x7ff0000000000000
-#define UI8_MASKC 0x000fffffffffffff
-#define UI8_MASKD 0x0000000000000008
-#define UI8_MASKE 0x0000800000000000
-#else
-#define LUI8_MASKA  0x0000000000000080
-#define LUI8_MASKB1 0x000000000000007f
-#define LUI8_MASKB2 0x000000000000f000
-#define LUI8_MASKC1 0x0000000000000f00
-#define LUI8_MASKC2 0x0000000000ff0000
-#define LUI8_MASKC3 0x00000000ff000000
-#define LUI8_MASKC4 0x000000ff00000000
-#define LUI8_MASKC5 0x0000ff0000000000
-#define LUI8_MASKC6 0x00ff000000000000
-#define LUI8_MASKC7 0xff00000000000000
-#define LUI8_MASKD  0x0800000000000000
-#define LUI8_MASKE  0x0000800000000000
-#endif
+#define LUI8F_MASKA  0x0000000000000080
+#define LUI8F_MASKB1 0x000000000000007f
+#define LUI8F_MASKB2 0x000000000000f000
+#define LUI8F_MASKC1 0x0000000000000f00
+#define LUI8F_MASKC2 0x0000000000ff0000
+#define LUI8F_MASKC3 0x00000000ff000000
+#define LUI8F_MASKC4 0x000000ff00000000
+#define LUI8F_MASKC5 0x0000ff0000000000
+#define LUI8F_MASKC6 0x00ff000000000000
+#define LUI8F_MASKC7 0xff00000000000000
+#define LUI8F_MASKD  0x0800000000000000
+#define LUI8F_MASKE  0x0000800000000000
+#define LUI8F_MASKF 0xff00ff00ff00ff00
+#define LUI8F_MASKG 0x00ff00ff00ff00ff
+#define LUI8F_MASKH 0xffff0000ffff0000
+#define LUI8F_MASKI 0x0000ffff0000ffff
+#define LUI8F_MASKJ 0xffffffff00000000
+#define LUI8F_MASKK 0x00000000ffffffff
 
 /************************************************************/
 /* DFKlui8f()                                                */
@@ -2277,7 +6906,7 @@ uint32 num_elm, source_stride, dest_stride;
 #endif /* PROTOTYPE */
 {
   int fast_processing = 0;              /* By default not array processed */
-  register int i,j;
+  int i,j,n;
   long buf;                             /* This is a temporary stride buf */
   uint8 * dud = (uint8*)&buf;           /* Dummy pointer to buf1 for strides */
 #ifdef PROTOTYPE
@@ -2300,29 +6929,283 @@ uint32 num_elm, source_stride, dest_stride;
     if(source_stride == 0 && dest_stride == 0)
         fast_processing = 1;
 
-    if(fast_processing)
+    if(fast_processing) {
+#ifndef DUFF_lui8f
+#if defined TEST1_lui8f
+        n=num_elm;
+        for(i = 0; i < n; i ++) {
+            lptr_dest[0] = (((lptr_src[0] & LUI8F_MASKA) << 56) | /* Sign */
+                    (((lptr_src[0] & LUI8F_MASKB1) << 52) |   /* Exp. */
+                    ((lptr_src[0] & LUI8F_MASKB2) << 36)) + (15362 << 48)) |
+                    ((((((lptr_src[0] & LUI8F_MASKC1) << 40) | /* Mantissa */
+                        ((lptr_src[0] & LUI8F_MASKC2) << 24) |
+                        ((lptr_src[0] & LUI8F_MASKC3) << 8) |
+                        ((lptr_src[0] & LUI8F_MASKC4) >> 8) |
+                        ((lptr_src[0] & LUI8F_MASKC5) >> 24) |
+                        ((lptr_src[0] & LUI8F_MASKC6) >> 40) |
+                        ((lptr_src[0] & LUI8F_MASKC7) >> 56)) +
+                    ((lptr_src[0] & LUI8F_MASKD) >> 55)) >>5) | LUI8F_MASKE);
+            lptr_src++;
+            lptr_dest++;
+        }
+#else
         for(i = 0; i < num_elm; i ++) {
             if (lptr_src[0] != 0) {
-                if ((lptr_src[0] & (~LUI8_MASKA)) == 0)
+                if ((lptr_src[0] & (~LUI8F_MASKA)) == 0)
                     lptr_dest[0] = 0;
                 else
-                    lptr_dest[0] = (((lptr_src[0] & LUI8_MASKA) << 56) | /* Sign */
-                            (((lptr_src[0] & LUI8_MASKB1) << 52) |   /* Exp. */
-                            ((lptr_src[0] & LUI8_MASKB2) << 36)) + (15362 << 48)) |
-                            ((((((lptr_src[0] & LUI8_MASKC1) << 40) | /* Mantissa */
-                                ((lptr_src[0] & LUI8_MASKC2) << 24) |
-                                ((lptr_src[0] & LUI8_MASKC3) << 8) |
-                                ((lptr_src[0] & LUI8_MASKC4) >> 8) |
-                                ((lptr_src[0] & LUI8_MASKC5) >> 24) |
-                                ((lptr_src[0] & LUI8_MASKC6) >> 40) |
-                                ((lptr_src[0] & LUI8_MASKC7) >> 56)) +
-                            ((lptr_src[0] & LUI8_MASKD) >> 55)) >>5) | LUI8_MASKE);
+                    lptr_dest[0] = (((lptr_src[0] & LUI8F_MASKA) << 56) | /* Sign */
+                            (((lptr_src[0] & LUI8F_MASKB1) << 52) |   /* Exp. */
+                            ((lptr_src[0] & LUI8F_MASKB2) << 36)) + (15362 << 48)) |
+                            ((((((lptr_src[0] & LUI8F_MASKC1) << 40) | /* Mantissa */
+                                ((lptr_src[0] & LUI8F_MASKC2) << 24) |
+                                ((lptr_src[0] & LUI8F_MASKC3) << 8) |
+                                ((lptr_src[0] & LUI8F_MASKC4) >> 8) |
+                                ((lptr_src[0] & LUI8F_MASKC5) >> 24) |
+                                ((lptr_src[0] & LUI8F_MASKC6) >> 40) |
+                                ((lptr_src[0] & LUI8F_MASKC7) >> 56)) +
+                            ((lptr_src[0] & LUI8F_MASKD) >> 55)) >>5) | LUI8F_MASKE);
             }
             else
                 lptr_dest[0] = 0;
             lptr_src++;
             lptr_dest++;
         }
+#endif
+#else   /* DUFF_lui8f */
+        n=(num_elm+7)/8;
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    lptr_dest[0] = (((lptr_src[0] & LUI8F_MASKA) << 56) | /* Sign */
+                            (((lptr_src[0] & LUI8F_MASKB1) << 52) |   /* Exp. */
+                            ((lptr_src[0] & LUI8F_MASKB2) << 36)) + (15362 << 48)) |
+                            ((((((lptr_src[0] & LUI8F_MASKC1) << 40) | /* Mantissa */
+                                ((lptr_src[0] & LUI8F_MASKC2) << 24) |
+                                ((lptr_src[0] & LUI8F_MASKC3) << 8) |
+                                ((lptr_src[0] & LUI8F_MASKC4) >> 8) |
+                                ((lptr_src[0] & LUI8F_MASKC5) >> 24) |
+                                ((lptr_src[0] & LUI8F_MASKC6) >> 40) |
+                                ((lptr_src[0] & LUI8F_MASKC7) >> 56)) +
+                            ((lptr_src[0] & LUI8F_MASKD) >> 55)) >>5) | LUI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+#ifdef QAK
+            case 15:
+                    lptr_dest[0] = (((lptr_src[0] & LUI8F_MASKA) << 56) | /* Sign */
+                            (((lptr_src[0] & LUI8F_MASKB1) << 52) |   /* Exp. */
+                            ((lptr_src[0] & LUI8F_MASKB2) << 36)) + (15362 << 48)) |
+                            ((((((lptr_src[0] & LUI8F_MASKC1) << 40) | /* Mantissa */
+                                ((lptr_src[0] & LUI8F_MASKC2) << 24) |
+                                ((lptr_src[0] & LUI8F_MASKC3) << 8) |
+                                ((lptr_src[0] & LUI8F_MASKC4) >> 8) |
+                                ((lptr_src[0] & LUI8F_MASKC5) >> 24) |
+                                ((lptr_src[0] & LUI8F_MASKC6) >> 40) |
+                                ((lptr_src[0] & LUI8F_MASKC7) >> 56)) +
+                            ((lptr_src[0] & LUI8F_MASKD) >> 55)) >>5) | LUI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 14:
+                    lptr_dest[0] = (((lptr_src[0] & LUI8F_MASKA) << 56) | /* Sign */
+                            (((lptr_src[0] & LUI8F_MASKB1) << 52) |   /* Exp. */
+                            ((lptr_src[0] & LUI8F_MASKB2) << 36)) + (15362 << 48)) |
+                            ((((((lptr_src[0] & LUI8F_MASKC1) << 40) | /* Mantissa */
+                                ((lptr_src[0] & LUI8F_MASKC2) << 24) |
+                                ((lptr_src[0] & LUI8F_MASKC3) << 8) |
+                                ((lptr_src[0] & LUI8F_MASKC4) >> 8) |
+                                ((lptr_src[0] & LUI8F_MASKC5) >> 24) |
+                                ((lptr_src[0] & LUI8F_MASKC6) >> 40) |
+                                ((lptr_src[0] & LUI8F_MASKC7) >> 56)) +
+                            ((lptr_src[0] & LUI8F_MASKD) >> 55)) >>5) | LUI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 13:
+                    lptr_dest[0] = (((lptr_src[0] & LUI8F_MASKA) << 56) | /* Sign */
+                            (((lptr_src[0] & LUI8F_MASKB1) << 52) |   /* Exp. */
+                            ((lptr_src[0] & LUI8F_MASKB2) << 36)) + (15362 << 48)) |
+                            ((((((lptr_src[0] & LUI8F_MASKC1) << 40) | /* Mantissa */
+                                ((lptr_src[0] & LUI8F_MASKC2) << 24) |
+                                ((lptr_src[0] & LUI8F_MASKC3) << 8) |
+                                ((lptr_src[0] & LUI8F_MASKC4) >> 8) |
+                                ((lptr_src[0] & LUI8F_MASKC5) >> 24) |
+                                ((lptr_src[0] & LUI8F_MASKC6) >> 40) |
+                                ((lptr_src[0] & LUI8F_MASKC7) >> 56)) +
+                            ((lptr_src[0] & LUI8F_MASKD) >> 55)) >>5) | LUI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 12:
+                    lptr_dest[0] = (((lptr_src[0] & LUI8F_MASKA) << 56) | /* Sign */
+                            (((lptr_src[0] & LUI8F_MASKB1) << 52) |   /* Exp. */
+                            ((lptr_src[0] & LUI8F_MASKB2) << 36)) + (15362 << 48)) |
+                            ((((((lptr_src[0] & LUI8F_MASKC1) << 40) | /* Mantissa */
+                                ((lptr_src[0] & LUI8F_MASKC2) << 24) |
+                                ((lptr_src[0] & LUI8F_MASKC3) << 8) |
+                                ((lptr_src[0] & LUI8F_MASKC4) >> 8) |
+                                ((lptr_src[0] & LUI8F_MASKC5) >> 24) |
+                                ((lptr_src[0] & LUI8F_MASKC6) >> 40) |
+                                ((lptr_src[0] & LUI8F_MASKC7) >> 56)) +
+                            ((lptr_src[0] & LUI8F_MASKD) >> 55)) >>5) | LUI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 11:
+                    lptr_dest[0] = (((lptr_src[0] & LUI8F_MASKA) << 56) | /* Sign */
+                            (((lptr_src[0] & LUI8F_MASKB1) << 52) |   /* Exp. */
+                            ((lptr_src[0] & LUI8F_MASKB2) << 36)) + (15362 << 48)) |
+                            ((((((lptr_src[0] & LUI8F_MASKC1) << 40) | /* Mantissa */
+                                ((lptr_src[0] & LUI8F_MASKC2) << 24) |
+                                ((lptr_src[0] & LUI8F_MASKC3) << 8) |
+                                ((lptr_src[0] & LUI8F_MASKC4) >> 8) |
+                                ((lptr_src[0] & LUI8F_MASKC5) >> 24) |
+                                ((lptr_src[0] & LUI8F_MASKC6) >> 40) |
+                                ((lptr_src[0] & LUI8F_MASKC7) >> 56)) +
+                            ((lptr_src[0] & LUI8F_MASKD) >> 55)) >>5) | LUI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 10:
+                    lptr_dest[0] = (((lptr_src[0] & LUI8F_MASKA) << 56) | /* Sign */
+                            (((lptr_src[0] & LUI8F_MASKB1) << 52) |   /* Exp. */
+                            ((lptr_src[0] & LUI8F_MASKB2) << 36)) + (15362 << 48)) |
+                            ((((((lptr_src[0] & LUI8F_MASKC1) << 40) | /* Mantissa */
+                                ((lptr_src[0] & LUI8F_MASKC2) << 24) |
+                                ((lptr_src[0] & LUI8F_MASKC3) << 8) |
+                                ((lptr_src[0] & LUI8F_MASKC4) >> 8) |
+                                ((lptr_src[0] & LUI8F_MASKC5) >> 24) |
+                                ((lptr_src[0] & LUI8F_MASKC6) >> 40) |
+                                ((lptr_src[0] & LUI8F_MASKC7) >> 56)) +
+                            ((lptr_src[0] & LUI8F_MASKD) >> 55)) >>5) | LUI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 9:
+                    lptr_dest[0] = (((lptr_src[0] & LUI8F_MASKA) << 56) | /* Sign */
+                            (((lptr_src[0] & LUI8F_MASKB1) << 52) |   /* Exp. */
+                            ((lptr_src[0] & LUI8F_MASKB2) << 36)) + (15362 << 48)) |
+                            ((((((lptr_src[0] & LUI8F_MASKC1) << 40) | /* Mantissa */
+                                ((lptr_src[0] & LUI8F_MASKC2) << 24) |
+                                ((lptr_src[0] & LUI8F_MASKC3) << 8) |
+                                ((lptr_src[0] & LUI8F_MASKC4) >> 8) |
+                                ((lptr_src[0] & LUI8F_MASKC5) >> 24) |
+                                ((lptr_src[0] & LUI8F_MASKC6) >> 40) |
+                                ((lptr_src[0] & LUI8F_MASKC7) >> 56)) +
+                            ((lptr_src[0] & LUI8F_MASKD) >> 55)) >>5) | LUI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 8:
+                    lptr_dest[0] = (((lptr_src[0] & LUI8F_MASKA) << 56) | /* Sign */
+                            (((lptr_src[0] & LUI8F_MASKB1) << 52) |   /* Exp. */
+                            ((lptr_src[0] & LUI8F_MASKB2) << 36)) + (15362 << 48)) |
+                            ((((((lptr_src[0] & LUI8F_MASKC1) << 40) | /* Mantissa */
+                                ((lptr_src[0] & LUI8F_MASKC2) << 24) |
+                                ((lptr_src[0] & LUI8F_MASKC3) << 8) |
+                                ((lptr_src[0] & LUI8F_MASKC4) >> 8) |
+                                ((lptr_src[0] & LUI8F_MASKC5) >> 24) |
+                                ((lptr_src[0] & LUI8F_MASKC6) >> 40) |
+                                ((lptr_src[0] & LUI8F_MASKC7) >> 56)) +
+                            ((lptr_src[0] & LUI8F_MASKD) >> 55)) >>5) | LUI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+#endif
+            case 7:
+                    lptr_dest[0] = (((lptr_src[0] & LUI8F_MASKA) << 56) | /* Sign */
+                            (((lptr_src[0] & LUI8F_MASKB1) << 52) |   /* Exp. */
+                            ((lptr_src[0] & LUI8F_MASKB2) << 36)) + (15362 << 48)) |
+                            ((((((lptr_src[0] & LUI8F_MASKC1) << 40) | /* Mantissa */
+                                ((lptr_src[0] & LUI8F_MASKC2) << 24) |
+                                ((lptr_src[0] & LUI8F_MASKC3) << 8) |
+                                ((lptr_src[0] & LUI8F_MASKC4) >> 8) |
+                                ((lptr_src[0] & LUI8F_MASKC5) >> 24) |
+                                ((lptr_src[0] & LUI8F_MASKC6) >> 40) |
+                                ((lptr_src[0] & LUI8F_MASKC7) >> 56)) +
+                            ((lptr_src[0] & LUI8F_MASKD) >> 55)) >>5) | LUI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 6:
+                    lptr_dest[0] = (((lptr_src[0] & LUI8F_MASKA) << 56) | /* Sign */
+                            (((lptr_src[0] & LUI8F_MASKB1) << 52) |   /* Exp. */
+                            ((lptr_src[0] & LUI8F_MASKB2) << 36)) + (15362 << 48)) |
+                            ((((((lptr_src[0] & LUI8F_MASKC1) << 40) | /* Mantissa */
+                                ((lptr_src[0] & LUI8F_MASKC2) << 24) |
+                                ((lptr_src[0] & LUI8F_MASKC3) << 8) |
+                                ((lptr_src[0] & LUI8F_MASKC4) >> 8) |
+                                ((lptr_src[0] & LUI8F_MASKC5) >> 24) |
+                                ((lptr_src[0] & LUI8F_MASKC6) >> 40) |
+                                ((lptr_src[0] & LUI8F_MASKC7) >> 56)) +
+                            ((lptr_src[0] & LUI8F_MASKD) >> 55)) >>5) | LUI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 5:
+                    lptr_dest[0] = (((lptr_src[0] & LUI8F_MASKA) << 56) | /* Sign */
+                            (((lptr_src[0] & LUI8F_MASKB1) << 52) |   /* Exp. */
+                            ((lptr_src[0] & LUI8F_MASKB2) << 36)) + (15362 << 48)) |
+                            ((((((lptr_src[0] & LUI8F_MASKC1) << 40) | /* Mantissa */
+                                ((lptr_src[0] & LUI8F_MASKC2) << 24) |
+                                ((lptr_src[0] & LUI8F_MASKC3) << 8) |
+                                ((lptr_src[0] & LUI8F_MASKC4) >> 8) |
+                                ((lptr_src[0] & LUI8F_MASKC5) >> 24) |
+                                ((lptr_src[0] & LUI8F_MASKC6) >> 40) |
+                                ((lptr_src[0] & LUI8F_MASKC7) >> 56)) +
+                            ((lptr_src[0] & LUI8F_MASKD) >> 55)) >>5) | LUI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 4:
+                    lptr_dest[0] = (((lptr_src[0] & LUI8F_MASKA) << 56) | /* Sign */
+                            (((lptr_src[0] & LUI8F_MASKB1) << 52) |   /* Exp. */
+                            ((lptr_src[0] & LUI8F_MASKB2) << 36)) + (15362 << 48)) |
+                            ((((((lptr_src[0] & LUI8F_MASKC1) << 40) | /* Mantissa */
+                                ((lptr_src[0] & LUI8F_MASKC2) << 24) |
+                                ((lptr_src[0] & LUI8F_MASKC3) << 8) |
+                                ((lptr_src[0] & LUI8F_MASKC4) >> 8) |
+                                ((lptr_src[0] & LUI8F_MASKC5) >> 24) |
+                                ((lptr_src[0] & LUI8F_MASKC6) >> 40) |
+                                ((lptr_src[0] & LUI8F_MASKC7) >> 56)) +
+                            ((lptr_src[0] & LUI8F_MASKD) >> 55)) >>5) | LUI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 3:
+                    lptr_dest[0] = (((lptr_src[0] & LUI8F_MASKA) << 56) | /* Sign */
+                            (((lptr_src[0] & LUI8F_MASKB1) << 52) |   /* Exp. */
+                            ((lptr_src[0] & LUI8F_MASKB2) << 36)) + (15362 << 48)) |
+                            ((((((lptr_src[0] & LUI8F_MASKC1) << 40) | /* Mantissa */
+                                ((lptr_src[0] & LUI8F_MASKC2) << 24) |
+                                ((lptr_src[0] & LUI8F_MASKC3) << 8) |
+                                ((lptr_src[0] & LUI8F_MASKC4) >> 8) |
+                                ((lptr_src[0] & LUI8F_MASKC5) >> 24) |
+                                ((lptr_src[0] & LUI8F_MASKC6) >> 40) |
+                                ((lptr_src[0] & LUI8F_MASKC7) >> 56)) +
+                            ((lptr_src[0] & LUI8F_MASKD) >> 55)) >>5) | LUI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 2:
+                    lptr_dest[0] = (((lptr_src[0] & LUI8F_MASKA) << 56) | /* Sign */
+                            (((lptr_src[0] & LUI8F_MASKB1) << 52) |   /* Exp. */
+                            ((lptr_src[0] & LUI8F_MASKB2) << 36)) + (15362 << 48)) |
+                            ((((((lptr_src[0] & LUI8F_MASKC1) << 40) | /* Mantissa */
+                                ((lptr_src[0] & LUI8F_MASKC2) << 24) |
+                                ((lptr_src[0] & LUI8F_MASKC3) << 8) |
+                                ((lptr_src[0] & LUI8F_MASKC4) >> 8) |
+                                ((lptr_src[0] & LUI8F_MASKC5) >> 24) |
+                                ((lptr_src[0] & LUI8F_MASKC6) >> 40) |
+                                ((lptr_src[0] & LUI8F_MASKC7) >> 56)) +
+                            ((lptr_src[0] & LUI8F_MASKD) >> 55)) >>5) | LUI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+            case 1:
+                    lptr_dest[0] = (((lptr_src[0] & LUI8F_MASKA) << 56) | /* Sign */
+                            (((lptr_src[0] & LUI8F_MASKB1) << 52) |   /* Exp. */
+                            ((lptr_src[0] & LUI8F_MASKB2) << 36)) + (15362 << 48)) |
+                            ((((((lptr_src[0] & LUI8F_MASKC1) << 40) | /* Mantissa */
+                                ((lptr_src[0] & LUI8F_MASKC2) << 24) |
+                                ((lptr_src[0] & LUI8F_MASKC3) << 8) |
+                                ((lptr_src[0] & LUI8F_MASKC4) >> 8) |
+                                ((lptr_src[0] & LUI8F_MASKC5) >> 24) |
+                                ((lptr_src[0] & LUI8F_MASKC6) >> 40) |
+                                ((lptr_src[0] & LUI8F_MASKC7) >> 56)) +
+                            ((lptr_src[0] & LUI8F_MASKD) >> 55)) >>5) | LUI8F_MASKE);
+                    lptr_src++;
+                    lptr_dest++;
+                } while(--n>0);
+        }
+#endif  /* DUFF_lui8f */
+      } /* end if */
     else
         for(i = 0; i < num_elm; i ++) {
             dud[0] = source[7];
@@ -2335,10 +7218,10 @@ uint32 num_elm, source_stride, dest_stride;
             dud[7] = source[0];
 
             if (buf != 0) {
-                buf = (((buf & UI8_MASKA) | ((buf & UI8_MASKB) >> 4) +
+                buf = (((buf & UI8F_MASKA) | ((buf & UI8F_MASKB) >> 4) +
                         (15362 << 48)) |
-                        ((((buf & UI8_MASKC) + ((buf & UI8_MASKD) << 1)) >> 5) |
-                        (UI8_MASKE)) );
+                        ((((buf & UI8F_MASKC) + ((buf & UI8F_MASKD) << 1)) >> 5) |
+                        (UI8F_MASKE)) );
                 if ((buf << 1) == 0)
                     buf = 0;
             }
@@ -2360,6 +7243,16 @@ uint32 num_elm, source_stride, dest_stride;
   return;
 }
 
+#define LUO8F_MASKA 0x8000000000000000
+#define LUO8F_MASKB 0x7fff000000000000
+#define LUO8F_MASKC 0x00007fffffffffff
+#define LUO8F_MASKD 0xff00ff00ff00ff00
+#define LUO8F_MASKE 0x00ff00ff00ff00ff
+#define LUO8F_MASKF 0xffff0000ffff0000
+#define LUO8F_MASKG 0x0000ffff0000ffff
+#define LUO8F_MASKH 0xffffffff00000000
+#define LUO8F_MASKI 0x00000000ffffffff
+
 /************************************************************/
 /* DFKluo8f()                                               */
 /* -->Unicos routine for exporting 64 bit floats            */
@@ -2376,7 +7269,7 @@ uint32 num_elm, source_stride, dest_stride;
 {
   int fast_processing = 0;              /* By default not array processed */
   int odd_man_out = 0;                  /* By default there are even num_elm */
-  register int i,j;
+  int i,j,n;
   long buf;                             /* This is a temporary stride buf */
   uint8 * dud = (uint8*)&buf;           /* Dummy pointer to buf1 for strides */
 #ifdef PROTOTYPE
@@ -2399,12 +7292,26 @@ uint32 num_elm, source_stride, dest_stride;
     if(source_stride == 0 && dest_stride == 0)
         fast_processing = 1;
 
-    if(fast_processing)
+    if(fast_processing) {
+#ifndef DUFF_luo8f
+#if defined TEST1_luo8f
+        n=num_elm;
+        for(i = 0; i < n; i ++) {
+            buf = (((lptr_src[0] & LUO8F_MASKA) |
+                    (((((lptr_src[0] & LUO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                    ((lptr_src[0] & LUO8F_MASKC) << 5));
+            buf = ((buf & LUO8F_MASKD)>>8) | ((buf & LUO8F_MASKE)<<8);
+            buf = ((buf & LUO8F_MASKF)>>16) | ((buf & LUO8F_MASKG)<<16);
+            lptr_dest[0] = ((buf & LUO8F_MASKH)>>32) | ((buf & LUO8F_MASKI)<<32);
+            lptr_src++;
+            lptr_dest++;
+        }
+#else
         for(i = 0; i < num_elm; i ++) {
             if (lptr_src[0] != 0) {
-                buf = (((lptr_src[0] & UO8_MASKA) |
-                        (((((lptr_src[0] & UO8_MASKB) >> 48) - 15362) << 53) >> 1)) +
-                        ((lptr_src[0] & UO8_MASKC) << 5));
+                buf = (((lptr_src[0] & LUO8F_MASKA) |
+                        (((((lptr_src[0] & LUO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                        ((lptr_src[0] & LUO8F_MASKC) << 5));
                 lptr_dest[0] = ((buf & 0xff00000000000000) >>56) |
                                ((buf & 0x00ff000000000000) >>40) |
                                ((buf & 0x0000ff0000000000) >>24) |
@@ -2419,6 +7326,161 @@ uint32 num_elm, source_stride, dest_stride;
             lptr_src++;
             lptr_dest++;
         }
+#endif
+#else   /* DUFF_luo8f */
+        n=(num_elm+7)/8;
+        switch(num_elm%8) {
+            case 0:
+                do{
+                    buf = (((lptr_src[0] & LUO8F_MASKA) |
+                            (((((lptr_src[0] & LUO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & LUO8F_MASKC) << 5));
+                    buf = ((buf & LUO8F_MASKD)>>8) | ((buf & LUO8F_MASKE)<<8);
+                    buf = ((buf & LUO8F_MASKF)>>16) | ((buf & LUO8F_MASKG)<<16);
+                    lptr_dest[0] = ((buf & LUO8F_MASKH)>>32) | ((buf & LUO8F_MASKI)<<32);
+                    lptr_src++;
+                    lptr_dest++;
+#ifdef QAK
+            case 15:
+                    buf = (((lptr_src[0] & LUO8F_MASKA) |
+                            (((((lptr_src[0] & LUO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & LUO8F_MASKC) << 5));
+                    buf = ((buf & LUO8F_MASKD)>>8) | ((buf & LUO8F_MASKE)<<8);
+                    buf = ((buf & LUO8F_MASKF)>>16) | ((buf & LUO8F_MASKG)<<16);
+                    lptr_dest[0] = ((buf & LUO8F_MASKH)>>32) | ((buf & LUO8F_MASKI)<<32);
+                    lptr_src++;
+                    lptr_dest++;
+            case 14:
+                    buf = (((lptr_src[0] & LUO8F_MASKA) |
+                            (((((lptr_src[0] & LUO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & LUO8F_MASKC) << 5));
+                    buf = ((buf & LUO8F_MASKD)>>8) | ((buf & LUO8F_MASKE)<<8);
+                    buf = ((buf & LUO8F_MASKF)>>16) | ((buf & LUO8F_MASKG)<<16);
+                    lptr_dest[0] = ((buf & LUO8F_MASKH)>>32) | ((buf & LUO8F_MASKI)<<32);
+                    lptr_src++;
+                    lptr_dest++;
+            case 13:
+                    buf = (((lptr_src[0] & LUO8F_MASKA) |
+                            (((((lptr_src[0] & LUO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & LUO8F_MASKC) << 5));
+                    buf = ((buf & LUO8F_MASKD)>>8) | ((buf & LUO8F_MASKE)<<8);
+                    buf = ((buf & LUO8F_MASKF)>>16) | ((buf & LUO8F_MASKG)<<16);
+                    lptr_dest[0] = ((buf & LUO8F_MASKH)>>32) | ((buf & LUO8F_MASKI)<<32);
+                    lptr_src++;
+                    lptr_dest++;
+            case 12:
+                    buf = (((lptr_src[0] & LUO8F_MASKA) |
+                            (((((lptr_src[0] & LUO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & LUO8F_MASKC) << 5));
+                    buf = ((buf & LUO8F_MASKD)>>8) | ((buf & LUO8F_MASKE)<<8);
+                    buf = ((buf & LUO8F_MASKF)>>16) | ((buf & LUO8F_MASKG)<<16);
+                    lptr_dest[0] = ((buf & LUO8F_MASKH)>>32) | ((buf & LUO8F_MASKI)<<32);
+                    lptr_src++;
+                    lptr_dest++;
+            case 11:
+                    buf = (((lptr_src[0] & LUO8F_MASKA) |
+                            (((((lptr_src[0] & LUO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & LUO8F_MASKC) << 5));
+                    buf = ((buf & LUO8F_MASKD)>>8) | ((buf & LUO8F_MASKE)<<8);
+                    buf = ((buf & LUO8F_MASKF)>>16) | ((buf & LUO8F_MASKG)<<16);
+                    lptr_dest[0] = ((buf & LUO8F_MASKH)>>32) | ((buf & LUO8F_MASKI)<<32);
+                    lptr_src++;
+                    lptr_dest++;
+            case 10:
+                    buf = (((lptr_src[0] & LUO8F_MASKA) |
+                            (((((lptr_src[0] & LUO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & LUO8F_MASKC) << 5));
+                    buf = ((buf & LUO8F_MASKD)>>8) | ((buf & LUO8F_MASKE)<<8);
+                    buf = ((buf & LUO8F_MASKF)>>16) | ((buf & LUO8F_MASKG)<<16);
+                    lptr_dest[0] = ((buf & LUO8F_MASKH)>>32) | ((buf & LUO8F_MASKI)<<32);
+                    lptr_src++;
+                    lptr_dest++;
+            case 9:
+                    buf = (((lptr_src[0] & LUO8F_MASKA) |
+                            (((((lptr_src[0] & LUO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & LUO8F_MASKC) << 5));
+                    buf = ((buf & LUO8F_MASKD)>>8) | ((buf & LUO8F_MASKE)<<8);
+                    buf = ((buf & LUO8F_MASKF)>>16) | ((buf & LUO8F_MASKG)<<16);
+                    lptr_dest[0] = ((buf & LUO8F_MASKH)>>32) | ((buf & LUO8F_MASKI)<<32);
+                    lptr_src++;
+                    lptr_dest++;
+            case 8:
+                    buf = (((lptr_src[0] & LUO8F_MASKA) |
+                            (((((lptr_src[0] & LUO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & LUO8F_MASKC) << 5));
+                    buf = ((buf & LUO8F_MASKD)>>8) | ((buf & LUO8F_MASKE)<<8);
+                    buf = ((buf & LUO8F_MASKF)>>16) | ((buf & LUO8F_MASKG)<<16);
+                    lptr_dest[0] = ((buf & LUO8F_MASKH)>>32) | ((buf & LUO8F_MASKI)<<32);
+                    lptr_src++;
+                    lptr_dest++;
+#endif
+            case 7:
+                    buf = (((lptr_src[0] & LUO8F_MASKA) |
+                            (((((lptr_src[0] & LUO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & LUO8F_MASKC) << 5));
+                    buf = ((buf & LUO8F_MASKD)>>8) | ((buf & LUO8F_MASKE)<<8);
+                    buf = ((buf & LUO8F_MASKF)>>16) | ((buf & LUO8F_MASKG)<<16);
+                    lptr_dest[0] = ((buf & LUO8F_MASKH)>>32) | ((buf & LUO8F_MASKI)<<32);
+                    lptr_src++;
+                    lptr_dest++;
+            case 6:
+                    buf = (((lptr_src[0] & LUO8F_MASKA) |
+                            (((((lptr_src[0] & LUO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & LUO8F_MASKC) << 5));
+                    buf = ((buf & LUO8F_MASKD)>>8) | ((buf & LUO8F_MASKE)<<8);
+                    buf = ((buf & LUO8F_MASKF)>>16) | ((buf & LUO8F_MASKG)<<16);
+                    lptr_dest[0] = ((buf & LUO8F_MASKH)>>32) | ((buf & LUO8F_MASKI)<<32);
+                    lptr_src++;
+                    lptr_dest++;
+            case 5:
+                    buf = (((lptr_src[0] & LUO8F_MASKA) |
+                            (((((lptr_src[0] & LUO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & LUO8F_MASKC) << 5));
+                    buf = ((buf & LUO8F_MASKD)>>8) | ((buf & LUO8F_MASKE)<<8);
+                    buf = ((buf & LUO8F_MASKF)>>16) | ((buf & LUO8F_MASKG)<<16);
+                    lptr_dest[0] = ((buf & LUO8F_MASKH)>>32) | ((buf & LUO8F_MASKI)<<32);
+                    lptr_src++;
+                    lptr_dest++;
+            case 4:
+                    buf = (((lptr_src[0] & LUO8F_MASKA) |
+                            (((((lptr_src[0] & LUO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & LUO8F_MASKC) << 5));
+                    buf = ((buf & LUO8F_MASKD)>>8) | ((buf & LUO8F_MASKE)<<8);
+                    buf = ((buf & LUO8F_MASKF)>>16) | ((buf & LUO8F_MASKG)<<16);
+                    lptr_dest[0] = ((buf & LUO8F_MASKH)>>32) | ((buf & LUO8F_MASKI)<<32);
+                    lptr_src++;
+                    lptr_dest++;
+            case 3:
+                    buf = (((lptr_src[0] & LUO8F_MASKA) |
+                            (((((lptr_src[0] & LUO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & LUO8F_MASKC) << 5));
+                    buf = ((buf & LUO8F_MASKD)>>8) | ((buf & LUO8F_MASKE)<<8);
+                    buf = ((buf & LUO8F_MASKF)>>16) | ((buf & LUO8F_MASKG)<<16);
+                    lptr_dest[0] = ((buf & LUO8F_MASKH)>>32) | ((buf & LUO8F_MASKI)<<32);
+                    lptr_src++;
+                    lptr_dest++;
+            case 2:
+                    buf = (((lptr_src[0] & LUO8F_MASKA) |
+                            (((((lptr_src[0] & LUO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & LUO8F_MASKC) << 5));
+                    buf = ((buf & LUO8F_MASKD)>>8) | ((buf & LUO8F_MASKE)<<8);
+                    buf = ((buf & LUO8F_MASKF)>>16) | ((buf & LUO8F_MASKG)<<16);
+                    lptr_dest[0] = ((buf & LUO8F_MASKH)>>32) | ((buf & LUO8F_MASKI)<<32);
+                    lptr_src++;
+                    lptr_dest++;
+            case 1:
+                    buf = (((lptr_src[0] & LUO8F_MASKA) |
+                            (((((lptr_src[0] & LUO8F_MASKB) >> 48) - 15362) << 53) >> 1)) +
+                            ((lptr_src[0] & LUO8F_MASKC) << 5));
+                    buf = ((buf & LUO8F_MASKD)>>8) | ((buf & LUO8F_MASKE)<<8);
+                    buf = ((buf & LUO8F_MASKF)>>16) | ((buf & LUO8F_MASKG)<<16);
+                    lptr_dest[0] = ((buf & LUO8F_MASKH)>>32) | ((buf & LUO8F_MASKI)<<32);
+                    lptr_src++;
+                    lptr_dest++;
+                } while(--n>0);
+		}
+#endif  /* DUFF_luo8f */
+      } /* end if */
     else
         for(i = 0; i < num_elm; i ++) {
             dud[0] = source[0];
@@ -2431,9 +7493,9 @@ uint32 num_elm, source_stride, dest_stride;
             dud[7] = source[7];
 
             if (buf != 0) {
-                buf = (((buf & UO8_MASKA) |             /* sign bit */
-                        (((((buf & UO8_MASKB) >> 48) - 15362) << 53) >> 1)) |/* exp */
-                        ((buf & UO8_MASKC) << 5));      /* mantissa */
+                buf = (((buf & LUO8F_MASKA) |             /* sign bit */
+                        (((((buf & LUO8F_MASKB) >> 48) - 15362) << 53) >> 1)) |/* exp */
+                        ((buf & LUO8F_MASKC) << 5));      /* mantissa */
             }
             else
                 buf = 0;
@@ -4226,6 +9288,387 @@ uint32 num_elm, source_stride, dest_stride;
 }
 #endif  /* CONVEXNATIVE */
 
+#if defined(VP)
+
+/* 
+ * NUMBER CONVERSION ROUTINES FOR Fujitsu VP series         
+ * (IBM floating point, BIG-ENDIAN integer types, ASCII     
+ *  chars...)                                               
+ *                                                          
+ * Drew Whitehouse, 
+ * Australian National University Supercomputer Facility. 
+ * Dec 92.
+ *
+ * Routines used were adapted from routines provided for     
+ * anon. ftp by the Cornell National Supercomputer        
+ * Facility. The following copyright was attached.....      
+ *                                                          
+ */
+
+/*---------------------------------------------------------------------*
+ * Val I. Garger, Technology Integration                               *
+ * Group, CNSF, Cornell University                                     *
+ * vig@eagle.cnsf.cornell.edu                                          *
+ *-------------------------------------------------------------------- *        
+ *                                                                     *        
+ *  COPYRIGHT -  VAL GARGER, CORNELL NATIONAL SUPERCOMPUTER FACILITY,  *        
+ *               (JUNE 1990) CORNELL UNIVERSITY, ITHACA, NY.           *        
+ *               CONTAINS RESTRICTED MATERIALS OF CORNELL UNIVERSITY,  *        
+ *               (C) COPYRIGHT CORNELL UNIVERSITY 1990                 * 
+ *---------------------------------------------------------------------*/
+
+/************************************************************/
+/* DFKpi4f()                                                */
+/* --> Import routine for 4 byte IBM floats                 */
+/* ie IEEE32->IBM32                                         */
+/************************************************************/
+
+#define pi4f_last 0x000000ff
+#define pi4f_impl 0x00800000
+#define pi4f_sign 0x80000000
+#define pi4f_tiss 0x007fffff                                                         
+#ifdef PROTOTYPE
+PRIVATE int DFKpi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+PRIVATE int DFKpi4f(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+  int32 i,k, ibs, ibe, ibt;
+
+#ifdef PROTOTYPE
+  uint8 * source = (uint8*)s;
+  uint8 * dest = (uint8*)d;
+#endif /* PROTOTYPE */
+  uint32 *buf;
+  char *FUNC="DFKpi4f";
+
+  HEclear();
+
+  if(num_elm == 0){   /* No elements is an error */
+    HERROR(DFE_BADCONV);
+    return FAIL;
+  }
+
+  if(source_stride == 0 && dest_stride == 0)
+      source_stride = dest_stride = 4;
+
+  for(i = 0; i < num_elm; i++) {
+
+    buf = (uint32*)source;
+    ibt =   *buf;
+    ibs =   *buf          &  pi4f_sign;
+    ibe  = ( *buf >> 23 )  &  pi4f_last;
+
+    if( ibe != 0 )  {
+      if( ibe == 255 ) { 
+	ibe = 378;
+	ibt = pi4f_tiss;
+      } 
+      ibe = ibe - 127 + 256 +1;
+      k = ibe%4;
+      ibe = ibe/4;
+      if( k != 0 ) 
+	ibe = ibe + 1;
+      ibe = ibe << 24 ;
+      ibt = (ibt & pi4f_tiss) | pi4f_impl ;
+      if (k != 0)
+	ibt = ( ibt + (1 << (3-k) )  ) >> (4-k);
+    }
+
+    buf = (uint32*)dest;
+    *buf = ibs | ibe | ibt;                            
+    source += source_stride;
+    dest   += dest_stride;
+  }
+  return 0;
+}
+
+/************************************************************/
+/* DFKpo4f()                                                */
+/* --> Export routine for 4 byte IBM floats                 */
+/* IBM->IEEE                                                */
+/************************************************************/
+
+#define   po4f_exp   0x7F000000
+#define   po4f_sign  0x80000000
+#define   po4f_tis   0x00FFFFFF
+#define   po4f_etis  0x007FFFFF
+
+#ifdef PROTOTYPE 
+PRIVATE int DFKpo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+PRIVATE int DFKpo4f(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+
+  int32 i, ibs, ibe, ibt, it, k;
+
+#ifdef PROTOTYPE
+  uint8 * source = (uint8*)s;
+  uint8 * dest = (uint8*)d;
+#endif /* PROTOTYPE */
+  char *FUNC="DFKpi4f";
+  uint32 *buf;
+  uint8 exp;
+
+  HEclear();
+
+  if(num_elm == 0 ){		/* No elements is an error */
+    HERROR(DFE_BADCONV);
+    return FAIL;
+  }
+
+  if(source_stride == 0 && dest_stride == 0)
+    source_stride = dest_stride = 4;
+
+  for(i = 0; i < num_elm; i++) {
+
+    buf = (uint32*)source;
+    ibs = *buf  & po4f_sign;
+    ibe = *buf  & po4f_exp;
+    ibt = *buf  & po4f_tis;
+    it = ibt << 8;
+
+    for(k = 0;  (k < 5) && (it >= 0);  k++ ) 
+      it = it << 1;
+
+    if( k < 4 ) {
+      ibt = (it >> 8) & po4f_etis;
+      ibe = (ibe >> 22) - 256 + 127 - k - 1;
+      if( ibe < 0 )
+	ibe = ibt = 0;
+      if( ibe >= 255 ) {
+	ibe = 255;                                                
+	ibt = 0;                                                 
+      }                                                              
+      ibe = ibe << 23;
+    }
+
+    /* put result into dest */
+    buf = (uint32*)dest;
+    *buf = ibs | ibe | ibt;                            
+    source += source_stride;
+    dest   += dest_stride;
+  }
+  return 0;
+
+}
+
+/************************************************************/
+/* DFKpi8f()                                                */
+/* --> Import routine for 8 byte VP floats                  */
+/* ie IEEE64->IBM64                                         */
+/************************************************************/
+
+#define pi8f_impl 0x00100000 
+#define pi8f_sign 0x80000000
+#define pi8f_maxl 0x00ffffff 
+#define pi8f_expn 0x7ff00000
+#define pi8f_tiss 0x000fffff
+#define pi8f_maxr 0xffffffff
+
+#ifdef PROTOTYPE
+PRIVATE int DFKpi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+PRIVATE int DFKpi8f(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+#ifdef PROTOTYPE
+  uint8 * source = (uint8*)s;
+  uint8 * dest   = (uint8*)d;
+#endif /* PROTOTYPE */
+  char *FUNC="DFKpi8f"; 
+  int i;
+  int32 ibs,ibe,ibt1,ibt2,isht,k;
+  int32 *buf;
+
+  HEclear();
+
+  if(num_elm == 0) {		/* No elements is an error */ 
+    HERROR(DFE_BADCONV);
+    return FAIL;
+  }
+
+  if(source_stride == 0 && dest_stride == 0)
+    source_stride = dest_stride = 8;
+
+  for ( i = 0; i < num_elm ; i++) {
+
+    buf  = (int32*)source;
+    ibs  = *buf & pi8f_sign;
+    ibe  = *buf & pi8f_expn;
+    ibt1 = *buf & pi8f_tiss;
+    ibt2 = *(buf+1);
+
+    if (ibe != 0) {
+
+      ibe = (ibe >> 20) - 1023 + 256 + 1;
+      k = 0;                                                                    
+      if (ibe > 508) k = 2;                                                     
+      if (ibe <   0) k = 1; 
+
+      switch (k) {
+
+      case 1:
+	ibe = ibt1 = ibt2 = 0;
+	break;
+
+      case 2:
+	ibe = 127;
+	ibt1 = pi8f_maxl;
+	ibt2 = pi8f_maxr;
+	break;
+
+      default:
+	isht = ibe % 4 -  1;
+	ibe = ibe >> 2 ; 
+	if ( isht != -1)
+	  ibe += 1;
+	else
+	  isht = 3;
+
+	ibt1 |=  pi8f_impl;
+	if (isht != 0 ) {
+	  ibt1 = ( ibt1 << isht ) |  (ibt2 >> 32-isht);
+	  ibt2 = ibt2 << isht;
+	}
+	break;
+      }
+      ibe = ibe << 24;
+
+    } /* ibe != 0 */
+
+    /* put number into destination array */
+    buf  = (int32*)dest;
+    *buf = ibs | ibe | ibt1;
+    *(buf+1) = ibt2;
+
+    source += source_stride;
+    dest   += dest_stride;
+  }
+  return 0;
+}
+
+
+/************************************************************/
+/* DFKpo8f()                                                */
+/* --> Export routine for 8 byte VP floats                  */
+/* IBM64->IEEE64                                            */
+/************************************************************/
+#define  po8f_exp   0x7f000000
+#define  po8f_sign  0x80000000
+#define  po8f_tiss  0x00FFFFFF 
+#define  po8f_nrm   0x00f00000 
+static int32 take[4] = {0x007fffff, 0x003fffff, 0x001fffff, 0x000fffff};
+static int32 look[4] = {0x00800000, 0x00400000, 0x00200000, 0x00100000};
+#ifdef PROTOTYPE
+PRIVATE int DFKpo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
+		   uint32 dest_stride)
+#else
+PRIVATE int DFKpo8f(source, dest, num_elm, source_stride, dest_stride)
+uint8 * source, * dest;
+uint32 num_elm, source_stride, dest_stride;
+#endif /* PROTOTYPE */
+{
+#ifdef PROTOTYPE
+  uint8 * source = (uint8*)s;
+  uint8 * dest = (uint8*)d;
+#endif				/* PROTOTYPE */
+  int32 ibs, ibe, ibt1, ibt2, it, isht;
+  int i,k;
+  int32 *buf;
+  double *tmp;
+  char *FUNC="DFKpo8f";
+  union {
+    struct { 
+      int long i1;
+      int long i2;
+    } sti;
+    struct { 
+      double r;
+    } str;
+  } un;
+
+  HEclear();
+
+  if(num_elm == 0){		/* No elements is an error */
+    HERROR(DFE_BADCONV);
+    return FAIL;
+  }
+
+  if(source_stride == 0 && dest_stride == 0)
+    source_stride = dest_stride = 8;
+
+  for (i = 0; i < num_elm; i++) {
+
+    buf = (int32*)source;
+    ibs  = *buf & po8f_sign;
+    ibe  = *buf & po8f_exp;
+    ibt1 = *buf & po8f_tiss;
+    ibt2 = *(buf+1);
+
+    if  ( (ibt1 == 0) && (ibt2 == 0) )                                          
+      ibe = 0 ;                                                                
+    else {
+
+      if ( (ibe != 0) && ( (ibt1 & po8f_nrm) == 0 ) ) {
+	un.sti.i1 = *buf;
+	un.sti.i2 = *(buf+1) ;
+	un.str.r  = un.str.r + 0e0 ;
+	ibe  = un.sti.i1 & po8f_exp ;
+	ibt1 = un.sti.i1 & po8f_tiss ;
+	ibt2 = un.sti.i2 ;
+      }
+
+      if      ((ibt1 & look[0]) != 0 )
+	{ k = 3 ; ibt1 =  ibt1 & take[0] ; }
+      else if ((ibt1 & look[1]) != 0 )
+	{ k = 2 ; ibt1 =  ibt1 & take[1] ; }
+      else if ((ibt1 & look[2]) != 0 )
+	{ k = 1 ; ibt1 =  ibt1 & take[2] ; }
+      else if ((ibt1 & look[3]) != 0 )
+	{ k = 0 ;  ibt1 =  ibt1 & take[3] ; }
+      else k = 4;
+
+      /* mantissa */
+      if  (k < 4) {
+	if (k != 0) {
+	  /* shift with rounding */
+	    it   = (ibt2 & 65535) + (1 << (k-1)) ;
+	    ibt2 = ( (ibt2 >> 16) & 65535 )  +  (it >> 16) ;
+	    ibt1 = ibt1 + (ibt2 >> 16) ;
+	    /* rounded */
+	    ibt2 = ( (ibt2 & 65535) << (16-k) ) | ( (it & 65535) >> k) ;
+	    it   = ibt1 << (32 - k) ;
+	    ibt1 = ibt1 >> k ;
+	    ibt2 = ibt2 | it;
+	  }                                                                      
+
+	/*  exponent */                                                       
+	ibe = ( (ibe >> 22)  - 256 + 1023 + k - 4 ) << 20 ;                    
+      } 
+    }
+    /* put number into destination array */
+    buf = (int32*)dest;
+    *buf     = ibs | ibe | ibt1;
+    *(buf+1) = ibt2;
+    source += source_stride;
+    dest   += dest_stride;
+  }
+  return 0;
+}
+
+
+#endif /* VP */
 /* End of Actual Conversion routines, start of Interface functions */
 
 /************************************************************
@@ -4667,12 +10110,13 @@ int32 numbertype, machinetype;
 *---------------------------------------------------------------------------*/
 
 #if defined PROTOTYPE
-int32 DFKconvert(uint8 *source, uint8 *dest, int32 ntype, int32 num_elm,
+int32 DFKconvert(VOIDP source, VOIDP dest, int32 ntype, int32 num_elm,
 	 	 int16 access, int32 source_stride, int32 dest_stride)
 #else
 int32 DFKconvert(source, dest, ntype, num_elm, access, source_stride,
 		 dest_stride)
-uint8 *source, *dest;
+VOIDP source;
+VOIDP dest;
 int32 ntype, num_elm, source_stride, dest_stride;
 int16 access;
 #endif
@@ -4682,10 +10126,9 @@ int16 access;
 
     DFKsetNT(ntype);
     if (access == DFACC_READ) 
-        ret = DFKnumin((VOIDP)source, (VOIDP)dest, num_elm, source_stride,
-		       dest_stride);
-    else ret = DFKnumout((VOIDP)source, (VOIDP)dest, num_elm, source_stride, 
-			 dest_stride);
+        ret = DFKnumin(source, dest, num_elm, source_stride, dest_stride);
+    else
+        ret = DFKnumout(source, dest, num_elm, source_stride, dest_stride);
     return(ret);
 }
 
