@@ -10,7 +10,7 @@ CC=cc
 CFLAGS= -Olimit 2048 -std1
 
 # Fortran compilier
-FC = f77
+FC = NONE
 FFLAGS =
 
 # Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
