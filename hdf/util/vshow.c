@@ -443,7 +443,7 @@ vsdumpfull(int32 vs)
                   {
                       for (t = 0; t < order[i]; t++)
                         {
-                            (fmtfn[i]) (b);
+                            (fmtfn[i]) ((char *)b);
                             b += off[i];
                             putchar(' ');
                             cn++;
