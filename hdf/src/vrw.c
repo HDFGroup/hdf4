@@ -427,7 +427,7 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 
                 int32       blk_size;
 
-                blk_size = (new_size > VDEFAULTBLKSIZE ? new_size : VDEFAULTBLKSIZE);
+                blk_size = ((new_size*vs->wlist.ivsize) > VDEFAULTBLKSIZE ? (new_size*vs->wlist.ivsize) : VDEFAULTBLKSIZE);
 
                 Hendaccess(vs->aid);
                 vs->aid = HLcreate(vs->f, VSDATATAG, vs->oref,
