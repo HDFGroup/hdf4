@@ -2,12 +2,15 @@
 $Header$
 
 $Log$
-Revision 1.4  1992/09/11 14:15:04  koziol
-Changed Fortran stubs' parameter passing to use a new typedef, intf,
-which should be typed to the size of an INTEGER*4 in whatever Fortran
-compiler the C functions need to be compatible with.  (This is mostly
-for the PC and possibly for the Mac)
+Revision 1.5  1992/09/15 19:58:20  koziol
+CHanged major and minor -> majorv and minorv respectively
 
+ * Revision 1.4  1992/09/11  14:15:04  koziol
+ * Changed Fortran stubs' parameter passing to use a new typedef, intf,
+ * which should be typed to the size of an INTEGER*4 in whatever Fortran
+ * compiler the C functions need to be compatible with.  (This is mostly
+ * for the PC and possibly for the Mac)
+ *
  * Revision 1.3  1992/08/31  16:14:52  chouck
  * Added Fortran support for calibration tags
  *
@@ -85,10 +88,10 @@ extern int Hnumber
   PROTO((int32 file_id, uint16 tag));
 
 extern int Hgetlibversion
-  PROTO((uint32 *major, uint32 *minor, uint32 *release, char *string));
+  PROTO((uint32 *majorv, uint32 *minorv, uint32 *release, char *string));
 
 extern int Hgetfileversion
-  PROTO((int32 file_id, uint32 *major, uint32 *minor, uint32 *release, 
+  PROTO((int32 file_id, uint32 *majorv, uint32 *minorv, uint32 *release, 
 	 char *string));
 
 #ifdef PC
