@@ -15,6 +15,7 @@
 #define REPACK_SDUTIL_H_
 
 #include "hrepack.h"
+#include "hrepack_parse.h"
 
 
 #ifdef __cplusplus
@@ -34,11 +35,7 @@ int  options_get_info(options_t      *options,     /* global options */
                       int32          dtype         /* numeric type (for SZIP), IN */
                       );
 
-int set_szip(int32 rank, 
-             int32 *dim_sizes, 
-             int32 dtype,
-             int   ncomps,
-             int   pixels_per_block, /*in */
+int set_szip( int   pixels_per_block, /*in */
              int   compression_mode, /* in */
              comp_info *c_info/*out*/);
 

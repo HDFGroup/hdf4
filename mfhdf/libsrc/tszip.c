@@ -12,6 +12,9 @@
 
 #include "mfhdf.h"
 #include "hdftest.h"
+#ifdef H4_HAVE_LIBSZ
+#include "szlib.h"
+#endif
 
 #define FILE_NAME8	"SDS_8_sziped.hdf"
 #define FILE_NAME16	"SDS_16_sziped.hdf"
@@ -24,15 +27,10 @@
 #define WIDTH		6
 #define LENGTH		9
 
-/* Initialize parameters for szip compression */
-#define NN_OPTION_MASK 		32
-#define LSB_OPTION_MASK		8
-#define MSB_OPTION_MASK		16
-#define RAW_OPTION_MASK		128
-
 static intn 
 test_szip_SDS8bit()
 {
+#ifdef H4_HAVE_LIBSZ
    /************************* Variable declaration **************************/
 
    int32	sd_id, sds_id;
@@ -40,13 +38,13 @@ test_szip_SDS8bit()
    int32	dim_sizes[2], array_rank, num_type, attributes;
    char 	name[MAX_NC_NAME];
    comp_info 	c_info;
-   int32	pixels_per_scanline;
    int32        start[2], edges[2];
    int8         fill_value = 0; /* Fill value */
    int          i,j;
    int    	num_errs = 0;   /* number of errors so far */
    comp_coder_t comp_type;      /* to retrieve compression type into */
    comp_info    cinfo;          /* compression information structure */
+   uint32       comp_config;
    int8         out_data[LENGTH][WIDTH];
    int8         in_data[LENGTH][WIDTH]={
 	   			 1,1,2,2,3,4,
@@ -61,6 +59,8 @@ test_szip_SDS8bit()
 
     /********************* End of variable declaration ***********************/
 
+    HCget_config_info(COMP_CODE_SZIP,&comp_config);
+    
     /* Create the file and initialize SD interface */
     sd_id = SDstart (FILE_NAME8, DFACC_CREATE);
     CHECK(sd_id, FAIL, "SDstart");
@@ -82,21 +82,29 @@ test_szip_SDS8bit()
     CHECK(status, FAIL, "SDsetfillvalue");
 
     /* Initialization for SZIP */
-    pixels_per_scanline = dim_sizes[1];
-    c_info.szip.pixels = dim_sizes[0]*dim_sizes[1];;
     c_info.szip.pixels_per_block = 2;
-    if(pixels_per_scanline >=2048)
-        c_info.szip.pixels_per_scanline = 512;
-    else
-        c_info.szip.pixels_per_scanline = dim_sizes[1];
 
-    c_info.szip.options_mask = NN_OPTION_MASK;
-    c_info.szip.options_mask |= RAW_OPTION_MASK;
-    c_info.szip.bits_per_pixel = 8;
+    c_info.szip.options_mask = SZ_EC_OPTION_MASK;
+    c_info.szip.options_mask |= SZ_RAW_OPTION_MASK;
+    c_info.szip.bits_per_pixel = 0;
+    c_info.szip.pixels = 0;
+    c_info.szip.pixels_per_scanline = 0;
 
     /* Set the compression */
     status = SDsetcompress (sds_id, COMP_CODE_SZIP, &c_info);
-    CHECK(status, FAIL, "SDsetcompress");
+    if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
+	/* should work */
+       CHECK(status, FAIL, "SDsetcompress");
+    } else {
+       /* skip rest of test?? */
+        status = SDendaccess (sds_id);
+        CHECK(status, FAIL, "SDendaccess");
+
+        status = SDend (sd_id);
+        CHECK(status, FAIL, "SDend");
+        printf("szip_SD8: SKIPPED\n");
+        return num_errs;
+    }
 
     /* Write data to the SDS */
     status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)in_data);
@@ -166,11 +174,15 @@ test_szip_SDS8bit()
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
+#else
+    return 0;
+#endif
 } /* test_szip_SDS8bit */
 
 static intn 
 test_szip_SDS16bit()
 {
+#ifdef H4_HAVE_LIBSZ
     /************************* Variable declaration **************************/
 
     int32	sd_id, sds_id;
@@ -178,7 +190,7 @@ test_szip_SDS16bit()
     int32	dim_sizes[2], array_rank, num_type, attributes;
     char	name[MAX_NC_NAME];
     comp_info	c_info;
-    int32	pixels_per_scanline;
+   uint32       comp_config;
     int32       start[2], edges[2];
     int16       fill_value = 0;   /* Fill value */
     int         i,j;
@@ -197,6 +209,7 @@ test_szip_SDS16bit()
 
     /********************* End of variable declaration ***********************/
 
+    HCget_config_info(COMP_CODE_SZIP,&comp_config);
     /* Create the file and initialize SD interface */
     sd_id = SDstart (FILE_NAME16, DFACC_CREATE);
     CHECK(sd_id, FAIL, "SDstart");
@@ -218,21 +231,29 @@ test_szip_SDS16bit()
     CHECK(status, FAIL, "SDsetfillvalue");
 
     /* Initialize for SZIP */
-    pixels_per_scanline = dim_sizes[1];
-    c_info.szip.pixels = dim_sizes[0]*dim_sizes[1];;
     c_info.szip.pixels_per_block = 2;
-    if(pixels_per_scanline >=2048)
-        c_info.szip.pixels_per_scanline = 512;
-    else
-        c_info.szip.pixels_per_scanline = dim_sizes[1];
 
-    c_info.szip.options_mask = NN_OPTION_MASK;
-    c_info.szip.options_mask |= RAW_OPTION_MASK;
-    c_info.szip.bits_per_pixel = 16;
+    c_info.szip.options_mask = SZ_EC_OPTION_MASK;
+    c_info.szip.options_mask |= SZ_RAW_OPTION_MASK;
+    c_info.szip.bits_per_pixel = 0;
+    c_info.szip.pixels = 0;
+    c_info.szip.pixels_per_scanline = 0;
 
     /* Set the compression */
     status = SDsetcompress (sds_id, COMP_CODE_SZIP, &c_info);
-    CHECK(status, FAIL, "SDsetcompress");
+    if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
+	/* should work */
+       CHECK(status, FAIL, "SDsetcompress");
+    } else {
+       /* skip rest of test?? */
+        status = SDendaccess (sds_id);
+        CHECK(status, FAIL, "SDendaccess");
+
+        status = SDend (sd_id);
+        CHECK(status, FAIL, "SDend");
+        printf("szip_SD16: SKIPPED\n");
+        return num_errs;
+    }
 
     /* Write data to the SDS */
     status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)in_data);
@@ -294,11 +315,15 @@ test_szip_SDS16bit()
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
+#else
+    return 0;
+#endif
 }  /* test_szip_SDS16bit */
 
 static intn 
 test_szip_SDS32bit()
 {
+#ifdef H4_HAVE_LIBSZ
     /************************* Variable declaration **************************/
 
     int32	sd_id, sds_id;
@@ -306,7 +331,7 @@ test_szip_SDS32bit()
     int32	dim_sizes[2], array_rank, num_type, attributes;
     char	name[MAX_NC_NAME];
     comp_info	c_info;
-    int32	pixels_per_scanline;
+   uint32       comp_config;
     int32       start[2], edges[2];
     int32       fill_value = 0;   /* Fill value */
     int         i,j;
@@ -325,6 +350,7 @@ test_szip_SDS32bit()
 
     /********************* End of variable declaration ***********************/
 
+    HCget_config_info(COMP_CODE_SZIP,&comp_config);
     /* Create the file and initialize SD interface */
     sd_id = SDstart (FILE_NAME32, DFACC_CREATE);
     CHECK(sd_id, FAIL, "SDstart");
@@ -346,21 +372,29 @@ test_szip_SDS32bit()
     CHECK(status, FAIL, "SDsetfillvalue");
 
     /* Initialize for SZIP */
-    pixels_per_scanline = dim_sizes[1];
-    c_info.szip.pixels = dim_sizes[0]*dim_sizes[1];;
     c_info.szip.pixels_per_block = 2;
-    if(pixels_per_scanline >=2048)
-        c_info.szip.pixels_per_scanline = 512;
-    else
-        c_info.szip.pixels_per_scanline = dim_sizes[1];
 
-    c_info.szip.options_mask = NN_OPTION_MASK;
-    c_info.szip.options_mask |= RAW_OPTION_MASK;
-    c_info.szip.bits_per_pixel = 32;
+    c_info.szip.options_mask = SZ_EC_OPTION_MASK;
+    c_info.szip.options_mask |= SZ_RAW_OPTION_MASK;
+    c_info.szip.bits_per_pixel = 0;
+    c_info.szip.pixels = 0;
+    c_info.szip.pixels_per_scanline = 0;
 
     /* Set the compression */
     status = SDsetcompress (sds_id, COMP_CODE_SZIP, &c_info);
-    CHECK(status, FAIL, "SDsetcompress");
+    if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
+	/* should work */
+       CHECK(status, FAIL, "SDsetcompress");
+    } else {
+       /* skip rest of test?? */
+        status = SDendaccess (sds_id);
+        CHECK(status, FAIL, "SDendaccess");
+
+        status = SDend (sd_id);
+        CHECK(status, FAIL, "SDend");
+        printf("szip_SD32: SKIPPED\n");
+        return num_errs;
+    }
 
     /* Write data to the SDS */
     status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)in_data);
@@ -422,11 +456,15 @@ test_szip_SDS32bit()
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
+#else
+    return 0;
+#endif
 }  /* test_szip_SDS32bit */
 
 static intn 
 test_szip_SDSfl32bit()
 {
+#ifdef H4_HAVE_LIBSZ
     /************************* Variable declaration **************************/
 
     int32	sd_id, sds_id;
@@ -434,7 +472,9 @@ test_szip_SDSfl32bit()
     int32	dim_sizes[2], array_rank, num_type, attributes;
     char	name[MAX_NC_NAME];
     comp_info	c_info;
+/*
     int32	pixels_per_scanline;
+*/
     int32       start[2], edges[2];
     float32     fill_value = 0;   /* Fill value */
     int         i,j;
@@ -474,21 +514,22 @@ test_szip_SDSfl32bit()
     CHECK(status, FAIL, "SDsetfillvalue");
 
     /* Initialize for SZIP */
-    pixels_per_scanline = dim_sizes[1];
-    c_info.szip.pixels = dim_sizes[0]*dim_sizes[1];;
     c_info.szip.pixels_per_block = 2;
-    if(pixels_per_scanline >=2048)
-        c_info.szip.pixels_per_scanline = 512;
-    else
-        c_info.szip.pixels_per_scanline = dim_sizes[1];
 
-    c_info.szip.options_mask = NN_OPTION_MASK;
-    c_info.szip.options_mask |= RAW_OPTION_MASK;
-    c_info.szip.bits_per_pixel = 32;
+    c_info.szip.options_mask = SZ_EC_OPTION_MASK;
+    c_info.szip.options_mask |= SZ_RAW_OPTION_MASK;
+    c_info.szip.bits_per_pixel = 0;
+    c_info.szip.pixels = 0;
+    c_info.szip.pixels_per_scanline = 0;
 
     /* Set the compression */
     status = SDsetcompress (sds_id, COMP_CODE_SZIP, &c_info);
-    CHECK(status, FAIL, "SDsetcompress");
+    if (SZ_encoder_enabled()) {
+	/* should pass */
+        CHECK(status, FAIL, "SDsetcompress");
+    } else {
+        return num_errs;
+    }
 
     /* Write data to the SDS */
     status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)in_data);
@@ -550,11 +591,15 @@ test_szip_SDSfl32bit()
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
+#else
+    return 0;
+#endif
 }  /* test_szip_SDSfl32bit */
 
 static intn 
 test_szip_SDSfl64bit()
 {
+#ifdef H4_HAVE_LIBSZ
     /************************* Variable declaration **************************/
 
     int32	sd_id, sds_id;
@@ -562,7 +607,7 @@ test_szip_SDSfl64bit()
     int32	dim_sizes[2], array_rank, num_type, attributes;
     char	name[MAX_NC_NAME];
     comp_info	c_info;
-    int32	pixels_per_scanline;
+   uint32       comp_config;
     int32       start[2], edges[2];
     float64     fill_value = 0;   /* Fill value */
     int         i,j;
@@ -581,6 +626,7 @@ test_szip_SDSfl64bit()
 
     /********************* End of variable declaration ***********************/
 
+    HCget_config_info(COMP_CODE_SZIP,&comp_config);
     /* Create the file and initialize SD interface */
     sd_id = SDstart (FILE_NAMEfl64, DFACC_CREATE);
     CHECK(sd_id, FAIL, "SDstart");
@@ -602,21 +648,29 @@ test_szip_SDSfl64bit()
     CHECK(status, FAIL, "SDsetfillvalue");
 
     /* Initialization for SZIP */
-    pixels_per_scanline = dim_sizes[1];
-    c_info.szip.pixels = dim_sizes[0]*dim_sizes[1];;
     c_info.szip.pixels_per_block = 2;
-    if(pixels_per_scanline >=2048)
-        c_info.szip.pixels_per_scanline = 512;
-    else
-        c_info.szip.pixels_per_scanline = dim_sizes[1];
 
-    c_info.szip.options_mask = NN_OPTION_MASK;
-    c_info.szip.options_mask |= RAW_OPTION_MASK;
-    c_info.szip.bits_per_pixel = 64;
+    c_info.szip.options_mask = SZ_EC_OPTION_MASK;
+    c_info.szip.options_mask |= SZ_RAW_OPTION_MASK;
+    c_info.szip.bits_per_pixel = 0;
+    c_info.szip.pixels = 0;
+    c_info.szip.pixels_per_scanline = 0;
 
     /* Set the compression */
     status = SDsetcompress (sds_id, COMP_CODE_SZIP, &c_info);
-    CHECK(status, FAIL, "SDsetcompress");
+    if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
+	/* should work */
+       CHECK(status, FAIL, "SDsetcompress");
+    } else {
+       /* skip rest of test?? */
+        status = SDendaccess (sds_id);
+        CHECK(status, FAIL, "SDendaccess");
+
+        status = SDend (sd_id);
+        CHECK(status, FAIL, "SDend");
+        printf("szip_SD64: SKIPPED\n");
+        return num_errs;
+    }
 
     /* Write data to the SDS */
     status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)in_data);
@@ -678,6 +732,9 @@ test_szip_SDSfl64bit()
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
+#else
+    return 0;
+#endif
 }  /* test_szip_SDSfl64bit */
 
 
@@ -692,6 +749,7 @@ test_szip_SDSfl64bit()
 static intn 
 test_szip_chunk()
 {
+#ifdef H4_HAVE_LIBSZ
    /************************* Variable declaration **************************/
 
    int32         sd_id, sds_id, sds_index;
@@ -699,7 +757,7 @@ test_szip_chunk()
    int32         flag, maxcache, new_maxcache;
    int32         dim_sizes[2], origin[2];
    HDF_CHUNK_DEF c_def; /* Chunking definitions */ 
-   int32	 pixels_per_scanline;
+   uint32       comp_config;
    int32         comp_flag;
    int16         all_data[LENGTH_CH][WIDTH_CH];
    int32         start[2], edges[2];
@@ -744,6 +802,7 @@ test_szip_chunk()
     c_def.comp.chunk_lengths[0] = CLENGTH;
     c_def.comp.chunk_lengths[1] = CWIDTH;
 
+    HCget_config_info(COMP_CODE_SZIP,&comp_config);
     /* Create the file and initialize SD interface. */
     sd_id = SDstart (FILE_NAME, DFACC_CREATE);
     CHECK(sd_id, FAIL, "SDstart");
@@ -759,21 +818,29 @@ test_szip_chunk()
     CHECK(status, FAIL, "SDsetfillvalue");
 
     /* Set parameters for Chunking/SZIP */
-    pixels_per_scanline = dim_sizes[1];
     c_def.comp.comp_type = COMP_CODE_SZIP;
-    c_def.comp.cinfo.szip.pixels = dim_sizes[0]*dim_sizes[1];;
     c_def.comp.cinfo.szip.pixels_per_block = 2;
-    if(pixels_per_scanline >=2048)
-        c_def.comp.cinfo.szip.pixels_per_scanline = 512;
-    else
-        c_def.comp.cinfo.szip.pixels_per_scanline = dim_sizes[1];
 
-    c_def.comp.cinfo.szip.options_mask = NN_OPTION_MASK;
-    c_def.comp.cinfo.szip.options_mask |= MSB_OPTION_MASK;
-    c_def.comp.cinfo.szip.bits_per_pixel = 16;
+    c_def.comp.cinfo.szip.options_mask = SZ_EC_OPTION_MASK;
+    c_def.comp.cinfo.szip.options_mask |= SZ_MSB_OPTION_MASK;
+    c_def.comp.cinfo.szip.bits_per_pixel = 0;
+    c_def.comp.cinfo.szip.pixels = 0;
+    c_def.comp.cinfo.szip.pixels_per_scanline = 0;
     comp_flag = HDF_CHUNK | HDF_COMP;
     status = SDsetchunk (sds_id, c_def, comp_flag);
-    CHECK(status, FAIL, "SDsetchunk");
+    if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
+	/* should work */
+       CHECK(status, FAIL, "SDsetchunk");
+    } else {
+       /* skip rest of test?? */
+        status = SDendaccess (sds_id);
+        CHECK(status, FAIL, "SDendaccess");
+
+        status = SDend (sd_id);
+        CHECK(status, FAIL, "SDend");
+        printf("szip chunk: SKIPPED\n");
+        return num_errs;
+    }
 
     /* Set chunk cache to hold maximum of 3 chunks. */
     maxcache = 3;
@@ -925,7 +992,165 @@ test_szip_chunk()
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
 
+#else
+    return 0;
+#endif
 }   /* test_szip_chunk */ 
+
+
+#define FILE_NAME_3D	"SDSchunkedsziped3d.hdf"
+#define RANK_CH3         3	/* rank of the chunked data set */
+#define WIDTH_CH 	4	/* width of the chunked data set */
+#define LENGTH_CH	9	/* length of the chunked data set */
+#define Z_CH	11	/* length of the chunked data set */
+#define X_CWIDTH		2	/* width of the chunk */
+#define X_CLENGTH		9	/* length of the chunk */
+#define CZ		2	/* length of the chunk */
+
+   int16         all_data[LENGTH_CH][WIDTH_CH][Z_CH];
+   int16         out_data[LENGTH_CH][WIDTH_CH][Z_CH];
+static intn 
+test_szip_chunk_3d()
+{
+#ifdef H4_HAVE_LIBSZ
+   /************************* Variable declaration **************************/
+
+   int32         sd_id, sds_id, sds_index;
+   intn          status;
+   int32         dim_sizes[3];
+   HDF_CHUNK_DEF c_def; /* Chunking definitions */ 
+   uint32       comp_config;
+   int32         comp_flag;
+   int32         start[3], edges[3];
+   int16         fill_value = 0;   /* Fill value */
+   comp_coder_t  comp_type;        /* to retrieve compression type into */
+   comp_info     cinfo;            /* compression information structure */
+   int    	 num_errs = 0;     /* number of errors so far */
+   int           i,j,k;
+for (i = 0; i < LENGTH_CH; i++) {
+for (j = 0; j < WIDTH_CH; j++) {
+for (k = 0; k < Z_CH; k++) {
+   out_data[i][j][k] = i*100+j*10+k;
+}}}
+
+    /* Initialize chunk lengths. */
+    c_def.comp.chunk_lengths[0] = X_CLENGTH;
+    c_def.comp.chunk_lengths[1] = X_CWIDTH;
+    c_def.comp.chunk_lengths[2] = CZ;
+
+    HCget_config_info(COMP_CODE_SZIP,&comp_config);
+    /* Create the file and initialize SD interface. */
+    sd_id = SDstart (FILE_NAME_3D, DFACC_CREATE);
+    CHECK(sd_id, FAIL, "SDstart");
+
+    /* Create LENGTH_CHxWIDTH_CH SDS. */
+    dim_sizes[0] = LENGTH_CH;
+    dim_sizes[1] = WIDTH_CH;
+    dim_sizes[2] = Z_CH;
+    sds_id = SDcreate (sd_id, SDS_NAME_CH,DFNT_INT16, RANK_CH3, dim_sizes);
+    CHECK(sds_id, FAIL, "SDcreate:Failed to create a data set for chunking/szip compression testing");
+
+    /* Fill the SDS array with the fill value. */
+    status = SDsetfillvalue (sds_id, (VOIDP)&fill_value);
+    CHECK(status, FAIL, "SDsetfillvalue");
+
+    /* Set parameters for Chunking/SZIP */
+    c_def.comp.comp_type = COMP_CODE_SZIP;
+    c_def.comp.cinfo.szip.pixels_per_block = 2;
+
+    c_def.comp.cinfo.szip.options_mask = SZ_EC_OPTION_MASK;
+    c_def.comp.cinfo.szip.options_mask |= SZ_MSB_OPTION_MASK;
+    c_def.comp.cinfo.szip.bits_per_pixel = 0;
+    c_def.comp.cinfo.szip.pixels = 0;
+    c_def.comp.cinfo.szip.pixels_per_scanline = 0;
+    comp_flag = HDF_CHUNK | HDF_COMP;
+    status = SDsetchunk (sds_id, c_def, comp_flag);
+    if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
+	/* should work */
+       CHECK(status, FAIL, "SDsetchunk");
+    } else {
+       /* skip rest of test?? */
+        status = SDendaccess (sds_id);
+        CHECK(status, FAIL, "SDendaccess");
+
+        status = SDend (sd_id);
+        CHECK(status, FAIL, "SDend");
+        printf("szip chunk 3d: SKIPPED\n");
+        return num_errs;
+    }
+
+
+    start[0] = 0;
+    start[1] = 0;
+    start[2] = 0;
+    edges[0] = LENGTH_CH;
+    edges[1] = WIDTH_CH;
+    edges[2] = Z_CH;
+    status = SDwritedata (sds_id, start, NULL, edges, (VOIDP) out_data); 
+    CHECK(status, FAIL, "SDwritedata");
+
+    /* Terminate access to the data set. */
+    status = SDendaccess (sds_id);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* Terminate access to the SD interface and close the file. */
+    status = SDend (sd_id);
+    CHECK(status, FAIL, "SDend");
+
+    /*
+     * Verify the compressed data
+     */
+
+    /* Reopen the file and access the first data set. */
+    sd_id = SDstart (FILE_NAME_3D, DFACC_READ);
+    sds_index = 0;
+    sds_id = SDselect (sd_id, sds_index);
+    CHECK(sds_id, FAIL, "SDselect:Failed to select a data set for chunking/szip compression testing");
+
+    /* Retrieve compression information about the dataset */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+
+    status = SDgetcompress(sds_id, &comp_type, &cinfo);
+    CHECK(status, FAIL, "SDgetcompress");
+    VERIFY(comp_type, COMP_CODE_SZIP, "SDgetcompress");
+
+    start[0] = 0;
+    start[1] = 0;
+    start[2] = 0;
+    edges[0] = LENGTH_CH;
+    edges[1] = WIDTH_CH;
+    edges[2] = Z_CH;
+    status = SDreaddata (sds_id, start, NULL, edges, (VOIDP)all_data);
+    CHECK(status, FAIL, "SDreaddata");
+
+for (i = 0; i < LENGTH_CH; i++) {
+for (j = 0; j < WIDTH_CH; j++) {
+for (k = 0; k < Z_CH; k++) {
+	    if (out_data[i][j][k] != all_data[i][j][k])
+	    {
+		fprintf(stderr,"Bogus val in loc [%d][%d][%d] want %ld got %ld\n", i, j,k, out_data[i][j][k], all_data[i][j][k]);
+		num_errs++;
+	    }
+    }
+    }
+    }
+
+    /* Terminate access to the data set. */
+    status = SDendaccess (sds_id);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* Terminate access to the SD interface and close the file. */
+    status = SDend (sd_id);
+    CHECK(status, FAIL, "SDend");
+
+    /* Return the number of errors that's been kept track of so far */
+    return num_errs;
+
+#else
+    return 0;
+#endif
+}   /* test_szip_chunk_3D */ 
 
 /* 
  * At this time, the use of SZIP compression with unlimited dimension SDSs
@@ -937,6 +1162,7 @@ test_szip_chunk()
 static intn 
 test_szip_unlimited()
 {
+#ifdef H4_HAVE_LIBSZ
     /************************* Variable declaration **************************/
 
     int32	sd_id, sds_id;
@@ -944,7 +1170,7 @@ test_szip_unlimited()
     int32	dim_sizes[2], array_rank, num_type, attributes;
     char	name[MAX_NC_NAME];
     comp_info	c_info;
-    int32	pixels_per_scanline;
+   uint32       comp_config;
     int32       start[2], edges[2];
     int32       fill_value = 0;   /* Fill value */
     int         i,j;
@@ -962,6 +1188,8 @@ test_szip_unlimited()
 				   0,  0,600,600,300,400};
 
     /********************* End of variable declaration ***********************/
+
+    HCget_config_info(COMP_CODE_SZIP,&comp_config);
 
     /* Create the file and initialize SD interface */
     sd_id = SDstart (FILE_NAME_UNLIM, DFACC_CREATE);
@@ -985,22 +1213,30 @@ test_szip_unlimited()
     CHECK(status, FAIL, "SDsetfillvalue");
 
     /* Initialize for SZIP */
-    pixels_per_scanline = dim_sizes[1];
-    c_info.szip.pixels = dim_sizes[0]*dim_sizes[1];;
     c_info.szip.pixels_per_block = 2;
-    if(pixels_per_scanline >=2048)
-        c_info.szip.pixels_per_scanline = 512;
-    else
-        c_info.szip.pixels_per_scanline = dim_sizes[1];
 
-    c_info.szip.options_mask = NN_OPTION_MASK;
-    c_info.szip.options_mask |= RAW_OPTION_MASK;
-    c_info.szip.bits_per_pixel = 32;
+    c_info.szip.options_mask = SZ_EC_OPTION_MASK;
+    c_info.szip.options_mask |= SZ_RAW_OPTION_MASK;
+    c_info.szip.bits_per_pixel = 0;
+    c_info.szip.pixels = 0;
+    c_info.szip.pixels_per_scanline = 0;
 
     /* Attempting to set SZIP compression will fail because SZIP is 
      * not available with unlimited dimension yet */
     status = SDsetcompress (sds_id, COMP_CODE_SZIP, &c_info);
-    VERIFY(status, FAIL, "SDsetcompress");
+    if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
+	/* should work */
+       VERIFY(status, FAIL, "SDsetcompress");
+    } else {
+       /* skip rest of test?? */
+        status = SDendaccess (sds_id);
+        CHECK(status, FAIL, "SDendaccess");
+
+        status = SDend (sd_id);
+        CHECK(status, FAIL, "SDend");
+        printf("szip_SD unlimited: SKIPPED\n");
+        return num_errs;
+    }
 
     /* Write data to the SDS; data will be uncompressed */
     status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)in_data);
@@ -1062,6 +1298,9 @@ test_szip_unlimited()
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
+#else
+    return 0;
+#endif
 }  /* test_szip_unlimited */
 
 /* 
@@ -1071,6 +1310,7 @@ extern int
 test_szip_compression ()
 {
     int num_errs = 0;
+#ifdef H4_HAVE_LIBSZ
     num_errs = num_errs + test_szip_SDS8bit();
     num_errs = num_errs + test_szip_SDS16bit();
     num_errs = num_errs + test_szip_SDS32bit();
@@ -1078,5 +1318,9 @@ test_szip_compression ()
     num_errs = num_errs + test_szip_SDSfl64bit();
     num_errs = num_errs + test_szip_chunk();
     num_errs = num_errs + test_szip_unlimited();
+    num_errs = num_errs + test_szip_chunk_3d();
+#else
+    printf("SKIPPING SZIP compression tests\n");
+#endif
     return num_errs;
 }

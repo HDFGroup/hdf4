@@ -155,7 +155,19 @@ PRIVATE int32
 HCIinit_coder(int16 acc_mode, comp_coder_info_t * cinfo, comp_coder_t coder_type,
               comp_info * c_info)
 {
+    uint32 comp_info;
     CONSTR(FUNC, "HCIinit_coder");  /* for HERROR */
+
+    HCget_config_info(coder_type, &comp_info);
+    if ((comp_info & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
+	/* coder not present?? */
+              HRETURN_ERROR(DFE_BADCODER, FAIL)
+    }
+    if (((acc_mode & DFACC_WRITE) == DFACC_WRITE) &&
+		((comp_info & COMP_ENCODER_ENABLED) == 0)) {
+	/* encoder not present?? */
+               HRETURN_ERROR(DFE_NOENCODER, FAIL)
+    }
 
     switch (coder_type)
       {     /* determin the type of encoding */
@@ -905,9 +917,9 @@ done:
 
 /*--------------------------------------------------------------------------
  NAME
-    HCgetcompress -- Retrieves compression information of an element
+    HCPgetcompress -- Retrieves compression information of an element
  USAGE
-    intn HCgetcompress(aid, coder_type, c_info)
+    intn HCPgetcompress(aid, coder_type, c_info)
     int32 aid;                  IN: access record ID
     comp_coder_t* coder_type;   OUT: the type of compression
     comp_info* c_info;          OUT: ptr to compression information
@@ -924,14 +936,16 @@ done:
  EXAMPLES
  REVISION LOG
     July 2001: Added to fix bug #307 - BMR
+    Dec. 2004: Changed name to HCPgetcompress, to be consistent with other
+               practice.  REM
 --------------------------------------------------------------------------*/
 intn
-HCgetcompress(int32 file_id,
+HCPgetcompress(int32 file_id,
               uint16 data_tag, uint16 data_ref,
               comp_coder_t* comp_type,  /* OUT: compression type */
               comp_info* c_info)        /* OUT: retrieved compression info */
 {
-    CONSTR(FUNC, "HCgetcompress");   /* for HGOTO_ERROR */
+    CONSTR(FUNC, "HCPgetcompress");   /* for HGOTO_ERROR */
     int32   aid=0, status;
     accrec_t*    access_rec=NULL;/* access element record */
     compinfo_t*  info=NULL;  /* compressed element information */
@@ -939,7 +953,7 @@ HCgetcompress(int32 file_id,
     int32       ret_value=SUCCEED;
 
 #ifdef HAVE_PABLO
-    TRACE_ON(PABLO_mask,ID_HCgetcompress);
+    TRACE_ON(PABLO_mask,ID_HCPgetcompress);
 #endif /* HAVE_PABLO */
 
     /* clear error stack */
@@ -1003,7 +1017,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-  TRACE_OFF(PABLO_mask,ID_HCgetcompress);
+  TRACE_OFF(PABLO_mask,ID_HCPgetcompress);
 #endif /* HAVE_PABLO */
 
   return ret_value;
@@ -1544,3 +1558,70 @@ HCPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
 
     return SUCCEED;
 }   /* HCPinfo */
+
+/* ------------------------------- HCPgetinfo ----------------------------- */
+/*
+NAME
+   HCget_config_info -- return info about configuration of a compression method
+
+USAGE
+     intn HCget_config_info( comp_coder_t coder_type,  
+	uint32* compression_config_info)
+        comp_coder_t coder_type;  IN: the compression type queried  
+	compression_config_info;  OUT: flags to indiat compression status
+               
+                0 -- not enabled
+		COMP_DECODER_ENABLED - decoding enabled
+                COMP_ENCODER_ENABLED - encoding enabled
+
+RETURNS
+   SUCCEED / FAIL
+DESCRIPTION
+   Return information about the given compresion method. 
+
+   Currently, reports if encoding and/or decoding are available. SZIP
+   is the only method that varies in the current versions.
+
+
+---------------------------------------------------------------------------*/
+intn
+HCget_config_info( comp_coder_t coder_type,  /* IN: compression type */
+		uint32* compression_config_info)
+{
+    CONSTR(FUNC, "HCget_config_info");
+
+    *compression_config_info = 0;
+    switch (coder_type)
+      {     
+          case COMP_CODE_NONE:      /* "none" (i.e. no) encoding */
+		*compression_config_info = 0;
+          case COMP_CODE_RLE:   /* Run-length encoding */
+          case COMP_CODE_NBIT:      /* N-bit encoding */
+          case COMP_CODE_SKPHUFF:   /* Skipping Huffman encoding */
+		*compression_config_info = COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED;
+              break;
+
+          case COMP_CODE_JPEG:  /* jpeg may be optional */
+		*compression_config_info = COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED;
+              break;
+          case COMP_CODE_DEFLATE:   /* gzip 'deflate' encoding, maybe optional */
+		*compression_config_info = COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED;
+              break;
+
+           case COMP_CODE_SZIP:
+#ifdef H4_HAVE_LIBSZ
+	      if (SZ_encoder_enabled()) {
+		*compression_config_info = COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED;
+		} else {
+		*compression_config_info = COMP_DECODER_ENABLED;
+		}
+#else
+		*compression_config_info = 0;
+#endif /* H4_HAVE_LIBSZ */
+              break;
+          default:
+		*compression_config_info = 0;
+              HRETURN_ERROR(DFE_BADCODER, FAIL)
+	}
+    return SUCCEED;
+}

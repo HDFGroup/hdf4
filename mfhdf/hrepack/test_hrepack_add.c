@@ -176,8 +176,8 @@ void add_gr_ffile(const char* name_file,
  */
 
 /* dimensions of image */
-#define X_DIM_GR     6
-#define Y_DIM_GR     4
+#define X_DIM_GR     60
+#define Y_DIM_GR     400
 
 void add_gr(const char* gr_name,     /* gr name */
             int32 file_id,           /* file ID */
@@ -197,7 +197,6 @@ void add_gr(const char* gr_name,     /* gr name */
         data[Y_DIM_GR][X_DIM_GR];
  int    i, j, n=0, ncomps=1;
  HDF_CHUNK_DEF chunk_def;           /* Chunking definitions */ 
- int32         pixels_per_scanline;
  
  /* set the data type, interlace mode, and dimensions of the image */
  data_type = DFNT_UINT32;
@@ -228,16 +227,20 @@ void add_gr(const char* gr_name,     /* gr name */
   break;
   
  case COMP_CODE_SZIP:
-  pixels_per_scanline = dim_gr[1];
-  comp_info->szip.pixels = dim_gr[0]*dim_gr[1];
+#ifdef H4_HAVE_LIBSZ
+  if (SZ_encoder_enabled()) {
   comp_info->szip.pixels_per_block = 2;
-  if(pixels_per_scanline >=2048)
-   comp_info->szip.pixels_per_scanline = 512;
-  else
-   comp_info->szip.pixels_per_scanline = dim_gr[1];
-  comp_info->szip.options_mask = NN_OPTION_MASK;
-  comp_info->szip.options_mask |= RAW_OPTION_MASK;
-  comp_info->szip.bits_per_pixel = 32;
+  comp_info->szip.options_mask = SZ_EC_OPTION_MASK;
+  comp_info->szip.options_mask |= SZ_RAW_OPTION_MASK;
+  comp_info->szip.pixels = 0;
+   comp_info->szip.pixels_per_scanline = 0;
+  comp_info->szip.bits_per_pixel = 0;
+  } else {
+  printf("Warning: SZIP encoding not available\n");
+  }
+#else
+  printf("Warning: SZIP compression not available\n");
+#endif
   break;
  }
  
@@ -284,16 +287,20 @@ void add_gr(const char* gr_name,     /* gr name */
    break;
    
   case COMP_CODE_SZIP:
-   pixels_per_scanline = dim_gr[1];
-   chunk_def.comp.cinfo.szip.pixels = dim_gr[0]*dim_gr[1];
+#ifdef H4_HAVE_LIBSZ
+  if (SZ_encoder_enabled()) {
    chunk_def.comp.cinfo.szip.pixels_per_block = 2;
-   if(pixels_per_scanline >=2048)
-    chunk_def.comp.cinfo.szip.pixels_per_scanline = 512;
-   else
-    chunk_def.comp.cinfo.szip.pixels_per_scanline = dim_gr[1];
-   chunk_def.comp.cinfo.szip.options_mask = NN_OPTION_MASK;
-   chunk_def.comp.cinfo.szip.options_mask |= RAW_OPTION_MASK;
-   chunk_def.comp.cinfo.szip.bits_per_pixel = 32;
+   chunk_def.comp.cinfo.szip.options_mask = SZ_EC_OPTION_MASK;
+   chunk_def.comp.cinfo.szip.options_mask |= SZ_RAW_OPTION_MASK;
+   chunk_def.comp.cinfo.szip.pixels = 0;
+    chunk_def.comp.cinfo.szip.pixels_per_scanline = 0;
+   chunk_def.comp.cinfo.szip.bits_per_pixel = 0;
+  } else {
+  printf("Warning: SZIP encoding not available\n");
+  }
+#else
+  printf("Warning: SZIP compression not available\n");
+#endif
    break;
   }
   if(GRsetchunk (ri_id, chunk_def, chunk_flags)==FAIL)
@@ -573,7 +580,7 @@ void add_r24(const char* image_file,
 
 /* dimensions of dataset */
 #define X_DIM      20
-#define Y_DIM      80
+#define Y_DIM      800
 #define Z_DIM      2
 
 
@@ -626,12 +633,20 @@ void add_sd(const char *fname,       /* file name */
   break;
   
  case COMP_CODE_SZIP:
-  comp_info->szip.pixels_per_scanline = dim_sds[1];
-  comp_info->szip.pixels = dim_sds[0]*dim_sds[1];
+#ifdef H4_HAVE_LIBSZ
+  if (SZ_encoder_enabled()) {
   comp_info->szip.pixels_per_block = 2;
-  comp_info->szip.options_mask = NN_OPTION_MASK;
-  comp_info->szip.options_mask |= RAW_OPTION_MASK;
-  comp_info->szip.bits_per_pixel = 32;
+  comp_info->szip.options_mask = SZ_EC_OPTION_MASK;
+  comp_info->szip.options_mask |= SZ_RAW_OPTION_MASK;
+  comp_info->szip.pixels = 0;
+  comp_info->szip.pixels_per_scanline = 0;
+  comp_info->szip.bits_per_pixel = 0;
+  } else {
+  printf("Warning: SZIP encoding not available\n");
+  }
+#else
+  printf("Warning: SZIP compression not available\n");
+#endif
   break;
  }
  
@@ -676,7 +691,7 @@ void add_sd(const char *fname,       /* file name */
 
  /* set a fill value */
  if (SDsetfillvalue (sds_id, (VOIDP)&fill_value)==FAIL){
-   printf( "Failed to set compress for SDS <%s>\n", sds_name);
+   printf( "Failed to set fillvaclue for SDS <%s>\n", sds_name);
    goto fail;
   } 
   
@@ -1355,7 +1370,7 @@ void add_sd_szip(const char *fname,       /* file name */
         sds_id,       /* data set identifier */
         sds_ref,      /* reference number of the data set */
         rank = 2;     /* rank of the data set array */
- int32          comp_type;        /* compression flag */
+ comp_coder_t          comp_type;        /* compression flag */
  comp_info      comp_info;        /* compression structure */
  HDF_CHUNK_DEF  chunk_def;        /* chunking definitions */ 
  int32 edges[2],        /* write edges */
@@ -1363,19 +1378,35 @@ void add_sd_szip(const char *fname,       /* file name */
 
  edges[0]=dim[0]; edges[1]=dim[1];
 
+#ifdef H4_HAVE_LIBSZ
+  if (SZ_encoder_enabled()) {
  comp_type = COMP_CODE_SZIP;
- comp_info.szip.pixels_per_scanline = dim[1];
- comp_info.szip.pixels = dim[0]*dim[1];
  comp_info.szip.pixels_per_block = 2;
- comp_info.szip.options_mask = NN_OPTION_MASK;
- comp_info.szip.options_mask |= RAW_OPTION_MASK;
- comp_info.szip.bits_per_pixel = bits_per_pixel;
+ comp_info.szip.options_mask = SZ_EC_OPTION_MASK;
+ comp_info.szip.options_mask |= SZ_RAW_OPTION_MASK;
+  comp_info.szip.pixels = 0;
+  comp_info.szip.pixels_per_scanline = 0;
+  comp_info.szip.bits_per_pixel = 0;
+  } else {
+  printf("Warning: SZIP encoding not available\n");
+  }
+#else
+  printf("Warning: SZIP compression not available\n");
+#endif
 
  /* initialize the SD interface */
  sd_id = SDstart (fname, DFACC_WRITE);
+ if (sd_id < 0) {
+   printf( "SDstart failed for file <%s>\n",fname);
+   goto fail;
+ }
  
  /* create the SDS */
  sds_id = SDcreate (sd_id, sds_name, nt, rank, dim);
+ if (sds_id < 0) {
+   printf( "SDcreate failed for file <%s>\n",sds_name);
+   goto fail;
+ }
 
  /* set chunk */
  if ( (chunk_flags == HDF_CHUNK) || (chunk_flags == (HDF_CHUNK | HDF_COMP)) )
@@ -1459,8 +1490,8 @@ fail:
  */
 
 /* dimensions */
-#define XD1     6
-#define YD1     4
+#define XD1     60
+#define YD1     40
 
 void add_sd_szip_all(const char *fname,       /* file name */
                      int32 file_id,           /* file ID */
@@ -1531,12 +1562,20 @@ chunk_def->comp.chunk_lengths[1] = dim[1]/2;
   break;
   
  case COMP_CODE_SZIP:
- chunk_def->comp.cinfo.szip.pixels = dim[0]*dim[1]*ncomps;
+#ifdef H4_HAVE_LIBSZ
+ if (SZ_encoder_enabled()) {
  chunk_def->comp.cinfo.szip.pixels_per_block = 2;
- chunk_def->comp.cinfo.szip.pixels_per_scanline = dim[1];
- chunk_def->comp.cinfo.szip.options_mask = NN_OPTION_MASK;
- chunk_def->comp.cinfo.szip.options_mask |= RAW_OPTION_MASK;
- chunk_def->comp.cinfo.szip.bits_per_pixel = bits_per_pixel;
+ chunk_def->comp.cinfo.szip.options_mask = SZ_EC_OPTION_MASK;
+ chunk_def->comp.cinfo.szip.options_mask |= SZ_RAW_OPTION_MASK;
+ chunk_def->comp.cinfo.szip.pixels = 0;
+ chunk_def->comp.cinfo.szip.pixels_per_scanline = 0;
+ chunk_def->comp.cinfo.szip.bits_per_pixel = 0;
+  } else {
+  printf("Warning: SZIP encoding not available\n");
+  }
+#else
+  printf("Warning: SZIP compression not available\n");
+#endif
   break;
  }
 

@@ -15,6 +15,9 @@
 #include <assert.h>
 #include "hdf.h"
 #include "mfhdf.h"
+#ifdef H4_HAVE_LIBSZ
+#include "szlib.h"
+#endif
 
 
 #include "hrepack_sdutil.h"
@@ -108,7 +111,7 @@ int  options_get_info(options_t      *options,     /* global options */
      break;
      
     case COMP_CODE_SZIP:
-     if (set_szip (rank,dimsizes,dtype,ncomps,obj->comp.info,obj->comp.szip_mode,&c_info)==FAIL)
+     if (set_szip (obj->comp.info,obj->comp.szip_mode,&c_info)==FAIL)
      {
       return -1;
      }
@@ -186,7 +189,7 @@ int  options_get_info(options_t      *options,     /* global options */
       break;
 
      case COMP_CODE_SZIP:
-      if (set_szip (rank,dimsizes,dtype,ncomps,obj->comp.info,obj->comp.szip_mode,&c_info)==FAIL)
+      if (set_szip (obj->comp.info,obj->comp.szip_mode,&c_info)==FAIL)
       {
        return -1;
       }
@@ -262,7 +265,7 @@ int  options_get_info(options_t      *options,     /* global options */
     break;
     
    case COMP_CODE_SZIP:
-    if (set_szip (rank,dimsizes,dtype,ncomps,options->comp_g.info,options->comp_g.szip_mode,&c_info)==FAIL)
+    if (set_szip (options->comp_g.info,options->comp_g.szip_mode,&c_info)==FAIL)
     {
      return -1;
     }
@@ -327,7 +330,7 @@ int  options_get_info(options_t      *options,     /* global options */
     break;
     
    case COMP_CODE_SZIP:
-    if (set_szip (rank,dimsizes,dtype,ncomps,options->comp_g.info,options->comp_g.szip_mode,&c_info)==FAIL)
+    if (set_szip (options->comp_g.info,options->comp_g.szip_mode,&c_info)==FAIL)
     {
      return -1;
     }
@@ -379,16 +382,19 @@ int  options_get_info(options_t      *options,     /* global options */
  *-------------------------------------------------------------------------
  */
 
-int set_szip(int32 rank, 
-             int32 *dim_sizes, 
-             int32 dtype,
-             int   ncomps,
-             int   pixels_per_block, /*in */
+int set_szip( int   pixels_per_block, /*in */
              int   compression_mode, /* in */
              comp_info *c_info/*out*/)
 {
  int   i;
  int   ppb=pixels_per_block;
+
+#ifdef H4_HAVE_LIBSZ
+
+ if (SZ_encoder_enabled() == 0) {
+  printf("Warning: SZIP encoder is not enabled\n");
+  return -1;
+ }
 
  if ( (compression_mode!=NN_MODE) && (compression_mode!=EC_MODE))
  {
@@ -396,178 +402,38 @@ int set_szip(int32 rank,
   return -1;
  }
 
-
- /*
- pixels_per_scanline = size of the fastest-changing dimension 
- Must be <= MAX_PIXELS_PER_SCANLINE and <= pixels
- */
- c_info->szip.pixels_per_scanline  = dim_sizes[rank-1]*ncomps;
- c_info->szip.pixels               = 1;
- for ( i = 0; i < rank; i++)
- {
-  c_info->szip.pixels             *= dim_sizes[i];
- }
- c_info->szip.pixels              *= ncomps;
- 
- if (c_info->szip.pixels_per_scanline > MAX_PIXELS_PER_SCANLINE)
- {
-  printf("Warning: in SZIP setting, pixels per scanline was set to <%d>, \
-          MAX_PIXELS_PER_SCANLINE\n",MAX_PIXELS_PER_SCANLINE);
-  c_info->szip.pixels_per_scanline = MAX_PIXELS_PER_SCANLINE;
- }
- 
  /* 
   pixels_per_block must be an even number, and <= pixels_per_scanline 
-  and <= MAX_PIXELS_PER_BLOCK
+  and <= SZ_MAX_PIXELS_PER_BLOCK
   */
 
- if (ppb > c_info->szip.pixels_per_scanline)
- {
-  ppb=c_info->szip.pixels_per_scanline;
-  if (ppb%2!=0)
-   ppb--;
-  if (ppb<=1 )
-  {
-  printf("Warning: in SZIP settings, pixels per block <%d>, \
-   cannot be set with pixels per scanline<%d>\n",
-   ppb, c_info->szip.pixels_per_scanline);
-  return -1;
-  }
- }
- c_info->szip.pixels_per_block = ppb;
- 
- c_info->szip.options_mask = NN_OPTION_MASK;
- c_info->szip.options_mask |= RAW_OPTION_MASK;
- /* NN_MODE (1) or EC_MODE (0) */
- c_info->szip.compression_mode = compression_mode;
-
- /*
-  bits_per_pixel
-  Must be in range 1..24,32,64
-  */
- 
- switch(dtype) 
- {
- case DFNT_INT8:
- case DFNT_UINT8:
- case DFNT_UCHAR8:
-  c_info->szip.bits_per_pixel = 8;
-  break;
- case DFNT_INT16:
- case DFNT_UINT16:
-  c_info->szip.bits_per_pixel = 16;
-  break;
- case DFNT_INT32:
- case DFNT_UINT32:
-  c_info->szip.bits_per_pixel = 32;
-  break;
- case DFNT_FLOAT:
-  c_info->szip.bits_per_pixel = 32;
-  break;
- case DFNT_DOUBLE:
-  c_info->szip.bits_per_pixel = 64;
-  break;
- default:
-  printf("Error: Bad numeric type <%d> in SZIP\n",dtype);
-  return -1;
- }
-
- return check_szip_params( c_info->szip.bits_per_pixel, 
-                           c_info->szip.pixels_per_block, 
-                           c_info->szip.pixels_per_scanline, 
-                           c_info->szip.pixels);
-
-}
-
-/*-------------------------------------------------------------------------
- * Function: check_szip_params
- *
- * Purpose: Adapted from rice.c. Checks the SZIP parameters
- *
- * Return: 0 for OK, -1 otherwise
- *
- *-------------------------------------------------------------------------
- */
-
-int check_szip_params( int bits_per_pixel, 
-                       int pixels_per_block, 
-                       int pixels_per_scanline, 
-                       long image_pixels)
-{
- 
  if (pixels_per_block & 1)
  {
   printf("Pixels per block must be even.\n");
   return -1;
  }
- 
- if (pixels_per_block > pixels_per_scanline)
- {
-  printf("Pixels per block is greater than pixels per scanline.\n");
+ if (ppb < 2 || ppb > 32) {
+  printf("Pixels per block must be 2-32.\n");
   return -1;
  }
+ c_info->szip.pixels_per_block = ppb;
  
- if (bits_per_pixel >= 1 && bits_per_pixel <= 24)
-  ;
- else if (bits_per_pixel == 32 || bits_per_pixel == 64)
-  ;
- else
- {
-  printf("bits per pixel must be in range 1..24,32,64");
-  return -1;
+/* set according to input value */
+ c_info->szip.options_mask = SZ_EC_OPTION_MASK;
+ if (compression_mode == EC_MODE) {
+     c_info->szip.options_mask = SZ_EC_OPTION_MASK;
+ } else if (compression_mode == NN_MODE) {
+     c_info->szip.options_mask = SZ_NN_OPTION_MASK;
  }
- 
- if (pixels_per_block > MAX_PIXELS_PER_BLOCK) 
- {
-  printf("maximum pixels per block exceeded");
+ c_info->szip.options_mask |= SZ_RAW_OPTION_MASK;
+
+ return 0;
+#else
+  printf("Warning: SZIP compression is not available\n");
   return -1;
- }
- 
- if (pixels_per_block & 1) 
- {
-  printf("pixels per block must be even");
-  return -1;
- }
- 
- if (pixels_per_block > pixels_per_scanline)
- {
-  printf("pixels per block > pixels per scanline");
-  return -1;
- }
- 
- if (pixels_per_scanline > MAX_PIXELS_PER_SCANLINE)
- {
-  printf("maximum pixels per scanline exceeded");
-  return -1;
- }
- 
- if (image_pixels < pixels_per_scanline)
- {
-  printf("image pixels less than pixels per scanline");
-  return -1;
- }
- 
- if (image_pixels % pixels_per_scanline)
- {
-  printf("Pixels (%ld) must be integer multiple of pixels per scanline (%d)\n", 
-   image_pixels,pixels_per_scanline);
-  return -1;
- }
- 
-#if 0
- if (pixels_per_scanline % pixels_per_block)
- {
-  printf("Pixels per scanline (%d) must be an integer multiple of pixels per block (%d)\n", 
-   pixels_per_scanline, pixels_per_block);
-  return -1;
- }
 #endif
 
-
- 
- return 0;
 }
-
 
 /*-------------------------------------------------------------------------
  * Function: cache

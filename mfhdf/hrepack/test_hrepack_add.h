@@ -26,6 +26,7 @@
 #define TESTING(WHAT) {printf("%-70s", "Testing " WHAT); fflush(stdout); }
 #endif
 #define PASSED() {puts(" PASSED");fflush(stdout);}
+#define SKIPPED() {puts(" SKIPPED");fflush(stdout);}
 #define H4_FAILED() {puts("*FAILED*");fflush(stdout);}
 
 #ifdef __cplusplus

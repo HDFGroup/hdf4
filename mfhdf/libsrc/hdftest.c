@@ -4048,7 +4048,7 @@ main(int argc, char *argv[])
     status = test_szip_compression();  /* defined in tszip.c */
     num_errs = num_errs + status;
 #else
-    printf("****** SD Szip test skipped *****\n");
+   /*  printf("****** SD Szip test skipped *****\n"); */
 #endif /* H4_HAVE_LIBSZ */
 
     printf("num_err == %d\n", num_errs);

@@ -11,7 +11,17 @@
  ****************************************************************************/
 
 #include <hdf.h>
+#ifdef H4_HAVE_LIBSZ
+#include "szlib.h"
+#endif
 #include "tutils.h"
+
+/*
+ *  NOTE: these tests should be elaborated:
+ *     - use NN and EC options
+ *     - bigger datasets
+ *     - more data types
+ */     
 
 #define  FILE_NAME8     "RI_8_sziped.hdf"
 #define  FILE_NAME16    "RI_16_sziped.hdf"
@@ -22,12 +32,6 @@
 #define  LENGTH		6     /* number of rows in the image */
 #define  N_COMPS	3     /* number of components in the image */
 #define  IMAGE_NAME 	"Sziped_Image"
-
-/* Initialize parameters for szip compression */
-#define NN_OPTION_MASK          32
-#define LSB_OPTION_MASK         8
-#define MSB_OPTION_MASK         16
-#define RAW_OPTION_MASK 	128
 
 /* 
  * Sub-tests for test_mgr_szip():
@@ -44,6 +48,7 @@
 static void 
 test_szip_RI8bit()
 {
+#ifdef H4_HAVE_LIBSZ
    /************************* Variable declaration **************************/
 
     intn  status;         /* status for functions returning an intn */
@@ -53,10 +58,10 @@ test_szip_RI8bit()
           dim_sizes[2],   /* dimension sizes of the image array */
           interlace_mode, /* interlace mode of the image */
           data_type,      /* data type of the image data */
-          index,
-	  pixels_per_scanline;
+          index;
     int32 start[2],
           edges[2];
+    uint32 comp_config;
     comp_info cinfo;    /* Compression parameters - union */
  
     comp_coder_t comp_type;
@@ -80,6 +85,8 @@ test_szip_RI8bit()
 
     /********************** End of variable declaration **********************/
 
+    HCget_config_info(COMP_CODE_SZIP, &comp_config);
+    CHECK( (comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED),0, "SZIP Compression not available" );
     /* Create and open the file for sziped data */
     file_id = Hopen (FILE_NAME8, DFACC_CREATE, 0);
     CHECK(file_id, FAIL, "Hopen");
@@ -106,22 +113,33 @@ test_szip_RI8bit()
 
     /* Initializate for SZIP */
     comp_type = COMP_CODE_SZIP;
-    pixels_per_scanline = dim_sizes[0]*N_COMPS;
-    cinfo.szip.pixels = dim_sizes[0]*dim_sizes[1]*N_COMPS;
     cinfo.szip.pixels_per_block = 2;
-    if(pixels_per_scanline >=2048)
-          cinfo.szip.pixels_per_scanline = 512;
-    else
-          cinfo.szip.pixels_per_scanline = pixels_per_scanline;
-
-    cinfo.szip.options_mask = NN_OPTION_MASK;
-    cinfo.szip.options_mask |= MSB_OPTION_MASK;
-    cinfo.szip.options_mask |= RAW_OPTION_MASK;
-    cinfo.szip.bits_per_pixel = 8;
+    cinfo.szip.options_mask = SZ_EC_OPTION_MASK;
+    cinfo.szip.options_mask |= SZ_MSB_OPTION_MASK;
+    cinfo.szip.options_mask |= SZ_RAW_OPTION_MASK;
+    cinfo.szip.pixels = 0;
+    cinfo.szip.pixels_per_scanline = 0;
+    cinfo.szip.bits_per_pixel = 0;
 
     /* Set the compression */
     status = GRsetcompress(ri_id, comp_type, &cinfo);
-    CHECK(status, FAIL, "GRsetcompress");
+    if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
+	/* should work */
+       CHECK(status, FAIL, "GRsetcompress");
+    } else {
+       /* skip rest of test?? */
+        /* Terminate access to the raster image */
+        status = GRendaccess (ri_id);
+        CHECK(status, FAIL, "GRendaccess");
+
+        /* Terminate access to the GR interface and close the HDF file */
+        status = GRend (gr_id);
+        CHECK(status, FAIL, "GRend");
+        status = Hclose (file_id);
+        CHECK(status, FAIL, "Hclose");
+        MESSAGE(1,printf("test_szip_RI8bit(): %s\n",SKIP_STR););
+       return;  
+    }
 
     status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)in_data);
     CHECK(status, FAIL, "GRwriteimage");
@@ -189,6 +207,7 @@ test_szip_RI8bit()
     status = Hclose (file_id);
     CHECK(status, FAIL, "Hclose");
 
+#endif
 }  /* end of test_szip_RI8bit */
 
 /* 
@@ -197,6 +216,7 @@ test_szip_RI8bit()
 static void 
 test_szip_RI16bit()
 {
+#ifdef H4_HAVE_LIBSZ
    /************************* Variable declaration **************************/
 
     intn  status;         /* status for functions returning an intn */
@@ -206,11 +226,11 @@ test_szip_RI16bit()
           dim_sizes[2],   /* dimension sizes of the image array */
           interlace_mode, /* interlace mode of the image */
           data_type,      /* data type of the image data */
-          index,
-	  pixels_per_scanline;
+          index;
     int32 start[2],
           edges[2];
     comp_info cinfo;    /* Compression parameters - union */
+uint32 comp_config;
 
     comp_coder_t comp_type;
     int16 out_data[LENGTH][WIDTH][N_COMPS];
@@ -233,6 +253,8 @@ test_szip_RI16bit()
 
     /********************** End of variable declaration **********************/
 
+    HCget_config_info(COMP_CODE_SZIP, &comp_config);
+    CHECK( (comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED),0, "SZIP Compression not available" );
     /* Create and open the file for sziped data */
     file_id = Hopen (FILE_NAME16, DFACC_CREATE, 0);
     CHECK(file_id, FAIL, "Hopen");
@@ -259,22 +281,33 @@ test_szip_RI16bit()
 
     /* Initializate for SZIP */
     comp_type = COMP_CODE_SZIP;
-    pixels_per_scanline = dim_sizes[0]*N_COMPS;
-    cinfo.szip.pixels = dim_sizes[0]*dim_sizes[1]*N_COMPS;
     cinfo.szip.pixels_per_block = 2;
-    if(pixels_per_scanline >=2048)
-         cinfo.szip.pixels_per_scanline = 512;
-    else
-         cinfo.szip.pixels_per_scanline = pixels_per_scanline;
-
-    cinfo.szip.options_mask = NN_OPTION_MASK;
-    cinfo.szip.options_mask |= MSB_OPTION_MASK;
-    cinfo.szip.options_mask |= RAW_OPTION_MASK;
-    cinfo.szip.bits_per_pixel = 16;
+    cinfo.szip.options_mask = SZ_EC_OPTION_MASK;
+    cinfo.szip.options_mask |= SZ_MSB_OPTION_MASK;
+    cinfo.szip.options_mask |= SZ_RAW_OPTION_MASK;
+    cinfo.szip.pixels = 0;
+    cinfo.szip.pixels_per_scanline = 0;
+    cinfo.szip.bits_per_pixel = 0;
  
     /* Set the compression */
     status = GRsetcompress(ri_id, comp_type, &cinfo);
-    CHECK(status, FAIL, "GRsetcompress");
+    if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
+	/* should work */
+       CHECK(status, FAIL, "GRsetcompress");
+    } else {
+       /* skip rest of test?? */
+        /* Terminate access to the raster image */
+        status = GRendaccess (ri_id);
+        CHECK(status, FAIL, "GRendaccess");
+
+        /* Terminate access to the GR interface and close the HDF file */
+        status = GRend (gr_id);
+        CHECK(status, FAIL, "GRend");
+        status = Hclose (file_id);
+        CHECK(status, FAIL, "Hclose");
+        MESSAGE(1,printf("szip_RI16: %s\n",SKIP_STR););
+       return;  
+    }
 
     status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)in_data);
     CHECK(status, FAIL, "SDwritedata");
@@ -341,6 +374,7 @@ test_szip_RI16bit()
     status = Hclose (file_id);
     CHECK(status, FAIL, "Hclose");
 
+#endif
 }  /* end of test_szip_RI16bit */
 
 /* 
@@ -349,6 +383,7 @@ test_szip_RI16bit()
 static void 
 test_szip_RI32bit()
 {
+#ifdef H4_HAVE_LIBSZ
    /************************* Variable declaration **************************/
 
     intn  status;         /* status for functions returning an intn */
@@ -358,11 +393,11 @@ test_szip_RI32bit()
           dim_sizes[2],   /* dimension sizes of the image array */
           interlace_mode, /* interlace mode of the image */
           data_type,      /* data type of the image data */
-          index,
-	  pixels_per_scanline;
+          index;
     int32 start[2],
           edges[2];
     comp_info cinfo;    /* Compression parameters - union */
+uint32 comp_config;
 
     comp_coder_t comp_type;
     int32 out_data[LENGTH][WIDTH][N_COMPS];
@@ -385,6 +420,8 @@ test_szip_RI32bit()
 
    /********************** End of variable declaration **********************/
 
+    HCget_config_info(COMP_CODE_SZIP, &comp_config);
+    CHECK( (comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED),0, "SZIP Compression not available" );
     /* Create and open the file for sziped data */
     file_id = Hopen (FILE_NAME32, DFACC_CREATE, 0);
     CHECK(file_id, FAIL, "Hopen");
@@ -411,22 +448,33 @@ test_szip_RI32bit()
 
     /* Initializate for SZIP */
     comp_type = COMP_CODE_SZIP;
-    pixels_per_scanline = dim_sizes[0]*N_COMPS;
-    cinfo.szip.pixels = dim_sizes[0]*dim_sizes[1]*N_COMPS;
     cinfo.szip.pixels_per_block = 2;
-    if(pixels_per_scanline >=2048)
-         cinfo.szip.pixels_per_scanline = 512;
-    else
-         cinfo.szip.pixels_per_scanline = pixels_per_scanline;
-
-    cinfo.szip.options_mask = NN_OPTION_MASK;
-    cinfo.szip.options_mask |= MSB_OPTION_MASK;
-    cinfo.szip.options_mask |= RAW_OPTION_MASK;
-    cinfo.szip.bits_per_pixel = 32;
+    cinfo.szip.options_mask = SZ_EC_OPTION_MASK;
+    cinfo.szip.options_mask |= SZ_MSB_OPTION_MASK;
+    cinfo.szip.options_mask |= SZ_RAW_OPTION_MASK;
+    cinfo.szip.pixels = 0;
+    cinfo.szip.pixels_per_scanline = 0;
+    cinfo.szip.bits_per_pixel = 0;
 
     /* Set the compression */
     status = GRsetcompress(ri_id, comp_type, &cinfo);
-    CHECK(status, FAIL, "GRsetcompress");
+    if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
+	/* should work */
+       CHECK(status, FAIL, "GRsetcompress");
+    } else {
+       /* skip rest of test?? */
+        /* Terminate access to the raster image */
+        status = GRendaccess (ri_id);
+        CHECK(status, FAIL, "GRendaccess");
+
+        /* Terminate access to the GR interface and close the HDF file */
+        status = GRend (gr_id);
+        CHECK(status, FAIL, "GRend");
+        status = Hclose (file_id);
+        CHECK(status, FAIL, "Hclose");
+        MESSAGE(1,printf("szip_RI32: %s\n",SKIP_STR););
+       return;  
+    }
 
     status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)in_data);
     CHECK(status, FAIL, "GRwriteimage");
@@ -494,6 +542,7 @@ test_szip_RI32bit()
     status = Hclose (file_id);
     CHECK(status, FAIL, "Hclose");
 
+#endif
 }  /* end of test_szip_RI32bit */
 
 /* 
@@ -502,6 +551,7 @@ test_szip_RI32bit()
 static void 
 test_szip_RIfl32bit()
 {
+#ifdef H4_HAVE_LIBSZ
    /************************* Variable declaration **************************/
 
     intn  status;         /* status for functions returning an intn */
@@ -511,11 +561,11 @@ test_szip_RIfl32bit()
           dim_sizes[2],   /* dimension sizes of the image array */
           interlace_mode, /* interlace mode of the image */
           data_type,      /* data type of the image data */
-          index,
-	  pixels_per_scanline;
+          index;
     int32 start[2],
           edges[2];
     comp_info cinfo;    /* Compression parameters - union */
+    uint32 comp_config;
 
     comp_coder_t comp_type;
     float32 out_data[LENGTH][WIDTH][N_COMPS];
@@ -538,6 +588,10 @@ test_szip_RIfl32bit()
 
    /********************** End of variable declaration **********************/
 
+    HCget_config_info(COMP_CODE_SZIP, &comp_config);
+    CHECK( (comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED),0, "SZIP Compression not available" );
+
+    /* Create and open the file for sziped data */
     /* Create and open the file for sziped data */
     file_id = Hopen (FILE_NAMEfl32, DFACC_CREATE, 0);
     CHECK(file_id, FAIL, "Hopen");
@@ -564,22 +618,34 @@ test_szip_RIfl32bit()
 
     /* Initializate for SZIP */
     comp_type = COMP_CODE_SZIP;
-    pixels_per_scanline = dim_sizes[0]*N_COMPS;
-    cinfo.szip.pixels = dim_sizes[0]*dim_sizes[1]*N_COMPS;
     cinfo.szip.pixels_per_block = 2;
-    if(pixels_per_scanline >=2048)
-         cinfo.szip.pixels_per_scanline = 512;
-    else
-         cinfo.szip.pixels_per_scanline = pixels_per_scanline;
 
-    cinfo.szip.options_mask = NN_OPTION_MASK;
-    cinfo.szip.options_mask |= MSB_OPTION_MASK;
-    cinfo.szip.options_mask |= RAW_OPTION_MASK;
-    cinfo.szip.bits_per_pixel = 32;
+    cinfo.szip.options_mask = SZ_EC_OPTION_MASK;
+    cinfo.szip.options_mask |= SZ_MSB_OPTION_MASK;
+    cinfo.szip.options_mask |= SZ_RAW_OPTION_MASK;
+    cinfo.szip.pixels = 0;
+    cinfo.szip.pixels_per_scanline = 0;
+    cinfo.szip.bits_per_pixel = 0;
  
     /* Set the compression */
     status = GRsetcompress(ri_id, comp_type, &cinfo);
-    CHECK(status, FAIL, "GRsetcompress");
+    if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
+	/* should work */
+       CHECK(status, FAIL, "GRsetcompress");
+    } else {
+       /* skip rest of test?? */
+        /* Terminate access to the raster image */
+        status = GRendaccess (ri_id);
+        CHECK(status, FAIL, "GRendaccess");
+
+        /* Terminate access to the GR interface and close the HDF file */
+        status = GRend (gr_id);
+        CHECK(status, FAIL, "GRend");
+        status = Hclose (file_id);
+        CHECK(status, FAIL, "Hclose");
+        MESSAGE(1,printf("szip_RIflt32: %s\n",SKIP_STR););
+       return;  
+    }
 
     status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)in_data);
     CHECK(status, FAIL, "GRwriteimage");
@@ -646,6 +712,7 @@ test_szip_RIfl32bit()
     status = Hclose (file_id);
     CHECK(status, FAIL, "Hclose");
 
+#endif
 }  /* end of test_szip_RIfl32bit */
 
 /* 
@@ -654,6 +721,7 @@ test_szip_RIfl32bit()
 static void 
 test_szip_RIfl64bit()
 {
+#ifdef H4_HAVE_LIBSZ
    /************************* Variable declaration **************************/
 
     intn  status;         /* status for functions returning an intn */
@@ -663,11 +731,11 @@ test_szip_RIfl64bit()
           dim_sizes[2],   /* dimension sizes of the image array */
           interlace_mode, /* interlace mode of the image */
           data_type,      /* data type of the image data */
-          index,
-	  pixels_per_scanline;
+          index;
     int32 start[2],
           edges[2];
     comp_info cinfo;    /* Compression parameters - union */
+    uint32 comp_config;
 
     comp_coder_t comp_type;
     float64 out_data[LENGTH][WIDTH][N_COMPS];
@@ -690,6 +758,10 @@ test_szip_RIfl64bit()
 
     /********************** End of variable declaration **********************/
 
+    HCget_config_info(COMP_CODE_SZIP, &comp_config);
+    CHECK( (comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED),0, "SZIP Compression not available" );
+
+    /* Create and open the file for sziped data */
     /* Create and open the file for sziped data */
     file_id = Hopen (FILE_NAMEfl64, DFACC_CREATE, 0);
     CHECK(file_id, FAIL, "Hopen");
@@ -716,22 +788,34 @@ test_szip_RIfl64bit()
  
     /* Initializate for SZIP */
     comp_type = COMP_CODE_SZIP;
-    pixels_per_scanline = dim_sizes[0]*N_COMPS;
-    cinfo.szip.pixels = dim_sizes[0]*dim_sizes[1]*N_COMPS;
     cinfo.szip.pixels_per_block = 2;
-    if(pixels_per_scanline >=2048)
-          cinfo.szip.pixels_per_scanline = 512;
-    else
-          cinfo.szip.pixels_per_scanline = pixels_per_scanline;
  
-    cinfo.szip.options_mask = NN_OPTION_MASK;
-    cinfo.szip.options_mask |= MSB_OPTION_MASK;
-    cinfo.szip.options_mask |= RAW_OPTION_MASK;
-    cinfo.szip.bits_per_pixel = 64;
+    cinfo.szip.options_mask = SZ_EC_OPTION_MASK;
+    cinfo.szip.options_mask |= SZ_MSB_OPTION_MASK;
+    cinfo.szip.options_mask |= SZ_RAW_OPTION_MASK;
+    cinfo.szip.pixels = 0;
+    cinfo.szip.pixels_per_scanline = 0;
+    cinfo.szip.bits_per_pixel = 0;
 
     /* Set the compression */
     status = GRsetcompress(ri_id, comp_type, &cinfo);
-    CHECK(status, FAIL, "GRsetcompress");
+    if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
+	/* should work */
+       CHECK(status, FAIL, "GRsetcompress");
+    } else {
+       /* skip rest of test?? */
+        /* Terminate access to the raster image */
+        status = GRendaccess (ri_id);
+        CHECK(status, FAIL, "GRendaccess");
+
+        /* Terminate access to the GR interface and close the HDF file */
+        status = GRend (gr_id);
+        CHECK(status, FAIL, "GRend");
+        status = Hclose (file_id);
+        CHECK(status, FAIL, "Hclose");
+        MESSAGE(1,printf("szip_RIflt 64: %s\n",SKIP_STR););
+       return;  
+    }
 
     status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)in_data);
     CHECK(status, FAIL, "GRwriteimage");
@@ -798,6 +882,7 @@ test_szip_RIfl64bit()
     status = Hclose (file_id);
     CHECK(status, FAIL, "Hclose");
 
+#endif
 }  /* end of test_szip_RIfl64bit */
 
 /*
@@ -811,6 +896,7 @@ test_szip_RIfl64bit()
 static void 
 test_szip_chunk()
 {
+#ifdef H4_HAVE_LIBSZ
 
     /************************* Variable declaration **************************/
 
@@ -823,12 +909,12 @@ test_szip_chunk()
           interlace_mode, /* interlace mode of the image */
           data_type,      /* data type of the image data */
           comp_flag,      /* compression flag */
-          index,
-	  pixels_per_scanline;
+          index;
     int32 start[2],
           stride[2],
           edge[2];
     comp_info cinfo_out;    /* Compression parameters - union */
+    uint32 comp_config;
     comp_coder_t comp_type;
     int8 data_out[N_COMPS*LENGTH_CH*WIDTH_CH];
     char *image_name = "Image_chunked_sziped";
@@ -870,6 +956,9 @@ test_szip_chunk()
 
     /********************** End of variable declaration **********************/
 
+    HCget_config_info(COMP_CODE_SZIP, &comp_config);
+    CHECK( (comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED),0, "SZIP Compression not available" );
+    /* Create and open the file for sziped data */
     /* Create and open the file for chunked and sziped data. */
     file_id = Hopen (CHKSZIPFILE, DFACC_CREATE, 0);
     CHECK(file_id, FAIL, "Hopen");
@@ -894,21 +983,33 @@ test_szip_chunk()
     chunk_def.comp.chunk_lengths[0] = 3;
     chunk_def.comp.chunk_lengths[1] = 2;
     chunk_def.comp.comp_type = COMP_CODE_SZIP;
-    pixels_per_scanline = 2*N_COMPS;
-    chunk_def.comp.cinfo.szip.pixels = 3*2*N_COMPS;
     chunk_def.comp.cinfo.szip.pixels_per_block = 2;
-    if(pixels_per_scanline >=2048)
-         chunk_def.comp.cinfo.szip.pixels_per_scanline = 512;
-    else
-         chunk_def.comp.cinfo.szip.pixels_per_scanline = pixels_per_scanline;
 
-    chunk_def.comp.cinfo.szip.options_mask = NN_OPTION_MASK;
-    chunk_def.comp.cinfo.szip.options_mask |= MSB_OPTION_MASK;
-    chunk_def.comp.cinfo.szip.options_mask |= RAW_OPTION_MASK;
-    chunk_def.comp.cinfo.szip.bits_per_pixel = 8;
+    chunk_def.comp.cinfo.szip.options_mask = SZ_EC_OPTION_MASK;
+    chunk_def.comp.cinfo.szip.options_mask |= SZ_MSB_OPTION_MASK;
+    chunk_def.comp.cinfo.szip.options_mask |= SZ_RAW_OPTION_MASK;
+    chunk_def.comp.cinfo.szip.pixels = 0;
+    chunk_def.comp.cinfo.szip.pixels_per_scanline = 0;
+    chunk_def.comp.cinfo.szip.bits_per_pixel = 0;
  
     status = GRsetchunk(ri_id, chunk_def, comp_flag);
-    CHECK(status, FAIL, "GRsetchunk");
+    if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
+	/* should work */
+       CHECK(status, FAIL, "GRsetchunk");
+    } else {
+       /* skip rest of test?? */
+        /* Terminate access to the raster image */
+        status = GRendaccess (ri_id);
+        CHECK(status, FAIL, "GRendaccess");
+
+        /* Terminate access to the GR interface and close the HDF file */
+        status = GRend (gr_id);
+        CHECK(status, FAIL, "GRend");
+        status = Hclose (file_id);
+        CHECK(status, FAIL, "Hclose");
+        MESSAGE(1,printf("szip RI chunk: %s\n",SKIP_STR););
+       return;  
+    }
 
     /* Write first data chunk ( 0, 0 ). */
     origin[0] = origin[1] = 0;
@@ -958,7 +1059,7 @@ test_szip_chunk()
     HDmemset(&cinfo_out,  0, sizeof(cinfo_out)) ;
 
     status = GRgetcompress(ri_id, &comp_type, &cinfo_out);
-    CHECK(status, FAIL, "GRsetcompress");
+    CHECK(status, FAIL, "GRgetcompress");
     VERIFY(comp_type, COMP_CODE_SZIP, "GRgetcompress");
 
     /* Read first chunk back and compare with input chunk. */
@@ -1011,6 +1112,7 @@ test_szip_chunk()
     CHECK(status, FAIL, "GRend");
     status = Hclose (file_id);
     CHECK(status, FAIL, "Hclose");
+#endif
 }  /* end of test_szip_chunk */
 
 /****************************************************************
@@ -1030,6 +1132,7 @@ test_szip_chunk()
 extern void
 test_mgr_szip()
 {
+#ifdef H4_HAVE_LIBSZ
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing GR szip compression WRITE/READ\n"););
 
@@ -1039,4 +1142,8 @@ test_mgr_szip()
     test_szip_RIfl32bit();
     test_szip_RIfl64bit();
     test_szip_chunk();
+#else
+    /* Output message about test being performed */
+    MESSAGE(6, printf("Skipping GR szip compression WRITE/READ\n"););
+#endif
 } 

@@ -30,7 +30,7 @@ TESTING() {
 # difference between the actual output and the expected output. The
 # expected output is given as the first argument to this function and
 # the actual output file is calculated by replacing the `.ddl' with
-# `.out'.  The actual output is not removed if $HDF5_NOCLEANUP has a
+# `.out'.  The actual output is not removed if $HDF_NOCLEANUP has a
 # non-zero value.
 #
 TOOLTEST() {
@@ -70,7 +70,7 @@ TOOLTEST() {
    fi
 
    # Clean up output file
-     if test -z "$HDF5_NOCLEANUP"; then
+     if test -z "$HDF_NOCLEANUP"; then
      rm -f $actual $actual_err
      fi
 }

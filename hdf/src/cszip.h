@@ -61,6 +61,9 @@ uint16 *pref,
      extern intn HCPcszip_endaccess
                  (accrec_t * access_rec);
 
+     extern intn HCPsetup_szip_parms
+                 ( comp_info *c_info, int32 nt, int32 ncomp, int32 ndims, int32 *dims, int32 *cdims);
+
 #if defined c_plusplus || defined __cplusplus
 }
 #endif                          /* c_plusplus || __cplusplus */
@@ -71,22 +74,19 @@ typedef struct
 {
      int32       offset;    /* offset in the file */
      uint8       *buffer;   /* buffer for storing SZIP bytes */
-         int32       buffer_pos;
-         int32           buffer_size;
-         int32 bits_per_pixel;
-         int32 compression_mode;
-         int32 options_mask;
-         int32 pixels;
-         int32 pixels_per_block;
-         int32 pixels_per_scanline;
+     int32       buffer_pos;
+     int32       buffer_size;
+     int32 bits_per_pixel;
+     int32 options_mask;
+     int32 pixels;
+     int32 pixels_per_block;
+     int32 pixels_per_scanline;
      enum
        {
-           SZIP_INIT,                    /* initialize ... ***/
-           SZIP_RUN,              /* buffer up to the current position is a 
-run */
-                   SZIP_TERM
+           SZIP_INIT, SZIP_RUN,  SZIP_TERM
        }
      szip_state;                  /* state of the buffer storage */
+     enum { SZIP_CLEAN, SZIP_DIRTY } szip_dirty;
 }
 comp_coder_szip_info_t;
 
@@ -104,16 +104,5 @@ funclist_t  cszip_funcs =
      HCPcszip_endaccess
 };
 #endif
-
-#define ALLOW_K13_OPTION_MASK             1
-#define CHIP_OPTION_MASK                          2
-#define EC_OPTION_MASK                            4
-#define LSB_OPTION_MASK                           8
-#define MSB_OPTION_MASK                         16
-#define NN_OPTION_MASK                          32
-#define OVERWRITE_OPTION_MASK           64
-#define RAW_OPTION_MASK                         128
-#define KEEP_IMAGE_OPTION_MASK          256
-#define KEEP_COMPRESSED_OPTION_MASK     512
 
 #endif /* __CSZIP_H */

@@ -147,8 +147,14 @@ int copy_sds(int32 sd_in,
    chunk_def_in.comp.cinfo.deflate          = c_info_in.deflate;
    break;
   case COMP_CODE_SZIP:
+#ifdef H4_HAVE_LIBSZ
    chunk_def_in.comp.comp_type              = COMP_CODE_SZIP;
    chunk_def_in.comp.cinfo.szip             = c_info_in.szip;
+#else
+   printf("Error: SZIP compression is not available <%s>\n",path);
+  SDendaccess(sds_id);
+  return -1;
+#endif
    break;
   default:
    printf("Error: Unrecognized compression code in %d <%s>\n",comp_type_in,path);
@@ -172,8 +178,16 @@ int copy_sds(int32 sd_in,
   case COMP_CODE_RLE:
    break;
   case COMP_CODE_SZIP:
+#ifdef H4_HAVE_LIBSZ
    info      = c_info_in.szip.pixels_per_block;
-   szip_mode = c_info_in.szip.compression_mode;
+	if (c_info_in.szip.options_mask & SZ_EC_OPTION_MASK) {
+		szip_mode = EC_MODE;
+	} else if (c_info_in.szip.options_mask & SZ_NN_OPTION_MASK) {
+		szip_mode = NN_MODE;
+	}
+#else
+   printf("SZIP compression not supported in this version <%s>\n",path);
+#endif
    break;
   case COMP_CODE_SKPHUFF:
    info  = c_info_in.skphuff.skp_size;
@@ -212,8 +226,12 @@ int copy_sds(int32 sd_in,
    chunk_def.comp.cinfo.deflate         = c_info_in.deflate;
    break;
   case COMP_CODE_SZIP:
+#ifdef H4_HAVE_LIBSZ
    chunk_def.comp.comp_type              = COMP_CODE_SZIP;
    chunk_def.comp.cinfo.szip             = c_info_in.szip;
+#else
+   printf("Error: SZIP compression not available in %d <%s>\n",comp_type_in,path);
+#endif
    break;
   default:
    printf("Error: Unrecognized compression code in %d <%s>\n",comp_type_in,path);
@@ -372,6 +390,7 @@ int copy_sds(int32 sd_in,
    ret=-1;
    goto out;
   }
+
  }
 
 /*-------------------------------------------------------------------------
@@ -386,11 +405,21 @@ int copy_sds(int32 sd_in,
  /* use compress without chunk-in */
  else if ( chunk_flags==HDF_NONE && comp_type>COMP_CODE_NONE)  
  {
+ if ( nelms*eltsz<options->threshold )
+ {
+  /* reset to the original values . we don't want to uncompress if it was */
+    comp_type=COMP_CODE_NONE;
+  if (options->verbose) {
+   printf("Warning: object size smaller than %d bytes. Not compressing <%s>\n",
+    options->threshold,path);
+  } 
+  } else  {
+
   /* setup compression factors */
   switch(comp_type) 
   {
   case COMP_CODE_SZIP:
-   if (set_szip (rank,dimsizes,dtype,1,info,szip_mode,&c_info)==FAIL)
+   if (set_szip (info,szip_mode,&c_info)==FAIL)
    {
     comp_type=COMP_CODE_NONE;
    }
@@ -415,6 +444,7 @@ int copy_sds(int32 sd_in,
    printf( "Error: Failed to set compression for <%s>\n", path);
    ret=-1;
    goto out;
+  }
   }
  }
 

@@ -16,29 +16,9 @@
 
 #include "hrepack_lsttable.h"
 
-/* for SZIP */
-#if !defined (NN_OPTION_MASK)
-#define NN_OPTION_MASK     32
+#ifdef H4_HAVE_LIBSZ
+#include "szlib.h"
 #endif
-#if !defined (RAW_OPTION_MASK)
-#define RAW_OPTION_MASK    128
-#endif
-#if !defined (MAX_BLOCKS_PER_SCANLINE)
-#define MAX_BLOCKS_PER_SCANLINE  128
-#endif
-#if !defined (MAX_PIXELS_PER_BLOCK)
-#define MAX_PIXELS_PER_BLOCK    32
-#endif
-#if !defined (MAX_PIXELS_PER_SCANLINE)
-#define MAX_PIXELS_PER_SCANLINE     (MAX_BLOCKS_PER_SCANLINE)*(MAX_PIXELS_PER_BLOCK)
-#endif
-#if !defined (NN_MODE)
-#define NN_MODE 1
-#endif
-#if !defined (EC_MODE)
-#define EC_MODE 0
-#endif
-
 
 
 #define TAG_GRP_IMAGE DFTAG_RIG

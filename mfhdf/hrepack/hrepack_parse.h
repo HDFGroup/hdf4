@@ -40,5 +40,7 @@ obj_list_t* parse_chunk(const char *str, int *n_objs, int32 *chunk_lengths, int 
 }
 #endif
 
+#define NN_MODE 0
+#define EC_MODE 1
 
 #endif  /* REPACK_PARSE_H_ */

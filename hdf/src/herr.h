@@ -224,6 +224,7 @@ typedef enum
       DFE_COMPINFO,             /* Invalid compression header */
       DFE_CANTCOMP,             /* Can't compress an object */
       DFE_CANTDECOMP,           /* Can't de-compress an object */
+      DFE_NOENCODER,            /* Encoder not available */
 
 /* Raster errors */
       DFE_NODIM,                /* No dimension record associated with image */
@@ -397,6 +398,7 @@ PRIVATE const struct error_messages_t error_messages[] =
     {DFE_COMPINFO,      "Invalid compression header"},
     {DFE_CANTCOMP,      "Can't compress an object"},
     {DFE_CANTDECOMP,    "Can't de-compress an object"},
+    {DFE_NOENCODER,     "Encoder not available"},
 
 /* Raster errors */
     {DFE_NODIM,         "No dimension record associated with image"},

@@ -68,6 +68,12 @@ status = SDcheckempty(sdsid, emptySDS);
 #include "mfhdf.h"
 #include "hfile.h"
 
+#ifdef H4_HAVE_LIBSZ          /* we have the library */
+#include "szlib.h"
+#ifndef MIN
+#define MIN(a,b)    (((a)<(b)) ? (a) : (b))
+#endif
+#endif
 /* for Chunk debugging */
 /*
 #define CHK_DEBUG
@@ -4020,7 +4026,64 @@ done:
     return ret_value;    
 } /* SDsetnbitdataset */
 
+#ifdef H4_HAVE_LIBSZ          /* we have the library */
 
+/******************************************************************************
+ NAME
+	SDsetup_szip_parms -- check and set parameters for szip compression
+              int32 id;            IN: the  varid
+              NC *handle;          IN: the SD handle
+              comp_info *c_info;   IN/OUT: the compression settings 
+              int32 *cdims;        IN: the chunk dims, NULL if not chunked
+
+ DESCRIPTION
+     Collect the parameters and call HCPcszip_setup_parms to set the
+     computed szip paramters.
+
+ RETURNS
+    SUCCEED/FAIL
+
+******************************************************************************/ 
+intn 
+SDsetup_szip_parms( int32 id, NC *handle, comp_info *c_info, int32 *cdims)
+{
+    NC_dim    *dim;     /* to check if the dimension is unlimited */
+    int32      dimindex;/* to obtain the NC_dim record */
+    NC_var    *var; 
+    int32 ndims;
+    int i;
+    int32 xdims[MAX_VAR_DIMS];
+    int32 nt;
+    intn       ret_value = SUCCEED;
+
+    if(handle->vars == NULL)
+      {
+          ret_value = FAIL;
+          goto done;
+      }
+
+    var = SDIget_var(handle, id);
+    if(var == NULL)
+      {
+          ret_value = FAIL;
+          goto done;
+      }
+
+    ndims = var->assoc->count; 
+	for (i = 0; i < ndims; i++) {
+		dimindex = var->assoc->values[i];
+		dim = SDIget_dim(handle, dimindex);
+		xdims[i] = dim->size;
+	}
+
+    nt = var->HDFtype;
+	
+    ret_value = HCPsetup_szip_parms( c_info, nt, 1, ndims, xdims, cdims);
+
+done:
+	return(ret_value);
+}
+#endif
 /******************************************************************************
  NAME
 	SDsetcompress -- Create/convert a dataset to compressed representation
@@ -4043,11 +4106,14 @@ SDsetcompress(int32 id,                /* IN: dataset ID */
 					  perform on the next image */
               comp_info *c_info        /* IN: ptr to compression info struct*/)
 {
+    CONSTR(FUNC, "SDsetcompress");    /* for HGOTO_ERROR */
     NC        *handle;
     NC_var    *var;
     NC_dim    *dim;     /* to check if the dimension is unlimited */
     int32      dimindex;/* to obtain the NC_dim record */
     model_info m_info;  /* modeling information for the HCcreate() call */
+    comp_info c_info_x;  /* local copy */
+    uint32  comp_config;
     intn       status = FAIL;
     intn       ret_value = SUCCEED;
 
@@ -4064,6 +4130,17 @@ SDsetcompress(int32 id,                /* IN: dataset ID */
           ret_value = FAIL;
           goto done;
       }
+
+    HCget_config_info(comp_type, &comp_config);
+    if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
+	/* coder not present?? */
+	HGOTO_ERROR(DFE_BADCODER, FAIL);
+    }
+    if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
+	/* encoder not present?? */
+	HGOTO_ERROR(DFE_NOENCODER, FAIL);
+    }
+    HDmemcpy(&c_info_x,c_info,sizeof(comp_info));
 
     handle = SDIhandle_from_id(id, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE)
@@ -4085,9 +4162,7 @@ SDsetcompress(int32 id,                /* IN: dataset ID */
           goto done;
       }
 
-    /* When the compression is SZIP, disallow the use of unlimited dimension */
-    if (comp_type == COMP_CODE_SZIP)
-    {
+    /* unlimited dimensions don't work with compression */
         /* Get the index of the SDS' first dimension from the list of indices
          * branching out from NC_var.  This index indicates where this dim
          * is in the "dims" list branching out from NC. */
@@ -4108,7 +4183,19 @@ SDsetcompress(int32 id,                /* IN: dataset ID */
             ret_value = FAIL;
             goto done;
         }
-    }
+#ifdef H4_HAVE_LIBSZ          /* we have the library */
+	if (comp_type == COMP_CODE_SZIP) {
+	   if (SDsetup_szip_parms( id, handle, &c_info_x, NULL) == FAIL) {
+		HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	    }
+	}
+#else
+	/* no SZIP */
+/* probably covered by test at start */
+	if (comp_type == COMP_CODE_SZIP) {
+		HGOTO_ERROR(DFE_BADCODER, FAIL);
+	}
+#endif /* H4_HAVE_LIBSZ          */
 
 #ifdef SDDEBUG
     printf("SDsetcompress(): var->data_ref=%d\n",(int)var->data_ref);
@@ -4134,7 +4221,7 @@ SDsetcompress(int32 id,                /* IN: dataset ID */
 
     status=(intn)HCcreate(handle->hdf_file,(uint16)DATA_TAG,
                           (uint16) var->data_ref,COMP_MODEL_STDIO,&m_info,
-                          comp_type, c_info);
+                          comp_type, &c_info_x);
 
 #ifdef SDDEBUG
     printf("SDsetcompress(): HCcreate() status=%d\n",(intn)status);
@@ -4208,7 +4295,7 @@ done:
 	SDgetcompress -- Retrieves compression information of a dataset
 
  DESCRIPTION
-    This routine uses HCgetcompress to retrieve the compression type
+    This routine uses HCPgetcompress to retrieve the compression type
     and the compression information of the identified dataset.
 
  RETURNS
@@ -4260,7 +4347,7 @@ SDgetcompress(int32     id,     /* IN: dataset ID */
 	HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* use lower-level routine to get the compression information */
-    status = HCgetcompress(handle->hdf_file, var->data_tag, var->data_ref, 
+    status = HCPgetcompress(handle->hdf_file, var->data_tag, var->data_ref, 
 		comp_type, c_info);
     if(status==FAIL) HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
@@ -5221,6 +5308,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
            HDF_CHUNK_DEF chunk_def, /* IN: chunk definition */
            int32         flags      /* IN: flags */)
 {
+    CONSTR(FUNC, "SDsetchunk");    /* for HGOTO_ERROR */
     NC        *handle = NULL;      /* file handle */
     NC_var    *var    = NULL;      /* SDS variable */
     NC_attr  **fill_attr = NULL;   /* fill value attribute */
@@ -5228,6 +5316,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     HDF_CHUNK_DEF *cdef   = NULL;  /* SD Chunk definition */
     model_info minfo;              /* dummy model info struct */
     comp_info  cinfo;              /* compression info - NBIT */
+uint32 comp_config;
     int32     *cdims    = NULL;    /* array of chunk lengths */
     int32      fill_val_len = 0;   /* fill value length */
     void      *fill_val    = NULL; /* fill value */
@@ -5249,6 +5338,8 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     TRACE_ON(PABLO_mask, ID_SDsetchunk );
 #endif
 
+     /* make sure this is cleared */
+     memset(chunk,0,sizeof(chunk[0]));
     /* Check some args */
 
     /* get file handle and verify it is an HDF file 
@@ -5287,6 +5378,15 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
        */
           cdef  = (HDF_CHUNK_DEF *)&chunk_def;
 
+    HCget_config_info( (comp_coder_t)cdef->comp.comp_type , &comp_config);
+    if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
+	/* coder not present?? */
+	    HGOTO_ERROR(DFE_NOENCODER, FAIL);
+    }
+    if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
+	/* encoder not present?? */
+	HGOTO_ERROR(DFE_BADCODER, FAIL);
+    }
       if ((comp_coder_t)cdef->comp.comp_type != COMP_CODE_SZIP) {
           cdims = cdef->comp.chunk_lengths;
           chunk[0].chunk_flag = SPECIAL_COMP;  /* Compression */
@@ -5299,21 +5399,20 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
 
 #ifdef H4_HAVE_LIBSZ          /* we have the library */
           {
-          cdims = cdef->comp.chunk_lengths;
-          chunk[0].chunk_flag = SPECIAL_COMP;  /* Compression */
-          chunk[0].comp_type  = (comp_coder_t)cdef->comp.comp_type; 
-          chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
-          chunk[0].cinfo = &cdef->comp.cinfo; 
-          chunk[0].minfo = &minfo; /* dummy */
+           cdims = cdef->comp.chunk_lengths;
+           chunk[0].chunk_flag = SPECIAL_COMP;  /* Compression */
+           chunk[0].comp_type  = (comp_coder_t)cdef->comp.comp_type; 
+           chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
+           chunk[0].minfo = &minfo; /* dummy */
+    	   HDmemcpy(&cinfo,&(cdef->comp.cinfo),sizeof(comp_info));
+	   if ( SDsetup_szip_parms( sdsid, handle, &cinfo, cdims) == FAIL ) {
+	       HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	   }
+              chunk[0].cinfo = &cinfo; 
           }
 #else                         /* we do not have the SZIP library */
           {
-          cdims = cdef->comp.chunk_lengths;
-          chunk[0].chunk_flag = 0;
-          chunk[0].comp_type = COMP_CODE_NONE;
-          chunk[0].model_type = COMP_MODEL_STDIO;
-          chunk[0].cinfo = &cinfo;
-          chunk[0].minfo = &minfo;
+		HGOTO_ERROR(DFE_BADCODER, FAIL);
           }
 #endif /* H4_HAVE_LIBSZ */
 

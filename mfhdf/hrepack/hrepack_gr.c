@@ -175,7 +175,15 @@ int  copy_gr(int32 infile_id,
   break;
   case COMP_CODE_SZIP:
    info  = c_info_in.szip.pixels_per_block;
-   szip_mode = c_info_in.szip.compression_mode;
+#ifdef H4_HAVE_LIBSZ
+	if (c_info_in.szip.options_mask & SZ_EC_OPTION_MASK) {
+		szip_mode = EC_MODE;
+	} else if (c_info_in.szip.options_mask & SZ_NN_OPTION_MASK) {
+		szip_mode = NN_MODE;
+	}
+#else
+		szip_mode = 0; /* irrelevant */
+#endif
    break;
   case COMP_CODE_RLE:
    break;
@@ -402,11 +410,20 @@ int  copy_gr(int32 infile_id,
  /* use compress without chunk-in */
  else if ( chunk_flags==HDF_NONE && comp_type>COMP_CODE_NONE)  
  {
+ if ( have_info && options->trip>0  && nelms*eltsz<options->threshold )
+ {
+  /* reset to the original values . we don't want to uncompress if it was */
+  comp_type=COMP_CODE_NONE;
+  if (options->verbose) {
+   printf("Warning: object size smaller than %d bytes. Not compressing <%s>\n",
+    options->threshold,path);
+  }
+ } else {
   /* setup compression factors */
   switch(comp_type) 
   {
    case COMP_CODE_SZIP:
-   if (set_szip (rank,dimsizes,dtype,n_comps,info,szip_mode,&c_info)==FAIL)
+   if (set_szip (info,szip_mode,&c_info)==FAIL)
    {
     comp_type=COMP_CODE_NONE;
    }
@@ -433,6 +450,7 @@ int  copy_gr(int32 infile_id,
    ret=-1;
    goto out;
   }
+ }
  }
  
  /* write the data */

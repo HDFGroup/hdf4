@@ -17,6 +17,9 @@
 
 #include "hrepack_parse.h"
 
+#ifdef H4_HAVE_LIBSZ
+#include "szlib.h"
+#endif
 
 /*-------------------------------------------------------------------------
  * Function: parse_comp
@@ -229,17 +232,26 @@ obj_list_t* parse_comp(const char *str,
    }
    else if (HDstrcmp(scomp,"SZIP")==0)
    {
-    comp->type=COMP_CODE_SZIP;
-    if (no_param) { /*no more parameters, SZIP must have parameter */
-     if (obj_list) free(obj_list);
-     printf("Input Error: Missing compression parameter in <%s>\n",str);
+#ifdef H4_HAVE_LIBSZ
+    if (SZ_encoder_enabled()) {
+       comp->type=COMP_CODE_SZIP;
+       if (no_param) { /*no more parameters, SZIP must have parameter */
+        if (obj_list) free(obj_list);
+        printf("Input Error: Missing compression parameter in <%s>\n",str);
+        exit(1);
+       }
+	if (comp->szip_mode==FAIL) {
+		printf("Input Error: SZIP compression mode must be NN_MODE or EC_MODE");
+	     exit(1);
+	}
+    } else {
+     printf("Input Error: SZIP encoder is not available\n");
      exit(1);
     }
-				if (comp->szip_mode==FAIL)
-				{
-     printf("Input Error: SZIP compression mode must be NN_MODE or EC_MODE");
+#else
+     printf("Input Error: SZIP compression is not available\n");
      exit(1);
-				}
+#endif
    }
    else {
     if (obj_list) free(obj_list);
@@ -279,13 +291,20 @@ obj_list_t* parse_comp(const char *str,
    }
    break;
   case COMP_CODE_SZIP:
-    if ( (comp->info<=1 || comp->info>MAX_PIXELS_PER_BLOCK) || 
+#ifdef H4_HAVE_LIBSZ
+    if ( (comp->info<=1 || comp->info > SZ_MAX_PIXELS_PER_BLOCK) || 
          (comp->info%2!=0)  ){
     if (obj_list) free(obj_list);
     printf("Input Error: Invalid compression parameter in <%s>. \
-     Pixels per block must be an even number < %d\n",str,MAX_PIXELS_PER_BLOCK);
+     Pixels per block must be an even number < %d\n",str,SZ_MAX_PIXELS_PER_BLOCK);
     exit(1);
    }
+#else 
+    if (obj_list) free(obj_list);
+    printf("Input Error: Invalid compression method in <%s>. \
+     SZIP is not available < %d\n",str);
+    exit(1);
+#endif
    break;
   };
 

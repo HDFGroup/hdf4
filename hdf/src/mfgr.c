@@ -168,6 +168,11 @@ MODIFICATION HISTORY
 
 #define MFGR_MASTER
 #include "hdf.h"
+#include "hlimits.h"
+
+#ifdef H4_HAVE_LIBSZ          /* we have the library */
+#include "szlib.h"
+#endif
 
 /* Local pre-processor macros */
 #define XDIM    0
@@ -4519,6 +4524,56 @@ done:
   return ret_value;
 } /* end GRsetaccesstype() */
 
+
+#ifdef H4_HAVE_LIBSZ          /* we have the library */
+/*--------------------------------------------------------------------------
+ NAME
+    GRsetup_szip_parms( ri_info_t *ri_ptr, comp_info *c_info, int32 *cdims)
+
+ PURPOSE
+    Set up the szip parameters
+
+ USAGE
+    intn GRsetaccesstype( ri_info_t *ri_ptr, comp_info *c_info, int32 *cdims)
+       ri_info_t *ri_ptr;  IN: the RI object 
+       comp_info *c_info;  IN/OUT: the compression info (szip) 
+       int32 *cdims;       IN: chunk dims if chunked, else NULL
+
+ RETURNS
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    Sets the computed szip parameters before calling HCcreate.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn 
+GRsetup_szip_parms( ri_info_t *ri_ptr, comp_info *c_info, int32 *cdims)
+{
+int32 nt;
+int32 ndims;
+int32 ncomp;
+int32 xdims[MAX_VAR_DIMS];
+    intn       ret_value = SUCCEED;
+
+
+	ndims = 2;
+	xdims[0] = ri_ptr->img_dim.xdim;
+	xdims[1] = ri_ptr->img_dim.ydim;
+
+	nt = ri_ptr->img_dim.nt;
+	ncomp = ri_ptr->img_dim.ncomps;
+
+        ret_value = HCPsetup_szip_parms( c_info, nt, ncomp, ndims, xdims, cdims);
+
+done:
+	return(ret_value);
+}
+#endif
+
 /*--------------------------------------------------------------------------
  NAME
     GRsetcompress
@@ -4548,6 +4603,8 @@ intn GRsetcompress(int32 riid,comp_coder_t comp_type,comp_info *cinfo)
 {
     CONSTR(FUNC, "GRsetcompress");   /* for HERROR */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    comp_info cinfo_x;
+    uint32 comp_config;
     intn  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -4556,6 +4613,7 @@ intn GRsetcompress(int32 riid,comp_coder_t comp_type,comp_info *cinfo)
     /* clear error stack and check validity of args */
     HEclear();
 
+    HDmemcpy(&cinfo_x,cinfo,sizeof(comp_info));
     /* check the validity of the RI ID */
     if (HAatom_group(riid)!=RIIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -4573,12 +4631,30 @@ intn GRsetcompress(int32 riid,comp_coder_t comp_type,comp_info *cinfo)
     if (ri_ptr->use_buf_drvr)
         HGOTO_ERROR(DFE_CANTMOD, FAIL);
 
+    /* Check that the compression method is enabled */
+    HCget_config_info(comp_type, &comp_config);
+    if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
+	/* coder not present?? */
+	    HGOTO_ERROR(DFE_BADCODER, FAIL);
+    }
+    if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
+	/* encoder not present?? */
+	    HGOTO_ERROR(DFE_NOENCODER, FAIL);
+    }
     /*  EIP 09/12/03
        Quit if SZIP Library is not available but SZIP compression was requested 
     */ 
 #ifndef H4_HAVE_LIBSZ
+    /* probably covered by above */
     if (comp_type==COMP_CODE_SZIP) 
         HGOTO_ERROR(DFE_CANTMOD, FAIL);
+#else
+    if (comp_type==COMP_CODE_SZIP)  {
+    /* szip is enabled, check and set up szip parms */
+	if (GRsetup_szip_parms( ri_ptr, &cinfo_x, NULL) == FAIL) {
+	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	}
+    }
 #endif
 
     /* Mark the image as being compressed and cache args */
@@ -4599,7 +4675,7 @@ intn GRsetcompress(int32 riid,comp_coder_t comp_type,comp_info *cinfo)
       } /* end else */
 
     /* Store compression parameters */
-    HDmemcpy(&(ri_ptr->cinfo),cinfo,sizeof(comp_info));
+    HDmemcpy(&(ri_ptr->cinfo),&cinfo_x,sizeof(comp_info));
 
     /* Mark the image as needing to be a buffered special element */
     ri_ptr->use_buf_drvr=1;
@@ -4698,7 +4774,7 @@ intn GRgetcompress(int32 riid, comp_coder_t* comp_type, comp_info* cinfo)
     else
     {
 	/* use lower-level routine to get the compression information */
-	ret_value = HCgetcompress(file_id, ri_ptr->img_tag, ri_ptr->img_ref,
+	ret_value = HCPgetcompress(file_id, ri_ptr->img_tag, ri_ptr->img_ref,
                                 comp_type, cinfo);
 	if (ret_value == FAIL)
 	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -5664,6 +5740,7 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
     uintn      pixel_disk_size;      /* size of a pixel on disk */
     void *      fill_pixel = NULL;    /* converted value for the filled pixel */
     int32      at_index;             /* attribute index for the fill value */
+    uint32     comp_config;
     int32      ndims    = 0;         /* # dimensions i.e. rank */
     uint8      nlevels  = 1;         /* default # levels is 1 */
     intn       i;                    /* loop variable */
@@ -5681,6 +5758,7 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
     /* clear error stack and check validity of args */
     HEclear();
 
+    memset(chunk,0,sizeof(chunk[0]));
     /* Check some args */
 
     /* check the validity of the RI ID */
@@ -5729,6 +5807,16 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
        */
           cdef  = (HDF_CHUNK_DEF *)&chunk_def;
 
+    /* Check that the compression encoder is available */
+    HCget_config_info((comp_coder_t )(cdef->comp.comp_type), &comp_config);
+    if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
+	/* coder not present?? */
+                 HGOTO_ERROR(DFE_BADCODER,FAIL); 
+    }
+    if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
+	/* encoder not present?? */
+                 HGOTO_ERROR(DFE_NOENCODER,FAIL); 
+    }
       if ((comp_coder_t)cdef->comp.comp_type != COMP_CODE_SZIP) {
           cdims = cdef->comp.chunk_lengths;
           chunk[0].chunk_flag = SPECIAL_COMP;  /* Compression */
@@ -5741,21 +5829,20 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
 
 #ifdef H4_HAVE_LIBSZ          /* we have the library */
           {
-          cdims = cdef->comp.chunk_lengths;
-          chunk[0].chunk_flag = SPECIAL_COMP;  /* Compression */
-          chunk[0].comp_type  = (comp_coder_t)cdef->comp.comp_type; 
-          chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
-          chunk[0].cinfo = &cdef->comp.cinfo; 
-          chunk[0].minfo = &minfo; /* dummy */
-          }
+            cdims = cdef->comp.chunk_lengths;
+            chunk[0].chunk_flag = SPECIAL_COMP;  /* Compression */
+            chunk[0].comp_type  = (comp_coder_t)cdef->comp.comp_type; 
+            chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
+    	    HDmemcpy(&cinfo,&(cdef->comp.cinfo),sizeof(comp_info));
+            chunk[0].minfo = &minfo; /* dummy */
+	    if (GRsetup_szip_parms( ri_ptr, &cinfo, cdims) == FAIL) 
+                HGOTO_ERROR(DFE_INTERNAL,FAIL); 
+            chunk[0].cinfo = &cinfo; 
+	}
 #else                         /* we do not have the SZIP library */
           {
-          cdims = cdef->comp.chunk_lengths;
-          chunk[0].chunk_flag = 0;
-          chunk[0].comp_type = COMP_CODE_NONE;
-          chunk[0].model_type = COMP_MODEL_STDIO;
-          chunk[0].cinfo = &cinfo;
-          chunk[0].minfo = &minfo;
+/* covered by new test above ??*/
+		HGOTO_ERROR(DFE_CANTMOD, FAIL);
           }
 #endif /* H4_HAVE_LIBSZ */
 

@@ -18,6 +18,9 @@
 #include "hdiff.h"
 #include "test_hrepack_add.h"
 #include "test_hrepack_verify.h"
+#if defined (H4_HAVE_LIBSZ)
+#include "szlib.h"
+#endif
 
 #define DATA_FILE1       "image8.txt"
 #define DATA_FILE2       "image24pixel.txt"
@@ -29,7 +32,6 @@ char    *progname;
 #define H4_HAVE_LIBSZ
 #endif
   
-
 
 /*-------------------------------------------------------------------------
  * Function: main
@@ -220,11 +222,13 @@ int main(void)
  * SZIP
  *-------------------------------------------------------------------------
  */ 
+ if (SZ_encoder_enabled()) {
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_SZIP;
  add_sd(FILENAME,file_id,"dset_szip",0,chunk_flags,comp_type,&comp_info);
   
  add_sd_szip_all(FILENAME,file_id,0);
+ }
  
 #endif
 
@@ -273,9 +277,11 @@ int main(void)
 
 #if defined (H4_HAVE_LIBSZ)
 
+ if (SZ_encoder_enabled()) {
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_SZIP;
  add_gr("gr_szip",file_id,0,chunk_flags,comp_type,&comp_info);
+ }
 
 #endif
 
@@ -429,13 +435,14 @@ int main(void)
   goto out;
  PASSED();
 
-#if defined (H4_HAVE_LIBSZ)
 
 /*-------------------------------------------------------------------------
  * test4:  
  *-------------------------------------------------------------------------
  */
  TESTING("compressing SDS SELECTED with SZIP, chunking SELECTED");
+#if defined (H4_HAVE_LIBSZ)
+ if (SZ_encoder_enabled()) {
  hrepack_init (&options,verbose);
  hrepack_addcomp("dset4:SZIP 8,EC",&options);
  hrepack_addchunk("dset4:10x8",&options);
@@ -448,7 +455,14 @@ int main(void)
  if ( sds_verifiy_chunk("dset4",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
   goto out;
  PASSED();
+ } else {
+   /* no szip encoder */
+   SKIPPED();
+ }
 
+#else
+   /* no szip at all */
+   SKIPPED();
 #endif
 
 /*-------------------------------------------------------------------------
@@ -475,7 +489,6 @@ int main(void)
   goto out;
  PASSED();
 
-#if defined (H4_HAVE_LIBSZ)
 
 /*-------------------------------------------------------------------------
  * test5:  
@@ -486,7 +499,11 @@ int main(void)
  hrepack_addcomp("dset4:GZIP 9",&options);
  hrepack_addcomp("dset5:RLE",&options);
  hrepack_addcomp("dset6:HUFF 2",&options);
- hrepack_addcomp("dset7:SZIP 8,NN",&options);
+#if defined (H4_HAVE_LIBSZ)
+ if (SZ_encoder_enabled()) {
+   hrepack_addcomp("dset7:SZIP 8,EC",&options);
+ }
+#endif
  hrepack_addchunk("dset4:10x8",&options);
  hrepack_addchunk("dset5:10x8",&options);
  hrepack_addchunk("dset6:10x8",&options);
@@ -500,8 +517,12 @@ int main(void)
   goto out;
  if ( sds_verifiy_comp("dset6",COMP_CODE_SKPHUFF, 2) == -1) 
   goto out;
+#if defined (H4_HAVE_LIBSZ)
+ if (SZ_encoder_enabled()) {
  if ( sds_verifiy_comp("dset7",COMP_CODE_SZIP, 0) == -1) 
   goto out;
+ }
+#endif
  if ( sds_verifiy_chunk("dset4",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
   goto out;
  if ( sds_verifiy_chunk("dset5",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
@@ -520,7 +541,11 @@ int main(void)
  hrepack_addcomp("dset4:GZIP 9",&options);
  hrepack_addcomp("dset5:RLE",&options);
  hrepack_addcomp("dset6:HUFF 2",&options);
- hrepack_addcomp("dset7:SZIP 4,EC",&options);
+#if defined (H4_HAVE_LIBSZ)
+ if (SZ_encoder_enabled()) {
+   hrepack_addcomp("dset7:SZIP 4,EC",&options);
+ }
+#endif
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
  if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
@@ -531,11 +556,13 @@ int main(void)
   goto out;
  if ( sds_verifiy_comp("dset6",COMP_CODE_SKPHUFF, 2) == -1) 
   goto out;
+#if defined (H4_HAVE_LIBSZ)
+ if (SZ_encoder_enabled()) {
  if ( sds_verifiy_comp("dset7",COMP_CODE_SZIP, 0) == -1) 
   goto out;
- PASSED();
-
+ }
 #endif
+ PASSED();
 
 
 /*-------------------------------------------------------------------------

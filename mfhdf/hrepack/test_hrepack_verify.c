@@ -114,6 +114,7 @@ int sds_verifiy_comp_all(int32 in_comp_type,
                dim_sizes[MAX_VAR_DIMS];/* dimensions of an image */
  char          name[MAX_GR_NAME];      /* name of dataset */
  int           info;
+int status;
 
  /* initialize the sd interface */
  sd_id  = SDstart (FILENAME_OUT, DFACC_READ);
@@ -135,7 +136,14 @@ int sds_verifiy_comp_all(int32 in_comp_type,
    continue;
   }
 
+  name[0] = '\0';
   SDgetinfo(sds_id, name, &rrank, dim_sizes, &data_type, &n_attrs);
+  if (status < 0) {
+   printf("Error: can't read info for SDS <%s>",name);
+   SDendaccess (sds_id);
+   SDend (sd_id);
+   return -1;
+  }
  
  /*-------------------------------------------------------------------------
   * retrieve and verify the compression info
@@ -145,10 +153,13 @@ int sds_verifiy_comp_all(int32 in_comp_type,
   comp_type = COMP_CODE_NONE;  /* reset variables before retrieving info */
   HDmemset(&comp_info, 0, sizeof(comp_info)) ;
   
-  SDgetcompress(sds_id, &comp_type, &comp_info);
+  status = SDgetcompress(sds_id, &comp_type, &comp_info);
+  if (status < 0) {
+   printf("Warning: can't read compression for SDS <%s>",name);
+  } else {
   if ( comp_type != in_comp_type )
   {
-   printf("Error: compression type does not match ");
+   printf("Error: compression type does not match <%s>",name);
    SDendaccess (sds_id);
    SDend (sd_id);
    return -1;
@@ -181,6 +192,7 @@ int sds_verifiy_comp_all(int32 in_comp_type,
     SDend (sd_id);
     return -1;
    }
+  }
   }
   
   /* terminate access to the current dataset */

@@ -249,6 +249,8 @@ const char* get_scomp(comp_coder_t code)
   printf("Input Error in compression type\n");
   exit(1);
  }
+ /* not reached */
+ return NULL;
 } 
 
 
