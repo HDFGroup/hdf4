@@ -176,11 +176,6 @@ extern funclist_t ext_funcs;
    For definition of the compressed data element, see hcomp.c. */
 extern funclist_t comp_funcs;
 
-/* Functions for accessing big external data elements, or data
-   elements that are in some other files.  For definition of the big external
-   data element, see hbigext.c. */
-extern funclist_t bigext_funcs;
-
 /* Functions for accessing variable-length linked block data elements
    For definition of the big external data element, see hvblocks.c. */
 extern funclist_t vlnk_funcs;
@@ -192,7 +187,6 @@ functab_t   functab[] =
     {SPECIAL_LINKED, &linked_funcs},
     {SPECIAL_EXT, &ext_funcs},
     {SPECIAL_COMP, &comp_funcs},
-    {SPECIAL_BIGEXT, &bigext_funcs},
     {SPECIAL_VLINKED, &vlnk_funcs},
     {0, NULL}                   /* terminating record; add new record */
                    /* before this line */

@@ -148,8 +148,6 @@ herr.o: hdf.h herr.h hdfi.h hproto.h
 
 hblocks.o: hfile.h hdf.h herr.h hdfi.h hproto.h
 
-hbigext.o: hfile.h hdf.h herr.h hdfi.h hproto.h
-
 hextelt.o: hfile.h hdf.h herr.h hdfi.h hproto.h
 
 hkit.o: hfile.h hdf.h herr.h hdfi.h hproto.h

@@ -40,7 +40,6 @@
 +mstdio &
 +crle &
 +cnbit &
-+hbigext &
 +jutils &
 +jerror &
 +jmemmgr &

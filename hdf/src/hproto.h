@@ -273,13 +273,6 @@ extern      "C"
                  comp_coder_t coder_type, comp_info _HUGE * c_info);
 
 /*
-   ** from hbigext.c
- */
-    extern int32 HBcreate
-                (int32 file_id, uint16 tag, uint16 ref, const char _HUGE * extern_file_name,
-                 int32 offset, int32 start_len);
-
-/*
    ** from hvblocks.c
  */
     extern int32 HVcreate

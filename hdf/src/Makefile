@@ -287,8 +287,6 @@ cnbit.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 cnbit.o: vproto.h hfile.h hcompi.h mstdio.h cnbit.h $(FRC)
 mstdio.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 mstdio.o: vproto.h hfile.h hcompi.h mstdio.h $(FRC)
-hbigext.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-hbigext.o: vproto.h hfile.h $(FRC)
 cnone.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 cnone.o: vproto.h hfile.h hcompi.h mstdio.h cnone.h $(FRC)
 cskphuff.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h

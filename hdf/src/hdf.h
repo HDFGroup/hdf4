@@ -464,8 +464,7 @@ extern uint8 *tbuf;
 #define SPECIAL_LINKED 1    /* Fixed-size Linked blocks */
 #define SPECIAL_EXT 2       /* External */
 #define SPECIAL_COMP 3      /* Compressed */
-#define SPECIAL_BIGEXT 4    /* Big External */
-#define SPECIAL_VLINKED 5   /* Variable-length linked blocks */
+#define SPECIAL_VLINKED 4   /* Variable-length linked blocks */
 
 /* PARAMETERS */
 

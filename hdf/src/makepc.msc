@@ -93,7 +93,7 @@ CSRCS=hfile.c herr.c hblocks.c hextelt.c hkit.c dfan.c dfr8.c dfcomp.c \
       dfgroup.c dfconv.c dfufp2i.c vg.c vrw.c vio.c vparse.c vconv.c vsfld.c \
       vgp.c vhi.c dfutil.c dfstubs.c dfknat.c dfkswap.c dfkcray.c dfkvms.c \
       dfkconv.c dfkfuji.c tbbt.c hdfalloc.c maldebug.c hbitio.c hcomp.c \
-      mstdio.c crle.c cnbit.c hbigext.c
+      mstdio.c crle.c cnbit.c
 
 COBJS=hfile.obj herr.obj hblocks.obj hextelt.obj hkit.obj dfan.obj dfr8.obj \
         dfcomp.obj dfrle.obj dfimcomp.obj dfjpeg.obj dfunjpeg.obj dfp.obj \
@@ -101,7 +101,7 @@ COBJS=hfile.obj herr.obj hblocks.obj hextelt.obj hkit.obj dfan.obj dfr8.obj \
         vrw.obj vio.obj vparse.obj vconv.obj vsfld.obj vgp.obj vhi.obj \
         dfutil.obj dfstubs.obj dfknat.obj dfkswap.obj dfkcray.obj dfkvms.obj \
         dfkconv.obj dfkfuji.obj tbbt.obj hdfalloc.obj maldebug.obj hbitio.obj \
-        hcomp.obj mstdio.obj crle.obj cnbit.obj hbigext.obj
+        hcomp.obj mstdio.obj crle.obj cnbit.obj
 
 FSRCS=hfilef.c herrf.c dfanf.c dfr8f.c dfpf.c df24f.c dfsdf.c vgf.c dff.c \
       dfutilf.c hfileff.f dfanff.f df24ff.f dfpff.f dfr8ff.f dfsdff.f vgff.f \
@@ -183,9 +183,6 @@ hblocks.obj: hblocks.c hfile.h hdf.h
     $(CC) /c $(CFLAGS) %s
 
 hextelt.obj: hextelt.c hfile.h hdf.h
-    $(CC) /c $(CFLAGS) %s
-
-hbigext.obj: hbigext.c hdf.h hfile.h
     $(CC) /c $(CFLAGS) %s
 
 hbitio.obj: hbitio.c hdf.h hfile.h

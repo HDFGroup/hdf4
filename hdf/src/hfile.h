@@ -29,7 +29,7 @@
 #endif /* !PC */
 #endif /* MAX_FILE */
 
-/* Maximum length of external filename(s) (used in hextelt.c & hbigext.c) */
+/* Maximum length of external filename(s) (used in hextelt.c) */
 #ifndef MAX_PATH_LEN
 #if defined PC && !(defined PC386 || defined UNIX386)
 #define MAX_PATH_LEN 256
@@ -675,38 +675,6 @@ extern      "C"
 
     extern intn HXPsetaccesstype
                 (accrec_t * access_rec);
-
-/*
-   ** from hbigext.c
- */
-    extern int32 HBPstread
-                (accrec_t * rec);
-
-    extern int32 HBPstwrite
-                (accrec_t * rec);
-
-    extern int32 HBPseek
-                (accrec_t * access_rec, int32 offset, int origin);
-
-    extern int32 HBPread
-                (accrec_t * access_rec, int32 length, VOIDP data);
-
-    extern int32 HBPwrite
-                (accrec_t * access_rec, int32 length, const VOIDP data);
-
-    extern int32 HBPinquire
-                (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
-               int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
-                 int16 *pspecial);
-
-    extern intn HBPendaccess
-                (accrec_t * access_rec);
-
-    extern int32 HBPcloseAID
-                (accrec_t * access_rec);
-
-    extern int32 HBPinfo
-                (accrec_t * access_rec, sp_info_block_t * info_block);
 
 /*
    ** from hcomp.c
