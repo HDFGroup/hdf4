@@ -1,0 +1,13 @@
+open storm110.hdf
+info -all
+prev tag = 300
+info -long
+dump -short
+close
+open ntcheck.hdf
+next tag = 702  ref = 2
+dump -float
+next tag = 702  ref = 6
+dump -short
+close
+quit
