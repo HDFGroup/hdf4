@@ -1102,6 +1102,7 @@
 ./mfhdf/hdiff/hdiff_misc.c
 ./mfhdf/hdiff/hdiff_sdattr.c
 ./mfhdf/hdiff/hdiff_sddata.c
+./mfhdf/hdiff/hdiff_grdata.c
 ./mfhdf/hdiff/hdiff_vdata.c
 ./mfhdf/hdiff/hdifftst.c
 ./mfhdf/hdiff/testhdiff.sh
