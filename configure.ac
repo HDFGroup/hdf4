@@ -21,6 +21,7 @@ AC_CONFIG_AUX_DIR([bin])
 AC_CONFIG_HEADER([hdf/src/h4config.h])
 
 AM_INIT_AUTOMAKE([HDF], [4.1r5])
+AM_MAINTAINER_MODE
 
 AC_OUTPUT_COMMANDS([
   echo "creating hdf/src/h4config.h"

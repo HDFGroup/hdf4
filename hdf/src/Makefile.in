@@ -84,6 +84,9 @@ LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
+MAINT = @MAINT@
+MAINTAINER_MODE_FALSE = @MAINTAINER_MODE_FALSE@
+MAINTAINER_MODE_TRUE = @MAINTAINER_MODE_TRUE@
 MAKEINFO = @MAKEINFO@
 NEQN = @NEQN@
 OBJEXT = @OBJEXT@
@@ -283,10 +286,10 @@ all: h4config.h
 
 .SUFFIXES:
 .SUFFIXES: .inc .f90 .c .f .o .obj
-$(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.ac $(ACLOCAL_M4)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.ac $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --foreign  hdf/src/Makefile
-Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
+Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
 
 h4config.h: stamp-h1
@@ -298,6 +301,10 @@ h4config.h: stamp-h1
 stamp-h1: $(srcdir)/h4config.h.in $(top_builddir)/config.status
 	@rm -f stamp-h1
 	cd $(top_builddir) && $(SHELL) ./config.status hdf/src/h4config.h
+
+$(srcdir)/h4config.h.in: @MAINTAINER_MODE_TRUE@ $(top_srcdir)/configure.ac $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOHEADER)
+	touch $(srcdir)/h4config.h.in
 
 distclean-hdr:
 	-rm -f h4config.h stamp-h1
@@ -645,10 +652,6 @@ uninstall-am: uninstall-includeHEADERS uninstall-info-am \
 	else                                                            \
 	  sed -e 's/^[cC]/!/' -e 's/^     [^ ]/     \&/' < $(srcdir)/$< > $*.f90; \
 	fi
-
-# Don't regenerate the h4config.h.in file (we'll do that ourselves, thank you).
-$(srcdir)/h4config.h.in:  $(top_srcdir)/configure.ac $(ACLOCAL_M4) 
-	@true
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
