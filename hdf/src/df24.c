@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.4  1992/12/11 20:08:03  georgev
+Added state variables last_xdim, last_ydim to fix
+problems with DF24getimage after a DFgetdims call
 
+ * Revision 1.3  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.2  1992/10/01  02:54:34  chouck
  * Added function DF24lastref()
  *
@@ -36,6 +40,8 @@ Updates from 3.2r2 -> 3.3
 
 static int Newdata = 0;                /* does Readrig contain fresh data? */
 static int dimsset = 0;                /* have dimensions been set? */
+static int32 last_xdim = 0;
+static int32 last_ydim = 0;            /* .....gheesh.........*/
 
 #define LUT     0
 #define IMAGE   1
@@ -70,6 +76,8 @@ int DF24getdims(filename, pxdim, pydim, pil)
             return FAIL;
     } while (ncomps!=3);
 
+    last_xdim = *pxdim;
+    last_ydim = *pydim;
     Newdata = 1;
     return SUCCEED;
 }
@@ -128,6 +136,11 @@ int DF24getimage(filename, image, xdim, ydim)
 
     if (!Newdata && DF24getdims(filename, &tx, &ty, &il) == FAIL)
        return FAIL;
+    
+    if (Newdata) {
+      tx = last_xdim;
+      ty = last_ydim;
+    }
 
     if ((tx > xdim) || (ty > ydim)) {
        HERROR(DFE_ARGS);
