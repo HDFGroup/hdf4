@@ -235,6 +235,141 @@ main(int argc, char *argv[])
           while (status == SUCCEED);
           Hendaccess(aid);
       }     /* end if */
+
+    /* Handle new-style JPEG5 images */
+    aid = Hstartread(fid, DFTAG_JPEG5, DFREF_WILDCARD);
+    if (aid != FAIL)
+      {
+          do
+            {
+                Hinquire(aid, NULL, &image_desc.tag, &image_desc.ref,
+                         &image_desc.length, &image_desc.offset,
+                         NULL, NULL, NULL);
+                n++;    /* increment the number of images found */
+                if (jfif_formatted == TRUE)
+                  {
+                      sprintf(scratch, jfif_name, image_desc.ref);
+                      jfif_file = fopen(scratch, "wb");
+                  }     /* end if */
+                else
+                  {
+                      jfif_file = fopen(jfif_name, "wb");
+                  }     /* end else */
+                if (jfif_file == NULL)
+                  {
+                      printf("error opening JFIF output file\n");
+                      exit(1);
+                  }     /* end if */
+                data_aid = Hstartread(fid, DFTAG_CI, image_desc.ref);
+                Hinquire(data_aid, NULL, &image_desc.tag, &image_desc.ref,
+                         &image_desc.length, &image_desc.offset,
+                         NULL, NULL, NULL);
+                while (image_desc.length > MAX_FILE_BUF)
+                  {
+                      if (Hread(data_aid, MAX_FILE_BUF, file_buf) != (int32) (MAX_FILE_BUF))
+                        {
+                            printf("Error reading JPEG image data from HDF file\n");
+                            exit(1);
+                        }   /* end if */
+                      if (fwrite(file_buf, sizeof(uint8), MAX_FILE_BUF, jfif_file)
+                          != MAX_FILE_BUF)
+                        {
+                            printf("Error writing JPEG image data\n");
+                            exit(1);
+                        }   /* end if */
+                      image_desc.length -= MAX_FILE_BUF;
+                  }     /* end while */
+                if (image_desc.length > 0)
+                  {
+                      if (Hread(data_aid, image_desc.length, file_buf)
+                          != (int32) (image_desc.length))
+                        {
+                            printf("Error reading JPEG image data from HDF file\n");
+                            exit(1);
+                        }   /* end if */
+                      if (fwrite(file_buf, sizeof(uint8), (size_t) image_desc.length, jfif_file)
+                          !=          (size_t) image_desc.length)
+                        {
+                            printf("Error writing JPEG image data\n");
+                            exit(1);
+                        }   /* end if */
+                  }     /* end if */
+                Hendaccess(data_aid);   /* let go of the JPEG data AID */
+                fclose(jfif_file);  /* close the JFIF file */
+                status = Hnextread(aid, DFTAG_JPEG5, DFREF_WILDCARD, DF_CURRENT);
+
+            }
+          while (status == SUCCEED);
+          Hendaccess(aid);
+      }     /* end if */
+
+    /* Handle new-style GREYJPEG5 images */
+    aid = Hstartread(fid, DFTAG_GREYJPEG5, DFREF_WILDCARD);
+    if (aid != FAIL)
+      {
+          do
+            {
+                n++;    /* increment the number of images found */
+                Hinquire(aid, NULL, &image_desc.tag, &image_desc.ref,
+                         &image_desc.length, &image_desc.offset,
+                         NULL, NULL, NULL);
+                if (jfif_formatted == TRUE)
+                  {
+                      sprintf(scratch, jfif_name, image_desc.ref);
+                      jfif_file = fopen(scratch, "wb");
+                  }     /* end if */
+                else
+                  {
+                      jfif_file = fopen(jfif_name, "wb");
+                  }     /* end else */
+                if (jfif_file == NULL)
+                  {
+                      printf("error opening JFIF output file\n");
+                      exit(1);
+                  }     /* end if */
+                data_aid = Hstartread(fid, DFTAG_CI, image_desc.ref);
+                Hinquire(data_aid, NULL, &image_desc.tag, &image_desc.ref,
+                         &image_desc.length, &image_desc.offset,
+                         NULL, NULL, NULL);
+                while (image_desc.length > MAX_FILE_BUF)
+                  {
+                      if (Hread(data_aid, MAX_FILE_BUF, file_buf) != (int32) (MAX_FILE_BUF))
+                        {
+                            printf("Error reading JPEG image data from HDF file\n");
+                            exit(1);
+                        }   /* end if */
+                      if (fwrite(file_buf, sizeof(uint8), MAX_FILE_BUF, jfif_file)
+                          !=          (size_t) MAX_FILE_BUF)
+                        {
+                            printf("Error writing JPEG image data\n");
+                            exit(1);
+                        }   /* end if */
+                      image_desc.length -= MAX_FILE_BUF;
+                  }     /* end while */
+                if (image_desc.length > 0)
+                  {
+                      if (Hread(data_aid, image_desc.length, file_buf)
+                          != (int32) (image_desc.length))
+                        {
+                            printf("Error reading JPEG image data from HDF file\n");
+                            exit(1);
+                        }   /* end if */
+                      if (fwrite(file_buf, sizeof(uint8), (size_t) image_desc.length, jfif_file)
+                          !=          (size_t) image_desc.length)
+                        {
+                            printf("Error writing JPEG image data\n");
+                            exit(1);
+                        }   /* end if */
+                  }     /* end if */
+                Hendaccess(data_aid);   /* let go of the JPEG data AID */
+                fclose(jfif_file);  /* close the JFIF file */
+                status = Hnextread(aid, DFTAG_GREYJPEG5, DFREF_WILDCARD, DF_CURRENT);
+
+            }
+          while (status == SUCCEED);
+          Hendaccess(aid);
+      }     /* end if */
+
     if (n == 0)
         printf("Error, no JPEG images found in HDF file\n");
     return (0);

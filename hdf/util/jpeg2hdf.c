@@ -479,10 +479,17 @@ main(int argc, char *argv[])
                 exit(1);
             }   /* end if */
           wtag = DFTAG_CI;  /* yes, this is a compressed image */
+#ifdef OLD_WAY
           if (num_components == 1)
               ctag = DFTAG_GREYJPEG;
           else if (num_components == 3)
               ctag = DFTAG_JPEG;
+#else /* OLD_WAY */
+          if (num_components == 1)
+              ctag = DFTAG_GREYJPEG5;
+          else if (num_components == 3)
+              ctag = DFTAG_JPEG5;
+#endif /* OLD_WAY */
           else
             {
                 printf("Error, cannot support JPEG file containing %d components\n",
@@ -490,6 +497,7 @@ main(int argc, char *argv[])
                 Hclose(file_id);
                 exit(1);
             }   /* end else */
+#ifdef OLD_WAY
           if (fread(file_buf, sizeof(uint8), (size_t) off_image, jfif_file)
               !=          (size_t) off_image)
             {
@@ -536,6 +544,48 @@ main(int argc, char *argv[])
                   }     /* end if */
             }   /* end if */
           Hendaccess(aid);  /* done with JPEG data, create RIG */
+#else /* OLD_WAY */
+          if (Hputelement(file_id, ctag, wref, file_buf, 0) == FAIL)
+            {
+                printf("Error writing JPEG header to HDF file: %s\n", argv[2]);
+                exit(1);
+            }   /* end if */
+          if ((aid = Hstartwrite(file_id, wtag, wref, file_len)) == FAIL)
+            {
+                printf("Error from Hstartwrite() for JPEG image data\n");
+                exit(1);
+            }   /* end if */
+          while (file_len > MAX_FILE_BUF)
+            {
+                if (fread(file_buf, sizeof(uint8), MAX_FILE_BUF, jfif_file) !=
+                    MAX_FILE_BUF)
+                  {
+                      printf("Error reading JFIF image data from %s\n", argv[1]);
+                      exit(1);
+                  }     /* end if */
+                if (Hwrite(aid, MAX_FILE_BUF, file_buf) != (int32) (MAX_FILE_BUF))
+                  {
+                      printf("Error writing JPEG image data to HDF file\n");
+                      exit(1);
+                  }     /* end if */
+                file_len -= MAX_FILE_BUF;
+            }   /* end while */
+          if (file_len > 0)
+            {
+                if (fread(file_buf, sizeof(uint8), (size_t) file_len, jfif_file)
+                    !=          (size_t) image_len)
+                  {
+                      printf("Error reading JFIF image data from %s\n", argv[1]);
+                      exit(1);
+                  }     /* end if */
+                if (Hwrite(aid, file_len, file_buf) != (int32) (file_len))
+                  {
+                      printf("Error writing last of JPEG image data to HDF file\n");
+                      exit(1);
+                  }     /* end if */
+            }   /* end if */
+          Hendaccess(aid);  /* done with JPEG data, create RIG */
+#endif /* OLD_WAY */
           if (DFJPEGaddrig(file_id, wref, ctag) == FAIL)
             {
                 printf("Error writing JPEG RIG information\n");
