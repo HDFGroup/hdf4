@@ -38,15 +38,13 @@ static float32  maxf32 = (float32) 123.0;
 static float32  minf32 = (float32) -1.0;
 static float32  fillf32 = (float32) 1.0;
 
-#if !(defined CRAYMPP)
-static intn  maxin = 123;
-static intn  minin = -1;
-static intn  fillin = 1;
+static int32  maxin = 123;
+static int32  minin = -1;
+static int32  fillin = 1;
 
-static uintn  maxuin = 123;
-static uintn  minuin = 2;
-static uintn  filluin = 1;
-#endif
+static uint32  maxuin = 123;
+static uint32  minuin = 2;
+static uint32  filluin = 1;
 
 static int32  maxi32 = 123;
 static int32  mini32 = -1;
@@ -108,21 +106,19 @@ static float32  scrowf32[3] =
 static float32  sccolf32[4] =
 {(float32) 0.0, (float32) 1.0, (float32) 2.0, (float32) 3.0};
 
-#if !(defined CRAYMPP)
-static intn  scplnin[2] =
+static int32  scplnin[2] =
 {0, 100};
-static intn  scrowin[3] =
+static int32  scrowin[3] =
 {0, 10, 20};
-static intn  sccolin[4] =
+static int32  sccolin[4] =
 {0, 1, 2, 3};
 
-static uintn  scplnuin[2] =
+static uint32  scplnuin[2] =
 {0, 100};
-static uintn  scrowuin[3] =
+static uint32  scrowuin[3] =
 {0, 10, 20};
-static uintn  sccoluin[4] =
+static uint32  sccoluin[4] =
 {0, 1, 2, 3};
-#endif
 
 static int32  scplni32[2] =
 {0, 100};
@@ -227,27 +223,26 @@ static float64  slabw5f64[2][3][1] =
         {113.0},
         {123.0}}};
 
-#if !(defined CRAYMPP)
-static intn  slabw1in[1][1][3] =
+static int32  slabw1in[1][1][3] =
 {
     {
         {110, 111, 112}}};
-static intn  slabw2in[2][1][3] =
+static int32  slabw2in[2][1][3] =
 {
     {
         {20, 21, 22}},
     {
         {120, 121, 122}}};
-static intn  slabw3in[1][2][3] =
+static int32  slabw3in[1][2][3] =
 {
     {
         {0, 1, 2},
         {10, 11, 12}}};
-static intn  slabw4in[1][1][3] =
+static int32  slabw4in[1][1][3] =
 {
     {
         {100, 101, 102}}};
-static intn  slabw5in[2][3][1] =
+static int32  slabw5in[2][3][1] =
 {
     {
         {3},
@@ -258,26 +253,26 @@ static intn  slabw5in[2][3][1] =
         {113},
         {123}}};
 
-static uintn  slabw1uin[1][1][3] =
+static uint32  slabw1uin[1][1][3] =
 {
     {
         {110, 111, 112}}};
-static uintn  slabw2uin[2][1][3] =
+static uint32  slabw2uin[2][1][3] =
 {
     {
         {20, 21, 22}},
     {
         {120, 121, 122}}};
-static uintn  slabw3uin[1][2][3] =
+static uint32  slabw3uin[1][2][3] =
 {
     {
         {0, 1, 2},
         {10, 11, 12}}};
-static uintn  slabw4uin[1][1][3] =
+static uint32  slabw4uin[1][1][3] =
 {
     {
         {100, 101, 102}}};
-static uintn  slabw5uin[2][3][1] =
+static uint32  slabw5uin[2][3][1] =
 {
     {
         {3},
@@ -287,7 +282,6 @@ static uintn  slabw5uin[2][3][1] =
         {103},
         {113},
         {123}}};
-#endif
 
 static int32  slabw1i32[1][1][3] =
 {
@@ -587,8 +581,7 @@ static float64  f64data[2][3][4] =
         {100.0, 101.0, 102.0, 103.0},
         {110.0, 111.0, 112.0, 113.0},
         {120.0, 121.0, 122.0, 123.0}}};
-#if !(defined CRAYMPP)
-static intn  indata[2][3][4] =
+static int32  indata[2][3][4] =
 {
     {
         {0, 1, 2, 3},
@@ -598,7 +591,7 @@ static intn  indata[2][3][4] =
         {100, 101, 102, 103},
         {110, 111, 112, 113},
         {120, 121, 122, 123}}};
-static uintn  uindata[2][3][4] =
+static uint32  uindata[2][3][4] =
 {
     {
         {0, 1, 2, 3},
@@ -608,7 +601,6 @@ static uintn  uindata[2][3][4] =
         {100, 101, 102, 103},
         {110, 111, 112, 113},
         {120, 121, 122, 123}}};
-#endif
 static int32  i32data[2][3][4] =
 {
     {
@@ -686,10 +678,8 @@ static const char  *sw4 = "s4w.hdf";
 
 static int slabwf32(void);
 static int slabwf64(void);
-#if !(defined CRAYMPP)
 static int slabwin(void);
 static int slabwuin(void);
-#endif
 static int slabwi32(void);
 static int slabwui32(void);
 static int slabwi16(void);
@@ -1012,7 +1002,6 @@ slabwf64(void)
     return (int) num_err;
 }
 
-#if !(defined CRAYMPP)
 /*
    ** Write intn data set to slabwin.hdf as 5 hyperslabs.
  */
@@ -1022,8 +1011,8 @@ slabwin(void)
     int32       i, j, k;
     int32       ret = 0;
     int32       num_err = 0;
-    intn        sdata[2][3][4]; /* Data array read from from file */
-    intn        lfill=(intn)0;
+    int32        sdata[2][3][4]; /* Data array read from from file */
+    int32        lfill=0;
 
     MESSAGE(10, printf("\n slabwin:  Writing 5 slabs to slabwin.hdf \n");
         );
@@ -1179,8 +1168,8 @@ slabwuin(void)
     int32       i, j, k;
     int32       ret = 0;
     int32       num_err = 0;
-    uintn       sdata[2][3][4]; /* Data array read from from file */
-    uintn       lfill=(uintn)0;
+    uint32       sdata[2][3][4]; /* Data array read from from file */
+    uint32       lfill=0;
 
     MESSAGE(10, printf("\n slabwuin:  Writing 5 slabs to slabwuin.hdf \n");
         );
@@ -1326,7 +1315,6 @@ slabwuin(void)
 
     return (int) num_err;
 }
-#endif
 
 /*
    ** Write int32 data set to slabwi32.hdf as 5 hyperslabs.
@@ -2871,13 +2859,8 @@ test_slab(void)
 {
     num_errs += slabwf32();
     num_errs += slabwf64();
-#if !(defined CRAYMPP)
     num_errs += slabwin();
     num_errs += slabwuin();
-#else
-    printf("    Skipping slabwin\n");
-    printf("    Skipping slabuwin\n");
-#endif
     num_errs += slabwi32();
     num_errs += slabwui32();
     num_errs += slabwi16();
