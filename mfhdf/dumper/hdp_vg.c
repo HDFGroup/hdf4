@@ -300,7 +300,7 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
 	   if (HDstrlen(vgname)==0)
 	      HDstrcat(vgname,"");
 	   Vgetclass(vg_id, vgclass);
-	   list[i] = (struct node*)malloc(sizeof(struct node)); /* here */
+	   list[i] = (struct node*)malloc(sizeof(struct node)); 
 	   num_nodes++;
 	   
 	   switch (dumpvg_opts->contents) {
@@ -363,7 +363,7 @@ static intn dvg(dump_info_t *dumpvg_opts, intn curr_arg,
 	 if (dumpvg_opts->contents!=DDATA) {
 	    printf("\n\nGraphical representation of the file:-\n");
 	    printf("(vg#: vgroup;   vd: vdata)\n\n");
-	    for (y=0; y<num_nodes; y++) {   /* here */
+	    for (y=0; y<num_nodes; y++) { 
 	     int32 firstchild=FALSE, k;
 	       level = -1;
 	       ptr = list[y];
@@ -416,7 +416,7 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode,
 	            (int)vgoref, (int)ne);
             fprintf(fp, "\tname = %s; class = %s\n", vgname, vgclass);
          } 
-	 Vdetach(vgt); /* here */
+	 Vdetach(vgt);
 	 aNode->children[t] = (char*)malloc(sizeof(char)*strlen(vgname));
 	 strcpy(aNode->children[t], vgname);
 	 aNode->type[t] = (char*)malloc(sizeof(char)*3);
@@ -475,7 +475,7 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode,
          }
 
 
-	 VSdetach(vs); /* here */
+	 VSdetach(vs);
 	 aNode->children[t] = (char*)malloc(sizeof(char)*strlen(vsname));
 	 strcpy(aNode->children[t], vsname); 
 	 
@@ -499,7 +499,6 @@ void vgdumpfull(int32 vg_id, int32 file_id, FILE *fp, struct node *aNode,
          }
 	 else
 	    aNode->type[t] = tempPtr + 6;
-						/* here */
       }
    } /* for */
    aNode->children[num_entries] = NULL;
@@ -541,7 +540,7 @@ void display(struct node *ptr, int32 level, struct node **list,
 	       x++;
 	    display(list[x], level, list, num_nodes, firstchild);
          } /* if */ 
-	 else {               /* here */
+	 else { 
 	    if (i>0) {
 	       for (k=0; k<level+1; k++)
 		  for (z=0; z<num; z++)
