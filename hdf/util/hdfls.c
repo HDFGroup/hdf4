@@ -26,10 +26,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1992/03/18 17:49:26  chouck
-Added Hendaccess() call so that Hclose() will not FAIL
-,
+Revision 1.8  1992/03/23 17:21:52  likkai
+Put in description of "-d" option in "usage" message.
+and redo the format for the output of that option.
 
+ * Revision 1.7  1992/03/18  17:49:26  chouck
+ * Added Hendaccess() call so that Hclose() will not FAIL
+ * ,
+ *
  * Revision 1.6  1992/03/11  20:53:33  chouck
  * Use HDgettagname() to look up tag names.  Change the tag/ref look
  * up routines to use Hiquire() and Hnextread instead of DFdescriptors()
@@ -130,6 +134,7 @@ char *argv[];
         printf("        This program displays information about the");
         printf(" data elements in\n");
         printf("        HDF file.\n");
+        printf("    -d: offset & length info of each element in the file\n");
         printf("    -o: Ordered - display in reference number order\n");
         printf("    -l: Long format - display more information\n");
         exit (1);
@@ -181,9 +186,10 @@ char *argv[];
 	}
 
 	if(debug) {
+	  printf("\n");
 	  for (j=0; j<n; j++) {
-	    printf("%d) %d[%d]", j, desc[j].tag, desc[j].ref);
-	    printf(" off %ld len %ld\n", desc[j].offset, desc[j].length);
+	    printf("%6d) tag %6d ref %6d ", j, desc[j].tag, desc[j].ref);
+	    printf(" offset %10ld length %10ld\n", desc[j].offset, desc[j].length);
 	  }
 	}
 	
