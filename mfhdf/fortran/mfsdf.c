@@ -912,7 +912,7 @@ nscgdinfo(id, name, sz, nt, nattr, len)
   
     *nt    = (intf) nt32;
     *sz    = (intf) sz32;
-    *nattr = (intf) nattr;
+    *nattr = (intf) nattr32;
 
     return(status);
 
