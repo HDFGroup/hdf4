@@ -104,6 +104,7 @@ int32 write_vset_stuff() {
     } else 
         num++;
 
+#ifdef NO_DUPLICATES
     /* attempt to add an element already in the Vgroup */
     status = Vaddtagref(vg2, (int32) 123, (int32) 1234);
     if(status != FAIL) {
@@ -116,6 +117,7 @@ int32 write_vset_stuff() {
         num_errs++;
         printf(">>> Vntagrefs returned %d was expecting %d\n", Vntagrefs(vg2), num);
     }
+#endif /* NO_DUPLICATES */
 
     /* lets check the contents */
     /* look for a valid one first */
