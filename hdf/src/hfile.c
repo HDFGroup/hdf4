@@ -3267,9 +3267,8 @@ int32 HDget_special_info(int32 access_id, sp_info_block_t * info_block)
     /* clear error stack and check validity of access id */
     HEclear();
     access_rec = AID2REC(access_id);
-    if (access_rec == (accrec_t *) NULL || 
-        !access_rec->used || 
-        info_block == NULL)
+    if (access_rec == (accrec_t *) NULL || !access_rec->used || 
+        	info_block == NULL)
         HRETURN_ERROR(DFE_ARGS,FAIL);
     
     /* special elt, so call special function */

@@ -1234,7 +1234,8 @@ int32 HCPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
     /* fill in the info_block */
     info_block->key = SPECIAL_COMP;
 
-    info_block->compression_flag = 5; /* I dunno */
+    info_block->comp_type = info->cinfo.coder_type;
+    info_block->model_type = info->minfo.model_type;
 
     return SUCCEED;
 

@@ -304,7 +304,8 @@ typedef struct sp_info_block_t {
     int32       nblocks;           /* number of blocks per chunk */
 
     /* compressed elements */
-    int32       compression_flag;  /* compression type */
+    int32       comp_type;         /* compression type */
+    int32       model_type; 	   /* model type */
 
 } sp_info_block_t;
 

@@ -98,11 +98,11 @@ typedef struct backing_store_struct {
 	/* Methods for reading/writing/closing this backing-store object */
 	METHOD(VOID, read_backing_store, (backing_store_ptr info,
 					  VOIDP buffer_address,
-					  long file_offset, long byte_count);
+					  long file_offset, long byte_count));
 	METHOD(VOID, write_backing_store, (backing_store_ptr info,
 					   VOIDP buffer_address,
-					   long file_offset, long byte_count);
-	METHOD(VOID, close_backing_store, (backing_store_ptr info);
+					   long file_offset, long byte_count));
+	METHOD(VOID, close_backing_store, (backing_store_ptr info));
 	/* Private fields for system-dependent backing-store management */
 	/* For a typical implementation with temp files, we might need: */
 	FILE * temp_file;	/* stdio reference to temp file */

@@ -163,7 +163,9 @@ JOBJS= $(CLIBOBJECTS) $(DLIBOBJECTS) $(COMOBJECTS)
 .f.o:
 	$(FC) $(FFLAGS) -c $<
 
-all: libdf.a install_it
+.PHONY : all nofortran libnostub clean distclean debug saber lint
+
+all: libdf.a .installed
 
 libdf.a: $(COBJS) $(FOBJS) $(JOBJS)
 	-$(RM) libdf.a
@@ -175,11 +177,11 @@ libnofortran: $(COBJS) $(JOBJS)
 	$(AR) $(ARFLAGS) libdf.a `lorder $(COBJS) $(JOBJS) | tsort `
 	$(RANLIB) libdf.a
 
-nofortran: libnofortran install_it
+nofortran: libnofortran .installed
 
 libnostub: nofortran
 
-debug: libdf.a install_it
+debug: libdf.a .installed
 
 saber:
 	#load -D$(MACHINE) $(CSRCS) $(TSRCS) $(JCSRCS) -lc
@@ -359,12 +361,13 @@ jwrtarga.o : jwrtarga.c jinclude.h jconfig.h jpegdata.h
 
 jmemsys.o : jmemsys.c jinclude.h jconfig.h jpegdata.h jmemsys.h
 
-install_it:
+.installed: libdf.a
 	-if (test \! -d $(HDFINC)) then (mkdir $(HDFINC) ) fi
 	-cp $(HDRS) $(JINCS) $(HDFINC)
 	-if (test \! -d $(HDFLIB)) then (mkdir $(HDFLIB) ) fi
 	-cp libdf.a $(HDFLIB)
 	-$(RANLIB) $(HDFLIB)/libdf.a
+	touch .installed
 
 clean:
 	-$(RM) $(RMFLAGS) *.o
