@@ -174,10 +174,10 @@ typedef int fmp_file_t;
                                   open((p), O_RDONLY, DEF_FILEMODE))
 #   define FMPI_CREATE(p)         (open((p), O_RDWR | O_CREAT | O_TRUNC,DEF_FILEMODE))
 #   define FMPI_CLOSE(f)          (close(f))
-#if 0
 #   define FMPI_FLUSH(f)          (fsync(f))
-#endif
+#if 0
 #   define FMPI_FLUSH(f)          (SUCCEED)
+#endif
 #   define FMPI_READ(f, b, n)     (read((f), (char *)(b), (n)))
 #   define FMPI_WRITE(f, b, n)    (write((f), (char *)(b), (n)))
 #   define FMPI_SEEK(f, o)        (lseek((f), (off_t)(o), SEEK_SET))
