@@ -48,7 +48,7 @@ Caution: Hdfed has been revised so that it can dump data of various number
          types.  This function has been tested on SUN Station, CRAY2 and 
          CRAY-YMP. 
 
-        copy ntcheck.hdf form the testfiles/ directory to the util/ directory.
+        copy ntcheck.hdf from the testfiles/ directory to the util/ directory.
   
           hdfed ntcheck.hdf
 
@@ -77,7 +77,7 @@ Caution: Hdfed has been revised so that it can dump data of various number
 	  
         Look at the data in various objects and verify the data type, eg:
 
-          next tag = 702  ref = 2      
+          prev tag = 702  ref = 2      
            
              (if you are past this data object you will receive the message
               "Reached end of file. Not moved."  In this case, just repeat 
@@ -169,7 +169,7 @@ ristosds -- converts a series raster image hdf files into a
 
 hdfpack --  compacts an hdf file
 
-   Copy the file test.cdf from the ../../mfhdf/libsrc directory.
+   Copy the file test.cdf from the testfiles/ directory.
 
    Execute:
         hdfpack test.cdf test.pck
@@ -177,17 +177,17 @@ hdfpack --  compacts an hdf file
 
    Use hdfls to get a listing of test.cdf and test.pck.  The only
        difference between the 2 listings should be that test.pck
-       shouldn't have any special elements (they show up as "Unknown
-       Tag") and it also shouldn't have any "Linked Block Indicators."
+       shouldn't have any special elements and it also shouldn't 
+       have any "Linked Block Indicators."
 
           hdfls test.cdf
           hdfls test.pck
 
    The file sizes should be as follows:
 
-       test.cdf - 30258 
-       test.pck - 7254 
-       test.blk - 22707
+       test.cdf - 11795 
+       test.pck - 6747 
+       test.blk - 7599
 
 hdftopal/paltohdf  -- converts between a raw palette and an hdf
 
@@ -267,7 +267,7 @@ jpeg2hdf/hdf2jpeg
         hdf2jpeg jpeg.hdf jpeg2.jpg
 
    Use hdfls with the '-l' option to examine the HDF file.  It should
-        contain one raster image sets, which will be compressed with JPEG
+        contain one raster image set, which will be compressed with JPEG
         compression.  The JPEG compressed image will be 2922 bytes in size.
    Use the Unix utility 'cmp' or something similar to do byte-for-byte
         comparisons on the produced raw raster files by hdf2jpeg.  The
@@ -276,7 +276,7 @@ jpeg2hdf/hdf2jpeg
 
 fp2hdf -- converts floating point 2D/3D datasets into hdf SDS or RIS.
 
-   1. Run fptest to create 2-/3-D ASCII/binary test files. 
+   1. Run fptest to create 2-/3-D ASCII/binary test files:  
                    ctxtr2, type 'TEXT', size 3x4
                    ctxtr3, type 'TEXT', size 3x4x5
                    cb32r2, type 'FP32', size 3x4
