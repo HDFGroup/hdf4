@@ -2,9 +2,12 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.1  1992/04/27 17:28:04  sxu
-C Initial revision
+C Revision 1.2  1992/05/29 18:54:51  chouck
+C Changed output file names
 C
+c Revision 1.1  1992/04/27  17:28:04  sxu
+c Initial revision
+c
 C
       program tdfsd_nntF
 C
@@ -12,7 +15,7 @@ C
 C  Program to test writing SDSs with different types of data.
 C
 C  Input file:  none
-C  Output files:  fo1,fo2, ...fo5, fo.hdf
+C  Output files:  fo.hdf.1, fo.hdf.2, ...fo.hdf.5, fo.hdf
 C
 
       integer dspdata, dsgdata, dsadata, dssdims, dssnt
@@ -68,8 +71,8 @@ C  individual files
       print *,'Testing arrays in individual files...'
   
       err = dssnt(DFNT_NFLOAT64)
-      err1 = dspdata('fo1', rank, dims, f64)
-      err2 = dsgdata('fo1', rank, dims, tf64)
+      err1 = dspdata('fo.hdf.1', rank, dims, f64)
+      err2 = dsgdata('fo.hdf.1', rank, dims, tf64)
       print *,'Write: ', err1, '    Read: ', err2
       err = 0
       do 160 i=1,10
@@ -82,8 +85,8 @@ C  individual files
       call err_check(err, number_failed, 'float64')
 
       err = dssnt(DFNT_NFLOAT32)
-      err1 = dspdata('fo2', rank, dims, f32)
-      err2 = dsgdata('fo2', rank, dims, tf32)
+      err1 = dspdata('fo.hdf.2', rank, dims, f32)
+      err2 = dsgdata('fo.hdf.2', rank, dims, tf32)
       print *,'Write: ', err1, '    Read: ', err2
       err = 0
       do 210 i=1,10
@@ -96,8 +99,8 @@ C  individual files
       call err_check(err, number_failed, 'float32')
 
       err = dssnt(DFNT_NINT8)
-      err1 = dspdata('fo3', rank, dims, i8)
-      err2 = dsgdata('fo3', rank, dims, ti8)
+      err1 = dspdata('fo.hdf.3', rank, dims, i8)
+      err2 = dsgdata('fo.hdf.3', rank, dims, ti8)
       print *,'Write: ', err1, '    Read: ', err2
       err = 0
       do 310 i=1,10
@@ -110,8 +113,8 @@ C  individual files
       call err_check(err, number_failed, 'int8')
 
       err = dssnt(DFNT_NINT16)
-      err1 = dspdata('fo4', rank, dims, i16)
-      err2 = dsgdata('fo4', rank, dims, ti16)
+      err1 = dspdata('fo.hdf.4', rank, dims, i16)
+      err2 = dsgdata('fo.hdf.4', rank, dims, ti16)
       print *,'Write: ', err1, '    Read: ', err2
       err = 0
       do 410 i=1,10
@@ -124,8 +127,8 @@ C  individual files
       call err_check(err, number_failed, 'int16')
 
       err = dssnt(DFNT_NINT32)
-      err1 = dspdata('fo5', rank, dims, i32)
-      err2 = dsgdata('fo5', rank, dims, ti32)
+      err1 = dspdata('fo.hdf.5', rank, dims, i32)
+      err2 = dsgdata('fo.hdf.5', rank, dims, ti32)
       print *,'Write: ', err1, '    Read: ', err2
       err = 0
       do 510 i=1,10
