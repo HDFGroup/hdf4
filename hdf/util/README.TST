@@ -290,20 +290,24 @@ jpeg2hdf/hdf2jpeg
 
 fp2hdf -- converts floating point 2D/3D datasets into hdf SDS or RIS.
 
-   To test this utility you must first create the binary test files
-   with the fptest utility.  Then run fp2hdf on the test files that 
-   were created, and analyze the output.  Following are the steps to 
+   To test this utility you must first create the ASCII and binary test 
+   files with the fptest program.  Then run fp2hdf on the test files that 
+   get created, and analyze the output.  Following are the steps to 
    do this:
 
-   1. Run fptest to create 2-/3-D ASCII/binary test files:  
-                   ctxtr2, type 'TEXT', size 3x4
-                   ctxtr3, type 'TEXT', size 3x4x5
-                   cb32r2, type 'FP32', size 3x4
-                   cb32r3, type 'FP32', size 3x4x5
-                   cb64r2, type 'FP64', size 3x4
-                   cb64r3, type 'FP64', size 3x4x5
+   1. Run fptest to create 2D/3D ASCII/binary test files:  
 
-     Contents of the arrays that get created:
+                   FILE    TYPE    DIMENSIONS 
+                   ----    ----    ----------
+                   ctxtr2  TEXT    3x4
+                   ctxtr3  TEXT    5x3x4
+                   cb32r2  FP32    3x4
+                   cb32r3  FP32    5x3x4
+                   cb64r2  FP64    3x4
+                   cb64r3  FP64    5x3x4
+
+     Following are the values of the dimension scales and arrays that 
+     get created:
 
      row scale values start at 11 and increment by 1 => 11, 12, 13
      column scale values start at 21 and increment by 2 => 21, 23, 25, 27
@@ -351,8 +355,10 @@ fp2hdf -- converts floating point 2D/3D datasets into hdf SDS or RIS.
       ./fp2hdf ctxtr2 -o ctxtr2_ris.hdf -raster -e 50 50
       ./fp2hdf cb64r2 -o cb64r2_ris.hdf -raster -i 50 50 -f
 
-   3. Use hdfls and hdfed/Collage to verify the correctness of 
-      the output *.hdf files.  
+   3. Use hdfls and hdfed to verify the correctness of the output 
+      *.hdf files.  The rank, dimension size, number type, 
+      dimension scale and data values should agree with those
+      listed in item 1 above. 
 
       You can also use the hdp command.  To use hdp from the
       util/ directory, type:
@@ -365,15 +371,21 @@ fp2hdf -- converts floating point 2D/3D datasets into hdf SDS or RIS.
   
         ../../mfhdf/dumper/hdp dumprig <hdf filename>
 
-      ctxtr2.hdf -- 2D SDS, display spreadsheet
-      ctxtr3.hdf -- 3D SDS, display spreadsheet along z axis.
-      cb32r2.hdf -- 2D SDS, display spreadsheet
-      cb32r3.hdf -- 3D SDS, display spreadsheet along z axis
-      cb64r2.hdf -- 2D SDS, display spreadsheet
-      cb64r3.hdf -- 3D SDS, display spreadsheet along z axis
-      ctxtr2_ris.hdf -- RIS, display image
-      cb64r2_ris.hdf -- an interpolated RIS, display the image;
-                        and a 2D SDS, display spreadsheet.
+      Collage can also be used to display the *.hdf files.
+      Display the spreadsheet and compare the values to those
+      in Item 1.  For the Raster Images, display the image; 
+      the values are interpolated, and will not match the
+      values as show in Item 1.  
+
+        ctxtr2.hdf -- 2D SDS, display spreadsheet
+        ctxtr3.hdf -- 3D SDS, display spreadsheet along z axis.
+        cb32r2.hdf -- 2D SDS, display spreadsheet
+        cb32r3.hdf -- 3D SDS, display spreadsheet along z axis
+        cb64r2.hdf -- 2D SDS, display spreadsheet
+        cb64r3.hdf -- 3D SDS, display spreadsheet along z axis
+        ctxtr2_ris.hdf -- RIS, display image
+        cb64r2_ris.hdf -- 2D SDS, display spreadsheet
+                          RIS, display image 
    
    4. Remove ctxtr* and cb*.  
                    
