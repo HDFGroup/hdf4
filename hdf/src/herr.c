@@ -113,17 +113,28 @@ HEstring(hdf_err_code_t error_code)
 {
 #ifndef OLD_WAY
     int         i;              /* temp int index */
+    char _HUGE *ret_value = DEFAULT_MESG; /* otherwise, return default message */
 
     /* look for the error_code in error message table */
     for (i = 0; i < ERRMESG_SZ; i++)
         if (error_messages[i].error_code == error_code)
-            return error_messages[i].str;
-
-    /* otherwise, return default message */
-    return DEFAULT_MESG;
+          {
+            ret_value = error_messages[i].str;
+            break;
+          }
 #else
-    return (error_messages[error_code].str);
+    ret_value = (error_messages[error_code].str);
 #endif
+
+done:
+  if(ret_value == NULL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 } /* HEstring */
 
 /*--------------------------------------------------------------------------
@@ -140,9 +151,8 @@ DESCRIPTION
 VOID
 HEclear(void)
 {
-
     if (!error_top)
-        return;
+        goto done;
 
     /* error_top == 0 means no error in stack */
     /* clean out old descriptions if they exist */
@@ -154,6 +164,9 @@ HEclear(void)
                 error_stack[error_top - 1].desc = NULL;
             }
       }
+
+done:
+  return;
 } /* HEclear */
 
 /*-------------------------------------------------------------------------
@@ -182,7 +195,6 @@ HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_na
     intn        i;
 
     /* if the stack is not allocated, then do it */
-
     if (!error_stack)
       {
           error_stack = (error_t *) HDmalloc((uint32) sizeof(error_t) * ERR_STACK_SZ);
@@ -246,7 +258,7 @@ HEreport(const char *format,...)
           if (!tmp)
             {
                 HERROR(DFE_NOSPACE);
-                return;
+                goto done;
             }
           vsprintf(tmp, format, arg_ptr);
           if (error_stack[error_top - 1].desc)
@@ -255,6 +267,8 @@ HEreport(const char *format,...)
       }
 
     va_end(arg_ptr);
+
+done:
     return;
 } /* HEreport */
 
@@ -310,10 +324,14 @@ HEprint(FILE * stream, int32 print_levels)
 int16
 HEvalue(int32 level)
 {
-    if (level > 0 && level <= error_top)
-        return (int16) error_stack[error_top - level].error_code;
-    else
-	return DFE_NONE;
+  int16 ret_value = DFE_NONE;
+
+  if (level > 0 && level <= error_top)
+    ret_value = (int16) error_stack[error_top - level].error_code;
+  else
+    ret_value = DFE_NONE;
+
+  return ret_value;
 } /* HEvalue */
 
 /*--------------------------------------------------------------------------

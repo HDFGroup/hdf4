@@ -64,72 +64,87 @@ PRIVATE int32 DFPIopen
 intn
 DFPgetpal(const char *filename, VOIDP palette)
 {
-    CONSTR(FUNC, "DFPgetpal");
-    int32       file_id;
-    int32       aid;
-    int32       length;
+  CONSTR(FUNC, "DFPgetpal");
+  int32       file_id;
+  int32       aid;
+  int32       length;
+  intn        ret_value = SUCCEED;
 
-    HEclear();
+  HEclear();
 
-    if (!palette)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+  if (!palette)
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    if ((file_id = DFPIopen(filename, DFACC_READ)) == FAIL)
-        HRETURN_ERROR(DFE_BADOPEN, FAIL);
+  if ((file_id = DFPIopen(filename, DFACC_READ)) == FAIL)
+    HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
-    if (Refset)
-      {
-          aid = Hstartread(file_id, DFTAG_IP8, Refset);
-          if (aid == FAIL)
-              aid = Hstartread(file_id, DFTAG_LUT, Refset);
-      }     /* end if */
-    else if (Readref)
-      {
-          aid = Hstartread(file_id, DFTAG_IP8, Readref);
-          if (aid == FAIL)
-              aid = Hstartread(file_id, DFTAG_LUT, Readref);
-          if (aid != FAIL &&
-            (Hnextread(aid, DFTAG_IP8, DFREF_WILDCARD, DF_CURRENT) == FAIL))
+  if (Refset)
+    {
+      aid = Hstartread(file_id, DFTAG_IP8, Refset);
+      if (aid == FAIL)
+        aid = Hstartread(file_id, DFTAG_LUT, Refset);
+    }     /* end if */
+  else if (Readref)
+    {
+      aid = Hstartread(file_id, DFTAG_IP8, Readref);
+      if (aid == FAIL)
+        aid = Hstartread(file_id, DFTAG_LUT, Readref);
+      if (aid != FAIL &&
+          (Hnextread(aid, DFTAG_IP8, DFREF_WILDCARD, DF_CURRENT) == FAIL))
+        {
+          if (Hnextread(aid, DFTAG_LUT, DFREF_WILDCARD, DF_CURRENT) == FAIL)
             {
-                if (Hnextread(aid, DFTAG_LUT, DFREF_WILDCARD, DF_CURRENT) == FAIL)
-                  {
-                      Hendaccess(aid);
-                      aid = FAIL;
-                  }     /* end if */
-            }   /* end if */
-      }     /* end if */
-    else
-      {
-          aid = Hstartread(file_id, DFTAG_IP8, DFREF_WILDCARD);
-          if (aid == FAIL)
-              aid = Hstartread(file_id, DFTAG_LUT, DFREF_WILDCARD);
-      }     /* end else */
+              Hendaccess(aid);
+              aid = FAIL;
+            }     /* end if */
+        }   /* end if */
+    }     /* end if */
+  else
+    {
+      aid = Hstartread(file_id, DFTAG_IP8, DFREF_WILDCARD);
+      if (aid == FAIL)
+        aid = Hstartread(file_id, DFTAG_LUT, DFREF_WILDCARD);
+    }     /* end else */
 
-    Refset = 0;
-    if (aid == FAIL)
-        return (HDerr(file_id));
+  Refset = 0;
+  /* on error, close file and return -1 */
+  if (aid == FAIL)
+    {
+      ret_value = (HDerr(file_id));
+      goto done;
+    }
 
-    /* on error, close file and return -1 */
+  if (Hinquire(aid, (int32 *) NULL, (uint16 *) NULL, &Readref, &length,
+               (int32 *) NULL, (int32 *) NULL, (int16 *) NULL, (int16 *) NULL) == FAIL)
+    {
+      Hendaccess(aid);
+      ret_value = HDerr(file_id);
+      goto done;
+    }     /* end if */
 
-    if (Hinquire(aid, (int32 *) NULL, (uint16 *) NULL, &Readref, &length,
-    (int32 *) NULL, (int32 *) NULL, (int16 *) NULL, (int16 *) NULL) == FAIL)
-      {
-          Hendaccess(aid);
-          return HDerr(file_id);
-      }     /* end if */
+  /* read palette */
+  if (Hread(aid, length, (uint8 *) palette) == FAIL)
+    {
+      Hendaccess(aid);
+      ret_value = (HDerr(file_id));
+      goto done;
+    }     /* end if */
 
-    /* read palette */
-    if (Hread(aid, length, (uint8 *) palette) == FAIL)
-      {
-          Hendaccess(aid);
-          return (HDerr(file_id));
-      }     /* end if */
+  Hendaccess(aid);
 
-    Hendaccess(aid);
+  Lastref = Readref;
 
-    Lastref = Readref;
+  ret_value = Hclose(file_id);
 
-    return (Hclose(file_id));
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* end DFPgetpal() */
 
 /*--------------------------------------------------------------------------
@@ -157,40 +172,54 @@ DFPgetpal(const char *filename, VOIDP palette)
 intn
 DFPputpal(const char *filename, const VOIDP palette, intn overwrite, const char *filemode)
 {
-    CONSTR(FUNC, "DFPputpal");
-    int32       file_id;
+  CONSTR(FUNC, "DFPputpal");
+  int32       file_id;
+  intn        ret_value = SUCCEED;
 
-    HEclear();
+  HEclear();
 
-    if (!palette)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+  if (!palette)
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    if (overwrite && HDstrcmp(filename, Lastfile))
-        HRETURN_ERROR(DFE_BADCALL, FAIL);
+  if (overwrite && HDstrcmp(filename, Lastfile))
+    HGOTO_ERROR(DFE_BADCALL, FAIL);
 
-    file_id = DFPIopen(filename, (*filemode == 'w') ? DFACC_CREATE : DFACC_WRITE);
-    if (file_id == FAIL)
-        HRETURN_ERROR(DFE_BADOPEN, FAIL);
+  file_id = DFPIopen(filename, (*filemode == 'w') ? DFACC_CREATE : DFACC_WRITE);
+  if (file_id == FAIL)
+    HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
     /* if we want to overwrite, Lastref is the ref to write.  If not, if
        Writeref is set, we use that ref.  If not we get a fresh ref. The
        ref to write is placed in Lastref */
-    if (!overwrite)
-        Lastref = (uint16) (Writeref ? Writeref : Htagnewref(file_id,DFTAG_IP8));
-    if (Lastref == 0)
-        HRETURN_ERROR(DFE_NOREF, FAIL);
+  if (!overwrite)
+    Lastref = (uint16) (Writeref ? Writeref : Htagnewref(file_id,DFTAG_IP8));
+  if (Lastref == 0)
+    HGOTO_ERROR(DFE_NOREF, FAIL);
 
-    Writeref = 0;   /* don't know ref to write after this */
+  Writeref = 0;   /* don't know ref to write after this */
 
-    /* write out palette */
-    if (Hputelement(file_id, DFTAG_IP8, Lastref, (const uint8 *) palette, (int32) 768) < 0)
-        return (HDerr(file_id));
+  /* write out palette */
+  if (Hputelement(file_id, DFTAG_IP8, Lastref, (const uint8 *) palette, (int32) 768) < 0)
+    {
+      ret_value = (HDerr(file_id));
+      goto done;
+    }
 
     /* Check for the tag/ref before creating it willy-nilly */
-    if(Hexist(file_id,DFTAG_LUT,Lastref)==FAIL)
-        Hdupdd(file_id, DFTAG_LUT, Lastref, DFTAG_IP8, Lastref);
+  if(Hexist(file_id,DFTAG_LUT,Lastref)==FAIL)
+    Hdupdd(file_id, DFTAG_LUT, Lastref, DFTAG_IP8, Lastref);
 
-    return (Hclose(file_id));
+  ret_value = (Hclose(file_id)); 
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* end DFPputpal() */
 
 /*--------------------------------------------------------------------------
@@ -212,7 +241,11 @@ DFPputpal(const char *filename, const VOIDP palette, intn overwrite, const char 
 intn
 DFPaddpal(const char *filename, const VOIDP palette)
 {
-    return (DFPputpal(filename, palette, 0, "a"));
+  intn ret_value;
+
+  ret_value = (DFPputpal(filename, palette, 0, "a"));
+
+  return ret_value;
 }   /* end DFPaddpal() */
 
 /*--------------------------------------------------------------------------
@@ -233,76 +266,98 @@ DFPaddpal(const char *filename, const VOIDP palette)
 intn
 DFPnpals(const char *filename)
 {
-    CONSTR(FUNC, "DFPnpals");
-    int32       file_id;
-    intn        curr_pal;       /* current palette count */
-    int32       nip8, nlut;     /* number of IP8s & number of LUTs */
-    intn        npals;          /* total number of palettes */
-    uint16      find_tag, find_ref;     /* storage for tag/ref pairs found */
-    int32       find_off, find_len;     /* storage for offset/lengths of tag/refs found */
-    int32      *pal_off;        /* storage for an array of palette offsets */
-    intn        i, j;           /* local counting variable */
+  CONSTR(FUNC, "DFPnpals");
+  int32       file_id;
+  intn        curr_pal;       /* current palette count */
+  int32       nip8, nlut;     /* number of IP8s & number of LUTs */
+  intn        npals;          /* total number of palettes */
+  uint16      find_tag, find_ref;     /* storage for tag/ref pairs found */
+  int32       find_off, find_len;     /* storage for offset/lengths of tag/refs found */
+  int32      *pal_off;        /* storage for an array of palette offsets */
+  intn        i, j;           /* local counting variable */
+  intn        ret_value = SUCCEED;
 
-    HEclear();
+  HEclear();
 
-    /* should use reopen if same file as last time - more efficient */
-    if ((file_id = DFPIopen(filename, DFACC_READ)) == FAIL)
-        HRETURN_ERROR(DFE_BADOPEN, FAIL);
+  /* should use reopen if same file as last time - more efficient */
+  if ((file_id = DFPIopen(filename, DFACC_READ)) == FAIL)
+    HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
     /* count number of IPs */
-    if ((nip8 = Hnumber(file_id, DFTAG_IP8)) == FAIL)
-        return (HDerr(file_id));
-    /* count number of LUTs */
-    if ((nlut = Hnumber(file_id, DFTAG_LUT)) == FAIL)
-        return (HDerr(file_id));
-    npals = (intn) (nip8 + nlut);
+  if ((nip8 = Hnumber(file_id, DFTAG_IP8)) == FAIL)
+    {
+      ret_value = (HDerr(file_id));
+      goto done;
+    }
 
-    /* if no palettes just return zero and get out */
-    if (npals == 0)
-      {
-          if (Hclose(file_id) == FAIL)
-              return FAIL;
+  /* count number of LUTs */
+  if ((nlut = Hnumber(file_id, DFTAG_LUT)) == FAIL)
+    {
+      ret_value = (HDerr(file_id));
+      goto done;
+    }
+  npals = (intn) (nip8 + nlut);
 
-          return (npals);
-      }
+  /* if no palettes just return zero and get out */
+  if (npals == 0)
+    {
+      if (Hclose(file_id) == FAIL)
+        {
+          ret_value = FAIL;
+          goto done;
+        }
 
-    /* Get space to store the palette offsets */
-    if ((pal_off = (int32 *) HDmalloc(npals * sizeof(int32))) == NULL)
-                    HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      ret_value = npals;
+      goto done;
+    }
 
-    /* go through the IP8s */
-    curr_pal = 0;
-    find_tag = find_ref = 0;
-    while (Hfind(file_id, DFTAG_IP8, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len, DF_FORWARD) == SUCCEED)
-      {
-          pal_off[curr_pal] = find_off;     /* store offset */
-          curr_pal++;
-      }     /* end while */
+  /* Get space to store the palette offsets */
+  if ((pal_off = (int32 *) HDmalloc(npals * sizeof(int32))) == NULL)
+    HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-    /* go through the LUTs */
-    find_tag = find_ref = 0;
-    while (Hfind(file_id, DFTAG_LUT, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len, DF_FORWARD) == SUCCEED)
-      {
-          pal_off[curr_pal] = find_off;     /* store offset */
-          curr_pal++;
-      }     /* end while */
+  /* go through the IP8s */
+  curr_pal = 0;
+  find_tag = find_ref = 0;
+  while (Hfind(file_id, DFTAG_IP8, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len, DF_FORWARD) == SUCCEED)
+    {
+      pal_off[curr_pal] = find_off;     /* store offset */
+      curr_pal++;
+    }     /* end while */
 
-    npals = curr_pal;   /* reset the number of palettes we really have */
-    for (i = 1; i < curr_pal; i++)
-      {     /* go through the palettes looking for duplicates */
-          for (j = 0; j < i; j++)
-            {
-                if (pal_off[i] == pal_off[j])
-                    npals--;    /* if duplicate found, decrement the number of palettes */
-            }   /* end for */
-      }     /* end for */
+  /* go through the LUTs */
+  find_tag = find_ref = 0;
+  while (Hfind(file_id, DFTAG_LUT, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len, DF_FORWARD) == SUCCEED)
+    {
+      pal_off[curr_pal] = find_off;     /* store offset */
+      curr_pal++;
+    }     /* end while */
 
-    HDfree((VOIDP) pal_off);   /* free offsets */
+  npals = curr_pal;   /* reset the number of palettes we really have */
+  for (i = 1; i < curr_pal; i++)
+    {     /* go through the palettes looking for duplicates */
+      for (j = 0; j < i; j++)
+        {
+          if (pal_off[i] == pal_off[j])
+            npals--;    /* if duplicate found, decrement the number of palettes */
+        }   /* end for */
+    }     /* end for */
 
-    if (Hclose(file_id) == FAIL)
-        HRETURN_ERROR(DFE_CANTCLOSE, FAIL);
+  HDfree((VOIDP) pal_off);   /* free offsets */
 
-    return (npals);
+  if (Hclose(file_id) == FAIL)
+    HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
+
+  ret_value = npals;
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* end DFPnpals() */
 
 /*--------------------------------------------------------------------------
@@ -325,27 +380,41 @@ DFPnpals(const char *filename)
 intn
 DFPreadref(const char *filename, uint16 ref)
 {
-    CONSTR(FUNC, "DFPreadref");
-    int32       file_id;
-    int32       aid;
+  CONSTR(FUNC, "DFPreadref");
+  int32       file_id;
+  int32       aid;
+  intn        ret_value = SUCCEED;
 
-    HEclear();
+  HEclear();
 
-    if ((file_id = DFPIopen(filename, DFACC_READ)) == FAIL)
-        HRETURN_ERROR(DFE_BADOPEN, FAIL);
+  if ((file_id = DFPIopen(filename, DFACC_READ)) == FAIL)
+    HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
-    aid = Hstartread(file_id, DFTAG_IP8, ref);
-    if (aid == FAIL)
-      {
-          aid = Hstartread(file_id, DFTAG_LUT, ref);
-          if (aid == FAIL)
-              return (HDerr(file_id));
-      }     /* end if */
+  aid = Hstartread(file_id, DFTAG_IP8, ref);
+  if (aid == FAIL)
+    {
+      aid = Hstartread(file_id, DFTAG_LUT, ref);
+      if (aid == FAIL)
+        {
+          ret_value = (HDerr(file_id));
+          goto done;
+        }
+    }     /* end if */
 
-    Hendaccess(aid);
-    Refset = ref;
+  Hendaccess(aid);
+  Refset = ref;
 
-    return (Hclose(file_id));
+  ret_value = (Hclose(file_id));
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* end DFPreadref() */
 
 /*--------------------------------------------------------------------------
@@ -368,11 +437,12 @@ DFPreadref(const char *filename, uint16 ref)
 intn
 DFPwriteref(const char *filename, uint16 ref)
 {
-    /* shut compiler up */
-    filename = filename;
+  intn ret_value = SUCCEED;
+  /* shut compiler up */
+  filename = filename;
+  Writeref = ref;
 
-    Writeref = ref;
-    return (SUCCEED);
+  return ret_value;
 }   /* end DFPwriteref() */
 
 /*--------------------------------------------------------------------------
@@ -393,8 +463,11 @@ DFPwriteref(const char *filename, uint16 ref)
 intn
 DFPrestart(void)
 {
-    Lastfile[0] = '\0';
-    return (SUCCEED);
+  intn ret_value = SUCCEED;
+
+  Lastfile[0] = '\0';
+
+  return ret_value;
 }   /* end DFPrestart() */
 
 /*--------------------------------------------------------------------------
@@ -415,7 +488,11 @@ DFPrestart(void)
 uint16
 DFPlastref(void)
 {
-    return (Lastref);
+  uint16 ret_value;
+
+  ret_value = Lastref;
+
+  return ret_value;
 }   /* end DFPlastref() */
 
 /**************************************************************************/
@@ -456,23 +533,34 @@ DFPlastref(void)
 PRIVATE int32
 DFPIopen(const char *filename, intn acc_mode)
 {
-    CONSTR(FUNC, "DFPIopen");
-    int32       file_id;
+  CONSTR(FUNC, "DFPIopen");
+  int32       file_id;
+  int32       ret_value = SUCCEED;
 
-    /* use reopen if same file as last time - more efficient */
-    if (HDstrncmp(Lastfile, filename, DF_MAXFNLEN) || (acc_mode == DFACC_CREATE))
-      {
-          /* treat create as different file */
-          if ((file_id = Hopen(filename, acc_mode, 0)) == FAIL)
-              HRETURN_ERROR(DFE_BADOPEN, FAIL);
-          Refset = 0;   /* no ref to get set for this file */
-          Readref = 0;
-      }     /* end if */
-    else if ((file_id = Hopen(filename, acc_mode, 0)) == FAIL)
-        HRETURN_ERROR(DFE_BADOPEN, FAIL);
+  /* use reopen if same file as last time - more efficient */
+  if (HDstrncmp(Lastfile, filename, DF_MAXFNLEN) || (acc_mode == DFACC_CREATE))
+    {
+      /* treat create as different file */
+      if ((file_id = Hopen(filename, acc_mode, 0)) == FAIL)
+        HGOTO_ERROR(DFE_BADOPEN, FAIL);
+      Refset = 0;   /* no ref to get set for this file */
+      Readref = 0;
+    }     /* end if */
+  else if ((file_id = Hopen(filename, acc_mode, 0)) == FAIL)
+    HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
     /* remember filename, so reopen may be used next time if same file */
-    HDstrncpy(Lastfile, filename, DF_MAXFNLEN);
+  HDstrncpy(Lastfile, filename, DF_MAXFNLEN);
 
-    return (file_id);
+  ret_value = (file_id);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* end DFPIopen() */

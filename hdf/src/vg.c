@@ -99,20 +99,31 @@ VSelts(int32 vkey)
 {
     vsinstance_t *w;
     VDATA      *vs;
+    int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSelts");
 
     if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
     if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
-        HRETURN_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
     if ((vs == NULL) || (vs->otag != DFTAG_VH))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    return (vs->nvertices);
+    ret_value = (vs->nvertices);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* VSelts */
 
 /* ------------------------------------------------------------------
@@ -131,20 +142,31 @@ VSgetinterlace(int32 vkey)
 {
     vsinstance_t *w;
     VDATA      *vs;
+    int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSgetinterlace");
 
     if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
     if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
-        HRETURN_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
     if (vs == NULL)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    return ((int32) (vs->interlace));
+    ret_value = ((int32) (vs->interlace));
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* VSgetinterlace */
 
 /*------------------------------------------------------------------
@@ -164,32 +186,43 @@ VSsetinterlace(int32 vkey, int32 interlace)
 {
     vsinstance_t *w;
     VDATA      *vs;
+    intn       ret_value = SUCCEED;
     CONSTR(FUNC, "VSsetinterlace");
 
     if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
     if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
-        HRETURN_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
     if (vs == NULL)
-        HRETURN_ERROR(DFE_BADPTR, FAIL);
+        HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     if (vs->access == 'r')
-        HRETURN_ERROR(DFE_RDONLY, FAIL);
+        HGOTO_ERROR(DFE_RDONLY, FAIL);
     if (vs->nvertices > 0)
-        HRETURN_ERROR(DFE_NORESET, FAIL);
+        HGOTO_ERROR(DFE_NORESET, FAIL);
 
     /* currently only 2 kinds allowed */
     if (interlace == FULL_INTERLACE || interlace == NO_INTERLACE)
       {
           vs->interlace = (int16) interlace;
-          return (TRUE);    /* ok */
+          ret_value = TRUE;    /* ok */
       }
     else
-        return (FAIL);
+        ret_value = FAIL;
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* VSsetinterlace */
 
 /*------------------------------------------------------------------
@@ -210,18 +243,19 @@ VSgetfields(int32 vkey, char *fields)
     int32       i;
     vsinstance_t *w;
     VDATA      *vs;
+    int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSgetfields");
 
     if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
     if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
-        HRETURN_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
     if (vs == NULL)
-        HRETURN_ERROR(DFE_BADPTR, FAIL);
+        HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     fields[0] = '\0';
     for (i = 0; i < vs->wlist.n; i++)
@@ -231,7 +265,17 @@ VSgetfields(int32 vkey, char *fields)
               HDstrcat(fields, ",");
       }
 
-    return ((int32) vs->wlist.n);
+    ret_value = ((int32) vs->wlist.n);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* VSgetfields */
 
 /*------------------------------------------------------------------
@@ -255,23 +299,24 @@ VSfexist(int32 vkey, char *fields)
     DYN_VWRITELIST *w;
     vsinstance_t *wi;
     VDATA      *vs;
+    intn       ret_value = SUCCEED;
     CONSTR(FUNC, "VSfexist");
 
     if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
     if (NULL == (wi = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
-        HRETURN_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = wi->vs;
 
     /* call scanattrs to parse the string */
     if (scanattrs(fields, &ac, &av) < 0)
-        HRETURN_ERROR(DFE_BADFIELDS, FAIL);
+        HGOTO_ERROR(DFE_BADFIELDS, FAIL);
 
     if ((vs == NULL) || (ac < 1))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* now check in vs's field table */
     w = &vs->wlist;
@@ -296,10 +341,23 @@ VSfexist(int32 vkey, char *fields)
 #endif /* VDATA_FIELDS_ALL_UPPER */
             }
           if (!found)
-              return (FAIL);
+            {
+              ret_value = FAIL;
+              goto done;
+            }
       }
 
-    return (TRUE);
+    ret_value = TRUE;
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }	/* VSfexist */
 
 /* -----------------------------------------------------------------
@@ -323,18 +381,19 @@ VSsizeof(int32 vkey, char *fields)
     char      **av;
     vsinstance_t *w;
     VDATA      *vs;
+    int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSsizeof");
 
     if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
     if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
-        HRETURN_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
     if (vs == NULL)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     totalsize = 0;
     if (fields == NULL)
@@ -345,7 +404,7 @@ VSsizeof(int32 vkey, char *fields)
     else
       {
 	  if ((scanattrs(fields, &ac, &av) < 0) || (ac < 1))
-	      HRETURN_ERROR(DFE_ARGS, FAIL);
+	      HGOTO_ERROR(DFE_ARGS, FAIL);
 	  for (i = 0; i < ac; i++)
 	    {   /* check fields in vs */
 		for (found = 0, j = 0; j < vs->wlist.n; j++)	
@@ -357,10 +416,20 @@ VSsizeof(int32 vkey, char *fields)
 		      }
 
 		if (!found)
-		    HRETURN_ERROR(DFE_ARGS, FAIL);
+		    HGOTO_ERROR(DFE_ARGS, FAIL);
 	    }	/* end for */
       }		/* end else */
-    return (totalsize);
+    ret_value = (totalsize);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* VSsizeof */
 
 /*----------------------------------------------------------------- 
@@ -429,17 +498,18 @@ VSsetname(int32 vkey, const char *vsname)
     VDATA      *vs;
     CONSTR(FUNC, "VSsetname");
     int         slen;
+    int32       ret_value = SUCCEED;
 
     if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
     if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
-        HRETURN_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
     if (vs == NULL)
-        HRETURN_ERROR(DFE_BADPTR, FAIL);
+        HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     if ((slen = HDstrlen(vsname)) > VSNAMELENMAX)
       {
@@ -449,7 +519,16 @@ VSsetname(int32 vkey, const char *vsname)
     else
         HDstrcpy(vs->vsname, vsname);
     vs->marked = TRUE;
-    return (SUCCEED);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* VSsetname */
 
 /* ------------------------------------------------------
@@ -471,17 +550,18 @@ VSsetclass(int32 vkey, const char *vsclass)
     VDATA      *vs;
     CONSTR(FUNC, "VSsetclass");
     int         slen;
+    int32       ret_value = SUCCEED;
 
     if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
     if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
-        HRETURN_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
     if (vs == NULL)
-        HRETURN_ERROR(DFE_BADPTR, FAIL);
+        HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     if ((slen = HDstrlen(vsclass)) > VSNAMELENMAX)
       {
@@ -491,7 +571,16 @@ VSsetclass(int32 vkey, const char *vsclass)
     else
         HDstrcpy(vs->vsclass, vsclass);
     vs->marked = TRUE;
-    return (SUCCEED);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* VSsetclass */
 
 /*------------------------------------------------------ 
@@ -510,21 +599,31 @@ VSgetname(int32 vkey, char *vsname)
 {
     vsinstance_t *w;
     VDATA      *vs;
+    int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSgetname");
 
     if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
     if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
-        HRETURN_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
     if (vs == NULL)
-        HRETURN_ERROR(DFE_BADPTR, FAIL);
+        HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     HDstrcpy(vsname, vs->vsname);
-    return (SUCCEED);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* VSgetname */
 
 /*------------------------------------------------------ 
@@ -543,21 +642,31 @@ VSgetclass(int32 vkey, char *vsclass)
 {
     vsinstance_t *w;
     VDATA      *vs;
+    int32     ret_value = SUCCEED;
     CONSTR(FUNC, "VSgetclass");
 
     if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vg's index in vgtab */
     if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
-        HRETURN_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
     if (vs == NULL)
-        HRETURN_ERROR(DFE_BADPTR, FAIL);
+        HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     HDstrcpy(vsclass, vs->vsclass);
-    return (SUCCEED);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* VSgetclass */
 
 /* ------------------------------------------------------------------ 
@@ -580,6 +689,7 @@ intn
 VSinquire(int32 vkey, int32 *nelt, int32 *interlace,
           char *fields, int32 *eltsize, char *vsname)
 {
+  intn ret_value = SUCCEED;
 #ifdef LATER
     CONSTR(FUNC, "VSinquire");
 #endif
@@ -595,7 +705,7 @@ VSinquire(int32 vkey, int32 *nelt, int32 *interlace,
     if (vsname)
         VSgetname(vkey, vsname);
 
-    return (SUCCEED);   /* ok */
+    return ret_value;   /* ok */
 }   /* VSinquire */
 
 /*-----------------------------------------------------------------
@@ -620,11 +730,12 @@ VSlone(HFILEID f, int32 *idarray, int32 asize)
     int32       i, vgid, vsid, vstag;
     int32       vkey;
     int32       nlone;          /* total number of lone vdatas */
+    int32       ret_value = SUCCEED;
     CONSTR(FUNC, "VSlone");
 
     /* -- allocate space for vdata refs, init to zeroes -- */
     if (NULL == (lonevdata = (uint8 *) HDmalloc(65000L * sizeof(uint8))))
-                    HRETURN_ERROR(DFE_NOSPACE, FAIL);
+                    HGOTO_ERROR(DFE_NOSPACE, FAIL);
     HDmemset(lonevdata, 0, 65000L * sizeof(uint8));
 
     /* -- look for all vdatas in the file, and flag (1) each -- */
@@ -660,7 +771,17 @@ VSlone(HFILEID f, int32 *idarray, int32 asize)
       }
     HDfree((VOIDP) lonevdata);
 
-    return (nlone);     /* return the TOTAL # of lone vdatas */
+    ret_value = nlone;     /* return the TOTAL # of lone vdatas */
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* VSlone */
 
 /*----------------------------------------------------------------- 
@@ -686,11 +807,12 @@ Vlone(HFILEID f, int32 *idarray, int32 asize)
     int32       vgid, vstag, id;
     int32       vkey;
     int32       nlone;          /* total number of lone vgroups */
+    int32       ret_value = SUCCEED;
     CONSTR(FUNC, "Vlone");
 
     /* -- allocate space for vgroup refs, init to zeroes -- */
     if (NULL == (lonevg = (uint8 *) HDmalloc(65000L * sizeof(uint8))))
-                    HRETURN_ERROR(DFE_NOSPACE, FAIL);
+                    HGOTO_ERROR(DFE_NOSPACE, FAIL);
     HDmemset(lonevg, 0, 65000L * sizeof(uint8));
 
     /* -- look for all vgroups in the file, and flag (1) each -- */
@@ -727,8 +849,17 @@ Vlone(HFILEID f, int32 *idarray, int32 asize)
       }
     HDfree((VOIDP) lonevg);
 
-    return (nlone);     /* return the TOTAL # of lone vgroups */
+    ret_value = nlone;     /* return the TOTAL # of lone vgroups */
 
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* Vlone */
 
 /* ----------------------------------------------------------------- 
@@ -748,6 +879,7 @@ Vfind(HFILEID f, const char *vgname)
 {
     int32       vgid = -1;
     vginstance_t    * v;
+    int32       ret_value = SUCCEED;
 #ifdef LATER
     CONSTR(FUNC, "Vfind");
 #endif
@@ -755,11 +887,28 @@ Vfind(HFILEID f, const char *vgname)
     while (-1L != (vgid = Vgetid(f, vgid)))
       {
         if((v=vginstance(f,(uint16)vgid))==NULL)
-            return(0);          /* error */
+          {
+            ret_value = 0;          /* error */
+            goto done;
+          }
         if (!HDstrcmp(vgname, v->vg->vgname)) 
-            return((int32)(v->vg->oref));  /* found the vdata */
+          {
+            ret_value = ((int32)(v->vg->oref));  /* found the vdata */
+            goto done;
+          }
       }
-    return (0);		/* not found */
+
+    ret_value =  0;		/* not found */
+
+done:
+  if(ret_value == 0)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }	/* Vfind */
 
 /*------------------------------------------------------------------
@@ -779,6 +928,7 @@ VSfind(HFILEID f, const char *vsname)
 {
     int32       vsid = -1;
     vsinstance_t    * v;
+    int32 ret_value = SUCCEED;
 #ifdef LATER
     CONSTR(FUNC, "VSfind");
 #endif
@@ -786,11 +936,28 @@ VSfind(HFILEID f, const char *vsname)
     while (-1L != (vsid = VSgetid(f, vsid)))
       {
         if((v=vsinstance(f,(uint16)vsid))==NULL)
-            return(0);          /* error */
+          {
+            ret_value = (0);          /* error */
+            goto done;
+          }
         if (!HDstrcmp(vsname, v->vs->vsname)) 
-            return((int32)(v->vs->oref));  /* found the vdata */
+          {
+            ret_value = ((int32)(v->vs->oref));  /* found the vdata */
+            goto done;
+          }
       }
-    return (0);     /* not found */
+
+    ret_value = (0);     /* not found */
+
+done:
+  if(ret_value == 0)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* VSfind */
 
 /* ----------------------------------------------------------------- 
@@ -810,6 +977,7 @@ Vfindclass(HFILEID f, const char *vgclass)
 {
     int32       vgid = -1;
     vginstance_t    * v;
+    int32       ret_value = SUCCEED;
 #ifdef LATER
     CONSTR(FUNC, "Vfind");
 #endif
@@ -817,11 +985,28 @@ Vfindclass(HFILEID f, const char *vgclass)
     while (-1L != (vgid = Vgetid(f, vgid)))
       {
         if((v=vginstance(f,(uint16)vgid))==NULL)
-            return(0);          /* error */
+          {
+            ret_value =(0);          /* error */
+            goto done;
+          }
         if (!HDstrcmp(vgclass, v->vg->vgclass)) 
-            return((int32)(v->vg->oref));  /* found the vgroup */
+          {
+            ret_value =((int32)(v->vg->oref));  /* found the vgroup */
+            goto done;
+          }
       }
-    return (0);		/* not found */
+
+    ret_value = (0);		/* not found */
+
+done:
+  if(ret_value == 0)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;    
 }	/* Vfindclass */
 
 /*------------------------------------------------------------------
@@ -841,6 +1026,7 @@ VSfindclass(HFILEID f, const char *vsclass)
 {
     int32       vsid = -1;
     vsinstance_t    * v;
+    int32       ret_value = SUCCEED;
 #ifdef LATER
     CONSTR(FUNC, "VSfind");
 #endif
@@ -848,11 +1034,28 @@ VSfindclass(HFILEID f, const char *vsclass)
     while (-1L != (vsid = VSgetid(f, vsid)))
       {
         if((v=vsinstance(f,(uint16)vsid))==NULL)
-            return(0);          /* error */
+          {
+            ret_value = (0);          /* error */
+            goto done;
+          }
         if (!HDstrcmp(vsclass, v->vs->vsclass)) 
-            return((int32)(v->vs->oref));  /* found the vdata */
+          {
+            ret_value =((int32)(v->vs->oref));  /* found the vdata */
+            goto done;
+          }
       }
-    return (0);     /* not found */
+
+    ret_value = (0);     /* not found */
+
+done:
+  if(ret_value == 0)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* VSfindclass */
 
 /* ------------------------------- Vsetzap -------------------------------- */

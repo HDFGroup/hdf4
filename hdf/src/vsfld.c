@@ -82,25 +82,26 @@ VSsetfields(int32 vkey, const char *fields)
     DYN_VWRITELIST *wlist;
     vsinstance_t *w;
     VDATA      *vs;
+    intn       ret_value = SUCCEED;
     CONSTR(FUNC, "VSsetfields");
 
     if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vs's index in vstab */
     if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
-        HRETURN_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
     if (vs == NULL)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if ((scanattrs(fields, &ac, &av) == FAIL) || (ac == 0))
-        HRETURN_ERROR(DFE_BADFIELDS, FAIL);
+        HGOTO_ERROR(DFE_BADFIELDS, FAIL);
 
      /* check number of fields limit  */
      if (ac > VSFIELDMAX)
-         HRETURN_ERROR(DFE_SYMSIZE,FAIL);
+         HGOTO_ERROR(DFE_SYMSIZE,FAIL);
 
     /*
      * write to an empty vdata : set the write list but do not set the
@@ -114,24 +115,24 @@ VSsetfields(int32 vkey, const char *fields)
 
           /* allocate space for the internal WRITELIST structures */
           if((wlist->type=HDmalloc(sizeof(int16)*ac))==NULL)
-              HRETURN_ERROR(DFE_NOSPACE,FAIL);
+              HGOTO_ERROR(DFE_NOSPACE,FAIL);
           if((wlist->isize=HDmalloc(sizeof(int16)*ac))==NULL)
             {
               HDfree(wlist->type);
-              HRETURN_ERROR(DFE_NOSPACE,FAIL);
+              HGOTO_ERROR(DFE_NOSPACE,FAIL);
             } /* end if */
           if((wlist->off=HDmalloc(sizeof(int16)*ac))==NULL)
             {
               HDfree(wlist->isize);
               HDfree(wlist->type);
-              HRETURN_ERROR(DFE_NOSPACE,FAIL);
+              HGOTO_ERROR(DFE_NOSPACE,FAIL);
             } /* end if */
           if((wlist->order=HDmalloc(sizeof(int16)*ac))==NULL)
             {
               HDfree(wlist->off);
               HDfree(wlist->isize);
               HDfree(wlist->type);
-              HRETURN_ERROR(DFE_NOSPACE,FAIL);
+              HGOTO_ERROR(DFE_NOSPACE,FAIL);
             } /* end if */
           if((wlist->name=HDmalloc(sizeof(char *)*ac))==NULL)
             {
@@ -139,7 +140,7 @@ VSsetfields(int32 vkey, const char *fields)
               HDfree(wlist->off);
               HDfree(wlist->isize);
               HDfree(wlist->type);
-              HRETURN_ERROR(DFE_NOSPACE,FAIL);
+              HGOTO_ERROR(DFE_NOSPACE,FAIL);
             } /* end if */
           if((wlist->esize=HDmalloc(sizeof(int16)*ac))==NULL)
             {
@@ -148,7 +149,7 @@ VSsetfields(int32 vkey, const char *fields)
               HDfree(wlist->off);
               HDfree(wlist->isize);
               HDfree(wlist->type);
-              HRETURN_ERROR(DFE_NOSPACE,FAIL);
+              HGOTO_ERROR(DFE_NOSPACE,FAIL);
             } /* end if */
 
           for (i = 0; i < ac; i++)
@@ -169,7 +170,7 @@ VSsetfields(int32 vkey, const char *fields)
                               HDfree(wlist->off);
                               HDfree(wlist->isize);
                               HDfree(wlist->type);
-                              HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                              HGOTO_ERROR(DFE_NOSPACE,FAIL);
                             } /* end if */
                           order = vs->usym[j].order;
                           wlist->type[wlist->n] = vs->usym[j].type;
@@ -177,17 +178,17 @@ VSsetfields(int32 vkey, const char *fields)
 
                           value = order * DFKNTsize(vs->usym[j].type | DFNT_NATIVE);
                           if (value > MAX_FIELD_SIZE)
-                              HRETURN_ERROR(DFE_BADFIELDS, FAIL);
+                              HGOTO_ERROR(DFE_BADFIELDS, FAIL);
                           wlist->esize[wlist->n] = (int16) value;
 
                           value = order * vs->usym[j].isize;
                           if (value > MAX_FIELD_SIZE)
-                              HRETURN_ERROR(DFE_BADFIELDS, FAIL);
+                              HGOTO_ERROR(DFE_BADFIELDS, FAIL);
                           wlist->isize[wlist->n] = (int16) value;
 
                           value = (int32) wlist->ivsize + (int32) (wlist->isize[wlist->n]);
                           if (value > MAX_FIELD_SIZE)
-                              HRETURN_ERROR(DFE_BADFIELDS, FAIL);
+                              HGOTO_ERROR(DFE_BADFIELDS, FAIL);
                           wlist->ivsize = (int16) value;
 
                           wlist->n++;
@@ -210,7 +211,7 @@ VSsetfields(int32 vkey, const char *fields)
                                     HDfree(wlist->off);
                                     HDfree(wlist->isize);
                                     HDfree(wlist->type);
-                                    HRETURN_ERROR(DFE_NOSPACE,FAIL);
+                                    HGOTO_ERROR(DFE_NOSPACE,FAIL);
                                   } /* end if */
                                 order = rstab[j].order;
                                 wlist->type[wlist->n] = rstab[j].type;
@@ -223,7 +224,7 @@ VSsetfields(int32 vkey, const char *fields)
                             }
                   }
                 if (!found)     /* field is not a defined field - error  */
-                    HRETURN_ERROR(DFE_BADFIELDS, FAIL);
+                    HGOTO_ERROR(DFE_BADFIELDS, FAIL);
             }
 
           /* *********************************************************** */
@@ -234,7 +235,8 @@ VSsetfields(int32 vkey, const char *fields)
                 j += wlist->isize[i];
             }
 
-          return (SUCCEED);     /* ok */
+          ret_value = (SUCCEED);     /* ok */
+          goto done;
       }     /* writing to empty vdata */
 
     /*
@@ -251,7 +253,7 @@ VSsetfields(int32 vkey, const char *fields)
 
           /* Allocate enough space for the read list */
           if((rlist->item=(intn *)HDmalloc(sizeof(intn)*(ac)))==NULL)
-              HRETURN_ERROR(DFE_NOSPACE, FAIL);
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
           for (i = 0; i < ac; i++)
             {
                 found = FALSE;
@@ -265,13 +267,24 @@ VSsetfields(int32 vkey, const char *fields)
                           break;
                       }
                 if (!found)     /* field does not exist - error */
-                    HRETURN_ERROR(DFE_BADFIELDS, FAIL);
+                    HGOTO_ERROR(DFE_BADFIELDS, FAIL);
             }
 
-          return (SUCCEED);
+          ret_value =  (SUCCEED);
+          goto done;
       }     /* setting read list */
 
-    return (FAIL);
+    ret_value = (FAIL);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* VSsetfields */
 
 /* ------------------------------------------------------------------ */
@@ -289,22 +302,23 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
     intn j;
     vsinstance_t *w;
     VDATA      *vs;
+    intn       ret_value = SUCCEED;
     CONSTR(FUNC, "VSfdefine");
 
     if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vs's index in vstab */
     if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
-        HRETURN_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
     if ((vs == NULL) || (scanattrs(field, &ac, &av) == FAIL) || (ac != 1))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* The order of a variable is stored in a 16-bit number, so have to keep this limit -QAK */
     if (order < 1 || order > MAX_ORDER)
-        HRETURN_ERROR(DFE_BADORDER, FAIL);
+        HGOTO_ERROR(DFE_BADORDER, FAIL);
 
     /*
      ** check for any duplicates
@@ -340,16 +354,16 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
           usymid = vs->nusym;
           /* use temporary pointer in case we run out of memory, so we don't loose original list */
           if((tmp_sym=(SYMDEF *)HDrealloc(tmp_sym,sizeof(SYMDEF)*(usymid+1)))==NULL)
-              HRETURN_ERROR(DFE_NOSPACE,FAIL);
+              HGOTO_ERROR(DFE_NOSPACE,FAIL);
           vs->usym=tmp_sym;
       } /* end else */
 
     if ((vs->usym[usymid].isize = (int16) DFKNTsize((int32) localtype)) == FAIL)
-        HRETURN_ERROR(DFE_BADTYPE, FAIL);
+        HGOTO_ERROR(DFE_BADTYPE, FAIL);
 
     /* Copy the symbol [field] information */
     if ((vs->usym[usymid].name = (char *) HDstrdup(av[0]) ) == NULL)
-        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
     vs->usym[usymid].type = (int16) localtype;
     vs->usym[usymid].order = (int16) order;
 
@@ -357,14 +371,22 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
 /* Now we are dynamicly allocating the symbol table, so no overflow -QAK */
     /* prevent user-symbol table overflow */
     if (vs->nusym >= VSFIELDMAX)
-        HRETURN_ERROR(DFE_SYMSIZE, FAIL);
+        HGOTO_ERROR(DFE_SYMSIZE, FAIL);
 #endif /* OLD_WAY */
 
     /* increment vs->nusym only if no user field has been redefined */
     if (!replacesym)
         vs->nusym++;
 
-    return (SUCCEED);
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }	/* VSfdefine */
 
 /* ------------------------------------------------------------------------ */
@@ -389,6 +411,7 @@ VFnfields(int32 vkey)
 {
     vsinstance_t *w;
     VDATA      *vs;
+    int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VFnfeilds");
 
     if (!VALIDVSID(vkey))
@@ -399,19 +422,23 @@ VFnfields(int32 vkey)
 
     /* locate vs's index in vstab */
     if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
-      {
-          HERROR(DFE_NOVS);
-          return (FAIL);
-      }
+      HGOTO_ERROR(DFE_NOVS,FAIL);
 
     vs = w->vs;
     if ((vs == NULL) || (vs->otag != VSDESCTAG))
-      {
-          HERROR(DFE_ARGS);
-          return (FAIL);
-      }
+      HGOTO_ERROR(DFE_ARGS,FAIL);
 
-    return ((int32) vs->wlist.n);
+    ret_value = ((int32) vs->wlist.n);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }	/* VFnfields */
 
 /* ----------------------------- VFfieldname ------------------------------ */
@@ -427,30 +454,31 @@ VFfieldname(int32 vkey, int32 index)
 {
     vsinstance_t *w;
     VDATA      *vs;
+    char       *ret_value = NULL; /* FAIL */
     CONSTR(FUNC, "VFfieldname");
 
     if (!VALIDVSID(vkey))
-      {
-          HERROR(DFE_ARGS);
-          return (NULL);
-      }
+      HGOTO_ERROR(DFE_ARGS,NULL);
 
     /* locate vs's index in vstab */
     if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
-      {
-          HERROR(DFE_NOVS);
-          return (NULL);
-      }
+      HGOTO_ERROR(DFE_NOVS,NULL);
 
     vs = w->vs;
     if ((vs == NULL) || (vs->otag != VSDESCTAG))
-      {
-          HERROR(DFE_ARGS);
-          return (NULL);
-      }
+      HGOTO_ERROR(DFE_ARGS,NULL);
 
-    return ((char *) vs->wlist.name[index]);
+    ret_value = ((char *) vs->wlist.name[index]);
 
+done:
+  if(ret_value == NULL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* VFfieldname */
 
 /* ----------------------------- VFfieldtype ------------------------------ */
@@ -464,30 +492,31 @@ VFfieldtype(int32 vkey, int32 index)
 {
     vsinstance_t *w;
     VDATA      *vs;
+    int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VFfeildtype");
 
     if (!VALIDVSID(vkey))
-      {
-          HERROR(DFE_ARGS);
-          return (FAIL);
-      }
+      HGOTO_ERROR(DFE_ARGS,FAIL);
 
     /* locate vs's index in vstab */
     if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
-      {
-          HERROR(DFE_NOVS);
-          return (FAIL);
-      }
+      HGOTO_ERROR(DFE_NOVS,FAIL);
 
     vs = w->vs;
     if ((vs == NULL) || (vs->otag != VSDESCTAG))
-      {
-          HERROR(DFE_ARGS);
-          return (FAIL);
-      }
+      HGOTO_ERROR(DFE_ARGS,FAIL);
 
-    return ((int32) vs->wlist.type[index]);
+    ret_value = ((int32) vs->wlist.type[index]);
 
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* VFfieldtype */
 
 /* ----------------------------- VFfieldisize ------------------------------ */
@@ -501,30 +530,31 @@ VFfieldisize(int32 vkey, int32 index)
 {
     vsinstance_t *w;
     VDATA      *vs;
+    int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VFfieldisize");
 
     if (!VALIDVSID(vkey))
-      {
-          HERROR(DFE_ARGS);
-          return (FAIL);
-      }
+      HGOTO_ERROR(DFE_ARGS,FAIL);
 
     /* locate vs's index in vstab */
     if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
-      {
-          HERROR(DFE_NOVS);
-          return (FAIL);
-      }
+      HGOTO_ERROR(DFE_NOVS,FAIL);
 
     vs = w->vs;
     if ((vs == NULL) || (vs->otag != VSDESCTAG))
-      {
-          HERROR(DFE_ARGS);
-          return (FAIL);
-      }
+      HGOTO_ERROR(DFE_ARGS,FAIL);
 
-    return ((int32) vs->wlist.isize[index]);
+    ret_value = ((int32) vs->wlist.isize[index]);
 
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* VFfieldisize */
 
 /* ----------------------------- VFfieldesize ------------------------------ */
@@ -538,30 +568,31 @@ VFfieldesize(int32 vkey, int32 index)
 {
     vsinstance_t *w;
     VDATA      *vs;
+    int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VFfieldisize");
 
     if (!VALIDVSID(vkey))
-      {
-          HERROR(DFE_ARGS);
-          return (FAIL);
-      }
+      HGOTO_ERROR(DFE_ARGS,FAIL);
 
     /* locate vs's index in vstab */
     if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
-      {
-          HERROR(DFE_NOVS);
-          return (FAIL);
-      }
+      HGOTO_ERROR(DFE_NOVS,FAIL);
 
     vs = w->vs;
     if ((vs == NULL) || (vs->otag != VSDESCTAG))
-      {
-          HERROR(DFE_ARGS);
-          return (FAIL);
-      }
+      HGOTO_ERROR(DFE_ARGS,FAIL);
 
-    return ((int32) vs->wlist.esize[index]);
+    ret_value = ((int32) vs->wlist.esize[index]);
 
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* VFfieldesize */
 
 /* ----------------------------- VFfieldorder ------------------------------ */
@@ -575,28 +606,30 @@ VFfieldorder(int32 vkey, int32 index)
 {
     vsinstance_t *w;
     VDATA      *vs;
+    int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VFfieldorder");
 
     if (!VALIDVSID(vkey))
-      {
-          HERROR(DFE_ARGS);
-          return (FAIL);
-      }
+      HGOTO_ERROR(DFE_ARGS,FAIL);
 
     /* locate vs's index in vstab */
     if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
-      {
-          HERROR(DFE_NOVS);
-          return (FAIL);
-      }
+      HGOTO_ERROR(DFE_NOVS,FAIL);
 
     vs = w->vs;
     if ((vs == NULL) || (vs->otag != VSDESCTAG))
-      {
-          HERROR(DFE_ARGS);
-          return (FAIL);
-      }
+      HGOTO_ERROR(DFE_ARGS,FAIL);
 
-    return ((int32) vs->wlist.order[index]);
+    ret_value = ((int32) vs->wlist.order[index]);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }	/* VFfieldorder */
 

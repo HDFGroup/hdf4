@@ -59,11 +59,14 @@ VHstoredata(HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype,
 
 {
     int32       order = 1;
+    int32       ret_value;
 #ifdef LATER
     CONSTR(FUNC, "VHstoredata");
 #endif
 
-    return((int32)VHstoredatam(f, field, buf, n, datatype, vsname, vsclass, order));
+    ret_value = ((int32)VHstoredatam(f, field, buf, n, datatype, vsname, vsclass, order));
+
+    return ret_value;
 } /* end VHstoredata */
 
 /* ----------------------- VHstoredatam ----------------------------
@@ -96,31 +99,42 @@ VHstoredatam(HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype, char 
 {
     int32       ref;
     int32       vs;
+    int32       ret_value = SUCCEED;
     CONSTR(FUNC, "VHstoredatam");
 
     if ((vs = VSattach(f, -1, "w")) == FAIL)
-        HRETURN_ERROR(DFE_CANTATTACH,FAIL);
+        HGOTO_ERROR(DFE_CANTATTACH,FAIL);
 
     if ( VSfdefine(vs, field, datatype, order) == FAIL)
-        HRETURN_ERROR(DFE_BADFIELDS,FAIL);
+        HGOTO_ERROR(DFE_BADFIELDS,FAIL);
 
     if ( VSsetfields(vs, field) == FAIL)
-        HRETURN_ERROR(DFE_BADFIELDS,FAIL);
+        HGOTO_ERROR(DFE_BADFIELDS,FAIL);
 
     if (n != VSwrite(vs, buf, n, FULL_INTERLACE))
-        HRETURN_ERROR(DFE_BADATTACH,FAIL);
+        HGOTO_ERROR(DFE_BADATTACH,FAIL);
 
     if(VSsetname(vs, vsname)==FAIL)
-        HRETURN_ERROR(DFE_BADVSNAME,FAIL);
+        HGOTO_ERROR(DFE_BADVSNAME,FAIL);
 
     if(VSsetclass(vs, vsclass)==FAIL)
-        HRETURN_ERROR(DFE_BADVSCLASS,FAIL);
+        HGOTO_ERROR(DFE_BADVSCLASS,FAIL);
 
     ref = VSQueryref(vs);
     if(VSdetach(vs)==FAIL)
-        HRETURN_ERROR(DFE_CANTDETACH,FAIL);
+        HGOTO_ERROR(DFE_CANTDETACH,FAIL);
 
-    return ((int32) ref);
+    ret_value = ((int32) ref);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* VHstoredatam */
 
 /* ------------------------ VHmakegroup ------------------------------- */
@@ -155,28 +169,39 @@ VHmakegroup(HFILEID f, int32 tagarray[], int32 refarray[], int32 n, char *vgname
 {
     int32       ref, i;
     int32       vg;
+    int32       ret_value = SUCCEED;
     CONSTR(FUNC, "VHmakegroup");
 
     if (( vg = Vattach(f, -1, "w"))== FAIL)
-        HRETURN_ERROR(DFE_CANTATTACH,FAIL);
+        HGOTO_ERROR(DFE_CANTATTACH,FAIL);
 
     if(Vsetname(vg, vgname)==FAIL)
-        HRETURN_ERROR(DFE_BADVGNAME,FAIL);
+        HGOTO_ERROR(DFE_BADVGNAME,FAIL);
 
     if(Vsetclass(vg, vgclass)==FAIL)
-        HRETURN_ERROR(DFE_BADVGCLASS,FAIL);
+        HGOTO_ERROR(DFE_BADVGCLASS,FAIL);
 
     for (i = 0; i < n; i++)
       {
           if ( Vaddtagref(vg, tagarray[i], refarray[i]) == FAIL)
-              HRETURN_ERROR(DFE_CANTADDELEM,FAIL);
+              HGOTO_ERROR(DFE_CANTADDELEM,FAIL);
       }
 
     ref = VQueryref(vg);
     if(Vdetach(vg)==FAIL)
-        HRETURN_ERROR(DFE_CANTDETACH,FAIL);
+        HGOTO_ERROR(DFE_CANTDETACH,FAIL);
 
-    return (ref);
+    ret_value = (ref);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* VHmakegroup */
 
 /* ------------------------------------------------------------------ */

@@ -75,13 +75,16 @@ PRIVATE uint8 *Vtbuf = NULL;
 --------------------------------------------------------------------------*/
 intn VSPfreebuf(void)
 {
-    if(Vtbuf!=NULL)
-      {
-          HDfree(Vtbuf);
-          Vtbuf=NULL;
-          Vtbufsize = 0;
-      } /* end if */
-    return(SUCCEED);
+  intn  ret_value = SUCCEED;
+
+  if(Vtbuf!=NULL)
+    {
+      HDfree(Vtbuf);
+      Vtbuf=NULL;
+      Vtbufsize = 0;
+    } /* end if */
+
+  return ret_value;
 } /* end VSPfreebuf() */
 
 /* --------------------------- VSseek -------------------------------------- */
@@ -102,26 +105,37 @@ VSseek(int32 vkey, int32 eltpos)
     int32       ret, offset;
     vsinstance_t *w;
     VDATA      *vs;
+    int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSseek");
 
     if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vs's index in vstab */
     if (NULL == (w = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
-        HRETURN_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
     if ((vs == NULL) || (eltpos < 0))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     offset = eltpos * vs->wlist.ivsize;
 
     ret = Hseek(vs->aid, offset, DF_START);
     if (ret == FAIL)
-        HRETURN_ERROR(DFE_BADSEEK, FAIL);
+        HGOTO_ERROR(DFE_BADSEEK, FAIL);
 
-    return (eltpos);
+    ret_value = (eltpos);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }	/* VSseek */
 
 /* ------------------------------------------------------------------------ */
@@ -147,27 +161,28 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
     int32       uvsize;         /* size of "element" as NEEDED by user */
     vsinstance_t *wi;
     VDATA      *vs;
+    int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSread");
 
     if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vs's index in vstab */
     if (NULL == (wi = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
-        HRETURN_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = wi->vs;
     if (vs == NULL)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if ((vs->aid == NO_ID) || (vs->nvertices == 0))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if (vexistvs(vs->f, vs->oref) == FAIL)
-        HRETURN_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     if (interlace != FULL_INTERLACE && interlace != NO_INTERLACE)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     w = &(vs->wlist);
     r = &(vs->rlist);
@@ -180,7 +195,7 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
           if (Vtbuf)
               HDfree((VOIDP) Vtbuf);
           if ((Vtbuf = (uint8 *) HDmalloc(Vtbufsize)) == NULL)
-              HRETURN_ERROR(DFE_NOSPACE, FAIL);
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
       }
 
     /* ================ start reading ============================== */
@@ -191,7 +206,8 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
       {
           HERROR(DFE_READERROR);
           HEreport("Tried to read %d, only read %d", nelt * hsize, nv);
-          return FAIL;
+          ret_value = FAIL;
+          goto done;
       }
 
     /*
@@ -223,7 +239,8 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 
           DFKnumin(b2, b1, (uint32) w->order[0] * nelt, 0, 0);
 
-          return (nelt);
+          ret_value = (nelt);
+          goto done;
       }     /* case (e) */
 
     /* ----------------------------------------------------------------- */
@@ -335,7 +352,17 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
             }
       }     /* case (d) */
 
-    return (nv / hsize);
+    ret_value = (nv / hsize);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* VSread */
 
 /* ------------------------------------------------------------------ */
@@ -371,36 +398,38 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
     VDATA      *vs;
     int32       bytes;          /* number of elements / bytes to write next time */
     int32       chunk, done;    /* number of records to do / done */
+    int32       ret_value = SUCCEED;
     CONSTR(FUNC, "VSwrite");
 
     if (!VALIDVSID(vkey))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vs's index in vstab */
     if (NULL == (wi = (vsinstance_t *) vsinstance(VSID2VFILE(vkey), (uint16) VSID2SLOT(vkey))))
-        HRETURN_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = wi->vs;
 
     if ((nelt <= 0) || (vs == NULL))
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if (vs->access != 'w')
-        HRETURN_ERROR(DFE_BADACC, FAIL);
+        HGOTO_ERROR(DFE_BADACC, FAIL);
 
     if (-1L == vexistvs(vs->f, vs->oref))
-        HRETURN_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     w = & vs->wlist;
     if (w->n == 0)
       {
           HERROR(DFE_NOVS);
           HEreport("No fields set for writing");
-          return (FAIL);
+          ret_value = (FAIL);
+          goto done;
       }
 
     if (interlace != NO_INTERLACE && interlace != FULL_INTERLACE)
-        HRETURN_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     hdf_size = w->ivsize;   /* as stored in HDF file */
     total_bytes = hdf_size * nelt;
@@ -410,7 +439,7 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
       {
           vs->aid = Hstartwrite(vs->f, DFTAG_VS, vs->oref, total_bytes);
           if (vs->aid == FAIL)
-              HRETURN_ERROR(DFE_BADAID, FAIL);
+              HGOTO_ERROR(DFE_BADAID, FAIL);
       }
 
     /*
@@ -497,7 +526,7 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
                 if (Vtbuf)
                     HDfree((VOIDP) Vtbuf);
                 if ((Vtbuf = (uint8 *) HDmalloc(Vtbufsize)) == NULL)
-                    HRETURN_ERROR(DFE_NOSPACE, FAIL);
+                    HGOTO_ERROR(DFE_NOSPACE, FAIL);
             }
 
           done = 0;
@@ -543,7 +572,7 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
                 /* write the converted data to the file */
                 status = Hwrite(vs->aid, bytes, (uint8 *) Vtbuf);
                 if (status != bytes)
-                    HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+                    HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
                 /* record what we've done and move to next group */
                 done += chunk;
@@ -569,7 +598,7 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 		if (Vtbuf)
 		    HDfree((VOIDP) Vtbuf);
 		if ((Vtbuf = (uint8 *) HDmalloc(Vtbufsize)) == NULL)
-		    HRETURN_ERROR(DFE_NOSPACE, FAIL);
+		    HGOTO_ERROR(DFE_NOSPACE, FAIL);
 	    }
 
 	  /* ----------------------------------------------------------------- */
@@ -651,7 +680,7 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 
 	  status = Hwrite(vs->aid, total_bytes, (uint8 *) Vtbuf);
 	  if (status != total_bytes)
-	      HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+	      HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
       }     /* cases a, b, and d */
 
@@ -660,7 +689,17 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
         vs->nvertices = new_size;
     vs->marked = 1;
 
-    return (nelt);
+    ret_value = (nelt);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }	/* VSwrite */
 
 /* ------------------------------------------------------------------ */
