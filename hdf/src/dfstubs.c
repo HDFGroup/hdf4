@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1993/05/11 16:57:03  koziol
-Fixed two leaking AID places.
+Revision 1.7  1993/05/13 20:05:03  chouck
+Undid Hendaccess() call in DFfind().  The search AID is freed in DFclose()
 
+ * Revision 1.6  1993/05/11  16:57:03  koziol
+ * Fixed two leaking AID places.
+ *
  * Revision 1.5  1993/04/22  15:06:35  chouck
  * A plain call to free() had snuck through
  *
@@ -422,7 +425,6 @@ DFfind(dfile, ptr)
     Hinquire(search_aid, NULL, &ptr->tag, &ptr->ref, &ptr->length, &ptr->offset,
 	     NULL, NULL, NULL);
 
-    Hendaccess(search_aid);
     return(0);
 }
 
