@@ -166,7 +166,7 @@ extern intn Hfidinquire
 */
 
 extern VOIDP HDmemfill
-  (VOIDP dest,const VOIDP src,uint32 item_size,uint32 num_items);
+  PROTO((VOIDP dest,const VOIDP src,uint32 item_size,uint32 num_items));
 
 extern char _HUGE *HIstrncpy
   PROTO((register char _HUGE *dest, register char _HUGE *source, int32 len));
