@@ -557,7 +557,7 @@ color_quant_prescan (decompress_info_ptr cinfo, int num_rows,
 		     JSAMPIMAGE image_data, JSAMPARRAY workspace)
 {
     /* shut compiler up */
-    workspace=workspace; image_data=image_data; num_rows;
+    workspace=workspace; image_data=image_data; num_rows=num_rows;
   ERREXIT(cinfo->emethods, "Should not get here!");
 }
 

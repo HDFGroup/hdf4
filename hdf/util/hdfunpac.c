@@ -45,7 +45,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* Prototypes declaration */
 int main
-    (int, char **);
+    (int, char *a[]);
 void hdferror
     (void);
 void error
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 {
     int32 infile, aid, ret;
     char *filename;
-    char datafilename[DF_MAXFNLEN] = "";
+    char datafilename[DF_MAXFNLEN];
 
     uint16 tag;
     uint16 ref;
