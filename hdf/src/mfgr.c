@@ -132,6 +132,9 @@ intn GRsetcompress(int32 riid,comp_coder_t comp_type,comp_info *cinfo)
     - Makes the image data of an RI into a compressed special element.
 intn GRgetcompress(int32 riid,comp_coder_t* comp_type,comp_info *cinfo)
     - Retrieves the compression information of a raster image's data.
+intn GRgetcompinfo(int32 riid,comp_coder_t* comp_type,comp_info *cinfo)
+    - Retrieves the compression information of a raster image's data.
+      Will replace GRgetcompress in the future.
 
 Attribute Functions:
 intn GRsetattr(int32 dimid|riid|grid,char *name,int32 attr_nt,int32 count,void * data)
@@ -4819,6 +4822,99 @@ done:
   /* Normal function cleanup */
   return ret_value;
 } /* end GRgetcompress() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRgetcompinfo
+
+ PURPOSE
+    Get the compression information of a raster image's data.
+
+ USAGE
+    intn GRgetcompinfo(riid,comp_type,cinfo)
+        int32 riid;		   IN: RI ID from GRselect/GRcreate
+        comp_coder_t* comp_type;   OUT: type of compression
+        comp_info* cinfo;	   OUT: retrieved compression information
+
+ RETURNS
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    This routine gets the compression type of the given RI's data, then
+    retrieves the appropriate information into the provided compression
+    info structure.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    JPEG information is currently not retrievable because the JPEG 
+    parameters, 'quality' and 'force_baseline', are irreversibly 
+    mapped to a quantization table.  Thus, only the correct compression 
+    type will be returned; cinfo will only contain 0s.
+
+ EXAMPLES
+ REVISION LOG
+    July 2001: Added to fix bug #307 - BMR (from GRgetcompress)
+    Apr 2005:  This function was actually created at this time, but it is
+               almost a duplicate of GRgetcompress, which is intended to be
+               removed in the future, due to its incorrect behavior.  The
+               only difference is the call to the low-level routine,
+               HCPgetcompinfo, instead of HCPgetcompress.
+
+--------------------------------------------------------------------------*/
+intn GRgetcompinfo(int32 riid, comp_coder_t* comp_type, comp_info* cinfo)
+{
+    CONSTR(FUNC, "GRgetcompinfo");	/* for HGOTO_ERROR */
+    ri_info_t *ri_ptr;          	/* ptr to the image to work with */
+    int32 file_id;
+    uint16 scheme;	/* compression scheme used for JPEG images */
+    intn  ret_value = SUCCEED;
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+    /* check the validity of the RI ID */
+    if (HAatom_group(riid) != RIIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* and check the output arguments */
+    if (comp_type == NULL || cinfo == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* locate RI's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
+        HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+    file_id = ri_ptr->gr_ptr->hdf_file_id;	/* temporary use */
+
+    /* If the compression scheme used was JPEG, return the compression type
+       and 0 for the 'quality' and 'force_baseline' parameters, because 
+       these parameters are currently not possible to be retrieved. */
+    scheme = ri_ptr->img_dim.comp_tag;
+    if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5
+            || scheme==DFTAG_JPEG || scheme==DFTAG_GREYJPEG)
+    {
+	*comp_type = COMP_CODE_JPEG;
+	cinfo->jpeg.quality = 0;
+	cinfo->jpeg.force_baseline = 0;
+    }
+    else
+    {
+	/* use lower-level routine to get the compression information */
+	ret_value = HCPgetcompinfo(file_id, ri_ptr->img_tag, ri_ptr->img_ref,
+                                comp_type, cinfo);
+	if (ret_value == FAIL)
+	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    }
+
+done:
+  if(ret_value == 0)
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+  return ret_value;
+} /* end GRgetcompinfo() */
 
 /*--------------------------------------------------------------------------
  NAME

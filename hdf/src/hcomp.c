@@ -1013,7 +1013,117 @@ done:
 
   /* Normal function cleanup */
   return ret_value;
-} /* HCgetcompress */
+} /* HCPgetcompress */
+
+
+/*--------------------------------------------------------------------------
+ NAME
+    HCPgetcompinfo -- Retrieves compression information of an element
+ USAGE
+    intn HCPgetcompinfo(aid, coder_type, c_info)
+    int32 aid;                  IN: access record ID
+    comp_coder_t* coder_type;   OUT: the type of compression
+    comp_info* c_info;          OUT: ptr to compression information
+                                structure for storing the retrieved info
+ RETURNS
+    SUCCEED/FAIL
+ DESCRIPTION
+    This routine retrieves the compression type and the compression
+    information of the element, identified by 'aid'.  The routine is 
+    used by GRgetcompinfo and SDgetcompinfo at this time.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+    July 2001: Added to fix bug #307 - BMR
+    Dec. 2004: Changed name to HCPgetcompress, to be consistent with other
+               practice.  REM
+    Apr. 2005:	HCPgetcompinfo was added to fix bugzilla #130 and may replace 
+		HCPgetcompress in the future because HCPgetcompress did not 
+		behave correctly.  The revision logs above are carried over 
+		from HCPgetcompress for the records.
+--------------------------------------------------------------------------*/
+intn
+HCPgetcompinfo(int32 file_id,
+              uint16 data_tag, uint16 data_ref,
+              comp_coder_t* comp_type,  /* OUT: compression type */
+              comp_info* c_info)        /* OUT: retrieved compression info */
+{
+    CONSTR(FUNC, "HCPgetcompinfo");	/* for HGOTO_ERROR */
+    int32   aid=0, status;
+    accrec_t*    access_rec=NULL;	/* access element record */
+    compinfo_t*  info=NULL;		/* compressed element information */
+    model_info  m_info;			/* modeling information - dummy */
+    intn       ret_value=SUCCEED;
+
+    /* clear error stack */
+    HEclear();
+
+    /* start read access on the access record of the data element, which
+       is being inquired for its compression information */
+    aid = Hstartread(file_id, data_tag, data_ref);
+
+    /* get the access_rec pointer */
+    access_rec = HAatom_object(aid);
+    if (access_rec == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* if the element is compressed, get the compression info as requested */
+    if (access_rec->special == SPECIAL_COMP)
+    {
+        info = (compinfo_t *) access_rec->special_info;
+        if (info == NULL) HGOTO_ERROR(DFE_COMPINFO, FAIL);
+
+        status = HCIread_header(access_rec, info, c_info, &m_info);
+        if (status == FAIL) HGOTO_ERROR(DFE_COMPINFO, FAIL);
+
+        /* get the compression type */
+        *comp_type = info->cinfo.coder_type;
+
+    }  /* end if element is compressed */
+
+    /* if the element is chunked, call HMCgetcompress to get the 
+	compression info as appropriate */
+    else if (access_rec->special == SPECIAL_CHUNKED)
+    {
+	status = HMCgetcompress(access_rec, comp_type, c_info);
+        if (status == FAIL) HGOTO_ERROR(DFE_COMPINFO, FAIL);
+    }
+
+    /* return COMP_CODE_NONE for a non-compressed element */
+    /* Note: SPECIAL_COMPRAS may need special handling */
+    else if (access_rec->special == SPECIAL_LINKED ||
+             access_rec->special == SPECIAL_EXT ||
+             access_rec->special == SPECIAL_VLINKED ||
+             access_rec->special == SPECIAL_BUFFERED ||
+             access_rec->special == SPECIAL_COMPRAS ||
+             access_rec->special == 0)
+    {
+        *comp_type = COMP_CODE_NONE;
+    }
+
+    /* flag the error when access_rec->special is not something valid */
+    else 
+    {
+	*comp_type = COMP_CODE_INVALID; 
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+    }
+    /* end access to the aid appropriately */
+    if (Hendaccess(aid)== FAIL)
+        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+
+done:
+  if(ret_value == FAIL)
+    { /* Error condition cleanup */
+       /* end access to the aid if it's been accessed */
+        if (aid != 0)
+            if (Hendaccess(aid)== FAIL)
+                HERROR(DFE_CANTENDACCESS);
+    } /* end if */
+
+  /* Normal function cleanup */
+  return ret_value;
+} /* HCPgetcompinfo */
 
 /*--------------------------------------------------------------------------
  NAME
