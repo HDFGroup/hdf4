@@ -15,10 +15,6 @@
 #include "hdiff_list.h"
 #include "hdiff_mattbl.h"
 
-
-
-
-
 /*-------------------------------------------------------------------------
  * Function: hdiff
  *
@@ -32,7 +28,6 @@
  *
  *-------------------------------------------------------------------------
  */
-
 
 int hdiff(const char *fname1, 
           const char *fname2, 
@@ -77,13 +72,13 @@ int hdiff(const char *fname1,
  if ((file1_id = Hopen(fname1, DFACC_READ, 0))==FAIL)
  {
   printf("Exiting: Hopen failed on <%s>", fname1);
-  goto out;
+  return FAIL;
  }
  
  if ((file2_id = Hopen(fname2, DFACC_READ, 0))==FAIL)
  {
   printf("Exiting: Hopen failed on <%s>", fname2);
-  goto out;
+  return FAIL;
  }
 
 /*-------------------------------------------------------------------------
@@ -93,11 +88,11 @@ int hdiff(const char *fname1,
 
  if ((sd1_id = SDstart(fname1, DFACC_RDONLY))==FAIL) {
   printf("SDstart failed on <%s>", fname1);
-  goto out;
+  return FAIL;
  }
  if ((sd2_id = SDstart(fname2, DFACC_RDONLY))==FAIL) {
   printf("SDstart failed on <%s>", fname2);
-  goto out;
+  return FAIL;
  }
 
 /*-------------------------------------------------------------------------
@@ -107,11 +102,11 @@ int hdiff(const char *fname1,
 
  if ((gr1_id = GRstart(file1_id))==FAIL) {
   printf("GRstart failed on <%s>", fname1);
-  goto out;
+  return FAIL;
  }
  if ((gr2_id = GRstart(file2_id))==FAIL) {
   printf("GRstart failed on <%s>", fname2);
-  goto out;
+  return FAIL;
  }
 
 /*-------------------------------------------------------------------------
@@ -143,25 +138,30 @@ int hdiff(const char *fname1,
  
  if ( SDend(sd1_id)==FAIL) {
   printf("Error: SDend failed on <%s>", fname1);
+  return FAIL;
  }
  if (SDend(sd2_id)==FAIL) {
   printf("Error: SDend failed on <%s>", fname2);
+  return FAIL;
  }
  if (GRend(gr1_id)==FAIL) {
   printf("Error: GRend failed on <%s>", fname1);
+  return FAIL;
  }
  if (GRend(gr2_id)==FAIL) {
   printf("Error: GRend failed on <%s>", fname2);
+  return FAIL;
  }
  if (Hclose(file1_id)==FAIL) {
   printf("Error: Hclose failed on <%s>", fname1);
+  return FAIL;
  }
  if (Hclose(file2_id)==FAIL) {
   printf("Error: Hclose failed on <%s>", fname2);
+  return FAIL;
  }
 
-  
-out:
+
  /* free tables */
  dtable_free(list1);
  dtable_free(list2);
@@ -196,7 +196,7 @@ int match( const char *fname1, int nobjects1, dtable_t *list1,
  int   more_names_exist = (nobjects1>0 && nobjects2>0) ? 1 : 0;
  int   curr1=0;
  int   curr2=0;
- int   nfound=0;
+ int   nfound=0, ret;
  /*build a common list */
  match_table_t *mattbl=NULL;
  unsigned infile[2]; 
@@ -312,21 +312,25 @@ int match( const char *fname1, int nobjects1, dtable_t *list1,
  for (i = 0; i < mattbl->nobjs; i++)
  {
   if ( mattbl->objs[i].flags[0] && mattbl->objs[i].flags[1] )
-   nfound+=diff( fname1, 
-                 fname2,
-                 file1_id,
-                 file2_id,
-                 sd1_id,
-                 sd2_id,
-                 gr1_id,
-                 gr2_id,
-                 mattbl->objs[i].obj_name, 
-                 mattbl->objs[i].obj_name, 
-                 mattbl->objs[i].tag1,
-                 mattbl->objs[i].ref1,
-                 mattbl->objs[i].tag2,
-                 mattbl->objs[i].ref2,
-                 opt );
+  {
+   if((ret=diff( fname1, 
+    fname2,
+    file1_id,
+    file2_id,
+    sd1_id,
+    sd2_id,
+    gr1_id,
+    gr2_id,
+    mattbl->objs[i].obj_name, 
+    mattbl->objs[i].obj_name, 
+    mattbl->objs[i].tag1,
+    mattbl->objs[i].ref1,
+    mattbl->objs[i].tag2,
+    mattbl->objs[i].ref2,
+    opt ))<0)
+    return FAIL;
+   nfound+=ret;
+  }
  }
 
 
@@ -372,7 +376,8 @@ int diff( const char *fname1,
   case DFTAG_SD:  /* Scientific Data */
   case DFTAG_SDG: /* Scientific Data Group */
   case DFTAG_NDG: /* Numeric Data Group */
-   nfound=diff_sds(fname1,fname2,sd1_id,sd2_id,ref1,ref2,opt);
+   if ((nfound=diff_sds(fname1,fname2,sd1_id,sd2_id,ref1,ref2,opt))<0)
+    return FAIL;
   break;
 
   case DFTAG_VG: 
@@ -384,13 +389,17 @@ int diff( const char *fname1,
   case DFTAG_RI8: /* Raster-8 image */
   case DFTAG_CI8: /* RLE compressed 8-bit image */
   case DFTAG_II8: /* IMCOMP compressed 8-bit image */
-   if (opt->gr == 1)
-   nfound=diff_gr(file1_id,file2_id,gr1_id,gr2_id,ref1,ref2,opt);
+   if (opt->gr == 1) {
+     if ((nfound=diff_gr(file1_id,file2_id,gr1_id,gr2_id,ref1,ref2,opt))<0)
+      return FAIL;
+   }
    break;
    
   case DFTAG_VH: 
-   if (opt->vd == 1)
-   nfound=diff_vs(file1_id,file2_id,ref1,ref2,opt);
+   if (opt->vd == 1) {
+    if ((nfound=diff_vs(file1_id,file2_id,ref1,ref2,opt))<0)
+     return FAIL;
+   }
    break;
   
   default:

@@ -95,7 +95,7 @@ main(int argc, char *argv[])
  };
  int   c;
  int   i;
- int   errs;
+ int   nfound;
  
  opterr = 1;
  progname = argv[0];
@@ -170,7 +170,11 @@ main(int argc, char *argv[])
  
  argv = argv + optind;
 
- errs = hdiff(argv[0],argv[1],&opt);
-  
- return errs;
+ nfound = hdiff(argv[0],argv[1],&opt);
+
+ if (nfound==0) 
+  return 0;
+ else
+  return 1;
+ 
 }

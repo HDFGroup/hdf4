@@ -206,6 +206,7 @@ int diff_sds(const char  *fname1,
  */ 
  if (SDcheckempty( sds1_id, &empty1_sds ) == FAIL) {
   printf( "Failed to check empty SDS <%s>\n", sds1_name);
+  nfound=FAIL;
   goto out;
  }
  if (empty1_sds==1 ) {
@@ -214,6 +215,7 @@ int diff_sds(const char  *fname1,
  }
  if (SDcheckempty( sds2_id, &empty2_sds ) == FAIL) {
   printf( "Failed to check empty SDS <%s>\n", sds2_name);
+  nfound=FAIL;
   goto out;
  }
  if (empty2_sds==1 ) {
@@ -229,21 +231,25 @@ int diff_sds(const char  *fname1,
  /* alloc */
  if ((buf1 = (VOIDP) HDmalloc(nelms * eltsz)) == NULL) {
   printf( "Failed to allocate %d elements of size %d\n", nelms, eltsz);
+  nfound=FAIL;
   goto out;
  }
  /* read data */
  if (SDreaddata (sds1_id, start, NULL, edges, buf1) == FAIL) {
   printf( "Could not read SDS <%s>\n", sds1_name);
+  nfound=FAIL;
   goto out;
  }
  /* alloc */
  if ((buf2 = (VOIDP) HDmalloc(nelms * eltsz)) == NULL) {
   printf( "Failed to allocate %d elements of size %d\n", nelms, eltsz);
+  nfound=FAIL;
   goto out;
  }
  /* read data */
  if (SDreaddata (sds2_id, start, NULL, edges, buf2) == FAIL) {
   printf( "Could not read SDS <%s>\n", sds2_name);
+  nfound=FAIL;
   goto out;
  }
 
@@ -289,10 +295,14 @@ int diff_sds(const char  *fname1,
  */
 
 out:
- if (SDendaccess(sds1_id)<0)
+ if (SDendaccess(sds1_id)<0) {
   fprintf(stderr,"SDendaccess FAIL\n");
- if (SDendaccess(sds2_id)<0)
+  nfound=FAIL;
+ }
+ if (SDendaccess(sds2_id)<0) {
   fprintf(stderr,"SDendaccess FAIL\n");
+  nfound=FAIL;
+ }
  if (buf1) free(buf1);
  if (buf2) free(buf2);
 
