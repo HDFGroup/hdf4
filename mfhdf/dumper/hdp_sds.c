@@ -1,8 +1,5 @@
 #include <stdio.h>
-#include "hdf.h"
-#include "hfile.h"
 #include "mfhdf.h"
-#include "dfsd.h"
 #include "hdp.h"
 #include <math.h>
 
