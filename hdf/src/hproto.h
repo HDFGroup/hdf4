@@ -3048,14 +3048,14 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
                 (intf  * vkey, intf  * eltpos);
 
     extern      FRETVAL(intf) nvsgnamc
-                (intf  * vkey, _fcd vsname);
+                (intf  * vkey, _fcd vsname, intf *vsnamelen);
 
     extern      FRETVAL(intf) nvsgclsc
-                (intf  * vkey, _fcd vsclass);
+                (intf  * vkey, _fcd vsclass, intf *vsclasslen);
 
     extern      FRETVAL(intf) nvsinqc
-                (intf  * vkey, intf  * nelt, intf  * interlace,
-                 _fcd fields, intf  * eltsize, _fcd vsname);
+                (intf  * vkey, intf  * nelt, intf  * interlace, _fcd fields,
+		intf  * eltsize, _fcd vsname, intf *fieldslen, intf *vsnamelen);
 
     extern      FRETVAL(intf) nvsfexc
                 (intf  * vkey, _fcd fields, intf  * fieldslen);

@@ -316,12 +316,8 @@ nvsatchc(HFILEID * f, intf * vsid, _fcd accesstype)
     intf        vkey;
     char       *acc;
 
-    acc = HDf2cstring(accesstype, 1);   /* 'r' or 'w' only */
-    if (!acc) return(FAIL);
-    vkey = VSattach(*f, *vsid, acc);
-    HDfree(acc);
-
-    return (vkey);
+    /* need not HDf2cstring since only first char is accessed. */
+    return(VSattach(*f, *vsid, _fcdtocp(accesstype)));
 }
 
 /* ------------------------------------------------------------------ */
@@ -391,9 +387,24 @@ nvsseekc(intf * vkey, intf * eltpos)
  */
 
 FRETVAL(intf)
-nvsgnamc(intf * vkey, _fcd vsname)
+nvsgnamc(intf * vkey, _fcd vsname, intf *vsnamelen)
 {
-    return (VSgetname(*vkey, _fcdtocp(vsname)));
+    CONSTR(FUNC, "vsgnamc");
+    char	*tvsname = NULL;
+    intn	status;
+
+    /* Allocate space for fortran strings */
+    tvsname = (char *) HDmalloc(*vsnamelen + 1);
+    if (!tvsname)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+
+    status = VSgetname(*vkey, tvsname);
+
+    /* convert C-string results back to Fortran strings */
+    HDpackFstring(tvsname, _fcdtocp(vsname), (intn) *vsnamelen);
+    HDfree(tvsname);
+
+    return(status);
 }   /* VSGNAMC */
 
 /* ------------------------------------------------------------------ */
@@ -403,9 +414,24 @@ nvsgnamc(intf * vkey, _fcd vsname)
  */
 
 FRETVAL(intf)
-nvsgclsc(intf * vkey, _fcd vsclass)
+nvsgclsc(intf * vkey, _fcd vsclass, intf *vsclasslen)
 {
-    return (VSgetclass(*vkey, _fcdtocp(vsclass)));
+    CONSTR(FUNC, "vsgclsc");
+    char	*tvsclass = NULL;
+    intn	status;
+
+    /* Allocate space for fortran strings */
+    tvsclass = (char *) HDmalloc(*vsclasslen + 1);
+    if (!tvsclass)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+
+    status = VSgetclass(*vkey, tvsclass);
+
+    /* convert C-string results back to Fortran strings */
+    HDpackFstring(tvsclass, _fcdtocp(vsclass), (intn) *vsclasslen);
+    HDfree(tvsclass);
+
+    return(status);
 }   /* VSGCLSC */
 
 /* ------------------------------------------------------------------ */
@@ -416,10 +442,35 @@ nvsgclsc(intf * vkey, _fcd vsclass)
 
 FRETVAL(intf)
 nvsinqc(intf * vkey, intf * nelt, intf * interlace, _fcd fields, intf * eltsize,
-        _fcd vsname)
+        _fcd vsname, intf *fieldslen, intf *vsnamelen)
 {
-    return ((intf) VSinquire(*vkey, (int32 *) nelt, (int32 *) interlace,
-                  _fcdtocp(fields), (int32 *) eltsize, _fcdtocp(vsname)));
+    CONSTR(FUNC, "vsinqc");
+    char	*tfields = NULL;
+    char	*tvsname = NULL;
+    intn	status;
+
+    /* Allocate space for fortran strings */
+    tfields = (char *) HDmalloc(*fieldslen + 1);
+    if (!tfields)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+    tvsname = (char *) HDmalloc(*vsnamelen + 1);
+    if (!tfields){
+	HDfree(tfields);
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+    }
+    
+    /* the following contains error for nelt, interlace and eltsize */
+    /* if int32 and intf are different in size. */
+    status = VSinquire(*vkey, (int32 *) nelt, (int32 *) interlace,
+                  tfields, (int32 *) eltsize, tvsname);
+    
+    /* convert C-string results back to Fortran strings */
+    HDpackFstring(tfields, _fcdtocp(fields), (intn) *fieldslen);
+    HDpackFstring(tvsname, _fcdtocp(vsname), (intn) *vsnamelen);
+    HDfree(tfields);
+    HDfree(tvsname);
+
+    return status;
 }   /* VSINQC */
 
 /* ------------------------------------------------------------------ */

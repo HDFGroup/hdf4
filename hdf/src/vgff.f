@@ -210,7 +210,7 @@ c     related: VSgetname--vsgnamc--vsfgnam
       character*(*)	vsname
       integer       vsgnamc
 
-      vsfgnam = vsgnamc (vs, vsname)
+      vsfgnam = vsgnamc (vs, vsname, len(vsname))
       end
 
 c     ------------------------------------------------------------
@@ -222,7 +222,7 @@ c     related: VSgetclass--vsgclsc--vsfgcls
       character*(*)	vsclass
       integer       vsgclsc
 
-      vsfgcls = vsgclsc  (vs, vsclass)
+      vsfgcls = vsgclsc  (vs, vsclass, len(vsclass))
       end
 
 c     ------------------------------------------------------------
@@ -234,7 +234,8 @@ c     related: VSinquire--vsinqc--vsfinq
       character*(*)	fields, vsname
       integer			vsinqc
 
-      vsfinq = vsinqc (vs,nvs,ilace,fields,vsize,vsname)
+      vsfinq = vsinqc (vs, nvs, ilace, fields, vsize, vsname,
+     +             len(fields), len(vsname))
       end
 
 c     ------------------------------------------------------------
