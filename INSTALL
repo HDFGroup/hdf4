@@ -30,6 +30,7 @@
   2.5.6 Windows '95 or Windows NT
   2.5.7 CM5 Parallel I/O Extension
   2.5.8 PowerPC/68k(far/4i/8d)- Macintosh OS
+  2.5.9 Fujitsu UXP/M-1800(Unix_System_V-4.0)
 
   2.6 Pablo Instrumentation
   2.7 File Cache(Beta release)
@@ -90,8 +91,9 @@ or
   IBM SP2 (single node)       xlc            f77              X         X
   DEC Alpha/Digital Unix v3.2 CC 3.11        f77              X         X
   DEC Alpha/OpenVMS AXP v6.2  DECC         DEC FORTRAN        X         X
+  Fujitsu UXP/M-1800(SYS_V-4.0) CC            -               X         X
   IBM PC - Intel Pentium
-       Solarisx86             GCC 2.7.0       -               X         X
+       Solarisx86             GCC 2.6.3       -               X         X
        Linux(a.out) v1.2.4    GCC         Fortran compiler    X         X
                                              2.6.2
                                  (Fortran to C converter)
@@ -287,7 +289,7 @@ or
     (e.g hppa1.1-hp-hpux9.03 for an HP900/735 running HPUX9.03).
 
     If this still fails all is not lost. All the configure script really
-    needs is one of the supported targets mentioned above(except NT/Macintosh).
+    needs is one of the supported targets mentioned above(except NT).
     If you think your platform is close to one of the above platforms
     mentioned in the 'Supported Platforms' sections you can pass configure
     this target and it will configure the distribution for that target..
@@ -359,9 +361,9 @@ or
 
     2.5.4 Solaris(2.4) on INTEL(x86)
     --------------------------------
-    The distribution has been compiled/tested with GCC 2.7.0 with
+    The distribution has been compiled/tested with GCC 2.6.3 with
     *NO* fortran support. The binary distribution was compiled
-    using GCC 2.7.0.
+    using GCC 2.6.3.
 
     2.5.5 OpenVMS AXP on DEC Alpha
     ------------------------------
@@ -496,7 +498,7 @@ or
           Note:
            When testing 'testhdf' in 'hdf/test' directory make sure
            that a directory called 'testdir' exists in the 'hdf/test'.
-           This directory is used the the external element test.
+           This directory is used in the external element test.
 
        2. mfhdf/xdr/xdrtest
            After running this test compare the output to that shown in
@@ -512,6 +514,14 @@ or
 
        5. mfhdf/nctest/nctest
 
+
+    2.5.9 Fujitsu UXP/M-1800(Unix_System_V-4.0)
+    --------------------------------------------
+    The distribution has been compiled/tested with the native
+    ANSI-C compiler only. No fortran support is provided as
+    there was a problem with the fortran linker and system XDR libraries
+    at the time of the distribution. The binary distribution was compiled
+    using the native compiler.
 
 2.6 Pablo Instrumentation
     ====================
