@@ -555,7 +555,7 @@ uint16 ref;
     uint8          *vgpack;
     uint32          len;
           
-    if (( len = Hlength(f, DFTAG_VG, (uint16) ref)) == FAIL)
+    if (( len = Hlength(f, DFTAG_VG, (uint16) ref)) == (uint32)FAIL)
         HRETURN_ERROR(DFE_INTERNAL,NULL);
 
     if(( vgpack = (uint8 *) HDgetspace(len)) == NULL)

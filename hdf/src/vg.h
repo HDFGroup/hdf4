@@ -258,23 +258,23 @@ typedef struct vfiledir_struct {
 #define VSIDTYPE  9         /* Also defined in hfile.h */
 
 /* VGID and VSID's are composed of the following fields:    */
-/*      Top 8 Bits: File ID (can be used for Get_vfile)     */
-/*      Next 8 Bits:VGID/VSID constant (for identification) */
+/*      Top 8 Bits:VGID/VSID constant (for identification) */
+/*      Next 8 Bits: File ID (can be used for Get_vfile)     */
 /*      Bottom 16 Bits: ID for the individual VGroup/VSet   */
 
 #define VGSLOT2ID(f,s) ( (((uint32)f & 0xff) << 16) | \
                     (((uint32)VGIDTYPE & 0xff) << 24) | ((s) & 0xffff) )
 #define VALIDVGID(i) (((((uint32)(i) >> 24) & 0xff) == VGIDTYPE) && \
                     ((((uint32)(i) >> 16)  & 0xff) < MAX_VFILE))
-#define VGID2SLOT(i) (VALIDVGID(i) ? (uint32)(i) & 0xffff : -1)
-#define VGID2VFILE(i) (VALIDVGID(i) ? ((uint32)(i) >> 16) & 0xff : -1)
+#define VGID2SLOT(i) (VALIDVGID(i) ? (uint32)(i) & 0xffff : (uintn)-1)
+#define VGID2VFILE(i) (VALIDVGID(i) ? ((uint32)(i) >> 16) & 0xff : (uintn)-1)
 
 #define VSSLOT2ID(f,s) ( (((uint32)f & 0xff) << 16) | \
                     (((uint32)VSIDTYPE & 0xff) << 24) | ((s) & 0xffff) )
 #define VALIDVSID(i) (((((uint32)(i) >> 24) & 0xff) == VSIDTYPE) && \
                     ((((uint32)(i) >> 16)  & 0xff) < MAX_VFILE))
-#define VSID2SLOT(i) (VALIDVSID(i) ? (uint32)(i) & 0xffff : -1)
-#define VSID2VFILE(i) (VALIDVSID(i) ? ((uint32)(i) >> 16) & 0xff : -1)
+#define VSID2SLOT(i) (VALIDVSID(i) ? (uint32)(i) & 0xffff : (uintn)-1)
+#define VSID2VFILE(i) (VALIDVSID(i) ? ((uint32)(i) >> 16) & 0xff : (uintn)-1)
 
 /* .................................................................. */
 #define VSET_VERSION   3     /* DO NOT CHANGE!! */
