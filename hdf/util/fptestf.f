@@ -37,16 +37,16 @@ c
        real       ezero
        parameter (ezero  =  0.0e0)
 
-#ifndef UNICOS
-       double precision     b64r2(3,4)    , b64r3(3,4,5)
-       double precision    row8(3)       , col8(4)       , pln8(5)
-       double precision    rowo8         , colo8         , plno8
-       double precision    rowi8         , coli8         , plni8
-       parameter       (rowo8 = 11.0d0, colo8 = 21.0d0, plno8 = 51.0d0)
-       parameter       (rowi8 =  1.0d0, coli8 =  2.0d0, plni8 =  5.0d0)
-       double precision    dzero
-       parameter       (dzero =  0.0d0)
-#else
+C#ifndef UNICOS
+C       double precision     b64r2(3,4)    , b64r3(3,4,5)
+C       double precision    row8(3)       , col8(4)       , pln8(5)
+C       double precision    rowo8         , colo8         , plno8
+C       double precision    rowi8         , coli8         , plni8
+C       parameter       (rowo8 = 11.0d0, colo8 = 21.0d0, plno8 = 51.0d0)
+C       parameter       (rowi8 =  1.0d0, coli8 =  2.0d0, plni8 =  5.0d0)
+C       double precision    dzero
+C       parameter       (dzero =  0.0d0)
+C#else
        real       b64r2(3,4)    , b64r3(3,4,5)
        real       row8(3)       , col8(4)       , pln8(5)
        real       rowo8         , colo8         , plno8
@@ -55,7 +55,7 @@ c
        parameter (rowi8 =  1.0e0, coli8 =  2.0e0, plni8 =  5.0e0)
        real       dzero
        parameter (dzero  =  0.0e0)
-#endif
+C#endif
 
        integer   text,  fp32,  fp64
        data      text   / 'TEXT' /

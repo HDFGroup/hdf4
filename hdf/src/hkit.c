@@ -385,65 +385,66 @@ int HIfind_dd(uint16 look_tag, uint16 look_ref, ddblock_t **pblock, int32 *pidx,
 	intn HIcount_dd(file_rec, tag, ref, all_cnt, real_cnt)
         filerec_t *  file_rec;       IN:  file record to search
         uint16       tag;            IN:  tag of element to find
-										(can be DFTAG_WILDCARD)
+                                          (can be DFTAG_WILDCARD)
         uint16       ref;            IN:  ref of element to find
-										(can be DFREF_WILDCARD)
-		uintn       *all_cnt;		 OUT: Count of all the tag/ref pairs
-										found, including DFTAG_NULL and
-										DFTAG_FREE
-		uintn       *real_cnt;		 OUT: Count of all the tag/ref pairs
-										found, excluding DFTAG_NULL and
-										DFTAG_FREE
+                                          (can be DFREF_WILDCARD)
+        uintn       *all_cnt;        OUT: Count of all the tag/ref pairs
+                                          found, including DFTAG_NULL and
+                                          DFTAG_FREE
+        uintn       *real_cnt;	     OUT: Count of all the tag/ref pairs
+                                          found, excluding DFTAG_NULL and
+                                          DFTAG_FREE
  RETURNS
         SUCCEED / FAIL
  DESCRIPTION
-		Counts the number of tag/ref pairs in a file.
-
-		This routine keeps track of and returns to the user the number
-		of all tag/refs and the number of "real" tag/refs found.
-		"Real" tag/refs are any except DFTAG_NULL & DFTAG_FREE.
-
-		This routine always counts the total tag/refs in the file, no
-		provision is made for partial searches.
-
+        Counts the number of tag/ref pairs in a file.
+        
+        This routine keeps track of and returns to the user the number
+        of all tag/refs and the number of "real" tag/refs found.
+        "Real" tag/refs are any except DFTAG_NULL & DFTAG_FREE.
+        
+        This routine always counts the total tag/refs in the file, no
+        provision is made for partial searches.
+        
 --------------------------------------------------------------------------- */
 intn HIcount_dd(filerec_t *file_rec, uint16 cnt_tag,uint16 cnt_ref, 
 	uintn *all_cnt, uintn *real_cnt)
 {
-	uintn t_all_cnt=0;	/* count of all tag/refs found */
-	uintn t_real_cnt=0;	/* count of all tag/refs except NULL & FREE */
+    uintn t_all_cnt=0;	/* count of all tag/refs found */
+    uintn t_real_cnt=0;	/* count of all tag/refs except NULL & FREE */
     intn idx;          /* index into ddlist of current dd searched */
     ddblock_t *block;  /* ptr to current ddblock searched */
     dd_t *list;        /* ptr to current ddlist searched */
     uint16 special_tag;                /* corresponding special tag */
-
+    
     /* search for special version also */
     special_tag = MKSPECIALTAG(cnt_tag);
-
+    
     for (block=file_rec->ddhead; block!=NULL; block=block->next) {
-		t_all_cnt+=block->ndds;
-
-		list = block->ddlist;
-		for (idx=0; idx < block->ndds; idx++) {
-			/* skip the empty dd's */
-			if ((list[idx].tag==DFTAG_NULL && cnt_tag!=DFTAG_NULL) 
-					|| (list[idx].tag==DFTAG_FREE && cnt_tag!=DFTAG_FREE))
-				continue;
-
-			if(((cnt_tag==DFTAG_WILDCARD || list[idx].tag==cnt_tag)
-					|| (special_tag!=DFTAG_NULL && special_tag!=DFTAG_FREE 
-					&& list[idx].tag==special_tag))
-					&& (cnt_ref==DFREF_WILDCARD || list[idx].ref==cnt_ref)) {
-
-				/* we have a match !! */
-				t_real_cnt++;
-			  } /* end if */
-		  } /* end for */
-	  } /* end for */
-
-	*all_cnt=t_all_cnt;
-	*real_cnt=t_real_cnt;
+        t_all_cnt+=block->ndds;
+        
+        list = block->ddlist;
+        for (idx=0; idx < block->ndds; idx++) {
+            /* skip the empty dd's */
+            if ((list[idx].tag==DFTAG_NULL && cnt_tag!=DFTAG_NULL) 
+                || (list[idx].tag==DFTAG_FREE && cnt_tag!=DFTAG_FREE))
+                continue;
+            
+            if(((cnt_tag==DFTAG_WILDCARD || list[idx].tag==cnt_tag)
+                || (special_tag!=DFTAG_NULL && special_tag!=DFTAG_FREE 
+                    && list[idx].tag==special_tag))
+               && (cnt_ref==DFREF_WILDCARD || list[idx].ref==cnt_ref)) {
+                
+                /* we have a match !! */
+                t_real_cnt++;
+            } /* end if */
+        } /* end for */
+    } /* end for */
+    
+    *all_cnt=t_all_cnt;
+    *real_cnt=t_real_cnt;
     return(SUCCEED);
+
 } /* HIcount_dd */
 
 
@@ -632,7 +633,8 @@ char _HUGE *HDgetNTdesc(int32 nt)
 	    if(ret_desc==NULL)
 	       ret_desc=HDstrdup(nt_descriptions[i].desc);
 	    else {
-		char *t=(char *)HDgetspace(HDstrlen(ret_desc)+HDstrlen(nt_descriptions[i].desc)+2);
+		char *t = (char *) HDgetspace(HDstrlen(ret_desc) + 
+                                              HDstrlen(nt_descriptions[i].desc) + 2);
 		if(t==NULL) {
                     HDfreespace(ret_desc);
 		    HRETURN_ERROR(DFE_NOSPACE,NULL);

@@ -125,7 +125,7 @@ int annotate(char *editor, int ann)
      */
     if (editor == NULL)
     {
-        editor = (char *)getenv("EDITOR");
+        editor = (char *) getenv("EDITOR");
         if (editor == NULL) editor = "/usr/bin/ex";
     }
     if (fork() == 0)

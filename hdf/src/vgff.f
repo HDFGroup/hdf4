@@ -268,7 +268,6 @@ c     related: VSfind--vsfind--vsffnd
       integer	function vsffnd (vs, name)
       integer			vs
       character*(*)	name
-      integer			vsfind
 
       vsffnd = vsfndc (vs, name, len(name))
       end

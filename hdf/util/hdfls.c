@@ -72,134 +72,135 @@ int compare(const VOID * aa, const VOID * bb)
 void print_item(int32 fid, dd_t *desc_list, intn n) 
 {
     sp_info_block_t info;
-	intn status;
+    intn status;
     int32 len;
     char *name, *label_str;
+    
+    printf("\tRef no %6d\t%8ld bytes\n", desc_list[n].ref, desc_list[n].length);
+    
+    /* print out labels and annotations if desired */
+    if(labels) { /* read in all of the labels */
+        len = DFANgetlablen(file_name, desc_list[n].tag, desc_list[n].ref);
+        if(len != FAIL) {
+            label_str = (char *) HDgetspace((uint32) len + 1);
+            status = DFANgetlabel(file_name, desc_list[n].tag, desc_list[n].ref, label_str, len + 1);
+            label_str[len] = '\0';
+            if(status == FAIL) 
+                printf("\t  Unable to read label\n");
+            else
+                printf("\t  Label: %s\n", label_str);
+            HDfreespace(label_str);
+        }
+        
+        /* read in all of the annotations */
+        len = DFANgetdesclen(file_name, desc_list[n].tag, desc_list[n].ref);
+        if(len != FAIL) {
+            label_str = (char *) HDgetspace((uint32) len + 1);
+            status=DFANgetdesc(file_name,desc_list[n].tag,desc_list[n].ref,label_str,len+1);
+            label_str[len] = '\0';
+            if(status == FAIL) 
+                printf("\t  Unable to read description\n");
+            else
+                printf("\t  Description: %s\n", label_str);
+            HDfreespace(label_str);
+        }
+    }
+    
+    if((special) && (SPECIALTAG(desc_list[n].tag))) { /* print out special info if desired */
+        int32 aid, ret; 
+        
+        aid = Hstartread(fid, desc_list[n].tag, desc_list[n].ref);
+        ret = HDget_special_info(aid, &info);
+        if((ret == FAIL) || (info.key == FAIL))
+            return;
+        
+        switch(info.key) {
+        case SPECIAL_LINKED:
+            printf("\tLinked Block: first %ld standard %ld per unit %ld\n",
+                   (long)info.first_len, (long)info.block_len, 
+                   (long)info.nblocks);
+            break;
+            
+        case SPECIAL_EXT:
+            printf("\tExternal File: path %s  offset %ld\n", info.path, 
+                   (long)info.offset);
+            break;
+            
+        case SPECIAL_COMP:
+            printf("\tCompressed Element: compression type: %s  modeling type %s\n", 
+                   (info.comp_type==COMP_CODE_NONE ? "None" : 
+                    (info.comp_type==COMP_CODE_RLE ? "Run-Length" : 
+                     (info.comp_type==COMP_CODE_NBIT ? "N-Bit" : "Unknown" ))), 
+                   (info.model_type==COMP_MODEL_STDIO ? "Standard" : "Unknown"));
+            break;
+            
+        default:
+            printf("\tDo not understand special element type %d\n", 
+                   info.key);
+            break;
+        }
+        Hendaccess(aid);
+    }
+    
+    if((groups) && (desc_list[n].tag==DFTAG_RIG || desc_list[n].tag==DFTAG_SDG 
+                    || desc_list[n].tag==DFTAG_NDG || desc_list[n].tag==DFTAG_VG)) { /* print groups */
+        if(desc_list[n].tag!=DFTAG_VG) {	/* groups other than Vgroups */
+            int32 GroupID;
+            DFdi elmt;
+            
+            printf("\tContents:\n");
+            if((GroupID=DFdiread(fid, desc_list[n].tag, desc_list[n].ref))>=0) {
+                while(!DFdiget(GroupID,&elmt.tag,&elmt.ref)) {
+                    name=(char *)HDgettagname(elmt.tag);
+                    if(!name) 
+                        name = "Unknown Tag";
+                    printf("\t\t%-30s: (tag=%6d) ref=%d\n",name, 
+                           elmt.tag,elmt.ref);
+                } /* end while */
+            }  /* end if */
+            else
+                printf("\t\tNone!\n");
+        }	/* end if */
+        else {	/* dump Vgroup tag/refs */
+            int32 ntagrefs;
+            int32 vkey;
+            int32 *tag_arr, *ref_arr;
+            intn i;
+            
+            if(v_init_done==FALSE) {	/* init the V routines */
+                v_init_done=TRUE;
+                Vinitialize(fid);
+            }	/* end if */
+            if((vkey=Vattach(fid,desc_list[n].ref,"r"))!=FAIL) {
+                ntagrefs=Vntagrefs(vkey);
+                printf("\tContents: %d items\n",(int)ntagrefs);
+                if(ntagrefs>0) {
+                    tag_arr = (int32 *) HDgetspace(sizeof(int32)*ntagrefs);
+                    ref_arr = (int32 *) HDgetspace(sizeof(int32)*ntagrefs);
+                    if(tag_arr==NULL || ref_arr==NULL) {
+                        HDfreespace(tag_arr);
+                        HDfreespace(ref_arr);
+                    }	/* end if */
+                    else {
+                        if(Vgettagrefs(vkey,tag_arr,ref_arr,ntagrefs)!=FAIL) {
+                            for(i=0; i<ntagrefs; i++) {
+                                name=(char *)HDgettagname(tag_arr[i]);
+                                if(!name) 
+                                    name = "Unknown Tag";
+                                printf("\t\t%-30s: (tag=%6d) ref=%d\n",
+                                       name, (int)tag_arr[i],(int)ref_arr[i]);
+                            }	/* end for */
+                        }	/* end if */
+                        HDfreespace(tag_arr);
+                        HDfreespace(ref_arr);
+                    }	/* end else */
+                }	/* end if */
+                Vdetach(vkey);
+            }	/* end if */
+        }	/* end else */
+    } /* dumping groups */
+} /* print_item */
 
-	printf("\tRef no %6d\t%8ld bytes\n", desc_list[n].ref, desc_list[n].length);
-                
-	/* print out labels and annotations if desired */
-	if(labels) { /* read in all of the labels */
-		len = DFANgetlablen(file_name, desc_list[n].tag, desc_list[n].ref);
-		if(len != FAIL) {
-			label_str = (char *) HDgetspace((uint32) len + 1);
-			status = DFANgetlabel(file_name, desc_list[n].tag, desc_list[n].ref, label_str, len + 1);
-			label_str[len] = '\0';
-			if(status == FAIL) 
-				printf("\t  Unable to read label\n");
-			else
-				printf("\t  Label: %s\n", label_str);
-			HDfreespace(label_str);
-		}
-                    
-		/* read in all of the annotations */
-		len = DFANgetdesclen(file_name, desc_list[n].tag, desc_list[n].ref);
-		if(len != FAIL) {
-			label_str = (char *) HDgetspace((uint32) len + 1);
-			status=DFANgetdesc(file_name,desc_list[n].tag,desc_list[n].ref,label_str,len+1);
-			label_str[len] = '\0';
-			if(status == FAIL) 
-				printf("\t  Unable to read description\n");
-			else
-				printf("\t  Description: %s\n", label_str);
-			HDfreespace(label_str);
-		}
-	}
-
-	if((special) && (SPECIALTAG(desc_list[n].tag))) { /* print out special info if desired */
-		int32 aid, ret; 
-
-		aid = Hstartread(fid, desc_list[n].tag, desc_list[n].ref);
-		ret = HDget_special_info(aid, &info);
-		if((ret == FAIL) || (info.key == FAIL))
-			return;
-                    
-		switch(info.key) {
-			case SPECIAL_LINKED:
-				printf("\tLinked Block: first %ld standard %ld per unit %ld\n",
-						(long)info.first_len, (long)info.block_len, 
-						(long)info.nblocks);
-				break;
-
-			case SPECIAL_EXT:
-				printf("\tExternal File: path %s  offset %ld\n", info.path, 
-						(long)info.offset);
-				break;
-
-			case SPECIAL_COMP:
-				printf("\tCompressed Element: compression type: %s  modeling type %s\n", 
-						(info.comp_type==COMP_CODE_NONE ? "None" : 
-						(info.comp_type==COMP_CODE_RLE ? "Run-Length" : 
-						(info.comp_type==COMP_CODE_NBIT ? "N-Bit" : "Unknown" ))), 
-						(info.model_type==COMP_MODEL_STDIO ? "Standard" : "Unknown"));
-				break;
-
-			default:
-				printf("\tDo not understand special element type %d\n", 
-						info.key);
-				break;
-		}
-		Hendaccess(aid);
-	}
-
-	if((groups) && (desc_list[n].tag==DFTAG_RIG || desc_list[n].tag==DFTAG_SDG 
-			|| desc_list[n].tag==DFTAG_NDG || desc_list[n].tag==DFTAG_VG)) { /* print groups */
-		if(desc_list[n].tag!=DFTAG_VG) {	/* groups other than Vgroups */
-			int32 GroupID;
-			DFdi elmt;
-
-			printf("\tContents:\n");
-			if((GroupID=DFdiread(fid, desc_list[n].tag, desc_list[n].ref))>=0) {
-				while(!DFdiget(GroupID,&elmt.tag,&elmt.ref)) {
-					name=(char *)HDgettagname(elmt.tag);
-					if(!name) 
-						name = "Unknown Tag";
-					printf("\t\t%-30s: (tag=%6d) ref=%d\n",name, 
-							elmt.tag,elmt.ref);
-				}	/* end while */
-			}	/* end if */
-			else
-				printf("\t\tNone!\n");
-		}	/* end if */
-		else {	/* dump Vgroup tag/refs */
-			int32 ntagrefs;
-			int32 vkey;
-			int32 *tag_arr, *ref_arr;
-			intn i;
-
-			if(v_init_done==FALSE) {	/* init the V routines */
-				v_init_done=TRUE;
-				Vinitialize(fid);
-			}	/* end if */
-			if((vkey=Vattach(fid,desc_list[n].ref,"r"))!=FAIL) {
-				ntagrefs=Vntagrefs(vkey);
-				printf("\tContents: %d items\n",(int)ntagrefs);
-				if(ntagrefs>0) {
-					tag_arr=(int32 *)HDgetspace(sizeof(int32)*ntagrefs);
-					ref_arr=(int32 *)HDgetspace(sizeof(int32)*ntagrefs);
-					if(tag_arr==NULL || ref_arr==NULL) {
-						HDfreespace(tag_arr);
-						HDfreespace(ref_arr);
-					}	/* end if */
-					else {
-						if(Vgettagrefs(vkey,tag_arr,ref_arr,ntagrefs)!=FAIL) {
-							for(i=0; i<ntagrefs; i++) {
-								name=(char *)HDgettagname(tag_arr[i]);
-								if(!name) 
-									name = "Unknown Tag";
-								printf("\t\t%-30s: (tag=%6d) ref=%d\n",
-										name, (int)tag_arr[i],(int)ref_arr[i]);
-							}	/* end for */
-						}	/* end if */
-						HDfreespace(tag_arr);
-						HDfreespace(ref_arr);
-					}	/* end else */
-				}	/* end if */
-				Vdetach(vkey);
-			}	/* end if */
-		}	/* end else */
-	}	/* end if */
-}	/* end print_item */
 
 void lprint(int32 fid, dd_t *desc_tmp, int num)
 {
@@ -325,7 +326,7 @@ int main(int argc, char *argv[])
         exit (1);
     }
     
-    desc_buf=(dd_t *)HDgetspace(sizeof(dd_t)*MAXBUFF);
+    desc_buf = (dd_t *) HDgetspace(sizeof(dd_t)*MAXBUFF);
 
     while(i < argc) {
         file_name = argv[i];

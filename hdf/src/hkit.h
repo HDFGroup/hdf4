@@ -23,8 +23,8 @@
    required but efficiency should be okay. */
 typedef struct tag_descript_t {
     uint16 tag;    		/* tag for description ? */
-    const char   *name;  	/* tag name ? */  
     const char   *desc;  	/* tag description ? */  
+    const char   *name;  	/* tag name ? */  
 } tag_descript_t;
 
 /* stringizing macro */

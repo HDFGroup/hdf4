@@ -1356,7 +1356,7 @@ void *DFIgetspace(uint32 qty)
 {
     void *ret;
 
-    ret = (void *)HDgetspace(qty);
+    ret = (void *) HDgetspace(qty);
     DFerror = HEvalue(1);
     return(ret);
 }
