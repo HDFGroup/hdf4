@@ -393,9 +393,9 @@
     ------------------------------------------
 
     The distribution was compiled/tested with MetroWerks Codewarrior(CW Pro1).
-    Only the base libraries{jpeg.PPC.lib, z.PPC.lib, hdflib.PPC.lib,
-    xdr.PPC.lib and mfhdf.PPC.lib}
-    were compiled and tested on the PowerPC without Fortran support.
+    Only the base libraries {jpeg.PPC.lib, z.PPC.lib, hdflib.PPC.lib,
+    xdr.PPC.lib and mfhdf.PPC.lib} were compiled and tested on the
+    PowerPC without Fortran support.
 
     *NO* Fortran support is included in this distribution.
 
@@ -413,7 +413,9 @@
        This directory is used in the external element test.
 
     3. You need at least 8MB of memory to run most of the test programs.
-
+ 
+    4. Distribution also contains projects files to build utilities,
+       but utilities were not tested.
 
     2.5.6.2 Building the Distribution
     *********************************
