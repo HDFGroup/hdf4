@@ -19,20 +19,12 @@ import java.lang.*;
 
 import ncsa.hdf.hdflib.*;
 
-
-//---------------------------------------------------------------------------------
-//
-//  Upgraded to the JDK 1.1.1b Event Model.
-//    - Apu Kapadia  May 21st, 1997
-//
-//----------------------------------------------------------------------------------
-
-/** Display HDF Vdata */
+/** Display of HDF Vdata */
 class JHVVdataCanvas extends Canvas implements MouseListener{
     
     // the frame of the spreadsheet
     JHVVdataFrame	vdataFrame;
-  
+   
     // An HDF vdata value  
     String[][]       vdata = null;
 
@@ -128,22 +120,11 @@ class JHVVdataCanvas extends Canvas implements MouseListener{
     // flag
     boolean findDataRangeFlag = true;
 
- public JHVVdataCanvas(JHVVdataFrame frame) {
-                      
-
-    // set spreadsheet frame 
-    vdataFrame = frame;
-    
-    // do initalization
-    setup();
-    addMouseListener(this);
-  }
-
     /** Calculate each cell size by row of a spreadsheet based on provided
      *  HDF vdata.  That is metedata associated with different order.
      */
     public void calculateCellSize() {
-	 
+
 	// compute spreadsheet width
 	spreadsheetWidth  = 0;
 
@@ -164,9 +145,8 @@ class JHVVdataCanvas extends Canvas implements MouseListener{
 	    
 	    int datatype = vdataFrame.vdataFieldDatatype[index];
 	    if ((datatype & HDFConstants.DFNT_LITEND) != 0) {
-                        datatype -= HDFConstants.DFNT_LITEND;
-            }
-
+		datatype -= HDFConstants.DFNT_LITEND;
+	    }
 	    int order    = vdataFrame.vdataFieldOrder[index];
 	    String fldName = vdataFrame.vdataFieldName[index];
 	
@@ -208,65 +188,12 @@ class JHVVdataCanvas extends Canvas implements MouseListener{
 	
     }
 
-    /** initialize some variable and get display vdata string */
-    public void setup() {
-	   
-	// set vdata_id
-	vdata_id = vdataFrame.vdata_id;
-	
-	frameDisplayed = false;
-    
-	// set font
-	setFont(dataFont);
-	
-	// cell size
-	calculateCellSize();
-	
-	// prepare the spreadsheet data
-	try {
-	getSpreadsheetData();
-	} catch (HDFException e) {}
-
-	// set draw flag
-	drawFlag       = false;
-
-    }
-
-    /** Initialize vdata & repaint that */
-    public void update() {
-
-	// setup
-	setup();
-	
-	// reset
-	hOffset = 0;
-	vOffset = 0;
-	
-	// set scrollbar value
-	setVScrollbarValue();
-	setHScrollbarValue();
-	
-	// re-calculate the cell position
-	computeCellPosition();
-
-	// reset scrollbar values
-	vdataFrame.vScrollbar.setValue(0);
-	vdataFrame.hScrollbar.setValue(0);
-
-	// repaint
-	repaint();
-
-	// for xy-plot
-	if (plotFrame != null)
-	   destroyXYPlot();
-	
-    }
 
     public void destroyXYPlot() {
 
 	// remove all elements
 	selectedColnumVector.removeAllElements();
-	
+
 	// set frame null
 	plotFrame.dispose();
 
@@ -295,207 +222,23 @@ class JHVVdataCanvas extends Canvas implements MouseListener{
     return getMinimumSize();
   }
 
- /** Prepare the spreadsheet data.  */
-  public  void getSpreadsheetData() throws HDFException {
-
-    HDFLibrary hdf = vdataFrame.hdf;
-    
-    // get selected vdata field name by selectedVdataFields(index) & vdataFieldName
-    selectedVdataFieldName = new String[vdataFrame.selectedVdataFieldsNumber];
-    for (int i=0; i<vdataFrame.selectedVdataFieldsNumber; i++) {
-	
-	int index = vdataFrame.selectedVdataFields[i];
-	selectedVdataFieldName[i] = vdataFrame.vdataFieldName[index];	
-    }
-    
-    //  specify vdata
-    vdata = new String[vdataFrame.selectedVdataRecordsNumber]
-                      [vdataFrame.selectedVdataFieldsNumber];
-   
-    int rows = 0;
-    // for each record of a vdata
-    for (int kk=vdataFrame.selectedVdataRecords[0];
-	     kk<=vdataFrame.selectedVdataRecords[1]; kk++, rows++) {
-   
-	// for each field of a vdata
-	for (int i=0; i< vdataFrame.selectedVdataFieldsNumber; i++) {
-	    
-	    // specify read vdata size
-	    int  dataType = vdataFrame.vdataFieldDatatype[i];
-	    if ((dataType & HDFConstants.DFNT_LITEND) != 0) {
-		dataType -= HDFConstants.DFNT_LITEND;
-	    }
-
-	    int  order    = vdataFrame.vdataFieldOrder[i];
-	    	    
-	    int datasize = 1;
-	    int readNum = 0;
-	    String tmpStr="";
-	    
-	    if (order>0) {
-		
-		
-		hdf.VSseek(vdata_id, kk-1);
-		boolean status = hdf.VSsetfields(vdata_id, selectedVdataFieldName[i]);
-		    
-		datasize = order * hdf.DFKNTsize(dataType);
-
-		// assume repeat number is less than 3 -- only display
-		//   first 3 fields
-
-	        if ((order>3) && (dataType != HDFConstants.DFNT_CHAR8)) 
-	           order = 3;
-	
-		// organize data
-		switch(dataType) {
-		case HDFConstants.DFNT_CHAR:  
-		case HDFConstants.DFNT_UCHAR8:
-		    
-			// this is assumed to be a string
-			byte[] bdat = new byte[datasize];
-			readNum = hdf.VSread(vdata_id, bdat, 1, HDFConstants.FULL_INTERLACE);
-			vdata[rows][i] = new String(bdat,0,datasize);
-			break;
-		    
-		case HDFConstants.DFNT_UINT8: 
-		case HDFConstants.DFNT_INT8: {
-			// signed integer (byte) array
-			byte[] sbdat = new byte[datasize];
-			readNum = hdf.VSread(vdata_id, sbdat, 1, HDFConstants.FULL_INTERLACE);
-			tmpStr="";
-			for (int j=0; j<order; j++) {
-			    int tmpVal = (int)((byte)sbdat[j]);
-			    if ((dataType == HDFConstants.DFNT_UINT8) && (tmpVal <0)) {
-				tmpVal += 256;
-			    }
-			    tmpStr += Integer.toString(tmpVal) +"  ";
-			}
-
-			if (vdataFrame.vdataFieldOrder[i]>3)
-			   tmpStr += "...";
-
-			vdata[rows][i] = new String(tmpStr);
-			break;
-		    }
-			    
-		case HDFConstants.DFNT_INT16:
-		case HDFConstants.DFNT_UINT16:
-		    {
-			// short array
-			short[] sdat = new short[order];
-			readNum = hdf.VSread(vdata_id, sdat, 1, HDFConstants.FULL_INTERLACE);
-			tmpStr="";
-			int pos = 0;
-			for (int j=0; j<order; j++) {
-			    int tmpVal = (int)sdat[j];
-
-			    if ((dataType == HDFConstants.DFNT_UINT16) && (tmpVal <0)) {
-				tmpVal += 65536;
-			    }
-
-			    tmpStr += Integer.toString(tmpVal) +"  ";
-			}			
-
-			if (vdataFrame.vdataFieldOrder[i]>3)
-			   tmpStr += "...";
-
-			vdata[rows][i] = new String(tmpStr);
-			break;
-		    }
-		
-		    
-		case HDFConstants.DFNT_INT32:
-		case HDFConstants.DFNT_UINT32:
-		    {
-			// integer	
-			tmpStr="";
-			int[] idat = new int[order];
-			readNum = hdf.VSread(vdata_id, idat, 1, HDFConstants.FULL_INTERLACE);
-			tmpStr="";
-			for (int j=0; j<order; j++) {
-			    int tmpVal = idat[j];
-			    if ((dataType == HDFConstants.DFNT_UINT32) && (tmpVal <0))  			
-				tmpVal += 4294967296;
-		    
-			    tmpStr += Integer.toString(tmpVal) +"  ";
-			}
-		        
-			if (vdataFrame.vdataFieldOrder[i]>3)
-			   tmpStr += "...";
-
-			vdata[rows][i] = new String(tmpStr);
-			break;
-		    }
-		
-		        
-		case HDFConstants.DFNT_FLOAT:
-		//case HDFConstants.DFNT_FLOAT32:
-			// Float	
-		    {
-			tmpStr="";
-			float[] fdat = new float[order];
-			readNum = hdf.VSread(vdata_id, fdat, 1, HDFConstants.FULL_INTERLACE);
-			for (int j=0; j<order; j++) {
-			    float tmpVal = fdat[j];
-			    tmpStr += Float.toString(tmpVal) +"  ";
-			}
-			        
-			if (vdataFrame.vdataFieldOrder[i]>3)
-			   tmpStr += "...";
-	    		
-		        vdata[rows][i] = new String(tmpStr);
-			break;
-		    }
-          
-		case HDFConstants.DFNT_DOUBLE:
-		//case HDFConstants.DFNT_FLOAT64:
-		    {
-			// Double	
-			tmpStr="";
-			double[] ddat = new double[order];
-			readNum = hdf.VSread(vdata_id, ddat, 1, HDFConstants.FULL_INTERLACE);
-			for (int j=0; j<order; j++) {
-			    
-			    double tmpVal =ddat[j];
-			    tmpStr += Double.toString(tmpVal) +"  ";
-			}
-		        
-			if (vdataFrame.vdataFieldOrder[i]>3)
-			   tmpStr += "...";
-
-		        vdata[rows][i] = new String(tmpStr);
-			break;
-		    }
-		
-		default:
-		    vdata[rows][i] = new String("");
-		}
-		
-	    }
-	    
-	}
-	    
-    }
-	
-  }
-
    /** get cell number for each row or colnum */
    public void getCellNumber(int w, int h) {
-    
+
       cellNumberByRow    = h / CellRect.height  ;
-      
+
       int colNum = 0;
       int width = 0;
 
       for (int i=hOffset; i<vdataFrame.selectedVdataFieldsNumber; i++, colNum++)  {
-	
+
 	width += vdataCellRect[i].width;
 	if (width > w)
 	   break;
       }
-      
+
       cellNumberByColnum  = colNum;
-    
+
     }
 
  /** draw the spreadsheet */
@@ -504,9 +247,9 @@ class JHVVdataCanvas extends Canvas implements MouseListener{
     // get background color
     Color bColor = getBackground();
 
-    // get current graphics color 
+    // get current graphics color
     Color gColor = g.getColor();
-    
+
     // get current canvas size
     int w = getSize().width;
     int h = getSize().height;
@@ -908,8 +651,11 @@ int m = (int)(height - (canvasHeight - p));
   }
 
   public void mouseReleased(MouseEvent e) {}
+
   public void mouseEntered(MouseEvent e) {}
+
   public void mouseExited(MouseEvent e) {}
+
   public void mouseClicked(MouseEvent e) {}
 
   public void mousePressed(MouseEvent e)
@@ -975,6 +721,11 @@ int m = (int)(height - (canvasHeight - p));
 
     if ( selectedColnum > -1) { // valid selection
    
+      // forget the field which contains of more then one data number
+      // int dt = vdataFrame.vdataFieldDatatype[selectedColnum];
+      int order = vdataFrame.vdataFieldOrder[selectedColnum];
+      if (order>=2) return;
+
       if (plotData[selectedColnum] != null) {	// basic information   
 	   drawColnumFlag = plotData[selectedColnum].drawColnumFlag;
 	   plotData[selectedColnum].drawColnumFlag = !drawColnumFlag;
@@ -1055,9 +806,7 @@ int m = (int)(height - (canvasHeight - p));
 	   if (zoomFactor < 0)
 	      for (int kk=0; kk<(-zoomFactor); kk++)
 		  dataNumber *= 2;
-		
-	}	   
-	
+	}
 	// adjust data number
 	if ((vOffset+dataNumber) > vdataFrame.selectedVdataRecordsNumber) 
 	    dataNumber = vdataFrame.selectedVdataRecordsNumber - vOffset ;
@@ -1077,15 +826,15 @@ int m = (int)(height - (canvasHeight - p));
 	    // for each selected colnum
 	    for (int kk=0; kk<mColnum.size(); kk++) {
 
+	      try {
 	        // selectedColnum ?
 	    	int selectedColnum = ((Integer)(mColnum.elementAt(kk))).intValue();
 		String valStr = (String)vdata[vOffset+i][selectedColnum].trim();
 	    	tmpData[kk+1][i]   = Double.valueOf(valStr).doubleValue();
-		
+	      } 
+	      catch (Exception e) { tmpData[kk+1][i] = 0.0; };
 	    }
 	}
-
-  
 	if (!plotFrameDisplayed) {
 
 	   // set frame displayed
@@ -1093,46 +842,22 @@ int m = (int)(height - (canvasHeight - p));
 
 	   // display  plot
 	   plotFrame = new JHVVdataPlotFrame(this,tmpData);
-
 	}
 	else { // reset data 
 	   
 	   // set data
 	   plotFrame.plotCanvas.setData(tmpData);
-
 	}
-
 	
-	if (findDataRangeFlag)  {
-
-	  // selected colnum data range for whole dataset
-	  double min=Double.MAX_VALUE;
-	  double max=-min;
-
-          // for each selected colnum
-          for (int kk=0; kk<mColnum.size(); kk++) {
-
-	    int selectedColnum = ((Integer)(mColnum.elementAt(kk))).intValue();
-
-	    double tmpRange[] = null ;
-	    tmpRange = getDataRange(selectedColnum);
-
-	    min = Math.min(min,tmpRange[0]);
-	    max = Math.max(max,tmpRange[1]);
-
-	  }
-
-	  // reset y-axis range
-	  plotFrame.plotCanvas.setYAxisRange(min,max);
-
+	if (findDataRangeFlag) { 
+	   resetDataRange();
 
           // for each selected colnum
 	  for (int kk=0; kk<mColnum.size(); kk++) {
 
 	    // selectedColnum ?
 	    int selectedColnum = ((Integer)(mColnum.elementAt(kk))).intValue();
-	    tmpStr[kk]         =  vdataFrame.vdataFieldName[selectedColnum];
-		
+	    tmpStr[kk]         =  vdataFrame.vdataFieldName[selectedColnum];	
 	  }
 
           // set annotation
@@ -1179,18 +904,20 @@ int m = (int)(height - (canvasHeight - p));
 	double range[] = new double[2];
 	
   	// selected colnum data range for whole dataset
-	double min=Double.MAX_VALUE, max=Double.MIN_VALUE;
-		
-	String valStr = (String)vdata[0][selectedColnum].trim();
-	if (selectedColnum >= 0)
-	   min = max =  Double.valueOf(valStr).doubleValue();
-
-	for (int kk=1; kk<vdataFrame.selectedVdataRecordsNumber; kk++) {
-	
-	    valStr = (String)vdata[kk][selectedColnum].trim();
-	    double tmp = Double.valueOf(valStr).doubleValue();
-	    min = Math.min(tmp,min);
-	    max = Math.max(tmp,max);
+	double min  = Double.MAX_VALUE;
+	double max  = -min;
+	if ( selectedColnum < 0) {
+	   range[0] = range[1] = min;
+	   return range;
+	}
+	for (int kk=0; kk<vdataFrame.selectedVdataRecordsNumber; kk++) {
+	  double tmp = 0;
+	  try {
+	    String valStr = (String)vdata[kk][selectedColnum].trim();
+	    tmp = Double.valueOf(valStr).doubleValue();
+	  } catch (Exception e) { tmp  = 0; };
+	  min = Math.min(tmp,min);
+	  max = Math.max(tmp,max);	  
 	}
 	
 	range[0] = min;
@@ -1204,7 +931,6 @@ int m = (int)(height - (canvasHeight - p));
      * @param y the y coordinate
      * @ return the selected colnum number , otherwise -1
      */
-
     public int getSelectedColnum(int x, int y) {
 
 	int seleNum = -1;
@@ -1221,16 +947,115 @@ int m = (int)(height - (canvasHeight - p));
     	if (col<= cellNumberByColnum)
 	   // set which colnum has been selected, after that we'll make a xy-plot.
 	   seleNum = col + hOffset;
-   
-	return seleNum;
-    
-    }
 
-  
+	return seleNum;
+    }
 
   void setFindDataRange(boolean flag) {
 
 	this.findDataRangeFlag = flag;
-
   }
+
+     public void resetDataRange() {
+
+	  // current selected colnum
+          Vector mColnum = selectedColnumVector;
+
+	  // selected colnum data range for whole dataset
+	  double min=Double.MAX_VALUE;
+	  double max=-min;
+
+	  int pos = 0;
+	  if (plotFrame.plotCanvas.plotMode == plotFrame.plotCanvas.XYPLOT)
+	     pos = 1;
+
+          // for each selected colnum
+          for (int kk=pos; kk<mColnum.size(); kk++) {
+
+	    int selectedColnum = ((Integer)(mColnum.elementAt(kk))).intValue();
+
+	    double tmpRange[] = null ;
+	    tmpRange = getDataRange(selectedColnum);
+
+	    min = Math.min(min,tmpRange[0]);
+	    max = Math.max(max,tmpRange[1]);
+         }
+
+	 // reset y-axis range
+	 plotFrame.plotCanvas.setYAxisRange(min,max);
+     }
+
+    /**
+     *  Constructor with given JHVVdataFrame and HDFObject
+     *
+     *  @param frame       The JHVVdataFrame
+     *  @param vdataObject The HDFVdata object containing information and data
+     *  @auther            Peter Cao (xcao@ncsa.uiuc.edu)
+     */
+    public JHVVdataCanvas(JHVVdataFrame frame, ncsa.hdf.message.HDFVdata vdataObject)
+    {
+        // set spreadsheet frame 
+        vdataFrame = frame;
+    
+        // do initalization
+        setup(vdataObject);
+        addMouseListener(this);
+    }
+    /**
+     *  setup the JHVVdataCanvas
+     *
+     *  @param vdataObject The HDFVdata object containing information and data
+     *  @auther            Peter Cao (xcao@ncsa.uiuc.edu)
+     */
+    public void setup(ncsa.hdf.message.HDFVdata vdataObject)
+    {
+        frameDisplayed = false;
+    
+        // set font
+        setFont(dataFont);
+        
+        // cell size
+        calculateCellSize();
+        
+        selectedVdataFieldName = vdataObject.getFieldNames();
+        vdata =  vdataObject.getVdata();
+
+        // set draw flag
+        drawFlag       = false;
+   }
+
+    /**
+     *  update the JHVVdataCanvas
+     *
+     *  @param vdataObject The HDFVdata object containing information and data
+     *  @auther            Peter Cao (xcao@ncsa.uiuc.edu)
+     */
+    public void update(ncsa.hdf.message.HDFVdata vdataObject)
+    {
+
+        setup (vdataObject);
+
+        // reset
+        hOffset = 0;
+        vOffset = 0;
+        
+        // set scrollbar value
+        setVScrollbarValue();
+        setHScrollbarValue();
+        
+        // re-calculate the cell position
+        computeCellPosition();
+
+        // reset scrollbar values
+        vdataFrame.vScrollbar.setValue(0);
+        vdataFrame.hScrollbar.setValue(0);
+
+        // repaint
+        repaint();
+
+        // for xy-plot
+        if (plotFrame != null)
+           destroyXYPlot();
+
+    }     
 }

@@ -13,7 +13,6 @@
 package ncsa.hdf.jhv;
 
 
-import  ncsa.hdf.hdflib.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.awt.image.*;
@@ -24,6 +23,9 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.util.*;
 import java.net.*;
+
+import ncsa.hdf.hdflib.*;
+import ncsa.hdf.message.*;
 
 /**
  * JHV  is to display the HDF tree structure
@@ -36,7 +38,7 @@ import java.net.*;
  *  be painted on this canvas */
 public class JHVCanvas extends Canvas implements MouseListener, 
                                                  MouseMotionListener {
-
+ 
   JHV		app;
   
   Image 	  	currentImage;
@@ -85,6 +87,10 @@ public class JHVCanvas extends Canvas implements MouseListener,
   
   // sds data range
   double[] range;
+  
+  // slice info. for 3d animation
+  SDSDimInfo		sliceInfo;
+  SliceSelection  	sliceSelectionWindow;
 
   /** the constructor */
   JHVCanvas() { 
@@ -199,8 +205,6 @@ public class JHVCanvas extends Canvas implements MouseListener,
     int w = getSize().width;
     int h = getSize().height;
     
-    //System.out.println("HDBCanvas: " + w + ", " + h);
-    
     // get the approciate position to display the image
     startx=0;
     starty=0;
@@ -210,8 +214,6 @@ public class JHVCanvas extends Canvas implements MouseListener,
     int height;
     width = getImageWidth();
     height= getImageHeight();
-    
-    // System.out.println ( "Image: " + width + " ," + height);
     
     int  factor_x = width / w;	 
     int  factor_y = height / h;
@@ -301,7 +303,6 @@ public class JHVCanvas extends Canvas implements MouseListener,
     if  (dragFlag)
 	g.drawRect(dragArea.x, dragArea.y, dragArea.width, dragArea.height);
 
-    //System.out.println("imageArea: " + imageArea);  
   }
 
   /** Write the information on the top of the image
@@ -482,6 +483,11 @@ public class JHVCanvas extends Canvas implements MouseListener,
     * Called if the mouse is up.
     */
   public void mouseReleased(MouseEvent me)   {
+
+    // added by Peter Cao on 10-3-97
+    // if the mouse is not on the image, do nothing
+    if (!imageArea.contains(me.getX(),me.getY()) && !dragFlag) return;
+
     
     // Is dragArea valid?
     // Checks if two rectangles intersect.
@@ -552,25 +558,33 @@ public class JHVCanvas extends Canvas implements MouseListener,
       else
 	subsetRange = new Rectangle(0,0,originalImageWidth, originalImageHeight);
       
-      // System.out.println("HDBCanvas::mouseUp::Dataset: " + subsetRange);
     }
     
     if ((node != null) && (currentImage != null) && (subsetRange != null)) {
       
       // set cursor type to "WAIT_CURSOR"
       ((Component)app.jhvFrame).setCursor(new Cursor(Cursor.WAIT_CURSOR));
-      
+
+      // closing selection slice window
+      SliceSelection select = getSliceWindow();
+      if (select != null) { 
+	  select.dispose();
+	  select = null;
+      }
+
       // Create  new frame and display the orginal image use the ScrollPanel
       // JHVImageFrame frame = new JHVImageFrame(this);
-      JHVImageFrame frame = new JHVImageFrame(this, subsetRange);
-      
-      // display frame
-      frame.popup();
+      int totalArea = subsetRange.width*subsetRange.height;
+      if ( totalArea > 0 ) {
+          JHVImageFrame frame = new JHVImageFrame(this, getSliceInfo(), subsetRange);
+          frame.popup();
+      }
       
       // set cursor type to "DEFAULT_CURSOR"
       ((Component)app.jhvFrame).setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       
     }  
+    dragFlag = false;
     
   }
   
@@ -659,5 +673,23 @@ public class JHVCanvas extends Canvas implements MouseListener,
 	if (range != null)
 	   return range[0]; 
 	return 0;
+  }
+
+  public void  setSliceInfo(SDSDimInfo info) {
+
+	this.sliceInfo = info;
+  }
+
+  public void  setSliceWindow(SliceSelection select) {
+
+	this.sliceSelectionWindow = select;
+  }
+
+  public SDSDimInfo  getSliceInfo( ) {
+	return this.sliceInfo ;
+  }
+
+  public SliceSelection  getSliceWindow( ) {
+	return this.sliceSelectionWindow;
   }
 }

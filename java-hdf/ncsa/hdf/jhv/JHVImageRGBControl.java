@@ -15,10 +15,11 @@ import  java.awt.image.*;
 import  java.awt.*;
 import  java.awt.event.*;
 import  java.lang.*;
+
 import  ncsa.hdf.hdflib.*;
-import  ncsa.hdf.java.awt.*;
-import  ncsa.hdf.java.awt.event.*;
-import  ncsa.hdf.java.awt.image.*;
+import  ncsa.hdf.awt.*;
+import  ncsa.hdf.awt.event.*;
+import  ncsa.hdf.awt.image.*;
 
 //  Upgraded to the JDK 1.1.1b Event Model by Apu
 public class JHVImageRGBControl extends Frame implements Runnable {

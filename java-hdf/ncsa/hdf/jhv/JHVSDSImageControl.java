@@ -13,9 +13,10 @@ package ncsa.hdf.jhv;
 
 import  java.awt.*;
 import  java.lang.*;
+
 import  ncsa.hdf.hdflib.*;
-import  ncsa.hdf.java.awt.*;
-import  ncsa.hdf.java.awt.event.*;
+import  ncsa.hdf.awt.*;
+import  ncsa.hdf.awt.event.*;
 
 //  Upgraded to the JDK 1.1.1b Event Model by Apu.
 public class JHVSDSImageControl extends Frame implements Runnable {
@@ -50,9 +51,8 @@ public class JHVSDSImageControl extends Frame implements Runnable {
 
 	// get real max. min
 	double[] minmax = null;
-	try {
-		minmax = getRange(imageCanvas.hdfData, imageCanvas.hdfDataType);
-	} catch (HDFException e ) {}
+	minmax = ImageDataConverter.getDataRange(imageCanvas.hdfData, imageCanvas.hdfDataType);
+
 	if (minmax != null) {
 
 	   if (minValue == maxValue) { // no max. or min
@@ -147,91 +147,6 @@ public class JHVSDSImageControl extends Frame implements Runnable {
 	   return retStr.substring(0,strLen);
 	else 
 	   return (retStr + space(strLen-len));
-
-    }
-
-    // determine the dataset range from SDS
-    public double[] getRange(byte[] data, int datatype) throws HDFException {
-
-        HDFNativeData convert = new HDFNativeData();
-        HDFLibrary hdf = new HDFLibrary();
-	double retVal[] = new double[2]; // min. and max.
-	if (data == null)  return retVal;
-
-	if ((datatype & HDFConstants.DFNT_LITEND) != 0) {
-		datatype -= HDFConstants.DFNT_LITEND;
-	}
-	// set default
-	retVal[0] = Double.MAX_VALUE;
-	retVal[1] = Double.MIN_VALUE;
-
-	int len = data.length;
-
-	double tmpDat;
-
-	int size = hdf.DFKNTsize(datatype);
-
-	int pos = 0;
-
-	for (int i=0; i<len/size; i++) {
-
-		switch(datatype) {
-		// one bit char
-		case HDFConstants.DFNT_CHAR:
-		case HDFConstants.DFNT_UCHAR8:
-		case HDFConstants.DFNT_UINT8:
-	  		tmpDat = (double)((byte)data[pos]);
-	  		// convert to positive if the number is negative 
-	  		if (tmpDat < 0)  
-	     	 	   tmpDat += 256.0d;
-	
-	  		break;
-		
-		// signed integer (byte)	
-		case HDFConstants.DFNT_INT8:
-	  
-	  		tmpDat = (double)((byte)data[pos]);
-	  		break;
-	  
-        	// short	
-		case HDFConstants.DFNT_INT16:
-		case HDFConstants.DFNT_UINT16:
-	      
-			Short shval = new Short(convert.byteToShort(data,pos));
-	  		tmpDat = shval.doubleValue();
-	  		break;
-	    
-		case HDFConstants.DFNT_INT32:
-		case HDFConstants.DFNT_UINT32:
-		
-			Integer ival = new Integer(convert.byteToInt(data,pos));
-	  		tmpDat = ival.doubleValue();
-	  		break;
-		  
-		//case HDFConstants.DFNT_FLOAT:
-		case HDFConstants.DFNT_FLOAT32:
-			Float fval = new Float(convert.byteToFloat(data,pos));
-	  		tmpDat = fval.doubleValue();
-	  		break;
-	    
-		//case HDFConstants.DFNT_DOUBLE:
-		case HDFConstants.DFNT_FLOAT64:
-	
-			Double dval = new Double(convert.byteToDouble(data,pos));
-	  		tmpDat = dval.doubleValue();
-	  		break;
-	
-		default:
-	  		tmpDat = 0.0;
-		} 
-  
-		retVal[0] = Math.min(retVal[0], tmpDat);
-		retVal[1] = Math.max(retVal[1], tmpDat);
-
-		pos += size;
-	} 
-
-	return retVal;
 
     }
 

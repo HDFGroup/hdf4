@@ -14,6 +14,9 @@ package ncsa.hdf.jhv;
 import java.awt.*;
 import java.awt.image.*;
 
+import ncsa.hdf.message.*;
+
+
 /**
  * A TreeNode class was written by Sandip Chitale. This class will be used as 
  * a base clas to implemnt a node of the tree data structres like heirarchical
@@ -23,205 +26,166 @@ import java.awt.image.*;
  */
 public class TreeNode
 {
-  /** The object is the Generic object. 
-     For our HDF it should be HDFObjectNode */
-  Object	 hdfObject;
+    /** The object is the Generic object */
+    Object userObject;
 
-  /** the default icon of the node */
-  Image		defaultIcon;
+    /** the default icon of the node */
+    Image defaultIcon;
 
-  /** the node level in the tree */ 
-  int		objLevel;
+    /** the node level in the tree */
+    int objLevel;
 
-  /** the icon of the node when it was expanded */
-  Image		expandedIcon;
+    /** the icon of the node when it was expanded */
+    Image  expandedIcon;
 
-  boolean	nodeIsExpanded;
+    boolean nodeIsExpanded;
   
-  /** the icon of the final node */
-  Image		fileIcon;
+    /** the icon of the final node */
+    Image fileIcon;
 
-  /** create the new tree node 
-   * @param obj the HDF object node
-   * @param pDefaultImage   the default image
-   * @param pCollapseImage  the collapse image
-   */
-
-  public TreeNode(Object obj
-		  ,Image	defaultImage
-		  ,Image	expandedImage)
-  {
-    hdfObject		= obj;
-    defaultIcon	        = defaultImage;
-    objLevel		= 10000;
-    expandedIcon	= expandedImage;
-    nodeIsExpanded	= false;
-  }
-
-  /** create the tree node by object and the default node image
-   * @param obj the HDF object node
-   * @param the default image
-   */
-
-  public TreeNode(Object obj ,Image defaultImage)
-  {
-    hdfObject		= obj;
-    defaultIcon	        = defaultImage;
-    objLevel		= 10000;
-    expandedIcon	= null;
-    nodeIsExpanded	= false;
-    fileIcon	        = defaultImage;
-  }
-
-  /** add one tree 
-   * @param objTree the tree
-   */
-  public  void  added(HDFTree	objTree) {
-  
-  }
-
-  // derived class should override this
-  public  void   deleted(HDFTree	objTree) {
-	
-  }
-
-  // derived class should override this
-  public  void  select(HDFTree	objTree, int modifiers) {
-  
-  }
-
-  // derived class should override this
-  public  void  expandCollapse(HDFTree objTree, int modifiers) {
-
-    // the node has child
-    if (isExpandable()) {      
-      toggleExpanded();
+    /** create the new tree node 
+     * @param obj the HDF object node
+     * @param pDefaultImage   the default image
+     * @param pCollapseImage  the collapse image
+     */
+    public TreeNode(Object obj, Image defaultImage, Image expandedImage)
+    {
+        userObject = obj;
+        defaultIcon = defaultImage;
+        objLevel = 10000;
+        expandedIcon = expandedImage;
+        nodeIsExpanded = false;
+        fileIcon = defaultImage;
     }
-  }
 
-  // various accesor fuctions
-  public  boolean  isExpandable() {
-	
-  return(!(expandedIcon == null));
-  }
-
-  /** set the collapse image
-   * @param expandedImage the collapse image
-   */
-
-  public  void  setExpandable(Image expandedImage) {	
-    expandedIcon	= expandedImage;
-  }
-
-  /** unselect the collapse image */
-  public  void  unsetExpandable() {	
-    expandedIcon	= null;
-  }
-
-  public  boolean  isExpanded() {
-    
-    return(nodeIsExpanded);
-  }
-
-  /** set the node to be expanded */
-  public  void  setExpanded() {
-	
-    if (isExpandable()) {
-      
-      nodeIsExpanded = true;
+    /** create the tree node by object and the default node image
+     * @param obj the HDF object node
+     * @param the default image
+     */
+    public TreeNode(Object obj ,Image defaultImage)
+    {
+        this(obj, defaultImage, null);
     }
-  }
 
-  /** set the node not to be expanded */
-  public  void   unsetExpanded() {
-  
-    if (isExpandable()) {
-      
-      nodeIsExpanded = false;
+    /** add one tree
+     * @param objTree the tree
+     */
+    public  void  added(Object objTree) { }
+
+    // derived class should override this
+    public  void   deleted(Object objTree) { }
+
+    // derived class should override this
+    public  void  select(Object objTree) {}
+
+    // derived class should override this
+    public  void  expandCollapse(Object objTree)
+    {
+        if (isExpandable()) toggleExpanded();
     }
-  }
 
-  public  void toggleExpanded() {
-    
-    if (isExpanded()) {
-      
-      unsetExpanded();
+    // various accesor fuctions
+    public  boolean  isExpandable() {
+        return(!(expandedIcon == null));
     }
-    else {
-      
-      setExpanded();
+
+    /** set the collapse image
+     * @param expandedImage the collapse image
+     */
+    public  void  setExpandable(Image expandedImage) {
+        expandedIcon = expandedImage;
     }
-  }
 
-  /** get the object */
-  public Object  getObject() {
+    /** unselect the collapse image */
+    public  void  unsetExpandable() {        
+        expandedIcon = null;
+    }
+
+    public  boolean  isExpanded() {
+        return nodeIsExpanded;
+    }
+
+    /** set the node to be expanded */
+    public  void  setExpanded() {
+      if (isExpandable()) nodeIsExpanded = true;
+    }
+
+    /** set the node not to be expanded */
+    public  void unsetExpanded() {
   
-    return(hdfObject);
-  }
+    if (isExpandable()) nodeIsExpanded = false;
+    }
 
-  /** get the default image */
-  public  Image  getDefaultImage() {
-	
-    return(defaultIcon);
-  }
+    public  void toggleExpanded() {
+      if (isExpanded()) unsetExpanded();
+      else setExpanded();
+    }
 
-  /** set the default image */
-  public  void  setDefaultImage(Image defaultImage)
-  {
-    defaultIcon = defaultImage;
-  }
+    /** get the object */
+    public Object  getObject() {
+        return userObject;
+    }
 
-  /** set the file image */
-  public  void  setFileImage(Image img)
-  {
-    fileIcon = img;
-  }
+    /** get the default image */
+    public  Image  getDefaultImage() {
+        return defaultIcon;
+    }
 
-  /** get the file image */
-  public  Image  getFileImage()
-  {
-    return(fileIcon);
-    
-  }
+    /** set the default image */
+    public  void  setDefaultImage(Image defaultImage)
+    {
+        defaultIcon = defaultImage;
+    }
 
-  /** get the node level */
-  public  int  getLevel()
-  {
-    return(objLevel);
-  }
+    /** set the file image */
+    public  void  setFileImage(Image img)
+    {
+        fileIcon = img;
+    }
 
-  /** set the level of the node 
-   * @param level the level value of the node 
-   */
-  public void setLevel(int level)
-  {
-    objLevel = level;
-  }
+    /** get the file image */
+    public  Image  getFileImage()
+    {
+        return fileIcon;
+    }
 
-  /** get the collapse image(expanded).
-   *@return the image 
-   */
-  public  Image getCollapseImage()
-  {
-    return(expandedIcon);
-  }
+    /** get the node level */
+    public int getLevel()
+    {
+        return objLevel;
+    }
 
-  /**
-   * Converts to a rather lengthy String.
-   */
-  
-  public String toString()
-  {
-    return(hdfObject.toString());
-  }
-  
+    /** set the level of the node
+     * @param level the level value of the node 
+     */
+    public void setLevel(int level)
+    {
+        objLevel = level;
+    }
 
-  /** compare the two nodes 
-   * @param pOther the tree node 
-   * @return true if the two object is the same, or false
-   */
-  public  boolean   equals(TreeNode pOther)
-  {
-    return(hdfObject.equals(pOther.getObject()));
-  }
+    /** get the collapse image(expanded).
+     *@return the image
+     */
+    public  Image getCollapseImage()
+    {
+        return expandedIcon;
+    }
+
+    /**
+     * Converts to a rather lengthy String.
+     */
+    public String toString()
+    {
+        return (userObject.toString());
+    }
+
+
+    /** compare the two nodes 
+     * @param pOther the tree node
+     * @return true if the two object is the same, or false
+     */
+    public boolean equals(TreeNode pOther)
+    {
+      return (userObject.equals(pOther.getObject()));
+    }
 }

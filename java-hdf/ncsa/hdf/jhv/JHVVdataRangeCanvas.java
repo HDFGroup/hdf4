@@ -22,16 +22,6 @@ import java.applet.*;
 import java.util.*;
 import java.net.*;
 
-
-
-//-------------------------------------------------------------------------------------
-//
-//  Upgraded to the JDK 1.1.1b Event Model.
-//    - Apu Kapadia, May 21st 1997.
-//
-//-------------------------------------------------------------------------------------
-
-
 /** This class will create a new canvas to display an HDF field name & records */
 public class JHVVdataRangeCanvas extends Canvas implements MouseListener {
  
@@ -254,8 +244,11 @@ public class JHVVdataRangeCanvas extends Canvas implements MouseListener {
   }
 
   public void mousePressed(MouseEvent me) {}
+
   public void mouseEntered(MouseEvent me) {}
+
   public void mouseExited(MouseEvent me) {}
+
   public void mouseClicked(MouseEvent me) {}
 
   public void mouseReleased(MouseEvent me)

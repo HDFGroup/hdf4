@@ -15,16 +15,18 @@ import java.applet.Applet;
 import java.net.URL;
 import java.util.Hashtable;
 import java.awt.image.*;
-
 import java.lang.Thread;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 
 import ncsa.hdf.hdflib.*;
-import ncsa.hdf.java.awt.image.*;
-import ncsa.hdf.java.awt.*;
-import ncsa.hdf.java.awt.event.*;
+import ncsa.hdf.awt.image.*;
+import ncsa.hdf.awt.animation.ImageAnimation;
+import ncsa.hdf.awt.*;
+import ncsa.hdf.awt.event.*;
+import ncsa.hdf.message.*;
+
 
 //  Upgraded to the JDK 1.1.1b Event Model by Apu
 /**
@@ -51,8 +53,8 @@ public class JHVImageFrame extends Frame implements ItemListener, ActionListener
   int frameWidth	= 710;
   int frameHeight	= 420;
 
-  /** set animated speed choice  */
-  Choice speedsChoice  = new Choice();
+  // set animated speed choice  
+  // Choice speedsChoice  = new Choice();
 
   /** the constants of the animation operation  */
   public  final static int NEXT     = 1;
@@ -79,15 +81,22 @@ public class JHVImageFrame extends Frame implements ItemListener, ActionListener
   Checkbox       zoomFactor1000   ;
     
   public float   zoomFactor = 2.0f;
-    
-  Button spButton;
+  
+  // spreedsheet button  
+  Button 	spButton;
+
+  // animation
+  Button 	anButton;
+
+  // image number
+  TextField 	imgField;
 
   // animated operation button
   Button nextButton;
   Button prevButton;
-  Button foreButton;
-  Button backButton;
-  Button stopButton;
+  // Button foreButton;
+  // Button backButton;
+  // Button stopButton;
 
   JHVSDSImageControl	sdsImageControl;
   JHVImageRGBControl	imageRGBControl;
@@ -104,13 +113,25 @@ public class JHVImageFrame extends Frame implements ItemListener, ActionListener
   public static final int RADIAL_PLOT = 4;
   public static final int HISTOGRAM_PLOT = 5;
 
-  // view menu items
+  // view menu items  
   CheckboxMenuItem 	digitItem;
   CheckboxMenuItem	pixelItem;
   CheckboxMenuItem	noneItem;
   CheckboxMenuItem	radialItem;
   CheckboxMenuItem	histogramItem;
   CheckboxMenuItem	noPlotItem;
+
+  // animation window opeded?
+  boolean		animationWindowOpened = false;
+  JHVImageAnimation	jhvImageAnimation;
+
+  // Inner class for Window closing
+  class JHVImageFrameClosedProcess extends WindowAdapter {
+     public void windowClosing(WindowEvent evt) {
+	// close all of my control
+	close();
+     }
+  }
 
   /** Create the seprate frame based on the HDF browser's image canvas.
    *  This frame will display the HDF raster image with scroll panel
@@ -172,8 +193,75 @@ public class JHVImageFrame extends Frame implements ItemListener, ActionListener
     //imagePanel.imageCanvas.checkSize();
     imageCanvas.checkSize();
 
-    speedsChoice.addItemListener(this);
-    this.addWindowListener(new WindowClosedProcess());
+    // speedsChoice.addItemListener(this);
+    this.addWindowListener(new JHVImageFrameClosedProcess());
+  }
+
+  /** Create the seprate frame based on the HDF browser's image canvas.
+   *  This frame will display the HDF raster image with scroll panel
+   * @param app the JHV applet name
+   */
+  public JHVImageFrame(JHVCanvas canvas_, SDSDimInfo slice, Rectangle subset) {
+    
+    // JHV applet 
+    applet_ = canvas_.app;
+
+    // set HDF Browser image canvas
+    jhvCanvas = canvas_;
+
+    // set the frame tittle
+    setTitle();
+
+    // set menu bar
+    setMenuBar(this.createJHVImageMenuBar());
+ 
+    // image canvas
+    imageCanvas = new JHVImageCanvas(this, subset);
+    
+    // set slice info
+    setSliceInfo(slice);
+         
+    // set jhv canvas associated with image canvas
+    imageCanvas.jhvCanvas = canvas_;
+    
+    // set image
+    // if (canvas_.currentImage != null)
+      // set image for image canvas
+      // imageCanvas.setImage(canvas_.currentImage);
+
+    // set image size
+    // int w = canvas_.getImageWidth();
+    // int h = canvas_.getImageHeight();
+    // imageCanvas.setImageSize(w,h);
+    imageCanvas.setImageSize(subset.width, subset.height);
+
+    // set canvas size
+    // imageCanvas.setCanvasSize(w,h);
+    imageCanvas.setCanvasSize(200,200);
+    
+    // repaint the image
+    // imageCanvas.repaint();
+         
+    // get HDF Object Node;
+    imageCanvas.setHDFObjectNode( canvas_.node );
+	
+    // initialize the HDF based on the selected HDF node
+    imageCanvas.initHDF();
+    
+    // set layout manager
+    setLayout(new BorderLayout());
+    
+    // GUI
+    add("Center", createDisplayItems());
+    
+    // set scrollbar
+    imageCanvas.setScrollbar(hScrollbar, vScrollbar);
+    
+    //imagePanel.imageCanvas.checkSize();
+    imageCanvas.checkSize();
+
+    // speedsChoice.addItemListener(this);
+    this.addWindowListener(new JHVImageFrameClosedProcess());
   }
 
   /** setup the frame tittle */
@@ -199,7 +287,7 @@ public class JHVImageFrame extends Frame implements ItemListener, ActionListener
         jhvImageMenuBar.add(createFileMenu("File"));
   	jhvImageMenuBar.add(createEditMenu("Edit"));
 	jhvImageMenuBar.add(createViewMenu("View"));	
-	jhvImageMenuBar.add(createPlotMenu("Plot"));
+	// jhvImageMenuBar.add(createPlotMenu("Plot"));
     	jhvImageMenuBar.add(createPaletteMenu("Palette"));
 	jhvImageMenuBar.add(createImageMenu("Image"));
 	jhvImageMenuBar.add(createFilterMenu("Filter"));
@@ -234,7 +322,7 @@ public class JHVImageFrame extends Frame implements ItemListener, ActionListener
         // new menu by specified menuTitle
         Menu viewMenu = new Menu(menuTitle);
     
-	noneItem = new CheckboxMenuItem("No Value",true);
+	noneItem = new CheckboxMenuItem("Default",true);
 	noneItem.addItemListener(this); 
         viewMenu.add(noneItem);
 
@@ -246,6 +334,22 @@ public class JHVImageFrame extends Frame implements ItemListener, ActionListener
 	pixelItem = new CheckboxMenuItem("Pixel Value");
 	pixelItem.addItemListener(this); 
         viewMenu.add(pixelItem);
+
+	viewMenu.addSeparator();
+
+   	// histogram or arial plots
+	noPlotItem = new CheckboxMenuItem("No Plots",true);
+	noPlotItem.addItemListener(this); 
+        viewMenu.add(noPlotItem);
+
+	// histogram or arial plots
+	radialItem = new CheckboxMenuItem("Radial Plots");
+	radialItem.addItemListener(this); 
+        viewMenu.add(radialItem);
+
+	histogramItem = new CheckboxMenuItem("Histogram Plots");
+	histogramItem.addItemListener(this); 
+        viewMenu.add(histogramItem);
 
         return viewMenu;    
     }
@@ -446,32 +550,38 @@ public Panel createDisplayItems() {
     // control area	  
     Panel ctrPanel = new Panel();
     ctrPanel.setLayout(new GridLayout(1,0));
-    
+
     ctrPanel.add(spButton = new Button("Spreadsheet"));
     spButton.addActionListener(this);
 
-    speedsChoice.add("0.0");
-    speedsChoice.add("0.1");
-    speedsChoice.add("0.2");
-    speedsChoice.add("0.5");
-    speedsChoice.add("1.0");
-    speedsChoice.add("2.0");
-    
-    ctrPanel.add(speedsChoice);
-    
+    ctrPanel.add(anButton = new Button("Animation"));
+    anButton.addActionListener(this);
+
+    ctrPanel.add(imgField = new TextField("1"));
+    imgField.addActionListener(this);
+
+    // speedsChoice.add("0.0");
+    // speedsChoice.add("0.1");
+    // speedsChoice.add("0.2");
+    // speedsChoice.add("0.5");
+    // speedsChoice.add("1.0");
+    // speedsChoice.add("2.0");   
+    // ctrPanel.add(speedsChoice);
+       
     ctrPanel.add(nextButton =new Button("Next"));
     ctrPanel.add(prevButton =new Button("Previous"));
-    ctrPanel.add(backButton =new Button("Backward"));
-    ctrPanel.add(foreButton =new Button("Forward"));
-    ctrPanel.add(stopButton =new Button("Stop"));
+    // ctrPanel.add(backButton =new Button("Backward"));
+    // ctrPanel.add(foreButton =new Button("Forward"));
+    // ctrPanel.add(stopButton =new Button("Stop"));
+
     Button dismissButton;
     ctrPanel.add(dismissButton =new Button("Dismiss"));    
    
     nextButton.addActionListener(this);
     prevButton.addActionListener(this);
-    backButton.addActionListener(this);
-    foreButton.addActionListener(this);
-    stopButton.addActionListener(this);
+    // backButton.addActionListener(this);
+    // foreButton.addActionListener(this);
+    // stopButton.addActionListener(this);
     dismissButton.addActionListener(this);
 
     // zoom image panel
@@ -635,6 +745,22 @@ public Panel createDisplayItems() {
   }
 
     public void close() {
+
+	if (imageCanvas.paletteEditor != null)
+	    imageCanvas.paletteEditor.selectedExit();
+
+	// close the window
+	dispose();
+
+	if (jhvImageAnimation != null) {
+	    jhvImageAnimation.animatedImage.dispose();
+	    jhvImageAnimation.animatedImage = null;
+	    jhvImageAnimation = null;
+	}
+
+	// stop the animation
+	imageCanvas.stop();
+
 	// shut down all my control
 	// for sds
 	if (sdsImageControl != null) {
@@ -651,7 +777,6 @@ public Panel createDisplayItems() {
 	   imageBCControl.close();
 	   imageBCControl = null;
 	}
-
 	if (imageCanvas.hPlot != null) {
 	   (imageCanvas.hPlot).xyPlotExit();
 	   imageCanvas.hPlot = null;
@@ -659,8 +784,7 @@ public Panel createDisplayItems() {
 	if (imageCanvas.aPlot != null) {
 	   (imageCanvas.aPlot).xyPlotExit();
 	   imageCanvas.aPlot = null;
-	}
-	
+	}	
     }
 
     /** Enables annimated button */
@@ -668,10 +792,10 @@ public Panel createDisplayItems() {
 
 	nextButton.setEnabled(true);
 	prevButton.setEnabled(true);
-	stopButton.setEnabled(true);
-	foreButton.setEnabled(true);
-	backButton.setEnabled(true);
-	
+	anButton.setEnabled(true);
+	// stopButton.setEnabled(true);
+	// foreButton.setEnabled(true);
+	// backButton.setEnabled(true);	
     }
 
     /** Disables annimated button */
@@ -679,10 +803,10 @@ public Panel createDisplayItems() {
 	
 	nextButton.setEnabled(false);
 	prevButton.setEnabled(false);
-	stopButton.setEnabled(false);
-	foreButton.setEnabled(false);
-	backButton.setEnabled(false);
-	
+	anButton.setEnabled(false);
+	// stopButton.setEnabled(false);
+	// foreButton.setEnabled(false);
+	// backButton.setEnabled(false);	
     }
 
     public void handleMenuEvent(String arg) {
@@ -694,10 +818,6 @@ public Panel createDisplayItems() {
  
 	    // Close Window
 	    if ("Close Window".equals(arg)) {		
-		// stop the animation
-		imageCanvas.stop();
-		// close the window
-		dispose();
 		// close all of my control
 		close();
 	    }
@@ -772,7 +892,7 @@ public Panel createDisplayItems() {
 			imageCanvas.dispImageDataMode = DIGIT_VALUE;
 			imageCanvas.setShowCoordinate(true);	
 	    	} else {
-	      	if ("No Value".equals(label))  {
+	      	if ("Default".equals(label))  {
 			noneItem.setState(true);
 			digitItem.setState(false);
 			pixelItem.setState(false);			
@@ -829,6 +949,23 @@ public Panel createDisplayItems() {
 	    if ("Set Palette".equals(arg)) 
 		setNewPalette();
     }
+
+ public void handleTextFieldEvent(TextField target, String arg) {
+	// image number
+	if(target instanceof TextField) {
+   
+ 		TextField textFld = (TextField)target;
+		String numStr = (String)textFld.getText();
+		numPlane = Integer.parseInt(numStr);
+		
+		// get image number, then display it if possible
+		if ((numPlane>plane) || (numPlane<1))
+		   numPlane = 1;
+
+   		// set image for current canvas & repaint it
+      		imageCanvas.setImage(imageCanvas.getImage(numPlane));
+      	}  
+ }
 
     public void setImageFilter(ImageFilter filter) {
 
@@ -895,42 +1032,46 @@ public Panel createDisplayItems() {
   public void actionPerformed(ActionEvent e)
   {
 
-    plane = imageCanvas.numberOfImage;
+    Object target = e.getSource();
     String arg = e.getActionCommand();
 
-    if ("Spreadsheet".equals(arg))
+    plane = imageCanvas.numberOfImage;
+	
+    if (target instanceof TextField) {
+ 	TextField textField = (TextField)target;
+ 	handleTextFieldEvent(textField, arg);
+    }
+
+    if ("Spreadsheet".equals(arg))  
 	 imageCanvas.makeSpreadsheet();
+    else if ("Animation".equals(arg))  {
+	    if (jhvImageAnimation == null)
+		jhvImageAnimation = new JHVImageAnimation(imageCanvas.getImages()); 
+	    else {
+		ImageAnimation an = jhvImageAnimation.animatedImage;
+		if (!an.isShowing())
+		    an.setVisible(true);
+	    }
+    }
+
+    // "stop" pressed, then kill the current thread
+    // if ("Stop".equals(arg)) 		
+    //	imageCanvas.stop();
       
-      // "stop" pressed, then kill the current thread
-      if ("Stop".equals(arg)) 		
-	imageCanvas.stop();
-      
-      // "dimiss" pressed, then close the frame
-      if ("Dismiss".equals(arg)) {
-
-	// Data Frame will be distroyed
-
-	// close HDF file(Do we need close the HDF now?)
-	// imageCanvas.hdf.close();
-
-	// stop the animation
-	imageCanvas.stop();
-
-	// close the window
-	dispose();
-
+    // "dimiss" pressed, then close the frame
+    if ("Dismiss".equals(arg)) {
 	// close all of my control
 	close();
-      }
+    }
 
-      // "Next" pressed
-      if ("Next".equals(arg)) { //next image
+    // "Next" pressed
+    if ("Next".equals(arg)) { //next image
 	try {
 	  // set the next image
 	  setImage(NEXT);
 	} catch(Exception ex) {};
-      }
-
+    }
+    else 
       // "Previous" pressed
       if ("Previous".equals(arg)) { //previous Image
 	try {
@@ -939,6 +1080,7 @@ public Panel createDisplayItems() {
 	} catch (Exception ex) {};
       }
 
+      /************* animation support  *************************
       // "Backward" pressed
       if ("Backward".equals(arg)) { //All of images (backward)
 	try {
@@ -953,10 +1095,10 @@ public Panel createDisplayItems() {
 	  // set action for image operation
 	  setImage(FORWARD);
 	} catch (Exception ex) {};
-      }
-  
-      
-      //Event HAS to be a MenuItem generated event.
+      }  
+      ************ animation support  *************************/
+
+      // if the Event is a MenuItem generated event, then ....
       handleMenuEvent(arg);
   }
 
@@ -975,7 +1117,7 @@ public Panel createDisplayItems() {
 	String label = (String)labels[0];
  	if (("Pixel Value".equals(label))   ||
 	    ("Digital Value".equals(label)) ||
-	    ("No Value".equals(label)) )
+	    ("Default".equals(label)) )
 	   handleViewMenuEvent((CheckboxMenuItem)target);
 	else 
 	   handlePlotMenuEvent((CheckboxMenuItem)target);
@@ -1062,4 +1204,11 @@ public Panel createDisplayItems() {
       }
     }
   }
+
+  
+
+ public void setSliceInfo(SDSDimInfo info) {
+
+	imageCanvas.setSliceInfo(info);
+ }
 }

@@ -11,7 +11,7 @@
 
 package ncsa.hdf.jhv;
 
-import  java.awt.*;
+import java.awt.*;
 import java.awt.event.*;
 
 /** This class will display the image  in the seprate  window */
@@ -479,8 +479,10 @@ public class ImageFrame extends Frame
     
     // release frame
     dataFrame = null;
-    dispose();	 
-    
+
+
+
+    dispose();	  
   }
 
   public void adjustmentValueChanged(AdjustmentEvent e)
@@ -545,11 +547,8 @@ public class ImageFrame extends Frame
       }
       
       dataFrame = null;
-      dispose();
-      
-    }	
-    
-    
+      dispose();      
+    }	 
   }
   
 }

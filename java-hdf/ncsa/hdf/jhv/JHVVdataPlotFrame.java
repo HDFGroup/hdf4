@@ -11,25 +11,17 @@
 
 package ncsa.hdf.jhv;
 
-import  java.awt.*;
+import java.awt.*;
 import java.awt.event.*;
-import  java.lang.*;
-import  java.util.Vector;
-
-
-//----------------------------------------------------------------------------
-//
-//  Upgraded to the JDK 1.1.1b Event Model
-//   - Apu Kapadia May 21st, 1997
-//
-//----------------------------------------------------------------------------
+import java.lang.*;
+import java.util.Vector;
 
 /* This class will make a plot for selected HDF Vdata
    Modified Data: 04-02-97
 		  Update the method, MakeAxis, to make a axis label "Value" for
 		  y-axis and "Row Value" for x-axis.
  */
-class JHVVdataPlotCanvas extends Canvas implements MouseListener{
+class JHVVdataPlotCanvas extends Canvas {
 
 	// my parent
 	JHVVdataPlotFrame plotFrame;
@@ -63,8 +55,14 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
 	public static final int  LINE  = 0;
 	public static final int  POINT = LINE+1;
 
-	// draw mode (default)
+	// xy-plot style (line or scatter)
 	int     drawMode = LINE;
+
+	// option
+	public static final int LINEPLOT	= 1;
+	public static final int XYPLOT		= 2;	
+	// xy-plot mode
+	int     plotMode = LINEPLOT;
 
 	// the boundary of the rectangle(plot)
 	Rectangle  boundary = new Rectangle();
@@ -111,7 +109,7 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
 
 	// set font
 	setFont(dataFont);
-	addMouseListener(this);
+	// addMouseListener(this);
     }
 
     /** Default new constructor */
@@ -125,7 +123,7 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
 
 	// set data
 	setData(data);
-	addMouseListener(this);	
+	// addMouseListener(this);	
     }
 
  //  Set preferred  size at SxS for current canvas  
@@ -164,8 +162,7 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
 
 	    xMin = Math.min(tmp, xMin);
 	    xMax = Math.max(tmp, xMax);
-	}
-	
+	}	
 	repaint();
     }
 
@@ -176,7 +173,6 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
 	xMax = xmax;
 
 	repaint();
-
     }
 
    /** Set y-axis data range by the specified  data range */ 
@@ -187,8 +183,7 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
 
 	    yMin = Math.min(tmp, yMin);
 	    yMax = Math.max(tmp, yMax);
-	}
-	
+	}	
 	repaint();
     }
 
@@ -199,7 +194,6 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
 	yMax = ymax;
 
 	repaint();
-
     }
 
     /** Set annotation
@@ -227,8 +221,7 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
 	// set x-axis
 	setXAxisRange(data[0]);
 
-	repaint();
-	
+	repaint();	
     }
 
     /** Get point refer to the graphic device
@@ -283,7 +276,6 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
 
 	// default
 	appendPlotedPoints(data);
-
     }
 
     /**
@@ -295,7 +287,13 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
      // how many line will be ploted ?
      plotLine  = data.length - 1;
 
-     if (plotLine > 0) {
+     if ((plotLine > 0) && (plotMode == LINEPLOT)) {
+
+	// x-axis reset
+	// setXAxisRange(data[0]);
+	double range[] = getDataRange(data[0]);
+	xMin = range[0];
+	xMax = range[1];
 
 	plotPoints = null;
 	plotPoints = new Vector[plotLine];
@@ -307,22 +305,48 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
     
 	    // how many points?
 	    int  size = data[0].length;
-	    
+	
 	    for (int i=0; i<size; i++) {
+	    		// x value
+	    		double   x = data[0][i];   // rows
+	    		// y value
+	    		double   y = data[kk][i];
+	        	Point pp = getDevicePoint(x,y);
+	        	// append point
+	        	plotPoints[kk-1].addElement(pp);
+	    } // for (int i=0; i<size; i++) 
+	} // for (int kk=1; kk<=plotLine; kk++)  
+      } 
+      else  if ((plotLine >= 1) && (plotMode == XYPLOT)) {
 
-	    	// x value
-	    	double   x = data[0][i];
+	--plotLine;
+	plotPoints = null;
+	plotPoints = new Vector[plotLine];
 
-	    	// y value
-	    	double   y = data[kk][i];
+	// x-axis reset
+	// setXAxisRange(data[1]);
+	double range[] = getDataRange(data[1]);
+	xMin = range[0];
+	xMax = range[1];
 
-	        Point pp = getDevicePoint(x,y);
-	 
-	        // append point
-	        plotPoints[kk-1].addElement(pp);
+	for (int kk=1; kk<=plotLine; kk++) {
 
-	    }
-	} 
+	    // specify the new vector to hold the drawable points
+	    plotPoints[kk-1] = new Vector();
+    
+	    // how many points?
+	    int  size = data[0].length;
+	
+	    for (int i=0; i<size; i++) {
+	    		// x value
+	    		double   x = data[1][i];   // rows
+	    		// y value
+	    		double   y = data[kk+1][i];
+	        	Point pp = getDevicePoint(x,y);
+	        	// append point
+	        	plotPoints[kk-1].addElement(pp);
+	    } // for (int i=0; i<size; i++) 
+	} // for (int kk=1; kk<plotLine; kk++)  
       } 
     }
 
@@ -346,11 +370,9 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
 	   if (annotation[kk] != null) { // enough point to draw
 		
 		int strLen = (annotation[kk].length() + 1) * fontWidth + 18  ;
-		if ((x+strLen) > w) { // move to next line
-		   
+		if ((x+strLen) > w) { // move to next line   
 		    // adjust y
 		    y -= (fontHeight - 1);
-		
 		    // adjust x
 		    x = borderLen + 8;
 		}
@@ -360,18 +382,26 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
 		
 		gc.setColor(oldColor);
 
-		// annotation
-		gc.drawString( annotation[kk], x+18 ,y);
-		
-		x += strLen ;	
+		if (plotMode == LINEPLOT)
+		   // annotation
+		   gc.drawString( annotation[kk], x+18 ,y);
+		else
+		   gc.drawString( annotation[kk+1], x+18 ,y);
 
-	    } // if (annotation[kk] != null) { // enough point to draw
-		
+		x += strLen ;	
+	    } // if (annotation[kk] != null) { // enough point to draw	
 	}
 
 	// reset the color
 	gc.setColor(oldColor);
-
+	
+	// draw x-axis legend	
+	int dy = h - 2*borderLen; 
+	if (dy<0) dy = 2*borderLen;
+	gc.setFont(new Font("Fixed", Font.PLAIN, 10));
+	if ((plotMode == XYPLOT) && (annotation[0] != null))
+	   gc.drawString(annotation[0],(w-2*borderLen+15), dy);
+	gc.setFont(dataFont);
     }
 
     /** Draw the point */
@@ -383,6 +413,8 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
 	// draw each line
 	for (int kk=0; kk<plotLine; kk++) { 
 	
+	    if (plotPoints[kk] == null) continue;
+
 	    // set default color
 	    gc.setColor(plotLineColor[kk]);
 
@@ -409,16 +441,12 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
 
 		     // move to next point
 		     prePoint = cPoint;
-		}
-		
-	    }
-	   
-
+		} // for (int i=1; i<size; i++)	
+	    }   // if (size >1) { // enough point to draw
 	} 
 
 	// reset the color
 	gc.setColor(oldColor);
-
     }
 
     /** Make the axis by current canvas size & drawable data */
@@ -461,7 +489,7 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
 	gc.drawLine (rx+extraLen,dy,rx+extraLen-arrowLen,dy-arrowLen);
 
 	// draw label of row number
-	gc.drawString("[Row Number]", (width-3*borderLen)/2, dy+3*fontHeight);
+	// gc.drawString("[Row Number]", (width-3*borderLen)/2, dy+3*fontHeight);
 
 	// draw scale (5 points)
 	for (int i=0;i<4;i++) {
@@ -476,7 +504,7 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
 
     	   String yLabel = Double.toString(yVal);  // vdata value fof selected field
 	  
-    	   if (yLabel.length() > 12) yLabel = yLabel.substring(0,12);
+    	   if (yLabel.length() > 8) yLabel = yLabel.substring(0,8);
       
 	   String xLabel = Integer.toString((int)xVal);  // colnum
            if (xLabel.length() > 5) xLabel = xLabel.substring(0,5);
@@ -498,8 +526,6 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
    	   gc.drawString(yLabel,
 		 	 lx-(yLabel.trim().length()*fontWidth)-2*fontWidth,dy+i*(uy-dy+1)/3 );
   
-
-
   	   // short scale
     	   if (i != 3) {
       		gc.drawLine(lx+(int)((i+0.5)*(rx-lx+1)/3),dy-shortScaleSize,
@@ -520,10 +546,12 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
      */
     public void paint(Graphics g) {
 
-	// make axis
-	makeAxis(g);
+	setBackground(Color.white);
 
 	appendPlotedPoints();
+
+	// make axis
+	makeAxis(g);
 
 	// plot the point;
 	drawPlotPoint(g);
@@ -542,7 +570,6 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
 
  	// reset the color
     	g.setColor(gColor);
-  
     }
 
  /** Updates the component. This method is called in
@@ -583,11 +610,20 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
 	return zoomFactor;
     }
 
-    // set plot mode (line or plot)
+    // set plot mode (line or xy plot)
     public void setPlotMode(int mode) {
 
+	this.plotMode = mode;	
+	// adjustPlotLine();
+
+	plotFrame.vdataCanvas.resetDataRange();
+	repaint();
+    }
+
+    // set plot mode (line or plot)
+    public void setPlotStyle(int mode) {
+
 	this.drawMode = mode;
-	
 	repaint();
     }
 
@@ -608,29 +644,10 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
     
   }
 
-  public void mouseEntered(MouseEvent e)
-  {
-    xPos = e.getX();
-    yPos = e.getY();
-    
-    oldCursor = ((Component)plotFrame).getCursor().getType();
-    ((Component)plotFrame).setCursor(new Cursor(Cursor.HAND_CURSOR));
-    getToolkit().sync();
+  public void adjustPlot() {
+ 
+    adjustZoomFactor();
 
-  }
-
-  public void mouseExited(MouseEvent e)
-  {
-    xPos = e.getX();
-    yPos = e.getY();
-   
-    // cursor 	
-    ((Component)plotFrame).setCursor(new Cursor(oldCursor));
-    getToolkit().sync();
-  }
-
-  public void mouseReleased(MouseEvent e)
-  { 
     if (drawPlot) {
       // data processing
       plotFrame.vdataCanvas.setFindDataRange(false); // max. or min. known
@@ -641,7 +658,8 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
     }
   }
   
-  public void mousePressed(MouseEvent e)
+
+  public void adjustZoomFactor()
   {
     int  oldZoomFactor = zoomFactor;
 
@@ -657,15 +675,39 @@ class JHVVdataPlotCanvas extends Canvas implements MouseListener{
       drawPlot = true;
     else
       drawPlot = false;
-
   }
 
-  public void mouseClicked(MouseEvent e) {}
+  public void adjustPlotLine()  {
+     	// how many line will be ploted ?
+     	plotLine  = data.length - 1;
+	if (plotMode == XYPLOT) --plotLine;
+  }
 
+    // return dataset maxinum and mininum value
+    public double[] getDataRange(double dat[]) {
+
+	double range[] = new double[2];
+	
+  	// selected colnum data range for whole dataset
+	double min=dat[0], max=dat[0];
+		
+	for (int kk=1; kk<dat.length; kk++) {
+
+	    double tmp = dat[kk];
+	    min = Math.min(tmp,min);
+	    max = Math.max(tmp,max);
+	}
+	
+	range[0] = min;
+	range[1] = max;
+
+	return range;
+     }
 }
 
 /** This class will make a plot for selected HDF Vdata */
-public class JHVVdataPlotFrame extends Frame implements ItemListener, ActionListener{
+public class JHVVdataPlotFrame  extends Frame 
+				implements ItemListener, ActionListener {
 
 	// keep zoom state
 	public static final int	ZOOM_IN	= 0;
@@ -681,20 +723,36 @@ public class JHVVdataPlotFrame extends Frame implements ItemListener, ActionList
 	double data[][];
 
 	// mode choice
-	Choice  plotModeChoice = new Choice(); 
+	// Choice  plotModeChoice = new Choice(); 
 
 	// for zooming;
-	CheckboxGroup  zoomInOut ;
-  	Checkbox       zoomIn    ;
-  	Checkbox       zoomOut   ;
+	// CheckboxGroup  zoomInOut ;
+  	// Checkbox       zoomIn    ;
+  	// Checkbox       zoomOut   ;
 
 	// zoom state 
 	int 	zoomState = ZOOM_IN;
 
+	// menubar items ....
+	// style
+	CheckboxMenuItem	lineStyleItem, scatterStyleItem;
+	CheckboxMenuItem	linePlotItem, xyPlotItem;
+	
+  	// Inner class for Window closing
+  	class VdataPlotFrameClosedProcess extends WindowAdapter {
+     	  public void windowClosing(WindowEvent evt) {
+		// close all of my control
+		dispose();
+     	  }
+  	}
+
    /** Default new constructor */
    public JHVVdataPlotFrame() {
-     plotModeChoice.addItemListener(this);
-     addWindowListener(new WindowClosedProcess((Frame)this));
+     // set menu bar
+     setMenuBar(this.createVdataPlotMenuBar());
+ 
+     // plotModeChoice.addItemListener(this);
+     addWindowListener(new VdataPlotFrameClosedProcess());
     }
 
  
@@ -704,7 +762,10 @@ public class JHVVdataPlotFrame extends Frame implements ItemListener, ActionList
 
 	// set title
 	setTitle("HDF Vdata XY-Plot");
-
+ 
+       // set menu bar
+       setMenuBar(this.createVdataPlotMenuBar());
+ 
 	// set data
 	this.data = data;
 
@@ -713,8 +774,9 @@ public class JHVVdataPlotFrame extends Frame implements ItemListener, ActionList
 
 	// check size
 	plotCanvas.checkSize();
-	plotModeChoice.addItemListener(this);
-	addWindowListener(new WindowClosedProcess());
+
+	// plotModeChoice.addItemListener(this);
+	this.addWindowListener(new VdataPlotFrameClosedProcess());
     }
 
    /** Default new constructor */
@@ -724,8 +786,8 @@ public class JHVVdataPlotFrame extends Frame implements ItemListener, ActionList
 
 	this.vdataCanvas = vdataCanvas; 
 	
-	plotModeChoice.addItemListener(this);
-	addWindowListener(new WindowClosedProcess());
+	// plotModeChoice.addItemListener(this);
+	addWindowListener(new VdataPlotFrameClosedProcess());
     }
 
   /** setup the frame tittle
@@ -737,7 +799,9 @@ public class JHVVdataPlotFrame extends Frame implements ItemListener, ActionList
     super.setTitle(title);
   }
 
-  /** Create display panel */
+  /** Create display panel
+   *  Modified:  11-10-97   xlu
+   */
   public void createDisplayGUI() {
 
     // set Layout Manager
@@ -748,7 +812,8 @@ public class JHVVdataPlotFrame extends Frame implements ItemListener, ActionList
 	
     // set graphic panel
     add("Center", plotCanvas);
-  
+   
+    /********************* take out *****************************
     // zoom control area	  
     Panel zCtrPanel = new Panel();
     zCtrPanel.setLayout(new GridLayout(1,0));
@@ -787,8 +852,106 @@ public class JHVVdataPlotFrame extends Frame implements ItemListener, ActionList
     panel_.add( ctrPanel);
   
     add("South", panel_);
-     
+    *****************************************************/
   }
+
+    // create menubar for JHV XY-Plot
+    public MenuBar createVdataPlotMenuBar() {
+    
+        // new menubar
+        MenuBar  xyPlotMenuBar = new MenuBar();
+        xyPlotMenuBar.add(createFileMenu("File"));
+  	xyPlotMenuBar.add(createOptionMenu("Option"));
+	xyPlotMenuBar.add(createViewMenu("View"));	
+	xyPlotMenuBar.add(createStyleMenu("Style"));
+    
+
+        return  xyPlotMenuBar;
+    }
+
+    /** create a file menu by provided title
+    * @param menuTitle the menu title
+    */
+    public Menu createFileMenu(String  menuTitle) {
+    
+        // new menu by specified menuTitle
+        Menu fileMenu = new Menu(menuTitle);
+    
+        // add menuItem 
+	MenuItem CloseWindowMItem = new MenuItem("Close");
+	CloseWindowMItem.addActionListener(this);
+        fileMenu.add(CloseWindowMItem);
+    
+        return fileMenu;    
+    }
+
+ 
+
+  /** create a view menu by provided title
+    * @param menuTitle the menu title
+    */
+    public Menu createViewMenu(String  menuTitle) {
+    
+        // new menu by specified menuTitle
+        Menu viewMenu = new Menu(menuTitle);
+
+	// add menuItem  
+	MenuItem zoomInItem = new MenuItem("Zoom In");
+	zoomInItem.addActionListener(this);  
+	viewMenu.add(zoomInItem); //default
+
+	MenuItem zoomOutItem = new MenuItem("Zoom Out");
+	zoomOutItem.addActionListener(this); 
+        viewMenu.add(zoomOutItem);
+
+        return viewMenu;    
+    }
+
+ 
+ 
+
+  /** create a style  menu  
+    * @param menuTitle the menu title
+    */
+    public Menu createStyleMenu(String  menuTitle) {
+    
+        // new menu by specified menuTitle
+        Menu styleMenu = new Menu(menuTitle);
+  
+	// add menuItem  
+	lineStyleItem = new CheckboxMenuItem("Line", true);
+	lineStyleItem.addItemListener(this);  
+	styleMenu.add(lineStyleItem); //default
+
+	scatterStyleItem = new CheckboxMenuItem("Scatter");
+	scatterStyleItem.addItemListener(this); 
+        styleMenu.add(scatterStyleItem);
+
+        return styleMenu; 
+    }
+
+ 
+ 
+
+  /** create a option  menu  
+    * @param menuTitle the menu title
+    */
+    public Menu createOptionMenu(String  menuTitle) {
+    
+        // new menu by specified menuTitle
+        Menu optionMenu = new Menu(menuTitle);
+    
+        // add menuItem 
+	linePlotItem = new CheckboxMenuItem("Line-Plot", true);
+	linePlotItem.addItemListener(this);  
+	optionMenu.add(linePlotItem); //default
+
+	xyPlotItem = new CheckboxMenuItem("XY-Plot");
+	xyPlotItem.addItemListener(this); 
+        optionMenu.add(xyPlotItem);
+
+        return optionMenu;
+    }
 
  /** popup the new frame actually */
   public void popup() {
@@ -811,51 +974,26 @@ public class JHVVdataPlotFrame extends Frame implements ItemListener, ActionList
      * @see java.awt.Component#action
      */
 
-  public void itemStateChanged(ItemEvent e)
-  {
+  public void itemStateChanged(ItemEvent e)  {
+   
     ItemSelectable target = e.getItemSelectable();
-  
-    if (target instanceof Choice) {
-	    
-      Choice choice = (Choice) target;
-      String str = choice.getSelectedItem();
-	   
-      if ("Line".equals(str)) {
-	// set line mode
-	plotCanvas.setPlotMode(plotCanvas.LINE);
-      }
-      else {
-	if ("Point".equals(str)) {
-	  // set line mode
-	  plotCanvas.setPlotMode(plotCanvas.POINT);
-	}
-      }
+
+    if (target instanceof CheckboxMenuItem) { // option & style of xy-plot
+	Object labels[] = ((CheckboxMenuItem)target).getSelectedObjects();
+	if (labels == null) return;
+	String label = (String)labels[0];
+ 	if (("Line-Plot".equals(label))||("XY-Plot".equals(label)))
+	   handleOptionMenuEvent((CheckboxMenuItem)target);
+	else 
+	   if (("Line".equals(label))||("Scatter".equals(label)))
+	      handleStyleMenuEvent((CheckboxMenuItem)target);
     }
-    
-    // checkbox  selected
-    if (target instanceof Checkbox) {
-      
-      Checkbox checkBox = (Checkbox)target;
-      String   label    = checkBox.getLabel();
-	 
-      // "Zoom In" pressed, then set the indentificator to true and set the 
-      // zoom factor (positive or negative number)
-      if ("Zoom-In".equals(label)) 
-	zoomState 	= ZOOM_IN;
-      else
-	if ("Zoom-Out".equals(label)) 
-		zoomState 	= ZOOM_OUT;
-      
-    }
-    
   }
 
-  public void actionPerformed(ActionEvent e)
-  {
-    String arg = e.getActionCommand();
-
-    if ("Dismiss".equals(arg))
-      dispose();
+  public void actionPerformed(ActionEvent evt) {
+  
+    	String arg = evt.getActionCommand();
+	handleMenuEvent(arg);
   }
 
   public void dispose() {
@@ -869,4 +1007,76 @@ public class JHVVdataPlotFrame extends Frame implements ItemListener, ActionList
       super.dispose();
   }
     
+
+   public void handleMenuEvent(String arg) {
+
+	    // Close Window
+	    if ("Close".equals(arg)) 	
+		// close all of my control
+		dispose();
+	    else  if (("Zoom In".equals(arg)) || ("Zoom Out".equals(arg)))
+		     handleViewMenuEvent(arg);
+    }
+
+   // Handle View menu events
+    public void handleViewMenuEvent(String arg) {
+
+	// Zoom In
+	if ("Zoom In".equals(arg)) 
+	   zoomState 	= ZOOM_IN;
+	else 
+	    // Zoom Out
+	    if  ("Zoom Out".equals(arg)) 
+		zoomState 	= ZOOM_OUT;
+
+	plotCanvas.adjustPlot();
+    }
+
+ 
+
+    // Handle Option menu events
+    public void handleOptionMenuEvent( CheckboxMenuItem item) {
+	    
+	Object labels[] = item.getSelectedObjects();
+	if (labels == null) return;
+	String label = (String)labels[0];
+
+     	if ("Line-Plot".equals(label))  {
+		linePlotItem.setState(true);
+	        xyPlotItem.setState(false);
+		// set line mode
+		plotCanvas.setPlotMode(JHVVdataPlotCanvas.LINEPLOT);
+	}
+      	else  
+	   if ("XY-Plot".equals(label))  {		
+		linePlotItem.setState(false);
+	        xyPlotItem.setState(true);
+	  	// set xy-plot mode
+	  	plotCanvas.setPlotMode(JHVVdataPlotCanvas.XYPLOT);
+	   }
+    }
+
+ 
+
+    // Handle Style menu events
+    public void handleStyleMenuEvent( CheckboxMenuItem item) {
+	    
+	Object labels[] = item.getSelectedObjects();
+	if (labels == null) return;
+	String label = (String)labels[0];
+
+     	if ("Line".equals(label))  {
+		lineStyleItem.setState(true);
+	        scatterStyleItem.setState(false);
+		// set line mode
+		plotCanvas.setPlotStyle(plotCanvas.LINE);
+	}
+      	else  
+	   if ("Scatter".equals(label))  {		
+		lineStyleItem.setState(false);
+	        scatterStyleItem.setState(true);
+	  	// set line mode
+	  	plotCanvas.setPlotStyle(plotCanvas.POINT);
+	   }
+    }
 }

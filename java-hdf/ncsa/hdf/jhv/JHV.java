@@ -11,3299 +11,1168 @@
 
 package ncsa.hdf.jhv;
 
-import  ncsa.hdf.hdflib.*;
-import  ncsa.hdf.java.util.*;
-import  ncsa.hdf.java.awt.image.*;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.net.*;
 import java.applet.*;
-import java.io.File;
-import java.io.InputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.net.*;
 
+import ncsa.hdf.hdflib.*;
+import ncsa.hdf.util.*;
+import ncsa.hdf.awt.*;
+import ncsa.hdf.awt.image.*;
+import ncsa.hdf.message.*;
+
 /**
- * JHV  is to display the HDF tree structure
- * Modification:
- * 	Keep track of current HDF directory, and selected HDF file will be
- * located under previous selected HDF file directory.  Also improve the  
- * "Load File" and let it do more work than "Open file".  08/08/97 xlu
- *      Support lagre HDF file access, more changes.    09/06/97 xlu
+ * JHV  displays the HDF tree structure and data content
+ * Modifications:
+ *     1. Keep track of current HDF directory, and the selected HDF file will be
+ *        located under previous selected HDF file directory.  Also improve the
+ *        "Load File" and let it do more work than "Open file".  08/08/97 xlu
+ *     2. Support lagre HDF file access, more changes.    09/06/97 xlu
+ *     3. Separate hdf file access from the UI. 01/14/98, Peter Cao
+ *     4. Support remote file access. 01/14/98, Peter Cao
+ *     5. Add documentation. 01/14/98, Peter Cao
  * @version 1.00   8/10/97
  * @author Xinjian LU, HDF Group, NCSA
  */
-public class JHV extends Applet implements ActionListener {
+public class JHV extends Applet implements ActionListener,ItemListener {
 
- static {
-                System.loadLibrary("hdf");
+    // thiese lines may be deleted after the recoding is done
+    //static { System.loadLibrary("hdf"); }
+    int fid;
+    boolean isSuppportRemoteAccess = false;
+
+    /** the user's display level */
+    public static final int USER      = 0;
+
+    /** the developer's display level */
+    public static final int DEVELOPER = 1;
+
+    /** default view selection */
+    public static final int  DEFAULT   = 0;
+
+    /** animation view selection */
+    public static final int  ANIMATION = 1;
+
+    /** layer view selection */
+    public static final int  LAYER     = 2;
+
+    /** new line feed plus carrage return */
+    public static char[] nl = {13, 10};
+
+    /** the new line charactor */
+    public static String NL = new String(nl);
+
+    /** the host header in the configuration file */
+    public static String HOSTHEADER = "Server";
+
+    /** the frame to hold this viewer */
+    Frame jhvFrame;
+
+    /** the HDFTree to display the HDF data hierarchy */
+    HDFTree hdfTree;
+
+    /** The TextArea to display text information */
+    TextArea infoText;
+
+    /** canvas to display the preview HDF image */
+    JHVCanvas hdfCanvas;
+
+    JHVCanvas hdfIconCanvas;
+    
+    /** the HDF logo */
+    Image  hdfIcon = null;
+    
+    /** the closed file folder icon */
+    Image lDefault;
+
+    /** the file icon */
+    Image lFile;
+
+    /** the opened file folder icon */
+    Image lCollapse;
+
+    /** the hdf annotation icon */
+    Image annImg;
+  
+    /** the hdf raster image icon */
+    Image risImg;
+ 
+    /** the hdf sds icon */
+    Image sdsImg;
+
+    /** the hdf vdata icon */
+    Image vdImg;
+
+    /** the hdf Vgroup icon */
+    Image  vgImg= null;
+
+    /** indicating if icons are loaded */
+    boolean iconLoaded = false;
+
+    /** the hdf file source */
+    TextField hdfFileText;
+
+    /** the hdf file name */
+    String hdfFile;
+
+    /** the queue to store the hdf object */
+    public  Queue hdfObjQueue = null;
+
+    /** the generic hdf object */
+    public HDFLibrary hdf;
+
+    // variables for duble-buffer
+    Image offScreenImage = null;
+    Graphics offGraphics;
+    
+    /** indicating if the file is local or remote */
+    boolean isLocal = true;
+    
+    /** the JHV home directory */
+    String jhvDir = ".";
+
+    /** the jhv incon directory */
+    String jhvIconDir = ".";
+
+    /** the name of jhv configuration file */
+    String configFilename = "jhv.ini";
+    
+    /** indicating if the JHV starts as an applet */
+    boolean isApplet = false;
+    
+    /** the Vdata frame */
+    JHVVdataFrame  vdataFrame = null;
+
+    /** to keep only on Vdata frame alive a time */
+    boolean  vdataFrameDisplayed = false;
+
+    // define a display level for HDF tree
+    public int dispLevel   = USER;
+
+    /** the current hdf file directory */
+    String cDir;
+
+    // menu of "view"
+    CheckboxMenuItem defItem, anItem, layerItem;
+    int dispMode = DEFAULT;
+	
+    //  JHVImageAnimation
+    JHVImageAnimation animatedImages = null;
+
+    //  JHVLayeredImage
+    JHVLayeredImage layeredImages = null;
+
+    /** the remote machine name the the server */
+    private String serverHost = "";
+
+    /** the port number of the server */
+    private int serverPort = 8181;
+
+    /** a list of server machines */
+    private List hostList;
+
+    /** the server host menu */
+    private Menu hostMenu;
+
+    /**
+     * It is called automatically by the system the application is started.
+     */
+    public static void main(String args[])
+    {
+        // create new jhv object
+        JHV jhv = new JHV();
+
+        String tmpHDFFile = "";
+        File tmpFile = null;
+        jhv.jhvIconDir = "";
+        for (int i = 0; i < args.length; i++) {
+            if ("-jhvpath".equalsIgnoreCase(args[i])) {
+ 	        try {
+                    tmpFile = new File(args[i+1]);
+                    if (tmpFile.isDirectory()) jhv.jhvDir = tmpFile.getPath();
+                    else jhv.jhvDir = tmpFile.getParent();
+                    i++;
+                } catch (Exception e) {}
+            }
+            else if ("-jhviconspath".equalsIgnoreCase(args[i])) {
+	        try {
+                    tmpFile = new File(args[i+1]);
+                    if (tmpFile.isDirectory()) jhv.jhvIconDir = tmpFile.getPath();
+                    i++;
+                }
+                catch (Exception e) {}
+            } else {
+		if (args[i] != null)
+		   tmpHDFFile = new String(args[2]);
+	    }
         }
- 
-  // my frame
-  Frame    	jhvFrame;
 
-  /** HDFTree object */
-  HDFTree	hdfTree;
+        if (jhv.jhvIconDir == null || jhv.jhvIconDir.length() < 1 )
+            jhv.jhvIconDir = jhv.jhvDir+File.separator+"lib"+File.separator+"hdficons";
+        jhv.cDir = jhv.jhvDir;
 
-  /** information panel to be as a test area */
-  TextArea      infoText;
+        jhv.init(tmpHDFFile);
 
-  /** canvas to display the image responding to the appropriate tree node */
-  JHVCanvas	hdfCanvas;
-
-  JHVCanvas     hdfIconCanvas;
-    
-  // some of icons
-  Image         hdfIcon = null;
-    
-  /** the default icon for the tree node that is not a final tree node */
-  Image         lDefault;
-
-  /** the icon for the tree node */
-  Image         lFile;
-
-  /** the icon for the tree node has been expended */
-  Image         lCollapse;
-
-  /** the hdf annotation icon */
-  Image 	annImg;
-  
-  /** the hdf raster image icon */
-  Image risImg;
- 
-  /** the hdf sds icon */
-  Image  sdsImg;
-
-  /** the hdf vdata icon */
-  Image vdImg;
-
-  /** the hdf Vgroup icon */
-  Image  vgImg= null;
-
-  // for setup
-  boolean 	iconLoaded = false;
-
-  /** the hdf file source */
-  TextField	hdfFileText;
-
-  /** hdf file name */
-  String	hdfFile;
-
-  boolean 	isLocalFile = false;
-//public static final String  HDFFILENAME  = "/usr/tmp/tmp.hdf";
-
-int fid;
-	
-  /** the queue to store the hdf object */
-  public  Queue hdfObjQueue = null;
-  
-  /** the generic hdf object */
-  public HDFLibrary 	hdf;
-
-  // variables for duble-buffer
-  Image 	offScreenImage = null;
-  Graphics 	offGraphics;
-    
-  // where an HDF file is from?
-  boolean isLocal = true;
-    
-  // Directory that JHV run
-  String  jhvDir = ".";
-
-  String  jhvIconDir = ".";
-    
-  // JHV as applet?
-  boolean isApplet = false;
-    
-  // Vdata frame
-  JHVVdataFrame  vdataFrame = null;
-  
-  boolean  vdataFrameDisplayed = false;
-
-  // define display level
-  public static final int USER      = 0;
-  public static final int DEVELOPER = 1;
-
-  // define a display level for HDF tree
-  public 	int	dispLevel   = USER;
-
-  // current hdf file directory
-  String 	cDir;
-
-  /**
-   * It is called automatically by the system the application is started.
-   */
-  public static void main(String args[]) {
-         	    	
-    // create new jhv object 
-    JHV	jhv = new JHV();
-
-    String tmpHDFFile = "";
-    int i;
-    for (i = 0; i < args.length; i++) { 
-       if ("-jhvpath".equalsIgnoreCase(args[i])) {
-	    // get jhv directory
-	    File tmpFile = new File(args[i+1]);
-	    if (tmpFile.isDirectory()) 
-		     jhv.jhvDir = tmpFile.getPath();
-	     else
-		     jhv.jhvDir = tmpFile.getParent();
-	    i++;
-	} else if ("-jhviconspath".equalsIgnoreCase(args[i])) {
-	    File tmpFile = new File(args[i+1]);
-	    if (tmpFile.isDirectory()) 
-		     jhv.jhvIconDir = tmpFile.getPath();
-	   i++;
-
-	} else {
-		if (args[i] != null) 
-		   tmpHDFFile = new String(args[2]);    	
-	}
+        Frame frame = new Frame("HDF Viewer");
+        WindowListener adapter = new WindowAdapter()
+        { public void windowClosing(WindowEvent e) {System.exit(0);} };
+        frame.addWindowListener(adapter);
+        frame.setLayout(new BorderLayout());
+        frame.setMenuBar(jhv.createHdbMenuBar());
+        frame.add("Center", jhv);
+        frame.pack();
+        frame.setSize(600,500);
+        frame.show();
+        jhv.setJHVFrame(frame);
     }
 
-    //   set current hdf file directory
-    jhv.cDir = jhv.jhvDir;
+    /**
+     * Initialize jhv with specified hdf file
+     * @param hdffile  the name of hdf file
+     */
+    public void init(String hdffile) {
 
-    jhv.init(tmpHDFFile);
-    
-    Frame frame = new Frame();
-    frame.setTitle("HDF Viewer");
-    WindowListener adapter = new WindowAdapter() 
-    { public void windowClosing(WindowEvent e) {System.exit(0);} };
-    frame.addWindowListener(adapter);
-    
-    frame.setLayout(new BorderLayout());
-    // set menu bar
-    frame.setMenuBar(jhv.createHdbMenuBar());
-    
-    frame.add("Center", jhv);
-    
-    frame.pack();
-    
-    frame.setSize(600,500);
-    frame.show();
-    
-    // set my defuly frame
-    jhv.setJHVFrame(frame);
-    
-  }
+        hdfFile = new String(hdffile);
 
-  public void actionPerformed(ActionEvent e)
-  {
-    String arg = e.getActionCommand();
-  
-    if (arg.equals("Open Layers")) {
-	
-	// an HDF file source 
-	openFileOnLocal();
-	setup(hdfFile);
-	hdfTree.refresh();
-	
-	// clean up the hdfCanvas
-	hdfCanvas.setImage(null);
-	hdfCanvas.repaint();	
+        // create a HDFTree control
+        hdfTree = new HDFTree();
 
-	// invoke JHVLayerImage
-	JHVLayeredImage layeredImages = new JHVLayeredImage(hdfFile);
-     } else {
-  
-       if (arg.equals("Open Animation")) {
-	
-	// an HDF file source 
-	openFileOnLocal();
-	setup(hdfFile);
-	hdfTree.refresh();
-	
-	// clean up the hdfCanvas
-	hdfCanvas.setImage(null);
-	hdfCanvas.repaint();	
+        // set layout manager
+        setLayout(new BorderLayout());
 
-	// invoke JHVImageAnimation
-	JHVImageAnimation animatedImages = new JHVImageAnimation(hdfFile);
-       }
-     }
-  
-     if (arg.equals("Open")) {
-	
-	// an HDF file source 
-	openFileOnLocal();
-	setup(hdfFile);     
+        // information panel
+        infoText = new TextArea();
+        infoText.setFont(new Font("Courier", Font.PLAIN, 12));
+        infoText.setEditable(false);
 
-	hdfTree.resetTreeOffset();
-	hdfTree.refresh();
-	
-	// clean up the hdfCanvas
-	hdfCanvas.setImage(null);
-	hdfCanvas.repaint();		
-	
-      }
-      
-      else if (arg.equals("Exit")) {
-	System.exit(0);
-      }
+        // load icon images
+        if (!(iconLoaded)) {
+            Toolkit toolkit = getToolkit();
+            iconLoaded = true;
 
-    else if (arg.equals("Clean")) {
-      
-      infoText.setText("");
-      infoText.select(0,0);
+            String defaultImg = new String(jhvIconDir +"/default.gif");
+            String fileImg = new String(jhvIconDir+"/file.gif");
+            String collapseImg = new String(jhvIconDir+"/collapse.gif");
+            String hdfStr= new String(jhvIconDir+"/hdf.gif");
+            String annStr= new String(jhvIconDir+"/ann.gif");
+            String risStr= new String(jhvIconDir+"/ris.gif");
+            String sdsStr= new String(jhvIconDir+"/sds.gif");
+            String vdStr = new String(jhvIconDir+"/vdata.gif");
+            String vgStr = new String(jhvIconDir+"/vgroup.gif");
+
+            lDefault = toolkit.getImage(defaultImg );
+            lFile    = toolkit.getImage(fileImg    );
+            lCollapse= toolkit.getImage(collapseImg);
+            hdfIcon= toolkit.getImage(hdfStr);
+            annImg = toolkit.getImage( annStr);
+            risImg = toolkit.getImage( risStr);
+            sdsImg = toolkit.getImage( sdsStr);
+            vdImg  = toolkit.getImage(  vdStr);
+            vgImg  = toolkit.getImage(  vgStr);
+        }
+
+        //setup(hdfFile);
+
+        // orgnize the panel
+        add("Center",createDisplayPanel());
+
+        // resize the default size for the HDF Browser
+        setSize(600,400);
+
+        // display hdf icon
+        hdfIconCanvas.setSize(32,32);
+        hdfIconCanvas.setImageSize(30,30);
+        hdfIconCanvas.setImage(hdfIcon);
+
+        // get the initialized tree structure
+        hdfTree.refresh();
     }
 
-    else {
+    /**
+     *  handles the viewer action events.
+     *  modified by Peter Cao (xcao@ncsa.uiuc.edu) on Jan. 13, 1998
+     */
+    public void actionPerformed(ActionEvent e)
+    {
+        String arg = e.getActionCommand();
+        Object source = e.getSource();
 
-    // open file
-    if (arg.equals("Load File")) {
-       hdfFile = new String(hdfFileText.getText());
-       // an HDF file source 
-       if (hdfFile.indexOf("://") !=  -1) {
-          // supported by URL, This feature is not supported yet
-          this.isLocal = false;
-       }
-       else  {
-           this.isLocal = true;
-           if (!isFile(hdfFile)) {
-		if (isDirectory(hdfFile)) 
-		   cDir = hdfFile;
-                openFileOnLocal();
-	   }
-       }
-      
-      setup(hdfFile);
-      if (!isLocal) {
-	infoText.setText("Remote file access is not supported yet.");	
-      }
+        if (source instanceof MenuItem)
+            arg = ((MenuItem)source).getLabel();
 
-      hdfTree.resetTreeOffset();
-      hdfTree.refresh();
-      
-      // clean up the hdfCanvas
-      hdfCanvas.setImage(null);
-      hdfCanvas.repaint();		
+        // load file from a typed in name
+        if (source.equals(hdfFileText) ||
+            arg.equals("Load File") )
+        {
+            hdfFile = hdfFileText.getText().trim();
+            int portIndex = -1;
+            if (hdfFile.length() > 6)
+                portIndex = (hdfFile.substring(6)).indexOf(":");
+
+            if (portIndex > 0)
+            {
+                this.isLocal = false;
+                int fileIndex = -1;
+                String path = "";
+                hdfFile = hdfFile.replace('\\', '/');
+                String location = hdfFile;
+
+                String prefix = hdfFile.substring(0, 7);
+                if ( prefix.equalsIgnoreCase("http://"))
+                {
+                    // java web server
+                    String suffix = hdfFile.substring(7);
+                    int doubleSlash = suffix.indexOf("//");
+                    while (doubleSlash > 0)
+                    {
+                        // remove the extra slash character
+                        suffix = suffix.substring(0, doubleSlash)+suffix.substring(doubleSlash+1);
+                        doubleSlash = suffix.indexOf("//");
+                    }
+                    int servletIndex = suffix.indexOf("/servlet");
+                    int pathIndex = suffix.indexOf("/");
+                    if (servletIndex > 0)
+                        pathIndex = suffix.indexOf("/", servletIndex+9);
+                    else
+                        pathIndex = suffix.indexOf("/", pathIndex+1);
+                    if (pathIndex > 0)
+                    {
+                        location = "http://"+suffix.substring(0, pathIndex);
+                        path = suffix.substring(pathIndex);
+                    }
+                }
+                else
+                {
+                    // standlone server
+                    fileIndex = hdfFile.indexOf("/");
+                    if (fileIndex > 0)
+                    {
+                        location = hdfFile.substring(0, fileIndex);
+                        path = hdfFile.substring(fileIndex);
+                    }
+                }
+                if (path == null) path = "";
+
+                hdfFile = null;
+                openFile(location, path);
+                if (hdfFile == null) return;
+            }
+            else
+            {
+               this.isLocal = true;
+               if (!isFile(hdfFile))
+               {
+                    if (isDirectory(hdfFile))
+                        cDir = hdfFile;
+                    openFile();
+               }
+            }
+
+            // load the HDF hierrchy tree
+            infoText.setText("");
+            setup(hdfFile);
+
+	    hdfTree.resetTreeOffset();
+	    hdfTree.refresh();
+            hdfCanvas.setImage(null);
+            hdfCanvas.repaint();
+        }
+
+        // clean the information area
+        else if (arg.equals("Clean")) {
+            infoText.setText("");
+            infoText.select(0,0);
+        }
+
+        // open local file from a file manager
+        else if (arg.equals("Open Local File"))
+        {
+            // an HDF file source
+            openFile();
+            setup(hdfFile);
+
+            hdfTree.resetTreeOffset();
+            hdfTree.refresh();
+            hdfCanvas.setImage(null);
+            hdfCanvas.repaint();
+        }
+
+        // open a remote file from a remote file dialog
+        else if ( ( (Menu) ((MenuItem)source).getParent() )
+            .getLabel().equals("Open Remote File"))
+        {
+            String selectedHost = "";
+            isLocal = false;
+
+            int length = hostList.getItemCount();
+            for (int i = 0; i < length; i++)
+            {
+               if (arg.equals(hostList.getItem(i)))
+               {
+                  selectedHost = hostList.getItem(i);
+                  i = length;
+               }
+            }
+            hdfFile = null;
+            openFile(selectedHost, "");
+            if (hdfFile == null) return;
+
+            // load the HDF hierrchy tree
+            infoText.setText("");
+            setup(hdfFile);
+
+	    hdfTree.resetTreeOffset();
+	    hdfTree.refresh();
+	    hdfCanvas.setImage(null);
+	    hdfCanvas.repaint();
+        }
+
+        // exit JHV
+        else if (arg.equals("Exit")) {
+            System.exit(0);
+        }
+
+        // edit remote host list
+        else if (arg.equals("Remote Host"))
+        {
+            HostEditor hostEditor = new HostEditor(jhvFrame, hostList);
+            if (hostEditor.isChanged())
+            {
+                updateServerHosts(hostEditor.getHostList());
+            }
+        }
+
+        // setup preferences
+        else if (arg.equals("Preferences")) {}
+
+        // display JHV version information
+        else if (arg.equals("About")) {
+            String about = "Java HDF Viewer\n"+
+                              "Version 2.1\n"+
+                              "Copyright "+'\u00a9'+" 1998 NCSA";
+
+            InfoDialog id = new InfoDialog(jhvFrame, "About JHV", about, hdfIcon);
+            id.show();
+        }
+
+        // for futher implementation
+        else {
+            infoText.setText("This action is not implemented.");
+        }
+
     }
-   
-    }
-  }
-  
 
-  /**
-   * Initialize the applet. Resize and load images.
-   */
-  public void init() {
+    /**
+     *  reset the viewer and display the HDF hierarchy 
+     *  when a new file is selected.
+     *  @param hdfFileName  the name of the hdf file
+     */
+    public void setup(String hdfFileName) {
     
-    
-    int width;
-    int height;
- 
-    isApplet = true;
-    
-    if (!isLocal) {
-	
-	// for applet 
-	String dataSource = getParameter("hdfFile");
-	hdfFile = (dataSource != null) ? dataSource : "http://hdf.ncsa.uiuc.edu:4321/hdf/jet2.hdf";  
-    
-	String at = getParameter("width");
-	width = (at !=null) ? Integer.parseInt(at):600;
-	
-	at = getParameter("height");
-	height= (at != null) ? Integer.parseInt(at):400;
-    }
-    else {
-	width = 600;
-	height = 400;
-	hdfFile = new String("/hdfscr2/xlu/tmp/testfile/hdf1.hdf" );
-    }
-	
-    // create a HDFTree control
-    hdfTree = new HDFTree();
+        System.gc();
 
-    // set layout manager
-    setLayout(new BorderLayout());
- 
-    // information panel
-    infoText = new TextArea();
+        jhvFrame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        Vector hdfObjVec = new Vector();
+
+       // clean up the HDF object Queue, and the HDF tree
+        if (hdfObjQueue == null) hdfObjQueue = new Queue();
+        else hdfObjQueue.removeAllElements();
+        hdfTree.removeAllTreeNodes();
+
+        this.hdfFile = hdfFileName;
+        try {
+            HDFHierarchy hierarchy = (HDFHierarchy) getHDFObject(null);
+            hdfObjQueue = hierarchy.getQueue();
+        }
+        catch (Exception e){jhvFrame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));}
+        extractHdfObj(hdfObjQueue, hdfObjVec);
+
+        // add the TreeNodes to the tree.
+        TreeNode addedNode;
+        for (int i = 0; i < hdfObjVec.size(); i++)
+        {
+            HDFObjectNode objNode;
+            objNode = (HDFObjectNode)hdfObjVec.elementAt(i);
       
-    // create hdf file by downloading the hdf file via http or file , ftp etc. 
-    setup(hdfFile);
-
-    // orgnize the panel
-    add("Center",createDisplayPanel());
-    if (!isLocal) {
-	infoText.setText("Remote file access is not supported yet.");	
+            // node has child
+            if (objNode.child != null)
+              addedNode = new HDFTreeNode(objNode, lDefault, lCollapse, this);
+            else  {
+                Image img = null;
+                switch (objNode.type) {
+                    case HDFObjectNode.Annotation:
+                    case HDFObjectNode.GRGLOBALATTR:
+                    case HDFObjectNode.GRDATASETATTR:
+                    case HDFObjectNode.SDSGLOBALATTR:
+                    case HDFObjectNode.SDSDATASETATTR:
+                        img = annImg;
+                        break;
+                    case HDFObjectNode.Palette:
+                        img = lFile;
+                         break;
+                    case HDFObjectNode.RIS8:
+                    case HDFObjectNode.RIS24:
+                    case HDFObjectNode.GRDATASET:
+                        img = risImg;
+                        break;
+                    case HDFObjectNode.SDSDATASET:
+                        img = sdsImg;
+                        break;
+                    case HDFObjectNode.Vdata:
+                        img = vdImg;
+                        break;
+                    case HDFObjectNode.Vgroup:
+                        img = vgImg;
+                        break;
+                }
+      
+                if (img == null)
+                    addedNode = new HDFTreeNode(objNode, lFile, this);
+                else
+                    addedNode = new HDFTreeNode(objNode, img, this);
+            }
+      
+            /* set the level of the node */
+            addedNode.setLevel(objNode.getObjLevel());
+      
+            hdfTree.addTreeNode(addedNode);
+            jhvFrame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        }
     }
-  
-    // resize the default size for the HDF Browser
-    setSize(width,height);
+
+    /**
+     *  create the new display panel for JHV
+     *  @return the panel for HDF Browser
+     */
+    public Panel createDisplayPanel() {
     
-    // get the initialized tree structure
-    hdfTree.refresh();
-
-  }
-  
-  
-
-  /**
-   * Initialize jhv with specified hdf file
-   */
-  public void init(String hdffile) {
-
-    hdfFile = new String(hdffile);
-
-    // create a HDFTree control
-    hdfTree = new HDFTree();
-
-    // set layout manager
-    setLayout(new BorderLayout());
- 
-    // information panel
-    infoText = new TextArea();
-      
-    // create hdf file by downloading the hdf file via http or file , ftp etc. 
-    setup(hdfFile);
-
-    // orgnize the panel
-    add("Center",createDisplayPanel());
-    if (!isLocal) {
-	infoText.setText("Remote file access is not supported yet.");	
-    }
-  
-    // resize the default size for the HDF Browser
-    setSize(600,400);
-      
-    // display hdf icon
-    hdfIconCanvas.setSize(32,32);
-    hdfIconCanvas.setImageSize(30,30);
-    hdfIconCanvas.setImage(hdfIcon);
+        Panel dispPanel = new Panel();
+        dispPanel.setLayout(new BorderLayout());
     
-    // get the initialized tree structure
-    hdfTree.refresh();
-
-  }
-  
-  
-
-  /** initialize some variables
-   * @param hdfFileName the file name 
-   */
-  public void setup(String hdfFileName) {
-  
-    // clean up the HDF object Queue
-    if (hdfObjQueue == null)
-      hdfObjQueue = new Queue();
-    else
-      hdfObjQueue.removeAllElements();
-    
-    // close the opened hdf file if possible	
-    if (hdf != null) {
-      if (fid != HDFConstants.FAIL) {
-		try {
-		    hdf.Hclose(fid);
-		} catch (Exception e) {
-			infoText.setText("Exception closing file: "+fid);
-		}
-	}
-    } else {
-	hdf = new HDFLibrary();
-    }
-    
-    // set the hdf file
-    if (hdfFileName.equals("")) {
-	hdfFile = null;
-    }
-    else {
-        setHdfFile(hdfFileName);
-    }
-    
-    // load the icons into
-    if (!(iconLoaded)) {
-      
-      iconLoaded = true;
-      
-      if (!isApplet) {
-	    
-	// load images
-
-	String defaultImg = new String(jhvIconDir +"/default.gif");
-	String fileImg = new String(jhvIconDir+"/file.gif"); 
-	String collapseImg = new String(jhvIconDir+"/collapse.gif");
-	
-	// icons for hdf
-	String hdfStr= new String(jhvIconDir+"/hdf.gif");
-	String annStr= new String(jhvIconDir+"/ann.gif");
-	String risStr= new String(jhvIconDir+"/ris.gif");
-	String sdsStr= new String(jhvIconDir+"/sds.gif");
-	String vdStr = new String(jhvIconDir+"/vdata.gif");
-	String vgStr = new String(jhvIconDir+"/vgroup.gif");
-
-	Toolkit toolkit = getToolkit();
-	
-        lDefault = toolkit.getImage(defaultImg );
-        lFile    = toolkit.getImage(fileImg    );
-        lCollapse= toolkit.getImage(collapseImg);
-      
-	hdfIcon= toolkit.getImage(hdfStr);
-        annImg = toolkit.getImage( annStr);
-        risImg = toolkit.getImage( risStr);
-        sdsImg = toolkit.getImage( sdsStr);
-        vdImg  = toolkit.getImage(  vdStr);
-        vgImg  = toolkit.getImage(  vgStr);  
-      }
-      else { 
-        // applet  running
-	// load images
-	String defaultImg = new String("hdficons/default.gif");
-        String fileImg = new String("hdficons/file.gif");
-        String collapseImg = new String("hdficons/collapse.gif");
-      
-        // icons
-	String hdfStr= new String("hdficons/hdf.gif");
-        String annStr= new String("hdficons/ann.gif");
-        String risStr= new String("hdficons/ris.gif");
-        String sdsStr= new String("hdficons/sds.gif");
-        String vdStr = new String("hdficons/vdata.gif");
-        String vgStr = new String("hdficons/vgroup.gif");  
-     	
-        lDefault = getImage(getDocumentBase(),defaultImg );
-        lFile    = getImage(getDocumentBase(),fileImg    );
-        lCollapse= getImage(getDocumentBase(),collapseImg);
+        // hdf hierarchy tree canvas & HDF canvas
+        Panel  panel1 = new Panel();
+        panel1.setLayout(new GridLayout(1, 2));
         
-	hdfIcon= getImage(getDocumentBase(), hdfStr);
-        annImg = getImage(getDocumentBase(), annStr);
-        risImg = getImage(getDocumentBase(), risStr);
-        sdsImg = getImage(getDocumentBase(), sdsStr);
-        vdImg  = getImage(getDocumentBase(),  vdStr);
-        vgImg  = getImage(getDocumentBase(),  vgStr);
-      }    
-    }
-    
-    // get all hdf object
-    Vector hdfObjVec = new Vector();
-    getHdfObj(this.hdfFile, hdfObjVec);
-
-    // get hdf object, default-> USER
-    Vector objVec = getDispObjNode(hdfObjVec, dispLevel);
-
-    //  cleanup HDF tree vector
-    hdfTree.removeAllTreeNodes();
-    
-    // Declare a TreeNodes
-    TreeNode addedNode;
-    
-    // add the TreeNodes to the tree.
-    for (int i = 0; i < objVec.size(); i++) {
+        // create hdf canvas;
+        hdfCanvas = new JHVCanvas(this);
       
-      HDFObjectNode objNode;
-      objNode = (HDFObjectNode)objVec.elementAt(i);
+        Panel title = new Panel();
+        title.setLayout(new BorderLayout());
+        hdfIconCanvas = new JHVCanvas();
+        
+        title.add("West",  hdfIconCanvas);
+        title.add("Center",new Label("Hierarchy of the HDF", Label.CENTER));
+        
+        // hdf tree panel
+        Panel hdfTreePanel = new Panel();
+        hdfTreePanel.setLayout(new BorderLayout());
+        hdfTreePanel.add("North", title);
+        hdfTreePanel.add("Center", hdfTree);
 
-      // node has child
-      if (objNode.child != null)
-	addedNode = new HDFTreeNode(objNode, lDefault, lCollapse, this);
-      else  {
-	
-	Image img = null;
-	switch (objNode.type) {
-	case HDFObjectNode.Annotation: 
-	case HDFObjectNode.GRGLOBALATTR:
-	case HDFObjectNode.GRDATASETATTR:
-	case HDFObjectNode.SDSGLOBALATTR:
-	case HDFObjectNode.SDSDATASETATTR:
-	  
-	     img = annImg;
-	     break;
-	case HDFObjectNode.Palette: 
-	     img = lFile;
-	     break;
-	case HDFObjectNode.RIS8: 
-	case HDFObjectNode.RIS24:	    
-	case HDFObjectNode.GRDATASET: 
-	     img = risImg;
-	     break;
-	case HDFObjectNode.SDSDATASET: 
-	     img = sdsImg;
-	     break;
-	case HDFObjectNode.Vdata: 
-	     img = vdImg;
-	     break;
-	case HDFObjectNode.Vgroup: 
-	     img = vgImg;
-	     break;
-	}
+        panel1.add(hdfTreePanel);
+        panel1.add(hdfCanvas = new JHVCanvas(this));
+        
+        // control panel (middle)
+        Panel panel2 = new Panel();
+        
+        // botton or label
+        Panel panel2_right = new Panel();
+        panel2_right.setLayout(new FlowLayout(FlowLayout.CENTER));
+        panel2_right.add(new Label(""));
+        
+        Button LoadFileButton = new Button("Load File");
+        Button CleanButton = new Button("Clean");
+        LoadFileButton.addActionListener(this);
+        CleanButton.addActionListener(this);
+        panel2_right.add(LoadFileButton);
+        panel2_right.add(CleanButton);
 
-	if (img == null)
-	   addedNode = new HDFTreeNode(objNode, lFile, this);
-	else
-	   addedNode = new HDFTreeNode(objNode, img, this);
-      }
-      
-      /* set the level of the node */
-      addedNode.setLevel(objNode.getObjLevel());
-      
-      hdfTree.addTreeNode(addedNode);
-      
-    }
-
-    if (isLocal) {  /* remote access not supported yet */
-    if (hdfFile != null) {
-	    // open file if one has been given
-	try {
-	    fid = hdf.Hopen(this.hdfFile);   
-	} catch (Exception e) {
-		infoText.setText("Exception opening file: "+this.hdfFile+
-                                 "\nPlease check if the file is an hdf file");
-	}
-    }
-    }
-  
-  }
-
-  /** create the new display panel for JHV
-   * @return the panel for HDF Browser
-   */
-  public Panel createDisplayPanel() {
-  
-    Panel 	dispPanel = new Panel();
-    dispPanel.setLayout(new BorderLayout());
-    
-    // hdf hierarchy tree canvas & HDF canvas
-    Panel  panel1 = new Panel();
-    panel1.setLayout(new GridLayout(1, 2));
-    
-    // create hdf canvas;
-    hdfCanvas = new JHVCanvas(this);
-  
-    Panel title = new Panel();
-    title.setLayout(new BorderLayout());
-    hdfIconCanvas = new JHVCanvas();
-    
-    title.add("West",  hdfIconCanvas);
-    title.add("Center",new Label("Hierarchy of the HDF", Label.CENTER));
-    
-    // hdf tree panel
-    Panel hdfTreePanel = new Panel();
-    hdfTreePanel.setLayout(new BorderLayout());
-    hdfTreePanel.add("North", title);
-    hdfTreePanel.add("Center", hdfTree);
-    
-    
-    panel1.add(hdfTreePanel);
-    panel1.add(hdfCanvas = new JHVCanvas(this));
-    
-    // control panel (middle)
-    Panel panel2 = new Panel();
-    
-    // botton or label
-    Panel panel2_right = new Panel();
-    panel2_right.setLayout(new FlowLayout(FlowLayout.CENTER));
-    panel2_right.add(new Label(""));
-    
-    Button LoadFileButton = new Button("Load File");
-    Button CleanButton = new Button("Clean");
-    LoadFileButton.addActionListener(this);
-    CleanButton.addActionListener(this);
-    panel2_right.add(LoadFileButton);
-    panel2_right.add(CleanButton);
-    
-    
-    panel2.setLayout(new BorderLayout());
-    
-    // HDF file text field
-    if (hdfFile != null) {
-	hdfFileText = new TextField(hdfFile);
-    } else {
-	hdfFileText = new TextField("No File Selected");
-    }
-    
-    panel2.add("Center", hdfFileText);
-    panel2.add("East",   panel2_right);
-    
-    // info
-    Panel panel3 = new Panel();
-    panel3.setLayout(new BorderLayout());
-    panel3.add("Center", infoText);
-    
-    // main panel
-    Panel panel4 = new Panel();
-    panel4.setLayout(new BorderLayout());
-    panel4.add("North", panel2);
-    panel4.add("Center",panel3);
-    
-    // display panel
-    dispPanel.setLayout(new GridLayout(0,1));
-    dispPanel.add("North", panel1);
-    dispPanel.add("Center",panel4);
-    
-    return dispPanel;
-  }   
-
-  /* Is the current platform MacOS */
-  public  boolean isMac() {
-        String          osName;
-
-        osName = System.getProperty("os.name");
-        if (osName != null) {
-	   if  (osName.toLowerCase().startsWith("mac")) 
-                return true;
-	   else
-	   	return false;
+        panel2.setLayout(new BorderLayout());
+        
+        // HDF file text field
+        if (hdfFile != null) {
+            hdfFileText = new TextField(hdfFile);
+        } else {
+            hdfFileText = new TextField("No File Selected");
         }
-	else 
-          return false;
+        hdfFileText.addActionListener(this);
+         
+        panel2.add("Center", hdfFileText);
+        panel2.add("East",   panel2_right);
+        
+        // info
+        Panel panel3 = new Panel();
+        panel3.setLayout(new BorderLayout());
+        panel3.add("Center", infoText);
+        
+        // main panel
+        Panel panel4 = new Panel();
+        panel4.setLayout(new BorderLayout());
+        panel4.add("North", panel2);
+        panel4.add("Center",panel3);
+        
+        // display panel
+        dispPanel.setLayout(new GridLayout(0,1));
+        dispPanel.add("North", panel1);
+        dispPanel.add("Center",panel4);
+        
+        return dispPanel;
     }
 
-  /** Get the file name that is for MacOS
-   * @param fileName an hdf file name
-   * @return the MacOS-style file name
-   */
-  public String getFileNameForMacOS(String fileName) {
-
-	String newStr;
-   
-   	// Ignore the first separator
-	if (fileName.indexOf('/') == 0)
-	   newStr = new String(fileName.substring(1));
-	else
-	   newStr = new String(fileName);
-
-	
-     	// replace "/" with ":"
-	newStr = newStr.replace('/',':');
-
-	return(newStr);
-    
-  }
-
-  
-
- 
-
-  /** set hdf file name and create new hdf.
-   * @param fileName hdf file name
-   */
-  public void setHdfFile(String fileName) {
-   
-    String newFileName;
-
-    if (isMac())
-	newFileName = new String(getFileNameForMacOS(fileName));
-    else
-	newFileName = fileName;	
-
-    // create new hdf 
-    // openHDF(newFileName);
-
-    //if (!isLocal) 
-     //  hdfFile = new String(HDFFILENAME);
-    //else
-     //  hdfFile = new String(newFileName);
-       
-  }
-
-  
-
-  /** get the HDF object from the HDF file and put in into the Vector
-   * @param hdffile the HDF file name
-   * @param hdfObjVector the vector to store the HDF object node
-   */
-  public void getHdfObj(String hdffile, Vector hdfObjVector  )  {
-    
-    if (!isLocal) return;
-    if (hdffile == null) return;
-    HDFAnalyse analyseHdf = new HDFAnalyse();
-    analyseHdf.getHdfObject(hdffile, hdfObjQueue);
-    
-    // extract the HDF Object node from the Queue into Vector
-    extractHdfObj(hdfObjQueue, hdfObjVector);
-  }
-  
-  
-  
-
-  // get display object by display level
-  public Vector getDispObjNode(Vector hdfObjVec, int level )  {
-   
-    // display HDF nodes
-    Vector	objVec = new Vector();  
-
-    if (level == USER) {
-	
-    	// display node by different level. (gv suggest)
-   	// currently take all Reserved classes and names for vdatas/vgroups off
-    	for (int i=0; i<hdfObjVec.size(); i++) {
-   
-      	    // get one node from the Queue
-      	    HDFObjectNode node = (HDFObjectNode)hdfObjVec.elementAt(i);
-
-	    if (node.isReadable())	// not readable
-   	       objVec.addElement(node);
-	}
-   
-       int vdataCount = 0;
-       int vgroupCount= 0;
-       for (int i=0; i<objVec.size(); i++) {
-
-   	// get one node from the Queue
-      	HDFObjectNode node = (HDFObjectNode)objVec.elementAt(i);
-	if (node.type == node.Vdata)  ++vdataCount;
-	if (node.type == node.Vgroup) ++vgroupCount; 
-
-       }
-
-       if (vdataCount == 1) // one vdata root or vdata in vgroup
- 	  for (int i=0; i<objVec.size(); i++) {
-
-   		// get one node from the Queue
-      		HDFObjectNode node = (HDFObjectNode)objVec.elementAt(i);
-		if ( (node.type == node.Vdata) && (node.level == 0) ) // root 
-		   objVec.removeElementAt(i);
-     	 }
-
-      if (vgroupCount == 1) // one vgroup root
- 	 for (int i=0; i<objVec.size(); i++) {
-
-   		// get one node from the Queue
-      		HDFObjectNode node = (HDFObjectNode)objVec.elementAt(i);
-		if (node.type == node.Vgroup) 
-		   objVec.removeElementAt(i);
-     	}
-
-   } else {
-	// level DEVELOPER 
-	for (int i=0; i<hdfObjVec.size(); i++) {
-   
-      	    HDFObjectNode node = (HDFObjectNode)hdfObjVec.elementAt(i);
-   	    objVec.addElement(node);
-
-	}
-   
-   }
-
-   return (Vector)objVec;
-
- }
-  
-  
-  
-
-  /** create the HDF file by the specified string. Support most kinds of 
-   * file  transfer protocol
-   * @param hdfURL the string specified the location of the file
-   */
-  //  I think this needs to be massively redone -- REMcG 6.18.97
-  public void openHDF(String hdfURL)  {
-  
-    /* hdf file is from server */
-   if (!isLocal) {
-
-	InputStream dataStream;
-	try {
-	    
-	    URL 	hdfFileURL = new URL(hdfURL);
-	    
-	    URLConnection hdfURLConnection = hdfFileURL.openConnection();
-	    int fileSize = hdfURLConnection.getContentLength();
-	    String fileType = new String(hdfURLConnection.getContentType());
-	
-
-	    dataStream = hdfURLConnection.getInputStream();  
-	    
-	} catch (IOException e) {
-	    dataStream = null;    
-	}
+    /** Is the current platform MacOS */
+    public  boolean isMac() {
+        String osName = System.getProperty("os.name");
+        if (osName == null) return false;
+        return  (osName.toLowerCase().startsWith("mac")) ;
     }
-    else {
-	// create HDF instance
-	hdf = new HDFLibrary();
+
+    /** Is local access */
+    public  boolean isLocal() { return isLocal; }
+
+    /** Returns the HDFTree */
+    public HDFTree getTree() { return hdfTree; }
+
+    /**
+     * extract the HDF object node into Vector
+     * @param hdfQueue  the HDF object node Queue
+     * @param vec       the vector to store the HDF object node sequencely
+     */
+    public  void extractHdfObj(Queue  hdfQueue, Vector vec) {
+        HDFObjectNode node = null;
+        Queue subQueue = null;
+
+        if (hdfQueue.size() == 0) return;
+
+        for (int i=0; i<hdfQueue.size(); i++) {
+            node = (HDFObjectNode)hdfQueue.elementAt(i);
+            vec.addElement(node);
+            if (node.child != null) {
+                subQueue = (Queue) (node.child);
+                extractHdfObj(subQueue, vec);
+            }
+        }
     }
-  }
-  
-
-  /** extract the HDF object node into Vector
-   * @param hdfQueue  the HDF object node Queue
-   * @param vec       the vector to store the HDF object node sequencely
-   */
-  public  void extractHdfObj(Queue  hdfQueue, Vector vec) {
-    HDFObjectNode node     = null;
-    Queue         subQueue = null;
-	
-    if (hdfQueue.size() == 0)
-      return;
-    for (int i=0; i<hdfQueue.size(); i++) {
-      
-      // get one node from the Queue
-      node = (HDFObjectNode)hdfQueue.elementAt(i);
-
-      vec.addElement(node);
-      
-      // does this node has child
-      if (node.child != null) { // has child & child is another Queue
-	
-	subQueue = (Queue) (node.child);
-	extractHdfObj(subQueue, vec);
-      }
-    } 
-    
-  }  
 
     /** create menubar for jhv viewer */
     public MenuBar createHdbMenuBar() {
-    
+
         MenuBar  jhvMenuBar = new MenuBar();
         jhvMenuBar.add(createFileMenu("File"));
-    
+        if(isSuppportRemoteAccess)
+            jhvMenuBar.add(createOptionMenu("Options"));
+        jhvMenuBar.add(createViewMenu("View"));
+        jhvMenuBar.add(createHelpMenu("Help"));
+
         return  jhvMenuBar;
     }
 
-   /** create a file menu by provoded title
-    * @param menuTitle the menu title
-    */
+    /** create a open menu by provided title
+     * @param menuTitle the menu title
+     */
     public Menu createFileMenu(String  menuTitle) {
     
         Menu fileMenu = new Menu(menuTitle);
-    
-	MenuItem menuOpen = new MenuItem("Open");
-	MenuItem menuOpenLayer = new MenuItem("Open Layers");
-	MenuItem menuOpenAnimation = new MenuItem("Open Animation");
-
-	MenuItem menuExit = new MenuItem("Exit");
-
+	MenuItem menuOpen = new MenuItem("Open Local File",new MenuShortcut(KeyEvent.VK_O));
 	menuOpen.addActionListener(this);
-	menuOpenLayer.addActionListener(this);
-	menuOpenAnimation.addActionListener(this);
-
-	menuExit.addActionListener(this);
-
         fileMenu.add(menuOpen);
-        // fileMenu.add(menuOpenLayer);
-        // fileMenu.add(menuOpenAnimation);
 
+        if (isSuppportRemoteAccess)
+        {
+            String configPath = jhvDir+File.separator;
+            hostList = readHosts(configPath+configFilename);
+            if (hostList.getItemCount()<1)
+            {
+                configPath += "bin"+File.separator;
+                hostList = readHosts(configPath+configFilename);
+            }
+            configFilename = configPath+configFilename;
+            hostMenu = new Menu("Open Remote File");
+            hostMenu.addActionListener(this);
+            fileMenu.addSeparator();
+            fileMenu.add(hostMenu);
+            addHostMenuItems();
+        }
+
+	MenuItem menuExit = new MenuItem("Exit",new MenuShortcut(KeyEvent.VK_E));
+	menuExit.addActionListener(this);
         fileMenu.addSeparator();
-    
         fileMenu.add(menuExit);
-    
+
         return fileMenu;
-    
     }
 
-   /** Determines whether the specified string is a local file
-    * @param str the file string
-    * @return true if str is a file, otherwise false
+   /**
+    * create an option menu with specific menu title
+    * @param title the menu title
+    * @return the option menu
+    * @auther Peter Cao (xcao@ncsa.uiuc.edu)
     */
-   public boolean isFile(String str) {
-    
-       File tmpFile = new File(str);
-       return(tmpFile.isFile());
-     
-  }
+    public Menu createOptionMenu(String  title) {
 
-   public boolean isDirectory(String str) {
-    
-       File tmpFile = new File(str);
-       return(tmpFile.isDirectory());
-     
-  }
+        Menu menu = new Menu(title);
+	MenuItem pref = new MenuItem("Preferences");
+	MenuItem edit = new MenuItem("Remote Host");
+	MenuItem server = new MenuItem("Local Server");
 
-  public void openFileOnServer() {
-  }
+	pref.addActionListener(this);
+	edit.addActionListener(this);
+	server.addActionListener(this);
 
-   /** open local file */
+        menu.add(pref);
+        menu.addSeparator();
+        menu.add(edit);
+        menu.add(server);
 
-   public void openFileOnLocal() {
-   
-    this.isLocal = true;
-				
-    FileDialog fd = new FileDialog(getFrame(), "HDF File");
-
-    // cDir is a directory of the last HDF file
-    fd.setDirectory(cDir);		
-    fd.show();
-		
-    hdfFile = null;
-
-    // The system dependent file separator String.
-    String separator = System.getProperty("file.separator");
-
-	if ((fd.getDirectory() != null) && (fd.getFile() != null)) {
-    if (isMac())
-       hdfFile = fd.getDirectory() + separator + fd.getFile();
-    else
-       hdfFile = fd.getDirectory() + fd.getFile();
-       cDir = fd.getDirectory()	;
-
-	} else {
-		hdfFile = new String("");
-	}
-	
-    hdfFileText.setText(hdfFile);
-    infoText.setText("");
-    infoText.select(0,0);
-    
-  }
-
-  public void setJHVFrame(Frame f) {
-
-	jhvFrame = f;
-  }
-
-  public Frame getFrame() {
-  
-    Component c = (Component)this;
-    while(c != null && !(c instanceof Frame))
-      c = c.getParent();
-    return (Frame)c;
-  }  
-
-  /**
-   * Cleans up whatever resources are being held. If the applet is active
-   * @see java.applet.Applet#destroy
-   */
-  public void destroy() {
-    // close hdf file
-	try {
-    if (this.fid != HDFConstants.FAIL)
-      hdf.Hclose(this.fid);
-	} catch (HDFException e) {
-		infoText.setText("Exception closing file: "+fid);
-	};
-    
-    super.destroy();
-    
-  }
-
-   public  boolean makeImageDataByRange_old(byte[] data, double min, double max, 
-                                int datatype, int w, int h, 
-                                byte[] output)
-   {
-
-        return (makeImageDataByRange_old(data,min,max,datatype,w,h,0,output));
-        
+        return menu;
     }
 
-   /** 
-    * convert scientific data to image data
-    * @param data the scientific data
-    * @param datatype the data type of the scientific data
-    * @param w the width of the converted image
-    * @param h the height of the image
-    * @param pos the first converted scientific data position
-    * @param output the converted image data
-    * @return TRUE if successed, or false
-    */
-// can this be done in Java rather than C?  REMcG 6.18.97
-
-   public native boolean makeImageData_old(byte[] data, int datatype, int w, int h, int pos,
-                             byte[] output);
-   
-
-   /** 
-    * convert scientific data to image data
-    * @param data the scientific data
-    * @param datatype the data type of the scientific data
-    * @param range    the specified dataset range[min, max]
-    * @param w the width of the converted image
-    * @param h the height of the image
-    * @param pos the first converted scientific data position
-    * @param output the converted image data
-    * @return TRUE if successed, or false
-    */
-
-   public native boolean makeImageDataByRange_old(byte[] data, double min, double max,
-                             int datatype, int w, int h, int pos,
-                             byte[] output);
-   
-}
-
-/** This class is actual HDF tree node derived from the HDFTreeNode and
- *  used by JHV. This class also define a bunch of methods to
- *  do something like the HDF operation 
- */
-/* Date: 3-26-97
-   For attribute of an HDF objects, add "Number type" & "Count" info.
-   Need changed to the following methods:
-	getHdfSDSgattr(), getHdfSDSattr(),
-	getHdfGRgattr(),  getHdfGRattr(),
-   Date: 6-5-97
-	Take UINT8 same as INT8.
-*/
-
-class HDFTreeNode extends TreeNode
-{
-  // applet
-  JHV 		applet_;
-	
-  // hdf 
-  HDFLibrary		hdf;
-
-  // the current generic image
-  Image image = null;
-  Image paletteImage = null;
-
-  // default preffered image size
-  public static final int PREFFEREDIMAGESIZE = 256;
- 
-  // skip value when read a large HDF file (subsample)
-  int	skip=1;
-
-  /** create the new HDF Tree node
-   * @param obj  the generic object
-   * @param img  the default icon for this node
-   * @param app  the applet of this node that belongs to
-   */
-  public HDFTreeNode(Object obj, Image img, JHV app)
-  {
-    super(obj, img);
-    applet_ = app;
-  }
-
-  /** create the new HDF Tree node for the node who has the child
-   * @param obj  the generic object
-   * @param img  the default icon for this node
-   * @param app  the applet of this node that belongs to
-   */
-  public HDFTreeNode(Object obj, Image img, Image imgCollapsed, 
-		     JHV app)
-  {
-    super(obj, img, imgCollapsed);
-    applet_ = app;
-  }
-
-  /** add one HDF Tree
-   * @param tree the HDF Tree
-   */
-  public void added(HDFTree tree)
-  {
-    super.added(tree);
-  }
-
-  /** delete one HDF Tree
-   * @param tree the HDF Tree
-   */
-  public void  deleted(HDFTree tree)
-  {
-    super.added(tree);
-  }
-
-  /** select the node on the  HDF Tree
-   * @param tree the HDF Tree
-   */
-  public  void  select(HDFTree tree, int modifier) {
-
-   // set cursor type to "WAIT_CURSOR"
-   ((Component)applet_.jhvFrame).setCursor(new Cursor(Cursor.WAIT_CURSOR));
-
-    super.select(tree, modifier);
-
-    // do something for HDF
-    HDFObjectNode  node = (HDFObjectNode)(tree.selectedNode.hdfObject);
-     
-    // detect the type of the node
-    int nodeType = node.getObjType();
-    
-    // open HDF file
-    hdf = applet_.hdf;
-    int fid = applet_.fid;
-
-    try {
-        // HDF Annotation node
-        if (nodeType == node.Annotation)   
-		dispHdfAnnotation(fid);
-    	
-        // HDF 8-raster image
-        if (nodeType == node.RIS8) 
-		dispHdfRis8(applet_.hdfFile, node);
-    
-        // HDF 24-raster image
-        if (nodeType == node.RIS24) 
-		dispHdfRis24(applet_.hdfFile, node);
-    
-        // HDF GR
-     	if ((nodeType == node.GRGLOBALATTR) || (node.type == node.GRDATASETATTR)
-	   || (node.type == node.GRDATASET) ||(node.type == node.GRDATASETAN)  )  {
-		dispHdfGR(fid, node);
-        }
-    
-        // HDF SDS
-   	if ((nodeType == node.SDSGLOBALATTR) || (node.type == node.SDSDATASETATTR)
-	   || (node.type == node.SDSDATASET) || (node.type == node.SDSDATASETAN)) {
-    	 	dispHdfSDS(applet_.hdfFile,node);
-        }
-           
-        // HDF VDATA
-        if (nodeType == node.Vdata) {
-		// vdata processing
-		dispHdfVdata(fid,node);
-        }
-    } catch (HDFException e) {
-	System.out.println("Warning:  HDFException caught (select): "+e);	
-    }
-   
-    // set cursor type to "DEFAULT_CURSOR"
-    ((Component)applet_.jhvFrame).setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-
-  }
-
-  /** get the length of the char
-   * @param chr the array of the char
-   * @return the length of the array of the chr
-   */
-  public int getCharArrayLen(char[] chr)
-  {
-    int len = 0;	
-    for (int i=0; i<chr.length; i++) {     
-      if (chr[i] != '\0')
-	++len;
-      else
-	break;
-    }
-    return len;   
-  }
-  
-
-  /** clean up  the image panel */
-  public void eraseImage() {
-  
-    applet_.hdfCanvas.setImage(null);
-    
-    applet_.hdfCanvas.repaint();
-    
-  }
-
-  /** display the HDF file annotation in the information panel 
-   * @param fid the HDF file identifier
-   */
-  public void dispHdfAnnotation(int fid) throws HDFException {
-	
-    // has File Annotation
-    HDFLibrary hdf = applet_.hdf;
-    
-    int anid = hdf.ANstart(fid);
-
-    if (anid == HDFConstants.FAIL) {
-         hdf.ANend(anid);
-        return;
-	}
-    
-    hdf.ANend(anid);
-    String an = new String(ANfileannotation());
-
-    String annInfo = new String(" ==================== HDF File Annotation ==============\n");
-    annInfo += an+"\n";
-    annInfo += "==============================================\n";
-
-    applet_.infoText.setText(annInfo);
-
-    eraseImage();
-  }
-  
-
-public String ANfileannotation() throws HDFException {
-
-	HDFLibrary hdf = applet_.hdf;
-	String retStr = new String(" ");
-	int[] fileInfo = new int[4];
-	int an_id =  hdf.ANstart(applet_.fid);
-
-	if (hdf.ANfileinfo(an_id, fileInfo) == false ) {
-		hdf.ANend(an_id);
-	   return  retStr;
-	}
-
-	int numFileLabel = fileInfo[0];
-
-	int numFileDesc  = fileInfo[1];
-
-	int numFileAnn    =Math.max(numFileLabel, numFileDesc);
-
-	for (int kk=0; kk < numFileAnn; kk++) {
-
-		// get ann_id;
-		int annid = hdf.ANselect(an_id, kk, HDFConstants.AN_FILE_LABEL);
-
- 		if (annid != HDFConstants.FAIL)  {
-
-		   retStr = retStr.concat("File Label #");
-		   retStr = retStr.concat(Integer.toString(kk));
-		   retStr = retStr.concat("\n\n");
-	  	
-		   // get the file label length
-		   int fileLabelLen = hdf.ANannlen(annid)+1;
-		   String fileLabelBuf = new String(" ");
-		   String s[] = new String[1];
-		   s[0] = fileLabelBuf;
-
-		   if (fileLabelLen >0) {
-	   	   	// get file label
-	   		if (hdf.ANreadann(annid, s, fileLabelLen)) { 
-			   retStr = retStr.concat(s[0]);
-			}
-		   }
-		}
-
-		hdf.ANendaccess(annid);
-
-		annid = hdf.ANselect(an_id, kk, HDFConstants.AN_FILE_DESC);
-
-		if (annid != HDFConstants.FAIL)  { 
-
-		   retStr = retStr.concat("\nFile Desc. #");
-		   retStr = retStr.concat(Integer.toString(kk));
-		   retStr = retStr.concat("\n\n");
-	  	
-		   // get the file desc. length
-		   int fileDescLen = hdf.ANannlen(annid)+1;
-
-		   if (fileDescLen >0) {
-	    	   	String fileDescBuf = new String(" ");
-			String s[] = new String[1];
-			s[0] = fileDescBuf;
-	   	   	// get file desc.
-	   		if (hdf.ANreadann(annid, s, fileDescLen))  {
-			   retStr = retStr.concat(s[0]);
-			}
-		   }
-		} 
-		hdf.ANendaccess(annid);
-	}
-	hdf.ANend(an_id);
-	return retStr;
-   }
-
-    /** get object  label from HDF file 
-     * @param tag  the tag of the HDF object.
-     * @param ref  the reference number
-     * @return the string look like text of the object label 
+    /** create a view menu by provided title
+     * @param menuTitle the menu title
      */
-     public String ANgetobjectlabel(int tag,int ref) throws HDFException {
-	
-	StringBuffer retStr = new StringBuffer();
-	int[] fileInfo = new int[4];
-	int an_id =  hdf.ANstart(applet_.fid);
-	if (hdf.ANfileinfo(an_id, fileInfo) == false ) {
-		hdf.ANend(an_id);
-	   return  retStr.toString();
-	}
+    public Menu createViewMenu(String  menuTitle) {
+        // new menu by specified menuTitle
+        Menu viewMenu = new Menu(menuTitle);
 
-	// set the file annotation type to be a label
-	int anntype = HDFConstants.AN_DATA_LABEL;
+	defItem = new CheckboxMenuItem("Default",true);
+	defItem.addItemListener(this); 
+        viewMenu.add(defItem);
 
-	// get the number of the object label
-	int numObjectLabel = hdf.ANnumann(an_id, anntype, (short)tag, (short)ref);
+	// add menuItem  
+	anItem = new CheckboxMenuItem("Animation");
+	anItem.addItemListener(this);  
+	viewMenu.add(anItem);
 
+	layerItem = new CheckboxMenuItem("Layer");
+	layerItem.addItemListener(this); 
+        viewMenu.add(layerItem);
 
-	if (numObjectLabel == HDFConstants.FAIL)
-	   return new String();
+        return viewMenu;      
+    }
 
-	// alocate space 
-	int ann_id_list[] = new int[numObjectLabel];
+   /**
+    * create a help menu with specific menu title
+    * @param title the menu title
+    * @return the option menu
+    * @auther Peter Cao (xcao@ncsa.uiuc.edu)
+    */
+    public Menu createHelpMenu(String  title) {
 
-	// get the list of the object annotation id
-	int numAnnid = hdf.ANannlist(an_id, anntype, tag, ref, ann_id_list);
+        Menu menu = new Menu(title);
+	MenuItem about = new MenuItem("About");
+	about.addActionListener(this);
+        menu.add(about);
+        menu.addSeparator();
 
-	if (numAnnid == HDFConstants.FAIL)
-	   return new String();
-	
-	for (int i=0; i<numObjectLabel; i++) {
+        return menu;
+    }
 
-	   // get ann_id;
-	   int annid = ann_id_list[i];
+     /**
+      * Determines whether the specified string is a local file
+      * @param str the file string
+      * @return true if str is a file, otherwise false
+      */
+    public boolean isFile(String str) {
+         return((new File(str)).isFile());
+    }
 
+    public boolean isDirectory(String str) {
+        return((new File(str)).isDirectory());
+    }
 
-	   // get the object label length
-	   int objectLabelLen = hdf.ANannlen(annid);
-
-
-	   if (objectLabelLen >0) {
-
-	      String objectLabelBuf[] = new String[1];
-	      objectLabelBuf[0] = new String("");
-	      // get object label
-	      if (hdf.ANreadann(annid, objectLabelBuf, objectLabelLen))  {
-		  retStr.append("  ");
-		  retStr.append((new String(objectLabelBuf[0])).trim());
-		  retStr.append("           \n");
-	      }	  			      
-	   } // if (objectLabelLen > 0)
-	   
-	}  // for ()
-
-	hdf.ANend(an_id);
-
-	return retStr.toString();
-
-   }
-
-   /** get the object desc from HDF file 
-     * @param tag  the tag of the HDF object.
-     * @param ref  the reference number
-     * @return the string look like text of the object desc 
+    /**
+     *  open a file from a remote machine
+     *
+     *  @param location  the remote machine
+     *  @param afilename the requested hdf file
      */
-     public String ANgetobjectdesc(int tag,int ref) throws HDFException  {
+    public void openFile(String location, String afilename)
+    {
+        String prefix = location.substring(0, 7);
 
-	StringBuffer retStr = new StringBuffer();
-	int[] fileInfo = new int[4];
+        // java web server
+        if ( prefix.equalsIgnoreCase("http://"))
+        {
+                serverHost = location;
+                serverPort = -1;
+        }
+        else
+        {
+            int portPosition = location.indexOf(":");
+            if (portPosition > 0)
+            {
+                serverHost = location.substring(0, portPosition);
+                try { serverPort = Integer.parseInt(location.substring(portPosition+1),10); }
+                catch (Exception e) {}
+            }
+        }
 
-	// set the file annotation type to be a desc
-	int anntype = HDFConstants.AN_DATA_DESC;
+        // check if the connection is OK before doing the actually work
+        // if the connection fails, stop accessing to the remote file.
+        jhvFrame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        java.net.Socket server = null;
+        if (serverPort > 0) {
+            try { server = new java.net.Socket(serverHost, serverPort); }
+            catch (Exception ex)
+            {
+                infoText.setText(ex.toString());
+                jhvFrame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                return;
+            }
+            try { server.close(); }
+            catch (Exception ex){}
+        }
+        else {
+            try { new java.net.URL(serverHost); }
+            catch (Exception ex)
+            {
+                infoText.setText(ex.toString());
+                jhvFrame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                return;
+            }
+        }
 
-	int an_id =  hdf.ANstart(applet_.fid);
+        jhvFrame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        RemoteFileDialog dl = new RemoteFileDialog(jhvFrame, "Remote File Tree",
+            serverHost, serverPort, lCollapse, lDefault, lFile);
+        dl.init(afilename);
 
-	if (hdf.ANfileinfo(an_id, fileInfo) == false ) {
-		hdf.ANend(an_id);
-	   return  retStr.toString();
-	}
+        String filename = dl.getFile();
+        if (filename == null || filename.trim().length() == 0)
+        {
+            hdfFile = null;
+            return;
+        }
 
-	// get the number of the object desc
-	int numObjectDesc = hdf.ANnumann(an_id, anntype, (short)tag, (short)ref);
+        // cut out junk stuff from a file name
+        filename = filename.replace('/', File.separatorChar);
+        filename = filename.replace('\\', File.separatorChar);
+        String sepSep = File.separator+File.separator;
+        int sepSepIndex = filename.indexOf(sepSep);
+        while (sepSepIndex >= 0)
+        {
+            if (sepSepIndex == 0)
+                filename = filename.substring(sepSepIndex+1);
+            else
+                filename = filename.substring(0,sepSepIndex)+filename.substring(sepSepIndex+1);
+            sepSepIndex = filename.indexOf(sepSep);
+        }
 
-	if (numObjectDesc == HDFConstants.FAIL)
-	   return new String();
-
-	// alocate space 
-	int ann_id_list[] = new int[numObjectDesc];
-
-	// get the list of the object annotation id
-	int numAnnid = hdf.ANannlist(an_id, anntype, tag, ref, ann_id_list);
-
-	if (numAnnid == HDFConstants.FAIL)
-	   return new String();
-	
-	for (int i=0; i<numObjectDesc; i++) {
-
-	   // get ann_id;
-	   int annid = ann_id_list[i];
-
-	   // get the object desc length
-	   int objectDescLen = hdf.ANannlen(annid);
-
-	   if (objectDescLen >0) {
-
-	      String objectDescBuf[] = new String[1];
-	      objectDescBuf[0] = new String("");
-	      // get object desc
-	      if (hdf.ANreadann(annid, objectDescBuf, objectDescLen))  {
-		  retStr.append("  ");
-		  retStr.append((new String(objectDescBuf[0])).trim());
-		  retStr.append("   \n");
-	      }	  			      
-	   } // if (objectDescLen > 0)
-	   
-	}  // for ()
-	
-	hdf.ANend(an_id);
-	return retStr.toString();
-
-   }
-
-  /** display the HDF file 8-raster image generic information
-   * @param filename the HDF file name
-   * @param node the HDF Object node
-   */
-  public  void dispHdfRis8Info(String filename, HDFObjectNode node) throws HDFException {
-	
-	HDFLibrary hdf = new HDFLibrary(); 
-	int argv[] = new int[2];
-	boolean argB[] = new boolean[1];
-
-    
-    int numberOfImage = hdf.DFR8nimages(filename);
-    String   info = new String(" ");
-    
-    // image number in HDF file
-    info = info.concat("There are " + Integer.toString(numberOfImage) + " image(s) in " +
-                filename + "\n");
-    
-    // for each image object, list image name & dimension
-
-    hdf.DFR8restart();
-    
-    while (hdf.DFR8getdims(filename,argv,argB)) {
-	
-	int w = argv[0];
-	int h = argv[1];
-	boolean hasPalette = argB[0];
-  
-	int ref = hdf.DFR8lastref();
-	
-	info = info.concat("            Reference number: " + Integer.toString(ref) + "\n");
-	info = info.concat("            Dimension    size:  " + Integer.toString(w) + "X" +
-	                                             Integer.toString(h) + "\n");
-	if (hasPalette)
-	   info = info.concat("            Associated palette: TRUE \n");
-	else
-	   info = info.concat("            Associated palette: FALSE \n");
-
-	info = info.concat(" -----------------------------------------------------------  \n ");
-	
-    }
-    applet_.infoText.setText(info);
-  }
-  
-
-  /** display the HDF file 8-raster image in the image canvas
-   * @param filename the HDF file name
-   * @param node the HDF Object node
-   */
-  public  void dispHdfRis8(String filename, HDFObjectNode node) throws HDFException {
-	
-	HDFLibrary hdf = new HDFLibrary(); 
-	int argv[] = new int[2];
-	boolean argB[] = new boolean[1];
-  
-    // set the reference number
-    if (hdf.DFR8readref(filename, node.ref) == false)
-      return;
-    
-    // get HDF image information
-    if (hdf.DFR8getdims(filename,argv,argB) == false)
-      return;
-    
-    int w = argv[0];
-    int h = argv[1];
-    boolean hasPalette = argB[0];
-    
-    
-    byte imageData[]    = new byte[w*h];
-    byte imagePalette[] = new byte[256*3];
-    
-    boolean readFlag;
-    
-    // read the image
-    readFlag = hdf.DFR8getimage(filename, imageData,w,h,imagePalette);
-    
-    // set image palette
-    if (hasPalette == false) {
-      for (int i=0; i<256; i++)
-	for (int j=0; j<3; j++)  
-	  imagePalette[i*3+j] = (byte)i;
-    }
-    
-    Image palImage = null;
-    // create palette image
-    palImage = createPaletteImage(imagePalette);
-    
-    Image img=null;
-    if (readFlag) {
-      img = createRasterImage(imageData,w,h,imagePalette);
-    }
-    
-    // diaplay the raster image
-    if (img != null) {
-      // set the image size (org)
-      applet_.hdfCanvas.setOriginalImageSize(w,h);
-   
-      applet_.hdfCanvas.setImage(img, palImage);
-      
-      applet_.hdfCanvas.repaint();
-      
-      // set the current HDF Object Node
-      applet_.hdfCanvas.setObject(node);
-    }
-  }
-  
-
-  /** display the HDF file 24-raster image generic information
-   * @param filename the HDF file name
-   * @param node the HDF Object node
-   */
-  public  void dispHdfRis24Info(String filename, HDFObjectNode node) throws HDFException {
-	
-    HDFLibrary hdf = new HDFLibrary();
-    int argv[] = new int[3];
-    
-    int numberOfImage = hdf.DF24nimages(filename);
-    String   info = new String();
-    
-    // image number in HDF file
-    info = info.concat("================== 24-bit raster image information ===============\n");
-    info = info.concat("There are " + Integer.toString(numberOfImage) + " image(s) in " +
-                filename + "\n");
-    
-    // for each image object, list image name & dimension
-
-    hdf.DF24restart();
-    
-    while (hdf.DF24getdims(filename,argv)) {
-	
-	int w = argv[0];
-	int h = argv[1];
-	int interlace = argv[2];
-  
-	int ref = hdf.DF24lastref();
-	
-	info = info.concat("      Image reference number: " + Integer.toString(ref) + "\n");
-	info = info.concat("            Dimension size: " + Integer.toString(w) + " by " +
-	                                             Integer.toString(h) + "\n");
-	info = info.concat("            Interlace       :" + Integer.toString(interlace)+ " \n");
-	info = info.concat("  \n ");
-	
-    }
-   applet_.infoText.setText(info);
-  }
-  
-
-  /** display the HDF file 24-raster image in the image canvas
-   * @param filename the HDF file name
-   * @param node the HDF Object node
-   */
-  public void dispHdfRis24(String filename, HDFObjectNode node) throws HDFException {
-	
-    HDFLibrary hdf = new HDFLibrary(); 
-    int argv[] = new int[3];
-    
-    // set the reference number
-    if (!(hdf.DF24readref(filename, node.ref)))
-      return;
-    
-    // get HDF image information
-    if (hdf.DF24getdims(filename,argv) == false)
-      return;
-    
-    int w = argv[0];
-    int h = argv[1];
-    int interlace = argv[2];
-    
-    byte imageData[]    = new byte[w*h*3];
-    byte imagePalette[] = new byte[256*3];
-    
-    boolean readFlag;
-    // set the interlace for reading by component interlacing scheme
-    hdf.DF24reqil(HDFConstants.MFGR_INTERLACE_COMPONENT);
-    
-    readFlag = hdf.DF24getimage(filename, imageData,w,h);
-    
-    // set image palette
-    boolean hasPalette = false;
-    
-    if (hasPalette == false) {
-      for (int i=0; i<256; i++)
-	for (int j=0; j<3; j++)  
-	  imagePalette[i*3+j] = (byte)i;
-    }
-    
-    Image palImage = null;
-    // create palette image
-    palImage = createPaletteImage(imagePalette);
-    
-    Image img=null;
-    if (readFlag)
-      img = createRasterImage(imageData,w,h,imagePalette);
-    
-    // diaplay the raster image
-    if (img != null) {
-      
-      applet_.hdfCanvas.setImageSize(w,h);
-      applet_.hdfCanvas.setImage(img);
-      applet_.hdfCanvas.repaint();
-      
-      // set the current HDF Object Node
-      applet_.hdfCanvas.setObject(node);
-      
-    }
-  }
-
-  /** display the HDF file GR generic information
-   * @param fid HDF file id.
-   * @param node the HDF Object node
-   */
-  public  void dispHdfGRInfo(int fid, HDFObjectNode node) throws HDFException {
-	   
-    // get ready to read the HDF GR interface
-    int grid = -1;
-    int riid = -1;
-    int[] argv = new int[2];
-    HDFLibrary hdf = (HDFLibrary)applet_.hdf;
-   
-    grid = hdf.GRstart(fid);
-    if (grid == HDFConstants.FAIL) {
-      hdf.GRend(grid);
-      return;
+        hdfFile = filename;
+        hdfFileText.setText(location+hdfFile);
     }
 
-    // get HDF GR information
-    
-    if (hdf.GRfileinfo(grid, argv) == false) {
-      // terminate the GR access
-      hdf.GRend(grid);
-      return;
-    }
-    
-    String attrBuf = new String();	
+    /** opens a local file */
+    public void openFile()
+    {
 
-    String   info = new String();
-    
-    // GR number in HDF file
-    info = info.concat("================== GR information ===============\n");
-  
-    if (node.type == node.GR) { 
+        this.isLocal = true;
+        FileDialog fd = new FileDialog(getFrame(), "HDF File");
 
-      info = info.concat("Number of Dataset: " + argv[0] + "\n");
-      info = info.concat("Number of Global Attributes: " + argv[1] + "\n");
-    }
-    else {   
- 
-    	int ref = node.ref;
-     
-    	int index = hdf.GRreftoindex(grid, (short)ref);
- 
-    	if (index == HDFConstants.FAIL) {
-      	   info = info.concat("GRreftoindex: FAIL\n"); 
-    	} else {
-		if ((riid = hdf.GRselect(grid,index)) == HDFConstants.FAIL) {
-		   hdf.GRendaccess(riid);
-		   info = info.concat("GRselect: FAIL\n"); 
-      		}
-     		else {		
-			String gr_name = new String(" "); 
-			String[] n = new String[1];
-                        n[0] = gr_name;
+        fd.setDirectory(cDir);
+        fd.show();
 
-			int[] imInfo = new int[4];
-			int[]dim_sizes = new int[2];  /* ??? */
+        hdfFile = null;
 
-			if (hdf.GRgetiminfo( riid, n, imInfo, dim_sizes) ) {
-				gr_name = n[0];
-	
-				// GR dataset name
-				info = info.concat("Image Name : " + gr_name + "\n");
-				info = info.concat("Image Index: " + Integer.toString(index) + "\n");
+        String separator = System.getProperty("file.separator");
+        if ((fd.getDirectory() != null) && (fd.getFile() != null)) {
+            if (isMac())
+                hdfFile = fd.getDirectory() + separator + fd.getFile();
+            else
+                hdfFile = fd.getDirectory() + fd.getFile();
+            cDir = fd.getDirectory();
 
-				// rank
-				String rankInfo = Integer.toString(dim_sizes[0]);
-				rankInfo += " by " ;
-				rankInfo += Integer.toString(dim_sizes[1]);
-				rankInfo += "\n";
+        } else {
+            hdfFile = new String("");
+        }
 
-				info = info.concat("Image Size : " + rankInfo);
-				
-				// nt
-				info = info.concat("Data Number Type: " + hdf.HDgetNTdesc(imInfo[1]) + "\n" );
-				info = info.concat("Num of Components: " + imInfo[0] + "\n" );
-				info = info.concat("Interlace  : " + imInfo[2] + "\n" );
+        hdfFileText.setText(hdfFile);
+        infoText.setText("");
+        infoText.select(0,0);
 
-				// attributes
-				info = info.concat("Num of Attributes: " + imInfo[3] + "\n" );
-
-	  		} 
-			else {
-			  info = info.concat("GRgetinfo: FAIL\n"); 	
-			}
-		} 
-    		hdf.GRendaccess(riid);
-	} 
-    }   
- 
-    info = info.concat("===============================================\n");
-   
-    hdf.GRend(grid);
-
-    applet_.infoText.setText(info);
-  }
-  
-
-  /** display the HDF file generic raster image in the image canvas
-   * @param fid the file identifier
-   * @param node the HDF Object node
-   */
-  public void dispHdfGR(int fid, HDFObjectNode node) throws HDFException {
-
-    // get ready to read the HDF GR interface
-    int grid = -1;
-    int riid = -1;
-    HDFLibrary hdf = (HDFLibrary)applet_.hdf;
-    
-    grid = hdf.GRstart(fid);
-    if (grid == HDFConstants.FAIL) {
-      hdf.GRend(grid);
-      return;
-    }
-    
-    // get HDF GR information
-    int[] fileInfo = new int[2];
-    
-    if (hdf.GRfileinfo(grid, fileInfo) == false) {
-      // terminate the GR access
-      hdf.GRend(grid);
-      return;
-    }
-    
-    String attrBuf = new String();	
-    
-    if (node.type == node.GRGLOBALATTR) {
-      // GR Global Attributes
-      attrBuf = attrBuf.concat("\n======================== GR Global Attribute =================\n");
-      // the whole Global Attribute
-      attrBuf = attrBuf.concat(getHdfGRgattr(grid, node));
-      attrBuf = attrBuf.concat("\n===================== End of GR Global Attribute ==============\n");
-      
-      // display the info.
-      dispMessage(attrBuf); 
-      
-    }
-    else {
-      if (node.type == node.GRDATASETATTR) {
-	// GR dataset attribute
-	attrBuf = attrBuf.concat("\n=====================  GR Image Attribute  ================\n");
-	// the whole Global Attribute 
-	attrBuf = attrBuf.concat(getHdfGRattr(grid, node));
-	attrBuf = attrBuf.concat("\n===================== End of GR Image Attribute ============\n");
-	
-	// display the info.
-	dispMessage(attrBuf); 
-      }
-      else {  // object annotation
-	if (node.type == node.GRDATASETAN) 
-	    dispHdfObjectAnnotation(fid, node);
-	else
-	    dispHdfGRimage(grid, node);
-      }
-    } 
-    hdf.GRend(grid);
-   }
-  
-
-  /** display the HDF file generic raster image in the image canvas
-   * @param grid the GR identifier
-   * @param node the HDF Object node
-   */
-  public void dispHdfGRimage(int grid, HDFObjectNode node) throws HDFException {
-  
-    int riid      = -1;
-    String retStr = null;
-    int w	      = 256;
-    int h	      = 256;
-    HDFLibrary hdf = (HDFLibrary)applet_.hdf;
-    
-    int ref = node.ref;
-    
-    int index = hdf.GRreftoindex(grid, (short)ref);
-    
-    if (index == HDFConstants.FAIL)  {
-      retStr = new String ("GRreftoindex: FAIL");
-    }
-    else {
-      if ((riid = hdf.GRselect(grid,index)) == HDFConstants.FAIL) {
-	hdf.GRendaccess(riid);
-	retStr = new String("GRselect: FAIL");
-      }
-      else { 
-	String gr_name = new String(" "); 
-	String[] n = new String[1];
-	n[0] = gr_name;
-
-	int[]dim_sizes = new int[2];  /* ??? */
-	int[] argv = new int[4];
-
-	if (hdf.GRgetiminfo(riid, n, argv, dim_sizes) ) {
-		gr_name = n[0];
-		w = dim_sizes[0];
-		h = dim_sizes[1];
-		int plane = 1;
-		image = getHdfGRimage(riid, argv[0], argv[1], argv[2], w, h, plane);
-	}
-      } 
-    } 
-    
-    // display the raster image
-    if (image != null) {
-      // set the image size (org)
-      applet_.hdfCanvas.setOriginalImageSize(w,h);
-      
-      // set the image
-      applet_.hdfCanvas.setImage(image,paletteImage);
-        
-      applet_.hdfCanvas.setSubsampleFactor(skip);
-
-      // repaint the image 
-      // applet_.hdfCanvas.repaint();
-     
-      // set the current HDF Object Node
-      applet_.hdfCanvas.setObject(node);
-      
-    }
-    else {
-      // display error
-      dispMessage(retStr);
-    }
-    hdf.GRendaccess(riid);
-  }
-  
-
-  /** Get the HDF  generic raster image by specified plane number
-   * @param riid the raster image identifier 
-   * @param imgInfo the image info. array
-   * @param plane   the plane number to be retrived.
-   * @return the image, otherwise null
-   */
-  public Image getHdfGRimage(int riid, int ncomp, int nt, int interlace, int w, int h, int plane) 
-	 throws HDFException {
-
-    HDFLibrary hdf = (HDFLibrary)applet_.hdf;
-    Image image = null;
-    
-    boolean hasPalette = false;
-    
-    // image data size;
-    // int dataSize = w*h*ncomp*hdf.DFKNTsize(nt);
-    
-    // specify the image data storage	
-    // byte imageData[]    = new byte[dataSize];
-    
-    // image palette
-    byte imagePalette[] = new byte[3*256];
-    
-    // set the interlace for reading by component interlacing scheme
-    if (hdf.GRreqimageil(riid, HDFConstants.MFGR_INTERLACE_COMPONENT) == false)
-      return null;
-    
-    // get palette info.
-    int lutid = hdf.GRgetlutid(riid, 0);
-    
-    if (lutid == HDFConstants.FAIL)
-	   hasPalette = false;
-    else
-      hasPalette = true;
-    
-    // specify palette info.
-    int[] lutInfo = new int[4];
-
-    // Reminder to myselef.
-    // GRgetlutinfo() may not work correctly when having aa access to the HDF file
-    // created by DFR8 or DF24 interface.
-    /*********************************************************
-      if (hdfgr.GRgetlutinfo(lutid, lutInfo)) // succeed
-      hasPalette = true;
-      else
-      hasPalette = false;
-      
-      if ((lutInfo[0] != 3) || (lutInfo[3] != 256))
-      hasPalette = false;
-      else
-      hasPalette = true;  
-    
-    ************************************************************/
-
-    // set interlace to read	
-    hdf.GRreqlutil(riid, HDFConstants.MFGR_INTERLACE_PIXEL);	
-    
-    if ((hasPalette) && (hdf.GRreadlut(lutid, imagePalette))) {   
-      // get palette (easy processing)
-      ;  	
-    }
-    else  { // default	
-      // try rainbow
-      imagePalette = null;
-      imagePalette = getPaletteOfRainbow();
-    }
-    
-    // create palette image
-    paletteImage = createPaletteImage(imagePalette);
-    
-    // read image data	
-    int start[] = new int[2];
-    int stride[]= new int[2];
-    int count[] = new int[2];
-    
-    start[0] = 0;
-    start[1] = 0;
-     
-    // get subsample image
-    int max = (h>w?h:w);
-    
-    skip = max / PREFFEREDIMAGESIZE;
-    if ((skip>0) && ((w/skip) > 0) && ((h/skip) > 0)) {
-
-	skip++;
-
-	// do subset
-	stride[0] = skip;
-    	stride[1] = skip;
-   	count[0] = w/skip ;  // x
-	count[1] = h /skip ;  // y
-    }
-    else {
-
-	skip = 1;
-    	stride[0] = 1;
-    	stride[1] = 1;
-    
-    	count[0] = w  ;  // x
-    	count[1] = h   ;  // y
-    }
-     
-    w = count[0];
-    h = count[1];
-
-    // image data size;
-    int dataSize = w*h*ncomp*hdf.DFKNTsize(nt);
-    
-    // specify the image data storage	
-    byte imageData[]    = new byte[dataSize];
-
-    // read flag
-    boolean readFlag = hdf.GRreadimage(riid,start,stride,count,imageData);
-    
-    // image data
-    byte[] output = new byte[w*h];
-    
-    if (readFlag) {
-      // convert the data into a standard image  
-      if (ImageDataConverter.makeImageData(imageData,nt,w,h,(w*h*(plane-1)),output)) {
-	image = createRasterImage(output,w,h,imagePalette);
-      }
-    }
-    return image;
-  }
-  
-
-  /** Process numeric attributes or strings, converting from bytes to Java
-   *  types.
-   *  This calls native routines to do the numeric conversions.
-   */
-  String doattrs( byte[] buf, int buffsize, int NT, int count ) throws HDFException {
-
-    HDFNativeData convert = new HDFNativeData();
-    String lr         = new String("\t");
-    String semicolon  = new String("; ");
-    String str = new String(" ");
-
-    if ((NT & HDFConstants.DFNT_LITEND) != 0) {
-        NT -= HDFConstants.DFNT_LITEND;
-    }
-    int incr = hdf.DFKNTsize(NT);
-    
-    switch(NT) {
-    case HDFConstants.DFNT_CHAR:
-      // take it as char
-      str = str.concat(lr);
-      for (int jj=0; jj<count; jj++) {
-	String sval = new String(buf,jj,1);
-	str = str.concat(sval);
-      }
-      break;
-    case HDFConstants.DFNT_UCHAR8:
-      //case HDFConstants.DFNT_UCHAR:
-    case HDFConstants.DFNT_UINT8:
-      str = str.concat(lr);
-      for (int jj=0; jj<count; jj++) {
-	Byte bval = new Byte(buf[jj]);
-	Short shval;
-	if (bval.shortValue() < 0)  
-	  shval = new Short((short)(bval.intValue() + 256));
-	else  
-	  shval = new Short(bval.shortValue());
-	
-	str = str.concat(shval.toString());
-	str = str.concat(semicolon);
-      }
-      break;
-    case HDFConstants.DFNT_INT8:
-      str = str.concat(lr);
-      for (int jj=0; jj<count; jj++) {
-	int pos = jj*incr;
-	// convert to integer
-	Byte bval = new Byte(buf[pos]);
-	str = str.concat(bval.toString());
-	str = str.concat(semicolon);
-      }
-      break;
-    case HDFConstants.DFNT_INT16:
-      str.concat(lr);
-      for (int jj=0; jj<count; jj++) {
-	int pos = jj*incr;
-	// convert to integer
-	Short shval = new Short(convert.byteToShort(buf,pos));
-	str = str.concat(shval.toString());
-	str = str.concat(semicolon);
-      }
-      break;
-    case HDFConstants.DFNT_UINT16:
-      str = str.concat(lr);
-      for (int jj=0; jj<count; jj+=incr) {
-	int pos = jj*incr;
-	Short shval = new Short(convert.byteToShort(buf,pos));
-	Integer ival;
-	if (shval.shortValue() < 0)  
-	  ival = new Integer((shval.intValue() + 65536));
-	else  
-	  ival = new Integer(shval.intValue());
-	
-	str = str.concat(ival.toString());
-	str = str.concat(semicolon);
-      }
-      break;
-    case HDFConstants.DFNT_INT32:
-      str = str.concat(lr);
-      for (int jj=0; jj<count; jj++) {
-	int pos = jj*incr;
-	// convert to integer
-	Integer ival = new Integer(convert.byteToInt(buf,pos));
-	str = str.concat(ival.toString());
-	str = str.concat(semicolon);
-      }
-      break;
-      
-    case HDFConstants.DFNT_UINT32:
-      str = str.concat(lr);
-      for (int jj=0; jj<count; jj+=incr) {
-	int pos = jj*incr;
-	Integer ival = new Integer(convert.byteToInt(buf,pos));
-	Float fval;
-	if (ival.intValue() < 0) {
-	  fval = new Float((ival.floatValue() + (float)4294967295.0));
-	} else {
-	  fval = new Float(ival.intValue());
-	}
-	str = str.concat(ival.toString());
-	str = str.concat(semicolon);
-      }
-      break;
-      
-      //case HDFConstants.DFNT_FLOAT:
-    case HDFConstants.DFNT_FLOAT32:
-      str = str.concat(lr);
-      for (int jj=0; jj<count; jj++) {
-	int pos = jj*incr;
-	// convert to float
-	Float fval = new Float(convert.byteToFloat(buf,pos));
-	str = str.concat(fval.toString());
-	str = str.concat(semicolon);
-      }
-      break;
-      
-      //case HDFConstants.DFNT_FLOAT64:
-    case HDFConstants.DFNT_DOUBLE:
-      str = str.concat(lr);
-      for (int jj=0; jj<count; jj++) {
-	int pos = jj*incr;
-	// convert to integer
-	Double dval = new Double(convert.byteToDouble(buf,pos));
-	str = str.concat(dval.toString());
-	str = str.concat(semicolon);
-      }
-      break;
-    } 
-    return(str);
-  }
-  
-
-  /** display the HDF file generic raster image in the image canvas
-   * @param grid  the GR identifier
-   * @param nattr the number of the Global attribute.
-   * @return the string of the global attribute.
-   */
-  public String getHdfGRgattr(int grid, HDFObjectNode node ) throws HDFException {
-   
-  StringBuffer attr = new StringBuffer();	
-  String lr         = new String("\t");
-  String semicolon  = new String("; ");
-
-  // get the reference 
-  int kk = node.index;
-  
-  // for each of the global attribute 
-  String name = new String(" ");
-  String[] n = new String[1];
-  n[0] = name;
-  int[] attrInfo = new int[2];
-  
-  if (hdf.GRattrinfo(grid, kk, n, attrInfo)) {
-    name = n[0];
-    attr.append("\nName:  ");
-    attr.append(name);
- 
-    // read the attribute as bytes, call doattrs to convet to Java types.
-    int attrSize = hdf.DFKNTsize(attrInfo[0])*attrInfo[1] + 1;
-    byte[] buf = new byte[attrSize];
-    if (!hdf.GRgetattr(grid, kk, buf)) {
-      return (attr.toString());
-    }
-    buf[attrSize-1] = '\0';
-      
-    // namber type
-    attr.append("\nType : " + hdf.HDgetNTdesc( attrInfo[0]));
-    attr.append("\nCount: " + Integer.toString(attrInfo[1]));
-    
-    // tag value
-    attr.append("\nValue: " );
-    attr.append(doattrs( buf, attrSize, attrInfo[0], attrInfo[1] ));
-  } 
-  return attr.toString();
-}
-  
-
-  /** display the HDF file generic raster image in the image canvas
-   * @param grid  the GR identifier
-   * @param node  the HDF Object node
-   * @return the string of the image attribute.
-   */
-public String getHdfGRattr(int grid, HDFObjectNode node) throws HDFException {
-    
-    int riid	  = -1;
-
-    StringBuffer attr = new StringBuffer();	
-    String lr         = new String("\n\t");
-    String semicolon  = new String("; ");
-    
-    int ref = node.ref;
-    
-    int index = hdf.GRreftoindex(grid, (short)ref);
-    if (index == HDFConstants.FAIL) 
-      return ("GRreftoindex: FAIL");
-    
-    if ((riid = hdf.GRselect(grid,index)) == HDFConstants.FAIL) {
-      hdf.GRendaccess(riid);
-      return("GRselect: FAIL");
-    }
-    
-    int kk 		= node.index; // the index of the dataset attr.
-    String name = new String(" ");
-    String[] n = new String[1];
-    n[0] = name;
-    int [] attrInfo = new int[2];
-
-    if (hdf.GRattrinfo(riid, kk, n, attrInfo)) {
-      name = n[0];
-      attr.append("\nName:  ");
-      attr.append(name);
-      
-      int attrSize = hdf.DFKNTsize(attrInfo[0])*attrInfo[1] + 1;
-      byte[] buf = new byte[attrSize];
-      if (!hdf.GRgetattr(riid, kk, buf)) {
-	hdf.GRendaccess(riid);
-	return(attr.toString());
-      }
-         
-      attr.append("\nType : " + hdf.HDgetNTdesc(attrInfo[0]));
-      attr.append("\nCount: " + attrInfo[1]);
-
-      attr.append("\nValue:");
-      
-      attr.append(doattrs( buf, attrSize, attrInfo[0], attrInfo[1] ));
-    } 
-    hdf.GRendaccess(riid);
-    return attr.toString();
-  }
-  
-
-  /** display an HDF file object annotation
-   * @param fid a file identifer
-   * @param node  the HDF Object node
-   * @return a object annotation
-   */
-  public void dispHdfObjectAnnotation(int fid, HDFObjectNode node)
-	      throws HDFException {  
-    
-    // String lr         = new String("\n\t");
-    String lr         = new String("\n\t");
-    String semicolon  = new String("; ");
-    
-    // get the reference 
-    int ref = node.ref;
-    int tag = node.tag;
-
-    String label = ANgetobjectlabel(tag,ref);
-    String an = "";
-
-    if (label.length() >0 ) 
-    	an = "Object Label: \n" + label +"\n";
-
-    String desc = ANgetobjectdesc(tag,ref);
-    if (desc.length() >0 ) 
-    	an = "Object Annotation: \n" + desc + "\n" ;
-
-    // display the information 
-    StringBuffer annInfo = new StringBuffer(" ==================== HDF Object Annotation ==============\n");
-    annInfo.append( an.trim()+"\n");
-    annInfo.append("\n ==============================================\n");
-
-    // applet_.infoText.appendText(annInfo);
-    applet_.infoText.setText(annInfo.toString());
-
-    // for iamge
-    eraseImage();
-  
-  }
-  
-
-  /** display the HDF file SDS generic information
-   * @param filename the HDF file name
-   * @param node the HDF Object node
-   */
-public  void dispHdfSDSInfo(String filename, HDFObjectNode node) throws HDFException {
-    int sdid  = -1 ;
-    int sdsid = -1;
-     
-    sdid = hdf.SDstart(filename, HDFConstants.DFACC_RDONLY);
-    
-    if (sdid == HDFConstants.FAIL) {
-      hdf.SDend(sdid);
-      return;
     }
 
-    int[] fileInfo = new int[2];
-    
-    if (hdf.SDfileinfo(sdid, fileInfo) == false) {
-      hdf.SDend(sdid);
-      return;
-    }
- 
-    String   info = new String();
-    
-    // sds number in HDF file
-    info = info.concat("================== SDS information ===============\n");
-  
-    if (node.type == node.SDS) { // not the SDS root
-
-      info = info.concat("Number of Dataset: " + fileInfo[0] + "\n");
-      info = info.concat("Number of Global Attributes: " + fileInfo[1] + "\n");
-    }
-    else {
- 
-    	int ref = node.ref;
-    
-    	int index = hdf.SDreftoindex(sdid, ref);
-   
-    	if (index == HDFConstants.FAIL)   
-      	   info = info.concat("SDreftoindex: FAIL\n"); 
-    	else {
-      		if ((sdsid = hdf.SDselect(sdid,index)) == HDFConstants.FAIL) {
-			hdf.SDendaccess(sdsid);
-			info = info.concat("SDselect: FAIL\n"); 
-      		}
-      		else { 
-			int[] SDInfo = new int[3];
-                        String datasetname = new String(" ");
-			String[] ss = new String[1];
-			ss[0] = datasetname;
-                        int  dimsize[]     = new int[16];
-                        if (hdf.SDgetinfo(sdsid, ss, dimsize, SDInfo)) {
-	
-				datasetname = ss[0];
-				info = info.concat("Dataset name: " + datasetname + "\n");
-				String rankInfo = Integer.toString(SDInfo[0]);
-				rankInfo += ", " ;
-
-				for (int i=(SDInfo[0] - 1); i>0; i--) {
-					rankInfo += Integer.toString(dimsize[i]);
-					rankInfo += " by ";
-				}
-				rankInfo += Integer.toString(dimsize[0]);
-				rankInfo += "\n";
-
-				info = info.concat("Rank: " + rankInfo);
-				
-				info = info.concat("Data number type: " + hdf.HDgetNTdesc(SDInfo[1]) + "\n" );
-
-				info = info.concat("Number of Attributes: " + SDInfo[2] + "\n" );
-	  		} 
-			else {
-			  info = info.concat("SDgetinfo: FAIL\n");
-			}
-		} 
-    		hdf.SDendaccess(sdsid);
-	} 
-    }   
- 
-    info = info.concat("===============================================\n");
- 
-    hdf.SDend(sdid);
-
-    applet_.infoText.setText(info.toString());
-  }
-  
-
-  /** display the HDF file sds information and converted image
-   * @param filename the file name
-   * @param node the HDF Object node
-   */
-public void dispHdfSDS(String filename, HDFObjectNode node) throws HDFException {
-  
-    int sdid  = -1 ;
-    int sdsid = -1;
-    
-    sdid = hdf.SDstart(filename, HDFConstants.DFACC_RDONLY);
-    
-    if (sdid == HDFConstants.FAIL) {
-      hdf.SDend(sdid);
-      return;
+    public void setJHVFrame(Frame f) {
+        jhvFrame = f;
     }
 
-    dispHdfSDS(sdid, node);
- 
-    hdf.SDend(sdid);
-  }
-  
-
-  /** display the HDF file sds information and converted image
-   * @param sdid the SDS identifier
-   * @param node the HDF Object node
-   */
-public void dispHdfSDS(int sdid, HDFObjectNode node) throws HDFException {
-  
-    int sdsid = -1;
-
-    // get HDF SDS information
-    int[] fileInfo = new int[2];
-     
-    if (hdf.SDfileinfo(sdid, fileInfo) == false) {
-      hdf.SDend(sdid);
-      return;
-    }
-    
-    StringBuffer attrBuf = new StringBuffer();	
-    
-    if (node.type == node.SDSGLOBALATTR) {
-	attrBuf.append("\n======================== SDS Global Attribute =================\n");
-	attrBuf.append(getHdfSDSgattr(sdid, node));
-	attrBuf.append("\n===================== End of SDS Global Attribute ==============\n");
-
-	dispMessage(attrBuf.toString());
-    }
-    else {
-	if (node.type == node.SDSDATASETATTR) {
-		attrBuf.append("\n=====================  SDS Dataset Attribute  ================\n");
-		attrBuf.append(getHdfSDSattr(sdid, node));
-		attrBuf.append("\n===================== End of SDS Dataset Attribute ============\n");
-		dispMessage(attrBuf.toString());
-	} else { 
-	      if (node.type == node.SDSDATASETAN)  
-	    	dispHdfObjectAnnotation(applet_.fid, node);
-	      else
-		dispHdfSDSimage(sdid, node);
-	}
-    } 
-    hdf.SDend(sdid);
-  }
-  
-
-  /** display the HDF file SDS converted image
-   * @param sdid the SD identifier
-   * @param node the HDF Object node
-   */
-public void dispHdfSDSimage(int sdid, HDFObjectNode node) throws HDFException {
-	
-    int sdsid     = -1;
-    String retStr = null;
-    int w	      = 256;
-    int h	      = 256;
-    int ref = node.ref;
-    int index = hdf.SDreftoindex(sdid, ref);
-    
-    if (index == HDFConstants.FAIL)  {
-	retStr = new String ("SDreftoindex: FAIL");
-    }
-    else {
-	if ((sdsid = hdf.SDselect(sdid,index)) == HDFConstants.FAIL) {
-		hdf.SDendaccess(sdsid);
-		retStr = new String("SDselect: FAIL");
-	} else {
-		// get sds info.
-		int [] SDInfo = new int[3];
-		String datasetname = new String(" ");
-		String[] ss = new String[1];
-		ss[0] = datasetname;
-		int  dimsize[]     = new int[16];
-
-		if (hdf.SDgetinfo(sdsid, ss, dimsize, SDInfo)) {
-			datasetname = ss[0];
-			int rank = SDInfo[0];
-			if ((rank ==2) || (rank ==3)) {
-
-				w = dimsize[rank-1];
-				h = dimsize[rank-2];
-				int plane = 1;
-				image = getHdfSDSimage(sdsid, rank, SDInfo[1], dimsize, plane);
-			} else {
-				image = null;
-			}
-
-			if (image == null) {
-				retStr = "Can't convert image from SDS";
-			} else {
-				retStr = "SDS Dimension Size <= 3";
-			}
-		}
-      }
-    } 
-    
-    // display the raster image
-    if (image != null) {
-      // set the image size
-      applet_.hdfCanvas.setOriginalImageSize(w,h);
-      
-      // set the image
-      applet_.hdfCanvas.setImage(image, paletteImage);
-       
-      applet_.hdfCanvas.setSubsampleFactor(skip);
-
-      // repaint the image 
-      // applet_.hdfCanvas.repaint();
-
-      // set the current HDF Object Node
-      applet_.hdfCanvas.setObject(node);
-      
-    }
-    else {
-      dispMessage(retStr);
-    }
-    hdf.SDendaccess(sdsid);
-  }
-  
-
-  /** Get the HDF  converted image by specified plane number
-   * @param sdsid the SDS dataset identifier 
-   * @param sdsInfo the sds info. array
-   * @param dims    the sds dimension size
-   * @param plane   the plane number to be retrived.
-   * @return the image, otherwise null
-   */
-
-public Image getHdfSDSimage(int sdsid, int rank, int nt, int[] dims,int plane)
-	throws HDFException {
-
-    /****************************************************************
-     Date: 3-12-97
-      Method , getHdfSDSimage(), was modified so that we can created SDS 
-      converted image by specified dataset range if sds has an dataset range.
-      The dataset range may be smaller than the actual dataset range, fill the 
-      value if bigger or smaller than specified dataset range.  Native method
-      makeImageDataByRange() take charge of that. 
-    **************************************************************/
-
-    Image image_ = null;
-    
-    boolean hasPalette = false;
-    
-    
-    // Is the rank valid?
-    if ((rank<=1) || (rank>=4))
-      return null;
-    
-    int w = dims[rank-1];  
-    int h = dims[rank-2];
-    
-    if ((w*h) < 0)
-      return null;
-    
-    // int dataSize = w*h*hdf.DFKNTsize(nt);
-    // byte sdsData[]    = new byte[dataSize];
-    
-    byte imagePalette[] = new byte[3*256];
-       
-    if (hasPalette == false)  { 
-      // try rainbow
-      imagePalette = null;
-      imagePalette = getPaletteOfRainbow();
-    }
-    
-    // create palette image
-    paletteImage = null;
-    paletteImage = createPaletteImage(imagePalette);
-    
-    // read sds data	
-    int start[] = new int[3];
-    int stride[]= new int[3];
-    int count[] = new int[3];
-
-    start[0] = 0;
-    start[1] = 0;
-    start[2] = 0;
-      
-    stride[0] = 1;   
-    count[0]  = 1;
-
-    // get subsample image
-    int max = (h>w?h:w);
-    
-    skip = max / PREFFEREDIMAGESIZE;
-    if ((skip>0) && ((w/skip) > 0) && ((h/skip) > 0)) {
-
-	skip++;
-
-	// do subset
-	stride[1] = skip;
-    	stride[2] = skip;
-   	count[1] = h /skip ;  // y
-	count[2] = w /skip ;  //x
-
-    }
-    else {
-
-	skip = 1;
-
-    	stride[1] = 1;
-    	stride[2] = 1;
-    
-    	count[1] = h  ;   // y
-    	count[2] = w   ;  // x
+    public Frame getFrame() {
+        Component c = (Component)this;
+        while(c != null && !(c instanceof Frame))
+            c = c.getParent();
+        return (Frame)c;
     }
 
-    // reset width and height of an image(subsample) 
-    w = count[2];
-    h = count[1];
+    /**
+     * java.awt.event.ItemListener stuff
+     */
+    public void itemStateChanged(ItemEvent e)
+    {
+        Object target = e.getSource();
 
-    if (rank == 2) {
+        if (target instanceof CheckboxMenuItem)
+        {
+            String menu = ((Menu) ((MenuItem)target).getParent()).getLabel();
+            if  (menu.equals("View"))
+            {
+                String label = ((MenuItem)target).getLabel();
 
-      stride[0] = stride[1];
-      stride[1] = stride[2];
-      count[0] = count[1]   ;
-      count[1] = count[2]   ;	    
+                defItem.setState(false);
+                anItem.setState(false);
+                layerItem.setState(false);
+
+                if ("Default".equals(label)) {
+                    defItem.setState(true);
+                    dispMode = DEFAULT;
+                } else if ("Animation".equals(label))  {
+                    anItem.setState(true);
+                    dispMode = ANIMATION;
+                } else if ("Layer".equals(label))  {
+                    layerItem.setState(true);
+                    dispMode = LAYER;
+                }
+            }
+        } // end of (target instanceof CheckboxMenuItem)
     }
 
-    // sds data size;
-    int dataSize = w*h*hdf.DFKNTsize(nt);
-    
-    // specify the image data storage	
-    byte sdsData[]    = new byte[dataSize];
+    public void setHostList(List list) { this.hostList = list; }
+    public List getHostList() { return hostList; }
 
-    // read flag  ,  
-    // reminder: just handle 2d & 3d. need to do later to 4d. xlu 9/7/97
-    boolean readFlag = hdf.SDreaddata(sdsid,start,stride,count,sdsData);
-    
-    // iamge data
-    byte[] output = new byte[w*h];
-    double range[] = new double[2];
-    if (readFlag) {
-  
-      boolean cvFlag = true;
-      double maxmin[] = new double[2];
-      if (hdf.SDgetrange(sdsid, maxmin)) { 
-	 double tmp = maxmin[0];  // max.
-	 range[0] = maxmin[1];	 // min.
-	 range[1] = tmp;
-      	 cvFlag = ImageDataConverter.makeImageDataByRange(sdsData,maxmin[1],
-		maxmin[0],nt,w,h,(w*h*(plane-1)),output);
-      } else {
-	 range = getDataRange(sdsData, nt, w*h);   // small -> big
-	 // cvFlag = applet_.makeImageData(sdsData,nt,w,h,(w*h*(plane-1)),output);
-   	 cvFlag = ImageDataConverter.makeImageDataByRange(sdsData,range[0],
-		range[1],nt,w,h,(w*h*(plane-1)),output);
-      }
-  
-      // set sds range
-      applet_.hdfCanvas.setDataRange(range);
-
-      if (cvFlag) {
-
-         // the following code make me confused, I don't know  why I can't get image 
-         // painted under Win95. However if I changed pixel value for "pixel[0]" 
-         // to zero(0), then it works.    
-         // try to get OS name
-         String osName = System.getProperties().getProperty("os.name");
-         if (osName.toUpperCase().indexOf("WINDOW") != -1) // window 95 or nt
-	   output[0] = 0;
-
-	image_ = createRasterImage(output,w,h,imagePalette);
-      }
-    } else {
+    // add hosts into the host menu
+    public void addHostMenuItems()
+    {
+        int length = hostList.getItemCount();
+        for (int i=0; i<length; i++)
+        {
+            MenuItem theItem = new MenuItem(hostList.getItem(i));
+            hostMenu.add(theItem);
+            theItem.addActionListener(this);
+        }
     }
-    return image_;
-  }
-  
 
-  /** display the HDF file SDS global attributes
-   * @param sdid  the SDS identifier
-   * @param nattr the number of the Global attribute.
-   * @return the string of the global attribute.
-   */  
-public String getHdfSDSgattr(int sdid, HDFObjectNode node ) throws HDFException {
-  
-    String attr = new String();	
-    String lr         = new String("\t");
-    String semicolon  = new String("; ");
-    
-    int kk = node.index;
-    
-    // for each of the global attribute 
-    String name = new String(" ");
-    String[] ss = new String[1];
-    ss[0] = name;
-    int[] attrInfo = new int[2];
-
-    if (hdf.SDattrinfo(sdid, kk, /*name*/ss, attrInfo/*NT, count*/)) {
-      name = ss[0];
-      attr = attr.concat("\nName:  ");
-      attr = attr.concat(name);
-
-      // read the attributes as bytes, use doattr() to convert to
-	// java types
-      
-      int attrSize = hdf.DFKNTsize(attrInfo[0])*attrInfo[1] + 1;
-      byte[] buf = new byte[attrSize];
-      if (hdf.SDreadattr(sdid, kk, buf) == false) {
-	return (attr);
-      }
-      buf[attrSize-1] = '\0';
-      
-      attr = attr.concat("\nType : " + hdf.HDgetNTdesc(attrInfo[0]));
-      attr = attr.concat("\nCount: " + attrInfo[1]);
-
-      attr = attr.concat("\nValue: " );
-      
-      
-      attr = attr.concat(doattrs( buf, attrSize, attrInfo[0], attrInfo[1]));
-      
+    // remove hosts from the host menu
+    public void removeHostMenuItems()
+    {
+        int length = hostMenu.getItemCount();
+        for (int i = length - 1; i >= 0; i--)
+        {
+            MenuItem theItem = hostMenu.getItem(i);
+            theItem.removeActionListener(this);
+            hostMenu.remove(i);
+        }
     }
-    return attr;
-  }
-  
 
-  /** display the HDF file SDS dataset attributes
-   * @param sdid  the SDS identifier
-   * @param node  the HDF Object node
-   * @return the string of the image attribute.
-   */
-public String getHdfSDSattr(int sdid, HDFObjectNode node) throws HDFException {
-  
-    int riid	  = -1;
-    
-    String attr = new String();	
-    String lr         = new String("\t");
-    String semicolon  = new String("; ");
-    
-    int ref = node.ref;
-    
-    int index = hdf.SDreftoindex(sdid, ref);
-    if (index == HDFConstants.FAIL) 
-      return ("SDreftoindex: FAIL");
-    
-    if ((riid = hdf.SDselect(sdid,index)) == HDFConstants.FAIL) {
-      hdf.SDendaccess(riid);
-      return("SDselect: FAIL");
+    /**
+     *  updates the current host list and change the configuration file
+     *  @param list  the new list of server hosts
+     */
+    public void updateServerHosts(List list)
+    {
+        removeHostMenuItems();
+        hostList = list;
+        addHostMenuItems();
+        writeHosts(configFilename, list);
     }
-    
-    // for each of the global attribute 
-    int kk 		= node.index; 
-    String name = new String(" ");
-    String[] ss = new String[1];
-    ss[0] = name;
-    int attrInfo[] = new int[2];
 
-    if (hdf.SDattrinfo(riid, kk, ss, attrInfo)) {
-      name = ss[0];
-    
-      attr = attr.concat("\nName:  ");
-      attr = attr.concat(name);
-	
-      attr = attr.concat("\nType : " + hdf.HDgetNTdesc( /*NT.intValue()*/attrInfo[0]));
-      attr = attr.concat("\nCount: " + /*count.toString()*/attrInfo[1]);
+    /** 
+     *  reads server host list from jhv configuration file
+     *  
+     *  @param filename  The name of the configuration file
+     *  @param config    The configurations except the server hosts
+     *  @return          The list of server hosts
+     */
+    public List readHosts(String filename)
+    {
+        RandomAccessFile raf = null;
+        List hosts = new List();
+        String line = new String();
+        long pos = 0;
+        long length = 0;
 
-     
-      int attrSize = hdf.DFKNTsize(attrInfo[0])*attrInfo[1] + 1;
-      byte[] buf = new byte[attrSize];
-      if (hdf.SDreadattr(riid, kk, buf) == false) {
-	hdf.SDendaccess(riid);
-	return(attr);
-      }
-      
-      attr = attr.concat("\nValue:");  
-      attr = attr.concat(doattrs( buf, attrSize, attrInfo[0], attrInfo[1] ));
-    } 
-    hdf.SDendaccess(riid);
-    return attr;
-  }
-  
+        // Read the config file.
+        try {
+            raf = new RandomAccessFile(filename, "r");
+            length = raf.length();
+        }
+        catch (IOException e) { return hosts;}
 
-  /** display the HDF file vdata generic information
-   * @param fid the HDF file id.
-   * @param node the HDF Object node
-   */
-public  void dispHdfVdataInfo(int fid, HDFObjectNode node) throws HDFException {
- 
-       String   info = new String();
+        while (pos < length)
+        {
+            try { line = raf.readLine(); }
+            catch (IOException e) { return hosts;}
 
-       hdf.Vstart(fid);
+             // read hosts
+            line = line.trim();
+            if (line.startsWith(HOSTHEADER))
+                 hosts.addItem(line.substring(HOSTHEADER.length()).trim());
+            try{ pos = raf.getFilePointer(); }
+            catch (IOException e) { return hosts;}
+        }
+        try { raf.close(); }
+        catch (IOException e) {}
 
-       int vdata_ref = -1;	 
-  
-       int [] n = new int[1];
-       int vdNumber = hdf.VSlone(fid,n,0);
-  
-       int refArray[] = new int[vdNumber];
-       int refNum;
-   
-       if  ((refNum = hdf.VSlone(fid, refArray, vdNumber)) > 0){
-	
-       info = info.concat("================== Vdata information ===============\n");
-  
-       // each of vdata (lonely)
-       for (int i=0; i<refNum; i++) {
-	      
-	vdata_ref = refArray[i];
-
-       	int vstag = HDFConstants.DFTAG_VS;
-   
-       	int vdata_id = hdf.VSattach(fid, vdata_ref, "r"); 
-       	String className = new String(" ");
-	String s[] = new String[1];
-	s[0] = className;
-	hdf.VSgetclass(vdata_id,s);
-	className = s[0];
-       	String name      = new String(" ");
-	s[0] = name;
-	hdf.VSgetname (vdata_id,s);
-	name = s[0];
-    
-	if ( (className.indexOf("_HDF_CHK_TBL_0") == -1) ||  
-	     (applet_.dispLevel == applet_.DEVELOPER) ) { // non-chunk node
-
-		info = info.concat("VStag: "+vstag + ", ref: " + vdata_ref + "\n");
-   
-         	info = info.concat("Vdata Class: "+className + "\n");
-        	info = info.concat("Vdata Name:  "+name + "\n");
-      
-		info = info.concat("Vdata records: "+hdf.VSelts(vdata_id) + "\n");
-
-		info = info.concat("Interlace: "+hdf.VSgetinterlace(vdata_id)+"\n");
-
-		// test VSgetfields
-		String flist = new String(" ");
-		s[0] = flist;
-		int fieldNumber = hdf.VSgetfields(vdata_id, s);
-		flist = s[0];
-
-		info = info.concat("field number: "+ fieldNumber + "\n");
-		info = info.concat("fields list: "+  flist + "\n");       
-		info = info.concat("Sizes of a record: "+hdf.VSsizeof(vdata_id,flist) + " bytes\n");
-
-		// Check to see if this vdata is alone? ....
-
-		int  nFields = hdf.VFnfields(vdata_id);
-		for (int kk=0; kk<nFields; kk++) {
-  
-			String fName = hdf.VFfieldname(vdata_id, kk);
-			int	   fType = hdf.VFfieldtype(vdata_id, kk);
-			String fTypeName = hdf.HDgetNTdesc(fType);
-			int    fOrder= hdf.VFfieldorder(vdata_id, kk);
-
-			info = info.concat("   " +  fName  + ",  " + fTypeName + 
-				",  " + fOrder + "\n" );
-		} 
-  	     	 
-		 info = info.concat("---------------------------------------------------\n");	
-		hdf.VSdetach(vdata_id);
-	}
-      }
-      }
-    
-      info = info.concat("=====================================================\n");
-      hdf.Vend(fid);
-      applet_.infoText.setText(info);
-  }
-  
-
- /** display the HDF Vdata information
-   * @param fid the file identifier
-   * @param node the HDF Object node
-   */
-  public void dispHdfVdata(int fid, HDFObjectNode node) throws HDFException {
-
-    hdf.Vstart(fid);
-      
-    // Attaches to an existing Vdata
-    int vdata_id = hdf.VSattach(fid, node.ref, "r");
-    if (vdata_id != HDFConstants.FAIL) {
-	
-	// set selected vdata field & record number
-	int[] selectedRecords = new int[2];
-	selectedRecords[0] = 1;
-	selectedRecords[1] = hdf.VSelts(vdata_id) ;
-	    
-	// field
-	int nfields = hdf.VFnfields(vdata_id);
-	    
-	int[] selectedFields = new int[nfields];
-	for (int i=0; i<nfields; i++) 
-	    selectedFields[i] = i;
-	
-	if (applet_.vdataFrameDisplayed) {
-	   // change to another vdata_id
-	   applet_.vdataFrame.setup(vdata_id,selectedRecords, selectedFields); 
-	}
-	else {
-	   // display vdata
-	   applet_.vdataFrameDisplayed = true;    
-	   applet_.vdataFrame = new JHVVdataFrame(applet_,hdf, vdata_id, 
-	                                  selectedRecords, selectedFields);
-	}
+        return hosts;
     }
-    
-    hdf.VSdetach(vdata_id);
-    hdf.Vend(fid);
-    
-    return;
-  }
-  
 
- /** Return the RAINBOW palette 
-   * rgb rgb rgb rgb rgb ....
-   */
- public  ColorModel getColorModelOfRainbow()  {
+    /**
+     *  writes the server host list into the jhv configuration file
+     *  which also deletes the old host list from the configuration file
+     *
+     *  @param filename  The name of the configuration file
+     *  @param hosts     The list of server hosts
+     */
+    public void writeHosts(String filename, List hosts)
+    {
+        RandomAccessFile raf = null;
+        String config = new String(); //The configurations except the server hosts
+        String line = new String();
+        String hostStr = "";
+        File configFile = null;       // the current configuration file
+        File backupFile = null;       // the backup of the original configuration file
+        long pos = 0;
+        long length = 0;
 
- 	byte[]  values;	
-	values = getPaletteOfRainbow();
+        int n_hosts = hosts.getItemCount();
+        for (int i=0; i<n_hosts; i++) {
+            hostStr += HOSTHEADER+" "+hosts.getItem(i) + NL;
+        }
+        // Read the config file.
+        try {
+            raf = new RandomAccessFile(filename, "r");
+            length = raf.length();
+            while (pos < length)
+            {
+                line = raf.readLine().trim();
+                if (!line.startsWith(HOSTHEADER))
+                   config += line + NL;
+                pos = raf.getFilePointer();
+            }
+            raf.close();
+        }
+        catch (IOException e) {}
 
- 	// number of color
-	int  ncolors = 256;
-	
-	// set the RGB
-    	byte[] red   = new byte[256];
-    	byte[] green = new byte[256];
-    	byte[] blue  = new byte[256];
+        try {
+            configFile = new File(filename);
+            backupFile = new File(filename+".bak");
+        }
+        catch (NullPointerException e) { return;}
 
-	for (int i=0; i<256; i++ ) {
-	
-	    red[i]  = (byte)values[i*3  ];
-	    green[i]= (byte)values[i*3+1];
-	    blue[i] = (byte)values[i*3+2];
-	}
+        backupFile.delete();
+        configFile.renameTo(new File(filename+".bak"));
 
-	return new IndexColorModel(8, 256, red, green, blue);	
- }
+        // write the config file.
+        try {
+            raf = new RandomAccessFile(filename, "rw");
+            raf.writeBytes(config);
+            raf.writeBytes(hostStr);
+        }
+        catch (IOException e) { return; }
 
- /** Return the RAINBOW palette 
-   * rgb rgb rgb rgb rgb ....
-   */
- public  byte[] getPaletteOfRainbow()  {
-
-	int[] rainbowValues = {  
-
-   // rgb,rgb, ......
-   0x00, 0x00, 0x00, 0x7c, 0x00, 0xff, 0x78, 0x00, 0xfe, 0x73, 0x00, 0xff,
-   0x6f, 0x00, 0xfe, 0x6a, 0x00, 0xff, 0x66, 0x00, 0xfe, 0x61, 0x00, 0xff,
-   0x5d, 0x00, 0xfe, 0x58, 0x00, 0xff, 0x54, 0x00, 0xfe, 0x4f, 0x00, 0xff,
-   0x4b, 0x00, 0xfe, 0x46, 0x00, 0xff, 0x42, 0x00, 0xfe, 0x3d, 0x00, 0xff,
-   0x39, 0x00, 0xfe, 0x34, 0x00, 0xff, 0x30, 0x00, 0xfe, 0x2b, 0x00, 0xff,
-   0x27, 0x00, 0xfe, 0x22, 0x00, 0xff, 0x1e, 0x00, 0xfe, 0x19, 0x00, 0xff,
-   0x15, 0x00, 0xfe, 0x10, 0x00, 0xff, 0x0c, 0x00, 0xfe, 0x07, 0x00, 0xff,
-   0x03, 0x00, 0xfe, 0x00, 0x02, 0xff, 0x00, 0x06, 0xfe, 0x00, 0x0b, 0xff,
-   0x00, 0x0f, 0xfe, 0x00, 0x14, 0xff, 0x00, 0x18, 0xfe, 0x00, 0x1d, 0xff,
-   0x00, 0x21, 0xfe, 0x00, 0x26, 0xff, 0x00, 0x2a, 0xfe, 0x00, 0x2f, 0xff,
-   0x00, 0x33, 0xfe, 0x00, 0x38, 0xff, 0x00, 0x3c, 0xfe, 0x00, 0x41, 0xff,
-   0x00, 0x45, 0xfe, 0x00, 0x4a, 0xff, 0x00, 0x4e, 0xfe, 0x00, 0x53, 0xff,
-   0x00, 0x57, 0xfe, 0x00, 0x5c, 0xff, 0x00, 0x60, 0xfe, 0x00, 0x65, 0xff,
-   0x00, 0x69, 0xfe, 0x00, 0x6e, 0xff, 0x00, 0x72, 0xfe, 0x00, 0x77, 0xff,
-   0x00, 0x7a, 0xfe, 0x00, 0x80, 0xff, 0x00, 0x83, 0xfe, 0x00, 0x89, 0xff,
-   0x00, 0x8c, 0xfe, 0x00, 0x92, 0xff, 0x00, 0x95, 0xfe, 0x00, 0x9b, 0xff,
-   0x00, 0x9e, 0xfe, 0x00, 0xa4, 0xff, 0x00, 0xa7, 0xfe, 0x00, 0xad, 0xff,
-   0x00, 0xb0, 0xfe, 0x00, 0xb6, 0xff, 0x00, 0xb9, 0xfe, 0x00, 0xbf, 0xff,
-   0x00, 0xc2, 0xfe, 0x00, 0xc8, 0xff, 0x00, 0xcb, 0xfe, 0x00, 0xd1, 0xff,
-   0x00, 0xd4, 0xfe, 0x00, 0xda, 0xff, 0x00, 0xdd, 0xfe, 0x00, 0xe3, 0xff,
-   0x00, 0xe6, 0xfe, 0x00, 0xec, 0xff, 0x00, 0xf0, 0xfe, 0x00, 0xf5, 0xff,
-   0x00, 0xf9, 0xfe, 0x00, 0xfe, 0xff, 0x00, 0xfe, 0xfa, 0x00, 0xff, 0xf7,
-   0x00, 0xfe, 0xf1, 0x00, 0xff, 0xee, 0x00, 0xfe, 0xe8, 0x00, 0xff, 0xe5,
-   0x00, 0xfe, 0xdf, 0x00, 0xff, 0xdc, 0x00, 0xfe, 0xd6, 0x00, 0xff, 0xd3,
-   0x00, 0xfe, 0xcd, 0x00, 0xff, 0xca, 0x00, 0xfe, 0xc4, 0x00, 0xff, 0xc1,
-   0x00, 0xfe, 0xbb, 0x00, 0xff, 0xb8, 0x00, 0xfe, 0xb2, 0x00, 0xff, 0xaf,
-   0x00, 0xfe, 0xa9, 0x00, 0xff, 0xa6, 0x00, 0xfe, 0xa0, 0x00, 0xff, 0x9d,
-   0x00, 0xfe, 0x97, 0x00, 0xff, 0x94, 0x00, 0xfe, 0x8e, 0x00, 0xff, 0x8b,
-   0x00, 0xfe, 0x85, 0x00, 0xff, 0x82, 0x00, 0xfe, 0x7d, 0x00, 0xff, 0x79,
-   0x00, 0xfe, 0x74, 0x00, 0xff, 0x70, 0x00, 0xfe, 0x6b, 0x00, 0xff, 0x67,
-   0x00, 0xfe, 0x62, 0x00, 0xff, 0x5e, 0x00, 0xfe, 0x59, 0x00, 0xff, 0x55,
-   0x00, 0xfe, 0x50, 0x00, 0xff, 0x4c, 0x00, 0xfe, 0x47, 0x00, 0xff, 0x43,
-   0x00, 0xfe, 0x3e, 0x00, 0xff, 0x3a, 0x00, 0xfe, 0x35, 0x00, 0xff, 0x31,
-   0x00, 0xfe, 0x2c, 0x00, 0xff, 0x28, 0x00, 0xfe, 0x23, 0x00, 0xff, 0x1f,
-   0x00, 0xfe, 0x1a, 0x00, 0xff, 0x16, 0x00, 0xfe, 0x11, 0x00, 0xff, 0x0d,
-   0x00, 0xfe, 0x08, 0x00, 0xff, 0x04, 0x01, 0xfe, 0x00, 0x05, 0xff, 0x00,
-   0x0a, 0xfe, 0x00, 0x0e, 0xff, 0x00, 0x13, 0xfe, 0x00, 0x17, 0xff, 0x00,
-   0x1c, 0xfe, 0x00, 0x20, 0xff, 0x00, 0x25, 0xfe, 0x00, 0x29, 0xff, 0x00,
-   0x2e, 0xfe, 0x00, 0x32, 0xff, 0x00, 0x37, 0xfe, 0x00, 0x3b, 0xff, 0x00,
-   0x40, 0xfe, 0x00, 0x44, 0xff, 0x00, 0x49, 0xfe, 0x00, 0x4d, 0xff, 0x00,
-   0x52, 0xfe, 0x00, 0x56, 0xff, 0x00, 0x5b, 0xfe, 0x00, 0x5f, 0xff, 0x00,
-   0x64, 0xfe, 0x00, 0x68, 0xff, 0x00, 0x6d, 0xfe, 0x00, 0x71, 0xff, 0x00,
-   0x76, 0xfe, 0x00, 0x7b, 0xff, 0x00, 0x7e, 0xfe, 0x00, 0x84, 0xff, 0x00,
-   0x87, 0xfe, 0x00, 0x8d, 0xff, 0x00, 0x90, 0xfe, 0x00, 0x96, 0xff, 0x00,
-   0x99, 0xfe, 0x00, 0x9f, 0xff, 0x00, 0xa2, 0xfe, 0x00, 0xa8, 0xff, 0x00,
-   0xab, 0xfe, 0x00, 0xb1, 0xff, 0x00, 0xb4, 0xfe, 0x00, 0xba, 0xff, 0x00,
-   0xbd, 0xfe, 0x00, 0xc3, 0xff, 0x00, 0xc6, 0xfe, 0x00, 0xcc, 0xff, 0x00,
-   0xcf, 0xfe, 0x00, 0xd5, 0xff, 0x00, 0xd8, 0xfe, 0x00, 0xde, 0xff, 0x00,
-   0xe1, 0xfe, 0x00, 0xe7, 0xff, 0x00, 0xea, 0xfe, 0x00, 0xf0, 0xff, 0x00,
-   0xf3, 0xfe, 0x00, 0xf9, 0xff, 0x00, 0xfc, 0xfe, 0x00, 0xff, 0xfc, 0x00,
-   0xfe, 0xf7, 0x00, 0xff, 0xf3, 0x00, 0xfe, 0xee, 0x00, 0xff, 0xea, 0x00,
-   0xfe, 0xe5, 0x00, 0xff, 0xe1, 0x00, 0xfe, 0xdc, 0x00, 0xff, 0xd8, 0x00,
-   0xfe, 0xd3, 0x00, 0xff, 0xcf, 0x00, 0xfe, 0xca, 0x00, 0xff, 0xc6, 0x00,
-   0xfe, 0xc1, 0x00, 0xff, 0xbd, 0x00, 0xfe, 0xb8, 0x00, 0xff, 0xb4, 0x00,
-   0xfe, 0xaf, 0x00, 0xff, 0xab, 0x00, 0xfe, 0xa6, 0x00, 0xff, 0xa2, 0x00,
-   0xfe, 0x9d, 0x00, 0xff, 0x99, 0x00, 0xfe, 0x94, 0x00, 0xff, 0x90, 0x00,
-   0xfe, 0x8b, 0x00, 0xff, 0x87, 0x00, 0xfe, 0x83, 0x00, 0xff, 0x7e, 0x00,
-   0xfe, 0x7a, 0x00, 0xff, 0x75, 0x00, 0xfe, 0x71, 0x00, 0xff, 0x6c, 0x00,
-   0xfe, 0x68, 0x00, 0xff, 0x63, 0x00, 0xfe, 0x5f, 0x00, 0xff, 0x5a, 0x00,
-   0xfe, 0x56, 0x00, 0xff, 0x51, 0x00, 0xfe, 0x4d, 0x00, 0xff, 0x48, 0x00,
-   0xfe, 0x44, 0x00, 0xff, 0x3f, 0x00, 0xfe, 0x3b, 0x00, 0xff, 0x36, 0x00,
-   0xfe, 0x32, 0x00, 0xff, 0x2d, 0x00, 0xfe, 0x29, 0x00, 0xff, 0x24, 0x00,
-   0xfe, 0x20, 0x00, 0xff, 0x1b, 0x00, 0xfe, 0x17, 0x00, 0xff, 0x12, 0x00,
-   0xfe, 0x0e, 0x00, 0xff, 0x09, 0x00, 0xff, 0x05, 0x00, 0xff, 0xff, 0xff };
-
-	byte[] retVal = new byte[768];
-	for (int kk=0; kk<768; kk++) 
-	    retVal[kk] = (byte)rainbowValues[kk];
-	return retVal;
- }
- 
-
-  /** display the HDF file vgroup generic information
-   * @param fid the HDF file id.
-   * @param node the HDF Object node
-   */
-  public  void dispHdfVgroupInfo(int fid, HDFObjectNode node) throws HDFException {
- 
-       String   info = new String();
-
-       hdf.Vstart(fid);
-
-       // start search 	 
-       int vgroup_ref = -1;	  
-    
-       // for Vgroup
-       int [] n = new int[1];
-       int vgNumber = hdf.Vlone(fid,n,0);
-
-       if (node.ref == -1) {   // Vgroup root ...
-
-       	  if (vgNumber > 0)  {
-
-       		int refArray[] = new int[vgNumber];
-       		int refNum;
-   
-   		// for child of the Vgroup root
-       		if  ((refNum = hdf.Vlone(fid, refArray, vgNumber)) > 0){
-	
-       		    info = info.concat("================== Vgroup information ===============\n");
-  
-       		    // each of vgroup (lonely)
-       		    for (int i=0; i<refNum; i++) {
-	      
-			// reference .
-			vgroup_ref = refArray[i];
-
-       			int vgtag = HDFConstants.DFTAG_VG;
-	 
-       			int vg_id = hdf.Vattach(fid, vgroup_ref, "r"); 
-       			String className = new String(" ");
-			String s[] = new String[1];
-			s[0] = className;
-			hdf.Vgetclass(vg_id,s);	   
-			className = s[0];
-       			String name      = new String(" ");
-			s[0] = name;
-			hdf.Vgetname (vg_id,s);
-			name = s[0];
-           
-			if ( (className.indexOf("CDF0.0") == -1) ||
-			     (applet_.dispLevel == applet_.DEVELOPER) ) { // non-internel node
-
-				// get total numbers of tag/ref pairs id 
-				int npairs = hdf.Vntagrefs(vg_id);
-
-				info = info.concat("     Tag/Ref: "+ vgtag +"/" + vgroup_ref + "\n" );
-				info = info.concat("     Name: "+name + "\n"  );
-				info = info.concat("     Class Name: "+className + "\n" );
-				info = info.concat("     Entries: " + npairs + "\n" );
-
-				// what about attributes? add as needed in future....
-			
-				// separator   
-				info = info.concat("---------------------------------------------------\n");
-	  
-				// terminate this vgroup
-				 hdf.Vdetach(vg_id);
-       			} 
-      		    } 
-      		} 
-      	 }
-      }  
-      else {
-
- 	info = info.concat("================== Vgroup information ===============\n");
-
-      	// reference .
-	vgroup_ref = node.getObjRef();
-
-	int vgtag = HDFConstants.DFTAG_VG;
-	 
-       	int vg_id = hdf.Vattach(fid, vgroup_ref, "r"); 
-       	String className = new String(" ");
-	String s[] = new String[1];
-	s[0] = className;
-	hdf.Vgetclass(vg_id,s);	   
-	className = s[0];
-       	String name      = new String(" ");
-	s[0] = name;
-	hdf.Vgetname (vg_id,s);
-	name = s[0];
-           
-	// get total numbers of tag/ref pairs id 
-  	int npairs = hdf.Vntagrefs(vg_id);
-
-	info = info.concat("     Tag/Ref: "+ vgtag +"/" + vgroup_ref + "\n" );
-   	info = info.concat("     Name: "+name + "\n"  );
-   	info = info.concat("     Class Name: "+className + "\n" );
- 	info = info.concat("     Entries: " + npairs + "\n" );
-     	 
-        // Add attributes here ? .........
-  	     		
-       	// terminate this vgroup
-      	hdf.Vdetach(vg_id);
-
-       	// separator   
-       	info = info.concat("---------------------------------------------------\n");
-  
-      }
-      info = info.concat("=====================================================\n");
-  
-      hdf.Vend(fid);
-
-      applet_.infoText.setText(info);
-  }
-  
-
-  /** create the raster image br specified image data
-   * @param imgData the image data(pixel value)
-   * @param w the width of the image
-   * @param h the height of the image
-   * @param imgPalette the palette of the image
-   * @return the image , otherwise null
-   */
-  public Image createRasterImage(byte[]  imgData, int w, int h,byte[] imgPal) {
-    
-    return(createRasterImage(imgData,w,h,imgPal,1));
-  }
-  
-
-  /** create the raster image br specified image data
-   * @param imgData the image data(pixel value)
-   * @param w the width of the image
-   * @param h the height of the image
-   * @param imgPalette the palette of the image
-   * @param index      the plane number of the image
-   * @return the image , otherwise null
-   */
-  public Image createRasterImage(byte[]  imgData, int w, int h,
-				 byte[] imgPal,int index) {
- 
-    if ((w*h)<=0)
-      return null;
-    
-    if (index < 1 )
-      return null;
-    
-    // set the created image data
-    byte data[] = new byte[w*h];
-    
-    int pos = (index-1)*w*h;
-    
-    for (int i=0; i<(w*h); i++) 	     
-      data[i] = (byte)imgData[pos++];
-    
-    // set the RGB
-    byte[] red   = new byte[256];
-    byte[] green = new byte[256];
-    byte[] blue  = new byte[256];
-    
-    for (int i=0; i<256; i++) {
-      red[i]   = (byte)(imgPal[i*3]);
-      green[i] = (byte)(imgPal[i*3+1]);
-      blue[i]  = (byte)(imgPal[i*3+2]);
+        try { raf.close(); }
+        catch (IOException e) { }
     }
-    
-    // set the color model
-    ImageColorModel imagePalette;
-    imagePalette = new ImageColorModel(red,green,blue);
 
-    // create the image
-    return(applet_.createImage(new MemoryImageSource(w,h,imagePalette.getColorModel(),data,0,w)));
-   
-   
-  }
-
-  /** create the palette image
-   * @param pal the palette value
-   * @return the image , otherwise null
-   */
-  public Image createPaletteImage(byte[] pal) {
- 
-    // palette image
-    byte[] palImageData = new byte[256*18];
-    
-    for (int i=0; i<256; i++) {
-      for (int j=0; j<6; j++ ) {
-	palImageData[i*12+j]    = (byte)i;
-	palImageData[i*12+j+6] = (byte)i;
-	palImageData[i*12+j+12] = (byte)i;
-      }
-    } 
-    
-    return(  createRasterImage(palImageData,12,256,pal));
-    
-  }
-
-  /** select one HDF Tree node, this node is expandable(has one child at least)
-   * @param tree the HDF Tree
-   */
-  public void	expandCollapse(HDFTree tree, int modifier) {
- 
-	int fid = applet_.fid;
-  // set cursor type to "WAIT_CURSOR"
-   ((Component)applet_.jhvFrame).setCursor(new Cursor(Cursor.WAIT_CURSOR));
-
-    super.expandCollapse(tree,modifier);
-    
-    // clean up the image panel
-    eraseImage();
-    
-    // do something for HDF
-    HDFObjectNode  node = (HDFObjectNode)(tree.selectedNode.hdfObject);
-
-    // detect the type of the node
-    int nodeType = node.getObjType();
-
-    hdf = applet_.hdf;
-
-    if (isExpanded()) { // expanded node
-    try {
-	    switch (nodeType) {
-	    case node.RIS8: // HDF 8-raster image   
-		dispHdfRis8Info(applet_.hdfFile, node);
-// test for animation
-// invoke JHVImageAnimation
-// JHVImageAnimation animatedImages = new JHVImageAnimation(applet_.hdfFile);
-		break;
-
-	    case node.RIS24: // HDF 24-raster image
-		dispHdfRis24Info(applet_.hdfFile, node);
-		break;
-
-	    case node.SDS:     // HDF SDS
-	    case node.SDSDATASET: {	 
-		//hdf   = new HDFSDS();  
-		dispHdfSDSInfo(applet_.hdfFile,node);
-		break;
-	    }
-	    case node.GR:         // HDF GR
-	    case node.GRDATASET: {
-		// create HDFgeneric raster image object
-		//hdf= new HDFGR();
-
-		dispHdfGRInfo(fid, node);
-		break;
-	    }
-	    case node.Vdata:  {  // HDF VDATA
-		// vdata processing
-		dispHdfVdataInfo(fid,node);
-		break;
-	    }    
-		
-	    case  node.Vgroup:   // HDF VGROUP
-
-		// vgroup processing
-		dispHdfVgroupInfo(fid,node);
-		break;
-	    }
-    } catch (HDFException e) {
-	System.out.println("Warning:  Exception caught and ignored (expandCollapse)");
+    /**
+     *  get the HDFObject from server
+     *
+     *  @param node        The selected node in the hdf hierarchy tree
+     *  @return            The HDFObject containing the requested data
+     *  @auther            Peter Cao (xcao@ncsa.uiuc.edu), 10/2/97
+     */
+    public HDFObject getHDFObject(HDFObjectNode node)
+    {
+        if (isLocal)
+            return this.getHDFObject(null,-1,hdfFile,node);
+        else
+            return this.getHDFObject(serverHost,serverPort,hdfFile,node);
     }
-    } // if (isExpanded()) ...
 
-    // set cursor type to "DEFAULT_CURSOR"
-    ((Component)applet_.jhvFrame).setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-  }
-  
+    /**
+     *  get the HDFObject from server
+     *
+     *  @param host        The name of the remote machine
+     *  @param port        The port number of the server
+     *  @param filename    The hdf file name
+     *  @param node        The selected node in the hdf hierarchy tree
+     *  @return            The HDFObject containing the requested data
+     *  @auther            Peter Cao (xcao@ncsa.uiuc.edu), 10/2/97
+     */
+    public HDFObject getHDFObject(String host, int port, String filename,
+        HDFObjectNode node)
+    {
+        Socket server = null;
+        ObjectOutputStream output = null;
+        ObjectInputStream input = null;
+        HDFObject hdfObject = null;
+        HDFMessage message = null;
 
-  /** Display the message 
-   * @param msg the message to be displayed 
-   */
-  public void dispMessage(String msg)
-  {
-    if (msg != null) {
-      // display the info.
-      applet_.infoText.setText(msg); 
+        if  (node == null)
+            hdfObject = new HDFHierarchy (node, filename);
+        else if  (node.type == HDFObjectNode.Annotation)
+            hdfObject = new HDFAnnotation(node, filename);
+        else if  (node.type == HDFObjectNode.RIS8)
+            hdfObject = new HDFRIS8(node, filename);
+        else if  (node.type == HDFObjectNode.RIS24)
+            hdfObject = new HDFRIS24(node, filename);
+        else if ((node.type == HDFObjectNode.GRGLOBALATTR)  ||
+            (node.type == HDFObjectNode.GRDATASETATTR)      ||
+            (node.type == HDFObjectNode.GRDATASET)          ||
+            (node.type == HDFObjectNode.GRDATASETAN)  )
+            hdfObject = new HDFGR(node, filename);
+        else if ((node.type == HDFObjectNode.SDSGLOBALATTR) ||
+            (node.type == HDFObjectNode.SDSDATASETATTR)     ||
+            (node.type == HDFObjectNode.SDSDATASET)         ||
+            (node.type == HDFObjectNode.SDSDATASETAN))
+            hdfObject = new HDFSDS(node, filename);
+        else if  (node.type == HDFObjectNode.Vdata)
+            hdfObject = new HDFVdata(node, filename);
+        else return hdfObject;
 
-      // scroll
-      int pos = applet_.infoText.getText().length() - 1;
-      if (pos<0)
-	pos = 0;
-      applet_.infoText.select(pos,pos);
-      
+        // serve local file
+        if (host == null || host.length() <1)
+        {
+            if (filename != null && filename.length() > 0)
+                hdfObject.service();
+            return hdfObject;
+        }
+
+        // serve remote file
+        try {
+            // Web server
+            if (port < 1) {
+                URL url = new URL(host);
+                HttpURLConnection theConnection = (HttpURLConnection) url.openConnection();
+                theConnection.setDoOutput(true);
+                theConnection.setRequestProperty("Content-Type", "application/octet-stream");
+                output = new ObjectOutputStream(theConnection.getOutputStream());
+                output.writeObject(hdfObject.toServer());
+                output.close();
+                input = new ObjectInputStream (theConnection.getInputStream());
+                message = (HDFMessage) input.readObject();
+                input.close();
+            }
+            else {
+                server = new Socket(host, port);
+                output = new ObjectOutputStream (server.getOutputStream());
+                input = new ObjectInputStream (server.getInputStream());
+                output.writeObject(hdfObject.toServer());
+                message = (HDFMessage) input.readObject();
+                output.close();
+                input.close();
+                server.close();
+            }
+
+            if (message == null) return null;
+            hdfObject.fromServer(message);
+        }
+        catch (Exception exception) {infoText.setText(exception.toString());}
+
+        return hdfObject;
     }
-  }
-
-   public  double[] getDataRange(byte[] data, int nt, int size) {
-
-    HDFNativeData convert = new HDFNativeData();
-
-    double max = Double.MIN_VALUE;
-    double min = Double.MAX_VALUE;
-    int datasize = 1;
-    if ((nt & HDFConstants.DFNT_LITEND) != 0) {
-// will this code work now that it is written in java????
-	nt -= HDFConstants.DFNT_LITEND;
-    }
-    try {
-      // data size for the original data based on the data number type
-      datasize = HDFLibrary.DFKNTsize(nt);
-    } catch (HDFException e) {};
 
 
-    // extract the dataset to be processed
-    for (int i=0; i<size; i++) {
-
-	int pos = i*datasize;
-
-	double tmp = 0;	
-	switch(nt) {
-	// one bit char
-	case HDFConstants.DFNT_CHAR:
-	case HDFConstants.DFNT_UCHAR8:
-	case HDFConstants.DFNT_UINT8:
-	   tmp = (double)((byte)data[pos]);
-	  // convert to positive if the number is negative 
-	  if (tmp < 0)  
-	     tmp += 256.0d;	
-	  break;
-		
-	// signed integer (byte)	
-	case HDFConstants.DFNT_INT8:
-	  
-	  tmp = (double)((byte)data[pos]);
-	  break;
-	  
-        // short	
-	case HDFConstants.DFNT_INT16:
-	case HDFConstants.DFNT_UINT16:
-	  tmp = (double)convert.byteToShort(data, pos);
-	  break;
-	    
-	case HDFConstants.DFNT_INT32:
-	case HDFConstants.DFNT_UINT32:
-		
-	  tmp = (double)convert.byteToInt(data, pos);
-	  break;
-		  
-	//case HDFConstants.DFNT_FLOAT:
-	case HDFConstants.DFNT_FLOAT32:
-	
-	  tmp = (double)convert.byteToFloat(data, pos);
-	  break;
-	    
-	//case HDFConstants.DFNT_DOUBLE:
-	case HDFConstants.DFNT_FLOAT64:
-	
-	  tmp = convert.byteToDouble(data, pos);
-	  break;
-	
-	default:
-	  tmp = 0;
-	}
-	    
-	max = Math.max(tmp,max);
-	min = Math.min(tmp,min);
-
-    }     // for (int i=0; )
-
-    double range[] = new double[2];    
-    range[0] = min;
-    range[1] = max;
-    return range;
-  } 
 }
