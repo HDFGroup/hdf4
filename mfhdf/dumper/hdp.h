@@ -38,10 +38,17 @@ intn        vinit_done
 #define MAXNAMELEN 100
 #endif /* !MAXNAMELEN */
 #define MAXCLASSLEN 100
+#define MAXPERLINE 65	/* max # of chars per line in the output */
 #define MAXRANK 100
 #define MAXFNLEN 256
 #define CONDENSE 1
 #define NO_SPECIFIC -1     /* no specific datasets are requested */
+#define	ATTR_INDENT	0	/* # of spaces in front of attribute data */
+#define ATTR_CONT_INDENT  25	/* # of spaces in front of attribute data 
+					on a continuous line */
+#define	DATA_INDENT	16	/* # of spaces in front of dataset data */
+#define DATA_CONT_INDENT  16	/* # of spaces in front of dataset data 
+					on a continuous line */
 
 /* ERROR_GOTO_n macros are used to facilitate error printing.  Each
    macro prints the given message to the stderr, then uses the HDF 
@@ -348,13 +355,18 @@ typedef struct
    content_t   contents;        /* what contents to dump */
    intn        dump_to_file;	/* whether to dump to a file */
    file_type_t file_type;	/* Is data written in ASCII or binary */
-   intn	       no_cr;	/* whether carriage return added to output data lines */
-   intn	       indent;	/* column number where data starts on a line */ 
+   intn	       as_stream;	/* whether carriage return added to output data lines */
+   intn	       clean_output;	/* whether to print space characters as they 
+				   are or to print in \digit format */
+   intn	       firstln_indent;	/* col# where data starts on the first line*/ 
+   intn	       contln_indent;	/* col# where data continues on the next line*/ 
    char        file_name[MAXFNLEN];/* Name of file to dump into */
    char        ifile_name[MAXFNLEN];/* Name of input file being processed */
 
    intn        print_pal;	/* for GR only: TRUE if option -p selected */
    gr_interlace_t interlace;	/* user's choice of interlace mode to print data in */
+   intn	       no_lattr_data;	/* GR & SD only: TRUE if option -l selected */
+   intn	       no_gattr_data;	/* GR & SD only: TRUE if option -g selected */
   }
 dump_info_t;
 
@@ -440,8 +452,7 @@ typedef struct
 vg_info_t;
 
 /* hdp.c */
-/* removed and use VSsizeof instead
-extern int32 VShdfsize(int32 vkey, char *fields); */
+extern int32 VShdfsize(int32 vkey, char *fields);
 extern intn VSattrhdfsize(int32 vsid, int32 findex, intn attrindex,int32 *size);
 extern intn Vattrhdfsize(int32 vsid, intn attrindex, int32 *size);
 
@@ -493,7 +504,9 @@ extern intn fmtint32(VOIDP x, file_type_t ft, FILE * ofp);
 extern intn fmtuint32(VOIDP x, file_type_t ft, FILE * ofp);
 extern intn fmtfloat32(VOIDP x, file_type_t ft, FILE * ofp);
 extern intn fmtfloat64(VOIDP x, file_type_t ft, FILE * ofp);
-extern int32 dumpfull(int32 nt, file_type_t ft, int32 cnt, VOIDP databuf, intn indent, intn no_cret, FILE * ofp);
+extern intn dumpfull(int32 nt, dump_info_t * dump_opts, int32 cnt, VOIDP databuf, FILE * ofp, intn indent, intn cont_indent );
+extern intn dumpclean(int32 nt, dump_info_t * dump_opts, int32 cnt, VOIDP databuf, FILE * ofp );
+extern int32 dumpGR_SDattr(int32 nt, dump_info_t * dump_opts, int32 cnt, VOIDP databuf, FILE * ofp);
 
 /* show.c */
 extern int32 dumpvd(int32 vd, file_type_t ft, int data_only, FILE *fp, 
@@ -535,7 +548,7 @@ extern void reset_obj_list(objlist_t * o_list);
 extern void resetBuff(VOIDP *buf);
 extern void free_obj_list(objlist_t * o_list);
 extern void sort_obj_list(objlist_t * o_list, sort_t sort_type);
-extern intn print_SDattrs( int32 sd_id, FILE *fp, int32 n_file_attrs, file_type_t ft, intn no_cret );
+extern intn print_SDattrs( int32 sd_id, FILE *fp, int32 n_file_attrs, dump_info_t *dumpsds_opts );
 extern intn print_SDSattrs( int32 sds_id, int32 nattrs, FILE *fp, dump_info_t *dumpsds_opts);
 
 extern intn print_GRattrs( int32 gr_id, int32 n_file_attrs, FILE *fp, dump_info_t *dumpgr_opts );

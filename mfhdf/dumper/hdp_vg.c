@@ -1078,9 +1078,9 @@ vgdumpfull(int32        vg_id,
             ERROR_CONT_2( "in %s: VSinquire failed for vdata with ref#=%d", 
                                  "vgdumpfull", (int) elem_ref );
    
-         vsize = VSsizeof(vs, fields);
+         vsize = VShdfsize(vs, fields);
          if (vsize == FAIL)
-            ERROR_CONT_2( "in %s: VSsizeof failed for vdata with ref#=%d", 
+            ERROR_CONT_2( "in %s: VShdfsize failed for vdata with ref#=%d", 
                                  "vgdumpfull", (int) elem_ref );
 
 	 /* just in case vdata name is null */

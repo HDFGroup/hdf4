@@ -655,9 +655,9 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
                         "dumpvd_ascii", (int) vdata_ref, vd_id );
 
       /* Get the size of the specified fields of the vdata */
-      vsize = VSsizeof( vd_id, fields );
+      vsize = VShdfsize( vd_id, fields );
       if (vsize == FAIL)
-         ERROR_CONT_END( "in %s: VSsizeof failed for vdata with ref#=%d", 
+         ERROR_CONT_END( "in %s: VShdfsize failed for vdata with ref#=%d", 
  			"dumpvd_ascii", (int) vdata_ref, vd_id );
 
       if (FAIL == (vdata_tag = VSQuerytag(vd_id)))
@@ -795,8 +795,6 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
    int32       interlace;
    int32       vsize;
    int32       vdata_ref = -1;
-   int32       vdata_tag;
-   char        vdclass[VSNAMELENMAX];
    char        vdname[VSNAMELENMAX];
    intn        dumpall = 0;
    file_type_t ft = DBINARY;
@@ -861,13 +859,8 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
 
       else /* vdata is not empty */
       {
-         if (FAIL == (vdata_tag = VSQuerytag(vd_id)))
-            ERROR_CONT_END( "in %s: VSQuerytag failed for vdata with ref#=%d", 
-                        "dumpvd_binary", (int) vdata_ref, vd_id );
-
-         if (FAIL == VSgetclass(vd_id, vdclass))
-            ERROR_CONT_END( "in %s: VSgetclass failed for vdata with ref#=%d", 
-                        "dumpvd_binary", (int) vdata_ref, vd_id );
+	 /* removed calls to VSQuerytag and VSgetclass - not useful in
+	    dumping by binary - BMR 8/23/00) */
 
          /* If one or more fields were specified by the user, then find out
             what they were, determine their corresponding indices in 

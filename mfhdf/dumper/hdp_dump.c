@@ -115,16 +115,16 @@ fmtchar(VOIDP       x,
         file_type_t ft, 
         FILE       *ofp)
 {
-    if (isprint(*(unsigned char *) x))
-      {
-          putc(*((char *) x), ofp);
-          return (1);
-      }		
-    else
-      {
-          putc('\\', ofp);
-          return (1 + fprintf(ofp, "%03o", *((uchar8 *) x)));
-      }		
+   if (isprint(*(unsigned char *) x))
+   {
+      putc(*((char *) x), ofp);
+      return (1);
+   }
+   else
+   {
+      putc('\\', ofp);
+      return (1 + fprintf(ofp, "%03o", *((uchar8 *) x)));
+   }		
 }
 
 intn 
@@ -137,7 +137,7 @@ fmtuchar8(VOIDP       x, /* assumption: uchar8 is same as unsigned char */
     if(ft == DASCII) 
 	/* replace %o with %d by Elena's suggestion: it doesn't make
 	   sense to print in octal - BMR 06/23/00 */
-        return (1 + fprintf(ofp, "%d", *((uchar8 *) x)));
+        return (fprintf(ofp, "%d", *((uchar8 *) x)));
     else
       { 
           s = (uchar8) *((unsigned char *)x);
@@ -251,126 +251,142 @@ fmtfloat64(VOIDP       x,
       }
 }
 
-int32 
-dumpfull(int32       nt, 
-	 file_type_t ft,      /* ASCII or BINARY file */
-         int32       cnt,     /* number of items in 'databuf' ? */
-         VOIDP       databuf, 
-         intn        indent, 
-	 intn	     no_cret, /* whether output data lines broken & aligned */
-         FILE       *ofp)
+typedef intn (*fmtfunct_t) (VOIDP, file_type_t, FILE *);
+fmtfunct_t select_func(
+		int32 nt )
 {
-   intn    i;
-   VOIDP   b = NULL;
-   intn    (*fmtfunct) (VOIDP, file_type_t, FILE *) = NULL;
-   int32   off;
-   intn    cn;
-   intn    ret_value = SUCCEED;
-
-   /* check inputs */
-   if (NULL == databuf || NULL == ofp)
-   {
-      ret_value = FAIL;
-      goto done;
-   }
-    
    switch (nt & 0xff )
    {
       case DFNT_CHAR:
-          fmtfunct = fmtchar;
+          return( fmtchar );
           break;
       case DFNT_UCHAR:
-          fmtfunct = fmtuchar8;
+          return( fmtuchar8 );
           break;
       case DFNT_UINT8:
-          fmtfunct = fmtuint8;
+          return( fmtuint8 );
           break;
       case DFNT_INT8:
-          fmtfunct = fmtint8;
+          return( fmtint8 );
           break;
       case DFNT_UINT16:
-          fmtfunct = fmtuint16;
+          return( fmtuint16 );
           break;
       case DFNT_INT16:
-          fmtfunct = fmtint16;
+          return( fmtint16 );
           break;
       case DFNT_UINT32:
-          fmtfunct = fmtuint32;
+          return( fmtuint32 );
           break;
       case DFNT_INT32:
-          fmtfunct = fmtint32;
+          return( fmtint32 );
           break;
       case DFNT_FLOAT32:
-          fmtfunct = fmtfloat32;
+          return( fmtfloat32 );
           break;
       case DFNT_FLOAT64:
-          fmtfunct = fmtfloat64;
+          return( fmtfloat64 );
           break;
       default:
-          fprintf(ofp, "HDP does not support type [%d] \n", (int) nt);
-          ret_value = FAIL;
-          goto done;
+          fprintf(stderr, "HDP does not support type [%d].  Use signed character printing function.\n", (int) nt);
+	  return( fmtchar );
    }		/* end switch */
+}  /* select_func */
 
-   /* assign to variables used in loop below */
-   b = databuf;
+intn 
+dumpfull(int32       nt, 
+	 dump_info_t* dump_opts,
+         int32       cnt,     /* number of items in 'databuf' ? */
+         VOIDP       databuf, 
+         FILE       *ofp,
+	 intn	indent,		/* indentation on the first line */
+	 intn	cont_indent )	/* indentation on the continuous lines */
+{
+   intn    i;
+   VOIDP   bufptr = NULL;
+   fmtfunct_t fmtfunct = NULL;
+   int32   off;
+   intn    cn;
+   file_type_t ft = dump_opts->file_type;
+   intn    ret_value = SUCCEED;
+
+   /* check inputs */
+   if( NULL == databuf )
+      ERROR_GOTO_1( "in %s: Data buffer to be dumped is NULL", "dumpfull" );
+   if( NULL == ofp )
+      ERROR_GOTO_1( "in %s: Output file pointer is NULL", "dumpfull" );
+    
+   /* select the appropriate function to print data elements depending
+      on the data number type */
+   fmtfunct = select_func( nt );
+
+   /* assign to variables used in loop below (?)*/
+   bufptr = databuf;
    off = DFKNTsize(nt | DFNT_NATIVE); /* what is offset for data type */
    if (off == FAIL)
-      ERROR_GOTO_1("Failed to find native size of type [%d] \n", (int)nt);
-   cn = indent;
+      ERROR_GOTO_2("in %s: Failed to find native size of type [%d]", 
+			"dumpfull", (int)nt );
 
-   /* check if we're dumping data i.e. items in buffer in 
-      ASCII or Binary mode. */
+   cn = cont_indent; /* current column number, cont_indent because that's
+			where the data actually starts */
+
+   /* check if we're dumping data in ASCII or Binary mode. */
    if(ft == DASCII)
-   { /* ASCII */
+   {
+      /* print spaces in front of data on the first line */
+      for (i = 0; i < indent; i++)
+	 putc(' ', ofp);
+
       if (nt != DFNT_CHAR)
       {
-         for (cn = 0; cn < indent; cn++)
-            putc(' ', ofp);
-         for (i = 0; i < cnt && b != NULL; i++)
+         for (i = 0; i < cnt && bufptr != NULL; i++)
          {
-            cn += fmtfunct(b, ft, ofp); /* dump item to file */
-            b = (char *) b + off;
+            cn += fmtfunct(bufptr, ft, ofp); /* dump item to file */
+            bufptr = (char *) bufptr + off;
             putc(' ', ofp);
             cn++;
 
             /* temporary fix bad alignment algo in dumpfull by
                adding i < cnt-1 to remove extra line - BMR 4/10/99 */
-	    if( !no_cret ) /* add \n after 65 chars */
-               if (cn > 65 && i < cnt-1 )
+	    if( !dump_opts->as_stream ) /* add \n after MAXPERLINE chars */
+               if (cn > MAXPERLINE && i < cnt-1 )
                {
                   putc('\n', ofp);
-                  for (cn = 0; cn < indent; cn++)
+
+		  /* print spaces in front of data on the continuous line */
+                  for (cn = 0; cn < cont_indent; cn++)
                       putc(' ', ofp);
                }	/* end if */
          }	 /* end for every item in buffer */
       }		
       else /* DFNT_CHAR */
       {
-         for (i = 0; i < cnt && b != NULL; i++)
+         for (i = 0; i < cnt && bufptr != NULL; i++)
          {
-            cn += fmtfunct(b, ft, ofp); /* dump item to file */
-            b = (char *) b + off;
-	    if( !no_cret ) /* add \n after 65 chars */
-               if (cn > 65 )
+            cn += fmtfunct(bufptr, ft, ofp); /* dump item to file */
+            bufptr = (char *) bufptr + off;
+	    if( !dump_opts->as_stream ) /* add \n after MAXPERLINE chars */
+               if (cn > MAXPERLINE )
                {
                   putc('\n', ofp);
-                  for (cn = 0; cn < indent; cn++)
+
+		  /* print spaces in front of data on the continuous line */
+                  for (cn = 0; cn < cont_indent; cn++)
                       putc(' ', ofp);
                }		/* end if */
          }	/* end for every item in buffer */
       }		/* end else DFNT_CHAR */
 
-      putc('\n', ofp); /* newline */
+      putc('\n', ofp); /* newline after a dataset or attribute */
 
    } /* end DASCII  */
    else /*  Binary   */
    {
-      for (i = 0; i < cnt && b != NULL; i++)
+      for (i = 0; i < cnt && bufptr != NULL; i++)
       {
-         cn += fmtfunct(b, ft, ofp); /* dump item to file */
-         b = (char *) b + off; /* increment by offset? */
-         cn++;
+         cn += fmtfunct(bufptr, ft, ofp); /* dump item to file */
+         bufptr = (char *) bufptr + off; /* increment by offset? */
+         /* cn++; I don't see any reason of this increment being here 9/4/00*/
       } /* end for all items in buffer */
    }
 
@@ -382,3 +398,116 @@ done:
 
     return ret_value;
 } /* dumpfull */
+
+#define	CARRIAGE_RETURN	13
+#define	LINE_FEED	10
+#define	HORIZONTAL_TAB	9
+
+intn 
+dumpclean(int32       nt, 
+	 dump_info_t* dump_opts,
+         int32       cnt,     /* number of items in 'databuf' ? */
+         VOIDP       databuf, 
+         FILE       *ofp)
+{
+   intn    i;
+   VOIDP   bufptr = NULL;
+   int32   off;
+   intn    cn;
+   intn    is_null;	/* TRUE if current character is a null */
+   intn    ret_value = SUCCEED;
+
+   /* check inputs */
+   if( NULL == databuf )
+      ERROR_GOTO_1( "in %s: Data buffer to be dumped is NULL", "dumpGR_SDattr" );
+   if( NULL == ofp )
+      ERROR_GOTO_1( "in %s: Output file pointer is NULL", "dumpGR_SDattr" );
+    
+   /* assign to variables used in loop below (?)*/
+   bufptr = databuf;
+   off = DFKNTsize(nt | DFNT_NATIVE); /* what is offset for data type */
+   if (off == FAIL)
+      ERROR_GOTO_2("in %s: Failed to find native size of type [%d]", 
+			"dumpGR_SDattr", (int)nt );
+
+   cn = 0;  /* so attribute values printed next to "Value =" */
+   is_null = FALSE; /* no null character is reached yet */
+
+   /* dumping data in clean format only allowed in ASCII mode, not Binary */
+   for (i = 0; i < cnt && bufptr != NULL; i++)
+   {
+      /* if number of characters printed on the current line reaches
+	 the max defined, print a new line and indent appropriately.
+	 Note: this statement is at the top here is to prevent the
+	 extra line and indentation when the last line of the attribute
+	 data just reached MAXPERLINE */
+      if (cn >= MAXPERLINE )
+      {
+         putc('\n', ofp);
+         for (cn = 0; cn < ATTR_CONT_INDENT; cn++)
+            putc(' ', ofp);
+      }	/* end if */
+
+      /* the current character is printable */
+      if (isprint(*(unsigned char *) bufptr))
+      {
+	 /* if there has been null characters before this non-null char,
+	    print "..." */
+	 if( is_null )
+	 {
+            cn = cn + fprintf( ofp, " ... " );
+	    is_null = FALSE; /* reset flag */
+	 }
+
+	 /* then print the current non-null character */
+         putc(*((char *) bufptr), ofp);
+         cn++;  /* increment character count */
+      }
+
+      /* when a \0 is reached, do not print it, set flag for its existence,
+	 so when a non-null char is reached, "..." can be printed */
+      else if( *(unsigned char *) bufptr == '\0')
+         is_null = TRUE;
+
+      else if( isspace(*(unsigned char *) bufptr))
+      {
+         if( *(unsigned char *) bufptr == CARRIAGE_RETURN 
+            || *(unsigned char *) bufptr == LINE_FEED )
+            cn = MAXPERLINE;  /* so that next data element will be printed
+			   on the next line with proper indentation */
+         else if( *(unsigned char *) bufptr == HORIZONTAL_TAB )
+         {
+            putc(*((char *) bufptr), ofp);
+            cn = cn + 8;   /* compensate for the tab, at most 8 chars */
+         }
+
+         /* keep this else here to take care of other isspace cases, fill in
+	    more cases as need; if all cases are taken care of, remove else */
+         else
+         {
+            putc('\\', ofp);
+            cn = cn + fprintf(ofp, "%03o", *((uchar8 *) bufptr));
+         }		
+      }
+      else
+      {
+         putc('\\', ofp);
+         cn = cn + fprintf(ofp, "%03o", *((uchar8 *) bufptr));
+      }		
+
+      /* advance the buffer pointer */
+      bufptr = (char *) bufptr + off;
+
+   }	/* end for every item in buffer */
+
+   putc('\n', ofp); /* newline */
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+      }
+    /* Normal cleanup */
+
+    return ret_value;
+} /* dumpclean */
+

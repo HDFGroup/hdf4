@@ -31,16 +31,17 @@ dumpgr_usage(intn  argc,
              char *argv[])
 {
     printf("Usage:\n");
-    printf("%s dumpgr [-a|-i <indices>|-r <refs>|-n <names>] [-m <interlace>] [-p] [-dhvc] [-o <filename>] [-bx] <filelist>\n", argv[0]);
+    printf("%s dumpgr [-a|-i <indices>|-r <refs>|-n <names>] [-m <interlace>] [-p] [-cdhvs] [-o <filename>] [-bx] <filelist>\n", argv[0]);
     printf("\t-a\tDump all RIs in the file (default)\n");
     printf("\t-i <indices>\tDump the <indices>th RIs in the file \n");
     printf("\t-r <refs>\tDump the RIs with reference number <refs>\n");
     printf("\t-n <names>\tDump the RIs with name <names>\n");
     printf("\t-m <interlace>\tDump data in interlace mode <interlace= 0, 1, or 2>\n");
+    printf("\t-c\tPrint space characters as they are, not \\digit\n");
     printf("\t-d\tDump data only, no tag/ref, formatted to input to hp2hdf\n");
     printf("\t-h\tDump header only, no annotation for elements nor data\n");
     printf("\t-v\tDump everything including all annotations (default)\n");
-    printf("\t-c\tDo not add a carriage return to a long data line\n");
+    printf("\t-s\tDump data as a stream, i.e. do not add carriage returns\n");
     printf("\t-p\tDump palette data\n");
     printf("\t-o <filename>\tOutput to file <filename>\n");
     printf("\t-b\tBinary format of output\n");
@@ -135,9 +136,13 @@ parse_dumpgr_opts(dump_info_t *dumpgr_opts,
              (*curr_arg)++;
              break;
 
-         case 'c':      /* do not add carriage returns to output data lines */
-             dumpgr_opts->no_cr = TRUE;
-             dumpgr_opts->indent = 0; /* so that data is printed at 1st col. */
+         case 's':      /* do not add carriage returns to output data lines */
+             dumpgr_opts->as_stream = TRUE;
+             (*curr_arg)++;
+             break; 
+
+         case 'c':      /* print space characters as they are, not \\digit */
+             dumpgr_opts->clean_output = TRUE;
              (*curr_arg)++;
              break; 
 
@@ -210,7 +215,7 @@ grdumpfull(int32        ri_id,
          *start = NULL,  /* starting location to be read */
          *edge = NULL,   /* # of values to be read in each dim */
          *stride = NULL; /* # of values to be skipped b/w readings */
-   intn   ret_value = SUCCEED;
+   intn   status, ret_value = SUCCEED;
 
    /* Compute the number of the bytes for each value. */
    numtype = nt & DFNT_MASK;
@@ -247,20 +252,24 @@ grdumpfull(int32        ri_id,
       interlace mode of the image to be stored in memory when read */
    if( dumpgr_opts->interlace != NO_SPECIFIC )
    {
-      ret_value = GRreqimageil( ri_id, dumpgr_opts->interlace );
-      if( ret_value == FAIL )
+      status = GRreqimageil( ri_id, dumpgr_opts->interlace );
+      if( status == FAIL )
          ERROR_GOTO_2( "in %s: GRreqimageil failed for ri_id(%d)",
                   "grdumpfull", (int)ri_id );
    }
 
-   ret_value = GRreadimage(ri_id, start, stride, edge, buf);
-   if ( ret_value == FAIL )
+   status = GRreadimage(ri_id, start, stride, edge, buf);
+   if ( status == FAIL )
       ERROR_GOTO_2( "in %s: GRreadimage failed for ri_id(%d)",
                   "grdumpfull", (int)ri_id );
 
-   ret_value = dumpfull( nt, dumpgr_opts->file_type, read_nelts*ncomps, 
-		buf, dumpgr_opts->indent, dumpgr_opts->no_cr, fp);
-   if( ret_value == FAIL )
+   /* if printing data only, print with no indentation */
+   if( dumpgr_opts->contents == DDATA )
+      status = dumpfull( nt, dumpgr_opts, read_nelts*ncomps, buf, fp, 0, 0);
+   else 
+      status = dumpfull( nt, dumpgr_opts, read_nelts*ncomps, buf, fp,
+				DATA_INDENT, DATA_CONT_INDENT );
+   if( status == FAIL )
       ERROR_GOTO_2( "in %s: dumpfull failed for ri_id(%d)",
                   "grdumpfull", (int)ri_id );
 
@@ -449,12 +458,25 @@ print_GRattrs(
       /* display the attribute's values */
       fprintf(fp, "\t\t Value = ");
 
-      status = dumpfull(attr_nt, dumpgr_opts->file_type, attr_count, 
-				attr_buf, 0, dumpgr_opts->no_cr, fp);
-      if( FAIL == status )
-         ERROR_CONT_2( "in %s: dumpfull failed for %d'th attribute", 
-		"print_GRattr", (int)attr_index );
+      /* if the user wishes to have clean output, i.e. option -c is selected */
+      /* Note that this option is only applicable to DFNT_CHAR type, the
+         option will be ignored for other types */
+      if( dumpgr_opts->clean_output && attr_nt == DFNT_CHAR )
+      {
+         status = dumpclean(attr_nt, dumpgr_opts, attr_count, attr_buf, fp);
+         if( status == FAIL )
+            ERROR_CONT_2( "in %s: dumpclean failed for %d'th attribute",
+                "print_GRattr", (int)attr_index );
 
+      }
+      else  /* show tab, lf, null char... in octal as \011, \012, \000... */
+      {
+         status = dumpfull(attr_nt, dumpgr_opts, attr_count, attr_buf, fp,
+			ATTR_INDENT, ATTR_CONT_INDENT );
+         if( status == FAIL )
+            ERROR_CONT_2( "in %s: dumpfull failed for %d'th attribute",
+                "print_GRattr", (int)attr_index );
+      }
       /* free buffer and reset it to NULL */
       resetBuff( &attr_buf );
    } /* for all attributes of GR */
@@ -525,11 +547,25 @@ print_RIattrs(
 
       /* display the attribute's values then free buffer */
       fprintf(fp, "\t\t Value = ");
-      status = dumpfull(attr_nt, dumpgr_opts->file_type, attr_count, 
-			attr_buf, 0, dumpgr_opts->no_cr, fp);
-      if( status == FAIL )  /* go to the next attribute */
-         ERROR_CONT_3( "in %s: dumpfull failed for %d'th attribute of %d'th RI", 
+
+      /* if the user wishes to have clean output, i.e. option -c is selected */
+      /* Note that this option is only applicable to DFNT_CHAR type, the
+         option will be ignored for other types */
+      if( dumpgr_opts->clean_output && attr_nt == DFNT_CHAR )
+      {
+         status = dumpclean(attr_nt, dumpgr_opts, attr_count, attr_buf, fp);
+         if( status == FAIL )
+            ERROR_CONT_3( "in %s: dumpclean failed for %d'th attribute of %d'th RI", 
 			"print_RIattrs", (int)attr_index, (int)ri_index );
+      }
+      else  /* show tab, lf, null char... in octal as \011, \012, \000... */
+      {
+         status = dumpfull(attr_nt, dumpgr_opts, attr_count, attr_buf, fp,
+			ATTR_INDENT, ATTR_CONT_INDENT );
+         if( status == FAIL )
+            ERROR_CONT_3( "in %s: dumpfull failed for %d'th attribute of %d'th RI", 
+			"print_RIattrs", (int)attr_index, (int)ri_index );
+      }
 
       /* free buffer and reset it to NULL */
       resetBuff( &attr_buf );
@@ -652,14 +688,18 @@ print_Palette(
 			"print_Palette", (int)pal_index);
             }
 
-            /* Display the palette data with the title line when not data only*/
-            if( dumpgr_opts->contents != DDATA )
-               fprintf (fp, "\t Palette Data: \n");
+	    /* if printing data only, print palette data with no indentation */
+	    if( dumpgr_opts->contents == DDATA )
+               status = dumpfull(data_type, dumpgr_opts, n_entries*n_comps, 
+			palette_data, fp, 0, 0 );
 
-            /* Display the palette data */
-            status = dumpfull(data_type, dumpgr_opts->file_type, 
-			n_entries*n_comps, palette_data, dumpgr_opts->indent, 
-			dumpgr_opts->no_cr, fp);
+            /* display the palette data with the title line and indentation */
+	    else
+	    {
+               fprintf (fp, "\t Palette Data: \n");
+               status = dumpfull(data_type, dumpgr_opts, n_entries*n_comps, 
+			palette_data, fp, DATA_INDENT, DATA_CONT_INDENT );
+	    }
             if( status == FAIL )
                ERROR_GOTO_2( "in %s: dumpfull failed for palette #%d",
 			"print_Palette", (int)ri_id );

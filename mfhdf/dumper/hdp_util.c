@@ -202,16 +202,10 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
                 vinit_done = TRUE;
                 Vinitialize(fid);
             }	/* end if */
-/*
-PPNUM("attaching to vgroup with ref", ref );
-*/
           if ((vkey = Vattach(fid, ref, "r")) != FAIL)
             {
                 if ((nobj = Vntagrefs(vkey)) != FAIL)
                   {
-/*
-PPNUM("number of object for this vgroup just attached", nobj );
-*/
 		   if( nobj > 0 ) { /* Albert fixed */
                       int32      *temp_tag;
                       int32      *temp_ref;

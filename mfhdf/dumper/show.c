@@ -52,7 +52,6 @@ dumpvd(int32       vd,
     int32       addr_width = 0;
     int32       num_digits;
     int32       address = 0;
-    int32       num_flds;
     int32       nfields;
     int32       cnt1, cnt2;
     int32       cn = 0;
@@ -242,13 +241,13 @@ dumpvd(int32       vd,
                   }
             }		/* while */
 
-          if (FAIL == (nfields = VSgetfields(vd, flds)))
+          nfields = VSgetfields(vd, flds);
+          if (FAIL == nfields )
             {
                 fprintf(stderr,"dumpvd: VSgetfields failed for vd = %d \n",(int)vd);
                 ret_value = FAIL;
                 goto done;
             }
-          num_flds = vsize / nfields;
 
           cnt1 = 0;
           cnt2 = 0;
@@ -370,13 +369,13 @@ dumpvd(int32       vd,
 
     else
       {       /*  binary file  */
-          if (FAIL == (nfields = VSgetfields(vd, flds)))
+          nfields = VSgetfields(vd, flds);
+          if (FAIL == nfields )
             {
                 fprintf(stderr,"dumpvd: VSgetfields failed for vd = %d \n",(int)vd);
                 ret_value = FAIL;
                 goto done;
             }
-          num_flds = vsize / nfields;
 
           cnt1 = 0;
           cnt2 = 0; 

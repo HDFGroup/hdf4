@@ -61,9 +61,33 @@ init_dumprig_opts(dump_info_t * dumprig_opts)
     dumprig_opts->contents = DVERBOSE;	/* default dump all information */
     dumprig_opts->dump_to_file = FALSE;		/* don't dump to output file */
     dumprig_opts->file_type = DASCII;	/* default output is ASCII file */
-    dumprig_opts->no_cr = FALSE; /* print output aligned, using carriage returns */
+    dumprig_opts->as_stream = FALSE; /* print output aligned, using carriage returns */
     dumprig_opts->print_pal = FALSE;     /* GR only, don't print palette */
-    dumprig_opts->interlace = NO_SPECIFIC;     /* GR only, print data using interlace */
+
+    /* print output aligned, using carriage returns */
+    dumprig_opts->as_stream = FALSE;
+
+    /* print space characters (LF, FF, CR, space, tabs...) in \digit format */
+    dumprig_opts->clean_output = FALSE;
+
+    /* print data starting at column 5 unless reset otherwise */
+    dumprig_opts->firstln_indent = 5;  /* Note: only for dump_rig, so 
+					testfiles won't need to be changed */
+
+    /* print data on a continuous line starting at column 5 unless
+       reset otherwise */
+    dumprig_opts->contln_indent = 5;  /* Note: only for dump_rig, so 
+					testfiles won't need to be changed */
+
+    /* GR only, print data using interlace at creation */
+    dumprig_opts->interlace = NO_SPECIFIC;
+
+    /* GR & SD only, print data of global attributes unless -g is given */
+    dumprig_opts->no_gattr_data = FALSE;
+
+    /* GR & SD only, print data of local attributes unless -l is given */
+    dumprig_opts->no_lattr_data = FALSE;
+
     HDstrcpy(dumprig_opts->file_name, "\0");
 }	/* end init_list_opts() */
 
@@ -165,7 +189,7 @@ parse_dumprig_opts(dump_info_t *dumprig_opts,
                 break;
 
             case 'c':   /* do not add carriage returns to output data lines */
-                dumprig_opts->no_cr = TRUE;
+                dumprig_opts->as_stream = TRUE;
                 (*curr_arg)++;
                 break;    
 
@@ -216,7 +240,6 @@ drig(dump_info_t *dumprig_opts,
     int         dumpall = 0;
     int         ncomps;
     int         il;
-    int         rig;
     file_type_t ft;
     intn        ret_value = SUCCEED;
 
@@ -321,17 +344,15 @@ drig(dump_info_t *dumprig_opts,
                      i < ndsets && (dumpall!=0 || x < dumprig_opts->num_chosen); 
                      i++)
                   {	/* Examine all RIGs. */
-                      int     indent = 5;
                       int     compressed;
                       int     has_pal;
-                      int32   ret;
                       int32   eltsz;
                       int32   read_nelts;
                       uint16  rig_ref;
                       uint16  compr_type;
 
                       /* get dimensions of ri */
-                      if (FAIL ==(rig = DFGRgetimdims(file_name, &width, &height, &ncomps, &il)))
+                      if (FAIL == DFGRgetimdims(file_name, &width, &height, &ncomps, &il))
                         {
                             ret_value = FAIL;
                             goto done;
@@ -349,8 +370,8 @@ drig(dump_info_t *dumprig_opts,
                         }
 
 /*DFGRreqimil( 1 );*/
-                      if ((ret = DFGRIgetimlut((const char *) file_name, image, width,
-                                               height, IMAGE, 0, &compressed, &compr_type, &has_pal)) == -1)
+                      if (DFGRIgetimlut((const char *) file_name, image, width,
+                                               height, IMAGE, 0, &compressed, &compr_type, &has_pal) == -1)
                         {
                             fprintf(stderr,"DFGRIgetimlut: Read error for file %s\n",file_name);
                             ret_value = FAIL;
@@ -441,7 +462,7 @@ drig(dump_info_t *dumprig_opts,
                         case DDATA:
                             if (dumprig_opts->contents != DDATA)
                                 fprintf(fp, "\tData : \n");
-                            if (FAIL == dumpfull(DFNT_UINT8, ft, read_nelts*eltsz, image, indent, dumprig_opts->no_cr, fp))
+                            if (FAIL == dumpfull(DFNT_UINT8, dumprig_opts, read_nelts*eltsz, image, fp, 5, 5))
                               {
                                   fprintf(stderr,"dumpfull: failed to dump %d'th image data for file %s",
                                           i,file_name);
@@ -528,16 +549,14 @@ drig(dump_info_t *dumprig_opts,
                      i < ndsets && (dumpall!=0 || x<dumprig_opts->num_chosen); 
                      i++)
                   {	/* Examine all RIGs. */
-                      int    indent = 5;
                       int    compressed;
                       int    has_pal;
-                      int32  ret;
                       int32  eltsz;
                       int32  read_nelts;
                       uint16 rig_ref;
                       uint16 compr_type;
 
-                      if (FAIL ==(rig = DFGRgetimdims(file_name, &width, &height, &ncomps, &il)))
+                      if (FAIL == DFGRgetimdims(file_name, &width, &height, &ncomps, &il))
                         {
                             ret_value = FAIL;
                             goto done;
@@ -554,8 +573,8 @@ drig(dump_info_t *dumprig_opts,
                             ret_value = FAIL;
                             goto done;
                         }
-                      if ((ret = DFGRIgetimlut((const char *) file_name, image, width,
-                                               height, IMAGE, 0, &compressed, &compr_type, &has_pal)) == -1)
+                      if (DFGRIgetimlut((const char *) file_name, image, width,
+                                               height, IMAGE, 0, &compressed, &compr_type, &has_pal) == -1)
                         {
                             fprintf(stderr,"DFGRIgetimlut: Read error for file %s\n",file_name);
                             ret_value = FAIL;
@@ -603,7 +622,7 @@ drig(dump_info_t *dumprig_opts,
                         }
 
                                  
-                      if (FAIL == dumpfull(DFNT_UINT8, ft, read_nelts*ncomps, image, indent, dumprig_opts->no_cr, fp))
+                      if (FAIL == dumpfull(DFNT_UINT8, dumprig_opts, read_nelts*ncomps, image, fp, 5, 5))
                         {
                             fprintf(stderr,"dumpfull: failed to dump %d'th image data for file %s",
                                     i,file_name);
@@ -664,7 +683,6 @@ do_dumprig(intn  curr_arg,
       }		/* end if */
 
    /* initialize the structure that holds user's options and inputs */
-   /*init_dump_opts(&dumprig_opts); */
     init_dumprig_opts(&dumprig_opts);
 
 

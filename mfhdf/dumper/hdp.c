@@ -62,13 +62,26 @@ init_dump_opts(dump_info_t * dump_opts)
     dump_opts->num_chosen = NO_SPECIFIC;
 
     /* print output aligned, using carriage returns */
-    dump_opts->no_cr = FALSE;
+    dump_opts->as_stream = FALSE;
+
+    /* print space characters (LF, FF, CR, space, tabs...) in \digit format */
+    dump_opts->clean_output = FALSE;
 
     /* print data starting at column 16 unless reset otherwise */
-    dump_opts->indent = 16;
+    dump_opts->firstln_indent = 16;
+
+    /* print data on a continuous line starting at column 16 unless 
+       reset otherwise */
+    dump_opts->contln_indent = 16;
 
     /* GR only, print data using interlace at creation */
     dump_opts->interlace = NO_SPECIFIC;
+
+    /* GR & SD only, print data of global attributes unless -g is given */
+    dump_opts->no_gattr_data = FALSE;
+
+    /* GR & SD only, print data of local attributes unless -l is given */
+    dump_opts->no_lattr_data = FALSE;
 
     HDstrcpy(dump_opts->file_name, "\0");
 }       /* end init_dump_opts() */
@@ -179,20 +192,99 @@ main(int argc, char *argv[])
 
     return (0);
 }
+
 /* -----------------------------------------------------------------
 NAME
    VShdfsize - computes the byte size of the field(s) of a vdata.
 
 DESCRIPTION
    The size is the byte size of the fields of a vdata in a hdf file.
-
-REMARKS: This routine is removed because it is just a copy of the 
-   API routine VSsizeof.
+   This routine is very similar to the HDF API routine VSsizeof except
+   it uses (struct vdata_desc).wlist.isize to compute the field size
+   instead of (struct vdata_desc).wlist.esize as VSsizeof.
 
 RETURNS
    The byte size of the field(s), positive integer, on success; 
    otherwise, returns FAIL.
 ----------------------------------------------------------------- */
+int32 
+VShdfsize(int32 vkey,   /* IN vdata key */
+         char *fields  /* IN: Name(s) of the fields to check size of */ )
+{
+    int32       totalsize;
+    int32       i, j;
+    int32       found;
+    int32       ac;
+    char        **av = NULL;
+    vsinstance_t *w  = NULL;
+    VDATA        *vs = NULL;
+    int32        ret_value = SUCCEED;
+    CONSTR(FUNC, "VShdfsize");
+
+#ifdef HAVE_PABLO
+/*
+  TRACE_ON(VS_mask, ID_VShdfsize);
+*/
+#endif /* HAVE_PABLO */
+
+    /* check key is valid vdata */
+    if (HAatom_group(vkey)!=VSIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* get vdata instance */
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+
+    /* get vdata itself and check it */
+    vs = w->vs;
+    if (vs == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    totalsize = 0;
+    if (fields == NULL) /* default case? */
+      {   /* count all field sizes in vdata */
+        for (j = 0; j < vs->wlist.n; j++)	
+            totalsize += vs->wlist.isize[j];
+      }		
+    else
+      {  /* parse field string */
+        if ((scanattrs(fields, &ac, &av) < 0) || (ac < 1))
+            HGOTO_ERROR(DFE_ARGS, FAIL);
+
+        for (i = 0; i < ac; i++)
+          {   /* check fields in vs */
+            for (found = 0, j = 0; j < vs->wlist.n; j++)	
+                if (!HDstrcmp(av[i], vs->wlist.name[j]))
+                  {
+                    totalsize += vs->wlist.isize[j];
+                    found = 1;
+                    break;
+                  }
+
+            if (!found)
+                HGOTO_ERROR(DFE_ARGS, FAIL);
+          }	/* end for */
+      }		/* end else */
+
+    /* return total size of vdata fields specified */
+    ret_value = totalsize;
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+#ifdef HAVE_PABLO
+/*
+  TRACE_OFF(VS_mask, ID_VShdfsize);
+*/
+#endif /* HAVE_PABLO */
+
+  return ret_value;
+}   /* VShdfsize */
+
 
 /* ------------- VSattrhdfsize --------------------------
 NAME

@@ -745,11 +745,13 @@ print_all_file_descs(const char *fname,
     /* all SDS global attributes are considered file descriptions */
     if ((sd_fid = SDstart(fname, DFACC_READ)) != FAIL)
       { /* SD global attributes */
+dump_info_t dump_opts;
+init_dump_opts( &dump_opts );
           if (SDfileinfo(sd_fid, &ndsets, &nattrs) != FAIL)
 	  {
 	     /* BMR: installed input file name to opts for dumpfull 
                 in print_SDattrs to use - 6/16/2000 */
-             print_SDattrs( sd_fid, stdout, nattrs, DASCII, FALSE );
+             print_SDattrs( sd_fid, stdout, nattrs, &dump_opts );
                /* temporary use stdout until fixing hdp_list to print
                   to a FILE *fp */
 	  }
