@@ -342,7 +342,7 @@ ANIaddentry(int32 an_id,    /* IN: annotation interface id */
     if (file_rec->an_num[type] == -1)
       {
           if ((file_rec->an_tree[type] = 
-               (TBBT_TREE *) tbbtdmake(ANIanncmp,sizeof(int32))) == NULL)
+               (TBBT_TREE *) tbbtdmake(ANIanncmp,sizeof(int32),0)) == NULL)
             {
               HE_REPORT_GOTO("failed to create annotation tree", FAIL);
             }
@@ -484,7 +484,7 @@ ANIcreate_ann_tree(int32    an_id,/* IN: annotation interface id */
     if (file_rec->an_num[type] == -1)
       {
           if ((file_rec->an_tree[type] = 
-               (TBBT_TREE *) tbbtdmake(ANIanncmp,sizeof(int32))) == NULL)
+               (TBBT_TREE *) tbbtdmake(ANIanncmp,sizeof(int32),0)) == NULL)
             {
               HE_REPORT_GOTO("failed to create annotation tree", FAIL);
             }
@@ -675,7 +675,7 @@ ANIfind(int32    an_id, /* IN: annotation interface id */
     if (file_rec->an_num[type] == -1)
       {
           if ((file_rec->an_tree[type] = 
-               (TBBT_TREE *) tbbtdmake(ANIanncmp,sizeof(int32))) == NULL)
+               (TBBT_TREE *) tbbtdmake(ANIanncmp,sizeof(int32),0)) == NULL)
             {
               HE_REPORT_GOTO("failed to create annotation tree", FAIL);
             }
