@@ -509,16 +509,17 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
             {
                 fprintf(stderr,"VSattach failed for vdata_ref(%d) in file %s\n", 
                         (int) vdata_ref, file_name);
-                ret_value = FAIL;
-                goto done;
+		continue;  /* to skip processing this vdata */
+                /* removed goto done */
             }
 
           if (FAIL == VSinquire(vd_id, &nvf, &interlace, fields, &vsize, vdname))
             {
                 fprintf(stderr,"VSinqure failed on vdid(%d) in file %s\n", 
                         (int) vdata_ref, file_name);
-                ret_value = FAIL;
-                goto done;
+                /* removed goto done */
+		/* each of the parameters retuned by VSinquire must be 
+		   checked before being used */
             }
 
  	  vsize = VShdfsize(vd_id, fields);
@@ -526,24 +527,21 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
             {
               	fprintf(stderr,"VShdfsize failed on vdid(%d) in file %s\n", 
  			(int) vdata_ref, file_name);
-                ret_value = FAIL;
-                goto done;
+                /* remove goto done; vsize must be checked before use */
             }
 
           if (FAIL == (vdata_tag = VSQuerytag(vd_id)))
             {
                 fprintf(stderr,"VSQuerytag failed on vd_id(%d) in file %s\n", 
                         (int) vdata_ref, file_name);
-                ret_value = FAIL;
-                goto done;
+                /* remove goto done; vdata_tag must be checked before use */
             }
 
           if (FAIL == VSgetclass(vd_id, vdclass))
             {
                 fprintf(stderr,"VSgetclass failed on vd_id(%d) in file %s\n", 
                         (int) vdata_ref, file_name);
-                ret_value = FAIL;
-                goto done;
+                /* remove goto done; vdclass must be checked before use */
             }
 
 
@@ -604,12 +602,38 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
                   case DHEADER:	 /* header only, no attributes, annotations 
                                     or data */
                       fprintf(fp, "Vdata: %d\n", (int) i);
-                      fprintf(fp, "   tag = %d; ", (int) vdata_tag);
-                      fprintf(fp, "reference = %d;\n", (int) vdata_ref);
-                      fprintf(fp, "   number of records = %d; ", (int) nvf);
-                      fprintf(fp, "interlace = %d;\n", (int) interlace);
-                      fprintf(fp, "   fields = [");
+		     if( vdata_tag == FAIL )	/* print vdata tag */
+			fprintf(fp, "   tag = <Undefined>; ");
+		     else
+                        fprintf(fp, "   tag = %d; ", (int) vdata_tag);
 
+		     /* print reference number without checking because it's from
+			VSgetid and has been checked */
+                     fprintf(fp, "reference = %d;\n", (int) vdata_ref);
+
+		     if( nvf == FAIL ) /* print number of records in the vdata */
+                        fprintf(fp, "   number of records = <Undefined>; ");
+		     else
+                        fprintf(fp, "   number of records = %d;", (int) nvf);
+
+		     if( interlace == FAIL ) /* print interlace mode */
+                        fprintf(fp, "   interlace = <Undefined>;\n");
+		     else
+		         if( interlace == 0 )
+			    fprintf(fp, " interlace = FULL_INTERLACE (0);\n");
+			 else if( interlace == 1 )
+			     fprintf(fp, "   interlace = NO_INTERLACE;\n");
+			 else
+			     fprintf(fp, "   interlace = <Unknown interlace mode (%d)>;\n", 
+				(int) interlace);
+                     
+		     /* print the list of field names of the vdata if it's available */
+		     if( fields[0] == '\0' || fields == NULL )
+			 fprintf( fp, "   fields = <Undefined>;\n");
+
+		     else /* field name list is available */
+		     {
+		      fprintf( fp, "   fields = [");
                       /* The list of field names can be very long and would 
                          look very messy when being displayed if it were to
                          be dumped out at once. The following block of 
@@ -638,9 +662,23 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
                             ptr = tempPtr + 1;
                         }
                       fprintf(fp, "];\n");
+		      } /* if the field list is available */
 
-                      fprintf(fp, "   record size (in bytes) = %d;\n", (int)vsize);
-                      fprintf(fp, "   name = %s; class = %s;\n", vdname, vdclass);
+		      if( vsize > 0 ) /* print vdata record size */
+                         fprintf(fp, "   record size (in bytes) = %d;\n", (int)vsize);
+		      else
+                         fprintf(fp, "   record size = <Undefined>;\n");
+
+		      if( vdname[0] == '\0' ) /* print vdata name */
+                         fprintf(fp, "   name = <Undefined>; ");
+		      else
+                         fprintf(fp, "   name = %s;", vdname);
+
+		      /* print class name - Note that vdclass can be NULL */
+		      if( vdclass[0] == '\0' || vdclass == NULL )
+                         fprintf(fp, " class = <Undefined>;\n");
+		      else
+                         fprintf(fp, " class = %s;\n", vdclass);
 
                       /* check if only printing header */
                       if (dumpvd_opts->contents != DHEADER)
@@ -650,8 +688,7 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
                               {
                                   fprintf(stderr,"Failed to print vdata attributes for vd_id(%d) in file %s\n",
                                           (int) vd_id, file_name);
-                                  ret_value = FAIL;
-                                  goto done;
+                                  /* remove goto done */
                               }
 
                             /* dump annotations */
@@ -660,8 +697,9 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
                               {
                                   fprintf(stderr,"ANstart failed on file_id(%d) for file %s\n", 
                                           (int)file_id, file_name);
-                                  ret_value = FAIL;
-                                  goto done;
+                                  /* remove goto done */
+				  break; /* since the following code need an_handle; so break
+						out to VSdetach the current vdata */
                               }
                                   
                             /* print labels of vdata if any */
@@ -669,8 +707,7 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
                               {
                                   fprintf(stderr,"Failed to print data labels for vdata_ref(%d) in file %s\n", 
                                           (int) vdata_ref, file_name);
-                                  ret_value = FAIL;
-                                  goto done;
+                                  /* remove goto done */
                               }
 
                             /* print descriptions of vdata if any */
@@ -678,8 +715,7 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
                               {
                                   printf("Failed to print data descriptions for vdata_ref(%d) in file %s\n", 
                                          (int) vdata_ref, file_name);
-                                  ret_value = FAIL;
-                                  goto done;
+                                  /* remove goto done */
                               }
 
                             /* close annotation interface */
@@ -687,8 +723,7 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
                               {
                                   fprintf(stderr,"ANend failed for an_handle(%d) for file %s\n",
                                           (int)an_handle, file_name);
-                                  ret_value = FAIL;
-                                  goto done;
+                                  /* remove goto done */
                               }
 
                             an_handle = FAIL; /* reset */
@@ -725,14 +760,12 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
                         {
                             fprintf(stderr,"Failed to dump vdata data for vd_id(%d) in file %s\n", 
                                     (int) vdata_ref, file_name);
-                            ret_value = FAIL;
-                            goto done;
+                            /* removed goto done */
                         }
                       break;
                   default:
                       printf("dumping vdata in file %s, unknown option \n",file_name);
-                      ret_value = FAIL;
-                      goto done;
+                      /* removed goto done */
                   }	/* switch */
             }
 
@@ -740,8 +773,7 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
             {
                 fprintf(stderr,"VSdetach failed on vd_id(%d) in file %s\n", 
                         (int) vd_id, file_name);
-                ret_value = FAIL;
-                goto done;
+                /* removed goto done */
             }
 
           vd_id = FAIL; /* reset */
