@@ -3,7 +3,7 @@
 # Compiliers:
 # For gcc version
 #CC=gcc
-#CFLAGS=-ansi -pedantic -Wall -D_HPUX_SOURCE
+#CFLAGS=-ansi 
 #
 #Using HP-ANSI compilier also needs LIBS = -lm(see below)
 CC=cc

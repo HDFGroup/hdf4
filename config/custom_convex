@@ -40,7 +40,7 @@ HDF_LIB=${HDF_HOME}/hdf/src/libdf.a
 JPEG_LIB=${HDF_HOME}/hdf/jpeg/libjpeg.a
 #
 # Installation prefix (default is `..'):
-# prefix=/usr/local/unidata
+prefix=/usr/local
 #
 # Whether to use the old floating-point fill values for backward
 # compatibility (see INSTALL).  Uncomment to obtain the pre-2.3 default,
