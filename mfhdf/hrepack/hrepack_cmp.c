@@ -106,7 +106,6 @@ out:
 
 int  cmp_gr(int32 ri1_id, int32 ri2_id)
 {
- intn          status_n;      /* returned status_n for functions returning an intn  */
  int32         dimsizes[2],   /* dimensions of an image */
                n_comps,       /* number of components an image contains */
                interlace_mode1,/* interlace mode of an image */ 
@@ -122,10 +121,10 @@ int  cmp_gr(int32 ri1_id, int32 ri2_id)
                nelms,          /* number of elements */
                data_size;
  VOIDP         buf1=NULL, buf2=NULL;
- int           cmp;
+ int           cmp=-1;
 
- status_n = GRgetiminfo(ri1_id,gr_name,&n_comps,&dtype,&interlace_mode1,dimsizes,&n_attrs);
- status_n = GRgetiminfo(ri2_id,gr_name,&n_comps,&dtype,&interlace_mode2,dimsizes,&n_attrs);
+ GRgetiminfo(ri1_id,gr_name,&n_comps,&dtype,&interlace_mode1,dimsizes,&n_attrs);
+ GRgetiminfo(ri2_id,gr_name,&n_comps,&dtype,&interlace_mode2,dimsizes,&n_attrs);
 
  printf( "Comparing GR <%s>: ", gr_name);
 
@@ -219,8 +218,8 @@ int  cmp_gr(int32 ri1_id, int32 ri2_id)
 
 out:
  /* terminate access to the GRs */
- status_n = GRendaccess(ri1_id);
- status_n = GRendaccess(ri2_id);
+ GRendaccess(ri1_id);
+ GRendaccess(ri2_id);
  if (buf1)
   free(buf1);
  if (buf2)
