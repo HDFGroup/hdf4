@@ -11,7 +11,6 @@ hdf/jpeg/testorig.jpg -text
 hdf/jpeg/testprog.jpg -text
 hdf/pablo/Pablo.doc -text
 hdf/pablo/Pablo.pdf -text
-hdf/src/hdflib.project -text
 hdf/test/8bit.dat -text
 hdf/test/bitio.dat -text
 hdf/test/gr_r24.dat -text
