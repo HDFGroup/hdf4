@@ -10,11 +10,11 @@ $ type sys$input
 $ utils="hdfls,hdfrseq,r8tohdf,hdfcomp,hdftor8,hdftopal,"+-
 "paltohdf,hdf24to8,hdfpack,ristosds,vshow,vmake,hdf2jpeg,"+-
 "jpeg2hdf,he_main,he_cntrl,he_disp,he_file"
-$ define/nolog hdf$lib _$1$dia0:[folk.hdf33.hdf.lib]df.olb
+$ define/nolog hdf$lib _$1$dia0:[folk.33b2.hdf.lib]df.olb
 $ define/nolog  sys$clib sys$library:vaxcrtl
 $ cc/define=VMS/include=[-.include] 'utils
 $ link/exe=hdfed he_main,he_cntrl,he_disp,he_file,hdf$lib/lib, -
-   sys$clib/lib, _$1$dia0:[folk.hdf33.hdf.util]helink.opt/option
+   sys$clib/lib, _$1$dia0:[folk.33b2.hdf.util]helink.opt/option
 $ link hdfls,     hdf$lib/lib, sys$clib/lib
 $ link hdfrseq,   hdf$lib/lib, sys$clib/lib
 $ link r8tohdf,   hdf$lib/lib, sys$clib/lib
