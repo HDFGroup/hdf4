@@ -69,6 +69,8 @@ int diff_sds(const char  *fname1,
  VOIDP buf2=NULL;
  uint32 max_err_cnt;
  int   i;
+ VOIDP fill1=NULL;
+ VOIDP fill2=NULL;
 
 /*-------------------------------------------------------------------------
  * object 1
@@ -252,7 +254,24 @@ int diff_sds(const char  *fname1,
   nfound=FAIL;
   goto out;
  }
+ 
+/*-------------------------------------------------------------------------
+ * get fill values
+ *-------------------------------------------------------------------------
+ */
 
+ fill1 = (VOIDP) HDmalloc(eltsz);
+ fill2 = (VOIDP) HDmalloc(eltsz);
+ if (fill1!=NULL && SDgetfillvalue(sds1_id,fill1)<0)
+ {
+  HDfree(fill1);
+  fill1=NULL;
+ }
+ if (fill2!=NULL && SDgetfillvalue(sds2_id,fill2)<0)
+ {
+  HDfree(fill2);
+  fill2=NULL;
+ }
 
 /*-------------------------------------------------------------------------
  * Comparing
@@ -278,8 +297,8 @@ int diff_sds(const char  *fname1,
                    opt->err_limit, 
                    max_err_cnt, 
                    opt->statistics, 
-                   0, 
-                   0);
+                   fill1, 
+                   fill2);
   
  } /* flag to compare SDSs */
  
@@ -305,6 +324,8 @@ out:
  }
  if (buf1) free(buf1);
  if (buf2) free(buf2);
+ if (fill1!=NULL) HDfree(fill1);
+ if (fill2!=NULL) HDfree(fill2);
 
  return nfound;
 }
