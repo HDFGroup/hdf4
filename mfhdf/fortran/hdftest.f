@@ -1,8 +1,6 @@
 C
 C     Testing the Fortran interface for the multiple SD routines
 C
-C $Id$
-C
       program hdftest
 
       implicit none
@@ -13,19 +11,20 @@ C
 
       integer dim1, dim2
 
-      integer access, nt, rank, stat, ival, ivals(1000), i, err
+      integer access, nt, rank, stat, i, err
+      integer*4 ival, ivals(1000)
       integer dims(10), start(10), end(10), stride(10), count, nattr
-      integer max, min, num, ref, j
-      integer natt(2), inatt(2)
-      real fval
+      integer idims(10)
+      integer num, ref, j
+      real*4 fval
 
       real*8  cal, cale, ioff, ioffe
       real*8  eps
       character*50  name, l, u, f, c
       character cdata(6,4), icdata(6,4), cfill, icfill
       character catt(2), icatt(2)
-C comment out the next line for VMS
-      integer   i32(2), ii32(2)
+      integer*4   i32(2), ii32(2), max32, min32
+      integer*4 natt(2), inatt(2)
 
       integer sfstart,  sfcreate,  sfendacc, sfend,    sfsfill
       integer sfrdata,  sfwdata,   sfdimid,  sfsdmname
@@ -37,20 +36,20 @@ C comment out the next line for VMS
       integer sfsextf,  hxsdir,    hxscdir
       integer sfwcdata, sfrcdata,  sfscfill, sfgcfill
       integer sfscatt,  sfrcatt,   sfsnatt,  sfrnatt
-C commnet out next line for VMS 
-      integer sfsattr,  sfrattr
       integer SD_UNLIMITED, SD_DIMVAL_BW_INCOMP, DFNT_INT32
+      integer DFNT_FLOAT32, DFNT_CHAR8
       integer SD_DIMVAL_BW_COMP, SD_FILL, SD_NOFILL
       parameter (SD_UNLIMITED = 0,
      +            SD_DIMVAL_BW_INCOMP = 0,
      +            SD_DIMVAL_BW_COMP = 1,
      +            DFNT_INT32 = 24,
+     +            DFNT_FLOAT32 = 5,
+     +            DFNT_CHAR8 = 4,
      +            SD_FILL = 0,
      +            SD_NOFILL = 256)
       DATA cfill/'@'/, icfill/' '/
       DATA catt/'U','S'/, icatt/' ',' '/
       DATA natt/10,20/, inatt/0,0/
-C Comment out next line for VMS 
       DATA i32/15,25/, ii32/0,0/
 
 C     create a new file
@@ -65,7 +64,7 @@ C     create a new file
 
       dims(1) = 4
       dims(2) = 9
-      nt = 24
+      nt = DFNT_INT32
       rank = 2
       sds1 = sfcreate(fid1, 'Alpha', nt, rank, dims)
       if(sds1.eq.-1) then
@@ -76,7 +75,7 @@ C     create a new file
       dims(1) = 2
       dims(2) = 5
       dims(3) = 15
-      nt = 5
+      nt = DFNT_FLOAT32
       rank = 3
       sds2 = sfcreate(fid1, 'Beta[float32]', nt, rank, dims)
       if(sds2.eq.-1) then
@@ -91,15 +90,15 @@ C     create a new file
          err = err + 1
       endif
 
-      max = 10
-      min = 1
-      stat = sfsrange(sds1, max, min)
+      max32 = 10
+      min32 = 1
+      stat = sfsrange(sds1, max32, min32)
       if(stat.ne.0) then
          print *, 'Set range returned', stat
          err = err + 1
       endif
-      max = 0
-      min = 0
+      max32 = 0
+      min32 = 0
 
       do 100 i = 1, 10
          ivals(i) = i
@@ -183,7 +182,7 @@ C     create a new file
 
       if(err.ne.0) print *, 'After ReadVerify err = ', err
 
-      nt = 24
+      nt = DFNT_INT32
       stat = sfsnatt(sds2, 'TestAttr', nt, 3, ivals)
       if(stat.ne.0) then
          print *, 'Set numeric attr returned', stat
@@ -212,7 +211,7 @@ C     create a new file
          ivals(i) = 10 * i + i
  110  continue
 
-      nt = 24
+      nt = DFNT_INT32
       count = 5
       stat = sfsdscale(dim1, count, nt, ivals)
       if(stat.ne.0) then
@@ -236,6 +235,7 @@ C     create a new file
       cale  = 20.1
       ioff  = 40.1
       ioffe = 50.1
+C     why 16?  16 is not a legal HDF NType value.
       nt    = 16
       stat = sfscal(sds2, cal, cale, ioff, ioffe, nt)
       if(stat.ne.0) then
@@ -267,18 +267,14 @@ C     create a new file
          err = err + 1
       endif
 
-      nt = 4
+      nt = DFNT_CHAR8
       stat = sfscatt(fid1, 'Globulator', nt, 12, 'Howdy Sailor')
       if(stat.ne.0) then
          print *, 'Set attr returned', stat
          err = err + 1
       endif
-C Comment out the sfsattr part for VMS
-C sfsattr declairs input data buffer as character*(*)
-C  which doesn't work on VMS. Use sfscatt or sfsnatt
-C  instead of sfsattr. 
-      nt = 24
-      stat = sfsattr(fid1, 'Numeric', nt, 2, i32)
+      nt = DFNT_INT32
+      stat = sfsnatt(fid1, 'Numeric', nt, 2, i32)
       if(stat.ne.0) then
          print *, 'Set attr returned', stat
          err = err + 1
@@ -310,13 +306,13 @@ C
          err = err + 1
       endif
 
-      stat = sfginfo(sds3, name, rank, ivals, nt, nattr)
+      stat = sfginfo(sds3, name, rank, idims, nt, nattr)
       if(stat.ne.0) then
          print *, 'Get info returned ', stat
          err = err + 1
       endif
 
-      if(nt.ne.24) then
+      if(nt.ne.DFNT_INT32) then
          print *, 'Incorrect number type ', nt
          err = err + 1
       endif
@@ -326,13 +322,13 @@ C
          err = err + 1
       endif
 
-      if(ivals(1).ne.4) then
-         print *, 'Incorrect Dim(1) = ', ivals(1)
+      if(idims(1).ne.4) then
+         print *, 'Incorrect Dim(1) = ', idims(1)
          err = err + 1
       endif
 
-      if(ivals(2).ne.9) then
-         print *, 'Incorrect Dim(2) = ', ivals(2)
+      if(idims(2).ne.9) then
+         print *, 'Incorrect Dim(2) = ', idims(2)
          err = err + 1
       endif
 
@@ -343,32 +339,32 @@ C
 
       print *, 'name = ',   name
 
-      stat = sfgrange(sds3, max, min)
+      stat = sfgrange(sds3, max32, min32)
       if(stat.ne.0) then
          print *, 'Get range returned', stat
          err = err + 1
       endif
 
-      if(max.ne.10) then
-         print *, 'Max from GetRange ', max
+      if(max32.ne.10) then
+         print *, 'Max from GetRange ', max32
          err = err + 1
       endif
 
-      if(min.ne.1) then
-         print *, 'Min from GetRange ', min
+      if(min32.ne.1) then
+         print *, 'Min from GetRange ', min32
          err = err + 1
       endif
 
       if(err.ne.0) print *, 'Current error count ', err
 
-      stat = sfgfill(sds3, max)
+      stat = sfgfill(sds3, max32)
       if(stat.ne.0) then
          print *, 'Get fillvalue returned', stat
          err = err + 1
       endif
 
-      if(max.ne.14) then
-         print *, 'Incorrect FillValue ', max
+      if(max32.ne.14) then
+         print *, 'Incorrect FillValue ', max32
          err = err + 1
       endif
 
@@ -390,7 +386,7 @@ C
          err = err + 1
       endif
 
-      if(nt.ne.24) err = err + 1
+      if(nt.ne.DFNT_INT32) err = err + 1
       if(rank.ne.5) err = err + 1
       print *, 'name = ',   name
 
@@ -465,8 +461,7 @@ C
          err = err + 1
       endif
       print *, 'values = ', name
-C Comment out the sfrattr part for VMS
-      stat = sfrattr(fid2, 1, ii32)
+      stat = sfrnatt(fid2, 1, ii32)
       if(stat.ne.0) then
          print *, 'Attr read returned', stat
          err = err + 1
@@ -574,7 +569,7 @@ C     test sfsdmvc and sfisdmvc -- dimval backward compatible
 
       dims(1) = 6
       dims(2) = 0
-      nt = 24
+      nt = DFNT_INT32
       rank = 2
       sds1 = sfcreate(fid1, 'ncomp', nt, rank, dims)
       if (sds1 .eq. -1) then
@@ -653,13 +648,13 @@ C
          print *, 'sfselect returned', sds3
          err = err + 1
       endif
-      stat = sfginfo(sds3, name, rank, ivals, nt, nattr)
+      stat = sfginfo(sds3, name, rank, idims, nt, nattr)
       if (stat .ne. 0) then
           print *, 'sfginfo returned', stat
           err = err + 1
       endif
-      if ((rank .ne. 2) .or. (ivals(1) .ne. 6) .or.
-     +    (ivals(2) .ne. 4) .or. (nt .ne. 24)) then
+      if ((rank .ne. 2) .or. (idims(1) .ne. 6) .or.
+     +    (idims(2) .ne. 4) .or. (nt .ne. DFNT_INT32)) then
           print *, 'error in sfginfo'
           err = err + 1
       endif
@@ -722,14 +717,14 @@ C     read back dimval_non_compat
          print *, 'sfselect returned', sds2
          err = err + 1
       endif
-      stat = sfginfo(sds2, name, rank, ivals, nt, nattr)
+      stat = sfginfo(sds2, name, rank, idims, nt, nattr)
 
       if (stat .ne. 0) then
           print *, 'sfginfo returned', stat
           err = err + 1
       endif
-      if ((rank .ne. 2) .or. (ivals(2) .ne. 4) .or.
-     +    (ivals(1) .ne. 6) .or. (nt .ne. 24)) then
+      if ((rank .ne. 2) .or. (idims(2) .ne. 4) .or.
+     +    (idims(1) .ne. 6) .or. (nt .ne. DFNT_INT32)) then
           print *, 'error in sfginfo'
           err = err + 1
       endif
@@ -766,7 +761,7 @@ C sfscfill, sfgcfill
 
       dims(1) = 6
       dims(2) = 0
-      nt = 4
+      nt = DFNT_CHAR8
       rank = 2
       sds1 = sfcreate(fid1, 'char_type', nt, rank, dims)
       if (sds1 .eq. -1) then
@@ -805,7 +800,7 @@ C Set char attr
          err = err + 1
       endif
 C Set numeric attr
-      nt = 24
+      nt = DFNT_INT32
       stat = sfsnatt(sds1, 'NumericAttr',nt, 2, natt)
       if(stat.ne.0) then
          print *, 'sfsnatt returned', stat
@@ -839,7 +834,7 @@ C read back
          print *, 'sfselect returned', sds2
          err = err + 1
       endif
-      stat = sfginfo(sds2, name, rank, ivals, nt, nattr)
+      stat = sfginfo(sds2, name, rank, idims, nt, nattr)
       if (stat .ne. 0) then
           print *, 'sfginfo returned', stat
           err = err + 1
@@ -909,7 +904,7 @@ C Close file
       endif
 C Test set fill mode
       fid1 = sfstart('test1.hdf', 3)
-      nt = 24
+      nt = DFNT_INT32
       rank = 2
       dims(1) = 6
       dims(2) = 5
@@ -1036,7 +1031,7 @@ C test unlimited sds
       endif
       dims(1) = 6
       dims(2) = SD_UNLIMITED
-      sds1=sfcreate(fid1,'UNLIMITED_SDS',24,rank,dims)
+      sds1=sfcreate(fid1,'UNLIMITED_SDS',DFNT_INT32,rank,dims)
       if (sds1 .eq. -1) then
           print *,'create UNLIMITED_SDS failed. '
           err = err+1
