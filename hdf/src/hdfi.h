@@ -595,7 +595,7 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 
-#if !defined TEST_PC && !defined TEST_WIN
+#if !defined TEST_PC && !defined TEST_WIN && !defined unix
 #undef FAR
 #endif
 
