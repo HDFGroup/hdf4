@@ -18,6 +18,7 @@
 +*/
 
 #ifndef __HERR_H
+#define __HERR_H
 
 /* if these symbols are not provided by the compiler, we'll have to
    fake them.  These are used in HERROR for recording location of
