@@ -9,8 +9,10 @@ $! [-.xdr], before executing this procedure.
 $
 $
 $ macro :== macro/nolist
-$ ccc := cc /opt/nodebug/include=([-.xdr])/nolist/define=stdc_includes/define=swap
-$ librep := library/replace [-.-.LIB]NETCDF.OLB
+$ ccc := cc /opt/nodebug/include=([-.xdr],[-.-.hdf.include])/nolist  -
+            /define=stdc_includes/define=swap/define=VMS/define=HDF
+
+$ librep := library/replace [-.-.-.LIB]NETCDF.OLB
 $
 $ define rpc sys$disk:[-.xdr]
 $ define sys sys$library
@@ -29,19 +31,32 @@ $ ccc SHARRAY.C
 $ ccc STRING.C
 $ ccc VAR.C
 $ ccc XDRPOSIX.C
+! $ ccc XDRSTDIO.C
+$ ccc HDFSDS.C
+$ ccc MFSD.C
+$ ccc hdftest.c
 $ macro HTONS.MAR
 $ macro NTOHS.MAR
 $
 $ librep ARRAY, ATTR, CDF, DIM, FILE, IARRAY, ERROR, -
-    PUTGET, SPUTGETG, HARRAY, STRING, VAR, HTONS, NTOHS
-$
+    PUTGET, PUTGETG, SHARRAY, STRING, VAR, HTONS, NTOHS, -
+    HDFSDS, MFSD, XDRPOSIX
+$ library/list=netcdf.list/name [-.-.-.lib]netcdf.olb
 $ link/nodebug/exec=CDFTEST.exe -
     cdftest.obj, -
-    [-.-.lib]netcdf/library, -
+    [-.-.-.lib]netcdf/library, -
+    [-.-.hdf.lib]df/library, -
     sys$input/opt
 	sys$library:vaxcrtl.exe/share
 $
-$ create/dir [-.-.include]
+$ create/dir [-.-.-.include]
 $
 $ copy netcdf.h [-.-.-.include]
+$
+$ link/nodebug/exec=hdftest.exe -
+    hdftest.obj, -
+    [-.-.-.lib]netcdf/library, -
+    [-.-.hdf.lib]df/library, -
+        sys$input/opt
+        sys$library:vaxcrtl.exe/share
 $
