@@ -2,15 +2,9 @@
 Expected output for 'hdiff -d hdifftst1.hdf hdifftst2.hdf'
 #############################
 $hdiff -d hdifftst1.hdf hdifftst2.hdf
-
----------------------------
-SD Name: dset1 .... Comparing
 Index: 1,   File1: 1,   File2: 2
 Index: 2,   File1: 1,   File2: 3
 Index: 3,   File1: 1,   File2: 4
-
----------------------------
-SD Name: dset2 .... Comparing
 Index: 1,   File1: 1,   File2: 2
 Index: 2,   File1: 1,   File2: 3
 Index: 3,   File1: 1,   File2: 4
