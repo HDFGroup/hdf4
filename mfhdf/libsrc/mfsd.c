@@ -48,7 +48,10 @@ status = SDend(fid);
 
 status = SDisdimval_bwcomp(dimid);
 
-status = SDcheckempty(sdsid, emptySDS);
+status = SDcheckempty(sdsid, ...);
+
+        --- retrieve the compression information of an SDS
+status = SDgetcompinfo(sdsid, ...);
 
         --- take an id and determine if it is an SD id, SDS id, dim id, ---
         --- or none of the above ---
@@ -4287,6 +4290,79 @@ done:
 
     return ret_value;    
 } /* SDgetcompress */
+
+/******************************************************************************
+ NAME
+	SDgetcompinfo -- Retrieves compression information of a dataset
+
+ DESCRIPTION
+    This routine uses HCPgetcompinfo to retrieve the compression type
+    and the compression information of the identified dataset.
+
+ RETURNS
+    SUCCEED/FAIL
+
+ MODIFICATION
+    July 2001: Added to fix bug #307 - BMR (from SDgetcompress)
+    Apr 2005:  This function was actually created at this time, but it is
+	       almost a duplicate of SDgetcompress, which is intended to be 
+	       removed in the future, due to its incorrect behavior.  The
+	       only difference is the call to the low-level routine,
+	       HCPgetcompinfo, instead of HCPgetcompress.
+
+******************************************************************************/ 
+intn 
+SDgetcompinfo(int32 sdsid,     /* IN: dataset ID */
+              comp_coder_t*    comp_type,   /* OUT: the type of compression */
+              comp_info* c_info)/* OUT: ptr to compression information 
+				structure for storing the retrieved info */
+{
+    CONSTR(FUNC, "SDgetcompinfo");    /* for HGOTO_ERROR */
+    NC        *handle;
+    NC_var    *var;
+    intn       status = FAIL;
+    intn       ret_value = SUCCEED;
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDgetcompinfo: I've been called\n");
+#endif /* SDDEBUG */
+
+
+    /* clear error stack */
+    HEclear();
+
+    if(comp_type == NULL || c_info == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    handle = SDIhandle_from_id(sdsid, SDSTYPE);
+    if(handle == NULL || handle->file_type != HDF_FILE)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+    if(handle->vars == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    var = SDIget_var(handle, sdsid);
+    if(var == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
+
+#ifdef SDDEBUG
+    printf("SDgetcompinfo(): var->data_ref=%d, var->aid=%d\n",(int)var->data_ref, (int)var->aid);
+#endif /* SDDEBUG */
+    if(!var->data_ref) 
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* use lower-level routine to get the compression information */
+    status = HCPgetcompinfo(handle->hdf_file, var->data_tag, var->data_ref, 
+		comp_type, c_info);
+    if(status==FAIL) HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+
+    return ret_value;    
+} /* SDgetcompinfo */
 
 /******************************************************************************
  NAME
