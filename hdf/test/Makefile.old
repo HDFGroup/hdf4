@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.27  1992/10/01 03:27:34  chouck
+# Revision 1.28  1992/11/19 17:14:47  chouck
+# Made rules cleaner.  Fixed Fortran capitalizations
+#
+# Revision 1.27  1992/10/01  03:27:34  chouck
 # Added tests in tp.c into trig.c
 #
 # Revision 1.26  1992/10/01  02:53:23  chouck
@@ -227,16 +230,16 @@ HHDRS = hfile.h hdf.h hdfi.h herr.h hproto.h
 HTSRCS= thfile.c thfile1.c terr.c thblocks.c thextelt.c tlinkage.c 
 HTOBJS= thfile.o thfile1.o terr.o thblocks.o thextelt.o tlinkage.o
 
-FTESTS= tr8F t24F tpF tanF tanfileF tsdstrF tsdntF tsdnntF \
-        tsdmmsF tsdnmmsF tstubsF egfhi
-FSRCS = tr8F.f t24F.f tpF.f tanF.f tanfileF.f tsdstrF.f tsdntF.f \
-        tsdnntF.f tsdmmsF.f  tsdnmmsF.f tstubsF.f egfhi.f
-FOBJS = tr8F.o t24F.o tpF.o tanF.o tanfileF.o tsdstrF.o tsdntF.o \
-        tsdnntF.o tsdmmsF.o tsdnmmsF.o tstubsF.o egfhi.o
+FTESTS= tr8f t24f tpf tanf tanfilef tsdstrf tsdntf tsdnntf \
+        tsdmmsf tsdnmmsf tstubsf egfhi
+FSRCS = tr8f.f t24f.f tpf.f tanf.f tanfilef.f tsdstrf.f tsdntf.f \
+        tsdnntf.f tsdmmsf.f  tsdnmmsf.f tstubsf.f egfhi.f
+FOBJS = tr8f.o t24f.o tpf.o tanf.o tanfilef.o tsdstrf.o tsdntf.o \
+        tsdnntf.o tsdmmsf.o tsdnmmsf.o tstubsf.o egfhi.o
 
-all: ctests ftests htests
+all: htests ctests ftests
 
-nofortran: ctests htests
+nofortran: htests ctests
 
 ctests: $(CTESTS)
 
@@ -244,98 +247,11 @@ ftests: $(FTESTS)
 
 htests: $(HTESTS)
 	
-trig:  trig.c 
-	$(CC) $(CFLAGS) -I$(HDFINC)  trig.c $(HDFLIB)/libdf.a -o trig
+.c: $< $(HDFLIB)/libdf.a
+	$(CC) $(CFLAGS) -I$(HDFINC) $< -o $@ $(HDFLIB)/libdf.a
 
-tsdstr:    tsdstr.c
-	$(CC) $(CFLAGS) -I$(HDFINC)  tsdstr.c $(HDFLIB)/libdf.a -o tsdstr
-
-tsdnt:    tsdnt.c 
-	$(CC) $(CFLAGS) -I$(HDFINC)  tsdnt.c $(HDFLIB)/libdf.a -o tsdnt
-
-tsdmms:    tsdmms.c 
-	$(CC) $(CFLAGS) -I$(HDFINC)  tsdmms.c $(HDFLIB)/libdf.a -o tsdmms
-
-tsdnnt:    tsdnnt.c 
-	$(CC) $(CFLAGS) -I$(HDFINC)  tsdnnt.c $(HDFLIB)/libdf.a -o tsdnnt
-
-tsdnmms:    tsdnmms.c 
-	$(CC) $(CFLAGS) -I$(HDFINC)  tsdnmms.c $(HDFLIB)/libdf.a -o tsdnmms
-
-tan:  tan.c 
-	$(CC) $(CFLAGS) -I$(HDFINC)  tan.c $(HDFLIB)/libdf.a -o tan
-
-tanfile:     tanfile.c 
-	$(CC) $(CFLAGS) -I$(HDFINC)  tanfile.c $(HDFLIB)/libdf.a -o tanfile
-
-tstubs:     tstubs.c 
-	$(CC) $(CFLAGS) -I$(HDFINC)  tstubs.c $(HDFLIB)/libdf.a -o tstubs
-
-tv1:	    tv1.c
-	$(CC) $(CFLAGS) -I$(HDFINC)  tv1.c $(HDFLIB)/libdf.a -o tv1
-
-tv2:	    tv2.c
-	$(CC) $(CFLAGS) -I$(HDFINC)  tv2.c $(HDFLIB)/libdf.a -o tv2
-
-tvers:	    tvers.c
-	$(CC) $(CFLAGS) -I$(HDFINC)  tvers.c $(HDFLIB)/libdf.a -o tvers
-
-egchi:	    egchi.c
-	$(CC) $(CFLAGS) -I$(HDFINC)  egchi.c $(HDFLIB)/libdf.a -o egchi
-
-tr8F:	       tr8F.f
-	$(FC) $(FFLAGS) tr8F.f $(HDFLIB)/libdf.a -o tr8F 
-
-t24F:		t24F.f
-	$(FC) $(FFLAGS) t24F.f $(HDFLIB)/libdf.a -o t24F
-
-tanF:		tanF.f
-	$(FC) $(FFLAGS) tanF.f $(HDFLIB)/libdf.a -o tanF
-
-tanfileF:   tanfileF.f
-	$(FC) $(FFLAGS) tanfileF.f $(HDFLIB)/libdf.a  -o tanfileF
-
-tpF:   tpF.f
-	$(FC) $(FFLAGS) tpF.f $(HDFLIB)/libdf.a  -o tpF
-
-tstubsF:   tstubsF.f
-	$(FC) $(FFLAGS) tstubsF.f $(HDFLIB)/libdf.a  -o tstubsF
-
-tsdstrF:   tsdstrF.f
-	$(FC) $(FFLAGS) tsdstrF.f $(HDFLIB)/libdf.a  -o tsdstrF
-
-tsdntF:   tsdntF.f
-	$(FC) $(FFLAGS) tsdntF.f $(HDFLIB)/libdf.a  -o tsdntF 
-
-tsdnntF:   tsdnntF.f
-	$(FC) $(FFLAGS) tsdnntF.f $(HDFLIB)/libdf.a  -o tsdnntF
-
-tsdmmsF:   tsdmmsF.f 
-	$(FC) $(FFLAGS) tsdmmsF.f $(HDFLIB)/libdf.a -o tsdmmsF
-
-tsdnmmsF:   tsdnmmsF.f 
-	$(FC) $(FFLAGS) tsdnmmsF.f $(HDFLIB)/libdf.a -o tsdnmmsF
-
-egfhi:	   egfhi.f
-	$(FC) $(FFLAGS)  egfhi.f $(HDFLIB)/libdf.a -o egfhi
-
-thfile:     thfile.c 
-	$(CC) $(CFLAGS) -I$(HDFINC)  thfile.c $(HDFLIB)/libdf.a -o thfile
-
-thfile1:     thfile1.c 
-	$(CC) $(CFLAGS) -I$(HDFINC)  thfile1.c $(HDFLIB)/libdf.a -o thfile1
-
-terr:     terr.c 
-	$(CC) $(CFLAGS) -I$(HDFINC)  terr.c $(HDFLIB)/libdf.a -o terr
-
-thblocks:     thblocks.c 
-	$(CC) $(CFLAGS) -I$(HDFINC)  thblocks.c $(HDFLIB)/libdf.a -o thblocks
-
-thextelt:     thextelt.c
-	$(CC) $(CFLAGS) -I$(HDFINC)  thextelt.c $(HDFLIB)/libdf.a -o thextelt
-
-tlinkage:     tlinkage.c
-	$(CC) $(CFLAGS) -I$(HDFINC)  tlinkage.c $(HDFLIB)/libdf.a -o tlinkage
+.f: $< $(HDFLIB)/libdf.a
+	$(FC) $(FFLAGS) $< -o $@ $(HDFLIB)/libdf.a
 
 clean:
-	-$(RM) $(RMFLAGS) *.hdf $(CTESTS) $(HTESTS) $(FTESTS)
+	-$(RM) $(RMFLAGS) *.hdf $(CTESTS) $(HTESTS) $(FTESTS) core
