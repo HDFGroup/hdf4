@@ -1,10 +1,36 @@
+C***************************************************************************
+C
+C
+C                         NCSA HDF version 3.2r2
+C                            October 30, 1992
+C
+C NCSA HDF Version 3.2 source code and documentation are in the public
+C domain.  Specifically, we give to the public domain all rights for future
+C licensing of the source code, all resale rights, and all publishing rights.
+C
+C We ask, but do not require, that the following message be included in all
+C derived works:
+C
+C Portions developed at the National Center for Supercomputing Applications at
+C the University of Illinois at Urbana-Champaign, in collaboration with the
+C Information Technology Institute of Singapore.
+C
+C THE UNIVERSITY OF ILLINOIS GIVES NO WARRANTY, EXPRESSED OR IMPLIED, FOR THE
+C SOFTWARE AND/OR DOCUMENTATION PROVIDED, INCLUDING, WITHOUT LIMITATION,
+C WARRANTY OF MERCHANTABILITY AND WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE
+C
+C***************************************************************************
+
 C
 C $Header$
 C
 C $Log$
-C Revision 1.2  1992/11/02 16:35:41  koziol
-C Updates from 3.2r2 -> 3.3
+C Revision 1.3  1992/11/06 20:10:32  chouck
+C Changed tabs to spaces so Absoft Fortran on the Mac will be happy
 C
+c Revision 1.2  1992/10/23  19:13:12  koziol
+c Created fortran stubs dfvopen and dfvclos for DFvsetopen() and DFvsetclose
+c
 c Revision 1.1  1992/08/25  21:40:44  koziol
 c Initial revision
 c
@@ -19,7 +45,6 @@ c	* Contains fortran routines callable from fortran programs.
 c	*
 c	**************************************************************************
 
-
 C------------------------------------------------------------------------------
 C Name: dfvopen
 C Purpose:  call dfivopn, open file
@@ -32,554 +57,554 @@ C Users:    Fortran stub routine
 C Invokes: hiopen
 C----------------------------------------------------------------------------*/
 
-	integer function dfvopen(filename, access, defdds)
+      integer function dfvopen(filename, access, defdds)
 
-	character*(*) filename
-	integer       access, defdds, dfivopn
+      character*(*) filename
+      integer       access, defdds, dfivopn
 
-	dfvopen = dfivopn(filename, access, defdds, len(filename))
-	return
-	end
+      dfvopen = dfivopn(filename, access, defdds, len(filename))
+      return
+      end
 
 
-c   ============================================================
-c	 VGROUP ROUTINES
-c	============================================================
+c     ============================================================
+c      VGROUP ROUTINES
+c     ============================================================
 
-c	attachs to a vgroup 	
-c	related: Vattach--vatchc--VFATCH
+c     attachs to a vgroup 	
+c     related: Vattach--vatchc--vfatch
 
-	integer	function VFATCH(f, vgid, accesstype)
-	integer		f, vgid
-	character*1	accesstype
-	integer		VATCHC
+      integer	function vfatch(f, vgid, accesstype)
+      integer		f, vgid
+      character*1	accesstype
+      integer		vatchc
 
-	VFATCH = VATCHC (f, vgid, accesstype)
-	end
+      vfatch = vatchc (f, vgid, accesstype)
+      end
 
-c	------------------------------------------------------------
-c	detaches from a vgroup
-c	related: Vdetach--vdtchc--VFDTCH
+c     ------------------------------------------------------------
+c     detaches from a vgroup
+c     related: Vdetach--vdtchc--vfdtch
 
-	subroutine	VFDTCH (vg)	
-	integer		vg
+      subroutine	vfdtch (vg)	
+      integer		vg
 
-	call VDTCHC (vg)
-	end
+      call vdtchc (vg)
+      end
 
-c	------------------------------------------------------------
-c	general inquiry on a vgroup
-c	related: Vgetname--vgnamc--VFGNAM
+c     ------------------------------------------------------------
+c     general inquiry on a vgroup
+c     related: Vgetname--vgnamc--vfgnam
 
-	subroutine VFGNAM (vg, vgname)			 
-	integer			vg
-	character*(*)	vgname
+      subroutine vfgnam (vg, vgname)			 
+      integer			vg
+      character*(*)	vgname
 
-	call VGNAMC (vg, vgname)
-	end
-c	------------------------------------------------------------
-c	get the class name of a vgroup
-c	related: Vgetclass--vgclsc--VFGCLS
+      call vgnamc (vg, vgname)
+      end
+c     ------------------------------------------------------------
+c     get the class name of a vgroup
+c     related: Vgetclass--vgclsc--vfgcls
 
-	subroutine VFGCLS (vg, vgclass)			 
+      subroutine vfgcls (vg, vgclass)			 
 
-	integer			vg
-	character*(*)	vgclass
+      integer			vg
+      character*(*)	vgclass
 
-	call VGCLSC  (vg, vgclass)
-	end
-c	------------------------------------------------------------
-c	general inquiry on a vgroup
-c	related: Vinquire--vinqc--VFINQ
+      call vgclsc  (vg, vgclass)
+      end
+c     ------------------------------------------------------------
+c     general inquiry on a vgroup
+c     related: Vinquire--vinqc--vfinq
 
-	integer	function	VFINQ (vg, nentries, vgname) 
-	integer			vg, nentries
-	character*(*)	vgname
-	integer			VINQC
+      integer	function	vfinq (vg, nentries, vgname) 
+      integer			vg, nentries
+      character*(*)	vgname
+      integer			vinqc
 
-	VFINQ = VINQC (vg, nentries, vgname)
-	end
+      vfinq = vinqc (vg, nentries, vgname)
+      end
 
-c	------------------------------------------------------------
-c	gets the id of the next vgroup in the file
-c	related: Vgetid--vgidc--VFGID
+c     ------------------------------------------------------------
+c     gets the id of the next vgroup in the file
+c     related: Vgetid--vgidc--vfgid
 
-	integer	function	VFGID (f, vgid)			
-	integer		f, vgid
-	integer		VGIDC
+      integer	function	vfgid (f, vgid)			
+      integer		f, vgid
+      integer		vgidc
 
-	VFGID = VGIDC (f, vgid)
-	end
+      vfgid = vgidc (f, vgid)
+      end
 
-c	------------------------------------------------------------
-c	gets the id of the next entry in the vgroup
-c	related: Vgetnext--vgnxtc--VFGNXT
+c     ------------------------------------------------------------
+c     gets the id of the next entry in the vgroup
+c     related: Vgetnext--vgnxtc--vfgnxt
 
-	integer	function	VFGNXT (vg, id)				
-	integer		vg, id
-	integer		VGNXTC
+      integer	function	vfgnxt (vg, id)				
+      integer		vg, id
+      integer		vgnxtc
 
-	VFGNXT = VGNXTC (vg, id)
-	end
+      vfgnxt = vgnxtc (vg, id)
+      end
 
 
-c	------------------------------------------------------------
-c	sets the name of the vgroup
-c	related: Vsetname--vsnamc--VFSNAM
+c     ------------------------------------------------------------
+c     sets the name of the vgroup
+c     related: Vsetname--vsnamc--vfsnam
 
-	subroutine VFSNAM (vg, vgname)
-	integer			vg
-	character*(*)	vgname
+      subroutine vfsnam (vg, vgname)
+      integer			vg
+      character*(*)	vgname
 
-	call VSNAMC (vg, vgname, len(vgname))
-	end
-c	------------------------------------------------------------
-c	sets the class name of the vgroup
-c	related: Vsetclass--vsclsc--VFSCLS
+      call vsnamc (vg, vgname, len(vgname))
+      end
+c     ------------------------------------------------------------
+c     sets the class name of the vgroup
+c     related: Vsetclass--vsclsc--vfscls
 
-	subroutine VFSCLS (vg, vgclass)	
-	integer			vg
-	character*(*)	vgclass
+      subroutine vfscls (vg, vgclass)	
+      integer			vg
+      character*(*)	vgclass
 
-	call VSCLSC  (vg, vgclass, len(vgclass))
-	end
+      call vsclsc  (vg, vgclass, len(vgclass))
+      end
 
-c	------------------------------------------------------------
-c	inserts a vset entity (ie vgroup or vdata) into the given vgroup
-c	related: Vinsert--vinsrtc--VFINSRT
+c     ------------------------------------------------------------
+c     inserts a vset entity (ie vgroup or vdata) into the given vgroup
+c     related: Vinsert--vinsrtc--vfinsrt
 
 
-	integer	function VFINSRT (vg, velt)	
-	integer		vg, velt
-	integer		VINSRTC
+      integer	function vfinsrt (vg, velt)	
+      integer		vg, velt
+      integer		vinsrtc
 
-	VFINSRT = VINSRTC (vg, velt)
-	end
+      vfinsrt = vinsrtc (vg, velt)
+      end
 
-c	------------------------------------------------------------
-c	tests if an id in a vgroup is a vgroup
-c	related: Visvg--visvgc--VFISVG
+c     ------------------------------------------------------------
+c     tests if an id in a vgroup is a vgroup
+c     related: Visvg--visvgc--vfisvg
 
-	integer	function	VFISVG (vg, id) 									
-	integer		vg, id
-	integer		VISVGC
+      integer	function	vfisvg (vg, id) 									
+      integer		vg, id
+      integer		visvgc
 
-	VFISVG = VISVGC (vg, id)
-	end
+      vfisvg = visvgc (vg, id)
+      end
 
-c	------------------------------------------------------------
-c	tests if an id in a vgroup is a vdata
-c	related: Visvs--visvsc--VFISVS
+c     ------------------------------------------------------------
+c     tests if an id in a vgroup is a vdata
+c     related: Visvs--visvsc--vfisvs
 
-	integer	function	VFISVS (vg, id)
-	integer		vg, id
-	integer		VISVSC
+      integer	function	vfisvs (vg, id)
+      integer		vg, id
+      integer		visvsc
 
-	VFISVS = VISVSC (vg, id)
-	end
+      vfisvs = visvsc (vg, id)
+      end
 
 
 
-c	============================================================
-c	 VDATA ROUTINES
-c	============================================================
+c     ============================================================
+c      VDATA ROUTINES
+c     ============================================================
 
-c	attach to a vdata
-c	related: VSattach--vsatchc--VFATCH
+c     attach to a vdata
+c     related: VSattach--vsatchc--vfatch
 
-	integer	function	VSFATCH (f, vsid, accesstype)
-	integer		f, vsid
-	character*1	accesstype
-	integer		VSATCHC
+      integer	function	vsfatch (f, vsid, accesstype)
+      integer		f, vsid
+      character*1	accesstype
+      integer		vsatchc
 
-	VSFATCH = VSATCHC (f, vsid, accesstype)
-	end
+      vsfatch = vsatchc (f, vsid, accesstype)
+      end
 
-c	------------------------------------------------------------
-c	detach from a vdata
-c	related: VSdetach--vsdtchc--VFDTCH
+c     ------------------------------------------------------------
+c     detach from a vdata
+c     related: VSdetach--vsdtchc--vfdtch
 
-	subroutine	VSFDTCH (vs)
-	integer		vs
+      subroutine	vsfdtch (vs)
+      integer		vs
 
-	call VSDTCHC (vs)
-	end
+      call vsdtchc (vs)
+      end
 
-c	------------------------------------------------------------
-c	seeks to a given element position in a vadata
-c	related: VSseek--vsseekc--VSFSEEK
+c     ------------------------------------------------------------
+c     seeks to a given element position in a vadata
+c     related: VSseek--vsseekc--vsfseek
 
-	integer	function	VSFSEEK (vs, eltpos )
-	integer		vs, eltpos
-	integer		VSSEEKC
+      integer	function	vsfseek (vs, eltpos )
+      integer		vs, eltpos
+      integer		vsseekc
 
-	VSFSEEK = VSSEEKC (vs, eltpos)
-	end
+      vsfseek = vsseekc (vs, eltpos)
+      end
 
-c	------------------------------------------------------------
-c	gets the name of a vdata
-c	related: VSgetname--vsgnamc--VSFGNAM
+c     ------------------------------------------------------------
+c     gets the name of a vdata
+c     related: VSgetname--vsgnamc--vsfgnam
 
-	subroutine  VSFGNAM (vs, vsname)	
-	integer			vs
-	character*(*)	vsname
+      subroutine  vsfgnam (vs, vsname)	
+      integer			vs
+      character*(*)	vsname
 
-	call VSGNAMC (vs, vsname)
-	end
+      call vsgnamc (vs, vsname)
+      end
 
-c	------------------------------------------------------------
-c	get the class name of a vdata
-c	related: VSgetclass--vsgclsc--VSFGCLS
+c     ------------------------------------------------------------
+c     get the class name of a vdata
+c     related: VSgetclass--vsgclsc--vsfgcls
 
-	subroutine VSFGCLS (vs, vsclass)			 
-	integer			vs
-	character*(*)	vsclass
+      subroutine vsfgcls (vs, vsclass)			 
+      integer			vs
+      character*(*)	vsclass
 
-	call VSGCLSC  (vs, vsclass)
-	end
+      call vsgclsc  (vs, vsclass)
+      end
 
-c	------------------------------------------------------------
-c	general inquiry on a vdata
-c	related: VSinquire--vsinqc--VSFINQ
+c     ------------------------------------------------------------
+c     general inquiry on a vdata
+c     related: VSinquire--vsinqc--vsfinq
 
-	integer function VSFINQ (vs,nvs,ilace,fields,vsize,vsname) 
-	integer			vs, nvs, ilace, vsize
-	character*(*)	fields, vsname
-	integer			VSINQC
+      integer function vsfinq (vs,nvs,ilace,fields,vsize,vsname) 
+      integer			vs, nvs, ilace, vsize
+      character*(*)	fields, vsname
+      integer			vsinqc
 
-	VSFINQ = VSINQC (vs,nvs,ilace,fields,vsize,vsname) 
-	end
+      vsfinq = vsinqc (vs,nvs,ilace,fields,vsize,vsname) 
+      end
 
-c	------------------------------------------------------------
-c	tests if given fields exist in the vdata
-c	related: VSfexist--vsfexc--VSFEX
+c     ------------------------------------------------------------
+c     tests if given fields exist in the vdata
+c     related: VSfexist--vsfexc--vsfex
 
-	integer	function VSFEX (vs, fields)		
-	integer			vs
-	character*(*)	fields
-	integer			VSFEXC
+      integer	function vsfex (vs, fields)		
+      integer			vs
+      character*(*)	fields
+      integer			vsfexc
 
-	VSFEX = VSFEXC (vs, fields, len(fields))
-	end
+      vsfex = vsfexc (vs, fields, len(fields))
+      end
 
 c  ------------------------------------------------------------
-c	gets the id of the next vdata from the file
-c	related: VSgetid--vsgidc--VSFGID
+c     gets the id of the next vdata from the file
+c     related: VSgetid--vsgidc--vsfgid
 
-	integer  function VSFGID (f, vsid) 
-	integer     f, vsid
-	integer     VSGIDC
+      integer  function vsfgid (f, vsid) 
+      integer     f, vsid
+      integer     vsgidc
 
-	VSFGID = VSGIDC (f, vsid)
-	end
+      vsfgid = vsgidc (f, vsid)
+      end
 
-c	------------------------------------------------------------
-c	sets the name of a vdata
-c	related: VSsetname--vssnamc--VSFSNAM
+c     ------------------------------------------------------------
+c     sets the name of a vdata
+c     related: VSsetname--vssnamc--vsfsnam
 
-	subroutine VSFSNAM (vs, vsname)	
-	integer			vs
-	character*(*)	vsname
+      subroutine vsfsnam (vs, vsname)	
+      integer			vs
+      character*(*)	vsname
 
-	call VSSNAMC (vs, vsname, len(vsname))
-	end
+      call vssnamc (vs, vsname, len(vsname))
+      end
 
-c	------------------------------------------------------------
-c	set the class name of a vdata
-c	related: VSsetclass--vssclsc--VSFSCLS
+c     ------------------------------------------------------------
+c     set the class name of a vdata
+c     related: VSsetclass--vssclsc--vsfscls
 
-	subroutine VSFSCLS (vs, vsclass)			 
-	integer			vs
-	character*(*)	vsclass
+      subroutine vsfscls (vs, vsclass)			 
+      integer			vs
+      character*(*)	vsclass
 
-	call VSSCLSC  (vs, vsclass, len(vsclass))
-	end
+      call vssclsc  (vs, vsclass, len(vsclass))
+      end
 
-c	------------------------------------------------------------
-c	sets the fields in a vdata for reading or writing
-c	related: VSsetfields--vssfldc--VSFSFLD
+c     ------------------------------------------------------------
+c     sets the fields in a vdata for reading or writing
+c     related: VSsetfields--vssfldc--vsfsfld
 
-	integer	function	VSFSFLD (vs, fields)		
-	integer			vs
-	character*(*)	fields
-	integer		VSSFLDC
+      integer	function	vsfsfld (vs, fields)		
+      integer			vs
+      character*(*)	fields
+      integer		vssfldc
 
-	VSFSFLD = VSSFLDC (vs, fields, len(fields))
-	end
+      vsfsfld = vssfldc (vs, fields, len(fields))
+      end
 
-c	------------------------------------------------------------
-c	sets the file interlace of a vdata
-c	related: VSsetinterlace--vssintc--VSFSINT
+c     ------------------------------------------------------------
+c     sets the file interlace of a vdata
+c     related: VSsetinterlace--vssintc--vsfsint
 
-	integer 	function VSFSINT (vs, interface)
-	integer 		vs, interlace                         
-	integer		VSSINTC
+      integer 	function vsfsint (vs, interface)
+      integer 		vs, interlace                         
+      integer		vssintc
 
-	VSFSINT = VSSINTC (vs, interlace)
-	end
+      vsfsint = vssintc (vs, interlace)
+      end
 
-c	------------------------------------------------------------
-c	defines a new field to be used in the vdata
-c	related: VSfdefine--vsfdefc--VSFFDEF
+c     ------------------------------------------------------------
+c     defines a new field to be used in the vdata
+c     related: VSfdefine--vsfdefc--vsffdef
 
-	integer	function	VSFFDEF (vs, field, localtype, order)	
+      integer	function	vsffdef (vs, field, localtype, order)	
 
-	integer			vs, localtype, order
-	character*(*)	field
-	integer			VSFDEFC
+      integer			vs, localtype, order
+      character*(*)	field
+      integer			vsfdefc
 
-	VSFFDEF = VSFDEFC ( vs, field, localtype, order, len(field))
+      vsffdef = vsfdefc ( vs, field, localtype, order, len(field))
 
-	end
+      end
 
-c	------------------------------------------------------------
-c	reads from a vdata
-c	related: VSread--vsreadc--VSFREAD
+c     ------------------------------------------------------------
+c     reads from a vdata
+c     related: VSread--vsreadc--vsfread
 
-	integer	function	VSFREAD (vs, buf, nelts , interlace)
+      integer	function	vsfread (vs, buf, nelts , interlace)
 
-	integer			vs, nelts , interlace
-	character*(*)	buf
-	integer			VSREADC
+      integer			vs, nelts , interlace
+      character*(*)	buf
+      integer			vsreadc
 
-	VSFREAD = VSREADC (vs, buf, nelts, interlace)
-	end
+      vsfread = vsreadc (vs, buf, nelts, interlace)
+      end
 
-c	------------------------------------------------------------
-c	writes to a vdata
-c	related: VSwrite--vswritc--VSFWRIT
+c     ------------------------------------------------------------
+c     writes to a vdata
+c     related: VSwrite--vswritc--vsfwrit
 
-	integer	function	VSFWRIT (vs, buf, nelts, interlace)
+      integer	function	vsfwrit (vs, buf, nelts, interlace)
 
-	integer			vs, nelts, interlace
-	integer			buf(*)	
-	integer			VSWRITC
+      integer			vs, nelts, interlace
+      integer			buf(*)	
+      integer			vswritc
 
-	VSFWRIT = VSWRITC (vs, buf, nelts, interlace)
-	end
+      vsfwrit = vswritc (vs, buf, nelts, interlace)
+      end
 
-c	===========================================
-c	MISCELLANEOUS USEFUL VDATA INQUIRY ROUTINES
-c	===========================================
+c     ===========================================
+c     MISCELLANEOUS USEFUL VDATA INQUIRY ROUTINES
+c     ===========================================
 c
-c	undocumented
+c     undocumented
 
 
-c	gets the interlace of a vdata
-c	related: VSgetinterlace--vsgintc--VSFGINT
+c     gets the interlace of a vdata
+c     related: VSgetinterlace--vsgintc--vsfgint
 
-	integer 	function VSFGINT (vs)					
-	integer 		vs
-	integer		VSGINTC
+      integer 	function vsfgint (vs)					
+      integer 		vs
+      integer		vsgintc
 
-	VSFGINT = VSGINTC (vs)
-	end
+      vsfgint = vsgintc (vs)
+      end
 
-c	------------------------------------------------------------
-c	gets the number of elements in a vdata
-c	related: VSelts--vseltsc--VSFELTS
+c     ------------------------------------------------------------
+c     gets the number of elements in a vdata
+c     related: VSelts--vseltsc--vsfelts
 
-	integer 	function VSFELTS (vs)			
-	integer  vs	
-	integer	VSELTSC
+      integer 	function vsfelts (vs)			
+      integer  vs	
+      integer	vseltsc
 
-	VSFELTS = VSELTSC (vs)
-	end
+      vsfelts = vseltsc (vs)
+      end
 
-c	------------------------------------------------------------
-c	gets the fields in the vdata
-c	related: VSgetfields--vsgfldc--VSFGFLD
+c     ------------------------------------------------------------
+c     gets the fields in the vdata
+c     related: VSgetfields--vsgfldc--vsfgfld
 
-	integer	function VSFGFLD (vs, fields)	
-	integer			vs
-	character*(*) 	fields
-	integer			VSGFLDC
+      integer	function vsfgfld (vs, fields)	
+      integer			vs
+      character*(*) 	fields
+      integer			vsgfldc
 
-	VSFGFLD = VSGFLDC (vs, fields)
-	end
+      vsfgfld = vsgfldc (vs, fields)
+      end
 
-c	------------------------------------------------------------
+c     ------------------------------------------------------------
 c 	determines the (machine) size of the given fields
-c	related: VSsizeof--vssizc--VSFSIZ
+c     related: VSsizeof--vssizc--vsfsiz
 
-	integer	function VSFSIZ (vs, fields)		
-	integer			vs
-	character*(*) 	fields
-	integer			VSSIZC
+      integer	function vsfsiz (vs, fields)		
+      integer			vs
+      character*(*) 	fields
+      integer			vssizc
 
-	VSFSIZ = VSSIZC (vs, fields, len(fields))
-	end
+      vsfsiz = vssizc (vs, fields, len(fields))
+      end
 
-c	------------------------------------------------------------
-c	determines the no of entries in a vgroup
-c	related: Ventries--ventsc--VFENTS
+c     ------------------------------------------------------------
+c     determines the no of entries in a vgroup
+c     related: Ventries--ventsc--vfents
 
-	integer 	function	VFENTS (f, vgid)		
-	integer	f, vgid
-	integer	VENTSC 
+      integer 	function	vfents (f, vgid)		
+      integer	f, vgid
+      integer	ventsc 
 
-	VFENTS = VENTSC (f, vgid)
-	end
+      vfents = ventsc (f, vgid)
+      end
 
-c	------------------------------------------------------------
-c	DEBUGGING ROUTINES
-c	------------------------------------------------------------
+c     ------------------------------------------------------------
+c     DEBUGGING ROUTINES
+c     ------------------------------------------------------------
 
-c	enable debug
-c	related: setjj--setjjc--SETFJJ
+c     enable debug
+c     related: setjj--setjjc--setfjj
 
-	integer 	function SETFJJ()			 
-	integer  setjjc 
+      integer 	function setfjj()			 
+      integer  setjjc 
 
-	SETFJJ = setjjc() 
-	end
+      setfjj = setjjc() 
+      end
 
-c	------------------------------------------------------------
-c	disable debug
-c	related: setnojj--setnojjc--SETFNJJ
+c     ------------------------------------------------------------
+c     disable debug
+c     related: setnojj--setnojjc--setfnjj
 
-	integer 	function SETFNJJ()			 
-	integer  setnojjc 
+      integer 	function setfnjj()			 
+      integer  setnojjc 
 
-	SETFNJJ = setnojjc() 
-	end
-c	------------------------------------------------------------
-c	gets the refs of all lone vgroups in the file
-c	related: Vlone--vlonec--VFLONE
+      setfnjj = setnojjc() 
+      end
+c     ------------------------------------------------------------
+c     gets the refs of all lone vgroups in the file
+c     related: Vlone--vlonec--vflone
 
-	integer function VFLONE (f, idarray, asize)
-	integer			f
-	integer			idarray(*)
-	integer			asize
-	integer			VLONEC
+      integer function vflone (f, idarray, asize)
+      integer			f
+      integer			idarray(*)
+      integer			asize
+      integer			vlonec
 
-	VFLONE = VLONEC  (f, idarray, asize)
-	end
+      vflone = vlonec  (f, idarray, asize)
+      end
 
-c	------------------------------------------------------------
-c	gets the refs of all lone vdatas in the file
-c	related: VSlone--vslonec--VSFLONE
+c     ------------------------------------------------------------
+c     gets the refs of all lone vdatas in the file
+c     related: VSlone--vslonec--vsflone
 
-	integer function VSFLONE (f, idarray, asize)
-	integer			f
-	integer			idarray(*)
-	integer			asize
-	integer			VSLONEC
+      integer function vsflone (f, idarray, asize)
+      integer			f
+      integer			idarray(*)
+      integer			asize
+      integer			vslonec
 
-	VSFLONE = VSLONEC  (f, idarray, asize)
-	end
+      vsflone = vslonec  (f, idarray, asize)
+      end
 
-c	------------------------------------------------------------
-c	store a simple dataset in a vdata
-c	related: VHstoredata--vhsdc--vhfsd
+c     ------------------------------------------------------------
+c     store a simple dataset in a vdata
+c     related: VHstoredata--vhsdc--vhfsd
 
-	integer function VHFSD(f,field,buf,n,dtype,vsname,vsclass)
-	integer		f
-	character*(*)  field
-	integer		buf(*)	
-	integer		n, dtype
-	character*(*)  vsname, vsclass
-	integer VHSDC 	
+      integer function vhfsd(f,field,buf,n,dtype,vsname,vsclass)
+      integer		f
+      character*(*)  field
+      integer		buf(*)	
+      integer		n, dtype
+      character*(*)  vsname, vsclass
+      integer vhsdc 	
 
-	VHFSD = VHSDC (f, field, buf, n, dtype, vsname, vsclass,
+      vhfsd = vhsdc (f, field, buf, n, dtype, vsname, vsclass,
      1            len(field), len(vsname), len(vsclass))
-	end
+      end
 
-c	------------------------------------------------------------
-c	store an aggregate dataset in a vadata
-c	related: VHstoredatam--vhsdmc--vhfsdm
+c     ------------------------------------------------------------
+c     store an aggregate dataset in a vadata
+c     related: VHstoredatam--vhsdmc--vhfsdm
 
-	integer function VHFSDM (f,field,buf,n,dtype,vsname,vsclass,order)
-	integer			f
-	character*(*)  field
-	integer			buf(*)	
-	integer			n, dtype, order
-	character*(*)  vsname, vsclass
-	integer VHSDMC 		
+      integer function vhfsdm (f,field,buf,n,dtype,vsname,vsclass,order)
+      integer			f
+      character*(*)  field
+      integer			buf(*)	
+      integer			n, dtype, order
+      character*(*)  vsname, vsclass
+      integer vhsdmc 		
 
-	VHFSDM = VHSDMC (f, field, buf, n, dtype, vsname,vsclass, order,
+      vhfsdm = vhsdmc (f, field, buf, n, dtype, vsname,vsclass, order,
      1             len(field), len(vsname), len(vsclass))
-	end
+      end
 
-c	------------------------------------------------------------
-c	make a new vgroup given several tag/ref pairs
-c	related: VHmakegroup--vhmkgpc--vhfmkgp
+c     ------------------------------------------------------------
+c     make a new vgroup given several tag/ref pairs
+c     related: VHmakegroup--vhmkgpc--vhfmkgp
 
-	integer function VHFMKGP(f,tagarray,refarray,n,vgname,vgclass)
-	integer		f, n
-	integer		tagarray(*), refarray(*)
-	character*(*)  vgname, vgclass
-	integer 		VHMKGPC 	
+      integer function vhfmkgp(f,tagarray,refarray,n,vgname,vgclass)
+      integer		f, n
+      integer		tagarray(*), refarray(*)
+      character*(*)  vgname, vgclass
+      integer 		vhmkgpc 	
 
-	VHFMKGP = VHMKGPC (f, tagarray, refarray , n, vgname, vgclass,
+      vhfmkgp = vhmkgpc (f, tagarray, refarray , n, vgname, vgclass,
      1                len(vgname), len(vgclass))
-	end
+      end
 
-c	============================================================
-c	More vgroup routines
+c     ============================================================
+c     More vgroup routines
 
-c	locate a field in a vdata that belongs to this VGROUP	
-c	related: Vflocate--vffloc--vflocc
+c     locate a field in a vdata that belongs to this VGROUP	
+c     related: Vflocate--vffloc--vflocc
 
-	integer function VFFLOC  (vg, field)
-	integer			vg
-	character*(*)	field
-	integer 			VFLOCC								
-	VFFLOC = VFLOCC (vg, field, len(field))
-	end
+      integer function vffloc  (vg, field)
+      integer			vg
+      character*(*)	field
+      integer 			vflocc								
+      vffloc = vflocc (vg, field, len(field))
+      end
 
-c	------------------------------------------------------------
-c	tests if a tag/ref pair is in a vgroup.
-c	related: Vinqtagref--vinqtrc--vfinqtr
+c     ------------------------------------------------------------
+c     tests if a tag/ref pair is in a vgroup.
+c     related: Vinqtagref--vinqtrc--vfinqtr
 
-	integer function VFINQTR  (vg, tag, ref)
-	integer		vg, tag, ref
-	integer		VINQTRC									 
-	VFINQTR = VINQTRC (vg, tag, ref)
-	end
+      integer function vfinqtr  (vg, tag, ref)
+      integer		vg, tag, ref
+      integer		vinqtrc									 
+      vfinqtr = vinqtrc (vg, tag, ref)
+      end
 
-c	------------------------------------------------------------
-c	gets the number of tag/refs stored in a vgroup
-c	related: Velts--veltsc--vfelts
+c     ------------------------------------------------------------
+c     gets the number of tag/refs stored in a vgroup
+c     related: Velts--veltsc--vfelts
 
-	integer function VFNTR (vg)
-	integer		vg
-	integer VNTRC 
-	VFNTR = VNTRC (vg)
-	end
+      integer function vfntr (vg)
+      integer		vg
+      integer vntrc 
+      vfntr = vntrc (vg)
+      end
 
-c	------------------------------------------------------------
-c	returns all the tag/ref pairs in a vgroup
-c	related: Vgettagrefs--vgttrsc--vfgttrs
+c     ------------------------------------------------------------
+c     returns all the tag/ref pairs in a vgroup
+c     related: Vgettagrefs--vgttrsc--vfgttrs
 
-	integer function VFGTTRS (vg, tagarray, refarray, n)
-	integer		vg, n
-	integer		tagarray(*), refarray(*)
-	integer		VGTTRSC									
+      integer function vfgttrs (vg, tagarray, refarray, n)
+      integer		vg, n
+      integer		tagarray(*), refarray(*)
+      integer		vgttrsc									
 
-	VFGTTRS = VGTTRSC (vg, tagarray, refarray, n)
-	end
-c	------------------------------------------------------------
-c	returns a specified tag/ref pair in a vgroup
-c	related: Vgettagref--vgttrc--vfgttr
+      vfgttrs = vgttrsc (vg, tagarray, refarray, n)
+      end
+c     ------------------------------------------------------------
+c     returns a specified tag/ref pair in a vgroup
+c     related: Vgettagref--vgttrc--vfgttr
 
-	integer function VFGTTR (vg, which, tag, ref)
-	integer		vg, which
-	integer		tag, ref
-	integer		VGTTRC									
+      integer function vfgttr (vg, which, tag, ref)
+      integer		vg, which
+      integer		tag, ref
+      integer		vgttrc									
 
-	VFGTTR = VGTTRC (vg, which, tag, ref)
-	end
+      vfgttr = vgttrc (vg, which, tag, ref)
+      end
 
-c	------------------------------------------------------------
-c	add a tag/ref pair to a vgroup
-c	related: Vaddtagref--vadtrc--VFADTR
+c     ------------------------------------------------------------
+c     add a tag/ref pair to a vgroup
+c     related: Vaddtagref--vadtrc--vfadtr
 
-	integer function VFADTR	( vg, tag, ref)
-	integer		vg, tag, ref
-	integer VADTRC				
+      integer function vfadtr	( vg, tag, ref)
+      integer		vg, tag, ref
+      integer vadtrc				
 
-	VFADTR = VADTRC  ( vg, tag, ref)
-	end
-c	============================================================
+      vfadtr = vadtrc  ( vg, tag, ref)
+      end
+c     ============================================================
 
