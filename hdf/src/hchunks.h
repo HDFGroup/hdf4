@@ -1,0 +1,244 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
+/* $Id$ */
+
+/*-----------------------------------------------------------------------------
+ * File:         hchunks.h
+ * Purpose:      Header file for Chunked elements
+ * Dependencies: 
+ * Invokes:      none
+ * Contents:     Structures & definitions for chunked distribution.  
+ * Structure definitions:
+ * Constant definitions:
+ * Author: -GV
+ *---------------------------------------------------------------------------*/
+
+/* avoid re-inclusion */
+#ifndef __HCHUNKS_H
+#define __HCHUNKS_H
+
+/* required includes */
+#include "hfile.h"  /* special info stuff */
+
+#ifdef   _HCHUNKS_MAIN_
+/* Private to 'hchunks.c' */
+
+#include "tbbt.h"   /* TBBT stuff */
+#include "hcache.h" /* caching routines */
+
+/* Define class and name(partial) for chunk table */
+#define _HDF_CHK_TBL_CLASS "_HDF_CHK_TBL_" /* 13 bytes */
+#define _HDF_CHK_TBL_NAME  "_HDF_CHK_TBL_" /* 13 bytes */
+
+/* Define field name for each chunk record i.e. Vdata record */
+#define _HDF_CHK_FIELD_1   "origin"  /* 6 bytes */
+#define _HDF_CHK_FIELD_2   "chk_tag" /* 7 bytes */
+#define _HDF_CHK_FIELD_3   "chk_ref" /* 7 bytes */
+#define _HDF_CHK_FIELD_NAMES   "origin,chk_tag,chk_ref" /* 22 bytes */
+
+/* Define version number for chunked header format */
+#define _HDF_CHK_HDR_VER   1
+
+#endif /* _HCHUNKS_MAIN_ */
+
+/* Public structures */
+
+/* Structure for each Data array dimension Defintion */
+typedef struct dim_def_struct {
+    int32 dim_length;          /* length of this dimension */
+    int32 chunk_length;        /* chunk length along this dimension */
+    int32 distrib_type;        /* Data distribution along this dimension */
+} DIM_DEF, * DIM_DEF_PTR;
+
+/* Structure for each Chunk Definition*/
+typedef struct chunk_def_struct {
+    int32 chunk_size;        /* size of this chunk*/
+    int32 num_dims;          /* number of actual dimensions */
+    DIM_DEF *pdims;          /* ptr to array of dimension records for this chunk*/
+    int32 chunk_flag;        /* multiply specailness? */
+}CHUNK_DEF, * CHUNK_DEF_PTR;
+
+/* Private structues */
+#ifdef _HCHUNKS_MAIN_
+/* Private to 'hchunks.c' */
+
+/* Structure for each Data array dimension */
+typedef struct dim_rec_struct {
+    /* fields stored in chunked header */
+    int32 distrib_type;        /* Data distribution along this dimension */
+    int32 dim_length;          /* length of this dimension */
+    int32 chunk_length;        /* chunk length along this dimension */
+    
+    /* computed field */
+    int32 num_chunks;          /* i.e. "dim_length / chunk_length" */
+} DIM_REC, * DIM_REC_PTR;
+
+
+/* Structure for each Chunk */
+typedef struct chunk_rec_struct {
+    int32 chunk_number;      /* chunk number from coordinates i.e. origin */
+    int32 chk_vnum;          /* chunk vdata record number i.e. position in table*/
+
+    /* chunk record fields stored in Vdata Table */
+    int32  *origin;          /* origin -> position of chunk */
+    uint16 chk_tag;          /* DFTAG_CHUNK or another Chunked element? */
+    uint16 chk_ref;          /* reference number of this chunk */
+}CHUNK_REC, * CHUNK_REC_PTR;
+
+/* information on this special chunk data elt */
+typedef struct chunkinfo_t
+{
+    intn        attached;     /* how many access records refer to this elt */
+    int32       aid;          /* Access id of chunk table i.e. Vdata */
+
+    /* chunked element format header  fields */
+    int32       sp_tag_header_len; /* length of the special element header */
+    uint8       version;      /* Version of this Chunked element */
+    int32       flag;         /* flag for multiply specialness ...*/
+    int32       length;       /* the actual length of the data elt */
+    int32       chunk_size;   /* the logical size of the chunks */
+    uint16      chktbl_tag;   /* DFTAG_VH - Vdata header */
+    uint16      chktbl_ref;   /* ref of the first chunk table structure(VDATA) */
+    uint16      sp_tag;       /* For future use.. */
+    uint16      sp_ref;       /* For future use.. */
+    uint8       ndims;        /* number of dimensions of chunk */
+    DIM_REC     *ddims;       /* array of dimension records */
+    int32       fill_val_len; /* fill value number of bytes */
+    VOID        *fill_val;    /* fill value */
+
+    /* additional memory resident data structures to be used */
+    int32       *seek_chunk_indices; /* chunk array indicies relative
+                                        to the other chunks */
+    int32       *seek_pos_chunk;     /* postion within the current chunk */
+    TBBT_TREE   *chk_tree;    /* TBBT tree of all accessed table entries 
+                                 i.e. CHUNK_REC's read/written/modified */
+    MCACHE      *chk_cache;   /* chunk cache */
+    int32       num_recs;     /* number of Table(Vdata) records */
+}
+chunkinfo_t;
+#endif /* _HCHUNKS_MAIN_ */
+
+#if defined c_plusplus || defined __cplusplus
+extern      "C"
+{
+#endif                          /* c_plusplus || __cplusplus */
+
+/*
+** from hchunks.c
+*/
+
+/* User Public */
+    extern int32 HMCcreate
+        (int32 file_id,       /* IN: file to put linked chunk element in */
+         uint16 tag,          /* IN: tag of element */
+         uint16 ref,          /* IN: ref of element */
+         uint8 nlevels,       /* IN: number of levels of chunks */
+         int32 data_len,      /* IN: length of element */
+         int32 fill_val_len,  /* IN: fill value length in bytes */
+         VOID  *fill_val,     /* IN: fill value */
+         CHUNK_DEF *chk_array /* IN: structure describing chunk distribution
+                                 can be an array? but we only handle 1 level */);
+
+    extern int32 HMCsetMaxcache
+        (int32 access_id, /* IN: access aid to mess with */
+         int32 maxcache,  /* IN: max number of pages to cache */
+         int32 flags      /* IN: flags = 0, HMC_PAGEALL */);
+
+    extern int32 HMCwriteChunk
+        (int32 access_id,  /* IN: access aid to mess with */
+         int32 *origin,    /* IN: origin of chunk to write */
+         const VOID *datap /* IN: buffer for data */);
+
+/* Library Private */
+#ifdef _HCHUNKS_MAIN_
+/* Private to 'hchunks.c' */
+    extern int32 HMCPstread
+        (accrec_t * access_rec  /* IN: access record to fill in */);
+
+    extern int32 HMCPstwrite
+        (accrec_t * access_rec  /* IN: access record to fill in */);
+
+    extern int32 HMCPseek
+        (accrec_t * access_rec, /* IN: access record to mess with */
+         int32 offset,          /* IN: seek offset */
+         int origin             /* IN: where we should calc the offset from */);
+
+    extern int32 HMCPchunkread
+        (VOID  *cookie,    /* IN: access record to mess with */
+         int32 chunk_num,  /* IN: chunk to read */
+         VOID  *datap      /* OUT: buffer for data */);
+
+    extern int32 HMCPread
+        (accrec_t * access_rec, /* IN: access record to mess with */
+         int32 length,          /* IN: number of bytes to read */
+         VOIDP data             /* OUT: buffer for data */);
+
+    extern int32 HMCPchunkwrite
+        (VOID  *cookie,    /* IN: access record to mess with */
+         int32 chunk_num,  /* IN: chunk number */
+         const VOID *datap /* IN: buffer for data */);
+
+    extern int32 HMCPwrite
+        (accrec_t * access_rec, /* IN: access record to mess with */
+         int32 length,          /* IN: number of bytes to write */
+         const VOIDP data       /* IN: buffer for data */);
+
+    extern int32 HMCPcloseAID
+        (accrec_t *access_rec /* IN:  access record of file to close */);
+
+    extern intn HMCPendaccess
+        (accrec_t * access_rec /* IN:  access record to close */);
+
+    extern int32 HMCPinfo
+        (accrec_t * access_rec,       /* IN: access record of access elemement */
+         sp_info_block_t * info_block /* OUT: information about the special element */);
+
+    extern int32 HMCPinquire
+        (accrec_t * access_rec, /* IN:  access record to return info about */
+         int32 *pfile_id,       /* OUT: file ID; */
+         uint16 *ptag,          /* OUT: tag of info record; */
+         uint16 *pref,          /* OUT: ref of info record; */
+         int32 *plength,        /* OUT: length of element; */
+         int32 *poffset,        /* OUT: offset of element -- meaningless */
+         int32 *pposn,          /* OUT: current position in element; */
+         int16 *paccess,        /* OUT: access mode; */
+         int16 *pspecial        /* OUT: special code; */);
+
+#endif /* _HCHUNKS_MAIN_ */
+
+#if defined c_plusplus || defined __cplusplus
+}
+#endif                          /* c_plusplus || __cplusplus */
+
+#ifndef _HCHUNKS_MAIN_
+/* not in master file hchunk.c */
+extern funclist_t chunked_funcs;  /* functions to perform chunking */
+
+#else /* in hchunks.c */
+
+/* the accessing special function table for chunks */
+funclist_t  chunked_funcs =
+{
+    HMCPstread,
+    HMCPstwrite,
+    HMCPseek,
+    HMCPinquire,
+    HMCPread,
+    HMCPwrite,
+    HMCPendaccess,
+    HMCPinfo
+};
+
+#endif
+
+#endif /* __HCHUNKS_H */
