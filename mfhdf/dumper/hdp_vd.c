@@ -515,7 +515,7 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
 
           if (FAIL == VSinquire(vd_id, &nvf, &interlace, fields, &vsize, vdname))
             {
-                fprintf(stderr,"VSinqure failed on vdid(%d) in file %s\n", 
+                fprintf(stderr,"VSinquire failed on vdid(%d) in file %s\n", 
                         (int) vdata_ref, file_name);
                 /* removed goto done */
 		/* each of the parameters retuned by VSinquire must be 
@@ -866,16 +866,16 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
             {
                 fprintf(stderr,"VSattach failed for vdata_ref(%d) in file %s\n", 
                         (int) vdata_ref, file_name);
-                ret_value = FAIL;
-                goto done;
+                continue; /* remove goto done and continue to skip processing 
+			this vdata but go on to the next instead of exit out 
+			dumper */
             }
 
           if (FAIL == VSinquire(vd_id, &nvf, &interlace, fields, &vsize, vdname))
             {
-                fprintf(stderr,"VSinqure failed on vd_id(%d) in file %s\n", 
+                fprintf(stderr,"VSinquire failed on vd_id(%d) in file %s\n", 
                         (int) vdata_ref,file_name);
-                ret_value = FAIL;
-                goto done;
+                /* remove goto done */
             }
 
 	  /* BMR - 7/1/98 realized while fixing bug #236.
@@ -889,16 +889,14 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
             {
                 fprintf(stderr,"VSQuerytag failed on vd_id(%d) in file %s\n", 
                         (int) vdata_ref, file_name);
-                ret_value = FAIL;
-                goto done;
+                /* remove goto done */
             }
 
             if (FAIL == VSgetclass(vd_id, vdclass))
             {
                 fprintf(stderr,"VSgetclass failed on vd_id(%d) in file %s\n", 
                         (int) vdata_ref, file_name);
-                ret_value = FAIL;
-                goto done;
+                /* remove goto done */
             }
 
 
@@ -948,24 +946,17 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
                 flds_match = 1;
             if (flds_match)
             {
-                if (dumpvd_opts->contents == DDATA)
-                  {
-                      data_only = 1;
-                      HDstrcpy(sep, "");
-                  }
-                else
-                  {
-                      data_only = 0;
-                      HDstrcpy(sep, ";");
-                  }
+		/* BMR: removed the if statement to determine if data_only
+		   should be set; set data_only in either case */
+                data_only = 1;
+                HDstrcpy(sep, "");
 
                 /* Only the chosen or all fields will be dumped out. */
                 if (FAIL == dumpvd(vd_id, ft, data_only, fp, sep, flds_indices, dumpallfields))
                   {
                       fprintf(stderr,"Failed to dump vdata data for vdid(%d) in file %s\n", 
                               (int) vd_id, file_name);
-                      ret_value = FAIL;
-                      goto done;
+                      /* remove goto done */
                   }
             }
 	  } /* end of if (fields[0] == '\0' || nvf == 0 ) */
@@ -974,8 +965,7 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
             {
                 fprintf(stderr,"VSdetach failed on vd_id(%d) in file %s\n", 
                         (int) vd_id, file_name);
-                ret_value = FAIL;
-                goto done;
+                /* remove goto done */
             }
 
           vd_id = FAIL; /* reset */
