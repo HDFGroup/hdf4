@@ -29,7 +29,7 @@ CC='cc'
 RANLIB=true
 #
 # C preprocessor flags 
-# CPPFLAGS=-DNDEBUG
+CPPFLAGS='DBIG_LONGS'
 #
 # Type of FORTRAN 77 compiler (default is `f77'):
 FC='f77'
