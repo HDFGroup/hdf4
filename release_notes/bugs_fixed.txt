@@ -30,6 +30,12 @@ HDF4.2r0-Beta
 
 9. NetCDF part of the HDF4 Library was not ported to Compaq True64 system. Fixed.
 
+10. The hdp commands dumpsds, dumpgr, dumpvd, and dumpvg now display an 
+    informative message when a non-HDF file is given as input. (Bug #817)
+
+11. The compilation warnings and error on the macro HDFclose are fixed.
+    (Bug #818)
+
 HDF4.1r5
 ========
 1. The following VS routines are added as requested (bug #267):
