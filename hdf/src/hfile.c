@@ -2933,7 +2933,7 @@ if (HI_WRITE(file_rec->file, ptbuf, NDDS_SZ + OFFSET_SZ) == FAIL)
 	HRETURN_ERROR(DFE_WRITEERROR, FAIL);
 
 /* allocate and initialize dd list */
-list = block->ddlist = (dd_t *) HDmalloc((uint32) ndds * DD_SZ);
+list = block->ddlist = (dd_t *) HDmalloc((uint32) ndds * sizeof(dd_t));
 if (list == (dd_t *) NULL)
 	HRETURN_ERROR(DFE_NOSPACE, FAIL);
 for (i = 0; i < ndds; i++)
@@ -3818,7 +3818,7 @@ HInew_dd_block(filerec_t * file_rec, int16 ndds, const char *FUNC)
 
     /* set up the dd list of this dd block and put it in the file
        after the dd block header */
-    list = block->ddlist = (dd_t *) HDmalloc((uint32) ndds * DD_SZ);
+    list = block->ddlist = (dd_t *) HDmalloc((uint32) ndds * sizeof(dd_t));
     if (list == (dd_t *) NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
     for (i = 0; i < ndds; i++)
@@ -3949,7 +3949,7 @@ HIfill_file_rec(filerec_t * file_rec, const char *FUNC)
           /* Now that we know how many dd's are in this block,
              alloc memory for the records. */
           file_rec->ddlast->ddlist =
-              (dd_t *) HDmalloc((uint32) FILE_NDDS(file_rec) * DD_SZ);
+              (dd_t *) HDmalloc((uint32) FILE_NDDS(file_rec) * sizeof(dd_t));
           if (!file_rec->ddlast->ddlist)
               HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
