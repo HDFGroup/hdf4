@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.12  1993/08/19 16:45:52  chouck
-Added code and tests for multi-order Vdatas
+Revision 1.13  1993/08/20 22:38:40  koziol
+Reduced the static memory of a couple of functions to make the PC happier...
 
+ * Revision 1.12  1993/08/19  16:45:52  chouck
+ * Added code and tests for multi-order Vdatas
+ *
  * Revision 1.11  1993/08/17  18:56:18  chouck
  * Redid some changes from version 1.9
  *
@@ -170,8 +173,8 @@ char    *fields;
     int32   ac, found;
     register intn j, i;
     intn  order;
-    VREADLIST     rlist;
-    VWRITELIST  wlist;
+    VREADLIST   *rlist;
+    VWRITELIST  *wlist;
     vsinstance_t    *w;
     VDATA           *vs;
     char  * FUNC = "VSsetfields";
@@ -181,7 +184,7 @@ char    *fields;
         HEprint(stderr, 0);
         return(FAIL);
     }
-  
+
   /* locate vs's index in vstab */
     if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
         HERROR(DFE_NOVS);
@@ -195,34 +198,35 @@ char    *fields;
           HEprint(stderr,0);
           return(FAIL);
     }
-  
+
     if((scanattrs(fields, &ac, &av) == FAIL) || (ac == 0))
         HRETURN_ERROR(DFE_BADFIELDS,FAIL);
 
-  /* 
-   * write to an empty vdata : set the write list but do not set the 
+  /*
+   * write to an empty vdata : set the write list but do not set the
    *   read list cuz there is nothing there to read yet...
    */
     if(vs->access == 'w' && vs->nvertices == 0) {
-        wlist        = vs->wlist;
-        wlist.ivsize = 0;
-        wlist.n      = 0;
+        wlist=HDgetspace(sizeof(VWRITELIST));
+        HDmemcpy(wlist,&(vs->wlist),sizeof(VWRITELIST));
+        wlist->ivsize = 0;
+        wlist->n      = 0;
         for(i = 0; i < ac; i++) {
-            
+
             found = FALSE;
             /* --- first look in the user's symbol table --- */
             for(j = 0; j < vs->nusym; j++)
                 if (!HDstrcmp(av[i], vs->usym[j].name)) {
                     found = TRUE;
                     
-                    HDstrcpy (wlist.name[wlist.n], vs->usym[j].name);
+                    HDstrcpy (wlist->name[wlist->n], vs->usym[j].name);
                     order = vs->usym[j].order;
-                    wlist.type[wlist.n]  = vs->usym[j].type;
-                    wlist.order[wlist.n] = order;
-                    wlist.esize[wlist.n] = (int16) order * DFKNTsize(vs->usym[j].type | DFNT_NATIVE);
-                    wlist.isize[wlist.n] = order * vs->usym[j].isize;
-                    wlist.ivsize+= (int16)(wlist.isize[wlist.n]);
-                    wlist.n++;
+                    wlist->type[wlist->n]  = vs->usym[j].type;
+                    wlist->order[wlist->n] = order;
+                    wlist->esize[wlist->n] = (int16) order * DFKNTsize(vs->usym[j].type | DFNT_NATIVE);
+                    wlist->isize[wlist->n] = order * vs->usym[j].isize;
+                    wlist->ivsize+= (int16)(wlist->isize[wlist->n]);
+                    wlist->n++;
                     break;
                 }
             
@@ -231,15 +235,15 @@ char    *fields;
                 for(j = 0; j < NRESERVED; j++)
                     if (!HDstrcmp(av[i], rstab[j].name)) {
                         found = TRUE;
-                        
-                        HDstrcpy( wlist.name[wlist.n],rstab[j].name);
+
+                        HDstrcpy( wlist->name[wlist->n],rstab[j].name);
                         order = rstab[j].order;
-                        wlist.type[wlist.n]  =  rstab[j].type;
-                        wlist.order[wlist.n] =  order;
-                        wlist.esize[wlist.n] =  (int16) order * DFKNTsize(rstab[j].type | DFNT_NATIVE);
-                        wlist.isize[wlist.n] =  order * rstab[j].isize;
-                        wlist.ivsize+= (int16)(wlist.isize[wlist.n]);
-                        wlist.n++;
+                        wlist->type[wlist->n]  =  rstab[j].type;
+                        wlist->order[wlist->n] =  order;
+                        wlist->esize[wlist->n] =  (int16) order * DFKNTsize(rstab[j].type | DFNT_NATIVE);
+                        wlist->isize[wlist->n] =  order * rstab[j].isize;
+                        wlist->ivsize+= (int16)(wlist->isize[wlist->n]);
+                        wlist->n++;
                         break;
                     }
             }
@@ -250,39 +254,41 @@ char    *fields;
     /* *********************************************************** */
     /* ensure fields with order > 1 are alone  */
 #ifdef CHOUCK
-        for (i = 0; i < wlist.n; i++)
-            if (wlist.order[i] > 1 && wlist.n != 1)
+        for (i = 0; i < wlist->n; i++)
+            if (wlist->order[i] > 1 && wlist->n != 1)
                 HRETURN_ERROR(DFE_BADORDER,FAIL);
 #endif /* CHOUCK */
 
     /* *********************************************************** */
     /* compute and save the fields' offsets */
-        for (j=0, i=0; i < wlist.n; i++) {
-            wlist.off[i] = (int16)j;
-            j += wlist.isize[i];
+        for (j=0, i=0; i < wlist->n; i++) {
+            wlist->off[i] = (int16)j;
+            j += wlist->isize[i];
         }
     
     /* copy from wlist (temp) into vdata */
-        HDmemcpy((VOIDP) &(vs->wlist), (VOIDP) &(wlist), sizeof(wlist));
-    
+        HDmemcpy((VOIDP) &(vs->wlist), (VOIDP) wlist, sizeof(VWRITELIST));
+
+        HDfreespace(wlist);     /* free up the writelist */
         return(SUCCEED); /* ok */
   } /* writing to empty vdata */
 
   /*
-   *   No matter the access mode, if there are elements in the VData 
+   *   No matter the access mode, if there are elements in the VData
    *      we should set the read list
    */
     if(vs->nvertices > 0) {
-        rlist   = vs->rlist;
-        rlist.n = 0;
+        rlist=HDgetspace(sizeof(VREADLIST));
+        HDmemcpy(rlist,&(vs->rlist),sizeof(VREADLIST));
+        rlist->n = 0;
         for (i = 0; i < ac; i++) {
             found = FALSE;
             for (j = 0; j < vs->wlist.n; j++)
                 if (!HDstrcmp(av[i], vs->wlist.name[j]) ) { /*  see if field exist */
                     found = TRUE;
                     
-                    rlist.item[rlist.n] = j; /* save as index into wlist->name */
-                    rlist.n++;
+                    rlist->item[rlist->n] = j; /* save as index into wlist->name */
+                    rlist->n++;
                     break;
                 }
             if (!found)       /* field does not exist - error */
@@ -290,7 +296,8 @@ char    *fields;
         }
         
         /* copy from rlist (temp) into vdata */
-        HDmemcpy((VOIDP) &(vs->rlist), (VOIDP) &(rlist), sizeof(rlist));
+        HDmemcpy((VOIDP) &(vs->rlist), (VOIDP) rlist, sizeof(VREADLIST));
+        HDfreespace(rlist);     /* free the readlist */
         
         return(SUCCEED);
         
@@ -300,7 +307,7 @@ char    *fields;
 } /* VSsetfields */
 
 /* ------------------------------------------------------------------ */
-/* 
+/*
 ** defines a (one) new field within the vdata 
 ** return FAIL if error
 ** return SUCCEED if success

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1993/08/19 16:45:45  chouck
-Added code and tests for multi-order Vdatas
+Revision 1.8  1993/08/20 22:38:37  koziol
+Reduced the static memory of a couple of functions to make the PC happier...
 
+ * Revision 1.7  1993/08/19  16:45:45  chouck
+ * Added code and tests for multi-order Vdatas
+ *
  * Revision 1.6  1993/08/16  21:46:32  koziol
  * Wrapped in changes for final, working version on the PC.
  *
@@ -136,10 +139,8 @@ int32 vimakecompat(f)
 HFILEID f;
 #endif
 {
-	VGROUP 	tempvgroup;
-	VDATA	tempvdata;
-	VGROUP	* vg = &tempvgroup;
-	VDATA	*vs = &tempvdata;
+	VGROUP	* vg;
+	VDATA	*vs;
     uint8   *buf=NULL; /* to store an old vdata or vgroup descriptor  */
 	int32 	old_bsize=0,bsize,
 	        aid;
@@ -151,6 +152,7 @@ HFILEID f;
 	/* =============================================  */
 	/* --- read all vgs and convert each --- */
 
+	vg = HDgetspace(sizeof(VGROUP));    /* allocate space for the VGroup */
     stat = aid = Hstartread (f, (uint16)OLD_VGDESCTAG, DFREF_WILDCARD);
 	while (stat != FAIL) {
         HQuerytagref (aid, &tag, &ref);
@@ -193,6 +195,7 @@ HFILEID f;
         stat = Hnextread (aid, (uint16)OLD_VGDESCTAG, DFREF_WILDCARD, DF_CURRENT);
 	  } /* while */
     Hendaccess (aid);
+    HDfreespace(vg);
 
 	/* =============================================  */
 	/* --- read all vdata descs  and convert each --- */
@@ -200,6 +203,7 @@ HFILEID f;
 
     old_bsize=0;    /* reset state variables */
     buf=NULL;
+	vs = HDgetspace(sizeof(VDATA));    /* allocate space for the VData */
     stat = aid = Hstartread (f, (uint16)OLD_VSDESCTAG, DFREF_WILDCARD);
 	while (stat != FAIL) {
 
@@ -243,6 +247,7 @@ HFILEID f;
 	  } /* while */
 
     Hendaccess (aid);
+    HDfreespace(vg);
 
 	return(1);
 
