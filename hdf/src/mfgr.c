@@ -356,6 +356,76 @@ New_grfile(HFILEID f)
 
 /*--------------------------------------------------------------------------
  NAME
+    GRIisspecial_type
+ PURPOSE
+    Check if an element is special.
+ USAGE
+    intn GRIisspecial_type(tag, ref, special_type)
+        int32 file_id;		IN: file id
+        uint16 tag;		IN: tag of the element
+        uint16 ref;		IN: ref of the element
+ RETURNS
+    1 if the element is special of the specified type, and 0, otherwise.
+ DESCRIPTION
+    Called internally by the GRIget_image_list to allow a chunked or 
+    linked-block element to proceed eventhough its offset is 0.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+
+  *** Only called by library routines, should _not_ be called externally ***
+
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+PRIVATE intn
+GRIisspecial_type(int32 file_id, uint16 tag, uint16 ref)
+{
+    CONSTR(FUNC, "GRIisspecial_type");
+    accrec_t* access_rec=NULL;/* access element record */
+    int32     aid;
+    intn      ret_value=0;
+
+    /* clear error stack */
+    HEclear();
+
+    /* start read access on the access record of the data element, which
+       is being inquired for its special information */
+    aid = Hstartread(file_id, tag, ref);
+
+    /* get the access_rec pointer */
+    access_rec = HAatom_object(aid);
+    if (access_rec == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* only return the valid special code, anything else return 0 */
+    switch (access_rec->special)
+    {
+	case SPECIAL_LINKED:
+	case SPECIAL_EXT:
+	case SPECIAL_COMP:
+	case SPECIAL_VLINKED:
+	case SPECIAL_CHUNKED:
+	case SPECIAL_BUFFERED:
+	case SPECIAL_COMPRAS:
+	    ret_value = access_rec->special;
+	    break;
+	default:
+	    ret_value = 0;
+    } /* switch */
+done:
+  if(ret_value == FAIL)
+    { /* Error condition cleanup */
+	/* end access to the aid if it's been accessed */
+	if (aid != 0)
+	    if (Hendaccess(aid)== FAIL)
+		HERROR(DFE_CANTENDACCESS);
+    } /* end if */
+
+  /* Normal function cleanup */
+  return ret_value;
+}   /* GRIisspecial_type */
+
+/*--------------------------------------------------------------------------
+ NAME
     GRIget_image_list
  PURPOSE
     Find all the unique raster images in the file
@@ -659,21 +729,30 @@ printf("%s: tag=%u, ref=%u\n",FUNC,(unsigned)grp_tag,(unsigned)grp_ref);
     */
 
     nimages = curr_image;   /* reset the number of images we really have */
-#ifdef QAK
+/* #ifdef QAK */
 printf("before duplicate elimination, curr_image=%d\n",curr_image);
 for (i = 0; i < curr_image; i++)
   {
     printf("%d: tag=%u, ref=%u, offset=%ld\n",(int)i,(unsigned)img_info[i].img_tag,(unsigned)img_info[i].img_ref,(long)img_info[i].offset);
   } /* end for */
-#endif /* QAK */
+/* #endif QAK */ 
     for (i = 0; i < curr_image; i++)
       {     /* go through the images looking for duplicates */
           if(img_info[i].img_tag!=DFTAG_NULL)
               for (j = i+1; j < curr_image; j++)
                 {
                     if(img_info[j].img_tag!=DFTAG_NULL)
-                        if ((img_info[i].offset!= INVALID_OFFSET && img_info[i].offset!=0)
-                            && img_info[i].offset == img_info[j].offset)
+		      {
+			/* temp vars, just to use in the following if statement
+			   so it'll be less cluttered; I don't want to touch 
+			   the rest of the code - BMR 02-2005 - bug #814 */
+		        uint16 *tagi=&(img_info[i].img_tag);
+			uint16 *refi=&(img_info[i].img_ref);
+                        if (((img_info[i].offset!= INVALID_OFFSET && img_info[i].offset!=0)
+                            && img_info[i].offset == img_info[j].offset) ||
+			GRIisspecial_type(file_id,*tagi,*refi)==SPECIAL_LINKED ||
+			GRIisspecial_type(file_id,*tagi,*refi)==SPECIAL_CHUNKED)
+
                           {
                               /* eliminate the oldest tag from the match */
                               switch(img_info[i].img_tag) {
@@ -710,21 +789,21 @@ for (i = 0; i < curr_image; i++)
                                 } /* end switch */
                               nimages--;  /* if duplicate found, decrement the number of images */
                           } /* end if */
+                     } /* end if */
                 } /* end for */
       } /* end for */
-#ifdef QAK
-printf("after duplicate elimination\n");
+printf("after duplicate elimination, curr_image = %d\n", curr_image);
 for (i = 0; i < curr_image; i++)
   {
     printf("%d: tag=%u, ref=%u, offset=%ld\n",(int)i,(unsigned)img_info[i].img_tag,(unsigned)img_info[i].img_ref,(long)img_info[i].offset);
   } /* end for */
-#endif /* QAK */
 
     /* Ok, now sort through the file for information about each image found */
     for(i=0; i<curr_image; i++)
       {
           if(img_info[i].img_tag!=DFTAG_NULL)
             {
+		    printf("DFTAG_NULL\n");
               switch(img_info[i].grp_tag) {
                   case DFTAG_VG: /* New style raster image, found in a Vgroup */
                       {
@@ -735,6 +814,7 @@ for (i = 0; i < curr_image; i++)
                           uint8 ntstring[4];        /* buffer to store NT info */
                           uint8 GRtbuf[64];         /* local buffer for reading RIG info */
 
+			      printf("DFTAG_VG\n");
 #ifdef QAK
 printf("%s: reading GR vgroup, img_ref=%d\n",FUNC,(int)img_info[i].img_ref);
 #endif /* QAK */
@@ -776,6 +856,7 @@ printf("%s: reading GR vgroup, img_ref=%d\n",FUNC,(int)img_info[i].img_ref);
                                       /* parse this tag/ref pair */
                                       switch(img_tag) {
                                           case DFTAG_RI:    /* Regular image data */
+						  printf("switch(img_tag) - DFTAG_RI - tag = %d\n", img_tag);
                                               new_image->img_tag=(uint16)img_tag;
                                               new_image->img_ref=(uint16)img_ref;
                                               if(SPECIALTAG(new_image->img_tag)==TRUE) {
@@ -784,6 +865,7 @@ printf("%s: reading GR vgroup, img_ref=%d\n",FUNC,(int)img_info[i].img_ref);
                                               break;
 
                                           case DFTAG_CI:    /* Compressed image data */
+						  printf("switch(img_tag) - DFTAG_CI\n");
                                               new_image->img_tag=(uint16)img_tag;
                                               new_image->img_ref=(uint16)img_ref;
                                               new_image->use_buf_drvr=1;
@@ -986,6 +1068,7 @@ printf("%s: reading GR vgroup, img_ref=%d\n",FUNC,(int)img_info[i].img_ref);
 #ifdef QAK
 printf("%s: reading RIG, img_ref=%d\n",FUNC,(int)img_info[i].img_ref);
 #endif /* QAK */
+			      printf("DFTAG_RIG\n");
                           /* read RIG into memory */
                           if ((GroupID = DFdiread(file_id, DFTAG_RIG, img_info[i].grp_ref)) == FAIL)
                               HGOTO_ERROR(DFE_READERROR, FAIL);
@@ -1175,6 +1258,7 @@ printf("%s: reading RIG, img_ref=%d\n",FUNC,(int)img_info[i].img_ref);
 #ifdef QAK
 printf("%s: reading RI, img_ref=%d\n",FUNC,(int)img_info[i].img_ref);
 #endif /* QAK */
+			      printf("case DFTAG_NULL\n");
                           if((new_image=(ri_info_t *)HDmalloc(sizeof(ri_info_t)))==NULL)
                             {
                               HDfree(img_info);   /* free offsets */
@@ -1258,6 +1342,7 @@ printf("%s: reading RI, img_ref=%d\n",FUNC,(int)img_info[i].img_ref);
                       break;
 
                   default: /* an image which was eliminated from the list of images */
+		      printf("switch(img_tag) - grp_tag = %d, in default\n", img_info[i].grp_tag);
                     break;
                 } /* end switch */
             } /* end if */
