@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/05/18 22:11:07  sxu
-modified constants for number types
+Revision 1.3  1992/05/27 21:51:19  chouck
+Added a few casts to VSwrite() calls
 
+ * Revision 1.2  1992/05/18  22:11:07  sxu
+ * modified constants for number types
+ *
  * Revision 1.1  1992/03/01  22:29:07  dilg
  * Initial revision
  *
@@ -93,8 +96,11 @@ doit() {
 		VSsetfields (vs1,"DOLLARS");
 		VSsetfields (vs2,"DOLLARS");
 
-		VSwrite (vs1, &bb[i*50], nelt1, FULL_INTERLACE);
-		VSwrite (vs2, &bb[i*50], nelt2, FULL_INTERLACE);
+		VSwrite (vs1, (unsigned char *) &bb[i*50], nelt1, 
+                         FULL_INTERLACE);
+
+		VSwrite (vs2, (unsigned char *) &bb[i*50], nelt2, 
+                         FULL_INTERLACE);
 
 		Vinsert (vg1,vs1);
 		Vinsert (vg2,vs2);
