@@ -61,7 +61,7 @@ all: testhdf fortest
 
 nofortran: testhdf
 
-debug: dbgtesthdf
+debug: ptesthdf
 
 #.c.o: 
 #	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
@@ -69,8 +69,8 @@ debug: dbgtesthdf
 .c.o: 
 	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
 
-dbgtesthdf: $(CTESTS) $(HDFLIB)/libdf.a
-	purify $(CC) $(CFLAGS) -o dbgtesthdf $(CTESTS) $(HDFLIB)/libdf.a
+ptesthdf: $(CTESTS) $(HDFLIB)/libdf.a
+	purify $(CC) $(CFLAGS) -o ptesthdf $(CTESTS) $(HDFLIB)/libdf.a
 
 testhdf.tc: $(CTESTS) $(HDFLIB)/libdf.a
 	proof $(CC) $(CFLAGS) -o testhdf.tc $(CTESTS) $(HDFLIB)/libdf.a
