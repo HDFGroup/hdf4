@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.19  1993/02/18 04:21:47  georgev
-Fixed DFSDsetfillvalue so that users don't clobber their data.
+Revision 1.20  1993/02/25 22:35:41  georgev
+The fill value wasn't being freed.
 
+ * Revision 1.19  1993/02/18  04:21:47  georgev
+ * Fixed DFSDsetfillvalue so that users don't clobber their data.
+ *
  * Revision 1.18  1993/02/02  00:13:04  georgev
  * Changed Hyperslab interface, added DFSDstartslab(), DFSDendslab().
  * Removed DFSDwritefillvalue().Fixed bug when writing out slabs in 
@@ -3332,11 +3335,14 @@ DFSsdg *sdg;
     sdg->aid = (int32)-1;
     sdg->compression = (int32)0;
     FileTranspose = 0;
+    sdg->fill_value = HDfreespace(sdg->fill_value);
 
     Ref.dims = -1;
     Ref.scales = Ref.luf[LABEL] = Ref.luf[UNIT] = Ref.luf[FORMAT] = (-1);
     Ref.coordsys = Ref.maxmin = (-1);
     Ref.new_ndg = -1;
+    Ref.fill_value = -1;
+
     return(0);
 }
 
