@@ -2511,9 +2511,11 @@ DESCRIPTION
 intn
 HDvalidfid(int32 file_id)
 {
-  filerec_t  *file_rec = HAatom_object(file_id);
+  filerec_t  *file_rec;
   intn        ret_value = TRUE;
 
+  /* convert file id to file rec and check for validity */
+  file_rec = HAatom_object(file_id);
   if (BADFREC(file_rec))
     ret_value = FALSE;
 

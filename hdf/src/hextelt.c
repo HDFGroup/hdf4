@@ -737,10 +737,12 @@ HXPwrite(accrec_t * access_rec, int32 length, const void * data)
     CONSTR(FUNC, "HXPwrite");   /* for HERROR */
     extinfo_t  *info =          /* information on the special element */
                     (extinfo_t *) (access_rec->special_info);
-    uint8      *p =local_ptbuf;/* temp buffer ptr */
-    filerec_t  *file_rec =     /* file record */
-                          HAatom_object(access_rec->file_id);
+    uint8      *p =local_ptbuf; /* temp buffer ptr */
+    filerec_t  *file_rec;       /* file record */
     int32      ret_value = SUCCEED;
+
+    /* convert file id to file record */
+    file_rec = HAatom_object(access_rec->file_id);
 
     /* validate length */
     if (length < 0)
@@ -905,9 +907,11 @@ intn
 HXPendaccess(accrec_t * access_rec)
 {
     CONSTR(FUNC, "HXPendaccess");   /* for HERROR */
-    filerec_t  *file_rec =      /* file record */
-        HAatom_object(access_rec->file_id);
+    filerec_t  *file_rec;           /* file record */
     intn     ret_value = SUCCEED;
+
+    /* convert file id to file record */
+    file_rec = HAatom_object(access_rec->file_id);
 
     /* close the file pointed to by this access rec */
     HXPcloseAID(access_rec);

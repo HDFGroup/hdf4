@@ -1015,8 +1015,11 @@ int32 Hnumber(int32 file_id,    /* IN: File ID the tag/refs are in */
     CONSTR(FUNC, "Hnumber");
     uintn       all_cnt;
     uintn       real_cnt;
-    filerec_t  *file_rec = HAatom_object(file_id);
+    filerec_t  *file_rec;           /* file record */
     int32 ret_value=SUCCEED;
+
+    /* convert file id to file record */
+    file_rec = HAatom_object(file_id);
 
 #ifdef HAVE_PABLO
   TRACE_ON(PABLO_mask,ID_Hnumber);

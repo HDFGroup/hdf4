@@ -1212,8 +1212,7 @@ HLPwrite(accrec_t   *access_rec,
 {
     CONSTR(FUNC, "HLPwrite");   /* for HERROR */
     const uint8      *data = datap;
-    filerec_t  *file_rec =      /* file record */
-        HAatom_object(access_rec->file_id);
+    filerec_t  *file_rec;       /* file record */
     int32       dd_aid;         /* AID for writing the special info */
     uint16      data_tag, data_ref;  /* Tag/ref of the data in the file */
     linkinfo_t *info =          /* linked blocks information record */
@@ -1223,7 +1222,7 @@ HLPwrite(accrec_t   *access_rec,
     int32       relative_posn = /* relative position in linked block */
         access_rec->posn;
     int32       block_idx;      /* block table index of current block */
-    link_t     *prev_link = NULL;   /* ptr to block table before current block table.
+    link_t     *prev_link = NULL; /* ptr to block table before current block table.
                                        for groking the offset of
                                        current block table */
     int32       current_length; /* length of current block */
@@ -1231,6 +1230,9 @@ HLPwrite(accrec_t   *access_rec,
     int32       bytes_written = 0;  /* total #bytes written by HLIwrite */
     uint8       local_ptbuf[4];
     int32       ret_value = SUCCEED;
+
+    /* convert file id to file record */
+    file_rec = HAatom_object(access_rec->file_id);
 
 #ifdef QAK
 printf("%s: length=%d\n",FUNC,(int)length);
@@ -1660,9 +1662,11 @@ intn
 HLPendaccess(accrec_t * access_rec)
 {
     CONSTR(FUNC, "HLPendaccess");   /* for HERROR */
-    filerec_t  *file_rec =      /* file record */
-        HAatom_object(access_rec->file_id);
+    filerec_t  *file_rec;           /* file record */
     intn      ret_value = SUCCEED;
+
+    /* convert file id to file record */
+    file_rec = HAatom_object(access_rec->file_id);
 
     /* detach the special information record.
        If no more references to that, free the record */

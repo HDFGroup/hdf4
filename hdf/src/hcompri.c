@@ -462,9 +462,11 @@ HRPendaccess(accrec_t * access_rec)
 #ifdef LATER
     CONSTR(FUNC, "HRPendaccess");   /* for HERROR */
 #endif /* LATER */
-    filerec_t  *file_rec =      /* file record */
-        HAatom_object(access_rec->file_id);
+    filerec_t  *file_rec; 	    /* file record */
     intn     ret_value = SUCCEED;
+
+    /* convert file id to file record */
+    file_rec = HAatom_object(access_rec->file_id);
 
 #ifdef QAK
 printf("%s: check 1.0\n",FUNC);
