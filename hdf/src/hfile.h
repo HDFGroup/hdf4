@@ -415,6 +415,9 @@ extern "C" {
 extern int HIget_access_slot
   (void);
 
+extern intn HIcount_dd(filerec_t *file_rec, uint16 cnt_tag,uint16 cnt_ref,
+	uintn *all_cnt, uintn *real_cnt);
+	
 extern int HIfind_dd
   (uint16 look_tag, uint16 look_ref, ddblock_t **pblock, int32 *pidx,
         intn direction);

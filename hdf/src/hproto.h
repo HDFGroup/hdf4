@@ -101,6 +101,9 @@ extern int Hsync
 extern int32 Hnumber
     (int32 file_id, uint16 tag);
 
+extern intn Hnobj
+    (int32 file_id);
+
 extern intn Hgetlibversion
     (uint32 _HUGE *majorv, uint32 _HUGE *minorv,
            uint32 _HUGE *releasev, char _HUGE *string);

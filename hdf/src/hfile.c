@@ -44,6 +44,7 @@ static char RcsId[] = "@(#)$Revision$";
        Hishdf      -- tells if a file is an HDF file
        Hsync       -- sync file with memory
        Hnumber     -- count number of occurrances of tag/ref in file
+       Hnobj       -- determine number of objects in a file
        Hgetlibversion  -- return version info on current HDF library
        Hgetfileversion -- return version info on HDF file
        Hfind       -- locate the next object of a search in an HDF file
@@ -2316,25 +2317,51 @@ PRIVATE int HIunlock(int32 file_id)
 int32 Hnumber(int32 file_id, uint16 tag)
 {
     CONSTR(FUNC,"Hnumber");
-    int32 n = 0;
-    ddblock_t *block;
-    int32 idx;
+    uintn all_cnt;
+    uintn real_cnt;
     filerec_t *file_rec = FID2REC(file_id);
 
     HEclear();
     if (!file_rec || file_rec->refcount == 0)
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
-    block = file_rec->ddhead;
-    idx = -1;
-    for (;;) {
-        if (HIfind_dd(tag, DFREF_WILDCARD, &block, &idx, DF_FORWARD) == FAIL)
-            break;
-        n++;
-    }
-    return n;
-
+	if(HIcount_dd(file_rec,tag,DFREF_WILDCARD,&all_cnt,&real_cnt)==FAIL)
+       HRETURN_ERROR(DFE_INTERNAL,FAIL);
+    return (int32)real_cnt;
 } /* Hnumber */
+
+
+/*--------------------------------------------------------------------------
+ NAME
+       Hnobj -- determine number of objects in a file
+ USAGE
+	intn Hnobj(fid)
+       	int32 fid;               IN: file ID
+ RETURNS
+       the number of objects in the file off any type except DFTAG_NULL
+	   & DFTAG_FREE else FAIL
+ DESCRIPTION
+       Determine how many objects of all tag/refs are in the file.
+
+       Note, a return value of zero is not a fail condition.
+
+--------------------------------------------------------------------------*/
+intn Hnobj(int32 file_id)
+{
+    CONSTR(FUNC,"Hnumber");
+    uintn all_cnt;
+    uintn real_cnt;
+    filerec_t *file_rec = FID2REC(file_id);
+
+    HEclear();
+    if (!file_rec || file_rec->refcount == 0)
+       HRETURN_ERROR(DFE_ARGS,FAIL);
+
+	if(HIcount_dd(file_rec,DFTAG_WILDCARD,DFREF_WILDCARD,&all_cnt,&real_cnt)==FAIL)
+       HRETURN_ERROR(DFE_INTERNAL,FAIL);
+		
+    return((intn)real_cnt);
+} /* Hnobj */
 
 
 /* ------------------------- SPECIAL TAG ROUTINES ------------------------- */
