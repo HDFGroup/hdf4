@@ -932,7 +932,7 @@ uint32    count;
             if(handle->hdf_mode == DFACC_RDONLY) {
                 if(vp->data_tag == DATA_TAG || vp->data_tag == DFTAG_SDS) {
                     if((attr = NC_findattr(&vp->attrs, _FillValue))!= NULL)
-                        HDmemfill(values,(*attr)->data->values,vp->szof,(vp->len/vp->HDFsize));
+                        HDmemfill(values,(*attr)->data->values,vp->szof,count);
                     else 
                         NC_arrayfill(values, count * vp->szof, vp->type);
                 }
