@@ -697,7 +697,9 @@ case "${OS}" in
 #   esac
 # done
 
-                LD_XDR=-lnsl;;
+                # QAK: If FreeBSD has float support (xdr_float & xdr_double)
+                # in it's libc.a someday, change the following line to LD_XDR=;;
+                LD_XDR=../xdr/xdrfloat.o;;
   hpux*)          
 #               for arg in -DHP9000; do
 #   case "$HDF_INC" in
@@ -870,6 +872,10 @@ fi
 rm -f conftest*
 
 echo checking for function prototypes
+# If you can get the FreeBSD stuff working, more power to you -QAK
+if test "$OS" = freebsd; then   # for some reason this is not working on FreeBSD
+    :
+else
 cat > conftest.c <<EOF
 
 main() { exit(0); } 
@@ -888,8 +894,13 @@ else
 
 fi
 rm -f conftest*
+fi
 
 echo checking for working const
+# If you can get the FreeBSD stuff working, more power to you -QAK
+if test "$OS" = freebsd; then   # for some reason this is not working on FreeBSD
+    :
+else
 cat > conftest.c <<EOF
 
 main() { exit(0); } 
@@ -909,8 +920,13 @@ else
 
 fi
 rm -f conftest*
+fi
 
 echo checking for variadic function support
+# If you can get the FreeBSD stuff working, more power to you -QAK
+if test "$OS" = freebsd; then   # for some reason this is not working on FreeBSD
+    :
+else
 cat > conftest.c <<EOF
 
 main() { exit(0); } 
@@ -936,6 +952,7 @@ else
 
 fi
 rm -f conftest*
+fi
 
 if test `$WHICH "${FC-}" | wc -w` != 1; then
 echo checking for strerror
