@@ -3048,7 +3048,7 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
                 (HFILEID _HUGE * f, _fcd name, intf _HUGE * namelen);
 
     extern      FRETVAL(intf) nvfndclsc
-                (HFILEID _HUGE * f, _fcd class, intf _HUGE * classlen);
+                (HFILEID _HUGE * f, _fcd vgclass, intf _HUGE * classlen);
 
     extern      FRETVAL(intf) nvhsdc
                 (HFILEID _HUGE * f, _fcd field, uint8 _HUGE * buf, intf _HUGE * n, intf _HUGE * datatype,
