@@ -68,7 +68,7 @@ JPEGLIB=../jpeg
 
 #Common include
 #COMMINC=-I../common/chipset/src/rbtree
-#COMMLIB=../common/chipset/src/librb.a
+#COMMLIB=../common/chipset/src/rbtree/librb.a
 
 # all includes
 ALLINC= -I$(JPEGINC) $(COMMINC)
@@ -296,3 +296,5 @@ hblocks.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 hblocks.o: vproto.h hfile.h $(FRC)
 mfan.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 mfan.o: vproto.h hfile.h mfan.h $(FRC)
+mfanf.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+mfanf.o: vproto.h hfile.h mfan.h $(FRC)
