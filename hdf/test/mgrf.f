@@ -87,10 +87,10 @@ c      integer mgsattr
       equivalence (outbuf, buf), (outbuf1, buf1), (outbuf2,buf2)
       equivalence (inbuf, in), (inbuf1, in1), (inbuf2,in2)
       character pal(3,256), in_pal(3,256), in_pal2(256,3)
-      integer*4 file_id, gr_id, ri_id, pal_id, index, index2
-      integer*4 n_datasets, n_attrs, ref
-      integer*4 n_comp, nt
-      integer*4 dims(2), start(2), stride(2)
+      integer   file_id, gr_id, ri_id, pal_id, index, index2
+      integer   n_datasets, n_attrs, ref
+      integer   n_comp, nt
+      integer   dims(2), start(2), stride(2)
       integer*4 attr(5), attr2(5), attr2_n(5)
       character attr_c(6), attr2_c(6)
       character cbuf(2,3,4), icbuf(2,3,4)
