@@ -1,64 +1,9 @@
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.16.2.1  1993/10/10 22:10:27  koziol
-Moved Tag descriptions into a header file.  Updated compression routines.
+/* $Id$ */
 
- * Revision 1.16  1993/09/30  19:05:15  koziol
- * Added basic compressing functionality for special tags.
- *
- * Revision 1.15  1993/09/28  18:04:41  koziol
- * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
- * tag handling.  Added new compression special tag type.
- *
- * Revision 1.14  1993/09/21  20:21:05  georgev
- * Changed  DFTAG_SDD tag.
- *
- * Revision 1.13  1993/08/16  21:46:05  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.12  1993/07/01  20:08:09  chouck
- * Made the hash table use fewer malloc() and free() pairs to improve
- * efficiency and (hopefully) reduce PC memory fragmentation.
- *
- * Revision 1.11  1993/04/22  20:24:22  koziol
- * Added new Hfind() routine to hfile.c which duplicates older DFsetfind/DFfind
- * utility...
- *
- * Revision 1.9  1993/04/14  21:39:22  georgev
- * Had to add some VOIDP casts to some functions to make the compiler happy.
- *
- * Revision 1.8  1993/04/05  22:35:51  koziol
- * Fixed goofups made in haste when patching code.
- *
- * Revision 1.7  1993/03/29  17:21:03  chouck
- * Fixed a prototype problem
- *
- * Revision 1.6  1993/01/26  19:42:48  koziol
- * Added support for reading and writing Little-Endian data on all
- * platforms.  This has been tested on: Cray, Sun, and PCs so far.
- *
- * Revision 1.5  1993/01/19  05:56:03  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.4  1992/11/05  18:59:26  chouck
- * Added (unix) wrapper to realloc()
- *
- * Revision 1.3  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.2  1992/08/26  19:44:25  chouck
- * Moved HDgettagname() into hkit.c and added calibration tag
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 #include <ctype.h>
 #include "hdf.h"
 #include "herr.h"
