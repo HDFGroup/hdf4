@@ -524,8 +524,8 @@
 ./hdf/util/testfiles/README
 ./hdf/util/testfiles/SunWheel.gif
 ./hdf/util/testfiles/bttrfly.gif
-./hdf/util/testfiles/head.r24.Z
-./hdf/util/testfiles/head.r8.Z
+./hdf/util/testfiles/head.r24.gz
+./hdf/util/testfiles/head.r8.gz
 ./hdf/util/testfiles/jet2.hdf
 ./hdf/util/testfiles/jpeg_img.jpg
 ./hdf/util/testfiles/ntcheck.hdf
