@@ -2,9 +2,13 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.2  1992/04/27 20:49:14  koziol
-C Changed hopen and hclose calls to hiopen and hiclose stub routine calls
+C Revision 1.3  1992/05/06 23:03:22  sxu
+C changed hiopen to hopen and hiclose to hclose
+C hopen returns fid (not ret)
 C
+c Revision 1.2  1992/04/27  20:49:14  koziol
+c Changed hopen and hclose calls to hiopen and hiclose stub routine calls
+c
 c Revision 1.1  1992/04/27  17:07:49  sxu
 c Initial revision
 c
@@ -25,7 +29,7 @@ C                 may be due to a bug in dfan.c in DFANIgetann().
 C
 
       integer daafid, daafds,dagfidl,dagfid
-      integer dagfdsl, dagfds, hiopen, hiclose
+      integer dagfdsl, dagfds, hopen, hclose
       integer ret, number_failed
       integer ISFIRST, NOFIRST, MAXLEN_LAB, MAXLEN_DESC
       integer fid, DFACC_CREATE, DFACC_READ
@@ -54,8 +58,8 @@ C
       desc2 = 'File descr #2: One more test ...'
 
       print *, '****** Write file labels *******'
-      fid = hiopen(TESTFILE, DFACC_CREATE, 0)
-      call RESULT(fid, 'hiopen')
+      fid = hopen(TESTFILE, DFACC_CREATE, 0)
+      call RESULT(fid, 'hopen')
       ret = daafid(fid, lab1)
       call RESULT(ret, 'daafid')
 
@@ -69,12 +73,12 @@ C
       ret = daafds(fid, desc2, len(desc2))
       call RESULT(ret, 'daafds')
 
-      ret = hiclose(fid)
-      call RESULT(ret, 'hiclose')
+      ret = hclose(fid)
+      call RESULT(ret, 'hclose')
 
       print *, '****** Read length of the first file label ****'
-      ret = hiopen(TESTFILE, DFACC_READ, 0)
-      call RESULT(ret, 'hiopen-read')
+      fid = hopen(TESTFILE, DFACC_READ, 0)
+      call RESULT(fid, 'hopen-read')
       ret = dagfidl(fid, ISFIRST)
       call RESULT(ret, 'dagfidl')
       call checklen(ret, lab1,  'label'  )
@@ -115,7 +119,10 @@ C
       ret = dagfds(fid, tempstr, MAXLEN_DESC, NOFIRST)
       call RESULT(ret, 'dagfds')
       call checkann(desc2, tempstr, ret, 'description')
-      
+     
+      ret = hclose(fid)
+      call RESULT(ret, 'hclose')
+ 
       print *, CR, CR
 
       if (number_failed .eq. 0) then
