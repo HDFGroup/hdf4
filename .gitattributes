@@ -17,6 +17,7 @@ hdf/pablo/Pablo.pdf -text
 hdf/src/hdflib.project -text
 hdf/test/8bit.dat -text
 hdf/test/bitio.dat -text
+hdf/test/gr_r24.dat -text
 hdf/test/greyjpeg.dat -text
 hdf/test/jpeg.dat -text
 hdf/test/litend.dat -text
