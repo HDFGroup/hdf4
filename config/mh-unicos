@@ -28,8 +28,8 @@ CC=cc
 CFLAGS=-O -s
 
 # Fortran compilier
-FC = cf77
-FFLAGS =-O 1 -s
+FC = f90
+FFLAGS =-O 1
 
 # Name of achive randomizer, usually ranlib (use 'true' if non-existant)
 RANLIB = true
