@@ -153,10 +153,28 @@ NETCDF:
           SUBDIRS="$(NETCDFDIR)" subdn
 
 test:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=hdf-test \
+          SUBDIRS="$(HDFDIR)" subd
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(NETCDFDIR)" subdn
+
+testnofortran:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=hdf-testnofortran \
+          SUBDIRS="$(HDFDIR)" subd
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=test \
+          SUBDIRS="$(NETCDFDIR)" subdn
+
+hdf-test:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(HDFDIR)" subd
+
+hdf-testnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="$(NETCDFDIR)" subdn
+          SUBDIRS="$(HDFDIR)" subd
+
+netcdf-test:
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=test \
+          SUBDIRS="$(NETCDFDIR)" subd
 
 hdf-allnofortran: 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="allnofortran" \
@@ -240,10 +258,16 @@ help:
 	@echo "make hdf-utilities     - makes HDF library and utilities"
 	@echo "make libdf             - makes HDF library "
 	@echo "make libjpeg           - makes IJG JPEG library "
-	@echo "make clean     - cleans up HDF and NETCDF packages(*.o,libdf.a,..)"
-	@echo "make distclean - cleans up HDF and NETCDF packages including"
-	@echo "                 configuration(Makefiles,config.status,..)"
-	@echo "make hdfclean  - cleans up HDF package(*.o,libdf.a,..et)"
+	@echo "make test              - run both HDF and NETCDF tests"
+	@echo "make testnofortran     - run HDF tests except the fortran test " 
+	@echo "                         and NETCDF tests "
+	@echo "make netcdf-test       - run NETCDF tests " 
+	@echo "make hdf-test          - run HDF tests " 
+	@echo "make hdf-testnofortran - run HDF tests except the fortran test " 
+	@echo "make clean        - cleans up HDF and NETCDF packages(*.o,libdf.a,..)"
+	@echo "make distclean    - cleans up HDF and NETCDF packages including"
+	@echo "                    configuration(Makefiles,config.status,..)"
+	@echo "make hdfclean     - cleans up HDF package(*.o,libdf.a,..et)"
 	@echo "make hdfdistclean - cleans up HDF package including "
 	@echo "                    configuration(Makefiles,config.status,..)"
 	@echo "make netcdfclean  - cleans up NETCDF package(*.o,libnetcdf.a,..et)"
