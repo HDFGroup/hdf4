@@ -31,6 +31,7 @@
 ./bin/snapshot
 
 ./config/BlankForm
+./config/freebsd
 ./config/irix6.x
 ./config/mh-aix
 ./config/mh-aix64
