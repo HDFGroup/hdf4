@@ -226,11 +226,6 @@ main(int argc, char *argv[])
         return(system("@fortest.com"));
     }
 #else
-        {
-	char fortrancmd[100];
-	HDstrcpy(fortrancmd, "./fortestF < ");
-	HDstrcat(fortrancmd, cmdfilename);
-	return(system(fortrancmd));
-    }
+    return(system("./fortestF"));
 #endif
 }

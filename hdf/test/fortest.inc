@@ -42,3 +42,10 @@ C     9		High:	Highest level.  All information.
      +		FALSE = 0,
      +		TRUE = 1
      +		)
+
+C Tests command file parameters.
+C cmdf: file unit number
+      integer      cmdf
+      character*30 cmdfilename
+      parameter (cmdf = 1)
+      parameter (cmdfilename = 'fortest.arg')

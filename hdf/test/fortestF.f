@@ -8,21 +8,30 @@ C Interface to invoke tests for HDF Fortran interfaces.
 	integer nerror, retcode
 	character cmd*15, test*30
 
+	print *, '==========================================='
+	print *, 'HDF Library Fortran Interface Tests Started'
+	print *, '==========================================='
+
 C Default to cleanup *.hdf files and set verbosity to default value
 	CleanUp = .TRUE.
 	CleanUpCMD = 'rm -f *.hdf'
 	Verbosity = VERBO_DEF
-
-	print *, '==========================================='
-	print *, 'HDF Library Fortran Interface Tests Started'
-	print *, '==========================================='
 	nerror = 0
-	call getcmd(cmd, test, retcode)
-	do while (retcode .eq. 0)
-	    call runcmd(cmd, test, retcode)
-	    if (retcode .ne. 0) nerror = nerror + 1
+
+C Open command file
+        call opencmdf(retcode)
+	if (retcode .ne. 0) then
+	    nerror = nerror + 1
+	else
+C
+C read and run one test command at a time
 	    call getcmd(cmd, test, retcode)
-	end do
+	    do while (retcode .eq. 0)
+		call runcmd(cmd, test, retcode)
+		if (retcode .ne. 0) nerror = nerror + 1
+		call getcmd(cmd, test, retcode)
+	    end do
+	end if
 
 	print *, '====================================='
 	if (nerror .ne. 0) then
@@ -37,6 +46,27 @@ C Default to cleanup *.hdf files and set verbosity to default value
 	stop
 	end
 
+
+C
+C Open the test command file
+C This is more general than reading from standard input file
+C which is often system dependent.
+C Retcode: 0 if everything is fine, else -1
+C
+	subroutine opencmdf(retcode)
+	implicit none
+	include 'fortest.inc'
+
+	integer retcode
+
+	retcode = 0
+	open(cmdf, FILE=cmdfilename, err=100)
+	return
+
+100	call MESSAGE(VERBO_NONE, 'failed to open command file')
+	retcode = -1
+	return
+	end
 
 C Get a test command.
 C Currently taking it from standard input.
@@ -56,7 +86,7 @@ C
 
 C For VMS, un-comment the next line 
 C        read(5,11,END=100,err=100) inline
-	read(*,11,END=100,err=100) inline
+	read(cmdf,11,END=100,err=100) inline
 C	print *, 'inline=', inline
 	linelen = len(inline)
 	i = index(inline, ' ')
@@ -85,8 +115,9 @@ C100	continue
 C        close(5)
 C        retcode =1
 C For VMS comment out next line
-100     retcode = 1
-
+C End of file or read error on cmdfile.  Close it either way.
+100     close(cmdf)
+	retcode = 1
 	return
 C
 11	format(A120)
