@@ -819,11 +819,8 @@
 ./mfhdf/hdfimport/Makefile.in
 ./mfhdf/hdfimport/hdfimport.c
 ./mfhdf/hdfimport/hdfimport.input1
-./mfhdf/hdfimport/hdfimport.input1-32
 ./mfhdf/hdfimport/hdfimport.out1
-./mfhdf/hdfimport/hdfimport.out1-32
 ./mfhdf/hdfimport/hdfimport.out2
-./mfhdf/hdfimport/hdfimport.out2-32
 ./mfhdf/hdfimport/hdfimporttest.c
 ./mfhdf/hdfimport/testutil.sh.in
 
