@@ -17,12 +17,72 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*
- * This file tests the Special Chunking Element layer of the
- * HDF library.
+ * This file tests the Special Chunking Element(HMCxxx) layer of the HDF library.
  *
  * NOTE: No failure conditions are tested yet....
  *
- * -GV
+ * Outline of Tests done:
+ *    1. First test simple writing of 2-D element with no ghost/partial chunks.
+ *       4x4 array of uint8, each chunk 2x2(4 bytes) -> 4 chunks(16 bytes).
+ *       Write out 12 bytes to all 4 chunks with only partial writes
+ *       to the last 2 chunks..
+ *       Write again to last 2 chunks with whole data chunks 
+ *
+ *    2. Now create a new chunked 2-D element with same parameters
+ *       before but write to 2 chunks of element using whole chunks.
+ *       The rest of he data should contain fill values.
+ *
+ *    3. Create a new element but now there will be partial chunks
+ *       because chunk lengths are not an even multiple of dimesion lengths.
+ *       Set dimension to 4x4 array with 4 chunks where each chunk is 
+ *       3x2 = 6 bytes. Real data size is 16 bytes, size with chunks is 
+ *       6 bytes x 4 chunks = 24 bytes 
+ *
+ *    4. Now create 3-D chunked element with no partial chunks.
+ *       Write to only part of the chunked element. The rest
+ *       should be filled with fill values.
+ *       Set dimension to 4x6x8 array with 8 chunks 
+ *       where each chunk is 2x3x4= 24 bytes , read data size 192 bytes 
+ *       data size with chunks is 192 bytes also.
+ *
+ *    5. Now create another 3-D chunked element with partial chunks.
+ *       Write to part of element, rest is filled with fill value.
+ *       Set dimension to 4x6x8 array with 8 chunks , real data 192 bytes
+ *       where each chunk is 3x4x5= 60 bytes , 
+ *       data size with chunks is 60 bytes x 8 chunks = 480 bytes  
+ *
+ *    6. Create 4-D element with partial chunks.
+ *       Write only half the data out(5,000 bytes)
+ *       Set dimension to 10x10x10x10 array -> real data 10,000 bytes .
+ *       120 chunks with chunks of 2x3x4x5 = 120 bytes,
+ *       data size with chunks is 120 bytes x 120 chunks = 14,400 bytes 
+ *
+ *    7. *NOT ENABLED*
+ *       The rest of the tests here are commented out
+ *       They are some extra high order tests to replicate
+ *       some test done on EOS-DEM data 
+ *       Set dimension to 12000x12000 array with 2,500 chunks 
+ *       whith chunk of 240x240 = 57,600 bytes
+ *
+ *  For all the tests the data is read back in and verified.
+ *
+ *  Routines tested using User level H-level calls:
+ *   Hstartread()         -> HMCPstread()
+ *   Hstartwrite()        -> HMCPstwrite()
+ *   Hread()              -> HMCPread()
+ *   Hwrite()             -> HMCPwrite()
+ *   Hendaccess()         -> HMCPendaccess()
+ *   Hinquire()           -> HMCPinquire()
+ *   HDget_special_info() -> HMCPinfo()
+ *
+ * Routines test by direct calling of Chunking routines:
+ *   HMCcreate()
+ *   HMCsetMaxCache()
+ *   HMCwriteChunk()
+ *
+ *
+ * Author -GeorgeV
+ *
  */
 
 #include "tproto.h"
@@ -71,6 +131,7 @@ test_chunks()
     int32      fill_val_len = 1;
     uint8      fill_val = 0;
     int32      nseek = 0;
+    sp_info_block_t info_block;      /* special info block */
     intn       errors = 0;
 
     /* intialize outbufer */
@@ -92,12 +153,14 @@ test_chunks()
 #if 0
 
 #endif
-    /* First test simple writing of 2-D element with no ghost/partial chunks.
-       Set dimension to 4x4 array with 4 chunks 
-       where each chunk is 2x2.
-       Write out 12 bytes to all 4 chunks with only partial writes
-       to the last 2 chunks..
-       Write again to last 2 chunks with whole data chunks */
+    /*
+      1.First test simple writing of 2-D element with no ghost/partial chunks.
+        Set dimension to 4x4 array with 4 chunks 
+        where each chunk is 2x2.
+        Write out 12 bytes to all 4 chunks with only partial writes
+        to the last 2 chunks..
+        Write again to last 2 chunks with whole data chunks 
+     */
     chunk[0].num_dims   = 2; /* 2-D */
     chunk[0].chunk_size = 4; /* 2x2 = 4 bytes */
     chunk[0].chunk_flag = 0; /* nothing set */
@@ -201,6 +264,35 @@ test_chunks()
           errors++;
       }
 
+    MESSAGE(5, printf("Get/Check special info data\n"); );
+
+    /* get special info about element */
+    ret = HDget_special_info(aid1, &info_block);
+    CHECK(aid1, FAIL, "HDget_special_info");
+
+    /* check special info */
+    if (info_block.ndims != chunk[0].num_dims /* 2-D */)
+      {
+          fprintf(stderr, "ERROR: HDget_specail_info does not return the correct values \n");
+      }
+
+    /* check chunk_lengths */
+    if (info_block.cdims != NULL)
+      {
+          if ((info_block.cdims[0] != 2) || (info_block.cdims[1] != 2))
+            {
+                fprintf(stderr, "ERROR: HDget_specail_info does not return the correct values \n");
+            }
+
+          /* free allocated space by routine */
+          HDfree(info_block.cdims);
+      }
+    else
+      {
+          fprintf(stderr, "ERROR: HDget_specail_info does not return the correct values \n");
+      }
+
+
     /* read back in buffer  */
     ret = Hread(aid1, 16, inbuf);
     VERIFY(ret, 16, "Hread");
@@ -229,9 +321,10 @@ test_chunks()
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
 
-    /* Now create a new chunked 2-D element with same parameters
-       before but write to 2 chunks of element using whole chunks.
-       The rest of he data should contain fill values.
+    /* 
+       2. Now create a new chunked 2-D element with same parameters
+          before but write to 2 chunks of element using whole chunks.
+          The rest of he data should contain fill values.
      */
 
     /* Open file for writing again */
@@ -334,11 +427,13 @@ test_chunks()
     CHECK(ret, FAIL, "Hclose");
 
 
-    /* Create a new element but now there will be partial chunks
-       because chunk lengths are not an even multiple of dimesion lengths.
-       Set dimension to 4x4 array with 4 chunks where each chunk is 3x2 = 6 bytes.
-       Real data size is 16 bytes, size with chunks is 
-       6 bytes x 4 chunks = 24 bytes */
+    /* 
+      3. Create a new element but now there will be partial chunks
+         because chunk lengths are not an even multiple of dimesion lengths.
+         Set dimension to 4x4 array with 4 chunks where each chunk is 3x2 = 6 bytes.
+         Real data size is 16 bytes, size with chunks is 
+         6 bytes x 4 chunks = 24 bytes 
+    */
     chunk[0].num_dims   = 2;
     chunk[0].chunk_size = 6; /* 3x2 = 6 bytes */
 
@@ -443,11 +538,13 @@ test_chunks()
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
 
-    /* Now create 3-D chunked element with no partial chunks.
-       Write to only part of the chunked element. The rest
-       should be filled with fill values.
-       Set dimension to 4x6x8 array with 8 chunks 
-       where each chunk is 2x3x4= 24 bytes , total data size 192 bytes */
+    /* 
+      4. Now create 3-D chunked element with no partial chunks.
+         Write to only part of the chunked element. The rest
+         should be filled with fill values.
+         Set dimension to 4x6x8 array with 8 chunks 
+         where each chunk is 2x3x4= 24 bytes , total data size 192 bytes 
+    */
     chunk[0].num_dims   = 3;
     chunk[0].chunk_size = 24; /* 2x3x4 bytes */
 
@@ -530,6 +627,37 @@ test_chunks()
           errors++;
       }
 
+    MESSAGE(5, printf("Get/Check special info data\n"); );
+
+    /* get special info about element */
+    ret = HDget_special_info(aid1, &info_block);
+    CHECK(aid1, FAIL, "HDget_special_info");
+
+    /* check special info */
+    if (info_block.ndims != chunk[0].num_dims /* 2-D */)
+      {
+          fprintf(stderr, "ERROR: HDget_specail_info does not return the correct values \n");
+      }
+
+    /* check chunk_lengths */
+    if (info_block.cdims != NULL)
+      {
+          if ((info_block.cdims[0] != 2) 
+              || (info_block.cdims[1] != 3)
+              || (info_block.cdims[2] != 4))
+            {
+                fprintf(stderr, "ERROR: HDget_specail_info does not return the correct values \n");
+            }
+
+          /* free allocated space by routine */
+          HDfree(info_block.cdims);
+      }
+    else
+      {
+          fprintf(stderr, "ERROR: HDget_specail_info does not return the correct values \n");
+      }
+
+
     /* read back in buffer  */
     ret = Hread(aid1, 112, inbuf);
     VERIFY(ret, 112, "Hread");
@@ -559,11 +687,13 @@ test_chunks()
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
 
-    /* Now create another 3-D chunked element with partial chunks.
-       Write to part of element, rest is filled with fill value.
-       Set dimension to 4x6x8 array with 8 chunks , real data 192 bytes
-       where each chunk is 3x4x5= 60 bytes , 
-       data size with chunks is 60 bytes x 8 chunks = 480 bytes */
+    /* 
+      5. Now create another 3-D chunked element with partial chunks.
+         Write to part of element, rest is filled with fill value.
+         Set dimension to 4x6x8 array with 8 chunks , real data 192 bytes
+         where each chunk is 3x4x5= 60 bytes , 
+         data size with chunks is 60 bytes x 8 chunks = 480 bytes 
+    */
     chunk[0].num_dims   = 3;
     chunk[0].chunk_size = 60; /* 3x4x5 = 60 bytes */
 
@@ -705,11 +835,13 @@ test_chunks()
     CHECK(ret, FAIL, "Hclose");
 
 
-    /* Create 4-D element with partial chunks.
-       Write only half the data out(5,000 bytes)
-       Set dimension to 10x10x10x10 array  real data 10,000 bytes .
-       120 chunks whit chunks of 2x3x4x5 = 120 bytes,
-       data size with chunks is 120 bytes x 120 chunks = 14,400 bytes */
+    /* 
+      6. Create 4-D element with partial chunks.
+         Write only half the data out(5,000 bytes)
+         Set dimension to 10x10x10x10 array  real data 10,000 bytes .
+         120 chunks whit chunks of 2x3x4x5 = 120 bytes,
+         data size with chunks is 120 bytes x 120 chunks = 14,400 bytes 
+    */
     chunk[0].num_dims   = 4;
     chunk[0].chunk_size = 120;
 
@@ -862,12 +994,13 @@ test_chunks()
 
 #if 0
 
-    /* The rest of the tests here are commented out
-       They are some extra high order tests to replicate
-       some test done on EOS-DEM data  -GV.....*/
-
-    /* Set dimension to 12000x12000 array with 2,500 chunks 
-     whith chunk of 240x240 = 57,600 bytes,  bytes */
+    /* 
+      7. The rest of the tests here are commented out
+         They are some extra high order tests to replicate
+         some test done on EOS-DEM data  -GV.....
+         Set dimension to 12000x12000 array with 2,500 chunks 
+         whith chunk of 240x240 = 57,600 bytes
+    */
     chunk[0].num_dims   = 2;
     chunk[0].chunk_size = 57600;
 
