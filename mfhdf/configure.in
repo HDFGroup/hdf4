@@ -55,6 +55,7 @@ UC_FINISH( \
     fortran/Makefile \
     ncgen/Makefile \
     ncdump/Makefile \
+    dumper/Makefile \
     nctest/Makefile \
     doc/Makefile \
     )

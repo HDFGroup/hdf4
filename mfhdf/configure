@@ -675,6 +675,14 @@ case "${OS}" in
   done
 
                 LD_XDR=;;
+  nextos*)         for arg in -DNEXT; do
+    case "$HDF_INC" in
+      *$arg*) ;;
+      *)      HDF_INC="${HDF_INC-} $arg";;
+    esac
+  done
+
+                LD_XDR=;;
   hpux*)          for arg in -DHP9000; do
     case "$HDF_INC" in
       *$arg*) ;;
@@ -682,17 +690,6 @@ case "${OS}" in
     esac
   done
 
-                if test "$GCC" = 1; then
-                        DUMMY=
-                else
-                          for arg in -Aa; do
-    case "$CPPFLAGS" in
-      *$arg*) ;;
-      *)      CPPFLAGS="${CPPFLAGS-} $arg";;
-    esac
-  done
-
-                fi
                 LD_XDR=;;
   osf*)           for arg in -DDEC_ALPHA; do
     case "$HDF_INC" in
@@ -727,12 +724,6 @@ case "${OS}" in
   *)		LD_XDR=;;
 esac
   for arg in ${CPP_XDR-}; do
-    case "$DEFS" in
-      *$arg*) ;;
-      *)      DEFS="${DEFS-} $arg";;
-    esac
-  done
-  for arg in ${CPPFLAGS-}; do
     case "$DEFS" in
       *$arg*) ;;
       *)      DEFS="${DEFS-} $arg";;
@@ -888,10 +879,9 @@ rm -f conftest*
 
 echo checking for variadic function support
 cat > conftest.c <<EOF
-
-main() { exit(0); } 
-t() { } 
 #include <stdarg.h>
+main() { exit(0); } 
+t() { ;}
 int foo(int bar, ...) {
     va_list     alist;
     va_start(alist, bar);
@@ -1042,6 +1032,7 @@ trap 'rm -f \
     fortran/Makefile \
     ncgen/Makefile \
     ncdump/Makefile \
+    dumper/Makefile \
     nctest/Makefile \
     doc/Makefile \
      ${TRANSFORMEES-}; exit 1' 1 3 15
@@ -1101,6 +1092,7 @@ for file in .. \
     fortran/Makefile \
     ncgen/Makefile \
     ncdump/Makefile \
+    dumper/Makefile \
     nctest/Makefile \
     doc/Makefile \
      ${TRANSFORMEES-}; do if [ "x$file" != "x.." ]; then
@@ -1227,6 +1219,7 @@ if $CC -o conftest conftest.c; then
     fortran/Makefile \
     ncgen/Makefile \
     ncdump/Makefile \
+    dumper/Makefile \
     nctest/Makefile \
     doc/Makefile \
      ${POST_PROCESSEES-}
