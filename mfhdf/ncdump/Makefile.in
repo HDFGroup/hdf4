@@ -160,7 +160,7 @@ man1_MANS = ncdump.1
 
 ncdump_SOURCES = dumplib.c ncdump.c vardata.c
 ncdump_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
-ncdump_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+ncdump_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 
 #############################################################################
@@ -176,8 +176,6 @@ PROGRAMS = $(bin_PROGRAMS)
 
 am_ncdump_OBJECTS = dumplib.$(OBJEXT) ncdump.$(OBJEXT) vardata.$(OBJEXT)
 ncdump_OBJECTS = $(am_ncdump_OBJECTS)
-ncdump_DEPENDENCIES = ../libsrc/libmfhdf.a \
-	$(top_builddir)/hdf/src/libdf.a
 ncdump_LDFLAGS =
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/hdf/src

@@ -20,7 +20,7 @@ man1_MANS = ncdump.1
 ## Information for building the "ncdump" program
 ncdump_SOURCES = dumplib.c ncdump.c vardata.c
 ncdump_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
-ncdump_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+ncdump_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 check: ncdump $(srcdir)/test0.cdl
 	../ncgen/ncgen -o test0.nc -n $(srcdir)/test0.cdl

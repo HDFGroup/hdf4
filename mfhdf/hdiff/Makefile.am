@@ -21,17 +21,19 @@ hdiff_SOURCES = dumplib.c hdiff.c hdiff_array.c hdiff_gr.c hdiff_list.c     \
                 hdiff_main.c hdiff_mattbl.c hdiff_gattr.c hdiff_misc.c      \
                 hdiff_sds.c hdiff_table.c hdiff_vs.c
 hdiff_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
-hdiff_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hdiff_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 #############################################################################
 ##                              Testing                                    ##
 #############################################################################
 
-check_PROGRAMS = hdifftst
+check_SCRIPTS = testhdiff.sh
+
+noinst_PROGRAMS = hdifftst
 
 hdifftst_SOURCES = hdifftst.c
 hdifftst_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
-hdifftst_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hdifftst_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 check: hdifftst
-	sh $(srcdir)/testhdiff.sh
+	@$(SHELL) $(srcdir)/testhdiff.sh

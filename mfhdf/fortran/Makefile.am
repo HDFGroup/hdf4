@@ -18,7 +18,7 @@ check_PROGRAMS = ftest
 
 ftest_SOURCES = ftest.f
 ftest_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
-ftest_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+ftest_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 SUFFIXES = .inc .f90
 .inc.f90:

@@ -161,7 +161,7 @@ ncgen_SOURCES = close.c escapes.c generate.c genlib.c getfill.c init.c      \
                 load.c main.c ncgentab.c
 
 ncgen_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
-ncgen_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+ncgen_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 
 #############################################################################
@@ -192,8 +192,6 @@ am_ncgen_OBJECTS = close.$(OBJEXT) escapes.$(OBJEXT) generate.$(OBJEXT) \
 	genlib.$(OBJEXT) getfill.$(OBJEXT) init.$(OBJEXT) \
 	load.$(OBJEXT) main.$(OBJEXT) ncgentab.$(OBJEXT)
 ncgen_OBJECTS = $(am_ncgen_OBJECTS)
-ncgen_DEPENDENCIES = ../libsrc/libmfhdf.a \
-	$(top_builddir)/hdf/src/libdf.a
 ncgen_LDFLAGS =
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/hdf/src

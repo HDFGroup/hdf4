@@ -29,8 +29,8 @@ hrepack_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 ##                   Testing -- Here there be dragons.                     ##
 #############################################################################
 
-TESTS = test_hrepack
-check_PROGRAMS = test_hrepack
+check_PROGRAMS = hrepack_check test_hrepack
+check_SCRIPTS = test_hrepack.sh
 
 test_hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_cmp.c hrepack_gr.c    \
                        hrepack_list.c hrepack_lsttable.c hrepack_opttable.c \
@@ -46,17 +46,15 @@ test_hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_cmp.c hrepack_gr.c    \
 test_hrepack_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 test_hrepack_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
-noinst_PROGRAMS = hrepack_check
-
 hrepack_check_SOURCES = hrepack_check.c
 hrepack_check_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 hrepack_check_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
-check:  test_hrepack hrepack
-	@srcdir="$(srcdir)" $(srcdir)/test_hrepack.sh
+check: test_hrepack
+	@$(SHELL) $(srcdir)/test_hrepack.sh
 
 #############################################################################
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES=*.hdf
+DISTCLEANFILES = *.hdf

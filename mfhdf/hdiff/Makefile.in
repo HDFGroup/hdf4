@@ -162,24 +162,26 @@ hdiff_SOURCES = dumplib.c hdiff.c hdiff_array.c hdiff_gr.c hdiff_list.c     \
                 hdiff_sds.c hdiff_table.c hdiff_vs.c
 
 hdiff_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
-hdiff_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hdiff_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 
 #############################################################################
 #############################################################################
-check_PROGRAMS = hdifftst
+check_SCRIPTS = testhdiff.sh
+
+noinst_PROGRAMS = hdifftst
 
 hdifftst_SOURCES = hdifftst.c
 hdifftst_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
-hdifftst_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hdifftst_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 subdir = mfhdf/hdiff
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/hdf/src/h4config.h
 CONFIG_CLEAN_FILES =
 bin_PROGRAMS = hdiff$(EXEEXT)
-check_PROGRAMS = hdifftst$(EXEEXT)
-PROGRAMS = $(bin_PROGRAMS)
+noinst_PROGRAMS = hdifftst$(EXEEXT)
+PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 
 am_hdiff_OBJECTS = dumplib.$(OBJEXT) hdiff.$(OBJEXT) \
 	hdiff_array.$(OBJEXT) hdiff_gr.$(OBJEXT) hdiff_list.$(OBJEXT) \
@@ -187,13 +189,9 @@ am_hdiff_OBJECTS = dumplib.$(OBJEXT) hdiff.$(OBJEXT) \
 	hdiff_gattr.$(OBJEXT) hdiff_misc.$(OBJEXT) hdiff_sds.$(OBJEXT) \
 	hdiff_table.$(OBJEXT) hdiff_vs.$(OBJEXT)
 hdiff_OBJECTS = $(am_hdiff_OBJECTS)
-hdiff_DEPENDENCIES = ../libsrc/libmfhdf.a \
-	$(top_builddir)/hdf/src/libdf.a
 hdiff_LDFLAGS =
 am_hdifftst_OBJECTS = hdifftst.$(OBJEXT)
 hdifftst_OBJECTS = $(am_hdifftst_OBJECTS)
-hdifftst_DEPENDENCIES = ../libsrc/libmfhdf.a \
-	$(top_builddir)/hdf/src/libdf.a
 hdifftst_LDFLAGS =
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/hdf/src
@@ -249,8 +247,8 @@ uninstall-binPROGRAMS:
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 
-clean-checkPROGRAMS:
-	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+clean-noinstPROGRAMS:
+	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
 hdiff$(EXEEXT): $(hdiff_OBJECTS) $(hdiff_DEPENDENCIES) 
 	@rm -f hdiff$(EXEEXT)
 	$(LINK) $(hdiff_LDFLAGS) $(hdiff_OBJECTS) $(hdiff_LDADD) $(LIBS)
@@ -387,7 +385,7 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
+	$(MAKE) $(AM_MAKEFLAGS) $(check_SCRIPTS)
 check: check-am
 all-am: Makefile $(PROGRAMS)
 
@@ -419,7 +417,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-checkPROGRAMS clean-generic \
+clean-am: clean-binPROGRAMS clean-generic clean-noinstPROGRAMS \
 	mostlyclean-am
 
 distclean: distclean-am
@@ -468,7 +466,7 @@ ps-am:
 uninstall-am: uninstall-binPROGRAMS uninstall-info-am
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
-	clean-checkPROGRAMS clean-generic ctags distclean \
+	clean-generic clean-noinstPROGRAMS ctags distclean \
 	distclean-compile distclean-generic distclean-tags distdir dvi \
 	dvi-am info info-am install install-am install-binPROGRAMS \
 	install-data install-data-am install-exec install-exec-am \
@@ -480,7 +478,7 @@ uninstall-am: uninstall-binPROGRAMS uninstall-info-am
 
 
 check: hdifftst
-	sh $(srcdir)/testhdiff.sh
+	@$(SHELL) $(srcdir)/testhdiff.sh
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

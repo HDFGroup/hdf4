@@ -20,7 +20,7 @@ bin_PROGRAMS = ncgen
 ncgen_SOURCES = close.c escapes.c generate.c genlib.c getfill.c init.c      \
                 load.c main.c ncgentab.c
 ncgen_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
-ncgen_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+ncgen_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 ## Recipe for building the ncgentab.c file
 ncgentab.c ncgentab.h: ncgen.h ncgen.y ncgenyy.c

@@ -18,17 +18,18 @@ bin_PROGRAMS = hdfimport
 
 hdfimport_SOURCES = hdfimport.c
 hdfimport_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
-hdfimport_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hdfimport_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 #############################################################################
 ##                   Testing -- Here there be dragons.                     ##
 #############################################################################
 
 check_PROGRAMS = hdfimporttest
+check_SCRIPTS = testutil.sh
 
 hdfimporttest_SOURCES = hdfimporttest.c
 hdfimporttest_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
-hdfimporttest_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hdfimporttest_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 check: hdfimporttest
-	sh testutil.sh $(host)
+	@$(SHELL) ./testutil.sh

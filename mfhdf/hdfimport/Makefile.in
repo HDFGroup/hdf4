@@ -159,16 +159,17 @@ bin_PROGRAMS = hdfimport
 
 hdfimport_SOURCES = hdfimport.c
 hdfimport_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
-hdfimport_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hdfimport_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 
 #############################################################################
 #############################################################################
 check_PROGRAMS = hdfimporttest
+check_SCRIPTS = testutil.sh
 
 hdfimporttest_SOURCES = hdfimporttest.c
 hdfimporttest_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
-hdfimporttest_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hdfimporttest_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 subdir = mfhdf/hdfimport
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
@@ -180,13 +181,9 @@ PROGRAMS = $(bin_PROGRAMS)
 
 am_hdfimport_OBJECTS = hdfimport.$(OBJEXT)
 hdfimport_OBJECTS = $(am_hdfimport_OBJECTS)
-hdfimport_DEPENDENCIES = ../libsrc/libmfhdf.a \
-	$(top_builddir)/hdf/src/libdf.a
 hdfimport_LDFLAGS =
 am_hdfimporttest_OBJECTS = hdfimporttest.$(OBJEXT)
 hdfimporttest_OBJECTS = $(am_hdfimporttest_OBJECTS)
-hdfimporttest_DEPENDENCIES = ../libsrc/libmfhdf.a \
-	$(top_builddir)/hdf/src/libdf.a
 hdfimporttest_LDFLAGS =
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/hdf/src
@@ -365,7 +362,7 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
+	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS) $(check_SCRIPTS)
 check: check-am
 all-am: Makefile $(PROGRAMS)
 
@@ -458,7 +455,7 @@ uninstall-am: uninstall-binPROGRAMS uninstall-info-am
 
 
 check: hdfimporttest
-	sh testutil.sh $(host)
+	@$(SHELL) ./testutil.sh
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

@@ -9,17 +9,15 @@ AM_CPPFLAGS=-I$(top_srcdir)/hdf/src
 ##                          Programs to build                              ##
 #############################################################################
 
-PROGS = gif2hdf h4cc hdf2gif hdf2jpeg hdf24to8 hdf8to24 hdfcomp hdfed hdfls \
-        hdfpack hdftopal hdftor8 hdfunpac jpeg2hdf paltohdf r8tohdf         \
-        ristosds vmake vshow 
+bin_PROGRAMS = gif2hdf hdf2gif hdf2jpeg hdf24to8 hdf8to24 hdfcomp hdfed     \
+               hdfls hdfpack hdftopal hdftor8 hdfunpac jpeg2hdf paltohdf    \
+               r8tohdf ristosds vmake vshow 
 
 if HDF_BUILD_FORTRAN
-H4SCRIPTS = h4redeploy h4cc h4fc
+bin_SCRIPTS = h4redeploy h4cc h4fc
 else
-H4SCRIPTS = h4redeploy h4cc
+bin_SCRIPTS = h4redeploy h4cc
 endif
-
-bin_PROGRAMS = $(PROGS) $(H4SCRIPTS)
 
 gif2hdf_SOURCES = gif2hdf.c gif2mem.c gifread.c decompress.c writehdf.c
 gif2hdf_LDADD = ../src/libdf.a
@@ -93,29 +91,6 @@ vshow_SOURCES = vshow.c
 vshow_LDADD = ../src/libdf.a
 vshow_DEPENDENCIES = ../src/libdf.a
 
-h4cc_SOURCES =
-h4cc_LDADD =
-h4cc_DEPENDENCIES =
-
-h4cc:
-	@true
-
-if HDF_BUILD_FORTRAN
-h4fc_SOURCES =
-h4fc_LDADD =
-h4fc_DEPENDENCIES =
-
-h4fc:
-	@true
-endif
-
-h4redeploy_SOURCES =
-h4redeploy_LDADD =
-h4redeploy_DEPENDENCIES =
-
-h4redeploy:
-	@true
-
 #############################################################################
 ##                   Testing -- Here there be dragons.                     ##
 #############################################################################
@@ -127,5 +102,5 @@ check:  $(bin_PROGRAMS)
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES=gif_hdf_temp/bttrfly.hdf gif_hdf_temp/skull.gif              \
-               gif_hdf_temp/SunWheel.hdf
+DISTCLEANFILES = gif_hdf_temp/bttrfly.hdf gif_hdf_temp/skull.gif    \
+                 gif_hdf_temp/SunWheel.hdf
