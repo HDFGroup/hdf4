@@ -21,6 +21,14 @@ hblocks.c: $(HDFSRC)/hblocks.c
 hblocks.o: $(HDFSRC)/hdf.h $(HDFSRC)/hlimits.h $(HDFSRC)/hdfi.h 
 hblocks.o: $(HDFSRC)/hbitio.h $(HDFSRC)/hcomp.h $(HDFSRC)/herr.h $(HDFSRC)/hproto.h
 hblocks.o: $(HDFSRC)/hfile.h $(FRC)
+hbuffer.c: $(HDFSRC)/hbuffer.c
+hbuffer.o: $(HDFSRC)/hdf.h $(HDFSRC)/hlimits.h $(HDFSRC)/hdfi.h 
+hbuffer.o: $(HDFSRC)/hbitio.h $(HDFSRC)/hcomp.h $(HDFSRC)/herr.h $(HDFSRC)/hproto.h
+hbuffer.o: $(HDFSRC)/hfile.h $(FRC)
+hcompri.c: $(HDFSRC)/hcompri.c
+hcompri.o: $(HDFSRC)/hdf.h $(HDFSRC)/hlimits.h $(HDFSRC)/hdfi.h 
+hcompri.o: $(HDFSRC)/hbitio.h $(HDFSRC)/hcomp.h $(HDFSRC)/herr.h $(HDFSRC)/hproto.h
+hcompri.o: $(HDFSRC)/hfile.h $(FRC)
 hextelt.c: $(HDFSRC)/hextelt.c
 hextelt.o: $(HDFSRC)/hdf.h $(HDFSRC)/hlimits.h $(HDFSRC)/hdfi.h 
 hextelt.o: $(HDFSRC)/hbitio.h $(HDFSRC)/hcomp.h $(HDFSRC)/herr.h $(HDFSRC)/hproto.h
