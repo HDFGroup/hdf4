@@ -122,7 +122,7 @@ HDFBIN= $(srcdir)/../bin
 JPEGINC=$(srcdir)/../jpeg
 JPEGLIB=$(srcdir)/../jpeg
 
-ALL_CFLAGS = $(CFLAGS) -I. -I$(HDFINC) -I$(JPEGINC)
+ALL_CFLAGS = $(CFLAGS) $(PABLO_FLAGS) -I. -I$(HDFINC) -I$(JPEGINC) 
 
 LINTFLAGS=
 SHAR=shar
@@ -131,6 +131,8 @@ ARCHIVE=pablo.shar
 MANIFEST = $(DISTFILES)
 DISTFILES = Makefile.in $(PSRCS) 
 
+# to extract all the object files out of libdf.a 
+HOBJS=`ar xv $(HDFLIB)/libdf.a | sed 's/x -//'`
 
 PINCS = $(PCHDRS) $(PFINCS)
 
@@ -152,7 +154,7 @@ PINCS = $(PCHDRS) $(PFINCS)
 .f.o:
 	$(FC) $(FFLAGS) -c $<
 
-.PHONY : all nofortran libnostub clean distclean debug saber lint
+.PHONY : all nofortran clean distclean debug saber lint
 
 
 all::         FORCE
@@ -165,22 +167,22 @@ all::         FORCE
 pablohdf::		FORCE
 	@case "$(FC)" in \
 	NONE*|none*) \
-	    $(MAKE) $(MFLAGS) $(HDF_FLAGS) libnofortran;; \
+	    $(MAKE) $(MFLAGS) $(HDF_FLAGS) pablonofortran;; \
 	*) \
 	    $(MAKE) $(MFLAGS) $(HDF_FLAGS) libdf-inst.a;; \
 	esac
 
 libdf-inst.a: $(PCOBJS) $(PFOBJS)
 	-$(RM) $(RMFLAGS) libdf-inst.a
-	$(AR) rcuv libdf-inst.a $(HDFLIB)/libdf.a $(PCOBJS) $(PFOBJS)
+	$(AR) rcuv libdf-inst.a $(HOBJS) $(PCOBJS) $(PFOBJS)
 	$(RANLIB) libdf-inst.a
 
-libnofortran: $(PCOBJS) 
+pablonofortran: $(PCOBJS) 
 	-$(RM) $(RMFLAGS) libdf-inst.a
-	$(AR) rcuv libdf-inst.a $(HDFLIB)/libdf.a $(PCOBJS)
+	$(AR) rcuv libdf-inst.a $(HOBJS) $(PCOBJS)
 	$(RANLIB) libdf-inst.a
 
-libnostub nofortran: libnofortran 
+nofortran: pablonofortran 
 
 rebuild:
 	@$(MAKE) all $(HDF_FLAGS) FRC=force_rebuild
@@ -196,7 +198,7 @@ debug: libdf-inst.a
 saber:
 	#load -D$(MACHINE) $(CSRCS) $(TSRCS) -lc
 
-install: nstall-headers
+install: install-headers
 
 install-headers:
 	for p in $(PINCS); do \
@@ -208,10 +210,10 @@ depend:
 	makedepend -fMakefile -- $(CSRCS)
 
 clean:
-	-$(RM) $(RMFLAGS) *.o libdf-inst.a
+	-$(RM) $(RMFLAGS) *.o ./__SYM* libdf-inst.a
 
 distclean:
-	-$(RM) $(RMFLAGS) *.o libdf-inst.a config.status Makefile
+	-$(RM) $(RMFLAGS) *.o ./__SYM* libdf-inst.a config.status Makefile
 
 lint: $(CSRCS) 
 	$(LINT) $(LINTFLAGS) $(CSRCS)
@@ -247,16 +249,15 @@ help:
 	@echo ""
 	@echo "Make supports the following targets"
 	@echo "make help    - prints this usage section"
-	@echo "make all     - (DEFAULT) makes HDF library"
-	@echo "make libdf.a      - makes HDF library "
-	@echo "make libnofortran - makes HDF library excluding fortran support"
-	@echo "make rebuild      - rebuilds HDF library "
-	@echo "make rebuildnofortran - rebuilds HDF library excluding"
+	@echo "make all     - (DEFAULT) makes Pablo stubs"
+	@echo "make pablohdf       - makes Pablo stubs "
+	@echo "make pablonofortran - makes Pablo stubs excluding fortran support"
+	@echo "make rebuild      - rebuilds Pablo stubs "
+	@echo "make rebuildnofortran - rebuilds Pablo stubs excluding"
 	@echo "                        fortran support "
-	@echo "make install          - install HDF library, "
-	@echo "                        and includes " 
-	@echo "make clean     - cleans up HDF library(*.o,libdf.a,..)"
-	@echo "make distclean - cleans up HDF library including"
+	@echo "make install          - install Pablo includes, "
+	@echo "make clean     - cleans up Pablo stubs (*.o,..)"
+	@echo "make distclean - cleans up Pablo stubs including"
 	@echo "                 configuration(Makefiles,config.status,..)"
 	@echo ""
 

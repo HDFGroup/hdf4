@@ -108,13 +108,34 @@ LIBOBJECTS= fmpool.o fmpio.o
 # object files for sample applications (excluding library files)
 TOBJECTS= test_fmpio.o
 
+# ==> specify directories where to find inludes and library
+#     HDF library, and HDF utilities
+HDFINC= $(srcdir)/../src
+HDFLIB= $(srcdir)/../src
+HDFBIN= $(srcdir)/../bin
 
 #### makefile fragment from 'config/' goes here ##############
 ## ------------------------ end of makefile fragments--------------------
 
 CL= ${CC} $(CFLAGS) -c -D__FMPINTERFACE_PRIVATE ${AUXFLAGS} -I. 
 
-all: libfmpool.a
+#all: libfmpool.a
+
+all::         FORCE
+	@if test -z "$(FMPOOL_FLAGS)"; then \
+	  : true; \
+	else		 \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) libfmpool; \
+	fi
+
+libfmpool: $(LIBOBJECTS)
+	$(RM) $(RMFLAGS) libfmpool.a
+	$(AR) $(ARFLAGS) libfmpool.a  $(LIBOBJECTS)
+	if test -f $(HDFLIB)/libdf.a ; then \
+	  $(AR) rcuv $(HDFLIB)/libdf.a $(LIBOBJECTS); \
+	  $(RANLIB) $(HDFLIB)/libdf.a ; \
+	fi
+	$(RANLIB) libfmpool.a 
 
 libfmpool.a: $(LIBOBJECTS)
 	$(RM) $(RMFLAGS) libfmpool.a
@@ -169,6 +190,11 @@ test: tfmp
 	cmp $(srcdir)/test1.mp test1out.mp
 
 check: test
+
+# The following dummy target is useful as a dependency to ensure that a
+# rule is always executed.
+#
+FORCE:
 
 # GNU Make likes to know which target names are not really files to be made:
 .PHONY: all install install-lib install-headers clean distribute test check
