@@ -1095,7 +1095,7 @@ done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
         if(access_rec!=NULL)
-            HDfree(access_rec);
+            HIrelease_accrec_node(access_rec);
 
     } /* end if */
 
@@ -1820,13 +1820,13 @@ Hendaccess(int32 access_id)
     if(HAremove_atom(access_id)==NULL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 #endif /* OLD_WAY */
-    HDfree(access_rec);
+    HIrelease_accrec_node(access_rec);
 
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
       if(access_rec!=NULL)
-        HDfree(access_rec);
+        HIrelease_accrec_node(access_rec);
     } /* end if */
 
   /* Normal function cleanup */
@@ -3474,29 +3474,60 @@ done:
         Return an pointer to a new access_rec to use for a new AID.
 
 --------------------------------------------------------------------------*/
-accrec_t *
-HIget_access_rec(void)
+accrec_t *HIget_access_rec(void)
 {
-#ifdef LATER
     CONSTR(FUNC, "HIget_access_rec");
-#endif /* LATER */
     accrec_t   *ret_value = NULL;
   
-    /* Allocate dynamically and initialize */
-    ret_value = (accrec_t *) HDcalloc(1 , sizeof(accrec_t));
+    HEclear();
 
-#ifdef LATER
+    /* Grab from free list if possible */
+    if(accrec_free_list!=NULL)
+      {
+        ret_value=accrec_free_list;
+        accrec_free_list=accrec_free_list->next;
+      } /* end if */
+    else
+      {
+        if((ret_value=(accrec_t *)HDmalloc(sizeof(accrec_t)))==NULL)
+            HGOTO_ERROR(DFE_NOSPACE, NULL);
+      } /* end else */
+
+    /* Initialize to zeros */
+    HDmemset(ret_value,0,sizeof(accrec_t));
+
 done:
   if(ret_value == NULL)   
     { /* Error condition cleanup */
 
     } /* end if */
-#endif /* LATER */
 
   /* Normal function cleanup */
 
   return ret_value;
 }	/* HIget_access_rec */
+
+/******************************************************************************
+ NAME
+     HIrelease_accrec_node - Releases an atom node
+
+ DESCRIPTION
+    Puts an accrec node into the free list
+
+ RETURNS
+    No return value
+
+*******************************************************************************/
+void HIrelease_accrec_node(accrec_t *acc)
+{
+#ifdef LATER
+    CONSTR(FUNC, "HIrelease_atom_node");	/* for HERROR */
+#endif /* LATER */
+
+    /* Insert the atom at the beginning of the free list */
+    acc->next=accrec_free_list;
+    accrec_free_list=acc;
+}   /* end HIrelease_accrec_node() */
 
 /*--------------------------------------------------------------------------
  PRIVATE    PRIVATE     PRIVATE     PRIVATE     PRIVATE
@@ -3862,7 +3893,20 @@ done:
 intn 
 Hshutdown(void)
 {
-  return (SUCCEED);
+    accrec_t *curr;
+
+    /* Release the free-list if it exists */
+    if(accrec_free_list!=NULL)
+      {
+        while(accrec_free_list!=NULL)
+          {
+            curr=accrec_free_list;
+            accrec_free_list=accrec_free_list->next;
+            HDfree(curr);
+          } /* end while */
+      } /* end if */
+
+    return (SUCCEED);
 }	/* end Hshutdown() */
 
 /* #define HFILE_SEEKINFO */

@@ -2755,6 +2755,8 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
    ** from vio.c
  */
 
+    extern intn VSPhshutdown(void);
+
     extern int32 vexistvs
                 (HFILEID f, uint16 vsref);
 

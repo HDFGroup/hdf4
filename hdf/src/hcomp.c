@@ -826,7 +826,7 @@ done:
     if(ret_value == FAIL)   
       { /* Error condition cleanup */
         if(access_rec!=NULL)
-            HDfree(access_rec);
+            HIrelease_accrec_node(access_rec);
         if(info!=NULL)
             HDfree((VOIDP) info);
       } /* end if */
@@ -1255,7 +1255,7 @@ HCPendaccess(accrec_t * access_rec)
     file_rec->attach--;
 
     /* free the access record */
-    HDfree(access_rec);
+    HIrelease_accrec_node(access_rec);
 
 done:
   if(ret_value == FAIL)   

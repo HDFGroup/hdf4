@@ -387,8 +387,14 @@ typedef struct accrec_t
       int32       posn;         /* seek position with respect to start of element */
       VOIDP       special_info; /* special element info? */
       struct funclist_t *special_func;  /* ptr to special function? */
+      struct accrec_t *next;    /* for free-list linking */
   }
 accrec_t;
+
+#ifdef HFILE_MASTER
+/* Pointer to the access record node free list */
+static accrec_t *accrec_free_list=NULL;
+#endif /* HFILE_MASTER */
 
 /* this type is returned to applications programs or other special
    interfaces when they need to know information about a given
@@ -508,6 +514,8 @@ extern      "C"
 
     extern accrec_t *HIget_access_rec
                 (void);
+
+    extern void HIrelease_accrec_node(accrec_t *acc);
 
     extern VOIDP HIgetspinfo
                 (accrec_t * access_rec);

@@ -1950,7 +1950,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
 
           /* free access record */
           if(access_rec != NULL)
-              HDfree(access_rec);
+              HIrelease_accrec_node(access_rec);
       } /* end if */
 
     /* Normal function cleanup */
@@ -3508,7 +3508,7 @@ HMCPendaccess(accrec_t * access_rec /* IN:  access record to close */)
     file_rec->attach--;
 
     /* free the access record */
-    HDfree(access_rec);
+    HIrelease_accrec_node(access_rec);
 
   done:
     if(ret_value == FAIL)   
