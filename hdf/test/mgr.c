@@ -176,6 +176,38 @@ static void test_mgr_lut(int flag);
 static void test_mgr_special(int flag);
 static void test_mgr_attr(int flag);
 
+#define ABS(x)  ((int)(x)<0 ? (-x) : x)
+
+static intn
+fuzzy_memcmp(const void *s1, const void *s2, int32 len, intn fuzz_factor);
+
+#ifdef DEC_ALPHA
+#define JPEG_FUZZ 13
+#else
+#define JPEG_FUZZ 1
+#endif
+
+static intn
+fuzzy_memcmp(const void *s1, const void *s2, int32 len, intn fuzz_factor)
+{
+    const uint8 *t1 = (const uint8 *) s1;
+    const uint8 *t2 = (const uint8 *) s2;
+
+    while (len > 0 && (int) ABS(*t2 - *t1) <= fuzz_factor)
+      {
+          t1++;
+          t2++;
+          len--;
+      }     /* end while */
+    if (len == 0)
+        return (0);
+    else
+      {
+          return ((intn) (*t1 - *t2));
+      }
+}   /* end fuzzy_memcmp() */
+
+
 #ifdef QAK
 static void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt)
 {
@@ -3698,7 +3730,7 @@ static void test_mgr_compress_b(int flag)
     int32 ret;              /* generic return value */
 
 /* B - Create/Write/Read JPEG compressed image */
-    MESSAGE(8, printf("Operate on jpeg compressed images\n"););
+    MESSAGE(8, printf("Operate on 8-bit JPEG compressed images\n"););
 
     /* Open up the existing datafile and get the image information from it */
     fid=Hopen(JPEGFILE,DFACC_ALL,0);
@@ -3836,13 +3868,132 @@ static void test_mgr_compress_b(int flag)
     CHECK(ret,FAIL,"Hclose");
 } /* end test_mgr_compress_b() */
 
+static void test_mgr_compress_c(int flag)
+{
+    intn  status;         /* status for functions returning an intn */
+    int32 file_id,        /* HDF file identifier */
+          gr_id,          /* GR interface identifier */
+          ri_id,          /* raster image identifier */
+          start[2],       /* start position to write for each dimension */
+          edges[2],       /* number of elements to be written along each dimension */
+          dim_sizes[2],   /* dimension sizes of the image array */
+          interlace_mode, /* interlace mode of the image */
+          data_type,      /* data type of the image data */
+          i, j;
+    uint8 image_buf[128][128][3];
+    uint8 read_buf[128][128][3];
+    comp_info  c_info;
+    char gname[60];
+    int32 nc, dt, im, dims[2], na;
+ 
+    /* ---- End of variable declaration --- */
+ 
+    /* Create and open the file and initialize GR interface */
+    /* ---------------------------------------------------- */
+    file_id = Hopen (JPEGFILE, DFACC_CREATE, 0);
+    CHECK(file_id,FAIL,"Hopen");
+
+    gr_id = GRstart (file_id);
+    CHECK(gr_id,FAIL,"GRstart");
+ 
+    /* Set data type, interlace mode, and dimensions of image */
+    /* ------------------------------------------------------ */
+    data_type = DFNT_UINT8;
+    interlace_mode = MFGR_INTERLACE_PIXEL;
+    dim_sizes[0] = 128;
+    dim_sizes[1] = 128;
+ 
+    /* Create the raster image array */
+    /* ----------------------------- */
+    ri_id = GRcreate (gr_id, "24-bit JPEG", 3, data_type, interlace_mode, dim_sizes);
+    CHECK(ri_id,FAIL,"GRcreate");
+ 
+    /* Set JPEG compression */
+    /* -------------------- */
+    c_info.jpeg.quality=75;
+    c_info.jpeg.force_baseline=1;
+    status = GRsetcompress (ri_id, COMP_CODE_JPEG, &c_info);
+    CHECK(status,FAIL,"GRsetcompress");
+ 
+    /* Fill the image data buffer with values */
+    /* -------------------------------------- */
+    for (i = 0; i < 128; i++)
+       for (j = 0; j < 128; j++)
+       {
+          image_buf[i][j][0] = (i+j) + 1;    
+          image_buf[i][j][1] = (i+j) + 1;    
+          image_buf[i][j][2] = (i+j) + 1;    
+       }
+ 
+    /* Write data in the buffer into the image array */
+    /* --------------------------------------------- */
+    start[0] = start[1] = 0;
+    edges[0] = 128;
+    edges[1] = 128;
+ 
+    status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)image_buf);
+    CHECK(status,FAIL,"GRwriteimage");
+ 
+    /* Terminate access to raster image and to GR */
+    /* interface and, close the HDF file.         */
+    /* ------------------------------------------ */
+    status = GRendaccess (ri_id);
+    CHECK(status,FAIL,"GRendaccess");
+
+    status = GRend (gr_id);
+    CHECK(status,FAIL,"GRend");
+ 
+    /* Read back data and print */
+    /* ------------------------ */
+    gr_id = GRstart (file_id);
+    CHECK(gr_id,FAIL,"GRstart");
+ 
+    ri_id = GRselect (gr_id, 0);
+    CHECK(ri_id,FAIL,"GRselect");
+ 
+    status = GRgetiminfo (ri_id, gname, &nc, &dt, &im, dims, &na);
+    CHECK(status,FAIL,"GRreadimage");
+    VERIFY(nc,3,"GRgetiminfo");
+    VERIFY(dt,DFNT_UINT8,"GRgetiminfo");
+    VERIFY(dim_sizes[0],dims[0],"GRgetiminfo");
+    VERIFY(dim_sizes[1],dims[1],"GRgetiminfo");
+    VERIFY(na,0,"GRgetiminfo");
+ 
+    start[0] = start[1] = 0;
+    edges[0] = 128;
+    edges[1] = 128;
+    status = GRreadimage (ri_id, start, NULL, edges, (VOIDP)read_buf);
+    CHECK(status,FAIL,"GRreadimage");
+ 
+  /* Compare data read in */
+    /* Verify correct image contents */
+    if(fuzzy_memcmp(image_buf,read_buf,128*128*3,JPEG_FUZZ)!=0) {
+        MESSAGE(3, printf("Error reading data for 24-big JPEG compressed image\n"););
+        num_errs++;
+    } /* end if */
+
+   
+    /* Close all interfaces */
+    /* -------------------- */
+    status = GRendaccess (ri_id);
+    CHECK(status,FAIL,"GRendaccess");
+
+    status = GRend (gr_id);
+    CHECK(status,FAIL,"GRend");
+
+    status = Hclose (file_id);
+    CHECK(status,FAIL,"Hclose");
+ 
+} /* end test_mgr_compress_c() */
+
 /****************************************************************
 **
 **  test_mgr_compress(): Multi-file Raster Compression tests
 ** 
 **  VIII. Compressed image tests
 **      A. Create/Read/Write gzip compressed Image
-**      B. Create/Read/Write JPEG compressed Image
+**      B. Create/Read/Write 8-bit JPEG compressed Image
+**      C. Create/Read/Write 24-bit JPEG compressed Image
 ** 
 ****************************************************************/
 static void
@@ -3853,6 +4004,7 @@ test_mgr_compress(int flag)
 
     test_mgr_compress_a(flag);
     test_mgr_compress_b(flag);
+    test_mgr_compress_c(flag);
 
 }   /* end test_mgr_compress() */
 
