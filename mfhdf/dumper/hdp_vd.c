@@ -124,11 +124,15 @@ by_ref */
                 else
                    *tempPtr = '\0';
                 flds_chosen[i] = (char *) HDmalloc(sizeof(char) * (HDstrlen(ptr)+1));
+		CHECK_ALLOC( flds_chosen[i], "flds_chosen[i]", "parse_dumpvd_opts" );
+
+/*
                 if (flds_chosen[i] == NULL)
                 {
                    fprintf(stderr,"Failure in parse_dumpvd_opts: Not enough memory!\n");
                    exit(1);
                 }
+*/
                 HDstrcpy(flds_chosen[i], ptr);
                 ptr = tempPtr + 1;
              }
@@ -186,25 +190,25 @@ by_ref */
     return (SUCCEED);
 }	/* end parse_dumpvd_opts */
 
-/* BMR - VSref_index returns the index of a vdata given the vdata's ref# or
-returns FAIL, if the ref# is not found */
+/* VSref_index returns the index of a vdata given the vdata's ref# 
+   or returns FAIL, if the ref# is not found */
 int32 
 VSref_index(int32 file_id, 
             int32 vd_ref)
 {
-    int32  find_ref = -1;
-    int    index    = 0; /* index is zero based? */
-    int32  ret_value = FAIL;   
+   int32  find_ref = -1;
+   int    index    = 0; /* index is zero based? */
+   int32  ret_value = FAIL;   
 
-    while ((find_ref = VSgetid(file_id, find_ref)) != FAIL)
+   while ((find_ref = VSgetid(file_id, find_ref)) != FAIL)
+   {
+      if (find_ref == vd_ref)
       {
-          if (find_ref == vd_ref)
-            {
-              ret_value = index;
-              goto done; /* found, done */
-            }
-          index++;
+         ret_value = index;
+         goto done; /* found, done */
       }
+      index++;
+   }
 
 done:
     if (ret_value == FAIL)
@@ -215,9 +219,8 @@ done:
     return ret_value;
 }	/* VSref_index */
 
-/* BMR - VSstr_index returns the index of a vdata given the vdata's name or
-returns FAIL, if the name is not found.  If the given name is not
-located then look for a class using that name */
+/* VSstr_index returns the index of a vdata given the vdata's name or
+   class, if the name is not found, and returns FAIL, otherwise.  */
 int32 
 VSstr_index(int32 file_id, 
             char *filter_str, /* searched vd's name or class */
@@ -227,7 +230,7 @@ VSstr_index(int32 file_id,
 {
    int32  vdata_id = FAIL;
    char   vdata_name[MAXNAMELEN];
-   int32  ret_value = FAIL;
+   int32  ret_value = SUCCEED;
 
    /* starting from the ref# *find_ref, search for the vdata having a
       name or class the same as the given string filter_str; when no
@@ -236,23 +239,27 @@ VSstr_index(int32 file_id,
    {
       vdata_id = VSattach(file_id, *find_ref, "r");
       if (FAIL == vdata_id)
-         goto done; /* FAIL */
+	 ERROR_GOTO_2( "in %s: VSattach failed for vdata with ref#=%d",
+		"VSstr_index", *find_ref );
 
       /* if the string searched is a vdata's name */
       if (is_name)
       {
          if (FAIL == VSgetname(vdata_id, vdata_name))
-            goto done; /* FAIL */
+	    ERROR_GOTO_2( "in %s: VSgetname failed for vdata with ref#=%d",
+		"VSstr_index", *find_ref );
       }
       /* or the string searched is a vdata's class */
       else
       {
          if (FAIL == VSgetclass(vdata_id, vdata_name))
-            goto done; /* FAIL */
+	 ERROR_GOTO_2( "in %s: VSgetclass failed for vdata with ref#=%d",
+		"VSstr_index", *find_ref );
       }
 
       if (FAIL == VSdetach(vdata_id))
-         goto done; /* FAIL */
+	 ERROR_GOTO_2( "in %s: VSdetach failed for vdata with ref#=%d",
+		"VSstr_index", *find_ref );
 
       /* if the vd's name or vd's class is the given string, return the
          index of the vdata found */
@@ -264,6 +271,9 @@ VSstr_index(int32 file_id,
          (*index)++;
          goto done; /* succeeded */
       }
+      else
+	 ret_value = FAIL;
+
       /* Note: in either case, increment the index for the next vdata */
       (*index)++;
    } /* end while getting vdatas */
@@ -302,11 +312,8 @@ choose_vd(dump_info_t * dumpvd_opts,
 
    /* if no specific vdatas are requested, return vdata count as 
       NO_SPECIFIC (-1) */
-      if( filter == DALL )
-      {
-          ret_value = NO_SPECIFIC;
-          goto done;
-      }
+   if( filter == DALL )
+      HGOTO_DONE( NO_SPECIFIC );
 
    /* if specific vdatas were requested, allocate space for the array
       of indices */
@@ -316,11 +323,7 @@ choose_vd(dump_info_t * dumpvd_opts,
    /* else, no chosen vdatas but filter is not DALL, it shouldn't be this
       combination, return vdata count as NO_SPECIFIC to dump all */
    else
-   {
-      ret_value = NO_SPECIFIC;
-      goto done;
-
-   }
+      HGOTO_DONE( NO_SPECIFIC );
 
    /* if there are some vdatas requested by index, store the indices in
       the array provided by the caller */
@@ -420,6 +423,153 @@ done:
     return ret_value;
 }	/* choose_vd */
 
+intn printHeader( 
+		FILE* fp,
+		char* fldstring,
+		char* fields,
+		vd_info_t* curr_vd )
+{ 
+/*   int32 lastItem;
+   int32 count = 0;
+   char  *tempPtr = NULL;
+   char  *ptr = NULL;
+   int32 i;
+*/
+   fprintf(fp, "Vdata: %d\n", (int) curr_vd->index );
+   if( curr_vd->tag == FAIL )	/* print vdata tag */
+      fprintf(fp, "   tag = <Undefined>; ");
+   else
+      fprintf(fp, "   tag = %d; ", (int) curr_vd->tag);
+
+   /* print reference number without checking because it's from
+      VSgetid and has been checked by the calling routine */
+   fprintf(fp, "reference = %d;\n", (int) curr_vd->ref);
+
+   if( curr_vd->nvf == FAIL ) /* print number of records in the vdata */
+      fprintf(fp, "   number of records = <Undefined>; ");
+   else
+      fprintf(fp, "   number of records = %d;", (int) curr_vd->nvf);
+
+   if( curr_vd->interlace == FAIL ) /* print interlace mode */
+      fprintf(fp, "   interlace = <Undefined>;\n");
+   else
+      if( curr_vd->interlace == 0 )
+	  fprintf(fp, " interlace = FULL_INTERLACE (0);\n");
+      else if( curr_vd->interlace == 1 )
+	  fprintf(fp, "   interlace = NO_INTERLACE;\n");
+      else
+	  fprintf(fp, "   interlace = <Unknown interlace mode (%d)>;\n", 
+				(int) curr_vd->interlace);
+                     
+   /* print the list of field names of the vdata if it's available */
+   /* The list of field names can be very long and would look very 
+      messy when being displayed if it were to be dumped out at once. 
+      print_fields displays a list in a nice way even if the list is 
+      long.  The second parameter specifies how the field name list 
+      begins; it's needed because dumpvd also uses this routine and 
+      has different indentation format than dumpvg */
+   print_fields( fields, "   fields = ", fp );
+
+   if( curr_vd->vsize > 0 ) /* print vdata record size */
+      fprintf(fp, "   record size (in bytes) = %d;\n", (int)curr_vd->vsize);
+   else
+      fprintf(fp, "   record size = <Undefined>;\n");
+
+   if( curr_vd->name[0] == '\0' ) /* print vdata name */
+      fprintf(fp, "   name = <Undefined>; ");
+   else
+      fprintf(fp, "   name = %s;", curr_vd->name);
+
+   /* print class name - Note that vdclass can be NULL */
+   if( curr_vd->class[0] == '\0' || curr_vd->class == NULL )
+      fprintf(fp, " class = <Undefined>;\n");
+   else
+      fprintf(fp, " class = %s;\n", curr_vd->class);
+
+} /* end of printHeader */
+
+intn getFieldIndices( 
+		char* fields, 
+		char *flds_chosen[MAXCHOICES],
+		int32* flds_indices )
+{
+   int32 lastItem = 0;  /* whether the last field in the list 'fields' is reached */
+   int32 fld_name_idx;  /* index for the list of field names */
+   int32 idx = 0;	      /* index for the array of field indices */
+   char  *tempPtr = NULL;  /* temp ptr to mark the end of a field name in the list */
+   char  *ptr = NULL;	/* used to forward to next field name in the field name list */
+   char  fldstring[MAXNAMELEN]; /* holds a field name extracted from field name list */
+   int32 i;
+   intn  flds_match = 0;
+   intn  ret_value = SUCCEED;
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+	/* macintosh cannot handle >32K locals */
+   char *tempflds = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
+   CHECK_ALLOC( tempflds, "tempflds", "getFieldIndices" );
+#else /* !macintosh */
+   char   tempflds[VSFIELDMAX*FIELDNAMELENMAX];
+#endif /* !macintosh */    
+
+   /* make copy of the field name list retrieved by VSinquire to use 
+      in processing the field names */
+   HDstrcpy(tempflds, fields);
+
+   ptr = tempflds;		/* used to forward the field names */
+
+   i = (-1);	/* dummy? */
+   HDmemfill(flds_indices, &i, sizeof(int32), MAXCHOICES);
+
+   /* Extract each field name from the list of fields of the 
+      current record. */
+   for (fld_name_idx = 0; !lastItem; fld_name_idx++)
+   {
+      /* look for a comma in the fields */
+      tempPtr = HDstrchr(ptr, ','); 
+
+      /* if no comma is found, that means the last field name is reached */
+      if (tempPtr == NULL)
+         lastItem = 1;	/* set flag */
+
+      /* otherwise, add null to end the extracted field name */
+      else
+         *tempPtr = '\0';
+
+      /* extract that field into fldstring */
+      HDstrcpy(fldstring, ptr);
+
+      /* forward the pointer to the next field name in the list */
+      ptr = tempPtr + 1;
+
+      /* Compare the extracted field name with each of the names
+         of the fields having been chosen. */
+      for( i = 0; flds_chosen[i] != NULL; i++)
+      {
+         if (!HDstrcmp(flds_chosen[i], fldstring))
+         {
+            flds_indices[idx] = fld_name_idx;
+            idx++;
+            flds_match = 1;
+         }
+      }		/* for (i...) */
+   }	/* for (fld_name_idx...) */
+   ret_value = flds_match;
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+      }
+    /* Normal cleanup */
+#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
+   if(tempflds != NULL)
+   {
+      HDfree(tempflds);
+      tempflds = NULL;
+   } 
+#endif /* macintosh */
+
+   return ret_value;
+} /* end of getFieldIndices */
+
 intn
 dumpvd_ascii(dump_info_t * dumpvd_opts, 
              int32 file_id,
@@ -429,333 +579,192 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
              int32 *vd_chosen,
              int dumpallfields)
 {
-    int32       flds_indices[MAXCHOICES];
-    int32       i, j, k, m, x;
-    int32       nvf;
-    int32       interlace;
-    int32       vsize;
-    int32       lastItem;
-    int32       vdata_ref = -1;
-    int32       vdata_tag;
-    char        vdclass[VSNAMELENMAX];
-    char        vdname[VSNAMELENMAX];
-    char       *tempPtr = NULL;
-    char       *ptr = NULL;
-    char        string[MAXNAMELEN];
-    FILE       *fp = NULL;
-    intn        dumpall = 0;
-    file_type_t ft = DASCII;
-    int32       vd_id = FAIL;
-    int32       an_handle   = FAIL;
-    intn        status = SUCCEED, ret_value = SUCCEED;
+   int32       flds_indices[MAXCHOICES];
+   int32       i;
+   int32       vd_chosen_idx;	/* index for vd_chosen array */
+   int32       nvf;
+   int32       interlace;
+   int32       vsize;
+   int32       vdata_ref = -1;
+   int32       vdata_tag;
+   char        vdclass[VSNAMELENMAX];
+   char        vdname[VSNAMELENMAX];
+   char        fldstring[MAXNAMELEN];
+   FILE       *fp = NULL;
+   intn        dumpall = 0;
+   file_type_t ft = DASCII;
+   vd_info_t   curr_vd;
+   int32       vd_id = FAIL;
+   int32       an_handle   = FAIL;
+   intn        status = SUCCEED, ret_value = SUCCEED;
 #if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
 	/* macintosh cannot handle >32K locals */
-    char *fields = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
-    char *tempflds = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
-    if (fields == NULL)
-	{
-	   fprintf(stderr,"Failure in dumpvd_ascii: Not enough memory!\n");
-	   exit(1);
-	 }
-    if (tempflds == NULL)
-	{
-    /* cleanup */
-	   if(fields != NULL)
-	   {
-	      HDfree(fields);
-	      fields = NULL;
-	    } 
-	   fprintf(stderr,"Failure in dumpvd_ascii: Not enough memory!\n");
-	   exit(1);
-	 }
+   char *fields = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
+   CHECK_ALLOC( fields, "fields", "dumpvd_ascii" );
+
 #else /* !macintosh */
-    char   fields[VSFIELDMAX*FIELDNAMELENMAX];
-    char   tempflds[VSFIELDMAX*FIELDNAMELENMAX];
+   char   fields[VSFIELDMAX*FIELDNAMELENMAX];
 #endif /* !macintosh */    
 
-    /* set output file */
-    if (dumpvd_opts->dump_to_file)
-        fp = fopen(dumpvd_opts->file_name, "w");
-    else
-        fp = stdout;
+   /* set output file */
+   if (dumpvd_opts->dump_to_file)
+      fp = fopen(dumpvd_opts->file_name, "w");
+   else
+      fp = stdout;
 
-    if (dumpvd_opts->contents != DDATA)
-    {
-        fprintf(fp, "File name: %s \n\n", file_name);
+   if (dumpvd_opts->contents != DDATA)
+   {
+      fprintf(fp, "File name: %s \n\n", file_name);
 
-        /* print file annotations */
-        status = print_file_annotations( file_id, file_name );
-        /* if error occurs, print_file_annotations already printed
-           appropriate messages so just continue processing */
-    }
+      /* print file annotations */
+      status = print_file_annotations( file_id, file_name );
+      if( status == FAIL )
+      ERROR_GOTO_2( "in %s: Failure in printing file annotations for file %s",
+			"dumpvd_ascii", file_name );
+   }
+   vd_chosen_idx = 0;	/* start at the beginning of vd_chosen */
 
-    x = 0;	/* "x" is used to index the array of "vd_chosen". */
+   /* Determine if all VDs are to be dumped out. */
+   if (num_vd_chosen <= 0)	/* If so, set the corresponding flag. */
+       dumpall = 1;
+   else
+       /* Otherwise, sort the indices of the chosen VDs in increasing 
+          order so that they will be dumped out in such order */
+      sort(vd_chosen,num_vd_chosen);
 
-    /* Determine if all VDs are to be dumped out. */
-    if (num_vd_chosen <= 0)	/* If so, set the corresponding flag. */
-        dumpall = 1;
-    else
+   /* Examine each VD, which is identified by its ref# returned by VSgetid */
+   for (i = 0; 
+	   (vdata_ref = VSgetid(file_id, vdata_ref)) != FAIL
+	&& (dumpall!=0 || vd_chosen_idx < num_vd_chosen); 
+	i++)
+   {
+      intn  data_only;	    /* indicates whether to print data only */
+      intn  flds_match = 0;  /* indicates whether any requested fields exist
+		/* or if no field requested, set to 1 means dump all fields */
+      char sep[2];	    /* the character that is used to separate 2 fields */
+
+      /* Only dump the info of the chosen VDs or all of the VDs if none
+         has been selected. */
+      if ((!dumpall) && (i != vd_chosen[vd_chosen_idx]))
+          continue; /* skip */
+
+      vd_chosen_idx++;	/* One vdata has been located; so go to the next one in 
+                   the array. */
+      vd_id = VSattach(file_id, vdata_ref, "r");
+      if (vd_id == FAIL) /* continue to the next vdata */
+	 ERROR_CONT_2( "in %s: VSattach failed for vdata_ref#=%d", 
+                        "dumpvd_ascii", (int) vdata_ref );
+
+      /* Note: each of the parameters retuned by a query routine below 
+	 must be checked before being used */
+
+      /* Retrieves general information about the vdata */
+      if (FAIL == VSinquire( vd_id, &nvf, &interlace, fields, &vsize, vdname ))
+	 ERROR_CONT_END( "in %s: VSinquire failed for vdata with ref#=%d", 
+                        "dumpvd_ascii", (int) vdata_ref, vd_id );
+
+      /* Get the size of the specified fields of the vdata */
+      vsize = VSsizeof( vd_id, fields );
+      if (vsize == FAIL)
+         ERROR_CONT_END( "in %s: VSsizeof failed for vdata with ref#=%d", 
+ 			"dumpvd_ascii", (int) vdata_ref, vd_id );
+
+      if (FAIL == (vdata_tag = VSQuerytag(vd_id)))
+         ERROR_CONT_END( "in %s: VSQuerytag failed for vdata with ref#=%d", 
+                        "dumpvd_ascii", (int) vdata_ref, vd_id );
+
+      if (FAIL == VSgetclass(vd_id, vdclass))
+         ERROR_CONT_END( "in %s: VSgetclass failed for vdata with ref#=%d",
+                        "dumpvd_ascii", (int) vdata_ref, vd_id );
+
+      /* If one or more fields were specified by the user, then find out
+         what they were, determine their corresponding indices in 
+         "fields", and store these indices in the array "flds_indices" so
+         that they can be used to determine whether a field should be
+         dumped later on. */
+      if (flds_chosen[0] != NULL)
+	 flds_match = getFieldIndices( fields, flds_chosen, flds_indices );
+
+      /* If no fields were chosen, all fields are to be dumped out, and
+         so all fields match. */
+      else /* if (flds_chosen[0] == NULL) */
+         flds_match = 1;
+
+      if (flds_match)
       {
-          /* Otherwise, sort the indices of the chosen VDs in increasing 
-             order so that they will be dumped out in such order. */
-          sort(vd_chosen,num_vd_chosen);
+         switch (dumpvd_opts->contents)
+         {
+             case DVERBOSE: /* dump all information */
+             case DHEADER:	 /* header only, no attributes, annotations 
+                                    or data */
+		/* store the vdata info into the vd_info_t struct for convenience */
+		curr_vd.index = i;        	/* vdata index */
+		curr_vd.nvf = nvf;        	/* number of records in the vdata */
+		curr_vd.interlace = interlace;  /* interlace mode of the vdata */
+		curr_vd.vsize = vsize;    	/* record size of the vdata */
+		curr_vd.ref = vdata_ref;  	/* vdata ref# */
+		curr_vd.tag = vdata_tag;  	/* vdata tag */
+		HDstrcpy( curr_vd.class, vdclass );   /* vdata class */
+		HDstrcpy( curr_vd.name, vdname );     /* vdata name */
+		printHeader( fp, fldstring, fields, &curr_vd );
+
+                /* proceed to printing data if not printing header only */
+                if (dumpvd_opts->contents != DHEADER)
+                {
+                   /* dump vdata attributes */
+                   status = dumpattr(vd_id, _HDF_VDATA, 1, ft, fp);
+                   if( FAIL == status )
+                      ERROR_BREAK_3( "in %s: %s failed for attributes of vdata with ref#=%d",
+                                    "dumpvd_ascii", "dumpattr", (int) vdata_ref, FAIL );
+
+                   /* dump all the annotations for this vdata */
+                   status = print_data_annots( file_id, file_name, vdata_tag, vdata_ref );
+                   if( FAIL == status )
+                      ERROR_BREAK_3( "in %s: %s failed for attributes of vdata with ref#=%d",
+                           "dumpvd_ascii", "print_data_annots", (int) vdata_ref, FAIL );
+
+                   /* BMR - 6/30/98 to fix bug #236: if no fields are defined or 
+		      no data is written, break out and don't fall through */
+                   if ( fields[0] == '\0' || nvf == 0 )
+                      ERROR_BREAK_0( "<No data written>\n\n", SUCCEED );
+                }
+                else /* only header, no attributes, annotations or data */
+                    break; /* break out and don't fall through */
+
+                      /* note that we fall through if not printing header only */
+             case DDATA:	/* data only */
+                if (dumpvd_opts->contents == DDATA)
+                {
+                   data_only = 1;
+                   HDstrcpy(sep, "");
+                }
+                else
+                {
+                   data_only = 0;
+                   HDstrcpy(sep, ";");
+                }
+
+                /* Only the chosen or all fields will be dumped out. */
+                status = dumpvd(vd_id, ft, data_only, fp, sep, flds_indices, dumpallfields);
+                if( FAIL == status )
+                   ERROR_BREAK_2( "in %s: dumpvd failed for vdata with ref#=%d",
+                                 "dumpvd_ascii", (int) vdata_ref, FAIL );
+		break; /* out of DDATA */
+
+             default:
+                printf("dumping vdata in file %s, unknown option %d\n",
+			file_name, dumpvd_opts->contents);
+         }   /* switch */
       }
 
-    /* Examine each VD. */
-    for (i = 0; (vdata_ref = VSgetid(file_id, vdata_ref)) != -1 && (dumpall!=0 || x<num_vd_chosen); i++)
-      {
-          int  data_only;
-          int  flds_match = 0;
-          char sep[2];
+      if (FAIL == VSdetach(vd_id))
+         fprintf(stderr,"in %s: VSdetach failed on vdata with ref#=%d", 
+                        (int) vdata_ref );
+      /* just simply goes to the next vdata */
 
-          /* Only dump the info of the chosen VDs or all of the VDs if none
-             has been selected. */
-          if ((!dumpall) && (i != vd_chosen[x]))
-              continue; /* skip */
+      vd_id = FAIL; /* reset */
 
-          x++;	/* One vdata has been located; so go to the next one in 
-                   the array. */
-          vd_id = VSattach(file_id, vdata_ref, "r");
-          if (vd_id == FAIL)
-            {
-                fprintf(stderr,"VSattach failed for vdata_ref(%d) in file %s\n", 
-                        (int) vdata_ref, file_name);
-		continue;  /* to skip processing this vdata */
-                /* removed goto done */
-            }
-
-          if (FAIL == VSinquire(vd_id, &nvf, &interlace, fields, &vsize, vdname))
-            {
-                fprintf(stderr,"VSinquire failed on vdid(%d) in file %s\n", 
-                        (int) vdata_ref, file_name);
-                /* removed goto done */
-		/* each of the parameters retuned by VSinquire must be 
-		   checked before being used */
-            }
-
- 	  vsize = VShdfsize(vd_id, fields);
- 	  if (vsize == FAIL)
-            {
-              	fprintf(stderr,"VShdfsize failed on vdid(%d) in file %s\n", 
- 			(int) vdata_ref, file_name);
-                /* remove goto done; vsize must be checked before use */
-            }
-
-          if (FAIL == (vdata_tag = VSQuerytag(vd_id)))
-            {
-                fprintf(stderr,"VSQuerytag failed on vd_id(%d) in file %s\n", 
-                        (int) vdata_ref, file_name);
-                /* remove goto done; vdata_tag must be checked before use */
-            }
-
-          if (FAIL == VSgetclass(vd_id, vdclass))
-            {
-                fprintf(stderr,"VSgetclass failed on vd_id(%d) in file %s\n", 
-                        (int) vdata_ref, file_name);
-                /* remove goto done; vdclass must be checked before use */
-            }
-
-
-          /* If one or more fields were specified by the user, then find out
-             what they were, determine their corresponding indices in 
-             "fields", and store these indices in the array "flds_indices" so
-             that they can be used to determine whether a field should be
-             dumped later on. */
-          if (flds_chosen[0] != NULL)
-            {
-                HDstrcpy(tempflds, fields);
-                ptr = tempflds;
-
-                j=(-1);
-                HDmemfill(flds_indices, &j, sizeof(int32), MAXCHOICES);
-
-                m = 0;
-                lastItem = 0;
-                /* Extract each field name from the list of fields of the 
-                   current record. */
-                for (j = 0; !lastItem; j++)
-                  {
-                      tempPtr = HDstrchr(ptr, ',');
-                      if (tempPtr == NULL)
-                          lastItem = 1;
-                      else
-                          *tempPtr = '\0';
-                      HDstrcpy(string, ptr);
-                      ptr = tempPtr + 1;
-                      /* Compare the extracted field name with each of the names
-                         of the fields having been chosen. */
-                      for (k = 0; flds_chosen[k] != NULL; k++)
-                        {
-                            if (!HDstrcmp(flds_chosen[k], string))
-                              {
-                                  flds_indices[m] = j;
-                                  m++;
-                                  flds_match = 1;
-                              }
-                        }		/* for (k...) */
-                  }	/* for (j...) */
-            }		/* if  */
-
-          /* If no fields were chosen, all fields are to be dumped out, and
-             so all fileds match. */
-          if (flds_chosen[0] == NULL)
-              flds_match = 1;
-
-          if (flds_match)
-            {
-                int32 z;
-                int32 lastItem;
-                int32 count = 0;
-
-                switch (dumpvd_opts->contents)
-                  {
-                  case DVERBOSE: /* dump all information */
-                  case DHEADER:	 /* header only, no attributes, annotations 
-                                    or data */
-                      fprintf(fp, "Vdata: %d\n", (int) i);
-		     if( vdata_tag == FAIL )	/* print vdata tag */
-			fprintf(fp, "   tag = <Undefined>; ");
-		     else
-                        fprintf(fp, "   tag = %d; ", (int) vdata_tag);
-
-		     /* print reference number without checking because it's from
-			VSgetid and has been checked */
-                     fprintf(fp, "reference = %d;\n", (int) vdata_ref);
-
-		     if( nvf == FAIL ) /* print number of records in the vdata */
-                        fprintf(fp, "   number of records = <Undefined>; ");
-		     else
-                        fprintf(fp, "   number of records = %d;", (int) nvf);
-
-		     if( interlace == FAIL ) /* print interlace mode */
-                        fprintf(fp, "   interlace = <Undefined>;\n");
-		     else
-		         if( interlace == 0 )
-			    fprintf(fp, " interlace = FULL_INTERLACE (0);\n");
-			 else if( interlace == 1 )
-			     fprintf(fp, "   interlace = NO_INTERLACE;\n");
-			 else
-			     fprintf(fp, "   interlace = <Unknown interlace mode (%d)>;\n", 
-				(int) interlace);
-                     
-		     /* print the list of field names of the vdata if it's available */
-		     if( fields[0] == '\0' || fields == NULL )
-			 fprintf( fp, "   fields = <Undefined>;\n");
-
-		     else /* field name list is available */
-		     {
-		      fprintf( fp, "   fields = [");
-                      /* The list of field names can be very long and would 
-                         look very messy when being displayed if it were to
-                         be dumped out at once. The following block of 
-                         operations is to display a list in a nice way even
-                         if the list is long. */
-                      lastItem = 0;
-                      HDstrcpy(tempflds, fields);
-                      ptr = tempflds;
-                      for (z = 0; !lastItem; z++)
-                        {
-                            tempPtr = HDstrchr(ptr, ',');
-                            if (tempPtr == NULL)
-                                lastItem = 1;
-                            else
-                                *tempPtr = '\0';
-                            HDstrcpy(string, ptr);
-                            count += HDstrlen(string);
-                            if (count > 50)
-                              {
-                                  fprintf(fp, "\n               ");
-                                  count = 0;
-                              }
-                            fprintf(fp, "%s", string);
-                            if (!lastItem)
-                                fprintf(fp, ", ");
-                            ptr = tempPtr + 1;
-                        }
-                      fprintf(fp, "];\n");
-		      } /* if the field list is available */
-
-		      if( vsize > 0 ) /* print vdata record size */
-                         fprintf(fp, "   record size (in bytes) = %d;\n", (int)vsize);
-		      else
-                         fprintf(fp, "   record size = <Undefined>;\n");
-
-		      if( vdname[0] == '\0' ) /* print vdata name */
-                         fprintf(fp, "   name = <Undefined>; ");
-		      else
-                         fprintf(fp, "   name = %s;", vdname);
-
-		      /* print class name - Note that vdclass can be NULL */
-		      if( vdclass[0] == '\0' || vdclass == NULL )
-                         fprintf(fp, " class = <Undefined>;\n");
-		      else
-                         fprintf(fp, " class = %s;\n", vdclass);
-
-                      /* check if only printing header */
-                      if (dumpvd_opts->contents != DHEADER)
-                        {
-                            /* dump attributes */
-                            if (FAIL == dumpattr(vd_id, _HDF_VDATA, 1, ft, fp))
-                              {
-                                  fprintf(stderr,"Failed to print vdata attributes for vd_id(%d) in file %s\n",
-                                          (int) vd_id, file_name);
-                                  /* remove goto done */
-                              }
-
-                            /* dump all the annotations for this vdata */
-                            status = print_data_annots( file_id, file_name, vdata_tag, vdata_ref );
-
-                            /* BMR - 6/30/98 to fix bug #236
-				if no fields are defined or no data is
-                                written, break out and don't fall through */
-                            if ( fields[0] == '\0' || nvf == 0 )
-                            {
-                                fprintf( stderr, "<No data written>\n\n");
-                                break;
-                            }
-                        }
-                      else /* only header, no attributes, annotations or data */
-                        {
-                            break; /* break out and don't fall through */
-                        }
-
-                      /* note we fall through */
-                  case DDATA:	/* data only */
-                      if (dumpvd_opts->contents == DDATA)
-                        {
-                            data_only = 1;
-                            HDstrcpy(sep, "");
-                        }
-                      else
-                        {
-                            data_only = 0;
-                            HDstrcpy(sep, ";");
-                        }
-
-                      /* Only the chosen or all fields will be dumped out. */
-                      if (FAIL == dumpvd(vd_id, ft, data_only, fp, sep, flds_indices, dumpallfields))
-                        {
-                            fprintf(stderr,"Failed to dump vdata data for vd_id(%d) in file %s\n", 
-                                    (int) vdata_ref, file_name);
-                            /* removed goto done */
-                        }
-                      break;
-                  default:
-                      printf("dumping vdata in file %s, unknown option \n",file_name);
-                      /* removed goto done */
-                  }	/* switch */
-            }
-
-          if (FAIL == VSdetach(vd_id))
-            {
-                fprintf(stderr,"VSdetach failed on vd_id(%d) in file %s\n", 
-                        (int) vd_id, file_name);
-                /* removed goto done */
-            }
-
-          vd_id = FAIL; /* reset */
-
-      }	/* for each vdata */
+   }	/* for each vdata */
 
 done:
     if (ret_value == FAIL)
@@ -773,11 +782,6 @@ done:
       HDfree(fields);
       fields = NULL;
     } 
-   if(tempflds != NULL)
-   {
-      HDfree(tempflds);
-      fields = NULL;
-    } 
 #endif /* macintosh */
 
     return ret_value;
@@ -793,50 +797,34 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
               int32 *vd_chosen,
               int dumpallfields)
 {
-    int32       flds_indices[MAXCHOICES];
-    int32       i, j, k, m, x;
-    int32       nvf;
-    int32       interlace;
-    int32       vsize;
-    int32       lastItem;
-    int32       vdata_ref = -1;
-    int32       vdata_tag;
-    char        vdclass[VSNAMELENMAX];
-    char        vdname[VSNAMELENMAX];
-    char       *tempPtr = NULL;
-    char       *ptr = NULL;
-    char        string[MAXNAMELEN];
-    FILE       *fp = NULL;
-    intn        dumpall = 0;
-    file_type_t ft = DBINARY;
-    int32       vd_id = FAIL;
-    intn        ret_value = SUCCEED;
+   int32       flds_indices[MAXCHOICES];
+   int32       i, j, k, m, vd_chosen_idx;
+   int32       nvf;
+   int32       interlace;
+   int32       vsize;
+   int32       lastItem;
+   int32       vdata_ref = -1;
+   int32       vdata_tag;
+   char        vdclass[VSNAMELENMAX];
+   char        vdname[VSNAMELENMAX];
+   char       *tempPtr = NULL;
+   char       *ptr = NULL;
+   char        fldstring[MAXNAMELEN];
+   FILE       *fp = NULL;
+   intn        dumpall = 0;
+   file_type_t ft = DBINARY;
+   int32       vd_id = FAIL;
+   intn        status;
+   intn        ret_value = SUCCEED;
 #if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
 	/* macintosh cannot handle >32K locals */
-    char *fields = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
-    char *tempflds = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
-    if (fields == NULL)
-	{
-	   fprintf(stderr,"Failure in dumpvd_binary: Not enough memory!\n");
-	   exit(1);
-	 }
-    if (tempflds == NULL)
-	{
-    /* cleanup */
-	   if(fields != NULL)
-	   {
-	      HDfree(fields);
-	      fields = NULL;
-	    } 
-	   fprintf(stderr,"Failure in dumpvd_binary: Not enough memory!\n");
-	   exit(1);
-	 }
+   char *fields = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
+
+   CHECK_ALLOC( fields, "fields", "dumpvd_binary" );
+
 #else /* !macintosh */
     char        fields[VSFIELDMAX*FIELDNAMELENMAX]; 
-    char        tempflds[VSFIELDMAX*FIELDNAMELENMAX];
 #endif /* !macintosh */    
-
-
 
     /* Get output file name.  */
     if (dumpvd_opts->dump_to_file)
@@ -844,7 +832,7 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
     else
         fp = stdout;
 
-    x = 0;	/* "x" is used to index the array of "vd_chosen". */
+    vd_chosen_idx = 0;	/* "vd_chosen_idx" is used to index the array of "vd_chosen". */
 
     /* Determine if all VDs are to be dumped out. */
     if (num_vd_chosen <= 0)	/* If so, set the corresponding flag. */
@@ -857,132 +845,83 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
       }
 
     /* Examine each VD. */
-    for (i = 0; 
+   for (i = 0; 
          (vdata_ref = VSgetid(file_id, vdata_ref)) != -1 
-             && (dumpall != 0 || x < num_vd_chosen); 
+         && (dumpall != 0 || vd_chosen_idx < num_vd_chosen); 
          i++)
+   {
+      int  data_only, flds_match = 0;
+      char sep[2];	/* character used to separate fields */
+
+      /* Only dump the info of the chosen VDs or all of the VDs if none
+         has been selected. */
+      if ((!dumpall) && (i != vd_chosen[vd_chosen_idx]))
+         continue; /* skip */
+
+      vd_chosen_idx++;	/* One vdata has been located; so go to the next one in 
+                   the array.  ???*/
+
+      /* Select the next vdata for processing */
+      vd_id = VSattach(file_id, vdata_ref, "r");
+      if (vd_id == FAIL)  /* continue to the next vdata */
+         ERROR_CONT_2( "in %s: VSattach failed for vdata with ref#=%d", 
+                        "dumpvd_binary", (int) vdata_ref );
+
+      status = VSinquire(vd_id, &nvf, &interlace, fields, &vsize, vdname);
+      if( FAIL == status ) /* end access to vd_id and cont. to next vdata */
+         ERROR_CONT_END( "in %s: VSinquire failed for vdata with ref#=%d", 
+                        "dumpvd_binary", (int) vdata_ref, vd_id );
+
+      /* BMR - 7/1/98 realized while fixing bug #236.
+         Skip binary printing if the vdata is empty */
+      if (fields[0] == '\0' || nvf == 0 )
+	 fprintf(stderr,"in %s: Vdata with ref#=%d) is empty.\n",
+                        "dumpvd_binary", (int) vdata_ref,file_name);
+
+      else /* vdata is not empty */
       {
-          int         data_only, flds_match = 0;
-          char        sep[2];
+         if (FAIL == (vdata_tag = VSQuerytag(vd_id)))
+            ERROR_CONT_END( "in %s: VSQuerytag failed for vdata with ref#=%d", 
+                        "dumpvd_binary", (int) vdata_ref, vd_id );
 
-          /* Only dump the info of the chosen VDs or all of the VDs if none
-             has been selected. */
-          if ((!dumpall) && (i != vd_chosen[x]))
-              continue; /* skip */
+         if (FAIL == VSgetclass(vd_id, vdclass))
+            ERROR_CONT_END( "in %s: VSgetclass failed for vdata with ref#=%d", 
+                        "dumpvd_binary", (int) vdata_ref, vd_id );
 
-          x++;	/* One vdata has been located; so go to the next one in 
-                   the array. */
+         /* If one or more fields were specified by the user, then find out
+            what they were, determine their corresponding indices in 
+            "fields", and store these indices in the array "flds_indices" so
+            that they can be used to determine whether a field should be
+            dumped later on. */
+         if (flds_chosen[0] != NULL)
+	    flds_match = getFieldIndices( fields, flds_chosen, flds_indices );
 
-          vd_id = VSattach(file_id, vdata_ref, "r");
-          if (vd_id == FAIL)
-            {
-                fprintf(stderr,"VSattach failed for vdata_ref(%d) in file %s\n", 
-                        (int) vdata_ref, file_name);
-                continue; /* remove goto done and continue to skip processing 
-			this vdata but go on to the next instead of exit out 
-			dumper */
-            }
+         /* If no fields were chosen, all fields are to be dumped out, and
+            so all fields match. */
+         else /* if (flds_chosen[0] == NULL) */
+            flds_match = 1;
 
-          if (FAIL == VSinquire(vd_id, &nvf, &interlace, fields, &vsize, vdname))
-            {
-                fprintf(stderr,"VSinquire failed on vd_id(%d) in file %s\n", 
-                        (int) vdata_ref,file_name);
-                /* remove goto done */
-            }
+         if (flds_match)
+         {
+	    /* BMR: removed the if statement to determine if data_only
+	       should be set; set data_only in either case */
+            data_only = 1;
+            HDstrcpy(sep, "");
 
-	  /* BMR - 7/1/98 realized while fixing bug #236.
-	     Skip binary printing if the vdata is empty */
-	  if (fields[0] == '\0' || nvf == 0 )
-	      fprintf(stderr,"Vdata with ref_num(%d) in file %s is empty.\n",
-                        (int) vdata_ref,file_name);
-	  else /* vdata is not empty */
-	  {
-            if (FAIL == (vdata_tag = VSQuerytag(vd_id)))
-            {
-                fprintf(stderr,"VSQuerytag failed on vd_id(%d) in file %s\n", 
-                        (int) vdata_ref, file_name);
-                /* remove goto done */
-            }
-
-            if (FAIL == VSgetclass(vd_id, vdclass))
-            {
-                fprintf(stderr,"VSgetclass failed on vd_id(%d) in file %s\n", 
-                        (int) vdata_ref, file_name);
-                /* remove goto done */
-            }
-
-
-            /* If one or more fields were specified by the user, then find out
-               what they were, determine their corresponding indices in 
-               "fields", and store these indices in the array "flds_indices" so
-               that they can be used to determine whether a field should be
-               dumped later on. */
-            if (flds_chosen[0] != NULL)
-            {
-                HDstrcpy(tempflds, fields);
-                ptr = tempflds;
-
-                j=(-1);
-                HDmemfill(flds_indices, &j, sizeof(int32), MAXCHOICES);
-
-                m = 0;
-                lastItem = 0;
-                /* Extract each field name from the list of fields of the 
-                   current record. */
-                for (j = 0; !lastItem; j++)
-                  {
-                      tempPtr = HDstrchr(ptr, ',');
-                      if (tempPtr == NULL)
-                          lastItem = 1;
-                      else
-                          *tempPtr = '\0';
-                      HDstrcpy(string, ptr);
-                      ptr = tempPtr + 1;
-                      /* Compare the extracted field name with each of the names
-                         of the fields having been chosen. */
-                      for (k = 0; flds_chosen[k] != NULL; k++)
-                        {
-                            if (!HDstrcmp(flds_chosen[k], string))
-                              {
-                                  flds_indices[m] = j;
-                                  m++;
-                                  flds_match = 1;
-                              }
-                        }		/* for (k...) */
-                  }	/* for (j...) */
-            }		/* if  */
-
-            /* If no fields were chosen, all fields are to be dumped out, and
-               so all fileds match. */
-            if (flds_chosen[0] == NULL)
-                flds_match = 1;
-            if (flds_match)
-            {
-		/* BMR: removed the if statement to determine if data_only
-		   should be set; set data_only in either case */
-                data_only = 1;
-                HDstrcpy(sep, "");
-
-                /* Only the chosen or all fields will be dumped out. */
-                if (FAIL == dumpvd(vd_id, ft, data_only, fp, sep, flds_indices, dumpallfields))
-                  {
-                      fprintf(stderr,"Failed to dump vdata data for vdid(%d) in file %s\n", 
-                              (int) vd_id, file_name);
-                      /* remove goto done */
-                  }
-            }
-	  } /* end of if (fields[0] == '\0' || nvf == 0 ) */
+            /* Only the chosen or all fields will be dumped out. */
+            if (FAIL == dumpvd(vd_id, ft, data_only, fp, sep, flds_indices, dumpallfields))
+               ERROR_CONT_END( "in %s: Failure in dumping data for vdata with ref#=%d", 
+                              "dumpvd_binary", (int) vdata_ref, vd_id );
+         }
+      } /* end of if (fields[0] == '\0' || nvf == 0 ) */
                       
-          if (FAIL == VSdetach(vd_id))
-            {
-                fprintf(stderr,"VSdetach failed on vd_id(%d) in file %s\n", 
-                        (int) vd_id, file_name);
-                /* remove goto done */
-            }
+      if (FAIL == VSdetach(vd_id))
+         fprintf(stderr,"in %s: VSdetach failed on vdata with ref#=%d", 
+                        "dumpvd_binary", (int) vdata_ref, vd_id );
 
-          vd_id = FAIL; /* reset */
+      vd_id = FAIL; /* reset */
 
-      }	/* for each vdata */
+   }	/* for each vdata */
 
 done:
     if (ret_value == FAIL)
@@ -995,11 +934,6 @@ done:
    if(fields != NULL)
    {
       HDfree(fields);
-      fields = NULL;
-    } 
-   if(tempflds != NULL)
-   {
-      HDfree(tempflds);
       fields = NULL;
     } 
 #endif /* macintosh */
@@ -1054,107 +988,85 @@ dvd(dump_info_t * dumpvd_opts,
     int32       num_vd_chosen;
     intn        index_error = 0;
     file_type_t ft;
+    intn        status;
     intn        ret_value = SUCCEED;
 
    /* check for missing input file name */
-   if( curr_arg >= argc )
-   {
-      fprintf( stderr, "Missing input file name.  Please try again.\n" );
-      return( FAIL ); /* nothing to be cleaned up at this point */
-   }
+   if( curr_arg >= argc ) /* goto done with FAIL */
+      ERROR_GOTO_0( "Missing input file name.  Please try again.\n" );
 
-    while (curr_arg < argc)
-      {	/* Loop until all specified files have been 
+   while (curr_arg < argc)
+   {	/* Loop until all specified files have been 
            processed */
 
-          /* get file name */
-          HDstrcpy(file_name, argv[curr_arg]); 
+   /* get file name */
+   HDstrcpy(file_name, argv[curr_arg]); 
 
-          /* record for later use */
-          HDstrcpy( dumpvd_opts->ifile_name, file_name );
-          curr_arg++;
+   /* record for later use */
+   HDstrcpy( dumpvd_opts->ifile_name, file_name );
+   curr_arg++;
 
-          closeVD( &file_id, &vd_chosen, file_name );
+   closeVD( &file_id, &vd_chosen, file_name );
 
-          /* try opening file */
-          file_id = Hopen(file_name, DFACC_READ, 0);
-          if (file_id == FAIL)
-            {
-                fprintf(stderr,"Failure in Hopen on file %s\n", file_name);
-                ret_value = FAIL;
-                continue;
-            }
-          if (FAIL == Vstart(file_id))
-            {
-                fprintf(stderr,"Vstart failed for file %s\n", file_name);
-                ret_value = FAIL;
-                continue;
-            }
+   /* try opening file */
+   file_id = Hopen(file_name, DFACC_READ, 0);
+   if (file_id == FAIL)
+      ERROR_CONT_1( "in dvd: Hopen failed on file %s\n", file_name);
 
-          /* Find out which VDs have been chosen. */
-          num_vd_chosen = choose_vd(dumpvd_opts, &vd_chosen, file_id, &index_error);
+   if (FAIL == Vstart(file_id))
+      ERROR_CONT_1( "in dvd: Vstart failed for file %s\n", file_name);
 
-          /* if there are no valid indices, move on to the next file */
-          if (index_error && num_vd_chosen == 0)
-             continue;   /* to the next file, closeVG before opening next file
-                        takes care of Vend, Hclose, and free vg_chosen */
+   /* Find out which VDs have been chosen. */
+   num_vd_chosen = choose_vd(dumpvd_opts, &vd_chosen, file_id, &index_error);
 
-          ft = dumpvd_opts->file_type;
-          switch(ft)
-            {
-            case DASCII:  /*    ASCII file   */
+   /* if there are no valid indices, move on to the next file */
+   if (index_error && num_vd_chosen == 0)
+      continue;   /* to the next file, closeVG before opening next file
+                     takes care of Vend, Hclose, and free vg_chosen */
 
-                if (FAIL == dumpvd_ascii(dumpvd_opts, file_id, file_name,
+   ft = dumpvd_opts->file_type;
+   switch(ft)
+   {
+       case DASCII:  /*    ASCII file   */
+
+          status = dumpvd_ascii(dumpvd_opts, file_id, file_name,
                                          num_vd_chosen, flds_chosen, 
-                                         vd_chosen, dumpallfields))
-                  {
-                     ret_value = FAIL;
-                     goto done;
-                  }
-                break;
-            case DBINARY:   /*  binary file, not fully tested yet  */
+                                         vd_chosen, dumpallfields);
+          if( FAIL == status )
+             ERROR_BREAK_0( "in dvd", FAIL );
+          break;
+       case DBINARY:   /*  binary file, not fully tested yet  */
 
-                if (FAIL == dumpvd_binary(dumpvd_opts, file_id, file_name,
+          status = dumpvd_binary(dumpvd_opts, file_id, file_name,
                                          num_vd_chosen, flds_chosen, 
-                                         vd_chosen, dumpallfields))
-                  {
-                     ret_value = FAIL;
-                     goto done;
-                  }
+                                         vd_chosen, dumpallfields);
+          if( FAIL == status )
+             ERROR_BREAK_0( "in dvd", FAIL );
 
-                break;
-            default:
-                printf("dumping vdata, unknown ouput file option \n");
-                ret_value = FAIL;
-                goto done;
-            }    /* switch for output file   */
+          break;
+       default:
+          printf("dumping vdata, unknown ouput file option \n");
+          ret_value = FAIL;
+   }    /* switch for output file   */
 
-          if(vd_chosen != NULL)
-            {
-                HDfree(vd_chosen);
-                vd_chosen = NULL;
-            } 
+   if(vd_chosen != NULL)
+   {
+      HDfree(vd_chosen);
+      vd_chosen = NULL;
+   } 
 
-          if (dumpvd_opts->dump_to_file)
-              fclose(fp);
+   if (dumpvd_opts->dump_to_file)
+      fclose(fp);
 
-          if (FAIL == Vend(file_id))
-            {
-              fprintf(stderr,"Vend failed on file %s\n", file_name);
-              ret_value = FAIL;
-              goto done;
-            }
+   if (FAIL == Vend(file_id))
+      ERROR_CONT_1( "in dvd: Vend failed on file %s\n", file_name);
 
-          if (FAIL == Hclose(file_id))
-            {
-              fprintf(stderr,"Hclose failed on file %s\n", file_name);
-              ret_value = FAIL;
-              goto done;
-            }
+   if (FAIL == Hclose(file_id))
+      ERROR_CONT_1( "in dvd: Hclose failed on file %s\n", file_name);
 
-          file_id = FAIL; /* reset */
+   file_id = FAIL; /* reset */
 
-      }	/* while processing files  */
+   }	/* while processing files  */
 
 done:
     if (ret_value == FAIL)

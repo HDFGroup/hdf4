@@ -62,22 +62,10 @@ dumpvd(int32       vd,
 	/* macintosh cannot handle >32K locals */
     char *fields = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
     char *flds = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
-    if (fields == NULL)
-	{
-	   fprintf(stderr,"Failure in dumpvd: Not enough memory!\n");
-	   exit(1);
-	 }
-    if (flds == NULL)
-	{
-    /* cleanup */
-	   if(fields != NULL)
-	   {
-	      HDfree(fields);
-	      fields = NULL;
-	    } 
-	   fprintf(stderr,"Failure in dumpvd: Not enough memory!\n");
-	   exit(1);
-	 }
+
+    CHECK_ALLOC( fields, "fields", "dumpvd" );
+    CHECK_ALLOC( flds, "flds", "dumpvd" );
+
 #else /* !macintosh */
     char        fields[VSFIELDMAX*FIELDNAMELENMAX];
     char        flds[VSFIELDMAX*FIELDNAMELENMAX];
@@ -105,14 +93,9 @@ dumpvd(int32       vd,
       }
 
     done = 0;
-    /* Allocate space for the buffer. */
-    if (( bb = (uint8 *) HDmalloc(bufsize)) == NULL)
-      {
-          fprintf(stderr,"dumpvd: failed to allocate memory \n");
-          ret_value = FAIL;
-          goto done;
-      }
-
+    /* Allocate space for the buffer and terminate hdp if allocation fails. */
+    bb = (uint8 *) HDmalloc(bufsize);
+    CHECK_ALLOC( fields, "fields", "dumpvd" );
     
     if (FAIL == VSsetfields(vd, fields))
       {
@@ -519,22 +502,11 @@ dumpattr(int32 vid,
 	/* macintosh cannot handle >32K locals */
     char *name = (char *)HDmalloc((FIELDNAMELENMAX+1) * sizeof(char));
     uint8 *attrbuf = (uint8 *)HDmalloc((BUFFER) * sizeof(uint8));
-    if (name == NULL)
-	{
-	   fprintf(stderr,"Failure in dumpattr: Not enough memory!\n");
-	   exit(1);
-	 }
-    if (attrbuf == NULL)
-	{
-    /* cleanup */
-	   if(name != NULL)
-	   {
-	      HDfree(name);
-	      name = NULL;
-	    } 
-	   fprintf(stderr,"Failure in dumpvd: Not enough memory!\n");
-	   exit(1);
-	 }
+
+    /* check if allocations fail, terminate hdp */
+    CHECK_ALLOC( name, "name", "dumpattr" );
+    CHECK_ALLOC( attrbuf, "attrbuf", "dumpattr" );
+
 #else /* !macintosh */
     char          name[FIELDNAMELENMAX+1];
     uint8         attrbuf[BUFFER];
@@ -594,7 +566,7 @@ dumpattr(int32 vid,
                   {
                       fprintf(stderr,">>>dumpattr:can't allocate buf for %d'th attribute.\n",i);
                       ret_value = FAIL;
-                      goto done;
+                      goto done;  /* do we want exit here? */
                   }
 
                 alloc_flag = 1;

@@ -58,7 +58,9 @@ init_dump_opts(dump_info_t * dump_opts)
     dump_opts->contents = DVERBOSE;   /* default dump all information */
     dump_opts->dump_to_file = FALSE;          /* don't dump to output file */
     dump_opts->file_type = DASCII;    /* default output is ASCII file */
+    dump_opts->no_cr = FALSE; /* print output aligned, using carriage returns */
     dump_opts->print_pal = FALSE;     /* GR only, don't print palette */
+    dump_opts->interlace = NO_SPECIFIC;     /* GR only, print data using interlace at creation */
     HDstrcpy(dump_opts->file_name, "\0");
 }       /* end init_dump_opts() */
 
@@ -121,7 +123,7 @@ main(int argc, char *argv[])
     switch (cmd)
       {
       case LIST:
-          if (FAIL == do_list(curr_arg, argc, argv, &glob_opts))
+          if (FAIL == do_list(curr_arg, argc, argv, glob_opts.help))
               exit(1);
           break;
 
@@ -131,7 +133,12 @@ main(int argc, char *argv[])
           break;
 
       case DUMPRIG:
-          if (FAIL == do_dumprig(curr_arg, argc, argv, glob_opts.help))
+	  /* BMR: retire dumprig, have dumpgr do the work */
+          if (FAIL == do_dumprig(curr_arg, argc, argv, glob_opts.help)) 
+/*
+	  fprintf( stderr, ">>> Please make a note that dumprig is no longer available.\n");
+	  fprintf( stderr, "    The command dumpgr is and should be used in its place.\n" );
+          if (FAIL == do_dumpgr(curr_arg, argc, argv, glob_opts.help)) */
               exit(1);
           break;
 
@@ -170,91 +177,17 @@ NAME
 DESCRIPTION
    The size is the byte size of the fields of a vdata in a hdf file.
 
+REMARKS: This routine is removed because it is just a copy of the 
+   API routine VSsizeof.
+
 RETURNS
    The byte size of the field(s), positive integer, on success; 
    otherwise, returns FAIL.
 ----------------------------------------------------------------- */
-int32 
-VShdfsize(int32 vkey,   /* IN vdata key */
-         char *fields  /* IN: Name(s) of the fields to check size of */ )
-{
-    int32       totalsize;
-    int32       i, j;
-    int32       found;
-    int32       ac;
-    char        **av = NULL;
-    vsinstance_t *w  = NULL;
-    VDATA        *vs = NULL;
-    int32        ret_value = SUCCEED;
-    CONSTR(FUNC, "VShdfsize");
-
-#ifdef HAVE_PABLO
-/*
-  TRACE_ON(VS_mask, ID_VShdfsize);
-*/
-#endif /* HAVE_PABLO */
-
-    /* check key is valid vdata */
-    if (HAatom_group(vkey)!=VSIDGROUP)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    /* get vdata instance */
-    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
-
-    /* get vdata itself and check it */
-    vs = w->vs;
-    if (vs == NULL)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    totalsize = 0;
-    if (fields == NULL) /* default case? */
-      {   /* count all field sizes in vdata */
-        for (j = 0; j < vs->wlist.n; j++)	
-            totalsize += vs->wlist.isize[j];
-      }		
-    else
-      {  /* parse field string */
-        if ((scanattrs(fields, &ac, &av) < 0) || (ac < 1))
-            HGOTO_ERROR(DFE_ARGS, FAIL);
-
-        for (i = 0; i < ac; i++)
-          {   /* check fields in vs */
-            for (found = 0, j = 0; j < vs->wlist.n; j++)	
-                if (!HDstrcmp(av[i], vs->wlist.name[j]))
-                  {
-                    totalsize += vs->wlist.isize[j];
-                    found = 1;
-                    break;
-                  }
-
-            if (!found)
-                HGOTO_ERROR(DFE_ARGS, FAIL);
-          }	/* end for */
-      }		/* end else */
-
-    /* return total size of vdata fields specified */
-    ret_value = totalsize;
-
-done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
-
-    } /* end if */
-
-  /* Normal function cleanup */
-#ifdef HAVE_PABLO
-/*
-  TRACE_OFF(VS_mask, ID_VShdfsize);
-*/
-#endif /* HAVE_PABLO */
-
-  return ret_value;
-}   /* VShdfsize */
 
 /* ------------- VSattrhdfsize --------------------------
 NAME
-       VSattrhdfsize -- get info of an attribute of a vdata/field
+       VSattrhdfsize -- get hdfsize of a vdata attribute
 USAGE
       intn VSattrhdfsize(int32 vsid, int32 findex, intn attrindex, int32 *size);
       int32 vsid;      IN: vdata id

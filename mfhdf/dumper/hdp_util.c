@@ -50,16 +50,16 @@ make_file_list(intn curr_arg, intn argc, char *argv[])
     if (curr_arg > argc)	/* consistency check */
         return (NULL);
 
-    ret = (filelist_t *) HDmalloc(sizeof(filelist_t));
+   ret = (filelist_t *) HDmalloc(sizeof(filelist_t));
     if (ret == NULL)
       {
-          printf("Failure to allocate memory\n");
+          fprintf(stderr, "make_file_list: space allocation failed\n");
           return (NULL);
       }
     ret->file_arr = (char **) HDmalloc(sizeof(char *) * ((argc - curr_arg) + 1));
     if (ret->file_arr == NULL)
       {
-          printf("Failure to allocate memory\n");
+          fprintf(stderr, "make_file_list: space allocation failed\n");
           HDfree(ret);
           return (NULL);
       }		/* end if */
@@ -81,9 +81,26 @@ get_next_file(filelist_t * f_list, intn advance)
     return (f_list->file_arr[f_list->curr_file]);
 }	/* end get_next_file() */
 
+/* free_struct_list use HDfree to free the list of vgroup info structs */
+vg_info_t ** free_vginfo_list( 
+		vg_info_t **nodelist,
+		int32 num_items )
+{
+   intn i;
+
+   /* if the list is not NULL, free each node then reset the list to NULL */
+   if( nodelist != NULL)
+   {
+      for( i = 0; i < num_items; i++ )
+         if( nodelist[i] != NULL )
+            HDfree( nodelist[i] );
+      HDfree( nodelist );
+   }
+   return( NULL );
+}  /* end of free_vginfo_list */
+
 /* free_str_list use HDfree to free the list of strings of characters */
-void
-free_str_list( char **str_list,
+char** free_str_list( char **str_list,
                int32 num_items )
 {
    intn i;
@@ -91,20 +108,28 @@ free_str_list( char **str_list,
    if( str_list != NULL)
    {
       for( i = 0; i < num_items; i++ )
-         if( str_list[i] != NULL )
-            HDfree( str_list[i] );
+         free_char_list( str_list[i] );
       HDfree( str_list );
    }
+   return( NULL );
 }  /* end of free_str_list */
 
+/* free_num_list use HDfree to free the string of characters; this routine
+   is short but can be used in many different places and very convenient */
+char* free_char_list( char *char_list )
+{
+   if( char_list != NULL)
+      HDfree( char_list );
+   return( NULL );
+}  /* end of free_char_list */
+
 /* free_num_list use HDfree to free the list of integers; this routine
-   is short but can be used in many different places and very
-   convenient */
-void
-free_num_list( int32 *num_list )
+   is short but can be used in many different places and very convenient */
+int32* free_num_list( int32 *num_list )
 {
    if( num_list != NULL)
       HDfree( num_list );
+   return( NULL );
 }  /* end of free_num_list */
 
 void 
@@ -137,7 +162,7 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
               return (NULL);
           if ((ret = (groupinfo_t *) HDmalloc(sizeof(groupinfo_t))) == NULL)
             {
-                printf("Failure to allocate memory \n");
+              fprintf(stderr, "make_group_list: space allocation failed\n");
                 return (NULL);
             }
           ret->max_dds = nobj;
@@ -146,7 +171,7 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
             {
                 if ((ret->dd_arr = (DFdi *) HDmalloc(sizeof(DFdi) * nobj)) == NULL)
                   {
-                      printf("Failure to allocate memory \n");
+                  fprintf(stderr, "make_group_list: space allocation failed\n");
                       HDfree(ret);
                       return (NULL);
                   }		/* end if */
@@ -177,23 +202,29 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
                 vinit_done = TRUE;
                 Vinitialize(fid);
             }	/* end if */
+/*
+PPNUM("attaching to vgroup with ref", ref );
+*/
           if ((vkey = Vattach(fid, ref, "r")) != FAIL)
             {
                 if ((nobj = Vntagrefs(vkey)) != FAIL)
                   {
+/*
+PPNUM("number of object for this vgroup just attached", nobj );
+*/
 		   if( nobj > 0 ) { /* Albert fixed */
                       int32      *temp_tag;
                       int32      *temp_ref;
 
                       if ((temp_tag = (int32 *) HDmalloc(sizeof(int32) * nobj)) == NULL)
                         {
-                            printf("Failure to allocate memory \n");
+                  fprintf(stderr, "make_group_list: space allocation failed\n");
                             Vdetach(vkey);
                             return (NULL);
                         }	/* end if */
                       if ((temp_ref = (int32 *) HDmalloc(sizeof(int32) * nobj)) == NULL)
                         {
-                            printf("Failure to allocate memory \n");
+                  fprintf(stderr, "make_group_list: space allocation failed\n");
 
                             Vdetach(vkey);
                             HDfree(temp_tag);
@@ -210,7 +241,7 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
 
                       if ((ret = (groupinfo_t *) HDmalloc(sizeof(groupinfo_t))) == NULL)
                         {
-                            printf("Failure to allocate memory \n");
+                  fprintf(stderr, "make_group_list: space allocation failed\n");
 
                             Vdetach(vkey);
                             HDfree(temp_tag);
@@ -221,7 +252,7 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
                       ret->curr_dd = 0;
                       if ((ret->dd_arr = (DFdi *) HDmalloc(sizeof(DFdi) * nobj)) == NULL)
                         {
-                            printf("Failure to allocate memory \n");
+                  fprintf(stderr, "make_group_list: space allocation failed\n");
 
                             Vdetach(vkey);
                             HDfree(temp_tag);
@@ -230,15 +261,24 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
                             return (NULL);
                         }	/* end if */
 
+/*
+printf("make_group_list for tag/ref = %d/%d\n", tag, ref );
+*/
                       for (i = 0; i < nobj; i++)
                         {
                             ret->dd_arr[i].tag = (uint16) temp_tag[i];
                             ret->dd_arr[i].ref = (uint16) temp_ref[i];
+/*
+printf("element %d: tag/ref = %d/%d\n", i, temp_tag[i], temp_ref[i] );
+*/
                         }	/* end for */
 
                       HDfree(temp_tag);
                       HDfree(temp_ref);
 		    } /* if nobj > 0 */
+                  /* BMR: 7/28/00 must add this one, otherwise, HDfree fails later */
+                  else /* nobj <= 0 */
+                     return( NULL );
                   }		/* end if */
                 else	/* bad vkey? */
                     return (NULL);
@@ -271,8 +311,12 @@ get_group_max(groupinfo_t * g_list)
 void 
 free_group_list(groupinfo_t * g_list)
 {
-    HDfree(g_list->dd_arr);
-    HDfree(g_list);
+   if( g_list != NULL )
+   {
+      if( g_list->dd_arr != NULL )
+         HDfree(g_list->dd_arr); 
+      HDfree(g_list);
+   }
 }	/* end free_group_list() */
 
 /*
@@ -282,224 +326,232 @@ free_group_list(groupinfo_t * g_list)
 objlist_t  *
 make_obj_list(int32 fid, uint32 options)
 {
-    intn        nobj;			/* number of DDs in the file */
-    int32       status;			/* status of various HDF calls */
-    int32       aid;			/* temporary AID to use while getting DD info */
-    int16       tmp_spec;		/* temporary storage for special status */
-    objlist_t  *obj_ret;		/* pointer to the dd list to return */
-    objinfo_t  *temp_obj;		/* temporary pointer to a working DD object */
-    sp_info_block_t info;		/* temp. storage for special elem. info */
-    intn        n, m;			/* local counting variable */
+    intn        nobj;		/* number of DDs in the file */
+    int32       status;		/* status of various HDF calls */
+    int32       aid;		/* temporary AID to use while getting DD info */
+    int16       tmp_spec;	/* temporary storage for special status */
+    objlist_t  *obj_ret;	/* pointer to the dd list to return */
+    objinfo_t  *obj_ptr;	/* temporary pointer to a working DD object */
+    sp_info_block_t info;	/* temp. storage for special elem. info */
+    intn        n, m;		/* local counting variable */
 
+   /* get the number of all objects in the file */
     nobj = Hnumber(fid, DFTAG_WILDCARD);
     if (nobj == FAIL || nobj <= 0 )  /* BMR: added check for nobj<=0 */
         return (NULL);
 
+   /* allocate space for the object list - exit at failure??? */
     if ((obj_ret = (objlist_t *) HDmalloc(sizeof(objlist_t))) == NULL)
       {
-          printf("Failure to allocate memory for obj_ret\n");
+      fprintf(stderr, "make_obj_list: space allocation failed\n");
           return (NULL);
       }
 
     obj_ret->max_obj = nobj;	/* set the number of objects */
     obj_ret->curr_obj = 0;
-    if ((obj_ret->raw_obj_arr = (objinfo_t *) HDmalloc(sizeof(objinfo_t) * nobj)) == NULL)
+    obj_ret->raw_obj_arr = (objinfo_t *) HDmalloc(sizeof(objinfo_t) * nobj);
+
+/* should it exit on failure ??? */
+    if( obj_ret->raw_obj_arr == NULL)
       {
-          printf("Failure to allocate memory for obj_ret->raw_obj_arr\n");
+      fprintf(stderr, "make_obj_list: space allocation failed\n");
           HDfree(obj_ret);
           return (NULL);
       }		/* end if */
 
-	/* Clear array of dd/object information */
-    HDmemset(obj_ret->raw_obj_arr, 0, sizeof(objinfo_t) * nobj);
+   /* Clear array of dd/object information */
+   HDmemset(obj_ret->raw_obj_arr, 0, sizeof(objinfo_t) * nobj);
 
-	/* Read all the tag/ref's in the file into an array */
-    aid = Hstartread(fid, DFTAG_WILDCARD, DFREF_WILDCARD);
-    if (aid == FAIL)
-      {
-          HEprint(stderr, 0);
-          HDfree(obj_ret->raw_obj_arr);
-          HDfree(obj_ret);
-          return (NULL);
-      }		/* end if */
+   /*
+    * Read all the tag/ref's in the file into an array 
+   */
+   /* start the reading of an access element */
+   aid = Hstartread(fid, DFTAG_WILDCARD, DFREF_WILDCARD);
+   if (aid == FAIL)
+   {
+      HEprint(stderr, 0);
+      HDfree(obj_ret->raw_obj_arr);
+      HDfree(obj_ret);
+      return (NULL);
+   }		/* end if */
 
-    for (n = 0, status = SUCCEED; (n < nobj) && (status != FAIL); n++)
-      {
-          Hinquire(aid, NULL, &(obj_ret->raw_obj_arr[n].tag),
-                   &(obj_ret->raw_obj_arr[n].ref), &(obj_ret->raw_obj_arr[n].length),
-                   &(obj_ret->raw_obj_arr[n].offset), NULL, NULL, &tmp_spec);
-          if (options & CHECK_SPECIAL)
-            {	/* are we looking for spec. elem. ? */
-                obj_ret->raw_obj_arr[n].is_special = (tmp_spec != 0);
-                if (obj_ret->raw_obj_arr[n].is_special)
-                  {		/* get the special info. */
-                      if ((status = HDget_special_info(aid, &info)) == FAIL)
-                        {
-                            obj_ret->raw_obj_arr[n].is_special = 0;
+   /* for each element */
+   for (n = 0, status = SUCCEED; (n < nobj) && (status != FAIL); n++)
+   {
+      Hinquire(aid, NULL, &(obj_ret->raw_obj_arr[n].tag),
+               &(obj_ret->raw_obj_arr[n].ref), &(obj_ret->raw_obj_arr[n].length),
+               &(obj_ret->raw_obj_arr[n].offset), NULL, NULL, &tmp_spec);
+      if (options & CHECK_SPECIAL)
+      {	/* are we looking for spec. elem. ? */
+         obj_ret->raw_obj_arr[n].is_special = (tmp_spec != 0);
+         if (obj_ret->raw_obj_arr[n].is_special)
+         {		/* get the special info. */
+            if ((status = HDget_special_info(aid, &info)) == FAIL)
+            {
+               obj_ret->raw_obj_arr[n].is_special = 0;
                         }	/* end if */
-                      else
-                        {	/* copy over special information we found */
-                            if ((obj_ret->raw_obj_arr[n].spec_info = (sp_info_block_t *) HDmalloc(sizeof(sp_info_block_t))) == NULL)
-                              {
-                                  printf("Failure to allocate memory \n");
-                                  obj_ret->raw_obj_arr[n].is_special = 0;
-                              }
-                            else
-                                HDmemcpy(obj_ret->raw_obj_arr[n].spec_info, &info, sizeof(sp_info_block_t));
-                        }	/* end else */
-                  }		/* end if */
+            else
+            {	/* copy over special information we found */
+               obj_ret->raw_obj_arr[n].spec_info = (sp_info_block_t *) HDmalloc(sizeof(sp_info_block_t)); 
+               if( obj_ret->raw_obj_arr[n].spec_info == NULL)
+               {
+                   fprintf(stderr, "make_obj_list: space allocation failed\n");
+                   obj_ret->raw_obj_arr[n].is_special = 0;
+               }
+               else
+                  HDmemcpy(obj_ret->raw_obj_arr[n].spec_info, &info, sizeof(sp_info_block_t));
+            }	/* end else */
+         }  /* end if */
+      }	 /* end if */
+      status = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
+   }  /* end for */
+
+   if (Hendaccess(aid) == FAIL)
+   {
+      HEprint(stderr, 0);
+      HDfree(obj_ret->raw_obj_arr);
+      HDfree(obj_ret);
+      return (NULL);
+   }  /* end if */
+
+   /* Post-process the list of dd/objects, adding more information */
+   /*  Also set up the pointers for the sorted list to be manipulated later */
+
+   obj_ret->srt_obj_arr = (objinfo_t **) HDmalloc(sizeof(objinfo_t *) * nobj);
+   if( obj_ret->srt_obj_arr == NULL )
+   {
+      fprintf(stderr, "make_obj_list: space allocation failed\n");
+      HDfree(obj_ret->raw_obj_arr);
+      HDfree(obj_ret);
+      return (NULL);
+   }  /* end if */
+
+   /* Loop for more information */
+   for (n = 0; n < nobj; n++)
+   {
+      obj_ptr = obj_ret->srt_obj_arr[n] = &obj_ret->raw_obj_arr[n];
+
+      /* set the index value to a flag for later */
+      obj_ptr->index = (-1);
+
+      /* check for a group */
+      if (options & CHECK_GROUP)
+      {	/* are we looking for groups ? */
+         if (obj_ptr->tag == DFTAG_RIG || obj_ptr->tag == DFTAG_SDG
+             || obj_ptr->tag == DFTAG_NDG || obj_ptr->tag == DFTAG_VG)
+         {
+            obj_ptr->is_group = TRUE;
+            obj_ptr->group_info = make_group_list(fid, obj_ptr->tag, obj_ptr->ref);
+            if( obj_ptr->group_info == NULL )
+            {
+	    /* do not free these because even this element has no group
+	       list, it still can be displayd */
+/*
+               HDfree(obj_ret->raw_obj_arr);
+               HDfree(obj_ret);
+               return (NULL); 
+*/
             }	/* end if */
-          status = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
-      }		/* end for */
+         }		/* end if */
+      }	/* end if */
+   }		/* end for */
 
-    if (Hendaccess(aid) == FAIL)
-      {
-          HEprint(stderr, 0);
-          HDfree(obj_ret->raw_obj_arr);
-          HDfree(obj_ret);
-          return (NULL);
-      }		/* end if */
+   /* Loop once more to figure out the index information */
+   for (n = 0, obj_ptr = &obj_ret->raw_obj_arr[0]; n < nobj; n++, obj_ptr++)
+   {
+      if (obj_ptr->index == (-1))
+      {	/* first object of this type in the file */
+         int32       temp_index = 0;
+         objinfo_t  *temp_ptr;	/* temporary pointer to a working DD object */
 
-	/* Post-process the list of dd/objects, adding more information */
-	/*  Also set up the pointers for the sorted list to be manipulated later */
+	 /* the object gets index of 0 */
+         obj_ptr->index = 0;
 
-    if ((obj_ret->srt_obj_arr = (objinfo_t **) HDmalloc(sizeof(objinfo_t *) * nobj)) == NULL)
-      {
-          printf("Failure to allocate memory for obj_ret->srt_obj_arr\n");
-          HDfree(obj_ret->raw_obj_arr);
-          HDfree(obj_ret);
-          return (NULL);
-      }		/* end if */
+         /* look for other objects of this tag */
+         for (m = n, temp_ptr = obj_ptr + 1; m+1 < nobj; m++, temp_ptr++)
+         {
+            if (temp_ptr->tag == obj_ptr->tag)
+               temp_ptr->index = ++temp_index;	/* set next index */
+         } 		/* end for */
+      }	/* end if */
+   }		/* end for */
 
-	/* Loop for more information */
-    for (n = 0; n < nobj; n++)
-      {
-          temp_obj = obj_ret->srt_obj_arr[n] = &obj_ret->raw_obj_arr[n];
+   obj_ret->options = options;
+   return (obj_ret);
+}  /* end make_dd_list() */
 
-              /* set the index value to a flag for later */
-          temp_obj->index = (-1);
-
-              /* check for a group */
-          if (options & CHECK_GROUP)
-            {	/* are we looking for groups ? */
-                if (temp_obj->tag == DFTAG_RIG || temp_obj->tag == DFTAG_SDG
-                    || temp_obj->tag == DFTAG_NDG || temp_obj->tag == DFTAG_VG)
-                  {
-                      temp_obj->is_group = TRUE;
-                      if ((temp_obj->group_info = make_group_list(fid, temp_obj->tag, temp_obj->ref)) == NULL)
-                        {
-                            HDfree(obj_ret->raw_obj_arr);
-                            HDfree(obj_ret);
-                            return (NULL);
-                        }	/* end if */
-                  }		/* end if */
-            }	/* end if */
-
-              /* check for a annotations */
-          if (options & CHECK_LABEL)
-            {	/* are we looking for annotations ? 
-                * No longer checked here, now checked in print_list_obj() -GV  */
-            }		/* end if */
-
-          if (options & CHECK_DESC)
-            {	/* are we looking for annotations ? 
-                 * No longer checked here, now checked in print_list_obj() -GV */
-            }		/* end if */
-      }		/* end for */
-
-	/* Loop once more to figure out the index information */
-    for (n = 0, temp_obj = &obj_ret->raw_obj_arr[0]; n < nobj; n++, temp_obj++)
-      {
-          if (temp_obj->index == (-1))
-            {	/* first object of this type in the file */
-                int32       temp_index;
-                objinfo_t  *temp2_obj;	/* temporary pointer to a working DD object */
-
-                temp_obj->index = temp_index = 0;
-
-                    /* look for other objects of this tag */
-                for (m = n, temp2_obj = temp_obj + 1; m+1 < nobj; m++, temp2_obj++)
-                  {
-                      if (temp2_obj->tag == temp_obj->tag)
-                          temp2_obj->index = ++temp_index;	/* set next index */
-                  } 		/* end for */
-            }	/* end if */
-      }		/* end for */
-
-    obj_ret->options = options;
-    return (obj_ret);
-}	/* end make_dd_list() */
-
-objinfo_t  *
-get_next_obj(objlist_t * o_list, intn advance)
+objinfo_t* get_next_obj(
+		objlist_t * o_list, intn advance )
 {
-    if (advance)
-        o_list->curr_obj++;
-    if (o_list->curr_obj >= o_list->max_obj)
-        return (NULL);
-    return (o_list->srt_obj_arr[o_list->curr_obj]);
+   if( advance )
+      o_list->curr_obj++;
+   if( o_list->curr_obj >= o_list->max_obj )
+      return (NULL);
+   return( o_list->srt_obj_arr[o_list->curr_obj] );
 }	/* end get_next_obj() */
 
-objinfo_t  *
-goto_nth_obj(objlist_t * o_list, intn n)
+objinfo_t* goto_nth_obj( 
+		objlist_t * o_list, intn n )
 {
-    if (n >= 0 && n < o_list->max_obj)
-        o_list->curr_obj = n;
-    return (o_list->srt_obj_arr[o_list->curr_obj]);
-}	/* end goto_nth_obj() */
+   if( n >= 0 && n < o_list->max_obj )
+      o_list->curr_obj = n;
+   return( o_list->srt_obj_arr[o_list->curr_obj] );
+}  /* end goto_nth_obj() */
 
-void 
-reset_obj_list(objlist_t * o_list)
+void reset_obj_list( 
+		objlist_t * o_list )
 {
-    if (o_list != NULL)
-        o_list->curr_obj = 0;
-}	/* end reset_obj_list() */
+   if( o_list != NULL )
+      o_list->curr_obj = 0;
+}  /* end reset_obj_list() */
 
-void 
-free_obj_list(objlist_t * o_list)
+void free_obj_list( 
+		objlist_t * o_list )
 {
-    intn        i;				/* local counting variable */
-    objinfo_t  *temp_obj;		/* temporary pointer to a working DD object */
+   intn        i;	/* local counting variable */
+   objinfo_t  *obj_ptr;	/* temporary pointer to a working DD object */
 
-    /* BMR: verify that o_list is not nil before accessing */
-    if( o_list != NULL )
-    { 
-       for (i = 0, temp_obj = o_list->raw_obj_arr; i < o_list->max_obj; i++, temp_obj++)
-       {
-          if (temp_obj->is_group)
-              free_group_list(temp_obj->group_info);
-          if (temp_obj->is_special)
-              HDfree(temp_obj->spec_info);
-       }		/* end for */
-       HDfree(o_list->srt_obj_arr);
-       HDfree(o_list->raw_obj_arr);
-       HDfree(o_list);
+   /* BMR: verify that o_list is not nil before accessing */
+   if( o_list != NULL )
+   { 
+      for (i = 0, obj_ptr = o_list->raw_obj_arr; i < o_list->max_obj; 
+							i++, obj_ptr++)
+      {
+         /* group_info can be NULL while is_group is set, how to handle 
+	    this one??? BMR 8/1/2000 
+	    if( obj_ptr->is_group && obj_ptr->group_info != NULL ) */
+         if( obj_ptr->is_group )
+            free_group_list( obj_ptr->group_info );
+         if( obj_ptr->is_special )
+            HDfree( obj_ptr->spec_info );
+      }		/* end for */
+      HDfree(o_list->srt_obj_arr);
+      HDfree(o_list->raw_obj_arr);
+      HDfree(o_list);
    }
    else
        fprintf(stderr, ">>>free_obj_list failed - attempting to free a NULL list \n");
 }	/* end free_obj_list() */
 
-int 
-sort_obj_list_by_tag(const void *p1, const void *p2)
+int sort_obj_list_by_tag(const void *p1, const void *p2)
 {
-    const objinfo_t *a = (const objinfo_t *) *((const void **) p1);
-    const objinfo_t *b = (const objinfo_t *) *((const void **) p2);
+   const objinfo_t *a = (const objinfo_t *) *((const void **) p1);
+   const objinfo_t *b = (const objinfo_t *) *((const void **) p2);
 
-    if (a->tag > b->tag)
-        return (1);
-    if (a->tag < b->tag)
-        return (-1);
-    if (a->ref > b->ref)
-        return (1);
-    if (a->ref < b->ref)
-        return (-1);
-    return (0);
+   if (a->tag > b->tag)
+      return (1);
+   if (a->tag < b->tag)
+      return (-1);
+   if (a->ref > b->ref)
+      return (1);
+   if (a->ref < b->ref)
+      return (-1);
+   return (0);
 }	/* end sort_obj_info_by_tag() */
 
 #if 0 /* No longer possible since objects can have more than one label 
        * -GV 6/12/97 */
-int 
-sort_obj_list_by_name(const void *p1, const void *p2)
+int sort_obj_list_by_name(const void *p1, const void *p2)
 {
     const objinfo_t *a = (const objinfo_t *) *((void **) p1);
     const objinfo_t *b = (const objinfo_t *) *((void **) p2);
@@ -522,11 +574,10 @@ sort_obj_list_by_name(const void *p1, const void *p2)
 }	/* end sort_obj_info_by_tag() */
 #endif
 
-void 
-sort_obj_list(objlist_t * o_list, sort_t sort_type)
+void sort_obj_list(objlist_t * o_list, sort_t sort_type)
 {
-    switch (sort_type)
-      {
+   switch (sort_type)
+   {
 #if 0 /* No longer possible since objects can have more than one label 
        * -GV 6/12/97 */
       case ONAME:	/* sort by name order */
@@ -543,23 +594,21 @@ sort_obj_list(objlist_t * o_list, sort_t sort_type)
       case OFILE:	/* sort by file order */
       default:
           break;
-      }		/* end switch() */
-}	/* end sort_obj_list() */
+   }  /* end switch() */
+}  /* end sort_obj_list() */
 
 /* Misc. utility functions */
-int 
-int32_compare(const void *a, const void *b)
+int int32_compare(const void *a, const void *b)
 {
-    if (*(const int32 *) a > *(const int32 *) b)
-        return (1);
-    else if (*(const int32 *) a < *(const int32 *) b)
-        return (-1);
-    else
-        return (0);
-}	/* end int32_compare() */
+   if (*(const int32 *) a > *(const int32 *) b)
+      return (1);
+   else if (*(const int32 *) a < *(const int32 *) b)
+      return (-1);
+   else
+      return (0);
+}  /* end int32_compare() */
 
-void 
-sort(int32 *chosen, int32 choices)
+void sort(int32 *chosen, int32 choices)
 {
     qsort((void *) chosen, choices, sizeof(int32), int32_compare);
 }
@@ -612,11 +661,7 @@ parse_number_opts( char *argv[],
 
    /* allocate space to hold all the items in the list */
    filter->num_list = (int32 *) HDmalloc(sizeof(intn) * numItems);
-   if (filter->num_list == NULL)
-   {
-      printf("Failure to allocate space in parse_number_opts\n");
-      exit(1);
-   }
+   CHECK_ALLOC( filter->num_list, "filter->num_list", "parse_number_opts" );
 
    /* go back to the beginning of the list and read in the numbers */
    ptr = argv[*curr_arg];
@@ -668,11 +713,8 @@ parse_string_opts( char *argv[],
       numItems++;
 
    /* allocate space to hold pointers that will point to the given strings */
-   if ((filter->str_list = (char **) HDmalloc(sizeof(char *) * numItems)) == NULL)
-   {
-      printf("Failure to allocate space in parse_string_opts\n");
-      exit(1);
-   }
+   filter->str_list = (char **) HDmalloc(sizeof(char *) * numItems);
+   CHECK_ALLOC( filter->str_list, "filter->str_list", "parse_string_opts" );
 
    /* go back to the beginning of the list and read in the given strings */
    ptr = argv[*curr_arg];
@@ -684,11 +726,8 @@ parse_string_opts( char *argv[],
          *tempPtr = '\0';  /* end the string with a NULL char */
 
       /* allocate space for each string */
-      if ((filter->str_list[i] = (char *) HDmalloc(sizeof(char) * (HDstrlen(ptr) + 1))) == NULL)
-      {
-         printf("Failure to allocate space in parse_string_opts\n");
-         exit(1);
-      }
+      filter->str_list[i] = (char *)HDmalloc(sizeof(char) * (HDstrlen(ptr)+1));
+      CHECK_ALLOC( filter->str_list[i], "filter->str_list[i]", "parse_string_opts" );
       HDstrcpy(filter->str_list[i], ptr);  /* get the current string */
       ptr = tempPtr + 1;  /* move pointer to next item or end of list */
       i++;
@@ -699,18 +738,24 @@ parse_string_opts( char *argv[],
 } /* parse_string_opts */
 
 /* validate_pos makes sure that number is > 0 so we are not going to
-   allocate 0 elements */
+   allocate 0 elements
+   This routine is replaced by the macro called CHECK_POS just because
+   the error checkings are being done that way! 7/27/00 
+*/
+
+/* if there are any specific datasets requested, alloc_index_list
+   allocates space for the list of indices of these requested items */
 void
-validate_pos(
-	int32 number,
-	char *variable_name,
-	char *routine_name )
+alloc_index_list(
+        int32 **index_list,
+        int32 num_chosen )
 {
-   if( number <= 0 )
-   {
-     fprintf(stderr,"Failure in %s: Attempting to allocate 0 items using '%s'!\n",
-                        routine_name, variable_name );
-     exit(1);   /* should we not exit here; I don't know yet - BMR */
-   }
-}
+   int32 i = -1;        /* used to pass into HDmemfill as dummmy? */
+
+   *index_list = (int32 *) HDmalloc(sizeof(int32) * num_chosen);
+   CHECK_ALLOC( *index_list, "index_list", "alloc_index_list" );
+
+   i = (-1);
+   HDmemfill(*index_list, &i, sizeof(int32), num_chosen);
+}  /* end of alloc_index_list */
 

@@ -135,7 +135,9 @@ fmtuchar8(VOIDP       x, /* assumption: uchar8 is same as unsigned char */
     uchar8 s;
 
     if(ft == DASCII) 
-        return (1 + fprintf(ofp, "%o", *((uchar8 *) x)));
+	/* replace %o with %d by Elena's suggestion: it doesn't make
+	   sense to print in octal - BMR 06/23/00 */
+        return (1 + fprintf(ofp, "%d", *((uchar8 *) x)));
     else
       { 
           s = (uchar8) *((unsigned char *)x);
@@ -251,28 +253,29 @@ fmtfloat64(VOIDP       x,
 
 int32 
 dumpfull(int32       nt, 
-         file_type_t ft, 
+	 file_type_t ft,      /* ASCII or BINARY file */
          int32       cnt,     /* number of items in 'databuf' ? */
          VOIDP       databuf, 
          intn        indent, 
+	 intn	     no_cret, /* whether output data lines broken & aligned */
          FILE       *ofp)
 {
-    intn    i;
-    VOIDP   b = NULL;
-    intn    (*fmtfunct) (VOIDP, file_type_t, FILE *) = NULL;
-    int32   off;
-    intn    cn;
-    intn    ret_value = SUCCEED;
+   intn    i;
+   VOIDP   b = NULL;
+   intn    (*fmtfunct) (VOIDP, file_type_t, FILE *) = NULL;
+   int32   off;
+   intn    cn;
+   intn    ret_value = SUCCEED;
 
-    /* check inputs */
-    if (NULL == databuf || NULL == ofp)
-      {
-          ret_value = FAIL;
-          goto done;
-      }
+   /* check inputs */
+   if (NULL == databuf || NULL == ofp)
+   {
+      ret_value = FAIL;
+      goto done;
+   }
     
-    switch (nt & 0xff )
-      {
+   switch (nt & 0xff )
+   {
       case DFNT_CHAR:
           fmtfunct = fmtchar;
           break;
@@ -307,68 +310,69 @@ dumpfull(int32       nt,
           fprintf(ofp, "HDP does not support type [%d] \n", (int) nt);
           ret_value = FAIL;
           goto done;
-      }		/* end switch */
+   }		/* end switch */
 
-    /* assign to variables used in loop below */
-    b = databuf;
-    off = DFKNTsize(nt | DFNT_NATIVE); /* what is offset for data type */
-    if (off == FAIL){
-	fprintf(ofp, "Failed to find native size of type [%d] \n", (int)nt);
-        ret_value = FAIL;
-        goto done;
-    }
-    cn = indent;
+   /* assign to variables used in loop below */
+   b = databuf;
+   off = DFKNTsize(nt | DFNT_NATIVE); /* what is offset for data type */
+   if (off == FAIL)
+      ERROR_GOTO_1("Failed to find native size of type [%d] \n", (int)nt);
+   cn = indent;
 
-    /* check if were are dumping data i.e. items in buffer in 
-       ASCII or Binary mode. */
-    if(ft == DASCII)
-      { /* ASCII */
-          if (nt != DFNT_CHAR)
-            {
-                for (i = 0; i < cnt && b != NULL; i++)
-                  {
-                      cn += fmtfunct(b, ft, ofp); /* dump item to file */
-                      b = (char *) b + off;
-                      putc(' ', ofp);
-                      cn++;
-                      /* temporary fix bad alignment algo in dumpfull by
-                         adding i < cnt-1 to remove extra line - BMR */
-                      if (cn > 65 && i < cnt-1 )
-                        {
-                            putc('\n', ofp);
-
-                            for (cn = 0; cn < indent; cn++)
-                                putc(' ', ofp);
-                        }		/* end if */
-                  }	/* end for every item in buffer */
-            }		
-          else /* DFNT_CHAR */
-            {
-                for (i = 0; i < cnt && b != NULL; i++)
-                  {
-                      cn += fmtfunct(b, ft, ofp); /* dump item to file */
-                      b = (char *) b + off;
-                      if (cn > 65)
-                        {
-                            putc('\n', ofp);
-                            for (cn = 0; cn < indent; cn++)
-                                putc(' ', ofp);
-                        }		/* end if */
-                  }	/* end for every item in buffer */
-            }		/* end else DFNT_CHAR */
-
-          putc('\n', ofp); /* newline */
-
-      } /* end DASCII  */
-    else /*  Binary   */
+   /* check if we're dumping data i.e. items in buffer in 
+      ASCII or Binary mode. */
+   if(ft == DASCII)
+   { /* ASCII */
+      if (nt != DFNT_CHAR)
       {
-          for (i = 0; i < cnt && b != NULL; i++)
-            {
-                cn += fmtfunct(b, ft, ofp); /* dump item to file */
-                b = (char *) b + off; /* increment by offset? */
-                cn++;
-            } /* end for all items in buffer */
-      }
+         for (cn = 0; cn < indent; cn++)
+            putc(' ', ofp);
+         for (i = 0; i < cnt && b != NULL; i++)
+         {
+            cn += fmtfunct(b, ft, ofp); /* dump item to file */
+            b = (char *) b + off;
+            putc(' ', ofp);
+            cn++;
+
+            /* temporary fix bad alignment algo in dumpfull by
+               adding i < cnt-1 to remove extra line - BMR 4/10/99 */
+	    if( !no_cret ) /* add \n after 65 chars */
+               if (cn > 65 && i < cnt-1 )
+               {
+                  putc('\n', ofp);
+                  for (cn = 0; cn < indent; cn++)
+                      putc(' ', ofp);
+               }	/* end if */
+         }	 /* end for every item in buffer */
+      }		
+      else /* DFNT_CHAR */
+      {
+         for (i = 0; i < cnt && b != NULL; i++)
+         {
+            cn += fmtfunct(b, ft, ofp); /* dump item to file */
+            b = (char *) b + off;
+	    if( !no_cret ) /* add \n after 65 chars */
+               if (cn > 65 )
+               {
+                  putc('\n', ofp);
+                  for (cn = 0; cn < indent; cn++)
+                      putc(' ', ofp);
+               }		/* end if */
+         }	/* end for every item in buffer */
+      }		/* end else DFNT_CHAR */
+
+      putc('\n', ofp); /* newline */
+
+   } /* end DASCII  */
+   else /*  Binary   */
+   {
+      for (i = 0; i < cnt && b != NULL; i++)
+      {
+         cn += fmtfunct(b, ft, ofp); /* dump item to file */
+         b = (char *) b + off; /* increment by offset? */
+         cn++;
+      } /* end for all items in buffer */
+   }
 
 done:
     if (ret_value == FAIL)

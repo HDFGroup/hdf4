@@ -31,19 +31,20 @@ dumprig_usage(intn argc,
 {
     printf("Usage:\n");
 #ifdef LATER
-    printf("%s dumprig [-a|-i <index>|-n <name>|-r <ref>] [-dhv] [-o <filename> [-bx]] <filelist>\n", argv[0]);
+    printf("%s dumprig [-a|-i <indices>|-n <names>|-r <refs>] [-dhvc] [-o <filename> [-bx]] <filelist>\n", argv[0]);
 #endif
-    printf("%s dumprig [-a|-i <index>|-m <n>|-r <ref>] [-dhv] [-o <filename> [-bx]] <filelist>\n", argv[0]);
+    printf("%s dumprig [-a|-i <indices>|-m <n>|-r <refs>] [-dhv] [-o <filename> [-bx]] <filelist>\n", argv[0]);
     printf("\t-a\tDump all RIGs in the file (default)\n");
-    printf("\t-i <index>\tDump the <index>th RIG in the file \n");
+    printf("\t-i <indices>\tDump the RIGs at positions listed in <indices>\n");
 #ifdef LATER
-    printf("\t-n <name>\tDump the RIG with name <name>\n");
+    printf("\t-n <names>\tDump the RIGs with name listed in <names>\n");
 #endif
     printf("\t-m <n>\tDump the 8- or 24-bit RIGs only, <n> may be 8 or 24 \n");
-    printf("\t-r <ref>\tDump the RIG with reference number <ref>\n");
+    printf("\t-r <refs>\tDump the RIGs with reference number listed in <refs>\n");
     printf("\t-d\tDump data only, no tag/ref, formatted to input to hp2hdf\n");
     printf("\t-h\tDump header only, no annotation for elements nor data\n");
     printf("\t-v\tDump everything including all annotations (default)\n");
+    printf("\t-c\tDo not add a carriage return to a long data line\n");
     printf("\t-o <filename>\tOutput to file <filename>\n");
     printf("\t-b\tBinary format of output\n");
     printf("\t-x\tAscii text format of output (default)\n");
@@ -60,6 +61,9 @@ init_dumprig_opts(dump_info_t * dumprig_opts)
     dumprig_opts->contents = DVERBOSE;	/* default dump all information */
     dumprig_opts->dump_to_file = FALSE;		/* don't dump to output file */
     dumprig_opts->file_type = DASCII;	/* default output is ASCII file */
+    dumprig_opts->no_cr = FALSE; /* print output aligned, using carriage returns */
+    dumprig_opts->print_pal = FALSE;     /* GR only, don't print palette */
+    dumprig_opts->interlace = NO_SPECIFIC;     /* GR only, print data using interlace */
     HDstrcpy(dumprig_opts->file_name, "\0");
 }	/* end init_list_opts() */
 
@@ -107,6 +111,13 @@ parse_dumprig_opts(dump_info_t *dumprig_opts,
                 (*curr_arg)++;
 
                 ptr = argv[*curr_arg];
+
+                /* check if it's the end of the command */
+                if( ptr == NULL )
+                {
+                   printf("Missing values for option\n");
+                   exit(1);
+                }
                 numItems = 0;
                 while ((tempPtr = HDstrchr(ptr, ',')) != NULL)
                   {
@@ -153,16 +164,27 @@ parse_dumprig_opts(dump_info_t *dumprig_opts,
                 (*curr_arg)++;
                 break;
 
-            case 'o':	/* specify output file */
-                dumprig_opts->dump_to_file = TRUE;	/* get filename */
+            case 'c':   /* do not add carriage returns to output data lines */
+                dumprig_opts->no_cr = TRUE;
+                (*curr_arg)++;
+                break;    
+
+            case 'o':   /* specify output file */
+                dumprig_opts->dump_to_file = TRUE;
+
+                /* Get file name */
                 HDstrcpy(dumprig_opts->file_name, argv[++(*curr_arg)]);
-                if (++(*curr_arg) < argc)	/* binary or ascii */
-                  {
-                      if (argv[*curr_arg][0] == '-')
-                          dumprig_opts->file_type = (argv[*curr_arg][1] == 'b') ? DBINARY : DASCII;
-                      else
-                          (*curr_arg)--;
-                  }
+
+                (*curr_arg)++;
+                break;
+
+            case 'b':   /* dump data in binary */
+                dumprig_opts->file_type = DBINARY;
+                (*curr_arg)++;
+                break;
+
+            case 'x':   /* dump data in ascii, also default */
+                dumprig_opts->file_type = DASCII;
                 (*curr_arg)++;
                 break;
 
@@ -327,6 +349,7 @@ drig(dump_info_t *dumprig_opts,
                             goto done;
                         }
 
+/*DFGRreqimil( 1 );*/
                       if ((ret = DFGRIgetimlut((const char *) file_name, image, width,
                                                height, IMAGE, 0, &compressed, &compr_type, &has_pal)) == -1)
                         {
@@ -419,9 +442,7 @@ drig(dump_info_t *dumprig_opts,
                         case DDATA:
                             if (dumprig_opts->contents != DDATA)
                                 fprintf(fp, "\tData : \n");
-                            for (count = 0; count < indent; count++)
-                                putc(' ', fp);
-                            if (FAIL == dumpfull(DFNT_UINT8, ft, read_nelts*eltsz, image, indent, fp))
+                            if (FAIL == dumpfull(DFNT_UINT8, ft, read_nelts*eltsz, image, indent, dumprig_opts->no_cr, fp))
                               {
                                   fprintf(stderr,"dumpfull: failed to dump %d'th image data for file %s",
                                           i,file_name);
@@ -583,7 +604,7 @@ drig(dump_info_t *dumprig_opts,
                         }
 
                                  
-                      if (FAIL == dumpfull(DFNT_UINT8, ft, read_nelts*ncomps, image, indent, fp))
+                      if (FAIL == dumpfull(DFNT_UINT8, ft, read_nelts*ncomps, image, indent, dumprig_opts->no_cr, fp))
                         {
                             fprintf(stderr,"dumpfull: failed to dump %d'th image data for file %s",
                                     i,file_name);
@@ -643,10 +664,13 @@ do_dumprig(intn  curr_arg,
           goto done;
       }		/* end if */
 
+   /* initialize the structure that holds user's options and inputs */
+   /*init_dump_opts(&dumprig_opts); */
     init_dumprig_opts(&dumprig_opts);
+
+
     if (parse_dumprig_opts(&dumprig_opts, &curr_arg, argc, argv, &model) == FAIL)
       {
-          printf("Failure in parsing options to dump RI data \n");
           dumprig_usage(argc, argv);
           ret_value = FAIL;
           goto done;
@@ -654,7 +678,7 @@ do_dumprig(intn  curr_arg,
 
     if (drig(&dumprig_opts, curr_arg, argc, argv, model) == FAIL)
       {
-          fprintf(stderr,"Failure in dumping RIG data\n");
+          fprintf(stderr,"Failure in drig.\n");
           ret_value = FAIL;
           goto done;
       }

@@ -28,7 +28,7 @@ dumpsds_usage(intn argc,
               char *argv[])
 {
     printf("Usage:\n");
-    printf("%s dumpsds [-a|-i <indices>|-r <refs>|-n <names>] [-dhv] [-o <filename>] [-bx] <filelist>\n", argv[0]);
+    printf("%s dumpsds [-a|-i <indices>|-r <refs>|-n <names>] [-dhvc] [-o <filename>] [-bx] <filelist>\n", argv[0]);
     printf("\t-a\tDump all SDSs in the file (default)\n");
     printf("\t-i <indices>\tDump the SDSs at positions listed in <indices>\n");
     printf("\t-r <refs>\tDump the SDSs with reference number listed in <refs>\n");
@@ -36,6 +36,7 @@ dumpsds_usage(intn argc,
     printf("\t-d\tDump data only, no tag/ref, formatted to input to hp2hdf\n");
     printf("\t-h\tDump header only, no annotation for elements nor data\n");
     printf("\t-v\tDump everything including all annotations (default)\n");
+    printf("\t-c\tDo not add a carriage return to a long data line\n");
     printf("\t-o <filename>\tOutput to file <filename>\n");
     printf("\t-b\tBinary format of output\n");
     printf("\t-x\tAscii text format of output (default)\n");
@@ -48,6 +49,8 @@ parse_dumpsds_opts(dump_info_t *dumpsds_opts,
                    intn argc,
                    char *argv[])
 {
+   intn ret_value = SUCCEED;
+
    /* traverse the command and process each option */
 #if defined(WIN386) || defined(DOS386)
    while ((*curr_arg < argc) && ((argv[*curr_arg][0] == '-') ||
@@ -108,6 +111,11 @@ parse_dumpsds_opts(dump_info_t *dumpsds_opts,
                 (*curr_arg)++;
                 break;
 
+         case 'c':	/* do not add carriage returns to output data lines */
+                dumpsds_opts->no_cr = TRUE;
+                (*curr_arg)++;
+                break;
+
          case 'o':   /* specify output file */
                 dumpsds_opts->dump_to_file = TRUE;
 
@@ -128,8 +136,8 @@ parse_dumpsds_opts(dump_info_t *dumpsds_opts,
                 break;
 
          default:    /* invalid dumpsds option */
-                printf("Invalid dumpsds option %s\n", argv[*curr_arg]);
-                return (FAIL);
+                printf("HDP ERROR>>> Invalid dumpsds option %s\n", argv[*curr_arg]);
+                HGOTO_DONE( FAIL );
             }	/* end switch */
       }		/* end while */
 
@@ -139,7 +147,17 @@ parse_dumpsds_opts(dump_info_t *dumpsds_opts,
                              dumpsds_opts->by_ref.num_items +
                              dumpsds_opts->by_name.num_items;
 
-    return (SUCCEED);
+done:
+   if (ret_value == FAIL)
+   { /* Failure cleanup */
+      /* free the lists for given indices, ref#s, and names if
+         they had been allocated */
+      free_num_list(dumpsds_opts->by_index.num_list );
+      free_num_list(dumpsds_opts->by_ref.num_list );
+      free_str_list(dumpsds_opts->by_name.str_list, dumpsds_opts->by_name.num_items);
+   }
+   /* Normal cleanup */
+   return (ret_value);
 }	/* end parse_dumpsds_opts */
 
 int32 
@@ -152,24 +170,24 @@ sdsdumpfull( int32        sds_id,
 {
 	/* "rank" is the number of dimensions and 
 	   "dimsizes[i]" is size of dimension "i". */
-    int32    j, i;
-    VOIDP    buf = NULL;
-    int32    numtype;
-    int32    eltsz;
-    int32    read_nelts;
-    int32    done;			/* number of rows we have done */
-    int32   *left = NULL;
-    int32   *start = NULL;
-    int32   *edge = NULL;
-    intn     count, indent = 16;  /* better than in parameter list */
-    intn     emptySDS = TRUE;
-    file_type_t ft;
-    char     curr_file_name[MAXFNLEN];
-    int32    ret_value = SUCCEED;
+   int32    j, i;
+   VOIDP    buf = NULL;
+   int32    numtype;
+   int32    eltsz;
+   int32    read_nelts;
+   int32    done;			/* number of rows we have done */
+   int32   *left = NULL;
+   int32   *start = NULL;
+   int32   *edge = NULL;
+   intn     count, indent = 16;  /* better than in parameter list */
+   intn     emptySDS = TRUE;
+   file_type_t ft;
+   intn     status;
+   int32    status32;
+   int32    ret_value = SUCCEED;
 
-   /* temp. names for file type and file name for ease of use */
+   /* temp. names for ease of use */
    ft = dumpsds_opts->file_type;
-   HDstrcpy( curr_file_name, dumpsds_opts->ifile_name );
 
    /* Compute the number of the bytes for each value. */
    numtype = nt & DFNT_MASK;
@@ -178,37 +196,21 @@ sdsdumpfull( int32        sds_id,
    read_nelts = dimsizes[rank - 1];
 
    /* make sure we are not allocating 0 elements */
-   validate_pos( read_nelts, "read_nelts", "sdsdumpfull" );
-   validate_pos( eltsz, "eltsz", "sdsdumpfull" );
-   validate_pos( rank, "rank", "sdsdumpfull" );
+   CHECK_POS( read_nelts, "read_nelts", "sdsdumpfull" );
+   CHECK_POS( eltsz, "eltsz", "sdsdumpfull" );
+   CHECK_POS( rank, "rank", "sdsdumpfull" );
 
    buf = (VOIDP) HDmalloc(read_nelts * eltsz);
-   if (buf == NULL)
-   {
-      fprintf(stderr,"Failure in sdsdumpfull: Not enough memory!\n");
-      exit(1);
-   }
+   CHECK_ALLOC( buf, "buf", "sdsdumpfull" );
 
    left = (int32 *) HDmalloc(rank * sizeof(int32));
-   if (left == NULL)
-   {
-      fprintf(stderr,"Failure in sdsdumpfull: Not enough memory!\n");
-      exit(1);
-   }
+   CHECK_ALLOC( left, "left", "sdsdumpfull" );
 
-    start = (int32 *) HDmalloc(rank * sizeof(int32));
-    if (start == NULL)
-   {
-      fprintf(stderr,"Failure in sdsdumpfull: Not enough memory!\n");
-      exit(1);
-   }
+   start = (int32 *) HDmalloc(rank * sizeof(int32));
+   CHECK_ALLOC( start, "start", "sdsdumpfull" );
 
    edge = (int32 *) HDmalloc(rank * sizeof(int32));
-    if (edge == NULL)
-   {
-      fprintf(stderr,"Failure in sdsdumpfull: Not enough memory!\n");
-      exit(1);
-   }
+   CHECK_ALLOC( edge, "edge", "sdsdumpfull" );
 
 /* BMR - how come GR has stride ? */
     for (i = 0; i < rank; i++)
@@ -220,67 +222,49 @@ sdsdumpfull( int32        sds_id,
    edge[rank - 1] = dimsizes[rank - 1];
 
     /* check if the SDS has data before proceeding */
-   if( SDcheckempty( sds_id, &emptySDS ) == FAIL )
+   status32 = SDcheckempty( sds_id, &emptySDS );
+   if( status32 == FAIL )
+      ERROR_GOTO_2( "in %s: SDcheckempty failed for sds_id(%d)",
+			"sdsdumpfull", (int) sds_id );
+   if( emptySDS )
    {
-      fprintf( stderr, "SDcheckempty failed for sds_id(%d) in file %s\n",
-			(int) sds_id, curr_file_name );
-      ret_value = FAIL;  /* caller will go to next sds */
-      goto done;
-   }
-    if( emptySDS )
-   {
-      if( ft == DASCII )
+      if( ft == DASCII ) /* what about binary??? - BMR */
          fprintf( fp, "No data written.\n" );
-      ret_value = SUCCEED;  /* because the dump for this SDS is */
-      goto done;	/* successful although it's empty -> next SDS */
+      HGOTO_DONE( SUCCEED );  /* because the dump for this SDS is */
+      			/* successful although it's empty -> next SDS */
    }
    if (rank == 1)
    { /* If there is only one dimension, then dump the data
                and the job is done. */
       if (FAIL == SDreaddata(sds_id, start, NULL, edge, buf))
-      {
-         fprintf(stderr,"SDreaddata failed for sds_id(%d) in file %s\n",
-                        (int)sds_id, curr_file_name );
-         ret_value = FAIL;
-         goto done;
-      }
+         ERROR_GOTO_2( "in %s: SDreaddata failed for sds_id(%d)",
+			"sdsdumpfull", (int)sds_id );
 
-      if(FAIL == dumpfull(numtype, ft, read_nelts, buf, indent, fp))
-      {
-         fprintf(stderr,"dumpfull failed for sds_id(%d) in file %s\n",
-                        (int)sds_id, curr_file_name );
-         ret_value = FAIL;
-         goto done;
-      }
+      status32 = dumpfull(numtype, ft, read_nelts, buf, indent, 
+			dumpsds_opts->no_cr, fp);
+      if( FAIL == status32 )
+         ERROR_GOTO_2( "in %s: dumpfull failed for sds_id(%d)",
+                        "sdsdumpfull", (int)sds_id );
    }
    else if (rank > 1)
    {
       done = 0;
 
-      /* In each iteration, a row in dumped and "left[]" is modified accordingly(?) */
+      /* In each iteration, a row in dumped and "left[]" is modified 
+	accordingly(?) */
       while (!done)
       {
-         if (FAIL == SDreaddata(sds_id, start, NULL, edge, buf))
-         {
-            fprintf(stderr,"SDreaddata failed for sds_id(%d) in file %s\n",
-                              (int)sds_id, curr_file_name );
-            ret_value = FAIL;
-            goto done;
-         }
+         status = SDreaddata(sds_id, start, NULL, edge, buf);
+         if( FAIL == status )
+            ERROR_GOTO_2( "in %s: SDreaddata failed for sds_id(%d)",
+                        "sdsdumpfull", (int)sds_id );
 
-         if (FAIL == dumpfull(numtype, ft, read_nelts, buf, indent, fp))
-         {
-            fprintf(stderr,"dumpfull failed for sds_id(%d) in file %s\n",
-                              (int)sds_id, curr_file_name );
-            ret_value = FAIL;
-            goto done;
-         }
+         status32 = dumpfull(numtype, ft, read_nelts, buf, indent, 
+			dumpsds_opts->no_cr, fp);
+         if( FAIL == status32 )
+            ERROR_GOTO_2( "dumpfull failed for sds_id(%d)",
+                        "sdsdumpfull", (int)sds_id );
 
-         if(ft == DASCII)
-         {
-            for (count = 0; count < indent; count++)
-               putc(' ', fp);
-         }
          /* Modify the values for "start[]" and "left[]" that are to be used
             for dumping the next row. */
 
@@ -296,7 +280,7 @@ sdsdumpfull( int32        sds_id,
 	    {  /* Proceed in the same dimension; as long as there are
 	       elements in this dimension, this loop breaks here After the
 	       last element in the current dimension has been subtracted,
-	       we substract one fro the next lower dimension and reset
+	       we substract one for the next lower dimension and reset
 	       "left[j]" to be the size of dimension j. */
                  start[j]++;
                  break;
@@ -309,23 +293,23 @@ sdsdumpfull( int32        sds_id,
                start[j] = 0;
                if (j == 0)
                   done = 1;
-               if(ft==DASCII)
-               {
-                  if (j == rank - 2)
-                  {
-                     fprintf(fp, "\n");
-                     for (count = 0; count < indent; count++)
-                        putc(' ', fp);
-                  }
-               }
-            }
-         }		/* for j */
-      }	/* while   */
-   }		/* else */
 
+   	       /* someone added an extra line b/w two dims of data for nice format;
+		  this causes 1 extra line at the end of the output but I still
+		  don't understand the logic here so I left it alone; just 
+		  removed the spaces attempting to line up the data. BMR 7/13/00 */
+               if(ft==DASCII)
+                  if (j == rank - 2)
+                     fprintf(fp, "\n");
+            }
+         }  /* for j */
+      }	 /* while   */
+   }  /* else */
+
+   /* add an extra line between two datasets for pretty format 
+      this also causes 1 extra line at the end of the output! */
     if (ft == DASCII)
         fprintf(fp, "\n");
-
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
@@ -343,35 +327,15 @@ done:
     return ret_value;
 }	/* sdsdumpfull */
 
-/* if there are any specific datasets requested, alloc_index_list 
-   allocates space for the list of indices of these requested items */ 
-void
-alloc_index_list(
-	int32 **index_list,
-	int32 num_chosen )
-{
-   int32 i = -1;	/* used to pass into HDmemfill as dummmy? */ 
-
-   *index_list = (int32 *) HDmalloc(sizeof(int32) * num_chosen); 
-   if( *index_list == NULL )
-   {
-      fprintf(stderr,"Failure to allocate space in alloc_index_list\n");
-      exit(1);
-   }   /* end if */
-
-   i = (-1);
-   HDmemfill(*index_list, &i, sizeof(int32), num_chosen);
-}  /* end of alloc_index_list */
-
 /* compose the list of indices of the requested SDSs although some
    SDSs are requested by ref# or name.
    The routine returns:
         - the number of SDSs to be processed, or
         - NO_SPECIFIC if all SDSs are to be processed, or
         - 0 if none.
-   If any failure occurs, the parameter index_error will be set to TRUE */
-intn
-get_SDSindex_list( 
+   If any failure occurs, the parameter index_error will be set to TRUE
+*/
+intn get_SDSindex_list( 
         int32 sd_id, 
         dump_info_t *dumpsds_opts,
         int32 **sds_chosen,/* array of indices of SDSs to be processed */
@@ -387,10 +351,7 @@ get_SDSindex_list(
    /* if no specific datasets are requested, return the SDS count as 
       NO_SPECIFIC (-1) to indicate that all datasets are to be dumped */
    if( filter == DALL )
-   {
-      ret_value = NO_SPECIFIC;
-      goto done;
-   }
+      HGOTO_DONE( NO_SPECIFIC );
 
    /* if specific datasets were requested, allocate space for the array
       of indices */
@@ -400,10 +361,7 @@ get_SDSindex_list(
    /* else, no chosen SDSs but filter is not DALL, it shouldn't be this
       combination, return SDS count as NO_SPECIFIC to dump all */
    else
-   {
-      ret_value = NO_SPECIFIC;
-      goto done;
-   }
+      HGOTO_DONE( NO_SPECIFIC );
 
    /* if there are some SDSs requested by index, store the indices in
       the array sds_chosen */
@@ -424,7 +382,6 @@ get_SDSindex_list(
          index = SDreftoindex(sd_id, dumpsds_opts->by_ref.num_list[i]);
          if (index == FAIL)
          {
-         /*fprintf( stderr, "SDS with reference number %d: not found\n",*/
             printf( "SDS with reference number %d: not found\n",
                                dumpsds_opts->by_ref.num_list[i]);
             *index_error = TRUE; /* error */
@@ -444,8 +401,6 @@ get_SDSindex_list(
          index = SDnametoindex(sd_id, dumpsds_opts->by_name.str_list[i]);
          if (index == FAIL)
          {
-         /*I want to use fprintf but it causes make test fail dumpsds-4.out*/
-         /* fprintf( stderr, "SDS with name %s: not found\n", */
             printf( "SDS with name %s: not found\n",
                               dumpsds_opts->by_name.str_list[i]);
             *index_error = TRUE; /* error */
@@ -466,12 +421,17 @@ done:
     return ret_value;
 } /* end of get_SDSindex_list */
 
-/* displays all SD file attributes */
+/* Displays all SD file attributes 
+   Note: the reason for dumpsds_opts is not passed for ft and no_cret
+   is print_SDattrs is also called by a function of hdp list, which has 
+   a different option structure than all the dump commands, 
+   list_info_t vs. dump_info_t */
 intn
 print_SDattrs( int32 sd_id,
                FILE *fp,
                int32 n_file_attrs,
-               const char *curr_file_name )
+	       file_type_t ft,
+	       intn no_cret )
 {
    int32 attr_index,
          attr_count,
@@ -490,11 +450,9 @@ print_SDattrs( int32 sd_id,
       /* get the current attr's name, number type, and number of values */
       status = SDattrinfo(sd_id, attr_index, attr_name, &attr_nt, &attr_count);
       if( status == FAIL )
-      {
-         fprintf(stderr, "SDattrinfo failed for %d'th attribute in file %s\n", attr_index, curr_file_name );
-         ret_value = FAIL; /* so caller can be traced in debugging */
-         continue; /* to the next attribute */
-      }
+         ERROR_CONT_2( "in %s: SDattrinfo failed for %d'th attribute", 
+			"print_SDattrs", attr_index );
+     
       /* to be sure that attr_buf is free before reuse since sometimes we
          have to break the current loop and continue to the next item */
       resetBuff( &attr_buf );
@@ -504,33 +462,25 @@ print_SDattrs( int32 sd_id,
       attr_buf_size = DFKNTsize(attr_nt) * attr_count;
 
       /* make sure we are not allocating 0 elements */
-      validate_pos( attr_buf_size, "attr_buf_size", "print_SDattrs" );
+      CHECK_POS( attr_buf_size, "attr_buf_size", "print_SDattrs" );
 
       /* allocate space for the attribute's values */
       attr_buf = (VOIDP) HDmalloc(attr_buf_size);
-      if (attr_buf == NULL)
-      {
-         fprintf(stderr,"Failure to allocate space in print_SDattrs\n");
-         exit(1);
-      }
+
+      /* if allocation fails, handle the failure */
+      CHECK_ALLOC( attr_buf, "attr_buf", "print_SDattrs" );
 
       /* read the values of the attribute into the buffer attr_buf */
       status = SDreadattr(sd_id, attr_index, attr_buf);
       if( status == FAIL )
-      {
-         fprintf(stderr,"SDreadattr failed for %d'th attribute in file %s\n", attr_index, curr_file_name );
-         ret_value = FAIL; /* so caller can be traced in debugging */
-         continue; /* to the next attribute */
-      }
+         ERROR_CONT_2( "in %s: SDreadattr failed for %d'th attribute", 
+			"print_SDattrs", attr_index );
 
       /* get number type description of the attribute */
       attr_nt_desc = HDgetNTdesc(attr_nt);
       if (attr_nt_desc == NULL)
-      {
-         fprintf(stderr,"HDgetNTdesc failed for %d'th attribute in file %s\n", attr_index, curr_file_name );
-         ret_value = FAIL; /* so caller can be traced in debugging */
-         continue; /* to the next attribute */
-      }
+         ERROR_CONT_2( "HDgetNTdesc failed for %d'th attribute", 
+			"print_SDattrs", attr_index );
 
       /* print a title line for file attributes if it's not printed
          yet and set flag so it won't be printed again */
@@ -549,13 +499,11 @@ print_SDattrs( int32 sd_id,
       /* Note that filetype is DASCII since binary format does not contain
          these information - it's data only */
       fprintf(fp,"\t\tValue = ");
-      status = dumpfull(attr_nt, DASCII, attr_count, attr_buf, 20, fp);
+      status = dumpfull(attr_nt, ft, attr_count, attr_buf, 0, no_cret, fp);
       if( status == FAIL )
-      {
-         fprintf(stderr,"dumpfull failed for %d'th attribute in file %s\n", attr_index, curr_file_name );
-         ret_value = FAIL; /* so caller can be traced in debugging */
-         continue; /* to the next attribute */
-      }
+         ERROR_CONT_2( "in %s: dumpfull failed for %d'th attribute", 
+			"print_SDattrs", attr_index );
+
       resetBuff( &attr_buf );  /* free buffer and reset it to NULL */
    }/* for each file attribute */
 
@@ -572,10 +520,9 @@ print_SDattrs( int32 sd_id,
 
 intn
 print_SDSattrs( int32 sds_id,
-                int32 sds_index,
                 int32 nattrs,
                 FILE *fp,
-                char *curr_file_name )
+	        dump_info_t *dumpsds_opts)
 {
    int32 attr_index,
          attr_count,
@@ -584,6 +531,9 @@ print_SDSattrs( int32 sds_id,
    char  attr_name[MAXNAMELEN],
         *attr_nt_desc = NULL;
    VOIDP attr_buf=NULL;
+   intn  no_cret = dumpsds_opts->no_cr;
+   file_type_t  ft = dumpsds_opts->file_type;
+   char *curr_file_name = dumpsds_opts->ifile_name;
    intn  status,   /* status returned from a called routine */
          ret_value = SUCCEED; /* returned value of print_SDSattrs */
 
@@ -593,11 +543,8 @@ print_SDSattrs( int32 sds_id,
       /* get the current attr's name, number type, and number of values */
       status = SDattrinfo(sds_id, attr_index, attr_name, &attr_nt, &attr_count);
       if (status == FAIL)
-      {
-         fprintf(stderr,"SDattrinfo failed for %d'th attribute of sds_id(%d) in file %s\n", attr_index,(int)sds_id, curr_file_name);
-         ret_value = FAIL;  /* so caller can be traced in debugging */
-         continue; /* to the next attribute */
-      }
+         ERROR_CONT_2( "in %s: SDattrinfo failed for %d'th attribute", 
+			"print_SDSattrs", attr_index );
 
       /* to be sure that attr_buf is free before reuse since sometimes we
          have to break the current loop and continue to the next item */
@@ -608,37 +555,28 @@ print_SDSattrs( int32 sds_id,
       attr_buf_size = DFKNTsize(attr_nt|DFNT_NATIVE) * attr_count;
 
       /* make sure we are not allocating 0 elements */
-      validate_pos( attr_buf_size, "attr_buf_size", "print_SDSattrs" );
+      CHECK_POS( attr_buf_size, "attr_buf_size", "print_SDSattrs" );
 
       /* allocate space for attribute's values */
       attr_buf = (VOIDP) HDmalloc(attr_buf_size);
-      if (attr_buf == NULL)
-      {
-         fprintf(stderr,"Not enough memory!\n");
-         exit(1);
-      }
+      CHECK_ALLOC( attr_buf, "attr_buf", "print_SDSattrs" );
 
       /* read the values of the attribute into buffer attr_buf */
       status = SDreadattr(sds_id, attr_index, attr_buf);
       if (status == FAIL)
-      {
-         fprintf(stderr,"SDreadattr failed for %d'th attribute for sds_id(%d) in file %s\n", attr_index,(int)sds_id, curr_file_name);
-         ret_value = FAIL;  /* so caller can be traced in debugging */
-         continue; /* to the next attribute */
-      }
+         ERROR_CONT_2( "in %s: SDreadattr failed for %d'th attribute", 
+			"print_SDSattrs", attr_index );
 
       /* get number type description of the attribute */
       attr_nt_desc = HDgetNTdesc(attr_nt);
       if (attr_nt_desc == NULL)
-      {
-         fprintf(stderr,"HDgetNTdesc failed for %d'th attribute of sds_id(%d) in file %s\n", attr_index,(int)sds_id, curr_file_name);
-         ret_value = FAIL;  /* so caller can be traced in debugging */
-         continue; /* to the next attribute */
-      }
+         ERROR_CONT_2( "in %s: HDgetNTdesc failed for %d'th attribute", 
+			"print_SDSattrs", attr_index );
 
       /* display the attribute's information then free the buffer */
       fprintf(fp, "\t Attr%d: Name = %s\n", (int) attr_index, attr_name);
-      fprintf(fp, "\t\t Type = %s \n\t\t Count= %d\n", attr_nt_desc, (int) attr_count);
+      fprintf(fp, "\t\t Type = %s \n\t\t Count= %d\n", 
+			attr_nt_desc, (int) attr_count);
       resetBuff((VOIDP *) &attr_nt_desc );
 
       /* display the attribute's values then free buffer */
@@ -646,12 +584,10 @@ print_SDSattrs( int32 sds_id,
          these information - it's data only */
       fprintf(fp, "\t\t Value = ");
 
-      if (FAIL == dumpfull(attr_nt, DASCII, attr_count, attr_buf, 20, fp))
-      {
-         fprintf(stderr,"dumpfull failed for %d'th attribute of sds_id(%d) in file %s\n", attr_index, (int)sds_id, curr_file_name);
-         ret_value = FAIL;  /* so caller can be traced in debugging */
-         continue; /* to the next attribute */
-      }
+      if (FAIL == dumpfull(attr_nt, ft, attr_count, attr_buf, 0, no_cret, fp))
+         ERROR_CONT_2( "in %s: dumpfull failed for %d'th attribute of", 
+			"print_SDSattrs", attr_index );
+
       resetBuff( &attr_buf );  /* free buffer and reset it to NULL */
    } /* for each attribute */
 done:
@@ -680,8 +616,10 @@ resetSDS(
    }
 }  /* end of resetSDS */
 
-intn
-printSD_ASCII( 
+/* printSDS_ASCII (yea, not SD_ASCII) prints all of the requested SDSs in
+   the file
+*/
+intn printSD_ASCII( 
 	int32 sd_id,
 	dump_info_t *dumpsds_opts,
 	int32 ndsets,         /* # of datasets in the file */
@@ -713,6 +651,7 @@ printSD_ASCII(
          ret_value = SUCCEED;/* returned value of printSD_ASCII */
 
    /* temp. name for curr input file name for ease of use */
+/* curr_file_name can be removed from this routine after changing resetSDS API */
    HDstrcpy( curr_file_name, dumpsds_opts->ifile_name );
 
    /* when there are no SDS specified, dumper dumps all datasets */
@@ -743,22 +682,16 @@ printSD_ASCII(
       /* get access to the current dataset */
       sds_id = SDselect(sd_id, sds_index);
       if (sds_id == FAIL)
-      {
-         fprintf(stderr,"SDselect failed for %d'th SDS in file %s\n",
-                                    sds_index, curr_file_name);
-         ret_value = FAIL;   /* so caller can be traced in debugging */
-         continue; /* to the next dataset */
-      }
+         ERROR_CONT_3( "in %s: %s failed for %d'th SDS",
+                      "printSD_ASCII", "SDselect", sds_index );
 
       /* get dataset's information */
       status = SDgetinfo(sds_id, name, &rank, dimsizes, &nt, &nattrs);
-      if (FAIL == status )
+      if( status == FAIL )
       {
-         fprintf(stderr,"SDgetinfo failed for %d'th SDS in file %s\n", 
-                                    sds_index, curr_file_name);
          resetSDS( &sds_id, sds_index, curr_file_name );
-         ret_value = FAIL;   /* so caller can be traced in debugging */
-         continue; /* to next dimension */
+         ERROR_CONT_3( "in %s: %s failed for %d'th SDS", 
+                       "printSD_ASCII", "SDgetinfo", sds_index );
       }
 
       /* BMR: it seems like this whole block of code is to get number
@@ -773,22 +706,17 @@ printSD_ASCII(
          dim_id = SDgetdimid(sds_id, 0);
          if( dim_id == FAIL )
          {
-            fprintf(stderr,"SDgetdimid failed for %d'th SDS in file %s\n",
-                                    (int)sds_index, curr_file_name);
             resetSDS( &sds_id, sds_index, curr_file_name );
-            ret_value = FAIL;   /* so caller can be traced in debugging */
-            continue; /* to next dataset */
+            ERROR_CONT_3( "in %s: %s failed for %d'th SDS", 
+                       "printSD_ASCII", "SDgetdimid", sds_index );
          }
 
          /* get information of current dimension */
-         status = SDdiminfo(dim_id, NULL, &size, &nt, &num_attrs);
-         if( status == FAIL )
+         if( SDdiminfo(dim_id, NULL, &size, &nt, &num_attrs) == FAIL )
          {
-            fprintf(stderr,"SDdiminfo failed for %d'th SDS in file %s\n",
-                                    (int)sds_index, curr_file_name);
             resetSDS( &sds_id, sds_index, curr_file_name );
-            ret_value = FAIL;   /* so caller can be traced in debugging */
-            continue; /* to next dataset */
+            ERROR_CONT_3( "in %s: %s failed for %d'th SDS", 
+                       "printSD_ASCII", "SDdiminfo", sds_index );
          }
       }                                                       
       /* print the current SDS's as specified by user's options */
@@ -799,11 +727,9 @@ printSD_ASCII(
             nt_desc = HDgetNTdesc(nt);
             if (nt_desc == NULL)
             {
-               fprintf(stderr,"HDgetNTdesc failed for %d'th SDS in file %s\n", 
-                               sds_index, curr_file_name);
-               ret_value = FAIL;   /* so caller can be traced in debugging */
+               ERROR_BREAK_3( "in %s: %s failed for %d'th SDS", 
+                               "printSD_ASCII", "HDgetNTdesc", sds_index, FAIL );
                /* did this one fail on allocation and need exit(1)? */
-               break;
             }
 
             /* Note: a variable can be used to hold an SDS or a dimension. */
@@ -825,11 +751,8 @@ printSD_ASCII(
 
             /* get SDS's ref# from its id */
             if ((sds_ref = SDidtoref(sds_id)) == FAIL)
-            {
-               fprintf(stderr,"Failure in determining reference for %d'th SDS in file %s.\n", sds_index, curr_file_name);
-               ret_value = FAIL;   /* so caller can be traced in debugging */
-               break;  /* out of switch */
-            }
+               ERROR_BREAK_3( "in %s: %s failed for %d'th SDS", 
+				"printSD_ASCII", "SDidtoref", sds_index, FAIL );
 
             fprintf(fp, "\t Ref. = %d\n", (int) sds_ref);
             fprintf(fp, "\t Rank = %d\n\t Number of attributes = %d\n",
@@ -842,22 +765,14 @@ printSD_ASCII(
 
                /* get current dimension id for access */
                if (FAIL == (dim_id = SDgetdimid(sds_id, j)))
-               {
-                  fprintf(stderr,"SDgetdimid failed for %d'th SDS in file %s\n",
-                                  sds_index, curr_file_name);
-                  ret_value = FAIL;   /* so caller can be traced in debugging */
-                  break;  /* out of switch */
-               }
+                  ERROR_BREAK_3( "in %s: %s failed for %d'th SDS", 
+				"printSD_ASCII", "SDgetdimid", sds_index, FAIL );
 
                /* get information of current dimension */
-               status = SDdiminfo(dim_id,dim_nm,&size,&(dimNT[j]),&(dimnattr[j])
-);
-               if (FAIL == status )
-               {
-                  fprintf(stderr, "SDdiminfo failed for %d'th dimension of %d'th SDS in file %s\n", j, sds_index, curr_file_name);
-                  ret_value = FAIL;   /* so caller can be traced in debugging */
-                  break;  /* out of switch */
-               }
+               ret_value = SDdiminfo(dim_id,dim_nm,&size,&(dimNT[j]),&(dimnattr[j]));
+               if (FAIL == ret_value )
+                  ERROR_BREAK_4( "in %s: %s failed for %d'th dimension of %d'th SDS", 
+				"printSD_ASCII", "SDdiminfo", j, sds_index, FAIL );
 
                fprintf(fp, "\t Dim%d: Name=%s\n", (int) j, dim_nm);
                if (size == 0)
@@ -873,11 +788,9 @@ printSD_ASCII(
                {  
                   attr_nt_desc = HDgetNTdesc(dimNT[j]);
                   if (attr_nt_desc == NULL)
-                  {
-                     fprintf(stderr,"HDgetNTdesc failed for %d'th dimension of %d'th SDS in file %s\n", j, sds_index, curr_file_name);
-                     ret_value = FAIL;
-                     break;
-                  }
+                     ERROR_BREAK_4( "in %s: %s failed for %d'th dimension of %d'th SDS", 
+				"printSD_ASCII", "HDgetNTdesc", j, sds_index, FAIL );
+
                   fprintf(fp, "\t\t Scale Type = %s\n", attr_nt_desc);
                   fprintf(fp, "\t\t Number of attributes = %d\n", (int) dimnattr[j]);
                   resetBuff(( VOIDP *) &attr_nt_desc);
@@ -885,13 +798,10 @@ printSD_ASCII(
             } /* end each for dimension */
 
             /* print dataset's attributes */
-            status = print_SDSattrs(sds_id, sds_index,nattrs, fp, curr_file_name);
+            status = print_SDSattrs(sds_id, nattrs, fp, dumpsds_opts);
             if( status == FAIL )
-            {
-               fprintf( stderr, "Failure in print_SDSattrs\n" );
-               ret_value = FAIL;
-               break; /* so SDendaccess can be called, then go to next SDS */
-            }
+               ERROR_BREAK_3( "in %s: %s failed for %d'th SDS",
+				"printSD_ASCII", "print_SDSattrs", sds_index, FAIL );
 
             /* header only, don't go into case DDATA */
             if (dumpsds_opts->contents == DHEADER)
@@ -907,17 +817,11 @@ printSD_ASCII(
                { /* no dump if dimvar w/o scale values */
 
                   intn        count;
-
-                  fprintf(fp, "                ");/* spaces to line up output */
-
+                /*  fprintf(fp, "                ");/* spaces to line up output */
                   status = sdsdumpfull( sds_id, dumpsds_opts, rank, dimsizes, nt, fp);
                   if( FAIL == status )
-                  {
-                     fprintf(stderr,"sdsdumpfull failed for %d'th SDS in file %s\n",
-                                 sds_index, curr_file_name);
-                     ret_value = FAIL;
-                     break;
-                  }
+                     ERROR_BREAK_3( "in %s: %s failed for %d'th SDS", 
+				"printSD_ASCII", "sdsdumpfull", sds_index, FAIL )
                }
             }
             break;
@@ -989,20 +893,15 @@ printSD_BINARY( int32 sd_id,
 
       sds_id = SDselect(sd_id, sds_index);
       if (sds_id == FAIL)
-      {
-         fprintf(stderr,"SDselect failed for %d'th SDS in file %s\n",
-                                    sds_index, curr_file_name);
-         ret_value = FAIL;   /* so caller can be traced in debugging */
-         continue; /* to the next dataset */
-      }
+         ERROR_CONT_3( "in %s: %s failed for %d'th SDS",
+			"printSD_BINARY", "SDselect", sds_index );
 
-      if (FAIL == SDgetinfo(sds_id, name, &rank, dimsizes, &nt, &nattrs))
+      status = SDgetinfo(sds_id, name, &rank, dimsizes, &nt, &nattrs);
+      if( FAIL == status )
       {
-         fprintf(stderr,"SDgetinfo failed for sds_id(%d) in file %s\n", 
-                                    (int)sds_id, curr_file_name);
          resetSDS( &sds_id, sds_index, curr_file_name );
-         ret_value = FAIL;   /* so caller can be traced in debugging */
-         continue; /* to next dataset */
+         ERROR_CONT_3( "in %s: %s failed for %d'th SDS",
+			"printSD_BINARY", "SDgetinfo", sds_index );
       }
 
       /* output data to binary file   */
@@ -1010,11 +909,8 @@ printSD_BINARY( int32 sd_id,
       {
          status = sdsdumpfull(sds_id, dumpsds_opts, rank, dimsizes, nt, fp);
          if( FAIL == status )
-         {
-            fprintf(stderr,"sdsdumpfull failed for %d'th SDS in file %s\n",                                 sds_index, curr_file_name);
-            ret_value = FAIL;
-            /* will end access then go to the next dataset naturally */
-         }
+            ERROR_CONT_3( "in %s: %s failed for %d'th SDS", 
+			"printSD_BINARY", "sdsdumpfull", sds_index );
       }
       resetSDS( &sds_id, sds_index, curr_file_name );
    }  /* for each dataset in file */
@@ -1042,6 +938,7 @@ dsd(dump_info_t *dumpsds_opts,
           name[MAXNAMELEN],
           dim_nm[MAXNAMELEN];
    FILE  *fp = NULL;
+   file_type_t ft = dumpsds_opts->file_type;
    intn   index_error = 0,
           i, j,
           status,
@@ -1063,12 +960,17 @@ dsd(dump_info_t *dumpsds_opts,
       HDstrcpy( dumpsds_opts->ifile_name, file_name ); /* record file name */
       curr_arg++;
 
+      /* if SDstart fails, shoudl ret_value be set to FAIL or SUCCEED? */
       sd_id = SDstart(file_name, DFACC_RDONLY);
       if (sd_id == FAIL)
       {
-         fprintf(stderr,"Failure in opening file %s\n", file_name);
-         ret_value = FAIL;
-         continue; /* to the next file */
+	 /* if there are no more files to be processed, print error 
+	    message, then returns with FAIL */
+	 if( curr_arg == argc )
+            {ERROR_GOTO_1( "in dsd: Failure in opening file %s", file_name);}
+	 /* otherwise, print message, then continue processing the next file */
+	 else
+            ERROR_CONT_1( "in dsd: Failure in opening file %s", file_name );
       }
 
       /* compose the list of indices of SDSs to be processed in the current 
@@ -1087,7 +989,8 @@ dsd(dump_info_t *dumpsds_opts,
             sds_chosen=NULL;
          } /* end if */
          if( FAIL == SDend(sd_id))
-            fprintf( stderr, "SDend failed for the current file\n" );
+            fprintf( stderr, "in dsd: SDend failed in closing file %s\n",
+			file_name );
          continue; /* to the next file */
       } /* end if */
 
@@ -1096,16 +999,12 @@ dsd(dump_info_t *dumpsds_opts,
          used to print file attributes */
       status = SDfileinfo(sd_id, &ndsets, &n_file_attrs);
       if (status == FAIL)
-      {
-         fprintf(stderr,"SDfileinfo failed for file %s\n", file_name);
-         ret_value = FAIL;
-         goto done;
-      }
+         ERROR_GOTO_2( "in dsd: %s failed for file %s", "SDfileinfo", file_name);
 
       fp = stdout;                /* assume no output file given */
 
       /* ASCII or binary dump? */
-      switch( dumpsds_opts->file_type )
+      switch( ft )
       {
          case DASCII:       /* ASCII file */
             /* open output file for ASCII or direct to standard output */
@@ -1117,19 +1016,17 @@ dsd(dump_info_t *dumpsds_opts,
             if (dumpsds_opts->contents != DDATA)
             {
                fprintf(fp, "File name: %s \n", file_name);
-               /* print SD file attributes */
-               status = print_SDattrs( sd_id, fp, n_file_attrs, file_name);
-               if( status == FAIL )
-               {
-                  fprintf(stderr,"print_SDattrs failed for file %s\n", file_name);
-                  ret_value = FAIL;
-                  continue; /* to the next file */
 
-               }
+               /* print SD file attributes */
+               status = print_SDattrs( sd_id, fp, n_file_attrs, ft, dumpsds_opts->no_cr);
+/* make this fail to see if it gets out of for loop or not - remove when done */
+               if( status == FAIL )
+                  ERROR_CONT_2( "in dsd: %s failed for file %s", file_name, "print_SDattrs" );
             }
             status = printSD_ASCII( sd_id, dumpsds_opts, ndsets, sds_chosen, num_sds_chosen, fp );
             if( status == FAIL )
-               fprintf( stderr, "Failure in printSD_ASCII: Unable to dump data for file %s\n", file_name );
+               fprintf( stderr, "HDP ERROR>>> in dsd: %s failed for file %s\n", 
+				"printSD_ASCII", file_name );
 
             /* close output file only if option -o is given */
             if (dumpsds_opts->dump_to_file)
@@ -1142,7 +1039,8 @@ dsd(dump_info_t *dumpsds_opts,
                  fp = fopen(dumpsds_opts->file_name, "wb");
             status = printSD_BINARY( sd_id, fp, dumpsds_opts, sds_chosen, num_sds_chosen, ndsets );
             if( status == FAIL )
-               fprintf( stderr, "Failure in printSD_BINARY: Unable to dump data for file %s\n", file_name );
+               fprintf( stderr, "HDP ERROR>>> in dsd: %s failed for file %s\n", 
+			"printSD_BINARY", file_name );
 
             /* close output file only if option -o is given */
             if (dumpsds_opts->dump_to_file)
@@ -1160,10 +1058,7 @@ dsd(dump_info_t *dumpsds_opts,
       } /* end if */
 
       if (FAIL == SDend(sd_id))
-      {
-         fprintf(stderr, "SDend failed for file %s\n", file_name);
-         continue; /* to the next file */
-      }
+         ERROR_CONT_1( "in dsd: SDend failed for file %s", file_name );
       sd_id = FAIL; /* reset */
    }  /* while processing files  */
 
@@ -1194,9 +1089,6 @@ do_dumpsds(intn  curr_arg,
     dump_info_t dumpsds_opts;	/* dumpsds options */
     intn status, ret_value = SUCCEED;
 
-   /* initialize the structure that holds user's options and inputs */
-   init_dump_opts(&dumpsds_opts);
-
    /* command line: hdp help */
    if (help == TRUE)
    {
@@ -1212,6 +1104,9 @@ do_dumpsds(intn  curr_arg,
       goto done;
    }            /* end if */
 
+   /* initialize the structure that holds user's options and inputs */
+   init_dump_opts(&dumpsds_opts);
+
    /* parse the user's command and store the inputs in dumpsds_opts */
    status = parse_dumpsds_opts( &dumpsds_opts, &curr_arg, argc, argv );
    if( status == FAIL )
@@ -1224,11 +1119,7 @@ do_dumpsds(intn  curr_arg,
    /* display data and information as specified in dumpsds_opts */
    status = dsd( &dumpsds_opts, curr_arg, argc, argv );
    if( status == FAIL )
-   {
-      fprintf( stderr, "Failure in dsd.\n" );
-      ret_value = FAIL; /* so caller can be traced in debugging */
-      goto done; /* skip dsd */
-   }
+      ERROR_GOTO_0( "in do_dumpsds" );
 
   done:
     if (ret_value == FAIL)
