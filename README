@@ -3,33 +3,37 @@
 
 Obtaining the latest version
 ----------------------------
-    The most recent version of the distribution can be obtained from
-the NCSA ftp archive site at:
+ The most recent version of the distribution can be obtained from
+ the NCSA ftp archive site at:
 
      ftp://ftp.ncsa.uiuc.edu/HDF/HDF4.0r1
 
 Distribution Layout
 -------------------
-There are five subdirectories in this directory:
+ There are five subdirectories in this directory:
 
-config -- contains machine dependent makefile fragments(mh-<os>). 
-hdf    -- contains the source code for the HDF 'base library', the 
-          the multi_file annotation interface, the multi_file raster
-          image interface, HDF command line utilities (hdp, an hdf 
-          dumper is in mfhdf/), Pablo instrumentation support, 
-          and a test suite. It also contains the the software
-          distributions for IJPEG(hdf/jpeg) and ZLIB(hdf/zlib) 
-          which are required by the HDF library. 
-          Please see the README in each directory for further info
-          on each package. 
-mfhdf  -- contains the netCDF/HDF part of HDF and HDF dumper
-          utility(hdp).
-man    -- man page(s) for HDF.
-release_notes -- descriptions on new features and bug fixes in this
-                 release. Files in this sub-directory can be used 
-                 as  supplement documentation for HDF4.0. These files 
-                 are also available on the NCSA ftp server, 
-                 in /HDF/Documentation/HDF4.0/release_notes/.
+   config -- contains machine dependent makefile fragments(mh-<os>). 
+
+   hdf    -- contains the source code for the HDF 'base library', the 
+             the multi_file annotation interface, the multi_file raster
+             image interface, HDF command line utilities (hdp, an hdf 
+             dumper is in mfhdf/), Pablo instrumentation support, 
+             and a test suite. It also contains the the software
+             distributions for IJPEG(hdf/jpeg) and ZLIB(hdf/zlib) 
+             which are required by the HDF library. 
+             Please see the README in each directory for further info
+             on each package. 
+
+   mfhdf  -- contains the netCDF(MFHDF) part of HDF/netCDF distribution
+             and HDF dumper utility(hdp).
+
+   man    -- incomplete set of man page(s) for HDF.
+
+   release_notes -- descriptions on new features and bug fixes in this
+                    release. Files in this sub-directory can be used 
+                    as  supplement documentation for HDF4.0. These files 
+                    are also available on the NCSA ftp server, 
+                    in /HDF/Documentation/HDF4.0/release_notes/.
 
 Third Party Software Requirements:
 ---------------------------------
@@ -55,90 +59,29 @@ System Requirements
      compile both libraries without Fortran support by setting 
      the Fortran compiler variable 'FC = NONE' in the respective
      makefile fragment(mh-<os>) found in the top-level 'config'
-     directory: 
+     directory. See the INSTALL file for further details on 
+     configuration and installation.
 
-          $(toplevel)/config/mh-<os>.
-
-     See the INSTALL file for further details on configuration 
-     and installation.
-
-Configuring/Testing/Installing for UNIX systems(Short version)
+Configuring/Testing/Installing 
 -------------------------------------------------------------
-It is now possible to automatically configure and build the
-HDF/IJPEG/ZLIB and netCDF distributions with one command. The following 
-is a quick intro to configuring, testing and installing this distribution.
-If you have problems see the INSTALL file for detail instructions.
-
-To build both of the distributions contained in this directory,
-run the ``configure'' script here, e.g.:
-
-	./configure -v --prefix=/usr/local/hdf
-
-This will configure the distribution to install the libraries,
-utilities, include and man files in '/usr/local/hdf/lib',
-'/usr/local/hdf/bin', '/usr/local/hdf/include' and 
-'/usr/local/hdf/man' respectively. The default 'prefix' is 
-'/usr/local'. It is advisable to use something like the above 
-to avoid overwriting say another 'libjpeg.a' that might be
-installed in '/usr/local/lib'. The '-v' option is for verbose 
-output.
-
-Note that both 'libz.a' and 'libjpeg.a' and their respective
-include files are installed along with the base HDF(libdf.a) 
-and netCDF(libmfhdf.a) libraries.
-
-If the configure script can't determine your type of computer
-then it probably is a platfrom that is no longer supported.
-If you want to be adventurous see the section 'Dealing with
-Configure Problems' in the INSTALL file. Otherwise send an 
-email to 'hdfhelp@ncsa.uiuc.edu' for further help. 
-
-`configure' is a Bourne-shell (`/bin/sh') script; if your system
-does not recognize this automatically when you run a different 
-shell, you may need to run `sh' on it explicitly:
-
-        sh ./configure -v --prefix=/usr/local/hdf
-
-To compile the library and utiltites type:
-
-        make 
-
-To find out the available make targets type:
-
-        make help
-
-To test the libraries and utilities type:
-
-        make test 
-
-It is a good idea to save the output of the tests and view it 
-later for errors.e.g. 
-
-        make test >& make.test.out
-
-To install the libraries, utilities, includes and man pages type: e.g.
-
-        make install
-
-See the INSTALL file for detail instructions on configuring and 
-installation and for non-UNIX systems.
+ See the INSTALL file for instructions on configuring,
+ testing and installing for Unix and non-UNIX systems.
 
 
 DOCUMENTATION/FAQ/HELP
 ----------------------
-
-The HDF 4.0 documentation can be found on the NCSA ftp server
-in the directory /HDF/Documentation/HDF4.0/Users_Guide.  The
-HDF home page is at:
+ The HDF 4.0 documentation can be found on the NCSA ftp server
+ in the directory /HDF/Documentation/HDF4.0/Users_Guide.  The
+ HDF home page is at:
 
       http://hdf.ncsa.uiuc.edu/
 
-An FAQ is available on our ftp server, as well as under
-"Information about HDF" in the home page.
+ An FAQ is available on our ftp server, as well as under
+ "Information about HDF" in the home page.
 
-If you have any questions or comments, or would like to be
-added to or removed from our hdfnews email list, contact us
-at:
+ If you have any questions or comments, or would like to be
+ added to or removed from our hdfnews email list, contact us
+ at:
 
       hdfhelp@ncsa.uiuc.edu
 
