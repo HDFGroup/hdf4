@@ -2,10 +2,13 @@ C---------------------------------------------------------------------------
 C $Header$
 C
 C $Log$
-C Revision 1.4  1993/04/27 21:01:57  georgev
-C Changed fortran stubs interface for hyperslabs, made them different
-C than the C names.
+C Revision 1.5  1993/08/03 16:36:20  georgev
+C Fixed problem with slab interface.
 C
+c Revision 1.4  1993/04/27  21:01:57  georgev
+c Changed fortran stubs interface for hyperslabs, made them different
+c than the C names.
+c
 c Revision 1.3  1993/02/01  23:23:15  georgev
 c Changed hyperslab test files to reflect new interface
 c
@@ -37,7 +40,6 @@ C Output file: slab1wf.hdf
       integer i, j, k
       character*10 lcol,ucol,fcol,lrow,urow,frow,lpln,upln,fpln
       character*30 fn, sn
-      integer fnlen
       integer num_err
      
       print *,'\n  Writing the first 3 of 5 slabs to slab1wf.hdf'
@@ -72,7 +74,6 @@ C Output file: slab1wf.hdf
       fn = 'slabf.hdf'
       sn = 'slab1wf.hdf'
       fill_value = 1.0
-      fnlen = 30
       slab1(1,1,1) = 110.0
       slab1(2,1,1) = 111.0
       slab1(3,1,1) = 112.0
@@ -137,7 +138,7 @@ C
       ret = dssdims(rank, di)
       num_err = num_err + ret
 
-      ret = dfsdsslab(sn, fnlen)
+      ret = dfsdsslab(sn)
       num_err = num_err + ret
       st(1) = 1
       st(2) = 2
