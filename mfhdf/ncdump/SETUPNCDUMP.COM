@@ -1,2 +1,2 @@
-ncdump  :==  $  MRLXP4$DKA300:[FOLK.HDF33R3.MFHDF.NCDUMP]ncdump
+ncdump  :==  $  MRLXP4$DKA200:[FOLK.dev.MFHDF.NCDUMP]ncdump
 
