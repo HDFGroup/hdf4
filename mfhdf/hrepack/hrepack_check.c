@@ -53,7 +53,6 @@ int main(int argc, char **argv)
 static
 int sds_get_compck(char *fname, char *sds_name)
 {
- intn          status_n;     /* returned status_n for functions returning an intn  */
  HDF_CHUNK_DEF chunk_def;    /* chunk defintion read */ 
  comp_coder_t  comp_type;    /* to retrieve compression type into */
  comp_info     comp_info;    /* compression structure */ 
@@ -74,13 +73,13 @@ int sds_get_compck(char *fname, char *sds_name)
  sds_index = SDnametoindex(sd_id, sds_name);
  if ((sds_id = SDselect(sd_id, sds_index))==FAIL) {
   printf("Error: cannot open sds <%s>\n", sds_name);
-  status_n = SDend (sd_id);
+  SDend (sd_id);
   return -1;
  }
- status_n  = SDgetchunkinfo (sds_id, &chunk_def, &chunk_flags);
+ SDgetchunkinfo (sds_id, &chunk_def, &chunk_flags);
 
  /*obtain name,rank,dimsizes,datatype and num of attributes of sds */
- status_n = SDgetinfo(sds_id,sds_name,&rank,dimsizes,&dtype,&nattrs);
+ SDgetinfo(sds_id,sds_name,&rank,dimsizes,&dtype,&nattrs);
 
 /*-------------------------------------------------------------------------
  * print the dimensions
@@ -118,7 +117,7 @@ int sds_get_compck(char *fname, char *sds_name)
  
  comp_type = COMP_CODE_NONE;  /* reset variables before retrieving info */
  HDmemset(&comp_info, 0, sizeof(comp_info)) ;
- status_n = SDgetcompress(sds_id, &comp_type, &comp_info);
+ SDgetcompress(sds_id, &comp_type, &comp_info);
  
  printf("compression type:  %s \n", get_scomp(comp_type));
  if (COMP_CODE_NONE != comp_type )
@@ -143,10 +142,10 @@ int sds_get_compck(char *fname, char *sds_name)
  }
 
  /* terminate access to the sds */
- status_n = SDendaccess (sds_id);
+ SDendaccess (sds_id);
  
  /* terminate access to the sd interface */
- status_n = SDend (sd_id);
+ SDend (sd_id);
  
  return 0;
  
@@ -169,7 +168,6 @@ int sds_get_compck(char *fname, char *sds_name)
 static
 int sds_get_all(char *fname)
 {
- intn          status_n;     /* returned status_n for functions returning an intn  */
  int32         sd_id,
                sds_id, 
                sds_index,
@@ -188,9 +186,9 @@ int sds_get_all(char *fname)
  }
  
  /* determine the number of data sets in the file */
- if ((status_n = SDfileinfo (sd_id, &n_datasets, &n_file_attrs))==FAIL) {
+ if (SDfileinfo (sd_id, &n_datasets, &n_file_attrs)==FAIL) {
   printf("Error: Cannot get file information\n");
-  status_n = SDend (sd_id);
+  SDend (sd_id);
   return -1;
  }
  
@@ -205,16 +203,16 @@ int sds_get_all(char *fname)
    continue;
   }
 
-  status_n = SDgetinfo(sds_id, name, &rrank, dim_sizes, &data_type, &n_attrs);
+  SDgetinfo(sds_id, name, &rrank, dim_sizes, &data_type, &n_attrs);
  
   printf("    %s\n", name);
  
   /* terminate access to the current dataset */
-  status_n = SDendaccess (sds_id);
+  SDendaccess (sds_id);
  }
  
  /* terminate access to the sd interface */
- status_n = SDend (sd_id);
+ SDend (sd_id);
  
  return 0;
 }

@@ -296,14 +296,15 @@ void print_options(options_t *options)
 
  for ( i = 0; i < options->op_tbl->nelems; i++) 
  {
-  if (options->op_tbl->objs[i].comp.type>=0)
+  pack_info_t obj=options->op_tbl->objs[i];
+  if (obj.comp.type>0)
   {
-   char* obj_name=options->op_tbl->objs[i].path;
+   char* obj_name=obj.path;
    if (options->verbose) {
     printf("\t%s     \t %s compression, parameter %d\n",
      obj_name,
-     get_scomp(options->op_tbl->objs[i].comp.type),
-     options->op_tbl->objs[i].comp.info);
+     get_scomp(obj.comp.type),
+     obj.comp.info);
    }
    has_cp=1;
   }
