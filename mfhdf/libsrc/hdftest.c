@@ -26,6 +26,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define FILE2   "test2.hdf"
 #define FILE3   "test3.hdf"
 #define EXTFILE "exttest.hdf"
+#define UFOFILE "file.UFO"	/* non-existing file */
 
 #define EXTERNAL_TEST
 #define NBIT_TEST
@@ -223,6 +224,25 @@ char *argv[];
 #endif
 
     ncopts = NC_VERBOSE;
+
+    /* Testing SDstart */
+
+    /* Try start non-existing file with RDONLY and RDWR. Both should fail. */
+    f1 = SDstart(UFOFILE, DFACC_RDONLY);
+    if (f1 != FAIL){
+	fprintf(stderr, "SDstart(..., RDONLY) should fail\n");
+        num_err++;
+	SDend(f1);
+    }
+    f1 = SDstart(UFOFILE, DFACC_RDWR);
+    if (f1 != FAIL){
+        fprintf(stderr, "SDstart(..., RDWR) should fail\n");
+        num_err++;
+	SDend(f1);
+    }
+
+
+    /* -------------------------- */
 
     f1 = SDstart(FILE1, DFACC_CREATE);
     CHECK(f1, "SDstart");
