@@ -44,7 +44,7 @@
 
   4. Release Notes
 
-  5. 4.1 Documentation
+  5. Documentation
 
   6. FAQ
 
@@ -53,7 +53,7 @@
 *****************************************************************************
 
 1. Obtaining the latest version
-============================
+   ============================
 
     The most recent version of the distribution can be obtained from
     the NCSA ftp archive site at:
@@ -61,7 +61,7 @@
      ftp://ftp.ncsa.uiuc.edu/HDF/HDF_Current
 
 2. Installing HDF/netCDF	
-=====================
+   =====================
 
     For compiling and installing HDF/netCDF libraries, tests and
     utilities on a system, please follow these instructions. 
@@ -331,7 +331,7 @@
     2.5.1 HPUX(9.03) on PA-RISC
     ---------------------------
     The distribution has been compiled/tested with the native
-    ANSI-C compiler and Fortran compilier.The binary distribution 
+    ANSI-C compiler and Fortran compiler.The binary distribution 
     was compiled using the native compilers.
 
     2.5.2 Solaris(2.5) on Sparc
@@ -351,6 +351,8 @@
 
     2.5.3 Solaris(2.4) on INTEL(x86)
     --------------------------------
+     ** not available with 4.1b1 **
+
     The distribution has been compiled/tested with GCC 2.6.3 with
     *NO* fortran support. The binary distribution was compiled
     using GCC 2.6.3.
@@ -400,6 +402,8 @@
  
     2.5.6 CM5 Parallel I/O Extension
     --------------------------------
+    ** not available with 4.1b1 **
+
     To install the parallel I/O extension for CM5, read the separate 
     installation instructions in:
 
@@ -534,6 +538,8 @@
 
     2.5.8 Exemplar
     --------------
+    ** not available with 4.1b1 **
+
     You need to change the compiler in dev/config/mh-hpux to use /bin/cc. 
     Otherwise, the default will be the CONVEX C compiler.
 
@@ -545,6 +551,8 @@
 
     2.5.9 Fujitsu UXP/M-1800(Unix_System_V-4.0)
     --------------------------------------------
+    ** not available with 4.1b1 **
+
     The distribution has been compiled/tested with the native
     ANSI-C compiler only. No fortran support is provided as
     there was a problem with the fortran linker and system XDR libraries
@@ -563,6 +571,8 @@
 
     2.5.11 T3D Single node
     ----------------------
+    ** not available with 4.1b1 **
+ 
     HDF has been ported to the T3D system but only the C interface is
     supported for now.  To make the binary, you need to specify 't3d'
     for the configure command, as follows.  (See the section "Specifying 
@@ -577,7 +587,7 @@
 
 2.6 Pablo Instrumentation
     ====================
-    *** Not Suppported in Beta Release ***
+    *** Not Supported in Beta Release ***
 
     This version of the distribution has support to create an instrumented 
     version of the HDF library(libdf-inst.a). This library along with
@@ -771,8 +781,8 @@
 5. Documentation
    =============
 
-   The HDF 4.1 documentation can be found on the NCSA ftp server
-   in the directory /HDF/Documentation/HDF4.1/Users_Guide.  The
+   The HDF 4.0r2 documentation can be found on the NCSA ftp server
+   in the directory /HDF/Documentation/HDF4.0r2/.  The
    HDF home page is at:
 
       http://hdf.ncsa.uiuc.edu/
