@@ -1479,6 +1479,186 @@ test_vdelete(void)
 
 } /* test_vdelete */
 
+/* Testing Vdeletetagref() for vgroups. */ 
+void
+test_vdeletetagref(void)
+{
+    int32 file_id;
+    int32 vgroup_id;
+    int32 status;
+    int32 vg_ref;
+
+    /* Open the HDF file. */
+    file_id = Hopen(FNAME0, DFACC_RDWR, 0);
+    CHECK(file_id,FAIL,"Hopen:tvset.hdf");
+
+    /* Initialize HDF for subsequent vgroup/vdata access. */
+    status = Vstart(file_id);
+    CHECK(status,FAIL,"Vstart:file_id");
+
+    /* Create a new vgroup. */
+    vgroup_id = Vattach(file_id, -1, "w");
+    CHECK(vgroup_id,FAIL,"Vattach:vgroup_id");
+          
+    /* Set the name and class. */
+    status = Vsetname(vgroup_id, "Vgroup to delete elements from");
+    CHECK(status,FAIL,"Vsetname:vgroup_id");
+
+    status = Vsetclass(vgroup_id, "Vgroup to delete elements from");
+    CHECK(status,FAIL,"Vsetclass:vgroup_id");
+
+    /* add a few tag/ref pairs to Vgroup */
+    status = Vaddtagref(vgroup_id, 1000, 12345);
+    CHECK(status,FAIL,"Vaddtagref");
+    status = Vaddtagref(vgroup_id, 1000, 12346);
+    CHECK(status,FAIL,"Vaddtagref");
+
+#ifndef NO_DUPLICATES
+    /* duplicate tag/ref pairs allowed. 
+       So add a duplicate */
+    status = Vaddtagref(vgroup_id, 1000, 12346);
+    CHECK(status,FAIL,"Vaddtagref");
+
+#endif /* NO_DUPLICATES */
+
+    status = Vaddtagref(vgroup_id, 2000, 12345);
+    CHECK(status,FAIL,"Vaddtagref");
+    status = Vaddtagref(vgroup_id, 2000, 12346);
+    CHECK(status,FAIL,"Vaddtagref");
+
+    status = Vaddtagref(vgroup_id, 3000, 12345);
+    CHECK(status,FAIL,"Vaddtagref");
+    status = Vaddtagref(vgroup_id, 3000, 12346);
+    CHECK(status,FAIL,"Vaddtagref");
+
+    /* get ref of vgroup */
+    vg_ref = VQueryref(vgroup_id);
+    CHECK(vg_ref,FAIL,"VQueryref:vgroup_id");
+
+    /* delete one item in vgroup during this round */
+    status = Vdeletetagref(vgroup_id, 1000, 12346);
+    CHECK(status,FAIL,"Vdeletetagref:vgroup_id");
+
+    /* Terminate access to the vgroup. */
+    status = Vdetach(vgroup_id);
+    CHECK(status,FAIL,"Vdetach:vgroup_id");
+    
+    /* Terminate access to the Vxxx interface and close the file. */
+    status = Vend(file_id);
+    CHECK(status,FAIL,"Vend:file_id");
+
+    status = Hclose(file_id);
+    CHECK(status,FAIL,"Hclose:file_id");
+
+    /* Now open the file again and delete two elements in the vgroup
+       during this round. */
+
+    /* Open the HDF file. */
+    file_id = Hopen(FNAME0, DFACC_RDWR, 0);
+    CHECK(file_id,FAIL,"Hopen:tvset.hdf");
+
+    /* Initialize HDF for subsequent vgroup/vdata access. */
+    status = Vstart(file_id);
+    CHECK(status,FAIL,"Vstart:file_id");
+
+    /* attach to vgroup */
+    vgroup_id = Vattach(file_id, vg_ref, "w");
+    CHECK(vgroup_id,FAIL,"Vattach:vgroup_id");
+
+#ifndef NO_DUPLICATES
+    /* inquire about number of elments in Vgroup.
+       There should only be 6 of them including one duplicate. */
+    if (6 != Vntagrefs(vgroup_id))
+      {
+          num_errs++;
+          printf(">>> Vntagrefs returned %d was expecting %d\n", 
+                 (int)Vntagrefs(vgroup_id),6);
+      }
+
+    /* delete a duplicate in this vgroup */
+    status = Vdeletetagref(vgroup_id, 1000, 12346);
+    CHECK(status,FAIL,"Vdeletetagref:vgroup_id");
+#else /* NO_DUPLICATES */
+    /* inquire about number of elments in Vgroup.
+       There should only be 5 of them since no duplicates . */
+    if (5 != Vntagrefs(vgroup_id))
+      {
+          num_errs++;
+          printf(">>> Vntagrefs returned %d was expecting %d\n", 
+                 (int)Vntagrefs(vgroup_id),5);
+      }
+#endif /* NO_DUPLICATES */
+
+    /* delete some tag/refs in this vgroup */
+    status = Vdeletetagref(vgroup_id, 2000, 12346);
+    CHECK(status,FAIL,"Vdeletetagref:vgroup_id");
+
+    /* this should be the last element in the vgroup if I have
+       the order right */
+    status = Vdeletetagref(vgroup_id, 3000, 12346);
+    CHECK(status,FAIL,"Vdeletetagref:vgroup_id");
+
+    /* Terminate access to the vgroup. */
+    status = Vdetach(vgroup_id);
+    CHECK(status,FAIL,"VSdetach:vgroup_id");
+
+    /* Terminate access to the Vxxx interface and close the file. */
+    status = Vend(file_id);
+    CHECK(status,FAIL,"Vend:file_id");
+
+    status = Hclose(file_id);
+    CHECK(status,FAIL,"Hclose:file_id");
+
+    /* Now open file again and try to attach to vgroup with 'vg_ref'.
+       There should only be 3 elements left in Vgroup left . */
+
+    /* Open the HDF file. */
+    file_id = Hopen(FNAME0, DFACC_RDONLY, 0);
+    CHECK(file_id,FAIL,"Hopen:tvset.hdf");
+
+    /* Initialize HDF for subsequent the vgroup/vdata access. */
+    status = Vstart(file_id);
+    CHECK(status,FAIL,"Vstart:file_id");
+
+    /* attach to vgroup, read only */
+    vgroup_id = Vattach(file_id, vg_ref, "r");
+    CHECK(vgroup_id,FAIL,"Vattach:vgroup_id");
+
+    /* inquire about number of elments left in Vgroup.
+       There should only be 3 of them now. */
+    if (3 != Vntagrefs(vgroup_id))
+      {
+          num_errs++;
+          printf(">>> Vntagrefs returned %d was expecting %d\n", 
+                 (int)Vntagrefs(vgroup_id), 3);
+      }
+
+    /* check tag/ref pair of those 3 elements */
+    if (Vinqtagref(vgroup_id, 1000, 12345) == FALSE)
+      {
+          num_errs++;
+          printf(">>> Vinqtagref couldn't find valid element\n");
+      }
+    if (Vinqtagref(vgroup_id, 2000, 12345) == FALSE)
+      {
+          num_errs++;
+          printf(">>> Vinqtagref couldn't find valid element\n");
+      }
+    if (Vinqtagref(vgroup_id, 3000, 12345) == FALSE)
+      {
+          num_errs++;
+          printf(">>> Vinqtagref couldn't find valid element\n");
+      }
+
+    /* Terminate access to the Vxxx interface and close the file. */
+    status = Vend(file_id);
+    CHECK(status,FAIL,"Vend:file_id");
+
+    status = Hclose(file_id);
+    CHECK(status,FAIL,"Hclose:file_id");
+
+} /* test_vdeletetagref */
+
 
 /* main test driver */
 void
@@ -1494,10 +1674,13 @@ test_vsets(void)
     if (status == FAIL)
         return;
 
-    /* test VSdelete */
+    /* test VSdelete() */
     test_vsdelete();
 
-    /* test Vdelete */
+    /* test Vdelete() */
     test_vdelete();
+   
+    /* test Vdeletetagref() */
+    test_vdeletetagref();
 
 }   /* test_vsets */
