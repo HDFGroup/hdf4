@@ -94,7 +94,7 @@ test_szip_SDS8bit()
 
     /* Set the compression */
     status = SDsetcompress (sds_id, COMP_CODE_SZIP, &c_info);
-    CHECK(status, FAIL, "SDsetfillvalue");
+    CHECK(status, FAIL, "SDsetcompress");
 
     /* Write data to the SDS */
     status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)in_data);
@@ -478,7 +478,7 @@ test_szip_SDSfl32bit()
 
     /* Set the compression */
     status = SDsetcompress (sds_id, COMP_CODE_SZIP, &c_info);
-    CHECK(status, FAIL, "SDsetfillvalue");
+    CHECK(status, FAIL, "SDsetcompress");
 
     /* Write data to the SDS */
     status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)in_data);
@@ -798,7 +798,7 @@ test_szip_chunk()
     edges[0] = 3;
     edges[1] = 2;
     status = SDwritedata (sds_id, start, NULL, edges, (VOIDP) chunk6); 
-    CHECK(status, FAIL, "SDwritechunk");
+    CHECK(status, FAIL, "SDwritedata");
 
     /* Fill second column in the chunk with the coordinates (1,1) using 
      * SDwritedata function. */
@@ -807,7 +807,7 @@ test_szip_chunk()
     edges[0] = 3;
     edges[1] = 1;
     status = SDwritedata (sds_id, start, NULL, edges, (VOIDP) column); 
-    CHECK(status, FAIL, "SDwritechunk");
+    CHECK(status, FAIL, "SDwritedata");
 
     /* Fill second row in the chunk with the coordinates (0,2) using 
      * SDwritedata function. */
@@ -816,7 +816,7 @@ test_szip_chunk()
     edges[0] = 1;
     edges[1] = 2;
     status = SDwritedata (sds_id, start, NULL, edges, (VOIDP) row); 
-    CHECK(status, FAIL, "SDwritechunk");
+    CHECK(status, FAIL, "SDwritedata");
            
     /* Terminate access to the data set. */
     status = SDendaccess (sds_id);
