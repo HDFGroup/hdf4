@@ -35,7 +35,7 @@ list_usage(intn argc,
            char *argv[])
 {
     printf("Usage:\n");
-    printf("%s list [-acensldg] [-o<f|g|t|n>] [-t tag] [files...]\n", argv[0]);
+    printf("%s list [-acensldg] [-o<f|g|t|n>] [-t tag] <filelist>\n", argv[0]);
     printf("\t-a\tPrint annotations of items (sets long output)\n");
     printf("\t-c\tPrint classes of items (sets long output)\n");
     printf("\t-n\tPrint names or labels of items (sets long output)\n");
@@ -53,6 +53,7 @@ list_usage(intn argc,
        * -GV 6/12/97 */
     printf("\t-on\tPrint items in name or label order\n");
 #endif
+    printf("\t<filelist>\tList of hdf file names, separated by spaces\n");
 }	/* end list_usage() */
 
 static void 
@@ -79,8 +80,11 @@ parse_list_opts(list_info_t * list_opts,
 
     for (; curr_arg < argc; curr_arg++)
       {
-/* BMR: if (argv[curr_arg][0] == '-' || argv[curr_arg][0] == '/') why??? */
+#if defined(WIN386) || defined(DOS386)
+          if (argv[curr_arg][0] == '-' || argv[curr_arg][0] == '/')
+#else
           if (argv[curr_arg][0] == '-' )
+#endif /* for DOS/WINDOWS */
             {
                 ret++;
                 switch (argv[curr_arg][1])
@@ -809,7 +813,7 @@ print_all_file_descs(const char *fname,
     if ((sd_fid = SDstart(fname, DFACC_READ)) != FAIL)
       { /* SD global attributes */
           if (SDfileinfo(sd_fid, &ndsets, &nattrs) != FAIL)
-               print_SDattrs( sd_fid, stdout, nattrs );
+               print_SDattrs( sd_fid, stdout, nattrs, fname );
                /* temporary use stdout until fixing hdp_list to print
                   to a FILE *fp */
           else
@@ -1177,11 +1181,11 @@ do_list(intn curr_arg,
                   }
 
                 /* make list of all objects in file */
-                if ((o_list = 
-                     make_obj_list(fid,
+                o_list = make_obj_list(fid, 
                                    (list_opts.name == TRUE ? CHECK_LABEL : 0) |
                                    (list_opts.desc == TRUE ? CHECK_DESC : 0) |
-                                   CHECK_GROUP | CHECK_SPECIAL)) != NULL)
+                                   CHECK_GROUP | CHECK_SPECIAL);
+                if (o_list != NULL)
                   {
 
                       /* print out filename, etc. */
@@ -1281,11 +1285,11 @@ do_list(intn curr_arg,
                                   o_info = get_next_obj(o_list, 1);		/* advance to the next DD object */
                               }		/*end while */
                         }	/* end else */
+/* BMR: moved this block inside the if (o_list != NULL ) */
+                     /* free the object list */
+                     free_obj_list(o_list);
+                     o_list = NULL;
                   }		/* end if */
-
-                /* free the object list */
-                free_obj_list(o_list);
-                o_list = NULL;
 
                 /* cleanup section */
                 if (vinit_done == TRUE)

@@ -331,9 +331,12 @@ dumpfull(int32       nt,
                       b = (char *) b + off;
                       putc(' ', ofp);
                       cn++;
-                      if (cn > 65)
+                      /* temporary fix bad alignment algo in dumpfull by
+                         adding i < cnt-1 to remove extra line - BMR */
+                      if (cn > 65 && i < cnt-1 )
                         {
                             putc('\n', ofp);
+
                             for (cn = 0; cn < indent; cn++)
                                 putc(' ', ofp);
                         }		/* end if */

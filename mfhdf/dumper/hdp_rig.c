@@ -47,6 +47,7 @@ dumprig_usage(intn argc,
     printf("\t-o <filename>\tOutput to file <filename>\n");
     printf("\t-b\tBinary format of output\n");
     printf("\t-x\tAscii text format of output (default)\n");
+    printf("\t<filelist>\tList of hdf file names, separated by spaces\n");
 }	/* end list_usage() */
 
 static void 

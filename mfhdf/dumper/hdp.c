@@ -28,16 +28,17 @@ static void
 usage(intn argc, char *argv[])
 {
     printf("%s, %s\n\n", argv[0], LIBVER_STRING );
-    printf("Usage: hdp [-H] command [command options] <filename list>\n");
-    printf("\t-H  Display usage information about the specified command.\n");
+    printf("Usage: hdp [-H] command [command options] <filelist>\n");
+    printf("\t -H  Display usage information about the specified command.\n");
     printf("\t     If no command is specified, -H lists all commands.\n");
     printf("\t Commands:\n");
-    printf("\t     list \tlists contents of files in <filename list>\n");
-    printf("\t     dumpsds\tdisplays data of NDGs and SDGs in files listed in <filename list>\n");
-    printf("\t     dumpvd\tdisplays data of vdatas in <filename list>. \n");
-    printf("\t     dumpvg\tdisplays data of vgroups in <filename list>. \n");
-    printf("\t     dumprig\tdisplays data of RIGs in <filename list>. \n");
-    printf("\t     dumpgr\tdisplays data of RIGs in <filename list>. \n");
+    printf("\t     list \tlists contents of files in <filelist>\n");
+    printf("\t     dumpsds\tdisplays data of SDSs in <filelist>\n");
+    printf("\t     dumpvd\tdisplays data of vdatas in <filelist>. \n");
+    printf("\t     dumpvg\tdisplays data of vgroups in <filelist>. \n");
+    printf("\t     dumprig\tdisplays data of RIs in <filelist>. \n");
+    printf("\t     dumpgr\tdisplays data of RIs in <filelist>. \n");
+    printf("\t <filelist>\tlist of hdf file names, separated by spaces.\n");
 }
 
 void
@@ -52,10 +53,12 @@ init_dump_opts(dump_info_t * dump_opts)
     dump_opts->by_name.num_items = 0;
     dump_opts->by_class.str_list = NULL; /* no class given */
     dump_opts->by_class.num_items = 0;
-    dump_opts->num_chosen = (-1);     /* default dump all items */
+    dump_opts->num_chosen = NO_SPECIFIC; /* no specific dataset requested
+					  default to dump all datasets */
     dump_opts->contents = DVERBOSE;   /* default dump all information */
     dump_opts->dump_to_file = FALSE;          /* don't dump to output file */
     dump_opts->file_type = DASCII;    /* default output is ASCII file */
+    dump_opts->print_pal = FALSE;     /* GR only, don't print palette */
     HDstrcpy(dump_opts->file_name, "\0");
 }       /* end init_dump_opts() */
 

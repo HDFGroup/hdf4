@@ -181,6 +181,7 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
             {
                 if ((nobj = Vntagrefs(vkey)) != FAIL)
                   {
+		   if( nobj > 0 ) { /* Albert fixed */
                       int32      *temp_tag;
                       int32      *temp_ref;
 
@@ -237,6 +238,7 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
 
                       HDfree(temp_tag);
                       HDfree(temp_ref);
+		    } /* if nobj > 0 */
                   }		/* end if */
                 else	/* bad vkey? */
                     return (NULL);
@@ -289,12 +291,13 @@ make_obj_list(int32 fid, uint32 options)
     sp_info_block_t info;		/* temp. storage for special elem. info */
     intn        n, m;			/* local counting variable */
 
-    if ((nobj = Hnumber(fid, DFTAG_WILDCARD)) == FAIL)
+    nobj = Hnumber(fid, DFTAG_WILDCARD);
+    if (nobj == FAIL || nobj <= 0 )  /* BMR: added check for nobj<=0 */
         return (NULL);
 
     if ((obj_ret = (objlist_t *) HDmalloc(sizeof(objlist_t))) == NULL)
       {
-          printf("Failure to allocate memory \n");
+          printf("Failure to allocate memory for obj_ret\n");
           return (NULL);
       }
 
@@ -302,7 +305,7 @@ make_obj_list(int32 fid, uint32 options)
     obj_ret->curr_obj = 0;
     if ((obj_ret->raw_obj_arr = (objinfo_t *) HDmalloc(sizeof(objinfo_t) * nobj)) == NULL)
       {
-          printf("Failure to allocate memory \n");
+          printf("Failure to allocate memory for obj_ret->raw_obj_arr\n");
           HDfree(obj_ret);
           return (NULL);
       }		/* end if */
@@ -359,9 +362,10 @@ make_obj_list(int32 fid, uint32 options)
 
 	/* Post-process the list of dd/objects, adding more information */
 	/*  Also set up the pointers for the sorted list to be manipulated later */
+
     if ((obj_ret->srt_obj_arr = (objinfo_t **) HDmalloc(sizeof(objinfo_t *) * nobj)) == NULL)
       {
-          printf("Failure to allocate memory \n");
+          printf("Failure to allocate memory for obj_ret->srt_obj_arr\n");
           HDfree(obj_ret->raw_obj_arr);
           HDfree(obj_ret);
           return (NULL);
@@ -459,7 +463,7 @@ free_obj_list(objlist_t * o_list)
 
     /* BMR: verify that o_list is not nil before accessing */
     if( o_list != NULL )
-    {
+    { 
        for (i = 0, temp_obj = o_list->raw_obj_arr; i < o_list->max_obj; i++, temp_obj++)
        {
           if (temp_obj->is_group)
@@ -470,8 +474,8 @@ free_obj_list(objlist_t * o_list)
        HDfree(o_list->srt_obj_arr);
        HDfree(o_list->raw_obj_arr);
        HDfree(o_list);
-    } /* if o_list not null */
-    else
+   }
+   else
        fprintf(stderr, ">>>free_obj_list failed - attempting to free a NULL list \n");
 }	/* end free_obj_list() */
 
@@ -559,3 +563,154 @@ sort(int32 *chosen, int32 choices)
 {
     qsort((void *) chosen, choices, sizeof(int32), int32_compare);
 }
+
+/* resetBuff frees the passed-in pointer and resets it to NULL,
+   if it is not NULL.  Its purpose is to make cleaning up simpler 
+   throughout the entire dumper */
+void resetBuff( VOIDP *ptr )
+{
+   if( *ptr != NULL )
+   {
+      HDfree(*ptr);
+      *ptr = NULL;
+   }
+}
+
+/* parse_number_opts take a list of numbers separated by commas then 
+   retrieves the numbers and stores them in the structure provided by
+   the caller.  This routine is used by all the routines
+   parse_dumpxx_opts to parse the index or ref list that accompanies
+   option -i or -r */
+void
+parse_number_opts( char *argv[],
+                   int *curr_arg, 
+                   number_filter_t *filter)
+{
+   int32 numItems = 0, i;
+   char *tempPtr = NULL;
+   char *ptr = NULL;
+
+   /* put a temp ptr at the beginning of the given list of numbers, 
+      separated by commas, for example, 1,2,3 */
+   ptr = argv[*curr_arg];
+
+   /* check if it's the end of the command */
+   if( ptr == NULL )
+   {
+      printf("Missing values for option\n");
+      exit(1);
+   }
+
+   /* then traverse the list and count the number of items in it */
+   while ((tempPtr = HDstrchr(ptr, ',')) != NULL)
+   {
+      numItems++;       /* count number of items in the list */
+      ptr = tempPtr + 1;/* forward pointer to next item, after a comma */
+   }  /* end while */
+   if (*ptr != '\0')	/* count the last item */
+      numItems++;
+
+   /* allocate space to hold all the items in the list */
+   filter->num_list = (int32 *) HDmalloc(sizeof(intn) * numItems);
+   if (filter->num_list == NULL)
+   {
+      printf("Failure to allocate space in parse_number_opts\n");
+      exit(1);
+   }
+
+   /* go back to the beginning of the list and read in the numbers */
+   ptr = argv[*curr_arg];
+   i = 0;  /* index of the list */
+   while ( i < numItems )
+   {
+      tempPtr = HDstrchr(ptr, ',');
+      if( tempPtr != NULL )
+         *tempPtr = '\0';  /* end the string of digits */
+      filter->num_list[i] = atoi(ptr);  /* convert string to digits */
+      ptr = tempPtr + 1;
+      i++;
+   }
+   filter->num_items = numItems;   /* save the number of items */
+}  /* parse_number_opts */
+
+/* parse_string_opts take a list of strings separated by commas then 
+   retrieves the strings and stores them in the structure provided by
+   the caller.  This routine is used by all the routines 
+   parse_dumpxx_opts to parse the name or class list that accompanies
+   option -n or -c */
+void
+parse_string_opts( char *argv[],
+                   int *curr_arg, 
+                   char_filter_t *filter)
+{
+   int32 numItems = 0, i;
+   char *tempPtr = NULL;
+   char *ptr = NULL;
+
+   /* put a temp pointer at the beginning of the list of strings,
+      separated by commas */
+   ptr = argv[*curr_arg];
+
+   /* check if it's the end of the command */
+   if( ptr == NULL )
+   {
+      printf("Missing values for option\n");
+      exit(1);
+   }
+
+   /* then traverse the list and count the number of strings in it */
+   while ((tempPtr = HDstrchr(ptr, ',')) != NULL)
+   {
+      numItems++;
+      ptr=tempPtr+1;
+   }  /* end while */
+   if (*ptr != '\0')	/* count the last item */
+      numItems++;
+
+   /* allocate space to hold pointers that will point to the given strings */
+   if ((filter->str_list = (char **) HDmalloc(sizeof(char *) * numItems)) == NULL)
+   {
+      printf("Failure to allocate space in parse_string_opts\n");
+      exit(1);
+   }
+
+   /* go back to the beginning of the list and read in the given strings */
+   ptr = argv[*curr_arg];
+   i = 0;  /* init the index of the list */
+   while ( i < numItems )
+   {
+      tempPtr = HDstrchr(ptr, ','); /* find the end of a string */
+      if( tempPtr != NULL )
+         *tempPtr = '\0';  /* end the string with a NULL char */
+
+      /* allocate space for each string */
+      if ((filter->str_list[i] = (char *) HDmalloc(sizeof(char) * (HDstrlen(ptr) + 1))) == NULL)
+      {
+         printf("Failure to allocate space in parse_string_opts\n");
+         exit(1);
+      }
+      HDstrcpy(filter->str_list[i], ptr);  /* get the current string */
+      ptr = tempPtr + 1;  /* move pointer to next item or end of list */
+      i++;
+   }  /* end while */
+
+   filter->num_items = numItems;	/* save the number of items */
+
+} /* parse_string_opts */
+
+/* validate_pos makes sure that number is > 0 so we are not going to
+   allocate 0 elements */
+void
+validate_pos(
+	int32 number,
+	char *variable_name,
+	char *routine_name )
+{
+   if( number <= 0 )
+   {
+     fprintf(stderr,"Failure in %s: Attempting to allocate 0 items using '%s'!\n",
+                        routine_name, variable_name );
+     exit(1);   /* should we not exit here; I don't know yet - BMR */
+   }
+}
+

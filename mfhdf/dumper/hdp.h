@@ -21,7 +21,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "hdf.h"
 #include "hfile.h"
-#include "vg.h"
 
 /* Global Variables (ick) */
 #ifndef HDP_MASTER
@@ -42,6 +41,7 @@ intn        vinit_done
 #define MAXRANK 100
 #define MAXFNLEN 256
 #define CONDENSE 1
+#define NO_SPECIFIC -1     /* no specific datasets are requested */
 
 /* Add enum and string for new commands to both of the variables below. */
 /* Preserve the correct/corresponding ordering */
@@ -164,6 +164,8 @@ typedef struct
    file_type_t file_type;	/* Is data written in ASCII or binary */
    char        file_name[MAXFNLEN];/* Name of file to dump into */
    char        ifile_name[MAXFNLEN];/* Name of input file being processed */
+
+   intn        print_pal;	/* for GR only: TRUE if option -p selected */
   }
 dump_info_t;
 
@@ -294,13 +296,16 @@ extern objlist_t *make_obj_list(int32 fid, uint32 options);
 extern objinfo_t *get_next_obj(objlist_t * o_list, intn advance);
 extern objinfo_t *goto_nth_obj(objlist_t * o_list, intn n);
 extern void reset_obj_list(objlist_t * o_list);
+extern void resetBuff(VOIDP *buf);
 extern void free_obj_list(objlist_t * o_list);
 extern void sort_obj_list(objlist_t * o_list, sort_t sort_type);
 extern intn print_all_file_labels(const char *fname, int32 an_id);
 extern intn print_file_annotations( int32 file_id, char *file_name );
 extern intn print_file_descs(const char *f_name, int32 an_id );
 extern intn print_data_annots(int32 file_id, char *file_name, int32 tag, int32 ref);
-extern intn print_SDattrs( int32 sdf_id, FILE *fp, int32 n_file_attrs);
-extern intn print_GRattrs( int32 gr_id, int32 n_file_attrs, FILE *fp, dump_info_t *dumpgr_opts );
+extern intn print_SDattrs( int32 sd_id, FILE *fp, int32 n_file_attrs, const char *curr_file_name );
+
+extern intn print_GRattrs( int32 gr_id, int32 n_file_attrs, FILE *fp, const char *curr_file_name );
+extern void alloc_index_list( int32 **index_list, int32 num_chosen );
 
 #endif /* __HDP_H */

@@ -40,19 +40,134 @@ dumpvg_usage(intn argc,
              char *argv[])
 {
     printf("Usage:\n");
-    printf("%s dumpvg [-a|-i <index>|-n <name>|-r <ref>] [-dhv] [-o <filename> [-bx]] <filelist>\n", argv[0]);
+    printf("%s dumpvg [-a|-i <indices>|-r <refs>|-n <names>|-c <classes>] [-hv] [-o <filename>] <filelist>\n", argv[0]);
     printf("\t-a\tDump all VGs in the file (default)\n");
-    printf("\t-i <index>\tDump the <index>th VGs in the file \n");
-    printf("\t-n <name>\tDump the VGs with name <name>\n");
-    printf("\t-c <class>\tDump the VGs with class <class>\n");
-    printf("\t-r <ref>\tDump the VGs with reference number <ref>\n");
-    printf("\t-d\tDump data only, no tag/ref, formatted to input to hp2hdf\n");
-    printf("\t-h\tDump header only, no annotation for elements nor data\n");
+    printf("\t-i <indices>\tDump the VGs at position listed in <indices>\n");
+    printf("\t-r <refs>\tDump the VGs with reference number listed in <refs>\n");
+    printf("\t-n <names>\tDump the VGs with name listed in <names>\n");
+    printf("\t-c <class>\tDump the VGs with class listed in <classes>\n");
+/*  printf("\t-d\tDump data only, no tag/ref, formatted to input to hp2hdf\n");
+*/  printf("\t-h\tDump header only, no annotation for elements nor data\n");
     printf("\t-v\tDump everything including all annotations (default)\n");
     printf("\t-o <filename>\tOutput to file <filename>\n");
-    printf("\t-b\tBinary format of output\n");
-    printf("\t-x\tAscii text format of output (default)\n");
-}   /* end list_usage() */
+/*  printf("\t-x\tAscii text format of output (default)\n"); */
+    printf("\t<filelist>\tList of hdf file names, separated by spaces\n");
+}   /* end dumpvg_usage() */
+
+intn 
+parse_dumpvg_opts(dump_info_t *dumpvg_opts, 
+                  intn *curr_arg, 
+                  intn  argc,
+                  char *argv[]) 
+{
+    int32       i, lastItem, numItems;
+    char       *tempPtr, *ptr;
+
+   /* traverse the command and process each option */
+#if defined(WIN386) || defined(DOS386)
+   while ((*curr_arg < argc) && ((argv[*curr_arg][0] == '-') ||
+                                 (argv[*curr_arg][0] == '/')))
+#else
+   while ((*curr_arg < argc) && (argv[*curr_arg][0] == '-'))
+#endif /* for the use of / as option on PC */
+   {
+      switch (argv[*curr_arg][1])
+      {
+         case 'a':	/* dump all, default */
+             dumpvg_opts->filter = DALL;
+
+             /* indicate that no specific images requested, will dump all */
+             dumpvg_opts->num_chosen = NO_SPECIFIC;
+             (*curr_arg)++;
+             break;
+
+         case 'i':	/* dump by index */
+             dumpvg_opts->filter |= DINDEX;  /* set bit DINDEX */
+             (*curr_arg)++;
+
+             /* parse and store the given indices in structure by_index */
+             parse_number_opts( argv, curr_arg, &dumpvg_opts->by_index);
+             (*curr_arg)++;
+             break;
+
+         case 'r':	/* dump by reference */
+             dumpvg_opts->filter |= DREFNUM; /* set bit DREFNUM */
+             (*curr_arg)++;
+
+             /* parse and store the given ref numbers in structure by_ref */
+             parse_number_opts( argv, curr_arg, &dumpvg_opts->by_ref);
+             (*curr_arg)++;
+             break;
+
+         case 'n':	/* dump by names */
+             dumpvg_opts->filter |= DNAME;   /* set bit DNAME */
+             (*curr_arg)++;
+
+             /* parse and store the given names in structure by_name */
+             parse_string_opts( argv, curr_arg, &dumpvg_opts->by_name);
+             (*curr_arg)++;
+             break;
+
+         case 'c':	/* dump by class */
+             dumpvg_opts->filter |= DCLASS;   /* set bit DCLASS */
+             (*curr_arg)++;
+
+             /* parse and store the given classes in structure by_class */
+             parse_string_opts( argv, curr_arg, &dumpvg_opts->by_class);
+             (*curr_arg)++;
+             break;
+
+         case 'd':	/* dump data only */
+             dumpvg_opts->contents = DDATA;
+             (*curr_arg)++;
+             printf("Warning>>> option -d is being removed from dumpvg.\n");
+             printf("Please contact hdfhelp@ncsa.uiuc.edu if you would like to keep it.\n\n");
+             break;
+
+         case 'h':	/* no annotations nor data */
+             dumpvg_opts->contents = DHEADER;
+             (*curr_arg)++;
+             break;
+
+         case 'v':	/* dump all info */
+             dumpvg_opts->contents = DVERBOSE;
+             (*curr_arg)++;
+             break;
+
+         case 'o':	/* specify output file */
+             dumpvg_opts->dump_to_file = TRUE;
+
+             /* Get file name */
+             HDstrcpy(dumpvg_opts->file_name, argv[++(*curr_arg)]);
+
+             (*curr_arg)++;
+             break;
+
+         case 'b':   /* dump data in binary - should be removed */ 
+             printf("Warning>>> option -b has been removed from dumpvg.\n");
+             printf("Please contact hdfhelp@ncsa.uiuc.edu for further assistance.\n");
+             return (FAIL);
+
+         case 'x':   /* dump data in ascii, also default */
+             dumpvg_opts->file_type = DASCII;
+             (*curr_arg)++;
+             break;
+
+         default:	/* invalid dumpvg option */
+             printf("Warning>>> Invalid dumpvg option %s\n", argv[*curr_arg]);
+                return (FAIL);
+            }	/* end switch */
+      }		/* end while */
+
+   /* add the number of vgroups requested by index, by ref#, and by name
+      to have a total number of requested vgroups */
+   dumpvg_opts->num_chosen = dumpvg_opts->by_index.num_items +
+                             dumpvg_opts->by_ref.num_items +
+                             dumpvg_opts->by_name.num_items +
+                             dumpvg_opts->by_class.num_items;
+
+    return (SUCCEED);
+}	/* end parse_dumpvg_opts */
 
 /* Given a ref#, Vref_index searches for the vgroup that has this ref#
 and returns the vgroup's index or FAIL */
@@ -145,6 +260,22 @@ done:
     return ret_value;
 } /* Vstr_index() */
 
+/* resetVG calls Vdetach to end access to a vgroup with error checking
+   and resets the vgroup id to FAIL.  If failure occurs, resetVG 
+   print an error message in the stderr to help debugging */
+void
+resetVG( int32 *vg_id,
+         char  *curr_file_name )
+{
+   if( *vg_id != FAIL )
+   {
+      if( FAIL == Vdetach( *vg_id ))
+         fprintf(stderr,"Failure in resetVG: Vdetach failed for vg_id(%d) in file %s\n",
+                    (int) vg_id, curr_file_name );
+      *vg_id = FAIL;
+   }
+}  /* end of resetVG */
+
 /* recursively display a vgroup with subtrees.  The parameter root_index
 is the index of the node of which the initial display is called.  The
 recursion is continued until this node is visited again; this way, infinite
@@ -209,7 +340,7 @@ display(struct node  *ptr,
             }
 
             /* BMR: stop when the current node is the same as the one 
-               that starts this whole tree, i.e, loop starts */
+               that starts this whole graph, i.e, loop starts */
             if( list[x]->index != root_index ) 
                display(list[x], level, list, num_nodes, root_index,firstchild,fp);
 
@@ -260,16 +391,18 @@ display(struct node  *ptr,
    ptr->displayed = FALSE;
 }  /* display */
 
-/* get_VGandInfo attaches to vgroup vg_ref, and retrieves the vgroup's
-id or FAIL if unable to attach.  When attaching successful, this routine
-reads the vgroup's tag, name, class, and number of entries.  */
-void
+/* get_VGandInfo attaches to vgroup with ref# vg_ref, and retrieves the 
+   vgroup's id.  If attaching successful, the routine reads the vgroup's 
+   tag, name, class, and number of entries; otherwise, it will set the
+   vgroup's id to FAIL and returns to the caller with status FAIL.
+   If any other failure occurs, get_VGandInfo will return the status
+   as FAIL after completing its processing. */
+intn
 get_VGandInfo( int32 *vg_id,
                int32  file_id,
                int32  vg_ref,
                char  *file_name,
                int32 *n_entries,
-               int32 *vg_tag,
                char  *vgname,
                char  *vgclass )
 {
@@ -278,19 +411,13 @@ get_VGandInfo( int32 *vg_id,
    /* detach the current vgroup if it's attached to cover the case 
       where a library routine fails and must continue to the next vgroup
       without detaching the failed vgroup */
-   if( *vg_id != FAIL )
-   {
-      if (FAIL == Vdetach(*vg_id))
-         fprintf(stderr,"Vdetach failed for vg_id(%d) in file %s\n", 
-                                 (int) *vg_id, file_name);
-      *vg_id = FAIL;
-   }
+   resetVG( vg_id, file_name );
 
    *vg_id = Vattach(file_id, vg_ref, "r");
    if( *vg_id == FAIL)
    {
       fprintf(stderr,"\n>>> Vattach failed on vgroup ref=%d; the rest of file %s is skipped.\n", (int) vg_ref, file_name);
-      ret_value = *vg_id;
+      ret_value = FAIL;  /* so caller can be traced in debugging */
       goto done;  /* to avoid getting tag, name, and class */
    }
 
@@ -298,34 +425,35 @@ get_VGandInfo( int32 *vg_id,
    if (FAIL == status)
    {
       fprintf(stderr,"Vinquire failed on vg ref=%d in file %s\n",                              (int) vg_ref, file_name);
+      ret_value = FAIL;  /* so caller can be traced in debugging */
+
       /* stuff values to these variables so they can be printed */
       *n_entries = -1;
       HDstrcpy( vgname, "<Unknown>" );
    }
 /* for next release 
    else if( HDstrcmp( vgname, "" ) == 0) 
-      HDstrcpy( vgname, "<Undefined>" ); */
-
-   if (FAIL == (*vg_tag = VQuerytag(*vg_id)))
-   {
-      fprintf(stderr,"VQuerytag failed on vg ref=%d in file %s\n", (int) vg_ref, file_name);
-   }
+      HDstrcpy( vgname, "<Unknown>" ); */
 
    if (FAIL == Vgetclass(*vg_id, vgclass))
    {
       fprintf(stderr,"Vgetclass failed on vg ref=%d in file %s\n",
                               (int) vg_ref, file_name);
-      /* stuff values to these variables so they can be printed */
+      ret_value = FAIL;  /* so caller can be traced in debugging */
+
+      /* stuff values to the class so it can be printed */
       HDstrcpy( vgclass, "<Unknown>" );
    }
 /* for next release 
    else if( HDstrcmp( vgclass, "" ) == 0) 
-      HDstrcpy( vgclass, "<Undefined>" ); */
+      HDstrcpy( vgclass, "<Unknown>" ); */
 done:
    if( ret_value == FAIL )
    {
    }
    /* Normal cleanup */
+
+   return( ret_value );
 } /* end of get_VGandInfo */
 
 intn 
@@ -348,7 +476,7 @@ print_data_annots( int32 file_id,
    /* print labels of vgroup if any */
    if (FAIL == print_data_labels(file_name, an_id, tag, ref))
    {
-      fprintf(stderr,"Failed to print data labels for vg_ref(%d) in file %s\n", 
+      fprintf(stderr,"Failure in print_data_labels for vg_ref(%d) in file %s\n", 
                                     (int) ref, file_name);
       ret_value = FAIL;
       goto done;  /* back to the caller */
@@ -357,7 +485,7 @@ print_data_annots( int32 file_id,
    /* print descriptions of vgroup if any */
    if (FAIL == print_data_descs(file_name, an_id, tag, ref))
    {
-      fprintf(stderr, "Failed to print data descriptions for vg-ref(%d) in file %s\n", 
+      fprintf(stderr, "Failure in print_data_descs for vg-ref(%d) in file %s\n", 
                                    (int) ref, file_name);
       ret_value = FAIL;
       goto done;  /* back to the caller */
@@ -377,12 +505,97 @@ done:
    {
       if (an_id != FAIL)
          ANend(an_id);
-      if (an_id != FAIL)
-         ANend(an_id);
    }
    /* Normal cleanup */
    return( ret_value );
 } /* end of print_data_annots */
+
+/* alloc_list_of_strings allocates a list of num_entries char pointers 
+   and initializes the pointers to NULL.  If allocation fails, 
+   alloc_list_of_strings simply terminates hdp. */
+char **
+alloc_list_of_strings(
+	int32 num_entries )
+{
+   char **ptr;
+   intn i;
+
+   /* I don't know why +1 here and only i<num_entries at for loop - BMR*/
+   /* probably, +1 so that HDmalloc won't fail when num_entries = 0. */
+   ptr = (char **) HDmalloc(sizeof(char *) * (num_entries+1));
+
+   /* If allocation fails, alloc_list_of_string simply terminates hdp. */
+   if (ptr == NULL)
+   {
+      fprintf(stderr,"Failure in vgdumpfull: Not enough memory!\n");
+      exit(1); 
+   }
+   for (i = 0; i < num_entries; i++)
+      ptr[i] = NULL;
+
+   return( ptr );
+}  /* end of alloc_list_of_strings */
+
+char *
+alloc_strg_of_chars(
+        char *strg )
+{
+   char *ptr;
+
+   ptr = (char *) HDmalloc(sizeof(char) * (HDstrlen(strg)+1));
+   if (ptr == NULL)
+   {
+      fprintf(stderr,"Failure in vgdumpfull: Not enough memory!\n");
+      exit(1);
+   }
+   HDstrcpy(ptr, strg);
+
+   return( ptr );
+}
+
+/* print_fields displays the vdata's fields in an aligned format,
+   particularly when there are many fields and/or fields names are
+   lengthy */
+print_fields( char *fields,
+	FILE *fp )
+{
+   int32  lastItem = 0, i,
+          count = 0;
+   char  *ptr, *tempPtr,
+          string[MAXNAMELEN],
+          tempflds[VSFIELDMAX*FIELDNAMELENMAX];
+
+   /* if fields are not defined by VSsetfields and VSfdefine */
+   if( fields[0] == '\0' || fields == NULL )
+      fprintf( fp, "   fields = <Undefined>;\n");
+
+   else
+   { /* there are fields to print */
+      fprintf(fp, "\tfields = [");
+      HDstrcpy(tempflds, fields);
+      ptr = tempflds;
+      for (i = 0; !lastItem; i++)
+      {
+         tempPtr = HDstrchr(ptr, ',');
+         if (tempPtr == NULL)
+            lastItem = 1;
+         else
+            *tempPtr = '\0';
+         HDstrcpy(string, ptr);
+         count += HDstrlen(string);
+         if (count > 50)
+         {
+            fprintf(fp, "\n\t          ");
+            count = 0;
+         }
+         fprintf(fp, "%s", string);
+         if (!lastItem)
+            fprintf(fp, ", ");
+         ptr = tempPtr + 1;
+      }  /* end of if skip */
+      fprintf(fp, "];\n");
+   }  /* there are fields to print */
+}  /* end of print_fields */
 
 intn
 vgdumpfull(int32        vg_id, 
@@ -402,8 +615,6 @@ vgdumpfull(int32        vg_id,
     int    found = 0;
     int32  vs;
     int32  nv;
-    int32  vsotag;
-    int32  vsoref;
     int32  interlace;
     int32  vsize;
     char   fields[VSFIELDMAX*FIELDNAMELENMAX];
@@ -412,36 +623,13 @@ vgdumpfull(int32        vg_id,
     char   vgname[VGNAMELENMAX];
     char   vgclass[VGNAMELENMAX];
     char  *name = NULL;
-    int32  z,i;
-    int32  lastItem;
-    int32  count = 0;
-    char  *tempPtr;
-    char  *ptr;
+    int32  i;
     char  *file_name = dumpvg_opts->ifile_name;
-    char   string[MAXNAMELEN];
-    char   tempflds[VSFIELDMAX*FIELDNAMELENMAX];
     intn   status, ret_value = SUCCEED;
 
-   /* allocate and init memory for storing children's info */
-   aNode->children = (char **) HDmalloc(sizeof(char *) * (num_entries+1));
-   if (aNode->children == NULL)
-   {
-      fprintf(stderr,"Failure in vgdumpfull: Not enough memory!\n");
-      exit(1); 
-   }
-
-   for (i = 0; i < num_entries; i++)
-      aNode->children[i] = NULL;
-
-   aNode->type = (char **) HDmalloc(sizeof(char *) * (num_entries+1));
-   if (aNode->type == NULL)
-   {
-      fprintf(stderr,"Failure in vgdumpfull: Not enough memory!\n");
-      exit(1); 
-   }
-
-   for (i = 0; i < num_entries; i++)
-      aNode->type[i] = NULL;
+   /* allocate and init memory for storing children's and type's info */
+   aNode->children = alloc_list_of_strings( num_entries );
+   aNode->type = alloc_list_of_strings( num_entries );
 
    for (t = 0; t < num_entries; t++)
    {
@@ -449,6 +637,7 @@ vgdumpfull(int32        vg_id,
       {
          fprintf(stderr,"Vgettagref failed for vg_id(%d) in file %s\n", 
                         (int) vg_id, file_name);
+         ret_value = FAIL;
          continue;   /* to next entry */
       }
 
@@ -457,7 +646,12 @@ vgdumpfull(int32        vg_id,
       { /* vgroup */
 
          /* get the current vgroup and its information */
-         get_VGandInfo( &vgt, file_id, elem_ref, file_name, &elem_n_entries, &elem_tag, vgname, vgclass );
+         status = get_VGandInfo( &vgt, file_id, elem_ref, file_name, &elem_n_entries, vgname, vgclass );
+         if( status == FAIL )
+         {
+            fprintf(stderr, "Failure in get_VGandInfo.\n");
+            ret_value = FAIL; /* so caller can be traced */
+         }
 
          /* since the succeeding processing depends on this vg id, we 
             decided to just skip the current file.  Note that elem_n_entries 
@@ -488,6 +682,7 @@ vgdumpfull(int32        vg_id,
             if (FAIL == dumpattr(vgt, 0, 0, dumpvg_opts->file_type, fp))
             {
                fprintf(stderr,"Failed to dump attributes for vg_id(%d) in file %s\n", (int) vgt, file_name);
+               ret_value = FAIL;
                continue;  /* to the next vgroup */
             }
 
@@ -497,33 +692,11 @@ vgdumpfull(int32        vg_id,
             status = print_data_annots( file_id, file_name, elem_tag, elem_ref );
          } /* if !skip */
 
-         if( vgt != FAIL )
-         {
-            if (FAIL == Vdetach(vgt))
-            {
-               fprintf(stderr, "Vdetach failed for vg_id(%d) for file %s\n", 
-                             (int) vgt, file_name);
-               /* don't continue for now */
-            }
-            vgt = FAIL; /* reset */
-         }  /* if vg != FAIL */
+         resetVG( &vgt, file_name );
 
-         /* prepare the vgroup's info for graphical representation */
-         aNode->children[t] = (char *) HDmalloc(sizeof(char) * (HDstrlen(vgname)+1));
-         if (aNode->children[t] == NULL)
-         {
-            fprintf(stderr,"Failure in vgdumpfull: Not enough memory!\n");
-            exit(1);
-         }
-         HDstrcpy(aNode->children[t], vgname);
-
-         aNode->type[t] = (char *) HDmalloc(sizeof(char) * 3);
-         if (aNode->type[t] == NULL)
-         {
-            fprintf(stderr,"Failure in vgdumpfull: Not enough memory!\n");
-            exit(1);
-         }
-         HDstrcpy(aNode->type[t], "vg");
+         /* add the name and type of this element to the current graph */
+         aNode->children[t] = alloc_strg_of_chars( vgname );
+         aNode->type[t] = alloc_strg_of_chars( "vg" );
 
       }	/* if current element is vgroup */
       else if (elem_tag == VSDESCTAG)
@@ -533,115 +706,88 @@ vgdumpfull(int32        vg_id,
          {
             fprintf(stderr,"VSattach failed on vs_ref(%d) for file %s\n", 
                               (int) elem_ref, file_name);
-            continue;  /* to the next entry */
+            ret_value = FAIL;
          }
-
-         if (FAIL == VSinquire(vs, &nv, &interlace, fields, &vsize, vsname))
+         else /* VSattach didn't fail */
          {
-            fprintf(stderr,"VSinquire failed on vsid(%d) for file %s\n", 
-                              (int) vs, file_name);
-            continue;  /* to the next entry */
-         }
+            /* get and print vdata's information only if its parent is
+		being printed */
+            if (!skip)
+            {
+               status = VSinquire(vs, &nv, &interlace, fields, &vsize, vsname);
+               if( FAIL == status )
+               {
+                  fprintf(stderr,"VSinquire failed on vsid(%d) for file %s\n", 
+                                 (int) vs, file_name);
+                  ret_value = FAIL;
+                  /* for next release: set & print Unknown when appro. */
+               }
+   
+               vsize = VShdfsize(vs, fields);
+               if (vsize == FAIL)
+               {
+                  fprintf(stderr,"VShdfsize failed on vsid(%d) in file %s\n", 
+ 			         (int) vs, file_name);
+                  ret_value = FAIL;
+               }
 
-         vsize = VShdfsize(vs, fields);
-         if (vsize == FAIL)
-         {
-            fprintf(stderr,"VShdfsize failed on vsid(%d) in file %s\n", 
- 			(int) vs, file_name);
-            continue;  /* to the next entry */
-         }
+               if (HDstrlen(vsname) == 0)
+                  HDstrcat(vsname, "NoName");
+   
+               if (FAIL == VSgetclass(vs, vsclass))
+               {
+                  fprintf(stderr,"VSgetclass failed on vsid=%d\n for file %s", 
+                                 (int) vs, file_name);
+                  ret_value = FAIL;
+                  /* for next release: set & print Unknown when appro. */
+               }
 
-         if (FAIL == (vsotag = VSQuerytag(vs)))
-         {
-            fprintf(stderr,"VSQuerytag failed on vsid(%d) for file %s\n", 
-                              (int) vs, file_name);
-            continue;  /* to the next entry */
-         }
+               fprintf(fp, "     #%d (Vdata)\n", (int) t);
+               fprintf(fp, "\ttag = %d; ", (int) elem_tag);
+               fprintf(fp, "reference = %d; \n", (int) elem_ref);
+               fprintf(fp, "\tnumber of records = %d; ", (int) nv);
+               fprintf(fp, "interlace = %d;\n", (int) interlace);
 
-         if (FAIL == (vsoref = VSQueryref(vs)))
-         {
-            fprintf(stderr,"VSQueryref failed on vsid(%d) for file %s\n",
-                              (int) vs, file_name);
-            continue;  /* to the next entry */
-         }
+               /* The list of field names can be very long and would  
+                  look very messy when being displayed if it were to 
+                  be dumped out at once. print_fields displays a list 
+		  in a nice way even if the list is long. */
+               print_fields( fields, fp );
+               fprintf(fp, "\trecord size (in bytes) = %d;\n", (int)vsize);
+               fprintf(fp, "\tname = %s; class = %s;\n", vsname, vsclass);
+               fprintf(fp, "\ttotal number of attributes = %d.\n", 
+				VSnattrs(vs));
+            }  /* !skip */
+            else /* if the parent is not being printed */
+            {
+               /* get vdata's name for graphical rep. preparation only */
+               if (FAIL == VSgetname(vs, vsname))
+               {
+                  fprintf(stderr,"VSgetname failed on vsid=%d\n for file %s", 
+                                 (int) vs, file_name);
+                  ret_value = FAIL;
 
+                  /* set vdata's name to undefined */
+      		  HDstrcpy( vgname, "<Unknown>" );
+               }
+            }  /* skip */
+
+            if (FAIL == VSdetach(vs))
+            {
+               fprintf(stderr, "VSdetach failed on vsid(%d) for file %s\n", 
+                                 (int) elem_ref, file_name);
+               ret_value = FAIL;
+            }
+         }  /* if VSattach doesn't fail */
+
+         /* vdata's name might be "" - is this same thing as <Unknown>? */
          if (HDstrlen(vsname) == 0)
             HDstrcat(vsname, "NoName");
 
-         if (FAIL == VSgetclass(vs, vsclass))
-         {
-            fprintf(stderr,"VSgetclass failed on vsid=%d\n for file %s", 
-                              (int) vs, file_name);
-            continue;  /* to the next entry */
-         }
+         /* add the name and type of this element to the current graph */
+         aNode->children[t] = alloc_strg_of_chars( vsname );
+         aNode->type[t] = alloc_strg_of_chars( "vd" );
 
-         if (!skip)
-         {
-            fprintf(fp, "     #%d (Vdata)\n", (int) t);
-            fprintf(fp, "\ttag = %d; ", (int) vsotag);
-            fprintf(fp, "reference = %d; \n", (int) vsoref);
-            fprintf(fp, "\tnumber of records = %d; ", (int) nv);
-            fprintf(fp, "interlace = %d;\n", (int) interlace);
-            fprintf(fp, "\tfields = [");
-
-            /* The list of field names can be very long and would look 
-               very messy when being displayed if it were to be dumped 
-               out at once. The following block of operations is to 
-               display a list in a nice way even if the list is long. */
-            lastItem = 0;
-            HDstrcpy(tempflds, fields);
-            ptr = tempflds;
-            for (z = 0; !lastItem; z++)
-            {
-               tempPtr = HDstrchr(ptr, ',');
-               if (tempPtr == NULL)
-                  lastItem = 1;
-               else
-                  *tempPtr = '\0';
-               HDstrcpy(string, ptr);
-               count += HDstrlen(string);
-               if (count > 50)
-               {
-                  fprintf(fp, "\n\t          ");
-                  count = 0;
-               }
-               fprintf(fp, "%s", string);
-               if (!lastItem)
-                  fprintf(fp, ", ");
-               ptr = tempPtr + 1;
-            }  /* end of if skip */
-            fprintf(fp, "];\n");
-            fprintf(fp, "\trecord size (in bytes) = %d;\n", (int)vsize);
-            fprintf(fp, "\tname = %s; class = %s;\n", vsname, vsclass);
-
-         /* hmm.....just print the number of attributes but not dump them */
-         /* BMR: temporarily moved this line inside the if(!skip) to fix
-            the problem where "total ..." is printed everywhere 4/1/99 */
-         fprintf(fp, "\ttotal number of attributes = %d.\n", VSnattrs(vs));
-         }
-
-         if (FAIL == VSdetach(vs))
-         {
-            fprintf(stderr, "VSdetach failed on vsid(%d) for file %s\n", 
-                              (int) elem_ref, file_name);
-            /* just keep going here because Q. said it's safe */
-         }
-
-         aNode->children[t] = (char *) HDmalloc(sizeof(char) * (HDstrlen(vsname)+1));
-         if (aNode->children[t] == NULL)
-         {
-            fprintf(stderr,"Failure in vgdumpfull: Not enough memory!\n");
-            exit(1);
-         }
-         HDstrcpy(aNode->children[t], vsname);
-
-         aNode->type[t] = (char *) HDmalloc(sizeof(char) * 3);
-         if (aNode->type[t] == NULL)
-         {
-            fprintf(stderr,"Failure in vgdumpfull: Not enough memory!\n");
-            exit(1);
-         }
-         HDstrcpy(aNode->type[t], "vd");
       }  /* if current element is a vdata */
       else /* else something else */
       {
@@ -655,23 +801,12 @@ vgdumpfull(int32        vg_id,
             fprintf(fp, "\ttag = %d; reference = %d;\n", (int) elem_tag, (int) elem_ref);
          }
 
-         aNode->children[t] = (char *) HDmalloc(sizeof(char) * 4);
-         if (aNode->children[t] == NULL)
-         {
-            fprintf(stderr,"Failure in vgdumpfull: Not enough memory!\n");
-            exit(1);
-         }
-         HDstrcpy(aNode->children[t], "***");
+         /* add the name and type of this element to the current graph */
+         aNode->children[t] = alloc_strg_of_chars( "***" );
 
          if (!strcmp(name, "Unknown Tag"))
          {
-            aNode->type[t] = (char *) HDmalloc(sizeof(char) * 15);
-            if (aNode->type[t] == NULL)
-            {
-               fprintf(stderr,"Failure in vgdumpfull: Not enough memory!\n");
-               exit(1);
-            }
-            HDstrcpy(aNode->type[t], "Unknown Object");
+            aNode->type[t] = alloc_strg_of_chars( "Unknown Object");
          }
          else
             aNode->type[t] = name;
@@ -681,8 +816,7 @@ vgdumpfull(int32        vg_id,
 
    aNode->children[num_entries] = NULL;
 
-   /* BMR: added !skip to avoid printing "None." for now; maybe there 
-      is a better way than using "skip" */
+   /* BMR: added !skip to avoid printing "None." */
    if (!found && !skip )
       printf("     None.\n");
 
@@ -692,18 +826,16 @@ done:
           if (aNode->children != NULL)
             {
                 for (i = 0; i < num_entries; i++)
-                  {
-                      if (aNode->children[i] != NULL)
-                          HDfree(aNode->children[i]);
-                  }
+                   if (aNode->children[i] != NULL)
+                       HDfree(aNode->children[i]);
+                HDfree( aNode->children );
             }
           if (aNode->type != NULL)
             {
                 for (i = 0; i < num_entries; i++)
-                  {
-                      if (aNode->type[i] != NULL)
-                          HDfree(aNode->type[i]);
-                  }
+                   if (aNode->type[i] != NULL)
+                       HDfree(aNode->type[i]);
+                HDfree( aNode->type );
             }
       }
     /* Normal cleanup */
@@ -713,29 +845,47 @@ done:
 
 /* compose the list of indices of the requested vgroups although some
    vgroups are requested by ref# or name.
-   The routine returns the number of vgroups to be processed, or -1 if
-   all vgroups are to be processed, or 0 if none.  If there are any
-   errors, the parameter index_error will return the number of errors
-   occured */
-intn
-get_VGindex_list( int32 file_id,
-                  dump_info_t *dumpvg_opts,
-                  int32 **vg_chosen,
-                  int32 num_vg_chosen,  /* used in reallocating vg_chosen */
-                  intn *index_error )
+   The routine returns:
+	- the number of vgroups to be processed, or
+	- NO_SPECIFIC if all vgroups are to be processed, or 
+	- 0 if none.
+   If there are any errors, the parameter index_error will return TRUE */
+int32
+get_VGindex_list( 
+	int32 file_id,
+	dump_info_t *dumpvg_opts,
+	int32 **vg_chosen,
+	intn *index_error )
 {
-   intn i, vg_count = 0;
-   int32 index,
-         find_ref,
-         number;
+   intn     i;
+   int32    index,
+            find_ref,
+            vg_count = 0,
+            num_vg_chosen = dumpvg_opts->num_chosen,
+            number;
    filter_t filter = dumpvg_opts->filter; /* temporary name */
-   intn ret_value = SUCCEED;
+   intn     ret_value = 0;
 
-   /* if no specific vgroups are requested, return vgroup count as -1 */
+   /* if no specific vgroups are requested, return vgroup count 
+      as NO_SPECIFIC (-1) */
    if( filter == DALL )
    {
-      vg_count = -1;
-      return( vg_count );
+      ret_value = NO_SPECIFIC;
+      goto done;
+   }
+
+   /* if specific vgroups were requested, allocate space for the array
+      of indices */
+   if (num_vg_chosen > 0)
+      alloc_index_list( vg_chosen, num_vg_chosen );
+
+   /* else, no chosen vgroups but filter is not DALL, it shouldn't be this
+      combination, return vgroup count as NO_SPECIFIC to dump all */
+   else
+   {
+      ret_value = NO_SPECIFIC;
+      goto done;
+
    }
 
    /* if there are some vgroups requested by index, store the indices in
@@ -743,7 +893,7 @@ get_VGindex_list( int32 file_id,
    if( filter & DINDEX )
       for (i = 0; i<dumpvg_opts->by_index.num_items; i++)
       {
-         (*vg_chosen)[i] = dumpvg_opts->by_index.num_list[i];
+         (*vg_chosen)[vg_count] = dumpvg_opts->by_index.num_list[i];
          vg_count++;
       }
 
@@ -753,9 +903,9 @@ get_VGindex_list( int32 file_id,
       for (i = 0; i<dumpvg_opts->by_ref.num_items; i++)
       {
          index = Vref_index(file_id, dumpvg_opts->by_ref.num_list[i]);
-         if (index == -1)
+         if (index == FAIL)
          {
-            printf("Vgroup with reference number %d: not found\n", 
+            printf( "Vgroup with reference number %d: not found\n", 
                            dumpvg_opts->by_ref.num_list[i]);
             *index_error = 1; /* error */
          }
@@ -774,9 +924,9 @@ get_VGindex_list( int32 file_id,
          find_ref = (-1);
          number = 0;
          index = Vstr_index(file_id, dumpvg_opts->by_name.str_list[i], 1, &find_ref, &number);
-         if (index == -1)
+         if (index == FAIL)
          {
-            printf("Vgroup with name %s: not found\n", 
+            printf( "Vgroup with name %s: not found\n", 
                            dumpvg_opts->by_name.str_list[i]);
             *index_error = 1; /* error */
          }
@@ -821,7 +971,7 @@ get_VGindex_list( int32 file_id,
          }
          if (!found)
          {
-            printf("Vgroup with class %s: not found\n", 
+            printf( "Vgroup with class %s: not found\n", 
                            dumpvg_opts->by_class.str_list[i]);
             *index_error = 1; /* error */
          }
@@ -862,7 +1012,7 @@ print_file_annotations( int32 file_id,
    status = print_all_file_labels( file_name, an_id );
    if( status == FAIL )
    {
-      fprintf(stderr,">>> Failure in printing file labels for file %s \n",
+      fprintf(stderr,"Failure in print_all_file_labels for file %s \n",
                              file_name);
       ret_value = FAIL;
       goto done;  /* back to the caller */
@@ -872,7 +1022,7 @@ print_file_annotations( int32 file_id,
    status = print_file_descs( file_name, an_id );
    if( status == FAIL )
    {
-      fprintf(stderr,">>> Failure in printing file descriptions for file %s \n",
+      fprintf(stderr,"Failure in print_file_descs for file %s \n",
                              file_name);
       ret_value = FAIL;
       goto done;  /* back to the caller */
@@ -891,13 +1041,44 @@ done:
    if( ret_value == FAIL )
    {
       if (an_id != FAIL)
-         ANend(an_id);
-      if (an_id != FAIL)
-         ANend(an_id);
+         if (FAIL == ANend( an_id ))
+            fprintf(stderr,"ANend failed for an_id(%d) for file %s\n",
+                                    (int)an_id, file_name);
    }
    /* Normal cleanup */
    return( ret_value );
 }  /* end of print_file_annotations */
+
+/* closeVG combines the processes of Vend, Hclose, freeing the list
+   of numbers, and resetting all ids, after validating the ids first.
+   When either Vend or Hclose fails, closeVG prints an informative
+   message then resetting the ids as normal since these failures are
+   highly unlikely and since the files are opened as read-only, it's
+   safe to go on. */
+void
+closeVG(
+    int32 *file_id,     /* will be returned as a FAIL */
+    int32 **vg_chosen,  /* will be returned as a NULL */
+    char  *curr_file_name )
+{
+   if( *file_id != FAIL )
+   {
+      if (FAIL == Vend(*file_id))
+         fprintf(stderr,"Failure in closeVG: Vend failed for file %s\n",
+                         curr_file_name );
+      if (FAIL == Hclose(*file_id))
+         fprintf(stderr,"Failure in closeVG: Hclose failed for file %s\n",
+                         curr_file_name );
+      *file_id = FAIL; /* reset */
+   }
+
+   if( *vg_chosen != NULL )
+   {
+      HDfree( *vg_chosen );
+      *vg_chosen = NULL;
+   } /* end if */
+
+} /* end of closeVG */
 
 intn 
 dvg(dump_info_t *dumpvg_opts, 
@@ -949,11 +1130,14 @@ dvg(dump_info_t *dumpvg_opts,
       HDstrcpy( dumpvg_opts->ifile_name, file_name ); /* record for later use */
       curr_arg++;  /* forward the current argument pointer */
 
+      closeVG( &file_id, &vg_chosen, file_name );
+
       /* open current hdf file with error check, if fail, go to next file */
       file_id = Hopen(file_name, DFACC_READ, 0);
       if (file_id == FAIL)
       {
          fprintf(stderr, "Failure in open %s\n", file_name);
+         ret_value = FAIL;   /* so caller can be traced in debugging */
          continue; /* to the next file */
       }
 
@@ -961,47 +1145,18 @@ dvg(dump_info_t *dumpvg_opts,
       if (FAIL == Vstart(file_id))
       {
          fprintf(stderr,"Vstart failed for file %s\n", file_name);
-         Hclose( file_id );
+         ret_value = FAIL;   /* so caller can be traced in debugging */
          continue; /* to the next file */
       }
 
-      /* use the number of vgroups chosen that was obtained from parsing
-         dump opts to allocate the array that holds the indices of the 
-         vgroups to be processed */
-      num_vg_chosen = dumpvg_opts->num_chosen;
-      if (num_vg_chosen > 0)
-      {
-         vg_chosen = (int32 *) HDmalloc(sizeof(int32) * num_vg_chosen);
-         if( vg_chosen == NULL )
-         {
-            fprintf(stderr,"Failure in dvg: Not enough memory!\n");
-            exit(1); 
-         }	
-         vg_count = (-1);
-         HDmemfill(vg_chosen, &vg_count, sizeof(int32), num_vg_chosen);
-      }	/* end if */
-
       /* compose the list of indices of vgroups to be processed in the current
       file and return the number of items in the list */
-      vg_count = get_VGindex_list( file_id, dumpvg_opts, &vg_chosen, num_vg_chosen, &index_error);
+      num_vg_chosen = get_VGindex_list( file_id, dumpvg_opts, &vg_chosen, &index_error);
 
       /* if there are no valid indices, move on to the next file */
-      if (index_error && vg_count == 0)
-      {
-         if(vg_chosen != NULL)
-         {
-            HDfree( vg_chosen );
-            vg_chosen=NULL;
-         } /* end if */
-
-         Vend( file_id );
-         Hclose( file_id );
-         continue;   /* to the next file */
-      } /* end if */
-
-      /* number of items in the list can be different from the number of
-         chosen vgroups due to errors or multiple vgs of same class */
-      num_vg_chosen = vg_count;  /* update actual number of vgs */
+      if (index_error && num_vg_chosen == 0)
+         continue;   /* to the next file, closeVG before opening next file
+                        takes care of Vend, Hclose, and free vg_chosen */
 
       /* open output file for ASCII or direct to standard output */
       if (dumpvg_opts->dump_to_file)
@@ -1009,22 +1164,26 @@ dvg(dump_info_t *dumpvg_opts,
       else
          fp = stdout;
 
-      /* print input file name only without data only option */
+      /* print input file name and file annotations only if data 
+         only option is not given */
       if (dumpvg_opts->contents != DDATA)
       {
          fprintf(fp, "File name: %s \n", file_name);
 
          /* print file annotations */
          status = print_file_annotations( file_id, file_name );
-         /* if error occurs, print_file_annotations already printed
-            appropriate messages so just continue processing */
+         if( status == FAIL )
+         {
+            fprintf( stderr, "Failure in print_file_annotations\n");
+            ret_value = FAIL;
+         }
       }
 
       nvg = 0; /* ??? */
       vg_count = 0; /* no vgroups processed yet */
 
       /* when no vgroups specified, dump all vgroups */
-      if (num_vg_chosen == -1)
+      if (num_vg_chosen == NO_SPECIFIC)
          dumpall = TRUE;
       /* otherwise, sort the list of indices */
       else
@@ -1063,7 +1222,12 @@ dvg(dump_info_t *dumpvg_opts,
          }
 
          /* attaches the current vgroup and gets its tag, name, and class */ 
-         get_VGandInfo( &vg_id, file_id, vg_ref, file_name, &n_entries, &vg_tag, vgname, vgclass );
+         status = get_VGandInfo( &vg_id, file_id, vg_ref, file_name, &n_entries, vgname, vgclass );
+         if( status == FAIL )
+         {
+            fprintf(stderr, "Failure in get_VGandInfo.\n");
+            ret_value = FAIL; /* so caller can be traced */
+         }
 
          /* since the succeeding processing depends heavily on these
             we decided to just skip the current file */
@@ -1082,14 +1246,14 @@ dvg(dump_info_t *dumpvg_opts,
             max_vgs += NUM_VGS;
             if ((list = HDrealloc(list, (uint32) sizeof(struct node) * max_vgs)) == NULL)
             {
-               fprintf(stderr,"Not enough memory!\n");
+               fprintf(stderr,"Failure in dvg: Not enough memory!\n");
                exit(1);  
             }
          }
 
          if (( list[i] = (struct node *) HDmalloc(sizeof(struct node))) == NULL)
          {
-            fprintf(stderr,"Not enough memory!\n");
+            fprintf(stderr,"Failure in dvg: Not enough memory!\n");
             exit(1);  
          }
          num_nodes++;
@@ -1098,6 +1262,12 @@ dvg(dump_info_t *dumpvg_opts,
          {
             intn isvdata; /* TRUE if a vdata being processed, FALSE if vg */
             case DVERBOSE:	/* dump all information */
+	       if (FAIL == (vg_tag = VQuerytag(vg_id)))
+               {
+                  fprintf(stderr,"VQuerytag failed on vg ref=%d in file %s\n", 
+		         (int) vg_ref, file_name);
+                  ret_value = FAIL; /* so caller can be traced */
+               }
                fprintf(fp, "\n");
                fprintf(fp, "\nVgroup:%d\n", (int) i);
                fprintf(fp, "     tag = %d; reference = %d;\n", (int) vg_tag, (int) vg_ref);
@@ -1106,10 +1276,12 @@ dvg(dump_info_t *dumpvg_opts,
 
                /* dump attributes of vgroup */
                isvdata = FALSE;
-               if (FAIL == dumpattr(vg_id, 0, isvdata, dumpvg_opts->file_type, fp))
+               status = dumpattr(vg_id, 0, isvdata, dumpvg_opts->file_type, fp);
+               if (FAIL == status )
                {
-                  fprintf(stderr,"Failed to dump attributes for vg_id(%d) in file %s\n", 
+                  fprintf(stderr,"Failure in dumpattr for vg_id(%d) in file %s\n", 
                                     (int) vg_id, file_name);
+                  ret_value = FAIL;
                   /* let it continue so that vgdumpfull can prepare for the
                      graphical representation part (there are better ways) */
                }
@@ -1118,6 +1290,12 @@ dvg(dump_info_t *dumpvg_opts,
                /* Re-vamped annotation handling to use new ANxxx interface 
                 *  -georgev 6/11/97 */
                status = print_data_annots( file_id, file_name, vg_tag, vg_ref );
+               if (FAIL == status )
+               {
+                  fprintf(stderr,"Failure in print_data_annots for vg_id(%d) in file %s\n", 
+                                    (int) vg_id, file_name);
+                  ret_value = FAIL;
+               }
 
                /* fall through to next case */
 
@@ -1132,11 +1310,12 @@ dvg(dump_info_t *dumpvg_opts,
                   if (FAIL == vgdumpfull(vg_id, dumpvg_opts, file_id, n_entries,
                                   fp, list[i], skip, &skipfile )) 
                   {
-                     fprintf(stderr,"Failed to dump vgroup data for vg_id(%d) in file %s\n", 
+                     fprintf(stderr,"Failure in vgdumpfull for vg_id(%d) in file %s\n", 
                                     (int) vg_id, file_name);
+                     ret_value = FAIL;
                      if( skipfile )
                      {
-                        fprintf(stderr, "Severe failure.  Go to next file.\n");
+                        fprintf(stderr, "Severe failure in file %s.  Go to next file.\n", file_name );
                         break; /* out of for loop */
                      }
                      /* do not continue so list[i] can be set */
@@ -1151,14 +1330,7 @@ dvg(dump_info_t *dumpvg_opts,
                goto done;
          }		/* switch */
 
-         if (FAIL == Vdetach(vg_id))
-         {
-            fprintf(stderr,"Vdetach failed for vg_id(%d) in file %s\n", 
-                              (int) vg_id, file_name);
-            ret_value = FAIL;
-            goto done; /* leave them this way for now */
-         }
-         vg_id = FAIL; /* reset */
+         resetVG( &vg_id, file_name );
   
          list[i]->index = i;
          HDstrcpy(list[i]->name, vgname);
@@ -1166,6 +1338,7 @@ dvg(dump_info_t *dumpvg_opts,
          list[i]->treedisplayed = FALSE;  /* BMR - 01/16/99 */
       }	/* for all vgroups */
 
+      /* print the graphical representation part */
       if (dumpvg_opts->contents != DDATA && !skipfile )
       {
          fprintf( fp, "\n\nGraphical representation of the file:-\n");
@@ -1195,67 +1368,39 @@ dvg(dump_info_t *dumpvg_opts,
           HDfree(list);
        }
 
-       if (vg_chosen!=NULL)
-       {
-          HDfree(vg_chosen);
-          vg_chosen=NULL;
-       } /* end if */
+       closeVG( &file_id, &vg_chosen, file_name );
 
        if (dumpvg_opts->dump_to_file)
           fclose(fp);
 
-       if (FAIL == Vend(file_id))
-       {
-          fprintf(stderr,"Vend failed for file_id(%d) or file %s\n", 
-                        (int) file_id, file_name);
-          continue; /* to the next file */
-       }
-
-       if (FAIL == Hclose(file_id))
-       {
-          fprintf(stderr,"Hclose failed for file_id(%d) for file %s\n", 
-                        (int) file_id, file_name);
-          continue; /* to the next file */
-       }
-       file_id = FAIL; /* reset */
-
-   } /* while (curr_arg < argc)  */
+   } /* while (more file to process) */
 
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
-          if (vg_id != FAIL)
-          {
-              Vdetach(vg_id);
-              vg_id = FAIL; /* reset */
-          }
-          
-          if (file_id != FAIL)
-            {
-                Vend(file_id);
-                Hclose(file_id);
-            }
+
+          closeVG( &file_id, &vg_chosen, file_name );
+
+          resetVG( &vg_id, file_name );
 
           if (list != NULL)
-            {
-                for (i=0; i < max_vgs; i++)
-                  {
-                      if (list[i] != NULL)
-                          HDfree(list[i]);
-                  }
-                HDfree(list);
-            }
+          {
+             for (i=0; i < max_vgs; i++)
+             {
+                if (list[i] != NULL)
+                   HDfree(list[i]);
+             }
+             HDfree(list);
+          }
 
-          if (vg_chosen!=NULL)
-              HDfree(vg_chosen);
       }
     /* Normal cleanup */
 
     return ret_value;
 }	/* dvg */
 
-
-/* exported */
+/* main routine in hdp_vg.c; called by hdp.c/main to process the command
+hdp dumpvg... */
 intn
 do_dumpvg(intn  curr_arg, 
           intn  argc, 
@@ -1263,8 +1408,6 @@ do_dumpvg(intn  curr_arg,
           intn  help )
 {
     dump_info_t dumpvg_opts;	/* dumpvg options */
-    char       *dummy1[MAXNAMELEN];
-    int         dummy2;
     intn status, ret_value = SUCCEED;
 
    /* initialize the structure that holds user's options and inputs */
@@ -1280,18 +1423,27 @@ do_dumpvg(intn  curr_arg,
    if( curr_arg >= argc )
    {
       dumpvg_usage(argc, argv);
+      ret_value = FAIL;  /* so caller can be traced in debugging */
       goto done;
    }            /* end if */
 
    /* parse the user's command and store the inputs in dumpvg_opts */
-   status = parse_dumpvd_opts(&dumpvg_opts, &curr_arg, argc, argv, dummy1, &dummy2);
+   status = parse_dumpvg_opts(&dumpvg_opts, &curr_arg, argc, argv );
    if( status == FAIL )
+   {
+      dumpvg_usage(argc, argv);
+      ret_value = FAIL;  /* so caller can be traced in debugging */
       goto done;  /* skip dvg */
+   }
 
    /* display data and information as specified in dumpvg_opts */
    status = dvg(&dumpvg_opts, curr_arg, argc, argv);
-
-   ret_value = status;  /* return status to caller */
+   if( status == FAIL )
+   {
+      fprintf( stderr, "Failure in dvg\n");
+      ret_value = FAIL;  /* so caller can be traced in debugging */
+      goto done;  /* skip dvg */
+   }
 
   done:
     if (ret_value == FAIL)
