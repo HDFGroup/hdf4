@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/10/16 22:59:18  chouck
-Dynamically allocated arrays to make Mac testing more robust
+Revision 1.5  1992/10/19 22:21:02  mfolk
+changed palette references from char * to uint8 *. (356, 388-90)
 
+ * Revision 1.4  1992/10/16  22:59:18  chouck
+ * Dynamically allocated arrays to make Mac testing more robust
+ *
  * Revision 1.1  1992/10/12  18:48:12  koziol
  * Initial revision
  *
@@ -362,7 +365,7 @@ test_r8()
 {
     uint8 *im2, *ii2;
 	uint8 *im1, *ii1;
-    char *pal1, *pal2, *ipal;
+    uint8 *pal1, *pal2, *ipal;
 	
     int x,y;
     int ret, num_images=0;
@@ -385,9 +388,9 @@ test_r8()
 		exit(1);
 	}
 	
-  	pal1 = (char *) malloc(768 * sizeof(char));
-	pal2 = (char *) malloc(768 * sizeof(char));
-	ipal = (char *) malloc(768 * sizeof(char));
+  	pal1 = (uint8 *) malloc(768 * sizeof(char));
+	pal2 = (uint8 *) malloc(768 * sizeof(char));
+	ipal = (uint8 *) malloc(768 * sizeof(char));
 	if(!ipal || !pal1 || !pal2) {
 		fprintf(stderr, "Out of memory!\n");
 		exit(1);	
