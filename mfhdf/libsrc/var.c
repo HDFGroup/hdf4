@@ -97,8 +97,6 @@ NC_array *dims;
 	size_t xszof ;
 
 #ifdef HDF
-        NC *handle;  /* for length promotion later */
-
 	xszof = var->HDFsize ; 
 #else
 	xszof = NC_xtypelen(var->type) ;
