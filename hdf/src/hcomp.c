@@ -553,7 +553,7 @@ HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info * m_info,
               }     /* end case */
               break;
 
-          case COMP_CODE_SZIP:   /* Szip coding stores deflation level */
+          case COMP_CODE_SZIP:   /* Szip coding stores the following values*/
 	      {
                   UINT32DECODE(p, c_info->szip.pixels);
                   UINT32DECODE(p, c_info->szip.pixels_per_scanline);
@@ -977,9 +977,14 @@ HCgetcompress(int32 file_id,
 
     /* flag the error when attempting to get compression info on a
        non-compressed element */
-    else
+    else 
+    /* EIP 9/16/03  Fail but return compression type COMP_CODE_NONE
+       instead of junk in this case.
+    */
+     {
+        (comp_coder_t)*comp_type = COMP_CODE_NONE; 
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+     }
     /* end access to the aid appropriately */
     if (Hendaccess(aid)== FAIL)
         HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
@@ -990,7 +995,9 @@ done:
        /* end access to the aid if it's been accessed */
         if (aid != 0)
             if (Hendaccess(aid)== FAIL)
-                HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+       /* EIP 9/16/03 This causes infinite loop since HGOTO_ERROR has goto done in it 
+                HGOTO_ERROR(DFE_CANTENDACCESS, FAIL); Replaced with HERROR call*/
+                HERROR(DFE_CANTENDACCESS);
     } /* end if */
 
   /* Normal function cleanup */
