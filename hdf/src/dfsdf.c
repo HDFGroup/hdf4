@@ -1256,7 +1256,7 @@ ndsigdis(intf * dim, _fcd label, _fcd unit, _fcd format, intf * llabel,
 }
 
 /*-----------------------------------------------------------------------------
- * Name:    DFSDIsetdatastrs()
+ * Name:    dsisdas
  * Purpose: Set label, unit and format for displaying subsequent SDGs
  * Inputs:  label: label to be used to describe data
  *          unit: unit corresponding to data values
@@ -1384,7 +1384,7 @@ ndsscal(float64 *cal, float64 *cal_err, float64 *ioff, float64 *ioff_err,
  *          cal_type       : after calibration NT
  * Returns: 0 on success, -1 on failure
  * Users:   HDF Fortran programmers
- * Invokes: DFSDgetdatastrs
+ * Invokes: DFSDgetcal
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
@@ -1415,7 +1415,7 @@ ndsgcal(float64 *cal, float64 *cal_err, float64 *ioff, float64 *ioff_err,
  *          ref: next ref to read
  * Returns: 0 on success, -1 on failure with DFerror set
  * Users:   HDF Fortran programmers
- * Invokes:
+ * Invokes: DFSDwriteref
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
