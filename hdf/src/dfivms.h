@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.2  1992/10/16 16:33:07  chouck
-Added entry for DFtransarrry()
+Revision 1.3  1992/10/16 20:47:17  chouck
+Added DFSDpre32
 
+ * Revision 1.2  1992/10/16  16:33:07  chouck
+ * Added entry for DFtransarrry()
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -97,6 +100,7 @@ Added entry for DFtransarrry()
 #define DFSDgetslice _DFSDgetslice
 #define DFSDlastref _DFSDlastref
 #define DFSDnumber _DFSDnumber
+#define DFSDpre32 _DFSDpre32
 #define DFSDputdata _DFSDputdata
 #define DFSDputsdg _DFSDputsdg
 #define DFSDputslice _DFSDputslice
