@@ -1091,7 +1091,7 @@ uint32    count;
             vp->name->values, count, where);
 
     /* position ourselves correctly */
-    status = HI_SEEK(handle->cdf_fp, where);
+    status = HI_SEEK((hdf_file_t) handle->cdf_fp, where);
     if(status == FAIL)
         return(FALSE);
     
@@ -1109,7 +1109,7 @@ uint32    count;
 
     /* Read or write the data into / from values */
     if(handle->xdrs->x_op == XDR_DECODE) {
-        status = HI_READ(handle->cdf_fp, tBuf, byte_count);
+        status = HI_READ((hdf_file_t) handle->cdf_fp, tBuf, byte_count);
         if(status == FAIL) return FALSE;
         
         /* convert tBuf into values */
