@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.1  1992/07/06 22:54:16  mlivin
-Initial revision
+Revision 1.2  1992/07/14 16:29:20  mlivin
+fixed include of he_proto.h (for name change to _ not -)
 
+ * Revision 1.1  1992/07/06  22:54:16  mlivin
+ * Initial revision
+ *
 */
 /* he.h -- header file for HDFedit */
 #include "hdf.h"
@@ -159,7 +162,7 @@ extern HE_GROUP he_grp[];
 #define currGrpNo()   (desc2Grp(he_currDesc))
 #define currDesc()    ((DFdesc*) he_desc + he_currDesc)
 
-#include "he-proto.h"
+#include "he_proto.h"
 
 /* end of he.h */
 
