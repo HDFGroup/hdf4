@@ -167,7 +167,7 @@ HDFLIBAPI intn SDsetcompress
     (int32 id, int32 type, comp_info *c_info);
 
 HDFLIBAPI intn SDgetcompress
-    (int32 id, int32* type, comp_info *c_info);
+    (int32 id, comp_coder_t* type, comp_info *c_info);
 
 HDFLIBAPI int32 SDfindattr
     (int32 id, const char *attrname);

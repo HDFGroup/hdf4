@@ -859,7 +859,7 @@ done:
  NAME
     HCgetcompress -- Retrieves compression information of an element
  USAGE
-    int32 HCgetcompress(aid, coder_type, c_info)
+    intn HCgetcompress(aid, coder_type, c_info)
     int32 aid;                  IN: access record ID
     comp_coder_t* coder_type;   OUT: the type of compression
     comp_info* c_info;          OUT: ptr to compression information

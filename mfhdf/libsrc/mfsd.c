@@ -4185,7 +4185,7 @@ done:
 ******************************************************************************/ 
 intn 
 SDgetcompress(int32     id,     /* IN: dataset ID */
-              int32*    comp_type,   /* OUT: the type of compression */
+              comp_coder_t*    comp_type,   /* OUT: the type of compression */
               comp_info* c_info)/* OUT: ptr to compression information 
 				structure for storing the retrieved info */
 {
@@ -4226,7 +4226,7 @@ SDgetcompress(int32     id,     /* IN: dataset ID */
 
     /* use lower-level routine to get the compression information */
     status = HCgetcompress(handle->hdf_file, var->data_tag, var->data_ref, 
-		(comp_coder_t*)comp_type, c_info);
+		comp_type, c_info);
     if(status==FAIL) HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:

@@ -4646,7 +4646,7 @@ done:
  REVISION LOG
     July 2001: Added to fix bug #307 - BMR
 --------------------------------------------------------------------------*/
-intn GRgetcompress(int32 riid, int32* comp_type, comp_info* cinfo)
+intn GRgetcompress(int32 riid, comp_coder_t * comp_type, comp_info* cinfo)
 {
     CONSTR(FUNC, "GRgetcompress");   /* for HGOTO_ERROR */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
@@ -4689,7 +4689,7 @@ intn GRgetcompress(int32 riid, int32* comp_type, comp_info* cinfo)
     {
 	/* use lower-level routine to get the compression information */
 	ret_value = HCgetcompress(file_id, ri_ptr->img_tag, ri_ptr->img_ref,
-                                (comp_coder_t*)comp_type, cinfo);
+                                comp_type, cinfo);
 	if (ret_value == FAIL)
 	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
     }
