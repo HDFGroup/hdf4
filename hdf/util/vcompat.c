@@ -26,9 +26,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/02/29 18:58:36  sxu
-add header
+Revision 1.3  1992/04/24 15:38:25  koziol
+PC port
 
+ * Revision 1.2  1992/02/29  18:58:36  sxu
+ * add header
+ *
  * Revision 1.1  1992/02/28  17:00:00  likkai
  * Initial revision
  *

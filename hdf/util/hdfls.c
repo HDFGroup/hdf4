@@ -26,9 +26,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.10  1992/03/27 15:39:28  chouck
-Can now handle multiple command line options
+Revision 1.11  1992/04/24 15:38:25  koziol
+PC port
 
+ * Revision 1.10  1992/03/27  15:39:28  chouck
+ * Can now handle multiple command line options
+ *
  * Revision 1.9  1992/03/25  22:51:35  chouck
  * Fixed stupid bugs relating to unknown tags
  *
