@@ -33,6 +33,7 @@
   2.5.9 SP2 Single node
   2.5.10 T3D Single node
   2.5.11 IRIX 6.2
+  2.5.12 DEC Alpha(Digital Unix v4.0)
 
   2.6 Pablo Instrumentation
   2.7 File Cache(Beta release)
@@ -604,6 +605,14 @@
     However, SGI changed the compiler defaults in IRIX 6.2.  We decided
     to change the setting for it too.
 
+
+    2.5.12 DEC Alpha(Digital Unix v4.0)
+    ------------------------------------
+    The distribution has been compiled/tested with native Digital Unix 
+    C and FORTRAN compiliers.
+
+    During the testing of the library the test 'mfhdf/libsrc/hdftest' 
+    will report "Unaligned access ..." messages which can be ignored.
 
 2.6 Pablo Instrumentation
     ====================
