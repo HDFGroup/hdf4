@@ -91,9 +91,9 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
   exit(1);
  }
 
-#if 1
 
  /* get compression type */
+ m=0;
  for ( i=end_obj+1, k=0; i<len; i++,k++)
  {
   c = str[i];
@@ -107,7 +107,7 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
     for ( m=0,u=i+1; u<len; u++,m++) {
      c = str[u];
      if (!isdigit(c)){
-      printf("Error: Invalid compression parameter in <%s>\n",str);
+      printf("Error: Compression parameter not digit in <%s>\n",str);
       exit(1);
      }
      stype[m]=c;
@@ -127,7 +127,7 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
     comp->type=COMP_CODE_RLE;
     if (m>0){ /*RLE does not have parameter */
      if (obj_list) free(obj_list);
-     printf("Error: Invalid compression parameter in <%s>\n",str);
+     printf("Error: Invalid compression parameter in RLE <%s>\n",str);
      exit(1);
     }
    }
@@ -165,8 +165,6 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
    }
   }
  } /*i*/
-
-#endif
 
 
  /* check valid parameters */
@@ -306,7 +304,7 @@ obj_list_t* parse_chunk(char *str, int *n_objs, int32 *chunk_lengths, int *chunk
   c = str[i];
   sdim[k]=c;
 
-  if (!isdigit(c) && c!='x'){
+  if (!isdigit(c) && c!='x' && c!='N' && c!='O' && c!='N' && c!='E'){
    if (obj_list) free(obj_list);
    printf("%s\nError: Invalid chunking definition\n",str);
    exit(1);

@@ -17,17 +17,12 @@
 #include "hzip.h"
 #include "hdiff.h"
 #include "add.h"
+#include "verify.h"
 
-
-#define FILENAME         "hziptst.hdf"
-#define FILENAME_OUT     "hziptst_out.hdf"
 #define DATA_FILE1       "image8.txt"
 #define DATA_FILE2       "image24pixel.txt"
 char    *progname;     
 
-
-int verifiy_comp_chunk(char *sds_name, int32 in_chunk_flags, int rank, 
-                       int32 *in_chunk_lengths, int32 in_comp_type, int32 in_comp_info);  
 
 /*-------------------------------------------------------------------------
  * Function: main
@@ -88,7 +83,7 @@ int main(void)
  fspec.sa = 1;    /* compare SD local attributes */
  fspec.sd = 1;    /* compare SD data */
  fspec.vd = 1;    /* compare Vdata */
-	fspec.gr = 1;    /* compare GR data */
+ fspec.gr = 1;    /* compare GR data */
 
 /*-------------------------------------------------------------------------
  * create a file with SDSs, images , groups and vdatas
@@ -147,6 +142,8 @@ int main(void)
  add_sd(FILENAME,"dset2",vgroup2_id,chunk_flags,comp_type,NULL);
  add_sd(FILENAME,"dset3",vgroup3_id,chunk_flags,comp_type,NULL);
  add_sd(FILENAME,"dset4",0,chunk_flags,comp_type,NULL);
+ add_sd(FILENAME,"dset5",0,chunk_flags,comp_type,NULL);
+ add_sd(FILENAME,"dset6",0,chunk_flags,comp_type,NULL);
 
 
 /*-------------------------------------------------------------------------
@@ -259,6 +256,7 @@ int main(void)
 
  in_chunk_lengths[0]=in_chunk_lengths[1]=10;
 
+
 /*-------------------------------------------------------------------------
  * test1:  
  *-------------------------------------------------------------------------
@@ -271,10 +269,12 @@ int main(void)
  hzip_end (&options);
  if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
   goto out;
- if ( verifiy_comp_chunk("dset4",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths,
-  COMP_CODE_SKPHUFF, 1) == -1) 
+ if ( sds_verifiy_comp("dset4",COMP_CODE_SKPHUFF, 1) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk("dset4",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
   goto out;
  PASSED();
+
 
 /*-------------------------------------------------------------------------
  * test2:  
@@ -288,8 +288,10 @@ int main(void)
  hzip_end (&options);
  if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
   goto out;
- if ( verifiy_comp_chunk("dset4",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths,
-  COMP_CODE_RLE, 0) == -1) goto out;
+ if ( sds_verifiy_comp("dset4",COMP_CODE_RLE, 0) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk("dset4",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
+  goto out;
  PASSED();
 
 /*-------------------------------------------------------------------------
@@ -304,108 +306,159 @@ int main(void)
  hzip_end (&options);
  if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
   goto out;
- if ( verifiy_comp_chunk("dset4",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths,
-  COMP_CODE_DEFLATE, 0) == -1) goto out;
+ if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 6) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk("dset4",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
+  goto out;
+ PASSED();
+
+
+/*-------------------------------------------------------------------------
+ * test4:  
+ *-------------------------------------------------------------------------
+ */
+ TESTING("compressing SDS SELECTED with NONE, chunking SELECTED NONE");
+ hzip_init (&options,verbose);
+ hzip_addcomp("dset_chunk_comp:NONE",&options);
+ hzip_addcomp("dset_chunk:NONE",&options);
+ hzip_addchunk("dset_chunk_comp:NONE",&options);
+ hzip_addchunk("dset_chunk:NONE",&options);
+ hzip(FILENAME,FILENAME_OUT,&options);
+ hzip_end (&options);
+ if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+  goto out;
+ if ( sds_verifiy_comp("dset_chunk_comp",COMP_CODE_NONE, 0) == -1) 
+  goto out;
+ if ( sds_verifiy_comp("dset_chunk",COMP_CODE_NONE, 0) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk("dset_chunk_comp",HDF_NONE,0,0) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk("dset_chunk",HDF_NONE,0,0) == -1) 
+  goto out;
+ PASSED();
+
+
+/*-------------------------------------------------------------------------
+ * test5:  
+ *-------------------------------------------------------------------------
+ */
+ TESTING("compressing SDS SELECTED with all types, chunking SELECTED");
+ hzip_init (&options,verbose);
+ hzip_addcomp("dset4:GZIP 9",&options);
+ hzip_addcomp("dset5:RLE",&options);
+ hzip_addcomp("dset6:HUFF 2",&options);
+ hzip_addchunk("dset4:10x10",&options);
+ hzip_addchunk("dset5:10x10",&options);
+ hzip_addchunk("dset6:10x10",&options);
+ hzip(FILENAME,FILENAME_OUT,&options);
+ hzip_end (&options);
+ if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+  goto out;
+ if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 9) == -1) 
+  goto out;
+ if ( sds_verifiy_comp("dset5",COMP_CODE_RLE, 0) == -1) 
+  goto out;
+ if ( sds_verifiy_comp("dset6",COMP_CODE_SKPHUFF, 2) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk("dset4",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk("dset5",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk("dset6",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
+  goto out;
+ PASSED();
+
+/*-------------------------------------------------------------------------
+ * test6:  
+ *-------------------------------------------------------------------------
+ */
+ TESTING("compressing SDS SELECTED with all types, no chunking");
+ hzip_init (&options,verbose);
+ hzip_addcomp("dset4:GZIP 9",&options);
+ hzip_addcomp("dset5:RLE",&options);
+ hzip_addcomp("dset6:HUFF 2",&options);
+ hzip(FILENAME,FILENAME_OUT,&options);
+ hzip_end (&options);
+ if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+  goto out;
+ if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 9) == -1) 
+  goto out;
+ if ( sds_verifiy_comp("dset5",COMP_CODE_RLE, 0) == -1) 
+  goto out;
+ if ( sds_verifiy_comp("dset6",COMP_CODE_SKPHUFF, 2) == -1) 
+  goto out;
+ PASSED();
+
+/*-------------------------------------------------------------------------
+ * test7:  
+ *-------------------------------------------------------------------------
+ */
+
+ TESTING("compressing SDS ALL, chunking SELECTED NONE");
+ hzip_init (&options,verbose);
+ hzip_addcomp("*:GZIP 1",&options);
+ hzip_addchunk("dset_chunk_comp:NONE",&options);
+ hzip_addchunk("dset_chunk:NONE",&options);
+ hzip(FILENAME,FILENAME_OUT,&options);
+ hzip_end (&options);
+ if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+  goto out;
+ if ( sds_verifiy_comp_all(COMP_CODE_DEFLATE, 1) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk("dset_chunk_comp",HDF_NONE,0,0) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk("dset_chunk",HDF_NONE,0,0) == -1) 
+  goto out;
+ PASSED();
+
+/*-------------------------------------------------------------------------
+ * test8:  
+ *-------------------------------------------------------------------------
+ */
+
+ TESTING("no compressing, chunking ALL");
+ hzip_init (&options,verbose);
+ hzip_addchunk("*:10x10",&options);
+ hzip(FILENAME,FILENAME_OUT,&options);
+ hzip_end (&options);
+ if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+  goto out;
+ if ( sds_verifiy_chunk_all(HDF_CHUNK,2,in_chunk_lengths) == -1) 
+  goto out;
+ PASSED();
+
+/*-------------------------------------------------------------------------
+ * test9:  
+ *-------------------------------------------------------------------------
+ */
+
+
+ verbose        =1;
+ fspec.verbose  =1;
+
+ TESTING("compressing SDS ALL with GZIP, chunking ALL");
+ printf("\n");
+ hzip_init (&options,verbose);
+ hzip_addcomp("*:GZIP 1",&options);
+ hzip_addchunk("*:10x10",&options);
+ hzip(FILENAME,FILENAME_OUT,&options);
+ hzip_end (&options);
+ if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+  goto out;
+ if ( sds_verifiy_comp_all(COMP_CODE_DEFLATE, 1) == -1) 
+  goto out;
+ if ( sds_verifiy_chunk_all(HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
+  goto out;
  PASSED();
  
 /*-------------------------------------------------------------------------
- * all tests passed
+ * all tests PASSED
  *-------------------------------------------------------------------------
  */
  
  return 0;
 out:
- H5_FAILED();
+ H4_FAILED();
  return 1;
-}
-
-
-/*-------------------------------------------------------------------------
- * Function: verifiy_comp_chunk
- *
- * Purpose: utility function to verify chunking and compression
- *
- * Return: void
- *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 3, 2003
- *
- *-------------------------------------------------------------------------
- */
-
-int verifiy_comp_chunk(char *sds_name, int32 in_chunk_flags, int rank, 
-                       int32 *in_chunk_lengths, int32 in_comp_type, int32 in_comp_info)
-{
- intn          status_n;     /* returned status_n for functions returning an intn  */
- HDF_CHUNK_DEF chunk_def;    /* Chunk defintion read */ 
- comp_coder_t  comp_type;    /* to retrieve compression type into */
- int32         chunk_flags;  /* Chunking flag */ 
- comp_info     comp_info;    /* compression structure */ 
- int32         sd_id,
-               sds_id, 
-               sds_index;   
- int           i;
-
- /* get chunk and comp */
- sd_id     = SDstart (FILENAME_OUT, DFACC_RDONLY);
- sds_index = SDnametoindex(sd_id, sds_name);
- sds_id    = SDselect(sd_id, sds_index);
- status_n  = SDgetchunkinfo (sds_id, &chunk_def, &chunk_flags);
-
-
-/*-------------------------------------------------------------------------
- * retrieve and verify the chunk info
- *-------------------------------------------------------------------------
- */
- if ( chunk_flags != (in_chunk_flags) )
- {
-  printf("Error:chunk flags do not match");
-  status_n = SDendaccess (sds_id);
-  status_n = SDend (sd_id);
-  return -1;
- }
- for (i = 0; i < rank; i++)
- {
-  if (chunk_def.chunk_lengths[i] != in_chunk_lengths[i] )
-  {
-   printf("Error:chunk lengths do not match ");
-   status_n = SDendaccess (sds_id);
-   status_n = SDend (sd_id);
-   return -1;
-  }
- }
-
-/*-------------------------------------------------------------------------
- * retrieve and verify the compression info
- *-------------------------------------------------------------------------
- */
- 
- comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
- HDmemset(&comp_info, 0, sizeof(comp_info)) ;
- status_n = SDgetcompress(sds_id, &comp_type, &comp_info);
- if ( comp_type != in_comp_type )
- {
-  printf("Error:compression type does not match ");
-  status_n = SDendaccess (sds_id);
-  status_n = SDend (sd_id);
-  return -1;
- }
- if ( in_comp_info && comp_info.skphuff.skp_size != in_comp_info )
- {
-  printf("Error:compresion information does not match ");
-  status_n = SDendaccess (sds_id);
-  status_n = SDend (sd_id);
-  return -1;
- }
- 
- /* terminate access to the SDS */
- status_n = SDendaccess (sds_id);
- 
- /* terminate access to the SD interface */
- status_n = SDend (sd_id);
- 
- return 0;
- 
 }
 
