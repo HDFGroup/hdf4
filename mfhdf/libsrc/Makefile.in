@@ -52,8 +52,7 @@ CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
-
-CPPFLAGS = $(INCLUDES) $(DEFINES) @CPPFLAGS@
+CPPFLAGS = @CPPFLAGS@ $(INCLUDES) $(DEFINES)
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
@@ -707,7 +706,7 @@ check:
 	@echo "============================"
 	@echo "HDF-SD C interfaces tests"
 	@echo "============================"
-	./hdftest > hdfout.new
+	srcdir="$(srcdir)" ./hdftest > hdfout.new
 	@cmd="$(DIFF) hdfout.new $(srcdir)/hdfout.sav";                 \
 	  echo $$cmd;                                                   \
 	  if $$cmd; then                                                \
@@ -720,7 +719,7 @@ check:
 	@echo "========================="
 	@echo "netCDF formatted tests"
 	@echo "========================="
-	./cdftest > cdfout.new
+	srcdir="$(srcdir)" ./cdftest > cdfout.new
 	@cmd="$(DIFF) cdfout.new $(srcdir)/testout.sav";                \
 	  echo $$cmd;                                                   \
 	  if $$cmd; then                                                \

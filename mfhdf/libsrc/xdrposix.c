@@ -286,7 +286,7 @@ int nbytes;
 
 static bool_t   xdrposix_getlong();
 static bool_t   xdrposix_putlong();
-#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || (defined _AIX && defined __64BIT__)
+#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64
 static bool_t   xdrposix_getint();
 static bool_t   xdrposix_putint();
 #endif
@@ -338,15 +338,15 @@ static struct xdr_ops   xdrposix_ops = {
     xdrposix_getint,   /* deserialize a 32-bit int */
     xdrposix_putint    /* serialize a 32-bit int */
 #else
-#if (defined _AIX && defined __64BIT__)
+#ifdef AIX5L64
     xdrposix_destroy,
     NULL,
     NULL,
     xdrposix_getint,
     xdrposix_putint
-#else /* _AIX && __64BIT__ */
+#else /*AIX5L64 */
     xdrposix_destroy    /* destroy stream */
-#endif /* _AIX && __64BIT__ */
+#endif /*AIX5L64 */
 #endif
 };
 
@@ -465,7 +465,7 @@ xdrposix_getlong(xdrs, lp)
 #endif
 {
     unsigned char *up = (unsigned char *)lp ;
-#if (defined CRAY || (defined _AIX && defined__64BIT__) )  
+#if (defined CRAY || defined AIX5L64)   
     *lp = 0 ;
     up += (sizeof(long) - 4) ;
 #endif
@@ -492,7 +492,7 @@ xdrposix_putlong(xdrs, lp)
     netlong mycopy = htonl(*lp);
     up = (unsigned char *)&mycopy;
 #endif
-#if (defined CRAY || (defined _AIX && defined__64BIT__) ) 
+#if (defined CRAY || defined AIX5L64 )
     up += (sizeof(long) - 4) ;
 #endif
 
@@ -614,7 +614,7 @@ int
     return (NULL);
 }
 
-#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || (defined _AIX && __64BIT__)
+#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 
 
 static bool_t
 xdrposix_getint(xdrs, lp)

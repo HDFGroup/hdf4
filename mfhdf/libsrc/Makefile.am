@@ -7,8 +7,7 @@ INCLUDES=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc   \
          -I$(top_srcdir)/mfhdf/port
 DEFINES=-DNDEBUG -DHDF
-
-CPPFLAGS=$(INCLUDES) $(DEFINES) @CPPFLAGS@
+CPPFLAGS=@CPPFLAGS@ $(INCLUDES) $(DEFINES)
 
 #############################################################################
 ##                          Library to build                               ##
@@ -49,7 +48,7 @@ check:
 	@echo "============================"
 	@echo "HDF-SD C interfaces tests"
 	@echo "============================"
-	./hdftest > hdfout.new
+	srcdir="$(srcdir)" ./hdftest > hdfout.new
 	@cmd="$(DIFF) hdfout.new $(srcdir)/hdfout.sav";                 \
 	  echo $$cmd;                                                   \
 	  if $$cmd; then                                                \
@@ -62,7 +61,7 @@ check:
 	@echo "========================="
 	@echo "netCDF formatted tests"
 	@echo "========================="
-	./cdftest > cdfout.new
+	srcdir="$(srcdir)" ./cdftest > cdfout.new
 	@cmd="$(DIFF) cdfout.new $(srcdir)/testout.sav";                \
 	  echo $$cmd;                                                   \
 	  if $$cmd; then                                                \

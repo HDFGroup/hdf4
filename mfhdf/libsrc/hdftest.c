@@ -1568,6 +1568,8 @@ test_chunk()
 static int16  netcdf_u16[2][3] = {{1, 2, 3}, 
                                    {4, 5, 6}};
 
+char    testfile[512] = "";
+
 /* Tests reading of netCDF file 'test1.nc' using the SDxxx inteface.
    Note not all features of reading SDS from netCDF files are tested here.
    Hopefully more tests will be added over time as needed/required. */
@@ -1591,7 +1593,6 @@ test_netcdf_reading()
     intn i, j;
     int     num_errs = 0;    /* number of errors so far */
     const char *basename = "test1.nc";
-    char    testfile[512] = "";
     char   *srcdir = getenv("srcdir");
 
     /* Generate the correct name for the test file, by prepending the source path */
