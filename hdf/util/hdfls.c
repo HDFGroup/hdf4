@@ -26,10 +26,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.20  1993/01/19 06:00:14  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.21  1993/02/22 17:24:48  georgev
+Fixed a bug in PROTOTTYPE definition of "qsort" for the SGI's.
 
+ * Revision 1.20  1993/01/19  06:00:14  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.19  1992/07/15  21:48:48  sxu
  * No change
  *
@@ -148,23 +151,23 @@ intn
 char * file_name;    /* name of current file being listed */
 
 int compare
-  PROTO((dd_t *a, dd_t *));
+  PROTO((const void *a, const void *));
 int main
   PROTO((int, char **));
 int lprint
   PROTO((dd_t *, int));
 
 #ifdef PROTOTYPE
-int compare(dd_t *a, dd_t *b)
+int compare(const void *a, const void *b)
 #else
 int compare(a, b)
-dd_t *a,*b;
+VOID *a,*b;
 #endif /* PROTOTYPE */
 {
-    if (a->tag>b->tag) return(1);
-    if (a->tag<b->tag) return(-1);
-    if (a->ref>b->ref) return(1);
-    if (a->ref<b->ref) return(-1);
+    if (((dd_t *)a)->tag > ((dd_t *)b)->tag) return(1);
+    if (((dd_t *)a)->tag < ((dd_t *)b)->tag) return(-1);
+    if (((dd_t *)a)->ref > ((dd_t *)b)->ref) return(1);
+    if (((dd_t *)a)->ref < ((dd_t *)b)->ref) return(-1);
     return(0);
 }
 
