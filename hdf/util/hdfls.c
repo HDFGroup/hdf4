@@ -74,6 +74,7 @@ print_item(int32 fid, dd_t *desc_list, intn n)
     intn        status;
     int32       len;
     char       *name, *label_str;
+    intn        i;   /* loop variable*/
 
     printf("\tRef no %6d\t%8d bytes\n", (int)desc_list[n].ref, (int)desc_list[n].length);
 
@@ -143,6 +144,16 @@ print_item(int32 fid, dd_t *desc_list, intn n)
                            (info.comp_type == COMP_CODE_DEFLATE ? "Deflated" : 
                             "Unknown"))))),
                        (info.model_type == COMP_MODEL_STDIO ? "Standard" : "Unknown"));
+                break;
+
+             case SPECIAL_CHUNKED:
+                printf("\tChunked Element: \n \tlogical size: %ld\n \tnumber of dimensions: %ld \n",
+                       (long) info.chunk_size, (long) info.ndims);
+                printf("\tarray of chunk lengths for each dimension:");
+                    for(i=0; i < info.ndims; i++)
+                               printf("\t %ld", (long) info.cdims[i]);
+                printf("\n");
+                HDfree(info.cdims);
                 break;
 
             default:
