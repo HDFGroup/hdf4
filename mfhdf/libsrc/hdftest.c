@@ -305,14 +305,7 @@ char *argv[];
      * Test the External File storage stuff 
      */
 
-    /* native mode currently does not work on non 32-bit machines */
-#ifdef UNICOS
-    nt = DFNT_INT32;
-#else 
     nt = DFNT_INT32 | DFNT_NATIVE;
-#endif
-
-
     dimsize[0] = 5;
     dimsize[1] = 5;
     newsds = SDcreate(f1, "ExternalDataSet", nt, 2, dimsize);
@@ -393,3 +386,7 @@ char *argv[];
 
     exit(0);
 }
+
+
+
+

@@ -772,7 +772,7 @@ NC      * handle;
 NC_var  * vp;
 u_long    where;
 nc_type   type;
-Void    * values;
+VOIDP     values;
 uint32    count;
 {
     int32 status;
@@ -900,11 +900,11 @@ uint32    count;
  */
 static bool_t
   hdf_xdr_NCv1data(handle, vp, where, type, values)
-NC *handle;
-NC_var *vp;
-u_long where;
-nc_type type;
-Void *values;
+NC      * handle;
+NC_var  * vp;
+u_long    where;
+nc_type   type;
+VOIDP     values;
 {
 
 #if 0

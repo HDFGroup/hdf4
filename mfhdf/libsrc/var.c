@@ -94,7 +94,12 @@ NC_array *dims;
 	NC_dim **dp ;
 	size_t xszof ;
 
+#ifdef HDF
+	xszof = var->HDFsize ; 
+#else
 	xszof = NC_xtypelen(var->type) ;
+#endif
+
 	var->shape = NULL ;
 	var->dsizes = NULL ;
 

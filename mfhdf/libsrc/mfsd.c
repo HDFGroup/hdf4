@@ -805,6 +805,7 @@ int32 nt, rank, *dimsizes;
     
     /* NC_new_var strips off "nativeness" add it back in if appropriate */
     var->HDFtype = nt;
+    var->HDFsize = DFKNTsize(nt);
 
     /* add it to the handle */
     if(handle->vars == NULL) { /* first time */

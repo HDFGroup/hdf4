@@ -400,7 +400,7 @@ extern int hdf_fill_array
     PROTO((Void  * storage,int32 len,Void  * value,int32 type));
 
 extern int hdf_get_data
-    PROTO((NC *handle,NC_var *vp,nc_type type));
+    PROTO((NC *handle,NC_var *vp));
 
 extern int hdf_map_type
     PROTO((int ));
