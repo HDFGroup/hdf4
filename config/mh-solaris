@@ -58,7 +58,7 @@ LIBSX = -lm
 # include directory to get to files 'IOTrace.h', 'IOTrace_SD.h' and others.
 
 #PABLO_FLAGS  = -DHAVE_PABLO
-#PABLO_INCDIR = /usr/local/include/pablo-5.0
+#PABLO_INCDIR = /usr/local/include/pablo-5.1
 #PABLO_INCLUDE = -I$(PABLO_INCDIR)
 # ------------ Macros for File Cache(fmpool) ------
 # Uncomment the following lines to enable shared memory file buffer pool
