@@ -25,7 +25,7 @@ VERSION  = 4.0
 #
 #Using ANSI compilier also needs LIBSX = -lm(see below)
 CC=cc
-CFLAGS= -Xa -O2
+CFLAGS= -Xa -O
 
 # Fortran compilier
 FC = f77
