@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.16  1993/01/26 19:42:51  koziol
-Added support for reading and writing Little-Endian data on all
-platforms.  This has been tested on: Cray, Sun, and PCs so far.
+Revision 1.17  1993/02/02 00:10:13  georgev
+Changed prototypes for Hyperslab routines to reflect new interface
 
+ * Revision 1.16  1993/01/26  19:42:51  koziol
+ * Added support for reading and writing Little-Endian data on all
+ * platforms.  This has been tested on: Cray, Sun, and PCs so far.
+ *
  * Revision 1.15  1993/01/19  05:56:05  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -864,11 +867,12 @@ extern FRETVAL(intf) ndfr8setjpeg
 #   define ndfsdsetnt        FNAME(DFSDSETNT)
 #   define ndfsdgetnt        FNAME(DFSDGETNT)
 #   define ndfsdlastref      FNAME(DFSDLASTREF)
-#   define ndswref           FNAME(DSWREF)
-#   define ndssfv            FNAME(DSSFV)
-#   define ndsgfv            FNAME(DSGFV)
-#   define ndswfv            FNAME(DSWFV)
-#   define ndswslab          FNAME(DSWSLAB)
+#   define ndfsdwriteref     FNAME(DFSDWRITEREF)
+#   define ndfsdsetfill      FNAME(DFSDSETFILL)
+#   define ndfsdgetfill      FNAME(DFSDGETFILL)
+#   define ndfsdstartslab    FNAME(DFSDSTARTSLAB)
+#   define ndfsdwriteslab    FNAME(DFSDWRITESLAB)
+#   define ndfsdendslab      FNAME(DFSDENDSLAB)
 #else
 #   define ndsgdast  FNAME(dsgdast)
 #   define ndsgdisc  FNAME(dsgdisc)
@@ -917,11 +921,12 @@ extern FRETVAL(intf) ndfr8setjpeg
 #   define ndfsdsetnt        FNAME(dfsdsetnt)
 #   define ndfsdgetnt        FNAME(dfsdgetnt)
 #   define ndfsdlastref      FNAME(dfsdlastref)
-#   define ndswref           FNAME(dswref)
-#   define ndssfv            FNAME(dssfv)
-#   define ndsgfv            FNAME(dsgfv)
-#   define ndswfv            FNAME(dswfv)
-#   define ndswslab          FNAME(dswslab)
+#   define ndfsdwriteref     FNAME(dfsdwriteref)
+#   define ndfsdsetfill      FNAME(dfsdsetfill)
+#   define ndfsdgetfill      FNAME(dfsdgetfill)
+#   define ndfsdstartslab    FNAME(dfsdstartslab)
+#   define ndfsdwriteslab    FNAME(dfsdwriteslab)
+#   define ndfsdendslab      FNAME(dfsdendslab)
 #endif /* DF_CAPFNAMES */
 #endif  /* DFSD_FNAMES */
 
@@ -1084,21 +1089,24 @@ extern FRETVAL(intf) ndsgcal
     PROTO((float64 _HUGE *cal, float64 _HUGE *cal_err, float64 _HUGE *ioff,
         float64 _HUGE *ioff_err, intf _HUGE *cal_type));
 
-extern FRETVAL(intf) ndswref
+extern FRETVAL(intf) ndfsdwriteref
      PROTO((_fcd filename, intf _HUGE *fnlen, intf _HUGE *ref));
 
-extern FRETVAL(intf) ndssfv
+extern FRETVAL(intf) ndfsdsetfill
      PROTO((void _HUGE *fill_value));
 
-extern FRETVAL(intf) ndsgfv
+extern FRETVAL(intf) ndfsdgetfill
      PROTO((void _HUGE *fill_value));
 
-extern FRETVAL(intf) ndswfv
-     PROTO((_fcd filename, intf _HUGE *fnlen, void _HUGE *fill_value));
+extern FRETVAL(intf) ndfsdstartslab
+     PROTO((_fcd filename, intf _HUGE *fnlen));
 
-extern FRETVAL(intf) ndswslab
-     PROTO((_fcd filename, intf _HUGE *fnlen, intf _HUGE start[], intf _HUGE stride[],
+extern FRETVAL(intf) ndfsdwriteslab
+     PROTO((intf _HUGE start[], intf _HUGE stride[],
             intf _HUGE cont[], void _HUGE *data));
+
+extern FRETVAL(intf) ndfsdendslab
+     PROTO((void));
 
 /*
 ** from dfpF.c
