@@ -1159,7 +1159,9 @@
 ./mfhdf/hzip/verify.c
 ./mfhdf/hzip/verify.h
 ./mfhdf/hzip/table.h
+./mfhdf/hzip/hdfzipck.c
 ./mfhdf/hzip/testhzip.sh
+./mfhdf/hzip/zip_all.sh
 ./mfhdf/hzip/info.txt
 
 
