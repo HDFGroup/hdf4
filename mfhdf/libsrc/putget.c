@@ -184,8 +184,8 @@ const long *coords ;
                 handle->numrecs = *ip + 1;
                 handle->flags |= NC_NDIRTY;
             }
-            HDfreespace(strg);
-            HDfreespace(strg1);
+            HDfreespace((VOIDP)strg);
+            HDfreespace((VOIDP)strg1);
 
             return (TRUE);
         }
@@ -675,7 +675,7 @@ NC_var *vp;
 
     /* make sure our tmp buffer is big enough to hold everything */
     if(tBuf_size < byte_count) {
-        if(tBuf) HDfreespace(tBuf);
+        if(tBuf) HDfreespace((VOIDP)tBuf);
         tBuf_size = byte_count;
         tBuf = (int8 *) HDgetspace(byte_count);
     }
@@ -710,7 +710,7 @@ NC_var *vp;
     fprintf(stderr, "Done with the DATA Vdata returning id %d\n", vsid);
 #endif
 
-    HDfreespace(values);
+    HDfreespace((VOIDP)values);
     vp->aid = FAIL;
 
     /* added a new object -- make sure we flush the header */
@@ -840,7 +840,7 @@ uint32    count;
     /* make sure our tmp buffer is big enough to hold everything */
     byte_count = count * vp->HDFsize;
     if(tBuf_size < byte_count) {
-        if(tBuf) HDfreespace(tBuf);
+        if(tBuf) HDfreespace((VOIDP)tBuf);
         tBuf_size = byte_count;
         tBuf = (int8 *) HDgetspace(tBuf_size);
         if(tBuf == NULL) return FALSE;

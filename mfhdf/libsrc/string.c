@@ -49,7 +49,7 @@ const char *str ;
 	return(ret) ;
 alloc_err :
 	nc_serror("NC_new_string") ;
-	if(ret != NULL) HDfreespace(ret) ;
+	if(ret != NULL) HDfreespace((VOIDP)ret) ;
 	return(NULL) ;
 }
 
