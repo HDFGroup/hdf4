@@ -10,6 +10,7 @@ CPPFLAGS	= $(CPP_NETCDF) @CPPFLAGS@
 CFLAGS		= @CFLAGS@
 FFLAGS		= @FFLAGS@
 HDF_LIB         = @HDF_LIB@
+JPEG_LIB        = @JPEG_LIB@
 GARBAGE		= $(PROGRAM) test.nc copy.nc netcdf.inc jackets.c \
 		  $(PROGRAM).f test*.hdf hdftest hdfout.new
 HEADERS		= netcdf.inc
@@ -34,7 +35,7 @@ REMOTE_LIBRARY	= ../libsrc/lib$(LIBNAME).a
 OBJS		= $(PROGRAM).o $(LIBOBJS) 
 LD_XDR		= @LD_XDR@
 LD_NETCDF	= -L../libsrc -lnetcdf
-LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB)
+LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(JPEG_LIB)
 prefix		= ../../..
 
 all::		FORCE
