@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/02/28 15:22:47  mfolk
-*** empty log message ***
+Revision 1.3  1992/03/23 16:38:33  mfolk
+fixed minor bug in reporting success/failure of a DFR8 routine.
 
+ * Revision 1.2  1992/02/28  15:22:47  mfolk
+ * *** empty log message ***
+ *
  * Revision 1.1  1992/02/28  14:33:49  mfolk
  * Initial revision
  *
@@ -116,7 +119,7 @@ main()
             check_lab_desc(TESTFILE, DFTAG_SDG, refnum, labsds, descsds);
 
         ret = DFR8getimage(TESTFILE, (char *) newimage, COLS, ROWS, pal);
-        RESULT("DFR8getdims")
+        RESULT("DFR8getimage")
         refnum = DFR8lastref();
         check_lab_desc(TESTFILE, DFTAG_RIG, refnum, labris, descris);
     }
