@@ -407,10 +407,6 @@ printf("%s: nri=%ld, nci=%ld, nri8=%ld, nci8=%ld, nvg=%ld\n",FUNC,(long)nri,(lon
           int32       gr_key;         /* Vgroup key of the GR Vgroup */
 
           gr_ptr->gr_ref=gr_ref; /* squirrel this away for later use */
-#ifdef QAK
-printf("%s: found GR group gr_ref=%u\n",FUNC,gr_ref);
-#endif /* QAK */
-
           if((gr_key=Vattach(file_id,(int32)gr_ref,"r"))!=FAIL)
             {
                 int32 nobjs=Vntagrefs(gr_key); /* The number of objects in the Vgroup */
@@ -427,27 +423,18 @@ printf("%s: found GR group gr_ref=%u\n",FUNC,gr_ref);
                       switch(grp_tag)
                         {
                             case DFTAG_VG:  /* should be an image */
-#ifdef QAK
-printf("%s: found DFTAG_VG\n",FUNC);
-#endif /* QAK */
                                 if((img_key=Vattach(file_id,grp_ref,"r"))!=FAIL)
                                   {
                                     if(Vgetclass(img_key,textbuf)!=FAIL)
                                       {
                                         if(!HDstrcmp(textbuf,RI_NAME))
                                           { /* found an image, whew! */
-#ifdef QAK
-printf("%s: found an image\n",FUNC);
-#endif /* QAK */
                                             for(j=0; j<Vntagrefs(img_key); j++)
                                               {
                                                   if(Vgettagref(img_key,j,&img_tag,&img_ref)==FAIL)
                                                       continue;
                                                   if(img_tag==DFTAG_RI)
                                                     {
-#ifdef QAK
-printf("%s: found DFTAG_RI\n",FUNC);
-#endif /* QAK */
                                                         img_info[curr_image].grp_tag=(uint16)grp_tag;
                                                         img_info[curr_image].grp_ref=(uint16)grp_ref;
                                                         img_info[curr_image].img_tag=(uint16)img_tag;
@@ -470,9 +457,6 @@ printf("%s: found DFTAG_RI\n",FUNC);
 
                                       if((new_attr=(at_info_t *)HDmalloc(sizeof(at_info_t)))==NULL)
                                           HGOTO_ERROR(DFE_NOSPACE,FAIL);
-#ifdef QAK
-printf("%s: found global attribute, new_attr=%p\n",FUNC,new_attr);
-#endif /* QAK */
                                       new_attr->ref=(uint16)grp_ref;
                                       new_attr->index=gr_ptr->gattr_count;
                                       new_attr->data_modified=FALSE;
@@ -499,19 +483,24 @@ printf("%s: found global attribute, new_attr=%p\n",FUNC,new_attr);
                                               {
                                                 sprintf(textbuf,"Attribute #%d",(int)new_attr->index);
                                                 if((new_attr->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
+                                                  {
+                                                    VSdetach(at_key);
+                                                    HDfree(new_attr);
                                                     HGOTO_ERROR(DFE_NOSPACE,FAIL);
+                                                  } /* end if */
                                                 HDstrcpy(new_attr->name,textbuf);
                                               } /* end if */
                                             else
                                               {
                                                 if((new_attr->name=(char *)HDmalloc(HDstrlen(fname)+1))==NULL)
+                                                  {
+                                                    VSdetach(at_key);
+                                                    HDfree(new_attr);
                                                     HGOTO_ERROR(DFE_NOSPACE,FAIL);
+                                                  } /* end if */
                                                 HDstrcpy(new_attr->name,fname);
                                               } /* end else */
                                                 
-#ifdef QAK
-printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new_attr->index);
-#endif /* QAK */
                                             tbbtdins(gr_ptr->gattree, (VOIDP) new_attr, NULL);    /* insert the attr instance in B-tree */ 
 
                                             VSdetach(at_key);
@@ -840,13 +829,21 @@ for (i = 0; i < curr_image; i++)
                                                           {
                                                             sprintf(textbuf,"Attribute #%d",(int)new_attr->index);
                                                             if((new_attr->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
+                                                              {
+                                                                VSdetach(at_key);
+                                                                HDfree(new_attr);
                                                                 HGOTO_ERROR(DFE_NOSPACE,FAIL);
+                                                              } /* end if */
                                                             HDstrcpy(new_attr->name,textbuf);
                                                           } /* end if */
                                                         else
                                                           {
                                                             if((new_attr->name=(char *)HDmalloc(HDstrlen(fname)+1))==NULL)
+                                                              {
+                                                                VSdetach(at_key);
+                                                                HDfree(new_attr);
                                                                 HGOTO_ERROR(DFE_NOSPACE,FAIL);
+                                                              } /* end if */
                                                             HDstrcpy(new_attr->name,fname);
                                                           } /* end else */
                                                 
@@ -867,6 +864,7 @@ for (i = 0; i < curr_image; i++)
                               new_image->gr_ptr=gr_ptr; /* point up the tree */
                               tbbtdins(gr_ptr->grtree, (VOIDP) new_image, NULL);    /* insert the new image into B-tree */ 
                               gr_ptr->gr_count++;
+                              Vdetach(img_key);
                             } /* end if */
                       } /* end case */
                       break;
@@ -1362,7 +1360,6 @@ int32 GRstart(int32 hdf_file_id)
     if(!HDvalidfid(hdf_file_id))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-#ifdef QAK
     /* Check if GR file tree has been allocated */
     if (gr_tree == NULL)
       {
@@ -1373,14 +1370,6 @@ int32 GRstart(int32 hdf_file_id)
           HAinit_group(GRIDGROUP,GRATOM_HASH_SIZE);
           HAinit_group(RIIDGROUP,GRATOM_HASH_SIZE);
       } /* end if */
-#else /* QAK */
-    /* Check if GR file tree has been allocated */
-    if (gr_tree == NULL)
-      {
-          if ((gr_tree = tbbtdmake(rigcompare, sizeof(int32))) == NULL)
-              HGOTO_ERROR(DFE_NOSPACE, FAIL);
-      } /* end if */
-#endif /* QAK */
 
     /* Grab the existing gr_info_t structure first, otherwise create a new one */
     if ((gr_ptr = Get_grfile(hdf_file_id)) == NULL)
@@ -1389,12 +1378,6 @@ int32 GRstart(int32 hdf_file_id)
 
     if (gr_ptr->access++)
         HGOTO_DONE(SUCCEED);
-
-#ifndef QAK  
-    /* Initialize the atom groups for GRs and RIs */
-    HAinit_group(GRIDGROUP,GRATOM_HASH_SIZE);
-    HAinit_group(RIIDGROUP,GRATOM_HASH_SIZE);
-#endif /* QAK */
 
     /* Fire up the Vset interface */
     if(Vstart(hdf_file_id)==FAIL)
@@ -1861,9 +1844,15 @@ printf("%s: attr_ptr->ref=%u\n",FUNC,attr_ptr->ref);
         if((AttrID=VSattach(hdf_file_id,attr_ptr->ref,"w"))==FAIL)
             HGOTO_ERROR(DFE_CANTATTACH,FAIL);
         if(VSsetfields(AttrID,attr_ptr->name)==FAIL)
+          {
+            VSdetach(AttrID);
             HGOTO_ERROR(DFE_BADFIELDS,FAIL);
+          } /* end if */
         if(VSwrite(AttrID,attr_ptr->data,attr_ptr->len,FULL_INTERLACE)==FAIL)
+          {
+            VSdetach(AttrID);
             HGOTO_ERROR(DFE_VSWRITE,FAIL);
+          } /* end if */
         if(VSdetach(AttrID)==FAIL)
             HGOTO_ERROR(DFE_CANTDETACH,FAIL);
       } /* end else */
@@ -2126,11 +2115,8 @@ printf("%s: GroupID=%ld\n",FUNC,(long)GroupID);
     if(Vend(hdf_file_id)==FAIL)
         HGOTO_ERROR(DFE_CANTSHUTDOWN,FAIL);
 
-#ifndef QAK  
-    /* Destroy the atom groups for GRs and RIs */
-    HAdestroy_group(GRIDGROUP);
-    HAdestroy_group(RIIDGROUP);
-#endif /* QAK */
+    if (NULL == HAremove_atom(grid))
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
   if(ret_value == FAIL)   
@@ -4407,9 +4393,15 @@ printf("%s: found existing attribute\n",FUNC);
                 if((AttrID=VSattach(hdf_file_id,at_ptr->ref,"w"))==FAIL)
                     HGOTO_ERROR(DFE_CANTATTACH,FAIL);
                 if(VSsetfields(AttrID,at_ptr->name)==FAIL)
+                  {
+                    VSdetach(AttrID);
                     HGOTO_ERROR(DFE_BADFIELDS,FAIL);
+                  } /* end if */
                 if(VSwrite(AttrID,data,count,FULL_INTERLACE)==FAIL)
+                  {
+                    VSdetach(AttrID);
                     HGOTO_ERROR(DFE_VSWRITE,FAIL);
+                  } /* end if */
                 if(VSdetach(AttrID)==FAIL)
                     HGOTO_ERROR(DFE_CANTDETACH,FAIL);
 
@@ -4717,9 +4709,15 @@ intn GRgetattr(int32 id,int32 index,VOIDP data)
         if((AttrID=VSattach(hdf_file_id,at_ptr->ref,"r"))==FAIL)
             HGOTO_ERROR(DFE_CANTATTACH,FAIL);
         if(VSsetfields(AttrID,at_ptr->name)==FAIL)
+          {
+            VSdetach(AttrID);
             HGOTO_ERROR(DFE_BADFIELDS,FAIL);
+          } /* end if */
         if(VSread(AttrID,at_ptr->data,at_ptr->len,FULL_INTERLACE)==FAIL)
+          {
+            VSdetach(AttrID);
             HGOTO_ERROR(DFE_VSWRITE,FAIL);
+          } /* end if */
         if(VSdetach(AttrID)==FAIL)
             HGOTO_ERROR(DFE_CANTDETACH,FAIL);
       } /* end if */
@@ -4855,11 +4853,9 @@ intn GRPshutdown(void)
           /* Free the vfile tree */
           tbbtdfree(gr_tree, GRIgrdestroynode, NULL);
 
-#ifdef QAK
           /* Destroy the atom groups for GRs and RIs */
           HAdestroy_group(GRIDGROUP);
           HAdestroy_group(RIIDGROUP);
-#endif /* QAK */
 
           gr_tree=NULL;
       } /* end if */
