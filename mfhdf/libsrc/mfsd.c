@@ -4285,8 +4285,8 @@ const VOID *datap;
     uint8      platntsubclass;  /* the machine type of the current platform */
     uint8      outntsubclass;   /* the data's machine type */
     uintn      convert;         /* whether to convert or not */
-    static     int32 tBuf_size = 0; /* statc conversion buffer size */
-    static     uint8 *tBuf = NULL; /* static buffer used for conversion */
+    static     uint32 tBuf_size = 0; /* statc conversion buffer size */
+    static     VOID *tBuf = NULL; /* static buffer used for conversion */
     intn       i;
     intn       status = SUCCEED;
 
@@ -4358,7 +4358,7 @@ const VOID *datap;
                             if(tBuf == NULL) 
                                 HDfree((VOIDP)tBuf);
                             tBuf_size = byte_count;
-                            tBuf      = (uint8 *) HDmalloc(tBuf_size);
+                            tBuf      = (VOID *)HDmalloc(tBuf_size);
                             if(tBuf == NULL) 
                               {
                                   tBuf_size = 0;
@@ -4374,8 +4374,8 @@ const VOID *datap;
                             fprintf(stderr,"SDwriteChunk: convert \n");
 #endif
                             DFKsetNT(var->HDFtype);
-                            DFKnumout((uint8 *) datap, tBuf, (uint32) csize, 0, 0);
-                            status = HMCwriteChunk(var->aid, origin, (uint8 *) tBuf);
+                            DFKnumout((VOID *)datap, tBuf, (uint32) csize, 0, 0);
+                            status = HMCwriteChunk(var->aid, origin, tBuf);
                         } /* end if */
                       else 
                           status = HMCwriteChunk(var->aid, origin, datap);
@@ -4446,8 +4446,8 @@ VOID *datap;
     uint8      platntsubclass;  /* the machine type of the current platform */
     uint8      outntsubclass;   /* the data's machine type */
     uintn      convert;         /* whether to convert or not */
-    static     int32 tBuf_size = 0; /* statc conversion buffer size */
-    static     uint8  *tBuf = NULL; /* static buffer used for conversion */
+    static     uint32 tBuf_size = 0; /* statc conversion buffer size */
+    static     VOID  *tBuf = NULL; /* static buffer used for conversion */
     intn       i;
     intn       status = SUCCEED;
 
@@ -4519,7 +4519,7 @@ VOID *datap;
                             if(tBuf == NULL) 
                                 HDfree((VOIDP)tBuf);
                             tBuf_size = byte_count;
-                            tBuf      = (uint8 *) HDmalloc(tBuf_size);
+                            tBuf      = (VOID *) HDmalloc(tBuf_size);
                             if(tBuf == NULL) 
                               {
                                   tBuf_size = 0;
@@ -4534,10 +4534,10 @@ VOID *datap;
 #ifdef CHK_DEBUG
                             fprintf(stderr,"SDreadChunk: convert \n");
 #endif
-                            status = HMCreadChunk(var->aid, origin, (uint8 *) tBuf);
+                            status = HMCreadChunk(var->aid, origin, tBuf);
                             /* convert chunk */
                             DFKsetNT(var->HDFtype);
-                            DFKnumin((uint8 *) tBuf, (uint8 *) datap, (uint32) csize, 0, 0);
+                            DFKnumin(tBuf, datap, (uint32) csize, 0, 0);
                         } /* end if */
                       else 
                           status = HMCreadChunk(var->aid, origin, datap);
