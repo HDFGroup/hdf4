@@ -69,7 +69,7 @@ int diff_sds(char  *fname1,
  intn  empty2_sds;
  VOIDP buf1=NULL;
  VOIDP buf2=NULL;
- unsigned int max_err_cnt;
+ int32 max_err_cnt;
  int    i, k;
  vnode* vlist = newvlist();  /* list for vars specified with -v option */
  int32  varid1;
