@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.10  1993/09/21 01:13:09  koziol
-Fixed typo in function declaration for non-ANSI machines...
+Revision 1.11  1993/09/28 18:04:18  koziol
+Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
+tag handling.  Added new compression special tag type.
 
+ * Revision 1.10  1993/09/21  01:13:09  koziol
+ * Fixed typo in function declaration for non-ANSI machines...
+ *
  * Revision 1.9  1993/09/20  19:56:02  koziol
  * Updated the "special element" function pointer array to be a structure
  * of function pointers.  This way, function prototypes can be written for the
@@ -96,9 +100,7 @@ typedef struct link_t {
 typedef struct linkinfo_t {
     int attached;               /* how many access records refer to this elt */
     int32 length;               /* the actual length of the data elt */
-#ifndef oldspecial
     int32 first_length;         /* length of first block */
-#endif
     int32 block_length;         /* the length of the remaining blocks */
     int32 number_blocks;        /* total number of blocks in each link/block
                                   table */
@@ -108,32 +110,22 @@ typedef struct linkinfo_t {
 } linkinfo_t;
 
 /* private functions */
-
 PRIVATE int32 HLIstaccess PROTO((accrec_t *access_rec, int16 access));
-PRIVATE int32 HLIstread PROTO((accrec_t *access_rec));
-PRIVATE int32 HLIstwrite PROTO((accrec_t *access_rec));
-PRIVATE link_t *HLIgetlink PROTO((int32 file_id, uint16 ref, \
-                        int32 number_blocks));
-PRIVATE int32 HLIseek PROTO((accrec_t *access_rec, int32 offset, int origin));
-PRIVATE int32 HLIread PROTO((accrec_t *access_rec, int32 length, VOIDP data));
-PRIVATE int32 HLIwrite PROTO((accrec_t *access_rec, int32 length, VOIDP data));
 PRIVATE link_t *HLInewlink PROTO((int32 file_id, int32 number_blocks,
                           uint16 link_ref, uint16 first_block_ref));
-PRIVATE int32 HLIinquire PROTO((accrec_t *access_rec, int32 *pfile_id, \
-                uint16 *ptag, uint16 *pref, int32 *plength, int32 *poffset, \
-                int32 *pposn, int16 *paccess, int16 *pspecial));
-PRIVATE int32 HLIendaccess PROTO((accrec_t *access_rec));
+PRIVATE link_t *HLIgetlink PROTO((int32 file_id, uint16 ref, \
+                        int32 number_blocks));
 
 /* the accessing function table for linked blocks */
 
 funclist_t linked_funcs = {
-    HLIstread,
-    HLIstwrite,
-    HLIseek,
-    HLIinquire,
-    HLIread,
-    HLIwrite,
-    HLIendaccess,
+    HLPstread,
+    HLPstwrite,
+    HLPseek,
+    HLPinquire,
+    HLPread,
+    HLPwrite,
+    HLPendaccess,
 };
 
 /*- HLcreate
@@ -163,24 +155,16 @@ int32 HLcreate(file_id, tag, ref, block_length, number_blocks)
     linkinfo_t *info;          /* information for the linked blocks elt */
     uint16 link_ref;           /* the ref of the link structure
                                   (block table) */
-#ifndef oldspecial
     dd_t *data_dd;             /* dd of existing regular element */
     uint16 special_tag;                /* special version of this tag */
-#endif
 
     /* clear error stack and validate file record id */
 
     HEclear();
     file_rec = FID2REC(file_id);
-    if (!file_rec ||
-       file_rec->refcount == 0 ||
-       block_length < 0 ||
-       number_blocks < 0
-#ifndef oldspecial
-       || SPECIALTAG(tag)
-       || (special_tag = MKSPECIALTAG(tag)) == DFTAG_NULL
-#endif
-       ) {
+    if (!file_rec || file_rec->refcount == 0 || block_length < 0 ||
+            number_blocks < 0 || SPECIALTAG(tag) ||
+            (special_tag = MKSPECIALTAG(tag)) == DFTAG_NULL) {
        HERROR(DFE_ARGS);
        return FAIL;
     }
@@ -205,21 +189,14 @@ int32 HLcreate(file_id, tag, ref, block_length, number_blocks)
 
     /* search for identical dd */
     if (HIlookup_dd(file_rec, tag, ref, &data_block, &data_idx) != FAIL) {
-#ifndef oldspecial
        data_dd = &(data_block->ddlist[data_idx]);
        if (SPECIALTAG(data_dd->tag)) {
            HERROR(DFE_CANTMOD);
            access_rec->used = FALSE;
            return FAIL;
        }
-    } else {
+    } else
        data_dd = (dd_t *) NULL;
-#else
-       HERROR(DFE_CANTMOD);
-       access_rec->used = FALSE;
-        return FAIL;
-#endif
-    }
 
     /* search for the empty dd to put new dd */
 
@@ -239,7 +216,6 @@ int32 HLcreate(file_id, tag, ref, block_length, number_blocks)
     }
     dd = &access_rec->block->ddlist[access_rec->idx];
 
-#ifndef oldspecial
     if (data_dd) {
 
        /* remove old tag from hash table */
@@ -253,12 +229,11 @@ int32 HLcreate(file_id, tag, ref, block_length, number_blocks)
        }
 
        /* update hash table */
-       if(HIadd_hash_dd(file_rec, data_dd->tag, data_dd->ref, data_block, 
+       if(HIadd_hash_dd(file_rec, data_dd->tag, data_dd->ref, data_block,
                         data_idx) == FAIL) 
          return FAIL;
 
     }
-#endif
 
     /* write the special info structure to fill */
 
@@ -282,12 +257,8 @@ int32 HLcreate(file_id, tag, ref, block_length, number_blocks)
 
     info = (linkinfo_t *) access_rec->special_info;
     info->attached = 1;
-#ifndef oldspecial
     info->length = data_dd ? data_dd->length : 0;
     info->first_length = data_dd ? data_dd->length : block_length;
-#else
-    info->length = 0;
-#endif
     info->block_length = block_length;
     info->number_blocks = number_blocks;
 
@@ -310,12 +281,7 @@ int32 HLcreate(file_id, tag, ref, block_length, number_blocks)
 
     /* allocate info structure and file it in */
     info->link = HLInewlink(file_id, number_blocks, link_ref,
-#ifndef oldspecial
-                           (uint16)(data_dd ? data_dd->ref : 0)
-#else
-                           (uint16)0
-#endif
-                           );
+                           (uint16)(data_dd ? data_dd->ref : 0));
     if (!info->link) {
        access_rec->used = FALSE;
        return FAIL;
@@ -345,7 +311,6 @@ int32 HLcreate(file_id, tag, ref, block_length, number_blocks)
 
     return ASLOT2ID(slot);
 }
-
 
 /*---------------------------------------------------------------------------
  HDinqblockinfo - Given an aid, return special info for linked-block
@@ -386,8 +351,6 @@ int32 *length, *first_length, *block_length, *number_blocks;
 
     return(SUCCEED);
 }
-
-
 
 /*- HLIstaccess
  start access to the special linked block data elt
@@ -462,7 +425,6 @@ PRIVATE int32 HLIstaccess(access_rec, access)
        HDfreespace((VOIDP) info);
        return FAIL;
     }
-#ifndef oldspecial
     if (info->link->block_list[0].ref) {
        info->first_length = Hlength(access_rec->file_id,
                                     DFTAG_LINKED,
@@ -476,7 +438,6 @@ PRIVATE int32 HLIstaccess(access_rec, access)
     } else {
        info->first_length = info->block_length;
     }
-#endif
 
     info->last_link = info->link;
     while (info->last_link->nextref != 0) {
@@ -503,28 +464,28 @@ PRIVATE int32 HLIstaccess(access_rec, access)
     return ASLOT2ID(access_rec - access_records);
 }
 
-/*- HLIstread
+/*- HLPstread
  start read on special linked block data element
  just calls HLIstaccess
 -*/
 #ifdef PROTOTYPE
-PRIVATE int32 HLIstread(accrec_t *access_rec)
+int32 HLPstread(accrec_t *access_rec)
 #else
-PRIVATE int32 HLIstread(access_rec)
+int32 HLPstread(access_rec)
     accrec_t *access_rec;      /* access record */
 #endif
 {
     return HLIstaccess(access_rec, DFACC_READ);
 }
 
-/*- HLKIstwrite
+/*- HLPstwrite
  start write on a special linked block data element
  calls HLIstaccess
 -*/
 #ifdef PROTOTYPE
-PRIVATE int32 HLIstwrite(accrec_t *access_rec)
+int32 HLPstwrite(accrec_t *access_rec)
 #else
-PRIVATE int32 HLIstwrite(access_rec)
+int32 HLPstwrite(access_rec)
     accrec_t *access_rec;
 #endif
 {
@@ -593,19 +554,19 @@ PRIVATE link_t * HLIgetlink(file_id, ref, number_blocks)
     return link;
 }
 
-/*- HLIseek
+/*- HLPseek
  set position of next access into data elt
 -*/
 #ifdef PROTOTYPE
-PRIVATE int32 HLIseek(accrec_t *access_rec, int32 offset, int origin)
+int32 HLPseek(accrec_t *access_rec, int32 offset, int origin)
 #else
-PRIVATE int32 HLIseek(access_rec, offset, origin)
+int32 HLPseek(access_rec, offset, origin)
     accrec_t *access_rec;
     int32 offset;
     int origin;
 #endif
 {
-    char *FUNC="HLIseek";      /* for HERROR */
+    char *FUNC="HLPseek";      /* for HERROR */
 
     /* validate access record */
 
@@ -632,19 +593,19 @@ PRIVATE int32 HLIseek(access_rec, offset, origin)
     return SUCCEED;
 }
 
-/*- HLIread
+/*- HLPread
  read data from elt into data buffer
 -*/
 #ifdef PROTOTYPE
-PRIVATE int32 HLIread(accrec_t *access_rec, int32 length, VOIDP datap)
+int32 HLPread(accrec_t *access_rec, int32 length, VOIDP datap)
 #else
-PRIVATE int32 HLIread(access_rec, length, datap)
+int32 HLPread(access_rec, length, datap)
     accrec_t *access_rec;      /* access record */
     int32 length;              /* length of data to read */
     VOIDP datap;               /* buffer to read data into */
 #endif
 {
-    char *FUNC="HLIread";      /* for HERROR */
+    char *FUNC="HLPread";      /* for HERROR */
     uint8 *data=(uint8 *)datap;
 
     /* information record for this special data elt */
@@ -660,9 +621,7 @@ PRIVATE int32 HLIread(access_rec, length, datap)
     int32 relative_posn = access_rec->posn;
 
     int32 block_idx;             /* block table index of current block */
-#ifndef oldspecial
     int32 current_length;      /* length of current block */
-#endif
     int32 nbytes = 0;           /* # bytes read on any single Hread() */
     int32 bytes_read = 0;       /* total # bytes read for this call of HLIread*/
 
@@ -680,7 +639,6 @@ PRIVATE int32 HLIread(access_rec, length, datap)
 
     /* search for linked block to start reading from */
 
-#ifndef oldspecial
     if (relative_posn < info->first_length) {
        block_idx = 0;
        current_length = info->first_length;
@@ -690,10 +648,6 @@ PRIVATE int32 HLIread(access_rec, length, datap)
        relative_posn %= info->block_length;
        current_length = info->block_length;
     }
-#else
-    block_idx = relative_posn / info->block_length + 1;
-    relative_posn %= info->block_length;
-#endif
 
     {
         register int32 i;
@@ -711,12 +665,7 @@ PRIVATE int32 HLIread(access_rec, length, datap)
 
     do {
        register int32 remaining = /* remaining data in current block */
-#ifndef oldspecial
-           current_length
-#else
-           info->block_length
-#endif
-               - relative_posn;
+           current_length - relative_posn;
 
        /* read in the data in this block */
 
@@ -762,28 +711,26 @@ PRIVATE int32 HLIread(access_rec, length, datap)
            }
        }
        relative_posn = 0;
-#ifndef oldspecial
        current_length = info->block_length;
-#endif
     } while (length > 0);      /* if still somemore to read in, repeat */
 
     access_rec->posn += bytes_read;
     return bytes_read;
 }
 
-/*- HLIwrite
+/*- HLPwrite
  write out data into linked block data elt
 -*/
 #ifdef PROTOTYPE
-PRIVATE int32 HLIwrite(accrec_t *access_rec, int32 length, VOIDP datap)
+int32 HLPwrite(accrec_t *access_rec, int32 length, VOIDP datap)
 #else
-PRIVATE int32 HLIwrite(access_rec, length, datap)
+int32 HLPwrite(access_rec, length, datap)
     accrec_t *access_rec;      /* access record */
     int32 length;              /* length of data */
     VOIDP datap;                        /* data buffer to write from */
 #endif
 {
-    char *FUNC="HLIwrite";     /* for HERROR */
+    char *FUNC="HLPwrite";     /* for HERROR */
     uint8 *data=(uint8 *)datap;
     filerec_t *file_rec =      /* file record */
        FID2REC(access_rec->file_id);
@@ -801,9 +748,7 @@ PRIVATE int32 HLIwrite(access_rec, length, datap)
                                   for groking the offset of
                                   current block table */
        NULL;
-#ifndef oldspecial
     int32 current_length;      /* length of current block */
-#endif
     int32 nbytes = 0;           /* #bytes written by any single Hwrite */
     int32 bytes_written = 0;    /* total #bytes written by HLIwrite */
 
@@ -823,7 +768,6 @@ PRIVATE int32 HLIwrite(access_rec, length, datap)
     /* determine where to start.  Setup missing block tables
        along the way. */
 
-#ifndef oldspecial
     if (relative_posn < info->first_length) {
        block_idx = 0;
        current_length = info->first_length;
@@ -833,10 +777,6 @@ PRIVATE int32 HLIwrite(access_rec, length, datap)
        relative_posn %= info->block_length;
        current_length = info->block_length;
     }
-#else
-    block_idx = relative_posn / info->block_length + 1;
-    relative_posn %= info->block_length;
-#endif
     {
        /* follow the links of block tables and create missing
           block tabels along the way */
@@ -898,14 +838,8 @@ PRIVATE int32 HLIwrite(access_rec, length, datap)
     do {
        int32 access_id;        /* access record id */
        int32 remaining =       /* remaining data length in this block */
-#ifndef oldspecial
-           current_length
-#else
-           info->block_length
-#endif
-               - relative_posn;
-       uint16 new_ref =        /* ref of newly created block */
-           0;
+           current_length - relative_posn;
+       uint16 new_ref = 0;      /* ref of newly created block */
 
        /* determine length and write this block */
 
@@ -917,15 +851,8 @@ PRIVATE int32 HLIwrite(access_rec, length, datap)
            block_t *current_block = /* ptr to current block record */
                &(link->block_list[block_idx]);
 
-           access_id= Hstartwrite(access_rec->file_id,
-                                  DFTAG_LINKED,
-                                  current_block->ref,
-#ifndef oldspecial
-                                  current_length
-#else
-                                  info->block_length
-#endif
-                                  );
+           access_id= Hstartwrite(access_rec->file_id, DFTAG_LINKED,
+                                  current_block->ref, current_length);
 
        } else {
 
@@ -933,13 +860,7 @@ PRIVATE int32 HLIwrite(access_rec, length, datap)
 
            new_ref = Hnewref(access_rec->file_id);
            access_id = Hstartwrite(access_rec->file_id, DFTAG_LINKED,
-                                   new_ref,
-#ifndef oldspecial
-                                   current_length
-#else
-                                   info->block_length
-#endif
-                                   );
+                                   new_ref, current_length);
 
        }
 
@@ -1050,10 +971,7 @@ PRIVATE int32 HLIwrite(access_rec, length, datap)
        /* update vars for next phase */
 
        relative_posn = 0;
-#ifndef oldspecial
        current_length = info->block_length;
-#endif
-
     } while (length > 0);
 
     if (HI_SEEK(file_rec->file, info_dd->offset+2) == FAIL) {
@@ -1169,15 +1087,15 @@ PRIVATE link_t *HLInewlink(file_id, number_blocks, link_ref, first_block_ref)
     return link;
 }
 
-/*- HLIinquire
+/*- HLPinquire
 
 -*/
 #ifdef PROTOTYPE
-PRIVATE int32 HLIinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
+int32 HLPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
                 uint16 *pref, int32 *plength, int32 *poffset, int32 *pposn,
                 int16 *paccess, int16 *pspecial)
 #else
-PRIVATE int32 HLIinquire(access_rec, pfile_id, ptag, pref, plength, poffset,
+int32 HLPinquire(access_rec, pfile_id, ptag, pref, plength, poffset,
                         pposn, paccess, pspecial)
      accrec_t *access_rec;     /* access record */
      int32 *pfile_id;          /* ptr to file id, OUT */
@@ -1213,13 +1131,13 @@ PRIVATE int32 HLIinquire(access_rec, pfile_id, ptag, pref, plength, poffset,
 
 -*/
 #ifdef PROTOTYPE
-PRIVATE int32 HLIendaccess(accrec_t *access_rec)
+int32 HLPendaccess(accrec_t *access_rec)
 #else
-PRIVATE int32 HLIendaccess(access_rec)
+int32 HLPendaccess(access_rec)
     accrec_t *access_rec;      /* access record to dispose of */
 #endif
 {
-    char *FUNC="HLIendaccess"; /* for HERROR */
+    char *FUNC="HLPendaccess"; /* for HERROR */
     linkinfo_t *info =         /* special information record */
        (linkinfo_t *)access_rec->special_info;
     filerec_t *file_rec =      /* file record */

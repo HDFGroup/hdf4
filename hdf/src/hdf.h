@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.16  1993/09/08 20:53:10  georgev
-Changed TBUF_SZ size for Mac only.
+Revision 1.17  1993/09/28 18:04:24  koziol
+Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
+tag handling.  Added new compression special tag type.
 
+ * Revision 1.16  1993/09/08  20:53:10  georgev
+ * Changed TBUF_SZ size for Mac only.
+ *
  * Revision 1.15  1993/09/01  23:31:58  georgev
  * Added defines for THINK_C
  *
@@ -454,6 +458,7 @@ extern uint8 *tbuf;
 /* SPECIAL CODES */
 #define SPECIAL_LINKED 1
 #define SPECIAL_EXT 2
+#define SPECIAL_COMP 3
 
 /* PARAMETERS */
 
@@ -582,3 +587,4 @@ typedef int32           HFILEID;
 #define Vend(f)             Vfinish((f))
 
 #endif /* HDF_H */
+

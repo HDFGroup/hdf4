@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.6  1993/07/13 20:45:02  chouck
-Fixed a few memory leaks
+Revision 1.7  1993/09/28 18:04:29  koziol
+Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
+tag handling.  Added new compression special tag type.
 
+ * Revision 1.6  1993/07/13  20:45:02  chouck
+ * Fixed a few memory leaks
+ *
  * Revision 1.5  1993/04/06  17:23:37  chouck
  * Added Vset macros
  *
@@ -33,7 +37,7 @@ Fixed a few memory leaks
 *** to be included by all ".c" files
 +*/
 
-#ifndef HERROR
+#ifndef __HERR_H
 
 /* if these symbols are not provided by the compiler, we'll have to
    fake them.  These are used in HERROR for recording location of
@@ -146,6 +150,10 @@ extern int32 error_top;
 #define DFE_SYMSIZE     -64 /* Too many symbols in users table */
 #define DFE_BADATTACH   -65 /* Cannot write to a previously attached VData */
 #define DFE_CANTDETACH  -66 /* Cannot detach a VData with access 'w' */
+#define DFE_CANTUPDATE  -67 /* Cannot update the DD block */
+#define DFE_CANTHASH    -68 /* Cannot add a DD to the hash table */
+#define DFE_CANTDELDD   -69 /* Cannot delete a DD in the file */
+#define DFE_CANTDELHASH -70 /* Cannot delete a DD from the hash table */
 
 #ifdef _H_ERR_MASTER_
 
@@ -225,9 +233,12 @@ PRIVATE struct error_messages_t error_messages[] =
 { DFE_BADTYPE,     "Incompatible type specified"},
 { DFE_SYMSIZE,     "Too many symbols in table"},
 { DFE_BADATTACH,   "Cannot write to a previously attached VData"},
-{ DFE_CANTDETACH,  "Cannot detach a VData with access 'w'"}
+{ DFE_CANTDETACH,  "Cannot detach a VData with access 'w'"},
+{ DFE_CANTUPDATE,  "Cannot update the DD block"},
+{ DFE_CANTHASH,    "Cannot add a DD to the hash table"},
+{ DFE_CANTDELDD,   "Cannot delete a DD in the file"},
+{ DFE_CANTDELHASH, "Cannot delete a DD from the hash table"}
 };
 #endif /* _H_ERR_MASTER_ */
 
-#endif /* HERROR */
-
+#endif /* __HERR_H */

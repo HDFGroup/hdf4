@@ -133,9 +133,6 @@ TBBT_NODE *tbbtfind( root, key, compar, arg, pp )
     TBBT_NODE *parent= NULL;
     intn       cmp= 1;
 
-#ifdef QAK
-printf("tbbtfind(): key=%d\n",(int)key);
-#endif
     if(ptr) {
         intn side;
 
@@ -149,9 +146,6 @@ printf("tbbtfind(): key=%d\n",(int)key);
     }
     if(  NULL != pp  )
         *pp= parent;
-#ifdef QAK
-printf("tbbtfind(): cmp=%d\n",cmp);
-#endif
     return( (0==cmp) ? ptr : NULL );
 }
 
@@ -235,55 +229,26 @@ static TBBT_NODE *swapkid( root, ptr, side )
     ptrflg= SetFlags( ptr, side, Cnt(ptr,side) - Cnt(kid,side) - 1,
             /*deep[1]-deep[0] */ deep[0]-deep[1], HasChild(ptr,Other(side)) && HasChild(kid,Other(side)) );
     if(  HasChild(kid,Other(side))  ) {
-#ifdef QAK
-printf("swapkid(): Real Child\n");
-#endif
         ptr->link[side]= kid->link[Other(side)];    /* Real child */
         ptr->link[side]->Parent= ptr;
     } else {
-#ifdef QAK
-printf("swapkid(): Thread\n");
-#endif
         ptr->link[side]= kid;                       /* Thread */
 	}
     /* Update grand parent's pointer: */
     if(  NULL == ptr->Parent  ) {
-#ifdef QAK
-printf("swapkid(): NULL==ptr->Parent\n");
-#endif
         *root= kid;
 	}
     else if(  ptr/*->Lchild*/ == ptr->Parent->Lchild  ) {
-#ifdef QAK
-printf("swapkid(): case b\n");
-#endif
-#ifdef OLD_WAY
-        ptr->Parent->Lchild= ptr;
-#else
         ptr->Parent->Lchild= kid;
-#endif
 	}
     else {
-#ifdef QAK
-printf("swapkid(): case c\n");
-#endif
-#ifdef OLD_WAY
-        ptr->Parent->Rchild= ptr;
-#else
         ptr->Parent->Rchild= kid;
-#endif
 	}
     ptr->Parent= kid;
     kid->link[Other(side)]= ptr;
-#ifndef QAK
     kid->flags= SetFlags( kid, Other(side),
             Cnt(ptr,Other(side)) + 1 + Cnt(kid,Other(side)),
             deep[2]-1-Max(deep[0],deep[1]), HasChild(kid,side) );
-#else
-    kid->flags= SetFlags( kid, side,
-            Cnt(ptr,Other(side)) + 1 + Cnt(kid,Other(side)),
-            deep[2]-1-Max(deep[0],deep[1]), HasChild(kid,side) );
-#endif
     ptr->flags= ptrflg;
     return( kid );
 }
@@ -314,9 +279,6 @@ static VOID balance( root, ptr, side, added )
             if(  deeper == Delta(ptr,side)  ) { /* Became too unbalanced: */
               TBBT_NODE *kid;
 
-#ifdef QAK
-printf("balance(): too unbalanced!\n");
-#endif
                 ptr->flags |= TBBT_DOUBLE;  /* Mark node too unbalanced */
                 if(  deeper < 0  )      /* Just removed a node: */
                     side= Other(side);  /* Swap with child from other side. */
@@ -324,23 +286,11 @@ printf("balance(): too unbalanced!\n");
                     deeper= 0;          /* Fix will re-shorten sub-tree. */
                 kid= ptr->link[side];
                 if(  Heavy(kid,Other(side))  ) {    /* Double rotate needed: */
-#ifdef QAK
-printf("balance(): double rotate coming up!\n");
-#endif
                     kid= swapkid( root, kid, Other(side) );
                     ptr= swapkid( root, ptr, side );
                 } else {                    /* Just rotate parent and kid: */
-#ifdef QAK
-printf("balance(): single rotate coming up!\n");
-printf("balance(): root=%p, ptr=%p, side=%d\n",root,ptr,side);
-#endif
-#ifdef OLD_WAY
-                    if(  Heavy(kid,side)  ) /* In this case, sub-tree gets */
-                        deeper= 0;  /* re-lengthened after a node removed. */
-#else
                     if(  HasChild(kid,side)  ) /* In this case, sub-tree gets */
                         deeper= 0;  /* re-lengthened after a node removed. */
-#endif
                     ptr= swapkid( root, ptr, side );
                 }
             } else if(  UnBal(ptr)  ) {     /* Just became balanced: */
@@ -441,9 +391,6 @@ intn           arg;   /* Third argument for (*compar)() */
         return( ptr );
     }
     cmp= KEYcmp( ptr->key, parent->key, arg);
-#ifdef QAK
-printf("tbbtins(): cmp=%d\n",cmp);
-#endif
     if(  cmp < 0  ) {
         ptr->Lchild= parent->Lchild;    /* Parent's thread now new node's */
         ptr->Rchild= parent;            /* New nodes right thread is parent */
@@ -453,15 +400,7 @@ printf("tbbtins(): cmp=%d\n",cmp);
         ptr->Lchild= parent;
         parent->Rchild= ptr;
     }
-#ifdef QAK
-printf("tbbtins(): before balancing\n");
-tbbt1dump(*root,0);
-#endif
     balance( root, parent, (cmp<0) ? LEFT : RIGHT, 1 );
-#ifdef QAK
-printf("tbbtins(): after balancing\n");
-tbbt1dump(*root,0);
-#endif
     return( ptr );
 }
 
@@ -695,10 +634,6 @@ TBBT_NODE *node;
 #endif
 {
 	printf("node=%p, key=%p, data=%p, flags=%x\n",node,node->key,node->data,node->flags);
-#ifdef QAK
-printf("*key=%d\n",*(int32 *)(node->key));
-#endif
-vprint(node->key);
 	printf("Lchild=%p, Rchild=%p, Parent=%p\n",node->Lchild,node->Rchild,node->Parent);
 }	/* end tbbtprint() */
 
@@ -782,4 +717,3 @@ TBBT_TREE *tree;                  /* Pointer to tree description record */
     else
 	return(tree->count);
 }
-

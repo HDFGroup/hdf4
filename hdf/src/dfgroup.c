@@ -5,11 +5,15 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.9  1993/09/11 21:14:26  koziol
-Fixed sizeof(DFdi) problem on Cray Y-MP.  Replaced all occurences of
-sizeof(DFdi) with a hard-coded 4, because there is no fileNTsize vs.
-localNTsize distinction made in these routines.
+Revision 1.10  1993/09/28 18:04:12  koziol
+Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
+tag handling.  Added new compression special tag type.
 
+ * Revision 1.9  1993/09/11  21:14:26  koziol
+ * Fixed sizeof(DFdi) problem on Cray Y-MP.  Replaced all occurences of
+ * sizeof(DFdi) with a hard-coded 4, because there is no fileNTsize vs.
+ * localNTsize distinction made in these routines.
+ *
  * Revision 1.7  1993/08/16  21:45:12  koziol
  * Wrapped in changes for final, working version on the PC.
  *
@@ -326,9 +330,6 @@ int DFdiwrite(file_id, list, tag, ref)
                       (int32)list_rec->current * 4);
     HDfreespace((VOIDP)list_rec->DIlist);
     HDfreespace((VOIDP)list_rec);
-#ifdef QAK
-printf("DFdiwrite(): list=%ld, list&0xFFFF=%ld\n",list,(list & 0xffff));
-#endif
     Group_list[list & 0xffff] = NULL;  /* YUCK! BUG! */
     return ret;
 }

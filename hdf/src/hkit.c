@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.14  1993/09/21 20:21:05  georgev
-Changed  DFTAG_SDD tag.
+Revision 1.15  1993/09/28 18:04:41  koziol
+Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
+tag handling.  Added new compression special tag type.
 
+ * Revision 1.14  1993/09/21  20:21:05  georgev
+ * Changed  DFTAG_SDD tag.
+ *
  * Revision 1.13  1993/08/16  21:46:05  koziol
  * Wrapped in changes for final, working version on the PC.
  *
@@ -286,13 +290,10 @@ int HIfind_dd(look_tag, look_ref, pblock, pidx, direction)
     register ddblock_t *block;  /* ptr to current ddblock searched */
     register dd_t *list;        /* ptr to current ddlist searched */
 
-#ifndef oldspecial
     uint16 special_tag;                /* corresponding special tag */
 
     /* search for special version also */
-
     special_tag = MKSPECIALTAG(look_tag);
-#endif
 
     if(direction==DF_FORWARD) {     /* search forward through the DD list */
         /* start searching on the next dd */
@@ -307,12 +308,10 @@ int HIfind_dd(look_tag, look_ref, pblock, pidx, direction)
                     continue;
 
                 if(((look_tag == DFTAG_WILDCARD || list[idx].tag == look_tag)
-#ifndef oldspecial
-                        || (special_tag != DFTAG_NULL &&
-                        list[idx].tag == special_tag)
-#endif
-                        ) && (look_ref == DFREF_WILDCARD ||
-                        list[idx].ref == look_ref)) {
+                        || (special_tag != DFTAG_NULL
+                        && list[idx].tag == special_tag))
+                        && (look_ref == DFREF_WILDCARD
+                        || list[idx].ref == look_ref)) {
 
                     /* we have a match !! */
                     *pblock = block;
@@ -338,12 +337,10 @@ int HIfind_dd(look_tag, look_ref, pblock, pidx, direction)
                     continue;
 
                 if(((look_tag == DFTAG_WILDCARD || list[idx].tag == look_tag)
-#ifndef oldspecial
-                        || (special_tag != DFTAG_NULL &&
-                        list[idx].tag == special_tag)
-#endif
-                        ) && (look_ref == DFREF_WILDCARD ||
-                        list[idx].ref == look_ref)) {
+                        || (special_tag != DFTAG_NULL
+                        && list[idx].tag == special_tag))
+                        && (look_ref == DFREF_WILDCARD
+                        || list[idx].ref == look_ref)) {
 
                     /* we have a match !! */
                     *pblock = block;

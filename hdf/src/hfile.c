@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.23  1993/09/21 00:58:37  georgev
-With the new HDstrdup() need casts on the Mac and Convex.
+Revision 1.24  1993/09/28 18:04:36  koziol
+Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
+tag handling.  Added new compression special tag type.
 
+ * Revision 1.23  1993/09/21  00:58:37  georgev
+ * With the new HDstrdup() need casts on the Mac and Convex.
+ *
  * Revision 1.22  1993/09/20  19:56:09  koziol
  * Updated the "special element" function pointer array to be a structure
  * of function pointers.  This way, function prototypes can be written for the
@@ -116,78 +120,6 @@ With the new HDstrdup() need casts on the Mac and Convex.
 			   Hgetlibversion() and Hgetfileversion() (public) and
 			   HIread_version() and HIupdate_version() (PRIVATE).
 +*/
-/*
- SOME EXAMPLES
-       Example 1.  To create a HDF file and write a data element into it in
-       one go:
-
-       int fileid;
-       int tag=100, ref;
-       char data[DATA_SIZE];
-
-       ..create a file with clobber, use default ndds..
-       fileid = Hopen("myfile.hdf", DF_CREATE, 0);
-       ..get a new ref..
-       ref = Hnewref(fileid);
-       Hputelement(fileid, tag, ref, data, DATA_SIZE);
-
-       Hclose(fileid);
-
-       Example 2.  To read a data element in one go:
-
-       int fileid;
-       int tag=100, ref=3;
-       long length;
-       char data[DATA_SIZE];
-
-       ..open the file with read only..
-       fileid = Hopen("myfile.hdf", DFACC_READ, 0);
-       ..check length of data element..
-       length = Hlength(fileid, tag, ref);
-       if (length > DATA_SIZE) routine_with_larger_buffer();
-       else
-           Hgetelement(fileid, tag, ref, data);
-
-       Example 3.  To write 2 data elements piece by piece
-
-       int fileid;
-       int acc1, acc2;
-       int tag1=100, tag2=200;
-       int ref1=1, ref2=3;
-       char buf1[1000], buf2[500];
-
-       fileid = Hopen("myfile.hdf", DF_CREATE, 0)
-       acc1 = Hstartwrite(fileid, tag1, ref1, ELT1_SIZE);
-       acc2 = Hstartwrite(fileid, tag2, ref2, ELT2_SIZE);
-
-       Hwrite(acc1, 1000L, buf1);
-       Hwrite(acc2, 500L, buf2);
-       ..fill buffers again..
-       Hwrite(acc1, 1000L, buf1);
-       ..etc..
-       Hendaccess(acc1);
-       Hendaccess(acc2);
-
-       Example 4.  To read 2 data element piece by piece
-
-       int fileid;
-       int acc1, acc2;
-       int tag1=100, tag2=200;
-       int ref1=1, ref2=3;
-       char buf1[1000], buf2[500];
-
-       fileid = Hopen("myfile.hdf", DFACC_READ, 0);
-       acc1 = Hstartread(fileid, tag1, ref1);
-       acc2 = Hstartread(fileid, tag2, ref2);
-
-       Hread(acc1, 1000L, buf1);
-       Hread(acc2, 500L, buf2);
-       ..do something with data read..
-       Hread(acc1, 1000L, buf1);
-       ..etc..
-       Hendaccess(acc1);
-       Hendaccess(acc2);
-*/
 
 #define HMASTER
 #include "hdf.h"
@@ -244,22 +176,27 @@ extern funclist_t linked_funcs;
 
 /* Functions for accessing external data elements, or data
    elements that are in some other files.  For definition of the external
-   data element, see hext.c. */
+   data element, see hextelt.c. */
 
 extern funclist_t ext_funcs;
 
+/* Functions for accessing compressed special data elements.
+   For definition of the compressed data element, see hcomp.c. */
+
+extern funclist_t comp_funcs;
+
 /* Table of these function tables for accessing special elements.  The first
    member of each record is the speical code for that type of data element. */
-
 functab_t functab[] = {
     {SPECIAL_LINKED, &linked_funcs},
     {SPECIAL_EXT, &ext_funcs},
+    {SPECIAL_COMP, &comp_funcs},
     {0, NULL}                  /* terminating record; add new record */
                                /* before this line */
 };
 
 /*
-** Declaration of private functions. 
+** Declaration of private functions.
 */
 PRIVATE int HIget_file_slot
   PROTO((char *path, char *FUNC));
@@ -331,7 +268,7 @@ int32 Hopen(path, access, ndds)
     char *path;                        /* Path of file to open */
     intn access;                       /* Access mode */
     int16 ndds;                        /* Number of dd's in each ddblock
-                                  if file is created */
+                                            if file is created */
 #endif
 {
     char *FUNC="Hopen";                /* For HERROR */
@@ -647,11 +584,8 @@ int32 Hstartread(file_id, tag, ref)
     }
     access_rec = &(access_records[slot]);
 
-#ifndef oldspecial
     /* convert tag to base form */
-
     tag = BASETAG(tag);
-#endif
 
     /* search for the data element in the dd lists of the file */
 
@@ -1061,11 +995,8 @@ int32 Hstartwrite(file_id, tag, ref, length)
        return FAIL;
     }
 
-#ifndef oldspecial
     /* convert tag to base form */
-
     tag = BASETAG(tag);
-#endif
 
     /* set up access record to look for the dd */
     access_rec = &(access_records[slot]);
@@ -3814,4 +3745,3 @@ mlseek(hdf_file_t rn, int32 n, intn m)
 
 
 #endif /* MAC */
-

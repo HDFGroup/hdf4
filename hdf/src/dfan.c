@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.10  1993/04/19 22:47:04  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.11  1993/09/28 18:04:04  koziol
+Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
+tag handling.  Added new compression special tag type.
 
+ * Revision 1.10  1993/04/19  22:47:04  koziol
+ * General Code Cleanup to reduce/remove errors on the PC
+ *
  * Revision 1.9  1993/04/05  22:35:02  koziol
  * Fixed goofups made in haste when patching code.
  *
@@ -613,11 +617,8 @@ uint16 tag, ref;
         /* if no directory for this type of annotation, make one */
     if (DFANdir[type]==NULL) { 
         nanns = Hnumber(file_id, anntag); 
-#ifdef QAK
-        if (nanns < 0) return(0);
-#else
-        if (nanns == 0) return(0);
-#endif
+        if (nanns == 0)
+            return(0);
 
            /* allocate directory space.  Note head struct includes 1 entry */
         DFANdir[type] = (DFANdirhead *)
@@ -1275,5 +1276,4 @@ int isfirst;
     Hendaccess(aid);
     return(length);                /* return length of label */
 }
-
 

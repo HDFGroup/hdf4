@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.10  1993/05/04 18:55:56  georgev
-Fixed a minor cast problem on the Mac.
+Revision 1.11  1993/09/28 18:04:15  koziol
+Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
+tag handling.  Added new compression special tag type.
 
+ * Revision 1.10  1993/05/04  18:55:56  georgev
+ * Fixed a minor cast problem on the Mac.
+ *
  * Revision 1.9  1993/04/22  23:00:05  koziol
  * Changed DFR8nimages, DFPnpals to report the correct number of images
  * and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
@@ -116,10 +120,6 @@ PRIVATE int32 DFR8Iopen
 PRIVATE int DFR8Iriginfo
     PROTO((int32 file_id));
 
-#ifdef QAK
-uint8 R8tbuf[512];
-#endif
-
 /*-----------------------------------------------------------------------------
  * Name:    DFR8setcompress
  * Purpose: set compression scheme for 8-bit image
@@ -205,37 +205,6 @@ intn DFR8getdims(filename, pxdim, pydim, pispal)
     return(Hclose(file_id));
 }
 
-#ifdef QAK
-/*-----------------------------------------------------------------------------
- * Name:    DFR8Dsetreadpal
- * Purpose: Set up a palette to override the one which would be read from
- *          a file normally and associated with a 8-bit raster image.  This
- *          routine is (currently) only called from the JPEG unpacking
- *          routines.
- * Inputs:  newpal: the palette to use with the image
- * Returns: none, if no memory is available, its not an error, the image
- *          will just have a really nasty palette associated with it.
- * Users:   DFunjpeg()
- * Invokes: HDgetspace()
- * Remarks:
- *---------------------------------------------------------------------------*/
-
-#ifdef PROTOTYPE
-VOID DFR8Dsetreadpal(char *newpal)
-#else
-VOID DFR8Dsetreadpal(newpal)
-    char *newpal;
-#endif
-{
-    char *FUNC="DFR8Dsetreadpal";
-
-    if((ReadPalette=HDgetspace(768))!=NULL) {   /* check for space */
-        HDmemcpy(ReadPalette,newpal,768);
-        OverridePal=TRUE;
-      } /* end if */
-}   /* end DFR8Dsetreadpal() */
-#endif
-
 /*-----------------------------------------------------------------------------
  * Name:    DFR8getimage
  * Purpose: get next image from a RIG, get palette also if desired
@@ -316,15 +285,6 @@ intn DFR8getimage(filename, image, xdim, ydim, pal)
        }
     }
 
-#ifdef QAK
-    if (OverridePal==TRUE) {    /* check for an over-ridden palette */
-        if(pal)     /* do we want it? */
-            HDmemcpy(pal,ReadPalette,768);
-        OverridePal=FALSE;
-        HDfreespace(ReadPalette);
-      } /* end if */
-    else
-#endif
     if (pal && Readrig.lut.tag) { /* read palette */
         if (Hgetelement(file_id, Readrig.lut.tag, 
                                Readrig.lut.ref,(uint8 *)pal) == FAIL)

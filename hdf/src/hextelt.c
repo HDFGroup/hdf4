@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.13  1993/09/21 00:58:36  georgev
-With the new HDstrdup() need casts on the Mac and Convex.
+Revision 1.14  1993/09/28 18:04:31  koziol
+Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
+tag handling.  Added new compression special tag type.
 
+ * Revision 1.13  1993/09/21  00:58:36  georgev
+ * With the new HDstrdup() need casts on the Mac and Convex.
+ *
  * Revision 1.12  1993/09/20  19:56:05  koziol
  * Updated the "special element" function pointer array to be a structure
  * of function pointers.  This way, function prototypes can be written for the
@@ -56,7 +60,7 @@ With the new HDstrdup() need casts on the Mac and Convex.
 /*+ hextelt.c
  Routines for external elements, i.e., data elements that reside on
  some other file.  These elements have no limits on their length.
- While users are prevented from reading beyond what is written, a 
+ While users are prevented from reading beyond what is written, a
  user can write an unlimited amount of data.
 
  17-Mar-93
@@ -82,24 +86,9 @@ typedef struct {
 } extinfo_t;
 
 /* forward declaration of the functions provided in this module */
-
 PRIVATE int32 HXIstaccess
     PROTO((accrec_t *access_rec, int16 access));
-PRIVATE int32 HXIstread
-    PROTO((accrec_t *rec));
-PRIVATE int32 HXIstwrite
-    PROTO((accrec_t *rec));
-PRIVATE int32 HXIseek
-    PROTO((accrec_t *access_rec, int32 offset, int origin));
-PRIVATE int32 HXIread
-    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
-PRIVATE int32 HXIwrite
-    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
-PRIVATE int32 HXIinquire
-    PROTO((accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
-            int32 *plength, int32 *poffset,int32 *pposn, int16 *paccess,
-            int16 *pspecial));
-PRIVATE int32 HXIendaccess
+PRIVATE int32 HXIcloseAID
     PROTO((accrec_t *access_rec));
 
 /* ext_funcs -- table of the accessing functions of the external
@@ -107,13 +96,13 @@ PRIVATE int32 HXIendaccess
    the table is standard */
 
 funclist_t ext_funcs = {
-    HXIstread,
-    HXIstwrite,
-    HXIseek,
-    HXIinquire,
-    HXIread,
-    HXIwrite,
-    HXIendaccess,
+    HXPstread,
+    HXPstwrite,
+    HXPseek,
+    HXPinquire,
+    HXPread,
+    HXPwrite,
+    HXPendaccess,
 };
 
 /* ------------------------------- HXcreate ------------------------------- */
@@ -152,20 +141,16 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
     int32 data_idx;            /* dd list index to existing data element */
     hdf_file_t file_external;      /* external file descriptor */
     extinfo_t *info;           /* special element information */
-#ifndef oldspecial
     dd_t *data_dd;             /* dd of existing regular element */
     uint16 special_tag;                /* special version of tag */
-#endif
 
     /* clear error stack and validate args */
 
     HEclear();
     file_rec = FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0 || !extern_file_name || (f_offset<0)
-#ifndef oldspecial
-       || SPECIALTAG(tag) || (special_tag = MKSPECIALTAG(tag)) == DFTAG_NULL
-#endif
-       ) {
+    if (!file_rec || file_rec->refcount == 0 || !extern_file_name
+            || (f_offset<0) || SPECIALTAG(tag)
+            || (special_tag = MKSPECIALTAG(tag)) == DFTAG_NULL ) {
        HERROR(DFE_ARGS);
        return FAIL;
     }
@@ -185,7 +170,6 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
 
     /* look for existing data element of the same tag/ref */
     if (FAIL != HIlookup_dd(file_rec, tag, ref, &data_block, &data_idx)) {
-#ifndef oldspecial
        data_dd = &(data_block->ddlist[data_idx]);
        if (SPECIALTAG(data_dd->tag)) {
 
@@ -196,17 +180,8 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
            access_rec->used = FALSE;
            return FAIL;
        }
-    } else {
+    } else
        data_dd = (dd_t *) NULL;
-#else
-       /* abort since we cannot convert the data element to an external
-          data element */
-
-       HERROR(DFE_CANTMOD);
-       access_rec->used = FALSE;
-       return FAIL;
-#endif
-    }
 
     /* look for empty dd to use */
     if (FAIL == HIlookup_dd(file_rec, DFTAG_NULL, DFREF_WILDCARD,
@@ -247,7 +222,6 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
        return FAIL;
     }
 
-#ifndef oldspecial
     if (data_dd) {
        VOIDP buf;              /* temporary buffer */
        buf = (VOIDP)HDgetspace((uint32) data_dd->length);
@@ -285,7 +259,6 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
     } else {
        info->length = start_len;
     }
-#endif
 
     info->attached = 1;
     info->file_external = file_external;
@@ -334,12 +307,10 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
         return FAIL;
     }
 
-#ifndef oldspecial
     if (data_dd) {
        Hdeldd(file_id, data_dd->tag, data_dd->ref);
        HIdel_hash_dd(file_rec, data_dd->tag, data_dd->ref);
     }
-#endif
 
     /* update access record and file record */
 
@@ -462,45 +433,45 @@ PRIVATE int32 HXIstaccess(access_rec, access)
     return ASLOT2ID(access_rec-access_records);
 }
 
-/*- HXIstread
+/*- HXPstread
  start reading an external data element
 -*/
 #ifdef PROTOTYPE
-PRIVATE int32 HXIstread(accrec_t *rec)
+int32 HXPstread(accrec_t *rec)
 #else
-PRIVATE int32 HXIstread(rec)
+int32 HXPstread(rec)
     accrec_t *rec;
 #endif
 {
     return HXIstaccess(rec, DFACC_READ);
 }
 
-/*- HXIstwrite
+/*- HXPstwrite
  start writing an external data element
 -*/
 #ifdef PROTOTYPE
-PRIVATE int32 HXIstwrite(accrec_t *rec)
+int32 HXPstwrite(accrec_t *rec)
 #else
-PRIVATE int32 HXIstwrite(rec)
+int32 HXPstwrite(rec)
     accrec_t *rec;
 #endif
 {
     return HXIstaccess(rec, DFACC_WRITE);
 }
 
-/*- HXIseek
+/*- HXPseek
  seek to offset with the data element
 -*/
 #ifdef PROTOTYPE
-PRIVATE int32 HXIseek(accrec_t *access_rec, int32 offset, int origin)
+int32 HXPseek(accrec_t *access_rec, int32 offset, int origin)
 #else
-PRIVATE int32 HXIseek(access_rec, offset, origin)
+int32 HXPseek(access_rec, offset, origin)
     accrec_t *access_rec;
     int32 offset;
     int origin;
 #endif
 {
-    char *FUNC="HXIseek";      /* for HERROR */
+    char *FUNC="HXPseek";      /* for HERROR */
 
     /* Adjust offset according to origin.
        there is no upper bound to posn */
@@ -519,19 +490,19 @@ PRIVATE int32 HXIseek(access_rec, offset, origin)
     return SUCCEED;
 }
 
-/*- HXIread
+/*- HXPread
  read in a portion of data from the external element
 -*/
 #ifdef PROTOTYPE
-PRIVATE int32 HXIread(accrec_t *access_rec, int32 length, VOIDP data)
+int32 HXPread(accrec_t *access_rec, int32 length, VOIDP data)
 #else
-PRIVATE int32 HXIread(access_rec, length, data)
+int32 HXPread(access_rec, length, data)
     accrec_t *access_rec;      /* access record */
     int32 length;              /* length of data to read in */
     VOIDP data;                        /* data buffer */
 #endif
 {
-    char *FUNC="HXIread";      /* for HERROR */
+    char *FUNC="HXPread";      /* for HERROR */
     extinfo_t *info =          /* information on the special element */
        (extinfo_t *)access_rec->special_info;
 
@@ -570,19 +541,19 @@ PRIVATE int32 HXIread(access_rec, length, data)
     return length;
 }
 
-/*- HXIwrite
+/*- HXPwrite
  write a length of data to the element
 -*/
 #ifdef PROTOTYPE
-PRIVATE int32 HXIwrite(accrec_t *access_rec, int32 length, VOIDP data)
+int32 HXPwrite(accrec_t *access_rec, int32 length, VOIDP data)
 #else
-PRIVATE int32 HXIwrite(access_rec, length, data)
+int32 HXPwrite(access_rec, length, data)
     accrec_t *access_rec;      /* access record */
     int32 length;              /* length of data to write */
     VOIDP data;                        /* data buffer */
 #endif
 {
-    char *FUNC="HXIwrite";     /* for HERROR */
+    char *FUNC="HXPwrite";     /* for HERROR */
     extinfo_t *info =          /* information on the special element */
        (extinfo_t*)(access_rec->special_info);
 
@@ -647,18 +618,18 @@ PRIVATE int32 HXIwrite(access_rec, length, data)
 }
 
 
-/* ------------------------------ HXIinquire ------------------------------ */
+/* ------------------------------ HXPinquire ------------------------------ */
 /*
 
  inquire information about the access record and data element
 
 */
 #ifdef PROTOTYPE
-PRIVATE int32 HXIinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
+int32 HXPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
                         uint16 *pref, int32 *plength, int32 *poffset,
                         int32 *pposn, int16 *paccess, int16 *pspecial)
 #else
-PRIVATE int32 HXIinquire(access_rec, pfile_id, ptag, pref, plength, poffset,
+int32 HXPinquire(access_rec, pfile_id, ptag, pref, plength, poffset,
                         pposn, paccess, pspecial)
      accrec_t *access_rec;     /* access record */
      int32 *pfile_id;          /* ptr to file id, OUT */
@@ -690,20 +661,20 @@ PRIVATE int32 HXIinquire(access_rec, pfile_id, ptag, pref, plength, poffset,
     return SUCCEED;
 }
 
-/* ----------------------------- HXIendaccess ----------------------------- */
+/* ----------------------------- HXPendaccess ----------------------------- */
 /*
 
   Close the file pointed to by the current AID and free the AID
 
 */
 #ifdef PROTOTYPE
-PRIVATE int32 HXIendaccess(accrec_t *access_rec)
+int32 HXPendaccess(accrec_t *access_rec)
 #else
-PRIVATE int32 HXIendaccess(access_rec)
+int32 HXPendaccess(access_rec)
     accrec_t *access_rec;      /* access record to dispose of */
 #endif
 {
-    char *FUNC="HXIendaccess"; /* for HERROR */
+    char *FUNC="HXPendaccess"; /* for HERROR */
     filerec_t *file_rec =      /* file record */
        FID2REC(access_rec->file_id);
 
@@ -728,7 +699,7 @@ PRIVATE int32 HXIendaccess(access_rec)
     return SUCCEED;
 }
 
-/* ----------------------------- HXIcloseAID ------------------------------ */
+/* ----------------------------- HXPcloseAID ------------------------------ */
 /*
 
   close the file currently being pointed to by this AID but do *NOT* 
@@ -765,4 +736,3 @@ accrec_t *access_rec;
 
 
 } /* HXIcloseAID */
-

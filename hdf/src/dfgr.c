@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.12  1993/09/01 23:21:22  georgev
-Fixed cast for HDfreespace().
+Revision 1.13  1993/09/28 18:04:09  koziol
+Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
+tag handling.  Added new compression special tag type.
 
+ * Revision 1.12  1993/09/01  23:21:22  georgev
+ * Fixed cast for HDfreespace().
+ *
  * Revision 1.11  1993/05/03  21:32:04  koziol
  * First half of fixes to make Purify happy
  *
@@ -111,10 +115,6 @@ static DFGRrig Grzrig = {      /* empty RIG for initialization */
     {(float32)0.0, (float32)0.0, (float32)0.0},
     {(float32)0.0, (float32)0.0, (float32)0.0}, NULL
 };
-
-#ifdef QAK
-uint8 GRtbuf[512];
-#endif
 
 #define LUT     0
 #define IMAGE   1

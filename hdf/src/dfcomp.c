@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1993/09/01 23:20:37  georgev
-Fixed some casts for jpeg.
+Revision 1.7  1993/09/28 18:04:07  koziol
+Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
+tag handling.  Added new compression special tag type.
 
+ * Revision 1.6  1993/09/01  23:20:37  georgev
+ * Fixed some casts for jpeg.
+ *
  * Revision 1.5  1993/04/14  21:39:02  georgev
  * Had to add some VOIDP casts to some functions to make the compiler happy.
  *
@@ -37,10 +41,10 @@ Fixed some casts for jpeg.
  * Remarks: DFgetcomp and DFputcomp constitute a general compression interface
  *---------------------------------------------------------------------------*/
 
-/* This module (dfcomp.c) is in charge of the general compression information */
-#define COMPRESS_MASTER
+/* This module (dfcomp.c) used to be in */
+/* charge of the general compression information */
+/* but hcomp.c now supercedes it. */
 #include "hdf.h"
-#undef COMPRESS_MASTER
 
 #include "herr.h"
 

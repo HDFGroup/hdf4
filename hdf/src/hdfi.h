@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.37  1993/09/27 20:59:49  briand
-Added MIPSEL to the list for strdup
+Revision 1.38  1993/09/28 18:04:26  koziol
+Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
+tag handling.  Added new compression special tag type.
 
+ * Revision 1.37  1993/09/27  20:59:49  briand
+ * Added MIPSEL to the list for strdup
+ *
  * Revision 1.36  1993/09/21  16:19:04  georgev
  * Added an ansi cast to strlen().
  *
@@ -1162,7 +1166,7 @@ extern uint8 FAR *DFtbuf;
 #  define HDstrcat(s1,s2)   (strcat((s1),(s2)))
 #  define HDstrcmp(s,t)     (strcmp((s),(t)))
 #  define HDstrcpy(s,d)     (strcpy((s),(d)))
-#  define HDstrlen(s)       (strlen((const char *)s))
+#  define HDstrlen(s)       (strlen((const char *)(s)))
 #  define HDstrncmp(s1,s2,n)    (strncmp((s1),(s2),(n)))
 #  define HDstrncpy(s1,s2,n)    (strncpy((s1),(s2),(n)))
 #  define HDstrchr(s,c)    (strchr((s),(c)))
