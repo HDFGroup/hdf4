@@ -48,9 +48,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1993/10/06 20:27:30  koziol
-More compression fixed, and folded Doug's suggested change into VSappendable.
+Revision 1.6.2.1  1993/10/10 22:10:12  koziol
+Moved Tag descriptions into a header file.  Updated compression routines.
 
+ * Revision 1.6  1993/10/06  20:27:30  koziol
+ * More compression fixed, and folded Doug's suggested change into VSappendable.
+ *
  * Revision 1.5  1993/10/04  20:02:43  koziol
  * Updated error reporting in H-Layer routines, and added more error codes and
  * compression stuff.
@@ -83,6 +86,7 @@ More compression fixed, and folded Doug's suggested change into VSappendable.
 /* Local defines */
 #define COMP_HEADER_VERSION 0
 #define COMP_HEADER_LENGTH  14
+#define COMP_START_BLOCK    1
 
 /* declaration of the functions provided in this module */
 PRIVATE int32 HCIstaccess
@@ -141,6 +145,9 @@ PRIVATE int32 HCIinit_coder(cinfo, coder_type)
 
     switch(coder_type) {    /* determin the type of encoding */
         case COMP_CODE_RLE:           /* Run-length encoding */
+#ifdef TESTING
+printf("HCIinit_coder(): RLE coder type\n");
+#endif
             cinfo->coder_type=COMP_CODE_RLE;    /* set coding type */
             cinfo->coder_funcs=crle_funcs;      /* set the RLE func. ptrs */
 #ifdef QAK
@@ -187,6 +194,9 @@ PRIVATE int32 HCIinit_model(minfo, model_type)
 
     switch(model_type) {    /* determine the type of modeling */
         case COMP_MODEL_STDIO:        /* standard C stdio modeling */
+#ifdef TESTING
+printf("HCIinit_model(): stdio model type\n");
+#endif
             minfo->model_type=COMP_MODEL_STDIO;    /* set model type */
             minfo->model_funcs=mstdio_funcs;    /* set the stdio func. ptrs */
 #ifdef QAK
@@ -206,7 +216,7 @@ PRIVATE int32 HCIinit_model(minfo, model_type)
     HCcreate -- Create a compressed data element
 
  USAGE
-    int32 HCcreate(id,tag,ref)
+    int32 HCcreate(id,tag,ref,model_type,coder_type)
     int32 id;            IN: the file id to create the data in
     uint16 tag,ref;      IN: the tag/ref pair which is to be compressed
     intn model_type;     IN: the type of modeling to use
@@ -247,6 +257,8 @@ int32 HCcreate(file_id, tag, ref, model_type, coder_type)
     dd_t *data_dd;          /* dd of existing regular element */
     uint16 special_tag;     /* special version of tag */
     uint8 *p;               /* pointer into the temp. buffer */
+    int32 ret;
+    uint16 ctype,mtype;     /* temp. storage for coder and model types */
 
     /* clear error stack and validate args */
     HEclear();
@@ -339,11 +351,13 @@ int32 HCcreate(file_id, tag, ref, model_type, coder_type)
            return FAIL;
        }
        HDfreespace((VOIDP)buf);
-#endif
        info->length=data_dd->length;
+#else
+        HRETURN_ERROR(DFE_UNSUPPORTED,FAIL);
+#endif
       } /* end if */
     else {  /* start new compressed data element */
-        info->length=0;
+        info->length=COMP_START_BLOCK;
       } /* end else */
 
     /* set up compressed special info structure */
@@ -354,12 +368,14 @@ int32 HCcreate(file_id, tag, ref, model_type, coder_type)
 
     /* write special element info to the file */
     p=tbuf;
-    INT16ENCODE(p, SPECIAL_COMP);        /* specify special tag type */
+    INT16ENCODE(p, SPECIAL_COMP);           /* specify special tag type */
     UINT16ENCODE(p, COMP_HEADER_VERSION);   /* specify header version */
-    INT32ENCODE(p, info->length);           /* write length of data */
+    INT32ENCODE(p, info->length);           /* write length of un-comp. data */
     UINT16ENCODE(p, (uint16)info->comp_ref);/* specify ref # of comp. data */
-    UINT16ENCODE(p, (uint16)model_type);    /* specify model type stored */
-    UINT16ENCODE(p, (uint16)coder_type);    /* specify coder type stored */
+    mtype=(uint16)model_type;
+    UINT16ENCODE(p, (uint16)mtype);    /* specify model type stored */
+    ctype=(uint16)coder_type;
+    UINT16ENCODE(p, (uint16)ctype);    /* specify coder type stored */
     if(HI_SEEKEND(file_rec->file)==FAIL) {
        access_rec->used=FALSE;
        HRETURN_ERROR(DFE_SEEKERROR,FAIL);
@@ -367,7 +383,7 @@ int32 HCcreate(file_id, tag, ref, model_type, coder_type)
 
     /* write compressed special element data to the file */
     dd->offset=HI_TELL(file_rec->file);
-    dd->length=(p-tbuf);
+    dd->length=COMP_HEADER_LENGTH;
     dd->tag=special_tag;
     dd->ref=ref;
     if(HI_WRITE(file_rec->file, tbuf, dd->length)==FAIL) {
@@ -412,6 +428,10 @@ int32 HCcreate(file_id, tag, ref, model_type, coder_type)
     if(ref>file_rec->maxref)
         file_rec->maxref=ref;
 
+    /* propagate the initialization down to the modeling layer */
+    if((ret=(*(info->minfo.model_funcs.stwrite))(access_rec))==FAIL)
+        HRETURN_ERROR(DFE_MODEL,FAIL);
+
     return(ASLOT2ID(slot));
 }   /* end HCcreate() */
 
@@ -447,9 +467,11 @@ PRIVATE int32 HCIstaccess(access_rec, access)
     dd_t *info_dd;              /* dd of the special information element */
     compinfo_t *info;           /* special element information */
     filerec_t *file_rec;        /* file record */
-    int16 header_version;       /* version of the compression header */
+    uint16 header_version;      /* version of the compression header */
+    uint16 mtype,ctype;         /* temporary variables for model and coder type */
     comp_model_t model_type;    /* type of modeling to use */
     comp_coder_t coder_type;    /* type of encoding to use */
+    int32 ret;
 
     /* get file record and validate */
     file_rec=FID2REC(access_rec->file_id);
@@ -465,17 +487,20 @@ PRIVATE int32 HCIstaccess(access_rec, access)
     info_dd=&access_rec->block->ddlist[access_rec->idx];
 
     /* get the special info record */
+#ifdef OLD_WAY
+/* this won't work because the compression state will get screwed up */
     access_rec->special_info=HIgetspinfo(access_rec,info_dd->tag,info_dd->ref);
     if(access_rec->special_info) {  /* found it from other access records */
         info=(compinfo_t *)access_rec->special_info;
         info->attached++;
       } /* end if */
     else {  /* look for information in the file */
+#endif
         if(HI_SEEK(file_rec->file, info_dd->offset+2)==FAIL) {
             access_rec->used=FALSE;
             HRETURN_ERROR(DFE_SEEKERROR,FAIL);
         }
-        if(HI_READ(file_rec->file, tbuf, (COMP_HEADER_LENGTH-2))==FAIL) {
+        if((ret=HI_READ(file_rec->file, tbuf, (COMP_HEADER_LENGTH-2)))==FAIL) {
             access_rec->used=FALSE;
             HRETURN_ERROR(DFE_READERROR,FAIL);
         }
@@ -490,13 +515,19 @@ PRIVATE int32 HCIstaccess(access_rec, access)
             UINT16DECODE(p, header_version);    /* get header length */
             INT32DECODE(p, info->length);   /* get _uncompressed_ data length */
             UINT16DECODE(p, info->comp_ref);    /* get ref # of comp. data */
-            UINT16DECODE(p, model_type);    /* get model type */
-            UINT16DECODE(p, coder_type);    /* get encoding type */
+            UINT16DECODE(p, mtype);             /* get model type */
+	    model_type=(comp_model_t)mtype;
+            UINT16DECODE(p, ctype);            /* get encoding type */
+	    coder_type=(comp_coder_t)ctype;
         }
         info->attached=1;
-        HCIinit_model(&(info->minfo),model_type);
-        HCIinit_coder(&(info->cinfo),coder_type);
+        if(HCIinit_model(&(info->minfo),model_type)==FAIL)
+	    HRETURN_ERROR(DFE_MINIT,FAIL);
+        if(HCIinit_coder(&(info->cinfo),coder_type)==FAIL)
+	    HRETURN_ERROR(DFE_CINIT,FAIL);
+#ifdef OLD_WAY
       } /* end else */
+#endif
 
     file_rec->attach++;
 
@@ -674,8 +705,12 @@ int32 HCPread(access_rec, length, data)
     info=(compinfo_t *)access_rec->special_info;
 
     /* adjust length if it falls off the end of the element */
-    if(length==0)
+    if(length==0) {
         length=info->length-access_rec->posn;
+#ifdef QAK
+printf("length=%d, info->length=%d, access_rec->posn=%d\n",length,info->length,access_rec->posn);
+#endif
+      } /* end if */
     else
         if(length<0 || access_rec->posn+length>info->length)
            HRETURN_ERROR(DFE_RANGE,FAIL);
@@ -743,7 +778,7 @@ int32 HCPwrite(access_rec, length, data)
         INT32ENCODE(p, info->length);
         if(HI_SEEK(file_rec->file, info_dd->offset+4)==FAIL)
             HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-        if(HI_WRITE(file_rec->file, tbuf, 4)==FAIL)
+        if(HI_WRITE(file_rec->file, tbuf, 4)==FAIL) /* re-write un-comp. len */
             HRETURN_ERROR(DFE_WRITEERROR,FAIL);
       } /* end if */
 
@@ -901,5 +936,11 @@ int32 HCPcloseAID(access_rec)
     if((ret=(*(info->minfo.model_funcs.endaccess))(access_rec))==FAIL)
         HRETURN_ERROR(DFE_MODEL,FAIL);
 
+    /* Free the compression information */
+    if(--(info->attached)==0) {
+        HDfreespace(info);
+      } /* end if */
+
     return(SUCCEED);
 }   /* end HCPcloseAID() */
+
