@@ -27,27 +27,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "hdf.h"
 
-#ifndef HFILE_FNAMES
-#   define HFILE_FNAMES
-#ifdef DF_CAPFNAMES
-#   define nhiopen   FNAME(HIOPEN)
-#   define nhclose   FNAME(HCLOSE)
-#   define nhxisdir  FNAME(HXISDIR)
-#   define nhxiscdir FNAME(HXISCDIR)
-#   define nhddontatexit FNAME(HDDONTATEXIT)
-#   define nhglibverc FNAME(HGLIBVERC)
-#   define nhgfilverc FNAME(HGFILVERC)
-#else
-#   define nhiopen   FNAME(hiopen)
-#   define nhclose   FNAME(hclose)
-#   define nhxisdir  FNAME(hxisdir)
-#   define nhxiscdir FNAME(hxiscdir)
-#   define nhddontatexit FNAME(hddontatexit)
-#   define nhglibverc FNAME(hglibverc)
-#   define nhgfilverc FNAME(hgfilverc)
-#endif /* DF_CAPFNAMES */
-#endif /* HFILE_FNAMES */
-
 /*-----------------------------------------------------------------------------
  * Name:    hiopen
  * Purpose: call Hopen to open HDF file

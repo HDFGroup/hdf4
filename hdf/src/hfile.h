@@ -19,10 +19,6 @@
 #ifndef HFILE_H
 #define HFILE_H
 
-//RWR Modification Start 07/14/98
-#include "api_adpt.h"
-//RWR Modification End
-
 #include "tbbt.h"
 #include "bitvect.h"
 #include "atom.h"

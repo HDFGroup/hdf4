@@ -2042,7 +2042,7 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #ifndef HFILE_FNAMES
 #   define HFILE_FNAMES
 #ifdef DF_CAPFNAMES
-#  if !(defined INTEL86) && !(defined WIN32)
+# if defined(UNIX386) || (!(defined INTEL86) && !(defined WIN32))
 #   define nhiopen   FNAME(HIOPEN)
 #   define nhclose   FNAME(HCLOSE)
 #   define nhnumber  FNAME(HNUMBER)
@@ -2063,7 +2063,7 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #  endif
 
 #else
-#  if !(defined INTEL86) && !(defined WIN32)
+# if defined(UNIX386) || (!(defined INTEL86) && !(defined WIN32))
 #   define nhiopen   FNAME(hiopen)
 #   define nhclose   FNAME(hclose)
 #   define nhnumber  FNAME(hnumber)
@@ -2144,7 +2144,7 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #ifndef MFAN_FNAMES
 #   define  MFAN_FNAMES
 #ifdef DF_CAPFNAMES
-# if !(defined INTEL86) && !(defined WIN32)
+# if defined(UNIX386) || (!(defined INTEL86) && !(defined WIN32))
 #  define nafstart      FNAME(AFSTART)
 #  define naffileinfo   FNAME(AFFILEINFO)
 #  define nafend        FNAME(AFEND)
@@ -2182,7 +2182,7 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #  define nafitg2tp     FNAME(AFITG2TP)
 # endif
 #else  /* !DF_CAPFNAMES */
-# if !(defined INTEL86) && !(defined WIN32)
+# if defined(UNIX386) || (!(defined INTEL86) && !(defined WIN32))
 #  define nafstart      FNAME(afstart)
 #  define naffileinfo   FNAME(affileinfo)
 #  define nafend        FNAME(afend)
@@ -2322,7 +2322,7 @@ HDFLIBAPI intn ANdestroy(void);
 #ifndef MFGR_FNAMES
 #   define  MFGR_FNAMES
 #ifdef DF_CAPFNAMES
-# if !(defined INTEL86) && !(defined WIN32)
+# if defined(UNIX386) || (!(defined INTEL86) && !(defined WIN32))
 #  define nmgstart      FNAME(MGSTART)
 #  define nmgfinfo      FNAME(MGFINFO)
 #  define nmgend        FNAME(MGEND)
@@ -2406,7 +2406,7 @@ HDFLIBAPI intn ANdestroy(void);
 # define nmglt2rf         FNAME(MGLT2RF)
 # endif
 #else  /* !DF_CAPFNAMES */
-# if !(defined INTEL86) && !(defined WIN32)
+# if defined(UNIX386) || (!(defined INTEL86) && !(defined WIN32))
 #  define nmgstart      FNAME(mgstart)
 #  define nmgfinfo      FNAME(mgfinfo)
 #  define nmgend        FNAME(mgend)
@@ -3415,7 +3415,7 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 #ifndef VG_FNAMES
 #   define VG_FNAMES
 #ifdef DF_CAPFNAMES
-#  if !(defined INTEL86) && !(defined WIN32)
+# if defined(UNIX386) || (!(defined INTEL86) && !(defined WIN32))
 #   define  ndfivopn FNAME(DFIVOPN)
 #   define  ndfvclos FNAME(DFVCLOS)
 #   define  nvatchc  FNAME(VATCHC)
@@ -3581,7 +3581,7 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 #   define  nvscfcls    FNAME(VSCFCLS)
 #  endif
 #else                           /* !DF_CAPFNAMES */
-#  if !(defined INTEL86) && !(defined WIN32)
+# if defined(UNIX386) || (!(defined INTEL86) && !(defined WIN32))
 #   define  ndfivopn FNAME(dfivopn)
 #   define  ndfvclos FNAME(dfvclos)
 #   define  nvatchc  FNAME(vatchc)
@@ -4022,7 +4022,7 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 #ifndef VATTR_FNAMES
 #  define VATTR_FNAMES
 #ifdef DF_CAPFNAMES
-# if !(defined INTEL86) && !(defined WIN32)
+# if defined(UNIX386) || (!(defined INTEL86) && !(defined WIN32))
 #  define nvsfcfdx   FNAME(VSFCFDX)
 #  define nvsfcsat   FNAME(VSFCSAT)
 #  define nvsfcsca   FNAME(VSFCSCA)
@@ -4062,7 +4062,7 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 #  define nvfcgver   FNAME(VFCGVER)
 # endif
 #else       /* !DF_CAPFNAMES  */
-#  if !(defined INTEL86) && !(defined WIN32)
+# if defined(UNIX386) || (!(defined INTEL86) && !(defined WIN32))
 #  define nvsfcfdx   FNAME(vsfcfdx)
 #  define nvsfcsat   FNAME(vsfcsat)
 #  define nvsfcsca   FNAME(vsfcsca)

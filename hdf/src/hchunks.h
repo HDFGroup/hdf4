@@ -27,10 +27,6 @@
 #ifndef __HCHUNKS_H
 #define __HCHUNKS_H
 
-//RWR Modification Start 07/14/98
-#include "api_adpt.h"
-//RWR Modification End
-
 /* required includes */
 #include "hfile.h"  /* special info stuff */
 

@@ -1,3 +1,4 @@
+/*
 // api_adpt.h
 //
 // Project:  mfhdf_dll
@@ -8,7 +9,7 @@
 // Revision History:
 //	1998/7/14	Logic taken from modifications made by CDB 1997/7/30
 //
-/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////// */
 /**********
 This header file provides the macros to adapt the HDF public functions to
 dll entry points.
@@ -59,3 +60,4 @@ mutli-threaded DLLs using the multithreaded runtime DLLs.
 #	define HDFPUBLIC
 #	define HDFLIBAPI extern
 #endif
+

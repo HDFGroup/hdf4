@@ -15,10 +15,6 @@
 #ifndef _MFSD_H_
 #define _MFSD_H_
 
-//RWR Modification Start 07/14/98
-#include "api_adpt.h"
-//RWR Modification End
-
 #ifndef HDF
 #define HDF 1
 #endif
@@ -449,7 +445,7 @@ HDFLIBAPI intn SDsetchunkcache
 #ifndef MFSD_FNAMES
 #   define  MFSD_FNAMES
 #ifdef DF_CAPFNAMES
-# if !(defined INTEL86) && !(defined WIN32)
+# if defined(UNIX386) || (!(defined INTEL86) && !(defined WIN32))
 #   define nscstart    FNAME(SCSTART)
 #   define nsfend      FNAME(SFEND)
 #   define nsfendacc   FNAME(SFENDACC)
@@ -566,7 +562,7 @@ HDFLIBAPI intn SDsetchunkcache
 #   define nscr2idx      FNAME(SCR2IDX)
 #  endif   /* Fortran PowerStation */
 #else   /* DF_CAPFNAMES */
-#  if !(defined INTEL86) && !(defined WIN32)
+# if defined(UNIX386) || (!(defined INTEL86) && !(defined WIN32))
 #   define nscstart    FNAME(scstart)
 #   define nsfend      FNAME(sfend)
 #   define nsfendacc   FNAME(sfendacc)

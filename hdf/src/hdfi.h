@@ -15,10 +15,6 @@
 #ifndef HDFI_H
 #define HDFI_H
 
-//RWR Modification Start 07/14/98
-#include "api_adpt.h"
-//RWR Modification End
-
 #ifdef GOT_MACHINE
 #undef GOT_MACHINE
 #endif
@@ -788,6 +784,11 @@ If you get an error on this line more than one machine type has been defined.
 Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
+
+/* RWR Modification Start 07/14/98 */
+/* Macros for DLL code */
+#include "api_adpt.h"
+/* RWR Modification End */
 
 #if defined _WINDOWS || defined WIN32
 #pragma comment( lib, "oldnames" )
