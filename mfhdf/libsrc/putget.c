@@ -945,6 +945,14 @@ NC_var    * vp;
 #ifdef OLD_WAY
           vp->aid = Hstartwrite(handle->hdf_file, vp->data_tag, vp->data_ref, 0);
 #else /* OLD_WAY */
+        if(!IS_RECVAR(vp)) {
+          vp->aid = Hstartaccess(handle->hdf_file, vp->data_tag, vp->data_ref, DFACC_WRITE);
+          if(vp->set_length==TRUE) {
+              Hsetlength(vp->aid,vp->len);
+              vp->set_length=FALSE;
+          }
+        }
+        else
           vp->aid = Hstartaccess(handle->hdf_file, vp->data_tag, vp->data_ref, DFACC_WRITE|DFACC_APPENDABLE);
 #endif /* OLD_WAY */
       }

@@ -216,6 +216,14 @@ typedef struct {
     int32 aid;    /* aid for DFTAG_SD data */
     int32 HDFtype; /* type of this variable as HDF thinks */
     int32 HDFsize; /* size of this variable as HDF thinks */
+    /* These next two flags control when space in the file is allocated
+        for a new dataset.  They are used (currently) in SDwritedata() and
+        hdf_get_vp_aid() to allocate the full length of a new fixed-size dataset
+        which is not writing fill values, instead of letting them get created
+        as an "appendable" dataset and probably get converted into a linked-
+        block special element when they don't need to be one */
+    int32   created;    /* BOOLEAN == is newly created */
+    int32   set_length; /* BOOLEAN == needs length set */
     int32   is_ragged; /* BOOLEAN == is a ragged array */
     int32 * rag_list;  /* size of ragged array lines */
     int32   rag_fill;  /* last line in rag_list to be set */

@@ -53,6 +53,8 @@ const int *dims ;
         ret->HDFtype = hdf_map_type(type);
         ret->HDFsize = DFKNTsize(ret->HDFtype);
         ret->is_ragged = FALSE;
+        ret->created = FALSE;       /* This is set in SDcreate() if its a new SDS */
+        ret->set_length = FALSE;    /* This is set in SDwritedata() if the data needs its length set */
 #endif
 
 	return(ret) ;

@@ -1203,6 +1203,10 @@ SDcreate(int32  fid,      /* IN: file ID */
           ret_value = FAIL;
           goto done;
       }
+    
+    /* Set the "newly created" & "set length" flags for use in SDwritedata */
+    var->created=TRUE;
+    var->set_length=FALSE;
 
     /* NC_new_var strips off "nativeness" add it back in if appropriate */
     var->HDFtype = nt;
@@ -2213,6 +2217,9 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
         dim = SDIget_dim(handle, sdsid);
       }
 
+#ifdef QAK
+    fprintf(stderr, "SDwritedata: check 1.0\n");
+#endif
     if(handle->vars == NULL)
       {
           ret_value = FAIL;
@@ -2237,6 +2244,9 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
         varid = (intn)sdsid & 0xffff;
       }
 
+#ifdef QAK
+    fprintf(stderr, "SDwritedata: check 2.0\n");
+#endif
     /* Check for strides all set to '1', so it acts like NULL was passed */
     if(stride!=NULL)
       {
@@ -2290,6 +2300,19 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
     Stride = (long *)stride;
 
 #endif
+
+    /* Check if this data is being written out to a newly created dataset */
+    {
+        intn ret;
+        NC_var *var = SDIget_var(handle, sdsid);
+
+        if(var->created) {
+            if(!IS_RECVAR(var) && (handle->flags & NC_NOFILL) ) {
+              var->set_length=TRUE;
+            } /* end if */
+            var->created=FALSE;
+        } /* end if */
+    }
 
     /* call the writeg routines if a stride is given */
     if(stride == NULL || no_strides==1)
