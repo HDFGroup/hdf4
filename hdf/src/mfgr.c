@@ -723,6 +723,22 @@ for (i = 0; i < curr_image; i++)
                                           case DFTAG_LUT:   /* Palette */
                                               new_image->lut_tag=(uint16)img_tag;
                                               new_image->lut_ref=(uint16)img_ref;
+
+                                              /* Fill in some default palette dimension info, in case there isn't a DFTAG_LD for this palette */
+                                              if(new_image->lut_dim.dim_ref==0)
+                                                {
+                                                  new_image->lut_dim.dim_ref = DFREF_WILDCARD;
+                                                  new_image->lut_dim.xdim=256;
+                                                  new_image->lut_dim.ydim=1;
+                                                  new_image->lut_dim.ncomps=3;
+                                                  new_image->lut_dim.nt=DFNT_UINT8;
+                                                  new_image->lut_dim.file_nt_subclass=DFNTF_HDFDEFAULT;
+                                                  new_image->lut_dim.il=MFGR_INTERLACE_PIXEL;
+                                                  new_image->lut_dim.nt_tag=DFTAG_NULL;
+                                                  new_image->lut_dim.nt_ref=DFREF_WILDCARD;
+                                                  new_image->lut_dim.comp_tag=DFTAG_NULL;
+                                                  new_image->lut_dim.comp_ref=DFREF_WILDCARD;
+                                                } /* end if */
                                               break;
 
                                           case DFTAG_LD:    /* Palette dimensions */
@@ -933,6 +949,22 @@ for (i = 0; i < curr_image; i++)
                                       case DFTAG_LUT:   /* Palette */
                                           new_image->lut_tag=elt_tag;
                                           new_image->lut_ref=elt_ref;
+
+                                          /* Fill in some default palette dimension info, in case there isn't a DFTAG_LD for this palette */
+                                          if(new_image->lut_dim.dim_ref==0)
+                                            {
+                                              new_image->lut_dim.dim_ref = DFREF_WILDCARD;
+                                              new_image->lut_dim.xdim=256;
+                                              new_image->lut_dim.ydim=1;
+                                              new_image->lut_dim.ncomps=3;
+                                              new_image->lut_dim.nt=DFNT_UINT8;
+                                              new_image->lut_dim.file_nt_subclass=DFNTF_HDFDEFAULT;
+                                              new_image->lut_dim.il=MFGR_INTERLACE_PIXEL;
+                                              new_image->lut_dim.nt_tag=DFTAG_NULL;
+                                              new_image->lut_dim.nt_ref=DFREF_WILDCARD;
+                                              new_image->lut_dim.comp_tag=DFTAG_NULL;
+                                              new_image->lut_dim.comp_ref=DFREF_WILDCARD;
+                                            } /* end if */
                                           break;
 
                                       case DFTAG_LD:    /* Palette dimensions */
@@ -1101,14 +1133,14 @@ for (i = 0; i < curr_image; i++)
                                 new_image->lut_dim.dim_ref = DFREF_WILDCARD;
                                 new_image->lut_dim.xdim=256;
                                 new_image->lut_dim.ydim=1;
-                                new_image->img_dim.ncomps=1;
-                                new_image->img_dim.nt=DFNT_UINT8;
-                                new_image->img_dim.file_nt_subclass=DFNTF_HDFDEFAULT;
-                                new_image->img_dim.il=MFGR_INTERLACE_PIXEL;
-                                new_image->img_dim.nt_tag=DFTAG_NULL;
-                                new_image->img_dim.nt_ref=DFREF_WILDCARD;
-                                new_image->img_dim.comp_tag=DFTAG_NULL;
-                                new_image->img_dim.comp_ref=DFREF_WILDCARD;
+                                new_image->lut_dim.ncomps=3;
+                                new_image->lut_dim.nt=DFNT_UINT8;
+                                new_image->lut_dim.file_nt_subclass=DFNTF_HDFDEFAULT;
+                                new_image->lut_dim.il=MFGR_INTERLACE_PIXEL;
+                                new_image->lut_dim.nt_tag=DFTAG_NULL;
+                                new_image->lut_dim.nt_ref=DFREF_WILDCARD;
+                                new_image->lut_dim.comp_tag=DFTAG_NULL;
+                                new_image->lut_dim.comp_ref=DFREF_WILDCARD;
                             } /* end if */
                           else
                                 new_image->lut_tag=new_image->lut_ref=DFREF_WILDCARD;
@@ -4133,6 +4165,8 @@ intn GRsetexternalfile(int32 riid,char *filename,int32 offset)
 {
     CONSTR(FUNC, "GRsetexternalfile");   /* for HERROR */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    int32 tmp_aid;  /* AID returned from HXcreate() */
     intn  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -4156,6 +4190,21 @@ intn GRsetexternalfile(int32 riid,char *filename,int32 offset)
     ri_ptr->ext_img=TRUE;
     HDstrcpy(ri_ptr->ext_name,filename);
     ri_ptr->ext_offset=offset;
+
+    /* Create the image tag/ref if it's a new image */
+    if(ri_ptr->img_tag==DFTAG_NULL || ri_ptr->img_ref==DFREF_WILDCARD)
+      {
+        ri_ptr->img_tag=DFTAG_RI;
+        ri_ptr->img_ref=Htagnewref(ri_ptr->gr_ptr->hdf_file_id,ri_ptr->img_tag);
+        ri_ptr->meta_modified=TRUE;
+      } /* end if */
+
+    /* Convert the image into an external element */
+    if((tmp_aid=HXcreate(ri_ptr->gr_ptr->hdf_file_id,ri_ptr->img_tag,
+            ri_ptr->img_ref,filename,offset,0))==FAIL)
+        HGOTO_ERROR(DFE_BADAID, FAIL);
+    if(Hendaccess(tmp_aid)==FAIL)
+        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
 done:
   if(ret_value == 0)   

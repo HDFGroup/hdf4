@@ -97,7 +97,7 @@ PRIVATE int32 HCIstaccess
             (accrec_t * access_rec, int16 acc_mode);
 
 PRIVATE int32 HCIinit_coder
-            (comp_coder_info_t * cinfo, comp_coder_t coder_type,
+            (int16 acc_mode, comp_coder_info_t * cinfo, comp_coder_t coder_type,
              comp_info * coder_info);
 
 PRIVATE int32 HCIread_header
@@ -108,7 +108,7 @@ PRIVATE int32 HCIwrite_header
             (atom_t file_id, compinfo_t * info, uint16 special_tag, uint16 ref);
 
 PRIVATE int32 HCIinit_model
-            (comp_model_info_t * minfo, comp_model_t model_type,
+            (int16 acc_mode, comp_model_info_t * minfo, comp_model_t model_type,
              model_info * m_info);
 
 /* comp_funcs -- struct of accessing functions for the compressed
@@ -150,7 +150,7 @@ funclist_t  comp_funcs =
  REVISION LOG
 --------------------------------------------------------------------------*/
 PRIVATE int32
-HCIinit_coder(comp_coder_info_t * cinfo, comp_coder_t coder_type,
+HCIinit_coder(int16 acc_mode, comp_coder_info_t * cinfo, comp_coder_t coder_type,
               comp_info * c_info)
 {
     CONSTR(FUNC, "HCIinit_coder");  /* for HERROR */
@@ -195,7 +195,8 @@ HCIinit_coder(comp_coder_info_t * cinfo, comp_coder_t coder_type,
               cinfo->coder_funcs = cdeflate_funcs;  /* set the gzip 'deflate' func. ptrs */
 
               /* copy encoding info */
-              cinfo->coder_info.deflate_info.deflate_level = c_info->deflate.level;
+              if(acc_mode&DFACC_WRITE)
+                  cinfo->coder_info.deflate_info.deflate_level = c_info->deflate.level;
               break;
 
           default:
@@ -225,7 +226,7 @@ HCIinit_coder(comp_coder_info_t * cinfo, comp_coder_t coder_type,
  REVISION LOG
 --------------------------------------------------------------------------*/
 PRIVATE int32
-HCIinit_model(comp_model_info_t * minfo, comp_model_t model_type,
+HCIinit_model(int16 acc_mode, comp_model_info_t * minfo, comp_model_t model_type,
               model_info * m_info)
 {
     CONSTR(FUNC, "HCIinit_model");  /* for HERROR */
@@ -537,8 +538,8 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
     /* set up compressed special info structure */
     info->attached = 1;
     info->comp_ref = Htagnewref(file_id,DFTAG_COMPRESSED);  /* get the new reference # */
-    HCIinit_model(&(info->minfo), model_type, m_info);
-    HCIinit_coder(&(info->cinfo), coder_type, c_info);
+    HCIinit_model(DFACC_RDWR, &(info->minfo), model_type, m_info);
+    HCIinit_coder(DFACC_RDWR, &(info->cinfo), coder_type, c_info);
 
     if (HCIwrite_header(file_id, info, special_tag, ref) == FAIL)
           HGOTO_ERROR(DFE_WRITEERROR, FAIL);
@@ -644,9 +645,9 @@ HCIstaccess(accrec_t * access_rec, int16 acc_mode)
     if (HCIread_header(file_rec, access_rec, info, &c_info, &m_info) == FAIL)
           HGOTO_ERROR(DFE_COMPINFO, FAIL);
     info->attached = 1;
-    if (HCIinit_model(&(info->minfo), info->minfo.model_type, &m_info) == FAIL)
+    if (HCIinit_model(acc_mode,&(info->minfo), info->minfo.model_type, &m_info) == FAIL)
           HRETURN_ERROR(DFE_MINIT, FAIL);
-    if (HCIinit_coder(&(info->cinfo), info->cinfo.coder_type, &c_info) == FAIL)
+    if (HCIinit_coder(acc_mode,&(info->cinfo), info->cinfo.coder_type, &c_info) == FAIL)
           HRETURN_ERROR(DFE_CINIT, FAIL);
 
     file_rec->attach++;
