@@ -689,7 +689,7 @@ int32 HLPwrite(access_rec, length, datap)
 
     /* validate length and file records */
 
-    if (length < 0)
+    if (length <= 0)
        HRETURN_ERROR(DFE_RANGE,FAIL);
     if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0)
        HRETURN_ERROR(DFE_INTERNAL,FAIL);

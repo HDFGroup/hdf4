@@ -386,15 +386,17 @@ int32 infile, outfile;
     rdret = data_size;
     while (rdret == data_size) {
 	rdret = Hread(inaid, data_size, data);
-	if (ret == FAIL) {
+	if (rdret == FAIL) {
 	    HERROR(DFE_GENAPP);
 	    hdferror();
 	}
-	ret = Hwrite(outaid, rdret, data);
-	if (ret == FAIL) {
-	    HERROR(DFE_GENAPP);
-	    hdferror();
-	}
+        if(rdret != 0) {
+	    ret = Hwrite(outaid, rdret, data);
+	    if (ret == FAIL) {
+	        HERROR(DFE_GENAPP);
+	        hdferror();
+	    }
+        }
     }
     Hendaccess(outaid);
 }
