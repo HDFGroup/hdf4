@@ -1,122 +1,29 @@
 All the input data files needed to test the utilities
 are in the subdirectory testfiles/. 
 
-Instructions on testing the HDF utility programs.
+
+Instructions on testing the HDF utility programs:
 
 
-hdf24to8:
+hdf24to8 -- converts 24-bit raster images to hdf 8-bit images
 
-   Copy head.r24 in the testfiles directory.  
+   Copy head.r24.Z from the testfiles/ directory to the util/ directory
+
+   Uncompress head.r24.Z 
 
    Execute: 
+
         hdf24to8 head.r24 head8.hdf
 
-   View head8.hdf.
+   View head8.hdf using any visualization tool available (mosaic, collage, etc)
 
-   Not yet tested: error traps
 
-ristosds:
+hdfed -- hdf file editor
 
-   Copy the three HDF files storm110.hdf, storm120.hdf, and
-   storm130.hdf from the testfiles/ directory.
+   Copy the file storm110.hdf from the testfiles/ directory to the util/ directory
 
    Execute:
-        ristosds storm*.hdf -o storm.hdf
- 
-   Use hdfed to compare storm*.hdf with storm.hdf:
-      In storm.hdf tag 702's element should be 38988 bytes.
-      In storm110.hdf tag 302's element should be 12th of
-         this, which is 3249.  (It is a 57x57 image.)
-      Compare the first few numbers in storm110's image
-      with the first few numbers in storm.hdf's SDS.  They
-      should be the same.
 
-
-hdfpack:
-
-   Copy the file test.cdf from the testfiles/ directory.
-
-   Execute:
-        hdfpack test.cdf test.pck
-        hdfpack -b test.cdf test.blk
-
-   Use hdfls to get a listing of test.cdf and test.pck.  The only
-       difference between the 2 listings should be that test.pck
-       shouldn't have any special elements (they show up as "Unknown
-       Tag") and it also shouldn't have any "Linked Block Indicators."
-   Use the HDF browser to verify that the Vgroup named "Float" has a
-       Vdata with ref no. 55 that contains the values:
-       0.0, 1.0, 2.0,..., 359.0
-   The file sizes should be as follows:
-       test.cdf - 11795
-       test.pck - 6747
-       test.blk - 8111
-
-
-hdftopal/paltohdf
-
-   Copy the file palette.raw from the testfiles/ directory.
-
-   Execute:
-        paltohdf palette.raw palette.hdf
-        hdftopal palette.hdf palette.raw.new
-
-   Use hdfls with the '-l' option to examine the HDF palette file.
-        It should have an 'Image Palette-8' and an 'Image Palette,'
-        both with length 768 bytes.  They should also have the same
-        reference number.
-   Use the Unix utility 'cmp' or something similar to do a byte-for-byte
-        comparison of palette.raw and palette.raw.new.  They should be
-        identical.
-
-
-r8tohdf/hdftor8
-
-   Copy the files storm*.raw and palette.raw from the testfiles/ directory.
-
-   Execute:
-        r8tohdf 57 57 storm.hdf storm*.raw
-        r8tohdf 57 57 storm.hdf -p palette.raw -i storm110.raw
-        hdftor8 storm.hdf
-
-   Use hdfls with the '-l' option to examine the HDF file.  It should
-        contain five raster image sets, one of which will be compressed
-        under IMCOMP compression.  (If you do not put the '-p' in the
-        second r8tohdf command above, you should get an error message.)
-        The non-compressed rasters images should be the same length as
-        the raw raster files.  The compressed will be about 25% of that
-        size.
-   Use the Unix utility 'cmp' or something similar to do byte-for-byte
-        comparisons on the produced raw raster files by hdftor8.  There
-        should be one more than you had at the start.  One of them may
-        not compare exactly with any one of the raw rasters, 
-         and the rest will compare with one of
-        the other raw rasters.  There is no guarantee about the order
-        of the produced raw rasters, but it is likely they will be produced
-        in the order in which they went into the file, which would be
-        increasing numerical order, with the compressed image last.
-
-
-hdfcomp
-
-   Copy the files storm*.hdf from the testfiles/ directory.
-
-   Execute:
-        hdfcomp allstorms.hdf storm*.hdf
-        hdfcomp allcomp.hdf -c storm*.hdf
-
-   Use hdfls with the '-l' option to examine the two HDF files.  The first,
-        allstorms.hdf, should simply hold the raster together in one file,
-        with no compression.  You can use hdfls to check the original files.
-        The second file, allcomp.hdf, should hold all the rasters in a
-        compress format.  Run-Length Encoding (RLE) compression will result
-        in modest savings - about 10% to 15% for these files.
-
-hdfed
-
-   Copy the file storm110.hdf from the testfiles/ directory.
-
-   Execute:
         hdfed storm110.hdf
 
         Running interactively, type the following commands:
@@ -137,6 +44,220 @@ hdfed
         Type help and experiment.  Most of the information can be verified
         with hdfls.  Be sure to type 'close' then 'quit' when you are finished.
 
+Caution: Hdfed has been revised so that it can dump data of various number
+         types.  This function has been tested on SUN Station, CRAY2 and 
+         CRAY-YMP. 
+
+        copy ntcheck.hdf form the testfiles/ directory to the util/ directory.
+  
+          hdfed ntcheck.hdf
+
+        ntcheck.hdf will be used as an input file to test the dump function. 
+
+        The command:
+
+          dump -help
+
+        displays the list of formats supported by hdfed. 
+
+        Commands:
+
+          prev tag=<tag>  ref=<ref>
+
+        and
+
+          next tag=<rag> ref=<ref> 
+
+        move you back and forth among the objects.
+        
+          info -all 
+                
+        gives the tag and reference numbers for each object.
+
+	  
+        Look at the data in various objects and verify the data type, eg:
+
+          next tag = 702  ref = 2      
+           
+             (if you are past this data object you will receive the message
+              "Reached end of file. Not moved."  In this case, just repeat 
+               the command using prev instead of next.)
+                         
+          dump -float
+
+          the first 5 lines of output should read as follows:
+
+             0:    0.000000e+00   1.000000e+00   2.000000e+00   3.000000e+00
+            16:    4.000000e+00   5.000000e+00   6.000000e+00   7.000000e+00
+            32:    8.000000e+00   9.000000e+00   4.000000e+01   4.100000e+01
+            48:    4.200000e+01   4.300000e+01   4.400000e+01   4.500000e+01
+            64:    4.600000e+01   4.700000e+01   4.800000e+01   4.900000e+01
+         	
+
+	  next tag = 702  ref = 6     
+
+          dump -short
+
+         the first 5 lines of output should read as follows:
+  
+           0:          0          1          2          3          4          5
+          12:          6          7          8          9       6000       6001
+          24:       6002       6003       6004       6005       6006       6007
+          36:       6008       6009      12000      12001      12002      12003
+          48:      12004      12005      12006      12007      12008      12009
+
+ 
+        the following is a cross reference of ref number and data type if you
+        want to experiment: 
+
+           
+          ref		number type
+
+
+	  2		DFNT_FLOAT32
+
+  	  3		DFNT_INT8
+
+	  4		DFNT_UINT8
+
+	  5		DFNT_INT16
+
+	  6		DFNT_UINT16
+
+	  7		DFNT_INT32
+
+	  8		DFNT_UINT32
+
+        type 'close' and 'quit' when you are finished.
+
+
+ristosds -- converts a series raster image hdf files into a
+                  single 3D sds hdf file.
+
+   Copy the three HDF files storm110.hdf, storm120.hdf, and
+   storm130.hdf from the testfiles/ directory.
+
+   Execute:
+
+        ristosds storm*.hdf -o storm.hdf
+ 
+   Compare storm110.hdf with storm.hdf using the following commands:
+   
+        hdfed storm.hdf
+        prev tag = 702
+	info -long
+    (*)	dump -length 20 -byte
+	close
+	open storm110.hdf
+	prev tag = 302
+        info -long
+   (**)	dump -length 20 -byte
+   	close
+        quit
+
+   * In storm.hdf tag 702's element should be 9747 bytes.
+
+  ** In storm110.hdf tag 302's element should be 1/3 of
+     9747, which is 3249.  (It is a 57x57 image.)
+
+     Compare the first few numbers in storm110's image
+     with the first few numbers in storm.hdf's SDS.  
+     They should be the same. 
+
+     Remove storm*.hdf from the util/ directory before continuing.
+
+
+hdfpack --  compacts an hdf file
+
+   Copy the file test.cdf from the ../../mfhdf/libsrc directory.
+
+   Execute:
+        hdfpack test.cdf test.pck
+        hdfpack -b test.cdf test.blk
+
+   Use hdfls to get a listing of test.cdf and test.pck.  The only
+       difference between the 2 listings should be that test.pck
+       shouldn't have any special elements (they show up as "Unknown
+       Tag") and it also shouldn't have any "Linked Block Indicators."
+
+          hdfls test.cdf
+          hdfls test.pck
+
+   The file sizes should be as follows:
+
+       test.cdf - 30258 
+       test.pck - 7254 
+       test.blk - 22707
+
+hdftopal/paltohdf  -- converts between a raw palette and an hdf
+
+   Copy the file palette.raw from the testfiles/ directory.
+
+   Execute:
+
+        paltohdf palette.raw palette.hdf
+        hdftopal palette.hdf palette.raw.new
+
+   Use hdfls with the '-l' option to examine palette.hdf.
+        It should have an 'Image Palette-8' and an 'Image Palette,'
+        both with length 768 bytes.  They should also have the same
+        reference number.
+
+   Use the Unix utility 'cmp' or something similar to do a byte-for-byte
+        comparison of palette.raw and palette.raw.new.  They should be
+        identical.
+         
+	
+r8tohdf/hdftor8 -- converts between 8-bit raster images and hdf files
+
+   Copy the files storm*.raw and palette.raw from the testfiles/ directory.
+
+   Execute:
+
+        r8tohdf 57 57 storm.hdf storm*.raw
+        r8tohdf 57 57 storm.hdf -p palette.raw -i storm110.raw
+        hdftor8 storm.hdf
+
+   Use hdfls with the '-l' option to examine storm.hdf.  It should
+   contain five raster image sets, one of which will be compressed
+   under IMCOMP compression.  (If you do not put the '-p' in the
+   second r8tohdf command above, you should get an error message.)
+   The non-compressed rasters images should be the same length as
+   the raw raster files.  The compressed will be about 25% of that
+   size.
+
+   Use the Unix utility 'cmp' or something similar to do byte-for-byte
+   comparisons on the raw raster files produced by hdftor8:
+             
+                cmp img001-057.057  storm110.raw   
+	        cmp img002-057.057  storm120.raw
+                cmp img003-057.057  storm130.raw
+                cmp img004-057.057  storm140.raw
+
+   There should be one more img* file than you had at the start.  One of the
+   img files may not compare exactly with any one of the raw rasters, and the 
+   rest will compare with one of the other raw rasters.  There is no guarantee
+   about the order of the produced raw rasters, but it is likely they will be 
+   produced in the order in which they went into the file, which would be
+   increasing numerical order, with the compressed image last.
+
+
+hdfcomp -- re-compress 8-bit raster hdf file
+
+   Copy the files storm*.hdf from the testfiles/ directory.
+
+   Execute:
+
+        hdfcomp allstorms.hdf storm*.hdf
+        hdfcomp allcomp.hdf -c storm*.hdf
+
+   Use hdfls with the '-l' option to examine the two HDF files.  The first,
+        allstorms.hdf, should simply hold the raster together in one file,
+        with no compression.  You can use hdfls to check the original files.
+        The second file, allcomp.hdf, should hold all the rasters in a
+        compress format.  Run-Length Encoding (RLE) compression will result
+        in modest savings - about 10% to 15% for these files.
+
 jpeg2hdf/hdf2jpeg
 
    Copy the file jpeg_img.jpg from the testfiles/ directory.
@@ -152,4 +273,81 @@ jpeg2hdf/hdf2jpeg
         comparisons on the produced raw raster files by hdf2jpeg.  The
         initial jpeg_img.jpg file should be an exact match for the new
         jpeg2.jpg file.
+
+fp2hdf -- converts floating point 2D/3D datasets into hdf SDS or RIS.
+
+   1. Run fptest to create 2-/3-D ASCII/binary test files. 
+                   ctxtr2, type 'TEXT', size 3x4
+                   ctxtr3, type 'TEXT', size 3x4x5
+                   cb32r2, type 'FP32', size 3x4
+                   cb32r3, type 'FP32', size 3x4x5
+                   cb64r2, type 'FP64', size 3x4
+                   cb64r3, type 'FP64', size 3x4x5
+
+     Contents of the arrays:
+
+     row scale values start at 11 and increment by 1 => 11, 12, 13
+     column scale values start at 21 and increment by 2 => 21, 23, 25, 27
+     plane scale values start at 51 and increment by 5 => 51, 56, 61, 66, 71
+
+     data element value = row scale value + column scale value [+ plane 
+                          scale value, if rank=3]
+
+   For an array of [3][4], data values are:
+
+      3.200000E+01  3.400000E+01  3.600000E+01  3.800000E+01
+      3.300000E+01  3.500000E+01  3.700000E+01  3.900000E+01
+      3.400000E+01  3.600000E+01  3.800000E+01  4.000000E+01
+ 
+   For array of [5][3][4], data values are:
+ 
+      8.300000E+01  8.500000E+01  8.700000E+01  8.900000E+01
+      8.400000E+01  8.600000E+01  8.800000E+01  9.000000E+01
+      8.500000E+01  8.700000E+01  8.900000E+01  9.100000E+01
+ 
+      8.800000E+01  9.000000E+01  9.200000E+01  9.400000E+01
+      8.900000E+01  9.100000E+01  9.300000E+01  9.500000E+01
+      9.000000E+01  9.200000E+01  9.400000E+01  9.600000E+01
+
+      9.300000E+01  9.500000E+01  9.700000E+01  9.900000E+01
+      9.400000E+01  9.600000E+01  9.800000E+01  1.000000E+02
+      9.500000E+01  9.700000E+01  9.900000E+01  1.010000E+02
+
+      9.800000E+01  1.000000E+02  1.020000E+02  1.040000E+02
+      9.900000E+01  1.010000E+02  1.030000E+02  1.050000E+02
+      1.000000E+02  1.020000E+02  1.040000E+02  1.060000E+02
+
+      1.030000E+02  1.050000E+02  1.070000E+02  1.090000E+02
+      1.040000E+02  1.060000E+02  1.080000E+02  1.100000E+02
+      1.050000E+02  1.070000E+02  1.090000E+02  1.110000E+02
+
+   2. Run:
+    
+      fp2hdf ctxtr2 -o ctxtr2.hdf
+      fp2hdf ctxtr3 -o ctxtr3.hdf
+      fp2hdf cb32r2 -o cb32r2.hdf
+      fp2hdf cb32r3 -o cb32r3.hdf
+      fp2hdf cb64r2 -o cb64r2.hdf
+      fp2hdf cb64r3 -o cb64r3.hdf
+      fp2hdf ctxtr2 -o ctxtr2_ris.hdf -raster -e 50 50
+      fp2hdf cb64r2 -o cb64r2_ris.hdf -raster -i 50 50 -f
+
+   3. Use hdfls and hdfed/Collage to varify the correctness of
+      the output *.hdf files.
+
+      ctxtr2.hdf -- 2D SDS, display spreadsheet
+      ctxtr3.hdf -- 3D SDS, display spreadsheet along z axis.
+      cb32r2.hdf -- 2D SDS, display spreadsheet
+      cb32r3.hdf -- 3D SDS, display spreadsheet along z axis
+      cb64r2.hdf -- 2D SDS, display spreadsheet
+      cb64r3.hdf -- 3D SDS, display spreadsheet along z axis
+      ctxtr2_ris.hdf -- RIS, display image
+      cb64r2_ris.hdf -- an interpolated RIS, display the image;
+                        and a 2D SDS, display spreadsheet.
+                   
+
+
+
+
+
 
