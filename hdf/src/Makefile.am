@@ -24,4 +24,4 @@ include_HEADERS = hfile.h hdf.h hdfi.h herr.h hproto.h hcomp.h hconv.h  \
 
 SUFFIXES = .inc .f90
 .inc.f90:
-	sed -e 's/^[cC]/!/' -e 's/^     [^ ]/     \&/' < $< > $*.f90
+	sed -e 's/^[cC]/!/' -e 's/^     [^ ]/     \&/' < $(srcdir)/$< > $*.f90
