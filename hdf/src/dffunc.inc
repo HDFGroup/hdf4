@@ -84,7 +84,6 @@ C
 
 	integer DF24setil,		d2setil
 	integer DF24addimage,		d2aimg
-	integer DF24putimage,		d2pimg
 	integer DF24getimage,		d2gimg
 	integer DF24getdims,		d2gdims
 	integer DF24setdims,		d2sdims
@@ -101,7 +100,7 @@ C
 	integer DFPnpals,		dpnpals
 	integer DFPwriteref,		dpwref
 	integer DFPreadref,		dprref
-	integer DFPrestart,		dprest
+	integer DFPrestart,		dprset
 	integer DFPlastref,		dplref
 
 C
@@ -162,75 +161,6 @@ C
       integer sfsextf
       integer sfsnbit
       integer sfsacct
-      integer sfid2ref
-      integer sfiscvar
-      integer sfref2index
-
-
-C
-C	Declarations of return values for HDF Vgroup functions
-C
-      integer vfadtr 
-      integer vfatch
-      integer vfdtch
-      integer vfents
-      integer vffloc
-      integer vfgcls
-      integer vfgid
-      integer vfgnam
-      integer vfgnxt
-      integer vfgttr
-      integer vfgttrs
-      integer vfinq
-      integer vfinqtr
-      integer vfinsrt
-      integer vfisvg
-      integer vfisvs
-      integer vflone
-      integer vfntr
-      integer vfscls
-      integer vfsnam
-
-C
-C	Declarations of return values for HDF high level Vdata/Vgroup
-C       functions
-C
-      integer vhfmkgp
-      integer vhfsd
-      integer vhfsdm
-
-C
-C	Declarations of return values for HDF Vdata functions
-C
-      integer vsfatch
-      integer vsfdlte
-      integer vsfdtch
-      integer vsfelts
-      integer vsfex
-      integer vsffdef
-      integer vsffnd
-      integer vsfgcls
-      integer vsfgfld
-      integer vsfgid
-      integer vsfgint
-      integer vsfgnam
-      integer vsfinq
-      integer vsflone
-      integer vsfread
-      integer vsfscls
-      integer vsfseek
-      integer vsfsfld
-      integer vsfsint
-      integer vsfsiz
-      integer vsfsnam
-      integer vsfwrit
-
-C
-C	Declarations of return values for HDF low level H functions
-C
-      integer hopen
-      integer hclose
-      integer heprnt
 
 C End of declarations
 
