@@ -453,7 +453,7 @@ intn read_vattrs(void)
 {
    int32 fid, vgid, vsid, vgref, vsref;
    intn n_vgattrs, n_vsattrs, n_fldattrs;
-   intn  iattrindex, i;
+   intn  iattrindex, i, ret;
    int32 i_type, i_count, i_size, iversion;
    char iname[FIELDNAMELENMAX+1], iclass[FIELDNAMELENMAX+1];
    char iattrname[FIELDNAMELENMAX+1];
@@ -727,8 +727,12 @@ intn read_vattrs(void)
         printf(">>> Wrong vdata version. ATTNAME10 should be of ");
         printf(" %d, got %d\n", VSET_VERSION, iversion);
    }
- 
- 
+   ret = VSdetach(vsid);
+   CHECK(ret, FAIL, "VSdetach");
+   ret = Vend(fid);
+   CHECK(ret, FAIL, "Vend");
+   ret = Hclose(fid);
+   CHECK(ret, FAIL, "Hclose");  
 
    return 0;
 }
@@ -741,5 +745,5 @@ test_vset_attr(void)
 
    ret = write_vset_stuff();
    ret = write_vattrs();
-   ret = read_vattrs();
+   ret = read_vattrs(); 
 } /* test_vset_attr */
