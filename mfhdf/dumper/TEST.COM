@@ -1,4 +1,5 @@
-$ hdp :== $ MRLXP1$DKA200:[FOLK.DEV.mfhdf.dumper]hdp.exe
+$ define sys$output hdp.out
+$ hdp :== $sys$disk:[--.bin]hdp.exe
 $ hdp list tdata.hdf
 $ hdp list -l tdata.hdf
 $ hdp list -d tdata.hdf
@@ -7,24 +8,23 @@ $ hdp list -t 720 tdata.hdf
 $ hdp list -d -t "Numeric Data Group" tdata.hdf
 $ hdp list -g tdata.hdf
 $ hdp list -a tdata.hdf
-
-
+$!
 $ hdp dumpsds swf32.hdf
 $ hdp dumpsds -i 2 swf32.hdf
 $ hdp dumpsds -i 1,3 swf32.hdf
 $ hdp dumpsds -n Time swf32.hdf ! This command should fail with
 $!       error message: "SD with name Time: not found"     
-$ hdp dumpsds -n "fakeDim0", "Data-Set-2" swf32.hdf
+$! hdp dumpsds -n "fakeDim0", "Data-Set-2" swf32.hdf
 $ hdp dumpsds -r 3,2 swf32.hdf
 $ hdp dumpsds -r 3,2 -d swf32.hdf
-
+$!
 $ hdp dumprig tdf24.hdf
 $ hdp dumprig -i 1,2 tdf24.hdf
-$ hdp dumprig -i 1,3 tdf24.hdf /* '-i 3' is invalid   */
+$ hdp dumprig -i 1,3 tdf24.hdf !/* '-i 3' is invalid   */
 $ hdp dumprig -m 24 tdf24.hdf
 $ hdp dumprig -r 3,4 tdf24.hdf
 $ hdp dumprig -r 3,4 -d tdf24.hdf
-
+$!
 $ hdp dumpvd tvset.hdf
 $ hdp dumpvd -i 1,3,5 tvset.hdf
 $ hdp dumpvd -r 1238,1239,1251,1252 tvset.hdf
@@ -34,7 +34,7 @@ $ hdp dumpvd -c "Test object","No class specified" tvset.hdf
 $ hdp dumpvd -f "B" tvset.hdf
 $ hdp dumpvd -f "STATION_NAME","FLOATS" tvset.hdf
 $ hdp dumpvd -f "STATION_NAME","FLOATS" -d tvset.hdf
-
+$!
 $ hdp dumpvg tvset.hdf
 $ hdp dumpvg -i 0,1 tvset.hdf
 $ hdp dumpvg -r 3 tvset.hdf
@@ -59,5 +59,4 @@ $ hdp dumpgr grtdfui83.hdf
 $ hdp dumpgr grtdfui84.hdf
 $ hdp dumpgr grtdfui162.hdf
 $ hdp dumpgr grtdfi322.hdf
-$!
-~
+$ exit
