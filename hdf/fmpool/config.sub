@@ -483,6 +483,10 @@ case $basic_machine in
 		basic_machine=sparc-cm5
 		os=-sunos4
 		;;
+  	mac)
+		basic_machine=m68k-mac
+		os=-macos
+		;;
 	symmetry)
 		basic_machine=i386-sequent
 		os=-dynix
@@ -646,6 +650,9 @@ case $os in
 	-xenix)
 		os=-xenix
 		;;
+  	-macos)
+		os=-macos
+		;;
 	-none)
 		;;
 	*)
@@ -793,6 +800,9 @@ case $basic_machine in
 				;;
 			-mvs*)
 				vendor=ibm
+				;;
+          -macos*)
+               vendor=apple
 				;;
 			-ptx*)
 				vendor=sequent
