@@ -13,7 +13,11 @@ static char RcsId[] = "$Id$";
  * $Header$
  *
  * $Log$
- * Revision 1.4  1993/02/01 23:23:21  georgev
+ * Revision 1.5  1993/03/24 22:32:02  briand
+ * fixed path for hdf.h file in slab tests. Fixed function pointer in
+ * testhdf
+ *
+ * Revision 1.4  1993/02/01  23:23:21  georgev
  * Changed hyperslab test files to reflect new interface
  *
  * Revision 1.3  1993/01/19  05:58:25  koziol
@@ -29,7 +33,7 @@ static char RcsId[] = "$Id$";
  *
  *------------------------------------------------------------------------*/
 
-#include "../include/hdf.h"
+#include "hdf.h"
 
 int32 ret; 
 int32 rank=3; 

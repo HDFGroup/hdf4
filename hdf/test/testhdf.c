@@ -11,11 +11,11 @@ int Verbocity = 0;
 #include "tproto.h"
 
 struct TestStruct {
-  int  NumErrors;
-  char Description[64];
-  int  SkipFlag;
-  char Name[16];
-  void (*Call)();
+  int   NumErrors;
+  char  Description[64];
+  int   SkipFlag;
+  char  Name[16];
+  VOIDP Call;
 } Test[NUMOFTESTS] ;
 
 void InitTest (TheName, TheCall, TheDescr)
@@ -44,6 +44,8 @@ main (argc, argv)
   int ret;
   uint32 lmajor, lminor, lrelease;
   char fstring[81], lstring[81], output[256];
+
+  void (*FuncCall)();
 
   InitTest("vers",test_vers,"VERSION OF LIBRARY");
   InitTest("24bit",test_r24,"24BIT RASTER IMAGE INTERFACE");
@@ -162,7 +164,8 @@ main (argc, argv)
                        Test[Loop].Description,Test[Loop].Name););
       MESSAGE(5,printf("===============================================\n"););
       Test[Loop].NumErrors = num_errs;
-      (*Test[Loop].Call)();
+      FuncCall = (void (*) ()) Test[Loop].Call;
+      (*FuncCall)();
       Test[Loop].NumErrors = num_errs - Test[Loop].NumErrors;
       MESSAGE(5,printf("===============================================\n"););
       MESSAGE(5,printf("There were %d errors detected.\n\n",Test[Loop].NumErrors););
