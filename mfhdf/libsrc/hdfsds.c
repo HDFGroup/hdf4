@@ -612,8 +612,15 @@ intn hdf_read_ndgs(handle)
              * If there is a data label use that as the variable name
              *    else use the reference number of the NDG as part of
              *    a made up name
+             *
+             * Convert spaces in the name to underscores (yuck) otherwise
+             *    ncgen will barf on ncdumped files
              */
             if(namebuf) {
+                char *c;
+                for(c = namebuf; *c; c++)
+                    if((*c) == ' ') (*c) = '_';
+
                 vars[current_var] = NC_new_var((char *) namebuf, type, (int) rank, vardims);
             } else {
                 sprintf(tmpname, "Data-Set-%d", ndgRef); 
