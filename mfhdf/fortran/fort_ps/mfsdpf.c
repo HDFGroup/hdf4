@@ -2080,7 +2080,7 @@ nscchempty(id, flag)
 {
 
     comp_info c_info;         /* compression info     */
-    int32 c_type;              /* compression type definition */
+    comp_coder_t c_type;              /* compression type definition */
 
     int   CASE;
     intn c_ret;
@@ -2089,7 +2089,7 @@ nscchempty(id, flag)
 
     c_ret = SDgetcompress(*id, &c_type, &c_info);
     if (c_ret == 0) {
-    CASE = c_type;
+    CASE = (int)c_type;
     switch (CASE)  {
 
        case COMP_CODE_NONE:       /* No compression */

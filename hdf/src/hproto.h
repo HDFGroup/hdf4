@@ -2725,7 +2725,7 @@ HDFLIBAPI intn GRsetaccesstype(int32 riid,uintn accesstype);
 
 HDFLIBAPI intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo);
 
-HDFLIBAPI intn GRgetcompress(int32 riid,int32* comp_type,comp_info *cinfo);
+HDFLIBAPI intn GRgetcompress(int32 riid,comp_coder_t* comp_type,comp_info *cinfo);
 
 HDFLIBAPI intn GRsetattr(int32 id,const char *name,int32 attr_nt,int32 count,const void * data);
 

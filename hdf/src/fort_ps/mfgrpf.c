@@ -1040,7 +1040,6 @@ ret = GRsetchunk(riid, chunk_def, cflags);
 return(ret);
 
 }   
-//#if 0 /* Commented out for now  -EIP 12/29/97 */ 
 /*-----------------------------------------------------------------------------
  * Name:     mgcwcchnk
  * Purpose:  write the specified chunk of CHARACTER data to the GR 
@@ -1120,7 +1119,6 @@ return(ret);
        return(ret);
 
 } 
-//#endif /*Commented out for now -EIP 12/29/97 */
 /*-------------------------------------------------------------------------
  * Name:    mgcscompress
  * Puporse: Call GRsetcompress
@@ -1154,7 +1152,7 @@ return(ret);
 
 int32 riid;               /*  GR id               */
 comp_info c_info;         /* compression info     */
-int32 c_type;              /* compression type definition */
+comp_coder_t c_type;              /* compression type definition */
 
 int   i, CASE;
 intf ret;
@@ -1252,7 +1250,7 @@ return(ret);
 #endif /* PROTOTYPE */
 {
     comp_info c_info;         /* compression info     */
-    int32 c_type;              /* compression type definition */
+    comp_coder_t c_type;              /* compression type definition */
 
     int CASE;
     intf ret = -1;
@@ -1262,7 +1260,7 @@ return(ret);
     c_ret = GRgetcompress(*id, &c_type, &c_info);
 
     if (c_ret == 0) {
-    CASE = c_type;
+    CASE = (int)c_type;
     switch (CASE)  {
 
        case COMP_CODE_NONE:       /* No compression */
