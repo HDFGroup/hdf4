@@ -82,14 +82,22 @@ APPSOURCES=
 
 SOURCES= $(LIBSOURCES) $(APPSOURCES)
 # files included by source files
-INCLUDES= cdefs.h compat.h fmptypes.h queue.h fmpconf.h fmpio.h fmpool.h 
+INCLUDES= cdefs.h compat.h fmptypes.h queue.h fmpio.h fmpool.h 
 
 # documentation, test, and support files
-DOCS= README INSTALL fmpool.1
+DOCS= 
 
-MKFILES= configure Makefile.in
-CONFIGFILES= 
-OTHERFILES= 
+MKFILES= configure Makefile.in configure.in config.sub config.guess \
+	move-if-change
+CONFIGFILES= config/fmpsun.h config/fmpirix5.h config/mh-aix config/mh-alpha \
+	config/mh-cm5 config/mh-convex config/mh-decstation config/mh-fbsd \
+	config/mh-hpux config/mh-irix32 config/mh-irix4 config/mh-irix5 \
+	config/mh-irix6 config/mh-linux config/mh-solaris config/mh-sun \
+	config/mh-unicos config/fmphpux.h config/fmpalpha.h config/fmpcm5.h \
+	config/fmpconvex.h config/fmpdec.h config/fmpfbsd.h config/fmpirix32.h \
+	config/fmpirix4.h config/fmpirix6.h config/fmplinux.h config/fmpsolaris.h \
+	config/fmpunicos.h config/fmpaix.h
+OTHERFILES= run.tests
 TESTFILES= test_fmpio.c tfmpio_read.c tfmpio_write.c
 
 DISTFILES= $(DOCS) $(MKFILES) $(CONFIGFILES) $(SOURCES) $(INCLUDES) \
@@ -114,22 +122,22 @@ libfmpool.a: $(LIBOBJECTS)
 	$(AR2) libfmpool.a
 
 
-tfmp: ${INCLUDES} test_fmpio.c libfmpool.a
+tfmp: ${INCLUDES} fmpconf.h test_fmpio.c libfmpool.a
 	${CC} $(CFLAGS)  ${AUXFLAGS} -I. -c test_fmpio.c 
 	$(LN) $(LDFLAGS) -o tfmp $(TOBJECTS) libfmpool.a $(LDLIBS)
 
-tfmpr: ${INCLUDES} tfmpio_read.c libfmpool.a
+tfmpr: ${INCLUDES} fmpconf.h tfmpio_read.c libfmpool.a
 	${CC} $(CFLAGS)  ${AUXFLAGS} -I. -c tfmpio_read.c
 	$(LN) $(LDFLAGS) -o tfmpr tfmpio_read.o libfmpool.a $(LDLIBS)
 
-tfmpw: ${INCLUDES} tfmpio_write.c libfmpool.a
+tfmpw: ${INCLUDES} fmpconf.h tfmpio_write.c libfmpool.a
 	${CC} $(CFLAGS)  ${AUXFLAGS} -I. -c tfmpio_write.c
 	$(LN) $(LDFLAGS) -o tfmpw tfmpio_write.o libfmpool.a $(LDLIBS)
 
-fmpool.o: ${INCLUDES} fmpool.c 
+fmpool.o: ${INCLUDES} fmpconf.h fmpool.c 
 	${CL} fmpool.c
 
-fmpio.o:  ${INCLUDES} fmpio.c 
+fmpio.o:  ${INCLUDES} fmpconf.h fmpio.c 
 	${CL} fmpio.c
 
 install-lib: libfmpool.a install-headers
@@ -143,7 +151,7 @@ clean:
 
 distclean:
 	-$(RM) $(RMFLAGS) *.o *.mp core libfmpool.a tfmp
-	-$(RM) $(RMFLAGS) config.status fmpconf.h
+	-$(RM) $(RMFLAGS) Makefile config.status fmpconf.h
 
 distribute:
 	$(RM) $(RMFLAGS) fmpoolsrc.tar*
