@@ -36,12 +36,13 @@ char *argv[];
 {
     int32 f1, f2, sdsid, nt, dimsize[10], nattr, rank;
     int32 newsds, newsds2, newsds3, dimid, dimid2, number, offset;
-    int32 index;
+    int32 index, ival;
     intn status, i;
     char name[90], text[256];
     int32   start[10], end[10], scale[10], stride[10];
     char    l[80], u[80], fmt[80], c[80];
-    int     count, num_err = 0;
+    int32   count;
+    int     num_err = 0;
     int32   idata[100];
     int16   sdata[100];
     int32  ndg_saved_ref;
@@ -126,7 +127,7 @@ char *argv[];
     /* verify that we can read the dimensions values with SDreaddata */
     start[0] = 0;
     end[0]   = 4;
-    status = SDreaddata(dimid, start, NULL, end, idata);
+    status = SDreaddata(dimid, start, NULL, end, (VOIDP) idata);
     CHECK(status, "SDreaddata");
 
     for(i = 0; i < 4; i++) {
@@ -139,7 +140,7 @@ char *argv[];
 
     /* lets store an attribute here */
     max = 3.1415;
-    status = SDsetattr(dimid, "DimAttr", DFNT_FLOAT32, 1, &max);
+    status = SDsetattr(dimid, "DimAttr", DFNT_FLOAT32, 1, (VOIDP) &max);
     CHECK(status, "SDsetattr");
 
     /* lets make sure we can read it too */
@@ -168,8 +169,8 @@ char *argv[];
     }
 
     /* lets store an attribute without explicitly creating the coord var first */
-    i = -256;
-    status = SDsetattr(dimid2, "Integer", DFNT_INT32, 1, &i);
+    ival = -256;
+    status = SDsetattr(dimid2, "Integer", DFNT_INT32, 1, (VOIDP) &ival);
     CHECK(status, "SDsetattr");
 
     /* lets make sure we can read it too */
@@ -191,11 +192,11 @@ char *argv[];
         num_err++;
     }
 
-    i = 0;
-    status = SDreadattr(dimid2, 0, &i);
+    ival = 0;
+    status = SDreadattr(dimid2, 0, (VOIDP) &ival);
     CHECK(status, "SDreatattr");
     
-    if(i != -256) {
+    if(ival != -256) {
         fprintf(stderr, "Wrong value for SDreadattr(dim)\n");
         num_err++;
     }
