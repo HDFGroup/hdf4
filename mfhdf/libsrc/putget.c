@@ -2042,7 +2042,7 @@ void *values ;
                               return(-1) ;
 #endif /* !HDF */
                                 
-                          values = (const void *)((const uint8 *)values + iocount * szof);
+                          values = (void *)((const uint8 *)values + iocount * szof);
                           (*cc) += (edp0 == edges ? iocount : 1) ;
 #ifdef VDEBUG
                           fprintf(stderr, "\t\t *cc %ld, *mm %ld  continue\n",
@@ -2091,7 +2091,7 @@ int cdfid ;
 int varid ;
 const long *start ;
 const long *edges ;
-const ncvoid *values ;
+ncvoid *values ;
 {
 	NC *handle ;
 
@@ -2293,7 +2293,7 @@ int
 ncrecput(cdfid, recnum, datap)
 int cdfid ;
 long recnum ;
-ncvoid * const *datap ;
+ncvoid * *datap ;
 {
 	NC *handle ;
 	long unfilled ;

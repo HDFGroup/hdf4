@@ -169,11 +169,11 @@ nclong xdr_d_infinity[2] = {0x00000000,0x7ff00000};
  */
 void
 NC_arrayfill(lo, len, type)
-Void *lo ;	/* lower bound of area to be filled */
+void *lo ;	/* lower bound of area to be filled */
 size_t len ;	/* how many bytes */
 nc_type type ;
 {
-	Void *hi = lo + len ;
+	void *hi = (void *)((char *)lo + len );
 	switch(type) {
 	case NC_BYTE :
                 HDmemset(lo, FILL_BYTE, len);
@@ -184,26 +184,26 @@ nc_type type ;
 	case NC_SHORT :
 		while(lo < hi ){
 			*((short *)lo) = FILL_SHORT ;
-			lo += sizeof(short) ;
+			*((char *)lo) += sizeof(short) ;
 		}
 		break ;
 	case NC_LONG :
 		while(lo < hi ){
 			*((nclong *)lo) = FILL_LONG ;
-			lo += sizeof(nclong);
+			*((char *)lo) += sizeof(nclong) ;
 		}
 		break ;
 	case NC_FLOAT :
 		while(lo < hi ){
 			*((float *)lo) = FILL_FLOAT ;
-			lo += sizeof(float) ;
+			*((char *)lo) += sizeof(float) ;
 		}
 		break ;
 	case NC_DOUBLE : 
 		while(lo < hi ){
 			/*SUPPRESS 450*/
 			*((double *)lo) = FILL_DOUBLE ;
-			lo += sizeof(double) ;
+			*((char *)lo) += sizeof(double) ;
 		}
 		break ;
 	default :

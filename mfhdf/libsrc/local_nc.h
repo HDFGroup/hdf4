@@ -363,7 +363,7 @@ extern char       *NCmemset		PROTO((
 ));
 
 extern void       NC_arrayfill		PROTO((
-    Void	*lo,
+    void	*lo,
     size_t	len,
     nc_type	type
 ));
@@ -621,7 +621,7 @@ extern intn SDPfreebuf PROTO((void));
 
 extern intn NCgenio
     PROTO((NC *handle, int varid, const long *start, const long *count,
-        const long *stride, const long *imap, const void *values));
+        const long *stride, const long *imap, void *values));
 
 extern intn NC_var_shape
     PROTO((NC_var *var,NC_array *dims));

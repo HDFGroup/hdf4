@@ -39,7 +39,7 @@ typedef struct {
     int32 aid;              /* target AID for output */
     int32 file_id;          /* HDF file ID */
     uint16 tag, ref;        /* tag & ref of image to output */
-    void * image;            /* pointer to the image data */
+    const void * image;            /* pointer to the image data */
     int32 xdim, ydim;       /* X & Y dimensions of the image */
     int16 scheme;           /* type of image (8-bit or 24-bit) */
 
@@ -287,7 +287,7 @@ DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim,
     /* write the whole image out at once */
     while (cinfo_ptr->next_scanline < cinfo_ptr->image_height)
       {
-        row_pointer[0]=&image_buffer[(size_t)cinfo_ptr->next_scanline * (size_t)row_stride];
+        row_pointer[0]=(JSAMPROW)(&image_buffer[(size_t)cinfo_ptr->next_scanline * (size_t)row_stride]);
         jpeg_write_scanlines(cinfo_ptr,row_pointer,1);
       } /* end while */
 

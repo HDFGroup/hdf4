@@ -29,7 +29,7 @@ NCgenio(handle, varid, start, count, stride, imap, values)
     const long	*count;		/* NULL => everything following start[] */
     const long	*stride;	/* NULL => unity strides */
     const long	*imap;		/* NULL => same structure as netCDF variable */
-    const void	*values ;
+    void	*values ;
 {
     int		maxidim;	/* maximum dimensional index */
     NC_var	*vp	= NC_hlookupvar( handle, varid );
@@ -150,7 +150,7 @@ const long *start ;
 const long *count ;
 const long *stride ;
 const long *imap ;
-const ncvoid *values ;
+ncvoid *values ;
 {
 	NC *handle ;
 
@@ -209,7 +209,7 @@ int varid ;
 const long *start ;
 const long *count ;
 const long *stride ;
-const ncvoid *values ;
+ncvoid *values ;
 {
 	NC *handle ;
 
