@@ -2,10 +2,14 @@ C---------------------------------------------------------------------------
 C $Header$
 C
 C $Log$
-C Revision 1.6  1993/08/16 21:58:27  koziol
-C Fixed access list for these files, and the actual changes I made to the
-C files are for PC compatibility.
+C Revision 1.7  1993/08/28 00:58:19  georgev
+C Fixed some changes lost during the PC merge.
+C Changed fortran long names in slabs to use the short ones.
 C
+c Revision 1.6  1993/08/16  21:58:27  koziol
+c Fixed access list for these files, and the actual changes I made to the
+c files are for PC compatibility.
+c
 c Revision 1.4  1993/04/27  21:01:57  georgev
 c Changed fortran stubs interface for hyperslabs, made them different
 c than the C names.
@@ -31,7 +35,7 @@ C Output file: slab1wf.hdf
 
 
       integer dssdims, dssdisc, dssdist
-      integer dfsdsfill, dfsdsslab, dfsdwslab, dfsdeslab
+      integer dssfill, dssslab, dswslab, dseslab
       integer ret, np, nr,nc, di(3), st(3), sz(3), sr(3)
       integer rank, DFTAG_SDT, DFO_FORTRAN
       real    scpln(2), scrow(3), sccol(4), da(4,3,2)
@@ -133,7 +137,7 @@ C    		print *, da(k,j,i)
 C 
 C Write it slab by slab   
 C 
-      ret = dfsdsfill(fill_value)
+      ret = dssfill(fill_value)
       num_err = num_err + ret
       sr(1) = 0
       sr(2) = 0
@@ -141,7 +145,7 @@ C
       ret = dssdims(rank, di)
       num_err = num_err + ret
 
-      ret = dfsdsslab(sn, fnlen)
+      ret = dssslab(sn, fnlen)
       num_err = num_err + ret
       st(1) = 1
       st(2) = 2
@@ -149,7 +153,7 @@ C
       sz(1) = 3
       sz(2) = 1
       sz(3) = 1
-      ret = dfsdwslab(st, sr, sz,slab1)
+      ret = dswslab(st, sr, sz,slab1)
       num_err = num_err + ret
       st(1) = 1
       st(2) = 1
@@ -157,7 +161,7 @@ C
       sz(1) = 3
       sz(2) = 2
       sz(3) = 1
-      ret = dfsdwslab(st, sr, sz, slab3)
+      ret = dswslab(st, sr, sz, slab3)
       num_err = num_err + ret
       st(1) = 4
       st(2) = 1
@@ -165,10 +169,10 @@ C
       sz(1) = 1
       sz(2) = 3
       sz(3) = 2
-      ret = dfsdwslab(st, sr, sz, slab5)
+      ret = dswslab(st, sr, sz, slab5)
       num_err = num_err + ret
 
-      ret = dfsdeslab()
+      ret = dseslab()
       num_err = num_err + ret
 
  

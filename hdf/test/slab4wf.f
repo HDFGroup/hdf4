@@ -2,10 +2,14 @@ C---------------------------------------------------------------------------
 C $Header$
 C
 C $Log$
-C Revision 1.5  1993/08/16 21:58:32  koziol
-C Fixed access list for these files, and the actual changes I made to the
-C files are for PC compatibility.
+C Revision 1.6  1993/08/28 00:58:25  georgev
+C Fixed some changes lost during the PC merge.
+C Changed fortran long names in slabs to use the short ones.
 C
+c Revision 1.5  1993/08/16  21:58:32  koziol
+c Fixed access list for these files, and the actual changes I made to the
+c files are for PC compatibility.
+c
 c Revision 1.3  1993/04/27  21:02:09  georgev
 c Changed fortran stubs interface for hyperslabs, made them different
 c than the C names.
@@ -28,7 +32,7 @@ C
 
 
       integer dssdims,  dssdisc, dssdist
-      integer dfsdsslab, dfsdwslab, dfsdeslab, dsigslc
+      integer dssslab, dswslab, dseslab, dsgslc
       integer ret, np, nr,nc, di(3), st(3), sz(3), sr(3)
       integer rank, DFTAG_SDT, DFO_FORTRAN
       real    scpln(2), scrow(3), sccol(4), da(4,3,2)
@@ -100,7 +104,7 @@ C
 C Write it as one slab    
 C 
 
-      ret = dfsdsslab(sn, fnlen)
+      ret = dssslab(sn)
       num_err = num_err + ret
       st(1) = 1
       st(2) = 1
@@ -108,10 +112,10 @@ C
       sz(1) = 4
       sz(2) = 3
       sz(3) = 2
-      ret = dfsdwslab(st, sr, sz, da)
+      ret = dswslab(st, sr, sz, da)
       num_err = num_err + ret
 
-      ret = dfsdeslab()
+      ret = dseslab()
       num_err = num_err + ret
  
 C
@@ -126,7 +130,7 @@ C
       sr(1) = 4
       sr(2) = 3
       sr(3) = 2
-      ret = dsigslc(sn, st, sz, sa, sr, fnlen)
+      ret = dsgslc(sn, st, sz, sa, sr)
       num_err = num_err + ret
 
       if ( num_err .ne. 0) then
