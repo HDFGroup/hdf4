@@ -59,9 +59,10 @@
 #define VATOM_HASH_SIZE 256
 
 /* .................................................................. */
-#define VSET_NEW_VERSION 4  /* if attr or other new features are set */
-#define VSET_VERSION   3    /* DO NOT CHANGE!! */
-#define VSET_OLD_TYPES 2    /* All version <= 2 use old type mappings */
+#define VSET_NEW_VERSION	4  /* if attr or other new features are set */
+#define VSET_VERSION		3  /* DO NOT CHANGE!! */
+#define VSET_OLD_VERSION	2  /* All version <= 2 use old type mappings */
+#define VSET_OLD_TYPES		VSET_OLD_VERSION  /* For backward compatibility */
 
 /* Only include the library header if the VSET_INTERFACE macro is defined */
 #ifdef VSET_INTERFACE
