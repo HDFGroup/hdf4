@@ -1721,9 +1721,9 @@ done:
 intn 
 hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
 {
-    char vgname[100] = "";
-    char vsclass[128] = "";
-    char vgclass[128] = "";
+    char vgname[MAX_NC_NAME] = "";
+    char vsclass[MAX_NC_CLASS] = "";
+    char vgclass[MAX_NC_CLASS] = "";
     int      id, count, i, found;
     int      sub_id;
     int32    dim_size;
@@ -1967,7 +1967,7 @@ hdf_num_attrs(NC *handle,/* IN: handle to SDS */
     int       t, n;
     int32     vs, tag;
     int32     id = -1;
-    char      class[128] = "";
+    char      class[MAX_NC_CLASS] = "";
     intn      ret_value = FAIL;
 
 #ifdef HDF_NUM_ATTRS
@@ -2051,9 +2051,9 @@ hdf_read_attrs(XDR *xdrs, NC *handle, int32 vg)
     int       count, t, n;
     int32     vs, tag, id, vsize, attr_size, nt;
     nc_type   type;
-    char      vsname[100] = "";
+    char      vsname[MAX_NC_NAME] = "";
     char      fields[100] = "" ;
-    char      class[128] = "";
+    char      class[MAX_NC_CLASS] = "";
     char     *values = NULL;
     NC_attr **attributes = NULL;
     NC_array *Array = NULL;
@@ -2242,9 +2242,9 @@ hdf_read_vars(XDR *xdrs,
               NC *handle, 
               int32 vg)
 {
-    char     vgname[100] = "";
-    char     subname[100] = "";
-    char     class[128] = "";
+    char     vgname[MAX_NC_NAME] = "";
+    char     subname[MAX_NC_NAME] = "";
+    char     class[MAX_NC_CLASS] = "";
     NC_var **variables = NULL;
     NC_var  *vp = NULL;
     int      ndims, *dims = NULL;
@@ -2677,7 +2677,7 @@ XDR *xdrs;
 NC **handlep;
 {
 #if DEBUG
-  char            vgname[100];
+  char            vgname[MAX_NC_NAME];
   int32           entries;
 #endif
   register int32  cdf_vg = FAIL;
@@ -2685,7 +2685,7 @@ NC **handlep;
   int             status;
 #ifdef OLD_WAY
   register int    found;
-  char            class[128];
+  char            class[MAX_NC_CLASS];
 #endif /* OLD_WAY */
   CONSTR(FUNC,"hdf_read_xdr_cdf");
   intn            ret_value = SUCCEED;
@@ -3218,7 +3218,7 @@ hdf_close(handle)
     int        id, sub_id;
     int32      vg, dim;
     int32      vs;
-    char       class[128] = "";
+    char       class[MAX_NC_CLASS] = "";
     intn       ret_value = SUCCEED;
 #ifdef LATER
     CONSTR(FUNC,"hdf_close"); 

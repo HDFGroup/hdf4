@@ -179,6 +179,9 @@
 #define MAX_NC_NAME MIN(256,MIN(VSNAMELENMAX,VGNAMELENMAX)) */
 
 #define MAX_NC_NAME 256		 /* max length of a name */
+#define MAX_NC_CLASS 128         /* max length of a class name - added this
+        because 128 was used commonly in SD for class name, and this will help
+        changing the class name variable declaration much easier - BMR 4/1/02*/
 #define MAX_VAR_DIMS 32          /* max per variable dimensions */
 
 /* ----------------- Constants for MFGR interface --------------------- */
