@@ -2,10 +2,14 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.8  1993/01/19 05:59:21  koziol
-C Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-C port.  Lots of minor annoyances fixed.
+C Revision 1.9  1993/02/09 21:24:32  briand
+C I modified tstubsf.f so that it does not require the user to press
+C return before performing the test.
 C
+c Revision 1.8  1993/01/19  05:59:21  koziol
+c Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+c port.  Lots of minor annoyances fixed.
+c
 c Revision 1.7  1992/12/01  21:07:48  chouck
 c Fixed tab / space problem so Mac Fortran doesn't complain
 c
@@ -84,9 +88,9 @@ C
       print *, 'out at the end.'
       print *, ' '
       print *, 'Hit <return> to continue.'
-      read(5,100) in
- 100  format(a)
-      in(1:20) = '                    '
+c      read(5,100) in
+c 100  format(a)
+c      in(1:20) = '                    '
       
       print *, ' '
       print *, 'Testing dferrno...'
