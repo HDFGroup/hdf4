@@ -1,4 +1,4 @@
-allstorms.hdf:  
+allstorms.hdf:
 File library version: Major= 4, Minor=0, Release=1
 NCSA HDF Version 4.0 Release 1, Post patch01 1996/05/13
 
@@ -35,7 +35,7 @@ Raster Image Group            : (tag 306)
 	Ref no      3	       8 bytes
 	Ref no      4	       8 bytes
 
-allcomp.hdf:  
+allcomp.hdf:
 File library version: Major= 4, Minor=0, Release=1
 NCSA HDF Version 4.0 Release 1, Post patch01 1996/05/13
 

@@ -1,4 +1,4 @@
-test.hdf:  
+test.hdf:
 File library version: Major= 3, Minor=3, Release=2
 NCSA HDF Version 3.3 Release 2, Novermber 1993
 
@@ -22,7 +22,7 @@ Vgroup                        : (tag 1965)
 	Ref nos: 122 124 126 134 142 151 159 168 171
 Special Scientific Data       : (tag 17086)
 	Ref nos: 59 113 116 119
-test.pck:  
+test.pck:
 File library version: Major= 4, Minor=0, Release=1
 NCSA HDF Version 4.0 Release 1, Post patch01 1996/05/13
 

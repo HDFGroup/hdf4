@@ -309,7 +309,7 @@ void printfilever(int32 file_id)
     if (Hgetfileversion(file_id, &major, &minor, &release, string) == SUCCEED)
       {
         string[LIBVSTR_LEN] = '\0';		/* make it a null terminated string */
-        printf("\nFile library version: ");
+        printf("File library version: ");
         printf("Major= %u, Minor=%u, Release=%u\n%s\n", (unsigned)major, (unsigned)minor, (unsigned)release, string);
       }
     else
