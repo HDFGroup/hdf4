@@ -2,7 +2,12 @@
 # $Header$
 #
 # $Log$
-# Revision 1.2  1992/03/24 20:40:09  sxu
+# Revision 1.3  1992/04/27 17:01:33  sxu
+# Added Fortran test  programs: tdfr8F, tdf24F, tdfpF, tdfsd_ntF
+#      tdfsd_nntF, tdfsd_mmsF, tdfsd_nmmsF, tdfanF, tdfanfileF
+#      and tdfstubsF
+#
+# Revision 1.2  1992/03/24  20:40:09  sxu
 # Bugs fixed in lib and include directories
 #
 # Revision 1.1  1992/03/01  23:39:01  mfolk
@@ -31,15 +36,26 @@
 #              tdf24     (24-bit raster image sets)
 #              tdfp      (palettes)
 #              tdfsd_nt  (scientific data sets, data only)
+#              tdfsd_nnt (same as tdfsd_nt with native number types)
 #              tdfsd_mms (scientific data sets, data, max/min and scales)
+#              tdfsd_nmms(same as tdfsd_mms with native number types)
 #              tdfan     (annotations for HDF objects)
 #              tdfanfile (annotations for HDF files)
 #              tdfstubs  (emulation of old lower level i/o routines)
 #
 # The application layer FORTRAN test programs are:
 #
+#              tdfr8F     (8-bit raster image sets)
+#              tdf24F     (24-bit raster image sets)
+#              tdfp       (Palettes)
 #              tdfsd_ntF  (scientific data sets, data only)
+#              tdfsd_nntF (same as tdfsd_nntF except all data types are native 
+#                           machine number types)
 #              tdfsd_mmsF (scientific data sets, data, max/min and scales)
+#	       tdfsd_nmmsF(same as tdfsd_mmsF with native number types)
+#              tdfanF     (annotations for HDF objects)
+#              tdfanfileF (annotations for HDF files)
+#              tdfstubsF  (emulation of old lower level i/o routines)
 #
 # The lower level C test programs are:
 #
@@ -92,26 +108,27 @@
 MACHINE=SUN
 
 # ==> specify your fortran compiler
-FC=f77 -g
-FFLAGS=
+FC=f77 
+FFLAGS=  -g
 
 # ==> specify your C compiler
 CC=cc
 CFLAGS=  -g -D${MACHINE} $(IFLAGS)
 
 # ==> where are your hdf.h, hdfi.h and vg.h files located?
-IFLAGS=   -I/hdf/home/sxu/3.2tar/include -I.
+IFLAGS=   -I../include -I.
 
 # ==> where is your HDF library (libdf.a) located?
-LIBS= /hdf/home/sxu/3.2tar/lib/libdf.a
+LIBS= ../lib/libdf.a
 
 RM=/bin/rm
 RMFLAGS=-f
 
-CTESTS= tdfr8 tdf24 tdfsd_mms tdfsd_nt tdfan tdfanfile tdfp tdfstubs 
+CTESTS= tdfr8 tdf24 tdfsd_mms tdfsd_nmms tdfsd_nnt tdfsd_nt tdfan \
+        tdfanfile tdfp tdfstubs 
 CHDRS = df.h dfi.h dfsd.h vg.h df.h dfi.h dfstubs.h
-CTSRCS= tdfr8.c tdf24.c tdfsd_mms.c tdfsd_nt.c tdfan.c tdfanfile.c \
-        tdfp.c tdfstubs.c 
+CTSRCS= tdfr8.c tdf24.c tdfsd_mms.c tdfsd_nmms.c tdfsd_nnt.c \
+        tdfsd_nt.c tdfan.c tdfanfile.c tdfp.c tdfstubs.c 
 CTOBJS= tdfr8.o tdf24.o tdfsd_mms.o tdfsd_nt.o tdfan.o tdfanfile.o \
         tdfp.o tdfstubs.o 
 
@@ -120,9 +137,12 @@ HHDRS = hfile.h hdf.h hdfi.h herr.h hproto.h
 HTSRCS= thfile.c thfile1.c terr.c thblocks.c thextelt.c 
 HTOBJS= thfile.o thfile1.o terr.o thblocks.o thextelt.o
 
-FTESTS= tdfsd_ntF
-FSRCS = tdfsd_mmsF.c tdfsd_ntF.c
-FOBJS = tdfsd_mmsF.o tdfsd_ntF.o
+FTESTS= tdfr8F tdf24F tdfpF tdfanF tdfanfileF tdfsd_ntF tdfsd_nntF \
+        tdfsd_mmsF tdfsd_nmmsF tdfstubsF
+FSRCS = tdfr8F.f tdf24F.f tdfpF.f tdfanF.f tdfanfileF.f tdfsd_ntF.f \
+        tdfsd_nntF.f tdfsd_mmsF.f  tdfsd_nmmsF.f tdfstubsF.f
+FOBJS = tdfr8F.o tdf24F.o tdfpF.o tdfanF.o tdfanfileF.o tdfsd_ntF.o \
+        tdfsd_nntF.o tdfsd_mmsF.o tdfsd_nmmsF.o tdfstubsF.o
 
 all: ctests ftests htests
 
@@ -147,20 +167,51 @@ tdfsd_nt:    tdfsd_nt.c
 tdfsd_mms:    tdfsd_mms.c 
 	$(CC) $(CFLAGS) -D$(MACHINE) tdfsd_mms.c $(LIBS) -o tdfsd_mms
 
+tdfsd_nnt:    tdfsd_nnt.c 
+	$(CC) $(CFLAGS) -D$(MACHINE) tdfsd_nnt.c $(LIBS) -o tdfsd_nnt
+
+tdfsd_nmms:    tdfsd_nmms.c 
+	$(CC) $(CFLAGS) -D$(MACHINE) tdfsd_nmms.c $(LIBS) -o tdfsd_nmms
+
 tdfan:  tdfan.c 
 	$(CC) $(CFLAGS) -D$(MACHINE) tdfan.c $(LIBS) -o tdfan
 
-tdfanfile:     tdfan.c 
+tdfanfile:     tdfanfile.c 
 	$(CC) $(CFLAGS) -D$(MACHINE) tdfanfile.c $(LIBS) -o tdfanfile
+
 
 tdfstubs:     tdfstubs.c 
 	$(CC) $(CFLAGS) -D$(MACHINE) tdfstubs.c $(LIBS) -o tdfstubs
 
+tdfr8F:	       tdfr8F.f
+	$(FC) $(FFLAGS) tdfr8F.f $(LIBS) -o tdfr8F 
+
+tdf24F:		tdf24F.f
+	$(FC) $(FFLAGS) tdf24F.f $(LIBS) -o tdf24F
+
+tdfanF:		tdfanF.f
+	$(FC) $(FFLAGS) tdfanF.f $(LIBS) -o tdfanF
+
+tdfanfileF:   tdfanfileF.f
+	$(FC) $(FFLAGS) tdfanfileF.f $(LIBS)  -o tdfanfileF
+
+tdfpF:   tdfpF.f
+	$(FC) $(FFLAGS) tdfpF.f $(LIBS)  -o tdfpF
+
+tdfstubsF:   tdfstubsF.f
+	$(FC) $(FFLAGS) tdfstubsF.f $(LIBS)  -o tdfstubsF
+
 tdfsd_ntF:   tdfsd_ntF.f
 	$(FC) $(FFLAGS) tdfsd_ntF.f $(LIBS)  -o tdfsd_ntF 
 
-#tdfsd_mmsF:   tdfsd_mmsF.f 
-#	$(FC) $(FFLAGS) tdfsd_mmsF.f $(LIBS) -o tdfsd_mmsF
+tdfsd_nntF:   tdfsd_nntF.f
+	$(FC) $(FFLAGS) tdfsd_nntF.f $(LIBS)  -o tdfsd_nntF
+
+tdfsd_mmsF:   tdfsd_mmsF.f 
+	$(FC) $(FFLAGS) tdfsd_mmsF.f $(LIBS) -o tdfsd_mmsF
+
+tdfsd_nmmsF:   tdfsd_nmmsF.f 
+	$(FC) $(FFLAGS) tdfsd_nmmsF.f $(LIBS) -o tdfsd_nmmsF
 
 thfile:     thfile.c 
 	$(CC) $(CFLAGS) -D$(MACHINE) thfile.c $(LIBS) -o thfile
