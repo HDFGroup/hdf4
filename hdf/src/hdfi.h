@@ -88,7 +88,7 @@
 #define FAR /* */
 #endif
 
-#if defined(SUN) || defined(sun) || defined(__sun__)
+#if (defined(SUN) || defined(sun) || defined(__sun__)) & !defined(__i386)
 #ifdef __STDC__
 #define ANSISUN
 #else /* __STDC__ */
@@ -98,7 +98,7 @@
 
 #if defined(ANSISUN)
 
-#ifndef SUN
+#if !defined(SUN)
 #define SUN
 #endif
 
@@ -153,7 +153,7 @@ typedef double            float64;
 
 #if defined(KNRSUN)
 
-#ifndef SUN
+#if !defined(SUN)
 #define SUN
 #endif
 

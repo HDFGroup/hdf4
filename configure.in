@@ -51,6 +51,7 @@ case "${host}" in
   i[345]86-*-linux*)      host_makefile_frag=config/mh-linux ;;
   i[345]86-*-freebsd*)    host_makefile_frag=config/mh-fbsd ;;
   *-ibm-aix*)             host_makefile_frag=config/mh-aix ;;
+  i386-*-solaris2*)       host_makefile_frag=config/mh-solarisx86 ;;
   *-*-solaris2*)          host_makefile_frag=config/mh-solaris ;;
   *-sun-*)		  host_makefile_frag=config/mh-sun ;;
   *-hp-hpux*)             host_makefile_frag=config/mh-hpux ;;
@@ -116,6 +117,7 @@ case "${host}" in
   i[345]86-*-linux*)      files=config/custom_linux ;;
   i[345]86-*-freebsd*)    files=config/custom_fbsd ;;
   *-ibm-aix*)             files=config/custom_aix ;;
+  i386-*-solaris2*)       files=config/custom_solarisx86 ;;
   *-*-solaris2*)          files=config/custom_solaris ;;
   *-sun-*)		  files=config/custom_sun ;;
   *-hp-hpux*)             files=config/custom_hpux ;;

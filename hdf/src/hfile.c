@@ -3861,7 +3861,7 @@ HInew_dd_block(filerec_t * file_rec, int16 ndds, const char *FUNC)
 		  p = ptbuf;
 		  INT32ENCODE(p, nextoffset);
           if (HPseek(file_rec, offset) == FAIL)
-              HRETURN_ERROR(DFE_SEEKERROR, NULL);
+              HRETURN_ERROR(DFE_SEEKERROR, FAIL);
 		  if (HPwrite(file_rec, ptbuf, OFFSET_SZ) == FAIL)
 			  HRETURN_ERROR(DFE_WRITEERROR, FAIL);
 	  }		/* end else */

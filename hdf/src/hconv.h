@@ -90,7 +90,7 @@
 /* CONSTANT DEFINITIONS                                                      */
 /*****************************************************************************/
 /* Generally Big-Endian machines */
-#if !defined(VMS) && !defined(PC) && !defined(MIPSEL) && !defined(DEC_ALPHA) && !defined(I860)
+#if !defined(VMS) && !defined(PC) && !defined(MIPSEL) && !defined(DEC_ALPHA) && !defined(I860) && !defined(SUN386)
 #   if !defined(UNICOS)
 #       define UI8_IN     DFKnb1b   /* Unsigned Integer, 8 bits */
 #       define UI8_OUT    DFKnb1b
@@ -178,7 +178,7 @@
 #       define LF64_OUT   DFKluo8f
 
 #   endif   /* !UNICOS */
-#else  /* must be VMS || PC || MIPSEL || DEC_ALPHA || I860 (Generally, little-endian machines */
+#else  /* must be VMS || PC || MIPSEL || DEC_ALPHA || I860 || SUN386 (Generally, little-endian machines */
 #   define UI8_IN     DFKnb1b   /* Big-Endian IEEE support */
 #   define UI8_OUT    DFKnb1b   /* The s in DFKsb2b is for swap */
 #   define SI16_IN    DFKsb2b

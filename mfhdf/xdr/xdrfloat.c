@@ -19,7 +19,7 @@ static char sccsid[] = "@(#)xdr_float.c 1.12 87/08/11 Copyr 1984 Sun Micro";
 #include "types.h"
 #include "xdr.h"
 
-#ifdef i386
+#if defined(i386) | defined(__i386)
 #define SWAP_DOUBLES
 #endif
 #ifdef MIPSEL

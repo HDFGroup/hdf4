@@ -181,24 +181,24 @@ VSsetfields(int32 vkey, const char *fields)
 
           /* allocate space for the internal WRITELIST structures */
           if((wlist->type=HDmalloc(sizeof(int16)*ac))==NULL)
-              HRETURN_ERROR(DFE_NOSPACE,NULL);
+              HRETURN_ERROR(DFE_NOSPACE,FAIL);
           if((wlist->isize=HDmalloc(sizeof(int16)*ac))==NULL)
             {
               HDfree(wlist->type);
-              HRETURN_ERROR(DFE_NOSPACE,NULL);
+              HRETURN_ERROR(DFE_NOSPACE,FAIL);
             } /* end if */
           if((wlist->off=HDmalloc(sizeof(int16)*ac))==NULL)
             {
               HDfree(wlist->isize);
               HDfree(wlist->type);
-              HRETURN_ERROR(DFE_NOSPACE,NULL);
+              HRETURN_ERROR(DFE_NOSPACE,FAIL);
             } /* end if */
           if((wlist->order=HDmalloc(sizeof(int16)*ac))==NULL)
             {
               HDfree(wlist->off);
               HDfree(wlist->isize);
               HDfree(wlist->type);
-              HRETURN_ERROR(DFE_NOSPACE,NULL);
+              HRETURN_ERROR(DFE_NOSPACE,FAIL);
             } /* end if */
           if((wlist->name=HDmalloc(sizeof(char *)*ac))==NULL)
             {
@@ -206,7 +206,7 @@ VSsetfields(int32 vkey, const char *fields)
               HDfree(wlist->off);
               HDfree(wlist->isize);
               HDfree(wlist->type);
-              HRETURN_ERROR(DFE_NOSPACE,NULL);
+              HRETURN_ERROR(DFE_NOSPACE,FAIL);
             } /* end if */
           if((wlist->esize=HDmalloc(sizeof(int16)*ac))==NULL)
             {
@@ -215,7 +215,7 @@ VSsetfields(int32 vkey, const char *fields)
               HDfree(wlist->off);
               HDfree(wlist->isize);
               HDfree(wlist->type);
-              HRETURN_ERROR(DFE_NOSPACE,NULL);
+              HRETURN_ERROR(DFE_NOSPACE,FAIL);
             } /* end if */
 
           for (i = 0; i < ac; i++)
@@ -236,7 +236,7 @@ VSsetfields(int32 vkey, const char *fields)
                               HDfree(wlist->off);
                               HDfree(wlist->isize);
                               HDfree(wlist->type);
-                              HRETURN_ERROR(DFE_NOSPACE,NULL);
+                              HRETURN_ERROR(DFE_NOSPACE,FAIL);
                             } /* end if */
                           HDstrcpy(wlist->name[wlist->n], vs->usym[j].name);
                           order = vs->usym[j].order;
@@ -278,7 +278,7 @@ VSsetfields(int32 vkey, const char *fields)
                                     HDfree(wlist->off);
                                     HDfree(wlist->isize);
                                     HDfree(wlist->type);
-                                    HRETURN_ERROR(DFE_NOSPACE,NULL);
+                                    HRETURN_ERROR(DFE_NOSPACE,FAIL);
                                   } /* end if */
                                 HDstrcpy(wlist->name[wlist->n], rstab[j].name);
                                 order = rstab[j].order;
