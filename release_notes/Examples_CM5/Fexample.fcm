@@ -2,7 +2,6 @@
 	implicit none
 	include "/v/u2/ncsa/acheng/CMHDF/include/hdf.inc"
 	include "/v/u2/ncsa/acheng/CMHDF/include/dffunc.inc"
-	include "/v/u2/ncsa/acheng/CMHDF/include/netcdf.inc"
 
 	integer xsize, ysize, zsize
 	parameter (xsize=256, ysize=256, zsize=256)
@@ -10,7 +9,7 @@
 	integer	dims(3)/xsize, ysize, zsize/
 	integer	begin(3)/0, 0, 0/
 	integer	edges(3)/xsize, ysize, zsize/
-	integer strides(3)/0, 0, 0/
+	integer strides(3)/1, 1, 1/
 	integer	cosmo_cube(xsize, ysize, zsize)
 	integer	cosmo_cube2(xsize, ysize, zsize)
 	integer	rank, nt, nattr
