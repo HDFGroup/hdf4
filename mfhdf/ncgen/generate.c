@@ -714,6 +714,8 @@ ncftype(type)
 {
     switch (type) {
 #ifdef cray
+#ifndef _CRAYMPP
+      /* Traditional vector pipe cray */
       case NC_BYTE:
 	return "integer";
       case NC_CHAR:
@@ -726,6 +728,21 @@ ncftype(type)
 	return "real";
       case NC_DOUBLE:
 	return "real";		/* we don't support CRAY 128-bit doubles */
+#else
+      /* a T3D/E.  INTEGER and REAL are both 8 bytes. */
+      case NC_BYTE:
+	return "integer";
+      case NC_CHAR:
+	return "character";
+      case NC_SHORT:
+	return "integer";
+      case NC_LONG:
+	return "integer*4";
+      case NC_FLOAT:
+	return "real*4";
+      case NC_DOUBLE:
+	return "real";
+#endif	/* (_CRAYMPP) */
 #else
       case NC_BYTE:
 	return "byte";		/* non-standard */
