@@ -28,8 +28,9 @@
 #define DFTAG_COMPRESSED    40  /* compressed special element */
 #define DFTAG_VLINKED       50  /* variable-len linked-block header */
 #define DFTAG_VLINKED_DATA  51  /* variable-len linked-block data */
-#define DFTAG_CHUNKED       60  /* chunked special element header */
-#define DFTAG_CHUNK         61  /* chunk  element */
+#define DFTAG_CHUNKED       60  /* chunked special element header
+                                   (for expansion, not used )*/
+#define DFTAG_CHUNK         61  /* chunk element */
 
 /* utility set */
 #define DFTAG_FID   ((uint16)100)   /* File identifier */
