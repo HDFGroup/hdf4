@@ -404,9 +404,12 @@ NULL)
 }	/* end print_file_desc() */
 
 static void
-print_list_obj(list_info_t * l_opts, objinfo_t * o_info, intn o_num)
+print_list_obj(list_info_t * l_opts, objinfo_t * o_info, intn o_num, int32 an_id)
 {
     char       *s;
+    char       *buf;
+    int32 ann_num, ann_length, retn, ann_id,i;
+    int32      *ann_list;
 
     switch (l_opts->verbosity)
       {
@@ -436,13 +439,42 @@ print_list_obj(list_info_t * l_opts, objinfo_t * o_info, intn o_num)
           HDfree(s);	/* free tagname string */
           break;
       }		/* end switch */
-    if (l_opts->name == TRUE && o_info->has_label)
-        printf("%*s%s\n", LABEL_FIELD_WIDTH, "Name/Label=", o_info->lab_info);
+    if (l_opts->name == TRUE && o_info->has_label){
+        ann_num = ANnumann(an_id, AN_DATA_LABEL,o_info->tag, o_info->ref);
+        ann_list = HDmalloc(ann_num*sizeof(int32));
+        retn = ANannlist(an_id,AN_DATA_LABEL,o_info->tag, o_info->ref, ann_list);
+
+        for(i=0; i<ann_num; i++){
+        ann_id = *ann_list+i;
+        ann_length =  ANannlen(ann_id);
+        buf= HDmalloc((ann_length+1) * sizeof(char));
+        ANreadann(ann_id, buf, ann_length+1);
+        printf("%*s%s\n", LABEL_FIELD_WIDTH, "Name/Label=", buf);
+        HDfree(buf);
+        }
+    }
+      /*  printf("%*s%s\n", LABEL_FIELD_WIDTH, "Name/Label=", o_info->lab_info);*/
     if (l_opts->class == TRUE)
       {
       }		/* end if */
-    if (l_opts->desc == TRUE && o_info->has_desc)
-        printf("%*s%s\n", DESC_FIELD_WIDTH, "Description=", o_info->desc_info);
+    if (l_opts->desc == TRUE && o_info->has_desc){
+        ann_num = ANnumann(an_id, AN_DATA_DESC, o_info->tag, o_info->ref);
+        ann_list = HDmalloc(ann_num*sizeof(int32));
+       
+        retn = ANannlist(an_id,AN_DATA_DESC, o_info->tag, o_info->ref, ann_list)
+;
+
+        for(i=0; i<ann_num; i++){
+        ann_id = *ann_list+i;
+        ann_length =  ANannlen(ann_id);
+        buf= HDmalloc((ann_length+1) * sizeof(char));
+        ANreadann(ann_id, buf, ann_length+1);
+        printf("%*s%s\n", LABEL_FIELD_WIDTH, "Description=", buf);
+        HDfree(buf);
+        }
+    }
+
+       /* printf("%*s%s\n", DESC_FIELD_WIDTH, "Description=", o_info->desc_info); */
     if (l_opts->spec == TRUE && o_info->is_special)
       {
           switch (o_info->spec_info->key)
@@ -564,21 +596,21 @@ do_list(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts)
 
                           /* check for file label */
                       if (list_opts.name == TRUE)
-                          {
-                           printf("--------------------------------------------------\n");
+
+
                            print_file_label(an_id);
-                           printf("--------------------------------------------------\n");
-                           print_data_label(an_id);
-                           printf("--------------------------------------------------\n");}
+
+
+
 
                           /* check for file descriptions */
                       if (list_opts.desc == TRUE)
-                          {
-                           printf("--------------------------------------------------\n");
+
+
                            print_file_desc(f_name, an_id);
-                           printf("--------------------------------------------------\n");
-                           print_data_desc(f_name, an_id);
-                           printf("--------------------------------------------------\n");}
+
+
+
 
                           /* sort list */
                       sort_obj_list(o_list, list_opts.order);
@@ -623,13 +655,13 @@ do_list(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts)
                                     default:
                                     case LNONE:
                                     case LGROUP:
-                                        print_list_obj(&list_opts, o_info, obj_num);
+                                        print_list_obj(&list_opts, o_info, obj_num,an_id);
                                         break;
 
                                     case LTAGNUM:
                                     case LTAGNAME:
                                         if (list_opts.limit_tag == o_info->tag)
-                                            print_list_obj(&list_opts, o_info, obj_num);
+                                            print_list_obj(&list_opts, o_info, obj_num, an_id);
                                         break;
                                     }	/* end switch */
                                   obj_num++;
