@@ -36,10 +36,4 @@ if(ret == FAIL) {printf("*** UNEXPECTED RETURN from %s is %d at line %4d in %s\n
 
 #define MESSAGE(v,a) {if (Verbocity>v) {a}}
 
-
-#ifdef PROTOTYPE
-#define    PROTO(x) x
-#else
-#define    PROTO(x) ()
-#endif
 #endif /* _TUTILS_H */

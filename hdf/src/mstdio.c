@@ -69,12 +69,7 @@ static char RcsId[] = "@(#)$Revision$";
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPmstdio_stread(accrec_t *access_rec)
-#else
-int32 HCPmstdio_stread(access_rec)
-    accrec_t *access_rec;
-#endif
 {
     CONSTR(FUNC,"HCPmstdio_stread");
     compinfo_t *info;               /* information on the special element */
@@ -110,12 +105,7 @@ int32 HCPmstdio_stread(access_rec)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPmstdio_stwrite(accrec_t *access_rec)
-#else
-int32 HCPmstdio_stwrite(access_rec)
-    accrec_t *access_rec;
-#endif
 {
     CONSTR(FUNC,"HCPmstdio_stwrite");
     compinfo_t *info;               /* information on the special element */
@@ -164,14 +154,7 @@ printf("HCPmstdio_stwrite(): after coder_funcs.write=%p\n",info->cinfo.coder_fun
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPmstdio_seek(accrec_t *access_rec, int32 offset, int origin)
-#else
-int32 HCPmstdio_seek(access_rec, offset, origin)
-    accrec_t *access_rec;
-    int32 offset;
-    int origin;
-#endif
 {
     CONSTR(FUNC,"HCPmstdio_seek");
     compinfo_t *info;               /* information on the special element */
@@ -209,14 +192,7 @@ int32 HCPmstdio_seek(access_rec, offset, origin)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPmstdio_read(accrec_t *access_rec, int32 length, VOIDP data)
-#else
-int32 HCPmstdio_read(access_rec, length, data)
-    accrec_t *access_rec;      /* access record */
-    int32 length;              /* length of data to read in */
-    VOIDP data;                        /* data buffer */
-#endif
 {
     CONSTR(FUNC,"HCPmstdio_read");
     compinfo_t *info;       /* information on the special element */
@@ -253,14 +229,7 @@ int32 HCPmstdio_read(access_rec, length, data)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPmstdio_write(accrec_t *access_rec, int32 length, const VOIDP data)
-#else
-int32 HCPmstdio_write(access_rec, length, data)
-    accrec_t *access_rec;   /* access record */
-    int32 length;           /* length of data to write */
-    const VOIDP data;             /* data buffer */
-#endif
 {
     CONSTR(FUNC,"HCPmstdio_write");
     compinfo_t *info;       /* information on the special element */
@@ -311,23 +280,9 @@ printf("HCPmstdio_write(): after function ptr call\n");
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPmstdio_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
     uint16 *pref, int32 *plength, int32 *poffset,int32 *pposn, int16 *paccess,
     int16 *pspecial)
-#else
-int32 HCPmstdio_inquire(access_rec, pfile_id, ptag, pref, plength, poffset,
-            pposn, paccess, pspecial)
-     accrec_t *access_rec;     /* access record */
-     int32 *pfile_id;          /* ptr to file id, OUT */
-     uint16 *ptag;             /* ptr to tag of information, OUT */
-     uint16 *pref;             /* ptr to ref of information, OUT */
-     int32 *plength;           /* ptr to length of data element, OUT */
-     int32 *poffset;           /* ptr to offset of data element, OUT */
-     int32 *pposn;             /* ptr to position of access in element, OUT */
-     int16 *paccess;           /* ptr to access mode, OUT */
-     int16 *pspecial;          /* ptr to special code */
-#endif
 {
     CONSTR(FUNC,"HCPmstdio_inquire");
     compinfo_t *info;       /* information on the special element */
@@ -359,12 +314,7 @@ int32 HCPmstdio_inquire(access_rec, pfile_id, ptag, pref, plength, poffset,
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPmstdio_endaccess(accrec_t *access_rec)
-#else
-int32 HCPmstdio_endaccess(access_rec)
-    accrec_t *access_rec;      /* access record to dispose of */
-#endif
 {
     CONSTR(FUNC,"HCPmstdio_endaccess");
     compinfo_t *info;       /* information on the special element */

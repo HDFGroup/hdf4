@@ -39,7 +39,7 @@
 #ifdef INCLUDES_ARE_ANSI
 #include <stdlib.h>		/* to declare getenv() */
 #else
-extern char * getenv PROTO((const char * name));
+extern char * getenv (const char * name);
 #endif
 #endif
 
@@ -125,11 +125,7 @@ static long max_num_barray = 0;		/* max simultaneously alloced */
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 print_mem_stats (VOID)
-#else
-print_mem_stats ()
-#endif
 {
   /* since this is only a debugging stub, we can cheat a little on the
    * trace message mechanism... helpful 'cuz trace_message can't handle longs.
@@ -165,12 +161,7 @@ print_mem_stats ()
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 out_of_memory (int which)
-#else
-out_of_memory (which)
-int which;
-#endif
 /* Report an out-of-memory error and stop execution */
 /* If we compiled MEM_STATS support, report alloc requests before dying */
 {
@@ -198,12 +189,7 @@ static small_ptr small_list;	/* head of list */
 
 
 METHODDEF VOIDP
-#ifdef PROTOTYPE
 alloc_small (size_t sizeofobject)
-#else
-alloc_small (sizeofobject)
-size_t sizeofobject;
-#endif
 /* Allocate a "small" object */
 {
   small_ptr result;
@@ -230,12 +216,7 @@ size_t sizeofobject;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 free_small (VOIDP ptr)
-#else
-free_small (ptr)
-VOIDP ptr;
-#endif
 /* Free a "small" object */
 {
   small_ptr hdr;
@@ -279,12 +260,7 @@ static medium_ptr medium_list;	/* head of list */
 
 
 METHODDEF VOIDP
-#ifdef PROTOTYPE
 alloc_medium (size_t sizeofobject)
-#else
-alloc_medium (sizeofobject)
-size_t sizeofobject;
-#endif
 /* Allocate a "medium-size" object */
 {
   medium_ptr result;
@@ -311,12 +287,7 @@ size_t sizeofobject;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 free_medium (VOIDP ptr)
-#else
-free_medium (ptr)
-VOIDP ptr;
-#endif
 /* Free a "medium-size" object */
 {
   medium_ptr hdr;
@@ -368,13 +339,7 @@ static small_sarray_ptr small_sarray_list; /* head of list */
 
 
 METHODDEF JSAMPARRAY
-#ifdef PROTOTYPE
 alloc_small_sarray (long samplesperrow, long numrows)
-#else
-alloc_small_sarray (samplesperrow, numrows)
-long samplesperrow;
-long numrows;
-#endif
 /* Allocate a "small" (all-in-memory) 2-D sample array */
 {
   small_sarray_ptr hdr;
@@ -430,12 +395,7 @@ long numrows;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 free_small_sarray (JSAMPARRAY ptr)
-#else
-free_small_sarray (ptr)
-JSAMPARRAY ptr;
-#endif
 /* Free a "small" (all-in-memory) 2-D sample array */
 {
   small_sarray_ptr hdr;
@@ -487,13 +447,7 @@ static small_barray_ptr small_barray_list; /* head of list */
 
 
 METHODDEF JBLOCKARRAY
-#ifdef PROTOTYPE
 alloc_small_barray (long blocksperrow, long numrows)
-#else
-alloc_small_barray (blocksperrow, numrows)
-long blocksperrow;
-long numrows;
-#endif
 /* Allocate a "small" (all-in-memory) 2-D coefficient-block array */
 {
   small_barray_ptr hdr;
@@ -549,12 +503,7 @@ long numrows;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 free_small_barray (JBLOCKARRAY ptr)
-#else
-free_small_barray (ptr)
-JBLOCKARRAY ptr;
-#endif
 /* Free a "small" (all-in-memory) 2-D coefficient-block array */
 {
   small_barray_ptr hdr;
@@ -679,14 +628,7 @@ static big_barray_ptr big_barray_list; /* head of list */
 
 
 METHODDEF big_sarray_ptr
-#ifdef PROTOTYPE
 request_big_sarray (long samplesperrow, long numrows, long unitheight)
-#else
-request_big_sarray (samplesperrow, numrows, unitheight)
-long samplesperrow;
-long numrows;
-long unitheight;
-#endif
 /* Request a "big" (virtual-memory) 2-D sample array */
 {
   big_sarray_ptr result;
@@ -707,14 +649,7 @@ long unitheight;
 
 
 METHODDEF big_barray_ptr
-#ifdef PROTOTYPE
 request_big_barray (long blocksperrow, long numrows, long unitheight)
-#else
-request_big_barray (blocksperrow, numrows, unitheight)
-long blocksperrow;
-long numrows;
-long unitheight;
-#endif
 /* Request a "big" (virtual-memory) 2-D coefficient-block array */
 {
   big_barray_ptr result;
@@ -735,15 +670,8 @@ long unitheight;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 alloc_big_arrays (long extra_small_samples, long extra_small_blocks,
 		  long extra_medium_space)
-#else
-alloc_big_arrays (extra_small_samples, extra_small_blocks, extra_medium_space)
-long extra_small_samples;
-long extra_small_blocks;
-long extra_medium_space;
-#endif
 /* Allocate the in-memory buffers for any unrealized "big" arrays */
 /* 'extra' values are upper bounds for total future small-array requests */
 /* and far-heap requests */
@@ -858,13 +786,7 @@ long extra_medium_space;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 do_sarray_io (big_sarray_ptr ptr, bool writing)
-#else
-do_sarray_io (ptr, writing)
-big_sarray_ptr ptr;
-bool writing;
-#endif
 /* Do backing store read or write of a "big" sample array */
 {
   long bytesperrow, file_offset, byte_count, rows, i;
@@ -894,13 +816,7 @@ bool writing;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 do_barray_io (big_barray_ptr ptr, bool writing)
-#else
-do_barray_io (ptr, writing)
-big_barray_ptr ptr;
-bool writing;
-#endif
 /* Do backing store read or write of a "big" coefficient-block array */
 {
   long bytesperrow, file_offset, byte_count, rows, i;
@@ -930,14 +846,7 @@ bool writing;
 
 
 METHODDEF JSAMPARRAY
-#ifdef PROTOTYPE
 access_big_sarray (big_sarray_ptr ptr, long start_row, bool writable)
-#else
-access_big_sarray (ptr, start_row, writable)
-big_sarray_ptr ptr;
-long start_row;
-bool writable;
-#endif
 /* Access the part of a "big" sample array starting at start_row */
 /* and extending for ptr->unitheight rows.  writable is true if  */
 /* caller intends to modify the accessed area. */
@@ -988,14 +897,7 @@ bool writable;
 
 
 METHODDEF JBLOCKARRAY
-#ifdef PROTOTYPE
 access_big_barray (big_barray_ptr ptr, long start_row, bool writable)
-#else
-access_big_barray (ptr, start_row, writable)
-big_barray_ptr ptr;
-long start_row;
-bool writable;
-#endif
 /* Access the part of a "big" coefficient-block array starting at start_row */
 /* and extending for ptr->unitheight rows.  writable is true if  */
 /* caller intends to modify the accessed area. */
@@ -1046,12 +948,7 @@ bool writable;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 free_big_sarray (big_sarray_ptr ptr)
-#else
-free_big_sarray (ptr)
-big_sarray_ptr ptr;
-#endif
 /* Free a "big" (virtual-memory) 2-D sample array */
 {
   big_sarray_ptr * llink;
@@ -1076,12 +973,7 @@ big_sarray_ptr ptr;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 free_big_barray (big_barray_ptr ptr)
-#else
-free_big_barray (ptr)
-big_barray_ptr ptr;
-#endif
 /* Free a "big" (virtual-memory) 2-D coefficient-block array */
 {
   big_barray_ptr * llink;
@@ -1110,11 +1002,7 @@ big_barray_ptr ptr;
  */
 
 METHODDEF VOID
-#if defined ( PROTOTYPE ) && ! defined ( CONVEX )
-free_all (VOID)
-#else
-free_all ()
-#endif
+free_all (void)
 {
   /* First free any open "big" arrays -- these may release small arrays */
   while (big_sarray_list != NULL)
@@ -1151,12 +1039,7 @@ free_all ()
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jselmemmgr (external_methods_ptr emethods)
-#else
-jselmemmgr (emethods)
-external_methods_ptr emethods;
-#endif
 {
   methods = emethods;		/* save struct addr for error exit access */
 

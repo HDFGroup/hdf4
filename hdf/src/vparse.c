@@ -58,15 +58,7 @@ PRIVATE char    sym[50][FIELDNAMELENMAX+1]; /* array of tokens ? */
 #endif /* !macintosh */
 PRIVATE	intn 	nsym;   /* token index ? */
 
-#ifdef PROTOTYPE
 int32 scanattrs (const char *attrs, int32 *attrc, char ***attrv)
-#else
-int32 scanattrs (attrs,attrc,attrv)
-
-     const char	*attrs;		/* field string (input) */
-     int32	*attrc;		/* # of fields (output) */
-     char	***attrv;	/* array of char ptrs to fields (output) */
-#endif
      
 {
     register char   *s, *s0, *ss;

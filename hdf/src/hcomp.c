@@ -90,24 +90,24 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* declaration of the functions provided in this module */
 PRIVATE int32 HCIstaccess
-    PROTO((accrec_t *access_rec, int16 acc_mode));
+    (accrec_t *access_rec, int16 acc_mode);
 
 PRIVATE int32 HCIinit_coder
-    PROTO((comp_coder_info_t *cinfo,comp_coder_t coder_type,
-            comp_info *coder_info));
+    (comp_coder_info_t *cinfo,comp_coder_t coder_type,
+            comp_info *coder_info);
 
 PRIVATE int32 HCIread_header
-    PROTO((filerec_t *file_rec,accrec_t *access_rec,
+    (filerec_t *file_rec,accrec_t *access_rec,
         compinfo_t *info,dd_t *info_dd,comp_info *c_info,
-        model_info *m_info));
+        model_info *m_info);
 
 PRIVATE int32 HCIwrite_header
-    PROTO((filerec_t *file_rec,accrec_t *access_rec,compinfo_t *info,dd_t *dd,
-            uint16 special_tag,uint16 ref));
+    (filerec_t *file_rec,accrec_t *access_rec,compinfo_t *info,dd_t *dd,
+            uint16 special_tag,uint16 ref);
 
 PRIVATE int32 HCIinit_model
-    PROTO((comp_model_info_t *minfo,comp_model_t model_type,
-            model_info *m_info));
+    (comp_model_info_t *minfo,comp_model_t model_type,
+            model_info *m_info);
 
 /* Private buffer */
 PRIVATE uint8 *ptbuf = NULL;
@@ -149,15 +149,8 @@ funclist_t comp_funcs={
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int32 HCIinit_coder(comp_coder_info_t *cinfo,comp_coder_t coder_type,
         comp_info *c_info)
-#else
-PRIVATE int32 HCIinit_coder(cinfo, coder_type, c_info)
-    comp_coder_info_t *cinfo;   /* encoding information to modify */
-    comp_coder_t coder_type;    /* type of encoding to use */
-    comp_info *c_info;      /* encoding information */
-#endif
 {
     CONSTR(FUNC,"HCIinit_coder");  /* for HERROR */
 
@@ -214,15 +207,8 @@ printf("HCIinit_coder(): coder_funcs.write=%p\n",cinfo->coder_funcs.write);
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int32 HCIinit_model(comp_model_info_t *minfo,comp_model_t model_type,
         model_info *m_info)
-#else
-PRIVATE int32 HCIinit_model(minfo, model_type, m_info)
-    comp_model_info_t *minfo;   /* modeling information to modify */
-    comp_model_t model_type;    /* type of modeling to use */
-    model_info *m_info;     /* modeling information */
-#endif
 {
     CONSTR(FUNC,"HCIinit_model");  /* for HERROR */
 
@@ -262,17 +248,8 @@ PRIVATE int32 HCIinit_model(minfo, model_type, m_info)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int32 HCIwrite_header(filerec_t *file_rec,accrec_t *access_rec,
         compinfo_t *info,dd_t *dd,uint16 special_tag,uint16 ref)
-#else
-PRIVATE int32 HCIwrite_header(file_rec,access_rec,info,dd,special_tag,ref)
-    filerec_t *file_rec;    /* file record */
-    accrec_t *access_rec;   /* access element record */
-    compinfo_t *info;       /* special element information */
-    dd_t *dd;               /* the DD of the new element */
-    uint16 special_tag,ref; /* the tag/ref pair of the compressed element */
-#endif
 {
     CONSTR(FUNC,"HCIwrite_header");  /* for HERROR */
     uint8 *p;       /* pointer to the temporary buffer */
@@ -382,19 +359,9 @@ printf("HCIwrite_header(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_le
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int32 HCIread_header(filerec_t *file_rec,accrec_t *access_rec,
         compinfo_t *info,dd_t *info_dd,comp_info *c_info,
         model_info *m_info)
-#else
-PRIVATE int32 HCIread_header(file_rec,access_rec,info,info_dd,c_info,m_info)
-    filerec_t *file_rec;    /* file record */
-    accrec_t *access_rec;   /* access element record */
-    compinfo_t *info;       /* special element information */
-    dd_t *info_dd;          /* the DD of the new element */
-    comp_info *c_info;   /* ptr to compression information to fill in */
-    model_info *m_info; /* ptr to modeling information to fill in */
-#endif
 {
     CONSTR(FUNC,"HCIread_header");    /* for HERROR */
     uint16 header_version;      /* version of the compression header */
@@ -490,19 +457,9 @@ printf("HCIread_header(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_len
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
         model_info *m_info, comp_coder_t coder_type,
         comp_info *c_info)
-#else
-int32 HCcreate(file_id, tag, ref, model_type, m_info, coder_type, c_info)
-    int32 file_id;      /* file record id */
-    uint16 tag, ref;    /* tag/ref of the special data element to create */
-    comp_model_t model_type;    /* type of modeling to use */
-    model_info *m_info;     /* modeling information */
-    comp_coder_t coder_type;    /* type of encoding to use */
-    comp_info *c_info;      /* coding information */
-#endif
 {
     CONSTR(FUNC,"HCcreate");  /* for HERROR */
     filerec_t *file_rec;    /* file record */
@@ -768,13 +725,7 @@ printf("HCcreate(): check 7, coder_funcs.write=%p\n",info->cinfo.coder_funcs.wri
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int32 HCIstaccess(accrec_t *access_rec, int16 acc_mode)
-#else
-PRIVATE int32 HCIstaccess(access_rec, acc_mode)
-    accrec_t *access_rec;   /* access record */
-    int16 acc_mode;           /* access mode */
-#endif
 {
     CONSTR(FUNC,"HCIstaccess");   /* for HERROR */
     dd_t *info_dd;              /* dd of the special information element */
@@ -896,12 +847,7 @@ PRIVATE int32 HCIstaccess(access_rec, acc_mode)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPstread(accrec_t *access_rec)
-#else
-int32 HCPstread(access_rec)
-    accrec_t *access_rec;
-#endif
 {
     CONSTR(FUNC,"HCPstread");     /* for HERROR */
     compinfo_t *info;           /* information on the special element */
@@ -939,12 +885,7 @@ int32 HCPstread(access_rec)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPstwrite(accrec_t *access_rec)
-#else
-int32 HCPstwrite(access_rec)
-    accrec_t *access_rec;
-#endif
 {
     CONSTR(FUNC,"HCPstwrite");    /* for HERROR */
     compinfo_t *info;           /* information on the special element */
@@ -984,14 +925,7 @@ int32 HCPstwrite(access_rec)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPseek(accrec_t *access_rec, int32 offset, intn origin)
-#else
-int32 HCPseek(access_rec, offset, origin)
-    accrec_t *access_rec;
-    int32 offset;
-    intn origin;
-#endif
 {
     CONSTR(FUNC,"HCPseek");   /* for HERROR */
     compinfo_t *info;       /* information on the special element */
@@ -1036,14 +970,7 @@ int32 HCPseek(access_rec, offset, origin)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPread(accrec_t *access_rec, int32 length, VOIDP data)
-#else
-int32 HCPread(access_rec, length, data)
-    accrec_t *access_rec;   /* access record */
-    int32 length;           /* length of data to read in */
-    VOIDP data;             /* data buffer */
-#endif
 {
     CONSTR(FUNC,"HCPread");   /* for HERROR */
     compinfo_t *info;       /* information on the special element */
@@ -1092,14 +1019,7 @@ int32 HCPread(access_rec, length, data)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPwrite(accrec_t *access_rec, int32 length, const VOIDP data)
-#else
-int32 HCPwrite(access_rec, length, data)
-    accrec_t *access_rec;      /* access record */
-    int32 length;              /* length of data to write */
-    const VOIDP data;                        /* data buffer */
-#endif
 {
     CONSTR(FUNC,"HCPwrite");     /* for HERROR */
     compinfo_t *info;       /* information on the special element */
@@ -1177,23 +1097,9 @@ printf("HCPwrite(): after func ptr call\n");
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
     uint16 *pref, int32 *plength, int32 *poffset,int32 *pposn,int16 *paccess,
     int16 *pspecial)
-#else
-int32 HCPinquire(access_rec, pfile_id, ptag, pref, plength, poffset, pposn,
-            paccess, pspecial)
-    accrec_t *access_rec;   /* access record */
-    int32 *pfile_id;        /* ptr to file id, OUT */
-    uint16 *ptag;           /* ptr to tag of information, OUT */
-    uint16 *pref;           /* ptr to ref of information, OUT */
-    int32 *plength;         /* ptr to length of data element, OUT */
-    int32 *poffset;         /* ptr to offset of data element, OUT */
-    int32 *pposn;           /* ptr to position of access in element, OUT */
-    int16 *paccess;         /* ptr to access mode, OUT */
-    int16 *pspecial;        /* ptr to special code, OUT */
-#endif
 {
     dd_t *info_dd=           /* dd of special information */
        &(access_rec->block->ddlist[access_rec->idx]);
@@ -1240,12 +1146,7 @@ int32 HCPinquire(access_rec, pfile_id, ptag, pref, plength, poffset, pposn,
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPendaccess(accrec_t *access_rec)
-#else
-int32 HCPendaccess(access_rec)
-    accrec_t *access_rec;      /* access record to dispose of */
-#endif
 {
     CONSTR(FUNC,"HCPendaccess");      /* for HERROR */
     filerec_t *file_rec=FID2REC(access_rec->file_id);   /* file record */
@@ -1285,12 +1186,7 @@ int32 HCPendaccess(access_rec)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPcloseAID(accrec_t *access_rec)
-#else
-int32 HCPcloseAID(access_rec)
-    accrec_t *access_rec;      /* access record to dispose of */
-#endif
 {
     CONSTR(FUNC,"HCPcloseAID"); /* for HERROR */
     compinfo_t *info;         /* special information record */
@@ -1325,13 +1221,7 @@ int32 HCPcloseAID(access_rec)
         assumed to be non-NULL.
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HCPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
-#else
-int32 HCPinfo(access_rec, info_block)
-     accrec_t        * access_rec;   /* access id */
-     sp_info_block_t * info_block;   /* info_block to fill */
-#endif
 {
     char *FUNC="HXPinfo";      /* for HERROR */
     compinfo_t *info =         /* special information record */

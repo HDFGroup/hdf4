@@ -43,30 +43,22 @@ int interactive;		/* interactive option */
 int verbose;			/* verbose option */
 
 int main
-    PROTO((int argc, char *argv[]));
+    (int argc, char *argv[]);
 void putRaster
-    PROTO((const char *template, int32 xdim, int32 ydim, int imageNumber,
-           uint8 *image));
+    (const char *template, int32 xdim, int32 ydim, int imageNumber, uint8 *image);
 void putPalette
-    PROTO((const char *template, int imageNumber, uint8 *palette));
+    (const char *template, int imageNumber, uint8 *palette);
 void convert
-    PROTO((const char *template, int imageNumber, int32 xdim, int32 ydim,
-           char *stringOut));
+    (const char *template, int imageNumber, int32 xdim, int32 ydim, char *stringOut);
 void fillStr
-    PROTO((const char **template, char **stringOut, char *string, char specialChar));
+    (const char **template, char **stringOut, char *string, char specialChar);
 char *newSpace
-    PROTO((int32 size));
+    (int32 size);
 char *getTemplate
-    PROTO((char *type, int imageNumber));
+    (char *type, int imageNumber);
 
 
-#ifdef PROTOTYPE
 int main(int argc, char *argv[])
-#else
-int main(argc, argv)
-    int argc;
-    char *argv[];
-#endif /* PROTOTYPE */
 {
     int i, imageNumber, ispal, err_val;
     int32 xdim, ydim;
@@ -162,16 +154,8 @@ int main(argc, argv)
  *        imageNumber : (need I say more?)
  *        image : pointer to image array
  */
-#ifdef PROTOTYPE
 void putRaster(const char *template, int32 xdim, int32 ydim, int imageNumber,
 	       uint8 *image)
-#else
-void putRaster(template, xdim, ydim, imageNumber, image)
-    const char *template;
-    char *image;
-    int32 xdim, ydim;
-    int imageNumber;
-#endif /* PROTOTYPE */
 {
     FILE *fd;
     char fileName[DF_MAXFNLEN];
@@ -216,14 +200,7 @@ void putRaster(template, xdim, ydim, imageNumber, image)
  *        imageNumber : Yes, the number of the image
  *        palette : pointer to the palette array
  */
-#ifdef PROTOTYPE
 void putPalette(const char *template, int imageNumber, uint8 *palette)
-#else
-void putPalette(template, imageNumber, palette)
-    const char *template;
-    char *palette;
-    int imageNumber;
-#endif /* PROTOTYPE */
 {
     int i;
     FILE *fd;
@@ -288,16 +265,8 @@ void putPalette(template, imageNumber, palette)
  * OUTPUT:
  *        stringOut : the concocted file name
  */
-#ifdef PROTOTYPE
 void convert(const char *template, int imageNumber, int32 xdim, int32 ydim,
 	     char *stringOut)
-#else
-void convert(template, imageNumber, xdim, ydim, stringOut)
-    const char *template; 
-    char *stringOut;
-    int imageNumber;
-    int32 xdim, ydim;
-#endif /* PROTOTYPE */
 {
     char numStr[20], xStr[20], yStr[20];
 
@@ -340,13 +309,7 @@ void convert(template, imageNumber, xdim, ydim, stringOut)
  * BUG: Both the pointer to the template string and the pointer to the
  *        comverted string are moved to after the position of the conversion.
  */
-#ifdef PROTOTYPE
 void fillStr(const char **template, char **stringOut, char *string, char specialChar)
-#else
-void fillStr(template, stringOut, string, specialChar)
-    const char **template;
-    char **stringOut, *string, specialChar;
-#endif /* PROTOTYPE */
 {
     int templateLen, stringLen, i;
 
@@ -373,12 +336,7 @@ void fillStr(template, stringOut, string, specialChar)
  *        a second call cannot be made while the space is still
  *        in use (somewhere else).
  */
-#ifdef PROTOTYPE
 char *newSpace(int32 size)
-#else
-char *newSpace(size)
-    int32 size;
-#endif /* PROTOTYPE */
 {
     static int32 oldSize = 0;        /* must be static */
     static char *oldSpace = NULL; /* must be static */
@@ -410,13 +368,7 @@ char *newSpace(size)
  *        a second call cannot be made while the template is still
  *        in use (somewhere else).
  */
-#ifdef PROTOTYPE
 char *getTemplate(char *type, int imageNumber)
-#else
-char *getTemplate(type, imageNumber)
-    int imageNumber;
-    char *type;
-#endif /* PROTOTYPE */
 {
     static char template[DF_MAXFNLEN];
 

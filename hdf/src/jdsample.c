@@ -22,12 +22,7 @@
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 upsample_init (decompress_info_ptr cinfo)
-#else
-upsample_init (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   /* no work for now */
 }
@@ -47,26 +42,11 @@ decompress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 int_upsample (decompress_info_ptr cinfo, int which_component,
 	      long input_cols, int input_rows,
 	      long output_cols, int output_rows,
 	      JSAMPARRAY above, JSAMPARRAY input_data, JSAMPARRAY below,
 	      JSAMPARRAY output_data)
-#else
-int_upsample (cinfo, which_component, input_cols, input_rows, output_cols,
-          output_rows, above, input_data, below, output_data)
-decompress_info_ptr cinfo;
-int which_component;
-long input_cols;
-int input_rows;
-long output_cols;
-int output_rows;
-JSAMPARRAY above;
-JSAMPARRAY input_data;
-JSAMPARRAY below;
-JSAMPARRAY output_data;
-#endif
 {
   jpeg_component_info * compptr = cinfo->cur_comp_info[which_component];
   register JSAMPROW inptr, outptr;
@@ -115,26 +95,11 @@ JSAMPARRAY output_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 h2v1_upsample (decompress_info_ptr cinfo, int which_component,
 	       long input_cols, int input_rows,
 	       long output_cols, int output_rows,
 	       JSAMPARRAY above, JSAMPARRAY input_data, JSAMPARRAY below,
 	       JSAMPARRAY output_data)
-#else
-h2v1_upsample (cinfo, which_component, input_cols, input_rows, output_cols,
-           output_rows, above, input_data, below, output_data)
-decompress_info_ptr cinfo;
-int which_component;
-long input_cols;
-int input_rows;
-long output_cols;
-int output_rows;
-JSAMPARRAY above;
-JSAMPARRAY input_data;
-JSAMPARRAY below;
-JSAMPARRAY output_data;
-#endif
 {
   register JSAMPROW inptr, outptr;
   register int invalue;
@@ -185,26 +150,11 @@ JSAMPARRAY output_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 h2v2_upsample (decompress_info_ptr cinfo, int which_component,
 	       long input_cols, int input_rows,
 	       long output_cols, int output_rows,
 	       JSAMPARRAY above, JSAMPARRAY input_data, JSAMPARRAY below,
 	       JSAMPARRAY output_data)
-#else
-h2v2_upsample (cinfo, which_component, input_cols, input_rows, output_cols,
-           output_rows, above, input_data, below, output_data)
-decompress_info_ptr cinfo;
-int which_component;
-long input_cols;
-int input_rows;
-long output_cols;
-int output_rows;
-JSAMPARRAY above;
-JSAMPARRAY input_data;
-JSAMPARRAY below;
-JSAMPARRAY output_data;
-#endif
 {
   register JSAMPROW inptr0, inptr1, outptr;
 #ifdef EIGHT_BIT_SAMPLES
@@ -273,26 +223,11 @@ JSAMPARRAY output_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 fullsize_upsample (decompress_info_ptr cinfo, int which_component,
 		   long input_cols, int input_rows,
 		   long output_cols, int output_rows,
 		   JSAMPARRAY above, JSAMPARRAY input_data, JSAMPARRAY below,
 		   JSAMPARRAY output_data)
-#else
-fullsize_upsample (cinfo, which_component, input_cols, input_rows, output_cols,
-           output_rows, above, input_data, below, output_data)
-decompress_info_ptr cinfo;
-int which_component;
-long input_cols;
-int input_rows;
-long output_cols;
-int output_rows;
-JSAMPARRAY above;
-JSAMPARRAY input_data;
-JSAMPARRAY below;
-JSAMPARRAY output_data;
-#endif
 {
 #ifdef DEBUG			/* for debugging pipeline controller */
   if (input_cols != output_cols || input_rows != output_rows)
@@ -309,12 +244,7 @@ JSAMPARRAY output_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 upsample_term (decompress_info_ptr cinfo)
-#else
-upsample_term (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   /* no work for now */
 }
@@ -327,12 +257,7 @@ decompress_info_ptr cinfo;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jselupsample (decompress_info_ptr cinfo)
-#else
-jselupsample (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   short ci;
   jpeg_component_info * compptr;

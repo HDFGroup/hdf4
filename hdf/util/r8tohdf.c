@@ -29,23 +29,11 @@ static char RcsId[] = "@(#)$Revision$";
 
 int32 xdim, ydim;
 
-#ifdef PROTOTYPE
 int main(int argc, char *argv[]);
 int palconv(char *palfile);
 int imconv(char *outfile, char *imfile, uint16 compress);
-#else
-int main();
-int palconv();
-int imconv();
-#endif /* PROTOTYPE */
 
-#ifdef PROTOTYPE
 int main(int argc, char *argv[]) 
-#else
-int main(argc,argv) 
-    int argc;
-    char *argv[];
-#endif /* PROTOTYPE */
 {
     int i, is_pal = 0, image = 1;
     char *outfile;
@@ -124,12 +112,7 @@ int main(argc,argv)
  *  palconv(file) sets the palette
  */
 
-#ifdef PROTOTYPE
 int palconv(char *palfile)
-#else
-int palconv(palfile)
-char *palfile;
-#endif /* PROTOTYPE */
 {
     uint8 palspace[1024], reds[256], greens[256], blues[256];
     uint8 *p;
@@ -166,14 +149,7 @@ char *palfile;
 }
 
 
-#ifdef PROTOTYPE
 int imconv(char *outfile, char *imfile, uint16 compress)
-#else
-int imconv(outfile, imfile, compress)
-char *outfile;
-char *imfile;
-uint16 compress;
-#endif /* PROTOTYPE */
 {
     int ret;
     char *space;

@@ -71,14 +71,7 @@ struct TestStruct {
   VOID (*Call)();
 } FAR Test[MAXNUMOFTESTS] ;
 
-#ifdef PROTOTYPE
 void InitTest (const char *TheName, VOID (*TheCall)(),const char *TheDescr)
-#else
-void InitTest (TheName, TheCall, TheDescr)
-const char* TheName;
-VOID (*TheCall)();
-const char* TheDescr;
-#endif
 {
     if(Index>=MAXNUMOFTESTS) {
         printf("Uh-oh, too many tests added, increase MAXNUMOFTEST!\n");
@@ -92,13 +85,7 @@ const char* TheDescr;
     Index++;
 }
 
-#ifdef PROTOTYPE
 int main (int argc, char *argv[])
-#else
-int main (argc, argv)
-     int argc;
-     char* argv[];
-#endif
 {
     int CLLoop; /* Command Line Loop */
     int Loop,Loop1;

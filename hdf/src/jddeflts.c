@@ -36,14 +36,7 @@
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 d_progress_monitor (decompress_info_ptr cinfo, long loopcounter, long looplimit)
-#else
-d_progress_monitor (cinfo, loopcounter, looplimit)
-decompress_info_ptr cinfo;
-long loopcounter;
-long looplimit;
-#endif
 {
   /* do nothing */
 }
@@ -67,12 +60,7 @@ long looplimit;
  */
 
 METHODDEF int
-#ifdef PROTOTYPE
 d_read_jpeg_data (decompress_info_ptr cinfo)
-#else
-d_read_jpeg_data (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   cinfo->next_input_byte = cinfo->input_buffer + MIN_UNGET;
 
@@ -121,13 +109,7 @@ decompress_info_ptr cinfo;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 j_d_defaults (decompress_info_ptr cinfo, bool standard_buffering)
-#else
-j_d_defaults (cinfo, standard_buffering)
-decompress_info_ptr cinfo;
-bool standard_buffering;
-#endif
 /* NB: the external methods must already be set up. */
 {
   short i;

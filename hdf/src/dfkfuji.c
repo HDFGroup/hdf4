@@ -99,21 +99,13 @@ static char RcsId[] = "@(#)$Revision$";
 #define pi4f_sign 0x80000000
 #define pi4f_tiss 0x007fffff
                                                          
-#ifdef PROTOTYPE
 int DFKpi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKpi4f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int32 i,k, ibs, ibe, ibt;
 
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   uint32 *buf;
   char *FUNC="DFKpi4f";
 
@@ -169,22 +161,14 @@ uint32 num_elm, source_stride, dest_stride;
 #define   po4f_tis   0x00FFFFFF
 #define   po4f_etis  0x007FFFFF
 
-#ifdef PROTOTYPE 
 int DFKpo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKpo4f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
 
   int32 i, ibs, ibe, ibt, it, k;
 
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKpi4f";
   uint32 *buf;
   uint8 exp;
@@ -245,19 +229,11 @@ uint32 num_elm, source_stride, dest_stride;
 #define pi8f_tiss 0x000fffff
 #define pi8f_maxr 0xffffffff
 
-#ifdef PROTOTYPE
 int DFKpi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKpi8f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest   = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKpi8f"; 
   int i;
   int32 ibs,ibe,ibt1,ibt2,isht,k;
@@ -342,19 +318,11 @@ uint32 num_elm, source_stride, dest_stride;
 #define  po8f_nrm   0x00f00000 
 static int32 take[4] = {0x007fffff, 0x003fffff, 0x001fffff, 0x000fffff};
 static int32 look[4] = {0x00800000, 0x00400000, 0x00200000, 0x00100000};
-#ifdef PROTOTYPE
 int DFKpo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKpo8f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif				/* PROTOTYPE */
   int32 ibs, ibe, ibt1, ibt2, it, isht;
   int i,k;
   int32 *buf;
@@ -454,20 +422,12 @@ uint32 num_elm, source_stride, dest_stride;
 #define LPI4F_MASKC 0xffff0000
 #define LPI4F_MASKD 0x0000ffff
                                                          
-#ifdef PROTOTYPE
 int DFKlpi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKlpi4f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     int32 i,k, ibs, ibe, ibt;
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
     uint32 *buf;
     uint32 temp;
     char *FUNC="DFKpi4f";
@@ -535,20 +495,12 @@ uint32 num_elm, source_stride, dest_stride;
 #define LPO4F_MASKC 0xffff0000
 #define LPO4F_MASKD 0x0000ffff
 
-#ifdef PROTOTYPE 
 int DFKlpo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKlpo4f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     int32 i, ibs, ibe, ibt, it, k;
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
     char *FUNC="DFKpi4f";
     uint32 *buf;
     uint32 temp;
@@ -620,19 +572,11 @@ uint32 num_elm, source_stride, dest_stride;
 #define LPI8F_MASKC 0xffff0000
 #define LPI8F_MASKD 0x0000ffff
 
-#ifdef PROTOTYPE
 int DFKlpi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKlpi8f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest   = (uint8*)d;
-#endif /* PROTOTYPE */
     char *FUNC="DFKpi8f";
     intn i;
     int32 ibs,ibe,ibt1,ibt2,isht,k;
@@ -738,19 +682,11 @@ uint32 num_elm, source_stride, dest_stride;
 static int32 ltake[4] = {0x007fffff, 0x003fffff, 0x001fffff, 0x000fffff};
 static int32 llook[4] = {0x00800000, 0x00400000, 0x00200000, 0x00100000};
 
-#ifdef PROTOTYPE
 int DFKlpo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKlpo8f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif				/* PROTOTYPE */
     int32 ibs, ibe, ibt1, ibt2, it, isht;
     int i,k;
     int32 *buf;

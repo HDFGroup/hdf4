@@ -53,19 +53,19 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* declaration of the functions provided in this module */
 PRIVATE int32 HCIcrle_staccess
-    PROTO((accrec_t *access_rec, int16 acc_mode));
+    (accrec_t *access_rec, int16 acc_mode);
 
 PRIVATE int32 HCIcrle_init
-    PROTO((accrec_t *access_rec));
+    (accrec_t *access_rec);
 
 PRIVATE int32 HCIcrle_decode
-    PROTO((compinfo_t *info,int32 length,uint8 *buf));
+    (compinfo_t *info,int32 length,uint8 *buf);
 
 PRIVATE int32 HCIcrle_encode
-    PROTO((compinfo_t *info,int32 length,uint8 *buf));
+    (compinfo_t *info,int32 length,uint8 *buf);
 
 PRIVATE int32 HCIcrle_term
-    PROTO((compinfo_t *info));
+    (compinfo_t *info);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -86,12 +86,7 @@ PRIVATE int32 HCIcrle_term
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int32 HCIcrle_init(accrec_t *access_rec)
-#else
-PRIVATE int32 HCIcrle_init(access_rec)
-    accrec_t *access_rec;   /* access record */
-#endif
 {
     CONSTR(FUNC,"HCIcrle_init");
     compinfo_t *info;                   /* special element information */
@@ -134,14 +129,7 @@ PRIVATE int32 HCIcrle_init(access_rec)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int32 HCIcrle_decode(compinfo_t *info,int32 length,uint8 *buf)
-#else
-PRIVATE int32 HCIcrle_decode(info,length,buf)
-    compinfo_t *info;       /* compression info */
-    int32 length;           /* number of bytes to read in */
-    uint8 *buf;             /* buffer to read data into */
-#endif
 {
     CONSTR(FUNC,"HCIcrle_decode");
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
@@ -216,14 +204,7 @@ PRIVATE int32 HCIcrle_decode(info,length,buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int32 HCIcrle_encode(compinfo_t *info,int32 length,uint8 *buf)
-#else
-PRIVATE int32 HCIcrle_encode(info,length,buf)
-    compinfo_t *info;       /* compression info */
-    int32 length;           /* number of bytes to write out */
-    uint8 *buf;             /* buffer to read data from */
-#endif
 {
     CONSTR(FUNC,"HCIcrle_encode");
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
@@ -331,12 +312,7 @@ PRIVATE int32 HCIcrle_encode(info,length,buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int32 HCIcrle_term(compinfo_t *info)
-#else
-PRIVATE int32 HCIcrle_term(info)
-    compinfo_t *info;       /* compression info */
-#endif
 {
     CONSTR(FUNC,"HCIcrle_term");
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
@@ -389,13 +365,7 @@ PRIVATE int32 HCIcrle_term(info)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int32 HCIcrle_staccess(accrec_t *access_rec, int16 acc_mode)
-#else
-PRIVATE int32 HCIcrle_staccess(access_rec, acc_mode)
-    accrec_t *access_rec;   /* access record */
-    int16 acc_mode;           /* access mode */
-#endif
 {
     CONSTR(FUNC,"HCIcrle_staccess");
     compinfo_t *info;                   /* special element information */
@@ -433,12 +403,7 @@ PRIVATE int32 HCIcrle_staccess(access_rec, acc_mode)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPcrle_stread(accrec_t *access_rec)
-#else
-int32 HCPcrle_stread(access_rec)
-    accrec_t *access_rec;
-#endif
 {
     CONSTR(FUNC,"HCPcrle_stread");
     int32 ret;
@@ -467,12 +432,7 @@ int32 HCPcrle_stread(access_rec)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPcrle_stwrite(accrec_t *access_rec)
-#else
-int32 HCPcrle_stwrite(access_rec)
-    accrec_t *access_rec;
-#endif
 {
     CONSTR(FUNC,"HCPcrle_stwrite");
     int32 ret;
@@ -506,14 +466,7 @@ int32 HCPcrle_stwrite(access_rec)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPcrle_seek(accrec_t *access_rec, int32 offset, int origin)
-#else
-int32 HCPcrle_seek(access_rec, offset, origin)
-    accrec_t *access_rec;
-    int32 offset;
-    int origin;
-#endif
 {
     CONSTR(FUNC,"HCPcrle_seek");
     compinfo_t *info;                   /* special element information */
@@ -570,14 +523,7 @@ int32 HCPcrle_seek(access_rec, offset, origin)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPcrle_read(accrec_t *access_rec, int32 length, VOIDP data)
-#else
-int32 HCPcrle_read(access_rec, length, data)
-    accrec_t *access_rec;      /* access record */
-    int32 length;              /* length of data to read in */
-    VOIDP data;                /* data buffer */
-#endif
 {
     CONSTR(FUNC,"HCPcrle_read");
     compinfo_t *info;                   /* special element information */
@@ -611,14 +557,7 @@ int32 HCPcrle_read(access_rec, length, data)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPcrle_write(accrec_t *access_rec, int32 length, const VOIDP data)
-#else
-int32 HCPcrle_write(access_rec, length, data)
-    accrec_t *access_rec;       /* access record */
-    int32 length;               /* length of data to write */
-    const VOIDP data;                 /* data buffer */
-#endif
 {
     CONSTR(FUNC,"HCPcrle_write");
     compinfo_t *info;               /* special element information */
@@ -669,23 +608,9 @@ int32 HCPcrle_write(access_rec, length, data)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPcrle_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
                         uint16 *pref, int32 *plength, int32 *poffset,
                         int32 *pposn, int16 *paccess, int16 *pspecial)
-#else
-int32 HCPcrle_inquire(access_rec, pfile_id, ptag, pref, plength, poffset,
-                        pposn, paccess, pspecial)
-     accrec_t *access_rec;     /* access record */
-     int32 *pfile_id;          /* ptr to file id, OUT */
-     uint16 *ptag;             /* ptr to tag of information, OUT */
-     uint16 *pref;             /* ptr to ref of information, OUT */
-     int32 *plength;           /* ptr to length of data element, OUT */
-     int32 *poffset;           /* ptr to offset of data element, OUT */
-     int32 *pposn;             /* ptr to position of access in element, OUT */
-     int16 *paccess;           /* ptr to access mode, OUT */
-     int16 *pspecial;          /* ptr to special code */
-#endif
 {
     return(SUCCEED);
 }   /* HCPcrle_inquire() */
@@ -709,12 +634,7 @@ int32 HCPcrle_inquire(access_rec, pfile_id, ptag, pref, plength, poffset,
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPcrle_endaccess(accrec_t *access_rec)
-#else
-int32 HCPcrle_endaccess(access_rec)
-    accrec_t *access_rec;      /* access record to dispose of */
-#endif
 {
     CONSTR(FUNC,"HCPcrle_endaccess");
     compinfo_t *info;               /* special element information */

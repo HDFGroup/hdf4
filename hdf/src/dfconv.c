@@ -122,32 +122,26 @@ static char RcsId[] = "@(#)$Revision$";
 **  Static function prototypes
 */
 PRIVATE int DFKInoset
-    PROTO((VOIDP source, VOIDP dest, uint32 num_elm,uint32 source_stride,
-            uint32 dest_stride));
+    (VOIDP source, VOIDP dest, uint32 num_elm,uint32 source_stride,
+            uint32 dest_stride);
 
 /*
 **  Conversion Routine Pointer Definitions
 */
 int (*DFKnumin)
-        PROTO((VOIDP source, VOIDP dest, uint32 num_elm,
-                uint32 source_stride, uint32 dest_stride)) = DFKInoset;
+        (VOIDP source, VOIDP dest, uint32 num_elm,
+                uint32 source_stride, uint32 dest_stride) = DFKInoset;
 int (*DFKnumout)
-        PROTO((VOIDP source, VOIDP dest, uint32 num_elm,
-                uint32 source_stride, uint32 dest_stride)) = DFKInoset;
+        (VOIDP source, VOIDP dest, uint32 num_elm,
+                uint32 source_stride, uint32 dest_stride) = DFKInoset;
 
 /************************************************************
  * If the programmer forgot to call DFKsetntype, then let
  * them know about it.
  * Should this be PUBLIC or PRIVATE
  ************************************************************/
-#ifdef PROTOTYPE
 PRIVATE int DFKInoset(VOIDP source, VOIDP dest, uint32 num_elm, 
 	uint32 source_stride, uint32 dest_stride)
-#else
-PRIVATE int DFKInoset(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   CONSTR(FUNC,"DFKInoset");
 
@@ -178,11 +172,7 @@ PRIVATE int32 g_ntype = DFNT_NONE;   /* Holds current number type. */
 *   Determine the current conversion settings 
  ************************************************************/
 PUBLIC
-#ifdef PROTOTYPE
 int32 DFKqueryNT(void) 
-#else
-int32 DFKqueryNT()
-#endif /* PROTOTYPE */
 {
   return g_ntype;
 }
@@ -192,12 +182,7 @@ int32 DFKqueryNT()
  *   Determine the size, given the number type
  ************************************************************/
 PUBLIC
-#ifdef PROTOTYPE
 int DFKNTsize(int32 number_type)
-#else
-DFKNTsize(number_type)
-int32 number_type;
-#endif /* PROTOTYPE */
 {
     CONSTR(FUNC,"DFKNTsize");
 
@@ -258,12 +243,7 @@ int32 number_type;
  *   Set the number type for future conversion calls
  ************************************************************/
 PUBLIC
-#ifdef PROTOTYPE
 intn DFKsetNT(int32 ntype)
-#else
-intn DFKsetNT(ntype)
-int32 ntype;
-#endif /* PROTOTYPE */
 {
   CONSTR(FUNC,"DFKsetNT");
 
@@ -372,18 +352,12 @@ int32 ntype;
  * conversion routines....
  *****************************************************************************/
 PUBLIC
-#ifdef PROTOTYPE
 int DFKsetcustom(
   int (*DFKcustin)(VOIDP source, VOIDP dest, uint32 num_elm,
 		   uint32 source_stride, uint32 dest_stride), 
   int (*DFKcustout)(VOIDP source, VOIDP dest, uint32 num_elm, 
 		    uint32 source_stride, uint32 dest_stride)
 )
-#else
-DFKsetcustom(DFKcustout, DFKcustin)
-int (*DFKcustin)();
-int (*DFKcustout)();
-#endif /* PROTOTYPE */
 {
   DFKnumin = DFKcustin;
   DFKnumout = DFKcustout;
@@ -402,12 +376,7 @@ int (*DFKcustout)();
  * Remarks:
  *------------------------------------------------------------------*/
 
-#if defined PROTOTYPE
 int32 DFKisnativeNT(int32 numbertype)
-#else
-int32 DFKisnativeNT(numbertype)
-int32 numbertype;
-#endif /* PROTOTYPE */
 {
     return ((DFNT_NATIVE & numbertype)>0 ? 1 : 0 );
 }
@@ -422,12 +391,7 @@ int32 numbertype;
  * Remarks:
  *------------------------------------------------------------------*/
 
-#if defined PROTOTYPE
 int32 DFKislitendNT(int32 numbertype)
-#else
-int32 DFKislitendNT(numbertype)
-int32 numbertype;
-#endif /* PROTOTYPE */
 {
     return ((DFNT_LITEND & numbertype)>0 ? 1 : 0 );
 }
@@ -449,15 +413,8 @@ int32 numbertype;
  * int  * desttype    the specifid type of the converted data, ie DFNTF_VAX...
  * int  * size        the number (total) of BYTES to convert
  ************************************************************/
-#if defined PROTOTYPE
 int DFconvert(uint8 *source,uint8 *dest,int ntype,int sourcetype,int desttype,
         int32 size)
-#else
-int DFconvert(source, dest, ntype, sourcetype, desttype, size)
-uint8 * source, * dest; 
-int ntype, sourcetype, desttype;
-int32 size;
-#endif /* PROTOTYPE */
 { 
   register uint32 num_elm;
   CONSTR(FUNC,"DFconvert");
@@ -507,12 +464,7 @@ int32 size;
  * Remarks:
  *------------------------------------------------------------------*/
 
-#if defined(PROTOTYPE)
 int8 DFKgetPNSC(int32 numbertype, int32 machinetype)
-#else
-int8 DFKgetPNSC(numbertype, machinetype)
-int32 numbertype, machinetype;
-#endif /* PROTOTYPE */
 {
     switch (numbertype) {
         case DFNT_FLOAT32:
@@ -573,17 +525,8 @@ int32 numbertype, machinetype;
 * Method:  Calls DFKsetNT, then call DFnumin or DFnumout
 *---------------------------------------------------------------------------*/
 
-#if defined PROTOTYPE
 int32 DFKconvert(VOIDP source, VOIDP dest, int32 ntype, int32 num_elm,
 	 	 int16 acc_mode, int32 source_stride, int32 dest_stride)
-#else
-int32 DFKconvert(source, dest, ntype, num_elm, acc_mode, source_stride,
-		 dest_stride)
-VOIDP source;
-VOIDP dest;
-int32 ntype, num_elm, source_stride, dest_stride;
-int16 acc_mode;
-#endif
 
 {
     int ret;

@@ -88,14 +88,7 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsgdisc(intf *dim, intf *maxsize, VOIDP scale)
-#else
-ndsgdisc(dim, maxsize, scale)
-    intf *dim;
-    intf *maxsize;
-    VOID *scale;
-#endif /* PROTOTYPE */
 {
     intn rank, cdim;
     intf ret;
@@ -125,12 +118,7 @@ ndsgdisc(dim, maxsize, scale)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsgrang(VOIDP pmax, VOIDP pmin)
-#else
-ndsgrang(pmax, pmin)
-    VOID *pmax, *pmin;
-#endif /* PROTOTYPE */
 {
     return(DFSDgetrange(pmax, pmin));
 }
@@ -147,13 +135,7 @@ ndsgrang(pmax, pmin)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndssdims(intf *rank, intf dimsizes[])
-#else
-ndssdims(rank, dimsizes)
-    intf *rank;
-    intf dimsizes[];
-#endif /* PROTOTYPE */
 {
     int32 i, *cdims, *p;
     intf ret;
@@ -184,14 +166,7 @@ ndssdims(rank, dimsizes)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndssdisc(intf *dim, intf *dimsize, VOIDP scale)
-#else
-ndssdisc(dim, dimsize, scale)
-    intf *dim;
-    intf *dimsize;
-    VOID *scale;
-#endif /* PROTOTYPE */
 {
     int cdim, ret;
     intn rank;
@@ -215,12 +190,7 @@ ndssdisc(dim, dimsize, scale)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndssrang(VOIDP max, VOIDP min)
-#else
-ndssrang(max, min)
-    VOID *max, *min;
-#endif /* PROTOTYPE */
 {
     return(DFSDsetrange(max, min));
 }
@@ -236,11 +206,7 @@ ndssrang(max, min)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsclear(void)
-#else
-ndsclear()
-#endif /* PROTOTYPE */
 {
     return(DFSDclear());
 }
@@ -256,16 +222,8 @@ ndsclear()
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsslens(intf *maxlen_label, intf *maxlen_unit, intf *maxlen_format,
      intf *maxlen_coordsys)
-#else
-ndsslens(maxlen_label, maxlen_unit, maxlen_format, maxlen_coordsys)
-    intf *maxlen_label,
-        *maxlen_unit,
-        *maxlen_format,
-        *maxlen_coordsys;
-#endif /* PROTOTYPE */
 {
     return(DFSDsetlengths((intn)*maxlen_label, (intn)*maxlen_unit,
             (intn)*maxlen_format, (intn)*maxlen_coordsys));
@@ -283,12 +241,7 @@ ndsslens(maxlen_label, maxlen_unit, maxlen_format, maxlen_coordsys)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsgdiln(intf *dim, intf *llabel, intf *lunit, intf *lformat)
-#else
-ndsgdiln(dim, llabel, lunit, lformat)
-    intf *dim, *llabel, *lunit, *lformat;
-#endif /* PROTOTYPE */
 {
     intn rank, cdim;
     intf ret;
@@ -324,12 +277,7 @@ ndsgdiln(dim, llabel, lunit, lformat)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsgdaln(intf *llabel, intf *lunit, intf *lformat, intf *lcoordsys)
-#else
-ndsgdaln(llabel, lunit, lformat, lcoordsys)
-    intf *llabel, *lunit, *lformat, *lcoordsys;
-#endif /* PROTOTYPE */
 {
     intf ret;
     intn cllabel, clunit, clformat, clcoordsys;
@@ -354,11 +302,7 @@ ndsgdaln(llabel, lunit, lformat, lcoordsys)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsfirst(void)
-#else
-ndsfirst()
-#endif /* PROTOTYPE */
 {
 
     return(DFSDrestart());
@@ -377,14 +321,7 @@ ndsfirst()
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndspslc(intf windims[], VOIDP data, intf dims[])
-#else
-ndspslc(windims, data, dims)
-    intf windims[];
-    VOID  *data;
-    intf dims[];
-#endif /* PROTOTYPE */
 {
     int32 *cdims, *cwindims, *p, *wp;
     intn i, rank;
@@ -421,11 +358,7 @@ ndspslc(windims, data, dims)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndseslc(void)
-#else
-ndseslc()
-#endif /* PROTOTYPE */
 {
 
     return(DFSDIendslice(1));
@@ -444,12 +377,7 @@ ndseslc()
  *---------------------------------------------------------------------------*/
 
         FRETVAL(intf)
-#ifdef PROTOTYPE
 ndssnt(intf *numbertype)
-#else
-ndssnt(numbertype)
-    intf *numbertype;
-#endif /* PROTOTYPE */
 {
     return(DFSDsetNT(*numbertype));
 }
@@ -465,12 +393,7 @@ ndssnt(numbertype)
  *---------------------------------------------------------------------------*/
 
         FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsgnt(intf *pnumbertype)
-#else
-ndsgnt(pnumbertype)
-    intf *pnumbertype;
-#endif /* PROTOTYPE */
 {
     return(DFSDgetNT((int32 *)pnumbertype));
 }
@@ -490,14 +413,8 @@ ndsgnt(pnumbertype)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsigdim(_fcd filename, intf *prank, intf sizes[], intf *maxrank,
      intf *lenfn)
-#else
-ndsigdim(filename, prank, sizes, maxrank, lenfn)
-    _fcd filename;
-    intf *prank, sizes[], *maxrank, *lenfn;
-#endif /* PROTOTYPE */
 {
     char *fn;
     int32 i, tmp;
@@ -532,14 +449,7 @@ ndsigdim(filename, prank, sizes, maxrank, lenfn)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsigdat(_fcd filename, intf *rank, intf maxsizes[], VOIDP data, intf *fnlen)
-#else
-ndsigdat(filename, rank, maxsizes, data, fnlen)
-    _fcd filename;
-    intf *rank, maxsizes[], *fnlen;
-    VOID *data;
-#endif /* PROTOTYPE */
 {
     int32 i;
     intn isndg;
@@ -585,16 +495,7 @@ ndsigdat(filename, rank, maxsizes, data, fnlen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsipdat(_fcd filename, intf *rank, intf dimsizes[], VOIDP data, intf *fnlen)
-#else
-ndsipdat(filename, rank, dimsizes, data, fnlen)
-    _fcd filename;
-    intf *rank;
-    intf dimsizes[];
-    VOID *data;
-    intf *fnlen;
-#endif /* PROTOTYPE */
 {
     char *fn;
     int32 i, *cdims, *p;
@@ -634,16 +535,7 @@ ndsipdat(filename, rank, dimsizes, data, fnlen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsiadat(_fcd filename, intf *rank, intf dimsizes[], VOIDP data, intf *fnlen)
-#else
-ndsiadat(filename, rank, dimsizes, data, fnlen)
-    _fcd filename;
-    intf *rank;
-    intf dimsizes[];
-    VOID *data;
-    intf *fnlen;
-#endif /* PROTOTYPE */     
 {
     char *fn;
     int32 i,  *cdims, *p;
@@ -684,17 +576,8 @@ ndsiadat(filename, rank, dimsizes, data, fnlen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsigslc(_fcd filename, intf winst[], intf windims[], VOIDP data, intf dims[],
     intf *fnlen)
-#else
-ndsigslc(filename, winst, windims, data, dims, fnlen)
-    _fcd filename;
-    intf winst[], windims[];
-    intf dims[];
-    VOID *data;
-    intf *fnlen;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -753,13 +636,7 @@ ndsigslc(filename, winst, windims, data, dims, fnlen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsisslc(_fcd filename, intf *fnlen)
-#else
-ndsisslc(filename, fnlen)
-    _fcd filename;
-    intf *fnlen;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -782,14 +659,7 @@ ndsisslc(filename, fnlen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsirref(_fcd filename, intf *ref, intf *fnlen)
-#else
-ndsirref(filename, ref, fnlen)
-    _fcd filename;
-    intf *ref;
-    intf *fnlen;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -812,11 +682,7 @@ ndsirref(filename, ref, fnlen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE  
 ndslref(void)
-#else
-ndslref()
-#endif /* PROTOTYPE */
 {
     return(DFSDlastref());
 }
@@ -834,13 +700,7 @@ ndslref()
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE  
 ndsinum(_fcd filename, intf *len)
-#else
-ndsinum(filename, len)
-    _fcd filename;
-    intf *len;
-#endif /* PROTOTYPE */
 {
     char *cname;
     intf status;
@@ -867,13 +727,7 @@ ndsinum(filename, len)
 *------------------------------------------------------------------------------*/
 
       FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsip32s(_fcd filename, intf *ref, intf *ispre32, intf *len)
-#else
-ndsip32s(filename, ref, ispre32, len)
-    _fcd filename;
-    intf *ref, *ispre32, *len;
-#endif /* PROTOTYPE */
 { 
     char *cname;
     intf status;
@@ -895,12 +749,7 @@ ndsip32s(filename, ref, ispre32, len)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfsdgetdatastrs(_fcd label, _fcd unit, _fcd format, _fcd coordsys)
-#else
-ndfsdgetdatastrs(label, unit, format, coordsys)
-    _fcd label, unit, format, coordsys;
-#endif /* PROTOTYPE */
 {
     return(DFSDgetdatastrs((char *)_fcdtocp(label), (char *)_fcdtocp(unit),
 			 (char *)_fcdtocp(format), (char *)_fcdtocp(coordsys)));
@@ -917,13 +766,7 @@ ndfsdgetdatastrs(label, unit, format, coordsys)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfsdgetdimstrs(intf *dim, _fcd label, _fcd unit, _fcd format)
-#else
-ndfsdgetdimstrs(dim, label, unit, format)
-    intf *dim;
-    _fcd label, unit, format;
-#endif /* PROTOTYPE */
 {
     intn isndg;
     intn rank, cdim;
@@ -954,14 +797,7 @@ ndfsdgetdimstrs(dim, label, unit, format)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfsdgetdimscale(intf *dim, intf *maxsize, VOIDP scale)
-#else
-ndfsdgetdimscale(dim, maxsize, scale)
-    intf *dim;
-    intf *maxsize;
-    VOID *scale;
-#endif /* PROTOTYPE */
 {
 
     intn isndg;
@@ -990,12 +826,7 @@ ndfsdgetdimscale(dim, maxsize, scale)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfsdgetrange(VOIDP pmax, VOIDP pmin)
-#else
-ndfsdgetrange(pmax, pmin)
-    VOID *pmax, *pmin;
-#endif /* PROTOTYPE */
 {
     return(DFSDgetrange(pmax, pmin));
 }
@@ -1012,13 +843,7 @@ ndfsdgetrange(pmax, pmin)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfsdsetdims(intf *rank, intf dimsizes[])
-#else
-ndfsdsetdims(rank, dimsizes)
-    intf *rank;
-    intf dimsizes[];
-#endif /* PROTOTYPE */
 {
 
     int32 i, *cdims, *p;
@@ -1050,14 +875,7 @@ ndfsdsetdims(rank, dimsizes)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfsdsetdimscale(intf *dim, intf *dimsize, VOIDP scale)
-#else
-ndfsdsetdimscale(dim, dimsize, scale)
-    intf *dim;
-    intf *dimsize;
-    VOID *scale;
-#endif /* PROTOTYPE */
 {
     intn rank, cdim;
     intf ret;
@@ -1081,12 +899,7 @@ ndfsdsetdimscale(dim, dimsize, scale)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfsdsetrange(VOIDP max, VOIDP min)
-#else
-ndfsdsetrange(max, min)
-    VOID *max, *min;
-#endif /* PROTOTYPE */
 {
     return(DFSDsetrange(max, min));
 }
@@ -1102,11 +915,7 @@ ndfsdsetrange(max, min)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfsdclear(void)
-#else
-ndfsdclear()
-#endif /* PROTOTYPE */
 {
     return(DFSDclear());
 }
@@ -1122,13 +931,8 @@ ndfsdclear()
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfsdsetlengths(intf *maxlen_label, intf *maxlen_unit, intf *maxlen_format,
         intf *maxlen_coordsys)
-#else
-ndfsdsetlengths(maxlen_label, maxlen_unit, maxlen_format, maxlen_coordsys)
-    intf *maxlen_label, *maxlen_unit, *maxlen_format, *maxlen_coordsys;
-#endif /* PROTOTYPE */
 {
     return(DFSDsetlengths((intn)*maxlen_label, (intn)*maxlen_unit,
             (intn)*maxlen_format, (intn)*maxlen_coordsys));
@@ -1146,12 +950,7 @@ ndfsdsetlengths(maxlen_label, maxlen_unit, maxlen_format, maxlen_coordsys)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfsdgetdimlen(intf *dim, intf *llabel, intf *lunit, intf *lformat)
-#else
-ndfsdgetdimlen(dim, llabel, lunit, lformat)
-    intf *dim, *llabel, *lunit, *lformat;
-#endif /* PROTOTYPE */
 {
     intn isndg;
     intn rank, cdim;
@@ -1186,12 +985,7 @@ ndfsdgetdimlen(dim, llabel, lunit, lformat)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfsdgetdatalen(intf *llabel, intf *lunit, intf *lformat, intf *lcoordsys)
-#else
-ndfsdgetdatalen(llabel, lunit, lformat, lcoordsys)
-    intf *llabel, *lunit, *lformat, *lcoordsys;
-#endif /* PROTOTYPE */
 {
     intf ret;
     intn cllabel, clunit, clformat, clcoordsys;
@@ -1216,11 +1010,7 @@ ndfsdgetdatalen(llabel, lunit, lformat, lcoordsys)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfsdrestart(void)
-#else
-ndfsdrestart()
-#endif /* PROTOTYPE */
 {
     return(DFSDrestart());
 }
@@ -1239,14 +1029,7 @@ ndfsdrestart()
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfsdputslice(intf windims[], VOIDP data, intf dims[])
-#else
-ndfsdputslice(windims, data, dims)
-    intf windims[];
-    VOID *data;
-    intf dims[];
-#endif /* PROTOTYPE */
 {
     intn rank, i;
     intf ret;
@@ -1282,11 +1065,7 @@ ndfsdputslice(windims, data, dims)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfsdendslice(void)
-#else
-ndfsdendslice()
-#endif /* PROTOTYPE */
 {
     return(DFSDIendslice(1));
 }
@@ -1304,12 +1083,7 @@ ndfsdendslice()
  *---------------------------------------------------------------------------*/
 
         FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfsdsetnt(intf *numbertype)
-#else
-ndfsdsetnt(numbertype)
-    intf *numbertype;
-#endif /* PROTOTYPE */
 {
     return(DFSDsetNT(*numbertype));
 }
@@ -1325,12 +1099,7 @@ ndfsdsetnt(numbertype)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfsdgetnt(intf *pnumbertype)
-#else
-ndfsdgetnt(pnumbertype)
-    intf *pnumbertype;
-#endif /* PROTOTYPE */
 {
     return(DFSDgetNT((int32 *)pnumbertype));
 }
@@ -1347,11 +1116,7 @@ ndfsdgetnt(pnumbertype)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfsdlastref(void)
-#else
-ndfsdlastref()
-#endif /* PROTOTYPE */
 {
     return(DFSDlastref());
 }
@@ -1374,15 +1139,8 @@ ndfsdlastref()
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsisdis(intf *dim, _fcd flabel, _fcd funit, _fcd fformat,
      intf *llabel, intf *lunit, intf *lformat)
-#else
-ndsisdis(dim, flabel, funit, fformat, llabel, lunit, lformat)
-    intf *dim;
-    _fcd flabel, funit, fformat;
-    intf *llabel, *lunit, *lformat;
-#endif /* PROTOTYPE */
 {
     char *label  =  HDf2cstring(flabel, (intn)*llabel);
     char *unit   =  HDf2cstring(funit, (intn)*lunit);
@@ -1415,15 +1173,8 @@ ndsisdis(dim, flabel, funit, fformat, llabel, lunit, lformat)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsigdis(intf *dim, _fcd label, _fcd unit, _fcd format, intf *llabel,
          intf *lunit, intf *lformat)
-#else
-ndsigdis(dim, label, unit, format, llabel, lunit, lformat)
-     intf *dim;
-     _fcd label, unit, format;
-     intf *llabel, *lunit, *lformat;
-#endif /* PROTOTYPE */
 {
     char *ilabel, *iunit, *iformat;
     intn rank, cdim;
@@ -1472,16 +1223,8 @@ ndsigdis(dim, label, unit, format, llabel, lunit, lformat)
  * Remarks: 
  *---------------------------------------------------------------------------*/
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsisdas(_fcd flabel, _fcd funit, _fcd fformat, _fcd fcoordsys, intf *isfortran,
      intf *llabel, intf *lunit, intf *lformat, intf *lcoordsys)
-#else
-ndsisdas(flabel, funit, fformat, fcoordsys, isfortran, llabel, lunit,
-     lformat, lcoordsys)
-    _fcd flabel, funit, fformat, fcoordsys;
-    intf *isfortran;
-    intf *llabel, *lunit, *lformat, *lcoordsys;
-#endif /* PROTOTYPE */
 {
     char *label    =  HDf2cstring(flabel, (intn)*llabel);
     char *unit     =  HDf2cstring(funit, (intn)*lunit);
@@ -1509,14 +1252,8 @@ ndsisdas(flabel, funit, fformat, fcoordsys, isfortran, llabel, lunit,
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsigdas(_fcd label, _fcd unit, _fcd format, _fcd coordsys, intf *llabel,
         intf *lunit, intf *lformat, intf *lcoord)
-#else
-ndsigdas(label, unit, format, coordsys, llabel, lunit, lformat, lcoord)
-     _fcd label, unit, format, coordsys;
-     intf *llabel, *lunit, *lformat, *lcoord;
-#endif /* PROTOTYPE */
 {
     char *ilabel, *iunit, *iformat, *icoord;
     intf status;
@@ -1555,14 +1292,8 @@ ndsigdas(label, unit, format, coordsys, llabel, lunit, lformat, lcoord)
  * Invokes: DFSDgetdatastrs
  *---------------------------------------------------------------------------*/
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsscal(float64 *cal, float64 *cal_err, float64 *ioff, float64 *ioff_err,
          intf * cal_type)
-#else
-ndsscal(cal, cal_err, ioff, ioff_err, cal_type)
-     float64 *cal, *cal_err, *ioff, *ioff_err;
-     int32   *cal_type;
-#endif /* PROTOTYPE */
 {
     return DFSDsetcal(*cal, *cal_err, *ioff, *ioff_err, *cal_type);
 } /* ndsscal */
@@ -1579,14 +1310,8 @@ ndsscal(cal, cal_err, ioff, ioff_err, cal_type)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsgcal(float64 *cal, float64 *cal_err, float64 *ioff, float64 *ioff_err,
          intf * cal_type)
-#else
-ndsgcal(cal, cal_err, ioff, ioff_err, cal_type)
-     float64 *cal, *cal_err, *ioff, *ioff_err;
-     intf   *cal_type;
-#endif /* PROTOTYPE */
 {
     return DFSDgetcal(cal, cal_err, ioff, ioff_err, (int32 *)cal_type);
 } /* ndsgcal */
@@ -1603,14 +1328,7 @@ ndsgcal(cal, cal_err, ioff, ioff_err, cal_type)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsiwref(_fcd filename, intf *fnlen, intf *ref)
-#else
-ndsiwref(filename, fnlen, ref)
-    _fcd filename;
-    intf *fnlen;
-    intf *ref;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -1631,12 +1349,7 @@ ndsiwref(filename, fnlen, ref)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndssfill(VOIDP fill_value)
-#else
-ndssfill(fill_value)
-    VOID *fill_value;
-#endif /* PROTOTYPE */
 {
     return DFSDsetfillvalue(fill_value);
 }
@@ -1651,12 +1364,7 @@ ndssfill(fill_value)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsgfill(VOIDP fill_value)
-#else
-ndsgfill(fill_value)
-    VOID *fill_value;
-#endif /* PROTOTYPE */
 {
     return DFSDgetfillvalue(fill_value);
 }
@@ -1673,13 +1381,7 @@ ndsgfill(fill_value)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsisslab(_fcd filename, intf *fnlen )
-#else
-ndsisslab(filename, fnlen)
-    _fcd filename;
-    intf *fnlen;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -1705,16 +1407,8 @@ ndsisslab(filename, fnlen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndswslab(intf start[], intf stride[],
          intf count[], VOIDP data)
-#else
-ndswslab(start, stride, count, data)
-    intf start[];
-    intf stride[];
-    intf count[];
-    VOID  *data;
-#endif /* PROTOTYPE */
 {
     int32 *lstart, *lstride, *lcount, *aptr, *bptr, *cptr;
     intn i, rank;
@@ -1763,11 +1457,7 @@ ndswslab(start, stride, count, data)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndseslab()
-#else
-ndseslab()
-#endif /* PROTOTYPE */
 {
     return DFSDendslab();
 }
@@ -1788,19 +1478,8 @@ ndseslab()
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndsirslab(_fcd filename, intf *fnlen, intf start[], intf slab_size[], 
           intf stride[], VOIDP buffer, intf buffer_size[])
-#else
-ndsirslab(filename, fnlen, start, slab_size, stride, buffer, buffer_size)
-    _fcd filename;
-    intf *fnlen;
-    intf start[]; 
-    intf slab_size[];
-    intf stride[];
-    VOID *buffer;
-    intf buffer_size[];
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;

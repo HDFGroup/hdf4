@@ -49,18 +49,12 @@ extern int num_errs;
 extern int Verbocity;
 
 PRIVATE VOID swap_arr
-    PROTO((int32 *arr,intn a,intn b));
+    (int32 *arr,intn a,intn b);
 
 PUBLIC intn tcompare
-    PROTO((VOIDP k1,VOIDP k2,intn cmparg));
+    (VOIDP k1,VOIDP k2,intn cmparg);
 
-#ifdef PROTOTYPES
 PRIVATE VOID swap_arr(int32 *arr,intn a,intn b) 
-#else
-PRIVATE VOID swap_arr(arr,a,b)
-int32 *arr;
-intn a,b;
-#endif
 {
     int32 t;
 
@@ -71,19 +65,12 @@ intn a,b;
       } /* end if */
 }  /* end swap_arr() */
 
-#ifdef PROTOTYPES
 PUBLIC intn tcompare(VOIDP k1,VOIDP k2,intn cmparg) 
-#else
-PUBLIC intn tcompare(k1,k2,cmparg)
-VOIDP k1;
-VOIDP k2;
-intn cmparg;
-#endif
 {
     return((intn)((*(int32 *)k1) - (*(int32 *)k2)));
 }
 
-void test_tbbt()
+void test_tbbt(void)
 {
     intn test_size;
     intn i,j;

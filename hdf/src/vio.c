@@ -32,7 +32,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* Private Function Prototypes */
 PRIVATE VOID vunpackvs
-    PROTO((VDATA *vs, uint8 buf[]));
+    (VDATA *vs, uint8 buf[]);
 
 /* vpackvs is prototyped in vg.h since vconv.c needs to call it */
 
@@ -47,13 +47,7 @@ extern vfile_t *vfile;
 * RETURNS vsinstance_t pointer if ok.
 *
 */
-#ifdef PROTOTYPE
 vsinstance_t _HUGE * vsinstance (HFILEID f, uint16 vsid)
-#else
-vsinstance_t _HUGE * vsinstance (f,vsid)
-HFILEID f;
-uint16 vsid;
-#endif
 {
     VOIDP *t;
     register vfile_t      * vf;
@@ -88,13 +82,7 @@ uint16 vsid;
 * returns TRUE if found.
 */
 
-#ifdef PROTOTYPE
 int32 vexistvs (HFILEID f, uint16 vsid)         
-#else
-int32 vexistvs (f, vsid)
-HFILEID f;
-uint16 vsid;
-#endif
 {
     if (NULL== vsinstance(f,vsid))
         return(FAIL);
@@ -147,14 +135,7 @@ CONTENTS of VS stored in HDF file with tag DFTAG_VH:
 convert a vs struct to a vspack suitable for storage in a HDF file 
 */
 
-#ifdef PROTOTYPE
 void vpackvs (VDATA *vs, uint8 buf[], int32 *size)
-#else
-void vpackvs (vs, buf, size)
-VDATA   *vs;
-int32       *size;
-uint8        buf[];
-#endif
 {
     register int32      i;
     register uint8      *bb;
@@ -226,12 +207,7 @@ uint8        buf[];
 Convert an old type (i.e. LOCAL_INT to DFNT_ based types
 */
 PRIVATE
-#ifdef PROTOTYPE
 intn map_from_old_types(intn type)
-#else
-intn map_from_old_types(type)
-intn type;
-#endif
 {
     switch(type) {
         case LOCAL_CHARTYPE:
@@ -265,13 +241,7 @@ Convert a packed form(from HDF file)  to a VDATA structure.
 This routine will also initalize the VDATA structure as much as it can.
 */
 
-#ifdef PROTOTYPE
 PRIVATE VOID vunpackvs (VDATA *vs, uint8 buf[])
-#else
-PRIVATE VOID vunpackvs (vs, buf)
-VDATA   *vs;
-uint8   buf[];
-#endif
 {
     uint8   *bb;
     int32   i;
@@ -349,12 +319,7 @@ uint8   buf[];
 
   *** Only called by B-tree routines, should _not_ be called externally ***
 */
-#ifdef PROTOTYPE
 PUBLIC VOID vsdestroynode(VOIDP n)
-#else
-PUBLIC VOID vsdestroynode(n)
-VOIDP n;
-#endif
 {
     VDATA       *vs;
 
@@ -419,14 +384,7 @@ VOIDP n;
 	returns NULL if error.
    *************************************************************** */
 
-#ifdef PROTOTYPE
 PUBLIC int32 VSattach (HFILEID f, int32 vsid, const char *accesstype)
-#else
-PUBLIC int32 VSattach (f, vsid, accesstype)
-HFILEID f;
-int32   vsid;
-const char *  accesstype;
-#endif
 {
     VDATA * vs;  			 /* new vdata to be returned */
     uint8 * vspack;
@@ -652,12 +610,7 @@ const char *  accesstype;
 
    *************************************************************** */
 
-#ifdef PROTOTYPE
 PUBLIC int32 VSdetach (int32 vkey)
-#else
-PUBLIC int32 VSdetach (vkey)
-int32 vkey;
-#endif
 {
     int32	i, ret, vspacksize;
     uint8            *vspack;
@@ -734,13 +687,7 @@ int32 vkey;
  *
  */
 
-#ifdef PROTOTYPE
 PUBLIC int32 VSappendable (int32 vkey, int32 blk)
-#else
-PUBLIC int32 VSappendable (vkey, blk)
-int32 vkey;
-int32 blk;
-#endif
 {
     int32           blksize, curr_size;
     vsinstance_t    *w;
@@ -785,13 +732,7 @@ returns the id of the next  VDATA from the file f .
 RETURNS -1 on error.
 RETURNS vdata id (0 or +ve integer) 
 */
-#ifdef PROTOTYPE
 PUBLIC int32 VSgetid (HFILEID f, int32 vsid)
-#else
-PUBLIC int32 VSgetid (f, vsid)
-int32   vsid;
-HFILEID f;
-#endif
 {
 	vsinstance_t   * w;
 	vfile_t	       * vf;
@@ -845,12 +786,7 @@ HFILEID f;
 */
 
 PUBLIC 
-#ifdef PROTOTYPE
 int32 VSQuerytag(int32 vkey)
-#else
-int32 VSQuerytag(vkey)
-int32 vkey;
-#endif
 {
     vsinstance_t    *w;
     VDATA           *vs;
@@ -886,12 +822,7 @@ int32 vkey;
 */
 
 PUBLIC 
-#ifdef PROTOTYPE
 int32 VSQueryref(int32 vkey)
-#else
-int32 VSQueryref(vkey)
-int32 vkey;
-#endif
 {
     vsinstance_t    *w;
     VDATA           *vs;
@@ -920,12 +851,7 @@ int32 vkey;
 
 /* -------------- Return the writelist of a VData----------------- */
 
-#ifdef PROTOTYPE
 VWRITELIST _HUGE *vswritelist(int32 vkey)
-#else
-VWRITELIST _HUGE *vswritelist(vkey)
-int32 vkey;
-#endif
 {
     vsinstance_t    *w;
     VDATA           *vs;
@@ -948,12 +874,7 @@ int32 vkey;
 /* -------------- Return the version number of a VData----------------- */
 
 PUBLIC 
-#ifdef PROTOTYPE
 int32 VSgetversion(int32 vkey)
-#else
-int32 VSgetversion(vkey)
-int32 vkey;
-#endif
 {
     vsinstance_t    *w;
     VDATA           *vs;
@@ -985,13 +906,7 @@ int32 vkey;
 
 */
 int32
-#ifdef PROTOTYPE
 VSdelete(int32 f, int32 vsid)
-#else
-VSdelete(f, vsid)
-int32 f;
-int32 vsid;
-#endif
 {
     VOIDP  	 v;
     vfile_t      * vf;

@@ -50,7 +50,7 @@ PRIVATE data structures in here pertain to vdata in vsdir only.
 /* Private functions */
 #ifdef VDATA_FIELDS_ALL_UPPER
 PRIVATE int32 matchnocase
-    PROTO((char *strx, char *stry));
+    (char *strx, char *stry);
 #endif /* VDATA_FIELDS_ALL_UPPER */
 
 /* ------------------------------------------------------------------
@@ -65,12 +65,7 @@ RETURNS
 DESCRIPTION
         Utility routine. Undocumented
 ----------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 uint16 vnewref (HFILEID f)		
-#else
-uint16 vnewref (f)		
-HFILEID f;
-#endif
 {
 	uint16 r;
 	CONSTR(FUNC,"vnewref");
@@ -95,12 +90,7 @@ RETURNS
 DESCRIPTION
        Private routine. 
 -------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 PRIVATE int32 matchnocase (char *strx, char *stry)
-#else
-PRIVATE int32 matchnocase (strx, stry)
-char *strx,*stry;
-#endif
 {
     int32 	i,nx,ny;
     
@@ -129,12 +119,7 @@ RETURNS
        returns FAIL  on error.
 DESCRIPTION
 --------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 PUBLIC int32 VSelts (int32 vkey)
-#else
-PUBLIC int32 VSelts (vkey)
-int32 vkey;
-#endif
 {
     vsinstance_t    *w;
     VDATA           *vs;
@@ -167,12 +152,7 @@ RETURNS
 DESCRIPTION
 ----------------------------------------------------------------------- */
 
-#ifdef PROTOTYPE
 PUBLIC int32 VSgetinterlace (int32 vkey)
-#else
-PUBLIC int32 VSgetinterlace (vkey)
-int32 vkey;
-#endif
 {
     vsinstance_t    *w;
     VDATA           *vs;
@@ -205,13 +185,7 @@ DESCRIPTION
         The interlace may be one of FULL_INTERLACE or NO_INTERLACE.
 -------------------------------------------------------------------- */
 
-#ifdef PROTOTYPE
 PUBLIC intn VSsetinterlace(int32 vkey, int32 interlace)
-#else
-PUBLIC intn VSsetinterlace(vkey, interlace)
-int32 vkey;
-int32 interlace;
-#endif
 {
     vsinstance_t    *w;
     VDATA           *vs;
@@ -256,13 +230,7 @@ DESCRIPTION
         The fields are returned as a comma-separated string (e.g., "PX,PY").
 ---------------------------------------------------------------------- */
 
-#ifdef PROTOTYPE
 PUBLIC int32 VSgetfields (int32 vkey, char *fields)
-#else
-PUBLIC int32 VSgetfields (vkey, fields)
-int32 vkey;
-char  * fields;         /* fieldnames are returned in this var */
-#endif
 {
 	int32 i;
     vsinstance_t    *w;
@@ -304,13 +272,7 @@ DESCRIPTION
         (e.g. "PX,PY,PZ").
 -------------------------------------------------------------------- */
 
-#ifdef PROTOTYPE
 PUBLIC intn VSfexist (int32 vkey, char *fields)
-#else
-PUBLIC intn VSfexist (vkey, fields)
-int32 vkey;
-char *fields;
-#endif
 {
     char   		**av, *s;
     int32			ac,i,j,found;
@@ -376,13 +338,7 @@ DESCRIPTION
         The size is the actual size for the local machine.
 
 * ----------------------------------------------------------------- */
-#ifdef PROTOTYPE
 PUBLIC int32 VSsizeof (int32 vkey, char *fields)
-#else
-PUBLIC int32 VSsizeof (vkey, fields)
-int32 vkey;
-char  *fields;
-#endif
 {
     int32 	totalsize, ac, i,j,found;
     char   	**av;
@@ -425,12 +381,7 @@ USAGE
 RETURNS
         No return codes.
 ------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 VOID VSdump (int32 vkey)
-#else
-VOID VSdump (vkey)
-int32 vkey;
-#endif
 {
 #ifdef OLD_WAY
     VWRITELIST  *w;
@@ -474,13 +425,7 @@ DESCRIPTION
         Truncates name to max length of VSNAMELENMAX
 ---------------------------------------------------------- */
 
-#ifdef PROTOTYPE
 PUBLIC int32 VSsetname (int32 vkey, const char *vsname)
-#else
-PUBLIC int32 VSsetname (vkey, vsname)
-int32 vkey;
-const char    *vsname;
-#endif
 {
     vsinstance_t    *w;
     VDATA           *vs;
@@ -521,13 +466,7 @@ RETURNS
 DESCRIPTION
         Truncates class name to max length of VSNAMELENMAX
 ---------------------------------------------------------- */
-#ifdef PROTOTYPE
 PUBLIC int32 VSsetclass (int32 vkey, const char *vsclass)
-#else
-PUBLIC int32 VSsetclass (vkey, vsclass)
-int32 vkey;
-const char    *vsclass;
-#endif
 {
     vsinstance_t    *w;
     VDATA           *vs;
@@ -568,13 +507,7 @@ RETURNS
 DESCRIPTION
 ---------------------------------------------------------- */
 
-#ifdef PROTOTYPE
 PUBLIC int32 VSgetname (int32 vkey, char *vsname)
-#else
-PUBLIC int32 VSgetname (vkey, vsname)
-int32 vkey;
-char    *vsname;
-#endif
 {
     vsinstance_t    *w;
     VDATA           *vs;
@@ -608,13 +541,7 @@ RETURNS
 DESCRIPTION
 ---------------------------------------------------------- */
 
-#ifdef PROTOTYPE
 PUBLIC int32 VSgetclass (int32 vkey, char *vsclass)
-#else
-PUBLIC int32 VSgetclass (vkey, vsclass)
-int32 vkey;
-char    *vsclass;
-#endif
 {
     vsinstance_t    *w;
     VDATA           *vs;
@@ -659,15 +586,8 @@ RETURNS
          
 	Returns FAIL if error;	Returns 1 if ok.
 ------------------------------------------------------------------------ */
-#ifdef PROTOTYPE
 PUBLIC intn VSinquire (int32 vkey, int32 *nelt, int32 *interlace,
         char *fields, int32 *eltsize, char *vsname)
-#else
-PUBLIC intn VSinquire (vkey, nelt, interlace, fields, eltsize, vsname)
-int32 vkey;
-char    *fields, *vsname;
-int32   *nelt, *interlace, *eltsize;
-#endif
 {
     CONSTR(FUNC,"VSinquire");
 
@@ -703,14 +623,7 @@ DESCRIPTION
 		 to asize worth of refs.
 --------------------------------------------------------------------- */
 
-#ifdef PROTOTYPE
 PUBLIC int32 VSlone(HFILEID f, int32 idarray[], int32 asize) 
-#else
-PUBLIC int32 VSlone(f, idarray, asize)
-HFILEID f;
-int32   idarray[];       /* array to contain the refs */
-int32   asize;            /* input: size of idarray */
-#endif
 {
     uint8  *lonevdata; /* lcl wrk area: stores flags of vdatas */
     int32  i, vgid, vsid, vstag;
@@ -774,14 +687,7 @@ DESCRIPTION
 --------------------------------------------------------------------- */
 
 
-#ifdef PROTOTYPE
 PUBLIC int32 Vlone (HFILEID f, int32 idarray[], int32 asize)
-#else
-PUBLIC int32 Vlone (f, idarray, asize)
-HFILEID f;
-int32   idarray[];       /* array to contain the refs */
-int32   asize;            /* input: size of idarray */
-#endif
 {
     uint8 * lonevg; /* local wrk area: stores flags of vgroups */
     int32   i;
@@ -842,13 +748,7 @@ RETURNS
         Returns 0 if not found, or error. Otherwise, returns the 
            vgroup's ref (a positive integer).
 ----------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 Vfind (HFILEID f, const char *vgname)
-#else
-int32 Vfind (f, vgname)
-HFILEID f;
-const char    * vgname;
-#endif
 {
     int32 vgid = -1;
     int32 ret_ref;
@@ -888,13 +788,7 @@ RETURNS
         Returns 0 if not found, or error. Otherwise, returns the vdata's 
              ref (a positive integer).
 --------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 VSfind (HFILEID f, const char *vsname)
-#else
-int32 VSfind (f, vsname)
-HFILEID f;
-const char * vsname;
-#endif
 {
     int32 vsid = -1;
     int32 ret_ref;
@@ -924,14 +818,6 @@ const char * vsname;
  * Vsetzap: Useless now. Maintained for back compatibility.
  */
 
-#ifdef PROTOTYPE
-#ifdef CONVEX
-PUBLIC VOID Vsetzap()
-#else
 PUBLIC VOID Vsetzap(void)
-#endif
-#else
-PUBLIC VOID Vsetzap()
-#endif
 {
 }

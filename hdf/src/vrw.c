@@ -58,13 +58,7 @@ PRIVATE uint8 *Vtbuf = NULL;
 	RETURNS position of element seeked to (0 or a +ve integer)
         (eg  returns 5 if seek to the 6th element, etc)
 */
-#ifdef PROTOTYPE
 PUBLIC int32 VSseek (int32 vkey, int32 eltpos)
-#else
-PUBLIC int32 VSseek (vkey, eltpos)
-int32 vkey;
-int32      eltpos;
-#endif
 {
     int32 	ret, offset;
     vsinstance_t    *w;
@@ -103,15 +97,7 @@ int32      eltpos;
 */
 
 
-#ifdef PROTOTYPE
 PUBLIC int32 VSread (int32 vkey,uint8 buf[], int32 nelt, int32 interlace)
-#else
-PUBLIC int32 VSread (vkey, buf, nelt, interlace)
-int32 vkey;
-int32 nelt;
-int32 interlace;
-uint8 buf[];
-#endif
 {
     register intn  isize = 0;
     register intn  order = 0;
@@ -320,15 +306,7 @@ uint8 buf[];
 
 */
 
-#ifdef PROTOTYPE
 PUBLIC int32 VSwrite (int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
-#else
-PUBLIC int32 VSwrite (vkey, buf, nelt, interlace)
-int32 vkey;
-int32       nelt;
-int32       interlace;
-uint8        buf[];
-#endif
 {
     register intn  isize = 0;
     register intn  order = 0;

@@ -21,8 +21,8 @@
 #ifdef INCLUDES_ARE_ANSI
 #include <stdlib.h>		/* to declare malloc(), free() */
 #else
-extern VOIDP malloc PROTO((size_t size));
-extern VOID free PROTO((VOID *ptr));
+extern VOIDP malloc (size_t size);
+extern VOID free (VOID *ptr);
 #endif
 
 
@@ -35,23 +35,13 @@ static external_methods_ptr methods; /* saved for access to error_exit */
  */
 
 GLOBAL VOIDP
-#ifdef PROTOTYPE
 jget_small (size_t sizeofobject)
-#else
-jget_small (sizeofobject)
-size_t sizeofobject;
-#endif
 {
   return (VOID *) malloc(sizeofobject);
 }
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jfree_small (VOIDP object)
-#else
-jfree_small (object)
-VOIDP object;
-#endif
 {
   free(object);
 }
@@ -68,13 +58,7 @@ VOIDP object;
  */
 
 GLOBAL long
-#ifdef PROTOTYPE
 jmem_available (long min_bytes_needed, long max_bytes_needed)
-#else
-jmem_available (min_bytes_needed, max_bytes_needed)
-long min_bytes_needed;
-long max_bytes_needed;
-#endif
 {
   return max_bytes_needed;
 }
@@ -86,13 +70,7 @@ long max_bytes_needed;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jopen_backing_store (backing_store_ptr info, long total_bytes_needed)
-#else
-jopen_backing_store (info, total_bytes_needed)
-backing_store_ptr info;
-long total_bytes_needed;
-#endif
 {
   ERREXIT(methods, "Backing store not supported");
 }
@@ -105,23 +83,14 @@ long total_bytes_needed;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jmem_init (external_methods_ptr emethods)
-#else
-jmem_init (emethods)
-external_methods_ptr emethods;
-#endif
 {
   methods = emethods;		/* save struct addr for error exit access */
   emethods->max_memory_to_use = 0;
 }
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jmem_term (VOID)
-#else
-jmem_term ()
-#endif
 {
   /* no work */
 }

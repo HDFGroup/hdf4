@@ -43,7 +43,7 @@ PRIVATE uint16 Lastref = 0;     /* Last ref read/written */
 PRIVATE char Lastfile[DF_MAXFNLEN] = ""; /* last file opened */
 
 PRIVATE int32 DFPIopen
-    PROTO((const char _HUGE *filename, intn acc_mode));
+    (const char _HUGE *filename, intn acc_mode);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -62,13 +62,7 @@ PRIVATE int32 DFPIopen
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFPgetpal(const char *filename, VOIDP palette)
-#else
-intn DFPgetpal(filename, palette)
-    const char *filename;
-    VOIDP palette;
-#endif
 {
     CONSTR(FUNC,"DFPgetpal");
     int32 file_id;
@@ -154,15 +148,7 @@ intn DFPgetpal(filename, palette)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFPputpal(const char *filename, VOIDP palette, intn overwrite, const char *filemode)
-#else
-intn DFPputpal(filename, palette, overwrite, filemode)
-    const char *filename;
-    VOIDP palette;
-    intn overwrite;
-    const char *filemode;
-#endif
 {
     CONSTR(FUNC,"DFPputpal");
     int32 file_id;
@@ -214,13 +200,7 @@ intn DFPputpal(filename, palette, overwrite, filemode)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFPaddpal(const char *filename, VOIDP palette)
-#else
-intn DFPaddpal(filename, palette)
-    const char *filename;
-    VOIDP palette;
-#endif
 {
     return(DFPputpal(filename, palette, 0, "a"));
 }   /* end DFPaddpal() */
@@ -240,12 +220,7 @@ intn DFPaddpal(filename, palette)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFPnpals(const char *filename)
-#else
-intn DFPnpals(filename)
-    const char *filename;
-#endif
 {
     CONSTR(FUNC,"DFPnpals");
     int32 file_id;
@@ -323,13 +298,7 @@ intn DFPnpals(filename)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFPreadref(const char *filename, uint16 ref)
-#else
-intn DFPreadref(filename, ref)
-    const char *filename;
-    uint16 ref;
-#endif
 {
     CONSTR(FUNC,"DFPreadref");
     int32 file_id;
@@ -370,13 +339,7 @@ intn DFPreadref(filename, ref)
     Writeref
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFPwriteref(const char *filename, uint16 ref)
-#else
-intn DFPwriteref(filename, ref)
-    const char *filename;
-    uint16 ref;
-#endif
 {
     Writeref = ref;
     return(SUCCEED);
@@ -397,11 +360,7 @@ intn DFPwriteref(filename, ref)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFPrestart(void)
-#else
-intn DFPrestart()
-#endif
 {
     Lastfile[0] = '\0';
     return(SUCCEED);
@@ -422,11 +381,7 @@ intn DFPrestart()
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 uint16 DFPlastref(void)
-#else
-uint16 DFPlastref()
-#endif
 {
     return(Lastref);
 }   /* end DFPlastref() */
@@ -466,13 +421,7 @@ uint16 DFPlastref()
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int32 DFPIopen(const char *filename, intn acc_mode)
-#else
-PRIVATE int32 DFPIopen(filename, acc_mode)
-    const char *filename;
-    intn acc_mode;
-#endif
 {
     CONSTR(FUNC,"DFPIopen");
     int32 file_id;

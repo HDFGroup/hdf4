@@ -34,12 +34,7 @@ static external_methods_ptr methods; /* saved for access to message_parm, free_a
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 trace_message (const char *msgtext)
-#else
-trace_message (msgtext)
-const char *msgtext;
-#endif
 {
   fprintf(stderr, msgtext,
 	  methods->message_parm[0], methods->message_parm[1],
@@ -51,12 +46,7 @@ const char *msgtext;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 error_exit (const char *msgtext)
-#else
-error_exit (msgtext)
-const char *msgtext;
-#endif
 {
   (*methods->trace_message) (msgtext);
   (*methods->free_all) ();	/* clean up memory allocation */
@@ -71,12 +61,7 @@ const char *msgtext;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jselerror (external_methods_ptr emethods)
-#else
-jselerror (emethods)
-external_methods_ptr emethods;
-#endif
 {
   methods = emethods;		/* save struct addr for later access */
 

@@ -112,26 +112,9 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
     FRETVAL(int)
-#ifdef PROTOTYPE
 nduif2i(int32 *hdim, int32 *vdim, float32 *max, float32 *min, float32 hscale[],
 	float32 vscale[], float32 data[], uint8 *palette, _fcd outfile,
     int *ct_method, int32 *hres, int32 *vres, int *compress, int *lenfn)
-#else
-nduif2i(hdim,vdim,max,min,hscale,vscale,data,palette,
-                                   outfile,ct_method,hres,vres,compress,lenfn)
-
-    int32 *hdim, *vdim; /* horizontal and vertical dimensions of input data */
-    float32 *max, *min,/* maximum and minimum values in the data */
-            hscale[]   /* horizontal and vertical scales */,
-            vscale[],
-            data[];    /* input data */
-    uint8 *palette;    /* palette to be stored with the image */
-    _fcd outfile;      /* name of file to store image in */
-    int  *ct_method;   /* color transform method: 1=EXPAND; 2=INTERP */
-    int32 *hres, *vres; /* resolutions desired for output image      */
-    int *compress,      /* flag: 0 = don't compress; 1=do compression */
-         *lenfn;        /* length of outfile string */
-#endif /* PROTOTYPE */
 {
     char *fn;
     int  ret;
@@ -164,24 +147,9 @@ nduif2i(hdim,vdim,max,min,hscale,vscale,data,palette,
  * Remarks: none
  *----------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFUfptoimage(int32 hdim, int32 vdim, float32 max, float32 min,
         float32 *hscale, float32 *vscale, float32 *data, uint8 *palette,
         char *outfile, int ct_method, int32 hres, int32 vres, int compress)
-#else
-int DFUfptoimage(hdim,vdim,max,min,hscale,vscale,data,palette,
-                                   outfile,ct_method,hres,vres,compress)
-
-int32   hdim, vdim,      /* horizontal and vertical dimensions of input data */
-        hres, vres;      /* resolutions desired for output image      */
-float32 max, min,        /* maximum and minimum values in the data */
-        *hscale,*vscale, /* horizontal and vertical scales */
-        *data;           /* input data */
-uint8   *palette;        /* palette to be stored with the image */
-char    *outfile;        /* name of file to store image in */
-int     ct_method,       /* color transform method: 1=EXPAND; 2=INTERP */
-        compress;        /* flag: 0 = don't compress; 1=do compression */
-#endif /* PROTOTYPE */
 {
     Input in;
     Output out;
@@ -224,13 +192,7 @@ int     ct_method,       /* color transform method: 1=EXPAND; 2=INTERP */
  * Remarks: none
  *----------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int process(Input *in, Output *out)
-#else
-int process(in, out)
-Input *in;
-Output *out;
-#endif /* PROTOTYPE */
 {
     int ret;
     int32   file_id;
@@ -303,13 +265,7 @@ Output *out;
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int generate_scale(int32 dim, float32 *scale)
-#else
-int generate_scale(dim, scale)
-int32 dim;
-float32 *scale;
-#endif /* PROTOTYPE */
 {
     int32 i;
 
@@ -332,12 +288,7 @@ float32 *scale;
  *---------------------------------------------------------------------------*/
 /*  This function is commented out of the code!! */
 #ifdef DEBUG_HDF
-#ifdef PROTOTYPE
 int printinput(Input *in)
-#else
-int printinput(in)
-Input *in;
-#endif /* PROTOTYPE */
 {
     int i,j; 
 
@@ -387,12 +338,7 @@ Input *in;
  *---------------------------------------------------------------------------*/
 /*  This function is commented out of the code!! */
 #ifdef DEBUG_HDF
-#ifdef PROTOTYPE
 int printoutput(Output *out)
-#else
-int printoutput(out)
-Output *out;
-#endif /* PROTOTYPE */
 {
     int i,j;
     printf("\n");
@@ -429,13 +375,7 @@ Output *out;
  * Remarks: Uses a bilinear interpolation method to fill in the picture.
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int convert_interp(Input *in, Output *out)
-#else
-int convert_interp(in, out)
-Input   *in;
-Output  *out;
-#endif /* PROTOTYPE */
 {
     register int j,theval;
     float32 *f,*dxs,*dys,*xv,*yv,*lim,delx,dely,pt,xrange,yrange,range,zy,
@@ -590,13 +530,7 @@ Output  *out;
  *          pixels according to in->vscale and in->hscale
  *---------------------------------------------------------------------------*/
 
-#ifdef  PROTOTYPE
 int pixrep_scaled(Input *in, Output *out)
-#else
-int pixrep_scaled(in, out)
-Input   *in;
-Output  *out;
-#endif /* PROTOTYPE */
 {
     register int32 j;
     float *data, range, ratio;
@@ -667,15 +601,7 @@ Output  *out;
  *          pixel value to place in the final picture.
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int compute_offsets(float32 *scale, int32 dim, int32 *offsets, int32 res)
-#else
-int compute_offsets(scale, dim, offsets, res)
-float32 *scale;
-int32 dim,         /* dimension of scale */ 
-      res;         /* resolution: length of array 'offsets' */
-int32 *offsets;
-#endif /* PROTOTYPE */
 {
     int32 i,j;
     float32 *midpt, pt, delta;
@@ -720,13 +646,7 @@ int32 *offsets;
  *          the same number of pixels for each point
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int pixrep_simple(Input *in, Output *out)
-#else
-int pixrep_simple(in, out)
-Input   *in;
-Output  *out;
-#endif /* PROTOTYPE */
 {
     int32 i,j;
     uint8 raster_val;

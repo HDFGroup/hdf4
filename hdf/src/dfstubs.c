@@ -108,15 +108,7 @@ PRIVATE char patterns[] = {0x80, 0x40, 0x20, 0x10, 0x08,
 ** EXAMPLES
 ** REVISION LOG
 */
-#ifdef PROTOTYPE
 DF *DFopen(char *name, int acc_mode, int ndds)
-#else
-	DF *
-DFopen(name, acc_mode, ndds)
-    char *name;
-    int acc_mode;
-    int ndds;
-#endif /* PROTOTYPE */
 {
     if (DFIcheck(DFlist) == 0) {
         DFerror = DFE_TOOMANY;
@@ -156,13 +148,7 @@ DFopen(name, acc_mode, ndds)
 ** EXAMPLES
 ** REVISION LOG
 */
-#ifdef PROTOTYPE
 int DFclose(DF *dfile)
-#else
-	int
-DFclose(dfile)
-    DF *dfile;
-#endif /* PROTOTYPE */
 {
     int ret;
 
@@ -218,16 +204,7 @@ DFclose(dfile)
 ** EXAMPLES
 ** REVISION LOG
 */
-#ifdef PROTOTYPE
 int DFdescriptors(DF *dfile, DFdesc ptr[], int begin, int num)
-#else
-	int
-DFdescriptors(dfile, ptr, begin, num)
-    DF *dfile;
-    DFdesc ptr[];
-    int begin;
-    int num;
-#endif /* PROTOTYPE */
 {
     int i, ret;
     int32 aid;
@@ -288,14 +265,7 @@ DFdescriptors(dfile, ptr, begin, num)
 ** EXAMPLES
 ** REVISION LOG
 */
-#ifdef PROTOTYPE
 int DFnumber(DF *dfile, uint16 tag)
-#else
-	int
-DFnumber(dfile, tag)
-    DF *dfile;
-    uint16 tag;
-#endif /* PROTOTYPE */
 {
     int32 aid;
     int num, ret;
@@ -336,15 +306,7 @@ DFnumber(dfile, tag)
 ** EXAMPLES
 ** REVISION LOG
 */
-#ifdef PROTOTYPE
 int DFsetfind(DF *dfile, uint16 tag, uint16 ref)
-#else
-	int
-DFsetfind(dfile, tag, ref)
-    DF *dfile;
-    uint16 tag;
-    uint16 ref;
-#endif /* PROTOTYPE */
 {
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
@@ -378,14 +340,7 @@ DFsetfind(dfile, tag, ref)
 ** EXAMPLES
 ** REVISION LOG
 */
-#ifdef PROTOTYPE
 int DFfind(DF *dfile, DFdesc *ptr)
-#else
-	int
-DFfind(dfile, ptr)
-    DF *dfile;
-    DFdesc *ptr;
-#endif /* PROTOTYPE */
 {
     int ret;
 
@@ -441,16 +396,7 @@ DFfind(dfile, ptr)
 ** EXAMPLES
 ** REVISION LOG
 */
-#ifdef PROTOTYPE
 int DFaccess(DF *dfile, uint16 tag, uint16 ref, char *acc_mode)
-#else
-	int
-DFaccess(dfile, tag, ref, acc_mode)
-    DF *dfile;
-    uint16 tag;
-    uint16 ref;
-    char *acc_mode;
-#endif /* PROTOTYPE */
 {
     int accmode;
     /*
@@ -554,12 +500,7 @@ test */
 
 
 
-#ifdef PROTOTYPE
 PRIVATE int DFIclearacc(void)
-#else
-	PRIVATE int
-DFIclearacc()
-#endif /* PROTOTYPE */
 {
     Hendaccess(DFaid);
     DFaid = 0;
@@ -592,16 +533,7 @@ DFIclearacc()
 ** EXAMPLES
 ** REVISION LOG
 */
-#ifdef PROTOTYPE
 int DFstart(DF *dfile, uint16 tag, uint16 ref, char *acc_mode)
-#else
-	int
-DFstart(dfile, tag, ref, acc_mode)
-    DF *dfile;
-    uint16 tag;
-    uint16 ref;
-    char *acc_mode;
-#endif /* PROTOTYPE */
 {
     return(DFaccess(dfile, tag, ref, acc_mode));
 }
@@ -626,15 +558,7 @@ DFstart(dfile, tag, ref, acc_mode)
 ** EXAMPLES
 ** REVISION LOG
 */
-#ifdef PROTOTYPE
 int32 DFread(DF *dfile, char *ptr, int32 len)
-#else
-	int32
-DFread(dfile, ptr, len)
-    DF *dfile;
-    char *ptr;
-    int32 len;
-#endif /* PROTOTYPE */
 {
     int32 ret;
 
@@ -683,14 +607,7 @@ DFread(dfile, ptr, len)
 ** EXAMPLES
 ** REVISION LOG
 */
-#ifdef PROTOTYPE
 int32 DFseek(DF *dfile, int32 offset)
-#else
-	int32
-DFseek(dfile, offset)
-    DF *dfile;
-    int32 offset;
-#endif /* PROTOTYPE */
 {
     int ret;
 
@@ -742,15 +659,7 @@ DFseek(dfile, offset)
 ** EXAMPLES
 ** REVISION LOG
 */
-#ifdef PROTOTYPE
 int32 DFwrite(DF *dfile, char *ptr, int32 len)
-#else
-	int32
-DFwrite(dfile, ptr, len)
-    DF *dfile;
-    char *ptr;
-    int32 len;
-#endif /* PROTOTYPE */
 {
     int32 size, ret, newlen;
 
@@ -819,13 +728,7 @@ DFwrite(dfile, ptr, len)
 ** EXAMPLES
 ** REVISION LOG
 */
-#ifdef PROTOTYPE
 int DFupdate(DF *dfile)
-#else
-	int
-DFupdate(dfile)
-    DF *dfile;
-#endif /* PROTOTYPE */
 {
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
@@ -864,14 +767,7 @@ DFupdate(dfile)
 ** EXAMPLES
 ** REVISION LOG
 */
-#ifdef PROTOTYPE
 int DFstat(DF *dfile, DFdata *dfinfo)
-#else
-	int
-DFstat(dfile, dfinfo)
-    DF *dfile;
-    DFdata *dfinfo;
-#endif /* PROTOTYPE */
 {
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
@@ -907,15 +803,7 @@ DFstat(dfile, dfinfo)
 ** EXAMPLES
 ** REVISION LOG
 */
-#ifdef PROTOTYPE
 int32 DFgetelement(DF *dfile, uint16 tag, uint16 ref, char *ptr)
-#else
-int32 DFgetelement(dfile, tag, ref, ptr)
-    DF *dfile;
-    uint16 tag;
-    uint16 ref;
-    char *ptr;
-#endif /* PROTOTYPE */
 {
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
@@ -960,17 +848,7 @@ int32 DFgetelement(dfile, tag, ref, ptr)
 ** EXAMPLES
 ** REVISION LOG
 */
-#ifdef PROTOTYPE
 int32 DFputelement(DF *dfile, uint16 tag, uint16 ref, char *ptr, int32 len)
-#else
-    int32
-DFputelement(dfile, tag, ref, ptr, len)
-    DF *dfile;
-    uint16 tag;
-    uint16 ref;
-    char *ptr;
-    int32 len;
-#endif /* PROTOTYPE */
 {
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
@@ -1015,17 +893,7 @@ DFputelement(dfile, tag, ref, ptr, len)
 ** EXAMPLES
 ** REVISION LOG
 */
-#ifdef PROTOTYPE
 int DFdup(DF *dfile, uint16 itag, uint16 iref, uint16 otag, uint16 oref)
-#else
-	int
-DFdup(dfile, itag, iref, otag, oref)
-    DF *dfile;
-    uint16 itag;
-    uint16 iref;
-    uint16 otag;
-    uint16 oref;
-#endif /* PROTOTYPE */
 {
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
@@ -1061,15 +929,7 @@ DFdup(dfile, itag, iref, otag, oref)
 ** EXAMPLES
 ** REVISION LOG
 */
-#ifdef PROTOTYPE
 int DFdel(DF *dfile, uint16 tag, uint16 ref)
-#else
-	int
-DFdel(dfile, tag, ref)
-    DF *dfile;
-    uint16 tag;
-    uint16 ref;
-#endif /* PROTOTYPE */
 {
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
@@ -1102,13 +962,7 @@ DFdel(dfile, tag, ref)
 ** EXAMPLES
 ** REVISION LOG
 */
-#ifdef PROTOTYPE
 uint16 DFnewref(DF *dfile)
-#else
-	uint16
-DFnewref(dfile)
-    DF *dfile;
-#endif /* PROTOTYPE */
 {
     uint16 ret;
 
@@ -1144,13 +998,7 @@ DFnewref(dfile)
 ** EXAMPLES
 ** REVISION LOG
 */
-#ifdef PROTOTYPE
 int DFishdf(char *filename)
-#else
-	int
-DFishdf(filename)
-    char *filename;
-#endif /* PROTOTYPE */
 {
     int32 dummy;
 
@@ -1182,12 +1030,7 @@ DFishdf(filename)
 ** EXAMPLES
 ** REVISION LOG
 */
-#ifdef PROTOTYPE
 int DFerrno(void)
-#else
-	int
-DFerrno()
-#endif /* PROTOTYPE */
 {
     return(DFerror);
 }
@@ -1200,12 +1043,7 @@ DFerrno()
  * Users:   HDF systems programmers, several routines in this file
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 PRIVATE int DFIcheck(DF *dfile)
-#else
-PRIVATE int DFIcheck( dfile)
-DF *dfile;
-#endif  /* PROTOTYPE */
 {
     DFerror = DFE_NONE;
 
@@ -1479,12 +1317,7 @@ int32 offset;
  * Remarks: Used to centralize some error handling
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFIerr(DF *dfile)
-#else
-int DFIerr(dfile)
-DF *dfile;
-#endif  /* PROTOTYPE */
 {
     int saveerror;
 
@@ -1519,12 +1352,7 @@ int32 DFIspaceleft(void)
 #endif /* PC */
 
 
-#if defined PROTOTYPE
 void *DFIgetspace(uint32 qty)
-#else
-void *DFIgetspace(qty)
-uint32 qty;
-#endif /* PROTOTYPE */
 {
     void *ret;
 
@@ -1533,12 +1361,7 @@ uint32 qty;
     return(ret);
 }
 
-#if defined PROTOTYPE
 void *DFIfreespace(void *ptr)
-#else
-void *DFIfreespace(ptr)
-char *ptr;
-#endif /* PROTOTYPE */
 {
 #ifdef MALLOC_CHECK
     return(HDfreespace(ptr));
@@ -1549,24 +1372,12 @@ char *ptr;
 }
 
 
-#if defined PROTOTYPE
 intn DFIc2fstr(char *str, int len)
-#else
-intn DFIc2fstr(str, len)
-char* str;
-int len;
-#endif /* PROTOTYPE */
 {
     return(HDc2fstr(str, len));
 }
 
-#if defined PROTOTYPE
 char *DFIf2cstring(_fcd fdesc, intn len)
-#else
-char *DFIf2cstring(fdesc, len)
-    _fcd fdesc;
-    intn len;
-#endif /* PROTOTYPE */
 {
     return(HDf2cstring(fdesc, len));
 }

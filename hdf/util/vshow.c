@@ -37,15 +37,9 @@ static char *RcsId[] = "@(#)$Revision$";
 static int condensed;
 
 int32 vsdumpfull
-  PROTO((int32 vs)); 
+  (int32 vs); 
 
-#ifdef PROTOTYPE
 int main(int ac,char **av)
-#else
-int main(ac,av)
-int ac; 
-char**av;
-#endif
 {
     int32   vg, vgt;
     int32   vgotag,vgoref;
@@ -210,35 +204,20 @@ static int32 cn = 0;
 
 /* ------------------------------------------------ */
 /* printing functions used by vsdumpfull(). */
-#ifdef PROTOTYPE
 int32 fmtbyte(unsigned char *x)
-#else
-int32 fmtbyte(x)
-unsigned char*x;
-#endif
 {
     cn += printf("%02x ",*x);
     return(1);
 }
 
-#ifdef PROTOTYPE
 int32 fmtchar(char *x)
-#else
-int32 fmtchar(x)
-char*x; 
-#endif
 { 
     cn++;
     putchar(*x);
     return(1);
 }
 
-#ifdef PROTOTYPE
 int32 fmtint(char *x)
-#else
-int32 fmtint(x) 
-char* x;
-#endif
 {	
   int i = 0;
   HDmemcpy(&i, x, sizeof(int32));
@@ -246,12 +225,7 @@ char* x;
   return(1);  
 }
 
-#ifdef PROTOTYPE
 int32 fmtfloat(char *x)
-#else
-int32 fmtfloat(x) 
-char* x;
-#endif
 {
   float f = 0;
   HDmemcpy(&f, x, sizeof(float32));
@@ -259,12 +233,7 @@ char* x;
   return(1);  
 }
 
-#ifdef PROTOTYPE
 int32 fmtlong(char *x)
-#else
-int32 fmtlong(x) 
-char* x;
-#endif
 {	
   long l = 0;
   HDmemcpy(&l, x, sizeof(int32));
@@ -272,12 +241,7 @@ char* x;
   return(1);  
 }
 
-#ifdef PROTOTYPE
 int32 fmtshort(char *x)
-#else
-int32 fmtshort(x) 
-char* x;
-#endif
 {	
   short s = 0;
   HDmemcpy(&s, x, sizeof(int16));
@@ -285,12 +249,7 @@ char* x;
   return(1);  
 }
 
-#ifdef PROTOTYPE
 int32 fmtdouble(char *x)
-#else
-int32 fmtdouble(x)
-char*x;
-#endif
 {	
   double d = 0;
   HDmemcpy(&d, x, sizeof(float64));
@@ -303,12 +262,7 @@ char*x;
 
 /* ------------------------------------------------ */
 
-#ifdef PROTOTYPE
 int32 vsdumpfull(int32 vs)
-#else
-int32 vsdumpfull(vs)
-int32 vs; 
-#endif
 {
     char vsname[100], fields[100];
     int32 j,i,t,interlace, nv, vsize;

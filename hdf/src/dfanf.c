@@ -125,14 +125,7 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndaiganl(_fcd filename, intf *tag, intf *ref, intf *type, intf *fnlen)
-#else
-ndaiganl(filename, tag, ref, type, fnlen)
-    _fcd filename;
-    intf *tag, *ref;
-    intf *fnlen, *type;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -160,16 +153,8 @@ ndaiganl(filename, tag, ref, type, fnlen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndaigann(_fcd filename, intf *tag, intf *ref, _fcd annotation, intf *maxlen,
      intf *type, intf *fnlen)
-#else
-ndaigann(filename, tag, ref, annotation, maxlen, type, fnlen)
-    _fcd filename, annotation;
-    intf *tag, *ref;
-    intf *maxlen;
-    intf *type, *fnlen;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -198,16 +183,8 @@ ndaigann(filename, tag, ref, annotation, maxlen, type, fnlen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndaipann(_fcd filename, intf *tag, intf *ref, _fcd annotation,
          intf *annlen, intf *type, intf *fnlen)
-#else
-ndaipann(filename, tag, ref, annotation, annlen, type, fnlen)
-    _fcd filename, annotation;
-    intf *tag, *ref;
-    intf *annlen;
-    intf *type, *fnlen;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -240,18 +217,8 @@ ndaipann(filename, tag, ref, annotation, annlen, type, fnlen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndailist(_fcd filename, intf *tag, intf reflist[], _fcd labellist,
     intf *listsize, intf *maxlen, intf *startpos, intf *fnlen)
-#else
-ndailist(filename, tag, reflist, labellist,listsize, maxlen,startpos,fnlen)
-     _fcd filename;
-     intf *tag;
-     intf reflist[];
-     _fcd labellist;
-     intf *listsize;
-     intf *maxlen, *startpos, *fnlen;
-#endif /* PROTOTYPE */
 {
     char *fn;
     int i;
@@ -293,11 +260,7 @@ ndailist(filename, tag, reflist, labellist,listsize, maxlen,startpos,fnlen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndalref(void)
-#else
-ndalref()
-#endif /* PROTOTYPE */
 {
     return(DFANlastref());
 }
@@ -316,11 +279,7 @@ ndalref()
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfanlastref(void)
-#else
-ndfanlastref()
-#endif /* PROTOTYPE */
 {
     return(DFANlastref());
 }
@@ -343,14 +302,7 @@ ndfanlastref()
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfanaddfds(intf *dfile, _fcd desc, intf *desclen)
-#else
-ndfanaddfds(dfile, desc, desclen)
-    int32 *dfile;
-    _fcd  desc;
-    intf *desclen;
-#endif /* PROTOTYPE */
 {
     return ( DFANIaddfann( *dfile, _fcdtocp(desc), *desclen, DFAN_DESC) );
 }
@@ -366,13 +318,7 @@ ndfanaddfds(dfile, desc, desclen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfangetfidlen(intf *dfile, intf *isfirst)
-#else
-ndfangetfidlen(dfile, isfirst)
-    intf *dfile;
-    intf *isfirst;
-#endif /* PROTOTYPE */
 {
      return ( DFANIgetfannlen( *dfile, DFAN_LABEL, (intn)*isfirst) );
 }
@@ -389,13 +335,7 @@ ndfangetfidlen(dfile, isfirst)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfangetfdslen(intf *dfile, intf *isfirst)
-#else
-ndfangetfdslen(dfile, isfirst)
-    intf *dfile;
-    intf *isfirst;
-#endif /* PROTOTYPE */
 {
      return ( DFANIgetfannlen( *dfile, DFAN_DESC, (intn)*isfirst) );
 }
@@ -413,15 +353,7 @@ ndfangetfdslen(dfile, isfirst)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfangetfid(intf *dfile, _fcd id, intf *maxlen, intf *isfirst)
-#else
-ndfangetfid(dfile, id, maxlen, isfirst)
-    intf *dfile;
-    _fcd  id;
-    intf *maxlen;
-    intf *isfirst;
-#endif /* PROTOTYPE */
 {
     return( DFANIgetfann( *dfile, _fcdtocp(id), *maxlen,
             DFAN_LABEL, (intn)*isfirst));
@@ -440,15 +372,7 @@ ndfangetfid(dfile, id, maxlen, isfirst)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfangetfds(intf *dfile, _fcd id, intf *maxlen, intf *isfirst)
-#else
-ndfangetfds(dfile, id, maxlen, isfirst)
-    intf *dfile;
-     _fcd  id;
-    intf *maxlen;
-    intf *isfirst;
-#endif /* PROTOTYPE */
 {
     return( DFANIgetfann( *dfile, _fcdtocp(id), *maxlen,
             DFAN_DESC, (intn)*isfirst));
@@ -470,14 +394,7 @@ ndfangetfds(dfile, id, maxlen, isfirst)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndaafds(intf *dfile, _fcd desc, intf *desclen)
-#else
-ndaafds(dfile, desc, desclen)
-    intf *dfile;
-    _fcd  desc;
-    intf *desclen;
-#endif /* PROTOTYPE */
 {
     return ( DFANIaddfann( *dfile, _fcdtocp(desc), *desclen, DFAN_DESC) );
 }
@@ -494,13 +411,7 @@ ndaafds(dfile, desc, desclen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndagfidl(intf *dfile, intf *isfirst)
-#else
-ndagfidl(dfile, isfirst)
-    intf *dfile;
-    intf *isfirst;
-#endif /* PROTOTYPE */
 {
      return ( DFANIgetfannlen( *dfile, DFAN_LABEL, (intn)*isfirst) );
 }
@@ -517,13 +428,7 @@ ndagfidl(dfile, isfirst)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndagfdsl(intf *dfile, intf *isfirst)
-#else
-ndagfdsl(dfile, isfirst)
-    intf *dfile;
-    intf *isfirst;
-#endif /* PROTOTYPE */
 {
      return ( DFANIgetfannlen( *dfile, DFAN_DESC, (intn)*isfirst) );
 }
@@ -541,15 +446,7 @@ ndagfdsl(dfile, isfirst)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndagfid(intf *dfile, _fcd id, intf *maxlen, intf *isfirst)
-#else
-ndagfid(dfile, id, maxlen, isfirst)
-    intf *dfile;
-    _fcd  id;
-    intf *maxlen;
-    intf *isfirst;
-#endif /* PROTOTYPE */
 {
     return( DFANIgetfann( *dfile, _fcdtocp(id), *maxlen,
             DFAN_LABEL, (intn)*isfirst));
@@ -569,15 +466,7 @@ ndagfid(dfile, id, maxlen, isfirst)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndagfds(intf *dfile, _fcd id, intf *maxlen, intf *isfirst)
-#else
-ndagfds(dfile, id, maxlen, isfirst)
-    intf *dfile;
-    _fcd  id;
-    intf *maxlen;
-    intf *isfirst;
-#endif /* PROTOTYPE */
 {
     return( DFANIgetfann( *dfile, _fcdtocp(id), *maxlen,
             DFAN_DESC, (intn)*isfirst));
@@ -601,14 +490,7 @@ ndagfds(dfile, id, maxlen, isfirst)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndaiafid(intf *dfile, _fcd id, intf *idlen)
-#else
-ndaiafid(dfile, id, idlen)
-    intf *dfile;
-    _fcd  id;
-    intf *idlen;
-#endif /* PROTOTYPE */
 {
     return(DFANIaddfann( *dfile, _fcdtocp(id),*idlen, DFAN_LABEL));
 }

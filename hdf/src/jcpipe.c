@@ -55,12 +55,7 @@
  */
 
 LOCAL VOID
-#ifdef PROTOTYPE
 interleaved_scan_setup (compress_info_ptr cinfo)
-#else
-interleaved_scan_setup (cinfo)
-compress_info_ptr cinfo;
-#endif
 /* Compute all derived info for an interleaved (multi-component) scan */
 /* On entry, cinfo->comps_in_scan and cinfo->cur_comp_info[] are set up */
 {
@@ -116,12 +111,7 @@ compress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 noninterleaved_scan_setup (compress_info_ptr cinfo)
-#else
-noninterleaved_scan_setup (cinfo)
-compress_info_ptr cinfo;
-#endif
 /* Compute all derived info for a noninterleaved (single-component) scan */
 /* On entry, cinfo->comps_in_scan = 1 and cinfo->cur_comp_info[0] is set up */
 {
@@ -157,15 +147,8 @@ compress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 alloc_sampling_buffer (compress_info_ptr cinfo, JSAMPIMAGE fullsize_data[2],
 		       long fullsize_width)
-#else
-alloc_sampling_buffer (cinfo, fullsize_data, fullsize_width)
-compress_info_ptr cinfo;
-JSAMPIMAGE fullsize_data[2];
-long fullsize_width;
-#endif
 /* Create a pre-downsampling data buffer having the desired structure */
 /* (see comments at head of file) */
 {
@@ -203,13 +186,7 @@ long fullsize_width;
 #if 0				/* this routine not currently needed */
 
 LOCAL VOID
-#ifdef PROTOTYPE
 free_sampling_buffer (compress_info_ptr cinfo, JSAMPIMAGE fullsize_data[2])
-#else
-free_sampling_buffer (cinfo, fullsize_data)
-compress_info_ptr cinfo;
-JSAMPIMAGE fullsize_data[2];
-#endif
 /* Release a sampling buffer created by alloc_sampling_buffer */
 {
   short ci;
@@ -230,23 +207,10 @@ JSAMPIMAGE fullsize_data[2];
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 downsample (compress_info_ptr cinfo,
 	    JSAMPIMAGE fullsize_data, JSAMPIMAGE sampled_data,
 	    long fullsize_width,
 	    short above, short current, short below, short out)
-#else
-downsample (cinfo, fullsize_data, sampled_data, fullsize_width, above, current,
-        below, out)
-compress_info_ptr cinfo;
-JSAMPIMAGE fullsize_data;
-JSAMPIMAGE sampled_data;
-long fullsize_width;
-short above;
-short current;
-short below;
-short out;
-#endif
 /* Do downsampling of a single row group (of each component). */
 /* above, current, below are indexes of row groups in fullsize_data;      */
 /* out is the index of the target row group in sampled_data.              */
@@ -310,13 +274,7 @@ static int next_MCU_index;	/* next MCU in current row */
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 MCU_output_catcher (compress_info_ptr cinfo, JBLOCK *MCU_data)
-#else
-MCU_output_catcher (cinfo, MCU_data)
-compress_info_ptr cinfo;
-JBLOCK *MCU_data;
-#endif
 /* Output method for siphoning off extract_MCUs output into a big array */
 {
   static JBLOCKARRAY rowptr;
@@ -340,13 +298,7 @@ JBLOCK *MCU_data;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 dump_scan_MCUs (compress_info_ptr cinfo, MCU_output_method_ptr output_method)
-#else
-dump_scan_MCUs (cinfo, output_method)
-compress_info_ptr cinfo;
-MCU_output_method_ptr output_method;
-#endif
 /* Dump the MCUs saved in whole_scan_MCUs to the output method. */
 /* The method may be either the entropy encoder or some routine supplied */
 /* by the entropy optimizer. */
@@ -399,12 +351,7 @@ MCU_output_method_ptr output_method;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 single_ccontroller (compress_info_ptr cinfo)
-#else
-single_ccontroller (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   int rows_in_mem;		/* # of sample rows in full-size buffers */
   long fullsize_width;		/* # of samples per row in full-size buffers */
@@ -556,12 +503,7 @@ compress_info_ptr cinfo;
 #ifdef ENTROPY_OPT_SUPPORTED
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 single_eopt_ccontroller (compress_info_ptr cinfo)
-#else
-single_eopt_ccontroller (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   int rows_in_mem;		/* # of sample rows in full-size buffers */
   long fullsize_width;		/* # of samples per row in full-size buffers */
@@ -737,12 +679,7 @@ compress_info_ptr cinfo;
 #ifdef C_MULTISCAN_FILES_SUPPORTED
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 multi_ccontroller (compress_info_ptr cinfo)
-#else
-multi_ccontroller (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   ERREXIT(cinfo->emethods, "Not implemented yet");
 }
@@ -759,12 +696,7 @@ compress_info_ptr cinfo;
 #ifdef ENTROPY_OPT_SUPPORTED
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 multi_eopt_ccontroller (compress_info_ptr cinfo)
-#else
-multi_eopt_ccontroller (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   ERREXIT(cinfo->emethods, "Not implemented yet");
 }
@@ -778,12 +710,7 @@ compress_info_ptr cinfo;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jselcpipeline (compress_info_ptr cinfo)
-#else
-jselcpipeline (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   if (cinfo->interleave || cinfo->num_components == 1) {
     /* single scan needed */

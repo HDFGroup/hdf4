@@ -64,10 +64,10 @@ extern "C" {
 
 /* prototypes for internal routines */
 PRIVATE int DFIclearacc
-   PROTO((void));
+   (void);
 
 PRIVATE int DFIcheck
-   PROTO((DF *dfile));
+   (DF *dfile);
 
 #if defined c_plusplus || defined __cplusplus
 }

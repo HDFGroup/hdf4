@@ -51,12 +51,7 @@ static char * row_buffer;	/* holds 1 pixel row's worth of output */
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 output_init (decompress_info_ptr cinfo)
-#else
-output_init (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   if (cinfo->out_color_space == CS_GRAYSCALE) {
     /* emit header for raw PGM format */
@@ -89,15 +84,8 @@ decompress_info_ptr cinfo;
 #ifdef USE_PUTC_OUTPUT
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 put_pixel_rows (decompress_info_ptr cinfo, int num_rows,
 		JSAMPIMAGE pixel_data)
-#else
-put_pixel_rows (cinfo, num_rows, pixel_data)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE pixel_data;
-#endif
 {
   register FILE * outfile = cinfo->output_file;
   register JSAMPROW ptr0, ptr1, ptr2;
@@ -121,15 +109,8 @@ JSAMPIMAGE pixel_data;
 }
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 put_gray_rows (decompress_info_ptr cinfo, int num_rows,
 	       JSAMPIMAGE pixel_data)
-#else
-put_gray_rows (cinfo, num_rows, pixel_data)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE pixel_data;
-#endif
 {
   register FILE * outfile = cinfo->output_file;
   register JSAMPROW ptr0;
@@ -149,15 +130,8 @@ JSAMPIMAGE pixel_data;
 #else /* use row buffering */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 put_pixel_rows (decompress_info_ptr cinfo, int num_rows,
 		JSAMPIMAGE pixel_data)
-#else
-put_pixel_rows (cinfo, num_rows, pixel_data)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE pixel_data;
-#endif
 {
   FILE * outfile = cinfo->output_file;
   register JSAMPROW ptr0, ptr1, ptr2;
@@ -181,15 +155,8 @@ JSAMPIMAGE pixel_data;
 }
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 put_gray_rows (decompress_info_ptr cinfo, int num_rows,
 	       JSAMPIMAGE pixel_data)
-#else
-put_gray_rows (cinfo, num_rows, pixel_data)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE pixel_data;
-#endif
 {
   FILE * outfile = cinfo->output_file;
   register JSAMPROW ptr0;
@@ -218,15 +185,8 @@ JSAMPIMAGE pixel_data;
 #ifdef USE_PUTC_OUTPUT
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 put_demapped_rgb (decompress_info_ptr cinfo, int num_rows,
 		  JSAMPIMAGE pixel_data)
-#else
-put_demapped_rgb (cinfo, num_rows, pixel_data)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE pixel_data;
-#endif
 {
   register FILE * outfile = cinfo->output_file;
   register JSAMPROW ptr;
@@ -250,15 +210,8 @@ JSAMPIMAGE pixel_data;
 }
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 put_demapped_gray (decompress_info_ptr cinfo, int num_rows,
 		   JSAMPIMAGE pixel_data)
-#else
-put_demapped_gray (cinfo, num_rows, pixel_data)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE pixel_data;
-#endif
 {
   register FILE * outfile = cinfo->output_file;
   register JSAMPROW ptr;
@@ -280,15 +233,8 @@ JSAMPIMAGE pixel_data;
 #else /* use row buffering */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 put_demapped_rgb (decompress_info_ptr cinfo, int num_rows,
 		  JSAMPIMAGE pixel_data)
-#else
-put_demapped_rgb (cinfo, num_rows, pixel_data)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE pixel_data;
-#endif
 {
   FILE * outfile = cinfo->output_file;
   register JSAMPROW ptr;
@@ -315,15 +261,8 @@ JSAMPIMAGE pixel_data;
 }
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 put_demapped_gray (decompress_info_ptr cinfo, int num_rows,
 		   JSAMPIMAGE pixel_data)
-#else
-put_demapped_gray (cinfo, num_rows, pixel_data)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE pixel_data;
-#endif
 {
   FILE * outfile = cinfo->output_file;
   register JSAMPROW ptr;
@@ -354,14 +293,7 @@ JSAMPIMAGE pixel_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 put_color_map (decompress_info_ptr cinfo, int num_colors, JSAMPARRAY colormap)
-#else
-put_color_map (cinfo, num_colors, colormap)
-decompress_info_ptr cinfo;
-int num_colors;
-JSAMPARRAY colormap;
-#endif
 {
   if (cinfo->out_color_space == CS_RGB)
     cinfo->methods->put_pixel_rows = put_demapped_rgb;
@@ -375,12 +307,7 @@ JSAMPARRAY colormap;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 output_term (decompress_info_ptr cinfo)
-#else
-output_term (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   /* No work except to make sure we wrote the output file OK; */
   /* we let free_all release any workspace */
@@ -396,12 +323,7 @@ decompress_info_ptr cinfo;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jselwppm (decompress_info_ptr cinfo)
-#else
-jselwppm (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   cinfo->methods->output_init = output_init;
   cinfo->methods->put_color_map = put_color_map;

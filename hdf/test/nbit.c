@@ -138,12 +138,7 @@ static char RcsId[] = "@(#)$Revision$";
 extern int num_errs;
 extern int Verbocity;
 
-#ifdef PROTOTYPE
 void test_nbit1(int32 fid)
-#else
-void test_nbit1(fid)
-int32 fid;
-#endif
 {
     int32 aid1;
     uint16 ref1;
@@ -204,12 +199,7 @@ int32 fid;
     num_errs+=errors;
 }
 
-#ifdef PROTOTYPE
 void test_nbit2(int32 fid)
-#else
-void test_nbit2(fid)
-int32 fid;
-#endif
 {
     int32 aid1;
     uint16 ref1;
@@ -268,12 +258,7 @@ int32 fid;
     num_errs+=errors;
 }
 
-#ifdef PROTOTYPE
 void test_nbit3(int32 fid)
-#else
-void test_nbit3(fid)
-int32 fid;
-#endif
 {
     int32 aid1;
     uint16 ref1;
@@ -347,12 +332,7 @@ int32 fid;
     num_errs+=errors;
 }
 
-#ifdef PROTOTYPE
 void test_nbit4(int32 fid)
-#else
-void test_nbit4(fid)
-int32 fid;
-#endif
 {
     int32 aid1;
     uint16 ref1;
@@ -429,12 +409,7 @@ int32 fid;
     num_errs+=errors;
 }
 
-#ifdef PROTOTYPE
 void test_nbit5(int32 fid)
-#else
-void test_nbit5(fid)
-int32 fid;
-#endif
 {
     int32 aid1;
     uint16 ref1;
@@ -512,12 +487,7 @@ int32 fid;
     num_errs+=errors;
 }
 
-#ifdef PROTOTYPE
 void test_nbit6(int32 fid)
-#else
-void test_nbit6(fid)
-int32 fid;
-#endif
 {
     int32 aid1;
     uint16 ref1;
@@ -595,12 +565,7 @@ int32 fid;
     num_errs+=errors;
 }
 
-#ifdef PROTOTYPE
 void test_nbit7(int32 fid)
-#else
-void test_nbit7(fid)
-int32 fid;
-#endif
 {
     int32 aid1;
     uint16 ref1;
@@ -661,12 +626,7 @@ int32 fid;
     num_errs+=errors;
 }
 
-#ifdef PROTOTYPE
 void test_nbit8(int32 fid)
-#else
-void test_nbit8(fid)
-int32 fid;
-#endif
 {
     int32 aid1;
     uint16 ref1;
@@ -727,12 +687,7 @@ int32 fid;
     num_errs+=errors;
 }
 
-#ifdef PROTOTYPE
 void test_nbit9(int32 fid)
-#else
-void test_nbit9(fid)
-int32 fid;
-#endif
 {
     int32 aid1;
     uint16 ref1;
@@ -810,12 +765,7 @@ int32 fid;
     num_errs+=errors;
 }
 
-#ifdef PROTOTYPE
 void test_nbit10(int32 fid)
-#else
-void test_nbit10(fid)
-int32 fid;
-#endif
 {
     int32 aid1;
     uint16 ref1;
@@ -893,12 +843,7 @@ int32 fid;
     num_errs+=errors;
 }
 
-#ifdef PROTOTYPE
 void test_nbit11(int32 fid)
-#else
-void test_nbit11(fid)
-int32 fid;
-#endif
 {
     int32 aid1;
     uint16 ref1;
@@ -976,12 +921,7 @@ int32 fid;
     num_errs+=errors;
 }
 
-#ifdef PROTOTYPE
 void test_nbit12(int32 fid)
-#else
-void test_nbit12(fid)
-int32 fid;
-#endif
 {
     int32 aid1;
     uint16 ref1;
@@ -1059,7 +999,7 @@ int32 fid;
     num_errs+=errors;
 }
 
-void test_nbit()
+void test_nbit(void)
 {
     int32 fid;
     int32 ret;

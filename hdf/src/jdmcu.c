@@ -19,14 +19,8 @@
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 disassemble_noninterleaved_MCU (decompress_info_ptr cinfo,
 				JBLOCKIMAGE image_data)
-#else
-disassemble_noninterleaved_MCU (cinfo, image_data)
-decompress_info_ptr cinfo;
-JBLOCKIMAGE image_data;
-#endif
 {
   JBLOCKROW MCU_data[1];
   long mcuindex;
@@ -53,14 +47,8 @@ JBLOCKIMAGE image_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 disassemble_interleaved_MCU (decompress_info_ptr cinfo,
 			     JBLOCKIMAGE image_data)
-#else
-disassemble_interleaved_MCU (cinfo, image_data)
-decompress_info_ptr cinfo;
-JBLOCKIMAGE image_data;
-#endif
 {
   JBLOCKROW MCU_data[MAX_BLOCKS_IN_MCU];
   long mcuindex;
@@ -108,16 +96,8 @@ JBLOCKIMAGE image_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 reverse_DCT (decompress_info_ptr cinfo,
 	     JBLOCKIMAGE coeff_data, JSAMPIMAGE output_data, int start_row)
-#else
-reverse_DCT (cinfo, coeff_data, output_data, start_row)
-decompress_info_ptr cinfo;
-JBLOCKIMAGE coeff_data;
-JSAMPIMAGE output_data;
-int start_row;
-#endif
 {
   DCTBLOCK block;
   JBLOCKROW browptr;
@@ -195,12 +175,7 @@ int start_row;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 disassemble_init (decompress_info_ptr cinfo)
-#else
-disassemble_init (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   /* no work for now */
 }
@@ -211,12 +186,7 @@ decompress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 disassemble_term (decompress_info_ptr cinfo)
-#else
-disassemble_term (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   /* no work for now */
 }
@@ -228,12 +198,7 @@ decompress_info_ptr cinfo;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jseldmcu (decompress_info_ptr cinfo)
-#else
-jseldmcu (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   if (cinfo->comps_in_scan == 1)
     cinfo->methods->disassemble_MCU = disassemble_noninterleaved_MCU;

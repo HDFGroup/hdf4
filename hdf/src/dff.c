@@ -106,14 +106,7 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfiopen(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
-#else
-ndfiopen(name, acc_mode, defdds, namelen)
-    _fcd name;
-    intf *acc_mode, *defdds;
-    intf *namelen;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -135,12 +128,7 @@ ndfiopen(name, acc_mode, defdds, namelen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfclose(intf *dfile)
-#else
-ndfclose(dfile)
-    intf *dfile;
-#endif /* PROTOTYPE */
 {
     return(DFclose((DF *)*dfile));
 }
@@ -157,13 +145,7 @@ ndfclose(dfile)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfdesc(intf *dfile, intf ptr[][4], intf *begin, intf *num)
-#else
-ndfdesc(dfile, ptr, begin, num)
-    intf *dfile, *begin, *num;
-    intf ptr[][4];
-#endif /* PROTOTYPE */
 {
     DFdesc *ptr1;
     int i;
@@ -200,13 +182,7 @@ ndfdesc(dfile, ptr, begin, num)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfdup(intf *dfile, intf *tag, intf *ref, intf *otag, intf *oref)
-#else
-ndfdup(dfile, tag, ref, otag, oref)
-    intf *dfile;
-    intf *tag, *ref, *oref, *otag;
-#endif /* PROTOTYPE */
 {
     return(DFdup((DF *)*dfile, (uint16)*tag, (uint16)*ref, (uint16)*otag,
     	   (uint16)*oref));
@@ -224,13 +200,7 @@ ndfdup(dfile, tag, ref, otag, oref)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfdel(intf *dfile, intf *tag, intf *ref)
-#else
-ndfdel(dfile, tag, ref)
-    intf *dfile;
-    intf *tag, *ref;
-#endif /* PROTOTYPE */
 {
     return (DFdel((DF *)*dfile, (uint16)*tag, (uint16)*ref));
 }
@@ -248,15 +218,7 @@ ndfdel(dfile, tag, ref)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfiaccess(intf *dfile, intf *tag, intf *ref, _fcd acc_mode, intf *acclen)
-#else
-ndfiaccess(dfile, tag, ref, acc_mode, acclen)
-    intf *dfile;
-    intf *tag, *ref;
-    _fcd acc_mode;
-    intf *acclen;
-#endif /* PROTOTYPE */
 {
     char *acc;
     intf ret;
@@ -281,14 +243,7 @@ ndfiaccess(dfile, tag, ref, acc_mode, acclen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfstart(intf *dfile, intf *tag, intf *ref, char *acc_mode)
-#else
-ndfstart(dfile, tag, ref, acc_mode)
-    intf *dfile;
-    intf *tag, *ref;
-    char *acc_mode;
-#endif /* PROTOTYPE */
 {
     return(DFaccess((DF *)*dfile, (uint16)*tag, (uint16)*ref, acc_mode));
 }
@@ -306,13 +261,7 @@ ndfstart(dfile, tag, ref, acc_mode)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfread(intf *dfile, _fcd ptr, intf *len)
-#else
-ndfread(dfile, ptr, len)
-    intf *dfile, *len;
-    _fcd ptr;
-#endif /* PROTOTYPE */
 {
     return (DFread((DF *) *dfile, (char *)_fcdtocp(ptr), *len));
 }
@@ -328,12 +277,7 @@ ndfread(dfile, ptr, len)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfseek(intf *dfile, intf *offset)
-#else
-ndfseek(dfile, offset)
-    intf *dfile, *offset;
-#endif /* PROTOTYPE */
 {
     return (DFseek((DF *)*dfile, *offset));
 }
@@ -351,13 +295,7 @@ ndfseek(dfile, offset)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfwrite(intf *dfile, _fcd ptr, intf *len)
-#else
-ndfwrite(dfile, ptr, len)
-    intf *dfile, *len;
-    _fcd ptr;
-#endif /* PROTOTYPE */
 {
     return (DFwrite((DF *)*dfile, (char *)_fcdtocp(ptr), *len));
 }
@@ -372,12 +310,7 @@ ndfwrite(dfile, ptr, len)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfupdate(intf *dfile)
-#else
-ndfupdate(dfile)
-    intf *dfile;
-#endif /* PROTOTYPE */
 {
     return (DFupdate((DF *)*dfile));
 }
@@ -395,14 +328,7 @@ ndfupdate(dfile)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfget(intf *dfile, intf *tag, intf *ref, _fcd ptr)
-#else
-ndfget(dfile, tag, ref, ptr)
-    intf *dfile;
-    intf *tag, *ref;
-    _fcd ptr;
-#endif /* PROTOTYPE */
 {
     return (DFgetelement((DF *)*dfile, (uint16)*tag, (uint16)*ref,
     	    (char *)_fcdtocp(ptr)));
@@ -422,15 +348,7 @@ ndfget(dfile, tag, ref, ptr)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfput(intf *dfile, intf *tag, intf *ref, _fcd ptr, intf *len)
-#else
-ndfput(dfile, tag, ref, ptr, len)
-    intf *dfile;
-    intf *tag, *ref;
-    intf *len;
-    _fcd ptr;
-#endif /* PROTOTYPE */
 {
     return (DFputelement((DF *)*dfile, (uint16)*tag, (uint16)*ref,
 	    (char*)_fcdtocp(ptr), *len));
@@ -447,13 +365,7 @@ ndfput(dfile, tag, ref, ptr, len)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfsfind(intf *dfile, intf *tag, intf *ref)
-#else
-ndfsfind(dfile, tag, ref)
-    intf *dfile;
-    intf *tag, *ref;
-#endif /* PROTOTYPE */
 {
     return (DFsetfind((DF *) *dfile, (uint16)*tag, (uint16)*ref));
 }
@@ -471,14 +383,7 @@ ndfsfind(dfile, tag, ref)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndffind(intf *dfile, intf *itag, intf *iref, intf *len)
-#else
-ndffind(dfile, itag, iref, len)
-    intf *dfile;
-    intf *itag, *iref;
-    intf *len;
-#endif /* PROTOTYPE */
 {
     DFdesc *ptr1;
     intf ret;
@@ -506,11 +411,7 @@ ndffind(dfile, itag, iref, len)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndferrno(void)
-#else
-ndferrno()
-#endif /* PROTOTYPE */
 {
     return(DFerrno());
 }
@@ -525,12 +426,7 @@ ndferrno()
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfnewref(intf *dfile)
-#else
-ndfnewref(dfile)
-intf *dfile;
-#endif /* PROTOTYPE */
 {
     return(DFnewref((DF *) *dfile));
 }
@@ -547,13 +443,7 @@ intf *dfile;
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfnumber(intf *dfile, intf *tag)
-#else
-ndfnumber(dfile, tag)
-intf *dfile;
-intf *tag;
-#endif /* PROTOTYPE */
 {
     return(DFnumber((DF *) *dfile, (uint16)*tag));
 }
@@ -570,13 +460,7 @@ intf *tag;
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfstat(intf *dfile, DFdata *dfinfo)
-#else
-ndfstat(dfile, dfinfo)
-intf *dfile;
-DFdata *dfinfo;
-#endif /* PROTOTYPE */
 {
     return(DFstat((DF *) *dfile, dfinfo));
 }
@@ -593,13 +477,7 @@ DFdata *dfinfo;
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfiishdf(_fcd name, intf *namelen)
-#else
-ndfiishdf(name, namelen)
-    _fcd name;
-    intf *namelen;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;

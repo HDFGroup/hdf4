@@ -40,14 +40,7 @@ static char RcsId[] = "@(#)$Revision$";
  * Remarks: Written for efficiency
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int32 DFCIrle(VOIDP buf, VOIDP bufto, int32 len)
-#else
-int32 DFCIrle(buf,bufto,len)
-    VOIDP buf;
-    VOIDP bufto;
-    int32 len;
-#endif
 {
     register uint8 * p;
     register uint8 * q;
@@ -118,15 +111,7 @@ int32 DFCIrle(buf,bufto,len)
  *          Hence the static storage stuff
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int32 DFCIunrle(uint8 *buf, uint8 *bufto, int32 outlen, int resetsave)
-#else
-int32 DFCIunrle(buf,bufto,outlen, resetsave)
-    uint8 *buf;
-    uint8 *bufto;
-    int32 outlen;
-    int resetsave;
-#endif
 {
     register int cnt;
     register uint8 * p;

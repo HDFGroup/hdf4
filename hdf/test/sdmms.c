@@ -68,7 +68,7 @@ static int32   cal5;
 static float64 ical1, ical2, ical3, ical4;
 static int32   ical5;
 
-void test_sdmms()
+void test_sdmms(void)
 {
     int i, j, err, err1, err2, ret;
     intn rank;

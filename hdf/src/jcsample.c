@@ -38,12 +38,7 @@
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 downsample_init (compress_info_ptr cinfo)
-#else
-downsample_init (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   /* no work for now */
 }
@@ -56,26 +51,11 @@ compress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 int_downsample (compress_info_ptr cinfo, int which_component,
 		long input_cols, int input_rows,
 		long output_cols, int output_rows,
 		JSAMPARRAY above, JSAMPARRAY input_data, JSAMPARRAY below,
 		JSAMPARRAY output_data)
-#else
-int_downsample (cinfo, which_component, input_cols, input_rows, output_cols,
-        output_rows, above, input_data, below, output_data)
-compress_info_ptr cinfo;
-int which_component;
-long input_cols;
-int input_rows;
-long output_cols;
-int output_rows;
-JSAMPARRAY above;
-JSAMPARRAY input_data;
-JSAMPARRAY below;
-JSAMPARRAY output_data;
-#endif
 {
   jpeg_component_info * compptr = cinfo->cur_comp_info[which_component];
   int inrow, outrow, h_expand, v_expand, numpix, numpix2, h, v;
@@ -123,26 +103,11 @@ JSAMPARRAY output_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 h2v1_downsample (compress_info_ptr cinfo, int which_component,
 		 long input_cols, int input_rows,
 		 long output_cols, int output_rows,
 		 JSAMPARRAY above, JSAMPARRAY input_data, JSAMPARRAY below,
 		 JSAMPARRAY output_data)
-#else
-h2v1_downsample (cinfo, which_component, input_cols, input_rows,
-         output_cols, output_rows, above, input_data, below, output_data)
-compress_info_ptr cinfo;
-int which_component;
-long input_cols;
-int input_rows;
-long output_cols;
-int output_rows;
-JSAMPARRAY above;
-JSAMPARRAY input_data;
-JSAMPARRAY below;
-JSAMPARRAY output_data;
-#endif
 {
   int outrow;
   long outcol;
@@ -177,26 +142,11 @@ JSAMPARRAY output_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 h2v2_downsample (compress_info_ptr cinfo, int which_component,
 		 long input_cols, int input_rows,
 		 long output_cols, int output_rows,
 		 JSAMPARRAY above, JSAMPARRAY input_data, JSAMPARRAY below,
 		 JSAMPARRAY output_data)
-#else
-h2v2_downsample (cinfo, which_component, input_cols, input_rows,
-         output_cols, output_rows, above, input_data, below, output_data)
-compress_info_ptr cinfo;
-int which_component;
-long input_cols;
-int input_rows;
-long output_cols;
-int output_rows;
-JSAMPARRAY above;
-JSAMPARRAY input_data;
-JSAMPARRAY below;
-JSAMPARRAY output_data;
-#endif
 {
   int inrow, outrow;
   long outcol;
@@ -235,26 +185,11 @@ JSAMPARRAY output_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 fullsize_downsample (compress_info_ptr cinfo, int which_component,
 		     long input_cols, int input_rows,
 		     long output_cols, int output_rows,
 		     JSAMPARRAY above, JSAMPARRAY input_data, JSAMPARRAY below,
 		     JSAMPARRAY output_data)
-#else
-fullsize_downsample (cinfo, which_component, input_cols, input_rows,
-             output_cols, output_rows, above, input_data, below, output_data)
-compress_info_ptr cinfo;
-int which_component;
-long input_cols;
-int input_rows;
-long output_cols;
-int output_rows;
-JSAMPARRAY above;
-JSAMPARRAY input_data;
-JSAMPARRAY below;
-JSAMPARRAY output_data;
-#endif
 {
 #ifdef DEBUG			/* for debugging pipeline controller */
   if (input_cols != output_cols || input_rows != output_rows)
@@ -274,26 +209,11 @@ JSAMPARRAY output_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 h2v2_smooth_downsample (compress_info_ptr cinfo, int which_component,
 			long input_cols, int input_rows,
 			long output_cols, int output_rows,
 			JSAMPARRAY above, JSAMPARRAY input_data, JSAMPARRAY below,
 			JSAMPARRAY output_data)
-#else
-h2v2_smooth_downsample (cinfo, which_component, input_cols, input_rows,
-            output_cols, output_rows, above, input_data, below, output_data)
-compress_info_ptr cinfo;
-int which_component;
-long input_cols;
-int input_rows;
-long output_cols;
-int output_rows;
-JSAMPARRAY above;
-JSAMPARRAY input_data;
-JSAMPARRAY below;
-JSAMPARRAY output_data;
-#endif
 {
   int inrow, outrow;
   long colctr;
@@ -400,26 +320,11 @@ JSAMPARRAY output_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 fullsize_smooth_downsample (compress_info_ptr cinfo, int which_component,
 			    long input_cols, int input_rows,
 			    long output_cols, int output_rows,
 			    JSAMPARRAY above, JSAMPARRAY input_data, JSAMPARRAY below,
 			    JSAMPARRAY output_data)
-#else
-fullsize_smooth_downsample (cinfo, which_component, input_cols, input_rows,
-                output_cols, output_rows, above, input_data, below, output_data)
-compress_info_ptr cinfo;
-int which_component;
-long input_cols;
-int input_rows;
-long output_cols;
-int output_rows;
-JSAMPARRAY above;
-JSAMPARRAY input_data;
-JSAMPARRAY below;
-JSAMPARRAY output_data;
-#endif
 {
   int outrow;
   long colctr;
@@ -492,12 +397,7 @@ JSAMPARRAY output_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 downsample_term (compress_info_ptr cinfo)
-#else
-downsample_term (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   /* no work for now */
 }
@@ -510,12 +410,7 @@ compress_info_ptr cinfo;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jseldownsample (compress_info_ptr cinfo)
-#else
-jseldownsample (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   short ci;
   jpeg_component_info * compptr;

@@ -82,12 +82,7 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nd8spal(_fcd pal)
-#else
-nd8spal(pal)
-    _fcd pal;
-#endif /* PROTOTYPE */
 {
     return (DFR8setpalette((uint8 *)_fcdtocp(pal)));
 }
@@ -103,11 +98,7 @@ nd8spal(pal)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nd8first(void)
-#else
-nd8first()
-#endif /* PROTOTYPE */
 {
     return(DFR8restart());
 }
@@ -125,14 +116,7 @@ nd8first()
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nd8igdim(_fcd filename, intf *xdim, intf *ydim, intf *ispal, intf *lenfn)
-#else
-nd8igdim(filename, xdim, ydim, ispal, lenfn)
-    _fcd filename;
-    intf *xdim, *ydim;
-    intf *ispal, *lenfn;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -158,14 +142,7 @@ nd8igdim(filename, xdim, ydim, ispal, lenfn)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nd8igimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, _fcd pal, intf *lenfn)
-#else
-nd8igimg(filename, image, xdim, ydim, pal, lenfn)
-    _fcd filename, image, pal;
-    intf *xdim, *ydim;
-    intf *lenfn;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -192,15 +169,8 @@ nd8igimg(filename, image, xdim, ydim, pal, lenfn)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nd8ipimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *compress,
      intf *lenfn)
-#else
-nd8ipimg(filename, image, xdim, ydim, compress, lenfn)
-    _fcd filename, image;
-    intf *xdim, *ydim;
-    intf *compress, *lenfn;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -227,15 +197,8 @@ nd8ipimg(filename, image, xdim, ydim, compress, lenfn)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nd8iaimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *compress,
      intf *lenfn)
-#else
-nd8iaimg(filename, image, xdim, ydim, compress, lenfn)
-    _fcd filename, image;
-    intf *xdim, *ydim;
-    intf *compress, *lenfn;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -259,14 +222,7 @@ nd8iaimg(filename, image, xdim, ydim, compress, lenfn)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nd8irref(_fcd filename, intf *ref, intf *fnlen)
-#else
-nd8irref(filename, ref, fnlen)
-    _fcd filename;
-    intf *ref;
-    intf  *fnlen;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -294,14 +250,7 @@ nd8irref(filename, ref, fnlen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nd8iwref(_fcd filename, intf *ref, intf *fnlen)
-#else
-nd8iwref(filename, ref, fnlen)
-    _fcd filename;
-    intf *ref;
-    intf *fnlen;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -328,13 +277,7 @@ nd8iwref(filename, ref, fnlen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nd8inims(_fcd filename, intf *fnlen)
-#else
-nd8inims(filename, fnlen)
-    _fcd filename;
-    intf *fnlen;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -356,11 +299,7 @@ nd8inims(filename, fnlen)
  *---------------------------------------------------------------------------*/
 
         FRETVAL(intf)
-#ifdef PROTOTYPE
 nd8lref(void)
-#else
-nd8lref()
-#endif  /* PROTOTYPE */
 {
     return(DFR8lastref());
 }
@@ -379,12 +318,7 @@ nd8lref()
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nd8scomp(intf *scheme)
-#else
-nd8scomp(scheme)
-intf *scheme;
-#endif /* PROTOTYPE */
 {
     comp_info cinfo;   /* Structure containing compression parameters */
 
@@ -408,13 +342,7 @@ intf *scheme;
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nd8sjpeg(intf *quality,intf *force_baseline)
-#else
-nd8sjpeg(quality,force_baseline)
-intf *quality;
-intf *force_baseline;
-#endif /* PROTOTYPE */
 {
     comp_info cinfo;   /* Structure containing compression parameters */
 
@@ -434,11 +362,7 @@ intf *force_baseline;
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfr8lastref(void)
-#else
-ndfr8lastref()
-#endif /* PROTOTYPE */
 {
     return(DFR8lastref());
 }
@@ -454,12 +378,7 @@ ndfr8lastref()
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfr8setpalette(_fcd pal)
-#else
-ndfr8setpalette(pal)
-    _fcd pal;
-#endif /* PROTOTYPE */
 {
 
     return (DFR8setpalette((uint8 *)_fcdtocp(pal)));
@@ -475,11 +394,7 @@ ndfr8setpalette(pal)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfr8restart(void)
-#else
-ndfr8restart()
-#endif /* PROTOTYPE */
 {
 
     return(DFR8restart());
@@ -499,12 +414,7 @@ ndfr8restart()
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfr8scompress(intf *scheme)
-#else
-ndfr8scompress(scheme)
-intf *scheme;
-#endif /* PROTOTYPE */
 {
     comp_info cinfo;   /* Structure containing compression parameters */
 
@@ -528,13 +438,7 @@ intf *scheme;
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfr8sjpeg(intf *quality,intf *force_baseline)
-#else
-ndfr8sjpeg(quality,force_baseline)
-intf *quality;
-intf *force_baseline;
-#endif /* PROTOTYPE */
 {
     comp_info cinfo;   /* Structure containing compression parameters */
 

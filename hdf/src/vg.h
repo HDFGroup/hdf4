@@ -308,19 +308,19 @@ extern "C" {
  * Routines public to the VSet layer
  */
 extern vsinstance_t _HUGE * vsinstance
-    PROTO((HFILEID f, uint16 vsid));
+    (HFILEID f, uint16 vsid);
 
 extern VWRITELIST _HUGE * vswritelist
-    PROTO((int32 vskey));
+    (int32 vskey);
 
 extern void vpackvg
-  PROTO((VGROUP _HUGE *vg, uint8 _HUGE buf[], int32 _HUGE *size));
+  (VGROUP _HUGE *vg, uint8 _HUGE buf[], int32 _HUGE *size);
 
 extern int32 vinsertpair
-  PROTO((VGROUP _HUGE *vg, uint16 tag, uint16 ref));
+  (VGROUP _HUGE *vg, uint16 tag, uint16 ref);
 
 extern void vpackvs
-    PROTO((VDATA _HUGE *vs, uint8 _HUGE buf[], int32 _HUGE *size));
+    (VDATA _HUGE *vs, uint8 _HUGE buf[], int32 _HUGE *size);
 
 #if defined c_plusplus || defined __cplusplus
 }

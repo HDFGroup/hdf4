@@ -60,7 +60,7 @@ extern "C" {
 
 /* Library-developer functions */
 extern int32 DFGRIopen
-       PROTO((const char *filename, int acc_mode));
+       (const char *filename, int acc_mode);
 
 #if defined c_plusplus || defined __cplusplus
 }

@@ -49,12 +49,7 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
     FRETVAL(VOID)
-#ifdef PROTOTYPE
 nheprnt(intf *print_levels)
-#else
-nheprnt(print_levels)
-    intf *print_levels;
-#endif /* PROTOTYPE */
 {
     HEprint(stderr, *print_levels);
 }

@@ -46,18 +46,13 @@ uint16  only_tag = DFTAG_NULL;  /* by default print info about all tags */
 char * file_name;    /* name of current file being listed */
 
 int compare
-  PROTO((const VOID *, const VOID *));
+  (const VOID *, const VOID *);
 int main
-  PROTO((int, char **));
+  (int, char **);
 int lprint
-  PROTO((int32, dd_t *, int));
+  (int32, dd_t *, int);
 
-#ifdef PROTOTYPE
 int compare(const VOID * aa, const VOID * bb)
-#else
-int compare(aa, bb)
-const VOIDP aa, bb;
-#endif /* PROTOTYPE */
 {
     const dd_t *a = (const dd_t *) aa;
     const dd_t *b = (const dd_t *) bb;
@@ -69,13 +64,7 @@ const VOIDP aa, bb;
     return(0);
 }
 
-#ifdef PROTOTYPE
 int main(int argc, char *argv[])
-#else
-int main(argc, argv)
-int argc;
-char *argv[];
-#endif /* PROTOTYPE */
 {
     int32 fid, aid;
     int i=1, j, n, status;
@@ -195,14 +184,7 @@ char *argv[];
     return(0);
 }
 
-#ifdef PROTOTYPE
 int lprint(int32 fid, dd_t *desc, int num)
-#else
-int lprint(fid, desc, num)
-int32 fid;
-dd_t  *desc;
-int num;
-#endif /* PROTOTYPE */
 {
     sp_info_block_t info;
     

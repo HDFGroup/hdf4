@@ -14,12 +14,7 @@
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 d_per_scan_method_selection (decompress_info_ptr cinfo)
-#else
-d_per_scan_method_selection (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Central point for per-scan method selection */
 {
   /* MCU disassembly */
@@ -30,12 +25,7 @@ decompress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 d_initial_method_selection (decompress_info_ptr cinfo)
-#else
-d_initial_method_selection (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Central point for initial method selection (after reading file header) */
 {
   /* JPEG file scanning method selection is already done. */
@@ -95,12 +85,7 @@ decompress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 initial_setup (decompress_info_ptr cinfo)
-#else
-initial_setup (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Do computations that are needed before initial method selection */
 {
   short ci;
@@ -140,12 +125,7 @@ decompress_info_ptr cinfo;
 
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jpeg_decompress (decompress_info_ptr cinfo)
-#else
-jpeg_decompress (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   /* Init pass counts to 0 --- total_passes is adjusted in method selection */
   cinfo->total_passes = 0;

@@ -32,12 +32,7 @@
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jseldarithmetic (decompress_info_ptr cinfo)
-#else
-jseldarithmetic (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   if (cinfo->arith_code) {
     ERREXIT(cinfo->emethods, "Sorry, there are legal restrictions on arithmetic coding");

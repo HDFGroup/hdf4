@@ -63,14 +63,8 @@ static char RcsId[] = "@(#)$Revision$";
 /* DFKnb1b()                                                */
 /*   Native mode for 1 byte data items                      */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKnb1b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKnb1b(s, d, num_elm, source_stride, dest_stride)
-VOIDP s, d;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     int fast_processing = 0;
     int in_place = 0;
@@ -120,14 +114,8 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKnb2b()                                                */
 /* -->Native mode for 2 byte data items                     */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKnb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKnb2b(s, d, num_elm, source_stride, dest_stride)
-VOIDP s, d;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int fast_processing = 0;              /* Default is not fast processing */
   int in_place = 0;                     /* Inplace must be detected */
@@ -187,14 +175,8 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKnb4b()                                                */
 /* -->Native mode for 4 byte items                          */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKnb4b(VOIDP s, VOIDP d, uint32 num_elm,
 		   uint32 source_stride, uint32 dest_stride)
-#else
-int DFKnb4b(s, d, num_elm, source_stride, dest_stride)
-uint8 * s, * d;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int fast_processing = 0;              /* Default is not fast processing */
   int in_place = 0;                     /* Inplace must be detected */
@@ -262,23 +244,15 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKnb8b()                                                */
 /* -->Native mode for 8 byte items                          */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKnb8b(VOIDP s, VOIDP d, uint32 num_elm,
 		   uint32 source_stride, uint32 dest_stride)
-#else
-int DFKnb8b(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int fast_processing = 0;              /* Default is not fast processing */
   int in_place = 0;                     /* Inplace must be detected */
   register uint32 i;            
   uint8 buf[8];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
 
     CONSTR(FUNC,"DFKnb8b");
 

@@ -77,7 +77,7 @@ PRIVATE DFANdirhead *DFANdir[2] = { NULL,          /* object labels       */
 
 #ifndef VMS
 PRIVATE int32 DFANIopen
-    PROTO((const char *filename, intn acc_mode));
+    (const char *filename, intn acc_mode);
 #else /*VMS*/
 PRIVATE int32 _DFANIopen();
 #endif
@@ -107,13 +107,7 @@ PRIVATE int32 _DFANIopen();
  REVISION LOG
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int32 DFANgetlablen(const char *filename, uint16 tag, uint16 ref)
-#else
-int32 DFANgetlablen(filename, tag, ref)
-    const char *filename;
-    uint16 tag, ref;
-#endif
 {
     return(DFANIgetannlen(filename, tag, ref, DFAN_LABEL));
 }
@@ -141,16 +135,8 @@ int32 DFANgetlablen(filename, tag, ref)
  REVISION LOG
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFANgetlabel(const char *filename, uint16 tag, uint16 ref, char *label,
                  int32 maxlen)
-#else
-intn DFANgetlabel(filename, tag, ref, label, maxlen)
-const char *filename;
-uint16 tag, ref;
-char *label;
-int32 maxlen;
-#endif
 {
     return(DFANIgetann(filename, tag, ref, (uint8 *)label, maxlen, DFAN_LABEL));
 }
@@ -176,13 +162,7 @@ int32 maxlen;
  REVISION LOG
  *------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int32 DFANgetdesclen(const char *filename, uint16 tag, uint16 ref)
-#else
-int32 DFANgetdesclen(filename, tag, ref)
-const char *filename;
-uint16 tag, ref;
-#endif 
 {
     return(DFANIgetannlen(filename, tag, ref, DFAN_DESC));
 }
@@ -212,16 +192,8 @@ uint16 tag, ref;
  REVISION LOG
  *------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFANgetdesc(const char *filename, uint16 tag, uint16 ref, char *desc,
                 int32 maxlen)
-#else
-intn DFANgetdesc(filename, tag, ref, desc, maxlen)
-const char *filename;
-uint16 tag, ref;
-char *desc;
-int32 maxlen;
-#endif 
 {
     return(DFANIgetann(filename, tag, ref, (uint8 *)desc, maxlen, DFAN_DESC));
 }
@@ -254,13 +226,7 @@ int32 maxlen;
  REVISION LOG
  *------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int32 DFANgetfidlen(int32 file_id, int isfirst)
-#else
-int32 DFANgetfidlen(file_id, isfirst)
-int32 file_id;
-int isfirst;
-#endif 
 {
      return ( DFANIgetfannlen(file_id, DFAN_LABEL, isfirst) );
 }
@@ -288,15 +254,7 @@ int isfirst;
  REVISION LOG
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int32 DFANgetfid(int32 file_id, char *label, int32 maxlen, intn isfirst)
-#else
-int32 DFANgetfid(file_id, label, maxlen, isfirst)
-int32 file_id;
-char *label;
-int32 maxlen;
-intn isfirst;
-#endif 
 {
      return ( DFANIgetfann(file_id, label, maxlen, DFAN_LABEL, isfirst) );
 }
@@ -326,13 +284,7 @@ intn isfirst;
  REVISION LOG
  *------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int32 DFANgetfdslen(int32 file_id, intn isfirst)
-#else
-int32 DFANgetfdslen(file_id, isfirst)
-    int32 file_id;
-    intn isfirst;
-#endif 
 {
      return ( DFANIgetfannlen(file_id, DFAN_DESC, isfirst) );
 }
@@ -361,15 +313,7 @@ int32 DFANgetfdslen(file_id, isfirst)
  REVISION LOG
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int32 DFANgetfds(int32 file_id, char *desc, int32 maxlen, intn isfirst)
-#else
-int32 DFANgetfds(file_id, desc, maxlen, isfirst)
-int32 file_id;
-char *desc;
-int32 maxlen;
-intn isfirst;
-#endif 
 {
     return ( DFANIgetfann(file_id, desc, maxlen, DFAN_DESC, isfirst) );
 }
@@ -401,14 +345,7 @@ intn isfirst;
  REVISION LOG
  *------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFANputlabel(const char *filename, uint16 tag, uint16 ref, char *label)
-#else
-intn DFANputlabel(filename, tag, ref, label)
-const char *filename;
-uint16 tag, ref;
-char *label;
-#endif 
 {
     return(DFANIputann(filename, tag, ref, (uint8 *)label,
                 (int32)HDstrlen(label), DFAN_LABEL));
@@ -440,16 +377,8 @@ char *label;
  REVISION LOG
  *------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFANputdesc(const char *filename, uint16 tag, uint16 ref, char *desc,
                 int32 desclen)
-#else
-intn DFANputdesc(filename, tag, ref, desc, desclen)
-const char *filename;
-uint16 tag, ref;
-char *desc;
-int32 desclen;
-#endif 
 {
     return(DFANIputann(filename, tag, ref, (uint8 *)desc, desclen, DFAN_DESC));
 }
@@ -477,13 +406,7 @@ int32 desclen;
  REVISION LOG
  *------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFANaddfid(int32 file_id, char *id)
-#else
-intn DFANaddfid(file_id, id)
-int32 file_id;
-char *id;
-#endif 
 {
     return ( DFANIaddfann(file_id, id, (int32)HDstrlen(id), DFAN_LABEL) );
 }
@@ -510,14 +433,7 @@ char *id;
  REVISION LOG
  *------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFANaddfds(int32 file_id, char *desc, int32 desclen)
-#else
-intn DFANaddfds(file_id, desc, desclen)
-int32 file_id;
-char *desc;
-int32 desclen;
-#endif 
 {
     return ( DFANIaddfann(file_id, desc, desclen, DFAN_DESC) );
 }
@@ -543,11 +459,7 @@ int32 desclen;
  REVISION LOG
  *------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 uint16 DFANlastref(void)
-#else
-uint16 DFANlastref()
-#endif 
 {
     return(Lastref);
 }
@@ -584,17 +496,8 @@ uint16 DFANlastref()
        Revised 04/17/90.  (See DESCRIPTION.)
  *------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFANlablist(const char *filename, uint16 tag, uint16 reflist[], char *labellist,
                 intn listsize, intn maxlen, intn startpos)
-#else
-intn DFANlablist(filename, tag, reflist, labellist, listsize, maxlen, startpos)
-const char *filename;
-uint16 tag, reflist[];
-char *labellist;
-intn listsize;
-intn maxlen, startpos;
-#endif 
 {
     return(DFANIlablist(filename, tag, reflist, (uint8 *)labellist, 
                                             listsize, maxlen, startpos, 0));
@@ -626,13 +529,7 @@ intn maxlen, startpos;
        
  *------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 PRIVATE int32 DFANIopen(const char *filename, intn acc_mode)
-#else
-PRIVATE int32 DFANIopen(filename, acc_mode)
-const char *filename;
-intn acc_mode;
-#endif 
 {
     CONSTR(FUNC,"DFANIopen");
     int32 file_id;
@@ -702,14 +599,7 @@ intn acc_mode;
        
  *------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 uint16 DFANIlocate(int32 file_id, int type, uint16 tag, uint16 ref)
-#else
-uint16 DFANIlocate(file_id, type, tag, ref)
-int32 file_id;
-int type;
-uint16 tag, ref;
-#endif 
 {
     CONSTR(FUNC,"DFANIlocate");
     uint8 datadi[4];
@@ -796,13 +686,7 @@ uint16 tag, ref;
  REVISION LOG
  *------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFANIaddentry(int type, uint16 annref, uint16 datatag, uint16 dataref)
-#else
-int DFANIaddentry(type, annref, datatag, dataref)
-uint16 annref, datatag, dataref;
-int type;
-#endif 
 {
     int32 i;
     DFANdirhead *p, *q;
@@ -862,14 +746,7 @@ int type;
  REVISION LOG
  *------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int32 DFANIgetannlen(const char *filename, uint16 tag, uint16 ref, int type)
-#else
-int32 DFANIgetannlen(filename, tag, ref, type)
-const char *filename;
-uint16 tag, ref;
-int type;
-#endif 
 {
     CONSTR(FUNC,"DFANIgetannlen");
     int32 file_id, annlength;
@@ -925,17 +802,8 @@ int type;
  REVISION LOG
  *------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFANIgetann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
                 int32 maxlen, int type)
-#else
-intn DFANIgetann(filename, tag, ref, ann, maxlen, type)
-const char *filename;
-uint16 tag, ref;
-uint8 *ann;
-int32 maxlen;
-int type;
-#endif 
 {
     CONSTR(FUNC,"DFANIgetann");
     int32 file_id, aid;
@@ -1018,17 +886,8 @@ int type;
  REVISION LOG
  *------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
                 int32 annlen, int type)
-#else
-intn DFANIputann(filename, tag, ref, ann, annlen, type)
-const char *filename;
-uint16 tag, ref;
-uint8 *ann;
-int32 annlen;
-int type;
-#endif 
 {
 
     CONSTR(FUNC,"DFANIputann");
@@ -1131,18 +990,9 @@ int type;
        Revised 04/17/90.  (See DESCRIPTION.)
  *------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFANIlablist(const char *filename, uint16 tag, uint16 reflist[], 
 		 uint8 *labellist, int listsize, int maxlen, int startpos, 
 		 int isfortran)
-#else
-int DFANIlablist(filename, tag, reflist, labellist, listsize, maxlen,
-                                                        startpos, isfortran)
-const char *filename;
-uint16 tag, reflist[];
-uint8 *labellist;                       /* actually an array of strings */
-int listsize, maxlen, startpos, isfortran;
-#endif 
 {
     CONSTR(FUNC,"DFANIlablist");
     int32 i;
@@ -1268,15 +1118,7 @@ int listsize, maxlen, startpos, isfortran;
  REVISION LOG
  *------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFANIaddfann(int32 file_id, char *ann, int32 annlen, int type)
-#else
-int DFANIaddfann(file_id, ann, annlen, type)
-    int32 file_id;
-    char *ann;
-    int32 annlen;
-    int type;
-#endif 
 {
     CONSTR(FUNC,"DFANIaddfann");
     uint16 anntag, annref;
@@ -1320,14 +1162,7 @@ int DFANIaddfann(file_id, ann, annlen, type)
  REVISION LOG
  *------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int32 DFANIgetfannlen(int32 file_id, int type, int isfirst)
-#else
-int32 DFANIgetfannlen(file_id, type, isfirst)
-int32 file_id;
-int type;
-int isfirst;
-#endif 
 {
     CONSTR(FUNC,"DFANIgetfannlen");
     uint16 anntag, annref;
@@ -1394,17 +1229,8 @@ int isfirst;
  REVISION LOG
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int32 DFANIgetfann(int32 file_id, char *ann, int32 maxlen, int type,
                           int isfirst)
-#else
-int32 DFANIgetfann(file_id, ann, maxlen, type, isfirst)
-int32 file_id;
-char *ann;
-int32 maxlen;
-int type;
-int isfirst;
-#endif 
 {
     CONSTR(FUNC,"DFANIgetfann");
     uint16 anntag, annref;

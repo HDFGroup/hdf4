@@ -48,7 +48,7 @@ typedef struct {
 
 /* forward declaration of the functions provided in this module */
 PRIVATE int32 HBIstaccess
-    PROTO((accrec_t *access_rec, int16 acc_mode));
+    (accrec_t *access_rec, int16 acc_mode);
 
 /* Private buffer */
 PRIVATE uint8 *ptbuf = NULL;
@@ -100,17 +100,7 @@ funclist_t bigext_funcs = {
         on error.
 
 --------------------------------------------------------------------------*/ 
-#ifdef PROTOTYPE
 int32 HBcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, int32 offset, int32 start_len)
-#else
-int32 HBcreate(file_id, tag, ref, extern_file_name, offset, start_len)
-    int32 file_id;             /* file record id */
-    uint16 tag, ref;           /* tag/ref of the special data element
-                                  to create */
-    const char *extern_file_name;    /* name of external file to use as
-                                  data element */
-    int32 offset,start_len;
-#endif
 {
     CONSTR(FUNC,"HBcreate");     /* for HERROR */
     filerec_t *file_rec;       /* file record */
@@ -324,13 +314,7 @@ int32 HBcreate(file_id, tag, ref, extern_file_name, offset, start_len)
         pull in the information ourselves
 
 --------------------------------------------------------------------------- */ 
-#ifdef PROTOTYPE
 PRIVATE int32 HBIstaccess(accrec_t *access_rec, int16 acc_mode)
-#else
-PRIVATE int32 HBIstaccess(access_rec, acc_mode)
-    accrec_t *access_rec;      /* access record */
-    int16 acc_mode;              /* access mode */
-#endif
 {
     CONSTR(FUNC,"HBIstaccess");  /* for HERROR */
     dd_t *info_dd;             /* dd of the special information element */
@@ -433,12 +417,7 @@ PRIVATE int32 HBIstaccess(access_rec, acc_mode)
         reading
 
 --------------------------------------------------------------------------- */ 
-#ifdef PROTOTYPE
 int32 HBPstread(accrec_t *rec)
-#else
-int32 HBPstread(rec)
-    accrec_t *rec;
-#endif
 {
     return HBIstaccess(rec, DFACC_READ);
 } /* HBPstread */
@@ -458,12 +437,7 @@ int32 HBPstread(rec)
         Calls to HBIstaccess to fill in the access rec for writing
 
 --------------------------------------------------------------------------- */ 
-#ifdef PROTOTYPE
 int32 HBPstwrite(accrec_t *rec)
-#else
-int32 HBPstwrite(rec)
-    accrec_t *rec;
-#endif
 {
     return HBIstaccess(rec, DFACC_WRITE);
 } /* HBPstwrite */
@@ -485,14 +459,7 @@ int32 HBPstwrite(rec)
         Set the seek posn in the given external element
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HBPseek(accrec_t *access_rec, int32 offset, int origin)
-#else
-int32 HBPseek(access_rec, offset, origin)
-    accrec_t *access_rec;
-    int32 offset;
-    int origin;
-#endif
 {
     CONSTR(FUNC,"HBPseek");      /* for HERROR */
 
@@ -534,14 +501,7 @@ int32 HBPseek(access_rec, offset, origin)
         until the end.
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HBPread(accrec_t *access_rec, int32 length, VOIDP data)
-#else
-int32 HBPread(access_rec, length, data)
-    accrec_t *access_rec;      /* access record */
-    int32 length;              /* length of data to read in */
-    VOIDP data;                        /* data buffer */
-#endif
 {
     CONSTR(FUNC,"HBPread");      /* for HERROR */
     extinfo_t *info =          /* information on the special element */
@@ -588,14 +548,7 @@ int32 HBPread(access_rec, length, data)
         Write out some data to an external file
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HBPwrite(accrec_t *access_rec, int32 length, const VOIDP data)
-#else
-int32 HBPwrite(access_rec, length, data)
-    accrec_t *access_rec;      /* access record */
-    int32 length;              /* length of data to write */
-    const VOIDP data;                        /* data buffer */
-#endif
 {
     CONSTR(FUNC,"HBPwrite");     /* for HERROR */
     extinfo_t *info =          /* information on the special element */
@@ -682,23 +635,9 @@ int32 HBPwrite(access_rec, length, data)
         BUG: The offset returned is not correct.
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HBPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
                         uint16 *pref, int32 *plength, int32 *poffset,
                         int32 *pposn, int16 *paccess, int16 *pspecial)
-#else
-int32 HBPinquire(access_rec, pfile_id, ptag, pref, plength, poffset,
-                        pposn, paccess, pspecial)
-     accrec_t *access_rec;     /* access record */
-     int32 *pfile_id;          /* ptr to file id, OUT */
-     uint16 *ptag;             /* ptr to tag of information, OUT */
-     uint16 *pref;             /* ptr to ref of information, OUT */
-     int32 *plength;           /* ptr to length of data element, OUT */
-     int32 *poffset;           /* ptr to offset of data element, OUT */
-     int32 *pposn;             /* ptr to position of access in element, OUT */
-     int16 *paccess;           /* ptr to access mode, OUT */
-     int16 *pspecial;          /* ptr to special code */
-#endif
 {
     dd_t *info_dd =            /* dd of special information */
        &(access_rec->block->ddlist[access_rec->idx]);
@@ -734,12 +673,7 @@ int32 HBPinquire(access_rec, pfile_id, ptag, pref, plength, poffset,
         Close the file pointed to by the current AID and free the AID
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HBPendaccess(accrec_t *access_rec)
-#else
-int32 HBPendaccess(access_rec)
-    accrec_t *access_rec;      /* access record to dispose of */
-#endif
 {
     CONSTR(FUNC,"HBPendaccess"); /* for HERROR */
     filerec_t *file_rec =      /* file record */
@@ -783,12 +717,7 @@ int32 HBPendaccess(access_rec)
         reference to it is lost.
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HBPcloseAID(accrec_t *access_rec)
-#else
-int32 HBPcloseAID(access_rec)
-accrec_t *access_rec;
-#endif
 {
 
     CONSTR(FUNC,"HBPcloseAID"); /* for HERROR */
@@ -827,13 +756,7 @@ accrec_t *access_rec;
         local copy.
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HBPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
-#else
-int32 HBPinfo(access_rec, info_block)
-     accrec_t        * access_rec;  /* access record */
-     sp_info_block_t * info_block;  /* info_block to fill */
-#endif
 {
     char *FUNC="HXPinfo";      /* for HERROR */
     extinfo_t *info =         /* special information record */

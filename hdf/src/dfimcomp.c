@@ -81,26 +81,26 @@ static struct rgb *color_pt = (struct rgb *)NULL; /*contains the hi-lo */
 static uint8 *image;            /* contains the compressed image            */
 static int trans[MAXCOLOR];     /* color translation table                  */
 
-PRIVATE VOID compress PROTO((unsigned char raster[], int block));
-PRIVATE VOID init_global PROTO((int32 xdim, int32 ydim, VOIDP out, VOIDP out_pal));
-PRIVATE int cnt_color PROTO((int blocks));
-PRIVATE VOID set_palette PROTO((int blocks));
-PRIVATE VOID fillin_color PROTO((int blocks));
-PRIVATE int indx PROTO((unsigned char r, unsigned char g, unsigned char b));
-PRIVATE VOID map PROTO((int blocks));
-PRIVATE int nearest_color PROTO((uint8 r, uint8 g, uint8 b));
-PRIVATE uint32 sqr PROTO((int16 x));
-PRIVATE VOID sel_palette PROTO((int blocks, int distinct, struct rgb *color_pt));
-PRIVATE VOID init PROTO((int blocks, int distinct, struct rgb *color_pt));
-PRIVATE VOID sort PROTO((int l, int r, int dim, int rank[]));
-PRIVATE int partition PROTO((int l, int r, int dim, int rank[]));
-PRIVATE struct box *find_box PROTO((void));
-PRIVATE VOID split_box PROTO((struct box *ptr));
-PRIVATE VOID assign_color PROTO((void));
-PRIVATE int select_dim PROTO((struct box *ptr));
-PRIVATE float find_med PROTO((struct box *ptr, int dim));
-PRIVATE VOID classify PROTO((struct box *ptr, struct box *child));
-PRIVATE int next_pt PROTO((int dim, int i, int rank[], int distinct));
+PRIVATE VOID compress (unsigned char raster[], int block);
+PRIVATE VOID init_global (int32 xdim, int32 ydim, VOIDP out, VOIDP out_pal);
+PRIVATE int cnt_color (int blocks);
+PRIVATE VOID set_palette (int blocks);
+PRIVATE VOID fillin_color (int blocks);
+PRIVATE int indx (unsigned char r, unsigned char g, unsigned char b);
+PRIVATE VOID map (int blocks);
+PRIVATE int nearest_color (uint8 r, uint8 g, uint8 b);
+PRIVATE uint32 sqr (int16 x);
+PRIVATE VOID sel_palette (int blocks, int distinct, struct rgb *color_pt);
+PRIVATE VOID init (int blocks, int distinct, struct rgb *color_pt);
+PRIVATE VOID sort (int l, int r, int dim, int rank[]);
+PRIVATE int partition (int l, int r, int dim, int rank[]);
+PRIVATE struct box *find_box (void);
+PRIVATE VOID split_box (struct box *ptr);
+PRIVATE VOID assign_color (void);
+PRIVATE int select_dim (struct box *ptr);
+PRIVATE float find_med (struct box *ptr, int dim);
+PRIVATE VOID classify (struct box *ptr, struct box *child);
+PRIVATE int next_pt (int dim, int i, int rank[], int distinct);
 
 /************************************************************************/
 /*  Function: DFCIimcomp                                                */
@@ -124,15 +124,8 @@ PRIVATE int next_pt PROTO((int dim, int i, int rank[], int distinct));
 /*        sel_palette(), map()                                          */
 /************************************************************************/
 
-#ifdef PROTOTYPE
 VOID DFCIimcomp(int32 xdim, int32 ydim, uint8 in[], uint8 out[],
               uint8 in_pal[], uint8 out_pal[], int mode)
-#else
-VOID DFCIimcomp(xdim, ydim, in, out, in_pal, out_pal, mode)
-    int32 xdim, ydim;
-    uint8 in[], out[], in_pal[], out_pal[];
-    int mode;
-#endif
 {
     unsigned char raster[48];
     int blocks, nmbr;
@@ -221,13 +214,7 @@ VOID DFCIimcomp(xdim, ydim, in, out, in_pal, out_pal, mode)
 /*  Calls       : none                                                  */
 /************************************************************************/
 
-#ifdef PROTOTYPE
 PRIVATE VOID compress(unsigned char raster[], int block)
-#else
-PRIVATE VOID compress(raster, block)
-    unsigned char raster[];
-    int block;
-#endif
 {
     float32 y[16], y_av;
     int i, j, k, l;
@@ -315,14 +302,7 @@ PRIVATE VOID compress(raster, block)
 /*  Calls       : none                          */
 /************************************************************************/
 
-#ifdef PROTOTYPE
 PRIVATE VOID init_global(int32 xdim, int32 ydim, VOIDP out, VOIDP out_pal)
-#else
-PRIVATE VOID init_global(xdim, ydim, out, out_pal)
-    int32 xdim, ydim;
-    VOIDP out;
-    VOIDP out_pal;
-#endif
 {
     int32 i, j;
 
@@ -365,12 +345,7 @@ PRIVATE VOID init_global(xdim, ydim, out, out_pal)
 /*  Calls       : indx()                        */
 /************************************************************************/
 
-#ifdef PROTOTYPE
 PRIVATE int cnt_color(int blocks)
-#else
-PRIVATE int cnt_color(blocks)
-    int blocks;
-#endif
 {
     int temp[MAXCOLOR];
     int i, k, count;
@@ -412,12 +387,7 @@ PRIVATE int cnt_color(blocks)
 /*  Calls       : indx()                        */
 /************************************************************************/
 
-#ifdef PROTOTYPE
 PRIVATE VOID set_palette(int blocks)
-#else
-PRIVATE VOID set_palette(blocks)
-    int blocks;
-#endif
 {
     int ent, i, k;
 
@@ -451,12 +421,7 @@ PRIVATE VOID set_palette(blocks)
 /*  Calls       : none                          */
 /************************************************************************/
 
-#ifdef PROTOTYPE
 PRIVATE VOID fillin_color(int blocks)
-#else
-PRIVATE VOID fillin_color(blocks)
-    int blocks;
-#endif
 {
     int i, j, k;
 
@@ -484,12 +449,7 @@ PRIVATE VOID fillin_color(blocks)
 /*  Calls       : none                          */
 /************************************************************************/
 
-#ifdef PROTOTYPE
 PRIVATE int indx(unsigned char r, unsigned char g, unsigned char b)
-#else
-PRIVATE int indx(r, g, b)
-    unsigned char r, g, b;
-#endif
 {
     int temp;
 
@@ -514,12 +474,7 @@ PRIVATE int indx(r, g, b)
 /*  Calls       : nearest_color()                   */
 /************************************************************************/
 
-#ifdef PROTOTYPE
 PRIVATE VOID map(int blocks)
-#else
-PRIVATE VOID map(blocks)
-    int blocks;
-#endif
 {
     int i, k;
     uint8 r, g, b;
@@ -554,12 +509,7 @@ s[k]*3
 /*  Calls       : sqr()                         */
 /************************************************************************/
 
-#ifdef PROTOTYPE
 PRIVATE int nearest_color(uint8 r, uint8 g, uint8 b)
-#else
-PRIVATE int nearest_color(r, g, b)
-    uint8 r, g, b;
-#endif
 {
     int i, nearest;
     long int min, error;
@@ -592,12 +542,7 @@ PRIVATE int nearest_color(r, g, b)
 /*  Calls       : none                          */
 /************************************************************************/
 
-#ifdef PROTOTYPE
 PRIVATE uint32 sqr(int16 x)
-#else
-PRIVATE uint32 sqr(x)
-    int16 x;
-#endif
 {
     return ((int32)x*(int32)x);
 }
@@ -619,13 +564,7 @@ PRIVATE uint32 sqr(x)
 /*  Calls       : none                          */
 /************************************************************************/
 
-#ifdef PROTOTYPE
 VOID DFCIunimcomp(int32 xdim, int32 ydim, uint8 in[], uint8 out[])
-#else
-VOID DFCIunimcomp(xdim, ydim, in, out)
-    int32 xdim, ydim;
-    uint8 in[], out[];
-#endif
 {
     int bitmap, temp;
     int32 i, j, k, x, y;
@@ -687,13 +626,7 @@ VOID DFCIunimcomp(xdim, ydim, in, out)
 /*  Calls       : init(), split_box(), find_box(), assign_color()   */
 /************************************************************************/
 
-#ifdef PROTOTYPE
 PRIVATE VOID sel_palette(int blocks, int distinct, struct rgb *color_pt)
-#else
-PRIVATE VOID sel_palette(blocks,distinct, color_pt)
-    int blocks, distinct;
-    struct rgb *color_pt;
-#endif
 {
     int boxes;
     /*  int i, j;*/
@@ -745,13 +678,7 @@ PRIVATE VOID sel_palette(blocks,distinct, color_pt)
 /*  Calls       : none                          */
 /************************************************************************/
 
-#ifdef PROTOTYPE
 PRIVATE VOID init(int blocks, int distinct, struct rgb *color_pt)
-#else
-PRIVATE VOID init(blocks, distinct, color_pt)
-    int blocks, distinct;
-    struct rgb *color_pt;
-#endif
 {
     int i, j, k, l;
     int temp[MAXCOLOR];
@@ -848,12 +775,7 @@ PRIVATE VOID init(blocks, distinct, color_pt)
 /*  Calls       : partition()                       */
 /************************************************************************/
 
-#ifdef PROTOTYPE
 PRIVATE VOID sort(int l, int r, int dim, int rank[])
-#else
-PRIVATE VOID sort(l,r,dim, rank)
-    int l, r, dim, rank[];
-#endif
 {
     int i;
 
@@ -883,12 +805,7 @@ PRIVATE VOID sort(l,r,dim, rank)
 *  Calls       : none                          
 ************************************************************************/
 
-#ifdef PROTOTYPE
 PRIVATE int partition(int l, int r, int dim, int rank[])
-#else
-PRIVATE int partition(l, r, dim, rank)
-    int l, r, dim, rank[];
-#endif
 {
     int i, j, temp;
     uint8 v;
@@ -942,11 +859,7 @@ PRIVATE int partition(l, r, dim, rank)
 /*  Calls       : none                          */
 /************************************************************************/
 
-#ifdef PROTOTYPE
 PRIVATE struct box *find_box(void)
-#else
-PRIVATE struct box *find_box()
-#endif
 {
     struct box *temp;
     struct box *max;
@@ -989,12 +902,7 @@ PRIVATE struct box *find_box()
 /*  Calls       : find_med(), select_dim(), classify()          */
 /************************************************************************/
 
-#ifdef PROTOTYPE
 PRIVATE VOID split_box(struct box *ptr)
-#else
-PRIVATE VOID split_box(ptr)
-    struct box *ptr;
-#endif
 {
     int dim, j, i;
     float median;
@@ -1046,11 +954,7 @@ PRIVATE VOID split_box(ptr)
 /*  Calls       : none                          */
 /************************************************************************/
 
-#ifdef PROTOTYPE
 PRIVATE VOID assign_color(void)
-#else
-PRIVATE VOID assign_color()
-#endif
 {
     struct box *temp;
     int ent, k, j;
@@ -1103,12 +1007,7 @@ PRIVATE VOID assign_color()
 /*  Called by   : split_box()                       */
 /*  Calls       : none                          */
 /************************************************************************/
-#ifdef PROTOTYPE
 PRIVATE int select_dim(struct box *ptr)
-#else
-PRIVATE int select_dim(ptr)
-    struct box *ptr;
-#endif
 {
     int i, j;
     uint8 low[3], high[3];
@@ -1151,13 +1050,7 @@ PRIVATE int select_dim(ptr)
 /*  Calls       : next_pt()                     */
 /************************************************************************/
 
-#ifdef PROTOTYPE
 PRIVATE float find_med(struct box *ptr, int dim)
-#else
-PRIVATE float find_med(ptr,dim)
-    struct box *ptr;
-    int dim;
-#endif
 {
     int i, j, count, next, prev;
     int *rank;
@@ -1215,12 +1108,7 @@ PRIVATE float find_med(ptr,dim)
 /*  Calls       : none                          */
 /************************************************************************/
 
-#ifdef PROTOTYPE
 PRIVATE VOID classify(struct box *ptr, struct box *child)
-#else
-PRIVATE VOID classify(ptr, child)
-    struct box *ptr, *child;
-#endif
 {
     int i, j;
     int *temp;
@@ -1276,12 +1164,7 @@ PRIVATE VOID classify(ptr, child)
 /*  Calls       : none                          */
 /************************************************************************/
 
-#ifdef PROTOTYPE
 PRIVATE int next_pt(int dim, int i, int rank[], int distinct)
-#else
-PRIVATE int next_pt(dim, i, rank, distinct)
-    int dim, i, rank[], distinct;
-#endif
 {
     int j;
     uint8 old;

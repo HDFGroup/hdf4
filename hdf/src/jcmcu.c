@@ -45,17 +45,8 @@ static const short ZAG[DCTSIZE2] = {
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 extract_block (JSAMPARRAY input_data, int start_row, long start_col,
 	       JBLOCK output_data, QUANT_TBL_PTR quanttbl)
-#else
-extract_block (input_data, start_row, start_col, output_data, quanttbl)
-JSAMPARRAY input_data;
-int start_row;
-long start_col;
-JBLOCK output_data;
-QUANT_TBL_PTR quanttbl;
-#endif
 /* Extract one 8x8 block from the specified location in the sample array; */
 /* perform forward DCT, quantization scaling, and zigzag reordering on it. */
 {
@@ -141,18 +132,10 @@ QUANT_TBL_PTR quanttbl;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 extract_MCUs (compress_info_ptr cinfo,
 	      JSAMPIMAGE image_data,
 	      int num_mcu_rows,
 	      MCU_output_method_ptr output_method)
-#else
-extract_MCUs (cinfo, image_data, num_mcu_rows, output_method)
-compress_info_ptr cinfo;
-JSAMPIMAGE image_data;
-int num_mcu_rows;
-MCU_output_method_ptr output_method;
-#endif
 {
   JBLOCK MCU_data[MAX_BLOCKS_IN_MCU];
   int mcurow;
@@ -190,12 +173,7 @@ MCU_output_method_ptr output_method;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 extract_init (compress_info_ptr cinfo)
-#else
-extract_init (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   /* no work for now */
 #ifdef DCT_ERR_STATS
@@ -209,12 +187,7 @@ compress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 extract_term (compress_info_ptr cinfo)
-#else
-extract_term (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   /* no work for now */
 #ifdef DCT_ERR_STATS
@@ -230,12 +203,7 @@ compress_info_ptr cinfo;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jselcmcu (compress_info_ptr cinfo)
-#else
-jselcmcu (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   /* just one implementation for now */
   cinfo->methods->extract_init = extract_init;

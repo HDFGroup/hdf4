@@ -101,12 +101,7 @@ typedef enum {			/* JPEG marker codes */
 #if 0				/* not needed in this module */
 
 METHODDEF int
-#ifdef PROTOTYPE
 read_jpeg_data (decompress_info_ptr cinfo)
-#else
-read_jpeg_data (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   cinfo->next_input_byte = cinfo->input_buffer + MIN_UNGET;
 
@@ -133,12 +128,7 @@ decompress_info_ptr cinfo;
 
 
 LOCAL int32
-#ifdef PROTOTYPE
 get_2bytes (decompress_info_ptr cinfo)
-#else
-get_2bytes (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Get a 2-byte unsigned integer (e.g., a marker parameter length field) */
 {
   int32 a;
@@ -149,13 +139,7 @@ decompress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 skip_variable (decompress_info_ptr cinfo, int code)
-#else
-skip_variable (cinfo, code)
-decompress_info_ptr cinfo;
-int code;
-#endif
 /* Skip over an unknown or uninteresting variable-length marker */
 {
   int32 length;
@@ -171,12 +155,7 @@ int code;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 get_dht (decompress_info_ptr cinfo)
-#else
-get_dht (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Process a DHT marker */
 {
   int32 length;
@@ -234,12 +213,7 @@ decompress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 get_dac (decompress_info_ptr cinfo)
-#else
-get_dac (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Process a DAC marker */
 {
   int32 length;
@@ -272,12 +246,7 @@ decompress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 get_dqt (decompress_info_ptr cinfo)
-#else
-get_dqt (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Process a DQT marker */
 {
   int32 length;
@@ -323,12 +292,7 @@ decompress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 get_dri (decompress_info_ptr cinfo)
-#else
-get_dri (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Process a DRI marker */
 {
   if (get_2bytes(cinfo) != 4)
@@ -342,12 +306,7 @@ decompress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 get_app0 (decompress_info_ptr cinfo)
-#else
-get_app0 (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Process an APP0 marker */
 {
 #define JFIF_LEN 14
@@ -404,13 +363,7 @@ decompress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 get_sof (decompress_info_ptr cinfo, int code)
-#else
-get_sof (cinfo, code)
-decompress_info_ptr cinfo;
-int code;
-#endif
 /* Process a SOFn marker */
 {
   int32 length;
@@ -473,12 +426,7 @@ int code;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 get_sos (decompress_info_ptr cinfo)
-#else
-get_sos (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Process a SOS marker */
 {
   int32 length;
@@ -525,12 +473,7 @@ decompress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 get_soi (decompress_info_ptr cinfo)
-#else
-get_soi (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Process an SOI marker */
 {
   int i;
@@ -555,12 +498,7 @@ decompress_info_ptr cinfo;
 
 
 LOCAL int
-#ifdef PROTOTYPE
 next_marker (decompress_info_ptr cinfo)
-#else
-next_marker (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Find the next JPEG marker */
 /* Note that the output might not be a valid marker code, */
 /* but it will never be 0 or FF */
@@ -589,12 +527,7 @@ decompress_info_ptr cinfo;
 
 
 LOCAL JPEG_MARKER
-#ifdef PROTOTYPE
 process_tables (decompress_info_ptr cinfo)
-#else
-process_tables (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Scan and process JPEG markers that can appear in any order */
 /* Return when an SOI, EOI, SOFn, or SOS is found */
 {
@@ -669,12 +602,7 @@ decompress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 read_file_header (decompress_info_ptr cinfo)
-#else
-read_file_header (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   int c;
 
@@ -754,12 +682,7 @@ decompress_info_ptr cinfo;
  */
 
 METHODDEF bool
-#ifdef PROTOTYPE
 read_scan_header (decompress_info_ptr cinfo)
-#else
-read_scan_header (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   int c;
   
@@ -825,13 +748,7 @@ decompress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 resync_to_restart (decompress_info_ptr cinfo, int marker)
-#else
-resync_to_restart (cinfo, marker)
-decompress_info_ptr cinfo;
-int marker;
-#endif
 {
   int desired = cinfo->next_restart_num;
   int action = 1;
@@ -883,12 +800,7 @@ int marker;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 read_scan_trailer (decompress_info_ptr cinfo)
-#else
-read_scan_trailer (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   /* no work needed */
 }
@@ -899,12 +811,7 @@ decompress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 read_file_trailer (decompress_info_ptr cinfo)
-#else
-read_file_trailer (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   /* no work needed */
 }
@@ -919,12 +826,7 @@ decompress_info_ptr cinfo;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jselrjfif (decompress_info_ptr cinfo)
-#else
-jselrjfif (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   cinfo->methods->read_file_header = read_file_header;
   cinfo->methods->read_scan_header = read_scan_header;

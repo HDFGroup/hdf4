@@ -31,18 +31,12 @@ static char RcsId[] = "@(#)$Revision$";
                              : HDmemcmp( k1, k2, 0<(a) ? (a) : HDstrlen(k1) )  )
 
 VOID tbbt1dump
-	PROTO((TBBT_NODE *node,intn method));
+	(TBBT_NODE *node,intn method);
 
 /* #define TESTING */
 
 /* Returns pointer to end-most (to LEFT or RIGHT) node of tree: */
-#ifdef PROTOTYPE
 static TBBT_NODE *tbbt_end(TBBT_NODE *root, intn side)
-#else
-static TBBT_NODE *tbbt_end( root, side )
-TBBT_NODE *root;
-intn side;
-#endif
 {
     if(  NULL == root  )
         return( root );
@@ -52,34 +46,18 @@ intn side;
     return( root );
 }
 
-#ifdef PROTOTYPE
 TBBT_NODE *tbbtfirst(TBBT_NODE *root)
-#else
-TBBT_NODE *tbbtfirst( root )
-  TBBT_NODE *root;
-#endif
 {
     return(  tbbt_end( root, LEFT )  );
 }
 
-#ifdef PROTOTYPE
 TBBT_NODE *tbbtlast(TBBT_NODE *root)
-#else
-TBBT_NODE *tbbtlast( root )
-  TBBT_NODE *root;
-#endif
 {
     return(  tbbt_end( root, RIGHT )  );
 }
 
 /* Return address of parent's pointer to neighboring node (to LEFT or RIGHT) **
-#ifdef PROTOTYPE
 static TBBT_NODE **tbbt_anbr(TBBT_NODE *ptr, intn side )
-#else
-static TBBT_NODE **tbbt_anbr( ptr, side )
-TBBT_NODE *ptr;
-intn       side;
-#endif
 {
   TBBT_NODE **aptr;
 
@@ -92,13 +70,7 @@ intn       side;
 }*/
 
 /* Returns pointer to neighboring node (to LEFT or RIGHT): */
-#ifdef PROTOTYPE
 static TBBT_NODE *tbbt_nbr(TBBT_NODE * ptr, intn  side )
-#else
-static TBBT_NODE *tbbt_nbr( ptr, side )
-TBBT_NODE *ptr;
-intn       side;
-#endif
 {
     /* return( *tbbt_anbr(ptr,side) ); */
 
@@ -112,41 +84,21 @@ intn       side;
 }
 
 /* Returns pointer to node with previous key value: */
-#ifdef PROTOTYPE
 TBBT_NODE *tbbtnext( TBBT_NODE *node )
-#else
-TBBT_NODE *tbbtnext( node )
-TBBT_NODE *node;
-#endif
 {
     return(  tbbt_nbr( node, RIGHT )  );
 }
 
 /* Returns pointer to node with next key value: */
-#ifdef PROTOTYPE
 TBBT_NODE *tbbtprev( TBBT_NODE *node)
-#else
-TBBT_NODE *tbbtprev( node )
-TBBT_NODE *node;
-#endif
 {
     return(  tbbt_nbr( node, LEFT )  );
 }
 
 /* tbbtfind -- Look up a node in a tree based on a key value */
 /* Returns a pointer to the found node (or NULL) */
-#ifdef PROTOTYPE
-TBBT_NODE *tbbtfind(TBBT_NODE *root,VOIDP key, intn (*compar) PROTO((VOIDP,VOIDP,intn)),intn arg,
+TBBT_NODE *tbbtfind(TBBT_NODE *root,VOIDP key, intn (*compar) (VOIDP,VOIDP,intn),intn arg,
         TBBT_NODE    **pp )
-#else
-TBBT_NODE *tbbtfind( root, key, compar, arg, pp )
-  TBBT_NODE     *root;  /* Pointer to root node of tree (NULL if 0 elements) */
-  VOIDP         key;    /* Key value of node we are looking for */
-  intn         (*compar)(/* void *k1, void *k2, int arg */);
-                        /* memcmp()-like routine to compare key values */
-  intn           arg;   /* Third argument for (*compar)() */
-  TBBT_NODE    **pp;    /* Place for pointer to parent (or NULL) */
-#endif
 {
     TBBT_NODE *ptr= root;
     TBBT_NODE *parent= NULL;
@@ -170,27 +122,14 @@ TBBT_NODE *tbbtfind( root, key, compar, arg, pp )
 
 /* tbbtdfind -- Look up a node in a "described" tree based on a key value */
 /* Returns a pointer to the found node (or NULL) */
-#ifdef PROTOTYPE
 TBBT_NODE *tbbtdfind(TBBT_TREE *tree,VOIDP key,TBBT_NODE **pp)
-#else
-TBBT_NODE *tbbtdfind( tree, key, pp )
-TBBT_TREE     *tree;  /* Pointer to tree description record */
-VOIDP          key;   /* Pointer to key value to find node with */
-TBBT_NODE    **pp;    /* Address of buffer for pointer to parent node */
-#endif
 {
     return(  tbbtfind( tree->root, key, tree->compar, tree->cmparg, pp )  );
 }
 
 /* tbbtindx -- Look up the Nth node (in key order) */
 /* Returns a pointer to the `indx'th node (or NULL) */
-#ifdef PROTOTYPE
 TBBT_NODE *tbbtindx(TBBT_NODE *root,int32 indx)
-#else
-TBBT_NODE *tbbtindx( root, indx )
-TBBT_NODE *root;  /* Pointer to root node of tree (NULL if 0 elements) */
-int32      indx;  /* Sequence number of desired node (0 for first) */
-#endif
 {
     TBBT_NODE *ptr= root;
 
@@ -228,14 +167,7 @@ int32      indx;  /* Sequence number of desired node (0 for first) */
  * [A], [B], or [C] can have depth 0 so `link[]' contains threads rather than
  * pointers to children.
  */
-#ifdef PROTOTYPE
 static TBBT_NODE *swapkid(TBBT_NODE **root,TBBT_NODE *ptr,intn side )
-#else
-static TBBT_NODE *swapkid( root, ptr, side )
-  TBBT_NODE    **root;  /* Pointer to root of tree */
-  TBBT_NODE     *ptr;   /* Pointer to parent node to be swapped */
-  intn           side;  /* Which of parent's children is to be swapped */
-#endif
 {
   TBBT_NODE *kid= ptr->link[side];  /* Sibling to be swapped with parent */
   intn  deep[3];        /* Relative depths of three sub-trees involved. */
@@ -318,15 +250,7 @@ printf("swapkid(): check 4, ptr=%p, ptr->flags=%x, ptr->Parent=%p, kid->flags=%x
  * and looking for unbalanced ancestors.  Adjust all balance factors and re-
  * balance through "rotation"s when needed.
  */
-#ifdef PROTOTYPE
 static VOID balance(TBBT_NODE **root,TBBT_NODE *ptr,intn side,intn added )
-#else
-static VOID balance( root, ptr, side, added )
-  TBBT_NODE    **root;  /* Root of tree being balanced */
-  TBBT_NODE     *ptr;   /* Parent that just gained/lost a child */
-  intn           side;  /* Which side child was inserted on or removed from */
-  intn           added; /* 1 if a child was just added; -1 if just deleted */
-#endif
 {
   intn deeper= added;  /* 1 if sub-tree got longer; -1 if got shorter */
   intn odelta;
@@ -488,18 +412,8 @@ printf("balance(): check 4, side=%d, lcnt=%d, rcnt=%d\n",side,LeftCnt(ptr),Right
  */
 
 /* Returns pointer to inserted node (or NULL) */
-#ifdef PROTOTYPE
 TBBT_NODE *tbbtins(TBBT_NODE **root,VOIDP item,VOIDP key,intn (*compar)
-        PROTO((VOIDP k1,VOIDP k2,intn arg)),intn arg )
-#else
-TBBT_NODE *tbbtins( root, item, key, compar, arg )
-TBBT_NODE    **root;  /* Address of pointer to root node of tree */
-VOIDP         item;  /* Data to be associated with node */
-VOIDP         key;   /* Key of node to be added */
-intn         (*compar)(/* void *k1, void *k2, int arg */);
-                        /* memcmp()-like routine to compare key values */
-intn           arg;   /* Third argument for (*compar)() */
-#endif
+        (VOIDP k1,VOIDP k2,intn arg),intn arg )
 {
     intn cmp;
     TBBT_NODE *ptr, *parent;
@@ -534,14 +448,7 @@ intn           arg;   /* Third argument for (*compar)() */
 
 /* tbbtdins -- Insert a node into a "described" tree */
              /* Returns a pointer to the inserted node */
-#ifdef PROTOTYPE
 TBBT_NODE *tbbtdins(TBBT_TREE *tree,VOIDP item,VOIDP key )
-#else
-TBBT_NODE *tbbtdins( tree, item, key )
-TBBT_TREE *tree;      /* Pointer to tree description record */
-VOIDP     item;      /* Pointer to data item for new node */
-VOIDP     key;       /* Pointer to key value for new node (or NULL) */
-#endif
 {
     TBBT_NODE *ret_node; /* the node to return */
 
@@ -562,14 +469,7 @@ VOIDP     key;       /* Pointer to key value for new node (or NULL) */
  * node is placed in the buffer that it points to.
  */
               /* Data item pointer of deleted node is returned */
-#ifdef PROTOTYPE
 VOIDP tbbtrem(TBBT_NODE **root,TBBT_NODE *node,VOIDP *kp)
-#else
-VOIDP tbbtrem( root, node, kp )
-  TBBT_NODE **root; /* Root of tree to delete node from */
-  TBBT_NODE  *node; /* Pointer to node to be deleted */
-  VOIDP      *kp;   /* NULL or address of buffer for pointer to key value */
-#endif
 {
   TBBT_NODE *leaf;  /* Node with one or zero children */
   TBBT_NODE *par;   /* Parent of `leaf' */
@@ -758,14 +658,7 @@ printf("tbbtrem(): check 7.5, par=%p, par->lcnt=%d, par->rcnt=%d\n",par,par->lcn
 
 /* tbbtdmake - Allocate a new tree description record for an empty tree */
 /* Returns a pointer to the description record */
-#ifdef PROTOTYPE
-TBBT_TREE *tbbtdmake(intn (*cmp) PROTO((VOIDP k1,VOIDP k2,intn arg)), intn arg)
-#else
-TBBT_TREE *tbbtdmake( cmp, arg )
-intn (*cmp)(/* void *k1, void *k2, int arg */);
-                /* memcmp()-link routine for comparing keys (or NULL) */
-intn   arg;   /* Third argument for (*cmp)() */
-#endif
+TBBT_TREE *tbbtdmake(intn (*cmp) (VOIDP k1,VOIDP k2,intn arg), intn arg)
 {
   TBBT_TREE *tree= Alloc( 1, TBBT_TREE );
 
@@ -783,13 +676,8 @@ intn   arg;   /* Third argument for (*cmp)() */
  * space, this next less-simple recursive version that wastes less stack space,
  * or the last non-recursive version which isn't simple but saves stack space.
  */
-static VOID (*FD) PROTO((VOIDP item)), (*FK) PROTO((VOIDP key));
-#ifdef PROTOTYPE
+static VOID (*FD) (VOIDP item), (*FK) (VOIDP key);
 static VOID tbbt1free( TBBT_NODE *node)
-#else
-static VOID tbbt1free( node )
-TBBT_NODE *node;
-#endif
 {
     if(  HasChild(node,LEFT)  )     tbbt1free( node->Lchild );
     if(  HasChild(node,RIGHT)  )    tbbt1free( node->Rchild );
@@ -798,14 +686,7 @@ TBBT_NODE *node;
     Free( node );
 }
 
-#ifdef PROTOTYPE
-VOID tbbtfree(TBBT_NODE **root, VOID (*fd) PROTO((VOIDP item)),VOID (*fk) PROTO((VOIDP key)))
-#else
-VOID tbbtfree( root, fd, fk )
-TBBT_NODE    **root;
-VOID         (*fd)(/* void *item */);
-VOID         (*fk)(/* void *key */);
-#endif
+VOID tbbtfree(TBBT_NODE **root, VOID (*fd) (VOIDP item),VOID (*fk) (VOIDP key))
 {
     if(  NULL == *root  )
         return;
@@ -816,14 +697,7 @@ VOID         (*fk)(/* void *key */);
 #else /* WASTE_STACK */
 
 /* tbbtfree() - Free an entire tree not allocated with tbbtdmake(). */
-#ifdef PROTOTYPE
-VOID tbbtfree(TBBT_NODE **root, VOID (*fd) PROTO((VOIDP item)),VOID (*fk) PROTO((VOIDP key)))
-#else
-VOID tbbtfree( root, fd, fk )
-TBBT_NODE    **root;                  /* Address of pointer to root node */
-VOID         (*fd)(/* void *item */); /* Routine to free data items */
-VOID         (*fk)(/* void *key */);  /* Routine to free key values */
-#endif
+VOID tbbtfree(TBBT_NODE **root, VOID (*fd) (VOIDP item),VOID (*fk) (VOIDP key))
 {
   TBBT_NODE *par, *node= *root;
 
@@ -857,12 +731,7 @@ VOID         (*fk)(/* void *key */);  /* Routine to free key values */
 }
 #endif /* WASTE_STACK */
 
-#ifdef PROTOTYPE
 VOID tbbtprint(TBBT_NODE *node)
-#else
-VOID tbbtprint(node)
-TBBT_NODE *node;
-#endif
 {
 	printf("node=%p, key=%p, data=%p, flags=%x\n",node,node->key,node->data,(unsigned)node->flags);
 	printf("Lcnt=%d, Rcnt=%d\n",(int)node->lcnt,(int)node->rcnt);
@@ -870,13 +739,7 @@ printf("*key=%d\n",(int)*(int32 *)(node->key));
 	printf("Lchild=%p, Rchild=%p, Parent=%p\n",node->Lchild,node->Rchild,node->Parent);
 }	/* end tbbtprint() */
 
-#ifdef PROTOTYPE
 VOID tbbt1dump(TBBT_NODE *node,intn method)
-#else
-VOID tbbt1dump(node,method)
-TBBT_NODE *node;
-intn method;
-#endif
 {
 	if(node==NULL)
 		return;
@@ -909,13 +772,7 @@ intn method;
 	  }	/* end switch() */
 }	/* end tbbt1dump() */
 
-#ifdef PROTOTYPE
 VOID tbbtdump(TBBT_TREE *tree,intn method)
-#else
-VOID tbbtdump(tree, method)
-TBBT_TREE *tree;
-intn method;
-#endif
 {
     if(*(TBBT_NODE **)tree!=NULL) {
         printf("Number of nodes in the tree: %ld\n",tree->count);
@@ -926,14 +783,7 @@ intn method;
 }	/* end tbbtdump() */
 
 /* Always returns NULL */
-#ifdef PROTOTYPE
-TBBT_TREE *tbbtdfree(TBBT_TREE *tree,VOID (*fd) PROTO((VOIDP item)), VOID (*fk) PROTO((VOIDP key)))
-#else
-TBBT_TREE *tbbtdfree( tree, fd, fk )
-TBBT_TREE *tree;                  /* Pointer to tree description record */
-VOID     (*fd)(/* void *item */); /* Routine to free data items */
-VOID     (*fk)(/* void *key */);  /* Routine to free key values */
-#endif
+TBBT_TREE *tbbtdfree(TBBT_TREE *tree,VOID (*fd) (VOIDP item), VOID (*fk) (VOIDP key))
 {
     tbbtfree( &tree->root, fd, fk );
     Free( tree );
@@ -942,12 +792,7 @@ VOID     (*fk)(/* void *key */);  /* Routine to free key values */
 
 
 /* returns the number of nodes in the tree */
-#ifdef PROTOTYPE
 long tbbtcount(TBBT_TREE *tree)
-#else
-long tbbtcount(tree)
-TBBT_TREE *tree;                  /* Pointer to tree description record */
-#endif
 {
     if(tree==NULL)
         return(-1);

@@ -62,12 +62,7 @@ static int dimsset = 0;
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nd2reqil(intf *il)
-#else
-nd2reqil(il)
-    intf *il;
-#endif /* PROTOTYPE */
 {
     return(DFGRIreqil((intn)*il, (intn)IMAGE));
 }
@@ -84,12 +79,7 @@ nd2reqil(il)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nd2sdims(intf *xdim, intf *ydim)
-#else
-nd2sdims(xdim, ydim)
-    intf *xdim, *ydim;
-#endif /* PROTOTYPE */
 {
     dimsset = 1;
     return(DFGRIsetdims(*xdim, *ydim, 3, IMAGE));
@@ -111,14 +101,7 @@ nd2sdims(xdim, ydim)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nd2igdim(_fcd filename, intf *pxdim, intf *pydim, intf *pil, intf *fnlen)
-#else
-nd2igdim(filename, pxdim, pydim, pil, fnlen)
-    _fcd filename;
-    intf *pxdim, *pydim;
-    intf *pil, *fnlen;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -144,15 +127,7 @@ nd2igdim(filename, pxdim, pydim, pil, fnlen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nd2igimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *fnlen)
-#else
-nd2igimg(filename, image, xdim, ydim, fnlen)
-    _fcd filename;
-    _fcd image;
-    intf *xdim, *ydim;
-    intf *fnlen;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -178,16 +153,8 @@ nd2igimg(filename, image, xdim, ydim, fnlen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nd2iaimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *fnlen,
     intf *newfile)
-#else
-nd2iaimg(filename, image, xdim, ydim, fnlen, newfile)
-    _fcd filename;
-    _fcd image;
-    intf *xdim, *ydim;
-    intf *fnlen, *newfile;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -214,12 +181,7 @@ nd2iaimg(filename, image, xdim, ydim, fnlen, newfile)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nd2setil(intf *il)
-#else
-nd2setil(il)
-    intf *il;
-#endif /* PROTOTYPE */
 {
     return (DFGRIsetil((intn)*il, IMAGE));
 }
@@ -235,11 +197,7 @@ nd2setil(il)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nd2first(void)
-#else
-nd2first()
-#endif /* PROTOTYPE */
 {
     return (DFGRIrestart());
 }
@@ -255,11 +213,7 @@ nd2first()
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nd2lref(void)
-#else
-nd2lref()
-#endif /* PROTOTYPE */
 {
     return (DFGRIlastref());
 }
@@ -278,12 +232,7 @@ nd2lref()
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nd2scomp(intf *scheme)
-#else
-nd2scomp(scheme)
-intf *scheme;
-#endif /* PROTOTYPE */
 {
     comp_info cinfo;   /* Structure containing compression parameters */
 
@@ -307,13 +256,7 @@ intf *scheme;
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nd2sjpeg(intf *quality,intf *force_baseline)
-#else
-nd2sjpeg(quality,force_baseline)
-intf *quality;
-intf *force_baseline;
-#endif /* PROTOTYPE */
 {
     comp_info cinfo;   /* Structure containing compression parameters */
 
@@ -333,12 +276,7 @@ intf *force_baseline;
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndf24reqil(intf *il)
-#else
-ndf24reqil(il)
-    intf *il;
-#endif /* PROTOTYPE */
 {
     return(DFGRIreqil((intn)*il, IMAGE));
 }
@@ -355,12 +293,7 @@ ndf24reqil(il)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndf24setdims(intf *xdim, intf *ydim)
-#else
-ndf24setdims(xdim, ydim)
-    intf *xdim, *ydim;
-#endif /* PROTOTYPE */
 {
     dimsset = 1;
     return(DFGRIsetdims(*xdim, *ydim, 3, IMAGE));
@@ -377,12 +310,7 @@ ndf24setdims(xdim, ydim)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndf24setil(intf *il)
-#else
-ndf24setil(il)
-    intf *il;
-#endif /* PROTOTYPE */
 {
     return (DFGRIsetil((intn)*il, IMAGE));
 }
@@ -398,11 +326,7 @@ ndf24setil(il)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndf24restart(void)
-#else
-ndf24restart()
-#endif /* PROTOTYPE */
 {
     return (DFGRIrestart());
 }
@@ -421,12 +345,7 @@ ndf24restart()
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndf24scompress(intf *scheme)
-#else
-ndf24scompress(scheme)
-intf *scheme;
-#endif /* PROTOTYPE */
 {
     comp_info cinfo;   /* Structure containing compression parameters */
 
@@ -450,13 +369,7 @@ intf *scheme;
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndf24sjpeg(intf *quality,intf *force_baseline)
-#else
-ndf24sjpeg(quality,force_baseline)
-intf *quality;
-intf *force_baseline;
-#endif /* PROTOTYPE */
 {
     comp_info cinfo;   /* Structure containing compression parameters */
 
@@ -478,14 +391,7 @@ intf *force_baseline;
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nd2irref(_fcd filename, intf *ref, intf *fnlen)
-#else
-nd2irref(filename, ref, fnlen)
-    _fcd filename;
-    intf *ref;
-    intf *fnlen;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;

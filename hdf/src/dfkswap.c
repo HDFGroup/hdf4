@@ -62,23 +62,15 @@ static char RcsId[] = "@(#)$Revision$";
 /* DFKsb2b()                                                */
 /* -->Byte swapping for 2 byte data items                   */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKsb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKsb2b(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int fast_processing = 0;              /* Default is not fast processing */
   int in_place = 0;                     /* Inplace must be detected */
   register uint32 i;            
   uint8 buf[2];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   CONSTR(FUNC,"DFKsb2b");
 
   HEclear();
@@ -142,23 +134,15 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKsb4b()                                                */
 /* -->Byte swapping for 4 byte data items                   */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKsb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKsb4b(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int fast_processing = 0;              /* Default is not fast processing */
   int in_place = 0;                     /* Inplace must be detected */
   register uint32 i;            
   uint8 buf[4];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   CONSTR(FUNC,"DFKsb4b");
 #ifdef TEST3_sb4b
   uint32 *lp_dest;
@@ -318,23 +302,15 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKsb8b()                                                */
 /* -->Byte swapping for 8 byte data items                   */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKsb8b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKsb8b(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int fast_processing = 0;              /* Default is not fast processing */
   int in_place = 0;                     /* Inplace must be detected */
   register uint32 i;            
   uint8 buf[8];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
     CONSTR(FUNC,"DFKsb8b");
 
     HEclear();

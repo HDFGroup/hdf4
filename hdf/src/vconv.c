@@ -43,8 +43,8 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* ------------------------------------------------------------------ */
 
-PRIVATE void oldunpackvg PROTO((VGROUP *vg,uint8  buf[], int32 *size));
-PRIVATE void oldunpackvs PROTO((VDATA *vs, uint8 buf[], int32 *size));
+PRIVATE void oldunpackvg (VGROUP *vg,uint8  buf[], int32 *size);
+PRIVATE void oldunpackvs (VDATA *vs, uint8 buf[], int32 *size);
 
 /*
 *  this routine checks that the given OPENED file is compatible with
@@ -53,12 +53,7 @@ PRIVATE void oldunpackvs PROTO((VDATA *vs, uint8 buf[], int32 *size));
 *          0  if not compatible.
 *          -1 if error.
 */
-#ifdef PROTOTYPE
 int32 vicheckcompat(HFILEID f)
-#else
-int32 vicheckcompat(f)
-HFILEID f;
-#endif
 {
     int16   foundold, foundnew;
 	int32 	aid;
@@ -111,12 +106,7 @@ HFILEID f;
 */
 
 
-#ifdef PROTOTYPE
 int32 vimakecompat(HFILEID f)
-#else
-int32 vimakecompat(f)
-HFILEID f;
-#endif
 {
 	VGROUP	* vg;
 	VDATA	*vs;
@@ -247,12 +237,7 @@ HFILEID f;
 *          -1 if error.
 */
 
-#ifdef PROTOTYPE
 int32 vcheckcompat(char *fs)
-#else
-int32 vcheckcompat(fs)
-char * fs;
-#endif
 {
 
 	HFILEID	f;
@@ -280,12 +265,7 @@ char * fs;
 * returns  1 if successful. if error, returns 0
 */
 
-#ifdef PROTOTYPE
 int32 vmakecompat(char * fs) 
-#else
-int32 vmakecompat(fs)
-char * fs;
-#endif
 {
 	HFILEID 	f;
 	int32 	ret;
@@ -301,14 +281,7 @@ char * fs;
 
 /* ==================================================================== */
 
-#ifdef PROTOTYPE
 static void oldunpackvg (VGROUP *vg,uint8  buf[], int32 *size)
-#else
-static void oldunpackvg (vg, buf, size)
-VGROUP*     vg;     /* vgroup to be loaded with file data */
-uint8            buf[];  /* must contain a VGDESCTAG data object from file */
-int32*      size;   /* ignored, but included to look like packvg() */
-#endif
 {
     uint8       *bb;
     uint32       i;
@@ -335,14 +308,7 @@ int32*      size;   /* ignored, but included to look like packvg() */
 
 /* ================================================================= */
 
-#ifdef PROTOTYPE
 static void oldunpackvs (VDATA *vs, uint8 buf[], int32 *size)
-#else
-static void oldunpackvs (vs, buf, size)
-VDATA   *vs;
-int32       *size;  /* UNUSED, but retained for compatibility with packvs */
-uint8        buf[];
-#endif
 {
     uint8   *bb;
 	int16    i;

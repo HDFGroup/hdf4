@@ -52,13 +52,7 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 
-#ifdef PROTOTYPE
 uint16 DFfindnextref(int32 file_id, uint16 tag, uint16 lref)
-#else
-uint16 DFfindnextref(file_id, tag, lref)
-    int32 file_id;
-    uint16 tag, lref;
-#endif /* PROTOTYPE */
 {
     CONSTR(FUNC,"DFfindnextref");
     uint16 newtag, newref;

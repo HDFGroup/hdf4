@@ -73,12 +73,7 @@ static int32 * rgb_ycc_tab;	/* => table for RGB to YCbCr conversion */
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 rgb_ycc_init (compress_info_ptr cinfo)
-#else
-rgb_ycc_init (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   int32 i;
 
@@ -112,15 +107,8 @@ compress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_rgb_ycc_rows (compress_info_ptr cinfo,
 		  int rows_to_read, JSAMPIMAGE image_data)
-#else
-get_rgb_ycc_rows (cinfo, rows_to_read, image_data)
-compress_info_ptr cinfo;
-int rows_to_read;
-JSAMPIMAGE image_data;
-#endif
 {
 #ifdef SIXTEEN_BIT_SAMPLES
   register uint16 r, g, b;
@@ -182,15 +170,8 @@ JSAMPIMAGE image_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_rgb_gray_rows (compress_info_ptr cinfo,
 		   int rows_to_read, JSAMPIMAGE image_data)
-#else
-get_rgb_gray_rows (cinfo, rows_to_read, image_data)
-compress_info_ptr cinfo;
-int rows_to_read;
-JSAMPIMAGE image_data;
-#endif
 {
 #ifdef SIXTEEN_BIT_SAMPLES
   register uint16 r, g, b;
@@ -235,12 +216,7 @@ JSAMPIMAGE image_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 colorin_init (compress_info_ptr cinfo)
-#else
-colorin_init (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   /* Allocate a workspace for the result of get_input_row. */
   pixel_row = (*cinfo->emethods->alloc_small_sarray)
@@ -256,15 +232,8 @@ compress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_grayscale_rows (compress_info_ptr cinfo,
 		    int rows_to_read, JSAMPIMAGE image_data)
-#else
-get_grayscale_rows (cinfo, rows_to_read, image_data)
-compress_info_ptr cinfo;
-int rows_to_read;
-JSAMPIMAGE image_data;
-#endif
 {
   int row;
 
@@ -285,15 +254,8 @@ JSAMPIMAGE image_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_noconvert_rows (compress_info_ptr cinfo,
 		    int rows_to_read, JSAMPIMAGE image_data)
-#else
-get_noconvert_rows (cinfo, rows_to_read, image_data)
-compress_info_ptr cinfo;
-int rows_to_read;
-JSAMPIMAGE image_data;
-#endif
 {
   int row, ci;
 
@@ -314,12 +276,7 @@ JSAMPIMAGE image_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 colorin_term (compress_info_ptr cinfo)
-#else
-colorin_term (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   /* no work (we let free_all release the workspace) */
 }
@@ -330,12 +287,7 @@ compress_info_ptr cinfo;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jselccolor (compress_info_ptr cinfo)
-#else
-jselccolor (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   /* Make sure input_components agrees with in_color_space */
   switch (cinfo->in_color_space) {

@@ -87,7 +87,7 @@ static char RcsId[] = "@(#)$Revision$";
 /* #define NOFLOATCRAY2IEG */
 
 PRIVATE VOID DFKswap
-    PROTO((VOIDP s, VOIDP d, uintn elem_size, uintn num_elem));
+    (VOIDP s, VOIDP d, uintn elem_size, uintn num_elem);
 
 #define SWAP_MASKA  0xffffffff00000000
 #define SWAP_MASKB  0x00000000ffffffff
@@ -105,19 +105,11 @@ PRIVATE VOID DFKswap
 /*          Also, there in no provision for source or       */
 /*          destination strides other than 1.               */
 /************************************************************/
-#ifdef PROTOTYPE
 PRIVATE VOID DFKswap(VOIDP s, VOIDP d, uintn elem_size, uintn num_elem)
-#else
-PRIVATE VOID DFKswap(source, dest, elem_size, num_elem)
-uint8 * source, * dest;
-uintn elem_size, num_elem;
-#endif /* PROTOTYPE */
 {
     register uintn i;
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
     unsigned long *lp_dest,*lp_src;
     intn odd_man_out;
     uintn n;
@@ -203,21 +195,13 @@ uintn elem_size, num_elem;
 /* (**) This routine converts two byte IEEE to eight byte   */
 /*      Cray big endian integer.                            */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKui2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKui2i(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     register uint32 i;
     int fast_processing=0;
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
     long * lptr_dest = (long*)dest;
     long *lp_dest;
     unsigned long *lp_src;
@@ -519,21 +503,13 @@ uint32 num_elm, source_stride, dest_stride;
 /* (**) This routine converts two byte IEEE to eight byte   */
 /*      Cray.                                               */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKui2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKui2s(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     register uint32 i;
     int fast_processing=0;
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
     long * lptr_dest = (long*)dest;
     long *lp_dest;
     unsigned long *lp_src;
@@ -596,21 +572,13 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKuo2i()                                                */
 /* -->Unicos routine for exporting 2 byte data items        */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKuo2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKuo2i(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     register uintn i;
     int fast_processing=0;
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
     long *lp_dest;
     long *lp_src;
     char *FUNC="DFKuo2i";
@@ -838,21 +806,13 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKuo2s()                                                */
 /* -->Unicos routine for exporting signed 2 byte data items */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKuo2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKuo2s(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     register uintn i;
     int fast_processing=0;
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
     long *lp_dest;
     long *lp_src;
     char *FUNC="DFKuo2s";
@@ -899,21 +859,13 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKui4i()                                                */
 /* -->Unicos routine for importing 4 byte unsigned ints     */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKui4i(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     int fast_processing=0;
     register uint32 i;
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
     long * lptr_dest = (long*)dest;
     long *lp_dest;
     unsigned long *lp_src;
@@ -1123,21 +1075,13 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKui4s()                                                */
 /* -->Unicos routine for importing 4 signed ints            */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKui4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKui4s(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     int fast_processing=0;
     register uint32 i;
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
     long * lptr_dest = (long*)dest;
     long *lp_dest;
     long *lp_src;
@@ -1197,21 +1141,13 @@ uint32 num_elm, source_stride, dest_stride;
 /* -->Unicos routine for exporting 4 byte data items        */
 /************************************************************/
 
-#ifdef PROTOTYPE
 int DFKuo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKuo4i(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     int fast_processing=0;
     register uintn i;
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
     long *lp_dest;
     long *lp_src;
     char *FUNC="DFKuo4i";
@@ -1357,21 +1293,13 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKuo4s()                                                */
 /* -->Unicos routine for exporting signed 4 byte data items */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKuo4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKuo4s(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     int fast_processing=0;
     register uintn i;
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
     long *lp_dest;
     long *lp_src;
     char *FUNC="DFKuo4s";
@@ -1439,17 +1367,8 @@ uint32 num_elm, source_stride, dest_stride;
 
  ************************************************************/
 
-#ifdef PROTOTYPE
 int DFKui4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKui4f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source;
-uint8 * dest;
-uint32 num_elm;
-uint32 source_stride;
-uint32 dest_stride;
-#endif /* PROTOTYPE */
 {
     int fast_processing = 0;            /* By default not array processed */
     int odd_man_out = 0;                /* By default there are even num_elm */
@@ -1458,10 +1377,8 @@ uint32 dest_stride;
     long buf2;                          /* This is a temporary stride buf */
     uint8 * dud1 = (uint8*)&buf1;       /* Dummy pointer to buf1 for strides */
     uint8 * dud2 = (uint8*)&buf2;       /* Dummy pointer to buf2 for strides */
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;         /* Cray does not like certain   */
     uint8 * dest = (uint8*)d;           /* void and void* constructions */
-#endif /* PROTOTYPE */
     long * lptr_src = (long*)source;
     long * lptr_dest = (long*)dest;
     char *FUNC="DFKui4f";
@@ -1557,14 +1474,8 @@ uint32 dest_stride;
 
  ************************************************************/
 
-#ifdef PROTOTYPE
 int DFKuo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKuo4f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     int fast_processing = 0;        /* By default not array processed */
     int odd_man_out = 0;            /* By default there are even num_elm */
@@ -1573,10 +1484,8 @@ uint32 num_elm, source_stride, dest_stride;
     long buf2;                      /* This is a temporary stride buf */
     uint8 * dud1 = (uint8*)&buf1;   /* Dummy pointer to buf1 for strides */
     uint8 * dud2 = (uint8*)&buf2;   /* Dummy pointer to buf2 for strides */
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;     /* Cray does not like certain   */
     uint8 * dest = (uint8*)d;       /* void and void* constructions */
-#endif /* PROTOTYPE */
     long * lptr_src = (long*)source;
     long * lptr_dest = (long*)dest;
     char *FUNC="DFKuo4f";
@@ -1659,23 +1568,15 @@ uint32 num_elm, source_stride, dest_stride;
 /* -->Unicos routine for importing 64 bit floats            */
 /************************************************************/
 
-#ifdef PROTOTYPE
 int DFKui8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKui8f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     int fast_processing = 0;        /* By default not array processed */
     int i,j,n;
     long buf;                       /* This is a temporary stride buf */
     uint8 * dud = (uint8*)&buf;     /* Dummy pointer to buf1 for strides */
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;     /* Cray does not like certain   */
     uint8 * dest = (uint8*)d;       /* void and void* constructions */
-#endif /* PROTOTYPE*/
     long * lptr_src = (long*)source;
     long * lptr_dest = (long*)dest;
     char *FUNC="DFKui8f";
@@ -1751,24 +1652,16 @@ uint32 num_elm, source_stride, dest_stride;
 /* -->Unicos routine for exporting 64 bit floats            */
 /************************************************************/
 
-#ifdef PROTOTYPE
 int DFKuo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKuo8f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     int fast_processing = 0;              /* By default not array processed */
     int odd_man_out = 0;                  /* By default there are even num_elm */
     int i,j,n;
     long buf;                             /* This is a temporary stride buf */
     uint8 * dud = (uint8*)&buf;           /* Dummy pointer to buf1 for strides */
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;           /* Cray does not like certain   */
     uint8 * dest = (uint8*)d;             /* void and void* constructions */
-#endif /* PROTOTYPE */
     long * lptr_src = (long*)source;
     long * lptr_dest = (long*)dest;
     char *FUNC="DFKuo8f";
@@ -1847,21 +1740,13 @@ uint32 num_elm, source_stride, dest_stride;
 /* (**) This routine converts two byte little-endian IEEE   */
 /*      to eight byte Cray big endian integer.              */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKlui2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKlui2i(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     register uint32 i;
     int fast_processing=0;
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
     long * lptr_dest = (long*)dest;
     long *lp_dest;
     long *lp_src;
@@ -2270,21 +2155,13 @@ uint32 num_elm, source_stride, dest_stride;
 /* (**) This routine converts two byte IEEE to eight byte   */
 /*      Cray.                                               */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKlui2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKlui2s(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     register uint32 i;
     int fast_processing=0;
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
     long * lptr_dest = (long*)dest;
     long *lp_dest;
     long *lp_src;
@@ -2362,21 +2239,13 @@ uint32 num_elm, source_stride, dest_stride;
 /* -->Unicos routine for exporting 2 byte little-endian     */
 /*      data items                                          */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKluo2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKluo2i(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     register uint32 i;
     int fast_processing=0;
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
     long *lp_dest;
     long *lp_src;
     char *FUNC="DFKuo2i";
@@ -2700,21 +2569,13 @@ uint32 num_elm, source_stride, dest_stride;
 /* -->Unicos routine for exporting signed 2 byte            */
 /*      little-endian data items                            */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKluo2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKluo2s(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     register uint32 i;
     int fast_processing=0;
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
     long *lp_dest;
     long *lp_src;
     char *FUNC="DFKuo2s";
@@ -2783,21 +2644,13 @@ uint32 num_elm, source_stride, dest_stride;
 /* -->Unicos routine for importing 4 byte little-endian     */
 /*      unsigned ints                                       */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKlui4i(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     int fast_processing=0;
     register uint32 i;
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
     long * lptr_dest = (long*)dest;
     long *lp_dest;
     long *lp_src;
@@ -3143,21 +2996,13 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKlui4s()                                                */
 /* -->Unicos routine for importing 4 signed ints            */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKlui4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKlui4s(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     int fast_processing=0;
     register uint32 i;
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
     long * lptr_dest = (long*)dest;
     long *lp_dest;
     long *lp_src;
@@ -3233,21 +3078,13 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKluo4i()                                                */
 /* -->Unicos routine for exporting 4 byte data items        */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKluo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKluo4i(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     int fast_processing=0;
     register uintn i;
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
     unsigned long *lp_dest;
     unsigned long *lp_src;
     char *FUNC="DFKuo4i";
@@ -3518,21 +3355,13 @@ uint32 num_elm, source_stride, dest_stride;
 /* -->Unicos routine for exporting signed 4 byte            */
 /*      little-endian data items                            */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKluo4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKluo4s(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     int fast_processing=0;
     register uintn i;
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
     unsigned long *lp_dest;
     unsigned long *lp_src;
     char *FUNC="DFKuo4s";
@@ -3623,17 +3452,8 @@ uint32 num_elm, source_stride, dest_stride;
 
  ************************************************************/
 
-#ifdef PROTOTYPE
 int DFKlui4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKlui4f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source;
-uint8 * dest;
-uint32 num_elm;
-uint32 source_stride;
-uint32 dest_stride;
-#endif /* PROTOTYPE */
 {
     int fast_processing = 0;              /* By default not array processed */
     int odd_man_out = 0;                  /* By default there are even num_elm */
@@ -3642,10 +3462,8 @@ uint32 dest_stride;
     long buf2;                            /* This is a temporary stride buf */
     uint8 * dud1 = (uint8*)&buf1;         /* Dummy pointer to buf1 for strides */
     uint8 * dud2 = (uint8*)&buf2;         /* Dummy pointer to buf2 for strides */
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;            /* Cray does not like certain   */
     uint8 * dest = (uint8*)d;              /* void and void* constructions */
-#endif /* PROTOTYPE */
     long * lptr_src = (long*)source;
     long * lptr_dest = (long*)dest;
     char *FUNC="DFKui4f";
@@ -3752,14 +3570,8 @@ uint32 dest_stride;
 
  ************************************************************/
 
-#ifdef PROTOTYPE
 int DFKluo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKluo4f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     int fast_processing = 0;              /* By default not array processed */
     int odd_man_out = 0;                  /* By default there are even num_elm */
@@ -3768,10 +3580,8 @@ uint32 num_elm, source_stride, dest_stride;
     long buf2;                            /* This is a temporary stride buf */
     uint8 * dud1 = (uint8*)&buf1;         /* Dummy pointer to buf1 for strides */
     uint8 * dud2 = (uint8*)&buf2;         /* Dummy pointer to buf2 for strides */
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;           /* Cray does not like certain   */
     uint8 * dest = (uint8*)d;             /* void and void* constructions */
-#endif /* PROTOTYPE */
     long * lptr_src = (long*)source;
     long * lptr_dest = (long*)dest;
     char *FUNC="DFKuo4f";
@@ -3874,23 +3684,15 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKlui8f()                                               */
 /* -->Unicos routine for importing 64 bit floats            */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKlui8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKlui8f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     int fast_processing = 0;            /* By default not array processed */
     int i,j,n;
     long buf;                           /* This is a temporary stride buf */
     uint8 * dud = (uint8*)&buf;         /* Dummy pointer to buf1 for strides */
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;         /* Cray does not like certain   */
     uint8 * dest = (uint8*)d;           /* void and void* constructions */
-#endif /* PROTOTYPE*/
     long * lptr_src = (long*)source;
     long * lptr_dest = (long*)dest;
     char *FUNC="DFKui8f";
@@ -3985,24 +3787,16 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKluo8f()                                               */
 /* -->Unicos routine for exporting 64 bit floats            */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKluo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKluo8f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
     int fast_processing = 0;              /* By default not array processed */
     int odd_man_out = 0;                  /* By default there are even num_elm */
     int i,j,n;
     long buf;                             /* This is a temporary stride buf */
     uint8 * dud = (uint8*)&buf;           /* Dummy pointer to buf1 for strides */
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;           /* Cray does not like certain   */
     uint8 * dest = (uint8*)d;             /* void and void* constructions */
-#endif /* PROTOTYPE */
     long * lptr_src = (long*)source;
     long * lptr_dest = (long*)dest;
     char *FUNC="DFKuo8f";

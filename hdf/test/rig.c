@@ -1092,15 +1092,7 @@ static uint8 FAR jpeg_24bit_temp[JPEGY][JPEGX][3];
 
 #define ABS(x)  ((int)(x)<0 ? (-x) : x)
 
-#ifdef PROTOTYPE
 intn fuzzy_memcmp(const void *s1,const void *s2,int32 len,intn fuzz_factor)
-#else
-intn fuzzy_memcmp(s1,s2,len,fuzz_factor)
-VOIDP s1;
-VOIDP s2;
-int32 len;
-intn fuzz_factor;
-#endif
 {
 	const uint8 *t1=(const uint8 *)s1;
 	const uint8 *t2=(const uint8 *)s2;
@@ -1125,7 +1117,7 @@ intn fuzz_factor;
 
 /* ------------------------------- test_r24 ------------------------------- */
 
-void test_r24()
+void test_r24(void)
 {
     comp_info cinfo;        /* compression information for the JPEG */
     int32 xd, yd;
@@ -1550,14 +1542,8 @@ if(ret==FAIL)
 
 
 
-#ifdef PROTOTYPE
 VOID check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy,
     uint8 *oldim, uint8 *newim, uint8 *oldpal, uint8 *newpal)
-#else
-VOID check_im_pal(oldx, oldy, newx, newy, oldim, newim, oldpal, newpal)
-    int32 oldx, oldy, newx, newy;
-    uint8 *oldim, *newim, *oldpal, *newpal;
-#endif
 {
     int error;
     int x, y;
@@ -1605,7 +1591,7 @@ VOID check_im_pal(oldx, oldy, newx, newy, oldim, newim, oldpal, newpal)
 #define XD2 7
 #define YD2 11
 
-void test_r8()
+void test_r8(void)
 {
     comp_info cinfo;        /* compression information for the JPEG */
     uint8 *im2, *ii2;
@@ -1832,7 +1818,7 @@ void test_r8()
     HDfreespace((VOIDP)jpeg_8bit_temp);
 }
 
-void test_pal()
+void test_pal(void)
 {
     int i;
     int ret;

@@ -28,19 +28,9 @@ uint8 palette[768];
 int32 xdim, ydim;
 int ispal;
 
-#ifdef PROTOTYPE
 int main(int argc, char *argv[]);
-#else
-int main();
-#endif /* PROTOTYPE */
 
-#ifdef PROTOTYPE
 int main(int argc, char *argv[]) 
-#else
-int main(argc,argv) 
-    int argc;
-    char *argv[];
-#endif /* PROTOTYPE */
     {
     int i, ret;
     char *outfile;

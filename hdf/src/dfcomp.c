@@ -63,21 +63,9 @@ static char RcsId[] = "@(#)$Revision$";
  *          Note that compression is always row by row for RLE.
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFputcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
              int32 ydim, uint8 *palette, uint8 *newpal, int16 scheme,
              comp_info *cinfo)
-#else
-intn DFputcomp(file_id, tag, ref, image, xdim, ydim, palette, newpal, scheme, cinfo)
-    int32 file_id;
-    uint16 tag, ref;
-    uint8 *image;
-    int32 xdim, ydim;
-    uint8 *palette;
-    uint8 *newpal;
-    int16 scheme;
-    comp_info *cinfo;
-#endif
 {
     CONSTR(FUNC,"DFputcomp");
     uint8 *buffer;             /* buffer to hold compressed image */
@@ -205,17 +193,8 @@ intn DFputcomp(file_id, tag, ref, image, xdim, ydim, palette, newpal, scheme, ci
  *          Other encodings can also be decoded with this
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
              int32 ydim, uint16 scheme)
-#else
-int DFgetcomp(file_id, tag, ref, image, xdim, ydim, scheme)
-    int32 file_id;
-    uint16 tag, ref;
-    uint8 *image;
-    int32 xdim, ydim;
-    uint16 scheme;
-#endif
 {
     CONSTR(FUNC,"DFgetcomp");
     uint8 *buffer;

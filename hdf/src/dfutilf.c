@@ -50,13 +50,7 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfindnr(intf *dfile, intf *tag, intf *lref)
-#else
-ndfindnr(dfile, tag, lref)
-     intf *dfile;
-     intf *tag, *lref;
-#endif /* PROTOTYPE */
 {
     return(DFfindnextref(*dfile, (uint16)*tag, (uint16)*lref));
 }
@@ -78,13 +72,7 @@ CEND7MAX
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndffindnextref(intf *dfile, intf *tag, intf *lref)
-#else
-ndffindnextref(dfile, tag, lref)
-     intf *dfile;
-     intf *tag, *lref;
-#endif /* PROTOTYPE */
 {
     return(DFfindnextref(*dfile, (uint16)*tag, (uint16)*lref));
 }

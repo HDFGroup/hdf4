@@ -154,12 +154,7 @@
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 j_rev_dct (DCTBLOCK data)
-#else
-j_rev_dct (data)
-DCTBLOCK data;
-#endif
 {
   int32 tmp0, tmp1, tmp2, tmp3;
   int32 tmp10, tmp11, tmp12, tmp13;

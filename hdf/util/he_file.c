@@ -22,12 +22,7 @@ static char RcsId[] = "@(#)$Revision$";
 #   include descrip
 #endif
 
-#ifdef PROTOTYPE
 int HEannotate(HE_CMD *cmd)
-#else
-int HEannotate(cmd)
-    HE_CMD *cmd;
-#endif
 {
     register int i;
     char *editor = NULL;
@@ -73,13 +68,7 @@ int HEannotate(cmd)
 
 /* Edit annontations (labels and descriptions) for the
  * current data element */
-#ifdef PROTOTYPE
 int annotate(char *editor, int ann)
-#else
-int annotate(editor, ann)
-    char *editor;		/* editor to use */
-    int ann;			/* HE_LABEL  or HE_DESCRIPTOR */
-#endif
 {
 
 #if !defined MAC && !defined PC
@@ -204,12 +193,7 @@ int annotate(editor, ann)
 
 extern int he_backup;
 
-#ifdef PROTOTYPE
 int HEopen(HE_CMD *cmd)
-#else
-int HEopen(cmd)
-     HE_CMD *cmd;
-#endif
 {
   int backup = YES;
   register int i;
@@ -258,13 +242,7 @@ int HEopen(cmd)
 /* openFile -- Internal open file routine. */
 /* Called by:	HEopen, main */
 /* Returns:	HE_OK and FAIL */
-#ifdef PROTOTYPE
 int openFile(char *file, int backup)
-#else
-int openFile(file, backup)
-    char *file;
-    int backup;
-#endif
 {
     ASSERT(file);
 
@@ -294,12 +272,7 @@ int openFile(file, backup)
 
 /* HEclose -- close current file*/
 /* Called by HEdoCmd */
-#ifdef PROTOTYPE
 int HEclose(HE_CMD *cmd)
-#else
-int HEclose(cmd)
-    HE_CMD *cmd;
-#endif
 {
     register int i;
     int keep = NO;
@@ -334,12 +307,7 @@ int HEclose(cmd)
     return closeFile(keep);
 }
 
-#ifdef PROTOTYPE
 int HErevert(HE_CMD *cmd)
-#else
-int HErevert(cmd)
-    HE_CMD *cmd;
-#endif
 {
     if (cmd->argc < 2)
 	return revert();
@@ -353,12 +321,7 @@ int HErevert(cmd)
     return HE_FAIL;
 }
 
-#ifdef PROTOTYPE
 int HEwrite(HE_CMD *cmd)
-#else
-int HEwrite(cmd)
-    HE_CMD *cmd;
-#endif
 {
     register int i;
     char *file;
@@ -399,14 +362,7 @@ int HEwrite(cmd)
     return writ(file, tag, ref);
 }
 
-#ifdef PROTOTYPE
 int writ(char *file, uint16 tag, uint16 ref)
-#else
-int writ(file, tag, ref)
-    char *file;
-    uint16 tag;
-    uint16 ref;
-#endif
 {
     int ret;
     uint16 ref1;
@@ -437,12 +393,7 @@ int writ(file, tag, ref)
 
 /* --------------------------- get a r8 from a file ----------------------- */
 
-#ifdef PROTOTYPE
 int HEgetR8(HE_CMD *cmd)
-#else
-int HEgetR8(cmd)
-    HE_CMD *cmd;
-#endif
 {
     register int i;
     int xdim = 0, ydim = 0;
@@ -511,12 +462,7 @@ int HEgetR8(cmd)
 
 /* --------------- generic put routines ---------------------- */
 
-#ifdef PROTOTYPE
 int HEput(HE_CMD *cmd)
-#else
-int HEput(cmd)
-    HE_CMD *cmd;
-#endif
 {
     register int i;
     int verbose = NO;
@@ -556,13 +502,7 @@ int HEput(cmd)
     return put(template, verbose);
 }
 
-#ifdef PROTOTYPE
 int put(char *template, int verbose)
-#else
-int put(template, verbose)
-    char *template;
-    int verbose;
-#endif
 {
     int length;
     char *data;
@@ -579,12 +519,7 @@ int put(template, verbose)
 
 /* ------------------ routines to put an r8 into a file --------------------- */
 
-#ifdef PROTOTYPE
 int HEputR8(HE_CMD *cmd)
-#else
-int HEputR8(cmd)
-    HE_CMD *cmd;
-#endif
 {
     register int i;
     int verbose = NO;
@@ -629,14 +564,7 @@ int HEputR8(cmd)
     return putR8(image, pal, verbose);
 }
 
-#ifdef PROTOTYPE
 int putR8(char *image, char *pal, int verbose)
-#else
-int putR8(image, pal, verbose)
-    char *image;
-    char *pal;
-    int verbose;
-#endif
 {
     int ret;
     int32 xdim, ydim;

@@ -34,9 +34,9 @@ extern int Verbocity;
 int number_failed = 0;
 
 static VOID compare
-    PROTO((const char *outstring, const char *instring));
+    (const char *outstring, const char *instring);
 
-void test_tsdstr()
+void test_tsdstr(void)
 {
     int i, j, ret;
     intn rank;
@@ -126,12 +126,7 @@ void test_tsdstr()
 
 }
 
-#ifdef PROTOTYPE
 static VOID compare(const char *outstring, const char *instring)
-#else
-static VOID compare(outstring, instring)
-const char *outstring, *instring;
-#endif
 {
     if (0 == HDstrcmp(outstring, instring))
         MESSAGE(5,printf("Test passed for %s\n", outstring);)

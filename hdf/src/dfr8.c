@@ -101,20 +101,20 @@ PRIVATE DFRrig Zrig = {          /* empty RIG for initialization */
 
 /* private functions */
 PRIVATE intn DFR8Iputimage
-    PROTO((const char *filename,VOIDP image,int32 xdim,int32 ydim,uint16 compress,
-            intn append));
+    (const char *filename,VOIDP image,int32 xdim,int32 ydim,uint16 compress,
+            intn append);
 
 PRIVATE int32 DFR8Iopen
-    PROTO((const char *filename, intn acc_mode));
+    (const char *filename, intn acc_mode);
 
 PRIVATE intn DFR8Iriginfo
-    PROTO((int32 file_id));
+    (int32 file_id);
 
 PRIVATE intn DFR8getrig
-    PROTO((int32 file_id, uint16 ref, DFRrig *rig));
+    (int32 file_id, uint16 ref, DFRrig *rig);
 
 PRIVATE intn DFR8putrig
-    PROTO((int32 file_id, uint16 ref, DFRrig *rig, intn wdim));
+    (int32 file_id, uint16 ref, DFRrig *rig, intn wdim);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -140,13 +140,7 @@ PRIVATE intn DFR8putrig
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFR8setcompress(int32 type,comp_info *cinfo)
-#else
-intn DFR8setcompress(type,cinfo)
-    int32 type;
-    comp_info *cinfo;
-#endif
 {
     CONSTR(FUNC,"DFR8setcompress");
 
@@ -186,14 +180,7 @@ intn DFR8setcompress(type,cinfo)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFR8getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pispal)
-#else
-intn DFR8getdims(filename, pxdim, pydim, pispal)
-    const char *filename;
-    int32 *pxdim, *pydim;
-    intn *pispal;
-#endif
 {
     CONSTR(FUNC,"DFR8getdims");
     int32 file_id;
@@ -246,15 +233,7 @@ intn DFR8getdims(filename, pxdim, pydim, pispal)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFR8getimage(const char *filename,uint8 *image,int32 xdim,int32 ydim,uint8 *pal)
-#else
-intn DFR8getimage(filename, image, xdim, ydim, pal)
-    const char *filename;
-    int32 xdim, ydim;
-    uint8 *image;
-    uint8 *pal;
-#endif
 {
     CONSTR(FUNC,"DFR8getimage");
     int32 file_id;
@@ -330,12 +309,7 @@ intn DFR8getimage(filename, image, xdim, ydim, pal)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFR8setpalette(uint8 *pal)
-#else
-intn DFR8setpalette(pal)
-    uint8 *pal;
-#endif
 {
     CONSTR(FUNC,"DFR8setpalette");
 
@@ -388,17 +362,8 @@ intn DFR8setpalette(pal)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE intn DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
                          uint16 compress, intn append)
-#else
-PRIVATE intn DFR8Iputimage(filename, image, xdim, ydim, compress, append)
-    const char *filename;
-    int32 xdim, ydim;
-    VOIDP image;
-    uint16 compress;            /* compression scheme */
-    intn append;                /* 0 is a put, 1 is a putnext */
-#endif
 {
     CONSTR(FUNC,"DFR8Iputimage");
     intn acc_mode;            /* create if op 0, write if op 1 */
@@ -541,16 +506,8 @@ PRIVATE intn DFR8Iputimage(filename, image, xdim, ydim, compress, append)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFR8putimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
                 uint16 compress)
-#else
-intn DFR8putimage(filename, image, xdim, ydim, compress)
-    const char *filename;
-    int32 xdim, ydim;
-    VOIDP image;
-    uint16 compress;
-#endif
 {
     return(DFR8Iputimage(filename, image, xdim, ydim, compress, 0));
 }   /* end DFR8putimage() */
@@ -578,16 +535,8 @@ intn DFR8putimage(filename, image, xdim, ydim, compress)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFR8addimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
                 uint16 compress)
-#else
-intn DFR8addimage(filename, image, xdim, ydim, compress)
-    const char *filename;
-    int32 xdim, ydim;
-    VOIDP image;
-    uint16 compress;
-#endif
 {
     return(DFR8Iputimage(filename, image, xdim, ydim, compress, 1));
 }   /* end DFR8addimage() */
@@ -615,14 +564,7 @@ intn DFR8addimage(filename, image, xdim, ydim, compress)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE intn DFR8getrig(int32 file_id, uint16 ref, DFRrig *rig)
-#else
-PRIVATE intn DFR8getrig(file_id, ref, rig)
-    int32 file_id;
-    uint16 ref;
-    DFRrig *rig;
-#endif
 {
     CONSTR(FUNC,"DFR8getrig");
     uint16 elt_tag;
@@ -712,15 +654,7 @@ PRIVATE intn DFR8getrig(file_id, ref, rig)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE intn DFR8putrig(int32 file_id, uint16 ref, DFRrig *rig, intn wdim)
-#else
-PRIVATE intn DFR8putrig(file_id, ref, rig, wdim)
-    int32 file_id;
-    uint16 ref;
-    DFRrig *rig;
-    intn wdim;
-#endif
 {
     CONSTR(FUNC,"DFR8putrig");
     static uint16 prevdimref=0; /*ref of previous dimension record, to reuse */
@@ -809,12 +743,7 @@ PRIVATE intn DFR8putrig(file_id, ref, rig, wdim)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFR8nimages(const char *filename)
-#else
-intn DFR8nimages(filename)
-    const char *filename;
-#endif
 {
     CONSTR(FUNC,"DFR8nimages");
     int32 file_id;
@@ -944,13 +873,7 @@ intn DFR8nimages(filename)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFR8readref(const char *filename, uint16 ref)
-#else
-intn DFR8readref(filename, ref)
-    const char *filename;
-    uint16 ref;
-#endif
 {
     CONSTR(FUNC,"DFR8readref");
     int32 file_id;
@@ -989,13 +912,7 @@ intn DFR8readref(filename, ref)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFR8writeref(const char *filename, uint16 ref)
-#else
-intn DFR8writeref(filename, ref)
-    const char *filename;
-    uint16 ref;
-#endif
 {
     HEclear();
 
@@ -1018,11 +935,7 @@ intn DFR8writeref(filename, ref)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFR8restart(void)
-#else
-intn DFR8restart()
-#endif
 {
     Lastfile[0] = '\0';
     return(SUCCEED);
@@ -1043,11 +956,7 @@ intn DFR8restart()
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 uint16 DFR8lastref(void)
-#else
-uint16 DFR8lastref()
-#endif
 {
     return(Lastref);
 }   /* end DFR8lastref() */
@@ -1075,13 +984,7 @@ uint16 DFR8lastref()
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int32 DFR8Iopen(const char *filename, intn acc_mode)
-#else
-PRIVATE int32 DFR8Iopen(filename, acc_mode)
-    const char *filename;
-    intn acc_mode;
-#endif
 {
     CONSTR(FUNC,"DFR8Iopen");
     int32 file_id;
@@ -1129,12 +1032,7 @@ PRIVATE int32 DFR8Iopen(filename, acc_mode)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE intn DFR8Iriginfo(int32 file_id)
-#else
-PRIVATE intn DFR8Iriginfo(file_id)
-    int32 file_id;
-#endif
 {
     CONSTR(FUNC,"DFR8riginfo");
     uint16 riref=0, ciref=0;

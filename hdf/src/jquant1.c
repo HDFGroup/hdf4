@@ -131,13 +131,7 @@ static bool on_odd_row;  /* flag to remember which row we are on */
 
 
 LOCAL int
-#ifdef PROTOTYPE
 select_ncolors (decompress_info_ptr cinfo, int Ncolors[])
-#else
-select_ncolors (cinfo, Ncolors)
-decompress_info_ptr cinfo;
-int Ncolors[];
-#endif
 /* Determine allocation of desired colors to components, */
 /* and fill in Ncolors[] array to indicate choice. */
 /* Return value is total number of colors (product of Ncolors[] values). */
@@ -244,15 +238,7 @@ int Ncolors[];
 
 
 LOCAL int
-#ifdef PROTOTYPE
 output_value (decompress_info_ptr cinfo, int ci, int j, int maxj)
-#else
-output_value (cinfo, ci, j, maxj)
-decompress_info_ptr cinfo;
-int ci;
-int j;
-int maxj;
-#endif
 /* Return j'th output value, where j will range from 0 to maxj */
 /* The output values must fall in 0..MAXJSAMPLE in increasing order */
 {
@@ -266,15 +252,7 @@ int maxj;
 
 
 LOCAL int
-#ifdef PROTOTYPE
 largest_input_value (decompress_info_ptr cinfo, int ci, int j, int maxj)
-#else
-largest_input_value (cinfo, ci, j, maxj)
-decompress_info_ptr cinfo;
-int ci;
-int j;
-int maxj;
-#endif
 /* Return largest input value that should map to j'th output value */
 /* Must have largest(j=0) >= 0, and largest(j=maxj) >= MAXJSAMPLE */
 {
@@ -288,12 +266,7 @@ int maxj;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 color_quant_init (decompress_info_ptr cinfo)
-#else
-color_quant_init (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   int total_colors;		/* Number of distinct output colors */
   int Ncolors[MAX_COMPONENTS];	/* # of values alloced to each component */
@@ -391,14 +364,7 @@ decompress_info_ptr cinfo;
  */
 
 LOCAL VOID
-#ifdef PROTOTYPE
 do_color_conversion (decompress_info_ptr cinfo, JSAMPIMAGE input_data, int row)
-#else
-do_color_conversion (cinfo, input_data, row)
-decompress_info_ptr cinfo;
-JSAMPIMAGE input_data;
-int row;
-#endif
 /* Convert the indicated row of the input data into output colorspace */
 /* in input_buffer.  This requires a little trickery since color_convert */
 /* expects to deal with 3-D arrays; fortunately we can fake it out */
@@ -425,16 +391,8 @@ int row;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 color_quantize (decompress_info_ptr cinfo, int num_rows,
 		JSAMPIMAGE input_data, JSAMPARRAY output_data)
-#else
-color_quantize (cinfo, num_rows, input_data, output_data)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE input_data;
-JSAMPARRAY output_data;
-#endif
 /* General case, no dithering */
 {
   register int pixcode, ci;
@@ -460,16 +418,8 @@ JSAMPARRAY output_data;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 color_quantize3 (decompress_info_ptr cinfo, int num_rows,
 		 JSAMPIMAGE input_data, JSAMPARRAY output_data)
-#else
-color_quantize3 (cinfo, num_rows, input_data, output_data)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE input_data;
-JSAMPARRAY output_data;
-#endif
 /* Fast path for color_out_comps==3, no dithering */
 {
   register int pixcode;
@@ -495,16 +445,8 @@ JSAMPARRAY output_data;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 color_quantize_dither (decompress_info_ptr cinfo, int num_rows,
 		       JSAMPIMAGE input_data, JSAMPARRAY output_data)
-#else
-color_quantize_dither (cinfo, num_rows, input_data, output_data)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE input_data;
-JSAMPARRAY output_data;
-#endif
 /* General case, with Floyd-Steinberg dithering */
 {
   register FSERROR val;
@@ -591,12 +533,7 @@ JSAMPARRAY output_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 color_quant_term (decompress_info_ptr cinfo)
-#else
-color_quant_term (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   /* no work (we let free_all release the workspace) */
   /* Note that we *mustn't* free the colormap before free_all, */
@@ -610,16 +547,8 @@ decompress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 color_quant_prescan (decompress_info_ptr cinfo, int num_rows,
 		     JSAMPIMAGE image_data, JSAMPARRAY workspace)
-#else
-color_quant_prescan (cinfo, num_rows, image_data, workspace)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE image_data;
-JSAMPARRAY workspace;
-#endif
 {
   ERREXIT(cinfo->emethods, "Should not get here!");
 }
@@ -631,13 +560,7 @@ JSAMPARRAY workspace;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 color_quant_doit (decompress_info_ptr cinfo, quantize_caller_ptr source_method)
-#else
-color_quant_doit (cinfo, source_method)
-decompress_info_ptr cinfo;
-quantize_caller_ptr source_method;
-#endif
 {
   ERREXIT(cinfo->emethods, "Should not get here!");
 }
@@ -648,12 +571,7 @@ quantize_caller_ptr source_method;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jsel1quantize (decompress_info_ptr cinfo)
-#else
-jsel1quantize (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   if (! cinfo->two_pass_quantize) {
     cinfo->methods->color_quant_init = color_quant_init;

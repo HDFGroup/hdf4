@@ -77,12 +77,7 @@ static rle_map *colormap;	/* RLE colormap, if any */
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 input_init (compress_info_ptr cinfo)
-#else
-input_init (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   long width, height;
 
@@ -175,13 +170,7 @@ compress_info_ptr cinfo;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_grayscale_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-get_grayscale_row (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 /* This is used for GRAYSCALE images */
 {
   JSAMPROW inputrows[1];	/* a pseudo JSAMPARRAY structure */
@@ -196,13 +185,7 @@ JSAMPARRAY pixel_row;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_pseudocolor_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-get_pseudocolor_row (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 /* This is used for PSEUDOCOLOR images */
 {
   long col;
@@ -228,13 +211,7 @@ JSAMPARRAY pixel_row;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_truecolor_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-get_truecolor_row (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 /* This is used for TRUECOLOR images */
 /* The colormap consists of 3 independent lookup tables */
 {
@@ -263,13 +240,7 @@ JSAMPARRAY pixel_row;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_directcolor_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-get_directcolor_row (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 /* This is used for DIRECTCOLOR images */
 {
   JSAMPROW inputrows[3];	/* a pseudo JSAMPARRAY structure */
@@ -298,13 +269,7 @@ JSAMPARRAY pixel_row;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 load_image (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-load_image (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 {
   long row;
   rle_pixel *rle_row[3];
@@ -376,12 +341,7 @@ JSAMPARRAY pixel_row;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 input_term (compress_info_ptr cinfo)
-#else
-input_term (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   /* no work (we let free_all release the workspace) */
 }
@@ -396,12 +356,7 @@ compress_info_ptr cinfo;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jselrrle (compress_info_ptr cinfo)
-#else
-jselrrle (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   cinfo->methods->input_init    = input_init;
   cinfo->methods->get_input_row = load_image; /* until first call */

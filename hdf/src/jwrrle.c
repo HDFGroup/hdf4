@@ -71,12 +71,7 @@ static int number_colors;	/* Number of colors actually used */
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 output_init (decompress_info_ptr cinfo)
-#else
-output_init (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   short ci;
   
@@ -104,15 +99,8 @@ decompress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 put_pixel_rows (decompress_info_ptr cinfo, int num_rows,
 		JSAMPIMAGE pixel_data)
-#else
-put_pixel_rows (cinfo, num_rows, pixel_data)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE pixel_data;
-#endif
 {
   JSAMPROW outputrow[1];	/* a pseudo JSAMPARRAY structure */
   int row;
@@ -137,14 +125,7 @@ JSAMPIMAGE pixel_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 put_color_map (decompress_info_ptr cinfo, int num_colors, JSAMPARRAY colormap)
-#else
-put_color_map (cinfo, num_colors, colormap)
-decompress_info_ptr cinfo;
-int num_colors;
-JSAMPARRAY colormap;
-#endif
 {
   size_t cmapsize;
   short ci;
@@ -177,12 +158,7 @@ JSAMPARRAY colormap;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 output_term (decompress_info_ptr cinfo)
-#else
-output_term (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   rle_hdr header;		/* Output file information */
   rle_pixel *output_rows[MAX_CHANS];
@@ -245,12 +221,7 @@ decompress_info_ptr cinfo;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jselwrle (decompress_info_ptr cinfo)
-#else
-jselwrle (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   cinfo->methods->output_init    = output_init;
   cinfo->methods->put_color_map  = put_color_map;

@@ -39,13 +39,7 @@ static char RcsId[] = "@(#)$Revision$";
         and the string is padded with spaces
 
 --------------------------------------------------------------------------- */ 
-#if defined PROTOTYPE
 intn HDc2fstr(char *str, intn len)
-#else
-intn HDc2fstr(str, len)
-char* str;
-intn len;
-#endif /* PROTOTYPE */
 {
     int i;
 
@@ -73,13 +67,7 @@ intn len;
         to the user to free this string.
 
 --------------------------------------------------------------------------- */ 
-#if defined PROTOTYPE
 char _HUGE *HDf2cstring(_fcd fdesc, intn len)
-#else
-char _HUGE *HDf2cstring(fdesc, len)
-    _fcd fdesc;
-    intn len;
-#endif /* PROTOTYPE */
 {
     char *cstr, *str;
     int i;
@@ -119,17 +107,8 @@ char _HUGE *HDf2cstring(fdesc, len)
         get passed off to HIfind_dd().
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int HIlookup_dd(filerec_t *file_rec, uint16 look_tag, uint16 look_ref, 
                 ddblock_t **pblock, int32 *pidx)
-#else
-int HIlookup_dd(file_rec, look_tag, look_ref, pblock, pidx)
-     filerec_t *file_rec;       /* the file */
-     uint16 look_tag;           /* tag of dd to look for */
-     uint16 look_ref;           /* ref of dd to look for */
-     ddblock_t **pblock;        /* OUT: ddblock where dd is found */
-     int32 *pidx;               /* OUT: index into ddlist where dd is found */
-#endif
 { 
     CONSTR(FUNC,"HIlookup_dd");       /* for HERROR */
     register intn tag, ref, key, i;
@@ -197,17 +176,8 @@ int HIlookup_dd(file_rec, look_tag, look_ref, pblock, pidx)
         means of mapping tag and ref to the DD record for this element
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int HIadd_hash_dd(filerec_t *file_rec, uint16 look_tag, uint16 look_ref, 
                 ddblock_t *pblock, int32 pidx)
-#else
-int HIadd_hash_dd(file_rec, look_tag, look_ref, pblock, pidx)
-     filerec_t *file_rec;      /* the file */
-     uint16 look_tag;           /* tag of dd to add */
-     uint16 look_ref;           /* ref of dd to add */
-     ddblock_t *pblock;         /* ddblock where dd is  */
-     int32 pidx;                /* index into ddlist where dd is */
-#endif
 {
     CONSTR(FUNC,"HIadd_hash_dd");       /* for HERROR */
     register intn tag, ref, key, i;
@@ -268,14 +238,7 @@ int HIadd_hash_dd(file_rec, look_tag, look_ref, pblock, pidx)
         if the element does not exist in the table
  
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int HIdel_hash_dd(filerec_t *file_rec, uint16 look_tag, uint16 look_ref)
-#else
-int HIdel_hash_dd(file_rec, look_tag, look_ref)
-     filerec_t *file_rec;      /* the file */
-     uint16 look_tag;           /* tag of dd to add */
-     uint16 look_ref;           /* ref of dd to add */
-#endif
 {
   CONSTR(FUNC,"HIdel_hash_dd");       /* for HERROR */
   register intn tag, ref, key, i;
@@ -333,20 +296,8 @@ int HIdel_hash_dd(file_rec, look_tag, look_ref)
         or "give me the previous thing with ref = 3"
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int HIfind_dd(uint16 look_tag, uint16 look_ref, ddblock_t **pblock, int32 *pidx,
     intn direction)
-#else
-int HIfind_dd(look_tag, look_ref, pblock, pidx, direction)
-    uint16 look_tag;           /* tag of dd to look for */
-    uint16 look_ref;           /* ref of dd to look for */
-    ddblock_t **pblock;        /* IN: ddblock to start looking for the dd */
-                               /* OUT: ddblock where dd is found */
-    int32 *pidx;               /* IN: index before place in ddlist
-                                  to start searching */
-                               /* OUT: index into ddlist where dd is found */
-    intn direction;            /* IN : Direction to search the DD list in */
-#endif
 {
     register intn idx;          /* index into ddlist of current dd searched */
     register ddblock_t *block;  /* ptr to current ddblock searched */
@@ -445,12 +396,7 @@ int HIfind_dd(look_tag, look_ref, pblock, pidx, direction)
         really doing anything.
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 intn HDflush(int32 file_id)
-#else
-intn HDflush(file_id)
-    int32 file_id;             /* id of file to flush */
-#endif
 {
     CONSTR(FUNC,"HDflush");       /* for HERROR */
 
@@ -494,13 +440,7 @@ intn HDflush(file_id)
         support one of these.
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 intn HDpackFstring(char *src, char *dest, intn len)
-#else
-intn HDpackFstring(src, dest, len)
-char *src, *dest;
-intn len;
-#endif
 {
 
     intn sofar;
@@ -530,12 +470,7 @@ intn len;
         Map a tag to a statically allocated text description of it.
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 const char _HUGE *HDgettagname(uint16 tag)
-#else
-const char _HUGE *HDgettagname(tag)
-     uint16 tag;
-#endif /* PROTOTYPE */
 {
     intn i;
 

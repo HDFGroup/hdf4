@@ -72,22 +72,14 @@ static char RcsId[] = "@(#)$Revision$";
 /* DFKvi4f()                                                */
 /* --> Import routine for 4 byte VAX floats                 */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKvi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKvi4f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int in_place = 0;                     /* Inplace must be detected */
   register uint32 i;            
   uint8 buf[4];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKvi4f";
   uint8 exp;
 
@@ -204,22 +196,14 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKvo4f()                                                */
 /* --> Export routine for 4 byte VAX floats                 */
 /************************************************************/
-#ifdef PROTOTYPE 
 int DFKvo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKvo4f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int in_place = 0;                     /* Inplace must be detected */
   register uint32 i;            
   uint8 buf[4];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKvo4f";
   intn  exp;
 
@@ -386,22 +370,14 @@ static struct dbl_limits dbl_lim[2] = {
 /* DFKvi8f()                                                */
 /* --> Import routine for 8 byte VAX floats                 */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKvi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKvi8f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int in_place = 0;                     /* Inplace must be detected */
   register uint32 i;            
   uint8 buf[4];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKvi8f";
   intn exp;
 
@@ -477,22 +453,14 @@ shipit:  /* In VAX, bytes in a word are counted from right to left */
 /* DFKvo8f()                                                */
 /* --> Export routine for 8 byte VAX floats                 */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKvo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKvo8f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int in_place = 0;                     /* Inplace must be detected */
   register intn i;
   uint8 buf[4];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKvo8f";
   intn exp;
 
@@ -570,22 +538,14 @@ shipit:  /* In VAX the bytes in a word are counted from right to left */
 /* DFKlvi4f()                                                */
 /* --> Import routine for 4 byte VAX floats                 */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKlvi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKlvi4f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int in_place = 0;                     /* Inplace must be detected */
   register uint32 i;            
   uint8 buf[4];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKvi4f";
   uint8 exp;
 
@@ -702,22 +662,14 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKlvo4f()                                                */
 /* --> Export routine for 4 byte VAX floats                 */
 /************************************************************/
-#ifdef PROTOTYPE 
 int DFKlvo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKlvo4f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int in_place = 0;                     /* Inplace must be detected */
   register uint32 i;            
   uint8 buf[4];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKvo4f";
   intn  exp;
 
@@ -843,22 +795,14 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKlvi8f()                                                */
 /* --> Import routine for 8 byte VAX floats                 */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKlvi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKlvi8f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int in_place = 0;                     /* Inplace must be detected */
   register uint32 i;            
   uint8 buf[4];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKvi8f";
   intn exp;
 
@@ -921,22 +865,14 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKlvo8f()                                                */
 /* --> Export routine for 8 byte VAX floats                 */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKlvo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKlvo8f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int in_place = 0;                     /* Inplace must be detected */
   register intn i;
   uint8 buf[4];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKvo8f";
   intn exp;
 

@@ -17,15 +17,6 @@
 
 #include "hdfi.h"
 
-#ifdef PROTO
-#undef PROTO
-#endif /* PROTO */
-#ifdef PROTOTYPE
-#define    PROTO(x) x
-#else
-#define    PROTO(x) ()
-#endif
-
 /* Internal DF structure */
 typedef struct {
     uint16 tag;  /* tag of element */
@@ -94,7 +85,6 @@ typedef struct {
 #define STREQ(s, t) (strcmp((s), (t)) == 0)
 #define NSTREQ(s, t, n) (strncmp((s), (t), (n)) == 0)
 #endif
-#define HDfreenclear(p) { if((p)!=NULL) HDfreespace(p); p=NULL; }
 
 #ifndef PRIVATE
 #   define PRIVATE static

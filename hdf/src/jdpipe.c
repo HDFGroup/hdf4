@@ -87,12 +87,7 @@ static JSAMPIMAGE fullsize_ptrs; /* workspace for access_big_sarray() result */
  */
 
 LOCAL VOID
-#ifdef PROTOTYPE
 interleaved_scan_setup (decompress_info_ptr cinfo)
-#else
-interleaved_scan_setup (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Compute all derived info for an interleaved (multi-component) scan */
 /* On entry, cinfo->comps_in_scan and cinfo->cur_comp_info[] are set up */
 {
@@ -141,12 +136,7 @@ decompress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 noninterleaved_scan_setup (decompress_info_ptr cinfo)
-#else
-noninterleaved_scan_setup (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Compute all derived info for a noninterleaved (single-component) scan */
 /* On entry, cinfo->comps_in_scan = 1 and cinfo->cur_comp_info[0] is set up */
 {
@@ -175,16 +165,8 @@ decompress_info_ptr cinfo;
 
 
 LOCAL JSAMPIMAGE
-#ifdef PROTOTYPE
 alloc_sampimage (decompress_info_ptr cinfo,
 		 int num_comps, long num_rows, long num_cols)
-#else
-alloc_sampimage (cinfo, num_comps, num_rows, num_cols)
-decompress_info_ptr cinfo;
-int num_comps;
-long num_rows;
-long num_cols;
-#endif
 /* Allocate an in-memory sample image (all components same size) */
 {
   JSAMPIMAGE image;
@@ -202,14 +184,7 @@ long num_cols;
 #if 0				/* this routine not currently needed */
 
 LOCAL VOID
-#ifdef PROTOTYPE
 free_sampimage (decompress_info_ptr cinfo, JSAMPIMAGE image, int num_comps)
-#else
-free_sampimage (cinfo, image, num_comps)
-decompress_info_ptr cinfo;
-JSAMPIMAGE image;
-int num_comps;
-#endif
 /* Release a sample image created by alloc_sampimage */
 {
   int ci;
@@ -224,12 +199,7 @@ int num_comps;
 
 
 LOCAL JBLOCKIMAGE
-#ifdef PROTOTYPE
 alloc_MCU_row (decompress_info_ptr cinfo)
-#else
-alloc_MCU_row (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Allocate one MCU row's worth of coefficient blocks */
 {
   JBLOCKIMAGE image;
@@ -249,13 +219,7 @@ decompress_info_ptr cinfo;
 #ifdef NEED_COMPLEX_CONTROLLER	/* not used by simple controller */
 
 LOCAL VOID
-#ifdef PROTOTYPE
 free_MCU_row (decompress_info_ptr cinfo, JBLOCKIMAGE image)
-#else
-free_MCU_row (cinfo, image)
-decompress_info_ptr cinfo;
-JBLOCKIMAGE image;
-#endif
 /* Release a coefficient block array created by alloc_MCU_row */
 {
   int ci;
@@ -270,13 +234,7 @@ JBLOCKIMAGE image;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 alloc_sampling_buffer (decompress_info_ptr cinfo, JSAMPIMAGE sampled_data[2])
-#else
-alloc_sampling_buffer (cinfo, sampled_data)
-decompress_info_ptr cinfo;
-JSAMPIMAGE sampled_data[2];
-#endif
 /* Create a downsampled-data buffer having the desired structure */
 /* (see comments at head of file) */
 {
@@ -313,13 +271,7 @@ JSAMPIMAGE sampled_data[2];
 #ifdef NEED_COMPLEX_CONTROLLER	/* not used by simple controller */
 
 LOCAL VOID
-#ifdef PROTOTYPE
 free_sampling_buffer (decompress_info_ptr cinfo, JSAMPIMAGE sampled_data[2])
-#else
-free_sampling_buffer (cinfo, sampled_data)
-decompress_info_ptr cinfo;
-JSAMPIMAGE sampled_data[2];
-#endif
 /* Release a sampling buffer created by alloc_sampling_buffer */
 {
   short ci;
@@ -360,12 +312,7 @@ JSAMPIMAGE sampled_data[2];
  */
 
 LOCAL VOID
-#ifdef PROTOTYPE
 prepare_range_limit_table (decompress_info_ptr cinfo)
-#else
-prepare_range_limit_table (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Allocate and fill in the sample_range_limit table */
 {
   JSAMPLE * table;
@@ -383,16 +330,8 @@ decompress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 duplicate_row (JSAMPARRAY image_data,
 	       long num_cols, int source_row, int num_rows)
-#else
-duplicate_row (image_data, num_cols, source_row, num_rows)
-JSAMPARRAY image_data;
-long num_cols;
-int source_row;
-int num_rows;
-#endif
 /* Duplicate the source_row at source_row+1 .. source_row+num_rows */
 /* This happens only at the bottom of the image, */
 /* so it needn't be super-efficient */
@@ -407,23 +346,10 @@ int num_rows;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 expand (decompress_info_ptr cinfo,
 	JSAMPIMAGE sampled_data, JSAMPIMAGE fullsize_data,
 	long fullsize_width,
 	short above, short current, short below, short out)
-#else
-expand (cinfo, sampled_data, fullsize_data, fullsize_width, above, current,
-    below, out)
-decompress_info_ptr cinfo;
-JSAMPIMAGE sampled_data;
-JSAMPIMAGE fullsize_data;
-long fullsize_width;
-short above;
-short current;
-short below;
-short out;
-#endif
 /* Do upsampling expansion of a single row group (of each component). */
 /* above, current, below are indexes of row groups in sampled_data;       */
 /* out is the index of the target row group in fullsize_data.             */
@@ -470,16 +396,8 @@ short out;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 emit_1pass (decompress_info_ptr cinfo, int num_rows, JSAMPIMAGE fullsize_data,
 	    JSAMPARRAY dummy)
-#else
-emit_1pass (cinfo, num_rows, fullsize_data, dummy)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE fullsize_data;
-JSAMPARRAY dummy;
-#endif
 /* Do color processing and output of num_rows full-size rows. */
 /* This is not used when doing 2-pass color quantization. */
 /* The dummy argument simply lets this be called via scan_big_image. */
@@ -503,13 +421,7 @@ JSAMPARRAY dummy;
 #ifdef NEED_COMPLEX_CONTROLLER
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 scan_big_image (decompress_info_ptr cinfo, quantize_method_ptr quantize_method)
-#else
-scan_big_image (cinfo, quantize_method)
-decompress_info_ptr cinfo;
-quantize_method_ptr quantize_method;
-#endif
 /* Apply quantize_method to entire image stored in fullsize_image[]. */
 /* This is the "iterator" routine used by the 2-pass color quantizer. */
 /* We also use it directly in some cases. */
@@ -550,18 +462,9 @@ quantize_method_ptr quantize_method;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 smooth_mcu_row (decompress_info_ptr cinfo,
 		JBLOCKIMAGE above, JBLOCKIMAGE input, JBLOCKIMAGE below,
 		JBLOCKIMAGE output)
-#else
-smooth_mcu_row (cinfo, above, input, below, output)
-decompress_info_ptr cinfo;
-JBLOCKIMAGE above;
-JBLOCKIMAGE input;
-JBLOCKIMAGE below;
-JBLOCKIMAGE output;
-#endif
 /* Apply cross-block smoothing to one MCU row's worth of coefficient blocks. */
 /* above,below are NULL if at top/bottom of image. */
 {
@@ -598,17 +501,8 @@ JBLOCKIMAGE output;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 get_smoothed_row (decompress_info_ptr cinfo, JBLOCKIMAGE coeff_data,
 		  JBLOCKIMAGE bsmooth[3], int * whichb, long cur_mcu_row)
-#else
-get_smoothed_row (cinfo, coeff_data, bsmooth, whichb, cur_mcu_row)
-decompress_info_ptr cinfo;
-JBLOCKIMAGE coeff_data;
-JBLOCKIMAGE bsmooth[3];
-int * whichb;
-long cur_mcu_row;
-#endif
 /* Get an MCU row of coefficients, applying cross-block smoothing. */
 /* The output row is placed in coeff_data.  bsmooth and whichb hold */
 /* working state, and cur_row is needed to check for image top/bottom. */
@@ -660,12 +554,7 @@ long cur_mcu_row;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 simple_dcontroller (decompress_info_ptr cinfo)
-#else
-simple_dcontroller (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   long fullsize_width;		/* # of samples per row in full-size buffers */
   long cur_mcu_row;		/* counts # of MCU rows processed */
@@ -858,12 +747,7 @@ decompress_info_ptr cinfo;
 #ifdef NEED_COMPLEX_CONTROLLER
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 complex_dcontroller (decompress_info_ptr cinfo)
-#else
-complex_dcontroller (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   long fullsize_width;		/* # of samples per row in full-size buffers */
   long cur_mcu_row;		/* counts # of MCU rows processed */
@@ -1137,12 +1021,7 @@ decompress_info_ptr cinfo;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jseldpipeline (decompress_info_ptr cinfo)
-#else
-jseldpipeline (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   /* simplify subsequent tests on color quantization */
   if (! cinfo->quantize_colors)

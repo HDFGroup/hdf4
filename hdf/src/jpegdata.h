@@ -512,9 +512,9 @@ struct big_barray_control { long dummy; };
 /* Method types that need typedefs */
 
 typedef METHOD(VOID, MCU_output_method_ptr, (compress_info_ptr cinfo,
-					     JBLOCK *MCU_data));
+					     JBLOCK *MCU_data);
 typedef METHOD(VOID, MCU_output_caller_ptr, (compress_info_ptr cinfo,
-					     MCU_output_method_ptr output_method));
+					     MCU_output_method_ptr output_method);
 typedef METHOD(VOID, downsample_ptr, (compress_info_ptr cinfo,
 				      int which_component,
 				      long input_cols, int input_rows,
@@ -522,7 +522,7 @@ typedef METHOD(VOID, downsample_ptr, (compress_info_ptr cinfo,
 				      JSAMPARRAY above,
 				      JSAMPARRAY input_data,
 				      JSAMPARRAY below,
-				      JSAMPARRAY output_data));
+				      JSAMPARRAY output_data);
 typedef METHOD(VOID, upsample_ptr, (decompress_info_ptr cinfo,
 				    int which_component,
 				    long input_cols, int input_rows,
@@ -530,13 +530,13 @@ typedef METHOD(VOID, upsample_ptr, (decompress_info_ptr cinfo,
 				    JSAMPARRAY above,
 				    JSAMPARRAY input_data,
 				    JSAMPARRAY below,
-				    JSAMPARRAY output_data));
+				    JSAMPARRAY output_data);
 typedef METHOD(VOID, quantize_method_ptr, (decompress_info_ptr cinfo,
 					   int num_rows,
 					   JSAMPIMAGE input_data,
-					   JSAMPARRAY output_workspace));
+					   JSAMPARRAY output_workspace);
 typedef METHOD(VOID, quantize_caller_ptr, (decompress_info_ptr cinfo,
-					   quantize_method_ptr quantize_method));
+					   quantize_method_ptr quantize_method);
 
 
 /* These structs contain function pointers for the various JPEG methods. */
@@ -553,8 +553,8 @@ struct External_methods_struct {
 	 * can be substituted easily.  This will not be done until all the
 	 * code is in place, so that we know what messages are needed.
 	 */
-	METHOD(VOID, error_exit, (const char *msgtext));
-	METHOD(VOID, trace_message, (const char *msgtext));
+	METHOD(VOID, error_exit, (const char *msgtext);
+	METHOD(VOID, trace_message, (const char *msgtext);
 
 	/* Working data for error/trace facility */
 	/* See macros below for the usage of these variables */
@@ -575,39 +575,35 @@ struct External_methods_struct {
 	/* Memory management */
 	/* NB: alloc routines never return NULL. They exit to */
 	/* error_exit if not successful. */
-	METHOD(VOIDP, alloc_small, (size_t sizeofobject));
-	METHOD(VOID, free_small, (VOIDP ptr));
-	METHOD(VOIDP, alloc_medium, (size_t sizeofobject));
-	METHOD(VOID, free_medium, (VOIDP ptr));
+	METHOD(VOIDP, alloc_small, (size_t sizeofobject);
+	METHOD(VOID, free_small, (VOIDP ptr);
+	METHOD(VOIDP, alloc_medium, (size_t sizeofobject);
+	METHOD(VOID, free_medium, (VOIDP ptr);
 	METHOD(JSAMPARRAY, alloc_small_sarray, (long samplesperrow,
-						long numrows));
-	METHOD(VOID, free_small_sarray, (JSAMPARRAY ptr));
+						long numrows);
+	METHOD(VOID, free_small_sarray, (JSAMPARRAY ptr);
 	METHOD(JBLOCKARRAY, alloc_small_barray, (long blocksperrow,
-						 long numrows));
-	METHOD(VOID, free_small_barray, (JBLOCKARRAY ptr));
+						 long numrows);
+	METHOD(VOID, free_small_barray, (JBLOCKARRAY ptr);
 	METHOD(big_sarray_ptr, request_big_sarray, (long samplesperrow,
 						    long numrows,
-						    long unitheight));
+						    long unitheight);
 	METHOD(big_barray_ptr, request_big_barray, (long blocksperrow,
 						    long numrows,
-						    long unitheight));
+						    long unitheight);
 	METHOD(VOID, alloc_big_arrays, (long extra_small_samples,
 					long extra_small_blocks,
-					long extra_medium_space));
+					long extra_medium_space);
 	METHOD(JSAMPARRAY, access_big_sarray, (big_sarray_ptr ptr,
 					       long start_row,
-					       bool writable));
+					       bool writable);
 	METHOD(JBLOCKARRAY, access_big_barray, (big_barray_ptr ptr,
 						long start_row,
-						bool writable));
-	METHOD(VOID, free_big_sarray, (big_sarray_ptr ptr));
-	METHOD(VOID, free_big_barray, (big_barray_ptr ptr));
+						bool writable);
+	METHOD(VOID, free_big_sarray, (big_sarray_ptr ptr);
+	METHOD(VOID, free_big_barray, (big_barray_ptr ptr);
 
-#ifdef CONVEX
-	METHOD(VOID, free_all, ());
-#else
-	METHOD(VOID, free_all, (VOID));
-#endif
+	METHOD(VOID, free_all, (void);
 
 	long max_memory_to_use;	/* maximum amount of memory to use */
 };
@@ -687,138 +683,138 @@ struct External_methods_struct {
 
 struct Compress_methods_struct {
 	/* Hook for user interface to get control after input_init */
-	METHOD(VOID, c_ui_method_selection, (compress_info_ptr cinfo));
+	METHOD(VOID, c_ui_method_selection, (compress_info_ptr cinfo);
 	/* Hook for user interface to do progress monitoring */
 	METHOD(VOID, progress_monitor, (compress_info_ptr cinfo,
-					long loopcounter, long looplimit));
+					long loopcounter, long looplimit);
 	/* Input image reading & conversion to standard form */
-	METHOD(VOID, input_init, (compress_info_ptr cinfo));
+	METHOD(VOID, input_init, (compress_info_ptr cinfo);
 	METHOD(VOID, get_input_row, (compress_info_ptr cinfo,
-				     JSAMPARRAY pixel_row));
-	METHOD(VOID, input_term, (compress_info_ptr cinfo));
+				     JSAMPARRAY pixel_row);
+	METHOD(VOID, input_term, (compress_info_ptr cinfo);
 	/* Color space and gamma conversion */
-	METHOD(VOID, colorin_init, (compress_info_ptr cinfo));
+	METHOD(VOID, colorin_init, (compress_info_ptr cinfo);
 	METHOD(VOID, get_sample_rows, (compress_info_ptr cinfo,
 				       int rows_to_read,
-				       JSAMPIMAGE image_data));
-	METHOD(VOID, colorin_term, (compress_info_ptr cinfo));
+				       JSAMPIMAGE image_data);
+	METHOD(VOID, colorin_term, (compress_info_ptr cinfo);
 	/* Expand picture data at edges */
 	METHOD(VOID, edge_expand, (compress_info_ptr cinfo,
 				   long input_cols, int input_rows,
 				   long output_cols, int output_rows,
-				   JSAMPIMAGE image_data));
+				   JSAMPIMAGE image_data);
 	/* Downsample pixel values of a single component */
 	/* There can be a different downsample method for each component */
-	METHOD(VOID, downsample_init, (compress_info_ptr cinfo));
+	METHOD(VOID, downsample_init, (compress_info_ptr cinfo);
 	downsample_ptr downsample[MAX_COMPS_IN_SCAN];
-	METHOD(VOID, downsample_term, (compress_info_ptr cinfo));
+	METHOD(VOID, downsample_term, (compress_info_ptr cinfo);
 	/* Extract samples in MCU order, process & hand off to output_method */
 	/* The input is always exactly N MCU rows worth of data */
-	METHOD(VOID, extract_init, (compress_info_ptr cinfo));
+	METHOD(VOID, extract_init, (compress_info_ptr cinfo);
 	METHOD(VOID, extract_MCUs, (compress_info_ptr cinfo,
 				    JSAMPIMAGE image_data,
 				    int num_mcu_rows,
-				    MCU_output_method_ptr output_method));
-	METHOD(VOID, extract_term, (compress_info_ptr cinfo));
+				    MCU_output_method_ptr output_method);
+	METHOD(VOID, extract_term, (compress_info_ptr cinfo);
 	/* Entropy encoding parameter optimization */
 	METHOD(VOID, entropy_optimize, (compress_info_ptr cinfo,
-					MCU_output_caller_ptr source_method));
+					MCU_output_caller_ptr source_method);
 	/* Entropy encoding */
-	METHOD(VOID, entropy_encode_init, (compress_info_ptr cinfo));
+	METHOD(VOID, entropy_encode_init, (compress_info_ptr cinfo);
 	METHOD(VOID, entropy_encode, (compress_info_ptr cinfo,
-				      JBLOCK *MCU_data));
-	METHOD(VOID, entropy_encode_term, (compress_info_ptr cinfo));
+				      JBLOCK *MCU_data);
+	METHOD(VOID, entropy_encode_term, (compress_info_ptr cinfo);
 	/* JPEG file header construction */
-	METHOD(VOID, write_file_header, (compress_info_ptr cinfo));
-	METHOD(VOID, write_scan_header, (compress_info_ptr cinfo));
+	METHOD(VOID, write_file_header, (compress_info_ptr cinfo);
+	METHOD(VOID, write_scan_header, (compress_info_ptr cinfo);
 	METHOD(VOID, write_jpeg_data, (compress_info_ptr cinfo,
 				       char *dataptr,
-				       int datacount));
-	METHOD(VOID, write_scan_trailer, (compress_info_ptr cinfo));
-	METHOD(VOID, write_file_trailer, (compress_info_ptr cinfo));
+				       int datacount);
+	METHOD(VOID, write_scan_trailer, (compress_info_ptr cinfo);
+	METHOD(VOID, write_file_trailer, (compress_info_ptr cinfo);
 	/* Pipeline control */
-	METHOD(VOID, c_pipeline_controller, (compress_info_ptr cinfo));
+	METHOD(VOID, c_pipeline_controller, (compress_info_ptr cinfo);
 	METHOD(VOID, entropy_output, (compress_info_ptr cinfo,
 				      char *dataptr,
-				      int datacount));
+				      int datacount);
 	/* Overall control */
-	METHOD(VOID, c_per_scan_method_selection, (compress_info_ptr cinfo));
+	METHOD(VOID, c_per_scan_method_selection, (compress_info_ptr cinfo);
 };
 
 /* Methods used during JPEG decompression. */
 
 struct Decompress_methods_struct {
 	/* Hook for user interface to get control after reading file header */
-	METHOD(VOID, d_ui_method_selection, (decompress_info_ptr cinfo));
+	METHOD(VOID, d_ui_method_selection, (decompress_info_ptr cinfo);
 	/* Hook for user interface to do progress monitoring */
 	METHOD(VOID, progress_monitor, (decompress_info_ptr cinfo,
-					long loopcounter, long looplimit));
+					long loopcounter, long looplimit);
 	/* JPEG file scanning */
-	METHOD(VOID, read_file_header, (decompress_info_ptr cinfo));
-	METHOD(bool, read_scan_header, (decompress_info_ptr cinfo));
-	METHOD(int, read_jpeg_data, (decompress_info_ptr cinfo));
+	METHOD(VOID, read_file_header, (decompress_info_ptr cinfo);
+	METHOD(bool, read_scan_header, (decompress_info_ptr cinfo);
+	METHOD(int, read_jpeg_data, (decompress_info_ptr cinfo);
 	METHOD(VOID, resync_to_restart, (decompress_info_ptr cinfo,
-					 int marker));
-	METHOD(VOID, read_scan_trailer, (decompress_info_ptr cinfo));
-	METHOD(VOID, read_file_trailer, (decompress_info_ptr cinfo));
+					 int marker);
+	METHOD(VOID, read_scan_trailer, (decompress_info_ptr cinfo);
+	METHOD(VOID, read_file_trailer, (decompress_info_ptr cinfo);
 	/* Entropy decoding */
-	METHOD(VOID, entropy_decode_init, (decompress_info_ptr cinfo));
+	METHOD(VOID, entropy_decode_init, (decompress_info_ptr cinfo);
 	METHOD(VOID, entropy_decode, (decompress_info_ptr cinfo,
-				      JBLOCKROW *MCU_data));
-	METHOD(VOID, entropy_decode_term, (decompress_info_ptr cinfo));
+				      JBLOCKROW *MCU_data);
+	METHOD(VOID, entropy_decode_term, (decompress_info_ptr cinfo);
 	/* MCU disassembly: fetch MCUs from entropy_decode, build coef array */
 	/* The reverse_DCT step is in the same module for symmetry reasons */
-	METHOD(VOID, disassemble_init, (decompress_info_ptr cinfo));
+	METHOD(VOID, disassemble_init, (decompress_info_ptr cinfo);
 	METHOD(VOID, disassemble_MCU, (decompress_info_ptr cinfo,
-				       JBLOCKIMAGE image_data));
+				       JBLOCKIMAGE image_data);
 	METHOD(VOID, reverse_DCT, (decompress_info_ptr cinfo,
 				   JBLOCKIMAGE coeff_data,
-				   JSAMPIMAGE output_data, int start_row));
-	METHOD(VOID, disassemble_term, (decompress_info_ptr cinfo));
+				   JSAMPIMAGE output_data, int start_row);
+	METHOD(VOID, disassemble_term, (decompress_info_ptr cinfo);
 	/* Cross-block smoothing */
 	METHOD(VOID, smooth_coefficients, (decompress_info_ptr cinfo,
 					   jpeg_component_info *compptr,
 					   JBLOCKROW above,
 					   JBLOCKROW currow,
 					   JBLOCKROW below,
-					   JBLOCKROW output));
+					   JBLOCKROW output);
 	/* Upsample pixel values of a single component */
 	/* There can be a different upsample method for each component */
-	METHOD(VOID, upsample_init, (decompress_info_ptr cinfo));
+	METHOD(VOID, upsample_init, (decompress_info_ptr cinfo);
 	upsample_ptr upsample[MAX_COMPS_IN_SCAN];
-	METHOD(VOID, upsample_term, (decompress_info_ptr cinfo));
+	METHOD(VOID, upsample_term, (decompress_info_ptr cinfo);
 	/* Color space and gamma conversion */
-	METHOD(VOID, colorout_init, (decompress_info_ptr cinfo));
+	METHOD(VOID, colorout_init, (decompress_info_ptr cinfo);
 	METHOD(VOID, color_convert, (decompress_info_ptr cinfo,
 				     int num_rows, long num_cols,
 				     JSAMPIMAGE input_data,
-				     JSAMPIMAGE output_data));
-	METHOD(VOID, colorout_term, (decompress_info_ptr cinfo));
+				     JSAMPIMAGE output_data);
+	METHOD(VOID, colorout_term, (decompress_info_ptr cinfo);
 	/* Color quantization */
-	METHOD(VOID, color_quant_init, (decompress_info_ptr cinfo));
+	METHOD(VOID, color_quant_init, (decompress_info_ptr cinfo);
 	METHOD(VOID, color_quantize, (decompress_info_ptr cinfo,
 				      int num_rows,
 				      JSAMPIMAGE input_data,
-				      JSAMPARRAY output_data));
+				      JSAMPARRAY output_data);
 	METHOD(VOID, color_quant_prescan, (decompress_info_ptr cinfo,
 					   int num_rows,
 					   JSAMPIMAGE image_data,
-					   JSAMPARRAY workspace));
+					   JSAMPARRAY workspace);
 	METHOD(VOID, color_quant_doit, (decompress_info_ptr cinfo,
-					quantize_caller_ptr source_method));
-	METHOD(VOID, color_quant_term, (decompress_info_ptr cinfo));
+					quantize_caller_ptr source_method);
+	METHOD(VOID, color_quant_term, (decompress_info_ptr cinfo);
 	/* Output image writing */
-	METHOD(VOID, output_init, (decompress_info_ptr cinfo));
+	METHOD(VOID, output_init, (decompress_info_ptr cinfo);
 	METHOD(VOID, put_color_map, (decompress_info_ptr cinfo,
-				     int num_colors, JSAMPARRAY colormap));
+				     int num_colors, JSAMPARRAY colormap);
 	METHOD(VOID, put_pixel_rows, (decompress_info_ptr cinfo,
 				      int num_rows,
-				      JSAMPIMAGE pixel_data));
-	METHOD(VOID, output_term, (decompress_info_ptr cinfo));
+				      JSAMPIMAGE pixel_data);
+	METHOD(VOID, output_term, (decompress_info_ptr cinfo);
 	/* Pipeline control */
-	METHOD(VOID, d_pipeline_controller, (decompress_info_ptr cinfo));
+	METHOD(VOID, d_pipeline_controller, (decompress_info_ptr cinfo);
 	/* Overall control */
-	METHOD(VOID, d_per_scan_method_selection, (decompress_info_ptr cinfo));
+	METHOD(VOID, d_per_scan_method_selection, (decompress_info_ptr cinfo);
 };
 
 
@@ -826,78 +822,78 @@ struct Decompress_methods_struct {
 /* Note: use "j" as first char of names to minimize namespace pollution. */
 
 /* main entry for compression */
-EXTERN VOID jpeg_compress PROTO((compress_info_ptr cinfo));
+EXTERN VOID jpeg_compress (compress_info_ptr cinfo);
 
 /* default parameter setup for compression */
-EXTERN VOID j_c_defaults PROTO((compress_info_ptr cinfo, int quality,
-			     bool force_baseline));
-EXTERN VOID j_monochrome_default PROTO((compress_info_ptr cinfo));
-EXTERN VOID j_set_quality PROTO((compress_info_ptr cinfo, int quality,
-			      bool force_baseline));
+EXTERN VOID j_c_defaults (compress_info_ptr cinfo, int quality,
+			     bool force_baseline);
+EXTERN VOID j_monochrome_default (compress_info_ptr cinfo);
+EXTERN VOID j_set_quality (compress_info_ptr cinfo, int quality,
+			      bool force_baseline);
 /* advanced compression parameter setup aids */
-EXTERN VOID j_add_quant_table PROTO((compress_info_ptr cinfo, int which_tbl,
+EXTERN VOID j_add_quant_table (compress_info_ptr cinfo, int which_tbl,
 				  const QUANT_VAL *basic_table,
-				  int scale_factor, bool force_baseline));
-EXTERN int j_quality_scaling PROTO((int quality));
+				  int scale_factor, bool force_baseline);
+EXTERN int j_quality_scaling (int quality);
 
 /* main entry for decompression */
-EXTERN VOID jpeg_decompress PROTO((decompress_info_ptr cinfo));
+EXTERN VOID jpeg_decompress (decompress_info_ptr cinfo);
 
 /* default parameter setup for decompression */
-EXTERN VOID j_d_defaults PROTO((decompress_info_ptr cinfo,
-			     bool standard_buffering));
+EXTERN VOID j_d_defaults (decompress_info_ptr cinfo,
+			     bool standard_buffering);
 
 /* forward DCT */
-EXTERN VOID j_fwd_dct PROTO((DCTBLOCK data));
+EXTERN VOID j_fwd_dct (DCTBLOCK data);
 /* inverse DCT */
-EXTERN VOID j_rev_dct PROTO((DCTBLOCK data));
+EXTERN VOID j_rev_dct (DCTBLOCK data);
 
 /* utility routines in jutils.c */
-EXTERN long jround_up PROTO((long a, long b));
-EXTERN VOID jcopy_sample_rows PROTO((JSAMPARRAY input_array, int source_row,
+EXTERN long jround_up (long a, long b);
+EXTERN VOID jcopy_sample_rows (JSAMPARRAY input_array, int source_row,
 				  JSAMPARRAY output_array, int dest_row,
-				  int num_rows, long num_cols));
-EXTERN VOID jcopy_block_row PROTO((JBLOCKROW input_row, JBLOCKROW output_row,
-				long num_blocks));
-EXTERN VOID jzero_far PROTO((VOIDP target, size_t bytestozero));
+				  int num_rows, long num_cols);
+EXTERN VOID jcopy_block_row (JBLOCKROW input_row, JBLOCKROW output_row,
+				long num_blocks);
+EXTERN VOID jzero_far (VOIDP target, size_t bytestozero);
 
 /* method selection routines for compression modules */
-EXTERN VOID jselcpipeline PROTO((compress_info_ptr cinfo)); /* jcpipe.c */
-EXTERN VOID jselchuffman PROTO((compress_info_ptr cinfo)); /* jchuff.c */
-EXTERN VOID jselcarithmetic PROTO((compress_info_ptr cinfo)); /* jcarith.c */
-EXTERN VOID jselexpand PROTO((compress_info_ptr cinfo)); /* jcexpand.c */
-EXTERN VOID jseldownsample PROTO((compress_info_ptr cinfo)); /* jcsample.c */
-EXTERN VOID jselcmcu PROTO((compress_info_ptr cinfo)); /* jcmcu.c */
-EXTERN VOID jselccolor PROTO((compress_info_ptr cinfo));	/* jccolor.c */
+EXTERN VOID jselcpipeline (compress_info_ptr cinfo); /* jcpipe.c */
+EXTERN VOID jselchuffman (compress_info_ptr cinfo); /* jchuff.c */
+EXTERN VOID jselcarithmetic (compress_info_ptr cinfo); /* jcarith.c */
+EXTERN VOID jselexpand (compress_info_ptr cinfo); /* jcexpand.c */
+EXTERN VOID jseldownsample (compress_info_ptr cinfo); /* jcsample.c */
+EXTERN VOID jselcmcu (compress_info_ptr cinfo); /* jcmcu.c */
+EXTERN VOID jselccolor (compress_info_ptr cinfo);	/* jccolor.c */
 /* The user interface should call one of these to select input format: */
-EXTERN VOID jselrgif PROTO((compress_info_ptr cinfo)); /* jrdgif.c */
-EXTERN VOID jselrppm PROTO((compress_info_ptr cinfo)); /* jrdppm.c */
-EXTERN VOID jselrrle PROTO((compress_info_ptr cinfo)); /* jrdrle.c */
-EXTERN VOID jselrtarga PROTO((compress_info_ptr cinfo)); /* jrdtarga.c */
+EXTERN VOID jselrgif (compress_info_ptr cinfo); /* jrdgif.c */
+EXTERN VOID jselrppm (compress_info_ptr cinfo); /* jrdppm.c */
+EXTERN VOID jselrrle (compress_info_ptr cinfo); /* jrdrle.c */
+EXTERN VOID jselrtarga (compress_info_ptr cinfo); /* jrdtarga.c */
 /* and one of these to select output header format: */
-EXTERN VOID jselwjfif PROTO((compress_info_ptr cinfo)); /* jwrjfif.c */
+EXTERN VOID jselwjfif (compress_info_ptr cinfo); /* jwrjfif.c */
 
 /* method selection routines for decompression modules */
-EXTERN VOID jseldpipeline PROTO((decompress_info_ptr cinfo)); /* jdpipe.c */
-EXTERN VOID jseldhuffman PROTO((decompress_info_ptr cinfo)); /* jdhuff.c */
-EXTERN VOID jseldarithmetic PROTO((decompress_info_ptr cinfo)); /* jdarith.c */
-EXTERN VOID jseldmcu PROTO((decompress_info_ptr cinfo)); /* jdmcu.c */
-EXTERN VOID jselbsmooth PROTO((decompress_info_ptr cinfo)); /* jbsmooth.c */
-EXTERN VOID jselupsample PROTO((decompress_info_ptr cinfo)); /* jdsample.c */
-EXTERN VOID jseldcolor PROTO((decompress_info_ptr cinfo));	/* jdcolor.c */
-EXTERN VOID jsel1quantize PROTO((decompress_info_ptr cinfo)); /* jquant1.c */
-EXTERN VOID jsel2quantize PROTO((decompress_info_ptr cinfo)); /* jquant2.c */
+EXTERN VOID jseldpipeline (decompress_info_ptr cinfo); /* jdpipe.c */
+EXTERN VOID jseldhuffman (decompress_info_ptr cinfo); /* jdhuff.c */
+EXTERN VOID jseldarithmetic (decompress_info_ptr cinfo); /* jdarith.c */
+EXTERN VOID jseldmcu (decompress_info_ptr cinfo); /* jdmcu.c */
+EXTERN VOID jselbsmooth (decompress_info_ptr cinfo); /* jbsmooth.c */
+EXTERN VOID jselupsample (decompress_info_ptr cinfo); /* jdsample.c */
+EXTERN VOID jseldcolor (decompress_info_ptr cinfo);	/* jdcolor.c */
+EXTERN VOID jsel1quantize (decompress_info_ptr cinfo); /* jquant1.c */
+EXTERN VOID jsel2quantize (decompress_info_ptr cinfo); /* jquant2.c */
 /* The user interface should call one of these to select input format: */
-EXTERN VOID jselrjfif PROTO((decompress_info_ptr cinfo)); /* jrdjfif.c */
+EXTERN VOID jselrjfif (decompress_info_ptr cinfo); /* jrdjfif.c */
 /* and one of these to select output image format: */
-EXTERN VOID jselwgif PROTO((decompress_info_ptr cinfo)); /* jwrgif.c */
-EXTERN VOID jselwppm PROTO((decompress_info_ptr cinfo)); /* jwrppm.c */
-EXTERN VOID jselwrle PROTO((decompress_info_ptr cinfo)); /* jwrrle.c */
-EXTERN VOID jselwtarga PROTO((decompress_info_ptr cinfo)); /* jwrtarga.c */
+EXTERN VOID jselwgif (decompress_info_ptr cinfo); /* jwrgif.c */
+EXTERN VOID jselwppm (decompress_info_ptr cinfo); /* jwrppm.c */
+EXTERN VOID jselwrle (decompress_info_ptr cinfo); /* jwrrle.c */
+EXTERN VOID jselwtarga (decompress_info_ptr cinfo); /* jwrtarga.c */
 
 /* method selection routines for system-dependent modules */
-EXTERN VOID jselerror PROTO((external_methods_ptr emethods)); /* jerror.c */
-EXTERN VOID jselmemmgr PROTO((external_methods_ptr emethods)); /* jmemmgr.c */
+EXTERN VOID jselerror (external_methods_ptr emethods); /* jerror.c */
+EXTERN VOID jselmemmgr (external_methods_ptr emethods); /* jmemmgr.c */
 
 
 /* We assume that right shift corresponds to signed division by 2 with

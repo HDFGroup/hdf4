@@ -22,12 +22,7 @@ static int bits_left;		/* # of unused bits in it */
 static bool printed_eod;	/* flag to suppress multiple end-of-data msgs */
 
 LOCAL VOID
-#ifdef PROTOTYPE
 fix_huff_tbl (HUFF_TBL * htbl)
-#else
-fix_huff_tbl (htbl)
-HUFF_TBL * htbl;
-#endif
 /* Compute derived values for a Huffman table */
 {
   int p, i, l, si;
@@ -113,12 +108,7 @@ static const int bmask[16] =	/* bmask[n] is mask for n rightmost bits */
 
 
 LOCAL int
-#ifdef PROTOTYPE
 fill_bit_buffer (int nbits)
-#else
-fill_bit_buffer (nbits)
-int nbits;
-#endif
 /* Load up the bit buffer and do get_bits(nbits) */
 {
   /* Attempt to load at least MIN_GET_BITS bits into get_buffer. */
@@ -180,12 +170,7 @@ int nbits;
   
 INLINE
 LOCAL int
-#ifdef PROTOTYPE
 huff_DECODE (HUFF_TBL * htbl)
-#else
-huff_DECODE (htbl)
-HUFF_TBL * htbl;
-#endif
 {
   register int l;
   register int32 code;
@@ -229,12 +214,7 @@ static const int extend_offset[16] = /* entry n is (-1 << n) + 1 */
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 huff_decoder_init (decompress_info_ptr cinfo)
-#else
-huff_decoder_init (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   short ci;
   jpeg_component_info * compptr;
@@ -269,12 +249,7 @@ decompress_info_ptr cinfo;
  */
 
 LOCAL VOID
-#ifdef PROTOTYPE
 process_restart (decompress_info_ptr cinfo)
-#else
-process_restart (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   int c, nbytes;
   short ci;
@@ -349,13 +324,7 @@ static const short ZAG[DCTSIZE2+16] = {
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 huff_decode_mcu (decompress_info_ptr cinfo, JBLOCKROW *MCU_data)
-#else
-huff_decode_mcu (cinfo, MCU_data)
-decompress_info_ptr cinfo;
-JBLOCKROW *MCU_data;
-#endif
 {
   register int s, k, r;
   short blkn, ci;
@@ -426,12 +395,7 @@ JBLOCKROW *MCU_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 huff_decoder_term (decompress_info_ptr cinfo)
-#else
-huff_decoder_term (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   /* No work needed */
 }
@@ -442,12 +406,7 @@ decompress_info_ptr cinfo;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jseldhuffman (decompress_info_ptr cinfo)
-#else
-jseldhuffman (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   if (! cinfo->arith_code) {
     cinfo->methods->entropy_decode_init = huff_decoder_init;

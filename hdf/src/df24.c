@@ -69,14 +69,7 @@ static int32 last_ydim = 0;         /* .....gheesh.........*/
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DF24getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pil)
-#else
-intn DF24getdims(filename, pxdim, pydim, pil)
-    const char *filename;
-    int32 *pxdim, *pydim;
-    intn *pil;
-#endif
 {
     CONSTR(FUNC,"DF24getdims");
     intn ncomps;
@@ -107,12 +100,7 @@ intn DF24getdims(filename, pxdim, pydim, pil)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DF24reqil(intn il)
-#else
-intn DF24reqil(il)
-    intn il;
-#endif
 {
     return(DFGRIreqil(il, IMAGE));
 }   /* end DF24reqil() */
@@ -138,14 +126,7 @@ intn DF24reqil(il)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DF24getimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
-#else
-intn DF24getimage(filename, image, xdim, ydim)
-    const char *filename;
-    VOIDP image;
-    int32 xdim, ydim;
-#endif
 {
     CONSTR(FUNC,"DF24getimage");
     intn ret, il;
@@ -189,12 +170,7 @@ intn DF24getimage(filename, image, xdim, ydim)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DF24setdims(int32 xdim, int32 ydim)
-#else
-intn DF24setdims(xdim, ydim)
-    int32 xdim, ydim;
-#endif
 {
     dimsset = 1;
     return(DFGRIsetdims(xdim, ydim, 3, IMAGE));
@@ -215,12 +191,7 @@ intn DF24setdims(xdim, ydim)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DF24setil(intn il)
-#else
-intn DF24setil(il)
-    intn il;
-#endif
 {
     return(DFGRIsetil(il, IMAGE));
 }   /* end DF24setil() */
@@ -245,13 +216,7 @@ intn DF24setil(il)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DF24setcompress(int32 type,comp_info *cinfo)
-#else
-intn DF24setcompress(type,cinfo)
-    int32 type;
-    comp_info *cinfo;
-#endif
 {
     return(DFGRsetcompress(type, cinfo));
 }   /* end DF24setcompress() */
@@ -271,11 +236,7 @@ intn DF24setcompress(type,cinfo)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DF24restart(void)
-#else
-intn DF24restart()
-#endif
 {
     return(DFGRIrestart());
 }   /* end DF24restart() */
@@ -300,14 +261,7 @@ intn DF24restart()
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DF24addimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
-#else
-intn DF24addimage(filename, image, xdim, ydim)
-    const char *filename;
-    VOIDP image;
-    int32 xdim, ydim;
-#endif
 {
     CONSTR(FUNC,"DF24addimage");
 
@@ -339,14 +293,7 @@ intn DF24addimage(filename, image, xdim, ydim)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DF24putimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
-#else
-intn DF24putimage(filename, image, xdim, ydim)
-    const char *filename;
-    VOIDP image;
-    int32 xdim, ydim;
-#endif
 {
     CONSTR(FUNC,"DF24putimage");
 
@@ -373,12 +320,7 @@ intn DF24putimage(filename, image, xdim, ydim)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DF24nimages(const char *filename)
-#else
-intn DF24nimages(filename)
-    const char *filename;
-#endif
 {
     CONSTR(FUNC,"DF24nimages");
     int32 file_id;
@@ -445,13 +387,7 @@ intn DF24nimages(filename)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DF24readref(const char *filename, uint16 ref)
-#else
-intn DF24readref(filename, ref)
-    const char *filename;
-    uint16 ref;
-#endif
 {
     return(DFGRreadref(filename, ref));
 }   /* end DF24readref() */
@@ -470,11 +406,7 @@ intn DF24readref(filename, ref)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 uint16 DF24lastref(void)
-#else
-uint16 DF24lastref()
-#endif
 {
     return(DFGRIlastref());
 }   /* end DF24lastref() */

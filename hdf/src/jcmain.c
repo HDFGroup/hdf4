@@ -89,12 +89,7 @@ static boolean is_targa;	/* records user -targa switch */
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 select_file_type (compress_info_ptr cinfo)
-#else
-select_file_type (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   int c;
 
@@ -152,12 +147,7 @@ compress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 c_ui_method_selection (compress_info_ptr cinfo)
-#else
-c_ui_method_selection (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   /* If the input is gray scale, generate a monochrome JPEG file. */
   if (cinfo->in_color_space == CS_GRAYSCALE)
@@ -182,12 +172,7 @@ compress_info_ptr cinfo;
 static external_methods_ptr emethods; /* for access to free_all */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 signal_catcher (int signum)
-#else
-signal_catcher (signum)
-int signum;
-#endif
 {
   if (emethods != NULL) {
     emethods->trace_level = 0;	/* turn off trace output */
@@ -207,14 +192,7 @@ int signum;
 #ifdef PROGRESS_REPORT
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 progress_monitor (compress_info_ptr cinfo, long loopcounter, long looplimit)
-#else
-progress_monitor (cinfo, loopcounter, looplimit)
-compress_info_ptr cinfo;
-long loopcounter;
-long looplimit;
-#endif
 {
   if (cinfo->total_passes > 1) {
     fprintf(stderr, "\rPass %d/%d: %3d%% ",
@@ -243,11 +221,7 @@ static char * progname;		/* program name for error messages */
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 usage (VOID)
-#else
-usage ()
-#endif
 /* complain about bad command line */
 {
   fprintf(stderr, "usage: %s [switches] ", progname);
@@ -287,14 +261,7 @@ usage ()
 
 
 LOCAL boolean
-#ifdef PROTOTYPE
 keymatch (char * arg, const char * keyword, int minchars)
-#else
-keymatch (arg, keyword, minchars)
-char * arg;
-const char * keyword;
-int minchars;
-#endif
 /* Case-insensitive matching of (possibly abbreviated) keyword switches. */
 /* keyword is the constant keyword (must be lower case already), */
 /* minchars is length of minimum legal abbreviation. */
@@ -319,12 +286,7 @@ int minchars;
 
 
 LOCAL int
-#ifdef PROTOTYPE
 qt_getc (FILE * file)
-#else
-qt_getc (file)
-FILE * file;
-#endif
 /* Read next char, skipping over any comments (# to end of line) */
 /* A comment/newline sequence is returned as a newline */
 {
@@ -341,12 +303,7 @@ FILE * file;
 
 
 LOCAL long
-#ifdef PROTOTYPE
 read_qt_integer (FILE * file)
-#else
-read_qt_integer (file)
-FILE * file;
-#endif
 /* Read an unsigned decimal integer from a quantization-table file */
 /* Swallows one trailing character after the integer */
 {
@@ -375,14 +332,7 @@ FILE * file;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 read_quant_tables (compress_info_ptr cinfo, char * filename, int scale_factor)
-#else
-read_quant_tables (cinfo, filename, scale_factor)
-compress_info_ptr cinfo;
-char * filename;
-int scale_factor;
-#endif
 /* Read a set of quantization tables from the specified file.
  * The file is plain ASCII text: decimal numbers with whitespace between.
  * Comments preceded by '#' may be included in the file.
@@ -435,13 +385,7 @@ int scale_factor;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 set_sample_factors (compress_info_ptr cinfo, char *arg)
-#else
-set_sample_factors (cinfo, arg)
-compress_info_ptr cinfo;
-char *arg;
-#endif
 /* Process a sample-factors parameter string, of the form */
 /*     HxV[,HxV,...]    */
 {
@@ -474,16 +418,8 @@ char *arg;
 
 
 LOCAL int
-#ifdef PROTOTYPE
 parse_switches (compress_info_ptr cinfo, int last_file_arg_seen,
 		int argc, char **argv)
-#else
-parse_switches (cinfo, last_file_arg_seen, argc, argv)
-compress_info_ptr cinfo;
-int last_file_arg_seen;
-int argc;
-char **argv;
-#endif
 /* Initialize cinfo with default switch settings, then parse option switches.
  * Returns argv[] index of first file-name argument (== argc if none).
  * Any file names with indexes <= last_file_arg_seen are ignored;
@@ -661,13 +597,7 @@ char **argv;
  */
 
 GLOBAL int
-#ifdef PROTOTYPE
 main (int argc, char **argv)
-#else
-main (argc, argv)
-int argc;
-char **argv;
-#endif
 {
   struct Compress_info_struct cinfo;
   struct Compress_methods_struct c_methods;

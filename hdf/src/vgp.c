@@ -28,16 +28,16 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hfile.h"
 
 PRIVATE intn Load_vfile
-    PROTO((HFILEID f));
+    (HFILEID f);
 
 PRIVATE VOID Remove_vfile
-    PROTO((HFILEID f));
+    (HFILEID f);
 
 PRIVATE vginstance_t *vginstance
-    PROTO((HFILEID f, uint16 vgid));
+    (HFILEID f, uint16 vgid);
 
 PRIVATE void vunpackvg
-    PROTO((VGROUP *vg, uint8 buf[]));
+    (VGROUP *vg, uint8 buf[]);
 
 /*
 * -------------------------------------------------------------------- 
@@ -68,12 +68,7 @@ RETURNS FAIL if error or no more file slots available.
 RETURNS SUCCEED if ok.
 */
 
-#ifdef PROTOTYPE
 PRIVATE intn Load_vfile (HFILEID f)
-#else
-PRIVATE intn Load_vfile (f)
-HFILEID f;
-#endif
 {
     vfile_t		  * vf;
     vginstance_t  * v;
@@ -175,12 +170,7 @@ HFILEID f;
   removes the file ptr from the vfile[] table. 
   *** Only called by Vfinish() ***
 */
-#ifdef PROTOTYPE
 PRIVATE VOID Remove_vfile (HFILEID f)
-#else
-PRIVATE VOID Remove_vfile (f)
-HFILEID f;
-#endif
 {
     vfile_t      *vf=NULL;
     CONSTR(FUNC,"Remove_vfile");
@@ -216,14 +206,7 @@ HFILEID f;
 
   *** Only called by B-tree routines, should _not_ be called externally ***
 */
-#ifdef PROTOTYPE
 PUBLIC intn vcompare(VOIDP k1,VOIDP k2,intn cmparg)
-#else
-PUBLIC intn vcompare(k1,k2,cmparg)
-VOIDP k1;
-VOIDP k2;
-intn cmparg;
-#endif
 {
     return((intn)((*(int32 *)k1) - (*(int32 *)k2)));  /* valid for integer keys */
 }  /* vcompare */
@@ -234,12 +217,7 @@ intn cmparg;
 
   *** Only called by B-tree routines, should _not_ be called externally ***
 */
-#ifdef PROTOTYPE
 PUBLIC VOID vprint(VOIDP k1)
-#else
-PUBLIC VOID vprint(k1)
-VOIDP k1;
-#endif
 {
     printf("Ptr=%p, key=%d, ref=%d\n",k1,(int)((vginstance_t *)k1)->key,(int)((vginstance_t *)k1)->ref);
 }  /* vprint */
@@ -250,12 +228,7 @@ VOIDP k1;
 
   *** Only called by B-tree routines, should _not_ be called externally ***
 */
-#ifdef PROTOTYPE
 PUBLIC VOID vdestroynode(VOIDP n)
-#else
-PUBLIC VOID vdestroynode(n)
-VOIDP n;
-#endif
 {
     VGROUP       * vg;
 
@@ -277,12 +250,7 @@ VOIDP n;
 
   *** Only called by B-tree routines, should _not_ be called externally ***
 */
-#ifdef PROTOTYPE
 PUBLIC VOID vtfreekey(VOIDP k)
-#else
-PUBLIC VOID vtfreekey(k)
-VOIDP k;
-#endif
 {
     k=k;    /* i.e. do nothing */
 }  /* vtfreekey */
@@ -290,12 +258,7 @@ VOIDP k;
 
 /* ---------------------------- Vinitialize ------------------------- */
 
-#ifdef PROTOTYPE
 PUBLIC intn Vinitialize(HFILEID f)
-#else
-PUBLIC intn Vinitialize(f)
-HFILEID f;
-#endif
 {
     CONSTR(FUNC,"Vinitialize");
 
@@ -304,12 +267,7 @@ HFILEID f;
 
 /* ---------------------------- Vfinish ------------------------- */
 
-#ifdef PROTOTYPE
 PUBLIC intn Vfinish (HFILEID f)
-#else
-PUBLIC intn Vfinish (f)
-HFILEID f;
-#endif
 {
     CONSTR(FUNC,"Vfinish");
     
@@ -326,13 +284,7 @@ HFILEID f;
 * RETURNS vginstance_t pointer if ok.
 *
 */
-#ifdef PROTOTYPE
 PRIVATE vginstance_t * vginstance (HFILEID f, uint16 vgid)
-#else
-PRIVATE vginstance_t * vginstance (f, vgid)
-HFILEID     f;
-uint16  vgid;
-#endif
 {
     VOIDP *t;
     vfile_t      * vf;
@@ -367,13 +319,7 @@ uint16  vgid;
 * returns FAIL if not found,
 * returns TRUE if found.
 */
-#ifdef PROTOTYPE
 int32 vexistvg (HFILEID f, uint16 vgid)
-#else
-int32 vexistvg (f, vgid)
-HFILEID     f;
-uint16  vgid;
-#endif
 {
     CONSTR(FUNC,"vexistvg");
   
@@ -406,14 +352,7 @@ uint16  vgid;
 *  NO RETURN VALUES.
 */
 
-#ifdef PROTOTYPE
 void vpackvg (VGROUP *vg, uint8 buf[], int32 *size)
-#else
-void vpackvg (vg, buf, size)
-VGROUP          *vg;    /* vgroup to be saved to file */
-uint8           buf[];  /* buffer to receive the packed fields */
-int32           *size;  /* the size of buf is returned here */
-#endif
 {
 	register uint16 	i;
     register uint8      *bb;
@@ -471,13 +410,7 @@ int32           *size;  /* the size of buf is returned here */
 *
 */
 
-#ifdef PROTOTYPE
 PRIVATE void vunpackvg (VGROUP *vg, uint8 buf[])
-#else
-PRIVATE void vunpackvg (vg, buf)
-VGROUP *vg; /* vgroup to be loaded with file data */
-uint8  buf[];  /* must contain a DFTAG_VG data object from file */
-#endif
 {
     register uint8   *bb;
     register uintn   u;
@@ -545,14 +478,7 @@ uint8  buf[];  /* must contain a DFTAG_VG data object from file */
 *	In any case, set marked flag to 0.
 */
 
-#ifdef PROTOTYPE
 PUBLIC int32 Vattach (HFILEID f, int32 vgid, const char *accesstype)
-#else
-PUBLIC int32 Vattach (f, vgid, accesstype)
-HFILEID f;      /* HDF file handle */
-int32   vgid;       /* actual vgroup's vgid or -1 for new vgroup */
-const char    *accesstype;    /* access mode */
-#endif
 {
 	VGROUP			*vg;
     int16           acc_mode;
@@ -699,12 +625,7 @@ const char    *accesstype;    /* access mode */
 * after detach, set marked flag to 0.	
 *
 */
-#ifdef PROTOTYPE
 PUBLIC int32 Vdetach (int32 vkey)
-#else
-PUBLIC int32 Vdetach (vkey)
-int32 vkey;
-#endif
 {
     VGROUP       *vg;
     int32         vgpacksize;
@@ -762,13 +683,7 @@ int32 vkey;
 * are from the same file. else error.
 */
 
-#ifdef PROTOTYPE
 PUBLIC int32 Vinsert (int32 vkey, int32 insertkey)
-#else
-PUBLIC int32 Vinsert (vkey, insertkey)
-int32 vkey;
-int32 insertkey;          /* (VGROUP*) or (VDATA*), doesn't matter */
-#endif
 {
     VGROUP *vg;
     vginstance_t  * v;
@@ -856,13 +771,7 @@ If found, returns the ref of the vdata.
 If not found, or error, returns FAIL
 28-MAR-91 Jason Ng NCSA
 */
-#ifdef PROTOTYPE
 PUBLIC int32 Vflocate (int32 vkey, char *field)
-#else
-PUBLIC int32 Vflocate (vkey, field)
-int32 vkey;
-char * field;
-#endif
 {
     int32   s;
     register uintn  u;
@@ -904,13 +813,7 @@ char * field;
 * RETURNS FALSE if not.
 * 28-MAR-91 Jason Ng NCSA
 */
-#ifdef PROTOTYPE
 PUBLIC int32 Vinqtagref (int32 vkey, int32 tag, int32 ref)
-#else
-PUBLIC int32 Vinqtagref (vkey, tag, ref)
-int32 vkey;
-int32   tag, ref;
-#endif
 {
     register uintn   u;
     register uint16     ttag, rref;
@@ -944,12 +847,7 @@ int32   tag, ref;
 * If error, returns FAIL
 * 28-MAR-91 Jason Ng NCSA.
 */
-#ifdef PROTOTYPE
 PUBLIC int32 Vntagrefs (int32 vkey)
-#else
-PUBLIC int32 Vntagrefs (vkey)
-int32 vkey;
-#endif
 {
     vginstance_t  * v;
     VGROUP *vg;
@@ -979,14 +877,7 @@ int32 vkey;
 * NOTE: Do not confuse with Vgettagref().
 *
 */
-#ifdef PROTOTYPE
 PUBLIC int32 Vgettagrefs (int32 vkey, int32 tagarray[], int32 refarray[], int32 n)
-#else
-PUBLIC int32 Vgettagrefs (vkey, tagarray, refarray, n)
-int32 vkey;
-int32   n;
-int32 tagarray[], refarray[];
-#endif
 {
     int32 i;
     vginstance_t  * v;
@@ -1025,14 +916,7 @@ int32 tagarray[], refarray[];
 * NOTE: Do not confuse with Vgettagrefs().
 *
 */
-#ifdef PROTOTYPE
 PUBLIC int32 Vgettagref (int32 vkey, int32 which, int32 *tag, int32 *ref)
-#else
-PUBLIC int32 Vgettagref (vkey, which, tag, ref)
-int32 vkey;
-int32   which;
-int32   *tag, *ref; /* these are returned */
-#endif
 {
     vginstance_t  * v;
     VGROUP *vg;
@@ -1063,12 +947,7 @@ int32   *tag, *ref; /* these are returned */
  * Return the tag of this Vgroup.
  * Return 0 on failure
  */
-#ifdef PROTOTYPE
 PUBLIC int32 VQuerytag(int32 vkey)
-#else
-PUBLIC int32 VQuerytag(vkey)
-int32 vkey;
-#endif
 {
     vginstance_t  * v;
     VGROUP *vg;
@@ -1094,12 +973,7 @@ int32 vkey;
   Return the ref of this Vgroup.
   Return FAIL on failure
 */
-#ifdef PROTOTYPE
 PUBLIC int32 VQueryref(int32 vkey)
-#else
-PUBLIC int32 VQueryref(vkey)
-int32 vkey;
-#endif
 {
     vginstance_t  * v;
     VGROUP *vg;
@@ -1129,13 +1003,7 @@ int32 vkey;
  * 28-MAR-91 Jason Ng NCSA.
  */
 
-#ifdef PROTOTYPE
 PUBLIC int32 Vaddtagref (int32 vkey, int32 tag, int32 ref)
-#else
-PUBLIC int32 Vaddtagref ( vkey, tag, ref)
-int32 vkey;
-int32  tag, ref;
-#endif
 {
     int32  n;
     vginstance_t  * v;
@@ -1179,13 +1047,7 @@ int32  tag, ref;
 * Returns the total number of tag/refs in the vgroup.
 */
 
-#ifdef PROTOTYPE
 int32 vinsertpair (VGROUP *vg, uint16 tag, uint16 ref)
-#else
-int32 vinsertpair ( vg, tag, ref)
-VGROUP      * vg;
-uint16      tag, ref;   /* this MUST be uint16 -  private routine */
-#endif
 {
     CONSTR(FUNC,"vinsertpair");
     
@@ -1217,13 +1079,7 @@ uint16      tag, ref;   /* this MUST be uint16 -  private routine */
 *  undocumented
 *
 */
-#ifdef PROTOTYPE
 int32 Ventries (HFILEID f, int32 vgid)    
-#else
-int32 Ventries (f, vgid)
-HFILEID f;
-int32   vgid;
-#endif
 {
     uint8   * vgpack;
 	VGROUP 	vg;
@@ -1261,13 +1117,7 @@ int32   vgid;
 *
 *	truncates to max length of VGNAMELENMAX 
 */
-#ifdef PROTOTYPE
 PUBLIC int32 Vsetname (int32 vkey, const char *vgname)
-#else
-PUBLIC int32 Vsetname (vkey, vgname)
-int32 vkey;
-const char        *vgname;
-#endif
 {
     vginstance_t  * v;
     VGROUP *vg;
@@ -1299,13 +1149,7 @@ const char        *vgname;
 *	truncates to max length of VGNAMELENMAX 
 */
 
-#ifdef PROTOTYPE
 PUBLIC int32 Vsetclass (int32 vkey, const char *vgclass)
-#else
-PUBLIC int32 Vsetclass (vkey, vgclass)
-int32 vkey;
-const char *vgclass;
-#endif
 {
     vginstance_t  * v;
     VGROUP *vg;
@@ -1337,13 +1181,7 @@ const char *vgclass;
 *	RETURNS FALSE if not, or if error
 *
 */
-#ifdef PROTOTYPE
 PUBLIC int32 Visvg (int32 vkey, int32 id)
-#else
-PUBLIC int32 Visvg (vkey, id)
-int32 vkey;
-int32   id;     /* valid id of the entry in question */
-#endif
 {
     register uintn u;
     register uint16 ID;
@@ -1380,13 +1218,7 @@ int32   id;     /* valid id of the entry in question */
 *  RETURNS 0 if not, or if error.
 */
 
-#ifdef PROTOTYPE
 PUBLIC int32 Visvs (int32 vkey, int32 id)
-#else
-PUBLIC int32 Visvs (vkey, id)
-int32 vkey;
-int32   id;
-#endif
 {
     register intn i;
     vginstance_t  * v;
@@ -1425,13 +1257,7 @@ int32   id;
 *	This id is actually the "ref" of the vgroup "tag/ref".
 */
 
-#ifdef PROTOTYPE
 PUBLIC int32 Vgetid (HFILEID f,int32 vgid)         
-#else
-PUBLIC int32 Vgetid (f, vgid)
-HFILEID     f;                      /* HDF file handle */
-int32   vgid;                   /* current vgid */
-#endif
 {
 	vginstance_t * v;
 	vfile_t		* vf;
@@ -1499,13 +1325,7 @@ int32   vgid;                   /* current vgid */
 *
 */
 
-#ifdef PROTOTYPE
 PUBLIC int32 Vgetnext (int32 vkey, int32 id)
-#else
-PUBLIC int32 Vgetnext (vkey, id)
-int32 vkey;
-int32 id;     /* actual id of an entry in the vgroup vg */
-#endif
 {
     register uintn  u;
     vginstance_t  * v;
@@ -1559,13 +1379,7 @@ int32 id;     /* actual id of an entry in the vgroup vg */
 *
 */
 
-#ifdef PROTOTYPE
 PUBLIC int32 Vgetname (int32 vkey, char *vgname)
-#else
-PUBLIC int32 Vgetname (vkey, vgname)
-int32 vkey;
-char *vgname;            /* its name is returned in this var */
-#endif
 {
     vginstance_t  * v;
     VGROUP *vg;
@@ -1595,13 +1409,7 @@ char *vgname;            /* its name is returned in this var */
 *
 */
 
-#ifdef PROTOTYPE
 PUBLIC int32 Vgetclass (int32 vkey, char *vgclass)
-#else
-PUBLIC int32 Vgetclass (vkey, vgclass)
-int32 vkey;
-char    *vgclass;   /* its class name is returned in this var */
-#endif
 {
     vginstance_t  * v;
     VGROUP *vg;
@@ -1637,14 +1445,7 @@ char    *vgclass;   /* its class name is returned in this var */
 *
 */
 
-#ifdef PROTOTYPE
 PUBLIC int32 Vinquire (int32 vkey, int32 *nentries, char *vgname)
-#else
-PUBLIC int32 Vinquire (vkey, nentries, vgname)
-int32 vkey;
-int32   *nentries;
-char        *vgname;
-#endif
 {
     vginstance_t  * v;
     VGROUP *vg;
@@ -1698,14 +1499,7 @@ char        *vgname;
 * 
 */
 
-#ifdef PROTOTYPE
 PUBLIC HFILEID Vopen( char *path, intn acc_mode, int16 ndds)
-#else
-PUBLIC HFILEID Vopen (path, acc_mode, ndds)
-char 		*path;
-intn 		acc_mode;
-int16       ndds;
-#endif
 {
 	CONSTR(FUNC,"Vopen");
 	HFILEID  f;
@@ -1738,12 +1532,7 @@ int16       ndds;
 *
 */
 
-#ifdef PROTOTYPE
 PUBLIC intn Vclose (HFILEID f)
-#else
-PUBLIC intn Vclose (f)
-HFILEID f;
-#endif
 {
 	CONSTR(FUNC,"Vclose");
 
@@ -1763,13 +1552,7 @@ HFILEID f;
 
 */
 int32
-#ifdef PROTOTYPE
 Vdelete(int32 f, int32 vgid)
-#else
-Vdelete(f, vgid)
-int32 f;
-int32 vgid;
-#endif
 {
     VOIDP	   v;
     vfile_t      * vf;

@@ -61,12 +61,7 @@ static int32 * Cb_g_tab;	/* => table for Cb to G conversion */
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 ycc_rgb_init (decompress_info_ptr cinfo)
-#else
-ycc_rgb_init (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   int32 i, x2;
   SHIFT_TEMPS
@@ -104,17 +99,8 @@ decompress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 ycc_rgb_convert (decompress_info_ptr cinfo, int num_rows, long num_cols,
 		 JSAMPIMAGE input_data, JSAMPIMAGE output_data)
-#else
-ycc_rgb_convert (cinfo, num_rows, num_cols, input_data, output_data)
-decompress_info_ptr cinfo;
-int num_rows;
-long num_cols;
-JSAMPIMAGE input_data;
-JSAMPIMAGE output_data;
-#endif
 {
 #ifdef SIXTEEN_BIT_SAMPLES
   register int32 y;
@@ -164,12 +150,7 @@ JSAMPIMAGE output_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 ycc_rgb_term (decompress_info_ptr cinfo)
-#else
-ycc_rgb_term (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   /* no work (we let free_all release the workspace) */
 }
@@ -183,12 +164,7 @@ decompress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 null_init (decompress_info_ptr cinfo)
-#else
-null_init (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* colorout_init for cases where no setup is needed */
 {
   /* no work needed */
@@ -200,17 +176,8 @@ decompress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 null_convert (decompress_info_ptr cinfo, int num_rows, long num_cols,
 	      JSAMPIMAGE input_data, JSAMPIMAGE output_data)
-#else
-null_convert (cinfo, num_rows, num_cols, input_data, output_data)
-decompress_info_ptr cinfo;
-int num_rows;
-long num_cols;
-JSAMPIMAGE input_data;
-JSAMPIMAGE output_data;
-#endif
 {
   short ci;
 
@@ -228,17 +195,8 @@ JSAMPIMAGE output_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 grayscale_convert (decompress_info_ptr cinfo, int num_rows, long num_cols,
 		   JSAMPIMAGE input_data, JSAMPIMAGE output_data)
-#else
-grayscale_convert (cinfo, num_rows, num_cols, input_data, output_data)
-decompress_info_ptr cinfo;
-int num_rows;
-long num_cols;
-JSAMPIMAGE input_data;
-JSAMPIMAGE output_data;
-#endif
 {
   jcopy_sample_rows(input_data[0], 0, output_data[0], 0,
 		    num_rows, num_cols);
@@ -250,12 +208,7 @@ JSAMPIMAGE output_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 null_term (decompress_info_ptr cinfo)
-#else
-null_term (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* colorout_term for cases where no teardown is needed */
 {
   /* no work needed */
@@ -268,12 +221,7 @@ decompress_info_ptr cinfo;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jseldcolor (decompress_info_ptr cinfo)
-#else
-jseldcolor (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   /* Make sure num_components agrees with jpeg_color_space */
   switch (cinfo->jpeg_color_space) {

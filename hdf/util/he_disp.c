@@ -25,12 +25,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define SCRY 900
 
 /* HEdisplay -- stub function for displaying an image using ICR */
-#ifdef PROTOTYPE
 int HEdisplay(HE_CMD *cmd)
-#else
-int HEdisplay(cmd)
-    HE_CMD *cmd;
-#endif
 {
 #ifndef IBM6000
     register int i;
@@ -92,12 +87,7 @@ int HEdisplay(cmd)
 #endif
 }
 
-#ifdef PROTOTYPE
 void goTo(int desc)
-#else
-void goTo(desc)
-    int desc;
-#endif
 {
     /* goto element of he_desc[desc] */
     /* ask swami */
@@ -125,11 +115,7 @@ unsigned char rgb[768];		/* storage for a palette */
 char *wherebig=NULL;	/* where to store small image */
 uint8 *wheresmall = NULL;	/* where to store image-related stuff */
 
-#ifdef PROTOTYPE
 int getSpace(void)
-#else
-int getSpace()
-#endif
 {
     /*  
      *  Don't allocate anything if the image is the same size as before.
@@ -155,11 +141,7 @@ int getSpace()
  *  locally.  
  *
  */
-#ifdef PROTOTYPE
 int largeSet(void)
-#else
-int largeSet()
-#endif
 {
     int
 	tmp;
@@ -179,12 +161,7 @@ int largeSet()
     return(factor > 1);		/* is expansion necessary? */
 }
 
-#ifdef PROTOTYPE
 int display(int c, int x, int y, int f, int l)
-#else
-int display(c, x, y, f, l)
-    int c, x, y, f, l;
-#endif
 {
 
     center = c;
@@ -231,12 +208,7 @@ int display(c, x, y, f, l)
 *  Remote display of the image using the ICR.
 *  Just print the codes to stdout using the protocol.
 */
-#ifdef PROTOTYPE
 int rImage(int usepal)
-#else
-int rImage(usepal)
-    int usepal;
-#endif
 {
     int i,j,newxsize;
     int8 *thisline, *space, *thischar;
@@ -321,12 +293,7 @@ int rImage(usepal)
 *  copy an image memory to memory, expanding byte by byte to get a larger image.
 *  no aliasing, just byte replication
 */
-#ifdef PROTOTYPE
 int bigImg(unsigned char *targ, unsigned char *src)
-#else
-int bigImg(targ, src)
-    unsigned char *targ,*src;
-#endif
 {
     register int i,j,line;
     register unsigned char *p,*q,*oldq;
@@ -354,13 +321,7 @@ int bigImg(targ, src)
 *  compress the data to go out with a simple run-length encoded scheme.
 *
 */
-#ifdef PROTOTYPE
 int rleIt(char *buf, char *bufto, int len)
-#else
-int rleIt(buf, bufto, len)
-    int len;
-    char *buf,*bufto;
-#endif
 {
     register char *p,*q,*cfoll,*clead;
     char *begp;

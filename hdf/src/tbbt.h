@@ -100,7 +100,7 @@ typedef   struct tbbt_tree  TBBT_TREE;
 struct tbbt_tree {
   TBBT_NODE *root;
   unsigned long count;  /* The number of nodes in the tree currently */
-  intn     (*compar) PROTO((VOIDP k1,VOIDP k2,intn cmparg));
+  intn     (*compar) (VOIDP k1,VOIDP k2,intn cmparg);
   intn     cmparg;
 #endif /* TBBT_INTERNALS */
 };
@@ -161,7 +161,7 @@ extern "C" {
 #endif /* c_plusplus || __cplusplus */
 
 TBBT_TREE *tbbtdmake
-    PROTO((intn (*compar)(VOIDP ,VOIDP ,intn), intn arg ));
+    (intn (*compar)(VOIDP ,VOIDP ,intn), intn arg );
 /* Allocates and initializes an empty threaded, balanced, binary tree and
  * returns a pointer to the control structure for it.  You can also create
  * empty trees without this function as long as you never use tbbtd* routines
@@ -215,10 +215,10 @@ TBBT_TREE *tbbtdmake
  */
 
 TBBT_NODE *tbbtdfind
-    PROTO((TBBT_TREE *tree, VOIDP key, TBBT_NODE **pp));
+    (TBBT_TREE *tree, VOIDP key, TBBT_NODE **pp);
 TBBT_NODE *tbbtfind
-    PROTO((TBBT_NODE *root,VOIDP key, intn (*cmp)(VOIDP,VOIDP,intn),
-        intn arg, TBBT_NODE **pp));
+    (TBBT_NODE *root,VOIDP key, intn (*cmp)(VOIDP,VOIDP,intn),
+        intn arg, TBBT_NODE **pp);
 /* Locate a node based on the key given.  A pointer to the node in the tree
  * with a key value matching `key' is returned.  If no such node exists, NULL
  * is returned.  Whether a node is found or not, if `pp' is not NULL, `*pp'
@@ -231,7 +231,7 @@ TBBT_NODE *tbbtfind
  */
 
 TBBT_NODE *tbbtindx
-    PROTO(( TBBT_NODE *root, int32 indx ));
+    ( TBBT_NODE *root, int32 indx );
 /* Locate the node that has `indx' nodes with lesser key values.  This is like
  * an array lookup with the first item in the list having index 0.  For large
  * values of `indx', this call is much faster than tbbtfirst() followed by
@@ -240,9 +240,9 @@ TBBT_NODE *tbbtindx
  */
 
 TBBT_NODE *tbbtdins
-    PROTO((TBBT_TREE *tree, VOIDP item, VOIDP key));
+    (TBBT_TREE *tree, VOIDP item, VOIDP key);
 TBBT_NODE *tbbtins
-    PROTO((TBBT_NODE **root,VOIDP item,VOIDP key, intn (*cmp)(VOIDP,VOIDP,intn), intn arg ));
+    (TBBT_NODE **root,VOIDP item,VOIDP key, intn (*cmp)(VOIDP,VOIDP,intn), intn arg );
 /* Insert a new node to the tree having a key value of `key' and a data pointer
  * of `item'.  If a node already exists in the tree with key value `key' or if
  * malloc() fails, NULL is returned (no node is inserted), otherwise a pointer
@@ -250,7 +250,7 @@ TBBT_NODE *tbbtins
  */
 
 VOIDP tbbtrem
-    PROTO((TBBT_NODE **root, TBBT_NODE *node, VOIDP *kp ));
+    (TBBT_NODE **root, TBBT_NODE *node, VOIDP *kp );
 /* Remove the node pointed to by `node' from the tree with root `root'.  The
  * data pointer for the deleted node is returned.  If the second argument is
  * NULL, NULL is returned.  If `kp' is not NULL, `*kp' is set to point to the
@@ -261,9 +261,9 @@ VOIDP tbbtrem
  */
 
 TBBT_NODE *tbbtfirst
-    PROTO((TBBT_NODE *root));
+    (TBBT_NODE *root);
 TBBT_NODE *tbbtlast
-    PROTO((TBBT_NODE *root ));
+    (TBBT_NODE *root );
 /* Returns a pointer to node from the tree with the lowest(first)/highest(last)
  * key value.  If the tree is empy NULL is returned.  Examples:
  *     node= tbbtfirst(*tree);
@@ -273,18 +273,18 @@ TBBT_NODE *tbbtlast
  */
 
 TBBT_NODE *tbbtnext
-    PROTO((TBBT_NODE *node));
+    (TBBT_NODE *node);
 TBBT_NODE *tbbtprev
-    PROTO((TBBT_NODE *node));
+    (TBBT_NODE *node);
 /* Returns a pointer the node from the tree with the next highest (previous
  * lowest) key value relative to the node pointed to by `node'.  If `node'
  * points the last (first) node of the tree, NULL is returned.
  */
 
 TBBT_TREE *tbbtdfree
-    PROTO((TBBT_TREE *tree, VOID (*fd)(VOIDP), VOID (*fk)(VOIDP)));
+    (TBBT_TREE *tree, VOID (*fd)(VOIDP), VOID (*fk)(VOIDP));
 VOID tbbtfree
-    PROTO((TBBT_NODE **root, VOID (*fd)(VOIDP), VOID (*fk)(VOIDP)));
+    (TBBT_NODE **root, VOID (*fd)(VOIDP), VOID (*fk)(VOIDP));
 /* Frees up an entire tree.  `fd' is a pointer to a function that frees/
  * destroys data items, and `fk' is the same for key values.
  *     void free();
@@ -298,11 +298,11 @@ VOID tbbtfree
  */
 
 VOID tbbtprint
-	PROTO((TBBT_NODE *node));
+	(TBBT_NODE *node);
 /* Prints out the data in a node */
 
 VOID tbbtdump
-	PROTO((TBBT_TREE *tree, intn method));
+	(TBBT_TREE *tree, intn method);
 /* Prints an entire tree.  The method variable determines which sort of
  * traversal is used:
  *	-1 : Pre-Order Traversal
@@ -311,7 +311,7 @@ VOID tbbtdump
  */
 
 long tbbtcount
-	PROTO((TBBT_TREE *tree));
+	(TBBT_TREE *tree);
 
 #if defined c_plusplus || defined __cplusplus
 }

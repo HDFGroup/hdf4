@@ -1187,6 +1187,7 @@ extern uint8 FAR *DFtbuf;
 #  define HDfreespace(p)     (free(p))
 #  define HDregetspace(p,s)  (realloc(p,s))
 #endif /* PC & !defined PC386 */
+#define HDfreenclear(p) { if((p)!=NULL) HDfreespace(p); p=NULL; }
 
 /**************************************************************************
 *  String functions defined differently under MS Windows

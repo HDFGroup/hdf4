@@ -54,24 +54,24 @@ typedef struct mydd_t {
 
 /* Static function prototypes */
 int promptblocks
-    PROTO((mydd_t *dd));
+    (mydd_t *dd);
 
 VOID copy_blocks
-    PROTO((mydd_t *dd, int32 infile, int32 outfile));
+    (mydd_t *dd, int32 infile, int32 outfile);
 
 VOID merge_blocks
-    PROTO((mydd_t *dd, int32 infile, int32 outfile));
+    (mydd_t *dd, int32 infile, int32 outfile);
 
 int main
-    PROTO((int, char **));
+    (int, char **);
 static VOID usage
-    PROTO((char *));
+    (char *);
 static VOID hdferror
-    PROTO((void));
+    (void);
 static VOID error
-    PROTO((const char *));
+    (const char *);
 int desc_comp
-    PROTO((const void *d1, const void *d2));
+    (const void *d1, const void *d2);
 
 unsigned char *data;
 char invoke[81];
@@ -81,13 +81,7 @@ char *from_file = NULL;
 char *to_file = NULL;
 
 
-#ifdef PROTOTYPE
 int main(int argc, char *argv[])
-#else
-int main(argc, argv)
-int argc;
-char *argv[];
-#endif /* PROTOTYPE */
 {
     int i, num_desc, fnum, merge;
     int32 infile, outfile, aid, ret;
@@ -366,12 +360,7 @@ char *argv[];
 ** NAME
 **      promptblocks
 */
-#ifdef PROTOTYPE
 int promptblocks(mydd_t *dd)
-#else
-int promptblocks(dd)
-mydd_t *dd;
-#endif /* PROTOTYPE */
 {
     char ans[80];
 
@@ -389,13 +378,7 @@ mydd_t *dd;
 ** NAME
 **      copy_blocks -- move a linked-block element; preserve blocking
 */
-#ifdef PROTOTYPE
 VOID copy_blocks(mydd_t *dd, int32 infile, int32 outfile)
-#else
-VOID copy_blocks(dd, infile, outfile)
-mydd_t *dd;
-int32 infile, outfile;
-#endif /* PROTOTYPE */
 {
     int32 inaid, ret, rdret, outaid;
     sp_info_block_t info;
@@ -469,13 +452,7 @@ int32 infile, outfile;
 ** NAME
 **      merge_blocks
 */
-#ifdef PROTOTYPE
 VOID merge_blocks(mydd_t *dd, int32 infile, int32 outfile)
-#else
-VOID merge_blocks(dd, infile, outfile)
-mydd_t *dd;
-int32 infile, outfile;
-#endif /* PROTOTYPE */
 {
     int32 inaid, outaid, ret, len;
     CONSTR(FUNC,"merge_blocks");
@@ -532,12 +509,7 @@ int32 infile, outfile;
 ** COMMENTS, BUGS, ASSUMPTIONS
 ** EXAMPLES
 */
-#ifdef PROTOTYPE
 static VOID usage(char *name)
-#else
-static VOID usage(name)
-char *name;
-#endif /* PROTOTYPE */
 {
     fprintf(stderr, "Usage:  %s [-i | -b] [-d#] [-t#] [-x] [-r <from> <to>] <infile> <outfile>\n", name);
     fprintf(stderr, "\t-t# : reset the linked block sizing\n");
@@ -563,11 +535,7 @@ char *name;
 **	This routine terminates the program with code 1.
 ** EXAMPLES
 */
-#ifdef PROTOTYPE
 static VOID hdferror(void)
-#else
-static VOID hdferror()
-#endif /* PROTOTYPE */
 {
     HEprint(stderr, 0);
     exit(1);
@@ -588,12 +556,7 @@ static VOID hdferror()
 **	This routine terminates the program with code 1.
 ** EXAMPLES
 */
-#ifdef PROTOTYPE
 static VOID error(const char *string)
-#else
-static VOID error(string)
-const char *string;
-#endif
 {
     fprintf(stderr, "%s: %s\n", invoke, string);
     exit(1);
@@ -617,12 +580,7 @@ const char *string;
 ** COMMENTS, BUGS, ASSUMPTIONS
 ** EXAMPLES
 */
-#ifdef PROTOTYPE
 int desc_comp(const void *d1, const void *d2)
-#else
-int desc_comp(d1, d2)
-const VOID *d1, *d2;
-#endif /* PROTOTYPE */
 {
     return((int)(((const mydd_t *)d1)->offset - ((const mydd_t *)d2)->offset));
 }

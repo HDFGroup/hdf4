@@ -50,7 +50,7 @@ static big_sarray_ptr whole_image; /* Needed if funny input row order */
 static long current_row;	/* Current logical row number to read */
 
 /* Pointer to routine to extract next Targa pixel from input file */
-static VOID (*read_pixel) PROTO((compress_info_ptr cinfo));
+static VOID (*read_pixel) (compress_info_ptr cinfo);
 
 /* Result of read_pixel is delivered here: */
 static U_CHAR tga_pixel[4];
@@ -78,12 +78,7 @@ static const uint8 c5to8bits[32] = {
 
 
 LOCAL int
-#ifdef PROTOTYPE
 read_byte (compress_info_ptr cinfo)
-#else
-read_byte (cinfo)
-compress_info_ptr cinfo;
-#endif
 /* Read next byte from Targa file */
 {
   register FILE *infile = cinfo->input_file;
@@ -96,14 +91,7 @@ compress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 read_colormap (compress_info_ptr cinfo, int cmaplen, int mapentrysize)
-#else
-read_colormap (cinfo, cmaplen, mapentrysize)
-compress_info_ptr cinfo;
-int cmaplen;
-int mapentrysize;
-#endif
 /* Read the colormap from a Targa file */
 {
   int i;
@@ -125,12 +113,7 @@ int mapentrysize;
  */
 
 LOCAL VOID
-#ifdef PROTOTYPE
 read_non_rle_pixel (compress_info_ptr cinfo)
-#else
-read_non_rle_pixel (cinfo)
-compress_info_ptr cinfo;
-#endif
 /* Read one Targa pixel from the input file; no RLE expansion */
 {
   register FILE * infile = cinfo->input_file;
@@ -143,12 +126,7 @@ compress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 read_rle_pixel (compress_info_ptr cinfo)
-#else
-read_rle_pixel (cinfo)
-compress_info_ptr cinfo;
-#endif
 /* Read one Targa pixel from the input file, expanding RLE data as needed */
 {
   register FILE * infile = cinfo->input_file;
@@ -186,13 +164,7 @@ compress_info_ptr cinfo;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_8bit_gray_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-get_8bit_gray_row (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 /* This version is for reading 8-bit grayscale pixels */
 {
   register JSAMPROW ptr0;
@@ -206,13 +178,7 @@ JSAMPARRAY pixel_row;
 }
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_8bit_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-get_8bit_row (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 /* This version is for reading 8-bit colormap indexes */
 {
   register int t;
@@ -232,13 +198,7 @@ JSAMPARRAY pixel_row;
 }
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_16bit_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-get_16bit_row (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 /* This version is for reading 16-bit pixels */
 {
   register int t;
@@ -265,13 +225,7 @@ JSAMPARRAY pixel_row;
 }
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_24bit_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-get_24bit_row (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 /* This version is for reading 24-bit pixels */
 {
   register JSAMPROW ptr0, ptr1, ptr2;
@@ -305,13 +259,7 @@ JSAMPARRAY pixel_row;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_memory_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-get_memory_row (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 {
   JSAMPARRAY image_ptr;
   long source_row;
@@ -339,13 +287,7 @@ JSAMPARRAY pixel_row;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 preload_image (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-preload_image (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 {
   JSAMPARRAY image_ptr;
   long row;
@@ -372,12 +314,7 @@ JSAMPARRAY pixel_row;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 input_init (compress_info_ptr cinfo)
-#else
-input_init (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   U_CHAR targaheader[18];
   int idlen, cmaptype, subtype, flags, interlace_type, components;
@@ -508,12 +445,7 @@ compress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 input_term (compress_info_ptr cinfo)
-#else
-input_term (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   /* no work (we let free_all release the workspace) */
 }
@@ -528,12 +460,7 @@ compress_info_ptr cinfo;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jselrtarga (compress_info_ptr cinfo)
-#else
-jselrtarga (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   cinfo->methods->input_init = input_init;
   /* cinfo->methods->get_input_row is set by input_init */

@@ -32,14 +32,7 @@
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 c_progress_monitor (compress_info_ptr cinfo, long loopcounter, long looplimit)
-#else
-c_progress_monitor (cinfo, loopcounter, looplimit)
-compress_info_ptr cinfo;
-long loopcounter;
-long looplimit;
-#endif
 {
   /* do nothing */
 }
@@ -50,16 +43,8 @@ long looplimit;
  */
 
 LOCAL VOID
-#ifdef PROTOTYPE
 add_huff_table (compress_info_ptr cinfo,
         HUFF_TBL **htblptr, const uint8 *bits, const uint8 *val)
-#else
-add_huff_table (cinfo, htblptr, bits, val)
-compress_info_ptr cinfo;
-HUFF_TBL **htblptr;
-const uint8 *bits;
-const uint8 *val;
-#endif
 /* Define a Huffman table */
 {
   if (*htblptr == NULL)
@@ -79,12 +64,7 @@ const uint8 *val;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 std_huff_tables (compress_info_ptr cinfo)
-#else
-std_huff_tables (cinfo)
-compress_info_ptr cinfo;
-#endif
 /* Set up the standard Huffman tables (cf. JPEG standard section K.3) */
 /* IMPORTANT: these are only valid for 8-bit data precision! */
 {
@@ -164,18 +144,9 @@ compress_info_ptr cinfo;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 j_add_quant_table (compress_info_ptr cinfo, int which_tbl,
 		   const QUANT_VAL *basic_table, int scale_factor,
 		   bool force_baseline)
-#else
-j_add_quant_table (cinfo, which_tbl, basic_table, scale_factor, force_baseline)
-compress_info_ptr cinfo;
-int which_tbl;
-const QUANT_VAL *basic_table;
-int scale_factor;
-bool force_baseline;
-#endif
 /* Define a quantization table equal to the basic_table times
  * a scale factor (given as a percentage).
  * If force_baseline is TRUE, the computed quantization table entries
@@ -206,12 +177,7 @@ bool force_baseline;
 
 
 GLOBAL int
-#ifdef PROTOTYPE
 j_quality_scaling (int quality)
-#else
-j_quality_scaling (quality)
-int quality;
-#endif
 /* Convert a user-specified quality rating to a percentage scaling factor
  * for an underlying quantization table, using our recommended scaling curve.
  * The input 'quality' factor should be 0 (terrible) to 100 (very good).
@@ -237,14 +203,7 @@ int quality;
 
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 j_set_quality (compress_info_ptr cinfo, int quality, bool force_baseline)
-#else
-j_set_quality (cinfo, quality, force_baseline)
-compress_info_ptr cinfo;
-int quality;
-bool force_baseline;
-#endif
 /* Set or change the 'quality' (quantization) setting, using default tables.
  * This is the standard quality-adjusting entry point for typical user
  * interfaces; only those who want detailed control over quantization tables
@@ -317,14 +276,7 @@ bool force_baseline;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 j_c_defaults (compress_info_ptr cinfo, int quality, bool force_baseline)
-#else
-j_c_defaults (cinfo, quality, force_baseline)
-compress_info_ptr cinfo;
-int quality;
-bool force_baseline;
-#endif
 /* NB: the external methods must already be set up. */
 {
   short i;
@@ -423,12 +375,7 @@ bool force_baseline;
 
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 j_monochrome_default (compress_info_ptr cinfo)
-#else
-j_monochrome_default (cinfo)
-compress_info_ptr cinfo;
-#endif
 /* Change the j_c_defaults() values to emit a monochrome JPEG file. */
 {
   jpeg_component_info * compptr;

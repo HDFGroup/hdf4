@@ -59,12 +59,7 @@ static DIlist_ptr *Group_list = NULL;
  * Remarks: Allocates internal storeage if necessary
  *---------------------------------------------------------------------------*/
 PRIVATE int32
-#ifdef PROTOTYPE
 setgroupREC(DIlist_ptr list_rec)
-#else
-setgroupREC(list_rec)
-     DIlist_ptr list_rec;
-#endif
 {
     CONSTR(FUNC,"setgroupREC");
     int32 i;
@@ -104,13 +99,7 @@ setgroupREC(list_rec)
  * Remarks: assumes tag is a group
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int32 DFdiread(int32 file_id, uint16 tag, uint16 ref)
-#else
-int32 DFdiread(file_id, tag, ref)
-     int32 file_id;
-     uint16 tag, ref;           /* tag, ref of group */
-#endif
 {
     DIlist_ptr new_list;
     CONSTR(FUNC,"DFdiread");
@@ -162,14 +151,7 @@ int32 DFdiread(file_id, tag, ref)
  * Remarks: frees Dilist space when all DIs returned
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFdiget(int32 list, uint16 *ptag, uint16 *pref)
-#else
-intn DFdiget(list, ptag, pref)
-     int32  list;
-     uint16 *ptag;
-     uint16 *pref;
-#endif
 {
     CONSTR(FUNC,"DFdiget");
     uint8      *p;
@@ -208,12 +190,7 @@ intn DFdiget(list, ptag, pref)
  *          space, possibly just use a big block of static space
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int32 DFdisetup(int maxsize)
-#else
-int32 DFdisetup(maxsize)
-    int maxsize;
-#endif
 {
     CONSTR(FUNC,"DFdisetup");
     DIlist_ptr new_list;
@@ -245,13 +222,7 @@ int32 DFdisetup(maxsize)
  * Remarks: arg is tag/ref rather than DI for convenience
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFdiput(int32 list, uint16 tag, uint16 ref)
-#else
-intn DFdiput(list, tag, ref)
-     int32 list;
-     uint16 tag, ref;
-#endif
 {
     CONSTR(FUNC,"DFdiput");
     uint8 *p;
@@ -283,14 +254,7 @@ intn DFdiput(list, tag, ref)
  * Remarks: frees storage for Dilist
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFdiwrite(int32 file_id, int32 list, uint16 tag, uint16 ref)
-#else
-intn DFdiwrite(file_id, list, tag, ref)
-     int32 file_id;
-     int32 list;
-     uint16 tag, ref;
-#endif
 {
     CONSTR(FUNC,"DFdiwrite");
     int32 ret;                   /* return value */

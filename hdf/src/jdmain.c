@@ -88,12 +88,7 @@ static IMAGE_FORMATS requested_fmt;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 d_ui_method_selection (decompress_info_ptr cinfo)
-#else
-d_ui_method_selection (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   /* if grayscale or CMYK input, force similar output; */
   /* else leave the output colorspace as set by options. */
@@ -145,12 +140,7 @@ decompress_info_ptr cinfo;
 static external_methods_ptr emethods; /* for access to free_all */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 signal_catcher (int signum)
-#else
-signal_catcher (signum)
-int signum;
-#endif
 {
   if (emethods != NULL) {
     emethods->trace_level = 0;	/* turn off trace output */
@@ -170,14 +160,7 @@ int signum;
 #ifdef PROGRESS_REPORT
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 progress_monitor (decompress_info_ptr cinfo, long loopcounter, long looplimit)
-#else
-progress_monitor (cinfo, loopcounter, looplimit)
-decompress_info_ptr cinfo;
-long loopcounter;
-long looplimit;
-#endif
 {
   if (cinfo->total_passes > 1) {
     fprintf(stderr, "\rPass %d/%d: %3d%% ",
@@ -206,11 +189,7 @@ static char * progname;		/* program name for error messages */
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 usage (VOID)
-#else
-usage ()
-#endif
 /* complain about bad command line */
 {
   fprintf(stderr, "usage: %s [switches] ", progname);
@@ -251,14 +230,7 @@ usage ()
 
 
 LOCAL bool
-#ifdef PROTOTYPE
 keymatch (char * arg, const char * keyword, int minchars)
-#else
-keymatch (arg, keyword, minchars)
-char * arg;
-const char * keyword;
-int minchars;
-#endif
 /* Case-insensitive matching of (possibly abbreviated) keyword switches. */
 /* keyword is the constant keyword (must be lower case already), */
 /* minchars is length of minimum legal abbreviation. */
@@ -283,16 +255,8 @@ int minchars;
 
 
 LOCAL int
-#ifdef PROTOTYPE
 parse_switches (decompress_info_ptr cinfo, int last_file_arg_seen,
 		int argc, char **argv)
-#else
-parse_switches (cinfo, last_file_arg_seen, argc, argv)
-decompress_info_ptr cinfo;
-int last_file_arg_seen;
-int argc;
-char **argv;
-#endif
 /* Initialize cinfo with default switch settings, then parse option switches.
  * Returns argv[] index of first file-name argument (== argc if none).
  * Any file names with indexes <= last_file_arg_seen are ignored;
@@ -408,13 +372,7 @@ char **argv;
  */
 
 GLOBAL int
-#ifdef PROTOTYPE
 main (int argc, char **argv)
-#else
-main (argc, argv)
-int argc;
-char **argv;
-#endif
 {
   struct Decompress_info_struct cinfo;
   struct Decompress_methods_struct dc_methods;

@@ -74,12 +74,7 @@ static JSAMPLE * rescale;	/* => maxval-remapping array, or NULL */
 
 
 LOCAL int
-#ifdef PROTOTYPE
 pbm_getc (FILE * file)
-#else
-pbm_getc (file)
-FILE * file;
-#endif
 /* Read next char, skipping over any comments */
 /* A comment/newline sequence is returned as a newline */
 {
@@ -96,12 +91,7 @@ FILE * file;
 
 
 LOCAL unsigned int
-#ifdef PROTOTYPE
 read_pbm_integer (compress_info_ptr cinfo)
-#else
-read_pbm_integer (cinfo)
-compress_info_ptr cinfo;
-#endif
 /* Read an unsigned decimal integer from the PPM file */
 /* Swallows one trailing character after the integer */
 /* Note that on a 16-bit-int machine, only values up to 64k can be read. */
@@ -142,13 +132,7 @@ compress_info_ptr cinfo;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_text_gray_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-get_text_gray_row (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 /* This version is for reading text-format PGM files with any maxval */
 {
   register JSAMPROW ptr0;
@@ -166,13 +150,7 @@ JSAMPARRAY pixel_row;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_text_rgb_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-get_text_rgb_row (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 /* This version is for reading text-format PPM files with any maxval */
 {
   register JSAMPROW ptr0, ptr1, ptr2;
@@ -203,13 +181,7 @@ JSAMPARRAY pixel_row;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_scaled_gray_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-get_scaled_gray_row (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 /* This version is for reading raw-format PGM files with any maxval */
 {
   register FILE * infile = cinfo->input_file;
@@ -224,13 +196,7 @@ JSAMPARRAY pixel_row;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_scaled_rgb_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-get_scaled_rgb_row (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 /* This version is for reading raw-format PPM files with any maxval */
 {
   register FILE * infile = cinfo->input_file;
@@ -249,13 +215,7 @@ JSAMPARRAY pixel_row;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_raw_gray_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-get_raw_gray_row (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 /* This version is for reading raw-format PGM files with maxval = MAXJSAMPLE */
 {
   register FILE * infile = cinfo->input_file;
@@ -270,13 +230,7 @@ JSAMPARRAY pixel_row;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_raw_rgb_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-get_raw_rgb_row (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 /* This version is for reading raw-format PPM files with maxval = MAXJSAMPLE */
 {
   register FILE * infile = cinfo->input_file;
@@ -298,13 +252,7 @@ JSAMPARRAY pixel_row;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_scaled_gray_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-get_scaled_gray_row (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 /* This version is for reading raw-format PGM files with any maxval */
 {
   register JSAMPROW ptr0;
@@ -322,13 +270,7 @@ JSAMPARRAY pixel_row;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_scaled_rgb_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-get_scaled_rgb_row (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 /* This version is for reading raw-format PPM files with any maxval */
 {
   register JSAMPROW ptr0, ptr1, ptr2;
@@ -350,13 +292,7 @@ JSAMPARRAY pixel_row;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_raw_gray_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-get_raw_gray_row (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 /* This version is for reading raw-format PGM files with maxval = MAXJSAMPLE */
 {
   register JSAMPROW ptr0;
@@ -374,13 +310,7 @@ JSAMPARRAY pixel_row;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_raw_rgb_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-get_raw_rgb_row (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 /* This version is for reading raw-format PPM files with maxval = MAXJSAMPLE */
 {
   register JSAMPROW ptr0, ptr1, ptr2;
@@ -409,12 +339,7 @@ JSAMPARRAY pixel_row;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 input_init (compress_info_ptr cinfo)
-#else
-input_init (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   int c;
   unsigned int w, h, maxval;
@@ -509,12 +434,7 @@ compress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 input_term (compress_info_ptr cinfo)
-#else
-input_term (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   /* no work (we let free_all release the workspace) */
 }
@@ -529,12 +449,7 @@ compress_info_ptr cinfo;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jselrppm (compress_info_ptr cinfo)
-#else
-jselrppm (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   cinfo->methods->input_init = input_init;
   /* cinfo->methods->get_input_row is set by input_init */

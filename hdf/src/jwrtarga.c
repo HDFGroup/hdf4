@@ -49,13 +49,7 @@ static char * row_buffer;	/* holds 1 pixel row's worth of output */
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 write_header (decompress_info_ptr cinfo, int num_colors)
-#else
-write_header (cinfo, num_colors)
-decompress_info_ptr cinfo;
-int num_colors;
-#endif
 /* Create and write a Targa header */
 {
   char targaheader[18];
@@ -99,12 +93,7 @@ int num_colors;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 output_init (decompress_info_ptr cinfo)
-#else
-output_init (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   if (cinfo->out_color_space == CS_GRAYSCALE) {
     /* Targa doesn't have a mapped grayscale format, so we will */
@@ -137,15 +126,8 @@ decompress_info_ptr cinfo;
 #ifdef USE_PUTC_OUTPUT
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 put_pixel_rows (decompress_info_ptr cinfo, int num_rows,
 		JSAMPIMAGE pixel_data)
-#else
-put_pixel_rows (cinfo, num_rows,pixel_data)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE pixel_data;
-#endif
 /* used for unquantized full-color output */
 {
   register FILE * outfile = cinfo->output_file;
@@ -170,15 +152,8 @@ JSAMPIMAGE pixel_data;
 }
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 put_gray_rows (decompress_info_ptr cinfo, int num_rows,
 	       JSAMPIMAGE pixel_data)
-#else
-put_gray_rows (cinfo, num_rows, pixel_data)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE pixel_data;
-#endif
 /* used for grayscale OR quantized color output */
 {
   register FILE * outfile = cinfo->output_file;
@@ -199,15 +174,8 @@ JSAMPIMAGE pixel_data;
 #else /* use row buffering */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 put_pixel_rows (decompress_info_ptr cinfo, int num_rows,
 		JSAMPIMAGE pixel_data)
-#else
-put_pixel_rows (cinfo, num_rows, pixel_data)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE pixel_data;
-#endif
 /* used for unquantized full-color output */
 {
   FILE * outfile = cinfo->output_file;
@@ -232,15 +200,8 @@ JSAMPIMAGE pixel_data;
 }
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 put_gray_rows (decompress_info_ptr cinfo, int num_rows,
 	       JSAMPIMAGE pixel_data)
-#else
-put_gray_rows (cinfo, num_rows, pixel_data)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE pixel_data;
-#endif
 /* used for grayscale OR quantized color output */
 {
   FILE * outfile = cinfo->output_file;
@@ -271,15 +232,8 @@ JSAMPIMAGE pixel_data;
 #ifdef USE_PUTC_OUTPUT
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 put_demapped_gray (decompress_info_ptr cinfo, int num_rows,
 		   JSAMPIMAGE pixel_data)
-#else
-put_demapped_gray (cinfo, num_rows, pixel_data)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE pixel_data;
-#endif
 {
   register FILE * outfile = cinfo->output_file;
   register JSAMPROW ptr;
@@ -301,15 +255,8 @@ JSAMPIMAGE pixel_data;
 #else /* use row buffering */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 put_demapped_gray (decompress_info_ptr cinfo, int num_rows,
 		   JSAMPIMAGE pixel_data)
-#else
-put_demapped_gray (cinfo, num_rows, pixel_data)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE pixel_data;
-#endif
 {
   FILE * outfile = cinfo->output_file;
   register JSAMPROW ptr;
@@ -339,14 +286,7 @@ JSAMPIMAGE pixel_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 put_color_map (decompress_info_ptr cinfo, int num_colors, JSAMPARRAY colormap)
-#else
-put_color_map (cinfo, num_colors, colormap)
-decompress_info_ptr cinfo;
-int num_colors;
-JSAMPARRAY colormap;
-#endif
 {
   register FILE * outfile = cinfo->output_file;
   int i;
@@ -374,12 +314,7 @@ JSAMPARRAY colormap;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 output_term (decompress_info_ptr cinfo)
-#else
-output_term (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   /* No work except to make sure we wrote the output file OK */
   fflush(cinfo->output_file);
@@ -394,12 +329,7 @@ decompress_info_ptr cinfo;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jselwtarga (decompress_info_ptr cinfo)
-#else
-jselwtarga (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   cinfo->methods->output_init = output_init;
   cinfo->methods->put_color_map = put_color_map;

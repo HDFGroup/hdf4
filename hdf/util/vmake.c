@@ -41,49 +41,39 @@ static char *RcsId[] = "@(#)$Revision$";
  * Prototypes of local functions
  */
 int32 vsetlink
-  PROTO((char *hfile, int32 vgid, int32 ids[], int32 n));
+  (char *hfile, int32 vgid, int32 ids[], int32 n);
 
 int32 vgadd
-  PROTO((char *hfile, char *vgname));
+  (char *hfile, char *vgname);
 
 int32 inpdata 
-  PROTO((unsigned char**bp));
+  (unsigned char**bp);
 
 void vsadd
-  PROTO((char *hfile, char *vsname, char *format));
+  (char *hfile, char *vsname, char *format);
 
 int32 scanit
-  PROTO((char *string, char ***fields, int32 **type, int32 **order));
+  (char *string, char ***fields, int32 **type, int32 **order);
 
 int32 savfld
-  PROTO((char *ss, int p1, int p2));
+  (char *ss, int p1, int p2);
 
 int32 compact
-  PROTO((char *ss, char *dd));
+  (char *ss, char *dd);
 
 int32 savtype
-  PROTO((char *ss, int p1, int p2));
+  (char *ss, int p1, int p2);
 
 int32 separate
-  PROTO((char *ss, char *fmt, int32 *num));
+  (char *ss, char *fmt, int32 *num);
 
 int show_help_msg
-#ifdef CONVEX
-    PROTO(());
-#else
-    PROTO((VOID));
-#endif
+    (void);
 
 /*
  *  Main entry point
  */
-#ifdef PROTOTYPE
 int main(int ac,char **av)
-#else
-int main(ac,av)
-int ac;
-char**av;
-#endif
 {
 
   char  *hfile, *vgname, *vsname, *fmt;
@@ -133,11 +123,7 @@ void showfmttypes() {
 	fprintf(stderr,"\t  f - float   (float32 in HDF file) \n");
 	}
 
-#if defined ( PROTOTYPE ) && ! defined ( CONVEX )
-int show_help_msg(VOID)
-#else
-int show_help_msg()
-#endif
+int show_help_msg(void)
 {
 
   printf("\nvmake: creates vsets.\n");
@@ -168,13 +154,7 @@ int show_help_msg()
 
 /* ------------------------------------------------------- */
 
-#ifdef PROTOTYPE
 int32 vsetlink(char *hfile, int32 vgid, int32 ids[], int32 n)
-#else
-int32 vsetlink(hfile,vgid,ids,n)
-char * hfile;
-int32 vgid, n, ids[];
-#endif
 {
   HFILEID f;
   int32 vgmain, vg;
@@ -229,13 +209,7 @@ int32 vgid, n, ids[];
 add a (new) vgroup to the file 
 */
 
-#ifdef PROTOTYPE
 int32 vgadd (char *hfile, char *vgname) 
-#else
-int32 vgadd (hfile,vgname) 
-char * hfile;
-char * vgname;
-#endif
 {
   HFILEID f;
   int32 ref; 
@@ -264,14 +238,7 @@ char * vgname;
  Data will be ascii and will come in from stdin
  according to the format (c-style).
 */
-#ifdef PROTOTYPE
 void vsadd (char *hfile, char *vsname, char *format)
-#else
-void vsadd (hfile,vsname,format)
-char * hfile;
-char * vsname;
-char * format;
-#endif
 {
   int32 ret, i,n, nwritten;
   unsigned char *buf;
@@ -352,12 +319,7 @@ static int  ntotal = 0;
 
 
 /* scanf functions */
-#ifdef PROTOTYPE
 static int32 inplong  (int32 *x)
-#else
-static int32 inplong  (x)
-int32  *x;
-#endif
 {
 int32 val, ret;
 
@@ -366,12 +328,7 @@ int32 val, ret;
     return(ret);
 }
 
-#ifdef PROTOTYPE
 static int32 inpshort  (int16 *x)
-#else
-static int32 inpshort  (x)
-short  *x;
-#endif
 {
 int ret, val;
 
@@ -380,12 +337,7 @@ int ret, val;
     return(ret);
 }
 
-#ifdef PROTOTYPE
 static int32 inpbyte  (int8 *x)
-#else
-static int32 inpbyte  (x)
-int8  *x;
-#endif
 {
 int ret;
 int val;
@@ -395,12 +347,7 @@ int val;
     return(ret);
 }
 
-#ifdef PROTOTYPE
 static int32 inpfloat(float32 *x)
-#else
-static int32 inpfloat(x)
-float32 *x;
-#endif
 {
 int ret;
 float val;
@@ -410,12 +357,7 @@ float val;
     return(ret);
 }
 
-#ifdef PROTOTYPE
 static int32 inpchar (char *x)
-#else
-static int32 inpchar (x)
-char *x;
-#endif
 {
     return(scanf ("%c ",x));
 }
@@ -424,12 +366,7 @@ char *x;
 #define BUFSIZE 40000
 unsigned char inpbuffer[BUFSIZE];
 
-#ifdef PROTOTYPE
 int32 inpdata (unsigned char **bp)
-#else
-int32 inpdata (bp)
-     unsigned char**bp; 
-#endif
 { 
   int32 totalsize, nread, t,i,j,k;
   unsigned char *b;
@@ -486,15 +423,7 @@ int32 inpdata (bp)
 } /* inpdata */
 
 
-#ifdef PROTOTYPE
 int32 scanit (char *string,char ***fields,int32 **type,int32 **order)
-#else
-int32 scanit (string,fields,type,order)
- char *   string;
- char *** fields;
- int32  **  type;
- int32  **  order;
-#endif
 {
   int32 ns,i;
   int32 p1,p2;
@@ -530,12 +459,7 @@ int32 scanit (string,fields,type,order)
 
 } /* scanit */
 
-#ifdef PROTOTYPE
 int32 compact (char *ss, char *dd) 
-#else
-int32 compact (ss,dd) 
-     char *ss, *dd; 
-#endif
 {
   int i,t,n = HDstrlen(ss);
   for(t=0,i=0;i<n;i++)
@@ -547,13 +471,7 @@ int32 compact (ss,dd)
 }
 
 /* ------------------------------------------------------------------ */
-#ifdef PROTOTYPE
 int32 savfld(char *ss, int p1, int p2)
-#else
-int32 savfld(ss,p1,p2) 
-     char *ss; 
-     int p1,p2; 
-#endif
 {
   int32 t=p2-p1+1;
 
@@ -562,13 +480,7 @@ int32 savfld(ss,p1,p2)
   return (1);
 } /* savfld */
 
-#ifdef PROTOTYPE
 int32 savtype (char *ss, int p1, int p2) 
-#else
-int32 savtype (ss,p1,p2) 
-     char *ss; 
-     int p1,p2; 
-#endif
 {
   char temp[20];
   int32 t=p2-p1+1;
@@ -580,14 +492,7 @@ int32 savtype (ss,p1,p2)
 
   }
 
-#ifdef PROTOTYPE
 int32 separate(char *ss, char *fmt, int32 *num) 
-#else
-int32 separate(ss,fmt,num) 
-char *ss; 
-char *fmt; 
-int32 *num; 
-#endif
 {
   int32 i,n;
   i=0;

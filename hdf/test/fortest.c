@@ -38,10 +38,7 @@ struct TestStruct {
   char Call[20];
 } Test[NUMOFTESTS] ;
 
-void InitTest (TheName, TheCall, TheDescr)
-const char* TheName;
-const char* TheCall;
-const char* TheDescr;
+void InitTest (const char *TheName,const char * TheCall,const char * TheDescr)
 {
   static int Index=0;
   HDstrcpy(Test[Index].Description,TheDescr);
@@ -52,8 +49,7 @@ const char* TheDescr;
   Index++;
 }
 
-void CallFortranTest(TheCall) 
-char* TheCall;
+void CallFortranTest(char *TheCall) 
 {
 #ifdef VMS
   static  char TheProc[25];
@@ -66,9 +62,7 @@ char* TheCall;
 #endif
 }
 
-int main (argc, argv) 
-     int argc;
-     char* argv[];
+int main (int argc, char *argv[]) 
 {
   int CLLoop; /* Command Line Loop */
   int Loop, Loop1;

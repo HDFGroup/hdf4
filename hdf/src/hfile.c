@@ -125,38 +125,38 @@ functab_t functab[] = {
 */
 #ifdef DELETE_FOR_40_RELEASE_IF_NOT_USED
 PRIVATE intn HIlock
-  PROTO((int32 file_id));
+  (int32 file_id);
 #endif
 
 PRIVATE intn HIunlock
-  PROTO((int32 file_id));
+  (int32 file_id);
 
 #ifdef DELETE_FOR_40_RELEASE_IF_NOT_USED
 PRIVATE intn HIchangedd
-  PROTO((dd_t *datadd, ddblock_t *block, intn idx, int16 special,
-	 VOIDP special_info, funclist_t *special_func));
+  (dd_t *datadd, ddblock_t *block, intn idx, int16 special,
+	 VOIDP special_info, funclist_t *special_func);
 #endif
 
 PRIVATE intn HIget_file_slot
-  PROTO((const char *path, char *FUNC));
+  (const char *path, char *FUNC);
 
 PRIVATE bool HIvalid_magic
-  PROTO((hdf_file_t file, char *FUNC));
+  (hdf_file_t file, char *FUNC);
 
 PRIVATE intn HIfill_file_rec
-  PROTO((filerec_t *file_rec, char *FUNC));
+  (filerec_t *file_rec, char *FUNC);
 
 PRIVATE intn HIinit_file_dds
-  PROTO((filerec_t *file_rec, int16 ndds, char *FUNC));
+  (filerec_t *file_rec, int16 ndds, char *FUNC);
 
 PRIVATE funclist_t *HIget_function_table 
-  PROTO((accrec_t *access_rec, char *FUNC));
+  (accrec_t *access_rec, char *FUNC);
 
 PRIVATE intn HIupdate_version
-  PROTO((int32));
+  (int32);
 
 PRIVATE intn HIread_version
-  PROTO((int32));
+  (int32);
 
 /* #define TESTING */
 
@@ -198,15 +198,7 @@ PRIVATE intn HIread_version
        * the file headers and initial information are set up properly.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 Hopen(const char *path, intn acc_mode, int16 ndds)
-#else
-int32 Hopen(path, acc_mode, ndds)
-    const char *path;                        /* Path of file to open */
-    intn acc_mode;                       /* Access mode */
-    int16 ndds;                        /* Number of dd's in each ddblock
-                                            if file is created */
-#endif
 {
     CONSTR(FUNC,"Hopen");       /* For HERROR */
     int slot;               /* File record slot */
@@ -356,12 +348,7 @@ int32 Hopen(path, acc_mode, ndds)
        returned and the file is not closed.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn Hclose(int32 file_id)
-#else
-intn Hclose(file_id)
-    int32 file_id;             /* id of closing file */
-#endif
 {
     register intn i;
     CONSTR(FUNC,"Hclose");       /* for HERROR */
@@ -451,14 +438,7 @@ intn Hclose(file_id)
        An access element is created and attached to the file.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 Hstartread(int32 file_id, uint16 tag, uint16 ref)
-#else
-int32 Hstartread(file_id, tag, ref)
-    int32 file_id;             /* file id to read from */
-    uint16 tag;                        /* tag of elt to read */
-    uint16 ref;                        /* ref of elt to read */
-#endif
 {
     CONSTR(FUNC,"Hstartread");   /* for HERROR */
     int slot;                  /* slot in access record array */
@@ -538,15 +518,7 @@ int32 Hstartread(file_id, tag, ref)
     DF_END _not_ supported yet!
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
-#else
-intn Hnextread(access_id, tag, ref, origin)
-    int32 access_id;            /* id of the read access record to modify */
-    uint16 tag;                 /* the tag to look for */
-    uint16 ref;                 /* the ref to look for */
-    intn origin;                /* where to start searching from */
-#endif
 {
     CONSTR(FUNC,"Hnextread");    /* for HERROR */
     filerec_t *file_rec;       /* file record */
@@ -650,19 +622,9 @@ intn Hnextread(access_id, tag, ref, origin)
        and from the and of the file if the direction is DF_BACKWARD.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn Hfind(int32 file_id, uint16 search_tag, uint16 search_ref,
     uint16 *find_tag,uint16 *find_ref,int32 *find_offset,int32 *find_length,
     intn direction)
-#else
-intn Hfind(file_id, search_tag, search_ref, find_tag, find_ref, find_offset,
-    find_length, direction)
-int32 file_id;
-uint16 search_tag, search_ref;
-uint16 *find_tag,*find_ref;
-int32 *find_offset,*find_length;
-intn direction;
-#endif
 {
     CONSTR(FUNC,"Hfind");         /* for HERROR */
     filerec_t *file_rec;        /* file record */
@@ -733,14 +695,7 @@ intn direction;
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn Hexist(int32 file_id, uint16 search_tag, uint16 search_ref)
-#else
-intn Hexist(file_id, search_tag, search_ref)
-     int32 file_id;
-     uint16 search_tag;
-     uint16 search_ref;
-#endif
 {
     CONSTR(FUNC,"Hexist");        /* for HERROR */
     uint16 find_tag=0,find_ref=0;
@@ -777,23 +732,9 @@ intn Hexist(file_id, search_tag, search_ref)
        value.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn Hinquire(int32 access_id, int32 *pfile_id, uint16 *ptag, uint16 *pref,
               int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
               int16 *pspecial)
-#else
-intn Hinquire(access_id, pfile_id, ptag, pref, plength, poffset, pposn,
-              paccess, pspecial)
-    int32 access_id;           /* access id */
-    int32 *pfile_id;           /* file id */
-    uint16 *ptag;              /* elt tag */
-    uint16 *pref;              /* elt ref */
-    int32 *plength;            /* length of element */
-    int32 *poffset;            /* offset of elt in the file */
-    int32 *pposn;              /* position in the data elt we are accessing */
-    int16 *paccess;              /* access mode */
-    int16 *pspecial;             /* special code */
-#endif
 {
     CONSTR(FUNC,"Hinquire");     /* for HERROR */
     register accrec_t *access_rec;      /* access record */
@@ -853,15 +794,7 @@ intn Hinquire(access_id, pfile_id, ptag, pref, plength, poffset, pposn,
                 If it does not exist, it is created.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 Hstartwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
-#else
-int32 Hstartwrite(file_id, tag, ref, length)
-    int32 file_id;             /* file id */
-    uint16 tag;                        /* tag of elt to write */
-    uint16 ref;                        /* ref of elt to write */
-    int32 length;              /* length of elt to write */
-#endif
 {
     CONSTR(FUNC,"Hstartwrite");  /* for HERROR */
     int slot;                  /* free access records array slot */
@@ -1068,12 +1001,7 @@ int32 Hstartwrite(file_id, tag, ref, length)
        of linked blocks.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn Happendable(int32 aid)
-#else
-intn Happendable(aid)
-    int32 aid;              /* Access ID (from Hstartwrite, etc.) */
-#endif
 {
     CONSTR(FUNC,"Happendable");   /* for HERROR */
     int32 file_id;              /* file id the AID is attached to */
@@ -1136,14 +1064,7 @@ intn Happendable(aid)
        element and if the seeked position is outside of the data element.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn Hseek(int32 access_id, int32 offset, intn origin)
-#else
-intn Hseek(access_id, offset, origin)
-    int32 access_id;        /* access id */
-    int32 offset;           /* offset in this element to seek to */
-    intn origin;            /* origin in this elt to seek from */
-#endif
 {
     CONSTR(FUNC,"Hseek");                /* for HERROR */
     accrec_t *access_rec;      /* access record */
@@ -1224,14 +1145,7 @@ intn Hseek(access_id, offset, origin)
        of the object, read until the end of the object.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 Hread(int32 access_id, int32 length, VOIDP data)
-#else
-int32 Hread(access_id, length, data)
-    int32 access_id;           /* access id */
-    int32 length;              /* length of data to read */
-    VOIDP data;               /* data buffer to read into */
-#endif
 {
     CONSTR(FUNC,"Hread");                /* for HERROR */
     filerec_t *file_rec;       /* file record */
@@ -1299,14 +1213,7 @@ int32 Hread(access_id, length, data)
        Calling with length == 0 is an error.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 Hwrite(int32 access_id, int32 length, const VOIDP data)
-#else
-int32 Hwrite(access_id, length, data)
-    int32 access_id;           /* access id */
-    int32 length;              /* length of data to write */
-    const VOIDP data;          /* data buffer */
-#endif
 {
     CONSTR(FUNC,"Hwrite");       /* for HERROR */
     filerec_t *file_rec;       /* file record */
@@ -1406,12 +1313,7 @@ printf("Hwrite(): successful I/O\n");
         Calls Hread() to read a single byte and reports errors.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn HDgetc(int32 access_id)
-#else
-intn HDgetc(access_id)
-    int32 access_id;           /* access id */
-#endif
 {
     CONSTR(FUNC,"HDgetc");     /* for HERROR */
     uint8 c;                /* character read in */
@@ -1440,13 +1342,7 @@ intn HDgetc(access_id)
         Calls Hwrite() to write a single byte and reports errors.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn HDputc(uint8 c,int32 access_id)
-#else
-intn HDputc(c,access_id)
-    uint8 c;                /* byte to write out */
-    int32 access_id;        /* access id */
-#endif
 {
     CONSTR(FUNC,"HDputc");    /* for HERROR */
 
@@ -1474,12 +1370,7 @@ intn HDputc(c,access_id)
        is a very common problem when developing new code.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn Hendaccess(int32 access_id)
-#else
-intn Hendaccess(access_id)
-    int32 access_id;           /* access id */
-#endif
 {
     CONSTR(FUNC,"Hendaccess");   /* for HERROR */
     filerec_t *file_rec;       /* file record */
@@ -1532,15 +1423,7 @@ intn Hendaccess(access_id)
        be large enough.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 Hgetelement(int32 file_id, uint16 tag, uint16 ref, uint8 *data)
-#else
-int32 Hgetelement(file_id, tag, ref, data)
-    int32 file_id;          /* id of file to read from */
-    uint16 tag;             /* tag of elt to read */
-    uint16 ref;             /* ref of elt to read */
-    uint8 *data;            /* data buffer to read into */
-#endif
 {
     CONSTR(FUNC,"Hgetelement");  /* for HERROR */
     int32 access_id;           /* access record id */
@@ -1583,17 +1466,8 @@ int32 Hgetelement(file_id, tag, ref, data)
        in an HDF file.  Uses Hwrite and its associated routines.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 Hputelement(int32 file_id, uint16 tag, uint16 ref, uint8 *data,
                int32 length)
-#else
-int32 Hputelement(file_id, tag, ref, data, length)
-    int32 file_id;             /* file id to write to */
-    uint16 tag;                /* tag of elt to write */
-    uint16 ref;                /* ref of elt to write */
-    uint8 *data;               /* data buffer to write */
-    int32 length;              /* length of data to write */
-#endif
 {
     CONSTR(FUNC,"Hputelement");  /* for HERROR */
     int32 access_id;           /* access record id */
@@ -1635,14 +1509,7 @@ int32 Hputelement(file_id, tag, ref, data, length)
        cleaner this way.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 Hlength(int32 file_id, uint16 tag, uint16 ref)
-#else
-int32 Hlength(file_id, tag, ref)
-    int32 file_id;             /* file id of elt to inquire */
-    uint16 tag;                        /* tag of id to inquire */
-    uint16 ref;                        /* ref of id to inquire */
-#endif
 {
     CONSTR(FUNC,"Hlength");      /* for HERROR */
     int32 access_id;           /* access record id */
@@ -1690,14 +1557,7 @@ int32 Hlength(file_id, tag, ref)
        this way
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 Hoffset(int32 file_id, uint16 tag, uint16 ref)
-#else
-int32 Hoffset(file_id, tag, ref)
-    int32 file_id;             /* file id of elt to inquire */
-    uint16 tag;                        /* tag of elt to inquire */
-    uint16 ref;                        /* ref of elt to inquire */
-#endif
 {
     CONSTR(FUNC,"Hoffset");      /* for HERROR */
     int32 access_id;           /* access record id */
@@ -1740,17 +1600,8 @@ int32 Hoffset(file_id, tag, ref)
        the given tag/ref are already in use.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn Hdupdd(int32 file_id, uint16 tag, uint16 ref,
           uint16 old_tag, uint16 old_ref)
-#else
-intn Hdupdd(file_id, tag, ref, old_tag, old_ref)
-    int32 file_id;             /* file id of dd's to duplicate */
-    uint16 tag;                        /* tag of new duplicate dd */
-    uint16 ref;                        /* ref of new duplicate dd */
-    uint16 old_tag;            /* tag of old dd to duplicate */
-    uint16 old_ref;            /* ref of old dd to duplicate */
-#endif
 {
     CONSTR(FUNC,"Hdupdd");       /* for HERROR */
     filerec_t *file_rec;       /* file record */
@@ -1827,15 +1678,7 @@ intn Hdupdd(file_id, tag, ref, old_tag, old_ref)
 
 --------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int HIupdate_dd(filerec_t *file_rec, ddblock_t *block, int32 idx, char *FUNC)
-#else
-int HIupdate_dd(file_rec, block, idx, FUNC)
-    filerec_t *file_rec;       /* file record */
-    ddblock_t *block;          /* dd block of updated dd */
-    int32 idx;                 /* dd list index of updated dd */
-    char *FUNC;                /* for HERROR */
-#endif
 {
     int32 offset;              /* offset of updated dd in file */
     uint8 *p;                  /* temp buffer ptr */
@@ -1889,14 +1732,7 @@ int HIupdate_dd(file_rec, block, idx, FUNC)
        will *NOT* get updated to reflect that this element has been deleted.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn Hdeldd(int32 file_id, uint16 tag, uint16 ref)
-#else
-intn Hdeldd(file_id, tag, ref)
-    int32 file_id;             /* file record id */
-    uint16 tag;                        /* tag of dd to delete */
-    uint16 ref;                        /* ref of dd to delete */
-#endif
 {
     CONSTR(FUNC,"Hdeldd");       /* for HERROR */
     filerec_t *file_rec;       /* file record */
@@ -1950,12 +1786,7 @@ intn Hdeldd(file_id, tag, ref)
        returned, then Hnewref will return unused ref's starting from 1.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 uint16 Hnewref(int32 file_id)
-#else
-uint16 Hnewref(file_id)
-    int32 file_id;             /* file record id */
-#endif
 {
     CONSTR(FUNC,"Hnewref");      /* for HERROR */
     filerec_t *file_rec;       /* file record */
@@ -2008,12 +1839,7 @@ uint16 Hnewref(file_id)
 --------------------------------------------------------------------------*/
 
 intn
-#ifdef PROTOTYPE
 Hishdf(const char *filename)
-#else
-Hishdf(filename)
-    const char *filename;
-#endif /* PROTOTYPE */
 {
     CONSTR(FUNC,"Hishdf");
 
@@ -2060,13 +1886,7 @@ Hishdf(filename)
        FAIL (-1) if it is not in the file or an error occurs.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 Htrunc(int32 aid, int32 trunc_len)
-#else
-int32 Htrunc(aid, trunc_len)
-    int32 aid;             /* access id of elt to truncate */
-    int32 trunc_len;       /* length to truncate element to */
-#endif
 {
     CONSTR(FUNC,"Htrunc");       /* for HERROR */
     accrec_t *access_rec;      /* access record */
@@ -2115,12 +1935,7 @@ int32 Htrunc(aid, trunc_len)
 
 --------------------------------------------------------------------------*/
 /* ARGSUSED */
-#ifdef PROTOTYPE
 intn Hsync(int32 file_id)
-#else
-intn Hsync(file_id)
-    int32 file_id;
-#endif
 {
 #ifdef QAK
     accrec_t *access_rec;      /* access record */
@@ -2163,12 +1978,7 @@ intn Hsync(file_id)
        Determine whether a given int32 is a valid HDF file ID or not
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 bool HDvalidfid(int32 file_id)
-#else
-bool HDvalidfid(file_id)
-    int32 file_id;
-#endif
 {
     filerec_t *file_rec = FID2REC(file_id);
     if (!file_rec || file_rec->refcount == 0)
@@ -2183,12 +1993,7 @@ bool HDvalidfid(file_id)
 
  Closes a file and return FAIL.  Replacement for DFIerr in HDF3.1 and before
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int HDerr(int32 file_id)
-#else
-int HDerr(file_id)
-    int32 file_id;
-#endif
 {
     Hclose(file_id);
     return FAIL;
@@ -2222,18 +2027,8 @@ int HDerr(file_id)
        for the given object.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int HIchangedd(dd_t *datadd, ddblock_t *block, int idx, int16 special,
               VOIDP special_info, funclist_t *special_func)
-#else
-PRIVATE int HIchangedd(datadd, block, idx, special, special_info, special_func)
-    dd_t *datadd;               /* dd that had been converted to special */
-    ddblock_t *block;           /* new dd block of converted dd */
-    int idx;                    /* next dd list index of converted dd */
-    int16 special;              /* special code of converted dd */
-    VOIDP special_info;         /* special info of converted dd */
-    funclist_t *special_func;   /* special function table of converted dd */
-#endif
 {
     int i;                     /* temp index */
     int attached = 0;          /* number of accesses attached to this dd */
@@ -2278,14 +2073,7 @@ PRIVATE int HIchangedd(datadd, block, idx, special, special_info, special_func)
        for the first DDblock in a newly created file
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int HIinit_file_dds(filerec_t *file_rec, int16 ndds, char *FUNC)
-#else
-PRIVATE int HIinit_file_dds(file_rec, ndds, FUNC)
-    filerec_t *file_rec;       /* file record */
-    int16 ndds;        /* number of dd's to put in this block */
-    char *FUNC;                        /* for HERROR */
-#endif
 {
     ddblock_t *block;          /* dd block to intialize */
     uint8 *p;                  /* temp buffer ptr */
@@ -2382,13 +2170,7 @@ PRIVATE int HIinit_file_dds(file_rec, ndds, FUNC)
        Set up the table of special functions for a given special element
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE funclist_t *HIget_function_table(accrec_t *access_rec, char *FUNC)
-#else
-PRIVATE funclist_t *HIget_function_table(access_rec, FUNC)
-    accrec_t *access_rec;      /* access record */
-    char *FUNC;                        /* for HERROR */
-#endif
 {
     dd_t *dd;                  /* ptr to current dd */
     filerec_t *file_rec;       /* file record */
@@ -2450,14 +2232,7 @@ PRIVATE funclist_t *HIget_function_table(access_rec, FUNC)
        Reads from the global access_records
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 VOIDP HIgetspinfo(accrec_t *access_rec, uint16 tag, uint16 ref)
-#else
-VOIDP HIgetspinfo(access_rec, tag, ref)
-    accrec_t *access_rec;      /* file record id */
-    uint16 tag;                /* tag of special elt */
-    uint16 ref;                /* ref of special elt */
-#endif
 {
     register int i;            /* temp index */
 
@@ -2484,12 +2259,7 @@ VOIDP HIgetspinfo(access_rec, tag, ref)
  lock a file record.  This is used by special functions to prevent
  losing files that are still accessed
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int HIlock(int32 file_id)
-#else
-PRIVATE int HIlock(file_id)
-    int32 file_id;             /* file record id to lock */
-#endif
 {
     CONSTR(FUNC,"HIlock");       /* for HERROR */
 
@@ -2510,12 +2280,7 @@ PRIVATE int HIlock(file_id)
 
  unlock a previously locked file record
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int HIunlock(int32 file_id)
-#else
-PRIVATE int HIunlock(file_id)
-    int32 file_id;             /* file record to unlock */
-#endif
 {
     CONSTR(FUNC,"HIunlock");     /* for HERROR */
 
@@ -2548,13 +2313,7 @@ PRIVATE int HIunlock(file_id)
        Note, a return value of zero is not a fail condition.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 Hnumber(int32 file_id, uint16 tag)
-#else
-int32 Hnumber(file_id, tag)
-    int32 file_id;
-    uint16 tag;
-#endif
 {
     CONSTR(FUNC,"Hnumber");
     int32 n = 0;
@@ -2617,12 +2376,7 @@ PRIVATE special_table_t special_table[] = {
 
 /*--------------------------------------------------------------------------
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 uint16 HDmake_special_tag(uint16 tag)
-#else
-uint16 HDmake_special_tag(tag)
-    uint16 tag;                        /* tag to convert */
-#endif
 {
     register int i;
 
@@ -2638,12 +2392,7 @@ uint16 HDmake_special_tag(tag)
 
 /*--------------------------------------------------------------------------
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 bool HDis_special_tag(uint16 tag)
-#else
-bool HDis_special_tag(tag)
-    uint16 tag;                        /* tag to check */
-#endif
 {
     register int i;
 
@@ -2659,12 +2408,7 @@ bool HDis_special_tag(tag)
 
 /*--------------------------------------------------------------------------
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 uint16 HDbase_tag(uint16 tag)
-#else
-uint16 HDbase_tag(tag)
-    uint16 tag;                        /* tag to convert */
-#endif
 {
     register int i;
 
@@ -2698,13 +2442,7 @@ uint16 HDbase_tag(tag)
         it is not necessary to have any files open to get this information.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn Hgetlibversion(uint32 *majorv, uint32 *minorv, uint32 *releasev, char string[])
-#else
-intn Hgetlibversion(majorv, minorv, releasev, string)
-uint32 *majorv, *minorv, *releasev;
-char string[];
-#endif
 {
     CONSTR(FUNC,"Hgetlibversion");
 
@@ -2739,15 +2477,8 @@ char string[];
 	Reads file_records[]
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn Hgetfileversion(int32 file_id, uint32 *majorv, uint32 *minorv,
 		    uint32 *release, char string[])
-#else
-intn Hgetfileversion(file_id, majorv, minorv, release, string)
-int32 file_id;
-uint32 *majorv, *minorv, *release;
-char string[];
-#endif
 {
     filerec_t *file_rec;
     CONSTR(FUNC,"Hgetfileversion");
@@ -2791,23 +2522,9 @@ char string[];
 
 --------------------------------------------------------------------------*/
 #ifdef WIN3
-#ifdef PROTOTYPE
 int32 HDfreadbig(VOIDP buffer,int32 size,HFILE fp)
-#else
-int32 HDfreadbig(buffer,size,fp)
-VOIDP buffer;
-int32 size;
-HFILE fp;
-#endif
 #else /* !WIN3 */
-#ifdef PROTOTYPE
 int32 HDfreadbig(VOIDP buffer,int32 size,FILE *fp)
-#else
-int32 HDfreadbig(buffer,size,fp)
-VOIDP buffer;
-int32 size;
-FILE *fp;
-#endif
 #endif /* WIN3 */
 {
     uint8 *b;           /* alias for the buffer */
@@ -2859,23 +2576,9 @@ FILE *fp;
 
 --------------------------------------------------------------------------*/
 #ifdef WIN3
-#ifdef PROTOTYPE
 int32 HDfwritebig(VOIDP buffer,int32 size,HFILE fp)
-#else
-int32 HDfwritebig(buffer,size,fp)
-VOIDP buffer;
-int32 size;
-HFILE fp;
-#endif
 #else /* !WIN3 */
-#ifdef PROTOTYPE
 int32 HDfwritebig(VOIDP buffer,int32 size,FILE *fp)
-#else
-int32 HDfwritebig(buffer,size,fp)
-VOIDP buffer;
-int32 size;
-FILE *fp;
-#endif
 #endif /* WIN3 */
 {
     uint8 *b;              /* alias for the buffer */
@@ -2931,13 +2634,7 @@ FILE *fp;
        Error occurred is charged to the calling function.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int HIget_file_slot(const char *path, char *FUNC)
-#else
-PRIVATE int HIget_file_slot(path, FUNC)
-    const char *path;                /* file path */
-    char *FUNC;                /* Error is charged to calling function */
-#endif
 {
     int i;
     int slot;
@@ -3026,13 +2723,7 @@ PRIVATE int HIget_file_slot(path, FUNC)
        file are the HDF "magic number" HDFMAGIC
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE bool HIvalid_magic(hdf_file_t file, char *FUNC)
-#else
-PRIVATE bool HIvalid_magic(file, FUNC)
-    hdf_file_t file;               /* File handle. */
-    char *FUNC;                        /* Charge error to calling function. */
-#endif
 {
     char b[MAGICLEN];          /* Temporary buffer */
 
@@ -3065,11 +2756,7 @@ PRIVATE bool HIvalid_magic(file, FUNC)
         access records
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int HIget_access_slot(void)
-#else
-int HIget_access_slot()
-#endif
 {
     int i;                     /* temp index */
 
@@ -3118,14 +2805,7 @@ int HIget_access_slot()
         one.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int HInew_dd_block(filerec_t *file_rec, int16 ndds, char *FUNC)
-#else
-int HInew_dd_block(file_rec, ndds, FUNC)
-    filerec_t *file_rec;       /* file record */
-    int16 ndds;                /* number of dd's to create in this ddblock */
-    char *FUNC;                        /* function that this was called from */
-#endif
 {
     ddblock_t *block;          /* current dd block */
     int32 nextoffset;          /* offset of new ddblock */
@@ -3240,13 +2920,7 @@ int HInew_dd_block(file_rec, ndds, FUNC)
         Fill in a file record with data from the file, especially
         the data descriptors.
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int HIfill_file_rec(filerec_t *file_rec, char *FUNC)
-#else
-PRIVATE int HIfill_file_rec(file_rec, FUNC)
-    filerec_t *file_rec;       /* File record */
-    char *FUNC;                        /* Charge error to calling function. */
-#endif
 {
   uint8 *p;               /* Temporary pointer. */
   int32 n;
@@ -3400,12 +3074,7 @@ PRIVATE int HIfill_file_rec(file_rec, FUNC)
 	entry.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int HIupdate_version(int32 file_id)
-#else
-PRIVATE int HIupdate_version(file_id)
-int32 file_id;
-#endif
 {
     /* uint32 lmajorv, lminorv, lrelease; */
     uint8 /*lstring[81],*/ lversion[LIBVER_LEN];
@@ -3464,12 +3133,7 @@ int32 file_id;
 	Writes to version fields of appropriate file_records[] entry.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int HIread_version(int32 file_id)
-#else
-PRIVATE int HIread_version(file_id)
-int32 file_id;
-#endif
 {
     filerec_t *file_rec;
     uint8 fversion[LIBVER_LEN];
@@ -3523,14 +3187,7 @@ int32 file_id;
 	blocks in the file and dole those out.
 
 -------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HPgetdiskblock(filerec_t *file_rec, int32 block_size, bool moveto)
-#else
-int32 HPgetdiskblock(file_rec, block_size, moveto)
-filerec_t *file_rec;
-int32 block_size;
-bool moveto;
-#endif
 {
     CONSTR(FUNC,"HPgetdiskblock");
     uint8 temp;
@@ -3576,14 +3233,7 @@ bool moveto;
 	to a "real" free-list of empty blocks in the file and manage those.
 
 -------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn HPfreediskblock(filerec_t *file_rec, int32 block_off, int32 block_size)
-#else
-intn HPfreediskblock(file_rec, block_off, block_size)
-filerec_t *file_rec;
-int32 block_off;
-int32 block_size;
-#endif
 {
     CONSTR(FUNC,"HPfreediskblock");
 
@@ -3608,13 +3258,7 @@ int32 block_size;
        the 'key' field to FAIL in info_block.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HDget_special_info(int32 access_id, sp_info_block_t * info_block)
-#else
-int32 HDget_special_info(access_id, info_block)
-     int32             access_id;   /* access id */
-     sp_info_block_t * info_block;  /* info_block to fill */
-#endif
 {
     char *FUNC="HDget_special_info";  /* for HERROR */
     filerec_t *file_rec;              /* file record */
@@ -3659,13 +3303,7 @@ int32 HDget_special_info(access_id, info_block)
        routine.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HDset_special_info(int32 access_id, sp_info_block_t * info_block)
-#else
-int32 HDset_special_info(access_id, info_block)
-     int32             access_id;   /* access id */
-     sp_info_block_t * info_block;  /* new special information */
-#endif
 {
     char *FUNC="HDset_special_info";  /* for HERROR */
     filerec_t *file_rec;              /* file record */

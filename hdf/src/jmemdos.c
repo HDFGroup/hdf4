@@ -43,9 +43,9 @@
 #ifdef INCLUDES_ARE_ANSI
 #include <stdlib.h>		/* to declare malloc(), free(), getenv() */
 #else
-extern void * malloc PROTO((size_t size));
-extern void free PROTO((void *ptr));
-extern char * getenv PROTO((const char * name));
+extern void * malloc (size_t size);
+extern void free (void *ptr);
+extern char * getenv (const char * name);
 #endif
 
 #ifdef NEED_FAR_POINTERS
@@ -89,17 +89,17 @@ typedef struct {		/* registers for calling EMS driver */
 	void far * ds_si;
       } EMScontext;
 
-EXTERN short far jdos_open PROTO((short far * handle, char far * filename));
-EXTERN short far jdos_close PROTO((short handle));
-EXTERN short far jdos_seek PROTO((short handle, long offset));
-EXTERN short far jdos_read PROTO((short handle, void far * buffer,
-			       unsigned short count));
-EXTERN short far jdos_write PROTO((short handle, void far * buffer,
-				unsigned short count));
-EXTERN void far jxms_getdriver PROTO((XMSDRIVER far *));
-EXTERN void far jxms_calldriver PROTO((XMSDRIVER, XMScontext far *));
-EXTERN short far jems_available PROTO((void));
-EXTERN void far jems_calldriver PROTO((EMScontext far *));
+EXTERN short far jdos_open (short far * handle, char far * filename);
+EXTERN short far jdos_close (short handle);
+EXTERN short far jdos_seek (short handle, long offset);
+EXTERN short far jdos_read (short handle, void far * buffer,
+			       unsigned short count);
+EXTERN short far jdos_write (short handle, void far * buffer,
+				unsigned short count);
+EXTERN void far jxms_getdriver (XMSDRIVER far *);
+EXTERN void far jxms_calldriver (XMSDRIVER, XMScontext far *);
+EXTERN short far jems_available (void);
+EXTERN void far jems_calldriver (EMScontext far *);
 
 
 static external_methods_ptr methods; /* saved for access to error_exit */

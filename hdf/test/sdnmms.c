@@ -67,7 +67,7 @@ static  uint32 FAR ui32scale[10], FAR tui32scale[10];
 static  uint32 ui32max = 999999999, ui32min = 0;
 static  uint32 tui32max, tui32min;
 
-void test_sdnmms()
+void test_sdnmms(void)
 {
     int i, j, err, err1, err2, ret;
     intn rank;

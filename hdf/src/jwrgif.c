@@ -93,11 +93,7 @@ static char packetbuf[256];	/* workspace for accumulating packet */
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 flush_packet (VOID)
-#else
-flush_packet ()
-#endif
 /* flush any accumulated data */
 {
   if (bytesinpkt > 0) {		/* never write zero-length packet */
@@ -125,12 +121,7 @@ static int cur_bits;		/* # of bits in cur_accum */
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 output (code_int code)
-#else
-output (code)
-code_int code;
-#endif
 /* Emit a code of n_bits bits */
 /* Uses cur_accum and cur_bits to reblock into 8-bit bytes */
 {
@@ -165,11 +156,7 @@ static bool first_byte;	/* if TRUE, waiting_code is not valid */
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 clear_hash (VOID)
-#else
-clear_hash ()
-#endif
 /* Fill the hash table with empty entries */
 {
   /* It's sufficient to zero hash_code[] */
@@ -178,11 +165,7 @@ clear_hash ()
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 clear_block (VOID)
-#else
-clear_block ()
-#endif
 /* Reset compressor and issue a Clear code */
 {
   clear_hash();			/* delete all the symbols */
@@ -194,12 +177,7 @@ clear_block ()
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 compress_init (int i_bits)
-#else
-compress_init (i_bits)
-int i_bits;
-#endif
 /* Initialize LZW compressor */
 {
   /* init all the static variables */
@@ -221,12 +199,7 @@ int i_bits;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 compress_byte (int c)
-#else
-compress_byte (c)
-int c;
-#endif
 /* Accept and compress one 8-bit byte */
 {
   register hash_int i;
@@ -282,11 +255,7 @@ int c;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 compress_term (VOID)
-#else
-compress_term ()
-#endif
 /* Clean up at end */
 {
   /* Flush out the buffered code */
@@ -307,12 +276,7 @@ compress_term ()
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 put_word (uint16 w)
-#else
-put_word (w)
-uint16 w;
-#endif
 /* Emit a 16-bit word, LSB first */
 {
   putc(w & 0xFF, dcinfo->output_file);
@@ -321,12 +285,7 @@ uint16 w;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 put_3bytes (int val)
-#else
-put_3bytes (val)
-int val;
-#endif
 /* Emit 3 copies of same byte value --- handy subr for colormap construction */
 {
   putc(val, dcinfo->output_file);
@@ -336,13 +295,7 @@ int val;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 emit_header (int num_colors, JSAMPARRAY colormap)
-#else
-emit_header (num_colors, colormap)
-int num_colors;
-JSAMPARRAY colormap;
-#endif
 /* Output the GIF file header, including color map */
 /* If colormap==NULL, synthesize a gray-scale colormap */
 {
@@ -426,12 +379,7 @@ JSAMPARRAY colormap;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 output_init (decompress_info_ptr cinfo)
-#else
-output_init (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   dcinfo = cinfo;		/* save for use by local routines */
   if (cinfo->final_out_comps != 1) /* safety check */
@@ -458,14 +406,7 @@ decompress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 put_color_map (decompress_info_ptr cinfo, int num_colors, JSAMPARRAY colormap)
-#else
-put_color_map (cinfo, num_colors, colormap)
-decompress_info_ptr cinfo;
-int num_colors;
-JSAMPARRAY colormap;
-#endif
 {
   emit_header(num_colors, colormap);
 }
@@ -476,15 +417,8 @@ JSAMPARRAY colormap;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 put_pixel_rows (decompress_info_ptr cinfo, int num_rows,
 		JSAMPIMAGE pixel_data)
-#else
-put_pixel_rows (cinfo, num_rows, pixel_data)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE pixel_data;
-#endif
 {
   register JSAMPROW ptr;
   register long col;
@@ -506,12 +440,7 @@ JSAMPIMAGE pixel_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 output_term (decompress_info_ptr cinfo)
-#else
-output_term (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   /* Flush LZW mechanism */
   compress_term();
@@ -534,12 +463,7 @@ decompress_info_ptr cinfo;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jselwgif (decompress_info_ptr cinfo)
-#else
-jselwgif (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   cinfo->methods->output_init = output_init;
   cinfo->methods->put_color_map = put_color_map;

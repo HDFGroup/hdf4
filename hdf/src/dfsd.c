@@ -202,15 +202,7 @@ PRIVATE uint8 *ptbuf = NULL;
        data set, and so forth. "DFSDgetdims" opens and closes the file.
 
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFSDgetdims(const char *filename, intn *prank, int32 sizes[], intn maxrank)
-#else
-intn DFSDgetdims(filename, prank, sizes, maxrank)
-     const char  *filename;
-     intn  *prank;
-     int32 sizes[];
-     intn  maxrank;
-#endif /* PROTOTYPE */
 {
     intn i;
     int32 file_id;
@@ -261,15 +253,7 @@ intn DFSDgetdims(filename, prank, sizes, maxrank)
        that is to be used for interpreting the dimension information.
 
 ----------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFSDgetdatastrs(char *label, char *unit, char *format, char *coordsys)
-#else
-intn DFSDgetdatastrs(label, unit, format, coordsys)
-     char *label;
-     char *unit;
-     char *format;
-     char *coordsys;
-#endif /* PROTOTYPE */
 {
     int32 luf;
     char *lufp;
@@ -328,15 +312,7 @@ intn DFSDgetdatastrs(label, unit, format, coordsys)
        as 1+maxlen_label, _unit or _format after they are set by "DFSDsetlengths".
        The maximum default string length is 255.
 ----------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFSDgetdimstrs(int dim, char *label, char *unit, char *format)
-#else
-intn DFSDgetdimstrs(dim, label, unit, format)
-     intn dim;
-     char *label;
-     char *unit;
-     char *format;
-#endif /* PROTOTYPE */
 {
     intn luf;
     intn rdim;
@@ -396,15 +372,7 @@ intn DFSDgetdimstrs(dim, label, unit, format)
        actual length of the string.
 
 ----------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFSDgetdatalen(intn *llabel, intn *lunit, intn *lformat, intn *lcoordsys)
-#else
-intn DFSDgetdatalen(llabel, lunit, lformat, lcoordsys)
-     intn *llabel;
-     intn *lunit;
-     intn *lformat;
-     intn *lcoordsys;
-#endif /* PROTOTYPE */
 {
     CONSTR(FUNC,"DFSDgetdatalen");
 
@@ -442,15 +410,7 @@ intn DFSDgetdatalen(llabel, lunit, lformat, lcoordsys)
        strings must be at least 1 byte larger than the actual length of the
        string.
 ----------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFSDgetdimlen(intn dim, intn *llabel, intn *lunit, intn *lformat)
-#else
-intn DFSDgetdimlen(dim, llabel, lunit, lformat)
-     intn dim;
-     intn *llabel;
-     intn *lunit;
-     intn *lformat;
-#endif /* PROTOTYPE */
 {
     CONSTR(FUNC,"DFSDgetdimlen");
 
@@ -489,14 +449,7 @@ intn DFSDgetdimlen(dim, llabel, lunit, lformat)
        of a different number type than the corresponding data see the 
        multi-file SD interface.
 ---------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFSDgetdimscale(intn dim, int32 maxsize, VOIDP scale)
-#else
-intn DFSDgetdimscale(dim, maxsize, scale)
-     intn dim;
-     int32 maxsize;
-     VOIDP scale;
-#endif /* PROTOTYPE */
 {
     uint32 dimsize;
     int32 numtype;
@@ -563,13 +516,7 @@ intn DFSDgetdimscale(dim, maxsize, scale)
        and minimum vlaues in the data set. In some cases the "max" and "min"
        values may actually lie outside the range of values in the data set.
 ---------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int DFSDgetrange(VOIDP pmax, VOIDP pmin)
-#else
-int DFSDgetrange(pmax, pmin)
-     VOIDP pmax;
-     VOIDP pmin;
-#endif /* PROTOTYPE */
 {
     int32 numtype;
     uint32 localNTsize;
@@ -632,15 +579,7 @@ int DFSDgetrange(pmax, pmin)
        used to override this convention.
 
 ---------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFSDgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data)
-#else
-intn DFSDgetdata(filename, rank, maxsizes, data)
-     const char  *filename;
-     intn  rank;
-     int32 maxsizes[];
-     VOIDP data;
-#endif /* PROTOTYPE */
 {
     return (DFSDIgetdata(filename, rank, maxsizes, data, 0));    /* 0 == C */
 }
@@ -664,16 +603,8 @@ intn DFSDgetdata(filename, rank, maxsizes, data)
        Normally, "DFSDsetlengths" is not needed. If it is not called,
        default maximum lengths of 255 are used for all strings.
 -----------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFSDsetlengths(intn maxlen_label, intn maxlen_unit, intn maxlen_format,
 		    intn maxlen_coordsys)
-#else
-intn DFSDsetlengths(maxlen_label, maxlen_unit, maxlen_format, maxlen_coordsys)
-     intn maxlen_label;
-     intn maxlen_unit;
-     intn maxlen_format;
-     intn maxlen_coordsys;
-#endif /* PROTOTYPE */
 {
     if (maxlen_label > 0) 
       Maxstrlen[LABEL] = maxlen_label;
@@ -705,13 +636,7 @@ intn DFSDsetlengths(maxlen_label, maxlen_unit, maxlen_format, maxlen_coordsys)
        rank or dimension sizes change, all previous set calls are cleared,
        except for the number type which is set by calling "DFSDsetNT".
 -----------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFSDsetdims(intn rank, int32 dimsizes[])
-#else
-intn DFSDsetdims(rank, dimsizes)
-     intn rank;
-     int32  dimsizes[];
-#endif /* PROTOTYPE */
 {
     intn i;
     CONSTR(FUNC,"DFSDsetdims");
@@ -777,15 +702,7 @@ intn DFSDsetdims(rank, dimsizes)
        Sets the label, unit, format and coordsys(coordinate system) strings
        to be assigned to the next data set written to the file.
 -----------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFSDsetdatastrs(const char *label, const char *unit, const char *format, const char *coordsys)
-#else
-intn DFSDsetdatastrs(label, unit, format, coordsys)
-     const char *label;
-     const char *unit;
-     const char *format;
-     const char *coordsys;
-#endif /* PROTOTYPE */
 {
     return (DFSDIsetdatastrs(label, unit, format, coordsys));
 }
@@ -807,15 +724,7 @@ intn DFSDsetdatastrs(label, unit, format, coordsys)
  *          "cylindrical" make sense for 2D?
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFSDIsetdatastrs(const char *label, const char *unit, const char *format, const char *coordsys)
-#else
-intn DFSDIsetdatastrs(label, unit, format, coordsys)
-     const char *label;
-     const char *unit;
-     const char *format;
-     const char *coordsys;
-#endif /* PROTOTYPE */
 {
     intn luf;			/* takes values LABEL, UNIT, FORMAT */
 				/* in succession */
@@ -881,15 +790,7 @@ intn DFSDIsetdatastrs(label, unit, format, coordsys)
        first dimension to "vertical" and set the unit and format strings to
        empty strings.
 -----------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFSDsetdimstrs(intn dim, const char *label, const char *unit, const char *format)
-#else
-intn DFSDsetdimstrs(dim, label, unit, format)
-     intn dim;
-     const char *label;
-     const char *unit;
-     const char *format;
-#endif /* PROTOTYPE */
 {
     return (DFSDIsetdimstrs(dim, label, unit, format));
 } /* DFSDsetdimstrs */
@@ -910,15 +811,7 @@ intn DFSDsetdimstrs(dim, label, unit, format)
  * Method:  Stores values in global structure Writesdg
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFSDIsetdimstrs(intn dim, const char *label, const char *unit, const char *format)
-#else
-intn DFSDIsetdimstrs(dim, label, unit, format)
-     intn dim;
-     const char *label;
-     const char *unit;
-     const char *format;
-#endif /* PROTOTYPE */
 {
     intn i;
     intn rdim;
@@ -993,14 +886,7 @@ intn DFSDIsetdimstrs(dim, label, unit, format)
        points on a mpa could have two scales, one representing points of 
        latitude, and the other points of longitude.
 -----------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFSDsetdimscale(intn dim, int32 dimsize, VOIDP scale)
-#else
-intn DFSDsetdimscale(dim, dimsize, scale)
-     intn dim;
-     int32   dimsize;
-     VOID *scale;
-#endif /* PROTOTYPE */
 {
     int32 i;
     intn rdim;
@@ -1104,13 +990,7 @@ intn DFSDsetdimscale(dim, dimsize, scale)
        different values for "max" and "min". These values are automatically
        cleared aftera a call to either "DFSDputdata" or "DFSDaddadata".
 -----------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFSDsetrange(VOIDP maxi, VOIDP mini)
-#else
-intn DFSDsetrange(maxi, mini)
-     VOID *maxi;
-     VOID *mini;
-#endif /* PROTOTYPE */
 {
     int32 numtype;
     uint32 localNTsize;
@@ -1160,15 +1040,7 @@ intn DFSDsetrange(maxi, mini)
        contents of the original file. Use with caution.
 -----------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFSDputdata(const char *filename, intn rank, int32 dimsizes[], VOIDP data)
-#else
-intn DFSDputdata(filename, rank, dimsizes, data)
-     const char *filename;
-     intn rank;
-     int32 dimsizes[];
-     VOID *data;
-#endif /* PROTOTYPE */
 {
     /* 0, 0 specify create mode, C style array (row major) */
     return (DFSDIputdata(filename, rank, dimsizes, data, 0, 0));
@@ -1198,15 +1070,7 @@ DESCRIPTION
       information that has been set by "DFSDset* " calls is written to the
       file, along with the data array itself.
 -----------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFSDadddata(const char *filename, intn rank, int32 dimsizes[], VOIDP data)
-#else
-intn DFSDadddata(filename, rank, dimsizes, data)
-     const char  *filename;
-     intn  rank;
-     int32 dimsizes[];
-     VOIDP data;
-#endif /* PROTOTYPE */
 {
     /* 1, 0 specifies append mode, C style array (row major) */
     return (DFSDIputdata(filename, rank, dimsizes, data, 1, 0));
@@ -1223,11 +1087,7 @@ intn DFSDadddata(filename, rank, dimsizes, data)
        Forces the next read operation to read the first scientific data set
        in the file.
 -----------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFSDrestart(void)
-#else
-intn DFSDrestart()
-#endif /* PROTOTYPE */
 {
     Lastfile = NULL;
     Readref  = 0;
@@ -1250,12 +1110,7 @@ intn DFSDrestart()
        use "DFSDndatasets" instead of "DFSDnumber".
 -----------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int32 DFSDndatasets(char *filename)
-#else
-int32 DFSDndatasets(filename)
-     char *filename;
-#endif /* PROTOTYPE */
 {
     int32 file_id;
     int32 nsdgs=0;
@@ -1287,15 +1142,7 @@ int32 DFSDndatasets(filename)
       values set by an "DFSDset*" calls will not be written unless they 
       are set again.
 ----------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
-#ifdef CONVEX
-intn DFSDclear()
-#else
-intn DFSDclear(VOID)
-#endif
-#else
-intn DFSDclear()
-#endif /* PROTOTYPE */
+intn DFSDclear(void)
 {
     lastnsdg.tag = DFTAG_NULL;
     lastnsdg.ref = 0;
@@ -1317,11 +1164,7 @@ intn DFSDclear()
        Get the most recent reference number used in writing or reading a
        scientific data set.
 -----------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 uint16 DFSDlastref(void)
-#else
-uint16 DFSDlastref()
-#endif /* PROTOTYPE */
 {
     return ((uint16) Lastref);
 }
@@ -1346,13 +1189,7 @@ uint16 DFSDlastref()
        for a scientific data set.
 -----------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFSDreadref(char *filename, uint16 ref)
-#else
-intn DFSDreadref(filename, ref)
-    char *filename;
-    uint16 ref;
-#endif /* PROTOTYPE */
 {
     int32 file_id;
     int32 aid;
@@ -1413,17 +1250,8 @@ intn DFSDreadref(filename, ref)
        on earlier versions of the library.
 ----------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFSDgetslice(const char *filename, int32 winst[], int32 windims[], VOIDP data,
 		  int32 dims[])
-#else
-intn DFSDgetslice(filename, winst, windims, data, dims)
-     const char *filename;
-     int32 winst[];
-     int32 windims[];
-     int32 dims[];
-     VOID *data;
-#endif /* PROTOTYPE */
 {
     return (DFSDIgetslice(filename, winst, windims, data, dims, 0));
 }
@@ -1448,12 +1276,7 @@ intn DFSDgetslice(filename, winst, windims, data, dims)
        to support "DFSDstartslice" only to maintain backward compatibility 
        with HDF applications built on earlier version of the library.
 -----------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFSDstartslice(const char *filename)
-#else
-intn DFSDstartslice(filename)
-     const char *filename;
-#endif /* PROTOTYPE */
 {
     intn i;
     int32 size;
@@ -1535,14 +1358,7 @@ intn DFSDstartslice(filename)
        backward compatibility with HDF applications built on earlier versions
        of the library.
 -----------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn DFSDputslice(int32 winend[], VOIDP data, int32 dims[])
-#else
-intn DFSDputslice(winend, data, dims)
-     int32 winend[];
-     VOID *data;
-     int32 dims[];
-#endif /* PROTOTYPE */
 {
     return (DFSDIputslice(winend, data, dims, 0));
 }
@@ -1567,11 +1383,7 @@ intn DFSDputslice(winend, data, dims)
 
 ----------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFSDendslice(void)
-#else
-intn DFSDendslice()
-#endif /* PROTOTYPE */
 {
     return (DFSDIendslice(0));
 }
@@ -1602,12 +1414,7 @@ intn DFSDendslice()
             32-bit signed int     DFNT_INT32     24
             32-bit unsigned int   DFNT_UINT32    25
 ---------------------------------------------------------------------------*/
-#if defined PROTOTYPE
 intn DFSDsetNT(int32 numbertype)
-#else
-intn DFSDsetNT(numbertype)
-     int32 numbertype;
-#endif /* PROTOTYPE */
 {
     uint8 outNT;
     CONSTR(FUNC,"DFSDsetNT");
@@ -1645,12 +1452,7 @@ intn DFSDsetNT(numbertype)
 * Remarks:
 *--------------------------------------------------------------------*/
 
-#if defined PROTOTYPE
 intn DFSDIclearNT(DFSsdg *sdg)
-#else
-intn DFSDIclearNT(sdg)
-     DFSsdg *sdg;
-#endif
 {
     intn i;
     CONSTR(FUNC,"DFSDIclearNT");
@@ -1704,12 +1506,7 @@ intn DFSDIclearNT(sdg)
             32-bit unsigned int   DFNT_UINT32    25
 --------------------------------------------------------------------------- */
 
-#if defined PROTOTYPE
 intn DFSDgetNT(int32 *pnumbertype)
-#else
-intn DFSDgetNT(pnumbertype)
-     int32 *pnumbertype;
-#endif
 {
     CONSTR(FUNC,"DFSDgetNT");
 
@@ -1743,14 +1540,7 @@ intn DFSDgetNT(pnumbertype)
        this information, programmers can decide whether or not to transpose
        the corresponding array.
 ----------------------------------------------------------------------------*/
-#if defined PROTOTYPE
 intn DFSDpre32sdg(char *filename, uint16 ref, intn *ispre32)
-#else
-intn DFSDpre32sdg(filename, ref,ispre32)
-     char *filename;
-     uint16 ref;
-     intn *ispre32;
-#endif
 {
     uint32 num;
     int32  file_id;
@@ -1814,13 +1604,7 @@ intn DFSDpre32sdg(filename, ref,ispre32)
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   DFSDIopen for READ
  *--------------------------------------------------------------------------*/
-#if defined PROTOTYPE
 intn DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr *l_nsdghdr)
-#else
-intn DFSDIsetnsdg_t(file_id,l_nsdghdr)
-     int32 file_id;
-     DFnsdg_t_hdr *l_nsdghdr;
-#endif
 {
     uint32 sz_DFnsdgle = (uint32)sizeof(struct DFnsdgle);
     int32 aid;      /* access id */
@@ -2082,13 +1866,7 @@ intn DFSDIsetnsdg_t(file_id,l_nsdghdr)
 *	   nsdg: the structure holds the di of next sdg or ndg
 * Returns: 0 on succeeds, FAIL on failure
 * -------------------------------------------------------------------*/
-#if defined PROTOTYPE
 intn DFSDInextnsdg(DFnsdg_t_hdr *l_nsdghdr, DFdi *nsdg)
-#else
-intn DFSDInextnsdg(l_nsdghdr,nsdg)
-     DFnsdg_t_hdr *l_nsdghdr;
-     DFdi *nsdg;
-#endif /* PROTOTYPE*/
 {
     uint32 num;
     intn found=FALSE;
@@ -2159,15 +1937,7 @@ intn DFSDInextnsdg(l_nsdghdr,nsdg)
  * Remarks: This accepts non-float32 data
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
-#else
-intn DFSDIgetndg(file_id, tag, ref, sdg)
-     int32 file_id;
-     uint16 tag;
-     uint16 ref;
-     DFSsdg *sdg;
-#endif /* PROTOTYPE */
 {
     int32 i;
     intn luf;
@@ -2709,14 +2479,7 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
  * Remarks: Writes out NTs
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFSDIputndg(int32 file_id, uint16 ref, DFSsdg *sdg)
-#else
-intn DFSDIputndg(file_id, ref, sdg)
-     int32 file_id;
-     uint16 ref;
-     DFSsdg *sdg;
-#endif /* PROTOTYPE */
 {
     int32 i;
     intn j;
@@ -3161,12 +2924,7 @@ intn DFSDIputndg(file_id, ref, sdg)
  * Remarks: checks that slice writes were completed.
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFSDIendslice(intn isfortran)
-#else
-intn DFSDIendslice(isfortran)
-    intn isfortran;
-#endif /* PROTOTYPE */
 {
     intn i;
     intn ret;
@@ -3248,13 +3006,7 @@ intn DFSDIendslice(isfortran)
  *          reopen a file, to avoid re-reading all the headers
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int32 DFSDIopen(const char *filename, intn acc_mode)
-#else
-int32 DFSDIopen(filename, acc_mode)
-     const char *filename;
-     intn acc_mode;
-#endif /* PROTOTYPE */
 {
     int32 file_id;
     CONSTR(FUNC,"DFSDIopen");
@@ -3361,12 +3113,7 @@ int32 DFSDIopen(filename, acc_mode)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFSDIsdginfo(int32 file_id)
-#else
-intn DFSDIsdginfo(file_id)
-     int32 file_id;
-#endif /* PROTOTYPE */
 {
     DFdi ptr;
     CONSTR(FUNC,"DFSDIsdginfo");
@@ -3438,12 +3185,7 @@ intn DFSDIsdginfo(file_id)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFSDIrefresh(char *filename)
-#else
-intn DFSDIrefresh(filename)
-     char *filename;
-#endif /* PROTOTYPE */
 {
       int32 file_id;
       CONSTR(FUNC,"DFSDIrefresh");
@@ -3478,12 +3220,7 @@ intn DFSDIrefresh(filename)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFSDIisndg(intn *isndg)
-#else
-intn DFSDIisndg(isndg)
-     intn *isndg;
-#endif /* PROTOTYPE */
 {
     *isndg = (intn)Readsdg.isndg;
     return (SUCCEED);
@@ -3500,12 +3237,7 @@ intn DFSDIisndg(isndg)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFSDIgetrrank(intn *rank)
-#else
-intn DFSDIgetrrank(rank)
-     intn *rank;
-#endif /* PROTOTYPE */
 {
     *rank = (intn)Readsdg.rank;
     return (SUCCEED);
@@ -3522,12 +3254,7 @@ intn DFSDIgetrrank(rank)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFSDIgetwrank(intn *rank)
-#else
-intn DFSDIgetwrank(rank)
-     intn *rank;
-#endif /* PROTOTYPE */
 {
     *rank = (intn)Writesdg.rank;
     return (SUCCEED);
@@ -3545,12 +3272,7 @@ intn DFSDIgetwrank(rank)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFSDIclear(DFSsdg *sdg)
-#else
-intn DFSDIclear(sdg)
-     DFSsdg *sdg;
-#endif /* PROTOTYPE */
 {
     intn i;
     intn luf;
@@ -3630,17 +3352,8 @@ intn DFSDIclear(sdg)
  *          User sets maxsizes before call.
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data,
 	          intn isfortran)
-#else
-int DFSDIgetdata(filename, rank, maxsizes, data, isfortran)
-     const char *filename;
-     intn rank;
-     int32 maxsizes[];
-     VOID *data;
-     intn isfortran;
-#endif /* PROTOTYPE */
 {
     intn i;
     intn ret;
@@ -3707,18 +3420,8 @@ int DFSDIgetdata(filename, rank, maxsizes, data, isfortran)
  * Method:  Create file if necessary, allocate arrays, call slice routines
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFSDIputdata(const char *filename, intn rank, int32 *dimsizes, VOIDP data,
 	          intn accmode, intn isfortran)
-#else
-intn DFSDIputdata(filename, rank, dimsizes, data, accmode, isfortran)
-     const char *filename;
-     intn  rank;
-     int32   *dimsizes;
-     VOID *data;
-     intn accmode;
-     intn isfortran;
-#endif /* PROTOTYPE */
 {
     intn ret;
     int32 file_id;
@@ -3792,19 +3495,8 @@ intn DFSDIputdata(filename, rank, dimsizes, data, accmode, isfortran)
 									     */
 /*****************************************************************************/
 
-#ifdef PROTOTYPE
 intn DFSDIgetslice(const char *filename, int32 winst[], int32 windims[],
 	           VOIDP data, int32 dims[], intn isfortran)
-#else
-intn DFSDIgetslice(filename, winst, windims, data, dims, isfortran)
-    const char    *filename;  /* HDF file containing the dataset */
-    int32 winst[];      /* array containing the coordinates of the start */
-                        /*  of the slice in the HDF file */
-    int32 windims[];	/* array containing the size of the slice */
-    int32 dims[];	/* array containing the dimensions of data[] */
-    VOID  *data;	/* array to hold the floating point data read*/
-    intn  isfortran;	/* true if called from Fortran */
-#endif /* PROTOTYPE */
 {
     intn  rank;           /* number of dimensions in data[] */
     int32 leastsig;       /* fastest varying subscript in the array */
@@ -4154,15 +3846,7 @@ intn DFSDIgetslice(filename, winst, windims, data, dims, isfortran)
  *          of the Fortorder variable - row major if 0, column major if 1
  *--------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
-#else
-intn DFSDIputslice(windims, data, dims, isfortran)
-    int32 windims[];  /* array containing dimensions of the slice */
-    int32 dims[];     /* array containing the dimensions of data[] */
-    VOID  *data;      /* array of the floating point data to write */
-    intn  isfortran;  /* true if called from Fortran */
-#endif /* PROTOTYPE */
 {
     intn rank;           /* number of dimensions in data[] */
     int32 leastsig;      /* fastest varying subscript in the array */
@@ -4469,15 +4153,8 @@ intn DFSDsetcal(cal, cal_err, ioff, ioff_err, cal_nt)
        in sequence in and HDF file; therefore, it is not safe to assume
        that a reference number is the sequence number for a data set. 
 -----------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn
 DFSDwriteref(const char *filename, uint16 ref)
-#else
-intn
-DFSDwriteref(filename, ref)
-    const char *filename;
-    uint16 ref;
-#endif /* PROTOTYPE */
 {
     int32 file_id; 
     int32 aid;
@@ -4542,14 +4219,8 @@ DFSDwriteref(filename, ref)
        Memory bug on SGI's if you try to free allocated space for fill values.
 -----------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn
 DFSDsetfillvalue(VOIDP fill_value)
-#else
-intn
-DFSDsetfillvalue(fill_value)
-    VOID *fill_value;
-#endif /* PROTOTYPE */
 {
     int32 numtype;      /* current number type  */
     uint32 localNTsize;  /* size of this NT on as it is on this machine  */
@@ -4592,14 +4263,8 @@ DFSDsetfillvalue(fill_value)
       is required in order for "DFSDgetfillvalue" to succeed. This is because 
       "DFSDgetfillvalue" does not take a file name as an arguement.
 -----------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn
 DFSDgetfillvalue(VOIDP fill_value)
-#else
-intn
-DFSDgetfillvalue(fill_value)
-    VOID *fill_value;
-#endif /* PROTOTYPE */
 {
     int32 numtype;      /* current number type  */
     uint32 localNTsize;  /* size of this NT on as it is on this machine  */
@@ -4657,18 +4322,8 @@ DFSDgetfillvalue(fill_value)
        the slab size as {3,1,4}.
 -----------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFSDreadslab(const char *filename, int32 start[], int32 slab_size[], 
                  int32 stride[], VOIDP buffer, int32 buffer_size[])
-#else
-intn DFSDreadslab(filename, start, slab_size, stride, buffer, buffer_size)
-     const char *filename;
-     int32 start[];
-     int32 slab_size[];
-     int32 stride[];
-     VOIDP buffer;
-     int32 buffer_size[];
-#endif /* PROTOTYPE */
 {
     return (DFSDgetslice(filename, start, slab_size, buffer, buffer_size));
 }
@@ -4690,14 +4345,8 @@ intn DFSDreadslab(filename, start, slab_size, stride, buffer, buffer_size)
        fill values if "DFSDsetfillvalue" is called before this routine and
        this is the first write(i.e. creation) to the data set.
 -----------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn
 DFSDstartslab(const char *filename)
-#else
-intn
-DFSDstartslab(filename)
-     const char *filename;
-#endif /* PROTOTYPE */
 {
     int32 i;
     int32 sdg_size;
@@ -4838,19 +4487,9 @@ DFSDstartslab(filename)
        compilier nor the HDF sotfware can detect if the wrong type of data
        is written.
 ----------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn
 DFSDwriteslab(int32 start[], int32 stride[],
               int32 count[], VOIDP data)
-#else
-intn
-DFSDwriteslab(start, stride, count, data)
-    int32 start[];        /* array containing the coordinates of the start */
-                          /*   of the slab in the HDF file */
-    int32 stride[];       /* array containing the dimensions of data[] */
-    int32 count[];        /* array containing the size of the slab */
-    VOID  *data;          /* array to hold the floating point data to write*/
-#endif /* PROTOTYPE */
 {
     intn  rank;           /* number of dimensions in data[] */
     int32 i;              /* temporary loop index */
@@ -5142,13 +4781,8 @@ DFSDwriteslab(start, stride, count, data)
        a "DFSDstartslab" that created a new SDG.
 
 ----------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn
 DFSDendslab(void)
-#else
-intn
-DFSDendslab()
-#endif /* PROTOTYPE */
 {
     intn ret;
     CONSTR(FUNC,"DFSDendslab");

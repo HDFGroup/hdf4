@@ -104,11 +104,11 @@ PRIVATE DFGRrig Grzrig = {      /* empty RIG for initialization */
 
 /* private functions */
 PRIVATE int DFGRIriginfo
-    PROTO((int32 file_id));
+    (int32 file_id);
 PRIVATE int DFGRgetrig
-    PROTO((int32 file_id, uint16 ref, DFGRrig *rig));
+    (int32 file_id, uint16 ref, DFGRrig *rig);
 PRIVATE int DFGRaddrig
-    PROTO((int32 file_id, uint16 ref, DFGRrig *rig));
+    (int32 file_id, uint16 ref, DFGRrig *rig);
 
 /*-----------------------------------------------------------------------------
  * Name:    DFGRgetlutdims
@@ -124,15 +124,8 @@ PRIVATE int DFGRaddrig
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFGRgetlutdims(const char *filename, int32 *pxdim, int32 *pydim, int *pncomps,
                   int *pil)
-#else
-int DFGRgetlutdims(filename, pxdim, pydim, pncomps, pil)
-const char *filename;
-int32 *pxdim, *pydim;
-int *pncomps, *pil;
-#endif
 {
     return(DFGRIgetdims(filename, pxdim, pydim, pncomps, pil, LUT));
 }
@@ -148,12 +141,7 @@ int *pncomps, *pil;
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFGRreqlutil(int il)
-#else
-int DFGRreqlutil(il)
-int il;
-#endif
 {
     return(DFGRIreqil(il, LUT));
 }
@@ -171,14 +159,7 @@ int il;
  * Remarks: space is assumed to be xdim * ydim * ncomps bytes
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFGRgetlut(const char *filename, VOIDP lut, int32 xdim, int32 ydim)
-#else
-int DFGRgetlut(filename, lut, xdim, ydim)
-const char *filename;
-VOIDP lut;
-int32 xdim, ydim;
-#endif
 {
     /* 0 == C */
     return(DFGRIgetimlut(filename, lut, xdim, ydim, LUT, 0));
@@ -198,15 +179,8 @@ int32 xdim, ydim;
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFGRgetimdims(const char *filename, int32 *pxdim, int32 *pydim, int *pncomps,
                  int *pil)
-#else
-int DFGRgetimdims(filename, pxdim, pydim, pncomps, pil)
-const char *filename;
-int32 *pxdim, *pydim;
-int *pncomps, *pil;
-#endif
 {
     return(DFGRIgetdims(filename, pxdim, pydim, pncomps, pil, IMAGE));
 }
@@ -221,12 +195,7 @@ int *pncomps, *pil;
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFGRreqimil(int il)
-#else
-int DFGRreqimil(il)
-int il;
-#endif
 {
     return(DFGRIreqil(il, IMAGE));
 }
@@ -243,14 +212,7 @@ int il;
  * Remarks: space is assumed to be xdim * ydim * ncomps bytes
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFGRgetimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
-#else
-int DFGRgetimage(filename, image, xdim, ydim)
-const char *filename;
-VOIDP image;
-int32 xdim, ydim;
-#endif
 {
     /* 0 == C */
     return(DFGRIgetimlut(filename, image, xdim, ydim, IMAGE, 0));
@@ -268,13 +230,7 @@ int32 xdim, ydim;
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFGRsetcompress(int32 scheme,comp_info *cinfo)
-#else
-int DFGRsetcompress(scheme,cinfo)
-int32 scheme;
-comp_info *cinfo;
-#endif
 {
     CONSTR(FUNC,"DFGRsetcompress");
 
@@ -302,13 +258,7 @@ comp_info *cinfo;
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFGRsetlutdims(int32 xdim, int32 ydim, int ncomps, int il)
-#else
-int DFGRsetlutdims(xdim, ydim, ncomps, il)
-int32 xdim, ydim;
-int ncomps, il;
-#endif
 {
     if (DFGRIsetil(il, LUT) < 0)
         return FAIL;
@@ -327,13 +277,7 @@ int ncomps, il;
  * Remarks: array lut is assumed to be xdim * ydim * ncomps bytes
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFGRsetlut(VOIDP lut, int32 xdim, int32 ydim)
-#else
-int DFGRsetlut(lut, xdim, ydim)
-VOIDP lut;
-int32 xdim, ydim;
-#endif
 {
     /* 0 == C, 0 == no newfile */
     return(DFGRIaddimlut((const char*)NULL, lut, xdim, ydim, LUT, 0, 0));
@@ -352,14 +296,7 @@ int32 xdim, ydim;
  * Remarks: array lut is assumed to be xdim * ydim * ncomps bytes
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFGRaddlut(const char *filename, VOIDP lut, int32 xdim, int32 ydim)
-#else
-int DFGRaddlut(filename, lut, xdim, ydim)
-const char *filename;
-VOIDP lut;
-int32 xdim, ydim;
-#endif
 {
     /* 0 == C, 0 == no new file */
     return(DFGRIaddimlut(filename, lut, xdim, ydim, LUT, 0, 0));
@@ -378,13 +315,7 @@ int32 xdim, ydim;
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFGRsetimdims(int32 xdim, int32 ydim, int ncomps, int il)
-#else
-int DFGRsetimdims(xdim, ydim, ncomps, il)
-int32 xdim, ydim;
-int ncomps, il;
-#endif
 {
     if (DFGRIsetil(il, IMAGE) < 0)
         return FAIL;
@@ -403,27 +334,13 @@ int ncomps, il;
  * Remarks: array image is assumed to be xdim * ydim * ncomps bytes
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFGRaddimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
-#else
-int DFGRaddimage(filename, image, xdim, ydim)
-const char *filename;
-VOIDP image;
-int32 xdim, ydim;
-#endif
 {
     /* 0 == C, 0 == not new file */
     return(DFGRIaddimlut(filename, image, xdim, ydim, IMAGE, 0, 0));
 }
 
-#ifdef PROTOTYPE
 int DFGRputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
-#else
-int DFGRputimage(filename, image, xdim, ydim)
-const char *filename;
-VOIDP image;
-int32 xdim, ydim;
-#endif
 {
     /* 0 == C, 1 == new file */
     return(DFGRIaddimlut(filename, image, xdim, ydim, IMAGE, 0, 1));
@@ -440,13 +357,7 @@ int32 xdim, ydim;
  * Remarks: checks if rig with this ref exists
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFGRreadref(const char *filename, uint16 ref)
-#else
-int DFGRreadref(filename, ref)
-    const char *filename;
-    uint16 ref;
-#endif
 {
     int32 file_id;
     int32 aid;
@@ -485,14 +396,7 @@ int DFGRreadref(filename, ref)
  * Remarks: incomplete - does not support DFTAG_MA etc.
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 PRIVATE int DFGRgetrig(int32 file_id, uint16 ref, DFGRrig *rig)
-#else
-PRIVATE int DFGRgetrig(file_id, ref, rig)
-    int32 file_id;
-    uint16 ref;
-    DFGRrig *rig;
-#endif
 {
     CONSTR(FUNC,"DFGRgetrig");
     uint16 elt_tag, elt_ref;
@@ -567,14 +471,7 @@ PRIVATE int DFGRgetrig(file_id, ref, rig)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 PRIVATE int DFGRaddrig(int32 file_id, uint16 ref, DFGRrig *rig)
-#else
-PRIVATE int DFGRaddrig(file_id, ref, rig)
-    int32 file_id;
-    uint16 ref;
-    DFGRrig *rig;
-#endif
 {
     CONSTR(FUNC,"DFGRaddrig");
     uint8 ntstring[4];
@@ -692,13 +589,7 @@ PRIVATE int DFGRaddrig(file_id, ref, rig)
  *          reopen a file, to avoid re-reading all the headers
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int32 DFGRIopen(const char *filename, int acc_mode)
-#else
-int32 DFGRIopen(filename, acc_mode)
-    const char *filename;
-    int acc_mode;
-#endif
 {
     CONSTR(FUNC,"DFGRIopen");
     int32 file_id;
@@ -748,12 +639,7 @@ int32 DFGRIopen(filename, acc_mode)
  * Remarks: if Grrefset set, gets image with that ref, if any
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 PRIVATE int DFGRIriginfo(int32 file_id)
-#else
-PRIVATE int DFGRIriginfo(file_id)
-int32 file_id;
-#endif
 {
     int i, isfirst;
     uint16 newref=0, newtag, gettag, getref, ref, dummy;
@@ -859,15 +745,8 @@ int32 file_id;
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFGRIgetdims(const char *filename, int32 *pxdim, int32 *pydim,
                         int *pncomps, int *pil, int type)
-#else
-int DFGRIgetdims(filename, pxdim, pydim, pncomps, pil, type)
-    const char *filename;
-    int32 *pxdim, *pydim;
-    int *pncomps, *pil, type;
-#endif
 {
     CONSTR(FUNC,"DFGRIgetdims");
     int32 file_id;
@@ -911,12 +790,7 @@ int DFGRIgetdims(filename, pxdim, pydim, pncomps, pil, type)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFGRIreqil(intn il, intn type)
-#else
-int DFGRIreqil(il, type)
-    intn il, type;
-#endif
 {
     HEclear();
 
@@ -947,16 +821,8 @@ int DFGRIreqil(il, type)
 
 /* shut lint up */
 /* ARGSUSED */
-#ifdef PROTOTYPE
 int DFGRIgetimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
                          int type, int isfortran)
-#else
-int DFGRIgetimlut(filename, imlut, xdim, ydim, type, isfortran)
-    const char *filename;
-    int32 xdim, ydim;
-    VOIDP imlut;
-    int type, isfortran;
-#endif
 {
     CONSTR(FUNC,"DFGRIgetimlut");
     int32 file_id;
@@ -1100,14 +966,7 @@ int DFGRIgetimlut(filename, imlut, xdim, ydim, type, isfortran)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFGRIsetdims(int32 xdim, int32 ydim, intn ncomps, int type)
-#else
-int DFGRIsetdims(xdim, ydim, ncomps, type)
-    int32 xdim, ydim;
-    intn ncomps;
-    int type;
-#endif
 {
     CONSTR(FUNC,"DFGRIsetdims");
     if (ncomps == FAIL || (xdim<=0) || (ydim<=0)) {
@@ -1135,13 +994,7 @@ int DFGRIsetdims(xdim, ydim, ncomps, type)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 int DFGRIsetil(int il, int type)
-#else
-int DFGRIsetil(il, type)
-    int il;
-    int type;
-#endif
 {
     CONSTR(FUNC,"DFGRIsetil");
     if (il == FAIL) {
@@ -1161,11 +1014,7 @@ int DFGRIsetil(il, type)
  * Invokes: none
  * Remarks: none
  *---------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int DFGRIrestart(void)
-#else
-int DFGRIrestart()
-#endif
 {
     Grlastfile = NULL;
     Grrefset = 0;
@@ -1191,16 +1040,8 @@ int DFGRIrestart()
 
 /* shut lint up */
 /* ARGSUSED */
-#ifdef PROTOTYPE
 int DFGRIaddimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
                  int type, int isfortran, int newfile)
-#else
-int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran, newfile)
-    const char *filename;
-    int32 xdim, ydim;
-    VOIDP imlut;
-    int type, isfortran, newfile;
-#endif
 {
     CONSTR(FUNC,"DFGRIaddimlut");
     int32 file_id;
@@ -1364,11 +1205,7 @@ int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran, newfile)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 uint16 DFGRIlastref(void)
-#else
-uint16 DFGRIlastref()
-#endif
 {
     return((uint16) Grlastref);
 }

@@ -29,7 +29,7 @@ static char RcsId[] = "@(#)$Revision$";
 /*
 ** Include files for variable argument processing for HEreport
 */
-#if defined PROTOTYPE
+#if defined __STDC__
 #include <stdarg.h>
 #else
 #include <varargs.h>
@@ -93,12 +93,7 @@ int32 error_top = 0;
        default message is returned.
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 const char _HUGE *HEstring(hdf_err_code_t error_code)
-#else
-const char _HUGE *HEstring(error_code)
-    hdf_err_code_t error_code;
-#endif
 {
 #ifndef OLD_WAY
     int i;                     /* temp int index */
@@ -130,11 +125,7 @@ const char _HUGE *HEstring(error_code)
         Remove all currently reported errors from the error stack
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 VOID HEclear(void)
-#else
-VOID HEclear()
-#endif
 {
 
     if(!error_top)
@@ -172,15 +163,7 @@ VOID HEclear()
         that a description is reported  only if REreport is called
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 VOID HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_name, intn line)
-#else
-VOID HEpush(error_code, function_name, file_name, line)
-    hdf_err_code_t error_code;/* internal number of the error */
-    const char   *function_name; /* name of function that error occurred */
-    const char   *file_name;          /* name of file that error occurred */
-    intn   line;                /* line number in file that error occurred */
-#endif
 {
     intn i;
 
@@ -228,7 +211,6 @@ VOID HEpush(error_code, function_name, file_name, line)
         error condition
 
 --------------------------------------------------------------------------- */
-#if defined PROTOTYPE
 VOID HEreport(const char *format, ...)
 {
     va_list arg_ptr;
@@ -252,51 +234,6 @@ VOID HEreport(const char *format, ...)
     va_end(arg_ptr);
     return;
 }
-#else
-VOID HEreport(va_alist)
-va_dcl
-{
-    CONSTR(FUNC,"HEreport");   /* name of function if HIalloc fails */
-    char *tmp;
-    char * format;
-    va_list arg_ptr;
-
-    va_start(arg_ptr);
-
-    format = va_arg(arg_ptr, char *);
-
-    if((error_top < ERR_STACK_SZ+1) && (error_top > 0)){
-        tmp = (char *) HDgetspace(ERR_STRING_SIZE);
-        if (!tmp) {
-            HERROR(DFE_NOSPACE);
-            return;
-        }
-
-        vsprintf(tmp, format, arg_ptr);
-
-/* can't do this w/o stdC <stdio.h>
-*
-* For example, on xongmao a sun4, stdio.h declares:
-*
-* extern char *sprintf();
-*
-*    count = vsprintf(tmp, format, arg_ptr);
-*
-*    if(count > ERR_STRING_SIZE) {
-*           printf("HEreport overwrote array. %d Unsafe to continue!!", count);
-*           exit(8);
-*    }
-*/
-        if(error_stack[error_top - 1].desc)
-            HDfreespace(error_stack[error_top - 1].desc);
-        error_stack[error_top - 1].desc = tmp;
-
-    }
-
-    va_end(arg_ptr);
-    return;
-}
-#endif /* PROTOTYPE */
 
 
 /* -------------------------------------------------------------------------
@@ -315,13 +252,7 @@ va_dcl
         added (via HEreport) it is printed too.
 
 --------------------------------------------------------------------------- */ 
-#ifdef PROTOTYPE
 VOID HEprint(FILE *stream, int32 print_levels)
-#else
-VOID HEprint(stream, print_levels)
-     FILE *stream;             /* stream to print to */
-     int32 print_levels;         /* levels to print */
-#endif
 {
     if (print_levels == 0 || print_levels > error_top) /* print all errors */
         print_levels = error_top;
@@ -355,12 +286,7 @@ VOID HEprint(stream, print_levels)
         Return the error code of a single error out of the error stack
 
 --------------------------------------------------------------------------- */ 
-#ifdef PROTOTYPE
 int16 HEvalue(int32 level)
-#else
-int16 HEvalue(level)
-    int32 level;                 /* level of error code to return */
-#endif
 {
     if (level > 0 && level <= error_top)
        return (int16)error_stack[error_top - level].error_code;

@@ -105,13 +105,7 @@ typedef enum {			/* JPEG marker codes */
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 emit_marker (compress_info_ptr cinfo, JPEG_MARKER mark)
-#else
-emit_marker (cinfo, mark)
-compress_info_ptr cinfo;
-JPEG_MARKER mark;
-#endif
 /* Emit a marker code */
 {
   emit_byte(cinfo, 0xFF);
@@ -120,13 +114,7 @@ JPEG_MARKER mark;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 emit_2bytes (compress_info_ptr cinfo, int value)
-#else
-emit_2bytes (cinfo, value)
-compress_info_ptr cinfo;
-int value;
-#endif
 /* Emit a 2-byte integer; these are always MSB first in JPEG files */
 {
   emit_byte(cinfo, (value >> 8) & 0xFF);
@@ -135,13 +123,7 @@ int value;
 
 
 LOCAL int
-#ifdef PROTOTYPE
 emit_dqt (compress_info_ptr cinfo, int index)
-#else
-emit_dqt (cinfo, index)
-compress_info_ptr cinfo;
-int index;
-#endif
 /* Emit a DQT marker */
 /* Returns the precision used (0 = 8bits, 1 = 16bits) for baseline checking */
 {
@@ -171,14 +153,7 @@ int index;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 emit_dht (compress_info_ptr cinfo, int index, bool is_ac)
-#else
-emit_dht (cinfo, index, is_ac)
-compress_info_ptr cinfo;
-int index;
-bool is_ac;
-#endif
 /* Emit a DHT marker */
 {
   HUFF_TBL * htbl;
@@ -216,12 +191,7 @@ bool is_ac;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 emit_dac (compress_info_ptr cinfo)
-#else
-emit_dac (cinfo)
-compress_info_ptr cinfo;
-#endif
 /* Emit a DAC marker */
 /* Since the useful info is so small, we want to emit all the tables in */
 /* one DAC marker.  Therefore this routine does its own scan of the table. */
@@ -260,12 +230,7 @@ compress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 emit_dri (compress_info_ptr cinfo)
-#else
-emit_dri (cinfo)
-compress_info_ptr cinfo;
-#endif
 /* Emit a DRI marker */
 {
   emit_marker(cinfo, M_DRI);
@@ -277,13 +242,7 @@ compress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 emit_sof (compress_info_ptr cinfo, JPEG_MARKER code)
-#else
-emit_sof (cinfo, code)
-compress_info_ptr cinfo;
-JPEG_MARKER code;
-#endif
 /* Emit a SOF marker */
 {
   int i;
@@ -311,12 +270,7 @@ JPEG_MARKER code;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 emit_sos (compress_info_ptr cinfo)
-#else
-emit_sos (cinfo)
-compress_info_ptr cinfo;
-#endif
 /* Emit a SOS marker */
 {
   int i;
@@ -340,12 +294,7 @@ compress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 emit_jfif_app0 (compress_info_ptr cinfo)
-#else
-emit_jfif_app0 (cinfo)
-compress_info_ptr cinfo;
-#endif
 /* Emit a JFIF-compliant APP0 marker */
 {
   /*
@@ -385,12 +334,7 @@ compress_info_ptr cinfo;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 write_file_header (compress_info_ptr cinfo)
-#else
-write_file_header (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   char qt_in_use[NUM_QUANT_TBLS];
   int i, prec;
@@ -451,12 +395,7 @@ compress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 write_scan_header (compress_info_ptr cinfo)
-#else
-write_scan_header (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   int i;
 
@@ -492,14 +431,7 @@ compress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 write_jpeg_data (compress_info_ptr cinfo, char *dataptr, int datacount)
-#else
-write_jpeg_data (cinfo, dataptr, datacount)
-compress_info_ptr cinfo;
-char *dataptr;
-int datacount;
-#endif
 {
   WRITE_BYTES(cinfo, dataptr, datacount);
 }
@@ -510,12 +442,7 @@ int datacount;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 write_scan_trailer (compress_info_ptr cinfo)
-#else
-write_scan_trailer (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   /* no work needed in this format */
 }
@@ -526,12 +453,7 @@ compress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 write_file_trailer (compress_info_ptr cinfo)
-#else
-write_file_trailer (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   emit_marker(cinfo, M_EOI);
   /* Make sure we wrote the output file OK */
@@ -545,12 +467,7 @@ compress_info_ptr cinfo;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jselwjfif (compress_info_ptr cinfo)
-#else
-jselwjfif (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   cinfo->methods->write_file_header = write_file_header;
   cinfo->methods->write_scan_header = write_scan_header;

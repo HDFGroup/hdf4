@@ -91,12 +91,7 @@ PRIVATE uint8 file_buf[MAX_FILE_BUF];   /* size of the buffer to copy through */
 
 
 static intn
-#ifdef PROTOTYPE
 jgetc(FILE *f)
-#else
-jgetc(f)
-FILE *f;
-#endif
 /* Get a 2-byte unsigned integer (e.g., a marker parameter length field) */
 {
   intn a;
@@ -108,12 +103,7 @@ FILE *f;
 }
 
 static int32
-#ifdef PROTOTYPE
 get_2bytes (FILE *f)
-#else
-get_2bytes (f)
-FILE *f;
-#endif
 /* Get a 2-byte unsigned integer (e.g., a marker parameter length field) */
 {
   int32 a;
@@ -123,12 +113,7 @@ FILE *f;
 }
 
 static VOID
-#ifdef PROTOTYPE
 get_sof (FILE *f)
-#else
-get_sof (f)
-FILE *f;
-#endif
 /* Process a SOFn marker */
 {
   short ci;
@@ -149,12 +134,7 @@ FILE *f;
 }
 
 static VOID
-#ifdef PROTOTYPE
 skip_variable (FILE *f)
-#else
-skip_variable (f)
-FILE *f;
-#endif
 /* Skip over an unknown or uninteresting variable-length marker */
 {
   int32 length;
@@ -167,12 +147,7 @@ FILE *f;
 
 
 static intn
-#ifdef PROTOTYPE
 next_marker (FILE *f)
-#else
-next_marker (f)
-FILE *f;
-#endif
 /* Find the next JPEG marker */
 /* Note that the output might not be a valid marker code, */
 /* but it will never be 0 or FF */
@@ -196,12 +171,7 @@ FILE *f;
 
 
 static JPEG_MARKER
-#ifdef PROTOTYPE
 process_tables (FILE *f)
-#else
-process_tables (f)
-FILE *f;
-#endif
 /* Scan and process JPEG markers that can appear in any order */
 /* Return when an SOI, EOI, SOFn, or SOS is found */
 {
@@ -288,12 +258,7 @@ FILE *f;
  */
 
 static int32
-#ifdef PROTOTYPE
 read_file_header (FILE *f)
-#else
-read_file_header (f)
-FILE *f;
-#endif
 {
   int c;
 
@@ -338,14 +303,7 @@ FILE *f;
  *          into the HDF file...
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 static intn DFJPEGaddrig(int32 file_id, uint16 ref, uint16 ctag)
-#else
-static intn DFJPEGaddrig(file_id, ref, ctag)
-    int32 file_id;
-    uint16 ref;
-    uint16 ctag;
-#endif
 {
 #ifdef OLD_WAY
     char *FUNC="DFJPEGaddrig";
@@ -444,11 +402,7 @@ static intn DFJPEGaddrig(file_id, ref, ctag)
     return(DFdiwrite(file_id, GroupID, DFTAG_RIG, ref));
 }
 
-#if defined ( PROTOTYPE ) && ! defined ( CONVEX )
-static VOID usage(VOID)
-#else
-static VOID usage()
-#endif
+static VOID usage(void)
 {
     printf("USAGE: jpeg2hdf <input JPEG file> <output HDF file>\n");
     printf("    <input JPEG file> : JPEG file containing input image \n");
@@ -456,13 +410,7 @@ static VOID usage()
     exit(1);
 }   /* end usage() */
 
-#ifdef PROTOTYPE
 int main(int argc,char *argv[])
-#else
-int main(argc,argv)
-int argc;
-char *argv[];
-#endif
 {
     int32 off_image;        /* offset of the JPEG image in the JFIF file */
     int32 file_len;         /* total length of the JPEG file */

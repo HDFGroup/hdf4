@@ -14,12 +14,7 @@
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 c_per_scan_method_selection (compress_info_ptr cinfo)
-#else
-c_per_scan_method_selection (cinfo)
-compress_info_ptr cinfo;
-#endif
 /* Central point for per-scan method selection */
 {
   /* Edge expansion */
@@ -32,12 +27,7 @@ compress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 c_initial_method_selection (compress_info_ptr cinfo)
-#else
-c_initial_method_selection (cinfo)
-compress_info_ptr cinfo;
-#endif
 /* Central point for initial method selection */
 {
   /* Input image reading method selection is already done. */
@@ -60,12 +50,7 @@ compress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 initial_setup (compress_info_ptr cinfo)
-#else
-initial_setup (cinfo)
-compress_info_ptr cinfo;
-#endif
 /* Do computations that are needed before initial method selection */
 {
   short ci;
@@ -105,12 +90,7 @@ compress_info_ptr cinfo;
 
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jpeg_compress (compress_info_ptr cinfo)
-#else
-jpeg_compress (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   /* Init pass counts to 0 --- total_passes is adjusted in method selection */
   cinfo->total_passes = 0;

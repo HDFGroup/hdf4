@@ -34,23 +34,13 @@ static char RcsId[] = "@(#)$Revision$";
 #define USAGE "ristosds infile{ infile} -o outfile"
 
 int main
-    PROTO((int, char **));
+    (int, char **);
 int cntimage
-    PROTO((char *filename, int32 *p_w, int32 *p_h, int *n_images));
+    (char *filename, int32 *p_w, int32 *p_h, int *n_images);
 VOID finishing
-#ifdef CONVEX
-    PROTO(());
-#else
-    PROTO((VOID));
-#endif
+    (void);
 
-#ifdef PROTOTYPE
 int main(int argc, char *argv[])
-#else
-int main(argc, argv)
-    int argc;
-    char *argv[];
-#endif /* PROTOTYPE */
 {
     int i,j;
     int nimg, nimg0;  /* nimg, nimg0 -- number of images	*/
@@ -144,11 +134,7 @@ int main(argc, argv)
     return(0);
 }
 
-#if defined ( PROTOTYPE ) && ! defined ( CONVEX )
-VOID finishing(VOID )
-#else
-VOID finishing()
-#endif
+VOID finishing(void )
 {
     printf("end of ristosds.\n");
     exit(1);
@@ -157,14 +143,7 @@ VOID finishing()
 
 /* count # of images  */
  	    
-#ifdef PROTOTYPE
 int cntimage(char *filename, int32 *p_w, int32 *p_h, int *n_images)
-#else
-int cntimage(filename, p_w, p_h, n_images)  
-    char *filename;		
-    int32 *p_w, *p_h; /* p_w -- pointer to width   */
-    int *n_images;  
-#endif /* PROTOTYPE */
 
 {     int32 ret, width, height;
       int ispal, dimerror;

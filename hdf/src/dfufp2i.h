@@ -60,17 +60,17 @@ extern int DFUfptoimage(int32 hdim, int32 vdim, float32 max, float32 min,
                         int32 hres, int32 vres, int compress);
 #endif
 extern int process
-    PROTO((Input *in, Output *out));
+    (Input *in, Output *out);
 extern int generate_scale
-    PROTO((int32 dim, float32 *scale));
+    (int32 dim, float32 *scale);
 extern int convert_interp
-    PROTO((Input *in, Output *out));
+    (Input *in, Output *out);
 extern int pixrep_scaled
-    PROTO((Input *in, Output *out));
+    (Input *in, Output *out);
 extern int compute_offsets
-    PROTO((float32 *scale, int32 dim, int32 *offsets, int32 res));
+    (float32 *scale, int32 dim, int32 *offsets, int32 res);
 extern int pixrep_simple
-    PROTO((Input *in, Output *out));
+    (Input *in, Output *out);
 
 #if defined c_plusplus || defined __cplusplus
 }

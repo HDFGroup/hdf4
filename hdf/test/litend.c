@@ -44,7 +44,7 @@ static uint32 FAR cdata_u32[CDIM_Y][CDIM_X];
 static float32 FAR cdata_f32[CDIM_Y][CDIM_X];
 static float64 FAR cdata_f64[CDIM_Y][CDIM_X];
 
-VOID init_cdata()
+VOID init_cdata(void)
 {
     int i,j;
 
@@ -62,11 +62,11 @@ VOID init_cdata()
           } /* end for */
 }   /* end init_cdata() */
 
-VOID wrapup_cdata()
+VOID wrapup_cdata(void)
 {
 }   /* end wrapup_cdata() */
 
-VOID test_little_read()
+VOID test_little_read(void)
 {
     intn rank;
     int32 dimsizes[2];
@@ -312,7 +312,7 @@ VOID test_little_read()
       } /* end else */
 }   /* end test_little_read */
 
-VOID test_little_write()
+VOID test_little_write(void)
 {
     intn rank;
     int32 dimsizes[2];
@@ -621,7 +621,7 @@ VOID test_little_write()
       } /* end else */
 }   /* end test_little_write */
 
-void test_litend()
+void test_litend(void)
 {
     init_cdata();
 

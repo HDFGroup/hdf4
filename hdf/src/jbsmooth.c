@@ -19,22 +19,12 @@
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 smooth_coefficients (decompress_info_ptr cinfo,
 		     jpeg_component_info *compptr,
 		     JBLOCKROW above,
 		     JBLOCKROW currow,
 		     JBLOCKROW below,
 		     JBLOCKROW output)
-#else
-smooth_coefficients (cinfo, compptr, above, currow, below, output)
-decompress_info_ptr cinfo;
-jpeg_component_info *compptr;
-JBLOCKROW above;
-JBLOCKROW currow;
-JBLOCKROW below;
-JBLOCKROW output;
-#endif
 {
   QUANT_TBL_PTR Qptr = cinfo->quant_tbl_ptrs[compptr->quant_tbl_no];
   long blocks_in_row = compptr->downsampled_width / DCTSIZE;
@@ -119,12 +109,7 @@ JBLOCKROW output;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jselbsmooth (decompress_info_ptr cinfo)
-#else
-jselbsmooth (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   /* just one implementation for now */
   cinfo->methods->smooth_coefficients = smooth_coefficients;

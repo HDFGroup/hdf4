@@ -19,13 +19,7 @@ static char RcsId[] = "@(#)$Revision$";
 #include <stdio.h>
 #include "vg.h"
 
-#ifdef PROTOTYPE
 int main (int ac,char **av)
-#else
-int main (ac,av)
-int ac;
-char**av;
-#endif
 {
 
 if (ac!=2) { 

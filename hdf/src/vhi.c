@@ -53,19 +53,8 @@ DESCRIPTION
        Returns -1 if error; ref of that new vdata (a +ve integer) if successful.
 ------------------------------------------------------------------------- */
 
-#ifdef PROTOTYPE
 PUBLIC int32 VHstoredata (HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype, 
                           char *vsname, char *vsclass)
-#else
-
-PUBLIC int32 VHstoredata (f, field, buf, n, datatype, vsname, vsclass)
-	HFILEID 	f;
-	char * 	field;
-        uint8   buf[];
-	int32 	n;
-	char * 	vsname, * vsclass;
-	int32 	datatype;
-#endif
 
 {
   int32	ref;
@@ -101,18 +90,7 @@ DESCRIPTION
        Returns -1 if error; ref of that new vdata (a +ve integer) if successful.
 --------------------------------------------------------------------------- */
 
-#ifdef PROTOTYPE
 PUBLIC int32 VHstoredatam (HFILEID f, char *field, uint8 buf[], int32  n, int32 datatype, char *vsname, char *vsclass, int32 order)
-#else
-PUBLIC int32 VHstoredatam (f, field, buf, n, datatype, vsname, vsclass, order)
-HFILEID     f;
-char    *   field;
-uint8        buf[];
-int32   n;
-int32   datatype;
-int32   order;
-char *  vsname, * vsclass;
-#endif
 {
     int32 s;
     int32 ref;
@@ -171,15 +149,7 @@ DESCRIPTION
 
 --------------------------------------------------------------------------- */
 
-#ifdef PROTOTYPE
 PUBLIC int32 VHmakegroup (HFILEID f, int32 tagarray[], int32 refarray[] , int32 n, char *vgname, char *vgclass)
-#else
-PUBLIC int32 VHmakegroup (f, tagarray, refarray , n, vgname, vgclass)
-HFILEID     f;
-int32   tagarray[], refarray[];
-int32   n;
-char        * vgname, * vgclass;
-#endif
 {
     int32 ref, i, s;
     int32 vg;

@@ -52,15 +52,7 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nhiopen(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
-#else
-nhiopen(name, acc_mode, defdds, namelen)
-    _fcd name;
-    intf *acc_mode;
-    intf *defdds;
-    intf *namelen;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -82,12 +74,7 @@ nhiopen(name, acc_mode, defdds, namelen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nhclose(intf *file_id)
-#else
-nhclose(file_id)
-    intf *file_id;
-#endif /* PROTOTYPE */
 {
     return(Hclose(*file_id));
 }
@@ -103,13 +90,7 @@ nhclose(file_id)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 nhnumber(int32 file_id, uint16 tag)
-#else
-nhnumber(file_id, tag)
-    int32 file_id;
-    uint16 tag;
-#endif /* PROTOTYPE */
 {
     return(Hnumber(file_id,tag));
 }

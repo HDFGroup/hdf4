@@ -103,91 +103,91 @@ extern "C" {
 
 /* prototypes for dfstubs.c */
 extern DF *DFopen
-  PROTO((char *name, int acc_mode, int ndds));
+  (char *name, int acc_mode, int ndds);
 
 extern int DFclose
-  PROTO((DF *dfile));
+  (DF *dfile);
 
 extern int DFdescriptors
-  PROTO((DF *dfile, DFdesc ptr[], int begin, int num));
+  (DF *dfile, DFdesc ptr[], int begin, int num);
 
 extern int DFnumber
-  PROTO((DF *dfile, uint16 tag));
+  (DF *dfile, uint16 tag);
 
 extern int DFsetfind
-  PROTO((DF *dfile, uint16 tag, uint16 ref));
+  (DF *dfile, uint16 tag, uint16 ref);
 
 extern int DFfind
-  PROTO((DF *dfile, DFdesc *ptr));
+  (DF *dfile, DFdesc *ptr);
 
 extern int DFaccess
-  PROTO((DF *dfile, uint16 tag, uint16 ref, char *acc_mode));
+  (DF *dfile, uint16 tag, uint16 ref, char *acc_mode);
 
 extern int DFstart
-  PROTO((DF *dfile, uint16 tag, uint16 ref, char *acc_mode));
+  (DF *dfile, uint16 tag, uint16 ref, char *acc_mode);
 
 extern int32 DFread
-  PROTO((DF *dfile, char *ptr, int32 len));
+  (DF *dfile, char *ptr, int32 len);
 
 extern int32 DFseek
-  PROTO((DF *dfile, int32 offset));
+  (DF *dfile, int32 offset);
 
 extern int32 DFwrite
-  PROTO((DF *dfile, char *ptr, int32 len));
+  (DF *dfile, char *ptr, int32 len);
 
 extern int DFupdate
-  PROTO((DF *dfile));
+  (DF *dfile);
 
 extern int DFstat
-  PROTO((DF *dfile, DFdata *dfinfo));
+  (DF *dfile, DFdata *dfinfo);
 
 extern int32 DFgetelement
-  PROTO((DF *dfile, uint16 tag, uint16 ref, char *ptr));
+  (DF *dfile, uint16 tag, uint16 ref, char *ptr);
 
 extern int32 DFputelement
-  PROTO((DF *dfile, uint16 tag, uint16 ref, char *ptr, int32 len));
+  (DF *dfile, uint16 tag, uint16 ref, char *ptr, int32 len);
 
 extern int DFdup
-  PROTO((DF *dfile, uint16 itag, uint16 iref, uint16 otag, uint16 oref));
+  (DF *dfile, uint16 itag, uint16 iref, uint16 otag, uint16 oref);
 
 extern int DFdel
-  PROTO((DF *dfile, uint16 tag, uint16 ref));
+  (DF *dfile, uint16 tag, uint16 ref);
 
 extern uint16 DFnewref
-  PROTO((DF *dfile));
+  (DF *dfile);
 
 extern int DFishdf
-  PROTO((char *filename));
+  (char *filename);
 
 extern int DFerrno
-  PROTO((void));
+  (void);
 
 extern int DFIerr
-  PROTO((DF *dfile));
+  (DF *dfile);
 
 extern int DFImemcopy
-  PROTO((char *from, char *to, register int length));
+  (char *from, char *to, register int length);
 
 extern void *DFIgetspace
-  PROTO((uint32 qty));
+  (uint32 qty);
 
 extern void *DFIfreespace
-  PROTO((void *ptr));
+  (void *ptr);
 
 extern int DFIc2fstr
-  PROTO((char *str, int len));
+  (char *str, int len);
 
 extern char *DFIf2cstring
-  PROTO((_fcd fdesc, intn len));
+  (_fcd fdesc, intn len);
 
 #ifdef PC
 extern int32 DFIspaceleft
-  PROTO((void));
+  (void);
 #endif /* PC */
 
 /* prototypes for dfconv.c */
 extern int DFconvert
-  PROTO((uint8 *source,uint8 *dest,int ntype,int sourcetype,int desttype, int32 size));
+  (uint8 *source,uint8 *dest,int ntype,int sourcetype,int desttype, int32 size);
 
 #if defined c_plusplus || defined __cplusplus
 }

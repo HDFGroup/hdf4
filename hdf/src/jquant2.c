@@ -121,16 +121,8 @@ static hist3d histogram;	/* pointer to the histogram */
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 color_quant2_prescan (decompress_info_ptr cinfo, int num_rows,
              JSAMPIMAGE image_data, JSAMPARRAY workspace)
-#else
-color_quant2_prescan (cinfo, num_rows, image_data, workspace)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE image_data;
-JSAMPARRAY workspace;
-#endif
 {
   register JSAMPROW ptr0, ptr1, ptr2;
   register histptr histp;
@@ -182,11 +174,7 @@ static JSAMPARRAY my_colormap;	/* the finished colormap (in YCbCr space) */
 
 
 LOCAL boxptr
-#if defined( PROTOTYPE ) && ! defined( CONVEX )
-find_biggest_color_pop (VOID)
-#else
-find_biggest_color_pop ()
-#endif
+find_biggest_color_pop (void)
 /* Find the splittable box with the largest color population */
 /* Returns NULL if no splittable boxes remain */
 {
@@ -209,11 +197,7 @@ find_biggest_color_pop ()
 
 
 LOCAL boxptr
-#if defined( PROTOTYPE ) && ! defined( CONVEX )
-find_biggest_volume (VOID)
-#else
-find_biggest_volume ()
-#endif
+find_biggest_volume (void)
 /* Find the splittable box with the largest (scaled) volume */
 /* Returns NULL if no splittable boxes remain */
 {
@@ -247,12 +231,7 @@ find_biggest_volume ()
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 update_box (boxptr boxp)
-#else
-update_box (boxp)
-boxptr boxp;
-#endif
 /* Shrink the min/max bounds of a box to enclose only nonzero elements, */
 /* and recompute its population */
 {
@@ -347,12 +326,7 @@ boxptr boxp;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 median_cut (int desired_colors)
-#else
-median_cut (desired_colors)
-int desired_colors;
-#endif
 /* Repeatedly select and split the largest box until we have enough boxes */
 {
   int n,lb;
@@ -415,13 +389,7 @@ int desired_colors;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 compute_color (boxptr boxp, int icolor)
-#else
-compute_color (boxp, icolor)
-boxptr boxp;
-int icolor;
-#endif
 /* Compute representative color for a box, put it in my_colormap[icolor] */
 {
   /* Current algorithm: mean weighted by pixels (not colors) */
@@ -459,12 +427,7 @@ int icolor;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 remap_colormap (decompress_info_ptr cinfo)
-#else
-remap_colormap (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Remap the internal colormap to the output colorspace */
 {
   /* This requires a little trickery since color_convert expects to
@@ -487,12 +450,7 @@ decompress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 select_colors (decompress_info_ptr cinfo)
-#else
-select_colors (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Master routine for color selection */
 {
   int desired = cinfo->desired_number_of_colors;
@@ -606,17 +564,8 @@ decompress_info_ptr cinfo;
  */
 
 LOCAL int
-#ifdef PROTOTYPE
 find_nearby_colors (decompress_info_ptr cinfo, int minc0, int minc1, int minc2,
 		    JSAMPLE colorlist[])
-#else
-find_nearby_colors (cinfo, minc0, minc1, minc2, colorlist)
-decompress_info_ptr cinfo;
-int minc0;
-int minc1;
-int minc2;
-JSAMPLE colorlist[];
-#endif
 /* Locate the colormap entries close enough to an update box to be candidates
  * for the nearest entry to some cell(s) in the update box.  The update box
  * is specified by the center coordinates of its first cell.  The number of
@@ -745,19 +694,8 @@ JSAMPLE colorlist[];
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 find_best_colors (decompress_info_ptr cinfo, int minc0, int minc1, int minc2,
 		  int numcolors, JSAMPLE colorlist[], JSAMPLE bestcolor[])
-#else
-find_best_colors (cinfo, minc0, minc1, minc2, numcolors, colorlist, bestcolor)
-decompress_info_ptr cinfo;
-int minc0;
-int minc1;
-int minc2;
-int numcolors;
-JSAMPLE colorlist[];
-JSAMPLE bestcolor[];
-#endif
 /* Find the closest colormap entry for each cell in the update box,
  * given the list of candidate colors prepared by find_nearby_colors.
  * Return the indexes of the closest entries in the bestcolor[] array.
@@ -836,15 +774,7 @@ JSAMPLE bestcolor[];
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 fill_inverse_cmap (decompress_info_ptr cinfo, int c0, int c1, int c2)
-#else
-fill_inverse_cmap (cinfo, c0, c1, c2)
-decompress_info_ptr cinfo;
-int c0;
-int c1;
-int c2;
-#endif
 /* Fill the inverse-colormap entries in the update box that contains */
 /* histogram cell c0/c1/c2.  (Only that one cell MUST be filled, but */
 /* we can fill as many others as we wish.) */
@@ -907,16 +837,8 @@ int c2;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 pass2_nodither (decompress_info_ptr cinfo, int num_rows,
 		JSAMPIMAGE image_data, JSAMPARRAY output_workspace)
-#else
-pass2_nodither (cinfo, num_rows, image_data, output_workspace)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE image_data;
-JSAMPARRAY output_workspace;
-#endif
 /* This version performs no dithering */
 {
   register JSAMPROW ptr0, ptr1, ptr2, outptr;
@@ -987,16 +909,8 @@ static bool on_odd_row;	/* flag to remember which row we are on */
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 pass2_dither (decompress_info_ptr cinfo, int num_rows,
 	      JSAMPIMAGE image_data, JSAMPARRAY output_workspace)
-#else
-pass2_dither (cinfo, num_rows, image_data, output_workspace)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE image_data;
-JSAMPARRAY output_workspace;
-#endif
 /* This version performs Floyd-Steinberg dithering */
 {
 #ifdef EIGHT_BIT_SAMPLES
@@ -1118,12 +1032,7 @@ JSAMPARRAY output_workspace;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 color_quant2_init (decompress_info_ptr cinfo)
-#else
-color_quant2_init (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   int i;
 
@@ -1183,13 +1092,7 @@ decompress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 color_quant2_doit (decompress_info_ptr cinfo, quantize_caller_ptr source_method)
-#else
-color_quant2_doit (cinfo, source_method)
-decompress_info_ptr cinfo;
-quantize_caller_ptr source_method;
-#endif
 {
   int i;
 
@@ -1217,12 +1120,7 @@ quantize_caller_ptr source_method;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 color_quant2_term (decompress_info_ptr cinfo)
-#else
-color_quant2_term (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   /* no work (we let free_all release the histogram/cache and colormaps) */
   /* Note that we *mustn't* free the external colormap before free_all, */
@@ -1236,16 +1134,8 @@ decompress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 color_quantize2 (decompress_info_ptr cinfo, int num_rows,
 		JSAMPIMAGE input_data, JSAMPARRAY output_data)
-#else
-color_quantize2 (cinfo, num_rows, input_data, output_data)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE input_data;
-JSAMPARRAY output_data;
-#endif
 {
   ERREXIT(cinfo->emethods, "Should not get here!");
 }
@@ -1256,12 +1146,7 @@ JSAMPARRAY output_data;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jsel2quantize (decompress_info_ptr cinfo)
-#else
-jsel2quantize (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   if (cinfo->two_pass_quantize) {
     /* Make sure jdmaster didn't give me a case I can't handle */

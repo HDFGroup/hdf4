@@ -23,8 +23,8 @@
  * On an 80x86 machine using small-data memory model, these manage near heap.
  */
 
-EXTERN VOIDP jget_small PROTO((size_t sizeofobject));
-EXTERN VOID jfree_small PROTO((VOIDP object));
+EXTERN VOIDP jget_small (size_t sizeofobject);
+EXTERN VOID jfree_small (VOIDP object);
 
 /*
  * These two functions are used to allocate and release large chunks of
@@ -34,8 +34,8 @@ EXTERN VOID jfree_small PROTO((VOIDP object));
  */
 
 #ifdef NEED_FAR_POINTERS	/* typically not needed except on 80x86 */
-EXTERN VOIDP jget_large PROTO((size_t sizeofobject));
-EXTERN VOID jfree_large PROTO((VOIDP object));
+EXTERN VOIDP jget_large (size_t sizeofobject);
+EXTERN VOID jfree_large (VOIDP object);
 #else
 #define jget_large(sizeofobject)	jget_small(sizeofobject)
 #define jfree_large(object)		jfree_small(object)
@@ -71,7 +71,7 @@ EXTERN VOID jfree_large PROTO((VOIDP object));
  * Conversely, zero may be returned to always use the minimum amount of memory.
  */
 
-EXTERN long jmem_available PROTO((long min_bytes_needed, long max_bytes_needed));
+EXTERN long jmem_available (long min_bytes_needed, long max_bytes_needed);
 
 
 /*
@@ -97,10 +97,10 @@ typedef struct backing_store_struct * backing_store_ptr;
 typedef struct backing_store_struct {
 	/* Methods for reading/writing/closing this backing-store object */
     METHOD(VOID, read_backing_store, (backing_store_ptr info,
-                      VOIDP buffer_address, long file_offset, long byte_count));
+                      VOIDP buffer_address, long file_offset, long byte_count);
     METHOD(VOID, write_backing_store, (backing_store_ptr info,
-                      VOIDP buffer_address, long file_offset, long byte_count));
-    METHOD(VOID, close_backing_store, (backing_store_ptr info));
+                      VOIDP buffer_address, long file_offset, long byte_count);
+    METHOD(VOID, close_backing_store, (backing_store_ptr info);
     /* Private fields for system-dependent backing-store management */
 	/* For the MS-DOS environment, we need: */
 	handle_union handle;	/* reference to backing-store storage object */
@@ -115,8 +115,8 @@ typedef struct backing_store_struct {
  * take an error exit.)
  */
 
-EXTERN VOID jopen_backing_store PROTO((backing_store_ptr info,
-				    long total_bytes_needed));
+EXTERN VOID jopen_backing_store (backing_store_ptr info,
+				    long total_bytes_needed);
 
 
 /*
@@ -129,6 +129,6 @@ EXTERN VOID jopen_backing_store PROTO((backing_store_ptr info,
  * if that happens.
  */
 
-EXTERN VOID jmem_init PROTO((external_methods_ptr emethods));
-EXTERN VOID jmem_term PROTO((VOID));
+EXTERN VOID jmem_init (external_methods_ptr emethods);
+EXTERN VOID jmem_term (VOID);
 

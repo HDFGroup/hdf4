@@ -71,14 +71,7 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndpigpal(_fcd filename, _fcd pal, intf *fnlen)
-#else
-ndpigpal(filename, pal, fnlen)
-    _fcd filename;
-    _fcd pal;
-    intf *fnlen;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -108,16 +101,7 @@ ndpigpal(filename, pal, fnlen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndpippal(_fcd filename, _fcd pal, intf *overwrite, _fcd filemode, intf *fnlen)
-#else
-ndpippal(filename, pal, overwrite, filemode, fnlen)
-    _fcd filename;
-    _fcd pal;
-    intf *overwrite;
-    _fcd filemode;
-    intf *fnlen;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -140,13 +124,7 @@ ndpippal(filename, pal, overwrite, filemode, fnlen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndpinpal(_fcd filename, intf *fnlen)
-#else
-ndpinpal(filename, fnlen)
-    _fcd filename;
-    intf *fnlen;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -170,14 +148,7 @@ ndpinpal(filename, fnlen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndpirref(_fcd filename, uint16 *ref, intf *fnlen)
-#else
-ndpirref(filename, ref, fnlen)
-    _fcd filename;
-    uint16 *ref;
-    intf *fnlen;
-#endif /* PROTOTYPE */
 {
     char *fn;
     intf ret;
@@ -202,14 +173,7 @@ ndpirref(filename, ref, fnlen)
 
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndpiwref(_fcd filename, uint16 *ref, intf *fnlen)
-#else
-ndpiwref(filename, ref, fnlen)
-    _fcd filename;
-    uint16 *ref;
-    intf *fnlen;
-#endif /* PROTOTYPE */
 {
 
     char *fn;
@@ -232,11 +196,7 @@ ndpiwref(filename, ref, fnlen)
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndprest(void)
-#else
-ndprest()
-#endif /* PROTOTYPE */
 {
 
     return(DFPrestart());
@@ -255,11 +215,7 @@ ndprest()
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndplref(void)
-#else
-ndplref()
-#endif /* PROTOTYPE */
 {
 
     return(DFPlastref());
@@ -276,11 +232,7 @@ ndplref()
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfprestart(void)
-#else
-ndfprestart()
-#endif /* PROTOTYPE */
 {
 
     return(DFPrestart());
@@ -299,11 +251,7 @@ ndfprestart()
  *---------------------------------------------------------------------------*/
 
     FRETVAL(intf)
-#ifdef PROTOTYPE
 ndfplastref(void)
-#else
-ndfplastref()
-#endif /* PROTOTYPE */
 {
 
     return(DFPlastref());

@@ -77,13 +77,13 @@ typedef struct linkinfo_t {
 
 /* private functions */
 PRIVATE int32 HLIstaccess
-    PROTO((accrec_t *access_rec, int16 acc_mode));
+    (accrec_t *access_rec, int16 acc_mode);
 
 PRIVATE link_t *HLInewlink
-    PROTO((int32 file_id, int32 number_blocks, uint16 link_ref, uint16 first_block_ref));
+    (int32 file_id, int32 number_blocks, uint16 link_ref, uint16 first_block_ref);
 
 PRIVATE link_t *HLIgetlink
-    PROTO((int32 file_id,uint16 ref,int32 number_blocks));
+    (int32 file_id,uint16 ref,int32 number_blocks);
 
 /* Private buffer */
 PRIVATE uint8 *ptbuf = NULL;
@@ -132,17 +132,8 @@ funclist_t linked_funcs = {
         and application depedent.
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length,
               int32 number_blocks)
-#else
-int32 HLcreate(file_id, tag, ref, block_length, number_blocks)
-    int32 file_id;
-    uint16 tag;
-    uint16 ref;
-    int32 block_length;
-    int32 number_blocks;
-#endif
 {
     CONSTR(FUNC,"HLcreate");     /* for HERROR */
     filerec_t *file_rec;       /* file record */
@@ -346,14 +337,8 @@ int32 HLcreate(file_id, tag, ref, block_length, number_blocks)
         this function.
 
 ---------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int HDinqblockinfo(int32 aid, int32 *length, int32 *first_length,
                 int32 *block_length, int32 *number_blocks)
-#else
-int HDinqblockinfo(aid, length, first_length, block_length, number_blocks)
-int32 aid;
-int32 *length, *first_length, *block_length, *number_blocks;
-#endif /* PROTOTYPE */
 {
     accrec_t *arec;
     CONSTR(FUNC,"HDinqblockinfo");
@@ -399,13 +384,7 @@ int32 *length, *first_length, *block_length, *number_blocks;
         pull in the information ourselves
 
 ----------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int32 HLIstaccess(accrec_t *access_rec, int16 acc_mode)
-#else
-PRIVATE int32 HLIstaccess(access_rec, acc_mode)
-    accrec_t *access_rec;      /* access record */
-    int16 acc_mode;               /* access mode */
-#endif
 {
     CONSTR(FUNC,"HLIstaccess");  /* for HERROR */
     filerec_t *file_rec;       /* file record */
@@ -550,12 +529,7 @@ PRIVATE int32 HLIstaccess(access_rec, acc_mode)
         reading
 
 --------------------------------------------------------------------------- */ 
-#ifdef PROTOTYPE
 int32 HLPstread(accrec_t *access_rec)
-#else
-int32 HLPstread(access_rec)
-    accrec_t *access_rec;      /* access record */
-#endif
 {
     return HLIstaccess(access_rec, DFACC_READ);
 } /* HLPstread */
@@ -576,12 +550,7 @@ int32 HLPstread(access_rec)
         writing
 
 --------------------------------------------------------------------------- */ 
-#ifdef PROTOTYPE
 int32 HLPstwrite(accrec_t *access_rec)
-#else
-int32 HLPstwrite(access_rec)
-    accrec_t *access_rec;
-#endif
 {
     return HLIstaccess(access_rec, DFACC_WRITE);
 } /* HLPstwrite */
@@ -606,14 +575,7 @@ int32 HLPstwrite(access_rec)
         It seems that num_blocks is redundant.
 
 --------------------------------------------------------------------------- */ 
-#ifdef PROTOTYPE
 PRIVATE link_t *HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
-#else
-PRIVATE link_t * HLIgetlink(file_id, ref, number_blocks)
-    int32 file_id;             /* file record id */
-    uint16 ref;                        /* tag ref of block table elt */
-    int32 number_blocks;       /* number of blocks in this link elt */
-#endif
 {
     CONSTR(FUNC,"HLIgetlink");   /* for HERROR */
     int32 access_id;           /* access record id */
@@ -682,14 +644,7 @@ PRIVATE link_t * HLIgetlink(file_id, ref, number_blocks)
         Set the seek posn in the given linked block element
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HLPseek(accrec_t *access_rec, int32 offset, int origin)
-#else
-int32 HLPseek(access_rec, offset, origin)
-    accrec_t *access_rec;
-    int32 offset;
-    int origin;
-#endif
 {
     CONSTR(FUNC,"HLPseek");      /* for HERROR */
 
@@ -735,14 +690,7 @@ int32 HLPseek(access_rec, offset, origin)
         read what has been written.
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HLPread(accrec_t *access_rec, int32 length, VOIDP datap)
-#else
-int32 HLPread(access_rec, length, datap)
-    accrec_t *access_rec;      /* access record */
-    int32 length;              /* length of data to read */
-    VOIDP datap;               /* buffer to read data into */
-#endif
 {
     CONSTR(FUNC,"HLPread");      /* for HERROR */
     uint8 *data=(uint8 *)datap;
@@ -867,14 +815,7 @@ int32 HLPread(access_rec, length, datap)
         as needed.
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HLPwrite(accrec_t *access_rec, int32 length, const VOIDP datap)
-#else
-int32 HLPwrite(access_rec, length, datap)
-    accrec_t *access_rec;      /* access record */
-    int32 length;              /* length of data */
-    const VOIDP datap;                        /* data buffer to write from */
-#endif
 {
     CONSTR(FUNC,"HLPwrite");     /* for HERROR */
     uint8 *data=(uint8 *)datap;
@@ -1149,16 +1090,8 @@ int32 HLPwrite(access_rec, length, datap)
         ptr to the new link/block table.
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 PRIVATE link_t *HLInewlink(int32 file_id, int32 number_blocks,
                           uint16 link_ref, uint16 first_block_ref)
-#else
-PRIVATE link_t *HLInewlink(file_id, number_blocks, link_ref, first_block_ref)
-    int32 file_id;              /* file record id */
-    int32 number_blocks;        /* number os block to put in this link */
-    uint16 link_ref;            /* ref of link to create */
-    uint16 first_block_ref;     /* ref of first block in this link */
-#endif
 {
     CONSTR(FUNC,"HLInewlink");   /* for HERROR */
     int32 link_id;             /* access record id of new link */
@@ -1254,23 +1187,9 @@ PRIVATE link_t *HLInewlink(file_id, number_blocks, link_ref, first_block_ref)
         value is not needed.
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HLPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
                 uint16 *pref, int32 *plength, int32 *poffset, int32 *pposn,
                 int16 *paccess, int16 *pspecial)
-#else
-int32 HLPinquire(access_rec, pfile_id, ptag, pref, plength, poffset,
-                        pposn, paccess, pspecial)
-     accrec_t *access_rec;     /* access record */
-     int32 *pfile_id;          /* ptr to file id, OUT */
-     uint16 *ptag;             /* ptr to tag of information, OUT */
-     uint16 *pref;             /* ptr to ref of information, OUT */
-     int32 *plength;           /* ptr to length of data element, OUT */
-     int32 *poffset;           /* ptr to offset of data element, OUT */
-     int32 *pposn;             /* ptr to position of access in element, OUT */
-     int16 *paccess;           /* ptr to access mode, OUT */
-     int16 *pspecial;          /* ptr to special code */
-#endif
 {
     dd_t *info_dd =            /* dd of special information */
        &(access_rec->block->ddlist[access_rec->idx]);
@@ -1310,12 +1229,7 @@ int32 HLPinquire(access_rec, pfile_id, ptag, pref, plength, poffset,
         out.
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HLPendaccess(accrec_t *access_rec)
-#else
-int32 HLPendaccess(access_rec)
-    accrec_t *access_rec;      /* access record to dispose of */
-#endif
 {
     CONSTR(FUNC,"HLPendaccess"); /* for HERROR */
     linkinfo_t *info =         /* special information record */
@@ -1371,13 +1285,7 @@ int32 HLPendaccess(access_rec)
         assumed to be non-NULL.
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HLPinfo(accrec_t *access_rec, sp_info_block_t * info_block)
-#else
-int32 HLPinfo(access_rec, info_block)
-     accrec_t        * access_rec;   /* access record */
-     sp_info_block_t * info_block;   /* info_block to fill */
-#endif
 {
     char *FUNC="HLPinfo";      /* for HERROR */
     linkinfo_t *info =         /* special information record */

@@ -33,21 +33,10 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "hdf.h"
 
-#ifdef PROTOTYPE
 int main(int argc, char *argv[]);
 int rawpalconv(char *hdffile, char *rawpalfile);
-#else
-int main();
-int rawpalconv();
-#endif /* PROTOTYPE */
 
-#ifdef PROTOTYPE
 int main(int argc, char *argv[]) 
-#else
-int main(argc,argv) 
-int argc;
-char *argv[];
-#endif /* PROTOTYPE */
 {
     if (argc != 3) { 
         printf("Usage:\n");
@@ -68,12 +57,7 @@ char *argv[];
  *      rawpalconv(palfile, outfile) sets the palette
  */
 
-#ifdef PROTOTYPE
 int rawpalconv(char *hdffile, char *rawpalfile)
-#else
-int rawpalconv(hdffile, rawpalfile)
-char *hdffile, *rawpalfile;
-#endif /* PROTOTYPE */
 {
     uint8 palspace[1024], reds[256], greens[256], blues[256], *p;
     FILE *fp;

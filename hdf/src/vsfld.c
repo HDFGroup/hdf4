@@ -82,12 +82,7 @@ PRIVATE SYMDEF rstab[] =
  ** returns the machine size of a field type
  ** returns FAIL if error
  */
-#ifdef PROTOTYPE
 int16 VSIZEOF (int16 x)
-#else
-int16 VSIZEOF (x)
-int16 x;
-#endif
 {
   if (x < 0 || x > LOCALSIZETAB_SIZE-1) {
     return(FAIL);
@@ -101,12 +96,7 @@ int16 x;
  ** returns FAIL if error.  
  ** USE ONLY FOR BACKWARD COMPATABILITY
  */
-#ifdef PROTOTYPE
 int16 HDFSIZEOF (int16 x)
-#else
-int16 HDFSIZEOF (x)
-int16 x;
-#endif
 {
   
   if (x<0 || x>HDFSIZETAB_SIZE-1) {
@@ -126,13 +116,7 @@ int16 x;
 ** truncates each field to max length of  FIELDNAMELENMAX.
 */
 
-#ifdef PROTOTYPE
 PUBLIC intn VSsetfields (int32 vkey, const char *fields)
-#else
-PUBLIC intn VSsetfields (vkey,fields)
-int32 vkey;
-const char    *fields;
-#endif
 {
     char          **av;
     int32         ac, found;
@@ -270,14 +254,7 @@ const char    *fields;
 ** return SUCCEED if success
 */
 
-#ifdef PROTOTYPE
 PUBLIC intn VSfdefine (int32 vkey, const char *field, int32 localtype, int32 order)
-#else
-PUBLIC intn VSfdefine (vkey, field, localtype, order)
-int32 vkey;
-const char    *field;
-int32   localtype, order;
-#endif
 {
     char  **av;
     int32 ac;
@@ -371,12 +348,7 @@ int32   localtype, order;
 */
 
 PUBLIC 
-#ifdef PROTOTYPE
 int32 VFnfields(int32 vkey)
-#else
-int32 VFnfields(vkey)
-int32 vkey;
-#endif
 {
     vsinstance_t    *w;
     VDATA           *vs;
@@ -415,13 +387,7 @@ int32 vkey;
 */
 
 PUBLIC 
-#ifdef PROTOTYPE
 char * VFfieldname(int32 vkey, int32 index)
-#else
-char * VFfieldname(vkey, index)
-int32 vkey;
-int32 index;
-#endif
 {
     vsinstance_t    *w;
     VDATA           *vs;
@@ -458,13 +424,7 @@ int32 index;
 */
 
 PUBLIC 
-#ifdef PROTOTYPE
 int32 VFfieldtype(int32 vkey, int32 index)
-#else
-int32 VFfieldtype(vkey, index)
-int32 vkey;
-int32 index;
-#endif
 {
     vsinstance_t    *w;
     VDATA           *vs;
@@ -501,13 +461,7 @@ int32 index;
 */
 
 PUBLIC 
-#ifdef PROTOTYPE
 int32 VFfieldisize(int32 vkey, int32 index)
-#else
-int32 VFfieldisize(vkey, index)
-int32 vkey;
-int32 index;
-#endif
 {
     vsinstance_t    *w;
     VDATA           *vs;
@@ -544,13 +498,7 @@ int32 index;
 */
 
 PUBLIC 
-#ifdef PROTOTYPE
 int32 VFfieldesize(int32 vkey, int32 index)
-#else
-int32 VFfieldesize(vkey, index)
-int32 vkey;
-int32 index;
-#endif
 {
     vsinstance_t    *w;
     VDATA           *vs;
@@ -587,13 +535,7 @@ int32 index;
 */
 
 PUBLIC 
-#ifdef PROTOTYPE
 int32 VFfieldorder(int32 vkey, int32 index)
-#else
-int32 VFfieldorder(vkey, index)
-int32 vkey;
-int32 index;
-#endif
 {
     vsinstance_t    *w;
     VDATA           *vs;

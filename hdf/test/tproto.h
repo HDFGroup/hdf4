@@ -18,26 +18,26 @@
 #include "hdf.h"
 #include "tutils.h"
 
-void test_an PROTO((void));
-void test_anfile PROTO((void));
-void test_hblocks PROTO((void));
-void test_hextelt PROTO((void));
-void test_hfile PROTO((void));
-void test_hfile1 PROTO((void));
-void test_r24 PROTO((void));
-void test_r8 PROTO((void));
-void test_pal PROTO((void));
-void test_sdmms PROTO((void));
-void test_sdnmms PROTO((void));
-void test_tsdstr PROTO((void));
-void test_vers PROTO((void));
-void test_slab PROTO((void));
-void test_litend PROTO((void));
-void test_vsets PROTO((void));
-void test_comp PROTO((void));
-void test_bitio PROTO((void));
-void test_tbbt PROTO((void));
-void test_conv PROTO((void));
-void test_nbit PROTO((void));
+void test_an (void);
+void test_anfile (void);
+void test_hblocks (void);
+void test_hextelt (void);
+void test_hfile (void);
+void test_hfile1 (void);
+void test_r24 (void);
+void test_r8 (void);
+void test_pal (void);
+void test_sdmms (void);
+void test_sdnmms (void);
+void test_tsdstr (void);
+void test_vers (void);
+void test_slab (void);
+void test_litend (void);
+void test_vsets (void);
+void test_comp (void);
+void test_bitio (void);
+void test_tbbt (void);
+void test_conv (void);
+void test_nbit (void);
 
 #endif

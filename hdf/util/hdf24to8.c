@@ -63,17 +63,11 @@ typedef unsigned int	UINT;
 #define USAGE	fprintf (stderr, "usage: hdf24hdf8 hdf24_file hdf8_file\n")
 
 int main
-  PROTO((int, char **));
+  (int, char **);
 int r24r8
-  PROTO((int32, int32, unsigned char *, unsigned char *, int, unsigned char *));
+  (int32, int32, unsigned char *, unsigned char *, int, unsigned char *);
 
-#ifdef PROTOTYPE
 int main (int argc, char *argv[])
-#else
-int main (argc, argv)
-int argc;
-char *argv[];
-#endif /* PROTOTYPE */ 
 {
     int i;
 	int32 x_dim, y_dim, size;
@@ -151,17 +145,7 @@ char *argv[];
 	return 0;
 }
 
-#ifdef PROTOTYPE
 int r24r8 (int32 xres, int32 yres, UCHAR *dat24, UCHAR *dat8, int cres, UCHAR *cdat)
-#else
-int r24r8 (xres, yres, dat24, dat8, cres, cdat)
-int32    xres;      /* x dimension - horizontal size */
-int32    yres;      /* y dimension - vertical size */
-UCHAR   *dat24;		/* pointer to 24 bit image in "pixel" format */
-UCHAR   *dat8;		/* pointer to 8 bit image */
-int      cres;		/* number of colors in the palette - use 256 */
-UCHAR   *cdat;		/* pointer to palette - should be 3 * 256 bytes long */
-#endif /* PROTOTYPE */ 
 {
     int      ct,xct,yct;
     int      rres,rd,rr,rn,rct;

@@ -40,13 +40,7 @@ VOID usage()
     exit(1);
 }   /* end usage() */
 
-#ifdef PROTOTYPE
 int main(int argc, char *argv[])
-#else
-int main(argc, argv)
-int argc;
-char *argv[];
-#endif /* PROTOTYPE */
 {
     int32 fid, aid, data_aid;
     int n, status;

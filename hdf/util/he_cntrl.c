@@ -27,12 +27,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 
 /* --- HEif --- executes commands if predicates are satisfied */
-#ifdef PROTOTYPE
 int HEif(HE_CMD *cmd)
-#else
-int HEif(cmd)
-    HE_CMD *cmd;
-#endif
 {
     HE_PRED *pred;		/* predicates */
     HE_CMD *cmdTail;		/* last cmd we've seen in the sublist */
@@ -70,12 +65,7 @@ int HEif(cmd)
 
 /* --- HEselect --- step through all the elements in a file and execute if
    predicates are satisfied */
-#ifdef PROTOTYPE
 int HEselect(HE_CMD *cmd)
-#else
-int HEselect(cmd)
-    HE_CMD *cmd;
-#endif
 {
     int t_currDesc;		/* tmp var */
     HE_PRED *pred;		/* predicate structure */
@@ -122,12 +112,7 @@ int HEselect(cmd)
 
 extern HE_PRED *he_predicates;
 
-#ifdef PROTOTYPE
 int HEnext(HE_CMD *cmd)
-#else
-int HEnext(cmd)
-    HE_CMD *cmd;
-#endif
 {
     int tmp;
     HE_PRED *predicates;
@@ -177,12 +162,7 @@ int HEnext(cmd)
 
 /* ---------- Move to previous item -------------- */
 
-#ifdef PROTOTYPE
 int HEprev(HE_CMD *cmd)
-#else
-int HEprev(cmd)
-    HE_CMD *cmd;
-#endif
 {
     int tmp;
     HE_PRED *predicates;
@@ -230,12 +210,7 @@ int HEprev(cmd)
 
 /* ----------- routines to call od on some objects ----------- */
 
-#ifdef PROTOTYPE
 int HEdump(HE_CMD *cmd)
-#else
-int HEdump(cmd)
-    HE_CMD *cmd;
-#endif
 {
     register int i;
     int offset = 0, raw = 0;
@@ -333,15 +308,7 @@ int HEdump(cmd)
 /*
  * Run 'od' on a segment of the current data element
  */
-#ifdef PROTOTYPE
 int dump(int32 length, int offset, char *format, int raw_flag)
-#else
-int dump(length, offset, format, raw_flag)
-    int32 length;			/* length of segment to look at */
-    int offset;			/* offset from start of data element */
-    char *format;		/* od arg, e.g. -x for hexidecimal */
-    int raw_flag;
-#endif
 {
     int32 eltLength;
     register int32 i;
@@ -559,12 +526,7 @@ int dump(length, offset, format, raw_flag)
 
 /* ------------------ Print 'info' ----------------- */
 
-#ifdef PROTOTYPE
 int HEinfo(HE_CMD *cmd)
-#else
-int HEinfo(cmd)
-    HE_CMD *cmd;
-#endif
 {
   register int i;
   int all = NO;
@@ -616,15 +578,7 @@ int HEinfo(cmd)
 /*
  *Show info about data elements
  */
-#ifdef PROTOTYPE
 int info(int all, int longout, int group, int label)
-#else
-int info(all, longout, group, label)
-    int all;			/* select all elements */
-    int longout;		/* long output */
-    int group;			/* arrange output in groups */
-    int label;			/* show labels */
-#endif
 {
     int idx;
     int empty = 0;
@@ -717,14 +671,7 @@ int info(all, longout, group, label)
     return HE_OK;
 }
 
-#ifdef PROTOTYPE
 void infoDesc(int desc, int longout, int label)
-#else
-void infoDesc(desc, longout, label)
-    int desc;
-    int longout;
-    int label;
-#endif
 {
     char *s; 
     const char *name;
@@ -747,12 +694,7 @@ void infoDesc(desc, longout, label)
 }
 
 /* ---------- HEdelete --- 'stub' function for delete */
-#ifdef PROTOTYPE
 int HEdelete(HE_CMD *cmd)
-#else
-int HEdelete(cmd)
-    HE_CMD *cmd;
-#endif
 {
     if (cmd->argc < 2)
 	return delete(he_currDesc);
@@ -783,12 +725,7 @@ int HEdelete(cmd)
 }
 
 /* delete -- deletes a group and its elts or an elt from current hdf file */
-#ifdef PROTOTYPE
 int delete(int curr)
-#else
-int delete(curr)
-    int curr;
-#endif
 {
     int ret;
 
@@ -810,12 +747,7 @@ int delete(curr)
    a file. if the current elt is a group, it will call itself on the elts
    of the group. else, it will check if any group references the elt, and
    actually deletes it if there is no other references */
-#ifdef PROTOTYPE
 int recurseDel(int curr)
-#else
-int recurseDel(curr)
-    int curr;
-#endif
 {
     int d, currGrp;
     register int i;
@@ -914,12 +846,7 @@ struct {
 {"end",      (HE_FUNC) 0},
 };
 
-#ifdef PROTOTYPE
 HE_FUNC findFunc(char *fword)
-#else
-HE_FUNC findFunc(fword)
-    char *fword;
-#endif /* PROTOTYPE */
 {
     int len;
     int found = -1;
@@ -950,11 +877,7 @@ HE_FUNC findFunc(fword)
 }
 
 /* prompt -- printout prompt according to the nesting level */
-#ifdef PROTOTYPE
 void prompt(void)
-#else
-void prompt()
-#endif
 {
 
 #ifndef MAC
@@ -979,12 +902,7 @@ void prompt()
 /* Skips all initial spaces and empty commands */
 /* always returns with at least a word in p, unless eof */
 /* if eof and p is not empty, return HE_OK, else if no word, return EOF */
-#ifdef PROTOTYPE
 int getLine(register char *p)
-#else
-int getLine(p)
-    register char *p;
-#endif
 {
     static int ch = 0;
 
@@ -1044,12 +962,7 @@ int getLine(p)
 
 /* copy the next (space-delimited) word and advance the pointer as a
    side effect */
-#ifdef PROTOTYPE
 char *nextWord(char **p)
-#else
-char *nextWord(p)
-    char **p;
-#endif
 {
     char *word;
     register char *s, *q;
@@ -1077,12 +990,7 @@ char *nextWord(p)
     return word;
 }
 
-#ifdef PROTOTYPE
 HE_CMD *parseCmd(char **p)
-#else
-HE_CMD *parseCmd(p)
-    char **p;
-#endif
 {
     char *word;
     HE_CMD *cmd;
@@ -1124,11 +1032,7 @@ HE_CMD *parseCmd(p)
 }
 
 /* Inputs a line and returns cmd list of line */
-#ifdef PROTOTYPE
 HE_CMD *parse(void)
-#else
-HE_CMD *parse()
-#endif
 {
     static char line[HE_LINE_SZ];
     static char *ptr;
@@ -1151,11 +1055,7 @@ HE_CMD *parse()
     return cmd;
 }
 
-#ifdef PROTOTYPE
 HE_CMD *getCmd(void)
-#else
-HE_CMD *getCmd()
-#endif
 {
     static HE_CMD *cmdList;
     HE_CMD *cmd;
@@ -1198,13 +1098,7 @@ struct he_alias {
 
 int he_numAlias = 0;
 
-#ifdef PROTOTYPE
 int setAlias(char *str, HE_CMD *cmd)
-#else
-int setAlias(str, cmd)
-    char *str;
-    HE_CMD *cmd;
-#endif
 {
     register int i;
 
@@ -1225,12 +1119,7 @@ int setAlias(str, cmd)
     return HE_OK;
 }
 
-#ifdef PROTOTYPE
 HE_CMD *mkDupCmd(HE_CMD *cmd)
-#else
-HE_CMD *mkDupCmd(cmd)
-    HE_CMD *cmd;
-#endif
 {
     register int i;
     HE_CMD *dupCmd;
@@ -1245,12 +1134,7 @@ HE_CMD *mkDupCmd(cmd)
     return dupCmd;
 }
 
-#ifdef PROTOTYPE
 HE_CMD *findAlias(char *str)
-#else
-HE_CMD *findAlias(str)
-    char *str;
-#endif
 {
     register int i;
     HE_CMD *cmd;
@@ -1273,12 +1157,7 @@ HE_CMD *findAlias(str)
     return NULL;
 }
 
-#ifdef PROTOTYPE
 int HEunalias(HE_CMD *cmd)
-#else
-int HEunalias(cmd)
-    HE_CMD *cmd;
-#endif
 {
     register int a, i, j;
 
@@ -1297,13 +1176,7 @@ int HEunalias(cmd)
     return HE_OK;
 }
 
-#ifdef PROTOTYPE
 void printAlias(char *word, HE_CMD *cmd)
-#else
-void printAlias(word, cmd)
-    char *word;
-    HE_CMD *cmd;
-#endif
 {
     register int j;
 
@@ -1316,12 +1189,7 @@ void printAlias(word, cmd)
     }
 }
 
-#ifdef PROTOTYPE
 int HEalias(HE_CMD *cmd)
-#else
-int HEalias(cmd)
-    HE_CMD *cmd;
-#endif
 {
     char *s;
     char *word;
@@ -1357,11 +1225,7 @@ HE_PRED *he_predicates;
 
 /* resetPred -- for setting the he_predicates to point to a pred
    of only group, this is the default when a file is opened */
-#ifdef PROTOTYPE
 int resetPred(void)
-#else
-int resetPred()
-#endif
 {
     if (he_predicates != NULL)
 	HDfreespace(he_predicates);
@@ -1394,12 +1258,7 @@ struct {
 /* Finish this later */
 };
 
-#ifdef PROTOTYPE
 int findKey(char *word)
-#else
-int findKey(word)
-    char *word;
-#endif
 {
     register int i;
     int len;
@@ -1429,12 +1288,7 @@ int findKey(word)
     return he_keyTab[found].key;
 }
 
-#ifdef PROTOTYPE
 int isNumber(register char *s)
-#else
-int isNumber(s)
-    register char *s;
-#endif
 {
     for (; *s; s++)
 	if (!isdigit((int) *s)) return NO;
@@ -1444,13 +1298,7 @@ int isNumber(s)
 
 #define HE_PRED_SZ HE_ARG_SZ
 
-#ifdef PROTOTYPE
 HE_PRED *parsePred(int argc, char *argv[])
-#else
-HE_PRED *parsePred(argc, argv)
-    int argc;
-    char *argv[];
-#endif
 {
     HE_PRED *pred;
     int predNum = -1;
@@ -1545,13 +1393,7 @@ HE_PRED *parsePred(argc, argv)
     return pred;
 }
 
-#ifdef PROTOTYPE
 int satPred(DFdesc *desc, HE_PRED pred[])
-#else
-int satPred(desc, pred)
-    DFdesc *desc;
-    HE_PRED pred[];
-#endif
 {
     int i;
 
@@ -1597,12 +1439,7 @@ int satPred(desc, pred)
     return 1;
 }
 
-#ifdef PROTOTYPE
 char *nextToken(char **p)
-#else
-char *nextToken(p)
-    char **p;
-#endif
 {
     register char *s, *q;
     char *tok;
@@ -1623,12 +1460,7 @@ char *nextToken(p)
     return tok;
 }
     
-#ifdef PROTOTYPE
 int numCompare(int n1, int Comp, int n2)
-#else
-int numCompare(n1, Comp, n2)
-    int n1, Comp, n2;
-#endif
 {
     switch(Comp)
     {

@@ -41,13 +41,13 @@ extern int Verbocity;
 #define REPS            2   /* number of data sets to write to file */
 
 static VOID gen2Dfloat
-    PROTO((int height, int width, float *data));
+    (int height, int width, float *data);
 
 static VOID genimage
-    PROTO((int height, int width, float *data, uint8 *image));
+    (int height, int width, float *data, uint8 *image);
 
 static VOID check_lab_desc
-    PROTO((uint16 tag, uint16 ref, char *label,char *desc));
+    (uint16 tag, uint16 ref, char *label,char *desc);
 
 void test_an()
 {
@@ -143,13 +143,7 @@ void test_an()
 **  gen2Dfloat:  generate 2-D data array 
 **
 ****************************************************************/
-#ifdef PROTOTYPE
 static VOID gen2Dfloat(int height, int width, float *data)
-#else
-static VOID gen2Dfloat(height, width, data)
-int   height, width;
-float *data;
-#endif
 {
     int i, j;
         float *pdata;
@@ -167,14 +161,7 @@ float *data;
 **  genimage:  generate image from 2-D float array
 **
 ****************************************************************/
-#ifdef PROTOTYPE
 static VOID genimage(int height, int width, float *data, uint8 *image)
-#else
-static VOID genimage(height, width, data, image)
-int   height, width;
-float *data;
-uint8 *image;
-#endif
 {
     int i, limit;
     float *pdata, max, min, multiplier;
@@ -203,13 +190,7 @@ uint8 *image;
 **                   with expected ones
 **
 ****************************************************************/
-#ifdef PROTOTYPE
 static VOID check_lab_desc(uint16 tag, uint16 ref, char *label, char *desc)
-#else
-static VOID check_lab_desc(tag, ref, label, desc)
-char *label, *desc;
-uint16 tag, ref;
-#endif
 {
     int32 inlablen, indesclen, ret;
     char inlabel[MAXLEN_LAB], *indesc;

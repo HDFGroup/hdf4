@@ -111,18 +111,13 @@ static long pass4_offset;	/* # of pixel rows in passes 1,2,3 */
 
 
 /* Forward declarations */
-METHODDEF VOID load_interlaced_image PROTO((compress_info_ptr cinfo, JSAMPARRAY pixel_row));
-METHODDEF VOID get_interlaced_row PROTO((compress_info_ptr cinfo, JSAMPARRAY pixel_row));
+METHODDEF VOID load_interlaced_image (compress_info_ptr cinfo, JSAMPARRAY pixel_row);
+METHODDEF VOID get_interlaced_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row);
 
 
 
 LOCAL int
-#ifdef PROTOTYPE
 ReadByte (compress_info_ptr cinfo)
-#else
-ReadByte (cinfo)
-compress_info_ptr cinfo;
-#endif
 /* Read next byte from GIF file */
 {
   register FILE * infile = cinfo->input_file;
@@ -135,13 +130,7 @@ compress_info_ptr cinfo;
 
 
 LOCAL int
-#ifdef PROTOTYPE
 GetDataBlock (compress_info_ptr cinfo, char *buf)
-#else
-GetDataBlock (cinfo, buf)
-compress_info_ptr cinfo;
-char *buf;
-#endif
 /* Read a GIF data block, which has a leading count byte */
 /* A zero-length block marks the end of a data block sequence */
 {
@@ -157,12 +146,7 @@ char *buf;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 SkipDataBlocks (compress_info_ptr cinfo)
-#else
-SkipDataBlocks (cinfo)
-compress_info_ptr cinfo;
-#endif
 /* Skip a series of data blocks, until a block terminator is found */
 {
   char buf[256];
@@ -173,11 +157,7 @@ compress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 ReInitLZW (VOID)
-#else
-ReInitLZW ()
-#endif
 /* (Re)initialize LZW state; shared code for startup and Clear processing */
 {
   code_size = input_code_size+1;
@@ -188,11 +168,7 @@ ReInitLZW ()
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 InitLZWCode (VOID)
-#else
-InitLZWCode ()
-#endif
 /* Initialize for a series of LZWReadByte (and hence GetCode) calls */
 {
   /* GetCode initialization */
@@ -210,12 +186,7 @@ InitLZWCode ()
 
 
 LOCAL int
-#ifdef PROTOTYPE
 GetCode (compress_info_ptr cinfo)
-#else
-GetCode (cinfo)
-compress_info_ptr cinfo;
-#endif
 /* Fetch the next code_size bits from the GIF data */
 /* We assume code_size is less than 16 */
 {
@@ -269,12 +240,7 @@ compress_info_ptr cinfo;
 
 
 LOCAL int
-#ifdef PROTOTYPE
 LZWReadByte (compress_info_ptr cinfo)
-#else
-LZWReadByte (cinfo)
-compress_info_ptr cinfo;
-#endif
 /* Read an LZW-compressed byte */
 {
   static int oldcode;		/* previous LZW symbol */
@@ -365,14 +331,7 @@ compress_info_ptr cinfo;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 ReadColorMap (compress_info_ptr cinfo, int cmaplen, JSAMPARRAY cmap)
-#else
-ReadColorMap (cinfo, cmaplen, cmap)
-compress_info_ptr cinfo;
-int cmaplen;
-JSAMPARRAY cmap;
-#endif
 /* Read a GIF colormap */
 {
   int i;
@@ -386,12 +345,7 @@ JSAMPARRAY cmap;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 DoExtension (compress_info_ptr cinfo)
-#else
-DoExtension (cinfo)
-compress_info_ptr cinfo;
-#endif
 /* Process an extension block */
 /* Currently we ignore 'em all */
 {
@@ -411,12 +365,7 @@ compress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 input_init (compress_info_ptr cinfo)
-#else
-input_init (cinfo)
-compress_info_ptr cinfo;)
-#endif
 {
   char hdrbuf[10];		/* workspace for reading control blocks */
   uint16 width, height;		/* image dimensions */
@@ -547,13 +496,7 @@ compress_info_ptr cinfo;)
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_input_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-get_input_row (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 {
   register JSAMPROW ptr0, ptr1, ptr2;
   register long col;
@@ -578,13 +521,7 @@ JSAMPARRAY pixel_row;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 load_interlaced_image (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-load_interlaced_image (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 {
   JSAMPARRAY image_ptr;
   register JSAMPROW sptr;
@@ -622,13 +559,7 @@ JSAMPARRAY pixel_row;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 get_interlaced_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-get_interlaced_row (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 {
   JSAMPARRAY image_ptr;
   register JSAMPROW sptr, ptr0, ptr1, ptr2;
@@ -674,12 +605,7 @@ JSAMPARRAY pixel_row;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 input_term (compress_info_ptr cinfo)
-#else
-input_term (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   /* no work (we let free_all release the workspace) */
 }
@@ -694,12 +620,7 @@ compress_info_ptr cinfo;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jselrgif (compress_info_ptr cinfo)
-#else
-jselrgif (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   cinfo->methods->input_init = input_init;
   cinfo->methods->get_input_row = get_input_row; /* assume uninterlaced */

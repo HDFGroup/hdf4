@@ -102,7 +102,6 @@ char
     *wherebig=NULL,             /* where to store small image */
     *wheresmall=NULL;           /* where to store image-related stuff */
 
-#ifdef PROTOTYPE
 int main(int, char **);
 int getspace(void);
 int getpix(void);
@@ -112,17 +111,6 @@ int piximage(int);
 int rimage(int);
 int bigimg(unsigned char *, unsigned char *);
 int rleit(char *, char *, int);
-#else
-int main();
-int getspace();
-int getpix();
-int largeset();
-int showpic();
-int piximage();
-int rimage();
-int bigimg();
-int rleit();
-#endif /* PROTOTYPE */
 
 /*************************************************************************/
 /*  hdfseq
@@ -133,13 +121,7 @@ int rleit();
 *       RIG images in file
 *       RI8 and CI8 images in file
 */
-#ifdef PROTOTYPE
 int main(int argc, char *argv[])
-#else
-int main(argc,argv)
-    int argc;
-    char *argv[];
-#endif /* PROTOTYPE  */
     {
     int i,filearg;
 
@@ -250,11 +232,7 @@ int main(argc,argv)
 *  Provide enough space in the space pointers for the operations
 *  to all work.
 */
-#ifdef PROTOTYPE
 int getspace(void)
-#else
-int getspace()
-#endif /* PROTOTYPE  */
     {
 
 /*  
@@ -281,11 +259,7 @@ int getspace()
 /*
 *  Allocate the space for the image if displaying locally
 */
-#ifdef PROTOTYPE
 getpix(void)
-#else
-getpix()
-#endif /* PROTOTYPE  */
 {
 /*
 *  Allocation will take place because xsize and ysize will
@@ -314,11 +288,7 @@ getpix()
 *  locally.  
 *
 */
-#ifdef PROTOTYPE
 int largeset(void)
-#else
-int largeset()
-#endif /* PROTOTYPE  */
     {
 
     if (large) {
@@ -355,12 +325,7 @@ int largeset()
 *  Display them according to the remote flag on or off.
 *
 */
-#ifdef PROTOTYPE
 int showpic(char *filename)
-#else
-int showpic(filename)
-    char *filename;
-#endif /* PROTOTYPE  */
     {
     int ispal, r8_exists;
 
@@ -430,12 +395,7 @@ int showpic(filename)
 *  Takes the palette from the rgb[] if asked to.
 *  Will pause if step=1.
 */
-#ifdef PROTOTYPE
 piximage(int usepal)
-#else
-piximage(usepal)
-int usepal;
-#endif /* PROTOTYPE  */
 {
     char *pp;
     int r,g,b;
@@ -558,12 +518,7 @@ int usepal;
 *  Remote display of the image using the ICR.
 *  Just print the codes to stdout using the protocol.
 */
-#ifdef PROTOTYPE
 int rimage(int usepal)
-#else
-int rimage(usepal)
-    int usepal;
-#endif /* PROTOTYPE  */
     {
     int i,j,newxsize;
     char *space,*thisline,*thischar;
@@ -655,13 +610,7 @@ int rimage(usepal)
 *  compress the data to go out with a simple run-length encoded scheme.
 *
 */
-#ifdef PROTOTYPE
 int rleit(char *buf, char *bufto, int len)
-#else
-int rleit(buf,bufto,len)
-    int len;
-    char *buf,*bufto;
-#endif /* PROTOTYPE  */
     {
     register char *p,*q,*cfoll,*clead;
     char *begp;

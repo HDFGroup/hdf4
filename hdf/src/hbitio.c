@@ -55,15 +55,10 @@ static char RcsId[] = "@(#)$Revision$";
 static struct bitrec_t *bitfile_records = NULL;
 
 /* Local Function Declarations */
-#ifdef CONVEX
 PRIVATE int HIget_bitfile_slot
-    PROTO(());
-#else
-PRIVATE int HIget_bitfile_slot
-    PROTO((VOID));
-#endif
+    (void);
 
-PRIVATE intn HIbitflush PROTO((bitrec_t *bitfile_rec,intn flushbit,bool writeout));
+PRIVATE intn HIbitflush (bitrec_t *bitfile_rec,intn flushbit,bool writeout);
 
 /* #define TESTING */
 /* Actual Function Definitions */
@@ -86,14 +81,7 @@ PRIVATE intn HIbitflush PROTO((bitrec_t *bitfile_rec,intn flushbit,bool writeout
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 Hstartbitread(int32 file_id, uint16 tag, uint16 ref)
-#else
-int32 Hstartbitread(file_id, tag, ref)
-int32 file_id;          /* file id to read from */
-uint16 tag;             /* tag of elt to read */
-uint16 ref;             /* ref of elt to read */
-#endif
 {
     CONSTR(FUNC,"Hstartbitread");   /* for HERROR */
     int bitslot;        /* slot in bit-access record array */
@@ -163,15 +151,7 @@ uint16 ref;             /* ref of elt to read */
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 Hstartbitwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
-#else
-int32 Hstartbitwrite(file_id, tag, ref, length)
-int32 file_id;          /* file id */
-uint16 tag;             /* tag of elt to write */
-uint16 ref;             /* ref of elt to write */
-int32 length;           /* length of elt to write */
-#endif
 {
     CONSTR(FUNC,"Hstartbitwrite");  /* for HERROR */
     int bitslot;            /* free access records array slot */
@@ -246,12 +226,7 @@ int32 length;           /* length of elt to write */
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn Hbitappendable(int32 bitid)
-#else
-intn Hbitappendable(bitid)
-int32 bitid;            /* Bit ID to use */
-#endif
 {
     CONSTR(FUNC,"Hbitappendable");    /* for HERROR */
     bitrec_t *bitfile_rec;  /* access record */
@@ -293,14 +268,7 @@ int32 bitid;            /* Bit ID to use */
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn Hbitwrite(int32 bitid, intn count, uint32 data)
-#else
-intn Hbitwrite(bitid, count, data)
-int32 bitid;            /* Bit ID to use when writing out data */
-intn count;             /* Number of bits to write */
-uint32 data;            /* Actual bits to output */
-#endif
 {
     CONSTR(FUNC,"Hbitwrite"); /* for HERROR */
     bitrec_t *bitfile_rec;  /* access record */
@@ -437,14 +405,7 @@ printf("Hbitwrite(): pre-reading a block in the loop\n");
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn Hbitread(int32 bitid, intn count, uint32 *data)
-#else
-intn Hbitread(bitid, count, data)
-int32 bitid;            /* Bit ID to use when writing out data */
-intn count;             /* Number of bits to write */
-uint32 *data;           /* Actual bits to output */
-#endif
 {
     CONSTR(FUNC,"Hbitread"); /* for HERROR */
     bitrec_t *bitfile_rec;  /* access record */
@@ -581,14 +542,7 @@ printf("Hbitread(): max_offset=%d, byte_offset=%d\n",bitfile_rec->max_offset,bit
             Hbitseek(bitid,bit_offset/8,bit_offset%8);
      REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn Hbitseek(int32 bitid, int32 byte_offset, intn bit_offset)
-#else
-intn Hbitseek(bitid, byte_offset, bit_offset)
-int32 bitid; 
-int32 byte_offset; 
-intn bit_offset;
-#endif
 {
     CONSTR(FUNC,"Hbitseek");  /* for HERROR */
     bitrec_t *bitfile_rec;  /* access record */
@@ -706,13 +660,7 @@ printf("Hbitseek(): offset=%d, count=%d\n",(bitfile_rec->bytep-bitfile_rec->byte
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 Hendbitaccess(int32 bitfile_id,intn flushbit)
-#else
-int32 Hendbitaccess(bitfile_id,flushbit)
-int32 bitfile_id;           /* access id */
-intn flushbit;              /* how to flush the bits */
-#endif
 {
     CONSTR(FUNC,"Hendbitaccess");   /* for HERROR */
     bitrec_t *bitfile_rec;      /* bitfile record */
@@ -761,14 +709,7 @@ intn flushbit;              /* how to flush the bits */
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE intn HIbitflush(bitrec_t *bitfile_rec,intn flushbit,bool writeout)
-#else
-PRIVATE intn HIbitflush(bitfile_rec,flushbit,writeout)
-bitrec_t *bitfile_rec;
-intn flushbit;
-bool writeout;
-#endif
 {
     CONSTR(FUNC,"HIbitflush");
     intn write_size;            /* number of bytes to write out */
@@ -820,15 +761,7 @@ printf("HIbitflush(): write_size=%d\n",write_size);
 
  get a free bitfile record slot
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
-#ifdef CONVEX
-PRIVATE int HIget_bitfile_slot()
-#else
-PRIVATE int HIget_bitfile_slot(VOID)
-#endif
-#else
-PRIVATE int HIget_bitfile_slot()
-#endif
+PRIVATE int HIget_bitfile_slot(void)
 {
     int i;                     /* temp index */
     CONSTR(FUNC,"HIget_bitfile_slot");

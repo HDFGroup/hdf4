@@ -101,12 +101,7 @@ typedef enum {          /* JPEG marker codes */
  * Routines to parse JPEG markers & save away the useful info.
  */
 
-#ifdef PROTOTYPE
 LOCAL int32 get_2bytes (decompress_info_ptr cinfo)
-#else
-LOCAL int32 get_2bytes (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Get a 2-byte unsigned integer (e.g., a marker parameter length field) */
 {
   int32 a;
@@ -116,13 +111,7 @@ decompress_info_ptr cinfo;
 }
 
 
-#ifdef PROTOTYPE
 LOCAL VOID skip_variable (decompress_info_ptr cinfo, int code)
-#else
-LOCAL VOID skip_variable (cinfo, code)
-decompress_info_ptr cinfo;
-int code;
-#endif
 /* Skip over an unknown or uninteresting variable-length marker */
 {
     int32 length;
@@ -137,12 +126,7 @@ int code;
 }   /* end skip_variable() */
 
 
-#ifdef PROTOTYPE
 LOCAL VOID get_dht (decompress_info_ptr cinfo)
-#else
-LOCAL VOID get_dht (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Process a DHT marker */
 {
     int32 length;
@@ -201,12 +185,7 @@ decompress_info_ptr cinfo;
 }   /* end get_dht() */
 
 
-#ifdef PROTOTYPE
 LOCAL VOID get_dac (decompress_info_ptr cinfo)
-#else
-LOCAL VOID get_dac (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Process a DAC marker */
 {
     int32 length;
@@ -238,12 +217,7 @@ decompress_info_ptr cinfo;
 }   /* end get_dac() */
 
 
-#ifdef PROTOTYPE
 LOCAL VOID get_dqt (decompress_info_ptr cinfo)
-#else
-LOCAL VOID get_dqt (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Process a DQT marker */
 {
     int32 length;
@@ -288,12 +262,7 @@ decompress_info_ptr cinfo;
 }   /* end get_dqt() */
 
 
-#ifdef PROTOTYPE
 LOCAL VOID get_dri (decompress_info_ptr cinfo)
-#else
-LOCAL VOID get_dri (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Process a DRI marker */
 {
     if (get_2bytes(cinfo) != 4)
@@ -306,12 +275,7 @@ decompress_info_ptr cinfo;
 }   /* end get_dri() */
 
 
-#ifdef PROTOTYPE
 LOCAL VOID get_app0 (decompress_info_ptr cinfo)
-#else
-LOCAL VOID get_app0 (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Process an APP0 marker */
 {
 #define JFIF_LEN 14
@@ -360,13 +324,7 @@ decompress_info_ptr cinfo;
 }   /* end get_app0() */
 
 
-#ifdef PROTOTYPE
 LOCAL VOID get_sof (decompress_info_ptr cinfo, int code)
-#else
-LOCAL VOID get_sof (cinfo, code)
-decompress_info_ptr cinfo;
-int code;
-#endif
 /* Process a SOFn marker */
 {
     int32 length;
@@ -428,12 +386,7 @@ int code;
 }   /* end get_sof() */
 
 
-#ifdef PROTOTYPE
 LOCAL VOID get_sos (decompress_info_ptr cinfo)
-#else
-LOCAL VOID get_sos (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Process a SOS marker */
 {
     int32 length;
@@ -477,12 +430,7 @@ decompress_info_ptr cinfo;
 }   /* end get_sos() */
 
 
-#ifdef PROTOTYPE
 LOCAL VOID get_soi (decompress_info_ptr cinfo)
-#else
-LOCAL VOID get_soi (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Process an SOI marker */
 {
     int i;
@@ -506,12 +454,7 @@ decompress_info_ptr cinfo;
 }   /* end get_soi */
 
 
-#ifdef PROTOTYPE
 LOCAL int next_marker (decompress_info_ptr cinfo)
-#else
-LOCAL int next_marker (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Find the next JPEG marker */
 /* Note that the output might not be a valid marker code, */
 /* but it will never be 0 or FF */
@@ -538,12 +481,7 @@ decompress_info_ptr cinfo;
 }   /* end next_marker() */
 
 
-#ifdef PROTOTYPE
 LOCAL JPEG_MARKER process_tables (decompress_info_ptr cinfo)
-#else
-LOCAL JPEG_MARKER process_tables (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Scan and process JPEG markers that can appear in any order */
 /* Return when an SOI, EOI, SOFn, or SOS is found */
 {
@@ -617,12 +555,7 @@ decompress_info_ptr cinfo;
  * Initialize and read the file header (everything through the SOF marker).
  */
 
-#ifdef PROTOTYPE
 GLOBAL VOID read_file_header (decompress_info_ptr cinfo)
-#else
-GLOBAL VOID read_file_header (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
     int c;
 
@@ -722,12 +655,7 @@ HEprint(stderr,0);  /* print all the errors */
  * Return TRUE if find SOS, FALSE if find EOI.
  */
 
-#ifdef PROTOTYPE
 GLOBAL bool read_scan_header (decompress_info_ptr cinfo)
-#else
-GLOBAL bool read_scan_header (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
     int c;
   
@@ -756,12 +684,7 @@ decompress_info_ptr cinfo;
  * See the JGETC macro for calling conditions.
  */
 
-#ifdef PROTOTYPE
 GLOBAL int read_jpeg_data (decompress_info_ptr cinfo)
-#else
-GLOBAL int read_jpeg_data (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
     cinfo->next_input_byte = cinfo->input_buffer + MIN_UNGET;
 
@@ -785,12 +708,7 @@ decompress_info_ptr cinfo;
  * prepare for another read_scan_header call.
  */
 
-#ifdef PROTOTYPE
 GLOBAL VOID read_scan_trailer (decompress_info_ptr cinfo)
-#else
-GLOBAL VOID read_scan_trailer (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   /* no work needed */
 }
@@ -800,12 +718,7 @@ decompress_info_ptr cinfo;
  * Finish up at the end of the file.
  */
 
-#ifdef PROTOTYPE
 GLOBAL VOID read_file_trailer (decompress_info_ptr cinfo)
-#else
-GLOBAL VOID read_file_trailer (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
 #ifdef QAK
   /* no work needed */
@@ -823,12 +736,7 @@ decompress_info_ptr cinfo;
  * the appropriate method selection routine.
  */
 
-#ifdef PROTOTYPE
 GLOBAL VOID jselrhdf (decompress_info_ptr cinfo)
-#else
-GLOBAL VOID jselrhdf (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   cinfo->methods->read_file_header = read_file_header;
   cinfo->methods->read_scan_header = read_scan_header;
@@ -865,12 +773,7 @@ decompress_info_ptr cinfo;
  */
 
 
-#ifdef PROTOTYPE
 GLOBAL VOID output_init (decompress_info_ptr cinfo)
-#else
-GLOBAL VOID output_init (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* This routine should do any setup required */
 {
   /* This routine can initialize for output based on the data passed in cinfo.
@@ -909,15 +812,8 @@ decompress_info_ptr cinfo;
  * machine has only signed chars.
  */
 
-#ifdef PROTOTYPE
 GLOBAL VOID put_color_map (decompress_info_ptr cinfo, int num_colors,
         JSAMPARRAY colormap)
-#else
-GLOBAL VOID put_color_map (cinfo, num_colors, colormap)
-decompress_info_ptr cinfo;
-int num_colors;
-JSAMPARRAY colormap;
-#endif
 /* Write the color map */
 {
 #ifndef OLD_WAY
@@ -982,15 +878,8 @@ JSAMPARRAY colormap;
  */
 
 
-#ifdef PROTOTYPE
 GLOBAL VOID
 put_pixel_rows (decompress_info_ptr cinfo, int num_rows, JSAMPIMAGE pixel_data)
-#else
-GLOBAL VOID put_pixel_rows (cinfo, num_rows, pixel_data)
-decompress_info_ptr cinfo;
-int num_rows;
-JSAMPIMAGE pixel_data;
-#endif
 /* Write some rows of output data */
 {
   /* This example shows how you might write full-color RGB data (3 components)
@@ -1027,12 +916,7 @@ JSAMPIMAGE pixel_data;
 }   /* end put_pixel_rows() */
 
 
-#ifdef PROTOTYPE
 GLOBAL VOID output_term (decompress_info_ptr cinfo)
-#else
-GLOBAL VOID output_term (cinfo)
-decompress_info_ptr cinfo;
-#endif
 /* Finish up at the end of the output */
 {
   /* This termination routine may not need to do anything. */
@@ -1061,12 +945,7 @@ decompress_info_ptr cinfo;
  * force grayscale output from a color JPEG file (though not vice versa).
  */
 
-#ifdef PROTOTYPE
 GLOBAL VOID d_ui_method_selection (decompress_info_ptr cinfo)
-#else
-GLOBAL VOID d_ui_method_selection (cinfo)
-decompress_info_ptr cinfo;
-#endif
 {
   /* if grayscale input, force grayscale output; */
   /* else leave the output colorspace as set by main routine. */
@@ -1099,19 +978,8 @@ decompress_info_ptr cinfo;
  * Remarks: Uses the JPEG library routines.
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFCIunjpeg(int32 file_id, uint16 tag, uint16 ref, VOIDP image, int32 xdim,
     int32 ydim, int16 scheme)
-#else
-intn DFCIunjpeg(file_id, tag, ref, image, xdim, ydim, scheme)
-    int32 file_id;
-    uint16 tag;
-    uint16 ref;
-    VOIDP image;
-    int32 xdim;
-    int32 ydim;
-    int16 scheme;
-#endif
 {
   /* These three structs contain JPEG parameters and working data.
    * They must survive for the duration of parameter setup and one

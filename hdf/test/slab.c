@@ -351,8 +351,7 @@ static const char FAR *sw4 = "s4w.hdf";
 /*
 ** Write data set to slabw.hdf as 5 hyperslabs.
 */
-int
-slabwf32()
+int slabwf32(void)
 {
   int32 i, j, k;
   int32 ret = 0;
@@ -471,8 +470,7 @@ slabwf32()
 /*
 ** Write float64 data set to slabw.hdf as 5 hyperslabs.
 */
-int
-slabwf64()
+int slabwf64(void)
 {
   int32 i, j, k;
   int32 ret = 0;
@@ -596,8 +594,7 @@ slabwf64()
 /*
 ** Write intn data set to slabwin.hdf as 5 hyperslabs.
 */
-int
-slabwin()
+int slabwin(void)
 {
   int32 i, j, k;
   int32 ret = 0;
@@ -720,8 +717,7 @@ slabwin()
 /*
 ** Write uintn data set to slabwuin.hdf as 5 hyperslabs.
 */
-int
-slabwuin()
+int slabwuin(void)
 {
   int32 i, j, k;
   int32 ret = 0;
@@ -845,8 +841,7 @@ slabwuin()
 /*
 ** Write int32 data set to slabwi32.hdf as 5 hyperslabs.
 */
-int
-slabwi32()
+int slabwi32(void)
 {
   int32 i, j, k;
   int32 ret = 0;
@@ -969,8 +964,7 @@ slabwi32()
 /*
 ** Write uint32 data set to slabwui32.hdf as 5 hyperslabs.
 */
-int
-slabwui32()
+int slabwui32(void)
 {
   int32 i, j, k;
   int32 ret = 0;
@@ -1093,8 +1087,7 @@ slabwui32()
 /*
 ** Write int16 data set to slabwi16.hdf as 5 hyperslabs.
 */
-int
-slabwi16()
+int slabwi16(void)
 {
   int32 i, j, k;
   int32 ret = 0;
@@ -1216,8 +1209,7 @@ slabwi16()
 /*
 ** Write uint16 data set to slabwui16.hdf as 5 hyperslabs.
 */
-int
-slabwui16()
+int slabwui16(void)
 {
   int32 i, j, k;
   int32 ret = 0;
@@ -1339,8 +1331,7 @@ slabwui16()
 /*
 ** Write int8 data set to slabwi8.hdf as 5 hyperslabs.
 */
-int
-slabwi8()
+int slabwi8(void)
 {
   int32 i, j, k;
   int32 ret = 0;
@@ -1462,8 +1453,7 @@ slabwi8()
 /* 
 ** Write uint8 data set to slabw.hdf as 5 hyperslabs.
 */
-int
-slabwui8()
+int slabwui8(void)
 {
   int32 i, j, k;
   int32 ret = 0;
@@ -1584,8 +1574,7 @@ slabwui8()
 }
 
 
-int
-slab1w()
+int slab1w(void)
 {
   int32 ret = 0;
   int32 num_err = 0;
@@ -1661,8 +1650,7 @@ slab1w()
     return (int)num_err;
 }
 
-int
-slab2w()
+int slab2w(void)
 {
   int32 i, j, k;
   int32 ret = 0;
@@ -1736,9 +1724,7 @@ slab2w()
     return (int)num_err;
 }
 
-int
-slab3w()
-
+int slab3w(void)
 {
   int32 i, j, k;
   int32 ret = 0;
@@ -1937,8 +1923,7 @@ slab3w()
     return (int)num_err;
 }
 
-int
-slab4w()
+int slab4w(void)
 {
   int32 i, j, k;
   int32 ret = 0;
@@ -2020,8 +2005,7 @@ slab4w()
 /*
 ** Main slab call to all other slab functions
 */
-void
-test_slab()
+void test_slab(void)
 {
     num_errs += slabwf32();
     num_errs += slabwf64();

@@ -295,18 +295,18 @@ typedef struct sp_info_block_t {
    special data elements of a key could be accessed through the list
    of functions in array pointed to by tab. */
 typedef struct funclist_t {
-    int32 (*stread)  PROTO((accrec_t *rec));
-    int32 (*stwrite) PROTO((accrec_t *rec));
-    int32 (*seek)    PROTO((accrec_t *access_rec, int32 offset, intn origin));
-    int32 (*inquire) PROTO((accrec_t *access_rec, int32 *pfile_id, 
+    int32 (*stread)  (accrec_t *rec);
+    int32 (*stwrite) (accrec_t *rec);
+    int32 (*seek)    (accrec_t *access_rec, int32 offset, intn origin);
+    int32 (*inquire) (accrec_t *access_rec, int32 *pfile_id, 
                              uint16 *ptag, uint16 *pref, int32 *plength, 
                              int32 *poffset, int32 *pposn, int16 *paccess, 
-                             int16 *pspecial));
-    int32 (*read)    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
-    int32 (*write)   PROTO((accrec_t *access_rec, int32 length, const VOIDP data));
-    int32 (*endaccess) PROTO((accrec_t *access_rec));
-    int32 (*info)    PROTO((accrec_t *access_rec, sp_info_block_t * info));
-    int32 (*reset)   PROTO((accrec_t *access_rec, sp_info_block_t * info));
+                             int16 *pspecial);
+    int32 (*read)    (accrec_t *access_rec, int32 length, VOIDP data);
+    int32 (*write)   (accrec_t *access_rec, int32 length, const VOIDP data);
+    int32 (*endaccess) (accrec_t *access_rec);
+    int32 (*info)    (accrec_t *access_rec, sp_info_block_t * info);
+    int32 (*reset)   (accrec_t *access_rec, sp_info_block_t * info);
 } funclist_t;
 
 typedef struct functab_t {
@@ -395,184 +395,184 @@ extern "C" {
 #endif /* c_plusplus || __cplusplus */
 
 extern int HIget_access_slot
-  PROTO((void));
+  (void);
 
 extern int HIfind_dd
-  PROTO((uint16 look_tag, uint16 look_ref, ddblock_t **pblock, int32 *pidx,
-        intn direction));
+  (uint16 look_tag, uint16 look_ref, ddblock_t **pblock, int32 *pidx,
+        intn direction);
 
 extern int HInew_dd_block
-  PROTO((filerec_t *file_rec, int16 ndds, char *FUNC));
+  (filerec_t *file_rec, int16 ndds, char *FUNC);
 
 extern int HIupdate_dd
-  PROTO((filerec_t *file_rec, ddblock_t *block, int32 idx, char *FUNC));
+  (filerec_t *file_rec, ddblock_t *block, int32 idx, char *FUNC);
 
 extern VOIDP HIgetspinfo
-  PROTO((accrec_t *access_rec, uint16 tag, uint16 ref));
+  (accrec_t *access_rec, uint16 tag, uint16 ref);
 
 extern int HIlookup_dd
-  PROTO((filerec_t *file_rec, uint16 look_tag, uint16 look_ref,
-         ddblock_t **pblock, int32 *pidx));
+  (filerec_t *file_rec, uint16 look_tag, uint16 look_ref,
+         ddblock_t **pblock, int32 *pidx);
 
 extern int HIadd_hash_dd
-  PROTO((filerec_t *file_rec, uint16 look_tag, uint16 look_ref,
-         ddblock_t *pblock, int32 pidx));
+  (filerec_t *file_rec, uint16 look_tag, uint16 look_ref,
+         ddblock_t *pblock, int32 pidx);
 
 extern int HIdel_hash_dd
-  PROTO((filerec_t *file_rec, uint16 look_tag, uint16 look_ref));
+  (filerec_t *file_rec, uint16 look_tag, uint16 look_ref);
 
 extern int32 HPgetdiskblock
-  PROTO((filerec_t *file_rec, int32 block_size, bool moveto));
+  (filerec_t *file_rec, int32 block_size, bool moveto);
 
 extern intn HPfreediskblock
-  PROTO((filerec_t *file_rec, int32 block_offset, int32 block_size));
+  (filerec_t *file_rec, int32 block_offset, int32 block_size);
 
 /*
 ** from hblocks.c
 */
 extern int32 HLPstread
-    PROTO((accrec_t *access_rec));
+    (accrec_t *access_rec);
 
 extern int32 HLPstwrite
-    PROTO((accrec_t *access_rec));
+    (accrec_t *access_rec);
 
 extern int32 HLPseek
-    PROTO((accrec_t *access_rec, int32 offset, int origin));
+    (accrec_t *access_rec, int32 offset, int origin);
 
 extern int32 HLPread
-    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+    (accrec_t *access_rec, int32 length, VOIDP data);
 
 extern int32 HLPwrite
-    PROTO((accrec_t *access_rec, int32 length, const VOIDP data));
+    (accrec_t *access_rec, int32 length, const VOIDP data);
 
 extern int32 HLPinquire
-    PROTO((accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
+    (accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
         int32 *plength, int32 *poffset,int32 *pposn, int16 *paccess,
-        int16 *pspecial));
+        int16 *pspecial);
 
 extern int32 HLPendaccess
-    PROTO((accrec_t *access_rec));
+    (accrec_t *access_rec);
 
 extern int32 HLPinfo
-    PROTO((accrec_t * access_rec, sp_info_block_t * info_block));
+    (accrec_t * access_rec, sp_info_block_t * info_block);
 
 
 /*
 ** from hextelt.c
 */
 extern int32 HXPstread
-    PROTO((accrec_t *rec));
+    (accrec_t *rec);
 
 extern int32 HXPstwrite
-    PROTO((accrec_t *rec));
+    (accrec_t *rec);
 
 extern int32 HXPseek
-    PROTO((accrec_t *access_rec, int32 offset, int origin));
+    (accrec_t *access_rec, int32 offset, int origin);
 
 extern int32 HXPread
-    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+    (accrec_t *access_rec, int32 length, VOIDP data);
 
 extern int32 HXPwrite
-    PROTO((accrec_t *access_rec, int32 length, const VOIDP data));
+    (accrec_t *access_rec, int32 length, const VOIDP data);
 
 extern int32 HXPinquire
-    PROTO((accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
+    (accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
             int32 *plength, int32 *poffset,int32 *pposn, int16 *paccess,
-            int16 *pspecial));
+            int16 *pspecial);
 
 extern int32 HXPendaccess
-    PROTO((accrec_t *access_rec));
+    (accrec_t *access_rec);
 
 extern int32 HXPcloseAID
-    PROTO((accrec_t *access_rec));
+    (accrec_t *access_rec);
 
 extern int32 HXPinfo
-    PROTO((accrec_t *access_rec, sp_info_block_t * info_block));
+    (accrec_t *access_rec, sp_info_block_t * info_block);
 
 extern int32 HXPreset
-    PROTO((accrec_t *access_rec, sp_info_block_t * info_block));
+    (accrec_t *access_rec, sp_info_block_t * info_block);
 
 
 /*
 ** from hbigext.c
 */
 extern int32 HBPstread
-    PROTO((accrec_t *rec));
+    (accrec_t *rec);
 
 extern int32 HBPstwrite
-    PROTO((accrec_t *rec));
+    (accrec_t *rec);
 
 extern int32 HBPseek
-    PROTO((accrec_t *access_rec, int32 offset, int origin));
+    (accrec_t *access_rec, int32 offset, int origin);
 
 extern int32 HBPread
-    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+    (accrec_t *access_rec, int32 length, VOIDP data);
 
 extern int32 HBPwrite
-    PROTO((accrec_t *access_rec, int32 length, const VOIDP data));
+    (accrec_t *access_rec, int32 length, const VOIDP data);
 
 extern int32 HBPinquire
-    PROTO((accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
+    (accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
             int32 *plength, int32 *poffset,int32 *pposn, int16 *paccess,
-            int16 *pspecial));
+            int16 *pspecial);
 
 extern int32 HBPendaccess
-    PROTO((accrec_t *access_rec));
+    (accrec_t *access_rec);
 
 extern int32 HBPcloseAID
-    PROTO((accrec_t *access_rec));
+    (accrec_t *access_rec);
 
 extern int32 HBPinfo
-    PROTO((accrec_t *access_rec, sp_info_block_t * info_block));
+    (accrec_t *access_rec, sp_info_block_t * info_block);
 
 /*
 ** from hcomp.c
 */
 
 extern int32 HCPstread
-    PROTO((accrec_t *rec));
+    (accrec_t *rec);
 
 extern int32 HCPstwrite
-    PROTO((accrec_t *rec));
+    (accrec_t *rec);
 
 extern int32 HCPseek
-    PROTO((accrec_t *access_rec, int32 offset, int origin));
+    (accrec_t *access_rec, int32 offset, int origin);
 
 extern int32 HCPinquire
-    PROTO((accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
+    (accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
             int32 *plength, int32 *poffset,int32 *pposn, int16 *paccess,
-            int16 *pspecial));
+            int16 *pspecial);
 
 extern int32 HCPread
-    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+    (accrec_t *access_rec, int32 length, VOIDP data);
 
 extern int32 HCPwrite
-    PROTO((accrec_t *access_rec, int32 length, const VOIDP data));
+    (accrec_t *access_rec, int32 length, const VOIDP data);
 
 extern int32 HCPendaccess
-    PROTO((accrec_t *access_rec));
+    (accrec_t *access_rec);
 
 extern int32 HCPcloseAID
-    PROTO((accrec_t *access_rec));
+    (accrec_t *access_rec);
 
 extern int32 HCPinfo
-    PROTO((accrec_t *access_rec, sp_info_block_t * info_block));
+    (accrec_t *access_rec, sp_info_block_t * info_block);
 
 #ifdef MAC
 extern hdf_file_t mopen
-	PROTO((char * filename, intn access));
+	(char * filename, intn access);
 	
 extern int32 mclose
-	PROTO((hdf_file_t rn));
+	(hdf_file_t rn);
 	
 extern int32 mlseek
-	PROTO((hdf_file_t rn, int32 n, intn m));
+	(hdf_file_t rn, int32 n, intn m);
 
 extern int32 mread
-    PROTO((hdf_file_t rn, char *buf, int32 n));
+    (hdf_file_t rn, char *buf, int32 n);
 
 extern int32 mwrite
-    PROTO((hdf_file_t rn, char *buf, int32 n));
+    (hdf_file_t rn, char *buf, int32 n);
 
 #endif /* MAC */
 

@@ -76,22 +76,14 @@ static char RcsId[] = "@(#)$Revision$";
 /* DFKci4f()                                                */
 /* --> Import routine for 4 byte CONVEX floats              */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKci4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKci4f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int in_place = 0;                     /* Inplace must be detected */
   register uint32 i;            
   uint8 buf[4];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKci4f";
   uint8 exp;
 
@@ -162,22 +154,14 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKco4f()                                                */
 /* --> Export routine for 4 byte CONVEX floats              */
 /************************************************************/
-#ifdef PROTOTYPE 
 int DFKco4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKco4f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int in_place = 0;                     /* Inplace must be detected */
   register uint32 i;            
   uint8 buf[4];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKco4f";
   intn  exp;
 
@@ -258,22 +242,14 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKci8f()                                                */
 /* --> Import routine for 8 byte CONVEX floats              */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKci8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKci8f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int in_place = 0;                     /* Inplace must be detected */
   register uint32 i;            
   uint8 buf[8];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKci8f";
   intn exp;
 
@@ -357,22 +333,14 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKco8f()                                                */
 /* --> Export routine for 8 byte CONVEX floats              */
 /************************************************************/
-#ifdef PROTOTYPE 
 int DFKco8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKco8f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int in_place = 0;                     /* Inplace must be detected */
   register uint32 i;            
   uint8 buf[8];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKco8f";
   intn  exp;
 
@@ -465,22 +433,14 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKlci4f()                                                */
 /* --> Import routine for 4 byte CONVEX floats              */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKlci4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKlci4f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int in_place = 0;                     /* Inplace must be detected */
   register uint32 i;            
   uint8 buf[4];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKci4f";
   uint8 exp;
 
@@ -551,22 +511,14 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKlco4f()                                                */
 /* --> Export routine for 4 byte CONVEX floats              */
 /************************************************************/
-#ifdef PROTOTYPE 
 int DFKlco4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKlco4f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int in_place = 0;                     /* Inplace must be detected */
   register uint32 i;            
   uint8 buf[4];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKco4f";
   intn  exp;
 
@@ -647,22 +599,14 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKlci8f()                                                */
 /* --> Import routine for 8 byte CONVEX floats              */
 /************************************************************/
-#ifdef PROTOTYPE
 int DFKlci8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKlci8f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int in_place = 0;                     /* Inplace must be detected */
   register uint32 i;            
   uint8 buf[8];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKci8f";
   intn exp;
 
@@ -746,22 +690,14 @@ uint32 num_elm, source_stride, dest_stride;
 /* DFKlco8f()                                                */
 /* --> Export routine for 8 byte CONVEX floats              */
 /************************************************************/
-#ifdef PROTOTYPE 
 int DFKlco8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
-#else
-int DFKlco8f(source, dest, num_elm, source_stride, dest_stride)
-uint8 * source, * dest;
-uint32 num_elm, source_stride, dest_stride;
-#endif /* PROTOTYPE */
 {
   int in_place = 0;                     /* Inplace must be detected */
   register uint32 i;            
   uint8 buf[8];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKco8f";
   intn  exp;
 

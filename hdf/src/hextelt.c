@@ -49,7 +49,7 @@ typedef struct {
 
 /* forward declaration of the functions provided in this module */
 PRIVATE int32 HXIstaccess
-    PROTO((accrec_t *access_rec, int16 access));
+    (accrec_t *access_rec, int16 access);
 
 /* ext_funcs -- table of the accessing functions of the external
    data element function modules.  The position of each function in
@@ -99,17 +99,7 @@ funclist_t ext_funcs = {
         on error.
 
 --------------------------------------------------------------------------*/ 
-#ifdef PROTOTYPE
 int32 HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, int32 offset, int32 start_len)
-#else
-int32 HXcreate(file_id, tag, ref, extern_file_name, offset, start_len)
-    int32 file_id;             /* file record id */
-    uint16 tag, ref;           /* tag/ref of the special data element
-                                  to create */
-    const char *extern_file_name;    /* name of external file to use as
-                                  data element */
-    int32 offset,start_len;
-#endif
 {
     CONSTR(FUNC,"HXcreate");     /* for HERROR */
     filerec_t *file_rec;       /* file record */
@@ -325,13 +315,7 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, offset, start_len)
         pull in the information ourselves
 
 --------------------------------------------------------------------------- */ 
-#ifdef PROTOTYPE
 PRIVATE int32 HXIstaccess(accrec_t *access_rec, int16 acc_mode)
-#else
-PRIVATE int32 HXIstaccess(access_rec, acc_mode)
-    accrec_t *access_rec;      /* access record */
-    int16 acc_mode;              /* access mode */
-#endif
 {
     CONSTR(FUNC,"HXIstaccess");  /* for HERROR */
     dd_t *info_dd;             /* dd of the special information element */
@@ -435,12 +419,7 @@ PRIVATE int32 HXIstaccess(access_rec, acc_mode)
         reading
 
 --------------------------------------------------------------------------- */ 
-#ifdef PROTOTYPE
 int32 HXPstread(accrec_t *rec)
-#else
-int32 HXPstread(rec)
-    accrec_t *rec;
-#endif
 {
     return HXIstaccess(rec, DFACC_READ);
 } /* HXPstread */
@@ -460,12 +439,7 @@ int32 HXPstread(rec)
         Calls to HXIstaccess to fill in the access rec for writing
 
 --------------------------------------------------------------------------- */ 
-#ifdef PROTOTYPE
 int32 HXPstwrite(accrec_t *rec)
-#else
-int32 HXPstwrite(rec)
-    accrec_t *rec;
-#endif
 {
     return HXIstaccess(rec, DFACC_WRITE);
 } /* HXPstwrite */
@@ -487,14 +461,7 @@ int32 HXPstwrite(rec)
         Set the seek posn in the given external element
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HXPseek(accrec_t *access_rec, int32 offset, int origin)
-#else
-int32 HXPseek(access_rec, offset, origin)
-    accrec_t *access_rec;
-    int32 offset;
-    int origin;
-#endif
 {
     CONSTR(FUNC,"HXPseek");      /* for HERROR */
 
@@ -536,14 +503,7 @@ int32 HXPseek(access_rec, offset, origin)
         until the end.
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HXPread(accrec_t *access_rec, int32 length, VOIDP data)
-#else
-int32 HXPread(access_rec, length, data)
-    accrec_t *access_rec;      /* access record */
-    int32 length;              /* length of data to read in */
-    VOIDP data;                        /* data buffer */
-#endif
 {
     CONSTR(FUNC,"HXPread");      /* for HERROR */
     extinfo_t *info =          /* information on the special element */
@@ -605,14 +565,7 @@ int32 HXPread(access_rec, length, data)
         have a read AID for it.   Is that really the behavior that we want?
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HXPwrite(accrec_t *access_rec, int32 length, const VOIDP data)
-#else
-int32 HXPwrite(access_rec, length, data)
-    accrec_t *access_rec;      /* access record */
-    int32 length;              /* length of data to write */
-    const VOIDP data;                        /* data buffer */
-#endif
 {
     uint8 ptbuf[TBUF_SZ];      /* temp buffer */
     CONSTR(FUNC,"HXPwrite");     /* for HERROR */
@@ -705,23 +658,9 @@ int32 HXPwrite(access_rec, length, data)
         BUG: The offset returned is not correct.
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HXPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
                         uint16 *pref, int32 *plength, int32 *poffset,
                         int32 *pposn, int16 *paccess, int16 *pspecial)
-#else
-int32 HXPinquire(access_rec, pfile_id, ptag, pref, plength, poffset,
-                        pposn, paccess, pspecial)
-     accrec_t *access_rec;     /* access record */
-     int32 *pfile_id;          /* ptr to file id, OUT */
-     uint16 *ptag;             /* ptr to tag of information, OUT */
-     uint16 *pref;             /* ptr to ref of information, OUT */
-     int32 *plength;           /* ptr to length of data element, OUT */
-     int32 *poffset;           /* ptr to offset of data element, OUT */
-     int32 *pposn;             /* ptr to position of access in element, OUT */
-     int16 *paccess;           /* ptr to access mode, OUT */
-     int16 *pspecial;          /* ptr to special code */
-#endif
 {
     dd_t *info_dd =            /* dd of special information */
        &(access_rec->block->ddlist[access_rec->idx]);
@@ -757,12 +696,7 @@ int32 HXPinquire(access_rec, pfile_id, ptag, pref, plength, poffset,
         Close the file pointed to by the current AID and free the AID
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HXPendaccess(accrec_t *access_rec)
-#else
-int32 HXPendaccess(access_rec)
-    accrec_t *access_rec;      /* access record to dispose of */
-#endif
 {
     CONSTR(FUNC,"HXPendaccess"); /* for HERROR */
     filerec_t *file_rec =      /* file record */
@@ -806,12 +740,7 @@ int32 HXPendaccess(access_rec)
         reference to it is lost.
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HXPcloseAID(accrec_t *access_rec)
-#else
-int32 HXPcloseAID(access_rec)
-accrec_t *access_rec;
-#endif
 {
 
     CONSTR(FUNC,"HXPcloseAID"); /* for HERROR */
@@ -850,13 +779,7 @@ accrec_t *access_rec;
         the info_block copy point to our local copy.
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HXPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
-#else
-int32 HXPinfo(access_rec, info_block)
-     accrec_t        * access_rec;  /* access record */
-     sp_info_block_t * info_block;  /* info_block to fill */
-#endif
 {
     char *FUNC="HXPinfo";      /* for HERROR */
     extinfo_t *info =         /* special information record */
@@ -900,13 +823,7 @@ int32 HXPinfo(access_rec, info_block)
         The offset and length are assumed to be the same.
 
 --------------------------------------------------------------------------- */
-#ifdef PROTOTYPE
 int32 HXPreset(accrec_t * access_rec, sp_info_block_t * info_block)
-#else
-int32 HXPreset(access_rec, info_block)
-     accrec_t        * access_rec;  /* access record */
-     sp_info_block_t * info_block;  /* info_block to fill */
-#endif
 {
     char      * FUNC="HXPreset"; /* for HERROR */
     dd_t      * dd;              /* dd of existing external element record */

@@ -26,12 +26,7 @@ static int bytes_in_buffer;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 fix_huff_tbl (HUFF_TBL * htbl)
-#else
-fix_huff_tbl ( htbl)
-HUFF_TBL * htbl;
-#endif
 /* Compute derived values for a Huffman table */
 {
   int p, i, l, lastp, si;
@@ -86,11 +81,7 @@ HUFF_TBL * htbl;
 /* Outputting bytes to the file */
 
 LOCAL VOID
-#if defined( PROTOTYPE ) && ! defined( CONVEX )
-flush_bytes (VOID)
-#else
-flush_bytes ()
-#endif
+flush_bytes (void)
 {
   if (bytes_in_buffer)
     (*cinfo->methods->entropy_output) (cinfo, output_buffer, bytes_in_buffer);
@@ -115,13 +106,7 @@ flush_bytes ()
 
 INLINE
 LOCAL VOID
-#ifdef PROTOTYPE
 emit_bits (uint16 code, int size)
-#else
-emit_bits (code, size)
-uint16 code;
-int size;
-#endif
 {
   /* This routine is heavily used, so it's worth coding tightly. */
   register int32 put_buffer = code;
@@ -156,11 +141,7 @@ int size;
 
 
 LOCAL VOID
-#if defined( PROTOTYPE ) && ! defined( CONVEX )
-flush_bits (VOID)
-#else
-flush_bits ()
-#endif
+flush_bits (void)
 {
   emit_bits((uint16) 0x7F, 7);  /* fill any partial byte with ones */
   huff_put_buffer = 0;		/* and reset bit-buffer to empty */
@@ -173,14 +154,7 @@ flush_bits ()
 /* Note that the DC coefficient has already been converted to a difference */
 
 LOCAL VOID
-#ifdef PROTOTYPE
 encode_one_block (JBLOCK block, HUFF_TBL *dctbl, HUFF_TBL *actbl)
-#else
-encode_one_block (block, dctbl, actbl)
-JBLOCK block;
-HUFF_TBL *dctbl;
-HUFF_TBL *actbl;
-#endif
 {
   register int temp, temp2;
   register int nbits;
@@ -265,12 +239,7 @@ HUFF_TBL *actbl;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 huff_init (compress_info_ptr xinfo)
-#else
-huff_init (xinfo)
-compress_info_ptr xinfo;
-#endif
 {
   short ci;
   jpeg_component_info * compptr;
@@ -310,12 +279,7 @@ compress_info_ptr xinfo;
  */
 
 LOCAL VOID
-#ifdef PROTOTYPE
 emit_restart (compress_info_ptr cinfo)
-#else
-emit_restart (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   short ci;
 
@@ -340,13 +304,7 @@ compress_info_ptr cinfo;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 huff_encode (compress_info_ptr cinfo, JBLOCK *MCU_data)
-#else
-huff_encode (cinfo, MCU_data)
-compress_info_ptr cinfo;
-JBLOCK *MCU_data;
-#endif
 {
   short blkn, ci;
   jpeg_component_info * compptr;
@@ -378,12 +336,7 @@ JBLOCK *MCU_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 huff_term (compress_info_ptr cinfo)
-#else
-huff_term (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   /* Flush out the last data */
   flush_bits();
@@ -414,14 +367,7 @@ static long * ac_count_ptrs[NUM_HUFF_TBLS];
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
 gen_huff_coding (compress_info_ptr cinfo, HUFF_TBL *htbl, long freq[])
-#else
-gen_huff_coding (cinfo, htbl, freq)
-compress_info_ptr cinfo;
-HUFF_TBL *htbl;
-long freq[];
-#endif
 /* Generate the optimal coding for the given counts */
 {
 #define MAX_CLEN 32		/* assumed maximum initial code length */
@@ -559,16 +505,8 @@ long freq[];
 /* Note that the DC coefficient has already been converted to a difference */
 
 LOCAL VOID
-#ifdef PROTOTYPE
 htest_one_block (JBLOCK block, JCOEF block0,
 		 long dc_counts[], long ac_counts[])
-#else
-htest_one_block (block, block0, dc_counts, ac_counts)
-JBLOCK block;
-JCOEF block0;
-long dc_counts[];
-long ac_counts[];
-#endif
 {
   register int32 temp;
   register int nbits;
@@ -625,13 +563,7 @@ long ac_counts[];
  */
 
 LOCAL VOID
-#ifdef PROTOTYPE
 htest_encode (compress_info_ptr cinfo, JBLOCK *MCU_data)
-#else
-htest_encode (cinfo, MCU_data)
-compress_info_ptr cinfo;
-JBLOCK *MCU_data;
-#endif
 {
   short blkn, ci;
   jpeg_component_info * compptr;
@@ -672,13 +604,7 @@ JBLOCK *MCU_data;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 huff_optimize (compress_info_ptr cinfo, MCU_output_caller_ptr source_method)
-#else
-huff_optimize (cinfo, source_method)
-compress_info_ptr cinfo;
-MCU_output_caller_ptr source_method;
-#endif
 /* Optimize Huffman-coding parameters (Huffman symbol table) */
 {
   int i, tbl;
@@ -755,12 +681,7 @@ MCU_output_caller_ptr source_method;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jselchuffman (compress_info_ptr cinfo)
-#else
-jselchuffman (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   if (! cinfo->arith_code) {
     cinfo->methods->entropy_encode_init = huff_init;

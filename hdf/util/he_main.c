@@ -77,13 +77,7 @@ int he_remote = YES;
 /* is this batch mode or interactive? */
 extern int he_batch;
 
-#ifdef PROTOTYPE
 int main(int argc, char *argv[])
-#else
-int main(argc, argv)
-    int argc;
-    char *argv[];
-#endif
 {
     int backup = YES;		/* Backup files when opening? */
     register int i;
@@ -150,11 +144,7 @@ int main(argc, argv)
 }
 
 /* cmdLoop -- read commands and execute them */
-#ifdef PROTOTYPE
 void cmdLoop(void)
-#else
-void cmdLoop()
-#endif
 {
     HE_CMD *cmd;
 
@@ -179,13 +169,7 @@ char *he_file;
 DFdesc he_desc[HE_DESC_SZ];
 HE_GROUP he_grp[HE_DESC_SZ];
 	
-#ifdef PROTOTYPE
 int32 getElement(int desc, char **pdata)
-#else
-int32 getElement(desc, pdata)
-    int desc;
-    char **pdata;
-#endif
 {
     int32 length;
     int32 fid;
@@ -212,13 +196,7 @@ int32 getElement(desc, pdata)
 
 /* The function is not called.
 
-#ifdef PROTOTYPE
 int od(char *format, char *file)
-#else
-int od(format, file)
-    char *format;
-    char *file;
-#endif
 {
      fork a child and let the child run od. Use vfork for VMS.
 
@@ -248,12 +226,7 @@ int od(format, file)
 /* the tmp directory, currently set for unix */
 #define TDIR "/tmp/"
 
-#ifdef PROTOTYPE
 int getTmpName(char **pname)
-#else
-int getTmpName(pname)
-    char **pname;
-#endif
 {
     int length;
     static int count = 0;
@@ -271,14 +244,7 @@ int getTmpName(pname)
     return length;
 }
 
-#ifdef PROTOTYPE
 int writeToFile(char *file, char *data, int32 length)
-#else
-int writeToFile(file, data, length)
-    char *file;
-    char *data;
-    int32 length;
-#endif
 {
     FILE *fd;
     int written;
@@ -297,12 +263,7 @@ int writeToFile(file, data, length)
     return HE_OK;
 }
 
-#ifdef PROTOTYPE
 int removeFile(char *file)
-#else
-int removeFile(file)
-    char *file;
-#endif
 {
 #ifndef VMS
     return unlink(file);
@@ -312,31 +273,17 @@ int removeFile(file)
 }
 
 /* is a file currently opened */
-#ifdef PROTOTYPE
 int fileOpen(void)
-#else
-int fileOpen()
-#endif
 {
     return (he_file != NULL);
 }
 
-#ifdef PROTOTYPE
 char *backupName(char *file)
-#else
-char *backupName(file)
-    char *file;
-#endif
 {
     return catStr(file, "$hdfed$");
 }
 
-#ifdef PROTOTYPE
 int backupFile(char *file)
-#else
-int backupFile(file)
-    char *file;
-#endif
 {
     char *back;			/* backup file name */
 
@@ -344,12 +291,7 @@ int backupFile(file)
     return copyFile(file, back);
 }
 
-#ifdef PROTOTYPE
 int copyFile(char *from, char *to)
-#else
-int copyFile(from, to)
-    char *from, *to;
-#endif
 {
     int num_read;
     char buf[HE_BUF_SZ];	/* copying buffer */
@@ -378,11 +320,7 @@ int copyFile(from, to)
     return HE_OK;
 }
 
-#ifdef PROTOTYPE
 int updateDesc(void)
-#else
-int updateDesc()
-#endif
 {
   uint32 fid;
   int32 groupID;
@@ -440,12 +378,7 @@ int updateDesc()
 }
 
 
-#ifdef PROTOTYPE
 int initFile(char *file)
-#else
-int initFile(file)
-    char *file;
-#endif
 {
     if (he_file) HDfreespace(he_file);
     he_file = copyStr(file);
@@ -463,12 +396,7 @@ int initFile(file)
     return resetPred();
 }
 
-#ifdef PROTOTYPE
 int closeFile(int keep)
-#else
-int closeFile(keep)
-    int keep;
-#endif
 {
     register int i;
     char *back;
@@ -493,15 +421,7 @@ int closeFile(keep)
     return HE_OK;
 }
 
-#ifdef PROTOTYPE
 int getR8(int xdim, int ydim, char *image, char *pal, int compress)
-#else
-int getR8(xdim, ydim, image, pal, compress)
-    int xdim, ydim;
-    char *image;
-    char *pal;
-    int compress;
-#endif
 {
     FILE *fp;
     int32 length;
@@ -546,12 +466,7 @@ int getR8(xdim, ydim, image, pal, compress)
     return HE_OK;
 }
 
-#ifdef PROTOTYPE
 int setPal(char *pal)
-#else
-int setPal(pal)
-    char *pal;
-#endif
 {
     FILE *fp;
     char reds[HE_COLOR_SZ], greens[HE_COLOR_SZ], blues[HE_COLOR_SZ];
@@ -591,12 +506,7 @@ int setPal(pal)
     return HE_OK;
 }
 
-#ifdef PROTOTYPE
 int findDesc(tag_ref_ptr dd)
-#else
-int findDesc(dd)
-    tag_ref_ptr dd;
-#endif
 {
     register int i;
 
@@ -607,12 +517,7 @@ int findDesc(dd)
     return FAIL;
 }
 
-#ifdef PROTOTYPE
 int desc2Grp(int desc)
-#else
-int desc2Grp(desc)
-    int desc;
-#endif
 {
     register int i;
 
@@ -623,12 +528,7 @@ int desc2Grp(desc)
     return FAIL;
 }
 
-#ifdef PROTOTYPE
 int hasReference(int desc)
-#else
-int hasReference(desc)
-    int desc;
-#endif
 {
     register int i, j;
 
@@ -640,12 +540,7 @@ int hasReference(desc)
     return NO;
 }
 
-#ifdef PROTOTYPE
 int deleteDesc(int desc)
-#else
-int deleteDesc(desc)
-    int desc;
-#endif
 {
     int32 fid;
 
@@ -662,14 +557,7 @@ int deleteDesc(desc)
     return Hclose(fid);
 }
 
-#ifdef PROTOTYPE
 int getCurrRig(int32 *pXdim, int32 *pYdim, char **pPalette, char **pRaster)
-#else
-int getCurrRig(pXdim, pYdim, pPalette, pRaster)
-    int32 *pXdim, *pYdim;
-    char **pPalette;
-    char **pRaster;
-#endif
 {
     int ispal;
 
@@ -698,16 +586,7 @@ int getCurrRig(pXdim, pYdim, pPalette, pRaster)
     return HE_OK;
 }
 
-#ifdef PROTOTYPE
 int putWithTempl(char *template, int n1, int n2, int n3, char *data, int length, int verbose)
-#else
-int putWithTempl(template, n1, n2, n3, data, length, verbose)
-    char *template;
-    int n1, n2, n3;
-    char *data;
-    int length;
-    int verbose;
-#endif
 {
     char *file;
     int ret;
@@ -721,11 +600,7 @@ int putWithTempl(template, n1, n2, n3, data, length, verbose)
     return ret;
 }
 
-#ifdef PROTOTYPE
 int revert(void)
-#else
-int revert()
-#endif
 {
     char *back;
 
@@ -735,14 +610,7 @@ int revert()
     return initFile(he_file);
 }
 
-#ifdef PROTOTYPE
 int writeElt(char *file, uint16 ref, int elt)
-#else
-int writeElt(file, ref, elt)
-    char *file;
-    uint16 ref;
-    int elt;
-#endif
 {
     int ret;
     char *data;
@@ -799,16 +667,7 @@ int writeElt(file, ref, elt)
     return ret;
 }
 
-#ifdef PROTOTYPE
 int putElement(char *file, uint16 tag, uint16 ref, char *data, int32 len)
-#else
-int putElement(file, tag, ref, data, len)
-    char *file;
-    uint16 tag;
-    uint16 ref;
-    char *data;
-    int32 len;
-#endif
 {
     int ret;
     int32 fid;
@@ -828,12 +687,7 @@ int putElement(file, tag, ref, data, len)
     return Hclose(fid);
 }
 
-#ifdef PROTOTYPE
 int writeGrp(char *file)
-#else
-int writeGrp(file)
-    char *file;
-#endif
 {
     register int i;
     uint16 ref;
@@ -869,13 +723,7 @@ int writeGrp(file)
     return Hclose(fid);
 }
 
-#ifdef PROTOTYPE
 int getNewRef(char *file, uint16 *pRef)
-#else
-int getNewRef(file, pRef)
-    char *file;
-    uint16 *pRef;
-#endif
 {
     int32 fid;
 
@@ -890,14 +738,7 @@ int getNewRef(file, pRef)
     return Hclose(fid);
 }
 
-#ifdef PROTOTYPE
 int writeAnnot(char *file, uint16 tag, uint16 ref)
-#else
-int writeAnnot(file, tag, ref)
-    char *file;
-    uint16 tag;
-    uint16 ref;
-#endif
 {
     char *data;
     int32 eltLength;
@@ -940,15 +781,7 @@ int writeAnnot(file, tag, ref)
     return putElement(file, he_desc[he_currDesc].tag, newRef, data, eltLength);
 }
 
-#ifdef PROTOTYPE
 int32 getAnn(int ann, int16 tag, int16 ref, char **pBuf)
-#else
-int32 getAnn(ann, tag, ref, pBuf)
-    int ann;
-    uint16 tag;
-    uint16 ref;
-    char **pBuf;
-#endif
 {
     int32 len;
 
@@ -977,16 +810,7 @@ int32 getAnn(ann, tag, ref, pBuf)
     return len;
 }
 
-#ifdef PROTOTYPE
 int putAnn(int ann, uint16 tag, uint16 ref, char *buf, int32 len)
-#else
-int putAnn(ann, tag, ref, buf, len)
-    int ann;
-    uint16 tag;
-    uint16 ref;
-    char *buf;
-    int32 len;
-#endif
 {
     int ret;
 
@@ -1000,13 +824,7 @@ int putAnn(ann, tag, ref, buf, len)
     return ret;
 }
 
-#ifdef PROTOTYPE
 int32 readFromFile(char *file, char **pBuf)
-#else
-int32 readFromFile(file, pBuf)
-    char *file;
-    char **pBuf;
-#endif
 {
     FILE *fp;
     int32 soFar;
@@ -1082,12 +900,7 @@ struct {
 {"raw",    HE_RAW},
 };
 
-#ifdef PROTOTYPE
 int findOpt(char *word)
-#else
-int findOpt(word)
-    char *word;
-#endif
 {
     int len;
     int found = -1;
@@ -1114,12 +927,7 @@ int findOpt(word)
     return he_optTab[found].key;
 }
 
-#ifdef PROTOTYPE
 char * catStr(char *s, char *s1)
-#else
-char * catStr(s, s1)
-    register char *s, *s1;
-#endif
 {
     char *t;
 
@@ -1129,12 +937,7 @@ char * catStr(s, s1)
     return t;
 }
 
-#ifdef PROTOTYPE
 char *copyStr(char *s)
-#else
-char *copyStr(s)
-    register char *s;
-#endif
 {
     char *t;
 
@@ -1143,12 +946,7 @@ char *copyStr(s)
     return t;
 }
 
-#ifdef PROTOTYPE
 int isGrp(uint16 tag)
-#else
-int isGrp(tag)
-    uint16 tag;
-#endif
 {
     switch(tag)
     {
@@ -1162,12 +960,7 @@ int isGrp(tag)
     }
 }
 
-#ifdef PROTOTYPE
 int HEquit(HE_CMD *cmd)
-#else
-int HEquit(cmd)
-    HE_CMD *cmd;
-#endif
 {
     if (cmd->argc > 1)
     {
@@ -1178,12 +971,7 @@ int HEquit(cmd)
     return quit(0);
 }
 
-#ifdef PROTOTYPE
 int quit(int status)
-#else
-int quit(status)
-    int status;
-#endif
 {
     if (fileOpen())
     {
@@ -1194,22 +982,13 @@ int quit(status)
     return SUCCEED;
 }
 
-#ifdef PROTOTYPE
 int HEhelp(HE_CMD *dummy)
-#else
-int HEhelp(dummy)
-     HE_CMD *dummy;
-#endif
 {
     help();
     return HE_OK;
 }
 
-#ifdef PROTOTYPE
 void help(void)
-#else
-void help()
-#endif
 {
   /* print some help informations */
   printf("hdfed allows sophisticated HDF users to manipulate the elements in");
@@ -1261,12 +1040,7 @@ int HEwait(cmd)
     return HE_OK;
 }
 
-#ifdef PROTOTYPE
 void deleteCmd(HE_CMD *cmd)
-#else
-void deleteCmd(cmd)
-    HE_CMD *cmd;
-#endif
 {
     register int i;
 
@@ -1284,14 +1058,7 @@ void deleteCmd(cmd)
 #define TEMPLATE_CHAR2 '@'
 #define TEMPLATE_CHAR3 '%'
 
-#ifdef PROTOTYPE
 void convertTemplate(char *template, int n1, int n2, int n3, char **pname)
-#else
-void convertTemplate(template, n1, n2, n3, pname)
-    char *template;
-    int n1, n2, n3;
-    char **pname;
-#endif
 {
     char s1[20], s2[20], s3[20];
     char *t;
@@ -1320,15 +1087,7 @@ void convertTemplate(template, n1, n2, n3, pname)
     *t = '\0';
 }
 
-#ifdef PROTOTYPE
 void fillTemplate(char **template, char **pout, char *s, char templateChar)
-#else
-void fillTemplate(template, pout, s, templateChar)
-    char **template;
-    char **pout;
-    char *s;
-    char templateChar;
-#endif
 {
     int templateLen, sLen;
 

@@ -67,19 +67,19 @@ static const uint32 mask_arr32[33]={    /* array of values with [n] bits set */
 
 /* declaration of the functions provided in this module */
 PRIVATE int32 HCIcnbit_staccess
-    PROTO((accrec_t *access_rec, int16 acc_mode));
+    (accrec_t *access_rec, int16 acc_mode);
 
 PRIVATE int32 HCIcnbit_init
-    PROTO((accrec_t *access_rec));
+    (accrec_t *access_rec);
 
 PRIVATE int32 HCIcnbit_decode
-    PROTO((compinfo_t *info,int32 length,uint8 *buf));
+    (compinfo_t *info,int32 length,uint8 *buf);
 
 PRIVATE int32 HCIcnbit_encode
-    PROTO((compinfo_t *info,int32 length,uint8 *buf));
+    (compinfo_t *info,int32 length,uint8 *buf);
 
 PRIVATE int32 HCIcnbit_term
-    PROTO((compinfo_t *info));
+    (compinfo_t *info);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -100,12 +100,7 @@ PRIVATE int32 HCIcnbit_term
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int32 HCIcnbit_init(accrec_t *access_rec)
-#else
-PRIVATE int32 HCIcnbit_init(access_rec)
-accrec_t *access_rec;
-#endif
 {
     CONSTR(FUNC,"HCIcnbit_init");
     compinfo_t *info;                   /* special element information */
@@ -228,14 +223,7 @@ printf("HCIcnbit_init(): 3 - coder_func.write=%p\n",info->cinfo.coder_funcs.writ
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int32 HCIcnbit_decode(compinfo_t *info,int32 length,uint8 *buf)
-#else
-PRIVATE int32 HCIcnbit_decode(info,length,buf)
-compinfo_t *info;
-int32 length;
-uint8 *buf;
-#endif
 {
     CONSTR(FUNC,"HCIcnbit_decode");
     comp_coder_nbit_info_t *nbit_info;  /* ptr to n-bit info */
@@ -365,14 +353,7 @@ printf("HCInbit_decode(): i=%d, sign_bit=%d, input_bits=%x\n",i,sign_bit,input_b
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int32 HCIcnbit_encode(compinfo_t *info,int32 length,uint8 *buf)
-#else
-PRIVATE int32 HCIcnbit_encode(info,length,buf)
-compinfo_t *info;
-int32 length;
-uint8 *buf;
-#endif
 {
     CONSTR(FUNC,"HCIcnbit_encode");
     comp_coder_nbit_info_t *nbit_info;  /* ptr to n-bit info */
@@ -433,12 +414,7 @@ printf("HCIcnbit_encode(): mask->length=%d, offset=%d, mask=%x\n",mask_info->len
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int32 HCIcnbit_term(compinfo_t *info)
-#else
-PRIVATE int32 HCIcnbit_term(info)
-compinfo_t *info;
-#endif
 {
     CONSTR(FUNC,"HCIcnbit_term");
 
@@ -465,13 +441,7 @@ compinfo_t *info;
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int32 HCIcnbit_staccess(accrec_t *access_rec, int16 acc_mode)
-#else
-PRIVATE int32 HCIcnbit_staccess(access_rec,acc_mode)
-accrec_t *access_rec;
-int16 acc_mode;
-#endif
 {
     CONSTR(FUNC,"HCIcnbit_staccess");
     compinfo_t *info;                   /* special element information */
@@ -515,12 +485,7 @@ printf("HCIcnbit_staccess(): info->aid=%d, coder_func.write=%p\n",info->aid,info
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPcnbit_stread(accrec_t *access_rec)
-#else
-int32 HCPcnbit_stread(access_rec)
-accrec_t *access_rec;
-#endif
 {
     CONSTR(FUNC,"HCPcnbit_stread");
     int32 ret;
@@ -549,12 +514,7 @@ accrec_t *access_rec;
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPcnbit_stwrite(accrec_t *access_rec)
-#else
-int32 HCPcnbit_stwrite(access_rec)
-accrec_t *access_rec;
-#endif
 {
     CONSTR(FUNC,"HCPcnbit_stwrite");
     int32 ret;
@@ -591,14 +551,7 @@ printf("HCPcnbit_stwrite(): entering\n");
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPcnbit_seek(accrec_t *access_rec, int32 offset, int origin)
-#else
-int32 HCPcnbit_seek(access_rec,offset,origin)
-accrec_t *access_rec;
-int32 offset;
-int origin;
-#endif
 {
     CONSTR(FUNC,"HCPcnbit_seek");
     compinfo_t *info;                   /* special element information */
@@ -645,14 +598,7 @@ int origin;
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPcnbit_read(accrec_t *access_rec, int32 length, VOIDP data)
-#else
-int32 HCPcnbit_read(access_rec,length,data)
-accrec_t *access_rec;
-int32 length;
-VOIDP data;
-#endif
 {
     CONSTR(FUNC,"HCPcnbit_read");
     compinfo_t *info;                   /* special element information */
@@ -686,14 +632,7 @@ VOIDP data;
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPcnbit_write(accrec_t *access_rec, int32 length, const VOIDP data)
-#else
-int32 HCPcnbit_write(access_rec,length,data)
-accrec_t *access_rec;
-int32 length;
-const VOIDP data;
-#endif
 {
     CONSTR(FUNC,"HCPcnbit_write");
     compinfo_t *info;               /* special element information */
@@ -741,23 +680,9 @@ printf("HCPcnbit_write(): after HCIcnbit_encode() call\n");
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPcnbit_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
                         uint16 *pref, int32 *plength, int32 *poffset,
                         int32 *pposn, int16 *paccess, int16 *pspecial)
-#else
-int32 HCPcnbit_inquire(access_rec,pfile_id,ptag,pref,plength,poffset,
-                        pposn,paccess,pspecial)
-accrec_t *access_rec;
-int32 *pfile_id;
-uint16 *ptag;
-uint16 *pref;
-int32 *plength;
-int32 *poffset;
-int32 *pposn;
-int16 *paccess;
-int16 *pspecial;
-#endif
 {
     return(SUCCEED);
 }   /* HCPcnbit_inquire() */
@@ -781,12 +706,7 @@ int16 *pspecial;
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 int32 HCPcnbit_endaccess(accrec_t *access_rec)
-#else
-int32 HCPcnbit_endaccess(access_rec)
-accrec_t *access_rec;
-#endif
 {
     CONSTR(FUNC,"HCPcnbit_endaccess");
     compinfo_t *info;                   /* special element information */

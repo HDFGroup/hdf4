@@ -51,15 +51,7 @@ static char RcsId[] = "@(#)$Revision$";
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#if defined PROTOTYPE
 VOIDP HDmemfill(VOIDP dest,const VOIDP src,uint32 item_size,uint32 num_items)
-#else
-VOIDP HDmemfill(dest, src, item_size, num_items)
-     VOIDP       dest;
-     const VOIDP src;
-     uint32      item_size;
-     uint32      num_items;
-#endif
 {
     uint32 copy_size;   /* size of the buffer to copy */
     uint32 copy_items;  /* number of items currently copying */
@@ -111,14 +103,7 @@ VOIDP HDmemfill(dest, src, item_size, num_items)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#if defined PROTOTYPE
 char _HUGE *HIstrncpy(register char *dest,register const char *source,int32 len)
-#else
-char _HUGE *HIstrncpy(dest, source, len)
-register char *source; 
-register const char *dest;
-int32 len;
-#endif /* PROTOTYPE */
 {
     char *destp;
 
@@ -482,12 +467,7 @@ VOIDP HDfreespace(void *ptr)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#if defined PROTOTYPE
 VOIDP HDgetspace(uint32 qty)
-#else
-VOIDP HDgetspace(qty)
-uint32 qty;
-#endif /* PROTOTYPE */
 {
     char FUNC[]="HDgetspace";
     char *p;
@@ -518,13 +498,7 @@ uint32 qty;
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#if defined PROTOTYPE
 VOIDP HDregetspace(VOIDP where, uint32 qty)
-#else
-VOIDP HDregetspace(where, qty)
-VOIDP where;
-uint32 qty;
-#endif /* PROTOTYPE */
 {
     char FUNC[]="HDregetspace";
     char *p;
@@ -553,12 +527,7 @@ uint32 qty;
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#if defined PROTOTYPE
 VOIDP HDfreespace(VOIDP ptr)
-#else
-VOIDP HDfreespace(ptr)
-VOIDP ptr;
-#endif /* PROTOTYPE */
 {
     if (ptr!=NULL)
         free(ptr);
@@ -588,13 +557,7 @@ VOIDP ptr;
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#if defined PROTOTYPE
 VOIDP HDclearspace(uint32 n,uint32 size)
-#else
-VOIDP HDclearspace(n,size)
-uint32 n;
-uint32 size;
-#endif /* PROTOTYPE */
 {
     VOIDP p;
 
@@ -660,14 +623,7 @@ char *HDstrdup(const char *s)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 VOIDP fmemcpy_big(VOIDP dst,VOIDP src,uint32 len)
-#else
-VOIDP fmemcpy_big(dst,src,len)
-VOIDP dst;
-VOIDP src;
-uint32 len;
-#endif
 {
     uint8 *s,d;             /* alias for the buffers */
 
@@ -707,14 +663,7 @@ uint32 len;
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 VOIDP fmemset_big(VOIDP src,intn c,uint32 len)
-#else
-VOIDP fmemset_big(src,c,len)
-VOIDP src;
-intn c;
-uint32 len;
-#endif
 {
     uint8 *s;               /* alias for the buffers */
 
@@ -754,14 +703,7 @@ uint32 len;
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn fmemcmp_big(VOIDP s1,VOIDP s2,uint32 len)
-#else
-intn fmemcmp_big(s1,s2,len)
-VOIDP s1;
-VOIDP s2;
-uint32 len;
-#endif
 {
     intn ret_val;
 
@@ -803,14 +745,7 @@ uint32 len;
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 VOIDP memcpy_big(VOIDP dst,VOIDP src,uint32 len)
-#else
-VOIDP memcpy_big(dst,src,len)
-VOIDP dst;
-VOIDP src;
-uint32 len;
-#endif
 {
     uint8 *s,*d;             /* alias for the buffers */
 
@@ -850,14 +785,7 @@ uint32 len;
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 VOIDP memset_big(VOIDP src,intn c,uint32 len)
-#else
-VOIDP memset_big(src,c,len)
-VOIDP src;
-intn c;
-uint32 len;
-#endif
 {
     uint8 *s;               /* alias for the buffers */
 
@@ -897,14 +825,7 @@ uint32 len;
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 intn memcmp_big(VOIDP s1,VOIDP s2,uint32 len)
-#else
-intn memcmp_big(s1,s2,len)
-VOIDP s1;
-VOIDP s2;
-uint32 len;
-#endif
 {
     uint8 *t1=(uint8 *)s1,
         *t2=(uint8 *)s2;

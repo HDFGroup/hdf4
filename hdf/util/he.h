@@ -119,8 +119,7 @@
 #define HE_NUMBER 1
 #define HE_STRING 2
 
-typedef int (*HE_FUNC)
-     PROTO((void *));
+typedef int (*HE_FUNC) (void *);
 
 typedef struct he_cmd {
     int argc;

@@ -38,7 +38,8 @@ extern int num_errs;
 #define FIELD2       "DIFFERENT_FIELD_NAME"
 
 /* write some stuff to the file */
-int32 write_vset_stuff() {
+int32 write_vset_stuff(void) 
+{
     int32 status;
     int32 fid, aid;
     int32 vg1, vg2;
@@ -270,7 +271,7 @@ int32 write_vset_stuff() {
     /* store it */
     VSwrite(vs1, (unsigned char *) gbuf, count, FULL_INTERLACE);
     VSdetach(vs1);
-    MESSAGE(5,printf("created VDATA %s with %d elements\n", name, count););
+    MESSAGE(5,printf("created VDATA %s with %d elements\n", name, (int)count););
 
 
     /* create a whole bunch of Vdatas to check for memory leakage */
@@ -279,21 +280,21 @@ int32 write_vset_stuff() {
         vs1 = VSattach(fid, -1, "w");
         if(vs1 == FAIL) {
             num_errs++;
-            printf(">>> Vsattach failed on loop %d\n", i);
+            printf(">>> Vsattach failed on loop %d\n", (int)i);
             continue;
         }
-        sprintf(name, "VdataLoop-%d", i);
+        sprintf(name, "VdataLoop-%d", (int)i);
         VSsetname (vs1, name);
         status = VSfdefine(vs1, "A", DFNT_CHAR8, 1);
         if(status == FAIL) {
             num_errs++;
-            printf(">>> VSfdefine failed on loop %d\n", i);
+            printf(">>> VSfdefine failed on loop %d\n", (int)i);
             continue;
         }
         status = VSsetfields(vs1, "A");
         if(status == FAIL) {
             num_errs++;
-            printf(">>> VSsetfields failed on loop %d\n", i);
+            printf(">>> VSsetfields failed on loop %d\n", (int)i);
             continue;
         }
         VSwrite(vs1, (unsigned char *) name, 1, FULL_INTERLACE);
@@ -309,7 +310,8 @@ int32 write_vset_stuff() {
 
 
 /* read everything back in and check it */
-int32 read_vset_stuff() {
+int32 read_vset_stuff(void) 
+{
     int32   ibuf[2000]; /* integer buffer */
     float32 fbuf[2000]; /* floating point buffer */
     char    gbuf[2000]; /* generic buffer */
@@ -827,7 +829,8 @@ int32 read_vset_stuff() {
 
 
 /* main test driver */
-void test_vsets() {
+void test_vsets(void) 
+{
     int32 status;
     
     status = write_vset_stuff();

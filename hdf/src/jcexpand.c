@@ -20,21 +20,10 @@
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 edge_expand (compress_info_ptr cinfo,
 	     long input_cols, int input_rows,
 	     long output_cols, int output_rows,
 	     JSAMPIMAGE image_data)
-#else
-edge_expand (cinfo, input_cols, input_rows, output_cols, output_rows,
-        image_data)
-compress_info_ptr cinfo;
-long input_cols;
-int input_rows;
-long output_cols;
-int output_rows;
-JSAMPIMAGE image_data;
-#endif
 {
   /* Expand horizontally */
   if (input_cols < output_cols) {
@@ -79,12 +68,7 @@ JSAMPIMAGE image_data;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jselexpand (compress_info_ptr cinfo)
-#else
-jselexpand (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   /* just one implementation for now */
   cinfo->methods->edge_expand = edge_expand;

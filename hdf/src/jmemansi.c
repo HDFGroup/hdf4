@@ -18,8 +18,8 @@
 #ifdef INCLUDES_ARE_ANSI
 #include <stdlib.h>		/* to declare malloc(), free() */
 #else
-extern VOID * malloc PROTO((size_t size));
-extern VOID free PROTO((VOID *ptr));
+extern VOID * malloc (size_t size);
+extern VOID free (VOID *ptr);
 #endif
 
 #ifndef SEEK_SET		/* pre-ANSI systems may not define this; */
@@ -38,24 +38,14 @@ static long total_used;		/* total memory requested so far */
  */
 
 GLOBAL VOIDP
-#ifdef PROTOTYPE
 jget_small (size_t sizeofobject)
-#else
-jget_small (sizeofobject)
-size_t sizeofobject;
-#endif
 {
   total_used += sizeofobject;
   return (VOID *) malloc(sizeofobject);
 }
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jfree_small (VOIDP object)
-#else
-jfree_small (object)
-VOIDP object;
-#endif
 {
   free(object);
 }
@@ -79,13 +69,7 @@ VOIDP object;
 #endif
 
 GLOBAL long
-#ifdef PROTOTYPE
 jmem_available (long min_bytes_needed, long max_bytes_needed)
-#else
-jmem_available (min_bytes_needed, max_bytes_needed)
-long min_bytes_needed;
-long max_bytes_needed;
-#endif
 {
   return methods->max_memory_to_use - total_used;
 }
@@ -100,16 +84,8 @@ long max_bytes_needed;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 read_backing_store (backing_store_ptr info, VOIDP buffer_address,
 		    long file_offset, long byte_count)
-#else
-read_backing_store (info, buffer_address, file_offset, byte_count)
-backing_store_ptr info;
-VOIDP buffer_address;
-long file_offset;
-long byte_count;
-#endif
 {
   if (fseek(info->temp_file, file_offset, SEEK_SET))
     ERREXIT(methods, "fseek failed on temporary file");
@@ -120,16 +96,8 @@ long byte_count;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 write_backing_store (backing_store_ptr info, VOIDP buffer_address,
 		     long file_offset, long byte_count)
-#else
-write_backing_store (info, buffer_address, file_offset, byte_count)
-backing_store_ptr info;
-VOIDP buffer_address;
-long file_offset;
-long byte_count;
-#endif
 {
   if (fseek(info->temp_file, file_offset, SEEK_SET))
     ERREXIT(methods, "fseek failed on temporary file");
@@ -140,12 +108,7 @@ long byte_count;
 
 
 METHODDEF VOID
-#ifdef PROTOTYPE
 close_backing_store (backing_store_ptr info)
-#else
-close_backing_store (info)
-backing_store_ptr info;
-#endif
 {
   fclose(info->temp_file);
   /* Since this implementation uses tmpfile() to create the file,
@@ -163,13 +126,7 @@ backing_store_ptr info;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jopen_backing_store (backing_store_ptr info, long total_bytes_needed)
-#else
-jopen_backing_store (info, total_bytes_needed)
-backing_store_ptr info;
-long total_bytes_needed;
-#endif
 {
   if ((info->temp_file = tmpfile()) == NULL)
     ERREXIT(methods, "Failed to create temporary file");
@@ -186,12 +143,7 @@ long total_bytes_needed;
  */
 
 GLOBAL VOID
-#ifdef PROTOTYPE
 jmem_init (external_methods_ptr emethods)
-#else
-jmem_init (emethods)
-external_methods_ptr emethods;
-#endif
 {
   methods = emethods;		/* save struct addr for error exit access */
   emethods->max_memory_to_use = DEFAULT_MAX_MEM;
@@ -199,11 +151,7 @@ external_methods_ptr emethods;
 }
 
 GLOBAL VOID
-#if defined ( PROTOTYPE ) && ! defined ( CONVEX )
-jmem_term (VOID)
-#else
-jmem_term ()
-#endif
+jmem_term (void)
 {
   /* no work */
 }

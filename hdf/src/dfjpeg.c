@@ -137,13 +137,7 @@ typedef enum {			/* JPEG marker codes */
 } JPEG_MARKER;
 
 
-#ifdef PROTOTYPE
 VOID emit_marker (int32 aid, JPEG_MARKER mark)
-#else
-VOID emit_marker (aid, mark)
-int32 aid;
-JPEG_MARKER mark;
-#endif
 /* Emit a marker code */
 {
   emit_byte(aid, 0xFF);
@@ -151,13 +145,7 @@ JPEG_MARKER mark;
 }
 
 
-#ifdef PROTOTYPE
 LOCAL VOID emit_2bytes (int32 aid, int value)
-#else
-LOCAL VOID emit_2bytes (aid, value)
-int32 aid;
-int value;
-#endif
 /* Emit a 2-byte integer; these are always MSB first in JPEG files */
 {
   emit_byte(aid, (value >> 8) & 0xFF);
@@ -165,14 +153,7 @@ int value;
 }
 
 
-#ifdef PROTOTYPE
 LOCAL int emit_dqt (compress_info_ptr cinfo, int32 aid, int index)
-#else
-LOCAL int emit_dqt (cinfo, aid, index)
-compress_info_ptr cinfo;
-int32 aid;
-int index;
-#endif
 /* Emit a DQT marker */
 /* Returns the precision used (0 = 8bits, 1 = 16bits) for baseline checking */
 {
@@ -201,14 +182,7 @@ int index;
 }   /* 133 bytes written */
 
 
-#ifdef PROTOTYPE
 LOCAL VOID emit_dht (compress_info_ptr cinfo, int index, bool is_ac)
-#else
-LOCAL VOID emit_dht (cinfo, index, is_ac)
-compress_info_ptr cinfo;
-int index;
-bool is_ac;
-#endif
 /* Emit a DHT marker */
 {
   HUFF_TBL * htbl;
@@ -245,12 +219,7 @@ bool is_ac;
 }   /* 21+256=277 bytes written */
 
 
-#ifdef PROTOTYPE
 LOCAL VOID emit_dac (compress_info_ptr cinfo)
-#else
-LOCAL VOID emit_dac (cinfo)
-compress_info_ptr cinfo;
-#endif
 /* Emit a DAC marker */
 /* Since the useful info is so small, we want to emit all the tables in */
 /* one DAC marker.  Therefore this routine does its own scan of the table. */
@@ -288,13 +257,7 @@ compress_info_ptr cinfo;
 }       /* 36 bytes written */
 
 
-#ifdef PROTOTYPE
 LOCAL VOID emit_dri (compress_info_ptr cinfo,int32 aid)
-#else
-LOCAL VOID emit_dri (cinfo, aid)
-compress_info_ptr cinfo;
-int32 aid;
-#endif
 /* Emit a DRI marker */
 {
   emit_marker(aid, M_DRI);                            /* 2 */
@@ -305,14 +268,7 @@ int32 aid;
 }   /* 6 bytes written */
 
 
-#ifdef PROTOTYPE
 LOCAL VOID emit_sof (compress_info_ptr cinfo, int32 aid, JPEG_MARKER code)
-#else
-LOCAL VOID emit_sof (cinfo, aid, code)
-compress_info_ptr cinfo;
-int32 aid;
-JPEG_MARKER code;
-#endif
 /* Emit a SOF marker */
 {
   int i;
@@ -339,12 +295,7 @@ JPEG_MARKER code;
 }   /* 19 bytes written */
 
 
-#ifdef PROTOTYPE
 LOCAL VOID emit_sos (compress_info_ptr cinfo)
-#else
-LOCAL VOID emit_sos (cinfo)
-compress_info_ptr cinfo;
-#endif
 /* Emit a SOS marker */
 {
   int i;
@@ -367,13 +318,7 @@ compress_info_ptr cinfo;
 }   /* 14 bytes written */
 
 
-#ifdef PROTOTYPE
 LOCAL VOID emit_jfif_app0 (int32 aid,compress_info_ptr cinfo)
-#else
-LOCAL VOID emit_jfif_app0 (aid, cinfo)
-int32 aid;
-compress_info_ptr cinfo;
-#endif
 /* Emit a JFIF-compliant APP0 marker */
 {
   /*
@@ -412,12 +357,7 @@ compress_info_ptr cinfo;
  */
 
 
-#ifdef PROTOTYPE
 GLOBAL VOID write_file_header (compress_info_ptr cinfo)
-#else
-GLOBAL VOID write_file_header (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
     int32 aid;
     char qt_in_use[NUM_QUANT_TBLS];
@@ -503,12 +443,7 @@ HEprint(stderr,0);  /* print all the errors */
  * Write the start of a scan (everything through the SOS marker).
  */
 
-#ifdef PROTOTYPE
 GLOBAL VOID write_scan_header (compress_info_ptr cinfo)
-#else
-GLOBAL VOID write_scan_header (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   int i;
 
@@ -536,14 +471,7 @@ compress_info_ptr cinfo;
  * Write some bytes of compressed data within a scan.
  */
 
-#ifdef PROTOTYPE
 GLOBAL VOID write_jpeg_data (compress_info_ptr cinfo, char *dataptr, int datacount)
-#else
-GLOBAL VOID write_jpeg_data (cinfo, dataptr, datacount)
-compress_info_ptr cinfo;
-char *dataptr;
-int datacount;
-#endif
 {
   WRITE_BYTES(cinfo, (uint8 *)dataptr, datacount);
 }   /* end write_jpeg_data */
@@ -553,12 +481,7 @@ int datacount;
  * Finish up after a compressed scan (series of write_jpeg_data calls).
  */
 
-#ifdef PROTOTYPE
 GLOBAL VOID write_scan_trailer (compress_info_ptr cinfo)
-#else
-GLOBAL VOID write_scan_trailer (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   /* no work needed in this format */
 }   /* end write_scan_trailer */
@@ -568,12 +491,7 @@ compress_info_ptr cinfo;
  * Finish up at the end of the image.
  */
 
-#ifdef PROTOTYPE
 GLOBAL VOID write_file_trailer (compress_info_ptr cinfo)
-#else
-GLOBAL VOID write_file_trailer (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
     emit_marker(jdata_aid, M_EOI);
 
@@ -586,12 +504,7 @@ compress_info_ptr cinfo;
  * This should be called from c_ui_method_selection if appropriate.
  */
 
-#ifdef PROTOTYPE
 GLOBAL VOID jselwhdf (compress_info_ptr cinfo)
-#else
-GLOBAL VOID jselwhdf (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   cinfo->methods->write_file_header = write_file_header;
   cinfo->methods->write_scan_header = write_scan_header;
@@ -617,12 +530,7 @@ compress_info_ptr cinfo;
  *      image, and must do any setup needed for the get_input_row routine.
  *      The image information is returned in fields of the cinfo struct.
  *---------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 GLOBAL VOID input_init (compress_info_ptr cinfo)
-#else
-GLOBAL VOID input_init (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
     cinfo->image_width = img_xdim;        /* width in pixels */
     cinfo->image_height = img_ydim;       /* height in pixels */
@@ -677,13 +585,7 @@ compress_info_ptr cinfo;
  * since C does not support variable-size multidimensional arrays.
  * JSAMPLE is typically typedef'd as "unsigned char".
  *---------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 GLOBAL VOID get_input_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
-#else
-GLOBAL VOID get_input_row (cinfo, pixel_row)
-compress_info_ptr cinfo;
-JSAMPARRAY pixel_row;
-#endif
 {
   /* This example shows how you might read RGB data (3 components)
    * from an input file in which the data is stored 3 bytes per pixel
@@ -723,12 +625,7 @@ JSAMPARRAY pixel_row;
  * Note that the JPEG code will only call it during successful exit;
  * if you want it called during error exit, you gotta do that yourself.
  *---------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 GLOBAL VOID input_term (compress_info_ptr cinfo)
-#else
-GLOBAL VOID input_term (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
 }   /* end input_term() */
 
@@ -746,12 +643,7 @@ compress_info_ptr cinfo;
  * This routine gets control after the input file header has been read
  * (i.e., right after input_init has been called).
  *---------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 GLOBAL VOID c_ui_method_selection (compress_info_ptr cinfo)
-#else
-GLOBAL VOID c_ui_method_selection (cinfo)
-compress_info_ptr cinfo;
-#endif
 {
   /* If the input is gray scale, generate a monochrome JPEG file. */
     if (cinfo->in_color_space == CS_GRAYSCALE)
@@ -781,20 +673,8 @@ compress_info_ptr cinfo;
  *          DFputcomp() to write out the entire image at once.
  *---------------------------------------------------------------------------*/
 
-#ifdef PROTOTYPE
 intn DFCIjpeg(int32 file_id,uint16 tag,uint16 ref,int32 xdim, int32 ydim,
     VOIDP image, int16 scheme, comp_info *scheme_info)
-#else
-intn DFCIjpeg(file_id, tag, ref, xdim, ydim, image, scheme, scheme_info)
-    int32 file_id;
-    uint16 tag;
-    uint16 ref;
-    int32 xdim;
-    int32 ydim;
-    VOIDP image;
-    int16 scheme;
-    comp_info *scheme_info;
-#endif
 {
   /* These three structs contain JPEG parameters and working data.
    * They must survive for the duration of parameter setup and one

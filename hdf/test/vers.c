@@ -28,7 +28,7 @@ static char RcsId[] = "@(#)$Revision$";
 extern int Verbocity;
 extern int num_errs;
 
-void test_vers()
+void test_vers(void)
 {
   int ret;
   uint32 lmajor, lminor, lrelease;
