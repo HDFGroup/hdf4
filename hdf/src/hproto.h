@@ -1490,7 +1490,8 @@ extern FRETVAL(intf) ndfplastref
 #   define nd2igimg  FNAME(D2IGIMG)
 #   define nd2iaimg  FNAME(D2IAIMG)
 #   define nd2irref  FNAME(D2IRREF)
-#   define nd24lref  FNAME(D24LREF)
+#   define nd2lref   FNAME(D2LREF)
+#   define ndf24lastref  FNAME(DF24LASTREF)
 #   define nd2scomp  FNAME(D2SCOMP)
 #   define ndf24scompress FNAME(DF24SCOMPRESS)
 #   define nd2sjpeg  FNAME(D2SJPEG)
@@ -1508,7 +1509,8 @@ extern FRETVAL(intf) ndfplastref
 #   define nd2igimg  FNAME(d2igimg)
 #   define nd2iaimg  FNAME(d2iaimg)
 #   define nd2irref  FNAME(d2irref)
-#   define nd24lref  FNAME(d24lref)
+#   define nd2lref   FNAME(d2lref)
+#   define ndf24lastref  FNAME(df24lastref)
 #   define nd2scomp  FNAME(d2scomp)
 #   define ndf24scompress FNAME(df24scompress)
 #   define nd2sjpeg  FNAME(d2sjpeg)
@@ -1555,7 +1557,10 @@ extern FRETVAL(intf) ndf24restart
 extern FRETVAL(intf) nd2irref
     PROTO((_fcd filename, intf _HUGE *ref, intf _HUGE *fnlen));
 
-extern FRETVAL(intf) nd24lref
+extern FRETVAL(intf) nd2lref
+    PROTO((void));
+
+extern FRETVAL(intf) ndf24lastref
     PROTO((void));
 
 extern FRETVAL(intf) nd2scomp

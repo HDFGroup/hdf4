@@ -32,7 +32,8 @@ static char RcsId[] = "@(#)$Revision$";
  *  d2igdim: get dimensions of image
  *  d2igimg: read in image
  *  d2iaimg: write out image
- *  d24lref: last ref number
+ *  d2lref: last ref number
+ *  df24lastref: last ref number
  *  d2scomp: set compression to use (short name)
  *  df24setcompress: set compression to use (long name)
  *  d2sjpeg:  set JPEG parameters (short name)
@@ -245,7 +246,7 @@ nd2first()
 }
 
 /*-----------------------------------------------------------------------------
- * Name:    d24lref
+ * Name:    d2lref
  * Purpose: return last reference number 
  * Inputs:  
  * Returns: last ref number
@@ -256,9 +257,29 @@ nd2first()
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-nd24lref(void)
+nd2lref(void)
 #else
-nd24lref()
+nd2lref()
+#endif /* PROTOTYPE */
+{
+    return (DFGRIlastref());
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    df24lastref
+ * Purpose: return last reference number 
+ * Inputs:  
+ * Returns: last ref number
+ * Users:   HDF HLL (high-level library) users, utilities, other routines
+ * Invokes: DFGRIrestart
+ * Remarks: none
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+ndf24lastref(void)
+#else
+ndf24lastref()
 #endif /* PROTOTYPE */
 {
     return (DFGRIlastref());
