@@ -137,7 +137,7 @@ int status;
   }
 
   name[0] = '\0';
-  SDgetinfo(sds_id, name, &rrank, dim_sizes, &data_type, &n_attrs);
+  status=SDgetinfo(sds_id, name, &rrank, dim_sizes, &data_type, &n_attrs);
   if (status < 0) {
    printf("Error: can't read info for SDS <%s>",name);
    SDendaccess (sds_id);
