@@ -621,7 +621,7 @@ fi
 
 echo checking XDR library
 case "${OS}" in
-  irix*)	LD_XDR=-lsun
+  irix*)	LD_XDR=
                   for arg in -DIRIS4; do
     case "$HDF_INC" in
       *$arg*) ;;
