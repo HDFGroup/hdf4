@@ -602,6 +602,7 @@ Please check your Makefile.
 #include <fcntl.h>              /* unbuffered I/O stuff for MPW */
 #include <string.h>
 #include <stdlib.h>
+#include <limits.h>             /* for INT_MIN, etc. in hbitio.c */
 #ifdef THINK_C                  /* for THINK C */
 #include <unix.h>
 #define isascii(c)  (isprint(c) || iscntrl(c))
