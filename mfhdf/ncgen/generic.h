@@ -7,7 +7,7 @@
 union generic {			/* used to hold any kind of fill_value */
     double doublev;
     float floatv;
-    long longv;
+    nclong longv;
     short shortv;
     char charv;
 };

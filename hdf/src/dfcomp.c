@@ -28,10 +28,10 @@ static char RcsId[] = "@(#)$Revision$";
  * Remarks: DFgetcomp and DFputcomp constitute a general compression interface
  *---------------------------------------------------------------------------*/
 
-/* This module (dfcomp.c) used to be in */
-/* charge of the general compression information */
-/* but hcomp.c now supercedes it. */
+/* This module (dfcomp.c) is in charge of the general compression information */
+#define COMPRESS_MASTER
 #include "hdf.h"
+#undef COMPRESS_MASTER
 
 #include "herr.h"
 

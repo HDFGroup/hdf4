@@ -6,7 +6,7 @@
  * 605 E. Springfield, Champaign IL 61820                                   *
  *                                                                          *
  * For conditions of distribution and use, see the accompanying             *
- * hdf/COPYING file.                                                        *
+ * hdf/COPYING file.                                                      *
  *                                                                          *
  ****************************************************************************/
 
@@ -16,6 +16,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
+
 #include <ctype.h>
 #ifdef MALDEBUG
 #define __MALDEBUG__
@@ -23,74 +24,6 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hdf.h"
 #include "herr.h"
 #include "hfile.h"
-
-/*--------------------------------------------------------------------------
- NAME
-    HDmemfill -- copy a chunk of memory repetitively into another chunk
-
- USAGE
-    VOIDP HDmemfill(dest,src,item_size,num_items)
-    VOIDP dest;         OUT: pointer to the chunk of memory to be filled
-                            with a pattern
-    VOIDP src;          IN: pointer to the pattern to copy
-    uint32 item_size;   IN: size of the pattern to copy
-    uint32 num_items;   IN: number of times to copy the pattern into the dest
-                            buffer
-
- RETURNS
-    Returns a pointer to the dest parameter
-
- DESCRIPTION
-    Common code used to fill a chunk of memory with a pattern.  This
-    routine can be used to copy a given "fill" value into an array
-    of any number type.
-
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
-    The src and dest pointers are assumed to point to valid portions of
-    memory.
- EXAMPLES
- REVISION LOG
---------------------------------------------------------------------------*/
-#if defined PROTOTYPE
-VOIDP HDmemfill(VOIDP dest,const VOIDP src,uint32 item_size,uint32 num_items)
-#else
-VOIDP HDmemfill(dest, src, item_size, num_items)
-     VOIDP       dest;
-     const VOIDP src;
-     uint32      item_size;
-     uint32      num_items;
-#endif
-{
-    uint32 copy_size;   /* size of the buffer to copy */
-    uint32 copy_items;  /* number of items currently copying */
-    uint32 items_left;  /* number of items left to copy */
-    uint8 *curr_dest;   /* ptr into the 'dest' memory where we are currently */
-
-    /* minimal error check for 0 sized array or item size */
-    if(num_items>0 && item_size>0) {
-        HDmemcpy(dest,src,item_size);   /* copy first item */
-
-        copy_size=item_size;
-        copy_items=1;
-        items_left=num_items-1;
-        curr_dest=((uint8 *)dest)+item_size;
-
-        /* copy until we've copied at least half of the items */
-        while(items_left>=copy_items) {
-
-            HDmemcpy(curr_dest,dest,copy_size); /* copy the current chunk */
-            curr_dest+=copy_size;       /* move the offset for the next chunk */
-            items_left-=copy_items;     /* decrement the number of items left */
-
-            copy_size*=2;   /* increase the size of the chunk to copy */
-            copy_items*=2;  /* increase the count of items we are copying */
-          } /* end while */
-        if(items_left>0)   /* if there are any items left to copy */
-            HDmemcpy(curr_dest,dest,items_left*item_size);
-      } /* end if */
-    return(dest);
-}   /* end HDmemfill() */
 
 /*-----------------------------------------------------------------------------
  * Name:    HIstrncpy
@@ -445,7 +378,7 @@ VOIDP src;
 uint32 len;
 #endif
 {
-    uint8 *s,d;             /* alias for the buffers */
+    uint8 *s,*d;             /* alias for the buffers */
 
     if(len<=UINT_MAX)   /* if the size is small enough copy all at once */
         return(_fmemcpy(dst,src,(size_t)len));
@@ -708,3 +641,4 @@ uint32 len;
 #endif  /* WIN3 */
 
 #endif  /* WIN3 | PC */
+

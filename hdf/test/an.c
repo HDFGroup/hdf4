@@ -178,7 +178,6 @@ uint8 *image;
 {
     int i, limit;
     float *pdata, max, min, multiplier;
-    uint8  *pimage;
 
     limit = height*width;
     pdata = data;
@@ -189,7 +188,6 @@ uint8 *image;
     }
     /* store one value per row, increasing by one for each row */
     pdata = data;
-    pimage = image;
     multiplier = (float32)255.0 /(max-min);
     for (i=0; i< limit; i++)
         *image++ = (uint8)(((*pdata++)-min)*multiplier);

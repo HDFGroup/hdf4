@@ -1,3 +1,9 @@
+/* $Id$ */
+
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -9,12 +15,6 @@
  * hdf/COPYING file.                                                        *
  *                                                                          *
  ****************************************************************************/
-
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-
-/* $Id$ */
 
 /*
  FILE
@@ -38,6 +38,9 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "tproto.h"
 #include "tbbt.h"
+#ifdef PC386
+#include <time.h>
+#endif
 
 #define MAX_TEST_SIZE 31   /* maximum number of elements to insert */
 #define NUM_TEST_RUNS 100  /* number of times to insert & remove each size */
@@ -72,7 +75,7 @@ intn a,b;
 }  /* end swap_arr() */
 
 #ifdef PROTOTYPES
-PUBLIC intn tcompare(VOIDP k1,VOIDP k2,intn cmparg) 
+PUBLIC intn tcompare(VOIDP k1,VOIDP k2,intn cmparg)
 #else
 PUBLIC intn tcompare(k1,k2,cmparg)
 VOIDP k1;
@@ -80,6 +83,9 @@ VOIDP k2;
 intn cmparg;
 #endif
 {
+    /* shut compiler up */
+    cmparg=cmparg;
+
     return((intn)((*(int32 *)k1) - (*(int32 *)k2)));
 }
 
@@ -138,6 +144,7 @@ void test_tbbt()
 	        tbbtrem((TBBT_NODE **)tree,(TBBT_NODE *)r,NULL);
                 MESSAGE(9,tbbtdump(tree,-1););
     	      } /* end for */
+	  tbbtdfree(tree,NULL,NULL);
 	  } /* end for */
       } /* end for */
 } /* end test_tbbt() */

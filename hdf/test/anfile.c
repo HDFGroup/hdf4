@@ -29,17 +29,16 @@ extern int Verbocity;
 #define MAXLEN_DESC  1000
 
 static int checkannlen
-    PROTO((int32 ret, char *oldstr, char *type, int32 testflag));
+    PROTO((int32 ret, char *oldstr, char *type));
 
 static int checkann
-    PROTO((char *oldstr, char *newstr, int32 ret, char *type, int32 testflag));
+    PROTO((char *oldstr, char *newstr, int32 ret, char *type));
 
 void test_anfile()
 {
     char lab1[MAXLEN_LAB], lab2[MAXLEN_LAB],
          desc1[MAXLEN_DESC], desc2[MAXLEN_DESC],
          tempstr[MAXLEN_DESC];
-    int32 testflag = SUCCEED;
     int32 file_id, ret;
 
 /* set up file labels and descriptions */
@@ -85,40 +84,40 @@ void test_anfile()
     MESSAGE(5,puts("Reading length of first file label, followed by label."););
     ret = DFANgetfidlen(file_id, ISFIRST); 
     RESULT("DFANgetfidlen"); 
-    checkannlen(ret, lab1, "label", testflag);
+    checkannlen(ret, lab1, "label");
 
     ret = DFANgetfid(file_id, tempstr, MAXLEN_LAB, ISFIRST );
     RESULT("DFANgetfid");
-    checkann (lab1, tempstr, ret, "label", testflag);
+    checkann (lab1, tempstr, ret, "label");
 
     MESSAGE(5,puts("Reading length of second file label, followed by label."););
     ret = DFANgetfidlen(file_id, NOTFIRST);
     RESULT("DFANgetfidlen");
-    checkannlen(ret, lab2, "label", testflag);
+    checkannlen(ret, lab2, "label");
 
     ret = DFANgetfid(file_id, tempstr, MAXLEN_LAB, NOTFIRST );
     RESULT("DFANgetfid");
-    checkann (lab2, tempstr, ret, "label", testflag);
+    checkann (lab2, tempstr, ret, "label");
 
 /********  Read file descriptions *********/
 
     MESSAGE(5,puts("Reading length of first file descr, followed by descr."););
     ret = DFANgetfdslen(file_id, ISFIRST);
     RESULT("DFANgetfdslen");
-    checkannlen(ret, desc1, "description", testflag);
+    checkannlen(ret, desc1, "description");
 
     ret = DFANgetfds(file_id, tempstr, MAXLEN_DESC, ISFIRST );
     RESULT("DFANgetfds");
-    checkann (desc1, tempstr, ret, "description", testflag);
+    checkann (desc1, tempstr, ret, "description");
 
     MESSAGE(5,puts("Reading length of second file descr, followed by descr."););
     ret = DFANgetfdslen(file_id, NOTFIRST);
     RESULT("DFANgetfdslen");
-    checkannlen(ret, desc2, "description", testflag);
+    checkannlen(ret, desc2, "description");
 
     ret = DFANgetfds(file_id, tempstr, MAXLEN_DESC, NOTFIRST );
     RESULT("DFANgetfds");
-    checkann (desc2, tempstr, ret, "description", testflag);
+    checkann (desc2, tempstr, ret, "description");
 
     if (FAIL == Hclose(file_id) ) 
         printf("\n\nUnable to close file %s after reading.\n\n", TESTFILE);
@@ -126,10 +125,10 @@ void test_anfile()
 }
 
 #ifdef PROTOTYPE
-static int checkannlen(int32 ret, char *oldstr, char *type, int32 testflag)
+static int checkannlen(int32 ret, char *oldstr, char *type)
 #else
-static int checkannlen(ret, oldstr, type, testflag)
-int32 ret, testflag;
+static int checkannlen(ret, oldstr, type)
+int32 ret;
 char *oldstr, *type;
 #endif
 {
@@ -137,26 +136,23 @@ char *oldstr, *type;
         printf("Length of %s is INCORRECT\n", type);
         printf("It is:  %d\n", ret);
         printf("It should be: %d\n", HDstrlen(oldstr));
-        testflag = FAIL;
         return FAIL;
     }
     return SUCCEED;
 }
 
 #ifdef PROTOTYPE
-static int checkann(char *oldstr, char *newstr, int32 ret, char *type,
-        int32 testflag)
+static int checkann(char *oldstr, char *newstr, int32 ret, char *type)
 #else
-static int checkann(oldstr, newstr, ret, type, testflag)
+static int checkann(oldstr, newstr, ret, type)
 char *oldstr, *newstr, *type;
-int32 ret, testflag;
+int32 ret;
 #endif
 {
     if ( (ret >=0) && (0 != strcmp(oldstr, newstr)) ) {
         printf("%s is INCORRECT.\n", type);
         printf("It is:  %s\n", newstr);
         printf("It should be: %s\n", oldstr);
-        testflag = FAIL;
         return (FAIL);
     }
     return (SUCCEED);

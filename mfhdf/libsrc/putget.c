@@ -113,13 +113,15 @@ const long *coords ;
 
 
 #ifdef HDF
-        if(handle->file_type == HDF_FILE && IS_RECVAR(vp)) {
+        if(handle->is_hdf && IS_RECVAR(vp)) {
             Void *strg, *strg1;
             NC_attr ** attr = NULL;
             int count, byte_count;
 	    int len;
             
-            if((unfilled = *ip - vp->numrecs) <= 0) return TRUE;
+/* 12/27     if((unfilled = *ip - vp->numrecs) <= 0) return TRUE;   */
+            if((unfilled = *ip - vp->numrecs) < 0) return TRUE;   
+
             
             /* check to see if we are trying to read beyond the end */
             if(handle->xdrs->x_op != XDR_ENCODE)
@@ -157,11 +159,14 @@ const long *coords ;
             byte_count = vp->len;
 	    count = byte_count / vp->HDFsize;
 
-            Hseek(vp->aid, (vp->numrecs + 1) * byte_count, DF_START);
+/* 12/27       Hseek(vp->aid, (vp->numrecs + 1) * byte_count, DF_START); */
+            Hseek(vp->aid, (vp->numrecs) * byte_count, DF_START);
 
 #ifdef DEBUG
+/* 12/27         printf("Filling %d bytes starting at %d\n", 
+                   byte_count * unfilled, (vp->numrecs + 1) * byte_count); */
             printf("Filling %d bytes starting at %d\n", 
-                   byte_count * unfilled, (vp->numrecs + 1) * byte_count);
+                   byte_count * unfilled, (vp->numrecs) * byte_count);
 #endif  
 
             /*
@@ -171,7 +176,9 @@ const long *coords ;
             DFKsetNT(vp->HDFtype);
             DFKnumout(strg, strg1, count, 0, 0);
 
-            for(; unfilled; unfilled--)
+/* 12/27            for(; unfilled; unfilled--)
+                Hwrite(vp->aid, byte_count, (uint8 *) strg1);  */
+            for(; unfilled>=0; unfilled--, vp->numrecs++)
                 Hwrite(vp->aid, byte_count, (uint8 *) strg1);
 
 #ifdef DEBUG
@@ -181,7 +188,7 @@ const long *coords ;
                     vp->numrecs);
 #endif
 
-            vp->numrecs = MAX(vp->numrecs, *ip);
+/* 12/27            vp->numrecs = MAX(vp->numrecs, *ip);    */
             if((*ip + 1) > handle->numrecs) {
                 handle->numrecs = *ip + 1;
                 handle->flags |= NC_NDIRTY;
@@ -275,14 +282,12 @@ const long *coords ;
 
 	if( IS_RECVAR(vp) )
 	{
-            switch(handle->file_type) {
-            case HDF_FILE:
-                return( vp->begin + vp->dsizes[0] * *coords + offset) ;
-                break;
-            case netCDF_FILE:
-                return( vp->begin + handle->recsize * *coords + offset) ;
-                break;
-            }
+#ifdef HDF
+          if(handle->is_hdf)
+            return( vp->begin + vp->dsizes[0] * *coords + offset) ;
+          else
+#endif
+            return( vp->begin + handle->recsize * *coords + offset) ;
 	}
 	/* else */
 	return( vp->begin + offset );
@@ -488,7 +493,11 @@ Void *values ;
 	case NC_SHORT :
 		return( xdr_NCvshort(xdrs, (unsigned)rem/2, (short *)values) ) ;
 	case NC_LONG :
-		return( xdr_long(xdrs, (long *)values) ) ;
+#ifdef __alpha
+		return( xdr_int(xdrs, (nclong *)values) ) ;
+#else
+		return( xdr_long(xdrs, (nclong *)values) ) ;
+#endif
 	case NC_FLOAT :
 		return( xdr_float(xdrs, (float *)values) ) ;
 	case NC_DOUBLE : 
@@ -521,7 +530,7 @@ Void *values ;
 * 
 ******************************************************************************
 *
-* Please report all bugs / comments to chouck@ncsa.uiuc.edu
+* Please report all bugs / comments to hdfhelp@ncsa.uiuc.edu
 *
 *****************************************************************************/
 
@@ -617,8 +626,8 @@ NC_var *vp;
     fprintf(stderr, "hdf_get_data I've been called\n");
 #endif
     
-    if(!handle) return NULL;
-    if(!vp) return NULL;
+    if(!handle) return 0;
+    if(!vp) return 0;
 
     /* 
      * if it is stored as NDGs we can't do any better than what was
@@ -628,22 +637,26 @@ NC_var *vp;
     
     if(vp->vgid) {
         /* attach to the variable's Vgroup */
-        vg = Vattach(handle->hdf_file, vp->vgid, "w");
+        vg = Vattach(handle->hdf_file, vp->vgid, "r");
         if(vg == FAIL) {
             HEprint(stderr, 0);
-            return NULL;
+            return 0;
         }
         
         /* loop through looking for a data storage object */
         n = Vntagrefs(vg);
         for(t = 0; t < n; t++) {
             Vgettagref(vg, t, &tag, &vsid);
-            if(tag == DATA_TAG) return vsid;
+            if(tag == DATA_TAG) {
+                Vdetach(vg);
+                return vsid;
+            }
         }
+        Vdetach(vg);
     }
     
     if(handle->hdf_mode == DFACC_RDONLY)
-        return NULL;
+        return 0;
   
     /* 
      * create a new data storage object
@@ -687,7 +700,7 @@ NC_var *vp;
     vsid = Hnewref(handle->hdf_file);
     vp->aid = Hstartwrite(handle->hdf_file, DATA_TAG, vsid, byte_count);
 
-    if(vp->aid == FAIL) return NULL;
+    if(vp->aid == FAIL) return 0;
 
     /* make sure our tmp buffer is big enough to hold everything */
     if(tBuf_size < byte_count) {
@@ -708,7 +721,7 @@ NC_var *vp;
     done = 0;
     while(done != nvalues) {
         status = Hwrite(vp->aid, byte_count, (uint8 *) tBuf);
-        if(status != byte_count) return NULL;
+        if(status != byte_count) return 0;
         done += to_do;
         if(nvalues - done < to_do) {
             to_do = nvalues - done;
@@ -716,17 +729,50 @@ NC_var *vp;
         }
     }
 
-    if(Hendaccess(vp->aid) == FAIL) return NULL;
+    if(Hendaccess(vp->aid) == FAIL) return 0;
 
     /* if it is a record var might as well make it linked blocks now */
     if(IS_RECVAR(vp)) {
+#ifdef OLD_WAY
         vp->aid = HLcreate(handle->hdf_file, DATA_TAG, vsid, 
                            vp->len * BLOCK_SIZE, BLOCK_COUNT);
-        if(vp->aid == FAIL) return NULL;
-        if(Hendaccess(vp->aid) == FAIL) return NULL;
+#else /* OLD_WAY */
+        int32 block_size; /* the size of the linked blocks to use */
+
+/* The block size is calculated according to the following heuristic: */
+/*   First, the block size the user set is used, if set. */
+/*   Second, the block size is calculated according to the size being */
+/*           written times the BLOCK_MULT value, in order to make */
+/*           bigger blocks if the slices are very small. */
+/*   Third, the calculated size is check if it is bigger than the */
+/*           MAX_BLOCK_SIZE value so that huge empty blocks are not */
+/*           created.  If the calculated size is greater than */
+/*           MAX_BLOCK_SIZE, then MAX_BLOCK_SIZE is used */
+/* These are very vague heuristics, but hopefully they should avoid */
+/* some of the past problems... -QAK */
+        if(vp->block_size!=(-1)) /* use value the user provided, if available */
+            block_size=vp->block_size;
+        else { /* try figuring out a good value using some heuristics */
+            block_size=vp->len*BLOCK_MULT;
+            if(block_size>MAX_BLOCK_SIZE)
+                block_size=MAX_BLOCK_SIZE;
+          } /* end else */
+
+        vp->aid = HLcreate(handle->hdf_file, DATA_TAG, vsid, block_size,
+		BLOCK_COUNT);
+#endif /* OLD_WAY */
+        if(vp->aid == FAIL) return 0;
+        if(Hendaccess(vp->aid) == FAIL) return 0;
     }
 
     if(vp->vgid) {
+        /* attach to the variable's Vgroup */
+        vg = Vattach(handle->hdf_file, vp->vgid, "w");
+        if(vg == FAIL) {
+            HEprint(stderr, 0);
+            return 0;
+        }
+        
         /* add new Vdata to existing Vgroup */
         Vaddtagref(vg, (int32) DATA_TAG, (int32) vsid);
         
@@ -768,7 +814,7 @@ NC_var    * vp;
     /*
      * Fail if there is no data
      */
-    if(vp->data_ref == NULL) return(FALSE);
+    if(vp->data_ref == 0) return(FALSE);
 
     if(handle->hdf_mode == DFACC_RDONLY)
         vp->aid = Hstartread(handle->hdf_file, vp->data_tag, vp->data_ref);
@@ -793,6 +839,8 @@ NC_var    * vp;
  *  data attach to it now.  Since attaching / detaching is so
  *  slow, stay attached for future reads / writes.  As a result,
  *  we must always attach with write access.
+ *
+ * The calling routine is responsible for calling DFKsetNT() as required.
  */
 static bool_t
 hdf_xdr_NCvdata(handle, vp, where, type, count, values)
@@ -824,17 +872,20 @@ uint32    count;
          */
         if(vp->data_ref == 0) 
             if(handle->hdf_mode == DFACC_RDONLY) {
-                if(vp->data_tag == DATA_TAG) {
+                if(vp->data_tag == DATA_TAG ||
+                   vp->data_tag == DFTAG_SDS) {
                     NC_attr ** attr;
                     int len;
                     
                     attr = NC_findattr(&vp->attrs, _FillValue);
-                    len = (vp->len / vp->HDFsize) * vp->szof;       
+/* fill the buffer, use 'count' instead of 'vp->len' to calculate len   */
+/*                    len = (vp->len / vp->HDFsize) * vp->szof;       */
+
+                    len = count * vp->szof;
                     if(attr != NULL)
                         hdf_fill_array(values, len, (*attr)->data->values, vp->type);
                     else 
                         NC_arrayfill(values, len, vp->type);
-                    
                 }
                 return TRUE;
             } else {
@@ -875,9 +926,10 @@ uint32    count;
     }
     
 
-    /* Read or write the data into / from values */
-    DFKsetNT(vp->HDFtype);
+/*    This should be set by the caller */
+/*    DFKsetNT(vp->HDFtype); */
     
+    /* Read or write the data into / from values */
     if(handle->xdrs->x_op == XDR_DECODE) {
         status = Hread(vp->aid, byte_count, (uint8 *) tBuf);
         if(status != byte_count) return FALSE;
@@ -919,7 +971,7 @@ uint32    count;
 } /* xdr_NCvdata */
 
 
-/* ------------------------- xdr_NCv1data ------------------- */
+/* ------------------------- hdf_xdr_NCv1data ------------------- */
 /*
  * read / write a single datum of type 'type' at 'where'
  * This is designed to replace the xdr based routine of the
@@ -965,6 +1017,7 @@ VOIDP     values;
 
 #endif
     
+    DFKsetNT(vp->HDFtype);
     return (hdf_xdr_NCvdata(handle, vp, where, type, 1, values)); 
 
 } /* hdf_xdr_NCv1data */
@@ -993,20 +1046,17 @@ Void *value ;
 
 	if(vp->assoc->count == 0) /* 'scaler' variable */
 	{
-            switch(handle->file_type) {
-            case HDF_FILE:
-                return(
-                       hdf_xdr_NCv1data(handle, vp, vp->begin, vp->type, value) ?
-                       0 : -1 ) ;
-                break;
-            case netCDF_FILE:
-                return(
-                       xdr_NCv1data(handle->xdrs, vp->begin, vp->type, value) ?
-                       0 : -1 ) ;
-                break;
-                
-            }
-        }
+#ifdef HDF
+          if(handle->is_hdf)
+            return(
+                   hdf_xdr_NCv1data(handle, vp, vp->begin, vp->type, value) ?
+                   0 : -1 ) ;
+          else
+#endif
+            return(
+                   xdr_NCv1data(handle->xdrs, vp->begin, vp->type, value) ?
+                   0 : -1 ) ;
+	}
 
 	if( !NCcoordck(handle, vp, coords) )
 		return(-1) ;
@@ -1020,16 +1070,16 @@ Void *value ;
 	arrayp("coords", vp->assoc->count, coords) ;
 #endif /* VDEBUG */
         
-        switch(handle->file_type) {
-        case HDF_FILE:
+#ifdef HDF
+        if(handle->is_hdf) {
             if( !hdf_xdr_NCv1data(handle, vp, offset, vp->type, value))
                 return(-1) ;
-            break;
-        case netCDF_FILE:
-            if( !xdr_NCv1data(handle->xdrs, offset, vp->type, value))
-                return(-1) ;
-            break;
-        }
+        } else 
+#endif
+            {
+                if( !xdr_NCv1data(handle->xdrs, offset, vp->type, value))
+                    return(-1) ;
+            }
         
 	return(0) ;
 }
@@ -1153,8 +1203,12 @@ Void *values ;
 		} /* else */
 		return(TRUE) ;
 	case NC_LONG :
+#ifdef __alpha
+		xdr_NC_fnct = xdr_int ;
+#else
 		xdr_NC_fnct = xdr_long ;
-		szof = sizeof(long) ;
+#endif
+		szof = sizeof(nclong) ;
 		break ;
 	case NC_FLOAT :
 		xdr_NC_fnct = xdr_float ;
@@ -1262,21 +1316,23 @@ Void *values ;
 	if(newrecs > 0)
 		handle->flags |= NC_NDIRTY ;
 
-        switch(handle->file_type) {
-        case HDF_FILE:
+#ifdef HDF
+        if(handle->is_hdf) {
+            DFKsetNT(vp->HDFtype);
             if(!hdf_xdr_NCvdata(handle, vp,
                                 offset, vp->type, 
                                 (uint32)*edges, values))
                 return(-1) ;
-            break;
-        case netCDF_FILE:
+            vp->numrecs = MAX(vp->numrecs, (*start + *edges));
+        } else 
+#endif
+          {
             if(!xdr_NCvdata(handle->xdrs,
                             offset, vp->type, 
                             (unsigned)*edges, values))
-                return(-1) ;
-            break;
-        }
-        
+              return(-1) ;
+          }
+
 	if(newrecs > 0)
 	{
 		handle->numrecs += newrecs ;
@@ -1324,22 +1380,28 @@ Void *values ;
 	arrayp("edges", vp->assoc->count, edges) ;
 #endif /* VDEBUG */
 
-	if(vp->assoc->count == 0) /* 'scaler' variable */
-	{
-            switch(handle->file_type) {
-            case HDF_FILE:
+#ifdef HDF
+        /* set the number type now so we only do it once */
+        if(handle->is_hdf)
+            DFKsetNT(vp->HDFtype);
+#endif
+
+	if(vp->assoc->count == 0) {   /* 'scaler' variable */
+#ifdef HDF
+            if(handle->is_hdf) {
                 return(
                        hdf_xdr_NCv1data(handle, vp, vp->begin, vp->type, values) ?
                        0 : -1 ) ;
-                break;
-            case netCDF_FILE:
-		return(
-                       xdr_NCv1data(handle->xdrs, vp->begin, vp->type, values) ?
-                       0 : -1 ) ;
-                break;
-            }
-	}
-
+            } else
+#endif
+                {
+                    return(
+                           xdr_NCv1data(handle->xdrs, vp->begin, vp->type, values) ?
+                           0 : -1 ) ;
+                }
+            
+        }
+        
 	if( !NCcoordck(handle, vp, start) )
 		return(-1) ;
 
@@ -1430,20 +1492,20 @@ Void *values ;
 				arrayp("\t\t coords", vp->assoc->count, coords) ;
 #endif
 
-                                switch(handle->file_type) {
-                                case HDF_FILE:
-                                    if(!hdf_xdr_NCvdata(handle, vp,
+#ifdef HDF
+                                if(handle->is_hdf) {
+                                  if(!hdf_xdr_NCvdata(handle, vp,
+                                                  offset, vp->type, 
+                                                  (uint32)iocount, values))
+                                    return(-1) ;
+                                } else
+#endif
+                                    {
+                                        if(!xdr_NCvdata(handle->xdrs,
                                                         offset, vp->type, 
-                                                        (uint32)iocount, values))
-                                        return(-1) ;
-                                    break;
-                                case netCDF_FILE:
-                                    if(!xdr_NCvdata(handle->xdrs,
-                                                    offset, vp->type, 
-                                                    (unsigned)iocount, values))
-                                        return(-1) ;
-                                    break;
-                                }
+                                                        (unsigned)iocount, values))
+                                            return(-1) ;
+                                    }
                                 
 				values += iocount * szof ;
 				(*cc) += (edp0 == edges ? iocount : 1) ;
@@ -1655,20 +1717,23 @@ Void **datap ;
 		offset = NC_varoffset(handle, rvp[ii], coords) ;
 		iocount = NCelemsPerRec(rvp[ii]) ;
 
-                switch(handle->file_type) {
-                case HDF_FILE:
+
+
+#ifdef HDF
+                if(handle->is_hdf) {
+                    DFKsetNT(rvp[ii]->HDFtype);
                     if(!hdf_xdr_NCvdata(handle, rvp[ii],
                                         offset, rvp[ii]->type, 
                                         (uint32)iocount, datap[ii]))
                         return(-1) ;
-                    break;
-                case netCDF_FILE:
-                    if(!xdr_NCvdata(handle->xdrs,
-                                    offset, rvp[ii]->type, 
-                                    iocount, datap[ii]))
-                        return(-1) ;
-                    break;
-                }
+                } else
+#endif
+                    {
+                        if(!xdr_NCvdata(handle->xdrs,
+                                        offset, rvp[ii]->type, 
+                                        iocount, datap[ii]))
+                            return(-1) ;
+                    }
 
 	}
 	return 0 ;

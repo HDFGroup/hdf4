@@ -81,7 +81,7 @@ nc_type	type ;
 	case NC_SHORT :
 		return(sizeof(short)) ;
 	case NC_LONG :
-		return(sizeof(long)) ;
+		return(sizeof(nclong)) ;
 	case NC_FLOAT :
 		return(sizeof(float)) ;
 	case NC_DOUBLE : 
@@ -119,7 +119,7 @@ nc_type	type ;
 	case NC_SHORT :
 		return(sizeof(short)) ;
 	case NC_LONG :
-		return(sizeof(long)) ;
+		return(sizeof(nclong)) ;
 	case NC_FLOAT :
 		return(sizeof(float)) ;
 	case NC_DOUBLE : 
@@ -153,14 +153,14 @@ union xdr_d_union xdr_d_infs = {0x00, 0x00, 0x00, 0x00,
 #endif /* USE_D_UNION */
 
 #ifdef USE_F_LONG_PUN
-long xdr_f_infinity = 0x7f800000;
+nclong xdr_f_infinity = 0x7f800000;
 #endif
 
 #ifdef USE_D_LONG_PUN
 #ifndef SWAP
-long xdr_d_infinity[2] = {0x7ff00000,0x00000000};
+nclong xdr_d_infinity[2] = {0x7ff00000,0x00000000};
 #else
-long xdr_d_infinity[2] = {0x00000000,0x7ff00000};
+nclong xdr_d_infinity[2] = {0x00000000,0x7ff00000};
 #endif /* !SWAP */
 #endif /* USE_D_LONG_PUN */
 
@@ -189,8 +189,8 @@ nc_type type ;
 		break ;
 	case NC_LONG :
 		while(lo < hi ){
-			*((long *)lo) = FILL_LONG ;
-			lo += sizeof(long);
+			*((nclong *)lo) = FILL_LONG ;
+			lo += sizeof(nclong);
 		}
 		break ;
 	case NC_FLOAT :
@@ -561,7 +561,11 @@ xdr_NC_array(xdrs, app)
 		xdr_NC_fnct = xdr_shorts ;
 		goto func ;
 	case NC_LONG :
+#ifdef __alpha
+		xdr_NC_fnct = xdr_int ;
+#else
 		xdr_NC_fnct = xdr_long ;
+#endif
 		goto loop ;
 	case NC_FLOAT :
 		xdr_NC_fnct = xdr_float ;

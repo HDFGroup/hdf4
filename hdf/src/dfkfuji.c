@@ -109,7 +109,8 @@ uint8 * source, * dest;
 uint32 num_elm, source_stride, dest_stride;
 #endif /* PROTOTYPE */
 {
-  int32 i,k, ibs, ibe, ibt;
+  intn i,k;
+  int32 ibs, ibe, ibt;
 
 #ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
@@ -120,10 +121,8 @@ uint32 num_elm, source_stride, dest_stride;
 
   HEclear();
 
-  if(num_elm == 0){   /* No elements is an error */
-    HERROR(DFE_BADCONV);
-    return FAIL;
-  }
+  if(num_elm == 0)   /* No elements is an error */
+    HRETURN_ERROR(DFE_BADCONV,FAIL);
 
   if(source_stride == 0 && dest_stride == 0)
       source_stride = dest_stride = 4;
@@ -180,7 +179,8 @@ uint32 num_elm, source_stride, dest_stride;
 #endif /* PROTOTYPE */
 {
 
-  int32 i, ibs, ibe, ibt, it, k;
+  intn i, k;
+  int32 ibs, ibe, ibt, it;
 
 #ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
@@ -192,10 +192,8 @@ uint32 num_elm, source_stride, dest_stride;
 
   HEclear();
 
-  if(num_elm == 0 ){		/* No elements is an error */
-    HERROR(DFE_BADCONV);
-    return FAIL;
-  }
+  if(num_elm == 0 )		/* No elements is an error */
+    HRETURN_ERROR(DFE_BADCONV,FAIL);
 
   if(source_stride == 0 && dest_stride == 0)
     source_stride = dest_stride = 4;
@@ -260,9 +258,9 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 * dest   = (uint8*)d;
 #endif /* PROTOTYPE */
   char *FUNC="DFKpi8f"; 
-  int i;
-  int32 ibs,ibe,ibt1,ibt2,isht,k;
-  int32 *buf;
+  intn i,k;
+  uint32 ibs,ibe,ibt1,ibt2,isht;
+  uint32 *buf;
 
   HEclear();
 
@@ -276,7 +274,7 @@ uint32 num_elm, source_stride, dest_stride;
 
   for ( i = 0; i < num_elm ; i++) {
 
-    buf  = (int32*)source;
+    buf  = (uint32*)source;
     ibs  = *buf & pi8f_sign;
     ibe  = *buf & pi8f_expn;
     ibt1 = *buf & pi8f_tiss;
@@ -321,7 +319,8 @@ uint32 num_elm, source_stride, dest_stride;
     } /* ibe != 0 */
 
     /* put number into destination array */
-    buf  = (int32*)dest;
+    buf  = (uint32*)dest;
+
     *buf = ibs | ibe | ibt1;
     *(buf+1) = ibt2;
 
@@ -341,8 +340,8 @@ uint32 num_elm, source_stride, dest_stride;
 #define  po8f_sign  0x80000000
 #define  po8f_tiss  0x00FFFFFF 
 #define  po8f_nrm   0x00f00000 
-static int32 take[4] = {0x007fffff, 0x003fffff, 0x001fffff, 0x000fffff};
-static int32 look[4] = {0x00800000, 0x00400000, 0x00200000, 0x00100000};
+static uint32 take[4] = {0x007fffff, 0x003fffff, 0x001fffff, 0x000fffff};
+static uint32 look[4] = {0x00800000, 0x00400000, 0x00200000, 0x00100000};
 #ifdef PROTOTYPE
 int DFKpo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 		   uint32 dest_stride)
@@ -356,15 +355,15 @@ uint32 num_elm, source_stride, dest_stride;
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
 #endif				/* PROTOTYPE */
-  int32 ibs, ibe, ibt1, ibt2, it, isht;
-  int i,k;
-  int32 *buf;
+  uint32 ibs, ibe, ibt1, ibt2, it, isht;
+  intn i,k;
+  uint32 *buf;
   double *tmp;
   char *FUNC="DFKpo8f";
   union {
     struct { 
-      int long i1;
-      int long i2;
+      unsigned long i1;
+      unsigned long i2;
     } sti;
     struct { 
       double r;
@@ -373,17 +372,15 @@ uint32 num_elm, source_stride, dest_stride;
 
   HEclear();
 
-  if(num_elm == 0){		/* No elements is an error */
-    HERROR(DFE_BADCONV);
-    return FAIL;
-  }
+  if(num_elm == 0)		/* No elements is an error */
+    HRETURN_ERROR(DFE_BADCONV,FAIL);
 
   if(source_stride == 0 && dest_stride == 0)
     source_stride = dest_stride = 8;
 
   for (i = 0; i < num_elm; i++) {
 
-    buf = (int32*)source;
+    buf = (uint32*)source;
     ibs  = *buf & po8f_sign;
     ibe  = *buf & po8f_exp;
     ibt1 = *buf & po8f_tiss;
@@ -431,7 +428,7 @@ uint32 num_elm, source_stride, dest_stride;
       } 
     }
     /* put number into destination array */
-    buf = (int32*)dest;
+    buf = (uint32*)dest;
     *buf     = ibs | ibe | ibt1;
     *(buf+1) = ibt2;
     source += source_stride;
@@ -464,7 +461,8 @@ uint8 * source, * dest;
 uint32 num_elm, source_stride, dest_stride;
 #endif /* PROTOTYPE */
 {
-    int32 i,k, ibs, ibe, ibt;
+    intn i,k;
+    int32 ibs, ibe, ibt;
 #ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
@@ -475,10 +473,8 @@ uint32 num_elm, source_stride, dest_stride;
 
     HEclear();
 
-    if(num_elm == 0){   /* No elements is an error */
-        HERROR(DFE_BADCONV);
-        return FAIL;
-    }
+    if(num_elm == 0)   /* No elements is an error */
+        HRETURN_ERROR(DFE_BADCONV,FAIL);
 
     if(source_stride == 0 && dest_stride == 0)
         source_stride = dest_stride = 4;
@@ -545,7 +541,8 @@ uint8 * source, * dest;
 uint32 num_elm, source_stride, dest_stride;
 #endif /* PROTOTYPE */
 {
-    int32 i, ibs, ibe, ibt, it, k;
+    intn i, k;
+    int32 ibs, ibe, ibt, it;
 #ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
@@ -557,10 +554,8 @@ uint32 num_elm, source_stride, dest_stride;
 
     HEclear();
 
-    if(num_elm == 0 ){        /* No elements is an error */
-        HERROR(DFE_BADCONV);
-        return FAIL;
-      } /* end if */
+    if(num_elm == 0 )        /* No elements is an error */
+        HRETURN_ERROR(DFE_BADCONV,FAIL);
 
     if(source_stride == 0 && dest_stride == 0)
         source_stride = dest_stride = 4;
@@ -635,24 +630,22 @@ uint32 num_elm, source_stride, dest_stride;
     uint8 * dest   = (uint8*)d;
 #endif /* PROTOTYPE */
     char *FUNC="DFKpi8f";
-    intn i;
-    int32 ibs,ibe,ibt1,ibt2,isht,k;
+    intn i,k;
+    uint32 ibs,ibe,ibt1,ibt2,isht;
     uint32 *buf;
     uint32 temp;
 
     HEclear();
 
-    if(num_elm == 0) {        /* No elements is an error */
-        HERROR(DFE_BADCONV);
-        return FAIL;
-      } /* end if */
+    if(num_elm == 0)         /* No elements is an error */
+        HRETURN_ERROR(DFE_BADCONV,FAIL);
 
     if(source_stride == 0 && dest_stride == 0)
         source_stride = dest_stride = 8;
 
     for ( i = 0; i < num_elm ; i++) {
 #ifdef OLD_WAY
-        buf  = (int32*)source;
+        buf  = (uint32*)source;
         ibs  = *buf & lpi8f_sign;
         ibe  = *buf & lpi8f_expn;
         ibt1 = *buf & lpi8f_tiss;
@@ -752,16 +745,16 @@ uint32 num_elm, source_stride, dest_stride;
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
 #endif				/* PROTOTYPE */
-    int32 ibs, ibe, ibt1, ibt2, it, isht;
-    int i,k;
-    int32 *buf;
+    uint32 ibs, ibe, ibt1, ibt2, it, isht;
+    intn i,k;
+    uint32 *buf;
     uint32 temp;
     double *tmp;
     char *FUNC="DFKpo8f";
     union {
         struct {
-          int long i1;
-          int long i2;
+          unsigned long i1;
+          unsigned long i2;
         } sti;
         struct {
           double r;
@@ -770,17 +763,15 @@ uint32 num_elm, source_stride, dest_stride;
 
     HEclear();
 
-    if(num_elm == 0) {     /* No elements is an error */
-        HERROR(DFE_BADCONV);
-        return FAIL;
-    }
+    if(num_elm == 0)      /* No elements is an error */
+        HRETURN_ERROR(DFE_BADCONV,FAIL);
 
     if(source_stride == 0 && dest_stride == 0)
         source_stride = dest_stride = 8;
 
     for (i = 0; i < num_elm; i++) {
 
-        buf = (int32*)source;
+        buf = (uint32*)source;
         ibs  = *buf & lpo8f_sign;
         ibe  = *buf & lpo8f_exp;
         ibt1 = *buf & lpo8f_tiss;
@@ -836,7 +827,7 @@ uint32 num_elm, source_stride, dest_stride;
               } /* end if */
           } /* end else */
         /* put number into destination array */
-        buf = (int32*)dest;
+        buf = (uint32*)dest;
 #ifdef OLD_WAY
         *buf     = ibs | ibe | ibt1;
         *(buf+1) = ibt2;

@@ -299,9 +299,9 @@ void convert(template, imageNumber, xdim, ydim, stringOut)
 {
     char numStr[20], xStr[20], yStr[20];
 
-    sprintf(numStr, "%3d", imageNumber);
-    sprintf(xStr, "%3ld", xdim);
-    sprintf(yStr, "%3ld", ydim);
+    sprintf(numStr, "%03d", imageNumber);
+    sprintf(xStr, "%03ld", xdim);
+    sprintf(yStr, "%03ld", ydim);
 
     for(;(*template);) {
         switch (*template) {

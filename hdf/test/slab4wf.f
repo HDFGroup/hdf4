@@ -12,6 +12,7 @@ C****************************************************************************
 C
 C $Id$
 C
+C
       program slab4wf
 C
 C Program to write a data set as 1 slab to slab4wf.hdf.
@@ -21,7 +22,7 @@ C
 
 
       integer dssdims,  dssdisc, dssdist
-      integer dssslab, dswslab, dseslab, dsgslc
+      integer dssslab, dswslab, dseslab, dsrslab
       integer ret, np, nr,nc, di(3), st(3), sz(3), sr(3)
       integer rank, DFTAG_SDT, DFO_FORTRAN
       real    scpln(2), scrow(3), sccol(4), da(4,3,2)
@@ -119,7 +120,7 @@ C
       sr(1) = 4
       sr(2) = 3
       sr(3) = 2
-      ret = dsgslc(sn, st, sz, sa, sr)
+      ret = dsrslab(sn, st, sz, st, sa, sr)
       num_err = num_err + ret
 
       if ( num_err .ne. 0) then

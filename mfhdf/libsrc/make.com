@@ -10,7 +10,7 @@ $
 $
 $ macro :== macro/nolist
 $ ccc := cc /opt/nodebug/include=([-.xdr],[-.-.hdf.include])/nolist  -
-            /define=stdc_includes/define=swap/define=VMS/define=HDF
+            /define=swap/define=VMS/define=HDF 
 
 $ librep := library/replace [-.-.-.LIB]NETCDF.OLB
 $

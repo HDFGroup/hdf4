@@ -17,9 +17,9 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*-----------------------------------------------------------------------------
- * File:     df24F.c
- * Purpose:  read and write 24-bit raster images
- * Invokes:  dfgr.c df24.c
+ * File:    df24F.c
+ * Purpose: read and write 24-bit raster images
+ * Invokes: dfgr.c df24.c
  * Contents: 
  *  d2reqil: use this interlace when returning image
  *  df24reqil: use this interlace when returning image
@@ -495,3 +495,32 @@ nd2irref(filename, ref, fnlen)
     HDfreespace((VOIDP)fn);
     return(ret);
 }
+
+/*-----------------------------------------------------------------------------
+ * Name:    d2inimg
+ * Purpose: Internal stub for determining # of 24-bit raster images
+ * Inputs:  filename: name of HDF file
+ *          fnlen: length of filename
+ * Returns: # of images on success, -1 on failure with DFerror set
+ * Users:   HDF HLL (high-level library) users, utilities, other routines
+ * Invokes: DF24nimages
+ * Remarks: 
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nd2inimg(_fcd filename, intf *fnlen)
+#else
+nd2inimg(filename, fnlen)
+    _fcd filename;
+    intf *fnlen;
+#endif /* PROTOTYPE */
+{
+    char *fn;
+    intf ret;
+
+    fn = HDf2cstring(filename, (intn)*fnlen);
+    ret = DF24nimages(fn);
+    HDfreespace((VOIDP)fn);
+    return(ret);
+} /* end d2inimg() */

@@ -171,11 +171,14 @@ int id ;
 				return(-1) ;
 			handle->flags &= ~(NC_NDIRTY | NC_HDIRTY) ;
 		}
-		else if(handle->flags & NC_NDIRTY)
+		else if(handle->flags & NC_NDIRTY) 
 		{
 			if(!xdr_numrecs(handle->xdrs, handle) )
 				return(-1) ;
-			handle->flags &= ~(NC_NDIRTY) ;
+#ifdef HDF
+			if (!(handle->is_hdf))
+#endif
+                        handle->flags &= ~(NC_NDIRTY) ;
 		}
 	} else /* read only */
 	{
@@ -213,7 +216,7 @@ int cdfid ;
 	char path[FILENAME_MAX + 1] ;
 	unsigned flags ;
 #ifdef HDF
-        intn   file_type;
+        intn   is_hdf;
 #endif
 
 	cdf_routine_name = "ncabort" ;
@@ -256,36 +259,28 @@ int cdfid ;
 
 
 #ifdef HDF
-        file_type = handle->file_type;
+        is_hdf = handle->is_hdf;
 #endif
 
 	NC_free_cdf(handle) ; /* calls fclose */
 
 
 #ifdef HDF
-        switch(file_type) {
-
-        case netCDF_FILE:
+        if(!is_hdf) {
+#endif
           if(flags & (NC_INDEF | NC_CREAT))
             {
               if( remove(path) != 0 )
                 nc_serror("couldn't remove filename \"%s\"", path) ;
             }
-          break;
-      case HDF_FILE:
+#ifdef HDF
+        } else {
           if(flags & NC_CREAT)
             {
                 if( remove(path) != 0 )
                     nc_serror("couldn't remove filename \"%s\"", path) ;
             }
-          break;
-      }
-#else
-          if(flags & (NC_INDEF | NC_CREAT))
-            {
-              if( remove(path) != 0 )
-                nc_serror("couldn't remove filename \"%s\"", path) ;
-            }
+        }
 #endif
 
 	_cdfs[cdfid] = NULL ;
@@ -433,7 +428,7 @@ int cdfid ;
 
 
 #ifdef HDF
-        if(handle->file_type == HDF_FILE) {
+        if(handle->is_hdf) {
             handle->flags |= NC_INDEF ;
             handle->redefid = TRUE;
             return(0);
@@ -652,7 +647,7 @@ NC *handle ;
 	NC *stash = STASH(cdfid) ; /* faster rvalue */
 
 #ifdef HDF
-        if(handle->file_type != HDF_FILE)
+        if(!handle->is_hdf)
 #endif	
             NC_begins(handle) ;
 
@@ -666,7 +661,7 @@ NC *handle ;
 	}
 
 #ifdef HDF
-        if(handle->file_type == HDF_FILE) {
+        if(handle->is_hdf) {
             handle->flags &= ~(NC_CREAT | NC_INDEF | NC_NDIRTY | NC_HDIRTY) ;
             return(0) ;
         }
@@ -827,7 +822,7 @@ int cdfid ;
 	}
 
 #ifdef HDF
-        if(handle->file_type == HDF_FILE) hdf_close(handle);
+        if(handle->is_hdf) hdf_close(handle);
 #endif
 
         NC_free_cdf(handle) ; /* calls fclose */

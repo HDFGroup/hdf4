@@ -8,9 +8,10 @@
 # * For conditions of distribution and use, see the accompanying             *
 # * hdf/COPYING file.                                                        *
 # *                                                                          *
-# ****************************************************************************
+# ***************************************************************************
 #
 # $Id$
+#
 #
 # ##################################################################
 #
@@ -60,11 +61,11 @@
 SHELL=/bin/sh
 
 # Define your machine type
-MACHINE=NEXT
+MACHINE=I860
 
 # Define your C compiler and flags
 CC= cc
-CFLAGS= -D${MACHINE} -ansi 
+CFLAGS= -D${MACHINE} 
 
 # Define your FORTRAN compiler
 FC= f77
@@ -84,7 +85,7 @@ AR= ar
 ARFLAGS= r
 
 # Name of achive randomizer (use 'touch' if non-existant)
-RANLIB= ranlib
+RANLIB= touch
 
 # Name of remove utility
 RM= /bin/rm

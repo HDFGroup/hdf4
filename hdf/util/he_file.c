@@ -197,8 +197,11 @@ int annotate(editor, ann)
 
 #else
 
+    /* shutp compiler up */
+    editor=editor; ann=ann;
+
 	return 1;
-	
+
 #endif /* ndef MAC & PC */
 
 }

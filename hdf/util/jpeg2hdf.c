@@ -11,14 +11,16 @@
  ****************************************************************************/
 
 #ifdef RCSID
-static char *RcsId[] = "@(#)$Revision$";
-#endif 
+static char RcsId[] = "@(#)$Revision$";
+#endif
 
 /* $Id$ */
 
+#ifndef I860
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#endif /* I860 */
 #include "hdf.h"
 
 /* Size of the file buffer to copy through */
@@ -443,7 +445,7 @@ static intn DFJPEGaddrig(file_id, ref, ctag)
 }
 
 #if defined ( PROTOTYPE ) && ! defined ( CONVEX )
-static VOID usage(VOID)
+static VOID usage(void)
 #else
 static VOID usage()
 #endif

@@ -38,6 +38,16 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "tproto.h"
 #include <time.h>
+#ifdef I860
+typedef int clock_t;
+#define NO_TIMING
+#define UINT_MAX USI_MAX
+#endif /* I860 */
+
+/* last ditch attempt do define this value... */
+#ifndef UINT_MAX
+#define UINT_MAX (unsigned)(-1)
+#endif
 
 /* Substitute bogus value if CLOCKS_PER_SEC is unavailable */
 #ifndef CLOCKS_PER_SEC
@@ -48,7 +58,11 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 #ifdef UNICOS
+#ifdef PERF_TESTING
 #define TEST_SIZE 1000001
+#else
+#define TEST_SIZE 100001
+#endif
 #else
 #if defined PC | defined macintosh
 #define TEST_SIZE 8001          /* so that 8*8000<=64K */
@@ -64,12 +78,27 @@ static char RcsId[] = "@(#)$Revision$";
 #define RAND rand
 #define SEED(a) srand(a)
 
+#ifdef NO_TIMING
+#define clock() (0)
+#endif
+
 extern int num_errs;
 extern int Verbocity;
 
 /* Local variables */
 static int32 test_type[]={0,DFNT_LITEND,DFNT_NATIVE};
 static char *test_name[]={"Big-Endian","Little-Endian","Native"};
+
+/* for those machines with imprecise IEEE<-> conversions, this should be */
+/* close enough */
+#ifdef UNICOS
+#define FABS(x) ((x)<0.0 ? -(x) : (x))
+#define FLOAT64_FUDGE  (FABS((float64)src_float64[i]*(float64)0.000001))
+#define FLOAT32_FUDGE  (FABS((float32)src_float32[i]*(float32)0.0001))
+#else /* UNICOS */
+#define FLOAT64_FUDGE  ((float64)0.000001)
+#define FLOAT32_FUDGE  ((float32)0.0001)
+#endif /* UNICOS */
 
 void test_conv()
 {
@@ -111,17 +140,17 @@ void test_conv()
         /* allocate arrays */
         src_int8=(int8 *)HDgetspace(TEST_SIZE*sizeof(int8));
         if(src_int8==NULL) {
-        	CHECK(src_int8,NULL,HDgetspace);
+		CHECKP(src_int8,NULL,"HDgetspace");
         	return;
           } /* end if */
         dst_int8=(int8 *)HDgetspace(TEST_SIZE*sizeof(int8));
         if(dst_int8==NULL) {
-        	CHECK(dst_int8,NULL,HDgetspace);
+        	CHECKP(dst_int8,NULL,"HDgetspace");
         	return;
           } /* end if */
         dst2_int8=(int8 *)HDgetspace(TEST_SIZE*sizeof(int8));
         if(dst2_int8==NULL) {
-            CHECK(dst2_int8,NULL,HDgetspace);
+            CHECKP(dst2_int8,NULL,"HDgetspace");
             return;
           } /* end if */
 
@@ -131,14 +160,14 @@ void test_conv()
 
         MESSAGE(6,printf("converting %s int8 array\n",test_name[t]););
         c1=clock();
-        ret=DFKconvert(src_int8,dst_int8,test_type[t]|DFNT_INT8,TEST_SIZE,DFACC_WRITE,0,0);
+        ret=DFKconvert((VOIDP)src_int8,(VOIDP)dst_int8,test_type[t]|DFNT_INT8,TEST_SIZE,DFACC_WRITE,0,0);
         c2=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s int8 values\n",(int)(c2-c1),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
 
         MESSAGE(6,printf("re-converting %s int8 array\n",test_name[t]););
         c3=clock();
-        ret=DFKconvert(dst_int8,dst2_int8,test_type[t]|DFNT_INT8,TEST_SIZE,DFACC_READ,0,0);
+        ret=DFKconvert((VOIDP)dst_int8,(VOIDP)dst2_int8,test_type[t]|DFNT_INT8,TEST_SIZE,DFACC_READ,0,0);
         c4=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s int8 values\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
@@ -158,14 +187,14 @@ void test_conv()
 
         MESSAGE(6,printf("converting %s int8 array with %d/%d stride\n",test_name[t],SOURCE_STRIDE,DEST_STRIDE););
         c1=clock();
-        ret=DFKconvert(src_int8,dst_int8,test_type[t]|DFNT_INT8,TEST_SIZE/4,DFACC_WRITE,SOURCE_STRIDE*sizeof(int8),DEST_STRIDE*sizeof(int8));
+        ret=DFKconvert((VOIDP)src_int8,(VOIDP)dst_int8,test_type[t]|DFNT_INT8,TEST_SIZE/4,DFACC_WRITE,SOURCE_STRIDE*sizeof(int8),DEST_STRIDE*sizeof(int8));
         c2=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s int8 values with %d/%d stride\n",(int)(c2-c1),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],SOURCE_STRIDE,DEST_STRIDE););
 
         MESSAGE(6,printf("re-converting %s int8 array with %d/%d stride\n",test_name[t],SOURCE_STRIDE,DEST_STRIDE,SOURCE_STRIDE););
         c3=clock();
-        ret=DFKconvert(dst_int8,dst2_int8,test_type[t]|DFNT_INT8,TEST_SIZE/4,DFACC_READ,DEST_STRIDE*sizeof(int8),SOURCE_STRIDE*sizeof(int8));
+        ret=DFKconvert((VOIDP)dst_int8,(VOIDP)dst2_int8,test_type[t]|DFNT_INT8,TEST_SIZE/4,DFACC_READ,DEST_STRIDE*sizeof(int8),SOURCE_STRIDE*sizeof(int8));
         c4=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s int8 values with %d/%d stride\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],DEST_STRIDE,SOURCE_STRIDE););
@@ -182,17 +211,17 @@ void test_conv()
         MESSAGE(6,printf("seeding %s uint8 array\n",test_name[t]););
         src_uint8=(uint8 *)HDgetspace(TEST_SIZE*sizeof(uint8));
         if(src_uint8==NULL) {
-            CHECK(src_uint8,NULL,HDgetspace);
+            CHECKP(src_uint8,NULL,"HDgetspace");
             return;
           } /* end if */
         dst_uint8=(uint8 *)HDgetspace(TEST_SIZE*sizeof(uint8));
         if(dst_uint8==NULL) {
-            CHECK(dst_uint8,NULL,HDgetspace);
+            CHECKP(dst_uint8,NULL,"HDgetspace");
             return;
           } /* end if */
         dst2_uint8=(uint8 *)HDgetspace(TEST_SIZE*sizeof(uint8));
         if(dst2_uint8==NULL) {
-            CHECK(dst2_uint8,NULL,HDgetspace);
+            CHECKP(dst2_uint8,NULL,"HDgetspace");
             return;
           } /* end if */
 
@@ -202,14 +231,14 @@ void test_conv()
 
         MESSAGE(6,printf("converting %s uint8 array\n",test_name[t]););
         c1=clock();
-        ret=DFKconvert(src_uint8,dst_uint8,test_type[t]|DFNT_UINT8,TEST_SIZE,DFACC_WRITE,0,0);
+        ret=DFKconvert((VOIDP)src_uint8,(VOIDP)dst_uint8,test_type[t]|DFNT_UINT8,TEST_SIZE,DFACC_WRITE,0,0);
         c2=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s uint8 values\n",(int)(c2-c1),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
 
         MESSAGE(6,printf("re-converting %s uint8 array\n",test_name[t]););
         c3=clock();
-        ret=DFKconvert(dst_uint8,dst2_uint8,test_type[t]|DFNT_UINT8,TEST_SIZE,DFACC_READ,0,0);
+        ret=DFKconvert((VOIDP)dst_uint8,(VOIDP)dst2_uint8,test_type[t]|DFNT_UINT8,TEST_SIZE,DFACC_READ,0,0);
         c4=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s uint8 values\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
@@ -230,14 +259,14 @@ void test_conv()
 
         MESSAGE(6,printf("converting %s uint8 array with %d/%d stride\n",test_name[t],SOURCE_STRIDE,DEST_STRIDE););
         c1=clock();
-        ret=DFKconvert(src_uint8,dst_uint8,test_type[t]|DFNT_UINT8,TEST_SIZE/4,DFACC_WRITE,SOURCE_STRIDE*sizeof(uint8),DEST_STRIDE*sizeof(uint8));
+        ret=DFKconvert((VOIDP)src_uint8,(VOIDP)dst_uint8,test_type[t]|DFNT_UINT8,TEST_SIZE/4,DFACC_WRITE,SOURCE_STRIDE*sizeof(uint8),DEST_STRIDE*sizeof(uint8));
         c2=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s uint8 values with %d/%d stride\n",(int)(c2-c1),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],SOURCE_STRIDE,DEST_STRIDE););
 
         MESSAGE(6,printf("re-converting %s uint8 array with %d/%d stride\n",test_name[t],DEST_STRIDE,SOURCE_STRIDE););
         c3=clock();
-        ret=DFKconvert(dst_uint8,dst2_uint8,test_type[t]|DFNT_UINT8,TEST_SIZE/4,DFACC_READ,DEST_STRIDE*sizeof(uint8),SOURCE_STRIDE*sizeof(uint8));
+        ret=DFKconvert((VOIDP)dst_uint8,(VOIDP)dst2_uint8,test_type[t]|DFNT_UINT8,TEST_SIZE/4,DFACC_READ,DEST_STRIDE*sizeof(uint8),SOURCE_STRIDE*sizeof(uint8));
         c4=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s uint8 values with %d/%d stride\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],DEST_STRIDE,SOURCE_STRIDE););
@@ -254,17 +283,17 @@ void test_conv()
         MESSAGE(6,printf("seeding %s int16 array\n",test_name[t]););
         src_int16=(int16 *)HDgetspace(TEST_SIZE*sizeof(int16));
         if(src_int16==NULL) {
-            CHECK(src_int16,NULL,HDgetspace);
+            CHECKP(src_int16,NULL,"HDgetspace");
             return;
           } /* end if */
         dst_int16=(int16 *)HDgetspace(TEST_SIZE*sizeof(int16));
         if(dst_int16==NULL) {
-            CHECK(dst_int16,NULL,HDgetspace);
+            CHECKP(dst_int16,NULL,"HDgetspace");
             return;
           } /* end if */
         dst2_int16=(int16 *)HDgetspace(TEST_SIZE*sizeof(int16));
         if(dst2_int16==NULL) {
-            CHECK(dst2_int16,NULL,HDgetspace);
+            CHECKP(dst2_int16,NULL,"HDgetspace");
             return;
           } /* end if */
 
@@ -274,14 +303,14 @@ void test_conv()
 
         MESSAGE(6,printf("converting %s int16 array\n",test_name[t]););
         c1=clock();
-        ret=DFKconvert(src_int16,dst_int16,test_type[t]|DFNT_INT16,TEST_SIZE,DFACC_WRITE,0,0);
+        ret=DFKconvert((VOIDP)src_int16,(VOIDP)dst_int16,test_type[t]|DFNT_INT16,TEST_SIZE,DFACC_WRITE,0,0);
         c2=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s int16 values\n",(int)(c2-c1),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
 
         MESSAGE(6,printf("re-converting %s int16 array\n",test_name[t]););
         c3=clock();
-        ret=DFKconvert(dst_int16,dst2_int16,test_type[t]|DFNT_INT16,TEST_SIZE,DFACC_READ,0,0);
+        ret=DFKconvert((VOIDP)dst_int16,(VOIDP)dst2_int16,test_type[t]|DFNT_INT16,TEST_SIZE,DFACC_READ,0,0);
         c4=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s int16 values\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
@@ -301,14 +330,14 @@ void test_conv()
 
         MESSAGE(6,printf("converting %s int16 array with %d/%d stride\n",test_name[t],SOURCE_STRIDE,DEST_STRIDE););
         c1=clock();
-        ret=DFKconvert(src_int16,dst_int16,test_type[t]|DFNT_INT16,TEST_SIZE/4,DFACC_WRITE,SOURCE_STRIDE*sizeof(int16),DEST_STRIDE*sizeof(int16));
+        ret=DFKconvert((VOIDP)src_int16,(VOIDP)dst_int16,test_type[t]|DFNT_INT16,TEST_SIZE/4,DFACC_WRITE,SOURCE_STRIDE*sizeof(int16),DEST_STRIDE*sizeof(int16));
         c2=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s int16 values with %d/%d stride\n",(int)(c2-c1),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],SOURCE_STRIDE,DEST_STRIDE););
 
         MESSAGE(6,printf("re-converting %s int16 array with %d/%d stride\n",test_name[t],DEST_STRIDE,SOURCE_STRIDE););
         c3=clock();
-        ret=DFKconvert(dst_int16,dst2_int16,test_type[t]|DFNT_INT16,TEST_SIZE/4,DFACC_READ,DEST_STRIDE*sizeof(int16),SOURCE_STRIDE*sizeof(int16));
+        ret=DFKconvert((VOIDP)dst_int16,(VOIDP)dst2_int16,test_type[t]|DFNT_INT16,TEST_SIZE/4,DFACC_READ,DEST_STRIDE*sizeof(int16),SOURCE_STRIDE*sizeof(int16));
         c4=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s int16 values with %d/%d stride\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],DEST_STRIDE,SOURCE_STRIDE););
@@ -325,17 +354,17 @@ void test_conv()
         MESSAGE(6,printf("seeding %s uint16 array\n",test_name[t]););
         src_uint16=(uint16 *)HDgetspace(TEST_SIZE*sizeof(uint16));
         if(src_uint16==NULL) {
-            CHECK(src_uint16,NULL,HDgetspace);
+            CHECKP(src_uint16,NULL,"HDgetspace");
             return;
           } /* end if */
         dst_uint16=(uint16 *)HDgetspace(TEST_SIZE*sizeof(uint16));
         if(dst_uint16==NULL) {
-            CHECK(dst_uint16,NULL,HDgetspace);
+            CHECKP(dst_uint16,NULL,"HDgetspace");
             return;
           } /* end if */
         dst2_uint16=(uint16 *)HDgetspace(TEST_SIZE*sizeof(uint16));
         if(dst2_uint16==NULL) {
-            CHECK(dst2_uint16,NULL,HDgetspace);
+            CHECKP(dst2_uint16,NULL,"HDgetspace");
             return;
           } /* end if */
 
@@ -345,14 +374,14 @@ void test_conv()
 
         MESSAGE(6,printf("converting %s uint16 array\n",test_name[t]););
         c1=clock();
-        ret=DFKconvert(src_uint16,dst_uint16,test_type[t]|DFNT_UINT16,TEST_SIZE,DFACC_WRITE,0,0);
+        ret=DFKconvert((VOIDP)src_uint16,(VOIDP)dst_uint16,test_type[t]|DFNT_UINT16,TEST_SIZE,DFACC_WRITE,0,0);
         c2=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s uint16 values\n",(int)(c2-c1),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
 
         MESSAGE(6,printf("re-converting %s uint16 array\n",test_name[t]););
         c3=clock();
-        ret=DFKconvert(dst_uint16,dst2_uint16,test_type[t]|DFNT_UINT16,TEST_SIZE,DFACC_READ,0,0);
+        ret=DFKconvert((VOIDP)dst_uint16,(VOIDP)dst2_uint16,test_type[t]|DFNT_UINT16,TEST_SIZE,DFACC_READ,0,0);
         c4=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s uint16 values\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
@@ -372,14 +401,14 @@ void test_conv()
 
         MESSAGE(6,printf("converting %s uint16 array with %d/%d stride\n",test_name[t],SOURCE_STRIDE,DEST_STRIDE););
         c1=clock();
-        ret=DFKconvert(src_uint16,dst_uint16,test_type[t]|DFNT_UINT16,TEST_SIZE/4,DFACC_WRITE,SOURCE_STRIDE*sizeof(uint16),DEST_STRIDE*sizeof(uint16));
+        ret=DFKconvert((VOIDP)src_uint16,(VOIDP)dst_uint16,test_type[t]|DFNT_UINT16,TEST_SIZE/4,DFACC_WRITE,SOURCE_STRIDE*sizeof(uint16),DEST_STRIDE*sizeof(uint16));
         c2=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s uint16 values with %d/%d stride\n",(int)(c2-c1),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],SOURCE_STRIDE,DEST_STRIDE););
 
         MESSAGE(6,printf("re-converting %s uint16 array with %d/%d stride\n",test_name[t],DEST_STRIDE,SOURCE_STRIDE););
         c3=clock();
-        ret=DFKconvert(dst_uint16,dst2_uint16,test_type[t]|DFNT_UINT16,TEST_SIZE/4,DFACC_READ,DEST_STRIDE*sizeof(uint16),SOURCE_STRIDE*sizeof(uint16));
+        ret=DFKconvert((VOIDP)dst_uint16,(VOIDP)dst2_uint16,test_type[t]|DFNT_UINT16,TEST_SIZE/4,DFACC_READ,DEST_STRIDE*sizeof(uint16),SOURCE_STRIDE*sizeof(uint16));
         c4=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s uint16 values with %d/%d stride\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],DEST_STRIDE,SOURCE_STRIDE););
@@ -396,17 +425,17 @@ void test_conv()
         MESSAGE(6,printf("seeding %s int32 array\n",test_name[t]););
         src_int32=(int32 *)HDgetspace(TEST_SIZE*sizeof(int32));
         if(src_int32==NULL) {
-            CHECK(src_int32,NULL,HDgetspace);
+            CHECKP(src_int32,NULL,"HDgetspace");
             return;
           } /* end if */
         dst_int32=(int32 *)HDgetspace(TEST_SIZE*sizeof(int32));
         if(dst_int32==NULL) {
-            CHECK(dst_int32,NULL,HDgetspace);
+            CHECKP(dst_int32,NULL,"HDgetspace");
             return;
           } /* end if */
         dst2_int32=(int32 *)HDgetspace(TEST_SIZE*sizeof(int32));
         if(dst2_int32==NULL) {
-            CHECK(dst2_int32,NULL,HDgetspace);
+            CHECKP(dst2_int32,NULL,"HDgetspace");
             return;
           } /* end if */
 
@@ -416,14 +445,14 @@ void test_conv()
 
         MESSAGE(6,printf("converting %s int32 array\n",test_name[t]););
         c1=clock();
-        ret=DFKconvert(src_int32,dst_int32,test_type[t]|DFNT_INT32,TEST_SIZE,DFACC_WRITE,0,0);
+        ret=DFKconvert((VOIDP)src_int32,(VOIDP)dst_int32,test_type[t]|DFNT_INT32,TEST_SIZE,DFACC_WRITE,0,0);
         c2=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s int32 values\n",(int)(c2-c1),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
 
         MESSAGE(6,printf("re-converting %s int32 array\n",test_name[t]););
         c3=clock();
-        ret=DFKconvert(dst_int32,dst2_int32,test_type[t]|DFNT_INT32,TEST_SIZE,DFACC_READ,0,0);
+        ret=DFKconvert((VOIDP)dst_int32,(VOIDP)dst2_int32,test_type[t]|DFNT_INT32,TEST_SIZE,DFACC_READ,0,0);
         c4=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s int32 values\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
@@ -443,14 +472,14 @@ void test_conv()
 
         MESSAGE(6,printf("converting %s int32 array with %d/%d stride\n",test_name[t],SOURCE_STRIDE,DEST_STRIDE););
         c1=clock();
-        ret=DFKconvert(src_int32,dst_int32,test_type[t]|DFNT_INT32,TEST_SIZE/4,DFACC_WRITE,SOURCE_STRIDE*sizeof(int32),DEST_STRIDE*sizeof(int32));
+        ret=DFKconvert((VOIDP)src_int32,(VOIDP)dst_int32,test_type[t]|DFNT_INT32,TEST_SIZE/4,DFACC_WRITE,SOURCE_STRIDE*sizeof(int32),DEST_STRIDE*sizeof(int32));
         c2=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s int32 values with %d/%d stride\n",(int)(c2-c1),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],SOURCE_STRIDE,DEST_STRIDE););
 
         MESSAGE(6,printf("re-converting %s int32 array with %d/%d stride\n",test_name[t],DEST_STRIDE,SOURCE_STRIDE););
         c3=clock();
-        ret=DFKconvert(dst_int32,dst2_int32,test_type[t]|DFNT_INT32,TEST_SIZE/4,DFACC_READ,DEST_STRIDE*sizeof(int32),SOURCE_STRIDE*sizeof(int32));
+        ret=DFKconvert((VOIDP)dst_int32,(VOIDP)dst2_int32,test_type[t]|DFNT_INT32,TEST_SIZE/4,DFACC_READ,DEST_STRIDE*sizeof(int32),SOURCE_STRIDE*sizeof(int32));
         c4=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s int32 values with %d/%d stride\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],DEST_STRIDE,SOURCE_STRIDE););
@@ -467,17 +496,17 @@ void test_conv()
         MESSAGE(6,printf("seeding %s uint32 array\n",test_name[t]););
         src_uint32=(uint32 *)HDgetspace(TEST_SIZE*sizeof(uint32));
         if(src_uint32==NULL) {
-            CHECK(src_uint32,NULL,HDgetspace);
+            CHECKP(src_uint32,NULL,"HDgetspace");
             return;
           } /* end if */
         dst_uint32=(uint32 *)HDgetspace(TEST_SIZE*sizeof(uint32));
         if(dst_uint32==NULL) {
-            CHECK(dst_uint32,NULL,HDgetspace);
+            CHECKP(dst_uint32,NULL,"HDgetspace");
             return;
           } /* end if */
         dst2_uint32=(uint32 *)HDgetspace(TEST_SIZE*sizeof(uint32));
         if(dst2_uint32==NULL) {
-            CHECK(dst2_uint32,NULL,HDgetspace);
+            CHECKP(dst2_uint32,NULL,"HDgetspace");
             return;
           } /* end if */
 
@@ -487,14 +516,14 @@ void test_conv()
 
         MESSAGE(6,printf("converting %s uint32 array\n",test_name[t]););
         c1=clock();
-        ret=DFKconvert(src_uint32,dst_uint32,test_type[t]|DFNT_UINT32,TEST_SIZE,DFACC_WRITE,0,0);
+        ret=DFKconvert((VOIDP)src_uint32,(VOIDP)dst_uint32,test_type[t]|DFNT_UINT32,TEST_SIZE,DFACC_WRITE,0,0);
         c2=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s uint32 values\n",(int)(c2-c1),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
 
         MESSAGE(6,printf("re-converting %s uint32 array\n",test_name[t]););
         c3=clock();
-        ret=DFKconvert(dst_uint32,dst2_uint32,test_type[t]|DFNT_UINT32,TEST_SIZE,DFACC_READ,0,0);
+        ret=DFKconvert((VOIDP)dst_uint32,(VOIDP)dst2_uint32,test_type[t]|DFNT_UINT32,TEST_SIZE,DFACC_READ,0,0);
         c4=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s uint32 values\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
@@ -514,14 +543,14 @@ void test_conv()
 
         MESSAGE(6,printf("converting %s uint32 array with %d/%d stride\n",test_name[t],SOURCE_STRIDE,DEST_STRIDE););
         c1=clock();
-        ret=DFKconvert(src_uint32,dst_uint32,test_type[t]|DFNT_UINT32,TEST_SIZE/4,DFACC_WRITE,SOURCE_STRIDE*sizeof(uint32),DEST_STRIDE*sizeof(uint32));
+        ret=DFKconvert((VOIDP)src_uint32,(VOIDP)dst_uint32,test_type[t]|DFNT_UINT32,TEST_SIZE/4,DFACC_WRITE,SOURCE_STRIDE*sizeof(uint32),DEST_STRIDE*sizeof(uint32));
         c2=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s uint32 values with %d/%d stride\n",(int)(c2-c1),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],SOURCE_STRIDE,DEST_STRIDE););
 
         MESSAGE(6,printf("re-converting %s uint32 array with %d/%d stride\n",test_name[t],DEST_STRIDE,SOURCE_STRIDE););
         c3=clock();
-        ret=DFKconvert(dst_uint32,dst2_uint32,test_type[t]|DFNT_UINT32,TEST_SIZE/4,DFACC_READ,DEST_STRIDE*sizeof(uint32),SOURCE_STRIDE*sizeof(uint32));
+        ret=DFKconvert((VOIDP)dst_uint32,(VOIDP)dst2_uint32,test_type[t]|DFNT_UINT32,TEST_SIZE/4,DFACC_READ,DEST_STRIDE*sizeof(uint32),SOURCE_STRIDE*sizeof(uint32));
         c4=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s uint32 values with %d/%d stride\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],DEST_STRIDE,SOURCE_STRIDE););
@@ -538,17 +567,17 @@ void test_conv()
         MESSAGE(6,printf("seeding %s float32 array\n",test_name[t]););
         src_float32=(float32 *)HDgetspace(TEST_SIZE*sizeof(float32));
         if(src_float32==NULL) {
-            CHECK(src_float32,NULL,HDgetspace);
+            CHECKP(src_float32,NULL,"HDgetspace");
             return;
           } /* end if */
         dst_float32=(float32 *)HDgetspace(TEST_SIZE*sizeof(float32));
         if(dst_float32==NULL) {
-            CHECK(dst_float32,NULL,HDgetspace);
+            CHECKP(dst_float32,NULL,"HDgetspace");
             return;
           } /* end if */
         dst2_float32=(float32 *)HDgetspace(TEST_SIZE*sizeof(float32));
         if(dst2_float32==NULL) {
-            CHECK(dst2_float32,NULL,HDgetspace);
+            CHECKP(dst2_float32,NULL,"HDgetspace");
             return;
           } /* end if */
 
@@ -562,21 +591,22 @@ void test_conv()
 
         MESSAGE(6,printf("converting %s float32 array\n",test_name[t]););
         c1=clock();
-        ret=DFKconvert(src_float32,dst_float32,test_type[t]|DFNT_FLOAT32,TEST_SIZE,DFACC_WRITE,0,0);
+        ret=DFKconvert((VOIDP)src_float32,(VOIDP)dst_float32,test_type[t]|DFNT_FLOAT32,TEST_SIZE,DFACC_WRITE,0,0);
         c2=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s float32 values\n",(int)(c2-c1),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
 
         MESSAGE(6,printf("re-converting %s float32 array\n",test_name[t]););
         c3=clock();
-        ret=DFKconvert(dst_float32,dst2_float32,test_type[t]|DFNT_FLOAT32,TEST_SIZE,DFACC_READ,0,0);
+        ret=DFKconvert((VOIDP)dst_float32,(VOIDP)dst2_float32,test_type[t]|DFNT_FLOAT32,TEST_SIZE,DFACC_READ,0,0);
         c4=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s float32 values\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
 
 /* This amazing hack is because of the way the Cray converts numbers. */
 /*  The converted number are going to have to be checked by hand... */
-#ifdef UNICOS
+#if defined UNICOS | defined VP
+#ifdef OLD_WAY
         if(Verbocity>9) {
             intn i;
             uint8 *u8_s=(uint8 *)src_float32,
@@ -594,9 +624,37 @@ void test_conv()
               printf("%.2x ",u8_d2[i]);
             printf("\n");
         }
+#else /* OLD_WAY */
+	for(i=0; i<TEST_SIZE; i++) {
+	    if(dst2_float32[i]<(src_float32[i]-FLOAT32_FUDGE)
+		|| dst2_float32[i]>(src_float32[i]+FLOAT32_FUDGE)) {
+              printf("Error converting %s float32 values!\n",test_name[t]);
+printf("src[%d]=%lf, dst[%d]=%lf, dst2[%d]=%lf\n",i,src_float32[i],i,dst_float32[i],i,dst2_float32[i]);
+{
+            intn j;
+            uint8 *u8_s=(uint8 *)&src_float32[i],
+	        *u8_d=(uint8 *)&dst_float32[i],
+	        *u8_d2=(uint8 *)&dst2_float32[i];
+
+            printf("src_float32:  ");
+            for(j=0; j<sizeof(float32); j++)
+              printf("%.2x ",u8_s[j]);
+            printf("\ndst_float32:  ");
+            for(j=0; j<sizeof(float32); j++)
+              printf("%.2x ",u8_d[j]);
+            printf("\ndst2_float32: ");
+            for(j=0; j<sizeof(float32); j++)
+              printf("%.2x ",u8_d2[j]);
+            printf("\n");
+}
+              HEprint(stdout,0);
+              num_errs++;
+            } /* end if */
+	  } /* end for */
+#endif /* OLD_WAY */
 #else
         if(HDmemcmp(src_float32,dst2_float32,TEST_SIZE*sizeof(float32))) {
-            printf("Error converting float32 values!\n");
+            printf("Error converting %s float32 values!\n",test_name[t]);
             HEprint(stdout,0);
             num_errs++;
           } /* end if */
@@ -616,21 +674,22 @@ void test_conv()
 
         MESSAGE(6,printf("converting %s float32 array with %d/%d stride\n",test_name[t],SOURCE_STRIDE,DEST_STRIDE););
         c1=clock();
-        ret=DFKconvert(src_float32,dst_float32,test_type[t]|DFNT_FLOAT32,TEST_SIZE/4,DFACC_WRITE,SOURCE_STRIDE*sizeof(float32),DEST_STRIDE*sizeof(float32));
+        ret=DFKconvert((VOIDP)src_float32,(VOIDP)dst_float32,test_type[t]|DFNT_FLOAT32,TEST_SIZE/4,DFACC_WRITE,SOURCE_STRIDE*sizeof(float32),DEST_STRIDE*sizeof(float32));
         c2=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s float32 values with %d/%d stride\n",(int)(c2-c1),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],SOURCE_STRIDE,DEST_STRIDE););
 
         MESSAGE(6,printf("re-converting %s float32 array with %d/%d stride\n",test_name[t],DEST_STRIDE,SOURCE_STRIDE););
         c3=clock();
-        ret=DFKconvert(dst_float32,dst2_float32,test_type[t]|DFNT_FLOAT32,TEST_SIZE/4,DFACC_READ,DEST_STRIDE*sizeof(float32),SOURCE_STRIDE*sizeof(float32));
+        ret=DFKconvert((VOIDP)dst_float32,(VOIDP)dst2_float32,test_type[t]|DFNT_FLOAT32,TEST_SIZE/4,DFACC_READ,DEST_STRIDE*sizeof(float32),SOURCE_STRIDE*sizeof(float32));
         c4=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s float32 values with %d/%d stride\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],DEST_STRIDE,SOURCE_STRIDE););
 
 /* This amazing hack is because of the way the Cray converts numbers. */
 /*  The converted number are going to have to be checked by hand... */
-#ifdef UNICOS
+#if defined UNICOS | defined VP | defined CONVEXNATIVE
+#ifdef OLD_WAY
         if(Verbocity>9) {
             intn i;
             uint8 *u8_s=(uint8 *)src_float32,
@@ -648,6 +707,34 @@ void test_conv()
               printf("%.2x ",u8_d2[i]);
             printf("\n");
         }
+#else /* OLD_WAY */
+	for(i=0; i<(TEST_SIZE/2); i++) {
+	    if(dst2_float32[i]<(src_float32[i]-FLOAT32_FUDGE)
+		|| dst2_float32[i]>(src_float32[i]+FLOAT32_FUDGE)) {
+              printf("Error converting %s float32 values!\n",test_name[t]);
+printf("src[%d]=%lf, dst[%d]=%lf, dst2[%d]=%lf\n",i,src_float32[i],i,dst_float32[i],i,dst2_float32[i]);
+{
+            intn j;
+            uint8 *u8_s=(uint8 *)&src_float32[i],
+	        *u8_d=(uint8 *)&dst_float32[i],
+	        *u8_d2=(uint8 *)&dst2_float32[i];
+
+            printf("src_float32:  ");
+            for(j=0; j<sizeof(float32); j++)
+              printf("%.2x ",u8_s[j]);
+            printf("\ndst_float32:  ");
+            for(j=0; j<sizeof(float32); j++)
+              printf("%.2x ",u8_d[j]);
+            printf("\ndst2_float32: ");
+            for(j=0; j<sizeof(float32); j++)
+              printf("%.2x ",u8_d2[j]);
+            printf("\n");
+}
+              HEprint(stdout,0);
+              num_errs++;
+            } /* end if */
+	  } /* end for */
+#endif /* OLD_WAY */
 #else
         if(HDmemcmp(src_float32,dst2_float32,(TEST_SIZE/2)*sizeof(float32))) {
             printf("Error converting %s float32 values with strides!\n",test_name[t]);
@@ -663,17 +750,17 @@ void test_conv()
         MESSAGE(6,printf("seeding %s float64 array\n",test_name[t]););
         src_float64=(float64 *)HDgetspace(TEST_SIZE*sizeof(float64));
         if(src_float64==NULL) {
-            CHECK(src_float64,NULL,HDgetspace);
+            CHECKP(src_float64,NULL,"HDgetspace");
             return;
           } /* end if */
         dst_float64=(float64 *)HDgetspace(TEST_SIZE*sizeof(float64));
         if(dst_float64==NULL) {
-            CHECK(dst_float64,NULL,HDgetspace);
+            CHECKP(dst_float64,NULL,"HDgetspace");
             return;
           } /* end if */
         dst2_float64=(float64 *)HDgetspace(TEST_SIZE*sizeof(float64));
         if(dst2_float64==NULL) {
-            CHECK(dst2_float64,NULL,HDgetspace);
+            CHECKP(dst2_float64,NULL,"HDgetspace");
             return;
           } /* end if */
 
@@ -687,20 +774,21 @@ void test_conv()
 
         MESSAGE(6,printf("converting %s float64 array\n",test_name[t]););
         c1=clock();
-        ret=DFKconvert(src_float64,dst_float64,test_type[t]|DFNT_FLOAT64,TEST_SIZE,DFACC_WRITE,0,0);
+        ret=DFKconvert((VOIDP)src_float64,(VOIDP)dst_float64,test_type[t]|DFNT_FLOAT64,TEST_SIZE,DFACC_WRITE,0,0);
         c2=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s float64 values\n",(int)(c2-c1),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
 
         MESSAGE(6,printf("re-converting %s float64 array\n",test_name[t]););
         c3=clock();
-        ret=DFKconvert(dst_float64,dst2_float64,test_type[t]|DFNT_FLOAT64,TEST_SIZE,DFACC_READ,0,0);
+        ret=DFKconvert((VOIDP)dst_float64,(VOIDP)dst2_float64,test_type[t]|DFNT_FLOAT64,TEST_SIZE,DFACC_READ,0,0);
         c4=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s float64 values\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
 /* This amazing hack is because of the way the VMS converts numbers. */
 /*  The converted number are going to have to be checked by hand... */
-#ifdef VMS
+#if defined VP | defined VMS | defined CONVEXNATIVE
+#ifdef OLD_WAY
         if(Verbocity>9) {
             intn i;
             uint8 *u8_s=(uint8 *)src_float64,
@@ -718,9 +806,37 @@ void test_conv()
               printf("%.2x ",u8_d2[i]);
             printf("\n");
         }
+#else /* OLD_WAY */
+	for(i=0; i<TEST_SIZE; i++) {
+	    if(dst2_float64[i]<(src_float64[i]-FLOAT64_FUDGE)
+		|| dst2_float64[i]>(src_float64[i]+FLOAT64_FUDGE)) {
+              printf("Error converting %s float64 values!\n",test_name[t]);
+printf("src[%d]=%lf, dst[%d]=%lf, dst2[%d]=%lf\n",i,src_float64[i],i,dst_float64[i],i,dst2_float64[i]);
+{
+            intn j;
+            uint8 *u8_s=(uint8 *)&src_float64[i],
+	        *u8_d=(uint8 *)&dst_float64[i],
+	        *u8_d2=(uint8 *)&dst2_float64[i];
+
+            printf("src_float64:  ");
+            for(j=0; j<sizeof(float64); j++)
+              printf("%.2x ",u8_s[j]);
+            printf("\ndst_float64:  ");
+            for(j=0; j<sizeof(float64); j++)
+              printf("%.2x ",u8_d[j]);
+            printf("\ndst2_float64: ");
+            for(j=0; j<sizeof(float64); j++)
+              printf("%.2x ",u8_d2[j]);
+            printf("\n");
+}
+              HEprint(stdout,0);
+              num_errs++;
+            } /* end if */
+	  } /* end for */
+#endif /* OLD_WAY */
 #else
         if(HDmemcmp(src_float64,dst2_float64,TEST_SIZE*sizeof(float64))) {
-            printf("Error converting float64 values!\n");
+            printf("Error converting %s float64 values!\n",test_name[t]);
             HEprint(stdout,0);
             num_errs++;
           } /* end if */
@@ -740,20 +856,21 @@ void test_conv()
 
         MESSAGE(6,printf("converting %s float64 array with %d/%d stride\n",test_name[t],SOURCE_STRIDE,DEST_STRIDE););
         c1=clock();
-        ret=DFKconvert(src_float64,dst_float64,test_type[t]|DFNT_FLOAT64,TEST_SIZE/4,DFACC_WRITE,SOURCE_STRIDE*sizeof(float64),DEST_STRIDE*sizeof(float64));
+        ret=DFKconvert((VOIDP)src_float64,(VOIDP)dst_float64,test_type[t]|DFNT_FLOAT64,TEST_SIZE/4,DFACC_WRITE,SOURCE_STRIDE*sizeof(float64),DEST_STRIDE*sizeof(float64));
         c2=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s float64 values with %d/%d stride\n",(int)(c2-c1),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],SOURCE_STRIDE,DEST_STRIDE););
 
         MESSAGE(6,printf("re-converting %s float64 array with %d/%d stride\n",test_name[t],DEST_STRIDE,SOURCE_STRIDE););
         c3=clock();
-        ret=DFKconvert(dst_float64,dst2_float64,test_type[t]|DFNT_FLOAT64,TEST_SIZE/4,DFACC_READ,DEST_STRIDE*sizeof(float64),SOURCE_STRIDE*sizeof(float64));
+        ret=DFKconvert((VOIDP)dst_float64,(VOIDP)dst2_float64,test_type[t]|DFNT_FLOAT64,TEST_SIZE/4,DFACC_READ,DEST_STRIDE*sizeof(float64),SOURCE_STRIDE*sizeof(float64));
         c4=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s float64 values with %d/%d stride\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],DEST_STRIDE,SOURCE_STRIDE););
 /* This amazing hack is because of the way the VMS converts numbers. */
 /*  The converted number are going to have to be checked by hand... */
-#ifdef VMS
+#if defined VP | defined VMS | defined CONVEXNATIVE
+#ifdef OLD_WAY
         if(Verbocity>9) {
             intn i;
             uint8 *u8_s=(uint8 *)src_float64,
@@ -771,6 +888,34 @@ void test_conv()
               printf("%.2x ",u8_d2[i]);
             printf("\n");
         }
+#else /* OLD_WAY */
+	for(i=0; i<(TEST_SIZE/2); i++) {
+	    if(dst2_float64[i]<(src_float64[i]-FLOAT64_FUDGE)
+		|| dst2_float64[i]>(src_float64[i]+FLOAT64_FUDGE)) {
+              printf("Error converting %s float64 values!\n",test_name[t]);
+printf("src[%d]=%lf, dst[%d]=%lf, dst2[%d]=%lf\n",i,src_float64[i],i,dst_float64[i],i,dst2_float64[i]);
+{
+            intn j;
+            uint8 *u8_s=(uint8 *)&src_float64[i],
+	        *u8_d=(uint8 *)&dst_float64[i],
+	        *u8_d2=(uint8 *)&dst2_float64[i];
+
+            printf("src_float64:  ");
+            for(j=0; j<sizeof(float64); j++)
+              printf("%.2x ",u8_s[j]);
+            printf("\ndst_float64:  ");
+            for(j=0; j<sizeof(float64); j++)
+              printf("%.2x ",u8_d[j]);
+            printf("\ndst2_float64: ");
+            for(j=0; j<sizeof(float64); j++)
+              printf("%.2x ",u8_d2[j]);
+            printf("\n");
+}
+              HEprint(stdout,0);
+              num_errs++;
+            } /* end if */
+	  } /* end for */
+#endif /* OLD_WAY */
 #else
         if(HDmemcmp(src_float64,dst2_float64,(TEST_SIZE/2)*sizeof(float64))) {
             printf("Error converting %s float64 values with strides!\n",test_name[t]);

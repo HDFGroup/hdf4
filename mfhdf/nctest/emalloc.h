@@ -5,7 +5,7 @@
  *********************************************************************/
 
 #undef PROTO
-#ifndef NO_HAVE_PROTOTYPES 
+#if !defined MIPSEL & !defined NO_HAVE_PROTOTYPES 
 #   define	PROTO(x)	x
 #else
 #   define	PROTO(x)	()

@@ -21,11 +21,11 @@ static char RcsId[] = "@(#)$Revision$";
  * Purpose: Low level functions for implementing groups
  * Invokes: df.c df.h
  * Contents:
- *  DFdiread   : read in the data identifier list from the group
- *  DFdiget    : get next data identifier from list
- *  DFdisetup  : get ready to store a list of data identifiers to write out
- *  DFdiput    : add a data identifier to the list to be written out
- *  DFdiwrite  : write out the list of data identifiers
+ *  DFdiread: read in the data identifier list from the group
+ *  DFdiget: get next data identifier from list
+ *  DFdisetup: get ready to store a list of data identifiers to write out
+ *  DFdiput: add a data identifier to the list to be written out
+ *  DFdiwrite: write out the list of data identifiers
  * Remarks: A group is a way of associating data elements with each other.
  *          It is a tag whose data is a list of tag/refs
  *          Each tag/ref combination is called a data identifier (DI).
@@ -309,6 +309,9 @@ int DFdiwrite(file_id, list, tag, ref)
                       (int32)list_rec->current * 4);
     HDfreespace((VOIDP)list_rec->DIlist);
     HDfreespace((VOIDP)list_rec);
+#ifdef QAK
+printf("DFdiwrite(): list=%ld, list&0xFFFF=%ld\n",list,(list & 0xffff));
+#endif
     Group_list[list & 0xffff] = NULL;  /* YUCK! BUG! */
     return ret;
 }

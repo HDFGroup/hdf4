@@ -136,10 +136,9 @@ EXTERN VOID jmem_init PROTO((external_methods_ptr emethods));
 #ifdef CONVEX
 EXTERN VOID jmem_term PROTO(());
 #else
-EXTERN VOID jmem_term PROTO((VOID));
+EXTERN VOID jmem_term PROTO((void));
 #endif
 
 #endif /* JMEMSYS !=MEM_DOS */
 
 #endif /* JMEMSYS_H */
-

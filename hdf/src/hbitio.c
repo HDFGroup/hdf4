@@ -60,7 +60,7 @@ PRIVATE int HIget_bitfile_slot
     PROTO(());
 #else
 PRIVATE int HIget_bitfile_slot
-    PROTO((VOID));
+    PROTO((void));
 #endif
 
 /* Actualy Function Definitions */
@@ -180,50 +180,6 @@ int32 length;           /* length of elt to write */
 /*--------------------------------------------------------------------------
 
  NAME
-       Hbitappendable -- make a bitio AID appendable
- USAGE
-       intn Hbitappendable(bitid)
-       int32 bitid;         IN: id of bit-element to make appendable
- RETURNS
-        SUCCEED for success
-        FAIL to indicate failure
- DESCRIPTION
-       If a dataset is at the end of a file, allow Hbitwrite()s to write
-       past the end of a file.  Allows expanding datasets without the use
-       of linked blocks.
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
---------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
-intn Hbitappendable(int32 bitid)
-#else
-intn Hbitappendable(bitid)
-int32 bitid;            /* Bit ID to use */
-#endif
-{
-    char *FUNC="Hbitappendable";    /* for HERROR */
-    bitrec_t *bitfile_rec;  /* access record */
-
-    /* clear error stack and check validity of file id */
-    HEclear();
-
-    if((bitfile_rec = BITID2REC(bitid))==NULL)
-        HRETURN_ERROR(DFE_ARGS,FAIL);
-
-    /* Check for write access */
-    if(bitfile_rec->mode!='w')
-        HRETURN_ERROR(DFE_BADACC,FAIL);
-
-    if(Happendable(bitfile_rec->acc_id)==FAIL)
-        HRETURN_ERROR(DFE_NOTENOUGH,FAIL);
-    return(SUCCEED);
-}   /* end Hbitappendable() */
-
-/*--------------------------------------------------------------------------
-
- NAME
        Hbitwrite -- write a number of bits out to a bit-element
  USAGE
        intn Hbitwrite(bitid, count, data)
@@ -259,9 +215,6 @@ uint32 data;            /* Actual bits to output */
     /* clear error stack and check validity of file id */
     HEclear();
 
-#ifdef QAK
-printf("Hbitwrite(): bitid=%d count=%d, data=%x\n",bitid,count,data);
-#endif
     if(count<=0 || (bitfile_rec = BITID2REC(bitid))==NULL)
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
@@ -358,13 +311,10 @@ uint32 *data;            /* Actual bits to output */
     if(count>32)    /* truncate the count if it's too large */
         count=32;
 
-#ifdef QAK
-printf("Hbitread(): BITNUM=%d, count=%d, bitfile_rec->count=%d\n",BITNUM,count,bitfile_rec->count);
-#endif
     /* if the request can be satisfied with just the */
     /* buffered bits then do the shift and return */
     if(count<=bitfile_rec->count) {
-        *data=(bitfile_rec->bits>>(bitfile_rec->count-=count)&(uint32)maskc[count]);
+        *data=(bitfile_rec->bits>>(bitfile_rec->count-=count)&maskc[count]);
         return(count);
       } /* end if */
 
@@ -388,11 +338,8 @@ printf("Hbitread(): BITNUM=%d, count=%d, bitfile_rec->count=%d\n",BITNUM,count,b
               } /* end if */
             bitfile_rec->bytez=n+(bitfile_rec->bytep=bitfile_rec->bytea);
           } /* end if */
-        l = *bitfile_rec->bytep++;
+        l = *(bitfile_rec->bytep++);
         b |= l << (count-=BITNUM);
-#ifdef QAK
-printf("Hbitread(): count=%d, l=%d, b=%d\n",count,l,b);
-#endif
       } /* end while */
 
     /* split any partial request with the bits buffer */
@@ -407,7 +354,7 @@ printf("Hbitread(): count=%d, l=%d, b=%d\n",count,l,b);
             bitfile_rec->bytez=n+(bitfile_rec->bytep=bitfile_rec->bytea);
           } /* end if */
         bitfile_rec->count=(BITNUM-count);
-        l=bitfile_rec->bits = *bitfile_rec->bytep++;
+        l=bitfile_rec->bits = *(bitfile_rec->bytep++);
         b|=l>>bitfile_rec->count;
       } /* end if */
     else
@@ -478,7 +425,7 @@ intn flushbit;              /* how to flush the bits */
 #ifdef CONVEX
 PRIVATE int HIget_bitfile_slot()
 #else
-PRIVATE int HIget_bitfile_slot(VOID)
+PRIVATE int HIget_bitfile_slot(void)
 #endif
 #else
 PRIVATE int HIget_bitfile_slot()

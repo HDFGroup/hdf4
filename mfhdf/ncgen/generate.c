@@ -102,7 +102,7 @@ gen_c(filename)
     char stmnt[C_MAX_STMNT];
     char s2[MAX_NC_NAME + 2];
 
-    static char *ctypes[] = {"char","short","long","float","double"};
+    static char *ctypes[] = {"char","short","nclong","float","double"};
     int ntypes = (sizeof ctypes) / (sizeof ctypes[0]);
 
     /* wrap in main program */
@@ -405,7 +405,7 @@ gen_fortran(filename)
     ftypes[(int) NC_BYTE] = "byte";
     ftypes[(int) NC_CHAR] = "char";
     ftypes[(int) NC_SHORT] = "short";
-    ftypes[(int) NC_LONG] = "long";
+    ftypes[(int) NC_LONG] = "nclong";
     ftypes[(int) NC_FLOAT] = "float";
     ftypes[(int) NC_DOUBLE] = "double";
 
@@ -699,7 +699,7 @@ ncctype(type)
       case NC_SHORT:
 	return "short";
       case NC_LONG:
-	return "long";
+	return "nclong";
       case NC_FLOAT:
 	return "float";
       case NC_DOUBLE:
@@ -772,7 +772,7 @@ cstring(type,valp, num)
     static char *cp, *sp, ch;
     char *bytep;
     short *shortp;
-    long *longp;
+    nclong *longp;
     float *floatp;
     double *doublep;
 
@@ -823,7 +823,7 @@ cstring(type,valp, num)
 
       case NC_LONG:
 	cp = (char *) emalloc (20);
-	longp = (long *)valp;
+	longp = (nclong *)valp;
 	(void) sprintf(cp,"%ld",* (longp + num));
 	return cp;
 
@@ -860,7 +860,7 @@ fstring(type,valp, num)
     static char *cp, *sp;
     char ch;
     short *shortp;
-    long *longp;
+    nclong *longp;
     float *floatp;
     double *doublep;
 
@@ -887,7 +887,7 @@ fstring(type,valp, num)
 
       case NC_LONG:
 	cp = (char *) emalloc (20);
-	longp = (long *)valp;
+	longp = (nclong *)valp;
 	(void) sprintf(cp,"%ld",* (longp + num));
 	return cp;
 

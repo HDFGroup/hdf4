@@ -32,7 +32,7 @@ $! Create test0.nc from test0.cdl
 $
 $ define/usrs sys$output test0.nc
 $ ncgen -b test0.cdl
-$ Create test1.cdf from test0.nc
+$! Create test1.cdf from test0.nc
 $ ncdump -n test1 test0.nc
 $
 $! Test "-c" option of ncgen

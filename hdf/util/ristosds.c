@@ -41,7 +41,7 @@ VOID finishing
 #ifdef CONVEX
     PROTO(());
 #else
-    PROTO((VOID));
+    PROTO((void));
 #endif
 
 #ifdef PROTOTYPE
@@ -59,7 +59,7 @@ main(argc, argv)
     int32 dimsizes[3];
     char *infile, *outfile, **argv_infile;
     uint8 *indata, *indata0, palette[768];
-    float32 *outdata, *outdata0;
+    uint8 *outdata, *outdata0;
 
     if (argc < 4) {
         printf("Usage %s.\n", USAGE);
@@ -104,7 +104,7 @@ main(argc, argv)
     
     /* read in images from all input files.  	*/
 
-    outdata0 = outdata = (float32 *)HDgetspace(nimg*w*h*(sizeof(float32)));
+    outdata0 = outdata = (uint8 *)HDgetspace(nimg*w*h*(sizeof(char)));
     indata0 = indata = (uint8 *)HDgetspace(w*h*sizeof(char));
     infile = *argv_infile;
     ret = DFR8getdims(infile, &w, &h, &ispal);
@@ -128,24 +128,25 @@ main(argc, argv)
     	    if (ret != 0) finishing();
 	}
 	
-	/* convert image data into floating point and store in the array  */
+	/* convert image data into sds array  */
 
-	for (i=0; i<w; i++)
-	    for (j=0; j<h; j++) *outdata++ = (float32) *indata++;
+	for (i=0; i<h; i++)
+	    for (j=0; j<w; j++) *outdata++ =  *indata++;
 	nimg--;
     }
 
     dimsizes[0] = nimg0;
-    dimsizes[1] = w;
-    dimsizes[2] = h;
-    ret = DFSDadddata(outfile, 3, dimsizes, outdata0);
+    dimsizes[1] = h;
+    dimsizes[2] = w;
+    if (DFSDsetNT(DFNT_UINT8) == FAIL) finishing();
+    ret = DFSDadddata(outfile, 3, dimsizes, (VOIDP)outdata0);
     if (ret != 0)
         finishing();
     return(0);
 }
 
 #if defined ( PROTOTYPE ) && ! defined ( CONVEX )
-VOID finishing(VOID )
+VOID finishing(void )
 #else
 VOID finishing()
 #endif

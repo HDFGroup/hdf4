@@ -61,9 +61,10 @@
 #define DIM_VALS          "DimVal0.0" 
 #define CDF               "CDF0.0"
 #define DATA              "Data0.0"
-#define ATTR_FIELD_NAME   "Values"
+#define ATTR_FIELD_NAME   "VALUES"
 
-#define BLOCK_SIZE  64    /* multiplier for bytes in linked blocks */
+#define BLOCK_MULT  64    /* multiplier for bytes in linked blocks */
+#define MAX_BLOCK_SIZE  65536    /* maximum size of block in linked blocks */
 #define BLOCK_COUNT 128   /* size of linked block pointer objects  */
 
 #endif
@@ -131,22 +132,16 @@ typedef struct {
         uint16 data_tag;  /* tag of the variable's data storage (if exists) */
         uint16 ndg_ref;   /* ref of ndg for this dataset */
         intn   data_offset; /* non-traditional data may not begin at 0 */
+        int32  block_size;  /* size of the blocks for unlimited dim. datasets */
         int numrecs;  /* number of records this has been filled to */
         int32 aid;    /* aid for DFTAG_SD data */
         int32 HDFtype; /* type of this variable as HDF thinks */
         int32 HDFsize; /* size of this variable as HDF thinks */
-        int32   is_ragged; /* BOOLEAN == is a ragged array */
-        int32 * rag_list;  /* size of ragged array lines */
-        int32   rag_fill;  /* last line in rag_list to be set */
 #endif
 } NC_var ;
 
 #define IS_RECVAR(vp) \
 	((vp)->shape != NULL ? (*(vp)->shape == NC_UNLIMITED) : 0 )
-
-#define netCDF_FILE  0
-#define HDF_FILE     1
-#define CDF_FILE     2
 
 typedef struct {
 	char path[FILENAME_MAX + 1] ;
@@ -162,10 +157,9 @@ typedef struct {
 	NC_array *vars ;
 #ifdef HDF
 	int32 hdf_file;
-        int file_type;
+        int is_hdf;
         int32 vgid;
         int hdf_mode; /* mode we are attached for */
-        FILE * cdf_fp; /* file pointer used for CDF files */
 #endif
 } NC ;
 
@@ -183,7 +177,7 @@ extern char *cdf_routine_name ; /* defined in lerror.c */
 #else
 #   define	PROTO(x)	()
 #endif
-#endif /* HDF */
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -472,8 +466,8 @@ extern int hdf_read_sds_cdf
     PROTO((XDR *,NC **));
 
 extern int NCgenio
-    PROTO((NC *handle,int varid,const int32 *start,const int32*count,
-        const int32 *stride,const int32 *imap,Void *values));
+    PROTO((NC *handle, int varid, const long *start, const long *count,
+        const long *stride, const long *imap,Void *values));
 
 extern int NC_var_shape
     PROTO((NC_var *var,NC_array *dims));

@@ -46,7 +46,7 @@ C
 	integer DFSDsetorder,		dssodr
 	integer DFSDnumber,		dsnum
 	integer DFSDlastref,		dslref
-        integer dsp32sd,
+        integer dsp32sd
         integer dsscal
         integer dsgcal
 C
@@ -93,6 +93,7 @@ C
         integer d24lref
 	integer DF24scompress,          d2scomp
 	integer DF24sjpeg,              d2sjpeg
+	integer DF24nimages,		d2nimg
 
 	integer DFPaddpal,		dpapal
 	integer DFPgetpal,		dpgpal

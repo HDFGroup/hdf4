@@ -385,7 +385,7 @@ int dump(length, offset, format, raw_flag)
             register int32 *idata;
             idata = (int32 *) HDgetspace(length/4*sizeof(int32));
 
-            DFKconvert((uint8 *)(data+offset), (uint8 *)idata, DFNT_INT32|raw_flag,
+            DFKconvert((VOIDP) (data+offset), (VOIDP)idata, DFNT_INT32|raw_flag,
                        length/4, DFACC_READ, 0, 0); 
             printf("%8d: ", offset); 
             for(i = 0; i < length/4; i++) {
@@ -402,7 +402,7 @@ int dump(length, offset, format, raw_flag)
             register uint32 *idata;
             idata = (uint32 *) HDgetspace(length/4*sizeof(int32));
 
-            DFKconvert((uint8 *)(data+offset), (uint8 *)idata, DFNT_UINT32|raw_flag,
+            DFKconvert((VOIDP)(data+offset), (VOIDP)idata, DFNT_UINT32|raw_flag,
                        length/4, DFACC_READ, 0, 0);
             printf("%8d: ", offset);
             for(i = 0; i < length/4; i++) {
@@ -417,7 +417,7 @@ int dump(length, offset, format, raw_flag)
         {
             register int16 *sdata;
             sdata = (int16 *) HDgetspace(length/2*sizeof(int16));
-            DFKconvert((uint8 *)(data + offset), (uint8 *)sdata, DFNT_INT16|raw_flag,
+            DFKconvert((VOIDP)(data + offset), (VOIDP)sdata, DFNT_INT16|raw_flag,
                        length/2, DFACC_READ, 0, 0);
 
             printf("%8d: ", offset);
@@ -435,7 +435,7 @@ int dump(length, offset, format, raw_flag)
             register uint16 *sdata;
             sdata = (uint16 *) HDgetspace(length/2*sizeof(uint16));
 
-            DFKconvert((uint8 *)(data + offset), (uint8 *)sdata, DFNT_UINT16|raw_flag, 
+            DFKconvert((VOIDP)(data + offset), (VOIDP)sdata, DFNT_UINT16|raw_flag, 
                        length/2, DFACC_READ, 0, 0);
             printf("%8d: ", offset); 
             for(i = 0; i < length/2; i++) {
@@ -452,7 +452,7 @@ int dump(length, offset, format, raw_flag)
             register uint8 *bdata;
             bdata = (uint8 *) HDgetspace(length);
           
-            DFKconvert((uint8 *)(data+offset), bdata, DFNT_UINT8|raw_flag,
+            DFKconvert((VOIDP)(data+offset), (VOIDP)bdata, DFNT_UINT8|raw_flag,
                        length, DFACC_READ, 0,0);
             printf("%8d: ", offset); 
             for(i = 0; i < length; i++) {
@@ -517,7 +517,7 @@ int dump(length, offset, format, raw_flag)
             register float32 *fdata;
             fdata = (float32 *) HDgetspace(length/4*sizeof(float32));
   
-            DFKconvert((uint8 *)(data + offset), (uint8 *)fdata, DFNT_FLOAT32|raw_flag,
+            DFKconvert((VOIDP)(data + offset), (VOIDP)fdata, DFNT_FLOAT32|raw_flag,
                        length/4, DFACC_READ, 0, 0);
 
             printf("%8d: ", offset);
@@ -535,7 +535,7 @@ int dump(length, offset, format, raw_flag)
             register float64 *fdata;
             fdata = (float64 *) HDgetspace(length/8*sizeof(float64));
   
-            DFKconvert((uint8 *)(data + offset), (uint8 *)fdata, DFNT_FLOAT64|raw_flag,
+            DFKconvert((VOIDP)(data + offset), (VOIDP)fdata, DFNT_FLOAT64|raw_flag,
                        length/8, DFACC_READ, 0, 0);
 
             printf("%8d: ", offset);
@@ -917,20 +917,20 @@ struct {
 };
 
 #ifdef PROTOTYPE
-HE_FUNC findFunc(char *fword)
+HE_FUNC findFunc(char *word)
 #else
-HE_FUNC findFunc(fword)
-    char *fword;
+HE_FUNC findFunc(word)
+    char *word;
 #endif /* PROTOTYPE */
 {
     int len;
     int found = -1;
     register int i;
 
-    len = strlen((const char *) fword);
+    len = strlen((const char *) word);
 
     for (i = 0; he_funcTab[i].str; i++)
-	if (!strncmp(he_funcTab[i].str, (const char *) fword, len))
+	if (!strncmp(he_funcTab[i].str, (const char *) word, len))
 	{
 	    /* check for exact match */
 	    if (strlen(he_funcTab[i].str) == len)
@@ -940,7 +940,7 @@ HE_FUNC findFunc(fword)
 		found = i;
 	    else
 	    {
-		fprintf(stderr,"Ambiguous command: %s.\n", fword);
+		fprintf(stderr,"Ambiguous command: %s.\n", word);
 		return NULL;
 	    }
 	}
@@ -1103,8 +1103,7 @@ HE_CMD *parseCmd(p)
     else
 	cmd->func = findFunc(cmd->argv[0]);
 
-    if (((HE_CMD*) cmd->func == (HE_CMD*) HEalias) || 
-        ((HE_CMD*) cmd->func == (HE_CMD*) HEwait)) {
+    if ((cmd->func == (HE_FUNC) HEalias) || (cmd->func == (HE_FUNC) HEwait)) {
       /* let the alias command handle the parsing */
       cmd->argv[1] = copyStr(*p);
       cmd->argc = 2;
@@ -1173,8 +1172,8 @@ HE_CMD *getCmd()
     cmd->next = (HE_CMD *) NULL; /* Cut off links since these will be */
 				 /* accessed later */
 
-    if (cmd && (((HE_CMD*)cmd->func == (HE_CMD*)HEif) ||
-                ((HE_CMD*)cmd->func == (HE_CMD*)HEselect)) &&
+    if (cmd && ((cmd->func == (HE_FUNC)HEif) ||
+                (cmd->func == (HE_FUNC)HEselect)) &&
 	!((cmd->argc > 1) && (cmd->argv[1][0] == '-') &&
 	  (findOpt(cmd->argv[1]+1) == HE_HELP)))
     {

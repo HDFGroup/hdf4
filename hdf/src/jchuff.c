@@ -87,7 +87,7 @@ HUFF_TBL * htbl;
 
 LOCAL VOID
 #if defined( PROTOTYPE ) && ! defined( CONVEX )
-flush_bytes (VOID)
+flush_bytes (void)
 #else
 flush_bytes ()
 #endif
@@ -157,7 +157,7 @@ int size;
 
 LOCAL VOID
 #if defined( PROTOTYPE ) && ! defined( CONVEX )
-flush_bits (VOID)
+flush_bits (void)
 #else
 flush_bits ()
 #endif

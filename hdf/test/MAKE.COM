@@ -22,6 +22,7 @@
 $ define/nolog hdf$lib [-.lib]df
 $ define/nolog hdf$include [-.include]
 $ define/nolog sys$clib sys$library:vaxcrtl
+
 !$!
 $ type sys$input
   **    Making testhdf **

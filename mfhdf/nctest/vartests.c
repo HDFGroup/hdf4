@@ -234,7 +234,7 @@ struct cdfelm {			/* coordinates and generic value */
 	char by;
 	char ch;
 	short sh;
-	long lo;
+	nclong lo;
 	float fl;
 	double db;
     } val;
@@ -261,7 +261,7 @@ test_varputget1(cdfid)
     void *tmpp;
     char chval;
     short shval;
-    long loval;
+    nclong loval;
     float flval;
     double dbval;
 
@@ -293,7 +293,7 @@ test_varputget1(cdfid)
 		tmpp = (void *) &shval;
 		break;
 	      case NC_LONG:
-		elm[ie].val.lo = (long) (ie-3);
+		elm[ie].val.lo = (nclong) (ie-3);
 		voidp = (void *) &elm[ie].val.lo;
 		tmpp = (void *) &loval;
 		break;
