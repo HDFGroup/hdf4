@@ -56,6 +56,9 @@
 #define CDF        "CDF0.0"
 #define DATA       "Data0.0"
 
+#define BLOCK_SIZE  64    /* multiplier for bytes in linked blocks */
+#define BLOCK_COUNT 128   /* size of linked block pointer objects  */
+
 #endif
 
 /* like, a discriminated union in the sense of xdr */

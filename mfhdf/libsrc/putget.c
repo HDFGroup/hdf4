@@ -686,7 +686,7 @@ NC_var *vp;
     /* if it is a record var might as well make it linked blocks now */
     if(IS_RECVAR(vp)) {
         vp->aid = HLcreate(handle->hdf_file, DATA_TAG, vsid, 
-                           byte_count * 64, 128);
+                           byte_count * BLOCK_SIZE, BLOCK_COUNT);
         if(vp->aid == FAIL) return NULL;
         if(Hendaccess(vp->aid) == FAIL) return NULL;
     }
