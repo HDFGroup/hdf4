@@ -150,6 +150,9 @@ extern int32 SDisrecord
 extern intn SDiscoordvar
     (int32 id);
 
+extern intn SDsetblocksize
+    (int32 sdsid, int32 block_size);
+
 /* Define the FORTRAN names */
 
 #ifndef MFSD_FNAMES

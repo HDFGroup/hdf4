@@ -43,6 +43,7 @@ const int *dims ;
         ret->data_ref = 0;
         ret->data_tag = DATA_TAG;  /* Assume normal data unless set   */
         ret->data_offset = 0;      /* Assume data starts at beginning */
+        ret->block_size = -1;      /* start off with no block size set */
         ret->numrecs = 0;
         ret->aid = FAIL;
         ret->ndg_ref = 0;

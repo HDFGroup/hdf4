@@ -62,7 +62,8 @@
 #define DATA              "Data0.0"
 #define ATTR_FIELD_NAME   "VALUES"
 
-#define BLOCK_SIZE  64    /* multiplier for bytes in linked blocks */
+#define BLOCK_MULT  64    /* multiplier for bytes in linked blocks */
+#define MAX_BLOCK_SIZE  65536    /* maximum size of block in linked blocks */
 #define BLOCK_COUNT 128   /* size of linked block pointer objects  */
 
 #endif
@@ -146,6 +147,7 @@ typedef struct {
         uint16 data_tag;  /* tag of the variable's data storage (if exists) */
         uint16 ndg_ref;   /* ref of ndg for this dataset */
         intn   data_offset; /* non-traditional data may not begin at 0 */
+        int32  block_size;  /* size of the blocks for unlimited dim. datasets */
         int numrecs;  /* number of records this has been filled to */
         int32 aid;    /* aid for DFTAG_SD data */
         int32 HDFtype; /* type of this variable as HDF thinks */

@@ -32,6 +32,9 @@ int32 hdf_get_vp_aid
 #endif /* HDF */
 
 /* #define VDEBUG */
+/* #define DEBUG */
+/* #define CDEBUG */
+
 #ifdef VDEBUG
 /*
  * Print the values of an array of longs
@@ -104,7 +107,7 @@ const long *coords ;
 	up = vp->shape + vp->assoc->count - 1 ;
 	ip = coords + vp->assoc->count - 1 ;
 #ifdef CDEBUG
-	fprintf(stderr,"	NCcoordck: coords %ld, count %ld, ip %d\n",
+	fprintf(stderr,"	NCcoordck: coords %p, count %ld, ip %p\n",
 		coords, vp->assoc->count, ip ) ;
 #endif /* CDEBUG */
 	for( ; ip >= boundary ; ip--, up--)
@@ -144,7 +147,11 @@ const long *coords ;
             attr = NC_findattr(&vp->attrs, _FillValue);
 
             if(attr != NULL)
+#ifdef OLD_WAY
                 hdf_fill_array(strg, len, (*attr)->data->values, vp->type);
+#else /* OLD_WAY */
+                HDmemfill(strg,(*attr)->data->values,vp->szof,(vp->len/vp->HDFsize));
+#endif /* OLD_WAY */
             else 
                 NC_arrayfill(strg, len, vp->type);
 
@@ -577,6 +584,7 @@ Void *values ;
 PRIVATE int32 tBuf_size = 0;
 PRIVATE int8  *tBuf = NULL;
 
+#ifdef OLD_WAY
 /* ---------------------------- hdf_fill_array ---------------------------- */
 /*
   Fill the array pointed to by storage with the value pointed to
@@ -640,6 +648,7 @@ int32   type;
     }
     
 } /* hdf_fill_array */
+#endif /* OLD_WAY */
 
 #define MAX_SIZE 1000000
 
@@ -661,7 +670,7 @@ NC_var *vp;
     int32 byte_count, len;
     int32 to_do, done, chunk_size;
     
-#if DEBUG 
+#ifdef DEBUG 
     fprintf(stderr, "hdf_get_data I've been called\n");
 #endif
     
@@ -720,7 +729,11 @@ NC_var *vp;
     if(!attr) {
         NC_arrayfill(values, len, vp->type);
     } else {
+#ifdef OLD_WAY
         hdf_fill_array(values, len, (*attr)->data->values, vp->type);
+#else
+        HDmemfill(values,(*attr)->data->values,vp->szof,to_do);
+#endif /* OLD_WAY */
     }
     
     /* --------------------------------------
@@ -731,6 +744,10 @@ NC_var *vp;
      */
 
     vsid = Hnewref(handle->hdf_file);
+#ifdef DEBUG
+    fprintf(stderr, "--- Allocating new data storage szof=%d, to_do=%d\n",(int)vp->szof, (int)to_do);
+    fprintf(stderr, "byte_count=%d\n", (int)byte_count);
+#endif  
     vp->aid = Hstartwrite(handle->hdf_file, DATA_TAG, vsid, byte_count);
 
     if(vp->aid == FAIL) return NULL;
@@ -766,8 +783,29 @@ NC_var *vp;
 
     /* if it is a record var might as well make it linked blocks now */
     if(IS_RECVAR(vp)) {
-        vp->aid = HLcreate(handle->hdf_file, DATA_TAG, vsid, 
-                           vp->len * BLOCK_SIZE, BLOCK_COUNT);
+        int32 block_size; /* the size of the linked blocks to use */
+
+	/* The block size is calculated according to the following heuristic: */
+	/*   First, the block size the user set is used, if set. */
+	/*   Second, the block size is calculated according to the size being */
+	/*           written times the BLOCK_MULT value, in order to make */
+	/*           bigger blocks if the slices are very small. */
+	/*   Third, the calculated size is check if it is bigger than the */
+	/*           MAX_BLOCK_SIZE value so that huge empty blocks are not */
+	/*           created.  If the calculated size is greater than */
+	/*           MAX_BLOCK_SIZE, then MAX_BLOCK_SIZE is used */
+	/* These are very vague heuristics, but hopefully they should avoid */
+	/* some of the past problems... -QAK */
+	if(vp->block_size!=(-1)) /* use value the user provided, if available */
+	    block_size=vp->block_size;
+	else { /* try figuring out a good value using some heuristics */
+	    block_size=vp->len*BLOCK_MULT;
+	    if(block_size>MAX_BLOCK_SIZE)
+		block_size=MAX_BLOCK_SIZE;
+	  } /* end else */
+
+        vp->aid = HLcreate(handle->hdf_file, DATA_TAG, vsid, block_size,
+		BLOCK_COUNT);
         if(vp->aid == FAIL) return NULL;
         if(Hendaccess(vp->aid) == FAIL) return NULL;
     }
@@ -780,7 +818,7 @@ NC_var *vp;
         Vdetach(vg);
     }
         
-#if DEBUG 
+#ifdef DEBUG 
     fprintf(stderr, "Done with the DATA Vdata returning id %d\n", vsid);
 #endif
 
@@ -858,11 +896,11 @@ uint32    count;
     uint8 platntsubclass;  /* the machine type of the current platform */
     uint8 outntsubclass;   /* the data's machine type */
 
-#if DEBUG
+#ifdef DEBUG
     fprintf(stderr, "hdf_xdr_NCvdata I've been called : %s\n", vp->name->values);
 #endif
 
-#if DEBUG 
+#ifdef DEBUG 
     fprintf(stderr, "Where = %d  count = %d\n", where, count);
 #endif
     
@@ -880,7 +918,11 @@ uint32    count;
                     attr = NC_findattr(&vp->attrs, _FillValue);
                     len = (vp->len / vp->HDFsize) * vp->szof;       
                     if(attr != NULL)
+#ifdef OLD_WAY
                         hdf_fill_array(values, len, (*attr)->data->values, vp->type);
+#else /* OLD_WAY */
+                        HDmemfill(values,(*attr)->data->values,vp->szof,(vp->len/vp->HDFsize));
+#endif /* OLD_WAY */
                     else 
                         NC_arrayfill(values, len, vp->type);
                     
@@ -1037,11 +1079,11 @@ uint32    count;
     int32 status;
     int32 byte_count;
 
-#if DEBUG
+#ifdef DEBUG
     fprintf(stderr, "nssdc_xdr_NCvdata I've been called : %s\n", vp->name->values);
 #endif
 
-#if DEBUG 
+#ifdef DEBUG 
     fprintf(stderr, "Where = %d  count = %d\n", where, count);
 #endif
 
@@ -1500,6 +1542,9 @@ Void *values ;
 	/* now accumulate max count for a single io operation */
 	edp = edges + vp->assoc->count - 1 ; /* count is > 0 at this point */
 	iocount = 1 ;
+#ifdef VDEBUG
+	fprintf(stderr, "edp\t%ld\n", (unsigned long)edp - (unsigned long)edges) ;
+#endif /* VDEBUG */
 	for( ; edp >= edp0 ; edp--)
 		iocount *= *edp ;
 	/* now edp = edp0 - 1 */
