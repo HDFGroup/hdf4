@@ -1844,7 +1844,7 @@ ndsirslab(filename, fnlen, start, slab_size, stride, buffer, buffer_size)
     }
     else	
         ret = DFSDreadslab(fn, (int32 *)start, (int32 *)slab_size,
-                (int32 *)stride, (int32 *)buffer, (int32 *)buffer_size);
+                (int32 *)stride, buffer, (int32 *)buffer_size);
     HDfreespace(fn);
     return(ret);
 }
