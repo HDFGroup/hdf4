@@ -81,7 +81,10 @@ for file in .. \
   fi
   echo creating $file
   rm -f $file
-  echo "# Generated automatically from `echo $file|sed 's|.*/||'`.in by configure." > $file
+  case $file in
+    *.c|*.h) echo "/* Generated automatically from `echo $file|sed 's|.*/||'`.in by configure. */" > $file;;
+    *) echo "# Generated automatically from `echo $file|sed 's|.*/||'`.in by configure." > $file;;
+  esac
   sed -e "
 $prsub
 s%@CPPFLAGS@%$CPPFLAGS%g
@@ -146,8 +149,8 @@ readsub(inpath)
     }
     buf[sizeof(buf)-1]	= 0;
     while (fgets(buf, sizeof(buf), fp) != NULL) {
-      if (sscanf(buf, "include%*[] \t[]%s", path) == 1) {
-          if (!readsub(path))
+	if (sscanf(buf, "include%*[] \t[]%s", path) == 1) {
+	    if (!readsub(path))
 		return 0;
 	} else {
 	    (void) fputs(buf, stdout);

@@ -148,9 +148,6 @@ OS_ultrix
 #ifdef _UNICOS
 OS_unicos
 #endif
-#ifdef __convex__
-OS_convex
-#endif
 #ifdef masscomp
 OS_rtu
 #endif
@@ -399,7 +396,7 @@ test -z "$FC" && FC=""
 test -n "$FC" && break
 done
 ;;
-  *)     for p in f77 cf77 fc
+  *)     for p in f77 cf77
 do
 if test -z "$FC"; then
   echo checking for $p
@@ -1015,7 +1012,10 @@ for file in .. \
   fi
   echo creating $file
   rm -f $file
-  echo "# Generated automatically from `echo $file|sed 's|.*/||'`.in by configure." > $file
+  case $file in
+    *.c|*.h) echo "/* Generated automatically from `echo $file|sed 's|.*/||'`.in by configure. */" > $file;;
+    *) echo "# Generated automatically from `echo $file|sed 's|.*/||'`.in by configure." > $file;;
+  esac
   sed -e "
 $prsub
 s%@CPPFLAGS@%$CPPFLAGS%g
@@ -1105,8 +1105,8 @@ readsub(inpath)
     }
     buf[sizeof(buf)-1]	= 0;
     while (fgets(buf, sizeof(buf), fp) != NULL) {
-      if (sscanf(buf, "include%*[] \\t[]%s", path) == 1) {
-          if (!readsub(path))
+	if (sscanf(buf, "include%*[] \\t[]%s", path) == 1) {
+	    if (!readsub(path))
 		return 0;
 	} else {
 	    (void) fputs(buf, stdout);
