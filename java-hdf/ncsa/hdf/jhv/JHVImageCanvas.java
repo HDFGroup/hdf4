@@ -20,7 +20,6 @@ import java.awt.event.*;
 import ncsa.hdf.hdflib.*;
 import ncsa.hdf.palette.*;
 
-
 //-------------------------------------------------------------------------------------
 //
 //  Upgraded to the JDK 1.1.1b Event Model.
@@ -240,6 +239,7 @@ public class JHVImageCanvas extends Canvas
   }
   
   
+
   /** Initialize the HDF sds */ 
   public void initSDS() throws HDFException {
     
@@ -331,6 +331,7 @@ public class JHVImageCanvas extends Canvas
     }
   }
   
+
   /** read 8-raster  image data from the HDF file 
    * @param filename the HDF file name
    */
@@ -705,6 +706,7 @@ public class JHVImageCanvas extends Canvas
     return retVal;
   }
   
+
   /**
    * set the number of the image
    * @param num the number of the image
@@ -713,6 +715,7 @@ public class JHVImageCanvas extends Canvas
     numberOfImage = num;
   }
   
+
   /** read the HDF file SDS and converted to image  
    * @param sdid the SDS identifier
    * @param ref  the reference number
@@ -792,6 +795,7 @@ public class JHVImageCanvas extends Canvas
     
   }
   
+
   /** Return the RAINBOW palette 
    * rgb rgb rgb rgb rgb ....
    */
@@ -1013,6 +1017,7 @@ public class JHVImageCanvas extends Canvas
     canvasHeight= h;
   }
   
+
   /** set image size 
    * @param w the image width
    * @param h the image height
@@ -1271,6 +1276,7 @@ public class JHVImageCanvas extends Canvas
     return retImage;
   }
   
+
   /** which action will be taken
    * @param actFlag the action flag
    */
@@ -1352,8 +1358,8 @@ public class JHVImageCanvas extends Canvas
       tx = newtx;
     }
     
-    int p = (int)(canvasWidth * /*0.9*/0.9);
-    int m = (int)(imageWidth - (canvasWidth - p));
+    int p = (int)(canvasWidth * 0.9);
+    int m = (int)(imageWidth - (canvasWidth - p) + 2);
     hScrollbar.setValues(//draw the part of the image that starts at this x:
 			 tx, 
 			 //amount to scroll for a "page":
@@ -1390,8 +1396,8 @@ public class JHVImageCanvas extends Canvas
       ty = newty;
     }
     
-    int p = (int)(canvasHeight * /*0.9*/0.9);
-    int m = (int)(imageHeight - (canvasHeight - p));
+    int p = (int)(canvasHeight * 0.9);
+    int m = (int)(imageHeight - (canvasHeight - p) + 2);
     vScrollbar.setValues(//draw the part of the image that starts at this y:
 			 ty, 
 			 //amount to scroll for a "page":
@@ -1627,7 +1633,7 @@ public class JHVImageCanvas extends Canvas
     } else {
       // draw the frame
       g.setColor(Color.red);
-      g.drawRect(startx-1,starty-1,imageWidth+1, imageHeight+1);
+      // g.drawRect(startx-1,starty-1,imageWidth+1, imageHeight+1);
       
       // image
       g.drawImage(image,startx,starty,this);
@@ -1709,6 +1715,7 @@ public class JHVImageCanvas extends Canvas
   }
 
   public void mouseClicked(MouseEvent e) {}
+
   /**
    * Called if the mouse is up.
    * @param evt the event
@@ -1774,6 +1781,7 @@ public class JHVImageCanvas extends Canvas
     }
   }
   
+
   /**
    * Called if the mouse is down.
    * @param evt the event
@@ -1791,6 +1799,7 @@ public class JHVImageCanvas extends Canvas
 
   }
   
+
   /**
    * Called if the mouse is dragged (the mouse button is down)
    * @param evt the event
@@ -1843,7 +1852,7 @@ public class JHVImageCanvas extends Canvas
   public void checkMousePosition(int x, int y) {
 	
     // check if the point(x,y) is inside the image area
-    if (imageArea.contains(x,y)) {
+    if (imageArea.contains(x+tx,y+ty)) {
   
       // make annotation (Click to get the orignal image)
       mouseOnImageFlag = true;
@@ -1920,7 +1929,6 @@ public class JHVImageCanvas extends Canvas
       // set show coordinate flag
     setShowCoordinate(false);
   }
-
 
 /** make spreadsheet for draged area of the image */
 public void makeSpreadsheet() {
@@ -2281,6 +2289,7 @@ public void drawRectangle(Rectangle rect) {
 	updateImageSource();
 
     }
+
      /**
       * ncsa.hdf.palette.PaletteEditorAdapter flag
       */
