@@ -35,6 +35,7 @@ void test_slab();
 void test_litend();
 void test_vsets();
 void test_tbbt();
+void test_conv();
 
 #endif
 

@@ -98,12 +98,13 @@ main (argc, argv)
   InitTest("extelt",test_hextelt,"EXTERNAL ELEMENTS");
   InitTest("hfile",test_hfile,"HFILE");
   InitTest("hfile1",test_hfile1,"HFILE LIMITS");
+  InitTest("conv",test_conv,"CONVERSION INTERFACE");
   InitTest("sdmms",test_sdmms,"SDMMS");
   InitTest("sdnmms",test_sdnmms,"SDNMMS");
   InitTest("slabs",test_slab,"HYPERSLAB INTERFACE");
   InitTest("litend",test_litend,"LITTLE-ENDIAN INTERFACE");
   InitTest("vset",test_vsets,"VSET Interface Test");
-  InitTest("tbbt",test_tbbt,"Threaded Balanced Trees\n");
+  InitTest("tbbt",test_tbbt,"Threaded Balanced Trees");
 
 
   Verbocity = 4; /* Default Verbocity is Low */

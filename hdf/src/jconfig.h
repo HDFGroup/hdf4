@@ -125,7 +125,7 @@
  * as the inline keyword; otherwise define it as empty.
  */
 
-#ifdef __GNUC__			/* for instance, GNU C knows about inline */
+#if defined __GNUC__ & !defined NEXT /* for instance, GNU C knows about inline */
 #define INLINE __inline__
 #endif
 #ifndef INLINE			/* default is to define it as empty */
