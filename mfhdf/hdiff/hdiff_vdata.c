@@ -489,9 +489,7 @@ vdata_cmp(int32  vs1, int32  vs2,
 
 
 void
-fmt_print(x, type)
-uint8 *x;
-int32 type;
+fmt_print(uint8 *x, int32 type)
 {
  int16    s = 0;
  int32    l = 0;
