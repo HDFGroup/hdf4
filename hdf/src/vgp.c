@@ -371,7 +371,7 @@ Load_vfile(HFILEID f /* IN: file handle */)
     /* Check if vfile buffer has been allocated */
     if (vtree == NULL)
       {
-          vtree = tbbtdmake(vcompare, sizeof(int32));
+          vtree = tbbtdmake(vcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE);
           if (vtree == NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -396,7 +396,7 @@ Load_vfile(HFILEID f /* IN: file handle */)
 
     /* load all the vg's  tag/refs from file */
     vf->vgtabn = 0; /* intialize to number of current entries to zero */
-    vf->vgtree = tbbtdmake(vcompare, sizeof(int32));
+    vf->vgtree = tbbtdmake(vcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE);
     if (vf->vgtree == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -435,7 +435,7 @@ Load_vfile(HFILEID f /* IN: file handle */)
 
     /* load all the vs's  tag/refs from file */
     vf->vstabn = 0;
-    vf->vstree = tbbtdmake(vcompare, sizeof(int32));
+    vf->vstree = tbbtdmake(vcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE);
     if (vf->vstree == NULL)
       {
           tbbtdfree(vf->vgtree, vdestroynode, NULL);

@@ -1237,7 +1237,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
 
           /* set up the chunk tables of the information */
           /* intialize TBBT tree of CHUNK records*/
-          info->chk_tree = tbbtdmake(chkcompare, sizeof(int32));
+          info->chk_tree = tbbtdmake(chkcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE);
 
           /* Use Vdata interface to read in chunk table and
              store per chunk-info in memory using TBBT trees  */ 
@@ -1894,7 +1894,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
         HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
     /* intialize TBBT tree of CHUNK records*/
-    info->chk_tree = tbbtdmake(chkcompare, sizeof(int32));
+    info->chk_tree = tbbtdmake(chkcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE);
 
     /* Detach from the data DD ID */
     if(data_id != FAIL)

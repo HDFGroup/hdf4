@@ -710,7 +710,7 @@ for (i = 0; i < curr_image; i++)
 
                                 /* Initialize the local attribute tree */
                                 new_image->lattr_count = 0;
-                                new_image->lattree = tbbtdmake(rigcompare, sizeof(int32));
+                                new_image->lattree = tbbtdmake(rigcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE);
                                 if (new_image->lattree == NULL)
                                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
                                 new_image->ri_ref=img_info[i].grp_ref;
@@ -946,7 +946,7 @@ for (i = 0; i < curr_image; i++)
                           HDstrcpy(new_image->name,textbuf);
 
                           /* Initialize the local attribute tree */
-                          new_image->lattree = tbbtdmake(rigcompare, sizeof(int32));
+                          new_image->lattree = tbbtdmake(rigcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE);
                           if (new_image->lattree == NULL)
                               HGOTO_ERROR(DFE_NOSPACE, FAIL);
                           new_image->ri_ref=DFREF_WILDCARD;
@@ -1107,7 +1107,7 @@ for (i = 0; i < curr_image; i++)
                           HDstrcpy(new_image->name,textbuf);
 
                           /* Initialize the local attribute tree */
-                          new_image->lattree = tbbtdmake(rigcompare, sizeof(int32));
+                          new_image->lattree = tbbtdmake(rigcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE);
                           if (new_image->lattree == NULL)
                               HGOTO_ERROR(DFE_NOSPACE, FAIL);
                           new_image->ri_ref=DFREF_WILDCARD;
@@ -1434,7 +1434,7 @@ int32 GRstart(int32 hdf_file_id)
     /* Check if GR file tree has been allocated */
     if (gr_tree == NULL)
       {
-          if ((gr_tree = tbbtdmake(rigcompare, sizeof(int32))) == NULL)
+          if ((gr_tree = tbbtdmake(rigcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE)) == NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           /* Initialize the atom groups for GRs and RIs */
@@ -1457,13 +1457,13 @@ int32 GRstart(int32 hdf_file_id)
         gr_ptr->hdf_file_id=hdf_file_id;
         gr_ptr->gr_ref=DFREF_WILDCARD;
         gr_ptr->gr_count=0;
-        gr_ptr->grtree = tbbtdmake(rigcompare, sizeof(int32));
+        gr_ptr->grtree = tbbtdmake(rigcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE);
         if (gr_ptr->grtree == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         gr_ptr->gr_modified=0;
 
         gr_ptr->gattr_count=0;
-        gr_ptr->gattree = tbbtdmake(rigcompare, sizeof(int32));
+        gr_ptr->gattree = tbbtdmake(rigcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE);
         if (gr_ptr->gattree == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         gr_ptr->gattr_modified=0;
@@ -2369,7 +2369,7 @@ int32 GRcreate(int32 grid,const char *name,int32 ncomp,int32 nt,int32 il,int32 d
     ri_ptr->meta_modified=TRUE;
     ri_ptr->attr_modified=FALSE;
     ri_ptr->lattr_count=0;
-    ri_ptr->lattree = tbbtdmake(rigcompare, sizeof(int32));
+    ri_ptr->lattree = tbbtdmake(rigcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE);
     if(ri_ptr->lattree==NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     ri_ptr->comp_img=FALSE;

@@ -162,7 +162,7 @@ intn HTPstart(filerec_t *file_rec       /* IN:  File record to store info in */
   file_rec->ddlast->dirty = 0;	/* block does not need to be flushed */
 
   /* Initialize the tag tree */
-  file_rec->tag_tree = tbbtdmake(tagcompare, sizeof(uint16));
+  file_rec->tag_tree = tbbtdmake(tagcompare, sizeof(uint16), TBBT_FAST_UINT16_COMPARE);
 
   /* Initialize the DD atom group (trying 256 hash currently, feel free to change */
   if(HAinit_group(DDGROUP,256)==FAIL)
@@ -394,7 +394,7 @@ intn HTPinit(filerec_t *file_rec,       /* IN: File record to store info in */
     file_rec->maxref = 0;
   
     /* Initialize the tag tree */
-    file_rec->tag_tree = tbbtdmake(tagcompare, sizeof(uint16));
+    file_rec->tag_tree = tbbtdmake(tagcompare, sizeof(uint16), TBBT_FAST_UINT16_COMPARE);
 
     /* Initialize the DD atom group (trying 256 hash currently, feel free to change */
     if(HAinit_group(DDGROUP,256)==FAIL)
