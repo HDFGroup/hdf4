@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1992/12/31 16:20:11  georgev
-Fixed bug - wrong arguement in printf()
+Revision 1.6  1993/01/19 06:00:31  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.5  1992/12/31  16:20:11  georgev
+ * Fixed bug - wrong arguement in printf()
+ *
  * Revision 1.4  1992/08/06  14:27:57  mlivin
  * made it append all RIGs to file, not crush the given output file
  *

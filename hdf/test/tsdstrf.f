@@ -2,10 +2,14 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.3  1992/08/09 19:47:09  chouck
-C Changed add-data to put-data.  Increased size of arrays strings are
-C returned in to avoid memory over-writes.
+C Revision 1.4  1993/01/19 05:59:17  koziol
+C Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+C port.  Lots of minor annoyances fixed.
 C
+c Revision 1.3  1992/08/09  19:47:09  chouck
+c Changed add-data to put-data.  Increased size of arrays strings are
+c returned in to avoid memory over-writes.
+c
 c Revision 1.2  1992/07/09  19:39:35  chouck
 c rank was declared twice
 c

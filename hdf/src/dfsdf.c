@@ -1,26 +1,3 @@
-/***************************************************************************
-*
-*
-*                         NCSA HDF version 3.2r3
-*                            December 1, 1992
-*
-* NCSA HDF Version 3.2 source code and documentation are in the public
-* domain.  Specifically, we give to the public domain all rights for future
-* licensing of the source code, all resale rights, and all publishing rights.
-*
-* We ask, but do not require, that the following message be included in all
-* derived works:
-*
-* Portions developed at the National Center for Supercomputing Applications at
-* the University of Illinois at Urbana-Champaign, in collaboration with the
-* Information Technology Institute of Singapore.
-*
-* THE UNIVERSITY OF ILLINOIS GIVES NO WARRANTY, EXPRESSED OR IMPLIED, FOR THE
-* SOFTWARE AND/OR DOCUMENTATION PROVIDED, INCLUDING, WITHOUT LIMITATION,
-* WARRANTY OF MERCHANTABILITY AND WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE
-*
-****************************************************************************
-*/
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
@@ -28,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.9  1993/01/15 16:51:37  georgev
-dswfv() works now. i.e. DFSDwritefillvalue()
+Revision 1.10  1993/01/19 05:55:14  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.9  1993/01/15  16:51:37  georgev
+ * dswfv() works now. i.e. DFSDwritefillvalue()
+ *
  * Revision 1.8  1993/01/05  04:07:25  georgev
  * Added Fortran hyperslab C stubs
  *
@@ -886,6 +867,7 @@ ndsinum(filename, len)
     return(status);
 }
 
+
 /*------------------------------------------------------------------------------
 * Name:     dsip32s
 * Purpose:  tests if the SDG with the specified ref was written by HDF prior to
@@ -917,7 +899,6 @@ ndsip32s(filename, ref, ispre32, len)
     HDfreespace(cname);
     return(status);
 }
-
 
 /*-----------------------------------------------------------------------------
  * Name:    dfsdgetdatastrs
@@ -1313,7 +1294,6 @@ ndfsdendslice()
 }
 
 
-
 /*-----------------------------------------------------------------------------
  * Name:    dfsdsetnt
  * Purpose: Call DFSDsetNT to set number type for subsequent calls to
@@ -1641,8 +1621,7 @@ ndswref(filename, fnlen, ref)
     fn = HDf2cstring(filename, *fnlen);
     ret = DFSDwriteref(fn, (uint16) *ref);
     HDfreespace(fn);
-
-    return ret;
+    return(ret);
 }
 
 /*-----------------------------------------------------------------------------
@@ -1791,4 +1770,5 @@ ndswslab(filename, fnlen, start, stride, count, data)
     HDfreespace(fn);
     return(ret);
 }
+
 

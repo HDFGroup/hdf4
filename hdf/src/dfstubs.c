@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.3  1993/01/19 05:55:19  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.2  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -1247,8 +1251,7 @@ DF *dfile;
         list=list->next;
         list->next=NULL;
 
-        DFmovmem((char*)&ddh, (char*)&(list->ddh),
-                 sizeof(DFddh) ); /* Copy ddh */
+        HDmemcpy((char*)&(list->ddh), (char*)&ddh, sizeof(DFddh) ); /* Copy ddh */
 
         if (n) {
 #ifdef DF_STRUCTOK
@@ -1492,9 +1495,9 @@ DF *dfile;
         CKMALLOC(dle, NULL);
         p->next=dle;                        /* insert dle at end of list */
         dle->next=NULL;
-        DFmovmem((char*)&ddh, (char*)&dle->ddh,sizeof(DFddh));
+        HDmemcpy((char*)&dle->ddh, (char*)&ddh, sizeof(DFddh));
         for (j=0; j<ddh.dds; j++)
-            DFmovmem( (char*)&dd, (char*)&dle->dd[j], sizeof(DFdd));
+            HDmemcpy((char*)&dle->dd[j], (char*)&dd, sizeof(DFdd));
         return(&(dle->dd[0]));
     }
 #ifdef PC

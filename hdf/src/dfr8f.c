@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.4  1993/01/19 05:54:57  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.3  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.2  1992/09/11  14:15:04  koziol
  * Changed Fortran stubs' parameter passing to use a new typedef, intf,
  * which should be typed to the size of an INTEGER*4 in whatever Fortran
@@ -366,6 +370,64 @@ nd8lref()
 }
 
 /*-----------------------------------------------------------------------------
+ * Name:    d8scomp
+ * Purpose: set the compression to use when writing the next image
+ * Inputs:
+ *      scheme - the type of compression to use
+ * Returns: 0 on success, -1 for error
+ * Users:   HDF HLL (high-level library) users, utilities, other routines
+ * Invokes: DFR8setcompress
+ * Remarks: if the compression scheme is JPEG, this routine sets up default
+ *          JPEG parameters to use, if a user wants to change them, d8sjpeg
+ *          must be called.
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nd8scomp(intf *scheme)
+#else
+nd8scomp(scheme)
+intf *scheme;
+#endif /* PROTOTYPE */
+{
+    comp_info *cinfo;   /* Structure containing compression parameters */
+
+    if(*scheme==COMP_JPEG) {  /* check for JPEG compression and set defaults */
+        cinfo->jpeg.quality=75;
+        cinfo->jpeg.force_baseline=1;
+      } /* end if */
+    return (DFR8setcompress((int32)*scheme,cinfo));
+}   /* end d8scomp() */
+
+/*-----------------------------------------------------------------------------
+ * Name:    d8sjpeg
+ * Purpose: change the JPEG compression parameters
+ * Inputs:
+ *      quality - what the JPEG quality rating should be
+ *      force_baseline - whether to force a JPEG baseline file to be written
+ * Returns: 0 on success, -1 for error
+ * Users:   HDF HLL (high-level library) users, utilities, other routines
+ * Invokes: DFR8setcompress
+ * Remarks: none
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nd8sjpeg(intf *quality,intf *force_baseline)
+#else
+nd8sjpeg(quality,force_baseline)
+intf *quality;
+intf *force_baseline;
+#endif /* PROTOTYPE */
+{
+    comp_info *cinfo;   /* Structure containing compression parameters */
+
+    cinfo->jpeg.quality=(intn)*quality;
+    cinfo->jpeg.force_baseline=(intn)*force_baseline;
+    return (DFR8setcompress((int32)COMP_JPEG,cinfo));
+}   /* end d8sjpeg() */
+
+/*-----------------------------------------------------------------------------
  * Name:    dfr8lastref
  * Purpose: Return last ref written or read
  * Inputs:  none
@@ -426,4 +488,63 @@ ndfr8restart()
 
     return(DFR8restart());
 }
+
+/*-----------------------------------------------------------------------------
+ * Name:    dfr8setcompress
+ * Purpose: set the compression to use when writing the next image
+ * Inputs:
+ *      scheme - the type of compression to use
+ * Returns: 0 on success, -1 for error
+ * Users:   HDF HLL (high-level library) users, utilities, other routines
+ * Invokes: DFR8setcompress
+ * Remarks: if the compression scheme is JPEG, this routine sets up default
+ *          JPEG parameters to use, if a user wants to change them, dfr8setjpeg
+ *          must be called.
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+ndfr8setcompress(intf *scheme)
+#else
+ndfr8setcompress(scheme)
+intf *scheme;
+#endif /* PROTOTYPE */
+{
+    comp_info *cinfo;   /* Structure containing compression parameters */
+
+    if(*scheme==COMP_JPEG) {  /* check for JPEG compression and set defaults */
+        cinfo->jpeg.quality=75;
+        cinfo->jpeg.force_baseline=1;
+      } /* end if */
+    return (DFR8setcompress((int32)*scheme,cinfo));
+}   /* end dfr8setcompress() */
+
+/*-----------------------------------------------------------------------------
+ * Name:    dfr8setjpeg
+ * Purpose: change the JPEG compression parameters
+ * Inputs:
+ *      quality - what the JPEG quality rating should be
+ *      force_baseline - whether to force a JPEG baseline file to be written
+ * Returns: 0 on success, -1 for error
+ * Users:   HDF HLL (high-level library) users, utilities, other routines
+ * Invokes: DFR8setcompress
+ * Remarks: none
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+ndfr8setjpeg(intf *quality,intf *force_baseline)
+#else
+ndfr8setjpeg(quality,force_baseline)
+intf *quality;
+intf *force_baseline;
+#endif /* PROTOTYPE */
+{
+    comp_info *cinfo;   /* Structure containing compression parameters */
+
+    cinfo->jpeg.quality=*quality;
+    cinfo->jpeg.force_baseline=*force_baseline;
+    return (DFR8setcompress((int32)COMP_JPEG,cinfo));
+}   /* end dfr8setjpeg() */
+
 

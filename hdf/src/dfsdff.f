@@ -1,32 +1,14 @@
-c***************************************************************************
-c
-c
-c                         NCSA HDF version 3.2r3
-c                            December 1, 1992
-c
-c NCSA HDF Version 3.2 source code and documentation are in the public
-c domain.  Specifically, we give to the public domain all rights for future
-c licensing of the source code, all resale rights, and all publishing rights.
-c
-c We ask, but do not require, that the following message be included in all
-c derived works:
-c
-c Portions developed at the National Center for Supercomputing Applications at
-c the University of Illinois at Urbana-Champaign, in collaboration with the
-c Information Technology Institute of Singapore.
-c
-c THE UNIVERSITY OF ILLINOIS GIVES NO WARRANTY, EXPRESSED OR IMPLIED, FOR THE
-c SOFTWARE AND/OR DOCUMENTATION PROVIDED, INCLUDING, WITHOUT LIMITATION,
-c WARRANTY OF MERCHANTABILITY AND WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE
-c
-c***************************************************************************
 C
 C $Header$
 C
 C $Log$
-C Revision 1.2  1993/01/04 18:09:33  sxu
-C add dsp32sd (for dfsdpre32sdg)
+C Revision 1.3  1993/01/19 05:55:17  koziol
+C Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+C port.  Lots of minor annoyances fixed.
 C
+c Revision 1.2  1993/01/04  18:09:33  sxu
+c add dsp32sd (for dfsdpre32sdg)
+c
 c Revision 1.1  1992/08/25  21:40:44  koziol
 c Initial revision
 c
@@ -46,7 +28,7 @@ C   dsgslc:         get slice from file
 C   dssslc:         set up to write slices to file
 C   dsrref:	    set up next ref to read
 C   dsnum:          return number of SDGs in file
-C   dsp32sd:        is the SDG/ref written by HDF prior to version 3.2?		
+C   dsp32sd:        is the SDG/ref written by HDF prior to version 3.2?
 C   dfsdgetdims:    get dimensions of next SDG
 C   dfsdgetdata:    get data for next SDG
 C   dfsdsetdatastrs:set strings for data for subsequent SDGs
@@ -275,6 +257,7 @@ C------------------------------------------------------------------------------
 
       return
       end
+
 
 C------------------------------------------------------------------------------
 C Name:     dsp32sd

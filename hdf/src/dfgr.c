@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.5  1993/01/19 05:54:26  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.4  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.3  1992/10/22  22:53:32  chouck
  * Added group handle to group interface
  *
@@ -59,7 +63,7 @@ static DFGRrig Grread;         /* information about RIG being read */
 static DFGRrig Grwrite;        /* information about RIG being written */
 static int Grnewdata = 0;      /* does Grread contain fresh data? */
 static int Grcompr = 0;        /* compression scheme to use */
-static comp_info Grcinfo;  	   /* Compression information for each scheme */
+static comp_info Grcinfo;      /* Compression information for each scheme */
 uint8  *Grlutdata=NULL;        /* points to lut, if in memory */
 static uint16 Grrefset=0;      /* Ref of image to get next */
 static uint16 Grlastref = 0;   /* Last ref read/written */
@@ -266,10 +270,19 @@ int32 scheme;
 comp_info *cinfo;
 #endif
 {
-    Grcompr = scheme;       /* Set the compression scheme */
+    char *FUNC="DFGRsetcompress";
+
+    if(scheme<0 || scheme>COMP_MAX_COMP || compress_map[scheme]==0)
+        HRETURN_ERROR(DFE_BADSCHEME, FAIL);
+
+    /* map JPEG compression into correct type of JPEG compression */
+    if(scheme==COMP_JPEG)
+        Grcompr = DFTAG_JPEG;       /* Set the compression scheme */
+    else    /* otherwise, just use mapped tag */
+        Grcompr = compress_map[scheme];
     Grcinfo = *cinfo;       /* Set the compression parameters */
     return SUCCEED;
-}
+}   /* end DFGRsetcompress() */
 
 /*-----------------------------------------------------------------------------
  * Name:    DFGRsetlutdims
@@ -883,10 +896,10 @@ int DFGRIgetdims(filename, pxdim, pydim, pncomps, pil, type)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFGRIreqil(int il, int type)
+int DFGRIreqil(intn il, intn type)
 #else
 int DFGRIreqil(il, type)
-    int il, type;
+    intn il, type;
 #endif
 {
     HEclear();
@@ -953,7 +966,7 @@ int DFGRIgetimlut(filename, imlut, xdim, ydim, type, isfortran)
     Grnewdata = 0;             /* read new RIG next time */
 
     if ((xdim!=Grread.datadesc[type].xdim)
-       || (ydim!=Grread.datadesc[type].ydim)) {
+            || (ydim!=Grread.datadesc[type].ydim)) {
         HERROR(DFE_ARGS);
         return FAIL;
     }
@@ -961,7 +974,7 @@ int DFGRIgetimlut(filename, imlut, xdim, ydim, type, isfortran)
     /* read image/lut */
     if (Grread.datadesc[type].compr.tag) { /* compressed image/lut */
         if ((Grreqil[type] >= 0) &&
-           (Grreqil[type] != Grread.datadesc[type].interlace)) {
+                (Grreqil[type] != Grread.datadesc[type].interlace)) {
             HERROR(DFE_UNSUPPORTED);
             return FAIL;
         }
@@ -1071,11 +1084,11 @@ int DFGRIgetimlut(filename, imlut, xdim, ydim, type, isfortran)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFGRIsetdims(int32 xdim, int32 ydim, int ncomps, int type)
+int DFGRIsetdims(int32 xdim, int32 ydim, intn ncomps, int type)
 #else
 int DFGRIsetdims(xdim, ydim, ncomps, type)
     int32 xdim, ydim;
-    int ncomps;
+    intn ncomps;
     int type;
 #endif
 {
@@ -1231,20 +1244,20 @@ int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran, newfile)
     if (!wref)
        return(HDerr(file_id));
 
+#ifdef OLD_WAY
     is8bit = (Grwrite.datadesc[IMAGE].ncomponents == 1);
+#else
+    /* make 8-bit compatibility only for older 8-bit stuff, not JPEG */
+    is8bit = ((Grwrite.datadesc[IMAGE].ncomponents == 1) &&
+            (Grcompr!=DFTAG_GREYJPEG && Grcompr!=DFTAG_JPEG));
+#endif
 
-    wtag = (type==LUT) ? DFTAG_LUT : Grcompr ? DFTAG_CI : DFTAG_RI;
+    wtag = (type==LUT) ? DFTAG_LUT : (Grcompr ? DFTAG_CI : DFTAG_RI);
     Grwrite.data[type].tag = wtag;
 
 
     /* write out image/lut */
     if ((type==IMAGE) && Grcompr) {
-#ifdef OLD_WAY
-        if (Grwrite.datadesc[IMAGE].ncomponents>1) {
-            HERROR(DFE_UNSUPPORTED);
-            return(HDerr(file_id));
-        }
-#endif
         lutsize = Grwrite.datadesc[LUT].xdim * Grwrite.datadesc[LUT].ydim *
            Grwrite.datadesc[LUT].ncomponents;
         if (Grcompr==DFTAG_IMC) {
@@ -1255,7 +1268,8 @@ int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran, newfile)
             newlut = (uint8 *) HDgetspace((uint32)lutsize);
         }
         if (DFputcomp(file_id, wtag, wref, (uint8*)imlut, xdim, ydim,
-                     (uint8*)Grlutdata, (uint8*)newlut, Grcompr) == FAIL)
+                     (uint8*)Grlutdata, (uint8*)newlut, Grcompr, &Grcinfo)
+                     == FAIL)
             return(HDerr(file_id));
     } else {                   /* image need not be compressed */
         if (Hputelement(file_id, wtag, wref, (uint8 *)imlut,
@@ -1265,12 +1279,15 @@ int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran, newfile)
     Grwrite.data[type].ref = wref;
     Grwrite.aspectratio = (float32)1.0;
 
-    wtag = (type==LUT) ? DFTAG_IP8 : Grcompr ?
-       ((Grcompr==DFTAG_RLE) ? DFTAG_CI8 : DFTAG_II8) : DFTAG_RI8;
     /* Write out Raster-8 tags for those who want it */
-    if (is8bit
-       && (Hdupdd(file_id, wtag, wref, Grwrite.data[type].tag, wref) == FAIL))
-        return(HDerr(file_id));
+    if (is8bit) {
+        wtag = (type==LUT) ? DFTAG_IP8 : Grcompr ?
+            ((Grcompr==DFTAG_RLE) ? DFTAG_CI8 :
+                    DFTAG_II8) : DFTAG_RI8;
+
+        if(Hdupdd(file_id, wtag, wref, Grwrite.data[type].tag, wref) == FAIL)
+            return(HDerr(file_id));
+      } /* end if */
 
     if (type==IMAGE)
        Grwrite.datadesc[IMAGE].compr.tag = Grcompr;
@@ -1299,7 +1316,7 @@ int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran, newfile)
 
     if (Grcompr==DFTAG_IMC) {
         Ref.lut = 0;
-       HDfreespace(newlut);
+        HDfreespace(newlut);
         newlut = NULL;
     }
 

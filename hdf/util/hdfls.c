@@ -26,9 +26,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.19  1992/07/15 21:48:48  sxu
-No change
+Revision 1.20  1993/01/19 06:00:14  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.19  1992/07/15  21:48:48  sxu
+ * No change
+ *
  * Revision 1.18  1992/07/09  01:18:57  koziol
  * More PC fixes
  *
@@ -175,7 +179,6 @@ char *argv[];
     int32 fid, aid;
     int i=1, j, n, status;
     filerec_t *file_rec;    /* file record */
-    dd_t desc[MAXBUFF];
     
     while((i < argc) && (argv[i][0]=='-')){
         switch(argv[i][1]) {

@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/11/30 22:00:01  chouck
-Added fixes for changing to Vstart and Vend
+Revision 1.5  1993/01/19 05:56:17  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.4  1992/11/30  22:00:01  chouck
+ * Added fixes for changing to Vstart and Vend
+ *
  * Revision 1.3  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -188,17 +192,17 @@ nvgnamc(vg, vgname)
 **  related: Vgetclass--vgclsc--VFGCLS
 */
 
-FRETVAL(void)
+    FRETVAL(void)
 #ifdef PROTOTYPE
-     nvgclsc(VGROUP ** vg, _fcd vgclass)
+nvgclsc(VGROUP ** vg, _fcd vgclass)
 #else
-     nvgclsc(vg, vgclass)
-     VGROUP  **vg;
-     _fcd    vgclass;	/* output */
+nvgclsc(vg, vgclass)
+    VGROUP  **vg;
+	_fcd 		vgclass;				/* output */
 #endif
-     
+
 {
-    Vgetclass (*vg, vgclass);
+	 Vgetclass (*vg, vgclass);
 }   /* VGCLSC */
 
 /* ------------------------------------------------------------------ */
@@ -274,11 +278,11 @@ nvsnamc(vg, vgname, vgnamelen)
     intf    *vgnamelen;
 #endif
 {
-    char *name;
-    
+	char *name;
+
     name = HDf2cstring (vgname, (intn)*vgnamelen);
-    /* trimendblanks(name); */
-    Vsetname (*vg, name);
+	/* trimendblanks(name); */
+	Vsetname (*vg, name);
     HDfreespace (name);
 }
 
@@ -293,16 +297,16 @@ nvsnamc(vg, vgname, vgnamelen)
 nvsclsc(VGROUP **vg, _fcd vgclass, intf *vgclasslen)
 #else
 nvsclsc(vg, vgclass, vgclasslen)
-     VGROUP  **vg;
-     _fcd	vgclass;
-     intf    *vgclasslen;
+    VGROUP  **vg;
+	_fcd	vgclass;
+    intf    *vgclasslen;
 #endif
 {
-    char *class;
-    
+	char *class;
+
     class = HDf2cstring (vgclass, (intn)*vgclasslen);
-    /* trimendblanks(class); */
-    Vsetclass (*vg, class);
+	/* trimendblanks(class); */
+	Vsetclass (*vg, class);
     HDfreespace (class);
 }
 
@@ -342,7 +346,6 @@ nvisvgc(vg, id)
 {
     return( (intf) Visvg(*vg, *id) );
 }
-
 
 /* ------------------------------------------------------------------ */
 /* 

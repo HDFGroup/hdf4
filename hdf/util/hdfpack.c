@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1993/01/12 20:02:14  chouck
-Last object was not always getting moved over correctly
+Revision 1.5  1993/01/19 06:00:16  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.4  1993/01/12  20:02:14  chouck
+ * Last object was not always getting moved over correctly
+ *
  * Revision 1.3  1992/07/15  21:48:48  sxu
  * Added changes for CONVEX
  *
@@ -60,13 +64,13 @@ int main(int, char **);
 int usage(char *);
 int hdferror(void);
 int error(char *);
-int32 desc_comp(mydd_t *d1, mydd_t *d2);
+int desc_comp(const void *d1, const void *d2);
 #else
 int main();
 int usage();
 int hdferror();
 int error();
-int32 desc_comp();
+int desc_comp();
 #endif /* PROTOTYPE */
 
 unsigned char *data;
@@ -239,7 +243,8 @@ char *argv[];
      * Close the access element
      */
     stat = Hendaccess(aid);
-    if (stat == FAIL) hdferror();
+    if (stat == FAIL)
+        hdferror();
 
 /*
 **   Sort DD's by offset to make it easy to
@@ -546,11 +551,11 @@ char *string;
 ** EXAMPLES
 */
 #ifdef PROTOTYPE
-int32 desc_comp(mydd_t *d1, mydd_t *d2)
+int desc_comp(const void *d1, const void *d2)
 #else
-int32 desc_comp(d1, d2)
-mydd_t *d1, *d2;
+int desc_comp(d1, d2)
+const VOID *d1, *d2;
 #endif /* PROTOTYPE */
 {
-    return(d1->offset - d2->offset);
+    return(((mydd_t *)d1)->offset - ((mydd_t *)d2)->offset);
 }

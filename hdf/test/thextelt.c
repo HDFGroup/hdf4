@@ -5,10 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1992/07/27 18:40:12  dilg
-Changed DFACC_ALL to DFACC_RDWR in appropriate places to conform to new
-handling of access modes by Hopen().
+Revision 1.8  1993/01/19 05:58:44  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.7  1992/07/27  18:40:12  dilg
+ * Changed DFACC_ALL to DFACC_RDWR in appropriate places to conform to new
+ * handling of access modes by Hopen().
+ *
  * Revision 1.6  1992/06/25  18:27:39  chouck
  * Changed output file names
  *
@@ -170,7 +174,7 @@ int main(argc, argv)
       exit(1);
     }
 
-    if(strcmp(inbuf, "element 1000 1 correct")) {
+    if(HDstrcmp((const char *)inbuf, "element 1000 1 correct")) {
       fprintf(stderr, "Object stored in file #1 is wrong\n");
       fprintf(stderr, "\t       Is: %s\n", inbuf);
       fprintf(stderr, "\tShould be: element 1000 1 correct\n");

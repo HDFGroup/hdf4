@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/12/28 18:18:37  mfolk
-Changed header doc of DFdiget to make it a little clearer.
+Revision 1.5  1993/01/19 05:54:31  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.4  1992/12/28  18:18:37  mfolk
+ * Changed header doc of DFdiget to make it a little clearer.
+ *
  * Revision 1.3  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *

@@ -15,26 +15,6 @@
 *			(3)	vmake file -l vgref v1 v2 ... vn
 *
 *
-*****************************************************************************
-* 
-*			  NCSA HDF Vset release 2.1
-*					May 1991
-* 				Jason Ng May 1991 NCSA
-*
-* NCSA HDF Vset release 2.1 source code and documentation are in the public
-* domain.  Specifically, we give to the public domain all rights for future
-* licensing of the source code, all resale rights, and all publishing rights.
-* 
-* We ask, but do not require, that the following message be included in all
-* derived works:
-* 
-* Portions developed at the National Center for Supercomputing Applications at
-* the University of Illinois at Urbana-Champaign.
-* 
-* THE UNIVERSITY OF ILLINOIS GIVES NO WARRANTY, EXPRESSED OR IMPLIED, FOR THE
-* SOFTWARE AND/OR DOCUMENTATION PROVIDED, INCLUDING, WITHOUT LIMITATION,
-* WARRANTY OF MERCHANTABILITY AND WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE
-* 
 ******************************************************************************/
 
 #include "vg.h"
@@ -81,21 +61,21 @@ main(ac,av) int ac; char**av; {
 		exit(0);
 		}
   else if (ac==3)  {
-      if (!strcmp(av[2],"-l")) { show_help_msg() ; exit(0); }
+      if (!HDstrcmp(av[2],"-l")) { show_help_msg() ; exit(0); }
   		hfile  = av[1];
   		vgname = av[2];
  		vgadd(hfile,vgname);
 		}
 
   else if (ac==4)  {
-      if (!strcmp(av[2],"-l")) { show_help_msg() ; exit(0); }
+      if (!HDstrcmp(av[2],"-l")) { show_help_msg() ; exit(0); }
   		hfile    = av[1];
   		vsname   = av[2];
   		fmt      = av[3];
  		vsadd(hfile,vsname,fmt);
 		}
 
-  else if (!strcmp(av[2],"-l")) {
+  else if (!HDstrcmp(av[2],"-l")) {
 
      	int i;
 	int32 n, vgref, ids[50];
@@ -291,8 +271,8 @@ printf("vsadd: ref is %d\n",ref);
 						break;
 		  }
 	  stat = VSfdefine(vs,fields[i],ftype,order[i]);
-	  strcat(allfields,fields[i]);
-	  strcat(allfields,",");
+      HDstrcat(allfields,fields[i]);
+      HDstrcat(allfields,",");
      }
 
   i=HDstrlen(allfields); allfields[i-1]='\0'; /* remove last comma */
@@ -341,6 +321,7 @@ static int32 inplong (x) long *x; { return(scanf ("%ld ",x)); }
 
 
 #define BUFSIZE 40000
+unsigned char inpbuffer[BUFSIZE];
 
 int32 inpdata (bp) 
      unsigned char**bp; 
@@ -350,7 +331,6 @@ int32 inpdata (bp)
   int32 maxrec;
   int32 (*inpfn[MAXVAR])();
   int32 inpsiz[MAXVAR];
-  unsigned char inpbuffer[BUFSIZE];
 
      for(i=0;i<ntotal;i++) {
 	    switch(fmts[i]) {
@@ -450,7 +430,10 @@ int32 compact (ss,dd)
 #endif
 {
   int i,t,n = HDstrlen(ss);
-  for(t=0,i=0;i<n;i++) if(ss[i]!=' ') { dd[t++] = ss[i]; }
+  for(t=0,i=0;i<n;i++)
+    if(ss[i]!=' ') {
+        dd[t++] = ss[i];
+    }
   dd[t] = '\0';
   return (1);
 }
@@ -465,7 +448,7 @@ int32 savfld(ss,p1,p2)
 #endif
 {
   int32 t=p2-p1+1;
-  strncpy(flds[ntotal],&ss[p1],t);
+  HDstrncpy(flds[ntotal],&ss[p1],t);
   flds[ntotal][t] = '\0';
   return (1);
 
@@ -481,7 +464,8 @@ int32 savtype (ss,p1,p2)
 {
   char temp[20];
   int32 t=p2-p1+1;
-  strncpy(temp,&ss[p1],p2-p1+1); temp[t] = '\0';
+  HDstrncpy(temp,&ss[p1],p2-p1+1);
+  temp[t] = '\0';
   separate(temp,&fmts[ntotal],&fords[ntotal]);
   ntotal++;
   return (1);

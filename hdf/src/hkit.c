@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/11/05 18:59:26  chouck
-Added (unix) wrapper to realloc()
+Revision 1.5  1993/01/19 05:56:03  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.4  1992/11/05  18:59:26  chouck
+ * Added (unix) wrapper to realloc()
+ *
  * Revision 1.3  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -38,9 +42,9 @@ Added (unix) wrapper to realloc()
  *---------------------------------------------------------------------------*/
 
 #if defined PROTOTYPE
-char HUGE *HIstrncpy(register char *dest,register char *source,int32 len)
+char _HUGE *HIstrncpy(register char *dest,register char *source,int32 len)
 #else
-char HUGE *HIstrncpy(dest, source, len)
+char _HUGE *HIstrncpy(dest, source, len)
 register char *source, *dest;
 int32 len;
 #endif /* PROTOTYPE */
@@ -109,75 +113,80 @@ int32 HDspaceleft(void)
 
 #ifdef PC
 #ifdef WIN3
-void HUGE *HDgetspace(uint32 qty)
+void _HUGE *HDgetspace(uint32 qty)
 {
     char *FUNC="HDgetspace";
 
-    HANDLE mem_handle;  /* handle of the memory allocated */
-    HANDLE *handle_addr;/* pointer to the HANDLE stored in the memory block */
-    char huge *p1;
-    char *p2;
-
-    if (qty <= (uint32)128) {
-        mem_handle=LocalAlloc(LMEM_MOVEABLE, (WORD)qty+sizeof(HANDLE)+1);
-        if (mem_handle==NULL) {
-            HERROR(DFE_NOSPACE);
-            return(NULL);
-        }
-        handle_addr=(HANDLE *)(p2=(char *)LocalLock(mem_handle));
-        if (handle_addr==NULL) {
-            HERROR(DFE_NOSPACE);
-            return(NULL);
-        }
-        *handle_addr=mem_handle;
-        *((char *)handle_addr+sizeof(HANDLE))=0;
-        return (p2+sizeof(HANDLE)+1);
-    } else {
-        mem_handle=GlobalAlloc(GMEM_MOVEABLE,(DWORD)(qty+sizeof(HANDLE)+1));
-        if(mem_handle==NULL) {
-            HERROR(DFE_NOSPACE);
-            return(NULL);
-        }
-        /* lock down the block, use GlobalWire because we don't know how long */
-        /*  this potentially large block will be used */
-        handle_addr=(HANDLE *)(p1=(char huge *)GlobalWire(mem_handle));
-        if (handle_addr==NULL) {
-            HERROR(DFE_NOSPACE);
-            return(NULL);
-        }
-        *handle_addr=mem_handle;    /* store the handle in the first part of the memory block */
-        *((char *)handle_addr+sizeof(HANDLE))=1;
-        return(p1+sizeof(HANDLE)+1);
+    HGLOBAL hTmp;
+    HGLOBAL far *wfpTmp;
+    
+    hTmp=GlobalAlloc(GMEM_MOVEABLE|GMEM_DISCARDABLE|GMEM_ZEROINIT,qty+sizeof(HGLOBAL));
+    if (!hTmp) {
+        HERROR(DFE_NOSPACE);
+        return(NULL);
+      } /* end if */
+    wfpTmp=(HGLOBAL far *) GlobalLock(hTmp);
+    if (!wfpTmp) {
+        GlobalFree(hTmp);
+        HERROR(DFE_NOSPACE);
+        return(NULL);
     }
+    *wfpTmp=hTmp;
+    wfpTmp++;
+    return((void _HUGE *)wfpTmp);
 }
 
-void HUGE *HDfreespace(void *ptr)
+void _HUGE *HDregetspace(VOIDP vfp, uint32 new_size)
 {
-    HANDLE mem_handle;  /* handle of the memory allocated */
-    HANDLE *handle_addr;/* pointer to the HANDLE stored in the memory block */
-
-    if(ptr!=NULL) {
-/* get the address of the handle, which is stored in the memory block itself */
-        handle_addr=(HANDLE *)((char *)ptr-sizeof(HANDLE)-1);
-        mem_handle=*handle_addr;    /* get the handle from the memory block */
-        if (*((char *)ptr-1)) {
-            GlobalUnWire(mem_handle);     /* unlock the block */
-            GlobalFree(mem_handle);       /* free the block */
-        } else {
-            LocalUnlock(mem_handle);
-            LocalFree(mem_handle);
+    char *FUNC="HDregetspace";
+    HGLOBAL new_handle;         /* handle of the new memory block */
+    HGLOBAL hTmp;
+    WORD far *wfpTmp;
+    
+    if (!vfp)
+        return(NULL);
+    hTmp = (HGLOBAL)(*(--((WORD far *) vfp)));
+    if (!hTmp)
+        return(NULL);
+    if (GlobalUnlock(hTmp)) {
+        HERROR(DFE_NOSPACE);
+        return(NULL);
+      } /* end if */
+    if((new_handle=GlobalReAlloc(hTmp,new_size,GMEM_MOVEABLE|GMEM_DISCARDABLE|GMEM_ZEROINIT))!=NULL) {
+        wfpTmp=(WORD far *) GlobalLock(new_handle);
+        if (!wfpTmp) {
+            GlobalFree(new_handle);
+            HERROR(DFE_NOSPACE);
+            return(NULL);
         }
-    } /* end if */
+        *wfpTmp=(WORD)hTmp;
+        wfpTmp++;
+        return(wfpTmp);
+    } else
+        return(NULL);
+}
+
+void _HUGE *HDfreespace(void *vfp)
+{
+    HGLOBAL hTmp;
+    
+    if (!vfp)
+        return(NULL);
+    hTmp=(HGLOBAL)(*(--((WORD far *) vfp)));
+    if (!hTmp)
+        return(NULL);
+    GlobalUnlock(hTmp);
+    GlobalFree(hTmp);
+
     return(NULL);
 }
 #else /* !WIN3 */
-void HUGE *HDgetspace(uint32 qty)
+void _HUGE *HDgetspace(uint32 qty)
 {
     char *FUNC="HDgetspace";
     char huge *p;
-    char *p2;
 
-    qty++;    /* increment the quantity to allocate to allow for the extra byte we are going to include */
+    qty+=sizeof(char)+sizeof(uint32);   /* increment the quantity to allocate */
 
     if(qty>=(int32)64000) {   /* see if we have to use halloc() to get a really large chunk of memory */
         p = halloc((int32)qty,(size_t)1);
@@ -185,36 +194,82 @@ void HUGE *HDgetspace(uint32 qty)
             HERROR(DFE_NOSPACE);
             return(NULL);
           } /* end if */
-        *p=1;           /* indicate that halloc() was used to acquire this memory */
-        p++;
-        return((char huge *)p);
+        *p++=1;     /* indicate that halloc() was used to acquire this memory */
       } /* end if */
     else {      /* we can get away with just malloc() */
-        p2 = malloc((size_t)qty);
-        if (p2==NULL) {
+        p = malloc((size_t)qty);
+        if (p==NULL) {
             HERROR(DFE_NOSPACE);
             return(NULL);
           } /* end if */
-        *p2=0;           /* indicate that malloc() was used to acquire this memory */
-        p2++;
-        return((char huge *)p2);
+        *p++=0;     /* indicate that malloc() was used to acquire this memory */
       } /* end else */
+    *(uint32 *)p=qty;   /* save the size of the block */
+    p+=sizeof(uint32);
+    return(p);
 }
 
-void HUGE *HDfreespace(void *ptr)
+#ifndef MIN
+#define MIN(a,b)    (((a)<(b)) ? (a) : (b))
+#endif
+
+void _HUGE *HDregetspace(VOIDP ptr, uint32 qty)
 {
+    char *FUNC="HDregetspace";
+    uint32 old_size;
+    char *p=ptr;
+    char *p2;
+
+    qty+=sizeof(char)+sizeof(uint32);   /* increment the quantity to allocate */
+
+    p-=sizeof(uint32);    /* decrement the pointer to free */
+    old_size=*(uint32 *)p;
+    p-=sizeof(char);
+    if(qty>=(int32)64000) {   /* see if we have to use halloc() to get a really large chunk of memory */
+        p2=halloc((int32)qty,(size_t)1);
+        if(p2==NULL) {
+            HERROR(DFE_NOSPACE);
+            return(NULL);
+          } /* end if */
+        *p2++=1;     /* indicate that halloc() was used to acquire this memory */
+        *(uint32 *)p2=qty;   /* save the size of the block */
+      } /* end if */
+    else {      /* we can get away with just malloc() */
+        p2=malloc((size_t)qty);
+        if(p2==NULL) {
+            HERROR(DFE_NOSPACE);
+            return(NULL);
+          } /* end if */
+        *p2++=0;     /* indicate that malloc() was used to acquire this memory */
+      } /* end else */
+    *(uint32 *)p2=qty;   /* save the size of the block */
+    p2+=sizeof(uint32);
+    HDmemcpy(p2,p+(sizeof(char)+sizeof(uint32)),
+            MIN(UINT_MAX,(uint16)MIN(old_size,qty))-(sizeof(char)+sizeof(uint32)));
+    if(*p)    /* check whether block of memory was allocated with halloc() */
+        hfree(p);
+    else       /* memory was allocated through malloc() */
+        free(p);
+    return(p2);
+}
+
+void _HUGE *HDfreespace(void *ptr)
+{
+    char *p=ptr;
+
     if(ptr==NULL)
         return(NULL);
 
-    ptr = (char *)ptr-1;      /* decrement the pointer to free */
-    if(*(char *)ptr)   /* check whether block of memory was allocated with halloc() */
-        hfree(ptr);
+    p-=(sizeof(char)+sizeof(uint32));    /* decrement the pointer to free */
+    if(*p)   /* check whether block of memory was allocated with halloc() */
+        hfree(p);
     else       /* memory was allocated through malloc() */
-        free(ptr);
+        free(p);
     return(NULL);
 }
+
 #endif /* WIN3 */
-#else /* PC */
+#else /* !PC */
 
 
 #if defined PROTOTYPE
@@ -270,11 +325,11 @@ void *ptr;
 #endif /* PC */
 
 #if defined PROTOTYPE 
-intn HDc2fstr(char *str, int len)
+intn HDc2fstr(char *str, intn len)
 #else
 intn HDc2fstr(str, len)
 char* str;
-int len;
+intn len;
 #endif /* PROTOTYPE */
 {
     int i;
@@ -286,9 +341,9 @@ int len;
 }
 
 #if defined PROTOTYPE
-char HUGE *HDf2cstring(_fcd fdesc, intn len)
+char _HUGE *HDf2cstring(_fcd fdesc, intn len)
 #else
-char HUGE *HDf2cstring(fdesc, len)
+char _HUGE *HDf2cstring(fdesc, len)
     _fcd fdesc;
     intn len;
 #endif /* PROTOTYPE */
@@ -398,7 +453,7 @@ int HIadd_hash_dd(file_rec, look_tag, look_ref, pblock, pidx)
   ref = (intn) look_ref;
   key = tag + ref;
 
-  if(!(p = (tag_ref_list_ptr) HDgetspace((uint32)sizeof(tag_ref_list))))
+  if((p = (tag_ref_list_ptr) HDgetspace((uint32)sizeof(tag_ref_list)))==NULL)
     HRETURN_ERROR(DFE_NOSPACE, FAIL);
   
   p->pblock = pblock;
@@ -604,9 +659,9 @@ intn len;
  *        lot of pretty-printing code depends on it.
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-char HUGE *HDgettagname(uint16 tag)
+char _HUGE *HDgettagname(uint16 tag)
 #else
-char HUGE *HDgettagname(tag)
+char _HUGE *HDgettagname(tag)
      uint16 tag;
 #endif /* PROTOTYPE */
 {
@@ -694,6 +749,10 @@ char HUGE *HDgettagname(tag)
       name = "Run Length Encoding"; break;
   case DFTAG_IMCOMP : 
       name = "IMCOMP Encoding"; break;
+  case DFTAG_JPEG :
+      name = "24-bit JPEG Encoding"; break;
+  case DFTAG_GREYJPEG :
+      name = "8-bit JPEG Encoding"; break;
       
       /* Scientific / Numeric Data Sets */
   case DFTAG_SDG   : 

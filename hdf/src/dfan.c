@@ -5,11 +5,15 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1992/12/21 23:27:49  mfolk
-Changed DFANIputann so that when you rewrite an annotation it
-deletes the old one and writes the new one to the end of the
-file.
+Revision 1.7  1993/01/19 05:54:05  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.6  1992/12/21  23:27:49  mfolk
+ * Changed DFANIputann so that when you rewrite an annotation it
+ * deletes the old one and writes the new one to the end of the
+ * file.
+ *
  * Revision 1.5  1992/12/18  15:41:48  mfolk
  * Added code in DFANIputann to promote annotation storage to linked
  * block if the annotation already exists in the file, is not
@@ -595,10 +599,7 @@ uint16 tag, ref;
     
     HEclear();
 
-    anntag =
-        (type==DFAN_LABEL) ?
-            DFTAG_DIL :
-            DFTAG_DIA;
+    anntag = (type==DFAN_LABEL) ? DFTAG_DIL : DFTAG_DIA;
 
         /* if no directory for this type of annotation, make one */
     if (DFANdir[type]==NULL) { 
@@ -679,7 +680,7 @@ int type;
     DFANdirhead *p, *q;
     
         /* move to last entry in list */
-    for (p=DFANdir[type]; (p!=NULL) && (p->next!=NULL); p=p->next)/*EMPTY*/
+    for (p=DFANdir[type]; (p!=NULL) && (p->next!=NULL); p=p->next)
         ;
 
     if (p) {                                    /* not new list */
@@ -978,7 +979,7 @@ int listsize, maxlen, startpos, isfortran;
     uint16 ref;
     DFANdirhead *p;
     uint8 *lp;                    /* pointer to label */
-    int nrefs, nlabs;
+    int nrefs,nlabs;
     uint8 labeldi[4];             /* to read in and discard data/ref */
     
     HEclear();
@@ -996,7 +997,6 @@ int listsize, maxlen, startpos, isfortran;
         HDmemset(labellist, ' ', (int32)maxlen * (int32)listsize);
     else
         HDmemset(labellist, '\0', (int32)maxlen * (int32)listsize);
-
 
     /* find all refs for this tag; store them in reflist */
     nrefs = Hnumber(file_id, tag);         /* how many times is tag in file? */
@@ -1021,6 +1021,7 @@ int listsize, maxlen, startpos, isfortran;
     Hendaccess(aid);
 
         /* get directory of all labels */
+
     nlabs = Hnumber(file_id, DFTAG_DIL);
     if (nlabs != 0)  {
        if (DFANdir[DFAN_LABEL]==NULL) {          /* if no dir info create dir */
@@ -1029,48 +1030,46 @@ int listsize, maxlen, startpos, isfortran;
           }
        }
 
-       lp = labellist;
+        lp = labellist;
 
        /* Look through all labels. Get those that correspond to the tag,
            and match them with corresponding tag/refs in the reflist.      */
 
-       for (p = DFANdir[DFAN_LABEL]; p!=NULL; p=p->next) { /* for each ann dir */
-           for (i=0; i<p->nentries; i++) {              /* for each tag in dir */
-               if (p->entries[i].datatag==tag) {        /* if this tag==our tag */
+    for (p = DFANdir[DFAN_LABEL]; p!=NULL; p=p->next) { /* for each ann dir */
+        for (i=0; i<p->nentries; i++) {              /* for each tag in dir */
+            if (p->entries[i].datatag==tag) {        /* if this tag==our tag */
 
-                  aid = Hstartread(file_id, DFTAG_DIL, p->entries[i].annref);
-                  if (aid == FAIL) {
-                     Hendaccess(aid); Hclose(file_id); return FAIL;
-                  }
-                  if ((int32)FAIL == Hread(aid, (int32) 4, labeldi)) { /* data tag/ref */
-                     Hendaccess(aid); Hclose(file_id); return FAIL;
-                  }
+                aid = Hstartread(file_id, DFTAG_DIL, p->entries[i].annref);
+                if (aid == FAIL) {
+                    Hendaccess(aid); Hclose(file_id); return FAIL;
+                }
+                if ((int32)FAIL == Hread(aid, (int32) 4, labeldi)) { /* data tag/ref */
+                    Hendaccess(aid); Hclose(file_id); return FAIL;
+                }
                     /* look for corresponding ref in reflist */
-                  for (k=0; k<nrefs && p->entries[i].dataref != reflist[k];k++)/*EMPTY*/
+                for (k=0; k<nrefs && p->entries[i].dataref != reflist[k];k++)
                      ;
-                  if (k < nrefs) {               /* if ref found */
+                if (k < nrefs) {               /* if ref found */
 
                     lp = labellist + k*maxlen;      /* get pos to copy to */
 
                         /* note len on read may be too big, but OK for DFread */
                     len = Hread(aid, (int32) (maxlen-1), lp);
-                    if (len == FAIL) {
+                    if (len == FAIL) { 
                         Hendaccess(aid); Hclose(file_id); return FAIL;
                     }
                         /* ret now contains actual length read */
                         /* pad with blanks for Fortran; add null for C */
-                    if (isfortran)
+                    if (isfortran) 
                         while (len++ < maxlen) lp[len] = ' ';
-                    else
+                    else 
                         lp[len] = '\0';
-                  }
-                  Hendaccess(aid);
+                }
+                Hendaccess(aid);
                }  /* tag == our tag  */
            }      /* for each tag in dir  */
        } /* for each ann dir  */
     }   /* nlabs != 0  */
-    if (FAIL == Hclose(file_id))       /* close file */
-
     if (FAIL == Hclose(file_id))       /* close file */
         return FAIL; 
     return(nrefs);

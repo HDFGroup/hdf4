@@ -2,7 +2,11 @@
 # $Header$
 #
 # $Log$
-# Revision 1.11  1992/10/09 20:58:15  chouck
+# Revision 1.12  1993/01/19 06:00:06  koziol
+# Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+# port.  Lots of minor annoyances fixed.
+#
+# Revision 1.11  1992/10/09  20:58:15  chouck
 # Fixed problems passing down compiler name
 #
 # Revision 1.10  1992/09/17  19:51:13  koziol
@@ -34,7 +38,7 @@
 #
 #
 UTILS = hdf24to8 hdfcomp hdfls hdfpack hdfrseq hdftopal hdftor8 paltohdf \
-        r8tohdf ristosds vcompat vmake vshow
+        r8tohdf ristosds vcompat vmake vshow make24 hdf2jpeg jpeg2hdf
 
 HEOBJ = he_main.o he_cntrl.o he_disp.o he_file.o
 
@@ -47,6 +51,7 @@ HEOBJ = he_main.o he_cntrl.o he_disp.o he_file.o
 MACHINE = SUN
 #MACHINE = UNICOS
 #MACHINE = IRIS4
+#MACHINE = ALPHA
 #MACHINE = APOLLO
 #MACHINE = IBM6000
 #MACHINE = CONVEX
@@ -68,8 +73,11 @@ GLLIB =
 
 CFLAGS = -D$(MACHINE)
 
+# ==> For ALPHA, specify CFLAGS as follows:
+#CFLAGS=  -g -DALPHA -std1
+
 # ==> For IRIS4, specify CFLAGS as follows:
-#CFLAGS=  -g -D$(MACHINE) -cckr
+#CFLAGS=  -g -D$(MACHINE) -ansi
 
 .c.o: he.h he_proto.h
 #	$(CC) -c $(CFLAGS) -I$(HDFINC) $(HDFLIB)/libdf.a $(GLLAB)  $<

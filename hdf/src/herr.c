@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.3  1993/01/19 05:55:43  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.2  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -77,9 +81,9 @@ int32 error_top = 0;
 *** linear search but efficiency should not be a problem here
 -*/
 #ifdef PROTOTYPE
-char HUGE *HEstring(int16 error_code)
+char _HUGE *HEstring(int16 error_code)
 #else
-char HUGE *HEstring(error_code)
+char _HUGE *HEstring(error_code)
     int16 error_code;
 #endif
 {

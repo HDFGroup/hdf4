@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/11/30 22:01:15  chouck
-Added fix for Vstart() and Vend()
+Revision 1.5  1993/01/19 05:59:23  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.4  1992/11/30  22:01:15  chouck
+ * Added fix for Vstart() and Vend()
+ *
  * Revision 1.3  1992/05/27  21:51:19  chouck
  * Added a few casts to VSwrite() calls
  *

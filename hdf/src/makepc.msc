@@ -2,14 +2,18 @@
 # $Header$
 #
 # $Log$
-# Revision 1.1  1992/08/25 21:40:44  koziol
+# Revision 1.2  1993/01/19 05:56:08  koziol
+# Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+# port.  Lots of minor annoyances fixed.
+#
+# Revision 1.1  1992/08/25  21:40:44  koziol
 # Initial revision
 #
 #
 # ##################################################################
 #
-#                   NCSA HDF Version 3.2 release 1
-#                          August 1992
+#                   NCSA HDF Version 3.3 beta 1
+#                         January 1993
 #
 #           MAKEFILE for creating the HDF library, libdf.a,
 #
@@ -45,7 +49,7 @@
 # You must modify the lines marked "# ==>".
 #
 
-.SUFFIXES : .f
+#.SUFFIXES : .f
 
 # ==> specify your machine
 MACHINE=PC
@@ -63,19 +67,17 @@ FFLAGS= /AH /4I4 $(IFLAGS) /W2 /Od /Tf
 
 # ==> specify your C compiler
 CC=cl
+#CFLAGS=  /D$(MACHINE) /AH /W4 /Ox $(IFLAGS) /Zp1
 CFLAGS=  /D$(MACHINE) /AH /W4 /Od $(IFLAGS) /Zi /Zp1
 #CFLAGS=  /D$(MACHINE) /AH /W4 /Od $(IFLAGS) /C /P
 
-# ==> where is your HDF library (libdf.a) located?
+# ==> where is your HDF library (df.lib) located?
 LIBS= ../lib/df.lib
-
-
-#BDIR=../backup
 
 # ==> specify your archiver
 AR=lib
-ARFLAGS=
-ARFLAGS2=/NOLOGO -+
+ARFLAGS=/PAGE:32
+ARFLAGS2=/NOLOGO +
 
 # ==> specify your archive randomizer
 #RANLIB=ranlib
@@ -83,150 +85,348 @@ ARFLAGS2=/NOLOGO -+
 RM=del
 RMFLAGS=
 LINTFLAGS=
-SHAR=zip
-ARCHIVE=hdf.zip
 
 HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h dfan.h dfrig.h dfgr.h dfsd.h \
      dfgroup.h dfconvrt.h vg.h df.h dfi.h dfstubs.h dfutil.h
 
 CSRCS=hfile.c herr.c hblocks.c hextelt.c hkit.c dfan.c dfr8.c dfcomp.c \
-      dfimcomp.c dfp.c dfgr.c df24.c dfsd.c dfgroup.c dfconv.c dfufp2i.c  \
-      vg.c vrw.c vio.c vparse.c vconv.c vsfld.c vgp.c vhi.c     \
-      dfutil.c dfstubs.c
+      dfrle.c dfimcomp.c dfjpeg.c dfunjpeg.c dfp.c dfgr.c df24.c dfsd.c \
+      dfgroup.c dfconv.c dfufp2i.c vg.c vrw.c vio.c vparse.c vconv.c vsfld.c \
+      vgp.c vhi.c dfutil.c dfstubs.c
 
 COBJS=hfile.obj herr.obj hblocks.obj hextelt.obj hkit.obj dfan.obj dfr8.obj \
-        dfcomp.obj dfimcomp.obj dfp.obj dfgr.obj df24.obj dfsd.obj dfgroup.obj \
-        dfconv.obj dfufp2i.obj vg.obj vrw.obj vio.obj vparse.obj vconv.obj \
-        vsfld.obj vgp.obj vhi.obj dfutil.obj dfstubs.obj
+        dfcomp.obj dfrle.obj dfimcomp.obj dfjpeg.obj dfunjpeg.obj dfp.obj \
+        dfgr.obj df24.obj dfsd.obj dfgroup.obj dfconv.obj dfufp2i.obj vg.obj \
+        vrw.obj vio.obj vparse.obj vconv.obj vsfld.obj vgp.obj vhi.obj \
+        dfutil.obj dfstubs.obj
 
-FSRCS=hfileF.c herrF.c hfileFf.f dfanF.c dfr8F.c dfpF.c df24F.c dfsdF.c \
-      vgF.c dfF.c dfanFf.f df24Ff.f dfpFf.f dfr8Ff.f dfsdFf.f vgFf.f dfFf.f \
-      dfutilF.c dfufp2iF.f constant.f
+FSRCS=hfilef.c herrf.c dfanf.c dfr8f.c dfpf.c df24f.c dfsdf.c vgf.c dff.c \
+      dfutilf.c hfileff.f dfanff.f df24ff.f dfpff.f dfr8ff.f dfsdff.f vgff.f \
+      dfff.f dfufp2if.f constant.f
 
-FOBJS=hfileF.obj herrF.obj hfileFf.obj dfanF.obj dfr8F.obj dfpF.obj df24F.obj \
-      dfsdF.obj vgF.obj dfF.obj dfanFf.obj df24Ff.obj dfpFf.obj dfr8Ff.obj \
-      dfsdFf.obj vgFf.obj dfFf.obj dfutilF.obj dfufp2iF.obj constant.obj
+FOBJS=hfilef.obj herrf.obj dfanf.obj dfr8f.obj dfpf.obj df24f.obj dfsdf.obj \
+      vgf.obj dff.obj dfutilf.obj hfileff.obj dfanff.obj df24ff.obj dfpff.obj \
+      dfr8ff.obj dfsdff.obj vgff.obj dfff.obj dfufp2if.obj constant.obj
+
+JCSRCS= jbsmooth.c jcarith.c jccolor.c jcdeflts.c jcexpand.c jchuff.c \
+        jcmain.c jcmaster.c jcmcu.c jcpipe.c jcsample.c jdarith.c jdcolor.c \
+        jddeflts.c jdhuff.c jdmain.c jdmaster.c jdmcu.c jdpipe.c jdsample.c \
+        jerror.c jquant1.c jquant2.c jfwddct.c jrevdct.c jutils.c jmemmgr.c \
+        jrdjfif.c jrdgif.c jrdppm.c jrdrle.c jrdtarga.c jwrjfif.c jwrgif.c \
+        jwrppm.c jwrrle.c jwrtarga.c jmemsys.c
+
+JINCS= jinclude.h jconfig.h jpegdata.h jversion.h jmemsys.h egetopt.c
+
+# objectfiles common to both JPEG compression and decompression
+COMOBJECTS= jutils.obj jerror.obj jmemmgr.obj jmemsys.obj jmemdosa.obj
+# compression objectfiles
+CLIBOBJECTS= jcmaster.obj jcdeflts.obj jcarith.obj jccolor.obj jcexpand.obj \
+        jchuff.obj jcmcu.obj jcpipe.obj jcsample.obj jfwddct.obj
+        
+CFILEOBJECTS=jwrjfif.obj jrdgif.obj jrdppm.obj jrdrle.obj jrdtarga.obj
+
+# decompression objectfiles
+DLIBOBJECTS= jdmaster.obj jddeflts.obj jbsmooth.obj jdarith.obj jdcolor.obj \
+        jdhuff.obj jdmcu.obj jdpipe.obj jdsample.obj jquant1.obj \
+        jquant2.obj jrevdct.obj
+
+DFILEOBJECTS=jrdjfif.obj jwrgif.obj jwrppm.obj jwrrle.obj jwrtarga.obj
+
+# These objectfiles are included in libjpeg.lib
+JOBJS= $(CLIBOBJECTS) $(DLIBOBJECTS) $(COMOBJECTS)
 
 #add all utilities here
-UTILS=vshow.obj
+#UTILS=vshow.obj
 
-.c.obj:
-    $(CC) /c $(CFLAGS) $<
-    $(AR) $(ARFLAGS) df.lib $(ARFLAGS2) $*;
+#.c.obj:
+#    $(CC) /c $(CFLAGS) $<
+#    $(AR) $(ARFLAGS) df.lib $(ARFLAGS2) $*;
 
-.f.obj:
-    $(FC) /c $(FFLAGS) $<
-    $(AR) $(ARFLAGS) df.lib $(ARFLAGS2) $*;
+#.f.obj:
+#    $(FC) /c $(FFLAGS) $<
+#    $(AR) $(ARFLAGS) df.lib $(ARFLAGS2) $*;
 
-all: df.lib utils install note
+all: df.lib install note
 
-allnostub: libnostub utils install note
+allnostub: libnostub install note
 
-df.lib: $(COBJS) $(FOBJS)
-#    -$(RM) df.lib
-#    $(AR) $(ARFLAGS) df.lib $(ARFLAGS2) $(COBJS) $(FOBJS)
-#    $(RANLIB) df.lib
+df.lib: $(COBJS) $(FOBJS) $(JOBJS)
+    del df.lib
+    $(AR) $(ARFLAGS) df.lib @hdf.bld;
 
-libnostub: $(COBJS)
-    -$(RM) df.lib
-#    $(AR) $(ARFLAGS) df.lib $(COBJS)
-    $(RANLIB) df.lib
-
-utils: $(UTILS)
+libnostub: $(COBJS) $(JOBJS)
+    del df.lib
+    $(AR) $(ARFLAGS) df.lib @hdfnof.bld;
 
 note:
 	@echo "^G"
 	@echo "***********************************************************"
-	@echo " libdf.a successfully created."
+    @echo " df.lib successfully created."
 	@echo ""
 	@echo "If you have any old vset files (v 1.0) you must use vcompat"
 	@echo "to make them compatible with Vset 2.0 applications"
-	@echo ""
-	@echo "The utilities (vshow, vmake, vconcat) can be individually"
-	@echo "created as follows:"
-	@echo ""
-    @echo "   cc -D$(MACHINE) program.c libdf.a -o program"
-	@echo ""
-	@echo "The test programs can be created as follows:"
-	@echo ""
-	@echo "   make -f Makefile.test"
 	@echo ""
 	@echo "***********************************************************"
 	@echo ""
 
 
-saber:
-	#load -D$(MACHINE) $(CSRCS) $(TSRCS) -lc
+hfile.obj: hfile.c hfile.h hdf.h herr.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-hfile.obj: hfile.h hdf.h herr.h hproto.h hdfi.h
+herr.obj: herr.c hdf.h herr.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-herr.obj: hdf.h herr.h hproto.h hdfi.h
+hblocks.obj: hblocks.c hfile.h hdf.h herr.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-hblocks.obj: hfile.h hdf.h herr.h hproto.h hdfi.h
+hextelt.obj: hextelt.c hfile.h hdf.h herr.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-hextelt.obj: hfile.h hdf.h herr.h hproto.h hdfi.h
+hkit.obj: hkit.c hfile.h hdf.h herr.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-hkit.obj: hfile.h hdf.h herr.h hproto.h  hdfi.h
+dfan.obj: dfan.c hdf.h herr.h dfan.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-dfan.obj: hdf.h herr.h dfan.h hproto.h hdfi.h
+dfanf.obj: dfanf.c hdf.h herr.h dfan.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-dfanF.obj: hdf.h herr.h dfan.h hproto.h hdfi.h
+dfr8.obj: dfr8.c hdf.h herr.h dfrig.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-dfr8.obj: hdf.h herr.h dfrig.h hproto.h hdfi.h
+dfr8f.obj: dfr8f.c hdf.h herr.h dfrig.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-dfr8F.obj: hdf.h herr.h dfrig.h hproto.h hdfi.h
+dfcomp.obj: dfcomp.c hdf.h herr.h dfrig.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-dfcomp.obj: hdf.h herr.h dfrig.h hproto.h hdfi.h
+dfimcomp.obj: dfimcomp.c hdf.h herr.h dfrig.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-dfimcomp.obj: hdf.h herr.h dfrig.h hproto.h hdfi.h
+dfrle.obj: dfrle.c hdf.h herr.h dfrig.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-dfp.obj: hdf.h herr.h hproto.h hdfi.h
+dfjpeg.obj: dfjpeg.c hdf.h herr.h dfrig.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-dfpF.obj: hdf.h herr.h hproto.h hdfi.h
+dfunjpeg.obj: dfunjpeg.c hdf.h herr.h dfrig.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-dfgr.obj: hdf.h herr.h dfgr.h hproto.h hdfi.h
+dfp.obj: dfp.c hdf.h herr.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-df24.obj: hdf.h herr.h dfgr.h hproto.h hdfi.h
+dfpf.obj: dfpf.c hdf.h herr.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-df24F.obj: hdf.h herr.h dfgr.h hproto.h hdfi.h
+dfgr.obj: dfgr.c hdf.h herr.h dfgr.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-dfsd.obj: hdf.h herr.h dfsd.h hproto.h hdfi.h
+df24.obj: df24.c hdf.h herr.h dfgr.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-dfsdF.obj: hdf.h herr.h dfsd.h hproto.h hdfi.h
+df24f.obj: df24f.c hdf.h herr.h dfgr.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-dfgroup.obj: hdf.h herr.h hfile.h hproto.h hdfi.h
+dfsd.obj: dfsd.c hdf.h herr.h dfsd.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-dfconv.obj: hdf.h herr.h hdfi.h
+dfsdf.obj: dfsdf.c hdf.h herr.h dfsd.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-vg.obj: vg.h hdf.h hdfi.h
+dfgroup.obj: dfgroup.c hdf.h herr.h hfile.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-vgF.obj: vg.h hdf.h hdfi.h
+dfconv.obj: dfconv.c hdf.h herr.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-vrw.obj: vg.h hdf.h hdfi.h
+vg.obj: vg.c vg.h hdf.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-vio.obj: vg.h hdf.h hdfi.h
+vgf.obj: vgf.c vg.h hdf.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-vparse.obj: vg.h hdf.h hdfi.h
+vrw.obj: vrw.c vg.h hdf.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-vconv.obj: vg.h hdf.h hdfi.h
+vio.obj: vio.c vg.h hdf.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-vsfld.obj: vg.h hdf.h hdfi.h
+vparse.obj: vparse.c vg.h hdf.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-vgp.obj: vg.h hdf.h hdfi.h
+vconv.obj: vconv.c vg.h hdf.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-vhi.obj: vg.h hdf.h hdfi.h
+vsfld.obj: vsfld.c vg.h hdf.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-dfstubs.obj: hdf.h herr.h dfstubs.h df.h dfi.h hproto.h hdfi.h
+vgp.obj: vgp.c vg.h hdf.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
 
-dfF.obj: hdf.h herr.h dfstubs.h df.h dfi.h hproto.h hdfi.h
+vhi.obj: vhi.c vg.h hdf.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
+
+dfstubs.obj: dfstubs.c hdf.h herr.h dfstubs.h df.h dfi.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
+
+dff.obj: dff.c hdf.h herr.h dfstubs.h df.h dfi.h hdfi.h
+    $(CC) /c $(CFLAGS) %s
+
+hfileff.obj : hfileff.f
+    $(FC) /c $(FFLAGS) %s
+
+dfanff.obj : dfanff.f
+    $(FC) /c $(FFLAGS) %s
+
+df24ff.obj : df24ff.f
+    $(FC) /c $(FFLAGS) %s
+
+dfpff.obj : dfpff.f
+    $(FC) /c $(FFLAGS) %s
+
+dfr8ff.obj : dfr8ff.f
+    $(FC) /c $(FFLAGS) %s
+
+dfsdff.obj : dfsdff.f
+    $(FC) /c $(FFLAGS) %s
+
+vgff.obj : vgff.f
+    $(FC) /c $(FFLAGS) %s
+
+dfff.obj : dfff.f
+    $(FC) /c $(FFLAGS) %s
+
+dfufp2if.obj : dfufp2if.f
+    $(FC) /c $(FFLAGS) %s
+
+constant.obj : constant.f
+    $(FC) /c $(FFLAGS) %s
+
+# JPEG source files
+jbsmooth.obj : jbsmooth.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jcarith.obj : jcarith.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jccolor.obj : jccolor.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jcdeflts.obj : jcdeflts.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jcexpand.obj : jcexpand.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jchuff.obj : jchuff.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+#jcmain.obj : jcmain.c jinclude.h jconfig.h jpegdata.h jversion.h egetopt.c
+#    $(CC) /c $(CFLAGS) %s
+
+jcmaster.obj : jcmaster.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jcmcu.obj : jcmcu.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jcpipe.obj : jcpipe.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jcsample.obj : jcsample.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jdarith.obj : jdarith.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jdcolor.obj : jdcolor.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jddeflts.obj : jddeflts.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jdhuff.obj : jdhuff.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+#jdmain.obj : jdmain.c jinclude.h jconfig.h jpegdata.h jversion.h egetopt.c
+#    $(CC) /c $(CFLAGS) %s
+
+jdmaster.obj : jdmaster.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jdmcu.obj : jdmcu.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jdpipe.obj : jdpipe.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jdsample.obj : jdsample.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jerror.obj : jerror.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jquant1.obj : jquant1.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jquant2.obj : jquant2.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jfwddct.obj : jfwddct.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jrevdct.obj : jrevdct.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jutils.obj : jutils.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jmemmgr.obj : jmemmgr.c jinclude.h jconfig.h jpegdata.h jmemsys.h
+    $(CC) /c $(CFLAGS) %s
+
+jrdjfif.obj : jrdjfif.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jrdgif.obj : jrdgif.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jrdppm.obj : jrdppm.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jrdrle.obj : jrdrle.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jrdtarga.obj : jrdtarga.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jwrjfif.obj : jwrjfif.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jwrgif.obj : jwrgif.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jwrppm.obj : jwrppm.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jwrrle.obj : jwrrle.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jwrtarga.obj : jwrtarga.c jinclude.h jconfig.h jpegdata.h
+    $(CC) /c $(CFLAGS) %s
+
+jmemsys.obj : jmemsys.c jinclude.h jconfig.h jpegdata.h jmemsys.h
+    $(CC) /c $(CFLAGS) %s
+
+
+jmemdosa.obj : jmemdosa.asm
+	masm /mx $*;
+
 
 install:
 	-mkdir $(INCDIR)
-	-cp $(HDRS) $(INCDIR)
+    -copy *.h $(INCDIR)
 	-mkdir $(LIBDIR)
-    -cp df.lib $(LIBDIR)
-	-mkdir $(BINDIR)
-	-cp $(UTILS) $(BINDIR)
+    -copy df.lib $(LIBDIR)
 
 clean:
     -$(RM) $(RMFLAGS) *.obj
@@ -240,14 +440,3 @@ lint: $(SRCS) $(R8SRCS)
 TAGS: $(SRCS) $(HDRS)
 	etags $(SRCS) $(HDRS)
 
-#$(ARCHIVE): ChangeLog Makefile $(SRCS) $(HDRS) $(TSRCS) $(USRCS)
-#	$(RM) $(RMFLAGS) $(ARCHIVE)
-#	$(SHAR) $(ARCHIVE) ChangeLog Makefile $(SRCS) $(HDRS) \
-#		$(TSRCS) $(USRCS)
-
-#archive: $(ARCHIVE)
-
-#backup: ChangeLog Makefile $(SRCS) $(HDRS) $(TSRCS) $(USRCS)
-#	cp ChangeLog Makefile $(SRCS) $(HDRS) $(TSRCS) $(USRCS) $(BDIR)
- 
- 

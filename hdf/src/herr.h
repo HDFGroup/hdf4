@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1993/01/19 05:55:44  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*+ herr.h
 ***  header file for using error routines
@@ -113,7 +117,8 @@ extern int32 error_top;
 #define DFE_BADAID      -58 /* Got a bogus aid */
 #define DFE_OPENAID     -59 /* There are still active AIDs */
 #define DFE_BADCONV     -60 /* Don't know how to convert data type */
-#define DFE_GENAPP	-61 /* Generic application-level error */
+#define DFE_GENAPP      -61 /* Generic application-level error */
+#define DFE_CANTFLUSH   -62 /* Can't flush DD back to file */
 
 #ifdef _H_ERR_MASTER_
 
@@ -190,7 +195,8 @@ PRIVATE struct error_messages_t error_messages[] =
 { DFE_BADAID,      "Unable to create a new AID"},
 { DFE_OPENAID,     "There are still active AIDs"},
 { DFE_BADCONV,     "Don't know how to convert data type"},
-{ DFE_GENAPP,      "Generic application-level error"}
+{ DFE_GENAPP,      "Generic application-level error"},
+{ DFE_CANTFLUSH,   "Cannot flush the changed DD back to the file"}
 };
 #endif /* _H_ERR_MASTER_ */
 

@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1992/07/16 19:34:08  mlivin
-changed re-opening of file to NOT include DFACC_CREATE
+Revision 1.8  1993/01/19 05:58:46  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.7  1992/07/16  19:34:08  mlivin
+ * changed re-opening of file to NOT include DFACC_CREATE
+ *
  * Revision 1.6  1992/06/26  20:23:20  mlivin
  * added in tests for Hishdf - open HDF, closed HDF, non-HDF, non-existing
  *
@@ -149,7 +153,7 @@ int main(argc, argv)
       errors++;
     }
 
-    if(strcmp(inbuf, "testing 100 1")) {
+    if(HDstrcmp((const char *)inbuf, "testing 100 1")) {
       fprintf(stderr, "ERROR: Hread returned the wrong data\n");
       fprintf(stderr, "\t       Is: %s\n", inbuf);
       fprintf(stderr, "\tShould be: testing 100 1\n");

@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.4  1992/09/11 18:32:51  chouck
-Assorted MAC mungings
+Revision 1.5  1993/01/19 06:00:28  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.4  1992/09/11  18:32:51  chouck
+ * Assorted MAC mungings
+ *
  * Revision 1.3  1992/08/11  23:05:39  sxu
  * Added parameter 'int raw' in prototype dump()
  *

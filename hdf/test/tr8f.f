@@ -2,9 +2,13 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.1  1992/11/05 19:34:01  chouck
-C Initial revision
+C Revision 1.2  1993/01/19 05:58:53  koziol
+C Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+C port.  Lots of minor annoyances fixed.
 C
+c Revision 1.1  1992/11/05  19:34:01  chouck
+c Initial revision
+c
 c Revision 1.5  1992/09/15  19:39:10  koziol
 c Added Shiming's changes to a couple of boolean tests
 c

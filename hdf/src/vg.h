@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.4  1992/11/30 22:00:01  chouck
-Added fixes for changing to Vstart and Vend
+Revision 1.5  1993/01/19 05:56:15  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.4  1992/11/30  22:00:01  chouck
+ * Added fixes for changing to Vstart and Vend
+ *
  * Revision 1.3  1992/11/24  17:43:26  chouck
  * Fixed memory over-write when VGroups have lots of members
  *
@@ -37,8 +41,11 @@ Added fixes for changing to Vstart and Vend
 
 /* H-level customization jason ng 12-Feb-92 */
 typedef int32           HFILEID;
+#ifndef WIN3
 typedef unsigned char   BYTE;
+#endif
 
+#ifdef OLD_WAY
 #define QQnewref Hnewref
 #define QQstartread Hstartread 
 #define QQstartwrite Hstartwrite
@@ -55,6 +62,7 @@ typedef unsigned char   BYTE;
 #define QQseek Hseek
 #define QQread Hread
 #define QQwrite Hwrite
+#endif
 
 /* 
 * interlacing supported by the vset. 
@@ -133,12 +141,12 @@ typedef struct read_struct
 } VREADLIST;
 
 /* 
- *  ----------------------------------------------- 
- V G R O U P     definition     
- *  ----------------------------------------------- 
- */
+*  ----------------------------------------------- 
+        V G R O U P     definition     
+*  ----------------------------------------------- 
+*/
 
-#define MAXNVELT  32		/* max no of objects in a vgroup */
+#define MAXNVELT  64		/* max no of objects in a vgroup */
 
 struct vgroup_desc
 { 
@@ -146,7 +154,7 @@ struct vgroup_desc
   HFILEID f;	 	    	/* HDF file id  */
   uint16  nvelt; 		/* S no of objects */
   intn	  access;		/* 'r' or 'w' */
-  uint16  *tag;	                /* S tag of objects */
+  uint16  *tag;                 /* S tag of objects */
   uint16  *ref;	                /* S ref of objects */
   char	  vgname[VGNAMELENMAX+1];/* S name of this vgroup */
   char	  vgclass[VGNAMELENMAX+1];/* S class name of this vgroup */
@@ -154,7 +162,7 @@ struct vgroup_desc
   uint16  extag, exref;	        /* expansion tag-ref */
   int16	  version, more;	/* version and "more" field */	
   intn    msize;                /* max size of storage arrays */
-};		
+};      
 /* VGROUP */
 
 /*

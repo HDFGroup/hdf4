@@ -13,7 +13,11 @@ static char RcsId[] = "$Id$";
  * $Header$
  *
  * $Log$
- * Revision 1.2  1993/01/07 21:38:38  georgev
+ * Revision 1.3  1993/01/19 05:58:23  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
+ * Revision 1.2  1993/01/07  21:38:38  georgev
  * Minor cosmetic changes.
  *
  * Revision 1.1  1993/01/07  20:56:15  georgev

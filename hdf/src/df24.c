@@ -5,10 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/12/11 20:08:03  georgev
-Added state variables last_xdim, last_ydim to fix
-problems with DF24getimage after a DFgetdims call
+Revision 1.5  1993/01/19 05:53:58  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.4  1992/12/11  20:08:03  georgev
+ * Added state variables last_xdim, last_ydim to fix
+ * problems with DF24getimage after a DFgetdims call
+ *
  * Revision 1.3  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -28,7 +32,16 @@ problems with DF24getimage after a DFgetdims call
  *  DF24reqil: use this interlace when returning image
  *  DF24getimage: read in image
  *  DF24setdims: set dimensions of image
- *  DF24addimage: write out image
+ *  DF24setil: set interlace of image to write next
+ *  DF24setcompress: set the compression to use when writing out next image
+ *  DF24restart: restart looking for 24-bit images in a file
+ *  DF24addimage: append image to file
+ *  DF24putimage: write image to a file
+ *  DF24readref: set ref of 24-bit RIG to get next
+ *  DF24lastref: return reference number of last RIG read or written
+ * Missing:
+ *  DF24writeref: set ref of 24-bit RIG to write next
+ *  DF24nimages: get number of images in file
  *
  * Remarks: A RIG specifies attributes associated with an image- lookup table,
  *          dimension, compression, color compensation etc.
@@ -136,7 +149,7 @@ int DF24getimage(filename, image, xdim, ydim)
 
     if (!Newdata && DF24getdims(filename, &tx, &ty, &il) == FAIL)
        return FAIL;
-    
+
     if (Newdata) {
       tx = last_xdim;
       ty = last_ydim;
@@ -210,7 +223,7 @@ int DF24setil(il)
 #ifdef PROTOTYPE
 int DF24setcompress(int32 type,comp_info *cinfo)
 #else
-int DF24setcompres(type,cinfo)
+int DF24setcompress(type,cinfo)
     int32 type;
     comp_info *cinfo;
 #endif

@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.11  1992/11/06 21:52:30  chouck
-Added HDmemset() function.
+Revision 1.12  1993/01/19 05:55:40  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.11  1992/11/06  21:52:30  chouck
+ * Added HDmemset() function.
+ *
  * Revision 1.10  1992/11/06  20:11:55  chouck
  * Added some changes for Absoft Fortran on the Mac
  *
@@ -56,6 +60,7 @@ Added HDmemset() function.
 /*      2 - VAX                                                             */
 /*      3 - Cray                                                            */
 /*      4 - Little Endian                                                   */
+/*      5 - Convex                                                          */
 /*--------------------------------------------------------------------------*/
 #define     DFMT_SUN            0x1111
 #define     DFMT_ALLIANT        0x1111
@@ -74,6 +79,7 @@ Added HDmemset() function.
 #define     DFMT_SUN386         0x4441
 #define     DFMT_NEXT           0x1111
 #define     DFMT_MOTOROLA       0x1111
+#define     DFMT_ALPHA          0x4441
 
 /* I/O library constants */
 #define UNIXUNBUFIO 1
@@ -122,14 +128,26 @@ typedef unsigned int      uintn;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef float             float32;
 typedef double            float64;
-#define HUGE              /* This should only be defined to a value on the PC */
-#define DFmovmem(from, to, len) memcpy(to, from, len)
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
 #ifndef __STDC__
 #define const
 #endif
+
+/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
+
+/* Determine the memory manager we are going to use. Valid values are: */
+/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
+/*  what each does */
+#define JMEMSYS         MEM_ANSI
+
+#ifdef __GNUC__
+#define HAVE_STDC
+#define INCLUDES_ARE_ANSI
+#endif
+
 #endif /* SUN */
 
 
@@ -165,10 +183,20 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-#define HUGE              /* This should only be defined to a value on the PC */
-#define DFmovmem(from, to, len) memcpy(to, from, len)
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
+
+/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
+
+/* Determine the memory manager we are going to use. Valid values are: */
+/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
+/*  what each does */
+#define JMEMSYS         MEM_ANSI
+
+#define HAVE_STDC
+#define INCLUDES_ARE_ANSI
+
 #endif /* IBM6000 */
 
 #ifdef HP9000
@@ -203,8 +231,7 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-#define HUGE              /* This should only be defined to a value on the PC */
-#define DFmovmem(from, to, len) memcpy(to, from, len)
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
 #ifndef __STDC__
@@ -229,7 +256,7 @@ Please check your Makefile.
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #define DF_MT              DFMT_IRIS4
 typedef void               VOID;
-typedef char               *VOIDP;
+typedef void               *VOIDP;
 typedef char               *_fcd;
 typedef int                bool;
 typedef char               char8;
@@ -245,13 +272,22 @@ typedef unsigned int       uintn;
 typedef float              float32;
 typedef double             float64;
 typedef int                intf;     /* size of INTEGERs in Fortran compiler */
-#define HUGE              /* This should only be defined to a value on the PC */
-#define DFmovmem(from, to, len) memcpy(to, from, len)
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
-#endif /* IRIS4 */
 
+/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
+
+/* Determine the memory manager we are going to use. Valid values are: */
+/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
+/*  what each does */
+#define JMEMSYS         MEM_ANSI
+
+#define HAVE_STDC
+#define INCLUDES_ARE_ANSI
+
+#endif /* IRIS4 */
 
 #ifdef UNICOS
 
@@ -288,8 +324,7 @@ typedef float           float32;
 typedef double          float64;
 typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 
-#define HUGE              /* This should only be defined to a value on the PC */
-#define DFmovmem(from, to, len) memcpy(to, from, len)
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define DF_CAPFNAMES            /* fortran names are in all caps */
 #define FILELIB UNIXBUFIO
 
@@ -322,8 +357,7 @@ typedef unsigned int       uintn;
 typedef float              float32;
 typedef double             float64;
 typedef int                intf;     /* size of INTEGERs in Fortran compiler */
-#define HUGE              /* This should only be defined to a value on the PC */
-#define DFmovmem(from, to, len) memcpy(to, from, len)
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define _fcdtocp(desc)  ((char *) *((char **) &desc[4]))
 
 /* 
@@ -378,8 +412,7 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-#define HUGE              /* This should only be defined to a value on the PC */
-#define DFmovmem(from, to, len) bcopy(from, to, len)
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
@@ -414,8 +447,7 @@ typedef unsigned int    uintn;
 typedef float           float32;
 typedef double          float64;
 typedef int             intf;     /* size of INTEGERs in Fortran compiler */
-#define HUGE              /* This should only be defined to a value on the PC */
-#define DFmovmem(from, to, len) memcpy(to, from, len)
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define _fcdtocp(desc) (desc)
 #define FNAME_POST_UNDERSCORE
 #define FILELIB UNIXBUFIO
@@ -443,10 +475,9 @@ Please check your Makefile.
 #include <Files.h>              /* for unbuffered i/o stuff */
 #endif /*THINK_C*/
 #ifndef ABSOFT
-#define	DF_CAPFNAMES            /* fortran names are in all caps */
+#define DF_CAPFNAMES            /* fortran names are in all caps */
 #endif /* ABSOFT */
-#define DF_DYNAMIC				/* use dynamic allocation */
-#define DFmovmem(from, to, len) memcpy(to, from, len)
+#define DF_DYNAMIC              /* use dynamic allocation */
 #define malloc(x)   NewPtr((Size)   (x))    /* don't use malloc on the Mac */
 #define free(x)     DisposPtr((Ptr) (x))    /* don't use free on the Nac   */ 
 #define DF_MT   DFMT_MAC
@@ -468,7 +499,7 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-#define HUGE              /* This should only be defined to a value on the PC */
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define _fcdtocp(desc) (desc)
 void exit(int status);
 
@@ -497,6 +528,7 @@ Please check your Makefile.
 #include <conio.h>          /* for debugging getch() calls */
 #include <string.h>         /* for vaious string functions */
 #include <limits.h>         /* for UINT_MAX used in various places */
+#include <stdlib.h>
 #ifdef WIN3
 #ifndef GMEM_MOVEABLE       /* check if windows header is already included */
 #include <windows.h>        /* include the windows headers */
@@ -530,13 +562,7 @@ typedef float             float32;
 typedef double            float64;
 typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 /* used to force the prototypes in hproto.h to use huge pointers */
-#define HUGE              huge      
-
-#ifdef WIN3
-#define DFmovmem(from, to, len) _fmemmove(to, from, len)
-#else   /* !WIN3 */
-#define DFmovmem(from, to, len) memcpy(to, from, len)
-#endif  /* WIN3 */
+#define _HUGE              huge
 
 #define _fcdtocp(desc) (desc)
 
@@ -546,6 +572,17 @@ typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 #else /* !WIN3 */
 #define FILELIB PCIO
 #endif /* WIN3 */
+
+/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
+
+/* Determine the memory manager we are going to use. Valid values are: */
+/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
+/*  what each does */
+#define JMEMSYS         MEM_DOS
+
+#define HAVE_STDC
+#define INCLUDES_ARE_ANSI
+
 #endif /* PC */
 
 #ifdef NEXT
@@ -579,11 +616,21 @@ typedef unsigned int      uintn;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef float             float32;
 typedef double            float64;
-#define HUGE              /* This should only be defined to a value on the PC */
-#define DFmovmem(from, to, len) memcpy(to, from, len)
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
+
+/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
+
+/* Determine the memory manager we are going to use. Valid values are: */
+/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
+/*  what each does */
+#define JMEMSYS         MEM_ANSI
+
+#define HAVE_STDC
+#define INCLUDES_ARE_ANSI
+
 #endif /* NEXT */
 
 #ifdef MOTOROLA
@@ -621,8 +668,7 @@ typedef unsigned int      uintn;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef float             float32;
 typedef double            float64;
-#define HUGE              /* This should only be defined to a value on the PC */
-#define DFmovmem(from, to, len) memcpy(to, from, len)
+#define _HUGE              /* This should only be defined to a value on the PC */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
@@ -630,6 +676,53 @@ typedef double            float64;
 #define const
 #endif
 #endif /* MOTOROLA */
+
+#ifdef ALPHA
+
+#ifdef GOT_MACHINE
+If you get an error on this line more than one machine type has been defined.
+Please check your Makefile.
+#endif
+#define GOT_MACHINE
+
+#include <string.h>
+#include <sys/file.h>               /* for unbuffered i/o stuff */
+#define DF_MT             DFMT_ALPHA
+typedef void              VOID;
+typedef void              *VOIDP;
+typedef char              *_fcd;
+typedef int               bool;
+typedef char              char8;
+typedef unsigned char     uchar8;
+typedef char              int8;
+typedef unsigned char     uint8;
+typedef short int         int16;
+typedef unsigned short int uint16;
+typedef int               int32;
+typedef unsigned int      uint32;
+typedef int               intn;
+typedef unsigned int      uintn;
+typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+typedef float             float32;
+typedef double            float64;
+#define _HUGE              /* This should only be defined to a value on the PC */
+#define FNAME_POST_UNDERSCORE
+#define _fcdtocp(desc) (desc)
+#define FILELIB UNIXBUFIO
+
+/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
+
+/* Determine the memory manager we are going to use. Valid values are: */
+/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
+/*  what each does */
+#define JMEMSYS         MEM_ANSI
+
+#ifdef __GNUC__
+#define HAVE_STDC
+#define INCLUDES_ARE_ANSI
+#endif
+
+#endif /* ALPHA */
 
 #ifndef GOT_MACHINE
 No machine type has been defined.  Your Makefile needs to have someing like
@@ -664,7 +757,8 @@ correctly.
 { (i) = (*(p) & 0xff) << 8; (p)++; (i) |= (*(p) & 0xff); (p)++; }
 
 #   define UINT16DECODE(p, i) \
-{ (i) = ((*(p) & 0xff) << 8); (p)++; (i) |= (*(p) & 0xff); (p)++; }
+{ (i) = (uint16)((*(p) & 0xff) << 8); (p)++; \
+        (i) |= (uint16)(*(p) & 0xff); (p)++; }
 
 #   define INT32DECODE(p, i) \
 { (i) = ((int32)(*(p) & 0xff) << 24); (p)++; \
@@ -683,9 +777,9 @@ correctly.
 ***************************************************************************/
 #    ifndef DFKMASTER
 #if defined __STDC__ || defined PC
-extern int (*DFKnumin)(void HUGE * source, void HUGE * dest, uint32 num_elm,
+extern int (*DFKnumin)(void _HUGE * source, void _HUGE * dest, uint32 num_elm,
             uint32 source_stride,uint32 dest_stride);
-extern int (*DFKnumout)(void HUGE * source, void HUGE * dest, uint32 num_elm,
+extern int (*DFKnumout)(void _HUGE * source, void _HUGE * dest, uint32 num_elm,
             uint32 source_stride,uint32 dest_stride);
 #else
 extern int (*DFKnumin)();
@@ -782,6 +876,7 @@ extern uint8 *DFtbuf;
 #  define HDstrlen(s)       (_fstrlen(s))
 #  define HDstrncmp(s1,s2,n)    (_fstrncmp((s1),(s2),(n)))
 #  define HDstrncpy(s1,s2,n)    (_fstrncpy((s1),(s2),(n)))
+#  define HDstrchr(s,c)    (_fstrchr((s),(c)))
 #else
 #  define HDstrcat(s1,s2)   (strcat((s1),(s2)))
 #  define HDstrcmp(s,t)     (strcmp((s),(t)))
@@ -789,6 +884,7 @@ extern uint8 *DFtbuf;
 #  define HDstrlen(s)       (strlen(s))
 #  define HDstrncmp(s1,s2,n)    (strncmp((s1),(s2),(n)))
 #  define HDstrncpy(s1,s2,n)    (strncpy((s1),(s2),(n)))
+#  define HDstrchr(s,c)    (strchr((s),(c)))
 #endif /* WIN3 */
 
 
@@ -797,12 +893,13 @@ extern uint8 *DFtbuf;
 **************************************************************************/
 
 #ifdef WIN3
-#  define HDmemcpy(dst,src,n) (_fmemcpy((dst),(src),(n)))
-#  define HDmemset(s,c,n)     (_fmemset((s),(c),(n)))
+#  define HDmemcpy(dst,src,n)   (_fmemcpy((dst),(src),(n)))
+#  define HDmemset(dst,c,n)     (_fmemset((dst),(c),(n)))
+#  define HDmemcmp(dst,src,n)   (_fmemcmp((dst),(src),(n)))
 #else
-#  define HDmemcpy(dst,src,n) (memcpy((dst),(src),(n)))
-#  define HDmemset(s,c,n)     (memset((s),(c),(n)))
+#  define HDmemcpy(dst,src,n)   (memcpy((dst),(src),(n)))
+#  define HDmemset(dst,c,n)     (memset((dst),(c),(n)))
+#  define HDmemcmp(dst,src,n)   (memcmp((dst),(src),(n)))
 #endif /* WIN3 */
-
 
 #endif /* HDFI_H */

@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1992/11/30 22:00:01  chouck
-Added fixes for changing to Vstart and Vend
+Revision 1.6  1993/01/19 05:56:22  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.5  1992/11/30  22:00:01  chouck
+ * Added fixes for changing to Vstart and Vend
+ *
  * Revision 1.4  1992/11/24  17:43:26  chouck
  * Fixed memory over-write when VGroups have lots of members
  *
@@ -143,9 +147,9 @@ PRIVATE int32 Load_vfile (f)
 
 	vf->vgtabn = 0;
 
-	stat = aid = QQstartread(f, DFTAG_VG,  DFREF_WILDCARD);
+    stat = aid = Hstartread(f, DFTAG_VG,  DFREF_WILDCARD);
 	while (stat != FAIL) {
-          QQQuerytagref (aid, &tag, &ref);
+          HQuerytagref (aid, &tag, &ref);
 #ifdef DEBUG
           if (vjv) {
             sprintf(sjs,"#LOADVGDIR:FOUND (%d) <%d/%d>\n ",
@@ -159,15 +163,15 @@ PRIVATE int32 Load_vfile (f)
           
           vf->vgtabtail->next  = v;
           vf->vgtabtail	     = v;
-          v->next     = NULL;
+          v->next		     = NULL;
           v->ref      = (intn) ref;
           v->vg       = (VGROUP*) NULL; /* ie not attached yet */
           v->nattach  = 0;
           v->nentries = 0;
           vf->vgtabn++;
-          stat = QQnextread (aid, DFTAG_VG, DFREF_WILDCARD, DF_CURRENT);
+          stat = Hnextread (aid, DFTAG_VG, DFREF_WILDCARD, DF_CURRENT);
 	}
-	QQendaccess (aid);
+    Hendaccess (aid);
 
 
 	/* load all the vs's  tag/refs from file */
@@ -181,10 +185,10 @@ PRIVATE int32 Load_vfile (f)
 	vf->vstab.next     = NULL;
 
 	vf->vstabn = 0;
-	stat = aid = QQstartread(f, VSDESCTAG,  DFREF_WILDCARD);
+    stat = aid = Hstartread(f, VSDESCTAG,  DFREF_WILDCARD);
 	while (stat != FAIL) {
 
-          QQQuerytagref (aid, &tag, &ref);
+          HQuerytagref (aid, &tag, &ref);
           
 #ifdef DEBUG
           if (vjv) {
@@ -205,9 +209,9 @@ PRIVATE int32 Load_vfile (f)
           w->nattach  = 0;
           w->nvertices= 0;
           vf->vstabn++;
-          stat = QQnextread (aid, VSDESCTAG, DFREF_WILDCARD, DF_CURRENT);
+          stat = Hnextread (aid, VSDESCTAG, DFREF_WILDCARD, DF_CURRENT);
 	}
-	QQendaccess (aid);
+    Hendaccess (aid);
 
 	/* file may be incompatible with vset version 2.x. Need to check it */
         if ( ((int32)0 == vf->vgtabn) && ((int32)0 == vf->vstabn) )
@@ -241,19 +245,20 @@ PRIVATE void Remove_vfile (f)
 	HFILEID f;
 #endif
 {
-    vginstance_t *vginst, *vg1;
-    vsinstance_t *vsinst, *vs1;
+	vginstance_t *vginst, *vg1;
+	vsinstance_t *vsinst, *vs1;
     vfile_t      *vf=NULL;
-    
-    char * FUNC = "Remove_vfile";
-    
-    
+
+	char * FUNC = "Remove_vfile";
+
+
     /* Figure out what file to work on */
     vf = Get_vfile(f);
-    
-    if(vf == NULL) return;
-    
-    /* free vstab and vgtab link-list entries */
+        
+    if(vf==NULL)
+        return;
+        
+	/* free vstab and vgtab link-list entries */
     vginst = vf->vgtab.next;
     while (vginst) {
         vg1 = vginst->next;
@@ -263,7 +268,7 @@ PRIVATE void Remove_vfile (f)
         }
         vginst = vg1;
     }
-    
+
     vsinst = vf->vstab.next;
     while (vsinst) {
         vs1 = vsinst->next; 
@@ -276,7 +281,7 @@ PRIVATE void Remove_vfile (f)
 
     vf->vgtab.next = NULL;
     vf->vstab.next = NULL;
-
+        
 }  /* Remove_vfile */
 
 /* ---------------------------- Vstart ------------------------- */
@@ -414,82 +419,82 @@ void vpackvg (vg, buf, size)
 #endif
 
 {
-    register uint16 	i;
-    register BYTE		*b, *bb;
-    register uint16		uint16var;
-    char * FUNC = "vpackvg";
-    
-    bb = &buf[0];
-    
-    /* save nvelt */
-    b= bb;
-    UINT16ENCODE(b,vg->nvelt);
-    bb +=UINT16SIZE;
-    
-    /* save all tags */
-    for(i = 0; i < vg->nvelt; i++) {
-        b= bb;
-        UINT16ENCODE(b,vg->tag[i]);
-        bb +=UINT16SIZE;
-    }
-    
-    /* save all refs */
-    for(i = 0; i < vg->nvelt; i++) {
-        b= bb;
-        UINT16ENCODE(b,vg->ref[i]);
-        bb +=UINT16SIZE;
-    }
-    
-    /* save the vgnamelen and vgname - omit the null */
-    b= bb;
+	register uint16 	i;
+	register BYTE		*b, *bb;
+	register uint16		uint16var;
+	char * FUNC = "vpackvg";
+
+	bb = &buf[0];
+
+	/* save nvelt */
+	b= bb;
+	UINT16ENCODE(b,vg->nvelt);
+	bb +=UINT16SIZE;
+
+	/* save all tags */
+    for(i=0; i<vg->nvelt; i++) {
+		b= bb;
+		UINT16ENCODE(b,vg->tag[i]);
+		bb +=UINT16SIZE;
+	}
+
+	/* save all refs */
+    for(i=0; i<vg->nvelt; i++) {
+		b= bb;
+		UINT16ENCODE(b,vg->ref[i]);
+		bb +=UINT16SIZE;
+	}
+
+	/* save the vgnamelen and vgname - omit the null */
+	b= bb;
     uint16var = HDstrlen(vg->vgname);
-    UINT16ENCODE(b,uint16var);
-    bb +=UINT16SIZE;
-    
+	UINT16ENCODE(b,uint16var);
+	bb +=UINT16SIZE;
+
     HDstrcpy((char*) bb,vg->vgname);
     bb +=  HDstrlen(vg->vgname) ;
-    
-    /* save the vgclasslen and vgclass- omit the null */
-    b= bb;
+
+	/* save the vgclasslen and vgclass- omit the null */
+	b= bb;
     uint16var = HDstrlen(vg->vgclass);
-    UINT16ENCODE(b,uint16var);
-    bb +=INT16SIZE;
-    
+	UINT16ENCODE(b,uint16var);
+	bb +=INT16SIZE;
+
     HDstrcpy((char*) bb,vg->vgclass);
     bb +=  HDstrlen(vg->vgclass) ;
-    
-    /* save the expansion tag/ref pair */
-    b= bb;
-    UINT16ENCODE(b,vg->extag);   /* the vg's expansion tag */
-    bb +=UINT16SIZE;
-    
-    b= bb;
-    UINT16ENCODE(b,vg->exref);   /* the vg's expansion ref */
-    bb +=UINT16SIZE;
-    
-    /*  save the vg's version field */
-    b= bb;
-    UINT16ENCODE(b,vg->version);
-    bb +=UINT16SIZE;
-    
-    /* save the vg's more field */
-    b= bb;
-    UINT16ENCODE(b,vg->more);
-    bb +=UINT16SIZE;
-    
-    if (vjv) {
-        sprintf(sjs,"vpackvg: vgname is [%s]\n",vg->vgname);
-        zj;
-    }
-    
-    /* returns the size of total fields saved */
+
+	/* save the expansion tag/ref pair */
+	b= bb;
+	UINT16ENCODE(b,vg->extag);   /* the vg's expansion tag */
+	bb +=UINT16SIZE;
+
+	b= bb;
+	UINT16ENCODE(b,vg->exref);   /* the vg's expansion ref */
+	bb +=UINT16SIZE;
+
+	/*  save the vg's version field */
+	b= bb;
+	UINT16ENCODE(b,vg->version);
+	bb +=UINT16SIZE;
+
+	/* save the vg's more field */
+	b= bb;
+	UINT16ENCODE(b,vg->more);
+	bb +=UINT16SIZE;
+
+	if (vjv) {
+		sprintf(sjs,"vpackvg: vgname is [%s]\n",vg->vgname);
+		zj;
+	}
+
+	/* returns the size of total fields saved */
     *size = (int32) (bb - buf) + 1;
-    
-    if (vjv) {
-        sprintf(sjs,"#vpackvg: vg->nvelt=%d\n",vg->nvelt);
-        zj;
-    }
-    
+
+	if (vjv) {
+		sprintf(sjs,"#vpackvg: vg->nvelt=%d\n",vg->nvelt);
+		zj;
+	}
+
 } /* vpackvg */
 
 /* ==================================================================== */
@@ -506,20 +511,18 @@ void vpackvg (vg, buf, size)
 */
 
 #ifdef PROTOTYPE
-void vunpackvg (VGROUP *vg, BYTE buf[])      
+void vunpackvg (VGROUP *vg, BYTE buf[])
 #else
-void vunpackvg (vg, buf)      
+void vunpackvg (vg, buf)
 	VGROUP*    	  	vg;	/* vgroup to be loaded with file data */
 	BYTE			buf[]; 	/* must contain a DFTAG_VG data object from file */
 #endif
-
 {
 
 	register BYTE	  *b, *bb;
 	register uint16   i;
 	register uint16	  uint16var;
 	char * FUNC = "vunpackvg";
-
 
 	bb = &buf[0];
 
@@ -528,21 +531,21 @@ void vunpackvg (vg, buf)
 	UINT16DECODE(b,vg->nvelt);
 	bb+=UINT16SIZE;
 
-        vg->msize = vg->nvelt;
-        vg->tag  = (uint16 *) HDgetspace(vg->msize * sizeof(uint16));
-        vg->ref  = (uint16 *) HDgetspace(vg->msize * sizeof(uint16));
+    vg->msize = vg->nvelt;
+    vg->tag  = (uint16 *) HDgetspace(vg->msize * sizeof(uint16));
+    vg->ref  = (uint16 *) HDgetspace(vg->msize * sizeof(uint16));
 
-        if((vg->tag == NULL) || (vg->ref == NULL)) return;
+    if((vg->tag == NULL) || (vg->ref == NULL)) return;
 
-	/* retrieve the tags */
-	for (i = 0; i < vg->nvelt; i++) {
+    /* retrieve the tags */
+    for (i=0; i<vg->nvelt; i++) {
 		b= bb;
-		UINT16DECODE(b, vg->tag[i]);
+		UINT16DECODE(b,vg->tag[i]);
 		bb +=UINT16SIZE;
 	}
 
 	/* retrieve the refs */
-	for (i = 0; i < vg->nvelt; i++) {
+    for (i=0; i<vg->nvelt; i++) {
 		b= bb;
 		UINT16DECODE(b,vg->ref[i]);
 		bb +=UINT16SIZE;
@@ -611,141 +614,139 @@ void vunpackvg (vg, buf)
 #ifdef PROTOTYPE
 PUBLIC VGROUP *Vattach (HFILEID f, int32 vgid, char *accesstype)
 #else
-
 PUBLIC VGROUP *Vattach (f, vgid, accesstype)
-	int32 	vgid;		/* actual vgroup's vgid or -1 for new vgroup */
-	char   	*accesstype; 	/* access mode */
-	HFILEID	f; 		/* HDF file handle */
-
+int32   vgid;       /* actual vgroup's vgid or -1 for new vgroup */
+char    *accesstype;    /* access mode */
+HFILEID f;      /* HDF file handle */
 #endif
 
 {
-    VGROUP			*vg;
+	VGROUP			*vg;
     int16           access;
     BYTE            * vgpack;
-    vginstance_t	* v;
-    vfile_t			* vf;
-    char * FUNC = "Vattach";
-    
+    vginstance_t    * v;
+	vfile_t			* vf;
+	char * FUNC = "Vattach";
+
     if (f == FAIL)             {HERROR(DFE_ARGS); return(NULL);}
     if (!(vf = Get_vfile(f)))  {HERROR(DFE_FNF); return(NULL);}
-    
+
     if ( accesstype[0]=='R' || accesstype[0]=='r')      access = 'r';
     else if ( accesstype[0]=='W' || accesstype[0]=='w') access = 'w';
     else HRETURN_ERROR(DFE_BADACC, NULL);
-    
-    if (vgid == -1) {           /******* create a NEW vg in vgdir ******/
-        
-        if (access=='r') {
+
+        if (vgid == -1) {           /******* create a NEW vg in vgdir ******/
+          
+          if (access=='r') {
             HERROR(DFE_ARGS);
             return(NULL);
-        }
-        
-        /* allocate space for vg, & zero it out */
-        if ( (vg = (VGROUP*) HDgetspace (sizeof(VGROUP)) ) == NULL) {
+          }
+          
+          /* allocate space for vg, & zero it out */
+          if ( (vg = (VGROUP*) HDgetspace (sizeof(VGROUP)) ) == NULL) {
             HERROR(DFE_NOSPACE);
             return(NULL);
-        }
-        
-        /* initialize new vg */
-        vg->msize = MAXNVELT;
-        vg->tag   = (uint16 *) HDgetspace(vg->msize * sizeof(uint16));
-        vg->ref   = (uint16 *) HDgetspace(vg->msize * sizeof(uint16));
+          }
 
-        if((vg->tag == NULL) || (vg->ref == NULL)) {
-            HERROR(DFE_NOSPACE);
-            return(NULL);
-        }
+          /* initialize new vg */
+            vg->msize = MAXNVELT;
+            vg->tag   = (uint16 *) HDgetspace(vg->msize * sizeof(uint16));
+            vg->ref   = (uint16 *) HDgetspace(vg->msize * sizeof(uint16));
 
-        vg->nvelt 	= 0;
-        vg->vgname[0]	= '\0';
-        vg->f           = f;
-        vg->otag        = DFTAG_VG;
-        vg->oref	= vnewref(f);  /* create a new unique ref for it */
-        if( vg->oref == 0 ) { HERROR(DFE_NOREF); return(NULL); }
-        
-        vg->access  	= access;
-        
-        vg->marked	= 0;
-        vg->vgclass[0]	= '\0';
-        vg->extag	= 0;
-        vg->exref	= 0;
-        vg->more	= 0;
-        vg->version	= VSET_VERSION;
-        
-        /* attach new vg to file's vgtab  */
-        if ( NULL == (v = (vginstance_t*) HDgetspace (sizeof(vginstance_t)))) {
+            if((vg->tag == NULL) || (vg->ref == NULL)) {
+                HERROR(DFE_NOSPACE);
+                return(NULL);
+            }
+
+            vg->nvelt   = 0;
+            vg->vgname[0]   = '\0';
+            vg->f           = f;
+            vg->otag        = DFTAG_VG;
+            vg->oref    = vnewref(f);  /* create a new unique ref for it */
+          if( vg->oref == 0 ) { HERROR(DFE_NOREF); return(NULL); }
+          
+          vg->access  	= access;
+          
+          vg->marked		= 0;
+          vg->vgclass[0]	= '\0';
+          vg->extag		= 0;
+          vg->exref		= 0;
+          vg->more			= 0;
+          vg->version		= VSET_VERSION;
+          
+          /* attach new vg to file's vgtab  */
+          if ( NULL == (v = (vginstance_t*) HDgetspace (sizeof(vginstance_t)))) {
             HERROR(DFE_NOSPACE);
             return(NULL);
-        }
-        
-        vf->vgtabtail->next = v;
-        vf->vgtabtail       = v;
-        vf->vgtabn++;
-        v->next     = NULL;
-        v->ref      = (intn) vg->oref;
-        v->vg       = vg;
-        v->nattach  = 1;
-        v->nentries = 0;
-        
-        return(vg);
-    }
-    
-    else { 		
+          }
+          
+          vf->vgtabtail->next = v;
+          vf->vgtabtail		  = v;
+          vf->vgtabn++;
+          v->next 	= NULL;
+          v->ref	= (intn) vg->oref;
+          v->vg      	= vg;
+          v->nattach	= 1;
+          v->nentries	= 0;
+          
+          return(vg);
+	}
+
+	else { 		
           /******* access an EXISTING vg *********/
         uint32 len;
-        
-        if (NULL == (v= vginstance (f,(uint16)vgid))) {
+          
+          if (NULL == (v= vginstance (f,(uint16)vgid))) {
             HERROR(DFE_NOMATCH);
             HEreport("Vgid (%d) is not in vgtab[]", vgid);
             return(NULL);
-        }
-        
-        /*
-         * vg already attached.  inc nattach and return existing ptr
-         */
-        if (v->vg != NULL) {  
+          }
+          
+          /*
+           * vg already attached.  inc nattach and return existing ptr
+           */
+          if (v->vg != NULL) {  
             v->nattach++;
             return(v->vg);
-        }
-        
-        /* else vg not attached, must fetch vg from file */
-        
-        len = Hlength(f, DFTAG_VG, (uint16) vgid);
-        if (len == FAIL) return NULL;
+          }
+          
+          /* else vg not attached, must fetch vg from file */
+          
+            len = Hlength(f, DFTAG_VG, (uint16) vgid);
+            if (len == FAIL) return NULL;
 
-        vgpack = (BYTE *) HDgetspace(len);
-        if(vgpack == NULL) return NULL;
+            vgpack = (BYTE *) HDgetspace(len);
+            if(vgpack == NULL) return NULL;
 
-        if (QQgetelement(f, DFTAG_VG, (uint16)vgid, vgpack) == (int32)FAIL) {
+          if (Hgetelement(f, DFTAG_VG, (uint16)vgid, vgpack) == (int32)FAIL) {
             HERROR(DFE_NOMATCH);
             return(NULL);
-        }
-        
-        /* allocate space for vg, & zero it out */
-        
-        if (NULL == (vg =(VGROUP*) HDgetspace (sizeof(VGROUP))) ) {
+          }
+          
+          /* allocate space for vg, & zero it out */
+          
+          if (NULL == (vg =(VGROUP*) HDgetspace (sizeof(VGROUP))) ) {
             HERROR(DFE_NOSPACE);
             return(NULL);
-        }
-        
-        /* unpack vgpack into structure vg, and init  */
-        
-        vunpackvg(vg,vgpack);
-        vg->f	     = f;
-        vg->oref     = (uint16)vgid;
-        vg->otag     = DFTAG_VG;
-        vg->access   = access;
-        vg->marked   = 0;
-        
-        /* attach vg to file's vgtab at the vg instance v */
-        v->vg       = vg;
-        v->nattach  = 1;
-        v->nentries = vg->nvelt;
-        HDfreespace(vgpack);
-        
-        return(vg);
-    }
+          }
+          
+          /* unpack vgpack into structure vg, and init  */
+          
+          vunpackvg(vg,vgpack);
+          vg->f				= f;
+          vg->oref            = (uint16)vgid;
+          vg->otag 		= DFTAG_VG;
+          vg->access		= access;
+          vg->marked		= 0;
+          
+          /* attach vg to file's vgtab at the vg instance v */
+          v->vg	    		= vg;
+          v->nattach    	= 1;
+          v->nentries    = vg->nvelt;
+            HDfreespace(vgpack);
+          
+          return(vg);
+	}
         
         
 } /* Vattach */
@@ -779,7 +780,7 @@ PUBLIC void Vdetach (vg)
 {
 
   int32         vgpacksize;
-  BYTE	        * vgpack;
+  BYTE          * vgpack;
   vginstance_t 	* v;
   char * FUNC = "Vdetach";
   
@@ -802,12 +803,11 @@ PUBLIC void Vdetach (vg)
   /* - OR - */
   /* if that vgroup is empty */
   if (vg->access == 'w') {
-    if ((vg->nvelt == 0) || (vg->marked == 1)) {
+    if ((vg->nvelt==0) || (vg->marked == 1)) {
       if (vjv) {
         sprintf(sjs,"@VDETACH: added %d entries in vg..update vg to file\n",
                 vg->nvelt - v->nentries); zj;
       }
-
       vgpack = (BYTE *) HDgetspace((int32) sizeof(VGROUP) + vg->nvelt * 4);
       vpackvg(vg,vgpack,&vgpacksize);
 
@@ -818,13 +818,13 @@ PUBLIC void Vdetach (vg)
       Hdeldd(vg->f, DFTAG_VG, vg->oref);
       if(vjv) {sprintf(sjs,"OLD VGROUP deleted.  Now writing again\n"); zj;}
 
-      if(QQputelement(vg->f, DFTAG_VG, vg->oref, vgpack, vgpacksize) == FAIL) {
+      if(Hputelement(vg->f, DFTAG_VG, vg->oref, vgpack, vgpacksize) == FAIL) {
         HERROR(DFE_WRITEERROR);
         HEprint(stderr, 0);
       }
       HDfreespace(vgpack);
       vg->marked = 0;
-/*      return;   */
+/*    return; */
     }
   }
   
@@ -834,11 +834,12 @@ PUBLIC void Vdetach (vg)
   if (v->nattach > 0)
     return;    /* ok */
   
+  
   v->vg = NULL;             /* detach vg from vgdir */
   
   HDfreespace(vg->tag);
   HDfreespace(vg->ref);
-  HDfreespace(vg);
+  HDfreespace (vg);
   
   return; /* ok */
   
@@ -909,25 +910,25 @@ PUBLIC int32 Vinsert (vg, velt)
           return(FAIL);
 	} /* switch */
 
-    /* check and prevent duplicate links */
-    for(u = 0; u < vg->nvelt; u++)
+	/* check and prevent duplicate links */
+    for(u=0; u<vg->nvelt; u++)
         if ( (vg->tag[u] == velt->otag) && (vg->ref[u] == velt->oref) ) {
-            HERROR(DFE_DUPDD);
-            HEreport("Vinsert: duplicate link <%d/%d>", velt->otag,velt->oref);
-            return(FAIL);
-        }
-    
-    /* Finally, ok to insert */
-    vinsertpair (vg, velt->otag, velt->oref);
-    
-    if (vjv) {
-        sprintf(sjs,"#Vinsert:inserted <%d/%d> at nvelt=%d\n",
-                velt->otag, velt->oref, vg->nvelt); zj;
-    }
-    
-    vg->marked = TRUE;
-    return(vg->nvelt - 1);
-    
+           HERROR(DFE_DUPDD);
+           HEreport("Vinsert: duplicate link <%d/%d>", velt->otag,velt->oref);
+           return(FAIL);
+		}
+
+	/* Finally, ok to insert */
+	vinsertpair (vg, velt->otag, velt->oref);
+
+	if (vjv) {
+		sprintf(sjs,"#Vinsert:inserted <%d/%d> at nvelt=%d\n",
+		    velt->otag, velt->oref, vg->nvelt); zj;
+	}
+
+	vg->marked = TRUE;
+	return(vg->nvelt - 1);
+
 } /* Vinsert */
 
 /* ----------------------------- Vflocate -------------------------------- */
@@ -1147,8 +1148,8 @@ int32 vinsertpair ( vg, tag, ref)
 #endif
 
 {
-    char * FUNC = "vinsertpair";
-    
+	char * FUNC = "vinsertpair";
+
     if(vg->nvelt >= vg->msize) {
         vg->msize *= 2;
         vg->tag  = (uint16 *) HDregetspace(vg->tag, vg->msize * sizeof(uint16));
@@ -1159,13 +1160,12 @@ int32 vinsertpair ( vg, tag, ref)
             return(NULL);
         }  
     }
-    
     vg->tag[vg->nvelt]   = tag;
-    vg->ref[vg->nvelt]   = ref;
-    vg->nvelt ++;
+	vg->ref[vg->nvelt]   = ref;
+	vg->nvelt ++;
 
-    vg->marked = TRUE;
-    return ((int32) vg->nvelt);
+	vg->marked = TRUE;
+	return ((int32) vg->nvelt);
 }
 
 /* ==================================================================== */
@@ -1190,34 +1190,33 @@ int32 Ventries (f, vgid)
 #endif
 
 {
-    BYTE	* vgpack;
-    VGROUP 	vg;
-    int32   	vgpacksize, len;
+    BYTE    * vgpack;
+	VGROUP 	vg;
+    int32   vgpacksize, len;
     char * FUNC = "Ventries";
-    
-    if (vgid < 1) {
-        HERROR(DFE_ARGS);
-        return(FAIL);
-    }
-    
+
+	if (vgid < 1) {
+      HERROR(DFE_ARGS);
+      return(FAIL);
+      }
+
     len = Hlength(f, DFTAG_VG, (uint16) vgid);
     if(len == FAIL) return FAIL;
 
     vgpack = (BYTE *) HDgetspace(len);
     if(vgpack == NULL) return FAIL;
 
-    if (QQgetelement(f, DFTAG_VG, (uint16)vgid, vgpack) == FAIL) {
-        sprintf(sjs,"@Ventries: cannot get vg from file\n"); zj;
-        return (FAIL);
-    }
-    
+    if ( Hgetelement(f, DFTAG_VG, (uint16)vgid, vgpack) == FAIL) {
+		sprintf(sjs,"@Ventries: cannot get vg from file\n"); zj;
+		return (FAIL);
+	}
+
     vunpackvg(&vg,vgpack);
-    
+
     HDfreespace(vg.tag);
     HDfreespace(vg.ref);
 
     return( (int32) vg.nvelt);
-    
 } /* Ventries */
 
 /* ==================================================================== */

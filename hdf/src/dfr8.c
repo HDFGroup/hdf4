@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.5  1993/01/19 05:54:54  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.4  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.3  1992/10/22  22:53:32  chouck
  * Added group handle to group interface
  *
@@ -36,6 +40,8 @@ Updates from 3.2r2 -> 3.3
  *  DFR8writeref: put image with this reference number next
  *  DFR8restart: forget info about last file accessed - restart from beginning
  *  DFR8lastref: return reference number of last element read or written
+ *  DFR8setcompress: Set the compression for next image written
+ * Private:
  *  DFR8Iopen: open/reopen file
  *  DFR8Iriginfo: obtain info about next RIG/RI8 to get
  * Remarks: A RIG specifies attributes associated with an image - palette,
@@ -48,20 +54,32 @@ Updates from 3.2r2 -> 3.3
 #include "herr.h"
 #include "dfrig.h"
 
-static int foundRig = -1;      /* -1: don't know if HDF file has RIGs */
-                               /* 0: No RIGs, try for RI8s etc. */
-                               /* 1: RIGs used, ignore RI8s etc. */
-static DFRrig Readrig;         /* information about RIG being read */
-static DFRrig Writerig;        /* information about RIG being written */
-static int Newdata = 0;        /* does Readrig contain fresh data? */
-static uint16 Writeref=0;      /* ref of next image to put in this file */
-static int Newpalette=(-1);    /* -1 = no palette is associated */
-                               /* 0 = palette already written out */
-                               /* 1 = new palette, not yet written out */
+static int foundRig = -1;       /* -1: don't know if HDF file has RIGs */
+                                /* 0: No RIGs, try for RI8s etc. */
+                                /* 1: RIGs used, ignore RI8s etc. */
+static DFRrig Readrig;          /* information about RIG being read */
+static DFRrig Writerig;         /* information about RIG being written */
+static int Newdata = 0;         /* does Readrig contain fresh data? */
+static uint16 Writeref=0;       /* ref of next image to put in this file */
+static int Newpalette=(-1);     /* -1 = no palette is associated */
+                                /* 0 = palette already written out */
+                                /* 1 = new palette, not yet written out */
+static bool CompressSet=FALSE;  /* Whether the compression parameters have */
+                                /* been set for the next image */
+static int32 CompType=COMP_NONE;/* What compression to use for the next image */
+static comp_info CompInfo;      /* Params for compression to perform */
 static uint8 Palette[768];      /* to store palette for 8-bit images */
-static uint16 Refset=0;        /* Ref of image to get next */
-static uint16 Lastref = 0;     /* Last ref read/written */
-static DFRrig Zrig = {         /* empty RIG for initialization */
+#ifdef QAK
+static bool OverridePal=FALSE;  /* indicate that the ReadPalette should be */
+                                /* used instead of the palette stored in the */
+                                /* file.  This ugly, nasty hack was brought */
+                                /* to you by QAK, in the interest of making */
+                                /* JPEG stored 8-it images look almost normal */
+static uint8 *ReadPalette;      /* to store to read palette for 8-bit images */
+#endif
+static uint16 Refset=0;         /* Ref of image to get next */
+static uint16 Lastref = 0;      /* Last ref read/written */
+static DFRrig Zrig = {          /* empty RIG for initialization */
     {0, 0}, {0, 0, {0, 0}, 0, 0, {0, 0}},
     {0, 0}, {0, 0, {0, 0}, 0, 0, {0, 0}},
     {0, 0}, {0, 0, {0, 0}, 0, 0, {0, 0}},
@@ -91,6 +109,42 @@ PRIVATE int DFR8Iriginfo
     PROTO((int32 file_id));
 
 uint8 R8tbuf[512];
+
+/*-----------------------------------------------------------------------------
+ * Name:    DFR8setcompress
+ * Purpose: set compression scheme for 8-bit image
+ * Inputs:
+ *      type - the type of compression to perform on the next image
+ *      cinfo - compression information structure
+ * Returns: 0 on success, -1 on failure with DFerror set
+ * Users:   HDF HLL (high-level library) users, utilities, other routines
+ * Invokes: none
+ * Remarks: none
+ *---------------------------------------------------------------------------*/
+
+#ifdef PROTOTYPE
+intn DFR8setcompress(int32 type,comp_info *cinfo)
+#else
+intn DFR8setcompress(type,cinfo)
+    int32 type;
+    comp_info *cinfo;
+#endif
+{
+    char *FUNC="DFR8setcompress";
+
+    if(type<0 || type>COMP_MAX_COMP || compress_map[type]==0)
+        HRETURN_ERROR(DFE_BADSCHEME, FAIL);
+
+    CompressSet=TRUE;
+
+    /* map JPEG compression into correct type of JPEG compression */
+    if(type==COMP_JPEG) 
+        CompType=DFTAG_GREYJPEG;
+    else    /* otherwise, just use mapped tag */
+        CompType=compress_map[type];
+    CompInfo=*cinfo;
+    return(SUCCEED);
+}   /* end DFR8setcompress() */
 
 /*-----------------------------------------------------------------------------
  * Name:    DFR8getdims
@@ -141,6 +195,37 @@ intn DFR8getdims(filename, pxdim, pydim, pispal)
     return(Hclose(file_id));
 }
 
+#ifdef QAK
+/*-----------------------------------------------------------------------------
+ * Name:    DFR8Dsetreadpal
+ * Purpose: Set up a palette to override the one which would be read from
+ *          a file normally and associated with a 8-bit raster image.  This
+ *          routine is (currently) only called from the JPEG unpacking
+ *          routines.
+ * Inputs:  newpal: the palette to use with the image
+ * Returns: none, if no memory is available, its not an error, the image
+ *          will just have a really nasty palette associated with it.
+ * Users:   DFunjpeg()
+ * Invokes: HDgetspace()
+ * Remarks:
+ *---------------------------------------------------------------------------*/
+
+#ifdef PROTOTYPE
+VOID DFR8Dsetreadpal(char *newpal)
+#else
+VOID DFR8Dsetreadpal(newpal)
+    char *newpal;
+#endif
+{
+    char *FUNC="DFR8Dsetreadpal";
+
+    if((ReadPalette=HDgetspace(768))!=NULL) {   /* check for space */
+        HDmemcpy(ReadPalette,newpal,768);
+        OverridePal=TRUE;
+      } /* end if */
+}   /* end DFR8Dsetreadpal() */
+#endif
+
 /*-----------------------------------------------------------------------------
  * Name:    DFR8getimage
  * Purpose: get next image from a RIG, get palette also if desired
@@ -174,8 +259,7 @@ intn DFR8getimage(filename, image, xdim, ydim, pal)
 
     HEclear();
 
-    if (!filename || !*filename || !image
-       || (xdim<=0) || (ydim<=0)) {
+    if (!filename || !*filename || !image || (xdim<=0) || (ydim<=0)) {
        HERROR(DFE_ARGS);
         return FAIL;
     }
@@ -222,6 +306,15 @@ intn DFR8getimage(filename, image, xdim, ydim, pal)
        }
     }
 
+#ifdef QAK
+    if (OverridePal==TRUE) {    /* check for an over-ridden palette */
+        if(pal)     /* do we want it? */
+            HDmemcpy(pal,ReadPalette,768);
+        OverridePal=FALSE;
+        HDfreespace(ReadPalette);
+      } /* end if */
+    else
+#endif
     if (pal && Readrig.lut.tag) { /* read palette */
         if (Hgetelement(file_id, Readrig.lut.tag, 
                                Readrig.lut.ref,(uint8 *)pal) == FAIL)
@@ -247,11 +340,6 @@ int DFR8setpalette(pal)
     uint8 *pal;
 #endif
 {
-/*    char *FUNC="DFR8setpalette"; */
-    int i;
-
-/*    HEclear(); */
-
     if (!pal) {
         Newpalette = -1;       /* no palette */
         Writerig.lut.tag = 0;
@@ -259,8 +347,7 @@ int DFR8setpalette(pal)
         Writerig.desclut.xdim = 0;
         Writerig.desclut.ncomponents = 0;
     } else {                   /* store palette */
-        for (i=0; i<768; i++)
-            Palette[i] = pal[i];
+        HDmemcpy(Palette,pal,768);
         Newpalette = 1;
     }
     return SUCCEED;
@@ -323,12 +410,27 @@ PRIVATE intn DFR8Iputimage(filename, image, xdim, ydim, compress, op)
        return FAIL;
 
     /* write out image */
-    if (compress) {
+    if (compress || CompressSet) {
+        /* if a compression type has been set, check if it's the same */
+        if(CompressSet==FALSE || (compress>1 && compress!=CompType &&
+                !(compress==COMP_JPEG && CompType==DFTAG_GREYJPEG))) {
+            if(compress<0 || compress>COMP_MAX_COMP || compress_map[compress]==0)
+                HRETURN_ERROR(DFE_BADSCHEME, FAIL);
+            /* map JPEG compression into correct type of JPEG compression */
+            if(compress==COMP_JPEG) {
+                CompType=DFTAG_GREYJPEG;
+                /* set up some sane JPEG params */
+                CompInfo.jpeg.quality=75;
+                CompInfo.jpeg.force_baseline=TRUE;
+              } /* end if */
+            else    /* otherwise, just use mapped tag */
+                CompType=compress_map[compress];
+          } /* end else */
         if (DFputcomp(file_id, DFTAG_CI, Writeref, (uint8*)image, xdim, ydim,
-                     (uint8*)pal, (uint8*)newpal, compress) == FAIL)
+                     pal, (uint8*)newpal, CompType, &CompInfo) == FAIL)
             return(HDerr(file_id));
         Writerig.image.tag = DFTAG_CI;
-        if (compress==DFTAG_IMC) {
+        if (CompType==DFTAG_IMC) {
             pal = newpal;      /* Imcomp creates new pal */
             Newpalette = 1;    /* write out palette */
         }
@@ -343,10 +445,12 @@ PRIVATE intn DFR8Iputimage(filename, image, xdim, ydim, compress, op)
     Writerig.aspectratio = (float32)1.0;
 
     /* Write out Raster-8 tags for those who want it */
-    r8tag = compress ?
-       ((compress==DFTAG_RLE) ? DFTAG_CI8 : DFTAG_II8) : DFTAG_RI8;
-    if (Hdupdd(file_id, r8tag, Writeref, Writerig.image.tag, Writeref) == FAIL)
-        return(HDerr(file_id));
+    if(CompType!=DFTAG_GREYJPEG) {
+        r8tag = CompType ?
+           ((CompType==DFTAG_RLE) ? DFTAG_CI8 : DFTAG_II8) : DFTAG_RI8;
+        if(Hdupdd(file_id,r8tag,Writeref,Writerig.image.tag,Writeref) == FAIL)
+            return(HDerr(file_id));
+      } /* end if */
 
     /* Write out palette */
     if (pal) {                 /* if there is a palette */
@@ -359,7 +463,7 @@ PRIVATE intn DFR8Iputimage(filename, image, xdim, ydim, compress, op)
             Writerig.desclut.xdim = 768;
             Writerig.desclut.ncomponents = 1;
         }
-        if (compress!=DFTAG_IMC)
+        if (CompType!=DFTAG_IMC)
             Newpalette = 0;
         /* if IMCOMP, original palette not written out */
 
@@ -372,13 +476,14 @@ PRIVATE intn DFR8Iputimage(filename, image, xdim, ydim, compress, op)
 
     /* Write out RIG */
     if ((Writerig.descimage.xdim==xdim) && (Writerig.descimage.ydim==ydim) &&
-            (Writerig.descimage.compr.tag==compress))
+            (Writerig.descimage.compr.tag==CompType))
         wdim = 0;
     else {
         wdim = 1;
         Writerig.descimage.xdim = xdim;
         Writerig.descimage.ydim = ydim;
-        Writerig.descimage.compr.tag = compress;
+        Writerig.descimage.compr.tag = CompType;
+        Writerig.descimage.compr.ref = Writeref;
     }
 
     /* write ID, NT */
@@ -388,6 +493,8 @@ PRIVATE intn DFR8Iputimage(filename, image, xdim, ydim, compress, op)
     Lastref = Writeref;     /* remember ref written */
 
     Writeref = 0;           /* don't know ref to write next */
+    CompressSet=FALSE;      /* Reset Compression flag and type */
+    CompType=COMP_NONE;
 
     return(Hclose(file_id));
 }
@@ -790,12 +897,12 @@ int DFR8restart()
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-int DFR8lastref(void)
+uint16 DFR8lastref(void)
 #else
-int DFR8lastref()
+uint16 DFR8lastref()
 #endif
 {
-    return((int) Lastref);
+    return((uint16) Lastref);
 }
 
 

@@ -2,11 +2,15 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.4  1992/06/29 20:34:06  chouck
-C Cast strings to smaller values for comparisions.  The last
-C byte of annotations and labels returned is NULL so the
-C string comparisions get confused
+C Revision 1.5  1993/01/19 05:58:39  koziol
+C Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+C port.  Lots of minor annoyances fixed.
 C
+c Revision 1.4  1992/06/29  20:34:06  chouck
+c Cast strings to smaller values for comparisions.  The last
+c byte of annotations and labels returned is NULL so the
+c string comparisions get confused
+c
 c Revision 1.3  1992/05/06  23:03:22  sxu
 c changed hiopen to hopen and hiclose to hclose
 c hopen returns fid (not ret)

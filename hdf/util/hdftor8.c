@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/07/15 21:48:48  sxu
- Added changes for CONVEX
+Revision 1.5  1993/01/19 06:00:24  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.4  1992/07/15  21:48:48  sxu
+ *  Added changes for CONVEX
+ *
  * Revision 1.3  1992/07/07  21:39:36  chouck
  * Changed main() to be of type int and added PROTO() stuff
  *

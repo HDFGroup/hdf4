@@ -1,33 +1,14 @@
-/***************************************************************************
-*
-*
-*                         NCSA HDF version 3.2r3
-*                            December 1, 1992
-*
-* NCSA HDF Version 3.2 source code and documentation are in the public
-* domain.  Specifically, we give to the public domain all rights for future
-* licensing of the source code, all resale rights, and all publishing rights.
-*
-* We ask, but do not require, that the following message be included in all
-* derived works:
-*
-* Portions developed at the National Center for Supercomputing Applications at
-* the University of Illinois at Urbana-Champaign, in collaboration with the
-* Information Technology Institute of Singapore.
-*
-* THE UNIVERSITY OF ILLINOIS GIVES NO WARRANTY, EXPRESSED OR IMPLIED, FOR THE
-* SOFTWARE AND/OR DOCUMENTATION PROVIDED, INCLUDING, WITHOUT LIMITATION,
-* WARRANTY OF MERCHANTABILITY AND WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE
-*
-****************************************************************************
-*/
 /*
 $Header$
 
 $Log$
-Revision 1.14  1993/01/15 16:52:32  georgev
-Wrong declaration for dswfv()
+Revision 1.15  1993/01/19 05:56:05  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.14  1993/01/15  16:52:32  georgev
+ * Wrong declaration for dswfv()
+ *
  * Revision 1.13  1993/01/14  19:09:07  chouck
  * Added routine Hfidinquire() to get info about an open file
  *
@@ -79,7 +60,7 @@ Wrong declaration for dswfv()
 ** from hfile.c 
 */
 extern int32 Hopen 
-  PROTO((char HUGE *path, intn access, int16 ndds));
+  PROTO((char _HUGE *path, intn access, int16 ndds));
 
 extern intn Hclose
   PROTO((int32 file_id));
@@ -91,30 +72,36 @@ extern intn Hnextread
   PROTO((int32 access_id, uint16 tag, uint16 ref, int origin));
 
 extern intn Hinquire
-  PROTO((int32 access_id, int32 HUGE *pfile_id, uint16 HUGE *ptag,
-        uint16 HUGE *pref,int32 HUGE *plength, int32 HUGE *poffset,
-        int32 HUGE *pposn, int16 HUGE *paccess, int16 HUGE *pspecial));
+  PROTO((int32 access_id, int32 _HUGE *pfile_id, uint16 _HUGE *ptag,
+        uint16 _HUGE *pref,int32 _HUGE *plength, int32 _HUGE *poffset,
+        int32 _HUGE *pposn, int16 _HUGE *paccess, int16 _HUGE *pspecial));
 
 extern int32 Hstartwrite
   PROTO((int32 file_id, uint16 tag, uint16 ref, int32 length));
+
+extern intn Happendable
+  PROTO((int32 aid));
 
 extern intn Hseek
   PROTO((int32 access_id, int32 offset, int origin));
 
 extern int32 Hread
-  PROTO((int32 access_id, int32 length, uint8 HUGE *data));
+  PROTO((int32 access_id, int32 length, uint8 _HUGE *data));
 
 extern int32 Hwrite
-  PROTO((int32 access_id, int32 length, uint8 HUGE *data));
+  PROTO((int32 access_id, int32 length, uint8 _HUGE *data));
+
+extern int32 Htrunc
+  PROTO((int32 access_id, int32 trunc_len));
 
 extern int32 Hendaccess
   PROTO((int32 access_id));
 
 extern int32 Hgetelement
-  PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 HUGE *data));
+  PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE *data));
 
 extern int Hputelement
-  PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 HUGE *data, int32 length));
+  PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE *data, int32 length));
 
 extern int32 Hlength
   PROTO((int32 file_id, uint16 tag, uint16 ref));
@@ -138,12 +125,12 @@ extern int Hnumber
   PROTO((int32 file_id, uint16 tag));
 
 extern int Hgetlibversion
-  PROTO((uint32 HUGE *majorv, uint32 HUGE *minorv,
-        uint32 HUGE *release, char HUGE *string));
+  PROTO((uint32 _HUGE *majorv, uint32 _HUGE *minorv,
+        uint32 _HUGE *release, char _HUGE *string));
 
 extern int Hgetfileversion
-  PROTO((int32 file_id, uint32 HUGE *majorv, uint32 HUGE *minorv,
-        uint32 HUGE *release, char HUGE *string));
+  PROTO((int32 file_id, uint32 _HUGE *majorv, uint32 _HUGE *minorv,
+        uint32 _HUGE *release, char _HUGE *string));
 
 #if defined WIN3
 extern int32 HDfreadbig
@@ -154,10 +141,10 @@ extern int32 HDfwritebig
 
 #elif defined PC
 extern int32 HDfreadbig
-  PROTO((VOIDP buffer, int32 size,FILE HUGE *fp));
+  PROTO((VOIDP buffer, int32 size,FILE _HUGE *fp));
 
 extern int32 HDfwritebig
-  PROTO((VOIDP buffer, int32 size,FILE HUGE *fp));
+  PROTO((VOIDP buffer, int32 size,FILE _HUGE *fp));
 #endif
 
 extern uint16 HDmake_special_tag
@@ -175,38 +162,39 @@ extern int HDerr
 extern bool HDvalidfid
   PROTO((int32 file_id));
 
-extern char HUGE *HDgettagname
+extern char _HUGE *HDgettagname
   PROTO((uint16 tag));
 
 extern int32 Hishdf
-  PROTO((char HUGE *filename));
+  PROTO((char _HUGE *filename));
 
 extern intn Hfidinquire
-    PROTO((int32 file_id, char **fname, intn *access, intn *attach));
+    PROTO((int32 file_id, char _HUGE **fname, intn _HUGE *access,
+        intn _HUGE *attach));
 
 /*
 ** from hkit.c 
 */
-extern char HUGE *HIstrncpy
-  PROTO((register char HUGE *dest, register char HUGE *source, int32 len));
+extern char _HUGE *HIstrncpy
+  PROTO((register char _HUGE *dest, register char _HUGE *source, int32 len));
 
 extern int32 HDspaceleft
   PROTO((void));
 
-extern void HUGE *HDgetspace
+extern void _HUGE *HDgetspace
   PROTO((uint32 qty));
 
-extern void HUGE *HDregetspace
+extern void _HUGE *HDregetspace
   PROTO((VOIDP where, uint32 qty));
 
-extern void HUGE *HDfreespace
-  PROTO((void HUGE *ptr));
+extern void _HUGE *HDfreespace
+  PROTO((void _HUGE *ptr));
 
 extern intn HDc2fstr
-  PROTO((char HUGE *str, int len));
+  PROTO((char _HUGE *str, intn len));
 
-extern char HUGE *HDf2cstring
-  PROTO((_fcd fdesc, int len));
+extern char _HUGE *HDf2cstring
+  PROTO((_fcd fdesc, intn len));
 
 extern intn HDflush
     PROTO((int32 file_id));
@@ -222,25 +210,25 @@ extern int32 HLcreate
 ** from hextelt.c 
 */
 extern int32 HXcreate
-  PROTO((int32 file_id, uint16 tag, uint16 ref, char HUGE *extern_file_name));
+  PROTO((int32 file_id, uint16 tag, uint16 ref, char _HUGE *extern_file_name));
 
 /*
 ** from herr.c 
 */
-extern char HUGE *HEstring
+extern char _HUGE *HEstring
   PROTO((int16 error_code));
 
 extern VOID HEpush
-  PROTO((int16 error_code, char HUGE *function_name, char HUGE *file_name,
+  PROTO((int16 error_code, char _HUGE *function_name, char _HUGE *file_name,
         int line));
 
 #ifndef _H_ERR_MASTER_
 extern VOID HEreport
-  PROTO((char HUGE *, ...));
+  PROTO((char _HUGE *, ...));
 #endif /* _H_ERR_MASTER_ */
 
 extern VOID HEprint
-  PROTO((FILE HUGE *stream, int32 print_level));
+  PROTO((FILE _HUGE *stream, int32 print_level));
 
 extern int16 HEvalue
   PROTO((int32 level));
@@ -249,11 +237,12 @@ extern int16 HEvalue
 ** from dfcomp.c 
 */
 extern int DFputcomp
-  PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 HUGE *image, int32 xdim,
-     int32 ydim, uint8 HUGE *palette, uint8 HUGE *newpal, int16 scheme));
+  PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE *image, int32 xdim,
+     int32 ydim, uint8 _HUGE *palette, uint8 _HUGE *newpal, int16 scheme,
+     comp_info *cinfo));
 
 extern int DFgetcomp
-  PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 HUGE *image, int32 xdim,
+  PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE *image, int32 xdim,
 	 int32 ydim, uint16 scheme));
 
 /*
@@ -263,17 +252,33 @@ extern int32 DFCIrle
   PROTO((VOIDP buf, VOIDP bufto, int32 len));
 
 extern int32 DFCIunrle
-  PROTO((uint8 HUGE *buf, uint8 *bufto, int32 outlen, int resetsave));
+  PROTO((uint8 _HUGE *buf, uint8 *bufto, int32 outlen, int resetsave));
 
 /*
 ** from dfimcomp.c 
 */
 extern VOID DFCIimcomp
-  PROTO((int32 xdim, int32 ydim, uint8 HUGE in[], uint8 HUGE out[],
-        uint8 HUGE in_pal[], uint8 HUGE out_pal[], int mode));
+  PROTO((int32 xdim, int32 ydim, uint8 _HUGE in[], uint8 _HUGE out[],
+        uint8 _HUGE in_pal[], uint8 _HUGE out_pal[], int mode));
 
 extern VOID DFCIunimcomp
-  PROTO((int32 xdim, int32 ydim, uint8 HUGE in[], uint8 HUGE out[]));
+  PROTO((int32 xdim, int32 ydim, uint8 _HUGE in[], uint8 _HUGE out[]));
+
+/*
+** from dfjpeg.c
+*/
+
+extern intn DFCIjpeg
+    PROTO((int32 file_id,uint16 tag,uint16 ref,int32 xdim, int32 ydim,
+            VOIDP image, int16 scheme, comp_info *scheme_info));
+
+/*
+** from dfunjpeg.c
+*/
+
+extern intn DFCIunjpeg
+    PROTO((int32 file_id, uint16 tag, uint16 ref, VOIDP image, int32 xdim,
+            int32 ydim, int16 scheme));
 
 /* 
 ** from dfgroup.c 
@@ -282,7 +287,7 @@ extern int32 DFdiread
   PROTO((int32 file_id, uint16 tag, uint16 ref));
 
 extern int DFdiget
-  PROTO((int32 list, uint16 HUGE *ptag, uint16 HUGE *pref));
+  PROTO((int32 list, uint16 _HUGE *ptag, uint16 _HUGE *pref));
 
 extern int32 DFdisetup
   PROTO((int maxsize));
@@ -297,92 +302,95 @@ extern int DFdiwrite
 ** from dfp.c 
 */
 extern intn DFPgetpal
-  PROTO((char HUGE *filename, VOIDP palette));
+  PROTO((char _HUGE *filename, VOIDP palette));
 
 extern intn DFPputpal
-  PROTO((char HUGE *filename, VOIDP palette, int overwrite, char HUGE *filemode));
+  PROTO((char _HUGE *filename, VOIDP palette, int overwrite, char _HUGE *filemode));
 
 extern int DFPaddpal
-  PROTO((char HUGE *filename, VOIDP palette));
+  PROTO((char _HUGE *filename, VOIDP palette));
 
 extern int DFPnpals
-  PROTO((char HUGE *filename));
+  PROTO((char _HUGE *filename));
 
 extern intn DFPreadref
-  PROTO((char HUGE *filename, uint16 ref));
+  PROTO((char _HUGE *filename, uint16 ref));
 
 extern int DFPwriteref
-  PROTO((char HUGE *filename, uint16 ref));
+  PROTO((char _HUGE *filename, uint16 ref));
 
 extern int DFPrestart
   PROTO((void));
 
-extern int DFPlastref
+extern uint16 DFPlastref
   PROTO((void));
 
 extern int32 DFPIopen
-  PROTO((char HUGE *filename, int access));
+  PROTO((char _HUGE *filename, int access));
 
 /*
 ** from dfr8.c 
 */
+extern int DFR8setcompress
+  PROTO((int32 scheme,comp_info *cinfo));
+
 extern intn DFR8getdims
-  PROTO((char HUGE *filename, int32 HUGE *pxdim, int32 HUGE *pydim,
-        int HUGE *pispal));
+  PROTO((char _HUGE *filename, int32 _HUGE *pxdim, int32 _HUGE *pydim,
+        int _HUGE *pispal));
 
 extern intn DFR8getimage
-  PROTO((char HUGE *filename, uint8 HUGE *image, int32 xdim, int32 ydim,
-        uint8 HUGE *pal));
+  PROTO((char _HUGE *filename, uint8 _HUGE *image, int32 xdim, int32 ydim,
+        uint8 _HUGE *pal));
 
 extern int DFR8setpalette
-  PROTO((uint8 HUGE *pal));
+  PROTO((uint8 _HUGE *pal));
 
 extern int DFR8putimage
-  PROTO((char HUGE *filename, VOIDP image, int32 xdim, int32 ydim, uint16 compress));
+  PROTO((char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim, uint16 compress));
 
 extern int DFR8addimage
-  PROTO((char HUGE *filename, VOIDP image, int32 xdim, int32 ydim, uint16 compress));
+  PROTO((char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim, uint16 compress));
 
 extern int DFR8nimages
-  PROTO((char HUGE *filename));
+  PROTO((char _HUGE *filename));
 
 extern intn DFR8readref
-  PROTO((char HUGE *filename, uint16 ref));
+  PROTO((char _HUGE *filename, uint16 ref));
 
 extern int DFR8writeref
-  PROTO((char HUGE *filename, uint16 ref));
+  PROTO((char _HUGE *filename, uint16 ref));
 
 extern int DFR8restart
   PROTO((void));
 
-extern int DFR8lastref
+extern uint16 DFR8lastref
   PROTO((void));
 
 /*
 ** from dfgr.c 
 */
 extern int DFGRgetlutdims
-  PROTO((char HUGE *filename, int32 HUGE *pxdim, int32 HUGE *pydim,
-        int HUGE *pncomps, int HUGE *pil));
+  PROTO((char _HUGE *filename, int32 _HUGE *pxdim, int32 _HUGE *pydim,
+        int _HUGE *pncomps, int _HUGE *pil));
 
 extern int DFGRreqlutil
   PROTO((int il));
 
 extern int DFGRgetlut
-  PROTO((char HUGE *filename, VOIDP lut, int32 xdim, int32 ydim));
+  PROTO((char _HUGE *filename, VOIDP lut, int32 xdim, int32 ydim));
 
 extern int DFGRgetimdims
-  PROTO((char HUGE *filename, int32 HUGE *pxdim, int32 HUGE *pydim,
-        int HUGE *pncomps, int HUGE *pil));
+  PROTO((char _HUGE *filename, int32 _HUGE *pxdim, int32 _HUGE *pydim,
+        int _HUGE *pncomps, int _HUGE *pil));
 
 extern int DFGRreqimil
   PROTO((int il));
 
 extern int DFGRgetimage
-  PROTO((char HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
+  PROTO((char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
 
 extern int DFGRsetcompress
-  PROTO((int scheme));
+  PROTO((int32 scheme,comp_info *cinfo));
 
 extern int DFGRsetlutdims
   PROTO((int32 xdim, int32 ydim, int ncomps, int il));
@@ -391,36 +399,36 @@ extern int DFGRsetlut
   PROTO((VOIDP lut, int32 xdim, int32 ydim));
 
 extern int DFGRaddlut
-  PROTO((char HUGE *filename, VOIDP lut, int32 xdim, int32 ydim));
+  PROTO((char _HUGE *filename, VOIDP lut, int32 xdim, int32 ydim));
 
 extern int DFGRsetimdims
   PROTO((int32 xdim, int32 ydim, int ncomps, int il));
 
 extern int DFGRaddimage
-  PROTO((char HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
+  PROTO((char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
 
 extern int DFGRputimage
-  PROTO((char HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
+  PROTO((char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
 
 extern int DFGRreadref
-  PROTO((char HUGE *filename, uint16 ref));
+  PROTO((char _HUGE *filename, uint16 ref));
 
 extern uint16 DFGRIlastref
     PROTO((void));
 
 extern int DFGRIgetdims
-  PROTO((char HUGE *filename, int32 HUGE *pxdim, int32 HUGE *pydim,
-        int HUGE *pncomps, int HUGE *pil, int type));
+  PROTO((char _HUGE *filename, int32 _HUGE *pxdim, int32 _HUGE *pydim,
+        int _HUGE *pncomps, int _HUGE *pil, int type));
 
 extern int DFGRIreqil
-  PROTO((int il, int type));
+  PROTO((intn il, intn type));
 
 extern int DFGRIgetimlut
-  PROTO((char HUGE *filename, VOIDP imlut, int32 xdim, int32 ydim, int type,
+  PROTO((char _HUGE *filename, VOIDP imlut, int32 xdim, int32 ydim, int type,
 	 int isfortran));
 
 extern int DFGRIsetdims
-  PROTO((int32 xdim, int32 ydim, int ncomps, int type));
+  PROTO((int32 xdim, int32 ydim, intn ncomps, int type));
 
 extern int DFGRIsetil
   PROTO((int il, int type));
@@ -429,21 +437,21 @@ extern int DFGRIrestart
   PROTO((void));
 
 extern int DFGRIaddimlut
-  PROTO((char HUGE *filename, VOIDP imlut, int32 xdim, int32 ydim, int type,
+  PROTO((char _HUGE *filename, VOIDP imlut, int32 xdim, int32 ydim, int type,
 	 int isfortran, int newfile));
 
 /*
 ** from df24.c 
 */
 extern int DF24getdims
-  PROTO((char HUGE *filename, int32 HUGE *pxdim, int32 HUGE *pydim,
-        int HUGE *pil));
+  PROTO((char _HUGE *filename, int32 _HUGE *pxdim, int32 _HUGE *pydim,
+        int _HUGE *pil));
 
 extern int DF24reqil
   PROTO((int il));
 
 extern int DF24getimage
-  PROTO((char HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
+  PROTO((char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
 
 extern int DF24setdims
   PROTO((int32 xdim, int32 ydim));
@@ -451,17 +459,20 @@ extern int DF24setdims
 extern int DF24setil
   PROTO((int il));
 
+extern int DF24setcompress
+  PROTO((int32 type,comp_info *cinfo));
+
 extern int DF24restart
   PROTO((void));
 
 extern int DF24addimage
-  PROTO((char HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
+  PROTO((char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
 
 extern int DF24putimage
-  PROTO((char HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
+  PROTO((char _HUGE *filename, VOIDP image, int32 xdim, int32 ydim));
 
 extern int DF24readref
-  PROTO((char HUGE *filename, uint16 ref));
+  PROTO((char _HUGE *filename, uint16 ref));
 
 extern uint16 DF24lastref
     PROTO((void));
@@ -471,50 +482,50 @@ extern uint16 DF24lastref
 */
 
 extern int32 DFANgetlablen
-    PROTO((char HUGE *filename, uint16 tag, uint16 ref));
+    PROTO((char _HUGE *filename, uint16 tag, uint16 ref));
 
 extern int DFANgetlabel
-    PROTO((char HUGE *filename, uint16 tag, uint16 ref, char HUGE *label,
+    PROTO((char _HUGE *filename, uint16 tag, uint16 ref, char _HUGE *label,
             int32 maxlen));
 
 extern int32 DFANgetdesclen
-    PROTO((char HUGE *filename, uint16 tag, uint16 ref));
+    PROTO((char _HUGE *filename, uint16 tag, uint16 ref));
 
 extern int DFANgetdesc
-    PROTO((char HUGE *filename, uint16 tag, uint16 ref, char HUGE *desc,
+    PROTO((char _HUGE *filename, uint16 tag, uint16 ref, char _HUGE *desc,
             int32 maxlen));
 
 extern int32 DFANgetfidlen
     PROTO((int32 file_id, int isfirst));
 
 extern int32 DFANgetfid
-    PROTO((int32 file_id, char HUGE *id, int32 maxlen, int isfirst));
+    PROTO((int32 file_id, char _HUGE *id, int32 maxlen, int isfirst));
 
 extern int32 DFANgetfdslen
     PROTO((int32 file_id, int isfirst));
 
 extern int32 DFANgetfds
-    PROTO((int32 file_id, char HUGE *desc, int32 maxlen, int isfirst));
+    PROTO((int32 file_id, char _HUGE *desc, int32 maxlen, int isfirst));
 
 extern int DFANputlabel
-    PROTO((char HUGE *filename, uint16 tag, uint16 ref, char HUGE *label));
+    PROTO((char _HUGE *filename, uint16 tag, uint16 ref, char _HUGE *label));
 
 extern int DFANputdesc
-    PROTO((char HUGE *filename, uint16 tag, uint16 ref, char HUGE *desc,
+    PROTO((char _HUGE *filename, uint16 tag, uint16 ref, char _HUGE *desc,
             int32 desclen));
 
 extern int DFANaddfid
-    PROTO((int32 file_id, char HUGE *id));
+    PROTO((int32 file_id, char _HUGE *id));
 
 extern int DFANaddfds
-    PROTO((int32 file_id, char HUGE *desc, int32 desclen));
+    PROTO((int32 file_id, char _HUGE *desc, int32 desclen));
 
 extern uint16 DFANlastref
     PROTO((void));
 
 extern int DFANlablist
-    PROTO((char HUGE *filename, uint16 tag, uint16 HUGE reflist[],
-            char HUGE *labellist, int listsize, int maxlen, int startpos));
+    PROTO((char _HUGE *filename, uint16 tag, uint16 _HUGE reflist[],
+            char _HUGE *labellist, int listsize, int maxlen, int startpos));
 
 extern uint16 DFANIlocate
   PROTO((int32 file_id, int type, uint16 tag, uint16 ref));
@@ -523,29 +534,29 @@ extern int DFANIaddentry
   PROTO((int type, uint16 annref, uint16 datatag, uint16 dataref));
 
 extern int32 DFANIgetannlen
-  PROTO((char HUGE *filename, uint16 tag, uint16 ref, int type));
+  PROTO((char _HUGE *filename, uint16 tag, uint16 ref, int type));
 
 extern intn DFANIgetann
-  PROTO((char HUGE *filename, uint16 tag, uint16 ref, uint8 HUGE *ann,
+  PROTO((char _HUGE *filename, uint16 tag, uint16 ref, uint8 _HUGE *ann,
             int32 maxlen, int type));
 
 extern intn DFANIputann
-  PROTO((char HUGE *filename, uint16 tag, uint16 ref, uint8 HUGE *ann,
+  PROTO((char _HUGE *filename, uint16 tag, uint16 ref, uint8 _HUGE *ann,
             int32 annlen, int type));
 
 extern int DFANIlablist
-  PROTO((char HUGE *filename, uint16 tag, uint16 HUGE reflist[],
-            uint8 HUGE *labellist, int listsize, int maxlen, int startpos,
+  PROTO((char _HUGE *filename, uint16 tag, uint16 _HUGE reflist[],
+            uint8 _HUGE *labellist, int listsize, int maxlen, int startpos,
             int isfortran));
 
 extern int DFANIaddfann
-  PROTO((int32 file_id, char HUGE *ann, int32 annlen, int type));
+  PROTO((int32 file_id, char _HUGE *ann, int32 annlen, int type));
 
 extern int32 DFANIgetfannlen
   PROTO((int32 file_id, int type, int isfirst));
 
 extern int32 DFANIgetfann
-  PROTO((int32 file_id, char HUGE *ann, int32 maxlen, int type, int isfirst));
+  PROTO((int32 file_id, char _HUGE *ann, int32 maxlen, int type, int isfirst));
 
 /*
 ** from dfsd.c (actually contained in dfsd.h because of use of private data
@@ -569,7 +580,7 @@ extern intn DFKsetNT
     PROTO((int32 ntype));
 
 extern int32 DFKconvert
-    PROTO((uint8 HUGE *source, uint8 HUGE *dest, int32 ntype, int32 num_elm,
+    PROTO((uint8 _HUGE *source, uint8 _HUGE *dest, int32 ntype, int32 num_elm,
             int16 access, int32 source_stride, int32 dest_stride));
 
 /*
@@ -619,60 +630,60 @@ extern int32 DFKconvert
 #endif /* DFAN_FNAMES */
 
 extern FRETVAL(intf) ndaiganl
-    PROTO((_fcd filename, intf HUGE *tag, intf HUGE *ref, intf HUGE *type,
-            intf HUGE *fnlen));
+    PROTO((_fcd filename, intf _HUGE *tag, intf _HUGE *ref, intf _HUGE *type,
+            intf _HUGE *fnlen));
 
 extern FRETVAL(intf) ndaigann
-    PROTO((_fcd filename, intf HUGE *tag, intf HUGE *ref, _fcd annotation,
-        intf HUGE *maxlen, intf HUGE *type, intf HUGE *fnlen));
+    PROTO((_fcd filename, intf _HUGE *tag, intf _HUGE *ref, _fcd annotation,
+        intf _HUGE *maxlen, intf _HUGE *type, intf _HUGE *fnlen));
 
 extern FRETVAL(intf) ndaipann
-    PROTO((_fcd filename, intf HUGE *tag, intf HUGE *ref, _fcd annotation,
-            intf HUGE *annlen, intf HUGE *type, intf HUGE *fnlen));
+    PROTO((_fcd filename, intf _HUGE *tag, intf _HUGE *ref, _fcd annotation,
+            intf _HUGE *annlen, intf _HUGE *type, intf _HUGE *fnlen));
 
 extern FRETVAL(intf) ndailist
-    PROTO((_fcd filename, intf HUGE *tag, intf HUGE reflist[], _fcd labellist,
-        intf HUGE *listsize, intf HUGE *maxlen, intf HUGE *startpos,
-        intf HUGE *fnlen));
+    PROTO((_fcd filename, intf _HUGE *tag, intf _HUGE reflist[], _fcd labellist,
+        intf _HUGE *listsize, intf _HUGE *maxlen, intf _HUGE *startpos,
+        intf _HUGE *fnlen));
 
 extern FRETVAL(intf) ndalref
     PROTO((void));
 
-extern FRETVAL(int) ndfanlastref
+extern FRETVAL(intf) ndfanlastref
     PROTO((void));
 
 extern FRETVAL(intf) ndfanaddfds
-    PROTO((intf HUGE *dfile, _fcd desc, intf HUGE *desclen));
+    PROTO((intf _HUGE *dfile, _fcd desc, intf _HUGE *desclen));
 
 extern FRETVAL(intf) ndfangetfidlen
-    PROTO((intf HUGE *dfile, intf HUGE *isfirst));
+    PROTO((intf _HUGE *dfile, intf _HUGE *isfirst));
 
 extern FRETVAL(intf) ndfangetfdslen
-    PROTO((intf HUGE *dfile, intf HUGE *isfirst));
+    PROTO((intf _HUGE *dfile, intf _HUGE *isfirst));
 
 extern FRETVAL(intf) ndfangetfid
-    PROTO((intf HUGE *dfile, _fcd id, intf HUGE *maxlen, intf HUGE *isfirst));
+    PROTO((intf _HUGE *dfile, _fcd id, intf _HUGE *maxlen, intf _HUGE *isfirst));
 
 extern FRETVAL(intf) ndfangetfds
-    PROTO((intf HUGE *dfile, _fcd id, intf HUGE *maxlen, intf HUGE *isfirst));
+    PROTO((intf _HUGE *dfile, _fcd id, intf _HUGE *maxlen, intf _HUGE *isfirst));
 
 extern FRETVAL(intf) ndaafds
-    PROTO((intf HUGE *dfile, _fcd desc, intf HUGE *desclen));
+    PROTO((intf _HUGE *dfile, _fcd desc, intf _HUGE *desclen));
 
 extern FRETVAL(intf) ndagfidl
-    PROTO((intf HUGE *dfile, intf HUGE *isfirst));
+    PROTO((intf _HUGE *dfile, intf _HUGE *isfirst));
 
 extern FRETVAL(intf) ndagfdsl
-    PROTO((intf HUGE *dfile, intf HUGE *isfirst));
+    PROTO((intf _HUGE *dfile, intf _HUGE *isfirst));
 
 extern FRETVAL(intf) ndagfid
-  PROTO((intf HUGE *dfile, _fcd id, intf HUGE *maxlen, intf HUGE *isfirst));
+  PROTO((intf _HUGE *dfile, _fcd id, intf _HUGE *maxlen, intf _HUGE *isfirst));
 
 extern FRETVAL(intf) ndagfds
-  PROTO((intf HUGE *dfile, _fcd id, intf HUGE *maxlen, intf HUGE *isfirst));
+  PROTO((intf _HUGE *dfile, _fcd id, intf _HUGE *maxlen, intf _HUGE *isfirst));
 
 extern FRETVAL(intf) ndaiafid
-  PROTO((intf HUGE *dfile, _fcd id, intf HUGE *idlen));
+  PROTO((intf _HUGE *dfile, _fcd id, intf _HUGE *idlen));
 
 /*
 ** from dfr8F.c
@@ -693,6 +704,10 @@ extern FRETVAL(intf) ndaiafid
 #   define ndfr8lastref      FNAME(DFR8LASTREF)
 #   define ndfr8setpalette   FNAME(DFR8SETPALETTE)
 #   define ndfr8restart  FNAME(DFR8RESTART)
+#   define nd8scomp  FNAME(D8SCOMP)
+#   define ndfr8setcompress FNAME(DFR8SETCOMPRESS)
+#   define nd8sjpeg  FNAME(D8SJPEG)
+#   define ndfr8setjpeg FNAME(DFR8SETJPEG)
 #else   /* !DF_CAPFNAMES */
 #   define nd8spal   FNAME(d8spal)
 #   define nd8first  FNAME(d8first)
@@ -707,6 +722,10 @@ extern FRETVAL(intf) ndaiafid
 #   define ndfr8lastref      FNAME(dfr8lastref)
 #   define ndfr8setpalette   FNAME(dfr8setpalette)
 #   define ndfr8restart  FNAME(dfr8restart)
+#   define nd8scomp  FNAME(d8scomp)
+#   define ndfr8setcompress FNAME(dfr8setcompress)
+#   define nd8sjpeg  FNAME(d8sjpeg)
+#   define ndfr8setjpeg FNAME(dfr8setjpeg)
 #endif /* DF_CAPFNAMES */
 #endif /* DFR8_FNAMES */
 
@@ -717,29 +736,29 @@ extern  FRETVAL(intf) nd8first
     PROTO((void));
 
 extern  FRETVAL(intf) nd8igdim
-    PROTO((_fcd filename, intf HUGE *xdim, intf HUGE *ydim, intf HUGE *ispal,
-            intf HUGE *lenfn));
+    PROTO((_fcd filename, intf _HUGE *xdim, intf _HUGE *ydim, intf _HUGE *ispal,
+            intf _HUGE *lenfn));
 
 extern  FRETVAL(intf) nd8igimg
-    PROTO((_fcd filename, _fcd image, intf HUGE *xdim, intf HUGE *ydim,
-            _fcd pal, intf HUGE *lenfn));
+    PROTO((_fcd filename, _fcd image, intf _HUGE *xdim, intf _HUGE *ydim,
+            _fcd pal, intf _HUGE *lenfn));
 
 extern  FRETVAL(intf) nd8ipimg
-    PROTO((_fcd filename, _fcd image, intf HUGE *xdim, intf HUGE *ydim,
-            intf HUGE *compress, intf HUGE *lenfn));
+    PROTO((_fcd filename, _fcd image, intf _HUGE *xdim, intf _HUGE *ydim,
+            intf _HUGE *compress, intf _HUGE *lenfn));
 
 extern  FRETVAL(intf) nd8iaimg
-    PROTO((_fcd filename, _fcd image, intf HUGE *xdim, intf HUGE *ydim,
-            intf HUGE *compress, intf HUGE *lenfn));
+    PROTO((_fcd filename, _fcd image, intf _HUGE *xdim, intf _HUGE *ydim,
+            intf _HUGE *compress, intf _HUGE *lenfn));
 
 extern  FRETVAL(intf) nd8irref
-    PROTO((_fcd filename, intf HUGE *ref, intf HUGE *fnlen));
+    PROTO((_fcd filename, intf _HUGE *ref, intf _HUGE *fnlen));
 
 extern FRETVAL(intf) nd8iwref
-    PROTO((_fcd filename, intf HUGE *ref, intf HUGE *fnlen));
+    PROTO((_fcd filename, intf _HUGE *ref, intf _HUGE *fnlen));
 
 extern FRETVAL(intf) nd8inims
-    PROTO((_fcd filename, intf HUGE *fnlen));
+    PROTO((_fcd filename, intf _HUGE *fnlen));
 
 extern FRETVAL(intf) nd8lref
     PROTO((void));
@@ -752,6 +771,18 @@ extern  FRETVAL(intf) ndfr8setpalette
 
 extern  FRETVAL(intf) ndfr8restart
     PROTO((void));
+
+extern FRETVAL(intf) nd8scomp
+    PROTO((intf *scheme));
+
+extern FRETVAL(intf) ndfr8setcompress
+    PROTO((intf *scheme));
+
+extern FRETVAL(intf) nd8sjpeg
+    PROTO((intf *quality,intf *force_baseline));
+
+extern FRETVAL(intf) ndfr8setjpeg
+    PROTO((intf *quality,intf *force_baseline));
 
 /*
 ** from dfsdF.c
@@ -787,7 +818,7 @@ extern  FRETVAL(intf) ndfr8restart
 #   define ndsirref  FNAME(DSIRREF)
 #   define ndslref   FNAME(DSLREF)
 #   define ndsinum   FNAME(DSINUM)
-#   define ndsip32s  FNAME(DSIP32S)	
+#   define ndsip32s  FNAME(DSIP32S)
 #   define ndsscal   FNAME(DSSCAL)
 #   define ndsgcal   FNAME(DSGCAL)
 #   define ndfsdgetdatastrs  FNAME(DFSDGETDATASTRS)
@@ -859,7 +890,7 @@ extern  FRETVAL(intf) ndfr8restart
 #   define ndfsdsetnt        FNAME(dfsdsetnt)
 #   define ndfsdgetnt        FNAME(dfsdgetnt)
 #   define ndfsdlastref      FNAME(dfsdlastref)
-#   define ndswref          FNAME(dswref)
+#   define ndswref           FNAME(dswref)
 #   define ndssfv            FNAME(dssfv)
 #   define ndsgfv            FNAME(dsgfv)
 #   define ndswfv            FNAME(dswfv)
@@ -868,182 +899,179 @@ extern  FRETVAL(intf) ndfr8restart
 #endif  /* DFSD_FNAMES */
 
 extern FRETVAL(intf) ndsgdisc
-    PROTO((intf HUGE *dim, intf HUGE *maxsize, void HUGE *scale));
+    PROTO((intf _HUGE *dim, intf _HUGE *maxsize, void _HUGE *scale));
 
 extern FRETVAL(intf) ndsgrang
-    PROTO((void HUGE *pmax, void HUGE *pmin));
+    PROTO((void _HUGE *pmax, void _HUGE *pmin));
 
 extern FRETVAL(intf) ndssdims
-    PROTO((intf HUGE *rank, intf HUGE dimsizes[]));
+    PROTO((intf _HUGE *rank, intf _HUGE dimsizes[]));
 
 extern FRETVAL(intf) ndssdisc
-    PROTO((intf HUGE *dim, intf HUGE *dimsize, void HUGE *scale));
+    PROTO((intf _HUGE *dim, intf _HUGE *dimsize, void _HUGE *scale));
 
 extern FRETVAL(intf) ndssrang
-    PROTO((void HUGE *max, void HUGE *min));
+    PROTO((void _HUGE *max, void _HUGE *min));
 
 extern FRETVAL(intf) ndsclear
     PROTO((void));
 
 extern FRETVAL(intf) ndsslens
-    PROTO((intf HUGE *maxlen_label, intf HUGE *maxlen_unit, \
-            intf HUGE *maxlen_format, intf HUGE *maxlen_coordsys));
+    PROTO((intf _HUGE *maxlen_label, intf _HUGE *maxlen_unit, \
+            intf _HUGE *maxlen_format, intf _HUGE *maxlen_coordsys));
 
 extern FRETVAL(intf) ndsgdiln
-    PROTO((intf HUGE *dim, intf HUGE *llabel, intf HUGE *lunit,
-            intf HUGE *lformat));
+    PROTO((intf _HUGE *dim, intf _HUGE *llabel, intf _HUGE *lunit,
+            intf _HUGE *lformat));
 
 extern FRETVAL(intf) ndsgdaln
-    PROTO((intf HUGE *llabel, intf HUGE *lunit, intf HUGE *lformat,
-            intf HUGE *lcoordsys));
+    PROTO((intf _HUGE *llabel, intf _HUGE *lunit, intf _HUGE *lformat,
+            intf _HUGE *lcoordsys));
 
 extern FRETVAL(intf) ndsfirst
     PROTO((void));
 
 extern FRETVAL(intf) ndspslc
-    PROTO((intf HUGE windims[], void HUGE *data, intf HUGE dims[]));
+    PROTO((intf _HUGE windims[], void _HUGE *data, intf _HUGE dims[]));
 
 extern FRETVAL(intf) ndseslc
     PROTO((void));
 
 extern FRETVAL(intf) ndssnt
-    PROTO((intf HUGE *numbertype));
+    PROTO((intf _HUGE *numbertype));
 
 extern FRETVAL(intf) ndsgnt
-    PROTO((intf HUGE *pnumbertype));
+    PROTO((intf _HUGE *pnumbertype));
 
 extern FRETVAL(intf) ndsigdim
-    PROTO((_fcd filename, intf HUGE *prank, intf HUGE sizes[],
-            intf HUGE *maxrank, intf HUGE *lenfn));
+    PROTO((_fcd filename, intf _HUGE *prank, intf _HUGE sizes[],
+            intf _HUGE *maxrank, intf _HUGE *lenfn));
 
 extern FRETVAL(intf) ndsigdat
-    PROTO((_fcd filename, intf HUGE *rank, intf HUGE maxsizes[],
-            void HUGE *data, intf HUGE *fnlen));
+    PROTO((_fcd filename, intf _HUGE *rank, intf _HUGE maxsizes[],
+            void _HUGE *data, intf _HUGE *fnlen));
 
 extern FRETVAL(intf) ndsipdat
-    PROTO((_fcd filename, intf HUGE *rank, intf HUGE dimsizes[],
-            void HUGE *data, intf HUGE *fnlen));
+    PROTO((_fcd filename, intf _HUGE *rank, intf _HUGE dimsizes[],
+            void _HUGE *data, intf _HUGE *fnlen));
 
 extern FRETVAL(intf) ndsiadat
-    PROTO((_fcd filename, intf HUGE *rank, intf HUGE dimsizes[],
-            void HUGE *data, intf HUGE *fnlen));
+    PROTO((_fcd filename, intf _HUGE *rank, intf _HUGE dimsizes[],
+            void _HUGE *data, intf _HUGE *fnlen));
 
 extern FRETVAL(intf) ndsigslc
-    PROTO((_fcd filename, intf HUGE winst[], intf HUGE windims[],
-            void HUGE *data, intf HUGE dims[], intf HUGE *fnlen));
+    PROTO((_fcd filename, intf _HUGE winst[], intf _HUGE windims[],
+            void _HUGE *data, intf _HUGE dims[], intf _HUGE *fnlen));
 
 extern FRETVAL(intf) ndsisslc
-    PROTO((_fcd filename, intf HUGE *fnlen));
+    PROTO((_fcd filename, intf _HUGE *fnlen));
 
 extern FRETVAL(intf) ndsirref
-    PROTO((_fcd filename, intf HUGE *ref, intf HUGE *fnlen));
+    PROTO((_fcd filename, intf _HUGE *ref, intf _HUGE *fnlen));
 
 extern FRETVAL(intf) ndslref
     PROTO((void));
 
 extern FRETVAL(intf) ndsinum
-    PROTO((_fcd filename, intf HUGE *len));
+    PROTO((_fcd filename, intf _HUGE *len));
 
 extern FRETVAL(intf) ndsip32s
-    PROTO((_fcd filename, intf HUGE *ref, intf HUGE *ispre32, intf HUGE *len));
+    PROTO((_fcd filename, intf _HUGE *ref, intf _HUGE *ispre32, intf _HUGE *len));
 
 extern FRETVAL(intf) ndfsdgetdatastrs
     PROTO((_fcd label, _fcd unit, _fcd format, _fcd coordsys));
 
 extern FRETVAL(intf) ndfsdgetdimstrs
-    PROTO((intf HUGE *dim, _fcd label, _fcd unit, _fcd format));
+    PROTO((intf _HUGE *dim, _fcd label, _fcd unit, _fcd format));
 
 extern FRETVAL(intf) ndfsdgetdimscale
-    PROTO((intf HUGE *dim, intf HUGE *maxsize, void HUGE *scale));
+    PROTO((intf _HUGE *dim, intf _HUGE *maxsize, void _HUGE *scale));
 
 extern FRETVAL(intf) ndfsdgetrange
-    PROTO((void HUGE *pmax, void HUGE *pmin));
+    PROTO((void _HUGE *pmax, void _HUGE *pmin));
 
 extern FRETVAL(intf) ndfsdsetdims
-    PROTO((intf HUGE *rank, intf HUGE dimsizes[]));
+    PROTO((intf _HUGE *rank, intf _HUGE dimsizes[]));
 
 extern FRETVAL(intf) ndfsdsetdimscale
-    PROTO((intf HUGE *dim, intf HUGE *dimsize, void HUGE *scale));
+    PROTO((intf _HUGE *dim, intf _HUGE *dimsize, void _HUGE *scale));
 
 extern FRETVAL(intf) ndfsdsetrange
-    PROTO((void HUGE *max, void HUGE *min));
+    PROTO((void _HUGE *max, void _HUGE *min));
 
 extern FRETVAL(intf) ndfsdclear
     PROTO((void));
 
 extern FRETVAL(intf) ndfsdsetlengths
-    PROTO((intf HUGE *maxlen_label, intf HUGE *maxlen_unit,
-            intf HUGE *maxlen_format, intf HUGE *maxlen_coordsys));
+    PROTO((intf _HUGE *maxlen_label, intf _HUGE *maxlen_unit,
+            intf _HUGE *maxlen_format, intf _HUGE *maxlen_coordsys));
 
 extern FRETVAL(intf) ndfsdgetdimlen
-    PROTO((intf HUGE *dim, intf HUGE *llabel, intf HUGE *lunit,
-            intf HUGE *lformat));
+    PROTO((intf _HUGE *dim, intf _HUGE *llabel, intf _HUGE *lunit,
+            intf _HUGE *lformat));
 
 extern FRETVAL(intf) ndfsdgetdatalen
-    PROTO((intf HUGE *llabel, intf HUGE *lunit, intf HUGE *lformat,
-            intf HUGE *lcoordsys));
+    PROTO((intf _HUGE *llabel, intf _HUGE *lunit, intf _HUGE *lformat,
+            intf _HUGE *lcoordsys));
 
 extern FRETVAL(intf) ndfsdrestart
     PROTO((void));
 
 extern FRETVAL(intf) ndfsdputslice
-    PROTO((intf HUGE windims[], void HUGE *data, intf HUGE dims[]));
+    PROTO((intf _HUGE windims[], void _HUGE *data, intf _HUGE dims[]));
 
 extern FRETVAL(intf) ndfsdendslice
     PROTO((void));
 
-extern FRETVAL(intf) ndfsdpre32
-    PROTO((void));
-
 extern FRETVAL(intf) ndfsdsetnt
-    PROTO((intf HUGE *numbertype));
+    PROTO((intf _HUGE *numbertype));
 
 extern FRETVAL(intf) ndfsdgetnt
-    PROTO((intf HUGE *pnumbertype));
+    PROTO((intf _HUGE *pnumbertype));
 
 extern FRETVAL(intf) ndfsdlastref
     PROTO((void));
 
 extern FRETVAL(intf) ndsisdis
-    PROTO((intf HUGE *dim, _fcd flabel, _fcd funit, _fcd fformat,
-            intf HUGE *llabel, intf HUGE *lunit, intf HUGE *lformat));
+    PROTO((intf _HUGE *dim, _fcd flabel, _fcd funit, _fcd fformat,
+            intf _HUGE *llabel, intf _HUGE *lunit, intf _HUGE *lformat));
 
 extern FRETVAL(intf) ndsigdis
-    PROTO((intf HUGE *dim, _fcd label, _fcd unit, _fcd format,
-            intf HUGE *llabel, intf HUGE *lunit, intf HUGE *lformat));
+    PROTO((intf _HUGE *dim, _fcd label, _fcd unit, _fcd format,
+            intf _HUGE *llabel, intf _HUGE *lunit, intf _HUGE *lformat));
 
 extern FRETVAL(intf) ndsisdas
     PROTO((_fcd flabel, _fcd funit, _fcd fformat, _fcd fcoordsys,
-        intf HUGE *isfortran, intf HUGE *llabel, intf HUGE *lunit,
-        intf HUGE *lformat, intf HUGE *lcoordsys));
+        intf _HUGE *isfortran, intf _HUGE *llabel, intf _HUGE *lunit,
+        intf _HUGE *lformat, intf _HUGE *lcoordsys));
 
 extern FRETVAL(intf) ndsigdas
-    PROTO((_fcd label, _fcd unit, _fcd format, _fcd coordsys, intf HUGE *llabel,
-        intf HUGE *lunit, intf HUGE *lformat, intf HUGE *lcoord));
+    PROTO((_fcd label, _fcd unit, _fcd format, _fcd coordsys, intf _HUGE *llabel,
+        intf _HUGE *lunit, intf _HUGE *lformat, intf _HUGE *lcoord));
 
 extern FRETVAL(intf) ndsscal
-    PROTO((float64 HUGE *cal, float64 HUGE *cal_err, float64 HUGE *ioff,
-        float64 HUGE *ioff_err, intf HUGE *cal_type));
+    PROTO((float64 _HUGE *cal, float64 _HUGE *cal_err, float64 _HUGE *ioff,
+        float64 _HUGE *ioff_err, intf _HUGE *cal_type));
 
 extern FRETVAL(intf) ndsgcal
-    PROTO((float64 HUGE *cal, float64 HUGE *cal_err, float64 HUGE *ioff,
-        float64 HUGE *ioff_err, intf HUGE *cal_type));
+    PROTO((float64 _HUGE *cal, float64 _HUGE *cal_err, float64 _HUGE *ioff,
+        float64 _HUGE *ioff_err, intf _HUGE *cal_type));
 
 extern FRETVAL(intf) ndswref
-     PROTO((_fcd filename, intf *fnlen, intf *ref));
+     PROTO((_fcd filename, intf _HUGE *fnlen, intf _HUGE *ref));
 
 extern FRETVAL(intf) ndssfv
-     PROTO((void *fill_value));
+     PROTO((void _HUGE *fill_value));
 
 extern FRETVAL(intf) ndsgfv
-     PROTO((void *fill_value));
+     PROTO((void _HUGE *fill_value));
 
 extern FRETVAL(intf) ndswfv
-     PROTO((_fcd filename, intf *fnlen, void *fill_value));
+     PROTO((_fcd filename, intf _HUGE *fnlen, void _HUGE *fill_value));
 
 extern FRETVAL(intf) ndswslab
-     PROTO((_fcd filename, intf *fnlen, intf start[], intf stride[],
-            intf cont[], void *data));
+     PROTO((_fcd filename, intf _HUGE *fnlen, intf _HUGE start[], intf _HUGE stride[],
+            intf _HUGE cont[], void _HUGE *data));
 
 /*
 ** from dfpF.c
@@ -1075,20 +1103,20 @@ extern FRETVAL(intf) ndswslab
 #endif /* DFP_FNAMES */
 
 extern  FRETVAL(intf) ndpigpal
-    PROTO((_fcd filename, _fcd pal, intf HUGE *fnlen));
+    PROTO((_fcd filename, _fcd pal, intf _HUGE *fnlen));
 
 extern FRETVAL(intf) ndpippal
-    PROTO((_fcd filename, _fcd pal, intf HUGE *overwrite, _fcd filemode,
-            intf HUGE *fnlen));
+    PROTO((_fcd filename, _fcd pal, intf _HUGE *overwrite, _fcd filemode,
+            intf _HUGE *fnlen));
 
 extern FRETVAL(intf) ndpinpal
-    PROTO((_fcd filename, intf HUGE *fnlen));
+    PROTO((_fcd filename, intf _HUGE *fnlen));
 
 extern FRETVAL(intf) ndpirref
-    PROTO((_fcd filename, uint16 HUGE *ref, intf HUGE *fnlen));
+    PROTO((_fcd filename, uint16 _HUGE *ref, intf _HUGE *fnlen));
 
 extern FRETVAL(intf) ndpiwref
-    PROTO((_fcd filename, uint16 HUGE *ref, intf HUGE *fnlen));
+    PROTO((_fcd filename, uint16 _HUGE *ref, intf _HUGE *fnlen));
 
 extern FRETVAL(intf) ndprest
     PROTO((void));
@@ -1121,6 +1149,10 @@ extern FRETVAL(intf) ndfplastref
 #   define nd2iaimg  FNAME(D2IAIMG)
 #   define nd2irref  FNAME(D2IRREF)
 #   define nd24lref  FNAME(D24LREF)
+#   define nd2scomp  FNAME(D2SCOMP)
+#   define ndf24setcompress FNAME(DF24SETCOMPRESS)
+#   define nd2sjpeg  FNAME(D2SJPEG)
+#   define ndf24setjpeg FNAME(DF24SETJPEG)
 #else
 #   define nd2reqil  FNAME(d2reqil)
 #   define ndf24reqil    FNAME(df24reqil)
@@ -1135,50 +1167,66 @@ extern FRETVAL(intf) ndfplastref
 #   define nd2iaimg  FNAME(d2iaimg)
 #   define nd2irref  FNAME(d2irref)
 #   define nd24lref  FNAME(d24lref)
+#   define nd2scomp  FNAME(d2scomp)
+#   define ndf24setcompress FNAME(df24setcompress)
+#   define nd2sjpeg  FNAME(d2sjpeg)
+#   define ndf24setjpeg FNAME(df24setjpeg)
 #endif /* DF_CAPFNAMES */
 #endif /* DF24_FNAMES */
 
 extern FRETVAL(intf) nd2reqil
-    PROTO((intf HUGE *il));
+    PROTO((intf _HUGE *il));
 
 extern FRETVAL(intf) nd2sdims
-    PROTO((intf HUGE *xdim, intf HUGE *ydim));
+    PROTO((intf _HUGE *xdim, intf _HUGE *ydim));
 
 extern FRETVAL(intf) nd2igdim
-    PROTO((_fcd filename, intf HUGE *pxdim, intf HUGE *pydim, int HUGE *pil,
-            int HUGE *fnlen));
+    PROTO((_fcd filename, intf _HUGE *pxdim, intf _HUGE *pydim, intf _HUGE *pil,
+            intf _HUGE *fnlen));
 
 extern FRETVAL(intf) nd2igimg
-    PROTO((_fcd filename, _fcd image, intf HUGE *xdim, intf HUGE *ydim,
-            intf HUGE *fnlen));
+    PROTO((_fcd filename, _fcd image, intf _HUGE *xdim, intf _HUGE *ydim,
+            intf _HUGE *fnlen));
 
 extern FRETVAL(intf) nd2iaimg
-    PROTO((_fcd filename, _fcd image, intf HUGE *xdim, intf HUGE *ydim,
-            intf HUGE *fnlen, intf HUGE *newfile));
+    PROTO((_fcd filename, _fcd image, intf _HUGE *xdim, intf _HUGE *ydim,
+            intf _HUGE *fnlen, intf _HUGE *newfile));
 
 extern FRETVAL(intf) nd2setil
-    PROTO((intf HUGE *il));
+    PROTO((intf _HUGE *il));
 
 extern FRETVAL(intf) nd2first
     PROTO((void));
 
 extern FRETVAL(intf) ndf24reqil
-    PROTO((intf HUGE *il));
+    PROTO((intf _HUGE *il));
 
 extern FRETVAL(intf) ndf24setdims
-    PROTO((intf HUGE *xdim, intf HUGE *ydim));
+    PROTO((intf _HUGE *xdim, intf _HUGE *ydim));
 
 extern FRETVAL(intf) ndf24setil
-    PROTO((intf HUGE *il));
+    PROTO((intf _HUGE *il));
 
 extern FRETVAL(intf) ndf24restart
     PROTO((void));
 
 extern FRETVAL(intf) nd2irref
-    PROTO((_fcd filename, intf HUGE *ref, intf HUGE *fnlen));
+    PROTO((_fcd filename, intf _HUGE *ref, intf _HUGE *fnlen));
 
 extern FRETVAL(intf) nd24lref
-         PROTO((void));
+    PROTO((void));
+
+extern FRETVAL(intf) nd2scomp
+    PROTO((intf *scheme));
+
+extern FRETVAL(intf) ndf24setcompress
+    PROTO((intf *scheme));
+
+extern FRETVAL(intf) nd2sjpeg
+    PROTO((intf *quality,intf *force_baseline));
+
+extern FRETVAL(intf) ndf24setjpeg
+    PROTO((intf *quality,intf *force_baseline));
 
 /*
 ** from dfF.c
@@ -1231,68 +1279,68 @@ extern FRETVAL(intf) nd24lref
 #endif /* DF_FNAMES */
 
 extern FRETVAL(intf) ndfiopen
-    PROTO((_fcd name, intf HUGE *access, intf HUGE *defdds, intf HUGE *namelen));
+    PROTO((_fcd name, intf _HUGE *access, intf _HUGE *defdds, intf _HUGE *namelen));
 
 extern FRETVAL(intf) ndfclose
-    PROTO((intf HUGE *dfile));
+    PROTO((intf _HUGE *dfile));
 
 extern FRETVAL(intf) ndfdesc
-    PROTO((intf HUGE *dfile, intf HUGE ptr[][4], intf HUGE *begin,
-            intf HUGE *num));
+    PROTO((intf _HUGE *dfile, intf _HUGE ptr[][4], intf _HUGE *begin,
+            intf _HUGE *num));
 
 extern FRETVAL(intf) ndfdup
-    PROTO((intf HUGE *dfile, intf HUGE *tag, intf HUGE *ref, intf HUGE *otag,
-            intf HUGE *oref));
+    PROTO((intf _HUGE *dfile, intf _HUGE *tag, intf _HUGE *ref, intf _HUGE *otag,
+            intf _HUGE *oref));
 
 extern FRETVAL(intf) ndfdel
-    PROTO((intf HUGE *dfile, intf HUGE *tag, intf HUGE *ref));
+    PROTO((intf _HUGE *dfile, intf _HUGE *tag, intf _HUGE *ref));
 
 extern FRETVAL(intf) ndfiaccess
-    PROTO((intf HUGE *dfile, intf HUGE *tag, intf HUGE *ref, _fcd access, intf HUGE *acclen));
+    PROTO((intf _HUGE *dfile, intf _HUGE *tag, intf _HUGE *ref, _fcd access, intf _HUGE *acclen));
 
 extern FRETVAL(intf) ndfstart
-    PROTO((intf HUGE *dfile, intf HUGE *tag, intf HUGE *ref, char HUGE *access));
+    PROTO((intf _HUGE *dfile, intf _HUGE *tag, intf _HUGE *ref, char _HUGE *access));
 
 extern FRETVAL(intf) ndfread
-    PROTO((intf HUGE *dfile, _fcd ptr, intf HUGE *len));
+    PROTO((intf _HUGE *dfile, _fcd ptr, intf _HUGE *len));
 
 extern FRETVAL(intf) ndfseek
-    PROTO((intf HUGE *dfile, intf HUGE *offset));
+    PROTO((intf _HUGE *dfile, intf _HUGE *offset));
 
 extern FRETVAL(intf) ndfwrite
-    PROTO((intf HUGE *dfile, _fcd ptr, intf HUGE *len));
+    PROTO((intf _HUGE *dfile, _fcd ptr, intf _HUGE *len));
 
 extern FRETVAL(intf) ndfupdate
-    PROTO((intf HUGE *dfile));
+    PROTO((intf _HUGE *dfile));
 
 extern FRETVAL(intf) ndfget
-    PROTO((intf HUGE *dfile, intf HUGE *tag, intf HUGE *ref, _fcd ptr));
+    PROTO((intf _HUGE *dfile, intf _HUGE *tag, intf _HUGE *ref, _fcd ptr));
 
 extern FRETVAL(intf) ndfput
-    PROTO((intf HUGE *dfile, intf HUGE *tag, intf HUGE *ref, _fcd ptr, intf HUGE *len));
+    PROTO((intf _HUGE *dfile, intf _HUGE *tag, intf _HUGE *ref, _fcd ptr, intf _HUGE *len));
 
 extern FRETVAL(intf) ndfsfind
-    PROTO((intf HUGE *dfile, intf HUGE *tag, intf HUGE *ref));
+    PROTO((intf _HUGE *dfile, intf _HUGE *tag, intf _HUGE *ref));
 
 extern FRETVAL(intf) ndffind
-    PROTO((intf HUGE *dfile, intf HUGE *itag, intf HUGE *iref, intf HUGE *len));
+    PROTO((intf _HUGE *dfile, intf _HUGE *itag, intf _HUGE *iref, intf _HUGE *len));
 
 extern FRETVAL(intf) ndferrno
     PROTO((void));
 
 extern FRETVAL(intf) ndfnewref
-    PROTO((intf HUGE *dfile));
+    PROTO((intf _HUGE *dfile));
 
 extern FRETVAL(intf) ndfnumber
-    PROTO((intf HUGE *dfile, intf HUGE *tag));
+    PROTO((intf _HUGE *dfile, intf _HUGE *tag));
 
 #ifdef TEMP_OUT
 extern FRETVAL(intf) ndfstat
-    PROTO((intf HUGE *dfile, DFdata HUGE *dfinfo));
+    PROTO((intf _HUGE *dfile, DFdata _HUGE *dfinfo));
 #endif
 
 extern FRETVAL(intf) ndfiishdf
-    PROTO((_fcd name, intf HUGE *namelen));
+    PROTO((_fcd name, intf _HUGE *namelen));
 
 /*
 ** from dfutil.c
@@ -1315,10 +1363,10 @@ extern uint16 DFfindnextref
 #endif /* DFUTIL_FNAMES */
 
 extern FRETVAL(intf) ndfindnr
-    PROTO((intf HUGE *dfile, intf HUGE *tag, intf HUGE *lref));
+    PROTO((intf _HUGE *dfile, intf _HUGE *tag, intf _HUGE *lref));
 
 extern FRETVAL(intf) ndffindnextref
-    PROTO((intf HUGE *dfile, intf HUGE *tag, intf HUGE *lref));
+    PROTO((intf _HUGE *dfile, intf _HUGE *tag, intf _HUGE *lref));
 
 /*
 ** from herrF.c
@@ -1333,7 +1381,7 @@ extern FRETVAL(intf) ndffindnextref
 #endif  /* HERR_FNAMES */
 
 extern FRETVAL(VOID) nheprnt
-    PROTO((intf HUGE *print_levels));
+    PROTO((intf _HUGE *print_levels));
 
 /*
 ** from hfileF.c
@@ -1350,10 +1398,10 @@ extern FRETVAL(VOID) nheprnt
 #endif /* HFILE_FNAMES */
 
 extern FRETVAL(intf) nhiopen
-    PROTO((_fcd name, intf HUGE *access, intf HUGE *defdds, intf HUGE *namelen));
+    PROTO((_fcd name, intf _HUGE *access, intf _HUGE *defdds, intf _HUGE *namelen));
 
 extern FRETVAL(intf) nhclose
-    PROTO((intf HUGE *file_id));
+    PROTO((intf _HUGE *file_id));
 
 /*
 ** from dfufp2im.c
@@ -1368,16 +1416,16 @@ extern FRETVAL(intf) nhclose
 #endif /* DFUFP2I_FNAMES */
 
 extern FRETVAL(int) nduif2i
-    PROTO((int32 HUGE *hdim, int32 HUGE *vdim, float32 HUGE *max,
-            float32 HUGE *min, float32 HUGE hscale[], float32 HUGE vscale[],
-            float32 HUGE data[], uint8 HUGE *palette, _fcd outfile,
-            int HUGE *ct_method, int32 HUGE *hres, int32 HUGE *vres,
-            int HUGE *compress, int HUGE *lenfn));
+    PROTO((int32 _HUGE *hdim, int32 _HUGE *vdim, float32 _HUGE *max,
+            float32 _HUGE *min, float32 _HUGE hscale[], float32 _HUGE vscale[],
+            float32 _HUGE data[], uint8 _HUGE *palette, _fcd outfile,
+            int _HUGE *ct_method, int32 _HUGE *hres, int32 _HUGE *vres,
+            int _HUGE *compress, int _HUGE *lenfn));
 
 extern int DFUfptoimage
     PROTO((int32 hdim, int32 vdim, float32 max, float32 min,
-            float32 HUGE *hscale, float32 HUGE *vscale, float32 HUGE *data,
-            uint8 HUGE *palette, char HUGE *outfile, int ct_method,
+            float32 _HUGE *hscale, float32 _HUGE *vscale, float32 _HUGE *data,
+            uint8 _HUGE *palette, char _HUGE *outfile, int ct_method,
             int32 hres, int32 vres, int compress));
 
 /* temp. fix for circular includes with vsets */

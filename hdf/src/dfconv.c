@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/01/15 23:47:37  sxu
-bug fixed in DFKvo8f and DFKvi8f
+Revision 1.4  1993/01/19 05:54:16  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.3  1993/01/15  23:47:37  sxu
+ * bug fixed in DFKvo8f and DFKvi8f
+ *
  * Revision 1.2  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -285,7 +289,7 @@ uint32 num_elm, source_stride, dest_stride;
 
   if(fast_processing) {
     if(!in_place) {
-      DFmovmem(source, dest, num_elm);
+      HDmemcpy(dest, source, num_elm);
       return 0;
     }
     else
@@ -342,7 +346,7 @@ uint32 num_elm, source_stride, dest_stride;
 
   if(fast_processing) 
     if(!in_place) {
-      DFmovmem(source, dest, num_elm*2);
+      HDmemcpy(dest, source, num_elm*2);
       return 0;
     }
     else {    /* Nothing to do */
@@ -409,7 +413,7 @@ uint32 num_elm, source_stride, dest_stride;
 
   if(fast_processing) 
     if(!in_place) {
-      DFmovmem(source, dest, num_elm*4);
+      HDmemcpy(dest, source, num_elm*4);
       return 0;
     }
     else {  /* Nothing to do */
@@ -487,7 +491,7 @@ uint32 num_elm, source_stride, dest_stride;
 
   if(fast_processing) 
     if(!in_place) {
-      DFmovmem(source, dest, num_elm*8);
+      HDmemcpy(dest, source, num_elm*8);
       return 0;
     }
     else {  
@@ -1960,7 +1964,6 @@ uint32 num_elm, source_stride, dest_stride;
 
 }
 
-
 /*
  * Define structures to encode and decode Vax numbers
  * The following code is based on the methods of reading / writing
@@ -2107,7 +2110,7 @@ uint32 num_elm, source_stride, dest_stride;
 #endif /* PROTOTYPE */
 {
   int in_place = 0;                     /* Inplace must be detected */
-  register int i;            
+  register intn i;
   uint8 buf[4];                          /* Inplace processing buffer */
 #ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
@@ -2178,7 +2181,7 @@ shipit:  /* In VAX the bytes in a word are counted from right to left */
              i3e +=4;
          }
        }
-             
+
       source += source_stride;
       dest   += dest_stride;
   }
@@ -2862,7 +2865,7 @@ int32 size;
   }
 
   if(sourcetype == desttype) { 
-    DFmovmem(source, dest, size);
+    HDmemcpy(dest, source, size);
     return 0;
   }
 

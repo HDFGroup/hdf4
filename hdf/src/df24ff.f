@@ -2,9 +2,13 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.2  1992/11/06 20:25:17  chouck
-C Made names lower-case for Absoft Fortran on the Mac
+C Revision 1.3  1993/01/19 05:54:02  koziol
+C Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+C port.  Lots of minor annoyances fixed.
 C
+c Revision 1.2  1992/11/06  20:25:17  chouck
+c Made names lower-case for Absoft Fortran on the Mac
+c
 c Revision 1.1  1992/08/25  21:40:44  koziol
 c Initial revision
 c
@@ -18,10 +22,10 @@ C   d2gdims: get dimensions of image
 C   d2gimg: read in image
 C   d2aimg: write out image
 C   d2rref: set reference number to be used for next get
-C   df24getdims:  get dimensions of image
-C   df24getimage: read in image
-C   df24getimage: write out image
-C   df24readref:  set reference number to be used for next get
+C   DF24getdims:  get dimensions of image
+C   DF24getimage: read in image
+C   DF24getimage: write out image
+C   DF24readref:  set reference number to be used for next get
 C
 C Remarks:  A RIG specifies attributes associated with an image - lookup table, 
 C           dimension, compression, color compensation etc.

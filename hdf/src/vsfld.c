@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/11/24 16:49:49  chouck
-Fixed a return value in VSsetfields()
+Revision 1.4  1993/01/19 05:56:36  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.3  1992/11/24  16:49:49  chouck
+ * Fixed a return value in VSsetfields()
+ *
  * Revision 1.2  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -218,7 +222,7 @@ PUBLIC int32 VSsetfields (vs,fields)
     /* copy from wlist (temp) into vdata */
     HDmemcpy((VOIDP) &(vs->wlist), (VOIDP) &(wlist), sizeof(wlist));
     
-    return(SUCCEED); 
+    return(SUCCEED); /* ok */
     
   } /* writing to empty vdata */
 

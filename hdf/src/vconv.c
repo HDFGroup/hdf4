@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.3  1993/01/19 05:56:10  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.2  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -63,25 +67,25 @@ HFILEID f;
 	foundold = 0;
 	foundnew = 0;
 	/* locate any OLD vgs */
-         aid = QQstartread (f, (uint16)OLD_VGDESCTAG,  DFREF_WILDCARD);
+         aid = Hstartread (f, (uint16)OLD_VGDESCTAG,  DFREF_WILDCARD);
 		 if (aid != FAIL) foundold++;
-		 QQendaccess (aid);
+         Hendaccess (aid);
 
 	/* locate any OLD vdatas */
-        aid = QQstartread(f, (uint16)OLD_VSDESCTAG,  DFREF_WILDCARD);
+        aid = Hstartread(f, (uint16)OLD_VSDESCTAG,  DFREF_WILDCARD);
 		if (aid != FAIL) foundold++;
-		QQendaccess (aid);
+        Hendaccess (aid);
 
 
    /* locate any NEW vgs */
-		aid = QQstartread(f, NEW_VGDESCTAG,  DFREF_WILDCARD);
+        aid = Hstartread(f, NEW_VGDESCTAG,  DFREF_WILDCARD);
 		if (aid != FAIL) foundnew++;
-		QQendaccess (aid);
+        Hendaccess (aid);
 
 	/* locate any NEW vdatas */
-		aid = QQstartread(f, NEW_VSDESCTAG,  DFREF_WILDCARD);
+        aid = Hstartread(f, NEW_VSDESCTAG,  DFREF_WILDCARD);
 		if (aid != FAIL) foundnew++;
-		QQendaccess (aid);
+        Hendaccess (aid);
 
 
 	if ( foundold == 0 ) /* has no old vset elements */
@@ -130,11 +134,11 @@ HFILEID f;
 	/* =============================================  */
 	/* --- read all vgs and convert each --- */
 
-    stat = aid = QQstartread (f, (uint16)OLD_VGDESCTAG, DFREF_WILDCARD);
+    stat = aid = Hstartread (f, (uint16)OLD_VGDESCTAG, DFREF_WILDCARD);
 	while (stat != FAIL) {
-		QQQuerytagref (aid, &tag, &ref);
-		QQQuerylength (aid, &bsize);
-       stat = QQgetelement (f, (uint16)OLD_VGDESCTAG, ref, (uint8*)buf);
+        HQuerytagref (aid, &tag, &ref);
+        HQuerylength (aid, &bsize);
+       stat = Hgetelement (f, (uint16)OLD_VGDESCTAG, ref, (uint8*)buf);
 		if (stat == FAIL) {
 			sprintf(sjs,"getvgroup_old. getelement err. \n"); zj;
 			return (0);
@@ -156,26 +160,26 @@ HFILEID f;
 						}
 		vpackvg (vg, buf, &bsize);
 
-     	stat = QQputelement (f, VGDESCTAG, ref, (uint8*)buf, bsize);
+        stat = Hputelement (f, VGDESCTAG, ref, (uint8*)buf, bsize);
 		if (stat == FAIL) {
 			sprintf(sjs,"put vgroup desc error.\n"); zj;
 			return (0);
 			}
 
-        stat = QQnextread (aid, (uint16)OLD_VGDESCTAG, DFREF_WILDCARD, DF_CURRENT);
+        stat = Hnextread (aid, (uint16)OLD_VGDESCTAG, DFREF_WILDCARD, DF_CURRENT);
 		} /* while */
-	QQendaccess (aid);
+    Hendaccess (aid);
 
 	/* =============================================  */
 	/* --- read all vdata descs  and convert each --- */
 	/* --- then dup a tag for each vdata data elt --- */
 
-    stat = aid = QQstartread (f, (uint16)OLD_VSDESCTAG, DFREF_WILDCARD);
+    stat = aid = Hstartread (f, (uint16)OLD_VSDESCTAG, DFREF_WILDCARD);
 	while (stat != FAIL) {
 
-		QQQuerytagref (aid, &tag, &ref);
-		QQQuerylength (aid, &bsize);
-		stat = QQgetelement (f, tag, ref, (uint8*)buf);
+        HQuerytagref (aid, &tag, &ref);
+        HQuerylength (aid, &bsize);
+        stat = Hgetelement (f, tag, ref, (uint8*)buf);
 		if (stat == FAIL) {
 			sprintf(sjs,"getvdata_old. getelement err. \n"); zj;
 			return (0);
@@ -191,22 +195,22 @@ HFILEID f;
 			vs->more = 0;
 		vpackvs (vs, buf, &bsize);
 
-      stat = QQputelement (f, VSDESCTAG, ref, (uint8*)buf, bsize);
+      stat = Hputelement (f, VSDESCTAG, ref, (uint8*)buf, bsize);
 		if (stat == FAIL) {
 			sprintf(sjs ,"put vdata desc error.\n"); zj;
 			return (0);
 			}
 
 		/* duplicate a tag to point to vdata data */
-            stat = QQdupdd (f, NEW_VSDATATAG, ref, (uint16)OLD_VSDATATAG, ref);
+            stat = Hdupdd (f, NEW_VSDATATAG, ref, (uint16)OLD_VSDATATAG, ref);
 			 if (stat == FAIL) {
 				 	sprintf(sjs,"Hdupdd - cannot duplicate vdata.\n"); zj;
 					return (0);
 					}
-        stat = QQnextread (aid, (uint16)OLD_VSDESCTAG, DFREF_WILDCARD, DF_CURRENT);
+        stat = Hnextread (aid, (uint16)OLD_VSDESCTAG, DFREF_WILDCARD, DF_CURRENT);
 		} /* while */
 
-	QQendaccess (aid);
+    Hendaccess (aid);
 
 	return(1);
 
@@ -238,13 +242,13 @@ char * fs;
 	HFILEID	f;
 	int32 	stat;
 
-	f = QQopen (fs,DFACC_ALL,0);
+    f = Hopen (fs,DFACC_ALL,0);
 	if (f == FAIL) {
 		sprintf(sjs,"vcheckcompat: cannot open %s\n",fs); zj;
 		return (-1);
 		}	 	
 	stat = vicheckcompat(f); 
-	QQclose (f);	
+    Hclose (f);
 
 	return (stat);
 } /* vcheckcompat */
@@ -274,13 +278,13 @@ int32 vmakecompat(fs)
 	HFILEID 	f;
 	int32 	stat;
 
-	f = QQopen (fs,DFACC_ALL,0);
+    f = Hopen (fs,DFACC_ALL,0);
    if (f == FAIL) { 
 		sprintf(sjs,"vmakecompat: cannot open %s\n",fs); zj;
 		return (0);
 		}	 	
 	stat = vimakecompat(f);
-	QQclose (f);
+    Hclose (f);
 	return (stat);
 
 } /* vmakecompat */

@@ -2,9 +2,13 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.7  1992/07/08 22:05:20  sxu
-C Changed dsgmaxm() to dsgrang(), and dssmaxm() to dssrang().
+C Revision 1.8  1993/01/19 05:59:05  koziol
+C Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+C port.  Lots of minor annoyances fixed.
 C
+c Revision 1.7  1992/07/08  22:05:20  sxu
+c Changed dsgmaxm() to dsgrang(), and dssmaxm() to dssrang().
+c
 c Revision 1.6  1992/07/07  21:51:03  chouck
 c Minor error reporting fix
 c

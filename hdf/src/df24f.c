@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.5  1993/01/19 05:54:00  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.4  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.3  1992/10/01  02:54:34  chouck
  * Added function DF24lastref()
  *
@@ -21,23 +25,28 @@ Updates from 3.2r2 -> 3.3
  * Initial revision
  *
 */
+
 /*-----------------------------------------------------------------------------
  * File:    df24F.c
  * Purpose: read and write 24-bit raster images
  * Invokes: dfgr.c df24.c
  * Contents: 
- *  d2reqil_: use this interlace when returning image
- *  df24reqil_: use this interlace when returning image
- *  d2sdims_: set dimensions of image
- *  df24setdims_: set dimensions of image
- *  d2setil_: set interlace for image
- *  df24setil_: set interlace for image
- *  d2first_: restart 24 bit raster
- *  df24restart_: restart 24 bit raster
- *  d2igdim_: get dimensions of image
- *  d2igimg_: read in image
- *  d2iaimg_: write out image
- *  d24lref_: last ref number
+ *  d2reqil: use this interlace when returning image
+ *  df24reqil: use this interlace when returning image
+ *  d2sdims: set dimensions of image
+ *  df24setdims: set dimensions of image
+ *  d2setil: set interlace for image
+ *  df24setil: set interlace for image
+ *  d2first: restart 24 bit raster
+ *  df24restart: restart 24 bit raster
+ *  d2igdim: get dimensions of image
+ *  d2igimg: read in image
+ *  d2iaimg: write out image
+ *  d24lref: last ref number
+ *  d2scomp: set compression to use (short name)
+ *  df24setcompress: set compression to use (long name)
+ *  d2sjpeg:  set JPEG parameters (short name)
+ *  df24setJPEG: set JPEG parameters (long name)
  *
  * Remarks:A RIG specifies attributes associated with an image - lookup table, 
  *          dimension, compression, color compensation etc.
@@ -70,7 +79,7 @@ nd2reqil(il)
     intf *il;
 #endif /* PROTOTYPE */
 {
-    return(DFGRIreqil(*il, IMAGE));
+    return(DFGRIreqil((intn)*il, (intn)IMAGE));
 }
 
 /*-----------------------------------------------------------------------------
@@ -196,7 +205,7 @@ nd2iaimg(filename, image, xdim, ydim, fnlen, newfile)
     if (!dimsset)
         if (DFGRIsetdims(*xdim, *ydim, 3, IMAGE)<0) return(-1);
 
-    fn = HDf2cstring(filename, *fnlen);
+    fn = HDf2cstring(filename, (intn)*fnlen);
     ret = DFGRIaddimlut(fn, (VOIDP)_fcdtocp(image), *xdim, *ydim,
             IMAGE, 1, *newfile);
     HDfreespace(fn);
@@ -226,7 +235,7 @@ nd2setil(il)
 }
 
 /*-----------------------------------------------------------------------------
- * Name:    df24first
+ * Name:    d2first
  * Purpose: restart 24 bit raster file
  * Inputs:  
  * Returns: 0 on success, -1 on failure with DFerror set
@@ -264,6 +273,64 @@ nd24lref()
 {
     return (DFGRIlastref());
 }
+
+/*-----------------------------------------------------------------------------
+ * Name:    d2scomp
+ * Purpose: set the compression to use when writing the next image
+ * Inputs:
+ *      scheme - the type of compression to use
+ * Returns: 0 on success, -1 for error
+ * Users:   HDF HLL (high-level library) users, utilities, other routines
+ * Invokes: DF24setcompress
+ * Remarks: if the compression scheme is JPEG, this routine sets up default
+ *          JPEG parameters to use, if a user wants to change them, d2sjpeg
+ *          must be called.
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nd2scomp(intf *scheme)
+#else
+nd2scomp(scheme)
+intf *scheme;
+#endif /* PROTOTYPE */
+{
+    comp_info *cinfo;   /* Structure containing compression parameters */
+
+    if(*scheme==COMP_JPEG) {  /* check for JPEG compression and set defaults */
+        cinfo->jpeg.quality=75;
+        cinfo->jpeg.force_baseline=1;
+      } /* end if */
+    return (DF24setcompress((int32)*scheme,cinfo));
+}   /* end d2scomp() */
+
+/*-----------------------------------------------------------------------------
+ * Name:    d2sjpeg
+ * Purpose: change the JPEG compression parameters
+ * Inputs:
+ *      quality - what the JPEG quality rating should be
+ *      force_baseline - whether to force a JPEG baseline file to be written
+ * Returns: 0 on success, -1 for error
+ * Users:   HDF HLL (high-level library) users, utilities, other routines
+ * Invokes: DF24setcompress
+ * Remarks: none
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nd2sjpeg(intf *quality,intf *force_baseline)
+#else
+nd2sjpeg(quality,force_baseline)
+intf *quality;
+intf *force_baseline;
+#endif /* PROTOTYPE */
+{
+    comp_info *cinfo;   /* Structure containing compression parameters */
+
+    cinfo->jpeg.quality=(intn)*quality;
+    cinfo->jpeg.force_baseline=(intn)*force_baseline;
+    return (DF24setcompress((int32)COMP_JPEG,cinfo));
+}   /* end d2sjpeg() */
 
 /*-----------------------------------------------------------------------------
  * Name:    df24reqil
@@ -349,6 +416,65 @@ ndf24restart()
 {
     return (DFGRIrestart());
 }
+
+/*-----------------------------------------------------------------------------
+ * Name:    df24setcompress
+ * Purpose: set the compression to use when writing the next image
+ * Inputs:
+ *      scheme - the type of compression to use
+ * Returns: 0 on success, -1 for error
+ * Users:   HDF HLL (high-level library) users, utilities, other routines
+ * Invokes: DF24setcompress
+ * Remarks: if the compression scheme is JPEG, this routine sets up default
+ *          JPEG parameters to use, if a user wants to change them, df24setjpeg
+ *          must be called.
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+ndf24setcompress(intf *scheme)
+#else
+ndf24setcompress(scheme)
+intf *scheme;
+#endif /* PROTOTYPE */
+{
+    comp_info *cinfo;   /* Structure containing compression parameters */
+
+    if(*scheme==COMP_JPEG) {  /* check for JPEG compression and set defaults */
+        cinfo->jpeg.quality=75;
+        cinfo->jpeg.force_baseline=1;
+      } /* end if */
+    return (DF24setcompress((int32)*scheme,cinfo));
+}   /* end df24setcompress() */
+
+/*-----------------------------------------------------------------------------
+ * Name:    df24setjpeg
+ * Purpose: change the JPEG compression parameters
+ * Inputs:
+ *      quality - what the JPEG quality rating should be
+ *      force_baseline - whether to force a JPEG baseline file to be written
+ * Returns: 0 on success, -1 for error
+ * Users:   HDF HLL (high-level library) users, utilities, other routines
+ * Invokes: DF24setcompress
+ * Remarks: none
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+ndf24setjpeg(intf *quality,intf *force_baseline)
+#else
+ndf24setjpeg(quality,force_baseline)
+intf *quality;
+intf *force_baseline;
+#endif /* PROTOTYPE */
+{
+    comp_info *cinfo;   /* Structure containing compression parameters */
+
+    cinfo->jpeg.quality=*quality;
+    cinfo->jpeg.force_baseline=*force_baseline;
+    return (DF24setcompress((int32)COMP_JPEG,cinfo));
+}   /* end df24setjpeg() */
+
 /*-----------------------------------------------------------------------------
  * Name:    d2irref
  * Purpose: Internal stub for setting ref of rig to read next

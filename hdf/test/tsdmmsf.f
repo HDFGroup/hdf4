@@ -2,9 +2,13 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.6  1992/08/31 16:14:15  chouck
-C Added tests for calibration tag stuff
+C Revision 1.7  1993/01/19 05:59:01  koziol
+C Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+C port.  Lots of minor annoyances fixed.
 C
+c Revision 1.6  1992/08/31  16:14:15  chouck
+c Added tests for calibration tag stuff
+c
 c Revision 1.5  1992/07/08  22:05:20  sxu
 c Changed dsgmaxm() to dsgrang(), and dssmaxm() to dssrang().
 c

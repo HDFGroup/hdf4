@@ -1,17 +1,6 @@
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-/*
-$Header$
-
-$Log$
-Revision 1.1  1992/11/02 16:34:45  koziol
-Initial revision
-
-*/
 /*-----------------------------------------------------------------------------
  * File:    dfrle.c
- * Purpose: RLE file compression algorithm
+ * Purpose: RLE image compression algorithm
  * Invokes:
  * Contents:
  *  DFCIrle: compress string using run length encoding
@@ -69,7 +58,7 @@ int32 DFCIrle(buf,bufto,len)
                 *cfoll = (uint8)(p - begp);
                 cfoll = clead;
             }
-            *cfoll++ = (uint8)128 | (uint8)(q-p); /* len of seq */
+            *cfoll++ = (uint8)(128 | (uint8)(q-p)); /* len of seq */
             *cfoll++ = *p;      /* char of seq */
             len -= q-p;         /* subtract len of seq */
             p = q;

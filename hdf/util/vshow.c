@@ -11,26 +11,6 @@
 *		'+n' means full dump only for the nth vdata.
 *
 *
-*****************************************************************************
-* 
-*			  NCSA HDF Vset release 2.1
-*					May 1991
-* 				Jason Ng May 1991 NCSA
-*
-* NCSA HDF Vset release 2.1 source code and documentation are in the public
-* domain.  Specifically, we give to the public domain all rights for future
-* licensing of the source code, all resale rights, and all publishing rights.
-* 
-* We ask, but do not require, that the following message be included in all
-* derived works:
-* 
-* Portions developed at the National Center for Supercomputing Applications at
-* the University of Illinois at Urbana-Champaign.
-* 
-* THE UNIVERSITY OF ILLINOIS GIVES NO WARRANTY, EXPRESSED OR IMPLIED, FOR THE
-* SOFTWARE AND/OR DOCUMENTATION PROVIDED, INCLUDING, WITHOUT LIMITATION,
-* WARRANTY OF MERCHANTABILITY AND WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE
-* 
 ******************************************************************************/
 
 #include "vg.h"
@@ -92,7 +72,7 @@ char**av;
     }
     Vinquire(vg,&n, vgname);
     Vgetclass(vg, vgclass); 
-    if (HDstrlen(vgname)==0)  strcat(vgname,"NoName");
+    if (HDstrlen(vgname)==0)  HDstrcat(vgname,"NoName");
     printf("\nvg:%d <%d/%d> (%s {%s}) has %d entries:\n",
            nvg, vg->otag, vg->oref, vgname, vgclass,n);
     
@@ -109,7 +89,7 @@ char**av;
         }
 
         VSinquire(vs, &nv,&interlace, fields, &vsize, vsname);
-        if (HDstrlen(vsname)==0)  strcat(vsname,"NoName");
+        if (HDstrlen(vsname)==0)  HDstrcat(vsname,"NoName");
         VSgetclass(vs,vsclass); 
         printf("  vs:%d <%d/%d> nv=%d i=%d fld [%s] vsize=%d (%s {%s})\n",
                 t, vs->otag, vs->oref, nv, interlace, fields, vsize, vsname, vsclass);
@@ -130,7 +110,7 @@ char**av;
           }
           
           Vinquire(vgt, &ne, vgname);
-          if (HDstrlen(vgname)==0)  strcat(vgname,"NoName");
+          if (HDstrlen(vgname)==0)  HDstrcat(vgname,"NoName");
           Vgetclass(vgt, vgclass);
           printf("  vg:%d <%d/%d> ne=%d (%s {%s})\n",
                  t, vgt->otag, vgt->oref, ne,  vgname, vgclass );
@@ -156,7 +136,7 @@ char**av;
   if(nlone > 0) {
 
     printf("Lone vdatas:\n");
-    if (NULL == (lonevs = (int32 *) HDgetspace (sizeof(int)*nlone))) {
+    if (NULL == (lonevs = (int32 *) HDgetspace(sizeof(int)*nlone))) {
       printf("%s: File has %d lone vdatas but ",av[0],nlone ); 
       printf("cannot alloc lonevs space. Quit.\n"); 
       exit(0);
@@ -170,7 +150,7 @@ char**av;
         continue;
       }
       VSinquire (vs, &nv,&interlace, fields, &vsize, vsname);
-      if (HDstrlen(vsname)==0)  strcat(vsname,"NoName");
+      if (HDstrlen(vsname)==0)  HDstrcat(vsname,"NoName");
       VSgetclass (vs, vsclass);
       printf("L vs:%d <%d/%d> nv=%d i=%d fld [%s] vsize=%d (%s {%s})\n",
               vsid, vs->otag, vs->oref, nv, interlace, fields, vsize, vsname, vsclass);
@@ -178,7 +158,7 @@ char**av;
       else if (fulldump && vsno==vs->oref) vsdumpfull(vs);
       VSdetach(vs);
     }
-    HDfreespace (lonevs);
+    HDfreespace(lonevs);
   }
 
   Vend(f);
@@ -256,7 +236,7 @@ int32 vsdumpfull(vs) VDATA * vs;
   int32 nf;
   
   VSinquire(vs, &nv,&interlace, fields, &vsize, vsname);
-  bb = (BYTE *) HDgetspace (nv*vsize);
+  bb = (BYTE *) HDgetspace(nv*vsize);
   if(bb==NULL) { 
     printf("vsdumpfull malloc error\n");
     return(0); 
@@ -336,7 +316,7 @@ int32 vsdumpfull(vs) VDATA * vs;
   
   /* ============================================ */
   
-  HDfreespace (bb);
+  HDfreespace(bb);
   printf("\n\n");
   
   return(1);

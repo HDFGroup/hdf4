@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/11/30 22:00:01  chouck
-Added fixes for changing to Vstart and Vend
+Revision 1.5  1993/01/19 05:56:27  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.4  1992/11/30  22:00:01  chouck
+ * Added fixes for changing to Vstart and Vend
+ *
  * Revision 1.3  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -183,7 +187,7 @@ a VDATA structure into a compact form suitable for storing in the HDF file.
 
 /****
 CONTENTS of VS stored in HDF file with tag DFTAG_VH:
-	int16		interlace
+    int16       interlace
 	int32		nvertices
 	int16		vsize
 	int16		nfields
@@ -578,8 +582,8 @@ PUBLIC VDATA * VSattach (f, vsid, accesstype)
           vs->oref		= vnewref(f);
           if (vs->oref == 0) {HERROR(DFE_NOREF); HDfreespace (vs); return(NULL);}
           
-          vs->otag		= DFTAG_VH;
-          vs->vsname[0] 	= '\0';
+          vs->otag      = DFTAG_VH;
+          vs->vsname[0]     = '\0';
           vs->interlace		= FULL_INTERLACE; /* DEFAULT */
           vs->access		= 'w';
           vs->f			= f;
@@ -640,7 +644,7 @@ PUBLIC VDATA * VSattach (f, vsid, accesstype)
         }
 
           /* need to fetch from file */
-        if (Hgetelement(f, DFTAG_VH,(uint16)vsid,vspack) == FAIL)
+        if (Hgetelement(f,DFTAG_VH,(uint16)vsid,vspack) == FAIL)
             HRETURN_ERROR(DFE_NOVS, NULL);
           
         vs->wlist.n = vs->rlist.n = 0;
@@ -698,7 +702,7 @@ PUBLIC VDATA * VSattach (f, vsid, accesstype)
           
           /* unpack the vs, then init all other fields in it */
           vunpackvs (vs,vspack,&vspacksize);
-          vs->otag	= DFTAG_VH;
+          vs->otag  = DFTAG_VH;
           vs->oref    = (uint16)vsid;
           vs->access	= 'w';
           vs->f		= f;
@@ -842,10 +846,10 @@ PUBLIC void VSdetach (vs)
                   
                   /* write out vwhole to file as 1 vdata */
                   if (vjv) {
-                    sprintf(sjs,"---- QQstartwrite nbytes = %ld\n", totalsize);zj; }
-                  stat = aid =QQstartwrite(vs->f,VSDATATAG,vs->oref, totalsize);
-                  QQwrite(aid,  totalsize , vwhole);
-                  QQendaccess (aid);
+                    sprintf(sjs,"---- Hstartwrite nbytes = %ld\n", totalsize);zj; }
+                  stat = aid =Hstartwrite(vs->f,VSDATATAG,vs->oref, totalsize);
+                  Hwrite(aid,  totalsize , vwhole);
+                  Hendaccess (aid);
                   HDfreespace(vwhole);
                   /* END OF VMBLOCK VERSION */ 	}}
 #endif

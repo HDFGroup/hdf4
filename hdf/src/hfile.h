@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.7  1993/01/14 19:08:42  chouck
-Added ID type of SDS objects (4)
+Revision 1.8  1993/01/19 05:55:56  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.7  1993/01/14  19:08:42  chouck
+ * Added ID type of SDS objects (4)
+ *
  * Revision 1.6  1992/11/30  21:59:11  chouck
  * Added NO_ID for testing if an ID variable has an invalid content
  *
@@ -238,7 +242,10 @@ typedef struct accrec_t {
     int32 posn;                 /* seek position with respect to */
                                 /* start of element */
     int16 access;               /* access codes */
-    intn used;
+    intn used;                  /* whether the access record is used */
+    bool appendable;            /* whether appends to the data are allowed */
+    bool flush;                 /* whether the DD for this data should be flushed */
+                                /* when Hendaccess() is called */
     int16 special;
     VOIDP special_info;
     int32 (**special_func)();

@@ -2,9 +2,9 @@
 # $Header$
 #
 # $Log$
-# Revision 1.5  1993/01/14 17:27:43  georgev
-# Upated headers in Makefiles to reflect HDF3.3.
-# Updated Makefile headers to reflect HDF3.3
+# Revision 1.6  1993/01/19 05:53:51  koziol
+# Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+# port.  Lots of minor annoyances fixed.
 #
 # Revision 1.4  1992/11/02  18:07:57  chouck
 # Added hcomp.h into the list of include files to move
@@ -22,7 +22,7 @@
 # ##################################################################
 #
 #                   NCSA HDF Version 3.3 release Beta 1
-#                               November 1992
+#                            January 1993
 #
 #           MAKEFILE for creating the HDF library, libdf.a,
 #
@@ -80,7 +80,10 @@ FFLAGS= -g
 CC=cc
 CFLAGS=  -g -D${MACHINE}
 
-# ==> For the IRIS and INDIGO, uncomment the following line
+# ==> For the ALPHA, uncomment the following line
+#CFLAGS=  -g -DALPHA -std1
+
+# ==> For the IRIS and INDIGO, and the NEXT, uncomment the following line
 #CFLAGS=  -g -D${MACHINE} -ansi
 
 # ==> where are your hdf.h, hdfi.h and vg.h files located?
@@ -109,18 +112,18 @@ LINTFLAGS=
 SHAR=shar
 ARCHIVE=hdf.shar
 
-HDRS=hcomp.h hfile.h hdf.h hdfi.h herr.h hproto.h dfan.h dfrig.h dfgr.h dfsd.h \
-     dfgroup.h dfconvrt.h vg.h df.h dfi.h dfstubs.h dfufp2i.h vproto.h 
+HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h dfan.h dfrig.h dfgr.h dfsd.h \
+     dfconvrt.h vg.h df.h dfi.h dfstubs.h dfufp2i.h vproto.h hcomp.h
 
 CSRCS=hfile.c herr.c hblocks.c hextelt.c hkit.c dfan.c dfr8.c dfcomp.c \
-      dfimcomp.c dfrle.c dfp.c dfgr.c df24.c dfsd.c dfgroup.c dfconv.c  \
-	  dfufp2i.c vg.c vrw.c vio.c vparse.c vconv.c vsfld.c vgp.c vhi.c \
-      dfutil.c dfstubs.c
+      dfrle.c dfimcomp.c dfjpeg.c dfunjpeg.c dfp.c dfgr.c df24.c dfsd.c \
+      dfgroup.c dfconv.c dfufp2i.c vg.c vrw.c vio.c vparse.c vconv.c vsfld.c \
+      vgp.c vhi.c dfutil.c dfstubs.c
 
 COBJS=hfile.o herr.o hblocks.o hextelt.o hkit.o dfan.o dfr8.o dfcomp.o \
-      dfimcomp.o dfrle.o dfp.o dfgr.o df24.o dfsd.o dfgroup.o dfconv.o \
-	  dfufp2i.o vg.o vrw.o vio.o vparse.o vconv.o vsfld.o vgp.o vhi.o \
-      dfutil.o dfstubs.o
+      dfrle.o dfimcomp.o dfjpeg.o dfunjpeg.o dfp.o dfgr.o df24.o dfsd.o \
+      dfgroup.o dfconv.o dfufp2i.o vg.o vrw.o vio.o vparse.o vconv.o vsfld.o \
+      vgp.o vhi.o dfutil.o dfstubs.o
 
 FSRCS=hfilef.c herrf.c hfileff.f dfanf.c dfr8f.c dfpf.c df24f.c dfsdf.c \
       vgf.c dff.c dfanff.f df24ff.f dfpff.f dfr8ff.f dfsdff.f vgff.f dfff.f \
@@ -130,6 +133,32 @@ FOBJS=hfilef.o herrf.o hfileff.o dfanf.o dfr8f.o dfpf.o df24f.o dfsdf.o \
       vgf.o dff.o dfanff.o df24ff.o dfpff.o dfr8ff.o dfsdff.o vgff.o dfff.o \
       dfutilf.o dfufp2if.o
 
+JCSRCS= jbsmooth.c jcarith.c jccolor.c jcdeflts.c jcexpand.c jchuff.c \
+        jcmain.c jcmaster.c jcmcu.c jcpipe.c jcsample.c jdarith.c jdcolor.c \
+        jddeflts.c jdhuff.c jdmain.c jdmaster.c jdmcu.c jdpipe.c jdsample.c \
+        jerror.c jquant1.c jquant2.c jfwddct.c jrevdct.c jutils.c jmemmgr.c \
+        jrdjfif.c jrdgif.c jrdppm.c jrdrle.c jrdtarga.c jwrjfif.c jwrgif.c \
+        jwrppm.c jwrrle.c jwrtarga.c jmemsys.c
+
+JINCS= jinclude.h jconfig.h jpegdata.h jversion.h jmemsys.h egetopt.c
+
+# objectfiles common to both JPEG compression and decompression
+COMOBJECTS= jutils.o jerror.o jmemmgr.o jmemsys.o 
+# compression objectfiles
+CLIBOBJECTS= jcmaster.o jcdeflts.o jcarith.o jccolor.o jcexpand.o \
+        jchuff.o jcmcu.o jcpipe.o jcsample.o jfwddct.o
+        
+CFILEOBJECTS=jwrjfif.o jrdgif.o jrdppm.o jrdrle.o jrdtarga.o
+
+# decompression objectfiles
+DLIBOBJECTS= jdmaster.o jddeflts.o jbsmooth.o jdarith.o jdcolor.o \
+        jdhuff.o jdmcu.o jdpipe.o jdsample.o jquant1.o \
+        jquant2.o jrevdct.o
+
+DFILEOBJECTS=jrdjfif.o jwrgif.o jwrppm.o jwrrle.o jwrtarga.o
+
+# These objectfiles are included in libjpeg.lib
+JOBJS= $(CLIBOBJECTS) $(DLIBOBJECTS) $(COMOBJECTS)
 
 .c.o:
 	$(CC) $(CFLAGS) -c $<
@@ -139,14 +168,14 @@ FOBJS=hfilef.o herrf.o hfileff.o dfanf.o dfr8f.o dfpf.o df24f.o dfsdf.o \
 
 all: libdf.a install_it
 
-libdf.a: $(COBJS) $(FOBJS)
+libdf.a: $(COBJS) $(FOBJS) $(JOBJS)
 	-$(RM) libdf.a
-	$(AR) $(ARFLAGS) libdf.a $(COBJS) $(FOBJS)
+	$(AR) $(ARFLAGS) libdf.a $(COBJS) $(FOBJS) $(JOBJS)
 	$(RANLIB) libdf.a
 
-libnofortran: $(COBJS)
+libnofortran: $(COBJS) $(JOBJS)
 	-$(RM) libdf.a
-	$(AR) $(ARFLAGS) libdf.a $(COBJS)
+	$(AR) $(ARFLAGS) libdf.a $(COBJS) $(JOBJS)
 	$(RANLIB) libdf.a
 
 nofortran: libnofortran install_it
@@ -176,9 +205,13 @@ dfr8f.o: hdf.h herr.h dfrig.h hdfi.h
 
 dfcomp.o: hdf.h herr.h dfrig.h hdfi.h
 
-dfrle.o: hdf.h herr.h dfrig.h hdfi.h
-
 dfimcomp.o: hdf.h herr.h dfrig.h hdfi.h
+
+dfrle.o: dfrle.c hdf.h herr.h dfrig.h hdfi.h
+
+dfjpeg.o: dfjpeg.c hdf.h herr.h dfrig.h hdfi.h
+
+dfunjpeg.o: dfunjpeg.c hdf.h herr.h dfrig.h hdfi.h
 
 dfp.o: hdf.h herr.h hdfi.h
 
@@ -190,7 +223,7 @@ df24.o: hdf.h herr.h dfgr.h hdfi.h
 
 df24f.o: hdf.h herr.h dfgr.h hdfi.h
 
-dfsd.o: hdf.h herr.h dfsd.h hdfi.h dfconvrt.h dfgroup.h hfile.h
+dfsd.o: hdf.h herr.h dfsd.h hdfi.h dfconvrt.h hfile.h
 
 dfsdf.o: hdf.h herr.h dfsd.h hdfi.h
 
@@ -224,9 +257,86 @@ dfstubs.o: hdf.h herr.h dfstubs.h df.h dfi.h hdfi.h
 
 dff.o: hdf.h herr.h dfstubs.h df.h dfi.h hdfi.h
 
+# JPEG source files
+jbsmooth.o : jbsmooth.c jinclude.h jconfig.h jpegdata.h
+
+jcarith.o : jcarith.c jinclude.h jconfig.h jpegdata.h
+
+jccolor.o : jccolor.c jinclude.h jconfig.h jpegdata.h
+
+jcdeflts.o : jcdeflts.c jinclude.h jconfig.h jpegdata.h
+
+jcexpand.o : jcexpand.c jinclude.h jconfig.h jpegdata.h
+
+jchuff.o : jchuff.c jinclude.h jconfig.h jpegdata.h
+
+#jcmain.o : jcmain.c jinclude.h jconfig.h jpegdata.h jversion.h egetopt.c
+
+jcmaster.o : jcmaster.c jinclude.h jconfig.h jpegdata.h
+
+jcmcu.o : jcmcu.c jinclude.h jconfig.h jpegdata.h
+
+jcpipe.o : jcpipe.c jinclude.h jconfig.h jpegdata.h
+
+jcsample.o : jcsample.c jinclude.h jconfig.h jpegdata.h
+
+jdarith.o : jdarith.c jinclude.h jconfig.h jpegdata.h
+
+jdcolor.o : jdcolor.c jinclude.h jconfig.h jpegdata.h
+
+jddeflts.o : jddeflts.c jinclude.h jconfig.h jpegdata.h
+
+jdhuff.o : jdhuff.c jinclude.h jconfig.h jpegdata.h
+
+#jdmain.o : jdmain.c jinclude.h jconfig.h jpegdata.h jversion.h egetopt.c
+
+jdmaster.o : jdmaster.c jinclude.h jconfig.h jpegdata.h
+
+jdmcu.o : jdmcu.c jinclude.h jconfig.h jpegdata.h
+
+jdpipe.o : jdpipe.c jinclude.h jconfig.h jpegdata.h
+
+jdsample.o : jdsample.c jinclude.h jconfig.h jpegdata.h
+
+jerror.o : jerror.c jinclude.h jconfig.h jpegdata.h
+
+jquant1.o : jquant1.c jinclude.h jconfig.h jpegdata.h
+
+jquant2.o : jquant2.c jinclude.h jconfig.h jpegdata.h
+
+jfwddct.o : jfwddct.c jinclude.h jconfig.h jpegdata.h
+
+jrevdct.o : jrevdct.c jinclude.h jconfig.h jpegdata.h
+
+jutils.o : jutils.c jinclude.h jconfig.h jpegdata.h
+
+jmemmgr.o : jmemmgr.c jinclude.h jconfig.h jpegdata.h jmemsys.h
+
+jrdjfif.o : jrdjfif.c jinclude.h jconfig.h jpegdata.h
+
+jrdgif.o : jrdgif.c jinclude.h jconfig.h jpegdata.h
+
+jrdppm.o : jrdppm.c jinclude.h jconfig.h jpegdata.h
+
+jrdrle.o : jrdrle.c jinclude.h jconfig.h jpegdata.h
+
+jrdtarga.o : jrdtarga.c jinclude.h jconfig.h jpegdata.h
+
+jwrjfif.o : jwrjfif.c jinclude.h jconfig.h jpegdata.h
+
+jwrgif.o : jwrgif.c jinclude.h jconfig.h jpegdata.h
+
+jwrppm.o : jwrppm.c jinclude.h jconfig.h jpegdata.h
+
+jwrrle.o : jwrrle.c jinclude.h jconfig.h jpegdata.h
+
+jwrtarga.o : jwrtarga.c jinclude.h jconfig.h jpegdata.h
+
+jmemsys.o : jmemsys.c jinclude.h jconfig.h jpegdata.h jmemsys.h
+
 install_it:
 	-mkdir $(HDFINC)
-	-cp $(HDRS) $(HDFINC)
+	-cp $(HDRS) $(JINCS) $(HDFINC)
 	-mkdir $(HDFLIB)
 	-cp libdf.a $(HDFLIB)
 	-$(RANLIB) $(HDFLIB)/libdf.a

@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/08/24 15:02:30  dilg
-Ripped out all Sunview code.  Sunview is no longer supported.
+Revision 1.4  1993/01/19 06:00:19  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.3  1992/08/24  15:02:30  dilg
+ * Ripped out all Sunview code.  Sunview is no longer supported.
+ *
  * Revision 1.2  1992/07/15  21:48:48  sxu
  * No change.
  *

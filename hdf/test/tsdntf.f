@@ -2,10 +2,14 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.5  1992/06/30 20:34:24  chouck
-C Fortran character passing problems were making the int8 tests
-C fail.  Change int8 variables to 'byte' for VMS
+C Revision 1.6  1993/01/19 05:59:13  koziol
+C Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+C port.  Lots of minor annoyances fixed.
 C
+c Revision 1.5  1992/06/30  20:34:24  chouck
+c Fortran character passing problems were making the int8 tests
+c fail.  Change int8 variables to 'byte' for VMS
+c
 c Revision 1.4  1992/06/26  20:44:33  chouck
 c Oops, filename change made lines too long
 c

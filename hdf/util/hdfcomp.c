@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/07/15 21:48:48  sxu
-Added changes for CONVEX
+Revision 1.3  1993/01/19 06:00:11  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.2  1992/07/15  21:48:48  sxu
+ * Added changes for CONVEX
+ *
  * Revision 1.1  1992/07/01  20:14:53  mlivin
  * Initial revision
  *
@@ -72,21 +76,25 @@ main(argc,argv)
     int i, ret;
     char *outfile;
     int image = 1;
+    intn jpeg_qual=75;      /* JPEG quality factor */
     uint16 prevref, writeref = 200, compress = (uint16) 0;
+    comp_info cinfo;        /* compression structure */
 
     if (argc < 3) { 
-        printf("%s,  version: 1.1   date: July 1, 1992\n", argv[0]);
+        printf("%s,  version: 1.2   date: December 21, 1992\n", argv[0]);
         printf("  This utility will read in raster-8 images from an\n");
         printf("  HDF file and create a new HDF containing the\n");
         printf("  images in a compressed format.  Images will be\n");
         printf("  appended to outfile, if it exists.\n\n");
         printf("Usage:\n");
-        printf(" hdfcomp outfile {[-c],[-r],[-i]} imagefile ...\n");
-        printf("                 {[-c],[-r],[-i]} imagefile\n");
+        printf(" hdfcomp outfile {[-c],[-r],[-i],[-j<quality>]} imagefile ...\n");
+        printf("                 {[-c],[-r],[-i], [-j<quality>]} imagefile\n");
         printf("         -r: Store without compression (default)\n");
         printf("         -c: Store using RLE compression\n");
         printf("         -i: Store using IMCOMP compression (requires a");
         printf(" palette in the HDF file)\n");
+        printf("         -j<quality>: Store using JPEG compression\n");
+        printf("            with a quality factor from 1-100, 75 default\n");
         exit(1);
     }
 
@@ -101,11 +109,22 @@ main(argc,argv)
                     break;
                 case 'c':               /* RLE */
                     image = 1;
-                    compress = DFTAG_RLE;
+                    compress = COMP_RLE;
                     break;
                 case 'i':               /* IMCOMP */
                     image = 1;
-                    compress = DFTAG_IMC;
+                    compress = COMP_IMCOMP;
+                    break;
+                case 'j':               /* JPEG */
+                    image = 1;
+                    compress = COMP_JPEG;
+                    if((jpeg_qual=atoi(&argv[i][2]))<=0 || jpeg_qual>100) {
+                        printf("Bad JPEG quality setting, should be between\n");
+                        printf("1 and 100, using default value of 75\n");
+                        jpeg_qual=75;
+                      } /* end if */
+                    cinfo.jpeg.quality=jpeg_qual;   /* set JPEG parameters */
+                    cinfo.jpeg.force_baseline=TRUE;
                     break;
                 default:
                     printf("Illegal option: %s, skipping....\n", argv[i]);   
@@ -131,8 +150,10 @@ main(argc,argv)
                 }
                 ret = DFR8writeref(outfile, writeref++);
 
-                if (DFR8addimage(outfile, (VOIDP) space, 
-						  xdim, ydim, compress)<0) {
+                if(compress)
+                    DFR8setcompress(compress,&cinfo);
+                if (DFR8addimage(outfile, (VOIDP) space,
+                        xdim, ydim, compress)<0) {
                     printf("Error writing image to file %s\n", outfile);
                     exit(1);
                 }
@@ -141,7 +162,7 @@ main(argc,argv)
                 ret = DFR8readref(argv[i], prevref);
                 ret = DFR8getdims(argv[i], &xdim, &ydim, &ispal);
 
-		HDfreespace(space);
+                HDfreespace(space);
             }
         }
     }

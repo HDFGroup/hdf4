@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/07/15 21:48:48  sxu
-Added changes for CONVEX
+Revision 1.3  1993/01/19 06:00:09  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.2  1992/07/15  21:48:48  sxu
+ * Added changes for CONVEX
+ *
  * Revision 1.1  1992/06/09  17:35:18  mfolk
  * Initial revision
  *
@@ -120,7 +124,7 @@ char *argv[];
 
 	size = x_dim * y_dim;
 
-	if ((r24 = (UCHAR *) malloc (size * 3)) == NULL)
+    if ((r24 = (UCHAR *) HDgetspace(size * 3)) == NULL)
 	{
 		fprintf (stderr, "error: malloc to hold r24 image failed\n");
 		exit (-1);
@@ -131,12 +135,12 @@ char *argv[];
 		exit (-1);
 	}
 
-	if ((r8 = (UCHAR *) malloc (size)) == NULL)
+    if ((r8 = (UCHAR *) HDgetspace(size)) == NULL)
 	{
 		fprintf (stderr, "error: malloc to hold r8 image failed\n");
 		exit (-1);
 	}
-	if ((pal = (UCHAR *) malloc (PALSIZE)) == NULL)
+    if ((pal = (UCHAR *) HDgetspace(PALSIZE)) == NULL)
 	{
 		fprintf (stderr, "error: malloc to hold palette failed\n");
 		exit (-1);
@@ -198,7 +202,7 @@ UCHAR   *cdat;		/* pointer to palette - should be 3 * 256 bytes long */
     char    *malloc();
 #endif
 
-    if ((idat[0] = (UINT *)malloc(6*xres*sizeof(UINT))) == NULL)
+    if ((idat[0] = (UINT *)HDgetspace(6*xres*sizeof(UINT))) == NULL)
     {   fprintf(stderr,"error: Memory allocation fault\n");
 	return -1;
     }

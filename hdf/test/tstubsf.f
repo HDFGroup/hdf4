@@ -2,9 +2,13 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.7  1992/12/01 21:07:48  chouck
-C Fixed tab / space problem so Mac Fortran doesn't complain
+C Revision 1.8  1993/01/19 05:59:21  koziol
+C Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+C port.  Lots of minor annoyances fixed.
 C
+c Revision 1.7  1992/12/01  21:07:48  chouck
+c Fixed tab / space problem so Mac Fortran doesn't complain
+c
 c Revision 1.6  1992/06/16  15:39:42  chouck
 c HP is really picky about things not extending into column 72
 c

@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.4  1992/11/10 20:23:03  georgev
-Added fill value tag DFTAG_FV for hyperslabs
+Revision 1.5  1993/01/19 05:55:38  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.4  1992/11/10  20:23:03  georgev
+ * Added fill value tag DFTAG_FV for hyperslabs
+ *
  * Revision 1.3  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -291,6 +295,7 @@ extern uint8 *tbuf;
 #define DFTAG_RI8   ((uint16)202) /* Raster-8 image */
 #define DFTAG_CI8   ((uint16)203) /* RLE compressed 8-bit image */
 #define DFTAG_II8   ((uint16)204) /* IMCOMP compressed 8-bit image */
+#define DFTAG_JI8   ((uint16)205) /* JPEG Compressed 8-bit image */
 
 /* Raster Image set */
 #define DFTAG_ID    ((uint16)300) /* Image DimRec */
@@ -344,6 +349,7 @@ extern uint8 *tbuf;
 #define DFTAG_IMC   ((uint16)12)    /* IMCOMP compression alias */
 #define DFTAG_IMCOMP ((uint16)12)   /* IMCOMP compression */
 #define DFTAG_JPEG  ((uint16)13)    /* JPEG compression (24-bit data) */
+#define DFTAG_GREYJPEG  ((uint16)14)    /* JPEG compression (8-bit data) */
 
 /* SPECIAL CODES */
 #define SPECIAL_LINKED 1

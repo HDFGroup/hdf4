@@ -2,9 +2,13 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.6  1992/12/01 21:07:48  chouck
-C Fixed tab / space problem so Mac Fortran doesn't complain
+C Revision 1.7  1993/01/19 05:58:20  koziol
+C Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+C port.  Lots of minor annoyances fixed.
 C
+c Revision 1.6  1992/12/01  21:07:48  chouck
+c Fixed tab / space problem so Mac Fortran doesn't complain
+c
 c Revision 1.5  1992/11/30  22:01:15  chouck
 c Added fix for Vstart() and Vend()
 c

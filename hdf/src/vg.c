@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.3  1993/01/19 05:56:12  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.2  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -51,7 +55,7 @@ uint16 vnewref (f)
 	uint16 r;
 	char * FUNC = "vnewref";
 
-	r = (uint16) QQnewref (f);
+    r = (uint16) Hnewref (f);
 	if (r == 0)  HERROR(DFE_NOFREEDD);
 
 	return (r);

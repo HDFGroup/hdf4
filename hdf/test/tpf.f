@@ -2,9 +2,13 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.2  1992/06/25 19:16:20  chouck
-C Changed double qutoes to single around string constants
+C Revision 1.3  1993/01/19 05:58:51  koziol
+C Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+C port.  Lots of minor annoyances fixed.
 C
+c Revision 1.2  1992/06/25  19:16:20  chouck
+c Changed double qutoes to single around string constants
+c
 c Revision 1.1  1992/04/27  17:07:49  sxu
 c Initial revision
 c

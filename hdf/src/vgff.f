@@ -1,33 +1,14 @@
-C***************************************************************************
-C
-C
-C                         NCSA HDF version 3.2r2
-C                            October 30, 1992
-C
-C NCSA HDF Version 3.2 source code and documentation are in the public
-C domain.  Specifically, we give to the public domain all rights for future
-C licensing of the source code, all resale rights, and all publishing rights.
-C
-C We ask, but do not require, that the following message be included in all
-C derived works:
-C
-C Portions developed at the National Center for Supercomputing Applications at
-C the University of Illinois at Urbana-Champaign, in collaboration with the
-C Information Technology Institute of Singapore.
-C
-C THE UNIVERSITY OF ILLINOIS GIVES NO WARRANTY, EXPRESSED OR IMPLIED, FOR THE
-C SOFTWARE AND/OR DOCUMENTATION PROVIDED, INCLUDING, WITHOUT LIMITATION,
-C WARRANTY OF MERCHANTABILITY AND WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE
-C
-C***************************************************************************
-
 C
 C $Header$
 C
 C $Log$
-C Revision 1.4  1992/11/30 22:00:01  chouck
-C Added fixes for changing to Vstart and Vend
+C Revision 1.5  1993/01/19 05:56:19  koziol
+C Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+C port.  Lots of minor annoyances fixed.
 C
+c Revision 1.4  1992/11/30  22:00:01  chouck
+c Added fixes for changing to Vstart and Vend
+c
 c Revision 1.3  1992/11/06  20:10:32  chouck
 c Changed tabs to spaces so Absoft Fortran on the Mac will be happy
 c
@@ -48,6 +29,7 @@ c	* Contains fortran routines callable from fortran programs.
 c	*
 c	**************************************************************************
 
+
 C------------------------------------------------------------------------------
 C Name: dfvopen
 C Purpose:  call dfivopn, open file
@@ -59,67 +41,68 @@ C Returns: 0 on success, FAIL on failure with error set
 C Users:    Fortran stub routine
 C Invokes: hiopen
 C----------------------------------------------------------------------------*/
-C
-C      integer function dfvopen(filename, access, defdds)
-C
-C      character*(*) filename
-C      integer       access, defdds, dfivopn
-C
-C      dfvopen = dfivopn(filename, access, defdds, len(filename))
-C      return
-C      end
 
-c     ============================================================
-c      VGROUP ROUTINES
-c     ============================================================
+C    integer function dfvopen(filename, access, defdds)
+C
+C    character*(*) filename
+C    integer       access, defdds, dfivopn
+C
+C    dfvopen = dfivopn(filename, access, defdds, len(filename))
+C    return
+C    end
 
-c     attachs to a vgroup 	
-c     related: Vattach--vatchc--vfatch
 
-      integer	function vfatch(f, vgid, accesstype)
-      integer		f, vgid
-      character*1	accesstype
-      integer		vatchc
+c   ============================================================
+c	 VGROUP ROUTINES
+c	============================================================
+
+c	attachs to a vgroup 	
+c	related: Vattach--vatchc--VFATCH
+
+      integer function vfatch(f, vgid, accesstype)
+      integer     f, vgid
+      character*1 accesstype
+      integer     vatchc
 
       vfatch = vatchc (f, vgid, accesstype)
       end
 
-c     ------------------------------------------------------------
-c     detaches from a vgroup
-c     related: Vdetach--vdtchc--vfdtch
+c	------------------------------------------------------------
+c	detaches from a vgroup
+c	related: Vdetach--vdtchc--VFDTCH
 
-      subroutine	vfdtch (vg)	
-      integer		vg
+      subroutine  vfdtch (vg)
+      integer     vg
 
       call vdtchc (vg)
       end
 
-c     ------------------------------------------------------------
-c     general inquiry on a vgroup
-c     related: Vgetname--vgnamc--vfgnam
+c	------------------------------------------------------------
+c	general inquiry on a vgroup
+c	related: Vgetname--vgnamc--VFGNAM
 
-      subroutine vfgnam (vg, vgname)			 
-      integer			vg
-      character*(*)	vgname
+      subroutine vfgnam (vg, vgname)
+      integer         vg
+      character*(*)   vgname
 
       call vgnamc (vg, vgname)
       end
-c     ------------------------------------------------------------
-c     get the class name of a vgroup
-c     related: Vgetclass--vgclsc--vfgcls
+c	------------------------------------------------------------
+c	get the class name of a vgroup
+c	related: Vgetclass--vgclsc--VFGCLS
 
-      subroutine vfgcls (vg, vgclass)			 
+      subroutine vfgcls (vg, vgclass)
 
       integer			vg
       character*(*)	vgclass
 
       call vgclsc  (vg, vgclass)
       end
-c     ------------------------------------------------------------
-c     general inquiry on a vgroup
-c     related: Vinquire--vinqc--vfinq
+c   ------------------------------------------------------------
+c	general inquiry on a vgroup
+c	related: Vinquire--vinqc--VFINQ
 
-      integer	function	vfinq (vg, nentries, vgname) 
+      integer   function    vfinq (vg, nentries, vgname)
       integer			vg, nentries
       character*(*)	vgname
       integer			vinqc
@@ -127,22 +110,22 @@ c     related: Vinquire--vinqc--vfinq
       vfinq = vinqc (vg, nentries, vgname)
       end
 
-c     ------------------------------------------------------------
-c     gets the id of the next vgroup in the file
-c     related: Vgetid--vgidc--vfgid
+c   ------------------------------------------------------------
+c	gets the id of the next vgroup in the file
+c	related: Vgetid--vgidc--VFGID
 
-      integer	function	vfgid (f, vgid)			
+      integer   function    vfgid (f, vgid)
       integer		f, vgid
       integer		vgidc
 
       vfgid = vgidc (f, vgid)
       end
 
-c     ------------------------------------------------------------
-c     gets the id of the next entry in the vgroup
-c     related: Vgetnext--vgnxtc--vfgnxt
+c	------------------------------------------------------------
+c	gets the id of the next entry in the vgroup
+c	related: Vgetnext--vgnxtc--VFGNXT
 
-      integer	function	vfgnxt (vg, id)				
+      integer   function    vfgnxt (vg, id)
       integer		vg, id
       integer		vgnxtc
 
@@ -150,9 +133,9 @@ c     related: Vgetnext--vgnxtc--vfgnxt
       end
 
 
-c     ------------------------------------------------------------
-c     sets the name of the vgroup
-c     related: Vsetname--vsnamc--vfsnam
+c	------------------------------------------------------------
+c	sets the name of the vgroup
+c	related: Vsetname--vsnamc--VFSNAM
 
       subroutine vfsnam (vg, vgname)
       integer			vg
@@ -160,23 +143,22 @@ c     related: Vsetname--vsnamc--vfsnam
 
       call vsnamc (vg, vgname, len(vgname))
       end
-c     ------------------------------------------------------------
-c     sets the class name of the vgroup
-c     related: Vsetclass--vsclsc--vfscls
+c   ------------------------------------------------------------
+c	sets the class name of the vgroup
+c	related: Vsetclass--vsclsc--VFSCLS
 
-      subroutine vfscls (vg, vgclass)	
+      subroutine vfscls (vg, vgclass)
       integer			vg
       character*(*)	vgclass
 
       call vsclsc  (vg, vgclass, len(vgclass))
       end
 
-c     ------------------------------------------------------------
-c     inserts a vset entity (ie vgroup or vdata) into the given vgroup
-c     related: Vinsert--vinsrtc--vfinsrt
+c	------------------------------------------------------------
+c	inserts a vset entity (ie vgroup or vdata) into the given vgroup
+c	related: Vinsert--vinsrtc--VFINSRT
 
-
-      integer	function vfinsrt (vg, velt)	
+      integer   function vfinsrt (vg, velt)
       integer		vg, velt
       integer		vinsrtc
 
@@ -609,4 +591,5 @@ c     related: Vaddtagref--vadtrc--vfadtr
       vfadtr = vadtrc  ( vg, tag, ref)
       end
 c     ============================================================
+
 

@@ -5,11 +5,15 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/12/18 15:46:32  mfolk
-added the line "access_rec->posn += bytes_read", because the linked
-block read routine did not update the read pointer properly.  This
-addition was at line 733, in function HLIread.
+Revision 1.3  1993/01/19 05:55:34  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.2  1992/12/18  15:46:32  mfolk
+ * added the line "access_rec->posn += bytes_read", because the linked
+ * block read routine did not update the read pointer properly.  This
+ * addition was at line 733, in function HLIread.
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -67,17 +71,17 @@ typedef struct link_t {
 /* information on this special linked block data elt */
 
 typedef struct linkinfo_t {
-    int attached;              /* how many access records refer to this elt */
-    int32 length;              /* the actual length of the data elt */
+    int attached;               /* how many access records refer to this elt */
+    int32 length;               /* the actual length of the data elt */
 #ifndef oldspecial
-    int32 first_length;                /* length of first block */
+    int32 first_length;         /* length of first block */
 #endif
-    int32 block_length;                /* the length of the remaining blocks */
-    int32 number_blocks;       /* total number of blocks in each link/block
+    int32 block_length;         /* the length of the remaining blocks */
+    int32 number_blocks;        /* total number of blocks in each link/block
                                   table */
-    uint16 link_ref;           /* ref of the first block table structure */
-    struct link_t *link;       /* pointer to the first block table */
-    struct link_t *last_link;  /* pointer to the last block table */
+    uint16 link_ref;            /* ref of the first block table structure */
+    link_t *link;               /* pointer to the first block table */
+    link_t *last_link;          /* pointer to the last block table */
 } linkinfo_t;
 
 /* private functions */
@@ -550,13 +554,14 @@ PRIVATE link_t * HLIgetlink(file_id, ref, number_blocks)
        HERROR(DFE_READERROR);
        return (link_t *) NULL;
     }
+
 {
     register int32 i;
     uint8 *p = buffer;
+
     UINT16DECODE(p, link->nextref);
-    for (i=0; i<number_blocks; i++) {
+    for (i=0; i<number_blocks; i++)
        UINT16DECODE(p, link->block_list[i].ref);
-    }
 }
     Hendaccess(access_id);
 

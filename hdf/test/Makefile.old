@@ -2,7 +2,11 @@
 # $Header$
 #
 # $Log$
-# Revision 1.30  1993/01/14 17:28:10  georgev
+# Revision 1.31  1993/01/19 05:58:16  koziol
+# Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+# port.  Lots of minor annoyances fixed.
+#
+# Revision 1.30  1993/01/14  17:28:10  georgev
 # Upated headers in Makefiles to reflect HDF3.3.
 # Updated Makefile headers to reflect HDF3.3
 # Updated Makefile header to reflect HDF3.3
@@ -103,7 +107,7 @@
 # ##################################################################
 #
 #                   NCSA HDF Version 3.3 release Beta 1
-#                               November 1992
+#                               January 1993
 #                  MAKEFILE for testing HDF Version 3.3
 #
 #                          ABOUT THIS MAKEFILE
@@ -227,6 +231,9 @@ CFLAGS=  -g -D${MACHINE}
 # ==> For Convex, specify CFLAGS as follows:
 #CFLAGS=  -g -D${MACHINE} $(IFLAGS)
 
+# ==> For ALPHA, specify CFLAGS as follows: 
+#CFLAGS=  -g -DALPHA $(IFLAGS) -std1
+
 # ==> For IRIS4, specify CFLAGS as follows: 
 #CFLAGS=  -g -D${MACHINE} $(IFLAGS) -ansi
 
@@ -240,16 +247,15 @@ CTESTS= trig tsdstr tsdmms tsdnmms tsdnnt tsdnt tan \
         tanfile tstubs tv1 tv2 tvers egchi \
         slabw slab1w slab2w slab3w slab4w
 
-
 CHDRS = df.h dfi.h dfsd.h vg.h df.h dfi.h dfstubs.h \
-	    vproto.h 
+        vproto.h
 CTSRCS= trig.c tsdstr.c tsdmms.c tsdnmms.c tsdnnt.c \
         tsdnt.c tan.c tanfile.c tstubs.c \
-	    tv1.c tv2.c tvers.c egchi.c\
+        tv1.c tv2.c tvers.c egchi.c \
         slabw.c slab1w.c slab2w.c slab3w.c slab4w.c
 CTOBJS= trig.o tsdstr.o tsdmms.o tsdnt.o tan.o tanfile.o \
         tstubs.o tsdnmms.o tsdnnt.o tv1.o tv2.o \
-	    tvers.o egchi.o \
+        tvers.o egchi.o \
         slabw.o slab1w.o slab2w.o slab3w.o slab4w.o
 
 HTESTS= thfile thfile1 terr thblocks thextelt tlinkage

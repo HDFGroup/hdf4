@@ -2,9 +2,13 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.6  1992/05/29 18:29:36  chouck
-C Fixed int16 / int32 problems.  Made buffer size 500 for RS/6000
+C Revision 1.7  1993/01/19 05:58:35  koziol
+C Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+C port.  Lots of minor annoyances fixed.
 C
+c Revision 1.6  1992/05/29  18:29:36  chouck
+c Fixed int16 / int32 problems.  Made buffer size 500 for RS/6000
+c
 c Revision 1.5  1992/05/29  15:20:58  sxu
 c declare tag's ref's and rank as int16
 c

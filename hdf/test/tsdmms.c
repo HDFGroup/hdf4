@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/08/27 22:19:29  chouck
-Added test for calibration tags
+Revision 1.5  1993/01/19 05:58:59  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.4  1992/08/27  22:19:29  chouck
+ * Added test for calibration tags
+ *
  * Revision 1.3  1992/07/08  22:05:20  sxu
  * Changed DFSDgetmaxmin() to DFSDgetrange().
  * Changed DFSDsetmaxmin() to DFSDsetrange().

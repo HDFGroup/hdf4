@@ -26,9 +26,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1992/07/15 21:48:48  sxu
-No change
+Revision 1.6  1993/01/19 06:00:34  koziol
+Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+port.  Lots of minor annoyances fixed.
 
+ * Revision 1.5  1992/07/15  21:48:48  sxu
+ * No change
+ *
  * Revision 1.4  1992/05/26  21:00:08  koziol
  * Folded Jason's Mac port and Linted code into the main version
  *
