@@ -57,7 +57,7 @@ the following:
 
       4.3 HDF4 uses Szip version 2.0 for compression. To use Szip
           library, you can download Szip source codes and binaries
-          from ftp://hdf.ncsa.uiuc.edu/lib-external/szip/bin/windows
+          from ftp://hdf.ncsa.uiuc.edu/szip/2.0/bin/windows/
 
           Please note that Szip is not a totally open-source free
           software.  For licensing issue of Szip, please check 
