@@ -2,7 +2,7 @@
 #
 # $Id$
 
-PROGRAM		= dumper
+PROGRAM		= hdp
 BINFILES	= $(PROGRAM)
 HDF_LIB         = @HDF_LIB@
 HDF_INC         = @HDF_INC@
