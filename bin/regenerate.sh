@@ -9,10 +9,12 @@
 #
 #       Name            Version
 #       ----            -------
+#       autoreconf        2.57
+#
 #       aclocal           1.7.7
 #       automake          1.7.7
-#       autoheader        2.53
-#       autoconf          2.53
+#       autoheader        2.57
+#       autoconf          2.57
 #
 echo /usr/bin/autoreconf -v
 env AUTOMAKE="/usr/bin/automake --foreign" /usr/bin/autoreconf -v
