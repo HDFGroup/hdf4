@@ -657,7 +657,7 @@ C
       call VRFY(status,'vfend',number_failed)
       status = hclose(file_id)
       call VRFY(status,'hclose',number_failed)
-      if (return_flag .eq. -1) goto 1000
+      if (number_failed .gt. 0) goto 1000
 C
 C     Reopen the HDF file for writing.
 C
