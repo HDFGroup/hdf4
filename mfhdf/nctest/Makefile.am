@@ -24,3 +24,9 @@ nctest_SOURCES = add.c atttests.c cdftests.c dimtests.c driver.c emalloc.c  \
                  vputget.c vputgetg.c
 nctest_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 nctest_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+
+#############################################################################
+##                          And the cleanup                                ##
+#############################################################################
+
+DISTCLEANFILES=test2.nc test.nc

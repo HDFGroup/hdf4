@@ -108,3 +108,10 @@ vms-stuff:	ncgentab.h ncgentab.c ncgenyy.c
 	cp $(srcdir)/ncgentab.h vmstab.h
 	cp $(srcdir)/ncgentab.c vmstab.c
 	cp $(srcdir)/ncgenyy.c vms_yy.c
+
+#############################################################################
+##                          And the cleanup                                ##
+#############################################################################
+
+DISTCLEANFILES=ctest0 ctest0.nc ctest1.cdl ncgentab.c ncgentab.h ncgenyy.c  \
+               test0.c test0.nc test1.cdl test1.nc test2.cdl

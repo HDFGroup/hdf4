@@ -91,3 +91,9 @@ vshow_DEPENDENCIES = ../src/libdf.a
 
 check:  $(bin_PROGRAMS)
 	sh ./testutil.sh $(target_canonical)
+
+#############################################################################
+##                          And the cleanup                                ##
+#############################################################################
+
+DISTCLEANFILES=bttrfly.hdf skull.gif SunWheel.hdf

@@ -81,3 +81,9 @@ check:
 	    echo "The above differences are OK if small";               \
 	    exit 0;                                                     \
 	  fi
+
+#############################################################################
+##                          And the cleanup                                ##
+#############################################################################
+
+DISTCLEANFILES=*.new *.hdf *.nc *.cdf *.cdl netcdf.h

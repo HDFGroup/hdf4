@@ -54,3 +54,9 @@ hrepack_check_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.
 
 check:  test_hrepack hrepack
 	@srcdir="$(srcdir)" $(srcdir)/test_hrepack.sh
+
+#############################################################################
+##                          And the cleanup                                ##
+#############################################################################
+
+DISTCLEANFILES=*.hdf

@@ -29,3 +29,9 @@ check: ncdump $(srcdir)/test0.cdl
 	./ncdump -n test0 test1.nc > test2.cdl
 	@cmp test1.cdl test2.cdl && echo "*** ncdump test successful ***" ;     \
 	    rm -f test1.nc test1.cdl test2.cdl
+
+#############################################################################
+##                          And the cleanup                                ##
+#############################################################################
+
+DISTCLEANFILES=test0.nc

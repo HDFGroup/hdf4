@@ -161,6 +161,11 @@ man1_MANS = ncdump.1
 ncdump_SOURCES = dumplib.c ncdump.c vardata.c
 ncdump_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 ncdump_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+
+
+#############################################################################
+#############################################################################
+DISTCLEANFILES = test0.nc
 subdir = mfhdf/ncdump
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
@@ -419,6 +424,7 @@ clean-generic:
 
 distclean-generic:
 	-rm -f $(CONFIG_CLEAN_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
