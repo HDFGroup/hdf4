@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/05/29 21:52:19  mfolk
-Added some casts to make it compile without warnings on Convex.
+Revision 1.4  1992/05/31 17:43:29  mfolk
+Put in a semicolon I accidentally deleted in last change.
 
+ * Revision 1.3  1992/05/29  21:52:19  mfolk
+ * Added some casts to make it compile without warnings on Convex.
+ *
  * Revision 1.2  1992/05/28  14:24:01  chouck
  * Added casts for calls to Hinquire()
  *
@@ -52,7 +55,7 @@ main(argc, argv)
     int32 aid1, aid2;
     int32 fileid, length, offset, posn;
     uint16 tag, ref;
-    int16 access, special
+    int16 access, special;
     int   ret, i, status;
 
     printf(" -------- \n");
