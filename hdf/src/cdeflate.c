@@ -85,6 +85,8 @@ HCIcdeflate_init(accrec_t * access_rec)
 
     /* Initialize deflation state information */
     deflate_info->offset = 0;   /* start at the beginning of the data */
+    deflate_info->acc_init = 0; /* second stage of initializing not performed */
+    deflate_info->acc_mode = 0; /* init access mode to illegal value */
 
     /* initialize compression context */
     deflate_info->deflate_context.zalloc=(alloc_func)Z_NULL;
@@ -134,6 +136,17 @@ HCIcdeflate_decode(compinfo_t * info, int32 length, uint8 *buf)
     deflate_info->deflate_context.avail_out=(uInt)length;
     while(deflate_info->deflate_context.avail_out>0)
       {
+#ifdef QAK
+int32 t1, t2;
+
+if(t1!=deflate_info->deflate_context.avail_out ||
+    t2!=deflate_info->deflate_context.avail_in)
+  {
+    printf("%s: avail_out=%d, avail_in=%d\n",FUNC,(int)deflate_info->deflate_context.avail_out,(int) deflate_info->deflate_context.avail_in);
+    t1=deflate_info->deflate_context.avail_out;
+    t2=deflate_info->deflate_context.avail_in;
+  }
+#endif
           /* Get more bytes from the file, if we've run out */
           if(deflate_info->deflate_context.avail_in==0)
             {
@@ -326,11 +339,48 @@ HCIcdeflate_staccess(accrec_t * access_rec, int16 acc_mode)
     if(HCIcdeflate_init(access_rec)==FAIL)
         HRETURN_ERROR(DFE_CODER,FAIL);
 
+    return (SUCCEED);
+}   /* end HCIcdeflate_staccess() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    HCIcdeflate_staccess2 -- 2nd half of start accessing a gzip 'deflate'
+                            compressed data element.
+
+ USAGE
+    int32 HCIcdeflate_staccess2(access_rec, access)
+    accrec_t *access_rec;   IN: the access record of the data element
+    int16 access;           IN: the type of access wanted
+
+ RETURNS
+    Returns SUCCEED or FAIL
+
+ DESCRIPTION
+    Common code called by HCIcdeflate_stread and HCIcdeflate_stwrite
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+PRIVATE int32
+HCIcdeflate_staccess2(accrec_t * access_rec, int16 acc_mode)
+{
+    CONSTR(FUNC, "HCIcdeflate_staccess2");
+    compinfo_t *info;           /* special element information */
+    comp_coder_deflate_info_t *deflate_info;    /* ptr to deflate info */
+
+    info = (compinfo_t *) access_rec->special_info;
+    deflate_info = &(info->cinfo.coder_info.deflate_info);
+
     /* Initialize the gzip library */
     if(acc_mode&DFACC_WRITE)
       {
         if(deflateInit(&(deflate_info->deflate_context),deflate_info->deflate_level)!=Z_OK)
             HRETURN_ERROR(DFE_CINIT, FAIL);
+
+        /* set access mode */
+        deflate_info->acc_mode=DFACC_WRITE;
 
         /* force I/O with the file at first */
         deflate_info->deflate_context.next_out=NULL;
@@ -341,12 +391,18 @@ HCIcdeflate_staccess(accrec_t * access_rec, int16 acc_mode)
         if(inflateInit(&(deflate_info->deflate_context))!=Z_OK)
             HRETURN_ERROR(DFE_CINIT, FAIL);
 
+        /* set access mode */
+        deflate_info->acc_mode=DFACC_READ;
+        
         /* force I/O with the file at first */
         deflate_info->deflate_context.avail_in=0;
       } /* end else */
 
+    /* set flag to indicate second stage of initialization is finished */
+    deflate_info->acc_init=1;
+
     return (SUCCEED);
-}   /* end HCIcdeflate_staccess() */
+}   /* end HCIcdeflate_staccess2() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -446,6 +502,13 @@ HCPcdeflate_seek(accrec_t * access_rec, int32 offset, int origin)
     info = (compinfo_t *) access_rec->special_info;
     deflate_info = &(info->cinfo.coder_info.deflate_info);
 
+    /* Check if second stage of initialization has been performed */
+    if(deflate_info->acc_init==0)
+      {
+        if (HCIcdeflate_staccess2(access_rec, DFACC_READ) == FAIL)
+            HRETURN_ERROR(DFE_CINIT, FAIL);
+      } /* end if */
+
 #ifdef QAK
     /* Don't allow seeks when writing (currently) -QAK */
     if (access_rec->access&DFACC_WRITE)
@@ -508,8 +571,17 @@ HCPcdeflate_read(accrec_t * access_rec, int32 length, VOIDP data)
 {
     CONSTR(FUNC, "HCPcdeflate_read");
     compinfo_t *info;           /* special element information */
+    comp_coder_deflate_info_t *deflate_info;    /* ptr to gzip 'deflate' info */
 
     info = (compinfo_t *) access_rec->special_info;
+    deflate_info = &(info->cinfo.coder_info.deflate_info);
+
+    /* Check if second stage of initialization has been performed */
+    if(deflate_info->acc_init==0)
+      {
+        if (HCIcdeflate_staccess2(access_rec, DFACC_READ) == FAIL)
+            HRETURN_ERROR(DFE_CINIT, FAIL);
+      } /* end if */
 
     if ((length=HCIcdeflate_decode(info, length, data)) == FAIL)
         HRETURN_ERROR(DFE_CDECODE, FAIL);
@@ -554,6 +626,13 @@ HCPcdeflate_write(accrec_t * access_rec, int32 length, const VOIDP data)
     if ((info->length != deflate_info->offset)
         && (deflate_info->offset != 0 || length < info->length))
         HRETURN_ERROR(DFE_UNSUPPORTED, FAIL);
+
+    /* Check if second stage of initialization has been performed */
+    if(deflate_info->acc_init==0)
+      {
+        if (HCIcdeflate_staccess2(access_rec, DFACC_WRITE) == FAIL)
+            HRETURN_ERROR(DFE_CINIT, FAIL);
+      } /* end if */
 
     if ((length=HCIcdeflate_encode(info, length, data)) == FAIL)
         HRETURN_ERROR(DFE_CENCODE, FAIL);
@@ -633,11 +712,13 @@ HCPcdeflate_endaccess(accrec_t * access_rec)
 {
     CONSTR(FUNC, "HCPcdeflate_endaccess");
     compinfo_t *info;           /* special element information */
+    comp_coder_deflate_info_t *deflate_info;    /* ptr to gzip 'deflate' info */
 
     info = (compinfo_t *) access_rec->special_info;
+    deflate_info = &(info->cinfo.coder_info.deflate_info);
 
     /* flush out buffer */
-    if (HCIcdeflate_term(info,access_rec->access) == FAIL)
+    if (HCIcdeflate_term(info,deflate_info->acc_mode) == FAIL)
         HRETURN_ERROR(DFE_CTERM, FAIL);
 
     /* close the compressed data AID */
