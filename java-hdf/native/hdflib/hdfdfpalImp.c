@@ -98,11 +98,7 @@ jstring filename)
 	rval = DFPnpals((char *)f);
 
 	(*env)->ReleaseStringUTFChars(env,filename,f);
-	if (rval == FAIL) {
-		return JNI_FALSE;
-	} else {
-		return JNI_TRUE;
-	}
+	return rval;
 }
 
 JNIEXPORT jboolean JNICALL Java_ncsa_hdf_hdflib_HDFLibrary_DFPputpal 
