@@ -1748,6 +1748,9 @@ VOIDP data;
 #else
     long    *Start, *End, *Stride;
 #endif
+#ifdef HDF
+    intn    no_strides=0;
+#endif /* HDF */
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDwritedata: I've been called\n");
@@ -1786,6 +1789,25 @@ VOIDP data;
 
     }
 
+    /* Check for strides all set to '1', so it acts like NULL was passed */
+#ifdef HDF
+    if(stride!=NULL)
+      {
+        int i;
+        NC_var * var = SDIget_var(handle, sdsid);
+
+        if(var == NULL)
+            return FAIL;
+        
+        no_strides=1;
+        /* if the stride for any dim. is not '1', real stride processing has to occur */
+        for(i = 0; i < var->assoc->count; i++) {
+            if(stride[i]!=1)    
+                no_strides=0;
+        }
+      } /* end if */
+#endif /* HDF */
+
     /*
      * In general, (long) == int32 
      * In cases where it doesn't we need to convert
@@ -1814,7 +1836,11 @@ VOIDP data;
 #endif
 
     /* call the writeg routines if a stride is given */
+#ifdef HDF
+    if(stride == NULL || no_strides==1)
+#else /* HDF */
     if(stride == NULL)
+#endif /* HDF */
         status = NCvario(handle, varid, Start, End, (Void *)data);
     else
         status = NCgenio(handle, varid, Start, End, Stride, NULL, (VOID *)data);
