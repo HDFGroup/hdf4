@@ -399,3 +399,27 @@ nd2irref(_fcd filename, intf * ref, intf * fnlen)
     HDfreespace((VOIDP) fn);
     return (ret);
 }
+
+/*-----------------------------------------------------------------------------
+ * Name:    d2inimg
+ * Purpose: Internal stub for getting the number of 24-bit raster images
+ * Inputs:  filename: name of HDF file
+ *          fnlen: length of filename
+ * Returns: # of images on success, -1 on failure with error stack set
+ * Users:   HDF HLL (high-level library) users, utilities, other routines
+ * Invokes: DF24nimages
+ * Remarks:
+ *---------------------------------------------------------------------------*/
+
+FRETVAL(intf)
+nd2inimg(_fcd filename, intf * fnlen)
+{
+    char       *fn;
+    intf        ret;
+
+    fn = HDf2cstring(filename, (intn) *fnlen);
+    ret = DF24nimages(fn);
+    HDfreespace((VOIDP) fn);
+    return (ret);
+} /* end nd2inimg */
+

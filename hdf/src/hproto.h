@@ -61,6 +61,9 @@ extern      "C"
     extern intn Happendable
                 (int32 aid);
 
+    extern intn HPisappendable
+                (int32 aid);
+
     extern intn Hseek
                 (int32 access_id, int32 offset, intn origin);
 
@@ -1567,6 +1570,7 @@ extern      "C"
 #   define nd2igimg  FNAME(D2IGIMG)
 #   define nd2iaimg  FNAME(D2IAIMG)
 #   define nd2irref  FNAME(D2IRREF)
+#   define nd2inimg  FNAME(D2INIMG)
 #   define nd2lref   FNAME(D2LREF)
 #   define nd2scomp  FNAME(D2SCOMP)
 #   define ndf24scompress FNAME(DF24SCOMPRESS)
@@ -1585,6 +1589,7 @@ extern      "C"
 #   define nd2igimg  FNAME(d2igimg)
 #   define nd2iaimg  FNAME(d2iaimg)
 #   define nd2irref  FNAME(d2irref)
+#   define nd2inimg  FNAME(d2inimg)
 #   define nd2lref   FNAME(d2lref)
 #   define nd2scomp  FNAME(d2scomp)
 #   define ndf24scompress FNAME(df24scompress)
@@ -1631,6 +1636,9 @@ extern      "C"
 
     extern      FRETVAL(intf) nd2irref
                 (_fcd filename, intf _HUGE * ref, intf _HUGE * fnlen);
+
+    extern      FRETVAL(intf) nd2inimg
+                (_fcd filename, intf _HUGE * fnlen);
 
     extern      FRETVAL(intf) nd2lref
                 (void);
