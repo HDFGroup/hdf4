@@ -63,7 +63,7 @@ or
 2. Installing HDF/netCDF	
 =====================
 
-    For compiling and installing HDF/netCDF libraries,tests and
+    For compiling and installing HDF/netCDF libraries, tests and
     utilities on a system, please follow these instructions. 
 
 2.1 Supported Platforms
@@ -89,7 +89,7 @@ or
   CM5 (Parallel I/O)          CSTAR 7.2      CMF 2.2.11       X         X
   IBM RS6000/AIX v3.2         xlc            f77              X         X
   IBM SP2 (single node)       xlc            f77              X         X
-  DEC Alpha/Digital Unix v3.2 CC 3.11        f77              X         X
+  DEC Alpha/Digital Unix v3.2 CC             f77              X         X
   DEC Alpha/OpenVMS AXP v6.2  DECC 5.3       DEC FORTRAN      X         X
   Fujitsu UXP/M-1800(SYS_V-4.0) CC            -               X         X
   IBM PC - Intel Pentium
@@ -111,11 +111,11 @@ or
      ==================================
 
      1. IJPEG distribution release 6a(libjpeg.a). The "official" site
-        for this is ftp::/ftp.uu.net/graphics/jpeg/jpegsrc.v6a.tar.gz
+        for this is ftp://ftp.uu.net/graphics/jpeg/jpegsrc.v6a.tar.gz
 
      2. ZLIB 1.0.2(libz.a) distribution.
 
-     Both of these distributions are include with this distribution
+     Both of these distributions are included with this distribution
      in 'hdf/jpeg' and 'hdf/zlib'. The HDF/netCDF base distribution
      in known to work with these versions only.
 
@@ -124,11 +124,11 @@ or
 
     To build both HDF and netCDF library from sources, you need:
 
-      * ANSI C compiler. The native ANSI compilers on the above 
+      * an ANSI C compiler. The native ANSI compilers on the above 
         platforms are supported. On platforms where no ANSI compiler
         was available the free GNU ANSI compiler GCC was used.
 
-      * Fortran 77 compiler if you want Fortran support. See above
+      * a Fortran 77 compiler if you want Fortran support. See above
         table for platforms where Fortran is supported. You can
         compile both libraries without Fortran support by setting 
         the Fortran compiler variable 'FC = NONE' in the respective
@@ -211,7 +211,7 @@ or
              $(toplevel)/config/mh-<os>
 
     for your particular operating system. After changing the values you must 
-    re-run the top-level 'configure' script.Make sure you start from
+    re-run the top-level 'configure' script. Make sure you start from
     a clean distribution if you are rebuilding after a previous make
     (i.e. 'make distclean') before re-running 'configure'.
 
@@ -225,25 +225,25 @@ or
       2.4.3.2 Using HDF/MFHDF libraries w/ original netCDF library
       ************************************************************
       To use the HDF/MFHDF libraries(libdf.a, libmfhdf.a) with the
-      orignal netCDF library(libnetcdf.a) the HDF/MFHDF distribution
+      original netCDF library(libnetcdf.a) the HDF/MFHDF distribution
       must be compiled with the option '-DHAVE_NETCDF'. This will
-      rename the HDF version of the C-interface(ncxxx) of netCDF API
-      to sd_ncxxx to avoid clashing with the orignal netCDF API from
+      rename the HDF version of the C-interface(ncxxx) of the netCDF API
+      to sd_ncxxx to avoid clashing with the original netCDF API from
       libnetcdf.a. Currently there is no support for renaming the 
       netCDF Fortran interface stubs. As such the HDF/MFHDF distribution 
-      must be compilied without fortran support. HDF Users can still access
+      must be compiled without fortran support. HDF Users can still access
       HDF/netCDF files through the SDxxx interface but not through the
       ncxxx interface unless the renamed interface is used(sd_ncxxx).
 
       2.4.3.3 Setting other Options
       *****************************
-      The makefile fragment is also the place modify to enable the featues 
+      The makefile fragment must also be modified to enable the features 
       mentioned in sections 2.6) and 2.7) below.
 
     2.4.4 Running configure
     -----------------------
     To build both of the libraries contained in this directory,
-    run the ``configure'' script int $(toplevel), e.g.:
+    run the ``configure'' script in $(toplevel), e.g.:
 
 	./configure -v --prefix=/usr/local/hdf
 
@@ -273,19 +273,19 @@ or
     If you want to be adventurous you can try the following.
 
     Configure basically calls either of the two shell scripts 'config.guess' 
-    or 'config.sub' depending upon whether a target platfrom was supplied 
+    or 'config.sub' depending upon whether a target platform was supplied 
     on the command line to configure. If you don't provide a target on
     the command line configure calls 'config.guess' to guess what platfrom
     it is configuring for. The shell script 'config.guess' uses the unix
     command 'uname' to figure out the CPU, vendor, and OS of the
-    platform. If you do provided a target on the command line, configure
+    platform. If you do provide a target on the command line, configure
     calls the shell script 'config.sub' to build the triplet specifying
     CPU, vendor, and OS from the full or partial target provided.
 
     If the configure script can't determine your type of computer, give it
     a general name that the computer is generally refered to as an argument, 
     for instance './configure sun4'.  You can use the script 'config.sub' 
-    to test whether a general name is recognised; if it is, config.sub 
+    to test whether a general name is recognized; if it is, config.sub 
     translates it to a triplet specifying CPU, vendor, and OS.
     (e.g hppa1.1-hp-hpux9.03 for an HP900/735 running HPUX9.03).
 
@@ -293,17 +293,17 @@ or
     needs is one of the supported targets mentioned above(except NT).
     If you think your platform is close to one of the above platforms
     mentioned in the 'Supported Platforms' sections you can pass configure
-    this target and it will configure the distribution for that target..
+    this target and it will configure the distribution for that target.
 
     For possible mappings you will need to look inside the shell script
     'config.sub' and look at the partial to full mappings and pick one
     that satisfies the triplet mappings found in 'configure.in' below
-    the section "# per-host:'. Note that if your try a mapping and it
+    the section "# per-host:'. Note that if you try a mapping and it
     does not work this means that 'config.sub' needs to be edited to
     provide the proper mapping from your target to a full mapping that
     is supported. 
 
-    There are currently NO instructions for Porting the distribution to a 
+    There are currently NO instructions for porting the distribution to a 
     new platform.
 
     2.4.6 Compiling, Testing and Installing
@@ -316,7 +316,7 @@ or
 
         make help
 
-    To test the libraries and utilities type :
+    To test the libraries and utilities type:
 
         make test 
 
@@ -344,7 +344,7 @@ or
     -----------------------
     The distribution has been compiled/tested with the native
     ANSI-C compiler and the fortran compiler. There is 
-    a ansi prototype clash with the XDR header files on this version 
+    an ansi prototype clash with the XDR header files on this version 
     of the OS that has been fixed in IRIX 5.3. It is recommended the 
     OS be upgraded to IRIX 5.3. Due to the ansi prototype clash, 
     the netCDF xdr tests will not compile with the -ansi option. To get 
@@ -368,9 +368,8 @@ or
 
     2.5.5 OpenVMS AXP on DEC Alpha
     ------------------------------
-    This is the first port of HDF4.0 to OpenVMS on DEC ALPHA. 
     Make.com files in each subdirectory are available to compile
-    the libraries and utilites. The MAKENOF.COM and MAKEFS.COM
+    the libraries and utilities. The MAKENOF.COM and MAKEFS.COM
     in hdf/src are for compiling the C and Fortran programs
     respectively.  The package should be compiled in the following
     order: [.hdf.jpeg], [.hdf.zlib], [.hdf.src],[hdf.test], 
@@ -384,25 +383,25 @@ or
 
     2.5.6 Windows '95 or Windows NT
     -------------------------------
-    To install on a Windows '95 or Windows NT machine, read the seperate
+    To install on a Windows '95 or Windows NT machine, read the separate
     installation instructions for Windows NT:
       
         $(toplevel)/release_notes/install_winNT.txt.
  
     2.5.7 CM5 Parallel I/O Extension
     --------------------------------
-    To install the parallel I/O extension for CM5, read the seperate 
+    To install the parallel I/O extension for CM5, read the separate 
     installation instructions in:
 
         $(toplevel)/release_notes/parallel_CM5.txt.
 
     2.5.8 PowerPC/68k(far/4i/8d)- Macintosh OS
     ------------------------------------------
-    The distribution was compilied/tested with MetroWerks Codewarrior(CW8).
+    The distribution was compiled/tested with MetroWerks Codewarrior(CW8).
     Only the base libraries{libdf.a,zlib.a,libjpeg.a,libmfhdf.a,libxdr.a}
-    were compilied and tested on the PowerPC and 68k without Fortran support.
+    were compiled and tested on the PowerPC and 68k without Fortran support.
 
-    The 68k version was compilied/tested using 4byte integers, 8byte doubles 
+    The 68k version was compiled/tested using 4byte integers, 8byte doubles 
     and far option.
 
     *NO* Fortran support is included in this distribution.
@@ -435,9 +434,9 @@ or
           mfhdf/libsrc/config/netcdf-mac.h  -> copied to mfhdf/libsrc/netcdf.h
           hdf/jpeg/config/jmac.h            -> copied to hdf/jpeg/jconfig.h
 
-       3. Re-tar this newly configured distribution and download it
+       3. Re-tar this newly configured distribution and download it to
           the Macintosh where any utility that understands the tar format
-          can be used to unpack it. If you dont' have access to such a 
+          can be used to unpack it. If you do not have access to such a 
           utility then you need to copy the files one by one.
 
     B. Don't have access to a unix box and are using the 'tar.Z'/'tar.gz' version.
@@ -457,7 +456,7 @@ or
 
     2.5.8.3 Building the Distribution
     *********************************
-    The distribution needs to be built in the order specifed below.
+    The distribution needs to be built in the order specified below.
     Both PowerPC and 68k Codewarrior Projects can be found in the 
     following directories:
  
@@ -506,11 +505,11 @@ or
            the file mfhdf/xdr/testout.sav
 
        3. mfhdf/libsrc/hdftest
-           After running this test compare the ouput to that shown in
+           After running this test compare the output to that shown in
            the file mfhdf/libsrc/hdfout.sav
 
        4. mfhdf/libsrc/cdftest
-           After running this test compare the ouput to that shown in
+           After running this test compare the output to that shown in
            the file mfhdf/libsrc/testout.sav
 
        5. mfhdf/nctest/nctest
@@ -527,9 +526,9 @@ or
 2.6 Pablo Instrumentation
     ====================
     This version of the distribution has support to create an instrumented 
-    version of the HDF library(libdf-inst.a). This library along
+    version of the HDF library(libdf-inst.a). This library along with
     the Pablo performance data capture libraries can be used to gather data
-    about I/O behaviour and procedure execution times.  
+    about I/O behavior and procedure execution times.  
 
     More detailed documentation on how to use the instrumented version of
     the HDF library with Pablo can be found in the Pablo directory: 
@@ -560,7 +559,7 @@ or
     #PABLO_INCLUDE = -I/hdf2/Pablo/Instrument.HP/include
 
     After setting these values you must re-run the toplevel 'configure' script.
-    Make sure that your start from a clean re-build(i.e. 'make clean') after
+    Make sure that you start from a clean re-build(i.e. 'make clean') after
     re-running the toplevel 'configure' script and then run 'make'.
     Details on running configure can be found above in the section
     'General Configuration/Installation - Unix'.
@@ -596,8 +595,8 @@ or
        for both arguments are required when using this call.
 
        The values set here only affect the next open/creation of a file and
-       do not change a particular file's paging behaviour after it has been
-       opened or created. This maybe changed in a later release.
+       do not change a particular file's paging behavior after it has been
+       opened or created. This may change in a later release.
 
        Use flags argument of 'MP_PAGEALL' if the whole file is to be cached
        in memory otherwise pass in zero. In this case the value for 'maxcache'
@@ -624,7 +623,7 @@ or
     #FMPOOL_FLAGS  = -DHAVE_FMPOOL
 
     After setting these values you must re-run the toplevel 'configure' script.
-    Make sure that your start from a clean re-build(i.e. 'make clean') after
+    Make sure that you start from a clean re-build(i.e. 'make clean') after
     re-running the toplevel 'configure' script and then run 'make'.
     Details on running configure can be found above in the section
     'General Configuration/Installation - Unix'.
@@ -681,11 +680,11 @@ or
 
     Where HOST and TARGET are something like "sparc-sunos", "mips-sgi-irix5",etc.
 
-    `configure' recognises the following options to control how it
+    `configure' recognizes the following options to control how it
     operates. 
 
     NOTE: not all options are currently supported by this
-          distribution.The following are the only ones supported.
+          distribution. The following are the only ones supported.
 
     `--help'
          Print a summary of the options to `configure', and exit.
@@ -704,8 +703,8 @@ or
 4. Release notes
    =============
     The files in sub-directory $(toplevel)/release_notes are detailed 
-    descriptions for the new features. They can be used as supplement 
-    documentation for HDF4.0. Those files are also available on the NCSA 
+    descriptions for the new features. They can be used as supplemental 
+    documentation for HDF4.0. These files are also available on the NCSA 
     ftp server(ftp.ncsa.uiuc.edu) in:
  
          /HDF/Documentation/HDF4.0/4.0_release_notes/.
