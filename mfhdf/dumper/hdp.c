@@ -36,6 +36,7 @@ usage(intn argc, char *argv[])
     printf("\t     dumpvd\tdisplays data of vdatas in <filename list>. \n");
     printf("\t     dumpvg\tdisplays data of vgroups in <filename list>. \n");
     printf("\t     dumprig\tdisplays data of RIGs in <filename list>. \n");
+    printf("\t     dumpgr\tdisplays data of RIGs in <filename list>. \n");
 }
 
 int 
@@ -114,6 +115,10 @@ main(int argc, char *argv[])
 
       case DUMPVD:
           do_dumpvd(curr_arg, argc, argv, &glob_opts);
+          break;
+
+      case DUMPGR:
+          do_dumpgr(curr_arg, argc, argv, &glob_opts);
           break;
 
       case HELP:

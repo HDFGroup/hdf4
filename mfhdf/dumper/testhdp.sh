@@ -12,6 +12,8 @@ $CMD list -t 720 tdata.hdf
 $CMD list -d -t "Numeric Data Group" tdata.hdf
 $CMD list -g tdata.hdf
 $CMD list -a tdata.hdf
+$CMD list -a Example6.hdf
+$CMD list -n Example6.hdf
 
 # Test command dumpsds
 $CMD dumpsds swf32.hdf
@@ -54,3 +56,17 @@ $CMD dumpvg -n nsamp,tdata.hdf tdata.hdf
 $CMD dumpvg -c CDF0.0 tdata.hdf
 $CMD dumpvg -c Dim0.0,Var0.0 tdata.hdf
 $CMD dumpvg -c Dim0.0,Var0.0 -d tdata.hdf
+
+#Test command dumpgr
+$CMD dumpgr grtdfui82.hdf
+$CMD dumpgr -i 0,1,3 grtdfui82.hdf
+$CMD dumpgr -i 0 grtdfui82.hdf
+$CMD dumpgr -n Image_array_5 grtdfui82.hdf
+$CMD dumpgr -r 6,2,3 grtdfui82.hdf
+$CMD dumpgr -r 6 -d  grtdfui82.hdf
+$CMD dumpgr -o my.dat grtdfui82.hdf
+$CMD dumpgr -o mybin.dat  -b grtdfui82.hdf
+$CMD dumpgr grtdfui83.hdf
+$CMD dumpgr grtdfui84.hdf
+$CMD dumpgr grtdfui162.hdf
+$CMD dumpgr grtdfi322.hdf

@@ -44,7 +44,7 @@ intn        vinit_done
 /* Preserve the correct/corresponding ordering */
 typedef enum
   {
-	  HELP, LIST, DUMPSDS, DUMPRIG, DUMPVG, DUMPVD, NONE
+	  HELP, LIST, DUMPSDS, DUMPRIG, DUMPVG, DUMPVD, DUMPGR, NONE
   }
 command_t;
 #ifndef HDP_MASTER
@@ -59,7 +59,8 @@ const char *commands[]
 	"dumpsds",
 	"dumprig",
 	"dumpvg",
-	"dumpvd"
+	"dumpvd",
+	"dumpgr"
 }
 #endif							/* HDP_MASTER */
            ;
@@ -204,6 +205,10 @@ extern void do_dumpvg(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_
 extern void do_dumpvd(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts);
 extern intn parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc,
               char *argv[], char *flds_chosen[MAXCHOICES], int *dumpallfields);
+
+/* hdp_gr.c */
+extern void do_dumpgr(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_ops);
+
 
 /* hdp_dump.c */
 extern intn fmtchar(VOIDP x, file_type_t ft, FILE * ofp);

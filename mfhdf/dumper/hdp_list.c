@@ -208,95 +208,145 @@ print_list_header(list_info_t * list_opts)
 }	/* end print_list_header() */
 
 static void 
-print_file_label(int32 fid)
+print_file_label(int32 an_id)
 {
-    int32       len, old_len;
+    
+    int32       len;
     intn        num = 0;
     char       *label = NULL;
 
-    old_len = len = DFANgetfidlen(fid, 1);
+    int32 ann_id, i;
+    int32 n_file_label;
+    int32 n_file_desc;
+    int32 n_data_label;
+    int32 n_data_desc;
+    int32 retn;
+    
+    retn = ANfileinfo(an_id, &n_file_label, &n_file_desc, &n_data_label, &n_data_desc);
+    for(i=0; i< n_file_label; i++) {  
+      ann_id = ANselect(an_id, i, AN_FILE_LABEL);
+      len = ANannlen(ann_id);
 
         /* allocate room for a label */
-    if ((label = (char *) HDmalloc(len + 1)) == NULL)
-      {
+      if ((label = (char *) HDmalloc(len + 1)) == NULL)
+        {
           printf("Failure to allocate space \n");
           return;
-      }
+         }
+      if(ANreadann(ann_id, label, len+1)!= FAIL)
+        printf("File Label #%d: %s\n", i, label);
+      retn = ANendaccess(ann_id);
+      HDfree(label);
+    }; 
 
-    if (DFANgetfid(fid, label, len + 1, 1) != FAIL)
-        printf("File Label #%d: %s\n\n", num++, label);
-
-    while ((len = DFANgetfidlen(fid, 0)) != FAIL)
-      {
-              /* check if we have enough room for the label */
-          if (len > old_len)
-            {
-                char       *new_label;
-
-                if ((new_label = (char *) HDmalloc(len + 1)) == NULL)
-                  {
-                      printf("Failure to allocate space \n");
-                      continue;
-                  }
-
-                HDfree(label);
-                label = new_label;
-                old_len = len;
-            }	/* end if */
-
-          if (DFANgetfid(fid, label, len + 1, 0) != FAIL)
-              printf("File Label #%d: %s\n\n", num++, label);
-      }		/* end while */
-    HDfree(label);
 }	/* end print_file_label() */
 
-static void 
-print_file_desc(const char *fname, int32 fid)
+static void
+print_data_label(int32 an_id)
+{
+
+    int32       len;
+    intn        num = 0;
+    char       *label = NULL;
+
+    int32 ann_id, i;
+    int32 n_file_label;
+    int32 n_file_desc;
+    int32 n_data_label;
+    int32 n_data_desc;
+    int32 retn;
+
+    retn = ANfileinfo(an_id, &n_file_label, &n_file_desc, &n_data_label, 
+                      &n_data_desc);
+    for(i=0; i< n_data_label; i++) {
+      ann_id = ANselect(an_id, i, AN_DATA_LABEL);
+      len = ANannlen(ann_id);
+
+        /* allocate room for a label */
+      if ((label = (char *) HDmalloc(len + 1)) == NULL)
+        {
+          printf("Failure to allocate space \n");
+          return;
+         }
+      if(ANreadann(ann_id, label, len+1)!= FAIL)
+       printf("Data ID Label #%d: %s\n", i, label);
+      retn = ANendaccess(ann_id);
+      HDfree(label);
+    };
+
+}       /* end print_data_label() */
+
+static void
+print_data_desc(const char *fname, int32 an_id)
 {
     int32       sd_fid;
-    int32       len, old_len;
+    int32       len;
     intn        num = 0;
     char       *desc = NULL;
     file_type_t ft;
 
-    old_len = len = DFANgetfdslen(fid, 1);
+    int32 ann_id, i;
+    int32 n_file_label;
+    int32 n_file_desc;
+    int32 n_data_label;
+    int32 n_data_desc;
+    int32 retn;
 
-	/* allocate room for a description */
-    if ((desc = (char *) HDmalloc(len + 1)) == NULL)
-      {
+    retn = ANfileinfo(an_id, &n_file_label, &n_file_desc,
+           &n_data_label, &n_data_desc);
+    for(i=0; i< n_data_desc; i++) {
+      ann_id = ANselect(an_id, i, AN_DATA_DESC);
+      len = ANannlen(ann_id);
+
+        /* allocate room for a label */
+      if ((desc = (char *) HDmalloc(len + 1)) == NULL)
+        {
           printf("Failure to allocate space \n");
           return;
-      }
+         }
+      if(ANreadann(ann_id, desc, len+1)!= FAIL)
+        printf("Data ID Annotation #%d: %s\n", i, desc);
 
-    if (DFANgetfds(fid, desc, len + 1, 1) != FAIL)
-        printf("File Description #%d: %s\n\n", num++, desc);
+      retn = ANendaccess(ann_id);
+    }
+}
 
-    while ((len = DFANgetfdslen(fid, 0)) != FAIL)
-      {
+static void 
+print_file_desc(const char *fname, int32 an_id)
+{
+    int32       sd_fid;
+    int32       len; 
+    intn        num = 0;
+    char       *desc = NULL;
+    file_type_t ft;
 
-              /* check if we have enough room for the desc. */
-          if (len > old_len)
-            {
-                char       *new_desc;
+    int32 ann_id, i;
+    int32 n_file_label;
+    int32 n_file_desc;
+    int32 n_data_label;
+    int32 n_data_desc;
+    int32 retn;
 
-                if ((new_desc = (char *) HDmalloc(len + 1)) == NULL)
-                  {
-                      printf("Failure to allocate space \n");
-                      continue;
-                  }
+    retn = ANfileinfo(an_id, &n_file_label, &n_file_desc, 
+           &n_data_label, &n_data_desc);
+    for(i=0; i< n_file_desc; i++) {
+      ann_id = ANselect(an_id, i, AN_FILE_DESC);
+      len = ANannlen(ann_id);
 
-                HDfree(desc);
-                desc = new_desc;
-                old_len = len;
-            }	/* end if */
+        /* allocate room for a label */
+      if ((desc = (char *) HDmalloc(len + 1)) == NULL)
+        {
+          printf("Failure to allocate space \n");
+          return;
+         }
+      if(ANreadann(ann_id, desc, len+1)!= FAIL)
+        printf("File description #%d: %s\n", i, desc);
 
-          if (DFANgetfds(fid, desc, len + 1, 0) != FAIL)
-            {
-                printf("File Description #%d: %s\n\n", num++, desc);
-            }
-      }		/* end while */
-    if ((sd_fid = SDstart(fname, DFACC_READ)) != FAIL)
-      {		/* SD global attributes */
+      retn = ANendaccess(ann_id);
+    } 
+       
+      if ((sd_fid = SDstart(fname, DFACC_READ)) != FAIL)
+      {         /* SD global attributes */
           int32       ndsets, nattrs;
           intn        i;
           char        name[MAXNAMELEN];
@@ -312,12 +362,13 @@ print_file_desc(const char *fname, int32 fid)
             {
                 for (i = 0; i < nattrs; i++)
                   {
-                      if (SDattrinfo(sd_fid, i, name, &attr_nt, &attr_count) != FAIL)
+                      if (SDattrinfo(sd_fid, i, name, &attr_nt, &attr_count) !=
+FAIL)
                         {
                             attr_nt_desc = HDgetNTdesc(attr_nt);
                             if (ret == FAIL)
                               {
-                                  printf("Failure in SDattrinfo %s\n", fname);
+                                   printf("Failure in SDattrinfo %s\n", fname);
                                   exit(1);
                               }
                             attr_index = SDfindattr(sd_fid, name);
@@ -327,7 +378,8 @@ print_file_desc(const char *fname, int32 fid)
                                   exit(1);
                               }
                             attr_buf_size = DFKNTsize(attr_nt) * attr_count;
-                            if ((attr_buf = (VOIDP) HDmalloc(attr_buf_size)) == NULL)
+                            if ((attr_buf = (VOIDP) HDmalloc(attr_buf_size)) ==
+NULL)
                               {
                                   printf("Failure to allocate space \n");
                                   exit(1);
@@ -337,8 +389,8 @@ print_file_desc(const char *fname, int32 fid)
                               {
                                   printf("Failure in SDfindattr %s\n", fname);
                                   exit(1);
-                              }
-                            printf("\t Attr%i: Name = %s\n", (int) attr_index, name);
+                               printf("\t Attr%i: Name = %s\n", (int) attr_index, name);
+
                             printf("\t\t Type = %s \n\t\t Count= %i\n",
                                    attr_nt_desc, (int) attr_count);
                             printf("\t\t Value = ");
@@ -348,15 +400,16 @@ print_file_desc(const char *fname, int32 fid)
                             HDfree(attr_nt_desc);
                             HDfree((VOIDP) attr_buf);
 
-                        }	/* end if */
-                  }		/* end for */
-            }	/* end if */
-      }		/* end if */
+                        }       /* end if */
+                  }             /* end for */
+            }   /* end if */
+      }         /* end if */
         /* clean up */
-    HDfree(desc);
+      HDfree(desc);
+    };
 }	/* end print_file_desc() */
 
-static void 
+static void
 print_list_obj(list_info_t * l_opts, objinfo_t * o_info, intn o_num)
 {
     char       *s;
@@ -460,6 +513,8 @@ do_list(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts)
     intn        status;			/* status from various function calls */
     char       *s;				/* temporary character pointer */
 
+    int32  an_id;
+
     if (glob_opts->help == TRUE || curr_arg >= argc)
       {
           list_usage(argc, argv);
@@ -485,6 +540,7 @@ do_list(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts)
           obj_num = 0;	/* number of the object we are displaying */
           if ((fid = Hopen(f_name, DFACC_READ, -1)) != FAIL)
             {
+                an_id = ANstart(fid);
                 if ((o_list = make_obj_list(fid,
                                             (list_opts.name == TRUE ? CHECK_LABEL : 0) |
                                             (list_opts.desc == TRUE ? CHECK_DESC : 0) |
@@ -496,11 +552,21 @@ do_list(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts)
 
                           /* check for file label */
                       if (list_opts.name == TRUE)
-                          print_file_label(fid);
+                          {
+                           printf("--------------------------------------------------\n");
+                           print_file_label(an_id);
+                           printf("--------------------------------------------------\n");
+                           print_data_label(an_id);
+                           printf("--------------------------------------------------\n");}
 
                           /* check for file descriptions */
                       if (list_opts.desc == TRUE)
-                          print_file_desc(f_name, fid);
+                          {
+                           printf("--------------------------------------------------\n");
+                           print_file_desc(f_name, an_id);
+                           printf("--------------------------------------------------\n");
+                           print_data_desc(f_name, an_id);
+                           printf("--------------------------------------------------\n");}
 
                           /* sort list */
                       sort_obj_list(o_list, list_opts.order);
