@@ -184,18 +184,6 @@ uint32 num_elm, source_stride, dest_stride;
                     ((lp_src[0]&0x00ff0000)>>8) |
                     ((lp_src[0]&0xff000000)>>24);
         lp_src++;
-#elif defined TEST2_sb4b
-        *dest++ = source[3];
-        *dest++ = source[2];
-        *dest++ = source[1];
-        *dest++ = source[0];
-        source += 4;
-#elif defined TEST1_sb4b
-        *dest++ = *source--;
-        *dest++ = *source--;
-        *dest++ = *source--;
-        *dest++ = *source;
-        source += 7;
 #else
         dest[0] = source[3];
         dest[1] = source[2];
