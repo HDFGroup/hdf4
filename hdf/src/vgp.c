@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.12  1993/04/06 17:23:43  chouck
-Added Vset macros
+Revision 1.13  1993/04/08 18:33:56  chouck
+Various Vset modifications (additions of Vdelete and VSdelete)
 
+ * Revision 1.12  1993/04/06  17:23:43  chouck
+ * Added Vset macros
+ *
  * Revision 1.11  1993/03/29  18:58:30  chouck
  * Made vinsertpair() public and added dummy decls to convert and JPeg
  * files to prevent 'empty symbol table' messages on the Sun
@@ -89,7 +92,7 @@ PRIVATE void vunpackvg
 */
 
 
-PUBLIC vfile_t  vfile [MAX_VFILE];
+PUBLIC vfile_t  vfile [MAX_VFILE] = {0};
 
 /* -------------------------- Load_vfile ------------------------ */
 /*
@@ -97,8 +100,8 @@ PUBLIC vfile_t  vfile [MAX_VFILE];
 
 loads vgtab table with info of all vgroups in file f.
 Will allocate a new vfile_t, then proceed to load vg instances.
-RETURNS -1 if error or no more file slots available.
-RETURNS 1 if ok.
+RETURNS FAIL if error or no more file slots available.
+RETURNS SUCCEED if ok.
 */
 
 #ifdef PROTOTYPE
@@ -108,33 +111,38 @@ PRIVATE int32 Load_vfile (f)
 HFILEID f;
 #endif
 {
-	vfile_t		  * vf;
-	vginstance_t  * v;
-	vsinstance_t  * w;
-	int32 			aid, stat;
-	uint16			tag, ref;
-	char * FUNC = "Load_vfile";
-
-	/* allocate a new vfile_t structure */
+    vfile_t		  * vf;
+    vginstance_t  * v;
+    vsinstance_t  * w;
+    int32 			aid, stat;
+    uint16			tag, ref;
+    char * FUNC = "Load_vfile";
+    
+    /* allocate a new vfile_t structure */
     vf = Get_vfile(f);
     if(!vf)
         return FAIL;
 
+    /* the file is already loaded (opened twice) do nothing */
+    if(vf->access++) {
+        return SUCCEED;
+    }
+
 	/* load all the vg's  tag/refs from file */
 #ifdef OLD_WAY
-	vf->vgtabn    = -1;
-	vf->vgtabtail = &(vf->vgtab);
-
-	vf->vgtab.ref      = -1;
-	vf->vgtab.nattach  = -1;
-	vf->vgtab.nentries = -1;
-	vf->vgtab.vg       = NULL;
-	vf->vgtab.next     = NULL;
+    vf->vgtabn    = -1;
+    vf->vgtabtail = &(vf->vgtab);
+    
+    vf->vgtab.ref      = -1;
+    vf->vgtab.nattach  = -1;
+    vf->vgtab.nentries = -1;
+    vf->vgtab.vg       = NULL;
+    vf->vgtab.next     = NULL;
 #else
-        vf->vgtabn = 0;
-        vf->vgtree = tbbtdmake(vcompare, sizeof(int32));
-        if(vf->vgtree == NULL)
-            return(FAIL);
+    vf->vgtabn = 0;
+    vf->vgtree = tbbtdmake(vcompare, sizeof(int32));
+    if(vf->vgtree == NULL)
+        return(FAIL);
 #endif
         
     stat = aid = Hstartread(f, DFTAG_VG,  DFREF_WILDCARD);
@@ -239,18 +247,23 @@ HFILEID f;
 #endif
 {
 #ifdef OLD_WAY
-	vginstance_t *vginst, *vg1;
-	vsinstance_t *vsinst, *vs1;
+    vginstance_t *vginst, *vg1;
+    vsinstance_t *vsinst, *vs1;
 #endif
     vfile_t      *vf=NULL;
-	char * FUNC = "Remove_vfile";
-
-
+    char * FUNC = "Remove_vfile";
+    
+    
     /* Figure out what file to work on */
     vf = Get_vfile(f);
-        
-    if(vf==NULL)
+    
+    if(vf == NULL)
         return;
+    
+    /* someone still has an active pointer to this file */
+    if(--vf->access) {
+        return;
+    }
         
 #ifdef OLD_WAY
 	/* free vstab and vgtab link-list entries */
@@ -303,6 +316,22 @@ printf("vcompare: *k1=%d, *k2=%d\n",*(int32 *)k1,*(int32 *)k2);
 #endif
     return((intn)((*(int32 *)k1) - (*(int32 *)k2)));  /* valid for integer keys */
 }  /* vcompare */
+
+/* ---------------------------- vprint ------------------------- */
+/*
+  Prints out the key and reference number of VDatas and Vgroups
+
+  *** Only called by B-tree routines, should _not_ be called externally ***
+*/
+#ifdef PROTOTYPE
+PUBLIC intn vprint(VOIDP k1)
+#else
+PUBLIC intn vprint(k1)
+VOIDP k1;
+#endif
+{
+    printf("Ptr=%p, key=%d, ref=%d\n",k1,((vginstance_t *)k1)->key,((vginstance_t *)k1)->ref);
+}  /* vprint */
 
 /* ---------------------------- vtfreenode ------------------------- */
 /*
@@ -1711,20 +1740,21 @@ int32   vgid;                   /* current vgid */
             break;
 		v = v->next;
 	}
-    if (v==NULL)
-		return (FAIL); /* none found */
+        if (v==NULL)
+            return (FAIL); /* none found */
 	else
-		if( v->next ==NULL)
-			return (FAIL); /* this is the last vg, no more after it */
-		else
-			return((v->next)->ref); /* success, return the next vg's ref */
+            if( v->next ==NULL)
+                return (FAIL); /* this is the last vg, no more after it */
+            else
+                return((v->next)->ref); /* success, return the next vg's ref */
 #else
 
     /* tbbtdfind returns a pointer to the vginstance_t pointer */
     key=VGSLOT2ID(f,vgid);
     t=(VOIDP *)tbbtdfind(vf->vgtree,(VOIDP)&key,NULL);
-    if(t==NULL)     /* couldn't find the old vgid */
-        return(FAIL);
+    if(t == NULL || 
+       t == (VOIDP *) tbbtlast((TBBT_NODE *)*(vf->vgtree))) /* couldn't find the old vgid */
+        return(FAIL);                                       /* or at the end */
     else
         if (NULL==(t=(VOIDP *)tbbtnext((TBBT_NODE *)t)))      /* get the next node in the tree */
             return (FAIL);
@@ -2036,3 +2066,58 @@ HFILEID f;
     return(Hclose (f));
 }
 
+/* ------------------------------- Vdelete -------------------------------- */
+/*
+
+  Remove a Vgroup from its file.  This function will both remove the Vgoup
+  from the internal Vset data structures as well as from the file.
+
+  (i.e. it calls tbbt_delete() and Hdeldd())
+
+  Return FAIL / SUCCEED
+
+*/
+int32
+#ifdef PROTOTYPE
+Vdelete(int32 f, int32 vgid)
+#else
+Vdelete(f, vgid)
+int32 f;
+int32 vgid;
+#endif
+{
+
+    VOIDP     tmp;
+    vfile_t * vf;
+    VOIDP   * t;
+    int32     key;
+    char    * FUNC = "Vdelete";
+
+    if(vgid < -1) {
+        HERROR(DFE_ARGS);
+        return(FAIL);
+    } 
+
+    if (NULL==(vf = Get_vfile(f))) {
+        HERROR(DFE_FNF);
+        return(FAIL);
+    } 
+
+    key=VGSLOT2ID(f,vgid);
+
+    t = (VOIDP *)tbbtdfind(vf->vgtree,(VOIDP)&key,NULL);
+
+    if(t == NULL)
+        return FAIL;
+
+    tmp = tbbtrem(vf->vgtree, (VOIDP)t, NULL);
+    if(tmp) 
+        HDfreespace(tmp);
+
+printf("deleting Vgroup %d\n", vgid);
+
+    Hdeldd(f, DFTAG_VG, (uint16) vgid);
+
+    return SUCCEED;
+       
+} /* Vdelete */

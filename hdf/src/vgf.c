@@ -5,15 +5,18 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1993/03/29 16:50:32  koziol
-Updated JPEG code to new JPEG 4 code.
-Changed VSets to use Threaded-Balanced-Binary Tree for internal
-	(in memory) representation.
-Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-	to use 32-bit integer keys instead of pointers.
-Backed out speedups for Cray, until I get the time to fix them.
-Fixed a bunch of bugs in the little-endian support in DFSD.
+Revision 1.7  1993/04/08 18:33:54  chouck
+Various Vset modifications (additions of Vdelete and VSdelete)
 
+ * Revision 1.6  1993/03/29  16:50:32  koziol
+ * Updated JPEG code to new JPEG 4 code.
+ * Changed VSets to use Threaded-Balanced-Binary Tree for internal
+ * 	(in memory) representation.
+ * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+ * 	to use 32-bit integer keys instead of pointers.
+ * Backed out speedups for Cray, until I get the time to fix them.
+ * Fixed a bunch of bugs in the little-endian support in DFSD.
+ *
  * Revision 1.5  1993/01/19  05:56:17  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -1072,9 +1075,9 @@ intf    *tag, *ref;                     /* outputs */
 }
 /* ------------------------------------------------------------------ */
 
-/*
-**  add a tag/ref pair to a vgroup 
-**  related: Vaddtagref--vadtrc--VFADTR 
+/* 
+**  tests if a tag/ref pair is in a vgroup.
+**  related: Vinqtagref--vinqtrc--vfinqtr
 */
 
     FRETVAL(intf)
@@ -1083,11 +1086,9 @@ nvadtrc(intf *vkey, intf *tag, intf *ref)
 #else
 nvadtrc(vkey, tag, ref)
 intf *vkey;
-intf   *tag, *ref;
+intf    *tag, *ref;
 #endif
 {
     return ( (intf) Vaddtagref ( *vkey, *tag, *ref) );
 }
-
 /* ------------------------------------------------------------------ */
-

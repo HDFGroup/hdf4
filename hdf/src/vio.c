@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1993/04/06 17:23:46  chouck
-Added Vset macros
+Revision 1.8  1993/04/08 18:33:59  chouck
+Various Vset modifications (additions of Vdelete and VSdelete)
 
+ * Revision 1.7  1993/04/06  17:23:46  chouck
+ * Added Vset macros
+ *
  * Revision 1.6  1993/03/29  16:50:43  koziol
  * Updated JPEG code to new JPEG 4 code.
  * Changed VSets to use Threaded-Balanced-Binary Tree for internal
@@ -1124,3 +1127,60 @@ int32 vkey;
   
     return (vs->version);
 }   /* end VSgetversion() */
+
+/* ------------------------------- VSdelete -------------------------------- */
+/*
+
+  Remove a Vdata from its file.  This function will both remove the Vdata
+  from the internal Vset data structures as well as from the file.
+
+  (i.e. it calls tbbt_delete() and Hdeldd())
+
+  Return FAIL / SUCCEED
+
+*/
+int32
+#ifdef PROTOTYPE
+VSdelete(int32 f, int32 vsid)
+#else
+VSdelete(f, vsid)
+int32 f;
+int32 vsid;
+#endif
+{
+
+    VOIDP     tmp;
+    vfile_t * vf;
+    VOIDP   * t;
+    int32     key;
+    char    * FUNC = "VSdelete";
+
+    if(vsid < -1 ) {
+        HERROR(DFE_ARGS);
+        return(FAIL);
+    } 
+
+    if (NULL==(vf = Get_vfile(f))) {
+        HERROR(DFE_FNF);
+        return(FAIL);
+    } 
+
+    key=VGSLOT2ID(f,vsid);
+
+    t = (VOIDP *)tbbtdfind(vf->vstree,(VOIDP)&key,NULL);
+
+    if(t == NULL)
+        return FAIL;
+
+    tmp = tbbtrem(vf->vstree, (VOIDP)t, NULL);
+    if(tmp) 
+        HDfreespace(tmp);
+
+printf("deleting Vdata %d\n", vsid);
+
+    Hdeldd(f, DFTAG_VS, (uint16) vsid);
+    Hdeldd(f, DFTAG_VH, (uint16) vsid);
+
+    return SUCCEED;
+       
+} /* VSdelete */

@@ -85,9 +85,10 @@ intn       side;
     /* return( *tbbt_anbr(ptr,side) ); */
 
     if(  ! HasChild( ptr, side )  )
-        return(  ptr->link[side]  );
+        return(  ptr->link[side]  ); 
+/*        return(NULL); */
     ptr= ptr->link[side];
-    while(  HasChild( ptr, side )  )
+    while(  HasChild( ptr, Other(side) )  )
         ptr= ptr->link[Other(side)];
     return( ptr );
 }
@@ -275,9 +276,15 @@ printf("swapkid(): case c\n");
 	}
     ptr->Parent= kid;
     kid->link[Other(side)]= ptr;
+#ifndef QAK
     kid->flags= SetFlags( kid, Other(side),
             Cnt(ptr,Other(side)) + 1 + Cnt(kid,Other(side)),
             deep[2]-1-Max(deep[0],deep[1]), HasChild(kid,side) );
+#else
+    kid->flags= SetFlags( kid, side,
+            Cnt(ptr,Other(side)) + 1 + Cnt(kid,Other(side)),
+            deep[2]-1-Max(deep[0],deep[1]), HasChild(kid,side) );
+#endif
     ptr->flags= ptrflg;
     return( kid );
 }
@@ -339,9 +346,16 @@ printf("balance(): root=%p, ptr=%p, side=%d\n",root,ptr,side);
             } else if(  deeper < 0  ) {     /* Just became unbalanced: */
                 ptr->flags |= TBBT_HEAVY(Other(side));  /* Other side longer */
                 deeper= 0;  /* One of equal legs shortened; max length same */
-            } else                          /* Just became unbalanced: */
+            } else {                        /* Just became unbalanced: */
                 ptr->flags |= TBBT_HEAVY(side); /* 0<deeper: Our side longer */
+              } /* end else */
         }
+        if(ptr->Parent) {
+            if(ptr == (ptr->Parent->Rchild))
+                side=RIGHT;
+            else
+                side=LEFT;
+          } /* end if */
         ptr= ptr->Parent;   /* Move up the tree */
     }
     /* total tree depth += deeper; */
@@ -644,14 +658,16 @@ VOID         (*fk)(/* void *key */);  /* Routine to free key values */
                 par= node->Parent;  /* Move up tree (stay in loop) */
                 if(  NULL != fd  )   (*fd)( node->data );
                 if(  NULL != fk  )   (*fk)( node->key );
-                Free( node );
                 if(  NULL == par  )     /* Just free()d last node */
                     *root= NULL;    /* NULL=par & NULL=*root gets fully out */
                 else if(  node == par->Lchild  )
                     par->Lchild= NULL;  /* Now no longer has this child */
                 else
                     par->Rchild= NULL;  /* Ditto */
-                node= par;  /* Move up tree; remember which node to do next */
+
+                Free( node );
+
+                node = par;  /* Move up tree; remember which node to do next */
             }
         } while(  NULL != par  );   /* While moving back up tree */
     }
@@ -669,6 +685,7 @@ TBBT_NODE *node;
 #ifdef QAK
 printf("*key=%d\n",*(int32 *)(node->key));
 #endif
+vprint(node->key);
 	printf("Rchild=%p, Lchild=%p, Parent=%p\n",node->Rchild,node->Lchild,node->Parent);
 }	/* end tbbtprint() */
 

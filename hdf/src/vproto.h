@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.8  1993/04/05 22:36:00  koziol
-Fixed goofups made in haste when patching code.
+Revision 1.9  1993/04/08 18:34:01  chouck
+Various Vset modifications (additions of Vdelete and VSdelete)
 
+ * Revision 1.8  1993/04/05  22:36:00  koziol
+ * Fixed goofups made in haste when patching code.
+ *
  * Revision 1.7  1993/03/29  16:50:48  koziol
  * Updated JPEG code to new JPEG 4 code.
  * Changed VSets to use Threaded-Balanced-Binary Tree for internal
@@ -382,6 +385,8 @@ extern int32 Vinquire
   PROTO((int32 vkey, int32 _HUGE *nentries, char _HUGE *vgname));
 #endif
 
+extern int32 Vdelete
+    PROTO((int32 f, int32 ref));
 
 /*
 ** from vparse.c
@@ -460,6 +465,9 @@ extern int32 VSgetid
 
 extern int32 VSgetversion
     PROTO((int32 vkey));
+
+extern int32 VSdelete
+    PROTO((int32 f, int32 ref));
 
 /*
 ** from vsfld.c

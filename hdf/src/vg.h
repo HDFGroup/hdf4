@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.7  1993/04/06 17:23:41  chouck
-Added Vset macros
+Revision 1.8  1993/04/08 18:33:52  chouck
+Various Vset modifications (additions of Vdelete and VSdelete)
 
+ * Revision 1.7  1993/04/06  17:23:41  chouck
+ * Added Vset macros
+ *
  * Revision 1.6  1993/03/29  16:50:30  koziol
  * Updated JPEG code to new JPEG 4 code.
  * Changed VSets to use Threaded-Balanced-Binary Tree for internal
@@ -279,12 +282,12 @@ typedef struct vg_instance_struct {
     uintn    ref;           /* ref # of this vgroup in the file */
                             /* needs to be second in the structure */
     intn    nattach;        /* # of current attachs to this vgroup */
-	int32 	nentries;	/* # of entries in that vgroup initially */
-	VGROUP 	*vg;			/* points to the vg when it is attached */
+    int32 	nentries;	/* # of entries in that vgroup initially */
+    VGROUP 	*vg;			/* points to the vg when it is attached */
 #ifdef OLD_WAY
 	struct vg_instance_struct * next;
 #endif
-}	vginstance_t; 
+} vginstance_t; 
 
 /* this is a memory copy of a vs tag/ref found in the file */
 typedef struct vs_instance_struct {
@@ -321,6 +324,7 @@ typedef struct vfiledir_struct {
 #else
     TBBT_TREE   *vstree;         /* Root of VSet B-Tree */
 #endif
+  intn     access;  /* the number of active pointers to this file's Vstuff */
 } vfile_t;
 
 /*
