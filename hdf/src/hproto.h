@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.17  1993/02/02 00:10:13  georgev
-Changed prototypes for Hyperslab routines to reflect new interface
+Revision 1.18  1993/02/16 18:55:18  koziol
+Fixed incorrect prototype for DFKconvert
 
+ * Revision 1.17  1993/02/02  00:10:13  georgev
+ * Changed prototypes for Hyperslab routines to reflect new interface
+ *
  * Revision 1.16  1993/01/26  19:42:51  koziol
  * Added support for reading and writing Little-Endian data on all
  * platforms.  This has been tested on: Cray, Sun, and PCs so far.
@@ -610,7 +613,7 @@ extern intn DFKsetNT
     PROTO((int32 ntype));
 
 extern int32 DFKconvert
-    PROTO((uint8 _HUGE *source, uint8 _HUGE *dest, int32 ntype, int32 num_elm,
+    PROTO((VOIDP source, VOIDP dest, int32 ntype, int32 num_elm,
             int16 access, int32 source_stride, int32 dest_stride));
 
 /*
