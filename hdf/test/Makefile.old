@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.12  1992/06/01 13:23:15  mfolk
+# Revision 1.13  1992/06/04 04:47:15  sxu
+# add -cckr for IRIS4
+#
+# Revision 1.12  1992/06/01  13:23:15  mfolk
 # Added some comments to help people compile on Convex.
 #
 # Revision 1.11  1992/05/29  19:25:32  chouck
@@ -153,6 +156,9 @@ IFLAGS=   -I../include -I.
 # ==> For Convex, specify CFLAGS as follows:
 #    STDFLAG = __STDC__
 #    CFLAGS=  -g -D${MACHINE} $(IFLAGS) -D${STDFLAG}
+
+# ==> For IRIS4, specify CFLAGS as follows:
+#    CFLAGS=  -g -cckr
 
 CFLAGS=  -g -D${MACHINE} $(IFLAGS)
 
