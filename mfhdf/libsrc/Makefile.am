@@ -86,4 +86,4 @@ check:
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES=*.new *.hdf *.nc *.cdf *.cdl netcdf.h
+DISTCLEANFILES=*.new *.hdf *.cdf *.cdl netcdf.h

@@ -185,7 +185,7 @@ hdftest_LDADD = libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 
 #############################################################################
 #############################################################################
-DISTCLEANFILES = *.new *.hdf *.nc *.cdf *.cdl netcdf.h
+DISTCLEANFILES = *.new *.hdf *.cdf *.cdl netcdf.h
 subdir = mfhdf/libsrc
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
