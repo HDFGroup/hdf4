@@ -220,7 +220,7 @@ If an error occurs, this function returns -1.
 Returns the ID of a netCDF dimension, given the name of the dimension.
 If an error occurs, this function returns -1.
 .HP
-\fBint ncdiminq(int \fIncid\fB, int \fIdimid\fB, char* \fIname\fB, long*\ \Isize\fB)\fR
+\fBint ncdiminq(int \fIncid\fB, int \fIdimid\fB, char* \fIname\fB, long*\ \fIsize\fB)\fR
 .sp
 Returns the name and size of a dimension, given its ID.  If either the
 \fIname\fP parameter or \fIsize\fP parameter is a \fBNULL\fP pointer, the
@@ -316,13 +316,13 @@ Writes a record (or a subset of a record) of values into the record
 variables of an open netCDF file, which must be in data mode.  The record
 number, \fIrecnum\fP, must be a nonnegative number that specifies which
 record (which value of the unlimited or record dimension) to write.  The
-array of pointers to blocks of data to be written, \fIvaluep\P, should have
+array of pointers to blocks of data to be written, \fIvaluep\fP, should have
 one pointer for each record variable.  The pointer to the data to be written
 to the \fIn\fP-th record variable, \fIvaluep[n]\fP, points to one record's
-worth of data of the appropriate type to be written into the \fIrecnum\P-th
+worth of data of the appropriate type to be written into the \fIrecnum\fP-th
 record of that netCDF variable.  If the pointer for any record variable is
 the \fBNULL\fP pointer, no data is written for that variable.  Hence any
-subset of record variables may be written by specifying non-\fBNULL\P
+subset of record variables may be written by specifying non-\fBNULL\fP
 pointers for the desired record variables.  Invoking this function is
 equivalent to a sequence of invocations of ncvarput() for all record
 variables for which a non-\fBNULL\fP pointer is specified.  If an error
@@ -333,13 +333,13 @@ occurs, this function returns -1.
 Reads a record (or a subset of a record) of values from the record variables
 of an open netCDF file, which must be in data mode.  The record number,
 \fIrecnum\fP, must be a nonnegative number that specifies which record to
-read.  The array of pointers to blocks of data to be read, \fIvaluep\P,
+read.  The array of pointers to blocks of data to be read, \fIvaluep\fP,
 should have one pointer for each record variable.  The pointer to the data
 to be read for the \fIn\fP-th record variable, \fIvaluep[n]\fP, shall point
 to enough space to hold one record's worth of data of the appropriate type
 for that netCDF record variable.  If the pointer for any record variable is
 the \fBNULL\fP pointer, no data is read from that variable.  Hence any
-subset of record variables may be read by specifying non-\fBNULL\P pointers
+subset of record variables may be read by specifying non-\fBNULL\fP pointers
 for only the desired record variables.  Invoking this function is equivalent
 to a sequence of invocations of ncvarget() for all record variables for
 which a non-\fBNULL\fP pointer is specified.  If an error occurs, this

@@ -17,7 +17,7 @@
 #include <string.h>
 #include "netcdf.h"
 
-typedef unsigned char byte;
+typedef unsigned char ncbyte;
 
 enum NcType 
 {
@@ -31,7 +31,7 @@ enum NcType
   ncInt				// Note:  needed for int* overloading
 };
 
-static const byte ncBad_byte = FILL_BYTE;
+static const ncbyte ncBad_byte = FILL_BYTE;
 static const char ncBad_char = FILL_CHAR;
 static const short ncBad_short = FILL_SHORT;
 static const long ncBad_long = FILL_LONG;
@@ -52,7 +52,7 @@ class NcVal(TYPE) : public NcValues					      \
     virtual ~NcVal(TYPE)( void );					      \
     virtual void* base( void ) const;					      \
     virtual int bytes_for_one( void ) const;				      \
-    virtual byte as_byte( int n ) const;				      \
+    virtual ncbyte as_ncbyte( int n ) const;				      \
     virtual char as_char( int n ) const;				      \
     virtual short as_short( int n ) const;				      \
     virtual long as_long( int n ) const;				      \
@@ -65,7 +65,7 @@ class NcVal(TYPE) : public NcValues					      \
 };
 
 #define NcTypeEnum(TYPE) name2(_nc__,TYPE)
-#define _nc__byte ncByte
+#define _nc__ncbyte ncByte
 #define _nc__char ncChar
 #define _nc__short ncShort
 #define _nc__long ncLong
@@ -123,12 +123,12 @@ int NcVal(TYPE)::bytes_for_one( void ) const				      \
     return nctypelen((nc_type) NcTypeEnum(TYPE));			      \
 }
 
-#define as_byte_implement(TYPE)						      \
-byte NcVal(TYPE)::as_byte( int n ) const				      \
+#define as_ncbyte_implement(TYPE)					      \
+ncbyte NcVal(TYPE)::as_ncbyte( int n ) const				      \
 {									      \
     if (the_values[n] < 0 || the_values[n] > UCHAR_MAX)			      \
       return ncBad_byte;						      \
-    return (byte) the_values[n];					      \
+    return (ncbyte) the_values[n];					      \
 }
 
 #define as_char_implement(TYPE)						      \
@@ -189,7 +189,7 @@ class NcValues			// ABC for value blocks
     // The following member functions provide conversions from the value
     // type to a desired basic type.  If the value is out of range, the
     // default "fill-value" for the appropriate type is returned.
-    virtual byte as_byte( int n ) const = 0;   // nth value as an unsigned char
+    virtual ncbyte as_ncbyte( int n ) const = 0;   // nth value as a byte
     virtual char as_char( int n ) const = 0;   // nth value as char
     virtual short as_short( int n ) const = 0; // nth value as short
     virtual long as_long( int n ) const = 0;   // nth value as long
@@ -203,7 +203,7 @@ class NcValues			// ABC for value blocks
     friend ostream& operator<< (ostream&, const NcValues&);
 };
 
-declare(NcValues,byte)
+declare(NcValues,ncbyte)
 declare(NcValues,char)
 declare(NcValues,short)
 declare(NcValues,long)

@@ -30,7 +30,7 @@ ostream& operator<< (ostream& os, const NcValues& vals)
     return vals.print(os);
 }
 
-implement(NcValues,byte)
+implement(NcValues,ncbyte)
 implement(NcValues,char)
 implement(NcValues,short)
 implement(NcValues,long)
@@ -38,7 +38,7 @@ implement(NcValues,int)
 implement(NcValues,float)
 implement(NcValues,double)
 
-Ncbytes_for_one_implement(byte)
+Ncbytes_for_one_implement(ncbyte)
 Ncbytes_for_one_implement(char)
 Ncbytes_for_one_implement(short)
 Ncbytes_for_one_implement(long)
@@ -50,18 +50,18 @@ int NcValues_int::bytes_for_one( void ) const
     return nctypelen( NC_LONG ); // *** treat "int" as "long" for now
 }
 
-as_byte_implement(short)
-as_byte_implement(int)
-as_byte_implement(long)
-as_byte_implement(float)
-as_byte_implement(double)
+as_ncbyte_implement(short)
+as_ncbyte_implement(int)
+as_ncbyte_implement(long)
+as_ncbyte_implement(float)
+as_ncbyte_implement(double)
 
-inline byte NcValues_char::as_byte( int n ) const
+inline ncbyte NcValues_char::as_ncbyte( int n ) const
 {
-    return the_values[n] < 0 ? ncBad_byte : (byte) the_values[n];
+    return the_values[n] < 0 ? ncBad_byte : (ncbyte) the_values[n];
 }
 
-inline byte NcValues_byte::as_byte( int n ) const
+inline ncbyte NcValues_ncbyte::as_ncbyte( int n ) const
 {
     return the_values[n];
 }
@@ -72,7 +72,7 @@ as_char_implement(long)
 as_char_implement(float)
 as_char_implement(double)
 
-inline char NcValues_byte::as_char( int n ) const
+inline char NcValues_ncbyte::as_char( int n ) const
 {
     return the_values[n] > CHAR_MAX ? ncBad_char : (char) the_values[n];
 }
@@ -87,7 +87,7 @@ as_short_implement(long)
 as_short_implement(float)
 as_short_implement(double)
 
-inline short NcValues_byte::as_short( int n ) const
+inline short NcValues_ncbyte::as_short( int n ) const
 {
     return the_values[n];
 }
@@ -105,7 +105,7 @@ inline short NcValues_short::as_short( int n ) const
 as_long_implement(float)
 as_long_implement(double)
 
-inline long NcValues_byte::as_long( int n ) const
+inline long NcValues_ncbyte::as_long( int n ) const
 {
     return the_values[n];
 }
@@ -130,7 +130,7 @@ inline long NcValues_long::as_long( int n ) const
     return the_values[n];
 }
 
-as_float_implement(byte)
+as_float_implement(ncbyte)
 as_float_implement(char)
 as_float_implement(short)
 as_float_implement(int)
@@ -138,7 +138,7 @@ as_float_implement(long)
 as_float_implement(float)
 as_float_implement(double)
 
-as_double_implement(byte)
+as_double_implement(ncbyte)
 as_double_implement(char)
 as_double_implement(short)
 as_double_implement(int)
@@ -152,7 +152,7 @@ as_string_implement(long)
 as_string_implement(float)
 as_string_implement(double)
 
-inline char* NcValues_byte::as_string( int n ) const
+inline char* NcValues_ncbyte::as_string( int n ) const
 {
     return strdup((char*)the_values + n);
 }
@@ -189,7 +189,7 @@ ostream& NcValues_int::print(ostream& os) const
     return os;
 }
 
-ostream& NcValues_byte::print(ostream& os) const
+ostream& NcValues_ncbyte::print(ostream& os) const
 {
     for(int i = 0; i < the_number - 1; i++)
       os << the_values[i] << ", ";

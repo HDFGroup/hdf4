@@ -6,7 +6,9 @@ have netCDF installed.  The files are:
    netcdf.cc	the implementation of the interface, on top of the current
 		C library interface
    nctst.cc	a test program for the interface that creates a netCDF file
-		and then dumps out its contents in ASCII form to stdout
+		and then dumps out its contents in ASCII form to stdout.
+		This example may also be helpful in understanding how the
+		interface is intended to be used.
    example.c	example of C code needed to create a small netCDF file
    example.cc	analogous example of C++ code needed to do the same thing
    Makefile	makefile for building nctst
@@ -14,9 +16,12 @@ have netCDF installed.  The files are:
 		netCDF interface; fairly simple
    ncvalues.cc	implementation of auxilliary classes of typed arrays needed by
 		netCDF interface
-   doc.txt	preliminary class documentation for the experimental C++
-		interface; the commented example program nctst.cc may also
-		be useful for understanding the interface
+   nc.txn	preliminary class documentation for the experimental C++
+		interface, in Texinfo form.
+   nc.info	preliminary class documentation for the experimental C++
+		interface, in info form, as generated from the Texinfo
+		source file.  The commented example program nctst.cc may
+		also be useful for understanding the interface
    README	this file   
 
 

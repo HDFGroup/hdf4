@@ -2,8 +2,6 @@
 #include <string.h>
 #include "netcdf.hh"
 
-#define NUM(array) (sizeof(array)/sizeof(array[0]))
-
 void gen(const char *path)		// Generate a netCDF file
 {
     NcNewFile nc (path, NcNewFile::Clobber); // Create, leave in define mode
@@ -15,17 +13,21 @@ void gen(const char *path)		// Generate a netCDF file
     }
 
     // Create dimensions
-    NcDim* latd = nc.add_dim("lat", 4);
-    NcDim* lond = nc.add_dim("lon", 3);
-    NcDim* frtimed = nc.add_dim("frtime");
-    NcDim* timelend = nc.add_dim("timelen",20); 
+    const int NLATS = 4;
+    const int NLONS = 3;
+    const int NFRTIMES = 2;
+    const int TIMELEN = 20;
+    NcDim* latd = nc.add_dim("lat", NLATS);
+    NcDim* lond = nc.add_dim("lon", NLONS);
+    NcDim* frtimed = nc.add_dim("frtime"); // unlimited dimension
+    NcDim* timelend = nc.add_dim("timelen", TIMELEN); 
 
     // Create variables and their attributes
     NcVar* P = nc.add_var("P", ncFloat, frtimed, latd, lond);
     P->add_att("long_name", "pressure at maximum wind");
     P->add_att("units", "hectopascals");
     static float range[] = {0., 1500.};
-    P->add_att("valid_range", NUM(range), range);
+    P->add_att("valid_range", 2, range);
     P->add_att("_FillValue", -9999.0f);
 
     NcVar* lat = nc.add_var("lat", ncFloat, latd);
@@ -44,8 +46,8 @@ void gen(const char *path)		// Generate a netCDF file
     reftime->add_att("long_name", "reference time");
     reftime->add_att("units", "text_time");
 
-    NcVar* scalar = nc.add_var("scalarv",ncLong);
-    scalar->add_att("scalar_att", 1.0);
+    NcVar* scalar = nc.add_var("scalarv", ncLong);
+    scalar->add_att("scalar_att", 1);
 
     // Global attributes
     nc.add_att("history", "created by Unidata LDM from NPS broadcast");
@@ -53,43 +55,49 @@ void gen(const char *path)		// Generate a netCDF file
 
     // Start writing data, implictly leaves define mode
 
-    float *lats = new float[latd->size()];
-    for(int i = 0; i < latd->size(); i++)
-      lats[i] = -90. + 2.5*i;
-    lat->put(lats, latd->size());
+    float lats[NLATS] = {-90, -87.5, -85, -82.5};
+    lat->put(lats, NLATS);
 
-    float *lons = new float[lond->size()];
-    for(i = 0; i < lond->size(); i++)
-      lons[i] = -180. + 5.*i;
-    lon->put(lons, lond->size());
+    float lons[NLONS] = {-180, -175, -170};
+    lon->put(lons, NLONS);
 
-    static long frtimes[] = {12, 18};
-    frtime->put(frtimes, NUM(frtimes));
+    static long frtimes[NFRTIMES] = {12, 18};
+    frtime->put(frtimes, NFRTIMES);
 
-    static char* s = "1992 03 04 12:00" ;
+    static char* s = "1992-3-21 12:00" ;
     reftime->put(s, strlen(s));
 
     static float P_data[] = {
 	950, 951, 952, 953, 954, 955, 956, 957, 958, 959, 960, 961,
 	962, 963, 964, 965, 966, 967, 968, 969, 970, 971, 972, 973
       };
-    P->put(P_data, P->edges());
-    
+    // We could write all P data at once with P->put(P_data, P->edges()),
+    // but instead we write one record at a time, to show use of setcur().
+    long rec = 0;                                      // start at zero-th
+    const long nrecs = 1;		               // # records to write
+    P->put(&P_data[0], nrecs, NLATS, NLONS);           // write zero-th record
+    P->set_cur(++rec);		                       // set to next record
+    P->put(&P_data[NLATS*NLONS], nrecs, NLATS, NLONS); // write next record
+
     // close of nc takes place in destructor
 }
 
 
-/* 
- * convert pathname of netcdf file into name for CDL, by taking 
- * last component of path and stripping off any extension.
+/*
+ * Convert pathname of netcdf file into name for CDL, by taking last component
+ * of path and stripping off any extension.  The returned string is in static
+ * storage, so copy it if you need to keep it.
  */
 static char *
 cdl_name(const char *path)
 {
-    char *np = strdup(path);
-    char *cp = strrchr(np, '/'); // assumes Unix pathnames
+    static char np[MAX_NC_NAME];
+    char *cp = strrchr(path, '/'); // assumes Unix pathnames
     if (cp)
-      np = ++cp;
+      strncpy(&np[0], ++cp, MAX_NC_NAME);
+    else
+      strncpy(&np[0], path, MAX_NC_NAME);
+
     if (cp = strrchr(np, '.'))
       *cp = '\0';
     return np;

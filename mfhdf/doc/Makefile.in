@@ -3,16 +3,18 @@
 # $Id$
 
 MANUALS		= netcdf.3 netcdf.3f
+INFOS		= guide.info
 MANIFEST	= README Makefile.in \
 		  $(MANUALS) texindex.c udunits.dat guide.ps guide.txn \
 		  texinfo.tex 
 prefix		= ../../..
-GARBAGE		= *.log *~ *.gs *.aux *.cp *.fn *.ky *.pg *.toc *.tp *.vr
+GARBAGE		= $(INFOS) *.log *~ *.gs *.aux *.cp *.fn *.ky *.pg *.toc \
+		  *.tp *.vr
 PRINTER		= hpnp
 
 all::
 
-install::	installed_manuals
+install::	installed_manuals installed_infos
 
 guide.hc:	guide.ps
 	lpr -P$(PRINTER) guide.ps

@@ -3,9 +3,8 @@
 @c %**start of header
 @setfilename netcdf.info
 @settitle NetCDF User's Guide
-@c %**end of header
-
 @setchapternewpage odd
+@c %**end of header
 
 @c Combine the variable and function indices.
 @synindex vr fn
@@ -27,10 +26,9 @@ are preserved on all copies.
 @titlepage
 @title NetCDF User's Guide
 @subtitle An Interface for Data Access
-@subtitle Version 2.3, February 1993
-@author Russ Rew
-@author Glenn Davis
-@author Steve Emmerson
+@subtitle Version 2.3, April 1993
+@author Russ Rew, Glenn Davis, and Steve Emmerson
+@author Unidata Program Center
 @page
 @vskip 0pt plus 1filll
 Copyright @copyright{} 1993 University Corporation for Atmospheric Research
@@ -56,12 +54,10 @@ Unidata does not authorize any use of information from this
 publication for advertising or publicity purposes.
 @end titlepage
 
-@page
 @node     Top, Foreword, (dir), (dir)
-@top
-@comment  node-name,  next,  previous,  up
-
 @ifinfo
+@top NetCDF User's Guide
+
 The Unidata netCDF library provides an application- and
 machine-independent interface to self-describing, multidimensional
 scientific data.  It supports an abstract view of scientific data as a
@@ -69,31 +65,174 @@ collection of named variables and their attributes, and provides
 high-level access to data that is faithful to the abstraction.  This
 on-line document describes the netCDF abstraction, applications programming
 interfaces, and utilities.  It includes the following chapters:
-@end ifinfo
 
 @menu
-* Foreword::        What is Unidata?
-* Summary::         Brief purpose and description of netCDF.
-* Introduction::    Overview and background of netCDF.
-* Components::      The components of a netCDF file.
-* Data::            The primitive netCDF data types and forms of data
+* Foreword::                    What is Unidata?
+* Summary::                     Brief purpose and description of netCDF.
+* Introduction::                Overview and background of netCDF.
+* Components::                  The components of a netCDF file.
+* Data::                        The primitive netCDF data types and forms of data
                     access.
-* Usage::           How to use the netCDF library.
-* File Operations:: The interface for handling netCDF files.
-* Dimensions::      The interface for handling netCDF dimensions.
-* Variables::       The interface for handling netCDF variables.
-* Attributes::      The interface for handling netCDF attributes.
-* File Structure::  The netCDF format and performance considerations.
-* Utilities::       Higher-level netCDF operations implemented as separate
+* Usage::                       How to use the netCDF library.
+* File Operations::             The interface for handling netCDF files.
+* Dimensions::                  The interface for handling netCDF dimensions.
+* Variables::                   The interface for handling netCDF variables.
+* Attributes::                  The interface for handling netCDF attributes.
+* File Structure::              The netCDF format and performance considerations.
+* Utilities::                   Higher-level netCDF operations implemented as separate
                     programs.
-* FAQ::             Answers to some frequently asked questions about netCDF.
-* C Interface::     A summary of the C interface.
-* Fortran Interface:: A summary of the Fortran interface.
-* Units::           The recommended syntax for representing units.
-* Name Index::      Index of cross-references for names of netCDF functions
+* FAQ::                         Answers to some frequently asked questions about netCDF.
+* C Interface::                 A summary of the C interface.
+* Fortran Interface::           A summary of the Fortran interface.
+* Units::                       The recommended syntax for representing units.
+* Name Index::                  Index of cross-references for names of netCDF functions
                     and variables.
-* General Index::   Index of concepts.
+* General Index::               Index of concepts.
+
+ --- The Detailed Node Listing ---
+
+The NetCDF Interface
+
+* Not a DBMS::   NetCDF is not a database management system.
+* Performance::  Some performance considerations.
+* Archiving::    Is netCDF a good archive format?
+* History::      Background and Evolution of the netCDF Interface.
+* Recent Changes::  Changes since the last release
+* Future Plans:: Future plans for netCDF.
+* References::   References.
+
+Components of a NetCDF File
+
+* What Are Dimensions?::  The components of and operations on netCDF
+                          dimensions.
+
+* What Are Variables?::  The components of and operations on netCDF
+                          variables.
+
+* What Are Attributes?::  The components of and operations on netCDF
+                          attributes.
+
+Dimensions
+
+* Specifying Variable Shapes::  Using Dimensions to Specify the Shapes
+                                of Variables
+
+* Relating Variables::          Using Dimensions to Relate Variables
+
+* Defining Coordinates::        Using Dimensions to Define Coordinates
+
+Attributes
+
+* Attribute Conventions::    Conventions for Commonly Used Attributes
+
+* Attributes and Variables:: Differences Between Attributes and Variables
+
+Data
+
+* Data Types::      The six basic netCDF data types.
+
+* Data Access::     Direct access, hyperslab access, and record access.
+
+* Data Structures:: Representing other structures with netCDF arrays.
+
+Use of the NetCDF Library
+
+* Creating a netCDF File::     How to create a new netCDF file.
+
+* Reading with Known Names::   How to read a netCDF file with known names.
+
+* Reading with Unknown Names:: How to read a generic netCDF.
+
+* Adding Components::          How to add new dimensions, variables, and
+                               attributes.
+
+* Error Handling::             How to handle errors.
+
+NetCDF Operations
+
+* Interface Descriptions::   Conventions for netCDF library interface
+                             descriptions.
+* nccreate and NCCRE::       Create a netCDF file.
+* ncopen and NCOPN::         Open a netCDF file for access.
+* ncredef and NCREDF::       Put open netCDF file into define mode.
+* ncendef and NCENDF::       Leave Define Mode.
+* ncclose and NCCLOS::       Close an Open netCDF File.
+* ncinquire and NCINQ::      Inquire about an Open netCDF File.
+* ncsync and NCSNC::         Synchronize an Open netCDF File to Disk.
+* ncabort and NCABOR::       Back Out of Recent Definitions.
+* ncsetfill and NCSFIL::     Set fill mode for optimized writes.
+
+Dimensions
+
+* ncdimdef and NCDDEF::    Create a Dimension
+* ncdimid and NCDID::      Get a Dimension ID from Its Name
+* ncdiminq and NCDINQ::    Inquire about a Dimension
+* ncdimrename and NCDREN:: Rename a Dimension
+
+Variables
+
+* ncvardef and NCVDEF::     Create a Variable
+* ncvarid and NCVID::       Get a Variable ID from Its Name
+* ncvarinq and NCVINQ::     Get Information about a Variable from Its ID
+* ncvarput1 and NCVPT1::    Write a Single Data Value
+* ncvarput and NCVPT::      Write a Hyperslab of Values
+* ncvarputg NCVPTG and NCVPGC::    Write a Generalized Hyperslab of Values
+* ncrecput::                Write a Record of Values
+* ncvarget1 and NCVGT1::    Read a Single Data Value
+* ncvarget and NCVGT(C)::   Read a Hyperslab of Values
+* ncvargetg NCVGTG and NCVGGC::    Read a Generalized Hyperslab of Values
+* ncrecget::                Read a Record of Values
+* Character String I/O::    Reading and Writing Character String Values
+* Missing Values::          Conventions for Missing Values
+* ncvarrename and NCVREN::  Rename a Variable
+* nctypelen and NCTLEN::    Get Number of Bytes for a Data Type
+* ncrecinq::                Get Information about Record Variables
+
+Attributes
+
+* ncattput and NCAPT::      Create an Attribute
+* ncattinq and NCAINQ::      Get Information about an Attribute
+* ncattget and NCAGT(C)::      Get Attribute's Values
+* ncattcopy and NCACPY::      Copy Attribute from One netCDF to Another
+* ncattname and NCANAM::      Get Name of Attribute from Its Number
+* ncattrename and NCAREN::      Rename an Attribute
+* ncattdel and NCADEL::      Delete an Attribute
+
+NetCDF File Structure and Performance
+
+* File parts::  Parts of a netCDF File
+* XDR layer::   The XDR Layer
+
+Higher-Level netCDF Operations
+
+* CDL Syntax::    The syntax of CDL, a tiny language for representing
+                  netCDF files or their structure in ASCII.
+* CDL Data Types::The data types of CDL.
+* CDL Constants:: The CDL notation for data constants.
+* ncgen::         Check CDL syntax or generate netCDF file (or C or Fortran)
+                  from netCDF file.
+* ncdump::        Generate CDL file (or a portion of a CDL file) from a netCDF
+                  file.
+
+Answers to Some Frequently Asked Questions
+
+* What is netCDF?::       
+* How to get it::         Availability of the netCDF software
+* Platforms::             What platforms it runs on
+* netCDF and CDF::        Connection with NASA's Common Data Format
+* netCDF and HDF::        Connection with NCSA's Hierarchical Data Format
+* pub/netcdf::            Some files with volatile netCDF information
+* XDR error messages::    Why occasional error messages from XDR layer
+* representing data::     Ways to represent data in netCDF
+* data compression::      Data compression in netCDF
+* Other utilities::             What netCDF utilities exist
+* mailing list::          The netCDF mailing lists
+* bug reports::           Where to send bug reports
+* Popularity::            Is netCDF widely used?
+* WAIS/gopher access::    WIAS or gopher access to netCDF information
 @end menu
+
+@end ifinfo
 
 @node Foreword, Summary, Top, Top
 @unnumbered Foreword
@@ -155,6 +294,7 @@ Facilitate using output from one application as input to another.
 @item
 Establish an interface standard which simplifies the inclusion of new 
 software into the Unidata system.
+@end itemize
 
 A measure of success has been achieved.  The netCDF is now in use on 
 computing platforms that range from CRAYs to Personal Computers and 
@@ -285,7 +425,7 @@ licensing restrictions to encourage its wide use.
 * References::   References.
 @end menu
 
-@node Not a DBMS, Performance, , Introduction
+@node Not a DBMS, Performance, Introduction, Introduction
 @section NetCDF is Not a Database Management System
 
 @cindex database management systems
@@ -492,7 +632,7 @@ interface required no changes to the associated file format.
 @node Recent Changes, Future Plans, History, Introduction
 @section What's New in this Release?
 
-This Guide documents the February 1993 release of netCDF 2.3, which
+This Guide documents the March 1993 release of netCDF 2.3, which
 preserves the same file format but adds a few new functions to the C and
 Fortran interfaces.
 
@@ -567,7 +707,7 @@ to data cross-sections in other files (what Joe Fahle calls
 ``assemblies''), better string support, and a well-tested C++ interface.
 Some of these extensions may be included in future releases.
 
-@node References, , Future Plans, Introduction
+@node References,  , Future Plans, Introduction
 @unnumberedsec References
 
 @enumerate
@@ -717,7 +857,7 @@ and variable data assignments appear after the @code{data} keyword.
                           attributes.
 @end menu
 
-@node What Are Dimensions?, What Are Variables?, , Components
+@node What Are Dimensions?, What Are Variables?,  , Components
 @section Dimensions
 
 @cindex dimensions
@@ -779,7 +919,7 @@ We discuss each of these uses below.
 * Defining Coordinates::        Using Dimensions to Define Coordinates
 @end menu
 
-@node Specifying Variable Shapes, Relating Variables, , What Are Dimensions?
+@node Specifying Variable Shapes, Relating Variables,  , What Are Dimensions?
 @subsection Using Dimensions to Specify Variable Shapes
 
 @cindex specifying variable shapes
@@ -815,7 +955,7 @@ netCDF file, variables @code{temp} and @code{rh} share the
 @code{rh} does not have @code{level} as a dimension, perhaps because it is only
 defined for a single level.
 
-@node Defining Coordinates, , Relating Variables, What Are Dimensions?
+@node Defining Coordinates,  , Relating Variables, What Are Dimensions?
 @subsection Using Dimensions to Define Coordinate Systems
 
 @cindex defining coordinate systems
@@ -955,7 +1095,7 @@ current size, given by the product of the maximum record written so far
 and the other dimensions of the variable.  Only record variables may
 grow after they are defined.
 
-@node What Are Attributes?, , What Are Variables?, Components
+@node What Are Attributes?,  , What Are Variables?, Components
 @section Attributes
 
 @cindex attributes
@@ -1066,7 +1206,7 @@ characteristics of the data.
 * Attributes and Variables:: Differences Between Attributes and Variables
 @end menu
 
-@node    Attribute Conventions, Attributes and Variables, ,What Are Attributes?
+@node    Attribute Conventions, Attributes and Variables,  , What Are Attributes?
 @comment  node-name,  next,  previous,  up
 @subsection Attribute Conventions
 
@@ -1228,7 +1368,7 @@ However adding new attributes to an existing file can incur the same
 expense as copying the file.  @xref{File Structure, , NetCDF File
 Structure and Performance}, for a more extensive discussion.
 
-@node   Attributes and Variables, , Attribute Conventions, What Are Attributes?
+@node   Attributes and Variables,  , Attribute Conventions, What Are Attributes?
 @subsection Differences between Attributes and Variables
 
 @cindex variables
@@ -1281,7 +1421,7 @@ than multidimensional arrays may be implemented in a netCDF file.
 * Data Structures:: Representing other structures with netCDF arrays.
 @end menu
 
-@node Data Types, Data Access, , Data
+@node Data Types, Data Access,  , Data
 @section NetCDF Data Types
 
 @cindex netCDF data types
@@ -1342,7 +1482,7 @@ without affecting existing netCDF files or applications, and with
 only minor changes required for generic applications that will support
 them.
 
-@node Data Access, Data Structures, Data Types , Data
+@node Data Access, Data Structures, Data Types, Data
 @section Data Access
 
 The netCDF interface supports several kinds of data access to data in an
@@ -1615,7 +1755,7 @@ choice about the order in which data is accessed or the order of the
 dimensions that define the shape of a variable, try to choose these two
 orders in harmony to avoid needless inefficiency.
 
-@node Data Structures, , Data Access, Data
+@node Data Structures,  , Data Access, Data
 @section Data Structures
 @cindex data structures
 @cindex sparse matrices
@@ -1691,7 +1831,7 @@ the procedures and subroutines are described in later chapters.
 * Error Handling::             How to handle errors.
 @end menu
 
-@node Creating a netCDF File, Reading with Known Names, , Usage
+@node Creating a netCDF File, Reading with Known Names,  , Usage
 @section Creating a NetCDF File
 
 @cindex netCDF file creation
@@ -2246,7 +2386,7 @@ the implied call to @code{ncendef} (or @code{NCENDF}) fails,
 the netCDF in its previous consistent state (before you entered define
 mode).
 
-@node Error Handling, , Adding Components, Usage
+@node Error Handling,  , Adding Components, Usage
 @section Error Handling
 
 @cindex error handling
@@ -2420,7 +2560,7 @@ these operations.
 * ncsetfill and NCSFIL::     Set fill mode for optimized writes.
 @end menu
 
-@node Interface Descriptions, nccreate and NCCRE, , File Operations
+@node Interface Descriptions, nccreate and NCCRE,  , File Operations
 @section NetCDF Library Interface Descriptions
 
 @cindex interface descriptions
@@ -3346,7 +3486,7 @@ a file named @file{foo.nc}:
 @end example
 
 @page
-@node ncsetfill and NCSFIL, , ncabort and NCABOR, File Operations
+@node ncsetfill and NCSFIL,  , ncabort and NCABOR, File Operations
 @section Set Fill Mode for Writes
 
 @cindex nofill mode
@@ -6937,7 +7077,7 @@ netCDF file named @file{foo.nc}:
 @end example
 
 @page
-@node ncrecinq, , nctypelen and NCTLEN, Variables
+@node ncrecinq,  , nctypelen and NCTLEN, Variables
 @section Get Information About Record Variables
 
 @cindex record I/O
@@ -8321,7 +8461,7 @@ enough detail to understand netCDF performance issues.
 @cindex fixed-size data part
 @cindex record-data part
 @cindex XDR
-@node File parts, XDR layer, , File Structure
+@node File parts, XDR layer,  , File Structure
 @section Parts of a NetCDF File
 
 A netCDF data set is stored as a single file comprising three parts:
@@ -8385,7 +8525,7 @@ since the best data access is currently achieved by reading or writing
 the data in sequential order.
 
 @cindex XDR
-@node XDR layer, , File parts, File Structure
+@node XDR layer,  , File parts, File Structure
 @section The XDR Layer
 
 XDR is a standard for describing and encoding data and a library of
@@ -8530,7 +8670,7 @@ list of these packages is maintained in the file
                   file.
 @end menu
 
-@node CDL Syntax, CDL Data Types,    , Utilities
+@node CDL Syntax, CDL Data Types,  , Utilities
 @section CDL Syntax
 
 @cindex CDL syntax
@@ -9259,7 +9399,7 @@ and utility programs under development
 @item ncprogs.txt
 an ASCII version of ncprogs.ps
 
-@item conventions.txt
+@item conventions.info
 a draft document of some proposed netCDF conventions
 
 @item cdl/
@@ -9661,7 +9801,7 @@ pages that come with the distribution.
 
 @printindex fn
 
-@node General Index, , Name Index, Top
+@node General Index,  , Name Index, Top
 @unnumbered General Index
 
 @printindex cp
