@@ -41,15 +41,15 @@ library is optional.
 INSTRUCTIONS FOR SPECIFIC PLATFORMS
 ===================================
 
-Cray C90 or YMP:
----------------
+Cray:
+----
 C:
     cc  -O -s -o <your program> <your program>.c \  
         -I<path for hdf include directory> \
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
-    cf77 -O 1 -s -o <your program> <your program>.f  \
+    f90 -O 1 -o <your program> <your program>.f  \
          -I<path for hdf include directory>\
          -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
@@ -103,12 +103,12 @@ C:
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
-    f77 -O -o <your program> <your program>.f  \
+    f77 -O -Nn802 -Nx400 -o <your program> <your program>.f  \
         -I<path for hdf include directory>\
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
-HP-UX:
------
+HP-UX 9.03:
+----------
 C:
     cc -Ae -O -o <your program> <your program>.c \
        -I<path for hdf include directory> \
@@ -116,6 +116,18 @@ C:
 
 FORTRAN:
     f77 -O -o <your program> <your program>.f  \
+        -I<path for hdf include directory>\
+        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
+ 
+HP-UX 10.2:
+----------
+C:
+    cc -ansi -s -o <your program> <your program>.c \
+       -I<path for hdf include directory> \
+       -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
+
+FORTRAN:
+    f77 -s -o <your program> <your program>.f  \
         -I<path for hdf include directory>\
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
  
@@ -157,15 +169,15 @@ FORTRAN:
         -I<path for hdf include directory>\
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
-Linux A.OUT and ELF:
--------------------
+Linux:
+-----
 C:
     gcc -ansi -o <your program> <your program>.c \  
         -I<path for hdf include directory> \
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
-FORTRAN (A.OUT only):
-    f77 -o <your program> <your program>.f  \
+FORTRAN:
+    fort77 -o <your program> <your program>.f  \
         -I<path for hdf include directory>\
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
@@ -218,12 +230,17 @@ FORTRAN:
         -I<path for hdf include directory>\
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
-T3D:
+T3E:
 ---
-C (only):
-    cc -Tcray-t3d -X1 -o <your program> <your program>.c \
+C:
+    cc -X 1 -s -o <your program> <your program>.c \
        -I<path for hdf include directory>\
        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
+
+FORTRAN:
+    f90 -X 1 -Wl"-Dpermok=yes" -Wl"-s" -o <your program> <your program>.f  \
+        -I<path for hdf include directory>\
+        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 
 VAX OpenVMS:
@@ -263,7 +280,7 @@ Under "Show directories for", select "Library files":
 Under Build->Settings, select folder, Link:
    Add the following libraries to the beginning of the list of
    Object/Library Modules:
-       mfhdf.lib hdf.lib jpeg.lib zlib.lib xdr.lib getopt.lib
+       libsrc.lib src.lib jpeg.lib zlib.lib xdr.lib 
 
    The following libraries may (or may not) need to be included: 
        kernel32.lib user32.lib gdi32.lib winspool.lib comdig32.lib
