@@ -1808,6 +1808,9 @@ PRIVATE intn GRIupdateRI(int32 hdf_file_id,ri_info_t *img_ptr)
     CONSTR(FUNC, "GRIupdateRI");   /* for HERROR */
     int32 GroupID;      /* RI vgroup id */
     intn  ret_value = SUCCEED;
+    int32 temp_ref;     /* used to hold the returned value from a function
+                                that may return a ref or a FAIL - BMR */
+
 
     HEclear();
     if (!HDvalidfid(hdf_file_id) || img_ptr==NULL)
@@ -1830,7 +1833,14 @@ printf("%s: check 2.0, GroupID=%ld\n",FUNC,(long)GroupID);
 #endif /* QAK */
     /* grab the ref. # of the new Vgroup */
     if(img_ptr->ri_ref==DFREF_WILDCARD)
-        img_ptr->ri_ref=(uint16)VQueryref(GroupID);
+    {
+    /* due to uint16 type of ref, check return value of VQueryref
+         and assign it to ri_ref only when it's not FAIL - BMR */
+    temp_ref = VQueryref (GroupID);
+    if(temp_ref == FAIL)
+        HGOTO_ERROR(DFE_BADREF,FAIL);
+    img_ptr->ri_ref = (uint16)temp_ref;
+    }
 
     /* Set the name of the RI */
     if(img_ptr->name!=NULL)
@@ -1980,6 +1990,9 @@ intn GRend(int32 grid)
     filerec_t *file_rec;        /* File record */
     void *      *t1;
     intn   ret_value = SUCCEED;
+    int32 temp_ref;     /* used to hold the returned value from a function
+                                that may return a ref or a FAIL - BMR */
+
 
 #ifdef HAVE_PABLO
     TRACE_ON(GR_mask, ID_GRend);
@@ -2008,8 +2021,13 @@ intn GRend(int32 grid)
           {
             if((GroupID=Vattach(gr_ptr->hdf_file_id,-1,"w"))==FAIL)
                 HGOTO_ERROR(DFE_CANTATTACH,FAIL);
-            if((gr_ptr->gr_ref=(uint16)VQueryref(GroupID))==(uint16)FAIL)
-                HGOTO_ERROR(DFE_NOVALS,FAIL);
+
+            /* due to uint16 type of ref, check return value of VQueryref
+                then assign it to gr_ref only when it's not FAIL */
+            temp_ref = VQueryref(GroupID);
+            if(temp_ref == FAIL)
+                HGOTO_ERROR (DFE_NOVALS,FAIL);
+	    gr_ptr->gr_ref = (uint16)temp_ref;
             if(Vsetname(GroupID,GR_NAME)==FAIL)
                 HGOTO_ERROR(DFE_BADVSNAME,FAIL);
             if(Vsetclass(GroupID,GR_NAME)==FAIL)
@@ -2321,6 +2339,8 @@ int32 GRcreate(int32 grid,const char *name,int32 ncomp,int32 nt,int32 il,int32 d
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     int32    ret_value = SUCCEED;
+    int32 temp_ref;     /* used to hold the returned value from a function
+                                that may return a ref or a FAIL - BMR */
 
 #ifdef HAVE_PABLO
     TRACE_ON(GR_mask, ID_GRcreate);
@@ -2356,7 +2376,12 @@ int32 GRcreate(int32 grid,const char *name,int32 ncomp,int32 nt,int32 il,int32 d
 #else /* OLD_WAY */
     if ((GroupID = Vattach(gr_ptr->hdf_file_id,-1,"w")) == FAIL)
         HGOTO_ERROR(DFE_CANTATTACH, FAIL);
-    ri_ptr->ri_ref=(uint16)VQueryref(GroupID);
+    /* due to uint16 type of ref, check return value of VQueryref
+         and assign it to ri_ref only when it's not FAIL - BMR */
+    temp_ref = VQueryref(GroupID);
+    if(temp_ref == FAIL)
+        HGOTO_ERROR(DFE_BADREF, FAIL);
+    ri_ptr->ri_ref = (uint16)temp_ref;
     if(Vdetach(GroupID)==FAIL)
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 #endif /* OLD_WAY */
