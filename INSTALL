@@ -18,7 +18,7 @@ Supported Platforms
   'Platform-specific Notes'.
 
 
-  Platform(OS)            C-Compilier  Fortran-Compilier   libdf.a   libmfhdf.a
+  Platform(OS)            C-Compiler  Fortran-Compiler   libdf.a   libmfhdf.a
   ------------            -----------  -----------------   -------   -----------
   Sun4(SunOS 4.1.3)           GCC 2.6.3      f77 SC1.0        X         X
   Sun4(Solaris 2.3)           CC SC3.0       f77 SC3.0        X         X
@@ -36,7 +36,7 @@ Supported Platforms
   DecStation/MIPSEL           CC              -
   IBM PC - Intel Pentium
        Solarisx86             GCC 2.6.3       -               X         X
-       Linux                  GCC         Fortran compilier   X         X
+       Linux                  GCC         Fortran compiler   X         X
                                              2.6.2
                                  (Fortran to C converter)
        Windows NT/95        Visual C++ 2.0    -               X         X(C only)
@@ -44,8 +44,8 @@ Supported Platforms
                                              2.6.2
                                  (Fortran to C converter)
   
-  NeXT/NeXTSTEP               -               -               -         -
-  MacQuadra950(MacOS-7.5)     -               -               -         -
+  NeXT/Next-STEP               -               -               -         -
+  MacQuadra950(Mac-OS-7.5)     -               -               -         -
   Fujitsu VP/UXPM             -               -               -         -  
   Intel i860                  -               -               -         -  
   VMS/VMS                     -               -               -         -  
@@ -55,16 +55,16 @@ Requirements
 
     To build both HDF and netCDF library from sources, you need:
 
-      * ANSI C compilier. The native ANSI compiliers on the above 
-        platforms are supported. On platforms where no ANSI compilier
-        was available the free GNU ANSI compilier GCC was used.
+      * ANSI C compiler. The native ANSI compilers on the above 
+        platforms are supported. On platforms where no ANSI compiler
+        was available the free GNU ANSI compiler GCC was used.
 
-      * Fortran 77 compilier if you want fortran support. See above
-        table for platforms where fortran is supported. You can
+      * Fortran 77 compiler if you want Fortran support. See above
+        table for platforms where Fortran is supported. You can
         compile both libraries without fortran support by setting 
-        the fortran compilier variable 'FC = NONE' in the respective
-        makefile fragment(mh-<os>) found in the toplevel 'config'
-        directory(config/mh-<os>).
+        the fortran compiler variable 'FC = NONE' in the respective
+        makefile fragment(mh-<os>) found in the top-level 'config'
+        directory($(toplevel)/config/mh-<os>).
 
         See below for further details of configuration and installation.
         
@@ -91,8 +91,8 @@ General Configuration/Installation - Unix
     Layout of configuration files
     -----------------------------
     The following shows the layout of the files used in the configuration.
-    NOTE: The mfhdf/CUSTOMIZE and mfhdf/configure(autoconf) files are no
-          longer used in the configuration
+    NOTE: The $(toplevel)/mfhdf/CUSTOMIZE and $(toplevel)/mfhdf/configure(autoconf)
+          files are no longer used in the configuration
   
     $(toplevel)/Makefile.in
                 config.guess
@@ -121,9 +121,9 @@ General Configuration/Installation - Unix
     Changing default values(CC,CFLAGS,..)
     -------------------------------------
     To change any of the default values for CC, FC, CFLAGS, FFLAGS,..etc
-    edit the makefile fragment 'config/mh-<os>' for your particular
+    edit the makefile fragment '$(toplevel)/config/mh-<os>' for your particular
     operating system. After changing the values you must re-run the 
-    toplevel 'configure' script. 
+    top-level 'configure' script. 
 
     Running configure
     -----------------
@@ -145,7 +145,7 @@ General Configuration/Installation - Unix
 
     If the configure script can't determine your type of computer, give it
     the name as an argument, for instance ``./configure sun4''.  You can
-    use the script ``config.sub'' to test whether a name is recognized; if
+    use the script ``config.sub'' to test whether a name is recognised; if
     it is, config.sub translates it to a triplet specifying CPU, vendor,
     and OS.(e.g hppa1.1-hp-hpux9.03 for an HP900/735 running HPUX9.03).
 
@@ -176,35 +176,35 @@ Platform-specific Notes
 ========================
     HPUX(9.03) on PA-RISC
     ---------------------
-    The distribution has been compilied/tested with both the native
-    ANSI-C compilier and GCC 2.6.3. In both cases the native fortran
-    compilier f77 was used. The binary distribution was compilied
-    using the native compiliers.
+    The distribution has been compiled/tested with both the native
+    ANSI-C compiler and GCC 2.6.3. In both cases the native fortran
+    compiler f77 was used. The binary distribution was compiled
+    using the native compilers.
 
     IRIX(5.2) on MIPS
     -----------------
-    The distribution has been compilied/tested with the native
-    ANSI-C compilier and the fortran compilier. There is 
+    The distribution has been compiled/tested with the native
+    ANSI-C compiler and the fortran compiler. There is 
     a ansi prototype clash with the XDR header files on this version 
     of the OS that as been fixed in IRIX 5.3. It is recommended the 
     OS be upgraded to IRIX 5.3. Due to the ansi prototype clash, 
     the netCDF xdr tests will not compile with the -ansi option. To get 
     around this you can compile this test using the -cckr option and 
     then compile/run the remainder of the tests using the regular
-    -ansi option. Note that the library compilies fine but that the 
+    -ansi option. Note that the library compiles fine but that the 
     xdr netCDF test does not without the above fix. The binary 
-    distribution was compilied using the native compiliers.
+    distribution was compiled using the native compilers.
 
     Solaris(2.3) on Sparc
     ---------------------
-    The distribution has been compilied/tested with the native
-    ANSI-C compilier and native fortran compilier. The binary 
-    distribution was compilied using the native compiliers.
+    The distribution has been compiled/tested with the native
+    ANSI-C compiler and native fortran compiler. The binary 
+    distribution was compiled using the native compilers.
 
     Solaris(2.4) on INTEL(x86)
     ---------------------------
-    The distribution has been compilied/tested with GCC 2.6.3 with
-    NO fortran support. The binary distribution was compilied
+    The distribution has been compiled/tested with GCC 2.6.3 with
+    NO fortran support. The binary distribution was compiled
     using GCC 2.6.3.
 
 
@@ -213,15 +213,51 @@ Platform-specific Notes
     To install on a Windows '95 or Windows NT machine, read the seperate
     installation instructions for Windows NT:
       
-        ./release_notes/install_winNT.txt.
+        $(toplevel)/release_notes/install_winNT.txt.
+
+Pablo Instrumentation
+====================
+    This version of the distribution has support to create an instrumented 
+    version of the HDF library(libdf-inst.a). This library along
+    the Pablo performance data capture libraries can be used to gather data
+    about I/O behaviour and procedure execution times.  
+
+    More detailed documentation on how to use the instrumented version of
+    the HDF library with Pablo can be found in the Pablo directory 
+    '$(toplevel)/hdf/pablo'. See the provided '$(toplevel)/hdf/pablo/README.Pablo'
+     and the PostScript file '$(toplevel)/hdf/pablo/Pablo.ps'.
+
+    At this time only an instrumented version of the core HDF library libdf.a 
+    can be created. Future versions will have support for the SDxx interface
+    found in libmfhdf.a. Current interfaces supported are ANxx, GRxx, DFSDxx,
+    DFANxx, DFPxx, DFR8xx, DF24xx, Hxx, Vxx, and VSxx.
+
+    To enable the creation of an instrumented library the following section
+    in the makefile fragment($(toplevel)/config/mh-<os>) must be uncommented 
+    and set.
+
+    # ------------ Macros for Pablo Instrumentation  --------------------
+    # Uncomment the following lines to create a Pablo Instrumentation
+    # version of the HDF core library called 'libdf-inst.a'
+    # See the documentation in the directory 'hdf/pablo' for further 
+    # information about Pablo and what platforms it is supported on
+    # before enabling. 
+    # You need to set 'PABLO_INCLUDE' to the Pablo distribution 
+    # include directory to get the files 'IOTrace.h' and 'IOTrace_SD.h'.
+    #PABLO_FLAGS  = -DHAVE_PABLO
+    #PABLO_INCLUDE = -I/hdf2/Pablo/Instrument.HP/include
+
+    After setting these values you must re-run  the toplevel 'configure' script. 
+    Details on running configure can be found above in the section
+    'General Configuration/Installation - Unix'.
 
 Documentation
 =============
 
     Manual pages for the library are not yet completed but some early
-    drafts are available in ./man.
+    drafts are available in $(toplevel)/man.
 
-    The files in sub-directory ./release_notes are detailed descriptions
+    The files in sub-directory $(toplevel)/release_notes are detailed descriptions
     for the new features. They can be used as  supplement documentation 
     for HDF4.0. Those files are also available on the NCSA ftp server, 
     in /HDF/Documentation/HDF4.0/4.0b2_release_notes/.
@@ -274,7 +310,7 @@ Usage: configure [OPTIONS] [HOST]
 
 Where HOST and TARGET are something like "sparc-sunos", "mips-sgi-irix5", etc.
 
-    `configure' recognizes the following options to control how it
+    `configure' recognises the following options to control how it
     operates. 
 
 NOTE: not all options are currently supported by this
