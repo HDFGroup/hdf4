@@ -2739,9 +2739,6 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
     extern int32 VSQueryref
                 (int32 vkey);
  
-    extern intn VSQuerynfields
-                (int32 vkey);
-    
     extern int32 VSgetid
                 (HFILEID f, int32 vsref);
 
@@ -2829,7 +2826,6 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 #   define  nvsdtchc FNAME(VSDTCHC)
 #   define  nvsqref  FNAME(VSQREF)
 #   define  nvsqtag  FNAME(VSQTAG)
-#   define  nvsqnfld FNAME(VSQNFLD)
 #   define  nvsgver  FNAME(VSGVER)
 #   define  nvsseekc FNAME(VSSEEKC)
 #   define  nvsgnamc FNAME(VSGNAMC)
@@ -2910,7 +2906,6 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 #   define  nvsdtchc FNAME(vsdtchc)
 #   define  nvsqref  FNAME(vsqref)
 #   define  nvsqtag  FNAME(vsqtag)
-#   define  nvsqnfld FNAME(vsqnfld)
 #   define  nvsgver  FNAME(vsgver)
 #   define  nvsseekc FNAME(vsseekc)
 #   define  nvsgnamc FNAME(vsgnamc)

@@ -1145,36 +1145,3 @@ done:
 
   return ret_value;
 }	/* VSdelete */
-
-/* -------------- Return the number of fields of a VData----------------- */
-intn 
-VSQuerynfields(int32 vkey)
-{
-    vsinstance_t *w;
-    VDATA      *vs;
-    intn ret_value = FAIL; /* FAIL */
-    CONSTR(FUNC, "VSQuerynflds");
-
-    if (HAatom_group(vkey)!=VSIDGROUP)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    /* locate vs's index in vstab */
-    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
-
-    vs = w->vs;
-    if ((vs == NULL) || (vs->otag != VSDESCTAG))
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-    ret_value = vs->wlist.n;
-
-done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
-
-    } /* end if */
-
-  /* Normal function cleanup */
-
-  return ret_value;
-}   /* end VSQuerynfields() */
-

@@ -361,19 +361,6 @@ nvsqtag(intf * vkey)
 }
 
 /* ------------------------------------------------------
-   ** vsqnfld -- get number of fields a vdata has
-   ** VSQuerynfields -- vsqnfld --
- */
-
-FRETVAL(intf)
-nvsqnfld(intf *vkey)
-{
-    intf ret;
-    ret = VSQuerynfields((int32) *vkey);
-    return(ret);
-}
-
-/* ------------------------------------------------------------------ */
 /*
    **  get the version # of a vdata
    **  related: VSgetversion--vsgver--
