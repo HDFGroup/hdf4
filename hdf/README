@@ -10,19 +10,22 @@ on an IBM RS/6000.
 
 Assuming you are on an IBM RS/6000:
 
-make -f MAKE.IBM6000   
+cp MAKE.IBM6000 Makefile
+
+make    
+make all 
         --- builds HDF library and the C and Fortran interfaces, the 
                 utilities and C and Fortran test programs.
 
-make -f MAKE.IBM6000 nofortran   
+make allnofortran   
         --- builds the HDF library and only the C interfaces, the
                 utilities and the C test programs.
 
-make -f MAKE.IBM6000 libdf
+make libdf
         --- builds the HDF library and the C and Fortran interfaces
 
-make -f MAKE.IBM6000 utils
+make utilities
         --- builds only the utility programs
 
-make -f MAKE.IBM6000 tests
+make tests
         --- builds all of the test programs
