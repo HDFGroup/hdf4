@@ -798,7 +798,7 @@ int32 read_vset_stuff() {
 
 
 /* main test driver */
-VOID test_vsets() {
+void test_vsets() {
     int32 status;
     
     status = write_vset_stuff();

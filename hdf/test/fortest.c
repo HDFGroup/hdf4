@@ -94,7 +94,9 @@ main (argc, argv)
   InitTest("sdnnt","tsdnntf","");
   InitTest("sdnt","tsdntf","");
   InitTest("sdstr","tsdstrf","");
+#ifndef DEC_ALPHA
   InitTest("stubs","tstubsf","");
+#endif
 
   Verbocity = 4; /* Default Verbocity is Low */
   ret = Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);

@@ -37,9 +37,23 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 #include "tproto.h"
+
 #define TESTFILE_NAME "tbitio.hdf"
 
+#ifndef RAND_MAX
+#define RAND_MAX (UINT_MAX)
+#endif
+
+/* define aliases for random number generation */
+#define RAND rand
+#define SEED(a) srand(a)
+
 #define BUFSIZE 4096
+
+#define BITIO_TAG_1     1000
+#define BITIO_REF_1     1000
+#define BITIO_TAG_2     2000
+#define BITIO_REF_2     2000
 
 #ifdef TEST_PC
 #define FAR far
@@ -50,15 +64,59 @@ static char RcsId[] = "@(#)$Revision$";
 static uint8 FAR outbuf[BUFSIZE],
     FAR inbuf[BUFSIZE];
 
-static uint8 FAR outbuf2[BUFSIZE],
+static uint32 FAR outbuf2[BUFSIZE],
     FAR inbuf2[BUFSIZE];
+
+static uint32 FAR maskbuf[]={
+    0x00000000,
+    0x00000001,0x00000003,0x00000007,0x0000000f,
+    0x0000001f,0x0000003f,0x0000007f,0x000000ff,
+    0x000001ff,0x000003ff,0x000007ff,0x00000fff,
+    0x00001fff,0x00003fff,0x00007fff,0x0000ffff,
+    0x0001ffff,0x0003ffff,0x0007ffff,0x000fffff,
+    0x001fffff,0x003fffff,0x007fffff,0x00ffffff,
+    0x01ffffff,0x03ffffff,0x07ffffff,0x0fffffff,
+    0x1fffffff,0x3fffffff,0x7fffffff,0xffffffff};
 
 extern int num_errs;
 extern int Verbocity;
 
 void test_bitio()
 {
-	return;
+    int32 fid;
+    int32 bitid1,bitid2;
+    int32 ret;
+    intn i;
+intn bit_count=0;
+
+for(i=0; i<33; i++)
+  printf("test_bitio(): i=%d, mask=%x\n",i,maskbuf[i]);
+    SEED((int)time(NULL));
+    for (i=0; i<BUFSIZE; i++) {
+        outbuf[i]=((RAND()>>4)%32)+1;       /* number of bits to output */
+        outbuf2[i]=RAND() & maskbuf[outbuf[i]];     /* actual bits to output */
+      } /* end for */
+
+    fid=Hopen(TESTFILE_NAME,DFACC_CREATE,0);
+    CHECK(fid,FAIL,"Hopen");
+    bitid1=Hstartbitwrite(fid,BITIO_TAG_1,BITIO_REF_1,16);
+    CHECK(bitid1,FAIL,"Hstartbitwrite");
+    ret=Hbitappendable(bitid1);
+    RESULT("Hbitappendable");
+
+    for(i=0; i<BUFSIZE; i++) {
+        ret=Hbitwrite(bitid1,outbuf[i],(uint32)outbuf2[i]);
+bit_count+=outbuf[i];
+if(ret==FAIL)
+  HEprint(stdout,0);
+        VERIFY(ret,outbuf[i],"Hbitwrite");
+      } /* end for */
+
+    ret=Hendbitaccess(bitid1);
+    RESULT("Hbitendaccess");
+printf("bit_count=%d\n",bit_count);
+    return;
+
 #ifdef QAK
     int32 fid, fid1;
     int32 aid1, aid2;
