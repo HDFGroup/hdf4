@@ -3468,7 +3468,19 @@ uint16 GRidtoref(int32 riid)
         HGOTO_ERROR(DFE_RINOTFOUND,(uint16)FAIL);
     ri_ptr=(ri_info_t *)*t;
 
+#ifdef OLD_WAY
     ret_value = (ri_ptr->ri_ref!=DFREF_WILDCARD ? ri_ptr->ri_ref : ri_ptr->rig_ref);
+#else /* OLD_WAY */
+/* Changed to handle case when ri_ptr->rig_ref is DFREF_WILDCARD */
+    if(ri_ptr->ri_ref!=DFREF_WILDCARD)
+        ret_value=ri_ptr->ri_ref;
+    else
+      {
+        if(ri_ptr->rig_ref==DFREF_WILDCARD)
+            ri_ptr->rig_ref=Hnewref(gr_ptr->hdf_file_id,DFTAG_RIG);
+        ret_value=ri_ptr->rig_ref;
+      } /* end else */
+#endif /* OLD_WAY */
 
 done:
   if(ret_value == 0)   
@@ -3935,7 +3947,7 @@ intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP 
           else
             {   /* LUT does not exist */
                 ri_ptr->lut_tag=DFTAG_LUT;
-                ri_ptr->lut_ref=Htagnewref(hdf_file_id,ri_ptr->lut_ref);
+                ri_ptr->lut_ref=Htagnewref(hdf_file_id,ri_ptr->lut_tag);
                 ri_ptr->lut_dim.dim_ref=DFREF_WILDCARD;
                 ri_ptr->lut_dim.xdim=256;
                 ri_ptr->lut_dim.ydim=1;
