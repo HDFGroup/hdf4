@@ -6,6 +6,7 @@
 /Win32min.zip -text
 /Win32nof.zip -text
 hdf/jpeg/jpeglib.project -text
+hdf/jpeg/testimg.bmp -text
 hdf/jpeg/testimg.gif -text
 hdf/jpeg/testimg.jpg -text
 hdf/jpeg/testimg.ppm -text svneol=unset#application/octet-stream
