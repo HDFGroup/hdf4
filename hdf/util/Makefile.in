@@ -98,6 +98,9 @@ HDFBIN=$(srcdir)/../bin
 JPEGLIB=$(srcdir)/../jpeg
 JPEGINC=$(srcdir)/../jpeg
 
+#Where are the utility includes
+UTILINC=$(srdir)
+
 # Utilities
 UTILS = hdf24to8 hdfcomp hdfls hdfpack hdftopal hdftor8 paltohdf \
         r8tohdf ristosds vcompat vmake vshow hdf8to24 hdf2jpeg jpeg2hdf fp2hdf \
@@ -124,19 +127,19 @@ force_rebuild:
 #	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
 #
 #.c.o: 
-#	 $(CC) $(CFLAGS) -c -I$(HDFINC) -I$(JPEGINC) $*.c 
+#	 $(CC) $(CFLAGS) -c -I$(HDFINC) -I$(UTILINC) -I$(JPEGINC) $*.c 
 
 .c.o: he.h he_proto.h $(HDFLIB)/libdf.a $(FRC)
-	$(CC) $(CFLAGS) -c -I$(HDFINC) -I$(JPEGINC) $<
+	$(CC) $(CFLAGS) -c -I$(HDFINC) -I$(UTILINC) -I$(JPEGINC) $<
 
 .c: $(HDFLIB)/libdf.a
-	$(CC) $(CFLAGS) -I$(HDFINC) -I$(JPEGINC) $< -o $@ $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(LIBS)
+	$(CC) $(CFLAGS) -I$(HDFINC) -I$(UTILINC) -I$(JPEGINC) $< -o $@ $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(LIBS)
 
 .f: $(HDFLIB)/libdf.a 
 	$(FC) $(FFLAGS) $< $(HDFLIB)/libdf.a -o $@ $(JPEGLIB)/libjpeg.a
 
 hdfed: he.h he_proto.h $(HEOBJ) $(HDFLIB)/libdf.a $(FRC)
-	$(CC) $(CFLAGS) -I$(HDFINC) $(HEOBJ) $(HDFLIB)/libdf.a -o hdfed $(JPEGLIB)/libjpeg.a
+	$(CC) $(CFLAGS) -I$(HDFINC) -I$(UTILINC) $(HEOBJ) $(HDFLIB)/libdf.a -o hdfed $(JPEGLIB)/libjpeg.a
 
 utils: $(UTILS) $(HDFLIB)/libdf.a
 
@@ -151,10 +154,10 @@ distclean:
 	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed fptest config.status Makefile
 
 depend: 
-	 makedepend -I$(HDFINC) *.c
+	 makedepend -I$(HDFINC) -I$(UTILINC) *.c
 
 saber:	$(SRCS)
-	 #load -I$(HDFINC) -D$(MACHINE) $(SRCS) 
+	 #load -I$(HDFINC) -I$(UTILINC) -D$(MACHINE) $(SRCS) 
 
 help:
 	@echo ""
