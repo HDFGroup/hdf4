@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.11  1992/05/29 19:25:32  chouck
+# Revision 1.12  1992/06/01 13:23:15  mfolk
+# Added some comments to help people compile on Convex.
+#
+# Revision 1.11  1992/05/29  19:25:32  chouck
 # Added rules for tlinkage
 #
 # Revision 1.10  1992/05/28  17:33:57  chouck
@@ -137,16 +140,21 @@
 # ==> specify your machine
 MACHINE=IBM6000
 
-# ==> specify your fortran compiler
+# ==> specify your fortran compiler 
 FC=xlf 
 FFLAGS=  -g
 
 # ==> specify your C compiler
 CC=gcc
-CFLAGS=  -g -D${MACHINE} $(IFLAGS)
 
 # ==> where are your hdf.h, hdfi.h and vg.h files located?
 IFLAGS=   -I../include -I.
+
+# ==> For Convex, specify CFLAGS as follows:
+#    STDFLAG = __STDC__
+#    CFLAGS=  -g -D${MACHINE} $(IFLAGS) -D${STDFLAG}
+
+CFLAGS=  -g -D${MACHINE} $(IFLAGS)
 
 # ==> where is your HDF library (libdf.a) located?
 LIBS= ../formal/libdf.a
