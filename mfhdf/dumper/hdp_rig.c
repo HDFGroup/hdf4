@@ -232,11 +232,12 @@ drig(dump_info_t * dumprig_opts, intn curr_arg, intn argc,
 		  /* Determine which RIGs are to be displayed. */
 		  if (dumprig_opts->filter == DINDEX)
 			{
-				for (i = 0; dumprig_opts->filter_num[i] != -1; i++)
+				for (i = 0; i < dumprig_opts->num_chosen; i++)
 				  {
 					  rig_chosen[i] = dumprig_opts->filter_num[i];
 					  rig_chosen[i]--;
 				  }		/* end for */
+                                sort(rig_chosen, num_rig_chosen);  /* DREFNUM doesn't need this */ 
 			}	/* end if */
 
 		  /* Get the name of the output file. */
@@ -269,8 +270,6 @@ drig(dump_info_t * dumprig_opts, intn curr_arg, intn argc,
 
 		  if (num_rig_chosen == -1)		/* If all RIGs will be dumped, set the flat. */
 			  dumpall = 1;
-		  else	/* Otherwise, sort the indices of the chosen RIGs in increasing order. */
-			  sort(rig_chosen, num_rig_chosen);
 
 		  x = 0;	/* Used as the index of the array of "rig_chosen[x]". */
 		  for (i = 0; i < ndsets; i++)
@@ -326,12 +325,12 @@ drig(dump_info_t * dumprig_opts, intn curr_arg, intn argc,
 				   is not what the user wants or if the user has specified a 
 				   model and the model of the current image is not that one, then
 				   skip the current image. */
-				if (((!dumpall) && (i != rig_chosen[x])) || (((ncomps * 8) != model) && (model != 0)))
+				if (((dumprig_opts->filter == DINDEX) && (i != rig_chosen[x++])) || 
+                                    (((ncomps * 8) != model) && (model != 0)))
 				  {
 					  HDfree((VOIDP) image);
 					  continue;
 				  }
-				x++;
 
 				/* Determine what to be dumped out. */
 				switch (dumprig_opts->contents)
