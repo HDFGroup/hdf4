@@ -982,7 +982,8 @@ HCgetcompress(int32 file_id,
        instead of junk in this case.
     */
      {
-        (comp_coder_t)*comp_type = COMP_CODE_NONE; 
+        /*Mac OSX screams here (comp_coder_t)*comp_type = COMP_CODE_NONE; */
+        *comp_type = COMP_CODE_NONE; 
         HGOTO_ERROR(DFE_ARGS, FAIL);
      }
     /* end access to the aid appropriately */
