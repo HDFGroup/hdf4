@@ -227,6 +227,16 @@ Platform-specific Notes
     [.mfhdf.fortran.vms], [.mfhdf.ncdump],[.mfhdf.ncgen], and 
     [.mfhdf.dumper]. 
 
+    Linking the example minigzip may fail due to an unresolved 
+    symbol UNLINK. People from GZIP suggested to add the following at
+    the beginning of minigzip.c and indicated the this fix will be
+    included in zlib 1.0.
+
+   #ifdef VMS
+   #  define unlink delete
+   #endif
+
+
     Windows '95 or Windows NT
     -------------------------
     To install on a Windows '95 or Windows NT machine, read the seperate
