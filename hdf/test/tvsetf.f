@@ -57,6 +57,7 @@ C Output file: tvsetf1.hdf
       character*10 fields2
       character*31 fields3
       character*15 cdata, icdata
+      character*7  field_name
       parameter (
      +           feps = 1.0E-5,
      +           geps = 1.0D-9
@@ -116,6 +117,14 @@ C      add a vdatas in vgroup1
       call VRFY(ret,'vfstart',number_failed)
       vgref1 = vfgid(fid1, -1)
       call VRFY(vgref1,'vfgid',number_failed)
+C
+C     Find group with the name 'Top Vgroup'
+C
+      ret = vfind(fid1, 'Top Vgroup')
+      if (ret .le. 0) then
+          number_failed = number_failed + 1
+          call MESSAGE(3, 'Top Vgroup is not found. ')
+      endif 
       vgid1 = vfatch(fid1, vgref1, 'w')
       call VRFY(vgid1,'vfatch',number_failed)
 C      create a single field (char) vdata
@@ -349,6 +358,57 @@ C     read the 'mixed type' vdata
       call VRFY(vsref22, 'vsffcls', number_failed)
       vsid2 = vsfatch(fid1, vsref2, 'w')
       call VRFY(vsid2, 'vsfatch', number_failed)
+C
+C     This piece of the code exercises VF interface function
+C     Added by E. Pourmal 1/22/99
+C
+C      
+C     Find the total number of the fields in the vdata.
+C
+      ret = vfnflds (vsid2)
+      if (ret .ne. 5) then
+          number_failed = number_failed + 1
+          call MESSAGE(3, 'Wrong number of the vdata fileds. ')
+      endif 
+C
+C     Find the datatype of the first field (should be DFNT_INT32)
+C
+      ret = vfftype(vsid2, 0)
+      if (ret. ne. DFNT_INT32) then
+          number_failed = number_failed + 1
+          call MESSAGE(3, 'Wrong field datatype returned. ')
+      endif
+C
+C     Find the order of the second field (should be 2)
+C
+      ret = vffordr(vsid2, 1)
+      if (ret .ne. 2) then
+          number_failed = number_failed + 1
+          call MESSAGE(3, 'Wrong field order returned. ') 
+      endif
+C
+C     Find the name of the third field (should be 'float32')
+C
+      ret = vffname(vsid2, 2, field_name)
+      if (ret .ne. 0 .or. field_name .ne. 'float32') then
+          number_failed = number_failed + 1
+          call MESSAGE(3, 'Cannot return name of the field. ') 
+      endif
+C
+C     Find the size as stored in memory of the fourth vdata field.
+C
+      ret = vffisiz(vsid2, 3)
+      call VRFY(ret, 'vffisiz', number_failed)
+C
+C     Find th esize as stored in file of the fifth vdata field.
+C
+      ret = vffesiz(vsid2, 4)
+      call VRFY(ret, 'vffesiz', number_failed)
+C
+C     The end of the VF interface test.  Two last calls should be tested
+C     more carefully, i.e. what the correct ret values are ??????????
+C
+
       ret = vsfinq(vsid2, nelts,il, fields3,vsize,vname)
       call VRFY(ret, 'vsfinq', number_failed)
       if (nelts .ne. 5) then
