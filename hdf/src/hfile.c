@@ -904,31 +904,32 @@ int32 Hstartwrite(file_id, tag, ref, length)
     }
 
     if (ddnew) {    /* have to allocate new space in the file for the data */
-       int32 offset;           /* offset of this data element in file */
+        int32 offset;           /* offset of this data element in file */
 
        /* place the data element at the end of the file and record its offset */
-       if (HI_SEEKEND(file_rec->file) == FAIL) {
-           access_rec->used = FALSE;
-           HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-       }
+        if (HI_SEEKEND(file_rec->file) == FAIL) {
+            access_rec->used = FALSE;
+            HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+        }
         offset = access_rec->block->ddlist[access_rec->idx].offset
-            = HI_TELL(file_rec->file);
+                = HI_TELL(file_rec->file);
 
-       /* reserve the space by marking the end of the element */
-
-       if (HI_SEEK(file_rec->file, length-1+offset) == FAIL) {
-           access_rec->used = FALSE;
-           HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-       }
-       if (HI_WRITE(file_rec->file, tbuf, 1) == FAIL) {
-           access_rec->used = FALSE;
-           HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-       }
+        if(length>0) {  /* only mark data if there is a positive length */
+            /* reserve the space by marking the end of the element */
+            if (HI_SEEK(file_rec->file, length-1+offset) == FAIL) {
+                access_rec->used = FALSE;
+                HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+            }
+            if (HI_WRITE(file_rec->file, tbuf, 1) == FAIL) {
+                access_rec->used = FALSE;
+                HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+            }
+          } /* end if */
 
        /* fill in dd record */
-       access_rec->block->ddlist[access_rec->idx].tag = tag;
-       access_rec->block->ddlist[access_rec->idx].ref = ref;
-       access_rec->appendable=TRUE;     /* mark data as appendable */
+        access_rec->block->ddlist[access_rec->idx].tag = tag;
+        access_rec->block->ddlist[access_rec->idx].ref = ref;
+        access_rec->appendable=TRUE;     /* mark data as appendable */
     }
 
     /* update dd in the file */
@@ -1470,16 +1471,19 @@ int32 Hendaccess(access_id)
 int32 Hgetelement(int32 file_id, uint16 tag, uint16 ref, uint8 *data)
 #else
 int32 Hgetelement(file_id, tag, ref, data)
-    int32 file_id;             /* id of file to read from */
-    uint16 tag;                        /* tag of elt to read */
-    uint16 ref;                        /* ref of elt to read */
-    uint8 *data;                       /* data buffer to read into */
+    int32 file_id;          /* id of file to read from */
+    uint16 tag;             /* tag of elt to read */
+    uint16 ref;             /* ref of elt to read */
+    uint8 *data;            /* data buffer to read into */
 #endif
 {
     char *FUNC="Hgetelement";  /* for HERROR */
     int32 access_id;           /* access record id */
     int32 length;              /* length of this elt */
+#ifdef OLD_WAY
     int32 ret;                 /* return code */
+#endif
+int32 offset;
 
     /* clear error stack */
     HEclear();
@@ -1491,12 +1495,20 @@ int32 Hgetelement(file_id, tag, ref, data)
     if (access_id == FAIL)
        HRETURN_ERROR(DFE_NOMATCH,FAIL);
 
+#ifdef OLD_WAY
     HQuerylength(access_id,&length);
     if ((ret = Hread(access_id, 0, data)) == FAIL)
        HERROR(DFE_READERROR);
     Hendaccess(access_id);
 
     return (ret == FAIL) ? ret : length;
+#else
+    if ((length=Hread(access_id, 0, data)) == FAIL)
+       HERROR(DFE_READERROR);
+    Hendaccess(access_id);
+
+    return(length);
+#endif
 }   /* Hgetelement() */
 
 /*--------------------------------------------------------------------------
@@ -1521,10 +1533,10 @@ int32 Hgetelement(file_id, tag, ref, data)
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int Hputelement(int32 file_id, uint16 tag, uint16 ref, uint8 *data,
+int32 Hputelement(int32 file_id, uint16 tag, uint16 ref, uint8 *data,
                int32 length)
 #else
-int Hputelement(file_id, tag, ref, data, length)
+int32 Hputelement(file_id, tag, ref, data, length)
     int32 file_id;             /* file id to write to */
     uint16 tag;                /* tag of elt to write */
     uint16 ref;                /* ref of elt to write */
@@ -1534,7 +1546,8 @@ int Hputelement(file_id, tag, ref, data, length)
 {
     char *FUNC="Hputelement";  /* for HERROR */
     int32 access_id;           /* access record id */
-    int32 ret;                  /* return code */
+    int32 ret;                 /* return code */
+int32 offset;
 
     /* clear error stack */
     HEclear();
@@ -1545,10 +1558,14 @@ int Hputelement(file_id, tag, ref, data, length)
        HRETURN_ERROR(DFE_NOMATCH,FAIL);
 
     if ((ret = Hwrite(access_id, length, data)) == FAIL)
-       HERROR(DFE_WRITEERROR);
+        HERROR(DFE_WRITEERROR);
     Hendaccess(access_id);
 
+#ifdef OLD_WAY
     return (ret == length ? SUCCEED : FAIL);
+#else
+    return (ret);
+#endif
 }   /* end Hputelement() */
 
 /*--------------------------------------------------------------------------
@@ -2597,7 +2614,7 @@ char string[];
         return(SUCCEED);
 }
 
-#ifdef PC
+#if defined PC && !defined PC386
 /*--------------------------------------------------------------------------
 **
 ** NAME
@@ -2643,7 +2660,7 @@ FILE *fp;
 
     if(size<=UINT_MAX)   /* if the size is small enough read it in all at once */
 #ifdef WIN3
-            bytes_read+=_lread(fp,b,UINT_MAX);
+        bytes_read=_lread(fp,buffer,size);
 #else
         bytes_read=fread(buffer,1,(uint16)size,fp);
 #endif
@@ -2652,7 +2669,7 @@ FILE *fp;
         b=buffer;
         while(size>UINT_MAX) {
 #ifdef WIN3
-        bytes_read=_lread(fp,buffer,(uint16)size);
+            bytes_read+=_lread(fp,b,(uint16)UINT_MAX);
 #else
             bytes_read+=fread(b,1,UINT_MAX,fp);
 #endif
@@ -3489,4 +3506,3 @@ mlseek(hdf_file_t rn, int32 n, intn m)
 }
 
 #endif /* MAC */
-

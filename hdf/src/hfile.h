@@ -63,44 +63,44 @@ typedef FILE *hdf_file_t;
                                 SUCCEED : FAIL)
 #   define HI_WRITE(f, b, n)   (((n) == fwrite((b), 1, (n), (f))) ? \
                                 SUCCEED : FAIL)
-#   define HI_CLOSE(f)         (fclose(f))
-#   define HI_FLUSH(f)         (fflush(f)==0 ? SUCCEED : FAIL)
-#   define HI_SEEK(f, o)       (fseek((f), (long)(o), SEEK_SET))
-#   define HI_SEEKEND(f)       (fseek((f), (long)0, SEEK_END))
-#   define HI_TELL(f)          (ftell(f))
-#   define OPENERR(f)          ((f) == (FILE *)NULL)
+#   define HI_CLOSE(f)   (fclose(f))
+#   define HI_FLUSH(f)   (fflush(f)==0 ? SUCCEED : FAIL)
+#   define HI_SEEK(f,o)  (fseek((f), (long)(o), SEEK_SET)==0 ? SUCCEED : FAIL)
+#   define HI_SEEKEND(f) (fseek((f), (long)0, SEEK_END)==0 ? SUCCEED : FAIL)
+#   define HI_TELL(f)    (ftell(f))
+#   define OPENERR(f)    ((f) == (FILE *)NULL)
 #endif /* FILELIB == UNIXBUFIO */
 
 #if (FILELIB == UNIXUNBUFIO)
 /* using UNIX unbuffered file I/O routines to access files */
 typedef int hdf_file_t;
 #   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
-                                open((p), O_RDWR) : open((p), O_RDONLY))
-#   define HI_CREATE(p)        (open((p), O_RDWR | O_CREAT | O_TRUNC))
-#   define HI_CLOSE(f)         (close(f))
-#   define HI_FLUSH(f)         (SUCCEED)
-#   define HI_READ(f, b, n)    (read((f), (char *)(b), (n)))
-#   define HI_WRITE(f, b, n)   (write((f), (char *)(b), (n)))
-#   define HI_SEEK(f, o)       (lseek((f), (off_t)(o), SEEK_SET))
-#   define HI_SEEKEND(f)       (lseek((f), (off_t)0, SEEK_END))
-#   define HI_TELL(f)          (lseek((f), (off_t)0, SEEK_CUR))
-#   define OPENERR(f)          (f < 0)
+                                    open((p), O_RDWR) : open((p), O_RDONLY))
+#   define HI_CREATE(p)         (open((p), O_RDWR | O_CREAT | O_TRUNC))
+#   define HI_CLOSE(f)          (close(f))
+#   define HI_FLUSH(f)          (SUCCEED)
+#   define HI_READ(f, b, n)     (read((f), (char *)(b), (n)))
+#   define HI_WRITE(f, b, n)    (write((f), (char *)(b), (n)))
+#   define HI_SEEK(f, o)        (lseek((f), (off_t)(o), SEEK_SET))
+#   define HI_SEEKEND(f)        (lseek((f), (off_t)0, SEEK_END))
+#   define HI_TELL(f)           (lseek((f), (off_t)0, SEEK_CUR))
+#   define OPENERR(f)           (f < 0)
 #endif /* FILELIB == UNIXUNBUFIO */
 
 #if (FILELIB == MACIO)
 /* using special routines to redirect to Mac Toolkit I/O */
 typedef short hdf_file_t;
-#   define HI_OPEN(x,y)        mopen(x,y)
-#   define HI_CREATE(name)     mopen(name, DFACC_CREATE)
-#   define HI_CLOSE(x)         mclose(x)
-#   define HI_FLUSH(a)         (SUCCEED)
-#   define HI_READ(a,b,c)      mread(a, (char *) b, (int32) c)
-#   define HI_WRITE(a,b,c)     mwrite(a, (char *) b, (int32) c)
-#   define HI_SEEK(x,y)        mlseek(x, (int32 )y, 0)
-#   define HI_SEEKEND(x)       mlseek(x, 0L, 2)
-#   define HI_TELL(x)          mlseek(x,0L,1)
-#   define DF_OPENERR(f)       ((f) == -1)
-#   define OPENERR(f)          (f < 0)
+#   define HI_OPEN(x,y)         mopen(x,y)
+#   define HI_CREATE(name)      mopen(name, DFACC_CREATE)
+#   define HI_CLOSE(x)          mclose(x)
+#   define HI_FLUSH(a)          (SUCCEED)
+#   define HI_READ(a,b,c)       mread(a, (char *) b, (int32) c)
+#   define HI_WRITE(a,b,c)      mwrite(a, (char *) b, (int32) c)
+#   define HI_SEEK(x,y)         mlseek(x, (int32 )y, 0)
+#   define HI_SEEKEND(x)        mlseek(x, 0L, 2)
+#   define HI_TELL(x)           mlseek(x,0L,1)
+#   define DF_OPENERR(f)	    ((f) == -1)
+#   define OPENERR(f)           (f < 0)
 #endif /* FILELIB == MACIO */
 
 #if (FILELIB == PCIO)
@@ -115,12 +115,12 @@ typedef FILE *hdf_file_t;
                                 SUCCEED : FAIL)
 #   define HI_WRITE(f, b, n)   (((int32)(n) == HDfwritebig((b), (n), (f))) ? \
                                 SUCCEED : FAIL)
-#   define HI_CLOSE(f)         (fclose(f))
-#   define HI_FLUSH(f)         (fflush(f)==0 ? SUCCEED : FAIL)
-#   define HI_SEEK(f, o)       (fseek((f), (long)(o), SEEK_SET))
-#   define HI_SEEKEND(f)       (fseek((f), (long)0, SEEK_END))
-#   define HI_TELL(f)          (ftell(f))
-#   define OPENERR(f)          ((f) == (FILE *)NULL)
+#   define HI_CLOSE(f)          (fclose(f))
+#   define HI_FLUSH(f)          (fflush(f)==0 ? SUCCEED : FAIL)
+#   define HI_SEEK(f,o)  (fseek((f), (long)(o), SEEK_SET)==0 ? SUCCEED : FAIL)
+#   define HI_SEEKEND(f) (fseek((f), (long)0, SEEK_END)==0 ? SUCCEED : FAIL)
+#   define HI_TELL(f)           (ftell(f))
+#   define OPENERR(f)           ((f) == (FILE *)NULL)
 #endif /* FILELIB == PCIO */
 
 #if (FILELIB == WINIO)
@@ -135,12 +135,12 @@ typedef HFILE hdf_file_t;
                                 SUCCEED : FAIL)
 #   define HI_WRITE(f, b, n)   (((int32)(n) == HDfwritebig((b), (n), (f))) ? \
                                 SUCCEED : FAIL)
-#   define HI_CLOSE(f)         (_lclose(f))
-#   define HI_FLUSH(f)         (0)
-#   define HI_SEEK(f, o)       (_llseek((f), (long)(o), SEEK_SET))
-#   define HI_SEEKEND(f)       (_llseek((f), (long)0, SEEK_END))
-#   define HI_TELL(f)          (_llseek((f),0l,SEEK_CUR))
-#   define OPENERR(f)          ((f) == (HFILE)HFILE_ERROR)
+#   define HI_CLOSE(f)          (_lclose(f))
+#   define HI_FLUSH(f)          (0)
+#   define HI_SEEK(f, o)        (_llseek((f), (long)(o), SEEK_SET))
+#   define HI_SEEKEND(f)        (_llseek((f), (long)0, SEEK_END))
+#   define HI_TELL(f)           (_llseek((f),0l,SEEK_CUR))
+#   define OPENERR(f)           ((f) == (HFILE)HFILE_ERROR)
 #endif /* FILELIB == WINIO */
 
 /* The internal structure used to keep track of the files opened: an
@@ -472,3 +472,4 @@ extern int32 mwrite
 #endif /* c_plusplus || __cplusplus */
 
 #endif /* HFILE_H */
+
