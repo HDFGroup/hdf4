@@ -189,9 +189,11 @@ int annotate(char *editor, int ann)
     return ret;
 
 #else
+    /* shut compiler up */
+    ann=ann; editor=editor;
 
 	return 1;
-	
+
 #endif /* ndef MAC & PC */
 
 }
@@ -513,7 +515,7 @@ int put(char *template, int verbose)
     char *data;
     int ret;
 
-    length = getElement(he_currDesc, &data);
+    length = (int)getElement(he_currDesc, &data);
     if ((length <= 0) || (data == NULL)) return HE_FAIL;
     ret = putWithTempl(template, he_currDesc, length, 1, data, length,
 		       verbose);
@@ -592,7 +594,7 @@ int putR8(char *image, char *pal, int verbose)
 	fprintf(stderr,"Cannot find raster.\n");
 	return HE_FAIL;
     }
-    ret = putWithTempl(image, he_currDesc, xdim, ydim, raster, xdim*ydim,
+    ret = putWithTempl(image, he_currDesc, (int)xdim, (int)ydim, raster, (int)(xdim*ydim),
 		       verbose);
     HDfreespace(raster);
     if (ret < 0) return HE_FAIL;
@@ -607,7 +609,7 @@ int putR8(char *image, char *pal, int verbose)
 	    p[HE_COLOR_SZ + i] = *palette++;
 	    p[2 * HE_COLOR_SZ + i] = *palette++;
 	}
-	ret = putWithTempl(pal, he_currDesc, xdim, ydim, p,
+	ret = putWithTempl(pal, he_currDesc, (int)xdim, (int)ydim, p,
 			   HE_PALETTE_SZ, verbose);
 	HDfreespace(palette);
 	if (ret < 0) return HE_FAIL;

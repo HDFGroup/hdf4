@@ -199,7 +199,7 @@ int main(int argc, char *argv[])
 **   See how many data elements there
 **   are and make room for their DD's
 */
-    num_desc = Hnumber(infile, DFTAG_WILDCARD);
+    num_desc = (int)Hnumber(infile, DFTAG_WILDCARD);
     if (num_desc == FAIL)
 	hdferror();
 

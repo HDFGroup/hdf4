@@ -66,6 +66,7 @@ static char RcsId[] = "@(#)$Revision$";
  *****************************************************************************/
 /* ------ he.c ------- main() main HDF interfacing routines */
 #include "he.h"
+#include <process.h>
 
 /* the return status of last command executed */
 int he_status = HE_OK;
@@ -252,7 +253,7 @@ int writeToFile(char *file, char *data, int32 length)
     fd = fopen(file, "w");
     if (fd == NULL) return FAIL;
 
-    written = fwrite(data, sizeof(char), length, fd);
+    written = fwrite(data, sizeof(char), (size_t)length, fd);
     if (written != length)
     {
 	fprintf(stderr,"Error in write.\n");
@@ -326,13 +327,13 @@ int updateDesc(void)
   int32 groupID;
   int32 aid, status;
   register int i, j;
-  
-  if(!(fid = Hopen(he_file, DFACC_READ, 0))) {
+
+  if((fid = Hopen(he_file, DFACC_READ, 0))==0) {
     printf("failed opening\n");
     HEprint(stdout, 0);
     return FAIL;
-  }    
-  
+  }
+
   aid = Hstartread(fid, DFTAG_WILDCARD, DFREF_WILDCARD);
   if(aid == FAIL) {
     HEprint(stderr, 0);
@@ -352,7 +353,7 @@ int updateDesc(void)
   for (i = 0; i < he_numDesc; i++) {
     if (isGrp(he_desc[i].tag)) {
       he_grp[he_numGrp].desc = i;
-      he_grp[he_numGrp].size = he_desc[i].length / sizeof(tag_ref);
+      he_grp[he_numGrp].size = (int)(he_desc[i].length / sizeof(tag_ref));
       he_grp[he_numGrp].ddList = (tag_ref_ptr) HDgetspace(he_desc[i].length);
       
       if (!he_grp[he_numGrp].ddList) {
@@ -426,14 +427,14 @@ int getR8(int xdim, int ydim, char *image, char *pal, int compress)
     FILE *fp;
     int32 length;
     char *buf;
-    int ret;
+    int32 ret;
 
     if (!fileOpen())
     {
 	noFile();
 	return FAIL;
     }
-    if (pal) 
+    if (pal)
 	if (setPal(pal) < 0)
 	    /* Error already signalled by setPal */
 	    return FAIL;
@@ -453,7 +454,7 @@ int getR8(int xdim, int ydim, char *image, char *pal, int compress)
     }
     fclose(fp);
 
-    if ((ret = DFR8addimage(he_file, buf, xdim, ydim, compress)) < 0)
+    if ((ret = DFR8addimage(he_file, buf, (int32)xdim, (int32)ydim, (uint16)compress)) < 0)
     {
 	HEprint(stderr, 0);
 	return FAIL;
@@ -669,7 +670,7 @@ int writeElt(char *file, uint16 ref, int elt)
 
 int putElement(char *file, uint16 tag, uint16 ref, char *data, int32 len)
 {
-    int ret;
+    int32 ret;
     int32 fid;
 
     if ((fid = Hopen(file, DFACC_READ | DFACC_WRITE, 0)) == (uint32)NULL)
@@ -682,7 +683,7 @@ int putElement(char *file, uint16 tag, uint16 ref, char *data, int32 len)
     if ((ret = Hputelement(fid, tag, ref, (unsigned char *) data, len)) < 0)
     {
 	HEprint(stderr, 0);
-	return ret;
+	return (int)ret;
     }
     return Hclose(fid);
 }
@@ -902,7 +903,7 @@ struct {
 
 int findOpt(char *word)
 {
-    int len;
+    unsigned len;
     int found = -1;
     register int i;
 
@@ -983,6 +984,9 @@ int quit(int status)
 
 int HEhelp(HE_CMD *dummy)
 {
+    /* shut compiler up */
+    dummy=dummy;
+
     help();
     return HE_OK;
 }
@@ -1021,8 +1025,7 @@ void help(void)
 
 }
 
-int HEwait(cmd)
-    HE_CMD *cmd;
+int HEwait(HE_CMD *cmd)
 {
     int c;
 

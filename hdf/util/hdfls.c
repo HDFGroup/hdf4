@@ -184,8 +184,8 @@ void print_item(int32 fid, dd_t *desc_list, intn n)
                     else {
                         if(Vgettagrefs(vkey,tag_arr,ref_arr,ntagrefs)!=FAIL) {
                             for(i=0; i<ntagrefs; i++) {
-                                name=(char *)HDgettagname(tag_arr[i]);
-                                if(!name) 
+                                name=(char *)HDgettagname((uint16)tag_arr[i]);
+                                if(!name)
                                     name = "Unknown Tag";
                                 printf("\t\t%-30s: (tag=%6d) ref=%d\n",
                                        name, (int)tag_arr[i],(int)ref_arr[i]);

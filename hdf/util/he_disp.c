@@ -100,7 +100,7 @@ void goTo(int desc)
 #ifndef IBM6000  /* Skip it all */
 
 int oldcf=0;			/* old value of compression flag */
-int oldx=0,oldy=0;		/* old values of xdim and ydim */
+int32 oldx=0,oldy=0;		/* old values of xdim and ydim */
 int coldx=0,coldy=0;		/* old values of xdim and ydim for CI8s */
 int32 xdim=0,ydim=0;  		/* size of image on disk */
 int xwhere,ywhere;		/* where to put it on the screen */
@@ -121,8 +121,8 @@ int getSpace(void)
      *  Don't allocate anything if the image is the same size as before.
      */
     if (oldx != xdim || oldy != ydim) {
-	oldx = xdim; oldy = ydim; 
-	
+	oldx = xdim; oldy = ydim;
+
 	if (wheresmall)
 	    HDfreespace(wheresmall);
 	
@@ -147,17 +147,17 @@ int largeSet(void)
 	tmp;
 
     if (large) {
-	factor = SCRX/xdim;	/* how much blow-up can we do? */
+	factor = (int)(SCRX/xdim);	/* how much blow-up can we do? */
 				/* calculate expansion factor  */
-	tmp = SCRY/ydim;
+	tmp = (int)(SCRY/ydim);
 
 	/* take minimum expansion factor */
 	if (factor > tmp) factor = tmp;
     }
     
-    xsize = factor*xdim;	/* re-calculate actual pixel dimensions */
-    ysize = factor*ydim;
-    
+    xsize = (int)(factor*xdim);	/* re-calculate actual pixel dimensions */
+    ysize = (int)(factor*ydim);
+
     return(factor > 1);		/* is expansion necessary? */
 }
 
@@ -343,12 +343,12 @@ int rleIt(char *buf, char *bufto, int len)
 		
 	if (q > p + 2) {	/* three in a row */
 	    if (p > begp) {
-		*cfoll = p - begp;
+		*cfoll = (char)(p - begp);
 		cfoll = clead;
 	    }
-	    *cfoll++ = 128 | (q-p); /* len of seq */
+	    *cfoll++ = (char)(128 | (q-p)); /* len of seq */
 	    *cfoll++ = *p;	/* char of seq */
-	    len -= q-p;		/* subtract len of seq */
+	    len -= (int)(q-p);		/* subtract len of seq */
 	    p = q;
 	    clead = cfoll+1;
 	    begp = p;
@@ -357,7 +357,7 @@ int rleIt(char *buf, char *bufto, int len)
 	    *clead++ = *p++;	/* copy one char */
 	    len--;
 	    if (p > begp + 120) {
-		*cfoll = p - begp;
+		*cfoll = (char)(p - begp);
 		cfoll = clead++;
 		begp = p;
 	    }
@@ -368,10 +368,10 @@ int rleIt(char *buf, char *bufto, int len)
 *  fill in last bytecount
 */
     if (p > begp) 
-	*cfoll = (p - begp);
+	*cfoll = (char)(p - begp);
     else
 	clead--;		/* don't need count position */
-	
+
     return((int)(clead - bufto)); /* how many stored as encoded */
 }
 

@@ -200,7 +200,7 @@ char *argv[];
     intn do_jpeg=FALSE;     /* flag to indicate JPEG compression */
     intn jpeg_qual=75;      /* JPEG quality factor */
     intn do_scale=FALSE;    /* flag to indicate whether to scale images */
-    float32 img_scale=1.0;  /* scaling factor */
+    float32 img_scale=(float32)1.0;  /* scaling factor */
     int32 xdim,ydim;        /* dimensions of the image to convert */
     intn ispal;             /* whether there's a palette with the image */
     uint8 *img_buf;         /* buffer to store the image in */

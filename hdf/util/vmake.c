@@ -475,7 +475,7 @@ int32 savfld(char *ss, int p1, int p2)
 {
   int32 t=p2-p1+1;
 
-  HDstrncpy(flds[ntotal],&ss[p1],t);
+  HDstrncpy(flds[ntotal],&ss[p1],(size_t)t);
   flds[ntotal][t] = '\0';
   return (1);
 } /* savfld */
