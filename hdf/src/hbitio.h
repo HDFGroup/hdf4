@@ -34,6 +34,7 @@
 #define BITID2SLOT(i) (VALIDBITID(i) ? (uint32)(i) & 0xffff : -1)
 #define BITID2REC(i) ((VALIDBITID(i) ? &(bitfile_records[(uint32)(i)&0xffff]) \
                     : NULL))
+#define BITREC2ID(b) (b->bit_id)
 
 /* Define the number of elements in the buffered array */
 #define BITBUF_SIZE 4096
@@ -44,10 +45,13 @@
 
 typedef struct bitrec_t {
     int32 acc_id;   /* Access ID for H layer I/O routines */
+    int32 bit_id;   /* Bitfile ID for internal use */
     bool used;      /* whether this record is in use */
-    uint32 max_offset,  /* offset of the last byte written to the dataset */
+    uint32 block_offset,    /* offset of the current buffered block in the dataset */
+        max_offset,     /* offset of the last byte written to the dataset */
         byte_offset;    /* offset of the current byte in the dataset */
-    uintn count;    /* bit count to next boundary */
+    uintn count,    /* bit count to next boundary */
+        buf_read;   /* number of bytes read into buffer (necessary for random I/O) */
     uint8 mode;     /* What the operation on this file is ('r', 'w', etc..) */
     uint8 bits;     /* extra bit buffer, 0..BITNUM-1 bits */
     uint8 *bytep;   /* current position in buffer */

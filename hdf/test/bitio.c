@@ -70,7 +70,8 @@ static uint8 FAR outbuf[BUFSIZE],
     FAR inbuf[DATASIZE];
 
 static uint32 FAR outbuf2[BUFSIZE],
-    FAR inbuf2[BUFSIZE];
+    FAR inbuf2[BUFSIZE],
+    FAR totbits[BUFSIZE];
 
 static uint32 FAR maskbuf[]={
     0x00000000,
@@ -92,12 +93,14 @@ void test_bitio_write()
     int32 bitid1,bitid2;
     int32 ret;
     intn i;
+    uint32 tot_bits=0;
 
     MESSAGE(6,printf("Testing bitio write routines\n"););
     SEED((int)time(NULL));
     for (i=0; i<BUFSIZE; i++) {
-        outbuf[i]=((RAND()>>4)%32)+1;       /* number of bits to output */
+        tot_bits+=outbuf[i]=((RAND()>>4)%32)+1;   /* number of bits to output */
         outbuf2[i]=RAND() & maskbuf[outbuf[i]];     /* actual bits to output */
+	totbits[i]=tot_bits;
       } /* end for */
 
     fid=Hopen(TESTFILE_NAME,DFACC_CREATE,0);
@@ -109,6 +112,9 @@ void test_bitio_write()
 
     for(i=0; i<BUFSIZE; i++) {
         ret=Hbitwrite(bitid1,outbuf[i],(uint32)outbuf2[i]);
+#ifdef TESTING
+printf("outbuf[%d]=%u, outbuf2[%d]=%u, totbits[%d]=%u\n",i,outbuf[i],i,outbuf2[i],i,totbits[i]);
+#endif
         VERIFY(ret,outbuf[i],"Hbitwrite");
       } /* end for */
 
@@ -120,11 +126,19 @@ void test_bitio_write()
 
     for(i=0; i<BUFSIZE; i++) {
         ret=Hbitread(bitid1,outbuf[i],&inbuf2[i]);
+#ifdef TESTING
+printf("outbuf[%d]=%u, inbuf2[%d]=%u, totbits[%d]=%u\n",i,outbuf[i],i,inbuf2[i],i,totbits[i]);
+#endif
         VERIFY(ret,outbuf[i],"Hbitread");
       } /* end for */
     if(HDmemcmp(outbuf2,inbuf2,sizeof(int32)*BUFSIZE)) {
         printf("Error in writing/reading bit I/O data\n");
         HEprint(stdout,0);
+#ifdef TESTING
+for(i=0; i<BUFSIZE; i++) 
+    if(outbuf2[i]!=inbuf2[i])
+    	printf("outbuf[%d]=%u, outbuf2[%d]=%u inbuf2[%d]=%u, totbits[%d]=%u\n",i,outbuf[i],i,outbuf2[i],i,inbuf2[i],i,totbits[i]);
+#endif
         num_errs++;
       }	/* end for */
 

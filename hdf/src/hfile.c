@@ -108,6 +108,7 @@ extern funclist_t comp_funcs;
 functab_t functab[] = {
     {SPECIAL_LINKED, &linked_funcs},
     {SPECIAL_EXT, &ext_funcs},
+    {SPECIAL_COMP, &comp_funcs},
     {0, NULL}                  /* terminating record; add new record */
                                /* before this line */
 };
@@ -1307,12 +1308,18 @@ int32 Hwrite(access_id, length, data)
             (!access_rec->appendable && length+access_rec->posn > dd->length))
        HRETURN_ERROR(DFE_BADSEEK,FAIL);
 
+#ifdef TESTING
+printf("Hwrite(): access_id=%d, length=%d, data=%p\n",access_id, length, data);
+#endif
     if(access_rec->appendable && length + access_rec->posn > dd->length) {
         int32 file_off;         /* offset in the file we are at currently */
         int32 file_end;         /* length of the file */
         int32 data_len;         /* length of the data we are checking */
         int32 data_off;         /* offset of the data we are checking */
 
+#ifdef TESTING
+printf("Hwrite(): appending to a dataset posn=%d, dd->length=%d\n",access_rec->posn, dd->length);
+#endif
         /* get the offset and length of the dataset */
         data_len=access_rec->block->ddlist[access_rec->idx].length;
         data_off=access_rec->block->ddlist[access_rec->idx].offset;
@@ -1327,6 +1334,9 @@ int32 Hwrite(access_id, length, data)
           } /* end if */
         dd->length=access_rec->posn+length;   /* update the DD length */
         access_rec->flush=TRUE; /* make certain the DD gets updated on disk */
+#ifdef TESTING
+printf("Hwrite(): appending to a dataset, ok to append\n");
+#endif
       } /* end if */
 
     if (HI_SEEK(file_rec->file, access_rec->posn + dd->offset) == FAIL)
@@ -1337,6 +1347,9 @@ int32 Hwrite(access_id, length, data)
     /* update position of access in elt */
     access_rec->posn += length;
 
+#ifdef TESTING
+printf("Hwrite(): successful I/O\n");
+#endif
     return length;
 
 }   /* end Hwrite */

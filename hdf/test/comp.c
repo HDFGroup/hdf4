@@ -98,7 +98,7 @@ void test_comp()
 
     ret = Hwrite(aid1, HDstrlen("correct")+1, (uint8 *) "correct");
     if(ret != (int32)HDstrlen("correct") + 1) {
-      fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", ret);
+      fprintf(stderr, "ERROR: (%d) Hwrite returned the wrong length: %d\n", __LINE__,ret);
       errors++;
     }
 
@@ -133,7 +133,7 @@ void test_comp()
 
     ret = Hwrite(aid1, BUFSIZE/2, outbuf2);
     if(ret != BUFSIZE/2) {
-      fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", ret);
+      fprintf(stderr, "ERROR: (%d) Hwrite returned the wrong length: %d\n", __LINE__,ret);
       HEprint(stdout,0);
       errors++;
     }
@@ -145,7 +145,7 @@ void test_comp()
     ret = Hgetelement(fid, (uint16) 1000, (uint16) ref1, inbuf);
     if(ret != BUFSIZE/2) {
       HEprint(stderr,0);
-      fprintf(stderr, "ERROR: Hgetelement returned the wrong length: %d\n", ret);
+      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n",__LINE__, ret);
       errors++;
     }
 
@@ -160,7 +160,7 @@ void test_comp()
     ret = Hgetelement(fid, (uint16) 1000, (uint16) ref2, inbuf2);
     if(ret != BUFSIZE/2) {
       HEprint(stderr,0);
-      fprintf(stderr, "ERROR: Hgetelement returned the wrong length: %d\n", ret);
+      fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n", __LINE__,ret);
       errors++;
     }
 
@@ -181,7 +181,7 @@ void test_comp()
 
     ret = Hwrite(aid1, BUFSIZE, outbuf);
     if(ret != BUFSIZE) {
-      fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", ret);
+      fprintf(stderr, "ERROR: (%d) Hwrite returned the wrong length: %d\n", __LINE__,ret);
       errors++;
     }
 
@@ -212,12 +212,12 @@ void test_comp()
 
     ret = Hread(aid1, length, inbuf);
     if(ret != 23) {
-      fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", ret);
+      fprintf(stderr, "ERROR: (%d) Hread returned the wrong length: %d\n", _LINE__,ret);
       errors++;
     }
 
     if(HDstrcmp((const char *) inbuf, (const char *) "element 1000 1 correct")) {
-      fprintf(stderr, "ERROR: Hread returned the wrong data\n");
+      fprintf(stderr, "ERROR: (%d) Hread returned the wrong data\n",__LINE__);
       fprintf(stderr, "\t       Is: %s\n", inbuf);
       fprintf(stderr, "\tShould be: element 1000 1 correct\n");
       errors++;
@@ -247,7 +247,7 @@ void test_comp()
 
     ret = Hwrite(aid2, 4, (uint8 *) "ABCD");
     if(ret != 4) {
-      fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", ret);
+      fprintf(stderr, "ERROR: (%d) Hwrite returned the wrong length: %d\n", __LINE__,ret);
       errors++;
     }
 #endif
@@ -255,7 +255,7 @@ void test_comp()
     /* let's try to write to a read element for fun */
     ret = Hwrite(aid1, 4, (uint8 *) "ABCD");
     if(ret != FAIL) {
-      fprintf(stderr, "ERROR: Hwrite allowed write to read access obj\n");
+      fprintf(stderr, "ERROR: (%d) Hwrite allowed write to read access obj\n",__LINE__);
       errors++;
     }
 

@@ -373,10 +373,6 @@ VOIDP HDgetspace(uint32 qty)
     return(p);
 }   /* end HDgetspace() */
 
-#ifndef MIN
-#define MIN(a,b)    (((a)<(b)) ? (a) : (b))
-#endif
-
 /*--------------------------------------------------------------------------
  NAME
     HDregetspace -- dynamicly resize (reallocate) memory

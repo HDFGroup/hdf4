@@ -138,6 +138,7 @@ void test_tbbt()
 	        tbbtrem((TBBT_NODE **)tree,(TBBT_NODE *)r,NULL);
                 MESSAGE(9,tbbtdump(tree,-1););
     	      } /* end for */
+	    tbbtdfree(tree,NULL,NULL);
 	  } /* end for */
       } /* end for */
 } /* end test_tbbt() */
