@@ -1,3 +1,5 @@
+# $Id$
+
 # You can override the following variables here
 #
 # Sections in Host makefile fragments
@@ -30,7 +32,7 @@ CFLAGS=-ansi -O
 FC = f77
 FFLAGS =
 
-# Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
+# Name of achive randomizer, usually ranlib (use 'true' if non-existant)
 RANLIB = ranlib
 
 # Name of library archiver and flags to send, default 'AR=ar', 'ARFLAGS=r'
