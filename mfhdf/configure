@@ -386,9 +386,13 @@ if test `$CPP conftest.c 2> /dev/null | wc -l` = 0; then
   else
     echo 1>&2 "$0: C preprocessor, \`$CPP', doesn't work; setting to \`cpp'"
     CPP=cpp
-    if test `$(WHICH) ${CPP} 2>&1 | wc -w` != 1; then
-      echo 1>&2 "$0: C preprocessor, \`$CPP', doesn't exist"
-      echo "CPP:C preprocessor:/lib/cpp" >> conf.missing
+    if test `${WHICH} ${CPP} 2>&1 | wc -w` != 1; then
+      echo 1>&2 "$0: C preprocessor, \`$CPP', doesn't work; setting to \`cpp'"
+      CPP=/usr/ccs/lib/cpp
+      if test `${WHICH} ${CPP} 2>&1 | wc -w` != 1; then
+        echo 1>&2 "$0: C preprocessor, \`$CPP', doesn't exist"
+        echo "CPP:C preprocessor:/lib/cpp" >> conf.missing
+      fi
     fi
   fi
 fi
