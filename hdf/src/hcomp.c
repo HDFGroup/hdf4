@@ -212,6 +212,9 @@ PRIVATE int32 HCIinit_model(comp_model_info_t *minfo,comp_model_t model_type,
 {
     CONSTR(FUNC,"HCIinit_model");  /* for HERROR */
 
+    /* shut compiler up */
+    m_info=m_info;
+
     switch(model_type) {    /* determine the type of modeling */
         case COMP_MODEL_STDIO:        /* standard C stdio modeling */
             minfo->model_type=COMP_MODEL_STDIO;    /* set model type */
@@ -368,6 +371,8 @@ PRIVATE int32 HCIread_header(filerec_t *file_rec,accrec_t *access_rec,
     uint16 mtype,ctype;         /* temporary variables for model and coder type */
     uint8 *p;       /* pointer to the temporary buffer */
 
+    /* shut compiler up */
+    m_info=m_info; access_rec=access_rec;
 
     /* Check if temproray buffer has been allocated */
     if (ptbuf == NULL) {
@@ -1132,7 +1137,7 @@ int32 HCPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
     HCPendaccess -- Close the compressed data element and free the AID
 
  USAGE
-    int32 HCPendaccess(access_rec)
+    intn HCPendaccess(access_rec)
         accrec_t *access_rec;   IN: the access record of the data element
 
  RETURNS
@@ -1146,7 +1151,7 @@ int32 HCPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-int32 HCPendaccess(accrec_t *access_rec)
+intn HCPendaccess(accrec_t *access_rec)
 {
     CONSTR(FUNC,"HCPendaccess");      /* for HERROR */
     filerec_t *file_rec=FID2REC(access_rec->file_id);   /* file record */

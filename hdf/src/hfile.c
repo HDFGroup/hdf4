@@ -44,7 +44,6 @@ static char RcsId[] = "@(#)$Revision$";
        Hishdf      -- tells if a file is an HDF file
        Hsync       -- sync file with memory
        Hnumber     -- count number of occurrances of tag/ref in file
-       Hnobj       -- determine number of objects in a file
        Hgetlibversion  -- return version info on current HDF library
        Hgetfileversion -- return version info on HDF file
        Hfind       -- locate the next object of a search in an HDF file
@@ -1968,6 +1967,8 @@ intn Hsync(int32 file_id)
             return FAIL;
           } /* end if */
       } /* end if */
+#else
+    file_id=file_id;        /* shut compiler up */
 #endif
     return SUCCEED;
 } /* Hsync */
@@ -2061,7 +2062,7 @@ printf("new access_type is %d\n", accesstype);
 #endif
     /* if special elt, call special function */
     if (access_rec->special)
-    	return(HXsetaccesstype(access_rec, accesstype));
+    	return(HXPsetaccesstype(access_rec, accesstype));
 }   /* Hsetacceesstype() */
 
 /*==========================================================================
@@ -2388,43 +2389,10 @@ int32 Hnumber(int32 file_id, uint16 tag)
     if (!file_rec || file_rec->refcount == 0)
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
-	if(HIcount_dd(file_rec,tag,DFREF_WILDCARD,&all_cnt,&real_cnt)==FAIL)
+    if(HIcount_dd(file_rec,tag,DFREF_WILDCARD,&all_cnt,&real_cnt)==FAIL)
        HRETURN_ERROR(DFE_INTERNAL,FAIL);
     return (int32)real_cnt;
 } /* Hnumber */
-
-
-/*--------------------------------------------------------------------------
- NAME
-       Hnobj -- determine number of objects in a file
- USAGE
-	intn Hnobj(fid)
-       	int32 fid;               IN: file ID
- RETURNS
-       the number of objects in the file off any type except DFTAG_NULL
-	   & DFTAG_FREE else FAIL
- DESCRIPTION
-       Determine how many objects of all tag/refs are in the file.
-
-       Note, a return value of zero is not a fail condition.
-
---------------------------------------------------------------------------*/
-intn Hnobj(int32 file_id)
-{
-    CONSTR(FUNC,"Hnumber");
-    uintn all_cnt;
-    uintn real_cnt;
-    filerec_t *file_rec = FID2REC(file_id);
-
-    HEclear();
-    if (!file_rec || file_rec->refcount == 0)
-       HRETURN_ERROR(DFE_ARGS,FAIL);
-
-	if(HIcount_dd(file_rec,DFTAG_WILDCARD,DFREF_WILDCARD,&all_cnt,&real_cnt)==FAIL)
-       HRETURN_ERROR(DFE_INTERNAL,FAIL);
-		
-    return((intn)real_cnt);
-} /* Hnobj */
 
 
 /* ------------------------- SPECIAL TAG ROUTINES ------------------------- */
@@ -3199,7 +3167,7 @@ PRIVATE int HIupdate_version(int32 file_id)
             p[i] = (uint8) 0;
     }
 
-    ret = Hputelement(file_id, (uint16)DFTAG_VERSION, (uint16)1, lversion,
+    ret = (int)Hputelement(file_id, (uint16)DFTAG_VERSION, (uint16)1, lversion,
 		      (int32)LIBVER_LEN);
 
     if (ret == SUCCEED) {
@@ -3332,6 +3300,9 @@ intn HPfreediskblock(filerec_t *file_rec, int32 block_off, int32 block_size)
 {
     CONSTR(FUNC,"HPfreediskblock");
 
+    /* shut compiler up */
+    file_rec=file_rec; block_off=block_off; block_size=block_size;
+
     return(SUCCEED);
 }   /* HPfreediskblock() */
 
@@ -3356,7 +3327,6 @@ intn HPfreediskblock(filerec_t *file_rec, int32 block_off, int32 block_size)
 int32 HDget_special_info(int32 access_id, sp_info_block_t * info_block)
 {
     char *FUNC="HDget_special_info";  /* for HERROR */
-    filerec_t *file_rec;              /* file record */
     accrec_t *access_rec;             /* access record */
 
     /* clear error stack and check validity of access id */
@@ -3400,7 +3370,6 @@ int32 HDget_special_info(int32 access_id, sp_info_block_t * info_block)
 int32 HDset_special_info(int32 access_id, sp_info_block_t * info_block)
 {
     char *FUNC="HDset_special_info";  /* for HERROR */
-    filerec_t *file_rec;              /* file record */
     accrec_t *access_rec;             /* access record */
 
     /* clear error stack and check validity of access id */
@@ -3414,7 +3383,7 @@ int32 HDset_special_info(int32 access_id, sp_info_block_t * info_block)
     /* special elt, so call special function */
     if (access_rec->special)
         return (*access_rec->special_func->reset)(access_rec, info_block);
-    
+
     /* else is not special so fail */
     return FAIL;
 

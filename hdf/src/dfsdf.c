@@ -1232,6 +1232,9 @@ ndsisdas(_fcd flabel, _fcd funit, _fcd fformat, _fcd fcoordsys, intf *isfortran,
     char *coordsys =  HDf2cstring(fcoordsys, (intn)*lcoordsys);
     intf status;
 
+    /* shut compiler up */
+    isfortran=isfortran;
+
     status = DFSDIsetdatastrs(label, unit, format, coordsys);
 
     HDfreespace(label);

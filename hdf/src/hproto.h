@@ -101,9 +101,6 @@ extern int Hsync
 extern int32 Hnumber
     (int32 file_id, uint16 tag);
 
-extern intn Hnobj
-    (int32 file_id);
-
 extern intn Hgetlibversion
     (uint32 _HUGE *majorv, uint32 _HUGE *minorv,
            uint32 _HUGE *releasev, char _HUGE *string);
@@ -196,7 +193,7 @@ extern VOIDP HDfreespace
 
 #if defined PC & !defined PC386
 extern VOIDP fmemcpy_big
-  (VOIDP dest, VOIDP source, uint32 len);
+  (VOIDP dest, const VOIDP source, uint32 len);
 
 extern VOIDP fmemset_big
   (VOIDP dest, intn c, uint32 len);

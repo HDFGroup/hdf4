@@ -207,7 +207,7 @@ void vpackvs (VDATA *vs, uint8 buf[], int32 *size)
 Convert an old type (i.e. LOCAL_INT to DFNT_ based types
 */
 PRIVATE
-intn map_from_old_types(intn type)
+int16 map_from_old_types(intn type)
 {
     switch(type) {
         case LOCAL_CHARTYPE:
@@ -230,7 +230,7 @@ intn map_from_old_types(intn type)
             return DFNT_FLOAT32;
 
         default:
-            return type;
+            return (int16)type;
     }
 } /* map_from_old_types */
 

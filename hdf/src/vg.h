@@ -49,12 +49,12 @@ typedef VDATA VSUBGROUP;
 * -----------------------------------------------------------------
 */
 
-typedef struct symdef_struct 
+typedef struct symdef_struct
 {
   char* name;			/* symbol name */
-  intn	type;			/* whether int, char, float etc */
-  intn	isize;			/* field size as stored in vdata */
-  intn	order;			/* order of field */
+  int16 type;			/* whether int, char, float etc */
+  int16 isize;			/* field size as stored in vdata */
+  int16 order;			/* order of field */
 } SYMDEF;
 
 typedef struct vdata_memory_struct
@@ -69,7 +69,7 @@ typedef struct write_struct
   intn  n;                  /* S actual # fields in element */
   int16 ivsize;             /* S size of element as stored in vdata */
   char 	name[VSFIELDMAX][FIELDNAMELENMAX+1]; /* S name of each field */
-  
+
   int16	len[VSFIELDMAX];     /* S length of each fieldname */
   int16 type[VSFIELDMAX];    /* S field type */
   int16	off[VSFIELDMAX];     /* S field offset in element in vdata */
@@ -115,7 +115,7 @@ struct vgroup_desc
 
 #define USYMMAX 36			/* max user-defined symbols allowed */
 
-struct vdata_desc { 
+struct vdata_desc {
   uint16	otag, oref; 		/* tag,ref of this vdata */
   HFILEID   f;                  /* HDF file id */
   intn      access;             /* 'r' or 'w' */
@@ -129,16 +129,16 @@ struct vdata_desc {
   SYMDEF 	usym[USYMMAX];
   intn 	        marked;			/* =1 if new info has been added to vdata */
   intn          islinked; 		/* =1 if vdata is a linked-block in file */
-  
+
   uint16	extag, exref;		/* expansion tag-ref */
-  int16		version, more;		/* version and "more" field */	
-  
+  int16		version, more;		/* version and "more" field */
+
   VMBLOCK * vm;
   int32 	aid;  /* access id - for LINKED blocks */
   struct vs_instance_struct *instance; /* ptr to the intance struct for this VData */
-}; /* VDATA */ 
+}; /* VDATA */
 
-/* 
+/*
   with the definition of Vobject handles these macros have been replaced
   with functions of the *SAME* name
 */

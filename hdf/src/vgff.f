@@ -334,8 +334,8 @@ c     ------------------------------------------------------------
 c     sets the file interlace of a vdata
 c     related: VSsetinterlace--vssintc--vsfsint
 
-      integer 	function vsfsint (vs, interface)
-      integer 		vs, interlace                         
+      integer 	function vsfsint (vs, interlace)
+      integer 		vs, interlace
       integer		vssintc
 
       vsfsint = vssintc (vs, interlace)

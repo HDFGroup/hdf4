@@ -754,9 +754,9 @@ intn DFR8nimages(const char *filename)
     int32 file_id;
     int32 group_id;         /* group ID for looking at RIG's */
     uint16 elt_tag,elt_ref; /* tag/ref of items in a RIG */
-    intn curr_image,        /* current image gathering information about */
-        nimages,            /* total number of potential images */
-        nrig,nri8,nci8;     /* number of RIGs, RI8s, and CI8s */
+    intn curr_image;        /* current image gathering information about */
+    intn nimages;           /* total number of potential images */
+    int32 nrig,nri8,nci8;   /* number of RIGs, RI8s, and CI8s */
     int32 *img_off;         /* storage for an array of image offsets */
     uint16 rig_tag,rig_ref; /* storage for tag/ref pairs of RIGs */
     intn found_8bit;        /* indicates whether a RIG is an 8-bit RIG */
@@ -784,7 +784,7 @@ intn DFR8nimages(const char *filename)
     nci8=Hnumber(file_id, DFTAG_CI8);
     if(nci8==FAIL)
        HRETURN_ERROR(DFE_INTERNAL,FAIL);
-    nimages=nrig+nri8+nci8;
+    nimages=(intn)(nrig+nri8+nci8);
 
     /* if there are no images just close the file and get out */
     if(nimages == 0) {
@@ -927,6 +927,9 @@ intn DFR8readref(const char *filename, uint16 ref)
 intn DFR8writeref(const char *filename, uint16 ref)
 {
     HEclear();
+
+    /* shut compiler up */
+    filename=filename;
 
     Writeref = ref;
     return(SUCCEED);

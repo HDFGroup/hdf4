@@ -431,7 +431,7 @@ gen_huff_coding (compress_info_ptr cinfo, HUFF_TBL *htbl, long freq[])
       codesize[c1]++;
     }
     
-    others[c1] = c2;		/* chain c2 onto c1's tree branch */
+    others[c1] = (short)c2;		/* chain c2 onto c1's tree branch */
     
     /* Increment the codesize of everything in c2's tree branch */
     codesize[c2]++;

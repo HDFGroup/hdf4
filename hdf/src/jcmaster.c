@@ -64,9 +64,9 @@ initial_setup (compress_info_ptr cinfo)
     if (compptr->h_samp_factor<=0 || compptr->h_samp_factor>MAX_SAMP_FACTOR ||
 	compptr->v_samp_factor<=0 || compptr->v_samp_factor>MAX_SAMP_FACTOR)
       ERREXIT(cinfo->emethods, "Bogus sampling factors");
-    cinfo->max_h_samp_factor = MAX(cinfo->max_h_samp_factor,
+    cinfo->max_h_samp_factor = (short)MAX(cinfo->max_h_samp_factor,
 				   compptr->h_samp_factor);
-    cinfo->max_v_samp_factor = MAX(cinfo->max_v_samp_factor,
+    cinfo->max_v_samp_factor = (short)MAX(cinfo->max_v_samp_factor,
 				   compptr->v_samp_factor);
 
   }

@@ -37,9 +37,9 @@ static char RcsId[] = "@(#)$Revision$";
 #define MAX_GROUPS 8
 
 typedef struct DIlist_struct {
-    uint8    *DIlist;
-    int32    num;
-    int32    current;
+    uint8   *DIlist;
+    intn    num;
+    intn    current;
 } DIlist, *DIlist_ptr;
 
 static DIlist_ptr *Group_list = NULL;
@@ -127,7 +127,7 @@ int32 DFdiread(int32 file_id, uint16 tag, uint16 ref)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
     }
 
-    new_list->num = length / 4;
+    new_list->num = (intn)(length / 4);
     new_list->current = 0;           /* no DIs returned so far */
 
     /* read in group */

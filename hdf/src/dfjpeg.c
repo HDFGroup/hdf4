@@ -56,7 +56,7 @@ PRIVATE intn img_scheme = 0;/* What type of image comp. are we doing? 24 or 8 bi
 #ifdef OLD_WAY
 #define emit_byte(cinfo,x)  putc((x), cinfo->output_file)
 #else
-#define emit_byte(aid,x)    do {uint8 c=(uint8)x; Hwrite((int32)aid,(int32)1,&c); \
+#define emit_byte(aid,x)    do {uint8 c=(uint8)(x); Hwrite((int32)aid,(int32)1,&c); \
     byte_count++;} while(0)
 #endif
 
@@ -366,7 +366,7 @@ GLOBAL VOID write_file_header (compress_info_ptr cinfo)
 
     /* Get an AID to write the JPEG header into.  1024 bytes should be more */
     /*  than enough (it should fit into 575) */
-    aid=Hstartwrite(img_file_id,img_scheme,img_ref,1024);
+    aid=Hstartwrite(img_file_id,img_scheme,img_ref,(int32)1024);
 
     emit_marker(aid, M_SOI);    /* first the SOI */       /* 2 */
 
@@ -484,6 +484,8 @@ GLOBAL VOID write_jpeg_data (compress_info_ptr cinfo, char *dataptr, int datacou
 GLOBAL VOID write_scan_trailer (compress_info_ptr cinfo)
 {
   /* no work needed in this format */
+  /* shut compiler up */
+  cinfo=cinfo;
 }   /* end write_scan_trailer */
 
 
@@ -493,6 +495,9 @@ GLOBAL VOID write_scan_trailer (compress_info_ptr cinfo)
 
 GLOBAL VOID write_file_trailer (compress_info_ptr cinfo)
 {
+    /* shut compiler up */
+    cinfo=cinfo;
+
     emit_marker(jdata_aid, M_EOI);
 
     Hendaccess(jdata_aid);      /* Stop using the AID for the JPEG data */
@@ -627,6 +632,8 @@ GLOBAL VOID get_input_row (compress_info_ptr cinfo, JSAMPARRAY pixel_row)
  *---------------------------------------------------------------------------*/
 GLOBAL VOID input_term (compress_info_ptr cinfo)
 {
+    /* shut compiler up */
+    cinfo=cinfo;
 }   /* end input_term() */
 
 /*-----------------------------------------------------------------------------

@@ -1218,7 +1218,7 @@ int32 HLPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
  NAME
 	HLPendacess -- close a linked block AID
  USAGE
-	int32 HLPendaccess(access_rec)
+	intn HLPendaccess(access_rec)
         access_t * access_rec;      IN:  access record to close
  RETURNS
         SUCCEED / FAIL
@@ -1229,7 +1229,7 @@ int32 HLPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
         out.
 
 --------------------------------------------------------------------------- */
-int32 HLPendaccess(accrec_t *access_rec)
+intn HLPendaccess(accrec_t *access_rec)
 {
     CONSTR(FUNC,"HLPendaccess"); /* for HERROR */
     linkinfo_t *info =         /* special information record */

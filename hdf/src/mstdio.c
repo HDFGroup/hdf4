@@ -300,7 +300,7 @@ int32 HCPmstdio_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
     HCPmstdio_endaccess -- Close the compressed data element
 
  USAGE
-    int32 HCPendaccess(access_rec)
+    intn HCPendaccess(access_rec)
     accrec_t *access_rec;   IN: the access record of the data element
 
  RETURNS
@@ -314,11 +314,11 @@ int32 HCPmstdio_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-int32 HCPmstdio_endaccess(accrec_t *access_rec)
+intn HCPmstdio_endaccess(accrec_t *access_rec)
 {
     CONSTR(FUNC,"HCPmstdio_endaccess");
     compinfo_t *info;       /* information on the special element */
-    int32 ret;
+    intn ret;
 
     info=(compinfo_t *)access_rec->special_info;
     if((ret=(*(info->cinfo.coder_funcs.endaccess))(access_rec))==FAIL)

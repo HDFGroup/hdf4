@@ -58,7 +58,7 @@ PRIVATE int16 hdf_sizetab[] =
 	    SIZE_FLOAT64  /* double */
 };
 
-PRIVATE SYMDEF rstab[] = 
+PRIVATE SYMDEF rstab[] =
 {
 	    "PX", DFNT_FLOAT32,	 SIZE_FLOAT32, 1,
 	    "PY", DFNT_FLOAT32,	 SIZE_FLOAT32, 1,
@@ -121,7 +121,7 @@ PUBLIC intn VSsetfields (int32 vkey, const char *fields)
     char          **av;
     int32         ac, found;
     register intn j, i;
-    intn          order;
+    int16         order;
     int32         value;
     VREADLIST     * rlist;
     VWRITELIST    * wlist;
@@ -152,7 +152,7 @@ PUBLIC intn VSsetfields (int32 vkey, const char *fields)
         wlist->ivsize = 0;
         wlist->n      = 0;
         for(i = 0; i < ac; i++) {
-            
+
             found = FALSE;
             /* --- first look in the user's symbol table --- */
             for(j = 0; j < vs->nusym; j++)
@@ -163,7 +163,7 @@ PUBLIC intn VSsetfields (int32 vkey, const char *fields)
                     order = vs->usym[j].order;
                     wlist->type[wlist->n]  = vs->usym[j].type;
                     wlist->order[wlist->n] = order;
-                    
+
                     value = order * DFKNTsize(vs->usym[j].type | DFNT_NATIVE);
                     if(value > TOO_BIG) HRETURN_ERROR(DFE_BADFIELDS,FAIL);
                     wlist->esize[wlist->n] = (int16) value;
@@ -191,7 +191,7 @@ PUBLIC intn VSsetfields (int32 vkey, const char *fields)
                         wlist->type[wlist->n]  =  rstab[j].type;
                         wlist->order[wlist->n] =  order;
                         wlist->esize[wlist->n] =  (int16) (order * DFKNTsize((int32)rstab[j].type | DFNT_NATIVE));
-                        wlist->isize[wlist->n] =  order * rstab[j].isize;
+                        wlist->isize[wlist->n] =  (int16) (order * rstab[j].isize);
                         wlist->ivsize+= (int16)(wlist->isize[wlist->n]);
                         wlist->n++;
                         break;
@@ -303,7 +303,7 @@ PUBLIC intn VSfdefine (int32 vkey, const char *field, int32 localtype, int32 ord
     else
         usymid = vs->nusym;
   
-    if ((vs->usym[usymid].isize = DFKNTsize( (int32) localtype)) == FAIL)
+    if ((vs->usym[usymid].isize = (int16)DFKNTsize( (int32) localtype)) == FAIL)
         HRETURN_ERROR(DFE_BADTYPE,FAIL);
   
     if( (ss = (char*) HDgetspace (HDstrlen(av[0]) + 1))==NULL)

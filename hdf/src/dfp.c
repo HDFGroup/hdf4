@@ -225,8 +225,8 @@ intn DFPnpals(const char *filename)
     CONSTR(FUNC,"DFPnpals");
     int32 file_id;
     intn curr_pal;          /* current palette count */
-    intn nip8, nlut,        /* number of IP8s & number of LUTs */
-        npals;              /* total number of palettes */
+    int32 nip8, nlut;       /* number of IP8s & number of LUTs */
+    intn npals;             /* total number of palettes */
     uint16 find_tag,find_ref;   /* storage for tag/ref pairs found */
     int32 find_off,find_len;    /* storage for offset/lengths of tag/refs found */
     int32 *pal_off;         /* storage for an array of palette offsets */
@@ -244,8 +244,8 @@ intn DFPnpals(const char *filename)
     /* count number of LUTs */
     if ((nlut = Hnumber(file_id, DFTAG_LUT))== FAIL)
         return(HDerr(file_id));
-    npals = nip8 + nlut;
-    
+    npals = (intn)(nip8 + nlut);
+
     /* if no palettes just return zero and get out */
     if(npals == 0) {
         if (Hclose(file_id) == FAIL)
@@ -349,6 +349,9 @@ intn DFPreadref(const char *filename, uint16 ref)
 --------------------------------------------------------------------------*/
 intn DFPwriteref(const char *filename, uint16 ref)
 {
+    /* shut compiler up */
+    filename=filename;
+
     Writeref = ref;
     return(SUCCEED);
 }   /* end DFPwriteref() */

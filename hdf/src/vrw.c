@@ -115,7 +115,7 @@ PUBLIC int32 VSread (int32 vkey,uint8 buf[], int32 nelt, int32 interlace)
 
     if (!VALIDVSID(vkey))
         HRETURN_ERROR(DFE_ARGS, FAIL);
-  
+
     /* locate vs's index in vstab */
     if(NULL==(wi=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey))))
         HRETURN_ERROR(DFE_NOVS, FAIL);
@@ -138,8 +138,8 @@ PUBLIC int32 VSread (int32 vkey,uint8 buf[], int32 nelt, int32 interlace)
     hsize = vs->wlist.ivsize; 		/* size as stored in HDF */
 
     /* alloc space (Vtbuf) for reading in the raw data from vdata */
-    if(Vtbufsize < nelt * hsize) {
-        Vtbufsize = nelt * hsize;
+    if(Vtbufsize < nelt * (uint32)hsize) {
+        Vtbufsize = nelt * (uint32)hsize;
         if(Vtbuf)
             HDfreespace((VOIDP)Vtbuf);
         if((Vtbuf = (uint8 *) HDgetspace ( Vtbufsize )) == NULL)
@@ -430,7 +430,7 @@ PUBLIC int32 VSwrite (int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
          * make sure our buffer is big enough
          */
 
-        if(total_bytes < Vtbufsize) {
+        if((uint32)total_bytes < Vtbufsize) {
             chunk = nelt;
         } else {
             int32 buf_size;
@@ -507,7 +507,7 @@ printf("Case E/C: [%d,%d] writing %d (elems) %d bytes\n", done, nelt, chunk, byt
          */
 
         /* alloc space (Vtbuf) for writing out the data */
-        if(Vtbufsize < total_bytes) {
+        if(Vtbufsize < (uint32)total_bytes) {
             Vtbufsize = total_bytes;
             if(Vtbuf)
                 HDfreespace((VOIDP)Vtbuf);

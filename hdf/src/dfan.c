@@ -990,8 +990,8 @@ intn DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
        Revised 04/17/90.  (See DESCRIPTION.)
  *------------------------------------------------------------------------*/
 
-int DFANIlablist(const char *filename, uint16 tag, uint16 reflist[], 
-		 uint8 *labellist, int listsize, int maxlen, int startpos, 
+intn DFANIlablist(const char *filename, uint16 tag, uint16 reflist[],
+		 uint8 *labellist, int listsize, int maxlen, int startpos,
 		 int isfortran)
 {
     CONSTR(FUNC,"DFANIlablist");
@@ -1001,12 +1001,12 @@ int DFANIlablist(const char *filename, uint16 tag, uint16 reflist[],
     uint16 ref;
     DFANdirhead *p;
     uint8 *lp;                    /* pointer to label */
-    int nrefs,nlabs;
+    intn nrefs,nlabs;
     uint8 labeldi[4];             /* to read in and discard data/ref */
-    
+
     HEclear();
 
-    if (!reflist || !labellist)  { 
+    if (!reflist || !labellist)  {
         HERROR(DFE_BADPTR); return FAIL; }
     if (!tag) { 
         HERROR(DFE_BADTAG); return FAIL; }
@@ -1021,7 +1021,7 @@ int DFANIlablist(const char *filename, uint16 tag, uint16 reflist[],
         HDmemset(labellist, '\0', (uint32)maxlen * (uint32)listsize);
 
     /* find all refs for this tag; store them in reflist */
-    nrefs = Hnumber(file_id, tag);         /* how many times is tag in file? */
+    nrefs = (intn)Hnumber(file_id, tag);         /* how many times is tag in file? */
     if (nrefs == FAIL) {
         Hclose(file_id); return FAIL;
     }
@@ -1044,7 +1044,7 @@ int DFANIlablist(const char *filename, uint16 tag, uint16 reflist[],
 
         /* get directory of all labels */
 
-    nlabs = Hnumber(file_id, DFTAG_DIL);
+    nlabs = (intn)Hnumber(file_id, DFTAG_DIL);
     if (nlabs != 0)  {
        if (DFANdir[DFAN_LABEL]==NULL) {          /* if no dir info create dir */
           if (0== DFANIlocate(file_id, DFAN_LABEL, 0, 0)){
@@ -1084,7 +1084,7 @@ int DFANIlablist(const char *filename, uint16 tag, uint16 reflist[],
                         /* pad with blanks for Fortran; add null for C */
                     if (isfortran) 
                         while (len++ < maxlen) lp[len] = ' ';
-                    else 
+                    else
                         lp[len] = '\0';
                 }
                 Hendaccess(aid);
@@ -1093,7 +1093,7 @@ int DFANIlablist(const char *filename, uint16 tag, uint16 reflist[],
        } /* for each ann dir  */
     }   /* nlabs != 0  */
     if (FAIL == Hclose(file_id))       /* close file */
-        return FAIL; 
+        return FAIL;
     return(nrefs);
 }
 

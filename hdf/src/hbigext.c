@@ -665,7 +665,7 @@ int32 HBPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
  NAME
 	HBPendacess -- close file, free AID
  USAGE
-	int32 HBPendaccess(access_rec)
+    intn HBPendaccess(access_rec)
         access_t * access_rec;      IN:  access record to close
  RETURNS
         SUCCEED / FAIL
@@ -673,7 +673,7 @@ int32 HBPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
         Close the file pointed to by the current AID and free the AID
 
 --------------------------------------------------------------------------- */
-int32 HBPendaccess(accrec_t *access_rec)
+intn HBPendaccess(accrec_t *access_rec)
 {
     CONSTR(FUNC,"HBPendaccess"); /* for HERROR */
     filerec_t *file_rec =      /* file record */

@@ -304,7 +304,7 @@ LOCAL VOID get_app0 (decompress_info_ptr cinfo)
                     b[5], b[6]);
       /* Save info */
             cinfo->density_unit = b[7];
-            cinfo->X_density = ((uint16)b[8] << 8) + b[9];
+            cinfo->X_density = (uint16)(((uint16)b[8] << 8) + b[9]);
             cinfo->Y_density = ((uint16)b[10] << 8) + b[11];
       /* Assume colorspace is YCbCr, unless UI has overridden me */
             if (cinfo->jpeg_color_space == CS_UNKNOWN)

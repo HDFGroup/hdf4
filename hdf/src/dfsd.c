@@ -3868,6 +3868,9 @@ intn DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
     uint8 *buf;          /* buffer containing converted current row */
     CONSTR(FUNC,"DFSDIputslice");
 
+    /* shut compiler up */
+    isfortran=isfortran;
+
     HEclear();
 
     if (!data) 
@@ -4325,6 +4328,9 @@ DFSDgetfillvalue(VOIDP fill_value)
 intn DFSDreadslab(const char *filename, int32 start[], int32 slab_size[], 
                  int32 stride[], VOIDP buffer, int32 buffer_size[])
 {
+    /* shut compiler up */
+    stride=stride;
+
     return (DFSDgetslice(filename, start, slab_size, buffer, buffer_size));
 }
 
@@ -4350,7 +4356,7 @@ DFSDstartslab(const char *filename)
 {
     int32 i;
     int32 sdg_size;
-    uint32 localNTsize;
+    int32 localNTsize;
     int32 fileNTsize;
     int32 fill_bufsize = 16384; /* Chosen for the PC */
     int32 odd_size;
@@ -4525,6 +4531,9 @@ DFSDwriteslab(int32 start[], int32 stride[],
                            /*   of current block */
 
     CONSTR(FUNC,"DFSDwriteslab");
+
+    /* shut compiler up */
+    stride=stride;
 
     /* Clear error stack  */
     HEclear();

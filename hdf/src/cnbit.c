@@ -689,10 +689,10 @@ int32 HCPcnbit_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
 
 /*--------------------------------------------------------------------------
  NAME
-    HCPclre_endaccess -- Close the compressed data element
+    HCPcnbit_endaccess -- Close the compressed data element
 
  USAGE
-    int32 HCPendaccess(access_rec)
+    intn HCPnbit_endaccess(access_rec)
     accrec_t *access_rec;   IN: the access record of the data element
 
  RETURNS
@@ -706,7 +706,7 @@ int32 HCPcnbit_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-int32 HCPcnbit_endaccess(accrec_t *access_rec)
+intn HCPcnbit_endaccess(accrec_t *access_rec)
 {
     CONSTR(FUNC,"HCPcnbit_endaccess");
     compinfo_t *info;                   /* special element information */

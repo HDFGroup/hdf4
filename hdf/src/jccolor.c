@@ -279,6 +279,8 @@ METHODDEF VOID
 colorin_term (compress_info_ptr cinfo)
 {
   /* no work (we let free_all release the workspace) */
+  /* shut compiler up */
+  cinfo=cinfo;
 }
 
 

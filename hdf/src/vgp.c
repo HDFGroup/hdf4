@@ -205,6 +205,9 @@ PRIVATE VOID Remove_vfile (HFILEID f)
 */
 PUBLIC intn vcompare(VOIDP k1,VOIDP k2,intn cmparg)
 {
+    /* shut compiler up */
+    cmparg=cmparg;
+
     return((intn)((*(int32 *)k1) - (*(int32 *)k2)));  /* valid for integer keys */
 }  /* vcompare */
 

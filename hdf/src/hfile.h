@@ -317,13 +317,13 @@ typedef struct funclist_t {
     int32 (*stread)  HPROTO((accrec_t *rec));
     int32 (*stwrite) HPROTO((accrec_t *rec));
     int32 (*seek)    HPROTO((accrec_t *access_rec, int32 offset, intn origin));
-    int32 (*inquire) HPROTO((accrec_t *access_rec, int32 *pfile_id, 
-                             uint16 *ptag, uint16 *pref, int32 *plength, 
+    int32 (*inquire) HPROTO((accrec_t *access_rec, int32 *pfile_id,
+                             uint16 *ptag, uint16 *pref, int32 *plength,
                              int32 *poffset, int32 *pposn, int16 *paccess, 
                              int16 *pspecial));
     int32 (*read)    HPROTO((accrec_t *access_rec, int32 length, VOIDP data));
     int32 (*write)   HPROTO((accrec_t *access_rec, int32 length, const VOIDP data));
-    int32 (*endaccess) HPROTO((accrec_t *access_rec));
+    intn (*endaccess) HPROTO((accrec_t *access_rec));
     int32 (*info)    HPROTO((accrec_t *access_rec, sp_info_block_t * info));
     int32 (*reset)   HPROTO((accrec_t *access_rec, sp_info_block_t * info));
 } funclist_t;
@@ -380,9 +380,9 @@ typedef struct functab_t {
 #define SPECIALTAG(t) (HDis_special_tag(t))
 #define MKSPECIALTAG(t) (HDmake_special_tag(t))
 #else
-#define BASETAG(t)      ((~(t) & 0x8000) ? ((t) & ~0x4000) : (t))
-#define SPECIALTAG(t)   ((~(t) & 0x8000) && ((t) & 0x4000))
-#define MKSPECIALTAG(t) ((~(t) & 0x8000) ? ((t) | 0x4000) : DFTAG_NULL)
+#define BASETAG(t)      (uint16)((~(t) & 0x8000) ? ((t) & ~0x4000) : (t))
+#define SPECIALTAG(t)   (uint16)((~(t) & 0x8000) && ((t) & 0x4000))
+#define MKSPECIALTAG(t) (uint16)((~(t) & 0x8000) ? ((t) | 0x4000) : DFTAG_NULL)
 #endif /*SPECIAL_TABLE */
 
 
@@ -475,7 +475,7 @@ extern int32 HLPinquire
         int32 *plength, int32 *poffset,int32 *pposn, int16 *paccess,
         int16 *pspecial);
 
-extern int32 HLPendaccess
+extern intn HLPendaccess
     (accrec_t *access_rec);
 
 extern int32 HLPinfo
@@ -505,7 +505,7 @@ extern int32 HXPinquire
             int32 *plength, int32 *poffset,int32 *pposn, int16 *paccess,
             int16 *pspecial);
 
-extern int32 HXPendaccess
+extern intn HXPendaccess
     (accrec_t *access_rec);
 
 extern int32 HXPcloseAID
@@ -516,6 +516,9 @@ extern int32 HXPinfo
 
 extern int32 HXPreset
     (accrec_t *access_rec, sp_info_block_t * info_block);
+
+extern intn HXPsetaccesstype
+    (accrec_t *access_rec, uintn accesstype);
 
 
 /*
@@ -541,7 +544,7 @@ extern int32 HBPinquire
             int32 *plength, int32 *poffset,int32 *pposn, int16 *paccess,
             int16 *pspecial);
 
-extern int32 HBPendaccess
+extern intn HBPendaccess
     (accrec_t *access_rec);
 
 extern int32 HBPcloseAID
@@ -574,7 +577,7 @@ extern int32 HCPread
 extern int32 HCPwrite
     (accrec_t *access_rec, int32 length, const VOIDP data);
 
-extern int32 HCPendaccess
+extern intn HCPendaccess
     (accrec_t *access_rec);
 
 extern int32 HCPcloseAID

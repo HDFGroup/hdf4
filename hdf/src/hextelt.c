@@ -300,9 +300,9 @@ int32 HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
 /* ------------------------------------------------------------------------ 
 
  NAME
-	HXsetaccesstype -- create an external element
+	HXPsetaccesstype -- create an external element
  USAGE
-	intn HXsetaccesstype(file_id, tag, ref, ext_name, offset, len)
+	intn HXPsetaccesstype(file_id, tag, ref, ext_name, offset, len)
         int32  file_id;      IN: file ID for HDF file
         int16  tag;          IN: tag number for external elem
         int16  ref;          IN: ref number for external elem
@@ -328,13 +328,14 @@ int32 HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
         on error.
 
 --------------------------------------------------------------------------*/ 
-intn HXsetaccesstype(accrec_t *access_rec, uintn accesstype)
+intn HXPsetaccesstype(accrec_t *access_rec, uintn accesstype)
 {
-    char *FUNC="HXsetaccesstype";     /* for HERROR */
-    filerec_t *file_rec;       /* file record */
-    hdf_file_t file_external;      /* external file descriptor */
+    char *FUNC="HXPsetaccesstype";     /* for HERROR */
+    hdf_file_t file_external;   /* external file descriptor */
+#ifdef CM5
     int32 para_extfile_id;      /* parallel external file id */
-    extinfo_t *info;           /* special element information */
+#endif /* CM5 */
+    extinfo_t *info;            /* special element information */
 
     /* clear error stack and validate args */
     HEclear();
@@ -346,39 +347,39 @@ intn HXsetaccesstype(accrec_t *access_rec, uintn accesstype)
     info = (extinfo_t *) access_rec->special_info;
     if (!info) {
        access_rec->used = FALSE;
-       printf("What error to return?\n");
        HRETURN_ERROR(DFE_NOSPACE,FAIL);
     }
 
     /* Not sure what to do here */
     /* Open the external file for the correct access type */
     switch (access_rec->access_type) {
-    case DFACC_SERIAL:
-	file_external = HI_OPEN(info->extern_file_name, DFACC_WRITE);
-	if (OPENERR(file_external)) {
-	    file_external = HI_CREATE(info->extern_file_name);
-	    if(OPENERR(file_external)) {
-		access_rec->used = FALSE;
-		HRETURN_ERROR(DFE_BADOPEN,FAIL);
-	    }
-	}
-	info->file_external = file_external;
-	break;
+        case DFACC_SERIAL:
+	        file_external = HI_OPEN(info->extern_file_name, DFACC_WRITE);
+	        if (OPENERR(file_external)) {
+	            file_external = HI_CREATE(info->extern_file_name);
+	            if(OPENERR(file_external)) {
+		            access_rec->used = FALSE;
+		            HRETURN_ERROR(DFE_BADOPEN,FAIL);
+	            }
+	        }
+	        info->file_external = file_external;
+	        break;
 #ifdef CM5
-    case DFACC_PARALLEL:
-        para_extfile_id = CM_OPEN(info->extern_file_name, DFACC_WRITE);
-	if (para_extfile_id == FAIL) {
-	    para_extfile_id = CM_CREATE(info->extern_file_name);
-	    if (para_extfile_id == FAIL) {
-		access_rec->used = FALSE;
-		HRETURN_ERROR(DFE_BADOPEN,FAIL);
-	    }
-	}
-	info->para_extfile_id = para_extfile_id;
-	break;
-#endif
-    otherwise:
-	HRETURN_ERROR(DFE_BADOPEN,FAIL);
+        case DFACC_PARALLEL:
+            para_extfile_id = CM_OPEN(info->extern_file_name, DFACC_WRITE);
+	        if (para_extfile_id == FAIL) {
+	            para_extfile_id = CM_CREATE(info->extern_file_name);
+	            if (para_extfile_id == FAIL) {
+		            access_rec->used = FALSE;
+		            HRETURN_ERROR(DFE_BADOPEN,FAIL);
+	            }
+	        }
+	        info->para_extfile_id = para_extfile_id;
+	    break;
+
+#endif  /* CM5 */
+        default:
+	        HRETURN_ERROR(DFE_BADOPEN,FAIL);
     }
 
     return SUCCEED;
@@ -804,7 +805,7 @@ int32 HXPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
  NAME
 	HXPendacess -- close file, free AID
  USAGE
-	int32 HXPendaccess(access_rec)
+	intn HXPendaccess(access_rec)
         access_t * access_rec;      IN:  access record to close
  RETURNS
         SUCCEED / FAIL
@@ -812,7 +813,7 @@ int32 HXPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag,
         Close the file pointed to by the current AID and free the AID
 
 --------------------------------------------------------------------------- */
-int32 HXPendaccess(accrec_t *access_rec)
+intn HXPendaccess(accrec_t *access_rec)
 {
     CONSTR(FUNC,"HXPendaccess"); /* for HERROR */
     filerec_t *file_rec =      /* file record */

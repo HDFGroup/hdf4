@@ -54,7 +54,7 @@ extern int32 HCPcnbit_read
 extern int32 HCPcnbit_write
     (accrec_t *access_rec, int32 length, const VOIDP data);
 
-extern int32 HCPcnbit_endaccess
+extern intn HCPcnbit_endaccess
     (accrec_t *access_rec);
 
 #if defined c_plusplus || defined __cplusplus

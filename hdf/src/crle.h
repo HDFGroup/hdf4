@@ -55,7 +55,7 @@ extern int32 HCPcrle_read
 extern int32 HCPcrle_write
     (accrec_t *access_rec, int32 length, const VOIDP data);
 
-extern int32 HCPcrle_endaccess
+extern intn HCPcrle_endaccess
     (accrec_t *access_rec);
 
 #if defined c_plusplus || defined __cplusplus

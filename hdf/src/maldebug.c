@@ -194,7 +194,7 @@ size_t	size
 	mem_size+=size;
 #if defined(MEM_WHERE)
 	p->mh_file=fil;
-	p->mh_line=lin;
+	p->mh_line=(uint16)lin;
 #endif
 
 #if defined(MEM_HEADER)
@@ -331,7 +331,7 @@ size_t		size
 	mem_size+=size;
 #if defined(MEM_LIST)
 	p->mh_file=fil;
-	p->mh_line=lin;
+	p->mh_line=(uint16)lin;
 #endif
 
 #if defined(MEM_WHERE)
@@ -391,7 +391,7 @@ void		*ptr
 	MEMHDR *p;
 #if defined(MEM_HEADER) || defined(MEM_COMP_FREE)
 	unsigned char *q;
-    int i;
+    uintn i;
 #endif
     char *FUNC="HDfreespace";
 
@@ -440,7 +440,7 @@ void		*ptr
 #if defined(MEM_COMP_FREE)
 	q=(unsigned char *)ptr;
 	for(i=0; i<p->mh_size; i++)
-		q[i]=~q[i];
+		q[i]=(unsigned char)~q[i];
 #endif
 
 #if defined(MEM_LIST)
@@ -628,6 +628,9 @@ static void mem_list_delete(MEMHDR	*p)
 static void mem_tag_err(void *p,int type,char *func,char *fil,int lin)
 {
 	FILE *fp;
+
+    /* shut compiler up */
+    fp=fp;
 
 #ifdef OLD_WAY
     fprintf(stdaux,"Malloc tag error #%d, in %s : %p - %s(%d)\n",type,func,p,fil,lin);
