@@ -1,6 +1,21 @@
                README for HDF/netCDF 4.0 Distribution
                --------------------------------------
 
+There are five subdirectories in this directory:
+
+config -- contains machine dependent makefile fragments. 
+hdf    -- contains the source code for the HDF 'base library', the 
+          the multi_file annotation interface, the multi_file raster
+          image interface, HDF command line utilities (hdp, an hdf 
+          dumper is in mfhdf/), and a test suite.
+mfhdf  -- contains the netCDF/HDF part of HDF.
+man    -- man page(s) for HDF.
+release_notes -- descriptions on new features and bug fixes in this
+                 release. Files in this sub-directory can be used 
+                 as  supplement documentation for HDF4.0. These files 
+                 are also available on the NCSA ftp server, 
+                 in /HDF/Documentation/HDF4.0/4.0b1_release_notes/.
+
 It is now possible to automatically configure and build both the
 HDF library and netCDF library with one command. The following is a
 quick intro to configuring, testing and installing this distribution.
@@ -35,43 +50,25 @@ shell, you may need to run `sh' on it explicitly:
 
 To compile the library and utiltites type:
 
-        ./make 
+        make 
 
 To find out the available make targets type:
 
-        ./make help
+        make help
 
 To test the libraries type :
 
-        ./make test 
+        make test 
 
 It is a good idea to save the output of the tests and view it 
 later for errors.e.g. 
 
-        ./make test >& make.test.out
+        make test >& make.test.out
 
 To install the libraries, utilities, includes and man pages type: e.g.
 
-        ./make install
+        make install
 
 See the INSTALL file for detail instructions on configuring and 
 installation.
-
-There are five subdirectories in this directory:
-
-config -- contains machine dependent makefile fragments. 
-hdf    -- contains the source code for the HDF 'base library', the 
-          the multi_file annotation interface, the multi_file raster
-          image interface, HDF command line utilities (hdp, an hdf 
-          dumper is in mfhdf/), and a test suite.
-mfhdf  -- contains the netCDF/HDF part of HDF.
-man    -- man page(s) for HDF.
-release_notes -- descriptions on new features and bug fixes in this
-                 release. Files in this sub-directory can be used 
-                 as  supplement documentation for HDF4.0. These files 
-                 are also available on the NCSA ftp server, 
-                 in /HDF/Documentation/HDF4.0/4.0b1_release_notes/.
-
-
-
 
