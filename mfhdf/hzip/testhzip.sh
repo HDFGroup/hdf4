@@ -82,8 +82,9 @@ TOOLTEST() {
 ##############################################################################
 
 
-# 
-./hzip -v -i hziptst.hdf -o hziptst_out.hdf -t "dset4:GZIP 6" -c "dset4:2x2"
+# just run the program hziptst; this has several runs with 
+# different compression and chunking options
+./hziptst 
 
 
 
