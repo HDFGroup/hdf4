@@ -119,7 +119,7 @@ PRIVATE DFSsdg Readsdg =     /* struct for reading */
       { NULL, NULL, NULL }, NULL, {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0},
       (int32)DFNT_NONE, DFNTF_NONE, (int32)-1, (int32)0, (int32)0,
       (float64) 1.0, (float64) 0.0, (float64) 0.0, (float64) 0.0,
-      (int32) -1, 0, 0
+      (int32) -1, {0}, 0
 };
 
 PRIVATE DFSsdg Writesdg =    /* struct for writing */
@@ -127,7 +127,7 @@ PRIVATE DFSsdg Writesdg =    /* struct for writing */
       { NULL, NULL, NULL }, NULL, {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0},
       (int32)DFNT_NONE, DFNTF_NONE, (int32)-1, (int32)0, (int32)0,
       (float64) 1.0, (float64) 0.0, (float64) 0.0, (float64) 0.0,
-      (int32) -1, 0, 0
+      (int32) -1, {0}, 0
 };
 
 PRIVATE uint16  Writeref=0;	/* ref of next SDG/NDG to write to file */

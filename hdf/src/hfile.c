@@ -151,6 +151,9 @@ PRIVATE intn HIinit_file_dds
 PRIVATE intn HIflush_dds
   (filerec_t *file_rec);
 
+PRIVATE intn HIextend_file
+  (filerec_t *file_rec);
+
 PRIVATE funclist_t *HIget_function_table 
   (accrec_t *access_rec, char *FUNC);
 
@@ -401,14 +404,9 @@ intn Hclose(int32 file_id)
                     HRETURN_ERROR(DFE_CANTFLUSH,FAIL);
 
             /* extend the end of the file if necessary */
-	    if(file_rec->dirty&FILE_END_DIRTY) {
-		uint8 temp=0;
-
-		if(HI_SEEK(file_rec->file,file_rec->f_end_off)==FAIL)
-                    HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-                if(HI_WRITE(file_rec->file,&temp,1)==FAIL)
-                    HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-	      } /* end if */
+	    if(file_rec->dirty&FILE_END_DIRTY) 
+	        if(HIextend_file(file_rec)==FAIL)
+                    HRETURN_ERROR(DFE_CANTFLUSH,FAIL);
 	  } /* end if */
 
         /* otherwise, nothing should still be using this file, close it */
@@ -1986,14 +1984,9 @@ intn Hsync(int32 file_id)
                 HRETURN_ERROR(DFE_CANTFLUSH,FAIL);
 
         /* extend the end of the file if necessary */
-        if(file_rec->dirty&FILE_END_DIRTY) {
-	    uint8 temp=0;
-
-	    if(HI_SEEK(file_rec->file,file_rec->f_end_off)==FAIL)
-                HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-            if(HI_WRITE(file_rec->file,&temp,1)==FAIL)
-                HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-	  } /* end if */
+        if(file_rec->dirty&FILE_END_DIRTY) 
+            if(HIextend_file(file_rec)==FAIL)
+                HRETURN_ERROR(DFE_CANTFLUSH,FAIL);
 	file_rec->dirty=0; /* file doesn't need to be flushed now */
       } /* end if */
 
@@ -2031,14 +2024,9 @@ intn Hcache(int32 file_id,intn cache_on)
                 HRETURN_ERROR(DFE_CANTFLUSH,FAIL);
 
         /* extend the end of the file if necessary */
-        if(file_rec->dirty&FILE_END_DIRTY) {
-	    uint8 temp=0;
-
-	    if(HI_SEEK(file_rec->file,file_rec->f_end_off)==FAIL)
-                HRETURN_ERROR(DFE_SEEKERROR,FAIL);
-            if(HI_WRITE(file_rec->file,&temp,1)==FAIL)
-                HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-	  } /* end if */
+        if(file_rec->dirty&FILE_END_DIRTY) 
+            if(HIextend_file(file_rec)==FAIL)
+                HRETURN_ERROR(DFE_CANTFLUSH,FAIL);
 	file_rec->dirty=0; /* file doesn't need to be flushed now */
       } /* end if */
     file_rec->cache=(cache_on!=0 ? TRUE : FALSE);
@@ -2298,6 +2286,7 @@ PRIVATE int HIinit_file_dds(filerec_t *file_rec, int16 ndds, char *FUNC)
     return SUCCEED;
 } /* HIinit_file_dds */
 
+
 /*--------------------------------------------------------------------------
  NAME
        HIflush_dds -- flush changed DD blocks to file
@@ -2367,6 +2356,34 @@ PRIVATE intn HIflush_dds(filerec_t *file_rec)
 
     return(SUCCEED);
 } /* HIflush_dds */
+
+
+/*--------------------------------------------------------------------------
+ NAME
+       HIextend_file -- extend file to current length
+ USAGE
+       int HIextend_file(file_rec)
+           filerec_t  * file_rec        IN: pointer to file structure to extend
+ RETURNS
+       SUCCEED / FAIL
+ DESCRIPTION
+       The routine extends an HDF file to be the length on the f_end_off
+       member of the file_rec.  This is mainly written as a function so that
+       the functionality if localized.
+--------------------------------------------------------------------------*/
+PRIVATE intn HIextend_file(filerec_t *file_rec)
+{
+    CONSTR(FUNC,"HIextend_file");       /* for HERROR */
+    uint8 temp=0;
+
+    if(HI_SEEK(file_rec->file,file_rec->f_end_off)==FAIL)
+        HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+    if(HI_WRITE(file_rec->file,&temp,1)==FAIL)
+        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+
+    return(SUCCEED);
+} /* HIextend_file */
+
 
 /*--------------------------------------------------------------------------
  NAME

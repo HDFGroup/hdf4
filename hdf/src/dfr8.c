@@ -405,7 +405,7 @@ PRIVATE intn DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 
         /* if a compression type has been set, check if it's the same */
         if(CompressSet==FALSE || (compress>1 && (int32)compress!=CompType &&
                 !(compress==COMP_JPEG && CompType==DFTAG_GREYJPEG))) {
-            if(compress<0 || compress>COMP_MAX_COMP || compress_map[compress]==0)
+            if(compress>COMP_MAX_COMP || compress_map[compress]==0)
                 HRETURN_ERROR(DFE_BADSCHEME, FAIL);
             /* map JPEG compression into correct type of JPEG compression */
             if(compress==COMP_JPEG) {
