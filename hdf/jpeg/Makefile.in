@@ -199,7 +199,7 @@ clean:
 
 distclean:
 	-$(RM) $(RMFLAGS) *.o cjpeg djpeg jpegtran libjpeg.a rdjpgcom wrjpgcom
-	-$(RM) $(RMFLAGS) ansi2knr core testout.* config.log config.status jconfig.h
+	-$(RM) $(RMFLAGS) ansi2knr core testout.* config.log config.status jconfig.h Makefile
 
 distribute:
 	$(RM) $(RMFLAGS) jpegsrc.tar*
