@@ -1041,7 +1041,7 @@ nsfiscvar(id)
 }
 
 /*-----------------------------------------------------------------------------
- * Name:    sdcsextf
+ * Name:    scsextf
  * Purpose: store data in an external file
  * Inputs:  id: sds id
  *          name: name of external file
@@ -1066,6 +1066,7 @@ nscsextf(id, name, offset, namelen)
     intf    ret;
     
     fn = HDf2cstring(name, *namelen);
+    if (!fn) return(FAIL);
     ret = (intf) SDsetexternalfile(*id, fn, *offset);
     HDfree((VOIDP)fn);
     return(ret);
