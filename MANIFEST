@@ -1314,12 +1314,15 @@
 ./mfhdf/nctest/README
 ./mfhdf/nctest/rec.c
 ./mfhdf/nctest/slabs.c
+./mfhdf/nctest/test_unlim.cdl
+./mfhdf/nctest/test_unlim.nc
 ./mfhdf/nctest/testcdf.h
 ./mfhdf/nctest/tests.h
 ./mfhdf/nctest/val.c
 ./mfhdf/nctest/val.h
 ./mfhdf/nctest/vardef.c
 ./mfhdf/nctest/varget.c
+./mfhdf/nctest/varget_unlim.c
 ./mfhdf/nctest/vargetg.c
 ./mfhdf/nctest/varput.c
 ./mfhdf/nctest/varputg.c
