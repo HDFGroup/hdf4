@@ -5,8 +5,8 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.11  1993/08/03 15:49:19  chouck
-Cleaned up a bunch of Vset code
+Revision 1.12  1993/08/16 21:46:34  koziol
+Wrapped in changes for final, working version on the PC.
 
  * Revision 1.10  1993/07/23  20:49:16  sxu
  * Changed 'void' to 'VOID' VSdump, Vinitialize, Vsetzap, Remove_vfile and unpackvs.
@@ -358,10 +358,10 @@ char *fields;
     vs=wi->vs;
 
 	/* call scanattrs to parse the string */
-	if (scanattrs(fields,&ac,&av) == FAIL) {
-            HERROR(DFE_BADFIELDS);
-            return (FAIL);
-        }
+	if (scanattrs(fields,&ac,&av) < 0) {
+        HERROR(DFE_BADFIELDS);
+        return (FAIL);
+    }
 
 	if ((vs == NULL) || (ac<1)) {
         HERROR(DFE_ARGS);
@@ -421,7 +421,7 @@ char  *fields;
     }
 
     vs=w->vs;
-    if((vs==NULL) || (scanattrs(fields,&ac,&av) == FAIL) || (ac<1)) {
+    if((vs==NULL) || (scanattrs(fields,&ac,&av) < 0) || (ac<1)) {
         HERROR(DFE_ARGS);
         return(FAIL);
     }

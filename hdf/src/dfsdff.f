@@ -2,8 +2,8 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.4  1993/07/31 16:54:44  georgev
-C Fixed fortran stubs for slabs.
+C Revision 1.5  1993/08/16 21:45:35  koziol
+C Wrapped in changes for final, working version on the PC.
 C
 c Revision 1.3  1993/01/19  05:55:17  koziol
 c Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
@@ -42,8 +42,6 @@ C   dfsdgetslice:   get slice from file
 C   dfsdstartslice:set up to write slices to file
 C   dfsdreadref:    set up next ref to read
 C   dfsdnumber:     return number of SDGs in the file
-C   dfsdwref:       set up next ref to write
-C   dfsdsslab:      set up write to SDS
 C Remarks: none
 C------------------------------------------------------------------------------
 
@@ -560,43 +558,6 @@ C------------------------------------------------------------------------------
       dsgdast = dsigdas(label, unit, format, coordsys, len(label),
      +   len(unit), len(format), len(coordsys))
 
-      return
-      end
-
-C------------------------------------------------------------------------------
-C Name:     dfsdwref
-C Purpose:  set up next ref to write 
-C Inputs:   filename: file to write to.
-C           ref: reference number to set.
-C Returns:  -1 on failure with DFerror set
-C Users:    HDF Fortran programmers
-C Invokes:  dfsdiwref
-C------------------------------------------------------------------------------
-
-      integer function dfsdwref(filename, ref)
-      character*(*) filename
-      integer ref, dfsdiwref
-
-      dfsdwref = dfsdiwref(filename, len(filename), ref)
-  
-      return
-      end
-
-C------------------------------------------------------------------------------
-C Name:     dfsdsslab
-C Purpose:  Set up slab writes to SDS 
-C Inputs:   filename: file to write to.
-C Returns:  -1 on failure with DFerror set
-C Users:    HDF Fortran programmers
-C Invokes:  dfsdisslab
-C------------------------------------------------------------------------------
-
-      integer function dfsdsslab(filename)
-      character*(*) filename
-	  integer dfsdisslab
-
-      dfsdsslab = dfsdisslab(filename, len(filename))
-  
       return
       end
 

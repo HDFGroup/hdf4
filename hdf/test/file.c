@@ -5,10 +5,24 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1993/01/19 05:58:46  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.1  1993/08/16 21:47:57  koziol
+Wrapped in changes for final, working version on the PC.
 
+ * Revision 1.2  1993/04/19  23:03:46  koziol
+ * General Code Cleanup to reduce/remove compilation warnings on PC
+ *
+ * Revision 1.1  1993/04/15  20:00:15  koziol
+ * Re-named the new tests for MS-DOS compatibility
+ *
+ * Revision 1.3  1993/02/16  20:51:15  chouck
+ * Went back to using -ansi so needed to fix a few casting problems
+ *
+ * Revision 1.2  1993/01/27  22:41:26  briand
+ * Fixed problem with compiling on RS6000.
+ *
+ * Revision 1.1  1993/01/27  22:04:31  briand
+ * Converted test files to work with master test program: testhdf
+ *
  * Revision 1.7  1992/07/16  19:34:08  mlivin
  * changed re-opening of file to NOT include DFACC_CREATE
  *
@@ -64,44 +78,61 @@ port.  Lots of minor annoyances fixed.
 
 */
 
-#include "hdf.h"
+#include "tproto.h"
 #define TESTFILE_NAME "t.hdf"
-uint8 outbuf[4096], inbuf[4096];
+#define BUF_SIZE        4096
+
+#ifdef TEST_PC
+#define FAR far
+#else
+#define FAR /* */
+#endif
+
+static uint8 FAR outbuf[BUF_SIZE],
+    FAR inbuf[BUF_SIZE];
+
+extern int num_errs;
+extern int Verbocity;
 
 
-#define CHECK(ret, val, where) \
-{if(ret == val) { fprintf(stderr, "%s failed, line %d, code %d\n", \
-                          where, __LINE__, ret); \
-                  HEprint(stderr, 0); exit(1);}}
-
-int main(argc, argv)
-    int argc;
-    char *argv[];
+void test_hfile()
 {
     int32 fid, fid1;
     int32 aid1, aid2;
     int32 fileid, length, offset, posn;
     uint16 tag, ref;
     int16 access, special;
-    int ret, i;
+    int32 ret;
+    int i;
     intn errors = 0;
     bool ret_bool;
+#ifdef QAK
+    uint8 *outbuf, *inbuf;
 
-    for (i=0; i<4096; i++) outbuf[i] = (char) (i % 256);
+    outbuf=HDgetspace(BUF_SIZE);
+    inbuf=HDgetspace(BUF_SIZE);
+	if(!outbuf || !inbuf) {
+		fprintf(stderr, "Out of memory!\n");
+		exit(1);
+	}
+#endif
 
-    printf("Creating a file %s\n\n", TESTFILE_NAME);
+    for (i=0; i<BUF_SIZE; i++)
+        outbuf[i] = (char) (i % 256);
+
+    MESSAGE(5,printf("Creating a file %s\n", TESTFILE_NAME););
     fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
     CHECK(fid, FAIL, "Hopen");
 
-    ret_bool = Hishdf(TESTFILE_NAME);
+    ret_bool = (bool)Hishdf(TESTFILE_NAME);
     CHECK(ret_bool, FALSE, "Hishdf");
 
     ret = Hnewref(fid);
     CHECK(ret, FAIL, "Hnewref");
 
-    printf("Reading / Writing to file\n");
-    ret = Hputelement(fid, (uint16) 100, 1, 
-                      (uint8 *) "testing 100 1", strlen("testing 100 1")+1);
+    MESSAGE(5,printf("Reading / Writing to file\n"););
+    ret = Hputelement(fid, (uint16) 100, 1,
+                      (uint8 *) "testing 100 1", HDstrlen("testing 100 1")+1);
     CHECK(ret, FAIL, "Hputelement");
 
     ret = Hputelement(fid, (uint16) 100, (uint16) 4, outbuf, 2000);
@@ -111,7 +142,7 @@ int main(argc, argv)
     CHECK(ret, FAIL, "Hnewref");
 
     ret = Hputelement(fid, (uint16) 103, (uint16) 2, 
-                      (uint8 *) "element 103 2", strlen("element 103 2")+1);
+                      (uint8 *) "element 103 2", HDstrlen("element 103 2")+1);
     CHECK(ret, FAIL, "Hputlement");
 
     ret = Hgetelement(fid, (uint16) 100, (uint16) 4, inbuf);
@@ -126,13 +157,13 @@ int main(argc, argv)
        inbuf[i] = '\0';
     }
 
-    ret = Hputelement(fid, 102, 2, outbuf, 4096);
+    ret = Hputelement(fid, 102, 2, outbuf, BUF_SIZE);
     CHECK(ret, FAIL, "Hputlement");
 
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
 
-    printf("\nClosing and re-opening file %s\n\n", TESTFILE_NAME);
+    MESSAGE(5,printf("Closing and re-opening file %s\n", TESTFILE_NAME););
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen");
 
@@ -146,14 +177,14 @@ int main(argc, argv)
                   &access, &special);
     CHECK(ret, FAIL, "Hinquire");
 
-    printf("Verifying data\n\n");
+    MESSAGE(5,printf("Verifying data\n\n"););
     ret = Hread(aid1, length, inbuf);
     if(ret != 14) {
       fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", ret);
       errors++;
     }
 
-    if(HDstrcmp((const char *)inbuf, "testing 100 1")) {
+    if(HDstrcmp((const char *) inbuf, (const char *) "testing 100 1")) {
       fprintf(stderr, "ERROR: Hread returned the wrong data\n");
       fprintf(stderr, "\t       Is: %s\n", inbuf);
       fprintf(stderr, "\tShould be: testing 100 1\n");
@@ -163,7 +194,7 @@ int main(argc, argv)
     ret = Hnewref(fid);
     CHECK(ret, FAIL, "Hnewref");
 
-    printf("Testing a number of searching schemes\n\n");
+    MESSAGE(5,printf("Testing a number of searching schemes\n"););
     ret = Hnextread(aid1, 100, DFREF_WILDCARD, DF_CURRENT);
     CHECK(ret, FAIL, "Hnextread");
 
@@ -217,7 +248,7 @@ int main(argc, argv)
     ret = Hendaccess(aid2);
     CHECK(ret, FAIL, "Hendaccess");
     
-    printf("Attempting to gain multiple access to file (is allowed)\n");
+    MESSAGE(5,printf("Attempting to gain multiple access to file (is allowed)\n"););
     fid1 = Hopen(TESTFILE_NAME, DFACC_READ, 0);
     if(fid1 == FAIL) {
       fprintf(stderr, "ERROR: Failed to have two concurrent access to file\n");
@@ -233,18 +264,17 @@ int main(argc, argv)
     ret = Hclose(fid1);
     CHECK(ret, FAIL, "Hclose");
 
-    ret_bool = Hishdf(TESTFILE_NAME);
+    ret_bool = (bool)Hishdf(TESTFILE_NAME);
     CHECK(ret_bool, FALSE, "Hishdf");
 
-    ret_bool = Hishdf(__FILE__);
+    ret_bool = (bool)Hishdf(__FILE__);
     CHECK(ret_bool, TRUE, "Hishdf");
 
-    ret_bool = Hishdf("qqqqqqqq.qqq");  /* I sure hope it isn't there */
+    ret_bool = (bool)Hishdf("qqqqqqqq.qqq");  /* I sure hope it isn't there */
     CHECK(ret, TRUE, "Hishdf");
 
-    if(errors) 
-      fprintf(stderr, "\n\t>>> %d errors were encountered <<<\n\n");
-    else
-      fprintf(stderr, "\n\t>>> All tests passed <<< \n\n");
-
+#ifdef QAK
+    HDfreespace(outbuf);
+    HDfreespace(inbuf);
+#endif
 }

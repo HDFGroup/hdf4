@@ -5,8 +5,8 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.17  1993/07/31 16:54:21  georgev
-Fixed fortran stubs for slabs.
+Revision 1.18  1993/08/16 21:45:33  koziol
+Wrapped in changes for final, working version on the PC.
 
  * Revision 1.16  1993/04/27  21:00:39  georgev
  * Changed fortran stubs interface for hyperslabs, made them different
@@ -1639,7 +1639,7 @@ ndsgcal(cal, cal_err, ioff, ioff_err, cal_type)
 } /* ndsgcal */
 
 /*-----------------------------------------------------------------------------
- * Name:    dfsdiwref
+ * Name:    dfsdwref
  * Purpose: Call DFSDwriteref to set up next ref to write
  * Inputs:  filename: name of HDF file
  *          fnlen: length of filename
@@ -1651,9 +1651,9 @@ ndsgcal(cal, cal_err, ioff, ioff_err, cal_type)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfsdiwref(_fcd filename, intf *fnlen, intf *ref)
+ndfsdwref(_fcd filename, intf *fnlen, intf *ref)
 #else
-ndfsdiwref(filename, fnlen, ref)
+ndfsdwref(filename, fnlen, ref)
     _fcd filename;
     intf *fnlen;
     intf *ref;
@@ -1709,7 +1709,7 @@ ndfsdgfill(fill_value)
 }
 
 /*-----------------------------------------------------------------------------
- * Name:    dfsdisslab
+ * Name:    dfsdsslab
  * Purpose: Set up slab writes to SDS
  * Inputs:  filename: file to which this applies
  *          fnlen: file name length
@@ -1721,9 +1721,9 @@ ndfsdgfill(fill_value)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-ndfsdisslab(_fcd filename, intf *fnlen )
+ndfsdsslab(_fcd filename, intf *fnlen )
 #else
-ndfsdisslab(filename, fnlen)
+ndfsdsslab(filename, fnlen)
     _fcd filename;
     intf *fnlen;
 #endif /* PROTOTYPE */

@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.16  1993/07/01 20:08:07  chouck
-Made the hash table use fewer malloc() and free() pairs to improve
-efficiency and (hopefully) reduce PC memory fragmentation.
+Revision 1.17  1993/08/16 21:46:02  koziol
+Wrapped in changes for final, working version on the PC.
 
+ * Revision 1.16  1993/07/01  20:08:07  chouck
+ * Made the hash table use fewer malloc() and free() pairs to improve
+ * efficiency and (hopefully) reduce PC memory fragmentation.
+ *
  * Revision 1.15  1993/06/23  19:05:54  chouck
  * Updated Version string and fixed a VSinquire macro
  *
@@ -113,7 +116,7 @@ typedef FILE *hdf_file_t;
 #   define HI_WRITE(f, b, n)   (((n) == fwrite((b), 1, (n), (f))) ? \
                                 SUCCEED : FAIL)
 #   define HI_CLOSE(f) (fclose(f))
-#   define HI_FLUSH(f) (fflush(f))
+#   define HI_FLUSH(f) (fflush(f)==0 ? SUCCEED : FAIL)
 #   define HI_SEEK(f, o)       (fseek((f), (long)(o), SEEK_SET))
 #   define HI_SEEKEND(f) (fseek((f), (long)0, SEEK_END))
 #   define HI_TELL(f)  (ftell(f))
@@ -165,7 +168,7 @@ typedef FILE *hdf_file_t;
 #   define HI_WRITE(f, b, n)   (((int32)(n) == HDfwritebig((b), (n), (f))) ? \
                                 SUCCEED : FAIL)
 #   define HI_CLOSE(f) (fclose(f))
-#   define HI_FLUSH(f) (fflush(f))
+#   define HI_FLUSH(f) (fflush(f)==0 ? SUCCEED : FAIL)
 #   define HI_SEEK(f, o)       (fseek((f), (long)(o), SEEK_SET))
 #   define HI_SEEKEND(f) (fseek((f), (long)0, SEEK_END))
 #   define HI_TELL(f)  (ftell(f))

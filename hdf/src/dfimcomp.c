@@ -5,8 +5,8 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1993/07/31 16:53:28  georgev
-fixed cast to VOIDP.
+Revision 1.7  1993/08/16 21:45:15  koziol
+Wrapped in changes for final, working version on the PC.
 
  * Revision 1.5  1993/05/03  21:32:07  koziol
  * First half of fixes to make Purify happy
@@ -206,7 +206,7 @@ VOID DFCIimcomp(xdim, ydim, in, out, in_pal, out_pal, mode)
 
     fillin_color(blocks);
     if(color_pt) {
-	HDfreespace((VOIDP)color_pt);
+	HDfreespace(color_pt);
 	color_pt=NULL;
       } /* end if */
 

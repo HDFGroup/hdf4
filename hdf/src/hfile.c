@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.15  1993/07/01 20:08:03  chouck
-Made the hash table use fewer malloc() and free() pairs to improve
-efficiency and (hopefully) reduce PC memory fragmentation.
+Revision 1.16  1993/08/16 21:45:58  koziol
+Wrapped in changes for final, working version on the PC.
 
+ * Revision 1.15  1993/07/01  20:08:03  chouck
+ * Made the hash table use fewer malloc() and free() pairs to improve
+ * efficiency and (hopefully) reduce PC memory fragmentation.
+ *
  * Revision 1.14  1993/05/03  21:32:14  koziol
  * First half of fixes to make Purify happy
  *
@@ -432,6 +435,10 @@ int32 Hopen(path, access, ndds)
                HERROR(DFE_WRITEERROR);
                return FAIL;
            }
+           if (HI_FLUSH(file_rec->file) == FAIL) {  /* flush the cookie */
+               HERROR(DFE_WRITEERROR);
+               return FAIL;
+           }
            if (HIinit_file_dds(file_rec, ndds, FUNC) == FAIL) {
                HERROR(DFE_WRITEERROR);
                return FAIL;
@@ -456,7 +463,7 @@ int32 Hopen(path, access, ndds)
     if(vtag==0)
         HIread_version(FSLOT2ID(slot));
     /* end version tags */
-    
+
     return FSLOT2ID(slot);
   }
 
@@ -2131,8 +2138,8 @@ Hishdf(filename)
 #endif /* PROTOTYPE */
 {
     char *FUNC = "Hishdf";
-  
-#if defined(VMS) || defined(MAC)
+
+#if defined(VMS) || defined(MAC) || defined(PC)
   
     int32 fid;
 
@@ -2474,7 +2481,6 @@ PRIVATE int HIinit_file_dds(file_rec, ndds, FUNC)
 
     file_rec->maxref = 0;
 
-    /* blank out the hash table */
     HDmemset(file_rec->hash, 0, sizeof(tag_ref_list_ptr) * (HASH_MASK+1));
 
     return SUCCEED;
@@ -3299,10 +3305,9 @@ PRIVATE int HIfill_file_rec(file_rec, FUNC)
     HERROR(DFE_SEEKERROR);
     return FAIL;
   }
-  
+
   /* Blank out hash table */
   HDmemset(file_rec->hash, 0, sizeof(tag_ref_list_ptr) * (HASH_MASK+1));
-
 
   /* Read in the dd's one at a time and determine the max ref in the file
      at the same time. */
@@ -3477,7 +3482,7 @@ int32 file_id;
     HIstrncpy((char*) p, file_rec->version.string, 80);
     }
 
-    ret = Hputelement(file_id, (uint16)DFTAG_VERSION, (uint16)1, lversion, 
+    ret = Hputelement(file_id, (uint16)DFTAG_VERSION, (uint16)1, lversion,
 		      (uint32)sizeof(lversion));
 
     if (ret == SUCCEED) {
@@ -3528,7 +3533,7 @@ int32 file_id;
         return(FAIL);
     }
 
-    if (Hgetelement(file_id, (uint16)DFTAG_VERSION, 
+    if (Hgetelement(file_id, (uint16)DFTAG_VERSION,
                               (uint16)1, fversion) == FAIL) {
         file_rec->version.majorv = 0;
         file_rec->version.minorv = 0;
@@ -3704,7 +3709,7 @@ int32
 mwrite(hdf_file_t rn, char *buf, int32 n)
 {
     OSErr result;
-    
+
     if (noErr != (result = FSWrite( rn, &n, buf)))
         return(FAIL);
     
@@ -3742,7 +3747,7 @@ mlseek(hdf_file_t rn, int32 n, int m)
 #ifdef OLD_EXTD
                     if(noErr != (result = GetEOF(rn, &logEOF)))
                         return FAIL;
-                    
+
                     oldpos = pos = n - logEOF;
                     if(NULL == (buffy = NewPtr((Size) pos)))
                         return FAIL;
@@ -3755,11 +3760,9 @@ mlseek(hdf_file_t rn, int32 n, int m)
 #else
 
 
-                    if(m != fsFromStart) {
-                        printf("mlseek: m != fsFromStart, m=%d, n=%ld.\n", m, n);
+                    if(m != fsFromStart)
                         return FAIL;
-                    }
-                    
+
                     newEOF = n;
                     if(noErr != (result = SetEOF(rn, newEOF)))
                         return FAIL;    

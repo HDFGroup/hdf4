@@ -2,8 +2,8 @@
 $Header$
 
 $Log$
-Revision 1.35  1993/07/31 16:55:17  georgev
-Fixed fortran stubs for slabs.
+Revision 1.36  1993/08/16 21:46:08  koziol
+Wrapped in changes for final, working version on the PC.
 
  * Revision 1.34  1993/07/01  17:15:21  briand
  * Removed a '\' from line 1320.
@@ -318,7 +318,7 @@ extern int32 HXcreate
   PROTO((int32 file_id, uint16 tag, uint16 ref, char _HUGE *extern_file_name, int32 f_offset, int32 start_len));
 
 /*
-** from herr.c 
+** from herr.c
 */
 extern char _HUGE *HEstring
   PROTO((int16 error_code));
@@ -338,8 +338,10 @@ extern VOID HEprint
 extern int16 HEvalue
   PROTO((int32 level));
 
-/* 
-** from dfcomp.c 
+extern VOID HEclear
+    PROTO((void));
+/*
+** from dfcomp.c
 */
 extern int DFputcomp
   PROTO((int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE *image, int32 xdim,
@@ -1240,10 +1242,10 @@ extern FRETVAL(intf) ndfr8sjpeg
 #   define ndfsdsetnt        FNAME(DFSDSETNT)
 #   define ndfsdgetnt        FNAME(DFSDGETNT)
 #   define ndfsdlastref      FNAME(DFSDLASTREF)
-#   define ndfsdiwref         FNAME(DFSDIWREF)
+#   define ndfsdwref         FNAME(DFSDWREF)
 #   define ndfsdsfill        FNAME(DFSDSFILL)
 #   define ndfsdgfill        FNAME(DFSDGFILL)
-#   define ndfsdisslab        FNAME(DFSDISSLAB)
+#   define ndfsdsslab        FNAME(DFSDSSLAB)
 #   define ndfsdwslab        FNAME(DFSDWSLAB)
 #   define ndfsdeslab        FNAME(DFSDESLAB)
 #else
@@ -1294,10 +1296,10 @@ extern FRETVAL(intf) ndfr8sjpeg
 #   define ndfsdsetnt        FNAME(dfsdsetnt)
 #   define ndfsdgetnt        FNAME(dfsdgetnt)
 #   define ndfsdlastref      FNAME(dfsdlastref)
-#   define ndfsdiwref         FNAME(dfsdiwref)
+#   define ndfsdwref         FNAME(dfsdwref)
 #   define ndfsdsfill        FNAME(dfsdsfill)
 #   define ndfsdgfill        FNAME(dfsdgfill)
-#   define ndfsdisslab        FNAME(dfsdisslab)
+#   define ndfsdsslab        FNAME(dfsdsslab)
 #   define ndfsdwslab        FNAME(dfsdwslab)
 #   define ndfsdeslab        FNAME(dfsdeslab)
 #endif /* DF_CAPFNAMES */

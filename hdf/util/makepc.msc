@@ -2,8 +2,8 @@
 # $Header$
 #
 # $Log$
-# Revision 1.2  1993/04/19 23:04:40  koziol
-# General Code Cleanup to reduce/remove compilation warnings on PC
+# Revision 1.3  1993/08/16 21:49:05  koziol
+# Wrapped in changes for final, working version on the PC.
 #
 # Revision 1.1  1993/01/19  06:13:02  koziol
 # New JPEG utilities and a real makefile for the PC
@@ -41,7 +41,7 @@
 #
 UTILS = hdf24to8.exe hdfcomp.exe hdfls.exe hdfpack.exe hdfrseq.exe hdftopal.exe \
     hdftor8.exe paltohdf.exe r8tohdf.exe ristosds.exe vcompat.exe vmake.exe \
-    vshow.exe make24.exe hdf2jpeg.exe jpeg2hdf.exe
+    vshow.exe make24.exe hdf2jpeg.exe jpeg2hdf.exe fp2hdf.exe
 
 HEOBJ = he_main.obj he_cntrl.obj he_disp.obj he_file.obj
 
@@ -74,8 +74,9 @@ IFLAGS=   /I../include /I.
 LIBS= ..\lib\df.lib
 
 CC=cl
-CFLAGS=  /c /D$(MACHINE) /Gt512 /AH /W4 /Od $(IFLAGS) /Zi /Zp1
-#CFLAGS=  /c /D$(MACHINE) /Gt512 /AH /W4 /Ox $(IFLAGS) /Zp1
+#CFLAGS=  /c /D$(MACHINE) /Gt512 /AH /W4 /Od $(IFLAGS) /Zi
+CFLAGS=  /c /D$(MACHINE) /AH /W4 /Od $(IFLAGS) /Zi
+#CFLAGS=  /c /D$(MACHINE) /Gt512 /AH /W4 /Ox $(IFLAGS)
 
 LN=link
 LNFLAGS=/COD /ST:6118
@@ -135,6 +136,9 @@ vmake.exe : vmake.obj
     $(LN) $(LNFLAGS) $*,$*,nul,$(LIBS);
 
 vshow.exe : vshow.obj
+    $(LN) $(LNFLAGS) $*,$*,nul,$(LIBS);
+
+fp2hdf.exe : fp2hdf.obj
     $(LN) $(LNFLAGS) $*,$*,nul,$(LIBS);
 
 utils: $(UTILS)

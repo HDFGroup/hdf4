@@ -2,8 +2,8 @@
 $Header$
 
 $Log$
-Revision 1.28  1993/08/03 15:49:14  chouck
-Cleaned up a bunch of Vset code
+Revision 1.29  1993/08/16 21:45:43  koziol
+Wrapped in changes for final, working version on the PC.
 
  * Revision 1.27  1993/06/15  18:22:00  chouck
  * Made a little smarter at guessing machine types
@@ -23,6 +23,9 @@ Cleaned up a bunch of Vset code
  *
  * Revision 1.22  1993/04/27  21:05:04  chouck
  * Added JPeg defines for Convex
+ *
+ * Revision 1.21  1993/04/24  18:29:03  koziol
+ * Added some preprocessor macros to the Cray section to get JPEG working.
  *
  * Revision 1.20  1993/04/22  23:00:18  koziol
  * Changed DFR8nimages, DFPnpals to report the correct number of images
@@ -158,6 +161,12 @@ Cleaned up a bunch of Vset code
 #endif
 #endif
 
+#if defined TEST_PC || defined TEST_WIN
+#define FAR far
+#else
+#define FAR /* */
+#endif
+
 #if defined(SUN) || defined(sun)
 
 #ifndef SUN
@@ -274,7 +283,6 @@ typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 
 #endif /* IBM6000 */
 
-
 #if defined(HP9000) || defined(hpux)
 
 #ifndef HP9000
@@ -381,7 +389,6 @@ typedef int                intf;     /* size of INTEGERs in Fortran compiler */
 
 #endif /* IRIS4 */
 
-
 #if defined(UNICOS) || defined(_UNICOS)
 
 #ifndef UNICOS
@@ -437,7 +444,6 @@ typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 
 #endif /* UNICOS */
 
-
 #ifdef VMS
 
 #ifdef GOT_MACHINE
@@ -485,13 +491,7 @@ typedef int                intf;     /* size of INTEGERs in Fortran compiler */
 
 #endif /* VMS */
 
-/* For Convex machines with native format floats */
-#ifdef CONVEXNATIVE
-#   define CONVEX
-#endif
-
-
-#if defined(CONVEX) || defined(__convex__)
+#if defined(CONVEX) || defined(CONVEXNATIVE) || defined(__convex__)
 
 #ifndef CONVEX
 #define CONVEX
@@ -511,6 +511,7 @@ Please check your Makefile.
 #define PROTOTYPE					/* to invoke ANSI prototypes */
 #endif	/* PROTOTYPE */
 
+/* For Convex machines with native format floats */
 #ifdef CONVEXNATIVE
 #define DF_MT             DFMT_CONVEXNATIVE
 #else
@@ -657,11 +658,21 @@ void exit(int status);
 #endif /*MAC*/
 
 
-#ifdef WIN3
+#if defined WIN3 || defined __WINDOWS__ || defined _WINDOWS
+#ifndef WIN3
+#define WIN3
+#endif  /* WIN3 */
 #define PC
 #endif  /* WIN3 */
 
-#ifdef PC
+#if defined PC || defined MSDOS || defined M_I86 || defined M_I386 || defined PC386
+#ifndef PC
+#define PC
+#endif /* PC */
+
+#if defined M_I386 && !defined PC386
+#define PC386
+#endif /* M_I386 && !PC386 */
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
@@ -678,6 +689,7 @@ Please check your Makefile.
 #include <string.h>         /* for vaious string functions */
 #include <limits.h>         /* for UINT_MAX used in various places */
 #include <stdlib.h>
+#include <ctype.h>          /* for character macros */
 #ifdef WIN3
 #ifndef GMEM_MOVEABLE       /* check if windows header is already included */
 #include <windows.h>        /* include the windows headers */
@@ -694,8 +706,13 @@ Please check your Makefile.
 #ifndef VOID    /* The stupid windows.h header file uses a #define instead of a typedef */
 typedef void              VOID;
 #endif  /* end VOID */
+#ifndef PC386
 typedef void              huge *VOIDP;
 typedef char              huge *_fcd;
+#else   /* PC386 */
+typedef void *            VOIDP;
+typedef char *            _fcd;
+#endif  /* PC386 */
 typedef int               bool;
 typedef char              char8;
 typedef unsigned char     uchar8;
@@ -710,12 +727,17 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef long              intf;     /* size of INTEGERs in Fortran compiler */
+#ifndef PC386
 /* used to force the prototypes in hproto.h to use huge pointers */
 #define _HUGE              huge
+#else   /* PC386 */
+#define _HUGE              /* This should only be defined to a value on the PC */
+#endif  /* PC386 */
 
 #define _fcdtocp(desc) (desc)
 
 #define register    /* don't mess with the PC compiler's register allocation */
+
 #ifdef WIN3
 #define FILELIB WINIO
 #else /* !WIN3 */
@@ -727,13 +749,25 @@ typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 /* Determine the memory manager we are going to use. Valid values are: */
 /*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
 /*  what each does */
+#ifndef PC386
 #define JMEMSYS         MEM_DOS
+#else   /* PC386 */
+#define JMEMSYS         MEM_ANSI
+#endif  /* PC386 */
 
 #define HAVE_STDC
 #define INCLUDES_ARE_ANSI
 
-#endif /* PC */
+#ifdef TEST_WIN
+#ifdef stderr
+#undef stderr
+#endif  /* stderr */
+extern FILE *dbg_file;
+#define stderr dbg_file
+#define stdout dbg_file
+#endif  /* TEST_WIN */
 
+#endif /* PC */
 
 #if defined(NEXT) || defined(NeXT)
 
@@ -787,7 +821,6 @@ typedef double            float64;
 
 #endif /* NEXT */
 
-
 #ifdef MOTOROLA
 
 #ifdef GOT_MACHINE
@@ -840,7 +873,6 @@ typedef double            float64;
 
 #endif /* MOTOROLA */
 
-
 #ifdef DEC_ALPHA
 
 #ifdef GOT_MACHINE
@@ -887,7 +919,6 @@ typedef double            float64;
 #endif
 
 #endif /* DEC_ALPHA */
-
 
 #ifdef VP
 
@@ -1004,10 +1035,10 @@ extern int (*DFKnumout)();
 ******************************************************************/
 #define DF_TBUFSZ       512     /* buffer size can be smaller */
 #ifdef  HMASTER
-    int    int_DFtbuf[DF_TBUFSZ]; /* int declaration to force word boundary */
-    uint8  *DFtbuf = (uint8 *) int_DFtbuf;
+    int    FAR int_DFtbuf[DF_TBUFSZ]; /* int declaration to force word boundary */
+    uint8  FAR *DFtbuf = (uint8 *) int_DFtbuf;
 #else /* !HMASTER */
-extern uint8 *DFtbuf;
+extern uint8 FAR *DFtbuf;
 #endif /*HMASTER*/
 
 /*----------------------------------------------------------------
@@ -1077,6 +1108,13 @@ extern uint8 *DFtbuf;
 #endif
 
 /**************************************************************************
+*  Debugging Allocation functions
+**************************************************************************/
+#ifdef MALDEBUG
+#include "maldebug.h"
+#endif
+
+/**************************************************************************
 *  String functions defined differently under MS Windows
 **************************************************************************/
 
@@ -1088,7 +1126,6 @@ extern uint8 *DFtbuf;
 #  define HDstrncmp(s1,s2,n)    (_fstrncmp((s1),(s2),(n)))
 #  define HDstrncpy(s1,s2,n)    (_fstrncpy((s1),(s2),(n)))
 #  define HDstrchr(s,c)    (_fstrchr((s),(c)))
-#  define HDstrdup(s)      (_fstrdup((s)))
 #else
 #  define HDstrcat(s1,s2)   (strcat((s1),(s2)))
 #  define HDstrcmp(s,t)     (strcmp((s),(t)))
@@ -1097,7 +1134,6 @@ extern uint8 *DFtbuf;
 #  define HDstrncmp(s1,s2,n)    (strncmp((s1),(s2),(n)))
 #  define HDstrncpy(s1,s2,n)    (strncpy((s1),(s2),(n)))
 #  define HDstrchr(s,c)    (strchr((s),(c)))
-#  define HDstrdup(s)      (strdup((s)))
 #endif /* WIN3 */
 
 

@@ -152,7 +152,7 @@ select_file_name (char * fname)
  * routines malloc() and free().
  */
 
-GLOBAL void *
+GLOBAL VOIDP
 jget_small (size_t sizeofobject)
 {
   /* near data space is NOT counted in total_used */
@@ -163,7 +163,7 @@ jget_small (size_t sizeofobject)
 }
 
 GLOBAL void
-jfree_small (void * object)
+jfree_small (VOIDP object)
 {
   free(object);
 }
@@ -175,7 +175,7 @@ jfree_small (void * object)
 
 #ifdef NEED_FAR_POINTERS
 
-GLOBAL void FAR *
+GLOBAL VOIDP
 jget_large (size_t sizeofobject)
 {
   total_used += sizeofobject;
@@ -183,7 +183,7 @@ jget_large (size_t sizeofobject)
 }
 
 GLOBAL void
-jfree_large (void FAR * object)
+jfree_large (VOIDP object)
 {
   far_free(object);
 }

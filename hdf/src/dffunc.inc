@@ -1,5 +1,10 @@
 C
 C $Header$
+C
+C $Log$
+C Revision 1.4  1993/08/16 21:45:10  koziol
+C Wrapped in changes for final, working version on the PC.
+C
 
 
 

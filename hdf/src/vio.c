@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.19  1993/07/23 20:49:20  sxu
-Changed 'void' to 'VOID' VSdump, Vinitialize, Vsetzap, Remove_vfile and unpackvs.
+Revision 1.20  1993/08/16 21:46:43  koziol
+Wrapped in changes for final, working version on the PC.
 
+ * Revision 1.19  1993/07/23  20:49:20  sxu
+ * Changed 'void' to 'VOID' VSdump, Vinitialize, Vsetzap, Remove_vfile and unpackvs.
+ *
  * Revision 1.18  1993/07/15  01:26:26  koziol
  * Final Whammy on the VSet memory Leak bug, mostly for maintenance purposes
  *
@@ -159,9 +162,9 @@ PUBLIC int32 DFvsetclose (f)
 */
 
 #ifdef PROTOTYPE
-vsinstance_t * vsinstance (HFILEID f, uint16 vsid)
+vsinstance_t _HUGE * vsinstance (HFILEID f, uint16 vsid)
 #else
-vsinstance_t * vsinstance (f,vsid)
+vsinstance_t _HUGE * vsinstance (f,vsid)
 HFILEID f;
 uint16 vsid;
 #endif
@@ -556,7 +559,7 @@ char *  accesstype;
 {
 	VDATA 		*vs;  			 /* new vdata to be returned */
 	int32 		vspacksize;
-    uint8       vspack[sizeof(VWRITELIST)];
+    uint8       *vspack;
     int32       access;
 	vsinstance_t	* w;
 	vfile_t			* vf;
@@ -659,7 +662,7 @@ char *  accesstype;
             return (w->key);
 #endif
           }
-          
+
         if (w->vs) {    /* use existing vs record */
             vs = w->vs;
         } else {
@@ -670,9 +673,13 @@ char *  accesstype;
         }
 
           /* need to fetch from file */
-        if (Hgetelement(f,DFTAG_VH,(uint16)vsid,vspack) == FAIL)
+        if ( (vspack= (uint8 *) HDgetspace (sizeof(VWRITELIST))) == NULL)
+            HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        if (Hgetelement(f,DFTAG_VH,(uint16)vsid,vspack) == FAIL) {
+            HDfreespace((VOIDP)vspack);
             HRETURN_ERROR(DFE_NOVS, FAIL);
-          
+          } /* end if */
+
         vs->wlist.n = vs->rlist.n = 0;
 
         /* unpack the vs, then init all other fields in it */
@@ -689,6 +696,7 @@ char *  accesstype;
         vs->aid     = Hstartread(vs->f, VSDATATAG, vs->oref);
         if(vs->aid == FAIL) {
             HDfreespace((VOIDP)vs);
+            HDfreespace((VOIDP)vspack);
             HRETURN_ERROR(DFE_BADAID, FAIL);
         }
 
@@ -698,6 +706,8 @@ char *  accesstype;
         w->vs        = vs;
         w->nattach   = 1;
         w->nvertices = vs->nvertices;
+
+        HDfreespace((VOIDP)vspack);
 #ifdef OLD_WAY
         return (vs);
 #else
@@ -710,7 +720,7 @@ char *  accesstype;
 
         if ((w = vsinstance(f, (uint16) vsid)) == NULL)
             HRETURN_ERROR(DFE_VTAB, FAIL);
-          
+
         if (w->nattach)  /* vdata previously attached before */
             HRETURN_ERROR(DFE_BADATTACH,FAIL);
 
@@ -722,10 +732,14 @@ char *  accesstype;
             if( (vs=(VDATA*) HDgetspace(sizeof(VDATA))) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
         }
-          
+
           /* need to fetch from file */
-        if (Hgetelement(f, DFTAG_VH, (uint16)vsid, vspack) == FAIL)
+        if ( (vspack= (uint8 *) HDgetspace (sizeof(VWRITELIST))) == NULL)
+            HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        if (Hgetelement(f, DFTAG_VH, (uint16)vsid, vspack) == FAIL) {
+            HDfreespace((VOIDP)vspack);
             HRETURN_ERROR(DFE_NOMATCH, FAIL);
+          } /* end if */
           
         vs->wlist.n = vs->rlist.n = 0;
         vs->nusym = 0;
@@ -738,20 +752,22 @@ char *  accesstype;
         vs->f     = f;
         vs->marked    = 0;
         vs->vm    = (VMBLOCK*) NULL;
-          
+
         vs->aid   = Hstartwrite(vs->f, VSDATATAG, vs->oref, 0);
         if(vs->aid == FAIL) {
             HDfreespace((VOIDP)vs);
+            HDfreespace((VOIDP)vspack);
             HRETURN_ERROR(DFE_BADAID, FAIL);
         }
-          
+
         vs->instance = w;
 
           /* attach vs to vsdir  at the vdata instance w */
         w->vs        = vs;
         w->nattach   = 1;
         w->nvertices = vs->nvertices;
-          
+
+        HDfreespace((VOIDP)vspack);
 #ifdef OLD_WAY
         return (vs);
 #else
@@ -779,7 +795,7 @@ char *  accesstype;
 	if vs has "r" access,   ( <=> only attached ONCE! )
 		decr nattach.
 		if (nattach is 0)   just free vs from vstab.
-			
+
    *************************************************************** */
 
 #ifdef PROTOTYPE
@@ -790,7 +806,7 @@ int32 vkey;
 #endif
 {
 	int32			i, stat, vspacksize;
-    uint8            vspack[sizeof(VWRITELIST)];
+    uint8            *vspack;
     vsinstance_t    *w;
     VDATA           *vs;
     char * FUNC = "VSdetach";
@@ -800,7 +816,7 @@ int32 vkey;
         HEprint(stderr, 0);
         return;
     }
-  
+
   /* locate vg's index in vgtab */
     if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
         HERROR(DFE_NOVS);
@@ -837,9 +853,16 @@ int32 vkey;
     }
 
 	if (vs->marked)  { /* if marked , write out vdata's VSDESC to file */
-        if(vs->nvertices==0) { /* sprintf(sjs,"VSdetach: Empty vdata detached\n"); zj; */ }
+        if(vs->nvertices==0) {
+            /* sprintf(sjs,"VSdetach: Empty vdata detached\n"); zj; */
+        }
+        if ( (vspack= (uint8 *) HDgetspace (sizeof(VWRITELIST))) == NULL) {
+            HERROR(DFE_NOSPACE);
+            return;
+          } /* end if */
         vpackvs(vs,vspack,&vspacksize);
         stat = Hputelement (vs->f,VSDESCTAG,vs->oref,vspack,vspacksize);
+        HDfreespace((VOIDP)vspack);
         if (stat == FAIL) {
             HERROR(DFE_WRITEERROR);
             return;
@@ -1119,9 +1142,9 @@ int32 vkey;
 /* -------------- Return the writelist of a VData----------------- */
 
 #ifdef PROTOTYPE
-VWRITELIST *vswritelist(int32 vkey)
+VWRITELIST _HUGE *vswritelist(int32 vkey)
 #else
-VWRITELIST *vswritelist(vkey)
+VWRITELIST _HUGE *vswritelist(vkey)
 int32 vkey;
 #endif
 {

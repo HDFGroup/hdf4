@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/04/19 22:48:23  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.6  1993/08/16 21:46:32  koziol
+Wrapped in changes for final, working version on the PC.
 
+ * Revision 1.5  1993/04/19  22:48:23  koziol
+ * General Code Cleanup to reduce/remove errors on the PC
+ *
  * Revision 1.4  1993/03/29  16:50:25  koziol
  * Updated JPEG code to new JPEG 4 code.
  * Changed VSets to use Threaded-Balanced-Binary Tree for internal
@@ -43,17 +46,20 @@ General Code Cleanup to reduce/remove errors on the PC
 * Part of the HDF Vset interface.
 */
 
-#include "vg.h" 
+#include "vg.h"
 
 /* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ */
 /* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ */
-/*                                                                    */ 
+/*                                                                    */
 /* routines for converting from vsets in v1.0 to v2.x                 */
-/*                                                                    */ 
+/*                                                                    */
 /* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ */
 /* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ */
 
 /* ------------------------------------------------------------------ */
+
+static void oldunpackvg PROTO((VGROUP *vg,uint8  buf[], int32 *size));
+static void oldunpackvs PROTO((VDATA *vs, uint8 buf[], int32 *size));
 
 /*
 *  this routine checks that the given OPENED file is compatible with
@@ -70,7 +76,7 @@ HFILEID f;
 #endif
 {
     int16   foundold, foundnew;
-	int32 	aid;	
+	int32 	aid;
 
 	foundold = 0;
 	foundnew = 0;
@@ -127,16 +133,15 @@ int32 vimakecompat(f)
 HFILEID f;
 #endif
 {
-
 	VGROUP 	tempvgroup;
-	VDATA		tempvdata;
-
+	VDATA	tempvdata;
 	VGROUP	* vg = &tempvgroup;
-	VDATA		*vs = &tempvdata;
-    uint8        buf[5000]; /* to store an old vdata or vgroup descriptor  */
-	int32 	bsize, aid;
+	VDATA	*vs = &tempvdata;
+    uint8   *buf=NULL; /* to store an old vdata or vgroup descriptor  */
+	int32 	old_bsize=0,bsize,
+	        aid;
     int32   stat;
-    uint16 u;
+    uint16  u;
 	uint16	tag, ref;
     char * FUNC = "vimakecompat";
 
@@ -147,9 +152,18 @@ HFILEID f;
 	while (stat != FAIL) {
         HQuerytagref (aid, &tag, &ref);
         HQuerylength (aid, &bsize);
+        if(buf==NULL || bsize>old_bsize) {
+            if(buf!=NULL)
+                HDfreespace(buf);
+            if ( (buf= (uint8 *) HDgetspace (bsize)) == NULL)
+                HRETURN_ERROR(DFE_NOSPACE, FAIL);
+            old_bsize=bsize;
+          } /* end if */
        stat = Hgetelement (f, (uint16)OLD_VGDESCTAG, ref, (uint8*)buf);
-        if (stat == FAIL)
+        if (stat == FAIL) {
+            HDfreespace(buf);
             HRETURN_ERROR(DFE_READERROR,0);
+          } /* end if */
 
 		oldunpackvg (vg, buf, &bsize);
 		/* add new items */
@@ -164,36 +178,42 @@ HFILEID f;
                     vg->tag[u] = NEW_VGDESCTAG;
                 else if (vg->tag[u] == OLD_VSDESCTAG)
                     vg->tag[u] = NEW_VSDESCTAG;
-                else {  /* BAD */
-#ifdef OLD_WAY
-                    sprintf(sjs,"vimakecompat: unknown tag %d] in vgroup!\n",
-                        vg->tag[u]); zj;
-#else
+                else   /* BAD */
                     HERROR(DFE_NOTINSET);
-#endif
-                }
 		vpackvg (vg, buf, &bsize);
 
         stat = Hputelement (f, VGDESCTAG, ref, (uint8*)buf, bsize);
+        HDfreespace(buf);
         if (stat == FAIL)
             HRETURN_ERROR(DFE_WRITEERROR,0);
 
         stat = Hnextread (aid, (uint16)OLD_VGDESCTAG, DFREF_WILDCARD, DF_CURRENT);
-		} /* while */
+	  } /* while */
     Hendaccess (aid);
 
 	/* =============================================  */
 	/* --- read all vdata descs  and convert each --- */
 	/* --- then dup a tag for each vdata data elt --- */
 
+    old_bsize=0;    /* reset state variables */
+    buf=NULL;
     stat = aid = Hstartread (f, (uint16)OLD_VSDESCTAG, DFREF_WILDCARD);
 	while (stat != FAIL) {
 
         HQuerytagref (aid, &tag, &ref);
         HQuerylength (aid, &bsize);
+        if(buf==NULL || bsize>old_bsize) {
+            if(buf!=NULL)
+                HDfreespace(buf);
+            if ( (buf= (uint8 *) HDgetspace (bsize)) == NULL)
+                HRETURN_ERROR(DFE_NOSPACE, FAIL);
+            old_bsize=bsize;
+          } /* end if */
         stat = Hgetelement (f, tag, ref, (uint8*)buf);
-        if (stat == FAIL)
+        if (stat == FAIL) {
+            HDfreespace(buf);
             HRETURN_ERROR(DFE_READERROR,0);
+          } /* end if */
 
 		oldunpackvs (vs, buf, &bsize);
 
@@ -205,16 +225,19 @@ HFILEID f;
 			vs->more = 0;
 		vpackvs (vs, buf, &bsize);
 
-      stat = Hputelement (f, VSDESCTAG, ref, (uint8*)buf, bsize);
-        if (stat == FAIL)
+        stat = Hputelement (f, VSDESCTAG, ref, (uint8*)buf, bsize);
+        if (stat == FAIL) {
+            HDfreespace(buf);
             HRETURN_ERROR(DFE_WRITEERROR,0);
+          } /* end if */
 
 		/* duplicate a tag to point to vdata data */
-            stat = Hdupdd (f, NEW_VSDATATAG, ref, (uint16)OLD_VSDATATAG, ref);
-             if (stat == FAIL)
-                HRETURN_ERROR(DFE_DUPDD,0);
+        stat = Hdupdd (f, NEW_VSDATATAG, ref, (uint16)OLD_VSDATATAG, ref);
+        HDfreespace(buf);
+         if (stat == FAIL)
+            HRETURN_ERROR(DFE_DUPDD,0);
         stat = Hnextread (aid, (uint16)OLD_VSDESCTAG, DFREF_WILDCARD, DF_CURRENT);
-		} /* while */
+	  } /* while */
 
     Hendaccess (aid);
 
@@ -252,7 +275,7 @@ char * fs;
     f = Hopen (fs,DFACC_ALL,0);
     if (f == FAIL)
         HRETURN_ERROR(DFE_BADOPEN,FAIL);
-	stat = vicheckcompat(f); 
+	stat = vicheckcompat(f);
     Hclose (f);
 
 	return (stat);
@@ -292,9 +315,9 @@ char * fs;
 /* ==================================================================== */
 
 #ifdef PROTOTYPE
-void oldunpackvg (VGROUP *vg,uint8  buf[], int32 *size)
+static void oldunpackvg (VGROUP *vg,uint8  buf[], int32 *size)
 #else
-void oldunpackvg (vg, buf, size)
+static void oldunpackvg (vg, buf, size)
 VGROUP*     vg;     /* vgroup to be loaded with file data */
 uint8            buf[];  /* must contain a VGDESCTAG data object from file */
 int32*      size;   /* ignored, but included to look like packvg() */
@@ -321,16 +344,14 @@ int32*      size;   /* ignored, but included to look like packvg() */
 
 	/* retrieve vgname */
     HDstrcpy(vg->vgname, (char*) bb);
-    bb += ( HDstrlen(vg->vgname)+1 );
-
 } /* oldunpackvg */
 
 /* ================================================================= */
 
 #ifdef PROTOTYPE
-void oldunpackvs (VDATA *vs, uint8 buf[], int32 *size)
+static void oldunpackvs (VDATA *vs, uint8 buf[], int32 *size)
 #else
-void oldunpackvs (vs, buf, size)       
+static void oldunpackvs (vs, buf, size)
 VDATA   *vs;
 int32       *size;  /* UNUSED, but retained for compatibility with packvs */
 uint8        buf[];

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1993/04/14 21:39:33  georgev
-Had to add some VOIDP casts to some functions to make the compiler happy.
+Revision 1.9  1993/08/16 21:46:47  koziol
+Wrapped in changes for final, working version on the PC.
 
+ * Revision 1.8  1993/04/14  21:39:33  georgev
+ * Had to add some VOIDP casts to some functions to make the compiler happy.
+ *
  * Revision 1.7  1993/04/06  17:23:48  chouck
  * Added Vset macros
  *
@@ -365,6 +368,7 @@ uint8    buf[];
 	return(nv/hsize);
 } /* VSread */
 
+#ifndef WIN3
 /* ------------------------------------------------------------------ */
 /* debugging routine */
 
@@ -385,6 +389,7 @@ int32   n;
     printf("\n");
     fflush(stdout);
 }
+#endif  /* WIN3 */
 
 /* ------------------------------------------------------------------ */
 /*

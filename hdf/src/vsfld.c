@@ -5,8 +5,8 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.9  1993/08/03 15:49:25  chouck
-Cleaned up a bunch of Vset code
+Revision 1.10  1993/08/16 21:46:50  koziol
+Wrapped in changes for final, working version on the PC.
 
  * Revision 1.8  1993/04/22  16:05:57  chouck
  * Minor Vset fixes
@@ -190,9 +190,12 @@ char    *fields;
           return(FAIL);
     }
   
-    if((scanattrs(fields, &ac, &av) == FAIL) || (ac == 0))
+    if (scanattrs(fields,&ac,&av) < 0)
         HRETURN_ERROR(DFE_BADFIELDS,FAIL);
 
+    if (ac==0)
+        return(FAIL);
+  
   /* 
    * write to an empty vdata : set the write list but do not set the 
    *   read list cuz there is nothing there to read yet...
@@ -202,37 +205,35 @@ char    *fields;
         wlist.ivsize = 0;
         wlist.n      = 0;
         for(i = 0; i < ac; i++) {
-            
-            found = FALSE;
-            /* --- first look in the user's symbol table --- */
-            for(j = 0; j < vs->nusym; j++)
-                if (!HDstrcmp(av[i], vs->usym[j].name)) {
-                    found = TRUE;
-                    
-                    HDstrcpy (wlist.name[wlist.n], vs->usym[j].name);
-                    order = vs->usym[j].order;
-                    wlist.type[wlist.n]  = vs->usym[j].type;
-                    wlist.order[wlist.n] = order;
-                    wlist.esize[wlist.n] = (int16)(order * DFKNTsize(vs->usym[j].type | DFNT_NATIVE));
-                    wlist.isize[wlist.n] = order * vs->usym[j].isize;
-                    wlist.ivsize+= (int16)(wlist.isize[wlist.n]);
+      /* --- first look in the reserved symbol table --- */
+            for(found = 0, j = 0; j < NRESERVED; j++)
+                if (!HDstrcmp(av[i], rstab[j].name)) {
+                    found = 1;
+          
+                    HDstrcpy( wlist.name[wlist.n],rstab[j].name);
+                    order = rstab[j].order;
+                    wlist.type[wlist.n]  =  rstab[j].type;
+                    wlist.order[wlist.n] =  order;
+                    wlist.esize[wlist.n] =  (int16)(order * DFKNTsize(rstab[j].type | DFNT_NATIVE));
+                    wlist.isize[wlist.n] =  order * rstab[j].isize;
+                    wlist.ivsize  += (int16)(wlist.isize[wlist.n]);
                     wlist.n++;
                     break;
                 }
-            
-            /* --- now look in the reserved symbol table --- */
+      
+      /* --- now look in the user's symbol table --- */
             if(!found) {
-                for(j = 0; j < NRESERVED; j++)
-                    if (!HDstrcmp(av[i], rstab[j].name)) {
-                        found = TRUE;
-                        
-                        HDstrcpy( wlist.name[wlist.n],rstab[j].name);
-                        order = rstab[j].order;
-                        wlist.type[wlist.n]  =  rstab[j].type;
-                        wlist.order[wlist.n] =  order;
-                        wlist.esize[wlist.n] =  (int16)(order * DFKNTsize(rstab[j].type | DFNT_NATIVE));
-                        wlist.isize[wlist.n] =  order * rstab[j].isize;
-                        wlist.ivsize  += (int16)(wlist.isize[wlist.n]);
+                for(found = 0,j = 0; j < vs->nusym; j++)
+                    if (!HDstrcmp(av[i], vs->usym[j].name)) {
+                        found = 1;
+            
+                        HDstrcpy (wlist.name[wlist.n], vs->usym[j].name);
+                        order = vs->usym[j].order;
+                        wlist.type[wlist.n]  = vs->usym[j].type;
+                        wlist.order[wlist.n] = order;
+                        wlist.esize[wlist.n] = (int16)(order * DFKNTsize(vs->usym[j].type | DFNT_NATIVE));
+                        wlist.isize[wlist.n] = order * vs->usym[j].isize;
+                        wlist.ivsize+= (int16)(wlist.isize[wlist.n]);
                         wlist.n++;
                         break;
                     }
@@ -243,14 +244,14 @@ char    *fields;
     
     /* *********************************************************** */
     /* ensure fields with order > 1 are alone  */
-        for (i = 0; i < wlist.n; i++)
-            if (wlist.order[i] > 1 && wlist.n != 1)
+        for (j=0,i=0;i<wlist.n;i++)
+            if (wlist.order[i] >1 && wlist.n != 1)
                 HRETURN_ERROR(DFE_BADORDER,FAIL);
-
     /* *********************************************************** */
+    
     /* compute and save the fields' offsets */
-        for (j=0, i=0; i < wlist.n; i++) {
-            wlist.off[i] = (int16)j;
+        for (j=0,i=0; i<wlist.n; i++) {
+            wlist.off[i] =(int16)j;
             j += wlist.isize[i];
         }
     
@@ -267,12 +268,11 @@ char    *fields;
     if(vs->nvertices > 0) {
         rlist   = vs->rlist;
         rlist.n = 0;
-        for (i = 0; i < ac; i++) {
-            found = FALSE;
-            for (j = 0; j < vs->wlist.n; j++)
+        for (i=0;i<ac;i++) {
+            for (found=0, j=0; j<vs->wlist.n; j++)
                 if (!HDstrcmp(av[i], vs->wlist.name[j]) ) { /*  see if field exist */
-                    found = TRUE;
-                    
+                    found = 1;
+          
                     rlist.item[rlist.n] = j; /* save as index into wlist->name */
                     rlist.n++;
                     break;
@@ -280,12 +280,12 @@ char    *fields;
             if (!found)       /* field does not exist - error */
                 HRETURN_ERROR(DFE_BADFIELDS,FAIL);
         }
-        
-        /* copy from rlist (temp) into vdata */
+    
+    /* copy from rlist (temp) into vdata */
         HDmemcpy((VOIDP) &(vs->rlist), (VOIDP) &(rlist), sizeof(rlist));
-        
+    
         return(SUCCEED);
-        
+    
   } /* setting read list */
 
   return (FAIL);
@@ -330,7 +330,7 @@ int32   localtype, order;
     }
 
     vs=w->vs;
-    if ((vs == NULL) || (scanattrs(field,&ac,&av) == FAIL) || (ac != 1))
+    if ((vs == NULL) || (scanattrs(field,&ac,&av) < 0) || (ac != 1))
         HRETURN_ERROR(DFE_ARGS, FAIL);
   
     if (order < 1 || order > MAX_ORDER)

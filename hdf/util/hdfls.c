@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.28  1993/05/17 22:54:41  sxu
-Wrapped in changes made in 3.2 and upgrade *.COM files for 3.3.
+Revision 1.29  1993/08/16 21:49:01  koziol
+Wrapped in changes for final, working version on the PC.
 
+ * Revision 1.28  1993/05/17  22:54:41  sxu
+ * Wrapped in changes made in 3.2 and upgrade *.COM files for 3.3.
+ *
  * Revision 1.27  1993/04/19  23:04:30  koziol
  * General Code Cleanup to reduce/remove compilation warnings on PC
  *
@@ -141,7 +144,11 @@ void qsort(void *base, size_t nmemb, size_t size,
         int (*compar) (const void*, const void *));
 #endif
 
+#ifdef PC
+#define MAXBUFF 2048
+#else
 #define MAXBUFF 8192
+#endif
 
 dd_t desc[MAXBUFF];
 

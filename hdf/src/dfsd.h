@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.10  1993/04/19 22:47:40  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.11  1993/08/16 21:45:30  koziol
+Wrapped in changes for final, working version on the PC.
 
+ * Revision 1.10  1993/04/19  22:47:40  koziol
+ * General Code Cleanup to reduce/remove errors on the PC
+ *
  * Revision 1.9  1993/02/02  00:10:49  georgev
  * Changed prototypes for Hyperslab routines to reflect new interface.
  *
@@ -40,7 +43,7 @@ General Code Cleanup to reduce/remove errors on the PC
  * File:    dfsd.h
  * Purpose: header file for the Scientific Data set
  * Invokes: dfrig.h
- * Contents: 
+ * Contents:
  *  Structure definitions: DFSsdg
  *  Constant definitions: DFS_MAXLEN
  * Remarks: This is included with user programs which use SDG
@@ -54,6 +57,7 @@ General Code Cleanup to reduce/remove errors on the PC
 #include "hdf.h"
 
 #define DFS_MAXLEN 255		/*  Max length of label/unit/format strings */
+#define DFSD_MAXFILL_LEN 16 /* Current max length for fill_value space */
 
 /* include numbertype and aid for 3.2   S. Xu   */
 /* structure to hold SDG info */
@@ -75,7 +79,8 @@ typedef struct DFSsdg {
     float64 cal, cal_err;       /* calibration multiplier stuff          */
     float64 ioff, ioff_err;     /* calibration offset stuff              */
     int32   cal_type;           /* number type of data after calibration */
-    uint8   _HUGE *fill_value;  /* fill value if any specified  */
+    uint8   fill_value[DFSD_MAXFILL_LEN];   /* fill value if any specified  */
+    bool fill_fixed;            /* whether ther fill value is a fixed value, or it can change */
 } DFSsdg;
 
 /* DFnsdgle is the internal structure which stores SDG or NDS and   */

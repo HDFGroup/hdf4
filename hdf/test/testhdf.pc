@@ -1,0 +1,4 @@
+testhdf slab
+testhdf /noi
+testhdf
+..\lib\df.lib,;

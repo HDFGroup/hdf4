@@ -824,48 +824,6 @@ uint32 num_elm, source_stride, dest_stride;
 
 }
 
-/*
- * Define structures to encode and decode Vax numbers
- * The following code is based on the methods of reading / writing
- *  doubles from Vaxen developed by Sun Microsystems as part of
- *  the XDR library.
- */
-
-/* How an IEEE double looks 
-struct  ieee_double {
-    unsigned int   mantissa1 : 20;
-    unsigned int   exp       : 11;
-    unsigned int   sign      : 1;
-    unsigned int   mantissa2 : 32;
-};
-
-   How a Vax double looks 
-struct  vax_double {
-    unsigned int    mantissa1 : 7;
-    unsigned int    exp       : 8;
-    unsigned int    sign      : 1;
-    unsigned int    mantissa2 : 16;
-    unsigned int    mantissa3 : 16;
-    unsigned int    mantissa4 : 16;
-};
-
-#define VAX_DBL_BIAS   0x81
-#define IEEE_DBL_BIAS  0x3ff
-#define MASK(nbits)    ((1 << nbits) - 1)
-
-struct dbl_limits {
-    struct vax_double  vaxx;
-    struct ieee_double ieee;
-};
-
-static struct dbl_limits dbl_lim[2] = {
-    {{ 0x7f,  0xff, 0x0, 0xffff, 0xffff, 0xfff},   Max Vax 
-     { 0x0,  0x7ff, 0x0, 0x0 }},                   Max IEEE 
-    {{ 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},              Min Vax 
-     { 0x0, 0x0, 0x0, 0x0 }}                       Min IEEE 
-};
-*/
-
 /************************************************************/
 /* DFKlvi8f()                                                */
 /* --> Import routine for 8 byte VAX floats                 */

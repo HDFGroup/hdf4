@@ -34,6 +34,7 @@
 +tbbt &
 +dfutil &
 +dfstubs &
++hdfalloc &
 +hfilef &
 +herrf &
 +dfanf &
@@ -53,7 +54,7 @@
 +vgff &
 +dfff &
 +dfufp2if &
-+constant &
++maldebug &
 +jutils &
 +jerror &
 +jmemmgr &

@@ -5,8 +5,8 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/08/03 15:49:22  chouck
-Cleaned up a bunch of Vset code
+Revision 1.6  1993/08/16 21:46:45  koziol
+Wrapped in changes for final, working version on the PC.
 
  * Revision 1.4  1993/03/29  16:50:46  koziol
  * Updated JPEG code to new JPEG 4 code.
@@ -44,15 +44,15 @@ Cleaned up a bunch of Vset code
 /*
 ** Given a string (attrs) , the routine parses it into token strings,
 ** and returns a ptr (attrv) to an array of ptrs where the tokens 
-** are stored.  The number of tokens are returned in attrc.
+** are stored.  The no of tokens are returned in attrc.
 **
 ** Currently used only by routines that manipulate field names.
 ** As such each field string is truncated to a max length of
-** FIELDNAMELENMAX (as defined in hdf.h). For most cases, this
+** FIELDNAMELENMAX (as defined in vg.h). For most cases, this
 ** truncation doesn't happen because FIELDNAMELENMAX is a big number.
 **
-** RETURN FAIL if error.
-** RETURN SUCCEED if ok.
+** RETURN -1 if error.
+** RETURN 1 if ok.
 **
 ** Current implementation: all strings inputs converted to uppercase.    
 ** tokens must be separated by COMMAs.
@@ -81,44 +81,25 @@ int32 scanattrs (attrs,attrc,attrv)
   register char   *s, *s0, *ss;
   register intn   i, slen, len;
   char * FUNC = "scanattrs";
-  char * saved_string = HDstrdup(attrs);
   
-  s = saved_string;
+  s = attrs;
   slen = HDstrlen(s);
   nsym = 0;
   
   s0 = s;
-  while(*s) {
-      if (*s >= 'a' && *s <= 'z') *s=(char)toupper(*s);
-      if ( ISCOMMA(*s) ) {
+  for (i = 0; i < slen; i++, s++)
+    if ( ISCOMMA(*s) ) {
+      len = (intn)(s - s0);
+      if (len <= 0) return(FAIL);
 
-          /* make sure we've got a legitimate length */
-          len = (intn)(s - s0);
-          if (len <= 0) return(FAIL);
-          
-          /* save that token */
-          ss = symptr[nsym] = sym[nsym]; 
-          nsym++;
-          
-          /* shove the string into our static buffer.  YUCK! */
-          if ( len > FIELDNAMELENMAX) len = FIELDNAMELENMAX;
-          HIstrncpy(ss, s0, len + 1);
-
-          /* skip over the comma */
-          s++;
-
-          /* skip over white space before the next field name */
-          while(*s && *s == ' ') s++;
-          
-          /* keep track of the first character of the next token */
-          s0 = s;
-
-      } else {
-
-          /* move along --- nothing to see here */
-          s++;
-      }
-  }  
+      /* save that token */
+      ss = symptr[nsym] = sym[nsym]; 
+      nsym++;
+      
+      if ( len > FIELDNAMELENMAX) len = FIELDNAMELENMAX;
+      HIstrncpy(ss, s0, len + 1);
+      s0 = s+1;
+    }
   
   /* save the last token */
   len = (intn)(s - s0);
@@ -129,12 +110,19 @@ int32 scanattrs (attrs,attrc,attrv)
   if ( len > FIELDNAMELENMAX) len = FIELDNAMELENMAX;
   HIstrncpy(ss, s0, len + 1);
   
+  /* convert all fields tokens to uppercase */
+  for (i = 0; i < nsym; i++) {
+    s = symptr[i];
+    while(*s != '\0') {
+      if (*s >= 'a' && *s <= 'z') *s=(char)toupper(*s);
+      s++;
+    }
+  }
+  
   symptr[nsym] = NULL;
   *attrc = nsym;
   *attrv = (char**) symptr;
   
-  HDfreespace(saved_string);
-
   return(SUCCEED); /* ok */
   
 } /* scanattrs */

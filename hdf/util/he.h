@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.10  1993/05/24 15:09:47  sxu
-Wrapped changes in HDF3.2 into 3.3.
+Revision 1.11  1993/08/16 21:49:03  koziol
+Wrapped in changes for final, working version on the PC.
 
+ * Revision 1.10  1993/05/24  15:09:47  sxu
+ * Wrapped changes in HDF3.2 into 3.3.
+ *
  * Revision 1.9  1993/01/19  06:24:11  koziol
  * Updated for better portability and fixed minor compiler warnings
  *
@@ -55,7 +58,11 @@ Wrapped changes in HDF3.2 into 3.3.
 #endif /* DEBUG */
 
 #define HE_ARG_SZ 30
+#ifdef PC
+#define HE_DESC_SZ 512
+#else
 #define HE_DESC_SZ 8192
+#endif
 
 #define HE_COLOR_SZ 256
 #define HE_PALETTE_SZ 768

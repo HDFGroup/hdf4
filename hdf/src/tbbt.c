@@ -6,7 +6,6 @@
 #include <stdio.h>  /* NULL */
 #include "hdf.h"
 #define TBBT_INTERNALS
-#define WASTE_STACK
 #include "tbbt.h"
 #define   Alloc(cnt,typ)   (typ *) HDgetspace( (cnt) * sizeof(typ) )
 #define   Free(x)           (HDfreespace((VOIDP)x))

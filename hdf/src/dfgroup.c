@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1993/04/14 21:39:06  georgev
-Had to add some VOIDP casts to some functions to make the compiler happy.
+Revision 1.7  1993/08/16 21:45:12  koziol
+Wrapped in changes for final, working version on the PC.
 
+ * Revision 1.6  1993/04/14  21:39:06  georgev
+ * Had to add some VOIDP casts to some functions to make the compiler happy.
+ *
  * Revision 1.5  1993/01/19  05:54:31  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -76,15 +79,21 @@ setgroupREC(list_rec)
      DIlist_ptr list_rec;
 #endif
 {
+    char *FUNC="setgroupREC";
     int32 i;
 
     if (!Group_list) {
-        Group_list = (DIlist_ptr *) HDgetspace((uint32) MAX_GROUPS * 
+        Group_list = (DIlist_ptr *) HDgetspace((uint32) MAX_GROUPS *
                                                sizeof(DIlist_ptr));
-        if (!Group_list) return FAIL;
-        
+        if (!Group_list)
+            HRETURN_ERROR(DFE_NOSPACE, FAIL);
+
+#ifdef OLD_WAY
         for (i = 0; i < MAX_GROUPS; i++)
             Group_list[i] = NULL;
+#else
+        HDmemset(Group_list,0,MAX_GROUPS*sizeof(DIlist_ptr));
+#endif
 
     }
 
@@ -94,8 +103,7 @@ setgroupREC(list_rec)
             return GSLOT2ID(i);
         }
 
-    return FAIL;
-
+    HRETURN_ERROR(DFE_INTERNAL, FAIL);
 } /* setgroupREC */
 
 /*-----------------------------------------------------------------------------
@@ -123,40 +131,34 @@ int32 DFdiread(file_id, tag, ref)
 
     HEclear();
 
-    if (!HDvalidfid(file_id)) {
-       HERROR(DFE_ARGS);
-       return FAIL;
-    }
+    if (!HDvalidfid(file_id))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
 
     /* Find the group. */
     length = Hlength(file_id, tag, ref);
-    if (length == FAIL) {
-       return FAIL;
-    }
+    if (length == FAIL)
+        HRETURN_ERROR(DFE_INTERNAL, FAIL);
 
     /* allocate a new structure to hold the group */
     new_list = (DIlist_ptr) HDgetspace((uint32) sizeof(DIlist));
-    if(!new_list) {
-        HERROR(DFE_NOSPACE);
-        return FAIL;
-    }
-        
-   
+    if(!new_list)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+
+
     new_list->DIlist = (uint8 *) HDgetspace((uint32)length);
     if (!new_list->DIlist) {
         HDfreespace((VOIDP)new_list);
-        HERROR(DFE_NOSPACE);
-        return FAIL;
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
     }
 
-    new_list->num = length / 4;      /* 4==sizeof DFdi */
+    new_list->num = length / sizeof(DFdi);
     new_list->current = 0;           /* no DIs returned so far */
 
     /* read in group */
     if (Hgetelement(file_id, tag, ref, (uint8 *)new_list->DIlist)<0) {
         HDfreespace((VOIDP)new_list->DIlist);
         HDfreespace((VOIDP)new_list);
-        return FAIL;
+        HRETURN_ERROR(DFE_READERROR, FAIL);
     }
     return (int32) setgroupREC(new_list);
 }
@@ -188,11 +190,13 @@ int DFdiget(list, ptag, pref)
 
     list_rec = GID2REC(list);
 
-    if (!list_rec) return FAIL;
-    if (list_rec->current >= list_rec->num) return FAIL;
+    if (!list_rec)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    if (list_rec->current >= list_rec->num)
+        HRETURN_ERROR(DFE_INTERNAL, FAIL);
 
     /* compute address of Ndi'th di */
-    p = (uint8 *) list_rec->DIlist + 4 * list_rec->current++;
+    p = (uint8 *) list_rec->DIlist + sizeof(DFdi) * list_rec->current++;
     UINT16DECODE(p, *ptag);
     UINT16DECODE(p, *pref);
 
@@ -229,17 +233,13 @@ int32 DFdisetup(maxsize)
 
     new_list = (DIlist_ptr) HDgetspace((uint32) sizeof(DIlist));
 
-    if (!new_list) {
-        HERROR(DFE_NOSPACE);
-        return FAIL;
-    }
+    if (!new_list)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    new_list->DIlist = (uint8 *) HDgetspace((uint32)(maxsize * 4));
-                               /* 4==sizeof(DFdi) */
+    new_list->DIlist = (uint8 *) HDgetspace((uint32)(maxsize * sizeof(DFdi)));
     if (!new_list->DIlist) {
         HDfreespace((VOIDP)new_list);
-        HERROR(DFE_NOSPACE);
-        return FAIL;
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
     }
 
     new_list->num     = maxsize;
@@ -272,11 +272,13 @@ int DFdiput(list, tag, ref)
     
     list_rec = GID2REC(list);
 
-    if (!list_rec) return FAIL;
-    if (list_rec->current >= list_rec->num) return FAIL;
+    if (!list_rec)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    if (list_rec->current >= list_rec->num)
+        HRETURN_ERROR(DFE_INTERNAL, FAIL);
 
     /* compute address of Ndi'th di to put tag/ref in */
-    p = (uint8 *) list_rec->DIlist + 4 * list_rec->current++;
+    p = (uint8 *) list_rec->DIlist + sizeof(DFdi) * list_rec->current++;
     UINT16ENCODE(p, tag);
     UINT16ENCODE(p, ref);
 
@@ -307,21 +309,21 @@ int DFdiwrite(file_id, list, tag, ref)
     int ret;                   /* return value */
     DIlist_ptr list_rec;
 
-    if (!HDvalidfid(file_id)) {
-        HERROR(DFE_ARGS);
-        return FAIL;
-    }
-    
-    list_rec = GID2REC(list);
-    
-    if (!list_rec) return FAIL;
+    if (!HDvalidfid(file_id))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
 
-    ret = Hputelement(file_id, tag, ref, list_rec->DIlist, 
-                      (int32)list_rec->current * 4);   /* 4 == sizeof(DFdi) */
+    list_rec = GID2REC(list);
+
+    if (!list_rec)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    ret = Hputelement(file_id, tag, ref, list_rec->DIlist,
+                      (int32)list_rec->current * sizeof(DFdi));
     HDfreespace((VOIDP)list_rec->DIlist);
     HDfreespace((VOIDP)list_rec);
+#ifdef QAK
+printf("DFdiwrite(): list=%ld, list&0xFFFF=%ld\n",list,(list & 0xffff));
+#endif
     Group_list[list & 0xffff] = NULL;  /* YUCK! BUG! */
     return ret;
 }
-
-     
