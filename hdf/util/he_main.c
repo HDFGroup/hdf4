@@ -73,7 +73,9 @@ static char RcsId[] = "@(#)$Revision$";
 #include "he.h"
 
 #include <stdio.h>
+#ifndef WIN32
 #include <unistd.h>
+#endif
 
 /* the return status of last command executed */
 int         he_status = HE_OK;
