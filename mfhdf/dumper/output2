@@ -1,0 +1,27 @@
+File name: swf32.hdf 
+
+Dimension Variable Name = fakeDim1
+	 Index = 1
+	 Type= 32-bit floating point
+	 Ref. = 4
+	 Rank = 1
+	 Number of attributes = 3
+	 Dim0: Name=fakeDim1
+		 Size = 3
+		 Type = 32-bit floating point
+		 Number of attributes = 3
+	 Attr0: Name = long_name
+		 Type = 8-bit signed char 
+		 Count= 4
+		 Value = Line
+	 Attr1: Name = units
+		 Type = 8-bit signed char 
+		 Count= 4
+		 Value = Inch
+	 Attr2: Name = format
+		 Type = 8-bit signed char 
+		 Count= 5
+		 Value = Int16
+	 Data : 
+                0.000000 10.000000 20.000000 
+
