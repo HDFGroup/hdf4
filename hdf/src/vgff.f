@@ -781,7 +781,7 @@ C-------------------------------------------------------------------------
 
          INTEGER function vsfsetblsz(id, block_size)
 C
-         INTEGER id
+         INTEGER id, block_size
          INTEGER vscsetblsz
 C
          vsfsetblsz = vscsetblsz(id, block_size) 

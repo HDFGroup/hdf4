@@ -1809,7 +1809,7 @@ C
 	!MS$if defined(BUILD_HDF_DLL)
 	!MS$attributes dllexport :: vsfsetblsz
 	!MS$endif
-         INTEGER id
+         INTEGER id, block_size
 C
       INTERFACE
         INTEGER FUNCTION vscsetblsz(id, block_size)
