@@ -295,9 +295,9 @@ convert(const char *template, int imageNumber, int32 xdim, int32 ydim,
 {
     char        numStr[20], xStr[20], yStr[20];
 
-    sprintf(numStr, "%3d", imageNumber);
-    sprintf(xStr, "%3ld", xdim);
-    sprintf(yStr, "%3ld", ydim);
+    sprintf(numStr, "%03d", imageNumber);
+    sprintf(xStr, "%03ld", xdim);
+    sprintf(yStr, "%03ld", ydim);
 
     for (; (*template);)
       {
