@@ -33,7 +33,7 @@
 * 
 ******************************************************************************/
 
-#include <vg.h>
+#include "vg.h"
 
 static int condensed;
 static char sbuf[80]; /* message buffer */
