@@ -14,7 +14,7 @@
 #
 # ##################################################################
 #
-#           MAKEFILE for creating the HDF library, libdf.a, on Crays
+#           MAKEFILE for creating the HDF library, libdf.a, on Suns
 #
 # This makefile creates the following FORTRAN and C interfaces 
 # for HDF in a library called "libdf.a": 
@@ -55,14 +55,14 @@
 SHELL=/bin/sh
 
 # Define your machine type
-#MACHINE=UNICOS
+#MACHINE=UNIX386
 
 # Define your C compiler and flags
-CC= cc
-CFLAGS= -O
+CC= gcc
+CFLAGS= -ansi -O
 
 # Define your FORTRAN compiler
-FC= cf77
+FC= f77
 FFLAGS=
 
 # Location where the HDF include files are to be installed
@@ -76,10 +76,10 @@ HDFBIN= `pwd`/bin
 
 # Name of library archiver and flags to send
 AR= ar
-ARFLAGS= r
+ARFLAGS= rc
 
 # Name of achive randomizer (use 'touch' if non-existant)
-RANLIB= touch
+RANLIB= ranlib
 
 # Name of remove utility
 RM= /bin/rm

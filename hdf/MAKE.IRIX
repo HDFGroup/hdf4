@@ -76,10 +76,10 @@ FFLAGS=
 GLLIB = -lgl_s
 
 # Location where the HDF include files are to be installed
-HDFINC= `pwd`/include
+HDFINC= `pwd`/src
 
 # Location where the HDF library is to be installed
-HDFLIB= `pwd`/lib
+HDFLIB= `pwd`/src
 
 # Location to put HDF utility executables
 HDFBIN= `pwd`/bin
