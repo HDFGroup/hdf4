@@ -58,7 +58,7 @@ MACHINE= DEC_ALPHA
 
 # Define your C compiler and flags
 CC= cc
-CFLAGS= -D$(MACHINE) -O -Olimit 1000 -std1
+CFLAGS= -D$(MACHINE) -O -Olimit 2048 -std1
 
 # Define your FORTRAN compiler
 FC= f77
