@@ -37,7 +37,7 @@ PRIVATE vginstance_t *vginstance
     (HFILEID f, uint16 vgid);
 
 PRIVATE void vunpackvg
-    (VGROUP *vg, uint8 buf[]);
+    (VGROUP *vg, uint8 buf[], uintn len);
 
 /*
 * -------------------------------------------------------------------- 
@@ -406,7 +406,10 @@ void vpackvg (VGROUP *vg, uint8 buf[], int32 *size)
     UINT16ENCODE(bb,vg->more);
 
 	/* returns the size of total fields saved */
-    *size = (int32) (bb - buf) + 1;
+    *size = (int32) (bb - buf) + 1; /* NOTE: the '+1' part shouldn't be there */
+									/* but since files have been created with */
+									/* it there (and the size calc. wrong) it */
+									/* has to be left alone -QAK */
 } /* vpackvg */
 
 /* ==================================================================== */
@@ -422,7 +425,7 @@ void vpackvg (VGROUP *vg, uint8 buf[], int32 *size)
 *
 */
 
-PRIVATE void vunpackvg (VGROUP *vg, uint8 buf[])
+PRIVATE void vunpackvg (VGROUP *vg, uint8 buf[], uintn len)
 {
     register uint8   *bb;
     register uintn   u;
@@ -431,44 +434,57 @@ PRIVATE void vunpackvg (VGROUP *vg, uint8 buf[])
     CONSTR(FUNC,"vunpackvg");
 #endif
     
-    bb = &buf[0];
-
-    /* retrieve nvelt */
-    UINT16DECODE(bb,vg->nvelt);
-    
-    vg->msize = (vg->nvelt > MAXNVELT ? vg->nvelt : MAXNVELT);
-    vg->tag  = (uint16 *) HDgetspace(vg->msize * sizeof(uint16));
-    vg->ref  = (uint16 *) HDgetspace(vg->msize * sizeof(uint16));
-    
-    if((vg->tag == NULL) || (vg->ref == NULL))
-        return;
-    
-    /* retrieve the tags */
-    for (u = 0; u < vg->nvelt; u++)
-        UINT16DECODE(bb,vg->tag[u]);
-    
-    /* retrieve the refs */
-    for (u = 0; u < vg->nvelt; u++)
-        UINT16DECODE(bb,vg->ref[u]);
-
-    /* retrieve vgname (and its len)  */
-    UINT16DECODE(bb,uint16var);
-    
-    HIstrncpy(vg->vgname, (char*) bb, (int32) uint16var + 1);
-    bb += uint16var;
-    
-    /* retrieve vgclass (and its len)  */
-    UINT16DECODE(bb,uint16var);
-    
-    HIstrncpy(vg->vgclass, (char*) bb, (int32) uint16var + 1);
-    bb += uint16var;
-    
-    UINT16DECODE(bb,vg->extag); /* retrieve the vg's expansion tag */
-    UINT16DECODE(bb,vg->exref); /* retrieve the vg's expansion ref */
-    
+    /* '5' is a magic number, the exact amount of space for 2 uint16's */
+	/* the magic number _should_ be '4', but the size of the Vgroup */
+	/* information is incorrectly calculated (in vpackvg() above) when the */
+	/* info is written to the file and it's too late to change it now :-( */
+    bb=&buf[len-5];
     UINT16DECODE(bb,vg->version); /* retrieve the vg's version field */
     
     UINT16DECODE(bb,vg->more); /* retrieve the vg's more field */
+
+    bb = &buf[0];
+
+    /* retrieve nvelt */
+    if(vg->version<=3) { /* current Vset version number */
+        UINT16DECODE(bb,vg->nvelt);
+    
+        vg->msize = (vg->nvelt > MAXNVELT ? vg->nvelt : MAXNVELT);
+        vg->tag  = (uint16 *) HDgetspace(vg->msize * sizeof(uint16));
+        vg->ref  = (uint16 *) HDgetspace(vg->msize * sizeof(uint16));
+    
+        if((vg->tag == NULL) || (vg->ref == NULL))
+            return;
+    
+        /* retrieve the tags */
+        for (u = 0; u < vg->nvelt; u++)
+            UINT16DECODE(bb,vg->tag[u]);
+    
+        /* retrieve the refs */
+        for (u = 0; u < vg->nvelt; u++)
+            UINT16DECODE(bb,vg->ref[u]);
+
+        /* retrieve vgname (and its len)  */
+        UINT16DECODE(bb,uint16var);
+    
+        HIstrncpy(vg->vgname, (char*) bb, (int32) uint16var + 1);
+        bb += uint16var;
+    
+        /* retrieve vgclass (and its len)  */
+        UINT16DECODE(bb,uint16var);
+    
+        HIstrncpy(vg->vgclass, (char*) bb, (int32) uint16var + 1);
+        bb += uint16var;
+    
+        UINT16DECODE(bb,vg->extag); /* retrieve the vg's expansion tag */
+        UINT16DECODE(bb,vg->exref); /* retrieve the vg's expansion ref */
+      } /* end if */
+    
+#ifdef OLD_WAY
+    UINT16DECODE(bb,vg->version); /* retrieve the vg's version field */
+    
+    UINT16DECODE(bb,vg->more); /* retrieve the vg's more field */
+#endif
 } /* vunpackvg */
 
 
@@ -607,7 +623,7 @@ PUBLIC int32 Vattach (HFILEID f, int32 vgid, const char *accesstype)
             HRETURN_ERROR(DFE_NOSPACE,FAIL);
           
         /* unpack vgpack into structure vg, and init  */
-        vunpackvg(vg,vgpack);
+        vunpackvg(vg,vgpack,len);
         vg->f             = f;
         vg->oref            = (uint16)vgid;
         vg->otag      = DFTAG_VG;
@@ -1115,7 +1131,7 @@ int32 Ventries (HFILEID f, int32 vgid)
     if ( Hgetelement(f, DFTAG_VG, (uint16)vgid, vgpack) == FAIL)
         HRETURN_ERROR(DFE_NOVS,FAIL);
 
-    vunpackvg(&vg,vgpack);
+    vunpackvg(&vg,vgpack,len);
 
     HDfreespace((VOIDP)vg.tag);
     HDfreespace((VOIDP)vg.ref);

@@ -55,10 +55,12 @@ static char RcsId[] = "@(#)$Revision$";
 static struct bitrec_t *bitfile_records = NULL;
 
 /* Local Function Declarations */
-PRIVATE int HIget_bitfile_slot
-    (void);
+PRIVATE int HIget_bitfile_slot(void);
 
-PRIVATE intn HIbitflush (bitrec_t *bitfile_rec,intn flushbit,intn writeout);
+PRIVATE intn HIbitflush(bitrec_t *bitfile_rec,intn flushbit,intn writeout);
+
+PRIVATE intn HIwrite2read(bitrec_t *bitfile_rec);
+PRIVATE intn HIread2write(bitrec_t *bitfile_rec);
 
 /* #define TESTING */
 /* Actual Function Definitions */
@@ -106,6 +108,7 @@ int32 Hstartbitread(int32 file_id, uint16 tag, uint16 ref)
         HRETURN_ERROR(DFE_INTERNAL,FAIL);
     bitfile_rec->byte_offset=0;
 
+    bitfile_rec->access='r';
     bitfile_rec->mode='r';
     bitfile_rec->bytez=bitfile_rec->bytea+BITBUF_SIZE;
 
@@ -198,6 +201,7 @@ int32 Hstartbitwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
         bitfile_rec->max_offset=0;
         bitfile_rec->buf_read=0;    /* set the number of bytes in buffer to 0 */
       } /* end else */
+    bitfile_rec->access='w';
     bitfile_rec->mode='w';
     bitfile_rec->bytez=bitfile_rec->bytea+BITBUF_SIZE;
     bitfile_rec->bytep=bitfile_rec->bytea;  /* set to the beginning of the buffer */
@@ -238,7 +242,7 @@ intn Hbitappendable(int32 bitid)
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* Check for write access */
-    if(bitfile_rec->mode!='w')
+    if(bitfile_rec->access!='w')
         HRETURN_ERROR(DFE_BADACC,FAIL);
 
     if(Happendable(bitfile_rec->acc_id)==FAIL)
@@ -284,11 +288,15 @@ intn Hbitwrite(int32 bitid, intn count, uint32 data)
 printf("Hbitwrite(): bitid=%d count=%d, data=%x, bitfile_rec->count=%d\n",bitid,count,data,bitfile_rec->count);
 #endif
     /* Check for write access */
-    if(bitfile_rec->mode!='w')
+    if(bitfile_rec->access!='w')
         HRETURN_ERROR(DFE_BADACC,FAIL);
 
     if(count>DATANUM)
         count=DATANUM;
+
+    /* change bitfile modes if necessary */
+    if(bitfile_rec->mode=='r')
+        HIread2write(bitfile_rec);
 
     data&=maskl[count];
 
@@ -303,7 +311,7 @@ printf("Hbitwrite(): bitid=%d count=%d, data=%x, bitfile_rec->count=%d\n",bitid,
     *(bitfile_rec->bytep)=(uint8)(bitfile_rec->bits|data>>(count-=bitfile_rec->count));
     bitfile_rec->byte_offset++;
     if(++bitfile_rec->bytep==bitfile_rec->bytez) {
-	int32 write_size;
+        int32 write_size;
 
 #ifdef TESTING
 printf("Hbitwrite(): past end of buffer on first chunk\n");
@@ -421,8 +429,14 @@ intn Hbitread(int32 bitid, intn count, uint32 *data)
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* Check for write access */
+#ifdef OLD_WAY
     if(bitfile_rec->mode!='r')
         HRETURN_ERROR(DFE_BADACC,FAIL);
+#else   /* OLD_WAY */
+    /* change bitfile modes if necessary */
+    if(bitfile_rec->mode=='w')
+        HIwrite2read(bitfile_rec);
+#endif /* OLD_WAY */
 
     if(count>DATANUM)    /* truncate the count if it's too large */
         count=DATANUM;
@@ -607,22 +621,22 @@ printf("Hbitseek(): bytez=%p, bytea=%p, bytep=%p, buf_read=%d, block_offset=%d\n
         if(bitfile_rec->mode=='w') {  /* if writing, mask off bits not yet written */
             bitfile_rec->bits= *(bitfile_rec->bytep);
             bitfile_rec->bits&=maskc[bit_offset]<<bitfile_rec->count;
-	  } /* end if */
-	else {
+          } /* end if */
+    	else {
             bitfile_rec->bits = *bitfile_rec->bytep++;
-	  } /* end else */
+          } /* end else */
       } /* end if */
     else {
         if(bitfile_rec->mode=='w') { /* if writing, mask off bits not yet written */
             bitfile_rec->count=BITNUM;
             bitfile_rec->bits=0;
-	  } /* end if */
-	else {
+    	  } /* end if */
+    	else {
             bitfile_rec->count=0;
 #ifdef QAK
             bitfile_rec->bits = *bitfile_rec->bytep++;
 #endif
-	  } /* end else */
+    	  } /* end else */
       } /* end else */
 
 #ifdef TESTING
@@ -787,4 +801,65 @@ PRIVATE int HIget_bitfile_slot(void)
 
     return FAIL;
 } /* HIget_bitfile_slot */
+
+/*--------------------------------------------------------------------------
+
+ NAME
+    HIread2write - switch from reading bits to writing them
+ USAGE
+    intn HIread2write(bitfile_rec)
+        bitrec_t *bitfile_rec;  IN: record of bitfile element to switch
+ RETURNS
+    returns SUCCEED (0) if successful, FAIL (-1) otherwise
+ DESCRIPTION
+    Used to switch a bitfile (which has 'w' access) from read mode to write
+    mode, at the same bit offset in the file.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+PRIVATE intn HIread2write(bitrec_t *bitfile_rec)
+{
+    CONSTR(FUNC,"HIread2write");
+
+    bitfile_rec->block_offset=INT_MIN;      /* set to bogus value */
+    bitfile_rec->mode='w';                  /* change to write mode */
+    if(Hbitseek(bitfile_rec->bit_id,bitfile_rec->byte_offset,(BITNUM-bitfile_rec->count))==FAIL)
+        HRETURN_ERROR(DFE_INTERNAL,FAIL);
+    return(SUCCEED);
+} /* HIread2write */
+
+/*--------------------------------------------------------------------------
+
+ NAME
+    HIwrite2read - switch from writing bits to reading them
+ USAGE
+    intn HIwrite2read(bitfile_rec)
+        bitrec_t *bitfile_rec;  IN: record of bitfile element to switch
+ RETURNS
+    returns SUCCEED (0) if successful, FAIL (-1) otherwise
+ DESCRIPTION
+    Used to switch a bitfile (which has 'w' access) from write mode to read
+    mode, at the same bit offset in the file.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+PRIVATE intn HIwrite2read(bitrec_t *bitfile_rec)
+{
+    CONSTR(FUNC,"HIwrite2read");
+    uintn prev_count=bitfile_rec->count;    /* preserve this for later */
+    uint32 prev_offset=bitfile_rec->byte_offset;
+
+    if(HIbitflush(bitfile_rec,-1,TRUE)==FAIL) /* flush any leftover bits */
+        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+
+    bitfile_rec->block_offset=INT_MIN;      /* set to bogus value */
+    bitfile_rec->mode='r';                  /* change to read mode */
+    if(Hbitseek(bitfile_rec->bit_id,prev_offset,(BITNUM-prev_count))==FAIL)
+        HRETURN_ERROR(DFE_INTERNAL,FAIL);
+    return(SUCCEED);
+} /* HIwrite2read */
 

@@ -107,8 +107,6 @@ int16 HDFSIZEOF (int16 x)
 } /* HDFSIZEOF */
 
 
-#define TOO_BIG 32000
-
 /* ------------------------------------------------------------------ */
 /*
 ** sets the fields in a vdata for reading or writing
@@ -165,15 +163,18 @@ PUBLIC intn VSsetfields (int32 vkey, const char *fields)
                     wlist->order[wlist->n] = order;
 
                     value = order * DFKNTsize(vs->usym[j].type | DFNT_NATIVE);
-                    if(value > TOO_BIG) HRETURN_ERROR(DFE_BADFIELDS,FAIL);
+                    if(value > MAX_FIELD_SIZE)
+			HRETURN_ERROR(DFE_BADFIELDS,FAIL);
                     wlist->esize[wlist->n] = (int16) value;
 
                     value = order * vs->usym[j].isize;
-                    if(value > TOO_BIG) HRETURN_ERROR(DFE_BADFIELDS,FAIL);
+                    if(value > MAX_FIELD_SIZE)
+			HRETURN_ERROR(DFE_BADFIELDS,FAIL);
                     wlist->isize[wlist->n] = (int16) value;
 
                     value = (int32)wlist->ivsize + (int32)(wlist->isize[wlist->n]);
-                    if(value > TOO_BIG) HRETURN_ERROR(DFE_BADFIELDS,FAIL);
+                    if(value > MAX_FIELD_SIZE)
+			HRETURN_ERROR(DFE_BADFIELDS,FAIL);
                     wlist->ivsize = (int16) value;
 
                     wlist->n++;

@@ -177,7 +177,7 @@ libnofortran: $(COBJS) $(JOBJS)
 	$(AR) $(ARFLAGS) libdf.a `lorder $(COBJS) $(JOBJS) | tsort `
 	$(RANLIB) libdf.a
 
-nofortran: libnofortran .installed
+nofortran: libnofortran 
 
 libnostub: nofortran
 

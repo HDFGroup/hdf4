@@ -513,6 +513,7 @@ extern uint8 *tbuf;
 
 /* Max order of a field in a Vdata */
 #define MAX_ORDER          32000
+#define MAX_FIELD_SIZE     32000
 
 /* type of ID to send to Hlevel */
 typedef int32           HFILEID;

@@ -357,7 +357,7 @@ intn Hclose(int32 file_id)
     /* convert file id to file rec and check for validity */
     
     file_rec = FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0)
+    if (BADFREC(file_rec))
         HRETURN_ERROR(DFE_ARGS,FAIL);
     
     /* version tags */
@@ -448,7 +448,7 @@ int32 Hstartread(int32 file_id, uint16 tag, uint16 ref)
 
     /* convert file id to file record and check for validity */
     file_rec = FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0)
+    if (BADFREC(file_rec))
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* get a slot in the access record array */
@@ -534,7 +534,7 @@ intn Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
 
     /* DF_END is NOT supported yet !!!! */
     file_rec = FID2REC(access_rec->file_id);
-    if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0)
+    if (BADFREC(file_rec))
         HRETURN_ERROR(DFE_INTERNAL,FAIL);
 
     /*
@@ -646,7 +646,7 @@ intn Hfind(int32 file_id, uint16 search_tag, uint16 search_ref,
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
     file_rec = FID2REC(file_id);
-    if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0)
+    if (BADFREC(file_rec))
         HRETURN_ERROR(DFE_INTERNAL,FAIL);
 
     if(*find_ref==0 && *find_tag==0) {  /* starting search */
@@ -819,7 +819,7 @@ int32 Hstartwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
     /* clear error stack and check validity of file id */
     HEclear();
     file_rec = FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0)
+    if (BADFREC(file_rec))
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* can write in this file? */
@@ -1028,7 +1028,7 @@ intn Happendable(int32 aid)
     file_id=access_rec->file_id;    /* get the file ID the AID is attached */
     
     file_rec = FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0)
+    if (BADFREC(file_rec))
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* get the offset and length of the dataset */
@@ -1173,7 +1173,7 @@ int32 Hread(int32 access_id, int32 length, VOIDP data)
 
     /* check validity of file record */
     file_rec = FID2REC(access_rec->file_id);
-    if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0)
+    if (BADFREC(file_rec))
         HRETURN_ERROR(DFE_INTERNAL,FAIL);
     
     /* get the dd of this data elt */
@@ -1248,7 +1248,7 @@ printf("Hwrite(): before special element function call\n");
 
     /* check validity of file record and get dd ptr */
     file_rec = FID2REC(access_rec->file_id);
-    if (!file_rec || file_rec->refcount == 0)
+    if (BADFREC(file_rec))
        HRETURN_ERROR(DFE_INTERNAL,FAIL);
     dd = &(access_rec->block->ddlist[access_rec->idx]);
 
@@ -1395,7 +1395,7 @@ intn Hendaccess(int32 access_id)
     
     /* check validity of file record */
     file_rec = FID2REC(access_rec->file_id);
-    if (!file_rec || file_rec->refcount == 0)
+    if (BADFREC(file_rec))
         HRETURN_ERROR(DFE_INTERNAL,FAIL);
     
     /* update file and access records */
@@ -1622,7 +1622,7 @@ intn Hdupdd(int32 file_id, uint16 tag, uint16 ref,
 
     HEclear();
     file_rec = FID2REC(file_id);
-    if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0)
+    if (BADFREC(file_rec))
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* look for old dd and new dd in file record */
@@ -1751,8 +1751,7 @@ intn Hdeldd(int32 file_id, uint16 tag, uint16 ref)
 
     HEclear();
     file_rec = FID2REC(file_id);
-    if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0
-            || tag == DFTAG_WILDCARD || ref == DFREF_WILDCARD)
+    if (BADFREC(file_rec) || tag == DFTAG_WILDCARD || ref == DFREF_WILDCARD)
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* look for the deleted dd */
@@ -1804,7 +1803,7 @@ uint16 Hnewref(int32 file_id)
 
     HEclear();
     file_rec = FID2REC(file_id);
-    if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0)
+    if (BADFREC(file_rec))
        HRETURN_ERROR(DFE_ARGS,0);
 
     /* if maxref of this file is still below the maximum,
@@ -1958,7 +1957,7 @@ intn Hsync(int32 file_id)
 
     /* check validity of file record and get dd ptr */
     file_rec = FID2REC(access_rec->file_id);
-    if (!file_rec || file_rec->refcount == 0) {
+    if (BADFREC(file_rec))
        HERROR(DFE_INTERNAL);
        return FAIL;
     }
@@ -1991,7 +1990,7 @@ intn Hsync(int32 file_id)
 intn HDvalidfid(int32 file_id)
 {
     filerec_t *file_rec = FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0)
+    if (BADFREC(file_rec))
        return FALSE;
     else
        return TRUE;
@@ -2333,7 +2332,7 @@ PRIVATE int HIlock(int32 file_id)
 
     /* get file record and check validity */
     filerec_t *file_rec=FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0)
+    if (BADFREC(file_rec))
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* lock the file record */
@@ -2354,7 +2353,7 @@ PRIVATE int HIunlock(int32 file_id)
 
     /* get file record and validate */
     filerec_t *file_rec=FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0)
+    if (BADFREC(file_rec))
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* unlock the file record */
@@ -2389,7 +2388,7 @@ int32 Hnumber(int32 file_id, uint16 tag)
     filerec_t *file_rec = FID2REC(file_id);
 
     HEclear();
-    if (!file_rec || file_rec->refcount == 0)
+    if (BADFREC(file_rec))
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     if(HIcount_dd(file_rec,tag,DFREF_WILDCARD,&all_cnt,&real_cnt)==FAIL)
@@ -2550,7 +2549,7 @@ intn Hgetfileversion(int32 file_id, uint32 *majorv, uint32 *minorv,
     HEclear();
 
     file_rec = FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0)
+    if (BADFREC(file_rec))
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
     *majorv = file_rec->version.majorv;
@@ -3153,7 +3152,7 @@ PRIVATE int HIupdate_version(int32 file_id)
     HEclear();
 
     file_rec = FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0)
+    if (BADFREC(file_rec))
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* copy in-memory version to file */
@@ -3210,7 +3209,7 @@ PRIVATE int HIread_version(int32 file_id)
     HEclear();
 
     file_rec = FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0)
+    if (BADFREC(file_rec))
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
     if(Hgetelement(file_id,(uint16)DFTAG_VERSION,(uint16)1,fversion) == FAIL) {

@@ -1121,7 +1121,7 @@ void test_r24(void)
 {
     comp_info cinfo;        /* compression information for the JPEG */
     int32 xd, yd;
-    int il;
+    intn il;
     int Error;
     char buf[YSIZE][XSIZE][3];
     char buf1[YSIZE][3][XSIZE];
@@ -1201,6 +1201,18 @@ if(ret==FAIL)
        }
 
     if(Error) {
+printf("in:\n");
+for(i=0; i<YSIZE; i++) {
+	for(j=0; j<XSIZE; j++)
+		printf("(%d,%d,%d)",(int)in[i][j][0],(int)in[i][j][1],(int)in[i][j][2]);
+	printf("\n");
+}
+printf("buf:\n");
+for(i=0; i<YSIZE; i++) {
+	for(j=0; j<XSIZE; j++)
+		printf("(%d,%d,%d)",(int)buf[i][j][0],(int)buf[i][j][1],(int)buf[i][j][2]);
+	printf("\n");
+}
         fprintf(stderr, "Image 0 was incorrect\n");
         num_errs++;
     }

@@ -48,7 +48,7 @@ int num_errs = 0;
 int Verbocity = 0;
 
 /* Internal Variables */
-int Index=0;
+static int Index=0;
 
 /* ANY new test needs to have a prototype in tproto.h */
 #include "tproto.h"
@@ -84,6 +84,32 @@ void InitTest (const char *TheName, VOID (*TheCall)(),const char *TheDescr)
     Test[Index].SkipFlag = 0;
     Index++;
 }
+
+void usage(intn argc, char *argv[])
+{
+    intn i;
+
+    printf("Usage: testhdf [-v[erbose] (l[ow]|m[edium]|h[igh]|0-10)] \n");
+    printf("               [-[e]x[clude] name+] \n");
+    printf("               [-o[nly] name+] \n");
+    printf("               [-b[egin] name] \n");
+    printf("               [-s[ummary]]  \n");
+    printf("               [-c[leanoff]]  \n");
+    printf("\n\n");
+    printf("verbose   controls the amount of information displayed\n");
+    printf("exclude   to exclude tests by name\n");
+    printf("only      to name tests which should be run\n");
+    printf("begin     start at the name of the test givin\n");
+    printf("summary   prints a summary of test results at the end\n");
+    printf("cleanoff  does not delete *.hdf files after execution of tests\n");
+    printf("\n\n");
+    printf("This program currently tests the following: \n\n");
+    printf("%16s %s\n","Name","Description");
+    printf("%16s %s\n","----","-----------");
+    for(i = 0; i < Index; i++)
+        printf("%16s %s\n",Test[i].Name,Test[i].Description);
+    printf("\n\n");
+}   /* end usage() */
 
 int main (int argc, char *argv[])
 {
@@ -147,29 +173,12 @@ int main (int argc, char *argv[])
         if ((argc > CLLoop) && ((HDstrcmp(argv[CLLoop],"-summary")==0) ||
                 (HDstrcmp(argv[CLLoop],"-s")==0)))
             Summary = 1;
+
         if ((argc > CLLoop) && (HDstrcmp(argv[CLLoop],"-help")==0)) {
-            printf("Usage: testhdf [-v[erbose] (l[ow]|m[edium]|h[igh]|0-10)] \n");
-            printf("               [-[e]x[clude] name+] \n");
-            printf("               [-o[nly] name+] \n");
-            printf("               [-b[egin] name] \n");
-            printf("               [-s[ummary]]  \n");
-            printf("               [-c[leanoff]]  \n");
-            printf("\n\n");
-            printf("verbose   controls the amount of information displayed\n");
-            printf("exclude   to exclude tests by name\n");
-            printf("only      to name tests which should be run\n");
-            printf("begin     start at the name of the test givin\n");
-            printf("summary   prints a summary of test results at the end\n");
-            printf("cleanoff  does not delete *.hdf files after execution of tests\n");
-            printf("\n\n");
-            printf("This program currently tests the following: \n\n");
-            printf("%16s %s\n","Name","Description");
-            printf("%16s %s\n","----","-----------");
-            for (Loop = 0; Loop < Index; Loop++)
-                printf("%16s %s\n",Test[Loop].Name,Test[Loop].Description);
-            printf("\n\n");
+	    usage(argc,argv);
             exit(0);
         }
+
         if ((argc > CLLoop) && ((HDstrcmp(argv[CLLoop],"-cleanoff")==0) ||
                 (HDstrcmp(argv[CLLoop],"-c")==0)))
             CleanUp = 0;
@@ -213,7 +222,7 @@ int main (int argc, char *argv[])
     for (Loop = 0; Loop < Index; Loop++) {
         if (Test[Loop].SkipFlag) {
             MESSAGE(4,printf("Skipping -- %s \n",Test[Loop].Description););
-	  } /* end if */
+	}
         else {
             MESSAGE(2,printf("Testing  -- %s (%s) \n",Test[Loop].Description,
                     Test[Loop].Name););
@@ -223,6 +232,17 @@ int main (int argc, char *argv[])
             Test[Loop].NumErrors = num_errs - Test[Loop].NumErrors;
             MESSAGE(5,printf("===============================================\n"););
             MESSAGE(5,printf("There were %d errors detected.\n\n",(int)Test[Loop].NumErrors););
+
+#ifdef QAK
+MESSAGE(2,printf("Testing  -- %s (%s) \n",Test[Loop].Description,
+    Test[Loop].Name););
+MESSAGE(5,printf("===============================================\n"););
+Test[Loop].NumErrors = num_errs;
+(*Test[Loop].Call)();
+Test[Loop].NumErrors = num_errs - Test[Loop].NumErrors;
+MESSAGE(5,printf("===============================================\n"););
+#endif
+
           } /* end else */
       } /* end for */
 

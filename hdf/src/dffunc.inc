@@ -159,6 +159,7 @@ C
       integer sfrdata
       integer sfwdata
       integer sfsextf
+      integer sfsnbit
       integer sfsacct
 
 C End of declarations

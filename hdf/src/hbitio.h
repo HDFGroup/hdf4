@@ -52,7 +52,8 @@ typedef struct bitrec_t {
         byte_offset;    /* offset of the current byte in the dataset */
     uintn count,    /* bit count to next boundary */
         buf_read;   /* number of bytes read into buffer (necessary for random I/O) */
-    uint8 mode;     /* What the operation on this file is ('r', 'w', etc..) */
+    uint8 access;   /* What the access on this file is ('r', 'w', etc..) */
+    uint8 mode;     /* how are we interacting with the data now ('r', 'w', etc) */
     uint8 bits;     /* extra bit buffer, 0..BITNUM-1 bits */
     uint8 *bytep;   /* current position in buffer */
     uint8 *bytez;   /* end of buffer to compare */

@@ -133,7 +133,7 @@ printf("HCIcnbit_init(): 0.4 - coder_func.write=%p\n",info->cinfo.coder_funcs.wr
     HDmemset(nbit_info->mask_buf,(nbit_info->fill_one==TRUE ? 0xff : 0),
 	    nbit_info->nt_size);
 #ifdef TESTING
-printf("HCIcnbit_init(): 0.5 - coder_func.write=%p\n",info->cinfo.coder_funcs.write);
+printf("HCIcnbit_init(): 0.5 - fill_one=%d, sign_ext=%d\n",(int)nbit_info->fill_one,(int)nbit_info->sign_ext);
 #endif
 
     bits=nbit_info->nt_size*8;  /* compute # of bits */
@@ -142,6 +142,9 @@ printf("HCIcnbit_init(): 0.5 - coder_func.write=%p\n",info->cinfo.coder_funcs.wr
 
     top_bit=bits-1;     /* set the initial top and bottom bits */
     bot_bit=bits-8;
+#ifdef TESTING
+printf("HCIcnbit_init(): 0.6 - mask_top=%d, mask_bot=%d, bits=%d, top_bit=%d, bot_bit=%d\n",mask_top,mask_bot,bits,top_bit,bot_bit);
+#endif
     HDmemset(nbit_info->mask_info,0,sizeof(nbit_info->mask_info));  /* set to 0 */
 #ifdef TESTING
 printf("HCIcnbit_init(): before init'ing mask, nt_size=%d\n",nbit_info->nt_size);
@@ -225,9 +228,7 @@ printf("HCIcnbit_init(): 3 - coder_func.write=%p\n",info->cinfo.coder_funcs.writ
 --------------------------------------------------------------------------*/
 PRIVATE int32 HCIcnbit_decode(compinfo_t *info,int32 length,uint8 *buf)
 {
-#ifdef LATER
     CONSTR(FUNC,"HCIcnbit_decode");
-#endif
     comp_coder_nbit_info_t *nbit_info;  /* ptr to n-bit info */
     int32 orig_length;      /* original length to write */
     uint32 input_bits;      /* bits read from the file */
@@ -237,7 +238,8 @@ PRIVATE int32 HCIcnbit_decode(compinfo_t *info,int32 length,uint8 *buf)
         sign_bit=0;         /* the sign bit from the n_bit data */
     nbit_mask_info_t *mask_info;    /* ptr to the mask info */
     intn copy_length;       /* number of bytes to copy */
-    intn buf_items;         /* number of items which will fit into expansion buffer */
+    intn buf_size,          /* size of the expansion buffer to use */
+	buf_items;          /* number of items which will fit into expansion buffer */
     uint8 *rbuf,*rbuf2;     /* pointer into the n-bit read buffer */
     intn i,j;               /* local counting variable */
 
@@ -254,17 +256,19 @@ printf("HCIcnbit_decode(): nbit_info=%p\n",nbit_info);
             mask_arr32[nbit_info->mask_off%8];
 #ifdef TESTING
 printf("HCInbit_decode(): sign_ext=%d,sign_ext_mask=%lx, sign_byte=%d, sign_mask=%lx\n",nbit_info->sign_ext,(unsigned long)sign_ext_mask,(int)sign_byte,(unsigned long)sign_mask);
-printf("HCInbit_decode(): mask_info[0]: mask=%x, offset=%d, length=%d\n",(unsigned)nbit_info->mask_info[0].mask,nbit_info->mask_info[0].offset,nbit_info->mask_info[0].length);
 printf("HCInbit_decode(): file_one=%d\n",nbit_info->fill_one);
+for(j=0; j<nbit_info->nt_size; j++) 
+    printf("HCInbit_decode(): j=%d, mask=%x, offset=%d, length=%d\n",j,(unsigned)nbit_info->mask_info[j].mask,(int)nbit_info->mask_info[j].offset,(int)nbit_info->mask_info[j].length);
 #endif
 
-    buf_items=NBIT_BUF_SIZE/nbit_info->nt_size; /* compute # of items in buffer */
+    buf_size=MIN(NBIT_BUF_SIZE,length);
+    buf_items=buf_size/nbit_info->nt_size; /* compute # of items in buffer */
     orig_length=length;     /* save this for later */
     while(length>0) {   /* decode until we have all the bytes */
 #ifdef TESTING
-printf("HCInbit_decode(): length=%d, buf=%p\n",length,buf);
+printf("HCInbit_decode(): length=%d, buf=%p, buf_items=%d\n",length,buf,buf_items);
 #endif
-        if(nbit_info->buf_pos>=NBIT_BUF_SIZE) {    /* re-fill buffer */
+        if(nbit_info->buf_pos>=buf_size) {    /* re-fill buffer */
             rbuf=(uint8*)nbit_info->buffer;  /* get a ptr to the buffer */
 
             /* get initial copy of the mask */
@@ -275,6 +279,9 @@ printf("HCInbit_decode(): length=%d, buf=%p\n",length,buf);
                 mask_info= &(nbit_info->mask_info[0]);
 
                 if(nbit_info->sign_ext) {   /* special code for expanding sign extended data */
+#ifdef TESTING
+printf("HCInbit_decode(): sign extending\n");
+#endif
                     rbuf2=rbuf;   /* set temporary pointer into buffer */
                     for(j=0; j<nbit_info->nt_size; j++,mask_info++,rbuf2++) {
                         if(mask_info->length>0) {   /* check if we need to read bits */
@@ -307,11 +314,21 @@ printf("HCInbit_decode(): i=%d, sign_bit=%d, input_bits=%x\n",i,sign_bit,input_b
                     rbuf+=nbit_info->nt_size;    /* increment buffer ptr */
                   } /* end if */
                 else {  /* no sign extension */
+#ifdef TESTING
+printf("HCInbit_decode(): NO sign extention\n");
+#endif
                     for(j=0; j<nbit_info->nt_size; j++,mask_info++,rbuf++) {
                         if(mask_info->length>0) {   /* check if we need to read bits */
-                            Hbitread(info->aid,mask_info->length,&input_bits);
+                            if(Hbitread(info->aid,mask_info->length,&input_bits)!=mask_info->length)
+				HRETURN_ERROR(DFE_CDECODE,FAIL);
+#ifdef TESTING
+printf("HCInbit_decode(): input_bits=%d\n",(int)input_bits);
+#endif
                             *rbuf|=mask_info->mask&(input_bits <<
                                     ((mask_info->offset-mask_info->length)+1));
+#ifdef TESTING
+printf("HCInbit_decode(): j=%d, length=%d, *rbuf=%x\n",j,mask_info->length,(unsigned)*rbuf);
+#endif
                           } /* end if */
                       } /* end for */
                   } /* end else */
@@ -320,8 +337,8 @@ printf("HCInbit_decode(): i=%d, sign_bit=%d, input_bits=%x\n",i,sign_bit,input_b
             nbit_info->buf_pos=0;   /* reset buffer position */
           } /* end if */
 
-        copy_length=(intn)((length>(NBIT_BUF_SIZE-nbit_info->buf_pos)) ?
-                (NBIT_BUF_SIZE-nbit_info->buf_pos) : length);
+        copy_length=(intn)((length>(buf_size-nbit_info->buf_pos)) ?
+                (buf_size-nbit_info->buf_pos) : length);
 
         HDmemcpy(buf,&(nbit_info->buffer[nbit_info->buf_pos]),copy_length);
 
@@ -383,6 +400,9 @@ printf("HCIcnbit_encode(): mask->length=%d, offset=%d, mask=%x\n",mask_info->len
         if(mask_info->length>0) {   /* check if we need to output bits */
             output_bits=((*buf)&(mask_info->mask)) >>
                     ((mask_info->offset-mask_info->length)+1);
+#ifdef TESTING
+printf("HCIcnbit_encode(): output_bits=%x\n",(unsigned)output_bits);
+#endif
             Hbitwrite(info->aid,mask_info->length,output_bits);
           } /* end if */
 
@@ -427,6 +447,9 @@ PRIVATE int32 HCIcnbit_term(compinfo_t *info)
     /* shut compiler up */
     info=info;
 
+#ifdef TESTING
+printf("HCPcnbit_term(): func called\n");
+#endif
     return(SUCCEED);
 }   /* end HCIcnbit_term() */
 
@@ -458,7 +481,7 @@ PRIVATE int32 HCIcnbit_staccess(accrec_t *access_rec, int16 acc_mode)
     info=(compinfo_t *)access_rec->special_info;
 
 #ifdef TESTING
-printf("HCIcnbit_staccess(): info=%p\n",info);
+printf("HCIcnbit_staccess(): info=%p, ref=%d\n",info,(int)info->comp_ref);
 #endif
     if(acc_mode==DFACC_READ)
         info->aid=Hstartbitread(access_rec->file_id,DFTAG_COMPRESSED,
@@ -729,6 +752,9 @@ intn HCPcnbit_endaccess(accrec_t *access_rec)
     compinfo_t *info;                   /* special element information */
     comp_coder_nbit_info_t *nbit_info;  /* ptr to n-bit info */
 
+#ifdef TESTING
+printf("HCPcnbit_endaccess(): entering\n");
+#endif
     info=(compinfo_t *)access_rec->special_info;
     nbit_info= &(info->cinfo.coder_info.nbit_info);
 
@@ -737,9 +763,15 @@ intn HCPcnbit_endaccess(accrec_t *access_rec)
         if(HCIcnbit_term(info)==FAIL)
             HRETURN_ERROR(DFE_CTERM,FAIL);
 
+#ifdef TESTING
+printf("HCPcnbit_endaccess(): before Hendbitaccess call\n");
+#endif
     /* close the n-bit data AID */
     if(Hendbitaccess(info->aid,0)==FAIL)
         HRETURN_ERROR(DFE_CANTCLOSE,FAIL);
 
+#ifdef TESTING
+printf("HCPcnbit_endaccess(): after Hendbitaccess call\n");
+#endif
     return(SUCCEED);
 }   /* HCPcnbit_endaccess() */

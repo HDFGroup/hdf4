@@ -118,8 +118,7 @@ int32 HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
     /* clear error stack and validate args */
     HEclear();
     file_rec = FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0 || !extern_file_name
-            || (offset<0) || SPECIALTAG(tag)
+    if (BADFREC(file_rec) || !extern_file_name || (offset<0) || SPECIALTAG(tag)
             || (special_tag = MKSPECIALTAG(tag)) == DFTAG_NULL )
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
@@ -397,7 +396,7 @@ PRIVATE int32 HXIstaccess(accrec_t *access_rec, int16 acc_mode)
 
     /* get file record and validate */
     file_rec = FID2REC(access_rec->file_id);
-    if (!file_rec || file_rec->refcount == 0 || !(file_rec->access & acc_mode))
+    if (BADFREC(file_rec) || !(file_rec->access & acc_mode))
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* intialize the access record */
@@ -805,7 +804,7 @@ intn HXPendaccess(accrec_t *access_rec)
     HXPcloseAID(access_rec);
 
     /* validate file record */
-    if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0)
+    if (BADFREC(file_rec))
        HRETURN_ERROR(DFE_INTERNAL,FAIL);
 
     /* detach from the file */
@@ -943,7 +942,7 @@ int32 HXPreset(accrec_t * access_rec, sp_info_block_t * info_block)
 
     /* check validity of file record */
     file_rec = FID2REC(access_rec->file_id);
-    if (!file_rec || file_rec->refcount == 0)
+    if (BADFREC(file_rec))
         HRETURN_ERROR(DFE_INTERNAL,FAIL);
     
     /* get the DD of the existing special element record */

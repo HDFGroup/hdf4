@@ -189,7 +189,7 @@ void test_nbit1(int32 fid)
 
     for (i=0; i < NBIT_SIZE1; i++) {
        test_val=(uint8)(outbuf[i]&NBIT_MASK1);
-       if (inbuf[i] != test_val) {
+       if ((uint8)inbuf[i] != (uint8)test_val) {
            printf("Wrong data at %d, out (%d)%d in %d\n", i, outbuf[i],test_val, inbuf[i]);
            errors++;
          }
@@ -248,7 +248,7 @@ void test_nbit2(int32 fid)
     }
 
     for (i=0; i < ret; i++) {
-       if (inbuf[i] != outbuf[i]) {
+       if ((int8)inbuf[i] != (int8)outbuf[i]) {
            printf("Wrong data at %d, out %d in %d\n", i, outbuf[i], inbuf[i]);
            errors++;
          }
@@ -318,7 +318,7 @@ void test_nbit3(int32 fid)
        test_out=(uint16)(outbuf[i]&NBIT_MASK3A);
        test_in=(uint16)(inbuf[i]&NBIT_MASK3B);
 #ifndef TESTING
-       if (test_in != test_out) {
+       if ((int16)test_in != (int16)test_out) {
            printf("Wrong data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i],test_out, inbuf[i],test_in);
            errors++;
          }
@@ -395,7 +395,7 @@ void test_nbit4(int32 fid)
        test_out=(int16)(outbuf[i]&NBIT_MASK4A);
        test_in=(int16)(inbuf[i]&NBIT_MASK4B);
 #ifndef TESTING
-       if (test_in != test_out) {
+       if ((int16)test_in != (int16)test_out) {
            printf("Wrong data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i],test_out, inbuf[i],test_in);
            errors++;
          }
@@ -473,7 +473,7 @@ void test_nbit5(int32 fid)
        test_out=outbuf[i]&NBIT_MASK5A;
        test_in=inbuf[i]&NBIT_MASK5B;
 #ifndef TESTING
-       if (test_in != test_out) {
+       if ((uint32)test_in != (uint32)test_out) {
            printf("Wrong data at %d, out (%lu)%lu in (%lu)%lu\n", i, (unsigned long)outbuf[i],(unsigned long)test_out, (unsigned long)inbuf[i],(unsigned long)test_in);
            errors++;
          }
@@ -551,7 +551,7 @@ void test_nbit6(int32 fid)
        test_out=outbuf[i]&NBIT_MASK6A;
        test_in=inbuf[i]&NBIT_MASK6B;
 #ifndef TESTING
-       if (test_in != test_out) {
+       if ((int32)test_in != (int32)test_out) {
            printf("Wrong data at %d, out (%ld)%ld in (%ld)%ld\n", i, (long)outbuf[i],(long)test_out, (long)inbuf[i],(long)test_in);
            errors++;
          }
@@ -616,7 +616,7 @@ void test_nbit7(int32 fid)
 
     for (i=0; i < ret; i++) {
         test_val=(uint8)((outbuf[i]&NBIT_MASK7A)|NBIT_MASK7B);
-        if (inbuf[i] != test_val) {
+        if ((uint8)inbuf[i] != (uint8)test_val) {
             printf("Wrong data at %d, out (%d)%d in %d\n", i, outbuf[i],test_val, inbuf[i]);
             errors++;
          }
@@ -677,7 +677,7 @@ void test_nbit8(int32 fid)
 
     for (i=0; i < ret; i++) {
 	test_val=(int8)(outbuf[i]|NBIT_MASK8);
-       if (inbuf[i] != test_val) {
+       if ((int8)inbuf[i] != (int8)test_val) {
            printf("Wrong data at %d, out (%d:%x)%d in %d\n", i, outbuf[i],outbuf[i],test_val, inbuf[i]);
            errors++;
          }
@@ -751,7 +751,7 @@ void test_nbit9(int32 fid)
        test_out=(uint16)((outbuf[i]|NBIT_MASK9A)&NBIT_MASK9B);
        test_in=(uint16)(inbuf[i]&NBIT_MASK9B);
 #ifndef TESTING
-       if (test_in != test_out) {
+       if ((uint16)test_in != (uint16)test_out) {
            printf("Wrong data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i],test_out, inbuf[i],test_in);
            errors++;
          }
@@ -829,7 +829,7 @@ void test_nbit10(int32 fid)
        test_out=(int16)((outbuf[i]|NBIT_MASK10A)&NBIT_MASK10B);
        test_in=(int16)(inbuf[i]&NBIT_MASK10B);
 #ifndef TESTING
-       if (test_in != test_out) {
+       if ((int16)test_in != (int16)test_out) {
            printf("Wrong data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i],test_out, inbuf[i],test_in);
            errors++;
          }
@@ -907,7 +907,7 @@ void test_nbit11(int32 fid)
        test_out=(outbuf[i]|NBIT_MASK11A)&NBIT_MASK11B;
        test_in=inbuf[i]&NBIT_MASK11B;
 #ifndef TESTING
-       if (test_in != test_out) {
+       if ((uint32)test_in != (uint32)test_out) {
            printf("Wrong data at %d, out (%lu)%lu in (%lu)%lu\n", i, (unsigned long)outbuf[i],(unsigned long)test_out, (unsigned long)inbuf[i],(unsigned long)test_in);
            errors++;
          }
@@ -985,7 +985,7 @@ void test_nbit12(int32 fid)
        test_out=(outbuf[i]|NBIT_MASK12A)&NBIT_MASK12B;
        test_in=inbuf[i]&NBIT_MASK12B;
 #ifndef TESTING
-       if (test_in != test_out) {
+       if ((int32)test_in != (int32)test_out) {
            printf("Wrong data at %d, out (%ld)%ld in (%ld)%ld\n", i, (long)outbuf[i],(long)test_out, (long)inbuf[i],(long)test_in);
            errors++;
          }

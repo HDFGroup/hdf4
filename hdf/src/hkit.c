@@ -481,10 +481,8 @@ intn HDflush(int32 file_id)
     filerec_t *file_rec;
     
     file_rec = FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0) {
-        HERROR(DFE_ARGS);
-        return FAIL;
-    }
+    if (BADFREC(file_rec))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
     
     fflush(file_rec->file);
 

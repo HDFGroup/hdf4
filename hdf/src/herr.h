@@ -127,6 +127,7 @@ typedef enum {
     DFE_BADTYPE,        /* Incompatible types specified */
     DFE_SYMSIZE,        /* Too many symbols in users table */
     DFE_BADATTACH,      /* Cannot write to a previously attached VData */
+    DFE_CANTATTACH,     /* Cannot attach to a VData */
     DFE_CANTDETACH,     /* Cannot detach a VData with access 'w' */
     DFE_CANTUPDATE,     /* Cannot update the DD block */
     DFE_CANTHASH,       /* Cannot add a DD to the hash table */
@@ -234,6 +235,7 @@ PRIVATE const struct error_messages_t error_messages[] =
 { DFE_BADTYPE,      "Incompatible type specified"},
 { DFE_SYMSIZE,      "Too many symbols in table"},
 { DFE_BADATTACH,    "Cannot write to a previously attached VData"},
+{ DFE_CANTATTACH,   "Cannot attach to a VData"},
 { DFE_CANTDETACH,   "Cannot detach a VData with access 'w'"},
 { DFE_CANTUPDATE,   "Cannot update the DD block"},
 { DFE_CANTHASH,     "Cannot add a DD to the hash table"},
@@ -247,7 +249,7 @@ PRIVATE const struct error_messages_t error_messages[] =
 { DFE_CDECODE,      "Error in decoding compressed data"},
 { DFE_CENCODE,      "Error in encoding compressed data"},
 { DFE_CTERM,        "Error in encoding termination"},
-{ DFE_CSEEK,        "Error seekging in encoded dataset"},
+{ DFE_CSEEK,        "Error seeking in encoded dataset"},
 { DFE_MINIT,        "Error in modeling initialization"},
 { DFE_COMPINFO,     "Invalid compression header"},
 { DFE_BADRIG,       "Error processing a RIG"},

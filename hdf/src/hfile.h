@@ -355,6 +355,7 @@ typedef struct functab_t {
 #define FID2SLOT(i) (VALIDFID(i) ? (uint32)(i) & 0xffff : -1)
 #define FID2REC(i)  ((VALIDFID(i) ? &(file_records[(uint32)(i) & 0xffff]) : \
                       NULL))
+#define BADFREC(r)  ((r)==NULL || (r)->refcount==0)
 #define ASLOT2ID(s) ((((uint32)AIDTYPE & 0xffff) << 16) | ((s) & 0xffff))
 #define VALIDAID(i) (((((uint32)(i) >> 16) & 0xffff) == AIDTYPE) && \
                      (((uint32)(i) & 0xffff) < MAX_ACC) && \

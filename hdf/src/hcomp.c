@@ -492,8 +492,8 @@ printf("HCcreate(): entering\n");
     /* clear error stack and validate args */
     HEclear();
     file_rec=FID2REC(file_id);
-    if(file_rec==NULL || file_rec->refcount==0 || SPECIALTAG(tag)
-            || (special_tag=MKSPECIALTAG(tag))==DFTAG_NULL)
+    if(BADFREC(file_rec) || SPECIALTAG(tag) 
+		|| (special_tag=MKSPECIALTAG(tag))==DFTAG_NULL)
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
 
@@ -747,7 +747,7 @@ PRIVATE int32 HCIstaccess(accrec_t *access_rec, int16 acc_mode)
 
     /* get file record and validate */
     file_rec=FID2REC(access_rec->file_id);
-    if(!file_rec || file_rec->refcount==0 || !(file_rec->access & acc_mode))
+    if(BADFREC(file_rec) || !(file_rec->access & acc_mode))
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* Check if temproray buffer has been allocated */
@@ -1159,7 +1159,7 @@ intn HCPendaccess(accrec_t *access_rec)
     filerec_t *file_rec=FID2REC(access_rec->file_id);   /* file record */
 
     /* validate file record */
-    if(file_rec==(filerec_t *) NULL || file_rec->refcount==0)
+    if(BADFREC(file_rec))
        HRETURN_ERROR(DFE_INTERNAL,FAIL);
 
     /* close the file pointed to by this access rec */

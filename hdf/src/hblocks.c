@@ -151,9 +151,9 @@ int32 HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length,
     /* clear error stack and validate file record id */
     HEclear();
     file_rec = FID2REC(file_id);
-    if (!file_rec || file_rec->refcount == 0 || block_length < 0 ||
-            number_blocks < 0 || SPECIALTAG(tag) ||
-            (special_tag = MKSPECIALTAG(tag)) == DFTAG_NULL)
+    if (BADFREC(file_rec) || block_length < 0 || number_blocks < 0 
+		|| SPECIALTAG(tag) 
+		|| (special_tag = MKSPECIALTAG(tag)) == DFTAG_NULL)
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     if (!(file_rec->access & DFACC_WRITE))
@@ -393,7 +393,7 @@ PRIVATE int32 HLIstaccess(accrec_t *access_rec, int16 acc_mode)
 
     /* validate file record id */
     file_rec = FID2REC(access_rec->file_id);
-    if (!file_rec || file_rec->refcount == 0 || !(file_rec->access & acc_mode))
+    if (BADFREC(file_rec) || !(file_rec->access & acc_mode))
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
 
@@ -841,7 +841,7 @@ int32 HLPwrite(accrec_t *access_rec, int32 length, const VOIDP datap)
 
     if (length <= 0)
        HRETURN_ERROR(DFE_RANGE,FAIL);
-    if (file_rec == (filerec_t *) NULL || file_rec->refcount == 0)
+    if (BADFREC(file_rec))
        HRETURN_ERROR(DFE_INTERNAL,FAIL);
 
 

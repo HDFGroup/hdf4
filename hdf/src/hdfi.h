@@ -275,6 +275,7 @@ Please check your Makefile.
 #define GOT_MACHINE
 
 #   define BSD
+#include <limits.h>
 #include <string.h>
 #ifndef __GNUC__
 #include <memory.h>
@@ -328,6 +329,7 @@ Please check your Makefile.
 
 #   define BSD
 #include <string.h>
+#include <limits.h>
 #ifndef __GNUC__
 #include <memory.h>
 #endif /* __GNUC__ */
@@ -379,6 +381,7 @@ Please check your Makefile.
 #define GOT_MACHINE 1
 
 #include <string.h>
+#include <limits.h>
 #include <memory.h>
 #include <fortran.h>
 #ifndef O_RDONLY
