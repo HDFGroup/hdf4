@@ -111,7 +111,7 @@ HDf2cstring(_fcd fdesc, intn len)
     for (; i >= 0; i--)
         cstr[i] = str[i];
 #else /* OLD_WAY */
-    HDmemcpy(cstr,str,i);
+    HDmemcpy(cstr,str,i+1);
 #endif /* OLD_WAY */
     return cstr;
 }   /* HDf2cstring */
