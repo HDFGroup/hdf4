@@ -174,10 +174,22 @@ int main(int argc , char **argv) {
 		
 		status = GRgetiminfo(ri_id , gr_name , &ncomp , &data_type , &interlace_mode , dim_sizes , &num_attrs);
 		if (!(data_type == DFNT_CHAR || data_type == DFNT_UCHAR || data_type == DFNT_INT8 || data_type == DFNT_UINT8 || data_type == DFNT_NINT8 || data_type == DFNT_NUINT8)) {
-			printf("The GR data type appears not to be 8-bit. Trying next image...\n");
+			printf("The GR data type of image %s in the hdf file appears not to be 8-bit. Trying next image...\n", gr_name);
 			continue;
 		}
-
+		
+		/* BUG FIX 601 - pkamat */
+		if (1 != ncomp) {  /* not an 8-bit image */ 
+		  if (3 == ncomp) { /* 24-bit image */
+		    printf("The GR data type of image %s in the hdf file appears to be a 24-bit image. ", gr_name);
+		    printf("Use hdf2jpeg to convert this image. Trying next image... \n");
+		    continue;
+                  }
+		  printf("The GR data type of image %s in the hdf file does not appear to be a 8-bit image. ", gr_name);
+		  printf("Trying next image... \n");	
+		  continue;
+		}	
+		/* End BUG FIX 601 */ 
 		
 		Image = (BYTE *)malloc(dim_sizes[0] * dim_sizes[1]);
 		status = GRreadimage(ri_id , start , stride , dim_sizes , Image);
