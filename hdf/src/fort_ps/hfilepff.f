@@ -253,6 +253,7 @@ C      integer       hiishdf
 	INTERFACE
         INTEGER FUNCTION hiishdf(filename, length)
           !MS$ATTRIBUTES C,reference,alias:'_HIISHDF' :: hiishdf
+	    !DEC$ ATTRIBUTES reference :: filename
           integer length
 	    character*(*) filename
         END FUNCTION hiishdf

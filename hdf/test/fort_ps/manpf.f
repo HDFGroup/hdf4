@@ -314,22 +314,22 @@ C
       ret = hishdf(TESTFILE)
       if (ret .ne. 1) then
           numberfailed = numberfailed + 1
-          write(*,*) "HISHDF function failed"
+          write(*,*) 'HISHDF function failed'
       endif
       ret = hestringf(0, error_message)
        if (ret .ne. 0) then
           numberfailed = numberfailed + 1
-          write(*,*) "HESTRINGF function failed"
+          write(*,*) 'HESTRINGF function failed'
       endif
 
 C
 C     Call hishdf with  file not being an hdf file. Call should return
 C     0 
 C
-      ret = hishdf("manf.f")
+      ret = hishdf('manf.f')
       if (ret .ne. 0) then
           numberfailed = numberfailed + 1
-          write(*,*) "HISHDF function failed"
+          write(*,*) 'HISHDF function failed'
       endif
 C
 C *****  end of hishdf test
