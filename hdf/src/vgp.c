@@ -1479,7 +1479,7 @@ Vaddtagref(int32 vkey, int32 tag, int32 ref)
     CONSTR(FUNC, "Vaddtagref");
     vginstance_t *v;
     VGROUP     *vg;
-    intn        i;
+    uintn        i;
     int32      ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -1831,10 +1831,9 @@ Vgetid(HFILEID f, int32 vgid)
 
     if (vgid == (-1))
       {     /* check for magic value to return the first group */
-          if (NULL == (t = (VOIDP *) tbbtfirst((TBBT_NODE *) * (vf->vgtree))))
+          if ((vf->vgtree==NULL) || (NULL == (t = (VOIDP *) tbbtfirst((TBBT_NODE *) * (vf->vgtree)))))
             {
-              ret_value = (FAIL);
-              goto done;
+                HGOTO_DONE(FAIL); /* just return FAIL, no error */
             }
           else
             {

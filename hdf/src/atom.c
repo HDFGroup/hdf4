@@ -136,6 +136,9 @@ intn HAinit_group(group_t grp,      /* IN: Group to initialize */
     /* Increment the count of the times this group has been initialized */
     grp_ptr->count++;
 
+#ifdef QAK
+printf("%s: group ID=%d, count=%d, current # of active atoms=%d\n",FUNC,grp,grp_ptr->count,grp_ptr->atoms);
+#endif /* QAK */
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
@@ -188,10 +191,14 @@ intn HAdestroy_group(group_t grp       /* IN: Group to destroy */
     if(grp_ptr==NULL || grp_ptr->count<=0)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
+#ifdef QAK
+printf("%s: group ID=%d, count=%d, current # of active atoms=%d\n",FUNC,grp,grp_ptr->count,grp_ptr->atoms);
+#endif /* QAK */
     /* Decrement the number of users of the atomic group */
     if((--(grp_ptr->count))==0)
       {
 #ifdef ATOMS_ARE_CACHED
+      {
         uintn i;
 
         for(i=0; i<ATOM_CACHE_SIZE; i++)
@@ -200,6 +207,7 @@ intn HAdestroy_group(group_t grp       /* IN: Group to destroy */
                 atom_id_cache[i]=(-1);
                 atom_obj_cache[i]=NULL;
               } /* end if */
+      } /* end block */
 #endif /* ATOMS_ARE_CACHED */
         HDfree(grp_ptr->atom_list);
       } /* end if */
@@ -476,6 +484,9 @@ VOIDP HAremove_atom(atom_t atm   /* IN: Atom to remove */
             break;  /* we assume there is only one instance in the cache */
           } /* end if */
 #endif /* ATOMS_ARE_CACHED */
+
+    /* Decrement the number of atoms in the group */
+    (grp_ptr->atoms)--;
 
 done:
   if(ret_value == NULL)   

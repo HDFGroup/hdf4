@@ -598,6 +598,7 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
     /* Make VDatas appendable by default */
     if (FAIL == VSappendable(ret_value,VDEFAULTBLKSIZE))
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
@@ -662,7 +663,11 @@ VSdetach(int32 vkey)
     if (vs->access == 'r')
       {
           if (w->nattach == 0)
+            {
               Hendaccess(vs->aid);
+              if(HAremove_atom(vkey)==NULL)
+                  HGOTO_ERROR(DFE_INTERNAL, FAIL);
+            } /* end if */
           HGOTO_DONE(SUCCEED);
       }
 
@@ -691,6 +696,9 @@ VSdetach(int32 vkey)
     vs->usym=NULL;
 
     Hendaccess(vs->aid);
+
+    if(HAremove_atom(vkey)==NULL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
   if(ret_value == FAIL)   
@@ -806,7 +814,7 @@ VSgetid(HFILEID f, int32 vsid)
 
     if (vsid == -1)
       {
-        if (NULL == (t = (VOIDP *) tbbtfirst((TBBT_NODE *) * (vf->vstree))))
+        if ((vf->vstree==NULL) || (NULL == (t = (VOIDP *) tbbtfirst((TBBT_NODE *) * (vf->vstree)))))
           {
             HGOTO_DONE(FAIL);
           }

@@ -1362,6 +1362,7 @@ int32 GRstart(int32 hdf_file_id)
     if(!HDvalidfid(hdf_file_id))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
+#ifdef QAK
     /* Check if GR file tree has been allocated */
     if (gr_tree == NULL)
       {
@@ -1372,6 +1373,14 @@ int32 GRstart(int32 hdf_file_id)
           HAinit_group(GRIDGROUP,GRATOM_HASH_SIZE);
           HAinit_group(RIIDGROUP,GRATOM_HASH_SIZE);
       } /* end if */
+#else /* QAK */
+    /* Check if GR file tree has been allocated */
+    if (gr_tree == NULL)
+      {
+          if ((gr_tree = tbbtdmake(rigcompare, sizeof(int32))) == NULL)
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
+      } /* end if */
+#endif /* QAK */
 
     /* Grab the existing gr_info_t structure first, otherwise create a new one */
     if ((gr_ptr = Get_grfile(hdf_file_id)) == NULL)
@@ -1380,6 +1389,12 @@ int32 GRstart(int32 hdf_file_id)
 
     if (gr_ptr->access++)
         HGOTO_DONE(SUCCEED);
+
+#ifndef QAK  
+    /* Initialize the atom groups for GRs and RIs */
+    HAinit_group(GRIDGROUP,GRATOM_HASH_SIZE);
+    HAinit_group(RIIDGROUP,GRATOM_HASH_SIZE);
+#endif /* QAK */
 
     /* Fire up the Vset interface */
     if(Vstart(hdf_file_id)==FAIL)
@@ -2110,6 +2125,12 @@ printf("%s: GroupID=%ld\n",FUNC,(long)GroupID);
     /* Close down the Vset routines we started */
     if(Vend(hdf_file_id)==FAIL)
         HGOTO_ERROR(DFE_CANTSHUTDOWN,FAIL);
+
+#ifndef QAK  
+    /* Destroy the atom groups for GRs and RIs */
+    HAdestroy_group(GRIDGROUP);
+    HAdestroy_group(RIIDGROUP);
+#endif /* QAK */
 
 done:
   if(ret_value == FAIL)   
@@ -3419,6 +3440,10 @@ intn GRendaccess(int32 riid)
 
     /* Reduce the number of accesses to the RI */
     ri_ptr->access--;
+
+    /* Delete the atom for the RI ID */
+    if(NULL==HAremove_atom(riid))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
 done:
   if(ret_value == FAIL)   
@@ -4830,9 +4855,11 @@ intn GRPshutdown(void)
           /* Free the vfile tree */
           tbbtdfree(gr_tree, GRIgrdestroynode, NULL);
 
-          /* Destroy the atom groups for Vdatas and Vgroups */
+#ifdef QAK
+          /* Destroy the atom groups for GRs and RIs */
           HAdestroy_group(GRIDGROUP);
           HAdestroy_group(RIIDGROUP);
+#endif /* QAK */
 
           gr_tree=NULL;
       } /* end if */
