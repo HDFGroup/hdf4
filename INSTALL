@@ -93,6 +93,7 @@
    CFP  (UNICOS 10.0.0bt u10.13)  CC 5.0.5.0       f90 3.0.2.0  
    IEEE (UNICOS 10.0.0bt d10.25)  CC 5.0.5.0       f90 3.0.2.0  
   Cray C90 (UNICOS 803.2)           -                -        
+  Cray J90 (bob.0 10.0.0.3)       CC 6.2.0.1       f90 3.2.0.0
   IBM SP2 (single node, v4.2.1)   XLC 3.1.4.0      f77 4.1.0.6       
   DEC Alpha/Digital Unix v4.0     CC               f77              
   DEC Alpha/OpenVMS AXP v6.2        -                -  
@@ -106,7 +107,7 @@
                                   Codewarrior (CW8)  -              
   68k-far/4i/8d(Mac-OS-7.6)         -                -           
   Windows NT/95                     -                -             
-  T3E (unicosmk 2.0.2.16)         CC 6.0.2.0.5     f90 3.0.2.0
+  T3E (unicosmk 2.0.4.46)         CC 6.2.0.1       f90 3.2.0.0
 
 
   NOTE:  Platforms listed with compiler information entered, are 
