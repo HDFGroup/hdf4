@@ -921,6 +921,7 @@
 ./mfhdf/dumper/testfiles/dumpgr-16.out
 ./mfhdf/dumper/testfiles/dumpgr-17.out
 ./mfhdf/dumper/testfiles/dumpgr-18.out
+./mfhdf/dumper/testfiles/dumpgr-19.out
 ./mfhdf/dumper/testfiles/dumpgr-1.out
 ./mfhdf/dumper/testfiles/dumpgr-2.out
 ./mfhdf/dumper/testfiles/dumpgr-3.out
@@ -945,6 +946,8 @@
 ./mfhdf/dumper/testfiles/dumpsds-7.out
 ./mfhdf/dumper/testfiles/dumpsds-8.out
 ./mfhdf/dumper/testfiles/dumpsds-9.out
+./mfhdf/dumper/testfiles/dumpsds-10.out
+./mfhdf/dumper/testfiles/dumpsds-11.out
 ./mfhdf/dumper/testfiles/dumpvd-10.out
 ./mfhdf/dumper/testfiles/dumpvd-1.out
 ./mfhdf/dumper/testfiles/dumpvd-2.out
