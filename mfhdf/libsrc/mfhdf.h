@@ -19,8 +19,12 @@
 #define HDF 1
 #endif
 
+#ifdef DEC_ALPHA
+#include "local_nc.h"
+#else /* DEC_ALPHA */
 #include "hdf.h"
 #include "netcdf.h"
+#endif /* DEC_ALPHA */
 
 #define SD_UNLIMITED NC_UNLIMITED
 
