@@ -27,32 +27,32 @@ static char RcsId[] = "@(#)$Revision$";
 dd_t       *desc_buf;
 
 intn
-            debug = FALSE,      /* Debugging is off by default */
-            ddblocks = FALSE,   /* DD block dumping is off by default */
+debug = FALSE,      /* Debugging is off by default */
+    ddblocks = FALSE,   /* DD block dumping is off by default */
 #ifdef DISKBLOCK_DEBUG
-            diskblock_check = FALSE,   /* check disk-block boundaries */
+    diskblock_check = FALSE,   /* check disk-block boundaries */
 #endif /* DISKBLOCK_DEBUG */
-            sort = TRUE,        /* Sorting is on by default */
-            longout = FALSE,    /* short output by default */
-            labels = FALSE,     /* no label info by default */
-            special = FALSE,    /* no special info by default */
-            groups = FALSE;     /* no group info by default */
+    sort = TRUE,        /* Sorting is on by default */
+    longout = FALSE,    /* short output by default */
+    labels = FALSE,     /* no label info by default */
+    special = FALSE,    /* no special info by default */
+    groups = FALSE;     /* no group info by default */
 static intn v_init_done = FALSE;    /* whether the Vset interface has been */
-                                /* initialized for this file */
+/* initialized for this file */
 uint16      only_tag = DFTAG_NULL;  /* by default print info about all tags */
 
 char       *file_name;          /* name of current file being listed */
 
 int         compare
-            (const VOID *, const VOID *);
+(const VOID *, const VOID *);
 int         main
-            (int, char *a[]);
+(int, char *a[]);
 void        lprint
-            (int32, dd_t *, int);
+(int32, dd_t *, int);
 void        print_item
-            (int32, dd_t *, intn);
+(int32, dd_t *, intn);
 void	    printfilever
-	    (int32 file_id);
+(int32 file_id);
 
 int
 compare(const VOID * aa, const VOID * bb)
@@ -117,44 +117,47 @@ print_item(int32 fid, dd_t *desc_list, intn n)
           int32       aid, ret;
 
           aid = Hstartread(fid, desc_list[n].tag, desc_list[n].ref);
+          if (aid == FAIL)
+              return;
+
           ret = HDget_special_info(aid, &info);
           if ((ret == FAIL) || (info.key == FAIL))
               return;
 
           switch (info.key)
             {
-                case SPECIAL_LINKED:
-                    printf("\tLinked Block: first %ld standard %ld per unit %ld\n",
-                           (long) info.first_len, (long) info.block_len,
-                           (long) info.nblocks);
-                    break;
+            case SPECIAL_LINKED:
+                printf("\tLinked Block: first %ld standard %ld per unit %ld\n",
+                       (long) info.first_len, (long) info.block_len,
+                       (long) info.nblocks);
+                break;
 
-                case SPECIAL_EXT:
-                    printf("\tExternal File: path %s  offset %ld\n", info.path,
-                           (long) info.offset);
-                    break;
+            case SPECIAL_EXT:
+                printf("\tExternal File: path %s  offset %ld\n", info.path,
+                       (long) info.offset);
+                break;
 
-                case SPECIAL_COMP:
-                    printf("\tCompressed Element: compression type: %s  modeling type %s\n",
-                           (info.comp_type == COMP_CODE_NONE ? "None" :
-                            (info.comp_type == COMP_CODE_RLE ? "Run-Length" :
-                             (info.comp_type == COMP_CODE_NBIT ? "N-Bit" : 
-                              (info.comp_type == COMP_CODE_SKPHUFF ? "Skipping Huffman" : 
-                               (info.comp_type == COMP_CODE_DEFLATE ? "Deflated" : 
-                             "Unknown"))))),
-                           (info.model_type == COMP_MODEL_STDIO ? "Standard" : "Unknown"));
-                    break;
+            case SPECIAL_COMP:
+                printf("\tCompressed Element: compression type: %s  modeling type %s\n",
+                       (info.comp_type == COMP_CODE_NONE ? "None" :
+                        (info.comp_type == COMP_CODE_RLE ? "Run-Length" :
+                         (info.comp_type == COMP_CODE_NBIT ? "N-Bit" : 
+                          (info.comp_type == COMP_CODE_SKPHUFF ? "Skipping Huffman" : 
+                           (info.comp_type == COMP_CODE_DEFLATE ? "Deflated" : 
+                            "Unknown"))))),
+                       (info.model_type == COMP_MODEL_STDIO ? "Standard" : "Unknown"));
+                break;
 
-                default:
-                    printf("\tDo not understand special element type %d\n",
-                           info.key);
-                    break;
+            default:
+                printf("\tDo not understand special element type %d\n",
+                       info.key);
+                break;
             }
           Hendaccess(aid);
       }
 
     if ((groups) && (desc_list[n].tag == DFTAG_RIG || desc_list[n].tag == DFTAG_SDG
-          || desc_list[n].tag == DFTAG_NDG || desc_list[n].tag == DFTAG_VG))
+                     || desc_list[n].tag == DFTAG_NDG || desc_list[n].tag == DFTAG_VG))
       {     /* print groups */
           if (desc_list[n].tag != DFTAG_VG)
             {   /* groups other than Vgroups */
@@ -261,8 +264,8 @@ lprint(int32 fid, dd_t *desc_tmp, int num)
             }
 
           /*
-           ** Find and print text description of this tag
-           */
+          ** Find and print text description of this tag
+          */
           name = (char *) HDgettagsname(desc_tmp[j].tag);
           if (!name)
               printf("\n%-30s: (tag %d)\n", "Unknown Tag", desc_tmp[j].tag);
@@ -273,8 +276,8 @@ lprint(int32 fid, dd_t *desc_tmp, int num)
             } /* end else */
 
           /*
-           ** Print out reference number information
-           */
+          ** Print out reference number information
+          */
           prev = desc_tmp[j].tag;
           if (longout)
             {
@@ -308,10 +311,10 @@ void printfilever(int32 file_id)
 
     if (Hgetfileversion(file_id, &major, &minor, &release, string) == SUCCEED)
       {
-        string[LIBVSTR_LEN] = '\0';		/* make it a null terminated string */
-        printf("File library version: ");
-        printf("Major= %u, Minor=%u, Release=%u\nString=%s\n",
-	    (unsigned)major, (unsigned)minor, (unsigned)release, string);
+          string[LIBVSTR_LEN] = '\0';		/* make it a null terminated string */
+          printf("File library version: ");
+          printf("Major= %u, Minor=%u, Release=%u\nString=%s\n",
+                 (unsigned)major, (unsigned)minor, (unsigned)release, string);
       }
     else
         printf("(Does not have libraray version information)\n");
@@ -320,29 +323,29 @@ void printfilever(int32 file_id)
 /* print command usage */
 void usage(char *argv[])
 {
-          printf("%s,  version: 2.0   date: March 1, 1994\n", argv[0]);
+    printf("%s,  version: 2.0   date: March 1, 1994\n", argv[0]);
 #ifdef DISKBLOCK_DEBUG
-          printf("%s [-o] [-l] [-d] [-v] [-g] [-s] [-h] [-x] [-t #] fn ....\n", argv[0]);
+    printf("%s [-o] [-l] [-d] [-v] [-g] [-s] [-h] [-x] [-t #] fn ....\n", argv[0]);
 #else /* DISKBLOCK_DEBUG */
-          printf("%s [-o] [-l] [-d] [-v] [-g] [-s] [-h] [-t #] fn ....\n", argv[0]);
+    printf("%s [-o] [-l] [-d] [-v] [-g] [-s] [-h] [-t #] fn ....\n", argv[0]);
 #endif /* DISKBLOCK_DEBUG */
-          printf("        This program displays information about the");
-          printf(" data elements in\n");
-          printf("        HDF file.\n");
-          printf("    -d: offset & length info of each element in the file\n");
-          printf("    -o: Ordered - display in reference number order\n");
-          printf("    -l: Long format - display more information\n");
-          printf("    -v: Verbose format - display text of annotations and labels.\n");
-          printf("        (Verbose format automatically puts you in Long format).\n");
-          printf("    -t #: List only information about a specific type of tag.\n");
-          printf("          For example '%s -t 700 foo.hdf' \n", argv[0]);
-          printf("          will list information only about Scientific Data\n");
-          printf("          Groups.\n");
-          printf("    -s: Give detailed descriptions of \"special elements\"\n");
-          printf("    -g: List items in groups\n");
-          printf("    -h: Dump DD Block information\n");
+    printf("        This program displays information about the");
+    printf(" data elements in\n");
+    printf("        HDF file.\n");
+    printf("    -d: offset & length info of each element in the file\n");
+    printf("    -o: Ordered - display in reference number order\n");
+    printf("    -l: Long format - display more information\n");
+    printf("    -v: Verbose format - display text of annotations and labels.\n");
+    printf("        (Verbose format automatically puts you in Long format).\n");
+    printf("    -t #: List only information about a specific type of tag.\n");
+    printf("          For example '%s -t 700 foo.hdf' \n", argv[0]);
+    printf("          will list information only about Scientific Data\n");
+    printf("          Groups.\n");
+    printf("    -s: Give detailed descriptions of \"special elements\"\n");
+    printf("    -g: List items in groups\n");
+    printf("    -h: Dump DD Block information\n");
 #ifdef DISKBLOCK_DEBUG
-          printf("    -x: Check disk block boundaries (also dumps DD blocks)\n");
+    printf("    -x: Check disk block boundaries (also dumps DD blocks)\n");
 #endif /* DISKBLOCK_DEBUG */
 }
 
@@ -361,96 +364,96 @@ int dumpDD()
 
     file_id=HI_OPEN(file_name,DFACC_READ);
     if(OPENERR(file_id))
-    {
-	printf("Error opening file: %s\n",file_name);
-	return(FAIL);
-	    } /* end if */
+      {
+          printf("Error opening file: %s\n",file_name);
+          return(FAIL);
+      } /* end if */
     while(next_block!=0)
-    {
-      if(HI_SEEK(file_id,next_block)==FAIL)
-	{
-	    printf("Error seeking in file: %s\n",file_name);
-	    return(FAIL);
-	} /* end if */
-      if(HI_READ(file_id,buf,NDDS_SZ+OFFSET_SZ)==FAIL)
-	{
-	    printf("Error reading in file: %s\n",file_name);
-	    return(FAIL);
-	} /* end if */
-      printf("current block: %ld,",(long)next_block);
-      b=buf;
-      INT16DECODE(b,n_dds);
-      INT32DECODE(b,next_block);
-      printf(" size of block: %ld, number of DDs:%d, next block: %ld\n",(long)(NDDS_SZ+OFFSET_SZ+(n_dds*DD_SZ)),(int)n_dds,(long)next_block);
+      {
+          if(HI_SEEK(file_id,next_block)==FAIL)
+            {
+                printf("Error seeking in file: %s\n",file_name);
+                return(FAIL);
+            } /* end if */
+          if(HI_READ(file_id,buf,NDDS_SZ+OFFSET_SZ)==FAIL)
+            {
+                printf("Error reading in file: %s\n",file_name);
+                return(FAIL);
+            } /* end if */
+          printf("current block: %ld,",(long)next_block);
+          b=buf;
+          INT16DECODE(b,n_dds);
+          INT32DECODE(b,next_block);
+          printf(" size of block: %ld, number of DDs:%d, next block: %ld\n",(long)(NDDS_SZ+OFFSET_SZ+(n_dds*DD_SZ)),(int)n_dds,(long)next_block);
 
-      ddbuf=(uint8 *)HDmalloc(n_dds*DD_SZ);
-      if(HI_READ(file_id,ddbuf,n_dds*DD_SZ)==FAIL)
-	{
-	    printf("Error reading in file: %s\n",file_name);
-	    return(FAIL);
-	} /* end if */
-      b=ddbuf;
-      for(l=0; l<n_dds; l++)
-	{
+          ddbuf=(uint8 *)HDmalloc(n_dds*DD_SZ);
+          if(HI_READ(file_id,ddbuf,n_dds*DD_SZ)==FAIL)
+            {
+                printf("Error reading in file: %s\n",file_name);
+                return(FAIL);
+            } /* end if */
+          b=ddbuf;
+          for(l=0; l<n_dds; l++)
+            {
 #ifdef DISKBLOCK_DEBUG
-	    uint8 block_head[DISKBLOCK_HSIZE];
-	    uint8 block_tail[DISKBLOCK_TSIZE];
+                uint8 block_head[DISKBLOCK_HSIZE];
+                uint8 block_tail[DISKBLOCK_TSIZE];
 #endif /* DISKBLOCK_DEBUG */
 
-	    UINT16DECODE(b, tag);
-	    UINT16DECODE(b, ref);
-	    INT32DECODE(b, off);
-	    INT32DECODE(b, len);
-	    printf("\t[%5d] tag=%5u ref=%5u offset=%10ld length=%10ld\n",(int)l,(unsigned)tag,(unsigned)ref,(long)off,(long)len);
+                UINT16DECODE(b, tag);
+                UINT16DECODE(b, ref);
+                INT32DECODE(b, off);
+                INT32DECODE(b, len);
+                printf("\t[%5d] tag=%5u ref=%5u offset=%10ld length=%10ld\n",(int)l,(unsigned)tag,(unsigned)ref,(long)off,(long)len);
 #ifdef DISKBLOCK_DEBUG
-	    if((tag!=DFTAG_NULL && tag!=DFTAG_FREE) &&
-		(len!=INVALID_LENGTH && off!=INVALID_OFFSET))
-	      {
-		if(HI_SEEK(file_id,off-DISKBLOCK_HSIZE)==FAIL)
-		  {
-		      printf("Error seeking in file: %s\n",file_name);
-		      return(FAIL);
-		  } /* end if */
-		if(HI_READ(file_id,block_head,DISKBLOCK_HSIZE)==FAIL)
-		  {
-		      printf("Error reading in file: %s\n",file_name);
-		      return(FAIL);
-		  } /* end if */
-		if(HDmemcmp(block_head,diskblock_header,DISKBLOCK_HSIZE)!=0)
-		  {
-		      intn k;
+                if((tag!=DFTAG_NULL && tag!=DFTAG_FREE) &&
+                   (len!=INVALID_LENGTH && off!=INVALID_OFFSET))
+                  {
+                      if(HI_SEEK(file_id,off-DISKBLOCK_HSIZE)==FAIL)
+                        {
+                            printf("Error seeking in file: %s\n",file_name);
+                            return(FAIL);
+                        } /* end if */
+                      if(HI_READ(file_id,block_head,DISKBLOCK_HSIZE)==FAIL)
+                        {
+                            printf("Error reading in file: %s\n",file_name);
+                            return(FAIL);
+                        } /* end if */
+                      if(HDmemcmp(block_head,diskblock_header,DISKBLOCK_HSIZE)!=0)
+                        {
+                            intn k;
 
-		      printf("Header wrong for disk block!\n");
-		      for(k=0; k<DISKBLOCK_HSIZE; k++)
-			{
-			  printf("\tbyte: %d, current: %x, correct: %x\n",k,(unsigned)block_head[k],(unsigned)diskblock_header[k]);
-			} /* end for */
-		  } /* end if */
-		if(HI_SEEK(file_id,off+len)==FAIL)
-		  {
-		      printf("Error seeking in file: %s\n",file_name);
-		      return(FAIL);
-		  } /* end if */
-		if(HI_READ(file_id,block_tail,DISKBLOCK_TSIZE)==FAIL)
-		  {
-		      printf("Error reading in file: %s\n",file_name);
-		      return(FAIL);
-		  } /* end if */
-		if(HDmemcmp(block_tail,diskblock_tail,DISKBLOCK_TSIZE)!=0)
-		  {
-		      intn k;
+                            printf("Header wrong for disk block!\n");
+                            for(k=0; k<DISKBLOCK_HSIZE; k++)
+                              {
+                                  printf("\tbyte: %d, current: %x, correct: %x\n",k,(unsigned)block_head[k],(unsigned)diskblock_header[k]);
+                              } /* end for */
+                        } /* end if */
+                      if(HI_SEEK(file_id,off+len)==FAIL)
+                        {
+                            printf("Error seeking in file: %s\n",file_name);
+                            return(FAIL);
+                        } /* end if */
+                      if(HI_READ(file_id,block_tail,DISKBLOCK_TSIZE)==FAIL)
+                        {
+                            printf("Error reading in file: %s\n",file_name);
+                            return(FAIL);
+                        } /* end if */
+                      if(HDmemcmp(block_tail,diskblock_tail,DISKBLOCK_TSIZE)!=0)
+                        {
+                            intn k;
 
-		      printf("Tail wrong for disk block!\n");
-		      for(k=0; k<DISKBLOCK_HSIZE; k++)
-			{
-			  printf("\tbyte: %d, current: %x, correct: %x\n",k,(unsigned)block_tail[k],(unsigned)diskblock_tail[k]);
-			} /* end for */
-		  } /* end if */
-	      } /* end if */
+                            printf("Tail wrong for disk block!\n");
+                            for(k=0; k<DISKBLOCK_HSIZE; k++)
+                              {
+                                  printf("\tbyte: %d, current: %x, correct: %x\n",k,(unsigned)block_tail[k],(unsigned)diskblock_tail[k]);
+                              } /* end for */
+                        } /* end if */
+                  } /* end if */
 #endif /* DISKBLOCK_DEBUG */
-	} /* end for */
-      HDfree(ddbuf);
-    } /* end while */
+            } /* end for */
+          HDfree(ddbuf);
+      } /* end while */
     HI_CLOSE(file_id);
     return(SUCCEED);
 }
@@ -469,54 +472,54 @@ main(int argc, char *argv[])
       {
           switch (argv[i][1])
             {
-                case 'o':   /* give non ordered output */
-                    sort = FALSE;
-                    break;
+            case 'o':   /* give non ordered output */
+                sort = FALSE;
+                break;
 
-                case 'd':   /* go into debugging mode */
-                    debug = TRUE;
-                    break;
+            case 'd':   /* go into debugging mode */
+                debug = TRUE;
+                break;
 
-                case 'h':   /* dump the dd blocks */
-                    ddblocks = TRUE;
-                    break;
+            case 'h':   /* dump the dd blocks */
+                ddblocks = TRUE;
+                break;
 
 #ifdef DISKBLOCK_DEBUG
-                case 'x':   /* check the disk-block boundaries (implies dumping dd blocks) */
-                    diskblock_check = TRUE;
-                    ddblocks = TRUE;
-                    break;
+            case 'x':   /* check the disk-block boundaries (implies dumping dd blocks) */
+                diskblock_check = TRUE;
+                ddblocks = TRUE;
+                break;
 #endif /* DISKBLOCK_DEBUG */
 
-                case 'v':   /* print labels for elements */
-                    labels = TRUE;
-                    longout = TRUE;
-                    break;
+            case 'v':   /* print labels for elements */
+                labels = TRUE;
+                longout = TRUE;
+                break;
 
-                case 'l':   /* give long output */
-                    longout = TRUE;
-                    break;
+            case 'l':   /* give long output */
+                longout = TRUE;
+                break;
 
-                case 's':   /* give info on special elements */
-                    special = TRUE;
-                    longout = TRUE;
-                    break;
+            case 's':   /* give info on special elements */
+                special = TRUE;
+                longout = TRUE;
+                break;
 
-                case 'g':   /* give info on groups */
-                    groups = TRUE;
-                    longout = TRUE;
-                    break;
+            case 'g':   /* give info on groups */
+                groups = TRUE;
+                longout = TRUE;
+                break;
 
-                case 't':
-                    if (argv[i][2] != '\0')
-                        only_tag = (uint16) atoi(&(argv[i][2]));
-                    else
-                        only_tag = (uint16) atoi(&(argv[++i][0]));
-                    break;
+            case 't':
+                if (argv[i][2] != '\0')
+                    only_tag = (uint16) atoi(&(argv[i][2]));
+                else
+                    only_tag = (uint16) atoi(&(argv[++i][0]));
+                break;
 
-                default:
-                    printf("Unknown option : -%c\n", argv[1][1]);
-                    break;
+            default:
+                printf("Unknown option : -%c\n", argv[1][1]);
+                break;
             }
           i++;
       }
@@ -526,7 +529,7 @@ main(int argc, char *argv[])
      */
     if (i == argc)
       {
-	  usage(argv);
+          usage(argv);
           exit(1);
       }
 
@@ -540,10 +543,10 @@ main(int argc, char *argv[])
           /* Dump the DD blocks, if asked */
           if(ddblocks==TRUE)
             {
-		if (dumpDD() == FAIL){
-		    i++;
-		    continue;
-		}
+                if (dumpDD() == FAIL){
+                    i++;
+                    continue;
+                }
             } /* end if */
 
           fid = Hopen(file_name, DFACC_READ, -1);
@@ -561,7 +564,8 @@ main(int argc, char *argv[])
                   }
             }
 
-	  printfilever(fid);
+          printfilever(fid);
+
           aid = Hstartread(fid, DFTAG_WILDCARD, DFREF_WILDCARD);
           if (aid == FAIL)
             {
@@ -587,11 +591,14 @@ main(int argc, char *argv[])
                       printf(" offset %10ld length %10ld\n", desc_buf[j].offset, desc_buf[j].length);
                   }
             }
+
           if (sort)
               qsort((char *) desc_buf, n, sizeof(dd_t), compare);
 
           v_init_done = FALSE;
+
           lprint(fid, desc_buf, n);
+
           if (v_init_done == TRUE)
               Vfinish(fid);
 
@@ -606,7 +613,7 @@ main(int argc, char *argv[])
 
           if (n >= MAXBUFF)
               fprintf(stderr,
-              "Warning:  File may have more DD's than hdfls can display\n");
+                      "Warning:  File may have more DD's than hdfls can display\n");
       }
 
     HDfree(desc_buf);
