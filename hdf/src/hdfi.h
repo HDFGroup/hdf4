@@ -616,7 +616,7 @@ Please check your Makefile.
 #define DF_MT   DFMT_MAC
 
 typedef void              VOID;
-typedef char              *VOIDP;
+typedef void              *VOIDP;
 typedef char              *_fcd;
 typedef char              char8;
 typedef unsigned char     uchar8;
