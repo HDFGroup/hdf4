@@ -19,7 +19,7 @@ C
 
       real*8  cal, cale, ioff, ioffe
       real*8  eps
-      character*50  name, l, u, f, c
+      character*60  name, l, u, f, c
       character cdata(6,4), icdata(6,4), cfill, icfill
       character catt(2), icatt(2)
 
@@ -764,7 +764,7 @@ C create the char data
 190      continue
 195   continue
 C Write a slab of char data
-      stat = sfwdata(sds1, start, stride, end, cdata)
+      stat = sfwcdata(sds1, start, stride, end, cdata)
       if (stat .ne. 0) then
           print *, 'sfwdata returned', stat
           err = err + 1
