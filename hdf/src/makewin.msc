@@ -52,8 +52,8 @@
 .SUFFIXES : .f
 
 # ==> specify your machine
-#MACHINE=WIN3
-MACHINE=PC
+MACHINE=WIN3
+#MACHINE=PC
 
 INCDIR=..\include
 LIBDIR=..\lib
