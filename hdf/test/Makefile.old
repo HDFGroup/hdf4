@@ -2,7 +2,12 @@
 # $Header$
 #
 # $Log$
-# Revision 1.29  1993/01/07 20:48:43  georgev
+# Revision 1.30  1993/01/14 17:28:10  georgev
+# Upated headers in Makefiles to reflect HDF3.3.
+# Updated Makefile headers to reflect HDF3.3
+# Updated Makefile header to reflect HDF3.3
+#
+# Revision 1.29  1993/01/07  20:48:43  georgev
 # Added Hyperslab C and Fortran test programs.
 #
 # Revision 1.28  1992/11/19  17:14:47  chouck
@@ -97,9 +102,9 @@
 
 # ##################################################################
 #
-#                   NCSA HDF Version 3.2 release Beta 1
-#                               March 1992
-#                  MAKEFILE for testing HDF Version 3.2
+#                   NCSA HDF Version 3.3 release Beta 1
+#                               November 1992
+#                  MAKEFILE for testing HDF Version 3.3
 #
 #                          ABOUT THIS MAKEFILE
 #
