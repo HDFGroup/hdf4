@@ -240,6 +240,8 @@ write_test(int32 aid,intn num_timings)
                     CHECK(ret, FAIL, "Hseek");
 
                     ret=Hwrite(aid,1,&out_buf[i]);
+if(ret<0)
+    HEprint(stdout,0);
                     VERIFY(ret, 1, "Hwrite");
                 } /* end for */
                 end_time=clock();
@@ -393,7 +395,7 @@ test_buffer(void)
         
         /* Perform write timing tests on un-buffered data element */
         /* Just write un-buffered compressed data in one block */
-        write_time[test_num][0]=write_test(aid,(test_num==0 ? 1 : NUM_TIMINGS));
+        write_time[test_num][0]=write_test(aid,(test_num==2 ? 1 : NUM_TIMINGS));
 
         /* Convert element to a buffered element */
         ret=HBconvert(aid);
