@@ -841,9 +841,6 @@ DESCRIPTION
    Frees chunk B-Tree nodes
    *** Only called by B-tree routines, should _not_ be called externally ***
 
-   Note that currently this routine also does ann Hendaccess on open
-   chunks. This is probably not a good place to do this as any errors
-   would be ignored due to the fact that this routine returns nothing.
 RETURNS
    Nothing
 ---------------------------------------------------------------------------*/
@@ -879,11 +876,14 @@ DESCRIPTION
    the number of chunks in the object i.e. object size/ chunk size,
    and the maximum number of chunks to cache in memory. Chunks in
    the cache are dealt with by their number i.e. translation of
-   'origin' of chunk to a unique number. 
+   'origin' of chunk to a unique number. The default maximum number
+   of chunks is the cache is set the number of chunks along the
+   last dimension.
 
-   Note the cache itself could be used to cache any object into a number 
+   NOTE: The cache itself could be used to cache any object into a number 
    of fixed size chunks so long as the read/write(page-in/page-out) routines know
-   how to deal with getting the correct chunk based on a number.
+   how to deal with getting the correct chunk based on a number. These
+   routines can be found in 'mcache.c'.
 
 RETURNS
    The AID of the access record on success FAIL on error.
@@ -1003,6 +1003,9 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
           info->chk_tree  = NULL;
           info->chk_cache = NULL;
           info->fill_val  = NULL;
+          info->minfo     = NULL;
+          info->cinfo     = NULL;
+          info->comp_sp_tag_header   = NULL;
           info->num_recs  = 0; /* zero records to start with */
 
           /* read the special info structure from the file */
@@ -1024,7 +1027,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
 
           /* Sanity check, the 256 limit is arbitrary and can 
              be removed later....*/
-          if (info->sp_tag_header_len < 0 && info->sp_tag_header_len > 256)
+          if (info->sp_tag_header_len < 0 || info->sp_tag_header_len > 256)
               HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
           /* Allocate buffer space for rest of special header */
@@ -1103,6 +1106,56 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
 
           } /* end decode special header */
 
+          /* if multiply special deal with now */
+          switch(info->flag)
+            {
+            case SPECIAL_COMP:
+            {
+                uint16     sp_tag;
+
+                /* first read specail tag header length which is 2+4 bytes */
+                if (Hread(dd_aid, 6, local_ptbuf) == FAIL)
+                    HGOTO_ERROR(DFE_READERROR, FAIL);
+
+                /* Decode compression header length */
+                {
+                    uint8      *p = NULL;
+
+                    p = local_ptbuf;
+                    UINT16DECODE(p, sp_tag);                     /* 2 bytes */
+                    INT32DECODE(p, info->comp_sp_tag_head_len);   /* 4 bytes */      
+                }
+
+                /* Sanity check */
+                if (info->sp_tag_header_len < 0 || sp_tag != SPECIAL_COMP)
+                    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+                /* Allocate buffer space for compression special header */
+                if (( info->comp_sp_tag_header = (VOID *) HDcalloc(info->comp_sp_tag_head_len,1))==NULL)
+                    HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+                /* read special header in */
+                if (Hread(dd_aid, info->comp_sp_tag_head_len, info->comp_sp_tag_header) == FAIL)
+                    HGOTO_ERROR(DFE_READERROR, FAIL);
+
+                /* allocate compression special info  */
+                if (( info->cinfo = (comp_info *) HDmalloc((uint32)sizeof(comp_info)))==NULL)
+                    HGOTO_ERROR(DFE_NOSPACE, FAIL);
+                if (( info->minfo = (model_info *) HDmalloc((uint32)sizeof(model_info)))==NULL)
+                    HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+                /* Decode header */
+                if (HCPdecode_header((uint8 *)info->comp_sp_tag_header,
+                                     (comp_model_t *)&info->model_type, info->minfo, 
+                                     (comp_coder_t *)&info->comp_type, info->cinfo) == FAIL)
+                    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+            }
+              break;
+            default:
+                /* Do nothing */
+                break;
+            } /* end switch on specialness */
+
           /* end access to special info stuff */
           if(Hendaccess(dd_aid)==FAIL)
               HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
@@ -1166,7 +1219,9 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
              NOTE: Should change this to a single VSread() but then
              would have to store all the v_data rec's somewhere
              before inserting them into the TBBT tree...
-             ....for somone to do later if performance of VSread() is bad
+             ....for somone to do later if performance of VSread() is bad.
+             Technically a B+-Tree should have been used instead or
+             better yet the Vdata implementation should be re-written to use one.
              Note that chunk tag DTAG_CHUNK is not verified here.
              It is checked in HMCPchunkread() before the chunk is read. */
           for (j = 0; j < num_recs; j++)
@@ -1339,7 +1394,7 @@ DESCRIPTION
    All of the pieces of the chunked element are the same size from
    the stand point of the element. If compression is used then
    each chunk is compressed and the compression layer takes
-   care of it as the chunk layers sees each chunks as a seperate
+   care of it as the chunk layer sees each chunks as a seperate
    HDF object(DFTAG_CHUNK). The proper compression special header
    needs to be passed to the compression layer.
 
@@ -1351,11 +1406,14 @@ DESCRIPTION
    the number of chunks in the object i.e. object size/ chunk size,
    and the maximum number of chunks to cache in memory. Chunks in
    the cache are dealt with by their number i.e. translation of
-   'origin' of chunk to a unique number. 
+   'origin' of chunk to a unique number. The default maximum number
+   of chunks is the cache is set the number of chunks along the
+   last dimension.
 
-   Note the cache itself could be used to cache any object into a number 
+   NOTE: The cache itself could be used to cache any object into a number 
    of fixed size chunks so long as the read/write(page-in/page-out) routines know
-   how to deal with getting the correct chunk based on a number.
+   how to deal with getting the correct chunk based on a number.These
+   routines can be found in 'mcache.c'.
 
 RETURNS
    The AID of newly created chunked element, FAIL on error.
@@ -1451,7 +1509,11 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     info->attached     = 1;
     info->aid          = FAIL;
     info->version      = _HDF_CHK_HDR_VER ;     /* verson 1 for now */
-    info->flag         = chk_array->chunk_flag; 
+    info->flag         = chk_array->chunk_flag; /* SPECIAL_COMP ? */
+    info->cinfo        = NULL;
+    info->minfo        = NULL; 
+    info->comp_sp_tag_head_len = 0;
+    info->comp_sp_tag_header   = NULL;
     info->chunk_size   = chk_array->chunk_size; /* logical chunk size */
     info->nt_size      = chk_array->nt_size;    /* number type size */
     info->ndims        = chk_array->num_dims;   /* number of dimensions */
@@ -1470,6 +1532,43 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     /* copy fill value over */
     HDmemcpy(info->fill_val, fill_val, info->fill_val_len); /* fill_val_len bytes */
+
+    /* if compression set then fill in info i.e ENCODE for storage */
+    switch(info->flag)
+      {
+      case SPECIAL_COMP:
+          /* set compression info */
+          /* allocate compression special info  */
+          if (( info->cinfo = (comp_info *) HDmalloc((uint32)sizeof(comp_info)))==NULL)
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
+          if (( info->minfo = (model_info *) HDmalloc((uint32)sizeof(model_info)))==NULL)
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
+          
+          /* find compression header length */
+          info->comp_sp_tag_head_len = HCPquery_encode_header(
+              (comp_model_t)info->model_type, info->minfo, 
+              (comp_coder_t)info->comp_type, info->cinfo);
+
+          /* allocate space for compression header */
+          if (( info->comp_sp_tag_header = (VOID *) HDmalloc(info->comp_sp_tag_head_len))==NULL)
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+          /* Encode header for storage */
+          if (HCPencode_header((uint8 *)info->comp_sp_tag_header,
+                               (comp_model_t)chk_array->model_type, chk_array->minfo, 
+                               (comp_coder_t)chk_array->comp_type, chk_array->cinfo) == FAIL)
+              HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+          /* Decode header back for memory */
+          if (HCPdecode_header((uint8 *)info->comp_sp_tag_header,
+                               (comp_model_t *)&info->model_type, info->minfo, 
+                               (comp_coder_t *)&info->comp_type, info->cinfo) == FAIL)
+              HGOTO_ERROR(DFE_INTERNAL, FAIL);
+          break;
+      default:
+          /* Do nothing */
+          break;
+      } /* end switch on specialness */
 
     /* Use Vxxx interface to create new Vdata to hold Chunk table */
     /* create/intialize chunk table (Vdata ) */
@@ -1593,8 +1692,18 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     /* Calculate total length of this special element header
        including the fields for 'sp_tag_desc' and 'sp_tag_head_len'.
        See description of format header at top of file for more
-       info on fields */
-    sp_tag_header_len = 6 + 9 + 12 + 8 +(12*info->ndims) + 4 + info->fill_val_len;
+       info on fields.
+       Include also length for multiply specialness headers */
+    switch(info->flag)
+      {
+      case SPECIAL_COMP:
+          sp_tag_header_len = 6 + 9 + 12 + 8 +(12*info->ndims) + 4 + info->fill_val_len
+                            + 6 + info->comp_sp_tag_head_len;
+          break;
+      default:
+          sp_tag_header_len = 6 + 9 + 12 + 8 +(12*info->ndims) + 4 + info->fill_val_len;
+          break;
+      }
 
     /* Allocate buffer space for header */
     if (( sp_header = (uint8 *) HDcalloc(sp_tag_header_len,1))==NULL)
@@ -1604,8 +1713,18 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
        Note the value of 'sp_tag_head_len' in the file is the 
        total length of this special object header - 6 bytes.
        beacuse the length of the fields 'sp_tag_desc'(2 bytes) and 
-       'sp_tag_head_len' (4 bytes) which are not included */
-    info->sp_tag_header_len = sp_tag_header_len - 6;
+       'sp_tag_head_len' (4 bytes) which are not included 
+       If also multiply special need to subtract another 6 byts plus
+       length for multiply specialness headers */
+    switch(info->flag)
+      {
+      case SPECIAL_COMP:
+          info->sp_tag_header_len = sp_tag_header_len - 6 - 6 - info->comp_sp_tag_head_len;
+          break;
+      default:
+          info->sp_tag_header_len = sp_tag_header_len - 6;
+          break;
+      }
 
     /* encode info into chunked descripton record */
     {
@@ -1639,7 +1758,20 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
         p = p + fill_val_len;
 
         /* Future to encode multiply specialness stuff
-           header lenghts, header,..etc*/
+           header lengths, header,..etc*/
+        switch(info->flag)
+          {
+          case SPECIAL_COMP:
+              UINT16ENCODE(p, SPECIAL_COMP);              /* 2 bytes */
+              INT32ENCODE(p, info->comp_sp_tag_head_len); /* 4 bytes */
+              /* copy special element header */
+              HDmemcpy(p,info->comp_sp_tag_header,info->comp_sp_tag_head_len); 
+              p = p + info->comp_sp_tag_head_len;
+              break;
+          default:
+              /* Do nothing */
+              break;
+          }
     }
 
     /* write the special info structure to fill */
@@ -2033,7 +2165,7 @@ HMCPchunkread(VOID  *cookie,    /* IN: access record to mess with */
           chk_rec = (CHUNK_REC *) entry->data; 
 
           /* check to see if has been written to */
-          if (chk_rec->chk_tag != DFTAG_NULL && chk_rec->chk_tag == DFTAG_CHUNK)
+          if (chk_rec->chk_tag != DFTAG_NULL && BASETAG(chk_rec->chk_tag) == DFTAG_CHUNK)
             { /* valid chunk in file */
                 /* Start read on chunk */
                 if ((chk_id = Hstartread(access_rec->file_id, chk_rec->chk_tag,
@@ -2552,12 +2684,33 @@ HMCPchunkwrite(VOID  *cookie,    /* IN: access record to mess with */
           /* Add to Vdata i.e. chunk table */
           if(VSwrite(info->aid,v_data,1,FULL_INTERLACE)==FAIL)
               HGOTO_ERROR(DFE_VSWRITE,FAIL);
-      } /* not already in Vdata table */
 
-    /* Start write on chunk */
-    if ((chk_id = Hstartwrite(access_rec->file_id, chk_rec->chk_tag,
-                              chk_rec->chk_ref,write_len)) == FAIL)
-        HE_REPORT_GOTO("Hstartwrite failed to read chunk", FAIL);
+          /* Create compressed chunk if set 
+             else start write access on element */
+          switch(info->flag)
+            {
+            case SPECIAL_COMP: /* Create compressed chunk */
+                if ((chk_id = HCcreate(access_rec->file_id, chk_rec->chk_tag,
+                                       chk_rec->chk_ref,
+                                       info->model_type, info->minfo,
+                                       info->comp_type, info->cinfo)) == FAIL)
+                    HE_REPORT_GOTO("HCcreate failed to read chunk", FAIL);
+                break;
+            default:
+                /* Start write on chunk */
+                if ((chk_id = Hstartwrite(access_rec->file_id, chk_rec->chk_tag,
+                                          chk_rec->chk_ref,write_len)) == FAIL)
+                    HE_REPORT_GOTO("Hstartwrite failed to read chunk", FAIL);
+                break;
+            }
+      } /* not already in Vdata table */
+    else
+      { /* Already in table so start access */
+        /* Start write on chunk */
+        if ((chk_id = Hstartwrite(access_rec->file_id, chk_rec->chk_tag,
+                                  chk_rec->chk_ref,write_len)) == FAIL)
+            HE_REPORT_GOTO("Hstartwrite failed to read chunk", FAIL);
+      }
 
     /* write data to chunk */
     if (Hwrite(chk_id, write_len, bptr) == FAIL)

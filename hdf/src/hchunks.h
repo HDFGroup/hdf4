@@ -35,6 +35,7 @@
 
 #include "tbbt.h"   /* TBBT stuff */
 #include "mcache.h" /* caching routines */
+#include "hcomp.h"  /* For Compression */
 
 /* Define class, class version and name(partial) for chunk table i.e. Vdata */
 #define _HDF_CHK_TBL_CLASS "_HDF_CHK_TBL_" /* 13 bytes */
@@ -63,11 +64,17 @@ typedef struct dim_def_struct {
 
 /* Structure for each Chunk Definition*/
 typedef struct chunk_def_struct {
-    int32 chunk_size;        /* size of this chunk*/
-    int32 nt_size;           /* number type size i.e. size of data type */
-    int32 num_dims;          /* number of actual dimensions */
+    int32    chunk_size;     /* size of this chunk*/
+    int32    nt_size;        /* number type size i.e. size of data type */
+    int32    num_dims;       /* number of actual dimensions */
     DIM_DEF *pdims;          /* ptr to array of dimension records for this chunk*/
-    int32 chunk_flag;        /* multiply specailness? */
+    int32   chunk_flag;      /* multiply specialness? SPECIAL_COMP */
+
+    /* For Compression info */
+    int32      comp_type;     /* Compression type */
+    int32      model_type;    /* Compression model type */
+    comp_info  *cinfo;        /* Compression info struct */
+    model_info *minfo;        /* Compression model info struct */
 }CHUNK_DEF, * CHUNK_DEF_PTR;
 
 /* Private structues */
@@ -85,7 +92,6 @@ typedef struct dim_rec_struct {
     int32 last_chunk_length;   /* last chunk length along this dimension */
     int32 num_chunks;          /* i.e. "dim_length / chunk_length" */
 } DIM_REC, * DIM_REC_PTR;
-
 
 /* Structure for each Chunk */
 typedef struct chunk_rec_struct {
@@ -119,6 +125,15 @@ typedef struct chunkinfo_t
     DIM_REC     *ddims;       /* array of dimension records */
     int32       fill_val_len; /* fill value number of bytes */
     VOID        *fill_val;    /* fill value */
+    /* For each specialness, only one for now SPECIAL_COMP */
+    int32       comp_sp_tag_head_len; /* Compression header length */
+    VOID        *comp_sp_tag_header;  /* compression header */
+
+    /* For Compression info */
+    int32       comp_type;            /* Compression type */
+    int32       model_type;           /* Compression model type */
+    comp_info   *cinfo;               /* Compression info struct */
+    model_info  *minfo;               /* Compression model info struct */
 
     /* additional memory resident data structures to be used */
     int32       *seek_chunk_indices; /* chunk array indicies relative
