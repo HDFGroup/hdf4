@@ -508,7 +508,7 @@ int *is_maxmin;
 			goto err;
 		}
 	} else {
-		for (k = 0, fp32 = in->data; k < in->dims[2]; k++) {
+		for (k = 0, fp32 = (float32 *) in->data; k < in->dims[2]; k++) {
 			for (j = 0; j < in->dims[1]; j++) {
 				for (i = 0; i < in->dims[0]; i++, fp32++) {
 					if (gfloat(infile, strm, fp32, in)) {
@@ -1672,7 +1672,7 @@ struct Raster *im;
 
 	static char *err1 = "Unable to dynamically allocate memory.\n";
 
-	dp = in->data;
+	dp = (float32 *)in->data;
 	ip = im->image;
 	range = in->max - in->min;
 	ratio = 237.9 / range;
@@ -1877,7 +1877,7 @@ struct Options *opt;
 		 * get the input data
 		 */
 		len = in.dims[0] * in.dims[1] * in.dims[2];
-		if ((in.data = (float32 *) HDgetspace((unsigned int) (len *
+		if ((in.data = (VOIDP) HDgetspace((unsigned int) (len *
 		    sizeof(float32)))) == NULL) {
 			(void) fprintf(stderr, err2);
 			goto err;
