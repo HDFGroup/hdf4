@@ -12,6 +12,7 @@
  *
  * -glenn
  */
+/* $Id$ */
 
 /*
  * 32-bit integer on the host architecture (on the CRAY, this is actually 64
@@ -283,26 +284,26 @@ int nbytes;
 }
 
 
-static bool_t   xdrposix_getlong(XDR *, long *);
-static bool_t   xdrposix_putlong(XDR *, long *);
+static bool_t   xdrposix_getlong();
+static bool_t   xdrposix_putlong();
 #if (_MIPS_SZLONG == 64)
 static bool_t   xdrposix_getint();
 static bool_t   xdrposix_putint();
 #endif
-static bool_t   xdrposix_getbytes(XDR *, caddr_t, u_int);
-static bool_t   xdrposix_putbytes(XDR *, caddr_t, u_int);
-static ncpos_t  xdrposix_getpos(XDR *);
-static bool_t   xdrposix_setpos(XDR *,ncpos_t );
+static bool_t   xdrposix_getbytes();
+static bool_t   xdrposix_putbytes();
+static ncpos_t  xdrposix_getpos();
+static bool_t   xdrposix_setpos();
 #ifdef CRAY
-static inline_t *   xdrposix_inline(XDR *, u_int);
+static inline_t *   xdrposix_inline();
 #else
 #if (_MIPS_SZLONG == 64)
-static long *    xdrposix_inline(XDR *, u_int);
+static long *    xdrposix_inline();
 #else
-static netlong *    xdrposix_inline(XDR *, u_int);
+static netlong *    xdrposix_inline();
 #endif
 #endif
-static void xdrposix_destroy(XDR *);
+static void xdrposix_destroy();
 
 /*
  * Ops vector for posix type XDR
