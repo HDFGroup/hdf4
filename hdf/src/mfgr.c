@@ -1430,9 +1430,7 @@ int32 GRstart(int32 hdf_file_id)
         if ((gr_ptr = New_grfile(hdf_file_id)) == NULL)
             HGOTO_ERROR(DFE_FNF, FAIL);
 
-    if (gr_ptr->access>0)
-        gr_ptr->access++;
-    else
+    if (gr_ptr->access==0)
       {
         /* Fire up the Vset interface */
         if(Vstart(hdf_file_id)==FAIL)
@@ -1458,6 +1456,7 @@ int32 GRstart(int32 hdf_file_id)
         if(GRIget_image_list(hdf_file_id,gr_ptr)==FAIL)
             HGOTO_ERROR(DFE_INTERNAL,FAIL);
       } /* end else */
+    gr_ptr->access++;
 
     /* Return handle to the GR interface to the user */
     ret_value=HAregister_atom(GRIDGROUP,gr_ptr);
