@@ -42,6 +42,8 @@ c      integer mgsattr
 	integer mgatinf, mggattr, mgfndat
       integer mgscatt, mgsnatt, mggcatt, mggnatt
       integer mgwcimg, mgrcimg
+      integer mggnluts
+      
       integer MFGR_INTERLACE_PIXEL, MFGR_INTERLACE_LINE,
      *      MFGR_INTERLACE_COMPONENT
 
@@ -100,6 +102,7 @@ c      integer mgsattr
       character attr_c(6), attr2_c(6)
       character cbuf(2,3,4), icbuf(2,3,4)
       integer i, j, k, ret, number_failed
+      integer n_pal
 
       DATA attr_c/'A','T','T','R','_','C'/
       DATA cbuf/'A','B','C','D','E','F','G','H','I','J','K','L',
@@ -241,7 +244,11 @@ C Select an image
       call VRFY(index,'mgn2ndx',number_failed)
       ri_id = mgselct(gr_id,index)
       call VRFY(ri_id,'mgselct',number_failed)
-
+      n_pal = mggnluts(ri_id)
+      call VRFY(ri_id,'mggnluts',number_failed)
+      if(n_pal .ne. 1) then
+         print *, 'Wrong number of palettes returned for IMAGE1'
+      endif
 C Get info about the image
       call MESSAGE(5,'Getting image information')
       ret = mggiinf(ri_id,IMAGE2,n_comp,nt,il,dims,n_attrs)
@@ -318,6 +325,11 @@ C Select a character image
       call VRFY(index,'mgn2ndx',number_failed)
       ri_id = mgselct(gr_id,index)
       call VRFY(ri_id,'mgselct',number_failed)
+      n_pal = mggnluts(ri_id)
+      call VRFY(ri_id,'mggnluts',number_failed)
+      if(n_pal .ne. 0) then
+         print *,'Wrong number of palettes returned for IMAGEC'
+      endif
 
 C Get info about the image
       call MESSAGE(5,'Getting image information')
