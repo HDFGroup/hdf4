@@ -5,9 +5,9 @@ dnl All rights reserved.
 dnl
 AC_REVISION($Id$)
 
-dnl ----------------------------------------------------------------------
+dnl ======================================================================
 dnl Initialize configure.
-dnl ----------------------------------------------------------------------
+dnl ======================================================================
 dnl AC_INIT takes the name of the package, the version number, and an
 dnl email address to report bugs. AC_CONFIG_SRCDIR takes a unique file
 dnl as its argument.
@@ -20,9 +20,9 @@ AC_CONFIG_SRCDIR([hdf/src/atom.c])
 AC_CONFIG_AUX_DIR([bin])
 AM_INIT_AUTOMAKE([HDF], [4.1r5])
 
-dnl ----------------------------------------------------------------------
+dnl ======================================================================
 dnl Information on the package
-dnl ----------------------------------------------------------------------
+dnl ======================================================================
 
 dnl Dump all shell variables values.
 AC_MSG_CHECKING([shell variables initial values])
@@ -36,13 +36,13 @@ dnl present but can be used by the maintainers to fine tune things like
 dnl turning on debug or profiling flags for the compiler. The search order
 dnl is:
 dnl
-dnl	CPU-VENDOR-OS
-dnl	VENDOR-OS
-dnl	CPU-OS
-dnl	CPU-VENDOR
-dnl	OS
-dnl	VENDOR
-dnl	CPU
+dnl         CPU-VENDOR-OS
+dnl         VENDOR-OS
+dnl         CPU-OS
+dnl         CPU-VENDOR
+dnl         OS
+dnl         VENDOR
+dnl         CPU
 dnl
 dnl If the `OS' ends with a version number then remove it. For instance,
 dnl `freebsd3.1' would become `freebsd'
@@ -60,16 +60,16 @@ case $host_os in
 esac
 
 host_config="none"
-for f in $host_cpu-$host_vendor-$host_os \
+for f in $host_cpu-$host_vendor-$host_os        \
          $host_cpu-$host_vendor-$host_os_novers \
-         $host_vendor-$host_os \
-         $host_vendor-$host_os_novers \
-         $host_cpu-$host_os \
-         $host_cpu-$host_os_novers \
-         $host_cpu-$host_vendor \
-         $host_os \
-         $host_os_novers \
-         $host_vendor \
+         $host_vendor-$host_os                  \
+         $host_vendor-$host_os_novers           \
+         $host_cpu-$host_os                     \
+         $host_cpu-$host_os_novers              \
+         $host_cpu-$host_vendor                 \
+         $host_os                               \
+         $host_os_novers                        \
+         $host_vendor                           \
          $host_cpu ; do
   AC_MSG_CHECKING([for config $f])
   if test -f "$srcdir/config/$f"; then
@@ -83,9 +83,9 @@ if test "X$host_config" != "Xnone"; then
   . $host_config
 fi
 
-dnl ----------------------------------------------------------------------
+dnl ======================================================================
 dnl Checks for programs
-dnl ----------------------------------------------------------------------
+dnl ======================================================================
 
 AC_PROG_MAKE_SET
 
@@ -110,9 +110,9 @@ AC_CHECK_PROG([TBL],      [tbl],      [tbl])
 AC_SUBST([AR])
 AC_SUBST([DIFF])
 
-dnl ----------------------------------------------------------------------
+dnl ======================================================================
 dnl Checks for libraries
-dnl ----------------------------------------------------------------------
+dnl ======================================================================
 
 dnl Is the GNU zlib present? It has a header file `zlib.h' and a library
 dnl `-lz' and their locations might be specified with the `--with-zlib'
@@ -315,23 +315,23 @@ case "${host}" in
   *)                    ;;
 esac
 
-dnl ----------------------------------------------------------------------
+dnl ======================================================================
 dnl Checks for header files
-dnl ----------------------------------------------------------------------
+dnl ======================================================================
 
 AC_HEADER_STDC
 
-dnl ----------------------------------------------------------------------
+dnl ======================================================================
 dnl Checks for types
-dnl ----------------------------------------------------------------------
+dnl ======================================================================
 
-dnl ----------------------------------------------------------------------
+dnl ======================================================================
 dnl Checks for structures
-dnl ----------------------------------------------------------------------
+dnl ======================================================================
 
-dnl ----------------------------------------------------------------------
+dnl ======================================================================
 dnl Checks for compiler characteristics
-dnl ----------------------------------------------------------------------
+dnl ======================================================================
 
 AC_PROG_CC_C_O
 AC_PROG_F77_C_O
@@ -339,29 +339,83 @@ AC_PROG_CXXCPP
 
 AC_C_BIGENDIAN([], [CPPFLAGS="$CPPFLAGS -DSWAP"])
 
-dnl ----------------------------------------------------------------------
+dnl Are we building this in debug or production mode? (Remove the -g flag
+dnl in production mode.)
+AC_MSG_CHECKING(for build mode)
+AC_ARG_ENABLE(production,
+              [AC_HELP_STRING([--enable-production],
+                              [Determines how to run the compiler.])])
+
+case "X-$enable_production" in
+  X-yes)
+    AC_MSG_RESULT([production])
+
+    dnl Remove the "-g" flag from compile line if it's in there.
+    CFLAGS_temp=""
+    if test -n "$CFLAGS"; then
+      for d in $CFLAGS ; do
+        if test "X$d" != "X-g"; then
+          CFLAGS_temp="$CFLAGS_temp $d"
+        fi
+      done
+      CFLAGS=$CFLAGS_temp
+    fi
+
+    FFLAGS_temp=""
+    if test -n "$FFLAGS"; then
+      for d in $FFLAGS ; do
+        if test "X$d" != "X-g"; then
+          FFLAGS_temp="$FFLAGS_temp $d"
+        fi
+      done
+      FFLAGS=$FFLAGS_temp
+    fi
+
+    CXXFLAGS_temp=""
+    if test -n "$CXXFLAGS"; then
+      for d in $CXXFLAGS ; do
+        if test "X$d" != "X-g"; then
+          CXXFLAGS_temp="$CXXFLAGS_temp $d"
+        fi
+      done
+      CXXFLAGS=$CXXFLAGS_temp
+    fi
+
+    CFLAGS="$CFLAGS $PROD_CFLAGS"
+    CXXFLAGS="$CXXFLAGS $PROD_CXXFLAGS"
+    FFLAGS="$FFLAGS $PROD_FFLAGS"
+    CPPFLAGS="$CPPFLAGS $PROD_CPPFLAGS"
+    ;;
+  X-|X-no)
+    AC_MSG_RESULT([development])
+    CFLAGS="$CFLAGS $DEBUG_CFLAGS"
+    FFLAGS="$FFLAGS $DEBUG_FFLAGS"
+    CXXFLAGS="$CXXFLAGS $DEBUG_CXXFLAGS"
+    CPPFLAGS="$CPPFLAGS $DEBUG_CPPFLAGS"
+    ;;
+  *)
+    AC_MSG_RESULT([user-defined])
+    ;;
+esac
+
+dnl ======================================================================
 dnl Checks for library functions
-dnl ----------------------------------------------------------------------
+dnl ======================================================================
 
 AC_MSG_CHECKING([for math library support])
 AC_TRY_LINK([#include <math.h>], [sqrt(37.927)],
             [AC_MSG_RESULT([yes])],
             [AC_MSG_RESULT([no]); LIBS="$LIBS -lm"])
 
-dnl ----------------------------------------------------------------------
+dnl ======================================================================
 dnl Checks for system services
-dnl ----------------------------------------------------------------------
+dnl ======================================================================
 
 dnl Copy NetCDF header files.
 dnl
 dnl FIXME: This is code stolen^Wborrowed from the old HDF4 configure.
 dnl These header files should probably be generated by autoconf instead
 dnl of being copied depending upon the host.
-src_files="mfhdf/libsrc/config/netcdf-FOO.h:mfhdf/libsrc/netcdf.h
-           mfhdf/fortran/config/jackets-FOO.c:mfhdf/fortran/jackets.c
-           mfhdf/fortran/config/netcdf-FOO.inc:mfhdf/fortran/netcdf.inc
-           mfhdf/fortran/config/ftest-FOO.f:mfhdf/fortran/ftest.f"
-
 case "${host}" in
   alpha-*-*)            BAR="alpha"       ;;
   mips*-dec-ultrix*)    BAR="dec"         ;;
@@ -386,6 +440,10 @@ case "${host}" in
   *)                    echo "*** unknown host $host!"; exit 1 ;;
 esac
 
+src_files="mfhdf/libsrc/config/netcdf-FOO.h:mfhdf/libsrc/netcdf.h
+           mfhdf/fortran/config/jackets-FOO.c:mfhdf/fortran/jackets.c
+           mfhdf/fortran/config/netcdf-FOO.inc:mfhdf/fortran/netcdf.inc
+           mfhdf/fortran/config/ftest-FOO.f:mfhdf/fortran/ftest.f"
 src_files="`echo $src_files | sed -e s/FOO/${BAR}/g`"
 
 for config_file in $src_files; do

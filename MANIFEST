@@ -30,6 +30,7 @@
 ./bin/runtest
 ./bin/snapshot
 
+./config/BlankForm
 ./config/mh-aix
 ./config/mh-aix64
 ./config/mh-alpha
@@ -587,7 +588,6 @@
 ./mfhdf/c++/netcdf.cc
 ./mfhdf/c++/netcdf.hh
 
-./mfhdf/doc/Makefile.am
 ./mfhdf/doc/Makefile.in
 ./mfhdf/doc/README
 ./mfhdf/doc/guide.ps
@@ -1019,7 +1019,6 @@
 ./mfhdf/ncgen/vms_yy.c
 
 ./mfhdf/nctest/Makefile.in
-./mfhdf/nctest/Makefile.in_orig
 ./mfhdf/nctest/README
 ./mfhdf/nctest/add.c
 ./mfhdf/nctest/add.h
