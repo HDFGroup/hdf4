@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.13  1993/01/26 19:42:45  koziol
-Added support for reading and writing Little-Endian data on all
-platforms.  This has been tested on: Cray, Sun, and PCs so far.
+Revision 1.14  1993/02/16 18:45:02  koziol
+Added prototyping to RS/6000 definition
 
+ * Revision 1.13  1993/01/26  19:42:45  koziol
+ * Added support for reading and writing Little-Endian data on all
+ * platforms.  This has been tested on: Cray, Sun, and PCs so far.
+ *
  * Revision 1.12  1993/01/19  05:55:40  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -164,6 +167,10 @@ Please check your Makefile.
 #define GOT_MACHINE
 
 #   define BSD
+#ifndef PROTOTYPE
+#define PROTOTYPE		/* to invoke ANSI prototypes */
+#endif	/* PROTOTYPE */
+
 #include <string.h>
 #ifndef __GNUC__
 #include <memory.h>
