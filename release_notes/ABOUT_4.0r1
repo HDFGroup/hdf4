@@ -90,10 +90,10 @@ Important Changes:
      the New Features and Changes section of this document for more 
      information.
   
-  5. Platforms tested on: IRIX (ver 4, 5.3, 6.1 (32 bit and 64 bit)), 
+  5. Platforms tested on: IRIX (5.3, 6.1 (32 bit and 64 bit)), 
      SunOS 4.1.4, Solaris (ver 2.3, 2.4, 2.5), Solaris x86, 
      HP-UX, Digital Unix, AIX, LINUX (A.OUT), CM5, YMP,
-     FreeBSD, C90, Exemplar, Open VMS, SP2. 
+     FreeBSD, C90, Exemplar, Open VMS, SP2 (single node only). 
 
      HDF 4.0 is not yet available on the Macintosh.
 
@@ -215,8 +215,9 @@ New Features and Changes:
      mfhdf/CM5/Examples.
 
      The parallel I/O interface stores scientific datasets in
-     external files. New options have been added to hdfls and
-     hdfpack to handle them. 
+     external files.  New options have been added to hdfls and
+     hdfpack to handle them.  A new utility, hdfunpac, was
+     created for external files handling, too. 
 
   9. Support for SGI Power Challenge running IRIX6.1 
      Power Challenge is now supported, both in the native 64-bit 
@@ -272,7 +273,6 @@ New Features and Changes:
      
       - HXsetcreatedir (hxscdir for FORTRAN) 
       - HXsetdir (hxsdir for FORTRAN)
-      - hdfunpac was created for external file handling.
 
  14. I/O performance improvement 
      HDF 4.0 unofficially supports file page buffering.  With HDF 4.1
@@ -324,7 +324,12 @@ New Features and Changes:
      level INSTALL file and the hdf/pablo/README.Pablo file for
      further information.
 
- 19. Miscellaneous fixes
+ 19. Support for the IBM SP-2 
+     The HDF library has been ported to run in a single SP2 node.
+     It does not support the parallel or distributed computing for
+     multiple SP-2 nodes yet.
+
+ 20. Miscellaneous fixes
 
      - To avoid conflicts with C++, internal structures' fields which
        were named 'new' have been renamed.
@@ -354,7 +359,8 @@ Changes to utilities:
      interface on CM5.
 
    o hdf/util/hdfunpac
-     This is a new utility for the external path handling.
+     This is a new utility for external file handling for the
+     parallel I/O interface on CM5.
 
    o /mfhdf/dumper/hdp
      Hdp is a new command line utility designed for quick display of 
@@ -369,8 +375,8 @@ Known Problems:
    o On the IRIX4 platform, fp2hdf creates float32 and float64 values
      incorrectly.   
 
-   o On the SP2, the hdp command fails when using the list option
-     (for eg. hdp list -a tdata.hdf).
+   o On the SP2, the hdp command gives a false message of "Failure to
+     allocate space" when the hdf file has no annotations to list. 
 
    o On the C90, hdfed fails inconsistently when opening hdf files
      more than once in the same hdfed session.
