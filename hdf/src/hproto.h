@@ -2263,7 +2263,7 @@ HDFLIBAPI FRETVAL(intf)
 naffcreate(intf *an_id, intf *atype);
 
 HDFLIBAPI FRETVAL(intf)
-nafselect(intf *an_id, intf *index, intf *atype);
+nafselect(intf *an_id, intf *idx, intf *atype);
 
 HDFLIBAPI FRETVAL(intf)
 nafnumann(intf *an_id, intf *atype, intf *etag, intf *eref);
@@ -2284,7 +2284,7 @@ HDFLIBAPI FRETVAL(intf)
 nafendaccess(intf *ann_id);
 
 HDFLIBAPI FRETVAL(intf)
-nafgettagref(intf *an_id, intf *index, intf *type, intf *tag, intf *ref);
+nafgettagref(intf *an_id, intf *idx, intf *type, intf *tag, intf *ref);
 
 HDFLIBAPI FRETVAL(intf)
 nafidtagref(intf *ann_id, intf *tag, intf *ref);
@@ -2311,7 +2311,7 @@ HDFLIBAPI int32 ANcreate(int32 an_id, uint16 elem_tag, uint16 elem_ref,
 
 HDFLIBAPI int32 ANcreatef(int32 an_id, ann_type type);
 
-HDFLIBAPI int32 ANselect(int32 an_id, int32 index, ann_type type);
+HDFLIBAPI int32 ANselect(int32 an_id, int32 idx, ann_type type);
 
 HDFLIBAPI intn  ANnumann(int32 an_id, ann_type type, uint16 elem_tag, 
                       uint16 elem_ref);
@@ -2327,7 +2327,7 @@ HDFLIBAPI int32 ANreadann(int32 ann_id, char *ann, int32 maxlen);
 
 HDFLIBAPI intn  ANendaccess(int32 ann_id);
 
-HDFLIBAPI int32 ANget_tagref(int32 an_id, int32 index, ann_type type,
+HDFLIBAPI int32 ANget_tagref(int32 an_id, int32 idx, ann_type type,
                           uint16 *ann_tag, uint16 *ann_ref);
 
 HDFLIBAPI int32 ANid2tagref(int32 an_id, uint16 *ann_tag, uint16 *ann_ref);
@@ -2523,7 +2523,7 @@ HDFLIBAPI FRETVAL(intf)     /* !sl */
 nmgirimg(intf * riid, intf *start, intf *stride, intf *count, VOIDP data);
 
 HDFLIBAPI FRETVAL(intf)     /* !sl */
-nmgignat(intf * riid, intf *index, VOIDP data);
+nmgignat(intf * riid, intf *idx, VOIDP data);
 
 HDFLIBAPI FRETVAL(intf)
 nmgstart(intf * fid);
@@ -2538,7 +2538,7 @@ HDFLIBAPI FRETVAL(intf)
 nmgicreat(intf * grid, _fcd name, intf *ncomp, intf *nt, intf *il, intf dimsizes[2], intf *nlen);
 
 HDFLIBAPI FRETVAL(intf)
-nmgselct(intf * grid, intf *index);
+nmgselct(intf * grid, intf *idx);
 
 HDFLIBAPI FRETVAL(intf)
 nmgin2ndx(intf * grid, _fcd name, intf *nlen);
@@ -2605,16 +2605,16 @@ HDFLIBAPI FRETVAL(intf)
 nmgisattr(intf * riid, _fcd name, intf *nt, intf *count, void * data, intf *nlen);
 
 HDFLIBAPI FRETVAL(intf)
-nmgatinf(intf * riid, intf *index, _fcd name, intf *nt, intf *count);
+nmgatinf(intf * riid, intf *idx, _fcd name, intf *nt, intf *count);
 
 HDFLIBAPI FRETVAL(intf)
-nmggcatt(intf * riid, intf *index, _fcd data);
+nmggcatt(intf * riid, intf *idx, _fcd data);
 
 HDFLIBAPI FRETVAL(intf)
-nmggnatt(intf * riid, intf *index, void * data);
+nmggnatt(intf * riid, intf *idx, void * data);
 
 HDFLIBAPI FRETVAL(intf)
-nmggattr(intf * riid, intf *index, void * data);
+nmggattr(intf * riid, intf *idx, void * data);
 
 HDFLIBAPI FRETVAL(intf)
 nmgifndat(intf * riid, _fcd name, intf *nlen);
@@ -2658,7 +2658,7 @@ HDFLIBAPI intn GRend(int32 grid);
 HDFLIBAPI int32 GRcreate(int32 grid,const char *name,int32 ncomp,int32 nt,int32 il,
     int32 dimsizes[2]);
 
-HDFLIBAPI int32 GRselect(int32 grid,int32 index);
+HDFLIBAPI int32 GRselect(int32 grid,int32 idx);
 
 HDFLIBAPI int32 GRnametoindex(int32 grid,const char *name);
 
@@ -2683,7 +2683,7 @@ HDFLIBAPI intn GRreqlutil(int32 riid,intn il);
 
 HDFLIBAPI intn GRreqimageil(int32 riid,intn il);
 
-HDFLIBAPI int32 GRgetlutid(int32 riid,int32 index);
+HDFLIBAPI int32 GRgetlutid(int32 riid,int32 idx);
 
 HDFLIBAPI uint16 GRluttoref(int32 lutid);
 
@@ -2703,9 +2703,9 @@ HDFLIBAPI intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo);
 
 HDFLIBAPI intn GRsetattr(int32 id,const char *name,int32 attr_nt,int32 count,const void * data);
 
-HDFLIBAPI intn GRattrinfo(int32 id,int32 index,char *name,int32 *attr_nt,int32 *count);
+HDFLIBAPI intn GRattrinfo(int32 id,int32 idx,char *name,int32 *attr_nt,int32 *count);
 
-HDFLIBAPI intn GRgetattr(int32 id,int32 index,void * data);
+HDFLIBAPI intn GRgetattr(int32 id,int32 idx,void * data);
 
 HDFLIBAPI int32 GRfindattr(int32 id,const char *name);
 
@@ -3395,19 +3395,19 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
                 (int32 vkey);
 
     HDFLIBAPI char *VFfieldname
-                (int32 vkey, int32 index);
+                (int32 vkey, int32 idx);
 
     HDFLIBAPI int32 VFfieldtype
-                (int32 vkey, int32 index);
+                (int32 vkey, int32 idx);
 
     HDFLIBAPI int32 VFfieldisize
-                (int32 vkey, int32 index);
+                (int32 vkey, int32 idx);
 
     HDFLIBAPI int32 VFfieldesize
-                (int32 vkey, int32 index);
+                (int32 vkey, int32 idx);
 
     HDFLIBAPI int32 VFfieldorder
-                (int32 vkey, int32 index);
+                (int32 vkey, int32 idx);
 
     HDFLIBAPI intn VSsetexternalfile
 		(int32 vkey, const char *filename, int32 offset);
@@ -3892,19 +3892,19 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
                 (intf  * vkey);
 
     HDFLIBAPI      FRETVAL(intf) nvffnamec
-                (intf  * vkey, intf  *index, _fcd fname, intf *len);
+                (intf  * vkey, intf  *idx, _fcd fname, intf *len);
 
     HDFLIBAPI      FRETVAL(intf) nvfftype
-                (intf  * vkey, intf  *index);
+                (intf  * vkey, intf  *idx);
 
     HDFLIBAPI      FRETVAL(intf) nvffisiz
-                (intf  * vkey, intf  *index);
+                (intf  * vkey, intf  *idx);
 
     HDFLIBAPI      FRETVAL(intf) nvffesiz
-                (intf  * vkey, intf  *index);
+                (intf  * vkey, intf  *idx);
 
     HDFLIBAPI      FRETVAL(intf) nvffordr
-                (intf  * vkey, intf  *index);
+                (intf  * vkey, intf  *idx);
 
     HDFLIBAPI      FRETVAL(intf) nvsfrdc
                 (intf  * vkey, _fcd  cbuf, intf  * nelt,
