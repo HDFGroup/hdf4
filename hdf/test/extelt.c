@@ -277,8 +277,54 @@ test_hextelt()
     ret = Hclose(fid1);
     CHECK(ret, FAIL, "Hclose");
 
+    /*==============================*/
+    /* Test External Path functions */
+    /*==============================*/
+    MESSAGE(5, printf("testing External Path functions\n");
+        );
+
+    /* start with a truncated brand new file */
+    fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
+    CHECK(fid, FAIL, "Hopen");
+
+    ret = HXsetcreatedir("testdir");
+    CHECK(ret, FAIL, "HXsetcreatedir");
+   
+    MESSAGE(5, printf("Creating an external element in file testdir/t5.hdf\n");
+        );
+    aid1 = HXcreate(fid, 1000, 5, "t5.hdf", (int32) 0, (int32) 0);
+    CHECK(aid1, FAIL, "HXcreate");
+
+    MESSAGE(5, printf("Writing 2000 bytes to file t5.hdf\n");
+        );
+    ret = Hwrite(aid1, 2000, outbuf);
+    CHECK(ret, FAIL, "Hwrite");
+
+    ret = Hendaccess(aid1);
+    CHECK(ret, FAIL, "Hendaccess");
+
+    MESSAGE(5, printf("Try read it.  Should fail the first time.\n");
+        );
+
+    ret = Hgetelement(fid, (uint16) 1000, (uint16) 5, inbuf);
+    VERIFY(ret, FAIL, "Hgetelement");
+
+    ret = HXsetdir("nosuchdir:testdir");
+    CHECK(ret, FAIL, "HXsetdir");
+
+    MESSAGE(5, printf("Try read it again.  Should not fail this time.\n");
+        );
+
+    ret = Hgetelement(fid, (uint16) 1000, (uint16) 5, inbuf);
+    CHECK(ret, FAIL, "Hgetelement");
+
+    ret = Hclose(fid);
+    CHECK(ret, FAIL, "Hclose");
+
+
 #ifdef QAK
     HDfree((VOIDP) outbuf);
     HDfree((VOIDP) inbuf);
 #endif
 }
+
