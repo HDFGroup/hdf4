@@ -117,8 +117,8 @@ const long *coords ;
 	up = vp->shape + vp->assoc->count - 1 ;
 	ip = coords + vp->assoc->count - 1 ;
 #ifdef CDEBUG
-	fprintf(stderr,"	NCcoordck: coords %p, count %ld, ip %p\n",
-            coords, vp->assoc->count, ip ) ;
+	fprintf(stderr,"	NCcoordck: coords %p, *coords %ld, count %ld, ip %p, boundary %p, *ip %ld\n",
+            coords, *coords, vp->assoc->count, ip , boundary, *ip) ;
 #endif /* CDEBUG */
 	for( ; ip >= boundary ; ip--, up--)
       {
@@ -129,7 +129,6 @@ const long *coords ;
           if( *ip < 0 || *ip >= *up )
               goto bad ;
       }
-
 
 #ifdef HDF
     if(handle->file_type == HDF_FILE && IS_RECVAR(vp)) 
@@ -143,7 +142,9 @@ const long *coords ;
           if((unfilled = *ip - vp->numrecs) < 0) 
               return TRUE;   
 
-            
+#ifdef CDEBUG
+fprintf(stderr, "NCcoordck: check 3.6, unfilled=%d\n",unfilled);
+#endif /* CDEBUG */
           /* check to see if we are trying to read beyond the end */
           if(handle->xdrs->x_op != XDR_ENCODE)
               goto bad ;
@@ -190,7 +191,7 @@ const long *coords ;
                     return FALSE;
 
 #ifdef DEBUG
-                printf("Filling %d bytes starting at %d\n", 
+                fprintf(stderr,"Filling %d bytes starting at %d\n", 
                        byte_count * unfilled, (vp->numrecs) * byte_count);
 #endif  
 
@@ -218,6 +219,9 @@ const long *coords ;
             } /* !SD_NOFILL  */
 
         vp->numrecs = MAX(vp->numrecs, (*ip + 1));    /* if NOFILL  */
+#ifdef CDEBUG
+fprintf(stderr, "NCcoordck: check 10.0, vp->numrecs=%d\n",vp->numrecs);
+#endif /* CDEBUG */
         if((*ip + 1) > handle->numrecs) 
           {
               handle->numrecs = *ip + 1;
@@ -1560,8 +1564,8 @@ Void *value ;
 	offset = NC_varoffset(handle, vp, coords) ;
 		
 #ifdef VDEBUG
-	NCadvise(NC_NOERR, "%s offset %d",
-             vp->name->values, offset ) ;
+	NCadvise(NC_NOERR, "%s offset %d, numrecs %d",
+             vp->name->values, offset, vp->numrecs) ;
 	arrayp("shape", vp->assoc->count, vp->shape) ;
 	arrayp("coords", vp->assoc->count, coords) ;
 #endif /* VDEBUG */
@@ -1745,6 +1749,7 @@ const long *edges ;
 {
 	const long *edp, *orp ;
 	unsigned long *boundary, *shp ;
+    int partial=0;
 
 	if( IS_RECVAR(vp) )
 	{
@@ -1770,10 +1775,22 @@ const long *edges ;
 			return(NULL) ;
 		}
 		if(*edp < *shp )
+          {
+            partial=1;
 			break ;
+          }
 	}
 	if(shp < boundary) /* made it all the way */
 		edp++ ;
+
+    /*
+     *   This little check makes certain that if complete "slices" of the
+     *  regular dimensions of an unlimited dimension dataset are being written
+     *  out, it's ok to write out a "block" of all those slices at once. -QAK
+     */
+	if( IS_RECVAR(vp) && (edp-1==edges) && !partial)
+        edp=edges;
+
 	/* shp, edp reference last index s.t. shape[ii] == edge[ii] */
 	return(edp) ;
 }
@@ -2070,6 +2087,18 @@ void *values ;
                       *coords, *upper) ;
 #endif
           }
+#ifdef VDEBUG
+        arrayp("coords", vp->assoc->count, coords) ;
+        arrayp("upper", vp->assoc->count, upper) ;
+        fprintf(stderr,"vp->numrecs=%d\n",vp->numrecs);
+        fprintf(stderr,"upper[0]=%d\n",upper[0]);
+#endif
+        /*
+         * This is a kludge to work around the fact the NCcoordck() doesn't
+         * get the upper limits on the slab to write out -QAK
+         */
+        if(upper[0] > vp->numrecs)
+            vp->numrecs=upper[0];
 	} /* end inline */
 
 #ifdef VDEBUG
