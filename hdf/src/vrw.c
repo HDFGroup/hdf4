@@ -379,7 +379,6 @@ uint8        buf[];
         HRETURN_ERROR(DFE_ARGS,FAIL);
     
     w = (VWRITELIST*) &vs->wlist;
-    hsize = w->ivsize; 		/* as stored in HDF file */
     
     hdf_size = w->ivsize; 		/* as stored in HDF file */
     total_bytes = hdf_size * nelt;
