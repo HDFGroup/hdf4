@@ -118,6 +118,10 @@ main (argc, argv)
     dbg_file=fopen("test.dbg","w+");
 #endif
 
+    /* Un-buffer the stdout and stderr */
+    setbuf(stderr,NULL);
+    setbuf(stdout,NULL);
+
     /* Tests are generally arranged from least to most complexity... */
     InitTest("vers",test_vers,"VERSION OF LIBRARY");
     InitTest("hfile",test_hfile,"HFILE");
@@ -136,6 +140,7 @@ main (argc, argv)
     InitTest("sdstr",test_tsdstr,"DATASTRINGS");
     InitTest("slabs",test_slab,"HYPERSLAB INTERFACE");
     InitTest("litend",test_litend,"LITTLE-ENDIAN INTERFACE");
+    InitTest("tbbt",test_tbbt,"Threaded Balanced Binary Trees");
     InitTest("vset",test_vsets,"VSET Interface Test");
 
     Verbocity = 4; /* Default Verbocity is Low */
@@ -192,7 +197,6 @@ main (argc, argv)
                 for (Loop1 = 0; Loop1 < Index; Loop1++)
                     if (HDstrcmp(argv[Loop],Test[Loop1].Name) == 0)
                         Test[Loop1].SkipFlag = 1;
-
                 Loop++;
               } /* end while */
           } /* end if */
