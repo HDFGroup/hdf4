@@ -23,8 +23,7 @@ VERSION  = 4.0
 #
 #Using ANSI compilier
 CC=cc
-#CFLAGS=-ansi -O -s
-CFLAGS=-ansi -g
+CFLAGS=-ansi -O -s
 
 # Fortran compilier
 FC = f77
