@@ -134,6 +134,7 @@ main (argc, argv)
     InitTest("sdnmms",test_sdnmms,"SDNMMS");
     InitTest("sdstr",test_tsdstr,"DATASTRINGS");
     InitTest("slabs",test_slab,"HYPERSLAB INTERFACE");
+    InitTest("nbit",test_nbit,"N-Bit Dataset Interface");
     InitTest("litend",test_litend,"LITTLE-ENDIAN INTERFACE");
     InitTest("tbbt",test_tbbt,"Threaded Balanced Binary Trees");
     InitTest("vset",test_vsets,"VSET Interface Test");
@@ -263,6 +264,7 @@ main (argc, argv)
         MESSAGE(2,printf("\nCleaning Up...\n\n"););
 #ifdef PC
         remove("*.hdf");
+        remove("*.tmp");
 #else
         system("rm -f *.hdf *.tmp");
 #endif

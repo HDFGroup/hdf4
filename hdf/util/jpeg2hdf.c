@@ -16,9 +16,11 @@ static char *RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
+#ifndef I860
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#endif /* I860 */
 #include "hdf.h"
 
 /* Size of the file buffer to copy through */

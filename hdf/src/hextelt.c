@@ -100,15 +100,15 @@ funclist_t ext_funcs = {
 
 --------------------------------------------------------------------------*/ 
 #ifdef PROTOTYPE
-int32 HXcreate(int32 file_id, uint16 tag, uint16 ref, char *extern_file_name, int32 f_offset, int32 start_len)
+int32 HXcreate(int32 file_id, uint16 tag, uint16 ref, char *extern_file_name, int32 offset, int32 start_len)
 #else
-int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
+int32 HXcreate(file_id, tag, ref, extern_file_name, offset, start_len)
     int32 file_id;             /* file record id */
     uint16 tag, ref;           /* tag/ref of the special data element
                                   to create */
     char *extern_file_name;    /* name of external file to use as
                                   data element */
-    int32 f_offset,start_len;
+    int32 offset,start_len;
 #endif
 {
     char *FUNC="HXcreate";     /* for HERROR */
@@ -127,7 +127,7 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
     HEclear();
     file_rec = FID2REC(file_id);
     if (!file_rec || file_rec->refcount == 0 || !extern_file_name
-            || (f_offset<0) || SPECIALTAG(tag)
+            || (offset<0) || SPECIALTAG(tag)
             || (special_tag = MKSPECIALTAG(tag)) == DFTAG_NULL )
        HRETURN_ERROR(DFE_ARGS,FAIL);
 
@@ -215,7 +215,7 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
            HDfreespace((VOIDP)buf);
            HRETURN_ERROR(DFE_READERROR,FAIL);
        }
-       if (HI_SEEK(file_external, f_offset) == FAIL) {
+       if (HI_SEEK(file_external, offset) == FAIL) {
            access_rec->used = FALSE;
            HDfreespace((VOIDP)info);
            HDfreespace((VOIDP)buf);
@@ -235,7 +235,7 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
 
     info->attached = 1;
     info->file_external = file_external;
-    info->extern_offset = f_offset;
+    info->extern_offset = offset;
     info->extern_file_name = (char *)HDstrdup(extern_file_name);
     if (!info->extern_file_name) {
        access_rec->used = FALSE;

@@ -71,10 +71,8 @@ PRIVATE int32 HCIcnbit_staccess
 PRIVATE int32 HCIcnbit_init
     (accrec_t *access_rec);
 
-#ifdef QAK
 PRIVATE int32 HCIcnbit_decode
     (compinfo_t *info,int32 length,uint8 *buf);
-#endif
 
 PRIVATE int32 HCIcnbit_encode
     (compinfo_t *info,int32 length,uint8 *buf);
@@ -121,7 +119,7 @@ PRIVATE int32 HCIcnbit_init(accrec_t *access_rec)
     nbit_info=&(info->cinfo.coder_info.nbit_info);
 
     /* Initialize N-bit state information */
-    nbit_info->buf_pos=0;           /* start at the beginning of the buffer */
+    nbit_info->buf_pos=NBIT_BUF_SIZE;   /* start at the beginning of the buffer */
     nbit_info->nt_pos=0;            /* start at beginning of the NT info */
     nbit_info->offset=0;            /* offset into the file */
     HDmemset(nbit_info->mask_buf,nbit_info->nt_size,
@@ -231,11 +229,11 @@ printf("HCInbit_decode(): sign_ext_mask=%lx, sign_byte=%d, sign_mask=%lx\n",(uns
 
     buf_items=NBIT_BUF_SIZE/nbit_info->nt_size; /* compute # of items in buffer */
     orig_length=length;     /* save this for later */
-    for(; length>0; length--,buf++) {   /* decode until we have all the bytes */
+    while(length>0) {   /* decode until we have all the bytes */
 #ifdef TESTING
 printf("HCInbit_decode(): length=%d, buf=%p\n",length,buf);
 #endif
-        if(buf_pos>=NBIT_BUF_SIZE) {    /* re-fill buffer */
+        if(nbit_info->buf_pos>=NBIT_BUF_SIZE) {    /* re-fill buffer */
             rbuf=(uint8*)nbit_info->buffer;  /* get a ptr to the buffer */
 
             /* get initial copy of the mask */
@@ -247,10 +245,10 @@ printf("HCInbit_decode(): length=%d, buf=%p\n",length,buf);
 
                 if(nbit_info->sign_ext) {   /* special code for expanding sign extended data */
                     rbuf2=rbuf;   /* set temporary pointer into buffer */
-                    for(j=0; j<nbit_info->nt_size; j++,mask_info++,buf2++) {
+                    for(j=0; j<nbit_info->nt_size; j++,mask_info++,rbuf2++) {
                         if(mask_info->length>0) {   /* check if we need to read bits */
                             Hbitread(info->aid,mask_info->length,input_bits);
-                            *buf2=mask_info->mask|(input_bits <<
+                            *rbuf2=mask_info->mask|(input_bits <<
                                     ((mask_info->offset-mask_info->length)+1));
                             if(j==sign_byte)   /* check if this is the sign byte */
                                 sign_bit=input_bits&sign_mask;
@@ -288,10 +286,14 @@ printf("HCInbit_decode(): length=%d, buf=%p\n",length,buf);
             nbit_info->buf_pos=0;   /* reset buffer position */
           } /* end if */
 
-        copy_length=(length>(NBIT_BUF_SIZE-(buf_pos+1))) ?
-                (NBIT_BUF_SIZE-(buf_pos+1)) : length;
+        copy_length=(length>(NBIT_BUF_SIZE-nbit_info->buf_pos)) ?
+                (NBIT_BUF_SIZE-nbit_info->buf_pos) : length;
 
         HDmemcpy(buf,&(nbit_info->buffer[buf_pos]),copy_length);
+
+        buf+=copy_length;
+        length-=copy_length;
+        nbit_info->buf_pos+=copy_length;
       } /* end for */
 
     nbit_info->offset+=orig_length;  /* incr. abs. offset into the file */
@@ -334,7 +336,7 @@ PRIVATE int32 HCIcnbit_encode(compinfo_t *info,int32 length,uint8 *buf)
     mask_info=&(nbit_info->mask_info[nbit_info->nt_pos]);
 
     orig_length=length;     /* save this for later */
-    for(; length>0; length--;buf++) {  /* encode until we store all the bytes */
+    for(; length>0; length--; buf++) {  /* encode until we store all the bytes */
 #ifdef TESTING
 printf("HCIcnbit_encode(): length=%d, buf=%p\n",length,buf);
 #endif
@@ -482,7 +484,7 @@ int32 HCPcnbit_stwrite(accrec_t *access_rec)
 
 /*--------------------------------------------------------------------------
  NAME
-    HCPclre_seek -- Seek to offset within the data element
+    HCPcnbit_seek -- Seek to offset within the data element
 
  USAGE
     int32 HCPcnbit_seek(access_rec,offset,origin)
@@ -509,7 +511,7 @@ int32 HCPcnbit_seek(accrec_t *access_rec, int32 offset, int origin)
     char *FUNC="HCPcnbit_seek";         /* for HERROR */
     compinfo_t *info;                   /* special element information */
     comp_coder_nbit_info_t *nbit_info;  /* ptr to n-bit info */
-    intn bit_offset;                    /* offset of the bit to seek to */
+    int32 bit_offset;                   /* offset of the bit to seek to */
 
     info=(compinfo_t *)access_rec->special_info;
     nbit_info=&(info->cinfo.coder_info.nbit_info);
@@ -518,32 +520,15 @@ int32 HCPcnbit_seek(accrec_t *access_rec, int32 offset, int origin)
     if(offset%nbit_info->nt_size!=0)
         HRETURN_ERROR(DFE_CSEEK,FAIL);
 
-    bit_offset=(offset/nbit_info->nt_size)*nbit_info->mask_off;
-#ifdef QAK
-    if(offset<rle_info->offset) {    /* need to seek from the beginning */
-        if(access_rec->access==DFACC_WRITE && rle_info->rle_state!=INIT)
-            if(HCIcnbit_term(info)==FAIL)
-                HRETURN_ERROR(DFE_CTERM,FAIL);
-        if(HCIcnbit_init(access_rec)==FAIL)
-            HRETURN_ERROR(DFE_CINIT,FAIL);
-      } /* end if */
+    bit_offset=(offset/nbit_info->nt_size)*nbit_info->mask_len;
 
-    if((tmp_buf=(uint8 *)HDgetspace(TMP_BUF_SIZE))==NULL)   /* get tmp buffer */
-        HRETURN_ERROR(DFE_NOSPACE,FAIL);
+    if(Hbitseek(info->aid,bit_offset/8,bit_offset%8)==FAIL)
+        HRETURN_ERROR(DFE_CSEEK,FAIL);
 
-    while(rle_info->offset+TMP_BUF_SIZE<offset)     /* grab chunks */
-        if(HCIcnbit_decode(info,TMP_BUF_SIZE,tmp_buf)==FAIL) {
-            HDfreespace(tmp_buf);
-            HRETURN_ERROR(DFE_CDECODE,FAIL);
-          } /* end if */
-    if(rle_info->offset<offset)             /* grab the last chunk */
-        if(HCIcnbit_decode(info,offset-rle_info->offset,tmp_buf)==FAIL) {
-            HDfreespace(tmp_buf);
-            HRETURN_ERROR(DFE_CDECODE,FAIL);
-          } /* end if */
+    nbit_info->buf_pos=NBIT_BUF_SIZE;   /* force re-read if writing */
+    nbit_info->nt_pos=0;            /* start at the first byte of the mask */
+    nbit_info->offset=offset;       /* set abs. offset into the file */
 
-    HDfreespace(tmp_buf);
-#endif
     return(SUCCEED);
 }   /* HCPcnbit_seek() */
 

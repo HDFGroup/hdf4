@@ -151,11 +151,11 @@ RMFLAGS=-f
 
 SRCS= 	rig.c sdstr.c blocks.c an.c anfile.c extelt.c file.c file1.c vers.c \
 	sdmms.c sdnmms.c slab.c litend.c tvset.c comp.c bitio.c tree.c conv.c \
-	testhdf.c
+	nbit.c testhdf.c
 
 CTESTS= rig.o sdstr.o blocks.o an.o anfile.o extelt.o file.o file1.o vers.o \
 	sdmms.o sdnmms.o slab.o litend.o tvset.o comp.o bitio.o tree.o conv.o \
-	testhdf.o
+	nbit.o testhdf.o
 
 FTESTS= tr8f t24f tpf tanf tanfilef tsdstrf tsdntf tsdnntf \
         tsdmmsf tsdnmmsf tstubsf \
@@ -168,9 +168,9 @@ FOBJS = tr8f.o t24f.o tpf.o tanf.o tanfilef.o tsdstrf.o tsdntf.o \
 .f: $< $(HDFLIB)/libdf.a
 	$(FC) $(FFLAGS) $< -o $@ $(HDFLIB)/libdf.a
 
-all: testhdf fortest #gentest
+all: testhdf fortest gentest
 
-nofortran: testhdf
+nofortran: testhdf gentest
 
 debug: ptesthdf
 
@@ -196,7 +196,7 @@ fortest: $(FTESTS) $(HDFLIB)/libdf.a fortest.o
 	$(CC) $(CFLAGS) -o fortest $(TESTF) $(HDFLIB)/libdf.a
 
 gentest: gentest.c $(HDFLIB)/libdf.a
-	$(CC) $(CFLAGS) -o gentest $(HDFLIB)/libdf.a
+	$(CC) $(CFLAGS) -I$(HDFINC) gentest.c -o gentest $(HDFLIB)/libdf.a
 
 ftests: $(FTESTS)
 

@@ -38,5 +38,6 @@ void test_comp();
 void test_bitio();
 void test_tbbt();
 void test_conv();
+void test_nbit();
 
 #endif

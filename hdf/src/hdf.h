@@ -539,6 +539,7 @@ typedef int32           HFILEID;
 /* Publically accessible functions declarations.  This includes all the
    functions that are used by application programs.  */
 
+#include "hbitio.h"
 #include "hcomp.h"
 #include "herr.h"
 #include "hproto.h"

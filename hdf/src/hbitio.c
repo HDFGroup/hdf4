@@ -43,7 +43,6 @@ static char RcsId[] = "@(#)$Revision$";
 #define BITMASTER
 #include "hdf.h"
 #include "hfile.h"
-#include "hbitio.h"
 
 /* Local Variables */
 
@@ -51,7 +50,7 @@ static char RcsId[] = "@(#)$Revision$";
    These will contain information like how to access the data element,
    where in the data element the current access should start from, etc.
    Allocated dynamically.
-   See bitfile.h for definition. */
+   See hbitio.h for definition. */
 
 static struct bitrec_t *bitfile_records = NULL;
 
