@@ -21,14 +21,16 @@ static char RcsId[] = "@(#)$Revision$";
  */
 
 #include "tproto.h"
+#include "hfile.h"
 #define BIG 600
 #define TESTFILE_NAME "thf"
+#define TESTREF_NAME "tref.hdf"
 
 static int32 FAR files[BIG];
 static int32 FAR accs[BIG];
 
 void
-test_hfile1()
+test_file_limits()
 {
     int         i;
     int32       ret;
@@ -123,4 +125,116 @@ test_hfile1()
     HDfree((VOIDP) files);
     HDfree((VOIDP) accs);
 #endif
+} /* end test_file_limits() */
+
+void
+test_ref_limits()
+{
+    int32 i;                /* local counting variable */
+    int32 fid;              /* file ID */
+    const uint16 tag1=1000, /* tags to create objects with */
+        tag2=1001;
+
+    MESSAGE(6, printf("Testing reference # limits\n"););
+    MESSAGE(7, printf("Writing out data\n"););
+    /* Write out MAX_REF number of data items for each tag */
+    fid=Hopen(TESTREF_NAME, DFACC_ALL, 512);
+    CHECK(fid, FAIL, "Hopen");
+
+    if(fid!=FAIL)
+      {
+          for(i=1; i<=(MAX_REF/2)+5; i++)
+            {
+                int32 aid;
+                uint16 ref;
+                int32 data;
+                int32 ret;
+
+                /* Write out data to tag1 */
+                ref=Htagnewref(fid,tag1);
+                CHECK(ref, 0, "Htagnewref");
+                aid=Hstartwrite(fid,tag1,ref,4);
+                CHECK(aid, FAIL, "Hstartwrite");
+                data=ref;
+                ret=Hwrite(aid,sizeof(int32),&data);
+                CHECK(ret, FAIL, "Hwrite");
+                ret=Hendaccess(aid);
+                CHECK(ret, FAIL, "Hendaccess");
+
+                /* Write out data to tag2 */
+                ref=Htagnewref(fid,tag2);
+                CHECK(ref, 0, "Htagnewref");
+                aid=Hstartwrite(fid,tag2,ref,4);
+                CHECK(aid, FAIL, "Hstartwrite");
+                data=ref<<16;
+                ret=Hwrite(aid,sizeof(int32),&data);
+                CHECK(ret, FAIL, "Hwrite");
+                ret=Hendaccess(aid);
+                CHECK(ret, FAIL, "Hendaccess");
+            } /* end for */
+          Hclose(fid);
+      } /* end if */
+
+    MESSAGE(7, printf("Verifying data\n"););
+    
+    /* Check the data written earlier */
+    fid=Hopen(TESTREF_NAME, DFACC_READ, 0);
+    CHECK(fid, FAIL, "Hopen");
+
+    if(fid!=FAIL)
+      {
+          uint16 ref;
+          int32 aid;
+          int32 data;
+          int32 ret;
+
+          /* Read in data from tag1 */
+          aid=Hstartread(fid,tag1,DFREF_WILDCARD);
+          CHECK(aid, FAIL, "Hstartread");
+          ret=Hread(aid,sizeof(int32),&data);
+          CHECK(ret, FAIL, "Hread");
+          ret=Hinquire(aid,NULL,NULL,&ref,NULL,NULL,NULL,NULL,NULL);
+          CHECK(ret, FAIL, "Hinquire");
+          VERIFY((uint16)data,ref,"Hread");
+
+          while(Hnextread(aid,tag1,DFTAG_WILDCARD,DF_CURRENT)!=FAIL)
+            {
+                ret=Hread(aid,sizeof(int32),&data);
+                CHECK(ret, FAIL, "Hread");
+                ret=Hinquire(aid,NULL,NULL,&ref,NULL,NULL,NULL,NULL,NULL);
+                CHECK(ret, FAIL, "Hinquire");
+                VERIFY((uint16)data,ref,"Hread");
+            } /* end while */
+          ret=Hendaccess(aid);
+          CHECK(ret, FAIL, "Hendaccess");
+
+          /* Read in data from tag2 */
+          aid=Hstartread(fid,tag2,DFREF_WILDCARD);
+          CHECK(aid, FAIL, "Hstartread");
+          ret=Hread(aid,sizeof(int32),&data);
+          CHECK(ret, FAIL, "Hread");
+          ret=Hinquire(aid,NULL,NULL,&ref,NULL,NULL,NULL,NULL,NULL);
+          CHECK(ret, FAIL, "Hinquire");
+          VERIFY((uint32)data,(((uint32)ref)<<16),"Hread");
+
+          while(Hnextread(aid,tag2,DFTAG_WILDCARD,DF_CURRENT)!=FAIL)
+            {
+                ret=Hread(aid,sizeof(int32),&data);
+                CHECK(ret, FAIL, "Hread");
+                ret=Hinquire(aid,NULL,NULL,&ref,NULL,NULL,NULL,NULL,NULL);
+                CHECK(ret, FAIL, "Hinquire");
+                VERIFY((uint32)data,(((uint32)ref)<<16),"Hread");
+            } /* end while */
+          ret=Hendaccess(aid);
+          CHECK(ret, FAIL, "Hendaccess");
+
+          Hclose(fid);
+      } /* end if */
+} /* end test_ref_limits() */
+
+void
+test_hfile1()
+{
+    test_file_limits();
+    test_ref_limits();
 }
