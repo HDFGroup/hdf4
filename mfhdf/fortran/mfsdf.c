@@ -322,14 +322,56 @@ nsfgdscale(id, values)
     return(SDgetdimscale(*id, values));
 }
 
-/*-----------------------------------------------------------------------------
- * Name:    sdfsfill
- * Purpose: Call SDsetfillvalue to set the fill value
+/*----------------------------------------------------------
+ * Name:    sdfscfill
+ * Purpose: Call nsfsnfill to set the char fill value
  * Inputs:  id: handle to a dimension
  *          val: the fill value
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
- *---------------------------------------------------------------------------*/
+ *----------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfscfill(intf *id, _fcd val)
+#else
+nsfscfill(id, val)
+     intf *id;
+     _fcd val;
+#endif /* PROTOTYPE */
+{
+    return(nsfsfill(id, (VOIDP) _fcdtocp(val)));
+}
+
+/*------------------------------------------------------------
+ * Name:    sdfgcfill
+ * Purpose: Call sfgfill to get the char fill value
+ * Inputs:  id: handle to a dimension
+ * Output:  val: the fill value
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *-----------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfgcfill(intf *id, _fcd val)
+#else
+nsfgcfill(id, val)
+     intf *id;
+     _fcd val;
+#endif /* PROTOTYPE */
+{
+    return(nsfgfill(id, (VOIDP) _fcdtocp(val)));
+}
+
+/*---------------------------------------------------------
+ * Name:    sdfsfill
+ * Purpose: Call SDsetfillvalue to set the numeric fill value
+ * Inputs:  id: handle to a dimension
+ *          val: the fill value
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *------------------------------------------------------------*/
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
@@ -343,14 +385,14 @@ nsfsfill(id, val)
     return(SDsetfillvalue(*id, val));
 }
 
-/*-----------------------------------------------------------------------------
+/*----------------------------------------------------------
  * Name:    sdfgfill
- * Purpose: Call SDgetfillvalue to get the fill value
+ * Purpose: Call SDgetfillvalue to get the fill value. 
  * Inputs:  id: handle to a dimension
  * Output:  val: the fill value
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
- *---------------------------------------------------------------------------*/
+ *------------------------------------------------------*/
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
@@ -364,7 +406,7 @@ nsfgfill(id, val)
     return(SDgetfillvalue(*id, val));
 }
 
-/*-----------------------------------------------------------------------------
+/*------------------------------------------------------------
  * Name:    sdfgrange
  * Purpose: Call SDgetrange to get the valid range info
  * Inputs:  id: handle to a dimension
@@ -616,6 +658,52 @@ nscsdatstr(id, l, u, f, c, ll, ul, fl, cl)
 }
 
 /*-----------------------------------------------------------------------------
+ * Name:    sfrcatt
+ * Purpose: Call sfrnatt to get the contents of a char attribute
+ * Inputs:  id: handle to a dataset
+ *          index: index of the attribute to read
+ *          buf: space to hold info
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfrcatt(intf *id, intf *index, _fcd buf)
+#else
+nsfrcatt(id, index, buf)
+     intf *id;
+     intf *index;
+     _fcd buf;
+#endif /* PROTOTYPE */
+{
+    return(nsfrnatt(id, index, (VOIDP) _fcdtocp(buf)));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    sfrnatt
+ * Purpose: Call SDreadattr to get the contents of a numeric attribute
+ * Inputs:  id: handle to a dataset
+ *          index: index of the attribute to read
+ *          buf: space to hold info
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfrnatt(intf *id, intf *index, VOIDP buf)
+#else
+nsfrnatt(id, index, buf)
+     intf *id;
+     intf *index;
+     VOIDP buf;
+#endif /* PROTOTYPE */
+{
+    return(SDreadattr(*id, *index, buf));
+}
+
+/*-----------------------------------------------------------------------------
  * Name:    sfrattr
  * Purpose: Call SDreadattr to get the contents of an attribute
  * Inputs:  id: handle to a dataset
@@ -635,13 +723,12 @@ nsfrattr(id, index, buf)
      VOIDP buf;
 #endif /* PROTOTYPE */
 {
-    return(SDreadattr(*id, *index, buf));
+    return(nsfrnatt(id, index, buf));
 }
 
-
-/*-----------------------------------------------------------------------------
+/*------------------------------------------------------------
  * Name:    sfrdata
- * Purpose: read a section of data
+ * Purpose: read a section of numeric data
  * Inputs:  id: dataset id
  *          start: start location
  *          stride: stride along each dimension
@@ -650,7 +737,7 @@ nsfrattr(id, index, buf)
  * Remarks: need to flip the dimensions to account for array ordering
  *          differences
  * Returns: 0 on success, -1 on failure with error set
- *---------------------------------------------------------------------------*/
+ *----------------------------------------------------------*/
 
    FRETVAL(intf)
 #ifdef PROTOTYPE
@@ -730,7 +817,7 @@ nsfwdata(id, start, stride, end, values)
         cend[i]   = end[rank - i - 1];
         if((cstride[i] = stride[rank - i - 1]) != 1) nostride = FALSE;
     }
-    
+
 #ifdef CM5
     ret = (intf) CMwritedata(*id, cstart, (nostride? NULL : cstride), cend, values);
 #else
@@ -739,7 +826,7 @@ nsfwdata(id, start, stride, end, values)
     else
         ret = (intf) SDwritedata(*id, cstart, cstride, cend, values);
 #endif
-        
+
     return(ret);
 }
 
@@ -765,7 +852,6 @@ nscgdimstrs(dim, label, unit, format, llabel, lunit, lformat, mlen)
 {
     char *ilabel, *iunit, *iformat;
     intf ret;
-
     iunit = ilabel = iformat = NULL;
 
     if(*llabel)  ilabel  = (char *) HDmalloc((uint32)*llabel + 1);
@@ -783,6 +869,58 @@ nscgdimstrs(dim, label, unit, format, llabel, lunit, lformat, mlen)
     if(iformat) HDfree((VOIDP)iformat);
 
     return ret;
+}
+
+/*--------------------------------------------------------
+ * Name:    sfrcdata
+ * Purpose: read a section of char data
+ * Inputs:  id: dataset id
+ *          start: start location
+ *          stride: stride along each dimension
+ *          end: number of values along each dim to read
+ *          values: data 
+ * Remarks: need to flip the dimensions to account for array ordering
+ *          differences
+ * Returns: 0 on success, -1 on failure with error set
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfrcdata(intf *id, intf *start, intf *stride, intf *end, _fcd values)
+#else
+nsfrcdata(id, start, stride, end, values)
+     intf *id;
+     intf *start, *stride, *end;
+     _fcd values;
+#endif /* PROTOTYPE */
+{
+     return(nsfrdata(id, start, stride, end, (VOIDP) _fcdtocp(values)));
+}
+
+/*--------------------------------------------------------
+ * Name:    sfwcdata
+ * Purpose: write a section of char data
+ * Inputs:  id: dataset id
+ *          start: start location
+ *          stride: stride along each dimension
+ *          end: number of values along each dim to read
+ *          values: data 
+ * Remarks: need to flip the dimensions to account for array ordering
+ *          differences
+ * Returns: 0 on success, -1 on failure with error set
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfwcdata(intf *id, intf *start, intf *stride, intf *end, _fcd values)
+#else
+nsfwcdata(id, start, stride, end, values)
+     intf *id;
+     intf *start, *stride, *end;
+     _fcd values;
+#endif /* PROTOTYPE */
+{
+     return(nsfwdata(id, start, stride, end, (VOIDP) _fcdtocp(values)));
 }
 
 /*-----------------------------------------------------------------------------
@@ -912,28 +1050,57 @@ nscgdinfo(id, name, sz, nt, nattr, len)
     *nattr = (intf) nattr32;
 
     return(status);
-
 }
 
 /*-----------------------------------------------------------------------------
- * Name:    scsattr
- * Purpose: create a new attribute (or modify an existing one)
+ * Name:    scscatt
+ * Purpose: calls scsnatt to create a new char attribute (or modify an existing one)
  * Inputs:  id: id (file or data set)
  *          name: name of attribute
  *          nt: number type
- *          rank: rank
- *          dims: dimension sizes
- *          namelen: length of name
- * Remarks: need to flip the dimensions to account for array ordering
- *          differences
+ *          count: number of values
+ *          data: where the values are
+ *          len: length of name
+ * Remarks: 
  * Returns: 0 on success, -1 on failure with error set
- *---------------------------------------------------------------------------*/
+ *--------------------------------------------------------------------*/
 
    FRETVAL(intf)
 #ifdef PROTOTYPE
-nscsattr(intf *id, _fcd name, intf *nt, intf *count, VOIDP data, intf *len)
+nscscatt(intf *id, _fcd name, intf *nt, intf *count, _fcd data, intf *len)
 #else
-nscsattr(id, name, nt, count, data, len)
+nscscatt(id, name, nt, count, data, len)
+     intf *id;
+     _fcd name;
+     intf *nt, *count;
+     _fcd data;
+     intf *len;
+#endif /* PROTOTYPE */
+{
+    char   *an;
+    intf    ret;
+   
+    return(nscsnatt(id, name, nt, count, (VOIDP) _fcdtocp(data), len));
+}
+
+/*-------------------------------------------------------------
+ * Name:    scsnatt
+ * Purpose: create a new numeric attribute (or modify an existing one)
+ * Inputs:  id: id (file or data set)
+ *          name: name of attribute
+ *          nt: number type
+ *          count: number of values 
+ *          data:  where the values are
+ *          len: length of name
+ * Remarks: This routine and scscattr are used to replace scsattr
+ * Returns: 0 on success, -1 on failure with error set
+ *--------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nscsnatt(intf *id, _fcd name, intf *nt, intf *count, VOIDP data, intf *len)
+#else
+nscsnatt(id, name, nt, count, data, len)
      intf *id;
      _fcd name;
      intf *nt, *count;
@@ -952,7 +1119,45 @@ nscsattr(id, name, nt, count, data, len)
     return(ret);
 }
 
+
 /*-----------------------------------------------------------------------------
+ * Name:    scsattr
+ * Purpose: for backward compatibility. Calls SDsetattr to create
+ *          or modify an existing attribute
+ * Inputs:  id: id (file or data set)
+ *          name: name of attribute
+ *          nt: number type
+ *          count: number of values
+ *          data: where the values are
+ *          namelen: length of name
+ * Returns: 0 on success, -1 on failure with error set
+ * Remarks: This routine and sfsattr should be phased out.
+ *          sfsattr declairs data as char *, scscatt assumes
+ *          data as VOIDP. This causes problems on VMS and T3D.
+ *--------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nscsattr(intf *id, _fcd name, intf *nt, intf *count, VOIDP data, intf *len)
+#else
+nscsattr(id, name, nt, count, data, len)
+     intf *id;
+     _fcd name;
+     intf *nt, *count;
+     VOIDP data;
+     intf *len;
+#endif /* PROTOTYPE */
+{
+    char   *an;
+    intf    ret;
+
+    an = HDf2cstring(name, *len);
+    ret = (intf) SDsetattr(*id, an, *nt, *count, data);
+    HDfree((VOIDP)an);
+    return(ret);
+}
+
+/*---------------------------------------------------------------------
  * Name:    scfattr
  * Purpose: call SDfindattr to find an attribute
  * Inputs:  id: object to look at

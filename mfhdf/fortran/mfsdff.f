@@ -245,12 +245,54 @@ C----------------------------------------------------------------------
       end
 
 C----------------------------------------------------------------------
-C Name:     sfsattr
-C Purpose:  create (or modify an existing) attribute
+C Name:     sfscatt
+C Purpose:  create (or modify an existing) char attribute
 C Inputs:   id: id of object to attribute-ize
 C Outputs:  name, nt, count, data
 C Returns:  0 on success, -1 on failure with DFerror set
 C Users:    HDF Fortran programmers
+C----------------------------------------------------------------------
+
+      integer function  sfscatt(id,name,nt,count,data)
+
+      character*(*) name, data
+      integer nt
+      integer scscatt, len
+
+      sfscatt = scscatt(id,name,nt,count,data,len(name))
+      
+      return
+      end
+
+C----------------------------------------------------------------------
+C Name:     sfsnatt
+C Purpose:  create (or modify an existing) numeric attribute
+C Inputs:   id: id of object to attribute-ize
+C Outputs:  name, nt, count, data
+C Returns:  0 on success, -1 on failure with DFerror set
+C Users:    HDF Fortran programmers
+C----------------------------------------------------------------------
+
+      integer function  sfsnatt(id, name, nt, count, data)
+
+      character*(*) name
+      integer nt, data
+      integer scsattr, len
+
+      sfsnatt = scsnatt(id, name, nt, count, data, len(name))
+      
+      return
+      end
+
+C----------------------------------------------------------------------
+C Name:     sfsattr
+C Purpose:  for backward compatability. Calls scsattr to 
+C           create (or modify an existing) attribute
+C Inputs:   id: id of object to attribute-ize
+C Outputs:  name, nt, count, data
+C Returns:  0 on success, -1 on failure with DFerror set
+C Users:    HDF Fortran programmers
+C Remarks:  This function should be phased out in the future.
 C----------------------------------------------------------------------
 
       integer function  sfsattr(id, name, nt, count, data)
