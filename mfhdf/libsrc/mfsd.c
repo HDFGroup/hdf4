@@ -4030,10 +4030,10 @@ done:
 
 ******************************************************************************/ 
 intn 
-SDsetcompress(int32 id,         /* IN: dataset ID */
-              int32 comp_type,  /* IN: the type of compression to perform
-                                       on the next image */
-              comp_info *c_info /* IN: ptr to compression info structure */)
+SDsetcompress(int32 id,                /* IN: dataset ID */
+              comp_coder_t comp_type,  /* IN: the type of compression to 
+					  perform on the next image */
+              comp_info *c_info        /* IN: ptr to compression info struct*/)
 {
     NC        *handle;
     NC_var    *var;
@@ -4049,7 +4049,7 @@ SDsetcompress(int32 id,         /* IN: dataset ID */
     TRACE_ON(PABLO_mask, ID_SDsetcompress );
 #endif
 
-    if (comp_type < 0 || comp_type >= COMP_CODE_INVALID)
+    if (comp_type < COMP_CODE_NONE || comp_type >= COMP_CODE_INVALID)
       {
           ret_value = FAIL;
           goto done;
@@ -4099,7 +4099,7 @@ SDsetcompress(int32 id,         /* IN: dataset ID */
 
     status=(intn)HCcreate(handle->hdf_file,(uint16)DATA_TAG,
                           (uint16) var->data_ref,COMP_MODEL_STDIO,&m_info,
-                          (comp_coder_t)comp_type, c_info);
+                          comp_type, c_info);
 
 #ifdef SDDEBUG
     printf("SDsetcompress(): HCcreate() status=%d\n",(intn)status);

@@ -164,7 +164,7 @@ HDFLIBAPI intn SDsetnbitdataset
     (int32 id, intn start_bit, intn bit_len, intn sign_ext, intn fill_one);
 
 HDFLIBAPI intn SDsetcompress
-    (int32 id, int32 type, comp_info *c_info);
+    (int32 id, comp_coder_t type, comp_info *c_info);
 
 HDFLIBAPI intn SDgetcompress
     (int32 id, comp_coder_t* type, comp_info *c_info);

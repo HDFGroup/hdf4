@@ -1893,8 +1893,8 @@ test_compression()
     int32 fcomp; /* File handle */
     int32 nt;                /* Number type */
     int32 dimsize[10];       /* dimension sizes */
-    int32 newsds, newsds2; /* SDS handles */
-    int32 comp_type;		/* to retrieve compression type into */
+    int32 newsds, newsds2; 	/* SDS handles */
+    comp_coder_t comp_type;	/* to retrieve compression type into */
     comp_info cinfo;            /* compression information structure */
     int32   idata[100];
     int32   rdata[100];
@@ -1963,7 +1963,7 @@ printf("reading compressed dataset\n");
     /*
      * Retrieve and verify the compression info - bug# 307, 9/7/01 - BMR
      */
-    comp_type = -1;	/* reset variables before retrieving info */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
@@ -2368,7 +2368,7 @@ printf("reading compressed dataset\n");
     /*
      * Retrieve and verify the compression info - bug# 307, 9/7/01 - BMR
      */
-    comp_type = -1;	/* reset variables before retrieving info */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
@@ -2455,7 +2455,7 @@ printf("reading compressed dataset\n");
     /*
      * Retrieve and verify the compression info - bug# 307, 9/7/01 - BMR
      */
-    comp_type = -1;	/* reset variables before retrieving info */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
@@ -2543,7 +2543,7 @@ printf("reading compressed dataset\n");
     /*
      * Retrieve and verify the compression info - bug# 307, 9/7/01 - BMR
      */
-    comp_type = -1;	/* reset variables before retrieving info */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
