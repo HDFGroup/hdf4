@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1993/08/28 00:12:40  georgev
-Added VOIDP casts to HDfreespace().
+Revision 1.7  1993/09/09 18:37:04  georgev
+More cast fixes...
 
+ * Revision 1.6  1993/08/28  00:12:40  georgev
+ * Added VOIDP casts to HDfreespace().
+ *
  * Revision 1.5  1993/08/16  21:47:49  koziol
  * Wrapped in changes for final, working version on the PC.
  *
@@ -138,7 +141,7 @@ void test_an()
             RESULT("DFANputdesc");
         }
 
-        ret = DFR8addimage(TESTFILE, image, COLS, ROWS, 0);
+        ret = DFR8addimage(TESTFILE, (VOIDP)image, COLS, ROWS, 0);
         RESULT("DFR8addimage");
         refnum = DFR8lastref();
         ret = DFANputlabel(TESTFILE, DFTAG_RIG, refnum, labris);

@@ -1726,7 +1726,7 @@ void test_r8()
         num_errs++;
     }
 
-    ret = DFR8getimage(JPEGFILE,(VOIDP)jpeg_8bit_temp, JPEGX, JPEGY, NULL);
+    ret = DFR8getimage(JPEGFILE,(uint8 *)jpeg_8bit_temp, JPEGX, JPEGY, NULL);
     RESULT("DFR8getimage");
 
     if(HDmemcmp(jpeg_8bit_temp,jpeg_8bit_j80,sizeof(jpeg_8bit_orig))) {
@@ -1742,7 +1742,7 @@ void test_r8()
         num_errs++;
     }
 
-    ret = DFR8getimage(JPEGFILE,(VOIDP)jpeg_8bit_temp, JPEGX, JPEGY, NULL);
+    ret = DFR8getimage(JPEGFILE,(uint8 *)jpeg_8bit_temp, JPEGX, JPEGY, NULL);
     RESULT("DFR8getimage");
 
     if(HDmemcmp(jpeg_8bit_temp,jpeg_8bit_j30,sizeof(jpeg_8bit_orig))) {
@@ -1758,7 +1758,7 @@ void test_r8()
         num_errs++;
     }
 
-    ret = DFR8getimage(JPEGFILE,(VOIDP)jpeg_8bit_temp, JPEGX, JPEGY, NULL);
+    ret = DFR8getimage(JPEGFILE,(uint8 *)jpeg_8bit_temp, JPEGX, JPEGY, NULL);
     RESULT("DFR8getimage");
 
     if(HDmemcmp(jpeg_8bit_temp,jpeg_8bit_j75,sizeof(jpeg_8bit_orig))) {
@@ -1773,7 +1773,7 @@ void test_r8()
     HDfreespace((VOIDP)pal1);
     HDfreespace((VOIDP)pal2);
     HDfreespace((VOIDP)ipal);
-    HDfreespace(jpeg_8bit_temp);
+    HDfreespace((VOIDP)jpeg_8bit_temp);
 }
 
 void test_pal()
