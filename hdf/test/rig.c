@@ -1290,8 +1290,8 @@ void test_r8()
     int ispal;
     int error;
 
-    im1 = (uint8 *) malloc(XD1 * YD1 * sizeof(uint8));
-	ii1 = (uint8 *) malloc(XD1 * YD1 * sizeof(uint8));
+    im1 = (uint8 *) HDgetspace(XD1 * YD1 * sizeof(uint8));
+	ii1 = (uint8 *) HDgetspace(XD1 * YD1 * sizeof(uint8));
 	if(!im1 || !ii1) {
 		fprintf(stderr, "Out of memory!\n");
 		exit(1);
@@ -1486,9 +1486,13 @@ void test_r8()
         num_errs++;
     }
     
-    HDfreespace(pal1);
-    HDfreespace(pal2);
-    HDfreespace(ipal);
+    HDfreespace((VOIDP)im1);
+    HDfreespace((VOIDP)ii1);
+    HDfreespace((VOIDP)im2);
+    HDfreespace((VOIDP)ii2);
+    HDfreespace((VOIDP)pal1);
+    HDfreespace((VOIDP)pal2);
+    HDfreespace((VOIDP)ipal);
 }
 
 void test_pal()
@@ -1599,8 +1603,8 @@ void test_pal()
     for (i=0;i<768;i++)
        if (ipal[i] != pal1[i])
            printf("Error at %d, ipal %d pal1 %d\n", i, ipal[i], pal1[i]);
-    HDfreespace(pal1);
-    HDfreespace(pal2);
-    HDfreespace(ipal);
+    HDfreespace((VOIDP)pal1);
+    HDfreespace((VOIDP)pal2);
+    HDfreespace((VOIDP)ipal);
 }
 
