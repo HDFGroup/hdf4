@@ -5,10 +5,23 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/07/08 22:07:42  sxu
-Initial revision
+Revision 1.2  1992/07/13 20:18:13  mfolk
+Added header to explain what it does.
 
+ * Revision 1.1  1992/07/08  22:07:42  sxu
+ * Initial revision
+ *
 */
+/***************************************************************
+**
+** This program tests correctness of writing and read datastrings
+** and dimension strings.
+** To avoid the '\0' inserted by HDstrncpy, compare the first 14
+** characters of output and input strings in subroutine compare()
+**
+****************************************************************/
+
+
 #include "hdf.h"
 #include "dfsd.h"
 
