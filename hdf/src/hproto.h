@@ -1868,9 +1868,7 @@ extern      "C"
 #include "vproto.h"
 #endif                          /* PERM_OUT */
 
-
-
-/* for Multi-file Annotation inteface */
+/* for Multi-file fortran Annotation inteface */
 #ifndef MFAN_FNAMES
 #   define  MFAN_FNAMES
 #ifdef DF_CAPFNAMES
@@ -1902,7 +1900,7 @@ extern      "C"
 #endif /* DF_CAPFNAMES */
 #endif /* MFAN_FNAMES */
 
-/* C stubs for fortan found in mfanf.c */
+/* Multi-file Annotation C-stubs for fortan interface found in mfanf.c */
 extern FRETVAL(intf)
 nacstart(_fcd filename, intf *acc_mode, intf *namelen);
 
@@ -1940,11 +1938,11 @@ nafreadann(intf *an_id,_fcd *ann, intf *maxlen);
 extern FRETVAL(intf)
 nafendaccess(intf *an_id);
 
-/* C-routines found in mfan.c */
+/* Multi-file Annotation C-routines found in mfan.c */
 extern int32 ANstart(const char *filename, int32 acc_mode);
 
-extern intn ANfileinfo(int32 file_id, int32 *n_file_label, int32 *n_file_desc,
-                      int32 *n_obj_label, int32 *n_obj_desc);
+extern intn  ANfileinfo(int32 file_id, int32 *n_file_label, int32 *n_file_desc,
+                        int32 *n_obj_label, int32 *n_obj_desc);
 
 extern int32 ANend(int32 file_id);
 
@@ -1955,11 +1953,11 @@ extern int32 ANcreatef(int32 file_id, ann_type type);
 
 extern int32 ANselect(int32 file_id, int32 index, ann_type type);
 
-extern intn ANnumann(int32 file_id, ann_type type, uint16 elem_tag, 
-                     uint16 elem_ref);
+extern intn  ANnumann(int32 file_id, ann_type type, uint16 elem_tag, 
+                      uint16 elem_ref);
 
-extern intn ANannlist(int32 file_id, ann_type type, uint16 elem_tag, 
-                      uint16 elem_ref, int32 ann_list[]);
+extern intn  ANannlist(int32 file_id, ann_type type, uint16 elem_tag, 
+                       uint16 elem_ref, int32 ann_list[]);
 
 extern int32 ANannlen(int32 ann_id);
 
@@ -1967,7 +1965,7 @@ extern int32 ANwriteann(int32 ann_id, uint8 *ann, int32 annlen);
 
 extern int32 ANreadann(int32 ann_id, uint8 *ann, int32 maxlen);
 
-extern intn ANendaccess(int32 an_id);
+extern intn  ANendaccess(int32 an_id);
 
 #if defined c_plusplus || defined __cplusplus
 }

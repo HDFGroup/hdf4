@@ -14,18 +14,19 @@ C $Id$
 C
 C------------------------------------------------------------------------------
 C File:     mfanff.f
-C Purpose:    Fortran stub routines for multi-file annotations
-C Invokes:    mfanf.c
+C Purpose:  Fortran stub routines for multi-file annotations
+C Invokes:  mfanf.c for C-stubs
 C Contents: 
-C             afstart   -- start annotation access on file
+C           afstart   -- start annotation access on file and return file
+C                        handle
 C------------------------------------------------------------------------------
 
 C------------------------------------------------------------------------------
 C Name:    afstart
-C Purpose: start annotation access on file
+C Purpose: start annotation access on file and return file handle
 C Inputs:  filename: name of HDF file
 C          accmode:  access mode
-C Returns: file handle on success, -1 on failure with DFerror set
+C Returns: file handle on success, -1 on failure 
 C Users:   HDF users, utilities, other routines
 C Invokes: acstart
 C------------------------------------------------------------------------------

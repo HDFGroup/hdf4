@@ -35,13 +35,13 @@
 
 #if 0
 /* enumerated types of the varous annotation types 
-* NOTE: moved to hdf.h */
+ * NOTE: moved to hdf.h */
 typedef enum 
 { 
-    AN_DATA_LABEL = 0, /* Data label */
-    AN_DATA_DESC,      /* Data description */
-    AN_FILE_LABEL,     /* File label */
-    AN_FILE_DESC       /* File description */
+  AN_DATA_LABEL = 0, /* Data label */
+  AN_DATA_DESC,      /* Data description */
+  AN_FILE_LABEL,     /* File label */
+  AN_FILE_DESC       /* File description */
 } ann_type;
 #endif
 
@@ -52,12 +52,12 @@ typedef enum
 typedef struct ANnode
 {
   int32   file_id;  /* which file this annotation belongs to */
-  int32   ann_key;  /* type/ref -used to find annotation in file's type RBtree*/
+  int32   ann_key;  /* type/ref -used to find annotation in file's type tree*/
   intn    new_ann;  /* flag */
 } ANnode;
 
 /*
- * This structure is an entry in the label/desc red-black tree
+ * This structure is an entry in the label/desc tree
  * for a label/desc in the file, it gives the ref of the label/desc,
  * and the tag/ref of the data item to which the label/desc relates */
 typedef struct ANentry
@@ -68,22 +68,26 @@ typedef struct ANentry
   uint16  elmref;      /* ref of data */
 } ANentry;
 
-/* Structure for each file opened to insert in red-black tree */
+/* Structure for each file opened to insert in tree */
 typedef struct ANfile
 {
   char    *filename;      /* File name */
   int32   access_mode;    /* access mode this file was opened with */
   intn    an_num[4];      /* Holds number of annotations found of each type */
 #ifdef HAVE_RBTREE
-  Rb_node an_tree[4];     /* Red-Black tree of annotations in file 
+  Rb_node an_tree[4];     /* RB-tress for each type of annotation in file 
                            * i.e. file/data labels and descriptions */
 #else  /* use tbbt */
-  TBBT_TREE *an_tree[4];
+  TBBT_TREE *an_tree[4];  /* tbbt trees for each type of annotation in file 
+                           * i.e. file/data labels and descriptions */
 #endif /* use tbbt */
 } ANfile;
 
 #ifdef MFAN_C
-/* We are in annotation source file */
+/* WE ARE IN MAIN ANNOTATION SOURCE FILE "mfan.c" */
+
+/* PRIVATE variables and defintions */
+
 #ifdef HAVE_RBTREE
 EXPORT Rb_node ANfilelist = NULL; /* List of open files */
 EXPORT Rb_node ANnodelist = NULL; /* List of all anotations across files */
@@ -95,52 +99,22 @@ PRIVATE intn    num_anns   = 0;    /* total number of annotations
                                       i.e. all files */
 
 /* Used to create unique 32bit keys from annotation type and reference number 
- *  This key is used to add nodes to ANnodelist. */
-/*  ----------------------------
+ *  This key is used to add nodes to ANnodelist. 
+ *  ----------------------------
  *  | t(16bits) | r(16bits) |
  *  -----------------------------*/
 #define AN_CREATE_KEY(t,r) ((((int32)t & 0xff) << 16) | r)
+
+/* Obtain Reference number from key */
 #define AN_KEY2REF(k)      ((uint16)((int32)k & 0xff))
+
+/* Obtain Annotation type from key */
 #define AN_KEY2TYPE(k)     ((int32)((int32)k >> 16))
-#if 0
-#define AN_KEY2TYPE(k)     ((int32)((int32)k & 0xff00) >> 16)
-#endif
 
 #else /* !MFAN_C */
-/* We dont't EXPORT any global variables */
-
-#ifndef MFAN_FNAMES
-#   define  MFAN_FNAMES
-#ifdef DF_CAPFNAMES
-#  define nacstart      FNAME(ACSTART)
-#  define naffileinfo   FNAME(AFFILEINFO)
-#  define nafend        FNAME(AFEND)
-#  define nafcreate     FNAME(AFCREATE)
-#  define naffcreate    FNAME(AFFCREATE)
-#  define nafselect     FNAME(AFSELECT)
-#  define nafnumann     FNAME(AFNUMANN)
-#  define nafannlist    FNAME(AFANNLIST)
-#  define nafannlen     FNAME(AFANNLEN)
-#  define nafwriteann   FNAME(AFWRITEANN)
-#  define nafreadann    FNAME(AFREADANN)
-#  define nafendaccess  FNAME(AFENDACCESS)
-#else  /* !DF_CAPFNAMES */
-#  define nacstart      FNAME(acstart)
-#  define naffileinfo   FNAME(affileinfo)
-#  define nafend        FNAME(afend)
-#  define nafcreate     FNAME(afcreate)
-#  define naffcreate    FNAME(affcreate)
-#  define nafselect     FNAME(afselect)
-#  define nafnumann     FNAME(afnumann)
-#  define nafannlist    FNAME(afannlist)
-#  define nafannlen     FNAME(afannlen)
-#  define nafwriteann   FNAME(afwriteann)
-#  define nafreadann    FNAME(afreadann)
-#  define nafendaccess  FNAME(afendaccess)
-#endif /* DF_CAPFNAMES */
-#endif /* MFAN_FNAMES */
+/* WE are NOT in main ANNOTATION source file
+ * Nothing EXPORTED  */
 
 #endif /* !MFAN_C */
-
 
 #endif /* DFAN_H */
