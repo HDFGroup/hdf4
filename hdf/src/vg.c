@@ -398,11 +398,11 @@ char  *fields;
     if(vs==NULL) 
         HRETURN_ERROR(DFE_ARGS,FAIL);
     
-	if(fields==NULL) {
+    if(fields==NULL) {
         for(totalsize=0,j=0; j<vs->wlist.n; j++) /* count fieldsizes in vs */
             totalsize += vs->wlist.esize[j];
-	  } /* end if */
-	else {
+      } /* end if */
+    else {
         if((scanattrs(fields,&ac,&av) < 0) || (ac<1)) 
             HRETURN_ERROR(DFE_ARGS,FAIL);
         totalsize=0;
@@ -420,7 +420,7 @@ char  *fields;
                 return(FAIL);
             }
         }
-	  } /* end else */
+      } /* end else */
     return(totalsize);
 } /* VSsizeof */
 
