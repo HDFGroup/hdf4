@@ -374,7 +374,6 @@ C     read the 'mixed type' vdata
      +             'int32,double,float32,int16,char', idbuf,
      +             320*4,3,'char',icdata)
       call VERIFY(ret, 'vsfcpak', number_failed)
-      print*, 'Check 8.5 number_failed=', number_failed
 
       do 45 i=1,3
          if (iddata4(i) .ne. (39+i)) then
@@ -386,21 +385,14 @@ C     read the 'mixed type' vdata
              call MESSAGE(5,'Wrong data. ')
          endif
 45    continue
-      print*, 'Check 8.7 number_failed=', number_failed
       do 50 i = 1, 3
          if (abs(gdata1(i) - igdata1(i)) .GE.
      +        gdata1(i)*geps)  then
-      print*, 'Check 8.8 number_failed=',number_failed
-      print*, 'Check 8.8 i=',i,' igdata1(i)=',igdata1(i)
-      print*, 'Check 8.8 i=',i,' gdata1(i)=',gdata1(i)
              number_failed = number_failed + 1
              call MESSAGE(5,'Wrong data. ')
          endif
          if (abs(fdata(i) - ifdata(i)) .GE.
      +        fdata(i)*feps)  then
-      print*, 'Check 8.85 number_failed=',number_failed
-      print*, 'Check 8.85 i=',i,' ifdata(i)=',ifdata(i)
-      print*, 'Check 8.85 i=',i,' fdata(i)=',fdata(i)
              number_failed = number_failed + 1
              call MESSAGE(5,'Wrong data. ')
          endif
@@ -410,8 +402,6 @@ C     read the 'mixed type' vdata
           call MESSAGE(5,'Wrong data. ')
       endif
 C     read field 'char' only, test pckfld ' '
-      print*, 'Check 9.0 number_failed=', number_failed
-      call MESSAGE(5,'Check 1')
       ret = vsfsfld(vsid2, 'char')
       call VERIFY(ret, 'vsfsfld', number_failed)
       ret = vsfrd(vsid2, idbuf, 2, FULL_INTERLACE)
