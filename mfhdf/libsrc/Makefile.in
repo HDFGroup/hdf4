@@ -138,7 +138,7 @@ DISTFILES	= Makefile.in README \
 		config/netcdf-linux.h config/netcdf-fbsd.h config/netcdf-alpha.h \
 		config/netcdf-dec.h config/netcdf-aix.h config/netcdf-solaris.h \
 		config/netcdf-solarisx86.h config/netcdf-convex.h \
-		config/netcdf-unicos.h config/netcdf-cm5.h 
+		config/netcdf-unicos.h
 
 LIBOBJS		= array.o attr.o cdf.o dim.o file.o iarray.o error.o \
 		  globdef.o putget.o putgetg.o sharray.o string.o var.o \

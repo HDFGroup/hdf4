@@ -114,11 +114,11 @@ MKFILES= configure.gnu makefile.cfg makefile.ansi makefile.unix makefile.bcc \
         makefile.vms makvms.opt Makefile.in configure.in
 CONFIGFILES= jconfig.cfg jconfig.manx jconfig.sas jconfig.st jconfig.bcc \
         jconfig.mc6 jconfig.dj jconfig.wat jconfig.vms \
-        config/jaix.h config/jalpha.h config/jcm5.h config/jconvex.h config/jdec.h \
+        config/jaix.h config/jalpha.h config/jconvex.h config/jdec.h \
         config/jfbsd.h config/jhpux.h config/jirix32.h config/jirix4.h \
         config/jirix5.h config/jirix6.h config/jlinux.h config/jsolaris.h \
         config/jsun.h config/junicos.h config/jwin32.h \
-        config/mh-aix config/mh-alpha config/mh-cm5 config/mh-convex config/mh-decstation \
+        config/mh-aix config/mh-alpha config/mh-convex config/mh-decstation \
         config/mh-fbsd config/mh-hpux config/mh-irix32 config/mh-irix4 \
         config/mh-irix5 config/mh-irix6 config/mh-linux config/mh-solaris \
         config/mh-sun config/mh-unicos config/win32jpg.mak 

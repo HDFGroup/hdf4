@@ -47,7 +47,6 @@ case "${host}" in
   *-convex-bsd*)          host_makefile_frag=config/mh-convex ;;
   *-cray-unicos*)         host_makefile_frag=config/mh-unicos ;;
   t3d-cray-craympp)       host_makefile_frag=config/mh-t3d ;;
-  *-cm5-*)		          host_makefile_frag=config/mh-cm5 ;;
   S370*)                  host_makefile_frag=config/mh-fujivp ;;
   *-mac-*)		          host_makefile_frag=config/mh-mac ;;
 esac
@@ -118,7 +117,6 @@ case "${host}" in
   *-convex-bsd*)          files=config/fmpconvex.h ;;
   *-cray-unicos*)         files=config/fmpunicos.h ;;
   t3d-cray-craympp)       files=config/fmpt3d.h ;;
-  *-cm5-*)		          files=config/fmpcm5.h ;;
   S370*)                  files=config/fmpfujivp.h ;;
   *-mac-*)		          files=config/fmpmac.h ;;
 esac

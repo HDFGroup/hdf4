@@ -487,10 +487,6 @@ case $basic_machine in
 	sun386 | sun386i | roadrunner)
 		basic_machine=i386-sun
 		;;
-	CM5 | cm5)
-		basic_machine=sparc-cm5
-		os=-sunos4
-		;;
   	mac)
 		basic_machine=m68k-mac
 		os=-macos

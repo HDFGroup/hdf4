@@ -384,9 +384,6 @@ HXPsetaccesstype(accrec_t * access_rec)
 {
     CONSTR(FUNC, "HXPsetaccesstype");
     hdf_file_t  file_external;  /* external file descriptor */
-#ifdef CM5
-    int32       para_extfile_id;    /* parallel external file id */
-#endif /* CM5 */
     extinfo_t  *info;           /* special element information */
     char	*fname=NULL;
     intn       ret_value = SUCCEED;
@@ -420,20 +417,6 @@ HXPsetaccesstype(accrec_t * access_rec)
               info->file_external = file_external;
               break;
               
-#ifdef CM5
-          case DFACC_PARALLEL:
-              para_extfile_id = CM_OPEN(fname, DFACC_WRITE);
-              if (para_extfile_id == FAIL)
-                {
-                    para_extfile_id = CM_CREATE(fname);
-                    if (para_extfile_id == FAIL)
-                        HGOTO_ERROR(DFE_BADOPEN, FAIL);
-                }
-              HDfree(fname);
-              info->para_extfile_id = para_extfile_id;
-              break;
-
-#endif /* CM5 */
           default:
               HGOTO_ERROR(DFE_BADOPEN, FAIL);
       }
@@ -703,17 +686,6 @@ HXPread(accrec_t * access_rec, int32 length, void * data)
       }
 
     /* read it in from the file */
-#ifdef CM5
-    if (access_rec->access_type == DFACC_PARALLEL)
-      {
-          /* parallel access handling */
-          if (CM_SEEK(info->para_extfile_id, access_rec->posn + info->extern_offset) == FAIL)
-              HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-          if (CM_READ(info->para_extfile_id, data, length) == FAIL)
-              HGOTO_ERROR(DFE_READERROR, FAIL);
-      }
-    else
-#endif
       {
           if (HI_SEEK(info->file_external, access_rec->posn + info->extern_offset) == FAIL)
               HGOTO_ERROR(DFE_SEEKERROR, FAIL);
@@ -792,18 +764,6 @@ HXPwrite(accrec_t * access_rec, int32 length, const void * data)
     }
 
     /* write the data onto file */
-#ifdef CM5
-    if (access_rec->access_type == DFACC_PARALLEL)
-      {
-          /* parallel access handling */
-          if (CM_SEEK(info->para_extfile_id,
-                      access_rec->posn + info->extern_offset) == FAIL)
-              HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-          if (CM_WRITE(info->para_extfile_id, data, length) == FAIL)
-                HGOTO_ERROR(DFE_DENIED, FAIL);
-      }
-    else
-#endif /* CM5 */
       {
           if (HI_SEEK(info->file_external, access_rec->posn + info->extern_offset) == FAIL)
               HGOTO_ERROR(DFE_SEEKERROR, FAIL);

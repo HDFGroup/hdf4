@@ -27,7 +27,6 @@
   2.5.3 Solaris(2.5) on INTEL(x86)
   2.5.4 OpenVMS AXP and OpenVMS VAX
   2.5.5 Windows '95 or Windows NT
-  2.5.6 CM5 Parallel I/O Extension
   2.5.7 PowerPC/68k(far/4i/8d)- Macintosh OS
   2.5.8 Exemplar (HP-UX 9.03)
   2.5.9 SP2 Single node
@@ -90,7 +89,6 @@
   Exemplar(HP-UX A.09.03)     CC 6.5         fc 9.5           X         X 
   Cray C90 (UNICOS 803.2)     -               -               -         - 
   Cray YMP (UNICOS 9.0.2asC cri.3) -          -               -         -
-  CM5 (Parallel I/O, 4.1.3_U1)CSTAR 7.2      CMF 2.1          X         X 
   IBM RS6000/AIX (4.1)        -               -               -         - 
   IBM SP2 (single node, v4.1) XLC 3.1.4.0    f77 3.2.4.2      X         X 
   DEC Alpha/Digital Unix v3.2 CC             f77              X         X
@@ -419,19 +417,6 @@
     To compile your program with HDF libraries, you need to define the
     architecture as INTEL86 via a /DINTEL86 preprocessor macro. 
  
-    2.5.6 CM5 Parallel I/O Extension
-    --------------------------------
-
-    To install the parallel I/O extension for CM5, read the separate 
-    installation instructions in:
-
-        $(toplevel)/release_notes/parallel_CM5.txt.
-
-    The following directory also contains examples in using the parallel
-    I/O extension:
-
-	$(toplevel)/release_notes/Examples_CM5
-
     2.5.7 PowerPC/68k(far/4i/8d)- Macintosh OS
     ------------------------------------------
     ***********************************************************
@@ -764,11 +749,11 @@
 
     See the file `config.sub' for the possible values of each field.
 
-    One system that requires this is the CM5. To configure properly
-    for the parallel support on the CM5 you must type the following on the
-    front end:
+    One system that requires this is the T3D which has a front end of
+    other machine type. To configure properly for the T3D system, you
+    must type the following on the front end:
 
-          ./configure -v CM5
+          ./configure -v t3d
 
 2.10 Configure Options 
     ==================

@@ -4319,9 +4319,6 @@ done:
 	Otherwise return FAIL.
 
 ******************************************************************************/	
-#ifdef CM5
-extern CM_DEBUG;
-#endif
 intn 
 SDsetaccesstype(int32 id,         /* IN: dataset ID */
                 uintn accesstype  /* IN: access type */)
@@ -4332,11 +4329,6 @@ SDsetaccesstype(int32 id,         /* IN: dataset ID */
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDsetaccesstype: I've been called\n");
-#endif
-
-#ifdef CM5
-if (CM_DEBUG > 0)
-    printf("SDsetaccesstype under construction\n");
 #endif
 
     switch (accesstype)

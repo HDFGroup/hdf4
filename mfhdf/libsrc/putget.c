@@ -960,10 +960,6 @@ done:
 } /* hdf_get_vp_aid */
 
  
-#ifdef CM5
-extern int32 CM_HDFtype;
-#endif
-
 /* --------------------------- hdf_xdr_NCvdata ---------------------------- */
 /*
  *  Read / write 'count' items of contiguous data of type 'type' at 'where'
@@ -1261,9 +1257,6 @@ hdf_xdr_NCvdata(NC *handle,
     fprintf(stderr, "hdf_xdr_NCvdata after Hseek(), byte_count=%d\n",(int)byte_count);
 #endif
     
-#ifdef CM5
-    CM_HDFtype = vp->HDFtype;
-#endif
     /* Read or write the data into / from values */
     if(handle->xdrs->x_op == XDR_DECODE) 
       {

@@ -2524,9 +2524,6 @@ DESCRIPTION
    accesstype.
 
 --------------------------------------------------------------------------*/
-#ifdef CM5
-extern      CM_DEBUG;
-#endif
 intn
 Hsetaccesstype(int32 access_id, uintn accesstype)
 {
@@ -2557,15 +2554,6 @@ Hsetaccesstype(int32 access_id, uintn accesstype)
       ret_value = FAIL;
       goto done;
     }
-#ifdef CM5
-  if (CM_DEBUG > 0)
-    {
-      printf("need to close old access\n");
-      printf("old access_type is %d\n", access_rec->access_type);
-      printf("new access_type is %d\n", accesstype);
-    }
-  access_rec->access_type = accesstype;
-#endif
   /* if special elt, call special function */
   if (access_rec->special)
     ret_value = HXPsetaccesstype(access_rec);

@@ -123,11 +123,6 @@ includedir = $(prefix)/include
 # Directory in which to install documentation info files.
 infodir = $(prefix)/info
 
-# Cstar objects for CM5 parallel I/O
-# CMOBJS is set in the makefile fragments section
-CMSRCS=cmextelt.cs
-CMOBJS=
-
 TARGETLIB = libdf.a
 
 #### ----- host and target specific makefile fragments come in here.-------
@@ -183,7 +178,7 @@ ARCHIVE=hdf.shar
 
 MANIFEST = $(DISTFILES)
 DISTFILES = Makefile.in src.inc $(HDRS) $(CSRCS) $(FSRCS) $(FINCS) \
-	win32hdf.mak cmextelt.cs hdfnof.bld hdfnofw3.lbc hdfnofwc.lbc \
+	win32hdf.mak hdfnof.bld hdfnofw3.lbc hdfnofwc.lbc \
 	hdfw386.lbc hdfwcc.lbc makepc.msc makepc.386 makepc.wcc makewin.msc
 
 #
@@ -221,10 +216,6 @@ HINCS = $(HDRS) $(FINCS)
 .inc.f90:
 	sed -e 's/^[cC]/!/' -e 's/^     [^ ]/     \&/' < $< > $*.f90
 
-# Should use a more general definition for the following.
-cmextelt.o: cmextelt.cs
-	$(CS) $(CSFLAGS) -c cmextelt.cs
-
 .PHONY : all nofortran libnostub clean distclean debug saber lint
 
 
@@ -251,22 +242,22 @@ libnofortran::         FORCE
 	fi
 
 
-libdf.a: $(COBJS) $(FOBJS) $(CMOBJS)
+libdf.a: $(COBJS) $(FOBJS)
 	-$(RM) $(RMFLAGS) libdf.a
 #	$(AR) $(ARFLAGS) libdf.a `lorder '$(COBJS) $(FOBJS)' | tsort `
-	$(AR) $(ARFLAGS) libdf.a $(COBJS) $(FOBJS) $(CMOBJS)
+	$(AR) $(ARFLAGS) libdf.a $(COBJS) $(FOBJS)
 	$(RANLIB) libdf.a
-#	$(LD) -b -o libdf.sl $(COBJS) $(FOBJS) $(CMOBJS)
+#	$(LD) -b -o libdf.sl $(COBJS) $(FOBJS)
 
-nofort-libdf.a: $(COBJS) $(CMOBJS)
+nofort-libdf.a: $(COBJS)
 	-$(RM) $(RMFLAGS) libdf.a
 #	$(AR) $(ARFLAGS) libdf.a `lorder $(COBJS) | tsort `
-	$(AR) $(ARFLAGS) libdf.a $(COBJS) $(CMOBJS)
+	$(AR) $(ARFLAGS) libdf.a $(COBJS)
 	$(RANLIB) libdf.a
 
-nofort-libdf-inst.a:   $(COBJS) $(CMOBJS) $(PCOBJS)
+nofort-libdf-inst.a:   $(COBJS) $(PCOBJS)
 	-$(RM) $(RMFLAGS) libdf-inst.a libdf.a
-	$(AR) $(ARFLAGS) libdf-inst.a  $(COBJS) $(CMOBJS) $(PCOBJS)
+	$(AR) $(ARFLAGS) libdf-inst.a  $(COBJS) $(PCOBJS)
 	$(RANLIB) libdf-inst.a
 	ln -s libdf-inst.a libdf.a
 
@@ -398,8 +389,6 @@ hblocks.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 hblocks.o: hfile.h $(FRC)
 hextelt.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 hextelt.o: hfile.h $(FRC)
-cmextelt.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-cmextelt.o: hfile.h $(FRC)
 hkit.o: hdf.h hlimits.h hdfi.h hbitio.h
 hkit.o: hcomp.h herr.h hproto.h hfile.h hkit.h $(FRC)
 dfan.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h

@@ -86,7 +86,7 @@ MANIFEST = $(DISTFILES)
 DISTFILES = INSTALL README \
 	Makefile.in configure configure.in config.guess config.sub \
 	install-sh mkinstalldirs move-if-change \
-	config/mh-aix config/mh-alpha config/mh-cm5 config/mh-convex \
+	config/mh-aix config/mh-alpha config/mh-convex \
 	config/mh-decstation config/mh-fbsd config/mh-hpux config/mh-irix32 \
 	config/mh-irix4 config/mh-irix5 config/mh-irix6 config/mh-linux \
 	config/mh-solaris config/mh-solarisx86 config/mh-sun config/mh-unicos

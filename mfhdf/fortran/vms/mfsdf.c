@@ -779,15 +779,7 @@ nsfrdata(id, start, stride, end, values)
         if((cstride[i] = stride[rank - i - 1]) != 1) nostride = FALSE;
     }
     
-#ifdef CM5
-    ret = (intf) CMreaddata(*id, cstart, (nostride? NULL : cstride), cend, values);
-#else
-    if(nostride)
-        ret = (intf) SDreaddata(*id, cstart, NULL, cend, values);
-    else
-        ret = (intf) SDreaddata(*id, cstart, cstride, cend, values);
-#endif
-  
+    ret = (intf) SDreaddata(*id, cstart, (nostride? NULL : cstride), cend, values);
     return(ret);
 }
 
@@ -830,15 +822,7 @@ nsfwdata(id, start, stride, end, values)
         if((cstride[i] = stride[rank - i - 1]) != 1) nostride = FALSE;
     }
 
-#ifdef CM5
-    ret = (intf) CMwritedata(*id, cstart, (nostride? NULL : cstride), cend, values);
-#else
-    if(nostride)
-        ret = (intf) SDwritedata(*id, cstart, NULL, cend, values);
-    else
-        ret = (intf) SDwritedata(*id, cstart, cstride, cend, values);
-#endif
-
+    ret = (intf) SDwritedata(*id, cstart, (nostride? NULL : cstride), cend, values);
     return(ret);
 }
 

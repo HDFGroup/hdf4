@@ -154,8 +154,7 @@ DISTFILES	= $(PROGRAM).src Makefile.in README aix.m4 common.inc \
 		config/netcdf-solaris.inc config/jackets-solaris.c config/ftest-solaris.f \
 		config/netcdf-solarisx86.inc config/jackets-solarisx86.c  config/ftest-solarisx86.f \
 		config/netcdf-convex.inc config/jackets-convex.c config/ftest-convex.f \
-		config/netcdf-unicos.inc config/jackets-unicos.c config/ftest-unicos.f \
-		config/netcdf-cm5.inc config/jackets-cm5.c config/ftest-cm5.f 
+		config/netcdf-unicos.inc config/jackets-unicos.c config/ftest-unicos.f
 
 LIBOBJS		= jackets.o mfsdf.o mfsdff.o
 LIBNAME		= mfhdf

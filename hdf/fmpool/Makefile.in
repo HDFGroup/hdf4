@@ -91,10 +91,10 @@ DOCS=
 MKFILES= configure Makefile.in configure.in config.sub config.guess \
 	move-if-change
 CONFIGFILES= config/fmpsun.h config/fmpirix5.h config/mh-aix config/mh-alpha \
-	config/mh-cm5 config/mh-convex config/mh-decstation config/mh-fbsd \
+	config/mh-convex config/mh-decstation config/mh-fbsd \
 	config/mh-hpux config/mh-irix32 config/mh-irix4 config/mh-irix5 \
 	config/mh-irix6 config/mh-linux config/mh-solaris config/mh-sun \
-	config/mh-unicos config/fmphpux.h config/fmpalpha.h config/fmpcm5.h \
+	config/mh-unicos config/fmphpux.h config/fmpalpha.h \
 	config/fmpconvex.h config/fmpdec.h config/fmpfbsd.h config/fmpirix32.h \
 	config/fmpirix4.h config/fmpirix6.h config/fmplinux.h config/fmpsolaris.h \
 	config/fmpunicos.h config/fmpaix.h
