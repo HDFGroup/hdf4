@@ -490,7 +490,7 @@ intn test_little_write()
             num_errs++;
           } /* end if */
         else {
-            data_u32=(uint 32*)HDgetspace(dimsizes[0]*dimsizes[1]*
+            data_u32=(uint32 *)HDgetspace(dimsizes[0]*dimsizes[1]*
 		    sizeof(uint32));
             ret=DFSDgetdata(TMPFILE,rank,dimsizes,data_u32);
             RESULT("DFSDgetdata");
