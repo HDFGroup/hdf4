@@ -31,7 +31,7 @@ dumpgr_usage(intn  argc,
              char *argv[])
 {
     printf("Usage:\n");
-    printf("%s dumpgr [-a|-i <indices>|-r <refs>|-n <names>] [-dhv] [-o <filename>] [-bx] <filelist>\n", argv[0]);
+    printf("%s dumpgr [-a|-i <indices>|-r <refs>|-n <names>] [-p] [-dhv] [-o <filename>] [-bx] <filelist>\n", argv[0]);
     printf("\t-a\tDump all RIs in the file (default)\n");
     printf("\t-i <indices>\tDump the <indices>th RIs in the file \n");
     printf("\t-r <refs>\tDump the RIs with reference number <refs>\n");
@@ -39,7 +39,7 @@ dumpgr_usage(intn  argc,
     printf("\t-d\tDump data only, no tag/ref, formatted to input to hp2hdf\n");
     printf("\t-h\tDump header only, no annotation for elements nor data\n");
     printf("\t-v\tDump everything including all annotations (default)\n");
-    printf("\t-p\tDump everything including all annotations (default)\n");
+    printf("\t-p\tDump palette's info and data; only info with -h; only data with -d\n");
     printf("\t-o <filename>\tOutput to file <filename>\n");
     printf("\t-b\tBinary format of output\n");
     printf("\t-x\tAscii text format of output (default)\n");
