@@ -21,7 +21,7 @@ int fortran_flag;
 int netcdf_flag;
 char *netcdf_name = NULL;	/* name of output netCDF file to write */
 
-extern FILE *yyin;
+extern FILE *yyin, *yyout;
 
 int
 main(argc, argv)
@@ -34,6 +34,8 @@ char *argv[];
     int c;
     FILE *fp, *efopen();
 
+    yyin=stdin;
+    yyout=stdout;
 #ifdef __hpux
     setlocale(LC_CTYPE,"");
 #endif
