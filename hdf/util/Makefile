@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.3  1992/07/15 21:39:54  sxu
+# Revision 1.4  1992/07/31 21:19:13  chouck
+# Fixed a problem with local CFLAGS
+#
+# Revision 1.3  1992/07/15  21:39:54  sxu
 # Added _STDC_ to make CONVEX happy.
 #
 # Revision 1.2  1992/07/15  19:36:00  chouck
@@ -38,7 +41,7 @@ MACHINE = SUN
 HDFLIB = ../lib
 HDFINC = ../include
 
-CFLAGS = -D$(MACHINE) -I$(INCDIR) -L$(LIBDIR)
+CFLAGS = -D$(MACHINE) -I$(INCDIR) 
 
 # ==> For Convex, specify CFLAGS as follows:
 # CFLAGS=  -g -D$(MACHINE) -I$(INCDIR)  -L$(LIBDIR) -D__STDC__
