@@ -103,12 +103,19 @@ extern funclist_t ext_funcs;
 
 extern funclist_t comp_funcs;
 
+/* Functions for accessing big external data elements, or data
+   elements that are in some other files.  For definition of the big external
+   data element, see hbigext.c. */
+
+extern funclist_t bigext_funcs;
+
 /* Table of these function tables for accessing special elements.  The first
    member of each record is the speical code for that type of data element. */
 functab_t functab[] = {
     {SPECIAL_LINKED, &linked_funcs},
     {SPECIAL_EXT, &ext_funcs},
     {SPECIAL_COMP, &comp_funcs},
+    {SPECIAL_BIGEXT, &bigext_funcs},
     {0, NULL}                  /* terminating record; add new record */
                                /* before this line */
 };
