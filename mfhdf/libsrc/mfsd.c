@@ -3998,8 +3998,8 @@ int32 flags;
           cdef  = (HDF_CHUNK_DEF *)&chunk_def;
           cdims = cdef->chunk_lengths;
           chunk[0].chunk_flag = 0;  /* nothing set for this now */
-          chunk[0].comp_type = 0; /* nothing set */
-          chunk[0].model_type = 0; /* nothing set */
+          chunk[0].comp_type = COMP_CODE_NONE; /* nothing set */
+          chunk[0].model_type = COMP_MODEL_STDIO; /* nothing set */
           chunk[0].cinfo = &cinfo; /* dummy */
           chunk[0].minfo = &minfo; /* dummy */
           break;
@@ -4030,7 +4030,6 @@ int32 flags;
       default:
           status = FAIL;
           goto done;
-          break;
       }
 
 #ifdef CHK_DEBUG
@@ -4434,15 +4433,6 @@ const VOID *datap;
     /* get variable from id */
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
-      {
-        status = FAIL;
-        goto done;
-      }
-
-    /* Check to see if data exists? i.e. may need to create a ref for SDS 
-    *  This will only occure if an empty SDS is created and then opened
-    *  again for writing. */
-    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FALSE) 
       {
         status = FAIL;
         goto done;
