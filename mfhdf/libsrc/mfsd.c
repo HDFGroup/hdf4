@@ -182,6 +182,9 @@ int32 SDstart(name, HDFmode)
     fprintf(stderr, "SDstart: I've been called\n");
 #endif
 
+    /* turn off annoying crash on error stuff */
+    ncopts = 0;
+
     if(HDFmode & DFACC_WRITE)
         NCmode = NC_RDWR;
     else
@@ -2570,3 +2573,43 @@ uint16   ref;
 
 } /* SDreftoindex */
 
+
+/* ----------------------------- SDisrecord ----------------------------- */
+/*
+
+  Return TRUE if this is a record dataset FALSE otherwise
+
+*/
+int32
+#ifdef PROTOTYPE
+SDisrecord(int32 id)
+#else
+SDisrecord(id)
+int32   id;
+#endif
+{
+
+    NC       * handle;
+    NC_var   * var;
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDisrecord: I've been called\n");
+#endif
+    
+    handle = SDIhandle_from_id(id, SDSTYPE);
+    if(handle == NULL || !handle->is_hdf) 
+        return FALSE;
+
+    if(handle->vars == NULL)
+        return FALSE;
+
+    var = SDIget_var(handle, id);
+    if(var == NULL)
+        return FALSE;
+
+    if(var->shape[0] == SD_UNLIMITED)
+        return TRUE;
+    else
+        return FALSE;
+
+} /* SDisrecord */

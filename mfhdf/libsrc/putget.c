@@ -858,7 +858,7 @@ uint32    count;
         DFKnumin((uint8 *) tBuf, (uint8 *) values, (uint32) count, 0, 0);
         
     } else {
-        
+      
         /*  convert values into tBuf */
         DFKnumout((uint8 *) values, tBuf, (uint32) count, 0, 0);
         

@@ -114,6 +114,9 @@ extern uint16 SDidtoref
 extern int32 SDreftoindex
     PROTO((int32 fid, uint16 ref));
 
+extern int32 SDisrecord
+    PROTO((int32 id));
+
 /* Define the FORTRAN names */
 
 #ifndef MFSD_FNAMES
