@@ -33,14 +33,17 @@ void qsort(void *base, size_t nmemb, size_t size,
 #define MAXBUFF 8192
 #endif
 
-dd_t desc[MAXBUFF];
+dd_t *desc_buf;
 
 intn
     debug    = FALSE,        /* Debugging is off by default */
     sort     = TRUE,         /* Sorting is on by default */
     longout  = FALSE,        /* short output by default */
     labels   = FALSE,        /* no label info by default */
-    special  = FALSE;        /* no special info by default */
+    special  = FALSE,        /* no special info by default */
+    groups   = FALSE;        /* no group info by default */
+static intn v_init_done=FALSE;	/* whether the Vset interface has been */
+								/* initialized for this file */
 uint16  only_tag = DFTAG_NULL;  /* by default print info about all tags */
 
 char * file_name;    /* name of current file being listed */
@@ -49,8 +52,10 @@ int compare
   (const VOID *, const VOID *);
 int main
   (int, char **);
-int lprint
+void lprint
   (int32, dd_t *, int);
+void print_item
+  (int32 , dd_t *, intn );
 
 int compare(const VOID * aa, const VOID * bb)
 {
@@ -64,6 +69,191 @@ int compare(const VOID * aa, const VOID * bb)
     return(0);
 }
 
+void print_item(int32 fid, dd_t *desc_list, intn n) 
+{
+    sp_info_block_t info;
+	intn status;
+    int32 len;
+    char *name, *label_str;
+
+	printf("\tRef no %6d\t%8ld bytes\n", desc_list[n].ref, desc_list[n].length);
+                
+	/* print out labels and annotations if desired */
+	if(labels) { /* read in all of the labels */
+		len = DFANgetlablen(file_name, desc_list[n].tag, desc_list[n].ref);
+		if(len != FAIL) {
+			label_str = (char *) HDgetspace((uint32) len + 1);
+			status = DFANgetlabel(file_name, desc_list[n].tag, desc_list[n].ref, label_str, len + 1);
+			label_str[len] = '\0';
+			if(status == FAIL) 
+				printf("\t  Unable to read label\n");
+			else
+				printf("\t  Label: %s\n", label_str);
+			HDfreespace(label_str);
+		}
+                    
+		/* read in all of the annotations */
+		len = DFANgetdesclen(file_name, desc_list[n].tag, desc_list[n].ref);
+		if(len != FAIL) {
+			label_str = (char *) HDgetspace((uint32) len + 1);
+			status=DFANgetdesc(file_name,desc_list[n].tag,desc_list[n].ref,label_str,len+1);
+			label_str[len] = '\0';
+			if(status == FAIL) 
+				printf("\t  Unable to read description\n");
+			else
+				printf("\t  Description: %s\n", label_str);
+			HDfreespace(label_str);
+		}
+	}
+
+	if((special) && (SPECIALTAG(desc_list[n].tag))) { /* print out special info if desired */
+		int32 aid, ret; 
+
+		aid = Hstartread(fid, desc_list[n].tag, desc_list[n].ref);
+		ret = HDget_special_info(aid, &info);
+		if((ret == FAIL) || (info.key == FAIL))
+			return;
+                    
+		switch(info.key) {
+			case SPECIAL_LINKED:
+				printf("\tLinked Block: first %ld standard %ld per unit %ld\n",
+						(long)info.first_len, (long)info.block_len, 
+						(long)info.nblocks);
+				break;
+
+			case SPECIAL_EXT:
+				printf("\tExternal File: path %s  offset %ld\n", info.path, 
+						(long)info.offset);
+				break;
+
+			case SPECIAL_COMP:
+				printf("\tCompressed Element: compression type: %s  modeling type %s\n", 
+						(info.comp_type==COMP_CODE_NONE ? "None" : 
+						(info.comp_type==COMP_CODE_RLE ? "Run-Length" : 
+						(info.comp_type==COMP_CODE_NBIT ? "N-Bit" : "Unknown" ))), 
+						(info.model_type==COMP_MODEL_STDIO ? "Standard" : "Unknown"));
+				break;
+
+			default:
+				printf("\tDo not understand special element type %d\n", 
+						info.key);
+				break;
+		}
+		Hendaccess(aid);
+	}
+
+	if((groups) && (desc_list[n].tag==DFTAG_RIG || desc_list[n].tag==DFTAG_SDG 
+			|| desc_list[n].tag==DFTAG_NDG || desc_list[n].tag==DFTAG_VG)) { /* print groups */
+		if(desc_list[n].tag!=DFTAG_VG) {	/* groups other than Vgroups */
+			int32 GroupID;
+			DFdi elmt;
+
+			printf("\tContents:\n");
+			if((GroupID=DFdiread(fid, desc_list[n].tag, desc_list[n].ref))>=0) {
+				while(!DFdiget(GroupID,&elmt.tag,&elmt.ref)) {
+					name=(char *)HDgettagname(elmt.tag);
+					if(!name) 
+						name = "Unknown Tag";
+					printf("\t\t%-30s: (tag=%6d) ref=%d\n",name, 
+							elmt.tag,elmt.ref);
+				}	/* end while */
+			}	/* end if */
+			else
+				printf("\t\tNone!\n");
+		}	/* end if */
+		else {	/* dump Vgroup tag/refs */
+			int32 ntagrefs;
+			int32 vkey;
+			int32 *tag_arr, *ref_arr;
+			intn i;
+
+			if(v_init_done==FALSE) {	/* init the V routines */
+				v_init_done=TRUE;
+				Vinitialize(fid);
+			}	/* end if */
+			if((vkey=Vattach(fid,desc_list[n].ref,"r"))!=FAIL) {
+				ntagrefs=Vntagrefs(vkey);
+				printf("\tContents: %d items\n",(int)ntagrefs);
+				if(ntagrefs>0) {
+					tag_arr=HDgetspace(sizeof(int32)*ntagrefs);
+					ref_arr=HDgetspace(sizeof(int32)*ntagrefs);
+					if(tag_arr==NULL || ref_arr==NULL) {
+						HDfreespace(tag_arr);
+						HDfreespace(ref_arr);
+					}	/* end if */
+					else {
+						if(Vgettagrefs(vkey,tag_arr,ref_arr,ntagrefs)!=FAIL) {
+							for(i=0; i<ntagrefs; i++) {
+								name=(char *)HDgettagname(tag_arr[i]);
+								if(!name) 
+									name = "Unknown Tag";
+								printf("\t\t%-30s: (tag=%6d) ref=%d\n",
+										name, (int)tag_arr[i],(int)ref_arr[i]);
+							}	/* end for */
+						}	/* end if */
+						HDfreespace(tag_arr);
+						HDfreespace(ref_arr);
+					}	/* end else */
+				}	/* end if */
+				Vdetach(vkey);
+			}	/* end if */
+		}	/* end else */
+	}	/* end if */
+}	/* end print_item */
+
+void lprint(int32 fid, dd_t *desc_tmp, int num)
+{
+    intn j = 0, empty = 0;
+    uint16 prev = 0;
+    char *name;
+    
+    while (j <num) {
+        if (desc_tmp[j].tag == DFTAG_NULL) {
+            empty++;
+            j++;
+            continue;               /* don't print anything now */
+        }
+        
+        /* 
+         * skip this tag if the user only wants to see some tags and
+         *  this is not one of them 
+         */
+        if(only_tag != DFTAG_NULL && only_tag != desc_tmp[j].tag) {
+            j++;
+            continue;
+        }
+        
+        /*
+         ** Find and print text description of this tag
+         */
+        name = (char *) HDgettagname(desc_tmp[j].tag);
+        if(!name) 
+			name = "Unknown Tag";
+        printf("\n%-30s: (tag %d)\n", name, desc_tmp[j].tag);
+        
+        /*
+         ** Print out reference number information
+         */
+        prev = desc_tmp[j].tag;
+        if(longout) {
+            while (desc_tmp[j].tag == prev && j < num) {
+				print_item(fid,desc_tmp,j);
+                j++;
+            }
+        } 
+		else {
+            printf("\tRef nos:");
+            while (desc_tmp[j].tag == (uint16)prev && j < num) {
+                printf(" %d",desc_tmp[j].ref);
+                j++;
+            }
+        }
+    }
+    
+    if(empty) 
+		printf("\nEmpty (tag %d): %d slots\n", DFTAG_NULL, empty);
+}
+
 int main(int argc, char *argv[])
 {
     int32 fid, aid;
@@ -71,32 +261,43 @@ int main(int argc, char *argv[])
     
     while((i < argc) && (argv[i][0]=='-')){
         switch(argv[i][1]) {
-        case 'o':                 /* give non ordered output */
-            sort = FALSE;
-            break;
-        case 'd':                 /* go into debugging mode */
-            debug = TRUE;
-            break;
-        case 'v':                 /* print labels for elements */
-            labels = TRUE;
-            longout = TRUE;
-            break;
-        case 'l':                 /* give long output */
-            longout = TRUE;
-            break;
-        case 's':                 /* give info on special elements */
-            special = TRUE;
-            longout = TRUE;
-            break;
-        case 't' :
-            if(argv[i][2] != '\0') 
-                only_tag = (uint16)atoi(&(argv[i][2]));
-            else 
-                only_tag = (uint16)atoi(&(argv[++i][0]));
-            break;
-        default:    
-            printf("Unknown option : -%c\n", argv[1][1]);
-            break;
+        	case 'o':                 /* give non ordered output */
+           	 	sort = FALSE;
+           	 	break;
+
+        	case 'd':                 /* go into debugging mode */
+            	debug = TRUE;
+            	break;
+
+        	case 'v':                 /* print labels for elements */
+            	labels = TRUE;
+            	longout = TRUE;
+            	break;
+
+        	case 'l':                 /* give long output */
+            	longout = TRUE;
+            	break;
+
+        	case 's':                 /* give info on special elements */
+            	special = TRUE;
+            	longout = TRUE;
+            	break;
+
+        	case 'g':                 /* give info on groups */
+            	groups = TRUE;
+            	longout = TRUE;
+            	break;
+
+        	case 't' :
+            	if(argv[i][2] != '\0') 
+                	only_tag = (uint16)atoi(&(argv[i][2]));
+            	else 
+                	only_tag = (uint16)atoi(&(argv[++i][0]));
+            	break;
+
+        	default:    
+            	printf("Unknown option : -%c\n", argv[1][1]);
+            	break;
         }
         i++;
     }
@@ -105,8 +306,8 @@ int main(int argc, char *argv[])
      * If a file name has not been supplied print the usage message
      */
     if(i == argc) {
-        printf("%s,  version: 1.2   date: June 8, 1992\n",argv[0]);
-        printf("%s [-o] [-l] [-d] [-v] [-t #] fn ....\n", argv[0]);
+        printf("%s,  version: 2.0   date: March 1, 1994\n",argv[0]);
+        printf("%s [-o] [-l] [-d] [-v] [-g] [-t #] fn ....\n", argv[0]);
         printf("        This program displays information about the");
         printf(" data elements in\n");
         printf("        HDF file.\n");
@@ -120,9 +321,12 @@ int main(int argc, char *argv[])
         printf("          will list information only about Scientific Data\n");
         printf("          Groups.\n");
         printf("    -s: Give detailed descriptions of \"special elements\"\n");
+	printf("    -g: List items in groups\n");
         exit (1);
     }
     
+    desc_buf=HDgetspace(sizeof(dd_t)*MAXBUFF);
+
     while(i < argc) {
         file_name = argv[i];
         fid = Hopen(file_name, DFACC_READ, -1);
@@ -139,155 +343,51 @@ int main(int argc, char *argv[])
             }
         }
         
-	aid = Hstartread(fid, DFTAG_WILDCARD, DFREF_WILDCARD);
-	if(aid == FAIL) {
+		aid = Hstartread(fid, DFTAG_WILDCARD, DFREF_WILDCARD);
+		if(aid == FAIL) {
             HEprint(stderr, 0);
             i++;
             continue;	  
-	}
+		}
         
-	status = SUCCEED;
-	for(n = 0; (n < MAXBUFF) && (status != FAIL); n++) {
-            Hinquire(aid, NULL, &desc[n].tag, &desc[n].ref, &desc[n].length,
-                     &desc[n].offset, NULL, NULL, NULL);
+		status = SUCCEED;
+		for(n = 0; (n < MAXBUFF) && (status != FAIL); n++) {
+            Hinquire(aid, NULL, &desc_buf[n].tag, &desc_buf[n].ref, &desc_buf[n].length,
+                     &desc_buf[n].offset, NULL, NULL, NULL);
             status = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
-	}
+		}
         
-	if(n == MAXBUFF) {
+		if(n == MAXBUFF) 
             fprintf(stderr, 
                     "Warning:  File may have more DD's than hdfls can display\n");
-	}
         
-	if(debug) {
+		if(debug) {
             printf("\n");
             for (j=0; j<n; j++) {
-                printf("%6d) tag %6d ref %6d ", j, desc[j].tag, desc[j].ref);
-                printf(" offset %10ld length %10ld\n", desc[j].offset, desc[j].length);
+                printf("%6d) tag %6d ref %6d ", j, desc_buf[j].tag, desc_buf[j].ref);
+                printf(" offset %10ld length %10ld\n", desc_buf[j].offset, desc_buf[j].length);
             }
-	}
+		}
+		if (sort) 
+			qsort( (char *)desc_buf, n, sizeof(dd_t), compare);
 	
-	if (sort) qsort( (char *)desc, n, sizeof(dd_t), compare);
-	
-	lprint(fid, desc, n);
+		v_init_done=FALSE;
+		lprint(fid, desc_buf, n);
+		if(v_init_done==TRUE)
+			Vfinish(fid);
         
-	if(Hendaccess(aid) == FAIL) {
+		if(Hendaccess(aid) == FAIL) 
             HEprint(stderr, 0);
-	}
         
-        if (Hclose(fid) == FAIL) {
+        if (Hclose(fid) == FAIL) 
             HEprint(stderr, 0);
-	}
         
         i++;
         printf("\n");
     }
+
+    HDfreespace(desc_buf);
+
     return(0);
 }
 
-int lprint(int32 fid, dd_t *desc, int num)
-{
-    sp_info_block_t info;
-    
-    intn j = 0, empty = 0, status;
-    uint16 prev = 0;
-    int32 len;
-    char *name, *label_str;
-    
-    while (j <num) {
-        if (desc[j].tag == DFTAG_NULL) {
-            empty++;
-            j++;
-            continue;               /* don't print anything now */
-        }
-        
-        /* 
-         * skip this tag if the user only wants to see some tags and
-         *  this is not one of them 
-         */
-        if(only_tag != DFTAG_NULL && only_tag != desc[j].tag) {
-            j++;
-            continue;
-        }
-        
-        /*
-         ** Find and print text description of this tag
-         */
-        name = (char *) HDgettagname(desc[j].tag);
-        if(!name) name = "Unknown Tag";
-        printf("\n%-30s: (tag %d)\n", name, desc[j].tag);
-        
-        /*
-         ** Print out reference number information
-         */
-        prev = desc[j].tag;
-        if(longout) {
-            while (desc[j].tag == prev && j < num) {
-                printf("\tRef no %6d\t%8ld bytes\n", desc[j].ref, desc[j].length);
-                
-                /* print out labels and annotations if desired */
-                if(labels) {
-                    /* read in all of the labels */
-                    len = DFANgetlablen(file_name, prev, desc[j].ref);
-                    if(len != FAIL) {
-                        label_str = (char *) HDgetspace((uint32) len + 1);
-                        status = DFANgetlabel(file_name, prev, desc[j].ref, label_str, len + 1);
-                        label_str[len] = '\0';
-                        if(status == FAIL) 
-                            printf("\t  Unable to read label\n");
-                        else
-                            printf("\t  Label: %s\n", label_str);
-                        HDfreespace(label_str);
-                    }
-                    
-                    /* read in all of the annotations */
-                    len = DFANgetdesclen(file_name, prev, desc[j].ref);
-                    if(len != FAIL) {
-                        label_str = (char *) HDgetspace((uint32) len + 1);
-                        status = DFANgetdesc(file_name, prev, desc[j].ref, label_str, len + 1);
-                        label_str[len] = '\0';
-                        if(status == FAIL) 
-                            printf("\t  Unable to read description\n");
-                        else
-                            printf("\t  Description: %s\n", label_str);
-                        HDfreespace(label_str);
-                    }
-                }
-                /* print out special info if desired */
-                if((special) && (SPECIALTAG(prev))) {
-                    int32 aid, ret; 
-
-                    aid = Hstartread(fid, prev, desc[j].ref);
-                    ret = HDget_special_info(aid, &info);
-                    if((ret == FAIL) || (info.key == FAIL))
-                        continue;
-                    
-                    switch(info.key) {
-                    case SPECIAL_LINKED:
-                        printf("\tLinked Block: first %d  standard %d  per unit %d\n",
-                               info.first_len, info.block_len, info.nblocks);
-                        break;
-                    case SPECIAL_EXT:
-                        printf("\tExternal File: path %s  offset %d\n", 
-                               info.path, info.offset);
-                        break;
-                    default:
-                        printf("\tDo not understand special element type %d\n", info.key);
-                        break;
-                    }
-                    Hendaccess(aid);
-                }
-                j++;
-            }
-        } else {
-            printf("\tRef nos:");
-            while (desc[j].tag == (uint16)prev && j < num) {
-                printf(" %d",desc[j].ref);
-                j++;
-            }
-        }
-    }
-    
-    if(empty) printf("\nEmpty (tag %d): %d slots\n", DFTAG_NULL, empty);
-    return 0;
-    
-}

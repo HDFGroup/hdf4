@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     int n, status;
     FILE *jfif_file;        /* file ptr for the JFIF file to create */
     dd_t image_desc;
-    bool jfif_formatted;    /* whether the jfif filename has a'#' in it */
+    intn jfif_formatted;    /* whether the jfif filename has a'#' in it */
     char jfif_name[128];    /* name of the JPEG file to create */
     char scratch[128];      /* name of the JPEG file to create */
     char *jfif_char;        /* location of the '#' char */
