@@ -43,13 +43,13 @@ extern int32 VSelts
 extern int32 VSgetinterlace
   PROTO((int32 vkey));
 
-extern int32 VSsetinterlace
+extern intn VSsetinterlace
   PROTO((int32 vkey, int32 interlace));
 
 extern int32 VSgetfields
   PROTO((int32 vkey, char _HUGE *fields));
 
-extern int32 VSfexist
+extern intn VSfexist
   PROTO((int32 vkey, char _HUGE *fields));
 
 extern int32 VSsizeof
@@ -70,7 +70,7 @@ extern int32 VSgetname
 extern int32 VSgetclass
   PROTO((int32 vkey, char _HUGE *vsclass));
 
-extern int32 VSinquire
+extern intn VSinquire
   PROTO((int32 vkey,int32 _HUGE *nelt, int32 _HUGE *interlace,
     char _HUGE *fields, int32 _HUGE *eltsize, char _HUGE *vsname));
 

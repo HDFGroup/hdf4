@@ -108,6 +108,7 @@ extern funclist_t comp_funcs;
 functab_t functab[] = {
     {SPECIAL_LINKED, &linked_funcs},
     {SPECIAL_EXT, &ext_funcs},
+    {SPECIAL_COMP, &comp_funcs},
     {0, NULL}                  /* terminating record; add new record */
                                /* before this line */
 };
