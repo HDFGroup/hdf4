@@ -1,9 +1,12 @@
 Obtaining the latest version
-----------------------------
+============================
+
     The most recent version of the distribution can be obtained from
 the NCSA ftp archive site at:
 
-     ftp://ftp.ncsa.uiuc.edu/HDF/HDF4.0.beta
+     ftp://ftp.ncsa.uiuc.edu/HDF/HDF4.0
+or
+     ftp://ftp.ncsa.uiuc.edu/HDF/HDF_Current
 
 Installing HDF/netCDF	
 =====================
@@ -28,28 +31,29 @@ Supported Platforms
   SGI-Indy(IRIX6.1_32)        CC             f77              X         X
   SGI-Indy(IRIX6.1_64)        CC             f77              X         X
   HP9000/735(HPUX 9.03)       CC             f77              X         X
-  Convex Exemplar(HPUX)       CC             f77              X         X
+  Exemplar(HPUX)              CC (for HPUX)  f77              X         X
   Cray C90 (UNICOS 803.2)     CC             cf77             X         X
   Cray YMP (UNICOS 803.2)     CC             cf77             X         X
   CM5 (Sun Frontend)          GCC 2.6.3      f77 SC1.0        X         X
   CM5 (Parallel I/O)          CSTAR 7.2      CMF 2.2.11       X         X
-  IBM RS6000/AIX              CC             f77              X         X
-  DEC Alpha/OSF1/1 v3.2       CC 3.11        f77              X         X
-  DecStation/MIPSEL           CC              -
+  IBM RS6000/AIX v3.2         xlc            f77              X         X
+  DEC Alpha/Digital Unix v3.2 CC 3.11        f77              X         X
+  DEC Alpha/OpenVMS AXP v6.2  DECC         DEC FORTRAN        X         X
   IBM PC - Intel Pentium
        Solarisx86             GCC 2.7.0       -               X         X
        Linux                  GCC         Fortran compiler    X         X
                                              2.6.2
                                  (Fortran to C converter)
-       Free BSD 2.0         GCC 2.6.2     Fortran compiler    X         X
+       Free BSD 2.0           GCC 2.6.2   Fortran compiler    X         X
                                              2.6.2
                                  (Fortran to C converter)
-  
+
+  DecStation/MIPSEL            -               -               -         -
   NeXT/Next-STEP               -               -               -         -
   MacQuadra950(Mac-OS-7.5)     -               -               -         -
   Fujitsu VP/UXPM              -               -               -         -  
   Intel i860                   -               -               -         -  
-  VMS/VMS                      -               -               -         -  
+  VAX/VMS                      (See 'DEC Alpha/OpenVMS' above )
   Windows NT/95                -               -               -         - 
    
 Requirements
@@ -190,7 +194,7 @@ Platform-specific Notes
     The distribution has been compiled/tested with the native
     ANSI-C compiler and the fortran compiler. There is 
     a ansi prototype clash with the XDR header files on this version 
-    of the OS that as been fixed in IRIX 5.3. It is recommended the 
+    of the OS that has been fixed in IRIX 5.3. It is recommended the 
     OS be upgraded to IRIX 5.3. Due to the ansi prototype clash, 
     the netCDF xdr tests will not compile with the -ansi option. To get 
     around this you can compile this test using the -cckr option and 
@@ -211,6 +215,17 @@ Platform-specific Notes
     *NO* fortran support. The binary distribution was compiled
     using GCC 2.7.0.
 
+    OpenVMS AXP on DEC Alpha
+    ------------------------
+    This is the first port of HDF4.0 to OpenVMS on DEC ALPHA. 
+    Make.com files in each subdirectory are available to compile
+    the libraries and utilites. The MAKENOF.COM and MAKEFS.COM
+    in hdf/src are for compiling the C and Fortran programs
+    respectively.  The package should be compiled in the following
+    order: [.hdf.jpeg], [.hdf.zlib], [.hdf.src],[hdf.test], 
+    [.hdf.util], [.mfhdf.xdr], [.mfhdf.libsrc],[.mfhdf.nctest],
+    [.mfhdf.fortran.vms], [.mfhdf.ncdump],[.mfhdf.ncgen], and 
+    [.mfhdf.dumper]. 
 
     Windows '95 or Windows NT
     -------------------------
@@ -218,6 +233,13 @@ Platform-specific Notes
     installation instructions for Windows NT:
       
         $(toplevel)/release_notes/install_winNT.txt.
+ 
+    CM5 Parallel I/O Extension
+    --------------------------
+    To install the parallel I/O extension for CM5, read the seperate 
+    installation instructions in:
+
+        $(toplevel)/release_notes/parallel_CM5.txt.
 
 Pablo Instrumentation
 ====================
