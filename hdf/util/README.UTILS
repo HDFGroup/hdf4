@@ -28,3 +28,24 @@ ristosds:
       Compare the first few numbers in storm110's image
       with the first few numbers in storm.hdf's SDS.  They
       should be the same.
+
+
+hdfpack:
+
+   Copy the file test.cdf from the examples/files directory.
+
+   Execute:
+        hdfpack test.cdf test.pck
+        hdfpack -b test.cdf test.blk
+
+   Use hdfls to get a listing of test.cdf and test.pck.  The only
+       difference between the 2 listings should be that test.pck
+       shouldn't have any special elements (they show up as "Unknown
+       Tag") and it also shouldn't have any "Linked Block Indicators."
+   Use the HDF browser to verify that the Vgroup named "Float" has a
+       Vdata with ref no. 55 that contains the values:
+       0.0, 1.0, 2.0,..., 359.0
+   The file sizes should be as follows:
+       test.cdf - 11795
+       test.pck - 6747
+       test.blk - 8111
