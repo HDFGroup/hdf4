@@ -318,7 +318,7 @@ distclean:
           SUBDIRS="$(HDFDIR)" subd
 	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
           SUBDIRS="$(NETCDFDIR)" subdn
-	-$(RM) $(RMFLAGS) config.status Makefile mfhdf/CUSTOMIZE
+	-$(RM) $(RMFLAGS) config.status Makefile
 
 help:
 	@echo ""
