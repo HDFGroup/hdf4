@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.9  1993/08/28 22:58:07  georgev
-Fixed a few VOIDP casts.
+Revision 1.10  1993/08/28 22:58:47  georgev
+Fixed cast problem for HDgetspace.
 
+ * Revision 1.9  1993/08/28  22:58:07  georgev
+ * Fixed a few VOIDP casts.
+ *
  * Revision 1.8  1993/08/20  22:38:37  koziol
  * Reduced the static memory of a couple of functions to make the PC happier...
  *
@@ -155,7 +158,7 @@ HFILEID f;
 	/* =============================================  */
 	/* --- read all vgs and convert each --- */
 
-	vg = HDgetspace(sizeof(VGROUP));    /* allocate space for the VGroup */
+	vg = (VGROUP *)HDgetspace(sizeof(VGROUP));/*allocate space for the VGroup */
     stat = aid = Hstartread (f, (uint16)OLD_VGDESCTAG, DFREF_WILDCARD);
 	while (stat != FAIL) {
         HQuerytagref (aid, &tag, &ref);
@@ -206,7 +209,7 @@ HFILEID f;
 
     old_bsize=0;    /* reset state variables */
     buf=NULL;
-	vs = HDgetspace(sizeof(VDATA));    /* allocate space for the VData */
+	vs = (VDATA *)HDgetspace(sizeof(VDATA));  /* allocate space for the VData */
     stat = aid = Hstartread (f, (uint16)OLD_VSDESCTAG, DFREF_WILDCARD);
 	while (stat != FAIL) {
 
