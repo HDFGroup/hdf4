@@ -33,6 +33,8 @@ static char sccsid[] = "@(#)xdr_stdio.c 1.16 87/08/11 Copyr 1984 Sun Micro";
               extern long htonl(long i_in);
               extern short ntohs(short i_in);
               extern short htons(short i_in);
+#		  else
+#			include <winsock.h>
 #         endif /* WINNT */
 #     endif
 #endif
