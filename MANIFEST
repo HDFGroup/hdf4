@@ -27,6 +27,7 @@
 ./bin/config.sub
 ./bin/depcomp
 ./bin/install-sh
+./bin/locate_sw
 ./bin/missing
 ./bin/mkinstalldirs
 ./bin/regenerate.sh
