@@ -21,7 +21,7 @@ C To avoid the '\0' inserted by HDstrncpy, compare the first 14
 C characters of output and input strings in subroutine compare()
       integer num_failed
       character*(*) myname
-      parameter (myname = "sdstr")
+      parameter (myname = 'sdstr')
 
       integer rank, i, j, ret, err
       integer dims(2)
@@ -34,7 +34,7 @@ C characters of output and input strings in subroutine compare()
       character*16 indimlabels(2), indimunits(2), indimfmts(2)
       character*15 fn
 
-      call ptestban("Testing", myname)
+      call ptestban('Testing', myname)
       DFNT_NFLOAT32 = 4096+5
       rank = 2
       dims(1) = 10

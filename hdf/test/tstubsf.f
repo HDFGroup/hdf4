@@ -17,7 +17,7 @@ C
       
       integer nerrors
       character*(*) myname
-      parameter (myname = "stubs")
+      parameter (myname = 'stubs')
 
       character ar0*10
       character ar1*9
@@ -54,7 +54,7 @@ C
       data ar3 /'...three'/
 
 
-      call ptestban("Testing", myname)
+      call ptestban('Testing', myname)
       nerrors = 0
       a0size = len(ar0)
       a1size = len(ar1)

@@ -33,7 +33,7 @@ C   VMS you should be able to find all of the necessary changes.
 C
       integer number_failed
       character*(*) myname
-      parameter (myname = "sdnnt")
+      parameter (myname = 'sdnnt')
 
       integer dspdata, dsgdata, dsadata, dssdims, dssnt
       
@@ -54,7 +54,7 @@ C      byte      i8(10,10), ti8(10,10)
       integer DFNT_NFLOAT64, DFNT_NFLOAT32, DFNT_NINT8
       integer DFNT_NINT16, DFNT_NINT32, DFNT_NATIVE
       
-      call ptestban("Testing", myname)
+      call ptestban('Testing', myname)
       DFNT_FLOAT64 = 6
       DFNT_FLOAT32 = 5
       DFNT_INT8 = 20
