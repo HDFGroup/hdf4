@@ -580,8 +580,8 @@ C
       external afwriteann
       integer  afreadann
       external afreadann
-      integer  afendacess
-      external afendacess
+      integer  afendaccess
+      external afendaccess
       integer  afgettagref
       external afgettagref
       integer  afidtagref
