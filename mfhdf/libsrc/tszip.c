@@ -45,6 +45,8 @@ test_szip_SDS8bit()
    int8         fill_value = 0;   /* Fill value */
    int          i,j;
    int    	num_errs = 0;    /* number of errors so far */
+   comp_coder_t comp_type;      /* to retrieve compression type into */
+   comp_info    cinfo;             /* compression information structure */ 
    int8         out_data[LENGTH][WIDTH];
    int8         in_data[LENGTH][WIDTH]={
 	   			 1,1,2,2,3,4,
@@ -58,7 +60,6 @@ test_szip_SDS8bit()
 				 0,0,6,6,3,4};
 
     /********************* End of variable declaration ***********************/
-
     /* Create the file and initialize SD interface */
     sd_id = SDstart (FILE_NAME8, DFACC_CREATE);
     CHECK(sd_id, FAIL, "SDstart");
@@ -108,11 +109,9 @@ test_szip_SDS8bit()
        flush the compressed info to the file */
     status = SDend (sd_id);
     CHECK(status, FAIL, "SDend");
-
     /*
     * Verify the compressed data
     */
-
     /* Reopen the file and select the first SDS */
     sd_id = SDstart (FILE_NAME8, DFACC_READ);
     CHECK(sd_id, FAIL, "SDstart");
@@ -124,6 +123,14 @@ test_szip_SDS8bit()
     status = SDgetinfo(sds_id, name, &array_rank, dim_sizes, &num_type, &attributes);
     CHECK(status, FAIL, "SDgetinfo");
 
+    /* Retrieve compression informayion about the dataset */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */  
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    
+    status = SDgetcompress(sds_id, &comp_type, &cinfo);
+    CHECK(status, FAIL, "SDgetcompress");
+    VERIFY(comp_type, COMP_CODE_SZIP, "SDgetcompress");
+
     /* Wipe out the output buffer */
     HDmemset(&out_data, 0, sizeof(out_data));
 
@@ -134,7 +141,6 @@ test_szip_SDS8bit()
     edges[1] = WIDTH;
     status = SDreaddata (sds_id, start, NULL, edges, (VOIDP)out_data);
     CHECK(status, FAIL, "SDreaddata");
-
     /* Compare read data against input data */
     for (j=0; j<LENGTH; j++) 
     {
@@ -699,6 +705,8 @@ test_szip_chunk()
    int16         fill_value = 0;   /* Fill value */
    int    	 num_errs = 0;    /* number of errors so far */
    int           i,j;
+   comp_coder_t  comp_type;      /* to retrieve compression type into */
+   comp_info     cinfo;             /* compression information structure */ 
    /*
    * Define all chunks.  Note that chunks 4 & 5 are not used to write,
    * only to verify the read data.  The 'row' and 'column' are used
@@ -836,6 +844,14 @@ test_szip_chunk()
     sds_id = SDselect (sd_id, sds_index);
     CHECK(sds_id, FAIL, "SDselect:Failed to select a data set for chunking/szip compression testing");
 
+    /* Retrieve compression informayion about the dataset */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */  
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    status = SDgetcompress(sds_id, &comp_type, &cinfo);
+    CHECK(status, FAIL, "SDgetcompress");
+    VERIFY(comp_type, COMP_CODE_SZIP, "SDgetcompress");
+
+    
     /* Read the entire data set using SDreaddata function. */
     start[0] = 0;
     start[1] = 0;
