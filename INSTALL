@@ -30,7 +30,7 @@
   2.5.6 PowerPC/68k(far/4i/8d)- Macintosh OS
   2.5.7 Exemplar (HP-UX 9.03)
   2.5.8 SP2 Single node
-  2.5.9 T3D Single node
+  2.5.9 T3D/T3E Single node
   2.5.10 IRIX 6.2
   2.5.11 DEC Alpha(Digital Unix v4.0)
   2.5.12 CRAY T90 (CRAY format and IEEE)
@@ -106,7 +106,8 @@
   PowerPC(Mac-OS-7.6)             Codewarrior 11     -              
   68k-far/4i/8d(Mac-OS-7.6)         -                -           
   Windows NT/95                   Visual C++ 4.2     -             
-  T3D (v9.0.2asC)                   -                -           
+  T3E (unicosmk 2.0.2.16)         CC 6.0.2.0       f90 3.0.2.0.2
+
 
 2.2  Third Party Software Requirements:
      ==================================
@@ -558,20 +559,30 @@
     not support concurrent access of the same HDF file.
 
 
-    2.5.9 T3D Single node
-    ---------------------
-    ** Not supported with HDF 4.1r1 **
- 
-    HDF has been ported to the T3D system but only the C interface is
-    supported for now.  To make the binary, you need to specify 't3d'
-    for the configure command, as follows.  (See the section "Specifying 
-    the System Type" for more details.)
+    2.5.9 T3D/T3E Single node
+    -------------------------
+    T3E:
+    HDF has been compiled and tested to run in a single node of the
+    T3E system.  To use it in the parallel processing environment on
+    the T3E system, you must run the HDF code in only one designated
+    process since HDF does not support concurrent access to the same
+    HDF file.
+    NOTE: HDF is compiled with the f90 compiler starting this release.
+    Cray has phased out the cf77 compiler.  The f90 compiler issues
+    numerous warnings during the compiling of the Fortran API test
+    programs.  They can be safely ignored.  One warning is about the
+    unsupported DOUBLE PRECISION being replaced by REAL.  That works
+    fine for the purpose of the test programs since T3E REAL is 8
+    bytes big which is the same size as DOUBLE PRECISION in other machines.
+    Another warning is by the loader complaining about many SYMBOLS
+    referenced but not defined.  Those SYMBOLS are actually HDF Fortran
+    function names declared in dffunc.inc file and they are not used
+    in the testing.
 
-	./configure t3d
-
-    To use it in the parallel processing environment on the T3D system,
-    you must run the HDF code in only one designated process since HDF
-    does not support concurrent access of the same HDF file.
+    T3D:
+    HDF no long supports the T3D platform due to the advance of the
+    T3E platform and the lack of appropriate fortran compiler in the
+    T3D platform.
 
 
     2.5.10 IRIX 6.2
