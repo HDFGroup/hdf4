@@ -143,7 +143,8 @@ debug:  $(PROGRAM)  ../libsrc/libmfhdf.a
 	purify $(CC) $(CFLAGS) $(CFLAGS_NETCDF) $(OBJS) $(LIBS) -o phdp
 
 
-test:	echo "*** there is no testing for $(PROGRAM) ***" ; 
+test: hdp
+	sh -x testhdp.sh
 
 install::	installed_program installed_manuals
 install-utils::	installed_program
