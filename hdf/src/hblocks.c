@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.12  1993/09/30 19:04:58  koziol
-Added basic compressing functionality for special tags.
+Revision 1.13  1993/10/04 20:02:39  koziol
+Updated error reporting in H-Layer routines, and added more error codes and
+compression stuff.
 
+ * Revision 1.12  1993/09/30  19:04:58  koziol
+ * Added basic compressing functionality for special tags.
+ *
  * Revision 1.11  1993/09/28  18:04:18  koziol
  * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
  * tag handling.  Added new compression special tag type.
@@ -302,6 +306,8 @@ int32 HLcreate(file_id, tag, ref, block_length, number_blocks)
     access_rec->posn = 0;
     access_rec->access = DFACC_WRITE;
     access_rec->file_id = file_id;
+    access_rec->appendable=FALSE;   /* start data as non-appendable */
+    access_rec->flush=FALSE;        /* start data as not needing flushing */
     file_rec->attach++;
 
     return ASLOT2ID(slot);

@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.16  1993/09/30 19:05:12  koziol
-Added basic compressing functionality for special tags.
+Revision 1.17  1993/10/04 20:02:52  koziol
+Updated error reporting in H-Layer routines, and added more error codes and
+compression stuff.
 
+ * Revision 1.16  1993/09/30  19:05:12  koziol
+ * Added basic compressing functionality for special tags.
+ *
  * Revision 1.15  1993/09/28  18:44:15  koziol
  * Fixed various things the Sun's pre-processor didn't like.
  *
@@ -310,6 +314,8 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
     access_rec->posn = 0;
     access_rec->access = DFACC_WRITE;
     access_rec->file_id = file_id;
+    access_rec->appendable=FALSE;   /* start data as non-appendable */
+    access_rec->flush=FALSE;        /* start data as not needing flushing */
 
     file_rec->attach++;
     if (ref > file_rec->maxref)

@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.26  1993/10/01 20:01:07  koziol
-Put "extern C" block around function prototypes for C++ compatibility.
+Revision 1.27  1993/10/04 20:03:01  koziol
+Updated error reporting in H-Layer routines, and added more error codes and
+compression stuff.
 
+ * Revision 1.26  1993/10/01  20:01:07  koziol
+ * Put "extern C" block around function prototypes for C++ compatibility.
+ *
  * Revision 1.25  1993/09/28  19:06:52  koziol
  * Fixed prototyping the Iris didn't like.
  *
@@ -539,6 +543,9 @@ extern int32 HCPwrite
 extern int32 HCPendaccess
     PROTO((accrec_t *access_rec));
 
+extern int32 HCPcloseAID
+    PROTO((accrec_t *access_rec));
+
 #ifdef MAC
 extern hdf_file_t mopen
 	PROTO((char * filename, intn access));
@@ -562,4 +569,3 @@ extern int32 mwrite
 #endif /* c_plusplus || __cplusplus */
 
 #endif /* HFILE_H */
-

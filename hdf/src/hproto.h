@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.47  1993/10/01 20:01:11  koziol
-Put "extern C" block around function prototypes for C++ compatibility.
+Revision 1.48  1993/10/04 20:03:04  koziol
+Updated error reporting in H-Layer routines, and added more error codes and
+compression stuff.
 
+ * Revision 1.47  1993/10/01  20:01:11  koziol
+ * Put "extern C" block around function prototypes for C++ compatibility.
+ *
  * Revision 1.46  1993/09/30  19:05:18  koziol
  * Added basic compressing functionality for special tags.
  *
@@ -376,7 +380,7 @@ extern int32 HXcreate
 */
 extern int32 HCcreate
     PROTO((int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
-        comp_code_t coder_type));
+        comp_coder_t coder_type));
 
 /*
 ** from herr.c
@@ -1912,4 +1916,3 @@ extern int DFUfptoimage
 #endif /* c_plusplus || __cplusplus */
 
 #endif /* _H_PROTO */
-

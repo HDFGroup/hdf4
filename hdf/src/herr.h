@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.9  1993/10/01 20:01:05  koziol
-Put "extern C" block around function prototypes for C++ compatibility.
+Revision 1.10  1993/10/04 20:02:49  koziol
+Updated error reporting in H-Layer routines, and added more error codes and
+compression stuff.
 
+ * Revision 1.9  1993/10/01  20:01:05  koziol
+ * Put "extern C" block around function prototypes for C++ compatibility.
+ *
  * Revision 1.8  1993/09/30  19:05:10  koziol
  * Added basic compressing functionality for special tags.
  *
@@ -67,13 +71,13 @@ Put "extern C" block around function prototypes for C++ compatibility.
    same assumptions as HERROR.  IN ADDITION, this macro causes
    a return from the calling routine */
 
-#define HRETURN_ERROR(err, ret_val) {HERROR(err); return(ret_val);}
+#define HRETURN_ERROR(err, ret_val) {HERROR(err); return(ret_val);} 
 
 /* HCLOSE_RETURN_ERROR macro, used to facilitate error reporting.  Makes
    same assumptions as HRETURN_ERROR.  IN ADDITION, this macro causes
    the file specified by the id "fid" to be closed */
 
-#define HCLOSE_RETURN_ERROR(hfid, err, ret_val) {HERROR(err); Hclose(hfid); return(ret_val);}
+#define HCLOSE_RETURN_ERROR(hfid, err, ret_val) {HERROR(err); Hclose(hfid); return(ret_val);} 
 
 #if 0
 /* Clear the error stack */
@@ -162,6 +166,8 @@ extern int32 error_top;
 #define DFE_CANTDELHASH -70 /* Cannot delete a DD from the hash table */
 #define DFE_BADMODEL    -71 /* Invalid compression model specified */
 #define DFE_BADCODER    -72 /* Invalid compression encoder specified */
+#define DFE_MODEL       -73 /* Error in modeling layer of compression */
+#define DFE_CODER       -74 /* Error in encoding layer of compression */
 
 #ifdef _H_ERR_MASTER_
 
@@ -174,7 +180,7 @@ typedef struct error_messages_t {
     char *str;
 } error_messages_t;
 
-PRIVATE struct error_messages_t error_messages[] =
+PRIVATE const error_messages_t error_messages[] =
 {
 { DFE_NONE,        "No error"},
 { DFE_FNF,         "File not found"},
@@ -247,9 +253,10 @@ PRIVATE struct error_messages_t error_messages[] =
 { DFE_CANTDELDD,   "Cannot delete a DD in the file"},
 { DFE_CANTDELHASH, "Cannot delete a DD from the hash table"},
 { DFE_BADMODEL,    "Invalid compression model specified"},
-{ DFE_BADCODER,    "Invalid compression coder specified"}
+{ DFE_BADCODER,    "Invalid compression coder specified"},
+{ DFE_MODEL,       "Error in modeling layer of compression"},
+{ DFE_CODER,       "Error in encoding layer of compression"}
 };
 #endif /* _H_ERR_MASTER_ */
 
 #endif /* __HERR_H */
-
