@@ -1499,8 +1499,10 @@ VOIDP data;
     if (nt & DFNT_NATIVE) 
         return FAIL;
 
-    /* Make sure that count is less than MAX_ORDER(Vdata) */
-    if (count > MAX_ORDER)
+    /* Make sure that count is less than MAX_ORDER(Vdata)
+           and total size is less than MAX_FIELD_SIZE(Vdata) */
+    if ((count > MAX_ORDER) ||
+        ((count * DFKNTsize(nt)) > MAX_FIELD_SIZE))
        return FAIL;
 
     /* determine what type of ID we've been given */
