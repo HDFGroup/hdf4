@@ -228,6 +228,7 @@ C
       integer vsfgnam
       integer vsfinq
       integer vsflone
+      integer vsfndc
       integer vsfread
       integer vsfscls
       integer vsfseek
