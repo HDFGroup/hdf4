@@ -327,8 +327,8 @@ intn hdf_read_ndgs(handle)
                     if (Hlength(handle->hdf_file, tmpTag, tmpRef) == 36) {
                         /* DFNT_FLOAT64 based calibration */
                         
-                        DFKconvert(DFtbuf, 
-                                   (unsigned char *) tBuf, 
+                        DFKconvert((VOIDP)DFtbuf, 
+                                   (VOIDP) tBuf, 
                                    DFNT_FLOAT64, 4, DFACC_READ, 0, 0);
                         
                         attrs[current_attr++] = 
@@ -358,8 +358,8 @@ intn hdf_read_ndgs(handle)
                     } else {
                         /* DFNT_FLOAT32 based calibration */
 
-                        DFKconvert(DFtbuf, 
-                                   (unsigned char *) tBuf, 
+                        DFKconvert((VOIDP)DFtbuf, 
+                                   (VOIDP)tBuf, 
                                    DFNT_FLOAT32, 4, DFACC_READ, 0, 0);
                         
                         attrs[current_attr++] = 
@@ -396,8 +396,8 @@ intn hdf_read_ndgs(handle)
                     if (Hgetelement(handle->hdf_file, tmpTag, tmpRef, DFtbuf) == FAIL)
                         return FALSE;
                     
-                    DFKconvert(DFtbuf, 
-                               (unsigned char *) tBuf, 
+                    DFKconvert((VOIDP)DFtbuf, 
+                               (VOIDP)tBuf, 
                                HDFtype, 2, DFACC_READ, 0, 0);
                     
                     attrs[current_attr++] = 
@@ -707,7 +707,7 @@ intn hdf_read_ndgs(handle)
                 attrs[current_attr++] = 
                     (NC_attr *) NC_new_attr("units", 
                                             NC_CHAR, 
-                                            HDstrlen(unitbuf), 
+                                            HDstrlen((char *)unitbuf), 
                                             (Void *) unitbuf);
                 
             }
