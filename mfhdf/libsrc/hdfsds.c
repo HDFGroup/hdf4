@@ -139,6 +139,8 @@ intn hdf_read_ndgs(handle)
     uint8  *p, tBuf[128];
     char   *q;
 
+    intn scale_offset;   /* current offset into the scales record for the
+                            current dimension's values */
 
     /*
      *  Allocate the array to store the dimensions
@@ -491,9 +493,11 @@ intn hdf_read_ndgs(handle)
                 scalebuf = NULL;
             }
             
+            /* skip over the garbage at the beginning */
+            scale_offset = rank * sizeof(uint8);
+            
             for (dim = 0; dim < rank; dim++) {
                 intn this_dim     = FAIL;
-                intn scale_offset = rank * sizeof(uint8);
                 char *unitname    = NULL;
                 
                 /* now loop though each dimension
@@ -618,7 +622,7 @@ intn hdf_read_ndgs(handle)
              */
             if(namebuf) {
                 char *c;
-                for(c = namebuf; *c; c++)
+                for(c = (char *)namebuf; *c; c++)
                     if((*c) == ' ') (*c) = '_';
 
                 vars[current_var] = NC_new_var((char *) namebuf, type, (int) rank, vardims);
