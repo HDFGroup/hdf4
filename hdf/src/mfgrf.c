@@ -54,6 +54,8 @@ static char RcsId[] = "@(#)$Revision$";
  *  mggnatt:    Call GRgetattr to read a numeric attribute from the file
  *  mggattr:    Call GRgetattr to read an attribute from the file
  *  mgfndat:    Call GRfindattr to get the index of an attribute for a name
+ *  mglut2ref:  Call GRluttoref to get reference number for a palette specified
+ *                   by palette identifier
  * Remarks: 
  *---------------------------------------------------------------------------*/
 
@@ -1196,7 +1198,7 @@ return(ret);
 
 }   
 /*-------------------------------------------------------------------------
- * Name:    mgclt2rf
+ * Name:    mglt2rf
  * Puporse: Call GRluttoref
  * Inputs:  id: LUT id returned by GRgetlutid(mggltid) 
  * Returns: valid reference number if a pallette exists or 0 (DFREF_WILDCARD)
@@ -1206,9 +1208,9 @@ return(ret);
 
     FRETVAL (intf)
 #ifdef PROTOTYPE
-       nmgclt2rf(intf *id)
+       nmglt2rf(intf *id)
 #else
-       nmgclt2rf( id)
+       nmglt2rf( id)
        intf *id;
 #endif /* PROTOTYPE */
 {
