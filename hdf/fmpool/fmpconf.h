@@ -28,7 +28,12 @@
 #define HAVE_SIZE_T
 #define HAVE_SSIZE_T
 #define HAVE_SIGSET_T
+#define HAVE_LIMITS_H
+#define HAVE_UNISTD_H
+#define HAVE_STDLIB
 #define HAVE_FCNTL
+#define HAVE_STAT
+#define HAVE_MIN_MAX
 
 #endif /* _FMPCONF_H */
 
