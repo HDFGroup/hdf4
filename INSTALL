@@ -11,7 +11,12 @@
   2.4 General Configuration/Installation - Unix
   2.4.1 Overview
   2.4.2 Layout of configuration files
-  2.4.3 Changing default values(CC,CFLAGS,..)
+
+  2.4.3 Changing default values(CC,CFLAGS,..) and Setting Options
+  2.4.3.1 Changing default values(CC,CFLAGS,..)
+  2.4.3.2 Using HDF/MFHDF libraries w/ original netCDF library
+  2.4.3.3 Setting other Options
+
   2.4.4 Running configure
   2.4.5 Dealing with Configure Problems
   2.4.6 Compiling, Testing and Installing
@@ -195,9 +200,9 @@ or
                 hdf/fmpool/config/mh-hpux, mh-sun,...(host makefile fragments)
                 hdf/fmpool/config/fmpsolaris.h,...    -> linked to fmpconf.h
 
-    2.4.3 Changing default values(CC,CFLAGS,..)
-    -------------------------------------------
-    To change any of the default values for CC, FC, CFLAGS, FFLAGS,..etc
+    2.4.3 Changing default values(CC,CFLAGS,..) and Setting Options
+    ---------------------------------------------------------------
+    To change any of the default values or set any of the options 
     edit the makefile fragment: 
 
              $(toplevel)/config/mh-<os>
@@ -205,10 +210,32 @@ or
     for your particular operating system. After changing the values you must 
     re-run the top-level 'configure' script.Make sure you start from
     a clean distribution if you are rebuilding after a previous make
-   (i.e. 'make distclean') before re-running 'configure'.
+    (i.e. 'make distclean') before re-running 'configure'.
 
-    It is also a good idea to look at the other variables to make sure 
-    they are set correctly for your system.
+      2.4.3.1 Changing default values(CC,CFLAGS,..)
+      ********************************************
+      To change any of the default values for CC, FC, CFLAGS, FFLAGS,..etc
+      edit the top part of the makefile fragment: $(toplevel)/config/mh-<os>
+      It is also a good idea to look at the other system variables to make sure 
+      they are set correctly for your system.
+
+      2.4.3.2 Using HDF/MFHDF libraries w/ original netCDF library
+      ************************************************************
+      To use the HDF/MFHDF libraries(libdf.a, libmfhdf.a) with the
+      orignal netCDF library(libnetcdf.a) the HDF/MFHDF distribution
+      must be compiled with the option '-DHAVE_NETCDF'. This will
+      rename the HDF version of the C-interface(ncxxx) of netCDF API
+      to sd_ncxxx to avoid clashing with the orignal netCDF API from
+      libnetcdf.a. Currently there is no support for renaming the 
+      netCDF Fortran interface stubs. As such the HDF/MFHDF distribution 
+      must be compilied without fortran support. HDF Users can still access
+      HDF/netCDF files through the SDxxx interface but not through the
+      ncxxx interface unless the renamed interface is used(sd_ncxxx).
+
+      2.4.3.3 Setting other Options
+      *****************************
+      The makefile fragment is also the place modify to enable the featues 
+      mentioned in sections 2.6) and 2.7) below.
 
     2.4.4 Running configure
     -----------------------
