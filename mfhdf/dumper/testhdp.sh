@@ -7,8 +7,32 @@
 CMD='./hdp'
 RM='rm -f'
 DIFF=diff
-errors=0
+nerrors=0		# number of errors (0)
+quitonerr=0		# quit on error (not)
+noclean=0		# no cleaning temp. files (yes)
 
+
+# parse arguments
+while [ $# -gt 0 ]
+do
+    case "$1" in
+	"-quit")
+	    quitonerr=1
+	    ;;
+	"-noclean")
+	    noclean=1
+	    ;;
+	"-help" | * )
+	    echo "Usage: $0 [-help] [-quit] [-noclean]"
+	    echo "    -help: display help information"
+	    echo "    -noclean: do not clean away temporary files"
+	    echo "    -quit: quit immediately if any test fails"
+	    exit 0
+	    ;;
+    esac
+    shift
+done
+    
 
 # Definitions of functions/shorthands
 #
@@ -53,18 +77,41 @@ TEST()
     expected=testfiles/$1
     shift
     # print a id banner
-    MESG 6 $@
+    MESG 6 "$@"
     # run the test
-    MESG 0 "Expected output for '$CMD $@'" > $output
-    $CMD "$@" >> $output
-    if ($DIFF $expected $output)
+    ( 
+	echo "#############################"
+	echo "Expected output for '$CMD $@'" 
+	echo "#############################"
+        $CMD "$@"
+    ) > $output
+    $DIFF $expected $output
+    if [ $? -ne 0 ]
     then
-	# no action
-	true
-    else
 	echo "   <<< FAILED >>>"
-	errors=`expr $errors + 1`
+	nerrors=`expr $nerrors + 1`
+	if [ $quitonerr -gt 0 ]; 
+	then
+	    FINISH
+	fi
     fi
+    if [ $noclean -eq 0 ]
+    then
+	$RM $output
+    fi
+}
+
+
+# Report the result and exit
+FINISH()
+{
+    if [ $nerrors -eq 0 ]
+    then
+	MESG 0 "All tests passed"
+    else
+	MESG 0 "Tests failed: $nerrors"
+    fi
+    exit $nerrors
 }
 
 
@@ -146,11 +193,5 @@ TEST dumpgr-10.out dumpgr grtdfui84.hdf
 TEST dumpgr-11.out dumpgr grtdfui162.hdf
 TEST dumpgr-12.out dumpgr grtdfi322.hdf
 
-# Result
-if [ $errors -eq 0 ]
-then
-    MESG 0 "All tests passed"
-else
-    MESG 0 "Tests failed: $errors"
-fi
-exit $errors
+# End of test
+FINISH
