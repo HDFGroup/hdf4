@@ -10,6 +10,8 @@ HDF4.1r2
    of Little Endian.
 6. HDF will no longer fail if you write data to a vdata that had no data 
    written to it when it was first created.
+7. The problems that occurred on the Crays with HDF 4.1r1 have been
+   corrected.
 
 HDF4.1r1
 ========
