@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/07/06 22:54:16  mlivin
-Initial revision
+Revision 1.2  1992/07/14 17:50:30  mlivin
+updated help with no pixrect, name of 'hdfed' not 'he'
 
+ * Revision 1.1  1992/07/06  22:54:16  mlivin
+ * Initial revision
+ *
 */
 /******************************************************************************
  * he - HDF editor
@@ -1178,37 +1181,34 @@ void help()
 #endif
 {
   /* print some help informations */
-  printf("he allows sophisticated HDF users to manipulate the elements in ");
-  printf("an HDF file.\nThese manipulations include selecting groups and ");
+  printf("hdfed allows sophisticated HDF users to manipulate the elements in");
+  printf(" an HDF file.\nThese manipulations include selecting groups and ");
   printf("showing information about\nthem, dumping them to the output, ");
   printf("writing them to new files, deleting them,\ninserting them, ");
   printf("replacing, say, the palette of an r8 group, and editing the\n");
   printf("text labels and descriptions of any element.\n\n");
 
-  printf("he will NOT allow the user to *arbitrarily* modify binary data in");
-  printf(" the file or\nany element, though it allows modification of tag ");
+  printf("hdfed will NOT allow the user to *arbitrarily* modify binary data ");
+  printf("in the file or\nany element, though it allows modification of tag ");
   printf("and reference numbers within\nstrict constraints.  The user should");
   printf(" not attempt to alter individual bytes.  It\nis acceptable,");
   printf(" however, to replace an element with another of the same type.\n\n");
 
-  printf("he can be used both interactively or in \"batch\" mode.  See the ");
-  printf("\"HDF Calling\nInterfaces and Utilities\" manual section on he for");
-  printf(" an example.\n\n");
+  printf("hdfed can be used both interactively or in 'batch' mode.  See the ");
+  printf("\"HDF Calling\nInterfaces and Utilities\" manual section on hdfed ");
+  printf("for an example.\n\n");
 
   printf("List of commands:");
   printf(    "\tannotate   dump    if      open    putr8    unalias\n");
   printf("\t\t\tclose      getr8   info    prev    revert   wait\n");
   printf("\t\t\tdelete     help    next    put     select   write\n");
-#ifdef SUN
-  printf("\t\t\tdisplay \n");
-#endif
 
-  printf("\nPredicates are of the form TAG = 3 IMAGE_SIZE < 1000 ");
-  printf(" LABEL = \"abc\"\n");
+  printf("\nPredicates for 'if' 'select' 'next' and 'prev' are of the form\n");
+  printf("\ttag = 3 ref = 2 image_size < 1000 label = \"abc\"\n");
   printf("Type <command> -help for usage of <command>.  DO NOT type the");
   printf(" command without\narguments and expect help.  Some commands delete");
   printf(" objects and do not need any\narguments.  If you are learning to ");
-  printf("use he, try it on an expendable file.\n");
+  printf("use hdfed, try it on an expendable file.\n");
 
 }
 
