@@ -1843,7 +1843,7 @@ uint16 Hnewref(file_id)
  NAME
        Hishdf -- tells if a file is an HDF file
  USAGE
-       int32 Hishdf(path)
+       intn Hishdf(path)
        char *path;             IN: name of file
  RETURNS
        returns TRUE (non-zero) if file is HDF, FALSE (0) otherwise
@@ -1854,7 +1854,7 @@ uint16 Hnewref(file_id)
  REVISION LOG
 --------------------------------------------------------------------------*/
 
-int32
+intn
 #ifdef PROTOTYPE
 Hishdf(char *filename)
 #else
@@ -1899,7 +1899,7 @@ Hishdf(filename)
         else ret = FALSE;
 
         HI_CLOSE(fp);
-        return(ret);
+        return((int)ret);
     }
 #endif
 } /* Hishdf */

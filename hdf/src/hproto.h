@@ -148,7 +148,7 @@ extern bool HDvalidfid
 extern char _HUGE *HDgettagname
   PROTO((uint16 tag));
 
-extern int32 Hishdf
+extern intn Hishdf
   PROTO((char _HUGE *filename));
 
 extern intn Hfidinquire
