@@ -43,6 +43,17 @@ test_hextelt(void)
     int32       ret;
     intn        errflag  = 0;
     intn        errors = 0;
+    const char *basename = "testdir";
+    char    testdir[512] = "";
+    char   *srcdir = getenv("srcdir");
+
+
+    /* Generate the correct name for the test file, by prepending the source path */
+    if (srcdir && ((strlen(srcdir) + strlen(basename) + 1) < sizeof(testdir))) {
+        strcpy(testdir, srcdir);
+        strcat(testdir, "/");
+    }
+    strcat(testdir, basename);
 
     /* Initialize buffer */
     for (i = 0; i < BUF_SIZE; i++)
@@ -424,7 +435,7 @@ test_hextelt(void)
     fid = Hopen(TESTFILE_NAME1, DFACC_CREATE, 0);
     CHECK(fid, FAIL, "Hopen");
 
-    ret = HXsetcreatedir("testdir");
+    ret = HXsetcreatedir(testdir);
     CHECK(ret, FAIL, "HXsetcreatedir");
    
     MESSAGE(5, printf("Creating an external element in file testdir/t5.hdf\n");
