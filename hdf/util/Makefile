@@ -13,7 +13,7 @@
 # $Id$
 #
 UTILS = hdf24to8 hdfcomp hdfls hdfpack hdfrseq hdftopal hdftor8 paltohdf \
-        r8tohdf ristosds vcompat vmake vshow make24 hdf2jpeg jpeg2hdf 
+        r8tohdf ristosds vcompat vmake vshow make24 hdf2jpeg jpeg2hdf fp2hdf
 
 HEOBJ = he_main.o he_cntrl.o he_disp.o he_file.o
 
@@ -58,11 +58,11 @@ CFLAGS = -D$(MACHINE)
 	$(CC) -c $(CFLAGS) -I$(HDFINC) $(HDFLIB)/libdf.a $(GLLAB)  $<
 #	$(CC) -c $(CFLAGS) -I$(HDFINC) $(GLLIB)  $<
 
-all: hdfed utils 
+all: hdfed utils fp2hdf fptest fptestf
 	-if( test \! -d $(HDFBIN)) then (mkdir $(HDFBIN)) fi
 	-cp $(UTILS) hdfed $(HDFBIN)
 
-nofortran: all
+nofortran: hdfed utils fp2hdf fptest
 
 hdfed: he.h he_proto.h $(HEOBJ) $(HDFLIB)/libdf.a
 	$(CC) $(CFLAGS) -I$(HDFINC) $(HEOBJ) $(HDFLIB)/libdf.a -o hdfed
@@ -70,10 +70,13 @@ hdfed: he.h he_proto.h $(HEOBJ) $(HDFLIB)/libdf.a
 .c: $(HDFLIB)/libdf.a
 	$(CC) $(CFLAGS) -I$(HDFINC) $< -o $@ $(HDFLIB)/libdf.a $(GLLIB)
 
+.f: $(HDFLIB)/libdf.a
+	$(FC) $(FFLAGS) $< $(HDFLIB)/libdf.a -o $@
+
 utils: $(UTILS) $(HDFLIB)/libdf.a
 
 clean:
-	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed
+	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed fptest fptestf
 
 distclean:
-	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed
+	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed fptest fptestf
