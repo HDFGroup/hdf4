@@ -823,6 +823,62 @@ done:
   return ret_value;
 }	/* end Hinquire */
 
+
+/* ----------------------------- Hfidinquire ----------------------------- */
+/*
+** NAME
+**      Hfidinquire --- Inquire about a file ID
+** USAGE
+**      int Hfidinquire(file_id)
+**      int32 file_id;          IN: handle of file
+**      char  *path;            OUT: path of file
+**      int32 mode;             OUT: mode file is opened with
+** RETURNS
+**      returns SUCCEED (0) if successful and FAIL (-1) if failed.
+** DESCRIPTION
+** GLOBAL VARIABLES
+** COMMENTS, BUGS, ASSUMPTIONS
+--------------------------------------------------------------------------*/
+intn 
+Hfidinquire(int32 file_id, char **fname, intn *access, intn *attach)
+{
+    CONSTR(FUNC, "Hfidinquire");               /* for HERROR */
+    filerec_t *file_rec;
+    intn      ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+    TRACE_ON(H_mask, ID_Hfidinquire);
+#endif /* HAVE_PABLO */
+
+    HEclear();
+
+    file_rec = FID2REC(file_id);
+    if (BADFREC(file_rec))
+        HGOTO_ERROR(DFE_BADACC, FAIL);
+
+    *fname  = file_rec->path;
+    *access = file_rec->access;
+    *attach = file_rec->attach;
+
+done:
+  if(ret_value == FAIL)
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(H_mask, ID_Hfidinquire);
+#endif /* HAVE_PABLO */
+
+
+  return ret_value;
+
+
+} /* Hfidinquire */
+
+/*------------------------------------------------------------------*/
+
 #ifdef OLD_WAY
 /*--------------------------------------------------------------------------
 
