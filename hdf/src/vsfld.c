@@ -795,7 +795,7 @@ DESCRIPTION
        which should agree with the number of fields to be 
        packed/unpacked. 
     3. For packtype = _HDF_VSPACK, the calling sequence should be:
-          VSsetfields,  VSwrite and VSfpack;
+          VSsetfields,  VSfpack, and VSwrite;
        For packtype = _HDF_VSUNPACK, the calling sequence should be:
           VSsetfields, VSread and VSfpack.
 */

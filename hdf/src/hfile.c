@@ -2690,6 +2690,11 @@ void HPend(void)
 
     /* can't issue errors if you're free'ing the error stack. */
     HDGLdestroy_list(cleanup_list);    /* clear the list of interface cleanup routines */
+    /* free allocated list struct */
+    HDfree(cleanup_list);
+    /* re-initialize */
+    cleanup_list = NULL;
+
 
     HPbitshutdown();
     HXPshutdown();

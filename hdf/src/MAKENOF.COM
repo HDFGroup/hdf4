@@ -19,12 +19,12 @@ $ ccc := cc/noopt/debug/include=([-.jpeg],[-.zlib])/define=VMS
 $ type sys$input
 	Creating base HDF library
 
-$ cobj="df24, dfan, dfcomp, dfgr, dfgroup, dfimcomp, dfp, dfr8, dfsd, "+-
-"dfstubs, dfutil, hblocks, herr, hextelt, hfile, hkit, vg, vgp, vhi, "+-
+$ cobj="df24,dfan,dfcomp, dfgr, dfgroup, dfimcomp, dfp, dfr8, dfsd, "+-
+"dfstubs, dfutil,hblocks, herr, hextelt, hfile, hkit, vg, vgp, vhi, "+-
 "vio, vparse, vrw, vsfld, dfconv, vconv, dfrle, dfjpeg, dfunjpeg, "+-
-"dfufp2i, dfknat, dfkswap, dfkcray, dfkvms, dfkconv, dfkfuji, hbitio, "+-
-"tbbt, hdfalloc, mfgr, cdeflate, cnbit, cnone, crle, cskphuff, hcomp, mfan," +-
-"mstdio,atom, bitvect, dynarray, hfiledd "
+"dfufp2i,dfknat,dfkswap,dfkcray, dfkvms, dfkconv, dfkfuji,hbitio, "+-
+"tbbt,hdfalloc,mfgr,cdeflate,cnbit,cnone,crle,cskphuff,hcomp,mfan," +-
+"mstdio,atom, bitvect, dynarray, hfiledd, glist "
 
 $ ccc 'cobj 
 $ library/create []df  'cobj

@@ -254,7 +254,7 @@ nmggiinf(intf * riid, _fcd name, intf *ncomp, intf *nt, intf *il, intf *dimsizes
 FRETVAL(intf)
 nmgwcimg(intf * riid, intf *start, intf *stride, intf *count, _fcd data)
 {
-    return(nmgwrimg(riid, start, stride, count, _fcdtocp(data)));
+    return(nmgwrimg(riid, start, stride, count, (VOIDP)_fcdtocp(data)));
 }   /* end mgwcimg() */
 
 /*-----------------------------------------------------------------------------
@@ -303,7 +303,7 @@ nmgwrimg(intf * riid, intf *start, intf *stride, intf *count, VOIDP data)
 FRETVAL(intf)
 nmgrcimg(intf * riid, intf *start, intf *stride, intf *count, _fcd data)
 {
-    return(nmgrdimg(riid, start, stride, count, _fcdtocp(data)));
+    return(nmgrdimg(riid,start,stride,count,(VOIDP)_fcdtocp(data)));
 }   /* end mgrcimg() */
 
 /*-----------------------------------------------------------------------------
