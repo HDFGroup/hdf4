@@ -123,25 +123,25 @@ all:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd  
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="fmpool src pablo util test" subd message 
+          SUBDIRS="src fmpool pablo util test" subd message 
 
 allnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd  
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
-          SUBDIRS="fmpool src pablo util test" subd message 
+          SUBDIRS="src fmpool pablo util test" subd message 
 
 rebuild rebuildnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="fmpool src pablo util test" subd message 
+          SUBDIRS="src fmpool pablo util test" subd message 
 
 libnofortran:
 	@$(MAKE) $(MYFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
 	  SUBDIRS="jpeg" subd 
 	@$(MAKE) $(MYFLAGS) $(HDF_FLAGS) TARG=nofortran \
-	  SUBDIRS="fmpool src pablo" subd message
+	  SUBDIRS="src fmpool pablo" subd message
 
 libnostub: libnofortran
 
@@ -151,7 +151,7 @@ libs:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="fmpool src pablo" subd
+          SUBDIRS="src fmpool pablo" subd
 
 libdf:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
@@ -165,19 +165,19 @@ utilities:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="fmpool src pablo util" subd
+          SUBDIRS="src fmpool pablo util" subd
 
 hdf-test:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="fmpool src pablo test" subd
+          SUBDIRS="src fmpool pablo test" subd
 
 testnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
-          SUBDIRS="fmpool src pablo test" subd message 
+          SUBDIRS="src fmpool pablo test" subd message 
 
 test-hdf:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=test-hdf \
@@ -201,7 +201,7 @@ perfs:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="fmpool src perf" subd
+          SUBDIRS="src fmpool perf" subd
 
 #install:      $(INSTALL_DIRS)
 #	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
