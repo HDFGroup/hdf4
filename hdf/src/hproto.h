@@ -1790,11 +1790,11 @@ extern FRETVAL(VOID) nheprnt
 #ifdef DF_CAPFNAMES
 #   define nhiopen   FNAME(HIOPEN)
 #   define nhclose   FNAME(HCLOSE)
-#   define nhnumber  FNAME(HNUMBR)
+#   define nhnumber  FNAME(HNUMBER)
 #else
 #   define nhiopen   FNAME(hiopen)
 #   define nhclose  FNAME(hclose)
-#   define nhnumber FNAME(hnumbr)
+#   define nhnumber FNAME(hnumber)
 #endif /* DF_CAPFNAMES */
 #endif /* HFILE_FNAMES */
 
