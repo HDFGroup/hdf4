@@ -35,7 +35,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define MAXLEN_DESC  1000
 #define ROWS           10
 #define COLS           10
-#define REPS            2   /* number of data sets to write to file */
+#define REPS            32/*2*/   /* number of data sets to write to file */
 
 static VOID gen2Dfloat
             (int height, int width, float *data);
@@ -236,4 +236,98 @@ check_lab_desc(uint16 tag, uint16 ref, char *label, char *desc)
             }
           HDfree((VOIDP) indesc);
       }
+}
+
+
+void
+test_an_2(void)
+{
+    char        labsds[MAXLEN_LAB], labris[MAXLEN_LAB], descsds[MAXLEN_DESC],
+                descris[MAXLEN_DESC];
+    uint8       pal[768];
+    uint8      *image, *newimage;
+    uint16      refnum;
+    int32       ret;
+    intn        rank;
+    int         j;
+    int32       dimsizes[2];
+    float      *data;
+
+/* set up object labels and descriptions */
+
+    HDstrcpy(labsds, "Object label #1: sds");
+    HDstrcpy(labris, "Object label #2: image");
+    HDstrcpy(descsds, "Object Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 \n");
+    HDstrcat(descsds, "             13 14 15 16 17 18 19 20 **END SDS DESCR**\n");
+    HDstrcpy(descris, "Object Descr #2: A B C D E F G H I J K L \n");
+    HDstrcat(descris, "                M N O **END IMAGE DESCR **\n");
+
+/***** generate float array and image *****/
+
+    data = (float *) HDmalloc(ROWS * COLS * sizeof(float));
+    image = (uint8 *) HDmalloc(ROWS * COLS * sizeof(char));
+    newimage = (uint8 *) HDmalloc(ROWS * COLS * sizeof(char));
+
+    dimsizes[0] = ROWS;
+    dimsizes[1] = COLS;
+
+    gen2Dfloat(ROWS, COLS, data);
+    genimage(ROWS, COLS, data, image);
+
+    ret = DFSDsetdims(2, dimsizes);
+    RESULT("DFSDsetdims");
+
+/********  Write labels and descriptions *********/
+    MESSAGE(5, printf("***  Writing labels and descriptions with SDS and RIS ***\n");
+        );
+    for (j = 0; j < REPS; j++)
+      {
+
+          /* write out scientific data set */
+          ret = DFSDadddata(TESTFILE, 2, dimsizes, (VOIDP) data);
+          RESULT("DFSDadddata");
+
+          if ((j % 3) != 0)
+            {   /* write out annotations for 2 out of every 3 */
+                refnum = DFSDlastref();
+                ret = DFANputlabel(TESTFILE, DFTAG_SDG, refnum, labsds);
+                RESULT("DFANputlabel");
+                ret = DFANputdesc(TESTFILE, DFTAG_SDG, refnum,
+                                  descsds, (int32)HDstrlen(descsds));
+                RESULT("DFANputdesc");
+            }
+
+          ret = DFR8addimage(TESTFILE, (VOIDP) image, COLS, ROWS, 0);
+          RESULT("DFR8addimage");
+          refnum = DFR8lastref();
+          ret = DFANputlabel(TESTFILE, DFTAG_RIG, refnum, labris);
+          RESULT("DFANputlabel");
+          ret = DFANputdesc(TESTFILE, DFTAG_RIG, refnum, descris, (int32)HDstrlen(descris));
+          RESULT("DFANputdesc");
+      }
+
+/********  Read labels and descriptions *********/
+
+    MESSAGE(5, printf("*** Reading labels and descriptions for SDS and RIS ***\n");
+        );
+
+    for (j = 0; j < REPS; j++)
+      {
+
+          ret = DFSDgetdims(TESTFILE, &rank, dimsizes, 3);
+          RESULT("DFSDgetdims");
+          refnum = DFSDlastref();
+
+          if ((j % 3) != 0)     /* read in annotations for 2 out of every 3 */
+              check_lab_desc(DFTAG_SDG, refnum, labsds, descsds);
+
+          ret = DFR8getimage(TESTFILE, newimage, (int32) COLS, (int32) ROWS, pal);
+          RESULT("DFR8getimage");
+          refnum = DFR8lastref();
+          check_lab_desc(DFTAG_RIG, refnum, labris, descris);
+      }
+
+    HDfree((VOIDP) data);
+    HDfree((VOIDP) image);
+    HDfree((VOIDP) newimage);
 }

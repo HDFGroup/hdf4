@@ -162,6 +162,7 @@ main(int argc, char *argv[])
     InitTest("sdstr", test_tsdstr, "DATASTRINGS");
     InitTest("slabs", test_slab, "HYPERSLAB INTERFACE");
     InitTest("anot", test_an, "ANNOTATIONS");
+    InitTest("anot_2", test_an_2, "UPDATE ANNOTATIONS");
     InitTest("anfile", test_anfile, "FILE ANNOTATIONS");
     InitTest("manot", test_man, "MULTI-ANNOTATIONS");
     InitTest("nbit", test_nbit, "N-Bit Dataset Interface");

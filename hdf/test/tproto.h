@@ -19,6 +19,7 @@
 #include "tutils.h"
 
 void        test_an(void);
+void        test_an_2(void);
 void        test_anfile(void);
 void        test_man(void);
 void        test_hblocks(void);
