@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.14  1993/05/24 15:09:48  sxu
-Wrapped changes in HDF3.2 into 3.3.
+Revision 1.15  1993/06/17 15:59:31  chouck
+Fixed typo in a printf()
 
+ * Revision 1.14  1993/05/24  15:09:48  sxu
+ * Wrapped changes in HDF3.2 into 3.3.
+ *
  * Revision 1.13  1993/04/14  21:42:07  georgev
  * Had to add some VOIDP casts to some functions to make the compiler happy
  *
@@ -537,7 +540,7 @@ int dump(length, offset, format, raw_flag)
                 if (cdata[i] != '\0')
                    printf("%c", cdata[i]);
                 else 
-                   printf(' ');
+                   printf(" ");
                 if(++len > 40) {len = 0; printf("\n%8d: ", (offset + (i+1)));}  
             }
             printf("\n");
