@@ -15,15 +15,23 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1993/09/30 19:05:23  koziol
-Added basic compressing functionality for special tags.
+Revision 1.2  1993/10/01 20:01:23  koziol
+Put "extern C" block around function prototypes for C++ compatibility.
 
+ * Revision 1.1  1993/09/30  19:05:23  koziol
+ * Added basic compressing functionality for special tags.
+ *
  *
  */
 
 /* avoid re-inclusion */
 #ifndef __MSTDIO_H
 #define __MSTDIO_H
+
+/* model information about stdio model */
+typedef struct {
+    uint32 pos;
+ } comp_model_stdio_info_t;
 
 #ifndef MSTDIO_MASTER
 extern funclist_t mstdio_funcs;     /* functions to perform run-length encoding */
@@ -40,3 +48,4 @@ funclist_t mstdio_funcs={    /* functions to perform run-length encoding */
 #endif
 
 #endif /* __MSTDIO_H */
+

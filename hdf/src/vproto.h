@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.18  1993/09/14 20:17:23  chouck
-Added prototypes for erstwhile Vset macros
+Revision 1.19  1993/10/01 20:01:29  koziol
+Put "extern C" block around function prototypes for C++ compatibility.
 
+ * Revision 1.18  1993/09/14  20:17:23  chouck
+ * Added prototypes for erstwhile Vset macros
+ *
  * Revision 1.17  1993/09/08  18:29:33  koziol
  * Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
  *
@@ -71,13 +74,13 @@ Added prototypes for erstwhile Vset macros
  *
 */
 
+#if defined c_plusplus || defined __cplusplus
+extern "C" {
+#endif /* c_plusplus || __cplusplus */
+
 /*
 ** from vconv.c
 */
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 extern int32 vicheckcompat
   PROTO((HFILEID f));
 
@@ -597,8 +600,7 @@ extern FRETVAL(intf) nvgttrc
 extern FRETVAL(intf) nvadtrc
     PROTO((intf _HUGE *vkey, intf _HUGE *tag, intf _HUGE *ref));
 
-#ifdef __cplusplus
+#if defined c_plusplus || defined __cplusplus
 }
-#endif
-
+#endif /* c_plusplus || __cplusplus */
 

@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.2  1993/01/19 05:55:22  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.3  1993/10/01 20:00:48  koziol
+Put "extern C" block around function prototypes for C++ compatibility.
 
+ * Revision 1.2  1993/01/19  05:55:22  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -56,6 +59,10 @@ PRIVATE char	*DFelement	= NULL;
 
 extern DF *makedf();
 
+#if defined c_plusplus || defined __cplusplus
+extern "C" {
+#endif /* c_plusplus || __cplusplus */
+
 /* prototypes for internal routines */
 PRIVATE int DFIclearacc
    PROTO((void));
@@ -63,4 +70,9 @@ PRIVATE int DFIclearacc
 PRIVATE int DFIcheck
    PROTO((DF *dfile));
 
+#if defined c_plusplus || defined __cplusplus
+}
+#endif /* c_plusplus || __cplusplus */
+
 #endif /* DFSTUBS_H */
+

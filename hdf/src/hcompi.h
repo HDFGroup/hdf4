@@ -14,15 +14,22 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1993/09/30 19:16:25  koziol
-Initial revision of the internal compression header
+Revision 1.2  1993/10/01 20:00:57  koziol
+Put "extern C" block around function prototypes for C++ compatibility.
 
+ * Revision 1.1  1993/09/30  19:16:25  koziol
+ * Initial revision of the internal compression header
+ *
  *
  */
 
 /* avoid re-inclusion */
 #ifndef __HCOMPI_H
 #define __HCOMPI_H
+
+#if defined c_plusplus || defined __cplusplus
+extern "C" {
+#endif /* c_plusplus || __cplusplus */
 
 /*
 ** from crle.c
@@ -77,6 +84,10 @@ extern int32 HCPmstdio_write
 
 extern int32 HCPmstdio_endaccess
     PROTO((accrec_t *access_rec));
+
+#if defined c_plusplus || defined __cplusplus
+}
+#endif /* c_plusplus || __cplusplus */
 
 #endif /* __HCOMPI_H */
 

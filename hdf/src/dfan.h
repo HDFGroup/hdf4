@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.3  1993/01/19 05:54:07  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.4  1993/10/01 20:00:35  koziol
+Put "extern C" block around function prototypes for C++ compatibility.
 
+ * Revision 1.3  1993/01/19  05:54:07  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.2  1992/12/18  15:45:00  mfolk
  * Added defines for default label blocksize and default description
  * blocksize, for when annotations get converted to linked block
@@ -66,3 +69,4 @@ int32 _DFANIgetannlen();
 
 
 #endif /* DFAN_H */
+

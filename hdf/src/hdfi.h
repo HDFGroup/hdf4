@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.39  1993/09/30 19:05:08  koziol
-Added basic compressing functionality for special tags.
+Revision 1.40  1993/10/01 20:01:02  koziol
+Put "extern C" block around function prototypes for C++ compatibility.
 
+ * Revision 1.39  1993/09/30  19:05:08  koziol
+ * Added basic compressing functionality for special tags.
+ *
  * Revision 1.38  1993/09/28  18:04:26  koziol
  * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
  * tag handling.  Added new compression special tag type.
@@ -1204,3 +1207,4 @@ extern uint8 FAR *DFtbuf;
 #define DFSDnumber DFSDndatasets
 
 #endif /* HDFI_H */
+

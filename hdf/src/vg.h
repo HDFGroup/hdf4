@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.15  1993/09/30 19:05:27  koziol
-Added basic compressing functionality for special tags.
+Revision 1.16  1993/10/01 20:01:27  koziol
+Put "extern C" block around function prototypes for C++ compatibility.
 
+ * Revision 1.15  1993/09/30  19:05:27  koziol
+ * Added basic compressing functionality for special tags.
+ *
  * Revision 1.14  1993/09/28  18:04:56  koziol
  * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
  * tag handling.  Added new compression special tag type.
@@ -347,6 +350,9 @@ typedef struct vfiledir_struct {
 #define DFvsetclose(x)     Vclose((x))
 #endif /* OLD_MACROS */
 
+#if defined c_plusplus || defined __cplusplus
+extern "C" {
+#endif /* c_plusplus || __cplusplus */
 
 /*
  * Routines public to the VSet layer
@@ -366,4 +372,9 @@ extern int32 vinsertpair
 extern void vpackvs
     PROTO((VDATA _HUGE *vs, uint8 _HUGE buf[], int32 _HUGE *size));
 
+#if defined c_plusplus || defined __cplusplus
+}
+#endif /* c_plusplus || __cplusplus */
+
 #endif /* _VG_H */
+

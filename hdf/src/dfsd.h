@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.11  1993/08/16 21:45:30  koziol
-Wrapped in changes for final, working version on the PC.
+Revision 1.12  1993/10/01 20:00:46  koziol
+Put "extern C" block around function prototypes for C++ compatibility.
 
+ * Revision 1.11  1993/08/16  21:45:30  koziol
+ * Wrapped in changes for final, working version on the PC.
+ *
  * Revision 1.10  1993/04/19  22:47:40  koziol
  * General Code Cleanup to reduce/remove errors on the PC
  *
@@ -98,6 +101,10 @@ typedef struct DFnsdg_t_hdr	{
     DFnsdgle *nsdg_t;
 }  DFnsdg_t_hdr;
 
+#if defined c_plusplus || defined __cplusplus
+extern "C" {
+#endif /* c_plusplus || __cplusplus */
+
 extern int32 DFSDIopen
     PROTO((char _HUGE *filename, int access));
 
@@ -147,4 +154,9 @@ extern int DFSDIsetdatastrs
     PROTO((char _HUGE *label, char _HUGE *unit, char _HUGE *format,
             char _HUGE *coordsys));
 
+#if defined c_plusplus || defined __cplusplus
+}
+#endif /* c_plusplus || __cplusplus */
+
 #endif /*DFSDG*/
+

@@ -142,3 +142,4 @@ EXTERN VOID jmem_term PROTO((VOID));
 #endif /* JMEMSYS !=MEM_DOS */
 
 #endif /* JMEMSYS_H */
+

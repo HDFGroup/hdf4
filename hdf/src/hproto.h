@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.46  1993/09/30 19:05:18  koziol
-Added basic compressing functionality for special tags.
+Revision 1.47  1993/10/01 20:01:11  koziol
+Put "extern C" block around function prototypes for C++ compatibility.
 
+ * Revision 1.46  1993/09/30  19:05:18  koziol
+ * Added basic compressing functionality for special tags.
+ *
  * Revision 1.45  1993/09/28  19:06:55  koziol
  * Fixed prototyping the Iris didn't like.
  *
@@ -166,12 +169,12 @@ Added basic compressing functionality for special tags.
 #ifndef _H_PROTO
 #define _H_PROTO
 
-#ifdef __cplusplus
+#if defined c_plusplus || defined __cplusplus
 extern "C" {
-#endif
+#endif /* c_plusplus || __cplusplus */
 
 /*
-** from hfile.c 
+** from hfile.c
 */
 extern int32 Hopen 
   PROTO((char _HUGE *path, intn access, int16 ndds));
@@ -1904,8 +1907,9 @@ extern int DFUfptoimage
 #include "vproto.h"
 #endif /* PERM_OUT */
 
-#ifdef __cplusplus
+#if defined c_plusplus || defined __cplusplus
 }
-#endif
+#endif /* c_plusplus || __cplusplus */
 
 #endif /* _H_PROTO */
+

@@ -23,9 +23,12 @@
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1993/10/01 20:00:40  koziol
+Put "extern C" block around function prototypes for C++ compatibility.
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
  * Revision 1.5  1992/08/19  04:27:36  koziol
  * Updated header for new release (v3.2r1)
  *
@@ -51,3 +54,4 @@ Initial revision
 #include "hdf.h"
 
 #endif /* DFGROUP */
+

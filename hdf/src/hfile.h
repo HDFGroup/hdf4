@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.25  1993/09/28 19:06:52  koziol
-Fixed prototyping the Iris didn't like.
+Revision 1.26  1993/10/01 20:01:07  koziol
+Put "extern C" block around function prototypes for C++ compatibility.
 
+ * Revision 1.25  1993/09/28  19:06:52  koziol
+ * Fixed prototyping the Iris didn't like.
+ *
  * Revision 1.24  1993/09/28  18:44:24  koziol
  * Fixed various things the Sun's pre-processor didn't like.
  *
@@ -416,12 +419,16 @@ extern filerec_t file_records[];
 #define FILE_NDDS(file_rec) ((file_rec)->ddlast->ndds)
 
 
-/* 
+/*
 ** Functions to get information of special elt from other access records.
-**   defined in hfile.c 
+**   defined in hfile.c
 ** These should really be HD... routines, but they are only used within
 **   the H-layer...
 */
+
+#if defined c_plusplus || defined __cplusplus
+extern "C" {
+#endif /* c_plusplus || __cplusplus */
 
 extern int HIget_access_slot
   PROTO((void));
@@ -549,6 +556,10 @@ extern int32 mwrite
     PROTO((hdf_file_t rn, char *buf, int32 n));
 
 #endif
+
+#if defined c_plusplus || defined __cplusplus
+}
+#endif /* c_plusplus || __cplusplus */
 
 #endif /* HFILE_H */
 

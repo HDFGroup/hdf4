@@ -15,15 +15,29 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1993/09/30 19:04:43  koziol
-Added basic compressing functionality for special tags.
+Revision 1.2  1993/10/01 20:00:28  koziol
+Put "extern C" block around function prototypes for C++ compatibility.
 
+ * Revision 1.1  1993/09/30  19:04:43  koziol
+ * Added basic compressing functionality for special tags.
+ *
  *
  */
 
 /* avoid re-inclusion */
 #ifndef __CRLE_H
 #define __CRLE_H
+
+/* RLE coding information */
+typedef struct {
+    uint8 buffer[128];      /* buffer for storing RLE bytes as they are sent */
+    intn  buf_pos;          /* offset into the buffer */
+    uint8 last_byte,        /* the last byte stored in the buffer */
+        second_byte;        /* the second to last byte stored in the buffer */
+    enum {RUN=0,            /* buffer up to the current position is a run */
+        MIX}                /* buffer up to the current position is a mix */
+	rle_state;          /* state of the buffer storage */
+ } comp_code_rle_info_t;
 
 #ifndef CRLE_MASTER
 extern funclist_t crle_funcs;     /* functions to perform run-length encoding */
@@ -40,3 +54,4 @@ funclist_t crle_funcs={    /* functions to perform run-length encoding */
 #endif
 
 #endif /* __CRLE_H */
+

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.12  1993/09/30 19:04:45  koziol
-Added basic compressing functionality for special tags.
+Revision 1.13  1993/10/01 20:00:32  koziol
+Put "extern C" block around function prototypes for C++ compatibility.
 
+ * Revision 1.12  1993/09/30  19:04:45  koziol
+ * Added basic compressing functionality for special tags.
+ *
  * Revision 1.11  1993/09/28  18:04:04  koziol
  * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
  * tag handling.  Added new compression special tag type.
@@ -111,40 +114,6 @@ PRIVATE int32 DFANIopen
 #else /*VMS*/
 PRIVATE int32 _DFANIopen();
 #endif
-
-#ifdef OLD_WAY
-uint16 DFANIlocate
-  PROTO((int32 file_id, int type, uint16 tag, uint16 ref));
-
-int DFANIaddentry
-  PROTO((int type, uint16 annref, uint16 datatag, uint16 dataref));
-
-
-int32 DFANIgetannlen
-  PROTO((char *filename, uint16 tag, uint16 ref, int type));
-
-int DFANIgetann
-  PROTO((char *filename, uint16 tag, uint16 ref, uint8 *ann,
-                int32 maxlen, int type));
-
-int DFANIputann
-  PROTO((char *filename, uint16 tag, uint16 ref, uint8 *ann, 
-	 int32 annlen, int type));
-
-int DFANIlablist
-  PROTO((char *filename, uint16 tag, uint16 reflist[], uint8 *labellist,
-	 int listsize, int maxlen, int startpos, int isfortran));
-
-int DFANIaddfann
-  PROTO((int32 file_id, char *ann, int32 annlen, int type));
-
-int32 DFANIgetfannlen
-  PROTO((int32 file_id, int type, int isfirst));
-
-int32 DFANIgetfann
-  PROTO((int32 file_id, char *ann, int32 maxlen, int type, int isfirst));
-#endif  /* OLD_WAY */
-
 
 /*-----------------------------------------------------------------------------
  * HDF object (i.e. tag/ref) label and description input routines
@@ -1279,4 +1248,3 @@ int isfirst;
     Hendaccess(aid);
     return(length);                /* return length of label */
 }
-

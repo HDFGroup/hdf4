@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.8  1993/09/30 19:05:10  koziol
-Added basic compressing functionality for special tags.
+Revision 1.9  1993/10/01 20:01:05  koziol
+Put "extern C" block around function prototypes for C++ compatibility.
 
+ * Revision 1.8  1993/09/30  19:05:10  koziol
+ * Added basic compressing functionality for special tags.
+ *
  * Revision 1.7  1993/09/28  18:04:29  koziol
  * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
  * tag handling.  Added new compression special tag type.
@@ -249,3 +252,4 @@ PRIVATE struct error_messages_t error_messages[] =
 #endif /* _H_ERR_MASTER_ */
 
 #endif /* __HERR_H */
+

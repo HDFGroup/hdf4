@@ -1,23 +1,3 @@
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-/*
-$Header$
-
-$Log$
-Revision 1.3  1993/09/30 19:05:00  koziol
-Added basic compressing functionality for special tags.
-
- * Revision 1.2  1993/09/28  18:44:12  koziol
- * Fixed various things the Sun's pre-processor didn't like.
- *
- * Revision 1.1  1993/09/28  18:04:21  koziol
- * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
- * tag handling.  Added new compression special tag type.
- *
- *
- */
-
 /*
  FILE
        hcomp.c
@@ -61,11 +41,34 @@ Added basic compressing functionality for special tags.
     9/21/93     Starting writing specs & coding prototype
 */
 
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+/*
+$Header$
+
+$Log$
+Revision 1.4  1993/10/01 20:00:54  koziol
+Put "extern C" block around function prototypes for C++ compatibility.
+
+ * Revision 1.3  1993/09/30  19:05:00  koziol
+ * Added basic compressing functionality for special tags.
+ *
+ * Revision 1.2  1993/09/28  18:44:12  koziol
+ * Fixed various things the Sun's pre-processor didn't like.
+ *
+ * Revision 1.1  1993/09/28  18:04:21  koziol
+ * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
+ * tag handling.  Added new compression special tag type.
+ *
+ *
+ */
+
 /* General HDF includes */
 #define COMPRESS_MASTER
 #include "hdf.h"
-#include "herr.h"
 #include "hfile.h"
+#include "herr.h"
 
 /* HDF compression includes */
 #include "hcompi.h"         /* Internal definitions for compression */
@@ -76,11 +79,6 @@ Added basic compressing functionality for special tags.
 #define COMP_HEADER_VERSION  0
 
 /* Modeling information */
-
-/* model information about stdio model */
-typedef struct {
-    uint32 pos;
- } comp_model_stdio_info_t;
 
 /* structure for storing modeling information */
 typedef struct {
@@ -93,17 +91,6 @@ typedef struct {
 
 
 /* Coding information */
-
-/* RLE coding information */
-typedef struct {
-    uint8 buffer[128];      /* buffer for storing RLE bytes as they are sent */
-    intn  buf_pos;          /* offset into the buffer */
-    uint8 last_byte,        /* the last byte stored in the buffer */
-        second_byte;        /* the second to last byte stored in the buffer */
-    enum {RUN=0,            /* buffer up to the current position is a run */
-        MIX}                /* buffer up to the current position is a mix */
-	rle_state;          /* state of the buffer storage */
- } comp_code_rle_info_t;
 
 /* structure for storing modeling information */
 typedef struct {

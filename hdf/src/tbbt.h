@@ -117,6 +117,10 @@ typedef   TBBT_NODE   **TBBT_TREE;
  * void tbbtfree( ITM ***root, void (*df)(ITM *), void (*kf)(void *) );
  */
 
+#if defined c_plusplus || defined __cplusplus
+extern "C" {
+#endif /* c_plusplus || __cplusplus */
+
 TBBT_TREE *tbbtdmake
     PROTO((intn (*compar)(VOIDP ,VOIDP ,intn), intn arg ));
 /* Allocates and initializes an empty threaded, balanced, binary tree and
@@ -270,4 +274,9 @@ VOID tbbtdump
 long tbbtcount
 	PROTO((TBBT_TREE *tree));
 
+#if defined c_plusplus || defined __cplusplus
+}
+#endif /* c_plusplus || __cplusplus */
+
 #endif /* TBBT_H */
+

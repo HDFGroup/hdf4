@@ -14,9 +14,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/09/30 19:05:02  koziol
-Added basic compressing functionality for special tags.
+Revision 1.4  1993/10/01 20:00:56  koziol
+Put "extern C" block around function prototypes for C++ compatibility.
 
+ * Revision 1.3  1993/09/30  19:05:02  koziol
+ * Added basic compressing functionality for special tags.
+ *
  *
  */
 
@@ -78,3 +81,4 @@ typedef union tag_comp_info {  /* Union to contain compression information */
   } comp_info;
 
 #endif /* __HCOMP_H */
+

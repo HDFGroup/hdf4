@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.3  1993/01/19 05:55:01  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.4  1993/10/01 20:00:45  koziol
+Put "extern C" block around function prototypes for C++ compatibility.
 
+ * Revision 1.3  1993/01/19  05:55:01  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.2  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -54,3 +57,4 @@ typedef struct {
 } DFRrig;
 
 #endif /*DFRIG*/
+
