@@ -32,6 +32,7 @@ char    *progname;
 #define H4_HAVE_LIBSZ
 #endif
   
+#define HDIFF_TSTSTR "hdiff hziptst.hdf hziptst.hdf"
 
 /*-------------------------------------------------------------------------
  * Function: main
@@ -368,28 +369,21 @@ int main(void)
 
 
 /*-------------------------------------------------------------------------
- * test0:  
- *-------------------------------------------------------------------------
- */
- TESTING("copying file with no options");
- hrepack_init (&options,verbose);
- hrepack(FILENAME,FILENAME_OUT,&options);
- hrepack_end (&options);
- if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
-  goto out;
- PASSED();
-
-
-/*-------------------------------------------------------------------------
  * test1:  
+	* HUFF
  *-------------------------------------------------------------------------
  */
- TESTING("compressing SDS SELECTED with HUFF, chunking SELECTED");
+
+
+ TESTING("hrepack -t dset7:HUFF 1 -c dset7:10x8x6");
  hrepack_init (&options,verbose);
  hrepack_addcomp("dset7:HUFF 1",&options);
  hrepack_addchunk("dset7:10x8x6",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
+	PASSED();
+
+ TESTING(HDIFF_TSTSTR);
  if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp("dset7",COMP_CODE_SKPHUFF, 1) == -1) 
@@ -400,15 +394,19 @@ int main(void)
 
 
 /*-------------------------------------------------------------------------
- * test2:  
+ * test2: 
+ * RLE
  *-------------------------------------------------------------------------
  */
- TESTING("compressing SDS SELECTED with RLE, chunking SELECTED");
+	TESTING("hrepack -t dset4:RLE -c dset4:10x8");
  hrepack_init (&options,verbose);
  hrepack_addcomp("dset4:RLE",&options);
  hrepack_addchunk("dset4:10x8",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
+	PASSED();
+
+ TESTING(HDIFF_TSTSTR);
  if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp("dset4",COMP_CODE_RLE, 0) == -1) 
@@ -419,14 +417,18 @@ int main(void)
 
 /*-------------------------------------------------------------------------
  * test3:  
+	* SDS SELECTED with GZIP, chunking SELECTED
  *-------------------------------------------------------------------------
  */
- TESTING("compressing SDS SELECTED with GZIP, chunking SELECTED");
+ TESTING("hrepack -t dset4:GZIP 6 -c dset4:10x8");
  hrepack_init (&options,verbose);
  hrepack_addcomp("dset4:GZIP 6",&options);
  hrepack_addchunk("dset4:10x8",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
+	PASSED();
+
+ TESTING(HDIFF_TSTSTR);
  if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 6) == -1) 
@@ -438,9 +440,10 @@ int main(void)
 
 /*-------------------------------------------------------------------------
  * test4:  
+	* SDS SELECTED with SZIP, chunking SELECTED
  *-------------------------------------------------------------------------
  */
- TESTING("compressing SDS SELECTED with SZIP, chunking SELECTED");
+ TESTING("hrepack -t dset4:SZIP 8,EC -c dset4:10x8");
 #if defined (H4_HAVE_LIBSZ)
  if (SZ_encoder_enabled()) {
  hrepack_init (&options,verbose);
@@ -448,6 +451,9 @@ int main(void)
  hrepack_addchunk("dset4:10x8",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
+	PASSED();
+
+ TESTING(HDIFF_TSTSTR);
  if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp("dset4",COMP_CODE_SZIP, 0) == -1) 
@@ -467,9 +473,10 @@ int main(void)
 
 /*-------------------------------------------------------------------------
  * test4:  
+	* SDS SELECTED with NONE, chunking SELECTED NONE
  *-------------------------------------------------------------------------
  */
- TESTING("compressing SDS SELECTED with NONE, chunking SELECTED NONE");
+ TESTING("hrepack -t dset_chunk:NONE -c dset_chunk:NONE");
  hrepack_init (&options,verbose);
  hrepack_addcomp("dset_chunk_comp:NONE",&options);
  hrepack_addcomp("dset_chunk:NONE",&options);
@@ -477,6 +484,9 @@ int main(void)
  hrepack_addchunk("dset_chunk:NONE",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
+	PASSED();
+
+ TESTING(HDIFF_TSTSTR);
  if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp("dset_chunk_comp",COMP_CODE_NONE, 0) == -1) 
@@ -491,10 +501,11 @@ int main(void)
 
 
 /*-------------------------------------------------------------------------
- * test5:  
+ * test5:
+	* SDS SELECTED with all types, chunking SELECTED
  *-------------------------------------------------------------------------
  */
- TESTING("compressing SDS SELECTED with all types, chunking SELECTED");
+ TESTING("hrepack -t dset4:GZIP 9 -t dset5:RLE -c dset4:10x8");
  hrepack_init (&options,verbose);
  hrepack_addcomp("dset4:GZIP 9",&options);
  hrepack_addcomp("dset5:RLE",&options);
@@ -509,6 +520,9 @@ int main(void)
  hrepack_addchunk("dset6:10x8",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
+	PASSED();
+
+ TESTING(HDIFF_TSTSTR);
  if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 9) == -1) 
@@ -533,10 +547,11 @@ int main(void)
 
 
 /*-------------------------------------------------------------------------
- * test6:  
+ * test6: 
+ * SDS SELECTED with all types, no chunking
  *-------------------------------------------------------------------------
  */
- TESTING("compressing SDS SELECTED with all types, no chunking");
+ TESTING("hrepack -t dset4:GZIP 9 -t dset5:RLE -t dset6:HUFF 2");
  hrepack_init (&options,verbose);
  hrepack_addcomp("dset4:GZIP 9",&options);
  hrepack_addcomp("dset5:RLE",&options);
@@ -548,6 +563,9 @@ int main(void)
 #endif
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
+	PASSED();
+
+ TESTING(HDIFF_TSTSTR);
  if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 9) == -1) 
@@ -567,16 +585,20 @@ int main(void)
 
 /*-------------------------------------------------------------------------
  * test7:  
+	* compressing SDS ALL, chunking SELECTED NONE
  *-------------------------------------------------------------------------
  */
 
- TESTING("compressing SDS ALL, chunking SELECTED NONE");
+ TESTING("hrepack -t *:GZIP 1 -c dset_chunk:NONE");
  hrepack_init (&options,verbose);
  hrepack_addcomp("*:GZIP 1",&options);
  hrepack_addchunk("dset_chunk_comp:NONE",&options);
  hrepack_addchunk("dset_chunk:NONE",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
+	PASSED();
+
+ TESTING(HDIFF_TSTSTR);
  if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp_all(COMP_CODE_DEFLATE, 1) == -1) 
@@ -588,15 +610,19 @@ int main(void)
  PASSED();
 
 /*-------------------------------------------------------------------------
- * test8:  
+ * test8:
+	* no compressing, chunking ALL
  *-------------------------------------------------------------------------
  */
 
- TESTING("no compressing, chunking ALL");
+ TESTING("hrepack -c *:10x8");
  hrepack_init (&options,verbose);
  hrepack_addchunk("*:10x8",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
+	PASSED();
+
+ TESTING(HDIFF_TSTSTR);
  if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_chunk_all(HDF_CHUNK,2,in_chunk_lengths,"dset7") == -1) 
@@ -605,19 +631,22 @@ int main(void)
 
 
 /*-------------------------------------------------------------------------
- * test9:  
+ * test9: 
+ * compressing SDS ALL with GZIP
  *-------------------------------------------------------------------------
  */
 
- verbose        =1;
- fspec.verbose  =1;
+ verbose        =0;
+ fspec.verbose  =0;
 
- TESTING("compressing SDS ALL with GZIP");
- printf("\n");
+ TESTING("hrepack -t *:GZIP 1");
  hrepack_init (&options,verbose);
  hrepack_addcomp("*:GZIP 1",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
+	PASSED();
+
+ TESTING(HDIFF_TSTSTR);
  if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp_all(COMP_CODE_DEFLATE, 1) == -1) 
