@@ -27,7 +27,6 @@ C Output files: slabwf.hdf, slab1wf, slab4wf
       character*20 myname
       parameter (myname = 'slab')
 
-      integer dsigdim
       integer ret, np, nr,nc, di(3), st(3), sz(3), sr(3)
       integer rank
 C
