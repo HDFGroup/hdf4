@@ -320,7 +320,24 @@ C
       external sfsdmvc
       integer  sfisdmvc
       external sfisdmvc
-
+      integer  sfgichnk
+      external sfgichnk
+      integer  sfrcchnk
+      external sfrcchnk
+      integer  sfrchnk
+      external sfrchnk
+      integer  sfwcchnk
+      external sfwcchnk
+      integer  sfwchnk
+      external sfwchnk
+      integer  sfscchnk
+      external sfscchnk
+      integer  sfschnk
+      external sfschnk
+      integer  sfscompress
+      external sfscompress
+      integer  sfisrcrd
+      external sfisrcrd
 C
 C     Declarations of return values for HDF Vgroup functions
 C
