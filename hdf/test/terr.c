@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/05/28 14:24:01  chouck
-Added casts for calls to Hinquire()
+Revision 1.3  1992/05/29 21:52:19  mfolk
+Added some casts to make it compile without warnings on Convex.
 
+ * Revision 1.2  1992/05/28  14:24:01  chouck
+ * Added casts for calls to Hinquire()
+ *
  * Revision 1.1  1992/02/10  20:59:34  chouck
  * Initial revision
  *
@@ -21,7 +24,7 @@ Added casts for calls to Hinquire()
 #include "hdf.h"
 #define TESTFILE_LOCAL "terr.hdf"
 #define TESTFILE_STUPID_PATH "/foo/bar/HDF/.empty/terr.hdf"
-char outbuf[4096], inbuf[4096];
+uint8 outbuf[4096], inbuf[4096];
 
 /*
 ** Test a status value.  If an error has occurred, add an error
@@ -49,7 +52,8 @@ main(argc, argv)
     int32 aid1, aid2;
     int32 fileid, length, offset, posn;
     uint16 tag, ref;
-    int access, special, ret, i, status;
+    int16 access, special
+    int   ret, i, status;
 
     printf(" -------- \n");
 
@@ -78,12 +82,14 @@ main(argc, argv)
     printf(" -------- \n");
 
     puts("putting some data elements into a (good) file");
-    status = Hputelement(fid, 100, 1, "test 100 1", strlen("test 100 1")+1);
+    status = Hputelement(fid, (uint16) 100, (uint16) 1, 
+                       (uint8 *) "test 100 1", strlen("test 100 1")+1);
     CHECK(status);
 
     puts("putting some data elements into a (bad) file");
     status = 
-      Hputelement((int32) 23578, 100, 1, "test 100 1", strlen("test 100 1")+1);
+      Hputelement((int32) 23578, (uint16) 100, (uint16) 1, 
+                       (uint8 *)"test 100 1", strlen("test 100 1")+1);
     CHECK(status);
 
     printf(" -------- \n");
