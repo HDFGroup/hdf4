@@ -1207,7 +1207,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
     char       *FUNC = "HXIbuildfilename";  /* for HERROR */
     int	        fname_len;		/* string length of the ext_fname */
     int	        path_len;		/* string length of prepend pathname */
-    static	firstinvoked = 1;	/* true if invoked the first time */
+    static int	firstinvoked = 1;	/* true if invoked the first time */
 
     char	*finalpath;	/* Final pathname to return */
     char	*fname;
@@ -1265,8 +1265,8 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 	    /* Just return the ext_fname */
 	    return(HDstrcpy(finalpath, fname));
 	}
-	break;
-    }
+	/* break; */
+    } /*DFACC_CREATE */
     case DFACC_OLD:{			/* Locating an old external element */
 	if ( *fname == '/' ) {	/* Absolute Pathname */
 	    if (stat(fname, &filestat) == 0){
@@ -1359,12 +1359,13 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 	    HDfree(finalpath);
 	    return(NULL);
 	}
-	break;
-    }
+	/* break; */
+    } /* DFACC_OLD */
     default:
 	HDfree(finalpath);
 	HRETURN_ERROR(DFE_ARGS, NULL);
     }
+
 }	/* HXIbuildfilename */
 
 /*------------------------------------------------------------------------ 
