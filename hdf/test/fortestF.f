@@ -174,6 +174,11 @@ C run the command
 	    return
 	endif
 
+	if (test .EQ. "vsetf") then
+	    call tvsetf(retcode)
+	    return
+	endif
+
 	if (test .EQ. "stubs") then
 	    call tstubsf(retcode)
 	    return

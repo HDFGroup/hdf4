@@ -12,8 +12,7 @@ C****************************************************************************
 C
 C $Id$
 C
-      subroutine mgrf (num_err)
-
+       subroutine mgrf (num_err)
 C
 C Test Program: 
 C   Tests the multi-file GR interface.
@@ -31,8 +30,9 @@ C
       integer mgid2rf, mgr2idx, mgrltil, mgrimil, mggltid
       integer mgglinf, mgwrlut, mgrdlut, mgsxfil, mgssctp
       integer mgsattr, mgatinf, mggattr, mgfndat
-
-      integer	MFGR_INTERLACE_PIXEL, MFGR_INTERLACE_LINE,
+      integer mgscatt, mgsnatt, mggcatt, mggnatt
+      integer mgwcimg, mgrcimg
+      integer MFGR_INTERLACE_PIXEL, MFGR_INTERLACE_LINE,
      *      MFGR_INTERLACE_COMPONENT
 
       parameter(MFGR_INTERLACE_PIXEL	= 0,
@@ -53,8 +53,9 @@ C
       integer 	DFNT_INT8,  DFNT_UINT8, 
      *		DFNT_INT16, DFNT_UINT16,
      *		DFNT_INT32, DFNT_UINT32, 
-     *      DFNT_INT64, DFNT_UINT64,
-     *      DFNT_INT128,DFNT_UINT128
+     *          DFNT_INT64, DFNT_UINT64,
+     *          DFNT_INT128,DFNT_UINT128,
+     *          DFNT_CHAR8, DFNT_UCHAR8
  
       parameter(DFNT_INT8	= 20,
      *		DFNT_UINT8	= 21,
@@ -65,11 +66,14 @@ C
      *		DFNT_INT64	= 26,
      *		DFNT_UINT64	= 27,
      *		DFNT_INT128	= 28,
-     *		DFNT_UINT128	= 29)
+     *		DFNT_UINT128	= 29,
+     *          DFNT_CHAR8      =  4,
+     *          DFNT_UCHAR8     =  3)
       integer il
       character*80 TESTFILE
-      character*80 IMAGE1, IMAGE2
-      character*80 ATNAME1, ATNAME2
+      character*80 IMAGE1, IMAGE2, IMAGEC, IMAGEC_2
+      character*80 ATNAME1, ATNAME_N, ATNAME_C
+      character*80 ATNAME2, ATNAME2_N, ATNAME2_C
       character*1 CR
       character buf(3, 2, 2), buf1(2, 3, 2), buf2(2, 2, 3)
       character in(3,2,2), in1(2, 3, 2), in2(2, 2, 3)
@@ -78,13 +82,21 @@ C
       integer*4 n_datasets, n_attrs, ref
       integer*4 n_comp, nt
       integer*4 dims(2), start(2), stride(2)
-      integer*4 attr(5), attr2(5)
-      integer i, j, ret, number_failed
+      integer*4 attr(5), attr2(5), attr2_n(5)
+      character attr_c(6), attr2_c(6)
+      character cbuf(2,3,4), icbuf(2,3,4)
+      integer i, j, k, ret, number_failed
 
+      DATA attr_c/'A','T','T','R','_','C'/
+      DATA cbuf/'A','B','C','D','E','F','G','H','I','J','K','L',
+     +          'M','N','O','P','Q','R','S','T','U','V','W','X'/
       num_err = 0
       TESTFILE = 'tmgrf.hdf'
       IMAGE1 = 'Image #1'
+      IMAGEC = 'Image_c #1'
       ATNAME1 = 'Attr. #1'
+      ATNAME_N = 'Numeric Attr. #1'
+      ATNAME_C = 'Character Attr. #1'
       CR = char(10)
       Verbosity=getverb()
       number_failed = 0
@@ -104,6 +116,14 @@ C Initialize the image arrays
               buf2(j, i, 3) = char(2*i - j)
 2       continue
 150   continue
+      do 157 i=1,2
+          do 156 j=1,3
+             do 155 k=1,4
+                 icbuf(k, j, i) = ' '
+155          continue
+156       continue
+157   continue
+
 C Initialize the palette array
       do 160 i=1, 256
           do 3 j=1, 3
@@ -149,7 +169,37 @@ C Store an attribute with the image
       ret = mgsattr(ri_id,ATNAME1,DFNT_INT32,5,attr)
       call VERIFY(ret,'mgsattr',number_failed,Verbosity)
 
+C Store a numeric attribute with the image
+      call MESSAGE(5,'Writing numeric attribute data',
+     +             Verbosity)
+      ret = mgsnatt(ri_id,ATNAME_N,DFNT_INT32,5,attr)
+      call VERIFY(ret,'mgsnatt',number_failed,Verbosity)
+
+C Store a character attribute with the image
+      call MESSAGE(5,'Writing numeric attribute data',
+     +             Verbosity)
+      ret = mgscatt(ri_id,ATNAME_C,DFNT_CHAR8,6,attr_c)
+      call VERIFY(ret,'mgscatt',number_failed,Verbosity)
+
 C End access to the image
+      ret = mgendac(ri_id)
+      call VERIFY(ret,'mgendac',number_failed,Verbosity)
+
+C Create a character type image
+      call MESSAGE(5,'Creating a character type image',Verbosity)
+      dims(1)=2
+      dims(2)=2
+      ri_id = mgcreat(gr_id,IMAGEC,3,DFNT_CHAR8,MFGR_INTERLACE_PIXEL,
+     *          dims)
+      call VERIFY(ri_id,'mgcreat',number_failed,Verbosity)
+
+      start(1)=0
+      start(2)=0
+      stride(1)=1
+      stride(2)=1
+      call MESSAGE(5,'Writing character image data',Verbosity)
+      ret = mgwcimg(ri_id,start,stride,dims,cbuf)
+      call VERIFY(ret,'mgwcimg',number_failed,Verbosity)
       ret = mgendac(ri_id)
       call VERIFY(ret,'mgendac',number_failed,Verbosity)
 
@@ -226,6 +276,59 @@ C Check attribute reading
       call VERIFY(ret,'mgatinf',number_failed,Verbosity)
       ret = mggattr(ri_id,index,attr2)
       call VERIFY(ret,'mggattr',number_failed,Verbosity)
+
+C Check numeric attr
+      index = mgfndat(ri_id, ATNAME_N)
+      call VERIFY(index,'mgfndat',number_failed,Verbosity)
+      call MESSAGE(5,'Reading attribute data',Verbosity)
+      ret = mgatinf(ri_id,index,ATNAME2_N,nt,i)
+      call VERIFY(ret,'mgatinf',number_failed,Verbosity)
+      ret = mggnatt(ri_id,index,attr2_n)
+      call VERIFY(ret,'mggnatt',number_failed,Verbosity)
+
+C Check character attr
+      index = mgfndat(ri_id, ATNAME_C)
+      call VERIFY(index,'mgfndat',number_failed,Verbosity)
+      call MESSAGE(5,'Reading attribute data',Verbosity)
+      ret = mgatinf(ri_id,index,ATNAME2_C,nt,i)
+      call VERIFY(ret,'mgatinf',number_failed,Verbosity)
+      ret = mggcatt(ri_id,index,attr2_c)
+      call VERIFY(ret,'mggcatt',number_failed,Verbosity)
+
+C End access to the image
+      ret = mgendac(ri_id)
+      call VERIFY(ret,'mgendac',number_failed,Verbosity)
+
+C Select a character image
+      call MESSAGE(5,'Selecting a char type image',Verbosity)
+      index = mgn2ndx(gr_id, IMAGEC)
+      call VERIFY(index,'mgn2ndx',number_failed,Verbosity)
+      ri_id = mgselct(gr_id,index)
+      call VERIFY(ri_id,'mgselct',number_failed,Verbosity)
+
+C Get info about the image
+      call MESSAGE(5,'Getting image information',Verbosity)
+      ret = mggiinf(ri_id,IMAGEC_2,n_comp,nt,il,dims,n_attr)
+      call VERIFY(ret,'mggiinf',number_failed,Verbosity)
+      ref = mgid2rf(ri_id)
+      call VERIFY(ref,'mgid2rf',number_failed,Verbosity)
+      index2 = mgr2idx(gr_id,ref)
+      call VERIFY(index2,'mgr2idx',number_failed,Verbosity)
+
+C Check image reading
+      start(1)=0
+      start(2)=0
+      stride(1)=1
+      stride(2)=1
+      call MESSAGE(5,'Reading image data',Verbosity)
+
+      call VERIFY(ret,'mgrdimg',number_failed,Verbosity)
+      ret = mgrimil(ri_id,MFGR_INTERLACE_LINE)
+      call VERIFY(ret,'mgrimil',number_failed,Verbosity)
+      ret = mgrcimg(ri_id,start,stride,dims,icbuf)
+      call VERIFY(ret,'mgrcimg',number_failed,Verbosity)
+      ret = mgrimil(ri_id,MFGR_INTERLACE_COMPONENT)
+      call VERIFY(ret,'mgrimil',number_failed,Verbosity)
 
 C End access to the image
       ret = mgendac(ri_id)

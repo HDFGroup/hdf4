@@ -104,6 +104,7 @@ main(int argc, char *argv[])
     num_tests=InitTest("sdnnt", "tsdnntf", "");
     num_tests=InitTest("sdnt", "tsdntf", "");
     num_tests=InitTest("sdstr", "tsdstrf", "");
+    num_tests=InitTest("vsetf", "tvsetf", "");
 #ifndef DEC_ALPHA
     num_tests=InitTest("stubs", "tstubsf", "");
 #else

@@ -55,7 +55,7 @@
 #          tvset.c  (the basic vgroup and vdata creation routines)
 #          tvsfpack.c (pack/unpack field values into/from a vdata buf)
 #          egfhi.f  (Fortran version of egchi.c)
-#
+#          tvsetf.f (Fortran version of tvset.c)
 # The lower level C test programs are:
 #
 #              vers.c     (get version string from an HDF file)
@@ -250,7 +250,7 @@ CTESTS= rig.o sdstr.o blocks.o an.o anfile.o extelt.o file.o file1.o vers.o \
 	nbit.o man.o mgr.o testhdf.o tbv.o tvsfpack.o
 
 FSRCS= tr8f.f t24f.f tpf.f tanf.f tanfilef.f tsdstrf.f tsdntf.f tsdnntf.f \
-        tsdmmsf.f tsdnmmsf.f tstubsf.f \
+        tsdmmsf.f tsdnmmsf.f tstubsf.f  tvsetf.f\
         slabwf.f manf.f mgrf.f fortest.c
 CFORSUPSRCS = forsupf.c
 FFORSUPSRCS = forsupff.f
@@ -260,7 +260,7 @@ FTESTS= tr8f t24f tpf tanf tanfilef tsdstrf tsdntf tsdnntf \
 FOBJS = slabwf.o \
 	t24f.o tanf.o tanfilef.o manf.o mgrf.o tpf.o tr8f.o \
 	tsdmmsf.o tsdnmmsf.o tsdnntf.o tsdntf.o tsdstrf.o tstubsf.o \
-	fortestF.o
+	tvsetf.o fortestF.o
 CFORSUPOBJS = forsupf.o
 FFORSUPOBJS = forsupff.o
 TESTF = fortest.o
