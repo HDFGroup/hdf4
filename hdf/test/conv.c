@@ -39,7 +39,6 @@ static char RcsId[] = "@(#)$Revision$";
 #include "tproto.h"
 #include <time.h>
 #ifdef I860
-#include <limits.h>
 typedef int clock_t;
 #define NO_TIMING
 #define UINT_MAX USI_MAX
