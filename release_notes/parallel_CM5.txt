@@ -41,12 +41,10 @@ Installing HDF Libraries With CM5 Parallel I/O Extension
     similar to libdf.a and libmfhdf.a.
 
     Configuration
-
 	make distclean	        # remove any files created in the previous make
 	./configure CM5
 
     Compile
-
 	make libdf libmfhdf     # create the two parallel IO libraries
 
     Install
@@ -56,3 +54,9 @@ Installing HDF Libraries With CM5 Parallel I/O Extension
 	cp mfhdf/libsrc/libmfhdf.a /usr/local/lib/libmfhdfcm5.a
 	ranlib /usr/local/lib/libmfhdfcm5.a
 
+    Testing
+	The normal HDF tests (e.g. "make test") are for the serial
+	version codes.  Use the program examples as described above
+	to test the installed CM5 extension libraries.
+
+    
