@@ -153,6 +153,7 @@ main(int argc, char *argv[])
     InitTest("8bit", test_r8, "8BIT RASTER IMAGE INTERFACE");
     InitTest("pal", test_pal, "PALETTE INTERFACE");
     InitTest("24bit", test_r24, "24BIT RASTER IMAGE INTERFACE");
+    InitTest("macros", test_macros, "ENCODING/DECODING INTERFACE");
     InitTest("conv", test_conv, "CONVERSION INTERFACE");
     InitTest("sdmms", test_sdmms, "SDMMS");
     InitTest("sdnmms", test_sdnmms, "SDNMMS");
