@@ -51,6 +51,14 @@ New Features
  We are hoping that Java will directly support 24-bit images in the
  future, so we can eliminate this band-aid.
 
+6.  Java HDF Interface updated
+
+ A few new routines and changes were added to the HDF API, and these 
+ were included in the JHI.
+
+ A few minor errors in the JHI were corrected.
+
+
 Bugs Fixed
 ==========
 
