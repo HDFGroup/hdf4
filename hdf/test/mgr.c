@@ -4202,6 +4202,249 @@ test_mgr_pal(int flag)
 #endif /* LATER */
 
 static void 
+test_mgr_chunkwr_pixelone()
+{
+   /*
+    * This function tests GR chunking write/read operations for the
+    * following types of compressions:
+    *                COMP_NONE
+    *                COMP_CODE_RLE
+    *                COMP_CODE_SKPHUFF
+    *                COMP_CODE_DEFLATE
+    * and PIXEL interlace mode.
+    */                    
+#define  FILE_NAME     "ChunkedGR.hdf"
+#define  X_LENGTH      10    /* number of columns in the image */
+#define  Y_LENGTH      6     /* number of rows in the image */
+#define  N_COMPS       3     /* number of components in the image */
+#define  COMP_METH     4     /* number of compression methods used - 4 (0-based) */
+
+   /************************* Variable declaration **************************/
+
+   intn  status;         /* status for functions returning an intn */
+   int32 file_id,        /* HDF file identifier */
+         gr_id,          /* GR interface identifier */
+         ri_id[4],       /* raster image identifier */
+         origin[2],      /* start position to write for each dimension */
+         dim_sizes[2],   /* dimension sizes of the image array */
+         interlace_mode, /* interlace mode of the image */
+         data_type,      /* data type of the image data */
+         comp_flag,      /* compression flag */
+         index,
+         i, j, ii;
+   int32 start[2],
+         stride[2],
+         edge[2];
+   int16 data_out[3*Y_LENGTH*X_LENGTH];
+   char *image_name[] = { "Image_NO", "Image_RL", "Image_Sk", "Image_DF"};
+   HDF_CHUNK_DEF chunk_def;
+   int16 chunk_buf[18];
+
+   int16 chunk00[] = {        110, 111, 112, 120, 121, 122,
+                              130, 131, 132, 140, 141, 142,
+                              150, 151, 152, 160, 161, 162 };
+ 
+ 
+   int16 chunk01[] = {    210, 211, 212, 220, 221, 222,
+                          230, 231, 232, 240, 241, 242,
+                          250, 251, 252, 260, 261, 262};
+ 
+   int16 chunk14[] = {    1010, 1011, 1012, 1020, 1021, 1022,
+                          1030, 1031, 1032, 1040, 1041, 1042,
+                          1050, 1051, 1052, 1060, 1061, 1062};
+
+   int16 data[]    = {
+                110, 111, 112, 120, 121, 122, 210, 211, 212, 220, 221, 222, 0, 
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 130, 131, 132, 140, 
+                141, 142, 230, 231, 232, 240, 241, 242, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 150, 151, 152, 160, 161, 162, 250, 251, 
+                252, 260, 261, 262, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                1010, 1011, 1012, 1020, 1021, 1022, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1030, 1031, 1032, 1040, 1041, 
+                1042, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                0, 1050, 1051, 1052, 1060, 1061, 1062 }; 
+
+
+   /********************** End of variable declaration **********************/
+   /*
+   * Create and open the file.
+   */
+   file_id = Hopen (FILE_NAME, DFACC_WRITE, 0);
+   CHECK(file_id, FAIL, "Hopen");
+
+   /*
+   * Initialize the GR interface.
+   */
+   gr_id = GRstart (file_id);
+   CHECK(gr_id, FAIL, "GRstart");
+
+   /*
+   * Set the data type, interlace mode, and dimensions of the image.
+   */
+   data_type = DFNT_INT16;
+   interlace_mode = MFGR_INTERLACE_PIXEL;
+   dim_sizes[0] = Y_LENGTH;
+   dim_sizes[1] = X_LENGTH;
+
+   for (i = 0; i < COMP_METH; i++ ) {  
+
+   /*
+   * Create the raster image array.
+   */
+   ri_id[i] = GRcreate (gr_id, image_name[i], N_COMPS, data_type, 
+                     interlace_mode, dim_sizes);
+   CHECK(ri_id[i], FAIL, "GRcreate");
+
+   /* 
+   * Create chunked image array.
+   */
+   switch (i) {
+              case 0: 
+                      comp_flag = HDF_CHUNK;
+                      chunk_def.chunk_lengths[0] = 3;
+                      chunk_def.chunk_lengths[1] = 2;
+                      break;
+              case 1 :
+                      comp_flag = HDF_CHUNK | HDF_COMP;
+                      chunk_def.comp.chunk_lengths[0] = 3;
+                      chunk_def.comp.chunk_lengths[1] = 2;
+                      chunk_def.comp.comp_type = COMP_CODE_RLE;
+                      break;
+              case 2 :
+                {
+                      comp_flag = HDF_CHUNK | HDF_COMP;
+                      chunk_def.comp.chunk_lengths[0] = 3;
+                      chunk_def.comp.chunk_lengths[1] = 2;
+                      chunk_def.comp.comp_type = COMP_CODE_SKPHUFF;
+                      chunk_def.comp.cinfo.skphuff.skp_size = 2;
+                      break;
+                }
+              case 3 :
+                { 
+                      comp_flag = HDF_CHUNK | HDF_COMP;
+                      chunk_def.comp.chunk_lengths[0] = 3;
+                      chunk_def.comp.chunk_lengths[1] = 2;
+                      chunk_def.comp.comp_type = COMP_CODE_DEFLATE;
+                      chunk_def.comp.cinfo.deflate.level = 6;
+                      break;
+                }
+              default:
+                {
+                      printf("Error\n");
+                      break;
+                }
+
+   } /* end switch */
+    
+   status = GRsetchunk(ri_id[i], chunk_def, comp_flag);
+   CHECK(status, FAIL, "GRsetchunk");
+
+   /*
+   * Write first data chunk ( 0, 0 ). 
+   */
+   origin[0] = origin[1] = 0;
+   status = GRwritechunk(ri_id[i], origin, (VOIDP)chunk00);
+   CHECK(status, FAIL, "GRwritechunk");
+
+   /*
+   * Write second data chunk ( 0, 1 ). 
+   */
+   origin[0] = 0; origin[1] = 1;
+   status = GRwritechunk(ri_id[i], origin, (VOIDP)chunk01);
+   CHECK(status, FAIL, "GRwritechunk");
+
+   /*
+   * Write third data chunk ( 1, 4 ). 
+   */
+   origin[0] = 1; origin[1] = 4;
+   status = GRwritechunk(ri_id[i], origin, (VOIDP)chunk14);
+   CHECK(status, FAIL, "GRwritechunk");
+   /*
+   * Read third chunk back.
+   */
+   origin[0] = 1; origin[1] = 4;
+   status = GRreadchunk(ri_id[i], origin, (VOIDP)chunk_buf);
+   CHECK(status, FAIL, "GRreadchunk");
+
+   /*
+   * Terminate access to the GR interface and close the HDF file.
+   */
+   status = GRendaccess (ri_id[i]);
+   CHECK(status, FAIL, "GRendaccess");
+ }  /* end for*/
+   status = GRend (gr_id);
+   CHECK(status, FAIL, "GRend");
+   status = Hclose (file_id);
+   CHECK(status, FAIL, "Hclose");
+
+    /* 
+    * Open the file.
+    */
+
+    file_id = Hopen (FILE_NAME, DFACC_WRITE, 0); 
+    CHECK(file_id, FAIL, "Hopen");
+
+   /*
+   * Initialize the GR interface.
+   */
+   gr_id = GRstart (file_id);
+   CHECK(gr_id, FAIL, "GRstart");
+
+   for (i = 0; i < COMP_METH; i++ ) { 
+
+   /*
+   * Find the index of the specified image.
+   */
+   index = GRnametoindex(gr_id, image_name[i]);
+   CHECK(index, FAIL, "GRnametoindex");
+   
+   /* 
+   * Select the image.
+   */
+   ri_id[i] = GRselect(gr_id, index);
+   CHECK(ri_id[i], FAIL, "GRselect");
+   /*
+   * Read third chunk back.
+   */
+   origin[0] = 1; origin[1] = 4;
+   status = GRreadchunk(ri_id[i], origin, (VOIDP)chunk_buf);
+   CHECK(status, FAIL, "GRreadchunk");
+   if (0 != HDmemcmp(chunk_buf, chunk14 , sizeof(chunk14)))
+      {
+            MESSAGE(3, printf("%d: Error in reading chunk\n",__LINE__););
+            MESSAGE(3, printf("%d: Compression method\n", i););
+            num_errs++;
+      } /* end if */
+   /*
+   * Read the whole image.
+   */
+   start[0] = start[1] = 0;
+   stride[0] = stride[1] = 1;
+   edge[0] = Y_LENGTH;
+   edge[1] = X_LENGTH;
+   status = GRreadimage(ri_id[i], start, stride, edge, (VOIDP)data_out);
+   CHECK(status, FAIL, "GRreadimage");
+   if (0!= HDmemcmp(data_out, data, sizeof(data)))
+      {
+            MESSAGE(3, printf("%d: Error reading data for the whole image\n",__LINE__););
+            MESSAGE(3, printf("%d: Compression method\n", i););
+            num_errs++;
+      } /* end if */
+
+   status = GRendaccess (ri_id[i]);
+   CHECK(status, FAIL, "GRendaccess");
+
+   } /* end for */    
+   /*
+   * Terminate access to the GR interface and close the HDF file.
+   */
+   status = GRend (gr_id);
+   CHECK(status, FAIL, "GRend");
+   status = Hclose (file_id);
+   CHECK(status, FAIL, "Hclose");
+}
+static void 
 test_mgr_chunkwr_pixel(int flag)
 {
    /*
@@ -4476,7 +4719,8 @@ test_mgr_chunkwr(void)
 {
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing GR chunking WRITE/READ\n"););
-
+    
+    test_mgr_chunkwr_pixelone();
     test_mgr_chunkwr_pixel(0);
     test_mgr_chunkwr_pixel(1);
     test_mgr_chunkwr_pixel(2);
