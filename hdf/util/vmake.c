@@ -49,7 +49,7 @@
  int32 compact (char *,char *);
  int32 savfld (char *,int, int);
  int32 savtype (char *,int, int);
- int32 separate(char *ss, char *, int*);
+ int32 separate(char *ss, char *, int32*);
  void showfmttypes(void);
 
 
@@ -83,7 +83,7 @@ int32 savtype
   PROTO((char *ss, int p1, int p2));
 
 int32 separate
-  PROTO((char *ss, char *fmt, int *num));
+  PROTO((char *ss, char *fmt, int32 *num));
 
 /*
  *  Main entry point
@@ -113,7 +113,8 @@ main(ac,av) int ac; char**av; {
 
   else if (!strcmp(av[2],"-l")) {
 
-     	int i, n, vgref,ids[50];
+     	int i;
+	int32 n, vgref, ids[50];
 	  	hfile 	= av[1];
 		sscanf(av[3],"%d",&vgref);
 		for(n=0,i=4;i<ac;i++,n++) { sscanf(av[i],"%d",&ids[n]); }
@@ -342,8 +343,8 @@ printf("vsadd: ref is %d\n",ref);
 static char *fldptr[MAXVAR];
 static char flds[MAXVAR][100];
 static char fmts[MAXVAR]; 
-static int  fords[MAXVAR]; 
-static int  ftyp[MAXVAR]; 
+static int32  fords[MAXVAR]; 
+static int32  ftyp[MAXVAR]; 
 static int  ntotal = 0;
 
 
@@ -504,12 +505,12 @@ int32 savtype (ss,p1,p2)
   }
 
 #ifdef PROTOTYPE
-int32 separate(char *ss, char *fmt, int *num) 
+int32 separate(char *ss, char *fmt, int32 *num) 
 #else
 int32 separate(ss,fmt,num) 
 char *ss; 
 char *fmt; 
-int *num; 
+int32 *num; 
 #endif
 {
   int32 i,n;
