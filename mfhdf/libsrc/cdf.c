@@ -243,7 +243,7 @@ int mode ;
             break;
         case CDF_FILE:
             fprintf(stderr, "About to do CDF file set up\n");
-            cdf->cdf_fp = (FILE *) HI_OPEN(name, hdf_mode);
+            cdf->cdf_fp =  HI_OPEN(name, hdf_mode);
             if (OPENERR(cdf->cdf_fp)) 
                 HRETURN_ERROR(DFE_DENIED,NULL);
             break;
