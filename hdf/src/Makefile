@@ -2,7 +2,13 @@
 # $Header$
 #
 # $Log$
-# Revision 1.11  1993/04/08 20:42:43  koziol
+# Revision 1.12  1993/04/12 13:26:59  koziol
+# Changed Macros for the JPEG stuff so the unused sources don't get
+# included into Codecenter and have to be removed.  Also, added
+# smarter "mkdir" lines so the installation won't try to re-create
+# the directories if they exist already.
+#
+# Revision 1.11  1993/04/08  20:42:43  koziol
 # Minor Cray tweaks
 #
 # Revision 1.10  1993/03/29  16:47:10  koziol
@@ -158,12 +164,14 @@ FOBJS=hfilef.o herrf.o hfileff.o dfanf.o dfr8f.o dfpf.o df24f.o dfsdf.o \
       vgf.o dff.o dfanff.o df24ff.o dfpff.o dfr8ff.o dfsdff.o vgff.o dfff.o \
       dfutilf.o dfufp2if.o
 
+JFSRCS= jdmain.c jcmain.c jrdjfif.c jrdgif.c jrdppm.c jrdrle.c jrdtarga.c \
+        jwrjfif.c jwrgif.c jwrppm.c jwrrle.c jwrtarga.c
+
 JCSRCS= jbsmooth.c jcarith.c jccolor.c jcdeflts.c jcexpand.c jchuff.c \
-        jcmain.c jcmaster.c jcmcu.c jcpipe.c jcsample.c jdarith.c jdcolor.c \
-        jddeflts.c jdhuff.c jdmain.c jdmaster.c jdmcu.c jdpipe.c jdsample.c \
+        jcmaster.c jcmcu.c jcpipe.c jcsample.c jdarith.c jdcolor.c \
+        jddeflts.c jdhuff.c jdmaster.c jdmcu.c jdpipe.c jdsample.c \
         jerror.c jquant1.c jquant2.c jfwddct.c jrevdct.c jutils.c jmemmgr.c \
-        jrdjfif.c jrdgif.c jrdppm.c jrdrle.c jrdtarga.c jwrjfif.c jwrgif.c \
-        jwrppm.c jwrrle.c jwrtarga.c jmemsys.c
+        jmemsys.c
 
 JINCS= jinclude.h jconfig.h jpegdata.h jversion.h jmemsys.h 
 
@@ -374,9 +382,9 @@ jwrtarga.o : jwrtarga.c jinclude.h jconfig.h jpegdata.h
 jmemsys.o : jmemsys.c jinclude.h jconfig.h jpegdata.h jmemsys.h
 
 install_it:
-	-if(!(-e $(HDFINC))) mkdir $(HDFINC)
+	-if (test \! -d $(HDFINC)) then (mkdir $(HDFINC) ) fi
 	-cp $(HDRS) $(JINCS) $(HDFINC)
-	-mkdir $(HDFLIB)
+	-if (test \! -d $(HDFLIB)) then (mkdir $(HDFLIB) ) fi
 	-cp libdf.a $(HDFLIB)
 	-$(RANLIB) $(HDFLIB)/libdf.a
 
