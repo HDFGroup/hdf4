@@ -13,6 +13,8 @@ HDF4.1b
 7. A problem was fixed with the gzip compression, where an error
    occurred if you attempted to write to an SDS that you have created, and 
    then performed an SDendaccess, followed by a SDselect.
+8. HDF4.0r2 did not recognize JPEG images created by HDF 3.3r4.  This
+   has been fixed.
 
 HDF4.0r2
 ========
