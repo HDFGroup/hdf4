@@ -4,6 +4,11 @@
  *   /hdf/src/master/mfhdf/ncdump/dumplib.h,v 1.2 1993/05/03 21:25:35 chouck Exp
  *********************************************************************/
 
+#ifndef HDF_HDIFF_DUMPLIB__
+#define HDF_HDIFF_DUMPLIB__
+
+
+
 extern char *progname;  /* for error messages */
 
 #ifndef EXIT_FAILURE
@@ -89,3 +94,7 @@ extern int varmember PROTO((
 #ifdef __cplusplus
 }
 #endif
+
+
+#endif
+

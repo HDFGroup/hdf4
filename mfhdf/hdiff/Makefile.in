@@ -123,11 +123,11 @@ BINFILES	= $(PROGRAM)
 #CFLAGS		= @CFLAGS@
 #FFLAGS		= @FFLAGS@
 MANIFEST = $(DISTFILES)
-DISTFILES	= Makefile.in hdiff.c hdiff_main.c dumplib.c hdiff_gattr.c hdiff_misc.c hdiff_sdattr.c hdiff_sddata.c hdiff_vdata.c hdiff_grdata.c hdifftst.c
+DISTFILES	= Makefile.in hdiff.c hdiff_main.c dumplib.c hdiff_gattr.c hdiff_misc.c hdiff_sdattr.c hdifftst.c hdiff_array.c hdiff_list.c hdiff_mattbl.c hdiff_table.c
 MANUALS		= 
 LIBNAME		= mfhdf
 LD_NETCDF	= ../libsrc/libmfhdf.a
-OBJS		= hdiff.o hdiff_main.o dumplib.o hdiff_gattr.o hdiff_misc.o hdiff_sdattr.o hdiff_sddata.o hdiff_grdata.o hdiff_vdata.o
+OBJS		= hdiff.o hdiff_main.o dumplib.o hdiff_gattr.o hdiff_misc.o hdiff_sdattr.o hdiff_array.o hdiff_list.o hdiff_mattbl.o hdiff_table.o
 #LD_XDR		= @LD_XDR@
 LIBS		= -lm $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(LIBSX) $(JPEG_LIB) $(ZLIB_LIB) $(SLIB_LIB)
 prefix		= ../../..
@@ -143,7 +143,7 @@ all::         FORCE
 
 
 hdifftst: 
-	$(CC) $(CFLAGS) -I$(HDF_INC) -I$(NETCDF_INC) $(TESTPROG).c $(LIBS) -o $(TESTPROG)
+	$(CC) $(CFLAGS) -I$(HDF_INC) -I$(NETCDF_INC)  $(TESTPROG).c $(LIBS) -o $(TESTPROG)
 
 debug:  $(PROGRAM)  ../libsrc/libmfhdf.a
 	purify $(CC) $(CFLAGS) $(CFLAGS_NETCDF) $(OBJS) $(LIBS) -o phdiff
