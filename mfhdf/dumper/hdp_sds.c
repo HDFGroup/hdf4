@@ -466,7 +466,7 @@ print_SDattrs( int32 sdf_id,
 
          /* Note that filetype is DASCII since binary does not have
             these information - it's data only */
-         if (FAIL == dumpfull(attr_nt, DASCII, attr_count, attr_buf, 20, stdout))
+         if (FAIL == dumpfull(attr_nt, DASCII, attr_count, attr_buf, 20, fp))
          {
             fprintf(stderr,"Failure from dumpfull for %d'th attribute\n", i );
             continue; /* to the next attribute */
