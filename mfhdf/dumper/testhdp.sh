@@ -257,9 +257,13 @@ TEST dumpvg-6.out dumpvg -i 1,3,5 tdata.hdf
 TEST dumpvg-7.out dumpvg -r 32,39 tdata.hdf
 TEST dumpvg-8.out dumpvg -n nsamp,tdata.hdf tdata.hdf
 TEST dumpvg-9.out dumpvg -c CDF0.0 tdata.hdf
-TEST dumpvg-10.out dumpvg -c Dim0.0,Var0.0 tdata.hdf
-TEST dumpvg-11.out dumpvg -c Dim0.0,Var0.0 -d tdata.hdf
-TEST dumpvg-12.out dumpvg tvattr.hdf
+# Added option -h to the following test; this option has always 
+# failed; just fixed it - BMR 8/1/00
+TEST dumpvg-10.out dumpvg -h -c Dim0.0,Var0.0 tdata.hdf
+# this following test is removed since option -d is removed
+#TEST dumpvg-11.out dumpvg -c Dim0.0,Var0.0 -d tdata.hdf
+# moved test #12 up to #11, consequently - BMR 7/25/00
+TEST dumpvg-11.out dumpvg tvattr.hdf
 else
 MESG 3 "$TestName <<<SKIPPED>>>"
 fi
