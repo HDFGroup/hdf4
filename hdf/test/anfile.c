@@ -16,7 +16,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
-#include "hdf.h"
 #include "tproto.h"
 #define TESTFILE "tdfan.hdf"
 

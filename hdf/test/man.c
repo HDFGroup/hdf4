@@ -39,7 +39,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* includes */
 #include "tproto.h"
-#include "mfan.h"
 
 #define TESTFILE "tman.hdf" /* testfile to write annotations to */
 #define ROWS          10    /* row size of dataset/image */
