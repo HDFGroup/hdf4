@@ -93,10 +93,8 @@ PCHDRS=ProcIDs.h ProcTrace.h
 PCSRCS=PabloHDF.c PabloHDF_RT.c PabloHDF_SDDF.c
 PCOBJS=PabloHDF.o PabloHDF_RT.o PabloHDF_SDDF.o
 PFINCS=PabloHDF.inc ProcTrace.inc
-PFSRCS=PabloHDFff.f
-PFOBJS=PabloHDFff.o
-POBJS=PabloHDF.o PabloHDF_RT.o PabloHDF_SDDF.o PabloHDFff.o
-PSRCS= $(PCHDRS) $(PCSRCS) $(PFINCS) $(PFSRCS)
+POBJS=PabloHDF.o PabloHDF_RT.o PabloHDF_SDDF.o
+PSRCS= $(PCHDRS) $(PCSRCS) $(PFINCS)
 
 TARGETLIB = libdf-inst.a
 
@@ -203,12 +201,12 @@ pablohdf::		FORCE
 	    $(MAKE) $(MFLAGS) $(HDF_FLAGS) libdf-inst.a;; \
 	esac
 
-libdf-inst.a: $(COBJS) $(FOBJS) $(PCOBJS) $(PFOBJS)
+libdf-inst.a: $(PABLO_INCLUDES) $(COBJS) $(FOBJS) $(PCOBJS) $(PFOBJS)
 	-$(RM) $(RMFLAGS) libdf-inst.a
 	$(AR) $(ARFLAGS) libdf-inst.a $(COBJS) $(FOBJS) $(PCOBJS) $(PFOBJS)
 	$(RANLIB) libdf-inst.a
 
-pablonofortran: $(COBJS) $(PCOBJS) 
+pablonofortran: $(PABLO_INCLUDES) $(COBJS) $(PCOBJS) 
 	-$(RM) $(RMFLAGS) libdf-inst.a
 	$(AR) $(ARFLAGS) libdf-inst.a $(COBJS) $(PCOBJS)
 	$(RANLIB) libdf-inst.a

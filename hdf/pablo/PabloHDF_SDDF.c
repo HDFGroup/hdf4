@@ -267,6 +267,11 @@ void HDFinitTrace_SDDF( char *traceFileName, int OUTSW )
 	   sprintf( buff, "%s.nd%.4d\0",traceFileName,myNode);
 	   setTraceFileName( buff );
 	   free( buff );
+    	   initIOTrace();
+    	   enableIOdetail();
+    	   disableLifetimeSummaries();
+           disableTimeWindowSummaries();
+	   disableFileRegionSummaries();
 #endif
 	} else {
 	   /*============================================================
@@ -322,7 +327,6 @@ void HDFendTrace_SDDF(int OUTSW)
 	   //===========================================================*/
        	   endIOTrace();
        	   endTracing();
-	   exit(1);
 	} 
 }
 /*=======================================================================
