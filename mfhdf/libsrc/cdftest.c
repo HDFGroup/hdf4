@@ -257,7 +257,7 @@ int id ;
 	/* zero the indices */
 
 	cc = vindices;
-	while (cc < &vindices[num_dims])
+	while (cc <= &vindices[num_dims-1])
 		*cc++ = 0; 
 
 	/* ripple counter */
@@ -302,7 +302,7 @@ int id ;
 
 	sizes[0] = NUM_RECS ;
 	cc = vindices;
-	while (cc < &vindices[num_dims])
+	while (cc <= &vindices[num_dims-1])
 		*cc++ = 0; 
 
 	/* ripple counter */
@@ -698,7 +698,7 @@ char *argv[];
 	printf("got val = %c (0x%02x) \n", got.by[0], got.by[0] ) ;
 
 	/* (void)memset(new,0,256) ; */
-	{ char *cp = new; for(; cp < &new[sizeof(new)] ; *cp++ = 0) ; }
+	{ char *cp = new; for(; cp < &new[sizeof(new)-1] ; *cp++ = 0) ; }
 	assert( ncvarget(id, Byte_id, s_start, s_edges, (ncvoid *)new) != -1 ) ;
 	printf("got val = \"%s\"\n", new) ;
 
