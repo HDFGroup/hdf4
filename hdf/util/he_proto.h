@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.2  1992/07/15 21:48:48  sxu
-No change.
+Revision 1.3  1992/08/11 23:05:39  sxu
+Added parameter 'int raw' in prototype dump()
 
+ * Revision 1.2  1992/07/15  21:48:48  sxu
+ * No change.
+ *
  * Revision 1.1  1992/07/14  16:38:12  mlivin
  * Initial revision
  *
@@ -118,7 +121,7 @@ int display
   PROTO((int c, int x, int y, int f, int l));
 
 int dump
-  PROTO((int32 length, int offset, char *foramt));
+  PROTO((int32 length, int offset, char *foramt, int raw));
 
 int fileOpen
   PROTO((void));
