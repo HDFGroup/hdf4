@@ -858,7 +858,10 @@ VSinquire(int32 vkey,       /* IN: vdata key */
       }
     if (eltsize)
       {
-        *eltsize = VSsizeof(vkey, fields);
+        if(fields != NULL && fields[0] != '\0')
+            *eltsize = VSsizeof(vkey, fields);
+        else
+            *eltsize = 0;
         ret_value = (*eltsize == FAIL)? FAIL: ret_value;
       }
     if (vsname)
