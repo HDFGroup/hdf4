@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.33  1993/05/11 16:51:07  koziol
-Fixed typos and bugs in the Fujitsu VP support
+Revision 1.34  1993/07/01 17:15:21  briand
+Removed a '\' from line 1320.
 
+ * Revision 1.33  1993/05/11  16:51:07  koziol
+ * Fixed typos and bugs in the Fujitsu VP support
+ *
  * Revision 1.32  1993/04/28  22:02:06  koziol
  * Fixed typo in ndfsdwslab macro
  *
@@ -1316,7 +1319,7 @@ extern FRETVAL(intf) ndsclear
     PROTO((void));
 
 extern FRETVAL(intf) ndsslens
-    PROTO((intf _HUGE *maxlen_label, intf _HUGE *maxlen_unit, \
+    PROTO((intf _HUGE *maxlen_label, intf _HUGE *maxlen_unit, 
             intf _HUGE *maxlen_format, intf _HUGE *maxlen_coordsys));
 
 extern FRETVAL(intf) ndsgdiln
