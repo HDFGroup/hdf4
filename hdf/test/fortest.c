@@ -43,12 +43,19 @@ int
 InitTest(const char *TheName, const char *TheCall, const char *TheDescr)
 {
     static int  Index = 0;
-    HDstrcpy(Test[Index].Description, TheDescr);
-    HDstrcpy(Test[Index].Name, TheName);
-    HDstrcpy(Test[Index].Call, TheCall);
-    Test[Index].NumErrors = -1;
-    Test[Index].SkipFlag = 0;
-    Index++;
+
+    if (Index >= NUMOFTESTS){
+	printf("*** Too many tests.  Need to increase NUMOFTESTS (%d).\n",
+		NUMOFTESTS);
+	printf("\tRequest (%s) ignored.\n", TheName);
+    } else {
+	HDstrcpy(Test[Index].Description, TheDescr);
+	HDstrcpy(Test[Index].Name, TheName);
+	HDstrcpy(Test[Index].Call, TheCall);
+	Test[Index].NumErrors = -1;
+	Test[Index].SkipFlag = 0;
+	Index++;
+    }
     return(Index);
 }
 
@@ -63,6 +70,10 @@ main(int argc, char *argv[])
     FILE	*cmdfile;
     char	*cmdfilename="fortest.arg";
 
+
+    printf(" ===========================================\n");
+    printf(" HDF Library Fortran Interface Tests Setup\n");
+    printf(" ===========================================\n");
 
     num_tests=InitTest("slab", "slabwf", "");
     num_tests=InitTest("r24", "t24f", "");
@@ -79,10 +90,10 @@ main(int argc, char *argv[])
     num_tests=InitTest("sdstr", "tsdstrf", "");
     num_tests=InitTest("vsetf", "tvsetf", "");
     num_tests=InitTest("vattrf", "tvattrf", "");
-#ifndef DEC_ALPHA
-    num_tests=InitTest("stubs", "tstubsf", "");
-#else
+#ifdef DEC_ALPHA
     printf("   Skipping stubs\n");
+#else
+    num_tests=InitTest("stubs", "tstubsf", "");
 #endif
 
     if ((cmdfile = fopen(cmdfilename, "w")) == NULL){
@@ -210,6 +221,9 @@ main(int argc, char *argv[])
       }
 
     fclose(cmdfile);
+
+    /* flush stdout to gurantee output preceed those of fortestF */
+    fflush(stdout);
 
 #ifdef VMS
     {
