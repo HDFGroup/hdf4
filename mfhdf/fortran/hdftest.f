@@ -21,13 +21,21 @@ C
       real*8  eps
       character* 60  name, l, u, f, c
 
+      integer SD_UNLIMITED, SD_DIMVAL_BW_INCOMP, DFNT_INT32
+      integer SD_DIMVAL_BW_COMP
+      parameter (SD_UNLIMITED = 0,
+     +            SD_DIMVAL_BW_INCOMP = 0,
+     +            SD_DIMVAL_BW_COMP = 1,
+     +            DFNT_INT32 = 24)
+
+
       integer sfstart,  sfcreate,  sfendacc, sfend,    sfsfill
       integer sfrdata,  sfwdata,   sfsattr,  sfdimid,  sfsdmname
       integer sffinfo,  sfn2index, sfsdmstr, sfsdtstr, sfsdscale
       integer sfscal,   sfselect,  sfginfo,  sfgdinfo, sfgainfo
       integer sfrattr,  sfsrange,  sfgrange, sfgfill
       integer sfgcal,   sfgdscale, sfgdtstr, sfgdmstr
-      integer sfid2ref, sfref2index
+      integer sfid2ref, sfref2index, sfsdmvc, sfisdmvc
       integer sfsextf,  hxsdir,    hxscdir
 
 C     create a new file
@@ -256,7 +264,6 @@ C     create a new file
          print *, 'SDendaccess returned', stat
          err = err + 1
       endif
-
       stat = sfend(fid1)
       if(stat.ne.0) then
          print *, 'SDend returned', stat
@@ -266,13 +273,12 @@ C     create a new file
 C
 C     OK, let's open it back up and take a look at what we've done
 C
-
       fid2 = sfstart('test1.hdf', 3)
       if(fid2.ne.393216) then
-         print *, 'Reopen returned', fid2
-         err = err + 1
+          print *, 'Reopen returned', fid2
+          err = err + 1
       endif
-
+ 
       sds3 = sfselect(fid2, 0)
       if(sds3.ne.262144) then
          print *, 'Select returned', sds3
@@ -524,6 +530,197 @@ C
          err = err + 1
       endif
 
+C     test sfsdmvc and sfisdmvc -- dimval backward compatible 
+      fid1 = sfstart('test2.hdf', 4)
+      if(fid1 .lt. 1) then
+         print *, 'sfstart returned', fid1
+         err = err + 1
+      endif
+
+      dims(1) = 6
+      dims(2) = 0
+      nt = 24
+      rank = 2
+      sds1 = sfcreate(fid1, 'ncomp', nt, rank, dims)
+      if (sds1 .eq. -1) then
+         print *, 'sfcreate returned', sds1
+         err = err + 1
+      endif
+
+      dim1 = sfdimid(sds1, 0)
+      if (dim1 .eq. -1) then
+         print *, 'sfdimid returned', dim1
+         err = err + 1
+      endif
+
+      stat = sfsdmvc(dim1, 0)
+      if(stat .ne. 0) then
+         print *, 'sfsdmvc returned', stat
+         err = err + 1
+      endif
+      dim2 = sfdimid(sds1, 1)
+      stat = sfsdmvc(dim2, 0)
+      if(stat .ne. 0) then
+         print *, 'sfsdmvc returned', stat
+         err = err + 1
+      endif
+      do 140 i=1, 6
+         ivals(i) = i*5
+140   continue
+      stat = sfsdscale(dim1, 6, DFNT_INT32, ivals)
+      if(stat .ne. 0) then
+          print *, 'sfsdscale returned', stat
+          err = err + 1
+      endif
+      start(1)=0
+      start(2)=0
+      stride(1) = 1
+      stride(2) = 1
+      end(1)=6
+      end(2)=4
+      do 160 i=1, 24
+        ivals(i) = i
+160   continue
+      stat = sfwdata(sds1, start, stride, end, ivals)
+      if (stat .ne. 0) then
+          print *, 'sfwdata returned', stat
+          err = err + 1
+      endif
+      stat = sfendacc(sds1)
+      if(stat .ne. 0) then
+           print *, 'sfendacc returned', stat
+           err = err + 1
+      endif
+
+      stat = sfend(fid1)
+      if(stat .ne. 0) then
+         print *, 'SDend returned', stat
+         err = err + 1
+      endif
+
+C     let's open it back up and take a look at what we've done
+C
+
+      fid2 = sfstart('test2.hdf', 3)
+      if(fid2 .lt.  0) then
+         print *, 'Reopen returned', fid2
+         err = err + 1
+      endif
+
+      stat = sfn2index(fid2, 'ncomp')
+      if (stat .lt. 0) then
+         print *, 'sfn2index returned', stat
+         err = err + 1
+      endif
+
+      sds3 = sfselect(fid2, stat)
+      if (sds3 .eq. -1) then
+         print *, 'sfselect returned', sds3
+         err = err + 1
+      endif
+      stat = sfginfo(sds3, name, rank, ivals, nt, nattr)
+      if (stat .ne. 0) then
+          print *, 'sfginfo returned', stat
+          err = err + 1
+      endif
+      if ((rank .ne. 2) .or. (ivals(1) .ne. 6) .or.
+     +    (ivals(2) .ne. 4) .or. (nt .ne. 24)) then
+          print *, 'error in sfginfo'
+          err = err + 1
+      endif
+      dim2=sfdimid(sds3,1)
+      stat = sfgdinfo(dim2, name, dims(2), nt, nattr)
+      if ((dims(2) .ne. SD_UNLIMITED) .or. (nt .ne.  0 ))  then
+          print *, '1st sfgdinfo error', stat, dims(2), nt
+          err = err + 1
+      endif
+      dim1=sfdimid(sds3,0)
+      stat = sfgdinfo(dim1, name, dims(1), nt, nattr)
+      if ((dims(1) .ne. 6) .or. (nt .ne. DFNT_INT32 ))  then
+         print *, '2nd sfgdinfo error', stat, dims(1), nt
+         err = err + 1
+      endif
+      stat = sfrdata(sds3, start, stride, end, ivals)
+      if (stat .ne. 0) then
+           print *, 'sfrdata returned', stat
+           err = err + 1
+      endif
+      do 180 i=0, 24
+          if (ivals(i) .ne. i)  then
+              print *,  'wrong value: should be ',i,'  got ',ivals(i)
+              err = err + 1
+          endif
+180    continue
+      stat = sfisdmvc(dim1)
+      if (stat .ne. 0)  then
+          print *, 'sfisdmvc returned', stat
+          err = err + 1
+      endif
+      stat = sfsdmvc(dim1, 1)
+      stat = sfendacc(sds3)
+      if (stat .ne. 0) then
+          print *, 'sfendacc returned', stat
+          err = err + 1
+      endif
+      stat = sfend(fid2)
+      if (stat .ne. 0) then
+           print *, 'sfend returned', stat
+           err = err + 1
+      endif
+
+C     open one last time to check that NDG ref has been constant
+C     check SDsetdimval_compat
+      fid1 = sfstart('test2.hdf', 3)
+      if (fid1 .eq. -1) then
+           print *, 'sfstart returned', stat
+           err = err + 1
+      endif
+C     read back dimval_non_compat
+      stat = sfn2index(fid1, 'ncomp')
+      if (stat .lt. 0) then
+         print *, 'sfn2index returned', stat
+         err = err + 1
+      endif
+
+      sds2 = sfselect(fid1, stat)
+      if (sds2 .eq. -1) then
+         print *, 'sfselect returned', sds2
+         err = err + 1
+      endif
+      stat = sfginfo(sds2, name, rank, ivals, nt, nattr)
+
+      if (stat .ne. 0) then
+          print *, 'sfginfo returned', stat
+          err = err + 1
+      endif
+      if ((rank .ne. 2) .or. (ivals(2) .ne. 4) .or.
+     +    (ivals(1) .ne. 6) .or. (nt .ne. 24)) then
+          print *, 'error in sfginfo'
+          err = err + 1
+      endif
+      dim1=sfdimid(sds2,0)
+      stat = sfgdinfo(dim1, name, dims(1), nt, nattr)
+      if ((dims(1) .ne. 6) .or. (nt .ne. DFNT_INT32 ))  then
+         print *, '3rd sfgdinfo error', stat, dims(1), nt 
+         err = err + 1
+      endif
+      stat = sfisdmvc(dim1)
+      if (stat .ne. 1)  then
+          print *, 'sfisdmvc returned', stat
+          err = err + 1
+      endif
+      stat = sfendacc(sds2)
+      if (stat .lt. 0) then
+          print *, 'sfendacc returned', stat
+          err = err + 1
+      endif
+      stat = sfend(fid1)
+      if (stat .lt. 0) then
+           print *, 'sfend returned', stat
+           err = err + 1
+      endif
+
       print *, 'Total errors : ', err
 
       end
+
