@@ -15,7 +15,7 @@ char *argv[];
 #endif 
 {
     int32 f1, f2, sdsid, nt, dimsize[10], nattr, rank;
-    int32 newsds, newsds2, newsds3, dimid, number;
+    int32 newsds, newsds2, newsds3, dimid, number, offset;
     intn status, i;
     char name[90], text[256];
     int32   start[10], end[10], scale[10], stride[10];
@@ -305,9 +305,17 @@ char *argv[];
      * Test the External File storage stuff 
      */
 
+    /* native mode currently does not work on non 32-bit machines */
+#ifdef UNICOS
+    nt = DFNT_INT32;
+#else 
+    nt = DFNT_INT32 | DFNT_NATIVE;
+#endif
+
+
     dimsize[0] = 5;
     dimsize[1] = 5;
-    newsds = SDcreate(f1, "ExternalDataSet", DFNT_INT32 | DFNT_NATIVE, 2, dimsize);
+    newsds = SDcreate(f1, "ExternalDataSet", nt, 2, dimsize);
     if(newsds == FAIL) {
         fprintf(stderr, "Failed to create a new data set for external promotion\n");
         num_err++;
@@ -344,13 +352,14 @@ char *argv[];
 
     dimsize[0] = 3;
     dimsize[1] = 3;
-    newsds2 = SDcreate(f1, "WrapperDataSet", DFNT_INT32 | DFNT_NATIVE, 2, dimsize);
+    newsds2 = SDcreate(f1, "WrapperDataSet", nt, 2, dimsize);
     if(newsds == FAIL) {
         fprintf(stderr, "Failed to create a new data set for external wrapping\n");
         num_err++;
     }
 
-    status = SDsetexternalfile(newsds2, EXTFILE, 8);
+    offset = DFKNTsize(nt) * 2;
+    status = SDsetexternalfile(newsds2, EXTFILE, offset);
     CHECK(status, "SDsetexternalfile");
  
     start[0] = start[1] = 0;
@@ -360,12 +369,14 @@ char *argv[];
 
     for(i = 0; i < 8; i++)
         if(idata[i] != (i + 2) * 10) {
-            fprintf(stderr, "Incorrect value returned in location %d in wrapper dataset\n", i);
+            fprintf(stderr, "Bogus val in loc %d in wrapper dset want %d  got %d\n", 
+		    i, (i + 2) * 10, idata[i]);
             num_err++;
         }
 
     if(idata[8] != 10) {
-        fprintf(stderr, "Incorrect value returned in last location in wrapper dataset\n");
+        fprintf(stderr, "Bogus val in last loc in wrapper dset want 10  got %d\n",
+		idata[8]);
         num_err++;
     }
     
