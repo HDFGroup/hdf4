@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.22  1993/04/27 21:05:04  chouck
-Added JPeg defines for Convex
+Revision 1.23  1993/04/30 20:28:51  koziol
+Added correct #define's for JPEG on the Cray
 
+ * Revision 1.22  1993/04/27  21:05:04  chouck
+ * Added JPeg defines for Convex
+ *
  * Revision 1.20  1993/04/22  23:00:18  koziol
  * Changed DFR8nimages, DFPnpals to report the correct number of images
  * and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
@@ -385,6 +388,8 @@ typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 /*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
 /*  what each does */
 #define JMEMSYS         MEM_ANSI
+#define RIGHT_SHIFT_IS_UNSIGNED
+#define CHAR_IS_UNSIGNED
 
 #endif /* UNICOS */
 
