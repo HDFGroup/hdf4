@@ -7,6 +7,7 @@ int Verbocity = 0;
 /* Internal Variables */
 int Index=0;
 
+/* ANY new test needs to have a prototype in tproto.h */
 #include "tproto.h"
 
 struct TestStruct {
@@ -69,6 +70,9 @@ main (argc, argv)
   InitTest("sdnmms",test_sdnmms,"SDNMMS");
   InitTest("slabs",test_slab,"HYPERSLAB INTERFACE");
   InitTest("litend",test_litend,"LITTLE-ENDIAN INTERFACE");
+  InitTest("egchi",test_egchi,"VSET TEST");
+  InitTest("tv1",test_tv1,"VSET TEST 1");
+  InitTest("tv2",test_tv2,"VSET TEST 2");
 
   Verbocity = 4; /* Default Verbocity is Low */
   ret = Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
@@ -213,7 +217,7 @@ main (argc, argv)
 #ifdef PC
     system("del *.hdf");
 #else
-    system("rm *.hdf");
+    system("rm -f *.hdf *.tmp");
 #endif
   }
   return(0);
