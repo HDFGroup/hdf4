@@ -176,12 +176,12 @@ FORTRAN:
 Linux:
 -----
 C:
-    gcc -ansi -o <your program> <your program>.c \  
+    gcc -ansi -D_BSD_SOURCE -o <your program> <your program>.c \  
         -I<path for hdf include directory> \
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
-    fort77 -o <your program> <your program>.f  \
+    g77 -o <your program> <your program>.f  \
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 Solaris:
