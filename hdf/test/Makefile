@@ -116,7 +116,9 @@
 
 # ==> specify your machine
 #MACHINE=IBM6000
+#MACHINE=HP9000
 MACHINE=SUN
+
 # ==> specify your fortran compiler  (Convex: fc)
 FC=f77 
 FFLAGS=  -g
@@ -172,8 +174,11 @@ nofortran: testhdf
 .c.o: 
 	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
 
-dbgtesthdf: $(CTESTS) $(HDFLIB)/libdf.a
-	purify $(CC) $(CFLAGS) -o dbgtesthdf $(CTESTS) $(HDFSRC)/libdf.a
+qtesthdf: $(CTESTS) $(HDFLIB)/libdf.a
+	quantify $(CC) $(CFLAGS) -o qtesthdf $(CTESTS) $(HDFSRC)/libdf.a
+
+ptesthdf: $(CTESTS) $(HDFLIB)/libdf.a
+	purify $(CC) $(CFLAGS) -o ptesthdf $(CTESTS) $(HDFSRC)/libdf.a
 
 testhdf.tc: $(CTESTS) $(HDFLIB)/libdf.a
 	proof $(CC) $(CFLAGS) -o testhdf.tc $(CTESTS) $(HDFLIB)/libdf.a
@@ -193,7 +198,7 @@ depend:
 	 makedepend -I$(HDFINC) *.c
 
 saber:	$(SRCS)
-	 #load $(SRCS) -I../include -D$(MACHINE) 
+	 #load -I../include -D$(MACHINE) $(SRCS) 
 
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
