@@ -2,9 +2,15 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.5  1993/08/16 21:45:35  koziol
-C Wrapped in changes for final, working version on the PC.
+C Revision 1.6  1993/08/28 00:40:22  georgev
+C Fixed some changes that got lost during the PC merge.
 C
+c Revision 1.5  1993/08/16  21:45:35  koziol
+c Wrapped in changes for final, working version on the PC.
+c
+c Revision 1.4  1993/07/31  16:54:44  georgev
+c Fixed fortran stubs for slabs.
+c
 c Revision 1.3  1993/01/19  05:55:17  koziol
 c Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
 c port.  Lots of minor annoyances fixed.
@@ -29,7 +35,7 @@ C   dspdata:        write SDG to new file
 C   dsadata:        append SDG to existing file
 C   dsgslc:         get slice from file
 C   dssslc:         set up to write slices to file
-C   dsrref:	    set up next ref to read
+C   dsrref:	        set up next ref to read
 C   dsnum:          return number of SDGs in file
 C   dsp32sd:        is the SDG/ref written by HDF prior to version 3.2?
 C   dfsdgetdims:    get dimensions of next SDG
@@ -39,9 +45,11 @@ C   dfsdsetdimstrs: set strings for a dimension for subsequent SDGs
 C   dfsdputdata:    write SDG to new file
 C   dfsdadddata:    append SDG to existing file
 C   dfsdgetslice:   get slice from file
-C   dfsdstartslice:set up to write slices to file
+C   dfsdstartslice: set up to write slices to file
 C   dfsdreadref:    set up next ref to read
 C   dfsdnumber:     return number of SDGs in the file
+C   dswref:         set up next ref to write
+C   dssslab:        set up write to SDS
 C Remarks: none
 C------------------------------------------------------------------------------
 
@@ -558,6 +566,43 @@ C------------------------------------------------------------------------------
       dsgdast = dsigdas(label, unit, format, coordsys, len(label),
      +   len(unit), len(format), len(coordsys))
 
+      return
+      end
+
+C------------------------------------------------------------------------------
+C Name:     dswref
+C Purpose:  set up next ref to write
+C Inputs:   filename: file to write to.
+C           ref: reference number to set.
+C Returns:  -1 on failure with DFerror set
+C Users:    HDF Fortran programmers
+C Invokes:  dfsdiwref
+C------------------------------------------------------------------------------
+
+      integer function dswref(filename, ref)
+      character*(*) filename
+      integer ref, dfsdiwref
+
+      dswref = dfsdiwref(filename, len(filename), ref)
+ 
+      return
+      end
+
+C------------------------------------------------------------------------------
+C Name:     dssslab
+C Purpose:  Set up slab writes to SDS
+C Inputs:   filename: file to write to.
+C Returns:  -1 on failure with DFerror set
+C Users:    HDF Fortran programmers
+C Invokes:  dfsdisslab
+C------------------------------------------------------------------------------
+
+      integer function dssslab(filename)
+      character*(*) filename
+      integer dfsdisslab
+
+      dssslab = dfsdisslab(filename, len(filename))
+ 
       return
       end
 
