@@ -40,8 +40,8 @@ main( )
 	int32 status_32;
 	int32 num_of_records;  
 	int32 n_values;
-	int   buf1a[Y_LENGTH][X_LENGTH] = {{1,1},{1,1},{5,6}};
- int   buf1b[Y_LENGTH][X_LENGTH] = {{1,2},{3,4},{5,6}};
+	int32 buf1a[Y_LENGTH][X_LENGTH] = {{1,1},{1,1},{5,6}};
+ int32 buf1b[Y_LENGTH][X_LENGTH] = {{1,2},{3,4},{5,6}};
 	char8 bufga1[] = "Storm_track_data1"; 
 	char8 bufga2[] = "Storm_track_data2"; 
 	float32 bufa1[2] = {1., 1.};

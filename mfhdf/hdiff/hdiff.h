@@ -22,7 +22,7 @@
 
 struct ncdim {			/* dimension */
     char name[MAX_NC_NAME];
-    long size;
+    int32 size;
 };
 
 struct ncvar {			/* variable */
@@ -44,7 +44,7 @@ struct ncatt {			/* attribute */
 typedef
 enum {LANG_NONE, LANG_C, LANG_F} Nclang; 
 
-struct fspec {			/* selection for comparison  */
+typedef struct {			/* selection for comparison  */
     int verbose;			/*
 				 * if true, print cuurent interface comparison
 				 */
@@ -66,7 +66,7 @@ struct fspec {			/* selection for comparison  */
     int max_err_cnt;            /*
                                  * max. no of difference to be printed
                                  */
-    float err_limit;		/*
+    float32 err_limit;		/*
 				 * limit of difference for the comparison
 				 */
     int nlvars;			/*
@@ -87,7 +87,7 @@ struct fspec {			/* selection for comparison  */
 				 */
 				int statistics;
 
-};
+} diff_opt_t;
 
 
 
@@ -96,21 +96,21 @@ struct fspec {			/* selection for comparison  */
 extern "C" {
 #endif
 
-int  hdiff(char *fname1, char *fname2, struct fspec fspec);
-int  gattr_diff(int32 sdid1, int32 sdid2, struct fspec specp);
-int  sdattr_diff(int32 sdid1, int32 sdid2, struct fspec specp);
+int  hdiff(char *fname1, char *fname2, diff_opt_t *fspec);
+int  gattr_diff(int32 sdid1, int32 sdid2, diff_opt_t *specp);
+int  sdattr_diff(int32 sdid1, int32 sdid2, diff_opt_t *specp);
 void pr_att_vals(nc_type type, int len, void *vals);
 int  vdata_cmp(int32 vs1, int32 vs2, char *gname, char*cname, int32 max_err_cnt);
 void fmt_print(uint8 *x, int32 type);
-void make_vars(char *optarg, struct fspec* fspecp, int option);
-int  array_diff(void *buf1, void *buf2, int32 tot_cnt, int32 type, float err_limit, 
+void make_vars(char *optarg, diff_opt_t *fspec, int option);
+int  array_diff(void *buf1, void *buf2, int32 tot_cnt, int32 type, float32 err_limit, 
 														 	int32 max_err_cnt, int32 statistics,
 														 	void *fill1, void *fill2);
 
 
 int match( char *fname1, int nobjects1, dtable_t *list1,
            char *fname2, int nobjects2, dtable_t *list2, 
-           struct fspec fspec );
+           diff_opt_t *fspec );
 
 
 int diff( char *fname1,
@@ -123,7 +123,7 @@ int diff( char *fname1,
           int32 ref1,
           int32 tag2,
           int32 ref2,
-          struct fspec fspec );
+          diff_opt_t *fspec );
 
 void print_dims( int r, int32 *d );
 

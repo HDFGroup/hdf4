@@ -34,7 +34,7 @@ int diff_vs( int32 file1_id,
              int32 file2_id,
              int32 ref1,              
              int32 ref2,
-             struct fspec specp)          
+             diff_opt_t * specp)          
 {
  int32 vdata1_id,             /* vdata identifier */
        n_records1,            /* number of records */
@@ -139,12 +139,12 @@ int diff_vs( int32 file1_id,
  *-------------------------------------------------------------------------
  */
  
- if (specp.nuvars > 0)   /* if specified vdata is selected */
+ if (specp->nuvars > 0)   /* if specified vdata is selected */
  {
   int imatch = 0, j;
-  for (j = 0; j < specp.nuvars; j++)
+  for (j = 0; j < specp->nuvars; j++)
   {
-   if (strcmp(vdata1_name, specp.uvars[j]) == 0)
+   if (strcmp(vdata1_name, specp->uvars[j]) == 0)
    {
     imatch = 1;
     break;
@@ -162,10 +162,10 @@ int diff_vs( int32 file1_id,
  *-------------------------------------------------------------------------
  */
 
- if (specp.verbose)
+ if (specp->verbose)
  printf("Comparing <%s>\n",vdata1_name);  
 
- ret=vdata_cmp(vdata1_id,vdata2_id,vdata1_name,vdata1_class,specp.max_err_cnt);
+ ret=vdata_cmp(vdata1_id,vdata2_id,vdata1_name,vdata1_class,specp->max_err_cnt);
 
 out:
  /* terminate access to the VSs */

@@ -33,7 +33,7 @@ int diff_sds(char  *fname1,
              char  *fname2, 
              int32 ref1,
              int32 ref2,
-             struct fspec fspec);
+             diff_opt_t *fspec);
 
 
 

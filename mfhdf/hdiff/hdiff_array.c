@@ -21,14 +21,14 @@
 #define MYMIN(A,B) (((A) < (B)) ? (A) : (B))
 #define PRINT_FSTATS(T) {\
  printf("Type: %s  Npts: %d  Ndiff: %d (%lf%%)\n", \
- T, tot_cnt, n_diff, 100.*(double)n_diff/(double)tot_cnt); \
+ T, tot_cnt, n_diff, 100.*(float64)n_diff/(float64)tot_cnt); \
  printf("Avg Diff: %.3le  Max Diff: %.3le\n",  \
  d_avg_diff/tot_cnt, d_max_diff); \
  printf("Range File1: %lf/%lf  File2: %lf/%lf\n", \
 d_min_val1, d_max_val1, d_min_val2, d_max_val2); }
 #define PRINT_ISTATS(T) {\
  printf("Type: %s  Npts: %d  Ndiff: %d (%lf%%)\n", \
- T, tot_cnt,n_diff, 100.*(double)n_diff/(double)tot_cnt); \
+ T, tot_cnt,n_diff, 100.*(float64)n_diff/(float64)tot_cnt); \
  printf("Avg Diff: %le   Max. Diff: %ld\n",  \
  (d_avg_diff / tot_cnt), i4_max_diff); \
  printf("Range File1: %ld/%ld  File2: %ld/%ld\n", \
@@ -46,7 +46,7 @@ int array_diff(void *buf1,
                void *buf2, 
                int32 tot_cnt, 
                int32 type, 
-               float err_limit, 
+               float32 err_limit, 
                int32 max_err_cnt, 
                int32 statistics,
                void *fill1, 
@@ -60,16 +60,16 @@ int array_diff(void *buf1,
  int32   *i4ptr1, *i4ptr2;
  float32 *fptr1, *fptr2;
  float64 *dptr1, *dptr2;
- double  d_diff, d_avg_diff = 0., d_max_diff = 0.;
- double  d_max_val1, d_min_val1, d_max_val2, d_min_val2;
- double  d_val1, d_val2;
- double  d_sumx = 0., d_sumy = 0., d_sumx2 = 0., d_sumy2 = 0., d_sumxy=0.;
- double  slope, intercept, correlation;
- float   f_diff;
- long    i4_diff, i4_max_diff = 0;
- long    i4_max_val1, i4_min_val1, i4_max_val2, i4_min_val2;
- short   i2_diff;
- char    c_diff;
+ float64 d_diff, d_avg_diff = 0., d_max_diff = 0.;
+ float64 d_max_val1, d_min_val1, d_max_val2, d_min_val2;
+ float64 d_val1, d_val2;
+ float64 d_sumx = 0., d_sumy = 0., d_sumx2 = 0., d_sumy2 = 0., d_sumxy=0.;
+ float64 slope, intercept, correlation;
+ float32 f_diff;
+ int32   i4_diff, i4_max_diff = 0;
+ int32   i4_max_val1, i4_min_val1, i4_max_val2, i4_min_val2;
+ int16   i2_diff;
+ int8    c_diff;
  int     n_diff = 0;
  int     is_fill1, is_fill2;
  int     n_stats = 0;
@@ -140,18 +140,18 @@ int array_diff(void *buf1,
  case DFNT_UINT8:
  case DFNT_UCHAR8:
  case DFNT_CHAR8:
-  i1ptr1 = (char *) buf1;
-  i1ptr2 = (char *) buf2;
+  i1ptr1 = (int8 *) buf1;
+  i1ptr2 = (int8 *) buf2;
   for (i=0; i<tot_cnt; i++)
   {
    c_diff = abs(*i1ptr1 - *i1ptr2);
-   is_fill1 = fill1 && (*i1ptr1 == *((char *)fill1));
-   is_fill2 = fill2 && (*i1ptr2 == *((char *)fill2));
+   is_fill1 = fill1 && (*i1ptr1 == *((int8 *)fill1));
+   is_fill2 = fill2 && (*i1ptr2 == *((int8 *)fill2));
    if (!is_fill1 && !is_fill2) {
-    d_avg_diff += (double)c_diff;
+    d_avg_diff += (float64)c_diff;
     i4_max_diff = MYMAX(i4_max_diff, c_diff);
-    d_val2 = (double)(*i1ptr2);
-    d_val1 = (double)(*i1ptr1);
+    d_val2 = (float64)(*i1ptr2);
+    d_val1 = (float64)(*i1ptr1);
     d_sumx += d_val1;
     d_sumy += d_val2;
     d_sumx2 += d_val1 * d_val1;
@@ -160,14 +160,14 @@ int array_diff(void *buf1,
     n_stats++;
    }
    if (!is_fill1) {
-    i4_max_val1 = MYMAX(i4_max_val1, (long)(*i1ptr1));
-    i4_min_val1 = MYMIN(i4_min_val1, (long)(*i1ptr1));
+    i4_max_val1 = MYMAX(i4_max_val1, (int32)(*i1ptr1));
+    i4_min_val1 = MYMIN(i4_min_val1, (int32)(*i1ptr1));
    }
    if (!is_fill2) {
-    i4_max_val2 = MYMAX(i4_max_val2, (long)(*i1ptr2));
-    i4_min_val2 = MYMIN(i4_min_val2, (long)(*i1ptr2));
+    i4_max_val2 = MYMAX(i4_max_val2, (int32)(*i1ptr2));
+    i4_min_val2 = MYMIN(i4_min_val2, (int32)(*i1ptr2));
    }
-   if (c_diff > (int) err_limit)
+   if (c_diff > (int32) err_limit)
    {
     n_diff++;
     if (n_diff <= max_err_cnt) {
@@ -185,35 +185,35 @@ int array_diff(void *buf1,
   
  case DFNT_INT16:
  case DFNT_UINT16:
-  i2ptr1 = (short *) buf1;
-  i2ptr2 = (short *) buf2;
+  i2ptr1 = (int16 *) buf1;
+  i2ptr2 = (int16 *) buf2;
   for (i=0; i<tot_cnt; i++)
   {
    i2_diff = abs(*i2ptr1 - *i2ptr2);
-   is_fill1 = fill1 && (*i2ptr1 == *((short *)fill1));
-   is_fill2 = fill2 && (*i2ptr2 == *((short *)fill2));
+   is_fill1 = fill1 && (*i2ptr1 == *((int16 *)fill1));
+   is_fill2 = fill2 && (*i2ptr2 == *((int16 *)fill2));
    if (debug) {
-    fprintf(fp, "%d %d %d %d\n", is_fill1, is_fill2, (int)(*i2ptr1), (int)(*i2ptr2));
+    fprintf(fp, "%d %d %d %d\n", is_fill1, is_fill2, (int32)(*i2ptr1), (int32)(*i2ptr2));
    }
    if (!is_fill1 && !is_fill2) {
-    d_val1 = (double)(*i2ptr1);
-    d_val2 = (double)(*i2ptr2);
+    d_val1 = (float64)(*i2ptr1);
+    d_val2 = (float64)(*i2ptr2);
     d_sumx += d_val1;
     d_sumy += d_val2;
     d_sumx2 += d_val1 * d_val1;
     d_sumy2 += d_val2 * d_val2;
     d_sumxy += d_val1 * d_val2;
-    d_avg_diff += (double)i2_diff;
+    d_avg_diff += (float64)i2_diff;
     i4_max_diff = MYMAX(i4_max_diff, i2_diff);
     n_stats++;
    }
    if (!is_fill1) {
-    i4_max_val1 = MYMAX(i4_max_val1, (long)(*i2ptr1));
-    i4_min_val1 = MYMIN(i4_min_val1, (long)(*i2ptr1));
+    i4_max_val1 = MYMAX(i4_max_val1, (int32)(*i2ptr1));
+    i4_min_val1 = MYMIN(i4_min_val1, (int32)(*i2ptr1));
    }
    if (!is_fill2) {
-    i4_max_val2 = MYMAX(i4_max_val2, (long)(*i2ptr2));
-    i4_min_val2 = MYMIN(i4_min_val2, (long)(*i2ptr2));
+    i4_max_val2 = MYMAX(i4_max_val2, (int32)(*i2ptr2));
+    i4_min_val2 = MYMIN(i4_min_val2, (int32)(*i2ptr2));
    }
    if (i2_diff > (int) err_limit)
    {
@@ -240,15 +240,15 @@ int array_diff(void *buf1,
    is_fill1 = fill1 && (*i4ptr1 == *((int32 *)fill1));
    is_fill2 = fill2 && (*i4ptr2 == *((int32 *)fill2));
    if (!is_fill1 && !is_fill2) {
-    d_avg_diff += (double)i4_diff;
-    d_val1 = (double)(*i4ptr1);
-    d_val2 = (double)(*i4ptr2);
+    d_avg_diff += (float64)i4_diff;
+    d_val1 = (float64)(*i4ptr1);
+    d_val2 = (float64)(*i4ptr2);
     d_sumx += d_val1;
     d_sumy += d_val2;
     d_sumx2 += d_val1 * d_val1;
     d_sumy2 += d_val2 * d_val2;
     d_sumxy += d_val1 * d_val2;
-    i4_max_diff = (long)MYMAX(i4_max_diff, (double)(i4_diff));
+    i4_max_diff = (int32)MYMAX(i4_max_diff, (float64)(i4_diff));
     n_stats++;
    }
    if (! is_fill1) {
@@ -276,35 +276,35 @@ int array_diff(void *buf1,
   break;
   
  case DFNT_FLOAT:
-  fptr1 = (float *) buf1;
-  fptr2 = (float *) buf2;
+  fptr1 = (float32 *) buf1;
+  fptr2 = (float32 *) buf2;
   for (i=0; i<tot_cnt; i++)
   {
-   f_diff = (float)fabs(*fptr1 - *fptr2);
-   is_fill1 = fill1 && (*fptr1 == *((float *)fill1));
-   is_fill2 = fill2 && (*fptr2 == *((float *)fill2));
+   f_diff = (float32)fabs(*fptr1 - *fptr2);
+   is_fill1 = fill1 && (*fptr1 == *((float32 *)fill1));
+   is_fill2 = fill2 && (*fptr2 == *((float32 *)fill2));
    if (debug) {
     fprintf(fp, "%d %d %f %f\n", is_fill1, is_fill2, *fptr1, *fptr2);
    }
    if (!is_fill1 && !is_fill2) {
-    d_avg_diff += (double)f_diff;
-    d_val1 = (double)(*fptr1);
-    d_val2 = (double)(*fptr2);
+    d_avg_diff += (float64)f_diff;
+    d_val1 = (float64)(*fptr1);
+    d_val2 = (float64)(*fptr2);
     d_sumx += d_val1;
     d_sumy += d_val2;
     d_sumx2 += d_val1 * d_val1;
     d_sumy2 += d_val2 * d_val2;
     d_sumxy += d_val1 * d_val2;
-    d_max_diff = MYMAX(d_max_diff, (double)(f_diff));
+    d_max_diff = MYMAX(d_max_diff, (float64)(f_diff));
     n_stats++;
    }
    if (!is_fill1) {
-    d_max_val1 = MYMAX(d_max_val1, (double)(*fptr1));
-    d_min_val1 = MYMIN(d_min_val1, (double)(*fptr1));
+    d_max_val1 = MYMAX(d_max_val1, (float64)(*fptr1));
+    d_min_val1 = MYMIN(d_min_val1, (float64)(*fptr1));
    }
    if (!is_fill2) {
-    d_max_val2 = MYMAX(d_max_val2, (double)(*fptr2));
-    d_min_val2 = MYMIN(d_min_val2, (double)(*fptr2));
+    d_max_val2 = MYMAX(d_max_val2, (float64)(*fptr2));
+    d_min_val2 = MYMIN(d_min_val2, (float64)(*fptr2));
    }
    if (f_diff > err_limit)
    {
@@ -322,17 +322,17 @@ int array_diff(void *buf1,
   break;
   
  case DFNT_DOUBLE:
-  dptr1 = (double *) buf1;
-  dptr2 = (double *) buf2;
+  dptr1 = (float64 *) buf1;
+  dptr2 = (float64 *) buf2;
   for (i=0; i<tot_cnt; i++)
   {
    d_diff = fabs(*dptr1 - *dptr2);
-   is_fill1 = fill1 && (*dptr1 == *((double *)fill1));
-   is_fill2 = fill2 && (*dptr2 == *((double *)fill2));
+   is_fill1 = fill1 && (*dptr1 == *((float64 *)fill1));
+   is_fill2 = fill2 && (*dptr2 == *((float64 *)fill2));
    if (!is_fill1 && !is_fill2) {
     d_avg_diff += d_diff;
-    d_val1 = (double)(*dptr1);
-    d_val2 = (double)(*dptr2);
+    d_val1 = (float64)(*dptr1);
+    d_val2 = (float64)(*dptr2);
     d_sumx += d_val1;
     d_sumy += d_val2;
     d_sumx2 += d_val1 * d_val1;
@@ -349,7 +349,7 @@ int array_diff(void *buf1,
     d_max_val2 = MYMAX(d_max_val2, (*dptr2));
     d_min_val2 = MYMIN(d_min_val2, (*dptr2));
    }
-   if (d_diff > (double) err_limit)
+   if (d_diff > (float64) err_limit)
    {
     n_diff++;
     if (n_diff <= max_err_cnt) {
@@ -368,13 +368,13 @@ int array_diff(void *buf1,
   printf(" bad type - %d\n", type);
   }
   if (statistics) {
-   double sqrt_arg;
-   if ((double)n_stats * d_sumx2 - d_sumx * d_sumx != 0.0) {
-    slope = ((double)n_stats * d_sumxy - d_sumx * d_sumy) / 
-     ((double)n_stats * d_sumx2 - d_sumx * d_sumx);
-    intercept = (d_sumy - slope * d_sumx) / (double)n_stats;
-    sqrt_arg = ((double)n_stats*d_sumx2 - d_sumx*d_sumx) /
-     ((double)n_stats * d_sumy2 - d_sumy * d_sumy);
+   float64 sqrt_arg;
+   if ((float64)n_stats * d_sumx2 - d_sumx * d_sumx != 0.0) {
+    slope = ((float64)n_stats * d_sumxy - d_sumx * d_sumy) / 
+     ((float64)n_stats * d_sumx2 - d_sumx * d_sumx);
+    intercept = (d_sumy - slope * d_sumx) / (float64)n_stats;
+    sqrt_arg = ((float64)n_stats*d_sumx2 - d_sumx*d_sumx) /
+     ((float64)n_stats * d_sumy2 - d_sumy * d_sumy);
     correlation = slope * sqrt(sqrt_arg);
     printf("Regression  N: %d  Slope: %le  Intercept: %le  R: %le\n",
      n_stats, slope, intercept, correlation);

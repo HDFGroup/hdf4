@@ -18,7 +18,7 @@
 char *
 name_path(char *path)
 {
- char *cp, *new;
+ char *cp, *newc;
  
 #ifdef vms
 #define FILE_DELIMITER ']'
@@ -34,15 +34,15 @@ name_path(char *path)
   cp = path;
  else   /* skip delimeter */
   cp++;
- new = (char *) malloc((unsigned) (strlen(cp)+1));
- if (new == 0) {
+ newc = (char *) malloc((unsigned) (strlen(cp)+1));
+ if (newc == 0) {
   error("out of memory!");
   exit(EXIT_FAILURE);
  }
- (void) strcpy(new, cp); /* copy last component of path */
- if ((cp = strrchr(new, '.')) != NULL)
+ (void) strcpy(newc, cp); /* copy last component of path */
+ if ((cp = strrchr(newc, '.')) != NULL)
   *cp = '\0';  /* strip off any extension */
- return new;
+ return newc;
 }
 
 
@@ -109,10 +109,10 @@ pr_att_vals(nc_type type, int len, void *vals)
  int iel;
  union {
   char *cp;
-  short *sp;
-  long *lp;
-  float *fp;
-  double *dp;
+  int16 *sp;
+  int32 *lp;
+  float32 *fp;
+  float64 *dp;
  } gp;
  char *sp;
  unsigned char uc;
@@ -172,17 +172,17 @@ pr_att_vals(nc_type type, int len, void *vals)
   Printf ("\"");
   break;
  case DFNT_INT16:
-  gp.sp = (short *) vals;
+  gp.sp = (int16 *) vals;
   for (iel = 0; iel < len; iel++)
    Printf ("%ds%s",*gp.sp++,iel<len-1 ? ", " : "");
   break;
  case DFNT_INT32:
-  gp.lp = (long *) vals;
+  gp.lp = (int32 *) vals;
   for (iel = 0; iel < len; iel++)
    Printf ("%ld%s",*gp.lp++,iel<len-1 ? ", " : "");
   break;
  case DFNT_FLOAT:
-  gp.fp = (float *) vals;
+  gp.fp = (float32 *) vals;
   for (iel = 0; iel < len; iel++) {
    int ll;
    (void) sprintf(gps, f_fmt, * gp.fp++);
@@ -195,7 +195,7 @@ pr_att_vals(nc_type type, int len, void *vals)
   }
   break;
  case DFNT_DOUBLE:
-  gp.dp = (double *) vals;
+  gp.dp = (float64 *) vals;
   for (iel = 0; iel < len; iel++) {
    (void) sprintf(gps, d_fmt, *gp.dp++);
    tztrim(gps); /* trim trailing 0's after '.' */
@@ -210,7 +210,7 @@ pr_att_vals(nc_type type, int len, void *vals)
 
 
 void
-make_vars(char *optarg, struct fspec* fspecp, int option)
+make_vars(char *optarg, diff_opt_t *fspecp, int option)
 {
  char *cp = optarg;
  int nvars = 1;
@@ -274,8 +274,8 @@ set_sigdigs(char *optarg)
 {
  char *ptr = optarg;
  char *ptr2 = 0;
- long flt_digits = 7; /* default floating-point digits */
- long dbl_digits = 15; /* default double-precision digits */
+ int32 flt_digits = 7; /* default floating-point digits */
+ int32 dbl_digits = 15; /* default double-precision digits */
  char flt_fmt[6];
  char dbl_fmt[6];
  

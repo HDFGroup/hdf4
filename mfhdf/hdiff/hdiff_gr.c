@@ -34,7 +34,7 @@ int diff_gr( int32 file1_id,
              int32 file2_id,
              int32 ref1,              
              int32 ref2,
-             struct fspec specp)  
+             diff_opt_t *specp)  
 {
  intn  status_n;               /* returned status_n for functions returning an intn  */
  int32 gr1_id,                 /* GR identifier */
@@ -168,7 +168,7 @@ int diff_gr( int32 file1_id,
  */
  if ( interlace_mode1 != interlace_mode2 )
  {
-  if (specp.verbose)
+  if (specp->verbose)
   printf("Warning: different interlace mode: <%d> and <%d>\n", 
    interlace_mode1,interlace_mode2);
   interlace_mode1=interlace_mode2;
@@ -247,7 +247,7 @@ int diff_gr( int32 file1_id,
  */
  
 
- if (specp.verbose)
+ if (specp->verbose)
  printf("Comparing <%s>\n",gr1_name); 
 
  cmp = HDmemcmp(buf1,buf2,data_size);
@@ -258,9 +258,9 @@ int diff_gr( int32 file1_id,
   If max_err_cnt is set (i.e. not its default -1), use it otherwise set it
   to tot_err_cnt so it doesn't trip  
   */
-  max_err_cnt = (specp.max_err_cnt >= 0) ? specp.max_err_cnt : nelms;
-  nfound=array_diff(buf1, buf2, nelms, dtype1, specp.err_limit, 
-   max_err_cnt, specp.statistics, 0, 0);
+  max_err_cnt = (specp->max_err_cnt >= 0) ? specp->max_err_cnt : nelms;
+  nfound=array_diff(buf1, buf2, nelms, dtype1, specp->err_limit, 
+   max_err_cnt, specp->statistics, 0, 0);
  }
   
 /*-------------------------------------------------------------------------

@@ -72,7 +72,7 @@ int main(void)
                vgroup_img_id,/* vgroup identifier */
                file_id;      /* HDF file identifier, same for V interface */
  options_t     options;      /* for hrepack  */ 
- static struct fspec fspec;  /* for hdiff  */ 
+ static diff_opt_t fspec;  /* for hdiff  */ 
  int           verbose=0;
  int32         attr_n_values = 3;  /* number of values in the vg attribute */
  char          vg_attr[3]    = {'A', 'B', 'C'};/* vg attribute values*/
@@ -82,7 +82,7 @@ int main(void)
  int32         in_chunk_lengths[MAX_VAR_DIMS];
 
  /* initialize options for hdiff */
- memset(&fspec,0,sizeof(struct fspec));
+ memset(&fspec,0,sizeof(diff_opt_t));
  fspec.ga = 1;    /* compare global attributes */
  fspec.sa = 1;    /* compare SD local attributes */
  fspec.sd = 1;    /* compare SD data */
@@ -369,7 +369,7 @@ int main(void)
  hrepack_init (&options,verbose);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
- if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+ if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
   goto out;
  PASSED();
 
@@ -384,7 +384,7 @@ int main(void)
  hrepack_addchunk("dset7:10x8x6",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
- if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+ if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp("dset7",COMP_CODE_SKPHUFF, 1) == -1) 
   goto out;
@@ -403,7 +403,7 @@ int main(void)
  hrepack_addchunk("dset4:10x8",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
- if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+ if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp("dset4",COMP_CODE_RLE, 0) == -1) 
   goto out;
@@ -421,7 +421,7 @@ int main(void)
  hrepack_addchunk("dset4:10x8",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
- if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+ if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 6) == -1) 
   goto out;
@@ -441,7 +441,7 @@ int main(void)
  hrepack_addchunk("dset4:10x8",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
- if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+ if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp("dset4",COMP_CODE_SZIP, 0) == -1) 
   goto out;
@@ -463,7 +463,7 @@ int main(void)
  hrepack_addchunk("dset_chunk:NONE",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
- if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+ if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp("dset_chunk_comp",COMP_CODE_NONE, 0) == -1) 
   goto out;
@@ -492,7 +492,7 @@ int main(void)
  hrepack_addchunk("dset6:10x8",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
- if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+ if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 9) == -1) 
   goto out;
@@ -523,7 +523,7 @@ int main(void)
  hrepack_addcomp("dset7:SZIP",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
- if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+ if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 9) == -1) 
   goto out;
@@ -550,7 +550,7 @@ int main(void)
  hrepack_addchunk("dset_chunk:NONE",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
- if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+ if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp_all(COMP_CODE_DEFLATE, 1) == -1) 
   goto out;
@@ -570,7 +570,7 @@ int main(void)
  hrepack_addchunk("*:10x8",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
- if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+ if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_chunk_all(HDF_CHUNK,2,in_chunk_lengths,"dset7") == -1) 
   goto out;
@@ -591,7 +591,7 @@ int main(void)
  hrepack_addcomp("*:GZIP 1",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
- if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
+ if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp_all(COMP_CODE_DEFLATE, 1) == -1) 
   goto out;

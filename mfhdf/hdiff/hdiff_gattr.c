@@ -18,7 +18,7 @@
 
 
 int
-gattr_diff(int32 sdid1, int32 sdid2, struct fspec specp)
+gattr_diff(int32 sdid1, int32 sdid2, diff_opt_t *specp)
 {
  int32   nvars1, nvars2;      /* number of variables */
  int32   ngatts1, ngatts2;    /* number of global attributes */

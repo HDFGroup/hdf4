@@ -35,7 +35,7 @@
  */
 
 
-int hdiff(char *fname1, char *fname2, struct fspec fspec)
+int hdiff(char *fname1, char *fname2, diff_opt_t *fspec)
 {
  dtable_t  *list1;
  dtable_t  *list2;
@@ -59,7 +59,7 @@ int hdiff(char *fname1, char *fname2, struct fspec fspec)
  if ((nobjects2=Hgetlist(fname2, list2))<=0)
   return FAIL;
 
- if (fspec.verbose) {
+ if (fspec->verbose) {
   dtable_print(list1);
   dtable_print(list2);
  }
@@ -85,7 +85,7 @@ int hdiff(char *fname1, char *fname2, struct fspec fspec)
   exit(1);
  }
  
- if (fspec.ga == 1) 
+ if (fspec->ga == 1) 
   nfound+=gattr_diff(sd1_id, sd2_id, fspec);
  
  SDend(sd1_id);
@@ -117,7 +117,7 @@ int hdiff(char *fname1, char *fname2, struct fspec fspec)
  */
 int match( char *fname1, int nobjects1, dtable_t *list1,
            char *fname2, int nobjects2, dtable_t *list2, 
-           struct fspec fspec )
+           diff_opt_t *fspec )
 {
  int32 file1_id,
        file2_id;
@@ -219,7 +219,7 @@ int match( char *fname1, int nobjects1, dtable_t *list1,
  *-------------------------------------------------------------------------
  */
 
- if (fspec.verbose) {
+ if (fspec->verbose) {
   printf("---------------------------------------\n");
   printf("file1     file2\n");
   printf("---------------------------------------\n");
@@ -314,7 +314,7 @@ int diff( char *fname1,
           int32 ref1,
           int32 tag2,
           int32 ref2,
-          struct fspec fspec )
+          diff_opt_t *fspec )
 {
  int nfound=0;
 
@@ -336,12 +336,12 @@ int diff( char *fname1,
   case DFTAG_RI8: /* Raster-8 image */
   case DFTAG_CI8: /* RLE compressed 8-bit image */
   case DFTAG_II8: /* IMCOMP compressed 8-bit image */
-   if (fspec.gr == 1)
+   if (fspec->gr == 1)
    nfound=diff_gr(file1_id,file2_id,ref1,ref2,fspec);
    break;
    
   case DFTAG_VH: 
-   if (fspec.vd == 1)
+   if (fspec->vd == 1)
    nfound=diff_vs(file1_id,file2_id,ref1,ref2,fspec);
    break;
   

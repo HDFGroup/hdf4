@@ -39,7 +39,7 @@ int diff_sds(char  *fname1,
              char  *fname2, 
              int32 ref1,
              int32 ref2,
-             struct fspec specp)
+             diff_opt_t * specp)
 {
  intn  status_n;               /* returned status_n for functions returning an intn  */
  int32 sd1_id,                 /* SD identifier */
@@ -111,7 +111,7 @@ int diff_sds(char  *fname1,
 
 
  /* flag to compare SDSs */
- if (specp.sd == 1)
+ if (specp->sd == 1)
  {
 
 /*-------------------------------------------------------------------------
@@ -123,14 +123,14 @@ int diff_sds(char  *fname1,
  * If any vars were specified with -v option, get list of associated
  * variable ids
  */
- for (k=0; k < specp.nlvars; k++) 
+ for (k=0; k < specp->nlvars; k++) 
  {
-  varid1 = SDnametoindex(sd1_id, specp.lvars[k]);
+  varid1 = SDnametoindex(sd1_id, specp->lvars[k]);
   varadd(vlist, varid1);
  }
  
  /* if var list specified, test for membership */
- if (specp.nlvars > 0 && ! varmember(vlist, sds1_index))
+ if (specp->nlvars > 0 && ! varmember(vlist, sds1_index))
   goto out;
 
 /*-------------------------------------------------------------------------
@@ -258,21 +258,21 @@ int diff_sds(char  *fname1,
  *-------------------------------------------------------------------------
  */
 
- if (specp.verbose)
+ if (specp->verbose)
  printf("Comparing <%s>\n",sds1_name); 
 
  /* 
   If max_err_cnt is set (i.e. not its default -1), use it otherwise set it
   to tot_err_cnt so it doesn't trip  
  */
- max_err_cnt = (specp.max_err_cnt >= 0) ? specp.max_err_cnt : nelms;
- nfound=array_diff(buf1, buf2, nelms, dtype1, specp.err_limit, 
-   max_err_cnt, specp.statistics, 0, 0);
+ max_err_cnt = (specp->max_err_cnt >= 0) ? specp->max_err_cnt : nelms;
+ nfound=array_diff(buf1, buf2, nelms, dtype1, specp->err_limit, 
+   max_err_cnt, specp->statistics, 0, 0);
   
  } /* flag to compare SDSs */
  
  /* flag to compare SDSs local attributes */
- if (specp.sa == 1)
+ if (specp->sa == 1)
  {
   diff_sds_attrs(sds1_id,nattrs1,sds2_id,nattrs2,sds1_name);
  }

@@ -77,7 +77,7 @@ main(int argc, char *argv[])
  extern int optind;
  extern int opterr;
  extern char *optarg;
- static struct fspec fspec = /* defaults, overridden on command line */
+ static diff_opt_t fspec = /* defaults, overridden on command line */
  {
   0,    /* verbose mode */
   1,    /* compare global attributes */
@@ -135,7 +135,7 @@ main(int argc, char *argv[])
   fspec.max_err_cnt = atoi(optarg);
   break;
  case 't':  /* range of difference to be printed */
-  fspec.err_limit = (float)atof(optarg);
+  fspec.err_limit = (float32)atof(optarg);
   break;
  case 'v':  /* variable names */
   /* make list of names of variables specified */
@@ -167,7 +167,7 @@ main(int argc, char *argv[])
  
  argv = argv + optind;
 
- ret=hdiff(argv[0],argv[1],fspec);
+ ret=hdiff(argv[0],argv[1],&fspec);
   
  return EXIT_SUCCESS;
 }
