@@ -135,7 +135,7 @@ wrjpgcom: wrjpgcom.o
 jconfig.h: jconfig.doc
 	echo You must prepare a system-dependent jconfig.h file.
 	echo Please read the installation directions in install.doc.
-	exit 1
+	false
 
 install: cjpeg djpeg rdjpgcom wrjpgcom
 	$(INSTALL_PROGRAM) cjpeg $(bindir)/$(binprefix)cjpeg
