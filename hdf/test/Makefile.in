@@ -52,8 +52,7 @@ CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
-
-CPPFLAGS = -I$(top_srcdir)/hdf/src @CPPFLAGS@
+CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
@@ -69,6 +68,8 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 F77 = @F77@
 FFLAGS = @FFLAGS@
+HDF_BUILD_FORTRAN_FALSE = @HDF_BUILD_FORTRAN_FALSE@
+HDF_BUILD_FORTRAN_TRUE = @HDF_BUILD_FORTRAN_TRUE@
 HDF_BUILD_XDR_FALSE = @HDF_BUILD_XDR_FALSE@
 HDF_BUILD_XDR_TRUE = @HDF_BUILD_XDR_TRUE@
 INSTALL_DATA = @INSTALL_DATA@
@@ -140,11 +141,15 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 
+AM_CPPFLAGS = -I$(top_srcdir)/hdf/src
+
 
 #############################################################################
 #############################################################################
-TESTS = testhdf fortest
-check_PROGRAMS = testhdf fortest fortestF
+@HDF_BUILD_FORTRAN_TRUE@TESTS = testhdf fortest
+@HDF_BUILD_FORTRAN_FALSE@TESTS = testhdf
+@HDF_BUILD_FORTRAN_TRUE@check_PROGRAMS = testhdf fortest fortestF
+@HDF_BUILD_FORTRAN_FALSE@check_PROGRAMS = testhdf
 
 testhdf_SOURCES = an.c anfile.c bitio.c blocks.c buffer.c chunks.c comp.c   \
                   conv.c extelt.c file.c file1.c litend.c macros.c man.c    \
@@ -155,34 +160,46 @@ testhdf_SOURCES = an.c anfile.c bitio.c blocks.c buffer.c chunks.c comp.c   \
 testhdf_LDADD = ../src/libdf.a
 testhdf_DEPENDENCIES = testdir ../src/libdf.a
 
-fortest_SOURCES = fortest.c
-fortest_LDADD = ../src/libdf.a
-fortest_DEPENDENCIES = testdir fortestF ../src/libdf.a
+@HDF_BUILD_FORTRAN_TRUE@fortest_SOURCES = fortest.c
+@HDF_BUILD_FORTRAN_TRUE@fortest_LDADD = ../src/libdf.a
+@HDF_BUILD_FORTRAN_TRUE@fortest_DEPENDENCIES = testdir fortestF ../src/libdf.a
 
-fortestF_SOURCES = forsupff.f forsupf.c fortestF.f manf.f mgrf.f slabwf.f   \
-                   t24f.f tanf.f tanfilef.f tpf.f tr8f.f tsdmmsf.f          \
-                   tsdnmmsf.f tsdnntf.f tsdntf.f tsdstrf.f tstubsf.f        \
-                   tvattrf.f tvsetf.f
+@HDF_BUILD_FORTRAN_TRUE@fortestF_SOURCES = forsupff.f forsupf.c fortestF.f manf.f mgrf.f slabwf.f   \
+@HDF_BUILD_FORTRAN_TRUE@                   t24f.f tanf.f tanfilef.f tpf.f tr8f.f tsdmmsf.f          \
+@HDF_BUILD_FORTRAN_TRUE@                   tsdnmmsf.f tsdnntf.f tsdntf.f tsdstrf.f tstubsf.f        \
+@HDF_BUILD_FORTRAN_TRUE@                   tvattrf.f tvsetf.f
 
-fortestF_LDADD = ../src/libdf.a
-fortestF_DEPENDENCIES = testdir ../src/libdf.a
+@HDF_BUILD_FORTRAN_TRUE@fortestF_LDADD = ../src/libdf.a
+@HDF_BUILD_FORTRAN_TRUE@fortestF_DEPENDENCIES = testdir ../src/libdf.a
 subdir = hdf/test
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/hdf/src/h4config.h
 CONFIG_CLEAN_FILES =
-check_PROGRAMS = testhdf$(EXEEXT) fortest$(EXEEXT) fortestF$(EXEEXT)
-am_fortest_OBJECTS = fortest.$(OBJEXT)
+@HDF_BUILD_FORTRAN_TRUE@check_PROGRAMS = testhdf$(EXEEXT) \
+@HDF_BUILD_FORTRAN_TRUE@	fortest$(EXEEXT) fortestF$(EXEEXT)
+@HDF_BUILD_FORTRAN_FALSE@check_PROGRAMS = testhdf$(EXEEXT)
+am__fortest_SOURCES_DIST = fortest.c
+@HDF_BUILD_FORTRAN_TRUE@am_fortest_OBJECTS = fortest.$(OBJEXT)
 fortest_OBJECTS = $(am_fortest_OBJECTS)
+@HDF_BUILD_FORTRAN_FALSE@fortest_DEPENDENCIES =
 fortest_LDFLAGS =
-am_fortestF_OBJECTS = forsupff.$(OBJEXT) forsupf.$(OBJEXT) \
-	fortestF.$(OBJEXT) manf.$(OBJEXT) mgrf.$(OBJEXT) \
-	slabwf.$(OBJEXT) t24f.$(OBJEXT) tanf.$(OBJEXT) \
-	tanfilef.$(OBJEXT) tpf.$(OBJEXT) tr8f.$(OBJEXT) \
-	tsdmmsf.$(OBJEXT) tsdnmmsf.$(OBJEXT) tsdnntf.$(OBJEXT) \
-	tsdntf.$(OBJEXT) tsdstrf.$(OBJEXT) tstubsf.$(OBJEXT) \
-	tvattrf.$(OBJEXT) tvsetf.$(OBJEXT)
+am__fortestF_SOURCES_DIST = forsupff.f forsupf.c fortestF.f manf.f \
+	mgrf.f slabwf.f t24f.f tanf.f tanfilef.f tpf.f tr8f.f tsdmmsf.f \
+	tsdnmmsf.f tsdnntf.f tsdntf.f tsdstrf.f tstubsf.f tvattrf.f \
+	tvsetf.f
+@HDF_BUILD_FORTRAN_TRUE@am_fortestF_OBJECTS = forsupff.$(OBJEXT) \
+@HDF_BUILD_FORTRAN_TRUE@	forsupf.$(OBJEXT) fortestF.$(OBJEXT) \
+@HDF_BUILD_FORTRAN_TRUE@	manf.$(OBJEXT) mgrf.$(OBJEXT) \
+@HDF_BUILD_FORTRAN_TRUE@	slabwf.$(OBJEXT) t24f.$(OBJEXT) \
+@HDF_BUILD_FORTRAN_TRUE@	tanf.$(OBJEXT) tanfilef.$(OBJEXT) \
+@HDF_BUILD_FORTRAN_TRUE@	tpf.$(OBJEXT) tr8f.$(OBJEXT) \
+@HDF_BUILD_FORTRAN_TRUE@	tsdmmsf.$(OBJEXT) tsdnmmsf.$(OBJEXT) \
+@HDF_BUILD_FORTRAN_TRUE@	tsdnntf.$(OBJEXT) tsdntf.$(OBJEXT) \
+@HDF_BUILD_FORTRAN_TRUE@	tsdstrf.$(OBJEXT) tstubsf.$(OBJEXT) \
+@HDF_BUILD_FORTRAN_TRUE@	tvattrf.$(OBJEXT) tvsetf.$(OBJEXT)
 fortestF_OBJECTS = $(am_fortestF_OBJECTS)
+@HDF_BUILD_FORTRAN_FALSE@fortestF_DEPENDENCIES =
 fortestF_LDFLAGS =
 am_testhdf_OBJECTS = an.$(OBJEXT) anfile.$(OBJEXT) bitio.$(OBJEXT) \
 	blocks.$(OBJEXT) buffer.$(OBJEXT) chunks.$(OBJEXT) \
@@ -222,7 +239,8 @@ LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 F77COMPILE = $(F77) $(AM_FFLAGS) $(FFLAGS)
 F77LD = $(F77)
 F77LINK = $(F77LD) $(AM_FFLAGS) $(FFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(fortest_SOURCES) $(fortestF_SOURCES) $(testhdf_SOURCES)
+DIST_SOURCES = $(am__fortest_SOURCES_DIST) $(am__fortestF_SOURCES_DIST) \
+	$(testhdf_SOURCES)
 DIST_COMMON = README Makefile.am Makefile.in
 SOURCES = $(fortest_SOURCES) $(fortestF_SOURCES) $(testhdf_SOURCES)
 

@@ -2,14 +2,19 @@
 ##                      Setup for building programs                        ##
 #############################################################################
 
-CPPFLAGS=-I$(top_srcdir)/hdf/src @CPPFLAGS@
+AM_CPPFLAGS=-I$(top_srcdir)/hdf/src
 
 #############################################################################
 ##                              Testing                                    ##
 #############################################################################
 
+if HDF_BUILD_FORTRAN
 TESTS = testhdf fortest
 check_PROGRAMS = testhdf fortest fortestF
+else
+TESTS = testhdf
+check_PROGRAMS = testhdf
+endif
 
 testhdf_SOURCES = an.c anfile.c bitio.c blocks.c buffer.c chunks.c comp.c   \
                   conv.c extelt.c file.c file1.c litend.c macros.c man.c    \
@@ -19,6 +24,7 @@ testhdf_SOURCES = an.c anfile.c bitio.c blocks.c buffer.c chunks.c comp.c   \
 testhdf_LDADD = ../src/libdf.a
 testhdf_DEPENDENCIES = testdir ../src/libdf.a
 
+if HDF_BUILD_FORTRAN
 fortest_SOURCES = fortest.c
 fortest_LDADD = ../src/libdf.a
 fortest_DEPENDENCIES = testdir fortestF ../src/libdf.a
@@ -29,6 +35,7 @@ fortestF_SOURCES = forsupff.f forsupf.c fortestF.f manf.f mgrf.f slabwf.f   \
                    tvattrf.f tvsetf.f
 fortestF_LDADD = ../src/libdf.a
 fortestF_DEPENDENCIES = testdir ../src/libdf.a
+endif
 
 testdir:
 	-mkdir testdir

@@ -3,7 +3,7 @@
 #############################################################################
 
 ## Setup the different includes and preprocessor #defines we need.
-CPPFLAGS=-I$(top_srcdir)/hdf/src @CPPFLAGS@
+AM_CPPFLAGS=-I$(top_srcdir)/hdf/src
 
 #############################################################################
 ##                          Programs to build                              ##

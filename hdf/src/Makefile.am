@@ -1,26 +1,36 @@
-lib_LIBRARIES = libdf.a
-libdf_a_SOURCES = atom.c bitvect.c cdeflate.c cnbit.c cnone.c crle.c    \
-                  cskphuff.c cszip.c df24.c df24f.c df24ff.f dfan.c     \
-                  dfanf.c dfanff.f dfcomp.c dfconv.c dff.c dfff.f dfgr.c\
-                  dfgroup.c dfimcomp.c dfjpeg.c dfkconv.c dfkcray.c     \
-                  dfkfuji.c dfknat.c dfkswap.c dfkvms.c dfp.c dfpf.c    \
-                  dfpff.f dfr8.c dfr8f.c dfr8ff.f dfrle.c dfsd.c dfsdf.c\
-                  dfsdff.f dfstubs.c dfufp2i.c dfufp2if.f dfunjpeg.c    \
-                  dfutil.c dfutilf.c dynarray.c glist.c hbitio.c        \
-                  hblocks.c hbuffer.c hchunks.c hcomp.c hcompri.c       \
-                  hdfalloc.c herr.c herrf.c hextelt.c hfile.c hfiledd.c \
-                  hfilef.c hfileff.f hkit.c linklist.c mcache.c mfan.c  \
-                  mfanf.c mfgr.c mfgrf.c mfgrff.f mstdio.c tbbt.c       \
-                  vattr.c vattrf.c vattrff.f vconv.c vg.c vgf.c vgff.f  \
-                  vgp.c vhi.c vio.c vparse.c vrw.c vsfld.c
+#############################################################################
+##                          Library to build                               ##
+#############################################################################
 
-include_HEADERS = hfile.h hdf.h hdfi.h herr.h hproto.h hcomp.h hconv.h  \
-                  hbitio.h tbbt.h crle.h cnbit.h mstdio.h cnone.h       \
-                  cskphuff.h cdeflate.h hlimits.h hntdefs.h htags.h     \
-                  hkit.h hcompi.h bitvect.h atom.h dynarray.h linklist.h\
-                  hchunks.h vattr.h df.h dfi.h dfstubs.h dfufp2i.h      \
-                  dfan.h dfrig.h dfgr.h dfsd.h vg.h mfan.h mfgr.h       \
-                  cszip.h dffunc.f90 hdf.f90 dffunc.inc hdf.inc
+lib_LIBRARIES = libdf.a
+
+FSOURCES = df24ff.f dfanf.c dfanff.f dff.c dfff.f dfpf.c dfpff.f dfr8f.c    \
+           dfr8ff.f dfsdf.c dfsdff.f dfufp2if.f dfutilf.c herrf.c hfilef.c  \
+           hfileff.f mfanf.c mfgrf.c mfgrff.f vattrf.c vattrff.f vgf.c vgff.f 
+CSOURCES = atom.c bitvect.c cdeflate.c cnbit.c cnone.c crle.c cskphuff.c    \
+           cszip.c df24.c df24f.c dfan.c dfcomp.c dfconv.c dfgr.c dfgroup.c \
+           dfimcomp.c dfjpeg.c dfkconv.c dfkcray.c dfkfuji.c dfknat.c       \
+           dfkswap.c dfkvms.c dfp.c dfr8.c dfrle.c dfsd.c dfstubs.c         \
+           dfufp2i.c dfunjpeg.c dfutil.c dynarray.c glist.c hbitio.c        \
+           hblocks.c hbuffer.c hchunks.c hcomp.c hcompri.c hdfalloc.c       \
+           herr.c hextelt.c hfile.c hfiledd.c hkit.c linklist.c mcache.c    \
+           mfan.c mfgr.c mstdio.c tbbt.c vattr.c vconv.c vg.c vgp.c vhi.c   \
+           vio.c vparse.c vrw.c vsfld.c
+
+CHEADERS = atom.h bitvect.h cdeflate.h cnbit.h cnone.h cskphuff.h crle.h    \
+           cszip.h df.h dfan.h dfi.h dfgr.h dfrig.h dfsd.h dfstubs.h        \
+           dfufp2i.h dynarray.h hbitio.h hchunks.h hcomp.h hcompi.h hconv.h \
+           hdf.h hdfi.h herr.h hfile.h hkit.h hlimits.h hntdefs.h hproto.h  \
+           htags.h linklist.h mfan.h mfgr.h mstdio.h tbbt.h vattr.h vg.h
+FHEADERS = dffunc.f90 hdf.f90 dffunc.inc hdf.inc
+
+if HDF_BUILD_FORTRAN
+libdf_a_SOURCES = $(CSOURCES) $(FSOURCES)
+include_HEADERS = $(CHEADERS) $(FHEADERS)
+else
+libdf_a_SOURCES = $(CSOURCES)
+include_HEADERS = $(CHEADERS)
+endif
 
 SUFFIXES = .inc .f90
 .inc.f90:
