@@ -1,0 +1,66 @@
+.TH "SDsetfillmode" 3 "24 January 1997"
+.SH "NAME"
+SDsetfillmode \- Set fill mode for a file which is 
+opened for writing
+.SH "SYNOPSIS"
+#include "mfhdf.h"
+.sp
+extern intn SDsetfillmode
+.br
+(
+.br
+       int32 file_id,
+       int32 fillmode
+.br
+);
+.SH "PARAMETERS"
+.TP
+.B "int32 file_id"
+IN: the file whose fill mode is being set.
+.TP
+.B "int32 fillmode"
+IN: fill mode, SD_FILL or SD_NOFILL, defined in mfhdf.h. 
+.br 
+    SD_FILL -- datasets are pre-filled with fill 
+               values, the default mode.
+.br 
+    SD_NOFILL -- no pre-filling for datasets.
+.SH "DESCRIPTION"
+When a new fixed size SDS is created, by default the 
+first SDwritedata() call will pre-fill the entire dataset 
+with a user defined (via SDsetfillvalue) fill value 
+or a default fill value, if there is no user-defined 
+fill value. For SDSs with unlimited size of the slowest
+changing dimension if the values to be written are beyond
+the position where data has been written, by default
+SDwritedata will fill the gap with user-defined or the default
+fill value. The fill values will stay in their positions
+until they are overwritten by user's data. 
+If you are sure that all values of the datasets will be
+written out completely before reading them back, there is 
+no need to write the fill values. You can call 
+SDsetfillmode() to set the file fill mode to SD_NOFILL.
+This will stop the pre-filling and omit the duplicate writes
+for each dataset, one for fill values and another one for 
+actual values. For large datasets, this can improve the 
+speed by almost 50%. 
+.br
+Note: 1. SDsetfillmode sets the file's fill mode, which  
+      applies to all SDSs contained in this file. 
+      2. If the file is closed and re-opened, its fill mode
+      will be the default SD_FILL mode. 
+.SH "RETURNS"
+Returns the fill mode which the file was already in, if
+successful. Otherwise, returns FAIL for errors. 
+.SH "FORTRAN"
+Integer function sfsflmd(file_id, fillmode)
+.br
+    Sets fill mode for the file
+.br 
+    integer file_id, fillmode
+.br
+    possible values for fillmode are: SD_FILL or SD_NOFILL,
+    defined in hdf.inc. SD_FILL -- 0, SD_NOFILL -- 256.
+
+
+
