@@ -52,6 +52,12 @@ extern      "C"
     extern int32 Hstartwrite
                 (int32 file_id, uint16 tag, uint16 ref, int32 length);
 
+    extern int32 Hstartaccess
+                (int32 file_id, uint16 tag, uint16 ref, uint32 flags);
+
+    extern intn Hsetlength
+                (int32 file_id, int32 length);
+
     extern intn Happendable
                 (int32 aid);
 

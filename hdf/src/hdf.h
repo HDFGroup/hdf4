@@ -37,6 +37,13 @@ DFdi;
 #define DFACC_RDWR 3
 #define DFACC_CLOBBER 4
 
+/* New file access codes (for Hstartaccess only, currently) */
+#define DFACC_BUFFER 8  /* buffer the access to this AID */
+#define DFACC_APPENDABLE 0x10 /* make this AID appendable */
+#define DFACC_CURRENT 0x20 /* start looking for a tag/ref from the current */
+			   /* location in the DD list (useful for continued */
+			   /* searching ala findfirst/findnext) */
+
 /* The magic cookie for Hcache to cache all files */
 #define CACHE_ALL_FILES (-2)
 

@@ -88,6 +88,8 @@ HCIcnone_staccess(accrec_t * access_rec, int16 acc_mode)
 
     if (info->aid == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
+    if ((acc_mode&DFACC_WRITE) && Happendable(info->aid) == FAIL)
+        HRETURN_ERROR(DFE_DENIED, FAIL);
     return (SUCCEED);
 }   /* end HCIcnone_staccess() */
 

@@ -243,10 +243,17 @@ HCIcskphuff_decode(compinfo_t * info, int32 length, uint8 *buf)
     orig_length = length;   /* save this for later */
     while (length > 0)
       {     /* decode until we have all the bytes we need */
+#ifdef TESTING
+printf("length=%ld\n",(long)length);
+#endif /* TESTING */
           a = ROOT;     /* start at the root of the tree and find the leaf we need */
 
           do
             {   /* walk down once for each bit on the path */
+#ifdef TESTING
+intn bitcount=0;
+printf("bitcount=%d\n",++bitcount);
+#endif /* TESTING */
                 if ((bit = Hgetbit(info->aid)) == 0)    /* get the next bit from the file */
                     a = skphuff_info->left[skphuff_info->skip_pos][a];
                 else if (bit == 1)
@@ -395,7 +402,9 @@ HCIcskphuff_staccess(accrec_t * access_rec, int16 acc_mode)
 #ifdef TESTING
     printf("HCIcskphuff_staccess(): before bitio calls\n");
 #endif /* TESTING */
-    if (acc_mode == DFACC_READ)
+    /* need to check for not writing, as opposed to read access */
+    /* because of the way the access works */
+    if (!(acc_mode&DFACC_WRITE))
         info->aid = Hstartbitread(access_rec->file_id, DFTAG_COMPRESSED,
                                   info->comp_ref);
     else
@@ -406,6 +415,8 @@ HCIcskphuff_staccess(accrec_t * access_rec, int16 acc_mode)
     printf("HCIcskphuff_staccess(): after bitio calls\n");
 #endif /* TESTING */
     if (info->aid == FAIL)
+        HRETURN_ERROR(DFE_DENIED, FAIL);
+    if ((acc_mode&DFACC_WRITE) && Hbitappendable(info->aid) == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
     return (HCIcskphuff_init(access_rec));  /* initialize the skip-Huffman info */
 }   /* end HCIcskphuff_staccess() */
@@ -473,7 +484,7 @@ HCPcskphuff_stwrite(accrec_t * access_rec)
     if ((ret = HCIcskphuff_staccess(access_rec, DFACC_WRITE)) == FAIL)
         HRETURN_ERROR(DFE_CINIT, FAIL);
 #ifdef TESTING
-    printf("HCPcskphuff_stwrite(): after call to HCIcskphuff_staccess(), ret=%\n", (int) ret);
+    printf("HCPcskphuff_stwrite(): after call to HCIcskphuff_staccess(), ret=%d\n", (int) ret);
 #endif
     return (ret);
 }   /* HCPcskphuff_stwrite() */
@@ -697,7 +708,7 @@ HCPcskphuff_endaccess(accrec_t * access_rec)
     info = (compinfo_t *) access_rec->special_info;
 
     /* flush out RLE buffer */
-    if (access_rec->access == DFACC_WRITE)
+    if (access_rec->access&DFACC_WRITE)
         if (HCIcskphuff_term(info) == FAIL)
             HRETURN_ERROR(DFE_CTERM, FAIL);
 

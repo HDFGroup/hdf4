@@ -22,7 +22,7 @@
 /* ------------------------------ Constants ------------------------------- */
 /* Maximum number of files (number of slots for file records) */
 #ifndef MAX_FILE
-#if defined PC && !defined PC386
+#if defined PC && !(defined PC386 || defined UNIX386)
 #   define MAX_FILE 8
 #else  /* !PC */
 #   define MAX_FILE 16
@@ -31,7 +31,7 @@
 
 /* Maximum length of external filename(s) (used in hextelt.c & hbigext.c) */
 #ifndef MAX_PATH_LEN
-#if defined PC && !defined PC386
+#if defined PC && !(defined PC386 || defined UNIX386)
 #define MAX_PATH_LEN 256
 #else  /* non-DOS systems */
 #define MAX_PATH_LEN 1024
@@ -68,6 +68,16 @@
 
 /* largest number that will fit into 16-bit word ref variable */
 #define MAX_REF ((uint16)32767)
+
+/* invalid offset & length to indicate a partially defined element */
+#define INVALID_OFFSET 0xFFFFFFFF
+#define INVALID_LENGTH 0xFFFFFFFF
+
+/* length of block and number of blocks for converting 'appendable' data */
+/* elements into linked blocks (will eventually be replaced by the newer */
+/* variable-length blocks */
+#define HDF_APPENDABLE_BLOCK_LEN 4096
+#define HDF_APPENDABLE_BLOCK_NUM 16
 
 /* ----------------------------- Version Tags ----------------------------- */
 /* Library version numbers */
@@ -381,8 +391,9 @@ typedef struct accrec_t
       intn        flush;        /* whether the DD for this data should be flushed */
       /* when Hendaccess() is called */
       intn        used;         /* whether the access record is used */
-      int16       access;       /* access codes */
-      int16       special;      /* special element ? */
+      uint32      access;       /* access codes */
+      intn        special;      /* special element ? */
+      intn        new;          /* is a new element (i.e. no length set yet) */
       uintn       access_type;  /* I/O access type: serial/parallel/... */
       int32       file_id;      /* id of attached file */
       int32       idx;          /* index of dd into *block */

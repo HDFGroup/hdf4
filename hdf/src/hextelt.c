@@ -372,7 +372,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     access_rec->special_func = &ext_funcs;
     access_rec->special      = SPECIAL_EXT;
     access_rec->posn         = 0;
-    access_rec->access       = DFACC_WRITE;
+    access_rec->access       = DFACC_RDWR;
     access_rec->file_id      = file_id;
     access_rec->appendable   = FALSE;     /* start data as non-appendable */
     access_rec->flush        = FALSE;  /* start data as not needing flushing */
@@ -505,7 +505,7 @@ HXIstaccess(accrec_t * access_rec, int16 acc_mode)
     /* intialize the access record */
     access_rec->special = SPECIAL_EXT;
     access_rec->posn = 0;
-    access_rec->access = acc_mode;
+    access_rec->access = acc_mode|DFACC_READ;
 
     /* get the dd for information */
     info_dd = &access_rec->block->ddlist[access_rec->idx];

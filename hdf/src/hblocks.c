@@ -324,14 +324,12 @@ HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length,
           access_rec->used = FALSE;
           HRETURN_ERROR(DFE_INTERNAL, FAIL);
       }     /* end if */
-    access_rec->special_info = (VOIDP) HDgetspace((uint32) sizeof(linkinfo_t));
-    if (!access_rec->special_info)
+    if (( info = (linkinfo_t *) HDgetspace((uint32) sizeof(linkinfo_t)))==NULL)
       {
           access_rec->used = FALSE;
           HRETURN_ERROR(DFE_NOSPACE, FAIL);
       }
 
-    info = (linkinfo_t *) access_rec->special_info;
     info->attached = 1;
     info->length = data_dd ? data_dd->length : 0;
     info->first_length = data_dd ? data_dd->length : block_length;
@@ -382,9 +380,10 @@ HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length,
 
     /* update access record and file record */
     access_rec->special_func = &linked_funcs;
+    access_rec->special_info=(VOIDP)info;
     access_rec->special = SPECIAL_LINKED;
     access_rec->posn = 0;
-    access_rec->access = DFACC_WRITE;
+    access_rec->access = DFACC_RDWR;
     access_rec->file_id = file_id;
     access_rec->appendable = FALSE;     /* start data as non-appendable */
     access_rec->flush = FALSE;  /* start data as not needing flushing */
@@ -446,6 +445,7 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
     uint16      special_tag;    /* special version of this tag */
     int32       file_id;        /* file ID for the access record */
     uint8       local_ptbuf[16];
+    int32       old_posn;       /* position in the access element */
 
     /* clear error stack */
     HEclear();
@@ -472,6 +472,9 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
     data_dd = &(data_block->ddlist[data_idx]);
     if (SPECIALTAG(data_dd->tag))
         HRETURN_ERROR(DFE_CANTMOD, FAIL);
+
+    /* Save previous position in data element so that we can come back to it */
+    old_posn=access_rec->posn;
 
     if ((special_tag = MKSPECIALTAG(data_dd->tag)) == DFTAG_NULL)
         HRETURN_ERROR(DFE_BADDDLIST, FAIL);
@@ -587,6 +590,16 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
     access_rec->appendable = FALSE;     /* start data as non-appendable */
     access_rec->flush = FALSE;  /* start data as not needing flushing */
 
+    /* check whether we should seek out to the proper position */
+    if(old_posn>0)
+      {
+	if(Hseek(aid,old_posn,DF_START)==FAIL)
+	  {
+              access_rec->used = FALSE;
+              HRETURN_ERROR(DFE_BADSEEK, FAIL);
+	  } /* end if */
+      } /* end if */
+
     return (SUCCEED);
 }   /* end HLconvert() */
 
@@ -674,7 +687,7 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
     /* set up some data in access record */
     access_rec->special = SPECIAL_LINKED;
     access_rec->posn = 0;
-    access_rec->access = acc_mode;
+    access_rec->access = acc_mode|DFACC_READ;
     dd = &access_rec->block->ddlist[access_rec->idx];
 
     /*

@@ -51,6 +51,8 @@ static char RcsId[] = "@(#)$Revision$";
 #define RUN_MASK        0x80    /* bit mask for run-length control bytes */
 #define COUNT_MASK      0x7f    /* bit mask for count of run or mix */
 
+/* #define TESTING */
+
 /* declaration of the functions provided in this module */
 PRIVATE int32 HCIcrle_staccess
             (accrec_t * access_rec, int16 acc_mode);
@@ -225,6 +227,9 @@ HCIcrle_encode(compinfo_t * info, int32 length, uint8 *buf)
     orig_length = length;   /* save this for later */
     while (length > 0)
       {     /* encode until we stored all the bytes */
+#ifdef TESTING
+printf("length=%ld, state=%d\n",(long)length, (int)rle_info->rle_state);
+#endif /* TESTING */
           switch (rle_info->rle_state)
             {
                 case RLE_INIT:      /* initial encoding state */
@@ -402,6 +407,8 @@ HCIcrle_staccess(accrec_t * access_rec, int16 acc_mode)
 
     if (info->aid == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
+    if ((acc_mode&DFACC_WRITE) && Happendable(info->aid) == FAIL)
+        HRETURN_ERROR(DFE_DENIED, FAIL);
     return (HCIcrle_init(access_rec));  /* initialize the RLE info */
 }   /* end HCIcrle_staccess() */
 
@@ -505,7 +512,7 @@ HCPcrle_seek(accrec_t * access_rec, int32 offset, int origin)
 
     if (offset < rle_info->offset)
       {     /* need to seek from the beginning */
-          if (access_rec->access == DFACC_WRITE && rle_info->rle_state != RLE_INIT)
+          if ((access_rec->access&DFACC_WRITE) && rle_info->rle_state != RLE_INIT)
               if (HCIcrle_term(info) == FAIL)
                   HRETURN_ERROR(DFE_CTERM, FAIL);
           if (HCIcrle_init(access_rec) == FAIL)
@@ -689,7 +696,7 @@ HCPcrle_endaccess(accrec_t * access_rec)
     rle_info = &(info->cinfo.coder_info.rle_info);
 
     /* flush out RLE buffer */
-    if (access_rec->access == DFACC_WRITE && rle_info->rle_state != RLE_INIT)
+    if ((access_rec->access&DFACC_WRITE) && rle_info->rle_state != RLE_INIT)
         if (HCIcrle_term(info) == FAIL)
             HRETURN_ERROR(DFE_CTERM, FAIL);
 

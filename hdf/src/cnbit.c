@@ -525,6 +525,8 @@ HCIcnbit_staccess(accrec_t * access_rec, int16 acc_mode)
 
     if (info->aid == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
+    if ((acc_mode&DFACC_WRITE) && Hbitappendable(info->aid) == FAIL)
+        HRETURN_ERROR(DFE_DENIED, FAIL);
 #ifdef TESTING
     printf("HCIcnbit_staccess(): info->aid=%d, coder_func.write=%p\n", info->aid, info->cinfo.coder_funcs.write);
 #endif
@@ -805,7 +807,7 @@ HCPcnbit_endaccess(accrec_t * access_rec)
     nbit_info = &(info->cinfo.coder_info.nbit_info);
 
     /* flush out n-bit buffer */
-    if (access_rec->access == DFACC_WRITE)
+    if (access_rec->access&DFACC_WRITE)
         if (HCIcnbit_term(info) == FAIL)
             HRETURN_ERROR(DFE_CTERM, FAIL);
 
