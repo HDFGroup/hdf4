@@ -128,21 +128,23 @@ include src.inc
 
 .PHONY : all nofortran libnostub clean distclean debug saber lint
 
-all: libdf.a .installed
+#all: libdf.a .installed
+all: libdf.a 
 
 libdf.a: $(COBJS) $(FOBJS) #$(JOBJS)
 	-$(RM) libdf.a
 #	$(AR) $(ARFLAGS) libdf.a `lorder '$(COBJS) $(FOBJS)' | tsort `
-	$(AR) $(ARFLAGS) libdf.a `lorder *.o | tsort `
+	$(AR) $(ARFLAGS) libdf.a *.o
 	$(RANLIB) libdf.a
 
 libnofortran: $(COBJS) #$(JOBJS) 
 	-$(RM) libdf.a
 #	$(AR) $(ARFLAGS) libdf.a `lorder $(COBJS) | tsort `
-	$(AR) $(ARFLAGS) libdf.a `lorder *.o | tsort `
+	$(AR) $(ARFLAGS) libdf.a *.o
 	$(RANLIB) libdf.a
 
-libnostub nofortran: libnofortran .finstalled
+#libnostub nofortran: libnofortran .finstalled
+libnostub nofortran: libnofortran 
 
 rebuild:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all FRC=force_rebuild
@@ -155,7 +157,8 @@ force_rebuild:
 
 $(FOBJS): $(FRC)
 
-debug: libdf.a .installed
+#debug: libdf.a .installed
+debug: libdf.a 
 
 saber:
 	#load -D$(MACHINE) $(CSRCS) $(TSRCS) -lc
