@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.7  1993/04/13 16:52:31  georgev
-Added DFIL_PIXEL, DFIL_LINE, DFIL_PLANE defines for interlacing schemes.
+Revision 1.8  1993/04/13 17:44:19  koziol
+Added patches for Fujitsu VP machines and fixed Cray fast conversion
+routines.
 
+ * Revision 1.7  1993/04/13  16:52:31  georgev
+ * Added DFIL_PIXEL, DFIL_LINE, DFIL_PLANE defines for interlacing schemes.
+ *
  * Revision 1.6  1993/01/26  19:42:42  koziol
  * Added support for reading and writing Little-Endian data on all
  * platforms.  This has been tested on: Cray, Sun, and PCs so far.
@@ -199,6 +203,7 @@ typedef struct {
 #define        DFNTF_CRAY      3       /* Cray format */
 #define        DFNTF_PC        4       /* PC floats - flipped IEEE */
 #define        DFNTF_CONVEX    5       /* CONVEX native format */
+#define        DFNTF_VP        6       /* Fujitsu VP native format */
 
 /* class info codes for char */
 #define        DFNTC_BYTE      0       /* bitwise/numeric field */

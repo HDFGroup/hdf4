@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.16  1993/04/05 22:35:37  koziol
-Fixed goofups made in haste when patching code.
+Revision 1.17  1993/04/13 17:44:23  koziol
+Added patches for Fujitsu VP machines and fixed Cray fast conversion
+routines.
 
+ * Revision 1.16  1993/04/05  22:35:37  koziol
+ * Fixed goofups made in haste when patching code.
+ *
  * Revision 1.15  1993/03/29  16:47:53  koziol
  * Updated JPEG code to new JPEG 4 code.
  * Changed VSets to use Threaded-Balanced-Binary Tree for internal
@@ -80,6 +84,7 @@ Fixed goofups made in haste when patching code.
 /*      3 - Cray                                                            */
 /*      4 - Little Endian                                                   */
 /*      5 - Convex                                                          */
+/*      6 - Fijitsu VP                                                      */
 /*--------------------------------------------------------------------------*/
 #define     DFMT_SUN            0x1111
 #define     DFMT_ALLIANT        0x1111
@@ -99,6 +104,7 @@ Fixed goofups made in haste when patching code.
 #define     DFMT_NEXT           0x1111
 #define     DFMT_MOTOROLA       0x1111
 #define     DFMT_ALPHA          0x4441
+#define     DFMT_VP             0x6611
 
 /* I/O library constants */
 #define UNIXUNBUFIO 1
@@ -803,6 +809,51 @@ typedef double            float64;
 #endif
 
 #endif /* ALPHA */
+
+#ifdef VP
+
+#ifdef GOT_MACHINE
+If you get an error on this line more than one machine type has been defined.
+Please check your Makefile.
+#endif
+#define GOT_MACHINE 1
+#ifndef PROTOTYPE
+#define PROTOTYPE
+#endif /* !PROTOTYPE */
+#include <string.h>
+#include <memory.h>
+#include <sys/types.h>
+#define DF_MT              DFMT_VP
+typedef void                VOID;
+typedef void               *VOIDP;
+typedef char               *_fcd;
+typedef int                bool;
+typedef char               char8;
+typedef unsigned char      uchar8;
+typedef char               int8;
+typedef unsigned char      uint8;
+typedef short int          int16;
+typedef unsigned short int uint16;
+typedef long int           int32;
+typedef unsigned long int  uint32;
+typedef int                intn;
+typedef unsigned int       uintn;
+typedef int                intf;     /* size of INTEGERs in Fortran compiler */
+typedef float              float32;
+typedef double             float64;
+#define _HUGE              /* This should only be defined to a value on the PC */
+#define FNAME_POST_UNDERSCORE
+#define _fcdtocp(desc) (desc)
+#define FILELIB UNIXBUFIO
+
+/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
+
+/* Determine the memory manager we are going to use. Valid values are: */
+/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
+/*  what each does */
+#define JMEMSYS         MEM_ANSI
+
+#endif /* VP */
 
 #ifndef GOT_MACHINE
 No machine type has been defined.  Your Makefile needs to have someing like
