@@ -665,34 +665,36 @@ int32 vkey;
     vsinstance_t    *w;
     VDATA           *vs;
     char * FUNC = "VSdetach";
-    
+
     if (!VALIDVSID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
     
     /* locate vg's index in vgtab */
     if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) 
         HRETURN_ERROR(DFE_NOVS,FAIL);
-    
+
     vs=w->vs;
-    if ((vs == NULL) || (vs->otag != VSDESCTAG))
-        HRETURN_ERROR(DFE_ARGS,FAIL);
+
+    if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
+        HERROR(DFE_ARGS);
+        return (FAIL);
+    }
     
     w->nattach--;
     
     /* --- case where access was 'r' --- */
     if (vs->access =='r') {
-#if 0
+        
         if (w->nattach == 0) {
             w->vs = NULL; /* detach vs from vsdir */
-            HDfreespace((VOIDP)vs);
-        }
-#endif
-
-        if(w->nattach == 0) {
             Hendaccess (vs->aid);
+            HDfreespace((VOIDP)vs);
+/*
+   not needed if we free all the time
             vs->aid = NO_ID;
+*/
         }
-        return(SUCCEED);
+        return (SUCCEED);
     }
     
     /* --- case where access was 'w' --- */
@@ -715,47 +717,12 @@ int32 vkey;
         HDfreespace((VOIDP)vs->usym[i].name);
     vs->nusym = 0;
     
-#if 0
-    {{ /* THIS VERSION WITH VMBLOCKS */
-        VMBLOCK * t, *p;
-        int32 aid, stat, cursize, totalsize = 0;
-        uint8 * vwhole;
-        
-        /* count total byte size */
-        t = vs->vm;
-        while (t != NULL) {
-            totalsize += t->n;
-            t = t->next;
-        }
-        vwhole = (uint8*) HDgetspace( totalsize );
-        if (vwhole==NULL) {
-            HERROR(DFE_NOSPACE);
-            return;
-        }
-        /* coalesce all VMBLOCKS into vwhole */
-        cursize = 0;
-        t = vs->vm;
-        while (t != NULL) {
-            HDmemcpy(&vwhole[cursize], t->mem, t->n);
-            HDfreespace((VOIDP)t->mem);
-            cursize+= t->n;
-            t = t->next;
-        }
-        /* free all VMBLOCKS */
-        t = vs->vm;
-        while (t != NULL) { p = t; t = t->next; HDfreespace((VOIDP)p); }
-        vs->vm = (VMBLOCK*) NULL;
-        
-        /* write out vwhole to file as 1 vdata */
-        stat = aid =Hstartwrite(vs->f,VSDATATAG,vs->oref, totalsize);
-        Hwrite(aid,  totalsize , vwhole);
-        Hendaccess (aid);
-        HDfreespace((VOIDP)vwhole);
-        /* END OF VMBLOCK VERSION */ 	}}
-#endif
-    
+    w->vs = NULL;                 /* detach vs from vsdir */
     Hendaccess (vs->aid);
+    HDfreespace((VOIDP)vs);
+    
     return(SUCCEED);
+
 } /* VSdetach */
 
 /* -------------------------- VSappendable -------------------------------- */

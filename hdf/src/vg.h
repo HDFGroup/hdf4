@@ -71,10 +71,10 @@ typedef struct write_struct
   char 	name[VSFIELDMAX][FIELDNAMELENMAX+1]; /* S name of each field */
   
   int16	len[VSFIELDMAX];     /* S length of each fieldname */
-  intn  type[VSFIELDMAX];    /* S field type */
+  int16 type[VSFIELDMAX];    /* S field type */
   int16	off[VSFIELDMAX];     /* S field offset in element in vdata */
-  intn  isize[VSFIELDMAX];   /* S internal (HDF) size [incl order] */
-  intn  order[VSFIELDMAX];   /* S order of field */
+  int16 isize[VSFIELDMAX];   /* S internal (HDF) size [incl order] */
+  int16 order[VSFIELDMAX];   /* S order of field */
   int16	esize[VSFIELDMAX];   /*  external (local machine) size [incl order] */
 } VWRITELIST;
 
