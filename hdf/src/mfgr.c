@@ -3623,6 +3623,11 @@ printf("%s: ri_ptr->img_tag=%u, ri_ptr->img_ref=%u\n",FUNC,(unsigned)ri_ptr->img
 printf("%s: ri_ptr->meta_mod=%u, ri_ptr->data_mod=%u\n",FUNC,(unsigned)ri_ptr->meta_modified,(unsigned)ri_ptr->data_modified);
 #endif /* QAK */
 
+    /* Double check on setting the GR modified flag */
+    /* Maybe this should be flagged as as error? -QAK */
+    if(ri_ptr->meta_modified==TRUE &&& ri_ptr->gr_ptr->gr_modified==FALSE)
+        ri_ptr->gr_ptr->gr_modified=TRUE;
+
     /* Delete the atom for the RI ID */
     if(NULL==HAremove_atom(riid))
         HGOTO_ERROR(DFE_NOVS, FAIL);
@@ -4185,6 +4190,7 @@ intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,void *
                     HGOTO_ERROR(DFE_PUTELEM,FAIL);
 
                 ri_ptr->meta_modified=TRUE;
+                ri_ptr->gr_ptr->gr_modified=TRUE;
             } /* end else */
       } /* end if */
     else
