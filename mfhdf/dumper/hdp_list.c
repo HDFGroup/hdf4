@@ -500,6 +500,23 @@ print_list_obj(list_info_t * l_opts, objinfo_t * o_info, intn o_num)
       }		/* end if */
 }	/* end print_obj_list() */
 
+
+/* print the library version of the file */
+void printfilever(int32 file_id)
+{
+    uint32 major, minor, release;
+    char string[LIBVSTR_LEN+1];
+
+    if (Hgetfileversion(file_id, &major, &minor, &release, string) == SUCCEED)
+      {
+        string[LIBVSTR_LEN] = '\0';		/* make it a null terminated string */
+        printf("\nFile library version: ");
+        printf("Major= %u, Minor=%u, Release=%u\n%s\n", (unsigned)major, (unsigned)minor, (unsigned)release, string);
+      }
+    else
+        printf("(Does not have libraray version information)\n");
+}
+
 void 
 do_list(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts)
 {
@@ -549,6 +566,7 @@ do_list(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts)
 
                           /* print out filename, etc. */
                       printf("File: %s\n", f_name);
+		      printfilever(fid);
 
                           /* check for file label */
                       if (list_opts.name == TRUE)
