@@ -126,7 +126,7 @@ SUBDIR_TARGETS	= \
     c++/all                                  c++/clean    c++/distclean \
     dumper/all	             dumper/install  dumper/clean dumper/distclean \
     ncdump/install-utils  ncgen/install-utils dumper/install-utils \
-    ncdump/install-man    ncgen/install-man   ncgen/install-man \
+    ncdump/install-man    ncgen/install-man   \
     xdr/install-includes fortran/install-includes libsrc/install-includes
 
 all::		port/all xdr/all libsrc/all fortran/all ncdump/all \
