@@ -36,7 +36,6 @@ typedef int16 gr_interlace_t;
 
 #include "hfile.h"
 #include "tbbt.h"       /* Get tbbt routines */
-#include "api_adpt.h"
 
 /* This is the size of the hash tables used for GR & RI IDs */
 #define GRATOM_HASH_SIZE    32
