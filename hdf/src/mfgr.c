@@ -663,7 +663,8 @@ for (i = 0; i < curr_image; i++)
               for (j = i+1; j < curr_image; j++)
                 {
                     if(img_info[j].img_tag!=DFTAG_NULL)
-                        if (img_info[i].offset!= INVALID_OFFSET && img_info[i].offset == img_info[j].offset)
+                        if ((img_info[i].offset!= INVALID_OFFSET && img_info[i].offset!=0)
+                            && img_info[i].offset == img_info[j].offset)
                           {
                               /* eliminate the oldest tag from the match */
                               switch(img_info[i].img_tag) {
