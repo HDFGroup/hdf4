@@ -293,8 +293,7 @@ testhdf.tc: $(CTESTS) $(HDFLIB)/libdf.a
 
 testhdf: $(CTESTS) $(HDFLIB)/libdf.a
 	$(CC) $(CFLAGS) -o testhdf $(CTESTS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
-	-mkdir $(TESTDIR)
-
+	test -d $(TESTDIR) || mkdir $(TESTDIR)
 
 fortest: $(FTESTS) $(HDFLIB)/libdf.a fortest.o
 	$(CC) $(CFLAGS) -o fortest $(TESTF) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
