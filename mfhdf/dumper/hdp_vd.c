@@ -425,7 +425,6 @@ choose_vd(dump_info_t * dumpvd_opts,
           printf("Unknown filter option\n");
           ret_value = FAIL;
           goto done;
-          break;
       }		/* switch */
 
     *num_vd_chosen = k;
@@ -716,7 +715,6 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
                       printf("dumping vdata in file %s, unknown option \n",file_name);
                       ret_value = FAIL;
                       goto done;
-                      break;
                   }	/* switch */
             }
 
@@ -1047,7 +1045,6 @@ dvd(dump_info_t * dumpvd_opts,
                 printf("dumping vdata, unknown ouput file option \n");
                 ret_value = FAIL;
                 goto done;
-                break;
             }    /* switch for output file   */
 
           if(vd_chosen != NULL)

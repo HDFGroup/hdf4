@@ -307,7 +307,6 @@ dumpfull(int32       nt,
           fprintf(ofp, "HDP does not support type [%d] \n", (int) nt);
           ret_value = FAIL;
           goto done;
-          break;
       }		/* end switch */
 
     /* assign to variables used in loop below */

@@ -442,7 +442,6 @@ dgr(dump_info_t *dumpgr_opts,
                 printf("Currently, no class defined on an GR.\n");
                 ret_value = FAIL;
                 goto done;
-                break;
 
             case DALL:
                 k= -1;
@@ -451,7 +450,6 @@ dgr(dump_info_t *dumpgr_opts,
                 printf("Unknown filter option for dumping GR\n");
                 ret_value = FAIL;
                 goto done;
-                break;
             } /* end switch filter option */
 
           if (index_error && k==0)
@@ -787,7 +785,6 @@ dgr(dump_info_t *dumpgr_opts,
                 printf("dumping GR, unknown output file option \n");
                 ret_value = FAIL;
                 goto done;
-                break;
             } /* switch for output file */
                        
 

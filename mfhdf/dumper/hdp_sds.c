@@ -510,7 +510,6 @@ dsd(dump_info_t *dumpsds_opts,
                 printf("Currently, no class defined on an SD.\n");
                 ret_value = FAIL;
                 goto done;
-                break;
 
             case DALL:
                 k= -1;
@@ -520,7 +519,6 @@ dsd(dump_info_t *dumpsds_opts,
                 printf("Unknown filter option\n");
                 ret_value = FAIL;
                 goto done;
-                break;
             }
 
           if (index_error && k==0)
@@ -788,7 +786,6 @@ dsd(dump_info_t *dumpsds_opts,
                             printf("dumping SDS, unknown option \n");
                             ret_value = FAIL;
                             goto done;
-                            break;
                         }		/* switch  */
 
                       if (FAIL == SDendaccess(sds_id))

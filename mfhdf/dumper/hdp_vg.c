@@ -782,7 +782,6 @@ dvg(dump_info_t *dumpvg_opts,
                 printf("Unknown filter option\n");
                 ret_value = FAIL;
                 goto done;
-                break;
             }	/* switch */
 
           if (index_error && k==0)
@@ -983,7 +982,6 @@ dvg(dump_info_t *dumpvg_opts,
                       printf("dumping vgroup, unknown option \n");
                       ret_value = FAIL;
                       goto done;
-                      break;
                   }		/* switch */
 
                 if (FAIL == Vdetach(vg_id))

@@ -434,7 +434,6 @@ drig(dump_info_t *dumprig_opts,
                             printf("dumping RIG, unknown option \n");
                             ret_value = FAIL;
                             goto done;
-                            break;
                         }		/* switch  */
 
                       if(dumpall!=1 && i == rig_chosen[x])
@@ -602,7 +601,6 @@ drig(dump_info_t *dumprig_opts,
                 printf("dumping RIG, unknown output file option \n");
                 ret_value = FAIL;
                 goto done;
-                break;
             }   /* switch for output file   */
 
           if (rig_chosen != NULL)

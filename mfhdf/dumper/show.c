@@ -184,7 +184,6 @@ dumpvd(int32       vd,
                 fprintf(stderr, "sorry, type [%d] not supported\n", (int) w->type[i]);
                 ret_value = FAIL;
                 goto done;
-                break;
 
             }	/* switch */
       }		/* for */
@@ -593,7 +592,6 @@ dumpattr(int32 vid,
                         (int) i_type);
                 ret_value = FAIL;
                 goto done;
-                break;
             }
 
           /* find offset */
