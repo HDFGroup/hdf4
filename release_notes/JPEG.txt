@@ -1,5 +1,5 @@
 Independant JPEG Group library
-    Version 4.0r2 of the HDF-netCDF library now uses v6a of the Independent
+    Version 4.1b of the HDF-netCDF library uses v6a of the Independent
 JPEG Group (IJG) JPEG file access library.  For most users of the HDF library,
 this will be completely transparent.  For users who are integrating the HDF
 library into an existing application which uses the IJG's JPEG library, linking
