@@ -903,8 +903,6 @@
 ./mfhdf/hrepack/hrepack_vg.h
 ./mfhdf/hrepack/hrepack_vs.c
 ./mfhdf/hrepack/hrepack_vs.h
-./mfhdf/hrepack/hziptst.hdf
-./mfhdf/hrepack/hziptst_out.hdf
 ./mfhdf/hrepack/image24pixel.txt
 ./mfhdf/hrepack/image24plane.txt
 ./mfhdf/hrepack/image8.txt
