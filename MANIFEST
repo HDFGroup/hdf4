@@ -32,6 +32,7 @@
 
 ./config/BlankForm
 ./config/freebsd
+./config/hpux11.00
 ./config/irix6.x
 ./config/mh-aix
 ./config/mh-aix64
