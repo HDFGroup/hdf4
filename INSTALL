@@ -77,7 +77,7 @@
   Platform(OS)                    C-Compiler       Fortran-Compiler   
   ------------                    ----------       ---------------- 
   Sun4(SunOS 4.1.4)               GCC 2.6.3        f77             
-  Sun4(Solaris 2.5)               CC SC3.0         f77            
+  Sun4(Solaris 2.5)               CC SC4.0         f77 SC4.0            
   SGI-Indy(IRIX5.3)               CC 3.19          f77, g77 0.5.19
   SGI-PowerChallenge(IRIX6.2_n32) CC 7.0           f77 7.0  
   SGI-PowerChallenge(IRIX6.2_64)  CC 7.0           f77 7.0   
