@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/01/19 05:54:00  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.6  1993/02/22 23:32:27  georgev
+Fixed minor compilier warning on SGI.
 
+ * Revision 1.5  1993/01/19  05:54:00  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.4  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -470,8 +473,8 @@ intf *force_baseline;
 {
     comp_info *cinfo;   /* Structure containing compression parameters */
 
-    cinfo->jpeg.quality=*quality;
-    cinfo->jpeg.force_baseline=*force_baseline;
+    cinfo->jpeg.quality = *quality;
+    cinfo->jpeg.force_baseline = *force_baseline;
     return (DF24setcompress((int32)COMP_JPEG,cinfo));
 }   /* end df24setjpeg() */
 
