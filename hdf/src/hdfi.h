@@ -1311,6 +1311,8 @@ extern uint8 FAR *DFtbuf;
 /**************************************************************************
 *  Misc. functions
 **************************************************************************/
+#include <sys/stat.h>
+#define HDstat(path, result)	(stat(path, result))
 #define HDgetenv(s1)	    (getenv(s1))
 
 /* Compatibility #define for V3.3, should be taken out by v4.0 - QAK */

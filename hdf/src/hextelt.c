@@ -82,7 +82,6 @@ EXPORTED ROUTINES
 
 #include "hdf.h"
 #include "hfile.h"
-#include <sys/stat.h>
 
 /* extinfo_t -- external elt information structure */
 
@@ -1269,7 +1268,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
     } /*DFACC_CREATE */
     case DFACC_OLD:{			/* Locating an old external element */
 	if ( *fname == '/' ) {	/* Absolute Pathname */
-	    if (stat(fname, &filestat) == 0){
+	    if (HDstat(fname, &filestat) == 0){
 		return (HDstrcpy(finalpath, fname));
 	    }
 	    else if (!extdir && !HDFEXTDIR) {
@@ -1312,7 +1311,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 			HRETURN_ERROR(DFE_NOSPACE, NULL);
 		    }
 		    HDstrcpy(path_pt, fname);
-		    if (stat(finalpath, &filestat) == 0 ){
+		    if (HDstat(finalpath, &filestat) == 0 ){
 			return(finalpath);
 		    }
 		}
@@ -1342,7 +1341,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 			HRETURN_ERROR(DFE_NOSPACE, NULL);
 		    }
 		    HDstrcpy(path_pt, fname);
-		    if (stat(finalpath, &filestat) == 0 ){
+		    if (HDstat(finalpath, &filestat) == 0 ){
 			return(finalpath);
 		    }
 		}
@@ -1352,7 +1351,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 	    /* Don't have Head File information now.  Continue */
 
 	    /* See if the file exists */
-	    if (stat(fname, &filestat) == 0 )
+	    if (HDstat(fname, &filestat) == 0 )
 		return(HDstrcpy(finalpath, fname));
 
 	    /* All have failed */
