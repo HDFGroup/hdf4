@@ -952,6 +952,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
+#ifdef QAK 
 #ifdef __alpha
     if ((nc_type) datatype == NC_LONG) {
 	long          longs = *(int *)value;
@@ -961,6 +962,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif
+#endif /* QAK */
     if (ncvarput1 (*cdfid, *varid - 1, nindices, value) == -1) {
 	*rcode = ncerr;
     }
@@ -1054,6 +1056,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
+#ifdef QAK 
 #ifdef __alpha
     if ((nc_type) datatype == NC_LONG) {
 	long *longs = itol (value, ncount, ndims);
@@ -1069,6 +1072,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif
+#endif /* QAK */
     if (ncvarput (*cdfid, *varid - 1, nstart, ncount, value) == -1) {
 	*rcode = ncerr;
     }
@@ -1204,6 +1208,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
+#ifdef QAK
 #ifdef __alpha
     if ((nc_type) datatype == NC_LONG) {
 	long *longs = itolg (value, ncount, nbasis, ndims);
@@ -1219,6 +1224,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif
+#endif /* QAK */
     if (ncvarputg (*cdfid, *varid - 1, nstart, ncount, nstride, nbasis,
 		   value) == -1) {
 	*rcode = ncerr;
@@ -1322,6 +1328,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
+#ifdef QAK
 #ifdef __alpha
     if ((nc_type) datatype == NC_LONG) {
 	long          longs;
@@ -1335,6 +1342,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif
+#endif /* QAK */
     if (ncvarget1 (*cdfid, *varid - 1, nindices, value) == -1) {
 	*rcode = ncerr;
     }
@@ -1448,6 +1456,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
+#ifdef QAK
 #ifdef __alpha
     if ((nc_type) datatype == NC_LONG) {
 	long iocount = dimprod (ncount, ndims);	/* product of dimensions */
@@ -1471,6 +1480,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif
+#endif /* QAK */
     if (ncvarget (*cdfid, *varid - 1, nstart, ncount, value) == -1) {
 	*rcode = ncerr;
     }
@@ -1626,6 +1636,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
+#ifdef QAK
 #ifdef __alpha
     if ((nc_type) datatype == NC_LONG) {
 	long iocount = dimprod (ncount, ndims);	/* product of dimensions */
@@ -1646,6 +1657,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif
+#endif /* QAK */
     if (ncvargetg (*cdfid, *varid - 1, nstart, ncount, nstride,
 		   nbasis, value) == -1) {
 	*rcode = ncerr;
@@ -1768,6 +1780,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
+#ifdef QAK
 #ifdef __alpha
     if ((nc_type) *datatype == NC_LONG) {
 	long *longs = itol (value, attlen, 1);
@@ -1784,6 +1797,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif
+#endif /* QAK */
     if (ncattput (*cdfid, *varid - 1, name, (nc_type) *datatype, *attlen,
 		  value) == -1) {
 	*rcode = ncerr;
@@ -1912,6 +1926,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
+#ifdef QAK
 #ifdef __alpha
     if ((nc_type) datatype == NC_LONG) {
 	long *longs = (long *) malloc (attlen * sizeof (long));
@@ -1933,6 +1948,7 @@ ltoig(longs, ints, dims, imap, ndims)
 	return;
     }				/* else */
 #endif
+#endif /* QAK */
     if (ncattget (*cdfid, *varid - 1, name, value) == -1) {
 	*rcode = ncerr;
     }
