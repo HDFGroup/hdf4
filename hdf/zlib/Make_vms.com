@@ -65,7 +65,9 @@ $   write sys$output "Building minigzip..."
 $   CALL MAKE minigzip.OBJ "CC ''CCOPT' minigzip" -
                 minigzip.c zlib.h zconf.h
 $   call make minigzip.exe - 
-                "LINK minigzip,libz.olb/lib,x11vms:xvmsutils.olb/lib" - 
+!                "LINK minigzip,libz.olb/lib,x11vms:xvmsutils.olb/lib" - 
+                 "LINK minigzip,libz.olb/lib,  -
+                      sys$common:[syslib]decwindows.olb/lib" - 
                 minigzip.obj libz.olb
 $  else
 $   mms/macro=('comp')
