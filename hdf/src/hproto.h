@@ -129,7 +129,7 @@ extern int32 HDfwritebig
 extern uint16 HDmake_special_tag
   (uint16 tag);
 
-extern bool HDis_special_tag
+extern intn HDis_special_tag
     (uint16 tag);
 
 extern uint16 HDbase_tag
@@ -138,7 +138,7 @@ extern uint16 HDbase_tag
 extern int HDerr
     (int32 file_id);
 
-extern bool HDvalidfid
+extern intn HDvalidfid
     (int32 file_id);
 
 extern const char _HUGE *HDgettagname

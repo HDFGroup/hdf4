@@ -61,7 +61,7 @@ PRIVATE intn   Newpalette   = -1; /* -1 = no palette is associated
                                       0 = palette already written out
                                       1 = new palette, not yet written out */
 
-PRIVATE bool CompressSet    = FALSE; /* Whether the compression parameters have
+PRIVATE intn CompressSet    = FALSE; /* Whether the compression parameters have
                                        been set for the next image */
 PRIVATE int32 CompType = COMP_NONE; /* What compression to use for the next
                                        image */
@@ -754,7 +754,7 @@ intn DFR8nimages(const char *filename)
         nrig,nri8,nci8;     /* number of RIGs, RI8s, and CI8s */
     int32 *img_off;         /* storage for an array of image offsets */
     uint16 rig_tag,rig_ref; /* storage for tag/ref pairs of RIGs */
-    bool found_8bit;        /* indicates whether a RIG is an 8-bit RIG */
+    intn found_8bit;        /* indicates whether a RIG is an 8-bit RIG */
     uint16 find_tag,find_ref;   /* storage for tag/ref pairs found */
     int32 find_off,find_len;    /* storage for offset/lengths of tag/refs found */
     uint8 GRtbuf[64];       /* local buffer to read the ID element into */

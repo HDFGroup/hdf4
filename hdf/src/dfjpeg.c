@@ -182,7 +182,7 @@ LOCAL int emit_dqt (compress_info_ptr cinfo, int32 aid, int index)
 }   /* 133 bytes written */
 
 
-LOCAL VOID emit_dht (compress_info_ptr cinfo, int index, bool is_ac)
+LOCAL VOID emit_dht (compress_info_ptr cinfo, int index, intn is_ac)
 /* Emit a DHT marker */
 {
   HUFF_TBL * htbl;
@@ -362,7 +362,7 @@ GLOBAL VOID write_file_header (compress_info_ptr cinfo)
     int32 aid;
     char qt_in_use[NUM_QUANT_TBLS];
     int i, prec;
-    bool is_baseline;
+    intn is_baseline;
 
     /* Get an AID to write the JPEG header into.  1024 bytes should be more */
     /*  than enough (it should fit into 575) */

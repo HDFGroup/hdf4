@@ -410,10 +410,10 @@ PRIVATE int32 HCIread_header(filerec_t *file_rec,accrec_t *access_rec,
                 INT32DECODE(p, c_info->nbit.nt);
                 /* next is the flag to indicate whether to sign extend */
                 UINT16DECODE(p, s_ext);
-                c_info->nbit.sign_ext=(bool)s_ext;
+                c_info->nbit.sign_ext=(intn)s_ext;
                 /* the flag to indicate whether to fill with 1's or 0's */
                 UINT16DECODE(p, f_one);
-                c_info->nbit.fill_one=(bool)f_one;
+                c_info->nbit.fill_one=(intn)f_one;
                 /* the offset of the bits extracted */
                 INT32DECODE(p, m_off);
                 c_info->nbit.start_bit=(intn)m_off;

@@ -109,7 +109,7 @@ d_read_jpeg_data (decompress_info_ptr cinfo)
  */
 
 GLOBAL VOID
-j_d_defaults (decompress_info_ptr cinfo, bool standard_buffering)
+j_d_defaults (decompress_info_ptr cinfo, intn standard_buffering)
 /* NB: the external methods must already be set up. */
 {
   short i;

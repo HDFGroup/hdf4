@@ -764,7 +764,7 @@ complex_dcontroller (decompress_info_ptr cinfo)
   JSAMPIMAGE sampled_data[2];
   int whichss, ri;
   short ci, i;
-  bool single_scan;
+  intn single_scan;
 
   /* Compute dimensions of full-size pixel buffers */
   /* Note these are the same whether interleaved or not. */

@@ -279,7 +279,7 @@ close_file_store (backing_store_ptr info)
 }
 
 
-LOCAL bool
+LOCAL intn
 open_file_store (backing_store_ptr info, long total_bytes_needed)
 {
   short handle;
@@ -406,7 +406,7 @@ close_xms_store (backing_store_ptr info)
 }
 
 
-LOCAL bool
+LOCAL intn
 open_xms_store (backing_store_ptr info, long total_bytes_needed)
 {
   XMScontext ctx;
@@ -529,7 +529,7 @@ close_ems_store (backing_store_ptr info)
 }
 
 
-LOCAL bool
+LOCAL intn
 open_ems_store (backing_store_ptr info, long total_bytes_needed)
 {
   EMScontext ctx;

@@ -229,7 +229,7 @@ usage (VOID)
 }
 
 
-LOCAL bool
+LOCAL intn
 keymatch (char * arg, const char * keyword, int minchars)
 /* Case-insensitive matching of (possibly abbreviated) keyword switches. */
 /* keyword is the constant keyword (must be lower case already), */

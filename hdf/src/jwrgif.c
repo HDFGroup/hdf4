@@ -152,7 +152,7 @@ output (code_int code)
 /* The LZW algorithm proper */
 
 static code_int waiting_code;	/* symbol not yet output; may be extendable */
-static bool first_byte;	/* if TRUE, waiting_code is not valid */
+static intn first_byte;	/* if TRUE, waiting_code is not valid */
 
 
 LOCAL VOID

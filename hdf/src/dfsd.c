@@ -1613,8 +1613,8 @@ intn DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr *l_nsdghdr)
     int32 GroupID;
     uint16 intag;
     uint16 inref;
-    bool moretags;
-    bool found;
+    intn moretags;
+    intn found;
     DFnsdgle *ntb;
     DFnsdgle *stb;
     DFnsdgle *new;

@@ -85,7 +85,7 @@
  * seldom-used ID field), so we provide a switch to force Targa input mode.
  */
 
-static boolean is_targa;	/* records user -targa switch */
+static intn is_targa;	/* records user -targa switch */
 
 
 LOCAL VOID
@@ -260,7 +260,7 @@ usage (VOID)
 }
 
 
-LOCAL boolean
+LOCAL intn
 keymatch (char * arg, const char * keyword, int minchars)
 /* Case-insensitive matching of (possibly abbreviated) keyword switches. */
 /* keyword is the constant keyword (must be lower case already), */

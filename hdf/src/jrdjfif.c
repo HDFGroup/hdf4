@@ -681,7 +681,7 @@ read_file_header (decompress_info_ptr cinfo)
  * Return TRUE if find SOS, FALSE if find EOI.
  */
 
-METHODDEF bool
+METHODDEF intn
 read_scan_header (decompress_info_ptr cinfo)
 {
   int c;

@@ -198,7 +198,7 @@ typedef struct {		/* A Huffman coding table */
   /* This field is used only during compression.  It's initialized FALSE when
    * the table is created, and set TRUE when it's been output to the file.
    */
-	bool sent_table;	/* TRUE when table has been output */
+	intn sent_table;	/* TRUE when table has been output */
   /* The remaining fields are computed from the above to allow more efficient
    * coding and decoding.  These fields should be considered private to the
    * Huffman compression & decompression modules.
@@ -251,7 +251,7 @@ struct Compress_info_struct {
 
 	double input_gamma;	/* image gamma of input file */
 
-	bool write_JFIF_header; /* should a JFIF marker be written? */
+	intn write_JFIF_header; /* should a JFIF marker be written? */
 	/* These three values are not used by the JPEG code, only copied */
 	/* into the JFIF APROTO0 marker.  density_unit can be 0 for unknown, */
 	/* 1 for dots/inch, or 2 for dots/cm.  Note that the pixel aspect */
@@ -275,10 +275,10 @@ struct Compress_info_struct {
     uint8 arith_dc_U[NUM_ARITH_TBLS]; /* U values for DC arithmetic-coding tables */
     uint8 arith_ac_K[NUM_ARITH_TBLS]; /* Kx values for AC arithmetic-coding tables */
 
-	bool arith_code;	/* TRUE=arithmetic coding, FALSE=Huffman */
-	bool interleave;	/* TRUE=interleaved output, FALSE=not */
-	bool optimize_coding; /* TRUE=optimize entropy encoding parms */
-	bool CCIR601_sampling; /* TRUE=first samples are cosited */
+	intn arith_code;	/* TRUE=arithmetic coding, FALSE=Huffman */
+	intn interleave;	/* TRUE=interleaved output, FALSE=not */
+	intn optimize_coding; /* TRUE=optimize entropy encoding parms */
+	intn CCIR601_sampling; /* TRUE=first samples are cosited */
 	int smoothing_factor;	/* 1..100, or 0 for no input smoothing */
 
 	/* The restart interval can be specified in absolute MCUs by setting
@@ -350,14 +350,14 @@ struct Decompress_info_struct {
 
 	double output_gamma;	/* image gamma wanted in output */
 
-	bool quantize_colors; /* T if output is a colormapped format */
+	intn quantize_colors; /* T if output is a colormapped format */
 	/* the following are ignored if not quantize_colors: */
-	bool two_pass_quantize;	/* use two-pass color quantization? */
-	bool use_dithering;		/* want color dithering? */
+	intn two_pass_quantize;	/* use two-pass color quantization? */
+	intn use_dithering;		/* want color dithering? */
 	int desired_number_of_colors;	/* max number of colors to use */
 
-	bool do_block_smoothing; /* T = apply cross-block smoothing */
-	bool do_pixel_smoothing; /* T = apply post-upsampling smoothing */
+	intn do_block_smoothing; /* T = apply cross-block smoothing */
+	intn do_pixel_smoothing; /* T = apply post-upsampling smoothing */
 
 /*
  * These fields are used for efficient buffering of data between read_jpeg_data
@@ -405,8 +405,8 @@ struct Decompress_info_struct {
     uint8 arith_dc_U[NUM_ARITH_TBLS]; /* U values for DC arith-coding tables */
     uint8 arith_ac_K[NUM_ARITH_TBLS]; /* Kx values for AC arith-coding tables */
 
-	bool arith_code;	/* TRUE=arithmetic coding, FALSE=Huffman */
-	bool CCIR601_sampling; /* TRUE=first samples are cosited */
+	intn arith_code;	/* TRUE=arithmetic coding, FALSE=Huffman */
+	intn CCIR601_sampling; /* TRUE=first samples are cosited */
 
     uint16 restart_interval;/* MCUs per restart interval, or 0 for no restart */
 
@@ -596,10 +596,10 @@ struct External_methods_struct {
 					long extra_medium_space);
 	METHOD(JSAMPARRAY, access_big_sarray, (big_sarray_ptr ptr,
 					       long start_row,
-					       bool writable);
+					       intn writable);
 	METHOD(JBLOCKARRAY, access_big_barray, (big_barray_ptr ptr,
 						long start_row,
-						bool writable);
+						intn writable);
 	METHOD(VOID, free_big_sarray, (big_sarray_ptr ptr);
 	METHOD(VOID, free_big_barray, (big_barray_ptr ptr);
 
@@ -751,7 +751,7 @@ struct Decompress_methods_struct {
 					long loopcounter, long looplimit);
 	/* JPEG file scanning */
 	METHOD(VOID, read_file_header, (decompress_info_ptr cinfo);
-	METHOD(bool, read_scan_header, (decompress_info_ptr cinfo);
+	METHOD(intn, read_scan_header, (decompress_info_ptr cinfo);
 	METHOD(int, read_jpeg_data, (decompress_info_ptr cinfo);
 	METHOD(VOID, resync_to_restart, (decompress_info_ptr cinfo,
 					 int marker);
@@ -826,14 +826,14 @@ EXTERN VOID jpeg_compress (compress_info_ptr cinfo);
 
 /* default parameter setup for compression */
 EXTERN VOID j_c_defaults (compress_info_ptr cinfo, int quality,
-			     bool force_baseline);
+			     intn force_baseline);
 EXTERN VOID j_monochrome_default (compress_info_ptr cinfo);
 EXTERN VOID j_set_quality (compress_info_ptr cinfo, int quality,
-			      bool force_baseline);
+			      intn force_baseline);
 /* advanced compression parameter setup aids */
 EXTERN VOID j_add_quant_table (compress_info_ptr cinfo, int which_tbl,
 				  const QUANT_VAL *basic_table,
-				  int scale_factor, bool force_baseline);
+				  int scale_factor, intn force_baseline);
 EXTERN int j_quality_scaling (int quality);
 
 /* main entry for decompression */
@@ -841,7 +841,7 @@ EXTERN VOID jpeg_decompress (decompress_info_ptr cinfo);
 
 /* default parameter setup for decompression */
 EXTERN VOID j_d_defaults (decompress_info_ptr cinfo,
-			     bool standard_buffering);
+			     intn standard_buffering);
 
 /* forward DCT */
 EXTERN VOID j_fwd_dct (DCTBLOCK data);

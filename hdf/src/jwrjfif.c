@@ -153,7 +153,7 @@ emit_dqt (compress_info_ptr cinfo, int index)
 
 
 LOCAL VOID
-emit_dht (compress_info_ptr cinfo, int index, bool is_ac)
+emit_dht (compress_info_ptr cinfo, int index, intn is_ac)
 /* Emit a DHT marker */
 {
   HUFF_TBL * htbl;
@@ -338,7 +338,7 @@ write_file_header (compress_info_ptr cinfo)
 {
   char qt_in_use[NUM_QUANT_TBLS];
   int i, prec;
-  bool is_baseline;
+  intn is_baseline;
   
   emit_marker(cinfo, M_SOI);	/* first the SOI */
 

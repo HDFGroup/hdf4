@@ -45,7 +45,7 @@ typedef struct error_t {
     const char *function_name;      /* function where error occur */
     const char *file_name;          /* file where error occur */
     intn line;                      /* line in file where error occurs */
-    intn system;                    /* bool for system or HDF error */
+    intn system;                    /* for system or HDF error */
     char *desc;                     /* optional supplied description */
 } error_t;
 

@@ -112,7 +112,7 @@ typedef FSERROR FAR *FSERRPTR;	/* pointer to error array (in FAR storage!) */
 
 static FSERRPTR evenrowerrs[MAX_COMPONENTS]; /* errors for even rows */
 static FSERRPTR oddrowerrs[MAX_COMPONENTS];  /* errors for odd rows */
-static bool on_odd_row;  /* flag to remember which row we are on */
+static intn on_odd_row;  /* flag to remember which row we are on */
 
 
 /*
@@ -140,7 +140,7 @@ select_ncolors (decompress_info_ptr cinfo, int Ncolors[])
   int max_colors = cinfo->desired_number_of_colors;
   int total_colors, iroot, i;
   long temp;
-  bool changed;
+  intn changed;
 
   /* We can allocate at least the nc'th root of max_colors per component. */
   /* Compute floor(nc'th root of max_colors). */

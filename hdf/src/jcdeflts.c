@@ -146,7 +146,7 @@ std_huff_tables (compress_info_ptr cinfo)
 GLOBAL VOID
 j_add_quant_table (compress_info_ptr cinfo, int which_tbl,
 		   const QUANT_VAL *basic_table, int scale_factor,
-		   bool force_baseline)
+		   intn force_baseline)
 /* Define a quantization table equal to the basic_table times
  * a scale factor (given as a percentage).
  * If force_baseline is TRUE, the computed quantization table entries
@@ -203,7 +203,7 @@ j_quality_scaling (int quality)
 
 
 GLOBAL VOID
-j_set_quality (compress_info_ptr cinfo, int quality, bool force_baseline)
+j_set_quality (compress_info_ptr cinfo, int quality, intn force_baseline)
 /* Set or change the 'quality' (quantization) setting, using default tables.
  * This is the standard quality-adjusting entry point for typical user
  * interfaces; only those who want detailed control over quantization tables
@@ -276,7 +276,7 @@ j_set_quality (compress_info_ptr cinfo, int quality, bool force_baseline)
  */
 
 GLOBAL VOID
-j_c_defaults (compress_info_ptr cinfo, int quality, bool force_baseline)
+j_c_defaults (compress_info_ptr cinfo, int quality, intn force_baseline)
 /* NB: the external methods must already be set up. */
 {
   short i;

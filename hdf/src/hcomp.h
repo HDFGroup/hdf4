@@ -89,8 +89,8 @@ typedef union tag_comp_info {  /* Union to contain compression information */
     struct {            /* struct to contain information about how to compress */
                         /* or decompress a N-bit encoded dataset */
         int32 nt;       /* number type of the data to encode */
-        bool sign_ext;  /* whether to sign extend or not */
-        bool fill_one;  /* whether to fill with 1's or 0's */
+        intn sign_ext;  /* whether to sign extend or not */
+        intn fill_one;  /* whether to fill with 1's or 0's */
         intn start_bit; /* offset of the start bit in the data */
         intn bit_len;   /* number of bits to store */
       } nbit;

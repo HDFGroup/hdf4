@@ -414,7 +414,7 @@ jseldownsample (compress_info_ptr cinfo)
 {
   short ci;
   jpeg_component_info * compptr;
-  bool smoothok = TRUE;
+  intn smoothok = TRUE;
 
   if (cinfo->CCIR601_sampling)
     ERREXIT(cinfo->emethods, "CCIR601 downsampling not implemented yet");

@@ -46,7 +46,7 @@
 typedef struct bitrec_t {
     int32 acc_id;   /* Access ID for H layer I/O routines */
     int32 bit_id;   /* Bitfile ID for internal use */
-    bool used;      /* whether this record is in use */
+    intn used;      /* whether this record is in use */
     uint32 block_offset,    /* offset of the current buffered block in the dataset */
         max_offset,     /* offset of the last byte written to the dataset */
         byte_offset;    /* offset of the current byte in the dataset */

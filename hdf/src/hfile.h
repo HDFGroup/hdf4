@@ -272,8 +272,8 @@ typedef struct filerec_t {
    instead of pointing directly to the dd, we point to the ddblock and
    index into the ddlist of that ddblock. */
 typedef struct accrec_t {
-    bool appendable;            /* whether appends to the data are allowed */
-    bool flush;                 /* whether the DD for this data should be flushed */
+    intn appendable;            /* whether appends to the data are allowed */
+    intn flush;                 /* whether the DD for this data should be flushed */
                                 /* when Hendaccess() is called */
     intn used;                  /* whether the access record is used */
     int16 access;               /* access codes */
@@ -439,7 +439,7 @@ extern int HIdel_hash_dd
   (filerec_t *file_rec, uint16 look_tag, uint16 look_ref);
 
 extern int32 HPgetdiskblock
-  (filerec_t *file_rec, int32 block_size, bool moveto);
+  (filerec_t *file_rec, int32 block_size, intn moveto);
 
 extern intn HPfreediskblock
   (filerec_t *file_rec, int32 block_offset, int32 block_size);

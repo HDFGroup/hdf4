@@ -140,7 +140,7 @@ PRIVATE intn HIchangedd
 PRIVATE intn HIget_file_slot
   (const char *path, char *FUNC);
 
-PRIVATE bool HIvalid_magic
+PRIVATE intn HIvalid_magic
   (hdf_file_t file, char *FUNC);
 
 PRIVATE intn HIfill_file_rec
@@ -255,7 +255,7 @@ int32 Hopen(const char *path, intn acc_mode, int16 ndds)
     } else {
 
        /* Flag to see if file is new and needs to be set up. */
-       bool new_file=FALSE;
+       intn new_file=FALSE;
 
        /* Open the file, fill in the blanks and all the good stuff. */
        if (acc_mode != DFACC_CREATE) {
@@ -798,7 +798,7 @@ int32 Hstartwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
 {
     CONSTR(FUNC,"Hstartwrite");  /* for HERROR */
     int slot;                  /* free access records array slot */
-    bool ddnew = FALSE;                /* is the dd a new one? */
+    intn ddnew = FALSE;                /* is the dd a new one? */
     filerec_t *file_rec;       /* file record */
     accrec_t *access_rec;      /* access record */
     /* version tags */
@@ -1856,7 +1856,7 @@ Hishdf(const char *filename)
 
 #else
 
-    bool ret;
+    intn ret;
     hdf_file_t fp;
   
     fp = HI_OPEN(filename, DFACC_READ);
@@ -1978,7 +1978,7 @@ intn Hsync(int32 file_id)
        Determine whether a given int32 is a valid HDF file ID or not
 
 --------------------------------------------------------------------------*/
-bool HDvalidfid(int32 file_id)
+intn HDvalidfid(int32 file_id)
 {
     filerec_t *file_rec = FID2REC(file_id);
     if (!file_rec || file_rec->refcount == 0)
@@ -2392,7 +2392,7 @@ uint16 HDmake_special_tag(uint16 tag)
 
 /*--------------------------------------------------------------------------
 --------------------------------------------------------------------------*/
-bool HDis_special_tag(uint16 tag)
+intn HDis_special_tag(uint16 tag)
 {
     register int i;
 
@@ -2723,7 +2723,7 @@ PRIVATE int HIget_file_slot(const char *path, char *FUNC)
        file are the HDF "magic number" HDFMAGIC
 
 --------------------------------------------------------------------------*/
-PRIVATE bool HIvalid_magic(hdf_file_t file, char *FUNC)
+PRIVATE intn HIvalid_magic(hdf_file_t file, char *FUNC)
 {
     char b[MAGICLEN];          /* Temporary buffer */
 
@@ -3175,7 +3175,7 @@ PRIVATE int HIread_version(int32 file_id)
 	int32 HPgetdiskblock(file_rec, block_size)
 	    filerec_t *file_rec;     IN: ptr to the file record
 	    int32 block_size;        IN: size of the block needed
-	    bool moveto;             IN: whether to move the file position
+	    intn moveto;             IN: whether to move the file position
 					 to the allocated position or leave
 					 it undefined.
  RETURNS
@@ -3187,7 +3187,7 @@ PRIVATE int HIread_version(int32 file_id)
 	blocks in the file and dole those out.
 
 -------------------------------------------------------------------------*/
-int32 HPgetdiskblock(filerec_t *file_rec, int32 block_size, bool moveto)
+int32 HPgetdiskblock(filerec_t *file_rec, int32 block_size, intn moveto)
 {
     CONSTR(FUNC,"HPgetdiskblock");
     uint8 temp;

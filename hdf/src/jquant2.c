@@ -905,7 +905,7 @@ typedef int32 FSERROR;		/* may need more than 16 bits? */
 typedef FSERROR FAR *FSERRPTR;	/* pointer to error array (in FAR storage!) */
 
 static FSERRPTR evenrowerrs, oddrowerrs; /* current-row and next-row errors */
-static bool on_odd_row;	/* flag to remember which row we are on */
+static intn on_odd_row;	/* flag to remember which row we are on */
 
 
 METHODDEF VOID

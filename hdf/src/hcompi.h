@@ -83,7 +83,7 @@ typedef struct compinfo_tag {
     int32 aid;                  /* AID of the compressed info */
     comp_model_info_t minfo;    /* modeling information */
     comp_coder_info_t cinfo;    /* coding information */
-    bool caching;               /* whether caching is turned on */
+    intn caching;               /* whether caching is turned on */
     comp_state_cache_t sinfo;   /* state information for caching */
 } compinfo_t;
 

@@ -75,7 +75,7 @@ void test_hfile()
     int32 ret;
     int i;
     intn errors = 0;
-    bool ret_bool;
+    intn ret_bool;
 #ifdef QAK
     uint8 *outbuf, *inbuf;
 
@@ -94,7 +94,7 @@ void test_hfile()
     fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
     CHECK(fid, FAIL, "Hopen");
 
-    ret_bool = (bool)Hishdf(TESTFILE_NAME);
+    ret_bool = (intn)Hishdf(TESTFILE_NAME);
     CHECK(ret_bool, FALSE, "Hishdf");
 
     ret = Hnewref(fid);
@@ -234,13 +234,13 @@ void test_hfile()
     ret = Hclose(fid1);
     CHECK(ret, FAIL, "Hclose");
 
-    ret_bool = (bool)Hishdf(TESTFILE_NAME);
+    ret_bool = (intn)Hishdf(TESTFILE_NAME);
     CHECK(ret_bool, FALSE, "Hishdf");
 
-    ret_bool = (bool)Hishdf(__FILE__);
+    ret_bool = (intn)Hishdf(__FILE__);
     CHECK(ret_bool, TRUE, "Hishdf");
 
-    ret_bool = (bool)Hishdf("qqqqqqqq.qqq");  /* I sure hope it isn't there */
+    ret_bool = (intn)Hishdf("qqqqqqqq.qqq");  /* I sure hope it isn't there */
     CHECK(ret, TRUE, "Hishdf");
 
 #ifdef QAK

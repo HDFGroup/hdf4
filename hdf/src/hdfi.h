@@ -112,7 +112,6 @@ Please check your Makefile.
 typedef void              VOID;
 typedef void              *VOIDP;
 typedef char              *_fcd;
-typedef int               bool;
 typedef char              char8;
 typedef unsigned char     uchar8;
 typedef char              int8;
@@ -167,7 +166,6 @@ Please check your Makefile.
 typedef void              VOID;
 typedef char              *VOIDP;
 typedef char              *_fcd;
-typedef int               bool;
 typedef char              char8;
 typedef unsigned char     uchar8;
 typedef char              int8;
@@ -230,7 +228,6 @@ Please check your Makefile.
 typedef void              VOID;
 typedef void              *VOIDP;
 typedef char              *_fcd;
-typedef int               bool;
 typedef char              char8;
 typedef unsigned char     uchar8;
 typedef char              int8;
@@ -282,7 +279,6 @@ Please check your Makefile.
 typedef void              VOID;
 typedef void              *VOIDP;
 typedef char              *_fcd;
-typedef int               bool;
 typedef char              char8;
 typedef unsigned char     uchar8;
 typedef char              int8;
@@ -335,7 +331,6 @@ Please check your Makefile.
 typedef void               VOID;
 typedef void               *VOIDP;
 typedef char               *_fcd;
-typedef int                bool;
 typedef signed char        char8;
 typedef unsigned char      uchar8;
 typedef signed char        int8;
@@ -390,7 +385,6 @@ Please check your Makefile.
 typedef void            VOID;
 typedef void            *VOIDP;
 typedef char            *_fcd;
-typedef int             bool;
 typedef signed char     char8;
 typedef unsigned char   uchar8;
 typedef signed char     int8;
@@ -435,7 +429,6 @@ Please check your Makefile.
 typedef int                VOID;
 typedef char               *VOIDP;
 typedef char               *_fcd;
-typedef int                bool;
 typedef char               char8;
 typedef unsigned char      uchar8;
 typedef char               int8;
@@ -498,7 +491,6 @@ Please check your Makefile.
 typedef void              VOID;
 typedef void              *VOIDP;
 typedef char              *_fcd;
-typedef int               bool;
 typedef char              char8;
 typedef unsigned char     uchar8;
 typedef char              int8;
@@ -546,7 +538,6 @@ Please check your Makefile.
 typedef void            VOID;
 typedef void            *VOIDP;
 typedef char            *_fcd;
-typedef int             bool;
 typedef char            char8;
 typedef unsigned char   uchar8;
 typedef char            int8;
@@ -605,7 +596,6 @@ Please check your Makefile.
 typedef void              VOID;
 typedef char              *VOIDP;
 typedef char              *_fcd;
-typedef int               bool;
 typedef char              char8;
 typedef unsigned char     uchar8;
 typedef char              int8;
@@ -701,7 +691,6 @@ typedef char              huge *_fcd;
 typedef void *            VOIDP;
 typedef char *            _fcd;
 #endif  /* PC386 */
-typedef int               bool;
 typedef char              char8;
 typedef unsigned char     uchar8;
 typedef char              int8;
@@ -790,7 +779,6 @@ Please check your Makefile.
 typedef void              VOID;
 typedef void              *VOIDP;
 typedef char              *_fcd;
-typedef int               bool;
 typedef char              char8;
 typedef unsigned char     uchar8;
 typedef char              int8;
@@ -842,7 +830,6 @@ Please check your Makefile.
 typedef void              VOID;
 typedef void              *VOIDP;
 typedef char              *_fcd;
-typedef int               bool;
 typedef char              char8;
 typedef unsigned char     uchar8;
 typedef char              int8;
@@ -887,7 +874,6 @@ Please check your Makefile.
 typedef void              VOID;
 typedef void              *VOIDP;
 typedef char              *_fcd;
-typedef int               bool;
 typedef char              char8;
 typedef unsigned char     uchar8;
 typedef char              int8;
@@ -937,7 +923,6 @@ Please check your Makefile.
 typedef void                VOID;
 typedef void               *VOIDP;
 typedef char               *_fcd;
-typedef int                bool;
 typedef char               char8;
 typedef unsigned char      uchar8;
 typedef char               int8;
@@ -981,7 +966,6 @@ Please check your Makefile.
 typedef void            VOID;
 typedef void            *VOIDP;
 typedef char            *_fcd;
-typedef int             bool;
 typedef char            char8;
 typedef unsigned char   uchar8;
 typedef char            int8;

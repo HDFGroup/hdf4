@@ -58,7 +58,7 @@ static struct bitrec_t *bitfile_records = NULL;
 PRIVATE int HIget_bitfile_slot
     (void);
 
-PRIVATE intn HIbitflush (bitrec_t *bitfile_rec,intn flushbit,bool writeout);
+PRIVATE intn HIbitflush (bitrec_t *bitfile_rec,intn flushbit,intn writeout);
 
 /* #define TESTING */
 /* Actual Function Definitions */
@@ -157,7 +157,7 @@ int32 Hstartbitwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
     int bitslot;            /* free access records array slot */
     bitrec_t *bitfile_rec;  /* access record */
     int32 aid;              /* Access ID for the bit-level routines to use */
-    bool exists;            /* whether dataset exists already */
+    intn exists;            /* whether dataset exists already */
 
     /* clear error stack and check validity of file id */
     HEclear();
@@ -549,7 +549,7 @@ intn Hbitseek(int32 bitid, int32 byte_offset, intn bit_offset)
     intn seek_pos;          /* position of block to seek to */
     int32 read_size;        /* number of bytes to read into buffer */
     int32 n;                /* number of bytes actually read */
-    bool new_block;         /* whether to move to another block in the dataset */
+    intn new_block;         /* whether to move to another block in the dataset */
 
     /* clear error stack and check validity of file id */
     HEclear();
@@ -709,7 +709,7 @@ int32 Hendbitaccess(int32 bitfile_id,intn flushbit)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn HIbitflush(bitrec_t *bitfile_rec,intn flushbit,bool writeout)
+PRIVATE intn HIbitflush(bitrec_t *bitfile_rec,intn flushbit,intn writeout)
 {
     CONSTR(FUNC,"HIbitflush");
     intn write_size;            /* number of bytes to write out */

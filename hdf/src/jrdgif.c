@@ -70,7 +70,7 @@ static char code_buf[256+4];	/* current input data block */
 static int last_byte;		/* # of bytes in code_buf */
 static int last_bit;		/* # of bits in code_buf */
 static int cur_bit;		/* next bit index to read */
-static boolean out_of_blocks;	/* TRUE if hit terminator data block */
+static intn out_of_blocks;	/* TRUE if hit terminator data block */
 
 static int input_code_size;	/* codesize given in GIF file */
 static int clear_code,end_code; /* values for Clear and End codes */
@@ -78,7 +78,7 @@ static int clear_code,end_code; /* values for Clear and End codes */
 static int code_size;		/* current actual code size */
 static int limit_code;		/* 2^code_size */
 static int max_code;		/* first unused code value */
-static boolean first_time;	/* flags first call to LZWReadByte */
+static intn first_time;	/* flags first call to LZWReadByte */
 
 /* LZW decompression tables:
  *   symbol_head[K] = prefix symbol of any LZW symbol K (0..LZW_TABLE_SIZE-1)
@@ -102,7 +102,7 @@ static uint8  FAR *sp;      /* stack pointer */
 
 /* Static state for interlaced image processing */
 
-static boolean is_interlaced;	/* TRUE if have interlaced image */
+static intn is_interlaced;	/* TRUE if have interlaced image */
 static big_sarray_ptr interlaced_image;	/* full image in interlaced order */
 static long cur_row_number;	/* need to know actual row number */
 static long pass2_offset;	/* # of pixel rows in pass 1 */

@@ -655,7 +655,7 @@ HEprint(stderr,0);  /* print all the errors */
  * Return TRUE if find SOS, FALSE if find EOI.
  */
 
-GLOBAL bool read_scan_header (decompress_info_ptr cinfo)
+GLOBAL intn read_scan_header (decompress_info_ptr cinfo)
 {
     int c;
   

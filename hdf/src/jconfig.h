@@ -138,9 +138,6 @@
  * In that case you need only comment out these definitions.
  */
 
-#ifdef QAK
-typedef int bool;
-#endif
 #undef FALSE			/* in case these macros already exist */
 #undef TRUE
 #define FALSE	0		/* values of bool */

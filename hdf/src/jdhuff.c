@@ -19,7 +19,7 @@ static decompress_info_ptr dcinfo;
 
 static int32 get_buffer;    /* current bit-extraction buffer */
 static int bits_left;		/* # of unused bits in it */
-static bool printed_eod;	/* flag to suppress multiple end-of-data msgs */
+static intn printed_eod;	/* flag to suppress multiple end-of-data msgs */
 
 LOCAL VOID
 fix_huff_tbl (HUFF_TBL * htbl)

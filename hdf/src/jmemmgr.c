@@ -602,8 +602,8 @@ struct big_sarray_control {
 	long rows_in_mem;	/* height of memory buffer */
 	long rowsperchunk;	/* allocation chunk size in mem_buffer */
 	long cur_start_row;	/* first logical row # in the buffer */
-    bool dirty;      /* do current buffer contents need written? */
-    bool b_s_open;   /* is backing-store data valid? */
+    intn dirty;      /* do current buffer contents need written? */
+    intn b_s_open;   /* is backing-store data valid? */
 	big_sarray_ptr next;	/* link to next big sarray control block */
 	backing_store_info b_s_info; /* System-dependent control info */
 };
@@ -618,8 +618,8 @@ struct big_barray_control {
 	long rows_in_mem;	/* height of memory buffer */
 	long rowsperchunk;	/* allocation chunk size in mem_buffer */
 	long cur_start_row;	/* first logical row # in the buffer */
-    bool dirty;      /* do current buffer contents need written? */
-    bool b_s_open;   /* is backing-store data valid? */
+    intn dirty;      /* do current buffer contents need written? */
+    intn b_s_open;   /* is backing-store data valid? */
 	big_barray_ptr next;	/* link to next big barray control block */
 	backing_store_info b_s_info; /* System-dependent control info */
 };
@@ -786,7 +786,7 @@ alloc_big_arrays (long extra_small_samples, long extra_small_blocks,
 
 
 LOCAL VOID
-do_sarray_io (big_sarray_ptr ptr, bool writing)
+do_sarray_io (big_sarray_ptr ptr, intn writing)
 /* Do backing store read or write of a "big" sample array */
 {
   long bytesperrow, file_offset, byte_count, rows, i;
@@ -816,7 +816,7 @@ do_sarray_io (big_sarray_ptr ptr, bool writing)
 
 
 LOCAL VOID
-do_barray_io (big_barray_ptr ptr, bool writing)
+do_barray_io (big_barray_ptr ptr, intn writing)
 /* Do backing store read or write of a "big" coefficient-block array */
 {
   long bytesperrow, file_offset, byte_count, rows, i;
@@ -846,7 +846,7 @@ do_barray_io (big_barray_ptr ptr, bool writing)
 
 
 METHODDEF JSAMPARRAY
-access_big_sarray (big_sarray_ptr ptr, long start_row, bool writable)
+access_big_sarray (big_sarray_ptr ptr, long start_row, intn writable)
 /* Access the part of a "big" sample array starting at start_row */
 /* and extending for ptr->unitheight rows.  writable is true if  */
 /* caller intends to modify the accessed area. */
@@ -897,7 +897,7 @@ access_big_sarray (big_sarray_ptr ptr, long start_row, bool writable)
 
 
 METHODDEF JBLOCKARRAY
-access_big_barray (big_barray_ptr ptr, long start_row, bool writable)
+access_big_barray (big_barray_ptr ptr, long start_row, intn writable)
 /* Access the part of a "big" coefficient-block array starting at start_row */
 /* and extending for ptr->unitheight rows.  writable is true if  */
 /* caller intends to modify the accessed area. */

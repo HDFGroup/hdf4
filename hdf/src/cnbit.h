@@ -76,8 +76,8 @@ typedef struct {        /* structure to hold bit vector info */
 typedef struct {
     int32 nt;               /* number type of data we are encoding */
     intn nt_size;           /* size of the number-type in the file */
-    bool fill_one;          /* whether to fill with 1's or not (0's) */
-    bool sign_ext;          /* whether to sign extend or not */
+    intn fill_one;          /* whether to fill with 1's or not (0's) */
+    intn sign_ext;          /* whether to sign extend or not */
     uint8 buffer[NBIT_BUF_SIZE];    /* buffer for expanding n-bit data in */
     intn buf_pos;           /* current offset in the expansion buffer */
     intn mask_off,          /* offset of the bit to start masking with */

@@ -319,7 +319,7 @@ input_init (compress_info_ptr cinfo)
   U_CHAR targaheader[18];
   int idlen, cmaptype, subtype, flags, interlace_type, components;
   uint16 width, height, maplen;
-  bool is_bottom_up;
+  intn is_bottom_up;
 
 #define GET_2B(offset)	((unsigned int) UCH(targaheader[offset]) + \
 			 (((unsigned int) UCH(targaheader[offset+1])) << 8))
