@@ -97,7 +97,7 @@ gen_c(filename)
     char stmnt[C_MAX_STMNT];
     char s2[MAX_NC_NAME + 2];
 
-    const static char *ctypes[] = {"char","short","nclong","float","double"};
+    static const char *ctypes[] = {"char","short","nclong","float","double"};
     int ntypes = (sizeof ctypes) / (sizeof ctypes[0]);
 
     /* wrap in main program */
