@@ -127,18 +127,32 @@
 SHELL = /bin/sh
 
 srcdir = @srcdir@
-VPATH = @srcdir@
-
-CFLAGS = @CFLAGS@
+VPATH  = @srcdir@
+TOP_SRCDIR = @top_srcdir@
+prefix     = @prefix@
+exec_prefix = @exec_prefix@
+ACDEFS = @DEFS@
+CC     = @CC@
+CFLAGS   = @CFLAGS@
 CPPFLAGS = @CPPFLAGS@
-LDFLAGS = @LDFLAGS@
+LDFLAGS  = @LDFLAGS@
+LIBS     = @LIBS@
+FC       = @FC@
+FFLAGS   = @FFLAGS@
+
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
+
 MAKEINFO = makeinfo
 TEXI2DVI = texi2dvi
-M4 = @M4@
+
+# /usr/local/bin/m4 (GNU version?)
+M4   = @M4@
+# /usr/loal/bin/perl (GNU version?)
 PERL = @PERL@
+
+# Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
 RANLIB = @RANLIB@
 
 # Name of library archiver and flags to send
@@ -152,8 +166,9 @@ ARFLAGS= r
 RM= /bin/rm
 RMFLAGS= -f 
 
-prefix = @prefix@
-exec_prefix = @exec_prefix@
+# Set for document generation
+MAKEINFO = makeinfo
+TEXI2DVI = texi2dvi
 
 # Directory in which to install scripts.
 bindir = $(exec_prefix)/bin
@@ -176,9 +191,6 @@ infodir = $(prefix)/info
 # ==> specify your C compiler
 #CC=cc
 
-# ==> where are your hdf.h, hdfi.h and vg.h files located?
-HDFINC= $srcdir/../src
-
 #CFLAGS=  -g -D${MACHINE}
 
 # ==> For Convex, specify CFLAGS as follows:
@@ -188,12 +200,15 @@ HDFINC= $srcdir/../src
 #CFLAGS=  -g -D${MACHINE} $(IFLAGS) -ansi
 
 # ==> where is your HDF library (libdf.a) located?
-HDFLIB=$srcdir/../src
-HDFSRC=$srcdir/../src
+# ==> where are your hdf.h, hdfi.h and vg.h files located?
+HDFINC= $(srcdir)/../src
+HDFLIB=$(srcdir)/../src
+HDFSRC=$(srcdir)/../src
+HDFBIN=$(srcdir)/../bin
 
 # ==> where is your JPEG library (libjpeg.a) located?
-JPEGLIB=$srcdir/../jpeg
-JPEGINC=$srcdir/../jpeg
+JPEGLIB=$(srcdir)/../jpeg
+JPEGINC=$(srcdir)/../jpeg
 
 SRCS= 	rig.c sdstr.c blocks.c an.c anfile.c extelt.c file.c file1.c vers.c \
 	sdmms.c sdnmms.c slab.c litend.c tvset.c comp.c bitio.c tree.c conv.c \
