@@ -456,15 +456,16 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
 
   if (vtag == 0)
     HIread_version(FSLOT2ID(slot));
-/* end version tags */
-done:
-    if(ret_value == FAIL)   
-      { /* Error condition cleanup */
 
-      } /* end if */
-    else
-     ret_value = FSLOT2ID(slot);
-    /* Normal function cleanup */
+  ret_value = FSLOT2ID(slot);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
 
   return ret_value;
 }	/* Hopen */
@@ -813,7 +814,6 @@ Hstartread(int32 file_id, uint16 tag, uint16 ref)
   filerec_t  *file_rec;		/* file record */
   accrec_t   *access_rec;	/* access record */
   int32      ret_value = SUCCEED;
-  intn       sp_func = 0; /* special function flag */
 
   /* clear error stack */
   HEclear();
@@ -855,7 +855,6 @@ Hstartread(int32 file_id, uint16 tag, uint16 ref)
           HGOTO_ERROR(DFE_INTERNAL, FAIL);
         }
       ret_value = (*access_rec->special_func->stread) (access_rec);
-      sp_func = 1; /* special function */
       goto done;
     }
 
@@ -865,13 +864,13 @@ Hstartread(int32 file_id, uint16 tag, uint16 ref)
   access_rec->special = 0;
   file_rec->attach++;
 
+  ret_value = ASLOT2ID(slot);
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else if (!sp_func)
-    ret_value = ASLOT2ID(slot);
 
   /* Normal function cleanup */
 
@@ -1025,7 +1024,7 @@ Hstartwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
   char        string[LIBVSTR_LEN + 1];	/* len 80+1  */
   int         newver;
   int32       ret_value = SUCCEED;
-  intn       sp_func = 0; /* special function flag */
+
   /* end version tags */
 
   /* clear error stack and check validity of file id */
@@ -1095,7 +1094,6 @@ Hstartwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
           }
         ret_value = (*access_rec->special_func->stwrite) (access_rec);
-        sp_func = 1; /* special function */
         goto done;
       }
 
@@ -1188,13 +1186,13 @@ Hstartwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
       file_rec->version_set = TRUE;
     }	/* test to set version tags */
 
+    ret_value = ASLOT2ID(slot);
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else if (!sp_func)
-    ret_value = ASLOT2ID(slot);
 
   /* Normal function cleanup */
 
@@ -1237,13 +1235,13 @@ Hstartread(int32 file_id, uint16 tag, uint16 ref)
   if ((ret = Hstartaccess(file_id, BASETAG(tag), ref, DFACC_READ)) == FAIL)
     HGOTO_ERROR(DFE_BADAID, FAIL);
 
+  ret_value = ret;
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else
-    ret_value = ret;
 
   /* Normal function cleanup */
 
@@ -1421,13 +1419,13 @@ Hstartwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
       HGOTO_ERROR(DFE_BADLEN, FAIL);
     }		/* end if */
 
+    ret_value = ret;
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else
-    ret_value = ret;
 
   /* Normal function cleanup */
 
@@ -1465,7 +1463,6 @@ Hstartaccess(int32 file_id, uint16 tag, uint16 ref, uint32 flags)
   int32       idx;			/* index into DDB i.e. DD of element */
   dd_t       *dd;				/* current dd pointer */
   int32      ret_value = SUCCEED;
-  intn       sp_func = 0; /* special function flag */
 
   /* clear error stack and check validity of file id */
   HEclear();
@@ -1575,8 +1572,8 @@ Hstartaccess(int32 file_id, uint16 tag, uint16 ref, uint32 flags)
             ret_value = (*access_rec->special_func->stread) (access_rec);
           else
             ret_value = (*access_rec->special_func->stwrite) (access_rec);
-          sp_func = 1; /* special function */
-          goto done;
+
+          goto done; /* we are done */
         }	/* end if */
     }		/* end else */
 
@@ -1621,14 +1618,14 @@ Hstartaccess(int32 file_id, uint16 tag, uint16 ref, uint32 flags)
   */
   if (!file_rec->version_set)
     HIcheckfileversion(file_id);
+
+  ret_value = ASLOT2ID(slot); 
  
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else if (!sp_func)
-    ret_value = ASLOT2ID(slot); 
 
   /* Normal function cleanup */
 
@@ -1957,13 +1954,14 @@ Htell(int32 access_id)
   if (access_rec == (accrec_t *) NULL || !access_rec->used)
     HGOTO_ERROR(DFE_ARGS, FAIL);
 
+  /* return the offset in the AID */
+  ret_value = (int32)access_rec->posn;
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else /* return the offset in the AID */
-    ret_value = (int32)access_rec->posn;
 
   /* Normal function cleanup */
 
@@ -1995,7 +1993,6 @@ Hread(int32 access_id, int32 length, VOIDP data)
   accrec_t   *access_rec;		/* access record */
   dd_t       *dd;				/* current dd pointer */
   int32      ret_value = SUCCEED;
-  intn       sp_func = 0; /* special function flag */
 
   /* clear error stack and check validity of access id */
   HEclear();
@@ -2011,8 +2008,7 @@ Hread(int32 access_id, int32 length, VOIDP data)
   if (access_rec->special)
     {
       ret_value = (*access_rec->special_func->read) (access_rec, length, data);
-      sp_func = 1; /* special function */
-      goto done;
+      goto done; /* we are done */
     }
 
   /* check validity of file record */
@@ -2040,13 +2036,13 @@ Hread(int32 access_id, int32 length, VOIDP data)
   /* move the position of the access record */
   access_rec->posn += length;
 
+  ret_value = length;
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else if (!sp_func)
-    ret_value = length;
 
   /* Normal function cleanup */
 
@@ -2086,7 +2082,6 @@ Hwrite(int32 access_id, int32 length, const VOIDP data)
   int32       data_len;		/* length of the data we are checking */
   int32       data_off;		/* offset of the data we are checking */
   int32       ret_value = SUCCEED;
-  intn       sp_func = 0; /* special function flag */
 
   /* clear error stack and check validity of access id */
 #ifdef TESTING
@@ -2105,8 +2100,7 @@ Hwrite(int32 access_id, int32 length, const VOIDP data)
   if (access_rec->special)
     {
       ret_value = (*access_rec->special_func->write) (access_rec, length, data);
-      sp_func = 1; /* special function */
-      goto done;
+      goto done; /* we are done */
     }
 
   /* check validity of file record and get dd ptr */
@@ -2187,13 +2181,13 @@ Hwrite(int32 access_id, int32 length, const VOIDP data)
   printf("%s: access_rec->posn=%ld\n",FUNC,(long)access_rec->posn);
 #endif
 
+  ret_value = length;
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else /* return number of bytes written */
-    ret_value = length;
 
   /* Normal function cleanup */
 
@@ -2225,13 +2219,13 @@ HDgetc(int32 access_id)
   if (Hread(access_id, 1, (VOIDP) &c) == FAIL)
     HGOTO_ERROR(DFE_READERROR, FAIL);
 
+  ret_value = (intn)c;
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else
-    ret_value = (intn)c;
 
   /* Normal function cleanup */
 
@@ -2263,13 +2257,13 @@ HDputc(uint8 c, int32 access_id)
   if (Hwrite(access_id, 1, (VOIDP) &c) == FAIL)
     HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
+  ret_value = (intn)c;
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else
-    ret_value = (intn)c;
 
   /* Normal function cleanup */
 
@@ -2384,13 +2378,13 @@ Hgetelement(int32 file_id, uint16 tag, uint16 ref, uint8 *data)
 
   Hendaccess(access_id);
 
+  ret_value = length;
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else
-    ret_value = length;
 
   /* Normal function cleanup */
 
@@ -2421,7 +2415,6 @@ Hputelement(int32 file_id, uint16 tag, uint16 ref, const uint8 *data,
 {
   CONSTR(FUNC, "Hputelement");	/* for HERROR */
   int32       access_id;		/* access record id */
-  int32       ret;			/* return code */
   int32       ret_value = SUCCEED;
 
   /* clear error stack */
@@ -2489,13 +2482,13 @@ Hlength(int32 file_id, uint16 tag, uint16 ref)
   if (HIlookup_dd(file_rec, tag, ref, &block, &idx) == FAIL)
     HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
+  ret_value = block->ddlist[idx].length;
+  
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else
-    ret_value = block->ddlist[idx].length;
 
   /* Normal function cleanup */
 
@@ -2520,13 +2513,13 @@ done:
     HERROR(DFE_INTERNAL);
   Hendaccess(access_id);
 
+  ret_value = length;
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else
-    ret_value = length;
 
   /* Normal function cleanup */
 
@@ -2562,7 +2555,6 @@ Hoffset(int32 file_id, uint16 tag, uint16 ref)
   CONSTR(FUNC, "Hoffset");	/* for HERROR */
   int32       access_id;		/* access record id */
   int32       offset;			/* offset of elt inquired */
-  int         ret;			/* return code */
   int32       ret_value = SUCCEED;
 
   /* clear error stack */
@@ -2578,13 +2570,13 @@ Hoffset(int32 file_id, uint16 tag, uint16 ref)
 
   Hendaccess(access_id);
 
+  ret_value = offset;
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else
-    ret_value = offset;
 
   /* Normal function cleanup */
 
@@ -2670,13 +2662,13 @@ Hdupdd(int32 file_id, uint16 tag, uint16 ref,
   if (HIadd_hash_dd(file_rec, tag, ref, new_block, new_idx))
     HGOTO_ERROR(DFE_CANTHASH, FAIL);
 
+  ret_value = HIupdate_dd(file_rec, new_block, new_idx, FUNC); 
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else
-    ret_value = HIupdate_dd(file_rec, new_block, new_idx, FUNC); 
 
   /* Normal function cleanup */
 
@@ -2811,13 +2803,13 @@ Hdeldd(int32 file_id, uint16 tag, uint16 ref)
   if (HPfreediskblock(file_rec, block->ddlist[idx].offset, block->ddlist[idx].length) == FAIL)
     HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
+  ret_value = HIupdate_dd(file_rec, block, idx, FUNC); 
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else
-    ret_value = HIupdate_dd(file_rec, block, idx, FUNC); 
 
   /* Normal function cleanup */
 
@@ -3765,13 +3757,13 @@ Hnumber(int32 file_id, uint16 tag)
   if (HIcount_dd(file_rec, tag, DFREF_WILDCARD, &all_cnt, &real_cnt) == FAIL)
     HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
+  ret_value = (int32) real_cnt;
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else
-    ret_value = (int32) real_cnt;
 
   /* Normal function cleanup */
 
@@ -4125,13 +4117,13 @@ HDfreadbig(VOIDP buffer, int32 size, FILE * fp)
 #endif
     } /* end else */
 
+    ret_value = bytes_read; /* set number of bytes read */
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else
-    ret_value = bytes_read; /* set number of bytes read */
 
   /* Normal function cleanup */
 
@@ -4193,13 +4185,13 @@ HDfwritebig(VOIDP buffer, int32 size, FILE * fp)
 #endif
     }		/* end else */
 
+  ret_value = bytes_written;
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else
-    ret_value = bytes_written;
 
   /* Normal function cleanup */
 
@@ -4898,13 +4890,13 @@ HPgetdiskblock(filerec_t * file_rec, int32 block_size, intn moveto)
   /* incr. offset of end of file */
   file_rec->f_end_off = ret + block_size;
 
+  ret_value = ret;
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-  else
-    ret_value = ret;
 
   /* Normal function cleanup */
 
@@ -4933,13 +4925,14 @@ HPfreediskblock(filerec_t * file_rec, int32 block_off, int32 block_size)
 #ifdef LATER
   CONSTR(FUNC, "HPfreediskblock");
 #endif
+  intn ret_value = SUCCEED;
 
   /* shut compiler up */
   file_rec = file_rec;
   block_off = block_off;
   block_size = block_size;
 
-  return (SUCCEED);
+  return ret_value;
 }	/* HPfreediskblock() */
 
 /*--------------------------------------------------------------------------
