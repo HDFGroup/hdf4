@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.10  1992/05/28 17:33:57  chouck
+# Revision 1.11  1992/05/29 19:25:32  chouck
+# Added rules for tlinkage
+#
+# Revision 1.10  1992/05/28  17:33:57  chouck
 # Make clean wipes out all *.hdf* files
 #
 # Revision 1.9  1992/05/27  21:55:34  chouck
@@ -163,10 +166,10 @@ CTOBJS= tr8.o t24.o tsdmms.o tsdnt.o tan.o tanfile.o \
         tp.o tstubs.o tsdnmms.o tsdnnt.o tv1.o tv2.o \
 	tvers.o egchi.o
 
-HTESTS= thfile thfile1 terr thblocks thextelt 
+HTESTS= thfile thfile1 terr thblocks thextelt tlinkage
 HHDRS = hfile.h hdf.h hdfi.h herr.h hproto.h 
-HTSRCS= thfile.c thfile1.c terr.c thblocks.c thextelt.c 
-HTOBJS= thfile.o thfile1.o terr.o thblocks.o thextelt.o
+HTSRCS= thfile.c thfile1.c terr.c thblocks.c thextelt.c tlinkage.c 
+HTOBJS= thfile.o thfile1.o terr.o thblocks.o thextelt.o tlinkage.o
 
 FTESTS= tr8F t24F tpF tanF tanfileF tsdntF tsdnntF \
         tsdmmsF tsdnmmsF tstubsF egfhi
@@ -272,6 +275,9 @@ thblocks:     thblocks.c
 
 thextelt:     thextelt.c
 	$(CC) $(CFLAGS) -D$(MACHINE) thextelt.c $(LIBS) -o thextelt
+
+tlinkage:     tlinkage.c
+	$(CC) $(CFLAGS) -D$(MACHINE) tlinkage.c $(LIBS) -o tlinkage
 
 
 clean:
