@@ -178,11 +178,6 @@ HDF 4.1r1 library, and the Java HDF Viewer application.
     to type `sh ./configure instead to prevent `csh' from trying to 
     execute `configure' itself.
 
-    The configuration is saved in the file 'config.cache'.  You can
-    rebuild the Makefiles as many times as you want using this cached 
-    configuration.  If you want to change the configuration, delete
-    the file 'cache.config' and run 'configure' again.
-
     2.4.5 Dealing with Configure Problems
     *************************************
     If you want to be adventurous you can try the following.

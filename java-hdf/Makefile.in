@@ -103,11 +103,9 @@ all: natives packages
 packages: $(PACKAGES) 
 	$(JAR) cvf ./lib/classes.zip $(CLASSES)
 
-natives: FORCE
+natives:
 	cd native; \
 	$(MAKE) 
-
-FORCE:
 
 help:
 	@echo ""
@@ -121,7 +119,7 @@ help:
 	@echo "make install-doc  - install the javadoc documentation"
 	@echo "make clean        - cleans up the java (*.class, classes.zip)"
 	@echo "                  and native code (*.o, libhdf.a, etc.)"
-	@echo "make distclean    - cleans up code including"
+	@echo "make distclean    - cleans up code including
 	@echo "                    configuration(Makefiles,config.status,..)"
 
 info: javadocs
@@ -133,10 +131,10 @@ install-info: install-javadocs
 install-doc: install-javadocs
 
 install-javadocs: javadocs
-	-mkdir -p $(DOCDIR);
+	if test ! -d $(DOCDIR); then \
+		mkdir $(DOCDIR); \
+	fi; \
 	$(JAVADOC) -sourcepath $(CLASSPATH) -d $(DOCDIR) $(JAVADOC_FLAGS) $(PACKAGES)
-	-mkdir -p $(DOCDIR)/images;
-	cp docs/images/*.gif $(DOCDIR)/images;
 
 javadocs:
 	$(JAVADOC) -sourcepath $(CLASSPATH) -d ./docs $(JAVADOC_FLAGS) $(PACKAGES)
@@ -154,10 +152,10 @@ install-classes: $(PACKAGES)
 uninstall-classes:
 	rm -f $(JHVINSTALLDIR)/lib/classes.zip
 
-#install-lib: ./lib/@JAVATARG@/libhdf.$(SLEXT) ./lib/@JAVATARG@/libjhv.$(SLEXT)
-
-install-lib: natives
-	mkdir -p $(LIBDIR);
+install-lib: ./lib/@JAVATARG@/libhdf.$(SLEXT) ./lib/@JAVATARG@/libjhv.$(SLEXT)
+	if test ! -d $(LIBDIR); then \
+	mkdir $(LIBDIR); \
+	fi; \
 	cp ./lib/@JAVATARG@/libhdf.$(SLEXT) $(LIBDIR)
 	cp ./lib/@JAVATARG@/libjhv.$(SLEXT) $(LIBDIR)
 
@@ -166,11 +164,15 @@ uninstall-lib:
 	rm -f $(LIBDIR)/@JAVATARG@/libjhv.$(SLEXT)
 
 install-bin: bin/jhv
-	mkdir -p $(BINDIR);
+	if test ! -d $(BINDIR); then \
+		mkdir $(BINDIR); \
+	fi; \
 	cp bin/jhv $(BINDIR)/jhv;
 	chmod a+x $(BINDIR)/jhv;
-	mkdir -p $(JHVINSTALLDIR)/lib/hdficons;
-	cp lib/hdficons/*.gif $(JHVINSTALLDIR)/lib/hdficons;
+	if test ! -d $(JHVINSTALLDIR)/lib/hdficons; then \
+		mkdir $(JHVINSTALLDIR)/lib/hdficons; \
+	fi; \
+	cp hdficons/* $(JHVINSTALLDIR)/lib/hdficons;
 
 uninstall-bin:
 	rm -f $(BINDIR)/jhv
@@ -180,12 +182,12 @@ clean: clean-natives clean-classes clean-docs
 
 distclean: clean-natives clean-classes clean-docs
 	rm config.cache config.status config.log 
-	rm -rf ./lib/@JAVATARG@
+	rm -rf ./lib/*
 	rm -f ./native/Makefile
 	rm -rf ./native/hdflib/Makefile
 	rm -rf ./native/jhv/Makefile
 	rm -rf ./Makefile
-	rm -rf ./bin/jhv
+	rm -rf bin/jhv
 
 clean-classes:
 	$(FIND) . \( -name '#*' -o -name '*~' -o -name '*.class' \) -exec rm -f {} \; ;\
@@ -199,14 +201,21 @@ clean-docs:
 	$(FIND) ./docs \( -name '#*' -o -name '*~' -o -name '*.html' \) -exec rm -f {} \; 
 
 jhvdist:
-	-mkdir -p $(VERSION);
+	if test ! -d $(VERSION); then \
+		mkdir $(VERSION); \
+	fi; \
 	tar cvf $(VERSION)/tmp.tar $(TOP) native ncsa
 	cd $(VERSION); tar xvf tmp.tar; rm tmp.tar
 	tar cvf $(VERSION).tar $(VERSION)
 	rm -rf $(VERSION)
 
 dist: 
-	-mkdir -p ../$(distdir)/java-hdf;
+	@if test ! -d ../$(distdir); then \
+		mkdir ../$(distdir); \
+	fi;
+	@if test ! -d ../$(distdir)/java-hdf; then \
+		mkdir ../$(distdir)/java-hdf; \
+	fi;
 	@echo "Copy java file to distribution"
 	tar cf ../$(distdir)/java-hdf/tmp.tar $(TOP) native ncsa java;
 	cd ../$(distdir)/java-hdf; tar xf tmp.tar; rm tmp.tar;

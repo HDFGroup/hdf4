@@ -101,7 +101,7 @@ public class JHV extends Applet implements ActionListener {
   String	hdfFile;
 
   boolean 	isLocalFile = false;
-//public static final String  HDFFILENAME  = "/usr/tmp/tmp.hdf";
+public static final String  HDFFILENAME  = "/usr/tmp/tmp.hdf";
 
 int fid;
 	
@@ -198,8 +198,16 @@ int fid;
 
      if (arg.equals("Open")) {
 	
+	hdfFile = new String(hdfFileText.getText());
+	
 	// an HDF file source 
-	openFileOnLocal();
+	if (hdfFile.indexOf("://") !=  -1) {
+	  // supported by URL
+	  isLocal = false;
+	}
+	else 
+	  openFileOnLocal();
+	
 	setup(hdfFile);
 	hdfTree.refresh();
 	
@@ -210,7 +218,12 @@ int fid;
       }
       
       if (arg.equals("Exit")) {
+	
+	// quit
+	//jhvFrame.dispose();
+	
 	System.exit(0);
+	
       }
 
     if (arg.equals("Clean")) {
@@ -227,8 +240,6 @@ int fid;
       // an HDF file source 
       if (hdfFile.indexOf("://") !=  -1) {
 	// supported by URL
-// This feature is not supported yet
-//
 	this.isLocal = false;
       }
       else  {
@@ -238,9 +249,6 @@ int fid;
       }
       
       setup(hdfFile);
-      if (!isLocal) {
-	infoText.setText("Remote file access is not supported yet.");	
-      }
       hdfTree.refresh();
       
       // clean up the hdfCanvas
@@ -294,9 +302,6 @@ int fid;
 
     // orgnize the panel
     add("Center",createDisplayPanel());
-    if (!isLocal) {
-	infoText.setText("Remote file access is not supported yet.");	
-    }
   
     // resize the default size for the HDF Browser
     setSize(width,height);
@@ -309,7 +314,7 @@ int fid;
   
 
   /**
-   * Initialize jhv with specified hdf file
+   * Initialize jhv bu specified hdf file
    */
   public void init(String hdffile) {
 
@@ -329,9 +334,6 @@ int fid;
 
     // orgnize the panel
     add("Center",createDisplayPanel());
-    if (!isLocal) {
-	infoText.setText("Remote file access is not supported yet.");	
-    }
   
     // resize the default size for the HDF Browser
     setSize(600,400);
@@ -365,12 +367,9 @@ int fid;
 		try {
 		    hdf.Hclose(fid);
 		} catch (Exception e) {
-			infoText.setText("Exception closing file: "+fid);
-		//	System.out.println("Exception closing file: "+fid);
+			System.out.println("Exception closing file: "+fid);
 		}
 	}
-    } else {
-	hdf = new HDFLibrary();
     }
     
     // set the hdf file
@@ -389,12 +388,22 @@ int fid;
       if (!isApplet) {
 	    
 	// load images
+	//String defaultImg = new String(jhvDir +"/hdficons/default.gif");
+	//String fileImg = new String(jhvDir+"/hdficons/file.gif");
+	//String collapseImg = new String(jhvDir+"/hdficons/collapse.gif");
 
 	String defaultImg = new String(jhvIconDir +"/default.gif");
 	String fileImg = new String(jhvIconDir+"/file.gif"); 
 	String collapseImg = new String(jhvIconDir+"/collapse.gif");
 	
 	// icons for hdf
+	//String hdfStr= new String(jhvDir+"/hdficons/hdf.gif");
+	//String annStr= new String(jhvDir+"/hdficons/ann.gif");
+	//String risStr= new String(jhvDir+"/hdficons/ris.gif");
+	//String sdsStr= new String(jhvDir+"/hdficons/sds.gif");
+	//String vdStr = new String(jhvDir+"/hdficons/vdata.gif");
+	//String vgStr = new String(jhvDir+"/hdficons/vgroup.gif");
+      
 	String hdfStr= new String(jhvIconDir+"/hdf.gif");
 	String annStr= new String(jhvIconDir+"/ann.gif");
 	String risStr= new String(jhvIconDir+"/ris.gif");
@@ -509,16 +518,13 @@ int fid;
       
     }
 
-    if (isLocal) {  /* remote access not supported yet */
     if (hdfFile != null) {
 	    // open file if one has been given
 	try {
 	    fid = hdf.Hopen(this.hdfFile);   
 	} catch (Exception e) {
-		infoText.setText("Exception opening file: "+this.hdfFile);
-	    //System.out.println("Exception opening file: "+this.hdfFile);
+	    System.out.println("Exception opening file: "+this.hdfFile);
 	}
-    }
     }
   
   }
@@ -656,12 +662,12 @@ int fid;
 	newFileName = fileName;	
 
     // create new hdf 
-    // openHDF(newFileName);
+    openHDF(newFileName);
 
-    //if (!isLocal) 
-     //  hdfFile = new String(HDFFILENAME);
-    //else
-     //  hdfFile = new String(newFileName);
+    if (!isLocal) 
+       hdfFile = new String(HDFFILENAME);
+    else
+       hdfFile = new String(newFileName);
        
   }
 
@@ -673,7 +679,6 @@ int fid;
    */
   public void getHdfObj(String hdffile, Vector hdfObjVector  )  {
     
-    if (!isLocal) return;
     if (hdffile == null) return;
     HDFAnalyse analyseHdf = new HDFAnalyse();
     analyseHdf.getHdfObject(hdffile, hdfObjQueue);
@@ -759,8 +764,8 @@ int fid;
   public void openHDF(String hdfURL)  {
   
     /* hdf file is from server */
-   if (!isLocal) {
-
+    if (!isLocal) {
+	
 	InputStream dataStream;
 	try {
 	    
@@ -870,18 +875,12 @@ int fid;
     // The system dependent file separator String.
     String separator = System.getProperty("file.separator");
 
-	if ((fd.getDirectory() != null) && (fd.getFile() != null)) {
     if (isMac())
        hdfFile = fd.getDirectory() + separator + fd.getFile();
     else
        hdfFile = fd.getDirectory() + fd.getFile();	
-	} else {
-		hdfFile = new String("");
-	}
 	
     hdfFileText.setText(hdfFile);
-    infoText.setText("");
-    infoText.select(0,0);
     
   }
 
@@ -908,9 +907,7 @@ int fid;
 	try {
     if (this.fid != HDFConstants.FAIL)
       hdf.Hclose(this.fid);
-	} catch (HDFException e) {
-		infoText.setText("Exception closing file: "+fid);
-	};
+	} catch (HDFException e) {};
     
     super.destroy();
     
@@ -2985,6 +2982,10 @@ public  void dispHdfVdataInfo(int fid, HDFObjectNode node) throws HDFException {
 	pos = 0;
       applet_.infoText.select(pos,pos);
       
+      // test
+      //applet_.hdfCanvas.setImage(null);
+      //applet_.hdfCanvas.infoStr = "";
+      //applet_.hdfCanvas.repaint();
     }
   }
 }

@@ -48,8 +48,10 @@ OBJECTS =  hdfstructsutil.o \
 all:  libhdf
 
 libhdf: $(OBJECTS)
-	-mkdir -p $(LIBDIR);
+	if test ! -d $(LIBDIR); then \
+	mkdir $(LIBDIR); \
+	fi; \
 	$(LD) $(LDOPT) $(OBJECTS) $(LIBS) -o $(LIBDIR)/libhdf.$(SLEXT)
 
 clean:
-	rm -f *.o so_locations $(LIBDIR)/libhdf.$(SLEXT)
+	rm -f *.o  $(LIBDIR)/libhdf.$(SLEXT)

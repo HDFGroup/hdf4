@@ -62,14 +62,14 @@ class JHVVdataCanvas extends Canvas implements MouseListener{
     public  static  int cellNumberByColnum;
     
     // 10 digits display for each cell 
-    public  static  int NumberLength = 18;
+    public  static  int NumberLength = 10;
     
     // create the new font with the specified font size
     public static   int defaultFontSize = 14;
     
     // Create the new font for displaying the  data correctly 
     // in the specified canvas within the scrollbar
-    Font dataFont        = new Font("Times", Font.PLAIN, defaultFontSize);
+    Font dataFont        = new Font("Fixed", Font.PLAIN, defaultFontSize);
     
     // default font width & height
     public static   int fontWidth = 14;

@@ -373,7 +373,6 @@ jintArray argv) /* OUT:  data_type, length */
 	} else {
 		(*env)->ReleaseIntArrayElements(env,argv,theArgs,JNI_COMMIT);
 		if (str != NULL) {
-		rstring = (*env)->NewStringUTF(env, str);
 		o = (*env)->GetObjectArrayElement(env,name,0);
 		if (o == NULL) {
 			return JNI_FALSE;

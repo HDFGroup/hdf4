@@ -1,9 +1,0 @@
-#############################
-Expected output for './hdp list -t 720 tdata.hdf'
-#############################
-File: tdata.hdf
-
-File library version: Major= 3, Minor=3, Release=4
-String=NCSA HDF Version 3.3 Release 4, October 1994
-Numeric Data Group  : (tag 720)
-	Ref nos: 2 3 4 
