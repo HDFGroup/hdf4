@@ -3745,10 +3745,15 @@ static void test_mgr_compress_b(int flag)
         int32 comp_type;            /* Compression method */
         comp_info cinfo;            /* Compression parameters */
         int32 dims[2]={10,10};    /* dimensions for the empty image */
+        int32 dims_out[2];          /* Buffer for retrieving dimensions */
         uint8 image[10][10]; /* space for the image data */
         uint8 image0[10][10]; /* space for the image data */
         int32 start[2];     /* start of image data to grab */
         int32 stride[2];    /* stride of image data to grab */
+        int32 n_images, n_file_attrs;   /* File information variables */
+        int32 interlace_mode, n_comps, n_attrs, datatype; /* Image information */
+        char name[30];      /* Buffer for retrieving image name */
+        uint8 attr;         /* Attribute data */
 #ifdef NOT_IMPLEMENTED
         int32 count[2];     /* Size of image data to operate on */
 #endif /* NOT_IMPLEMENTED */
@@ -3762,6 +3767,10 @@ static void test_mgr_compress_b(int flag)
         /* Get the first image in this file */
         riid=GRcreate(grid,"image1",1,DFNT_UINT8,MFGR_INTERLACE_PIXEL,dims);
         CHECK(riid,FAIL,"GRcreate");
+
+        attr = 100;
+        ret=GRsetattr(riid, "JPEG_quality", DFNT_UINT8, 1, &attr);
+        CHECK(ret,FAIL,"GRsetattr");
 
         /* Set the compression method for the image */
         comp_type=COMP_CODE_JPEG;
@@ -3780,11 +3789,39 @@ static void test_mgr_compress_b(int flag)
         ret=GRendaccess(riid);
         CHECK(ret,FAIL,"GRendaccess");
 
+        /* Close the interface */
+        ret = GRend (grid);
+        CHECK(ret,FAIL,"GRend");
+
         /* Check that the image made it out correctly */
+
+        /* Re-open the interface */
+        grid = GRstart (fid);
+        CHECK(grid,FAIL,"GRstart");
+
+        /* Get the file information */
+        ret = GRfileinfo (grid, &n_images, &n_file_attrs);
+        CHECK(ret,FAIL,"GRfileinfo");
+        if (n_images != 1) {
+            MESSAGE(3, printf("Wrong number of images found!\n"););
+            num_errs++;
+        }
+
+        /* Check the name of the image in the file */
+        ret = GRnametoindex (grid, "image1");
+        CHECK(ret,FAIL,"GRnametoindex");
 
         /* Get the first image in this file */
         riid=GRselect(grid,0);
         CHECK(riid,FAIL,"GRselect");
+
+        /* Get the attribute information */
+        ret = GRgetiminfo(riid, name, &n_comps, &datatype, &interlace_mode, dims_out, &n_attrs);
+        CHECK(ret,FAIL,"GRgetiminfo");
+        if (n_attrs != 1) {
+            MESSAGE(3, printf("Wrong number of attributes!\n"););
+            num_errs++;
+        }
 
         /* Read the whole image in */
         start[0]=start[1]=0;
