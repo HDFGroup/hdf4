@@ -107,9 +107,9 @@
        Solarisx86 (2.5.1)         GCC 2.7.2          -                
        Linux (elf) (2.2.26)       GCC 2.8.1        g77 2.8.1     
        FreeBSD (3.1)              GCC 2.7.2.1      g77 2.7.2.1
-  PowerMac 7600/120 (MacOS 8.0)   MetroWerks         -
+  PowerMac 7600/120 (MacOS 8.5.1) MetroWerks         -
                                   Codewarrior Pro1                 
-  68k-far/4i/8d(Mac-OS-7.6)         -                -           
+  68k-far/4i/8d                     -                -           
   Windows NT/95                   MSVC++ 5.0       DEC Visual Fortran 5.0
   DEC Alpha NT                    MSVC++ 5.0       DEC Visual Fortran 5.0
   T3E (unicosmk 2.0.4.46)         CC 6.2.0.1       f90 3.2.0.0
@@ -133,7 +133,7 @@
 
      Both of these distributions are included with this distribution
      in 'hdf/jpeg' and 'hdf/zlib'. The HDF/mfhdf base distribution
-     in known to work with these versions only.
+     is known to work with these versions only.
 
 2.3 System Requirements
     ===================
