@@ -67,7 +67,7 @@ static intn parse_list_opts(list_info_t *list_opts,intn curr_arg,intn argc,char 
 	intn ret=0;
 
 	for(; curr_arg<argc; curr_arg++) {
-		if(argv[curr_arg][0]=='-' || argv[curr_arg][0]=='/') {
+		if(argv[curr_arg][0]=='-'/* || argv[curr_arg][0]=='/' */) {
 			ret++;
 			switch(argv[curr_arg][1]) {
 				case 'a':	/* print annotations */
