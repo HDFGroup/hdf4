@@ -1,5 +1,5 @@
 #!/bin/sh
-# snaptest: Snap shot testing command script for HDF4.
+# snapshot: Snap shot testing command script for HDF4.
 # This script should be run nightly from cron.  It checks out hdf4
 # from the CVS source tree and compares it against the previous
 # snapshot.  If anything significant changed, it is build and tested.
@@ -26,7 +26,9 @@ ARCHIVES=$ARCHIVES_default
 METHODS="gzip bzip2"
 
 # Use User's MAKE if set.  Else use generic make.
-MAKE=${MAKE:-make}
+#MAKE=${MAKE:-make}
+# Hard set to make because dependences are not set correctly for parallel make
+MAKE=make
 
 # Make sure cvs would work
 if [ -z "$CVSROOT" ]; then
@@ -199,13 +201,14 @@ if [ "$cmd" = "all" -o -n "$cmdtest" ]; then
     fi
 
     # Make sure all the tests work.
+    # No uninstall target.  Use "rm -rf ..." for now.
     if [ "$snapshot" = "yes" ]; then
 	if (cd ${TESTDIR} && \
 	    ${CURRENT}/${CONFIGURE} --prefix=$INSTALLDIR && \
 	    ${MAKE} && \
 	    ${MAKE} test && \
 	    ${MAKE} install && \
-	    ${MAKE} uninstall ); then
+	    rm -rf $INSTALLDIR ); then
 	    :
 	else
 	    errcode=$?
