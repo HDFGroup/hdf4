@@ -57,6 +57,7 @@ status = SDisdimval_bwcomp(dimid);
 #ifdef HDF
 #include "mfhdf.h"
 #include "hfile.h"
+#include "hchunks.h" /* include here for now */
 
 PRIVATE NC_dim * SDIget_dim
     PROTO((NC *handle, int32 id));
@@ -3756,5 +3757,777 @@ int32 dimid;
     return(ret);
 
 } /* SDisdimval_bwcomp */
+
+/*====================== Chunking Routines ================================*/
+
+/*-------------------------------------------------------------------------
+ NAME
+        SDsetChunk   - create chunked SDS
+
+ DESCRIPTION
+        This routine creates a chunked SDS with the specified chunk
+        lengths for each dimension according to the structure passed in. 
+        Currently only the array(int32) specifiying chunk lengths can be 
+        passed in. 'flags' must be set 1; 
+        
+        In the future maybe a different structure can be used to define
+        a chunk.
+
+        The dataset currently cannot have an UNLIMITED dimension.
+
+        The dataset currently cannot be special already. 
+        i.e. NBIT, COMPRESSION, or EXTERNAL.
+
+        COMPRESSION support will be added later when doubly 
+        special elements are handled more gracefully in the HDF core library.
+
+        NOTE:
+           This routine directly calls a Special Chunked Element fcn HMCxxx.
+ RETURNS
+        SUCCEED/FAIL
+
+ AUTHOR 
+        -GV
+--------------------------------------------------------------------------- */
+intn 
+#ifdef PROTOTYPE
+SDsetChunk(int32 sdsid,     /* IN: sds access id */
+           VOID *chunk_def, /* IN: chunk definition */
+           int32 flags      /* IN: flags */)
+#else
+SDsetChunk(sdsid,     /* IN: sds access id */
+           chunk_def, /* IN: chunk definition */
+           flags      /* IN: flags */)
+int32 sdsid;
+VOID *chunk_def;
+int32 flags;
+#endif
+{
+    NC       * handle = NULL;        /* file handle */
+    NC_var   * var    = NULL;        /* SDS variable */
+    NC_attr ** fill_attr = NULL;     /* fill value attribute */
+    CHUNK_DEF  chunk[1];             /* handles up to 5 dimensions */
+    int32     *cdims     = NULL;     /* array of chunk lengths */
+    int32      fill_val_len = 0;     /* fill value length */
+    uint8      *fill_val    = NULL;  /* fill value */
+    uint8      default_fill_val = 0;  /* default fill value */
+    int32      ndims    = 0;          /* # dimensions i.e. rank */
+    uint8      nlevels  = 1;          /* default # levels is 1 */
+    intn       i;                     /* loop variable */
+    intn       status = SUCCEED;      /* return value */
+
+#ifdef CHK_DEBUG
+    fprintf(stderr,"SDsetChunk: called  \n");
+#endif
+    /* Check args, flags currently can only be '1' */
+    if (chunk_def == NULL || flags != 1)
+      {
+        status = FAIL;
+        goto done;
+      }
+
+    /* get file handle and verify it is an HDF file 
+       we only handle dealing with SDS only not coordinate variables */
+    handle = SDIhandle_from_id(sdsid, SDSTYPE);
+    if(handle == NULL || handle->file_type != HDF_FILE || handle->vars == NULL)
+      {
+        status = FAIL;
+        goto done;
+      }
+
+    /* get variable from id */
+    var = SDIget_var(handle, sdsid);
+    if(var == NULL)
+      {
+        status = FAIL;
+        goto done;
+      }
+
+    /* cast chunk_def to array of int32,
+       valid only if 'flags' == 1 */
+    cdims = (int32 *)chunk_def;
+#ifdef CHK_DEBUG
+    fprintf(stderr,"SDsetChunk: does data ref exist?  \n");
+#endif
+    /* Does data exist yet */
+    if(!var->data_ref) 
+      {   /* doesn't exist */
+#ifdef CHK_DEBUG
+    fprintf(stderr,"SDsetChunk: data ref does not exist  \n");
+#endif
+          /* element doesn't exist so we need a reference number */
+          var->data_ref=Hnewref(handle->hdf_file);
+          if(var->data_ref == 0)
+            {
+#ifdef CHK_DEBUG
+    fprintf(stderr,"SDsetChunk: failed to get data ref  \n");
+#endif
+              status = FAIL;
+              goto done;
+            }
+      } /* end if */
+
+    /* Now start setting chunk info */
+#ifdef CHK_DEBUG
+    fprintf(stderr,"SDsetChunk: got data ref  \n");
+#endif
+    ndims = var->assoc->count; /* set number of dims i.e. rank */
+
+    /* allocate space for chunk dimensions */
+    if ((chunk[0].pdims = (DIM_DEF *)HDmalloc(ndims*sizeof(DIM_DEF))) == NULL)
+      {
+          status = FAIL;
+          goto done;
+      }
+
+    /* initialize datset/chunk sizes using CHUNK defintion structure */
+    chunk[0].chunk_size = 1;
+
+    chunk[0].num_dims = ndims;
+    chunk[0].chunk_flag = 0;  /* nothing set for this now */
+    for (i = 0; i < ndims; i++)
+      {   /* get dimension length from shape arrays */
+          /* check if dimension in unlimited since we don't 
+             handle that yet */
+          if (var->shape[i] != SD_UNLIMITED)
+              chunk[0].pdims[i].dim_length = (int32) var->shape[i];
+          else
+            { /* UNLIMITED dimension case */
+#ifdef CHK_DEBUG
+    fprintf(stderr,"SDsetChunk: unlimited dimension case  \n");
+#endif
+                status = FAIL;
+                goto done;
+            }
+#ifdef CHK_DEBUG
+    fprintf(stder,"SDsetChunk: (int32) var->shape[%d]=%d\n",i,(int32) var->shape[i]);
+#endif
+          /* set chunk lengths */
+          if (cdims[i] >= 1)
+              chunk[0].pdims[i].chunk_length = cdims[i];
+          else
+            { /* chunk length is less than 1 */
+                status = FAIL;
+                goto done;
+            }
+          
+          /* Data distribution along dimensions */
+          chunk[0].pdims[i].distrib_type = 1;     /* default BLOCK */
+
+          /* compute chunk size */
+          chunk[0].chunk_size *= cdims[i];
+      } /* end for ndims */
+
+    /* Set number type size i.e. size of data type */
+    chunk[0].nt_size = var->HDFsize;
+
+    /* allocate space for fill value whose number type is the same as
+       the dataset */
+    fill_val_len = var->HDFsize;
+    if ((fill_val = (uint8 *)HDmalloc(fill_val_len)) == NULL)
+      {
+          status = FAIL;
+          goto done;
+      }
+
+    /* get fill value if one is set for this Dataset.
+       The number type is the same as that for the dataset. */
+    fill_attr = (NC_attr **) NC_findattr(&(var->attrs), _FillValue);
+    if(fill_attr != NULL)
+      {
+          NC_copy_arrayvals((char *)fill_val, (*fill_attr)->data) ;    
+      }
+    else /* copy some default fill value for now */
+      {
+        uint8 *p = fill_val;
+
+        for (i = 0; i < fill_val_len; i++,p++)
+          {
+              HDmemcpy(p,&default_fill_val,1);
+          }
+      }
+
+
+    /* check to see already special.
+       Error if already special since doubly special elements are
+       not yet handled. HMCcreate should catch this....*/
+    /* Create SDS as chunked element  */
+    status = HMCcreate(handle->hdf_file,       /* HDF file handle */
+                       (uint16)DATA_TAG,       /* Data tag */
+                       (uint16) var->data_ref, /* Data ref */
+                       nlevels,                /* nlevels */
+                       fill_val_len,           /* fill value length */
+                       (VOID *)fill_val,       /* fill value */
+                       (CHUNK_DEF *)chunk      /* chunk definition */);
+#ifdef CHK_DEBUG
+    fprintf(stderr,"SDsetChunk: status =%d \n", status);
+#endif
+    /* check return */
+    if(status != FAIL) 
+      { /* close old aid and set new one
+         ..hmm......maybe this is for the doubly specail hack since
+         this code framework came from SDsetcompress()....
+         ....maybe this would be an error for this case...leave for now */
+          if((var->aid != 0) && (var->aid != FAIL))
+              Hendaccess(var->aid);
+
+          var->aid = status;
+      } /* end if */
+
+  done:
+    if (status == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+
+    /* free fill value */
+    if (fill_val != NULL)
+        HDfree(fill_val);
+
+    /* free chunk dims */
+    if (chunk[0].pdims != NULL)
+        HDfree(chunk[0].pdims);
+
+    return status;
+} /* SDsetChunk */
+
+/*-------------------------------------------------------------------------
+ NAME
+        SDgetChunkInfo -- get Info on Chunked SDS
+
+ DESCRIPTION
+        This routine currently only handles as input an array to
+        hold the chunk_lengths for each dimension. The only
+        valid flag is '1'.
+
+ RETURNS
+        SUCCEED/FAIL
+
+ AUTHOR 
+        -GV
+--------------------------------------------------------------------------- */
+intn 
+#ifdef PROTOTYPE
+SDgetChunkInfo(int32 sdsid,      /* IN: sds access id */
+               VOID *chunk_def,  /* IN/OUT: chunk definition */
+               int32 flags       /* IN: flags */)
+#else
+SDgetChunkInfo(sdsid,     /* IN: sds access id */
+               chunk_def, /* IN/OUT: chunk definition */
+               flags      /* IN: flags */)
+int32 sdsid;
+VOID *chunk_def;
+int32 flags;
+#endif
+{
+    NC       * handle = NULL;        /* file handle */
+    NC_var   * var    = NULL;        /* SDS variable */
+    int32     *cdims     = NULL;     /* array of chunk lengths */
+    sp_info_block_t info_block;      /* special info block */
+    int16      special;              /* Special code */
+    intn       i;                    /* loop variable */
+    intn       status = SUCCEED;     /* return value */
+
+    /* Check args, flags currently can only be '1' */
+    if (chunk_def == NULL || flags != 1)
+      {
+        status = FAIL;
+        goto done;
+      }
+
+    /* get file handle and verify it is an HDF file 
+       we only handle dealing with SDS only not coordinate variables */
+    handle = SDIhandle_from_id(sdsid, SDSTYPE);
+    if(handle == NULL || handle->file_type != HDF_FILE || handle->vars == NULL)
+      {
+        status = FAIL;
+        goto done;
+      }
+
+    /* get variable from id */
+    var = SDIget_var(handle, sdsid);
+    if(var == NULL)
+      {
+        status = FAIL;
+        goto done;
+      }
+
+    /* cast chunk_def to array of int32,
+       valid only if 'flags' == 1 */
+    cdims = (int32 *)chunk_def;
+
+    /* inquire about element */
+    status = Hinquire(var->aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
+    if (status != FAIL)
+      {   /* make sure it is chunked element */
+          if (special == SPECIAL_CHUNKED)
+            { /* get info about chunked element */
+             if ((status = HDget_special_info(var->aid, &info_block)) != FAIL)
+               {   /* we assume user has allocat space for chunk lengths */
+                   /* copy chunk lengths over */
+                   for (i = 0; i < info_block.ndims; i++)
+                     {
+                         cdims[i] = info_block.cdims[i];
+                     }
+                   /* dont forget to free up info is special info block 
+                      This space was allocated by the library */
+                   HDfree(info_block.cdims);
+               }
+            }
+          else /* not special chunked element */
+              status = FAIL;
+      }
+
+  done:
+    if (status == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+
+    return status;
+} /* SDgetChunkInfo() */
+
+/*-------------------------------------------------------------------------
+ NAME
+        SDisChunked  -- Is this SDS chunked
+
+ DESCRIPTION
+        This routine checks to see if the SDS is a Chunked SDS.
+ RETURNS
+        1->True, 0->False, -1(FAIL)->Error
+ AUTHOR 
+       -GV
+--------------------------------------------------------------------------- */
+intn 
+#ifdef PROTOTYPE
+SDisChunked(int32 sdsid     /* IN: sds access id */)
+#else
+SDisChunked(sdsid     /* IN: sds access id */)
+int32 sdsid;
+#endif
+{
+    NC       * handle = NULL;        /* file handle */
+    NC_var   * var    = NULL;        /* SDS variable */
+    intn       status = 0;           /* return value, default is false */
+    int16      special;              /* Special code */
+
+    /* get file handle and verify it is an HDF file 
+       we only handle dealing with SDS only not coordinate variables */
+    handle = SDIhandle_from_id(sdsid, SDSTYPE);
+    if(handle == NULL || handle->file_type != HDF_FILE || handle->vars == NULL)
+      {
+        status = FAIL;
+        goto done;
+      }
+
+    /* get variable from id */
+    var = SDIget_var(handle, sdsid);
+    if(var == NULL)
+      {
+        status = FAIL;
+        goto done;
+      }
+
+    /* inquire about element */
+    status = Hinquire(var->aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
+    if (status != FAIL)
+      {
+          if (special == SPECIAL_CHUNKED)
+              status = 1; /* True */
+          else
+              status = 0; /* False */
+      }
+    
+  done:
+    if (status == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+
+    return status;
+} /* SDisChunked()*/
+
+
+/*-------------------------------------------------------------------------
+ NAME
+        SDwriteChunk   - write the specified chunk to the SDS
+
+ DESCRIPTION
+        This routine writes a whole chunk of data to the chunk 
+        specified by 'origin' for the given SDS.
+        Origin specifies the co-ordinates according to the chunk
+        position in the chunk array.
+
+        NOTE:
+           This routine directly calls a Special Chunked Element fcn HMCxxx.
+ RETURNS
+        SUCCEED/FAIL
+ AUTHOR 
+       -GV
+--------------------------------------------------------------------------- */
+intn 
+#ifdef PROTOTYPE
+SDwriteChunk(int32 sdsid,      /* IN: access aid to SDS */
+             int32 *origin,    /* IN: origin of chunk to write */
+             const VOID *datap /* IN: buffer for data */)
+#else
+SDwriteChunk(sdsid,    /* IN: access aid to SDS */
+             origin,   /* IN: origin of chunk to write */
+             datap     /* IN: buffer for data */)
+int32 sdsid;
+int32 *origin;
+const VOID *datap;
+#endif
+{
+    NC       * handle = NULL;   /* file handle */
+    NC_var   * var    = NULL;   /* SDS variable */
+    int16      special;         /* Special code */
+    int32      csize;           /* phsical chunk size */
+    sp_info_block_t info_block; /* special info block */
+    int32      byte_count;      /* bytes to write */
+    uint8      platntsubclass;  /* the machine type of the current platform */
+    uint8      outntsubclass;   /* the data's machine type */
+    uintn      convert;         /* whether to convert or not */
+    static     int32 tBuf_size = 0; /* statc conversion buffer size */
+    static     int8  *tBuf = NULL; /* static buffer used for conversion */
+    intn       i;
+    intn       status = SUCCEED;
+
+    /* Check args */
+    if (origin == NULL || datap == NULL)
+      {
+        status = FAIL;
+        goto done;
+      }
+
+    /* get file handle and verify it is an HDF file 
+       we only handle writinng to SDS only not coordinate variables */
+    handle = SDIhandle_from_id(sdsid, SDSTYPE);
+    if(handle == NULL || handle->file_type != HDF_FILE || handle->vars == NULL)
+      {
+        status = FAIL;
+        goto done;
+      }
+
+    /* get variable from id */
+    var = SDIget_var(handle, sdsid);
+    if(var == NULL)
+      {
+        status = FAIL;
+        goto done;
+      }
+
+    /* inquire about element */
+    status = Hinquire(var->aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
+    if (status != FAIL)
+      {
+          if (special == SPECIAL_CHUNKED)
+            {  /* yes */
+                /* set number type */
+                DFKsetNT(var->HDFtype);
+
+                /* get ready to write */
+                handle->xdrs->x_op = XDR_ENCODE;
+
+                /* get info about chunked element */
+                if ((status = HDget_special_info(var->aid, &info_block)) != FAIL)
+                  {   
+                      /* calcualte chunk size  */
+                      csize = 1;
+                      for (i = 0; i < info_block.ndims; i++)
+                          csize *= info_block.cdims[i];
+
+                      /* dont forget to free up info is special info block 
+                         This space was allocated by the library */
+                      HDfree(info_block.cdims);
+                      
+                      /* adjust for number type size */
+                      csize *= var->HDFsize;
+
+                      /* figure out if data needs to be converted */
+                      byte_count = csize;
+
+                      platntsubclass = DFKgetPNSC(var->HDFtype, DF_MT); 
+                      outntsubclass = DFKisnativeNT(var->HDFtype) 
+                          ? DFKgetPNSC(var->HDFtype, DF_MT)
+                          : (DFKislitendNT(var->HDFtype) 
+                             ? DFNTF_PC : DFNTF_HDFDEFAULT);
+
+                      convert= (uintn)(platntsubclass!=outntsubclass);
+
+                      /* make sure our tmp buffer is big enough to hold everything */
+                      if(convert && tBuf_size < byte_count) 
+                        {
+                            if(tBuf == NULL) 
+                                HDfree((VOIDP)tBuf);
+                            tBuf_size = byte_count;
+                            tBuf      = (int8 *) HDmalloc(tBuf_size);
+                            if(tBuf == NULL) 
+                              {
+                                  tBuf_size = 0;
+                                  status    = FAIL;
+                                  goto done;
+                              } /* end if */
+                        } /* end if */
+
+                      /* Write chunk out, */
+                      if(convert) 
+                        {
+                            DFKnumout((uint8 *) datap, tBuf, (uint32) csize, 0, 0);
+                            status = HMCwriteChunk(var->aid, origin, (uint8 *) tBuf);
+                        } /* end if */
+                      else 
+                          status = HMCwriteChunk(var->aid, origin, datap);
+                  } /* end if get special info block */
+            }
+          else /* not special CHUNKED */
+              status = FAIL;
+      } /* end if Hinquire */
+
+  done:
+    if (status == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+
+    return status;
+} /* SDwriteChunk() */
+
+/*-------------------------------------------------------------------------
+ NAME
+        SDreadChunk   - read the specified chunk to the SDS
+
+ DESCRIPTION
+        This routine reads a whole chunk of data to the chunk 
+        specified by 'origin' for the given SDS.
+        Origin specifies the co-ordinates according to the chunk
+        position in the chunk array.
+
+        NOTE:
+           This routine directly calls a Special Chunked Element fcn HMCxxx.
+ RETURNS
+        SUCCEED/FAIL
+ AUTHOR 
+       -GV
+--------------------------------------------------------------------------- */
+intn 
+#ifdef PROTOTYPE
+SDreadChunk(int32 sdsid,   /* IN: access aid to SDS */
+            int32 *origin, /* IN: origin of chunk to write */
+            VOID *datap    /* IN/OUT: buffer for data */)
+#else
+SDreadChunk(sdsid,    /* IN: access aid to SDS */
+            origin,   /* IN: origin of chunk to write */
+            datap     /* IN/OUT: buffer for data */)
+int32 sdsid;
+int32 *origin;
+VOID *datap;
+#endif
+{
+    NC       * handle = NULL;   /* file handle */
+    NC_var   * var    = NULL;   /* SDS variable */
+    int16      special;         /* Special code */
+    int32      csize;           /* phsical chunk size */
+    sp_info_block_t info_block; /* special info block */
+    int32      byte_count;      /* bytes to read */
+    uint8      platntsubclass;  /* the machine type of the current platform */
+    uint8      outntsubclass;   /* the data's machine type */
+    uintn      convert;         /* whether to convert or not */
+    static     int32 tBuf_size = 0; /* statc conversion buffer size */
+    static     int8  *tBuf = NULL; /* static buffer used for conversion */
+    intn       i;
+    intn       status = SUCCEED;
+
+    /* Check args */
+    if (origin == NULL || datap == NULL)
+      {
+        status = FAIL;
+        goto done;
+      }
+
+    /* get file handle and verify it is an HDF file 
+       we only handle reading from SDS only not coordinate variables */
+    handle = SDIhandle_from_id(sdsid, SDSTYPE);
+    if(handle == NULL || handle->file_type != HDF_FILE || handle->vars == NULL)
+      {
+        status = FAIL;
+        goto done;
+      }
+
+    /* get variable from id */
+    var = SDIget_var(handle, sdsid);
+    if(var == NULL)
+      {
+        status = FAIL;
+        goto done;
+      }
+
+    /* inquire about element */
+    status = Hinquire(var->aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
+    if (status != FAIL)
+      {
+          if (special == SPECIAL_CHUNKED)
+            {  /* yes */
+                /* set number type */
+                DFKsetNT(var->HDFtype);
+
+                /* get ready to read */
+                handle->xdrs->x_op = XDR_DECODE;
+
+                /* get info about chunked element */
+                if ((status = HDget_special_info(var->aid, &info_block)) != FAIL)
+                  {   
+                      /* calcualte chunk size  */
+                      csize = 1;
+                      for (i = 0; i < info_block.ndims; i++)
+                          csize *= info_block.cdims[i];
+
+                      /* dont forget to free up info is special info block 
+                         This space was allocated by the library */
+                      HDfree(info_block.cdims);
+                      
+                      /* adjust for number type size */
+                      csize *= var->HDFsize;
+
+                      /* figure out if data needs to be converted */
+                      byte_count = csize;
+
+                      platntsubclass = DFKgetPNSC(var->HDFtype, DF_MT); 
+                      outntsubclass = DFKisnativeNT(var->HDFtype) 
+                          ? DFKgetPNSC(var->HDFtype, DF_MT)
+                          : (DFKislitendNT(var->HDFtype) 
+                             ? DFNTF_PC : DFNTF_HDFDEFAULT);
+
+                      convert= (uintn)(platntsubclass!=outntsubclass);
+
+                      /* make sure our tmp buffer is big enough to hold everything */
+                      if(convert && tBuf_size < byte_count) 
+                        {
+                            if(tBuf == NULL) 
+                                HDfree((VOIDP)tBuf);
+                            tBuf_size = byte_count;
+                            tBuf      = (int8 *) HDmalloc(tBuf_size);
+                            if(tBuf == NULL) 
+                              {
+                                  tBuf_size = 0;
+                                  status    = FAIL;
+                                  goto done;
+                              } /* end if */
+                        } /* end if */
+
+                      /* read chunk in */
+                      if(convert) 
+                        {
+                            status = HMCreadChunk(var->aid, origin, (uint8 *) tBuf);
+                            /* convert chunk */
+                            DFKnumin((uint8 *) tBuf, (uint8 *) datap, (uint32) csize, 0, 0);
+                        } /* end if */
+                      else 
+                          status = HMCreadChunk(var->aid, origin, datap);
+                  } /* end if get special info block */
+            }
+          else /* not special CHUNKED */
+              status = FAIL;
+      } /* end if Hinquire */
+
+  done:
+    if (status == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+
+    return status;
+} /* SDreadChunk() */
+
+/*-------------------------------------------------------------------------
+NAME
+     SDsetChunkCache - maximum number of chunks to cache 
+
+DESCRIPTION
+     Set the maximum number of chunks to cache.
+
+     The values set here affects the current object's caching behaviour.
+     The cache only only grow up if the cache is max'd out and otherwise
+     it will be set the value 'maxcache' if the current number of chunks
+     cached is less than 'maxcache'.
+
+     Use flags arguement of 'HDF_PAGEALL' if the whole object is to be cached 
+     in memory otherwise passs in zero.
+
+     NOTE:
+          This routine directly calls a Special Chunked Element fcn HMCxxx.
+RETURNS
+     Returns number of 'maxcache' if successful and FAIL otherwise
+
+AUTHOR 
+      -GV
+--------------------------------------------------------------------------- */
+intn
+#ifdef PROTOTYPE
+SDsetChunkCache(int32 sdsid,     /* IN: access aid to mess with */
+                int32 maxcache,  /* IN: max number of pages to cache */
+                int32 flags      /* IN: flags = 0, HDF_PAGEALL */)
+#else
+SDsetChunkCache(sdsid,     /* IN: access aid to mess with */
+                maxcache,  /* IN: max number of pages to cache */
+                flags      /* IN: flags = 0, HDF_PAGEALL */)
+int32 sdsid;
+int32 maxcache;
+int32 flags;
+#endif
+{
+    NC       * handle = NULL;        /* file handle */
+    NC_var   * var    = NULL;        /* SDS variable */
+    int16      special;              /* Special code */
+    intn      status = SUCCEED;
+
+    /* Check args */
+    if (maxcache < 1)
+      {
+        status = FAIL;
+        goto done;
+      }
+
+    /* get file handle and verify it is an HDF file 
+       we only handle dealing with SDS only not coordinate variables */
+    handle = SDIhandle_from_id(sdsid, SDSTYPE);
+    if(handle == NULL || handle->file_type != HDF_FILE || handle->vars == NULL)
+      {
+        status = FAIL;
+        goto done;
+      }
+
+    /* get variable from id */
+    var = SDIget_var(handle, sdsid);
+    if(var == NULL)
+      {
+        status = FAIL;
+        goto done;
+      }
+
+    /* inquire about element */
+    status = Hinquire(var->aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
+    if (status != FAIL)
+      {
+          if (special == SPECIAL_CHUNKED)
+                status = HMCsetMaxcache(var->aid, maxcache, flags); /* set cache*/
+          else
+              status = FAIL;
+      }
+
+  done:
+    if (status == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+
+    return status;
+} /* SDsetChunkCache() */
 
 #endif /* HDF */

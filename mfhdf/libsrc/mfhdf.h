@@ -170,6 +170,36 @@ extern intn SDsetdimval_comp
 extern intn SDisdimval_bwcomp
     (int32 dimid);
 
+/*====================== Chunking Routines ================================*/
+
+extern intn SDsetChunk
+    (int32 sdsid,     /* IN: sds access id */
+     VOID *chunk_def, /* IN: chunk definition */
+     int32 flags      /* IN: flags */);
+
+extern intn SDgetChunkInfo
+    (int32 sdsid,      /* IN: sds access id */
+     VOID *chunk_def,  /* IN/OUT: chunk definition */
+     int32 flags       /* IN: flags */);
+
+extern intn SDisChunked
+    (int32 sdsid     /* IN: sds access id */);
+
+extern intn SDwriteChunk
+    (int32 sdsid,      /* IN: access aid to SDS */
+     int32 *origin,    /* IN: origin of chunk to write */
+     const VOID *datap /* IN: buffer for data */);
+
+extern intn SDreadChunk
+    (int32 sdsid,      /* IN: access aid to SDS */
+     int32 *origin,    /* IN: origin of chunk to read */
+     VOID  *datap      /* IN/OUT: buffer for data */);
+
+extern intn SDsetChunkCache
+    (int32 sdsid,     /* IN: access aid to mess with */
+     int32 maxcache,  /* IN: max number of pages to cache */
+     int32 flags      /* IN: flags = 0, HDF_PAGEALL */);
+
 /* Define the FORTRAN names */
 
 #ifndef MFSD_FNAMES
