@@ -20,6 +20,8 @@ C Output files: slabwf.hdf, slab1wf, slab4wf
 
       implicit none
       include 'fortest.inc'
+	include '../src/hdf.inc'
+	include '../src/dffunc.inc'
 
       integer num_err
       character*20 myname
@@ -30,11 +32,16 @@ C Output files: slabwf.hdf, slab1wf, slab4wf
       integer dsigdim, dswref, dsclear, dfsdrestart
       integer ret, np, nr,nc, di(3), st(3), sz(3), sr(3)
       integer rank, DFTAG_SDT, DFO_FORTRAN
-      real    scpln(2), scrow(3), sccol(4), da(4,3,2)
-      real    slab1(3,1,1), slab2(3,1,2), slab3(3,2,1)
-      real    slab4(3,1,1), slab5(1,3,2)
-      real    sa(4,3,2)
-      real    fillvalue
+C
+C FLOAT32 data variables.  FLOAT32 corresponds to real*4.
+C If the fortran compiler does not handle real*4,
+C change them to the right sizes if possible.
+      real*4  scpln(2), scrow(3), sccol(4), da(4,3,2)
+      real*4  slab1(3,1,1), slab2(3,1,2), slab3(3,2,1)
+      real*4  slab4(3,1,1), slab5(1,3,2)
+      real*4  sa(4,3,2)
+      real*4    fillvalue
+C
       integer i, j, k
       character*10 lcol,ucol,fcol,lrow,urow,frow,lpln,upln,fpln
       character*30 fn, sn, sn1, sn2, sn4
@@ -45,8 +52,6 @@ C Output files: slabwf.hdf, slab1wf, slab4wf
       call ptestban('Testing', myname)
       number_failed = 0
 
-      DFTAG_SDT = 709 
-      DFO_FORTRAN = 1
       di(1) = 4
       di(2) = 3
       di(3) = 2
@@ -119,7 +124,10 @@ C      print *,'\n   Writing data as 5 slabs to slabwf.hdf'
 
       num_err = 0
 
-C Set dimension stuff etc
+C Set number type, dimension stuff etc
+      ret = dssnt(DFNT_FLOAT32)
+      call VERIFY(ret,'dssnt',number_failed)
+
       ret = dssdims(rank, di)
       call VERIFY(ret,'dssdim',number_failed)
 
@@ -228,9 +236,12 @@ C
             do 300 k=1, nc
              if ( da(k,j,i) .ne. sa(k,j,i)) then
                  num_err = num_err + 1
+                 if (Verbosity .ge. VERBO_DEF) then
+		     call MESSAGE(VERBO_DEF, '  *** data error *** ')
+                     print *, '(k,j,i) = (', k,',', j,',', i,')',
+     +                     ' da=',da(k,j,i), ', sa=',sa(k,j,i)
+                 endif
              endif
-C            print *, 'da() ',da(k,j,i)
-C            print *, 'sa() ',sa(k,j,i)
 300   continue
 400   continue
 500   continue
