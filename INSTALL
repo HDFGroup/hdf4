@@ -30,11 +30,11 @@ Supported Platforms
                                              2.6.2
                                  (Fortran to C converter)
   
-  NeXT/NeXTSTEP                
-  MacQuadra950(MacOS-7.5)    
-  Fujitsu VP/UXPM               
-  Intel i860                    
-  VMS/VMS                       
+  NeXT/NeXTSTEP               -               -               -         -
+  MacQuadra950(MacOS-7.5)     -               -               -         -
+  Fujitsu VP/UXPM             -               -               -         -  
+  Intel i860                  -               -               -         -  
+  VMS/VMS                     -               -               -         -  
    
 Requirements
 ============
@@ -55,23 +55,27 @@ Requirements
         configuration and installation.
         
 
-Configuration/Installation
-===========================
-        
+Configuration/Installation - Unix
+=================================
+
+    Overview
+    --------        
     In this distribution there are two types of 'configure'
     scripts. One is the Cygnus 'configure' script and the other is the
     'configure' script created by the GNU autconf package. The Cygnus
     'configure' script is used at the top level to configure the overall
     distribution and the HDF/MFHDF library. The GNU 'configure' script
-    is used by the netCDF distribution to configure itself. This
-    gnu configure script is not used in configure this distribution.
+    is used by the netCDF distribution to configure itself. However, this
+    gnu configure script is not used in configuring this distribution.
  
     The Cygnus 'configure' script attempts to guess the correct
-    platfrom you are configuring the distribution for by calling the shell
+    platform you are configuring the distribution for by calling the shell
     script 'config.guess'. It outputs a unique string based on information
     obtained from the UNIX command 'uname' consisting of CPU-VENDOR-OS
     e.g. 'hppa1.1-hp-hpux9.03' for an  HP9000/735 running HPUX-9.03.
 
+    Layout of configuration files
+    -----------------------------
     The following shows the layout of the files used in the configuration.
     NOTE: The mfhdf/CUSTOMIZE and mfhdf/configure(autoconf) files are no
           longer used in the configuration
@@ -100,6 +104,15 @@ Configuration/Installation
                 hdf/jpeg/config/mh-hpux, mh-sun,...
                 hdf/jpeg/config/jhpux.h, jsun.h,...
 
+    Changing default values(CC,CFLAGS,..)
+    -------------------------------------
+    To change any of the default values for CC, FC, CFLAGS, FFLAGS,..etc
+    edit the makefile fragment 'config/mh-<os>' for your particular
+    operating system. After changing the values you must re-run the 
+    toplevel 'configure' script. 
+
+    Running configure
+    -----------------
     To build both of the libraries contained in this directory,
     run the ``configure'' script int $(toplevel), e.g.:
 
@@ -122,7 +135,9 @@ Configuration/Installation
     it is, config.sub translates it to a triplet specifying CPU, vendor,
     and OS.(e.g hppa1.1-hp-hpux9.03 for an HP900/735 running HPUX9.03).
 
-    To compile the library and utiltites type:
+    Compiling, Testing and Installing
+    ---------------------------------
+    To compile the library and utilities type:
 
         make 
 
@@ -143,6 +158,8 @@ Configuration/Installation
 
         make install
 
+Configuration/Installation - Windows '95 or Windows NT
+======================================================
 
     To install on a Windows '95 or Windows NT machine, read the seperate
     installation instructions for Windows NT:
@@ -153,12 +170,12 @@ Documentation
 =============
 
     Manual pages for the library are not yet completed but some early
-    drafts are avaiable in ./man.
+    drafts are available in ./man.
 
     The files in sub-directory ./release_notes are detailed descriptions
     for the new features. They can be used as  supplement documentation 
     for HDF4.0. Those files are also available on the NCSA ftp server, 
-    in /HDF/Documentation/HDF4.0/4.0b1_release_notes/.
+    in /HDF/Documentation/HDF4.0/4.0b2_release_notes/.
 
 
 Installation Location
