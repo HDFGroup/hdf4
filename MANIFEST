@@ -341,6 +341,7 @@
 ./hdf/test/tanf.f
 ./hdf/test/tanfilef.f
 ./hdf/test/tbv.c
+./hdf/test/tdupimgs.c
 ./hdf/test/testhdf.386
 ./hdf/test/testhdf.c
 ./hdf/test/testhdf.def
