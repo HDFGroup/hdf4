@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/08/27 22:18:42  chouck
-Added support for calibration tag reading and writing
+Revision 1.3  1992/09/17 22:06:06  chouck
+Removed debugging info for calibration tag routines
 
+ * Revision 1.2  1992/08/27  22:18:42  chouck
+ * Added support for calibration tag reading and writing
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -2044,7 +2047,6 @@ DFSsdg *sdg;
 
         case DFTAG_CAL:
 
-printf("Found some calibration info\n");
             if (fileNT == platnumsubclass) {       /* no conversion */
 
                 /* get size of element */
@@ -2078,14 +2080,10 @@ printf("Found some calibration info\n");
             else {
 
                 intn eltSize;
-printf("doing conversion\n");
 
                 /* get size of element */
                 eltSize = Hlength(file_id, elmt.tag, elmt.ref);
                 if(eltSize == FAIL) return FAIL;
-
-
-printf("Got back the element size %d\n", eltSize);
 
                 /* allocate buffer */
                 buf = HDgetspace((uint32) eltSize);
@@ -2104,9 +2102,6 @@ printf("Got back the element size %d\n", eltSize);
                                (unsigned char *) &sdg->cal, 
                                DFNT_FLOAT64, 4, DFACC_READ, 0, 0);
 
-
-printf("I think the cal is %f\n", sdg->cal);
-                    
                     /* read in the 32bit integer number type */
                     DFKconvert(buf + 32,
                                (unsigned char *) &sdg->cal_type, 
@@ -2117,7 +2112,6 @@ printf("I think the cal is %f\n", sdg->cal);
                     /* element is old float based type */
                     char *buf2;
 
- printf("(float32) I think the cal is %f\n", sdg->cal); 
                     /* allocate translation buffer */
                     buf2 = HDgetspace((uint32) 4 * sizeof(float32));
                     if(buf == NULL) return FAIL;
@@ -2416,8 +2410,6 @@ DFSsdg *sdg;
     
     /* Write calibration. */
     if (!Ref.cal) {
-        
-        printf("Writing out calibration information\n");
         
         if (platnumsubclass == outNT) {     /* no conversion */
             if (Hputelement(file_id, DFTAG_CAL, ref, 
