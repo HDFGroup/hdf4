@@ -37,6 +37,7 @@ C Output file: tvsetf1.hdf
       character*20 myname
       parameter (myname = 'vsetf')
 
+C these should be in dffunc.inc right?
       integer hopen,  vfatch,  vfgid,   vfgnxt, vfinsrt
       integer vfgttrs,vfadtr,  hclose,  vsfatch
       integer vsffdef,vsffnd,  vsfgid
@@ -433,5 +434,47 @@ C     read field 'char' only, test pckfld ' '
       call VERIFY(ret,'vfend',number_failed)
       ret = hclose(fid1)
       call VERIFY(ret, 'hclose', number_failed)
+C
+C     Testing deleting a tag/ref pair from Vgroups using vfdtr()
+C     Not as extensive as the C-version of the similar test because
+C     for now some the fortran versions of Vgroup routines are missing.
+C
+C Open the file for writing
+      fid1 = hopen(fn1, DFACC_RDWR, 0)
+      call VERIFY(fid1,'hopen',number_failed)
+      ret = vfstart(fid1)
+      call VERIFY(ret,'vfstart',number_failed)
+
+C Create a vgroup to add a bogus element to.
+      call MESSAGE(5,'Creating a vgroup')
+      vgid1 = vfatch(fid1, -1, 'w')
+      call VERIFY(vgid1, 'vfatch', number_failed)
+      ret = vfsnam(vgid1, 'Vgroup to delete from')
+      call VERIFY(ret,'vfsnam',number_failed)
+      ret = vfscls(vgid1, 'Vgroup to delete from')
+      call VERIFY(ret,'vfscls',number_failed)
+
+C     Add a bogus element to the vgroup
+      ret = vfadtr(vgid1, 5000, 1234)
+      call VERIFY(ret, 'vfadtr', number_failed)
+
+C     Now delete it again just make sure the call does not fail
+C     The C-version of the tests does a better job overall.
+
+      ret = vfdtr(vgid1, 5000, 1234)
+      call VERIFY(ret, 'vfdtr', number_failed)
+
+C     Detach from vgroup
+      ret = vfdtch(vgid1)
+      call VERIFY(ret,'vfdtch',number_failed)
+
+C     Close Vxxx interface down
+      ret = vfend(fid1)
+      call VERIFY(ret,'vfend',number_failed)
+
+C     Close file
+      ret = hclose(fid1)
+      call VERIFY(ret,'hclose',number_failed)
+
       return
       end
