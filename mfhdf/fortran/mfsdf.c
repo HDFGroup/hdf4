@@ -58,7 +58,7 @@ nscstart(name, access, namelen)
     fn = HDf2cstring(name, *namelen);
     
     ret = (intf) SDstart(fn, *access);
-    HDfreespace(fn);
+    HDfreespace((VOIDP)fn);
 
     return(ret);
 }
@@ -214,7 +214,7 @@ nscginfo(id, name, rank, dimsizes, nt, nattr, len)
 
     HDpackFstring(iname,  _fcdtocp(name),  *len);
 
-    if(iname)  HDfreespace(iname);
+    if(iname)  HDfreespace((VOIDP)iname);
   
     *rank  = (intf) rank32;
     *nt    = (intf) nt32;
@@ -433,7 +433,7 @@ nscn2index(id, name, namelen)
     
     fn = HDf2cstring(name, *namelen);
     ret = (intf) SDnametoindex(*id, fn);
-    HDfreespace(fn);
+    HDfreespace((VOIDP)fn);
     return(ret);
 }
 
@@ -476,8 +476,8 @@ nsccreate(id, name, nt, rank, dims, namelen)
 
     ret = (intf) SDcreate(*id, fn, *nt, *rank, cdims);
 
-    HDfreespace(fn);
-    HDfreespace(cdims);
+    HDfreespace((VOIDP)fn);
+    HDfreespace((VOIDP)cdims);
     return(ret);
 }
 
@@ -522,9 +522,9 @@ nscsdimstr(id, l, u, f, ll, ul, fl)
         fstr = NULL;
 
     ret = (intf) SDsetdimstrs(*id, lstr, ustr, fstr);
-    if(ll) HDfreespace(lstr);
-    if(ul) HDfreespace(ustr);
-    if(fl) HDfreespace(fstr);
+    if(ll) HDfreespace((VOIDP)lstr);
+    if(ul) HDfreespace((VOIDP)ustr);
+    if(fl) HDfreespace((VOIDP)fstr);
     return(ret);
 }
 
@@ -555,7 +555,7 @@ nscsdimname(id, name, len)
         nstr = NULL;
 
     ret = (intf) SDsetdimname(*id, nstr);
-    if(len) HDfreespace(nstr);
+    if(len) HDfreespace((VOIDP)nstr);
     return(ret);
 }
 
@@ -607,10 +607,10 @@ nscsdatstr(id, l, u, f, c, ll, ul, fl, cl)
         cstr = NULL;
 
     ret = (intf) SDsetdatastrs(*id, lstr, ustr, fstr, cstr);
-    if(ll) HDfreespace(lstr);
-    if(ul) HDfreespace(ustr);
-    if(fl) HDfreespace(fstr);
-    if(cl) HDfreespace(cstr);
+    if(ll) HDfreespace((VOIDP)lstr);
+    if(ul) HDfreespace((VOIDP)ustr);
+    if(fl) HDfreespace((VOIDP)fstr);
+    if(cl) HDfreespace((VOIDP)cstr);
     return(ret);
 }
 
@@ -771,9 +771,9 @@ nscgdimstrs(dim, label, unit, format, llabel, lunit, lformat, mlen)
     HDpackFstring(iunit,   _fcdtocp(unit),   *lunit);
     HDpackFstring(iformat, _fcdtocp(format), *lformat);
 
-    if(ilabel)  HDfreespace(ilabel);
-    if(iunit)   HDfreespace(iunit);
-    if(iformat) HDfreespace(iformat);
+    if(ilabel)  HDfreespace((VOIDP)ilabel);
+    if(iunit)   HDfreespace((VOIDP)iunit);
+    if(iformat) HDfreespace((VOIDP)iformat);
 
     return status;
 }
@@ -817,10 +817,10 @@ nscgdatstrs(id, label, unit, format, coord, llabel, lunit, lformat, lcoord, len)
     HDpackFstring(iformat, _fcdtocp(format), *lformat);
     HDpackFstring(icoord,  _fcdtocp(coord),  *lcoord);
 
-    if(ilabel)  HDfreespace(ilabel);
-    if(iunit)   HDfreespace(iunit);
-    if(iformat) HDfreespace(iformat);
-    if(icoord)  HDfreespace(icoord);
+    if(ilabel)  HDfreespace((VOIDP)ilabel);
+    if(iunit)   HDfreespace((VOIDP)iunit);
+    if(iformat) HDfreespace((VOIDP)iformat);
+    if(icoord)  HDfreespace((VOIDP)icoord);
 
     return status;
 }
@@ -858,7 +858,7 @@ nscgainfo(id, number, name, nt, count, len)
 
     HDpackFstring(iname,  _fcdtocp(name),  *len);
 
-    if(iname)  HDfreespace(iname);
+    if(iname)  HDfreespace((VOIDP)iname);
 
     *nt    = (intf) nt32;
   
@@ -898,7 +898,7 @@ nscgdinfo(id, name, sz, nt, nattr, len)
 
     HDpackFstring(iname,  _fcdtocp(name),  *len);
 
-    if(iname)  HDfreespace(iname);
+    if(iname)  HDfreespace((VOIDP)iname);
   
     *nt    = (intf) nt32;
     *sz    = (intf) sz32;
@@ -941,7 +941,7 @@ nscsattr(id, name, nt, count, data, len)
 
     ret = (intf) SDsetattr(*id, an, *nt, *count, data);
 
-    HDfreespace(an);
+    HDfreespace((VOIDP)an);
     return(ret);
 }
 
@@ -969,7 +969,7 @@ nscfattr(id, name, namelen)
     fn = HDf2cstring(name, *namelen);
     
     ret = (intf) SDfindattr(*id, fn);
-    HDfreespace(fn);
+    HDfreespace((VOIDP)fn);
 
     return(ret);
 }
