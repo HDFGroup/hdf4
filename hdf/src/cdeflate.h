@@ -69,7 +69,7 @@ extern      "C"
 
 /* Define the [default] size of the buffer to interact with the file. */
 #define DEFLATE_BUF_SIZE    4096
-#define TMP_BUF_SIZE        16384
+#define DEFLATE_TMP_BUF_SIZE        16384
 
 /* gzip [en|de]coding information */
 typedef struct

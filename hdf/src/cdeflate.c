@@ -460,11 +460,11 @@ HCPcdeflate_seek(accrec_t * access_rec, int32 offset, int origin)
               HRETURN_ERROR(DFE_SEEKERROR, FAIL);
       }     /* end if */
 
-    if ((tmp_buf = (uint8 *) HDmalloc(TMP_BUF_SIZE)) == NULL)     /* get tmp buffer */
+    if ((tmp_buf = (uint8 *) HDmalloc(DEFLATE_TMP_BUF_SIZE)) == NULL)     /* get tmp buffer */
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    while (deflate_info->offset + TMP_BUF_SIZE < offset)    /* grab chunks */
-        if (HCIcdeflate_decode(info, TMP_BUF_SIZE, tmp_buf) == FAIL)
+    while (deflate_info->offset + DEFLATE_TMP_BUF_SIZE < offset)    /* grab chunks */
+        if (HCIcdeflate_decode(info, DEFLATE_TMP_BUF_SIZE, tmp_buf) == FAIL)
           {
               HDfree(tmp_buf);
               HRETURN_ERROR(DFE_CDECODE, FAIL);
