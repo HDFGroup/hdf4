@@ -1118,3 +1118,51 @@ nsfsacct(id, type)
 {
     return((intf) SDsetaccesstype(*id, *type));
 }
+/*-----------------------------------------------------------------------------
+ * Name:    sfsdmvc
+ * Purpose: Call SDsetdimval_comp to set the dim value backward 
+ *            compatibility type
+ * Inputs:  id: sds id
+ *          compmode: backward compatibility:
+ *                    SD_DIMVAL_BW_COMP -- compatible (in mfhdf.h)
+ *                    SD_DIMVAL_BW_INCOMP -- incompatible.
+ *
+ * Returns: SUCCESS on success, FAIL on failure 
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfsdmvc(intf *id, intf *compmode)
+#else
+nsfsdmvc(id, compmode)
+     intf *id;
+     intf *compmode;
+#endif /* PROTOTYPE */
+{
+    return((intf) SDsetdimval_comp(*id, *compmode));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    sfisdmvc
+ * Purpose: Call SDisdimval_bwcomp to get the dim value backward 
+ *            compatibility 
+ * Inputs:  id: sds id
+ *
+ * Returns: SD_DIMVAL_BW_COMP (1) if dimval is backward compatible;
+            SD_DIMVAL_BW_INCOMP (0) for not compatible; (in mfhdf.h)
+            FAIL (-1) for error.
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfisdmvc(intf *id)
+#else
+nsfisdmvc(id)
+     intf *id;
+#endif /* PROTOTYPE */
+{
+    return((intf) SDisdimval_bwcomp(*id));
+}
+
