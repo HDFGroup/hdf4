@@ -1011,7 +1011,7 @@ test_nbit11(int32 fid)
     num_errs += errors;
 }
 
-void
+static void
 test_nbit12(int32 fid)
 {
     int32       aid1;
