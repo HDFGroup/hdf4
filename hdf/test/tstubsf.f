@@ -1,4 +1,5 @@
 C****************************************************************************
+C* $Id$			    *
 C* NCSA HDF                                                                 *
 C* Software Development Group                                               *
 C* National Center for Supercomputing Applications                          *
@@ -10,11 +11,11 @@ C* hdf/COPYING file.                                                        *
 C*                                                                          *
 C****************************************************************************
 C
-C $Id$
-C     
+C
       subroutine tstubsf (nerrors)
       implicit none
-      
+      include 'fortest.inc'
+
       integer nerrors
       character*(*) myname
       parameter (myname = 'stubs')
@@ -39,9 +40,9 @@ C
       integer r7
 
       integer dfaccess, dfopen, dfclose, dfdesc, dfdup, dfdel, dfread,
-     +     dfwrite, dfupdate, dfget, dfput, dfsfind, dffind, 
+     +     dfwrite, dfupdate, dfget, dfput, dfsfind, dffind,
      +     dferrno, dfishdf, dfnewref, dfnumber, dfstat
-      
+
       data t255 /255/
       data t127 /127/
       data r1   /1/
@@ -61,45 +62,42 @@ C
       a2size = len(ar2)
       a3size = len(ar3)
 
-      print *, 'This program will test the DF emulation layer'
-      print *, 'of HDF 3.2 and beyond (FORTRAN version).  Many'
-      print *, 'routines will be tested individually.  Each test'
-      print *, 'will report its name and results.  If all goes'
-      print *, 'well, all of the results will begin with "Success".'
-      print *, 'If a test fails, the results line will begin with'
-      print *, '">>>Failure".  An error count is kept and printed'
-      print *, 'out at the end.'
-      print *, ' '
-      print *, 'Hit <return> to continue.'
-c      read(5,100) in
-c 100  format(a)
-c      in(1:20) = '                    '
-      
-      print *, ' '
-      print *, 'Testing dferrno...'
+C      print *, 'This program will test the DF emulation layer'
+C      print *, 'of HDF 3.2 and beyond (FORTRAN version).  Many'
+C      print *, 'routines will be tested individually.  Each test'
+C      print *, 'will report its name and results.  If all goes'
+C      print *, 'well, all of the results will begin with "Success".'
+C      print *, 'If a test fails, the results line will begin with'
+C      print *, '">>>Failure".  An error count is kept and printed'
+C      print *, 'out at the end.'
+C      print *, 'Hit <return> to continue.'
+C      read(5,100) in
+C 100  format(a)
+C      in(1:20) = '                    '
+
+      call MESSAGE(VERBO_MED, 'Testing dferrno...')
       ret = dferrno()
       if (ret .ne. 0) then
          print *, '>>>Failure:  Returned ', ret, ' rather than 0.'
          nerrors = nerrors + 1
       else
-         print *, 'Success      !'
+         call MESSAGE(VERBO_HI, 'Success!')
       endif
-      
-      print *, ' '
-      print *, 'Testing dfishdf... (should fail)'
+
+      call MESSAGE(VERBO_MED, 'Testing dfishdf... (should fail)')
       ret = dfishdf('tstubsF.hdf')
       dfenum = dferrno()
       if (ret .eq. -1) then
-        print *, 'Success:  dfishdf failed with DFerror = ', dfenum
+C       print *, 'Success:  dfishdf failed with DFerror = ', dfenum
+        call MESSAGE(VERBO_HI, 'Success:  dfishdf did fail')
       else
          print *, '>>>Failure:  Non-existent file looks like HDF file.'
          print *, '   Maybe was a pre-existing file named "tstubsF.hdf"'
          print *, '   DFerror = ', dfenum
          nerrors = nerrors + 1
       endif
-      
-      print *, ' '
-      print *, 'Testing dfopen... (new file)'
+
+      call MESSAGE(VERBO_MED, 'Testing dfopen... (new file)')
       dfile = dfopen('tstubsF.hdf', 6, 0)
       dfenum = dferrno()
       if (dfile .eq. 0) then
@@ -107,11 +105,10 @@ c      in(1:20) = '                    '
          print *, '   Quiting.'
          return
       else
-         print *, 'Success      !'
+         call MESSAGE(VERBO_HI, 'Success!')
       endif
-      
-      print *, ' '
-      print *, 'Testing dfclose...'
+
+      call MESSAGE(VERBO_MED, 'Testing dfclose...')
       ret = dfclose(dfile)
       dfenum = dferrno()
       if (ret .eq. -1) then
@@ -119,22 +116,21 @@ c      in(1:20) = '                    '
          print *, '   DFerror = ', dfenum
          nerrors = nerrors + 1
       else
-         print *, 'Success      !'
+         call MESSAGE(VERBO_HI, 'Success!')
       endif
-      
-      print *, ' '
-      print *, 'Testing dfclose... (invalid file; should fail)'
+
+      call MESSAGE(VERBO_MED,
+     +    'Testing dfclose... (invalid file; should fail)')
       ret = dfclose(dfile)
       dfenum = dferrno()
       if (ret .eq. -1) then
-         print *, 'Success: dfclose failed with DFerror = ', dfenum
+         call MESSAGE(VERBO_HI, 'Success: dfclose did fail')
       else
          print *, '>>>Failure:  Close allowed on unopened file.'
          nerrors = nerrors + 1
       endif
-      
-      print *, ' '
-      print *, 'Testing dfopen... (existing file)'
+
+      call MESSAGE(VERBO_MED, 'Testing dfopen... (existing file)')
       dfile = dfopen('tstubsF.hdf', 2, 0)
       dfenum = dferrno()
       if (dfile .eq. 0) then
@@ -142,22 +138,20 @@ c      in(1:20) = '                    '
          print *, '   Quiting.'
          return
       else
-         print *, 'Success      !'
+         call MESSAGE(VERBO_HI, 'Success!')
       endif
-      
-      print *, ' '
-      print *, 'Testing dfput...'
+
+      call MESSAGE(VERBO_MED, 'Testing dfput...')
       ret = dfput(dfile, t255, r1, ar0, a0size)
       dfenum = dferrno()
       if (ret .ne. a0size) then
          print *, '>>>Failure:  DFerror = ', dfenum
          nerrors = nerrors + 1
       else
-         print *, 'Success      !'
+         call MESSAGE(VERBO_HI, 'Success!')
       endif
-      
-      print *, ' '
-      print *, 'Testing dfget...'
+
+      call MESSAGE(VERBO_MED, 'Testing dfget...')
       ret = dfget(dfile, t255, r1, in)
       dfenum = dferrno()
       if (ret .ne. a0size) then
@@ -176,14 +170,14 @@ c      in(1:20) = '                    '
             print *, '   String read:     ', in
             nerrors = nerrors + 1
          else
-            print *, 'Success:  string read is the same as written.'
+            call MESSAGE(VERBO_HI,
+     +		'Success:  string read is the same as written.')
          endif
       endif
-      
+
       in(1:20) = '                    '
-      
-      print *, ' '
-      print *, 'Testing dfaccess (write)...'
+
+      call MESSAGE(VERBO_MED, 'Testing dfaccess (write)...')
       ret = dfaccess(dfile, t255, r3, 'w')
       dfenum = dferrno()
       if (ret .eq. -1) then
@@ -191,23 +185,21 @@ c      in(1:20) = '                    '
          print *, '   DFerror = ', dfenum
          nerrors = nerrors + 1
       else
-         print *, 'Success      !'
+         call MESSAGE(VERBO_HI, 'Success!')
       endif
-      
-      print *, ' '
-      print *, 'Testing dfread... (should fail)'
+
+      call MESSAGE(VERBO_MED, 'Testing dfread... (should fail)')
       ret = dfread(dfile, in, 5)
       dfenum = dferrno()
       if (ret .eq. -1) then
-         print *, 'Success:  dfread failed with DFerror = ', dfenum
+         call MESSAGE(VERBO_HI, 'Success:  dfread did fail')
       else
          print *, '>>>Failure:  Read allowed on write element.'
          nerrors = nerrors + 1
       endif
       in(1:20) = '                    '
 
-      print *, ' '
-      print *, 'Testing dfwrite...'
+      call MESSAGE(VERBO_MED, 'Testing dfwrite...')
       ret = dfwrite(dfile, ar1, a1size)
       dfenum = dferrno()
       if (ret .ne. a1size) then
@@ -215,11 +207,10 @@ c      in(1:20) = '                    '
          print *, '   DFerror = ', dfenum
          nerrors = nerrors + 1
       else
-         print *, 'Success      !'
+         call MESSAGE(VERBO_HI, 'Success!')
       endif
 
-      print *, ' '
-      print *, 'Testing dfaccess (read)...'
+      call MESSAGE(VERBO_MED, 'Testing dfaccess (read)...')
       ret = dfaccess(dfile, t255, r3, 'r')
       dfenum = dferrno()
       if (ret .eq. -1) then
@@ -227,22 +218,20 @@ c      in(1:20) = '                    '
          print *, '   DFerror = ', dfenum
          nerrors = nerrors + 1
       else
-         print *, 'Success      !'
+         call MESSAGE(VERBO_HI, 'Success!')
       endif
 
-      print *, ' '
-      print *, 'Testing dfwrite... (should fail)'
+      call MESSAGE(VERBO_MED, 'Testing dfwrite... (should fail)')
       ret = dfwrite(dfile, in, 5)
       dfenum = dferrno()
       if (ret .eq. -1) then
-         print *, 'Success:  dfwrite failed with DFerror = ', dfenum
+         call MESSAGE(VERBO_HI, 'Success:  dfwrite did fail')
       else
          print *, '>>>Failure:  write allowed on read element.'
          nerrors = nerrors + 1
       endif
 
-      print *, ' '
-      print *, 'Testing dfread...'
+      call MESSAGE(VERBO_MED, 'Testing dfread...')
       ret = dfread(dfile, in, a1size)
       dfenum = dferrno()
       if (ret .ne. a1size) then
@@ -261,13 +250,13 @@ c      in(1:20) = '                    '
            print *, '   String read:     ', in
            nerrors = nerrors + 1
 	else
-           print *, 'Success:  string read is the same as written.'
+           call MESSAGE(VERBO_HI,
+     +		'Success:  string read is the same as written.')
         endif
       endif
       in(1:20) = '                    '
-      
-      print *, ' '
-      print *, 'Testing dfnumber...'
+
+      call MESSAGE(VERBO_MED, 'Testing dfnumber...')
       nd = dfnumber(dfile, t255)
       dfenum = dferrno()
       if (nd .ne. 2) then
@@ -276,14 +265,13 @@ c      in(1:20) = '                    '
          print *, '   DFerror = ', dfenum
          nerrors = nerrors + 1
       else
-         print *, 'Success      !'
+         call MESSAGE(VERBO_HI, 'Success!')
       endif
-      
-      print *, ' '
-      print *, 'Testing dfdesc...'
+
+      call MESSAGE(VERBO_MED, 'Testing dfdesc...')
       ret = dfdesc(dfile, dlist, 0, 5)
       dfenum = dferrno()
-C     
+C
 C  add one for version tag
 C
       if (ret .ne. (nd + 1)) then
@@ -291,11 +279,10 @@ C
          print *, '   DFerror = ', dfenum
          nerrors = nerrors + 1
       else
-         print *, 'Success      !'
+         call MESSAGE(VERBO_HI, 'Success!')
       endif
-      
-      print *, ' '
-      print *, 'Testing dfupdate'
+
+      call MESSAGE(VERBO_MED, 'Testing dfupdate')
       ret = dfupdate(dfile)
       dfenum = dferrno()
       if (ret .ne. 0) then
@@ -303,11 +290,10 @@ C
          print *, '   DFerror = ', dfenum
          nerrors = nerrors + 1
       else
-         print *, 'Success      !'
+         call MESSAGE(VERBO_HI, 'Success!')
       endif
 
-      print *, ' '
-      print *, 'Testing dfstat'
+      call MESSAGE(VERBO_MED, 'Testing dfstat')
       ret = dfstat(dfile, dfinfo)
       dfenum = dferrno()
       if (ret .ne. 0) then
@@ -315,11 +301,10 @@ C
          print *, '   DFerror = ', dfenum
          nerrors = nerrors + 1
       else
-         print *, 'Success      !'
+         call MESSAGE(VERBO_HI, 'Success!')
       endif
-    
-      print *, ' '
-      print *, 'Testing dfnewref...'
+
+      call MESSAGE(VERBO_MED, 'Testing dfnewref...')
       ret = dfnewref(dfile)
       dfenum = dferrno()
       if (ret .ne. 4) then
@@ -327,11 +312,10 @@ C
          print *, '   DFerror = ', dfenum
          nerrors = nerrors + 1
       else
-         print *, 'Success      !'
+         call MESSAGE(VERBO_HI, 'Success!')
       endif
 
-      print *, ' '
-      print *, 'Testing dfdup...'
+      call MESSAGE(VERBO_MED, 'Testing dfdup...')
       ret = dfdup(dfile, 127, r7, t255, r3)
       dfenum = dferrno()
       if (ret .eq. -1) then
@@ -346,12 +330,11 @@ C
            print *, '   DFerror = ', dfenum
            nerrors = nerrors + 1
 	else
-           print *, 'Success    !'
+           call MESSAGE(VERBO_HI, 'Success!')
         endif
       endif
-      
-      print *, ' '
-      print *, 'Testing dfdel...'
+
+      call MESSAGE(VERBO_MED, 'Testing dfdel...')
       ret = dfdel(dfile, t127, r7)
       dfenum = dferrno()
       if (ret .eq. -1) then
@@ -366,12 +349,11 @@ C
             print *, '   DFerror = ', dfenum
             nerrors = nerrors + 1
          else
-	  print *, 'Success!'
+	  call MESSAGE(VERBO_HI, 'Success!')
        endif
       endif
-      
-      print *, ' '
-      print *, 'Testing dfsfind...'
+
+      call MESSAGE(VERBO_MED, 'Testing dfsfind...')
       ret = dfsfind(dfile, 254, 0)
       dfenum = dferrno()
       if (ret .eq. -1) then
@@ -379,11 +361,10 @@ C
          print *, '   DFerror = ', dfenum
          nerrors = nerrors + 1
       else
-         print *, 'Success      !'
+         call MESSAGE(VERBO_HI, 'Success!')
       endif
 
-      print *, ' '
-      print *, 'Testing dffind...'
+      call MESSAGE(VERBO_MED, 'Testing dffind...')
       ret = dfdup(dfile, 254, 4, 255, 3)
       if (ret .ne. 0) then
          print *, '>>>DFdup 1 failed.'
@@ -404,7 +385,7 @@ C
             print *, '   DFerror = ', dfenum
             nerrors = nerrors + 1
          else
-            if ((tag .ne. 254) .or. (ref .ne. i) .or. 
+            if ((tag .ne. 254) .or. (ref .ne. i) .or.
      +           (length .ne. a1size)) then
                print *, '>>>Failure:  tag/ref found is not correct.'
                print *, '   Looking for:'
@@ -417,11 +398,11 @@ C
                print *, '      length: ', length
                nerrors = nerrors + 1
             else
-               print *, 'Success !'
+               call MESSAGE(VERBO_HI, 'Success!')
             endif
          endif
  200  continue
-      
+
       ret = dfclose(dfile)
       dfenum = dferrno()
       if (ret .ne. 0) then
@@ -429,14 +410,13 @@ C
          print *, '   DFerror = ', dfenum
          nerrors = nerrors + 1
       endif
-      
-      
-      print *, ' '
-      print *, ' '
-      print *, 'Test Summary:'
-      print *, '   ', nerrors, ' errors were encountered.'
+
       if (nerrors .ne. 0) then
-         print *, '   Please check program output carefully.'
+	  print *, '   ', nerrors, ' errors were encountered.'
+      else
+	  if (verbosity .ge. VERBO_HI) then
+	      print *, '        >>> ALL TESTS PASSED <<<'
+	  endif
       endif
 
       return

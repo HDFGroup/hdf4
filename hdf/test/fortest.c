@@ -117,18 +117,18 @@ main(int argc, char *argv[])
 	return(-1);
     }
 
-    Verbosity = 4;  /* Default Verbosity is Low */
+    Verbosity = 3;  /* Default Verbosity is Low */
     for (CLLoop = 1; CLLoop < argc; CLLoop++)
       {
           if ((argc > CLLoop + 1) && ((HDstrcmp(argv[CLLoop], "-verbose") == 0) ||
                                       (HDstrcmp(argv[CLLoop], "-v") == 0)))
             {
                 if (argv[CLLoop + 1][0] == 'l')
-                    Verbosity = 4;
+                    Verbosity = 5;
                 else if (argv[CLLoop + 1][0] == 'm')
-                    Verbosity = 6;
+                    Verbosity = 7;
                 else if (argv[CLLoop + 1][0] == 'h')
-                    Verbosity = 10;
+                    Verbosity = 9;
                 else
                     Verbosity = atoi(argv[CLLoop + 1]);
 		fprintf(cmdfile, "%s %d\n", VERBOSITY_STR, Verbosity);
@@ -140,7 +140,7 @@ main(int argc, char *argv[])
             }
           if ((argc > CLLoop) && (HDstrcmp(argv[CLLoop], "-help") == 0))
             {
-                printf("Usage: fortest [-v[erbose] (l[ow]|m[edium]|h[igh]|0-10)] \n");
+                printf("Usage: fortest [-v[erbose] (l[ow]|m[edium]|h[igh]|0-9)] \n");
                 printf("               [-[e]x[clude] name+] \n");
                 printf("               [-o[nly] name+] \n");
                 printf("               [-b[egin] name] \n");

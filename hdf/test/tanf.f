@@ -98,7 +98,8 @@ C  *** generate float array and image ***
 
 C  ***  Write labels and descriptions ***
 
-      print *,'***  Writing labels & descriptions with SDS and RIS ***'
+      call MESSAGE(VERBO_MED,
+     +        '***  Writing labels & descriptions with SDS and RIS ***')
 
       do 100 j=1,REPS
 C         write out scientific data set 
@@ -128,7 +129,8 @@ C         write out annotations for 2 out of every 3
 
 C********  Read labels and descriptions *********
 
-      print *,'*** Reading labels and descriptions for SDS and RIS ***'
+      call MESSAGE(VERBO_MED,
+     +        '*** Reading labels and descriptions for SDS and RIS ***')
 
       do 200 j=1,REPS
 
@@ -151,7 +153,8 @@ C         read in annotations for 2 out of every 3
   200 continue
 
       if ( number_failed .eq. 0 ) then
-          print *,'***** ALL DFAN TESTS SUCCESSFUL ***** '
+          call MESSAGE(VERBO_HI,
+     +        '***** ALL DFAN TESTS SUCCESSFUL ***** ')
       else
           print *,'***** ',number_failed,' TESTS FAILED ***** '
       endif

@@ -33,13 +33,13 @@ C Users:    HDF Fortran programmers
 C Invokes: none
 C------------------------------------------------------------------------------
       subroutine RESULT(errval, routine, num_failed)
+      implicit none
+      include 'fortest.inc'
+
       integer errval
       character*(*)  routine
       integer num_failed
 
-      integer FAIL
-
-      FAIL = -1
       if (errval .eq. FAIL) then
           num_failed = num_failed + 1
           print *, '    >>> ', routine, ' FAILED: ret = ',
@@ -70,15 +70,12 @@ C------------------------------------------------------------------------------
       character*(*)  routine
       integer num_failed
 
-      integer FAIL
-
-      FAIL = -1
       if (errval .eq. FAIL) then
           num_failed = num_failed + 1
           print *, '    >>> ', routine, ' FAILED: ret = ',
      *           errval, '    <<<'
       else 
-          if (verbosity .ge. 9) then
+          if (verbosity .ge. VERBO_HI) then
               print *, routine, ' SUCCESSFUL'
           endif
       endif
@@ -117,6 +114,9 @@ C  gen2Dfloat:  generate 2-D data array
 C
 C***************************************************************
       subroutine gen2Dfloat(height, width, data)
+      implicit none
+      include 'fortest.inc'
+
       integer   height, width
       real data(height,width)
 
@@ -138,11 +138,14 @@ C  genimage:  generate image from 2-D float array
 C
 C***************************************************************
       subroutine genimage(height, width, data, image)
+      implicit none
+      include 'fortest.inc'
+
       integer   height, width
       real      data(height, width)
       character image(height, width)
 
-      integer i
+      integer i, j
       real   max, min, multiplier
 
       max = data(1,1)
@@ -171,12 +174,11 @@ C     SUBROUTINE errchkio
 C
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       subroutine errchkio(err1, err2, err3, num_err, msg)
+      implicit none
+      include 'fortest.inc'
+
       integer err1, err2, err3, num_err
       character*(*)  msg
-
-      integer FAIL
-
-      FAIL = -1
 
       if (err1.eq.FAIL .or. err2.eq.FAIL .or. err3.eq.FAIL) then
           num_err = num_err + 1
@@ -184,9 +186,10 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
           print *,'>>> Test failed for ',msg, ' <<<'
           print *, '  err1=',err1, '   err2=',err2, '   err3=',err3
       else
-          print *,'Test passed for ', msg
+          if (verbosity .ge. VERBO_HI) then
+	      print *,'Test passed for ', msg
+	  endif
       endif
-      print *
 
       return
       end
@@ -198,32 +201,38 @@ C     SUBROUTINE errchkarr
 C
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       subroutine errchkarr(err1, err2, err3, num_err, type)
+      implicit none
+      include 'fortest.inc'
+
       integer err1, err2, err3, num_err
       character*(*)  type
       
-      print *
       if (err1 .eq. 1) then
         print *, '>>> Test failed for ', type, ' array' 
         num_err = num_err + 1
       else
-        print *, 'Test passed for ', type, ' array'
+          if (verbosity .ge. VERBO_HI) then
+	    print *, 'Test passed for ', type, ' array'
+	  endif
       endif
 
       if (err2 .eq. 1) then
         print *, '>>> Test failed for ',type, ' scales.'
         num_err = num_err + 1
       else
-        print *, 'Test passed for ', type, ' scales.'
+          if (verbosity .ge. VERBO_HI) then
+	    print *, 'Test passed for ', type, ' scales.'
+	  endif
       endif
 
       if (err3 .eq. 1) then
         print *, '>>> Test failed for ', type, ' max/min.'
         num_err = num_err + 1
       else
-        print *, 'Test passed for ', type, ' max/min.'
+          if (verbosity .ge. VERBO_HI) then
+	    print *, 'Test passed for ', type, ' max/min.'
+	  endif
       endif
-
-      print *
 
       return
       end
@@ -235,6 +244,9 @@ C     SUBROUTINE err_check
 C
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       subroutine err_check(err, num_err, type)
+      implicit none
+      include 'fortest.inc'
+
       integer err, num_err
       character*(*) type
 
@@ -242,7 +254,9 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
   	print *,'>>> Test failed for ',type, ' array.'
         num_err = num_err+1
       else
-  	print *,'Test passed for ', type, ' array.'
+          if (verbosity .ge. VERBO_HI) then
+	    print *,'Test passed for ', type, ' array.'
+	  endif
       endif
 
       return
@@ -262,9 +276,11 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       character*(*) action, name
 
       if (Verbosity .ge. VERBO_DEF) then
-	print *, '====================================='
-	print *, action, ' ', name
-	print *, '====================================='
+	call MESSAGE(VERBO_LO,
+     +     '=====================================')
+	print *, action, ' -- ', name
+	call MESSAGE(VERBO_LO,
+     +     '=====================================')
       endif
 
       return

@@ -38,15 +38,13 @@ C
       character*1 CR
 
       integer x, y, ret, num_images
-      integer d1, d2, ispal, FALSE, TRUE
+      integer d1, d2, ispal
       integer ref1, ref2, ref3
 
       call ptestban('Testing', myname)
       DFTAG_RLE = 11
       DFTAG_IMCOMP = 12
       TESTFILE = 'tdfr8f.hdf' 
-      FALSE = 0
-      TRUE = 1
       number_failed = 0
       num_images = 0
       CR = char(10)  
@@ -109,7 +107,9 @@ C Start here
       if (ret .ne. num_images) then 
           print *, '    >>>> WRONG NUMBER OF IMAGES  <<<   '
       else 
-	  print *, ret, ' images in the file'
+	  if (Verbosity .ge. VERBO_HI) then
+	      print *, ret, ' images in the file'
+	  endif
       endif
       call MESSAGE(VERBO_HI, 'Restarting file')
       ret = d8first()

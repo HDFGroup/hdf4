@@ -54,7 +54,7 @@ C characters of output and input strings in subroutine compare()
       err = 0
       num_failed = 0
 
-      print *, 'Creating arrays...'
+      call MESSAGE(5, 'Creating arrays...')
 
       do 110 i=1,dims(2)
           do 100 j=1,dims(1) 
@@ -75,7 +75,7 @@ C characters of output and input strings in subroutine compare()
       ret = dspdata(fn, rank,dims, f32)
       err = err + ret
 
-      print *, 'Test strings written so far'
+      call MESSAGE(5, 'Test strings written so far')
 
       ret = dsgdata(fn, rank, dims, inf32)
       err = err + ret
@@ -97,7 +97,7 @@ C characters of output and input strings in subroutine compare()
 150   continue
 
       if ((err .eq. 0) .and. (num_failed .eq. 0)) then
-          print *, '>>>> All Tests Passed.  >>>>'
+          call MESSAGE(5, '>>>> All Tests Passed.  >>>>')
       else
           print *, abs(err),' calls returned -1'
           print *, num_failed, ' values incorrect.'
@@ -110,6 +110,8 @@ C characters of output and input strings in subroutine compare()
 
       subroutine compare(outstring, instring, num)
       implicit none
+      include 'fortest.inc'
+
       character*14 outstring, instring
       integer      num
 C
@@ -121,7 +123,9 @@ C
           print *, '      HDF says= <', instring,'>'
           num= num+ 1
       else
-          print *, 'Test passed for ', outstring
+	  if (Verbosity .ge. VERBO_HI) then
+	      print *, 'Test passed for ', outstring
+	  endif
       endif
       return
       end

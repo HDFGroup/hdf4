@@ -108,7 +108,7 @@ C However, OR() is not really that portable
       DFNT_NINT16 =   DFNT_NATIVE + DFNT_INT16
       DFNT_NINT32 =   DFNT_NATIVE + DFNT_INT32
       
-      print *, 'Creating arrays...'
+      call MESSAGE(5, 'Creating arrays...')
       
       do 110 i=1,10
           do 100 j=1,10
@@ -134,7 +134,7 @@ C          i8scale(i) = (i * 10) + j
 C
 C  Writing dimscale, max/min, and arrays to a single file 
 C
-      print *, 'Writing arrays to single file...'
+      call MESSAGE(5, 'Writing arrays to single file...')
 
       err  = dssnt(DFNT_NFLOAT64)
       err1 = dssdisc(1, 10, f64scale)
@@ -198,7 +198,8 @@ C
 C
 C  Checking dimscales, max/min and arrays from single file
 C
-      print *, 'Checking dimscales, max/min & arrays from single file'
+      call MESSAGE(5,
+     +    'Checking dimscales, max/min & arrays from single file')
 
 C  float64
       err1 = 0
@@ -276,7 +277,7 @@ C
       if (number_failed .gt. 0 ) then
           print *, '        >>> ', number_failed, ' TESTS FAILED <<<'
       else
-          print *, '        >>> ALL TESTS PASSED <<<'
+          call MESSAGE(5, '        >>> ALL TESTS PASSED <<<')
       endif
 
       return

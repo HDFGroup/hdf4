@@ -12,6 +12,9 @@ C Default to cleanup *.hdf files and set verbosity to default value
 	CleanUp = .TRUE.
 	Verbosity = VERBO_DEF
 
+	print *, '====================================='
+	print*, 'Fortran tests started'
+	print *, '====================================='
 	nerror = 0
 	call getcmd(cmd, test, retcode)
 	do while (retcode .eq. 0)
@@ -22,7 +25,7 @@ C Default to cleanup *.hdf files and set verbosity to default value
 
 	print *, '====================================='
 	if (nerror .ne. 0) then
-	    print*, 'Fortran tests have ', nerror, 'errors'
+	    print*, nerror, ' Fortran test(s) failed'
 	else
 	    print*, 'All fortran tests passed'
 	endif

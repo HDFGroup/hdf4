@@ -31,6 +31,8 @@ C   to be 'byte' not 'character'  You will also need to remove
 C   a couple of calls to char().  If you search on the string 
 C   VMS you should be able to find all of the necessary changes.
 C
+      implicit none
+      include 'fortest.inc'
    
       integer number_failed
       character*(*) myname
@@ -109,7 +111,7 @@ C
       ioffe = 47.8
       ctype = DFNT_INT16
 
-      print *, 'Creating arrays...'
+      call MESSAGE(5, 'Creating arrays...')
       
       do 110 i=1,10
           do 100 j=1,10
@@ -135,7 +137,7 @@ C          i8scale(i) = (i * 10) + j
 C
 C  Writing dimscale, max/min, and arrays to a single file 
 C
-      print *, 'Writing arrays to single file...'
+      call MESSAGE(5, 'Writing arrays to single file...')
 
       err  = dssnt(DFNT_FLOAT64)
       err1 = dssdisc(1, 10, f64scale)
@@ -232,7 +234,8 @@ C
 C
 C  Checking dimscales, max/min and arrays from single file
 C
-      print *, 'Checking dimscales, max/min & arrays from single file'
+      call MESSAGE(5,
+     +    'Checking dimscales, max/min & arrays from single file')
 
 C  float64
       err1 = 0
@@ -311,7 +314,9 @@ C
       if (number_failed .gt. 0 ) then
           print *, '        >>> ', number_failed, ' TESTS FAILED <<<'
       else
-          print *, '        >>> ALL TESTS PASSED <<<'
+          if (verbosity .ge. VERBO_HI) then
+	      print *, '        >>> ALL TESTS PASSED <<<'
+	  endif
       endif
 
       return

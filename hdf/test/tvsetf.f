@@ -43,10 +43,10 @@ C Output file: tvsetf1.hdf
       integer*4 fid1, vgid1, vgid2, vsid1, vsid2
       integer*4 vgref1, vsref1, vsref2, vref
       integer vsize, found
-      integer DFACC_CREATE, FAIL, SUCCEED, DFNT_CHAR
+      integer DFACC_CREATE, DFNT_CHAR
       integer DFNT_INT16, DFNT_INT32, DFNT_FLOAT32
       integer DFNT_FLOAT64, FULL_INTERLACE, DFACC_RDWR
-      integer DFTAG_VH, TRUE, FALSE, HDF_VSPACK, HDF_VSUNPACK
+      integer DFTAG_VH, HDF_VSPACK, HDF_VSUNPACK
       integer ret,ntrs,i,il,nelts
       integer*4 dbuf(320),idbuf(320),ddata4(10),iddata4(10)
       integer*2 ddata1(10), iddata1(10)
@@ -71,12 +71,8 @@ C Output file: tvsetf1.hdf
      +           DFNT_FLOAT64 = 6,
      +           DFNT_INT16 = 22,
      +           DFNT_INT32 = 24,
-     +           SUCCEED = 0,
-     +           FAIL = -1,
      +           FULL_INTERLACE = 0,
      +           DFTAG_VH = 1962,
-     +           TRUE = 1,
-     +           FALSE = 0,
      +           HDF_VSPACK = 0,
      +           HDF_VSUNPACK = 1,
      +           feps = 1.0E-5,

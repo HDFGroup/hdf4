@@ -64,8 +64,8 @@ C
 
       call MESSAGE(VERBO_HI, 'Getting ref1')
       ref1 = dplref()
-C     call VERIFY(ref1, 'dplref', number_failed)
-      print *, 'ref1 is ', ref1
+      call VERIFY(ref1, 'dplref', number_failed)
+C     print *, 'ref1 is ', ref1
 
       call MESSAGE(VERBO_HI, 'Putting pal2 in file')
       ret = dpapal(TESTFILE, pal2)
@@ -73,8 +73,8 @@ C     call VERIFY(ref1, 'dplref', number_failed)
 
       call MESSAGE(VERBO_HI, 'Getting ref2')
       ref2 = dplref()
-C      call VERIFY(ref2, 'dplref', number_failed)
-      print *, 'ref2 is ', ref2
+      call VERIFY(ref2, 'dplref', number_failed)
+C     print *, 'ref2 is ', ref2
      
       call MESSAGE(VERBO_HI, 'Restarting palette interface')
       ret = dprest()
@@ -92,8 +92,8 @@ C      call VERIFY(ref2, 'dplref', number_failed)
       
       call MESSAGE(VERBO_HI, 'Getting ref1')
       ref1 =  dplref()
-C      call VERIFY(ref1, 'dplref', number_failed)
-      print *, 'Last ref is ', ref1
+      call VERIFY(ref1, 'dplref', number_failed)
+C     print *, 'Last ref is ', ref1
 
       call MESSAGE(VERBO_HI, 'Reading pal2.')
       ret = dpgpal(TESTFILE, ipal)
@@ -107,13 +107,13 @@ C      call VERIFY(ref1, 'dplref', number_failed)
 
       call MESSAGE(VERBO_HI, 'Getting ref2')
       ref2 = dplref()
-C      call VERIFY(ref2, 'dplref', number_failed)
-      print *, 'Last ref is ', ref2
+      call VERIFY(ref2, 'dplref', number_failed)
+C     print *, 'Last ref is ', ref2
 
       call MESSAGE(VERBO_HI, 'Getting number of palettes')
       ret = dpnpals(TESTFILE)
       call VERIFY(ret, 'dpnpals', number_failed)
-      print *, 'Number of palettes is:', ret
+C     print *, 'Number of palettes is:', ret
 
       call MESSAGE(VERBO_HI, 'Setting read ref to ref2.')
       ret = dprref(TESTFILE, ref2)
@@ -157,7 +157,7 @@ C      call VERIFY(ref2, 'dplref', number_failed)
       ret = dpppal(TESTFILE, pal1, 1, 'a')
       call VERIFY(ret, 'dpppal', number_failed)
       ret=dplref()
-      print *,'last ref is: ', ret
+C     print *,'last ref is: ', ret
       call MESSAGE(VERBO_HI, 'setting read ref to ref1')
       ret = dprref(TESTFILE, ref1)
       call VERIFY(ret, 'dprref', number_failed)

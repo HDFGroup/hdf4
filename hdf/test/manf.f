@@ -163,7 +163,8 @@ C  *** write file 2 labels/ 2 descriptions ***
 
 C  ***  Write data labels and descriptions ***
 
-      print *,'***  Writing labels & descriptions with SDS and RIS ***'
+      call MESSAGE(VERBO_HI,
+     +    '***  Writing labels & descriptions with SDS and RIS ***')
 
       do 100 j=1,REPS
 C  ***  write out scientific data set 
@@ -258,7 +259,8 @@ C ******* End writing annotatons **********
 
 
 C********  Read data labels and descriptions *********
-      print *,'*** Reading labels and descriptions for SDS and RIS ***'
+      call MESSAGE(VERBO_HI,
+     +    '*** Reading labels and descriptions for SDS and RIS ***')
 
       do 200 j=1,REPS
           ret = dsgdims(TESTFILE, rank,dimsizes,3)
@@ -287,13 +289,15 @@ C ****    read annotations for images
   200 continue
 
 C ****** Check file labels/descriptions *******
-      print *,'*** Reading file labels and descriptions ***'
+      call MESSAGE(VERBO_HI,
+     +    '*** Reading file labels and descriptions ***')
 
       call check_fan(TESTFILE, 0, lab1, desc1, numberfailed)
       call check_fan(TESTFILE, 1, lab2, desc2, numberfailed)
 
       if ( numberfailed .eq. 0 ) then
-          print *,'***** ALL ANxxx TESTS SUCCESSFUL ***** '
+          call MESSAGE(VERBO_HI,
+     +        '***** ALL ANxxx TESTS SUCCESSFUL ***** ')
       else
           print *,'***** ',numberfailed,' TESTS FAILED ***** '
       endif

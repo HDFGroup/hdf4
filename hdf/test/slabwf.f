@@ -238,7 +238,7 @@ C            print *, 'sa() ',sa(k,j,i)
       if (num_err .ne. 0) then
            print *,'slabwf: number of wrong values in slab =',num_err
       else
-           print *,'  *** slabwf passed *** '
+           call MESSAGE(VERBO_HI, '  *** slabwf passed *** ')
       endif
 
 C
@@ -318,9 +318,8 @@ C
       if (num_err .ne. 0) then
            print *,'number of failures =',num_err
       else
-           print *,'  *** slab1wf passsed *** '
+           call MESSAGE(VERBO_HI, '  *** slab1wf passed *** ')
       endif
-      print *,' '
 
 C
 C  slab2wf test
@@ -422,7 +421,7 @@ C            print *, 'sa() ',sa(k,j,i)
       if (num_err .ne. 0) then
            print *,'slab2wf: number of wrong values in slab =',num_err
       else
-           print *,'  *** slab2wf passed ***  '
+           call MESSAGE(VERBO_HI, '  *** slab2wf passed ***  ')
       endif
 
 C
@@ -515,7 +514,7 @@ C            print *, 'sa() ',sa(k,j,i)
       if (num_err .ne. 0) then
            print *,'slab4wf: number of wrong values in slab =',num_err
       else
-           print *,'  *** slab4wf passed *** '
+           call MESSAGE(VERBO_HI, '  *** slab4wf passed *** ')
       endif
 
 C

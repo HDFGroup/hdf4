@@ -13,7 +13,6 @@ C
 C $Id$
 C
       subroutine tsdntf (number_failed)
-      implicit none
 C
 C
 C  Program to test writing SDSs with different types of data.
@@ -30,6 +29,9 @@ C   to be 'byte' not 'character'  You will also need to remove
 C   a couple of calls to char().  If you search on the string 
 C   VMS you should be able to find all of the necessary changes.
 C
+      implicit none
+      include 'fortest.inc'
+
       integer number_failed
       character*(*) myname
       parameter (myname = 'sdnt')
@@ -46,7 +48,7 @@ C      byte      i8(10,10), ti8(10,10)
       character i8(10,10), ti8(10,10)
 
       
-      integer i, j, err, err1, err2
+      integer i, j, err
       integer rank
       integer dims(2)
       integer DFNT_FLOAT64, DFNT_FLOAT32, DFNT_INT8
@@ -63,7 +65,7 @@ C      byte      i8(10,10), ti8(10,10)
       dims(1) = 10
       dims(2) = 10
   
-      print *, 'Creating arrays...'
+      call MESSAGE(5, 'Creating arrays...')
   
       do 110 i=1,10
           do 100 j=1,10
@@ -80,12 +82,14 @@ C            i8(i,j) =  (i * 10) + j
       err = dssdims(rank, dims)
   
 C  individual files 
-      print *,'Testing arrays in individual files...'
+      call MESSAGE(5, 'Testing arrays in individual files...')
   
       err = dssnt(DFNT_FLOAT64)
-      err1 = dspdata('o1.hdf', rank, dims, f64)
-      err2 = dsgdata('o1.hdf', rank, dims, tf64)
-      print *,'Write: ', err1, '    Read: ', err2
+      call VERIFY(err, 'dssnt (float64)', number_failed)
+      err = dspdata('o1.hdf', rank, dims, f64)
+      call VERIFY(err, 'dspdata (float64)', number_failed)
+      err = dsgdata('o1.hdf', rank, dims, tf64)
+      call VERIFY(err, 'dsgdata (float64)', number_failed)
       err = 0
       do 160 i=1,10
           do 150 j=1,10
@@ -97,9 +101,11 @@ C  individual files
       call err_check(err, number_failed, 'float64')
 
       err = dssnt(DFNT_FLOAT32)
-      err1 = dspdata('o2.hdf', rank, dims, f32)
-      err2 = dsgdata('o2.hdf', rank, dims, tf32)
-      print *,'Write: ', err1, '    Read: ', err2
+      call VERIFY(err, 'dssnt (float32)', number_failed)
+      err = dspdata('o2.hdf', rank, dims, f32)
+      call VERIFY(err, 'dspdata (float32)', number_failed)
+      err = dsgdata('o2.hdf', rank, dims, tf32)
+      call VERIFY(err, 'dsgdata (float32)', number_failed)
       err = 0
       do 210 i=1,10
           do 200 j=1,10
@@ -111,9 +117,11 @@ C  individual files
       call err_check(err, number_failed, 'float32')
 
       err = dssnt(DFNT_INT8)
-      err1 = dspdata('o3.hdf', rank, dims, i8)
-      err2 = dsgdata('o3.hdf', rank, dims, ti8)
-      print *,'Write: ', err1, '    Read: ', err2
+      call VERIFY(err, 'dssnt (int8)', number_failed)
+      err = dspdata('o3.hdf', rank, dims, i8)
+      call VERIFY(err, 'dspdata (int8)', number_failed)
+      err = dsgdata('o3.hdf', rank, dims, ti8)
+      call VERIFY(err, 'dsgdata (int8)', number_failed)
       err = 0
       do 310 i=1,10
           do 300 j=1,10
@@ -127,9 +135,11 @@ C           ti8(i,j) = 0
       call err_check(err, number_failed, 'int8')
 
       err = dssnt(DFNT_INT16)
-      err1 = dspdata('o4.hdf', rank, dims, i16)
-      err2 = dsgdata('o4.hdf', rank, dims, ti16)
-      print *,'Write: ', err1, '    Read: ', err2
+      call VERIFY(err, 'dssnt (int16)', number_failed)
+      err = dspdata('o4.hdf', rank, dims, i16)
+      call VERIFY(err, 'dspdata (int16)', number_failed)
+      err = dsgdata('o4.hdf', rank, dims, ti16)
+      call VERIFY(err, 'dsgdata (int16)', number_failed)
       err = 0
       do 410 i=1,10
           do 400 j=1,10
@@ -141,9 +151,11 @@ C           ti8(i,j) = 0
       call err_check(err, number_failed, 'int16')
 
       err = dssnt(DFNT_INT32)
-      err1 = dspdata('o5.hdf', rank, dims, i32)
-      err2 = dsgdata('o5.hdf', rank, dims, ti32)
-      print *,'Write: ', err1, '    Read: ', err2
+      call VERIFY(err, 'dssnt (int32)', number_failed)
+      err = dspdata('o5.hdf', rank, dims, i32)
+      call VERIFY(err, 'dspdata (int32)', number_failed)
+      err = dsgdata('o5.hdf', rank, dims, ti32)
+      call VERIFY(err, 'dsgdata (int32)', number_failed)
       err = 0
       do 510 i=1,10
           do 500 j=1,10
@@ -156,36 +168,44 @@ C           ti8(i,j) = 0
 
 
 C 
-      print *, 'Writing arrays to single file.'
-      print *, 'Error values: '
+      call MESSAGE(5, 'Writing arrays to single file.')
 C
       err = dssnt(DFNT_FLOAT64)
-      print *,'Add float64 ret: ',dsadata('ntf.hdf',rank,dims,f64)
-
+      err = dsadata('ntf.hdf', rank, dims, f64)
+      call VERIFY(err, 'dsadata (f64)', number_failed)
+       
       err = dssnt(DFNT_FLOAT32)
-      print *,'Add float32 ret: ',dsadata('ntf.hdf',rank,dims,f32)
-
+      err = dsadata('ntf.hdf', rank, dims, f32)
+      call VERIFY(err, 'dsadata (f32)', number_failed)
+       
       err = dssnt(DFNT_INT8)
-      print *, 'Add int8 ret: ', dsadata('ntf.hdf', rank, dims, i8)
-
+      err = dsadata('ntf.hdf', rank, dims, i8)
+      call VERIFY(err, 'dsadata (i8)', number_failed)
+       
       err = dssnt(DFNT_INT16)
-      print *, 'Add int16 ret: ', dsadata('ntf.hdf', rank, dims, i16)
-
+      err = dsadata('ntf.hdf', rank, dims, i16)
+      call VERIFY(err, 'dsadata (i16)', number_failed)
+       
       err = dssnt(DFNT_INT32)
-      print *, 'Add int32 ret: ', dsadata('ntf.hdf', rank, dims, i32)
-
+      err = dsadata('ntf.hdf', rank, dims, i32)
+      call VERIFY(err, 'dsadata (i32)', number_failed)
+       
 C 
-      print *, 'Reading arrays from single file... '
-      print *, 'Error values: '
+      call MESSAGE(5, 'Reading arrays from single file... ')
 C
-      print *, 'Get f64 ret: ', dsgdata('ntf.hdf', rank, dims, tf64)
-      print *, 'Get f32 ret: ', dsgdata('ntf.hdf', rank, dims, tf32)
-      print *, 'Get int8 ret: ', dsgdata('ntf.hdf', rank, dims, ti8)
-      print *, 'Get int16 ret: ', dsgdata('ntf.hdf', rank, dims, ti16)
-      print *, 'Get int32 ret: ', dsgdata('ntf.hdf', rank, dims, ti32)
-
+      err = dsgdata('ntf.hdf', rank, dims, tf64)
+      call VERIFY(err, 'dsgdata (tf64)', number_failed)
+      err = dsgdata('ntf.hdf', rank, dims, tf32)
+      call VERIFY(err, 'dsgdata (tf32)', number_failed)
+      err = dsgdata('ntf.hdf', rank, dims, ti8)
+      call VERIFY(err, 'dsgdata (ti8)', number_failed)
+      err = dsgdata('ntf.hdf', rank, dims, ti16)
+      call VERIFY(err, 'dsgdata (ti16)', number_failed)
+      err = dsgdata('ntf.hdf', rank, dims, ti32)
+      call VERIFY(err, 'dsgdata (ti32)', number_failed)
+       
 C 
-      print *, 'Checking arrays from single file...\n\n'
+      call MESSAGE(5, 'Checking arrays from single file...\n\n')
 
       err = 0
       do 910 i=1,10
@@ -233,14 +253,11 @@ C
 
       call err_check(err, number_failed, 'int32')
 C 
-      print *
       if (number_failed .gt. 0 ) then
   	print *,'        >>> ', number_failed, ' TESTS FAILED <<<'
       else
-  	print *,'        >>> ALL TESTS PASSED <<<'
+  	call MESSAGE(VERBO_HI, '        >>> ALL TESTS PASSED <<<')
       endif
-      print *
-      print *
 
       return
       end  
