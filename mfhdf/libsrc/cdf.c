@@ -33,8 +33,9 @@ NC *handle ;
       if(handle == NULL)
               return ;
       NC_free_xcdf(handle) ;
-
+#ifndef macintosh /* We don't handle xdr files yet */
       xdr_destroy(handle->xdrs) ;
+#endif /* !macintosh */
       Free(handle->xdrs) ;
 
 #ifdef HDF
@@ -125,6 +126,10 @@ int mode ;
             printf("value returned from Hopen() : %d\n", cdf->hdf_file);
 #endif
         }
+#ifdef macintosh
+        else /* for mac we don't handle XDR files */
+		   return (NULL);
+#endif /* macintosh */
 #endif
 
 
@@ -559,7 +564,7 @@ NC_dim *dim;
           return FAIL;
       }
       
-      HDfreespace(val);
+      HDfreespace((VOIDP)val);
 
   }
   
@@ -961,8 +966,8 @@ NC **handlep;
   if(status == FAIL)
       HEprint(stdout, 0);
 
-  HDfreespace(tags);
-  HDfreespace(refs);
+  HDfreespace((VOIDP)tags);
+  HDfreespace((VOIDP)refs);
 
 #ifdef DEBUG
   fprintf(stderr, "======= Have finished writing top level VGroup #%d\n", status);
@@ -1070,7 +1075,7 @@ int32  vg;
   else
     handle->dims = NULL;
 
-  HDfreespace(dimension);
+  HDfreespace((VOIDP)dimension);
 
 #if DEBUG
  fprintf(stderr, "Created dimension array %d \n", handle->dims);
@@ -1150,7 +1155,7 @@ int32   vg;
               fprintf(stderr, "Attribute <%s> has type %d and size %d\n", 
                       vsname, type, attr_size);
 #endif
-              HDfreespace(values);
+              HDfreespace((VOIDP)values);
               count++;
               
           }
@@ -1160,7 +1165,7 @@ int32   vg;
   
   if(count) Array = NC_new_array(NC_ATTRIBUTE, count, (Void *) attributes);
 
-  HDfreespace(attributes);
+  HDfreespace((VOIDP)attributes);
 
 #if DEBUG
   fprintf(stderr, "Created attribute array %d \n", Array);
@@ -1370,8 +1375,8 @@ int32  vg;
                        * Deallocate the shape info as it will be recomputed
                        *  at a higher level later
                        */
-                      HDfreespace(vp->shape);
-                      HDfreespace(vp->dsizes);
+                      HDfreespace((VOIDP)vp->shape);
+                      HDfreespace((VOIDP)vp->dsizes);
                       
                   } else {
                       /* Not a rec var, don't worry about it */
@@ -1394,8 +1399,8 @@ bad_number_type:
   else
       handle->vars = NULL;
 
-  HDfreespace(variables);
-  HDfreespace(dims);
+  HDfreespace((VOIDP)variables);
+  HDfreespace((VOIDP)dims);
   
 #if DEBUG
   fprintf(stderr, "Created variable array %d \n", handle->vars);
