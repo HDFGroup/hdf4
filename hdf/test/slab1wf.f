@@ -2,10 +2,13 @@ C---------------------------------------------------------------------------
 C $Header$
 C
 C $Log$
-C Revision 1.7  1993/08/28 00:58:19  georgev
-C Fixed some changes lost during the PC merge.
-C Changed fortran long names in slabs to use the short ones.
+C Revision 1.8  1993/08/28 01:53:33  georgev
+C Forgot a to fix a change that was lost.
 C
+c Revision 1.7  1993/08/28  00:58:19  georgev
+c Fixed some changes lost during the PC merge.
+c Changed fortran long names in slabs to use the short ones.
+c
 c Revision 1.6  1993/08/16  21:58:27  koziol
 c Fixed access list for these files, and the actual changes I made to the
 c files are for PC compatibility.
@@ -145,7 +148,7 @@ C
       ret = dssdims(rank, di)
       num_err = num_err + ret
 
-      ret = dssslab(sn, fnlen)
+      ret = dssslab(sn)
       num_err = num_err + ret
       st(1) = 1
       st(2) = 2
