@@ -229,7 +229,7 @@ C
       do 600 i=1, 2
           do 580 j=1, 2
               do 560 k = 1, 3
-                  if (in2(k,j,i) .ne. buf2(k,j,i)) then
+                  if (in2(j,i,k) .ne. buf2(j,i,k)) then
                       print *, 'Error at  ', k, j, i
                   endif
 560           continue

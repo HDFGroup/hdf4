@@ -137,7 +137,7 @@ C Initialize the image arrays
       do 157 i=1,2
           do 156 j=1,3
              do 155 k=1,4
-                 icbuf(k, j, i) = ' '
+                 icbuf(i,j,k) = ' '
 155          continue
 156       continue
 157   continue
