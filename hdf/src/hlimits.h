@@ -241,17 +241,17 @@ ribute */
 /* For SD interface  */
 #define _FillValue      "_FillValue"
           /* name of an attribute to set fill value for an SDS */
-#define _LongName "long_name" /* data/dimension label string  */
-#define _Units    "units"     /* data/dimension unit string   */
-#define _Format   "format"    /* data/dimension format string */
-#define _CoordSys "coordsys"  /* data coordsys string         */
-#define _ValidRange     "valid_range" /* valid range of data values  */
-#define _ScaleFactor    "scale_factor" /* data calibration factor    */
-#define _ScaleFactorErr "scale_factor_err" /* data calibration factor error */
-#define _AddOffset      "add_offset" /* calibration offset           */
-#define _AddOffsetErr   "add_offset_err" /*  calibration offset error */
-#define _CalibratedNt   "calibrated_nt"  /* data type of uncalibrated data */
-#define _ValidMax       "valid_max"
-#define _ValidMin       "valid_min"
-#define _Remarks        "remarks"        /* annotation, by DFAN */
-#define _AnnoLabel      "anno_label"     /* annotation label, by DFAN */
+#define _HDF_LongName "long_name" /* data/dimension label string  */
+#define _HDF_Units    "units"     /* data/dimension unit string   */
+#define _HDF_Format   "format"    /* data/dimension format string */
+#define _HDF_CoordSys "coordsys"  /* data coordsys string         */
+#define _HDF_ValidRange     "valid_range" /* valid range of data values  */
+#define _HDF_ScaleFactor    "scale_factor" /* data calibration factor    */
+#define _HDF_ScaleFactorErr "scale_factor_err" /* data calibration factor error */
+#define _HDF_AddOffset      "add_offset" /* calibration offset           */
+#define _HDF_AddOffsetErr   "add_offset_err" /*  calibration offset error */
+#define _HDF_CalibratedNt   "calibrated_nt"  /* data type of uncalibrated data */
+#define _HDF_ValidMax       "valid_max"
+#define _HDF_ValidMin       "valid_min"
+#define _HDF_Remarks        "remarks"        /* annotation, by DFAN */
+#define _HDF_AnnoLabel      "anno_label"     /* annotation label, by DFAN */
