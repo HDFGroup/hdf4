@@ -25,7 +25,8 @@
 
 HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h dfan.h dfrig.h dfgr.h dfsd.h \
      vg.h df.h dfi.h dfstubs.h dfufp2i.h vproto.h hcomp.h hconv.h hbitio.h \
-     tbbt.h crle.h cnbit.h mstdio.h cnone.h cskphuff.h mfgr.h mfan.h cgzip.h
+     tbbt.h crle.h cnbit.h mstdio.h cnone.h cskphuff.h mfgr.h mfan.h cgzip.h \
+     hlimits.h hntdefs.h htags.h
 
 CSRCS=hfile.c herr.c hblocks.c hextelt.c hkit.c dfan.c dfr8.c dfcomp.c \
       dfrle.c dfimcomp.c dfjpeg.c dfunjpeg.c dfp.c dfgr.c df24.c dfsd.c \
