@@ -5,15 +5,18 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1993/03/29 16:47:18  koziol
-Updated JPEG code to new JPEG 4 code.
-Changed VSets to use Threaded-Balanced-Binary Tree for internal
-	(in memory) representation.
-Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-	to use 32-bit integer keys instead of pointers.
-Backed out speedups for Cray, until I get the time to fix them.
-Fixed a bunch of bugs in the little-endian support in DFSD.
+Revision 1.9  1993/05/18 19:43:08  chouck
+Fixed parameter differences in DFKNTsize()
 
+ * Revision 1.8  1993/03/29  16:47:18  koziol
+ * Updated JPEG code to new JPEG 4 code.
+ * Changed VSets to use Threaded-Balanced-Binary Tree for internal
+ * 	(in memory) representation.
+ * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
+ * 	to use 32-bit integer keys instead of pointers.
+ * Backed out speedups for Cray, until I get the time to fix them.
+ * Fixed a bunch of bugs in the little-endian support in DFSD.
+ *
  * Revision 1.7  1993/02/17  21:19:33  koziol
  * Enabled Cray speedups, but left testing code in still
  *
@@ -223,12 +226,12 @@ PUBLIC
 int DFKNTsize(int32 number_type)
 #else
 DFKNTsize(number_type)
-int number_type;
+int32 number_type;
 #endif /* PROTOTYPE */
 {
     char *FUNC="DFKNTsize";
 
-	switch ((int32) number_type)  {
+	switch (number_type)  {
     	    case DFNT_NUCHAR:	return(SIZE_NUCHAR);
     	    case DFNT_NCHAR:	return(SIZE_NCHAR);
     	    case DFNT_NINT8:	return(SIZE_NINT8);
