@@ -7,11 +7,11 @@
 #
 #Using ANSI compilier
 CC=cc
-CFLAGS=
+CFLAGS=-O -s
 
 # Fortran compilier
 FC = cf77
-FFLAGS =
+FFLAGS =-O 1 -s
 
 # Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
 RANLIB = touch
