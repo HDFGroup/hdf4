@@ -1,0 +1,207 @@
+# Makefile for HDF
+#
+#### Start of system configuration section. ####
+# Set shell so we know what it is
+SHELL = /bin/sh
+
+# Configure subsitutes preset values in for the following macros
+# 'srcdir' Gets set to directory this Makefile is found in
+srcdir = @srcdir@
+VPATH  = @srcdir@
+TOP_SRCDIR = @top_srcdir@
+prefix     = @prefix@
+exec_prefix = @exec_prefix@
+ACDEFS = @DEFS@
+CC     = @CC@
+CFLAGS   = @CFLAGS@
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS  = @LDFLAGS@
+LIBS     = @LIBS@
+FC       = @FC@
+FFLAGS   = @FFLAGS@
+
+INSTALL  = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA    = @INSTALL_DATA@
+
+# /usr/local/bin/m4 (GNU version?)
+M4   = @M4@
+# /usr/loal/bin/perl (GNU version?)
+PERL = @PERL@
+
+# Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
+RANLIB = @RANLIB@
+
+# Name of library archiver and flags to send, default 'AR=ar', 'ARFLAGS=r'
+AR = @AR@
+ARFLAGS = @ARFLAGS@
+
+# Name of remove utility, default 'RM=/bin/rm', 'RMFLAGS=-f'
+RM = @RM@
+RMFLAGS = @RMFLAGS@
+
+# Set for document generation
+MAKEINFO = makeinfo
+TEXI2DVI = texi2dvi
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+# Directory in which to install scripts.
+bindir = $(exec_prefix)/bin
+
+# Directory in which to install library files.
+libdir = $(prefix)/lib
+
+# Directory in which to install documentation info files.
+infodir = $(prefix)/info
+
+#### End of system configuration section. ####
+
+PACKAGE	 = @PACKAGE@
+VERSION  = @VERSION@
+
+MANIFEST = Makefile.in
+
+SUBDIRS= src jpeg test util
+
+HDFINC= $(srcdir)/include
+HDFLIB= $(srcdir)/lib
+HDFBIN= $(srcdir)/bin
+
+#
+#
+# Flags to recursively send
+#
+
+HDF_FLAGS       = \
+        CC="$(CC)" \
+        CFLAGS="$(CFLAGS)" \
+        FC="$(FC)" \
+        FFLAGS="$(FFLAGS)" \
+        RANLIB="$(RANLIB)" \
+        AR="$(AR)" \
+        ARFLAGS="$(ARFLAGS)" \
+        RM="$(RM)" \
+        RMFLAGS="$(RMFLAGS)" \
+        MACHINE="$(MACHINE)" \
+        HDFLIB="$(HDFLIB)" \
+        HDFINC="$(HDFINC)" \
+	HDFBIN="$(HDFBIN)"	
+
+#
+#
+# General rules
+#
+all:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="src jpeg util test" _sub message 
+
+allnofortran:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
+          SUBDIRS="src jpeg util test" _sub message 
+
+rebuild rebuildnofortran:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="src jpeg util test" _sub message 
+
+libnofortran:
+	@$(MAKE) $(MYFLAGS) $(HDF_FLAGS) TARG=nofortran \
+	  SUBDIRS="src jpeg" _sub message
+
+libnostub: libnofortran
+
+allnostub: allnofortran
+
+libdf:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
+          SUBDIRS="src" _sub
+
+libjpeg:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
+          SUBDIRS="jpeg" _sub
+
+utilities:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
+          SUBDIRS="src jpeg util" _sub
+
+tests:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
+          SUBDIRS="src jpeg test" _sub
+
+testnofortran:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
+          SUBDIRS="src jpeg test" _sub message 
+
+perfs:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
+          SUBDIRS="src jpeg perf" _sub
+
+#install:      $(INSTALL_DIRS)
+#	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
+#          SUBDIRS="src util test" _sub
+
+debug:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=debug \
+          SUBDIRS="src jpeg test" _sub message 
+
+saber:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=saber \
+          SUBDIRS="src jpeg test" _sub
+
+clean:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
+          SUBDIRS="src jpeg util test" _sub
+	$(RM) $(RMFLAGS) core *.log
+
+distclean:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
+          SUBDIRS="src jpeg util test" _sub
+	$(RM) $(RMFLAGS) core *.log
+	$(RM) -rf bin lib include
+
+_sub:
+	@for dir in $(SUBDIRS); do \
+          (cd $$dir; echo Making \`$(TARG)\' in `pwd`; \
+              $(MAKE) $(MFLAGS) $(HDF_FLAGS) $(TARG)); \
+	done
+
+# for distribution creation
+distdir = $(TOP_SRCDIR)/$(PACKAGE)-$(VERSION)/$(curdir)
+curdir = hdf
+dist: $(DISTFILES)
+	@for file in $(DISTFILES); do \
+	  ln $(srcdir)/$$file $(distdir) 2> /dev/null \
+	    || { echo copying $$file instead; \
+	    cp -p $(srcdir)/$$file $(distdir);}; \
+	done
+	for subdir in $(SUBDIRS); do \
+	  mkdir $(distdir)/$$subdir || exit 1; \
+	  (cd $$subdir && $(MAKE) $@) || exit 1; \
+	done
+
+# for auto remaking, see toplevel Makefile
+Makefile: $(TOP_SRCDIR)/config.status Makefile.in
+	CONFIG_FILES=$@ CONFIG_HEADERS= $(TOP_SRCDIR)/config.status
+
+# Tell versions [3.59,3.63) of GNU make not to export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:
+
+
+message:
+	@echo ""
+	@echo "***********************************************************"
+	@echo " HDF 4.0 library successfully created."
+	@echo ""
+	@echo "If you have any old vset files (v 1.0) you must use vcompat"
+	@echo "to make them compatible with Vset 2.0 applications"
+	@echo ""
+	@echo "User programs can be created as follows:"
+	@echo ""
+	@echo "   cc -D${MACHINE} program.c libdf.a -o program"
+	@echo ""
+	@echo "***********************************************************"
+	@echo ""
+
+
