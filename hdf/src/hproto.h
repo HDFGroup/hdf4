@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.44  1993/09/28 18:44:27  koziol
-Fixed various things the Sun's pre-processor didn't like.
+Revision 1.45  1993/09/28 19:06:55  koziol
+Fixed prototyping the Iris didn't like.
 
+ * Revision 1.44  1993/09/28  18:44:27  koziol
+ * Fixed various things the Sun's pre-processor didn't like.
+ *
  * Revision 1.43  1993/09/28  18:04:44  koziol
  * Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
  * tag handling.  Added new compression special tag type.
@@ -355,29 +358,6 @@ extern int HDinqblockinfo
     PROTO((int32 aid, int32 *length, int32 *first_length, int32 *block_length,
         int32 *number_blocks));
 
-extern int32 HLPstread
-    PROTO((accrec_t *access_rec));
-
-extern int32 HLPstwrite
-    PROTO((accrec_t *access_rec));
-
-extern int32 HLPseek
-    PROTO((accrec_t *access_rec, int32 offset, int origin));
-
-extern int32 HLPread
-    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
-
-extern int32 HLPwrite
-    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
-
-extern int32 HLPinquire
-    PROTO((accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
-        int32 *plength, int32 *poffset,int32 *pposn, int16 *paccess,
-        int16 *pspecial));
-
-extern int32 HLPendaccess
-    PROTO((accrec_t *access_rec));
-
 /*
 ** from hextelt.c
 */
@@ -385,61 +365,12 @@ extern int32 HXcreate
   PROTO((int32 file_id, uint16 tag, uint16 ref, char _HUGE *extern_file_name, 
 	int32 f_offset, int32 start_len));
 
-extern int32 HXPstread
-    PROTO((accrec_t *rec));
-
-extern int32 HXPstwrite
-    PROTO((accrec_t *rec));
-
-extern int32 HXPseek
-    PROTO((accrec_t *access_rec, int32 offset, int origin));
-
-extern int32 HXPread
-    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
-
-extern int32 HXPwrite
-    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
-
-extern int32 HXPinquire
-    PROTO((accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
-            int32 *plength, int32 *poffset,int32 *pposn, int16 *paccess,
-            int16 *pspecial));
-
-extern int32 HXPendaccess
-    PROTO((accrec_t *access_rec));
-
-extern int32 HXPcloseAID
-    PROTO((accrec_t *access_rec));
-
 /*
 ** from hcomp.c
 */
 
 extern int32 HCcreate
     PROTO((int32 file_id, uint16 tag, uint16 ref));
-
-extern int32 HCPstread
-    PROTO((accrec_t *rec));
-
-extern int32 HCPstwrite
-    PROTO((accrec_t *rec));
-
-extern int32 HCPseek
-    PROTO((accrec_t *access_rec, int32 offset, int origin));
-
-extern int32 HCPinquire
-    PROTO((accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
-            int32 *plength, int32 *poffset,int32 *pposn, int16 *paccess,
-            int16 *pspecial));
-
-extern int32 HCPread
-    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
-
-extern int32 HCPwrite
-    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
-
-extern int32 HCPendaccess
-    PROTO((accrec_t *access_rec));
 
 /*
 ** from herr.c

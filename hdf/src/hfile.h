@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.24  1993/09/28 18:44:24  koziol
-Fixed various things the Sun's pre-processor didn't like.
+Revision 1.25  1993/09/28 19:06:52  koziol
+Fixed prototyping the Iris didn't like.
 
+ * Revision 1.24  1993/09/28  18:44:24  koziol
+ * Fixed various things the Sun's pre-processor didn't like.
+ *
  * Revision 1.23  1993/09/20  19:56:14  koziol
  * Updated the "special element" function pointer array to be a structure
  * of function pointers.  This way, function prototypes can be written for the
@@ -446,6 +449,88 @@ extern int HIadd_hash_dd
 
 extern int HIdel_hash_dd
   PROTO((filerec_t *file_rec, uint16 look_tag, uint16 look_ref));
+
+/*
+** from hblocks.c
+*/
+extern int32 HLPstread
+    PROTO((accrec_t *access_rec));
+
+extern int32 HLPstwrite
+    PROTO((accrec_t *access_rec));
+
+extern int32 HLPseek
+    PROTO((accrec_t *access_rec, int32 offset, int origin));
+
+extern int32 HLPread
+    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+
+extern int32 HLPwrite
+    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+
+extern int32 HLPinquire
+    PROTO((accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
+        int32 *plength, int32 *poffset,int32 *pposn, int16 *paccess,
+        int16 *pspecial));
+
+extern int32 HLPendaccess
+    PROTO((accrec_t *access_rec));
+
+/*
+** from hextelt.c
+*/
+extern int32 HXPstread
+    PROTO((accrec_t *rec));
+
+extern int32 HXPstwrite
+    PROTO((accrec_t *rec));
+
+extern int32 HXPseek
+    PROTO((accrec_t *access_rec, int32 offset, int origin));
+
+extern int32 HXPread
+    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+
+extern int32 HXPwrite
+    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+
+extern int32 HXPinquire
+    PROTO((accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
+            int32 *plength, int32 *poffset,int32 *pposn, int16 *paccess,
+            int16 *pspecial));
+
+extern int32 HXPendaccess
+    PROTO((accrec_t *access_rec));
+
+extern int32 HXPcloseAID
+    PROTO((accrec_t *access_rec));
+
+/*
+** from hcomp.c
+*/
+
+extern int32 HCPstread
+    PROTO((accrec_t *rec));
+
+extern int32 HCPstwrite
+    PROTO((accrec_t *rec));
+
+extern int32 HCPseek
+    PROTO((accrec_t *access_rec, int32 offset, int origin));
+
+extern int32 HCPinquire
+    PROTO((accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
+            int32 *plength, int32 *poffset,int32 *pposn, int16 *paccess,
+            int16 *pspecial));
+
+extern int32 HCPread
+    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+
+extern int32 HCPwrite
+    PROTO((accrec_t *access_rec, int32 length, VOIDP data));
+
+extern int32 HCPendaccess
+    PROTO((accrec_t *access_rec));
 
 #ifdef MAC
 extern hdf_file_t mopen

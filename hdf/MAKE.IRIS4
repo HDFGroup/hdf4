@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.10  1993/05/13 18:44:40  chouck
+# Revision 1.11  1993/09/28 19:06:43  koziol
+# Fixed prototyping the Iris didn't like.
+#
+# Revision 1.10  1993/05/13  18:44:40  chouck
 # Made -O the default in CFLAGS
 #
 # Revision 1.9  1993/02/16  20:50:47  chouck
@@ -161,6 +164,10 @@ utilities:
 tests:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
           SUBDIRS="test" _sub
+
+testnofortran:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
+          SUBDIRS="src test" _sub message 
 
 #install:      $(INSTALL_DIRS)
 #	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
