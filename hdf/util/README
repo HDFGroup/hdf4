@@ -1,7 +1,6 @@
 In this directory there are hdf utility programs, makefiles, and a 
 subdirectory, testfiles/, which contains all the data files needed to test
-the utilities. The README.UTILS file describes how to use the data files
-in testfiles/ to test the utilities. 
+the utilities. 
 
 The utilities are:
 
