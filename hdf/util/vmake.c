@@ -207,7 +207,7 @@ char * vgname;
 
   vg = Vattach(f,-1,"w");
   if (vg==FAIL) { fprintf(stderr,"cannot attach vg\n"); exit(0); }
-  Vgetoref(vg,&ref);
+  ref = VQueryref(vg);
   Vsetname(vg,vgname);
   Vdetach(vg);
 
@@ -249,7 +249,7 @@ char * format;
 	  }
 
   vs = VSattach(f,-1,"w");
-  VSgetoref(vs,&ref);
+  ref = VSQueryref(vs);
 
 printf("vsadd: ref is %d\n",ref);
 

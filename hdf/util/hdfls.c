@@ -26,9 +26,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.23  1993/04/05 22:38:23  koziol
-Fixed goofups made in haste when patching code.
+Revision 1.24  1993/04/06 17:24:39  chouck
+Added some fixes for the Vset stuff
 
+ * Revision 1.23  1993/04/05  22:38:23  koziol
+ * Fixed goofups made in haste when patching code.
+ *
  * Revision 1.22  1993/03/29  16:52:48  koziol
  * Finished  DEC ALPHA port.
  * Updated JPEG code to new JPEG 4 code.
@@ -168,16 +171,19 @@ int lprint
   PROTO((dd_t *, int));
 
 #ifdef PROTOTYPE
-int compare(const VOIDP a, const VOIDP b)
+int compare(const VOIDP aa, const VOIDP bb)
 #else
-int compare(a, b)
-const VOIDP a, b;
+int compare(aa, bb)
+const VOIDP aa, bb;
 #endif /* PROTOTYPE */
 {
-    if ((dd_t *)a->tag>(dd_t *)b->tag) return(1);
-    if ((dd_t *)a->tag<(dd_t *)b->tag) return(-1);
-    if ((dd_t *)a->ref>(dd_t *)b->ref) return(1);
-    if ((dd_t *)a->ref<(dd_t *)b->ref) return(-1);
+    dd_t *a = (dd_t *) aa;
+    dd_t *b = (dd_t *) bb;
+    
+    if(a->tag > b->tag) return(1);
+    if(a->tag < b->tag) return(-1);
+    if(a->ref > b->ref) return(1);
+    if(a->ref < b->ref) return(-1);
     return(0);
 }
 

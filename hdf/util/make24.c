@@ -237,13 +237,13 @@ char *argv[];
         return(1);
       } /* end if */
 
-    if((img_buf=HDgetspace(xdim*ydim))==NULL) {
+    if((img_buf = (uint8 *) HDgetspace(xdim*ydim))==NULL) {
         printf("Error, cannot allocate space for %ldx%ld image\n",xdim,ydim);
         return(1);
       } /* end if */
 
     if(ispal) {
-        if((pal_buf=HDgetspace(768))==NULL) {
+        if((pal_buf = (uint8 *) HDgetspace(768))==NULL) {
             printf("Error, cannot allocate space for image palette\n");
             return(1);
           } /* end if */
@@ -263,7 +263,7 @@ char *argv[];
 
         new_xdim=img_scale*xdim;    /* calc. new image's dimensions */
         new_ydim=img_scale*ydim;
-        if((scaled_image=HDgetspace(new_xdim*new_ydim))==NULL) {
+        if((scaled_image = (uint8 *) HDgetspace(new_xdim*new_ydim))==NULL) {
             printf("Error, cannot allocate space for %ldx%ld scaled image\n");
             return(1);
           } /* end if */
@@ -294,7 +294,7 @@ char *argv[];
       } /* end else */
 
     /* allocate space for the 24-bit image */
-    if((img24_buf=HDgetspace(xdim*ydim*3))==NULL) {
+    if((img24_buf = (uint8 *) HDgetspace(xdim*ydim*3))==NULL) {
         printf("Error, cannot allocate space for %ldx%ld 24-bit image\n",xdim,ydim);
         return(1);
       } /* end if */

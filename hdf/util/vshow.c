@@ -73,8 +73,8 @@ char**av;
       printf("cannot open vg id=%d\n",vgid);
     }
     Vinquire(vg,&n, vgname);
-    Vgetotag(vg,&vgotag);
-    Vgetoref(vg,&vgoref);
+    vgotag = VQuerytag(vg);
+    vgoref = VQueryref(vg);
     Vgetclass(vg, vgclass); 
     if (HDstrlen(vgname)==0)  HDstrcat(vgname,"NoName");
     printf("\nvg:%d <%d/%d> (%s {%s}) has %d entries:\n",
@@ -93,8 +93,8 @@ char**av;
         }
 
         VSinquire(vs, &nv,&interlace, fields, &vsize, vsname);
-	VSgetotag(vs, &vsotag);
-	VSgetoref(vs, &vsoref);
+	vsotag = VSQuerytag(vs);
+	vsoref = VSQueryref(vs);
         if (HDstrlen(vsname)==0)  HDstrcat(vsname,"NoName");
         VSgetclass(vs,vsclass); 
         printf("  vs:%d <%d/%d> nv=%d i=%d fld [%s] vsize=%d (%s {%s})\n",
@@ -117,8 +117,8 @@ char**av;
           
           Vinquire(vgt, &ne, vgname);
           if (HDstrlen(vgname)==0)  HDstrcat(vgname,"NoName");
-	  Vgetotag(vgt,&vgotag);
-	  Vgetoref(vgt,&vgoref);
+	  vgotag = VQuerytag(vgt);
+	  vgoref = VQueryref(vgt);
           Vgetclass(vgt, vgclass);
           printf("  vg:%d <%d/%d> ne=%d (%s {%s})\n",
                  t, vgotag, vgoref, ne,  vgname, vgclass );
@@ -159,8 +159,8 @@ char**av;
       }
       VSinquire (vs, &nv,&interlace, fields, &vsize, vsname);
       if (HDstrlen(vsname)==0)  HDstrcat(vsname,"NoName");
-      VSgetotag(vs, &vsotag);
-      VSgetoref(vs, &vsoref);
+      vsotag = VSQuerytag(vs);
+      vsoref = VSQueryref(vs);
       VSgetclass (vs, vsclass);
       printf("L vs:%d <%d/%d> nv=%d i=%d fld [%s] vsize=%d (%s {%s})\n",
               vsid, vsotag, vsoref, nv, interlace, fields, vsize, vsname, vsclass);
