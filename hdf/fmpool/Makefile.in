@@ -147,10 +147,10 @@ install-headers: fmpio.h
 	$(INSTALL_DATA) $(srcdir)/fmpio.h $(includedir)/fmpio.h
 
 clean:
-	-$(RM) $(RMFLAGS) *.o *.mp core libfmpool.a tfmp
+	-$(RM) $(RMFLAGS) *.o *.mp core libfmpool.a tfmp tfmpr tfmpw
 
 distclean:
-	-$(RM) $(RMFLAGS) *.o *.mp core libfmpool.a tfmp
+	-$(RM) $(RMFLAGS) *.o *.mp core libfmpool.a tfmp tfmpr tfmpw
 	-$(RM) $(RMFLAGS) Makefile config.status fmpconf.h
 
 distribute:
