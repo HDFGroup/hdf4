@@ -4,8 +4,6 @@ Expected output for './hdp dumprig -r 3,4 tdf24.hdf'
 File name: tdf24.hdf 
 
 ndsets=3, dumpall=0, num_chosen=2
-
-The index or reference number 4 is out of range
 Data model: 24-bit raster image with palette.
 	width=13;  height=15
 	reference=3
