@@ -1504,7 +1504,7 @@ switch (cflags)
  * Returns:  0 on success, -1 on failure with error set
  *----------------------------------------------------------------------------*/   
     FRETVAL (intf)
-#ifdef PROTOTYPEi
+#ifdef PROTOTYPE
        nscrchnk(intf *id, intf *start, VOIDP num_data)
 #else
        nscrchnk(id, start, num_data)
