@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.4  1992/11/05 18:59:26  chouck
+Added (unix) wrapper to realloc()
 
+ * Revision 1.3  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.2  1992/08/26  19:44:25  chouck
  * Moved HDgettagname() into hkit.c and added calibration tag
  *
@@ -228,6 +231,26 @@ uint32 qty;
     if (p== (char *) NULL) {
         HERROR(DFE_NOSPACE);
         HEreport("Attempted to allocate %d bytes", qty);
+        return(NULL);
+    }
+    return(p);
+}
+
+#if defined PROTOTYPE
+void *HDregetspace(VOIDP where, uint32 qty)
+#else
+void *HDregetspace(where, qty)
+VOIDP where;
+uint32 qty;
+#endif /* PROTOTYPE */
+{
+    char *FUNC="HDregetspace";
+    char *p;
+
+    p = (char *) realloc(where, qty);
+    if (p== (char *) NULL) {
+        HERROR(DFE_NOSPACE);
+        HEreport("Attempted to re-allocate %d bytes", qty);
         return(NULL);
     }
     return(p);

@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.9  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.10  1992/11/05 18:59:26  chouck
+Added (unix) wrapper to realloc()
 
+ * Revision 1.9  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.8  1992/10/22  22:53:32  chouck
  * Added group handle to group interface
  *
@@ -154,6 +157,9 @@ extern int32 HDspaceleft
 
 extern void HUGE *HDgetspace
   PROTO((uint32 qty));
+
+extern void HUGE *HDregetspace
+  PROTO((VOIDP where, uint32 qty));
 
 extern void HUGE *HDfreespace
   PROTO((void HUGE *ptr));
