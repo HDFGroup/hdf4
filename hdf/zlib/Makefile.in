@@ -127,7 +127,7 @@ example: example.o $(LIBS)
 minigzip: minigzip.o $(LIBS)
 	$(CC) $(CFLAGS) -o $@ minigzip.o $(LDFLAGS)
 
-install: $(LIBS)
+install-lib install: $(LIBS)
 	-@if [ ! -d $(includedir)  ]; then mkdir $(includedir); fi
 	-@if [ ! -d $(libdir) ]; then mkdir $(libdir); fi
 	cp zlib.h zconf.h $(includedir)
