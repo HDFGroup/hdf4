@@ -511,6 +511,7 @@ $(MANDIR)/$(MANUAL):	$(MANDIR) $(MANUAL)
 	sed \
 	 -e '/^\.TH/s/$$D\ate: \([0-9]*\)\/\([0-9]*\)\/\([0-9]*\).*\$$/\1-\2-\3/'\
 	 $(MANUAL) | $(TBL) | $(NEQN) > $@
+	chmod u=rw,og=r $@
 
 dummy_mandir $(MANDIR):
 	mkdir -p $@
