@@ -110,6 +110,9 @@ extern intn SDsetfillvalue
 extern intn SDgetfillvalue
     (int32 sdsid, VOIDP val);
 
+extern intn SDsetfillmode
+    (int32 id, int32 fillmode);
+
 extern intn SDgetdatastrs
     (int32 sdsid, char *l, char *u, char *f, char *c, intn len);
 
@@ -468,6 +471,7 @@ extern intn SDsetchunkcache
 #   define nsfgfill    FNAME(SFGFILL)
 #   define nsfscfill   FNAME(SFSCFILL)
 #   define nsfsfill    FNAME(SFSFILL)
+#   define nsfsflmd    FNAME(SFSFLMD)
 #   define nsfgrange   FNAME(SFGRANGE)
 #   define nsfsrange   FNAME(SFSRANGE)
 #   define nscn2index  FNAME(SCN2INDEX)
@@ -513,6 +517,7 @@ extern intn SDsetchunkcache
 #   define nsfgfill    FNAME(sfgfill)
 #   define nsfscfill   FNAME(sfscfill)
 #   define nsfsfill    FNAME(sfsfill)
+#   define nsfsflmd    FNAME(sfsflmd)
 #   define nsfgrange   FNAME(sfgrange)
 #   define nsfsrange   FNAME(sfsrange)
 #   define nscn2index  FNAME(scn2index)

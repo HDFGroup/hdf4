@@ -3722,7 +3722,7 @@ int32  block_size;
 /*
 
  NAME
-        SDsetfillmode -- set fill mode as fill or nofile
+        SDsetfillmode -- set fill mode as fill or nofill
  USAGE
         intn SDsetfillmode(sd_id, fillmode)
         int32 sd_id;           IN: HDF file ID, returned from SDstart
@@ -3730,7 +3730,7 @@ int32  block_size;
                                    either SD_FILL or SD_NOFILL.
                                    SD_FILL is the default mode.
  RETURNS
-        The current fill mode of the file.
+        The current fill mode of the file, or FAIL for error.
  DESCRIPTION
         Calls ncsetfill().
 --------------------------------------------------------------------------- */

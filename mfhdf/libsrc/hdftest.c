@@ -209,7 +209,7 @@ char *argv[];
     char name[90], text[256];
     int32   start[10], end[10], scale[10], stride[10];
     char    l[80], u[80], fmt[80], c[80];
-    int32   count;
+    int32   count, fillval;
     int     num_err = 0;
     int32   idata[100], rdata[100];
     int16   sdata[100];
@@ -800,7 +800,230 @@ char *argv[];
     CHECK(status, "SDend");
 
 #endif /* NBIT_TEST */
+/* test SDsetfillmode   */
+/* test fixed size SDS   */
+/* create an empty SDS, set SD_NOFILL.
+   Change the fill mode to SD_FILL, and write a slab of data */
+    dimsize[0]=5;
+    dimsize[1]=6;
+    sdid = SDcreate(f1, "FIXED1", DFNT_INT32, 2, dimsize);
+    if (sdid == FAIL) {
+       fprintf(stderr, "Fail to create FIXED1 SDS in FILE1\n");
+       num_err++;
+    }
+    fillval = -300;
+    for (i=0; i<30; i++)
+        idata[i] = i+100;
+    status = SDsetattr(sdid, "_FillValue", DFNT_INT32, 1,
+                         (VOIDP) &fillval);
+    CHECK(status, "SDsetattr");
+
+    status = SDsetfillmode(f1, SD_NOFILL);
+    CHECK(status, "SDsetfillmode (SD_NOFILL)");
+    status = SDendaccess(sdid);
+
+    index = SDnametoindex(f1, "FIXED1");
+    sdid = SDselect(f1, index);
+    start[0]=2;
+    start[1]=0;
+    end[0]=1;
+    end[1]=6;
+    status = SDsetfillmode(f1, SD_FILL);
+    status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
+    CHECK(status, "SDwritedata (SD_FILL)");
+        status = SDendaccess(sdid);
+    CHECK(status, "SDendaccess");
+    /* write out the first 2 records with SD_FILL mode */
+/* create a new fixed size SDS. write with SD_NOFILL mode */
+    sdid = SDcreate(f1, "FIXED", DFNT_INT32, 2, dimsize);
+    if (sdid == FAIL) {
+       fprintf(stderr, "Fail to create FIXED SDS in FILE1\n");
+       num_err++;
+    }
+    fillval = -300;
+    for (i=0; i<30; i++)
+
+        idata[i] = i+100;
+    status = SDsetfillvalue(sdid, (VOIDP) &fillval);
+    CHECK(status, "SDsetfillvalue");
+    status = SDsetfillmode(f1, SD_NOFILL);
+    CHECK(status, "SDsetfillmode (SD_NOFILL)");
+    start[0]=2;
+    start[1]=0;
+    end[0]=1;
+    end[1]=6;
+    status = SDsetfillmode(f1, SD_NOFILL);
+    status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
+    CHECK(status, "SDwritedata (SD_NOFILL)");
+        status = SDendaccess(sdid);
+    CHECK(status, "SDendaccess");
+    /* write out the first 2 records with SD_FILL mode */
+    status = SDend(f1);
+    CHECK(status, "SDend");
+
+    /* open again, write record 4 with SD_FILL mode */
+    /* fill values already written out in the first SDwritedata,
+       fillmode changes should not affect the fill values */
+    f1 = SDstart(FILE1, DFACC_RDWR);
+    CHECK(f1, "SDstart (file1)");
+    index = SDnametoindex(f1, "FIXED");
+    CHECK(f1, "SDnametoindex (FIXED)");
+    sdid = SDselect(f1, index);
+    CHECK(f1, "SDselect (FIXED)");
+    status = SDsetfillmode(f1, SD_FILL);
+    CHECK(status, "SDsetfillmode (SD_FILL)");
+    start[0]=4;
+    start[1]=0;
+    end[0]=1;
+    end[1]=6;
+    status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
+    CHECK(status, "SDwritedata (SD_FILL)");
+    status = SDendaccess(sdid);
+    CHECK(status, "SDendaccess");
+    status = SDend(f1);
+    CHECK(status, "SDend");
+    /* read back and check fill values */
+    f1 = SDstart(FILE1, DFACC_RDWR);
+    CHECK(f1, "SDstart (file1)");
+    index = SDnametoindex(f1, "FIXED");
+    CHECK(f1, "SDnametoindex (FIXED)");
+    sdid = SDselect(f1, index);
+    CHECK(f1, "SDselect (FIXED)");
+    start[0]=0;
+    start[1]=0;
+    end[0]=5;
+    end[1]=6;
+    status = SDreaddata(sdid, start, NULL, end, (VOIDP)idata);
+    CHECK(status, "SDreaddata(FIXED)");
+    for (i=12; i<18; i++)  {
+        if ((idata[i] != 100 + (i-12)) ||
+            (idata[i+12] != 100 + (i-12))) {
+           fprintf(stderr, "wrong value: should be %d, got %d %d\n",
+                           100 + i-12, idata[i], idata[i+12]);
+           num_err++;
+        }
+    }
+    for (i=18; i<24; i++)  {
+        if (idata[i] ==fillval) {
+           fprintf(stderr, "wrong value: should not be %d, got %d\n",
+                           fillval, idata[i]);
+           num_err++;
+        }
+    }
+    status = SDendaccess(sdid);
+/* read back in FIXED1 SDS, with fill values */
+    index = SDnametoindex(f1, "FIXED1");
+    CHECK(f1, "SDnametoindex (FIXED1)");
+    sdid = SDselect(f1, index);
+    CHECK(f1, "SDselect (FIXED1)");
+    start[0]=0;
+    start[1]=0;
+    end[0]=5;
+    end[1]=6;
+    status = SDreaddata(sdid, start, NULL, end, (VOIDP)idata);
+    CHECK(status, "SDreaddata(FIXED)");
+    for (i=12; i<18; i++)  {
+        if (idata[i] != (100 + (i-12)))  {
+           fprintf(stderr, "wrong value: should be %d, got %d \n",
+                           100 + i-12, idata[i]);
+           num_err++;
+        }
+    }
+    for (i=18; i<24; i++)  {
+        if (idata[i] != fillval) {
+           fprintf(stderr, "wrong value: should be %d, got %d\n",
+                           fillval, idata[i]);
+           num_err++;
+        }
+    }
+    status = SDendaccess(sdid);
+
+    status = SDend(f1);
+    CHECK(status, "SDend");
+
+/* test UNLIMITED size SDS   */
+/*    dimsize[0]=4;   */
+    f1 = SDstart(FILE1, DFACC_RDWR);
+    CHECK(f1, "SDstart (file1)");
+
+    dimsize[0]=SD_UNLIMITED;
+    dimsize[1]=6;
+    sdid = SDcreate(f1, "UNLIMITED_SDS", DFNT_INT32, 2, dimsize);
+    if (sdid == FAIL) {
+       fprintf(stderr, "Fail to create UNLIMITED_SDS in FILE1\n");
+       num_err++;
+    }
+    fillval = -300;
+    for (i=0; i<24; i++)
+        idata[i] = i;
+    status = SDsetfillvalue(sdid, (VOIDP) &fillval);
+    CHECK(status, "SDsetattr");
+
+    status = SDsetfillmode(f1, SD_NOFILL);
+    CHECK(status, "SDsetfillmode (SD_NOFILL)");
+    start[0]=2;
+    start[1]=0;
+    end[0]=1;
+    end[1]=6;
+    status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
+    CHECK(status, "SDwritedata (UNLIMITED)");
+        status = SDendaccess(sdid);
+    CHECK(status, "SDendaccess");
+    /* write out the first 2 records with SD_NOFILL mode */
+    status = SDend(f1);
+    CHECK(status, "SDend");
+    /* open again, write record 4 with SD_FILL mode */
+    f1 = SDstart(FILE1, DFACC_RDWR);
+    CHECK(f1, "SDstart (file1)");
+    index = SDnametoindex(f1, "UNLIMITED_SDS");
+    CHECK(f1, "SDnametoindex (UNLIMITED)");
+    sdid = SDselect(f1, index);
+    CHECK(f1, "SDselect (UNLIMITED)");
+    status = SDsetfillmode(f1, SD_FILL);
+    CHECK(status, "SDsetfillmode (SD_FILL)");
+    start[0]=4;
+    start[1]=0;
+    end[0]=1;
+    end[1]=6;
+    status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
+    CHECK(status, "SDwritedata (SD_FILL)");
+    status = SDendaccess(sdid);
+    CHECK(status, "SDendaccess");
+    status = SDend(f1);
+    CHECK(status, "SDend");
+    /* read back and check fill values */
+    f1 = SDstart(FILE1, DFACC_RDWR);
+    CHECK(f1, "SDstart (file1)");
+    index = SDnametoindex(f1, "UNLIMITED_SDS");
+    CHECK(f1, "SDnametoindex (UNLIMITED_SDS)");
+    sdid = SDselect(f1, index);
+    CHECK(f1, "SDselect (UNLIMITED_SDS)");
+    start[0]=0;
+    start[1]=0;
+    end[0]=5;
+    end[1]=6;
+    status = SDreaddata(sdid, start, NULL, end, (VOIDP)idata);
+    CHECK(status, "SDwritedata(NO_FILL)");
+    for (i=12; i<18; i++)  {
+        if ((idata[i] != (i-12)) || (idata[i+12] != (i-12))) {
+           fprintf(stderr, "wrong value: should be %d, got %d\n",
+                           i-12, idata[i], idata[i+12]);
+           num_err++;
+        }
+    }
+    for (i=18; i<24; i++)  {
+        if (idata[i] !=fillval) {
+           fprintf(stderr, "wrong value: should be %d, got %d\n",
+                           fillval, idata[i]);
+           num_err++;
+        }
+    }
+    status = SDendaccess(sdid);
+    status = SDend(f1);
+    CHECK(status, "SDend");
+
 /* test SDsetdimval_incomp */
+    f1 = SDstart(FILE1, DFACC_RDWR);
     dimsize[0]=SD_UNLIMITED;
     dimsize[1]=6;
     sdid = SDcreate(f1, "dimval_non_compat", DFNT_INT32, 2, dimsize);

@@ -885,6 +885,12 @@ int fillmode ;
 			 * We are changing back to fill mode
 			 * so do a sync
 			 */
+#ifdef HDF       /* save the original x_op  */
+                 intn  xdr_op = handle->xdrs->x_op;
+                 
+                     if (handle->flags & NC_RDWR)   /* make sure we can write */
+                         handle->xdrs->x_op = XDR_ENCODE; /*  to the file */
+#endif
 			if(handle->flags & NC_HDIRTY)
 			{
 				if(!xdr_cdf(handle->xdrs, &handle) )
@@ -895,10 +901,18 @@ int fillmode ;
 			{
 				if(!xdr_numrecs(handle->xdrs, handle) )
 					return(-1) ;
-				handle->flags &= ~(NC_NDIRTY) ;
+#ifdef HDF
+                                if (handle->file_type != HDF_FILE)
+                                    handle->flags &= ~(NC_NDIRTY) ;
+#else              
+                                 handle->flags &= ~(NC_NDIRTY) ;
+#endif
 			}
+		      handle->flags &= ~NC_NOFILL ;
+#ifdef HDF                /* re-store the x_op  */
+                      handle->xdrs->x_op = xdr_op;
+#endif
 		}
-		handle->flags &= ~NC_NOFILL ;
 	}
 	else
 	{
