@@ -2974,8 +2974,8 @@ HIflush_dds(filerec_t * file_rec)
                         {
                             UINT16ENCODE(p, list->tag);
                             UINT16ENCODE(p, list->ref);
-                            INT32ENCODE(p, list->length);
                             INT32ENCODE(p, list->offset);
+                            INT32ENCODE(p, list->length);
                         }   /* end for */
 
                       if (HI_WRITE(file_rec->file, ptbuf, n * DD_SZ) == FAIL)
@@ -4032,7 +4032,7 @@ HIupdate_version(int32 file_id)
     ret = (int) Hputelement(file_id, (uint16) DFTAG_VERSION, (uint16) 1, lversion,
                             (int32) LIBVER_LEN);
 
-    if (ret == SUCCEED)
+    if (ret != FAIL)
       {
           file_rec->version.modified = 0;
           return (SUCCEED);
