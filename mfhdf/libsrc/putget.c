@@ -591,7 +591,25 @@ Void *values ;
 PRIVATE int32 tBuf_size = 0;
 PRIVATE int8  *tBuf = NULL;
 
+#ifdef HDF
+/* ------------------------------ SDPfreebuf ------------------------------ */
+/*
+    Throw away the temporary buffer we've allocated 
+*/
+intn SDPfreebuf()
+{
+    if(tBuf!=NULL)
+      {
+          HDfree(tBuf);
+          tBuf=NULL;
+          tBuf_size=0;
+      } /* end if */
+    return(SUCCEED);
+}
+#endif /* HDF */
+
 #ifdef OLD_WAY
+
 /* ---------------------------- hdf_fill_array ---------------------------- */
 /*
   Fill the array pointed to by storage with the value pointed to

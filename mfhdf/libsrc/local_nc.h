@@ -493,6 +493,8 @@ extern intn hdf_read_sds_dims
 extern int hdf_read_sds_cdf
     PROTO((XDR *,NC **));
 
+extern int SDPfreebuf PROTO((void));
+
 extern int NCgenio
     PROTO((NC *handle, int varid, const long *start, const long *count,
         const long *stride, const long *imap,Void *values));
