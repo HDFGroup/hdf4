@@ -299,13 +299,15 @@ c	Number type info codes
 c	tags and refs
 
       integer 	DFREF_WILDCARD, DFTAG_WILDCARD, DFTAG_NULL,
-     *		DFTAG_LINKED,   DFTAG_VERSION
+     *		DFTAG_LINKED, DFTAG_VERSION, DFTAG_COMPRESSED
  
       parameter(DFREF_WILDCARD	= 0,
      *		DFTAG_WILDCARD	= 0,
      *		DFTAG_NULL	= 1,
      *		DFTAG_LINKED	= 20,
-     *		DFTAG_VERSION	= 30)
+     *		DFTAG_VERSION	= 30,
+     *          DFTAG_COMPRESSED = 40)
+
 
 c	utility set
 
@@ -369,9 +371,9 @@ c	Tektronix
 c	Scientific Data set 
 
       integer	DFTAG_SDG, DFTAG_SDD, DFTAG_SD, DFTAG_SDS, DFTAG_SDL,
-     *      DFTAG_SDU, DFTAG_SDF, DFTAG_SDM, DFTAG_SDC,
+     *          DFTAG_SDU, DFTAG_SDF, DFTAG_SDM, DFTAG_SDC,
      *		DFTAG_SDT,DFTAG_SDLNK,DFTAG_NDG, 
-     *		DFTAG_BREQ,DFTAG_EREQ
+     *		DFTAG_BREQ,DFTAG_EREQ,DFTAG_CAL, DFTAG_FV
  
       parameter(DFTAG_SDG	= 700,
      *		DFTAG_SDD	= 701,
@@ -385,6 +387,8 @@ c	Scientific Data set
      *		DFTAG_SDT	= 709,
      *		DFTAG_SDLNK	= 710,
      *		DFTAG_NDG	= 720,
+     *          DFTAG_CAL       = 731,
+     *          DFTAG_FV        = 732,
      *		DFTAG_BREQ	= 799,
      *		DFTAG_EREQ	= 780)
 
@@ -399,7 +403,7 @@ c	VSets
 c	compression schemes 
 
       integer	DFTAG_RLE, DFTAG_IMC, DFTAG_IMCOMP, DFTAG_JPEG,
-     *	DFTAG_GREYJPEG
+     *	        DFTAG_GREYJPEG
  
       parameter(DFTAG_RLE   	=11,
      *		DFTAG_IMC   	=12,
