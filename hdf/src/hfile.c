@@ -139,7 +139,7 @@ static char RcsId[] = "@(#)$Revision$";
 /* Array of file records that contains all relevant
    information on an opened HDF file.
    See hfile.h for structure and members definition of filerec_t. */
-#if defined(macintosh) | defined(THINK_C) | defined(DMEM)	/* Dynamic memory */
+#if defined(macintosh) | defined(MAC)| defined(SYMANTEC_C) | defined(DMEM)	/* Dynamic memory */
 struct filerec_t *file_records = NULL;
 #else  /* !macintosh */
 struct filerec_t file_records[MAX_FILE];
@@ -4553,7 +4553,7 @@ HIget_file_slot(const char *path, const char *FUNC)
   int         slot;
   int         ret_value = SUCCEED;
 
-#if defined(macintosh) | defined(THINK_C) | defined(DMEM)
+#if defined(macintosh) | defined(MAC) | defined(SYMANTEC_C) | defined(DMEM)
   if (!file_records)
     {
       /* The array has not been allocated.  Allocating file records
@@ -4567,7 +4567,10 @@ HIget_file_slot(const char *path, const char *FUNC)
         {
           file_records[i].path = (char *) NULL;
           file_records[i].ddhead = (ddblock_t *) NULL;
+          file_records[i].ddlast = (ddblock_t *) NULL;
+          file_records[i].null_block = (ddblock_t *) NULL;
           file_records[i].refcount = 0;
+          file_records[i].maxref = 0;
         }
 
       /* Use the first slot. */
@@ -4580,7 +4583,7 @@ HIget_file_slot(const char *path, const char *FUNC)
       goto done;
     } /* end if !file_records */
 
-#endif /* macintosh or THINK_C or Dynamic Memory */
+#endif /* macintosh or SYMANTEC_C or Dynamic Memory */
 
   /* Search for a matching or free slot. */
   slot = FAIL;
@@ -4932,6 +4935,13 @@ HIfill_file_rec(filerec_t * file_rec, const char *FUNC)
 
       /* Read in dd's. */
       ndds = FILE_NDDS(file_rec);
+
+      for (i = 0; i < ndds; i++)
+        {
+          file_rec->ddlast->ddlist[i].tag = DFTAG_NULL;
+          file_rec->ddlast->ddlist[i].ref = 0;
+          file_rec->ddlast->ddlist[i].length = file_rec->ddlast->ddlist[i].offset = 0;
+        }
 
       /* check if the DD block is the last thing in the file */
       /* (Unlikely, but possible (I think)) */
@@ -5605,7 +5615,7 @@ done:
 } /* end HPwrite() */
 
 /* -------------------------- MAC Specific Stuff -------------------------- */
-#if defined(MAC) & !defined(THINK_C)
+#if defined(MAC) & !defined(SYMANTEC_C)
 /*
    *  Macintosh file stubs for HDF
    *
@@ -5614,13 +5624,274 @@ done:
  */
 
 #include "Errors.h"
-#ifdef MPW
-#include "Strings.h"
+#ifdef SYMANTEC_C
+#include "IntEnv.h"
+#include "MacRuntime.h"
 #endif
+#include "Files.h"
+#include "Strings.h"
 
-PRIVATE int32 hdfc = 1061109567L;	/* equal to 4 '?' in a row in ascii */
-					/* yes, I am deliberately avoiding the trigraph :-) */
-PRIVATE int32 hdft = 1600085855L;	/* equal to '_HDF' in ascii */
+PRIVATE int32 hdfc = 1061109567L; /* equal to 4 '?' in a row in ascii */
+                                  /* yes, I am deliberately avoiding the trigraph :-) */
+PRIVATE int32 hdft = 1600085855L; /* equal to '_HDF' in ascii */
+
+#ifndef OLD_WAY
+/* The routines have been updated for HFS */
+
+PRIVATE StringPtr pname; /* Pacal pointer to file name */
+
+hdf_file_t
+mopen(char *name, intn flags)
+{
+  hdf_file_t  ret_value;
+  short       volRefNum;
+  FSSpec      sfFile;
+  OSErr       result;
+  Str255      volName;
+  long        fBytes;
+  FInfo       fndrInfo;
+  char        perm;
+
+  pname = c2pstr(name); /* Convert C string to Pascal string */
+
+  /* get the info on the default volume */
+#if 0 
+  if ((result = GetVInfo(0, volName, &volRefNum, &fBytes)) != noErr)
+#endif
+  if ((result = GetVol(NULL, &volRefNum)) != noErr)
+   {
+     ret_value = FAIL;
+     goto done;
+   }
+
+  /* Create FSSpec record for file */
+  result = FSMakeFSSpec((short)volRefNum,(long)0,pname,(FSSpecPtr)&sfFile);
+
+  /* Do we need to create file */
+  if (flags == DFACC_CREATE)
+    { /* yes, we need to create it */
+      /* Does file exist */
+      if (result != fnfErr)
+       { /* file exists, so delte it first */
+         if (noErr != (result = FSpDelete(&sfFile)))
+           {
+             ret_value = FAIL;
+             goto done;
+           }
+       }
+      /* Create new file 
+      * Note: '-1' argument -> 'sySystemScript' - Script.h */
+      if (noErr != (result = FSpCreate(&sfFile,hdfc,hdft,-1)))
+        {
+          ret_value =  FAIL;
+          goto done;
+        }
+    } /* end if */
+
+
+  /* Set correct permission flag */
+  switch(flags)
+    {
+    case DFACC_READ:
+         perm = '1'; /* fsRdPermread permission */
+      break;
+    case DFACC_WRITE:
+         perm = '2'; /* fsWrPerm - write permission */
+      break;
+    case DFACC_CREATE:
+    case DFACC_RDWR:
+    case DFACC_ALL:
+         perm = '3'; /* fsRdWrPerm - exclusive read/write permission */
+      break;
+    default:
+         perm = '1'; /* fsRdPermread permission */
+      break;
+    } /* end switch 'flags' */
+
+  /* Now open file */
+  if (noErr != (result = FSpOpenDF(&sfFile, perm, &ret_value)))
+    {
+      ret_value = FAIL;    
+      goto done;
+    }
+
+  /* Truncate file if creation is also specified*/
+  if (flags & O_CREAT)
+    {	
+     if ((result = SetEOF(ret_value, 0L)) != noErr)
+       {
+         ret_value = FAIL;    
+         goto done;
+       }
+    }
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return (ret_value);
+} /* mopen() */
+
+
+int32
+mclose(hdf_file_t rn)
+{
+  return (FSClose(rn));
+} /* mclose() */
+
+int32
+mread(hdf_file_t rn, char *buf, int32 n)
+{
+  OSErr       result;
+
+  if (noErr != (result = FSRead(rn, &n, buf)))
+    return (FAIL);
+
+  return (n);
+} /* mread() */
+
+int32
+mwrite(hdf_file_t rn, char *buf, int32 n)
+{
+  OSErr       result;
+
+  if (noErr != (result = FSWrite(rn, &n, buf)))
+    return (FAIL);
+
+  return (n);
+} /* mwrite() */
+
+int32
+mlseek(hdf_file_t rn, int32 n, intn m)
+{
+  OSErr       result;
+  int32       newEOF;
+  short       posMode;
+  int32       ret_value;
+
+  /* set the positioning mode */
+  switch (m)
+    {
+    case 0:
+    default:
+      posMode = fsFromStart;
+      break;
+    case 1:
+      posMode = fsFromMark;
+      break;
+    case 2:
+      posMode = fsFromLEOF;
+      break;
+    } /* end switch 'm' */
+
+  /* Set file postion marker */
+  if (noErr != (result = SetFPos(rn, posMode, n)))
+    { /* Are we at logical end of file */
+      if (result == eofErr)
+        { /* yes, at logical end of file */
+          /* If we are at begening of file then return error */
+          if (posMode != fsFromStart)
+            {
+              ret_value = FAIL;
+              goto done;
+	    }
+
+          /* Else, lets set End-of-File marker here */
+          newEOF = n;
+          if (noErr != (result = SetEOF(rn, newEOF)))
+            {
+              ret_value = FAIL;
+              goto done;
+	    }
+
+          /* Now try reseting the file Postiion maker */
+          if (noErr != (result = SetFPos(rn, fsFromStart, n)))
+            {
+              ret_value = FAIL;
+              goto done;
+	    }
+        }
+      else 
+        { /* we have a real error we can't handle */
+          ret_value = FAIL;
+          goto done;
+        }
+    } /* end if */
+
+  /* Get new file marker postion */
+  if (noErr != (result = GetFPos(rn, &n)))
+    {
+      ret_value = FAIL;
+      goto done;
+    }
+
+  /* If postioned from current mark return current postion
+   * else return SUCCEED */
+  if (m == fsFromMark)
+    ret_value = (n);
+  else
+    ret_value = (SUCCEED);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return (ret_value);
+} /* mlseek() */
+
+intn
+mstat(char *path)
+{
+  short       volRefNum;
+  FSSpec      sfFile;
+  OSErr       result;
+  Str255      volName;
+  long        fBytes;
+  intn        ret_value;
+
+  pname = c2pstr(path); /* Convert C string to Pascal string */
+
+  /* get the info on the default volume */
+#if 0
+  if ((result = GetVInfo(0, volName, &volRefNum, &fBytes)) != noErr)
+#endif
+  if ((result = GetVol(NULL, &volRefNum)) != noErr)
+   {
+     ret_value = FAIL;
+     goto done;
+   }
+
+  /* Create FSSpec record for file */
+  result = FSMakeFSSpec(volRefNum,0,pname, &sfFile);
+
+ /* Does file exist */
+ if (result != fnfErr)
+  { /* file exists*/
+    ret_value = 0;
+  }
+ else
+    ret_value = FAIL;
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return (ret_value);
+} /* mstat() */
+
+#else /* OLD_WAY */
 
 #ifdef MPW
 hdf_file_t
@@ -5652,7 +5923,8 @@ mopen(char *name, intn flags)
 
   return (rn);
 }
-#else
+
+#else /* ! MPW */
 
 PRIVATE Str255 pname;
 
@@ -5792,6 +6064,7 @@ mlseek(hdf_file_t rn, int32 n, intn m)
     }
 
 }
+#endif /* OLD_WAY */
 
 #endif /* MAC */
 /* --------------------- (end of) MAC Specific Stuff ---------------------- */
