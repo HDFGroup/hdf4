@@ -86,6 +86,12 @@ parse_dumpsds_opts(dump_info_t *dumpsds_opts,
                 (*curr_arg)++;
 
                 ptr = argv[*curr_arg];
+		/* BMR: check if it's the end of the command */
+		if( ptr == NULL )
+		{
+/* BM note: add goto done here after adding done: */
+		   return FAIL;
+		}
                 numItems = 0;
                 while ((tempPtr = HDstrchr(ptr, ',')) != NULL)
                   {
@@ -121,6 +127,12 @@ parse_dumpsds_opts(dump_info_t *dumpsds_opts,
                 (*curr_arg)++;
 
                 ptr = argv[*curr_arg];
+		/* BMR: check if it's the end of the command */
+		if( ptr == NULL )
+		{
+/* BM note: add goto done here after adding done: */
+		   return FAIL;
+		}
                 numItems = 0;
                 while ((tempPtr = HDstrchr(ptr, ',')) != NULL)
                   {
@@ -179,16 +191,24 @@ parse_dumpsds_opts(dump_info_t *dumpsds_opts,
                 (*curr_arg)++;
                 break;
 
-            case 'o':	/* specify output file */
-                dumpsds_opts->dump_to_file = TRUE;	/* get filename */
+	    /* BMR: removed the processing of 'b' inside case 'o', and
+		    added cases 'b' and 'x' for binary and ascii options*/
+            case 'o':   /* specify output file */
+                dumpsds_opts->dump_to_file = TRUE;
+
+                /* Get file name */
                 HDstrcpy(dumpsds_opts->file_name, argv[++(*curr_arg)]);
-                if (++(*curr_arg) < argc)
-                  {		/* binary or ascii */
-                      if (argv[*curr_arg][0] == '-')
-                          dumpsds_opts->file_type = (argv[*curr_arg][1] == 'b') ? DBINARY : DASCII;
-                      else
-                          (*curr_arg)--;
-                  }
+
+                (*curr_arg)++;
+                break;
+
+            case 'b':   /* dump data in binary */
+                dumpsds_opts->file_type = DBINARY;
+                (*curr_arg)++;
+                break;
+
+            case 'x':   /* dump data in ascii, also default */
+                dumpsds_opts->file_type = DASCII;
                 (*curr_arg)++;
                 break;
 
@@ -222,6 +242,7 @@ sdsdumpfull(const char *fname,
     int32   *start = NULL;
     int32   *edge = NULL;
     intn     count;
+    intn     emptySDS = TRUE;
     int32    ret_value = SUCCEED;
 
     if (indent > 65)
@@ -276,6 +297,24 @@ sdsdumpfull(const char *fname,
       }
     edge[rank - 1] = dimsizes[rank - 1];
 
+    /* BMR: check if the SDS has data before proceed and display 
+	    appropriate messages */
+    if( SDcheckempty( sds_id, &emptySDS ) == FAIL )
+    {
+	fprintf( stderr, "SDcheckempty failed for sds_id(%d) in file %s\n",
+			(int) sds_id, fname);
+	if( ft == DASCII )
+	   fprintf( fp, "Unable to obtain data.\n" );
+	ret_value = FAIL;  /* should this be SUCCEED too? */
+	goto done;
+    }
+    if( emptySDS )
+    {
+	if( ft == DASCII )
+	   fprintf( fp, "No data written.\n" );
+	ret_value = SUCCEED;  /* because the dump for this SDS is */
+	goto done;	/* successful although it's empty -> next SDS */
+    }
     if (rank == 1)
       {		/* If there is only one dimension, then dump the data
                and the job is done. */
@@ -785,9 +824,11 @@ dsd(dump_info_t *dumpsds_opts,
                                       fprintf(fp, " ");
                                   if (FAIL == sdsdumpfull(file_name, sds_id, ft, rank, dimsizes, nt, 16, fp))
                                     {
-                                        fprintf(stderr,"sdsdumpfull failed for sds_id(%d) in file %s\n", 
+                            /*            fprintf(stderr,"sdsdumpfull failed for sds_id(%d) in file %s\n", 
                                                 (int)sds_id, file_name);
-                                        ret_value = FAIL;
+*/
+					fprintf( fp, "Unable to dump data\n");
+                                        /* ret_value = FAIL; go to next SDS*/
                                         goto done;
                                     }
                                 }
@@ -883,7 +924,7 @@ dsd(dump_info_t *dumpsds_opts,
                               {
                                   fprintf(stderr, "sdsdumpfull failed for sds_id(%d) in file %s\n", 
                                           (int)sds_id, file_name);
-                                  ret_value = FAIL;
+                                  /* ret_value = FAIL; go to next SDS*/
                                   goto done;
                               }
                         }
@@ -974,7 +1015,6 @@ do_dumpsds(intn        curr_arg,
 
     if (parse_dumpsds_opts(&dumpsds_opts, &curr_arg, argc, argv) == FAIL)
       {
-          printf("Failure in parsing options to dump SDS data \n");
           dumpsds_usage(argc, argv);
           ret_value = FAIL;
           goto done;
