@@ -2,8 +2,14 @@
 # $Header$
 #
 # $Log$
-# Revision 1.3  1992/08/05 21:56:40  chouck
-# Added support for moving utilites to HDFBIN
+# Revision 1.4  1992/08/12 22:30:23  dilg
+# Reincarnated all machine-specific Makefiles from generic Makefile.
+#
+# Revision 1.4  1992/08/05  21:47:57  chouck
+# Fixed a couple naming convention problems
+#
+# Revision 1.3  1992/08/05  21:27:30  chouck
+# Added support for moving utils to HDFBIN
 #
 # Revision 1.2  1992/07/22  19:25:34  dilg
 # Changed definitions of HDFINC and HDFLIB to be `pwd`/include and `pwd`/lib,
@@ -14,14 +20,51 @@
 #
 #
 #
+# ##################################################################
+#
+#                   NCSA HDF Version 3.2 release Beta 1
+#                               March 1992
+#
+#           MAKEFILE for creating the HDF library, libdf.a, on HP 9000's
+#
+# This makefile creates the following FORTRAN and C interfaces 
+# for HDF in a library called "libdf.a": 
+#
+#              DFR8   (8-bit raster image sets)
+#              DF24   (24-bit raster image sets)
+#              DFP    (palettes)
+#              DFSD   (scientific data sets)
+#              DFAN   (annotations)
+#              V      (vsets)
+#
+# See the file INSTALL for further information on how to invoke
+# this makefile.
+#
+# This release of HDF marks the first use of a new set of lower
+# level routines.  The makefile also creates these interfaces,
+# which are available in C only.  These routines are categorized 
+# as follows:
+#
+#              H      (lower level i/o)
+#              DF     (emulation of old lower level i/o routines)
+#              HD     (lower level utilities for developers)
+#              HE     (lower level error-handling)
+#              HD     (lower level utilities, for developers)
+#              DFK    (conversion routines)
+#
+# ##################################################################
+#
+#
+#
 #
 # This is the top level Makefile to build HDF 3.2 on Unix based
 #       platforms
 #
-# This copy has been set up to compile on IBM RS/6000s
+# Possible Machine Types
+#   SUN, IBM6000, HP9000, MIPSEL (Dec Mips based machines), ...
 #
-#
-#
+
+
 
 # Define your machine type
 MACHINE=HP9000
@@ -40,7 +83,7 @@ HDFINC= `pwd`/include
 # Location where the HDF library is to be installed
 HDFLIB= `pwd`/lib
 
-# Location where HDF utilities should be installed
+# Location to put HDF utility executables
 HDFBIN= `pwd`/bin
 
 # Name of library archiver and flags to send
@@ -71,8 +114,8 @@ HDF_FLAGS       = \
         RMFLAGS="$(RMFLAGS)" \
         MACHINE="$(MACHINE)" \
         HDFLIB="$(HDFLIB)" \
-        HDFINC="$(HDFINC)" \    
-        HDFBIN="$(HDFBIN)"
+        HDFINC="$(HDFINC)" \
+	HDFBIN="$(HDFBIN)"	
 
 #
 #
@@ -82,11 +125,17 @@ all:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="src util test" _sub message 
 
-nofortran:
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+allnofortran:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
           SUBDIRS="src util test" _sub message 
 
-libnostub: nofortran
+libnofortran:
+	@$(MAKE) $(MYFLAGS) $(HDF_FLAGS) TARG=nofortran \
+	  SUBDIRS="src" _sub message
+
+libnostub: libnofortran
+
+allnostub: allnofortran
 
 libdf:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
