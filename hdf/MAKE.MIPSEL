@@ -149,7 +149,7 @@ hdp:
 
 clean:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
-          SUBDIRS="src util test" _sub
+          SUBDIRS="src util test dumper" _sub
 	$(RM) $(RMFLAGS) core *.log
 
 _sub:

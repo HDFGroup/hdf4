@@ -532,7 +532,7 @@ intn HDpackFstring(char *src, char *dest, intn len)
 /*
 
  NAME
-	HDgettagdesc -- return a text description of a tag
+	HDgettagname -- return a text description of a tag
  USAGE
 	char * HDgettagname(tag)
         uint16   tag;          IN: tag of element to find
@@ -542,7 +542,7 @@ intn HDpackFstring(char *src, char *dest, intn len)
         Map a tag to a statically allocated text description of it.
 
 --------------------------------------------------------------------------- */
-const char _HUGE *HDgettagdesc(uint16 tag)
+const char _HUGE *HDgettagname(uint16 tag)
 {
     intn i;
 
@@ -552,28 +552,47 @@ const char _HUGE *HDgettagdesc(uint16 tag)
     return(NULL);
 }
 
-/* ----------------------------- HDgettagname ----------------------------- */
+/* ----------------------------- HDgettagsname ----------------------------- */
 /*
 
  NAME
-	HDgettagname -- return a text name of a tag
+	HDgettagsname -- return a text name of a tag
  USAGE
-	char * HDgettagname(tag)
+	char * HDgettagsname(tag)
         uint16   tag;          IN: tag of element to find
  RETURNS
         Descriptive text or NULL
  DESCRIPTION
-        Map a tag to a statically allocated text name of it.
+        Map a tag to a dynamically allocated text name of it.
+	Checks for special elements now.
 
 --------------------------------------------------------------------------- */
-const char _HUGE *HDgettagname(uint16 tag)
+char _HUGE *HDgettagsname(uint16 tag)
 {
+    CONSTR(FUNC,"HDgettagsname");       /* for HERROR */
+    char *ret=NULL;
     intn i;
 
+    if(SPECIALTAG(tag)) 
+        ret=(char *)HDstrdup("Special ");
+    tag=BASETAG(tag);
     for(i=0; i<sizeof(tag_descriptions)/sizeof(tag_descript_t); i++)
-	if(tag_descriptions[i].tag==tag)
-	    return(tag_descriptions[i].name);
-    return(NULL);
+        if(tag_descriptions[i].tag==tag) {
+            if(ret==NULL)
+               ret=HDstrdup(tag_descriptions[i].name);
+            else {
+		        char *t=(char *)HDgetspace(HDstrlen(ret)+HDstrlen(tag_descriptions[i].name)+2);
+                if(t==NULL) {
+                    HDfreespace(ret);
+                    HRETURN_ERROR(DFE_NOSPACE,NULL);
+                  } /* end if */
+                HDstrcpy(t,ret);
+                HDstrcat(t,tag_descriptions[i].name);
+                HDfreespace(ret);
+                ret=t;
+              } /* end else */
+          } /* end if */
+    return(ret);
 }
 
 /* ----------------------------- HDgettagnum ------------------------------ */
@@ -618,7 +637,7 @@ char _HUGE *HDgetNTdesc(int32 nt)
 {
     CONSTR(FUNC,"HDgetNTdesc");       /* for HERROR */
     intn i;
-    char _HUGE *ret_desc=NULL;
+    char *ret_desc=NULL;
 
     if(nt&DFNT_NATIVE)
 	ret_desc=HDstrdup(nt_descriptions[0].desc); /* evil hard-coded values */

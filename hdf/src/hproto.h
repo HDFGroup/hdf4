@@ -144,10 +144,10 @@ extern int HDerr
 extern intn HDvalidfid
     (int32 file_id);
 
-extern const char _HUGE *HDgettagdesc
+extern const char _HUGE *HDgettagname
     (uint16 tag);
 
-extern const char _HUGE *HDgettagname
+extern char _HUGE *HDgettagsname
     (uint16 tag);
 
 extern intn HDgettagnum

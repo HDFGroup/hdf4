@@ -20,7 +20,7 @@ C
 C Output file: slab1wf.hdf
 
 
-      integer dsgfill, dssslab, dswslab, dseslab, dsrslab
+      integer dssslab, dswslab, dseslab, dsrslab
       integer ret, np, nr,nc, di(3), st(3), sz(3), sr(3)
       integer rank, DFTAG_SDT, DFO_FORTRAN
       real    scpln(2), scrow(3), sccol(4), da(4,3,2)

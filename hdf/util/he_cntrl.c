@@ -1004,7 +1004,7 @@ HE_CMD *parseCmd(char **p)
     cmd->argc = 1;
     cmd->argv[0] = nextWord(p);
 
-    if (aliasCmd = findAlias(cmd->argv[0]))
+    if ((aliasCmd = findAlias(cmd->argv[0]))!=NULL)
 	cmd = aliasCmd;
     else
 	cmd->func = findFunc(cmd->argv[0]);
@@ -1215,9 +1215,9 @@ int HEalias(HE_CMD *cmd)
     }
     for (cmdTail = cmd; cmdTail->next;  cmdTail = cmdTail->next)/*EMPTY*/
         ;
-    while (cmdTail->next = parseCmd(&s))
-    for (; cmdTail->next;  cmdTail = cmdTail->next)/*EMPTY*/
-        ;
+    while ((cmdTail->next = parseCmd(&s))!=NULL)
+        for (; cmdTail->next;  cmdTail = cmdTail->next)/*EMPTY*/
+            ;
     return setAlias(word, cmd);
 }
 

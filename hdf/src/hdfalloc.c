@@ -593,7 +593,7 @@ char *HDstrdup(const char *s)
 {
     char *ret;
 
-    ret=HDgetspace((uint32)HDstrlen(s)+1);
+    ret=(char *)HDgetspace((uint32)HDstrlen(s)+1);
     if(ret==NULL)
         return(NULL);
     HDstrcpy(ret,s);

@@ -144,6 +144,11 @@ intn DFR8setcompress(int32 type,comp_info *cinfo)
 {
     CONSTR(FUNC,"DFR8setcompress");
 
+    if(type==COMP_NONE) { /* quick check for no compression */
+        CompType=0;
+        return(SUCCEED);
+      } /* end if */
+
     if(type<0 || type>COMP_MAX_COMP || compress_map[type]==0)
         HRETURN_ERROR(DFE_BADSCHEME, FAIL);
 

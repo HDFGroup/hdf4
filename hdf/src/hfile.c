@@ -55,13 +55,6 @@ static char RcsId[] = "@(#)$Revision$";
 #undef HMASTER
 #include "hfile.h"
 
-/*
-** Prototypes for local functions
-*/
-static int HIchangedd
-  (dd_t *datadd, ddblock_t *block, int idx, int16 special,
-	 VOIDP special_info, funclist_t *special_func);
-
 /* Array of file records that contains all relevant
    information on an opened HDF file.
    See hfile.h for structure and members definition of filerec_t. */
@@ -2807,8 +2800,12 @@ int HIget_access_slot(void)
         access_records = (accrec_t *) HDgetspace(MAX_ACC * sizeof(accrec_t));
         if (!access_records)
             return FAIL;
+#ifdef OLD_WAY
         for (i = 0; i < MAX_ACC; i++)
             access_records[i].used = FALSE;
+#else /* OLD_WAY */
+        HDmemset(access_records,0,MAX_ACC*sizeof(accrec_t));
+#endif /* OLD_WAY */
 
        /* use the first record */
 

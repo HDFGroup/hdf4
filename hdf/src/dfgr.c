@@ -234,6 +234,11 @@ int DFGRsetcompress(int32 scheme,comp_info *cinfo)
 {
     CONSTR(FUNC,"DFGRsetcompress");
 
+    if(scheme==COMP_NONE) { /* quick check for no compression */
+        Grcompr = 0;       /* Set the compression scheme */
+        return SUCCEED;
+      } /* end if */
+
     if(scheme<0 || scheme>COMP_MAX_COMP || compress_map[scheme]==0)
         HRETURN_ERROR(DFE_BADSCHEME, FAIL);
 

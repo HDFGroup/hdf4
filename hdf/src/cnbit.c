@@ -232,7 +232,7 @@ PRIVATE int32 HCIcnbit_decode(compinfo_t *info,int32 length,uint8 *buf)
     uint32 sign_mask,       /* mask to get the sign bit */
         sign_ext_mask;      /* mask for sign extension */
     intn sign_byte,         /* byte which contains the sign bit */
-        sign_bit;           /* the sign bit from the n_bit data */
+        sign_bit=0;         /* the sign bit from the n_bit data */
     nbit_mask_info_t *mask_info;    /* ptr to the mask info */
     intn copy_length;       /* number of bytes to copy */
     intn buf_items;         /* number of items which will fit into expansion buffer */
