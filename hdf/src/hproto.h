@@ -78,7 +78,7 @@ extern int32 Hwrite
 extern int32 Htrunc
     PROTO((int32 access_id, int32 trunc_len));
 
-extern int32 Hendaccess
+extern intn Hendaccess
     PROTO((int32 access_id));
 
 extern intn HDgetc
@@ -111,14 +111,14 @@ extern uint16 Hnewref
 extern int Hsync
     PROTO((int32 file_id));
 
-extern int Hnumber
+extern int32 Hnumber
     PROTO((int32 file_id, uint16 tag));
 
-extern int Hgetlibversion
+extern intn Hgetlibversion
     PROTO((uint32 _HUGE *majorv, uint32 _HUGE *minorv,
            uint32 _HUGE *releasev, char _HUGE *string));
 
-extern int Hgetfileversion
+extern intn Hgetfileversion
     PROTO((int32 file_id, uint32 _HUGE *majorv, uint32 _HUGE *minorv,
            uint32 _HUGE *release, char _HUGE *string));
 
@@ -157,7 +157,7 @@ extern bool HDvalidfid
 extern char _HUGE *HDgettagname
     PROTO((uint16 tag));
 
-extern int32 Hishdf
+extern intn Hishdf
     PROTO((char _HUGE *filename));
 
 extern intn Hfidinquire
