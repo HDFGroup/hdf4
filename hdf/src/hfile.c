@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.18  1993/09/03 14:10:13  koziol
-Saved debugging info.
+Revision 1.19  1993/09/08 18:29:24  koziol
+Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
 
+ * Revision 1.18  1993/09/03  14:10:13  koziol
+ * Saved debugging info.
+ *
  * Revision 1.17  1993/09/01  23:16:48  georgev
  * Fixed prototypes for MAC.
  *
@@ -2511,7 +2514,6 @@ PRIVATE int32 (** HIget_function_table(access_rec, FUNC))()
     /* read in the special code in the special elt */
 
     dd = &access_rec->block->ddlist[access_rec->idx];
-printf("HIgetfunction_table(): tag=%d, ref=%d, length=%d, offset=%d\n",dd->tag,dd->ref,dd->length,dd->offset);
     file_rec = FID2REC(access_rec->file_id);
     if (HI_SEEK(file_rec->file, dd->offset) == FAIL) {
        HERROR(DFE_SEEKERROR);

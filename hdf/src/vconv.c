@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.10  1993/08/28 22:58:47  georgev
-Fixed cast problem for HDgetspace.
+Revision 1.11  1993/09/08 18:29:31  koziol
+Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
 
+ * Revision 1.10  1993/08/28  22:58:47  georgev
+ * Fixed cast problem for HDgetspace.
+ *
  * Revision 1.9  1993/08/28  22:58:07  georgev
  * Fixed a few VOIDP casts.
  *
@@ -409,7 +412,7 @@ uint8        buf[];
 
     /* **EXTRA**  fill in the machine-dependent size fields */
     for (i=0;i<vs->wlist.n;i++)
-        vs->wlist.esize[i]=(int16)vs->wlist.order[i] * (SIZEOF((int16)vs->wlist.type[i]));
+        vs->wlist.esize[i]=(int16)vs->wlist.order[i] * (VSIZEOF((int16)vs->wlist.type[i]));
 
 } /* oldunpackvs */
 

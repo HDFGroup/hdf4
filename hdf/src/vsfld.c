@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.15  1993/08/28 23:07:07  georgev
-Arggh...more cast fixes..
+Revision 1.16  1993/09/08 18:29:36  koziol
+Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
 
+ * Revision 1.15  1993/08/28  23:07:07  georgev
+ * Arggh...more cast fixes..
+ *
  * Revision 1.14  1993/08/28  23:03:19  georgev
  * Again some cast fixes.
  *
@@ -126,9 +129,9 @@ PRIVATE SYMDEF rstab[] =
  ** returns FAIL if error
  */
 #ifdef PROTOTYPE
-int16 SIZEOF (int16 x)
+int16 VSIZEOF (int16 x)
 #else
-int16 SIZEOF (x)
+int16 VSIZEOF (x)
 int16 x;
 #endif
 {
@@ -137,7 +140,7 @@ int16 x;
   } else {
     return(local_sizetab[x]);
   }
-} /* SIZEOF */
+} /* VSIZEOF */
 
 /*
  ** returns the HDF file size of a field type

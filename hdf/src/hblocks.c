@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.7  1993/09/03 14:10:09  koziol
-Saved debugging info.
+Revision 1.8  1993/09/08 18:29:19  koziol
+Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
 
+ * Revision 1.7  1993/09/03  14:10:09  koziol
+ * Saved debugging info.
+ *
  * Revision 1.6  1993/09/02  00:32:07  georgev
  * Fixed some VOIDP casts.
  *
@@ -656,7 +659,6 @@ PRIVATE int32 HLIread(access_rec, length, data)
 
     /* validate length */
 
-printf("HLIread(): length=%d, data=%p\n",length,data);
     if (length == 0) length = info->length - access_rec->posn;
     else
 /*      if (length < 0 || access_rec->posn + length > info->length) {*/
@@ -797,7 +799,6 @@ PRIVATE int32 HLIwrite(access_rec, length, data)
 
     /* validate length and file records */
 
-printf("HLIwrite(): length=%d, data=%p\n",length,data);
     if (length < 0) {
        HERROR(DFE_RANGE);
        return FAIL;

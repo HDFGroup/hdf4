@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/09/03 14:10:25  koziol
-Saved debugging info.
+Revision 1.4  1993/09/08 18:29:50  koziol
+Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
 
+ * Revision 1.3  1993/09/03  14:10:25  koziol
+ * Saved debugging info.
+ *
  * Revision 1.2  1993/08/28  00:12:42  georgev
  * Added VOIDP casts to HDfreespace().
  *
@@ -125,7 +128,6 @@ void test_hblocks()
     ret = Hendaccess(aid1);
     CHECK(ret, FAIL, "Hendaccess");
 
-
     ret = Hnewref(fid);
     CHECK(ret, FAIL, "Hnewref");
 
@@ -144,7 +146,6 @@ void test_hblocks()
     MESSAGE(5,printf("Verifying data\n"););
     ret = Hgetelement(fid, (uint16) 1000, (uint16) 4, inbuf);
     if(ret != BUFSIZE/2) {
-HEprint(stderr,0);
       fprintf(stderr, "ERROR: Hgetelement returned the wrong length: %d\n", ret);
       errors++;
     }

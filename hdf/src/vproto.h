@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.16  1993/07/23 20:49:14  sxu
-Changed 'void' to 'VOID' VSdump, Vinitialize, Vsetzap, Remove_vfile and unpackvs.
+Revision 1.17  1993/09/08 18:29:33  koziol
+Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
 
+ * Revision 1.16  1993/07/23  20:49:14  sxu
+ * Changed 'void' to 'VOID' VSdump, Vinitialize, Vsetzap, Remove_vfile and unpackvs.
+ *
  * Revision 1.15  1993/07/14  11:55:53  koziol
  * Fixed memory leaks in freeing trees
  *
@@ -301,7 +304,7 @@ extern int32 VSappendable
 ** from vsfld.c
 */
 
-extern int16 SIZEOF
+extern int16 VSIZEOF
     PROTO((int16 x));
 
 extern int16 HDFSIZEOF

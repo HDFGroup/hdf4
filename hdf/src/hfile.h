@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.19  1993/09/02 14:41:59  koziol
-Patches for Watcom/386 Support
+Revision 1.20  1993/09/08 18:29:29  koziol
+Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
 
+ * Revision 1.19  1993/09/02  14:41:59  koziol
+ * Patches for Watcom/386 Support
+ *
  * Revision 1.18  1993/09/01  23:16:46  georgev
  * Fixed prototypes for MAC.
  *
@@ -122,9 +125,9 @@ typedef FILE *hdf_file_t;
 #endif /* PC386 */
 #endif
 #ifdef PC386
-#   define HI_CREATE(p)        (fopen((p), "w+"))
-#else /* PC386 */
 #   define HI_CREATE(p)        (fopen((p), "wb+"))
+#else /* PC386 */
+#   define HI_CREATE(p)        (fopen((p), "w+"))
 #endif  /* PC386 */
 #   define HI_READ(f, b, n)    (((n) == fread((b), 1, (n), (f))) ? \
                                 SUCCEED : FAIL)
