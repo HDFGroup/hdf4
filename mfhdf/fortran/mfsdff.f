@@ -277,7 +277,7 @@ C----------------------------------------------------------------------
 
       character*(*) name
       integer nt, data
-      integer scsattr, len
+      integer scsnatt, len
 
       sfsnatt = scsnatt(id, name, nt, count, data, len(name))
       

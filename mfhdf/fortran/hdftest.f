@@ -23,16 +23,6 @@ C
       character cdata(6,4), icdata(6,4), cfill, icfill
       character catt(2), icatt(2)
 
-      integer SD_UNLIMITED, SD_DIMVAL_BW_INCOMP, DFNT_INT32
-      integer SD_DIMVAL_BW_COMP
-      parameter (SD_UNLIMITED = 0,
-     +            SD_DIMVAL_BW_INCOMP = 0,
-     +            SD_DIMVAL_BW_COMP = 1,
-     +            DFNT_INT32 = 24)
-      DATA cfill/'@'/, icfill/' '/
-      DATA catt/'U','S'/, icatt/' ',' '/
-      DATA natt/10,20/, inatt/0,0/
-
       integer sfstart,  sfcreate,  sfendacc, sfend,    sfsfill
       integer sfrdata,  sfwdata,   sfsattr,  sfdimid,  sfsdmname
       integer sffinfo,  sfn2index, sfsdmstr, sfsdtstr, sfsdscale
@@ -43,6 +33,16 @@ C
       integer sfsextf,  hxsdir,    hxscdir
       integer sfwcdata, sfrcdata,  sfscfill, sfgcfill
       integer sfscatt,  sfrcatt,   sfsnatt,  sfrnatt
+
+      integer SD_UNLIMITED, SD_DIMVAL_BW_INCOMP, DFNT_INT32
+      integer SD_DIMVAL_BW_COMP
+      parameter (SD_UNLIMITED = 0,
+     +            SD_DIMVAL_BW_INCOMP = 0,
+     +            SD_DIMVAL_BW_COMP = 1,
+     +            DFNT_INT32 = 24)
+      DATA cfill/'@'/, icfill/' '/
+      DATA catt/'U','S'/, icatt/' ',' '/
+      DATA natt/10,20/, inatt/0,0/
 
 C     create a new file
       err = 0

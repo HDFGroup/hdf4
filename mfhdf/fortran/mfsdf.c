@@ -34,6 +34,20 @@ static char RcsId[] = "@(#)$Revision$";
 #ifdef HDF
 #include "mfhdf.h"
 
+#ifdef PROTOTYPE
+FRETVAL(intf) nsfscfill(intf *id, _fcd val);
+FRETVAL(intf) nsfsfill(intf *id, VOIDP val);
+FRETVAL(intf) nsfgfill(intf *id, VOIDP val);
+FRETVAL(intf) nsfrnatt(intf *id, intf *index, VOIDP buf);
+FRETVAL(intf) nscsnatt(intf *id, _fcd name, intf *nt, intf *count, VOIDP data, intf *len);
+#else
+FRETVAL(intf) nsfscfill();
+FRETVAL(intf) nsfsfill();
+FRETVAL(intf) nsfgfill();
+FRETVAL(intf) nsfrnatt();
+FRETVAL(intf) nscsnatt();
+#endif /* PROTOTYPE */
+
 /*-----------------------------------------------------------------------------
  * Name:    scstart
  * Purpose: call SDstart to open HDF file
@@ -749,7 +763,6 @@ nsfrdata(id, start, stride, end, values)
      VOIDP values;
 #endif /* PROTOTYPE */
 {
-    char   *fn;
     intf    ret;
     int32   i, rank, dims[100], nt, nattrs, status;
     int32   cstart[100], cstride[100], cend[100];
@@ -801,7 +814,6 @@ nsfwdata(id, start, stride, end, values)
      VOIDP values;
 #endif /* PROTOTYPE */
 {
-    char   *fn;
     intf    ret;
     int32   i, rank, dims[100], nt, nattrs, status;
     int32   cstart[100], cstride[100], cend[100];
@@ -1077,9 +1089,6 @@ nscscatt(id, name, nt, count, data, len)
      intf *len;
 #endif /* PROTOTYPE */
 {
-    char   *an;
-    intf    ret;
-   
     return(nscsnatt(id, name, nt, count, (VOIDP) _fcdtocp(data), len));
 }
 
