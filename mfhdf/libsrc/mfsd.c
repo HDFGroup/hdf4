@@ -3819,6 +3819,11 @@ int32 flags;
     uint8      default_fill_val = 0;  /* default fill value */
     int32      ndims    = 0;          /* # dimensions i.e. rank */
     uint8      nlevels  = 1;          /* default # levels is 1 */
+    uint8      platntsubclass;  /* the machine type of the current platform */
+    uint8      outntsubclass;   /* the data's machine type */
+    uintn      convert;         /* whether to convert or not */
+    static     int32 tBuf_size = 0; /* statc conversion buffer size */
+    static     int8  *tBuf = NULL; /* static buffer used for conversion */
     intn       i;                     /* loop variable */
     intn       status = SUCCEED;      /* return value */
 
@@ -3957,21 +3962,61 @@ int32 flags;
           }
       }
 
-#ifdef CHK_DEBUG
-    fprintf(stderr,"SDsetChunk: fill_val=%d\n",*fill_val);
-#endif
+    /* figure out if fill value has to be converted */
+    platntsubclass = DFKgetPNSC(var->HDFtype, DF_MT); 
+    outntsubclass = DFKisnativeNT(var->HDFtype) 
+        ? DFKgetPNSC(var->HDFtype, DF_MT)
+        : (DFKislitendNT(var->HDFtype) 
+           ? DFNTF_PC : DFNTF_HDFDEFAULT);
 
-    /* check to see already special.
-       Error if already special since doubly special elements are
-       not yet handled. HMCcreate should catch this....*/
-    /* Create SDS as chunked element  */
-    status = HMCcreate(handle->hdf_file,       /* HDF file handle */
-                       (uint16)DATA_TAG,       /* Data tag */
-                       (uint16) var->data_ref, /* Data ref */
-                       nlevels,                /* nlevels */
-                       fill_val_len,           /* fill value length */
-                       (VOID *)fill_val,       /* fill value */
-                       (CHUNK_DEF *)chunk      /* chunk definition */);
+    convert= (uintn)(platntsubclass!=outntsubclass);
+
+    /* make sure our tmp buffer is big enough to hold fill value */
+    if(convert && tBuf_size < fill_val_len) 
+      {
+          if(tBuf == NULL) 
+              HDfree((VOIDP)tBuf);
+          tBuf_size = fill_val_len;
+          tBuf      = (int8 *) HDmalloc(tBuf_size);
+          if(tBuf == NULL) 
+            {
+                tBuf_size = 0;
+                status    = FAIL;
+                goto done;
+            } /* end if */
+      } /* end if */
+
+    if (convert)
+      { /* convert fill value */
+        DFKnumout((uint8 *) fill_val, tBuf, (uint32) fill_val_len, 0, 0);        
+
+        /* check to see already special.
+           Error if already special since doubly special elements are
+           not yet handled. HMCcreate should catch this....*/
+        /* Create SDS as chunked element  */
+        status = HMCcreate(handle->hdf_file,       /* HDF file handle */
+                           (uint16)DATA_TAG,       /* Data tag */
+                           (uint16) var->data_ref, /* Data ref */
+                           nlevels,                /* nlevels */
+                           fill_val_len,           /* fill value length */
+                           (VOID *)tBuf,           /* fill value */
+                           (CHUNK_DEF *)chunk      /* chunk definition */);
+      }
+    else /* no need to convert fill value */
+      {
+          /* check to see already special.
+             Error if already special since doubly special elements are
+             not yet handled. HMCcreate should catch this....*/
+          /* Create SDS as chunked element  */
+          status = HMCcreate(handle->hdf_file,       /* HDF file handle */
+                             (uint16)DATA_TAG,       /* Data tag */
+                             (uint16) var->data_ref, /* Data ref */
+                             nlevels,                /* nlevels */
+                             fill_val_len,           /* fill value length */
+                             (VOID *)fill_val,       /* fill value */
+                             (CHUNK_DEF *)chunk      /* chunk definition */);
+      }
+
 #ifdef CHK_DEBUG
     fprintf(stderr,"SDsetChunk: status =%d \n", status);
 #endif
@@ -4313,6 +4358,10 @@ const VOID *datap;
   done:
     if (status == FAIL)
       { /* Failure cleanup */
+          /* dont forget to free up info is special info block 
+             This space was allocated by the library */
+          if (info_block.cdims != NULL)
+              HDfree(info_block.cdims);
 
       }
     /* Normal cleanup */
