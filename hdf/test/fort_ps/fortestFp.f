@@ -209,6 +209,11 @@ C	endif
 	    call mgrf(retcode)
 	    return
 	endif
+	
+	if (param .EQ. 'grcompress')  then
+            call test_grcompress(retcode)
+            return
+        endif  
 
 C	if (param .EQ. 'p') then
 C	    call tpf(retcode)
@@ -247,6 +252,11 @@ C	endif
  
 	if (param .EQ. 'vsetf') then
 	    call tvsetf(retcode)
+	    return
+	endif
+
+	if (param .EQ. 'vsblock') then
+	    call tvsetblock(retcode)
 	    return
 	endif
 
