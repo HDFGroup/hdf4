@@ -1108,7 +1108,6 @@ Void *value ;
 {
 	NC_var *vp ;
 	u_long offset ;
-	NC_var *NC_hlookupvar() ;
 
 	if(handle->flags & NC_INDEF )
 		return(-1) ;
@@ -1446,7 +1445,6 @@ Void *values ;
 	NC_var *vp ;
 	const long *edp0, *edp ;
 	unsigned long iocount ;
-	NC_var *NC_hlookupvar() ;
 
 	if(handle->flags & NC_INDEF)
 		return(-1) ;

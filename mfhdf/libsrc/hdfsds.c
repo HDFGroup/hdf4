@@ -693,7 +693,7 @@ intn hdf_read_ndgs(handle)
                 if(len != FAIL) {
                     char *tBuf;
                     
-                    tBuf = HDgetspace(sizeof(char) * (len + 1));
+                    tBuf = (char *)HDgetspace(sizeof(char) * (len + 1));
                     if(tBuf != NULL) {
                         
                         status = DFANgetdesc(handle->path, ndgTag, ndgRef, tBuf, len);

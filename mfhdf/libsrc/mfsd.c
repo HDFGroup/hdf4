@@ -370,8 +370,8 @@ int32 * attrs;
     fprintf(stderr, "SDnumber: looked up handle as %d\n", handle);
 #endif
     
-    *datasets = ((handle->vars != NULL) ? handle->vars->count : 0);
-    *attrs    = ((handle->attrs != NULL) ? handle->attrs->count : 0);
+    *(int32 *)datasets = ((handle->vars != NULL) ? handle->vars->count : 0);
+    *(int32 *)attrs    = ((handle->attrs != NULL) ? handle->attrs->count : 0);
 
     return SUCCEED;
 
