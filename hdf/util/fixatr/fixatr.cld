@@ -1,5 +1,5 @@
 define verb fixatr
-        image           MRLXP4$DKA300:[FOLK.HDF33R3.HDF.UTIL.FIXATR]rformat
+        image           MRLXP4$DKA300:[FOLK.DEV.HDF.UTIL.FIXATR]rformat
 	parameter	p1,label=filespec,prompt="File",value(required)
 	qualifier	rfm, label=rfm, value(default=variable)
 	qualifier	rat, label=rat, value(default=impliedcc)
