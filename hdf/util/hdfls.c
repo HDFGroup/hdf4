@@ -26,9 +26,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.24  1993/04/06 17:24:39  chouck
-Added some fixes for the Vset stuff
+Revision 1.25  1993/04/08 20:44:27  koziol
+Minor Cray tweaks.
 
+ * Revision 1.24  1993/04/06  17:24:39  chouck
+ * Added some fixes for the Vset stuff
+ *
  * Revision 1.23  1993/04/05  22:38:23  koziol
  * Fixed goofups made in haste when patching code.
  *
@@ -290,7 +293,7 @@ char *argv[];
             }
 	}
 	
-	if (sort) qsort( (char *) desc, n, sizeof(dd_t), compare);
+	if (sort) qsort( desc, n, sizeof(dd_t), compare);
 	
 	lprint(desc, n);
         
