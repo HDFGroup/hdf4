@@ -725,3 +725,28 @@ c     related: vfdtr()-->vdtrc()-->Vdeletetagref()
 
       vfdtr = vdtrc  ( vg, tag, ref)
       end
+C-------------------------------------------------------------------------
+C        Name:      vsffcls 
+C        Purpose:   looks in the file, finds the vdata 
+C                   with the specified class 
+C                   and returns the ref of the vdata with class vdclass 
+C        Inputs:    id       -  file ID
+C                   vdclass  -  class of vdata to find  
+C        Returns:   returns 0 if not found, or error. Otherwise, returns
+C                   the vdata's ref number (a positive integer)
+C        Calls:     vcffcls (C stub for VSfindclass function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function vsffcls(id, vdclass)
+C
+         INTEGER id
+         CHARACTER*(*) vdclass
+         INTEGER vcfcls 
+C
+         vsffcls = vscfcls(id,vdclass, len(vdclass)) 
+
+C
+         return 
+         end
+

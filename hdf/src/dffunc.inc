@@ -486,6 +486,8 @@ C
       external vsfscat
       integer  vsfscls
       external vsfscls
+      integer  vsffcls
+      external vsffcls
       integer  vsfseek
       external vsfseek
       integer  vsfsextf

@@ -1417,3 +1417,37 @@ nvdtrc(intf * vkey, intf * tag, intf * ref)
 {
     return ((intf) Vdeletetagref(*vkey, *tag, *ref));
 }
+
+/*------------------------------------------------------------------------
+ *       Name:      vscfcls 
+ *       Purpose:   calls VSfindclass 
+ *       Inputs:    id    -  file ID
+ *                  name  -  class of vdata to find  
+ *       Returns:   returns 0 if not found, or error. Otherwise, returns
+ *                  the vdata's ref number (a positive integer)
+ *       Related functions: vffcls, VSfindclass 
+ *       Users:     HDF Fortran programmers
+ ---------------------------------------------------------------------*/
+     FRETVAL (intf)
+#ifdef PROTOTYPE
+       nvscfcls( intf *id, _fcd name, intf *namelen )
+#else
+       nvscfcls (id, name, namelen)
+               intf   *id;
+              _fcd    name;
+               intf   *namelen;
+#endif /* PROTOTYPE */
+
+{
+       intf  fi_id;
+       intf  ret;
+       char  *class_name;
+
+       fi_id = *id;
+       class_name = HDf2cstring(name, (intn) *namelen);
+       if (!class_name) return(FAIL);
+
+       ret = VSfindclass( fi_id, class_name);
+       HDfree(class_name);
+       return(ret);
+} 
