@@ -171,6 +171,7 @@ int copy_sds(int32 sd_in,
   case COMP_CODE_RLE:
    break;
   case COMP_CODE_SZIP:
+   info  = c_info_in.szip.pixels_per_block;
    break;
   case COMP_CODE_SKPHUFF:
    info  = c_info_in.skphuff.skp_size;
@@ -386,10 +387,8 @@ int copy_sds(int32 sd_in,
   switch(comp_type) 
   {
   case COMP_CODE_SZIP:
-   if (set_szip (rank,dimsizes,dtype,1,&c_info)==FAIL)
+   if (set_szip (rank,dimsizes,dtype,1,info,&c_info)==FAIL)
    {
-    printf( "Warning: SZIP compression cannot be set for <%s>. \
-     Using no compression \n", path);
     comp_type=COMP_CODE_NONE;
    }
    break;

@@ -138,7 +138,7 @@ int sds_get_compck(char *fname, char *sds_name)
    printf("quality factor:  %d \n", comp_info.jpeg.quality);
    break;
   case COMP_CODE_SZIP:
-
+   printf("pixels per block:  %d \n", comp_info.szip.pixels_per_block);
    break;
   };
  }

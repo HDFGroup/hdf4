@@ -37,7 +37,8 @@ int set_szip(int32 rank,
              int32 *dim_sizes, 
              int32 dtype,
              int   ncomps,
-             comp_info *c_info);
+             int   pixels_per_block, /*in */
+             comp_info *c_info/*out*/);
 
 
 #ifdef __cplusplus

@@ -106,9 +106,8 @@ int  options_get_info(options_t      *options,     /* global options */
      break;
      
     case COMP_CODE_SZIP:
-     if (set_szip (rank,dimsizes,dtype,ncomps,&c_info)==FAIL)
+     if (set_szip (rank,dimsizes,dtype,ncomps,obj->comp.info,&c_info)==FAIL)
      {
-      printf( "Error: Failed to get SZIP compression for <%s>\n", path);
       return -1;
      }
      chunk_def->comp.cinfo = c_info;
@@ -184,9 +183,8 @@ int  options_get_info(options_t      *options,     /* global options */
       break;
 
      case COMP_CODE_SZIP:
-      if (set_szip (rank,dimsizes,dtype,ncomps,&c_info)==FAIL)
+      if (set_szip (rank,dimsizes,dtype,ncomps,obj->comp.info,&c_info)==FAIL)
       {
-       printf( "Error: Failed to get SZIP compression for <%s>\n", path);
        return -1;
       }
       chunk_def->comp.cinfo = c_info;
@@ -260,9 +258,8 @@ int  options_get_info(options_t      *options,     /* global options */
     break;
     
    case COMP_CODE_SZIP:
-    if (set_szip (rank,dimsizes,dtype,ncomps,&c_info)==FAIL)
+    if (set_szip (rank,dimsizes,dtype,ncomps,options->comp_g.info,&c_info)==FAIL)
     {
-     printf( "Error: Failed to get SZIP compression for <%s>\n", path);
      return -1;
     }
     chunk_def->comp.cinfo = c_info;
@@ -325,9 +322,8 @@ int  options_get_info(options_t      *options,     /* global options */
     break;
     
    case COMP_CODE_SZIP:
-    if (set_szip (rank,dimsizes,dtype,ncomps,&c_info)==FAIL)
+    if (set_szip (rank,dimsizes,dtype,ncomps,options->comp_g.info,&c_info)==FAIL)
     {
-     printf( "Error: Failed to get SZIP compression for <%s>\n", path);
      return -1;
     }
     chunk_def->comp.cinfo = c_info;
@@ -382,9 +378,11 @@ int set_szip(int32 rank,
              int32 *dim_sizes, 
              int32 dtype,
              int   ncomps,
-             comp_info *c_info)
+             int   pixels_per_block, /*in */
+             comp_info *c_info/*out*/)
 {
  int   i;
+ int   ppb=pixels_per_block;
 
  /*
  pixels_per_scanline = size of the fastest-changing dimension 
@@ -409,19 +407,22 @@ int set_szip(int32 rank,
   pixels_per_block must be an even number, and <= pixels_per_scanline 
   and <= MAX_PIXELS_PER_BLOCK
   */
- if (c_info->szip.pixels_per_scanline>2 )
-  c_info->szip.pixels_per_block=2;
- else
-  c_info->szip.pixels_per_block=2;
 
- if (c_info->szip.pixels_per_block > c_info->szip.pixels_per_scanline)
+ if (ppb > c_info->szip.pixels_per_scanline)
  {
-  printf("Warning: in SZIP setting, pixels per block <%d>, \
-   cannot be greater than pixels per scanline<%d>\n",
-   c_info->szip.pixels_per_block, c_info->szip.pixels_per_scanline);
+  ppb=c_info->szip.pixels_per_scanline;
+  if (ppb%2!=0)
+   ppb--;
+  if (ppb<=1 )
+  {
+  printf("Warning: in SZIP settings, pixels per block <%d>, \
+   cannot be set with pixels per scanline<%d>\n",
+   ppb, c_info->szip.pixels_per_scanline);
   return -1;
+  }
  }
-
+ c_info->szip.pixels_per_block = ppb;
+ 
  c_info->szip.options_mask = NN_OPTION_MASK;
  c_info->szip.options_mask |= RAW_OPTION_MASK;
  c_info->szip.compression_mode = NN_MODE;

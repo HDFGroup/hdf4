@@ -169,9 +169,9 @@ obj_list_t* parse_comp(const char *str,
    else if (HDstrcmp(scomp,"SZIP")==0)
    {
     comp->type=COMP_CODE_SZIP;
-    if (m>0){ /*SZIP does not have parameter */
+    if (no_param) { /*no more parameters, SZIP must have parameter */
      if (obj_list) free(obj_list);
-     printf("Input Error: Extra compression parameter in SZIP <%s>\n",str);
+     printf("Input Error: Missing compression parameter in <%s>\n",str);
      exit(1);
     }
    }
@@ -213,6 +213,13 @@ obj_list_t* parse_comp(const char *str,
    }
    break;
   case COMP_CODE_SZIP:
+    if ( (comp->info<=1 || comp->info>MAX_PIXELS_PER_BLOCK) || 
+         (comp->info%2!=0)  ){
+    if (obj_list) free(obj_list);
+    printf("Input Error: Invalid compression parameter in <%s>. \
+     Pixels per block must be an even number < %d\n",str,MAX_PIXELS_PER_BLOCK);
+    exit(1);
+   }
    break;
   };
 
