@@ -600,6 +600,6 @@ typedef int32 HFILEID;
 #define Vend(f)             Vfinish((f))
 
 /* Misc. macros for backward compability */
-#define HDgettagname(tag)   HDgettagdesc(nt)
+#define HDgettagname(tag)   HDgettagdesc(tag)
 
 #endif /* HDF_H */
