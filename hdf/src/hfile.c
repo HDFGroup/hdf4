@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.17  1993/09/01 23:16:48  georgev
-Fixed prototypes for MAC.
+Revision 1.18  1993/09/03 14:10:13  koziol
+Saved debugging info.
 
+ * Revision 1.17  1993/09/01  23:16:48  georgev
+ * Fixed prototypes for MAC.
+ *
  * Revision 1.16  1993/08/16  21:45:58  koziol
  * Wrapped in changes for final, working version on the PC.
  *
@@ -2508,6 +2511,7 @@ PRIVATE int32 (** HIget_function_table(access_rec, FUNC))()
     /* read in the special code in the special elt */
 
     dd = &access_rec->block->ddlist[access_rec->idx];
+printf("HIgetfunction_table(): tag=%d, ref=%d, length=%d, offset=%d\n",dd->tag,dd->ref,dd->length,dd->offset);
     file_rec = FID2REC(access_rec->file_id);
     if (HI_SEEK(file_rec->file, dd->offset) == FAIL) {
        HERROR(DFE_SEEKERROR);

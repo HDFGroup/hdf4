@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1993/08/28 00:12:44  georgev
-Added VOIDP casts to HDfreespace().
+Revision 1.3  1993/09/03 14:10:27  koziol
+Saved debugging info.
 
+ * Revision 1.2  1993/08/28  00:12:44  georgev
+ * Added VOIDP casts to HDfreespace().
+ *
  * Revision 1.1  1993/08/16  21:47:55  koziol
  * Wrapped in changes for final, working version on the PC.
  *
@@ -83,16 +86,6 @@ void test_hextelt()
     int i;
     int32 ret;
     intn errors = 0;
-#ifdef QAK
-    uint8 *outbuf, *inbuf;
-
-    outbuf=HDgetspace(BUF_SIZE);
-    inbuf=HDgetspace(BUF_SIZE);
-	if(!outbuf || !inbuf) {
-		fprintf(stderr, "Out of memory!\n");
-		exit(1);
-	}
-#endif
 
     for (i=0; i<BUF_SIZE; i++)
         outbuf[i] = (char) (i % 256);

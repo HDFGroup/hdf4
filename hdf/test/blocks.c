@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1993/08/28 00:12:42  georgev
-Added VOIDP casts to HDfreespace().
+Revision 1.3  1993/09/03 14:10:25  koziol
+Saved debugging info.
 
+ * Revision 1.2  1993/08/28  00:12:42  georgev
+ * Added VOIDP casts to HDfreespace().
+ *
  * Revision 1.1  1993/08/16  21:47:51  koziol
  * Wrapped in changes for final, working version on the PC.
  *
@@ -77,16 +80,6 @@ void test_hblocks()
     register int i;
     int32 ret;
     intn errors = 0;
-#ifdef QAK
-    uint8 *outbuf, *inbuf;
-
-    outbuf=HDgetspace(BUFSIZE);
-    inbuf=HDgetspace(BUFSIZE);
-	if(!outbuf || !inbuf) {
-		fprintf(stderr, "Out of memory!\n");
-		exit(1);
-	}
-#endif
 
     for (i=0; i<BUFSIZE; i++)
         outbuf[i] = (char) (i % 256);
@@ -121,7 +114,7 @@ void test_hblocks()
 
     MESSAGE(5,printf("Create a new element as a Linked Block\n"););
     aid1 = HLcreate(fid, 1000, 4, 512, 2);
-    CHECK(ret, FAIL, "HLcreate");
+    CHECK(aid1, FAIL, "HLcreate");
 
     ret = Hwrite(aid1, BUFSIZE/2, outbuf);
     if(ret != BUFSIZE/2) {
@@ -151,6 +144,7 @@ void test_hblocks()
     MESSAGE(5,printf("Verifying data\n"););
     ret = Hgetelement(fid, (uint16) 1000, (uint16) 4, inbuf);
     if(ret != BUFSIZE/2) {
+HEprint(stderr,0);
       fprintf(stderr, "ERROR: Hgetelement returned the wrong length: %d\n", ret);
       errors++;
     }
