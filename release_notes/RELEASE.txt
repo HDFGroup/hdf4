@@ -85,7 +85,10 @@ Bugs fixed since HDF4.2r0
                                             01/23/2005 EIP
  * When rank of SDS is 0, some SD APIs give segmentation fault (bug 1045);
    fixed
-                                            01/23/2005 EIP fro BMR
+                                            01/23/2005 EIP for BMR
+ * Some GR images with special elements are read in as duplicate
+   (bug 814); fixed
+                                            02/14/2005 BMR
 
 
 Documentation
