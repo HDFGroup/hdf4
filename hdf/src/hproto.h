@@ -935,6 +935,7 @@ extern intn DFKlpo8f
 #   define ndaipann  FNAME(DAIPANN)
 #   define ndailist  FNAME(DAILIST)
 #   define ndalref   FNAME(DALREF)
+#   define ndaclear  FNAME(DACLEAR)
 #   define ndfanlastref     FNAME(DFANLASTREF)
 
 #   define ndfanaddfds      FNAME(DFANADDFDS)
@@ -954,6 +955,7 @@ extern intn DFKlpo8f
 #   define ndaipann  FNAME(daipann)
 #   define ndailist  FNAME(dailist)
 #   define ndalref   FNAME(dalref)
+#   define ndaclear  FNAME(daclear)
 #   define ndfanlastref     FNAME(dfanlastref)
 
 #   define ndfanaddfds      FNAME(dfanaddfds)
@@ -988,6 +990,9 @@ extern FRETVAL(intf) ndailist
         intf _HUGE *fnlen));
 
 extern FRETVAL(intf) ndalref
+    PROTO((void));
+
+extern FRETVAL(intf) ndaclear
     PROTO((void));
 
 extern FRETVAL(intf) ndfanlastref

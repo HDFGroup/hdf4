@@ -532,9 +532,9 @@ intn DFANclear()
  *-------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-PRIVATE int32 DFANIclear(void)
+intn DFANIclear(void)
 #else
-PRIVATE int32 DFANIclear()
+intn DFANIclear()
 #endif 
 {
 

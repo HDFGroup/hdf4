@@ -118,11 +118,11 @@ static char RcsId[] = "@(#)$Revision$";
 
 /*---------------------------------------------------------------------------
  * Name:    daclear
- * Purpose: Call DFANclear to clear Lastref and DFANdir[i]
+ * Purpose: Call DFANIclear to clear Lastref and DFANdir[i]
  * Inputs:  none
  * Returns: 0 on success, -1 on failure with DFerror set
  * Users:   HDF Fortran programmers
- * Invokes: DFSDclear
+ * Invokes: DFSDIclear
  *-------------------------------------------------------------------------*/
 
     FRETVAL(intf)
@@ -132,7 +132,7 @@ ndaclear(void)
 ndaclear()
 #endif /* PROTOTYPE */
 {
-    return(DFANclear());
+    return(DFANIclear());
 }
 
 /*-----------------------------------------------------------------------------
