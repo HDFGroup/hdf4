@@ -5,9 +5,15 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/10/01 03:27:34  chouck
-Added tests in tp.c into trig.c
+Revision 1.3  1992/10/16 21:42:21  chouck
+Fixed output messages
 
+ * Revision 1.1  1992/10/12  18:48:12  koziol
+ * Initial revision
+ *
+ * Revision 1.2  1992/10/01  03:27:34  chouck
+ * Added tests in tp.c into trig.c
+ *
  * Revision 1.1  1992/10/01  02:53:23  chouck
  * Initial revision
  *
@@ -493,7 +499,7 @@ int check_im_pal(oldx, oldy, newx, newy, oldim, newim, oldpal, newpal)
            np++;
     }
     if (error) {
-        printf("    >>> Image is correct. <<<\n");
+        printf("    >>> Image is wrong. <<<\n");
         num_errs++;
     }
 
@@ -505,7 +511,7 @@ int check_im_pal(oldx, oldy, newx, newy, oldim, newim, oldpal, newpal)
                error = TRUE;
        }
     if (error) {
-        printf("    >>> Palette is correct. <<<\n");
+        printf("    >>> Palette is wrong. <<<\n");
         num_errs++;
     }
 }
