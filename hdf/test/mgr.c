@@ -5586,5 +5586,8 @@ test_mgr(void)
 #endif
 #endif
 
+    /* Added after fixing bug #814 to test eliminating of duplicate images */
+    test_mgr_dup_images();
+
 }   /* test_mgr() */
 
