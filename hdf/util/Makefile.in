@@ -147,7 +147,7 @@ DISTFILES = Makefile.in README.TST $(UTILSRCS) $(UTILHDRS) $(FIXATRS) $(TESTFILE
 
 # Utilities
 UTILSRCS = hdf24to8.c hdfcomp.c hdfls.c hdfpack.c hdftopal.c hdftor8.c paltohdf.c \
-        r8tohdf.c ristosds.c vcompat.c vmake.c vshow.c hdf8to24.c hdf2jpeg.c jpeg2hdf.c fp2hdf.c \
+        r8tohdf.c ristosds.c vmake.c vshow.c hdf8to24.c hdf2jpeg.c jpeg2hdf.c fp2hdf.c \
 	hdfunpac.c he_main.c he_cntrl.c he_disp.c he_file.c fptest.c
 
 UTILHDRS = he.h he_proto.h
@@ -163,7 +163,7 @@ TESTFILES = testfiles/README testfiles/head.r24.Z testfiles/jpeg_img.jpg \
 	testfiles/test.cdf testfiles/test.hdf
 
 UTILS = hdf24to8 hdfcomp hdfls hdfpack hdftopal hdftor8 paltohdf \
-        r8tohdf ristosds vcompat vmake vshow hdf8to24 hdf2jpeg jpeg2hdf fp2hdf \
+        r8tohdf ristosds  vmake vshow hdf8to24 hdf2jpeg jpeg2hdf fp2hdf \
 	hdfunpac
 
 HEOBJ = he_main.o he_cntrl.o he_disp.o he_file.o
