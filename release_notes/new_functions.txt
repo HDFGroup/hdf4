@@ -1,0 +1,62 @@
+This file contains a list of the new functions added with HDF 4.1r2.
+The functions in parenthesis were already present in the HDF library,
+and are included for clarity.
+
+C                     FORTRAN                 Description
+--------------------------------------------------------------------------------
+
+(SDsetcompress)       sfscompress             compresses SDS
+
+(SDwritechunk)        sfwchnk                 writes the specified chunk of
+                                              NUMERIC data to the SDS
+
+(SDwritechunk)        sfwcchnk                writes the specified chunk of
+                                              CHARACTER data to the SDS
+
+(SDreadchunk)         sfrchnk                 reads the specified chunk of
+                                              NUMERIC data to the SDS
+
+(SDreadchunk)         sfrcchnk                reads the specified chunk of
+                                              CHARACTER data to the SDS
+ 
+(SDsetchunk)          sfschnk                 makes the SDS a chunked SDS
+ 
+(SDsetchunkcache)     sfscchnk                sets the maximum number of chunks
+                                              to cache
+ 
+(SDgetchunkinfo)      sfgichnk                gets info on SDS
+
+(SDsetblocksize)      sfsblsz                 sets block size 
+
+(SDisrecord)          sdisrcrd                checks if an SDS is unlimited.
+
+
+
+(GRsetcompress)       mgscompress             compresses raster image
+
+GRsetchunk            mgschnk                 makes an raster image a chunked
+                                              raster image
+
+GRgetchunkinfo        mggichnk                gets info on a raster image
+
+GRsetchunkcache       mgscchnk                sets the maximum number of chunks
+                                              to cache
+
+
+(Hgetlibversion)      hglibver                gets version of the HDF Library
+
+(Hgetfileversion)     hgfilver                gets version of the HDF file
+
+
+Vdeletetagref        vfdtr                    deletes tag/ref pair ( HDF object)
+                                              from a vgroup
+
+(VSfindclass)        vsffcls                  finds class with a specified 
+                                              name in a vdata
+
+VSdelete             vsfdlte                  deletes a vdata
+
+Vdelete              vdelete                  deletes a vgroup
+
+
+
