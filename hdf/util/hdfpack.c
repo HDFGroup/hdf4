@@ -34,13 +34,13 @@ static char RcsId[] = "@(#)$Revision$";
 **	Both arguments must be supplied to the program and they cannot be
 **	identical.
 **	You must have enough additional disk space for the compacted file.
-** AUTHOR
-**	Doug Ilg
 */
 
 #include <stdio.h>
 #include <string.h>
 #include "hdf.h"
+#include "herr.h"
+#include "hfile.h"
 
 typedef struct mydd_t {
     uint16 tag;
@@ -348,7 +348,7 @@ int32 infile, outfile;
 /*
 **  copy first block
 */
-    outaid = Hstartwrite(outfile, HDbase_tag(dd->tag), dd->ref, first_len);
+    outaid = Hstartwrite(outfile, BASETAG(dd->tag), dd->ref, first_len);
     if (outaid == FAIL) {
         HERROR(DFE_GENAPP);
         hdferror();
@@ -374,7 +374,7 @@ int32 infile, outfile;
     if (nblk > 0)
         nblocks = nblk;
 
-    outaid = HLcreate(outfile,HDbase_tag(dd->tag), dd->ref, block_len, nblocks);
+    outaid = HLcreate(outfile, BASETAG(dd->tag), dd->ref, block_len, nblocks);
     if (outaid == FAIL) {
 	HERROR(DFE_GENAPP);
 	hdferror();
@@ -385,15 +385,17 @@ int32 infile, outfile;
     rdret = data_size;
     while (rdret == data_size) {
 	rdret = Hread(inaid, data_size, data);
-	if (ret == FAIL) {
+	if (rdret == FAIL) {
 	    HERROR(DFE_GENAPP);
 	    hdferror();
 	}
-	ret = Hwrite(outaid, rdret, data);
-	if (ret == FAIL) {
-	    HERROR(DFE_GENAPP);
-	    hdferror();
-	}
+        if(rdret != 0) {
+	    ret = Hwrite(outaid, rdret, data);
+	    if (ret == FAIL) {
+	        HERROR(DFE_GENAPP);
+	        hdferror();
+	    }
+        }
     }
     Hendaccess(outaid);
 }
@@ -420,7 +422,7 @@ int32 infile, outfile;
 	HERROR(DFE_GENAPP);
         hdferror();
     }
-    outaid = Hstartwrite(outfile, HDbase_tag(dd->tag), dd->ref, dd->length);
+    outaid = Hstartwrite(outfile, BASETAG(dd->tag), dd->ref, dd->length);
     if (outaid == FAIL) {
 	HERROR(DFE_GENAPP);
 	hdferror();
