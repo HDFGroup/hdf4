@@ -248,7 +248,9 @@ pr_att_vals(type, len, vals)
  */
 char *fixstr(char *str)
 {
+#ifndef __GNUC__
     char *strdup(const char *);
+#endif  /* linux */
 	char *new_str, *ptr;
 
 	if (!str)
