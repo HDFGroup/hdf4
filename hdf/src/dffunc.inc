@@ -16,39 +16,46 @@ C	dffunctions.f
 C
 C	Declarations of return values for HDF SDS functions
 C
-	integer DFSDsetlengths,		dsslens
-	integer DFSDsetdims,		dssdims
-	integer DFSDsetdimstrs,		dssdist
-	integer DFSDdsetdimscale,	dssdisc
-	integer DFSDsetdatastrs,	dssdast
-	integer DFSDsetmaxmin,		dssmaxm
-	integer DFSDsetrange,		dssrang
-	integer DFSDputdata,		dspdata
 	integer DFSDadddata,		dsadata
 	integer DFSDclear,		dsclear
-	integer DFSDstartslice,		dssslc
-	integer DFSDputslice,		dspslc
+	integer DFSDsetdimscale,	dssdisc
 	integer DFSDendslice,		dseslc
-	integer DFSDgetdims,		dsgdims
+	integer DFSDgetNT,		dsgnt
 	integer DFSDgetdata,		dsgdata
-	integer DFSDgetdimstrs,		dsgdist
-	integer DFSDgetdimscale,	dsgdisc
+	integer DFSDgetdatalen,		dsgdaln
 	integer DFSDgetdatastrs,	dsgdast
+	integer DFSDgetdimlen,		dsgdiln
+	integer DFSDgetdims,		dsgdims
+	integer DFSDgetdimscale,	dsgdisc
+	integer DFSDgetdimstrs,		dsgdist
 	integer DFSDgetmaxmin,		dsgmaxm
 	integer DFSDgetrange,		dsgrang
-	integer DFSDgetdimlen,		dsgdiln
-	integer DFSDgetdatalen,		dsgdaln
+	integer DFSDgetslice,		dsgslc
+	integer DFSDlastref,		dslref
+	integer DFSDnumber,		dsnum
+	integer DFSDputdata,		dspdata
+	integer DFSDputslice,		dspslc
 	integer DFSDreadref,		dsrref
 	integer DFSDrestart,		dsfirst
-	integer DFSDgetslice,		dsgslc
 	integer DFSDsetNT,		dssnt
-	integer DFSDgetNT,		dsgnt
+	integer DFSDsetdatastrs,	dssdast
+	integer DFSDsetdims,		dssdims
+	integer DFSDsetdimstrs,		dssdist
+	integer DFSDsetlengths,		dsslens
+	integer DFSDsetmaxmin,		dssmaxm
 	integer DFSDsetorder,		dssodr
-	integer DFSDnumber,		dsnum
-	integer DFSDlastref,		dslref
+	integer DFSDsetrange,		dssrang
+	integer DFSDstartslice,		dssslc
+        integer dsgcal
         integer dsp32sd
         integer dsscal
-        integer dsgcal
+        integer dseslab
+        integer dsrslab
+        integer dssslab
+        integer dswslab
+        integer dsgfill
+        integer dssfill
+        integer dswref
 C
 C	Declarations of return values for HDF Annotation functions
 C
@@ -91,7 +98,7 @@ C
 	integer DF24readref,		d2rref
 	integer DF24restart,		d2first
 	integer DF24reqil,		d2reqil
-        integer d24lref
+        integer 			d2lref
 	integer DF24scompress,          d2scomp
 	integer DF24sjpeg,              d2sjpeg
 
@@ -173,6 +180,7 @@ C
       integer vfadtr 
       integer vfatch
       integer vfdtch
+      integer vfend
       integer vfents
       integer vffloc
       integer vfgcls
@@ -190,6 +198,7 @@ C
       integer vfntr
       integer vfscls
       integer vfsnam
+      integer vfstart
 
 C
 C	Declarations of return values for HDF high level Vdata/Vgroup
@@ -228,9 +237,10 @@ C
 C
 C	Declarations of return values for HDF low level H functions
 C
-      integer hopen
       integer hclose
       integer heprnt
+      integer hnumber
+      integer hopen
 
 C End of declarations
 
