@@ -122,6 +122,7 @@ PROGRAM		= ftest
 #HDF_LIB         = @HDF_LIB@
 #JPEG_LIB        = @JPEG_LIB@
 GARBAGE		= $(PROGRAM) test.nc copy.nc \
+		  c*.hdf \
 		  test*.hdf hdftest hdfout.new \
 		  netcdf.f90
 HEADERS		= netcdf.inc netcdf.f90
