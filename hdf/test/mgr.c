@@ -4231,7 +4231,7 @@ test_mgr_chunkwr_pixelone()
          data_type,      /* data type of the image data */
          comp_flag,      /* compression flag */
          index,
-         i, j, ii;
+         i;
    int32 start[2],
          stride[2],
          edge[2];
@@ -4413,7 +4413,7 @@ test_mgr_chunkwr_pixelone()
    if (0 != HDmemcmp(chunk_buf, chunk14 , sizeof(chunk14)))
       {
             MESSAGE(3, printf("%d: Error in reading chunk\n",__LINE__););
-            MESSAGE(3, printf("%d: Compression method\n", i););
+            MESSAGE(3, printf("%d: Compression method\n", (int)i););
             num_errs++;
       } /* end if */
    /*
@@ -4428,7 +4428,7 @@ test_mgr_chunkwr_pixelone()
    if (0!= HDmemcmp(data_out, data, sizeof(data)))
       {
             MESSAGE(3, printf("%d: Error reading data for the whole image\n",__LINE__););
-            MESSAGE(3, printf("%d: Compression method\n", i););
+            MESSAGE(3, printf("%d: Compression method\n", (int)i););
             num_errs++;
       } /* end if */
 
@@ -4477,7 +4477,7 @@ test_mgr_chunkwr_pixel(int flag)
          data_type,      /* data type of the image data */
          comp_flag,      /* compression flag */
          index,
-         i, j;
+         i;
    int32 start[2],
          stride[2],
          edge[2];
@@ -4671,7 +4671,7 @@ test_mgr_chunkwr_pixel(int flag)
    if (0 != HDmemcmp(chunk_buf, chunk14 , sizeof(chunk14)))
       {
             MESSAGE(3, printf("%d: Error in reading chunk\n",__LINE__););
-            MESSAGE(3, printf("%d: Compression method\n", i););
+            MESSAGE(3, printf("%d: Compression method\n", (int)i););
             num_errs++;
       } /* end if */
    /*
@@ -4686,7 +4686,7 @@ test_mgr_chunkwr_pixel(int flag)
    if (0!= HDmemcmp(data_out, data, sizeof(data)))
       {
             MESSAGE(3, printf("%d: Error reading data for the whole image\n",__LINE__););
-            MESSAGE(3, printf("%d: Compression method\n", i););
+            MESSAGE(3, printf("%d: Compression method\n", (int)i););
             num_errs++;
       } /* end if */
 

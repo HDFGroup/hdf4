@@ -339,7 +339,7 @@ test_buffer(void)
 {
     model_info  m_info;
     comp_info   c_info;
-    uint16      tag,ref_num;        /* reference number of the data written out */
+    uint16      ref_num;        /* reference number of the data written out */
     int32       fid;            /* file ID of HDF file for testing */
     int32       aid;            /* AID of element to test */
     intn        test_num;

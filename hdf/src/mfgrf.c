@@ -874,7 +874,7 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
 
 {
        intf    ret;
-       int32   rank, status, i;
+       int32   rank, i;
        int32   *cstart;
 
        rank = 2;
@@ -1087,7 +1087,7 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
 
 {
        intf    ret;
-       int32   rank, status, i;
+       int32   rank, i;
        int32   *cstart;
 
        rank = 2;

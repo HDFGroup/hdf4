@@ -456,13 +456,14 @@ balance(TBBT_NODE ** root, TBBT_NODE * ptr, intn side, intn added)
                         {
                             ptr->flags |= (TBBT_FLAG)TBBT_HEAVY(Other(side));  /* Other side longer */
                             if (ptr->Parent)
-                                if (ptr->Parent->Rchild == ptr)     /* we're the right child */
+                                if (ptr->Parent->Rchild == ptr) {     /* we're the right child */
                                     if (Heavy(ptr->Parent, RIGHT) && LeftCnt(ptr->Parent) == 1)
                                         deeper = 0;
                                     else
                                         /* we're the left child */ if (Heavy(ptr->Parent, LEFT))
                                         if (ptr->Parent->Rchild && !UnBal(ptr->Parent->Rchild))
                                             deeper = 0;
+                                }
                         }
                   }
                 else

@@ -91,7 +91,7 @@ DFKsb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     if (source == dest)
         in_place = 1;
 
-    if (fast_processing)
+    if (fast_processing) {
         if (!in_place)
           {
               for (i = 0; i < num_elm; i++)
@@ -116,6 +116,7 @@ DFKsb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                 }
               return 0;
           }
+    }
 
     /* Generic stride processing */
     if (!in_place)
@@ -175,7 +176,7 @@ DFKsb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     if (source == dest)
         in_place = 1;
 
-    if (fast_processing)
+    if (fast_processing) {
         if (!in_place)
           {
 #ifndef DUFF_sb4b
@@ -289,6 +290,7 @@ DFKsb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                 }
               return 0;
           }
+    }
 
     /* Generic stride processing */
     if (!in_place)
@@ -350,7 +352,7 @@ DFKsb8b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     if (source == dest)
         in_place = 1;
 
-    if (fast_processing)
+    if (fast_processing) {
         if (!in_place)
           {
               for (i = 0; i < num_elm; i++)
@@ -393,6 +395,7 @@ DFKsb8b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                 }
               return 0;
           }
+    }
 
     /* Generic stride processing */
     if (!in_place)

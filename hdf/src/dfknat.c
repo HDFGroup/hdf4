@@ -150,7 +150,7 @@ DFKnb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     if (source == dest)
         in_place = 1;
 
-    if (fast_processing)
+    if (fast_processing) {
         if (!in_place)
           {
               HDmemcpy(dest, source, num_elm * 2);
@@ -160,6 +160,7 @@ DFKnb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           {     /* Nothing to do */
               return 0;
           }
+    }
 
     /* Generic stride processing */
     if (!in_place)
@@ -217,7 +218,7 @@ DFKnb4b(VOIDP s, VOIDP d, uint32 num_elm,
     if (source == dest)
         in_place = 1;
 
-    if (fast_processing)
+    if (fast_processing) {
         if (!in_place)
           {
               HDmemcpy(dest, source, num_elm * 4);
@@ -227,6 +228,7 @@ DFKnb4b(VOIDP s, VOIDP d, uint32 num_elm,
           {     /* Nothing to do */
               return 0;
           }
+    }
 
     /* Generic stride processing */
     if (!in_place)
@@ -293,7 +295,7 @@ DFKnb8b(VOIDP s, VOIDP d, uint32 num_elm,
     if (source == dest)
         in_place = 1;
 
-    if (fast_processing)
+    if (fast_processing) {
         if (!in_place)
           {
               HDmemcpy(dest, source, num_elm * 8);
@@ -303,6 +305,7 @@ DFKnb8b(VOIDP s, VOIDP d, uint32 num_elm,
           {
               return 0;     /* No work to do ! */
           }
+    }
 
     /* Generic stride processing */
     if (!in_place)
