@@ -140,12 +140,12 @@ test_ncopen(path)
 	ncclose(cdfid0); return;
     }
     if ((cdfid1 = ncopen(path, NC_WRITE)) == -1) {
-#if !(defined(vms) | defined(macintosh))
+#if !(defined(vms) || defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__))
 	error("%s: second ncopen failed", pname);
 	nerrs++;
 #else
-#ifdef macintosh
-	fprintf(stderr,"Doesn't support shared access on Macintosh\n") ;
+#if defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__)
+	fprintf(stderr,"This version of the library Doesn't support shared access to files on Macintosh\n") ;
 #else /* !macintosh */
 	fprintf(stderr,"Doesn't support shared access on vms\n") ;
 #endif /* !macintosh */

@@ -28,6 +28,10 @@ static char RcsId[] = "@(#)$Revision$";
 #define EXTERNAL_TEST
 #define NBIT_TEST
 
+#if defined __MWERKS__
+#include <console.h>
+#endif
+
 #ifdef PROTOTYPE
 int main(int argc, char *argv[])
 #else
@@ -52,6 +56,10 @@ char *argv[];
     uint8  iuval;
     float32 data[1000], max, min, imax, imin;
     float64 cal, cale, ioff, ioffe;
+
+#if defined __MWERKS__
+    argc = ccommand(&argv);
+#endif
 
     ncopts = NC_VERBOSE;
 

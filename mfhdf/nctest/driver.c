@@ -4,7 +4,7 @@
  *   $Header$
  *********************************************************************/
 
-#include <netcdf.h>
+#include "netcdf.h"
 #include "tests.h"
 
 /* #define MDEBUG 1 */
@@ -22,12 +22,25 @@
 FILE *dbg_file;
 #endif
 
-int
-main()
+#if defined __MWERKS__
+#include <console.h>
+#endif
+
+#ifdef PROTOTYPE
+int main(int argc, char *argv[])
+#else
+int main(argc, argv)
+int argc;
+char *argv[];
+#endif
 {
     extern int ncopts;		/* netCDF error options */
 
     static char testfile[] = "test.nc";
+
+#if defined __MWERKS__
+    argc = ccommand(&argv);
+#endif
 
 #if defined TEST_PC || defined TEST_WIN
     dbg_file=fopen("test.dbg","w+");

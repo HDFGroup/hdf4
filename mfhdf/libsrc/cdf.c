@@ -6,10 +6,13 @@
 
 #include	"local_nc.h"
 #include	"alloc.h"
-#include        <hfile.h>
+#include    "hfile.h"
 
 static bool_t NC_xdr_cdf
     PROTO((XDR *xdrs,NC **handlep));
+
+extern bool_t  hdf_xdr_cdf
+   PROTO((XDR *xdrs, NC**handlep));
 
 #define WRITE_NDG 1
 
@@ -34,7 +37,7 @@ NC *handle ;
       if(handle == NULL)
               return ;
       NC_free_xcdf(handle) ;
-#ifndef macintosh /* We don't handle xdr files yet */
+#if !(defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__))  /* We don't handle xdr files yet */
       xdr_destroy(handle->xdrs) ;
 #endif /* !macintosh */
       Free(handle->xdrs) ;
@@ -208,7 +211,7 @@ int mode ;
                 if((int) Hishdf((char *) name))
                   { /* Need to free allocated structures */
                     NC_free_xcdf(cdf) ;
-#ifndef macintosh /* We don't handle xdr files yet */
+#if !(defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__))/* We don't handle xdr files yet */
                     xdr_destroy(cdf->xdrs) ;
 #endif /* !macintosh */
                     Free(cdf->xdrs) ;
@@ -235,7 +238,7 @@ int mode ;
 #endif
             break;
         case netCDF_FILE:
-#ifdef macintosh
+#if defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__)
             /* for mac we don't handle XDR files */
             return (NULL);
 #endif /* macintosh */

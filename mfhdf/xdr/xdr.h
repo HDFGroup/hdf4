@@ -9,6 +9,12 @@
 #ifndef __XDR_HEADER__
 #define __XDR_HEADER__
 
+#if defined __MWERKS__
+#ifndef HDF
+#define HDF
+#endif
+#endif
+
 /*
  * XDR provides a conventional way for converting between C data
  * types and an external bit-string representation.  Library supplied

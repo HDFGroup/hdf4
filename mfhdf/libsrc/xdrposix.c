@@ -40,28 +40,31 @@ typedef NETLONG     netlong;
 #   if defined MSDOS || defined WINNT || defined WIN32
 #       include <io.h>
 #   else
-#       ifndef macintosh
+#       if !(defined(macintosh) || defined (SYMANTEC_C))
 #            include <unistd.h>
 #       endif
 #   endif
 #   include <fcntl.h>
 #endif
-#ifdef macintosh
+
+#if defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__)
 #include <types.h>
 #else
 #include <sys/types.h>
 #endif
+
 #include <string.h>
 #include "netcdf.h" /* NC_ */
 #include "local_nc.h" /* prototypes for NCadvis, nc_error */
 		      /* also obtains <stdio.h>, <rpc/types.h>, &
 		       * <rpc/xdr.h> */
 #include "mfhdf.h"
-#ifdef macintosh
-typedef long off_t;
+
+#if defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__)
+typedef u_long off_t;
 #endif
 
-#ifndef DOS_FS  
+#if !(defined DOS_FS || defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__))
 #   if defined VMS
         typedef u_long ncpos_t;  /* size of u_long is 32 for DECC AXP */
 #   else 
@@ -151,7 +154,7 @@ biobuf *biop;
             if(lseek(biop->fd, biop->page * BIOBUFSIZ, SEEK_SET) == ((off_t)-1))
                 return -1 ;
         }
-        biop->nread = biop->cnt = read(biop->fd, biop->base, BIOBUFSIZ) ;
+        biop->nread = biop->cnt = read(biop->fd, (VOIDP)biop->base, BIOBUFSIZ) ;
     }
     biop->ptr = biop->base ;
     return biop->cnt ;
@@ -176,7 +179,7 @@ biobuf *biop;
             if(lseek(biop->fd, biop->page * BIOBUFSIZ, SEEK_SET) == ((off_t)-1))
                 return -1 ;
         }
-        biop->nwrote = write(biop->fd, biop->base, biop->cnt) ;
+        biop->nwrote = write(biop->fd, (VOIDP)biop->base, biop->cnt) ;
     }
     biop->isdirty = 0 ;
 
@@ -356,7 +359,7 @@ xdrposix_create(xdrs, fd, fmode, op)
     enum xdr_op op;
 {
 
-#ifndef macintosh
+#if !(defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__))
     biobuf *biop = new_biobuf(fd, fmode) ;
 #endif /* !macintosh */
 #ifdef XDRDEBUG
@@ -364,7 +367,7 @@ fprintf(stderr,"xdrposix_create(): xdrs=%p, fd=%d, fmode=%d, op=%d\n",xdrs,fd,fm
 fprintf(stderr,"xdrposix_create(): after new_biobuf(), biop=%p\n",biop);
 #endif
     xdrs->x_op = op;
-#ifndef macintosh 
+#if !(defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__)) 
     xdrs->x_ops = &xdrposix_ops;
     xdrs->x_private = (caddr_t) biop ;
     /* unused */
@@ -652,7 +655,7 @@ fprintf(stderr,"NCxdrfile_create(): XDR=%p, path=%s, ncmode=%d\n",xdrs,path,ncmo
     if(_fmode != O_BINARY)
         _fmode = O_BINARY ;
 #endif
-#ifdef macintosh 
+#if defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__) 
     /* fd = open(path, fmode); */
     fd = 1; /* We fake a file descriptor for error purposes */
 #else /* !macintosh  */

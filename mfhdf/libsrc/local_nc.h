@@ -10,13 +10,23 @@
  *	netcdf library 'private' data structures, objects and interfaces
  */
 
+#if defined __MWERKS__
+#ifndef HDF
+#define HDF  /* well for Mac we need to define this */
+#endif
+#define NO_SYS_XDR_INC /* use stuff in "::xdr" */
+#define NO_ACCESS
+#define NO_GETPID
+#endif /* __MWERKS__ */
+
 #include	<stddef.h> /* size_t */
 #include	<stdio.h> /* FILENAME_MAX */
 #ifndef FILENAME_MAX
 #define FILENAME_MAX  255
 #endif
 
-#ifndef       NO_SYS_XDR_INC
+/* Do we have systeme XDR files */
+#ifndef  NO_SYS_XDR_INC 
 #ifdef VMS
 #    define  STDC_INCLUDES
 #endif   /* VMS */
@@ -28,17 +38,17 @@
 #undef GCC_FIX
 #endif /* __ultrix */
 #include	<rpc/xdr.h>
-#else
-#if defined(macintosh) | defined (THINK_C)
+#else    /* NO_SYS_XDR_INC */
+#if defined(macintosh) || defined (SYMANTEC_C) || defined (__MWERKS__)
      /* For the mac reference types.h specifically
         because we don't want it to pick up the system one */
 #include      "::xdr:types.h"
-#include      "xdr.h"    /* "../xdr/xdr.h" */
+#include      "::xdr:xdr.h"    /* "../xdr/xdr.h" */
 #else /* !macintosh */
-#include      <types.h>  /* "../xdr/types.h" */
-#include      <xdr.h>    /* "../xdr/xdr.h" */
+#include      <types.h>  /* <types.h */
+#include      <xdr.h>    /* <xdr.h> */
 #endif /* !macintosh */
-#endif /* !NO_SYSTEM_XDR_INCLUDES */
+#endif /* NO_SYSTEM_XDR_INCLUDES */
 
 #include	"netcdf.h" /* needed for defs of nc_type, ncvoid, ... */
 

@@ -46,12 +46,12 @@ extern char *malloc();
 #ifndef makedev /* ie, we haven't already included it */
 #include <sys/types.h>
 #endif
-#else /* unix */
+#else /* !unix */
 typedef unsigned char   u_char;
 typedef unsigned short  u_short;
 typedef unsigned int    u_int;
 typedef unsigned long   u_long;
 typedef char *  caddr_t;
-#endif /* unix */
+#endif /* !unix */
 
 #endif /* !__TYPES_RPC_HEADER__ */

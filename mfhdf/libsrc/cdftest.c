@@ -369,7 +369,17 @@ double zed = 0.0 ;
 FILE *dbg_file;
 #endif
 
-main()
+#if defined __MWERKS__
+#include <console.h>
+#endif
+
+#ifdef PROTOTYPE
+int main(int argc, char *argv[])
+#else
+int main(argc, argv)
+int argc;
+char *argv[];
+#endif
 {
 	int ret ;
 	int	 id ;
@@ -381,6 +391,10 @@ main()
 	long iilong ;
 	struct tcdfvar *tvp = testvars ;
 	union getret got ;
+
+#if defined __MWERKS__
+    argc = ccommand(&argv);
+#endif
 
 #if defined TEST_PC || defined TEST_WIN
     dbg_file=fopen("test.dbg","w+");

@@ -49,6 +49,10 @@ static char RcsId[] = "@(#)$Revision$";
 
 */
 
+#ifdef __MWERKS__
+#define HDF
+#endif
+
 #ifdef HDF
 
 #include        "local_nc.h"

@@ -7,7 +7,7 @@
 #include	<string.h>
 #include	"local_nc.h"
 #include	"alloc.h"
-#include        <hfile.h>    /* Ugh!  We need the defs for HI_READ and HI_SEEK */
+#include    "hfile.h"    /* Ugh!  We need the defs for HI_READ and HI_SEEK */
 
 /* Local function prototypes */
 static bool_t nssdc_xdr_NCvdata

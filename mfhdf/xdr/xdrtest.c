@@ -11,7 +11,8 @@ static char rcsid[] = "$Id$" ;
  *  'xdr_vector' is not used by the netCDF, it is used here for convenience.
  */
 #include <stdio.h>
-#ifdef macintosh
+#if (defined macintosh || defined __MWERKS__ || defined SYMANTEC_C || defined MAC)
+#define NO_SYS_XDR_INC /* use local "xdr.h" */
 #	include "types.h"
 #else /* not macintosh */
 #       ifdef vms
@@ -63,6 +64,10 @@ static char rcsid[] = "$Id$" ;
 #define EPSILON .0005
 #endif /* __FreeBSD__ */
 
+#if defined __MWERKS__
+#include <console.h>
+#endif
+
 main(ac,av)
 int ac ;
 char *av[] ;
@@ -71,7 +76,6 @@ char *av[] ;
 	char *fname ;
 	FILE *F ;
 	XDR xdrs[1] ;
-
 	u_int count ;
 	u_int szof ;
 #ifdef vms
@@ -148,6 +152,10 @@ char *av[] ;
 	static encount encounts[5] = {ZERO_E, ONE_E, TWO_E, THREE_E, FOUR_E} ;
 	encount *ep , got_ep[5] ;
 
+
+#if defined __MWERKS__
+    ac = ccommand(&av);
+#endif
 	
 #ifdef MDEBUG
 	malloc_debug(2) ;
