@@ -200,11 +200,11 @@ typedef struct sd_chunk_def_struct
 
 /******************************************************************************
  NAME
-      SDsetChunk   -- create chunked SDS
+      SDsetChunk   -- make SDS a chunked SDS
 
  DESCRIPTION
-      This routine creates a chunked SDS according to the structure passed 
-      in for the chunk defintion. 
+      This routine makes the SDS a chunked SDS according to the structure 
+      passed in for the chunk defintion. 
 
       The simplist structure is the array(int32) specifiying chunk 
       lengths for each dimension where the 'flags' argument set to 
@@ -234,15 +234,15 @@ typedef struct sd_chunk_def_struct
 
       The performance of the SDxxx interface with chunking is greatly
       affected by the users access pattern over the dataset and by
-      the maximum number of chunks set in the chunk cache. See the
-      routine SDsetmaxcache() for further info on how to set the chunk
-      cache. The number chunks that can be set in the cache is process 
-      memory limited. It is a good idea to always set the maximum number
-      of chunks in the cache as the default heuristic does not take
-      into account the memory available for the application.
+      the maximum number of chunks set in the chunk cache. The cache contains 
+      the Least Recently Used(LRU cache replacment policy) chunks. See the
+      routine SDsetmaxcache() for further info on the chunk cache and how 
+      to set the maximum number of chunks in the chunk cache. A default chunk 
+      cache is always created.
 
-        e.g. 4x4 array with 2x2 chunks. The array shows the layout of
-             chunks in the chunk array.
+      The following example shows the organization of chunks for a 2D array.
+      e.g. 4x4 array with 2x2 chunks. The array shows the layout of
+           chunks in the chunk array.
 
             4 ---------------------                                           
               |         |         |                                                 
@@ -325,40 +325,27 @@ extern intn SDgetChunkInfo
         This routine checks to see if the SDS is a Chunked SDS.
 
  RETURNS
-        1->True, 0->False, -1(FAIL)->Error
+        1->Yes, 0->No, -1(FAIL)->Error
 ******************************************************************************/
 extern intn SDisChunked
     (int32 sdsid     /* IN: sds access id */);
 
 /******************************************************************************
  NAME
-        SDwriteChunk  -- write the specified chunk to the SDS
+     SDwriteChunk  -- write the specified chunk to the SDS
 
  DESCRIPTION
-        This routine writes a whole chunk of data to the chunked SDS 
-        specified by chunk 'origin' for the given SDS and can be used
-        instead of SDwritedata() when this information is known. This
-        routine has less overhead and is much faster than using SDwritedata().
+     This routine writes a whole chunk of data to the chunked SDS 
+     specified by chunk 'origin' for the given SDS and can be used
+     instead of SDwritedata() when this information is known. This
+     routine has less overhead and is much faster than using SDwritedata().
 
-        Origin specifies the co-ordinates of the chunk according to the chunk
-        position in the overall chunk array.
+     Origin specifies the co-ordinates of the chunk according to the chunk
+     position in the overall chunk array.
 
-        'datap' must point to a whole chunk of data.
+     'datap' must point to a whole chunk of data.
 
-        e.g. 4x4 array with 2x2 chunks. The array shows the layout of
-             chunks in the chunk array.
-
-            4 ---------------------
-              |         |         |
-        Y     |  (0,1)  |  (1,1)  |
-        ^     |         |         |
-        |   2 ---------------------
-        |     |         |         |
-        |     |  (0,0)  |  (1,0)  |
-        |     |         |         |
-        |     ---------------------
-        |     0         2         4
-        ---------------> X
+     See SDsetChunk() for a description of the organization of chunks in an SDS.
 
  RETURNS
         SUCCEED/FAIL
@@ -370,33 +357,20 @@ extern intn SDwriteChunk
 
 /******************************************************************************
  NAME
-        SDreadChunk   -- read the specified chunk to the SDS
+     SDreadChunk   -- read the specified chunk to the SDS
 
  DESCRIPTION
-        This routine reads a whole chunk of data from the chunked SDS
-        specified by chunk 'origin' for the given SDS and can be used
-        instead of SDreaddata() when this information is known. This
-        routine has less overhead and is much faster than using SDreaddata().
+     This routine reads a whole chunk of data from the chunked SDS
+     specified by chunk 'origin' for the given SDS and can be used
+     instead of SDreaddata() when this information is known. This
+     routine has less overhead and is much faster than using SDreaddata().
 
-        Origin specifies the co-ordinates of the chunk according to the chunk
-        position in the overall chunk array.
+     Origin specifies the co-ordinates of the chunk according to the chunk
+     position in the overall chunk array.
 
-        'datap' must point to a whole chunk of data.
+     'datap' must point to a whole chunk of data.
 
-        e.g. 4x4 array with 2x2 chunks. The array shows the layout of
-             chunks in the chunk array.
-
-            4 ---------------------
-              |         |         |
-        Y     |  (0,1)  |  (1,1)  |
-        ^     |         |         |
-        |   2 ---------------------
-        |     |         |         |
-        |     |  (0,0)  |  (1,0)  |
-        |     |         |         |
-        |     ---------------------
-        |     0         2         4
-        ---------------> X
+     See SDsetChunk() for a description of the organization of chunks in an SDS.
 
  RETURNS
         SUCCEED/FAIL
@@ -412,6 +386,10 @@ NAME
 
 DESCRIPTION
      Set the maximum number of chunks to cache.
+
+     The cache contains the Least Recently Used(LRU cache replacment policy) 
+     chunks. This routine allows the setting of maximum number of chunks that 
+     can be cached.
 
      The performance of the SDxxx interface with chunking is greatly
      affected by the users access pattern over the dataset and by
@@ -439,6 +417,8 @@ DESCRIPTION
      Use flags argument of 'HDF_PAGEALL' if the whole object is to be cached 
      in memory, otherwise pass in zero(0). Currently you can only
      pass in zero.
+
+    See SDsetChunk() for a description of the organization of chunks in an SDS.
 
 RETURNS
      Returns the 'maxcache' value for the chunk cache if successful 
