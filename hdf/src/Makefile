@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.1  1992/08/25 21:40:44  koziol
+# Revision 1.2  1992/09/17 19:49:16  koziol
+# Made changes for ANSI compilation on the Convex
+#
+# Revision 1.1  1992/08/25  21:40:44  koziol
 # Initial revision
 #
 #
@@ -69,9 +72,6 @@ CFLAGS=  -g -D${MACHINE}
 
 # ==> For the IRIS and INDIGO, uncomment the following line
 #CFLAGS=  -g -D${MACHINE} -ansi
-
-# ==> For Convex, uncomment the following line
-#CFLAGS= -g -D${MACHINE} -D__STDC__
 
 # ==> where are your hdf.h, hdfi.h and vg.h files located?
 #IFLAGS=   -I../h -I.

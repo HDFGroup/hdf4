@@ -2,12 +2,15 @@
 $Header$
 
 $Log$
-Revision 1.3  1992/09/11 14:15:04  koziol
-Changed Fortran stubs' parameter passing to use a new typedef, intf,
-which should be typed to the size of an INTEGER*4 in whatever Fortran
-compiler the C functions need to be compatible with.  (This is mostly
-for the PC and possibly for the Mac)
+Revision 1.4  1992/09/17 19:49:16  koziol
+Made changes for ANSI compilation on the Convex
 
+ * Revision 1.3  1992/09/11  14:15:04  koziol
+ * Changed Fortran stubs' parameter passing to use a new typedef, intf,
+ * which should be typed to the size of an INTEGER*4 in whatever Fortran
+ * compiler the C functions need to be compatible with.  (This is mostly
+ * for the PC and possibly for the Mac)
+ *
  * Revision 1.2  1992/09/04  22:05:02  georgev
  * Fixed "const" problem for MIPSEL.
  *
@@ -332,6 +335,11 @@ Please check your Makefile.
 
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #include <stdlib.h>
+
+#ifndef PROTOTYPE
+#define PROTOTYPE					/* to invoke ANSI prototypes */
+#endif	/* PROTOTYPE */
+
 #define DF_MT             DFMT_CONVEX
 typedef void              VOID;
 typedef char              *VOIDP;
