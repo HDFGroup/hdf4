@@ -1,0 +1,87 @@
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+/*
+$Header$
+
+$Log$
+Revision 1.1  1992/03/01 22:29:07  dilg
+Initial revision
+
+ * Revision 1.1  1992/02/29  19:55:07  likkai
+ * Initial revision
+ *
+*/
+/*
+	=================================
+	HDF VSET TEST PROGRAM
+	Jason Ng Feb-28-92 NCSA
+	=================================
+*/
+
+#include "vg.h"
+
+#define FS "tv1.hdf"
+main(ac,av) 
+int ac;
+char**av;
+{
+	int num;
+
+	if(ac!=2) num = 5;
+	else sscanf(av[1],"%d",&num);
+
+	printf("%s: tests the basic vgroup and vdata creation routines\n", av[0]);
+	printf("creates %d vgroups and %d vdatas in %s\n",num,num,FS);
+	createm(FS,num);
+	printf("success: file %s created.\n", FS);
+	printf("use the utility vshow to examine this file:\n");
+	printf("\t\tvshow %s +\n",FS);
+	printf("results should be as in %s.result\n",av[0]);
+}
+
+createm(fs,n) char*fs;
+int n;
+{
+	VGROUP * vg;
+	VDATA * vs;
+	HFILEID f;
+	char ss[30];
+	int i,ne=0;
+	float buf[100];
+
+	if( FAIL==(f=Hopen(fs,DFACC_ALL,0))) {
+		printf("open err %s\n",fs);
+		exit(0);
+	}
+	for(i=0;i<n;i++) {
+		vg = (VGROUP*) Vattach(f,-1,"w");
+		sprintf(ss,"test_vgroup#%d",i);
+		Vsetname(vg,ss);
+		Vdetach(vg);
+		printf("created VGROUP %s \n",ss);
+	}
+
+	for(i=0;i<n;i++) {
+		ne +=5;
+		vs = (VDATA*) VSattach(f,-1,"w");
+		sprintf(ss,"vdata#%d",i);
+		VSsetname(vs,ss);
+		VSfdefine(vs,"PRESS",LOCAL_FLOATTYPE,1);
+		VSsetfields(vs,"PRESS");
+		makefloatdata(buf,ne);
+		VSwrite(vs,buf,ne,FULL_INTERLACE);
+		VSdetach(vs);
+		printf("created VDATA %s with %d elements\n",ss,ne);
+	}
+	Hclose(f);
+}
+
+makefloatdata(xx,n) 
+int n; 
+float xx[];
+{
+	int i;
+	for(i=0;i<n;i++) xx[i] = n*100.0 + i*i;
+}
+
