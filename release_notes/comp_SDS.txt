@@ -1,3 +1,24 @@
+Limitations of compressed SDS datasets
+    Due to certain limitations in the way compressed datasets are stored, data
+which has been compressed is not completely writeable in ways that uncompressed
+datasets are.  The "rules" for writing to a compressed dataset are as follows:
+
+    (1) Write an entire dataset that is to be compressed.  I.e. build the
+        dataset entirely in memory, then write it out with a single call.
+ 
+    (2) Append to a compressed dataset.  I.e. write to a compressed dataset
+        that has already been written out by adding to the unlimited
+        dimension for that dataset.
+ 
+    (3) For users of HDF 4.1, write to any subset of a compressed dataset
+        that is also chunked.
+
+    Generally speaking, these mean that it is impossible to overwrite existing
+compressed data which is not stored in "chunked" form.  This is due to 
+compression algorithms not being suitable for "local" modifications in a
+compressed datastream.  Please send questions about compression to the
+general HDF support e-mail address:  hdfhelp@ncsa.uiuc.edu
+
 Compression for HDF SDS
     There are two new compression functions added to the SD interface in this
 release, SDsetcompress and SDsetnbitdataset.   Both functions are used as
