@@ -207,7 +207,7 @@ opendir(char *dirname)
  *	passing in a name.  This routine WILL CHANGE YOUR CURRENT WORKING DIRECTORY!
  *
  *	Calls:			NewHandle(), PBHGetCatInfo(), PBHSetVol(), PtoCstr(), BlockMove(),
- *					DisposHandle(), MoveHHi(), HLock(), MemError()
+ *					DisposeHandle(), MoveHHi(), HLock(), MemError()
  *	Called By:		opendir(), and you if you feel brave.
  *	Globals Used:	dd_errno
  *	Parameters:		pointer to Pascal-string pathname, vRefNum, dirID of desired
@@ -299,7 +299,7 @@ hopendir(char *dirname, short vRefNum, long dirID)
 
 	/*	This code is branched-to in case of error.  It frees up the memory and returns.	*/
   failure_exit:
-	DisposHandle((char **) curh);
+	DisposeHandle((char **) curh);
 	return nil;
 }
 
@@ -330,7 +330,7 @@ telldir(DIR *dirp)
  *
  *	This function closes the directory opened with opendir() or hopendir()
  *
- *	Calls:			DisposHandle(), RecoverHandle()
+ *	Calls:			DisposeHandle(), RecoverHandle()
  *	Called By:		<general purpose>
  *	Globals Used:	none
  *	Parameters:		pointer to the directory management block
@@ -354,7 +354,7 @@ closedir(DIR *dirp)
 		
           next	= (*cur)->next;
 		
-          DisposHandle((Handle) cur);
+          DisposeHandle((Handle) cur);
 		
           if (dd_errno == noErr)
               dd_errno	= MemError();
@@ -363,7 +363,7 @@ closedir(DIR *dirp)
       }
 
 	/*	Dispose of the directory managment block	*/
-	DisposHandle(RecoverHandle((Ptr) dirp));
+	DisposeHandle(RecoverHandle((Ptr) dirp));
 
 	if (dd_errno == noErr)
 		dd_errno	= MemError();
@@ -479,7 +479,7 @@ readdir(DIR *dirp)
 
           if ((dd_errno = PBGetCatInfo(&cpb, false)) != noErr)
 			{
-                DisposHandle((Handle) meh);
+                DisposeHandle((Handle) meh);
                 return nil;
 			}
 	
@@ -509,7 +509,7 @@ readdir(DIR *dirp)
  *
  *	This function will give an absolute pathname to a given directory.
  *
- *	Calls:			NewPtr(), DisposPtr(), PBGetCatInfo()
+ *	Calls:			NewPtr(), DisposePtr(), PBGetCatInfo()
  *	Called By:		<general purpose>
  *	Globals Used:	none
  *	Parameters:		vRefNum and startDirID of desired path, pointer to path name storage,
@@ -553,7 +553,7 @@ hgetwd(short vRefNum, long startDirID, char *path, int max_path_len, char *sep)
 		
 		if ((err = PBGetCatInfo(&pb, false)) != noErr)
           {
-              DisposPtr((Ptr) temp_path);
+              DisposePtr((Ptr) temp_path);
               return err;
           }
 
@@ -563,7 +563,7 @@ hgetwd(short vRefNum, long startDirID, char *path, int max_path_len, char *sep)
 		/*	Check that we don't overflow storage	*/
 		if ((strlen((char const *)name) + strlen(path) + strlen(sep)) >= max_path_len)
           {
-              DisposPtr((Ptr) temp_path);
+              DisposePtr((Ptr) temp_path);
               return bdNamErr; /* -37 */
           }
 
@@ -580,7 +580,7 @@ hgetwd(short vRefNum, long startDirID, char *path, int max_path_len, char *sep)
 	while (pb.dirInfo.ioDrDirID != fsRtDirID);
 
 	/*	Get rid of our temp storage and return	*/
-	DisposPtr((Ptr) temp_path);
+	DisposePtr((Ptr) temp_path);
 
 	return MemError();
 }
