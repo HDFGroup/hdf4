@@ -999,7 +999,12 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 #endif
 
 #if defined UNIX386
+#ifdef H4_ABSOFT
+#define FNAME(x) x
+#define DF_CAPFNAMES
+#else
 #define FNAME_POST_UNDERSCORE
+#endif
 #elif defined INTEL386
 #define DF_CAPFNAMES
 #endif

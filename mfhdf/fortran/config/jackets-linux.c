@@ -521,11 +521,15 @@ ltoig(longs, ints, dims, imap, ndims)
 }
 #endif	/* Alpha platform above */
 
-/* ------------ Sun FORTRAN jackets for netCDF Functions ------------ */
+/* ------------ Linux FORTRAN jackets for netCDF Functions ------------ */
 
 /* used to set the C global variable ncopts from Fortran */
 void
+#ifdef H4_ABSOFT
+NCPOPT(val)
+#else
 ncpopt_(val)
+#endif
     int		*val;	
 {
     ncopts = *val;
@@ -534,7 +538,11 @@ ncpopt_(val)
 
 /* used to get the C global variable ncopts from Fortran */
 void
+#ifdef H4_ABSOFT
+NCGOPT(val)
+#else
 ncgopt_(val)
+#endif
     int		*val;	
 {
     *val = ncopts;
@@ -545,7 +553,11 @@ ncgopt_(val)
  * file is placed in define mode.
  */
 int
+#ifdef H4_ABSOFT
+NCCRE(pathname, clobmode, rcode, pathnamelen)
+#else
 nccre_(pathname, clobmode, rcode, pathnamelen)
+#endif
     char	*pathname;	
     int		pathnamelen;
     int		*clobmode;	
@@ -566,7 +578,11 @@ nccre_(pathname, clobmode, rcode, pathnamelen)
 
 /* opens an existing netCDF file for access */
 int
+#ifdef H4_ABSOFT
+NCOPN(pathname, rwmode, rcode, pathnamelen)
+#else
 ncopn_(pathname, rwmode, rcode, pathnamelen)
+#endif
     char	*pathname;	
     int		pathnamelen;
     int		*rwmode;	
@@ -587,7 +603,11 @@ ncopn_(pathname, rwmode, rcode, pathnamelen)
 
 /* adds a new dimension to an open netCDF file in define mode */
 int
+#ifdef H4_ABSOFT
+NCDDEF(cdfid, dimname, dimlen, rcode, dimnamelen)
+#else
 ncddef_(cdfid, dimname, dimlen, rcode, dimnamelen)
+#endif
     int		*cdfid;	
     char	*dimname;	
     int		dimnamelen;
@@ -612,7 +632,11 @@ ncddef_(cdfid, dimname, dimlen, rcode, dimnamelen)
  * dimension
  */
 int
+#ifdef H4_ABSOFT
+NCDID(cdfid, dimname, rcode, dimnamelen)
+#else
 ncdid_(cdfid, dimname, rcode, dimnamelen)
+#endif
     int		*cdfid;	
     char	*dimname;	
     int		dimnamelen;
@@ -633,7 +657,11 @@ ncdid_(cdfid, dimname, rcode, dimnamelen)
 
 /* adds a new variable to an open netCDF file in define mode */
 int
+#ifdef H4_ABSOFT
+NCVDEF(cdfid, varname, datatype, ndims, dimarray, rcode, varnamelen)
+#else
 ncvdef_(cdfid, varname, datatype, ndims, dimarray, rcode, varnamelen)
+#endif
     int		*cdfid;	
     char	*varname;	
     int		varnamelen;
@@ -661,7 +689,11 @@ ncvdef_(cdfid, varname, datatype, ndims, dimarray, rcode, varnamelen)
 
 /* returns the ID of a netCDF variable given its name */
 int
+#ifdef H4_ABSOFT
+NCVID(cdfid, varname, rcode, varnamelen)
+#else
 ncvid_(cdfid, varname, rcode, varnamelen)
+#endif
     int		*cdfid;	
     char	*varname;	
     int		varnamelen;
@@ -682,7 +714,11 @@ ncvid_(cdfid, varname, rcode, varnamelen)
 
 /* returns number of bytes per netCDF data type */
 int
+#ifdef H4_ABSOFT
+NCTLEN(datatype, rcode)
+#else
 nctlen_(datatype, rcode)
+#endif
     int		*datatype;	
     int		*rcode;	
 {
@@ -698,7 +734,11 @@ nctlen_(datatype, rcode)
 
 /* closes an open netCDF file */
 void
+#ifdef H4_ABSOFT
+NCCLOS(cdfid, rcode)
+#else
 ncclos_(cdfid, rcode)
+#endif
     int		*cdfid;	
     int		*rcode;	
 {
@@ -709,7 +749,11 @@ ncclos_(cdfid, rcode)
 
 /* puts an open netCDF into define mode */
 void
+#ifdef H4_ABSOFT
+NCREDF(cdfid, rcode)
+#else
 ncredf_(cdfid, rcode)
+#endif
     int		*cdfid;	
     int		*rcode;	
 {
@@ -720,7 +764,11 @@ ncredf_(cdfid, rcode)
 
 /* takes an open netCDF out of define mode */
 void
+#ifdef H4_ABSOFT
+NCENDF(cdfid, rcode)
+#else
 ncendf_(cdfid, rcode)
+#endif
     int		*cdfid;	
     int		*rcode;	
 {
@@ -731,7 +779,11 @@ ncendf_(cdfid, rcode)
 
 /* returns information about an open netCDF file given its netCDF ID */
 void
+#ifdef H4_ABSOFT
+NCINQ(cdfid, ndims, nvars, natts, recdim, rcode)
+#else
 ncinq_(cdfid, ndims, nvars, natts, recdim, rcode)
+#endif
     int		*cdfid;	
     int		*ndims;	
     int		*nvars;	
@@ -753,7 +805,11 @@ ncinq_(cdfid, ndims, nvars, natts, recdim, rcode)
  * is current
  */
 void
+#ifdef H4_ABSOFT
+NCSNC(cdfid, rcode)
+#else
 ncsnc_(cdfid, rcode)
+#endif
     int		*cdfid;	
     int		*rcode;	
 {
@@ -768,7 +824,11 @@ ncsnc_(cdfid, rcode)
  * or attributes
  */
 void
+#ifdef H4_ABSOFT
+NCABOR(cdfid, rcode)
+#else
 ncabor_(cdfid, rcode)
+#endif
     int		*cdfid;	
     int		*rcode;	
 {
@@ -779,7 +839,11 @@ ncabor_(cdfid, rcode)
 
 /* returns the name and size of a dimension, given its ID */
 void
+#ifdef H4_ABSOFT
+NCDINQ(cdfid, dimid, dimname, size, rcode, dimnamelen)
+#else
 ncdinq_(cdfid, dimid, dimname, size, rcode, dimnamelen)
+#endif
     int		*cdfid;	
     int		*dimid;	
     char	*dimname;	
@@ -807,7 +871,11 @@ ncdinq_(cdfid, dimid, dimname, size, rcode, dimnamelen)
 
 /* renames an existing dimension in a netCDF open for writing */
 void
+#ifdef H4_ABSOFT
+NCDREN(cdfid, dimid, dimname, rcode, dimnamelen)
+#else
 ncdren_(cdfid, dimid, dimname, rcode, dimnamelen)
+#endif
     int		*cdfid;	
     int		*dimid;	
     char	*dimname;	
@@ -824,7 +892,11 @@ ncdren_(cdfid, dimid, dimname, rcode, dimnamelen)
 
 /* returns information about a netCDF variable, given its ID */
 void
+#ifdef H4_ABSOFT
+NCVINQ(cdfid, varid, varname, datatype, ndims, dimarray, natts, rcode, varnamelen)
+#else
 ncvinq_(cdfid, varid, varname, datatype, ndims, dimarray, natts, rcode, varnamelen)
+#endif
     int		*cdfid;	
     int		*varid;	
     char	*varname;	
@@ -857,7 +929,11 @@ ncvinq_(cdfid, varid, varname, datatype, ndims, dimarray, natts, rcode, varnamel
 
 /* puts a single numeric data value into a variable of an open netCDF */
 void
+#ifdef H4_ABSOFT
+NCVPT1(cdfid, varid, indices, value, rcode)
+#else
 ncvpt1_(cdfid, varid, indices, value, rcode)
+#endif
     int		*cdfid;	
     int		*varid;	
     int		*indices;	
@@ -925,7 +1001,11 @@ ncvpt1_(cdfid, varid, indices, value, rcode)
 
 /* puts a single character into an open netCDF file */
 void
+#ifdef H4_ABSOFT
+NCVP1C(cdfid, varid, indices, chval, rcode, chvallen)
+#else
 ncvp1c_(cdfid, varid, indices, chval, rcode, chvallen)
+#endif
     int		*cdfid;	
     int		*varid;	
     int		*indices;	
@@ -956,7 +1036,11 @@ ncvp1c_(cdfid, varid, indices, chval, rcode, chvallen)
  * netCDF file
  */
 void
+#ifdef H4_ABSOFT
+NCVPT(cdfid, varid, start, count, value, rcode)
+#else
 ncvpt_(cdfid, varid, start, count, value, rcode)
+#endif
     int		*cdfid;	
     int		*varid;	
     int		*start;	
@@ -1051,7 +1135,11 @@ ncvpt_(cdfid, varid, start, count, value, rcode)
 
 /* writes a hypercube of character values into an open netCDF file */
 void
+#ifdef H4_ABSOFT
+NCVPTC(cdfid, varid, start, count, string, lenstr, rcode, stringlen)
+#else
 ncvptc_(cdfid, varid, start, count, string, lenstr, rcode, stringlen)
+#endif
     int		*cdfid;	
     int		*varid;	
     int		*start;	
@@ -1091,7 +1179,11 @@ ncvptc_(cdfid, varid, start, count, string, lenstr, rcode, stringlen)
  * an open netCDF file
  */
 void
+#ifdef H4_ABSOFT
+NCVPTG(cdfid, varid, start, count, stride, basis, value, rcode)
+#else
 ncvptg_(cdfid, varid, start, count, stride, basis, value, rcode)
+#endif
     int		*cdfid;	
     int		*varid;	
     int		*start;	
@@ -1223,7 +1315,11 @@ ncvptg_(cdfid, varid, start, count, stride, basis, value, rcode)
  * an open netCDF file
  */
 void
+#ifdef H4_ABSOFT
+NCVPGC(cdfid, varid, start, count, stride, basis, string, rcode, stringlen)
+#else
 ncvpgc_(cdfid, varid, start, count, stride, basis, string, rcode, stringlen)
+#endif
     int		*cdfid;	
     int		*varid;	
     int		*start;	
@@ -1266,7 +1362,11 @@ ncvpgc_(cdfid, varid, start, count, stride, basis, string, rcode, stringlen)
 
 /* gets a single numeric value from a variable of an open netCDF file */
 void
+#ifdef H4_ABSOFT
+NCVGT1(cdfid, varid, indices, value, rcode)
+#else
 ncvgt1_(cdfid, varid, indices, value, rcode)
+#endif
     int		*cdfid;	
     int		*varid;	
     int		*indices;	
@@ -1354,7 +1454,11 @@ ncvgt1_(cdfid, varid, indices, value, rcode)
  * netCDF file
  */
 void
+#ifdef H4_ABSOFT
+NCVG1C(cdfid, varid, indices, chval, rcode, chvallen)
+#else
 ncvg1c_(cdfid, varid, indices, chval, rcode, chvallen)
+#endif
     int		*cdfid;	
     int		*varid;	
     int		*indices;	
@@ -1386,7 +1490,11 @@ ncvg1c_(cdfid, varid, indices, chval, rcode, chvallen)
  * netCDF file
  */
 void
+#ifdef H4_ABSOFT
+NCVGT(cdfid, varid, start, count, value, rcode)
+#else
 ncvgt_(cdfid, varid, start, count, value, rcode)
+#endif
     int		*cdfid;	
     int		*varid;	
     int		*start;	
@@ -1518,7 +1626,11 @@ ncvgt_(cdfid, varid, start, count, value, rcode)
 
 /* reads a hypercube of character values from a netCDF variable */
 void
+#ifdef H4_ABSOFT
+NCVGTC(cdfid, varid, start, count, string, lenstr, rcode, stringlen)
+#else
 ncvgtc_(cdfid, varid, start, count, string, lenstr, rcode, stringlen)
+#endif
     int		*cdfid;	
     int		*varid;	
     int		*start;	
@@ -1564,7 +1676,11 @@ ncvgtc_(cdfid, varid, start, count, string, lenstr, rcode, stringlen)
  * open netCDF file
  */
 void
+#ifdef H4_ABSOFT
+NCVGTG(cdfid, varid, start, count, stride, basis, value, rcode)
+#else
 ncvgtg_(cdfid, varid, start, count, stride, basis, value, rcode)
+#endif
     int		*cdfid;	
     int		*varid;	
     int		*start;	
@@ -1720,7 +1836,11 @@ ncvgtg_(cdfid, varid, start, count, stride, basis, value, rcode)
  * of an open netCDF file
  */
 void
+#ifdef H4_ABSOFT
+NCVGGC(cdfid, varid, start, count, stride, basis, string, rcode, stringlen)
+#else
 ncvggc_(cdfid, varid, start, count, stride, basis, string, rcode, stringlen)
+#endif
     int		*cdfid;	
     int		*varid;	
     int		*start;	
@@ -1763,7 +1883,11 @@ ncvggc_(cdfid, varid, start, count, stride, basis, string, rcode, stringlen)
 
 /* changes the name of a netCDF variable in an open netCDF file */
 void
+#ifdef H4_ABSOFT
+NCVREN(cdfid, varid, varname, rcode, varnamelen)
+#else
 ncvren_(cdfid, varid, varname, rcode, varnamelen)
+#endif
     int		*cdfid;	
     int		*varid;	
     char	*varname;	
@@ -1784,7 +1908,11 @@ ncvren_(cdfid, varid, varname, rcode, varnamelen)
  * netCDF file
  */
 void
+#ifdef H4_ABSOFT
+NCAPT(cdfid, varid, attname, datatype, attlen, value, rcode, attnamelen)
+#else
 ncapt_(cdfid, varid, attname, datatype, attlen, value, rcode, attnamelen)
+#endif
     int		*cdfid;	
     int		*varid;	
     char	*attname;	
@@ -1878,7 +2006,11 @@ ncapt_(cdfid, varid, attname, datatype, attlen, value, rcode, attnamelen)
  * of an open netCDF file
  */
 void
+#ifdef H4_ABSOFT
+NCAPTC(cdfid, varid, attname, datatype, lenstr, string, rcode, attnamelen, stringlen)
+#else
 ncaptc_(cdfid, varid, attname, datatype, lenstr, string, rcode, attnamelen, stringlen)
+#endif
     int		*cdfid;	
     int		*varid;	
     char	*attname;	
@@ -1912,7 +2044,11 @@ ncaptc_(cdfid, varid, attname, datatype, lenstr, string, rcode, attnamelen, stri
  * ID and name
  */
 void
+#ifdef H4_ABSOFT
+NCAINQ(cdfid, varid, attname, datatype, attlen, rcode, attnamelen)
+#else
 ncainq_(cdfid, varid, attname, datatype, attlen, rcode, attnamelen)
+#endif
     int		*cdfid;	
     int		*varid;	
     char	*attname;	
@@ -1935,7 +2071,11 @@ ncainq_(cdfid, varid, attname, datatype, attlen, rcode, attnamelen)
  * and name
  */
 void
+#ifdef H4_ABSOFT
+NCAGT(cdfid, varid, attname, value, rcode, attnamelen)
+#else
 ncagt_(cdfid, varid, attname, value, rcode, attnamelen)
+#endif
     int		*cdfid;	
     int		*varid;	
     char	*attname;	
@@ -2057,7 +2197,11 @@ ncagt_(cdfid, varid, attname, value, rcode, attnamelen)
  * ID and name
  */
 void
+#ifdef H4_ABSOFT
+NCAGTC(cdfid, varid, attname, string, lenstr, rcode, attnamelen, stringlen)
+#else
 ncagtc_(cdfid, varid, attname, string, lenstr, rcode, attnamelen, stringlen)
+#endif
     int		*cdfid;	
     int		*varid;	
     char	*attname;	
@@ -2094,7 +2238,11 @@ ncagtc_(cdfid, varid, attname, string, lenstr, rcode, attnamelen, stringlen)
 
 /* copies an attribute from one open netCDF file to another */
 void
+#ifdef H4_ABSOFT
+NCACPY(incdfid, invarid, attname, outcdfid, outvarid, rcode, attnamelen)
+#else
 ncacpy_(incdfid, invarid, attname, outcdfid, outvarid, rcode, attnamelen)
+#endif
     int		*incdfid;	
     int		*invarid;	
     char	*attname;	
@@ -2118,7 +2266,11 @@ ncacpy_(incdfid, invarid, attname, outcdfid, outvarid, rcode, attnamelen)
  * as an attribute of that variable
  */
 void
+#ifdef H4_ABSOFT
+NCANAM(cdfid, varid, attnum, attname, rcode, attnamelen)
+#else
 ncanam_(cdfid, varid, attnum, attname, rcode, attnamelen)
+#endif
     int		*cdfid;	
     int		*varid;	
     int		*attnum;	
@@ -2144,7 +2296,11 @@ ncanam_(cdfid, varid, attnum, attname, rcode, attnamelen)
 
 /* renames an attribute in an open netCDF file */
 void
+#ifdef H4_ABSOFT
+NCAREN(cdfid, varid, attname, newname, rcode, attnamelen, newnamelen)
+#else
 ncaren_(cdfid, varid, attname, newname, rcode, attnamelen, newnamelen)
+#endif
     int		*cdfid;	
     int		*varid;	
     char	*attname;	
@@ -2168,7 +2324,11 @@ ncaren_(cdfid, varid, attname, newname, rcode, attnamelen, newnamelen)
  * name
  */
 void
+#ifdef H4_ABSOFT
+NCADEL(cdfid, varid, attname, rcode, attnamelen)
+#else
 ncadel_(cdfid, varid, attname, rcode, attnamelen)
+#endif
     int		*cdfid;	
     int		*varid;	
     char	*attname;	
@@ -2189,7 +2349,11 @@ ncadel_(cdfid, varid, attname, rcode, attnamelen)
  * sets the fill mode of a netCDF file open for writing
  */
 int
+#ifdef H4_ABSOFT
+NCSFIL(cdfid, fillmode, rcode)
+#else
 ncsfil_(cdfid, fillmode, rcode)
+#endif
     int		*cdfid;	
     int		*fillmode;	
     int		*rcode;	

@@ -51,9 +51,10 @@ New Features and Changes:
 
 Support for new platforms and compilers
 =======================================
-     * On MacOSX Fortran is supported for IBM xlf v 8.1 compiler (default) and
-       for Absoft f95 version 8.2. See installation  instructions for more 
-       information.
+     * Fortran IBM xlf v 8.1 and Absoft f95 version 8.2 compilers are supported 
+       on Mac OSX.
+                                                                       12/07/2004 EIP
+     * Absoft Fortran compiler f95 version 8.2 is supported on Linux 2.4 
                                                                        12/07/2004 EIP
 
 

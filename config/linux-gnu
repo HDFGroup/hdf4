@@ -28,12 +28,31 @@ fi
 if test "X-$F77" = "X-"; then
   F77=g77
   F77_BASENAME=g77
+
+else
+    case $F77 in
+        # The PGI and Intel compilers are automatically detected below
+        f95*|pgf90*)
+            ;;
+
+        *)
+            # Figure out which compiler we are using: pgf90 or Absoft f95
+            RM='rm -f'
+            tmpfile=/tmp/cmpver.$$
+            $F77 -V >$tmpfile
+            if test -s "$tmpfile"; then 
+                if( grep -s 'Absoft' $tmpfile > /dev/null) then
+                    F77_BASENAME=f95
+                fi 
+                if( grep -s 'pgf90' $tmpfile > /dev/null) then
+                    F77_BASENAME=pgf90
+                fi 
+            fi
+            $RM $tmpfile
+            ;;
+    esac
 fi
 
-if test "X-$CXX" = "X-"; then
-  CXX="/some/default/compiler/named/foo -ansi"
-  CXX_BASENAME=foo
-fi
 
 # C, Fortran, and C++ Compiler and Preprocessor Flags
 # ---------------------------------------------------
@@ -126,27 +145,12 @@ case $F77_BASENAME in
     PROFILE_FFLAGS="-pg"
     ;;
 
-  *)
-    FFLAGS="$FFLAGS"
+  f95)
+    CFLAGS="$CFLAGS -DH4_ABSOFT"
+    FFLAGS="$FFLAGS -YEXT_NAMES=UCS"
     DEBUG_FFLAGS="-g"
     PROD_FFLAGS="-O"
     PROFILE_FFLAGS="-pg"
-    ;;
-esac
-
-case $CXX_BASENAME in 
-  g++)
-    CXXFLAGS="$CXXFLAGS"
-    DEBUG_CXXFLAGS="-g -fverbose-asm"
-    PROD_CXXFLAGS="-O3 -fomit-frame-pointer"
-    PROFILE_CXXFLAGS="-pg"
-    ;;
-
-  *)
-    CXXFLAGS="$CXXFLAGS -ansi"
-    DEBUG_CXXFLAGS="-g"
-    PROD_CXXFLAGS="-O"
-    PROFILE_CXXFLAGS="-pg"
     ;;
 esac
 
