@@ -282,10 +282,10 @@ libmfhdf:
 install:	
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(HDFDIR)" subd
-	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=install \
-          SUBDIRS="$(NETCDFDIR)" subd
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install \
           SUBDIRS="$(MANDIR)" subd
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=install \
+          SUBDIRS="$(NETCDFDIR)" subd
 
 install-libs:	
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
@@ -353,10 +353,10 @@ mfhdfclean:
 clean:		
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(HDFDIR)" subd
-	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
-          SUBDIRS="$(NETCDFDIR)" subdn
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(MANDIR)" subd
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(NETCDFDIR)" subdn
 
 hdfdistclean:		
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="distclean" \
@@ -369,10 +369,10 @@ mfhdfdistclean:
 distclean:	
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(HDFDIR)" subd
-	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
-          SUBDIRS="$(NETCDFDIR)" subdn
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(MANDIR)" subd
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(NETCDFDIR)" subdn
 	-$(RM) $(RMFLAGS) config.status Makefile
 
 help:
