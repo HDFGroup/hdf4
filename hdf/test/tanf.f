@@ -2,8 +2,10 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.3  1992/05/04 14:51:22  sxu
-C Make (data(i,j)-min)*multiplier integer to please char()
+C Revision 1.4  1992/05/04 16:56:44  dilg
+C Added a call to INT() within call to CHAR() to make Cray compiler happy.
+C Changed calls to non-standard function JMOD() to calls to standard function
+C MOD().
 C
 c Revision 1.2  1992/04/27  17:20:31  sxu
 c Changed output file name.
@@ -97,7 +99,7 @@ C         write out scientific data set
           call RESULT(ret, 'dsadata')
 
 C         write out annotations for 2 out of every 3 
-          if (jmod(j,3) .ne. 0) then 
+          if (mod(j,3) .ne. 0) then 
               refnum = dslref()
               ret = daplab(TESTFILE, DFTAG_SDG, refnum, labsds)
               call RESULT(ret, 'daplab')
@@ -129,7 +131,7 @@ C********  Read labels and descriptions *********
           refnum = dslref()
 
 C         read in annotations for 2 out of every 3 
-          if (jmod(j,3) .ne. 0) then
+          if (mod(j,3) .ne. 0) then
               call check_lab_desc(TESTFILE, DFTAG_SDG, refnum, 
      *                                  labsds, descsds, number_failed)
           endif
@@ -201,7 +203,7 @@ C     store one value per row, increasing by one for each row
       multiplier = 255.0 /(max-min)
       do 210 i=1, height
           do 200 j=1, width
-             image(i,j) = char(int((data(i,j)-min) * multiplier))
+             image(i,j) = char( int((data(i,j)-min) * multiplier) )
   200     continue
   210 continue
       return 
