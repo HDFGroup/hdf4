@@ -24,14 +24,14 @@ policy:
 1. Starting from HDF4.0b2 both versions of the dimension will be
    created by default. The old tools recognize the "DimVal0.0" 
    dimension.
-2. A new function SDsetdimval_comp is added which can be called
-   for a specific dimension to suppress the creation of the 
-   "DimVal0.0" vdata for that dimension. Users who store big 1D 
-   arrays should use this function to create "DimVal0.1" only.
-   See the man page for sdsetdimval_comp.3. 
-3. A new function SDisdimval_bwcomp is added which can be called
-   to get the current compatibility mode of a dimension. 
-   See the man page for sdisdimval_bwcomp.3. 
+2. A new function SDsetdimval_comp (sfsdmvc) is added which can 
+   be called for a specific dimension to suppress the creation 
+   of the "DimVal0.0" vdata for that dimension. Users who store 
+   big 1D arrays should use this function to create "DimVal0.1" 
+   only.  See the man page for sdsetdimval_comp.3. 
+3. A new function SDisdimval_bwcomp (sfisdmvc) is added which 
+   can be called to get the current compatibility mode of a 
+   dimension. See the man page for sdisdimval_bwcomp.3. 
 4. HDF4.0b2 and later version of HDF libraries can recognize both
    old and new versions of dimensions. This means old HDF files can 
    always be read by new HDF libraries.
