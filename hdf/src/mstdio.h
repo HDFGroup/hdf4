@@ -71,3 +71,4 @@ funclist_t mstdio_funcs={    /* functions to perform run-length encoding */
 #endif
 
 #endif /* __MSTDIO_H */
+

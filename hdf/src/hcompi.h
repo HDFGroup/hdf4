@@ -36,11 +36,13 @@ typedef struct comp_model_info_tag {
 /* only allow encoding and master compression routines access */
 
 #include "crle.h"           /* run-length encoding header */
+#include "cnbit.h"          /* N-bit encoding header */
 
 typedef struct comp_coder_info_tag {
     comp_coder_t coder_type;    /* coding scheme this stream is using */
     union {     /* union of all the different types of coding information */
-        comp_coder_rle_info_t rle_info;      /* RLE coding info */
+        comp_coder_rle_info_t rle_info;     /* RLE coding info */
+        comp_coder_nbit_info_t nbit_info;   /* N-bit coding info */
     } coder_info;
     funclist_t coder_funcs;     /* functions to perform encoding */
  } comp_coder_info_t;
@@ -74,3 +76,4 @@ typedef struct compinfo_tag {
 } compinfo_t;
 
 #endif /* __HCOMPI_H */
+
