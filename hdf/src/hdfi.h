@@ -919,8 +919,10 @@ typedef char              int8;
 typedef unsigned char     uint8;
 typedef short int         int16;
 typedef unsigned short int uint16;
+#ifndef __rpc_types_h
 typedef int               int32;
 typedef unsigned int      uint32;
+#endif /* __rpc_types_h */
 typedef int               intn;
 typedef unsigned int      uintn;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
