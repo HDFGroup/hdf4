@@ -23,14 +23,16 @@ void list_gr (char* infname,char* outfname,int32 infile_id,int32 outfile_id,tabl
 void list_sds(char* infname,char* outfname,int32 infile_id,table_t *table,options_t *options);
 void list_vs (char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
 void list_glb(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
-void list_an (char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
+void list_an (char* infname,char* outfname,int32 infile_id,int32 outfile_id,options_t *options);
 
 void vgroup_insert(char* infname, char* outfname, 
                    int32 infile_id, int32 outfile_id,
                    int32 vgroup_id_out, char*path_name, 
                    int32* tags, int32* refs, int npairs, 
                    table_t *table, options_t *options);
-int copy_vgroup_attrs(int32 vg_in, int32 vg_out, char *path);
+int copy_vgroup_attrs(int32 vg_in, int32 vg_out, char *path,options_t *options);
+int copy_an_data(int32 infile_id,int32 outfile_id,int32 id_in,int32 id_out, 
+                 ann_type type,char *path,options_t *options,int is_label);
 
 
 
@@ -109,86 +111,13 @@ int list(char* infname, char* outfname, options_t *options)
  list_sds(infname,outfname,infile_id,table,options);
  list_vs (infname,outfname,infile_id,outfile_id,table,options);
 	list_glb(infname,outfname,infile_id,outfile_id,table,options);
-	list_an (infname,outfname,infile_id,outfile_id,table,options);
+	list_an (infname,outfname,infile_id,outfile_id,options);
 
  /* close the HDF files */
  if ((status_n = Hclose (infile_id)) == FAIL )
   printf( "Failed to close file <%s>\n", infname);
  if ((status_n = Hclose (outfile_id)) == FAIL )
   printf( "Failed to close file <%s>\n", outfname);
-
-#if !defined (ONE_TABLE)
-
- /* 
- check for objects to compress/uncompress:
- 1) the input object names are present in the file
- 2) they are valid objects (SDS or GR)
- check only if selected objects are given
- */
- if ( options->trip==0 && options->compress==SELECTED ) 
- {
-  if (options->verbose)
-   printf("Searching for objects to modify...\n");
-  if (options->cp_tbl) {
-   for ( i = 0; i < options->cp_tbl->nelems; i++) 
-   {
-    for ( j = 0; j < options->cp_tbl->objs[i].n_objs; j++) 
-    {
-     char* obj_name=options->cp_tbl->objs[i].obj_list[j].obj;
-     if (options->verbose)
-      printf("\t%s",obj_name);
-
-     /* the input object names are present in the file and are valid */
-     err=table_check(table,obj_name);
-     if (err!=NULL)
-     {
-      printf("Error: %s %s in file %s. Exiting...\n",obj_name,err,infname);
-      table_free(table);
-      return FAIL;
-     }
-     if (options->verbose)
-      printf("...Found\n");
-    }
-   }
-  }
- }
-
-
- /* 
- check for objects to chunk:
- 1) the input object names are present in the file
- 2) they are valid objects (SDS or GR)
- check only if selected objects are given
- */
- if ( options->trip==0 && options->chunk==SELECTED ) 
- {
-  if (options->verbose)
-   printf("Searching for objects to modify...\n");
-  if (options->ck_tbl) {
-   for ( i = 0; i < options->ck_tbl->nelems; i++) 
-   {
-    for ( j = 0; j < options->ck_tbl->objs[i].n_objs; j++) 
-    {
-     char* obj_name=options->ck_tbl->objs[i].obj_list[j].obj;
-     if (options->verbose)
-      printf("\t%s",obj_name);
-
-     /* the input object names are present in the file and are valid */
-     err=table_check(table,obj_name);
-     if (err!=NULL)
-     {
-      printf("\nError: %s %s in file %s. Exiting...\n",obj_name,err,infname);
-      table_free(table);
-      exit(1);
-     }
-     if (options->verbose)
-      printf("...Found\n");
-    }
-   }
-  }
- }
-
-#else
 
 
 
@@ -221,11 +150,6 @@ int list(char* infname, char* outfname, options_t *options)
     printf("...Found\n");
   }
  }
-
-
-
-
-#endif
 
  /* free table */
  table_free(table);
@@ -316,10 +240,20 @@ void list_vg(char* infname,char* outfname,int32 infile_id,int32 outfile_id,
     * to -1 for creating and the access mode is "w" for writing 
     */
     vgroup_id_out = Vattach (outfile_id, -1, "w");
-    status_32     = Vsetname (vgroup_id_out, vgroup_name);
-    status_32     = Vsetclass (vgroup_id_out, vgroup_class);
+    if (Vsetname (vgroup_id_out, vgroup_name)==FAIL)
+    {
+     printf("Error: Could not create group <%s>\n", vgroup_name);
+    }
+    if (Vsetclass (vgroup_id_out, vgroup_class)==FAIL)
+    {
+     printf("Error: Could not create group <%s>\n", vgroup_name);
+    }
 
-    copy_vgroup_attrs(vgroup_id, vgroup_id_out,vgroup_name);
+    copy_vgroup_attrs(vgroup_id,vgroup_id_out,vgroup_name,options);
+    copy_an_data(infile_id,outfile_id,vgroup_id,vgroup_id_out, 
+                 AN_DATA_LABEL,vgroup_name,options,TRUE);
+    copy_an_data(infile_id,outfile_id,vgroup_id,vgroup_id_out, 
+                 AN_DATA_DESC,vgroup_name,options,FALSE);
 
     if (options->verbose)
     printf(PFORMAT,"","",vgroup_name);    
@@ -339,8 +273,14 @@ void list_vg(char* infname,char* outfname,int32 infile_id,int32 outfile_id,
      free (refs);
     }
     
-    status_32 = Vdetach (vgroup_id);
-    status_32 = Vdetach (vgroup_id_out);
+    if(Vdetach (vgroup_id)==FAIL)
+    {
+     printf("Error: Could not detach group <%s>\n", vgroup_name);
+    }
+    if (Vdetach (vgroup_id_out)==FAIL)
+    {
+     printf("Error: Could not detach group <%s>\n", vgroup_name);
+    }
 
   } /* for */
   
@@ -352,9 +292,15 @@ void list_vg(char* infname,char* outfname,int32 infile_id,int32 outfile_id,
  
 
  /* terminate access to the V interface */
- status_n = Vend (infile_id);
- status_n = Vend (outfile_id);
-
+ if (Vend (infile_id)==FAIL)
+ {
+  printf("Error: Could not end group interface in <%s>\n", vgroup_name);
+ }
+ if (Vend (outfile_id)==FAIL)
+ {
+  printf("Error: Could not end group interface in <%s>\n", vgroup_name);
+ }
+ 
 
 }
 
@@ -446,10 +392,20 @@ void vgroup_insert(char* infname,char* outfname,int32 infile_id,int32 outfile_id
    * to -1 for creating and the access mode is "w" for writing 
    */
    vgroup_id_out = Vattach (outfile_id, -1, "w");
-   status_32     = Vsetname (vgroup_id_out, vgroup_name);
-   status_32     = Vsetclass (vgroup_id_out, vgroup_class);
+   if (Vsetname (vgroup_id_out, vgroup_name)==FAIL)
+   {
+    printf("Error: Could not create group <%s>\n", vgroup_name);
+   }
+   if (Vsetclass (vgroup_id_out, vgroup_class)==FAIL)
+   {
+    printf("Error: Could not create group <%s>\n", vgroup_name);
+   }
 
-   copy_vgroup_attrs(vgroup_id, vgroup_id_out,path);
+   copy_vgroup_attrs(vgroup_id, vgroup_id_out,path,options);
+   copy_an_data(infile_id,outfile_id,vgroup_id,vgroup_id_out, 
+                 AN_DATA_LABEL,path,options,TRUE);
+   copy_an_data(infile_id,outfile_id,vgroup_id,vgroup_id_out, 
+                 AN_DATA_DESC,path,options,FALSE);
    
    /* insert the created vgroup into its parent */
    vg_index = Vinsert (vgroup_id_out_par, vgroup_id_out);
@@ -467,9 +423,14 @@ void vgroup_insert(char* infname,char* outfname,int32 infile_id,int32 outfile_id
     free (tags);
     free (refs);
    }
-   status_32 = Vdetach (vgroup_id);
-   status_32 = Vdetach (vgroup_id_out);
-   
+   if(Vdetach (vgroup_id)==FAIL)
+   {
+    printf("Error: Could not detach group <%s>\n", vgroup_name);
+   }
+   if (Vdetach (vgroup_id_out)==FAIL)
+   {
+    printf("Error: Could not detach group <%s>\n", vgroup_name);
+   }
    if (path)
     free(path);
 
@@ -804,14 +765,18 @@ int is_reserved(char*vgroup_class)
  *-------------------------------------------------------------------------
  */
 
-
-int copy_vgroup_attrs(int32 vg_in, int32 vg_out, char *path) 
+int copy_vgroup_attrs(int32 vg_in, int32 vg_out, char *path,options_t *options) 
 {
  int    n_attrs;
  int32  data_type, size,  n_values;
  char   attr_name[MAX_NC_NAME];
  int    i;
  char   *buf=NULL;
+
+ if ( options->trip==0 ) 
+ {
+  return 1;
+ }
 
  /* Get the number of attributes attached to this vgroup.  */
  if((n_attrs = Vnattrs (vg_in))==FAIL) {
@@ -841,6 +806,9 @@ int copy_vgroup_attrs(int32 vg_in, int32 vg_out, char *path)
  }
  return 1;
 }
+
+
+
 
 
 /*-------------------------------------------------------------------------
@@ -911,14 +879,14 @@ void list_glb(char* infname,char* outfname,int32 infile_id,int32 outfile_id,tabl
 /*-------------------------------------------------------------------------
  * Function: list_an
  *
- * Purpose: list/copy AN objects
+ * Purpose: list/copy AN FILE objects
  *
  * Return: void
  *
  *-------------------------------------------------------------------------
  */
 
-void list_an(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options)
+void list_an(char* infname,char* outfname,int32 infile_id,int32 outfile_id,options_t *options)
 {
  intn  status_n;      /* returned status for functions returning an intn  */
  int32 status_32,     /* returned status for functions returning an int32 */
@@ -1032,6 +1000,127 @@ void list_an(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table
  
 }
 
+
+/*-------------------------------------------------------------------------
+ * Function: copy_an_data
+ *
+ * Purpose: copy DATA ANs
+ *
+ * Return: ok, 1, -1 not ok 
+ *
+ *-------------------------------------------------------------------------
+ */
+
+int copy_an_data(int32 infile_id,int32 outfile_id,int32 id_in,int32 id_out, 
+                 ann_type type,char *path,options_t *options, int is_label) 
+{
+ int32 an_id,         /* AN interface identifier */
+       an_out,        /* AN interface identifier */
+       ann_id,        /* an annotation identifier */
+       ann_out,       /* an annotation identifier */
+       i,             /* position of an annotation */
+       ann_length,    /* length of the text in an annotation */
+       n_anno,
+       ref_in,
+       tag_in,
+       ref_out,
+       tag_out;
+ char *buf;           /* buffer to hold the read annotation */
+
+ if ( options->trip==0 ) 
+ {
+  return 1;
+ }
+ 
+ /* Initialize the AN interface  */
+ an_id  = ANstart (infile_id);
+ an_out = ANstart (outfile_id);
+
+ if ((ref_in = VQueryref(id_in))==FAIL){
+  printf( "Failed to get ref for <%s>\n", path);
+  return-1;
+ }
+ if ((tag_in = VQuerytag(id_in))==FAIL){
+  printf( "Failed to get tag for <%s>\n", path);
+  return-1;
+ }
+ if ((ref_out = VQueryref(id_out))==FAIL){
+  printf( "Failed to get ref for <%s>\n", path);
+  return-1;
+ }
+ if ((tag_out = VQuerytag(id_out))==FAIL){
+  printf( "Failed to get tag for <%s>\n", path);
+  return-1;
+ }
+
+ /* Get the number of ANs in this object  */
+ if((n_anno = ANnumann(an_id,type,(uint16)tag_in,(uint16)ref_in))==FAIL) {
+  printf( "Failed to get annotations for <%s>\n", path);
+  return-1;
+ }
+ 
+ for (i = 0; i < n_anno; i++) 
+ {
+ /*-------------------------------------------------------------------------
+  * read
+  *-------------------------------------------------------------------------
+  */ 
+  if((ann_id = ANselect(an_id,i,type))==FAIL) {
+   printf( "Failed to select AN %d of <%s>\n", i, path);
+   continue;
+  }
+  if((ann_length = ANannlen(ann_id))==FAIL) {
+   printf( "Failed to get AN %d lenght of <%s>\n", i, path);
+   continue;
+  }
+  
+ /*
+  * Read the data label.  Note that the size of the buffer,
+  * i.e., the third parameter, is 1 character more than the length of
+  * the data label; that is for the null character.  It is not the case
+  * when a description is retrieved because the description does not 
+  * necessarily end with a null character.
+  * 
+  */
+  if (is_label)
+   ann_length++;
+
+  if ((buf = (char *)malloc((ann_length)*sizeof(int8)))==NULL ) {
+   printf( "Failed to get memory for AN %d of <%s>\n", i, path);
+   continue;
+  }
+  if(ANreadann(ann_id,buf,ann_length)==FAIL){
+   printf( "Failed to read AN %d of <%s>\n", i, path);
+   if (buf) free(buf);
+   continue;
+  }
+  if(ANendaccess(ann_id)==FAIL){
+   printf( "Failed to end AN %d of <%s>\n", i, path);
+   if (buf) free(buf);
+   continue;
+  }
+ /*-------------------------------------------------------------------------
+  * write
+  *-------------------------------------------------------------------------
+  */  
+ /* Create the data label for the vgroup identified by its tag and ref number */
+  if((ann_out = ANcreate(an_out,(uint16)tag_out,(uint16)ref_out,type))==FAIL) {
+   printf( "Failed to create AN %d of <%s>\n", i, path);
+   continue;
+  }
+  /* Write the annotation  */
+  if (ANwriteann (ann_out,buf,ann_length)==FAIL){
+   printf( "Failed to write AN %d of <%s>\n", i, path);
+		}
+  if(ANendaccess(ann_out)==FAIL){
+   printf( "Failed to end AN %d of <%s>\n", i, path);
+   if (buf) free(buf);
+   continue;
+  }
+  if (buf) free(buf);
+ }
+ return 1;
+}
 
 
 

@@ -24,30 +24,12 @@ void hzip_init (options_t *options, int verbose)
  memset(options,0,sizeof(options_t));
  options->threshold = 1024;
  options->verbose   = verbose;
- 
-#if defined (ONE_TABLE)
  options_table_init(&(options->op_tbl));
-
-#else
-
- comp_list_init(&(options->cp_tbl));
- chunk_list_init(&(options->ck_tbl));
-
-#endif
 }
 
 void hzip_end  (options_t *options)
 {
- 
-#if defined (ONE_TABLE)
  options_table_free(options->op_tbl);
-
-#else
-
- comp_list_free(options->cp_tbl);
- chunk_list_free(options->ck_tbl);
-
-#endif
 }
 
 
@@ -117,24 +99,6 @@ void hzip_addcomp(char* str, options_t *options)
  /* parse the -t option */
  obj_list=parse_comp(str,&n_objs,&comp);
 
-
-#if !defined (ONE_TABLE)
- 
- /* 
- add it to compress options table 
- return compress behaviour; 0 for no(default), 1 for selectd, 2 for all 
- */
- ret=comp_list_add(obj_list,n_objs,comp,options->cp_tbl);
- if (ret>options->compress)
-  options->compress=ret;
- 
- /* if we are compressing all set the global compression type */
- if (options->compress==ALL)
-  options->comp=comp;
-
-
-#else
-
   /* searh for the "*" all objects character */
  for (i = 0; i < n_objs; i++) 
  {
@@ -157,10 +121,6 @@ void hzip_addcomp(char* str, options_t *options)
  if (options->all_comp==0)
   options_add_comp(obj_list,n_objs,comp,options->op_tbl);
 
-#endif
-
-
- 
 }
 
 
@@ -197,26 +157,7 @@ void hzip_addchunk(char* str, options_t *options)
  /* parse the -c option */
  obj_list=parse_chunk(str,&n_objs,chunk_lengths,&chunk_rank);
 
-#if !defined (ONE_TABLE)
- 
- /* 
- add it to chunk options table 
- return chunk behaviour; 0 for no(default), 1 for selectd, 2 for all 
- */
- ret=chunk_list_add(obj_list,n_objs,chunk_lengths,chunk_rank,options->ck_tbl);
- if (ret>options->chunk)
-  options->chunk=ret;
- 
- /* if we are chunking all set the global chunking type */
- if (options->chunk==ALL)
- {
-  options->chunk_rank=chunk_rank;
-  options->chunk_flags=HDF_CHUNK;   /* set at least for chunk; it can further be comp */
-  for (j = 0; j < chunk_rank; j++) 
-   options->chunk_def.chunk_lengths[j] = chunk_lengths[j];
- }
 
-#else
 
   /* searh for the "*" all objects character */
  for (i = 0; i < n_objs; i++) 
@@ -241,8 +182,6 @@ void hzip_addchunk(char* str, options_t *options)
 
  if (options->all_chunk==0)
   options_add_chunk(obj_list,n_objs,chunk_lengths,chunk_rank,options->op_tbl);
-
-#endif
 
  free(obj_list);
   

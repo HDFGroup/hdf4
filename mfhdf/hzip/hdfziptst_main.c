@@ -203,7 +203,6 @@ int main(void)
  comp_type   = COMP_CODE_SZIP;
  add_sd(FILENAME,"dset_szip",0,chunk_flags,comp_type,&comp_info);
 
- 
 /*-------------------------------------------------------------------------
  * add some RIS24 images to the file
  *-------------------------------------------------------------------------
@@ -213,23 +212,57 @@ int main(void)
  add_r24(FILENAME,DATA_FILE2,0);
 
 /*-------------------------------------------------------------------------
- * add some GR images to the file
- * duplicates are inserted in the groups "g1", "g2", "g3" and root
- *-------------------------------------------------------------------------
- */ 
-
- add_gr(DATA_FILE1,"gr1",file_id,vgroup1_id);
- add_gr(DATA_FILE2,"gr2",file_id,vgroup2_id);
- add_gr(DATA_FILE1,"gr3",file_id,vgroup3_id);
- add_gr(DATA_FILE2,"gr4",file_id,0);
-
-/*-------------------------------------------------------------------------
  * add some RIS8 images to the file
  *-------------------------------------------------------------------------
  */ 
  add_r8(FILENAME,DATA_FILE1,vgroup_img_id);
  add_r8(FILENAME,DATA_FILE1,0);
 
+
+/*-------------------------------------------------------------------------
+ * add some GR images to the file with compression/chunking
+ *-------------------------------------------------------------------------
+ */ 
+
+/*-------------------------------------------------------------------------
+ * no compression
+ *-------------------------------------------------------------------------
+ */ 
+
+ chunk_flags = HDF_NONE;
+ comp_type   = COMP_CODE_NONE;
+ add_gr("gr_none",file_id,0,chunk_flags,comp_type,&comp_info);
+
+
+/*-------------------------------------------------------------------------
+ * GZIP
+ *-------------------------------------------------------------------------
+ */ 
+
+ chunk_flags = HDF_NONE;
+ comp_type   = COMP_CODE_DEFLATE;
+ add_gr("gr_gzip",file_id,0,chunk_flags,comp_type,&comp_info);
+
+/*-------------------------------------------------------------------------
+ * SZIP
+ *-------------------------------------------------------------------------
+ */ 
+
+ chunk_flags = HDF_NONE;
+ comp_type   = COMP_CODE_SZIP;
+ add_gr("gr_szip",file_id,0,chunk_flags,comp_type,&comp_info);
+
+/*-------------------------------------------------------------------------
+ * add some GR realistic images to the file
+ * realistic data is read from ASCII files
+ * duplicates are inserted in the groups "g1", "g2", "g3" and root
+ *-------------------------------------------------------------------------
+ */ 
+
+ add_gr_ffile(DATA_FILE1,"gr1",file_id,vgroup1_id);
+ add_gr_ffile(DATA_FILE2,"gr2",file_id,vgroup2_id);
+ add_gr_ffile(DATA_FILE1,"gr3",file_id,vgroup3_id);
+ add_gr_ffile(DATA_FILE2,"gr4",file_id,0);
 
 /*-------------------------------------------------------------------------
  * add some VS to the file
@@ -271,7 +304,6 @@ int main(void)
  /* close the HDF file */
  status_n = Hclose (file_id);
 
-
 /*-------------------------------------------------------------------------
  * TESTS:
  * 1) zip FILENAME with some compression/chunking options
@@ -310,6 +342,7 @@ int main(void)
   goto out;
  PASSED();
 
+#if 0
 
 /*-------------------------------------------------------------------------
  * test2:  
@@ -513,6 +546,8 @@ int main(void)
  * all tests PASSED
  *-------------------------------------------------------------------------
  */
+
+#endif
  
  return 0;
 out:

@@ -19,13 +19,6 @@
 #include "parse.h"
 
 
-
-#if !defined (ONE_TABLE)
-comp_info_t* get_comp(options_t *options, char* path);
-int          get_chunk(options_t *options, char* path, int32 *chunk_lengths);
-#endif
-
-
 int  copy_vdata_attribute(int32 in, int32 out, int32 findex, intn attrindex);
 int  options_get_info(options_t      *options,     /* global options */
                       int32          *chunk_flags, /* chunk flags OUT */
@@ -100,11 +93,6 @@ int copy_sds(int32 sd_in,
  intn             empty_sds;
  int              have_info;
 
-#if !defined (ONE_TABLE)
- int              chunk_rank;     /* rank got from chunk table  */
- int32            chunk_lengths[MAX_VAR_DIMS]; /* chunk lengths along each dimension */
-#endif
- 
  sds_index = SDreftoindex(sd_in,ref);
  sds_id    = SDselect(sd_in,sds_index);
  
@@ -263,6 +251,28 @@ int copy_sds(int32 sd_in,
   nelms   *= dimsizes[j];
   edges[j] = dimsizes[j];
   start[j] = 0;
+ }
+
+/*-------------------------------------------------------------------------
+ * check for maximum number of chunks treshold
+ *-------------------------------------------------------------------------
+ */
+ if ( options->trip>0 ) 
+ {
+  int count=1, nchunks;
+  int maxchunk=USHRT_MAX;
+  if ( (chunk_flags == HDF_CHUNK) || (chunk_flags == (HDF_CHUNK | HDF_COMP)) )
+  {
+   for (j = 0; j < rank; j++) {
+    count   *= chunk_def.chunk_lengths[j];
+   }
+   nchunks=nelms/count;
+   if (nchunks>maxchunk){
+    printf("Warning: number of chunks is %d (greater than %d). Not chunking <%s>\n",
+    nchunks,maxchunk,path);
+    chunk_flags=HDF_NONE;
+   }
+  }
  }
 
 
@@ -781,11 +791,6 @@ int  copy_gr(int32 gr_in,
  uint8         pal_data[256*3];
 
 
-#if !defined (ONE_TABLE)
- int           chunk_rank;     /* rank got from chunk table  */
- int32         chunk_lengths[MAX_VAR_DIMS]; /* chunk lengths along each dimension */
-#endif
-
  ri_index = GRreftoindex(gr_in,(uint16)ref);
  ri_id    = GRselect(gr_in,ri_index);
    
@@ -801,7 +806,7 @@ int  copy_gr(int32 gr_in,
  printf ("\t%s %d\n", path, ref); 
 #endif
 
- /*-------------------------------------------------------------------------
+/*-------------------------------------------------------------------------
  * get the original compression/chunk info from the object 
  *-------------------------------------------------------------------------
  */
@@ -1077,7 +1082,13 @@ int  copy_gr(int32 gr_in,
   /* setup compression factors */
   switch(comp_type) 
   {
-  case COMP_CODE_SZIP:         
+   case COMP_CODE_SZIP:
+   if (set_szip (rank,dimsizes,dtype,&c_info)==FAIL)
+   {
+    printf( "Error: Failed to set SZIP compression for <%s>\n", path);
+    ret=-1;
+    goto out;
+   }
    break;
   case COMP_CODE_RLE:         
    break;
@@ -1989,85 +2000,37 @@ int set_szip(int32 rank, int32 *dim_sizes, int32 dtype, comp_info *c_info)
 
 
 
-#if !defined (ONE_TABLE)
 
-
-/*-------------------------------------------------------------------------
- * Function: get_comp
- *
- * Purpose: get the compression info from table 
- *
- * Return: comp_info_t
- *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 16, 2003
- *
- *-------------------------------------------------------------------------
- */
-
-comp_info_t* get_comp(options_t *options, char* path)
+int cache(
+HDF_CHUNK_DEF    chunk_def,
+int32 eltsz,
+int32 rank,
+int32 *dimsize)
 {
- int i, j;
+int32 targetbytes;
+int32 chunkrow;
+int32 chunkcnt;
+int32 chunksizes[32];
+int i;
+int32 cntr;
 
- if (options->cp_tbl) {
-  for ( i = 0; i < options->cp_tbl->nelems; i++)
-  {
-   for ( j = 0; j < options->cp_tbl->objs[i].n_objs; j++) 
-   {
-    char* obj_name=options->cp_tbl->objs[i].obj_list[j].obj;
-    if (strcmp(obj_name,path)==0)
-    {
-     return (&options->cp_tbl->objs[i].comp);
-    }
-   }
-  }
- }
-
- return NULL;
+	for (i = 0; i < rank; i++) {
+		chunkcnt = 1;
+		targetbytes = dimsize[i] * eltsz;
+		chunkrow = eltsz * chunk_def.chunk_lengths[i];
+		cntr = chunkrow;
+		while( cntr < targetbytes) {
+			cntr += chunkrow;
+			chunkcnt++;
+		}
+		chunksizes[i] = chunkcnt;
+	}
+	chunkcnt = 1;
+	for (i = 0; i < rank; i++) {
+		chunkcnt *= chunksizes[i];
+	}
+	printf("total chunks is %d\n",chunkcnt);
+ return 0;
 }
-
-
-/*-------------------------------------------------------------------------
- * Function: get_chunk
- *
- * Purpose: get the chunk info from table 
- *
- * Return: 
- *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 21, 2003
- *
- *-------------------------------------------------------------------------
- */
-
-int get_chunk(options_t *options, char* path, int32 *chunk_lengths)
-{
- int i, j, k;
-
- if (options->ck_tbl) {
-  for ( i = 0; i < options->ck_tbl->nelems; i++)
-  {
-   for ( j = 0; j < options->ck_tbl->objs[i].n_objs; j++) 
-   {
-    char* obj_name=options->ck_tbl->objs[i].obj_list[j].obj;
-    if (strcmp(obj_name,path)==0)
-    {
-     for ( k = 0; k < options->ck_tbl->objs[i].rank; k++) 
-      chunk_lengths[k]=options->ck_tbl->objs[i].chunk_lengths[k];
-     return (options->ck_tbl->objs[i].rank);
-    }
-   }
-  }
- }
-
- return -1;
-}
-
-
-#endif
-
-
 
 

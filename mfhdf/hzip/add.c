@@ -29,7 +29,7 @@ unsigned char *image_data = 0;
 
 
 /*-------------------------------------------------------------------------
- * Function: add_gr
+ * Function: add_gr_ffile
  *
  * Purpose: utility function to read an image data file and save the image with the
  *  GR - Multifile General Raster Image Interface,
@@ -44,11 +44,9 @@ unsigned char *image_data = 0;
  *-------------------------------------------------------------------------
  */
 
-void add_gr(char* name_file,char* gr_name,int32 file_id,int32 vgroup_id)
+void add_gr_ffile(char* name_file,char* gr_name,int32 file_id,int32 vgroup_id)
 {
- intn   status_n;       /* returned status_n for functions returning an intn  */
- int32  status_32,      /* returned status_n for functions returning an int32 */
-        gr_id,          /* GR interface identifier */
+ int32  gr_id,          /* GR interface identifier */
         ri_id,          /* raster image identifier */
         gr_ref,         /* reference number of the GR image */
         start[2],       /* start position to write for each dimension */
@@ -75,24 +73,38 @@ void add_gr(char* name_file,char* gr_name,int32 file_id,int32 vgroup_id)
   interlace_mode = MFGR_INTERLACE_PIXEL;
   dim_gr[0] = X_LENGTH;
   dim_gr[1] = Y_LENGTH;
-
+  
+  
   /* initialize the GR interface */
-  gr_id = GRstart (file_id);
+  if ((gr_id = GRstart (file_id))== FAIL)
+  {
+   printf("Error: Could not start GR interface\n");
+  }
   
   /* create the raster image array */
-  ri_id = GRcreate (gr_id, gr_name, N_COMPS, data_type, interlace_mode, dim_gr);
+  if ((ri_id = GRcreate (gr_id, gr_name, N_COMPS, data_type, interlace_mode, dim_gr))== FAIL)
+  {
+   printf("Error: Could not create GR <%s>\n", gr_name);
+  }
   
   /* define the size of the data to be written */
   start[0] = start[1] = 0;
   edges[0] = X_LENGTH;
   edges[1] = Y_LENGTH;
   
+  
   /* write the data in the buffer into the image array */
-  status_n = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)image_data);
+  if (GRwriteimage(ri_id, start, NULL, edges, (VOIDP)image_data)==FAIL)
+  {
+   printf("Error: Could not write GR <%s>\n", gr_name);
+  }
 
   /* assign an attribute to the SDS */
   n_values = 2;
-  status_n = GRsetattr(ri_id, "Myattr", DFNT_UINT8, n_values, (VOIDP)attr_values);
+  if(GRsetattr(ri_id, "Myattr", DFNT_UINT8, n_values, (VOIDP)attr_values)==FAIL)
+  {
+   printf("Error: Could not write attributes for GR <%s>\n", gr_name);
+  }
   
   /* obtain the reference number of the GR using its identifier */
   gr_ref = GRidtoref (ri_id);
@@ -104,21 +116,221 @@ void add_gr(char* name_file,char* gr_name,int32 file_id,int32 vgroup_id)
   
   /* add the GR to the vgroup. the tag DFTAG_RIG is used */
   if (vgroup_id)
-   status_32 = Vaddtagref (vgroup_id, TAG_GRP_IMAGE, gr_ref);
+   if (Vaddtagref (vgroup_id, TAG_GRP_IMAGE, gr_ref)==FAIL)
+   {
+    printf("Error: Could not add GR <%s> to group\n", gr_name);
+   }
+   
+   /* terminate access to the raster image */
+   if (GRendaccess (ri_id)==FAIL)
+   {
+    printf("Error: Could not close GR <%s>\n", gr_name);
+   }
+   
+   /* terminate access to the GR interface */
+   if (GRend (gr_id)==FAIL)
+   {
+    printf("Error: Could not close GR interface\n");
+   }
 
-  /* terminate access to the raster image */
-  status_n = GRendaccess (ri_id);
-
-  /* terminate access to the GR interface */
-  status_n = GRend (gr_id);
-
- }
+ }  /* read data */
 
  if ( image_data )
  {
   free( image_data );
   image_data=NULL;
  }
+}
+
+
+/*-------------------------------------------------------------------------
+ * Function: add_gr
+ *
+ * Purpose: utility function to write images with the
+ *  GR - Multifile General Raster Image Interface,
+ *  optionally inserting the image into the group VGROUP_ID
+ *
+ * Return: void
+ *
+ * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ *
+ * Date: August 18, 2003
+ *
+ *-------------------------------------------------------------------------
+ */
+
+/* dimensions of image */
+#define X_DIM_GR     6
+#define Y_DIM_GR     4
+
+void add_gr(char* gr_name,           /* gr name */
+            int32 file_id,            /* file ID */
+            int32 vgroup_id,         /* group ID */
+            int32 chunk_flags,       /* chunk flags */
+            int32 comp_type,         /* compression flag */
+            comp_info *comp_info     /* compression structure */ )
+{
+ int32  gr_id,          /* GR interface identifier */
+        ri_id,          /* raster image identifier */
+        gr_ref,         /* reference number of the GR image */
+        start[2],       /* start position to write for each dimension */
+        edges[2],       /* number of elements to be written along each dimension */
+        dim_gr[2],      /* dimension sizes of the image array */
+        interlace_mode, /* interlace mode of the image */
+        data_type,      /* data type of the image data */
+        data[Y_DIM_GR][X_DIM_GR];
+ int    i, j, n=0, ncomps=1;
+ HDF_CHUNK_DEF chunk_def;           /* Chunking definitions */ 
+ int32         pixels_per_scanline;
+ 
+ /* set the data type, interlace mode, and dimensions of the image */
+ data_type = DFNT_UINT32;
+ interlace_mode = MFGR_INTERLACE_PIXEL;
+ dim_gr[0] = Y_DIM_GR;
+ dim_gr[1] = X_DIM_GR;
+
+ /* data set data initialization */
+ for (j = 0; j < Y_DIM_GR; j++) {
+  for (i = 0; i < X_DIM_GR; i++)
+   data[j][i] = n++;
+ }
+
+ /*define some compression specific parameters */
+ switch(comp_type)
+ {
+ case COMP_CODE_RLE:
+  break;
+
+ case COMP_CODE_SKPHUFF:
+  comp_info->skphuff.skp_size = 1;
+  break;
+
+ case COMP_CODE_DEFLATE:
+  comp_info->deflate.level = 6;
+  break;
+  
+ case COMP_CODE_SZIP:
+  pixels_per_scanline = dim_gr[1];
+  comp_info->szip.pixels = dim_gr[0]*dim_gr[1];
+  comp_info->szip.pixels_per_block = 2;
+  if(pixels_per_scanline >=2048)
+   comp_info->szip.pixels_per_scanline = 512;
+  else
+   comp_info->szip.pixels_per_scanline = dim_gr[1];
+  comp_info->szip.options_mask = NN_OPTION_MASK;
+  comp_info->szip.options_mask |= RAW_OPTION_MASK;
+  comp_info->szip.bits_per_pixel = 32;
+  break;
+ }
+ 
+ /* initialize the GR interface */
+ if ((gr_id = GRstart (file_id))== FAIL)
+ {
+  printf("Error: Could not start GR interface\n");
+ }
+ 
+ /* create the raster image array */
+ if ((ri_id = GRcreate (gr_id, gr_name, ncomps, data_type, interlace_mode, dim_gr))== FAIL)
+ {
+  printf("Error: Could not create GR <%s>\n", gr_name);
+ }
+
+ /* set chunk */
+ if ( (chunk_flags == HDF_CHUNK) || (chunk_flags == (HDF_CHUNK | HDF_COMP)) )
+ {
+  /* Define chunk's dimensions */
+  chunk_def.chunk_lengths[0] = Y_DIM_GR/2;
+  chunk_def.chunk_lengths[1] = X_DIM_GR/2;
+  /* To use chunking with RLE, Skipping Huffman, and GZIP compression */
+  chunk_def.comp.chunk_lengths[0] = Y_DIM_GR/2;
+  chunk_def.comp.chunk_lengths[1] = X_DIM_GR/2;
+
+  /*define some compression specific parameters */
+  switch(comp_type)
+  {
+  case COMP_CODE_RLE:
+   chunk_def.comp.comp_type = COMP_CODE_RLE;
+   break;
+   
+  case COMP_CODE_SKPHUFF:
+   chunk_def.comp.comp_type = COMP_CODE_SKPHUFF;
+   chunk_def.comp.cinfo.skphuff.skp_size = 1;
+   break;
+   
+  case COMP_CODE_DEFLATE:
+   /* GZIP compression, set compression type, flag and deflate level*/
+   chunk_def.comp.comp_type = COMP_CODE_DEFLATE;
+   chunk_def.comp.cinfo.deflate.level = 6;
+   break;
+   
+  case COMP_CODE_SZIP:
+   pixels_per_scanline = dim_gr[1];
+   chunk_def.comp.cinfo.szip.pixels = dim_gr[0]*dim_gr[1];
+   chunk_def.comp.cinfo.szip.pixels_per_block = 2;
+   if(pixels_per_scanline >=2048)
+    chunk_def.comp.cinfo.szip.pixels_per_scanline = 512;
+   else
+    chunk_def.comp.cinfo.szip.pixels_per_scanline = dim_gr[1];
+   chunk_def.comp.cinfo.szip.options_mask = NN_OPTION_MASK;
+   chunk_def.comp.cinfo.szip.options_mask |= RAW_OPTION_MASK;
+   chunk_def.comp.cinfo.szip.bits_per_pixel = 32;
+   break;
+  }
+  if(GRsetchunk (ri_id, chunk_def, chunk_flags)==FAIL)
+  {
+   printf("Error: Could not set chunk for GR <%s>\n", gr_name);
+  }
+ }
+ 
+ /* use compress without chunk-in */
+ else if ( (chunk_flags==HDF_NONE || chunk_flags==HDF_CHUNK) && 
+  comp_type>COMP_CODE_NONE && comp_type<COMP_CODE_INVALID)
+ {
+  if(GRsetcompress (ri_id, comp_type, comp_info)==FAIL)
+  {
+   printf("Error: Could not set compress for GR <%s>\n", gr_name);
+  }
+ }
+
+ 
+ /* define the size of the data to be written */
+ start[0] = start[1] = 0;
+ edges[0] = Y_DIM_GR;
+ edges[1] = X_DIM_GR;
+ 
+ /* write the data in the buffer into the image array */
+ if (GRwriteimage(ri_id, start, NULL, edges, (VOIDP)data)==FAIL)
+ {
+  printf("Error: Could not set write GR <%s>\n", gr_name);
+ }
+   
+ /* obtain the reference number of the GR using its identifier */
+ gr_ref = GRidtoref (ri_id);
+ 
+#if defined( HZIP_DEBUG)
+ printf("add_gr %d\n",gr_ref); 
+#endif
+ 
+ /* add the GR to the vgroup. the tag DFTAG_RIG is used */
+ if (vgroup_id)
+  if (Vaddtagref (vgroup_id, TAG_GRP_IMAGE, gr_ref)==FAIL)
+  {
+   printf("Error: Could not add GR <%s> to group\n", gr_name);
+  }
+ 
+ /* terminate access to the raster image */
+ if (GRendaccess (ri_id)==FAIL)
+ {
+  printf("Error: Could not close GR <%s>\n", gr_name);
+ }
+ 
+ /* terminate access to the GR interface */
+ if (GRend (gr_id)==FAIL)
+ {
+  printf("Error: Could not close GR interface\n");
+ }
+ 
+ 
 }
 
 /*-------------------------------------------------------------------------
@@ -714,6 +926,9 @@ void add_vs(char* vs_name,int32 file_id,int32 vgroup_id)
 
 #define  FILE_LABEL_TXT "General HDF objects"
 #define  FILE_DESC_TXT  "This is an HDF file that contains general HDF objects"
+#define  DATA_LABEL_TXT "Common AN Vgroup"
+#define  DATA_DESC_TXT  "This is a vgroup that is used to test data annotations"
+
 
 void add_an(int32 file_id)
 {
@@ -721,10 +936,19 @@ void add_an(int32 file_id)
  int32 status_32,    /* returned status for functions returning an int32 */
        an_id,        /* AN interface identifier */
        file_label_id,/* file label identifier */
-       file_desc_id; /* file description identifier */
+       file_desc_id, /* file description identifier */
+       data_label_id,  /* data label identifier */
+       data_desc_id,   /* data description identifier */
+       vgroup_id;
+ uint16 vgroup_tag, vgroup_ref;
          
  /* Initialize the AN interface */
  an_id = ANstart (file_id);
+
+/*-------------------------------------------------------------------------
+ * file labels and annotations
+ *-------------------------------------------------------------------------
+ */ 
 
  /* Create the file label */
  file_label_id = ANcreatef (an_id, AN_FILE_LABEL);
@@ -738,11 +962,45 @@ void add_an(int32 file_id)
  /* Write the annotation to the file description */
  status_32 = ANwriteann (file_desc_id, FILE_DESC_TXT, strlen (FILE_DESC_TXT));
 
-/* Terminate access to each annotation explicitly */
+
+/*-------------------------------------------------------------------------
+ * data labels and annotations
+ *-------------------------------------------------------------------------
+ */ 
+ 
+ /* Create a vgroup in the V interface*/
+ status_n = Vstart (file_id);
+ vgroup_id = Vattach (file_id, -1, "w");
+ status_32 = Vsetname (vgroup_id, "an_group");
+ 
+ /* Obtain the tag and ref number of the vgroup */
+ vgroup_tag = (uint16) VQuerytag (vgroup_id);
+ vgroup_ref = (uint16) VQueryref (vgroup_id);
+ 
+ /* Create the data label for the vgroup identified by its tag and ref number */
+ data_label_id = ANcreate (an_id, vgroup_tag, vgroup_ref, AN_DATA_LABEL);
+ 
+ /* Write the annotation text to the data label */
+ status_32 = ANwriteann (data_label_id, DATA_LABEL_TXT, 
+  strlen (DATA_LABEL_TXT));
+ 
+ /* Create the data description for the vgroup identified by its tag and ref number */
+ data_desc_id = ANcreate (an_id, vgroup_tag, vgroup_ref, AN_DATA_DESC);
+ 
+ /* Write the annotation text to the data description */
+ status_32 = ANwriteann (data_desc_id, DATA_DESC_TXT, strlen (DATA_DESC_TXT));
+ 
+ /* Teminate access to the vgroup and to the V interface */
+ status_32 = Vdetach (vgroup_id);
+ status_n = Vend (file_id);
+ 
+ /* Terminate access to each annotation explicitly */
  status_n = ANendaccess (file_label_id);
  status_n = ANendaccess (file_desc_id);
+ status_n = ANendaccess (data_label_id);
+ status_n = ANendaccess (data_desc_id);
  
-/* Terminate access to the AN interface */
+ /* Terminate access to the AN interface */
  status_32 = ANend (an_id);
 }
 
