@@ -34,9 +34,6 @@ extern int32 SDgetinfo
 extern int32 SDreaddata
     PROTO((int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data));
 
-extern uint16 SDgerefnumber
-    PROTO((int32 sdsid));
-
 extern int32 SDnametoindex
     PROTO((int32 fid, char *name));
 

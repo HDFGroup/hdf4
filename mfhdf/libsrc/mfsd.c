@@ -21,8 +21,6 @@ status = SDreaddata(sdsid, ...);
 
 status = SDgetrange(sdsid, ...);
 
-ref    = SDgetrefnumber(sdsid);
-
 status = SDend(fid);
 
 Questions, should the index parameter to SDselect() be zero based or one
@@ -514,6 +512,8 @@ VOIDP data;
 
 } /* SDreaddata */
 
+
+#if 0
 /* ---------------------------- SDgetrefnumber ---------------------------- */
 /*
 
@@ -547,6 +547,8 @@ int32 sdsid;
     return ((uint16) var->data_ref);
 
 } /* SDgetrefnumber */
+
+#endif /* 0 */
 
 /* ---------------------------- SDnametoindex ----------------------------- */
 /*

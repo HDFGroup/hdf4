@@ -865,10 +865,8 @@ NC_var **var;
   count++;
 
   /* Add a bogus tag so we know this NDG is really a variable */
-/*
   if (DFdiput(GroupID, BOGUS_TAG,(uint16) ref) == FAIL)
       return FAIL;
-*/
 
   /* write out NDG */
   if (DFdiwrite(handle->hdf_file, GroupID, DFTAG_NDG, (*var)->ndg_ref) < 0) 
@@ -882,9 +880,16 @@ NC_var **var;
 
   (*var)->vgid = VHmakegroup(handle->hdf_file, tags, refs, count, 
                              (*var)->name->values, VARIABLE);
-  if((*var)->vgid == FAIL)
+
+  if((*var)->vgid == FAIL) {
+      fprintf(stderr, "Failed to write variable %s\n", (*var)->name->values);
+      fprintf(stderr, "count = %d\n", count);
+      for(i = 0; i < count; i++)
+          fprintf(stderr, "i = %d   tag = %d ref = %d\n", i, tags[i], refs[i]);
+          
       HEprint(stdout, 0);
-  
+  }  
+
   return (*var)->vgid;
   
 } /* hdf_write_var */
@@ -967,6 +972,7 @@ NC **handlep;
       for(i = 0; i < tmp->count; i++) {
           tags[count] = (int32) VAR_TAG;
           refs[count] = (int32) hdf_write_var(xdrs, (*handlep), (NC_var **)vars);
+          if(refs[count] == FAIL) return FALSE;
           vars += tmp->szof;
           count++;
       }
@@ -981,6 +987,7 @@ NC **handlep;
       for(i = 0; i < tmp->count; i++) {
           tags[count] = (int32) ATTR_TAG;
           refs[count] = (int32) hdf_write_attr(xdrs, (*handlep), (NC_attr **)attrs);
+          if(refs[count] == FAIL) return FALSE;
           attrs += tmp->szof;
           count++;
       }
