@@ -29,7 +29,7 @@ CONTENTS
   -- Configuration
   -- Library
   -- Utilities
-- Support for new platforms
+- Support for new platforms and compilers
 - Bugs fixed since HDF4.1r5
 - Documentation
 - Platforms Tested
@@ -49,8 +49,12 @@ New Features and Changes:
     Utilities
     ========= 
 
-Support for new platforms 
-=========================
+Support for new platforms and compilers
+=======================================
+     * On MacOSX Fortran is supported for IBM xlf v 8.1 compiler (default) and
+       for Absoft f95 version 8.2. See installation  instructions for more 
+       information.
+                                                                       12/07/2004 EIP
 
 
 Bugs fixed since HDF4.2r0

@@ -1,7 +1,7 @@
 
-    Installation instructions for HDF4.2r0 on UNIX and MacOSX platforms
+    Installation instructions for HDF4.2r0-post0 on UNIX and MacOSX platforms
     ====================================================================
-                          December, 2003
+                          December, 2004
 
 
 CONTENTS
@@ -11,6 +11,8 @@ CONTENTS
 2. HDF4 Source code and precompiled binaries 
 3. UNIX and MacOSX configuration and build
 4. Using HDF/MFHDF libraries w/ original netCDF library
+5. Platform specific information
+   5.1 Mac OSX: Building with Absoft or IBM Fortran compilers 
 
 
 0. Third Party Software Requirements
@@ -22,6 +24,7 @@ CONTENTS
    x ZLIB 1.1.4(libz.a) Source code and binaries may be downloaded from
      http://www.gzip.org/ or from the NCSA ftp server  
      ftp://hdf.ncsa.uiuc.edu/lib-external/gzip/
+     Newest ZLIB 1.2 may also be used.
 
 
 1. Optional SZIP compression Library
@@ -98,8 +101,7 @@ CONTENTS
          automatically find the library. In this case, the corresponding
          configure flag may be ommitted.
        * Note that --prefix defines where the installation path is.
-         This version has the default set as /usr/local which is different
-	 from previous versions.
+         The default is set as <hdf4_build_directory>/NewHDF 
 
     To Build and Test:
 
@@ -149,6 +151,23 @@ CONTENTS
         must be compiled without fortran support. HDF Users can still access
         HDF/netCDF files through the SDxxx interface but not through the
         ncxxx interface unless the renamed interface is used(sd_ncxxx).
+
+5. Platform specific information
+   =============================
+   5.1 Mac OSX: Building with Absoft or IBM Fortran compilers 
+
+       We currently support IBM xlf version 8.1 and Absoft f95 version 8.2 to build
+       HDF4 libraries on MacOSX.
+
+       To build with IBM xlf compiler:
+       xlf compiler is a default compiler. To use it make sure that you have xlf in your path;
+       do not set F77 environment variable. Use configure command as discribed in 3.4
+
+       To build with Absoft f95 compiler:
+       Make sure that the "f95" compiler is in your path, then set environment variable
+       F77
+              setenv F77 f95
+       Use configure command as discribed in 3.4 
 
 
    Report all problems to hdfhelp@ncsa.uiuc.edu

@@ -761,7 +761,10 @@ typedef double          float64;
 typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 #define _fcdtocp(desc) (desc)
-#define FNAME_POST_UNDERSCORE
+#define FNAME(x) x
+#ifdef H4_ABSOFT
+#define DF_CAPFNAMES
+#endif /*ABSOFT*/
 #ifdef  HAVE_FMPOOL
 #define FILELIB PAGEBUFIO  /* enable page buffering */
 #else
@@ -851,7 +854,7 @@ Please check your Makefile.
 #else  /* MPW, possibly others */
 #include <Files.h>              /* for unbuffered I/O stuff */
 #endif /* SYMANTEC_C*/
-#ifndef ABSOFT
+#ifndef ABSOFT 
 #define DF_CAPFNAMES            /* fortran names are in all caps */
 #endif /* ABSOFT */
 #define DF_DYNAMIC              /* use dynamic allocation */

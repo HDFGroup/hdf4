@@ -24,16 +24,14 @@ if test "X-$CC" = "X-"; then
   CC=gcc
   CC_BASENAME=gcc
 fi
-
+#Make IBM xlf compiler a deafult
 if test "X-$F77" = "X-"; then
-  F77=f77
-  F77_BASENAME=f77
+  F77=xlf
+  F77_BASENAME=xlf
+else
+  F77_BASENAME=f95
 fi
 
-if test "X-$CXX" = "X-"; then
-  CXX=g++
-  CXX_BASENAME=g++
-fi
 
 # C, Fortran, and C++ Compiler and Preprocessor Flags
 # ---------------------------------------------------
@@ -119,36 +117,26 @@ case $CC_BASENAME in
 esac
 
 case $F77_BASENAME in 
-  g77)
+  xlf)
     FFLAGS="$FFLAGS"
     DEBUG_FFLAGS="-g"
     PROD_FFLAGS="-O"
     PROFILE_FFLAGS="-pg"
     ;;
 
-  *)
-    FFLAGS="$FFLAGS"
+  f95)
+    #
+    # Assume Absoft compiler
+    #
+    # Set a flag for compiling C stubs
+    CFLAGS="$CFLAGS -DH4_ABSOFT"
+    FFLAGS="$FFLAGS -YEXT_NAMES=UCS"
     DEBUG_FFLAGS="-g"
     PROD_FFLAGS="-O"
     PROFILE_FFLAGS="-pg"
     ;;
 esac
 
-case $CXX_BASENAME in 
-  g++)
-    CXXFLAGS="$CXXFLAGS"
-    DEBUG_CXXFLAGS="-g -fverbose-asm"
-    PROD_CXXFLAGS="-O3 -fomit-frame-pointer"
-    PROFILE_CXXFLAGS="-pg"
-    ;;
-
-  *)
-    CXXFLAGS="$CXXFLAGS -ansi"
-    DEBUG_CXXFLAGS="-g"
-    PROD_CXXFLAGS="-O"
-    PROFILE_CXXFLAGS="-pg"
-    ;;
-esac
 
 # Overriding Configure Tests
 # --------------------------
