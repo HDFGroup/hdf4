@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.13  1993/09/11 21:37:39  koziol
-Fixed weird HIstrncpy error in scanattrs
+Revision 1.14  1993/09/15 19:43:18  georgev
+Took out hack for strdup on MAC.
 
+ * Revision 1.13  1993/09/11  21:37:39  koziol
+ * Fixed weird HIstrncpy error in scanattrs
+ *
  * Revision 1.12  1993/09/11  18:08:15  koziol
  * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
  * cleaned up some goofy string manipulations in various places.
@@ -110,16 +113,7 @@ int32 scanattrs (attrs,attrc,attrv)
   register char   *s, *s0, *ss;
   register intn   i, slen, len;
   char * FUNC = "scanattrs";
-#if !(defined(macintosh) | defined(THINK_C))
   char * saved_string = (char *) HDstrdup(attrs);
-#else /* macintosh */
-  char * saved_string;
-  
-  slen = HDstrlen(attrs) + 1; /* add one for null */
-  saved_string = (char *)HDgetspace(slen);
-  if (HIstrncpy(saved_string, attrs, slen) == NULL)
-      return FAIL;
-#endif /* macintosh */
 
 #if defined(macintosh) | defined(THINK_C)
   /* Lets allocate space for ptrs to tokens and tokens */
