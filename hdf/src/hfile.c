@@ -840,7 +840,7 @@ int32 Hstartwrite(file_id, tag, ref, length)
     /* version tags */
     uint32 lmajorv, lminorv, lrelease;
     uint32 fmajorv, fminorv, frelease;
-    char string[81];
+    char string[LIBVSTR_LEN+1]; /* len 80+1  */
     int newver;
     /* end version tags */
 
@@ -982,7 +982,7 @@ int32 Hstartwrite(file_id, tag, ref, length)
         file_rec->version.majorv = lmajorv;
         file_rec->version.minorv = lminorv;
         file_rec->version.release = lrelease;
-        HIstrncpy(file_rec->version.string, string, 81);
+        HIstrncpy(file_rec->version.string, string, LIBVSTR_LEN+1);
         file_rec->version.modified = 1;
       }
       
@@ -2466,19 +2466,20 @@ uint16 HDbase_tag(tag)
 #ifdef PROTOTYPE
 int Hgetlibversion(uint32 *majorv, uint32 *minorv, uint32 *release, char string[])
 #else
-int Hgetlibversion(majorv, minorv, release, string)
-uint32 *majorv, *minorv, *release;
+int Hgetlibversion(majorv, minorv, releasev, string)
+uint32 *majorv, *minorv, *releasev;
 char string[];
 #endif
 {
     char *FUNC="Hgetlibversion";
+    int i;
 
     HEclear();
 
     *majorv = LIBVER_MAJOR;
     *minorv = LIBVER_MINOR;
-    *release = LIBVER_RELEASE;
-    HIstrncpy(string, LIBVER_STRING, 81);
+    *releasev = LIBVER_RELEASE;
+    HIstrncpy(string, LIBVER_STRING, LIBVSTR_LEN+1);
 
     return(SUCCEED);
 }
@@ -2527,7 +2528,7 @@ char string[];
     *majorv = file_rec->version.majorv;
     *minorv = file_rec->version.minorv;
     *release = file_rec->version.release;
-    HIstrncpy(string, file_rec->version.string, 81);
+    HIstrncpy(string, file_rec->version.string, LIBVSTR_LEN+1);
 
     if (majorv == 0) {
         HRETURN_ERROR(DFE_NOMATCH,FAIL);
@@ -3109,7 +3110,7 @@ int32 file_id;
     */
     uint8 /*lstring[81],*/ lversion[LIBVER_LEN];
     filerec_t *file_rec;
-    int ret;
+    int ret, i;
     char *FUNC="Hupdate_version";
 
 
@@ -3130,11 +3131,13 @@ int32 file_id;
     	UINT32ENCODE(p, file_rec->version.majorv);
     	UINT32ENCODE(p, file_rec->version.minorv);
     	UINT32ENCODE(p, file_rec->version.release);
-        HIstrncpy((char*) p, file_rec->version.string, 80);
+        HIstrncpy((char*) p, file_rec->version.string, LIBVSTR_LEN);
+        for (i = strlen((char *)p); i < LIBVSTR_LEN; i++)
+            p[i] = (uint8) 0;
     }
 
     ret = Hputelement(file_id, (uint16)DFTAG_VERSION, (uint16)1, lversion,
-		      (uint32)sizeof(lversion));
+		      (uint32)LIBVER_LEN);
 
     if (ret == SUCCEED) {
         file_rec->version.modified = 0;
@@ -3193,7 +3196,7 @@ int32 file_id;
         UINT32DECODE(p, file_rec->version.majorv);
         UINT32DECODE(p, file_rec->version.minorv);
         UINT32DECODE(p, file_rec->version.release);
-        HIstrncpy(file_rec->version.string, (char*) p, 80);
+        HIstrncpy(file_rec->version.string, (char*) p, LIBVSTR_LEN);
     }
     file_rec->version.modified = 0;
 
