@@ -1,33 +1,9 @@
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.7  1993/05/13 20:05:03  chouck
-Undid Hendaccess() call in DFfind().  The search AID is freed in DFclose()
+/* $Id$ */
 
- * Revision 1.6  1993/05/11  16:57:03  koziol
- * Fixed two leaking AID places.
- *
- * Revision 1.5  1993/04/22  15:06:35  chouck
- * A plain call to free() had snuck through
- *
- * Revision 1.4  1993/04/19  22:47:46  koziol
- * General Code Cleanup to reduce/remove errors on the PC
- *
- * Revision 1.3  1993/01/19  05:55:19  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.2  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*
 ** FILE
 **	dfstubs.c
@@ -56,6 +32,7 @@ Undid Hendaccess() call in DFfind().  The search AID is freed in DFclose()
 ** AUTHOR
 **	Doug Ilg
 */
+
 #include "dfstubs.h"
 #include "df.h"
 
