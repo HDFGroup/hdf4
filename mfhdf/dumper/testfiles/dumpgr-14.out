@@ -1,5 +1,5 @@
 #############################
-Expected output for './hdp dumpgr -p -h Image_with_Palette.hdf'
+Expected output for './hdp dumpgr -h Image_with_Palette.hdf'
 #############################
 File name: Image_with_Palette.hdf 
 
@@ -9,9 +9,9 @@ File name: Image_with_Palette.hdf
 	 width=5; height=5
 	 Ref. = 2
 	 ncomps = 2
-	 Number of attributes = 0
 	 Interlace mode= PIXEL
 	 Palette: 3 components; 256 entries
+	 Number of attributes = 0
 
 	 Image  Name = Second Image w/pal
 	 Index = 1
@@ -19,9 +19,9 @@ File name: Image_with_Palette.hdf
 	 width=5; height=5
 	 Ref. = 3
 	 ncomps = 2
-	 Number of attributes = 0
 	 Interlace mode= PIXEL
 	 Palette: 3 components; 256 entries
+	 Number of attributes = 0
 
 	 Image  Name = Last Image: no pal
 	 Index = 2
@@ -29,6 +29,6 @@ File name: Image_with_Palette.hdf
 	 width=5; height=5
 	 Ref. = 4
 	 ncomps = 2
-	 Number of attributes = 0
 	 Interlace mode= PIXEL
-	 No palette data
+	 No palette
+	 Number of attributes = 0
