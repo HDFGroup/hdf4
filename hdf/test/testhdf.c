@@ -1,6 +1,4 @@
 #define MAXNUMOFTESTS 20
-#define VERSION "0.8beta"
-#define BUILDDATE "Wed Jan 27 1993"
 
 /* Exportable variables */
 int num_errs = 0;
@@ -75,8 +73,8 @@ main (argc, argv)
   Verbocity = 4; /* Default Verbocity is Low */
   ret = Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
 
-  printf("\nHDFTEST V%s Built on: %s \n", VERSION, BUILDDATE );
-  printf("HDF Library Version: %d.%dr%d\n\n",
+  printf("\nFor help use: testhdf -help\n");
+  printf("Built with HDF Library Version: %d.%dr%d\n\n",
          lmajor, lminor, lrelease, lstring);
   for (CLLoop = 1; CLLoop < argc; CLLoop++) {
     if ((argc > CLLoop+1) && (HDstrcmp(argv[CLLoop],"-verbose")==0) ||
@@ -100,14 +98,14 @@ main (argc, argv)
       printf("               [-o[nly] name+] \n");
       printf("               [-b[egin] name] \n");
       printf("               [-s[ummary]]  \n");
-      printf("               [-c[leanno]]  \n");
+      printf("               [-c[leanoff]]  \n");
       printf("\n\n");
       printf("verbose   controls the amount of information displayed\n");
       printf("exclude   to exclude tests by name\n");
       printf("only      to name tests which should be run\n");
       printf("begin     start at the name of the test givin\n");
       printf("summary   prints a summary of test results at the end\n");
-      printf("cleanno   does not delete *.hdf files after execution of tests\n");
+      printf("cleanoff  does not delete *.hdf files after execution of tests\n");
       printf("\n\n");
       printf("This program currently tests the following: \n\n");
       printf("%16s %s\n","Name","Description");
@@ -118,7 +116,7 @@ main (argc, argv)
       printf("\n\n");
       exit(0);
     }
-    if ((argc > CLLoop) && (HDstrcmp(argv[CLLoop],"-cleanno")==0) ||
+    if ((argc > CLLoop) && (HDstrcmp(argv[CLLoop],"-cleanoff")==0) ||
         (HDstrcmp(argv[CLLoop],"-c")==0)) {
       CleanUp = 0;
     }
