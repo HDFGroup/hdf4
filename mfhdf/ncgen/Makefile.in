@@ -156,6 +156,7 @@ AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
 #############################################################################
 #############################################################################
 bin_PROGRAMS = ncgen
+noinst_PROGRAMS = ctest0 ftest0
 
 ncgen_SOURCES = close.c escapes.c generate.c genlib.c getfill.c init.c      \
                 load.c main.c ncgentab.c
@@ -186,8 +187,19 @@ mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/hdf/src/h4config.h
 CONFIG_CLEAN_FILES =
 bin_PROGRAMS = ncgen$(EXEEXT)
-PROGRAMS = $(bin_PROGRAMS)
+noinst_PROGRAMS = ctest0$(EXEEXT) ftest0$(EXEEXT)
+PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 
+ctest0_SOURCES = ctest0.c
+ctest0_OBJECTS = ctest0.$(OBJEXT)
+ctest0_LDADD = $(LDADD)
+ctest0_DEPENDENCIES =
+ctest0_LDFLAGS =
+ftest0_SOURCES = ftest0.c
+ftest0_OBJECTS = ftest0.$(OBJEXT)
+ftest0_LDADD = $(LDADD)
+ftest0_DEPENDENCIES =
+ftest0_LDFLAGS =
 am_ncgen_OBJECTS = close.$(OBJEXT) escapes.$(OBJEXT) generate.$(OBJEXT) \
 	genlib.$(OBJEXT) getfill.$(OBJEXT) init.$(OBJEXT) \
 	load.$(OBJEXT) main.$(OBJEXT) ncgentab.$(OBJEXT)
@@ -197,7 +209,8 @@ ncgen_LDFLAGS =
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/hdf/src
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/close.Po ./$(DEPDIR)/escapes.Po \
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/close.Po ./$(DEPDIR)/ctest0.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/escapes.Po ./$(DEPDIR)/ftest0.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/generate.Po ./$(DEPDIR)/genlib.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/getfill.Po ./$(DEPDIR)/init.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/load.Po ./$(DEPDIR)/main.Po \
@@ -206,12 +219,12 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(ncgen_SOURCES)
+DIST_SOURCES = ctest0.c ftest0.c $(ncgen_SOURCES)
 
 NROFF = nroff
 MANS = $(man1_MANS)
 DIST_COMMON = README $(srcdir)/Makefile.in Makefile.am
-SOURCES = $(ncgen_SOURCES)
+SOURCES = ctest0.c ftest0.c $(ncgen_SOURCES)
 
 all: all-am
 
@@ -246,6 +259,12 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+
+clean-noinstPROGRAMS:
+	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
+@HDF_BUILD_FORTRAN_FALSE@ftest0$(EXEEXT): $(ftest0_OBJECTS) $(ftest0_DEPENDENCIES) 
+@HDF_BUILD_FORTRAN_FALSE@	@rm -f ftest0$(EXEEXT)
+@HDF_BUILD_FORTRAN_FALSE@	$(LINK) $(ftest0_LDFLAGS) $(ftest0_OBJECTS) $(ftest0_LDADD) $(LIBS)
 ncgen$(EXEEXT): $(ncgen_OBJECTS) $(ncgen_DEPENDENCIES) 
 	@rm -f ncgen$(EXEEXT)
 	$(LINK) $(ncgen_LDFLAGS) $(ncgen_OBJECTS) $(ncgen_LDADD) $(LIBS)
@@ -257,7 +276,9 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/close.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ctest0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/escapes.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ftest0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/generate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/genlib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getfill.Po@am__quote@
@@ -454,7 +475,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic clean-noinstPROGRAMS \
+	mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -504,16 +526,16 @@ uninstall-am: uninstall-binPROGRAMS uninstall-info-am uninstall-man
 uninstall-man: uninstall-man1
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
-	clean-generic ctags distclean distclean-compile \
-	distclean-generic distclean-tags distdir dvi dvi-am info \
-	info-am install install-am install-binPROGRAMS install-data \
-	install-data-am install-exec install-exec-am install-info \
-	install-info-am install-man install-man1 install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-binPROGRAMS uninstall-info-am \
-	uninstall-man uninstall-man1
+	clean-generic clean-noinstPROGRAMS ctags distclean \
+	distclean-compile distclean-generic distclean-tags distdir dvi \
+	dvi-am info info-am install install-am install-binPROGRAMS \
+	install-data install-data-am install-exec install-exec-am \
+	install-info install-info-am install-man install-man1 \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
+	tags uninstall uninstall-am uninstall-binPROGRAMS \
+	uninstall-info-am uninstall-man uninstall-man1
 
 
 ncgentab.c ncgentab.h: ncgen.h ncgen.y ncgenyy.c

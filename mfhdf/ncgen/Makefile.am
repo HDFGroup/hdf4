@@ -15,6 +15,7 @@ AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 #############################################################################
 
 bin_PROGRAMS = ncgen
+noinst_PROGRAMS = ctest0 ftest0
 
 ## Information for building the "ncgen" program
 ncgen_SOURCES = close.c escapes.c generate.c genlib.c getfill.c init.c      \

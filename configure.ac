@@ -23,6 +23,8 @@ AC_CONFIG_HEADER([hdf/src/h4config.h])
 AM_INIT_AUTOMAKE([HDF], [4.2r0])
 AM_MAINTAINER_MODE
 
+AC_PREFIX_DEFAULT([`pwd`/NewHDF])
+
 AC_OUTPUT_COMMANDS([
   echo "creating hdf/src/h4config.h"
   sed 's/#define /#define H4_/' < hdf/src/h4config.h |\

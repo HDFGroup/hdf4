@@ -274,6 +274,7 @@ PACKAGE_STRING='HDF 4.2r0'
 PACKAGE_BUGREPORT='hdfhelp@ncsa.uiuc.edu'
 
 ac_unique_file="hdf/src/atom.c"
+ac_default_prefix=`pwd`/NewHDF
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -1752,6 +1753,8 @@ else
 fi
 
   MAINT=$MAINTAINER_MODE_TRUE
+
+
 
 
 
@@ -3724,7 +3727,7 @@ fi
 
 
 # Provide some information about the compiler.
-echo "$as_me:3727:" \
+echo "$as_me:3730:" \
      "checking for Fortran 77 compiler version" >&5
 ac_compiler=`set X $ac_compile; echo $2`
 { (eval echo "$as_me:$LINENO: \"$ac_compiler --version </dev/null >&5\"") >&5
