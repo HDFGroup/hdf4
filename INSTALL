@@ -41,7 +41,7 @@ Supported Platforms
   DEC Alpha/OpenVMS AXP v6.2  DECC         DEC FORTRAN        X         X
   IBM PC - Intel Pentium
        Solarisx86             GCC 2.7.0       -               X         X
-       Linux                  GCC         Fortran compiler    X         X
+       Linux(a.out) v1.2.4    GCC         Fortran compiler    X         X
                                              2.6.2
                                  (Fortran to C converter)
        Free BSD 2.0           GCC 2.6.2   Fortran compiler    X         X
@@ -51,7 +51,8 @@ Supported Platforms
   MacQuadra950(Mac-OS-7.5)     -               -               -         -
   VAX/VMS                      (See 'DEC Alpha/OpenVMS' above )
   Windows NT/95                -               -               -         - 
-   
+  LINUX(ELF)                   -               -               -         -
+ 
 Requirements
 ============
 
