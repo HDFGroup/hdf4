@@ -706,9 +706,6 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
                             info->link_ref, info->number_blocks);
     if (!info->link)
       {
-#if 0
-          HDfree((VOIDP) info);
-#endif
           ret_value = FAIL;
           goto done;
       }
@@ -719,9 +716,6 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
           if (info->first_length == FAIL)
             {
                 HDfree((VOIDP) info->link);
-#if 0
-                HDfree((VOIDP) info);
-#endif
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
             }
       }
@@ -745,9 +739,6 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
                           HDfree((VOIDP) l->block_list);
                       HDfree((VOIDP) l);
                   }
-#if 0
-                HDfree((VOIDP) info);
-#endif
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
             }
           info->last_link = info->last_link->next;
@@ -855,36 +846,19 @@ HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
     new_link->block_list = (block_t *) HDmalloc((uint32) number_blocks
                                                   * sizeof(block_t));
     if (new_link->block_list == NULL)
-      {
-#if 0
-          HDfree((VOIDP) new_link);
-#endif
-          HGOTO_ERROR(DFE_NOSPACE, NULL);
-      }
+        HGOTO_ERROR(DFE_NOSPACE, NULL);
+
     new_link->next = (link_t *) NULL;
 
     /* read block table into buffer */
     buffer = (uint8 *) HDmalloc((uint32) (2 + 2 * number_blocks));
     if (buffer == NULL)
-      {
-#if 0
-          HDfree((VOIDP) new_link->block_list);
-          HDfree((VOIDP) new_link);
-#endif
-          HGOTO_ERROR(DFE_NOSPACE, NULL);
-      }     
+        HGOTO_ERROR(DFE_NOSPACE, NULL);
 
     access_id = Hstartread(file_id, tag, ref);
     if (access_id == FAIL ||
         Hread(access_id, 2 + 2 * number_blocks, (VOIDP)buffer) == FAIL)
-      {
-#if 0
-          HDfree((VOIDP) buffer);
-          HDfree((VOIDP) new_link->block_list);
-          HDfree((VOIDP) new_link);
-#endif
-          HGOTO_ERROR(DFE_READERROR, NULL);
-      }
+        HGOTO_ERROR(DFE_READERROR, NULL);
 
     {
         int32 i;
@@ -894,10 +868,8 @@ HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
         for (i = 0; i < number_blocks; i++)
             UINT16DECODE(p, new_link->block_list[i].ref);
     }
+
     Hendaccess(access_id);
-#if 0
-    HDfree((VOIDP) buffer);
-#endif
     /* set return value */
     ret_value = new_link;
 
@@ -1419,37 +1391,22 @@ HLInewlink(int32 file_id, int32 number_blocks,
     t_link->block_list = (block_t *) HDmalloc((uint32) number_blocks
                                                 * sizeof(block_t));
     if (!t_link->block_list)
-      {
-#if 0
-          HDfree((VOIDP) t_link);
-#endif
-          HGOTO_ERROR(DFE_NOSPACE, NULL);
-      }
+        HGOTO_ERROR(DFE_NOSPACE, NULL);
+
     t_link->next = NULL;
 
     /* write the new link to file */
     link_id = Hstartwrite(file_id, DFTAG_LINKED, link_ref, 2 + 2 * number_blocks);
     if (link_id == FAIL)
-      {
-#if 0
-          HDfree((VOIDP) t_link->block_list);
-          HDfree((VOIDP) t_link);
-#endif
-          HGOTO_ERROR(DFE_WRITEERROR, NULL);
-      }
+        HGOTO_ERROR(DFE_WRITEERROR, NULL);
+
     {   /* CC */
         int32 i;       /* temp int index */
         uint8      *p;          /* temp buffer ptr */
 
         p = buf = (uint8 *) HDmalloc((uint32) (2 + 2 * number_blocks));
         if (!buf)
-          {
-#if 0
-              HDfree((VOIDP) t_link->block_list);
-              HDfree((VOIDP) t_link);
-#endif
-              HGOTO_ERROR(DFE_NOSPACE, NULL);
-          }
+            HGOTO_ERROR(DFE_NOSPACE, NULL);
 
         /* set up the record and write to file */
         t_link->nextref = 0;
@@ -1466,17 +1423,8 @@ HLInewlink(int32 file_id, int32 number_blocks,
 
     /* write the link */
     if (Hwrite(link_id, 2 + 2 * number_blocks, (VOIDP)buf) == FAIL)
-      {
-#if 0
-          HDfree((VOIDP) buf);
-          HDfree((VOIDP) t_link->block_list);
-          HDfree((VOIDP) t_link);
-#endif
-          HGOTO_ERROR(DFE_WRITEERROR, NULL);
-      }
-#if 0
-    HDfree((VOIDP) buf);
-#endif
+        HGOTO_ERROR(DFE_WRITEERROR, NULL);
+
     Hendaccess(link_id);
 
     /* set return value */
