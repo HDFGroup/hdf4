@@ -1792,7 +1792,10 @@ ANstart(int32 file_id)
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
-
+        if (an_id != NULL)
+            HDfree(an_id);
+        if(file_entry != NULL)
+            HDfree(file_entry);
     } /* end if */
 
   /* Normal function cleanup */
