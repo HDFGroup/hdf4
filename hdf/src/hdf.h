@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/08/31 16:16:45  chouck
+Added definition of calibration tag (731)
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 #ifndef HDF_H
 #define HDF_H
@@ -318,6 +321,7 @@ extern uint8 *tbuf;
 #define DFTAG_SDT   ((uint16)709) /* Transpose */
 #define DFTAG_SDLNK ((uint16)710) /* Links related to the dataset */
 #define DFTAG_NDG   ((uint16)720) /* Numeric Data Group */
+#define DFTAG_CAL   ((uint16)731) /* Calibration information */
 #define DFTAG_BREQ  ((uint16)799) /* Beginning of required tags   */
 #define DFTAG_EREQ  ((uint16)780) /* Current end of the range   */
 
