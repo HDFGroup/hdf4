@@ -56,15 +56,18 @@ C Output file: tvattrf.hdf
 
       integer nattrs, itype, icount, imsize, vsver
       integer fid1, vsid, vgid, vsref, vgref
-      integer ret, findex, iattri(5), vsbuf, aindex
+      integer ret, findex, vsbuf, aindex
+C
+C iattri is for int32 values
+C iattrs is for int16 values
+C iattrr, RATTR1 are for float32 values
+C iattrg, GATTR1 are for float64 values
+      integer*4 iattri(5)
       integer*2 iattrs(6)
-	integer iattr(20)
-      real    iattrr(5), feps, RATTR1, abs
+      real*4    iattrr(5), feps, RATTR1, abs
       double precision iattrg(5), geps, dabs, GATTR1
       character*10  iattrc
       character*20 iattrnm
-	equivalence (iattr(1),iattrs(1),iattri(1),iattrr(1),
-     +             iattrg(1))
      
       integer DFACC_CREATE, DFACC_RDWR, DFNT_CHAR
       integer DFNT_INT32, DFNT_FLOAT32 
@@ -193,9 +196,7 @@ C test vgroup routines
       endif
       ret = vfainfo(vgid,0,iattrnm,itype,icount,imsize)
       call VERIFY(ret, 'vfainfo',number_failed)
-C      use equivalence
-c      ret = vfgnatt(vgid, 0, iattri)
-	ret = vfgnatt(vgid, 0, iattr)
+      ret = vfgnatt(vgid, 0, iattri)
       call VERIFY(ret, 'vfgnatt',number_failed)
       if (iattri(1) .ne. 10032 .or. iattri(2) .ne. 10064)
      +      then
@@ -205,9 +206,7 @@ c      ret = vfgnatt(vgid, 0, iattri)
 C get attname2
       ret = vffdatt(vgid, 'attname2')
       call VERIFY(ret, 'vffdatt',number_failed)
-c use equivalence iattr to avoid warning of inconsistent data type
-c      ret = vfgnatt(vgid, ret, iattrs)
-	ret = vfgnatt(vgid, ret, iattr)
+      ret = vfgnatt(vgid, ret, iattrs)
       call VERIFY(ret, 'vfgnatt',number_failed)
       if (iattrs(1) .ne. 16 .or. iattrs(2) .ne. 32)
      +       then
@@ -272,9 +271,7 @@ C     +     .or. iattrc(3) .ne. '0') then
          call MESSAGE(1, 'Wrong values of char attr for vg')
          number_failed = number_failed + 1
       endif
-c      use equivalence iattr to avoid warning of inconsistent data type
-c      ret = vfgnatt(vgid, 1, iattrr)
-	ret = vfgnatt(vgid, 1, iattr)
+      ret = vfgnatt(vgid, 1, iattrr)
       call VERIFY(ret, 'vfgnatt', number_failed)
       if (abs(iattrr(1)-RATTR1) .gt. abs(RATTR1*feps)) 
      +          then
@@ -298,9 +295,7 @@ C     +     .or. iattrc(3) .ne. '2') then
          number_failed = number_failed + 1
          print *, iattrc, 'at2'
       endif
-c  use equivalence for iattrr
-c      ret = vsfgnat(vsid, 0, 0, iattrr)
-	ret = vsfgnat(vsid, 0, 0, iattr)
+      ret = vsfgnat(vsid, 0, 0, iattrr)
       call VERIFY(ret, 'vsfgnatt2', number_failed)
       if (abs(iattrr(1)-RATTR1) .gt. abs(RATTR1*feps)) 
      +          then
