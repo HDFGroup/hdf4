@@ -59,6 +59,15 @@
 #define HGOTO_ERROR(err, ret_val) {HERROR(err); ret_value = ret_val; \
                                    goto done;}
 
+/* HCLOSE_RETURN_ERROR macro, used to facilitate error reporting.  Makes
+   same assumptions as HRETURN_ERROR.  IN ADDITION, this macro causes
+   the file specified by the id "fid" to be closed 
+   Also , this macro causes a jump to the label 'done' which should 
+   be in every fucntion. There is an assumption of a variable 'ret_value' */
+
+#define HCLOSE_GOTO_ERROR(hfid, err, ret_val) {HERROR(err); Hclose(hfid); \
+                                            ret_value = ret_val; goto done;}
+
 /* For further error reporting */
 #define HE_REPORT(msg) HEreport(msg)
 #ifndef CONVEX
