@@ -2,9 +2,12 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.2  1993/05/12 16:25:32  chouck
-C Added SUCCEED and FAIL parameters
+C Revision 1.3  1993/06/18 16:44:23  georgev
+C Deleted 'bogus' function
 C
+# Revision 1.2  1993/05/12  16:25:32  chouck
+# Added SUCCEED and FAIL parameters
+#
 # Revision 1.1  1993/04/28  20:47:05  koziol
 # Renamed constant.f to constant.i and added dffunc.i
 #
@@ -372,21 +375,5 @@ C       Statndard return codes
       parameter(SUCCEED         = 0,
      *		FAIL     	= -1)
 
-
-C-----------------------------------------------------------------------------
-C  Name:    bogusfunc
-C  Purpose: Make the Microsoft fortran compiler happy
-C  Inputs:  none
-C  Returns: none
-C  Users:   No one
-C  Invokes: nothing
-C  Remarks: stupid compiler
-C-----------------------------------------------------------------------------
-
-      integer function bogusfunc
-
-      bogusfunc = 0
-      return
-      end
 
 c******************End of dfconstants.f***************************
