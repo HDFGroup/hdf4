@@ -332,7 +332,7 @@ subdir_dummy_target $(SUBDIR_TARGETS):
 #
 .c.o:
 	$(CC) -c $(CPPFLAGS) $(CPPFLAGS_NETCDF) $(CFLAGS) $(CFLAGS_NETCDF) \
-	$(PABLO_FLAGS) $(MFHDFSRC)/$*.c $(PABLO_INCLUDE)
+	$(PABLO_FLAGS) -I$(PABLO_HINC) $(MFHDFSRC)/$*.c $(PABLO_INCLUDE) 
 
 # Compile lex(1) code.  This rule is here to ensure the use of CPPFLAGS.
 # 
