@@ -13,12 +13,12 @@ please check the configuration file for your platform for the correct
 options.
 
 C:
-    cc -o <your program> <your program>.c -i<path for hdf include directory>\
+    cc -o <your program> <your program>.c -I<path for hdf include directory>\
        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
    or
 
-    cc -o <your program> <your program>.c -i<path for hdf include directory> \
+    cc -o <your program> <your program>.c -I<path for hdf include directory> \
           <path for libmfhdf.a>  <path for libdf.a> \
           <path for libjpeg.a> <path for libz.a>
 
@@ -43,7 +43,7 @@ Cray:
 ----
 C:
     cc  -O -s -o <your program> <your program>.c \  
-        -i<path for hdf include directory> \
+        -I<path for hdf include directory> \
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
@@ -54,7 +54,7 @@ Dec Alpha/Digital Unix:
 ----------------------
 C:
     cc -Olimit 2048 -std1 -o <your program> <your program>.c \
-       -i<path for hdf include directory>\
+       -I<path for hdf include directory>\
        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
@@ -81,7 +81,7 @@ Exemplar:
 --------
 C:
     cc -ext -nv -no <your program> <your program>.c \
-       -i<path for hdf include directory> \
+       -I<path for hdf include directory> \
        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
@@ -89,8 +89,8 @@ FORTRAN:
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
    NOTE: These instructions are for Convex/HP Exemplar machines running
-    versions of the OS ealier than 10.x.  For machines running version
-    10.x of HP-UX, follow the instrctions for Hp-UX 10.2.
+   versions of the OS ealier than 10.x.  For machines running version
+   10.x of HP-UX, follow the instructions for HP-UX 10.2.
 
 FreeBSD:
 -------
@@ -98,7 +98,7 @@ C:
     gcc -ansi -Wall -Wpointer-arith -Wcast-qual -Wcast-align \
         -Wwrite-strings -Wmissing-prototypes -Wnested-externs -pedantic -O2 \
         -o <your program> <your program>.c \  
-        -i<path for hdf include directory> \
+        -I<path for hdf include directory> \
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
@@ -109,7 +109,7 @@ HP-UX 9.03:
 ----------
 C:
     cc -Ae -O -o <your program> <your program>.c \
-       -i<path for hdf include directory> \
+       -I<path for hdf include directory> \
        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
@@ -119,8 +119,8 @@ FORTRAN:
 HP-UX 10.2:
 ----------
 C:
-    cc -ansi -s -o <your program> <your program>.c \
-       -i<path for hdf include directory> \
+    cc -Ae -s -o <your program> <your program>.c \
+       -I<path for hdf include directory> \
        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
@@ -131,7 +131,7 @@ IRIX 5.3:
 --------
 C:
     cc -ansi -O -s -o <your program> <your program>.c  \
-       -i<path for hdf include directory>\
+       -I<path for hdf include directory>\
        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
  
 FORTRAN:
@@ -143,7 +143,7 @@ IRIX 6.x:
 --------
 C:
     cc -ansi -n32 -mips3 -O -s -o <your program> <your program>.c  \
-       -i<path for hdf include directory>\
+       -I<path for hdf include directory>\
        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
@@ -151,10 +151,10 @@ FORTRAN:
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 IRIX64 with 64-bit mode:
----------------------
+------------------------
 C:
     cc -ansi -64 -mips4 -O -s -o <your program> <your program>.c  \
-       -i<path for hdf include directory>\
+       -I<path for hdf include directory>\
        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
@@ -163,10 +163,10 @@ FORTRAN:
 
   
 IRIX64 with n32-bit mode:
---------------------------
+-------------------------
 C:
     cc -ansi -n32 -mips4 -O -s -o <your program> <your program>.c \
-     -i<path for hdf include directory> \
+     -I<path for hdf include directory> \
      -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
@@ -177,7 +177,7 @@ Linux:
 -----
 C:
     gcc -ansi -o <your program> <your program>.c \  
-        -i<path for hdf include directory> \
+        -I<path for hdf include directory> \
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
@@ -190,7 +190,7 @@ Solaris:
 
 C:
     cc -Xc -xO2 -o <your program> <your program>.c  \
-       -i<path for hdf include directory>\
+       -I<path for hdf include directory>\
        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz \
        -L/usr/lib -lnsl
 
@@ -204,15 +204,15 @@ Solaris_x86 (C only):
     The -lnsl is necessary in order to include the xdr library.
 
     gcc -ansi -O -o <your program> <your program>.c \
-        -i<path for hdf include directory> \
+        -I<path for hdf include directory> \
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz  \
         -L/usr/lib -lnsl
 
-SP2 (AIX):
----------
+SP2:
+----
 C:
     xlc -qlanglvl=ansi -O -o <your program> <your program>.c \
-        -i<path for hdf include directory> \
+        -I<path for hdf include directory> \
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
@@ -223,7 +223,7 @@ SunOS:
 -----
 C:
     gcc -ansi -o <your program> <your program>.c \  
-        -i<path for hdf include directory> \
+        -I<path for hdf include directory> \
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
@@ -233,8 +233,9 @@ FORTRAN:
 T3E:
 ---
 C:
+    
     cc -X 1 -s -o <your program> <your program>.c \
-       -i<path for hdf include directory>\
+       -I<path for hdf include directory>\
        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
