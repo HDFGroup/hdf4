@@ -683,7 +683,7 @@ case "${OS}" in
     esac
   done
 
-                LD_XDR=-lnsl;;
+                LD_XDR=;;
   freebsd*)         for arg in -DUNIX386; do
     case "$HDF_INC" in
       *$arg*) ;;
@@ -691,7 +691,7 @@ case "${OS}" in
     esac
   done
 
-                LD_XDR=;;
+                LD_XDR=-lnsl;;
   hpux*)          for arg in -DHP9000; do
     case "$HDF_INC" in
       *$arg*) ;;
