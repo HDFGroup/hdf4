@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.4  1992/12/28 18:18:37  mfolk
+Changed header doc of DFdiget to make it a little clearer.
 
+ * Revision 1.3  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.2  1992/10/22  22:53:32  chouck
  * Added group handle to group interface
  *
@@ -153,8 +156,10 @@ int32 DFdiread(file_id, tag, ref)
 
 /*-----------------------------------------------------------------------------
  * Name:    DFdiget
- * Purpose: return next DI from list
- * Inputs:  di: space to return DI
+ * Purpose: return next DI from the list of DIs in a group
+ * Inputs:  list: handle to group (which is list of DIs)
+ * Outputs: ptag: pointer to tag part of DI to be returned
+ *          pref: pointer to ref part of DI to be returned
  * Returns: 0 on success, -1 on failure with error set
  * Users:   HDF systems programmers, DF8getrig, other routines
  * Invokes: none
