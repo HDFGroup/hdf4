@@ -5,9 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/11/28 18:35:27  chouck
-Improved speed of initialization for DFANlablist()
+Revision 1.5  1992/12/18 15:41:48  mfolk
+Added code in DFANIputann to promote annotation storage to linked
+block if the annotation already exists in the file, is not
+a linked block, AND we are increasing its size.
 
+ * Revision 1.4  1992/11/28  18:35:27  chouck
+ * Improved speed of initialization for DFANlablist()
+ *
  * Revision 1.3  1992/11/07  20:12:48  sxu
  * added nlabs in DFANIlablist.
  *
@@ -669,7 +674,7 @@ int type;
     DFANdirhead *p, *q;
     
         /* move to last entry in list */
-    for (p=DFANdir[type]; (p!=NULL) && (p->next!=NULL); p=p->next)
+    for (p=DFANdir[type]; (p!=NULL) && (p->next!=NULL); p=p->next)/*EMPTY*/
         ;
 
     if (p) {                                    /* not new list */
@@ -888,6 +893,31 @@ int type;
         newflag = 1;            /* remember to add ann tag/ref to directory */
     }
     
+     /*
+      * promote to linked-block if annotation exists, is not already
+      * a linked block, AND we are increasing its size.
+      */
+    if (newflag == 0) {           /* does prev annotation exist? */
+          int16  special;   /* to tell if special tag was used */
+          int32  blocksize, /* size of block to create, if necessary */
+                 oldlength; /* length of prev annotation */
+
+        aid = Hstartread(file_id, anntag, annref);
+        if (aid == FAIL) {
+            Hendaccess(aid); Hclose(file_id); return FAIL;
+        } else {
+            HQuerylength(aid, &oldlength);
+            HQueryspecial(aid, &special);
+            if ( !special && (annlen > (oldlength-4)) ) {
+                Hendaccess(aid);
+                blocksize = (anntag == DFTAG_DIL) ? DFAN_LAB_BLKSIZE 
+                                                  : DFAN_DESC_BLKSIZE;
+                aid = HLcreate(file_id, anntag, annref,blocksize,8);
+            }
+        }
+        Hendaccess(aid);
+    }
+
         /* put annotation */
         /* Note: cannot use DFputelement because need to write data tag/ref */
     aid = Hstartwrite(file_id, anntag, annref, annlen+4);
@@ -1025,7 +1055,7 @@ int listsize, maxlen, startpos, isfortran;
                      Hendaccess(aid); Hclose(file_id); return FAIL;
                   }
                     /* look for corresponding ref in reflist */
-                  for (k=0; k<nrefs && p->entries[i].dataref != reflist[k];k++)
+                  for (k=0; k<nrefs && p->entries[i].dataref != reflist[k];k++)/*EMPTY*/
                      ;
                   if (k < nrefs) {               /* if ref found */
 
