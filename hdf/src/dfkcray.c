@@ -97,6 +97,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define BITOFF 58
 #define NOINTCRAY2IEG
 /* #define NOFLOATCRAY2IEG */
+#define NOSTRIDEFLOATCRAY2IEG
 
 PRIVATE VOID DFKswap
             (VOIDP s, VOIDP d, uintn elem_size, uintn num_elem);
@@ -1503,7 +1504,7 @@ DFKui4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
       }     /* end if */
     else
       {     /* We end up here if we are doing stride based processing */
-#ifdef NOFLOATCRAY2IEG
+#ifdef NOSTRIDEFLOATCRAY2IEG
           buf1 = 0;
           for (i = 0; i < num_elm; i++)
             {
@@ -1542,11 +1543,7 @@ DFKui4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           for (i = 0; i < num_elm; i++)
             {
                 HDmemcpy(&tmp_src, source, sizeof(float32));
-#ifdef QAK
-                bitoff = 0;
-#else /* QAK */
                 bitoff = ((unsigned int)&tmp_src) >> BITOFF;
-#endif /* QAK */
                 ierr = IEG2CRAY(&type, &n_elem, &tmp_src, &bitoff, tmp_dst);
                 if (ierr != 0)
                     HRETURN_ERROR(DFE_BADCONV, FAIL);   /* error in Cray conversion */
@@ -1622,7 +1619,7 @@ DFKuo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
       }     /* end if */
     else
       {     /* We end up here if we are doing stride based processing */
-#ifdef NOFLOATCRAY2IEG
+#ifdef NOSTRIDEFLOATCRAY2IEG
           buf1 = 0;
           for (i = 0; i < num_elm; i++)
             {
@@ -1721,7 +1718,7 @@ DFKui8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     else
         for (i = 0; i < num_elm; i++)
           {
-#ifdef NOFLOATCRAY2IEG
+#ifdef NOSTRIDEFLOATCRAY2IEG
               dud[0] = source[0];
               dud[1] = source[1];
               dud[2] = source[2];
@@ -1812,7 +1809,7 @@ DFKuo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     else
         for (i = 0; i < num_elm; i++)
           {
-#ifdef NOFLOATCRAY2IEG
+#ifdef NOSTRIDEFLOATCRAY2IEG
               dud[0] = source[0];
               dud[1] = source[1];
               dud[2] = source[2];
@@ -3758,7 +3755,7 @@ DFKlui4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
       }     /* end if */
     else
       {     /* We end up here if we are doing stride based processing */
-#ifdef NOFLOATCRAY2IEG
+#ifdef NOSTRIDEFLOATCRAY2IEG
           buf1 = 0;
           for (i = 0; i < num_elm; i++)
             {
@@ -3892,7 +3889,7 @@ DFKluo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
       }     /* end if */
     else
       {     /* We end up here if we are doing stride based processing */
-#ifdef NOFLOATCRAY2IEG
+#ifdef NOSTRIDEFLOATCRAY2IEG
           buf1 = 0;
           for (i = 0; i < num_elm; i++)
             {
@@ -4013,7 +4010,7 @@ DFKlui8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
       }     /* end if */
     else
       {
-#ifdef NOFLOATCRAY2IEG
+#ifdef NOSTRIDEFLOATCRAY2IEG
           for (i = 0; i < num_elm; i++)
             {
                 dud[0] = source[7];
@@ -4133,7 +4130,7 @@ DFKluo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
       }     /* end if */
     else
       {
-#ifdef NOFLOATCRAY2IEG
+#ifdef NOSTRIDEFLOATCRAY2IEG
           for (i = 0; i < num_elm; i++)
             {
                 dud[0] = source[0];
