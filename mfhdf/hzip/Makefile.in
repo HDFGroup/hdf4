@@ -158,7 +158,7 @@ debug:  $(PROGRAM)  ../libsrc/libmfhdf.a
 	purify $(CC) $(CFLAGS) $(CFLAGS_NETCDF) $(OBJS) $(LIBS) -o phzip
 
 
-test: hrepacktst hrepack
+test: test_hrepack hrepack
 	sh test_hrepack.sh
 
 install::	installed_program installed_manuals

@@ -291,7 +291,7 @@ char* get_schunk(int32 flags)
 static 
 void usage()
 {
- printf("hrepackck file_name <sds_name>\n");
+ printf("hrepack_check file_name <sds_name>\n");
  printf("    file_name   HDF File\n");
  printf("    sds_name    SDS name (if no name, a list of all names is printed)\n");
 }
