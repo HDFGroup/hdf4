@@ -679,7 +679,7 @@ int32   *nelt, *interlace, *eltsize;
         *nelt=VSelts(vkey);
 	if(interlace)
         *interlace=VSgetinterlace(vkey);
-	if(eltsize)
+	if(eltsize && fields)
         *eltsize=VSsizeof(vkey,fields);
 	if(vsname)
         VSgetname(vkey,vsname);
