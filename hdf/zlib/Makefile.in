@@ -58,9 +58,9 @@ RANLIB = ranlib
 AR2= $(RANLIB)
 
 # installation program
-INSTALL= cp
-INSTALL_PROGRAM= $(INSTALL)
-INSTALL_DATA= $(INSTALL)
+INSTALL = ${TOP_SRCDIR}/install-sh -c
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL) -m 644
 
 # Old stuff
 #CC=cc

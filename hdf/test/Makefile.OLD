@@ -2,7 +2,11 @@
 # $Header$
 #
 # $Log$
-# Revision 1.5  1995/10/31 16:38:33  koziol
+# Revision 1.6  1995/11/13 20:19:27  acheng
+# Changed jpeg and zlib to use install-sh for installing (instead of
+# cp).  Make Install to use mode 644 whenever possible.
+#
+# Revision 1.5  1995/10/31  16:38:33  koziol
 # Took out old-style function prototypes, they should be fixed on a per
 # machine basis for now.  Also assume ANSI-C compiler in header files.
 #

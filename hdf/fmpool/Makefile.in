@@ -58,7 +58,7 @@ AR2= $(RANLIB)
 # installation program
 INSTALL= cp
 INSTALL_PROGRAM= $(INSTALL)
-INSTALL_DATA= $(INSTALL)
+INSTALL_DATA= $(INSTALL) -m 644
 
 # -DPURIFY     -> when using purify
 # -DSTATISTICS -> when you want statistics

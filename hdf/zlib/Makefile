@@ -1,17 +1,17 @@
 # This file was generated automatically by configure.  Do not edit.
 VPATH = .
 links = 
-host_alias = i386-unknown-freebsd2.1.0
-host_cpu = i386
-host_vendor = unknown
-host_os = freebsd2.1.0
-host_canonical = i386-unknown-freebsd2.1.0
-target_alias = i386-unknown-freebsd2.1.0
-target_cpu = i386
-target_vendor = unknown
-target_os = freebsd2.1.0
-target_canonical = i386-unknown-freebsd2.1.0
-host_makefile_frag = ../../config/mh-fbsd
+host_alias = mips-sgi-irix5.3
+host_cpu = mips
+host_vendor = sgi
+host_os = irix5.3
+host_canonical = mips-sgi-irix5.3
+target_alias = mips-sgi-irix5.3
+target_cpu = mips
+target_vendor = sgi
+target_os = irix5.3
+target_canonical = mips-sgi-irix5.3
+host_makefile_frag = ../../config/mh-irix5
 # Makefile for zlib
 # Copyright (C) 1995 Jean-loup Gailly.
 # For conditions of distribution and use, see copyright notice in zlib.h 
@@ -25,7 +25,7 @@ srcdir = .
 TOP_SRCDIR = ../..
 
 # Where to install the programs and man pages.
-prefix = /usr/local
+prefix = /usr6/acheng/HDF/v40/dev/Install
 exec_prefix = $(prefix)
 bindir = $(exec_prefix)/bin
 libdir = $(exec_prefix)/lib
@@ -72,9 +72,9 @@ RANLIB = ranlib
 AR2= $(RANLIB)
 
 # installation program
-INSTALL= cp
-INSTALL_PROGRAM= $(INSTALL)
-INSTALL_DATA= $(INSTALL)
+INSTALL = ${TOP_SRCDIR}/install-sh -c
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL) -m 644
 
 # Old stuff
 #CC=cc
@@ -99,24 +99,23 @@ HDFBIN= $(srcdir)/../bin
 #
 # Compiliers:
 # For gcc version
-CC=gcc
-CFLAGS=-ansi -Wall -pedantic -g
-#CFLAGS=-ansi
+#CC=gcc
+#CFLAGS=-ansi 
 #
 #Using ANSI compilier
-#CC=cc
-#CFLAGS=
+CC=cc
+CFLAGS=-ansi
 
 # Fortran compilier
 FC = f77
-FFLAGS = -g
+FFLAGS =
 
-# Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
-RANLIB = ranlib
+# Name of archive randomizer, usually ranlib (use 'true' if non-existant)
+RANLIB = true
 
 # Name of library archiver and flags to send, default 'AR=ar', 'ARFLAGS=r'
 AR = ar
-ARFLAGS = r
+ARFLAGS = rs
 
 # Name of remove utility, default 'RM=/bin/rm', 'RMFLAGS=-f'
 RM = /bin/rm
@@ -145,14 +144,14 @@ RMFLAGS = -f
 # Operating system, Used in fortran directory to generate fortran
 # wrappers. Possible values are osf, aix, hpux, irix, sunos, ultrix
 # unicos, convex, Linux, freebsd
-OS	= freebsd
+OS	= irix
 
 CPP	      = $(CC) -E
 
 # for endianess, for little endian byte order need -DSWAP
 # for FreeBSD and Linux(anny x86 UNIX)
-SWAP          = -DSWAP
-#SWAP          = 
+#SWAP          = -DSWAP
+SWAP          = 
 
 # for 32bit 'network long' integer, possible value -DNETLONG=int
 NETLONG       = 
@@ -204,8 +203,8 @@ VERSION_NETCDF	= 2.3.2
 CPP_XDR		= -I/usr/include/rpc
 
 # If XDR library not present then you need
-XDR_LIBOBJS    = xdr.o xdrfloat.o xdrstdio.o xdrarray.o
-#XDR_LIBOBJS     =
+#XDR_LIBOBJS    = xdr.o xdrfloat.o xdrstdio.o xdrarray.o
+XDR_LIBOBJS     =
 
 # location of library, sometimes the sunos requires -lsun
 LD_XDR		= 
@@ -281,7 +280,7 @@ minigzip: minigzip.o libz.a
 	$(CC) $(CFLAGS) -o $@ minigzip.o $(LDFLAGS)
 
 clean distclean:
-	rm -f *.o example minigzip libz.a foo.gz
+	rm -f *.o example minigzip libz.a foo.gz config.status Makefile
 
 zip:
 	zip -ul9 zlib README ChangeLog Makefile Make????.??? Makefile.?? \
