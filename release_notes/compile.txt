@@ -100,7 +100,7 @@ C:
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
-    f77 -O -Nn802 -Nx400 -o <your program> <your program>.f  \
+    f77 -O -o <your program> <your program>.f  \
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
  
