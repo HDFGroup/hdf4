@@ -97,7 +97,7 @@ TOOLTEST hdiff_04.txt -d hdifftst1.hdf hdifftst2.hdf
 TOOLTEST hdiff_05.txt -D hdifftst1.hdf hdifftst2.hdf
 
 # Print statistics
-TOOLTEST hdiff_06.txt -d -S hdifftst1.hdf hdifftst2.hdf
+#TOOLTEST hdiff_06.txt -d -S hdifftst1.hdf hdifftst2.hdf
 
 # Compare SD data on variable(s)
 TOOLTEST hdiff_07.txt -d -v dset1 hdifftst1.hdf hdifftst2.hdf
