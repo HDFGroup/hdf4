@@ -1430,32 +1430,34 @@ int32 GRstart(int32 hdf_file_id)
         if ((gr_ptr = New_grfile(hdf_file_id)) == NULL)
             HGOTO_ERROR(DFE_FNF, FAIL);
 
-    if (gr_ptr->access++)
-        HGOTO_DONE(SUCCEED);
+    if (gr_ptr->access>0)
+        gr_ptr->access++;
+    else
+      {
+        /* Fire up the Vset interface */
+        if(Vstart(hdf_file_id)==FAIL)
+            HGOTO_ERROR(DFE_CANTINIT,FAIL);
 
-    /* Fire up the Vset interface */
-    if(Vstart(hdf_file_id)==FAIL)
-        HGOTO_ERROR(DFE_CANTINIT,FAIL);
+        /* Initialize the starting information for the interface */
+        gr_ptr->hdf_file_id=hdf_file_id;
+        gr_ptr->gr_ref=DFREF_WILDCARD;
+        gr_ptr->gr_count=0;
+        gr_ptr->grtree = tbbtdmake(rigcompare, sizeof(int32));
+        if (gr_ptr->grtree == NULL)
+            HGOTO_ERROR(DFE_NOSPACE, FAIL);
+        gr_ptr->gr_modified=0;
 
-    /* Initialize the starting information for the interface */
-    gr_ptr->hdf_file_id=hdf_file_id;
-    gr_ptr->gr_ref=DFREF_WILDCARD;
-    gr_ptr->gr_count=0;
-    gr_ptr->grtree = tbbtdmake(rigcompare, sizeof(int32));
-    if (gr_ptr->grtree == NULL)
-        HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    gr_ptr->gr_modified=0;
+        gr_ptr->gattr_count=0;
+        gr_ptr->gattree = tbbtdmake(rigcompare, sizeof(int32));
+        if (gr_ptr->gattree == NULL)
+            HGOTO_ERROR(DFE_NOSPACE, FAIL);
+        gr_ptr->gattr_modified=0;
+        gr_ptr->attr_cache=GR_ATTR_THRESHHOLD;
 
-    gr_ptr->gattr_count=0;
-    gr_ptr->gattree = tbbtdmake(rigcompare, sizeof(int32));
-    if (gr_ptr->gattree == NULL)
-        HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    gr_ptr->gattr_modified=0;
-    gr_ptr->attr_cache=GR_ATTR_THRESHHOLD;
-
-    /* Go get all the images and attributes in the file */
-    if(GRIget_image_list(hdf_file_id,gr_ptr)==FAIL)
-        HGOTO_ERROR(DFE_INTERNAL,FAIL);
+        /* Go get all the images and attributes in the file */
+        if(GRIget_image_list(hdf_file_id,gr_ptr)==FAIL)
+            HGOTO_ERROR(DFE_INTERNAL,FAIL);
+      } /* end else */
 
     /* Return handle to the GR interface to the user */
     ret_value=HAregister_atom(GRIDGROUP,gr_ptr);
