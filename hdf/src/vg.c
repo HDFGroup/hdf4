@@ -53,6 +53,7 @@ PRIVATE int32 matchnocase
             (char *strx, char *stry);
 #endif /* VDATA_FIELDS_ALL_UPPER */
 
+#ifdef OLD_WAY
 /*------------------------------------------------------------------
 NAME 
    Vnewref --  utility routine. returns a unique reference number.
@@ -77,6 +78,7 @@ vnewref(HFILEID f)
 
     return (r);
 }   /* vnewref */
+#endif /* OLD_WAY */
 
 #ifdef VDATA_FIELDS_ALL_UPPER
 /*-----------------------------------------------------------------

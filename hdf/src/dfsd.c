@@ -1340,12 +1340,12 @@ DFSDstartslice(const char *filename)
     if (Sfile_id == DF_NOFILE)
         return FAIL;
 
+    Writesdg.data.tag = DFTAG_SD;
+
     if (!Writeref)
-        Writeref = Hnewref(Sfile_id);
+        Writeref = Htagnewref(Sfile_id,Writesdg.data.tag);
     if (!Writeref)
         return FAIL;
-
-    Writesdg.data.tag = DFTAG_SD;
     Writesdg.data.ref = Writeref;
 
     if (Writesdg.numbertype == DFNT_NONE)   /* if NT not set,default to float32 */
@@ -4486,13 +4486,12 @@ DFSDstartslab(const char *filename)
        ** If not Writeref then we create a new Writeref i.e new SDG
        ** Else use existing one.
      */
-    if (!Writeref)
-        Writeref = Hnewref(Sfile_id);
-    if (!Writeref)
-        return FAIL;
-
     /* Set tag, ref of SDG to write */
     Writesdg.data.tag = DFTAG_SD;
+    if (!Writeref)
+        Writeref = Htagnewref(Sfile_id,Writesdg.data.tag);
+    if (!Writeref)
+        return FAIL;
     Writesdg.data.ref = Writeref;
 
     /* Intialize a few local variables */

@@ -299,7 +299,7 @@ HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length,
             }   
 
           data_dd->tag = DFTAG_LINKED;
-          data_dd->ref = Hnewref(file_id);
+          data_dd->ref = Htagnewref(file_id,data_dd->tag);
           if (HIupdate_dd(file_rec, data_block, data_idx, FUNC) == FAIL)
             {
                 access_rec->used = FALSE;
@@ -316,7 +316,7 @@ HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length,
       }
 
     /* write the special info structure to fill */
-    link_ref = Hnewref(file_id);
+    link_ref = Htagnewref(file_id,DFTAG_LINKED);
     dd->length = 16;
 
     if ((dd->offset = HPgetdiskblock(file_rec, dd->length, TRUE)) == FAIL)
@@ -518,7 +518,7 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
       }     
 
     /* write the special info structure to fill */
-    link_ref = Hnewref(file_id);
+    link_ref = Htagnewref(file_id,DFTAG_LINKED);
     dd->length = 16;
 
     if ((dd->offset = HPgetdiskblock(file_rec, dd->length, TRUE)) == FAIL)
@@ -1154,7 +1154,7 @@ HLPwrite(accrec_t * access_rec, int32 length, const VOIDP datap)
           {
               if (!t_link->next)
                 {   /* create missing link (block table) */
-                    t_link->nextref = Hnewref(access_rec->file_id);
+                    t_link->nextref = Htagnewref(access_rec->file_id,DFTAG_LINKED);
                     t_link->next = HLInewlink(access_rec->file_id,
                                    info->number_blocks, t_link->nextref, 0);
                     if (!t_link->next)
@@ -1214,7 +1214,7 @@ HLPwrite(accrec_t * access_rec, int32 length, const VOIDP datap)
             }   
           else
             {   /* block is missing, set up a new block */
-                new_ref = Hnewref(access_rec->file_id);
+                new_ref = Htagnewref(access_rec->file_id,DFTAG_LINKED);
                 access_id = Hstartwrite(access_rec->file_id, DFTAG_LINKED,
                                         new_ref, current_length);
             }
@@ -1264,7 +1264,7 @@ HLPwrite(accrec_t * access_rec, int32 length, const VOIDP datap)
                 block_idx = 0;
                 if (!t_link->next)
                   {     /* create missing link/block table */
-                      t_link->nextref = Hnewref(access_rec->file_id);
+                      t_link->nextref = Htagnewref(access_rec->file_id,DFTAG_LINKED);
                       t_link->next = HLInewlink(access_rec->file_id,
                                    info->number_blocks, t_link->nextref, 0);
                       if (!t_link->next)

@@ -112,7 +112,7 @@
 #endif /* MIN_NDDS */
 
 /* largest number that will fit into 16-bit word ref variable */
-#define MAX_REF ((uint16)32767)
+#define MAX_REF ((uint16)65535)
 
 /* length of block and number of blocks for converting 'appendable' data */
 /* elements into linked blocks (will eventually be replaced by the newer */

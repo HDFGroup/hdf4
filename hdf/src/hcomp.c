@@ -599,7 +599,7 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
 
     /* set up compressed special info structure */
     info->attached = 1;
-    info->comp_ref = Hnewref(file_id);  /* get the new reference # */
+    info->comp_ref = Htagnewref(file_id,DFTAG_COMPRESSED);  /* get the new reference # */
 #ifdef TESTING
     printf("HCcreate(): check 3\n");
 #endif

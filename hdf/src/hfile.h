@@ -58,7 +58,7 @@
 #endif /* MIN_NDDS */
 
 /* largest number that will fit into 16-bit word ref variable */
-#define MAX_REF ((uint16)32767)
+#define MAX_REF ((uint16)65535)
 
 /* length of block and number of blocks for converting 'appendable' data */
 /* elements into linked blocks (will eventually be replaced by the newer */
@@ -84,6 +84,7 @@
 #define NDDS_SZ 2
 #define OFFSET_SZ 4
 
+>>>>>>> /tmp/T4001005
 /* invalid offset & length to indicate a partially defined element 
 * written to the HDF file i.e. can handle the case where the the
 * element is defined but not written out */

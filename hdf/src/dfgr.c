@@ -1242,26 +1242,16 @@ DFGRIaddimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
     if (file_id == (int32) NULL)
         HRETURN_ERROR(DFE_BADOPEN, FAIL);
 
-    wref = Hnewref(file_id);
-    if (!wref)
-        return (HDerr(file_id));
-
-#ifdef OLD_WAY
-    is8bit = (Grwrite.datadesc[IMAGE].ncomponents == 1);
-#else
-#ifdef OLD_WAY
-    /* make 8-bit compatibility only for older 8-bit stuff, not JPEG */
-    is8bit = ((Grwrite.datadesc[IMAGE].ncomponents == 1) &&
-              (Grcompr != DFTAG_GREYJPEG && Grcompr != DFTAG_JPEG));
-#else /* OLD_WAY */
     /* make 8-bit compatibility only for older 8-bit stuff, not JPEG */
     is8bit = ((Grwrite.datadesc[IMAGE].ncomponents == 1) &&
               (Grcompr != DFTAG_GREYJPEG5 && Grcompr != DFTAG_JPEG5));
-#endif /* OLD_WAY */
-#endif
 
     wtag = (uint16) ((type == LUT) ? DFTAG_LUT : (Grcompr ? DFTAG_CI : DFTAG_RI));
     Grwrite.data[type].tag = wtag;
+
+    wref = Htagnewref(file_id,wtag);
+    if (!wref)
+        return (HDerr(file_id));
 
     /* write out image/lut */
     if ((type == IMAGE) && Grcompr)

@@ -176,7 +176,7 @@ DFPputpal(const char *filename, const VOIDP palette, intn overwrite, const char 
        Writeref is set, we use that ref.  If not we get a fresh ref. The
        ref to write is placed in Lastref */
     if (!overwrite)
-        Lastref = (uint16) (Writeref ? Writeref : Hnewref(file_id));
+        Lastref = (uint16) (Writeref ? Writeref : Htagnewref(file_id,DFTAG_IP8));
     if (Lastref == 0)
         HRETURN_ERROR(DFE_NOREF, FAIL);
 

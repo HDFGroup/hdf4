@@ -540,7 +540,8 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
           vs->islinked = FALSE;
           vs->nusym = 0;
 
-          vs->oref = vnewref(f);
+          vs->otag = DFTAG_VH;
+          vs->oref = Htagnewref(f,vs->otag);
           if (vs->oref == 0)
             {
                 HERROR(DFE_NOREF);
@@ -548,7 +549,6 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
                 return (FAIL);
             }
 
-          vs->otag = DFTAG_VH;
           vs->vsname[0] = '\0';
           vs->interlace = FULL_INTERLACE;   /* DEFAULT */
           vs->access = 'w';

@@ -35,8 +35,10 @@ extern      "C"
 /*
    ** from vg.c
  */
+#ifdef OLD_WAY
     extern uint16 vnewref
                 (HFILEID f);
+#endif /* OLD_WAY */
 
     extern int32 VSelts
                 (int32 vkey);

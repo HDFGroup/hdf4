@@ -72,6 +72,8 @@ static char RcsId[] = "@(#)$Revision$";
    HIupdate_dd -- write an updated dd to the file
    Hdeldd      -- delete a data descriptor
    Hnewref     -- returns a ref that is guaranteed to be unique in the file
+   Htagnewref  -- returns a ref that is guaranteed to be unique in the file
+                    for a given tag
    Hishdf      -- tells if a file is an HDF file
    Htrunc      -- truncate a dataset to a length
    Hsync       -- sync file with memory
@@ -606,7 +608,7 @@ Hfind(int32 file_id, uint16 search_tag, uint16 search_ref,
 
 /* clear error stack and check validity of the access id */
 	HEclear();
-	if (file_id == FAIL || search_ref > MAX_REF || find_tag == NULL
+	if (file_id == FAIL || /* search_ref > MAX_REF || */ find_tag == NULL
 		|| find_ref == NULL || find_offset == NULL || find_length == NULL
 		|| (direction != DF_FORWARD && direction != DF_BACKWARD))
 		HRETURN_ERROR(DFE_ARGS, FAIL);
@@ -2495,7 +2497,7 @@ Hnewref(int32 file_id)
 
 /* otherwise, search for an empty ref */
 /* incredibly slow but unlikely situation */
-	for (ref = 1; ref < MAX_REF; ref++)
+	for (ref = 1; ref <= MAX_REF; ref++)
 	  {
 		  ddblock_t  *bl;
 		  int32       idx;
@@ -2508,6 +2510,57 @@ Hnewref(int32 file_id)
 
 	return 0;
 }	/* Hnewref */
+
+/*--------------------------------------------------------------------------
+NAME
+   Htagnewref -- returns a ref that is guaranteed to be unique in the file for
+                a given tag
+USAGE
+   uint16 Htagnewref(file_id,tag)
+   int32 file_id;          IN: id of file
+   uint16 tag;             IN: tag for new ref #
+RETURNS
+   returns the ref number, 0 otherwise
+DESCRIPTION
+   Returns a ref number that can be used with any tag to produce a
+   unique tag/ref.  Successive calls to Hnewref will generate a
+   strictly increasing sequence until the highest possible ref had been
+   returned, then Hnewref will return unused ref's starting from 1.
+
+--------------------------------------------------------------------------*/
+uint16
+Htagnewref(int32 file_id,uint16 tag)
+{
+	CONSTR(FUNC, "Htagnewref");	/* for HERROR */
+	filerec_t  *file_rec;		/* file record */
+	uint16      ref;			/* the new ref */
+
+/* clear error stack and check validity of file record id */
+	HEclear();
+	file_rec = FID2REC(file_id);
+	if (BADFREC(file_rec))
+		HRETURN_ERROR(DFE_ARGS, 0);
+
+/* if maxref of this file is still below the maximum,
+   just return next number */
+	if (file_rec->maxref < MAX_REF)
+		return ++(file_rec->maxref);
+
+/* otherwise, search for an empty ref for the given tag */
+/* incredibly slow but unlikely situation */
+	for (ref = 1; ref <= MAX_REF; ref++)
+	  {
+		  ddblock_t  *bl;
+		  int32       idx;
+
+		  bl = file_rec->ddhead;
+		  idx = -1;
+		  if (HIfind_dd(tag, ref, &bl, &idx, DF_FORWARD) == FAIL)
+			  return ref;
+	  }
+
+	return(0);
+}	/* Htagnewref */
 
 /*--------------------------------------------------------------------------
 NAME

@@ -1152,10 +1152,10 @@ intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
     /* Weird test below to allow for tag/ref values of zero.  (I'll spare */
     /*  everyone my rant about why DFTAG_NULL should have been made zero */
     /*  instead of one... QAK) */
-    if(img_ptr->img_dim.nt_ref<=DFTAG_NULL)
-        img_ptr->img_dim.nt_ref=Hnewref(hdf_file_id);
     if(img_ptr->img_dim.nt_tag<=DFTAG_NULL)
         img_ptr->img_dim.nt_tag=DFTAG_NT;
+    if(img_ptr->img_dim.nt_ref<=DFTAG_NULL)
+        img_ptr->img_dim.nt_ref=Htagnewref(hdf_file_id,img_ptr->img_dim.nt_tag);
     
     /* Write out the raster image's number-type record */
     ntstring[0] = DFNT_VERSION;     /* version */
@@ -1170,10 +1170,10 @@ intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
     if(img_ptr->lut_ref>DFTAG_NULL)
       {
           /* Write out the palette number-type */
-          if(img_ptr->lut_dim.nt_ref<=DFTAG_NULL)
-              img_ptr->lut_dim.nt_ref=Hnewref(hdf_file_id);
           if(img_ptr->lut_dim.nt_tag<=DFTAG_NULL)
               img_ptr->lut_dim.nt_tag=DFTAG_NT;
+          if(img_ptr->lut_dim.nt_ref<=DFTAG_NULL)
+              img_ptr->lut_dim.nt_ref=Htagnewref(hdf_file_id,img_ptr->lut_dim.nt_tag);
           ntstring[0] = DFNT_VERSION;     /* version */
           ntstring[1] = DFNT_UCHAR;       /* type */
           ntstring[2] = 8;                /* width: RIG data is 8-bit chars */
@@ -1193,7 +1193,7 @@ intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
           UINT16ENCODE(p, img_ptr->lut_dim.comp_tag);
           UINT16ENCODE(p, img_ptr->lut_dim.comp_ref);
           if(img_ptr->lut_dim.dim_ref<=DFTAG_NULL)
-              img_ptr->lut_dim.dim_ref=Hnewref(hdf_file_id);
+              img_ptr->lut_dim.dim_ref=Htagnewref(hdf_file_id,DFTAG_LD);
           if (Hputelement(hdf_file_id, DFTAG_LD, img_ptr->lut_dim.dim_ref, GRtbuf, (int32)(p-GRtbuf)) == FAIL)
               HRETURN_ERROR(DFE_PUTELEM, FAIL);
       } /* end if */
@@ -1209,7 +1209,7 @@ intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
     UINT16ENCODE(p, img_ptr->img_dim.comp_tag);
     UINT16ENCODE(p, img_ptr->img_dim.comp_ref);
     if(img_ptr->img_dim.dim_ref<=DFTAG_NULL)
-        img_ptr->img_dim.dim_ref=Hnewref(hdf_file_id);
+        img_ptr->img_dim.dim_ref=Htagnewref(hdf_file_id,DFTAG_ID);
     if (Hputelement(hdf_file_id, DFTAG_ID, img_ptr->img_dim.dim_ref, GRtbuf, (int32)(p-GRtbuf)) == FAIL)
         HRETURN_ERROR(DFE_PUTELEM, FAIL);
 
@@ -2123,7 +2123,7 @@ printf("%s: check 5, new_image=%d, whole_image=%d, solid_block=%d\n",FUNC,new_im
           if(new_image==TRUE)
             { /* Create the tag/ref for the new image */
                 ri_ptr->img_tag=DFTAG_RI;
-                ri_ptr->img_ref=Hnewref(hdf_file_id);
+                ri_ptr->img_ref=Htagnewref(hdf_file_id,ri_ptr->img_tag);
             } /* end if */
 
           if(whole_image==TRUE)
@@ -3155,7 +3155,7 @@ intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP 
           else
             {   /* LUT does not exist */
                 ri_ptr->lut_tag=DFTAG_LUT;
-                ri_ptr->lut_ref=Hnewref(hdf_file_id);
+                ri_ptr->lut_ref=Htagnewref(hdf_file_id,ri_ptr->lut_ref);
                 ri_ptr->lut_dim.dim_ref=DFTAG_NULL;
                 ri_ptr->lut_dim.xdim=256;
                 ri_ptr->lut_dim.ydim=1;

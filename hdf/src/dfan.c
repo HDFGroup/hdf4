@@ -1042,7 +1042,7 @@ DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
     annref = DFANIlocate(file_id, type, tag, ref);
     if (annref == 0)
       {
-          annref = Hnewref(file_id);
+          annref = Htagnewref(file_id,anntag);
           if (annref == 0)
             {
                 Hclose(file_id);
@@ -1315,7 +1315,7 @@ DFANIaddfann(int32 file_id, char *ann, int32 annlen, int type)
 
     anntag = (uint16) ((type == DFAN_LABEL) ? DFTAG_FID : DFTAG_FD);
 
-    annref = Hnewref(file_id);
+    annref = Htagnewref(file_id,anntag);
     if (annref == 0)
         return FAIL;
 

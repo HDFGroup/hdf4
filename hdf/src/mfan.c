@@ -1543,29 +1543,28 @@ ANIcreate(int32 file_id, uint16 elem_tag, uint16 elem_ref, ann_type type )
   if (file_id == FAIL)
     HRETURN_ERROR(DFE_BADCALL, FAIL);
 
-  /* new annotation */
-  ann_ref = Hnewref(file_id);
-  if (ann_ref == 0)
-    HE_REPORT_RETURN("Failed create new ref for annotation",FAIL);
-
   /* deal with type */
   switch((ann_type)type)
     {
     case AN_DATA_LABEL:
       ann_tag = DFTAG_DIL;
+      ann_ref = Htagnewref(file_id,ann_tag);
       break;
     case AN_DATA_DESC:
       ann_tag = DFTAG_DIA;
+      ann_ref = Htagnewref(file_id,ann_tag);
       break;
     case AN_FILE_LABEL:
       /* for file label set elmement tag/ref to ann_tag & ref */
       ann_tag = DFTAG_FID;
+      ann_ref = Htagnewref(file_id,ann_tag);
       elem_tag = ann_tag;
       elem_ref = ann_ref;
       break;
     case AN_FILE_DESC:
       /* for file desc set elmement tag/ref to ann_tag & ref */
       ann_tag = DFTAG_FD;
+      ann_ref = Htagnewref(file_id,ann_tag);
       elem_tag = ann_tag;
       elem_ref = ann_ref;
       break;

@@ -446,32 +446,19 @@ DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
     if ((file_id = DFR8Iopen(filename, acc_mode)) == FAIL)
         HRETURN_ERROR(DFE_BADOPEN, FAIL);
 
-    if (!Writeref)
-        if ((Writeref = Hnewref(file_id)) == 0)
-            HRETURN_ERROR(DFE_NOREF, FAIL);
-
     /* write out image */
     if (compress || CompressSet)
       {
           /* if a compression type has been set, check if it's the same */
-#ifdef OLD_WAY
-          if (CompressSet == FALSE || (compress > 1 && (int32) compress != CompType &&
-                    !(compress == COMP_JPEG && CompType == DFTAG_GREYJPEG)))
-#else /* OLD_WAY */
           if (CompressSet == FALSE || (compress > 1 && (int32) compress != CompType &&
                     !(compress == COMP_JPEG && CompType == DFTAG_GREYJPEG5)))
-#endif /* OLD_WAY */
             {
                 if (compress > COMP_MAX_COMP || compress_map[compress] == 0)
                     HRETURN_ERROR(DFE_BADSCHEME, FAIL);
                 /* map JPEG compression into correct type of JPEG compression */
                 if (compress == COMP_JPEG)
                   {
-#ifdef OLD_WAY
-                      CompType = DFTAG_GREYJPEG;
-#else /* OLD_WAY */
                       CompType = DFTAG_GREYJPEG5;
-#endif /* OLD_WAY */
                       /* set up some sane JPEG params */
                       CompInfo.jpeg.quality = 75;
                       CompInfo.jpeg.force_baseline = TRUE;
@@ -479,6 +466,10 @@ DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
                 else    /* otherwise, just use mapped tag */
                     CompType = compress_map[compress];
             }   /* end if */
+          if (!Writeref)
+              if ((Writeref = Htagnewref(file_id,DFTAG_CI)) == 0)
+                  HRETURN_ERROR(DFE_NOREF, FAIL);
+
           if (DFputcomp(file_id, DFTAG_CI, Writeref, (uint8 *) image, xdim, ydim,
                 pal, (uint8 *) newpal, (int16) CompType, &CompInfo) == FAIL)
               HRETURN_ERROR(DFE_WRITEERROR, HDerr(file_id));
@@ -491,6 +482,10 @@ DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
       }     /* end if */
     else
       {     /* image need not be compressed */
+          if (!Writeref)
+              if ((Writeref = Htagnewref(file_id,DFTAG_RI)) == 0)
+                  HRETURN_ERROR(DFE_NOREF, FAIL);
+
           if (Hputelement(file_id, DFTAG_RI, Writeref, (uint8 *) image, xdim * ydim) == FAIL)
               HRETURN_ERROR(DFE_PUTELEM, HDerr(file_id));
           Writerig.image.tag = DFTAG_RI;

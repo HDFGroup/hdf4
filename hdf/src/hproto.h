@@ -105,6 +105,9 @@ extern      "C"
     extern uint16 Hnewref
                 (int32 file_id);
 
+    extern uint16 Htagnewref
+                (int32 file_id, uint16 tag);
+
     extern intn Hsync
                 (int32 file_id);
 

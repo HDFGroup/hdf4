@@ -320,7 +320,7 @@ HVcreate(int32 file_id, uint16 tag, uint16 ref)
             }   
 
           data_dd->tag = DFTAG_VLINKED_DATA;
-          data_dd->ref = Hnewref(file_id);
+          data_dd->ref = Htagnewref(file_id,DFTAG_VLINKED_DATA);
           if (HIupdate_dd(file_rec, data_block, data_idx, FUNC) == FAIL)
             {
                 access_rec->used = FALSE;
@@ -337,7 +337,7 @@ HVcreate(int32 file_id, uint16 tag, uint16 ref)
       }
 
     /* write the special info structure to fill */
-    link_ref = Hnewref(file_id);
+    link_ref = Htagnewref(file_id,DFTAG_VLINKED);
     dd->length = 14;
 
     if ((dd->offset = HPgetdiskblock(file_rec, dd->length, TRUE)) == FAIL)
@@ -1011,7 +1011,7 @@ HVPwrite(accrec_t * access_rec, int32 length, const VOIDP datap)
           { /* have to create a new link header */
             uint16 new_ref;
 
-            new_ref=Hnewref(access_rec->file_id);
+            new_ref=Htagnewref(access_rec->file_id,DFTAG_VLINKED);
             t_link=HVInewlink(access_rec->file_id,new_ref,NULL);
             if(t_link==NULL)
                 HRETURN_ERROR(DFE_INTERNAL,FAIL);
@@ -1103,7 +1103,7 @@ printf("t_link->num_blocks=%d, relative_posn=%d\n",(int)t_link->num_blocks,(int)
       { /* a new block, therefore put the whole chunk of data out at once */
         uint16 new_ref;
 
-        new_ref=Hnewref(access_rec->file_id);
+        new_ref=Htagnewref(access_rec->file_id,DFTAG_VLINKED_DATA);
         if((data_aid=Hstartaccess(access_rec->file_id,DFTAG_VLINKED_DATA,new_ref,DFACC_RDWR))==FAIL)
             HRETURN_ERROR(DFE_CANTACCESS, FAIL);
         if(Hwrite(data_aid,length,(const VOIDP)data)==FAIL)
@@ -1162,7 +1162,7 @@ printf("t_link->num_blocks=%d, relative_posn=%d\n",(int)t_link->num_blocks,(int)
                     if(t_link->block_list[block_idx].tag==DFTAG_NULL)
                       {
                         t_link->block_list[block_idx].tag=DFTAG_VLINKED_DATA;
-                        t_link->block_list[block_idx].ref=Hnewref(access_rec->file_id);
+                        t_link->block_list[block_idx].ref=Htagnewref(access_rec->file_id,DFTAG_VLINKED_DATA);
                         t_link->dirty=TRUE; /* mark the header as modified */
                       } /* end if */
                   } /* end if */
@@ -1198,14 +1198,14 @@ printf("t_link->num_blocks=%d, relative_posn=%d\n",(int)t_link->num_blocks,(int)
                             vlnk_t *new_link;
                             uint16 new_ref;
 
-                            new_ref=Hnewref(access_rec->file_id);
+                            new_ref=Htagnewref(access_rec->file_id,DFTAG_VLINKED);
                             new_link=HVInewlink(access_rec->file_id,new_ref,NULL);
                             if(new_link==NULL)
                                 HRETURN_ERROR(DFE_INTERNAL,FAIL);
                             
                             /* link the headers together */
                             t_link->next=new_link;
-                            new_ref=Hnewref(access_rec->file_id);
+                            new_ref=Htagnewref(access_rec->file_id,DFTAG_VLINKED);
                             new_link->myref=new_ref;;
                             t_link->nextref=new_ref;
                             new_link->nextref=0;
@@ -1225,7 +1225,7 @@ printf("t_link->num_blocks=%d, relative_posn=%d\n",(int)t_link->num_blocks,(int)
               { 
                 uint16 new_ref;
 
-                new_ref=Hnewref(access_rec->file_id);
+                new_ref=Htagnewref(access_rec->file_id,DFTAG_VLINKED_DATA);
                 if((data_aid=Hstartaccess(access_rec->file_id,DFTAG_VLINKED_DATA,new_ref,DFACC_RDWR))==FAIL)
                     HRETURN_ERROR(DFE_CANTACCESS, FAIL);
                 if(Hwrite(data_aid,length,(const VOIDP)data)==FAIL)
