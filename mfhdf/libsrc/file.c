@@ -96,22 +96,22 @@ int mode ;
 		if( _cdfs[id] == NULL) break ;
 
 	if(id == _ncdf && _ncdf >= MAX_NC_OPEN) /* will need a new one */
-	{
-		NCadvise(NC_ENFILE, "maximum number of open cdfs %d exceeded",
-			 _ncdf) ;
-		return(-1) ;
-	}
+      {
+          NCadvise(NC_ENFILE, "maximum number of open cdfs %d exceeded",
+                   _ncdf) ;
+          return(-1) ;
+      }
 
 	handle = NC_new_cdf(path, mode) ;
 	if( handle == NULL)
-	{
-		if((mode & 0x0f) == NC_CLOBBER)
-		{
-			if( remove(path) != 0 )
-				nc_serror("couldn't remove filename \"%s\"", path) ;
-		}
-		return(-1) ;
-	}
+      {
+          if((mode & 0x0f) == NC_CLOBBER)
+            {
+                if( remove(path) != 0 )
+                    nc_serror("couldn't remove filename \"%s\"", path) ;
+            }
+          return(-1) ;
+      }
 
 	(void) strncpy(handle->path, path, FILENAME_MAX) ;
 	_cdfs[id] = handle ;
@@ -162,47 +162,47 @@ int id ;
 		return(-1) ;
 
 	if( handle->flags & NC_INDEF )
-	{
-		NCadvise(NC_EINDEFINE, "Unfinished definition") ;
-		return(-1) ;
-	}
+      {
+          NCadvise(NC_EINDEFINE, "Unfinished definition") ;
+          return(-1) ;
+      }
 
 	if(handle->flags & NC_RDWR)
-	{
-		handle->xdrs->x_op = XDR_ENCODE ;
-		if(handle->flags & NC_HDIRTY)
-		{
-			if(!xdr_cdf(handle->xdrs, &handle) )
-				return(-1) ;
-			handle->flags &= ~(NC_NDIRTY | NC_HDIRTY) ;
-		}
-		else if(handle->flags & NC_NDIRTY)
-		{
-			if(!xdr_numrecs(handle->xdrs, handle) )
-				return(-1) ;
+      {
+          handle->xdrs->x_op = XDR_ENCODE ;
+          if(handle->flags & NC_HDIRTY)
+            {
+                if(!xdr_cdf(handle->xdrs, &handle) )
+                    return(-1) ;
+                handle->flags &= ~(NC_NDIRTY | NC_HDIRTY) ;
+            }
+          else if(handle->flags & NC_NDIRTY)
+            {
+                if(!xdr_numrecs(handle->xdrs, handle) )
+                    return(-1) ;
 #ifdef HDF
-                        if (handle->file_type != HDF_FILE)
+                if (handle->file_type != HDF_FILE)
 #endif
-
-			handle->flags &= ~(NC_NDIRTY) ;
-		}
-	} else /* read only */
-	{
-		/* assert(handle->xdrs->x_op == XDR_DECODE) ; */
-                /* free the stuff in handle that xdr_cdf allocates */
-                handle->xdrs->x_op = XDR_FREE ;
-                (void) xdr_cdf(handle->xdrs, &handle) ;
-                handle->xdrs->x_op = XDR_DECODE ;
+                    handle->flags &= ~(NC_NDIRTY) ;
+            }
+      } 
+    else /* read only */
+      {
+          /* assert(handle->xdrs->x_op == XDR_DECODE) ; */
+          /* free the stuff in handle that xdr_cdf allocates */
+          handle->xdrs->x_op = XDR_FREE ;
+          (void) xdr_cdf(handle->xdrs, &handle) ;
+          handle->xdrs->x_op = XDR_DECODE ;
  
-		if(!xdr_cdf(handle->xdrs, &handle) )
-		{
-			nc_serror("xdr_cdf") ;
-			NC_free_cdf(handle) ; /* ?? what should we do now? */
-			return(-1) ;
-		}
-		if( NC_computeshapes(handle) == -1)
-			return(-1) ;
-	}
+          if(!xdr_cdf(handle->xdrs, &handle) )
+            {
+                nc_serror("xdr_cdf") ;
+                NC_free_cdf(handle) ; /* ?? what should we do now? */
+                return(-1) ;
+            }
+          if( NC_computeshapes(handle) == -1)
+              return(-1) ;
+      }
 
 	(void) NCxdrfile_sync(handle->xdrs) ;
 
@@ -222,7 +222,7 @@ int cdfid ;
 	char path[FILENAME_MAX + 1] ;
 	unsigned flags ;
 #ifdef HDF
-        intn   file_type;
+    intn   file_type;
 #endif
 
 	cdf_routine_name = "ncabort" ;
@@ -236,49 +236,50 @@ int cdfid ;
 
 	/* NC_CREAT implies NC_INDEF, in both cases need to remove handle->path */
 	if(flags & (NC_INDEF | NC_CREAT))
-	{
-		(void)strncpy(path, handle->path, FILENAME_MAX) ; /* stash path */
-		if(!(flags & NC_CREAT)) /* redef */
-		{
-			NC_free_cdf(STASH(cdfid)) ;
+      {
+          (void)strncpy(path, handle->path, FILENAME_MAX) ; /* stash path */
+          if(!(flags & NC_CREAT)) /* redef */
+            {
+                NC_free_cdf(STASH(cdfid)) ;
 
-			_cdfs[handle->redefid] = NULL ;
-			if(handle->redefid == _ncdf - 1)
-				_ncdf-- ;
-			handle->redefid = -1 ;
-		}
-	}
+                _cdfs[handle->redefid] = NULL ;
+                if(handle->redefid == _ncdf - 1)
+                    _ncdf-- ;
+                handle->redefid = -1 ;
+            }
+      }
 	else if(handle->flags & NC_RDWR)
-	{
-		handle->xdrs->x_op = XDR_ENCODE ;
-		if(handle->flags & NC_HDIRTY)
-		{
-			if(!xdr_cdf(handle->xdrs, &handle) )
-				return(-1) ;
-		}
-		else if(handle->flags & NC_NDIRTY)
-		{
-			if(!xdr_numrecs(handle->xdrs, handle) )
-				return(-1) ;
-		}
-	}
+      {
+          handle->xdrs->x_op = XDR_ENCODE ;
+          if(handle->flags & NC_HDIRTY)
+            {
+                if(!xdr_cdf(handle->xdrs, &handle) )
+                    return(-1) ;
+            }
+          else if(handle->flags & NC_NDIRTY)
+            {
+                if(!xdr_numrecs(handle->xdrs, handle) )
+                    return(-1) ;
+            }
+      }
 
 
 #ifdef HDF
-        file_type = handle->file_type;
+    file_type = handle->file_type;
 #endif
 
 	NC_free_cdf(handle) ; /* calls fclose */
 
 
 #ifdef HDF
-        switch(file_type) {
+    switch(file_type) 
+      {
 
-        case netCDF_FILE:
+      case netCDF_FILE:
           if(flags & (NC_INDEF | NC_CREAT))
             {
-              if( remove(path) != 0 )
-                nc_serror("couldn't remove filename \"%s\"", path) ;
+                if( remove(path) != 0 )
+                    nc_serror("couldn't remove filename \"%s\"", path) ;
             }
           break;
       case HDF_FILE:
@@ -290,11 +291,11 @@ int cdfid ;
           break;
       }
 #else
-          if(flags & (NC_INDEF | NC_CREAT))
-            {
-              if( remove(path) != 0 )
-                nc_serror("couldn't remove filename \"%s\"", path) ;
-            }
+    if(flags & (NC_INDEF | NC_CREAT))
+      {
+          if( remove(path) != 0 )
+              nc_serror("couldn't remove filename \"%s\"", path) ;
+      }
 #endif
 
 	_cdfs[cdfid] = NULL ;
@@ -346,7 +347,7 @@ const char *proto ;
 /* NO_GETPID defined if the OS lacks the getpid() function */
 #ifndef NO_GETPID
 #	define TN_NDIGITS 4
-        unsigned int pid ; /* OS/2 DOS (MicroSoft Lib) allows "negative" int pids */
+    unsigned int pid ; /* OS/2 DOS (MicroSoft Lib) allows "negative" int pids */
 #else
 #	define TN_NDIGITS 0
 #endif /* !NO_GETPID */
@@ -366,11 +367,11 @@ const char *proto ;
 	    begin++ ;
 
 	if(&tnbuf[FILENAME_MAX] - begin <= TN_NSEED + TN_NACCES + TN_NDIGITS)
-	{
-		/* not big enough */
-		tnbuf[0] = '\0' ;
-		return tnbuf ;
-	}
+      {
+          /* not big enough */
+          tnbuf[0] = '\0' ;
+          return tnbuf ;
+      }
 #else
 	begin = tnbuf ;
 #endif /* SEP */
@@ -383,10 +384,10 @@ const char *proto ;
 	*cp = '\0' ;
 	pid = getpid() ;
 	while(--cp >= begin + TN_NSEED + TN_NACCES)
-	{
-		*cp = (pid % 10) + '0' ;
-		pid /= 10 ;
-	}
+      {
+          *cp = (pid % 10) + '0' ;
+          pid /= 10 ;
+      }
 #else
 	*cp-- = '\0' ;
 #endif /* !NO_GETPID */
@@ -400,14 +401,14 @@ const char *proto ;
 
 #ifndef NO_ACCESS
 	for(*cp = 'a' ; access(tnbuf, 0) == 0 ; )
-	{
-		if(++*cp > 'z')
-		{
-			/* ran out of tries */
-			tnbuf[0] = '\0' ;
-			return tnbuf ;
-		}
-	}
+      {
+          if(++*cp > 'z')
+            {
+                /* ran out of tries */
+                tnbuf[0] = '\0' ;
+                return tnbuf ;
+            }
+      }
 #endif /* !NO_ACCESS */
 
 	return tnbuf ;
@@ -428,25 +429,26 @@ int cdfid ;
 	if(handle == NULL)
 		return(-1) ;
 	if( handle->flags & NC_INDEF) /* in define mode already */
-	{
-		NC *stash = STASH(cdfid) ;
-		if(stash) NCadvise(NC_EINDEFINE, "%s: in define mode aleady",
-                                   stash->path) ;
-		return(-1) ;
-	}
+      {
+          NC *stash = STASH(cdfid) ;
+          if(stash) NCadvise(NC_EINDEFINE, "%s: in define mode aleady",
+                             stash->path) ;
+          return(-1) ;
+      }
 	if(!(handle->flags & NC_RDWR))
-	{
-		NCadvise(NC_EPERM, "%s: NC_NOWRITE", handle->path) ;
-		return(-1) ;
-	}
+      {
+          NCadvise(NC_EPERM, "%s: NC_NOWRITE", handle->path) ;
+          return(-1) ;
+      }
 
 
 #ifdef HDF
-        if(handle->file_type == HDF_FILE) {
-            handle->flags |= NC_INDEF ;
-            handle->redefid = TRUE;
-            return(0);
-        }
+    if(handle->file_type == HDF_FILE) 
+      {
+          handle->flags |= NC_INDEF ;
+          handle->redefid = TRUE;
+          return(0);
+      }
 #endif
 
 	/* find first available id */
@@ -454,31 +456,31 @@ int cdfid ;
 		if( _cdfs[id] == NULL) break ;
 
 	if(id == _ncdf && _ncdf >= MAX_NC_OPEN) /* will need a new one */
-	{
-		NCadvise(NC_ENFILE, "maximum number of open cdfs %d exceeded",
-			 _ncdf) ;
-		return(-1) ;
-	}
+      {
+          NCadvise(NC_ENFILE, "maximum number of open cdfs %d exceeded",
+                   _ncdf) ;
+          return(-1) ;
+      }
 
 	if( ncopts & NC_NOFILL )
-	{
-		/* fill last record */
-		handle->xdrs->x_op = XDR_ENCODE ;
-		if(handle->flags & NC_NDIRTY)
-		{
-			if(!xdr_numrecs(handle->xdrs, handle) )
-				return(-1) ;
-			handle->flags &= ~(NC_NDIRTY) ;
-		}
-	}
+      {
+          /* fill last record */
+          handle->xdrs->x_op = XDR_ENCODE ;
+          if(handle->flags & NC_NDIRTY)
+            {
+                if(!xdr_numrecs(handle->xdrs, handle) )
+                    return(-1) ;
+                handle->flags &= ~(NC_NDIRTY) ;
+            }
+      }
 
 	scratchfile = NCtempname(handle->path) ;
 
 	new = NC_dup_cdf(scratchfile, NC_NOCLOBBER, handle) ;
 	if(new == NULL)
-	{
-		return(-1) ;
-	}
+      {
+          return(-1) ;
+      }
 
 	handle->flags |= NC_INDEF ;
 	(void) strncpy(new->path, scratchfile, FILENAME_MAX) ;
@@ -517,19 +519,19 @@ NC *handle ;
 	/* loop thru vars, first pass is for the 'non-record' vars */
 	vpp = (NC_var **)handle->vars->values ;
 	for(ii = 0 ; ii < handle->vars->count ; ii++, vpp++)
-	{
-		if( IS_RECVAR(*vpp) )
-		{
-			continue ;	/* skip record variables on this pass */
-		}
+      {
+          if( IS_RECVAR(*vpp) )
+            {
+                continue ;	/* skip record variables on this pass */
+            }
 
-		(*vpp)->begin = index ;
-		index += (*vpp)->len ;
+          (*vpp)->begin = index ;
+          index += (*vpp)->len ;
 #ifdef EDEBUG
-		NCadvise(NC_NOERR, "%s pass 1 begin %d, length %d",
-			(*vpp)->name->values, (*vpp)->begin, (*vpp)->len) ;
+          NCadvise(NC_NOERR, "%s pass 1 begin %d, length %d",
+                   (*vpp)->name->values, (*vpp)->begin, (*vpp)->len) ;
 #endif /* EDEBUG */
-	}
+      }
 
 	handle->begin_rec = index ;
 	handle->recsize = 0 ;
@@ -537,21 +539,21 @@ NC *handle ;
 	/* loop thru vars, second pass is for the 'non-record' vars */
 	vpp = (NC_var **)handle->vars->values ;
 	for(ii = 0 ; ii < handle->vars->count ; ii++, vpp++)
-	{
-		if( !IS_RECVAR(*vpp) )
-		{
-			continue ;	/* skip non-record variables on this pass */
-		}
+      {
+          if( !IS_RECVAR(*vpp) )
+            {
+                continue ;	/* skip non-record variables on this pass */
+            }
 
-		(*vpp)->begin = index ;
+          (*vpp)->begin = index ;
 #ifdef EDEBUG
-		NCadvise(NC_NOERR, "%s pass 2 begin %d, len %d, *dsizes %d",
-			(*vpp)->name->values, (*vpp)->begin, index, (*vpp)->len, *(*vpp)->dsizes ) ;
+          NCadvise(NC_NOERR, "%s pass 2 begin %d, len %d, *dsizes %d",
+                   (*vpp)->name->values, (*vpp)->begin, index, (*vpp)->len, *(*vpp)->dsizes ) ;
 #endif /* EDEBUG */
-		index += (*vpp)->len ;
-		handle->recsize += (*vpp)->len ;
-		last = (*vpp) ;
-	}
+          index += (*vpp)->len ;
+          handle->recsize += (*vpp)->len ;
+          last = (*vpp) ;
+      }
 	/*
 	 * for special case of exactly one record variable, pack values
 	 */
@@ -613,10 +615,10 @@ int varid ;
 	vpp += varid ;
 
 	if( !xdr_setpos(old->xdrs, (*vpp)->begin) )
-	{
-		NCadvise(NC_EXDR, "NC_vcpy: xdr_setpos") ;
-		return(FALSE) ;
-	}
+      {
+          NCadvise(NC_EXDR, "NC_vcpy: xdr_setpos") ;
+          return(FALSE) ;
+      }
 		
 	return(NC_dcpy(target, old->xdrs, (*vpp)->len)) ;
 }
@@ -637,7 +639,7 @@ int recnum ;
 	vpp += varid ;
 
 	if( !xdr_setpos(old->xdrs,
-			(*vpp)->begin + old->recsize*recnum )){
+                    (*vpp)->begin + old->recsize*recnum )){
 		NCadvise(NC_EXDR, "NC_reccpy: xdr_setpos") ;
 		return(FALSE) ;
 	}
@@ -661,127 +663,127 @@ NC *handle ;
 	NC *stash = STASH(cdfid) ; /* faster rvalue */
 
 #ifdef HDF
-        if(handle->file_type != HDF_FILE)
+    if(handle->file_type != HDF_FILE)
 #endif	
-            NC_begins(handle) ;
+        NC_begins(handle) ;
 
 	xdrs = handle->xdrs ;
 	xdrs->x_op = XDR_ENCODE ;
 
 	if(!xdr_cdf(xdrs, &handle) )
-	{
-		nc_serror("xdr_cdf") ;
-		return(-1) ;
-	}
+      {
+          nc_serror("xdr_cdf") ;
+          return(-1) ;
+      }
 
 #ifdef HDF
     /* Get rid of the temporary buffer allocated for I/O */
     SDPfreebuf();
 
-    if(handle->file_type == HDF_FILE) {
-        handle->flags &= ~(NC_CREAT | NC_INDEF | NC_NDIRTY | NC_HDIRTY) ;
-        return(0) ;
-    }
+    if(handle->file_type == HDF_FILE) 
+      {
+          handle->flags &= ~(NC_CREAT | NC_INDEF | NC_NDIRTY | NC_HDIRTY) ;
+          return(0) ;
+      }
 #endif	
 
-        if(handle->vars == NULL) 
+    if(handle->vars == NULL) 
 		goto done ;
 	
 	/* loop thru vars, first pass is for the 'non-record' vars */
 	vpp = (NC_var **)handle->vars->values ;
 	for(ii = 0 ; ii < handle->vars->count ; ii++, vpp++)
-	{
-		if( IS_RECVAR(*vpp) )
-		{
-			continue ;	/* skip record variables on this pass */
-		}
+      {
+          if( IS_RECVAR(*vpp) )
+            {
+                continue ;	/* skip record variables on this pass */
+            }
 
 #ifdef DEBUG
-		assert( (*vpp)->begin == xdr_getpos(xdrs) ) ;
+          assert( (*vpp)->begin == xdr_getpos(xdrs) ) ;
 #endif /* DEBUG */
 
-		if( !(handle->flags & NC_CREAT) && stash->vars != NULL
-			&& ii < stash->vars->count)
-		{
-			/* copy data */
-			if( !NC_vcpy(xdrs, stash, ii) )
-				return(-1) ;
-			continue ;
-		} /* else */
+          if( !(handle->flags & NC_CREAT) && stash->vars != NULL
+              && ii < stash->vars->count)
+            {
+                /* copy data */
+                if( !NC_vcpy(xdrs, stash, ii) )
+                    return(-1) ;
+                continue ;
+            } /* else */
 
-		if( !(handle->flags & NC_NOFILL) )
-			if( !xdr_NC_fill(xdrs, *vpp) )
-				return(-1) ;
-	}
+          if( !(handle->flags & NC_NOFILL) )
+              if( !xdr_NC_fill(xdrs, *vpp) )
+                  return(-1) ;
+      }
 
 	if(!(handle->flags & NC_CREAT)) /* after redefinition */
-	{
-		for(jj = 0 ; jj < stash->numrecs ; jj++)
-		{
-			vpp = (NC_var **)handle->vars->values ;
-			for(ii = 0 ; ii < handle->vars->count ; ii++, vpp++)
-			{
-				if( !IS_RECVAR(*vpp) )
-				{
-					continue ;	/* skip non-record variables on this pass */
-				}
-				if( stash->vars != NULL && ii < stash->vars->count)
-				{
-					/* copy data */
-					if( !NC_reccpy(xdrs, stash, ii, jj) )
-						return(-1) ;
-					continue ;
-				} /* else */
-				if( !(handle->flags & NC_NOFILL) )
-					if( !xdr_NC_fill(xdrs, *vpp) )
-						return(-1) ;
-			}
-		}
-		handle->numrecs = stash->numrecs ;
-		if(!xdr_numrecs(handle->xdrs, handle) )
-			return(-1) ;
-	}
+      {
+          for(jj = 0 ; jj < stash->numrecs ; jj++)
+            {
+                vpp = (NC_var **)handle->vars->values ;
+                for(ii = 0 ; ii < handle->vars->count ; ii++, vpp++)
+                  {
+                      if( !IS_RECVAR(*vpp) )
+                        {
+                            continue ;	/* skip non-record variables on this pass */
+                        }
+                      if( stash->vars != NULL && ii < stash->vars->count)
+                        {
+                            /* copy data */
+                            if( !NC_reccpy(xdrs, stash, ii, jj) )
+                                return(-1) ;
+                            continue ;
+                        } /* else */
+                      if( !(handle->flags & NC_NOFILL) )
+                          if( !xdr_NC_fill(xdrs, *vpp) )
+                              return(-1) ;
+                  }
+            }
+          handle->numrecs = stash->numrecs ;
+          if(!xdr_numrecs(handle->xdrs, handle) )
+              return(-1) ;
+      }
 
 #ifdef EDEBUG
 	NCadvise(NC_NOERR, "begin %d, recsize %d, numrecs %d",
-		handle->begin_rec, handle->recsize, handle->numrecs) ;
+             handle->begin_rec, handle->recsize, handle->numrecs) ;
 #endif /* EDEBUG */
 
 	if(!(handle->flags & NC_CREAT)) /* redefine */
-	{
-                char realpath[FILENAME_MAX + 1] ;
-                strcpy(realpath, stash->path) ;
+      {
+          char realpath[FILENAME_MAX + 1] ;
+          strcpy(realpath, stash->path) ;
 
-                /* close stash */
+          /* close stash */
 /*                NC_free_cdf(stash) ; */
 #ifdef DOS_FS
-                xdr_destroy(handle->xdrs) ; /* close handle */
-                if( remove(realpath) != 0 )
-                      nc_serror("couldn't remove filename \"%s\"", realpath) ;
+          xdr_destroy(handle->xdrs) ; /* close handle */
+          if( remove(realpath) != 0 )
+              nc_serror("couldn't remove filename \"%s\"", realpath) ;
 #endif
-                if( rename(handle->path, realpath) != 0)
-
-		{
-			nc_serror("rename %s -> %s failed", handle->path, realpath) ;
-			/* try to restore state prior to redef */
-			_cdfs[cdfid] = stash ;
-			_cdfs[handle->redefid] = NULL ;
-			if(handle->redefid == _ncdf - 1)
-				_ncdf-- ;
-			NC_free_cdf(handle) ;
-			return(-1) ;
-		}
-                (void) strncpy(handle->path, realpath, FILENAME_MAX) ;
+          if( rename(handle->path, realpath) != 0)
+            {
+                nc_serror("rename %s -> %s failed", handle->path, realpath) ;
+                /* try to restore state prior to redef */
+                _cdfs[cdfid] = stash ;
+                _cdfs[handle->redefid] = NULL ;
+                if(handle->redefid == _ncdf - 1)
+                    _ncdf-- ;
+                NC_free_cdf(handle) ;
+                return(-1) ;
+            }
+          (void) strncpy(handle->path, realpath, FILENAME_MAX) ;
 #ifdef DOS_FS
-                if( NCxdrfile_create( handle->xdrs, handle->path, NC_WRITE ) < 0)
-                        return -1 ;
+          if( NCxdrfile_create( handle->xdrs, handle->path, NC_WRITE ) < 0)
+              return -1 ;
 #endif
-		NC_free_cdf(stash) ;
-		_cdfs[handle->redefid] = NULL ;
-		if(handle->redefid == _ncdf - 1)
-			_ncdf-- ;
-		handle->redefid = -1 ;
-	}
+          NC_free_cdf(stash) ;
+          _cdfs[handle->redefid] = NULL ;
+          if(handle->redefid == _ncdf - 1)
+              _ncdf-- ;
+          handle->redefid = -1 ;
+      }
 
 done:
 	handle->flags &= ~(NC_CREAT | NC_INDEF | NC_NDIRTY | NC_HDIRTY) ;
@@ -804,7 +806,9 @@ int cdfid ;
 	return( NC_endef(cdfid, handle) ) ;
 }
 
-
+/*
+ * This routine is called by SDend()? -GV
+ */
 ncclose( cdfid )
 int cdfid ;
 {
@@ -817,32 +821,33 @@ int cdfid ;
 		return(-1) ;
 
 	if( handle->flags & NC_INDEF)
-	{
-		if( NC_endef(cdfid, handle) == -1 )
-		{
-			return( ncabort(cdfid) ) ;
-		}
-	}
+      {
+          if( NC_endef(cdfid, handle) == -1 )
+            {
+                return( ncabort(cdfid) ) ;
+            }
+      }
 	else if(handle->flags & NC_RDWR)
-	{
-		handle->xdrs->x_op = XDR_ENCODE ;
-		if(handle->flags & NC_HDIRTY)
-		{
-			if(!xdr_cdf(handle->xdrs, &handle) )
-				return(-1) ;
-		}
-		else if(handle->flags & NC_NDIRTY)
-		{
-			if(!xdr_numrecs(handle->xdrs, handle) )
-				return(-1) ;
-		}
-	}
+      {
+          handle->xdrs->x_op = XDR_ENCODE ;
+          if(handle->flags & NC_HDIRTY)
+            {
+                if(!xdr_cdf(handle->xdrs, &handle) )
+                    return(-1) ;
+            }
+          else if(handle->flags & NC_NDIRTY)
+            {
+                if(!xdr_numrecs(handle->xdrs, handle) )
+                    return(-1) ;
+            }
+      }
 
 #ifdef HDF
-        if(handle->file_type == HDF_FILE) hdf_close(handle);
+    if(handle->file_type == HDF_FILE) 
+        hdf_close(handle);
 #endif
 
-        NC_free_cdf(handle) ; /* calls fclose */
+    NC_free_cdf(handle) ; /* calls fclose */
 
 	_cdfs[cdfid] = NULL ;
 
@@ -867,58 +872,58 @@ int fillmode ;
 		return(-1) ;
 
 	if(!(handle->flags & NC_RDWR))
-	{
-		/* file isn't writable */
-		NCadvise(NC_EPERM, "%s is not writable", handle->path) ;
-		return -1 ;
-	}
+      {
+          /* file isn't writable */
+          NCadvise(NC_EPERM, "%s is not writable", handle->path) ;
+          return -1 ;
+      }
 
 	ret = (handle->flags & NC_NOFILL) ? NC_NOFILL : NC_FILL ;
 
 	if(fillmode == NC_NOFILL)
 		handle->flags |= NC_NOFILL ;
 	else if(fillmode == NC_FILL)
-	{
-		if(handle->flags & NC_NOFILL)
-		{
-			/*
-			 * We are changing back to fill mode
-			 * so do a sync
-			 */
+      {
+          if(handle->flags & NC_NOFILL)
+            {
+                /*
+                 * We are changing back to fill mode
+                 * so do a sync
+                 */
 #ifdef HDF       /* save the original x_op  */
-                 enum xdr_op  xdr_op = handle->xdrs->x_op;
+                enum xdr_op  xdr_op = handle->xdrs->x_op;
                  
-                     if (handle->flags & NC_RDWR)   /* make sure we can write */
-                         handle->xdrs->x_op = XDR_ENCODE; /*  to the file */
+                if (handle->flags & NC_RDWR)   /* make sure we can write */
+                    handle->xdrs->x_op = XDR_ENCODE; /*  to the file */
 #endif
-			if(handle->flags & NC_HDIRTY)
-			{
-				if(!xdr_cdf(handle->xdrs, &handle) )
-					return(-1) ;
-				handle->flags &= ~(NC_NDIRTY | NC_HDIRTY) ;
-			}
-			else if(handle->flags & NC_NDIRTY)
-			{
-				if(!xdr_numrecs(handle->xdrs, handle) )
-					return(-1) ;
+                if(handle->flags & NC_HDIRTY)
+                  {
+                      if(!xdr_cdf(handle->xdrs, &handle) )
+                          return(-1) ;
+                      handle->flags &= ~(NC_NDIRTY | NC_HDIRTY) ;
+                  }
+                else if(handle->flags & NC_NDIRTY)
+                  {
+                      if(!xdr_numrecs(handle->xdrs, handle) )
+                          return(-1) ;
 #ifdef HDF
-                                if (handle->file_type != HDF_FILE)
-                                    handle->flags &= ~(NC_NDIRTY) ;
+                      if (handle->file_type != HDF_FILE)
+                          handle->flags &= ~(NC_NDIRTY) ;
 #else              
-                                 handle->flags &= ~(NC_NDIRTY) ;
+                      handle->flags &= ~(NC_NDIRTY) ;
 #endif
-			}
-		      handle->flags &= ~NC_NOFILL ;
+                  }
+                handle->flags &= ~NC_NOFILL ;
 #ifdef HDF                /* re-store the x_op  */
-                      handle->xdrs->x_op = xdr_op;
+                handle->xdrs->x_op = xdr_op;
 #endif
-		}
-	}
+            }
+      }
 	else
-	{
-		NCadvise(NC_EINVAL, "Bad fillmode") ;
-		return -1 ;
-	}
+      {
+          NCadvise(NC_EINVAL, "Bad fillmode") ;
+          return -1 ;
+      }
 
 
 	return ret ;

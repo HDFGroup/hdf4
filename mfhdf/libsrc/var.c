@@ -61,21 +61,48 @@ alloc_err :
 
 /*
  * Free var
+ *
+ * NOTE: Changed return value to return 'int' 
+ *       If successful returns SUCCEED else FAIL -GV 9/19/97
  */
-void
+intn
 NC_free_var(var)
 NC_var *var ;
 {
-	if(var == NULL)
-		return ;
-	NC_free_string(var->name) ;
-	NC_free_iarray(var->assoc) ;
-	if(var->shape != NULL)
-		Free(var->shape) ;
-	if(var->dsizes != NULL)
-		Free(var->dsizes) ;
-	NC_free_array(var->attrs) ;
-	Free(var) ;
+    intn ret_value = SUCCEED;
+
+	if(var != NULL)
+      {
+          if (NC_free_string(var->name) == FAIL)
+            {
+                ret_value = FAIL;
+                goto done;
+            }
+          if (NC_free_iarray(var->assoc) == FAIL)
+            {
+                ret_value = FAIL;
+                goto done;
+            }
+          if(var->shape != NULL)
+              Free(var->shape) ;
+          if(var->dsizes != NULL)
+              Free(var->dsizes) ;
+          if (NC_free_array(var->attrs) == FAIL)
+            {
+                ret_value = FAIL;
+                goto done;
+            }
+          Free(var) ;
+      }
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+     /* Normal cleanup */
+
+    return ret_value;
 }
 
 
@@ -232,70 +259,70 @@ const int dims[] ;
 		return(-1) ;
 
 	if(ndims < 0) /* 0 => scalar */
-	{
-		NCadvise(NC_EINVAL, "Number of dimensions %d < 0", ndims) ;
-		return(-1) ;
-	} 
+      {
+          NCadvise(NC_EINVAL, "Number of dimensions %d < 0", ndims) ;
+          return(-1) ;
+      } 
 
 	if(ndims > 0 )
-	{
-		if(handle->dims == NULL || ndims > handle->dims->count )
-		{
-			NCadvise(NC_EINVAL, "Invalid number of dimensions %d > %d",
-				ndims, (handle->dims != NULL) ? handle->dims->count : 0) ;
-			return(-1) ;
-		}
-	}
+      {
+          if(handle->dims == NULL || ndims > handle->dims->count )
+            {
+                NCadvise(NC_EINVAL, "Invalid number of dimensions %d > %d",
+                         ndims, (handle->dims != NULL) ? handle->dims->count : 0) ;
+                return(-1) ;
+            }
+      }
 
 	if(handle->vars == NULL) /* first time */
-	{
-		var[0] = NC_new_var(name,type,ndims,dims) ;
-		if(var[0] == NULL)
-			return(-1) ;
-		handle->vars = NC_new_array(NC_VARIABLE,(unsigned)1,
-			(Void *)var) ;
-		if(handle->vars == NULL)
-			return(-1) ;
-	} else if(handle->vars->count >= MAX_NC_VARS)
-	{
-		NCadvise(NC_EMAXVARS, "maximum number of variables %d exceeded",
-			handle->vars->count ) ;
-		return(-1) ;
-	} else {
-		/* check for name in use */
-		len = strlen(name) ;
-		dp = (NC_var**)handle->vars->values ;
-		for(ii = 0 ; ii < handle->vars->count ; ii++, dp++)
-		{
-			if( len == (*dp)->name->len &&
-				strncmp(name, (*dp)->name->values, len) == 0)
-			{
-				NCadvise(NC_ENAMEINUSE, "variable \"%s\" in use with index %d",
-					(*dp)->name->values, ii) ;
-				return(-1) ;
-			}
-		}
-		var[0] = NC_new_var(name,type,ndims,dims) ;
-		if(var[0] == NULL)
-			return(-1) ;
-		if( NC_incr_array(handle->vars, (Void *)var) == NULL)
-			return(-1) ;
-	}
+      {
+          var[0] = NC_new_var(name,type,ndims,dims) ;
+          if(var[0] == NULL)
+              return(-1) ;
+          handle->vars = NC_new_array(NC_VARIABLE,(unsigned)1,
+                                      (Void *)var) ;
+          if(handle->vars == NULL)
+              return(-1) ;
+      } else if(handle->vars->count >= MAX_NC_VARS)
+        {
+            NCadvise(NC_EMAXVARS, "maximum number of variables %d exceeded",
+                     handle->vars->count ) ;
+            return(-1) ;
+        } else {
+            /* check for name in use */
+            len = strlen(name) ;
+            dp = (NC_var**)handle->vars->values ;
+            for(ii = 0 ; ii < handle->vars->count ; ii++, dp++)
+              {
+                  if( len == (*dp)->name->len &&
+                      strncmp(name, (*dp)->name->values, len) == 0)
+                    {
+                        NCadvise(NC_ENAMEINUSE, "variable \"%s\" in use with index %d",
+                                 (*dp)->name->values, ii) ;
+                        return(-1) ;
+                    }
+              }
+            var[0] = NC_new_var(name,type,ndims,dims) ;
+            if(var[0] == NULL)
+                return(-1) ;
+            if( NC_incr_array(handle->vars, (Void *)var) == NULL)
+                return(-1) ;
+        }
 #ifdef HDF
-        (*var)->cdf = handle; /* for NC_var_shape */
+    (*var)->cdf = handle; /* for NC_var_shape */
 #endif
 	if( NC_var_shape(*var, handle->dims) != -1)
-	{
+      {
 #ifdef HDF
 #ifdef NOT_YET
-            (*var)->ndg_ref = Htagnewref(handle->hdf_file,DFTAG_NDG);
+          (*var)->ndg_ref = Htagnewref(handle->hdf_file,DFTAG_NDG);
 #else /* NOT_YET */
-            (*var)->ndg_ref = Hnewref(handle->hdf_file);
+          (*var)->ndg_ref = Hnewref(handle->hdf_file);
 #endif /* NOT_YET */
 #endif            
-            return(handle->vars->count -1) ;
-	}
-		/* unwind */
+          return(handle->vars->count -1) ;
+      }
+    /* unwind */
 	handle->vars->count-- ;
 	NC_free_var(var[0]) ;
 	return(-1) ;
@@ -320,31 +347,31 @@ NC *handle ;
 		return(0) ;
 	vbase = (NC_var **)handle->vars->values ;
 	for( vpp =  vbase ;
-		vpp < &vbase[handle->vars->count] ;
-		vpp ++)
-	{
+         vpp < &vbase[handle->vars->count] ;
+         vpp ++)
+      {
 #ifdef HDF
-                (*vpp)->cdf= handle;
+          (*vpp)->cdf= handle;
 #endif
 
-		if( NC_var_shape(*vpp, handle->dims) == -1)
-			return(-1) ;
-	  	if(IS_RECVAR(*vpp))	
-		{
-	  		if(first == NULL)	
-				first = *vpp ;
-			handle->recsize += (*vpp)->len ;
-		}
-	}
+          if( NC_var_shape(*vpp, handle->dims) == -1)
+              return(-1) ;
+          if(IS_RECVAR(*vpp))	
+            {
+                if(first == NULL)	
+                    first = *vpp ;
+                handle->recsize += (*vpp)->len ;
+            }
+      }
 	if(first != NULL)
-	{
-		handle->begin_rec = first->begin ;
-		/*
-	 	 * for special case of exactly one record variable, pack values
-	 	 */
-		if(handle->recsize == first->len)
-			handle->recsize = *first->dsizes ;
-	}
+      {
+          handle->begin_rec = first->begin ;
+          /*
+           * for special case of exactly one record variable, pack values
+           */
+          if(handle->recsize == first->len)
+              handle->recsize = *first->dsizes ;
+      }
 	return(handle->vars->count) ;
 }
 

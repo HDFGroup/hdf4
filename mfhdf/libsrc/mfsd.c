@@ -4373,7 +4373,7 @@ if (CM_DEBUG > 0)
 
     /* if aid is not valid yet, there is no access_rec setup yet. */
     /* Go ahead and try set it up. */
-    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FALSE)
+    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FAIL)
         ret_value = FAIL;
     else 
         ret_value = (intn)Hsetaccesstype(var->aid, accesstype);
@@ -5134,7 +5134,7 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
       }
 
     /* Check to see if data aid exists? i.e. may need to create a ref for SDS */
-    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FALSE) 
+    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FAIL) 
       {
         ret_value = FAIL;
         goto done;
@@ -5269,7 +5269,7 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
       }
 
     /* Check to see if data aid exists? i.e. may need to create a ref for SDS */
-    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FALSE) 
+    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FAIL) 
       {
         ret_value = FAIL;
         goto done;
@@ -5468,7 +5468,7 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
       }
 
     /* Check to see if data aid exists? i.e. may need to create a ref for SDS */
-    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FALSE) 
+    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FAIL) 
       {
         ret_value = FAIL;
         goto done;
@@ -5685,7 +5685,7 @@ SDsetchunkcache(int32 sdsid,     /* IN: access aid to mess with */
       }
 
     /* Check to see if data aid exists? i.e. may need to create a ref for SDS */
-    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FALSE) 
+    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FAIL) 
       {
         ret_value = FAIL;
         goto done;

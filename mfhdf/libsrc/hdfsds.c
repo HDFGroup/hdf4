@@ -1774,16 +1774,16 @@ done:
    an HDF file
 
  RETURNS
-   TRUE / FALSE
+   SUCCEED / FAIL
  
 ******************************************************************************/
-bool_t
+int
 hdf_read_sds_cdf(XDR *xdrs, 
                  NC **handlep)
 {
     int32  status;
     NC     *handle = NULL;
-    bool_t  ret_value = TRUE;
+    intn  ret_value = SUCCEED;
     
     /* 
      * go through and treat each SDS as a separate varibiable 
@@ -1799,14 +1799,14 @@ hdf_read_sds_cdf(XDR *xdrs,
     handle = (*handlep);
     if(NULL == handle) 
       {
-        ret_value = FALSE;
+        ret_value = FAIL;
         goto done;
       }
 
     status = hdf_read_ndgs(handle);
     if(status == FAIL) 
       {
-        ret_value = FALSE;
+        ret_value = FAIL;
         goto done;
       }
 
@@ -1817,8 +1817,8 @@ hdf_read_sds_cdf(XDR *xdrs,
     sdgTable = NULL;
 
 done:
-    if (ret_value == FALSE)
-      { /* FALSE cleanup? */
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
 
       }
     /* Normal cleanup */

@@ -138,7 +138,7 @@ typedef struct {
 
 typedef struct {
 	unsigned count ;
-        unsigned len ; 
+    unsigned len ; 
 #ifdef HDF
     uint32 hash;        /* [non-perfect] hash value for faster comparisons */
 #endif /* HDF */
@@ -154,11 +154,11 @@ typedef struct {
 /* NC dimension stucture */
 typedef struct {
 	NC_string *name ;
-        long size ;
+    long size ;
 #ifdef HDF
-        int32 dim00_compat;   /* compatible with Dim0.0 */
+    int32 dim00_compat;   /* compatible with Dim0.0 */
 	int32 vgid;   /* id of the Vgroup representing this dimension */
-        int32 count;  /* Number of pointers to this dimension */
+    int32 count;  /* Number of pointers to this dimension */
 #endif
 } NC_dim ;
 
@@ -168,7 +168,7 @@ typedef struct {
 	NC_array	*data ;
 #ifdef HDF
 	int32           HDFtype; /* it should be in NC_array *data. However, */
-                                 /* NC.dims and NC.vars are NC_array too. */
+                             /* NC.dims and NC.vars are NC_array too. */
 #endif
 } NC_attr ;
 
@@ -186,10 +186,10 @@ typedef struct {
 	NC_array *vars ;
 #ifdef HDF
 	int32 hdf_file;
-        int file_type;
-        int32 vgid;
-        int hdf_mode; /* mode we are attached for */
-        hdf_file_t cdf_fp; /* file pointer used for CDF files */
+    int file_type;
+    int32 vgid;
+    int hdf_mode; /* mode we are attached for */
+    hdf_file_t cdf_fp; /* file pointer used for CDF files */
 #endif
 } NC ;
 
@@ -207,19 +207,19 @@ typedef struct {
 #ifdef HDF
 	NC *cdf;    /* handle of the file where this var belongs to  */
 	int32 vgid;     /* id of the variable's Vgroup */
-        uint16 data_ref;  /* ref of the variable's data storage (if exists) */
-        uint16 data_tag;  /* tag of the variable's data storage (if exists) */
-        uint16 ndg_ref;   /* ref of ndg for this dataset */
-        intn   data_offset; /* non-traditional data may not begin at 0 */
-        int32  block_size;  /* size of the blocks for unlimited dim. datasets */
-        int numrecs;  /* number of records this has been filled to */
-        int32 aid;    /* aid for DFTAG_SD data */
-        int32 HDFtype; /* type of this variable as HDF thinks */
-        int32 HDFsize; /* size of this variable as HDF thinks */
-        int32   is_ragged; /* BOOLEAN == is a ragged array */
-        int32 * rag_list;  /* size of ragged array lines */
-        int32   rag_fill;  /* last line in rag_list to be set */
-        vix_t * vixHead;   /* list of VXR records for CDF data storage */
+    uint16 data_ref;  /* ref of the variable's data storage (if exists) */
+    uint16 data_tag;  /* tag of the variable's data storage (if exists) */
+    uint16 ndg_ref;   /* ref of ndg for this dataset */
+    intn   data_offset; /* non-traditional data may not begin at 0 */
+    int32  block_size;  /* size of the blocks for unlimited dim. datasets */
+    int numrecs;  /* number of records this has been filled to */
+    int32 aid;    /* aid for DFTAG_SD data */
+    int32 HDFtype; /* type of this variable as HDF thinks */
+    int32 HDFsize; /* size of this variable as HDF thinks */
+    int32   is_ragged; /* BOOLEAN == is a ragged array */
+    int32 * rag_list;  /* size of ragged array lines */
+    int32   rag_fill;  /* last line in rag_list to be set */
+    vix_t * vixHead;   /* list of VXR records for CDF data storage */
 #endif
 } NC_var ;
 
@@ -373,25 +373,25 @@ extern void       NC_copy_arrayvals	PROTO((
     char	*target,
     NC_array	*array
 ));
-extern void       NC_free_array		PROTO((
+extern int       NC_free_array		PROTO((
     NC_array	*array
 ));
-extern void       NC_free_attr		PROTO((
+extern int       NC_free_attr		PROTO((
     NC_attr	*attr
 ));
-extern void       NC_free_cdf		PROTO((
+extern int       NC_free_cdf		PROTO((
     NC		*handle
 ));
-extern void       NC_free_dim		PROTO((
+extern int       NC_free_dim		PROTO((
     NC_dim	*dim
 ));
-extern void       NC_free_iarray	PROTO((
+extern int       NC_free_iarray	PROTO((
     NC_iarray	*iarray
 ));
-extern void       NC_free_string	PROTO((
+extern int       NC_free_string	PROTO((
     NC_string	*cdfstr
 ));
-extern void       NC_free_var		PROTO((
+extern int       NC_free_var		PROTO((
     NC_var	*var
 ));
 
@@ -546,13 +546,14 @@ extern int NCxdrfile_create
     PROTO((XDR *xdrs,const char *path,int ncmode));
 
 #ifdef HDF
+/* this routine is found in 'xdrposix.c' */
 extern void hdf_xdrfile_create
     PROTO(( XDR *xdrs, int ncop));
 
-extern int hdf_fill_array
+extern intn hdf_fill_array
     PROTO((Void  * storage,int32 len,Void  * value,int32 type));
 
-extern int hdf_get_data
+extern intn hdf_get_data
     PROTO((NC *handle,NC_var *vp));
 
 extern int32 hdf_get_vp_aid
@@ -564,16 +565,16 @@ extern int hdf_map_type
 extern nc_type hdf_unmap_type
     PROTO((int ));
 
-extern int hdf_get_ref
+extern intn hdf_get_ref
     PROTO((NC *,int ));
 
-extern int hdf_create_dim_vdata
+extern intn hdf_create_dim_vdata
     PROTO((XDR *,NC *,NC_dim *));
 
-extern int hdf_create_compat_dim_vdata
+extern intn hdf_create_compat_dim_vdata
     PROTO((XDR *xdrs, NC *handle, NC_dim *dim, int32 dimval_ver));
 
-extern int hdf_write_attr
+extern intn hdf_write_attr
     PROTO((XDR *,NC *,NC_attr **));
 
 extern int32 hdf_write_dim
@@ -582,51 +583,52 @@ extern int32 hdf_write_dim
 extern int32 hdf_write_var
     PROTO((XDR *,NC *,NC_var **));
 
-extern int hdf_write_xdr_cdf
+extern intn hdf_write_xdr_cdf
     PROTO((XDR *,NC **));
 
-extern int hdf_conv_scales
+extern intn hdf_conv_scales
     PROTO((NC **));
 
-extern int hdf_read_dims
+extern intn hdf_read_dims
     PROTO((XDR *,NC *,int32 ));
 
 extern NC_array *hdf_read_attrs
     PROTO((XDR *,NC *,int32 ));
 
-extern int hdf_read_vars
+extern intn hdf_read_vars
     PROTO((XDR *,NC *,int32 ));
 
-extern int hdf_read_xdr_cdf
+extern intn hdf_read_xdr_cdf
     PROTO((XDR *,NC **));
 
-extern int hdf_xdr_cdf
+extern intn hdf_xdr_cdf
     PROTO((XDR *,NC **));
 
-extern void hdf_vg_clobber
+extern intn hdf_vg_clobber
     PROTO((NC *,int ));
 
-extern void hdf_cdf_clobber
+extern intn hdf_cdf_clobber
     PROTO((NC *));
 
-extern void hdf_close
+extern intn hdf_close
     PROTO((NC *));
 
 extern intn hdf_read_sds_dims
     PROTO((NC *));
 
-extern int hdf_read_sds_cdf
+extern intn hdf_read_sds_cdf
     PROTO((XDR *,NC **));
 
-extern int SDPfreebuf PROTO((void));
+extern intn SDPfreebuf PROTO((void));
 
-extern int NCgenio
+extern intn NCgenio
     PROTO((NC *handle, int varid, const long *start, const long *count,
         const long *stride, const long *imap,Void *values));
 
-extern int NC_var_shape
+extern intn NC_var_shape
     PROTO((NC_var *var,NC_array *dims));
 
+/* CDF stuff. don't need anymore? -GV */
 extern nc_type cdf_unmap_type
     PROTO((int type));
 

@@ -39,22 +39,43 @@ alloc_err :
 
 /*
  * Free dim
+ *
+ * NOTE: Changed return value to return 'int' 
+ *       If successful returns SUCCEED else FAIL -GV 9/19/97
  */
-void
+int
 NC_free_dim(dim)
 NC_dim *dim ;
 {
-	if(dim ==NULL)
-		return ;
+    int ret_value = SUCCEED;
+
+	if(dim != NULL)
+      {
 #ifdef HDF
-        if (dim->count > 1)
-          {
-           dim->count -=  1;
-           return;
-          }
+          if (dim->count > 1)
+            {
+                dim->count -=  1;
+                ret_value = SUCCEED;
+                goto done;
+            }
 #endif /* HDF */
-	NC_free_string(dim->name) ;
-	Free(dim) ;
+
+          if (NC_free_string(dim->name) == FAIL)
+            {
+                ret_value = FAIL;
+                goto done;
+            }
+          Free(dim) ;
+      }
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+     /* Normal cleanup */
+
+    return ret_value;
 }
 
 
@@ -128,7 +149,7 @@ long size ;
 	return(handle->dims->count -1) ;
 }
 
-  NC_dimid( handle, name)
+NC_dimid( handle, name)
 NC *handle;
 char *name;
 {
@@ -309,10 +330,9 @@ xdr_NC_dim(xdrs, dpp)
 	}
 
 #ifdef HDF
-
-        if( xdrs->x_op == XDR_DECODE )
-            (*dpp)->count = 0;
-
+    /* hmm...what does this do? */
+    if( xdrs->x_op == XDR_DECODE )
+        (*dpp)->count = 0;
 #endif
 
 	if( !xdr_NC_string(xdrs, &((*dpp)->name)))

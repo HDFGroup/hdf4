@@ -12,15 +12,19 @@
 
 /* Local function prototypes */
 static bool_t nssdc_xdr_NCvdata
-    PROTO((NC *handle,NC_var *vp,u_long where,nc_type type,uint32 count,
-        VOIDP values));
-static bool_t hdf_xdr_NCvdata
-    PROTO((NC *handle,NC_var *vp,u_long where,nc_type type,uint32 count,
-        VOIDP values));
-static bool_t hdf_xdr_NCv1data
-    PROTO((NC *handle,NC_var *vp,u_long where,nc_type type,VOIDP values));
+       (NC *handle,NC_var *vp,u_long where,nc_type type,uint32 count,
+        VOIDP values);
+
+static intn hdf_xdr_NCvdata
+    (NC *handle,NC_var *vp,u_long where,nc_type type,uint32 count,
+        VOIDP values);
+
+static intn hdf_xdr_NCv1data
+    (NC *handle,NC_var *vp,u_long where,nc_type type,VOIDP values);
+
 int32 hdf_get_vp_aid
-    PROTO((NC *handle, NC_var *vp));
+    (NC *handle, NC_var *vp);
+
 #endif /* HDF */
 
 /*
@@ -99,55 +103,63 @@ const long *coords ;
 	long unfilled ;
 
 	if( IS_RECVAR(vp) )
-	{
-		boundary = coords + 1 ;
-		if(*coords < 0)
-			goto bad ;
-	} else
-		boundary = coords ;
+      {
+          boundary = coords + 1 ;
+          if(*coords < 0)
+              goto bad ;
+      } else
+          boundary = coords ;
 	
 	up = vp->shape + vp->assoc->count - 1 ;
 	ip = coords + vp->assoc->count - 1 ;
 #ifdef CDEBUG
 	fprintf(stderr,"	NCcoordck: coords %p, count %ld, ip %p\n",
-		coords, vp->assoc->count, ip ) ;
+            coords, vp->assoc->count, ip ) ;
 #endif /* CDEBUG */
 	for( ; ip >= boundary ; ip--, up--)
-	{
+      {
 #ifdef CDEBUG
-		fprintf(stderr,"	NCcoordck: ip %p, *ip %ld, up %p, *up %lu\n",
-			ip, *ip, up, *up ) ;
+          fprintf(stderr,"	NCcoordck: ip %p, *ip %ld, up %p, *up %lu\n",
+                  ip, *ip, up, *up ) ;
 #endif /* CDEBUG */
-		if( *ip < 0 || *ip >= *up )
-			goto bad ;
-	}
+          if( *ip < 0 || *ip >= *up )
+              goto bad ;
+      }
 
 
 #ifdef HDF
-        if(handle->file_type == HDF_FILE && IS_RECVAR(vp)) {
-            Void *strg, *strg1;
-            NC_attr ** attr = NULL;
-            int count, byte_count;
-	    int len;
+    if(handle->file_type == HDF_FILE && IS_RECVAR(vp)) 
+      {
+          VOID     *strg = NULL;
+          VOID     *strg1 = NULL;
+          NC_attr **attr = NULL;
+          int count, byte_count;
+          int len;
             
-/* 12/27     if((unfilled = *ip - vp->numrecs) <= 0) return TRUE;   */
-            if((unfilled = *ip - vp->numrecs) < 0) return TRUE;   
+          if((unfilled = *ip - vp->numrecs) < 0) 
+              return TRUE;   
 
             
-            /* check to see if we are trying to read beyond the end */
-            if(handle->xdrs->x_op != XDR_ENCODE)
-                goto bad ;
-            /* else */
-            if ((handle->flags & NC_NOFILL) == 0) {
+          /* check to see if we are trying to read beyond the end */
+          if(handle->xdrs->x_op != XDR_ENCODE)
+              goto bad ;
+
+          /* else */
+          if ((handle->flags & NC_NOFILL) == 0) 
+            {
                 /* make sure we can write to this sucker */
-                if(vp->aid == FAIL && hdf_get_vp_aid(handle, vp) == FALSE) return(FALSE);
+                if(vp->aid == FAIL && hdf_get_vp_aid(handle, vp) == FAIL) 
+                    return(FALSE);
             
                 /*
                  * Set up the array strg to hold the fill values
                  */
-      	        len = (vp->len / vp->HDFsize) * vp->szof;
+                len = (vp->len / vp->HDFsize) * vp->szof;
                 strg = (Void *) HDmalloc(len);
                 strg1 = (Void *) HDmalloc(len);
+                if (NULL == strg || NULL == strg1)
+                    return FALSE;
+
                 attr = NC_findattr(&vp->attrs, _FillValue);
 
                 if(attr != NULL)
@@ -168,29 +180,30 @@ const long *coords ;
                  * Seek to correct location
                  */
                 byte_count = vp->len;
-	        count = byte_count / vp->HDFsize;
+                count = byte_count / vp->HDFsize;
 
-/* 12/27        Hseek(vp->aid, (vp->numrecs + 1) * byte_count, DF_START); */
-                Hseek(vp->aid, (vp->numrecs) * byte_count, DF_START);
+                if (FAIL == Hseek(vp->aid, (vp->numrecs) * byte_count, DF_START))
+                    return FALSE;
 
 #ifdef DEBUG
-/* 12/27         printf("Filling %d bytes starting at %d\n", 
-                   byte_count * unfilled, (vp->numrecs + 1) * byte_count); */
                 printf("Filling %d bytes starting at %d\n", 
-                      byte_count * unfilled, (vp->numrecs) * byte_count);
+                       byte_count * unfilled, (vp->numrecs) * byte_count);
 #endif  
 
                 /*
                  * Write out the values
                  */
+                if (FAIL == DFKsetNT(vp->HDFtype))
+                    return FALSE;
 
-                DFKsetNT(vp->HDFtype);
-                DFKnumout(strg, strg1, count, 0, 0);
+                if (FAIL == DFKnumout(strg, strg1, count, 0, 0))
+                    return FALSE;
 
-/* 12/27            for(; unfilled; unfilled--)
-                Hwrite(vp->aid, byte_count, (uint8 *) strg1);  */
-                for(; unfilled>=0; unfilled--, vp->numrecs++)
-                    Hwrite(vp->aid, byte_count, (uint8 *) strg1);
+                for(; unfilled >= 0; unfilled--, vp->numrecs++)
+                  {
+                      if (FAIL == Hwrite(vp->aid, byte_count, (uint8 *) strg1))
+                          return FALSE;
+                  }
 
 #ifdef DEBUG
                 fprintf(stderr, "WROTE %d values at location %d (numrecs = %d)\n",
@@ -198,58 +211,60 @@ const long *coords ;
 #endif
                 HDfree((VOIDP)strg);
                 HDfree((VOIDP)strg1);
-        } /* !SD_NOFILL  */
-            vp->numrecs = MAX(vp->numrecs, (*ip + 1));    /* if NOFILL  */
-            if((*ip + 1) > handle->numrecs) {
-                handle->numrecs = *ip + 1;
-                handle->flags |= NC_NDIRTY;
-            }
+            } /* !SD_NOFILL  */
 
-            return (TRUE);
-        }
+        vp->numrecs = MAX(vp->numrecs, (*ip + 1));    /* if NOFILL  */
+        if((*ip + 1) > handle->numrecs) 
+          {
+              handle->numrecs = *ip + 1;
+              handle->flags |= NC_NDIRTY;
+          }
+
+        return (TRUE);
+    }
 #endif /* HDF */
 
 
 	if( IS_RECVAR(vp) && (unfilled = *ip - handle->numrecs) >= 0 )
-	{
-		/* check to see if we are trying to read beyond the end */
-		if(handle->xdrs->x_op != XDR_ENCODE)
-			goto bad ;
-		/* else */
+      {
+          /* check to see if we are trying to read beyond the end */
+          if(handle->xdrs->x_op != XDR_ENCODE)
+              goto bad ;
+          /* else */
 
-		handle->flags |= NC_NDIRTY ;
-		if( handle->flags & NC_NOFILL )
-		{
-			/* Go directly to jail, do not pass go */
-			handle->numrecs = *ip + 1 ;
-		}
-		else
-		{
-			/* fill out new records */
-			if( !xdr_NCsetpos(handle->xdrs,
-					handle->begin_rec + handle->recsize*handle->numrecs) )
-			{
-				nc_serror("NCcoordck seek, var %s", vp->name->values) ;
-				return(FALSE) ;
-			}
-			for( ; unfilled >= 0 ; unfilled--, handle->numrecs++)
-			{
-				if( !NCfillrecord(handle->xdrs,
-						(NC_var **)handle->vars->values, handle->vars->count) )
-				{
-					nc_serror("NCcoordck fill, var %s, rec %ld",
-						vp->name->values, handle->numrecs) ;
-					return(FALSE) ;
-				}
-			}
-		}
-		if(handle->flags & NC_NSYNC) /* write out header->numrecs NOW */
-		{
-			if(!xdr_numrecs(handle->xdrs, handle) )
-				return(FALSE) ;
-			handle->flags &= ~NC_NDIRTY ;
-		}
-	}
+          handle->flags |= NC_NDIRTY ;
+          if( handle->flags & NC_NOFILL )
+            {
+                /* Go directly to jail, do not pass go */
+                handle->numrecs = *ip + 1 ;
+            }
+          else
+            {
+                /* fill out new records */
+                if( !xdr_NCsetpos(handle->xdrs,
+                                  handle->begin_rec + handle->recsize*handle->numrecs) )
+                  {
+                      nc_serror("NCcoordck seek, var %s", vp->name->values) ;
+                      return(FALSE) ;
+                  }
+                for( ; unfilled >= 0 ; unfilled--, handle->numrecs++)
+                  {
+                      if( !NCfillrecord(handle->xdrs,
+                                        (NC_var **)handle->vars->values, handle->vars->count) )
+                        {
+                            nc_serror("NCcoordck fill, var %s, rec %ld",
+                                      vp->name->values, handle->numrecs) ;
+                            return(FALSE) ;
+                        }
+                  }
+            }
+          if(handle->flags & NC_NSYNC) /* write out header->numrecs NOW */
+            {
+                if(!xdr_numrecs(handle->xdrs, handle) )
+                    return(FALSE) ;
+                handle->flags &= ~NC_NDIRTY ;
+            }
+      }
 
 	return(TRUE) ;
 bad:
@@ -293,58 +308,65 @@ const long *coords ;
     for(offset = 0 ; ip >= boundary ; ip--, up--)
         offset += *up * *ip ;
     
-    if( IS_RECVAR(vp) ) {
+    if( IS_RECVAR(vp) ) 
+      {
 #ifdef HDF
-        switch(handle->file_type) {
-        case HDF_FILE:
-            return( vp->dsizes[0] * *coords + offset) ;
-        case netCDF_FILE:
-            return( vp->begin + handle->recsize * *coords + offset) ;
-        case CDF_FILE:
+          switch(handle->file_type) 
+            {
+            case HDF_FILE:
+                return( vp->dsizes[0] * *coords + offset) ;
+            case netCDF_FILE:
+                return( vp->begin + handle->recsize * *coords + offset) ;
+            case CDF_FILE:
 #ifdef DEBUG
-            fprintf(stderr, "Yow!  Don't do CDF records yet\n");
+                fprintf(stderr, "Yow!  Don't do CDF records yet\n");
 #endif
-            return (0);
-        }
+                return (0);
+            }
 #else /* !HDF */
-        return( vp->begin + handle->recsize * *coords + offset) ;
+          return( vp->begin + handle->recsize * *coords + offset) ;
 #endif /* !HDF */
-    } else {
+      } 
+    else 
+      {
 #ifdef HDF
-        switch(handle->file_type) {
-        case HDF_FILE:
-            return (offset);
-        case netCDF_FILE:
-            return (vp->begin + offset);
-        case CDF_FILE:
-            if((vix = vp->vixHead) == NULL)
-                return (-1);
+          switch(handle->file_type) 
+            {
+            case HDF_FILE:
+                return (offset);
+            case netCDF_FILE:
+                return (vp->begin + offset);
+            case CDF_FILE:
+                if((vix = vp->vixHead) == NULL)
+                    return (-1);
             
-            /* 
-             * Record data is stored in chunks.  the firstRec and lastRec
-             *  fields give the indicies of the first and last records
-             *  stored in a given chunk and the offset gives the offset in
-             *  the file of where that chunk starts.  The local variable
-             *  'offset' gives the offset into the entire variable space
-             *  where we want to read.  To map find the correct location
-             *  we need to find the correct chunk and then get our offset
-             *  within that chunk
-             */
-            while(vix) {
-                for(i = 0; i < vix->nUsed; i++) {
-                    if((vix->firstRec[i] <= *coords) && (vix->lastRec[i] >= *coords)) {
-                        /* found the record we want */
-                        return (offset + vix->offset[i] - vix->firstRec[i] * vp->dsizes[0] + 8);
-                    }
-                } /* loop over user entries in current vix record */
-                vix = vix->next;
-            } /* loop over all vix records */
-            break;
-        }
+                /* 
+                 * Record data is stored in chunks.  the firstRec and lastRec
+                 *  fields give the indicies of the first and last records
+                 *  stored in a given chunk and the offset gives the offset in
+                 *  the file of where that chunk starts.  The local variable
+                 *  'offset' gives the offset into the entire variable space
+                 *  where we want to read.  To map find the correct location
+                 *  we need to find the correct chunk and then get our offset
+                 *  within that chunk
+                 */
+                while(vix) 
+                  {
+                      for(i = 0; i < vix->nUsed; i++) 
+                        {
+                            if((vix->firstRec[i] <= *coords) && (vix->lastRec[i] >= *coords)) {
+                                /* found the record we want */
+                                return (offset + vix->offset[i] - vix->firstRec[i] * vp->dsizes[0] + 8);
+                            }
+                        } /* loop over user entries in current vix record */
+                      vix = vix->next;
+                  } /* loop over all vix records */
+                break;
+            }
 #else /* !HDF */
-        return (vp->begin + offset);
+          return (vp->begin + offset);
 #endif /* !HDF */
-    }
+      }
     
     /* should never get to here */
     return (0);
@@ -365,78 +387,78 @@ char *values ;
 {
 	char buf[4] ;
 	u_long origin ;
-        enum xdr_op  x_op = xdrs->x_op ; /* save state */
+    enum xdr_op  x_op = xdrs->x_op ; /* save state */
 
 	if(x_op == XDR_ENCODE)
-	{
-	/*
-	 * Since we only read/write multiples of four bytes,
-	 * We will read in the word to change one byte in it.
-	 */
-		origin = xdr_getpos( xdrs ) ;
+      {
+          /*
+           * Since we only read/write multiples of four bytes,
+           * We will read in the word to change one byte in it.
+           */
+          origin = xdr_getpos( xdrs ) ;
 #ifdef XDRSTDIO
-	/*
-	 * N.B. : "a file positioning function must be called between
-	 * a write and a read or vice versa"
-	 *		- limitations of stdio, open for update
-	 */
-		if( !xdr_setpos(xdrs, origin) ) 
-			return(FALSE) ;
+          /*
+           * N.B. : "a file positioning function must be called between
+           * a write and a read or vice versa"
+           *		- limitations of stdio, open for update
+           */
+          if( !xdr_setpos(xdrs, origin) ) 
+              return(FALSE) ;
 #endif /* XDRSTDIO */
-                /* next op is a get */
-                xdrs->x_op = XDR_DECODE ;
-        }
+          /* next op is a get */
+          xdrs->x_op = XDR_DECODE ;
+      }
 
-        if(!xdr_opaque(xdrs, buf, 4))
-        {
-                /* get failed, assume we are trying to read off the end */
+    if(!xdr_opaque(xdrs, buf, 4))
+      {
+          /* get failed, assume we are trying to read off the end */
 #ifdef XDRSTDIO
-		/*
-		 * N.B. 2 : Violates layering,
-		 * assumes stdio under xdr.
-		 * This clause could be safely replaced with
-		 * just the 'memset' line.
-		 */
-		if(feof((FILE*)xdrs->x_private)) /* NC_NOFILL */
-		{
-			/* failed because we tried to read
-			 * beyond EOF
-			 */
-			clearerr((FILE*)xdrs->x_private) ;
-			(void)HDmemset(buf, 0, sizeof(buf)) ;
-		}
-		else
-		{
-			NCadvise(NC_EXDR, "xdr_NCvbyte") ;
-			xdrs->x_op = x_op ;
-                        return(FALSE) ;
-		}
-#else
-		(void)HDmemset(buf, 0, sizeof(buf)) ;
-#endif /* XDRSTDIO */
-	}
-
-       if(x_op == XDR_ENCODE) /* back to encode */
+          /*
+           * N.B. 2 : Violates layering,
+           * assumes stdio under xdr.
+           * This clause could be safely replaced with
+           * just the 'memset' line.
+           */
+          if(feof((FILE*)xdrs->x_private)) /* NC_NOFILL */
+            {
+                /* failed because we tried to read
+                 * beyond EOF
+                 */
+                clearerr((FILE*)xdrs->x_private) ;
+                (void)HDmemset(buf, 0, sizeof(buf)) ;
+            }
+          else
+            {
+                NCadvise(NC_EXDR, "xdr_NCvbyte") ;
                 xdrs->x_op = x_op ;
+                return(FALSE) ;
+            }
+#else
+          (void)HDmemset(buf, 0, sizeof(buf)) ;
+#endif /* XDRSTDIO */
+      }
+
+    if(x_op == XDR_ENCODE) /* back to encode */
+        xdrs->x_op = x_op ;
 
 	while(count-- != 0)
-	{
-		if(x_op == XDR_ENCODE)
-			buf[rem] = *values ;
-		else
-			*values = buf[rem] ;
+      {
+          if(x_op == XDR_ENCODE)
+              buf[rem] = *values ;
+          else
+              *values = buf[rem] ;
 	
-		rem++ ;
-		values++ ;
-	}
+          rem++ ;
+          values++ ;
+      }
 
 	if(x_op == XDR_ENCODE)
-	{
-		if( !xdr_setpos(xdrs, origin) )
-			return(FALSE) ;
-		if( !xdr_opaque(xdrs, buf, 4))
-			return(FALSE) ;
-	}
+      {
+          if( !xdr_setpos(xdrs, origin) )
+              return(FALSE) ;
+          if( !xdr_opaque(xdrs, buf, 4))
+              return(FALSE) ;
+      }
 
 	return(TRUE) ;
 }
@@ -452,71 +474,71 @@ XDR *xdrs ;
 unsigned which ;
 short *values ;
 {
-        unsigned char buf[4] ; /* unsigned is important here */
-        u_long origin ;
-        enum xdr_op  x_op = xdrs->x_op ; /* save state */
+    unsigned char buf[4] ; /* unsigned is important here */
+    u_long origin ;
+    enum xdr_op  x_op = xdrs->x_op ; /* save state */
 
-        if(x_op == XDR_ENCODE)
-        {
-                origin = xdr_getpos( xdrs ) ;
+    if(x_op == XDR_ENCODE)
+      {
+          origin = xdr_getpos( xdrs ) ;
 #ifdef XDRSTDIO
-                /* See N.B. above */
-                if( !xdr_setpos(xdrs, origin) )
-                        return(FALSE) ;
+          /* See N.B. above */
+          if( !xdr_setpos(xdrs, origin) )
+              return(FALSE) ;
 #endif /* XDRSTDIO */
-                /* next op is a get */
-                xdrs->x_op = XDR_DECODE ;
-        }
+          /* next op is a get */
+          xdrs->x_op = XDR_DECODE ;
+      }
 
-        if(!xdr_opaque(xdrs, (caddr_t)buf, 4))
-        {
-                /* get failed, assume we are trying to read off the end */
+    if(!xdr_opaque(xdrs, (caddr_t)buf, 4))
+      {
+          /* get failed, assume we are trying to read off the end */
 #ifdef XDRSTDIO
-                /* See N.B. 2 above */
-                if(feof((FILE*)xdrs->x_private)) /* NC_NOFILL */
-                {
-                        /* failed because we tried to read
-                         * beyond EOF
-                         */
-                        clearerr((FILE*)xdrs->x_private) ;
-                        (void)memset(buf, 0, sizeof(buf)) ;
-                }
-                else
-                {
-                        NCadvise(NC_EXDR, "xdr_NCvbyte") ;
-                        xdrs->x_op = x_op ;
-                        return(FALSE) ;
-                }
-#else
-                (void)HDmemset(buf, 0, sizeof(buf)) ;
-#endif /* XDRSTDIO */
-        }
-
-        if(x_op == XDR_ENCODE) /* back to encode */
+          /* See N.B. 2 above */
+          if(feof((FILE*)xdrs->x_private)) /* NC_NOFILL */
+            {
+                /* failed because we tried to read
+                 * beyond EOF
+                 */
+                clearerr((FILE*)xdrs->x_private) ;
+                (void)memset(buf, 0, sizeof(buf)) ;
+            }
+          else
+            {
+                NCadvise(NC_EXDR, "xdr_NCvbyte") ;
                 xdrs->x_op = x_op ;
+                return(FALSE) ;
+            }
+#else
+          (void)HDmemset(buf, 0, sizeof(buf)) ;
+#endif /* XDRSTDIO */
+      }
+
+    if(x_op == XDR_ENCODE) /* back to encode */
+        xdrs->x_op = x_op ;
  
-        if(which != 0) which = 2 ;
+    if(which != 0) which = 2 ;
 
-        if(xdrs->x_op == XDR_ENCODE)
-        {
-                buf[which +1] = *values % 256 ;
-                buf[which] = (*values >> 8) ;
+    if(xdrs->x_op == XDR_ENCODE)
+      {
+          buf[which +1] = *values % 256 ;
+          buf[which] = (*values >> 8) ;
 
-                if( !xdr_setpos(xdrs, origin) )
-                        return(FALSE) ;
-                if( !xdr_opaque(xdrs, (caddr_t)buf, 4))
-                        return(FALSE) ;
-        }
-        else
-        {
-                *values = ((buf[which] & 0x7f) << 8) + buf[which + 1] ;
-                if(buf[which] & 0x80)
-                {
-                        /* extern is neg */
-                       *values -= 0x8000 ;
-                 }
-        }
-        return(TRUE) ;
+          if( !xdr_setpos(xdrs, origin) )
+              return(FALSE) ;
+          if( !xdr_opaque(xdrs, (caddr_t)buf, 4))
+              return(FALSE) ;
+      }
+    else
+      {
+          *values = ((buf[which] & 0x7f) << 8) + buf[which + 1] ;
+          if(buf[which] & 0x80)
+            {
+                /* extern is neg */
+                *values -= 0x8000 ;
+            }
+      }
+    return(TRUE) ;
 }
 
 
@@ -547,7 +569,7 @@ Void *values ;
 	case NC_BYTE :
 	case NC_CHAR :
 		return( xdr_NCvbyte(xdrs, (unsigned)rem, (unsigned)1,
-			(char *)values) ) ;
+                            (char *)values) ) ;
 	case NC_SHORT :
 		return( xdr_NCvshort(xdrs, (unsigned)rem/2, (short *)values) ) ;
 	case NC_LONG :
@@ -603,30 +625,44 @@ PRIVATE int8  *tValues = NULL;
 /*
     Throw away the temporary buffer we've allocated 
 */
-intn SDPfreebuf()
+intn 
+SDPfreebuf()
 {
-    if(tBuf!=NULL)
+    int ret_value = SUCCEED;
+
+    if(tBuf != NULL)
       {
           HDfree(tBuf);
-          tBuf=NULL;
-          tBuf_size=0;
-      } /* end if */
-    if(tValues!=NULL)
-      {
-          HDfree(tValues);
-          tValues=NULL;
-          tValues_size=0;
+          tBuf = NULL;
+          tBuf_size = 0;
       } /* end if */
 
-    return(SUCCEED);
+    if(tValues != NULL)
+      {
+          HDfree(tValues);
+          tValues = NULL;
+          tValues_size = 0;
+      } /* end if */
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+     /* Normal cleanup */
+
+    return ret_value;
 }
 
 /* ------------------------------ SDIresizebuf ------------------------------ */
 /*
     Resize a temporary buffer to the proper size
 */
-intn SDIresizebuf(VOIDP *buf,int32 *buf_size,int32 size_wanted)
+intn 
+SDIresizebuf(VOIDP *buf,int32 *buf_size,int32 size_wanted)
 {
+    intn ret_value = SUCCEED;
+
     if(*buf_size < size_wanted)
       {
         if(*buf)
@@ -636,10 +672,19 @@ intn SDIresizebuf(VOIDP *buf,int32 *buf_size,int32 size_wanted)
         if (*buf == NULL) 
           {
             *buf_size=0;
-            return(FAIL);
+            ret_value = FAIL;
+            goto done;
           } /* end if */
       } /* end if */
-    return(SUCCEED);
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+     /* Normal cleanup */
+
+    return ret_value;
 } /* end SDIresizebuf() */
 
 #define MAX_SIZE 1000000
@@ -647,54 +692,103 @@ intn SDIresizebuf(VOIDP *buf,int32 *buf_size,int32 size_wanted)
 /* ------------------------- hdf_get_data ------------------- */
 /*
  * Given a variable vgid return the id of a valid data storage
- * Create and fill in the VS as a side effect if it doesn't
- *  exist yet <- not any more, we delay filling until data is
- *  written out -QAK
+ *
+ * OLD WAY: Create and fill in the VS as a side effect if it doesn't
+ *          exist yet <- not any more
+ *
+ * NEW WAY: we delay filling until data is  written out -QAK
+ *
  */
-int 
-  hdf_get_data(handle, vp)
+intn 
+hdf_get_data(handle, vp)
 NC *handle;
 NC_var *vp;
 {
-    NC_attr **attr;
-    int32 vg;
-    int32 vsid, nvalues, status, tag, t, n;
-    int32 byte_count, len;
-    int32 to_do, done, chunk_size;
+    NC_attr **attr = NULL;
+    int32     vg = FAIL;
+    int32     vsid = FAIL;
+    int32     nvalues, status, tag, t, n;
+    int32     byte_count, len;
+    int32     to_do, done, chunk_size;
+    int       ret_value = FAIL;
     
 #ifdef DEBUG 
     fprintf(stderr, "hdf_get_data I've been called\n");
 #endif
     
-    if(!handle) return FALSE;
-    if(!vp) return FALSE;
+    if(NULL == handle) 
+      {
+          ret_value = FAIL;
+          goto done;
+      }
+
+    if(NULL == vp) 
+      {
+          ret_value = FAIL;
+          goto done;
+      }
 
     /* 
      * if it is stored as NDGs we can't do any better than what was
      *    originally stored in vp->data_ref
      */
-    if(vp->data_tag == DFTAG_SDS) return vp->data_ref;
+    if(vp->data_tag == DFTAG_SDS)
+      {
+          ret_value = vp->data_ref;
+          goto done;
+      }
     
-    if(vp->vgid) {
-        /* attach to the variable's Vgroup */
-        vg = Vattach(handle->hdf_file, vp->vgid, "r");
-        if(vg == FAIL)
-            return FALSE;
+    if(vp->vgid) 
+      {
+          /* attach to the variable's Vgroup */
+          vg = Vattach(handle->hdf_file, vp->vgid, "r");
+          if(FAIL == vg)
+            {
+                ret_value = FAIL;
+                goto done;
+            }
         
-        /* loop through looking for a data storage object */
-        n = Vntagrefs(vg);
-        for(t = 0; t < n; t++) {
-            Vgettagref(vg, t, &tag, &vsid);
-            if(tag == DATA_TAG) {
-                Vdetach(vg);
-                return vsid;
-              } /* end if */
-        }
-        Vdetach(vg);
-    }
+          /* loop through looking for a data storage object */
+          n = Vntagrefs(vg);
+          if(FAIL == n)
+            {
+                ret_value = FAIL;
+                goto done;
+            }
+
+          for(t = 0; t < n; t++) 
+            {
+                if (FAIL == Vgettagref(vg, t, &tag, &vsid))
+                  {
+                      ret_value = FAIL;
+                      goto done;
+                  }
+
+                if(tag == DATA_TAG) 
+                  {   /* detach */
+                      if (FAIL == Vdetach(vg))
+                        {
+                            ret_value = FAIL;
+                            goto done;
+                        }
+                      ret_value = vsid;
+                      goto done;
+                  } /* end if */
+            }
+          /* don't forget to let go of vgroup */
+          if (FAIL == Vdetach(vg))
+            {
+                ret_value = FAIL;
+                goto done;
+            }
+      }
     
+    /* are we only in read-only mode? */
     if(handle->hdf_mode == DFACC_RDONLY)
-        return FALSE;
+      { /* yes, not good */
+          ret_value = FAIL;
+          goto done;
+      }
   
     /* 
      * create a new data storage object
@@ -705,34 +799,6 @@ NC_var *vp;
     fprintf(stderr, "dsize[0]= %d dsize[1]= %d\n", vp->dsizes[0], vp->dsizes[1]);
 #endif  
     
-#ifdef OLD_WAY
-    /* look up fill value (if it exists) */
-    attr = NC_findattr(&(vp->attrs), _FillValue);
-
-
-    /* compute the various size parameters */
-    if(vp->len > MAX_SIZE)
-        chunk_size = MAX_SIZE;
-    else
-        chunk_size = vp->len;
-
-    nvalues = vp->len / vp->HDFsize;        /* total number of values */
-    to_do   = chunk_size / vp->HDFsize;     /* number of values in a chunk */
-    
-    len = to_do * vp->szof;                 /* size of buffer for fill values */
-    if (SDIresize((VOIDP *)&tValues,&tValues_size,len)==FAIL)
-        return(FALSE);
-
-    byte_count = to_do * vp->HDFsize;       /* external buffer size */
-
-    if ((handle->flags & NC_NOFILL) == 0) { /* fill the array */
-       if(!attr) {
-            NC_arrayfill((VOIDP)tValues, len, vp->type);
-       } else {
-            HDmemfill((VOIDP)tValues,(*attr)->data->values,vp->szof,to_do);
-       }
-    }
-#endif /* OLD_WAY */
     
     /* --------------------------------------
      *
@@ -751,80 +817,71 @@ NC_var *vp;
     fprintf(stderr, "byte_count=%d\n", (int)byte_count);
 #endif  
 
-#ifdef OLD_WAY
-    vp->aid = Hstartwrite(handle->hdf_file, DATA_TAG, vsid, vp->len);
-
-    if(vp->aid == FAIL) return FALSE;
-
-    if ((handle->flags & NC_NOFILL) == 0) { /* fill the array */
-        /* make sure our tmp buffer is big enough to hold everything */
-        if(SDIresizebuf((VOIDP *)&tBuf,&tBuf_size,byte_count)==FAIL)
-            return(FALSE);
-
-    /*
-     * Do numerical conversions
-     */
-        DFKsetNT(vp->HDFtype);
-        DFKnumout((uint8 *) tValues, tBuf, (uint32) to_do, 0, 0);
-
-    /*
-     * Write out the values
-     */
-        done = 0;
-        while(done != nvalues) {
-            status = Hwrite(vp->aid, byte_count, (uint8 *) tBuf);
-            if(status != byte_count) return FALSE;
-            done += to_do;
-            if(nvalues - done < to_do)  {
-                to_do = nvalues - done;
-                byte_count = to_do * vp->HDFsize;
-            }
-        }
-    }  /* NC_NOFILL */
-    if(Hendaccess(vp->aid) == FAIL) return FALSE;
-#endif /* OLD_WAY */
-
     /* if it is a record var might as well make it linked blocks now */
-    if(IS_RECVAR(vp)) {
-        int32 block_size; /* the size of the linked blocks to use */
+    if(IS_RECVAR(vp)) 
+      {
+          int32 block_size; /* the size of the linked blocks to use */
 
-	/* The block size is calculated according to the following heuristic: */
-	/*   First, the block size the user set is used, if set. */
-	/*   Second, the block size is calculated according to the size being */
-	/*           written times the BLOCK_MULT value, in order to make */
-	/*           bigger blocks if the slices are very small. */
-	/*   Third, the calculated size is check if it is bigger than the */
-	/*           MAX_BLOCK_SIZE value so that huge empty blocks are not */
-	/*           created.  If the calculated size is greater than */
-	/*           MAX_BLOCK_SIZE, then MAX_BLOCK_SIZE is used */
-	/* These are very vague heuristics, but hopefully they should avoid */
-	/* some of the past problems... -QAK */
-	if(vp->block_size!=(-1)) /* use value the user provided, if available */
-	    block_size=vp->block_size;
-	else { /* try figuring out a good value using some heuristics */
-	    block_size=vp->len*BLOCK_MULT;
-	    if(block_size>MAX_BLOCK_SIZE)
-		block_size=MAX_BLOCK_SIZE;
-	  } /* end else */
+          /* The block size is calculated according to the following heuristic: */
+          /*   First, the block size the user set is used, if set. */
+          /*   Second, the block size is calculated according to the size being */
+          /*           written times the BLOCK_MULT value, in order to make */
+          /*           bigger blocks if the slices are very small. */
+          /*   Third, the calculated size is check if it is bigger than the */
+          /*           MAX_BLOCK_SIZE value so that huge empty blocks are not */
+          /*           created.  If the calculated size is greater than */
+          /*           MAX_BLOCK_SIZE, then MAX_BLOCK_SIZE is used */
+          /* These are very vague heuristics, but hopefully they should avoid */
+          /* some of the past problems... -QAK */
+          if(vp->block_size != (-1)) /* use value the user provided, if available */
+              block_size = vp->block_size;
+          else 
+            { /* try figuring out a good value using some heuristics */
+                block_size = vp->len*BLOCK_MULT;
+                if (block_size > MAX_BLOCK_SIZE)
+                    block_size = MAX_BLOCK_SIZE;
+            } /* end else */
 
-        vp->aid = HLcreate(handle->hdf_file, DATA_TAG, vsid, block_size,
-		BLOCK_COUNT);
-        if(vp->aid == FAIL) return FALSE;
-        if(Hendaccess(vp->aid) == FAIL) return FALSE;
-    }
+          vp->aid = HLcreate(handle->hdf_file, DATA_TAG, vsid, block_size,
+                             BLOCK_COUNT);
+          if(vp->aid == FAIL) 
+            {
+                ret_value = FAIL;
+                goto done;
+            }
 
-    if(vp->vgid) {
-        /* attach to the variable's Vgroup */
-        vg = Vattach(handle->hdf_file, vp->vgid, "w");
-        if(vg == FAIL)
-            return FALSE;
+          if(Hendaccess(vp->aid) == FAIL) 
+            {
+                ret_value = FAIL;
+                goto done;
+            }
+      }
+
+    if(vp->vgid) 
+      {
+          /* attach to the variable's Vgroup */
+          vg = Vattach(handle->hdf_file, vp->vgid, "w");
+          if(vg == FAIL)
+            {
+                ret_value = FAIL;
+                goto done;
+            }
         
-        /* add new Vdata to existing Vgroup */
-        Vaddtagref(vg, (int32) DATA_TAG, (int32) vsid);
+          /* add new Vdata to existing Vgroup */
+          if (FAIL == Vaddtagref(vg, (int32) DATA_TAG, (int32) vsid))
+            {
+                ret_value = FAIL;
+                goto done;
+            }
+
         
-        /* detach from the variable's VGroup --- will no longer need it */
-        Vdetach(vg);
-    }
+          /* detach from the variable's VGroup --- will no longer need it */
+          if (FAIL == Vdetach(vg))
+            {
+                ret_value = FAIL;
+                goto done;
+            }
+      }
         
 #ifdef DEBUG 
     fprintf(stderr, "Done with the DATA Vdata returning id %d\n", vsid);
@@ -835,15 +892,26 @@ NC_var *vp;
     /* added a new object -- make sure we flush the header */
     handle->flags |= NC_HDIRTY;
             
-    return vsid;
+    ret_value = vsid;
 
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+          if (vg != FAIL)
+            {                
+                Vdetach(vg); /* no point in catch error here if we fail */
+            }
+      }
+     /* Normal cleanup */
+
+    return ret_value;
 } /* hdf_get_data */
 
 
 /* ---------------------------- hdf_get_vp_aid ---------------------------- */
 /*
 
-  Return an AID for the current variable.  Return FALSE on error TRUE on success
+  Return an AID for the current variable.  Return FAIL on error SUCCEED on success
 
 */
 int32
@@ -851,6 +919,7 @@ hdf_get_vp_aid(handle, vp)
 NC        * handle;
 NC_var    * vp;
 {
+    int32 ret_value = SUCCEED;
 
     /* attach to proper data storage*/
     if(!vp->data_ref)
@@ -859,22 +928,32 @@ NC_var    * vp;
     /*
      * Fail if there is no data
      */
-    if(vp->data_ref == 0) return(FALSE);
+    if(vp->data_ref == 0) 
+      {
+          ret_value = FAIL;
+          goto done;
+      }
 
     if(handle->hdf_mode == DFACC_RDONLY)
         vp->aid = Hstartread(handle->hdf_file, vp->data_tag, vp->data_ref);
     else
+      {
 #ifdef OLD_WAY
-        vp->aid = Hstartwrite(handle->hdf_file, vp->data_tag, vp->data_ref, 0);
+          vp->aid = Hstartwrite(handle->hdf_file, vp->data_tag, vp->data_ref, 0);
 #else /* OLD_WAY */
-        vp->aid = Hstartaccess(handle->hdf_file, vp->data_tag, vp->data_ref, DFACC_WRITE|DFACC_APPENDABLE);
+          vp->aid = Hstartaccess(handle->hdf_file, vp->data_tag, vp->data_ref, DFACC_WRITE|DFACC_APPENDABLE);
 #endif /* OLD_WAY */
+      }
     
-    if(vp->aid == FAIL)
-        return(FALSE);
+    ret_value = vp->aid;
 
-    return(TRUE);
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+      }
+     /* Normal cleanup */
 
+    return ret_value;
 } /* hdf_get_vp_aid */
 
  
@@ -893,90 +972,141 @@ extern int32 CM_HDFtype;
  *
  * The calling routine is responsible for calling DFKsetNT() as required.
  */
-static bool_t
-hdf_xdr_NCvdata(NC *handle, NC_var *vp, u_long where, nc_type type, uint32 count, VOIDP values)
+static intn
+hdf_xdr_NCvdata(NC *handle, 
+                NC_var *vp, 
+                u_long where, 
+                nc_type type, 
+                uint32 count, 
+                VOIDP values)
 {
-    NC_attr ** attr;        /* pointer to the fill-value attribute */
-    int32 status;
-    int32 byte_count;
-    int32 bytes_left;
-    int32 elem_length;
-    uint8 platntsubclass;  /* the machine type of the current platform */
-    uint8 outntsubclass;   /* the data's machine type */
-    uintn convert;          /* whether to convert or not */
-    int16 isspecial;
+    NC_attr **attr = NULL;      /* pointer to the fill-value attribute */
+    int32     status;
+    int32     byte_count;
+    int32     bytes_left;
+    int32     elem_length;
+    int8      platntsubclass;  /* the machine type of the current platform */
+    int8      outntsubclass;   /* the data's machine type */
+    uintn     convert;          /* whether to convert or not */
+    int16     isspecial;
+    intn      ret_value = SUCCEED;
 
 #ifdef DEBUG
     fprintf(stderr, "hdf_xdr_NCvdata I've been called : %s\n", vp->name->values);
 #endif
 
 #ifdef DEBUG 
-{
     fprintf(stderr, "Where = %d  count = %d\n", where, count);
-}
 #endif
     
-    if(vp->aid == FAIL && hdf_get_vp_aid(handle, vp) == FALSE) {
-        /*
-         * Fail if there is no data *AND* we were trying to read...
-         * Otherwise, we should fill with the fillvalue
-         */
+    if(vp->aid == FAIL 
+       && hdf_get_vp_aid(handle, vp) == FAIL) 
+      {
+          /*
+           * Fail if there is no data *AND* we were trying to read...
+           * Otherwise, we should fill with the fillvalue
+           */
 #ifdef DEBUG
-    fprintf(stderr, "hdf_xdr_NCvdata creating new data, check for fill value, vp->data_ref=%d\n",(int)vp->data_ref);
+          fprintf(stderr, "hdf_xdr_NCvdata creating new data, check for fill value, vp->data_ref=%d\n",(int)vp->data_ref);
 #endif
-        if(vp->data_ref == 0) 
-            if(handle->hdf_mode == DFACC_RDONLY) {
-                if(vp->data_tag == DATA_TAG || vp->data_tag == DFTAG_SDS) {
-                    if((attr = NC_findattr(&vp->attrs, _FillValue))!= NULL)
-                        HDmemfill(values,(*attr)->data->values,vp->szof,count);
-                    else 
-                        NC_arrayfill(values, count * vp->szof, vp->type);
-                }
-                return TRUE;
-            } else {
-                return FALSE;
+          if(vp->data_ref == 0) 
+            {
+                if(handle->hdf_mode == DFACC_RDONLY) 
+                  {
+                      if(vp->data_tag == DATA_TAG || vp->data_tag == DFTAG_SDS) 
+                        {
+                            if((attr = NC_findattr(&vp->attrs, _FillValue))!= NULL)
+                                HDmemfill(values,(*attr)->data->values,vp->szof,count);
+                            else 
+                                NC_arrayfill(values, count * vp->szof, vp->type);
+                        }
+
+                      ret_value = SUCCEED;
+                      goto done;
+                  } 
+                else 
+                  {
+                      ret_value =  FAIL;
+                      goto done;
+                  }
             }
-    }
+      }
 
     /* 
-        Figure out if the tag/ref is a compressed special-element with no data.
-        This "template" tag/ref is treated as if the tag/ref doesn't exist at
-        all:  reading from it fills a memory buffer and returns it to the user
-        and writing to it fills up the buffer around the block to write.
+       Figure out if the tag/ref is a compressed special-element with no data.
+       This "template" tag/ref is treated as if the tag/ref doesn't exist at
+       all:  reading from it fills a memory buffer and returns it to the user
+       and writing to it fills up the buffer around the block to write.
     */
-    if(Hinquire(vp->aid,NULL,NULL,NULL,&elem_length,NULL,NULL,NULL,&isspecial)==FAIL)
-        return FALSE;
+    if(Hinquire(vp->aid,NULL,NULL,NULL,&elem_length,NULL,NULL,NULL,&isspecial) == FAIL)
+      {
+          ret_value = FAIL;
+          goto done;
+      }
+
 #ifdef DEBUG 
-    fprintf(stderr, "vp->aid=%d, length=%ld, byte_count=%ld\n", (int)vp->aid, (long)elem_length, (long)byte_count);
+    fprintf(stderr, "vp->aid=%d, length=%ld, byte_count=%ld\n", 
+            (int)vp->aid, (long)elem_length, (long)byte_count);
 #endif
     /* Check for zero-length compressed special element, i.e. a template */
-    if(elem_length<=0)
+    if(elem_length <= 0)
       {
-        attr=NC_findattr(&vp->attrs, _FillValue);
+          attr = NC_findattr(&vp->attrs, _FillValue);
 
-        /* Check for reading from template & fill memory buffer with fill-value */
-        if(handle->xdrs->x_op == XDR_DECODE) 
-          {
-            if(attr != NULL)
-                HDmemfill(values,(*attr)->data->values,vp->szof,(vp->len/vp->HDFsize));
-            else 
-                NC_arrayfill(values, count * vp->szof, vp->type);
-            return TRUE;
-          } /* end if */
+          /* Check for reading from template & fill memory buffer with fill-value */
+          if(handle->xdrs->x_op == XDR_DECODE) 
+            {
+                if(attr != NULL)
+                    HDmemfill(values,(*attr)->data->values,vp->szof,(vp->len/vp->HDFsize));
+                else 
+                    NC_arrayfill(values, count * vp->szof, vp->type);
+
+                ret_value = SUCCEED; /* we are done */
+                goto done;
+            } /* end if */
       } /* end if */
 
     /* Collect all the number-type size information, etc. */
     byte_count = count * vp->HDFsize;
+
+#if 0 /* old way */
     platntsubclass = DFKgetPNSC(vp->HDFtype, DF_MT); 
     outntsubclass = DFKisnativeNT(vp->HDFtype) ? DFKgetPNSC(vp->HDFtype, DF_MT)
 	    : (DFKislitendNT(vp->HDFtype) ? DFNTF_PC : DFNTF_HDFDEFAULT);
+#else /* new way */
+    if (FAIL == (platntsubclass = DFKgetPNSC(vp->HDFtype, DF_MT)))
+      {
+          ret_value = FAIL;
+          goto done;
+      }
+
+    if (DFKisnativeNT(vp->HDFtype))
+      {
+          if (FAIL == (outntsubclass = DFKgetPNSC(vp->HDFtype, DF_MT)))
+            {
+                ret_value = FAIL;
+                goto done;
+            }
+      }
+    else
+      {
+          outntsubclass = DFKislitendNT(vp->HDFtype) ? DFNTF_PC : DFNTF_HDFDEFAULT;
+      }
+
+#endif
     convert= (uintn)(platntsubclass!=outntsubclass);
 
     /* make sure our tmp buffer is big enough to hold everything */
-    if(convert && ((tBuf_size < byte_count) || tBuf_size<where)) {
-        if(SDIresizebuf((VOIDP *)&tBuf,&tBuf_size,MAX(byte_count,where))==FAIL)
-            return(FALSE);
+    if(convert 
+       && ((tBuf_size < byte_count) || tBuf_size<where)) 
+      {
+          if(SDIresizebuf((VOIDP *)&tBuf,&tBuf_size,MAX(byte_count,where)) == FAIL)
+            {
+                ret_value = FAIL;
+                goto done;
+            }
       } /* end if */
+
 #ifdef DEBUG
     fprintf(stderr, "hdf_xdr_NCvdata: tBuf_size=%d, tBuf=%p\n",(int)tBuf_size,tBuf);
 #endif
@@ -990,92 +1120,138 @@ hdf_xdr_NCvdata(NC *handle, NC_var *vp, u_long where, nc_type type, uint32 count
 #ifdef DEBUG
     fprintf(stderr, "hdf_xdr_NCvdata: vp->data_offset=%d, where=%d\n",(int)vp->data_offset,(int)where);
 #endif
+
     if(vp->data_offset > 0) 
       {
-        where += vp->data_offset;
+          where += vp->data_offset;
 
 #ifdef QAK
-        /* if the dataset doesn't exist yet, we need to fill in the dimension scale info */
-        if(elem_length<=0 && (handle->flags & NC_NOFILL)==0)
-          {
-            /* Fill the temporary buffer with the fill-value */
-            if(attr != NULL)
-                HDmemfill(tBuf,(*attr)->data->values,vp->szof,(vp->data_offset/vp->HDFsize));
-            else 
-                NC_arrayfill((VOIDP)tBuf, vp->data_offset, vp->type);
+          /* if the dataset doesn't exist yet, we need to fill in the dimension scale info */
+          if(elem_length <= 0 && (handle->flags & NC_NOFILL) == 0)
+            {
+                /* Fill the temporary buffer with the fill-value */
+                if(attr != NULL)
+                    HDmemfill(tBuf,(*attr)->data->values,vp->szof,(vp->data_offset/vp->HDFsize));
+                else 
+                    NC_arrayfill((VOIDP)tBuf, vp->data_offset, vp->type);
 
-            /* convert the fill-values, if necessary */
-            if(convert) {
-                DFKsetNT(vp->HDFtype); /* added back here -GV */
-                DFKnumout((uint8 *) tBuf, tBuf, (uint32) (vp->data_offset/vp->HDFsize), 0, 0);
-              } /* end if */
+                /* convert the fill-values, if necessary */
+                if(convert) 
+                  {
+                      if (FAIL == DFKsetNT(vp->HDFtype)) /* added back here -GV */
+                        {
+                            ret_value = FAIL;
+                            goto done;
+                        }
+                      if (FAIL == DFKnumout((uint8 *) tBuf, tBuf, (uint32) (vp->data_offset/vp->HDFsize), 0, 0))
+                        {
+                            ret_value = FAIL;
+                            goto done;
+                        }
+                  } /* end if */
 
-            /* Write the fill-values out */
-            status = Hwrite(vp->aid, vp->data_offset, (uint8 *) tBuf);
-          } /* end if */
+                /* Write the fill-values out */
+                status = Hwrite(vp->aid, vp->data_offset, (uint8 *) tBuf);
+                if (FAIL == status)
+                  {
+                      ret_value = FAIL;
+                      goto done;
+                  }                
+            } /* end if */
 #endif /* QAK */
       } /* end if */
     
 #ifdef DEBUG
-    fprintf(stderr, "hdf_xdr_NCvdata vp->aid=%d, where=%d\n",(int)vp->aid,(int)where);
+    fprintf(stderr, "hdf_xdr_NCvdata vp->aid=%d, where=%d\n",
+            (int)vp->aid,(int)where);
 #endif
     /* if we get here and the length is 0, we need to fill in the initial set of fill-values */
-    if(elem_length<=0 && where>0)
+    if(elem_length <= 0 && where > 0)
       { /* fill in the lead sequence of bytes with the fill values */
-        if((handle->flags & NC_NOFILL)==0 || isspecial==SPECIAL_COMP)
-          {
-            int32 buf_size=where,
-                chunk_size;
-            uint8 *write_buf;
+          if((handle->flags & NC_NOFILL)==0 || isspecial==SPECIAL_COMP)
+            {
+                int32 buf_size = where;
+                int32 chunk_size;
+                uint8 *write_buf = NULL;
 
-            /* Make certain we don't try to write too large of a chunk at a time */
-            chunk_size=MIN(buf_size,MAX_SIZE);
+                /* Make certain we don't try to write too large of a chunk at a time */
+                chunk_size = MIN(buf_size,MAX_SIZE);
 
-            /* make sure our tmp buffer is big enough to hold everything */
-            if(SDIresizebuf((VOIDP *)&tBuf,&tBuf_size,chunk_size)==FAIL)
-                return(FALSE);
-            if(SDIresizebuf((VOIDP *)&tValues,&tValues_size,chunk_size)==FAIL)
-                return(FALSE);
+                /* make sure our tmp buffer is big enough to hold everything */
+                if(SDIresizebuf((VOIDP *)&tBuf,&tBuf_size,chunk_size) == FAIL)
+                  {
+                      ret_value = FAIL;
+                      goto done;
+                  }
 
-            /* Fill the temporary buffer with the fill-value */
-            if(attr != NULL)
-                HDmemfill(tBuf,(*attr)->data->values,vp->szof,(chunk_size/vp->HDFsize));
-            else 
-                NC_arrayfill((VOIDP)tBuf, chunk_size, vp->type);
+                if(SDIresizebuf((VOIDP *)&tValues,&tValues_size,chunk_size) == FAIL)
+                  {
+                      ret_value = FAIL;
+                      goto done;
+                  }
 
-            /* convert the fill-values, if necessary */
-            if(convert) {
-                DFKsetNT(vp->HDFtype); /* added back here -GV */
-                DFKnumout((uint8 *)tBuf, tValues, (uint32) (chunk_size/vp->HDFsize), 0, 0);
-                write_buf=(uint8 *)tValues;
-              } /* end if */
-            else
-                write_buf=(uint8 *)tBuf;
+                /* Fill the temporary buffer with the fill-value */
+                if(attr != NULL)
+                    HDmemfill(tBuf,(*attr)->data->values,vp->szof,(chunk_size/vp->HDFsize));
+                else 
+                    NC_arrayfill((VOIDP)tBuf, chunk_size, vp->type);
 
-            do {
-                /* Write the fill-values out */
-                status = Hwrite(vp->aid, chunk_size, write_buf);
+                /* convert the fill-values, if necessary */
+                if(convert) 
+                  {
+                      if (FAIL == DFKsetNT(vp->HDFtype)) /* added back here -GV */
+                        {
+                            ret_value = FAIL;
+                            goto done;
+                        }
 
-                /* reduce the bytes to write */
-                buf_size-=chunk_size;
-                chunk_size=MIN(buf_size,MAX_SIZE);
-             } while (buf_size>0);
+                      if (FAIL == DFKnumout((uint8 *)tBuf, tValues, (uint32) (chunk_size/vp->HDFsize), 0, 0))
+                        {
+                            ret_value = FAIL;
+                            goto done;
+                        }
 
-          } /* end if */
-        else
-          { /* don't write fill values, just seek to the correct location */
-            if( Hseek(vp->aid, where, DF_START) == FAIL)
-                return(FALSE);
-          } /* end else */
+                      write_buf = (uint8 *)tValues;
+                  } /* end if */
+                else
+                    write_buf = (uint8 *)tBuf;
+
+                do {
+                    /* Write the fill-values out */
+                    status = Hwrite(vp->aid, chunk_size, write_buf);
+                    if (FAIL == status)
+                      {
+                          ret_value = FAIL;
+                          goto done;
+                      }    
+                    /* reduce the bytes to write */
+                    buf_size -= chunk_size;
+                    chunk_size = MIN(buf_size,MAX_SIZE);
+                } while (buf_size > 0);
+
+            } /* end if */
+          else
+            { /* don't write fill values, just seek to the correct location */
+                if(Hseek(vp->aid, where, DF_START) == FAIL)
+                  {
+                      ret_value = FAIL;
+                      goto done;
+                  }    
+            } /* end else */
       } /* end if */
     else
       { /* position ourselves correctly */
 #ifdef DEBUG
-    fprintf(stderr, "hdf_xdr_NCvdata: Check 2.0\n");
+          fprintf(stderr, "hdf_xdr_NCvdata: Check 2.0\n");
 #endif
-        if(elem_length>0)
-            if( Hseek(vp->aid, where, DF_START) == FAIL)
-                return(FALSE);
+          if(elem_length > 0)
+            {
+                if( Hseek(vp->aid, where, DF_START) == FAIL)
+                  {
+                      ret_value = FAIL;
+                      goto done;
+                  }    
+            }
       } /* end else */
     
 #ifdef DEBUG
@@ -1083,93 +1259,150 @@ hdf_xdr_NCvdata(NC *handle, NC_var *vp, u_long where, nc_type type, uint32 count
 #endif
     
 #ifdef CM5
-CM_HDFtype = vp->HDFtype;
+    CM_HDFtype = vp->HDFtype;
 #endif
     /* Read or write the data into / from values */
-    if(handle->xdrs->x_op == XDR_DECODE) {
-        if(convert) {
-            status = Hread(vp->aid, byte_count, (uint8 *) tBuf);
-            if(status != byte_count) 
-                return FALSE;
-            DFKsetNT(vp->HDFtype); /* added back here -GV */
-            DFKnumin((uint8 *) tBuf, (uint8 *) values, (uint32) count, 0, 0);
-          } /* end if */
-        else {
-            status = Hread(vp->aid, byte_count, (uint8 *) values);
-            if(status != byte_count)
-                return FALSE;
-          } /* end else */
-    } else {
-        if(convert) {
-            DFKsetNT(vp->HDFtype); /* added back here -GV */
-            DFKnumout((uint8 *) values, tBuf, (uint32) count, 0, 0);
-            status = Hwrite(vp->aid, byte_count, (uint8 *) tBuf);
-          } /* end if */
-        else 
-            status = Hwrite(vp->aid, byte_count, (uint8 *) values);
+    if(handle->xdrs->x_op == XDR_DECODE) 
+      {
+          if(convert) 
+            {
+                status = Hread(vp->aid, byte_count, (uint8 *) tBuf);
+                if(status != byte_count) 
+                  {
+                      ret_value = FAIL;
+                      goto done;
+                  }    
+                if (FAIL == DFKsetNT(vp->HDFtype)) /* added back here -GV */
+                  {
+                      ret_value = FAIL;
+                      goto done;
+                  }    
+                if (FAIL == DFKnumin((uint8 *) tBuf, (uint8 *) values, (uint32) count, 0, 0))
+                  {
+                      ret_value = FAIL;
+                      goto done;
+                  }    
+            } /* end if */
+          else 
+            {
+                status = Hread(vp->aid, byte_count, (uint8 *) values);
+                if(status != byte_count)
+                  {
+                      ret_value = FAIL;
+                      goto done;
+                  }    
+            } /* end else */
+      } 
+    else 
+      {
+          if(convert) 
+            {
+                if (FAIL == DFKsetNT(vp->HDFtype)) /* added back here -GV */
+                  {
+                      ret_value = FAIL;
+                      goto done;
+                  }    
+                if (FAIL == DFKnumout((uint8 *) values, tBuf, (uint32) count, 0, 0))
+                  {
+                      ret_value = FAIL;
+                      goto done;
+                  }    
+                status = Hwrite(vp->aid, byte_count, (uint8 *) tBuf);
+            } /* end if */
+          else 
+              status = Hwrite(vp->aid, byte_count, (uint8 *) values);
 
 #ifdef DEBUG
-    fprintf(stderr, "hdf_xdr_NCvdata: status=%d\n",(int)status);
-    if(status==FAIL)
-        HEprint(stdout,0);
+          fprintf(stderr, "hdf_xdr_NCvdata: status=%d\n",(int)status);
+          if(status==FAIL)
+              HEprint(stdout,0);
 #endif
-        if(status != byte_count) 
-            return FALSE;
-    }
+          if(status != byte_count) 
+            {
+                ret_value = FAIL;
+                goto done;
+            }
+      }
 
     /* if we get here and the length is 0, we need to finish writing out the fill-values */
-    bytes_left=vp->len-(where+byte_count);
+    bytes_left = vp->len - (where + byte_count);
 #ifdef DEBUG
     fprintf(stderr, "hdf_xdr_NCvdata: bytes_left=%d\n",(int)bytes_left);
 #endif
-    if(elem_length<=0 && bytes_left>0)
+    if(elem_length <= 0 && bytes_left > 0)
       {
-        if((handle->flags & NC_NOFILL)==0 || isspecial==SPECIAL_COMP)
-          {
-            int32 buf_size=bytes_left,
-                chunk_size;
-            uint8 *write_buf;
+          if((handle->flags & NC_NOFILL) == 0 || isspecial == SPECIAL_COMP)
+            {
+                int32 buf_size = bytes_left;
+                int32 chunk_size;
+                uint8 *write_buf = NULL;
 
-            /* Make certain we don't try to write too large of a chunk at a time */
-            chunk_size=MIN(buf_size,MAX_SIZE);
+                /* Make certain we don't try to write too large of a chunk at a time */
+                chunk_size = MIN(buf_size,MAX_SIZE);
 
-            /* make sure our tmp buffer is big enough to hold everything */
-            if(SDIresizebuf((VOIDP *)&tBuf,&tBuf_size,chunk_size)==FAIL)
-                return(FALSE);
-            if(SDIresizebuf((VOIDP *)&tValues,&tValues_size,chunk_size)==FAIL)
-                return(FALSE);
+                /* make sure our tmp buffer is big enough to hold everything */
+                if(SDIresizebuf((VOIDP *)&tBuf,&tBuf_size,chunk_size) == FAIL)
+                  {
+                      ret_value = FAIL;
+                      goto done;
+                  }    
+                if(SDIresizebuf((VOIDP *)&tValues,&tValues_size,chunk_size) == FAIL)
+                  {
+                      ret_value = FAIL;
+                      goto done;
+                  }    
 
-            /* Fill the temporary buffer with the fill-value */
-            if(attr != NULL)
-                HDmemfill(tBuf,(*attr)->data->values,vp->szof,(chunk_size/vp->HDFsize));
-            else 
-                NC_arrayfill((VOIDP)tBuf, chunk_size, vp->type);
+                /* Fill the temporary buffer with the fill-value */
+                if(attr != NULL)
+                    HDmemfill(tBuf,(*attr)->data->values,vp->szof,(chunk_size/vp->HDFsize));
+                else 
+                    NC_arrayfill((VOIDP)tBuf, chunk_size, vp->type);
 
-            /* convert the fill-values, if necessary */
-            if(convert) {
-                DFKsetNT(vp->HDFtype); /* added back here -GV */
-                DFKnumout((uint8 *) tBuf, tValues, (uint32) (chunk_size/vp->HDFsize), 0, 0);
-                write_buf=(uint8 *)tValues;
-              } /* end if */
-            else
-                write_buf=(uint8 *)tBuf;
+                /* convert the fill-values, if necessary */
+                if(convert) 
+                  {
+                      if (FAIL == DFKsetNT(vp->HDFtype)) /* added back here -GV */
+                        {
+                            ret_value = FAIL;
+                            goto done;
+                        }    
+                      if (FAIL == DFKnumout((uint8 *) tBuf, tValues, (uint32) (chunk_size/vp->HDFsize), 0, 0))
+                        {
+                            ret_value = FAIL;
+                            goto done;
+                        }    
+                      write_buf=(uint8 *)tValues;
+                  } /* end if */
+                else
+                    write_buf=(uint8 *)tBuf;
 
-            do {
-                /* Write the fill-values out */
-                status = Hwrite(vp->aid, chunk_size, write_buf);
+                do {
+                    /* Write the fill-values out */
+                    status = Hwrite(vp->aid, chunk_size, write_buf);
+                    if (FAIL == status)
+                      {
+                          ret_value = FAIL;
+                          goto done;
+                      }    
 
-                /* reduce the bytes to write */
-                buf_size-=chunk_size;
-                chunk_size=MIN(buf_size,MAX_SIZE);
-             } while (buf_size>0);
-          } /* end if */
+                    /* reduce the bytes to write */
+                    buf_size -= chunk_size;
+                    chunk_size = MIN(buf_size,MAX_SIZE);
+                } while (buf_size > 0);
+            } /* end if */
       } /* end if */
 
 #ifdef DEBUG
     fprintf(stderr, " * * * Done with call to xdr_NCvdata * * *\n");
 #endif
-    
-    return(TRUE);
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+      }
+     /* Normal cleanup */
+
+    return ret_value;
 } /* hdf_xdr_NCvdata */
 
 
@@ -1180,8 +1413,8 @@ CM_HDFtype = vp->HDFtype;
  *  similar name
  * Return TRUE if everything worked, else FALSE
  */
-static bool_t
-  hdf_xdr_NCv1data(handle, vp, where, type, values)
+static intn
+hdf_xdr_NCv1data(handle, vp, where, type, values)
 NC      * handle;
 NC_var  * vp;
 u_long    where;
@@ -1189,39 +1422,24 @@ nc_type   type;
 VOIDP     values;
 {
 
-#if 0
+    intn ret_value = SUCCEED;
 
-    intn status;
-    uint8 buf[100];
     
-    /* Read or write the data into / from values */
-    DFKsetNT(vp->HDFtype);
-    
-    if(handle->xdrs->x_op == XDR_DECODE) {
+    if (FAIL == DFKsetNT(vp->HDFtype))
+      {
+          ret_value = FAIL;
+          goto done;
+      }
 
-        if(!(hdf_xdr_NCvdata(handle, vp, where, type, 1, buf)))
-            return FALSE;
+    ret_value = hdf_xdr_NCvdata(handle, vp, where, type, 1, values); 
 
-        /* convert buf into values */
-        DFKnumin((uint8 *) buf, (uint8 *) values, 1, 0, 0);
-        
-    } else {
-        
-        /*  convert values into tBuf */
-        DFKnumout((uint8 *) values, buf, 1, 0, 0);
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+      }
+     /* Normal cleanup */
 
-        if(!(hdf_xdr_NCvdata(handle, vp, where, type, 1, buf)))
-            return FALSE;
-
-    }
-    
-    return TRUE;
-
-#endif
-    
-    DFKsetNT(vp->HDFtype);
-    return (hdf_xdr_NCvdata(handle, vp, where, type, 1, values)); 
-
+    return ret_value;
 } /* hdf_xdr_NCv1data */
 
 /* -------------------------- nssdc_xdr_NCvdata --------------------------- */
@@ -1230,9 +1448,17 @@ VOIDP     values;
  *    out of a CDF file
  *
  * The calling routine is responsible for calling DFKsetNT() as required.
+ *
+ * NOTE: Do we really care about CDF anymore since we don't support 
+ *       it 100 percent -GV
  */
 static bool_t
-nssdc_xdr_NCvdata(NC *handle, NC_var *vp, u_long where, nc_type type, uint32 count, VOIDP values)
+nssdc_xdr_NCvdata(NC *handle, 
+                  NC_var *vp, 
+                  u_long where, 
+                  nc_type type, 
+                  uint32 count, 
+                  VOIDP values)
 {
     int32 status;
     int32 byte_count;
@@ -1311,25 +1537,26 @@ Void *value ;
 		return(-1) ;
 
 	if(vp->assoc->count == 0) /* 'scaler' variable */
-	{
+      {
 #ifdef HDF
-            switch(handle->file_type) {
+          switch(handle->file_type) 
+            {
             case HDF_FILE:
-                return(
-                       hdf_xdr_NCv1data(handle, vp, vp->begin, vp->type, value) ?
-                       0 : -1 ) ;
+           
+                if (FAIL == hdf_xdr_NCv1data(handle, vp, vp->begin, vp->type, value))
+                    return -1;
+                else
+                    return 0;
             case netCDF_FILE:
-                return(
-                       xdr_NCv1data(handle->xdrs, vp->begin, vp->type, value) ?
+                return(xdr_NCv1data(handle->xdrs, vp->begin, vp->type, value) ?
                        0 : -1 ) ;
-                
             }
 #else /* !HDF */
-            return(
-                xdr_NCv1data(handle->xdrs, vp->begin, vp->type, value) ?
-                0 : -1 ) ;
+          return(
+              xdr_NCv1data(handle->xdrs, vp->begin, vp->type, value) ?
+              0 : -1 ) ;
 #endif /* !HDF */
-        }
+      }
 
 	if( !NCcoordck(handle, vp, coords) )
 		return(-1) ;
@@ -1338,25 +1565,25 @@ Void *value ;
 		
 #ifdef VDEBUG
 	NCadvise(NC_NOERR, "%s offset %d",
-		vp->name->values, offset ) ;
+             vp->name->values, offset ) ;
 	arrayp("shape", vp->assoc->count, vp->shape) ;
 	arrayp("coords", vp->assoc->count, coords) ;
 #endif /* VDEBUG */
         
 #ifdef HDF
-        switch(handle->file_type) {
-        case HDF_FILE:
-            if( !hdf_xdr_NCv1data(handle, vp, offset, vp->type, value))
-                return(-1) ;
-            break;
-        case netCDF_FILE:
-            if( !xdr_NCv1data(handle->xdrs, offset, vp->type, value))
-                return(-1) ;
-            break;
-        }
-#else /* !HDF */
+    switch(handle->file_type) {
+    case HDF_FILE:
+        if(FAIL == hdf_xdr_NCv1data(handle, vp, offset, vp->type, value))
+            return(-1) ;
+        break;
+    case netCDF_FILE:
         if( !xdr_NCv1data(handle->xdrs, offset, vp->type, value))
             return(-1) ;
+        break;
+    }
+#else /* !HDF */
+    if( !xdr_NCv1data(handle->xdrs, offset, vp->type, value))
+        return(-1) ;
 #endif /* !HDF */
         
 	return(0) ;
@@ -1377,11 +1604,11 @@ const ncvoid *value ;
 	if(handle == NULL)
 		return(-1) ;
 
-        if(!(handle->flags & NC_RDWR))
-        {
-                NCadvise(NC_EPERM, "%s: NC_NOWRITE", handle->path) ;
-                return(-1) ;
-        }
+    if(!(handle->flags & NC_RDWR))
+      {
+          NCadvise(NC_EPERM, "%s: NC_NOWRITE", handle->path) ;
+          return(-1) ;
+      }
 	handle->xdrs->x_op = XDR_ENCODE ;
 
 	return( NCvar1io(handle, varid, coords, (Void *)value) ) ;
@@ -1571,25 +1798,25 @@ Void *values ;
 	 * routine
 	 */
 	if(*edges <= 0)
-	{
-		NCadvise(NC_EINVALCOORDS, "%s: Invalid edge length %ld",
-			vp->name->values, *edges) ;
-		return -1 ;
-	}
+      {
+          NCadvise(NC_EINVALCOORDS, "%s: Invalid edge length %ld",
+                   vp->name->values, *edges) ;
+          return -1 ;
+      }
 
 	/* check to see if we are trying to read beyond the end */
 	newrecs = (*start + *edges) - handle->numrecs ;
 	if(handle->xdrs->x_op != XDR_ENCODE && newrecs > 0)
-	{
-		NCadvise(NC_EINVALCOORDS, "%s: Invalid Coordinates",
-			vp->name->values) ;
-		return -1 ;
-	}
+      {
+          NCadvise(NC_EINVALCOORDS, "%s: Invalid Coordinates",
+                   vp->name->values) ;
+          return -1 ;
+      }
 
 	offset = NC_varoffset(handle, vp, start) ;
 #ifdef VDEBUG
 	fprintf(stderr, "\t\t %s offset %ld, *edges %lu\n",
-				vp->name->values, offset, *edges ) ;
+            vp->name->values, offset, *edges ) ;
 	arrayp("\t\t coords", vp->assoc->count, start) ;
 #endif
 
@@ -1597,45 +1824,46 @@ Void *values ;
 		handle->flags |= NC_NDIRTY ;
 
 #ifdef HDF
-        switch(handle->file_type) {
-        case HDF_FILE:
-            DFKsetNT(vp->HDFtype);
-            if(!hdf_xdr_NCvdata(handle, vp,
+    switch(handle->file_type) 
+      {
+      case HDF_FILE:
+          DFKsetNT(vp->HDFtype);
+          if(FAIL == hdf_xdr_NCvdata(handle, vp,
+                                     offset, vp->type, 
+                                     (uint32)*edges, values))
+              return(-1) ;
+          break;
+      case CDF_FILE:
+          DFKsetNT(vp->HDFtype);
+          if(!nssdc_xdr_NCvdata(handle, vp,
                                 offset, vp->type, 
                                 (uint32)*edges, values))
-                return(-1) ;
-            break;
-        case CDF_FILE:
-            DFKsetNT(vp->HDFtype);
-            if(!nssdc_xdr_NCvdata(handle, vp,
-                                offset, vp->type, 
-                                (uint32)*edges, values))
-                return(-1) ;
-            break;
-        case netCDF_FILE:
-            if(!xdr_NCvdata(handle->xdrs,
-                            offset, vp->type, 
-                            (unsigned)*edges, values))
-                return(-1) ;
-            break;
-        }
+              return(-1) ;
+          break;
+      case netCDF_FILE:
+          if(!xdr_NCvdata(handle->xdrs,
+                          offset, vp->type, 
+                          (unsigned)*edges, values))
+              return(-1) ;
+          break;
+      }
 #else /* !HDF */
-        if(!xdr_NCvdata(handle->xdrs,
-                        offset, vp->type, 
-                        (unsigned)*edges, values))
-            return(-1) ;
+    if(!xdr_NCvdata(handle->xdrs,
+                    offset, vp->type, 
+                    (unsigned)*edges, values))
+        return(-1) ;
 #endif /* !HDF */
         
 	if(newrecs > 0)
-	{
-		handle->numrecs += newrecs ;
-		if(handle->flags & NC_NSYNC) /* write out header->numrecs NOW */
-		{
-			if(!xdr_numrecs(handle->xdrs, handle) )
-				return(-1) ;
-			handle->flags &= ~NC_NDIRTY ;
-		}
-	}
+      {
+          handle->numrecs += newrecs ;
+          if(handle->flags & NC_NSYNC) /* write out header->numrecs NOW */
+            {
+                if(!xdr_numrecs(handle->xdrs, handle) )
+                    return(-1) ;
+                handle->flags &= ~NC_NDIRTY ;
+            }
+      }
 	return(0) ;
 }
 
@@ -1674,28 +1902,31 @@ Void *values ;
 
 #ifdef HDF
     if(handle->file_type != netCDF_FILE)
-        DFKsetNT(vp->HDFtype);
+      {
+          if (FAIL == DFKsetNT(vp->HDFtype))
+              return -1;
+      }
 #endif
 
 	if(vp->assoc->count == 0) /* 'scaler' variable */
-	{
+      {
 #ifdef HDF
-        switch(handle->file_type) {
-        case HDF_FILE:
-            return(
-                hdf_xdr_NCv1data(handle, vp, vp->begin, vp->type, values) ?
-                0 : -1 ) ;
-        case netCDF_FILE:
-            return(
-                xdr_NCv1data(handle->xdrs, vp->begin, vp->type, values) ?
-                0 : -1 ) ;
+          switch(handle->file_type) 
+            {
+            case HDF_FILE:
+                if (FAIL == hdf_xdr_NCv1data(handle, vp, vp->begin, vp->type, values))
+                    return -1;
+                else
+                    return 0;
+            case netCDF_FILE:
+                return(xdr_NCv1data(handle->xdrs, vp->begin, vp->type, values) ?
+                       0 : -1 ) ;
             }
 #else /* !HDF */
-        return(
-            xdr_NCv1data(handle->xdrs, vp->begin, vp->type, values) ?
-            0 : -1 ) ;
+          return(xdr_NCv1data(handle->xdrs, vp->begin, vp->type, values) ?
+                 0 : -1 ) ;
 #endif /* !HDF */
-	}
+      }
 
 	if( !NCcoordck(handle, vp, start) )
 		return(-1) ;
@@ -1703,10 +1934,10 @@ Void *values ;
 	if( IS_RECVAR(vp) 
 		&& vp->assoc->count == 1
 		&& handle->recsize <= vp->len)
-	{
-		/* one dimensional   &&  the only 'record' variable  */
-		return(NCsimplerecio(handle, vp, start, edges, values)) ;
-	}
+      {
+          /* one dimensional   &&  the only 'record' variable  */
+          return(NCsimplerecio(handle, vp, start, edges, values)) ;
+      }
 
 	/* find max contiguous, check sanity of edges */
 	edp0 = NCvcmaxcontig(handle, vp, start, edges) ;
@@ -1728,120 +1959,121 @@ Void *values ;
 
 	{ /* inline */
         long  coords[MAX_VAR_DIMS], upper[MAX_VAR_DIMS];
-	long  *cc ;
-	const long *mm ;
-	u_long offset ;
-	size_t szof = nctypelen(vp->type) ;
+        long  *cc ;
+        const long *mm ;
+        u_long offset ;
+        size_t szof = nctypelen(vp->type) ;
 
-	/* copy in starting indices */
-	cc = coords ;
-	mm = start ;
-	while(cc < &coords[vp->assoc->count] )
-		*cc++ = *mm++ ;
+        /* copy in starting indices */
+        cc = coords ;
+        mm = start ;
+        while(cc < &coords[vp->assoc->count] )
+            *cc++ = *mm++ ;
 #ifdef VDEBUG
-	arrayp("coords", vp->assoc->count, coords) ;
+        arrayp("coords", vp->assoc->count, coords) ;
 #endif
 
-	/* set up in maximum indices */
-	cc = upper ;
-	mm = coords ;
-	edp = edges ;
-	while(cc < &upper[vp->assoc->count] )
-		*cc++ = *mm++ + *edp++ ;
+        /* set up in maximum indices */
+        cc = upper ;
+        mm = coords ;
+        edp = edges ;
+        while(cc < &upper[vp->assoc->count] )
+            *cc++ = *mm++ + *edp++ ;
 #ifdef VDEBUG
-	arrayp("upper", vp->assoc->count, upper) ;
+        arrayp("upper", vp->assoc->count, upper) ;
 #endif
 
-	/* ripple counter */
-	cc = coords ;
-	mm = upper ;
-	while(*coords < *upper)
-	{
+        /* ripple counter */
+        cc = coords ;
+        mm = upper ;
+        while(*coords < *upper)
+          {
 #ifdef VDEBUG
-		fprintf(stderr, "\t*cc %ld, *mm %ld\n",
-			*cc, *mm) ;
+              fprintf(stderr, "\t*cc %ld, *mm %ld\n",
+                      *cc, *mm) ;
 #endif /* VDEBUG */
-		while( *cc < *mm )
-		{
+              while( *cc < *mm )
+                {
 #ifdef VDEBUG
-			fprintf(stderr, "\t\tedp0 %p, edges %p, mm %p, &upper[] %p\n",
-				edp0, edges, mm, &upper[edp0-edges-1]) ;
+                    fprintf(stderr, "\t\tedp0 %p, edges %p, mm %p, &upper[] %p\n",
+                            edp0, edges, mm, &upper[edp0-edges-1]) ;
 #endif /* VDEBUG */
-			if(edp0 == edges || mm == &upper[edp0-edges-1])
-			{
-				/* doit */
-				if( !NCcoordck(handle, vp, coords) )
-					return(-1) ;
-				offset = NC_varoffset(handle, vp, coords) ;
+                    if(edp0 == edges || mm == &upper[edp0-edges-1])
+                      {
+                          /* doit */
+                          if( !NCcoordck(handle, vp, coords) )
+                              return(-1) ;
+                          offset = NC_varoffset(handle, vp, coords) ;
 #ifdef VDEBUG
-				fprintf(stderr, "\t\t %s offset %lu, iocount %lu\n",
-					vp->name->values, offset, iocount ) ;
-				arrayp("\t\t coords", vp->assoc->count, coords) ;
+                          fprintf(stderr, "\t\t %s offset %lu, iocount %lu\n",
+                                  vp->name->values, offset, iocount ) ;
+                          arrayp("\t\t coords", vp->assoc->count, coords) ;
 #endif
 
 #ifdef HDF
-                switch(handle->file_type) {
-                case HDF_FILE:
-                    if(!hdf_xdr_NCvdata(handle, vp,
-                                        offset, vp->type, 
-                                        (uint32)iocount, values))
-                        return(-1) ;
-                    break;
-                case CDF_FILE:
-                    if(!nssdc_xdr_NCvdata(handle, vp,
-                                          offset, vp->type, 
-                                          (uint32)iocount, values))
-                        return(-1) ;
-                    break;
-                case netCDF_FILE:
-                    if(!xdr_NCvdata(handle->xdrs,
-                                    offset, vp->type, 
-                                    (unsigned)iocount, values))
-                        return(-1) ;
-                    break;
-                }
+                          switch(handle->file_type) 
+                            {
+                            case HDF_FILE:
+                                if(FAIL == hdf_xdr_NCvdata(handle, vp,
+                                                           offset, vp->type, 
+                                                           (uint32)iocount, values))
+                                    return(-1) ;
+                                break;
+                            case CDF_FILE:
+                                if(!nssdc_xdr_NCvdata(handle, vp,
+                                                      offset, vp->type, 
+                                                      (uint32)iocount, values))
+                                    return(-1) ;
+                                break;
+                            case netCDF_FILE:
+                                if(!xdr_NCvdata(handle->xdrs,
+                                                offset, vp->type, 
+                                                (unsigned)iocount, values))
+                                    return(-1) ;
+                                break;
+                            }
 #else /* !HDF */
-                if(!xdr_NCvdata(handle->xdrs,
-                                offset, vp->type, 
-                                (unsigned)iocount, values))
-                    return(-1) ;
+                          if(!xdr_NCvdata(handle->xdrs,
+                                          offset, vp->type, 
+                                          (unsigned)iocount, values))
+                              return(-1) ;
 #endif /* !HDF */
                                 
-				values += iocount * szof ;
-				(*cc) += (edp0 == edges ? iocount : 1) ;
+                          values += iocount * szof ;
+                          (*cc) += (edp0 == edges ? iocount : 1) ;
 #ifdef VDEBUG
-				fprintf(stderr, "\t\t *cc %ld, *mm %ld  continue\n",
-					*cc, *mm) ;
+                          fprintf(stderr, "\t\t *cc %ld, *mm %ld  continue\n",
+                                  *cc, *mm) ;
 #endif /* VDEBUG */
-				continue ;
-			}
-			cc++ ;
-			mm++ ;
+                          continue ;
+                      }
+                    cc++ ;
+                    mm++ ;
 #ifdef VDEBUG
-			fprintf(stderr, "\t\t*cc %ld, *mm %ld\n",
-				*cc, *mm) ;
+                    fprintf(stderr, "\t\t*cc %ld, *mm %ld\n",
+                            *cc, *mm) ;
 #endif /* VDEBUG */
-		}
+                }
 #ifdef VDEBUG
-		fprintf(stderr, "\tcc %p, coords %p\n",
-			cc, coords) ;
+              fprintf(stderr, "\tcc %p, coords %p\n",
+                      cc, coords) ;
 #endif /* VDEBUG */
-		if(cc == coords)
-		{
+              if(cc == coords)
+                {
 #ifdef VDEBUG
-			fprintf(stderr, "\t break\n") ;
+                    fprintf(stderr, "\t break\n") ;
 #endif /* VDEBUG */
-			break ;
-		}
-		*cc = start[ cc - coords ] ;
-		cc-- ;
-		mm-- ;
-		(*cc)++ ;
+                    break ;
+                }
+              *cc = start[ cc - coords ] ;
+              cc-- ;
+              mm-- ;
+              (*cc)++ ;
 #ifdef VDEBUG
-		fprintf(stderr, "\t*coords %ld, *upper %ld\n",
-			*coords, *upper) ;
+              fprintf(stderr, "\t*coords %ld, *upper %ld\n",
+                      *coords, *upper) ;
 #endif
-	}
+          }
 	} /* end inline */
 
 #ifdef VDEBUG
@@ -1866,11 +2098,11 @@ const ncvoid *values ;
 	if(handle == NULL)
 		return(-1) ;
 
-        if(!(handle->flags & NC_RDWR))
-        {
-                NCadvise(NC_EPERM, "%s: NC_NOWRITE", handle->path) ;
-                return(-1) ;
-        }
+    if(!(handle->flags & NC_RDWR))
+      {
+          NCadvise(NC_EPERM, "%s: NC_NOWRITE", handle->path) ;
+          return(-1) ;
+      }
 	handle->xdrs->x_op = XDR_ENCODE ;
 
 	return( NCvario(handle, varid, start, edges, (Void *)values) ) ;
@@ -2007,44 +2239,45 @@ Void **datap ;
 	memset(coords, 0, sizeof(coords)) ;
 	coords[0] = recnum ;
 	for(ii = 0 ; ii < nrvars ; ii++)
-	{
-		if(datap[ii] == NULL)
-			continue ;
-		/* else */
-		offset = NC_varoffset(handle, rvp[ii], coords) ;
-		iocount = NCelemsPerRec(rvp[ii]) ;
+      {
+          if(datap[ii] == NULL)
+              continue ;
+          /* else */
+          offset = NC_varoffset(handle, rvp[ii], coords) ;
+          iocount = NCelemsPerRec(rvp[ii]) ;
 
 #ifdef HDF
-        switch(handle->file_type) {
-        case HDF_FILE:
-            DFKsetNT(rvp[ii]->HDFtype);
-            if(!hdf_xdr_NCvdata(handle, rvp[ii],
+          switch(handle->file_type) 
+            {
+            case HDF_FILE:
+                DFKsetNT(rvp[ii]->HDFtype);
+                if(FAIL == hdf_xdr_NCvdata(handle, rvp[ii],
+                                           offset, rvp[ii]->type, 
+                                           (uint32)iocount, datap[ii]))
+                    return(-1) ;
+                break;
+            case CDF_FILE:
+                DFKsetNT(rvp[ii]->HDFtype);
+                if(!nssdc_xdr_NCvdata(handle, rvp[ii],
+                                      offset, rvp[ii]->type, 
+                                      (uint32)iocount, datap[ii]))
+                    return(-1) ;
+                break;
+            case netCDF_FILE:
+                if(!xdr_NCvdata(handle->xdrs,
                                 offset, rvp[ii]->type, 
-                                (uint32)iocount, datap[ii]))
-                return(-1) ;
-            break;
-        case CDF_FILE:
-            DFKsetNT(rvp[ii]->HDFtype);
-            if(!nssdc_xdr_NCvdata(handle, rvp[ii],
-                                  offset, rvp[ii]->type, 
-                                  (uint32)iocount, datap[ii]))
-                return(-1) ;
-            break;
-        case netCDF_FILE:
-            if(!xdr_NCvdata(handle->xdrs,
-                            offset, rvp[ii]->type, 
-                            iocount, datap[ii]))
-                return(-1) ;
-            break;
-        }
+                                iocount, datap[ii]))
+                    return(-1) ;
+                break;
+            }
 #else /* !HDF */
-        if(!xdr_NCvdata(handle->xdrs,
-                        offset, rvp[ii]->type, 
-                        iocount, datap[ii]))
-            return(-1) ;
+          if(!xdr_NCvdata(handle->xdrs,
+                          offset, rvp[ii]->type, 
+                          iocount, datap[ii]))
+              return(-1) ;
 #endif /* !HDF */
 
-	}
+      }
 	return 0 ;
 }
 

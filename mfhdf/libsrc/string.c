@@ -9,7 +9,9 @@
 #include	"alloc.h"
 
 #ifdef HDF
-static uint32 compute_hash(unsigned count, const char *str)
+static uint32 
+compute_hash(unsigned count, 
+             const char *str)
 {
     uint32 ret=0;
     uint32 temp;
@@ -18,14 +20,15 @@ static uint32 compute_hash(unsigned count, const char *str)
      if (str == NULL)
          return ret;
 
-    while(count>sizeof(uint32))
+    while(count > sizeof(uint32))
       {
           HDmemcpy((VOIDP)&temp,(const VOIDP)str,sizeof(uint32));
-          ret+=temp;
-          str+=sizeof(uint32);
-          count-=sizeof(uint32);
+          ret   += temp;
+          str   += sizeof(uint32);
+          count -= sizeof(uint32);
       } /* end while */
-    if(count>0)
+
+    if(count > 0)
       {
           temp=0;
           HDmemcpy((VOIDP)&temp,(const VOIDP)str,count);
@@ -44,45 +47,45 @@ const char *str ;
 	size_t memlen ;
 
 	if(count > MAX_NC_NAME)
-	{
-		NCadvise(NC_EMAXNAME,
-			"string \"%c%c%c%c%c%c ...\"  length %d exceeds %d",
-			str[0], str[1], str[2], str[3], str[4], str[5],
-			count,  MAX_NC_NAME ) ;
-		return NULL ;
-	}
+      {
+          NCadvise(NC_EMAXNAME,
+                   "string \"%c%c%c%c%c%c ...\"  length %d exceeds %d",
+                   str[0], str[1], str[2], str[3], str[4], str[5],
+                   count,  MAX_NC_NAME ) ;
+          return NULL ;
+      }
 
 
 	ret = (NC_string *)HDmalloc(sizeof(NC_string)) ;
 	if( ret == NULL )
 		goto alloc_err ;
 	ret->count = count ;
-        ret->len   = count ;
+    ret->len   = count ;
 #ifdef HDF
-    ret->hash=compute_hash(count,str);
+    ret->hash = compute_hash(count,str);
 #endif /* HDF */
 	if(count != 0 ) /* allocate */
-	{
-		memlen = count + 1 ;
-		ret->values = (char *)HDmalloc(memlen) ;
-		if(ret->values == NULL)
-			goto alloc_err ;
-		if(str != NULL)
-		{
+      {
+          memlen = count + 1 ;
+          ret->values = (char *)HDmalloc(memlen) ;
+          if(ret->values == NULL)
+              goto alloc_err ;
+          if(str != NULL)
+            {
 #ifdef HDF
-			memcpy(ret->values, str, (size_t)count) ;
+                memcpy(ret->values, str, (size_t)count) ;
 #else
-			(void)strncpy(ret->values, str, count) ;
+                (void)strncpy(ret->values, str, count) ;
 #endif
-			ret->values[count] = 0 ;
-		}
-	} else { /* use what what you were given */
-		ret->values = NULL ;
-	}
+                ret->values[count] = 0 ;
+            }
+      } else { /* use what what you were given */
+          ret->values = NULL ;
+      }
 	
 	return(ret) ;
-alloc_err :
-	nc_serror("NC_new_string") ;
+    alloc_err :
+        nc_serror("NC_new_string") ;
 #ifdef HDF
 	if(ret != NULL) HDfree((VOIDP)ret) ;
 #else
@@ -94,16 +97,31 @@ alloc_err :
 
 /*
  * Free string, and, if needed, its values.
+ *
+ * NOTE: Changed return value to return 'int' 
+ *       If successful returns SUCCEED else FAIL -GV 9/19/97
  */
-void
+int
 NC_free_string(cdfstr)
 NC_string *cdfstr ;
 {
-	if(cdfstr==NULL)
-		return ;
-	if(cdfstr->values != NULL)
-		Free(cdfstr->values) ;
-	Free(cdfstr) ;
+    int ret_value = SUCCEED;
+
+	if(cdfstr != NULL)
+      {
+          if(cdfstr->values != NULL)
+              Free(cdfstr->values) ;
+          Free(cdfstr) ;
+      }
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+     /* Normal cleanup */
+
+    return ret_value;
 }
 
 
@@ -114,12 +132,12 @@ unsigned count ;
 const char *str ;
 {
 	if(old->count < count) /* punt */
-	{
-		NCadvise(NC_ENOTINDEFINE,
-			"Must be in define mode to increase name length %d",
-			old->count) ;
-		return(NULL) ;
-	}
+      {
+          NCadvise(NC_ENOTINDEFINE,
+                   "Must be in define mode to increase name length %d",
+                   old->count) ;
+          return(NULL) ;
+      }
 
     if (str == NULL)
         return NULL;
@@ -127,10 +145,10 @@ const char *str ;
 	(void)memcpy(old->values, str, count) ;
 	(void)memset(old->values + count, 0, (int)old->count - (int)count +1) ;
         
-        /* make sure len is always == to the string length */
-        old->len = count ;
+    /* make sure len is always == to the string length */
+    old->len = count ;
 #ifdef HDF
-    old->hash=compute_hash(count,str);
+    old->hash = compute_hash(count,str);
 #endif /* HDF */
 
 	return(old) ;

@@ -30,7 +30,7 @@ const void *values ;
 	if( ret->data == NULL)
 		goto alloc_err ;
 #ifdef HDF
-        ret->HDFtype = hdf_map_type(type);
+    ret->HDFtype = hdf_map_type(type);
 #endif
 	return(ret) ;
 alloc_err :
@@ -41,17 +41,41 @@ alloc_err :
 
 /*
  * Free attr
+ *
+ * NOTE: Changed return value to return 'int' 
+ *       If successful returns SUCCEED else FAIL -GV 9/19/97
  */
-void
+int
 NC_free_attr(attr)
 NC_attr *attr ;
 {
+    int ret_value = SUCCEED;
 
-	if(attr == NULL)
-		return ;
-	NC_free_string(attr->name) ;
-	NC_free_array(attr->data) ;
-	Free(attr) ;
+	if(attr != NULL)
+      {
+          if (NC_free_string(attr->name) == FAIL)
+            {
+                ret_value = FAIL;
+                goto done;
+            }
+              
+          if (NC_free_array(attr->data) == FAIL)
+            {
+                ret_value = FAIL;
+                goto done;
+            }
+
+          Free(attr) ;
+      }
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+     /* Normal cleanup */
+
+    return ret_value;
 }
 
 

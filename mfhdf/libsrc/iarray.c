@@ -22,39 +22,47 @@ const int *values ;           /* VAX C doesn't like values[] */
 		goto alloc_err ;
 	ret->count = count ;
 	if(count != 0 ) /* allocate */
-	{
-		memlen = count * sizeof(int) ;
-		ret->values = (int *)HDmalloc(memlen) ;
-		if(ret->values == NULL)
-			goto alloc_err ;
-		if(values != NULL) /* copy them in */
-		{
-			for(ip = ret->values ; count > 0; count--)
-				*ip++ = *values++ ;
-		}
-	} else {
-		ret->values = NULL ;
-	}
+      {
+          memlen = count * sizeof(int) ;
+          ret->values = (int *)HDmalloc(memlen) ;
+          if(ret->values == NULL)
+              goto alloc_err ;
+          if(values != NULL) /* copy them in */
+            {
+                for(ip = ret->values ; count > 0; count--)
+                    *ip++ = *values++ ;
+            }
+      } else {
+          ret->values = NULL ;
+      }
 	
 	return(ret) ;
-alloc_err :
-	nc_serror("NC_new_iarray") ;
+    alloc_err :
+        nc_serror("NC_new_iarray") ;
 	return(NULL) ;
 }
 
 
 /*
  * Free iarray, and, if needed, its values.
+ *
+ * NOTE: Changed return value to return 'int' 
+ *       If successful returns SUCCEED else FAIL -GV 9/19/97
  */
-void
+int
 NC_free_iarray(iarray)
 NC_iarray *iarray ;
 {
-	if(iarray == NULL)
-		return ;
-	if(iarray->values != NULL)
-		Free(iarray->values) ;
-	Free(iarray) ;
+    int ret_value = SUCCEED;
+
+	if(iarray != NULL)
+      {
+          if(iarray->values != NULL)
+              Free(iarray->values) ;
+          Free(iarray) ;
+      }
+
+    return ret_value;
 }
 
 

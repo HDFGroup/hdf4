@@ -311,74 +311,116 @@ const void *values ;
 
 /*
  * Free array, and, if needed, its values.
+ * 
+ * NOTE: Changed return value to return 'int' 
+ *       If successful returns SUCCEED else FAIL -GV 9/19/97
  */
-void
+int
 NC_free_array(array)
 NC_array *array ;
 {
-	if( array == NULL)
-		return ;
+    int ret_value = SUCCEED;
 
-	if(array->values != NULL)
-	{
-		switch(array->type){
-		case NC_UNSPECIFIED :
-		case NC_BYTE :
-		case NC_CHAR :
-		case NC_SHORT :
-		case NC_LONG :
-		case NC_FLOAT :
-		case NC_DOUBLE :
-			break ;
-	 	case NC_STRING  :
-		{
-			NC_string **sp ;
-			sp = (NC_string **)array->values ;
-			for(sp += array->count - 1 ;
-					array->count > 0;
-					array->count--)
-				NC_free_string(*sp-- );
-		}
-			break ;
-	 	case NC_DIMENSION :
-		{
-			NC_dim **dp ;
-			dp = (NC_dim**)array->values ;
-			for(dp += array->count - 1 ;
-					array->count > 0;
-					array->count--)
-				NC_free_dim(*dp-- );
-		}
-			break ;
-	 	case NC_VARIABLE :
-		{
-			NC_var **dp ;
-			dp = (NC_var**)array->values ;
-			for(dp += array->count - 1 ;
-					array->count > 0;
-					array->count--)
-				NC_free_var(*dp-- );
-		}
-			break ;
-	 	case NC_ATTRIBUTE :
-		{
-			NC_attr **dp ;
-			dp = (NC_attr**)array->values ;
-			for(dp += array->count - 1 ;
-					array->count > 0;
-					array->count--)
-				NC_free_attr(*dp-- );
-		}
-			break ;
-		default:
-			NCadvise(NC_EBADTYPE, "Unknown type %d",array->type) ;
-			break ;
-		}
+	if( array != NULL)
+      {
+          if(array->values != NULL)
+            {
+                switch(array->type)
+                  {
+                  case NC_UNSPECIFIED :
+                  case NC_BYTE :
+                  case NC_CHAR :
+                  case NC_SHORT :
+                  case NC_LONG :
+                  case NC_FLOAT :
+                  case NC_DOUBLE :
+                      break ;
+                  case NC_STRING  :
+                  {
+                      NC_string **sp ;
+                      sp = (NC_string **)array->values ;
+                      for(sp += array->count - 1 ;
+                          array->count > 0;
+                          array->count--)
+                        {
+                            if (FAIL == NC_free_string(*sp-- ))
+                              {
+                                  ret_value = FAIL;
+                                  goto done;
+                              }
 
-		Free(array->values) ;
-	}
+                        }
+                  }
+                  break ;
+                  case NC_DIMENSION :
+                  {
+                      NC_dim **dp ;
+                      dp = (NC_dim**)array->values ;
+                      for(dp += array->count - 1 ;
+                          array->count > 0;
+                          array->count--)
+                        {
+                            if (FAIL == NC_free_dim(*dp-- ))
+                              {
+                                  ret_value = FAIL;
+                                  goto done;
+                              }
 
-	Free(array) ;
+                        }
+                  }
+                  break ;
+                  case NC_VARIABLE :
+                  {
+                      NC_var **dp ;
+                      dp = (NC_var**)array->values ;
+                      for(dp += array->count - 1 ;
+                          array->count > 0;
+                          array->count--)
+                        {
+                            if (FAIL == NC_free_var(*dp-- ))
+                              {
+                                  ret_value = FAIL;
+                                  goto done;
+                              }
+                        }
+                  }
+                  break ;
+                  case NC_ATTRIBUTE :
+                  {
+                      NC_attr **dp ;
+                      dp = (NC_attr**)array->values ;
+                      for(dp += array->count - 1 ;
+                          array->count > 0;
+                          array->count--)
+                        {
+                            if (FAIL == NC_free_attr(*dp-- ))
+                              {
+                                  ret_value = FAIL;
+                                  goto done;
+                              }
+                        }
+                  }
+                  break ;
+                  default:
+                      NCadvise(NC_EBADTYPE, "Unknown type %d",array->type) ;
+                      break ;
+                  }
+
+                Free(array->values) ;
+            }
+
+          Free(array) ;
+      }
+
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+     /* Normal cleanup */
+
+    return ret_value;
 }
 
 
