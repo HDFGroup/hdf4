@@ -157,6 +157,7 @@ LOCAL_MACROS  = CC="$(CC)" \
 	CPPFLAGS="$(CPPFLAGS)" \
 	exec_prefix="$(exec_prefix)" \
 	FC="$(FC)" \
+        FFLAGS="$(FFLAGS)" \
 	prefix="$(prefix)"
 
 #

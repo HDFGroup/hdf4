@@ -161,6 +161,7 @@ SUBDIR_MACROS = CC="$(CC)" \
 	CPP="$(CPP)" \
 	exec_prefix="$(exec_prefix)" \
 	FC="$(FC)" \
+        FFLAGS="$(FFLAGS)" \
 	prefix="$(prefix)"
 
 LOCAL_MACROS  = CC="$(CC)" \
@@ -169,6 +170,7 @@ LOCAL_MACROS  = CC="$(CC)" \
 	CPPFLAGS="$(CPPFLAGS)" \
 	exec_prefix="$(exec_prefix)" \
 	FC="$(FC)" \
+        FFLAGS="$(FFLAGS)" \
 	prefix="$(prefix)"
 
 # ###########################################################################
