@@ -32,12 +32,17 @@ C
       integer ret, number_failed
       integer ISFIRST, NOFIRST, MAXLEN_LAB, MAXLEN_DESC
       integer fid, DFACC_CREATE, DFACC_READ
+      integer getverb
+      integer Verbosity
 
       character*35 lab1, lab2
       character*35 templab
       character*100 desc1, desc2, tempstr
       character*64 TESTFILE
       character*1 CR
+
+C     Set verbosity level
+      Verbosity=getverb()     
 
       ISFIRST = 1
       NOFIRST = 0
@@ -56,73 +61,71 @@ C
 
       print *, '****** Write file labels *******'
       fid = hopen(TESTFILE, DFACC_CREATE, 0)
-      call RESULT(fid, 'hopen', number_failed)
+      call VERIFY(fid, 'hopen', number_failed, Verbosity)
       ret = daafid(fid, lab1)
-      call RESULT(ret, 'daafid', number_failed)
+      call VERIFY(ret, 'daafid', number_failed, Verbosity)
 
       ret = daafid(fid, lab2)
-      call RESULT(ret, 'daafid', number_failed)
+      call VERIFY(ret, 'daafid', number_failed, Verbosity)
 
       print *, '****** Write file descriptions *******'
       ret = daafds(fid, desc1, len(desc1))
-      call RESULT(ret, 'daafds', number_failed)
+      call VERIFY(ret, 'daafds', number_failed, Verbosity)
 
       ret = daafds(fid, desc2, len(desc2))
-      call RESULT(ret, 'daafds', number_failed)
+      call VERIFY(ret, 'daafds', number_failed, Verbosity)
 
       ret = hclose(fid)
-      call RESULT(ret, 'hclose', number_failed)
+      call VERIFY(ret, 'hclose', number_failed, Verbosity)
 
       print *, '****** Read length of the first file label ****'
       fid = hopen(TESTFILE, DFACC_READ, 0)
-      call RESULT(fid, 'hopen-read', number_failed)
+      call VERIFY(fid, 'hopen-read', number_failed, Verbosity)
       ret = dagfidl(fid, ISFIRST)
-      call RESULT(ret, 'dagfidl', number_failed)
+      call VERIFY(ret, 'dagfidl', number_failed, Verbosity)
       call checklen(ret, lab1,  'label'  )
 
       print *, '******...followed by the label *****'
       ret = dagfid(fid, templab, MAXLEN_LAB, ISFIRST)
 
-      call RESULT(ret, 'dagfid', number_failed)
+      call VERIFY(ret, 'dagfid', number_failed, Verbosity)
       call checklab(lab1, templab, ret, 'label')
 
       print *, '****** Read length of the second file label ****'
       ret = dagfidl(fid, NOFIRST)
-      call RESULT(ret, 'dagfidl', number_failed)
+      call VERIFY(ret, 'dagfidl', number_failed, Verbosity)
       call checklen(ret, lab2, 'label')
 
       print *, '******...followed by the label *****'
       ret = dagfid(fid, templab, MAXLEN_LAB, NOFIRST)
-      call RESULT(ret, 'dagfid', number_failed)
+      call VERIFY(ret, 'dagfid', number_failed, Verbosity)
       call checklab(lab2, templab, ret, 'label')
 
       print *, '****** Read length of the first file description ****'
       ret = dagfdsl(fid, ISFIRST)
-      call RESULT(ret, 'dagfdsl', number_failed)
+      call VERIFY(ret, 'dagfdsl', number_failed, Verbosity)
       call checklen(ret, desc1, 'description' )
 
       print *, '******...followed by the description *****'
       ret = dagfds(fid, tempstr, MAXLEN_DESC, ISFIRST)
-      call RESULT(ret, 'dagfds', number_failed)
+      call VERIFY(ret, 'dagfds', number_failed, Verbosity)
       call checkann(desc1, tempstr, ret, 'description')
 
       print *, '****** Read length of the second file description ****'
       ret = dagfdsl(fid, NOFIRST)
-      call RESULT(ret, 'dagfdsl', number_failed)
+      call VERIFY(ret, 'dagfdsl', number_failed, Verbosity)
       call checklen(ret, desc2, 'description' )
 
       print *, '******...followed by the description *****'
       ret = dagfds(fid, tempstr, MAXLEN_DESC, NOFIRST)
-      call RESULT(ret, 'dagfds', number_failed)
+      call VERIFY(ret, 'dagfds', number_failed, Verbosity)
       call checkann(desc2, tempstr, ret, 'description')
      
       ret = hclose(fid)
-      call RESULT(ret, 'hclose', number_failed)
+      call VERIFY(ret, 'hclose', number_failed, Verbosity)
  
-      print *, CR, CR
-
       if (number_failed .eq. 0) then
-         print *, '***** ALL TESTS SUCCESSFUL ******'
+         print *, '***** ALL DFANFILE TESTS SUCCESSFUL ******'
       else
          print *, '********', number_failed, ' TESTS FAILED'
       endif
