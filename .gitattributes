@@ -11,6 +11,7 @@ hdf/jpeg/testimgp.jpg -text
 hdf/jpeg/testorig.jpg -text
 hdf/jpeg/testprog.jpg -text
 hdf/pablo/Pablo.doc -text
+hdf/pablo/Pablo.pdf -text
 hdf/src/hdflib.project -text
 hdf/test/bitio.dat -text
 hdf/test/litend.dat -text
