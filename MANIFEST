@@ -597,7 +597,6 @@
 ./mfhdf/dumper/README
 ./mfhdf/dumper/TEST
 ./mfhdf/dumper/TEST.COM
-./mfhdf/dumper/depend
 ./mfhdf/dumper/hdp.c
 ./mfhdf/dumper/hdp_dump.c
 ./mfhdf/dumper/hdp_gr.c
@@ -1082,7 +1081,6 @@
 
 ./mfhdf/pablo/Makefile.am
 ./mfhdf/pablo/Makefile.in
-./mfhdf/pablo/depend
 
 ./mfhdf/port/COPYRIGHT
 ./mfhdf/port/CUSTOMIZE
