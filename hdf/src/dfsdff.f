@@ -601,7 +601,7 @@ C------------------------------------------------------------------------------
 C------------------------------------------------------------------------------
 C Name:     dsrslab
 C Purpose:  call dsirslab to get slab from SDS
-C Inputs:   filename: name of HDF file
+C Inputs:   fname: name of HDF file
 C           start: array of size = rank of data, containing start of slab
 C           slab_size: array of size rank, containing end of slab
 C           stride: sub sampling stride.
@@ -612,13 +612,13 @@ C Users:    HDF Fortran programmers
 C Invokes:  dsirslab
 C------------------------------------------------------------------------------
 
-      integer function dsrslab(filename, start, slab_size, stride, buffer,
-     +                         buffer_size)
-      character*(*) filename
-      integer start, slab_size, stride, buffer, buffer_size, dsirslab
+      integer function dsrslab(fname, start, slabsize, stride, buffer,
+     +                         buffersize)
+      character*(*) fname
+      integer start, slabsize, stride, buffer, buffersize, dsirslab
 
-      dsrslab = dsirslab(filename, len(filename), start, slab_size, stride, 
-     +                   buffer, buffer_size)
+      dsrslab = dsirslab(fname, len(fname), start, slabsize, stride, 
+     +                   buffer, buffersize)
 
       return
       end
