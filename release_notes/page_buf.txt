@@ -1,14 +1,13 @@
 ****************************** Beta Version *********************************
-File Page Buffering(Beta release)
+File Caching(Beta release)
 =================================
-    This version of the distribution has preliminary support for file page
-    buffering. 
+    This version of the distribution has preliminary support for file caching.
 
 *NOTE*: This version is NOT officially supported on all platforms
         and has not been extensively tested. As such it is provided as is.
         It will be supported officially in a later release.
 
-    The file page buffering allows the file to be mapped to user memory on 
+    The file caching allows the file to be mapped to user memory on 
     a per page basis i.e a memory pool of the file. With regards to the 
     file system, page sizes can be allocated based on the file system page-size 
     or if the user wants in some multiple of the file system page-size. This 
@@ -52,7 +51,7 @@ File Page Buffering(Beta release)
     created/opened and can not be shared. Future versions will allow sharing 
     of the file memory pool with other threads/processes.
 
-    To enable the creation of a library using page buffering the following 
+    To enable the creation of a library using page caching the following 
     section in the makefile fragment($(toplevel)/config/mh-<os>) must be 
     uncommented and set.
 
@@ -69,8 +68,8 @@ File Page Buffering(Beta release)
     'General Configuration/Installation - Unix' in the installation file 
     '$(toplevel)/INSTALL'.
 
-    The file page buffering version of libdf.a is automatically tested
-    when the regular HDF and netCDF tests are run. The page buffering
+    The file caching version of libdf.a is automatically tested
+    when the regular HDF and netCDF tests are run. The page caching
     version has been tested only on a few UNIX platforms and is NOT
     available for the Macintosh ,IBM-PC(Windows NT/95) or VMS.
 
