@@ -140,15 +140,20 @@ Configuration/Installation
 
 
     To install on a Windows '95 or Windows NT machine, read the seperate
-    installation instructions for Windows NT.
+    installation instructions for Windows NT:
+      
+        ./release_notes/install_winNT.txt.
 
 Documentation
 =============
 
     Manual pages for the library are not yet completed but some early
-    drafts are avaiable in XXX.
+    drafts are avaiable in ./man.
 
-    Various formatted documents related to HDF can be obtained by ?
+    The files in sub-directory ./release_notes are detailed descriptions
+    for the new features. They can be used as  supplement documentation 
+    for HDF4.0. Those files are also available on the NCSA ftp server, 
+    in /HDF/Documentation/HDF4.0/4.0b1_release_notes/.
 
 
 Installation Location
