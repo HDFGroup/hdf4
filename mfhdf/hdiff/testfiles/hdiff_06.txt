@@ -1,0 +1,24 @@
+#############################
+Expected output for 'hdiff -d -S hdifftst1.hdf hdifftst2.hdf'
+#############################
+$hdiff -d -S hdifftst1.hdf hdifftst2.hdf
+
+---------------------------
+SD Name: dset1 .... Comparing
+Index: 1,   File1: 1,   File2: 2
+Index: 2,   File1: 1,   File2: 3
+Index: 3,   File1: 1,   File2: 4
+Type: Integer4  Npts: 6  Ndiff: 3 (50.000000%)
+Avg Diff: 1.000000e+00   Max. Diff: 3
+Range File1: 1/6  File2: 1/6
+Regression  N: 6  Slope: 6.727273e-01  Intercept: 1.818182e+00  R: 8.433083e-01
+
+---------------------------
+SD Name: dset2 .... Comparing
+Index: 1,   File1: 1,   File2: 2
+Index: 2,   File1: 1,   File2: 3
+Index: 3,   File1: 1,   File2: 4
+Type: Integer4  Npts: 6  Ndiff: 3 (50.000000%)
+Avg Diff: 1.000000e+00   Max. Diff: 3
+Range File1: 1/6  File2: 1/6
+Regression  N: 6  Slope: 6.727273e-01  Intercept: 1.818182e+00  R: 8.433083e-01

@@ -1,0 +1,10 @@
+#############################
+Expected output for 'hdiff -d -v dset1 hdifftst1.hdf hdifftst2.hdf'
+#############################
+$hdiff -d -v dset1 hdifftst1.hdf hdifftst2.hdf
+
+---------------------------
+SD Name: dset1 .... Comparing
+Index: 1,   File1: 1,   File2: 2
+Index: 2,   File1: 1,   File2: 3
+Index: 3,   File1: 1,   File2: 4
