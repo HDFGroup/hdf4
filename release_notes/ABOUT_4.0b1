@@ -144,6 +144,8 @@ CONTENTS
 
             ./hdp.txt for details.
 
+     Currently hdp works on SunOS and LINUX only. 
+
 2. Bugs fixed and known problems
 
   Several bugs or problems, such as failure in setting 
@@ -198,6 +200,9 @@ follow the instructions listed in:
      release, but it is avalable in the binary release for 
      the CM5 version.  Please retrieve the fix there. 
    . SDsetcompress does not work correctly.
+   . Hdp now works on SunOS and LINUX only. Commands dumpsds, 
+     dumpvd and dumpvg have different problems on other platforms.
+     See mfhdf/dumper/README for more details. 
 
 6. Installing without FORTRAN support:
    . On UNIX systems without a FORTRAN system installed, 
