@@ -130,7 +130,7 @@ force_rebuild:
 	$(CC) $(CFLAGS) -c -I$(HDFINC) -I$(JPEGINC) $<
 
 .c: $(HDFLIB)/libdf.a
-	$(CC) $(CFLAGS) -I$(HDFINC) -I$(JPEGINC) $< -o $@ $(HDFLIB)/libdf.a $(GLLIB) $(JPEGLIB)/libjpeg.a
+	$(CC) $(CFLAGS) -I$(HDFINC) -I$(JPEGINC) $< -o $@ $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(LIBS)
 
 .f: $(HDFLIB)/libdf.a 
 	$(FC) $(FFLAGS) $< $(HDFLIB)/libdf.a -o $@ $(JPEGLIB)/libjpeg.a
