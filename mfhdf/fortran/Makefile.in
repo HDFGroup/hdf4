@@ -160,7 +160,6 @@ LIBOBJS		= jackets.o mfsdf.o mfsdff.o
 LIBNAME		= mfhdf
 #REMOTE_LIBRARY	= ../libsrc/lib$(LIBNAME).a
 REMOTE_LIBRARY	= $(srcdir)/../libsrc/lib$(LIBNAME).a
-OBJS		= $(PROGRAM).o $(LIBOBJS) 
 #LD_XDR		= @LD_XDR@
 #LD_NETCDF	= -L../libsrc -lmfhdf
 LD_NETCDF	= $(srcdir)/../libsrc/libmfhdf.a
@@ -437,13 +436,13 @@ program:
 	    $(MAKE) $(MFLAGS) $(LOCAL_MACROS) $(PROGRAM); \
 	fi
 
-dummy_prog $(PROGRAM):	$(OBJS)
+dummy_prog $(PROGRAM):	$(PROGRAM).o $(LIBS)
 	@if [ -r $@.f -o -r $@.F ]; then \
 	    ld='$(FC) $(FFLAGS)'; \
 	else \
 	    ld='$(CC) $(CFLAGS) $(CFLAGS_NETCDF) '; \
 	fi; \
-	cmd="$$ld $(OBJS) $(LIBS) -o $@"; \
+	cmd="$$ld $(PROGRAM).o $(LIBS) -o $@"; \
 	echo $$cmd; \
 	$$cmd \
 	    || (rm -f $@; exit 1)
