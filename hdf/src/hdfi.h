@@ -758,7 +758,7 @@ void exit(int status);
 /* Metrowerks Mac compiler defines some PC stuff so need to exclude this on the Mac */
 #if !(defined(macintosh) || defined(MAC))
 
-#if defined INTEL86 || defined M_I86 || defined M_I386 || defined DOS386 || defined __i386 || defined UNIX386
+#if defined _M_ALPHA || defined INTEL86 || defined M_I86 || defined M_I386 || defined DOS386 || defined __i386 || defined UNIX386
 #ifndef INTEL86
 #define INTEL86
 #endif /* INTEL86 */
@@ -784,6 +784,10 @@ If you get an error on this line more than one machine type has been defined.
 Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
+
+#if defined _WINDOWS || defined WIN32
+#pragma comment( lib, "oldnames" )
+#endif
 
 #include <fcntl.h>
 #ifdef UNIX386
@@ -830,6 +834,10 @@ typedef float             float32;
 typedef double            float64;
 typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
+
+#if defined _M_ALPHA
+#define FNAME_PRE_UNDERSCORE
+#endif
 
 #if defined UNIX386
 #define FNAME_POST_UNDERSCORE
@@ -960,7 +968,7 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 
 #endif /* MOTOROLA */
 
-#if defined DEC_ALPHA || (defined __alpha && (defined __unix__ || defined unix))
+#if defined DEC_ALPHA || (defined __alpha && defined __unix__)
 
 #ifndef DEC_ALPHA
 #define DEC_ALPHA
