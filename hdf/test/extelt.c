@@ -18,6 +18,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "tproto.h"
 #define TESTFILE_NAME "t.hdf"
+#define TESTFILE_NAME1 "tx.hdf"
 
 #define BUF_SIZE        4096
 
@@ -288,8 +289,8 @@ test_hextelt()
     MESSAGE(5, printf("testing External Path functions\n");
         );
 
-    /* start with a truncated brand new file */
-    fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
+    /* start with a brand new file */
+    fid = Hopen(TESTFILE_NAME1, DFACC_CREATE, 0);
     CHECK(fid, FAIL, "Hopen");
 
     ret = HXsetcreatedir("testdir");
