@@ -26,10 +26,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.14  1992/06/08 21:59:41  chouck
-Added 'verbose' option for labels/descriptions (-v) and
-option (-t #) to only list info about a given tag
+Revision 1.15  1992/06/08 22:25:22  chouck
+Minor fix with program name
 
+ * Revision 1.14  1992/06/08  21:59:41  chouck
+ * Added 'verbose' option for labels/descriptions (-v) and
+ * option (-t #) to only list info about a given tag
+ *
  * Revision 1.13  1992/05/31  19:16:26  mfolk
  * No change.  But Convex doesn't like match of arg types in call to
  * qsort on line 220.
@@ -193,7 +196,7 @@ char *argv[];
      */
     if(i == argc) {
         printf("%s,  version: 1.2   date: June 8, 1992\n",argv[0]);
-        printf("hdfls [-o] [-l] [-d] [-v] [-t #] fn ....\n");
+        printf("%s [-o] [-l] [-d] [-v] [-t #] fn ....\n", argv[0]);
         printf("        This program displays information about the");
         printf(" data elements in\n");
         printf("        HDF file.\n");
