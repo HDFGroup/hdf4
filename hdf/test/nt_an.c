@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1993/01/27 22:04:25  briand
-Converted test files to work with master test program: testhdf
+Revision 1.2  1993/01/27 22:41:22  briand
+Fixed problem with compiling on RS6000.
 
+ * Revision 1.1  1993/01/27  22:04:25  briand
+ * Converted test files to work with master test program: testhdf
+ *
  * Revision 1.6  1992/05/31  19:05:44  mfolk
  * Added int32 casts to line 127 for Convex.
  *
@@ -52,7 +55,7 @@ extern int Verbocity;
 #define COLS           10
 #define REPS            2   /* number of data sets to write to file */
 
-test_an()
+void test_an()
 {
     char labsds[MAXLEN_LAB], labris[MAXLEN_LAB],
          descsds[MAXLEN_DESC], descris[MAXLEN_DESC];

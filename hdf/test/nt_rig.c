@@ -10,7 +10,7 @@ extern int Verbocity;
 
 /* ------------------------------- test_r24 ------------------------------- */
 
-test_r24()
+void test_r24()
 {
     int32 xd, yd;
     int il;
@@ -330,7 +330,7 @@ test_r24()
 #define XD2 7
 #define YD2 11
 
-test_r8()
+void test_r8()
 {
     uint8 *im2, *ii2;
 	uint8 *im1, *ii1;
@@ -511,7 +511,7 @@ check_im_pal(oldx, oldy, newx, newy, oldim, newim, oldpal, newpal)
     }
 }
 
-test_pal()
+void test_pal()
 {
     int i;
     int ret;

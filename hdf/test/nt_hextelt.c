@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1993/01/27 22:04:29  briand
-Converted test files to work with master test program: testhdf
+Revision 1.2  1993/01/27 22:41:25  briand
+Fixed problem with compiling on RS6000.
 
+ * Revision 1.1  1993/01/27  22:04:29  briand
+ * Converted test files to work with master test program: testhdf
+ *
  * Revision 1.7  1992/07/27  18:40:12  dilg
  * Changed DFACC_ALL to DFACC_RDWR in appropriate places to conform to new
  * handling of access modes by Hopen().
@@ -39,7 +42,7 @@ uint8 outbuf[4096], inbuf[4096];
 extern int num_errs;
 extern int Verbocity;
 
-test_hextelt()
+void test_hextelt()
 {
     int32 fid, fid1;
     int32 aid1, aid2;

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1993/01/27 22:04:31  briand
-Converted test files to work with master test program: testhdf
+Revision 1.2  1993/01/27 22:41:26  briand
+Fixed problem with compiling on RS6000.
 
+ * Revision 1.1  1993/01/27  22:04:31  briand
+ * Converted test files to work with master test program: testhdf
+ *
  * Revision 1.7  1992/07/16  19:34:08  mlivin
  * changed re-opening of file to NOT include DFACC_CREATE
  *
@@ -71,7 +74,7 @@ extern int num_errs;
 extern int Verbocity;
 
 
-test_hfile()
+void test_hfile()
 {
     int32 fid, fid1;
     int32 aid1, aid2;

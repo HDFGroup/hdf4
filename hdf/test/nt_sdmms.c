@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1993/01/27 22:04:34  briand
-Converted test files to work with master test program: testhdf
+Revision 1.2  1993/01/27 22:41:30  briand
+Fixed problem with compiling on RS6000.
 
+ * Revision 1.1  1993/01/27  22:04:34  briand
+ * Converted test files to work with master test program: testhdf
+ *
  * Revision 1.4  1992/08/27  22:19:29  chouck
  * Added test for calibration tags
  *
@@ -69,7 +72,7 @@ int32   cal5;
 float64 ical1, ical2, ical3, ical4;
 int32   ical5;
 
-test_sdmms()
+void test_sdmms()
 {
     int i, j, err, err1, err2, err3, err4, ret;
     int32 rank, dims[2];

@@ -4,19 +4,19 @@
 #include "hdf.h"
 #include "tutils.h"
 
-test_an();
-test_anfile();
-test_hblocks();
-test_hextelt();
-test_hfile();
-test_hfile1();
-test_r24();
-test_r8();
-test_pal();
-test_sdmms();
-test_sdnmms();
-test_tsdstr();
-test_vers();
+void test_an();
+void test_anfile();
+void test_hblocks();
+void test_hextelt();
+void test_hfile();
+void test_hfile1();
+void test_r24();
+void test_r8();
+void test_pal();
+void test_sdmms();
+void test_sdnmms();
+void test_tsdstr();
+void test_vers();
 
 
 #endif

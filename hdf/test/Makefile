@@ -1,6 +1,6 @@
 # ==> specify your machine
-MACHINE=IBM6000
-#MACHINE=SUN
+#MACHINE=IBM6000
+MACHINE=SUN
 # ==> specify your fortran compiler  (Convex: fc)
 FC=f77 
 FFLAGS=  -g

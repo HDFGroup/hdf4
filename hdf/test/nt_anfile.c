@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1993/01/27 22:04:26  briand
-Converted test files to work with master test program: testhdf
+Revision 1.2  1993/01/27 22:41:23  briand
+Fixed problem with compiling on RS6000.
 
+ * Revision 1.1  1993/01/27  22:04:26  briand
+ * Converted test files to work with master test program: testhdf
+ *
  * Revision 1.1  1992/02/28  22:21:15  mfolk
  * Initial revision
  *
@@ -26,7 +29,7 @@ extern int Verbocity;
 #define MAXLEN_LAB     50
 #define MAXLEN_DESC  1000
 
-test_anfile()
+void test_anfile()
 {
     char lab1[MAXLEN_LAB], lab2[MAXLEN_LAB],
          desc1[MAXLEN_DESC], desc2[MAXLEN_DESC],
