@@ -531,7 +531,7 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
     while (Hfind(file_id, DFTAG_RI8, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len, DF_FORWARD) == SUCCEED)
       {
           img_info[curr_image].grp_tag=DFTAG_NULL;
-          img_info[curr_image].grp_ref=DFTAG_NULL;
+          img_info[curr_image].grp_ref=DFREF_WILDCARD;
           img_info[curr_image].img_tag=find_tag;
           img_info[curr_image].img_ref=find_ref;
           img_info[curr_image].offset = find_off;   /* store offset */
@@ -543,7 +543,7 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
     while (Hfind(file_id, DFTAG_CI8, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len, DF_FORWARD) == SUCCEED)
       {
           img_info[curr_image].grp_tag=DFTAG_NULL;
-          img_info[curr_image].grp_ref=DFTAG_NULL;
+          img_info[curr_image].grp_ref=DFREF_WILDCARD;
           img_info[curr_image].img_tag=find_tag;
           img_info[curr_image].img_ref=find_ref;
           img_info[curr_image].offset = find_off;   /* store offset */
@@ -669,7 +669,7 @@ for (i = 0; i < curr_image; i++)
                                 if(img_info[i].aux_ref!=0)
                                     new_image->rig_ref=img_info[i].aux_ref;
                                 else
-                                    new_image->rig_ref=DFTAG_NULL;
+                                    new_image->rig_ref=DFREF_WILDCARD;
 
                                 for(j=0; j<Vntagrefs(img_key); j++)
                                   {
@@ -871,7 +871,7 @@ for (i = 0; i < curr_image; i++)
                           new_image->lattree = tbbtdmake(rigcompare, sizeof(int32));
                           if (new_image->lattree == NULL)
                               HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                          new_image->ri_ref=DFTAG_NULL;
+                          new_image->ri_ref=DFREF_WILDCARD;
                           new_image->rig_ref=img_info[i].grp_ref;
 
                           while (!DFdiget(GroupID, &elt_tag, &elt_ref))
@@ -1011,8 +1011,8 @@ for (i = 0; i < curr_image; i++)
                           new_image->lattree = tbbtdmake(rigcompare, sizeof(int32));
                           if (new_image->lattree == NULL)
                               HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                          new_image->ri_ref=DFTAG_NULL;
-                          new_image->rig_ref=DFTAG_NULL;
+                          new_image->ri_ref=DFREF_WILDCARD;
+                          new_image->rig_ref=DFREF_WILDCARD;
 
                           /* Get tag/ref for image */
                           new_image->img_tag=img_info[i].img_tag;
@@ -1034,15 +1034,15 @@ for (i = 0; i < curr_image; i++)
                               HGOTO_ERROR(DFE_GETELEM, FAIL);
 
                           /* only 8-bit images, so fill in rest of dim info */
-                          new_image->img_dim.dim_ref=DFTAG_NULL;
+                          new_image->img_dim.dim_ref=DFREF_WILDCARD;
                           new_image->img_dim.ncomps=1;
                           new_image->img_dim.nt=DFNT_UINT8;
                           new_image->img_dim.file_nt_subclass=DFNTF_HDFDEFAULT;
                           new_image->img_dim.il=MFGR_INTERLACE_PIXEL;
                           new_image->img_dim.nt_tag=DFTAG_NULL;
-                          new_image->img_dim.nt_ref=DFTAG_NULL;
+                          new_image->img_dim.nt_ref=DFREF_WILDCARD;
                           new_image->img_dim.comp_tag=DFTAG_NULL;
-                          new_image->img_dim.comp_ref=DFTAG_NULL;
+                          new_image->img_dim.comp_ref=DFREF_WILDCARD;
 
                           /* Get palette information */
                           if(Hexist(file_id, DFTAG_IP8, new_image->img_ref)==SUCCEED)
@@ -1051,7 +1051,7 @@ for (i = 0; i < curr_image; i++)
                                 new_image->lut_ref=new_image->img_ref;
 
                                 /* set palette dimensions too */
-                                new_image->lut_dim.dim_ref = DFTAG_NULL;
+                                new_image->lut_dim.dim_ref = DFREF_WILDCARD;
                                 new_image->lut_dim.xdim=256;
                                 new_image->lut_dim.ydim=1;
                                 new_image->img_dim.ncomps=1;
@@ -1059,12 +1059,12 @@ for (i = 0; i < curr_image; i++)
                                 new_image->img_dim.file_nt_subclass=DFNTF_HDFDEFAULT;
                                 new_image->img_dim.il=MFGR_INTERLACE_PIXEL;
                                 new_image->img_dim.nt_tag=DFTAG_NULL;
-                                new_image->img_dim.nt_ref=DFTAG_NULL;
+                                new_image->img_dim.nt_ref=DFREF_WILDCARD;
                                 new_image->img_dim.comp_tag=DFTAG_NULL;
-                                new_image->img_dim.comp_ref=DFTAG_NULL;
+                                new_image->img_dim.comp_ref=DFREF_WILDCARD;
                             } /* end if */
                           else
-                                new_image->lut_tag=new_image->lut_ref=DFTAG_NULL;
+                                new_image->lut_tag=new_image->lut_ref=DFREF_WILDCARD;
 
                         new_image->index=gr_ptr->gr_count;
                         tbbtdins(gr_ptr->grtree, (VOIDP) new_image, NULL);    /* insert the new image into B-tree */ 
@@ -1341,7 +1341,7 @@ int32 GRstart(int32 hdf_file_id)
 
     /* Initialize the starting information for the interface */
     gr_ptr->hdf_file_id=hdf_file_id;
-    gr_ptr->gr_ref=DFTAG_NULL;
+    gr_ptr->gr_ref=DFREF_WILDCARD;
     gr_ptr->gr_count=0;
     gr_ptr->grtree = tbbtdmake(rigcompare, sizeof(int32));
     if (gr_ptr->grtree == NULL)
@@ -1482,7 +1482,7 @@ intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
     /*  instead of one... QAK) */
     if(img_ptr->img_dim.nt_tag<=DFTAG_NULL)
         img_ptr->img_dim.nt_tag=DFTAG_NT;
-    if(img_ptr->img_dim.nt_ref<=DFTAG_NULL)
+    if(img_ptr->img_dim.nt_ref==DFREF_WILDCARD)
         img_ptr->img_dim.nt_ref=Htagnewref(hdf_file_id,img_ptr->img_dim.nt_tag);
     
     /* Write out the raster image's number-type record */
@@ -1495,12 +1495,12 @@ intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
         HGOTO_ERROR(DFE_PUTELEM, FAIL);
     
     /* Check for a palette with this image */
-    if(img_ptr->lut_ref>DFTAG_NULL)
+    if(img_ptr->lut_ref>DFREF_WILDCARD)
       {
           /* Write out the palette number-type */
           if(img_ptr->lut_dim.nt_tag<=DFTAG_NULL)
               img_ptr->lut_dim.nt_tag=DFTAG_NT;
-          if(img_ptr->lut_dim.nt_ref<=DFTAG_NULL)
+          if(img_ptr->lut_dim.nt_ref==DFREF_WILDCARD)
               img_ptr->lut_dim.nt_ref=Htagnewref(hdf_file_id,img_ptr->lut_dim.nt_tag);
           ntstring[0] = DFNT_VERSION;     /* version */
           ntstring[1] = DFNT_UCHAR;       /* type */
@@ -1527,7 +1527,7 @@ intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
 #endif /* LATER */
           UINT16ENCODE(p, img_ptr->lut_dim.comp_tag);
           UINT16ENCODE(p, img_ptr->lut_dim.comp_ref);
-          if(img_ptr->lut_dim.dim_ref<=DFTAG_NULL)
+          if(img_ptr->lut_dim.dim_ref==DFREF_WILDCARD)
               img_ptr->lut_dim.dim_ref=Htagnewref(hdf_file_id,DFTAG_LD);
           if (Hputelement(hdf_file_id, DFTAG_LD, img_ptr->lut_dim.dim_ref, GRtbuf, (int32)(p-GRtbuf)) == FAIL)
               HGOTO_ERROR(DFE_PUTELEM, FAIL);
@@ -1550,7 +1550,7 @@ intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
 #endif /* LATER */
     UINT16ENCODE(p, img_ptr->img_dim.comp_tag);
     UINT16ENCODE(p, img_ptr->img_dim.comp_ref);
-    if(img_ptr->img_dim.dim_ref<=DFTAG_NULL)
+    if(img_ptr->img_dim.dim_ref==DFREF_WILDCARD)
         img_ptr->img_dim.dim_ref=Htagnewref(hdf_file_id,DFTAG_ID);
     if (Hputelement(hdf_file_id, DFTAG_ID, img_ptr->img_dim.dim_ref, GRtbuf, (int32)(p-GRtbuf)) == FAIL)
         HGOTO_ERROR(DFE_PUTELEM, FAIL);
@@ -1628,7 +1628,7 @@ printf("%s: writing RIG\n",FUNC);
         HGOTO_ERROR(DFE_PUTGROUP, FAIL);
 
     /* Check if we should write palette information */
-    if(img_ptr->lut_ref>DFTAG_NULL)
+    if(img_ptr->lut_ref>DFREF_WILDCARD)
       {
           /* add palette dimension tag/ref to RIG */
           if (DFdiput(GroupID, DFTAG_LD, (uint16) img_ptr->lut_dim.dim_ref) == FAIL)
@@ -1640,6 +1640,8 @@ printf("%s: writing RIG\n",FUNC);
       } /* end if */
 
     /* write out RIG */
+    if(img_ptr->rig_ref==DFTAG_WILDCARD)
+        img_ptr->rig_ref=Htagnewref(hdf_file_id,DFTAG_RIG);
     if(DFdiwrite(hdf_file_id, GroupID, DFTAG_RIG, img_ptr->rig_ref)==FAIL)
         HGOTO_ERROR(DFE_GROUPWRITE, FAIL);
 
@@ -1693,7 +1695,7 @@ printf("%s: check 1.0\n",FUNC);
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* Write out the RI Vgroup itself */
-    if ((GroupID = Vattach(hdf_file_id,(img_ptr->ri_ref>DFTAG_NULL ?
+    if ((GroupID = Vattach(hdf_file_id,(img_ptr->ri_ref>DFREF_WILDCARD ?
             img_ptr->ri_ref : -1),"w")) == FAIL)
         HGOTO_ERROR(DFE_CANTATTACH, FAIL);
 
@@ -1701,7 +1703,7 @@ printf("%s: check 1.0\n",FUNC);
 printf("%s: check 2.0, GroupID=%ld\n",FUNC,(long)GroupID);
 #endif /* QAK */
     /* grab the ref. # of the new Vgroup */
-    if(img_ptr->ri_ref==DFTAG_NULL)
+    if(img_ptr->ri_ref==DFREF_WILDCARD)
         img_ptr->ri_ref=(uint16)VQueryref(GroupID);
 
     /* Set the name of the RI */
@@ -1726,7 +1728,7 @@ printf("%s: check 2.0, GroupID=%ld\n",FUNC,(long)GroupID);
         HGOTO_ERROR(DFE_CANTADDELEM, FAIL);
 
     /* Check if we should write palette information */
-    if(img_ptr->lut_ref>DFTAG_NULL)
+    if(img_ptr->lut_ref>DFREF_WILDCARD)
       {
           /* add palette dimension tag/ref to RIG */
           if (Vaddtagref(GroupID, DFTAG_LD, (uint16) img_ptr->lut_dim.dim_ref) == FAIL)
@@ -1786,7 +1788,7 @@ intn GRIup_attr_data(int32 hdf_file_id,at_info_t *attr_ptr)
 printf("%s: attr_ptr->ref=%u\n",FUNC,attr_ptr->ref);
 #endif /* QAK */
     /* Write out the attribute data */
-    if (attr_ptr->ref==DFTAG_NULL)  /* create a new attribute */
+    if (attr_ptr->ref==DFREF_WILDCARD)  /* create a new attribute */
       {
         if((attr_ptr->ref=(uint16)VHstoredata(hdf_file_id,attr_ptr->name,attr_ptr->data,
                 attr_ptr->len,attr_ptr->nt,RIGATTRNAME,RIGATTRCLASS))==(uint16)FAIL)
@@ -1866,7 +1868,7 @@ intn GRend(int32 grid)
     if(((file_rec->access)&DFACC_WRITE)!=0)
       {
         /* Check if the GR group exists, and create it if not */
-        if(gr_ptr->gr_ref==DFTAG_NULL)
+        if(gr_ptr->gr_ref==DFREF_WILDCARD)
           {
             if((GroupID=Vattach(gr_ptr->hdf_file_id,-1,"w"))==FAIL)
                 HGOTO_ERROR(DFE_CANTATTACH,FAIL);
@@ -2203,19 +2205,19 @@ int32 GRcreate(int32 grid,char *name,int32 ncomp,int32 nt,int32 il,int32 dimsize
 
     /* Assign image information */
     ri_ptr->index=gr_ptr->gr_count;
-    ri_ptr->ri_ref=DFTAG_NULL;
-    ri_ptr->rig_ref=DFTAG_NULL;
-    ri_ptr->img_dim.dim_ref=DFTAG_NULL;
+    ri_ptr->ri_ref=DFREF_WILDCARD;
+    ri_ptr->rig_ref=DFREF_WILDCARD;
+    ri_ptr->img_dim.dim_ref=DFREF_WILDCARD;
     ri_ptr->img_dim.xdim=dimsizes[XDIM];
     ri_ptr->img_dim.ydim=dimsizes[YDIM];
     ri_ptr->img_dim.ncomps=ncomp;
     ri_ptr->img_dim.nt=nt;
     ri_ptr->img_dim.file_nt_subclass=DFNTF_HDFDEFAULT;
     ri_ptr->img_dim.il=il;
-    ri_ptr->img_dim.nt_tag=ri_ptr->img_dim.nt_ref=DFTAG_NULL;
-    ri_ptr->img_dim.comp_tag=ri_ptr->img_dim.comp_ref=DFTAG_NULL;
-    ri_ptr->img_tag=ri_ptr->img_ref=DFTAG_NULL;
-    ri_ptr->lut_tag=ri_ptr->lut_ref=DFTAG_NULL;
+    ri_ptr->img_dim.nt_tag=ri_ptr->img_dim.nt_ref=DFREF_WILDCARD;
+    ri_ptr->img_dim.comp_tag=ri_ptr->img_dim.comp_ref=DFREF_WILDCARD;
+    ri_ptr->img_tag=ri_ptr->img_ref=DFREF_WILDCARD;
+    ri_ptr->lut_tag=ri_ptr->lut_ref=DFREF_WILDCARD;
     ri_ptr->im_il=MFGR_INTERLACE_PIXEL;
     ri_ptr->lut_il=MFGR_INTERLACE_PIXEL;
     ri_ptr->data_modified=FALSE;
@@ -2598,7 +2600,7 @@ printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_si
     else /* no conversion necessary, just use the user's buffer */
         img_data=data;
 
-    if(ri_ptr->img_tag==DFTAG_NULL || ri_ptr->img_ref==DFTAG_NULL)
+    if(ri_ptr->img_tag==DFTAG_NULL || ri_ptr->img_ref==DFREF_WILDCARD)
         new_image=TRUE;
     else
         new_image=FALSE;
@@ -2627,7 +2629,7 @@ printf("%s: new_image=%d\n",FUNC,(int)new_image);
     else 
       {   /* create an uncompressed image */
 #ifdef QAK
-printf("%s: check 5, new_image=%d, whole_image=%d, solid_block=%d\n",FUNC,new_image,whole_image,solid_block);
+fprintf(stderr,"%s: check 5, new_image=%d, whole_image=%d, solid_block=%d\n",FUNC,new_image,whole_image,solid_block);
 #endif /* QAK */
           if(new_image==TRUE)
             { /* Create the tag/ref for the new image */
@@ -2635,6 +2637,9 @@ printf("%s: check 5, new_image=%d, whole_image=%d, solid_block=%d\n",FUNC,new_im
                 ri_ptr->img_ref=Htagnewref(hdf_file_id,ri_ptr->img_tag);
             } /* end if */
 
+#ifdef QAK
+fprintf(stderr,"%s: check 5.5, img_tag=%d, img_ref=%d\n",FUNC,(int)ri_ptr->img_tag,(int)ri_ptr->img_ref);
+#endif /* QAK */
           if(whole_image==TRUE)
             { /* write the whole image out */
                 if(Hputelement(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
@@ -3102,11 +3107,11 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOI
         HGOTO_ERROR(DFE_BADDIM, FAIL);
 
 #ifdef QAK
-printf("%s: riid=%ld\n",FUNC,(long)riid);
-printf("%s: start={%ld,%ld}\n",FUNC,(long)start[XDIM],(long)start[YDIM]);
-printf("%s: stride={%ld,%ld}\n",FUNC,(long)stride[XDIM],(long)stride[YDIM]);
-printf("%s: count={%ld,%ld}\n",FUNC,(long)count[XDIM],(long)count[YDIM]);
-printf("%s: data=%p\n",FUNC,data);
+fprintf(stderr,"%s: riid=%ld\n",FUNC,(long)riid);
+fprintf(stderr,"%s: start={%ld,%ld}\n",FUNC,(long)start[XDIM],(long)start[YDIM]);
+fprintf(stderr,"%s: stride={%ld,%ld}\n",FUNC,(long)stride[XDIM],(long)stride[YDIM]);
+fprintf(stderr,"%s: count={%ld,%ld}\n",FUNC,(long)count[XDIM],(long)count[YDIM]);
+fprintf(stderr,"%s: data=%p\n",FUNC,data);
 #endif /* QAK */
     /* Get the array index for the grid */
     gr_idx=RIID2GRID(riid);
@@ -3147,18 +3152,19 @@ printf("%s: pixel_disk_size=%u\n",FUNC,(unsigned)pixel_disk_size);
     convert = (ri_ptr->img_dim.file_nt_subclass != platnumsubclass);  /* is conversion necessary? */
 
 #ifdef QAK
-printf("%s: solid_block=%d\n",FUNC,(int)solid_block);
-printf("%s: whole_image=%d\n",FUNC,(int)whole_image);
-printf("%s: pixel_disk_size=%d\n",FUNC,(int)pixel_disk_size);
-printf("%s: convert=%d\n",FUNC,(int)convert);
+fprintf(stderr,"%s: solid_block=%d\n",FUNC,(int)solid_block);
+fprintf(stderr,"%s: whole_image=%d\n",FUNC,(int)whole_image);
+fprintf(stderr,"%s: pixel_disk_size=%d\n",FUNC,(int)pixel_disk_size);
+fprintf(stderr,"%s: ri_ptr->img_tag=%d, ri_ptr->img_ref=%d\n",FUNC,(int)ri_ptr->img_tag,(int)ri_ptr->img_ref);
+fprintf(stderr,"%s: convert=%d\n",FUNC,(int)convert);
 #endif /* QAK */
-    if(ri_ptr->img_tag==DFTAG_NULL || ri_ptr->img_ref==DFTAG_NULL)
+    if(ri_ptr->img_tag==DFTAG_NULL || ri_ptr->img_ref==DFREF_WILDCARD)
       { /* Fake an image for the user by using the pixel fill value */
           VOIDP fill_pixel;         /* converted value for the filled pixel */
           int32 at_index;
 
 #ifdef QAK
-printf("%s: faking an image for the user\n",FUNC);
+fprintf(stderr,"%s: faking an image for the user\n",FUNC);
 #endif /* QAK */
           if((fill_pixel=(VOIDP)HDmalloc(pixel_mem_size))==NULL)
               HGOTO_ERROR(DFE_NOSPACE,FAIL);
@@ -3185,7 +3191,7 @@ printf("%s: got the fill value\n",FUNC);
     else
       { /* an image exists in the file */
 #ifdef QAK
-printf("%s: image exists\n",FUNC);
+fprintf(stderr,"%s: image exists\n",FUNC);
 #endif /* QAK */
           if(convert)
             {   /* convert image data to HDF disk format */
@@ -3202,7 +3208,7 @@ printf("%s: check 1 whole_image=%d, solid_block=%d\n",FUNC,(int)whole_image,(int
           if(whole_image==TRUE)
             { /* read the whole image in */
 #ifdef QAK
-printf("%s: check 1.3, tag=%u, ref=%u\n",FUNC,(unsigned)ri_ptr->img_tag,(unsigned)ri_ptr->img_ref);
+fprintf(stderr,"%s: check 1.3, tag=%u, ref=%u\n",FUNC,(unsigned)ri_ptr->img_tag,(unsigned)ri_ptr->img_ref);
 #endif /* QAK */
                 if(Hgetelement(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
                         (uint8 *)img_data)==FAIL)
@@ -3215,7 +3221,7 @@ printf("%s: check 1.3, tag=%u, ref=%u\n",FUNC,(unsigned)ri_ptr->img_tag,(unsigne
                 int32 aid;
 
 #ifdef QAK
-printf("%s: check 1.5\n",FUNC);
+fprintf(stderr,"%s: check 1.5\n",FUNC);
 #endif /* QAK */
                 if((aid=Hstartaccess(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
                         DFACC_READ))==FAIL)
@@ -3462,7 +3468,7 @@ uint16 GRidtoref(int32 riid)
         HGOTO_ERROR(DFE_RINOTFOUND,(uint16)FAIL);
     ri_ptr=(ri_info_t *)*t;
 
-    ret_value = (ri_ptr->ri_ref!=DFTAG_NULL ? ri_ptr->ri_ref : ri_ptr->rig_ref);
+    ret_value = (ri_ptr->ri_ref!=DFREF_WILDCARD ? ri_ptr->ri_ref : ri_ptr->rig_ref);
 
 done:
   if(ret_value == 0)   
@@ -3817,7 +3823,7 @@ intn GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
         HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
-    if(ri_ptr->lut_ref<=DFTAG_NULL) /* check for no palette defined currently */
+    if(ri_ptr->lut_ref==DFREF_WILDCARD) /* check for no palette defined currently */
       {
           if(ncomp!=NULL)
               *ncomp=0;
@@ -3920,7 +3926,7 @@ intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP 
     if(ncomps==3 && nt==DFNT_UINT8 && il==MFGR_INTERLACE_PIXEL && nentries==256)
       {
           /* Check if LUT exists already */
-          if(ri_ptr->lut_tag!=DFTAG_NULL && ri_ptr->lut_ref>DFTAG_NULL)
+          if(ri_ptr->lut_tag!=DFTAG_NULL && ri_ptr->lut_ref>DFREF_WILDCARD)
             {   /* LUT already exists */
                 if(Hputelement(hdf_file_id,ri_ptr->lut_tag,ri_ptr->lut_ref,
                         data,ncomps*nentries*DFKNTsize(nt))==FAIL)
@@ -3930,7 +3936,7 @@ intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP 
             {   /* LUT does not exist */
                 ri_ptr->lut_tag=DFTAG_LUT;
                 ri_ptr->lut_ref=Htagnewref(hdf_file_id,ri_ptr->lut_ref);
-                ri_ptr->lut_dim.dim_ref=DFTAG_NULL;
+                ri_ptr->lut_dim.dim_ref=DFREF_WILDCARD;
                 ri_ptr->lut_dim.xdim=256;
                 ri_ptr->lut_dim.ydim=1;
                 ri_ptr->lut_dim.ncomps=3;
@@ -3938,9 +3944,9 @@ intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP 
                 ri_ptr->lut_dim.file_nt_subclass=DFNTF_HDFDEFAULT;
                 ri_ptr->lut_dim.il=MFGR_INTERLACE_PIXEL;
                 ri_ptr->lut_dim.nt_tag=DFTAG_NULL;
-                ri_ptr->lut_dim.nt_ref=DFTAG_NULL;
+                ri_ptr->lut_dim.nt_ref=DFREF_WILDCARD;
                 ri_ptr->lut_dim.comp_tag=DFTAG_NULL;
-                ri_ptr->lut_dim.comp_ref=DFTAG_NULL;
+                ri_ptr->lut_dim.comp_ref=DFREF_WILDCARD;
                 if(Hputelement(hdf_file_id,ri_ptr->lut_tag,ri_ptr->lut_ref,
                         data,ncomps*nentries*DFKNTsize(nt))==FAIL)
                     HGOTO_ERROR(DFE_PUTELEM,FAIL);
@@ -4024,7 +4030,7 @@ intn GRreadlut(int32 lutid,VOIDP data)
         HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
-    if(ri_ptr->lut_tag!=DFTAG_NULL && ri_ptr->lut_ref!=DFTAG_NULL)
+    if(ri_ptr->lut_tag!=DFTAG_NULL && ri_ptr->lut_ref!=DFREF_WILDCARD)
       {
           if(Hgetelement(hdf_file_id,ri_ptr->lut_tag,ri_ptr->lut_ref,data)==FAIL)
               HGOTO_ERROR(DFE_GETELEM,FAIL);
@@ -4523,7 +4529,7 @@ printf("%s:1: gr_ptr->gattr_count=%ld\n",FUNC,(long)gr_ptr->gattr_count);
                   HGOTO_ERROR(DFE_NOSPACE,FAIL);
               HDmemcpy(at_ptr->data,data,at_size);
               at_ptr->data_modified=TRUE;
-              at_ptr->ref=DFTAG_NULL;
+              at_ptr->ref=DFREF_WILDCARD;
           } /* end if */
         else
           { /* non-cacheable */

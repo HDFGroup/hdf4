@@ -444,13 +444,9 @@ DFKlpi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     for (i = 0; i < num_elm; i++)
       {
 
-#ifdef OLD_WAY
-          buf = (uint32 *) source;
-#else
           buf = (uint32 *) source;
           temp = ((*buf & LPI4F_MASKA) >> 8) | ((*buf & LPI4F_MASKB) << 8);
           temp = ((temp & LPI4F_MASKC) >> 16) | ((temp & LPI4F_MASKD) << 16);
-#endif
 
           ibt = temp;
           ibs = temp & lpi4f_sign;
@@ -546,14 +542,10 @@ DFKlpo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
           /* put result into dest */
           buf = (uint32 *) dest;
-#ifdef OLD_WAY
-          *buf = ibs | ibe | ibt;
-#else
           temp = ibs | ibe | ibt;
           temp = ((temp & LPO4F_MASKA) >> 8) | ((temp & LPO4F_MASKB) << 8);
           temp = ((temp & LPO4F_MASKC) >> 16) | ((temp & LPO4F_MASKD) << 16);
           *buf = temp;
-#endif
           source += source_stride;
           dest += dest_stride;
       }     /* end for */
@@ -599,13 +591,6 @@ DFKlpi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     for (i = 0; i < num_elm; i++)
       {
-#ifdef OLD_WAY
-        buf  = (uint32*)source;
-        ibs  = *buf & lpi8f_sign;
-        ibe  = *buf & lpi8f_expn;
-        ibt1 = *buf & lpi8f_tiss;
-        ibt2 = *(buf+1);
-#else
         buf  = (uint32*)source; /* be careful of 32-bit word swapping below */
         temp = ((*(buf+1) & LPI8F_MASKA)>>8) | ((*(buf+1) & LPI8F_MASKB)<<8);
         temp = ((temp & LPI8F_MASKC)>>16) | ((temp & LPI8F_MASKD)<<16);
@@ -616,7 +601,6 @@ DFKlpi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
         temp = ((*buf & LPI8F_MASKA)>>8) | ((*buf & LPI8F_MASKB)<<8);
         temp = ((temp & LPI8F_MASKC)>>16) | ((temp & LPI8F_MASKD)<<16);
         ibt2 = temp;
-#endif
 
           if (ibe != 0)
             {
@@ -781,10 +765,6 @@ DFKlpo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           } /* end else */
         /* put number into destination array */
         buf = (uint32*)dest;
-#ifdef OLD_WAY
-          *buf = ibs | ibe | ibt1;
-          *(buf + 1) = ibt2;
-#else
           temp = ibs | ibe | ibt1;
           temp = ((temp & LPO8F_MASKA) >> 8) | ((temp & LPO8F_MASKB) << 8);
           temp = ((temp & LPO8F_MASKC) >> 16) | ((temp & LPO8F_MASKD) << 16);
@@ -793,7 +773,6 @@ DFKlpo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           temp = ((temp & LPO8F_MASKA) >> 8) | ((temp & LPO8F_MASKB) << 8);
           temp = ((temp & LPO8F_MASKC) >> 16) | ((temp & LPO8F_MASKD) << 16);
           *buf = temp;
-#endif
           source += source_stride;
           dest += dest_stride;
       }     /* end for */

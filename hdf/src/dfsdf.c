@@ -1370,7 +1370,10 @@ FRETVAL(intf)
 ndsscal(float64 *cal, float64 *cal_err, float64 *ioff, float64 *ioff_err,
         intf * cal_type)
 {
-    return DFSDsetcal(*cal, *cal_err, *ioff, *ioff_err, *cal_type);
+    intf ret;
+
+    ret=(intf)DFSDsetcal((float64)*cal, (float64)*cal_err, (float64)*ioff, (float64)*ioff_err, (int32)*cal_type);
+    return ret;
 }   /* ndsscal */
 
 /*-----------------------------------------------------------------------------

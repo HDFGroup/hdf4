@@ -1476,11 +1476,14 @@ check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy,
 #define YD1 10
 #define XD2 7
 #define YD2 11
+#define XD3 8
+#define YD3 12
 
 void
 test_r8(void)
 {
     comp_info   cinfo;          /* compression information for the JPEG */
+    uint8      *im3, *ii3;
     uint8      *im2, *ii2;
     uint8      *im1, *ii1;
     uint8      *pal1, *pal2, *ipal;
@@ -1509,6 +1512,14 @@ test_r8(void)
           exit(1);
       }
 
+    im3 = (uint8 *) HDmalloc(XD3 * YD3 * sizeof(uint8));
+    ii3 = (uint8 *) HDmalloc(XD3 * YD3 * sizeof(uint8));
+    if (!im3 || !ii3)
+      {
+          fprintf(stderr, "Out of memory!\n");
+          exit(1);
+      }
+
     pal1 = (uint8 *) HDmalloc(768 * sizeof(char));
     pal2 = (uint8 *) HDmalloc(768 * sizeof(char));
     ipal = (uint8 *) HDmalloc(768 * sizeof(char));
@@ -1531,6 +1542,9 @@ test_r8(void)
     for (y = 0; y < YD2; y++)
         for (x = 0; x < XD2; x++)
             im2[y * XD2 + x] = (uint8) ((2 * x + y) - 256 * ((2 * x + y) / 256));
+    for (y = 0; y < YD3; y++)
+        for (x = 0; x < XD3; x++)
+            im3[y * XD3 + x] = (uint8) ((3 * x + y) - 256 * ((3 * x + y) / 256));
     for (x = 0; x < 256; x++)
       {
           pal1[3 * x] = (uint8) x;
@@ -1566,7 +1580,7 @@ test_r8(void)
     RESULT("DFR8setpalette");
     MESSAGE(5, printf("Putting image IMCOMP compression\n");
         );
-    ret = DFR8addimage(TESTFILE, (VOIDP) im2, XD2, YD2, DFTAG_IMCOMP);
+    ret = DFR8addimage(TESTFILE, (VOIDP) im3, XD3, YD3, DFTAG_IMCOMP);
     RESULT("DFR8addimage");
     num_images++;
     ref3 = DFR8lastref();
@@ -1605,7 +1619,7 @@ test_r8(void)
 
     ret = DFR8getdims(TESTFILE, &xd, &yd, &ispal);
     RESULT("DFR8getdims");
-    ret = DFR8getimage(TESTFILE, (uint8 *) ii2, (int32) XD2, (int32) YD2, ipal);
+    ret = DFR8getimage(TESTFILE, (uint8 *) ii3, (int32) XD3, (int32) YD3, ipal);
     RESULT("DFR8getimage");
 
     MESSAGE(5, printf("Rechecking RLE image\n");
@@ -1765,6 +1779,8 @@ test_r8(void)
     HDfree((VOIDP) ii1);
     HDfree((VOIDP) im2);
     HDfree((VOIDP) ii2);
+    HDfree((VOIDP) im3);
+    HDfree((VOIDP) ii3);
     HDfree((VOIDP) pal1);
     HDfree((VOIDP) pal2);
     HDfree((VOIDP) ipal);

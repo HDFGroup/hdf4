@@ -354,9 +354,6 @@ vsdestroynode(VOIDP n)
         for(i=0; i<vs->wlist.n; i++)
             HDfree(vs->wlist.name[i]);
         HDfree(vs->wlist.name);
-#ifdef QAK
-        HDfree(vs->wlist.len);
-#endif /* QAK */
         HDfree(vs->wlist.type);
         HDfree(vs->wlist.off);
         HDfree(vs->wlist.isize);
@@ -426,10 +423,6 @@ VDATA _HUGE *VSPgetinfo(HFILEID f,uint16 ref)
     vs->nusym   = 0;
     vs->usym=NULL;
     vunpackvs (vs,vspack);
- 
-#ifdef QAK
-    vs->vm      = (VMBLOCK*) NULL; /* always NULL for "r" */
-#endif /* QAK */
  
     HDfree((VOIDP)vspack);
  
@@ -549,7 +542,7 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
           vs->usym=NULL;
 
           vs->otag = DFTAG_VH;
-          vs->oref = Htagnewref(f,vs->otag);
+          vs->oref = Hnewref(f);
           if (vs->oref == 0)
             {
                 HERROR(DFE_NOREF);
@@ -569,10 +562,6 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
           vs->exref = 0;
           vs->more = 0;
           vs->version = VSET_VERSION;
-
-#ifdef QAK
-          vs->vm = (VMBLOCK *) NULL;
-#endif /* QAK */
 
           vs->aid = 0;
 

@@ -299,11 +299,7 @@ DFGRsetcompress(int32 scheme, comp_info * cinfo)
 
     /* map JPEG compression into correct type of JPEG compression */
     if (scheme == COMP_JPEG)
-#ifdef OLD_WAY
-        Grcompr = DFTAG_JPEG;   /* Set the compression scheme */
-#else /* OLD_WAY */
         Grcompr = DFTAG_JPEG5;   /* Set the compression scheme */
-#endif /* OLD_WAY */
     else    /* otherwise, just use mapped tag */
         Grcompr = compress_map[scheme];
     Grcinfo = (*cinfo);     /* Set the compression parameters */

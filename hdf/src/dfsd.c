@@ -1308,11 +1308,13 @@ DFSDsetrange(VOIDP maxi, VOIDP mini)
 
     Ref.maxmin = 0;
 
+#ifdef LATER
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
+#endif /* LATER */
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
@@ -1736,7 +1738,7 @@ DFSDstartslice(const char *filename)
   Writesdg.data.tag = DFTAG_SD;
 
   if (!Writeref)
-    Writeref = Htagnewref(Sfile_id,Writesdg.data.tag);
+    Writeref = Hnewref(Sfile_id);
   if (!Writeref)
     {
       ret_value = FAIL;
@@ -1986,11 +1988,13 @@ DFSDIclearNT(DFSsdg * sdg)
   Ref.scales = -1;    /* new number type              */
   Ref.new_ndg = -1;
 
+#ifdef LATER
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
+#endif /* LATER */
 
   /* Normal function cleanup */
 
@@ -5438,7 +5442,7 @@ DFSDstartslab(const char *filename)
   /* Set tag, ref of SDG to write */
   Writesdg.data.tag = DFTAG_SD;
   if (!Writeref)
-    Writeref = Htagnewref(Sfile_id,Writesdg.data.tag);
+    Writeref = Hnewref(Sfile_id);
   if (!Writeref)
     {
       ret_value = FAIL;

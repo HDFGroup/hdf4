@@ -256,6 +256,7 @@ c     related: VSfind--vsfind--vsffnd
       integer	function vsffnd (vs, name)
       integer			vs
       character*(*)	name
+      integer vsfndc
 
       vsffnd = vsfndc (vs, name, len(name))
       end
@@ -625,7 +626,7 @@ c     related: VSQueryfields--vsqfldsc--vsqfflds
       character*(*)	fields
       integer			vsqfldsc
 
-      vsqfflds = vsqfldsc (vs,fields)
+      vsqfflds = vsqfldsc (vs,fields, len(fields))
       end
 
 c     ------------------------------------------------------------
@@ -637,7 +638,7 @@ c     related: VSQueryname--vsqnamec--vsqfname
       character*(*)	name
       integer			vsqnamec
 
-      vsqfname = vsqnamec (vs,name)
+      vsqfname = vsqnamec (vs,name, len(name))
       end
 
 c     ============================================================

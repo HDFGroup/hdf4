@@ -138,7 +138,7 @@ nvdtchc(intf * vkey)
 FRETVAL(intf)
 nvgnamc(intf * vkey, _fcd vgname)
 {
-    return (Vgetname(*vkey, vgname));
+    return (Vgetname(*vkey, _fcdtocp(vgname)));
 }   /* VGNAMC */
 
 /* ------------------------------------------------------------------ */
@@ -150,7 +150,7 @@ nvgnamc(intf * vkey, _fcd vgname)
 FRETVAL(intf)
 nvgclsc(intf * vkey, _fcd vgclass)
 {
-    return (Vgetclass(*vkey, vgclass));
+    return (Vgetclass(*vkey, _fcdtocp(vgclass)));
 }   /* VGCLSC */
 
 /* ------------------------------------------------------------------ */
@@ -162,7 +162,7 @@ nvgclsc(intf * vkey, _fcd vgclass)
 FRETVAL(intf)
 nvinqc(intf * vkey, intf * nentries, _fcd vgname)
 {
-    return ((intf) Vinquire(*vkey, (int32 *) nentries, vgname));
+    return ((intf) Vinquire(*vkey, (int32 *) nentries, _fcdtocp(vgname)));
 }   /* VINQC */
 
 /* ------------------------------------------------------------------ */
@@ -393,7 +393,7 @@ nvsseekc(intf * vkey, intf * eltpos)
 FRETVAL(intf)
 nvsgnamc(intf * vkey, _fcd vsname)
 {
-    return (VSgetname(*vkey, vsname));
+    return (VSgetname(*vkey, _fcdtocp(vsname)));
 }   /* VSGNAMC */
 
 /* ------------------------------------------------------------------ */
@@ -405,7 +405,7 @@ nvsgnamc(intf * vkey, _fcd vsname)
 FRETVAL(intf)
 nvsgclsc(intf * vkey, _fcd vsclass)
 {
-    return (VSgetclass(*vkey, vsclass));
+    return (VSgetclass(*vkey, _fcdtocp(vsclass)));
 }   /* VSGCLSC */
 
 /* ------------------------------------------------------------------ */
@@ -419,7 +419,7 @@ nvsinqc(intf * vkey, intf * nelt, intf * interlace, _fcd fields, intf * eltsize,
         _fcd vsname)
 {
     return ((intf) VSinquire(*vkey, (int32 *) nelt, (int32 *) interlace,
-                             fields, (int32 *) eltsize, vsname));
+                             fields, (int32 *) eltsize, _fcdtocp(vsname)));
 }   /* VSINQC */
 
 /* ------------------------------------------------------------------ */
@@ -762,7 +762,7 @@ nvseltsc(intf * vkey)
 FRETVAL(intf)
 nvsgfldc(intf * vkey, _fcd fields)
 {
-    return ((intf) VSgetfields(*vkey, fields));
+    return ((intf) VSgetfields(*vkey, _fcdtocp(fields)));
 }   /* VSGFLDC */
 
 /* ------------------------------------------------------------------ */
@@ -1128,9 +1128,15 @@ nvsqfintr(intf * vkey, intf * interlace)
  */
 
 FRETVAL(intf)
-nvsqfldsc(intf * vkey, _fcd fields)
+nvsqfldsc(intf * vkey, _fcd fields, intf *fieldslen)
 {
-    return ((intf) VSQueryfields((int32) *vkey, fields));
+    char       *fld= HDf2cstring(fields, (intn) *fieldslen);
+    intf        ret;
+
+    ret = (intf) VSQueryfields((int32) *vkey, fld);
+    HDfree(fld);
+
+    return (ret);
 }
 /* ------------------------------------------------------------------ */
 
@@ -1158,8 +1164,15 @@ nvsqfvsiz(intf * vkey, intf * size)
  */
 
 FRETVAL(intf)
-nvsqnamec(intf * vkey, _fcd name)
+nvsqnamec(intf * vkey, _fcd name, intf *namelen)
 {
-    return ((intf) VSQueryname((int32) *vkey, name));
+    char       *nam= HDf2cstring(name, (intn) *namelen);
+    intf        ret;
+
+    /* trimendblanks(nam); */
+    ret = (intf) VSQueryname((int32) *vkey, nam);
+    HDfree(nam);
+
+    return (ret);
 }
 /* ------------------------------------------------------------------ */

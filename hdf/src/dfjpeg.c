@@ -126,12 +126,8 @@ void
 hdf_term_destination(struct jpeg_compress_struct *cinfo_ptr)
 {
     hdf_dest_ptr dest=(hdf_dest_ptr)cinfo_ptr->dest;
-#ifdef OLD_WAY
-    size_t datacount = OUTPUT_BUF_SIZE - dest->pub.free_in_buffer;
-#else
     /* note that 'free_in_buffer' is size_t in the jpeg library */
     int32 datacount = OUTPUT_BUF_SIZE - dest->pub.free_in_buffer;
-#endif
 
     /* Write any data remaining in the buffer */
     if (datacount > 0) {

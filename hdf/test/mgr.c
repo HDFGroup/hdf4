@@ -1043,7 +1043,7 @@ test_mgr_image()
 
         if(0!=HDmemcmp(image,image0,sizeof(image0)))
           {
-              MESSAGE(3, printf("Error reading data for new image with default fill-value, whole image\n"););
+              MESSAGE(3, printf("%d:Error reading data for new image with default fill-value, whole image\n",__LINE__););
               num_errs++;
           } /* end if */
 
@@ -1168,7 +1168,7 @@ test_mgr_image()
 
         if(0!=HDmemcmp(image,image0,sizeof(image0)))
           {
-              MESSAGE(3, printf("Error reading data for new image with default fill-value, sub-setted image\n"););
+              MESSAGE(3, printf("%d:Error reading data for new image with default fill-value, sub-setted image\n",__LINE__););
 
               MESSAGE(8, for(i=0; i<TEST_YDIM; i++) \
                       for(j=0; j<TEST_XDIM; j++) \
@@ -1297,7 +1297,7 @@ test_mgr_image()
 
         if(0!=HDmemcmp(image,sub_image,count[XDIM]*count[YDIM]*sizeof(fill_pixel)))
           {
-              MESSAGE(3, printf("Error reading data for new image with default fill-value, sub-setted image\n"););
+              MESSAGE(3, printf("%d:Error reading data for new image with default fill-value, sub-setted image\n",__LINE__););
               num_errs++;
           } /* end if */
 
@@ -1421,7 +1421,7 @@ test_mgr_image()
 
         if(0!=HDmemcmp(image,image0,sizeof(TEST_VARTYPE)*TEST_YDIM*TEST_XDIM*TEST_NCOMP))
           {
-              MESSAGE(3, printf("Error reading data for new image with default fill-value, sub-sampled image\n"););
+              MESSAGE(3, printf("%d:Error reading data for new image with default fill-value, sub-sampled image\n",__LINE__););
 
               MESSAGE(8, for(i=0; i<TEST_YDIM; i++) \
                       for(j=0; j<TEST_XDIM; j++) \
@@ -1549,7 +1549,7 @@ test_mgr_image()
 
         if(0!=HDmemcmp(image,sub_image,count[XDIM]*count[YDIM]*sizeof(fill_pixel)))
           {
-              MESSAGE(3, printf("Error reading data for new image with default fill-value, sub-sampled image\n"););
+              MESSAGE(3, printf("%d:Error reading data for new image with default fill-value, sub-sampled image\n",__LINE__););
               num_errs++;
           } /* end if */
 
@@ -1658,7 +1658,7 @@ test_mgr_image()
 
         if(0!=HDmemcmp(image,image0,sizeof(image0)))
           {
-              MESSAGE(3, printf("Error reading data for new image with default fill-value, whole image\n"););
+              MESSAGE(3, printf("%d:Error reading data for new image with default fill-value, whole image\n",__LINE__););
               num_errs++;
           } /* end if */
 
@@ -1925,7 +1925,7 @@ test_mgr_image()
 
         if(0!=HDmemcmp(image,sub_image,count[XDIM]*count[YDIM]*sizeof(pixel)))
           {
-              MESSAGE(3, printf("Error reading data for new image with default fill-value, sub-setted image\n"););
+              MESSAGE(3, printf("%d:Error reading data for new image with default fill-value, sub-setted image\n",__LINE__););
               num_errs++;
           } /* end if */
 
@@ -2185,7 +2185,7 @@ test_mgr_image()
 
         if(0!=HDmemcmp(image,sub_image,count[XDIM]*count[YDIM]*sizeof(fill_pixel)))
           {
-              MESSAGE(3, printf("Error reading data for new image with default fill-value, sub-sampled image\n"););
+              MESSAGE(3, printf("%d:Error reading data for new image with default fill-value, sub-sampled image\n",__LINE__););
               num_errs++;
           } /* end if */
 

@@ -179,7 +179,7 @@ int r;
       break;
     case LENS:
       NEEDBITS(32)
-      if (((~b) >> 16) != (b & 0xffff))
+      if ((((~b) >> 16) & 0xffff) != (b & 0xffff))
       {
         s->mode = BAD;
         z->msg = "invalid stored block lengths";

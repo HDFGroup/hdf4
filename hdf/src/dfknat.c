@@ -308,45 +308,15 @@ DFKnb8b(VOIDP s, VOIDP d, uint32 num_elm,
     if (!in_place)
         for (i = 0; i < num_elm; i++)
           {
-#ifdef OLD_WAY
-              dest[0] = source[0];
-              dest[1] = source[1];
-              dest[2] = source[2];
-              dest[3] = source[3];
-              dest[4] = source[4];
-              dest[5] = source[5];
-              dest[6] = source[6];
-              dest[7] = source[7];
-#else
               HDmemcpy(dest, source, 8);
-#endif /* OLD_WAY */
               dest += dest_stride;
               source += source_stride;
           }
     else
         for (i = 0; i < num_elm; i++)
           {
-#ifdef OLD_WAY
-              buf[0] = source[0];
-              buf[1] = source[1];
-              buf[2] = source[2];
-              buf[3] = source[3];
-              buf[4] = source[4];
-              buf[5] = source[5];
-              buf[6] = source[6];
-              buf[7] = source[7];
-              dest[0] = buf[0];
-              dest[1] = buf[1];
-              dest[2] = buf[2];
-              dest[3] = buf[3];
-              dest[4] = buf[4];
-              dest[5] = buf[5];
-              dest[6] = buf[6];
-              dest[7] = buf[7];
-#else
               HDmemcpy(buf, source, 8);
               HDmemcpy(dest, buf, 8);
-#endif
               dest += dest_stride;
               source += source_stride;
           }

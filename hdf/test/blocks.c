@@ -107,7 +107,7 @@ test_hblocks()
     ret = Hgetelement(fid, (uint16) 1000, (uint16) 4, inbuf);
     if (ret != BUFSIZE / 2)
       {
-          fprintf(stderr, "ERROR: Hgetelement returned the wrong length: %d\n", (int) ret);
+          fprintf(stderr, "ERROR(%d): Hgetelement returned the wrong length: %d\n", (int)__LINE__,(int) ret);
           errors++;
       }
 
@@ -150,6 +150,7 @@ test_hblocks()
 
     aid1 = Hstartread(fid, 1000, 1);
     CHECK(aid1, FAIL, "Hstartread");
+HEprint(stderr,0);
 
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);

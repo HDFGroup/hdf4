@@ -20,6 +20,10 @@
 #define HFILE_H
 
 #include "hlimits.h"
+#include "tbbt.h"
+#include "bitvect.h"
+#include "atom.h"
+#include "dynarray.h"
 
 /* Magic cookie for HDF data files */
 #define MAGICLEN 4  /* length */
@@ -281,6 +285,7 @@ typedef struct dd_t
       uint16      ref;          /* Reference number of element */
       int32       length;       /* length of data element */
       int32       offset;       /* byte offset of data element from */
+      struct ddblock_t *blk;    /* Pointer to the block this dd is in */
   }                             /* beginning of file */
 dd_t;
 
@@ -298,34 +303,25 @@ version_t;
 /* record of a block of data descriptors, mirrors structure of a HDF file.  */
 typedef struct ddblock_t
   {
-      intn        dirty;        /* boolean: should this DD block be flushed? */
+      uintn       dirty;        /* boolean: should this DD block be flushed? */
       int32       myoffset;     /* offset of this DD block in the file */
       int16       ndds;         /* number of dd's in this block */
       int32       nextoffset;   /* offset to the next ddblock in the file */
+      struct filerec_t *frec;   /* Pointer to the filerec this block is in */
       struct ddblock_t *next;   /* pointer to the next ddblock in memory */
       struct ddblock_t *prev;   /* Pointer to previous ddblock. */
       struct dd_t *ddlist;      /* pointer to array of dd's */
   }
 ddblock_t;
 
-/* tag/ref structure */
-typedef struct tag_ref_str
+/* Tag tree node structure */
+typedef struct tag_info_str
   {
-      intn        tag;          /* tag for this element */
-      intn        ref;          /* ref for this element */
-      ddblock_t  *pblock;       /* ddblock this object is in */
-      int32       pidx;         /* this object's index into dd block */
-  }
-tag_ref    , *tag_ref_ptr;
-
-/* tag/ref list structure */
-typedef struct tag_ref_list_str
-  {
-      int         count;        /* number of valid DDs in this list*/
-      tag_ref     objects[HASH_BLOCK_SIZE];     /* DDs */
-      struct tag_ref_list_str *next;    /* next list of DDs */
-  }
-tag_ref_list, *tag_ref_list_ptr;
+      uint16 tag;       /* tag value for this node */
+      /* Needs to be first in this structure */
+      bv_ptr b;         /* bit-vector to keep track of which refs are used */
+      dynarr_p d;       /* dynarray of the refs for this tag */
+  }tag_info;
 
 /* For determining what the last file operation was */
 typedef enum
@@ -349,10 +345,6 @@ typedef struct filerec_t
       intn        version_set;  /* version tag stuff */
       version_t   version;      /* file version info */
 
-      /* fast lookup of empty dd stuff */
-      int32       null_idx;     /* index into null_block of NULL entry */
-      struct ddblock_t *null_block;     /* last block a NULL entry was found in */
-
       /* Seek caching info */
       uint32      f_cur_off;    /* Current location in the file */
       fileop_t    last_op;      /* the last file operation performed */
@@ -362,11 +354,15 @@ typedef struct filerec_t
       intn        dirty;        /* boolean: if dd list needs to be flushed */
       uint32      f_end_off;    /* offset of the end of the file */
 
+      /* DD list pointers */
       struct ddblock_t *ddhead; /* head of ddblock list */
       struct ddblock_t *ddlast; /* end of ddblock list */
 
-      /* hash table stuff */
-      tag_ref_list_ptr hash[HASH_MASK + 1];   /* hashed table of tag/refs */
+      /* NULL DD pointers (for fast lookup of DFTAG_NULL) */
+      struct ddblock_t *ddnull; /* location of last ddblock with a DFTAG_NULL */
+      int32       ddnull_idx;   /* offset of the last location with DFTAG_NULL */
+
+      TBBT_TREE *tag_tree;      /* TBBT of the tags in the file */
   }
 filerec_t;
 
@@ -380,29 +376,21 @@ filerec_t;
    index into the ddlist of that ddblock. */
 typedef struct accrec_t
   {
+      /* Flags for this access record */
       intn        appendable;   /* whether appends to the data are allowed */
-      intn        flush;        /* whether the DD for this data should be flushed */
-      /* when Hendaccess() is called */
-      intn        used;         /* whether the access record is used */
-      uint32      access;       /* access codes */
       intn        special;      /* special element ? */
       intn        new_elem;     /* is a new element (i.e. no length set yet) */
+      intn        used;         /* whether the access record is used */
+      
+      uint32      access;       /* access codes */
       uintn       access_type;  /* I/O access type: serial/parallel/... */
       int32       file_id;      /* id of attached file */
-      int32       idx;          /* index of dd into *block */
-      int32       posn;         /* seek position with respect to */
-      /* start of element */
+      atom_t      ddid;         /* DD id for the DD attached to */
+      int32       posn;         /* seek position with respect to start of element */
       VOIDP       special_info; /* special element info? */
-      struct ddblock_t *block;  /* ptr to ddblock that contains dd */
       struct funclist_t *special_func;  /* ptr to special function? */
   }
 accrec_t;
-
-/* Convenience Macros to access the DD for an access record */
-#define ACCREC_TAG(a) ((a)->block->ddlist[(a)->idx].tag)
-#define ACCREC_REF(a) ((a)->block->ddlist[(a)->idx].ref)
-#define ACCREC_OFF(a) ((a)->block->ddlist[(a)->idx].offset)
-#define ACCREC_LEN(a) ((a)->block->ddlist[(a)->idx].length)
 
 /* this type is returned to applications programs or other special
    interfaces when they need to know information about a given
@@ -542,9 +530,6 @@ extern filerec_t *file_records;
 extern filerec_t file_records[];
 #endif /* !macintosh */
 
-/* The total number of DD's in the file?..hmm...*/
-#define FILE_NDDS(file_rec) ((file_rec)->ddlast->ndds)
-
 /* -------------------------- H-Layer Prototypes -------------------------- */
 /*
    ** Functions to get information of special elt from other access records.
@@ -561,32 +546,8 @@ extern      "C"
     extern int  HIget_access_slot
                 (void);
 
-    extern intn HIcount_dd(filerec_t * file_rec, uint16 cnt_tag, uint16 cnt_ref,
-                           uintn *all_cnt, uintn *real_cnt);
-
-    extern int  HIfind_dd
-                (uint16 look_tag, uint16 look_ref, ddblock_t ** pblock, int32 *pidx,
-                 intn direction);
-
-    extern int  HInew_dd_block
-                (filerec_t * file_rec, int16 ndds, const char *FUNC);
-
-    extern int  HIupdate_dd
-                (filerec_t * file_rec, ddblock_t * block, int32 idx, const char *FUNC);
-
     extern VOIDP HIgetspinfo
-                (accrec_t * access_rec, uint16 tag, uint16 ref);
-
-    extern int  HIlookup_dd
-                (filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
-                 ddblock_t ** pblock, int32 *pidx);
-
-    extern int  HIadd_hash_dd
-                (filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
-                 ddblock_t * pblock, int32 pidx);
-
-    extern int  HIdel_hash_dd
-                (filerec_t * file_rec, uint16 look_tag, uint16 look_ref);
+                (accrec_t * access_rec);
 
     extern int32 HPgetdiskblock
                 (filerec_t * file_rec, int32 block_size, intn moveto);
@@ -605,6 +566,12 @@ extern      "C"
 
     extern intn HPwrite
                 (filerec_t *file_rec,const VOIDP buf,int32 bytes);
+
+    extern intn tagcompare
+                (VOIDP k1, VOIDP k2, intn cmparg);
+
+    extern VOID tagdestroynode
+                (VOIDP n);
 
 /*
    ** from hblocks.c
@@ -756,6 +723,209 @@ extern      "C"
                 (hdf_file_t rn, char *buf, int32 n);
 
 #endif                          /* MAC */
+
+/*
+   ** from hfiledd.c
+ */
+/******************************************************************************
+ NAME
+     HTPstart - Initialize the DD list in memory
+
+ DESCRIPTION
+    Reads the DD blocks from disk and creates the in-memory structures for
+    handling them.  This routine should only be called once for a given
+    file and HTPend should be called when finished with the DD list (i.e.
+    when the file is being closed).
+
+ RETURNS
+    Returns SUCCEED if successful and FAIL otherwise
+
+*******************************************************************************/
+intn HTPstart(filerec_t *file_rec       /* IN:  File record to store info in */
+);
+
+/******************************************************************************
+ NAME
+     HTPinit - Create a new DD list in memory
+
+ DESCRIPTION
+    Creates a new DD list in memory for a newly created file.  This routine
+    should only be called once for a given file and HTPend should be called
+    when finished with the DD list (i.e.  when the file is being closed).
+
+ RETURNS
+    Returns SUCCEED if successful and FAIL otherwise
+
+*******************************************************************************/
+intn HTPinit(filerec_t *file_rec,       /* IN: File record to store info in */
+    int16 ndds                          /* IN: # of DDs to store in each block */
+);
+
+/******************************************************************************
+ NAME
+     HTPsync - Flush the DD list in memory
+
+ DESCRIPTION
+    Syncronizes the in-memory copy of the DD list with the copy on disk by
+    writing out the DD blocks which have changed to disk.
+    
+ RETURNS
+    Returns SUCCEED if successful and FAIL otherwise
+
+*******************************************************************************/
+intn HTPsync(filerec_t *file_rec       /* IN:  File record to store info in */
+);
+
+/******************************************************************************
+ NAME
+     HTPend - Terminate the DD list in memory
+
+ DESCRIPTION
+    Terminates access to the DD list in memory, writing the DD blocks out to
+    the disk (if they've changed).  After this routine is called, no further
+    access to tag/refs (or essentially any other HDF objects) can be performed
+    on the file.
+
+ RETURNS
+    Returns SUCCEED if successful and FAIL otherwise
+
+*******************************************************************************/
+intn HTPend(filerec_t *file_rec       /* IN:  File record to store info in */
+); 
+
+/******************************************************************************
+ NAME
+     HTPcreate - Create (and attach to) a tag/ref pair
+
+ DESCRIPTION
+    Creates a new tag/ref pair in memory and inserts the tag/ref pair into the
+    DD list to be written out to disk.  This routine returns a DD id which can
+    be used in the other tag/ref routines to modify the DD.
+
+ RETURNS
+    Returns DD id if successful and FAIL otherwise
+
+*******************************************************************************/
+atom_t HTPcreate(filerec_t *file_rec,   /* IN: File record to store info in */
+    uint16 tag,                         /* IN: Tag to create */
+    uint16 ref                          /* IN: ref to create */
+);
+
+/******************************************************************************
+ NAME
+     HTPselect - Attach to an existing tag/ref pair
+
+ DESCRIPTION
+    Attaches to an existing tag/ref pair.  This routine returns a DD id which
+    can be used in the other tag/ref routines to modify the DD.
+
+ RETURNS
+    Returns DD id if successful and FAIL otherwise
+
+*******************************************************************************/
+atom_t HTPselect(filerec_t *file_rec,   /* IN: File record to store info in */
+    uint16 tag,                         /* IN: Tag to select */
+    uint16 ref                          /* IN: ref to select */
+);
+
+/******************************************************************************
+ NAME
+     HTPendaccess - End access to an existing tag/ref pair
+
+ DESCRIPTION
+    Ends access to an existing tag/ref pair.  Any further access to the tag/ref
+    pair may result in incorrect information being recorded about the DD in
+    memory or on disk.
+
+ RETURNS
+    Returns SUCCEED if successful and FAIL otherwise
+
+*******************************************************************************/
+intn HTPendaccess(atom_t ddid           /* IN: DD id to end access to */
+);
+
+/******************************************************************************
+ NAME
+     HTPdelete - Delete an existing tag/ref pair
+
+ DESCRIPTION
+    Deletes a tag/ref from the file.  Also ends access to the tag/ref pair.
+    Any further access to the tag/ref pair may result in incorrect information
+    being recorded about the DD in memory or on disk.
+
+ RETURNS
+    Returns SUCCEED if successful and FAIL otherwise
+
+*******************************************************************************/
+intn HTPdelete(atom_t ddid              /* IN: DD id to delete */
+);
+
+/******************************************************************************
+ NAME
+     HTPupdate - Change the offset or length of an existing tag/ref pair
+
+ DESCRIPTION
+    Updates a tag/ref in the file, allowing the length and/or offset to be
+    modified. Note: "INVALID_OFFSET" & "INVALID_LENGTH" are used to indicate
+    that the length or offset (respectively) is unchanged.
+
+ RETURNS
+    Returns SUCCEED if successful and FAIL otherwise
+
+*******************************************************************************/
+intn HTPupdate(atom_t ddid,             /* IN: DD id to update */
+    int32 new_off,                      /* IN: new offset for DD */
+    int32 new_len                       /* IN: new length for DD */
+);
+
+/******************************************************************************
+ NAME
+     HTPinquire - Get the DD information for a DD (i.e. tag/ref/offset/length)
+
+ DESCRIPTION
+    Get the DD information for a DD id from the DD block.  Passing NULL for
+    any parameter does not try to update that parameter.
+
+ RETURNS
+    Returns SUCCEED if successful and FAIL otherwise
+
+*******************************************************************************/
+intn HTPinquire(atom_t ddid,            /* IN: DD id to inquire about */
+    uint16 *tag,                        /* IN: tag of DD */
+    uint16 *ref,                        /* IN: ref of DD */
+    int32 *off,                         /* IN: offset of DD */
+    int32 *len                          /* IN: length of DD */
+);
+
+/******************************************************************************
+ NAME
+     HTPis_special - Check if a DD id is associated with a special tag
+
+ DESCRIPTION
+    Checks if the tag for the DD id is a special tag.
+
+ RETURNS
+    Returns TRUE(1)/FALSE(0) if successful and FAIL otherwise
+
+*******************************************************************************/
+intn HTPis_special(atom_t ddid             /* IN: DD id to inquire about */
+);
+
+/******************************************************************************
+ NAME
+    HTPdump_dds -- Dump out the dd information for a file
+
+ DESCRIPTION
+    Prints out all the information (that you could _ever_ want to know) about
+    the dd blocks and dd list for a file.
+
+ RETURNS
+    returns SUCCEED (0) if successful and FAIL (-1) if failed.
+
+*******************************************************************************/
+intn HTPdump_dds(int32 file_id,     /* IN: file ID of HDF file to dump info for */
+    FILE *fout                      /* IN: file stream to output to */
+);
 
 #if defined c_plusplus || defined __cplusplus
 }

@@ -41,6 +41,7 @@ C
       FALSE = 0
       TRUE = 1
       number_failed = 0
+      num_images = 0
       CR = char(10)  
 
       do 120 x=1, 100

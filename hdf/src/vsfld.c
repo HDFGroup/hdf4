@@ -386,13 +386,6 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
     vs->usym[usymid].type = (int16) localtype;
     vs->usym[usymid].order = (int16) order;
 
-#ifdef OLD_WAY
-/* Now we are dynamicly allocating the symbol table, so no overflow -QAK */
-    /* prevent user-symbol table overflow */
-    if (vs->nusym >= VSFIELDMAX)
-        HGOTO_ERROR(DFE_SYMSIZE, FAIL);
-#endif /* OLD_WAY */
-
     /* increment vs->nusym only if no user field has been redefined */
     if (!replacesym)
         vs->nusym++;

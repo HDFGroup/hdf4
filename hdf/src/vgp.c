@@ -781,7 +781,7 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
           vg->vgname[0] = '\0';
           vg->f = f;
           vg->otag = DFTAG_VG;
-          vg->oref = Htagnewref(f,vg->otag);    /* create a new unique ref for it */
+          vg->oref = Hnewref(f);    /* create a new unique ref for it */
           if (vg->oref == 0)
               HGOTO_ERROR(DFE_NOREF, FAIL);
 

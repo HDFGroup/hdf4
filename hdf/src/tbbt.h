@@ -96,6 +96,10 @@ struct tbbt_node
     |  ( (i) ? TBBT_INTERN : 0 )  )
 #endif
   };
+
+/* Pointer to the tbbt node free list */
+static TBBT_NODE *tbbt_free_list=NULL;
+
 typedef struct tbbt_tree TBBT_TREE;
 /* Threaded tree structure */
 struct tbbt_tree
@@ -326,6 +330,9 @@ extern      "C"
 
     long        tbbtcount
                 (TBBT_TREE * tree);
+
+/* Terminate the buffers used in the tbbt*() interface */
+    intn tbbt_shutdown(void);
 
 #if defined c_plusplus || defined __cplusplus
 }

@@ -68,6 +68,12 @@
 #define HCLOSE_GOTO_ERROR(hfid, err, ret_val) {HERROR(err); Hclose(hfid); \
                                             ret_value = ret_val; goto done;}
 
+/* HGOTO_DONE macro, used to facilitate the new error reporting model.  
+   This macro is just a wrapper to set the return value and jump to the 'done'
+   label.  Also assumption of a variable 'ret_value' */
+
+#define HGOTO_DONE(ret_val) {ret_value = ret_val; goto done;}
+
 /* For further error reporting */
 #define HE_REPORT(msg) HEreport(msg)
 #define HE_REPORT_RETURN(msg, ret_val) { HEreport(msg); return(ret_val); }
@@ -82,6 +88,19 @@
                                                   ret_value = ret_val; \
                                                   goto done;}
 
+
+/* always points to the next available slot; the last error record is in slot (top-1) */
+#ifndef _H_ERR_MASTER_
+extern
+#endif /* _H_ERR_MASTER_ */
+int32       error_top
+#ifdef _H_ERR_MASTER_
+= 0
+#endif /* _H_ERR_MASTER_ */
+;
+
+/* Macro to wrap around calls to HEPclear, so it doesn't get called zillions of times */
+#define HEclear() {if(error_top!=0) HEPclear(); }
 
 /*
    ======================================================================
@@ -240,7 +259,13 @@ typedef enum
       DFE_BITSEEK,              /* There was a bit-seek error */
 
 /* tbbt interface errors */
-      DFE_TBBTINS               /* Failed to insert element into tree */
+      DFE_TBBTINS,              /* Failed to insert element into tree */
+
+/* bit-vector interface errors */
+      DFE_BVNEW,                /* Failed to create a bit-vector */
+      DFE_BVSET,                /* Failed when setting a bit in a bit-vector */
+      DFE_BVGET,                /* Failed when getting a bit in a bit-vector */
+      DFE_BVFIND                /* Failed when finding a bit in a bit-vector */
   }
 hdf_err_code_t;
 
@@ -403,7 +428,15 @@ PRIVATE const struct error_messages_t error_messages[] =
     {DFE_BITREAD,       "There was a bit-read error"},
     {DFE_BITWRITE,      "There was a bit-write error"},
     {DFE_BITSEEK,       "There was a bit-seek error"},
-    {DFE_TBBTINS,       "Failed to insert element into tree"}
+
+/* tbbt interface errors */
+    {DFE_TBBTINS,       "Failed to insert element into tree"},
+
+/* bit-vector interface errors */
+    {DFE_BVNEW,         "Failed to create a bit-vector"},
+    {DFE_BVSET,         "Failed when setting a bit in a bit-vector"},
+    {DFE_BVGET,         "Failed when getting a bit in a bit-vector"},
+    {DFE_BVFIND,        "Failed when finding a bit in a bit-vector"}
 };
 #endif /* _H_ERR_MASTER_ */
 

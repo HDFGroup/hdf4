@@ -93,8 +93,6 @@ gr_interlace_t;
  * raster images and one of global attributes
  */
 
-typedef int32 treekey;          /* type of keys for */
-
 typedef struct gr_info {
     int32       hdf_file_id;    /* the corresponding HDF file ID */
     uint16      gr_ref;         /* ref # of the Vgroup of the GR in the file */

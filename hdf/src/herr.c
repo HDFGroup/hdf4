@@ -40,37 +40,15 @@ EXPORTED ROUTINES
    ** Include files for variable argument processing for HEreport
  */
 #include <stdarg.h>
-#ifdef OLD_WAY
-#include <varargs.h>
-#endif
 
 /* We use a stack to hold the errors plus we keep track of the function,
    file and line where the error occurs. */
-
-#if 0
-#define FUNC_NAME_LEN   32
-
-/* error_stack is the error stack.  error_top is the stack top pointer, 
-   and points tothe next available slot on the stack */
-#ifndef ERR_STACK_SZ
-#   define ERR_STACK_SZ 10
-#endif
-
-/* max size of a stored error description */
-#ifndef ERR_STRING_SIZE
-#   define ERR_STRING_SIZE 512
-#endif
-#endif /* if 0 */
 
 /* the structure of the error stack element */
 typedef struct error_t
   {
       hdf_err_code_t error_code;    /* Error number */
-#ifdef OLD_WAY
-      const char *function_name;    /* function where error occur */
-#else /* OLD_WAY */
       char function_name[FUNC_NAME_LEN];    /* function where error occur */
-#endif /* OLD_WAY */
       const char *file_name;    /* file where error occur */
       intn        line;         /* line in file where error occurs */
       intn        system;       /* for system or HDF error */
@@ -81,9 +59,6 @@ error_t;
 
 /* pointer to the structure to hold error messages */
 PRIVATE error_t *error_stack = NULL;
-
-/* always points to the next available slot; the last error record is in slot (top-1) */
-int32       error_top = 0;
 
 #ifndef DEFAULT_MESG
 #   define DEFAULT_MESG "Unknown error"
@@ -110,7 +85,6 @@ DESCRIPTION
 const char _HUGE *
 HEstring(hdf_err_code_t error_code)
 {
-#ifndef OLD_WAY
     int         i;              /* temp int index */
 #ifdef HAVE_PABLO
     TRACE_ON(HE_mask, ID_HEstring);
@@ -131,9 +105,6 @@ HEstring(hdf_err_code_t error_code)
 #endif /* HAVE_PABLO */
     /* otherwise, return default message */
     return DEFAULT_MESG;
-#else
-    return (error_messages[error_code].str);
-#endif
 } /* HEstring */
 
 /*--------------------------------------------------------------------------
@@ -148,7 +119,7 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 VOID
-HEclear(void)
+HEPclear(void)
 {
 #ifdef HAVE_PABLO
   TRACE_ON(HE_mask, ID_HEclear);
@@ -172,7 +143,7 @@ done:
   TRACE_OFF(HE_mask, ID_HEclear);
 #endif /* HAVE_PABLO */
   return;
-} /* HEclear */
+} /* HEPclear */
 
 /*-------------------------------------------------------------------------
 NAME
@@ -220,11 +191,7 @@ HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_na
 
     if (error_top < ERR_STACK_SZ)
       {
-#ifdef OLD_WAY
-          error_stack[error_top].function_name = function_name;
-#else /* OLD_WAY */
           HDstrcpy(error_stack[error_top].function_name,function_name);
-#endif /* OLD_WAY */
           error_stack[error_top].file_name = file_name;
           error_stack[error_top].line = line;
           error_stack[error_top].error_code = error_code;

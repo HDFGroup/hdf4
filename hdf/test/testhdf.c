@@ -132,6 +132,8 @@ main(int argc, char *argv[])
     setbuf(stdout, NULL);
 
     /* Tests are generally arranged from least to most complexity... */
+    InitTest("bitvect", test_bitvect, "Bit-Vector routines");
+    InitTest("tbbt", test_tbbt, "Threaded Balanced Binary Trees");
     InitTest("vers", test_vers, "VERSION OF LIBRARY");
     InitTest("hfile", test_hfile, "HFILE");
     InitTest("hfile1", test_hfile1, "HFILE LIMITS");
@@ -155,7 +157,6 @@ main(int argc, char *argv[])
     InitTest("slabs", test_slab, "HYPERSLAB INTERFACE");
     InitTest("nbit", test_nbit, "N-Bit Dataset Interface");
     InitTest("litend", test_litend, "LITTLE-ENDIAN INTERFACE");
-    InitTest("tbbt", test_tbbt, "Threaded Balanced Binary Trees");
     InitTest("vset", test_vsets, "VSET InterfaceTest");
     InitTest("mfgr", test_mgr, "Multi-File Generic Raster Image Interface");
 

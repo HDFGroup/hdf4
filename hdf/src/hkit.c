@@ -25,13 +25,8 @@ LOCAL ROUTINES
 EXPORTED ROUTINES
   HDc2fstr      -- convert a C string into a Fortran string IN PLACE
   HDf2cstring   -- convert a Fortran string to a C string
-  HIlookup_dd   -- find the dd record for an element
-  HIadd_hash_dd -- add a dd to the hash table
-  HIdel_hash_dd -- remove a dd from the hash table
-  HIfind_dd     -- find the dd record for an element
-  HIcount_dd    -- counts the dd's of a certain type in file
-  HDflush       -- flush the HDF file
   HDpackFstring -- convert a C string into a Fortran string
+  HDflush       -- flush the HDF file
   HDgettagdesc  -- return a text description of a tag
   HDgettagsname -- return a text name of a tag
   HDgettagnum   -- return the tag number for a text description of a tag
@@ -60,12 +55,7 @@ HDc2fstr(char *str, intn len)
 {
     int         i;
 
-#ifdef OLD_WAY
-    for(i=0; (str[i]); i++)
-        /* EMPTY */;
-#else /* OLD_WAY */
     i=HDstrlen(str)+1;
-#endif /* OLD_WAY */
     for (; i < len; i++)
         str[i] = ' ';
     return SUCCEED;
@@ -95,501 +85,50 @@ HDf2cstring(_fcd fdesc, intn len)
     int         i;
 
     str = _fcdtocp(fdesc);
-#ifdef OLD_WAY
-    for (i = len - 1; i >= 0 && ((str[i] & 0x80) || !isgraph(str[i])); i--)
-        /*EMPTY */ ;
-#else /* OLD_WAY */
     /* This should be equivalent to the above test -QAK */
     for(i=len-1; i>=0 && !isgraph(str[i]); i--)
         /*EMPTY*/;
-#endif /* OLD_WAY */
     cstr = (char *) HDmalloc((uint32) (i + 2));
     if (!cstr)
 	HRETURN_ERROR(DFE_NOSPACE, NULL);
     cstr[i + 1] = '\0';
-#ifdef OLD_WAY
-    for (; i >= 0; i--)
-        cstr[i] = str[i];
-#else /* OLD_WAY */
     HDmemcpy(cstr,str,i+1);
-#endif /* OLD_WAY */
     return cstr;
 }   /* HDf2cstring */
 
-/* ----------------------------- HIlookup_dd ------------------------------ */
+/* ---------------------------- HDpackFstring ----------------------------- */
 /*
 NAME
-   HIlookup_dd -- find the dd record for an element
+   HDpackFstring -- convert a C string into a Fortran string
 USAGE
-   int HIlookup_dd(file_rec, tag, ref, block, idx)
-   filerec_t *  file_rec;       IN:  file record to search
-   uint16       tag;            IN:  tag of element to find
-   uint16       ref;            IN:  ref of element to find
-   ddblock_t ** block;          OUT: block element is in
-   int32     *  idx;            OUT: element's index in block
+   intn HDpackFstring(src, dest, len)
+   char * src;          IN:  source string
+   char * dest;         OUT: destination
+   intn   len;          IN:  length of string
 RETURNS
    SUCCEED / FAIL
 DESCRIPTION
-   find the dd with tag and ref, by returning the block 
-   where the dd resides and the index of the dd in the 
-   ddblock ddlist.
+   given a NULL terminated C string 'src' convert it to
+   a space padded Fortran string 'dest' of length 'len'
 
-   This function is different from HIfind_dd in that it
-   does not understand any ordering in the file.  Wildcards
-   sent to this routine (i.e. to get the 'next' widget
-   get passed off to HIfind_dd().
-
----------------------------------------------------------------------------*/
-int 
-HIlookup_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
-            ddblock_t ** pblock, int32 *pidx)
-{
-#ifdef LATER
-    CONSTR(FUNC, "HIlookup_dd");    /* for HERROR */
-#endif
-    intn tag, ref, key, i;
-    tag_ref_list_ptr p;
-    tag_ref_ptr o_ptr;
-
-    if (look_tag == DFTAG_WILDCARD || look_ref == DFREF_WILDCARD)
-        return (HIfind_dd(look_tag, look_ref, pblock, pidx, DF_FORWARD));
-
-    tag = (intn) look_tag;
-    ref = (intn) look_ref;
-
-    /*
-     * Look for the normal version
-     */
-    key = tag + ref;
-
-    for (p = file_rec->hash[key & HASH_MASK]; p; p = p->next)
-      {
-          for (i = 0, o_ptr = &p->objects[0]; i < p->count; i++, o_ptr++)
-            {
-                if (o_ptr->tag == tag && o_ptr->ref == ref)
-                  {
-                      *pblock = o_ptr->pblock;
-                      *pidx = o_ptr->pidx;
-                      return SUCCEED;
-                  }
-            }
-      }
-
-    /* Try looking for the special version of this tag */
-    tag = (intn) MKSPECIALTAG(look_tag);
-    key = tag + ref;
-
-    for (p = file_rec->hash[key & HASH_MASK]; p; p = p->next)
-      {
-          for (i = 0, o_ptr = &p->objects[0]; i < p->count; i++, o_ptr++)
-            {
-                if (o_ptr->tag == tag && o_ptr->ref == ref)
-                  {
-                      *pblock = o_ptr->pblock;
-                      *pidx = o_ptr->pidx;
-                      return SUCCEED;
-                  }
-            }
-      }
-
-    return FAIL;
-}	/* HIlookup_dd */
-
-/* ---------------------------- HIadd_hash_dd ----------------------------- */
-/*
-NAME
-   HIadd_hash_dd -- add a dd to the hash table
-USAGE        
-   int HIadd_hash_dd(file_rec, tag, ref, block, idx)
-   filerec_t  * file_rec;       IN:  file record
-   uint16       tag;            IN:  tag of element to add
-   uint16       ref;            IN:  ref of element to add
-   ddblock_t  * block;          OUT: block element is in
-   int32        idx;            OUT: element's index in block
-RETURNS
-   SUCCEED / FAIL
-DESCRIPTION
-   Stick an new element into the file's hash table.  The hash table 
-   is keyed on the low order bits of (tag + ref) and gives a quick
-   means of mapping tag and ref to the DD record for this element
-
----------------------------------------------------------------------------*/
-int 
-HIadd_hash_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
-              ddblock_t * pblock, int32 pidx)
-{
-    CONSTR(FUNC, "HIadd_hash_dd");  /* for HERROR */
-    intn tag, ref, key, i;
-    tag_ref_list_ptr p, where;
-
-    if (look_tag == DFTAG_NULL)
-        return SUCCEED;
-
-    tag = (intn) look_tag;
-    ref = (intn) look_ref;
-    key = tag + ref;
-
-    where = file_rec->hash[key & HASH_MASK];
-
-    if (where && where->count < HASH_BLOCK_SIZE)
-      {
-
-          i = where->count++;
-
-          where->objects[i].pblock = pblock;
-          where->objects[i].pidx = pidx;
-          where->objects[i].tag = tag;
-          where->objects[i].ref = ref;
-
-      }
-    else
-      {
-
-          if ((p = (tag_ref_list_ptr) HDmalloc((uint32) sizeof(tag_ref_list))) == NULL)
-              HRETURN_ERROR(DFE_NOSPACE, FAIL);
-
-          p->objects[0].pblock = pblock;
-          p->objects[0].pidx = pidx;
-          p->objects[0].tag = tag;
-          p->objects[0].ref = ref;
-
-          p->next = where;
-          p->count = 1;
-          file_rec->hash[key & HASH_MASK] = p;
-
-      }
-
-    return SUCCEED;
-}   /* HIadd_hash_dd */
-
-/* ---------------------------- HIdel_hash_dd ----------------------------- */
-/*
-NAME
-   HIdel_hash_dd -- remove a dd from the hash table
-USAGE        
-   int HIdel_hash_dd(file_rec, tag, ref)
-   filerec_t  * file_rec;       IN:  file record
-   uint16       tag;            IN:  tag of element to delete
-   uint16       ref;            IN:  ref of element to delete
-RETURNS
-   SUCCEED
-DESCRIPTION
-   Remove an element from the hash table.  Return succeed even
-   if the element does not exist in the table
-
----------------------------------------------------------------------------*/
-int 
-HIdel_hash_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref)
-{
-#ifdef LATER
-    CONSTR(FUNC, "HIdel_hash_dd");  /* for HERROR */
-#endif
-    intn tag, ref, key, i;
-    tag_ref_list_ptr p;
-
-    tag = (intn) look_tag;
-    ref = (intn) look_ref;
-    key = tag + ref;
-
-    p = file_rec->hash[key & HASH_MASK];
-
-    if (!p)
-        return SUCCEED;
-
-    for (p = file_rec->hash[key & HASH_MASK]; p; p = p->next)
-      {
-          for (i = 0; i < p->count; i++)
-            {
-                if (p->objects[i].tag == tag && p->objects[i].ref == ref)
-                  {
-                      p->objects[i].tag = DFTAG_NULL;
-                      return SUCCEED;
-                  }
-            }
-      }
-
-    return SUCCEED;
-}	/* HIdel_hash_dd */
-
-/* ----------------------------- HIfind_dd ------------------------------ */
-/*
-NAME
-   HIfind_dd -- find the dd record for an element
-USAGE
-   int HIfind_dd(file_rec, tag, ref, block, idx, direction)
-   filerec_t *  file_rec;       IN:  file record to search
-   uint16       tag;            IN:  tag of element to find
-   uint16       ref;            IN:  ref of element to find
-   ddblock_t ** block;          IN:  block to start search
-                                OUT: block element is in
-   int32     *  idx;            IN:  index to start search
-                                OUT: element's index in block
-   intn         direction;      IN:  direction to search 
-   (DF_FORWARD / DF_BACKWARD)
-RETURNS
-   SUCCEED / FAIL
-DESCRIPTION
-   find the dd with tag and ref, by returning the block 
-   where the dd resides and the index of the dd in the 
-   ddblock ddlist.  This is a more powerful, but slower 
-   version of HIlookup_dd()
-
-   By setting the direction and giving a starting block and
-   index we can handle searches like "give me the next widget"
-   or "give me the previous thing with ref = 3"
-
----------------------------------------------------------------------------*/
-int 
-HIfind_dd(uint16 look_tag, uint16 look_ref, ddblock_t ** pblock, int32 *pidx,
-          intn direction)
-{
-    intn idx;          /* index into ddlist of current dd searched */
-    ddblock_t *block;  /* ptr to current ddblock searched */
-    dd_t *list;        /* ptr to current ddlist searched */
-
-    uint16      special_tag;    /* corresponding special tag */
-
-    /* search for special version also */
-    special_tag = MKSPECIALTAG(look_tag);
-
-    if (direction == DF_FORWARD)
-      {   /* search forward through the DD list */
-	  /* start searching on the next dd */
-	  idx = (intn) *pidx + 1;
-	  for (block = *pblock; block; block = block->next)
-	    {
-		list = block->ddlist;
-		for (; idx < block->ndds; idx++)
-		  {
-		      /* skip the empty dd's */
-		      if (list[idx].tag == DFTAG_NULL && look_tag != DFTAG_NULL)
-			  continue;
-
-		      if (((look_tag == DFTAG_WILDCARD || list[idx].tag == look_tag)
-			   || (special_tag != DFTAG_NULL
-			       && list[idx].tag == special_tag))
-			  && (look_ref == DFREF_WILDCARD
-			      || list[idx].ref == look_ref))
-			{
-			    /* we have a match !! */
-			    *pblock = block;
-			    *pidx = idx;
-			    return (SUCCEED);
-			}	/* end if */
-		  }	/* end for */
-
-		/* start from beginning of the next dd list */
-		idx = 0;
-	    }	/* end for */
-      }		/* end if */
-    else if (direction == DF_BACKWARD)
-      {	  /* search backward through the DD list */
-	  /* start searching on the previous dd */
-	  idx = (intn) *pidx - 1;
-	  for (block = *pblock; block;)
-	    {
-		list = block->ddlist;
-		for (; idx >= 0; idx--)
-		  {
-		      /* skip the empty dd's */
-		      if (list[idx].tag == DFTAG_NULL && look_tag != DFTAG_NULL)
-			  continue;
-
-		      if (((look_tag == DFTAG_WILDCARD || list[idx].tag == look_tag)
-			   || (special_tag != DFTAG_NULL
-			       && list[idx].tag == special_tag))
-			  && (look_ref == DFREF_WILDCARD
-			      || list[idx].ref == look_ref))
-			{
-
-			    /* we have a match !! */
-			    *pblock = block;
-			    *pidx = idx;
-			    return (SUCCEED);
-			}	/* end if */
-		  }	/* end for */
-
-		/* start from beginning of the next dd list */
-		block = block->prev;
-		if (block != NULL)
-		    idx = block->ndds - 1;
-	    }	/* end for */
-      }		/* end if */
-
-    /* nothing found or bad direction */
-    return (FAIL);
-}	/* HIfind_dd */
-
-/* ----------------------------- HIcount_dd ------------------------------ */
-/*
-NAME
-   HIcount_dd -- counts the dd's of a certain type in file
-USAGE
-   intn HIcount_dd(file_rec, tag, ref, all_cnt, real_cnt)
-   filerec_t *  file_rec;       IN:  file record to search
-   uint16       tag;            IN:  tag of element to find
-                                     (can be DFTAG_WILDCARD)
-   uint16       ref;            IN:  ref of element to find
-                                     (can be DFREF_WILDCARD)
-   uintn       *all_cnt;        OUT: Count of all the tag/ref pairs
-                                     found, including DFTAG_NULL and
-                                     DFTAG_FREE
-   uintn       *real_cnt;       OUT: Count of all the tag/ref pairs
-                                     found, excluding DFTAG_NULL and 
-                                     DFTAG_FREE
-RETURNS
-   SUCCEED / FAIL
-DESCRIPTION
-   Counts the number of tag/ref pairs in a file.
-
-   This routine keeps track of and returns to the user the number
-   of all tag/refs and the number of "real" tag/refs found.
-   "Real" tag/refs are any except DFTAG_NULL & DFTAG_FREE.
-
-   This routine always counts the total tag/refs in the file, no
-   provision is made for partial searches.
+   This is very similar to HDc2fstr except that function does
+   it in place and this one copies.  We should probably only
+   support one of these.
 
 ---------------------------------------------------------------------------*/
 intn 
-HIcount_dd(filerec_t * file_rec, uint16 cnt_tag, uint16 cnt_ref,
-           uintn *all_cnt, uintn *real_cnt)
+HDpackFstring(char *src, char *dest, intn len)
 {
-    uintn       t_all_cnt = 0;  /* count of all tag/refs found */
-    uintn       t_real_cnt = 0; /* count of all tag/refs except NULL & FREE */
-    intn        idx;            /* index into ddlist of current dd searched */
-    ddblock_t  *block;          /* ptr to current ddblock searched */
-    dd_t       *list;           /* ptr to current ddlist searched */
-    uint16      special_tag;    /* corresponding special tag */
+    intn        sofar;
 
-    /* search for special version also */
-    special_tag = MKSPECIALTAG(cnt_tag);
+    for (sofar = 0; (sofar < len) && (*src != '\0'); sofar++)
+        *dest++ = *src++;
 
-#ifdef OLD_WAY
-    for (block = file_rec->ddhead; block != NULL; block = block->next)
-      {
-          t_all_cnt += block->ndds;
+    while (sofar++ < len)
+        *dest++ = ' ';
 
-	  list = block->ddlist;
-	  for (idx = 0; idx < block->ndds; idx++)
-	    {
-		/* skip the empty dd's */
-		if ((list[idx].tag == DFTAG_NULL && cnt_tag != DFTAG_NULL)
-		  || (list[idx].tag == DFTAG_FREE && cnt_tag != DFTAG_FREE))
-		    continue;
-
-		if (((cnt_tag == DFTAG_WILDCARD || list[idx].tag == cnt_tag)
-		  || (special_tag != DFTAG_NULL && special_tag != DFTAG_FREE
-		      && list[idx].tag == special_tag))
-		 && (cnt_ref == DFREF_WILDCARD || list[idx].ref == cnt_ref))
-		  { /* we have a match !! */
-		      t_real_cnt++;
-		  }	/* end if */
-	    }	/* end for */
-      }		/* end for */
-#else /* OLD_WAY */
-    switch(cnt_tag)
-      {
-          case DFTAG_WILDCARD:
-              for (block = file_rec->ddhead; block != NULL; block = block->next)
-                {
-                    t_all_cnt += block->ndds;
-
-                    list = block->ddlist;
-                    for (idx = 0; idx < block->ndds; idx++)
-                      {
-                          /* skip the empty dd's */
-                          if (list[idx].tag == DFTAG_NULL || list[idx].tag == DFTAG_FREE)
-                              continue;
-
-                          if ((cnt_ref == DFREF_WILDCARD || list[idx].ref == cnt_ref))
-                                t_real_cnt++;
-                  }	/* end for */
-                }		/* end for */
-              break;
-
-          case DFTAG_NULL:
-          case DFTAG_FREE:
-              for (block = file_rec->ddhead; block != NULL; block = block->next)
-                {
-                    t_all_cnt += block->ndds;
-
-                    list = block->ddlist;
-                    for (idx = 0; idx < block->ndds; idx++)
-                          if ((list[idx].tag == cnt_tag
-                            || (special_tag != DFTAG_NULL && list[idx].tag == special_tag))
-                           && (cnt_ref == DFREF_WILDCARD || list[idx].ref == cnt_ref))
-                                t_real_cnt++;
-                }		/* end for */
-              break;
-
-          default:
-              if(special_tag==DFTAG_NULL)
-                {
-                  for (block = file_rec->ddhead; block != NULL; block = block->next)
-                    {
-                        t_all_cnt += block->ndds;
-
-                        list = block->ddlist;
-                        for (idx = 0; idx < block->ndds; idx++)
-                            if (list[idx].tag == cnt_tag
-                             && (list[idx].ref == cnt_ref || cnt_ref == DFREF_WILDCARD))
-                                  t_real_cnt++;
-                    }		/* end for */
-                } /* end if */
-              else
-                {
-                  if(cnt_ref==DFREF_WILDCARD)
-                    {
-                      for (block = file_rec->ddhead; block != NULL; block = block->next)
-                        {
-                            t_all_cnt += block->ndds;
-
-                            list = block->ddlist;
-#ifdef QAK
-                            for (idx = 0; idx < block->ndds; idx++)
-                                  if (list[idx].tag == cnt_tag || list[idx].tag == special_tag)
-                                      t_real_cnt++;
-#else /* QAK */
-                            idx=0;
-                            if(block->ndds%2 == 1)
-                                if (list[idx].tag == cnt_tag || list[idx].tag == special_tag)
-                                  {
-                                    t_real_cnt++;
-                                    idx++;
-                                  } /* end if */
-                            for (; idx < block->ndds; idx++)
-                              {
-                                  if (list[idx].tag == cnt_tag || list[idx].tag == special_tag)
-                                      t_real_cnt++;
-                                  idx++;
-                                  if (list[idx].tag == cnt_tag || list[idx].tag == special_tag)
-                                      t_real_cnt++;
-                              } /* end for */
-#endif /* QAK */
-                        }		/* end for */
-                    } /* end if */
-                  else
-                    {
-                      for (block = file_rec->ddhead; block != NULL; block = block->next)
-                        {
-                            t_all_cnt += block->ndds;
-
-                            list = block->ddlist;
-                            for (idx = 0; idx < block->ndds; idx++)
-                                if ((list[idx].tag == cnt_tag || list[idx].tag == special_tag)
-                                   && list[idx].ref == cnt_ref)
-                                      t_real_cnt++;
-                        }		/* end for */
-                    } /* end else */
-                } /* end else */
-              break;
-      } /* end switch */
-#endif /* OLD_WAY */
-
-    *all_cnt = t_all_cnt;
-    *real_cnt = t_real_cnt;
-    return (SUCCEED);
-}	/* HIcount_dd */
+    return SUCCEED;
+}	/* HDpackFstring */
 
 /* ------------------------------- HDflush -------------------------------- */
 /*
@@ -627,40 +166,6 @@ HDflush(int32 file_id)
 
     return SUCCEED;
 }	/* HDflush */
-
-/* ---------------------------- HDpackFstring ----------------------------- */
-/*
-NAME
-   HDpackFstring -- convert a C string into a Fortran string
-USAGE
-   intn HDpackFstring(src, dest, len)
-   char * src;          IN:  source string
-   char * dest;         OUT: destination
-   intn   len;          IN:  length of string
-RETURNS
-   SUCCEED / FAIL
-DESCRIPTION
-   given a NULL terminated C string 'src' convert it to
-   a space padded Fortran string 'dest' of length 'len'
-
-   This is very similar to HDc2fstr except that function does
-   it in place and this one copies.  We should probably only
-   support one of these.
-
----------------------------------------------------------------------------*/
-intn 
-HDpackFstring(char *src, char *dest, intn len)
-{
-    intn        sofar;
-
-    for (sofar = 0; (sofar < len) && (*src != '\0'); sofar++)
-        *dest++ = *src++;
-
-    while (sofar++ < len)
-        *dest++ = ' ';
-
-    return SUCCEED;
-}	/* HDpackFstring */
 
 /* ----------------------------- HDgettagdesc ----------------------------- */
 /*
@@ -878,5 +383,7 @@ void HDFend(void)
     HXPshutdown();
     Hshutdown();
     HEshutdown();
+    HAshutdown();
+    tbbt_shutdown();
 } /* end HDFend() */
 

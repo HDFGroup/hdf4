@@ -98,21 +98,14 @@ PRIVATE int32 HCIinit_coder
 
 PRIVATE int32 HCIread_header
             (filerec_t * file_rec, accrec_t * access_rec,
-             compinfo_t * info, dd_t *info_dd, comp_info * c_info,
-             model_info * m_info);
+             compinfo_t * info, comp_info * c_info, model_info * m_info);
 
 PRIVATE int32 HCIwrite_header
-            (filerec_t * file_rec, accrec_t * access_rec, compinfo_t * info, dd_t *dd,
-             uint16 special_tag, uint16 ref);
+            (accrec_t * access_rec, compinfo_t * info, uint16 special_tag, uint16 ref);
 
 PRIVATE int32 HCIinit_model
             (comp_model_info_t * minfo, comp_model_t model_type,
              model_info * m_info);
-
-#ifdef OLD_WAY  /* uses global (sometimes) or local (mostly) tbuf's now */
-/* Private buffer */
-PRIVATE uint8 *ptbuf = NULL;
-#endif
 
 /* comp_funcs -- struct of accessing functions for the compressed
    data element function modules.  The position of each function in
@@ -258,11 +251,9 @@ HCIinit_model(comp_model_info_t * minfo, comp_model_t model_type,
  NAME
     HCIwrite_header -- Write the compression header info to a file
  USAGE
-    int32 HCIwrite_header(file_rec,access_rec,info,dd)
-    filerec_t *file_rec;    IN: ptr to the file record for the HDF file
+    int32 HCIwrite_header(access_rec,info,special_tag,ref)
     accrec_t *access_rec;   IN: ptr to the access element record
     compinfo_t *info;       IN: ptr the compression information
-    dd_t *dd;               IN: ptr to the DD info for the element
     uint16 special_tag,ref; IN: the tag/ref of the compressed element
 
  RETURNS
@@ -276,19 +267,13 @@ HCIinit_model(comp_model_info_t * minfo, comp_model_t model_type,
  REVISION LOG
 --------------------------------------------------------------------------*/
 PRIVATE int32
-HCIwrite_header(filerec_t * file_rec, accrec_t * access_rec,
-                compinfo_t * info, dd_t *dd, uint16 special_tag, uint16 ref)
+HCIwrite_header(accrec_t * access_rec, compinfo_t * info, uint16 special_tag, uint16 ref)
 {
     CONSTR(FUNC, "HCIwrite_header");    /* for HERROR */
+    int32       dd_aid;         /* AID for writing the special info */
     uint8      *p;              /* pointer to the temporary buffer */
     uint8       local_ptbuf[32];
-
-#ifdef OLD_WAY
-    /* Check if temporary buffer has been allocated */
-    if (ptbuf == NULL)
-        if ((ptbuf = (uint8 *) HDmalloc(TBUF_SZ * sizeof(uint8))) == NULL)
-                        HRETURN_ERROR(DFE_NOSPACE, FAIL);
-#endif
+    int32       ret_value=SUCCEED;
 
     /* write special element info to the file */
     p = local_ptbuf;
@@ -337,46 +322,33 @@ it_info.mask_off, info->cinfo.coder_info.nbit_info.mask_len);
               break;
       }     /* end switch */
 
-    dd->tag = special_tag;
-    dd->ref = ref;
-    dd->length = p - local_ptbuf;   /* not a constant length */
-    if ((dd->offset = HPgetdiskblock(file_rec, dd->length, TRUE)) == FAIL)
-      {
-          access_rec->used = FALSE;
-          HRETURN_ERROR(DFE_INTERNAL, FAIL);
-      }     /* end if */
-    if (HPwrite(file_rec, local_ptbuf, dd->length) == FAIL)
-      {
-          access_rec->used = FALSE;
-          HRETURN_ERROR(DFE_WRITEERROR, FAIL);
-      }     /* end if */
+    
+    /* write the special info structure to fill */
+    if((dd_aid=Hstartaccess(access_rec->file_id,special_tag,ref,DFACC_ALL))==FAIL)
+        HGOTO_ERROR(DFE_CANTACCESS, FAIL);
+    if (Hwrite(dd_aid, p-local_ptbuf, local_ptbuf) == FAIL)
+        HGOTO_ERROR(DFE_WRITEERROR, FAIL);
+    if(Hendaccess(dd_aid)==FAIL)
+        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
-    /* update DD block in the file */
-    if (FAIL == HIupdate_dd(file_rec, access_rec->block, access_rec->idx, FUNC))
-      {
-          access_rec->used = FALSE;
-          HRETURN_ERROR(DFE_CANTUPDATE, FAIL);
-      }     /* end if */
+done:
+    if(ret_value == FAIL)   
+      { /* Error condition cleanup */
+  
+      } /* end if */
 
-    /* add new DD to hash table */
-    if (FAIL == HIadd_hash_dd(file_rec, dd->tag, dd->ref, access_rec->block,
-                              access_rec->idx))
-      {
-          access_rec->used = FALSE;
-          HRETURN_ERROR(DFE_CANTHASH, FAIL);
-      }     /* end if */
-    return (SUCCEED);
+    /* Normal function cleanup */
+    return ret_value; 
 }   /* end HCIwrite_header() */
 
 /*--------------------------------------------------------------------------
  NAME
     HCIread_header -- Read the compression header info from a file
  USAGE
-    int32 HCIread_header(file_rec,access_rec,info,info_dd,comp_info,model_info)
+    int32 HCIread_header(file_rec,access_rec,info,comp_info,model_info)
     filerec_t *file_rec;    IN: ptr to the file record for the HDF file
     accrec_t *access_rec;   IN: ptr to the access element record
     compinfo_t *info;       IN: ptr the compression information
-    dd_t *info_dd;          IN: ptr to the DD info for the element
     comp_info *comp_info;   IN/OUT: ptr to encoding info
     model_info *model_info; IN/OUT: ptr to modeling info
  RETURNS
@@ -391,33 +363,26 @@ it_info.mask_off, info->cinfo.coder_info.nbit_info.mask_len);
 --------------------------------------------------------------------------*/
 PRIVATE int32
 HCIread_header(filerec_t * file_rec, accrec_t * access_rec,
-               compinfo_t * info, dd_t *info_dd, comp_info * c_info,
-               model_info * m_info)
+               compinfo_t * info, comp_info * c_info, model_info * m_info)
 {
     CONSTR(FUNC, "HCIread_header");     /* for HERROR */
     uint16      header_version; /* version of the compression header */
     uint16      mtype, ctype;   /* temporary variables for model and coder type */
+    int32       data_off;		/* offset of the data we are checking */
     uint8      *p;              /* pointer to the temporary buffer */
     uint8       local_ptbuf[32];
+    int32       ret_value=SUCCEED;
 
     /* shut compiler up */
     m_info = m_info;
-    access_rec = access_rec;
 
-#ifdef OLD_WAY
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
-          ptbuf = (uint8 *) HDmalloc(TBUF_SZ * sizeof(uint8));
-          if (ptbuf == NULL)
-              HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
-#endif
-
-    if (HPseek(file_rec, info_dd->offset + 2) == FAIL)
-        HRETURN_ERROR(DFE_SEEKERROR, FAIL);
+    /* get the info for the dataset */
+    if(HTPinquire(access_rec->ddid,NULL,NULL,&data_off,NULL)==FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    if (HPseek(file_rec, data_off + 2) == FAIL)
+        HGOTO_ERROR(DFE_SEEKERROR, FAIL);
     if (HPread(file_rec, local_ptbuf, (COMP_HEADER_LENGTH - 2)) == FAIL)
-        HRETURN_ERROR(DFE_READERROR, FAIL);
+        HGOTO_ERROR(DFE_READERROR, FAIL);
 
     p = local_ptbuf;
     UINT16DECODE(p, header_version);    /* get header length */
@@ -445,7 +410,7 @@ HCIread_header(filerec_t * file_rec, accrec_t * access_rec,
                   int32       m_off, m_len;     /* temp. var for mask offset and len */
 
                   if (HPread(file_rec, p, 16) == FAIL)
-                      HRETURN_ERROR(DFE_READERROR, FAIL);
+                      HGOTO_ERROR(DFE_READERROR, FAIL);
                   /* specify number-type of N-bit data */
                   INT32DECODE(p, c_info->nbit.nt);
                   /* next is the flag to indicate whether to sign extend */
@@ -460,9 +425,6 @@ HCIread_header(filerec_t * file_rec, accrec_t * access_rec,
                   /* the number of bits extracted */
                   INT32DECODE(p, m_len);
                   c_info->nbit.bit_len = (intn) m_len;
-#ifdef TESTING
-                  printf("HCIread_header(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_len=%d\n", c_info->nbit.nt, c_info->nbit.sign_ext, c_info->nbit.fill_one, c_info->nbit.start_bit, c_info->nbit.bit_len);
-#endif
               }     /* end case */
               break;
 
@@ -472,7 +434,7 @@ HCIread_header(filerec_t * file_rec, accrec_t * access_rec,
                               comp_size;    /* # of bytes to compress */
 
                   if (HPread(file_rec, p, 8) == FAIL)
-                      HRETURN_ERROR(DFE_READERROR, FAIL);
+                      HGOTO_ERROR(DFE_READERROR, FAIL);
                   /* specify skipping unit size */
                   UINT32DECODE(p, skp_size);
                   /* specify # of bytes of skipping data to compress */
@@ -485,7 +447,14 @@ HCIread_header(filerec_t * file_rec, accrec_t * access_rec,
               break;
       }     /* end switch */
 
-    return (SUCCEED);
+done:
+    if(ret_value == FAIL)   
+      { /* Error condition cleanup */
+  
+      } /* end if */
+
+    /* Normal function cleanup */
+    return ret_value; 
 }   /* end HCIread_header() */
 
 /*--------------------------------------------------------------------------
@@ -518,19 +487,14 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
 {
     CONSTR(FUNC, "HCcreate");   /* for HERROR */
     filerec_t  *file_rec;       /* file record */
-    accrec_t   *access_rec;     /* access element record */
+    accrec_t   *access_rec=NULL;/* access element record */
     int         slot;
-    dd_t       *dd;
-    ddblock_t  *data_block;     /* dd block ptr to exist data element */
-    int32       data_idx;       /* dd list index to existing data element */
-    compinfo_t *info;           /* special element information */
-    dd_t       *data_dd;        /* dd of existing regular element */
+    compinfo_t *info=NULL;      /* special element information */
+    atom_t      data_id=FAIL;   /* dd ID of existing regular element */
+    int32       data_len;		/* length of the data we are checking */
     uint16      special_tag;    /* special version of tag */
-    int32       ret;
+    int32       ret_value=SUCCEED;
 
-#ifdef TESTING
-    printf("HCcreate(): entering\n");
-#endif
     /* clear error stack and validate args */
     HEclear();
     file_rec = FID2REC(file_id);
@@ -548,170 +512,100 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
 
     access_rec = &access_records[slot];
 
-#ifdef TESTING
-    printf("HCcreate(): check 1\n");
-#endif
-    /* look for existing data element of the same tag/ref */
-    if (FAIL != HIlookup_dd(file_rec, tag, ref, &data_block, &data_idx))
+    /* search for identical dd */
+    if ((data_id=HTPselect(file_rec,tag,ref))!=FAIL)
       {
-          data_dd = &(data_block->ddlist[data_idx]);
-          if (SPECIALTAG(data_dd->tag))
+          /* Check if the element is already special */
+          if (HTPis_special(data_id)==TRUE)
             {
-                /* abort since we cannot convert the data element to a compressed
-                   data element */
-                access_rec->used = FALSE;
-                HRETURN_ERROR(DFE_CANTMOD, FAIL);
+                HTPendaccess(data_id);
+                HGOTO_ERROR(DFE_CANTMOD, FAIL);
             }   /* end if */
-      }     /* end if */
-    else
-        data_dd = NULL;
-
-    /* look for empty dd to use */
-    if (FAIL == HIlookup_dd(file_rec, DFTAG_NULL, DFREF_WILDCARD,
-                            &file_rec->null_block, &file_rec->null_idx))
-      {
-          if (FAIL == HInew_dd_block(file_rec, FILE_NDDS(file_rec), FUNC))
+          
+          /* get the info for the dataset */
+          if(HTPinquire(data_id,NULL,NULL,NULL,&data_len)==FAIL)
             {
-                access_rec->used = FALSE;
-                HRETURN_ERROR(DFE_NOFREEDD, FAIL);
-            }   /* end if */
-          else
-            {
-                access_rec->block = file_rec->ddlast;
-                access_rec->idx = 0;
-            }   /* end else */
-      }     /* end if */
-    else
-      {
-          access_rec->block = file_rec->null_block;
-          access_rec->idx = file_rec->null_idx;
-      }     /* end else */
-    dd = &access_rec->block->ddlist[access_rec->idx];
+                HTPendaccess(data_id);
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
+            } /* end if */
+      } /* end if */
 
-#ifdef TESTING
-    printf("HCcreate(): check 2\n");
-#endif
     /* set up the special element information and write it to file */
     info = (compinfo_t *) HDmalloc(sizeof(compinfo_t));
     access_rec->special_info = (VOIDP) info;
     if (info == NULL)
-      {
-          access_rec->used = FALSE;
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }     /* end if */
+          HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-    if (data_dd != NULL)    /* compress existing data */
-        info->length = data_dd->length;
-    else    /* start new compressed data element */
-        info->length = COMP_START_BLOCK;
+    info->length = (data_id!=FAIL) ? data_len : COMP_START_BLOCK;
 
     /* set up compressed special info structure */
     info->attached = 1;
     info->comp_ref = Htagnewref(file_id,DFTAG_COMPRESSED);  /* get the new reference # */
-#ifdef TESTING
-    printf("HCcreate(): check 3\n");
-#endif
     HCIinit_model(&(info->minfo), model_type, m_info);
-#ifdef TESTING
-    printf("HCcreate(): check 4\n");
-#endif
     HCIinit_coder(&(info->cinfo), coder_type, c_info);
-#ifdef TESTING
-    printf("HCcreate(): check 5, coder_funcs.write=%p\n", info->cinfo.coder_funcs.write);
-#endif
 
-    if (HCIwrite_header(file_rec, access_rec, info, dd, special_tag, ref) == FAIL)
-      {
-          access_rec->used = FALSE;
-          HRETURN_ERROR(DFE_WRITEERROR, FAIL);
-      }     /* end if */
+    if (HCIwrite_header(access_rec, info, special_tag, ref) == FAIL)
+          HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
-#ifdef TESTING
-    printf("HCcreate(): check 6, coder_funcs.write=%p\n", info->cinfo.coder_funcs.write);
-#endif
     /* update access record and file record */
+    if((access_rec->ddid=HTPselect(file_rec,tag,ref))==FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
     access_rec->special_func = &comp_funcs;
     access_rec->special = SPECIAL_COMP;
     access_rec->posn = 0;
     access_rec->access = DFACC_RDWR;
     access_rec->file_id = file_id;
     access_rec->appendable = FALSE;     /* start data as non-appendable */
-    access_rec->flush = FALSE;  /* start data as not needing flushing */
-
     file_rec->attach++;
-    if (ref > file_rec->maxref)
-        file_rec->maxref = ref;
 
-#ifdef TESTING
-    printf("HCcreate(): check 6.5, coder_funcs.write=%p\n", info->cinfo.coder_funcs.write);
-#endif
     /* propagate the initialization down to the modeling layer */
-    if ((ret = (*(info->minfo.model_funcs.stwrite)) (access_rec)) == FAIL)
-      {
-          access_rec->used = FALSE;
-          HRETURN_ERROR(DFE_MODEL, FAIL);
-      }     /* end if */
+    if ((*(info->minfo.model_funcs.stwrite))(access_rec) == FAIL)
+          HGOTO_ERROR(DFE_MODEL, FAIL);
 
-#ifdef TESTING
-    printf("HCcreate(): check 6.6, coder_funcs.write=%p\n", info->cinfo.coder_funcs.write);
-#endif
     /* compress the old DD and get rid of it, if there was one */
-    if (data_dd != NULL)
+    if (data_id != FAIL)
       {
           VOIDP       buf;      /* temporary buffer */
 
-          if ((buf = (VOIDP) HDmalloc((uint32) data_dd->length)) == NULL)
+          if ((buf = (VOIDP) HDmalloc((uint32) data_len)) == NULL)
+                HGOTO_ERROR(DFE_NOSPACE, FAIL);
+          if (Hgetelement(file_id, tag, ref, buf) == FAIL)
             {
-                access_rec->used = FALSE;
-                HDfree((VOIDP) info);
-                HRETURN_ERROR(DFE_NOSPACE, FAIL);
-            }   /* end if */
-          if (Hgetelement(file_id, data_dd->tag, data_dd->ref, buf) == FAIL)
-            {
-                access_rec->used = FALSE;
-                HDfree((VOIDP) info);
                 HDfree((VOIDP) buf);
-                HRETURN_ERROR(DFE_READERROR, FAIL);
+                HGOTO_ERROR(DFE_READERROR, FAIL);
             }   /* end if */
 
           /* write the data through to the compression layer */
-          if (HCPwrite(access_rec, data_dd->length, buf) == FAIL)
+          if (HCPwrite(access_rec, data_len, buf) == FAIL)
             {
-                access_rec->used = FALSE;
-                HDfree((VOIDP) info);
                 HDfree((VOIDP) buf);
-                HRETURN_ERROR(DFE_MODEL, FAIL);
+                HGOTO_ERROR(DFE_MODEL, FAIL);
             }   /* end if */
 
           HDfree((VOIDP) buf);
 
           /* seek back to the beginning of the data through to the compression layer */
           if (HCPseek(access_rec, 0, DF_START) == FAIL)
-            {
-                access_rec->used = FALSE;
-                HDfree((VOIDP) info);
-                HRETURN_ERROR(DFE_MODEL, FAIL);
-            }   /* end if */
+              HGOTO_ERROR(DFE_MODEL, FAIL);
 
           /* Delete the old DD from the file and memory hash table */
-          if (FAIL == Hdeldd(file_id, data_dd->tag, data_dd->ref))
-            {
-                access_rec->used = FALSE;
-                HDfree((VOIDP) info);
-                HRETURN_ERROR(DFE_CANTDELDD, FAIL);
-            }   /* end if */
-          if (FAIL == HIdel_hash_dd(file_rec, data_dd->tag, data_dd->ref))
-            {
-                access_rec->used = FALSE;
-                HDfree((VOIDP) info);
-                HRETURN_ERROR(DFE_CANTDELHASH, FAIL);
-            }   /* end if */
+          if (FAIL == HTPdelete(data_id))
+              HGOTO_ERROR(DFE_CANTDELDD, FAIL);
       }     /* end if */
 
-#ifdef TESTING
-    printf("HCcreate(): check 7, coder_funcs.write=%p\n", info->cinfo.coder_funcs.write);
-#endif
-    return (ASLOT2ID(slot));
+    ret_value=ASLOT2ID(slot);
+
+done:
+    if(ret_value == FAIL)   
+      { /* Error condition cleanup */
+        if(access_rec!=NULL)
+            access_rec->used = FALSE;
+        if(info!=NULL)
+            HDfree((VOIDP) info);
+      } /* end if */
+
+    /* Normal function cleanup */
+    return ret_value; 
 }   /* end HCcreate() */
 
 /*--------------------------------------------------------------------------
@@ -735,11 +629,11 @@ PRIVATE int32
 HCIstaccess(accrec_t * access_rec, int16 acc_mode)
 {
     CONSTR(FUNC, "HCIstaccess");    /* for HERROR */
-    dd_t       *info_dd;        /* dd of the special information element */
-    compinfo_t *info;           /* special element information */
+    compinfo_t *info=NULL;      /* special element information */
     filerec_t  *file_rec;       /* file record */
     comp_info   c_info;         /* encoding information from the header */
     model_info  m_info;         /* modeling information from the header */
+    int32       ret_value=SUCCEED;
 
     /* get file record and validate */
     file_rec = FID2REC(access_rec->file_id);
@@ -751,35 +645,33 @@ HCIstaccess(accrec_t * access_rec, int16 acc_mode)
     access_rec->posn = 0;
     access_rec->access = acc_mode|DFACC_READ;
 
-    /* get the dd for information */
-    info_dd = &access_rec->block->ddlist[access_rec->idx];
-
     /* get the special info record */
     access_rec->special_info = (VOIDP) HDmalloc(sizeof(compinfo_t));
     info = (compinfo_t *) access_rec->special_info;
     if (info == NULL)
-        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-    if (HCIread_header(file_rec, access_rec, info, info_dd, &c_info, &m_info) == FAIL)
-      {
-          HDfree(info);
-          HRETURN_ERROR(DFE_COMPINFO, FAIL);
-      }     /* end if */
+    if (HCIread_header(file_rec, access_rec, info, &c_info, &m_info) == FAIL)
+          HGOTO_ERROR(DFE_COMPINFO, FAIL);
     info->attached = 1;
     if (HCIinit_model(&(info->minfo), info->minfo.model_type, &m_info) == FAIL)
-      {
-          HDfree(info);
           HRETURN_ERROR(DFE_MINIT, FAIL);
-      }     /* end if */
     if (HCIinit_coder(&(info->cinfo), info->cinfo.coder_type, &c_info) == FAIL)
-      {
-          HDfree(info);
           HRETURN_ERROR(DFE_CINIT, FAIL);
-      }     /* end if */
 
     file_rec->attach++;
 
-    return (ASLOT2ID(access_rec - access_records));
+    ret_value=ASLOT2ID(access_rec - access_records);
+
+done:
+    if(ret_value == FAIL)   
+      { /* Error condition cleanup */
+        if(info!=NULL)
+            HDfree((VOIDP) info);
+      } /* end if */
+
+    /* Normal function cleanup */
+    return ret_value; 
 }   /* end HCIstaccess() */
 
 /*--------------------------------------------------------------------------
@@ -924,7 +816,6 @@ HCPread(accrec_t * access_rec, int32 length, VOIDP data)
 {
     CONSTR(FUNC, "HCPread");    /* for HERROR */
     compinfo_t *info;           /* information on the special element */
-    int32       ret;
 
     /* validate length */
     if (length < 0)
@@ -938,7 +829,7 @@ HCPread(accrec_t * access_rec, int32 length, VOIDP data)
     else if (length < 0 || access_rec->posn + length > info->length)
         HRETURN_ERROR(DFE_RANGE, FAIL);
 
-    if ((ret = (*(info->minfo.model_funcs.read)) (access_rec, length, data)) == FAIL)
+    if ((*(info->minfo.model_funcs.read))(access_rec, length, data) == FAIL)
         HRETURN_ERROR(DFE_MODEL, FAIL);
 
     /* adjust access position */
@@ -970,38 +861,33 @@ HCPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
 {
     CONSTR(FUNC, "HCPwrite");   /* for HERROR */
     compinfo_t *info;           /* information on the special element */
-    int32       ret;
     uint8       local_ptbuf[4];
     uint8       *p = local_ptbuf;  /* temp buffer ptr */
-    dd_t        *info_dd =      /* dd of infromation element */
-                          &access_rec->block->ddlist[access_rec->idx];
     filerec_t   *file_rec =     /* file record */
                            FID2REC(access_rec->file_id);  
 
-#ifdef TESTING
-    printf("HCPwrite(): entering\n");
-#endif
     /* validate length */
     if (length < 0)
         HRETURN_ERROR(DFE_RANGE, FAIL);
 
-#ifdef TESTING
-    printf("HCPwrite(): before func ptr call\n");
-#endif
     info = (compinfo_t *) access_rec->special_info;
-    if ((ret = (*(info->minfo.model_funcs.write)) (access_rec, length, data)) == FAIL)
+    if ((*(info->minfo.model_funcs.write)) (access_rec, length, data) == FAIL)
         HRETURN_ERROR(DFE_MODEL, FAIL);
-#ifdef TESTING
-    printf("HCPwrite(): after func ptr call\n");
-#endif
 
     /* update access record, and information about special element */
     access_rec->posn += length;
     if (access_rec->posn > info->length)
       {
+          int32       data_off;		/* offset of the data we are checking */
+
+          /* get the info for the dataset */
+          if(HTPinquire(access_rec->ddid,NULL,NULL,&data_off,NULL)==FAIL)
+              HRETURN_ERROR(DFE_INTERNAL, FAIL);
+
           info->length = access_rec->posn;
+
           INT32ENCODE(p, info->length);
-          if (HPseek(file_rec, info_dd->offset + 4) == FAIL)
+          if (HPseek(file_rec, data_off + 4) == FAIL)
               HRETURN_ERROR(DFE_SEEKERROR, FAIL);
           /* re-write un-comp. len */
           if (HPwrite(file_rec, local_ptbuf, 4) == FAIL)     
@@ -1041,22 +927,27 @@ HCPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
  uint16 *pref, int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
            int16 *pspecial)
 {
-    dd_t       *info_dd =       /* dd of special information */
-    &(access_rec->block->ddlist[access_rec->idx]);
+    CONSTR(FUNC, "HCPinquire");   /* for HERROR */
     compinfo_t *info =          /* special information record */
-    (compinfo_t *) access_rec->special_info;
+        (compinfo_t *) access_rec->special_info;
+    uint16 data_tag,data_ref;   /* tag/ref of the data we are checking */
+    int32       data_off;		/* offset of the data we are checking */
+
+    /* get the info for the dataset */
+    if(HTPinquire(access_rec->ddid,&data_tag,&data_ref,&data_off,NULL)==FAIL)
+        HRETURN_ERROR(DFE_INTERNAL, FAIL);
 
     /* fill in the variables if they are present */
     if (pfile_id != NULL)
         *pfile_id = access_rec->file_id;
     if (ptag != NULL)
-        *ptag = info_dd->tag;
+        *ptag = data_tag;
     if (pref != NULL)
-        *pref = info_dd->ref;
+        *pref = data_ref;
     if (plength != NULL)
         *plength = info->length;
     if (poffset != NULL)
-        *poffset = info_dd->offset;
+        *poffset = data_off;
     if (pposn != NULL)
         *pposn = access_rec->posn;
     if (paccess != NULL)
@@ -1088,6 +979,7 @@ HCPendaccess(accrec_t * access_rec)
 {
     CONSTR(FUNC, "HCPendaccess");   /* for HERROR */
     filerec_t  *file_rec = FID2REC(access_rec->file_id);    /* file record */
+    intn      ret_value = SUCCEED;
 
     /* validate file record */
     if (BADFREC(file_rec))
@@ -1096,13 +988,25 @@ HCPendaccess(accrec_t * access_rec)
     /* close the file pointed to by this access rec */
     HCPcloseAID(access_rec);
 
+    /* update file and access records */
+    if (HTPendaccess(access_rec->ddid) == FAIL)
+      HGOTO_ERROR(DFE_CANTFLUSH, FAIL);
+
     /* detach from the file */
     file_rec->attach--;
 
     /* free the access record */
     access_rec->used = FALSE;
 
-    return (SUCCEED);
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* end HCPendaccess() */
 
 /*--------------------------------------------------------------------------

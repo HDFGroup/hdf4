@@ -66,7 +66,7 @@ CallFortranTest(char *TheCall)
 
     HDstrcpy(TheLocalCall, "./");
     HDstrcat(TheLocalCall, TheCall);
-    system(TheCall);
+    system(TheLocalCall);
 #endif
 }
 

@@ -73,11 +73,6 @@ extern      "C"
     extern intn Hnextread
                 (int32 access_id, uint16 tag, uint16 ref, intn origin);
 
-    extern intn Hfind
-                (int32 file_id, uint16 search_tag, uint16 search_ref,
-                 uint16 *find_tag, uint16 *find_ref, int32 *find_offset,
-                 int32 *find_length, intn direction);
-
     extern intn Hexist
                 (int32 file_id, uint16 search_tag, uint16 search_ref);
 
@@ -137,26 +132,11 @@ extern      "C"
     extern int32 Hoffset
                 (int32 file_id, uint16 tag, uint16 ref);
 
-    extern int  Hdupdd
-                (int32 file_id, uint16 tag, uint16 ref, uint16 old_tag, uint16 old_ref);
-
-    extern int  Hdeldd
-                (int32 file_id, uint16 tag, uint16 ref);
-
-    extern uint16 Hnewref
-                (int32 file_id);
-
-    extern uint16 Htagnewref
-                (int32 file_id, uint16 tag);
-
     extern intn Hsync
                 (int32 file_id);
 
     extern intn Hcache
                 (int32 file_id, intn cache_on);
-
-    extern int32 Hnumber
-                (int32 file_id, uint16 tag);
 
     extern intn Hgetlibversion
                 (uint32 _HUGE * majorv, uint32 _HUGE * minorv,
@@ -226,6 +206,134 @@ extern      "C"
     extern intn Hshutdown(void);
 
     extern void HDFend(void);
+
+/*
+   ** from hfiledd.c
+ */
+/******************************************************************************
+ NAME
+     Hdupdd - Duplicate a data descriptor
+
+ DESCRIPTION
+    Duplicates a data descriptor so that the new tag/ref points to the
+    same data element pointed to by the old tag/ref.  Return FAIL if
+    the given tag/ref are already in use.
+
+ RETURNS
+    returns SUCCEED (0) if successful, FAIL (-1) otherwise
+
+*******************************************************************************/
+intn Hdupdd(int32 file_id,      /* IN: File ID the tag/refs are in */
+        uint16 tag,             /* IN: Tag of new tag/ref */
+        uint16 ref,             /* IN: Ref of new tag/ref */
+        uint16 old_tag,         /* IN: Tag of old tag/ref */
+        uint16 old_ref          /* IN: Ref of old tag/ref */
+);
+
+/******************************************************************************
+ NAME
+     Hnumber - Determine the number of objects of a given type
+
+ DESCRIPTION
+    Determine how many objects of the given tag are in the file.
+    tag may be set to DFTAG_WILDCARD to get back the total number
+    of objects in the file.
+
+    Note, a return value of zero is not a fail condition.
+
+ RETURNS
+    the number of objects of type 'tag' else FAIL
+
+*******************************************************************************/
+int32 Hnumber(int32 file_id,    /* IN: File ID the tag/refs are in */
+        uint16 tag              /* IN: Tag to count */
+);
+
+/******************************************************************************
+ NAME
+     Hnewref - Returns a ref that is guaranteed to be unique in the file
+
+ DESCRIPTION
+    Returns a ref number that can be used with any tag to produce a
+    unique tag/ref.  Successive calls to Hnewref will generate a
+    strictly increasing sequence until the highest possible ref had been
+    returned, then Hnewref will return unused ref's starting from 1.
+
+ RETURNS
+    returns the ref number, 0 otherwise
+
+*******************************************************************************/
+uint16 Hnewref(int32 file_id        /* IN: File ID the tag/refs are in */
+);
+
+/******************************************************************************
+ NAME
+    Htagnewref  - returns a ref that is unique in the file for a given tag
+
+ DESCRIPTION
+    Returns a ref number that can be used with any tag to produce a
+    unique tag/ref.  Successive calls to Hnewref will generate a
+    strictly increasing sequence until the highest possible ref had been
+    returned, then Hnewref will return unused ref's starting from 1.
+
+ RETURNS
+    returns the ref number, 0 otherwise
+
+*******************************************************************************/
+uint16 Htagnewref(int32 file_id,    /* IN: File ID the tag/refs are in */
+        uint16 tag                  /* IN: Tag to search for a new ref for */
+);
+
+/******************************************************************************
+ NAME
+    Hfind - locate the next object of a search in an HDF file
+
+ DESCRIPTION
+    Searches for the `next' DD that fits the search tag/ref.  Wildcards
+    apply.  If origin is DF_FORWARD, search from current position forwards
+    in the file, otherwise DF_BACKWARD searches backward from the current
+    position in the file.  If *find_tag and *find_ref are both set to
+    0, this indicates the beginning of a search, and the search will
+    start from the beginning of the file if the direction is DF_FORWARD
+    and from the and of the file if the direction is DF_BACKWARD.
+
+ RETURNS
+    returns SUCCEED (0) if successful and FAIL (-1) otherwise
+
+*******************************************************************************/
+intn Hfind(int32 file_id,       /* IN: file ID to search in */
+        uint16 search_tag,      /* IN: the tag to search for (can be DFTAG_WILDCARD) */
+        uint16 search_ref,      /* IN: ref to search for (can be DFREF_WILDCARD) */
+        uint16 *find_tag,       /* IN: if (*find_tag==0) and (*find_ref==0) then start search */
+                                /* OUT: tag matching the search tag */
+        uint16 *find_ref,       /* IN: if (*find_tag==0) and (*find_ref==0) then start search */
+                                /* OUT: ref matching the search ref */
+        int32 *find_offset,     /* OUT: offset of the data element found */
+        int32 *find_length,     /* OUT: length of the data element found */
+        intn direction          /* IN: Direction to search in: */
+                                /*  DF_FORWARD searches forward from the current location */
+                                /*  DF_BACKWARD searches backward from the current location */
+);
+
+/******************************************************************************
+ NAME
+     Hdeldd - Delete a data descriptor
+
+ DESCRIPTION
+    Deletes a data descriptor of tag/ref from the dd list of the file.
+    This routine is unsafe and may leave a file in a condition that is
+    not usable by some routines.  Use with care.
+    For example, if this element is contained in a Vgroup, that group
+    will *NOT* get updated to reflect that this element has been deleted.
+
+ RETURNS
+    returns SUCCEED (0) if successful, FAIL (-1) otherwise
+
+*******************************************************************************/
+intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
+        uint16 tag,             /* IN: Tag of tag/ref to delete */
+        uint16 ref              /* IN: Ref of tag/ref to delete */
+);
 
 /*
    ** from hdfalloc.c
@@ -359,7 +467,7 @@ extern      "C"
     extern int16 HEvalue
                 (int32 level);
 
-    extern VOID HEclear
+    extern VOID HEPclear
                 (void);
 
  	extern intn HEshutdown(void);

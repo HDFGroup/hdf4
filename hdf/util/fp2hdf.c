@@ -161,13 +161,6 @@
 #include <ctype.h>
 
 /*
- * functions with non-integer return types
- */
-void        help();
-void        mean();
-void        usage();
-
-/*
  * global macros
  */
 #define EXPAND      1   /* -e: expand image with pixel replication */
@@ -329,6 +322,13 @@ static int  process(struct Options *opt);
 static int  gfloat(char *infile, FILE * strm, float32 *fp32, struct Input *in);
 static int  gint(char *infile, FILE * strm, int *ival, struct Input *in);
 static int  isnum(char *s);
+
+/*
+ * functions with non-integer return types
+ */
+void        help(char *);
+void        mean(struct Input *, struct Options *);
+void        usage(char *);
 
 /*
  * Name:

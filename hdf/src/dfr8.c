@@ -194,11 +194,7 @@ DFR8setcompress(int32 type, comp_info * cinfo)
 
   /* map JPEG compression into correct type of JPEG compression */
   if (type == COMP_JPEG)
-#ifdef OLD_WAY
-    CompType = DFTAG_GREYJPEG;
-#else /* OLD_WAY */
   CompType = DFTAG_GREYJPEG5;
-#endif /* OLD_WAY */
   else    /* otherwise, just use mapped tag */
     CompType = compress_map[type];
   CompInfo = (*cinfo);
@@ -392,7 +388,9 @@ DFR8getimage(const char *filename, uint8 *image, int32 xdim, int32 ydim, uint8 *
         }
     }     /* end if */
 
-  ret_value = Hclose(file_id);
+  if((ret_value = Hclose(file_id))==FAIL)
+    HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
+
 
 done:
   if(ret_value == FAIL)   
@@ -555,7 +553,7 @@ DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
             CompType = compress_map[compress];
         }   /* end if */
       if (!Writeref)
-        if ((Writeref = Htagnewref(file_id,DFTAG_CI)) == 0)
+        if ((Writeref = Hnewref(file_id)) == 0)
           HGOTO_ERROR(DFE_NOREF, FAIL);
 
       if (DFputcomp(file_id, DFTAG_CI, Writeref, (uint8 *) image, xdim, ydim,
@@ -571,7 +569,7 @@ DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
   else
     {     /* image need not be compressed */
       if (!Writeref)
-        if ((Writeref = Htagnewref(file_id,DFTAG_RI)) == 0)
+        if ((Writeref = Hnewref(file_id)) == 0)
           HGOTO_ERROR(DFE_NOREF, FAIL);
 
       if (Hputelement(file_id, DFTAG_RI, Writeref, (uint8 *) image, xdim * ydim) == FAIL)
@@ -583,11 +581,7 @@ DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
   Writerig.aspectratio = (float32) 1.0;
 
     /* Write out Raster-8 tags for those who want it */
-#ifdef OLD_WAY
-  if (CompType != DFTAG_GREYJPEG)
-#else /* OLD_WAY */
     if (CompType != DFTAG_GREYJPEG5)
-#endif /* OLD_WAY */
       {
         r8tag = (uint16) (CompType ?
                           ((CompType == DFTAG_RLE) ? DFTAG_CI8 : DFTAG_II8) : DFTAG_RI8);
@@ -940,7 +934,8 @@ DFR8putrig(int32 file_id, uint16 ref, DFRrig * rig, intn wdim)
     HGOTO_ERROR(DFE_PUTGROUP, FAIL);
 
     /* write out RIG */
-  ret_value = DFdiwrite(file_id, GroupID, DFTAG_RIG, ref);
+  if((ret_value = DFdiwrite(file_id, GroupID, DFTAG_RIG, ref))==FAIL)
+    HGOTO_ERROR(DFE_GROUPWRITE, FAIL);
 
 done:
   if(ret_value == FAIL)   
@@ -1376,7 +1371,7 @@ done:
 PRIVATE intn
 DFR8Iriginfo(int32 file_id)
 {
-  CONSTR(FUNC, "DFR8riginfo");
+  CONSTR(FUNC, "DFR8Iriginfo");
   uint16      riref = 0, ciref = 0;
   int32       aid = FAIL;
   uint16      ref;
@@ -1402,7 +1397,8 @@ DFR8Iriginfo(int32 file_id)
                   if (aid != FAIL && Hnextread(aid, DFTAG_RIG, DFREF_WILDCARD,
                                                DF_CURRENT) == FAIL)
                     {
-                      Hendaccess(aid);
+                      if(Hendaccess(aid)==FAIL)
+                          HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
                       aid = FAIL;
                     }     /* end if */
                 }   /* end else */
@@ -1425,7 +1421,8 @@ DFR8Iriginfo(int32 file_id)
                   if (Refset || (HEvalue(1) != DFE_BADCALL))
                     {
                       Refset = 0;
-                      Hendaccess(aid);
+                      if(Hendaccess(aid)==FAIL)
+                          HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
                       HGOTO_ERROR(DFE_BADRIG, FAIL);
                     }     /* end if */
                   Readrig.image.ref = ref;
@@ -1436,10 +1433,10 @@ DFR8Iriginfo(int32 file_id)
                   Refset = 0;
                 }   /* end else */
             }     /* end if */
-        }
-      while ((aid != FAIL) && (HEvalue(1) == DFE_BADCALL));
+        } while ((aid != FAIL) && (HEvalue(1) == DFE_BADCALL));
       if (aid != FAIL)
-        Hendaccess(aid);
+        if(Hendaccess(aid)==FAIL)
+          HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
     }     /* end if */
   if (Refset || !foundRig)
     {     /* No RIGs present, look for RI8 and CI8 */
@@ -1466,7 +1463,8 @@ DFR8Iriginfo(int32 file_id)
           Hinquire(aid, (int32 *) NULL, (uint16 *) NULL, &riref,
                    (int32 *) NULL, (int32 *) NULL, (int32 *) NULL,
                    (int16 *) NULL, (int16 *) NULL);
-          Hendaccess(aid);
+          if(Hendaccess(aid)==FAIL)
+              HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
         }   /* end if */
 
       if (Refset)
@@ -1479,7 +1477,8 @@ DFR8Iriginfo(int32 file_id)
               if (aid != FAIL && Hnextread(aid, DFTAG_CI8, DFREF_WILDCARD,
                                            DF_CURRENT) == FAIL)
                 {
-                  Hendaccess(aid);
+                  if(Hendaccess(aid)==FAIL)
+                      HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
                   aid = FAIL;
                 }   /* end if */
             }     /* end if */
@@ -1491,7 +1490,8 @@ DFR8Iriginfo(int32 file_id)
           Hinquire(aid, (int32 *) NULL, (uint16 *) NULL, &ciref,
                    (int32 *) NULL, (int32 *) NULL, (int32 *) NULL,
                    (int16 *) NULL, (int16 *) NULL);
-          Hendaccess(aid);
+          if(Hendaccess(aid)==FAIL)
+              HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
         }   /* end if */
 
       Refset = 0;
@@ -1520,12 +1520,10 @@ DFR8Iriginfo(int32 file_id)
       else
         HGOTO_ERROR(DFE_GETELEM, FAIL);
 
-      if ((aid = Hstartread(file_id, DFTAG_IP8, Readrig.image.ref)) != FAIL)
+      if (Hexist(file_id, DFTAG_IP8, Readrig.image.ref) != FAIL)
         {
           Readrig.lut.tag = DFTAG_IP8;
           Readrig.lut.ref = Readrig.image.ref;
-
-          Hendaccess(aid);
         }   /* end if */
     }     /* end if */
   Lastref = Readrig.image.ref;    /* remember ref read */

@@ -486,39 +486,7 @@ RETURNS
 VOID 
 VSdump(int32 vkey)
 {
-#ifdef OLD_WAY
-    DYN_VWRITELIST *w;
-    int32       i;
-    CONSTR(FUNC, "VSdump");
-
-    if (!vs)
-      {
-          sprintf(sjs, "@VSdump: vs is null\n");
-          zj;
-          return;
-      }
-
-    sprintf(sjs, "@tag=%d ref=%d i=%d ", vs->otag, vs->oref, vs->interlace);
-    zj;
-    sprintf(sjs, "@nv=%ld\n ", vs->nvertices);
-    zj;
-
-    w = (DYN_VWRITELIST *) & vs->wlist;
-    sprintf(sjs, "@vsize(hdf)=%d fields=%d [%s]\n", w->ivsize, w->n, vs->vsname);
-    zj;
-
-    for (i = 0; i < w->n; i++)
-      {
-          sprintf(sjs, "@<%s>      type:%d esize=%d isize=%d off=%d\n",
-               w->name[i], w->type[i], w->esize[i], w->isize[i], w->off[i]);
-          zj;
-      }
-
-    sprintf(sjs, "\n");
-    zj;
-#else
     vkey = vkey;    /* suppress warning */
-#endif /* OLD_WAY */
 }   /* VSdump */
 
 /*-------------------------------------------------------

@@ -169,17 +169,16 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
 {
     CONSTR(FUNC, "HXcreate");   /* for HERROR */
     filerec_t  *file_rec;       /* file record */
-    accrec_t   *access_rec;     /* access element record */
+    accrec_t   *access_rec=NULL;/* access element record */
     int         slot;
-    dd_t       *dd;
-    ddblock_t  *data_block;     /* dd block ptr to exist data element */
-    int32       data_idx;       /* dd list index to existing data element */
+    int32       dd_aid;         /* AID for writing the special info */
     hdf_file_t  file_external;  /* external file descriptor */
-    extinfo_t  *info;           /* special element information */
-    dd_t       *data_dd;        /* dd of existing regular element */
+    extinfo_t  *info=NULL;      /* special element information */
+    atom_t      data_id=FAIL;   /* dd ID of existing regular element */
+    int32       data_len;		/* length of the data we are checking */
     uint16      special_tag;    /* special version of tag */
     uint8       local_ptbuf[20 + MAX_PATH_LEN];     /* temp working buffer */
-    char	*fname;		/* filename built from external filename */
+    char	   *fname=NULL;    /* filename built from external filename */
     int32       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -201,62 +200,44 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
         HGOTO_ERROR(DFE_TOOMANY, FAIL);
     access_rec = &access_records[slot];
 
-    /* look for existing data element of the same tag/ref */
-    if (FAIL != HIlookup_dd(file_rec, tag, ref, &data_block, &data_idx))
+    /* search for identical dd */
+    if ((data_id=HTPselect(file_rec,tag,ref))!=FAIL)
       {
-	  data_dd = &(data_block->ddlist[data_idx]);
-	  if (SPECIALTAG(data_dd->tag))
-	   {
-		sp_info_block_t sp_info;
-		int32	aid, retcode;
+          /* Check if the element is already special */
+          if (HTPis_special(data_id)==TRUE)
+            {
+                sp_info_block_t sp_info;
+                int32	aid, retcode;
 
-		aid = Hstartread(file_id, data_dd->tag, data_dd->ref);
-		retcode = HDget_special_info(aid, &sp_info);
-		Hendaccess(aid);
-		if ((retcode == FAIL) || (sp_info.key == FAIL)){
-		    HGOTO_ERROR(DFE_CANTMOD, FAIL);
-		}
+                aid = Hstartread(file_id, tag, ref);
+                retcode = HDget_special_info(aid, &sp_info);
+                Hendaccess(aid);
+                if ((retcode == FAIL) || (sp_info.key == FAIL))
+                    HGOTO_ERROR(DFE_CANTMOD, FAIL);
 		
-		switch(sp_info.key)
-		{
-		    case SPECIAL_LINKED:
-		    case SPECIAL_EXT:
-			/* we can proceed with these types of special elements */
-			break;
-		    case SPECIAL_COMP:
-		    default:
-			/* abort since we cannot convert the data element to
-			   an external data element */
-			access_rec->used = FALSE;
-			HGOTO_ERROR(DFE_CANTMOD, FAIL);
-			break;
-		} /* switch */
-	    }
-      }
-    else
-        data_dd = (dd_t *) NULL;
+                switch(sp_info.key)
+                  {
+                    /* we can proceed with these types of special elements */
+                    case SPECIAL_LINKED:
+                    case SPECIAL_EXT:
+                        break;
 
-    /* look for empty dd to use */
-    if (FAIL == HIlookup_dd(file_rec, DFTAG_NULL, DFREF_WILDCARD,
-                            &file_rec->null_block, &file_rec->null_idx))
-      {
-          if (FAIL == HInew_dd_block(file_rec, FILE_NDDS(file_rec), FUNC))
+                    /* abort since we cannot convert the data element to an external data element */
+                    case SPECIAL_COMP:
+                    default:
+                        HTPendaccess(data_id);
+                        HGOTO_ERROR(DFE_CANTMOD, FAIL);
+                        break;
+                  } /* switch */
+            }   /* end if */
+
+          /* get the info for the dataset */
+          if(HTPinquire(data_id,NULL,NULL,NULL,&data_len)==FAIL)
             {
-                access_rec->used = FALSE;
-                HGOTO_ERROR(DFE_NOFREEDD, FAIL);
-            }
-          else
-            {
-                access_rec->block = file_rec->ddlast;
-                access_rec->idx = 0;
-            }
-      }
-    else
-      {
-          access_rec->block = file_rec->null_block;
-          access_rec->idx = file_rec->null_idx;
-      }
-    dd = &access_rec->block->ddlist[access_rec->idx];
+                HTPendaccess(data_id);
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
+            } /* end if */
+      } /* end if */
 
     /* build the customized external file name. */
     if (!(fname = HXIbuildfilename(extern_file_name, DFACC_CREATE)))
@@ -268,11 +249,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     {
         file_external = HI_CREATE(fname);
         if (OPENERR(file_external))
-            {
-                access_rec->used = FALSE;
-                HDfree(fname);
-                HGOTO_ERROR(DFE_BADOPEN, FAIL);
-            }
+            HGOTO_ERROR(DFE_BADOPEN, FAIL);
     }
     HDfree(fname);
 
@@ -280,50 +257,34 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     access_rec->special_info = (VOIDP) HDmalloc((uint32) sizeof(extinfo_t));
     info = (extinfo_t *) access_rec->special_info;
     if (!info)
-      {
-          access_rec->used = FALSE;
-          HGOTO_ERROR(DFE_NOSPACE, FAIL);
-      }
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-    if (data_dd)
+    if (data_id!=FAIL)
       {
           VOIDP       buf;      /* temporary buffer */
 
-          if ((buf = (VOIDP) HDmalloc((uint32) data_dd->length)) == NULL)
+          if ((buf = (VOIDP) HDmalloc((uint32) data_len)) == NULL)
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
+          if (Hgetelement(file_id, tag, ref, (VOIDP)buf) == FAIL)
             {
-                access_rec->used = FALSE;
-                HDfree((VOIDP) info);
-                HGOTO_ERROR(DFE_NOSPACE, FAIL);
-            }
-          if (Hgetelement(file_id, data_dd->tag, data_dd->ref, (VOIDP)buf) == FAIL)
-            {
-                access_rec->used = FALSE;
-                HDfree((VOIDP) info);
                 HDfree((VOIDP) buf);
                 HGOTO_ERROR(DFE_READERROR, FAIL);
             }
           if (HI_SEEK(file_external, offset) == FAIL)
             {
-                access_rec->used = FALSE;
-                HDfree((VOIDP) info);
                 HDfree((VOIDP) buf);
                 HGOTO_ERROR(DFE_SEEKERROR, FAIL);
             }
-          if (HI_WRITE(file_external, buf, data_dd->length) == FAIL)
+          if (HI_WRITE(file_external, buf, data_len) == FAIL)
             {
-                access_rec->used = FALSE;
-                HDfree((VOIDP) info);
                 HDfree((VOIDP) buf);
                 HGOTO_ERROR(DFE_WRITEERROR, FAIL);
             }
           HDfree((VOIDP) buf);
-          info->length = data_dd->length;
-
+          info->length = data_len;
       }
     else
-      {
-          info->length = start_len;
-      }
+      info->length = start_len;
 
     info->attached         = 1;
     info->file_open        = TRUE;
@@ -331,15 +292,8 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     info->extern_offset    = offset;
     info->extern_file_name = (char *) HDstrdup(extern_file_name);
     if (!info->extern_file_name)
-      {
-          access_rec->used = FALSE;
-          HDfree((VOIDP) info);
-          HGOTO_ERROR(DFE_NOSPACE, FAIL);
-      }
+      HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-#ifdef QAK
-printf("%s: SPECIAL_EXT=%d\n",FUNC,(int)SPECIAL_EXT);
-#endif /* QAK */
     info->length_file_name = HDstrlen(extern_file_name);
     {
         uint8      *p = local_ptbuf;
@@ -349,73 +303,42 @@ printf("%s: SPECIAL_EXT=%d\n",FUNC,(int)SPECIAL_EXT);
         INT32ENCODE(p, info->length_file_name);
         HDstrcpy((char *) p, extern_file_name);
     }
-    dd->ref         = ref;
-    dd->tag         = special_tag;
-    dd->length      = 14 + info->length_file_name;
-    if ((dd->offset = HPgetdiskblock(file_rec, dd->length, TRUE)) == FAIL)
-      {
-          access_rec->used = FALSE;
-          HDfree((VOIDP) info);
-          HGOTO_ERROR(DFE_INTERNAL, FAIL);
-      }     /* end if */
-    if (HPwrite(file_rec, local_ptbuf, dd->length) == FAIL)
-      {
-          access_rec->used = FALSE;
-          HDfree((VOIDP) info);
-          HGOTO_ERROR(DFE_WRITEERROR, FAIL);
-      }
+    if(data_id!=FAIL)
+        if (HTPdelete(data_id) == FAIL)
+            HGOTO_ERROR(DFE_CANTDELDD, FAIL);
 
-    if (FAIL == HIupdate_dd(file_rec, access_rec->block, access_rec->idx, FUNC))
-      {
-          access_rec->used = FALSE;
-          HDfree((VOIDP) info);
-          HGOTO_ERROR(DFE_CANTUPDATE, FAIL);
-      }
-
-    /* add new DD to hash table */
-    if (FAIL == HIadd_hash_dd(file_rec, dd->tag, dd->ref, access_rec->block,
-                              access_rec->idx))
-      {
-          access_rec->used = FALSE;
-          HDfree((VOIDP) info);
-          HGOTO_ERROR(DFE_CANTHASH, FAIL);
-      }
-
-    if (data_dd)
-      {
-          if (Hdeldd(file_id, data_dd->tag, data_dd->ref) == FAIL)
-            {
-                access_rec->used = FALSE;
-                HDfree((VOIDP) info);
-                HGOTO_ERROR(DFE_CANTDELDD, FAIL);
-            }   /* end if */
-          if (HIdel_hash_dd(file_rec, data_dd->tag, data_dd->ref) == FAIL)
-            {
-                access_rec->used = FALSE;
-                HDfree((VOIDP) info);
-                HGOTO_ERROR(DFE_CANTDELHASH, FAIL);
-            }   /* end if */
-      }
+    /* write the special info structure to fill */
+    if((dd_aid=Hstartaccess(file_id,special_tag,ref,DFACC_ALL))==FAIL)
+        HGOTO_ERROR(DFE_CANTACCESS, FAIL);
+    if (Hwrite(dd_aid, 14+info->length_file_name, local_ptbuf) == FAIL)
+        HGOTO_ERROR(DFE_WRITEERROR, FAIL);
+    if(Hendaccess(dd_aid)==FAIL)
+        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
     /* update access record and file record */
+    if((access_rec->ddid=HTPselect(file_rec,special_tag,ref))==FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
     access_rec->special_func = &ext_funcs;
     access_rec->special      = SPECIAL_EXT;
     access_rec->posn         = 0;
     access_rec->access       = DFACC_RDWR;
     access_rec->file_id      = file_id;
     access_rec->appendable   = FALSE;     /* start data as non-appendable */
-    access_rec->flush        = FALSE;  /* start data as not needing flushing */
-
     file_rec->attach++;
-    if (ref > file_rec->maxref)
-        file_rec->maxref = ref;
 
     ret_value = ASLOT2ID(slot);  /* return access id */
 
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
-
+        if(access_rec!=NULL)
+            access_rec->used = FALSE;
+        if(info!=NULL)
+            HDfree((VOIDP) info);
+        if(fname!=NULL)
+            HDfree((VOIDP) fname);
+        if(data_id!=FAIL)
+            HTPendaccess(data_id);
     } /* end if */
 
   /* Normal function cleanup */
@@ -541,9 +464,9 @@ PRIVATE int32
 HXIstaccess(accrec_t * access_rec, int16 acc_mode)
 {
     CONSTR(FUNC, "HXIstaccess");    /* for HERROR */
-    dd_t       *info_dd;        /* dd of the special information element */
     extinfo_t  *info;           /* special element information */
     filerec_t  *file_rec;       /* file record */
+    int32       data_off;		/* offset of the data we are checking */
     uint8       local_ptbuf[12];    /* working buffer */
     int32       ret_value = SUCCEED;
 
@@ -557,71 +480,45 @@ HXIstaccess(accrec_t * access_rec, int16 acc_mode)
     access_rec->posn = 0;
     access_rec->access = acc_mode|DFACC_READ;
 
-    /* get the dd for information */
-    info_dd = &access_rec->block->ddlist[access_rec->idx];
+    /* Get the data's offset & length */
+    if(HTPinquire(access_rec->ddid,NULL,NULL,&data_off,NULL)==FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* get the special info record */
-    access_rec->special_info = HIgetspinfo(access_rec,
-                                           info_dd->tag, info_dd->ref);
+    access_rec->special_info = HIgetspinfo(access_rec);
     if (access_rec->special_info)
       {   /* found it from other access records */
-	  info = (extinfo_t *) access_rec->special_info;
-	  info->attached++;
+          info = (extinfo_t *) access_rec->special_info;
+          info->attached++;
       }
     else
       {   /* look for information in the file */
-      if (HPseek(file_rec, info_dd->offset + 2) == FAIL)
-        {
-            access_rec->used = FALSE;
-            HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-        }
-	  if (HPread(file_rec, local_ptbuf, 12) == FAIL)
-	    {
-            access_rec->used = FALSE;
-            HGOTO_ERROR(DFE_READERROR, FAIL);
-	    }
+          if (HPseek(file_rec, data_off + 2) == FAIL)
+              HGOTO_ERROR(DFE_SEEKERROR, FAIL);
+          if (HPread(file_rec, local_ptbuf, 12) == FAIL)
+              HGOTO_ERROR(DFE_READERROR, FAIL);
 
-	  access_rec->special_info = (VOIDP) HDmalloc((uint32) sizeof(extinfo_t));
-	  info = (extinfo_t *) access_rec->special_info;
-	  if (!info)
-	    {
-		access_rec->used = FALSE;
-		HGOTO_ERROR(DFE_NOSPACE, FAIL);
-	    }
-	  {
-	      uint8      *p = local_ptbuf;
-	      INT32DECODE(p, info->length);
-	      INT32DECODE(p, info->extern_offset);
-	      INT32DECODE(p, info->length_file_name);
-	  }
-	  info->extern_file_name = (char *) HDmalloc((uint32)
-						info->length_file_name + 1);
-	  if (!info->extern_file_name)
-	    {
-            access_rec->used = FALSE;
+          access_rec->special_info = (VOIDP) HDmalloc((uint32) sizeof(extinfo_t));
+          info = (extinfo_t *) access_rec->special_info;
+          if (info==NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
-	    }
-	  if (HPread(file_rec, info->extern_file_name,
-		      info->length_file_name) == FAIL)
-	    {
-            access_rec->used = FALSE;
-            HGOTO_ERROR(DFE_READERROR, FAIL);
-	    }
 
-	  info->extern_file_name[info->length_file_name] = '\0';
+          {
+              uint8      *p = local_ptbuf;
+              INT32DECODE(p, info->length);
+              INT32DECODE(p, info->extern_offset);
+              INT32DECODE(p, info->length_file_name);
+          }
+          info->extern_file_name = (char *) HDmalloc((uint32) info->length_file_name + 1);
+          if (!info->extern_file_name)
+              HGOTO_ERROR(DFE_NOSPACE, FAIL);
+          if (HPread(file_rec, info->extern_file_name, info->length_file_name) == FAIL)
+              HGOTO_ERROR(DFE_READERROR, FAIL);
+
+          info->extern_file_name[info->length_file_name] = '\0';
 
           /* delay file opening until needed */
           info->file_open = FALSE;
-
-#if 0
-          info->file_external = HI_OPEN(info->extern_file_name, acc_mode);
-          if (OPENERR(info->file_external))
-            {
-                access_rec->used = FALSE;
-                HGOTO_ERROR(DFE_BADOPEN, FAIL);
-            }
-#endif /* 0 */
-
           info->attached = 1;
       }
 
@@ -631,7 +528,7 @@ HXIstaccess(accrec_t * access_rec, int16 acc_mode)
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
-
+        access_rec->used = FALSE;
     } /* end if */
 
   /* Normal function cleanup */
@@ -853,10 +750,7 @@ HXPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
     CONSTR(FUNC, "HXPwrite");   /* for HERROR */
     extinfo_t  *info =          /* information on the special element */
                     (extinfo_t *) (access_rec->special_info);
-    uint8      *p =            /* temp buffer ptr */
-                   local_ptbuf;
-    dd_t       *info_dd =      /* dd of infromation element */
-                         &access_rec->block->ddlist[access_rec->idx];
+    uint8      *p =local_ptbuf;/* temp buffer ptr */
     filerec_t  *file_rec =     /* file record */
                           FID2REC(access_rec->file_id);
     int32      ret_value = SUCCEED;
@@ -868,17 +762,16 @@ HXPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
     /* see if the file is open, if not open it */
     if (!info->file_open)
     {
-	char *fname;
+        char *fname;
 
-	/* build the customized external file name. */
-	if (!(fname = HXIbuildfilename(info->extern_file_name, DFACC_OLD)))
-	    HGOTO_ERROR(DFE_BADOPEN, FAIL);
+        /* build the customized external file name. */
+        if (!(fname = HXIbuildfilename(info->extern_file_name, DFACC_OLD)))
+            HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
-	info->file_external = HI_OPEN(fname, access_rec->access);
-	HDfree(fname);
+        info->file_external = HI_OPEN(fname, access_rec->access);
+        HDfree(fname);
         if (OPENERR(info->file_external))
             {
-                access_rec->used = FALSE;
                 HERROR(DFE_BADOPEN);
                 HEreport("Could not find external file %s\n", info->extern_file_name);
                 ret_value = FAIL;
@@ -896,42 +789,45 @@ HXPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
                       access_rec->posn + info->extern_offset) == FAIL)
               HGOTO_ERROR(DFE_SEEKERROR, FAIL);
           if (CM_WRITE(info->para_extfile_id, data, length) == FAIL)
-            {
                 HGOTO_ERROR(DFE_DENIED, FAIL);
-            }
       }
     else
 #endif /* CM5 */
       {
-	  if (HI_SEEK(info->file_external,
-		      access_rec->posn + info->extern_offset) == FAIL)
-	      HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-	  if (HI_WRITE(info->file_external, data, length) == FAIL)
-	    {
-		/* this external file might not be opened with write permission,
-		   reopen the file and try again */
-		hdf_file_t  f = HI_OPEN(info->extern_file_name, DFACC_WRITE);
-		if (OPENERR(f) ||
-		HI_SEEK(f, access_rec->posn + info->extern_offset) == FAIL ||
-		    HI_WRITE(f, data, length) == FAIL)
-		  {
-		      HI_CLOSE(f);
-		      HGOTO_ERROR(DFE_DENIED, FAIL);
-		  }
-		HI_CLOSE(info->file_external);
+          if (HI_SEEK(info->file_external,
+                  access_rec->posn + info->extern_offset) == FAIL)
+              HGOTO_ERROR(DFE_SEEKERROR, FAIL);
+          if (HI_WRITE(info->file_external, data, length) == FAIL)
+            {
+            /* this external file might not be opened with write permission,
+               reopen the file and try again */
+                hdf_file_t  f = HI_OPEN(info->extern_file_name, DFACC_WRITE);
+                if (OPENERR(f) ||
+                HI_SEEK(f, access_rec->posn + info->extern_offset) == FAIL ||
+                    HI_WRITE(f, data, length) == FAIL)
+                  {
+                      HI_CLOSE(f);
+                      HGOTO_ERROR(DFE_DENIED, FAIL);
+                  }
+                HI_CLOSE(info->file_external);
 
-		/* if okay, substitute the file descriptor */
-		info->file_external = f;
-	    }
+                /* if okay, substitute the file descriptor */
+                info->file_external = f;
+            }
       }
 
     /* update access record, and information about special elelemt */
     access_rec->posn += length;
     if (access_rec->posn > info->length)
       {
+          int32       data_off;		/* offset of the data we are checking */
           info->length = access_rec->posn;
           INT32ENCODE(p, info->length);
-          if (HPseek(file_rec, info_dd->offset + 2) == FAIL)
+
+          /* Get the data's offset & length */
+          if(HTPinquire(access_rec->ddid,NULL,NULL,&data_off,NULL)==FAIL)
+              HGOTO_ERROR(DFE_INTERNAL, FAIL);
+          if (HPseek(file_rec, data_off + 2) == FAIL)
               HGOTO_ERROR(DFE_SEEKERROR, FAIL);
           if (HPwrite(file_rec, local_ptbuf, 4) == FAIL)
               HGOTO_ERROR(DFE_WRITEERROR, FAIL);
@@ -942,6 +838,7 @@ HXPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
+        access_rec->used = FALSE;
 
     } /* end if */
 
@@ -979,19 +876,23 @@ HXPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
            uint16 *pref, int32 *plength, int32 *poffset,
            int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    dd_t       *info_dd =       /* dd of special information */
-    &(access_rec->block->ddlist[access_rec->idx]);
+    CONSTR(FUNC, "HXPinquire");   /* for HERROR */
     extinfo_t  *info =          /* special information record */
     (extinfo_t *) access_rec->special_info;
+    uint16 data_tag,data_ref;   /* tag/ref of the data we are checking */
     int32    ret_value = SUCCEED;
+
+    /* Get the data's offset & length */
+    if(HTPinquire(access_rec->ddid,&data_tag,&data_ref,NULL,NULL)==FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* fill in the variables if they are present */
     if (pfile_id)
         *pfile_id = access_rec->file_id;
     if (ptag)
-        *ptag = info_dd->tag;
+        *ptag = data_tag;
     if (pref)
-        *pref = info_dd->ref;
+        *pref = data_ref;
     if (plength)
         *plength = info->length;
     if (poffset)
@@ -1002,6 +903,14 @@ HXPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
         *paccess = (int16)access_rec->access;
     if (pspecial)
         *pspecial = access_rec->special;
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
 
     return ret_value;
 }	/* HXPinquire */
@@ -1029,6 +938,10 @@ HXPendaccess(accrec_t * access_rec)
 
     /* close the file pointed to by this access rec */
     HXPcloseAID(access_rec);
+
+    /* update file and access records */
+    if (HTPendaccess(access_rec->ddid) == FAIL)
+      HGOTO_ERROR(DFE_CANTFLUSH, FAIL);
 
     /* validate file record */
     if (BADFREC(file_rec))
@@ -1075,7 +988,7 @@ HXPcloseAID(accrec_t * access_rec)
 {
 #ifdef LATER
     CONSTR(FUNC, "HXPcloseAID");    /* for HERROR */
-#endif
+#endif /* LATER */
     extinfo_t  *info =          /* special information record */
     (extinfo_t *) access_rec->special_info;
     int32      ret_value = SUCCEED;
@@ -1090,6 +1003,16 @@ HXPcloseAID(accrec_t * access_rec)
           HDfree((VOIDP) info->extern_file_name);
           HDfree((VOIDP) info);
       }
+
+#ifdef LATER
+done:
+#endif /* LATER */
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
 
     return ret_value;
 }   /* HXPcloseAID */
@@ -1113,7 +1036,7 @@ DESCRIPTION
 int32
 HXPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
 {
-    char       *FUNC = "HXPinfo";   /* for HERROR */
+    CONSTR(FUNC, "HXPinfo");    /* for HERROR */
     extinfo_t  *info =          /* special information record */
     (extinfo_t *) access_rec->special_info;
     int32      ret_value = SUCCEED;
@@ -1162,12 +1085,12 @@ DESCRIPTION
 int32
 HXPreset(accrec_t * access_rec, sp_info_block_t * info_block)
 {
-    char       *FUNC = "HXPreset";  /* for HERROR */
-    dd_t       *dd;             /* dd of existing external element record */
+    CONSTR(FUNC, "HXPreset");    /* for HERROR */
     filerec_t  *file_rec;       /* file record */
     uint8       local_ptbuf[14 + MAX_PATH_LEN];     /* temp buffer */
     extinfo_t  *info =          /* special information record */
     (extinfo_t *) access_rec->special_info;
+    int32 new_len, new_off;     /* new length & offset of the special info */
     int32      ret_value = SUCCEED;
 
     /* validate access record -- make sure is already external element */
@@ -1184,9 +1107,6 @@ HXPreset(accrec_t * access_rec, sp_info_block_t * info_block)
     if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-    /* get the DD of the existing special element record */
-    dd = &access_rec->block->ddlist[access_rec->idx];
-
     /* update our internal pointers */
     info->extern_offset = info_block->offset;
     info->extern_file_name = (char *) HDstrdup(info_block->path);
@@ -1199,8 +1119,8 @@ HXPreset(accrec_t * access_rec, sp_info_block_t * info_block)
      * accomplish this by changing the offset and length of the existing
      *  special element DD and writing it in a new place
      */
-    dd->length = 14 + info->length_file_name;
-    if ((dd->offset = HPgetdiskblock(file_rec, dd->length, TRUE)) == FAIL)
+    new_len=14+info->length_file_name;
+    if ((new_off=HPgetdiskblock(file_rec, new_len, TRUE)) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* write the new external file record */
@@ -1214,22 +1134,17 @@ HXPreset(accrec_t * access_rec, sp_info_block_t * info_block)
     }
 
     /* write out the new external file record */
-    if (HPwrite(file_rec, local_ptbuf, dd->length) == FAIL)
-      {
-          HERROR(DFE_WRITEERROR);
-          access_rec->used = FALSE;
-          ret_value = FAIL;
-          goto done;
-      }
+    if (HPwrite(file_rec, local_ptbuf, new_len) == FAIL)
+        HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
     /* update the DD block in the file */
-    if (HIupdate_dd(file_rec, access_rec->block, access_rec->idx, FUNC) == FAIL)
-        ret_value = FAIL;
+    if (HTPupdate(access_rec->ddid, new_off, new_len) == FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
-
+      access_rec->used = FALSE;
     } /* end if */
 
   /* Normal function cleanup */

@@ -221,15 +221,16 @@ HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length,
 {
     CONSTR(FUNC, "HLcreate");   /* for HERROR */
     filerec_t  *file_rec;       /* file record */
-    accrec_t   *access_rec;     /* access record */
+    accrec_t   *access_rec=NULL;/* access record */
     int         slot;           /* slot in access records */
-    dd_t       *dd;             /* ptr to created dd */
-    ddblock_t  *data_block;     /* dd lbock of the data dd */
-    int32       data_idx;       /* dd list index of data dd */
+    int32       dd_aid;         /* AID for writing the special info */
     linkinfo_t *info;           /* information for the linked blocks elt */
     uint16      link_ref;       /* the ref of the link structure
                                    (block table) */
-    dd_t       *data_dd;        /* dd of existing regular element */
+    atom_t      data_id;        /* dd ID of existing regular element */
+    uint16      new_data_tag, new_data_ref=0;  /* Tag/ref of the new data in the file */
+    int32       data_len;		/* length of the data we are checking */
+    int32       data_off;		/* offset of the data we are checking */
     uint16      special_tag;    /* special version of this tag */
     uint8       local_ptbuf[16];
     int32       ret_value = SUCCEED;
@@ -240,9 +241,6 @@ HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length,
 
     /* clear error stack and validate file record id */
     HEclear();
-#ifdef QAK
-printf("%s: I've been called\n",FUNC);
-#endif /* QAK */
     file_rec = FID2REC(file_id);
     if (BADFREC(file_rec) || block_length < 0 || number_blocks < 0
         || SPECIALTAG(tag)
@@ -259,90 +257,52 @@ printf("%s: I've been called\n",FUNC);
 
     access_rec = &access_records[slot];
 
-    /* update maxref if necessary */
-    if (ref > file_rec->maxref)
-        file_rec->maxref = ref;
-
     /* search for identical dd */
-    if (HIlookup_dd(file_rec, tag, ref, &data_block, &data_idx) != FAIL)
+    if ((data_id=HTPselect(file_rec,tag,ref))!=FAIL)
       {
-          data_dd = &(data_block->ddlist[data_idx]);
-          if (SPECIALTAG(data_dd->tag))
+          /* Check if the element is already special */
+          if (HTPis_special(data_id)==TRUE)
             {
-                access_rec->used = FALSE;
+                HTPendaccess(data_id);
                 HGOTO_ERROR(DFE_CANTMOD, FAIL);
             }   /* end if */
-      }     /* end if */
-    else
-        data_dd = (dd_t *) NULL;
 
-    /* search for the empty dd to put new dd */
-    if (HIlookup_dd(file_rec, DFTAG_NULL, DFREF_WILDCARD, &file_rec->null_block,
-                    &file_rec->null_idx) == FAIL)
-      {
-          if (HInew_dd_block(file_rec, FILE_NDDS(file_rec), FUNC) == FAIL)
+    /* If the data already was in the file, convert it into the first linked block */
+          /* get the info for the dataset */
+          if(HTPinquire(data_id,NULL,NULL,&data_off,&data_len)==FAIL)
             {
-                access_rec->used = FALSE;
-                HGOTO_ERROR(DFE_NOFREEDD, FAIL);
-            }
-          else
-            {
-                access_rec->block = file_rec->ddlast;
-                access_rec->idx = 0;
-            }
-      }
-    else
-      {
-          access_rec->block = file_rec->null_block;
-          access_rec->idx = file_rec->null_idx;
-      }
-    dd = &access_rec->block->ddlist[access_rec->idx];
+                HTPendaccess(data_id);
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
+            } /* end if */
 
-    if (data_dd)
-      {   /* remove old tag from hash table */
-          if (HIdel_hash_dd(file_rec, data_dd->tag, data_dd->ref) == FAIL)
+          new_data_tag=DFTAG_LINKED;
+          new_data_ref=Htagnewref(file_id,new_data_tag);
+          if(Hdupdd(file_id, new_data_tag, new_data_ref, tag, ref)==FAIL)
             {
-                access_rec->used = FALSE;
-                HGOTO_ERROR(DFE_CANTDELHASH, FAIL);
-            }   
-
-          data_dd->tag = DFTAG_LINKED;
-          data_dd->ref = Htagnewref(file_id,data_dd->tag);
-          if (HIupdate_dd(file_rec, data_block, data_idx, FUNC) == FAIL)
-            {
-                access_rec->used = FALSE;
+                HTPendaccess(data_id);
                 HGOTO_ERROR(DFE_CANTUPDATE, FAIL);
-            }
+            } /* end if */
 
-          /* update hash table */
-          if (HIadd_hash_dd(file_rec, data_dd->tag, data_dd->ref, data_block,
-                            data_idx) == FAIL)
-            {
-                access_rec->used = FALSE;
-                HGOTO_ERROR(DFE_CANTHASH, FAIL);
-            }   
-      }
+          /* Delete the old data ID */
+          if(HTPdelete(data_id)==FAIL)
+              HGOTO_ERROR(DFE_CANTDELHASH, FAIL);
 
-    /* write the special info structure to fill */
+          /* Attach to the new data ID */
+          if ((data_id=HTPselect(file_rec,new_data_tag,new_data_ref))==FAIL)
+              HGOTO_ERROR(DFE_INTERNAL, FAIL);
+      } /* end if */
+
     link_ref = Htagnewref(file_id,DFTAG_LINKED);
-    dd->length = 16;
 
-    if ((dd->offset = HPgetdiskblock(file_rec, dd->length, TRUE)) == FAIL)
-      {
-          access_rec->used = FALSE;
-          HGOTO_ERROR(DFE_INTERNAL, FAIL);
-      }     /* end if */
     if (( info = (linkinfo_t *) HDmalloc((uint32) sizeof(linkinfo_t)))==NULL)
-      {
-          access_rec->used = FALSE;
-          HGOTO_ERROR(DFE_NOSPACE, FAIL);
-      }
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     info->attached = 1;
-    info->length = data_dd ? data_dd->length : 0;
-    info->first_length = data_dd ? data_dd->length : block_length;
+    info->length = (data_id!=FAIL) ? data_len : 0;
+    info->first_length = (data_id!=FAIL) ? data_len : block_length;
     info->block_length = block_length;
     info->number_blocks = number_blocks;
+    info->link_ref = link_ref;
 
     {
         uint8      *p;
@@ -353,42 +313,28 @@ printf("%s: I've been called\n",FUNC);
         INT32ENCODE(p, number_blocks);
         UINT16ENCODE(p, link_ref);  /* link_ref */
     }
-    if (HPwrite(file_rec, local_ptbuf, dd->length) == FAIL)
-      {
-          access_rec->used = FALSE;
-          HGOTO_ERROR(DFE_WRITEERROR, FAIL);
-      }
-
-    dd->tag = special_tag;
-    dd->ref = ref;
+    /* write the special info structure to fill */
+    if((dd_aid=Hstartaccess(file_id,special_tag,ref,DFACC_ALL))==FAIL)
+        HGOTO_ERROR(DFE_CANTACCESS, FAIL);
+    if (Hwrite(dd_aid, 16, local_ptbuf) == FAIL)
+        HGOTO_ERROR(DFE_WRITEERROR, FAIL);
+    if(Hendaccess(dd_aid)==FAIL)
+        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
     /* allocate info structure and file it in */
     info->link = HLInewlink(file_id, number_blocks, link_ref,
-                            (uint16) (data_dd ? data_dd->ref : 0));
+                            (uint16) ((data_id!=FAIL) ? new_data_ref : 0));
     if (!info->link)
-      {
-          access_rec->used = FALSE;
-          ret_value = FAIL;
-          goto done;
-      }
-    info->link_ref = link_ref;
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-    /* update dd list in file */
-    if (HIupdate_dd(file_rec, access_rec->block, access_rec->idx, FUNC) == FAIL)
-      {
-          access_rec->used = FALSE;
-          HGOTO_ERROR(DFE_CANTUPDATE, FAIL);
-      }
-
-    /* update hash table */
-    if (HIadd_hash_dd(file_rec, dd->tag, dd->ref, access_rec->block,
-                      access_rec->idx) == FAIL)
-      {
-          access_rec->used = FALSE;
-          HGOTO_ERROR(DFE_CANTHASH, FAIL);
-      }     
+    /* Detach from the data DD ID */
+    if(data_id!=FAIL)
+        if(HTPendaccess(data_id)==FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* update access record and file record */
+    if((access_rec->ddid=HTPselect(file_rec,special_tag,ref))==FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
     access_rec->special_func = &linked_funcs;
     access_rec->special_info=(VOIDP)info;
     access_rec->special = SPECIAL_LINKED;
@@ -396,7 +342,6 @@ printf("%s: I've been called\n",FUNC);
     access_rec->access = DFACC_RDWR;
     access_rec->file_id = file_id;
     access_rec->appendable = FALSE;     /* start data as non-appendable */
-    access_rec->flush = FALSE;  /* start data as not needing flushing */
     file_rec->attach++;
 
     ret_value = ASLOT2ID(slot);
@@ -404,7 +349,8 @@ printf("%s: I've been called\n",FUNC);
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
-
+        if(access_rec!=NULL)
+            access_rec->used = FALSE;
     } /* end if */
 
   /* Normal function cleanup */
@@ -457,14 +403,15 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
 {
     CONSTR(FUNC, "HLconvert");  /* for HERROR */
     filerec_t  *file_rec;       /* file record */
-    accrec_t   *access_rec;     /* access record */
-    dd_t       *dd;             /* ptr to created dd */
-    ddblock_t  *data_block;     /* dd lbock of the data dd */
-    int32       data_idx;       /* dd list index of data dd */
+    accrec_t   *access_rec=NULL;/* access record */
     linkinfo_t *info;           /* information for the linked blocks elt */
     uint16      link_ref;       /* the ref of the link structure
                                    (block table) */
-    dd_t       *data_dd;        /* dd of existing regular element */
+    int32       dd_aid;         /* AID for writing the special info */
+    uint16      new_data_tag, new_data_ref=0;  /* Tag/ref of the new data in the file */
+    uint16      data_tag, data_ref;  /* Tag/ref of the data in the file */
+    int32       data_len;		/* length of the data we are checking */
+    int32       data_off;		/* offset of the data we are checking */
     uint16      special_tag;    /* special version of this tag */
     int32       file_id;        /* file ID for the access record */
     uint8       local_ptbuf[16];
@@ -478,9 +425,6 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
     /* clear error stack */
     HEclear();
 
-#ifdef QAK
-printf("%s: I've been called\n",FUNC);
-#endif /* QAK */
     /* start checking the func. args */
     if (!VALIDAID(aid) || block_length < 0 || number_blocks < 0)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -498,94 +442,49 @@ printf("%s: I've been called\n",FUNC);
         HGOTO_ERROR(DFE_DENIED, FAIL);
 
     /* get ptrs to DD info and verify that the object is not already special */
-    data_block = access_rec->block;
-    data_idx = access_rec->idx;
-    data_dd = &(data_block->ddlist[data_idx]);
-    if (SPECIALTAG(data_dd->tag))
+    if (HTPis_special(access_rec->ddid))
         HGOTO_ERROR(DFE_CANTMOD, FAIL);
 
     /* Save previous position in data element so that we can come back to it */
     old_posn=access_rec->posn;
-#ifdef QAK
-printf("%s: old_posn=%d\n",FUNC,old_posn);
-printf("%s: DD to convert: tag=%d, ref=%d\n",FUNC,(int)data_dd->tag,(int)data_dd->ref);
-#endif /* QAK */
 
-    if ((special_tag = MKSPECIALTAG(data_dd->tag)) == DFTAG_NULL)
+    /* get the info for the dataset */
+    if(HTPinquire(access_rec->ddid,&data_tag,&data_ref,&data_off,&data_len)==FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+    if ((special_tag = MKSPECIALTAG(data_tag)) == DFTAG_NULL)
         HGOTO_ERROR(DFE_BADDDLIST, FAIL);
 
-    /* search for the empty dd to put new dd */
-    if (HIlookup_dd(file_rec, DFTAG_NULL, DFREF_WILDCARD, &file_rec->null_block,
-                    &file_rec->null_idx) == FAIL)
-      {
-          if (HInew_dd_block(file_rec, FILE_NDDS(file_rec), FUNC) == FAIL)
-            {
-                HGOTO_ERROR(DFE_NOFREEDD, FAIL)
-            }   
-          else
-            {
-                access_rec->block = file_rec->ddlast;
-                access_rec->idx = 0;
-            }   
-      }     
-    else
-      {
-          access_rec->block = file_rec->null_block;
-          access_rec->idx = file_rec->null_idx;
-      }     
-    dd = &access_rec->block->ddlist[access_rec->idx];
+    new_data_tag=DFTAG_LINKED;
+    new_data_ref=Htagnewref(file_id,new_data_tag);
+    if(Hdupdd(file_id, new_data_tag, new_data_ref, data_tag, data_ref)==FAIL)
+        HGOTO_ERROR(DFE_CANTUPDATE, FAIL);
 
-    if (data_dd)
-      {   /* modify old DD entry */
-          /* remove old tag from hash table */
-          if (HIdel_hash_dd(file_rec, data_dd->tag, data_dd->ref) == FAIL)
-              HGOTO_ERROR(DFE_CANTDELHASH, FAIL);
+    /* Delete the old data ID */
+    if(HTPdelete(access_rec->ddid)==FAIL)
+        HGOTO_ERROR(DFE_CANTDELHASH, FAIL);
 
-          data_dd->tag = DFTAG_LINKED;
-          if (HIupdate_dd(file_rec, data_block, data_idx, FUNC) == FAIL)
-              HGOTO_ERROR(DFE_CANTUPDATE, FAIL);
+    /* Attach to the new data ID */
+    if ((access_rec->ddid=HTPcreate(file_rec,special_tag,data_ref))==FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-          /* update hash table */
-          if (HIadd_hash_dd(file_rec, data_dd->tag, data_dd->ref, data_block,
-                            data_idx) == FAIL)
-              HGOTO_ERROR(DFE_CANTHASH, FAIL);
-      }     
-
-    /* write the special info structure to fill */
     link_ref = Htagnewref(file_id,DFTAG_LINKED);
-    dd->length = 16;
-
-#ifdef QAK
-printf("%s: old offset=%d\n",FUNC,(int)dd->offset);
-#endif /* QAK */
-    if ((dd->offset = HPgetdiskblock(file_rec, dd->length, TRUE)) == FAIL)
-      {
-          access_rec->used = FALSE;
-          HGOTO_ERROR(DFE_INTERNAL, FAIL);
-      }     
-#ifdef QAK
-printf("%s: new offset=%d\n",FUNC,(int)dd->offset);
-#endif /* QAK */
 
     access_rec->special_info = (VOIDP) HDmalloc((uint32) sizeof(linkinfo_t));
     if (!access_rec->special_info)
-      {
-          access_rec->used = FALSE;
-          HGOTO_ERROR(DFE_NOSPACE, FAIL);
-      }     
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     info = (linkinfo_t *) access_rec->special_info;
     info->attached = 1;
-    info->length = data_dd ? data_dd->length : 0;
-    info->first_length = data_dd ? data_dd->length : block_length;
+    info->length = data_len;
+    info->first_length = data_len;
     info->block_length = block_length;
     info->number_blocks = number_blocks;
-#ifdef QAK
-printf("%s: info->length=%d\n",FUNC,(int)info->length);
-printf("%s: info->first_length=%d\n",FUNC,(int)info->first_length);
-printf("%s: info->block_length=%d\n",FUNC,(int)info->block_length);
-printf("%s: info->number_blocks=%d\n",FUNC,(int)info->number_blocks);
-#endif /* QAK */
+    info->link_ref = link_ref;
+
+    /* write the special info structure to fill */
+    if((dd_aid=Hstartaccess(file_id,special_tag,data_ref,DFACC_ALL))==FAIL)
+        HGOTO_ERROR(DFE_CANTACCESS, FAIL);
 
     {
         uint8      *p;
@@ -598,59 +497,32 @@ printf("%s: info->number_blocks=%d\n",FUNC,(int)info->number_blocks);
         UINT16ENCODE(p, link_ref);  /* link_ref */
     }
 
-    if (HPwrite(file_rec, local_ptbuf, dd->length) == FAIL)
-      {
-          access_rec->used = FALSE;
-          HGOTO_ERROR(DFE_WRITEERROR, FAIL);
-      }
-
-    dd->tag = special_tag;
-    dd->ref = data_dd->ref;
+    if (Hwrite(dd_aid, 16, local_ptbuf) == FAIL)
+        HGOTO_ERROR(DFE_WRITEERROR, FAIL);
+    if(Hendaccess(dd_aid)==FAIL)
+        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
     /* allocate info structure and file it in */
-    info->link = HLInewlink(file_id, number_blocks, link_ref,
-                            (uint16) (data_dd ? data_dd->ref : 0));
-    if (!info->link)
-      {
-          access_rec->used = FALSE;
-          HGOTO_ERROR(DFE_CANTLINK, FAIL);
-      }     
-    info->link_ref = link_ref;
-
-    /* update dd list in file */
-    if (HIupdate_dd(file_rec, access_rec->block, access_rec->idx, FUNC) == FAIL)
-      {
-          access_rec->used = FALSE;
-          HGOTO_ERROR(DFE_CANTUPDATE, FAIL);
-      }     
-
-    /* update hash table */
-    if (HIadd_hash_dd(file_rec, dd->tag, dd->ref, access_rec->block,
-                      access_rec->idx) == FAIL)
-      {
-          access_rec->used = FALSE;
-          HGOTO_ERROR(DFE_CANTHASH, FAIL);
-      }     
+    if ((info->link = HLInewlink(file_id, number_blocks, link_ref, data_ref)) ==NULL)
+        HGOTO_ERROR(DFE_CANTLINK, FAIL);
 
     /* update access record and file record */
     access_rec->special_func = &linked_funcs;
     access_rec->special = SPECIAL_LINKED;
     access_rec->appendable = FALSE;     /* start data as non-appendable */
-    access_rec->flush = FALSE;  /* start data as not needing flushing */
 
     /* check whether we should seek out to the proper position */
     if(old_posn>0)
       {
         if(Hseek(aid,old_posn,DF_START)==FAIL)
-          {
-              access_rec->used = FALSE;
               HGOTO_ERROR(DFE_BADSEEK, FAIL);
-          } /* end if */
       } /* end if */
 
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
+        if(access_rec!=NULL)
+          access_rec->used = FALSE;
 
     } /* end if */
 
@@ -744,7 +616,8 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
     CONSTR(FUNC, "HLIstaccess");    /* for HERROR */
     filerec_t  *file_rec;       /* file record */
     linkinfo_t *info;           /* information about data elt */
-    dd_t       *dd;             /* dd for the special elt */
+    int32       dd_aid;         /* AID for writing the special info */
+    uint16      data_tag, data_ref;  /* Tag/ref of the data in the file */
     uint8       local_ptbuf[14];
     int32       ret_value = SUCCEED;
 
@@ -757,7 +630,6 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
     access_rec->special = SPECIAL_LINKED;
     access_rec->posn = 0;
     access_rec->access = acc_mode|DFACC_READ;
-    dd = &access_rec->block->ddlist[access_rec->idx];
 
     /*
      * Lets free old special info first,if one exists,
@@ -788,10 +660,14 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
             }
       }
 
+    /* get the info for the dataset */
+    if(HTPinquire(access_rec->ddid,&data_tag,&data_ref,NULL,NULL)==FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
     /* if the special information are already in some other acc elt,
      * point to it 
      */
-    access_rec->special_info = HIgetspinfo(access_rec, dd->tag, dd->ref);
+    access_rec->special_info = HIgetspinfo(access_rec);
     if (access_rec->special_info)
       {
           ((linkinfo_t *) access_rec->special_info)->attached++;
@@ -800,12 +676,15 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
           goto done; /* we are done */
       }
 
-    /* read in the information from file */
-    if (HPseek(file_rec, dd->offset + 2) == FAIL)
+    /* read the special info structure from the file */
+    if((dd_aid=Hstartaccess(access_rec->file_id,data_tag,data_ref,DFACC_READ))==FAIL)
+        HGOTO_ERROR(DFE_CANTACCESS, FAIL);
+    if (Hseek(dd_aid, 2, DF_START) == FAIL)
         HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-
-    if (HPread(file_rec, local_ptbuf, 14) == FAIL)
+    if (Hread(dd_aid, 14, local_ptbuf) == FAIL)
         HGOTO_ERROR(DFE_READERROR, FAIL);
+    if(Hendaccess(dd_aid)==FAIL)
+        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
     access_rec->special_info = (VOIDP) HDmalloc((uint32) sizeof(linkinfo_t));
     info = (linkinfo_t *) access_rec->special_info;
@@ -833,9 +712,6 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
       {
           info->first_length = Hlength(access_rec->file_id, DFTAG_LINKED,
                                        info->link->block_list[0].ref);
-#ifdef QAK
-printf("%s: converting existing element, info->first_length=%d\n",FUNC,(int)info->first_length);
-#endif /* QAK */
           if (info->first_length == FAIL)
             {
                 HDfree((VOIDP) info->link);
@@ -844,15 +720,7 @@ printf("%s: converting existing element, info->first_length=%d\n",FUNC,(int)info
             }
       }
     else
-      {
         info->first_length = info->block_length;
-#ifdef QAK
-printf("%s: creating element, info->first_length=%d\n",FUNC,(int)info->first_length);
-#endif /* QAK */
-      } /* end else */
-#ifdef QAK
-printf("%s: info->block_length=%d\n",FUNC,info->block_length);
-#endif /* QAK */
 
     info->last_link = info->link;
     while (info->last_link->nextref != 0)
@@ -1179,17 +1047,7 @@ if(length==0)
             }
           else
             {   /*if block is missing, fill this part of buffer with zero's */
-#ifdef OLD_WAY
-                int32 i;
-
-                for (i = 0; i < remaining; i++)
-                    data[i] = '\0';
-#else  /* OLD_WAY */
-#ifdef QAK
-printf("%s: remaining=%d, length=%d, current_length=%d, relative_posn=%d\n",FUNC,(int)remaining,(int)length,(int)current_length,(int)relative_posn);
-#endif /* QAK */
                 HDmemset(data, 0, (size_t)remaining);
-#endif /* OLD_WAY */
                 bytes_read += nbytes;
             }
 
@@ -1246,14 +1104,14 @@ HLPwrite(accrec_t * access_rec, int32 length, const VOIDP datap)
     uint8      *data = (uint8 *) datap;
     filerec_t  *file_rec =      /* file record */
     FID2REC(access_rec->file_id);
-    dd_t       *info_dd =       /* dd of the special info record */
-    &(access_rec->block->ddlist[access_rec->idx]);
+    int32       dd_aid;         /* AID for writing the special info */
+    uint16      data_tag, data_ref;  /* Tag/ref of the data in the file */
     linkinfo_t *info =          /* linked blocks information record */
-    (linkinfo_t *) (access_rec->special_info);
+        (linkinfo_t *) (access_rec->special_info);
     link_t     *t_link =        /* ptr to link block table */
-    info->link;
+        info->link;
     int32       relative_posn = /* relative position in linked block */
-    access_rec->posn;
+        access_rec->posn;
     int32       block_idx;      /* block table index of current block */
     link_t     *prev_link = NULL;   /* ptr to block table before current block table.
                                        for groking the offset of
@@ -1463,9 +1321,13 @@ printf("%s: (b) block_idx=%d\n",FUNC,(int)block_idx);
       }
     while (length > 0);
 
-    if (HPseek(file_rec, info_dd->offset + 2) == FAIL)
+    /* update the info for the dataset */
+    if(HTPinquire(access_rec->ddid,&data_tag,&data_ref,NULL,NULL)==FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    if((dd_aid=Hstartaccess(access_rec->file_id,data_tag,data_ref,DFACC_WRITE))==FAIL)
+        HGOTO_ERROR(DFE_CANTACCESS, FAIL);
+    if (Hseek(dd_aid, 2, DF_START) == FAIL)
         HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-
     {
         int32       tmp;
         uint8      *p = local_ptbuf;
@@ -1475,8 +1337,10 @@ printf("%s: (b) block_idx=%d\n",FUNC,(int)block_idx);
             info->length = tmp;
         INT32ENCODE(p, info->length);
     }
-    if (HPwrite(file_rec, local_ptbuf, 4) == FAIL)
-        HGOTO_ERROR(DFE_WRITEERROR, FAIL);
+    if (Hwrite(dd_aid, 4, local_ptbuf) == FAIL)
+        HGOTO_ERROR(DFE_READERROR, FAIL);
+    if(Hendaccess(dd_aid)==FAIL)
+        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
     access_rec->posn += bytes_written;
     /* return SUCCEED; */
@@ -1621,19 +1485,23 @@ HLPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
            uint16 *pref, int32 *plength, int32 *poffset, int32 *pposn,
            int16 *paccess, int16 *pspecial)
 {
-    dd_t       *info_dd =       /* dd of special information */
-    &(access_rec->block->ddlist[access_rec->idx]);
+    CONSTR(FUNC, "HLPinquire");   /* for HERROR */
+    uint16      data_tag, data_ref;  /* Tag/ref of the data in the file */
     linkinfo_t *info =          /* special information record */
-    (linkinfo_t *) access_rec->special_info;
+        (linkinfo_t *) access_rec->special_info;
     int32   ret_value = SUCCEED;
+
+    /* update the info for the dataset */
+    if(HTPinquire(access_rec->ddid,&data_tag,&data_ref,NULL,NULL)==FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* fill in the variables if they are present */
     if (pfile_id)
         *pfile_id = access_rec->file_id;
     if (ptag)
-        *ptag = info_dd->tag;
+        *ptag = data_tag;
     if (pref)
-        *pref = info_dd->ref;
+        *pref = data_ref;
     if (plength)
         *plength = info->length;
     if (poffset)
@@ -1644,6 +1512,14 @@ HLPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
         *paccess = (int16)access_rec->access;
     if (pspecial)
         *pspecial = access_rec->special;
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
 
     return ret_value;
 }   /* HLPinquire */
@@ -1667,19 +1543,13 @@ DESCRIPTION
 intn
 HLPendaccess(accrec_t * access_rec)
 {
-#ifdef LATER
     CONSTR(FUNC, "HLPendaccess");   /* for HERROR */
-#endif
     linkinfo_t *info =          /* special information record */
-    (linkinfo_t *) access_rec->special_info;
+        (linkinfo_t *) access_rec->special_info;
     filerec_t  *file_rec =      /* file record */
-    FID2REC(access_rec->file_id);
+        FID2REC(access_rec->file_id);
     intn      ret_value = SUCCEED;
 
-#ifdef QAK
-printf("%s: info->length=%d\n","HLPendaccess",info->length);
-printf("%s: access_rec->posn=%d\n","HLPendaccess",access_rec->posn);
-#endif /* QAK */
     /* detach the special information record.
        If no more references to that, free the record */
     if (--(info->attached) == 0)
@@ -1691,17 +1561,6 @@ printf("%s: access_rec->posn=%d\n","HLPendaccess",access_rec->posn);
           for (t_link = info->link; t_link; t_link = next)
             {
                 next = t_link->next;
-#ifdef QAK
-{
-        intn i;
-
-        printf("t_link->nextref=%d\n",(int)t_link->nextref);
-        for(i=0; i<info->number_blocks; i++)
-          {
-              printf("[%d] ref=%d\n",i,(int)t_link->block_list[i].ref);
-          } /* end for */
-}
-#endif /* QAK */
                 HDfree((VOIDP) t_link->block_list);
                 HDfree((VOIDP) t_link);
             }
@@ -1710,13 +1569,25 @@ printf("%s: access_rec->posn=%d\n","HLPendaccess",access_rec->posn);
           access_rec->special_info = NULL;
       }
 
+    /* update file and access records */
+    if (HTPendaccess(access_rec->ddid) == FAIL)
+      HGOTO_ERROR(DFE_CANTFLUSH, FAIL);
+
     /* detach from the file */
     file_rec->attach--;
 
     /* free the access record */
     access_rec->used = FALSE;
 
-    return ret_value;
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
 }   /* HLPendaccess */
 
 /* ------------------------------- HLPinfo -------------------------------- */

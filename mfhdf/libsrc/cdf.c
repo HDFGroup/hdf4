@@ -974,7 +974,11 @@ NC_var **var;
   outNT = ((*var)->HDFtype & DFNT_NATIVE)?  DFKgetPNSC((*var)->HDFtype, DF_MT) :
           ((*var)->HDFtype & DFNT_LITEND)? DFNTF_PC :  DFNTF_IEEE;
 
+#ifdef NOT_YET
   ref = Htagnewref(handle->hdf_file,DFTAG_NT);
+#else /* NOT_YET */
+  ref = Hnewref(handle->hdf_file);
+#endif /* NOT_YET */
   ntstring[0] = DFNT_VERSION;                    /* version */
   ntstring[1] = (uint8)((*var)->HDFtype & 0xff); /* type */
   ntstring[2] = (uint8)((*var)->HDFsize * 8);    /* width (in bits) */

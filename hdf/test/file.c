@@ -66,17 +66,6 @@ test_hfile()
     int         i;
     intn        errors = 0;
     intn        ret_bool;
-#ifdef QAK
-    uint8      *outbuf, *inbuf;
-
-    outbuf = HDmalloc(BUF_SIZE);
-    inbuf = HDmalloc(BUF_SIZE);
-    if (!outbuf || !inbuf)
-      {
-          fprintf(stderr, "Out of memory!\n");
-          exit(1);
-      }
-#endif
 
     for (i = 0; i < BUF_SIZE; i++)
         outbuf[i] = (char) (i % 256);
@@ -111,7 +100,7 @@ test_hfile()
     ret = Hgetelement(fid, (uint16) 100, (uint16) 4, inbuf);
     if (ret != 2000)
       {
-          fprintf(stderr, "Hgetelement returned wrong count: %d\n", (int) ret);
+          fprintf(stderr, "Line %d: Hgetelement returned wrong count: %d\n", (int)__LINE__, (int) ret);
           errors++;
       }
 
@@ -249,8 +238,4 @@ test_hfile()
     ret_bool = (intn) Hishdf("qqqqqqqq.qqq");   /* I sure hope it isn't there */
     CHECK(ret, TRUE, "Hishdf");
 
-#ifdef QAK
-    HDfree((VOIDP) outbuf);
-    HDfree((VOIDP) inbuf);
-#endif
 }

@@ -203,8 +203,6 @@ vsinstance_t;
 /* each vfile_t maintains 2 linked lists: one of vgs and one of vdatas
    * that already exist or are just created for a given file.  */
 
-typedef int32 treekey;          /* type of keys for */
-
 typedef struct vfiledir_struct
   {
       int32       vgtabn;       /* # of vg entries in vgtab so far */
