@@ -232,6 +232,11 @@ HCIinit_coder(int16 acc_mode, comp_coder_info_t * cinfo, comp_coder_t coder_type
               cinfo->coder_info.szip_info.pixels_per_block = c_info->szip.pixels_per_block;
               cinfo->coder_info.szip_info.pixels_per_scanline = c_info->szip.pixels_per_scanline;
               cinfo->coder_info.szip_info.options_mask = c_info->szip.options_mask;
+              cinfo->coder_info.szip_info.buffer = NULL;
+              cinfo->coder_info.szip_info.buffer_size = 0;
+              cinfo->coder_info.szip_info.offset = 0;
+              cinfo->coder_info.szip_info.szip_state = SZIP_INIT;
+              cinfo->coder_info.szip_info.szip_dirty = SZIP_CLEAN;
               break;
 
 #endif /* H4_HAVE_LIBSZ */

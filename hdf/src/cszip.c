@@ -86,6 +86,13 @@ HCIcszip_init(accrec_t * access_rec)
 
     /* Initialize SZIP state information */
     szip_info->szip_state = SZIP_INIT;     /* start in initial state */
+    if (szip_info->buffer_size != 0) {
+        szip_info->buffer_size = 0;   /* offset into the file */
+        if (szip_info->buffer != NULL) {
+		HDfree(szip_info->buffer);
+		szip_info->buffer = NULL;
+        }
+    }
     szip_info->offset = 0;   /* offset into the file */
     szip_info->szip_dirty=SZIP_CLEAN;
 
@@ -248,7 +255,10 @@ HCIcszip_decode(compinfo_t * info, int32 length, uint8 *buf)
 	    szip_info->offset = szip_info->buffer_pos;
 	    HDfree(in_buffer);
 	    if (szip_info->buffer_size == 0) {
-		HDfree(szip_info->buffer);
+		if (szip_info->buffer != NULL) {
+		   HDfree(szip_info->buffer);
+		   szip_info->buffer = NULL;
+		}
 	    }
 	    return (SUCCEED);
         }
@@ -286,7 +296,10 @@ HCIcszip_decode(compinfo_t * info, int32 length, uint8 *buf)
     if (length > szip_info->buffer_size)
     {	
         /*  can't happen?? panic?? */
-        HDfree(szip_info->buffer);
+	if (szip_info->buffer != NULL) {
+            HDfree(szip_info->buffer);
+	    szip_info->buffer = NULL;
+        } 
         return (FAIL);
     }
 
@@ -296,7 +309,10 @@ HCIcszip_decode(compinfo_t * info, int32 length, uint8 *buf)
     szip_info->offset = szip_info->buffer_pos;
 
     if (szip_info->buffer_size == 0) {
-	HDfree(szip_info->buffer);
+       if (szip_info->buffer != NULL) {
+  	    HDfree(szip_info->buffer);
+	    szip_info->buffer = NULL;
+       }
     }
 
     return (SUCCEED);
@@ -424,7 +440,10 @@ HCIcszip_term(compinfo_t * info)
     if (szip_info->szip_dirty != SZIP_DIRTY) /* Should never happen?? */
     {
 	    if (szip_info->buffer_size == 0) {
-		HDfree(szip_info->buffer);
+                if (szip_info->buffer != NULL) {
+		    HDfree(szip_info->buffer);
+	            szip_info->buffer = NULL;
+                }
             }
 	return (SUCCEED);
     }
@@ -496,7 +515,10 @@ HCIcszip_term(compinfo_t * info)
 	    szip_info->szip_dirty=SZIP_CLEAN;
 			
 	    if (szip_info->buffer_size == 0) {
-		HDfree(szip_info->buffer);
+	        if (szip_info->buffer != NULL)  {
+		    HDfree(szip_info->buffer);
+	            szip_info->buffer = NULL;
+                }
             }
 	    return (SUCCEED);
 	 } 
@@ -505,7 +527,10 @@ HCIcszip_term(compinfo_t * info)
           szip_info->szip_dirty=SZIP_CLEAN;
           HDfree(out_buffer);
 	  if (szip_info->buffer_size == 0) {
-		HDfree(szip_info->buffer);
+	        if (szip_info->buffer != NULL)  {
+		    HDfree(szip_info->buffer);
+	            szip_info->buffer = NULL;
+                }
           }
 	  HRETURN_ERROR(DFE_CENCODE, FAIL);
 	}
@@ -526,7 +551,10 @@ HCIcszip_term(compinfo_t * info)
 	    szip_info->szip_dirty=SZIP_CLEAN;
 	    HDfree(out_buffer);
 	    if (szip_info->buffer_size == 0) {
-		HDfree(szip_info->buffer);
+	        if (szip_info->buffer != NULL) {
+		    HDfree(szip_info->buffer);
+	            szip_info->buffer = NULL;
+                }
             }
 	    return (SUCCEED);
 	}
@@ -548,7 +576,10 @@ HCIcszip_term(compinfo_t * info)
 	    HDfree(out_buffer);
 	    HDfree(ob);
 	    if (szip_info->buffer_size == 0) {
-		HDfree(szip_info->buffer);
+	        if (szip_info->buffer != NULL)  {
+		    HDfree(szip_info->buffer);
+	            szip_info->buffer = NULL;
+                }
             }
 	    return (SUCCEED);
      } 
@@ -562,7 +593,10 @@ HCIcszip_term(compinfo_t * info)
 
     szip_info->szip_dirty=SZIP_CLEAN;
     if (szip_info->buffer_size == 0) {
-	HDfree(szip_info->buffer);
+	if (szip_info->buffer != NULL) {
+	    HDfree(szip_info->buffer);
+	    szip_info->buffer = NULL;
+        }
     }
     HDfree(out_buffer);
 
