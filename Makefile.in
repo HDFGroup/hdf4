@@ -158,6 +158,12 @@ test:
 	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
           SUBDIRS="$(NETCDFDIR)" subdn
 
+allnofortran:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=allnofortran \
+          SUBDIRS="$(HDFDIR)" subd
+	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=all \
+          SUBDIRS="$(NETCDFDIR)" subdn
+
 testnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=hdf-testnofortran \
           SUBDIRS="$(HDFDIR)" subd
@@ -165,10 +171,6 @@ testnofortran:
           SUBDIRS="$(NETCDFDIR)" subdn
 
 hdf-test:
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="$(HDFDIR)" subd
-
-hdf-testnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(HDFDIR)" subd
 
@@ -188,6 +190,10 @@ hdf-testnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="testnofortran" \
           SUBDIRS="$(HDFDIR)" subd
 
+#hdf-testnofortran:
+#	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+#          SUBDIRS="$(HDFDIR)" subd
+#
 hdf-libnostub: 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="libnostub" \
           SUBDIRS="$(HDFDIR)" subd
@@ -260,33 +266,35 @@ help:
 	@echo "Make supports the following targets"
 	@echo "make help    - prints this usage section"
 	@echo "make all     - (DEFAULT) makes both HDF and netCDF packages"
-	@echo "make HDF     - makes HDF library,utilities, and tests "
+	@echo "make HDF     - makes HDF library,utilities, and tests"
 	@echo "make NETCDF  - makes NETCDF package"
+	@echo "make allnofortran - makes HDF package excluding fortran support"
+	@echo "                         and entire NETCDF package"
 	@echo "make hdf-allnofortran - makes HDF package excluding fortran support"
 	@echo "make hdf-libnofortran - makes HDF library excluding fortran support"
 	@echo "make hdf-testnofortran - makes HDF library and tests"
-	@echo "                         excluding fortran support""
+	@echo "                         excluding fortran support"
 	@echo "make hdf-utilities     - makes HDF library and utilities"
-	@echo "make libdf             - makes HDF library "
-	@echo "make libjpeg           - makes IJG JPEG library "
+	@echo "make libdf             - makes HDF library"
+	@echo "make libjpeg           - makes IJG JPEG library"
 	@echo "make test              - run both HDF and NETCDF tests"
-	@echo "make testnofortran     - run HDF tests except the fortran test " 
-	@echo "                         and NETCDF tests "
-	@echo "make netcdf-test       - run NETCDF tests " 
-	@echo "make hdf-test          - run HDF tests " 
-	@echo "make hdf-testnofortran - run HDF tests except the fortran test " 
-	@echo "make install           - install HDF,netCDF libraries, "
-	@echo "                         utilites, and includes " 
+	@echo "make testnofortran     - run HDF tests except the fortran test" 
+	@echo "                         and NETCDF tests"
+	@echo "make netcdf-test       - run NETCDF tests" 
+	@echo "make hdf-test          - run HDF tests" 
+	@echo "make hdf-testnofortran - run HDF tests except the fortran test" 
+	@echo "make install           - install HDF,netCDF libraries,"
+	@echo "                         utilites, and includes" 
 	@echo "make install-hdf       - install HDF library, utilities and includes"
 	@echo "make install-netcdf    - install netCDF library, utilities and includes"
 	@echo "make clean        - cleans up HDF and NETCDF packages(*.o,libdf.a,..)"
 	@echo "make distclean    - cleans up HDF and NETCDF packages including"
 	@echo "                    configuration(Makefiles,config.status,..)"
 	@echo "make hdfclean     - cleans up HDF package(*.o,libdf.a,..et)"
-	@echo "make hdfdistclean - cleans up HDF package including "
+	@echo "make hdfdistclean - cleans up HDF package including"
 	@echo "                    configuration(Makefiles,config.status,..)"
 	@echo "make netcdfclean  - cleans up NETCDF package(*.o,libnetcdf.a,..et)"
-	@echo "make netcdfdistclean - cleans up NETCDF package including "
+	@echo "make netcdfdistclean - cleans up NETCDF package including"
 	@echo "                       configuration(Makefiles,config.status,..)"
 
 # target for recursive directory make
