@@ -82,6 +82,7 @@ PABLO_HINC = $(TOP_SRCDIR)/hdf/pablo
 FMPOOL_INC = $(TOP_SRCDIR)/hdf/fmpool
 JPEG_LIB = $(TOP_SRCDIR)/hdf/jpeg/libjpeg.a
 ZLIB_LIB = $(TOP_SRCDIR)/hdf/zlib/libz.a
+SLIB_LIB = $(TOP_SRCDIR)/hdf/slib/libsz.a
 NETCDF_INC = $(TOP_SRCDIR)/mfhdf/libsrc
 PORT_INC   = $(TOP_SRCDIR)/mfhdf/port
 CPP	   = $(CC) -E
@@ -164,7 +165,7 @@ REMOTE_LIBRARY	= $(srcdir)/../libsrc/lib$(LIBNAME).a
 #LD_XDR		= @LD_XDR@
 #LD_NETCDF	= -L../libsrc -lmfhdf
 LD_NETCDF	= $(srcdir)/../libsrc/libmfhdf.a
-LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(JPEG_LIB) $(ZLIB_LIB) $(LIBSX)
+LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(JPEG_LIB) $(ZLIB_LIB) $(LIBSX) $(SLIB_LIB)
 prefix		= ../../..
 
 # directory used by extelt test.

@@ -275,6 +275,10 @@ libz:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(HDFDIR)" subd
 
+libsz: 
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(HDFDIR)" subd
+
 libmfhdf:
 	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
           SUBDIRS="$(NETCDFDIR)" subdn

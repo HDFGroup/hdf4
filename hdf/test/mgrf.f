@@ -859,7 +859,7 @@ C
      .          COMP_CODE_RLE     = 1,
      .          COMP_CODE_SKPHUFF = 3,
      .          COMP_CODE_DEFLATE = 4,
-     .          COMP_CODE_JPEG = 6)
+     .          COMP_CODE_JPEG = 7)
       parameter (DEFLATE_LEVEL = 6,
      .           SKPHUFF_SKP_SIZE = 2)
       parameter (JPEG_QUALITY = 100,

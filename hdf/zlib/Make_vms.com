@@ -3,7 +3,7 @@ $! written by Martin P.J. Zinser <m.zinser@gsi.de>
 $!
 $! Look for the compiler used
 $!
-$ ccopt = "/noopt"
+$ ccopt = ""
 $ if f$getsyi("HW_MODEL").ge.1024
 $ then
 $  ccopt = "/prefix=all"+ccopt
@@ -61,12 +61,12 @@ $   write sys$output "Building example..."
 $   CALL MAKE example.OBJ "CC ''CCOPT' example" -
                 example.c zlib.h zconf.h
 $   call make example.exe "LINK example,libz.olb/lib" example.obj libz.olb
-$!   write sys$output "Building minigzip..."
-$!   CALL MAKE minigzip.OBJ "CC ''CCOPT' minigzip" -
- !               minigzip.c zlib.h zconf.h
-$!   call make minigzip.exe - 
- !               "LINK minigzip,libz.olb/lib,x11vms:xvmsutils.olb/lib" - 
- !               minigzip.obj libz.olb
+$   write sys$output "Building minigzip..."
+$   CALL MAKE minigzip.OBJ "CC ''CCOPT' minigzip" -
+                minigzip.c zlib.h zconf.h
+$   call make minigzip.exe - 
+                "LINK minigzip,libz.olb/lib,x11vms:xvmsutils.olb/lib" - 
+                minigzip.obj libz.olb
 $  else
 $   mms/macro=('comp')
 $  endif

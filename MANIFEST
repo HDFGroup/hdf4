@@ -315,6 +315,20 @@
 ./hdf/pablo/ProcTrace.h
 ./hdf/pablo/README.Pablo
 
+./hdf/slib/Makefile.in
+./hdf/slib/burst_szip.c
+./hdf/slib/example.c
+./hdf/slib/gentest.c
+./hdf/slib/mcgill.c
+./hdf/slib/mcgill.h
+./hdf/slib/rice.c
+./hdf/slib/rice.h
+./hdf/slib/ricehdf.h
+./hdf/slib/sz_api.c
+./hdf/slib/szip_adpt.h
+./hdf/slib/szlib.h
+./hdf/slib/testit
+
 ./hdf/src/atom.c
 ./hdf/src/atom.h
 ./hdf/src/bitvect.c
@@ -709,7 +723,7 @@
 ./hdf/zlib/amiga/Makefile.sas
 ./hdf/zlib/ChangeLog
 ./hdf/zlib/compress.c
-./hdf/zlib/configure.gnu
+./hdf/zlib/configure
 ./hdf/zlib/contrib/asm386/gvmat32.asm
 ./hdf/zlib/contrib/asm386/gvmat32c.c
 ./hdf/zlib/contrib/asm386/mkgvmt32.bat
@@ -803,6 +817,7 @@
 ./hdf/zlib/zconf.h
 ./hdf/zlib/zlib.3
 ./hdf/zlib/zlib.h
+./hdf/zlib/zlib.html
 ./hdf/zlib/zlib.project.hqx
 ./hdf/zlib/zutil.c
 ./hdf/zlib/zutil.h

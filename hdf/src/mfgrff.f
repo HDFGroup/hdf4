@@ -346,7 +346,7 @@ C                            COMP_CODE_NONE = 0
 C                            COMP_CODE_RLE =1
 C                            COMP_CODE_SKPHUFF = 3
 C                            COMP_CODE_DEFLATE = 4
-C                            COMP_CODE_JPEG    = 6
+C                            COMP_CODE_JPEG    = 7 
 C                   comp_prm  - compression parameters array
 C                   Huffman:   comp_prm(1) = skphuff_skp_size
 C                   GZIP:      comp_prm(1) = deflate_level       
@@ -377,7 +377,7 @@ C                            COMP_CODE_NONE = 0
 C                            COMP_CODE_RLE =1
 C                            COMP_CODE_SKPHUFF = 3
 C                            COMP_CODE_DEFLATE = 4
-C                            COMP_CODE_JPEG    = 6
+C                            COMP_CODE_JPEG    = 7 
 C                   comp_prm  - compression parameters array
 C                   Huffman:   comp_prm(1) = skphuff_skp_size
 C                   GZIP:      comp_prm(1) = deflate_level       

@@ -171,7 +171,11 @@ FMPOOL_SRC=$(srcdir)/../fmpool
 ZLIBINC=$(srcdir)/../zlib
 ZLIBLIB=$(srcdir)/../zlib
 
-ALL_CFLAGS = -I. $(CFLAGS) $(FMPOOL_FLAGS) -I$(JPEGINC) -I$(ZLIBINC)
+# ==> specify where to find the szip slib include files and library
+SLIBINC=$(srcdir)/../slib
+SLIBLIB=$(srcdir)/../slib
+
+ALL_CFLAGS = -I. $(CFLAGS) $(FMPOOL_FLAGS) -I$(JPEGINC) -I$(ZLIBINC) -I$(SLIBINC)
 LINTFLAGS=
 SHAR=shar
 ARCHIVE=hdf.shar

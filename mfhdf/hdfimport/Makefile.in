@@ -83,6 +83,7 @@ PABLO_HINC = $(TOP_SRCDIR)/hdf/pablo
 FMPOOL_INC = $(TOP_SRCDIR)/hdf/fmpool
 JPEG_LIB = $(TOP_SRCDIR)/hdf/jpeg/libjpeg.a
 ZLIB_LIB = $(TOP_SRCDIR)/hdf/zlib/libz.a
+SLIB_LIB = $(TOP_SRCDIR)/hdf/slib/libsz.a
 NETCDF_INC = $(TOP_SRCDIR)/mfhdf/libsrc
 PORT_INC   = $(TOP_SRCDIR)/mfhdf/port
 CPP	   = $(CC) -E
@@ -129,7 +130,7 @@ LD_NETCDF	= ../libsrc/libmfhdf.a
 OBJS		= hdfimport.o
 #LD_XDR		= @LD_XDR@
 LD_NETCDF	= -L../libsrc -lmfhdf
-LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(LIBSX) $(JPEG_LIB) $(ZLIB_LIB)
+LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(LIBSX) $(JPEG_LIB) $(ZLIB_LIB) $(SLIB_LIB)
 prefix		= ../../..
 GARBAGE		= $(PROGRAM) $(TESTPROG) *.o
 

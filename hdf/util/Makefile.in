@@ -135,10 +135,14 @@ FMPOOL_SRC=$(srcdir)/../fmpool
 ZLIBLIB=$(srcdir)/../zlib
 ZLIBINC=$(srcdir)/../zlib
 
+# ==> where is your slib library (libsz.a) located?
+SLIBLIB=$(srcdir)/../slib
+SLIBINC=$(srcdir)/../slib
+
 #Where are the utility includes
 UTILINC=$(srcdir)
 
-ALL_CFLAGS = $(CFLAGS) $(FMPOOL_FLAGS) -I$(HDFINC) -I$(JPEGINC) -I$(ZLIBINC) -I$(UTILINC)
+ALL_CFLAGS = $(CFLAGS) $(FMPOOL_FLAGS) -I$(HDFINC) -I$(JPEGINC) -I$(ZLIBINC) -I$(SLIBINC) -I$(UTILINC)
 
 OTHERDIRS = fixatr testfiles
 
@@ -221,19 +225,19 @@ test-utils:
 	$(CC) $(ALL_CFLAGS) -c $<
 
 .c: $(HDFLIB)/libdf.a
-	$(CC) $(ALL_CFLAGS) $< -o $@ $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a $(LIBSX)
+	$(CC) $(ALL_CFLAGS) $< -o $@ $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a $(SLIBLIB)/libsz.a  $(LIBSX)
 
 .f: $(HDFLIB)/libdf.a 
-	$(FC) $(FFLAGS) $< $(HDFLIB)/libdf.a -o $@ $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+	$(FC) $(FFLAGS) $< $(HDFLIB)/libdf.a -o $@ $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a $(SLIBLIB)/libsz.a
 
 hdfed: he.h he_proto.h $(HEOBJ) $(HDFLIB)/libdf.a $(FRC)
-	$(CC) $(ALL_CFLAGS) $(HEOBJ) $(HDFLIB)/libdf.a -o hdfed $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+	$(CC) $(ALL_CFLAGS) $(HEOBJ) $(HDFLIB)/libdf.a -o hdfed $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a $(SLIBLIB)/libsz.a
 
 gif2hdf: gif.h $(GHOBJ) $(HDFLIB)/libdf.a $(FRC)
-	$(CC) $(ALL_CFLAGS) $(GHOBJ) $(HDFLIB)/libdf.a -o gif2hdf $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+	$(CC) $(ALL_CFLAGS) $(GHOBJ) $(HDFLIB)/libdf.a -o gif2hdf $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a $(SLIBLIB)/libsz.a
 
 hdf2gif: gif.h $(HGOBJ) $(HDFLIB)/libdf.a $(FRC)
-	$(CC) $(ALL_CFLAGS) $(HGOBJ) $(HDFLIB)/libdf.a -o hdf2gif $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+	$(CC) $(ALL_CFLAGS) $(HGOBJ) $(HDFLIB)/libdf.a -o hdf2gif $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a $(SLIBLIB)/libsz.a
 
 utils: $(UTILS) $(HDFLIB)/libdf.a $(FRC)
 

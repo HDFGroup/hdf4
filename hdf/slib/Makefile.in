@@ -1,0 +1,128 @@
+
+# For compiling with source and object files in different directories.
+srcdir = .
+TOP_SRCDIR = ../..
+
+# Where to install the programs and man pages.
+prefix = $(TOP_SRCDIR)/NewHDF
+exec_prefix = ${prefix}
+bindir = $(exec_prefix)/bin
+libdir = $(exec_prefix)/lib
+includedir = $(prefix)/include
+binprefix =
+manprefix =
+manext = 1
+mandir = $(prefix)/man/man$(manext)
+
+# The following default options are overriden in the makefile fragment
+# section below
+#
+# The name of your C compiler:
+CC= gcc
+
+# You may need to adjust these cc options:
+CFLAGS= -O -I$(srcdir)
+# Generally, we recommend defining any configuration symbols in jconfig.h,
+# NOT via -D switches here.
+# However, any special defines for ansi2knr.c may be included here:
+ANSI2KNRFLAGS= 
+
+# Link-time cc options:
+LDFLAGS= 
+
+# To link any special libraries, add the necessary -l commands here.
+LDLIBS= 
+
+# Put here the object file name for the correct system-dependent memory
+# manager file.  For Unix this is usually jmemnobs.o, but you may want
+# to use jmemansi.o or jmemname.o if you have limited swap space.
+SYSDEPMEM= 
+
+# miscellaneous OS-dependent stuff
+SHELL= /bin/sh
+# linker
+LN= $(CC)
+# file deletion command
+RM = /bin/rm 
+RMFLAGS = -f
+
+# file rename command
+MV= mv
+# library (.a) file creation command
+#AR= ar rc
+AR = ar
+ARFLAGS = rc
+
+# Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
+RANLIB = ranlib
+
+# second step in .a creation (use "touch" if not needed)
+AR2= $(RANLIB)
+
+# installation program
+INSTALL = ${TOP_SRCDIR}/install-sh -c
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL) -m 644
+
+LOCAL_MACROS  = CC="$(CC)" \
+	CFLAGS="$(CFLAGS)" \
+	CPP="$(CPP)" \
+	CPPFLAGS="$(CPPFLAGS)" \
+	exec_prefix="$(exec_prefix)" \
+	FC="$(FC)" \
+	prefix="$(prefix)"
+
+MANIFEST = $(DISTFILES)
+OTHERDIRS = config
+PACKAGE	 = HDF
+VERSION  = 4.0
+
+#----------------- End of configurable options.---------------------------
+
+# source files: SZIP library 
+LIBSOURCES= rice.c
+SOURCES= $(LIBSOURCES)
+# files included by source files
+INCLUDES= rice.h
+
+DISTFILES= $(SOURCES) 
+# library object files common to compression and decompression
+COMOBJECTS= rice.o
+# compression library object files
+CLIBOBJECTS= 
+# decompression library object files
+DLIBOBJECTS= 
+# These objectfiles are included in libsz.a
+LIBOBJECTS= $(CLIBOBJECTS) $(DLIBOBJECTS) $(COMOBJECTS)
+# object files for sample applications (excluding library files)
+COBJECTS= 
+DOBJECTS= 
+TROBJECTS= 
+
+#### makefile fragment from 'config/' goes here - inclues ansi2knr section
+## ------------------------ end of makefile fragments--------------------
+
+.SUFFIXES: .c.o
+.c.o:
+	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c $<
+
+libsz.a: $(LIBOBJECTS)
+	-$(RM) $(RMFLAGS) libsz.a
+	$(AR) $(ARFLAGS) libsz.a $(LIBOBJECTS)
+	$(RANLIB) libsz.a
+
+install-lib: libsz.a install-headers
+	$(INSTALL_DATA) libsz.a $(libdir)/$(binprefix)libsz.a
+	$(RANLIB) $(libdir)/$(binprefix)libsz.a
+
+install-includes:: install-headers
+
+install-headers: rice.h
+	$(INSTALL_DATA) rice.h $(includedir)/rice.h
+
+clean:
+	-$(RM) $(RMFLAGS) *.o libsz.a 
+
+distclean:
+	-$(RM) $(RMFLAGS) *.o libsz.a Makefile config.status
+
