@@ -113,5 +113,6 @@ vms-stuff:	ncgentab.h ncgentab.c ncgenyy.c
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES=ctest0 ctest0.nc ctest1.cdl ncgentab.c ncgentab.h ncgenyy.c  \
-               test0.c test0.nc test1.cdl test1.nc test2.cdl
+DISTCLEANFILES = ctest0 ctest0.nc ctest1.cdl ftest0 ftest0.nc ftest1.cdl    \
+                 ncgentab.c ncgentab.h ncgenyy.c netcdf.inc test0.c test0.f \
+                 test0.nc test1.cdl test1.nc test2.cdl
