@@ -1156,19 +1156,19 @@ VSQuerynfields(int32 vkey)
     CONSTR(FUNC, "VSQuerynflds");
 
     if (HAatom_group(vkey)!=VSIDGROUP)
-        HGOTO_ERROR(DFE_ARGS, NULL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vs's index in vstab */
     if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
-        HGOTO_ERROR(DFE_NOVS, NULL);
+        HGOTO_ERROR(DFE_NOVS, FAIL);
 
     vs = w->vs;
     if ((vs == NULL) || (vs->otag != VSDESCTAG))
-        HGOTO_ERROR(DFE_ARGS, NULL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     ret_value = vs->wlist.n;
 
 done:
-  if(ret_value == NULL)   
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
