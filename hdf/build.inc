@@ -29,7 +29,6 @@ HDF_FLAGS       = \
         CFLAGS="$(CFLAGS)" \
         FC="$(FC)" \
         FFLAGS="$(FFLAGS)" \
-	GLLIB="$(GLLIB)" \
         RANLIB="$(RANLIB)" \
         AR="$(AR)" \
         ARFLAGS="$(ARFLAGS)" \
