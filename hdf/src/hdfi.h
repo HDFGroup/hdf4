@@ -21,15 +21,29 @@
 
 /*--------------------------------------------------------------------------*/
 /*                              MT/NT constants                             */
-/*  four MT nibbles represent double, float, int, uchar (from most          */
-/*  significant to least significant).                                      */
+/*  Four MT nibbles represent double, float, int, uchar (from most          */
+/*      significant to least significant).                                  */
+/*  Each "column" in the "table" below is essentially independant of the    */
+/*      other "columns", for example the CONVEXNATIVE entry means that the  */
+/*      floating point formats are in Convex native format but the integers */
+/*      are big-endian and standard sizes                                   */
+/*  If you add another value to this "table", you need to add another       */
+/*      DFNTF_xxx entry in hntdefs.h                                        */
 /*  The values for each nibble are:                                         */
 /*      1 - Big Endian                                                      */
+/*          (i.e. Big-Endian, 32-bit architecture w/IEEE Floats)            */
 /*      2 - VAX                                                             */
+/*          (i.e. Middle-Endian, 32-bit architecture w/VAX Floats)          */
 /*      3 - Cray                                                            */
+/*          (i.e. Big-Endian, all 64-bit architecture w/Cray Floats)        */
 /*      4 - Little Endian                                                   */
+/*          (i.e. Little-Endian, 32-bit architecture w/IEEE Floats)         */
 /*      5 - Convex                                                          */
+/*          (i.e. Big-Endian, 32-bit architecture w/Convex Native Floats)   */
 /*      6 - Fujitsu VP                                                      */
+/*          (i.e. Big-Endian, 32-bit architecture w/Fujitsu Native Floats)  */
+/*      7 - Cray MPP                                                        */
+/*          (i.e. Big-Endian, 32-bit architecture w/IEEE Floats, but no 16-bit type)            */
 /*--------------------------------------------------------------------------*/
 #define     DFMT_SUN            0x1111
 #define     DFMT_ALLIANT        0x1111
@@ -124,6 +138,7 @@ typedef unsigned int      uintn;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef float             float32;
 typedef double            float64;
+typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
@@ -180,6 +195,7 @@ typedef unsigned int      uintn;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef float             float32;
 typedef double            float64;
+typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
@@ -239,6 +255,7 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
 #define FILELIB PAGEBUFIO  /* enable page buffering */
@@ -295,6 +312,7 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
 #define FILELIB PAGEBUFIO  /* enable page buffering */
@@ -347,6 +365,7 @@ typedef unsigned int       uintn;
 typedef float              float32;
 typedef double             float64;
 typedef int                intf;     /* size of INTEGERs in Fortran compiler */
+typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
@@ -406,6 +425,7 @@ typedef unsigned int    uintn;
 typedef float           float32;
 typedef double          float64;
 typedef int             intf;     /* size of INTEGERs in Fortran compiler */
+typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 
 #define DF_CAPFNAMES            /* fortran names are in all caps */
 #ifdef  HAVE_FMPOOL
@@ -466,6 +486,7 @@ typedef unsigned int    uintn;
 typedef float           float32;
 typedef double          float64;
 typedef int             intf;     /* size of INTEGERs in Fortran compiler */
+typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 
 #define _HUGE              /* This should only be defined to a value on the PC */
 #define DF_CAPFNAMES            /* fortran names are in all caps */
@@ -508,9 +529,11 @@ typedef unsigned short int uint16;
 #ifdef __alpha
 typedef int                int32;
 typedef unsigned int       uint32;
+typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
 #else
 typedef long int           int32;
 typedef unsigned long int  uint32;
+typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 #endif
 typedef int                intn;
 typedef unsigned int       uintn;
@@ -573,6 +596,7 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
 #define FILELIB PAGEBUFIO  /* enable page buffering */
@@ -629,6 +653,7 @@ typedef unsigned int    uintn;
 typedef float           float32;
 typedef double          float64;
 typedef int             intf;     /* size of INTEGERs in Fortran compiler */
+typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 #define _fcdtocp(desc) (desc)
 #define FNAME_POST_UNDERSCORE
 #ifdef  HAVE_FMPOOL
@@ -688,6 +713,7 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 #define _fcdtocp(desc) (desc)
 void exit(int status);
 
@@ -776,6 +802,7 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef long              intf;     /* size of INTEGERs in Fortran compiler */
+typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 
 #if defined UNIX386
 #define FNAME_POST_UNDERSCORE
@@ -837,6 +864,7 @@ typedef unsigned int      uintn;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef float             float32;
 typedef double            float64;
+typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
@@ -891,6 +919,7 @@ typedef unsigned int      uintn;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef float             float32;
 typedef double            float64;
+typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
@@ -937,6 +966,7 @@ typedef unsigned int      uintn;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef float             float32;
 typedef double            float64;
+typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
@@ -991,6 +1021,7 @@ typedef unsigned int       uintn;
 typedef int                intf;     /* size of INTEGERs in Fortran compiler */
 typedef float              float32;
 typedef double             float64;
+typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
 #define FILELIB UNIXBUFIO
@@ -1037,6 +1068,7 @@ typedef unsigned int    uintn;
 typedef float           float32;
 typedef double          float64;
 typedef int             intf;     /* size of INTEGERs in Fortran compiler */
+typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 #define _fcdtocp(desc) (desc)
 #define FNAME_POST_UNDERSCORE
 #define FILELIB UNIXBUFIO
