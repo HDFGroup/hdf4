@@ -33,7 +33,6 @@
   2.5.9 T3D/T3E Single node
   2.5.10 IRIX 6.2
   2.5.11 DEC Alpha(Digital Unix v4.0)
-  2.5.12 CRAY T90 (CRAY format and IEEE)
 
   2.6 Pablo Instrumentation
   2.7 File Cache(Beta release)
@@ -89,8 +88,8 @@
   HP9000/755(HP-UX B.10.20)       CC A.10.32.03    f77       
   Exemplar(HP-UX A.09.03)         CC 6.5           fc 9.5        
   Cray T90
-   CFP  (UNICOS  9.0.2ez u90.127) CC 5.0.5.0       f90 3.0.2.0.2
-   IEEE (UNICOS 10.0.0br d10.21 ) CC 5.0.5.0       f90 3.0.2.0.2
+   CFP  (UNICOS 10.0.0bt u10.13)  CC 5.0.5.0       f90 3.0.2.0  
+   IEEE (UNICOS 10.0.0bt d10.25)  CC 5.0.5.0       f90 3.0.2.0  
   Cray C90 (UNICOS 803.2)           -                -        
   IBM SP2 (single node, v4.2.1)   XLC 3.1.4.0      f77 4.1.0.6       
   DEC Alpha/Digital Unix v3.2     CC               f77              
@@ -609,15 +608,6 @@
     During the testing of the library the test 'mfhdf/libsrc/hdftest' 
     will report "Unaligned access ..." messages which can be ignored.
 
-    2.5.12 CRAY T90 (CRAY format and IEEE)
-    -------------------------------------------
-    It was necessary to compile and test the distribution using an
-    earlier Cray standard C compiler, scc.5.0.5.0.  The compiler may
-    be changed by execution of the command:
-
-    module switch scc scc.5.0.5.0
-
-    The above step MUST be done before any C compiling is carried out.
 
 2.6 Pablo Instrumentation
     =====================
