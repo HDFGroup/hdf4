@@ -20,7 +20,7 @@ import java.util.Queue;
     * @author HDF group, NCSA
     */
 
-  public class HDFObjectNode {
+  public class HDFObjectNode java.io.Serializable {
 	
 	/** define the type of HDF object */
 	public static final  int    Annotation =  1;
