@@ -297,6 +297,11 @@ VSgetfields(int32 vkey,   /* IN: vdata key */
   TRACE_ON(PABLO_mask,ID_VSgetfields);
 #endif /* HAVE_PABLO */
 
+    /* check if a NULL field list is passed in, then return with
+       error (found while fixing bug #554) - BMR 4/30/01 */
+    if (fields == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);

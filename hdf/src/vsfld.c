@@ -99,6 +99,11 @@ VSsetfields(int32 vkey, const char *fields)
     TRACE_ON(PABLO_mask,ID_VSsetfields);
 #endif /* HAVE_PABLO */
 
+    /* check if a NULL field list is passed in, then return with
+       error (bug #554) - BMR 4/30/01 */
+    if (fields == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
     if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
