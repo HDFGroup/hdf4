@@ -333,6 +333,8 @@ clean:
           SUBDIRS="$(HDFDIR)" subd
 	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
           SUBDIRS="$(NETCDFDIR)" subdn
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(MANDIR)" subd
 
 hdfdistclean:		
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="distclean" \
@@ -347,6 +349,8 @@ distclean:
           SUBDIRS="$(HDFDIR)" subd
 	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
           SUBDIRS="$(NETCDFDIR)" subdn
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(MANDIR)" subd
 	-$(RM) $(RMFLAGS) config.status Makefile
 
 help:
