@@ -381,7 +381,6 @@ Please check your Makefile.
 
 #include <memory.h>
 #include <fortran.h>
-#include <errno.h>
 #ifndef O_RDONLY
 #include <fcntl.h>              /* for unbuffered i/o stuff */
 #define L_INCR  1
