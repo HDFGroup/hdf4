@@ -70,7 +70,7 @@ Important Changes:
               <path of libz.a>
        or
    
-        f77 -o myprog myprog.f -L <path of libraries> \
+        f77 -o myprog myprog.f -L<path of libraries> \
               -lmfhdf -ldf  -ljpeg -lz
 
      NOTE: The order of the libraries is important: libmfhdf.a
