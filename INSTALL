@@ -20,7 +20,7 @@
    x HDF4.2r0 may be configured to use SZIP compression Library.
      For more information about SZIP Library see
 
-               http://hdf.ncsa.uiuc.edu/HDF5/doc_resource/SZIP/ 
+               http://hdf.ncsa.uiuc.edu/doc_resource/SZIP/ 
 
      The SZIP compression library is free for non-commercial use; 
      see http://hdf.ncsa.uiuc.edu/doc_resource/SZIP/Commercial_szip.html
@@ -41,7 +41,7 @@
        SunOs 5.7 (32 and 64-bit versions) 
        SunOS 5.8 (32 and 64-bit versions) 
        HPUX 11.00
-       Linux 2.4 (Rh7,8,9)
+       Linux 2.4 (Rh8,9, SuSE)
        IRIX64-6.5 (32 and 64-bit versions)
        MacOSX
        Crays SV1 and T3E
