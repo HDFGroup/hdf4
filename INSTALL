@@ -81,7 +81,7 @@
   ------------                    ----------       ---------------- 
   Sun4(SunOS 4.1.4)               GCC 2.6.3        f77 SC1.0            
   Sun4(Solaris 2.6)               CC               f77             
-  SGI-Indy(IRIX v6.2)             CC               f77 6.2
+  SGI-Indy(IRIX v6.5)             CC 7.2.1         f77 7.2.1
   SGI-Origin(IRIX64 v6.4-n32)     CC 7.20          f77 7.20     
   SGI-Origin(IRIX64 v6.4-64)      CC 7.20          f77 7.20    
   HP9000/735(HP-UX 9.03)          CC A.09.84       f77 09.16  
