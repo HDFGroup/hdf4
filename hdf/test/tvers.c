@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/02/10 20:59:34  chouck
-Initial revision
+Revision 1.2  1992/02/10 22:00:57  chouck
+Fixed earliest recognizable version
 
+ * Revision 1.1  1992/02/10  20:59:34  chouck
+ * Initial revision
+ *
 */
 /*
 ***********************************************************************
@@ -45,7 +48,7 @@ int main(argc, argv)
       for(j = strlen(output) - 1; j; j--)
 	printf("-");	
       if ((ret < 0) || ((fmajor == 0) && (fminor == 0))){
-	printf("\nEarlier than 4.0\n\n");
+	printf("\nEarlier than 3.2\n\n");
       } else {
 	printf("\nMajor:\t\t%d\nMinor:\t\t%d\nRelease:\t%d\nString:\t\t\"%s\"\n\n",
 	       fmajor, fminor, frelease, fstring);
