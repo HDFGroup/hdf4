@@ -108,7 +108,7 @@ case $CC_BASENAME in
     ;;
 
   *)
-    CFLAGS="$CFLAGS -ansi"
+    CFLAGS="$CFLAGS"
     DEBUG_CFLAGS="-g"
     DEBUG_CPPFLAGS=
     PROD_CFLAGS="-O"
@@ -127,7 +127,7 @@ case $F77_BASENAME in
     ;;
 
   *)
-    FFLAGS="$FFLAGS -ansi"
+    FFLAGS="$FFLAGS"
     DEBUG_FFLAGS="-g"
     PROD_FFLAGS="-O"
     PROFILE_FFLAGS="-pg"
