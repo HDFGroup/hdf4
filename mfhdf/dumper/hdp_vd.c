@@ -450,8 +450,6 @@ static intn dvd(dump_info_t *dumpvd_opts, intn curr_arg,
         /* Get output file name.  */
         if (dumpvd_opts->dump_to_file) 
 	   fp = fopen(dumpvd_opts->file_name, "w");
-        else if (dumpvd_opts->contents==DDATA)
-	   fp = fopen("fp2hdf", "w");
         else 
 	   fp = stdout;
         if (dumpvd_opts->contents!=DDATA)

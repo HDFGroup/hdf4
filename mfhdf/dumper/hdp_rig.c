@@ -262,8 +262,6 @@ static intn drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc,
         /* Get the name of the output file. */
         if (dumprig_opts->dump_to_file) 
 	   fp = fopen(dumprig_opts->file_name, "w");
-        else if (dumprig_opts->contents==DDATA)
-	   fp = fopen("fp2hdf", "w");
         else 
 	   fp = stdout;
         if (dumprig_opts->contents!=DDATA)

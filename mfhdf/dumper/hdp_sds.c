@@ -561,8 +561,6 @@ static intn dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[
                     /* get output file name  */
         if (dumpsds_opts->dump_to_file) 
 	   fp = fopen(dumpsds_opts->file_name, "w");
-        else if (dumpsds_opts->contents==DDATA)
-	   fp = fopen("fp2hdf", "w");
         else
 	   fp = stdout;
         if (dumpsds_opts->contents!=DDATA)
