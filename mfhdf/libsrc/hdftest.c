@@ -14,14 +14,14 @@ char *argv[];
 #endif 
 {
     int32 f1, f2, sdsid, nt, dimsize[10], nattr, rank;
-    int32 newsds, newsds2, newsds3, count, dimid, number;
+    int32 newsds, newsds2, newsds3, dimid, number;
     intn status, i;
     char name[90], text[256];
     int32   start[10], end[10], scale[10], stride[10];
     float32 data[1000], max, min;
     float64 cal, cale, ioff, ioffe;
     char    l[80], u[80], fmt[80], c[80];
-    int     num_err = 0;
+    int     count, num_err = 0;
     int16   sdata[100];
 
     ncopts = NC_VERBOSE;
@@ -154,7 +154,7 @@ char *argv[];
     status = SDsetattr(f1, "F-attr", DFNT_CHAR8, 10, "globulator");
     CHECK(status, "SDsetattr");
 
-    status = SDattrinfo(f1, 0, name, &nt, &count);
+    status = SDattrinfo(f1, (int32) 0, name, &nt, &count);
     CHECK(status, "SDinqattr");
 
     status = SDreadattr(f1, 0, text);

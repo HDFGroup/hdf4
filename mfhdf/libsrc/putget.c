@@ -108,19 +108,22 @@ const long *coords ;
             Void *strg, *strg1;
             NC_attr ** attr = NULL;
             int count, byte_count;
+	    int len;
             
             if((unfilled = *ip - vp->numrecs) <= 0) return TRUE;
 
             /*
              * Set up the array strg to hold the fill values
              */
-            strg = (Void *) malloc(vp->len);
-            strg1 = (Void *) malloc(vp->len);
-            attr = NC_findattr(&vp->attrs, _FillValue) ;
+	    len = (vp->len / vp->HDFsize) * vp->szof;
+            strg = (Void *) HDgetspace(len);
+            strg1 = (Void *) HDgetspace(len);
+            attr = NC_findattr(&vp->attrs, _FillValue);
+
             if(attr != NULL)
-                hdf_fill_array(vp, strg, (*attr)->data->values);
+                hdf_fill_array(strg, len, (*attr)->data->values, vp->type);
             else 
-                NC_arrayfill(strg, vp->len, vp->type);
+                NC_arrayfill(strg, len, vp->type);
 
 #ifdef DEBUG
             fprintf(stderr, "Going to fill in record %d for variable %s\n", *ip,
@@ -134,12 +137,9 @@ const long *coords ;
             /*
              * Seek to correct location
              */
-#ifdef OLD_WAY
-            byte_count = count * vp->HDFsize;
-#else
             byte_count = vp->len;
-#endif
-/*            Hseek(vp->aid, *ip * byte_count, DF_START); */
+	    count = byte_count / vp->HDFsize;
+
             Hseek(vp->aid, (vp->numrecs + 1) * byte_count, DF_START);
 
 #ifdef DEBUG
@@ -169,8 +169,8 @@ const long *coords ;
                 handle->numrecs = *ip + 1;
                 handle->flags |= NC_NDIRTY;
             }
-            free(strg);
-            free(strg1);
+            HDfreespace(strg);
+            HDfreespace(strg1);
 
             return (TRUE);
         }
@@ -587,16 +587,18 @@ PRIVATE int8  *tBuf = NULL;
   fill values to generate.
 */
 int 
-    hdf_fill_array(vp, storage, value)
-NC_var *vp;
-Void *storage, *value;
+    hdf_fill_array(storage, len, value, type)
+Void  * storage;
+Void  * value;
+int32   len;
+int32   type;
 {
     register Void *lo, *hi;
     
     lo = storage;
-    hi = storage + vp->szof * vp->dsizes[0]; 
+    hi = storage + len;
 
-    switch(vp->type) {
+    switch(type) {
     case NC_BYTE    :
     case NC_CHAR    :
         { 
@@ -604,7 +606,7 @@ Void *storage, *value;
             char t = *((char *) value);
             while(lo < hi) *lo++ = t;
 */
-	    HDmemset(lo, *((char *)value), vp->szof * vp->dsizes[0]);
+	    HDmemset(lo, *((char *)value), len);
         }
         break;
     case NC_SHORT    :
@@ -663,7 +665,7 @@ nc_type type;
     int32 vg;
     int32 vsid, nvalues, status, tag, t, n;
     register Void *values;
-    int32 byte_count;
+    int32 byte_count, len;
     
 #if DEBUG 
     fprintf(stderr, "hdf_get_data I've been called\n");
@@ -707,24 +709,17 @@ nc_type type;
 #endif  
     
     /* look up fill value (if it exists) */
-    values = (Void *) HDgetspace(vp->szof * vp->dsizes[0]);
+    len = (vp->len / vp->HDFsize) * vp->szof;
+    values = (Void *) HDgetspace(len);
     attr = NC_findattr(&(vp->attrs), _FillValue);
-#ifdef OLD_WAY
-    nvalues = vp->len / NC_typelen(vp->type);
-#else
+
+    byte_count = vp->len;
     nvalues = vp->len / vp->HDFsize;
-#endif
     
     if(!attr) {
-#ifdef DEBUG
-        fprintf(stderr, "No fill value fill with default \n");
-#endif
-        NC_arrayfill(values, vp->szof * vp->dsizes[0], vp->type);
+        NC_arrayfill(values, len, vp->type);
     } else {
-#ifdef DEBUG
-        fprintf(stderr, "Found a fill value (need %d of em)\n", nvalues);
-#endif
-        hdf_fill_array(vp, values, (*attr)->data->values);
+        hdf_fill_array(values, len, (*attr)->data->values, vp->type);
     }
     
     /* --------------------------------------
@@ -734,7 +729,6 @@ nc_type type;
      * --------------------------------------
      */
 
-    byte_count = nvalues * vp->HDFsize;
     vsid = Hnewref(handle->hdf_file);
     vp->aid = Hstartwrite(handle->hdf_file, DATA_TAG, vsid, byte_count);
 
