@@ -582,7 +582,7 @@ DF24readref(const char *filename, uint16 ref)
  USAGE
     uint16 DF24lastref(void)
  RETURNS
-    Last ref # on success, FAIL on failure.
+    Last ref # on success, 0 on failure.
  DESCRIPTION
     Returns the last ref # of a 24-bit RIG read to or written from a file.
  GLOBAL VARIABLES

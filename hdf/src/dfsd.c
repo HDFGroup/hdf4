@@ -1652,12 +1652,12 @@ DFSDlastref(void)
     /* Perform global, one-time initialization */
     if (library_terminate == FALSE)
         if(DFSDIstart()==FAIL)
-            HGOTO_ERROR(DFE_CANTINIT, (uint16)FAIL);
+            HGOTO_ERROR(DFE_CANTINIT, 0);
 
   ret_value = (uint16) Lastref;
 
 done:
-  if(ret_value == (uint16)FAIL)   
+  if(ret_value == 0)    /* 0 is invalid ref */
     { /* Error condition cleanup */
 
     } /* end if */

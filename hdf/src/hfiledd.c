@@ -1043,13 +1043,13 @@ done:
     returns the ref number, 0 otherwise
 
 *******************************************************************************/
-uint16 Hnewref(int32 file_id        /* IN: File ID the tag/refs are in */
-)
+uint16 
+Hnewref(int32 file_id /* IN: File ID the tag/refs are in */)
 {
     CONSTR(FUNC, "Hnewref");
-    filerec_t  *file_rec;		/* file record */
-    uint16      ref;			/* the new ref */
-    uint16 ret_value=0;
+    filerec_t  *file_rec;	   /* file record */
+    uint16      ref;		   /* the new ref */
+    uint16      ret_value = 0; /* 0 is invalid ref */
 
 #ifdef HAVE_PABLO
   TRACE_ON(H_mask, ID_Hnewref);
@@ -1082,7 +1082,7 @@ uint16 Hnewref(int32 file_id        /* IN: File ID the tag/refs are in */
       } /* end else */
 
 done:
-  if(ret_value == (uint16)FAIL)   
+  if(ret_value == 0)   /* Zero is invalid ref */
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1109,16 +1109,16 @@ done:
     returns the ref number, 0 otherwise
 
 *******************************************************************************/
-uint16 Htagnewref(int32 file_id,    /* IN: File ID the tag/refs are in */
-        uint16 tag                  /* IN: Tag to search for a new ref for */
-)
+uint16 
+Htagnewref(int32 file_id,/* IN: File ID the tag/refs are in */
+           uint16 tag    /* IN: Tag to search for a new ref for */)
 {
     CONSTR(FUNC, "Htagnewref");
-    filerec_t  *file_rec;		/* file record */
-    tag_info *tinfo_ptr;  /* pointer to the info for a tag */
-    tag_info **tip_ptr;   /* ptr to the ptr to the info for a tag */
-    uint16 base_tag=BASETAG(tag);    /* corresponding base tag (if the tag is special) */
-    uint16 ret_value=0;
+    filerec_t  *file_rec;  /* file record */
+    tag_info   *tinfo_ptr; /* pointer to the info for a tag */
+    tag_info  **tip_ptr;   /* ptr to the ptr to the info for a tag */
+    uint16      base_tag = BASETAG(tag); /* corresponding base tag (if the tag is special) */
+    uint16      ret_value = 0; /* 0 is invalid ref */
 
 #ifdef HAVE_PABLO
   TRACE_ON(H_mask, ID_Htagnewref);
@@ -1130,12 +1130,12 @@ uint16 Htagnewref(int32 file_id,    /* IN: File ID the tag/refs are in */
     if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, 0);
   
-    if((tip_ptr=(tag_info **)tbbtdfind(file_rec->tag_tree,(VOIDP)&base_tag,NULL))==NULL)
-        ret_value=1;  /* The first available ref */
+    if((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree,(VOIDP)&base_tag,NULL))==NULL)
+        ret_value = 1;  /* The first available ref */
     else
       {   /* found an existing tag */
-          tinfo_ptr=*tip_ptr; /* get the pointer to the tag info */
-          if((ret_value=(uint16)bv_find(tinfo_ptr->b,-1,BV_FALSE))==(uint16)FAIL)
+          tinfo_ptr = *tip_ptr; /* get the pointer to the tag info */
+          if((ret_value = (uint16)bv_find(tinfo_ptr->b,-1,BV_FALSE)) == (uint16)FAIL)
               HGOTO_ERROR(DFE_BVFIND, 0);
       } /* end else */
 

@@ -34,6 +34,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "hdf.h"
 
+/* remember that '0' is invalid ref number */
 PRIVATE uint16 Readref = 0;
 PRIVATE uint16 Writeref = 0;
 PRIVATE uint16 Refset = 0;      /* Ref of palette to get next */
@@ -533,7 +534,7 @@ DFPrestart(void)
  USAGE
     uint16 DFPlastref(void)
  RETURNS
-    ref # on on success, FAIL on failure.
+    ref # on on success, 0 on failure.
  DESCRIPTION
     Return the last ref # read/written from a file.
  GLOBAL VARIABLES

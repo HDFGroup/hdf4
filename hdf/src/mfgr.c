@@ -3561,7 +3561,7 @@ done:
         int32 riid;         IN: RI ID from GRselect/GRcreate
 
  RETURNS
-    A valid reference # on success or FAIL
+    A valid reference # on success or 0
 
  DESCRIPTION
     Maps an riid to a reference # for annotating or including in a Vgroup.
@@ -3585,11 +3585,11 @@ uint16 GRidtoref(int32 riid)
 
     /* check the validity of the RI ID */
     if (HAatom_group(riid)!=RIIDGROUP)
-        HGOTO_ERROR(DFE_ARGS, (uint16)FAIL);
+        HGOTO_ERROR(DFE_ARGS, 0);
     
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
-        HGOTO_ERROR(DFE_NOVS, (uint16)FAIL);
+        HGOTO_ERROR(DFE_NOVS, 0);
 
 #ifdef OLD_WAY
     ret_value = (ri_ptr->ri_ref!=DFREF_WILDCARD ? ri_ptr->ri_ref : ri_ptr->rig_ref);
@@ -3600,13 +3600,13 @@ uint16 GRidtoref(int32 riid)
     else
       {
         if(ri_ptr->rig_ref==DFREF_WILDCARD)
-            HGOTO_ERROR(DFE_INTERNAL,(uint16)FAIL);
+            HGOTO_ERROR(DFE_INTERNAL,0);
         ret_value=ri_ptr->rig_ref;
       } /* end else */
 #endif /* OLD_WAY */
 
 done:
-  if(ret_value == 0)   
+  if(ret_value == 0)   /* 0 is invalid ref */
     { /* Error condition cleanup */
 
     } /* end if */

@@ -1355,7 +1355,7 @@ done:
  USAGE
     uint16 DFR8lastref(void)
  RETURNS
-    Ref # on success, FAIL on failure.
+    Ref # on success, 0 on failure.
  DESCRIPTION
     Returns the last ref # written to or read from.
  GLOBAL VARIABLES
@@ -1377,12 +1377,12 @@ DFR8lastref(void)
   /* Perform global, one-time initialization */
   if (library_terminate == FALSE)
       if(DFR8Istart()==FAIL)
-          HGOTO_ERROR(DFE_CANTINIT, (uint16)FAIL);
+          HGOTO_ERROR(DFE_CANTINIT, 0);
 
   ret_value = Lastref;
 
 done:
-  if(ret_value == (uint16)FAIL)   
+  if(ret_value == 0)   /* 0 is invalid ref */
     { /* Error condition cleanup */
 
     } /* end if */

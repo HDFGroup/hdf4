@@ -580,7 +580,7 @@ DFANaddfds(int32 file_id, char *desc, int32 desclen)
  USAGE
        uint16 DFANlastref()
  RETURNS
-       Reference number if successful and FAIL (-1) otherwise
+       Reference number if successful and 0 otherwise
  DESCRIPTION
  GLOBAL VARIABLES
        Lastref
@@ -735,7 +735,7 @@ DFANIclear(void)
   }
   DFANdir[0] = DFANdir[1] = NULL;
 
-  Lastref = 0;
+  Lastref = 0; /* 0 is invalid ref */
 
 done:
   if(ret_value == FAIL)   
