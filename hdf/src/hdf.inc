@@ -13,7 +13,7 @@ C
 C $Id$
 C
 C *-----------------------------------------------------------------------------
-C * File: 	constant.f
+C * File: 	hdf.inc
 C * Purpose:	Fortran header file for HDF routines
 C * Contents: 
 C *     Tag definitions
