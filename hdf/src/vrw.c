@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/11/30 22:00:01  chouck
-Added fixes for changing to Vstart and Vend
+Revision 1.4  1992/12/02 22:32:27  chouck
+Fixed a size problem in VSwrite() when calling QQQueryspecial()
 
+ * Revision 1.3  1992/11/30  22:00:01  chouck
+ * Added fixes for changing to Vstart and Vend
+ *
  * Revision 1.2  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -383,7 +386,7 @@ PUBLIC int32 VSwrite (vs, buf, nelt, interlace)
 	register BYTE	*tbuf;
 */
 	int32 		j,type, offset;
-	int32 		special;
+	int16 		special;
         int32           position, new_size;
 	VWRITELIST	*w;
 	int32 		uvsize;		/* size of "element" as needed by user */
@@ -588,15 +591,12 @@ PUBLIC int32 VSwrite (vs, buf, nelt, interlace)
             if(vjv) {sprintf(sjs,"promotion to LINK-BLOCK seek stat is %ld\n",j); zj;}
           }
         }
-	  
+        
 	j = QQwrite (vs->aid,  nelt * hsize, (uint8*) Vtbuf);
 	if (j != nelt * hsize) { 
-          sprintf(sjs,"QQwrite of %ld : %ld bytes written\n", nelt * hsize,j); zj;
+            sprintf(sjs,"QQwrite of %ld : %ld bytes written\n", nelt * hsize, j); zj;
+            return(FAIL);
         }
-
-/*
-    HDfreespace(tbuf);
-*/
 
         if(new_size > vs->nvertices) vs->nvertices = new_size;
 
