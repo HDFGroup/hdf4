@@ -186,6 +186,14 @@ debug: libdf.a .installed
 saber:
 	#load -D$(MACHINE) $(CSRCS) $(TSRCS) $(JCSRCS) -lc
 
+.installed: libdf.a
+	-if (test \! -d $(HDFINC)) then (mkdir $(HDFINC) ) fi
+	-cp $(HDRS) $(JINCS) $(HDFINC)
+	-if (test \! -d $(HDFLIB)) then (mkdir $(HDFLIB) ) fi
+	-cp libdf.a $(HDFLIB)
+	-$(RANLIB) $(HDFLIB)/libdf.a
+	touch .installed
+
 depend:
 	makedepend -fMakefile -- $(JCSRCS) $(CSRCS)
 
