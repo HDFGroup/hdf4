@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/06/22 21:23:33  dilg
-Initial revision
+Revision 1.2  1992/07/01 17:16:17  dilg
+Changed option "-#" to "-d#" and added option "-t#" to change the size of
+the linked block table entries.  Cleaned up code a bit.
 
+ * Revision 1.1  1992/06/22  21:23:33  dilg
+ * Initial revision
+ *
 */
 /*
 ** FILE
@@ -20,7 +24,8 @@ Initial revision
 **      Options are:
 **          -b  Don't coalesce linked-block elements
 **          -i  Interactive mode; prompt for each linked-block element
-**          -#  Force the output file to have # DDs per DD block
+**          -d# Force the output file to have # DDs per DD block
+**          -t# Force output file to have # linked blocks per table entry
 **      Only one of options b and i can be specified.
 ** COMMENTS, BUGS, ASSUMPTIONS
 **	Both arguments must be supplied to the program and they cannot be
@@ -61,6 +66,7 @@ typedef struct mydd_t {
 unsigned char *data;
 char invoke[81];
 int32 data_size;
+int32 nblk = 0;
 
 #ifdef PROTOTYPE
 main(int argc, char *argv[])
@@ -84,6 +90,7 @@ char *argv[];
     char *FUNC="main";
 
 
+
 /*
 **   Get invocation name of program
 */
@@ -94,6 +101,11 @@ char *argv[];
 	    strcpy(invoke, tmp);
 	if ((tmp = strtok((char *)NULL, "/]\\\0")) == NULL)
 	    break;
+    }
+
+    if (argc < 3) {
+        usage(invoke);
+        exit(1);
     }
 
 /*
@@ -109,7 +121,7 @@ char *argv[];
                         blocks = 0;
 		        optset = 1;
 		    } else {
-			error("cannot specify -i and -b");
+			error("incompatible options: -i and -b");
 		    }
                     break;
                 case 'i':
@@ -118,15 +130,14 @@ char *argv[];
 			blocks = 0;
 		        optset = 1;
 		    } else {
-			error("cannot specify -i and -b");
+			error("incompatible options: -i and -b");
 		    }
                     break;
-                case '0': case '1':
-                case '2': case '3':
-                case '4': case '5':
-                case '6': case '7':
-                case '8': case '9':
-		    ndds = -(atoi(argv[i]));
+                case 'd':
+		    ndds = atoi(&argv[i][2]);
+                    break;
+                case 't':
+                    nblk = atoi(&argv[i][2]);
                     break;
                 default:
                     fprintf(stderr, "Unknown option -%c ignored\n", argv[i][1]);
@@ -151,7 +162,6 @@ char *argv[];
 /*
 **   Check to make sure input file is HDF
 */
-    printf("input name: %s\n", fname[0]);
     ret = Hishdf(fname[0]);
     if (ret == FALSE)
 	hdferror();
@@ -189,7 +199,6 @@ char *argv[];
     data = NULL;
     while ((data = (unsigned char *)HDgetspace(data_size)) == NULL)
 	data_size /= 2; /* okay then, cut request by half */
-    printf("%dK buffer allocated\n", data_size/1024);
 
 /*
 **   Get all DD's for data elements
@@ -251,8 +260,6 @@ char *argv[];
 		ret = Hdupdd(outfile, dlist[i].tag, dlist[i].ref,
 			     dlist[i-1].tag, dlist[i-1].ref);
                 if (ret == FAIL) {
-printf("old elt:\n\ttag= %d\n\tref= %d\n\toff= %d\n\tlen= %d\n\n",dlist[i-1].tag,dlist[i-1].ref,dlist[i-1].offset,dlist[i-1].length);
-printf("new elt:\n\ttag= %d\n\tref= %d\n\toff= %d\n\tlen= %d\n",dlist[i].tag,dlist[i].ref,dlist[i].offset,dlist[i].length);
 		    HERROR(DFE_GENAPP);
 	            hdferror();
 		}
@@ -315,7 +322,6 @@ int32 infile, outfile;
 
     inaid = Hstartread(infile, dd->tag, dd->ref);
     ret = HDinqblockinfo(inaid, &len, &first_len, &block_len, &nblocks);
-    printf("len=%d\nfirst_len=%d\nblock_len=%d\nnblocks=%d\n",len,first_len,block_len,nblocks);
     if (ret != SUCCEED) {
         HERROR(DFE_GENAPP);
         hdferror();
@@ -346,6 +352,9 @@ int32 infile, outfile;
 /*
 **  promote to linked-block element
 */
+    if (nblk > 0)
+        nblocks = nblk;
+
     outaid = HLcreate(outfile, HDbase_tag(dd->tag), dd->ref, block_len, nblocks);
     if (outaid == FAIL) {
 	HERROR(DFE_GENAPP);
@@ -445,7 +454,7 @@ int usage(name)
 char *name;
 #endif /* PROTOTYPE */
 {
-    fprintf(stderr, "Usage:  %s [options] <infile> <outfile>\n", name);
+    fprintf(stderr, "Usage:  %s [-i | -b] [-d#] [-t#] <infile> <outfile>\n", name);
 }
 
 /*
