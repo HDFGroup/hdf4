@@ -654,7 +654,7 @@ HDstrdup(const char *s)
 VOIDP
 fmemcpy_big(VOIDP dst, VOIDP src, uint32 len)
 {
-    uint8      *s, d;           /* alias for the buffers */
+    uint8      *s, *d;           /* alias for the buffers */
 
     if (len <= UINT_MAX)    /* if the size is small enough copy all at once */
         return (_fmemcpy(dst, src, (size_t) len));
