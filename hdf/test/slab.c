@@ -22,6 +22,7 @@ static char RcsId[] = "$Id$";
 *  slab1w(), slab2w(), slab3w(), slab4w()
 *
 ***************************************************************************/
+/* slabwin & slabwuin do not work for all machines */
 
 #include "hdf.h"
 #include "tutils.h"
@@ -37,7 +38,7 @@ static float32 FAR maxf32 = (float32) 123.0;
 static float32 FAR minf32 = (float32) -1.0;
 static float32 FAR fillf32 = (float32) 1.0;
 
-#if !(defined PC & !(defined PC386 | defined UNIX386))
+#if !((defined PC & !(defined PC386 | defined UNIX386)) | defined CRAYMPP)
 static intn FAR maxin = 123;
 static intn FAR minin = -1;
 static intn FAR fillin = 1;
@@ -107,7 +108,7 @@ static float32 FAR scrowf32[3] =
 static float32 FAR sccolf32[4] =
 {(float32) 0.0, (float32) 1.0, (float32) 2.0, (float32) 3.0};
 
-#if !(defined PC & !(defined PC386 | defined UNIX386))
+#if !((defined PC & !(defined PC386 | defined UNIX386)) | defined CRAYMPP)
 static intn FAR scplnin[2] =
 {0, 100};
 static intn FAR scrowin[3] =
@@ -226,7 +227,7 @@ static float64 FAR slabw5f64[2][3][1] =
         {113.0},
         {123.0}}};
 
-#if !(defined PC & !(defined PC386 | defined UNIX386))
+#if !((defined PC & !(defined PC386 | defined UNIX386)) | defined CRAYMPP)
 static intn FAR slabw1in[1][1][3] =
 {
     {
@@ -586,7 +587,7 @@ static float64 FAR f64data[2][3][4] =
         {100.0, 101.0, 102.0, 103.0},
         {110.0, 111.0, 112.0, 113.0},
         {120.0, 121.0, 122.0, 123.0}}};
-#if !(defined PC & !(defined PC386 | defined UNIX386))
+#if !((defined PC & !(defined PC386 | defined UNIX386)) | defined CRAYMPP)
 static intn FAR indata[2][3][4] =
 {
     {
@@ -994,7 +995,7 @@ slabwf64(void)
     return (int) num_err;
 }
 
-#if !(defined PC & !(defined PC386 | defined UNIX386))
+#if !((defined PC & !(defined PC386 | defined UNIX386)) | defined CRAYMPP)
 /*
    ** Write intn data set to slabwin.hdf as 5 hyperslabs.
  */
@@ -2853,9 +2854,12 @@ test_slab(void)
 {
     num_errs += slabwf32();
     num_errs += slabwf64();
-#if !(defined PC & !(defined PC386 | defined UNIX386))
+#if !((defined PC & !(defined PC386 | defined UNIX386)) | defined CRAYMPP)
     num_errs += slabwin();
     num_errs += slabwuin();
+#else
+    printf("    Skipping slabwin\n");
+    printf("    Skipping slabuwin\n");
 #endif
     num_errs += slabwi32();
     num_errs += slabwui32();
