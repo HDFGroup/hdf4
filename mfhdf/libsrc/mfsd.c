@@ -3072,7 +3072,7 @@ printf("SDsetnbitdata(): HCcreate() status=%d\n",(intn)status);
             Hendaccess(var->aid);
         var->aid = status;
       } /* end if */
-    return(status);
+    return(SUCCEED);
 } /* SDsetcompress */
 
 
