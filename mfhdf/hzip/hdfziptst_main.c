@@ -255,7 +255,9 @@ int main(void)
  fspec.verbose  =1;
 #endif
 
- in_chunk_lengths[0]=in_chunk_lengths[1]=in_chunk_lengths[2]=10;
+ in_chunk_lengths[0]=10;
+ in_chunk_lengths[1]=8;
+ in_chunk_lengths[2]=6;
 
 
 /*-------------------------------------------------------------------------
@@ -265,7 +267,7 @@ int main(void)
  TESTING("compressing SDS SELECTED with HUFF, chunking SELECTED");
  hzip_init (&options,verbose);
  hzip_addcomp("dset7:HUFF 1",&options);
- hzip_addchunk("dset7:10x10x10",&options);
+ hzip_addchunk("dset7:10x8x6",&options);
  hzip(FILENAME,FILENAME_OUT,&options);
  hzip_end (&options);
  if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
@@ -284,7 +286,7 @@ int main(void)
  TESTING("compressing SDS SELECTED with RLE, chunking SELECTED");
  hzip_init (&options,verbose);
  hzip_addcomp("dset4:RLE",&options);
- hzip_addchunk("dset4:10x10",&options);
+ hzip_addchunk("dset4:10x8",&options);
  hzip(FILENAME,FILENAME_OUT,&options);
  hzip_end (&options);
  if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
@@ -302,7 +304,7 @@ int main(void)
  TESTING("compressing SDS SELECTED with GZIP, chunking SELECTED");
  hzip_init (&options,verbose);
  hzip_addcomp("dset4:GZIP 6",&options);
- hzip_addchunk("dset4:10x10",&options);
+ hzip_addchunk("dset4:10x8",&options);
  hzip(FILENAME,FILENAME_OUT,&options);
  hzip_end (&options);
  if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
@@ -348,9 +350,9 @@ int main(void)
  hzip_addcomp("dset4:GZIP 9",&options);
  hzip_addcomp("dset5:RLE",&options);
  hzip_addcomp("dset6:HUFF 2",&options);
- hzip_addchunk("dset4:10x10",&options);
- hzip_addchunk("dset5:10x10",&options);
- hzip_addchunk("dset6:10x10",&options);
+ hzip_addchunk("dset4:10x8",&options);
+ hzip_addchunk("dset5:10x8",&options);
+ hzip_addchunk("dset6:10x8",&options);
  hzip(FILENAME,FILENAME_OUT,&options);
  hzip_end (&options);
  if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
@@ -419,7 +421,7 @@ int main(void)
 
  TESTING("no compressing, chunking ALL");
  hzip_init (&options,verbose);
- hzip_addchunk("*:10x10",&options);
+ hzip_addchunk("*:10x8",&options);
  hzip(FILENAME,FILENAME_OUT,&options);
  hzip_end (&options);
  if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
@@ -440,7 +442,7 @@ int main(void)
  printf("\n");
  hzip_init (&options,verbose);
  hzip_addcomp("*:GZIP 1",&options);
- hzip_addchunk("*:10x10",&options);
+ hzip_addchunk("*:10x8",&options);
  hzip(FILENAME,FILENAME_OUT,&options);
  hzip_end (&options);
  if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)

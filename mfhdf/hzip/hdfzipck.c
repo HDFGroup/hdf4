@@ -83,6 +83,18 @@ int sds_get_compck(char *fname, char *sds_name)
  status_n = SDgetinfo(sds_id,sds_name,&rank,dimsizes,&dtype,&nattrs);
 
 /*-------------------------------------------------------------------------
+ * print the dimensions
+ *-------------------------------------------------------------------------
+ */
+ 
+ printf("dimensions:  [");
+ for (i = 0; i < rank; i++)
+ {
+  printf("%d ", dimsizes[i]);
+ }
+ printf("]\n");
+
+/*-------------------------------------------------------------------------
  * print the chunk info
  *-------------------------------------------------------------------------
  */
