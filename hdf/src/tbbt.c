@@ -327,7 +327,7 @@ swapkid(TBBT_NODE ** root, TBBT_NODE * ptr, intn side)
                           Cnt(ptr, Other(side)) + 1 + Cnt(kid, Other(side)),
                   deep[2] - 1 - Max(deep[0], deep[1]), HasChild(kid, side));
 #else
-#if defined macintosh | defined THINK_C     /* Macro substitution limit on Mac */
+#if defined macintosh | defined MAC | defined SYMANTEC_C     /* Macro substitution limit on Mac */
     kid->flags = SetFlags(kid, (1 + 2 - (side)),
                         deep[2] - 1 - Max(deep[0], 0), HasChild(kid, side));
 #else  /* !macintosh */

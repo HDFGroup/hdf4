@@ -536,7 +536,7 @@ functab_t;
 extern accrec_t *access_records;
 
 /* file records array.  defined in hfile.c */
-#if defined(macintosh) | defined(THINK_C) | defined(DMEM)  /* Dynamic memory */
+#if defined(macintosh) | defined(MAC) | defined(SYMANTEC_C) | defined(DMEM)  /* Dynamic memory */
 extern filerec_t *file_records;
 #else  /* !macintosh */
 extern filerec_t file_records[];

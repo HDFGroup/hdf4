@@ -92,18 +92,18 @@
 #undef DF_BUFFIO    /* use unbuffered i/o */
 #include <memory.h>     /* malloc stuff for MPW 3.0 */
 #include <fcntl.h>  /* unbuffered IO stuff for MPW 3.0 */
-#ifdef THINK_C  /* for LightSpeed C */
+#ifdef SYMANTEC_C  /* for LightSpeed C */
 #include <unix.h>
-#else  /*THINK_C                   MPW, possibly others */
+#else  /*SYMANTEC_C                   MPW, possibly others */
 #include <Files.h>  /* for unbuffered i/o stuff */
-#endif /*THINK_C */
+#endif /*SYMANTEC_C */
 #define DF_CAPFNAMES    /* fortran names are in all caps */
 #define DF_DYNAMIC  /* use dynamic allocation */
-#ifdef THINK_C  /* LightSpeed C does not have memcpy */
+#ifdef SYMANTEC_C  /* LightSpeed C does not have memcpy */
 #define DFmovmem(from, to, len) DFImemcopy(from, to, len)
-#else  /*THINK_C */
+#else  /*SYMANTEC_C */
 #define DFmovmem(from, to, len) memcpy(to, from, len)
-#endif /*THINK_C */
+#endif /*SYMANTEC_C */
 #define malloc(x)   NewPtr((Size)   (x))    /* don't use malloc on the Mac */
 #define free(x)     DisposPtr((Ptr) (x))    /* don't use free on the Nac   */
 #undef DF_STRUCTOK

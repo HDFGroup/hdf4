@@ -26,7 +26,7 @@
    used.  tbuf lives in the hfile.c */
 
 #ifndef TBUF_SZ
-#if defined(macintosh) | defined(THINK_C)
+#if defined(macintosh) | defined(MAC) | defined(SYMANTEC_C)
 #   define TBUF_SZ      256
 #else  /* !macintosh */
 #   define TBUF_SZ     1024
@@ -51,7 +51,7 @@
  */
 
 #define FIELDNAMELENMAX    128  /* fieldname   : 16 chars max */
-#if defined macintosh | defined THINK_C
+#if defined macintosh | defined(MAC) | defined SYMANTEC_C
 #define VSFIELDMAX          64   /* max no of fields per vdata */
 #else  /* !macintosh */
 #define VSFIELDMAX         256  /* max no of fields per vdata */

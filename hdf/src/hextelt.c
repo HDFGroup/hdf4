@@ -1346,7 +1346,9 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 
     char	*finalpath;	/* Final pathname to return */
     char	*fname;
+#ifndef MAC
     struct	stat filestat;	/* for checking pathname existence */
+#endif
     char        *ret_value = NULL; /* FAIL */
 
     /* initialize HDFEXTDIR and HDFCREATEDIR if invoked the first time */

@@ -62,7 +62,7 @@ extern      "C"
    ** from hfile.c
  */
     extern int32 Hopen
-                (const char _HUGE * path, intn acc_mode, int16 ndds);
+                (const char _HUGE *path, intn acc_mode, int16 ndds);
 
     extern intn Hclose
                 (int32 file_id);
@@ -276,7 +276,7 @@ extern      "C"
 
 #endif                          /* WIN3 | PC */
 
-#if defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MIPSEL | defined NEXT | defined CONVEX
+#if defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MAC | defined MIPSEL | defined NEXT | defined CONVEX
     extern char *HDstrdup
                 (const char *s);
 
