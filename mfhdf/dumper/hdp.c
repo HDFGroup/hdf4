@@ -30,9 +30,9 @@ usage(intn argc, char *argv[])
 	printf("\t Commands:\n");
 	printf("\t     list \tlists contents of files in <filename list>\n");
 	printf("\t     dumpsds\tdisplays data of NDGs and SDGs in files listed in <filename list>\n");
-	printf("\t     dumpvd\tdisplays data of vdatas in <filename list>. Not implemented yet.\n");
-	printf("\t     dumpvg\tdisplays data of vgroups in <filename list>. Not implemented yet.\n");
-	printf("\t     dumpris\tdisplays data of RIGs in <filename list>. Not implemented yet.\n");
+	printf("\t     dumpvd\tdisplays data of vdatas in <filename list>. \n");
+	printf("\t     dumpvg\tdisplays data of vgroups in <filename list>. \n");
+	printf("\t     dumprig\tdisplays data of RIGs in <filename list>. \n");
 }
 
 int 
