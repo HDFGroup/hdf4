@@ -2,9 +2,12 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.1  1993/04/28 20:47:05  koziol
-C Renamed constant.f to constant.i and added dffunc.i
+C Revision 1.2  1993/05/12 16:25:32  chouck
+C Added SUCCEED and FAIL parameters
 C
+# Revision 1.1  1993/04/28  20:47:05  koziol
+# Renamed constant.f to constant.i and added dffunc.i
+#
 c Revision 1.3  1993/01/19  05:53:54  koziol
 c Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
 c port.  Lots of minor annoyances fixed.
@@ -361,6 +364,14 @@ c	PARAMETERS
       integer	DF_MAXFNLEN
 
       parameter(DF_MAXFNLEN	= 256)
+
+
+C       Statndard return codes       
+      integer	SUCCEED, FAIL
+ 
+      parameter(SUCCEED         = 0,
+     *		FAIL     	= -1)
+
 
 C-----------------------------------------------------------------------------
 C  Name:    bogusfunc
