@@ -1,0 +1,308 @@
+C *
+C * This file is an extension to NCSA HDF to enable the use of the
+C * Pablo trace library.
+C *
+C * Developed by: The TAPESTRY Parallel Computing Laboratory
+C *		  University of Illinois at Urbana-Champaign
+C *		  Department of Computer Science
+C *		  1304 W. Springfield Avenue
+C *		  Urbana, IL	61801
+C *
+C * Copyright (c) 1995
+C * The University of Illinois Board of Trustees.
+C *      All Rights Reserved.
+C *
+C * PABLO is a registered trademark of
+C * The Board of Trustees of the University of Illinois
+C * registered in the U.S. Patent and Trademark Office.
+C *
+C * Author: Jonathan M. Reid (jreid@cs.uiuc.edu)
+C *
+C * Project Manager and Principal Investigator:
+C *	Daniel A. Reed (reed@cs.uiuc.edu)
+C *
+C * Funded by: National Science Foundation grants NSF CCR86-57696,
+C * NSF CCR87-06653 and NSF CDA87-22836 (Tapestry), NASA ICLASS Contract
+C * No. NAG-1-613, DARPA Contract No. DABT63-91-K-0004, by a grant
+C * from the Digital Equipment Corporation External Research Program,
+C * and by a collaborative research agreement with the Intel Supercomputer
+C * Systems Division.
+C *
+
+C *---------------------------------------------------------------------------
+C * File: 	PabloHDF.inc
+C * Purpose:	Fortran header file for Pablo routines
+C * Contents: 
+C *    	Procedure IDs - obtained from ProcIDs.h
+C * Remarks: This file can be included with Fortran user programs who 
+C *          want to enable Pablo tracing.  
+C *---------------------------------------------------------------------------
+
+C IDs for annotation procedures
+
+      integer ID_DFANaddfds,ID_DFANaddfid,ID_DFANgetdesc,ID_DFANgetdesclen
+      integer ID_DFANgetfds,ID_DFANgetfdslen,ID_DFANgetfid,ID_DFANgetfidlen
+      integer ID_DFANgetlabel,ID_DFANgetlablen,ID_DFANlablist,ID_DFANlastref
+      integer ID_DFANputdesc,ID_DFANputlabel
+
+      integer ID_DFPaddpal,ID_DFPgetpal,ID_DFPlastref,ID_DFPnpals
+      integer ID_DFPputpal,ID_DFPreadref,ID_DFPrestart,ID_DFPwriteref
+
+      integer ID_DFR8addimage,ID_DFR8getdims,ID_DFR8getimage,ID_DFR8lastref
+      integer ID_DFR8nimages,ID_DFR8putimage,ID_DFR8readref,ID_DFR8restart
+      integer ID_DFR8setcompress,ID_DFR8setpalette,ID_DFR8writeref
+
+      integer ID_DFSDadddata,ID_DFSDclear,ID_DFSDendslab,ID_DFSDendslice
+      integer ID_DFSDgetcal,ID_DFSDgetdata,ID_DFSDgetdatalen
+      integer ID_DFSDgetdatastrs,ID_DFSDgetdimlen,ID_DFSDgetdims
+      integer ID_DFSDgetdimscale,ID_DFSDgetdimstrs,ID_DFSDgetfillvalue
+      integer ID_DFSDgetNT,ID_DFSDgetrange,ID_DFSDgetslice,ID_DFSDlastref
+      integer ID_DFSDndatasets,ID_DFSDpre32sdg,ID_DFSDputdata,ID_DFSDputslice
+      integer ID_DFSDreadref,ID_DFSDreadslab,ID_DFSDrestart,ID_DFSDsetcal
+      integer ID_DFSDsetdatastrs,ID_DFSDsetdims,ID_DFSDsetdimscale
+      integer ID_DFSDsetdimstrs,ID_DFSDsetfillvalue,ID_DFSDsetlengths
+      integer ID_DFSDsetNT,ID_DFSDsetrange,ID_DFSDstartslab,ID_DFSDstartslice
+      integer ID_DFSDwriteref,ID_DFSDwriteslab
+
+      integer ID_DF24addimage,ID_DF24getdims,ID_DF24getimage,ID_DF24lastref
+      integer ID_DF24nimages,ID_DF24putimage,ID_DF24readref,ID_DF24reqil
+      integer ID_DF24restart,ID_DF24setcompress,ID_DF24setdims,ID_DF24setil
+
+      integer ID_Happendable,ID_Hclose,ID_Hdeldd,ID_Hdupdd,ID_Hendaccess
+      integer ID_Hfind,ID_Hgetelement,ID_Hgetfileversion,ID_Hgetlibversion
+      integer ID_Hinquire,ID_Hishdf,ID_HLcreate,ID_Hlength,ID_Hnewref
+      integer ID_Hnextread,ID_Hnumber,ID_Hoffset,ID_Hopen,ID_Hputelement
+      integer ID_Hread,ID_Hseek,ID_Hstartread,ID_Hstartwrite,ID_Hsync
+      integer ID_Htrunc,ID_Hwrite,ID_HXcreate
+
+      integer ID_HEclear,ID_HEprint,ID_HEpush,ID_HEreport,ID_HEstring
+
+      integer ID_SDattrinfo,ID_SDcreate,ID_SDdiminfo,ID_SDend,ID_SDendaccess
+      integer ID_SDfileinfo,ID_SDfindattr,ID_SDgetcal,ID_SDgetdatastrs
+      integer ID_SDgetdimid,ID_SDgetdimscale,ID_SDgetdimstrs,ID_SDgetfillvalue
+      integer ID_SDgetinfo,ID_SDgetrange,ID_SDidtoref,ID_SDiscoordvar
+      integer ID_SDnametoindex,ID_SDreadattr,ID_SDreaddata,ID_SDreftoindex
+      integer ID_SDselect,ID_SDsetattr,ID_SDsetcal,ID_SDsetdatastrs
+      integer ID_SDsetdimname,ID_SDsetdimscale,ID_SDsetdimstrs
+      integer ID_SDsetexternalfile,ID_SDsetfillvalue,ID_SDsetrange,ID_SDstart
+      integer ID_SDwritedata
+
+      integer ID_VFfieldesize,ID_VFfieldisize,ID_VFfieldname,ID_VFfieldorder
+      integer ID_VFfieldtype,ID_VFnfields
+
+      integer ID_Vaddtagref,ID_Vattach,ID_Vdetach,ID_Vgetclass,ID_Vgetid
+      integer ID_Vgetname,ID_Vgettagref,ID_Vgettagrefs,ID_Vinqtagref
+      integer ID_Vinquire,ID_Vinsert,ID_Vlone,ID_Vntagrefs,ID_Vsetclass
+      integer ID_Vsetname
+
+      integer ID_VHmakegroup,ID_VHstoredata,ID_VHstoredatam
+
+      integer ID_VSattach,ID_VSdetach,ID_VSelts,ID_VSfdefine,ID_VSfexist
+      integer ID_VSfind,ID_VSgetclass,ID_VSgetfields,ID_VSgetid
+      integer ID_VSgetinterlace,ID_VSgetname,ID_VSinquire,ID_VSlone,ID_VSread
+      integer ID_VSseek,ID_VSsetclass,ID_VSsetfields,ID_VSsetinterlace
+      integer ID_VSsetname,ID_VSsizeof,ID_VSwrite
+
+      parameter(ID_DFANaddfds           = 101,
+     *          ID_DFANaddfid           = 102,
+     *          ID_DFANgetdesc          = 103,
+     *          ID_DFANgetdesclen       = 104,
+     *          ID_DFANgetfds           = 105,
+     *          ID_DFANgetfdslen        = 106,
+     *          ID_DFANgetfid           = 107,
+     *          ID_DFANgetfidlen        = 108,
+     *          ID_DFANgetlabel         = 109,
+     *          ID_DFANgetlablen        = 110,
+     *          ID_DFANlablist          = 111, 
+     *          ID_DFANlastref          = 112,
+     *          ID_DFANputdesc          = 113,
+     *          ID_DFANputlabel         = 114)
+
+      parameter(ID_DFPaddpal            = 201,
+     *          ID_DFPgetpal            = 202,
+     *          ID_DFPlastref           = 203,
+     *          ID_DFPnpals             = 204,
+     *          ID_DFPputpal            = 205,
+     *          ID_DFPreadref           = 206,
+     *          ID_DFPrestart           = 207,
+     *          ID_DFPwriteref          = 208)
+
+      parameter(ID_DFR8addimage         = 301,
+     *          ID_DFR8getdims          = 302,
+     *          ID_DFR8getimage         = 303,
+     *          ID_DFR8lastref          = 304,
+     *          ID_DFR8nimages          = 305,
+     *          ID_DFR8putimage         = 306,
+     *          ID_DFR8readref          = 307,
+     *          ID_DFR8restart          = 308,
+     *          ID_DFR8setcompress      = 309,
+     *          ID_DFR8setpalette       = 310,
+     *          ID_DFR8writeref         = 311)
+
+      parameter(ID_DFSDadddata          = 401,
+     *          ID_DFSDclear            = 402,
+     *          ID_DFSDendslab          = 403,
+     *          ID_DFSDendslice         = 404,
+     *          ID_DFSDgetcal           = 405,
+     *          ID_DFSDgetdata          = 406,
+     *          ID_DFSDgetdatalen       = 407,
+     *          ID_DFSDgetdatastrs      = 408,
+     *          ID_DFSDgetdimlen        = 409,
+     *          ID_DFSDgetdims          = 410,
+     *          ID_DFSDgetdimscale      = 411,
+     *          ID_DFSDgetdimstrs       = 412,
+     *          ID_DFSDgetfillvalue     = 413,
+     *          ID_DFSDgetNT            = 414,
+     *          ID_DFSDgetrange         = 415,
+     *          ID_DFSDgetslice         = 416,
+     *          ID_DFSDlastref          = 417,
+     *          ID_DFSDndatasets        = 418,
+     *          ID_DFSDpre32sdg         = 419,
+     *          ID_DFSDputdata          = 420,
+     *          ID_DFSDputslice         = 421,
+     *          ID_DFSDreadref          = 422,
+     *          ID_DFSDreadslab         = 423,
+     *          ID_DFSDrestart          = 424,
+     *          ID_DFSDsetcal           = 425,
+     *          ID_DFSDsetdatastrs      = 426,
+     *          ID_DFSDsetdims          = 427,
+     *          ID_DFSDsetdimscale      = 428,
+     *          ID_DFSDsetdimstrs       = 429,
+     *          ID_DFSDsetfillvalue     = 430,
+     *          ID_DFSDsetlengths       = 431,
+     *          ID_DFSDsetNT            = 432,
+     *          ID_DFSDsetrange         = 433,
+     *          ID_DFSDstartslab        = 434,
+     *          ID_DFSDstartslice       = 435,
+     *          ID_DFSDwriteref         = 436,
+     *          ID_DFSDwriteslab        = 437)
+
+      parameter(ID_DF24addimage         = 501,
+     *          ID_DF24getdims          = 502,
+     *          ID_DF24getimage         = 503,
+     *          ID_DF24lastref          = 504,
+     *          ID_DF24nimages          = 505,
+     *          ID_DF24putimage         = 506,
+     *          ID_DF24readref          = 507,
+     *          ID_DF24reqil            = 508,
+     *          ID_DF24restart          = 509,
+     *          ID_DF24setcompress      = 510,
+     *          ID_DF24setdims          = 511,
+     *          ID_DF24setil            = 512)
+
+      parameter(ID_Happendable          = 601,
+     *          ID_Hclose               = 602,
+     *          ID_Hdeldd               = 603,
+     *          ID_Hdupdd               = 604,
+     *          ID_Hendaccess           = 605,
+     *          ID_Hfind                = 606,
+     *          ID_Hgetelement          = 607,
+     *          ID_Hgetfileversion      = 608,
+     *          ID_Hgetlibversion       = 609,
+     *          ID_Hinquire             = 610,
+     *          ID_Hishdf               = 611,
+     *          ID_HLcreate             = 612,
+     *          ID_Hlength              = 613,
+     *          ID_Hnewref              = 614,
+     *          ID_Hnextread            = 615,
+     *          ID_Hnumber              = 616,
+     *          ID_Hoffset              = 617,
+     *          ID_Hopen                = 618,
+     *          ID_Hputelement          = 619,
+     *          ID_Hread                = 620,
+     *          ID_Hseek                = 621,
+     *          ID_Hstartread           = 622,
+     *          ID_Hstartwrite          = 623,
+     *          ID_Hsync                = 624,
+     *          ID_Htrunc               = 625,
+     *          ID_Hwrite               = 626,
+     *          ID_HXcreate             = 627)
+
+      parameter(ID_HEclear              = 701,
+     *          ID_HEprint              = 702,
+     *          ID_HEpush               = 703,
+     *          ID_HEreport             = 704,
+     *          ID_HEstring             = 705)
+
+      parameter(ID_SDattrinfo           = 801,
+     *          ID_SDcreate             = 802,
+     *          ID_SDdiminfo            = 803,
+     *          ID_SDend                = 804,
+     *          ID_SDendaccess          = 805,
+     *          ID_SDfileinfo           = 806,
+     *          ID_SDfindattr           = 807,
+     *          ID_SDgetcal             = 808,
+     *          ID_SDgetdatastrs        = 809,
+     *          ID_SDgetdimid           = 810,
+     *          ID_SDgetdimscale        = 811,
+     *          ID_SDgetdimstrs         = 812,
+     *          ID_SDgetfillvalue       = 813,
+     *          ID_SDgetinfo            = 814,
+     *          ID_SDgetrange           = 815,
+     *          ID_SDidtoref            = 816,
+     *          ID_SDiscoordvar         = 817,
+     *          ID_SDnametoindex        = 818,
+     *          ID_SDreadattr           = 819,
+     *          ID_SDreaddata           = 820,
+     *          ID_SDreftoindex         = 821,
+     *          ID_SDselect             = 822,
+     *          ID_SDsetattr            = 823,
+     *          ID_SDsetcal             = 824,
+     *          ID_SDsetdatastrs        = 825,
+     *          ID_SDsetdimname         = 826,
+     *          ID_SDsetdimscale        = 827,
+     *          ID_SDsetdimstrs         = 828,
+     *          ID_SDsetexternalfile    = 829,
+     *          ID_SDsetfillvalue       = 830,
+     *          ID_SDsetrange           = 831,
+     *          ID_SDstart              = 832,
+     *          ID_SDwritedata          = 833)
+
+      parameter(ID_VFfieldesize         = 901,
+     *          ID_VFfieldisize         = 902,
+     *          ID_VFfieldname          = 903,
+     *          ID_VFfieldorder         = 904,
+     *          ID_VFfieldtype          = 905,
+     *          ID_VFnfields            = 906)
+
+      parameter(ID_Vaddtagref           = 1001,
+     *          ID_Vattach              = 1002,
+     *          ID_Vdetach              = 1003,
+     *          ID_Vgetclass            = 1004,
+     *          ID_Vgetid               = 1005,
+     *          ID_Vgetname             = 1006,
+     *          ID_Vgettagref           = 1007,
+     *          ID_Vgettagrefs          = 1008,
+     *          ID_Vinqtagref           = 1009,
+     *          ID_Vinquire             = 1010,
+     *          ID_Vinsert              = 1011,
+     *          ID_Vlone                = 1012,
+     *          ID_Vntagrefs            = 1013,
+     *          ID_Vsetclass            = 1014,
+     *          ID_Vsetname             = 1015)
+
+      parameter(ID_VHmakegroup          = 1101,
+     *          ID_VHstoredata          = 1102,
+     *          ID_VHstoredatam         = 1103)
+
+      parameter(ID_VSattach             = 1201,
+     *          ID_VSdetach             = 1202,
+     *          ID_VSelts               = 1203,
+     *          ID_VSfdefine            = 1204,
+     *          ID_VSfexist             = 1205,
+     *          ID_VSfind               = 1206,
+     *          ID_VSgetclass           = 1207,
+     *          ID_VSgetfields          = 1208,
+     *          ID_VSgetid              = 1209,
+     *          ID_VSgetinterlace       = 1210,
+     *          ID_VSgetname            = 1211,
+     *          ID_VSinquire            = 1212,
+     *          ID_VSlone               = 1213,
+     *          ID_VSread               = 1214,
+     *          ID_VSseek               = 1215,
+     *          ID_VSsetclass           = 1216,
+     *          ID_VSsetfields          = 1217,
+     *          ID_VSsetinterlace       = 1218,
+     *          ID_VSsetname            = 1219,
+     *          ID_VSsizeof             = 1220,
+     *          ID_VSwrite              = 1221)
