@@ -133,7 +133,7 @@ install-lib install: $(LIBS)
 	cp zlib.h zconf.h $(includedir)
 	chmod 644 $(includedir)/zlib.h $(includedir)/zconf.h
 	cp $(LIBS) $(libdir)
-	cd $(libdir); chmod 755 $(LIBS)
+	cd $(libdir); chmod 644 $(LIBS)
 	-@(cd $(libdir); $(RANLIB) libz.a || true) >/dev/null 2>&1
 	cd $(libdir); if test -f $(SHAREDLIB).$(VER); then \
 	  rm -f $(SHAREDLIB) $(SHAREDLIB).1; \
