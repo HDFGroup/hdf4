@@ -26,8 +26,9 @@ IN: fill mode, SD_FILL or SD_NOFILL, defined in mfhdf.h.
 .br 
     SD_NOFILL -- no pre-filling for datasets.
 .SH "DESCRIPTION"
-When a new fixed size SDS is created, by default the 
-first SDwritedata() call will pre-fill the entire dataset 
+When a new fixed size SDS is created and the first call
+of SDwritedata writes out only part of the dataset, by 
+default SDwritedata will pre-fill the rest of the dataset 
 with a user defined (via SDsetfillvalue) fill value 
 or a default fill value, if there is no user-defined 
 fill value. For SDSs with unlimited size of the slowest
