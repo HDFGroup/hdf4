@@ -927,7 +927,7 @@ C     that will be written to.
       stride(1) = 1
       stride(2) = 1
 
-C     Write the stored data to the image array.
+C     Write the stored data to the image array..
       status = mgwrimg(ri_id(i_comp), start, stride, edges, image_data)
       if(status .ne. 0) then
          print *, 'mgwrimg failed for', i_comp, '-th data set'
@@ -1119,10 +1119,22 @@ C
       integer*2 chunk52(NCOMP* X_CH_LENGTH*Y_CH_LENGTH)
       integer*2 chunk52_out(NCOMP* X_CH_LENGTH*Y_CH_LENGTH)
       integer*2 data_org(NCOMP* X_LENGTH*Y_LENGTH)
+      integer*2 data_org1(30)
+      integer*2 data_org2(30)
+      integer*2 data_org3(30)
+      integer*2 data_org4(30)
+      integer*2 data_org5(30)
+      integer*2 data_org6(30)
        
       integer*2 image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
       integer*2 data_arr(NCOMP,X_LENGTH,Y_LENGTH)
       equivalence (data_org(1), data_arr(1,1,1))
+      equivalence (data_org(1), data_org1(1))
+      equivalence (data_org(31), data_org2(1))
+      equivalence (data_org(61), data_org3(1))
+      equivalence (data_org(91), data_org4(1))
+      equivalence (data_org(121), data_org5(1))
+      equivalence (data_org(151), data_org6(1))
 C
 C---Default pixel value
 C
@@ -1167,38 +1179,50 @@ C  Data initialization
 C 
       data chunk11 / 110, 111, 112, 120, 121, 122,
      .                130, 131, 132, 140, 141, 142,
-     .                150, 151, 152, 160, 161, 162/, 
-     .      chunk21 /
+     .                150, 151, 152, 160, 161, 162/ 
+      data  chunk21 /
      .                210, 211, 212, 220, 221, 222,
      .                230, 231, 232, 240, 241, 242,
      .                250, 251, 252, 260, 261, 262
-     .              /,
-     .      chunk52 /
+     .              /
+      data  chunk52 /
      .                1010, 1011, 1012, 1020, 1021, 1022,
      .                1030, 1031, 1032, 1040, 1041, 1042,
      .                1050, 1051, 1052, 1060, 1061, 1062
-     .              /,
-     .      data_org /
-     .                110, 111, 112, 120, 121, 122, 
+     .              /
+
+      data  data_org1  
+     .              / 110, 111, 112, 120, 121, 122, 
      .                210, 211, 212, 220, 221, 222, 0,
      .                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-     .                 0, 0, 0, 0, 0, 0, 0, 
-     .                130, 131, 132, 140,
+     .                 0, 0, 0, 0, 0, 0, 0 /
+
+      data  data_org2    
+     .              / 130, 131, 132, 140,
      .                141, 142, 230, 231, 232, 240, 241, 242, 
      .                0, 0, 0, 0, 0, 0, 0, 0, 0,
-     .                0, 0, 0, 0, 0, 0, 0, 0, 0, 
-     .                150, 151, 152, 160, 161, 162, 250, 251,
+     .                0, 0, 0, 0, 0, 0, 0, 0, 0 /
+
+       data data_org3          
+     .              / 150, 151, 152, 160, 161, 162, 250, 251,
      .                252, 260, 261, 262, 0, 0, 0, 0, 0, 0, 0, 
-     .                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     .                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+     .                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0/
+
+       data data_org4      
+     .              / 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
      .                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     .                1010, 1011, 1012, 1020, 1021, 1022, 
-     .                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     .                1010, 1011, 1012, 1020, 1021, 1022 /
+
+       data data_org5      
+     .              / 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      .                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-     .                1030, 1031, 1032, 1040, 1041,
-     .                1042, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+     .                1030, 1031, 1032, 1040, 1041, 1042/
+
+       data data_org6    
+     .              / 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
      .                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      .                0, 1050, 1051, 1052, 1060, 1061, 1062 /
+
 C
 C  Initialize compression argument array
 C
@@ -1427,3 +1451,5 @@ C
 2000  continue
       return
       end
+
+
