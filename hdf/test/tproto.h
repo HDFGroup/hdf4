@@ -17,6 +17,7 @@ void test_sdmms();
 void test_sdnmms();
 void test_tsdstr();
 void test_vers();
+void test_slab();
 
 
 #endif

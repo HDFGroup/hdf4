@@ -1,7 +1,7 @@
 #include "hdf.h"
 
 
-#define NUMOFTESTS 13
+#define NUMOFTESTS 14
 #define VERSION "0.8beta"
 #define BUILDDATE "Wed Jan 27 1993"
 
@@ -58,6 +58,7 @@ main (argc, argv)
   InitTest("hfile1",test_hfile1,"HFILE LIMITS");
   InitTest("sdmms",test_sdmms,"SDMMS");
   InitTest("sdnmms",test_sdnmms,"SDNMMS");
+  InitTest("slabs",test_slab,"HYPERSLAB INTERFACE");
 
   Verbocity = 4; /* Default Verbocity is Low */
   ret = Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
