@@ -149,6 +149,12 @@ clean:
           SUBDIRS="src util test" _sub
 	$(RM) $(RMFLAGS) core *.log
 
+distclean:
+        @$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
+          SUBDIRS="src util test" _sub
+        $(RM) $(RMFLAGS) core *.log
+        $(RM) -rf bin lib include
+
 _sub:
 	@for dir in $(SUBDIRS); do \
           (cd $$dir; echo Making \`$(TARG)\' in `pwd`; \
