@@ -988,7 +988,7 @@ int32 Hstartwrite(file_id, tag, ref, length)
            access_rec->used = FALSE;
            HRETURN_ERROR(DFE_SEEKERROR,FAIL);
        }
-       if (HI_WRITE(file_rec->file, tbuf, 1) == FAIL) {
+       if (HI_WRITE(file_rec->file, ptbuf, 1) == FAIL) {
            access_rec->used = FALSE;
            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
        }
