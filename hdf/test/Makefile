@@ -33,6 +33,8 @@ CTESTS= nt_rig.o nt_sdstr.o nt_hblocks.o nt_an.o nt_anfile.o \
 
 .c.o: ; $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
 
+all: testhdf
+
 testhdf: $(CTESTS)
 	$(CC) $(CFLAGS) -o testhdf $(CTESTS) $(HDFLIB)/libdf.a
 
