@@ -189,7 +189,7 @@ struct vdata_desc
 #define _HDF_VSUNPACK 1
 #define VG_ATTR_SET 0x00000001  /* this vgroup has attribute(s) */
 #define VS_ATTR_SET 0x00000001  /* this vdata has attribute(s) */
-#define ENTIRE_VDATA -1         /* used in vdata attr interface
+#define _HDF_ENTIRE_VDATA 0xffffffff /* used in vdata attr interface
                            findex to represent the entire vdata  */
 /* .................................................................. */
 /* Private data structures. Unlikely to be of interest to applications */

@@ -102,7 +102,7 @@ static char RcsId[] = "@(#)$Revision$";
 * Create 2 new types in vg.h:
 *     typedef struct dyn_vsattr_struct 
 *        {
-*            intn field_n -- which field of the vdata. 0 for the 
+*            int32 field_n -- which field of the vdata. 0 for the 
 *                              entire vdata.
 *            uint16 atag, aref  -- tag/ref of the attr vdata
 *         } vs_attr_t;
@@ -128,7 +128,7 @@ static char RcsId[] = "@(#)$Revision$";
 *         vg_attr_t *alist;
 *
 * New routines:
-*   intn VSfindex(int32 vsid, char *fieldname, int32 *fldindex)
+*   intn VSfindex(int32 vsid, char *fieldname, int32 *findex)
 *        find out the index of a field given the field name.
 *   intn VSsetattr(int32 vsid, int32 findex, char *attrname, 
 *                  int32 datatype, int32 count, VOIDP values)
@@ -270,7 +270,7 @@ USAGE
      int32 vsid;     IN: vdata access id
      int32 findex; IN: number determined by assinging each field 
                        in a record a number starting with 0; 
-                       ENTIRE_VDATA (-1) represents the entire vdata. 
+                       _HDF_ENTIRE_VDATA (0xffffffff) represents the entire vdata. 
      char *attrname;   IN: name of the attribute
      int32 datatype;   IN: data type of the attribute
      int32 count;      IN: number of values the attribute has
@@ -315,8 +315,7 @@ intn VSsetattr(int32 vsid, int32 findex, char *attrname,
         HGOTO_ERROR(DFE_NOVS, FAIL);
      w = &(vs->wlist);
      /* check field index */
-     if (findex >= w->n || findex < ENTIRE_VDATA) 
-                                 /* ENTIRE_VDATA is -1 */
+     if ((findex >= w->n || findex < 0) && (findex != _HDF_ENTIRE_VDATA))
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
      /* if the attr already exist for this field, check data type
         and order */
@@ -449,7 +448,7 @@ USAGE
       intn VSfnattrs(int32 vsid, int32 findex);
       int32 vsid;   IN: access id of the vdata
       int32 findex; IN: index of the field, 0 based. 
-                        Use ENTIRE_VDATA (-1) for the vdata itself. 
+                        Use _HDF_ENTIRE_VDATA (0xffffffff) for the vdata itself. 
 RETURNS
       Returns the number of attributes assigned to 
       the specified field when successful, FAIL otherwise.
@@ -480,8 +479,7 @@ intn VSfnattrs(int32 vsid, int32 findex)
         HGOTO_ERROR(DFE_NOVS, FAIL);
      if (NULL == (vs = vs_inst->vs))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-     if (findex >= vs->wlist.n || findex < ENTIRE_VDATA)  
-            /* ENTIRE_VDATA is -1 */
+     if ((findex >= vs->wlist.n || findex < 0) && (findex != _HDF_ENTIRE_VDATA))
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
      t_attrs = vs->nattrs;
      vs_alist = vs->alist;
@@ -515,7 +513,7 @@ done:
         intn VSfindattr(int32 vsid, int32 findex, char *attrname)
         int32 vsid;        IN: access id of the vdata
         int32 findex;      IN: index of the field starting from 0;
-                               ENTIRE_VDATA (-1) for the vdata 
+                               _HDF_ENTIRE_VDATA (0xffffffff) for the vdata 
         char *attrname;    IN: name of the attr
  RETURNS
         Returns the index of the attr when successful,
@@ -546,7 +544,7 @@ intn VSfindattr(int32 vsid, int32 findex, char *attrname)
         HGOTO_ERROR(DFE_NOVS, FAIL);
      if (NULL == (vs = vs_inst->vs))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-     if (findex >= vs->wlist.n || findex < ENTIRE_VDATA)
+     if ((findex >= vs->wlist.n || findex < 0) && (findex != _HDF_ENTIRE_VDATA))
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
      nattrs = vs->nattrs;
      vs_alist = vs->alist;
@@ -555,7 +553,7 @@ intn VSfindattr(int32 vsid, int32 findex, char *attrname)
             HGOTO_ERROR(DFE_ARGS, FAIL);
     fid = vs->f;
     found = 0;
-    a_index = ENTIRE_VDATA;  /* ENTIRE_VDATA is -1  */
+    a_index = -1;  
     for (i=0; i<nattrs; i++)  {
         if (vs_alist->findex == findex)  {
            a_index++; /* index of fld attr */
@@ -611,7 +609,7 @@ USAGE
       intn VSattrinfo(int32 vsid, int32 findex, intn attrindex,
            char *name, int32 *datatype, int32 *count, int32 *size);
       int32 vsid;      IN: vdata id
-      int32 findex;    IN: field index. ENTIRE_VDATA (-1) for the vdata
+      int32 findex;    IN: field index. _HDF_ENTIRE_VDATA (0xffffffff) for the vdata
       intn attrindex;  IN: which attr of the field/vdata 
                            attrindex is 0-based
       char *name;      OUT: attribute name
@@ -650,7 +648,7 @@ intn VSattrinfo(int32 vsid, int32 findex, intn attrindex,
         HGOTO_ERROR(DFE_NOVS, FAIL);
      if (NULL == (vs = vs_inst->vs))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-     if (findex >= vs->wlist.n || findex < ENTIRE_VDATA)
+     if ((findex >= vs->wlist.n || findex < 0) && (findex != _HDF_ENTIRE_VDATA))
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
      nattrs = vs->nattrs;
      if (attrindex <0 || attrindex >= nattrs)
@@ -661,7 +659,7 @@ intn VSattrinfo(int32 vsid, int32 findex, intn attrindex,
             HGOTO_ERROR(DFE_ARGS, FAIL);
      fid = vs->f; /* assume attrs are in the same file */
     found = 0;
-    a_index = ENTIRE_VDATA; /* ENTIRE_VDATA is defined as -1 */
+    a_index = -1; 
     for (i=0; i<nattrs; i++)  {
         if (vs_alist->findex == findex)  {
            a_index++; 
@@ -720,7 +718,7 @@ USAGE
        intn VSgetattr(int32 vsid, int32 findex, intn attrindex,
                   VOIDP values)
        int32 vsid;     IN: vdata access id
-       int32 findex;   IN: field index; ENTIRE_VDATA (-1) for vdata
+       int32 findex;   IN: field index; _HDF_ENTIRE_VDATA (0xffffffff) for vdata
        intn attrindex; IN: attribute index
        VOIDP values;   OUT: buffer holding attribute values.
 RETURNS
@@ -754,7 +752,7 @@ intn VSgetattr(int32 vsid, int32 findex, intn attrindex,
         HGOTO_ERROR(DFE_NOVS, FAIL);
      if (NULL == (vs = vs_inst->vs))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-     if (findex >= vs->wlist.n || findex < ENTIRE_VDATA)
+     if ((findex >= vs->wlist.n || findex < 0) && (findex != _HDF_ENTIRE_VDATA))
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
      nattrs = vs->nattrs;
      if (attrindex <0 || attrindex >= nattrs)
@@ -765,7 +763,7 @@ intn VSgetattr(int32 vsid, int32 findex, intn attrindex,
             HGOTO_ERROR(DFE_ARGS, FAIL);
      fid = vs->f;  /* assume attrs are in the same file */
     found = 0;
-    a_index = ENTIRE_VDATA;    /* ENTIRE_VDATA is defined as -1 */
+    a_index = -1; 
     for (i=0; i<nattrs; i++)  {
         if (vs_alist->findex == findex)  {
            a_index++;
