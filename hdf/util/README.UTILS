@@ -1,10 +1,16 @@
+All the input data files needed to test the utilities
+are in the subdirectory testfiles/. To test the dump
+function of hdfed, one may use the hdf file ntcheck.hdf
+created by running tsdmms.c which is in the directory
+../test/tsdmms.c.
+
 
 Instructions on testing the HDF utility programs.
 
 
 hdf24to8:
 
-   Copy head.r24 in the examples/files directory.  
+   Copy head.r24 in the testfiles directory.  
 
    Execute: 
         hdf24to8 head.r24 head8.hdf
@@ -16,12 +22,12 @@ hdf24to8:
 ristosds:
 
    Copy the three HDF files storm110.hdf, storm120.hdf, and
-   storm130.hdf from the examples/files directory.
+   storm130.hdf from the testfiles/ directory.
 
    Execute:
         ristosds storm*.hdf -o storm.hdf
  
-   Use he to compare storm*.hdf with storm.hdf:
+   Use hdfed to compare storm*.hdf with storm.hdf:
       In storm.hdf tag 702's element should be 38988 bytes.
       In storm110.hdf tag 302's element should be 12th of
          this, which is 3249.  (It is a 57x57 image.)
@@ -32,7 +38,7 @@ ristosds:
 
 hdfpack:
 
-   Copy the file test.cdf from the examples/files directory.
+   Copy the file test.cdf from the testfiles/ directory.
 
    Execute:
         hdfpack test.cdf test.pck
@@ -53,7 +59,7 @@ hdfpack:
 
 hdftopal/paltohdf
 
-   Copy the file palette.raw from the examples/files directory.
+   Copy the file palette.raw from the testfiles/ directory.
 
    Execute:
         paltohdf palette.raw palette.hdf
@@ -70,7 +76,7 @@ hdftopal/paltohdf
 
 r8tohdf/hdftor8
 
-   Copy the files storm*.raw and palette.raw from the examples/files directory.
+   Copy the files storm*.raw and palette.raw from the testfiles/ directory.
 
    Execute:
         r8tohdf 57 57 storm.hdf storm*.raw
@@ -86,9 +92,9 @@ r8tohdf/hdftor8
         size.
    Use the Unix utility 'cmp' or something similar to do byte-for-byte
         comparisons on the produced raw raster files by hdftor8.  There
-        should be one more than you had at the start.  Two of them will
-        compare exactly with storm110.raw (or whatever you gave in the
-        second r8tohdf command), and the rest will compare with one of
+        should be one more than you had at the start.  One of them may
+        not compare exactly with any one of the raw rasters, 
+         and the rest will compare with one of
         the other raw rasters.  There is no guarantee about the order
         of the produced raw rasters, but it is likely they will be produced
         in the order in which they went into the file, which would be
@@ -97,7 +103,7 @@ r8tohdf/hdftor8
 
 hdfcomp
 
-   Copy the files storm*.hdf from the examples/files directory.
+   Copy the files storm*.hdf from the testfiles/ directory.
 
    Execute:
         hdfcomp allstorms.hdf storm*.hdf
@@ -112,35 +118,73 @@ hdfcomp
 
 hdfed
 
-   Copy the file storm110.hdf from the examples/files directory.
+   Copy the file storm110.hdf from the testfiles/ directory.
 
    Execute:
-        he storm110.hdf
+        hdfed storm110.hdf
 
         Running interactively, type the following commands:
 
                 info -all
                 prev tag = 300
                 info -long
-                dump -decimal
+                dump -short
 
         The latter two commands should result in the following responses:
 
          (6)    Image Dimensions              : (Tag 300)
                 Ref: 110, Offset: 3459, Length: 20 (bytes)
+       0:          0         57          0         57        106        110
+      12:          1          0          0          0
 
-        0000000  00000 00057 00000 00057 00106 00110 00001 00000
-        0000020  00000 00000
-        0000024
 
         Type help and experiment.  Most of the information can be verified
         with hdfls.  Be sure to type 'close' then 'quit' when you are finished.
 
-   CAUTION: This utility is currently using the Unix utility 'od' (octal dump)
-   to examine the contents of the HDF file.  This utility does not exist under
-   PC and Mac environments.  Also, because of the internal storage methods of
-   HDF, little-endian machines will give garbled results. Also, on some
-   machines, such as the Cray and Convex, the dump will be different from
-   the one shown above because the wordsize is different.
+Caution: Hdfed has been revised so that it can dump data of various number
+        types.  This function has been tested on SUN Station, CRAY2 and 
+        CRAY-YMP. You are welcome to test on other platforms. If there is
+        any problem or suggestio, please contact sxu@ncsa.uiuc.edu. 
+
+        The program ../test/tsdmms.c tests DFSD* functions and creates an hdf
+        file ntcheck.hdf whcih contains 8 SDS's. Their number types are:
+
+	ref		number type
+
+	2		DFNT_FLOAT64
+
+	3		DFNT_FLOAT32
+
+	4		DFNT_INT8
+
+	5		DFNT_UINT8
+
+	6		DFNT_INT16
+
+	7		DFNT_UINT16
+
+	8		DFNT_INT32
+
+	9		DFNT_UINT32
 
 
+        Ntcheck.hdf can be used as an input file to test the dump function. 
+
+        The command:
+
+	dump -help
+
+        displays the list of formats supported by hdfed. 
+
+        Commands:
+
+        prev tag=<tag>  ref=<ref>
+
+        and
+
+        next tag=<rag> ref=<ref> 
+
+        move you back and forth among the objects. 
+
+        
+        
