@@ -587,6 +587,16 @@ C
       external mggattr     
       integer  mgfndat    
       external mgfndat    
+      integer  mggichnk
+      external mggichnk
+      integer  mgscchnk
+      external mgscchnk
+      integer  mgschnk
+      external mgschnk
+      integer  mgscompress
+      external mgscompress
+      integer  mglt2rf
+      external mglt2rf
 
 C
 C       Decls of ANxxx functions for Fortran multi-file AN interface
