@@ -14,13 +14,13 @@
 #       automake          1.6
 #       autoconf          2.53
 #
-echo /usr/bin/autoreconf -v
-env AUTOMAKE="/usr/bin/automake --foreign" /usr/bin/autoreconf -v
-#echo /usr/bin/autoconf
-#/usr/bin/autoconf
-#echo /usr/bin/autoheader
-#/usr/bin/autoheader
-#echo /usr/bin/aclocal
-#/usr/bin/aclocal
-#echo /usr/bin/automake --foreign
-#/usr/bin/automake --foreign
+#echo /usr/bin/autoreconf -v
+#env AUTOMAKE="/usr/bin/automake --foreign" /usr/bin/autoreconf -v
+echo /usr/bin/autoheader
+/usr/bin/autoheader
+echo /usr/bin/aclocal
+/usr/bin/aclocal
+echo /usr/bin/autoconf
+/usr/bin/autoconf
+echo /usr/bin/automake --foreign
+/usr/bin/automake --foreign
