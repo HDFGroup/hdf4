@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.1  1993/01/19 06:12:23  koziol
+# Revision 1.2  1993/01/26 19:45:08  koziol
+# Added new test files for checking little-endian support
+#
+# Revision 1.1  1993/01/19  06:12:23  koziol
 # New Makefile for the test files on the PC
 #
 # Revision 1.2  1992/10/12  18:11:51  koziol
@@ -37,6 +40,7 @@
 #              tan     (annotations for HDF objects)
 #              tanfile (annotations for HDF files)
 #              tstubs  (emulation of old lower level i/o routines)
+#              tlitend (Tests Little-endian support)
 #
 # The application layer FORTRAN test programs are:
 #
@@ -161,7 +165,7 @@ ARCHIVE=hdf.zip
 
 CTESTS= trig.exe tsdstr.exe tsdmms.exe tsdnmms.exe tsdnnt.exe tsdnt.exe tan.exe \
         tanfile.exe tstubs.exe tv1.exe tv2.exe tvers.exe egchi.exe \
-        slabw.exe slab1w.exe slab2w.exe slab3w.exe slab4w.exe
+        slabw.exe slab1w.exe slab2w.exe slab3w.exe slab4w.exe tlitend.exe
 
 CHDRS = df.h dfi.h dfsd.h vg.h df.h dfi.h dfstubs.h \
         vproto.h
@@ -169,12 +173,12 @@ CHDRS = df.h dfi.h dfsd.h vg.h df.h dfi.h dfstubs.h \
 CTSRCS= trig.c tsdstr.c tsdmms.c tsdnmms.c tsdnnt.c \
         tsdnt.c tan.c tanfile.c tstubs.c \
         tv1.c tv2.c tvers.c egchi.c \
-        slabw.c slab1w.c slab2w.c slab3w.c slab4w.c
+        slabw.c slab1w.c slab2w.c slab3w.c slab4w.c tlitend.c
 
 CTOBJS= trig.obj tsdstr.obj tsdmms.obj tsdnt.obj tan.obj tanfile.obj \
         tstubs.obj tsdnmms.obj tsdnnt.obj tv1.obj tv2.obj \
         tvers.obj egchi.obj \
-        slabw.obj slab1w.obj slab2w.obj slab3w.obj slab4w.obj
+        slabw.obj slab1w.obj slab2w.obj slab3w.obj slab4w.obj tlitend.obj
 
 HTESTS= thfile.exe thfile1.exe terr.exe thblocks.exe thextelt.exe tlinkage.exe
 HHDRS = hfile.h hdf.h hdfi.h herr.h hproto.h 
@@ -226,6 +230,8 @@ tan.exe:  tan.c
 tanfile.exe:     tanfile.c
 
 tstubs.exe:     tstubs.c
+
+tlitend.exe:     tlitend.c
 
 tv1.exe:        tv1.c
 
