@@ -144,14 +144,32 @@ tests:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
           SUBDIRS="test" _sub
 
+testnofortran:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
+          SUBDIRS="src test" _sub message 
+
 #install:      $(INSTALL_DIRS)
 #	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
 #          SUBDIRS="src util test" _sub
+
+debug:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=debug \
+          SUBDIRS="src test" _sub message 
+
+saber:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=saber \
+          SUBDIRS="src test" _sub
 
 clean:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
           SUBDIRS="src util test" _sub
 	$(RM) $(RMFLAGS) core *.log
+
+distclean:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
+          SUBDIRS="src util test" _sub
+	$(RM) $(RMFLAGS) core *.log
+	$(RM) -rf bin lib include
 
 _sub:
 	@for dir in $(SUBDIRS); do \
