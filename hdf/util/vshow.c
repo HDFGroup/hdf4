@@ -274,7 +274,7 @@ int32 vsdumpfull(vs) VDATA * vs;
     printf("%d: fld [%s], type=%d, order=%d\n", i, w->name[i], w->type[i], w->order[i]);
 
     order[i] = w->order[i];
-    off[i]   = DFKNTsize(w->type[i]);
+    off[i]   = DFKNTsize(w->type[i] | DFNT_NATIVE);
     
     switch(w->type[i]) {
       
