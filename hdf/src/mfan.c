@@ -21,6 +21,14 @@ static char RcsId[] = "@(#)$Revision$";
  * Purpose:  Multi-file read and write annotations: labels and descriptions 
  *           of data items and file
  * Invokes:  
+ * Comments:
+ *           Currently the file id returned by ANstart() can not be
+ *           shared across other interfaces. Currenntly as least 6 
+ *           TBBT trees are created to handle annotations(1 for file_ids,
+ *           1 for all ann_ids, 4 for file_ann, file_desc, data_ann and
+ *           data_desc) which is not pretty but it does make search/find of
+ *           annotations much easier.
+ *
  * Contents: 
  *
  *  Private Routines:
@@ -2399,5 +2407,114 @@ ANendaccess(int32 an_id)
 
   return SUCCEED;
 } /* ANendaccess() */
+
+/* -------------------------------------------------------------- 
+ NAME
+	ANget_tagref - get tag/ref pair to annotation ID
+ USAGE
+	int32 ANget_tagref(file_id, index)
+        int32 file_id;   IN: file ID
+        int32 index;     IN: index of annottion to get tag/ref for
+        ann_type  type:  IN: AN_DATA_LABEL for data labels, 
+                             AN_DATA_DESC for data descriptions,
+                             AN_FILE_LABEL for file labels,
+                             AN_FILE_DESC for file descritpions.
+        uint16 tag;     OUT: Tag for annotation
+        uint16 ref;     OUT: ref for annotation
+ RETURNS
+        A tag/ref pairt to an annotation type which can either be a 
+        label or description given the annotation ID
+ DESCRIPTION
+        The position index is zero based
+--------------------------------------------------------------------------- */
+EXPORT int32
+ANget_tagref(int32 file_id, int32 index, ann_type type, uint16 *tag, uint16 *ref)
+{
+  CONSTR(FUNC, "ANget_tagref");    /* for HERROR */
+#ifdef HAVE_RBTREE
+  Rb_node fentry;
+  Rb_node entry;
+#else
+  TBBT_NODE *fentry = NULL;
+  TBBT_NODE *entry  = NULL;
+#endif
+  ANfile  *file_entry = NULL;
+  ANentry *ann_entry  = NULL;
+#ifdef HAVE_RBTREE
+  intn    i;
+#endif /* HAVE_RBTREE */
+
+  /* Clear error stack */
+  HEclear();
+
+  /* Valid file id */
+  if (file_id == FAIL)
+    HRETURN_ERROR(DFE_BADCALL, FAIL);
+
+#ifdef HAVE_RBTREE
+  /* Find node containing key(file_id) */
+  if ((fentry = rb_find_gkey(ANfilelist, &file_id, ANIfidcmp)) == NULL)
+    HRETURN_ERROR(DFE_NOMATCH, FAIL);
+  
+  if (fentry == ANfilelist)
+    HE_REPORT_RETURN("failed to find file_id", FAIL);
+  else
+    file_entry = (ANfile *) rb_val(fentry); /* get file entry from node */
+#else  /* use tbbt */
+  /* First find file node from file tree */
+  if ((fentry = tbbtdfind(ANfilelist, &file_id, NULL)) == NULL)
+    HE_REPORT_RETURN("failed to find file_id", FAIL);
+
+  file_entry = (ANfile *) fentry->data; /* get file entry from node */
+#endif /* use tbbt */
+
+  /* Empty annotation tree */
+  if (file_entry->an_num[type] == -1)
+    {
+      if (ANIcreate_ann_tree(file_id, type) == FAIL)
+        HRETURN_ERROR(DFE_BADCALL, FAIL);
+    }
+
+#ifdef HAVE_RBTREE
+  /* Traverse the list till 'index' */
+  for(entry = rb_first(file_entry->an_tree[type]), i = 0; 
+      entry != nil(file_entry->an_tree[type]) && i != index; 
+      entry = rb_next(entry), i++);
+
+  if (entry == file_entry->an_tree[type])
+    HE_REPORT_RETURN("failed to find annoation of 'type' with 'index'", FAIL);
+  else
+    ann_entry = (ANentry *) rb_val(entry); 
+
+#else  /* use tbbt */
+
+  /* find 'index' entry */
+  if ((entry = tbbtindx((TBBT_NODE *)*(file_entry->an_tree[type]), index)) == NULL)
+    HE_REPORT_RETURN("failed to find 'index' entry", FAIL);
+
+  ann_entry = (ANentry *) entry->data; 
+#endif /* use tbbt */
+
+  *ref = ann_entry->annref;
+  switch(type)
+    {
+    case AN_DATA_LABEL:
+      *tag = DFTAG_DIL;
+      break;
+    case AN_DATA_DESC:
+      *tag = DFTAG_DIA;
+      break;
+    case AN_FILE_LABEL:
+      *tag = DFTAG_FID;
+      break;
+    case AN_FILE_DESC:
+      *tag = DFTAG_FD;
+      break;
+    default:
+      HE_REPORT_RETURN("Bad annotation type for this call",FAIL);
+    }
+
+  return SUCCEED;
+} /* ANget_tagref() */
 
 #endif /* MFAN_C */
