@@ -153,6 +153,7 @@ DFRI_FFOBJS=df24ff.o dfpff.o dfr8ff.o
 MFAN_FFOBJS=
 MFGR_FFOBJS=mfgrff.o
 
-FINCS=dffunc.inc hdf.inc
+F90INCS=dffunc.f90 hdf.f90
+FINCS=dffunc.inc hdf.inc $(F90INCS)
 
 

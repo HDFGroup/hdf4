@@ -212,6 +212,15 @@ HINCS = $(HDRS) $(FINCS)
 .f.o:
 	$(FC) $(FFLAGS) -c $<
 
+# Rules to make Free format Fortran90 include files from F77 include files
+# 1) change all col. 1 [Cc] to '!'
+# 2) change all col. 6 continuation character to '&'
+#
+.SUFFIXES:	.inc .f90
+
+.inc.f90:
+	sed -e 's/^[cC]/!/' -e 's/^     [^ ]/     \&/' < $< > $*.f90
+
 # Should use a more general definition for the following.
 cmextelt.o: cmextelt.cs
 	$(CS) $(CSFLAGS) -c cmextelt.cs
@@ -291,7 +300,7 @@ install-lib: install-headers
 	( cd $(libdir) ; $(RANLIB) $(libdir)/$(TARGETLIB).n )
 	mv -f $(libdir)/$(TARGETLIB).n $(libdir)/$(TARGETLIB)
 
-install-headers:
+install-headers: $(HINCS)
 	for p in $(HINCS); do \
 	    $(INSTALL_DATA) \
 		`pwd`/$$p $(includedir)/$$p; \
@@ -317,10 +326,10 @@ depend:
 	makedepend -fMakefile -- $(CSRCS)
 
 clean:
-	-$(RM) $(RMFLAGS) *.o
+	-$(RM) $(RMFLAGS) *.o $(F90INCS)
 
 distclean:
-	-$(RM) $(RMFLAGS) *.o libdf.a config.status Makefile
+	-$(RM) $(RMFLAGS) *.o libdf.a config.status Makefile $(F90INCS)
 
 lint: $(SRCS) $(R8SRCS)
 	$(LINT) $(LINTFLAGS) $(SRCS)

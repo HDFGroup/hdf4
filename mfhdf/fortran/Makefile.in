@@ -122,8 +122,9 @@ PROGRAM		= ftest
 #HDF_LIB         = @HDF_LIB@
 #JPEG_LIB        = @JPEG_LIB@
 GARBAGE		= $(PROGRAM) test.nc copy.nc \
-		  test*.hdf hdftest hdfout.new
-HEADERS		= netcdf.inc
+		  test*.hdf hdftest hdfout.new \
+		  netcdf.f90
+HEADERS		= netcdf.inc netcdf.f90
 MANIFEST = $(DISTFILES)
 DISTFILES	= $(PROGRAM).src Makefile.in README aix.m4 common.inc \
 		  common.m4 depend descrip.mms fortc fortc1.sed \
@@ -622,6 +623,15 @@ dummy_infodir $(INFODIR):
 	else \
 	  $(MAKEINFO) $< --no-split --output=$@; \
 	fi
+
+# Rules to make Free format Fortran90 include files from F77 include files
+# 1) change all col. 1 [Cc] to '!'
+# 2) change all col. 6 continuation character to '&'
+#
+.SUFFIXES:	.inc .f90
+
+.inc.f90:
+	sed -e 's/^[cC]/!/' -e 's/^     [^ ]/     \&/' < $< > $*.f90
 
 # Ensure that info page depends on canonical TeX-Info macros.
 #
