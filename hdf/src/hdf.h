@@ -289,12 +289,15 @@ typedef struct {
 #    define SIZE_LCHAR16     2    /* No current plans for support */
 #    define SIZE_LUCHAR16    2    /* No current plans for support */
 
-          /* sizes of different number types */
-#          define MACHINE_I8_SIZE     1
-#          define MACHINE_I16_SIZE    2
-#          define MACHINE_I32_SIZE    4
-#          define MACHINE_F32_SIZE    4
-#          define MACHINE_F64_SIZE    8
+        /* sizes of different number types */
+#       define MACHINE_I8_SIZE     1
+#       define MACHINE_I16_SIZE    2
+#       define MACHINE_I32_SIZE    4
+#       define MACHINE_F32_SIZE    4
+#       define MACHINE_F64_SIZE    8
+
+        /* maximum size of the atomic data types */
+#       define MAX_NT_SIZE      16
 
 /* tbuf used as a temporary buffer for small jobs.  The size is
    preferably > 512 but MUST be > ~256.  It is advised that if an
@@ -453,7 +456,7 @@ extern uint8 *tbuf;
 */
 
 #define FIELDNAMELENMAX        128  /* fieldname   : 16 chars max */
-#if defined macintosh | THINK_C
+#if defined macintosh | defined THINK_C
 #define VSFIELDMAX             64  /* max no of fields per vdata */
 #else /* !macintosh */
 #define VSFIELDMAX             256  /* max no of fields per vdata */
