@@ -51,6 +51,15 @@
 #define HCLOSE_RETURN_ERROR(hfid, err, ret_val) {HERROR(err); Hclose(hfid); \
                                                 return(ret_val);}
 
+/* For further error reporting */
+#define HE_REPORT(msg) HEreport(msg)
+#define HE_REPORT_RETURN(msg, ret_val) do { HEreport(msg); return(ret_val); \
+                                          } while (0)
+#define HE_CLOSE_REPORT_RETURN(hfid,msg, ret_val) { HEreport(msg); \
+                                                    Hclose(hfid); \
+                                                    return(ret_val);}
+
+
 /*
    ======================================================================
    Error codes
