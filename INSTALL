@@ -80,7 +80,7 @@
   SGI-Indy(IRIX5.3)           CC             f77              X         X
   SGI-Indy(IRIX6.1_n32)       CC 6.1         f77 6.1          X         X
   SGI-Indy(IRIX6.1_64)        CC 6.1         f77 6.1          X         X
-  HP9000/735(HPUX 9.03)       CC             f77              X         X
+  HP9000/735(HPUX 9.03)       CC(A.09.77)    f77(09.16)       X         X
   Exemplar(HPUX 9.03)         CC (for HPUX)  f77              X         X
   Cray C90 (UNICOS 803.2)     -               -               -         - 
   Cray YMP (UNICOS 803.2)     CC             cf77             X         X
@@ -99,7 +99,7 @@
        FreeBSD 2.2            GCC 2.6.3      f77              X         X
 
   PowerPC(Mac-OS-7.5)         Codewarrior 8   -               X         X
-  68k-far/4i/8d(Mac-OS-7.5)   Codewarrior 8   -               X         X
+  68k-far/4i/8d(Mac-OS-7.5)   Codewarrior 8   -               -         -
   Windows NT/95               Visual C++ 4.0  -               X         X  
   T3D (v9.0.lai)                -             -               -         - 
   VAX/VMS                       -             -               -         -  
@@ -332,10 +332,9 @@
 
     2.5.1 HPUX(9.03) on PA-RISC
     ---------------------------
-    The distribution has been compiled/tested with both the native
-    ANSI-C compiler and GCC 2.7.2. In both cases the native fortran
-    compiler f77 was used. The binary distribution was compiled
-    using the native compilers.
+    The distribution has been compiled/tested with the native
+    ANSI-C compiler and Fortran compilier.The binary distribution 
+    was compiled using the native compilers.
 
     2.5.2 Solaris(2.5) on Sparc
     ---------------------------
@@ -394,6 +393,8 @@
 
     2.5.7 PowerPC/68k(far/4i/8d)- Macintosh OS
     ------------------------------------------
+    *** For the Beta Release there is only a PowerPC port. NO 68k. ***
+
     The distribution was compiled/tested with MetroWerks Codewarrior(CW8).
     Only the base libraries{libdf.a,zlib.a,libjpeg.a,libmfhdf.a,libxdr.a}
     were compiled and tested on the PowerPC and 68k without Fortran support.
@@ -436,7 +437,8 @@
           can be used to unpack it. If you do not have access to such a 
           utility then you need to copy the files one by one.
 
-    B. Don't have access to a unix box and are using the 'tar.Z'/'tar.gz' version.
+    B. Don't have access to a unix box and are using the 'tar.Z'/'tar.gz' 
+        version.
        1. After you have downloaded the distribution to your Macintosh
           you need to find a utility to uncompress and an untar the
           distribution.
@@ -556,6 +558,8 @@
 
 2.6 Pablo Instrumentation
     ====================
+    *** Not Suppported in Beta Release ***
+
     This version of the distribution has support to create an instrumented 
     version of the HDF library(libdf-inst.a). This library along with
     the Pablo performance data capture libraries can be used to gather data
