@@ -54,8 +54,7 @@ C
 
 	retcode = 0
 
-C For VMS, un-comment the next line if the asterisk
-C        doesn't work
+C For VMS, un-comment the next line 
 C        read(5,11,END=100,err=100) inline
 	read(*,11,END=100,err=100) inline
 C	print *, 'inline=', inline
@@ -81,7 +80,13 @@ C	print *, 'inline=', inline
 	retcode = 0
 	return
 
-100	retcode =1
+C For VMS use the next three lines 
+C100	continue
+C        close(5)
+C        retcode =1
+C For VMS comment out next line
+100     retcode = 1
+
 	return
 C
 11	format(A120)
