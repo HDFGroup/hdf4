@@ -169,6 +169,7 @@ install-bin: bin/jhv
 	mkdir -p $(BINDIR);
 	cp bin/jhv $(BINDIR)/jhv;
 	chmod a+x $(BINDIR)/jhv;
+	cp bin/jhv.in $(BINDIR)/jhv.in;
 	mkdir -p $(JHVINSTALLDIR)/lib/hdficons;
 	cp lib/hdficons/*.gif $(JHVINSTALLDIR)/lib/hdficons;
 
