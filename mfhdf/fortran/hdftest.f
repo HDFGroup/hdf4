@@ -6,8 +6,10 @@ C
       implicit none
 
       integer fid1, fid2
+      integer fid_empty
 
       integer sds1, sds2, sds3, sds4
+      integer sds_empty, index_empty, flag_empty
 
       integer dim1, dim2
 
@@ -37,6 +39,7 @@ C
       integer sfsextf,  hxsdir,    hxscdir
       integer sfwcdata, sfrcdata,  sfscfill, sfgcfill
       integer sfscatt,  sfrcatt,   sfsnatt,  sfrnatt
+      integer sfchempty
       integer SD_UNLIMITED, SD_DIMVAL_BW_INCOMP, DFNT_INT32
       integer DFNT_FLOAT32, DFNT_CHAR8
       integer SD_DIMVAL_BW_COMP, SD_FILL, SD_NOFILL
@@ -53,13 +56,45 @@ C
       DATA natt/10,20/, inatt/0,0/
       DATA i32/15,25/, ii32/0,0/
 
+C
+C--- Create a file with an empty SDS
+C
+      fid_empty = sfstart('test_empty.hdf', 4)
+      if(fid_empty.eq.-1) then
+         print *, 'sfstart returned bad ID'
+         err = err + 1
+      endif
+C
+C--- Create an empty SDS
+C
+      dims(1) = 4
+      dims(2) = 9
+      nt = DFNT_INT32
+      rank = 2
+      sds_empty = sfcreate(fid_empty, 'Empty_SDS', nt, rank, dims)
+      if(sds_empty.eq.-1) then
+         print *, 'SDcreate Empty  returned bad ID', sds_empty
+         err = err + 1
+      endif
+
+      stat = sfendacc(sds_empty)
+      if(stat.ne.0) then
+         print *, 'SDendaccess returned', stat
+         err = err + 1
+      endif
+      stat = sfend(fid_empty)
+      if(stat.ne.0) then
+         print *, 'SDend returned', stat
+         err = err + 1
+      endif
+
 C     create a new file
       err = 0
       eps = 0.0001
       access = 4
       fid1 = sfstart('test1.hdf', access)
       if(fid1.eq.-1) then
-         print *, 'Hopen returned bad ID'
+         print *, 'sfstart returned bad ID'
          err = err + 1
       endif
 
@@ -295,16 +330,50 @@ C     why 16?  16 is not a legal HDF NType value.
 C
 C     OK, let's open it back up and take a look at what we've done
 C
+      fid_empty = sfstart('test_empty.hdf', 3)
+      if(fid_empty.eq.-1) then
+          print *, 'Reopen returned', fid_empty
+          err = err + 1
+      endif
+      index_empty = sfn2index(fid_empty,'Empty_SDS')
+ 
+      sds_empty= sfselect(fid_empty, index_empty)
+      if(sds_empty.eq. -1) then
+         print *, 'Select returned', sds_empty
+         err = err + 1
+      endif
+      stat = sfchempty(sds_empty, flag_empty)
+      if(stat.ne. 0 .or. flag_empty. ne. 1) then
+        print*, 'sfchempty returned wrong flag, should be 1)'
+        err = err +1
+      endif 
+
+      stat = sfendacc(sds_empty)
+      if(stat.ne.0) then
+         print *, 'SDendaccess returned', stat
+         err = err + 1
+      endif
+      stat = sfend(fid_empty)
+      if(stat.ne.0) then
+         print *, 'SDend returned', stat
+         err = err + 1
+      endif
+
       fid2 = sfstart('test1.hdf', 3)
-      if(fid2.ne.393216) then
+      if(fid2.eq.-1) then
           print *, 'Reopen returned', fid2
           err = err + 1
       endif
  
       sds3 = sfselect(fid2, 0)
-      if(sds3.ne.262144) then
+      if(sds3.eq. -1) then
          print *, 'Select returned', sds3
          err = err + 1
+      endif
+      stat = sfchempty(sds3, flag_empty)
+      if(stat.ne. 0 .or. flag_empty. ne. 0) then
+        print*, 'sfchempty returned wrong flag, should be 0)'
+        err = err +1
       endif
 
       stat = sfginfo(sds3, name, rank, idims, nt, nattr)
@@ -370,13 +439,13 @@ C
       endif
 
       sds4 = sfselect(fid2, 1)
-      if(sds4.ne.262145) then
+      if(sds4.eq. -1) then
          print *, 'Select #4  returned', sds4
          err = err + 1
       endif
 
       dim2 = sfdimid(sds4, 1)
-      if(dim2.ne.327683) then
+      if(dim2.eq. -1) then
          print *, 'Get dim id #2 returned', dim2
          err = err + 1
       endif
