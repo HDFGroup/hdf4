@@ -3,7 +3,7 @@
 # for discussion of the various options.
 #
 
-ANSI2KNRFLAGS= 
+ANSI2KNRFLAGS= -DBSD
 LDFLAGS= 
 LDLIBS= 
 SYSDEPMEM= jmemnobs.o
