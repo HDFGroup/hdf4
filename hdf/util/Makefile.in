@@ -53,7 +53,7 @@ CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
 
-CPPFLAGS = @CPPFLAGS@ -I$(top_srcdir)/hdf/src
+CPPFLAGS = -I$(top_srcdir)/hdf/src @CPPFLAGS@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
@@ -222,7 +222,7 @@ vshow_DEPENDENCIES = ../src/libdf.a
 subdir = hdf/util
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = testutil.sh
 bin_PROGRAMS = gif2hdf$(EXEEXT) hdf2gif$(EXEEXT) hdf2jpeg$(EXEEXT) \
 	hdf24to8$(EXEEXT) hdf8to24$(EXEEXT) hdfcomp$(EXEEXT) \
 	hdfed$(EXEEXT) hdfls$(EXEEXT) hdfpack$(EXEEXT) \
@@ -314,7 +314,7 @@ DIST_SOURCES = $(gif2hdf_SOURCES) $(hdf24to8_SOURCES) $(hdf2gif_SOURCES) \
 	$(hdftopal_SOURCES) $(hdftor8_SOURCES) $(hdfunpac_SOURCES) \
 	$(jpeg2hdf_SOURCES) $(paltohdf_SOURCES) $(r8tohdf_SOURCES) \
 	$(ristosds_SOURCES) $(vmake_SOURCES) $(vshow_SOURCES)
-DIST_COMMON = README Makefile.am Makefile.in
+DIST_COMMON = README Makefile.am Makefile.in testutil.sh.in
 SOURCES = $(gif2hdf_SOURCES) $(hdf24to8_SOURCES) $(hdf2gif_SOURCES) $(hdf2jpeg_SOURCES) $(hdf8to24_SOURCES) $(hdfcomp_SOURCES) $(hdfed_SOURCES) $(hdfls_SOURCES) $(hdfpack_SOURCES) $(hdftopal_SOURCES) $(hdftor8_SOURCES) $(hdfunpac_SOURCES) $(jpeg2hdf_SOURCES) $(paltohdf_SOURCES) $(r8tohdf_SOURCES) $(ristosds_SOURCES) $(vmake_SOURCES) $(vshow_SOURCES)
 
 all: all-am
@@ -326,6 +326,8 @@ $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.ac $(ACLOCAL_M4)
 	  $(AUTOMAKE) --foreign  hdf/util/Makefile
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
+testutil.sh: $(top_builddir)/config.status testutil.sh.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
@@ -635,6 +637,12 @@ uninstall-am: uninstall-binPROGRAMS uninstall-info-am
 	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
 	uninstall-am uninstall-binPROGRAMS uninstall-info-am
 
+
+#############################################################################
+#############################################################################
+
+check:  $(bin_PROGRAMS)
+	sh ./testutil.sh $(target_canonical)
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

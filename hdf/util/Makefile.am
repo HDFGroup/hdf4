@@ -3,7 +3,7 @@
 #############################################################################
 
 ## Setup the different includes and preprocessor #defines we need.
-CPPFLAGS=@CPPFLAGS@ -I$(top_srcdir)/hdf/src
+CPPFLAGS=-I$(top_srcdir)/hdf/src @CPPFLAGS@
 
 #############################################################################
 ##                          Programs to build                              ##
@@ -84,3 +84,10 @@ vmake_DEPENDENCIES = ../src/libdf.a
 vshow_SOURCES = vshow.c
 vshow_LDADD = ../src/libdf.a
 vshow_DEPENDENCIES = ../src/libdf.a
+
+#############################################################################
+##                   Testing -- Here there be dragons.                     ##
+#############################################################################
+
+check:  $(bin_PROGRAMS)
+	sh ./testutil.sh $(target_canonical)
