@@ -1324,7 +1324,8 @@ NC **handlep;
 /* --------------------------------------------------------------
 ** hdf_conv_scales converts old scale values into coord var values.
 ** Searchs through var list for DFTAG_SDS, reads in the scale data,
-** gets a new ref for it, writes the data out, changes its tag
+** change the ref to ndg_ref and the tag to DATA_TAG, writes the 
+** data out. 
 */
 int 
 hdf_conv_scales(handlep)
@@ -1334,6 +1335,8 @@ NC **handlep;
    NC_array *tmp;
    int i, status, scaleref, scaletag, scalelen;
    uint8 *scalebuf, *datap;
+   
+   CONSTR(FUNC, "hdf_conv_scales");
 
    if ((*handlep)->vars) {
       tmp = (*handlep)->vars;
@@ -1347,26 +1350,34 @@ NC **handlep;
              scalelen = Hlength((*handlep)->hdf_file, scaletag,
                                  scaleref);
              if (scalelen == FAIL) return FAIL;
-             scalebuf = (uint8 *)HDmalloc((uint32)scalelen);
-             if (scalebuf == NULL) return FAIL;
-             status = Hgetelement((*handlep)->hdf_file, scaletag, 
+             if ((*vars)->data_offset == -1)  { /* this dim has no scale values */
+                (*vars)->data_ref = 0;
+                (*vars)->data_tag = DATA_TAG;
+             }
+             else {    /* has scale values */
+                scalebuf = (uint8 *)HDmalloc((uint32)scalelen);
+                if (scalebuf == NULL) return FAIL;
+                status = Hgetelement((*handlep)->hdf_file, scaletag, 
                            scaleref, scalebuf); 
-             if (status == FAIL) {
+                if (status == FAIL) {
+                   HDfree(scalebuf);
+                   return FAIL;
+                }
+                (*vars)->data_tag = DATA_TAG;
+                (*vars)->data_ref = (*vars)->ndg_ref; /* Try to stick
+                 with the current way. If this ref conflicts with 
+                 existing SDS, call Hnewref to get a new one. 3/25/97 */
+                datap = scalebuf + (*vars)->data_offset;
+                status = Hputelement((*handlep)->hdf_file, DATA_TAG,
+                         (*vars)->data_ref, datap, (*vars)->len);
                 HDfree(scalebuf);
-                return FAIL;
-             }
-             (*vars)->data_tag = DATA_TAG;
-             (*vars)->data_ref = (*vars)->ndg_ref;
-             datap = scalebuf + (*vars)->data_offset;
-             status = Hputelement((*handlep)->hdf_file, DATA_TAG,
-                      (*vars)->data_ref, datap, (*vars)->len);
-             HDfree(scalebuf);
-             if (status == FAIL) {
-                (*vars)->data_tag = scaletag;
-                (*vars)->data_ref = scaleref;
-                return FAIL;
-             }
-          }
+                if (status == FAIL) {
+                   (*vars)->data_tag = scaletag;
+                   (*vars)->data_ref = scaleref;
+                   return FAIL;
+                }
+             } /* has scale values */
+          }  /* DFTAG_SDS */
           vars ++;
        }
    }
