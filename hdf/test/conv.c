@@ -36,6 +36,9 @@ static char RcsId[] = "@(#)$Revision$";
    10/27/93 - Started coding.
  */
 
+#ifdef UNICOS
+#include <stdlib.h>
+#endif
 #include "tproto.h"
 #include <time.h>
 #ifdef I860
@@ -89,9 +92,8 @@ static const char *test_name[] =
 
 /* for those machines with imprecise IEEE<-> conversions, this should be */
 /* close enough */
-#define FLOAT64_FUDGE  ((float64)0.00000001)
-#define FLOAT32_FUDGE  ((float32)0.00001)
-
+#define EPS64          ((float64)1.0E-14)
+#define EPS32          ((float32)1.0E-7)
 void
 test_conv()
 {
@@ -619,8 +621,7 @@ test_conv()
         }
 #else /* OLD_WAY */
 	for(i=0; i<TEST_SIZE; i++) {
-	    if(dst2_float32[i]<(src_float32[i]-FLOAT32_FUDGE)
-		|| dst2_float32[i]>(src_float32[i]+FLOAT32_FUDGE)) {
+	    if(abs(dst2_float32[i]-src_float32[i])> abs(src_float32[i]*EPS32)) {
               printf("Error converting %s float32 values!\n",test_name[t]);
 printf("src[%d]=%lf, dst[%d]=%lf, dst2[%d]=%lf\n",i,src_float32[i],i,dst_float32[i],i,dst2_float32[i]);
 {
@@ -702,8 +703,7 @@ printf("src[%d]=%lf, dst[%d]=%lf, dst2[%d]=%lf\n",i,src_float32[i],i,dst_float32
         }
 #else /* OLD_WAY */
 	for(i=0; i<(TEST_SIZE/2); i++) {
-	    if(dst2_float32[i]<(src_float32[i]-FLOAT32_FUDGE)
-		|| dst2_float32[i]>(src_float32[i]+FLOAT32_FUDGE)) {
+            if(abs(dst2_float32[i]-src_float32[i])>abs(src_float32[i]*EPS32)) {
               printf("Error converting %s float32 values!\n",test_name[t]);
 printf("src[%d]=%lf, dst[%d]=%lf, dst2[%d]=%lf\n",i,src_float32[i],i,dst_float32[i],i,dst2_float32[i]);
 {
@@ -801,9 +801,9 @@ printf("src[%d]=%lf, dst[%d]=%lf, dst2[%d]=%lf\n",i,src_float32[i],i,dst_float32
         }
 #else /* OLD_WAY */
 	for(i=0; i<TEST_SIZE; i++) {
-	    if(dst2_float64[i]<(src_float64[i]-FLOAT64_FUDGE)
-		|| dst2_float64[i]>(src_float64[i]+FLOAT64_FUDGE)) {
-              printf("Error converting %s float64 values!\n",test_name[t]);
+	    if(abs(dst2_float64[i]-src_float64[i]) >
+		abs(src_float64[i]*EPS64)) {
+             printf("Error converting %s float64 values!\n",test_name[t]);
 printf("src[%d]=%lf, dst[%d]=%lf, dst2[%d]=%lf\n",i,src_float64[i],i,dst_float64[i],i,dst2_float64[i]);
 {
             intn j;
@@ -883,8 +883,8 @@ printf("src[%d]=%lf, dst[%d]=%lf, dst2[%d]=%lf\n",i,src_float64[i],i,dst_float64
         }
 #else /* OLD_WAY */
 	for(i=0; i<(TEST_SIZE/2); i++) {
-	    if(dst2_float64[i]<(src_float64[i]-FLOAT64_FUDGE)
-		|| dst2_float64[i]>(src_float64[i]+FLOAT64_FUDGE)) {
+            if(abs(dst2_float64[i]-src_float64[i]) >
+		 abs(src_float64[i]*EPS64)) {
               printf("Error converting %s float64 values!\n",test_name[t]);
 printf("src[%d]=%lf, dst[%d]=%lf, dst2[%d]=%lf\n",i,src_float64[i],i,dst_float64[i],i,dst2_float64[i]);
 {
