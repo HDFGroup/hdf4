@@ -122,7 +122,8 @@ main(int argc, char *argv[])
           break;
 
       case DUMPGR:
-          do_dumpgr(curr_arg, argc, argv, &glob_opts);
+          if (FAIL == do_dumpgr(curr_arg, argc, argv, &glob_opts))
+              exit(1);
           break;
 
       case HELP:

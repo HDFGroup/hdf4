@@ -210,7 +210,7 @@ extern intn parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn ar
               char *argv[], char *flds_chosen[MAXCHOICES], int *dumpallfields);
 
 /* hdp_gr.c */
-extern void do_dumpgr(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_ops);
+extern intn do_dumpgr(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_ops);
 
 
 /* hdp_dump.c */

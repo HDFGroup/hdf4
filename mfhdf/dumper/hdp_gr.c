@@ -24,10 +24,9 @@ static char RcsId[] = "@(#)Revision";
 #include <math.h>
 #endif /* MIPSEL */
 
-static intn dgr(dump_info_t * dumpgr_opts, intn curr_arg, intn argc, char *argv[], int model);
-
 void 
-dumpgr_usage(intn argc, char *argv[])
+dumpgr_usage(intn  argc, 
+             char *argv[])
 {
     printf("Usage:\n");
     printf("%s dumpgr [-a|-i <index>|-n <name>|-r <ref>] [-dhv] [-o <filename> [-bx]] <filelist>\n", argv[0]);
@@ -57,11 +56,17 @@ init_dumpgr_opts(dump_info_t * dumpgr_opts)
 }	/* end init_list_opts() */
 
 intn 
-parse_dumpgr_opts(dump_info_t * dumpgr_opts, intn *curr_arg, intn argc, char *argv[], int *model)
+parse_dumpgr_opts(dump_info_t *dumpgr_opts, 
+                  intn        *curr_arg, 
+                  intn         argc, 
+                  char        *argv[], 
+                  int         *model)
 {
 
-    int32       i, numItems;
-    char       *tempPtr, *ptr;
+    int32 i;
+    int32 numItems;
+    char *tempPtr = NULL;
+    char *ptr = NULL;
 
     if (*curr_arg >= argc)
         return (FAIL);
@@ -204,54 +209,32 @@ parse_dumpgr_opts(dump_info_t * dumpgr_opts, intn *curr_arg, intn argc, char *ar
     return (SUCCEED);
 }	/* end parse_dumpgr_opts */
 
-void 
-do_dumpgr(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts)
-{
-    dump_info_t dumpgr_opts;	/* dumpgr options */
-    int model = 0;
-
-    if (glob_opts->help == TRUE)
-      {
-          dumpgr_usage(argc, argv);
-          return;
-      }		/* end if */
-
-    init_dumpgr_opts(&dumpgr_opts);
-    if (parse_dumpgr_opts(&dumpgr_opts, &curr_arg, argc, argv, &model) == FAIL)
-      {
-          dumpgr_usage(argc, argv);
-          return;
-      }		/* end if */
-
-    if (dgr(&dumpgr_opts, curr_arg, argc, argv, model) == FAIL)
-      {
-          printf("Failure in dumping GR data\n");
-          exit(1);
-      }
-
-	if ( dumpgr_opts.filter_num != NULL )
-           HDfree( dumpgr_opts.filter_num);
-
-        if( dumpgr_opts.filter_str != NULL)
-          HDfree(dumpgr_opts.filter_str);
-
-}	/* end do_dumpgr() */
 
 int32 
-grdumpfull(dump_info_t * dumpgr_opts, int32 ri_id, file_type_t ft, int32 ncomp,                int32 dimsizes[], int32 nt , intn indent, FILE * fp)
+grdumpfull(dump_info_t *dumpgr_opts, 
+           int32        ri_id, 
+           file_type_t  ft, 
+           int32        ncomp,	/* "ncomp" is the number of components 
+                                   in each element of the data set */
+           int32        dimsizes[], /*  size of dimension "i". */
+           int32        nt, 
+           intn         indent, 
+           FILE        *fp)
 {
-	/* "ncomp" is the number of components in each element of the data 
-            set 
-	   "dimsizes[i]" is size of dimension "i". */
-    int32       ret;
-    VOIDP       buf;
-    int32       numtype, eltsz, read_nelts;
-    int32       *start, *edge, *stride;
+    VOIDP   buf = NULL;
+    int32   numtype;
+    int32   eltsz;
+    int32   read_nelts;
+    int32   *start = NULL;
+    int32   *edge = NULL;
+    int32   *stride = NULL;
+    int32   ret_value = SUCCEED;
 
     if (indent > 65)
       {		/* This block is probably not necessary. */
           printf("Bad indentation %d\n", indent);
-          exit(1);
+          ret_value = FAIL;
+          goto done;
       }
 
 	/* Compute the number of the bytes for each value. */
@@ -262,27 +245,31 @@ grdumpfull(dump_info_t * dumpgr_opts, int32 ri_id, file_type_t ft, int32 ncomp, 
     buf = (VOIDP) HDmalloc(read_nelts * eltsz);
     if (buf == NULL)
       {
-          printf("Not enough memory!\n");
-          exit(-1);
+          fprintf(stderr,"Not enough memory!\n");
+          ret_value = FAIL;
+          goto done;
       }
     start = (int32 *) HDmalloc(ncomp * sizeof(int32));
     if (start == NULL)
       {
-          printf("Not enough memory!\n");
-          exit(-1);
+          fprintf(stderr,"Not enough memory!\n");
+          ret_value = FAIL;
+          goto done;
       }
    edge = (int32 *) HDmalloc(ncomp * sizeof(int32));
     if (edge == NULL)
       {
-          printf("Not enough memory!\n");
-          exit(-1);
+          fprintf(stderr,"Not enough memory!\n");
+          ret_value = FAIL;
+          goto done;
       }
 
     stride = (int32 *) HDmalloc(ncomp * sizeof(int32));
     if (stride == NULL)
       {
-          printf("Not enough memory!\n");
-          exit(-1);
+          fprintf(stderr,"Not enough memory!\n");
+          ret_value = FAIL;
+          goto done;
       }
 
     start[0]=start[1]=0;
@@ -291,59 +278,111 @@ grdumpfull(dump_info_t * dumpgr_opts, int32 ri_id, file_type_t ft, int32 ncomp, 
     stride[0]=1;
     stride[1]=1;
  
-    ret = GRreadimage(ri_id, start, stride, edge, buf);
-    /*  GRendaccess(ri_id);   */
+    if (FAIL == GRreadimage(ri_id, start, stride, edge, buf))
+      {
+          fprintf(stderr,"grdumpfull: GRreadimage() failed for ri_id %d \n",
+                  (int)ri_id);
+          ret_value = FAIL;
+          goto done;
+      }
 
-/*---------------------------------------------------------*/
+    if (FAIL == dumpfull(nt, ft, read_nelts*ncomp, buf, indent, fp))
+      {
+          fprintf(stderr,"grdumpfull: dumpfull() failed for ri_id %d \n",
+                  (int)ri_id);
+          ret_value = FAIL;
+          goto done;
+      }
 
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+      }
+    /* Normal cleanup */
+    if (edge != NULL)
+        HDfree((VOIDP) edge);
+    if (start != NULL)
+        HDfree((VOIDP) start);
+    if (stride != NULL)
+        HDfree((VOIDP) stride);
+    if (buf != NULL)
+        HDfree((VOIDP) buf);
 
-    ret = dumpfull(nt, ft, read_nelts*ncomp, buf, indent, fp);
-
-    HDfree((VOIDP) edge);
-    HDfree((VOIDP) start);
-    HDfree((VOIDP) stride);
-    HDfree((VOIDP) buf);
-    return (0);
+    return ret_value;
 }	/* grdumpfull */
 
 static intn 
-dgr(dump_info_t * dumpgr_opts, intn curr_arg, intn argc, char *argv[], 
-    int model)   
+dgr(dump_info_t *dumpgr_opts, 
+    intn         curr_arg, 
+    intn         argc, 
+    char        *argv[], 
+    int          model)   
 {
     intn        i, ret;
-    int32       grf_id, gr_id, ri_id, *gr_chosen=NULL;
+    int32       grf_id = FAIL;
+    int32       gr_id = FAIL;
+    int32       ri_id = FAIL;
+    int32       *gr_chosen = NULL;
     int32       num_gr_chosen;
-    int32       ncomp, nt, nattr, ndsets, il, nglb_attr;
-    int32       j, k, attr_nt, attr_count, attr_buf_size, attr_index;
-    char        file_name[MAXFNLEN], name[MAXNAMELEN];
+    int32       ncomp;
+    int32       nt;
+    int32       nattr;
+    int32       ndsets;
+    int32       il;
+    int32       nglb_attr;
+    intn        j, k;
+    int32       attr_nt;
+    int32       attr_count;
+    int32       attr_buf_size;
+    int32       attr_index;
+    char        file_name[MAXFNLEN];
+    char        name[MAXNAMELEN];
     char        attr_name[MAXNAMELEN];
-    int32       dimsizes[MAXRANK], dimNT[MAXRANK], dimnattr[MAXRANK];
-    FILE       *fp=NULL;
-    int32 /* ref , */ index;
+    int32       dimsizes[MAXRANK];
+    int32       dimNT[MAXRANK];
+    int32       dimnattr[MAXRANK];
+    FILE       *fp = NULL;
+    int32       index;
     VOIDP       attr_buf;
-    char       *nt_desc, *attr_nt_desc;
-    int         index_error=0, x, dumpall = 0, ref_found=0;
-    int32       ri_ref;
-    file_type_t    ft;
+    char       *nt_desc = NULL;
+    char       *attr_nt_desc = NULL;
+    int         index_error=0;
+    int         x;
+    int         dumpall = 0;
+    int         ref_found = 0;
+    int32       ri_ref = 0;
+    file_type_t ft;
+    intn        ret_value = SUCCEED;
 
     while (curr_arg < argc)
       {		/* Examine each file. */
           HDstrcpy(file_name, argv[curr_arg]);
           curr_arg++;
+
           grf_id = Hopen(file_name, DFACC_RDONLY,0);
           if (grf_id == FAIL)
             {
-                printf("Failure in open %s\n", file_name);
-                exit(1);
+                fprintf(stderr,"Failure in Hopen of file %s\n", file_name);
+                ret_value = FAIL;
+                goto done;
             }
+
           gr_id = GRstart(grf_id);
+          if (FAIL == gr_id)
+            {
+                fprintf(stderr,"GRstart failed for file %s\n", file_name);
+                ret_value = FAIL;
+                goto done;
+            }
+
           num_gr_chosen = dumpgr_opts->num_chosen;
           if (num_gr_chosen > 0)
             {
                 if ((gr_chosen = (int32 *) HDmalloc(sizeof(int32) * num_gr_chosen)) == NULL)
                   {
-                      printf("Memory allocation error\n");
-                      exit(1);
+                      fprintf(stderr,"Memory allocation error\n");
+                      ret_value = FAIL;
+                      goto done;
                   }		/* end if */
 
                 k = (-1);
@@ -354,7 +393,7 @@ dgr(dump_info_t * dumpgr_opts, intn curr_arg, intn argc, char *argv[],
           switch (dumpgr_opts->filter)
             {	/* Determine the GRs having been selected. */
             case DINDEX:
-                    /* Note: Don't replace this with HDmemcpy unless you change the sizes of the objects correctly -QAK */
+                /* Note: Don't replace this with HDmemcpy unless you change the sizes of the objects correctly -QAK */
                 for (i = 0; i < dumpgr_opts->num_chosen; i++)
                   {
                       gr_chosen[i] = dumpgr_opts->filter_num[i];
@@ -362,22 +401,24 @@ dgr(dump_info_t * dumpgr_opts, intn curr_arg, intn argc, char *argv[],
                   }
                 break;
 
-            case DREFNUM:
-              /*  for (i = 0; i < dumpgr_opts->num_chosen; i++)
-                  {
-                      index = GRreftoindex(gr_id, dumpgr_opts->filter_num[i]);
+            case DREFNUM: /* whats going on here? */
+                /*  
+                    for (i = 0; i < dumpgr_opts->num_chosen; i++)
+                    {
+                    index = GRreftoindex(gr_id, dumpgr_opts->filter_num[i]);
                  
-                      if (index == -1)
-                        {
-                            printf("GR with reference number %d: not found\n", dumpgr_opts->filter_num[i]);
-                            index_error = 1;     
-                        }
-                      else
-                        {
-                            gr_chosen[k] = index;
-                            k++;
-                        }
-                  }             */
+                    if (index == -1)
+                    {
+                    printf("GR with reference number %d: not found\n", dumpgr_opts->filter_num[i]);
+                    index_error = 1;     
+                    }
+                    else
+                    {
+                    gr_chosen[k] = index;
+                    k++;
+                    }
+                    }             
+                    */
                 break;
 
             case DNAME:
@@ -399,16 +440,19 @@ dgr(dump_info_t * dumpgr_opts, intn curr_arg, intn argc, char *argv[],
 
             case DCLASS:
                 printf("Currently, no class defined on an GR.\n");
-                exit(1);
+                ret_value = FAIL;
+                goto done;
+                break;
 
             case DALL:
                 k= -1;
                 break;
-
             default:
-                printf("Unknown filter option\n");
-                exit(1);
-            }
+                printf("Unknown filter option for dumping GR\n");
+                ret_value = FAIL;
+                goto done;
+                break;
+            } /* end switch filter option */
 
           if (index_error && k==0)
             {
@@ -418,245 +462,425 @@ dgr(dump_info_t * dumpgr_opts, intn curr_arg, intn argc, char *argv[],
                       gr_chosen=NULL;
                   } /* end if */
                 GRend(gr_id);
+                gr_id = FAIL; /* reset */
                 continue;
             } /* end if */
+
           num_gr_chosen=k;  /* update actual count of items chosen */
 
           ft=dumpgr_opts->file_type;
          
           switch(ft)
-          {
-           case DASCII:       /* ASCII file */
+            {
+            case DASCII:       /* ASCII file */
 
               /* get output file name  */
-          if (dumpgr_opts->dump_to_file)
-              fp = fopen(dumpgr_opts->file_name, "w");
-          else
-              fp = stdout;
+                if (dumpgr_opts->dump_to_file)
+                    fp = fopen(dumpgr_opts->file_name, "w");
+                else
+                    fp = stdout;
 
-          if (dumpgr_opts->contents != DDATA)
-              fprintf(fp, "File name: %s \n", file_name);
-          ret = GRfileinfo(gr_id, &ndsets, &nglb_attr);
-          if (ret == FAIL)
-            {
-                printf("Failure in GRfileinfo %s\n", file_name);
-                exit(1);
-            }
-
-          x = 0;
-          if (num_gr_chosen == (-1))
-              dumpall = 1;
-          else
-              sort(gr_chosen, num_gr_chosen);
-
-          for (i = 0; i < ndsets && (dumpall!=0 || x<dumpgr_opts->num_chosen); i++)
-            {	/* Examine each GR. */
-                if ((!dumpall) && (i != gr_chosen[x])&&(dumpgr_opts->filter!= DREFNUM))
-                    continue;
-                if(dumpgr_opts->filter!= DREFNUM) x++;
-
-                    /* Reset variables. */
-                HDmemset(dimsizes, 0, sizeof(int32) * MAXRANK);
-                HDmemset(dimNT, 0, sizeof(int32) * MAXRANK);
-                HDmemset(dimnattr, 0, sizeof(int32) * MAXRANK);
-
-                ri_id = GRselect(gr_id, i);
-                if (ri_id == FAIL)
+                if (dumpgr_opts->contents != DDATA)
+                    fprintf(fp, "File name: %s \n", file_name);
+                ret = GRfileinfo(gr_id, &ndsets, &nglb_attr);
+                if (ret == FAIL)
                   {
-                      printf("Failure in selecting %s\n", file_name);
-                      exit(1);
-                  }
-                if ((ri_ref = GRidtoref(ri_id)) == FAIL)
-                  {
-                      printf("Failure in determining reference no.\n");
-                      exit(1);
+                      fprintf(stderr,"Failure in GRfileinfo for file %s\n", file_name);
+                      ret_value = FAIL;
+                      goto done;
                   }
 
-    if (dumpgr_opts->filter == DREFNUM)
-                  {
-                      int  m;
-                      ref_found = 0;
+                x = 0;
+                if (num_gr_chosen == (-1))
+                    dumpall = 1;
+                else
+                    sort(gr_chosen, num_gr_chosen);
 
-                      for (m = 0; m < dumpgr_opts->num_chosen; m++)
-                          if (dumpgr_opts->filter_num[m] == ri_ref)
-                             {
-                              ref_found = 1;
-                              break;
-                             };
-                      if (!ref_found)
-                        continue;  
-                  }
+                for (i = 0; 
+                     i < ndsets && (dumpall!=0 || x<dumpgr_opts->num_chosen); 
+                     i++)
+                  {	/* Examine each GR. */
+                      if ((!dumpall) && (i != gr_chosen[x])&&(dumpgr_opts->filter!= DREFNUM))
+                          continue; /* skip */
 
-                ret = GRgetiminfo(ri_id, name, &ncomp, &nt, &il, dimsizes, &nattr);
+                      if(dumpgr_opts->filter!= DREFNUM) 
+                          x++;
 
-                switch (dumpgr_opts->contents)
-                  {
-                  case DVERBOSE:
-/*                     ref = GRidtoref(ri_id);
+                      /* Reset variables. */
+                      HDmemset(dimsizes, 0, sizeof(int32) * MAXRANK);
+                      HDmemset(dimNT, 0, sizeof(int32) * MAXRANK);
+                      HDmemset(dimnattr, 0, sizeof(int32) * MAXRANK);
+
+                      ri_id = GRselect(gr_id, i);
+                      if (ri_id == FAIL)
+                        {
+                            fprintf(stderr,"Failure in selecting %d'th GR in file %s\n", 
+                                    i,file_name);
+                            ret_value = FAIL;
+                            goto done;
+                        }
+                      if ((ri_ref = GRidtoref(ri_id)) == FAIL)
+                        {
+                            fprintf(stderr,"Failure in determining reference no. for %d'th GR in file %s\n",
+                                   i, file_name);
+                            ret_value = FAIL;
+                            goto done;
+                        }
+
+                      if (dumpgr_opts->filter == DREFNUM)
+                        {
+                            int  m;
+                            ref_found = 0;
+
+                            for (m = 0; m < dumpgr_opts->num_chosen; m++)
+                                if (dumpgr_opts->filter_num[m] == ri_ref)
+                                  {
+                                      ref_found = 1; /* found image */
+                                      break;
+                                  };
+
+                            if (!ref_found)
+                                continue;  
+                        }
+
+                      if (FAIL == GRgetiminfo(ri_id, name, &ncomp, &nt, &il, dimsizes, &nattr))
+                        {
+                            fprintf(stderr,"GRgetiminfo failed for %d'th GR in file %s\n",
+                                   i, file_name);
+                            ret_value = FAIL;
+                            goto done;
+                        }
+
+                      switch (dumpgr_opts->contents)
+                        {
+                        case DVERBOSE:
+                      /*ref = GRidtoref(ri_id);
                        if (ref == FAIL) {
                        printf("Failure in GRidtoref %s\n", file_name);
                        exit(1);
                        }
                        */
-                  case DHEADER:
-                      nt_desc = HDgetNTdesc(nt);
-                      if (ret == FAIL)
-                        {
-                            printf("Failure in GRgetiminfo %s\n", file_name);
-                            exit(1);
-                        }
+                        case DHEADER:
+                            nt_desc = HDgetNTdesc(nt);
+                            if (NULL == nt_desc)
+                              {
+                                  fprintf(stderr,"HDgetNTdesc failed for %d'th GR in file %s\n",
+                                          i, file_name);
+                                  ret_value = FAIL;
+                                  goto done;
+                              }
+
                             fprintf(fp, "\n\t Image  Name = %s\n\t Index = ", name);
                             fprintf(fp, "%d\n\t Type= %s\n", i, nt_desc);
-                      HDfree(nt_desc);
-                      fprintf(fp, "\t width=%d; height=%d\n", (int) dimsizes[0], (int) dimsizes[1]);
-                      fprintf(fp, "\t Ref. = %d\n", (int) ri_ref);
-                      fprintf(fp, "\t ncomps = %d\n\t Number of attributes = %d\n\t Interlace= %d\n", (int) ncomp, (int) nattr,(int) il);
 
-                          /* Print annotations */
-                      for (j = 0; j < nattr; j++)
+                            HDfree(nt_desc);
+                            nt_desc = NULL; /* reset */
+
+                            fprintf(fp, "\t width=%d; height=%d\n", (int) dimsizes[0], (int) dimsizes[1]);
+                            fprintf(fp, "\t Ref. = %d\n", (int) ri_ref);
+                            fprintf(fp, "\t ncomps = %d\n\t Number of attributes = %d\n\t Interlace= %d\n", (int) ncomp, (int) nattr,(int) il);
+
+                            /* Print attributes */
+                            for (j = 0; j < nattr; j++)
+                              {
+                                  if (FAIL == GRattrinfo(ri_id, j, attr_name, &attr_nt, &attr_count))
+                                    {
+                                        fprintf(stderr,"GRattrinfo failed for %d'th attribute of %d'th GR in file %s\n",
+                                                j,i, file_name);
+                                        ret_value = FAIL;
+                                        goto done;
+                                    }
+
+                                  attr_nt_desc = HDgetNTdesc(attr_nt);
+                                  if (NULL == attr_nt_desc)
+                                    {
+                                        fprintf(stderr,"HDgetNTdesc failed for %d'th attribute of %d'th GR in file %s\n",
+                                                j,i, file_name);
+                                        ret_value = FAIL;
+                                        goto done;
+                                    }
+
+                                  attr_index = GRfindattr(ri_id, attr_name);
+                                  if (attr_index == FAIL)
+                                    {
+                                        fprintf(stderr,"GRfindattr failed for %d'th attribute of %d'th GR in file %s\n",
+                                                j,i, file_name);
+                                        ret_value = FAIL;
+                                        goto done;
+                                    }
+
+                                  attr_buf_size = DFKNTsize(attr_nt) * attr_count;
+                                  attr_buf = (VOIDP) HDmalloc(attr_buf_size);
+                                  if (attr_buf == NULL)
+                                    {
+                                        fprintf(stderr,"Not enough memory!\n");
+                                        ret_value = FAIL;
+                                        goto done;
+                                    }
+                                  ret = GRgetattr(ri_id, attr_index, attr_buf);
+                                  if (ret == FAIL)
+                                    {
+                                        fprintf(stderr,"GRgetattr failed for %d'th attribute of %d'th GR in file %s\n",
+                                                j,i, file_name);
+                                        ret_value = FAIL;
+                                        goto done;
+                                    }
+                                  fprintf(fp, "\t Attr%d: Name = %s\n", (int) attr_index, attr_name);
+                                  fprintf(fp, "\t\t Type = %s \n\t\t Count= %d\n", attr_nt_desc, (int) attr_count);
+
+                                  HDfree(attr_nt_desc);
+                                  attr_nt_desc = NULL; /* reset */
+
+                                  fprintf(fp, "\t\t Value = ");
+
+                                  if (FAIL == dumpfull(attr_nt, ft, attr_count, attr_buf, 20, fp))
+                                    {
+                                        fprintf(stderr,"dumpfull() failed for %d'th attribute of %d'th GR in file %s\n",
+                                                j,i, file_name);
+                                        ret_value = FAIL;
+                                        goto done;
+                                    }
+
+                                  HDfree((VOIDP) attr_buf);
+                                  attr_buf = NULL; /* reset */
+                              } /* for all attributes of GR */
+
+                            if (dumpgr_opts->contents == DHEADER)
+                                break; /* break out for header only */
+
+                        case DDATA:
+                            if (dumpgr_opts->contents == DDATA)
+                              {
+                                  /* print ncomp, dimsizes, nt, maxmin, cal info */
+                              }
+                            if (dumpgr_opts->contents != DDATA)
+                                fprintf(fp, "\t Data : \n");
+                            if (ncomp > 0 && dimsizes[0] != 0)
+                              {
+                                  intn        count;
+
+                                  for (count = 0; count < 16; count++)
+                                      fprintf(fp, " ");
+                                  if (FAIL == grdumpfull(dumpgr_opts, ri_id, ft, ncomp, 
+                                                   dimsizes, nt, 16, fp))
+                                    {
+                                        fprintf(stderr,"grdumpfull() failed for %d'th GR in file %s\n",
+                                                i, file_name);
+                                        ret_value = FAIL;
+                                        goto done;
+                                    }
+
+                              }
+
+                            break; /* data section */
+                        } /* switch  on contents */
+
+                      if (FAIL == GRendaccess(ri_id))    
                         {
-                            ret = GRattrinfo(ri_id, j, attr_name, &attr_nt, &attr_count);
-                            attr_nt_desc = HDgetNTdesc(attr_nt);
-                            if (ret == FAIL)
-                              {
-                                  printf("Failure in GRattrinfo %s\n", file_name);
-                                  exit(1);
-                              }
-                            attr_index = GRfindattr(ri_id, attr_name);
-                            if (ret == FAIL)
-                              {
-                                  printf("Failure in GRfindattr %s\n", file_name);
-                                  exit(1);
-                              }
-                            attr_buf_size = DFKNTsize(attr_nt) * attr_count;
-                            attr_buf = (VOIDP) HDmalloc(attr_buf_size);
-                            if (attr_buf == NULL)
-                              {
-                                  printf("Not enough memory!\n");
-                                  exit(-1);
-                              }
-                            ret = GRgetattr(ri_id, attr_index, attr_buf);
-                            if (ret == FAIL)
-                              {
-                                  printf("Failure in GRfindattr %s\n", file_name);
-                                  exit(1);
-                              }
-                            fprintf(fp, "\t Attr%d: Name = %s\n", (int) attr_index, attr_name);
-                            fprintf(fp, "\t\t Type = %s \n\t\t Count= %d\n", attr_nt_desc, (int) attr_count);
-                            HDfree(attr_nt_desc);
-                            fprintf(fp, "\t\t Value = ");
-                            ret = dumpfull(attr_nt, ft, attr_count, attr_buf, 20, fp);
-                            HDfree((VOIDP) attr_buf);
+                            fprintf(stderr,"GRendaccess failed for %d'th GR in file %s\n",
+                                    i, file_name);
+                            ret_value = FAIL;
+                            goto done;
+                        }
+                  }	/* for ndsets  */
+
+                break; /* ASCII */
+
+            case DBINARY:       /* binary file */
+                /* get output file name  */
+                if (dumpgr_opts->dump_to_file)
+                    fp = fopen(dumpgr_opts->file_name, "w");
+                else
+                    fp = stdout;
+
+                ret = GRfileinfo(gr_id, &ndsets, &nglb_attr);
+                if (ret == FAIL)
+                  {
+                      printf("Failure in GRfileinfo for file %s\n", file_name);
+                      ret_value = FAIL;
+                      goto done;
+                  }
+
+                x = 0;
+                if (num_gr_chosen == (-1))
+                    dumpall = 1;
+                else
+                    sort(gr_chosen, num_gr_chosen);
+
+                for(i = 0; 
+                    i < ndsets && (dumpall!=0 || x<dumpgr_opts->num_chosen); 
+                    i++)
+                  {   /* Examine each GR. */
+                      if ((!dumpall) && (i != gr_chosen[x])&&(dumpgr_opts->filter!=DREFNUM))
+                          continue; /* skip */
+
+                      if(dumpgr_opts->filter!=DREFNUM) 
+                          x++;
+
+                      /* Reset variables. */
+                      HDmemset(dimsizes, 0, sizeof(int32) * MAXRANK);
+                      HDmemset(dimNT, 0, sizeof(int32) * MAXRANK);
+                      HDmemset(dimnattr, 0, sizeof(int32) * MAXRANK);
+
+                      ri_id = GRselect(gr_id, i);
+                      if (ri_id == FAIL)
+                        {
+                            fprintf(stderr,"Failure in selecting %d'th GR in file %s\n", 
+                                    i,file_name);
+                            ret_value = FAIL;
+                            goto done;
+                        }
+                      if ((ri_ref = GRidtoref(ri_id)) == FAIL)
+                        {
+                            fprintf(stderr,"Failure in determining reference no. for %d'th GR in file %s\n",
+                                   i, file_name);
+                            ret_value = FAIL;
+                            goto done;
+                        }
+                      if (dumpgr_opts->filter == DREFNUM)
+                        {
+                            int  m;
+                            ref_found = 0;
+
+                            for (m = 0; m < dumpgr_opts->num_chosen; m++)
+                                if (dumpgr_opts->filter_num[m] == ri_ref)
+                                  {
+                                      ref_found = 1; /* found image */
+                                      break;
+                                  };
+                            if (!ref_found)
+                                continue;
+                        }  
+
+                      if (FAIL == GRgetiminfo(ri_id, name, &ncomp, &nt, &il, dimsizes, &nattr))
+                        {
+                            fprintf(stderr,"GRgetiminfo failed for %d'th GR in file %s\n",
+                                   i, file_name);
+                            ret_value = FAIL;
+                            goto done;
                         }
 
-                      if (dumpgr_opts->contents == DHEADER)
-                         { GRendaccess(ri_id);
-                          break;
-                         }
-
-                  case DDATA:
-                      if (dumpgr_opts->contents == DDATA)
-                        {
-                                /* print ncomp, dimsizes, nt, maxmin, cal info */
-                        }
-                      if (dumpgr_opts->contents != DDATA)
-                          fprintf(fp, "\t Data : \n");
+                      /*   output data to binary file   */
                       if (ncomp > 0 && dimsizes[0] != 0)
                         {
-                            intn        count;
+                          if (FAIL == grdumpfull(dumpgr_opts, ri_id, ft, ncomp, dimsizes, nt, 16, fp))
+                            {
+                                fprintf(stderr,"dumpfull() failed for %d'th attribute of %d'th GR in file %s\n",
+                                        j,i, file_name);
+                                ret_value = FAIL;
+                                goto done;
+                            }
 
-                            for (count = 0; count < 16; count++)
-                                fprintf(fp, " ");
-                            ret = grdumpfull(dumpgr_opts, ri_id, ft, ncomp, 
-                                             dimsizes, nt, 16, fp);
                         }
 
-                      break;
-                  }		/* switch  */
-                GRendaccess(ri_id);    
-            }	/* for ndsets  */
-          break;
+                      if (FAIL == GRendaccess(ri_id))
+                        {
+                            fprintf(stderr,"GRendaccess failed for %d'th GR in file %s\n",
+                                    i, file_name);
+                            ret_value = FAIL;
+                            goto done;
+                        }
+                  }        /* for ndsets */
 
-       case DBINARY:       /* binary file */
-         /* get output file name  */
-          if (dumpgr_opts->dump_to_file)
-              fp = fopen(dumpgr_opts->file_name, "w");
-          else
-              fp = stdout;
-
-       /*   if (dumpgr_opts->contents != DDATA)
-              fprintf(fp, "File name: %s \n", file_name);     */
-
-          ret = GRfileinfo(gr_id, &ndsets, &nglb_attr);
-          if (ret == FAIL)
-            {
-                printf("Failure in GRfileinfo %s\n", file_name);
-                exit(1);
-            }
-
-          x = 0;
-          if (num_gr_chosen == (-1))
-              dumpall = 1;
-          else
-              sort(gr_chosen, num_gr_chosen);
-
-          for(i = 0; i < ndsets && (dumpall!=0 || x<dumpgr_opts->num_chosen); i++)
-            {   /* Examine each GR. */
-                if ((!dumpall) && (i != gr_chosen[x])&&(dumpgr_opts->filter!=DREFNUM))
-                    continue;
-                if(dumpgr_opts->filter!=DREFNUM) x++;
-
-                    /* Reset variables. */
-                HDmemset(dimsizes, 0, sizeof(int32) * MAXRANK);
-                HDmemset(dimNT, 0, sizeof(int32) * MAXRANK);
-                HDmemset(dimnattr, 0, sizeof(int32) * MAXRANK);
-
-                ri_id = GRselect(gr_id, i);
-                if (ri_id == FAIL)
-                  {
-                      printf("Failure in selecting %s\n", file_name);
-                      exit(1);
-                  }
-                if ((ri_ref = GRidtoref(ri_id)) == FAIL)
-                 {
-                      printf("Failure in determining reference no.\n");
-                      exit(1);
-                  }
-              if (dumpgr_opts->filter == DREFNUM)
-                  {
-                      int  m;
-                      ref_found = 0;
-
-                      for (m = 0; m < dumpgr_opts->num_chosen; m++)
-                          if (dumpgr_opts->filter_num[m] == ri_ref)
-                             {
-                              ref_found = 1;
-                              break;
-                             };
-                      if (!ref_found)
-                        continue;
-                  }  
-               ret = GRgetiminfo(ri_id, name, &ncomp, &nt, &il, dimsizes, &nattr);
-
-          /*   output data to binary file   */
-
-            if (ncomp > 0 && dimsizes[0] != 0)
-                ret = grdumpfull(dumpgr_opts, ri_id, ft, ncomp, dimsizes, nt, 16, fp);
-               GRendaccess(ri_id);
-             }        /* for ndsets */
-            break;
-        } /* switch for output file */
+                break; /* BINARY */
+            default:
+                printf("dumping GR, unknown output file option \n");
+                ret_value = FAIL;
+                goto done;
+                break;
+            } /* switch for output file */
                        
 
-          GRend(gr_id);
-          Hclose(grf_id);
+          if (FAIL == GRend(gr_id))
+            {
+                fprintf(stderr,"GRend failed for file %s\n", file_name);
+                ret_value = FAIL;
+                goto done;
+            }
+          gr_id = FAIL; /* reset */
+
+          if (FAIL == Hclose(grf_id))
+            {
+                fprintf(stderr,"Hclose failed for file %s\n", file_name);
+                ret_value = FAIL;
+                goto done;
+            }
+          grf_id = FAIL; /* reset */
+
           if (gr_chosen!=NULL)
             {
                 HDfree(gr_chosen);
                 gr_chosen=NULL;
             } /* end if */
+
           if (dumpgr_opts->dump_to_file)
               fclose(fp);
       }		/* while argc  */
-    return (0);
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+          if (nt_desc != NULL)
+              HDfree(nt_desc);
+          if (attr_nt_desc != NULL)
+              HDfree(attr_nt_desc);
+          if (attr_buf != NULL)
+              HDfree(attr_buf);
+          if (gr_id != FAIL)
+              GRend(gr_id);
+          if (grf_id != FAIL)
+              Hclose(grf_id);
+          if (gr_chosen!=NULL)
+              HDfree(gr_chosen);
+      }
+    /* Normal cleanup */
+
+    return ret_value;
 }	/* dgr */
+
+intn 
+do_dumpgr(intn        curr_arg, 
+          intn        argc, 
+          char       *argv[], 
+          dump_opt_t *glob_opts)
+{
+    dump_info_t dumpgr_opts;	/* dumpgr options */
+    int         model = 0;
+    intn        ret_value = SUCCEED;
+
+    if (glob_opts->help == TRUE)
+      {
+          dumpgr_usage(argc, argv);
+          goto done;
+      }		/* end if */
+
+    init_dumpgr_opts(&dumpgr_opts);
+
+    if (parse_dumpgr_opts(&dumpgr_opts, &curr_arg, argc, argv, &model) == FAIL)
+      {
+          printf("Failure in parsing options to dump GR data \n");
+          dumpgr_usage(argc, argv);
+          ret_value = FAIL;
+          goto done;
+      }		/* end if */
+
+    if (dgr(&dumpgr_opts, curr_arg, argc, argv, model) == FAIL)
+      {
+          fprintf(stderr,"Failure in dumping GR data\n");
+          ret_value = FAIL;
+          goto done;
+      }
+
+  done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+      }
+    /* Normal cleanup */
+	if ( dumpgr_opts.filter_num != NULL )
+        HDfree( dumpgr_opts.filter_num);
+
+    if( dumpgr_opts.filter_str != NULL)
+        HDfree(dumpgr_opts.filter_str);
+
+    return ret_value;
+}	/* end do_dumpgr() */
