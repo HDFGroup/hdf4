@@ -422,11 +422,13 @@ C       the following compression types:
 C
       integer COMP_CODE_NONE, COMP_CODE_RLE, COMP_CODE_NBIT
       integer COMP_CODE_SKPHUFF, COMP_CODE_DEFLATE
+      integer COMP_CODE_JPEG
       parameter (COMP_CODE_NONE = 0)
       parameter (COMP_CODE_RLE  = 1)
       parameter (COMP_CODE_NBIT = 2)
       parameter (COMP_CODE_SKPHUFF = 3)
       parameter (COMP_CODE_DEFLATE = 4)
+      parameter (COMP_CODE_JPEG = 6)
 C
 C	Interlace Types 
 
