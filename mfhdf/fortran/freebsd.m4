@@ -30,7 +30,7 @@ define(`LONG_INT',`integer')
 define(`SHORT_INT',`integer*2')
 
 # FORTRAN declaration for an integer byte (e.g. integer*1 or byte)
-define(`BYTE_INT',`byte')
+define(`BYTE_INT',`integer*1')
 
 # FORTRAN declaration for double precision (e.g. real for a Cray)
 define(`DOUBLE_PRECISION',`double precision')
