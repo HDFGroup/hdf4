@@ -321,7 +321,6 @@ test_hextelt()
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
 
-
 #ifdef QAK
     HDfree((VOIDP) outbuf);
     HDfree((VOIDP) inbuf);

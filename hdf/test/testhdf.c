@@ -249,7 +249,7 @@ main(int argc, char *argv[])
       {
           if (Test[Loop].SkipFlag)
             {
-                MESSAGE(4, printf("Skipping -- %s \n", Test[Loop].Description);
+                MESSAGE(2, printf("Skipping -- %s \n", Test[Loop].Description);
                     );
             }
           else

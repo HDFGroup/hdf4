@@ -88,7 +88,7 @@ extern      "C"
                 (int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE * data);
 
     extern int32 Hputelement
-                (int32 file_id, uint16 tag, uint16 ref, uint8 _HUGE * data, int32 length);
+                (int32 file_id, uint16 tag, uint16 ref, const uint8 _HUGE * data, int32 length);
 
     extern int32 Hlength
                 (int32 file_id, uint16 tag, uint16 ref);
@@ -423,10 +423,10 @@ extern      "C"
                 (const char _HUGE * filename, VOIDP palette);
 
     extern intn DFPputpal
-                (const char _HUGE * filename, VOIDP palette, intn overwrite, const char _HUGE * filemode);
+                (const char _HUGE * filename, const VOIDP palette, intn overwrite, const char _HUGE * filemode);
 
     extern intn DFPaddpal
-                (const char _HUGE * filename, VOIDP palette);
+                (const char _HUGE * filename, const VOIDP palette);
 
     extern intn DFPnpals
                 (const char _HUGE * filename);

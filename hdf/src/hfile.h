@@ -38,7 +38,6 @@
 #endif /* PATH_LEN defines */
 #endif /* MAX_PATH_LEN */
 
-#define MAX_
 /* Maximum number of access elements */
 #ifndef MAX_ACC
 #   define MAX_ACC 256
@@ -143,10 +142,10 @@ typedef int hdf_file_t;
 #   define HI_CREATE(p)         (open((p), O_RDWR | O_CREAT | O_TRUNC))
 #   define HI_CLOSE(f)          (close(f))
 #   define HI_FLUSH(f)          (SUCCEED)
-#   define HI_READ(f, b, n)     (read((f), (char *)(b), (n)))
-#   define HI_WRITE(f, b, n)    (write((f), (char *)(b), (n)))
-#   define HI_SEEK(f, o)        (lseek((f), (off_t)(o), SEEK_SET))
-#   define HI_SEEKEND(f)        (lseek((f), (off_t)0, SEEK_END))
+#   define HI_READ(f, b, n)     (((n)==read((f), (char *)(b), (n))) ? SUCCEED : FAIL)
+#   define HI_WRITE(f, b, n)    (((n)==write((f), (char *)(b), (n))) ? SUCCEED : FAIL)
+#   define HI_SEEK(f, o)        (lseek((f), (off_t)(o), SEEK_SET)!=(-1) ? SUCCEED : FAIL)
+#   define HI_SEEKEND(f)        (lseek((f), (off_t)0, SEEK_END)!=(-1) ? SUCCEED : FAIL)
 #   define HI_TELL(f)           (lseek((f), (off_t)0, SEEK_CUR))
 #   define OPENERR(f)           (f < 0)
 #endif /* FILELIB == UNIXUNBUFIO */
@@ -371,6 +370,9 @@ typedef struct filerec_t
       /* fast lookup of empty dd stuff */
       int32       null_idx;     /* index into null_block of NULL entry */
       struct ddblock_t *null_block;     /* last block a NULL entry was found in */
+
+      /* Seek caching info */
+      uint32      f_cur_off;    /* Current location in the file */
 
       /* DD block caching info */
       intn        cache;        /* boolean: whether caching is on */
@@ -612,6 +614,15 @@ extern      "C"
     extern int32 HDget_special_info
                 (int32 access_id, sp_info_block_t * info_block);
 
+    extern intn HPread
+                (filerec_t *file_rec,VOIDP buf,int32 bytes);
+
+    extern intn HPseek
+                (filerec_t *file_rec,int32 offset);
+
+    extern intn HPwrite
+                (filerec_t *file_rec,const VOIDP buf,int32 bytes);
+
 /*
    ** from hblocks.c
  */
@@ -764,4 +775,9 @@ extern      "C"
 }
 #endif                          /* c_plusplus || __cplusplus */
 
+#ifndef QAK
+#define CHECKQAK(file_rec) {HI_FLUSH(file_rec->file); if(file_rec->f_cur_off!=HI_TELL(file_rec->file)) printf("Ack! file=%s, line=%d, cur_off=%ld, ftell=%ld\n",__FILE__,__LINE__,(long)file_rec->f_cur_off,(long)ftell(file_rec->file));}
+#else /* QAK */
+#define CHECKQAK(file_rec) {}
+#endif /* QAK */
 #endif                          /* HFILE_H */

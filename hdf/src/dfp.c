@@ -156,7 +156,7 @@ DFPgetpal(const char *filename, VOIDP palette)
  REVISION LOG
 --------------------------------------------------------------------------*/
 intn
-DFPputpal(const char *filename, VOIDP palette, intn overwrite, const char *filemode)
+DFPputpal(const char *filename, const VOIDP palette, intn overwrite, const char *filemode)
 {
     CONSTR(FUNC, "DFPputpal");
     int32       file_id;
@@ -184,7 +184,7 @@ DFPputpal(const char *filename, VOIDP palette, intn overwrite, const char *filem
     Writeref = 0;   /* don't know ref to write after this */
 
     /* write out palette */
-    if (Hputelement(file_id, DFTAG_IP8, Lastref, (uint8 *) palette, (int32) 768) < 0)
+    if (Hputelement(file_id, DFTAG_IP8, Lastref, (const uint8 *) palette, (int32) 768) < 0)
         return (HDerr(file_id));
 
     /* Check for the tag/ref before creating it willy-nilly */
@@ -211,7 +211,7 @@ DFPputpal(const char *filename, VOIDP palette, intn overwrite, const char *filem
  REVISION LOG
 --------------------------------------------------------------------------*/
 intn
-DFPaddpal(const char *filename, VOIDP palette)
+DFPaddpal(const char *filename, const VOIDP palette)
 {
     return (DFPputpal(filename, palette, 0, "a"));
 }   /* end DFPaddpal() */

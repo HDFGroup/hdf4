@@ -338,7 +338,7 @@ it_info.mask_off, info->cinfo.coder_info.nbit_info.mask_len);
           access_rec->used = FALSE;
           HRETURN_ERROR(DFE_INTERNAL, FAIL);
       }     /* end if */
-    if (HI_WRITE(file_rec->file, local_ptbuf, dd->length) == FAIL)
+    if (HPwrite(file_rec, local_ptbuf, dd->length) == FAIL)
       {
           access_rec->used = FALSE;
           HRETURN_ERROR(DFE_WRITEERROR, FAIL);
@@ -407,9 +407,9 @@ HCIread_header(filerec_t * file_rec, accrec_t * access_rec,
       }
 #endif
 
-    if (HI_SEEK(file_rec->file, info_dd->offset + 2) == FAIL)
+    if (HPseek(file_rec, info_dd->offset + 2) == FAIL)
         HRETURN_ERROR(DFE_SEEKERROR, FAIL);
-    if (HI_READ(file_rec->file, local_ptbuf, (COMP_HEADER_LENGTH - 2)) == FAIL)
+    if (HPread(file_rec, local_ptbuf, (COMP_HEADER_LENGTH - 2)) == FAIL)
         HRETURN_ERROR(DFE_READERROR, FAIL);
 
     p = local_ptbuf;
@@ -437,7 +437,7 @@ HCIread_header(filerec_t * file_rec, accrec_t * access_rec,
                   uint16      f_one;    /* temp. var for fill one */
                   int32       m_off, m_len;     /* temp. var for mask offset and len */
 
-                  if (HI_READ(file_rec->file, p, 16) == FAIL)
+                  if (HPread(file_rec, p, 16) == FAIL)
                       HRETURN_ERROR(DFE_READERROR, FAIL);
                   /* specify number-type of N-bit data */
                   INT32DECODE(p, c_info->nbit.nt);
@@ -464,7 +464,7 @@ HCIread_header(filerec_t * file_rec, accrec_t * access_rec,
                   uint32      skp_size,     /* size of skipping unit */
                               comp_size;    /* # of bytes to compress */
 
-                  if (HI_READ(file_rec->file, p, 8) == FAIL)
+                  if (HPread(file_rec, p, 8) == FAIL)
                       HRETURN_ERROR(DFE_READERROR, FAIL);
                   /* specify skipping unit size */
                   UINT32DECODE(p, skp_size);
@@ -659,22 +659,6 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
                 HDfree((VOIDP) info);
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
             }   /* end if */
-#ifdef OLD_WAY
-          if (HI_SEEK(file_rec->file, data_dd->offset) == FAIL)
-            {
-                access_rec->used = FALSE;
-                HDfree((VOIDP) info);
-                HDfree((VOIDP) buf);
-                HRETURN_ERROR(DFE_SEEKERROR, FAIL);
-            }   /* end if */
-          if (HI_READ(file_rec->file, buf, data_dd->length) == FAIL)
-            {
-                access_rec->used = FALSE;
-                HDfree((VOIDP) info);
-                HDfree((VOIDP) buf);
-                HRETURN_ERROR(DFE_READERROR, FAIL);
-            }   /* end if */
-#else  /* OLD_WAY */
           if (Hgetelement(file_id, data_dd->tag, data_dd->ref, buf) == FAIL)
             {
                 access_rec->used = FALSE;
@@ -682,7 +666,6 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
                 HDfree((VOIDP) buf);
                 HRETURN_ERROR(DFE_READERROR, FAIL);
             }   /* end if */
-#endif /* OLD_WAY */
 
           /* write the data through to the compression layer */
           if (HCPwrite(access_rec, data_dd->length, buf) == FAIL)
@@ -987,7 +970,6 @@ HCPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
                           &access_rec->block->ddlist[access_rec->idx];
     filerec_t   *file_rec =     /* file record */
                            FID2REC(access_rec->file_id);  
-    int32       file_off;       /* offset in the file we are at currently */
 
 #ifdef TESTING
     printf("HCPwrite(): entering\n");
@@ -1012,21 +994,12 @@ HCPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
       {
           info->length = access_rec->posn;
           INT32ENCODE(p, info->length);
-          if (HI_SEEK(file_rec->file, info_dd->offset + 4) == FAIL)
+          if (HPseek(file_rec, info_dd->offset + 4) == FAIL)
               HRETURN_ERROR(DFE_SEEKERROR, FAIL);
           /* re-write un-comp. len */
-          if (HI_WRITE(file_rec->file, local_ptbuf, 4) == FAIL)     
+          if (HPwrite(file_rec, local_ptbuf, 4) == FAIL)     
               HRETURN_ERROR(DFE_WRITEERROR, FAIL);
       }     /* end if */
-
-    /* update end of file offset? */
-    file_off = HI_TELL(file_rec->file);
-#ifdef TESTING
-    printf("HCPwrite: file_rec->f_end_off=%d\n",file_rec->f_end_off);
-    printf("HCPwrite: file_off=%d\n",file_off);
-#endif
-    if (file_off > file_rec->f_end_off)
-      file_rec->f_end_off = file_off;
 
     return (length);  /* return length of bytes written */
 }   /* end HCPwrite() */

@@ -345,11 +345,12 @@ HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length,
         INT32ENCODE(p, number_blocks);
         UINT16ENCODE(p, link_ref);  /* link_ref */
     }
-    if (HI_WRITE(file_rec->file, local_ptbuf, dd->length) == FAIL)
+    if (HPwrite(file_rec, local_ptbuf, dd->length) == FAIL)
       {
           access_rec->used = FALSE;
           HRETURN_ERROR(DFE_WRITEERROR, FAIL);
       }
+
     dd->tag = special_tag;
     dd->ref = ref;
 
@@ -551,11 +552,12 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
         UINT16ENCODE(p, link_ref);  /* link_ref */
     }
 
-    if (HI_WRITE(file_rec->file, local_ptbuf, dd->length) == FAIL)
+    if (HPwrite(file_rec, local_ptbuf, dd->length) == FAIL)
       {
           access_rec->used = FALSE;
           HRETURN_ERROR(DFE_WRITEERROR, FAIL);
       }
+
     dd->tag = special_tag;
     dd->ref = data_dd->ref;
 
@@ -727,10 +729,10 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
       }
 
     /* read in the information from file */
-    if (HI_SEEK(file_rec->file, dd->offset + 2) == FAIL)
+    if (HPseek(file_rec, dd->offset + 2) == FAIL)
         HRETURN_ERROR(DFE_SEEKERROR, FAIL);
 
-    if (HI_READ(file_rec->file, local_ptbuf, 14) == FAIL)
+    if (HPread(file_rec, local_ptbuf, 14) == FAIL)
         HRETURN_ERROR(DFE_READERROR, FAIL);
 
     access_rec->special_info = (VOIDP) HDmalloc((uint32) sizeof(linkinfo_t));
@@ -1299,21 +1301,19 @@ HLPwrite(accrec_t * access_rec, int32 length, const VOIDP datap)
       }
     while (length > 0);
 
-    if (HI_SEEK(file_rec->file, info_dd->offset + 2) == FAIL)
+    if (HPseek(file_rec, info_dd->offset + 2) == FAIL)
         HRETURN_ERROR(DFE_SEEKERROR, FAIL);
 
     {
         int32       tmp;
+        uint8      *p = local_ptbuf;
 
         tmp = bytes_written + access_rec->posn;
         if (tmp > info->length)
             info->length = tmp;
-    }
-    {
-        uint8      *p = local_ptbuf;
         INT32ENCODE(p, info->length);
     }
-    if (HI_WRITE(file_rec->file, local_ptbuf, 4) == FAIL)
+    if (HPwrite(file_rec, local_ptbuf, 4) == FAIL)
         HRETURN_ERROR(DFE_WRITEERROR, FAIL);
 
     access_rec->posn += bytes_written;

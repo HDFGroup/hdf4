@@ -151,7 +151,7 @@ test_nbit1(int32 fid)
     ref1 = Hnewref(fid);
     CHECK(ref1, 0, "Hnewref");
 
-    MESSAGE(5, printf("Create a new element as a n-bit element\n");
+    MESSAGE(5, printf("Create a new element as an unsigned 8-bit n-bit element\n");
         );
     c_info.nbit.nt = DFNT_UINT8;
     c_info.nbit.sign_ext = FALSE;
@@ -218,7 +218,7 @@ test_nbit2(int32 fid)
     ref1 = Hnewref(fid);
     CHECK(ref1, 0, "Hnewref");
 
-    MESSAGE(5, printf("Create a new element as a signed n-bit element\n");
+    MESSAGE(5, printf("Create a new element as a signed 8-bit n-bit element\n");
         );
     c_info.nbit.nt = DFNT_INT8;
     c_info.nbit.sign_ext = TRUE;

@@ -3448,9 +3448,7 @@ DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data,
     int32      *winst;
     int32      *windims;
     int32       file_id;
-#ifdef LATER
     CONSTR(FUNC, "DFSDIgetdata");
-#endif
 
     HEclear();
 
@@ -3470,13 +3468,13 @@ DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data,
 
     winst = (int32 *) HDmalloc((uint32) Readsdg.rank * sizeof(int32));
     if (winst == NULL)
-        return FAIL;
+        HRETURN_ERROR(DFE_NOSPACE,FAIL);
 
     windims = (int32 *) HDmalloc((uint32) Readsdg.rank * sizeof(int32));
     if (windims == NULL)
       {
           HDfree((VOIDP) winst);
-          return FAIL;
+          HRETURN_ERROR(DFE_NOSPACE,FAIL);
       }
 
     for (i = 0; i < rank; i++)

@@ -1778,11 +1778,11 @@ test_pal(void)
     int         ret;
     uint16      ref1, ref2;
 
-    char       *pal1, *pal2, *ipal;
+    uint8       *pal1, *pal2, *ipal;
 
-    pal1 = (char *) HDmalloc(768 * sizeof(char));
-    pal2 = (char *) HDmalloc(768 * sizeof(char));
-    ipal = (char *) HDmalloc(768 * sizeof(char));
+    pal1 = (uint8 *) HDmalloc(768 * sizeof(uint8));
+    pal2 = (uint8 *) HDmalloc(768 * sizeof(uint8));
+    ipal = (uint8 *) HDmalloc(768 * sizeof(uint8));
     if (!ipal || !pal1 || !pal2)
       {
           fprintf(stderr, "Out of memory!\n");
@@ -1819,9 +1819,10 @@ test_pal(void)
     /* read and check palette 1 */
     ret = DFPgetpal(TESTFILE, ipal);
     RESULT("DFPgetpal");
-    for (i = 0; i < 768; i++)
-        if (ipal[i] != pal1[i])
-            printf("Error at %d, ipal %d pal1 %d\n", i, ipal[i], pal1[i]);
+    if(HDmemcmp(ipal,pal1,768)!=0)
+        for (i = 0; i < 768; i++)
+            if ((uint8)pal1[i] != (uint8)ipal[i])
+                printf("Error at %d, ipal %d pal1 %d\n", (int)i, (int)ipal[i], (int)pal1[i]);
 
     if (ref1 != DFPlastref())
       {
@@ -1832,9 +1833,10 @@ test_pal(void)
     /* read and check palette 2 */
     ret = DFPgetpal(TESTFILE, ipal);
     RESULT("DFPgetpal");
-    for (i = 0; i < 768; i++)
-        if (ipal[i] != pal2[i])
-            printf("Error at %d, ipal %d pal2 %d\n", i, ipal[i], pal2[i]);
+    if(HDmemcmp(ipal,pal2,768)!=0)
+        for (i = 0; i < 768; i++)
+            if ((uint8)ipal[i] != (uint8)pal2[i])
+                printf("Error at %d, ipal %d pal2 %d\n", (int)i, (int)ipal[i], (int)pal2[i]);
 
     if (ref2 != DFPlastref())
       {
@@ -1853,18 +1855,20 @@ test_pal(void)
     RESULT("DFPreadref");
     ret = DFPgetpal(TESTFILE, ipal);
     RESULT("DFPgetpal");
-    for (i = 0; i < 768; i++)
-        if (ipal[i] != pal2[i])
-            printf("Error at %d, ipal %d pal2 %d\n", i, ipal[i], pal2[i]);
+    if(HDmemcmp(ipal,pal2,768)!=0)
+        for (i = 0; i < 768; i++)
+            if (ipal[i] != pal2[i])
+                printf("Error at %d, ipal %d pal2 %d\n", i, ipal[i], pal2[i]);
 
     /* recheck palette number 1 */
     ret = DFPreadref(TESTFILE, ref1);
     RESULT("DFPreadref");
     ret = DFPgetpal(TESTFILE, ipal);
     RESULT("DFPgetpal");
-    for (i = 0; i < 768; i++)
-        if (ipal[i] != pal1[i])
-            printf("Error at %d, ipal %d pal1 %d\n", i, ipal[i], pal1[i]);
+    if(HDmemcmp(ipal,pal1,768)!=0)
+        for (i = 0; i < 768; i++)
+            if (ipal[i] != pal1[i])
+                printf("Error at %d, ipal %d pal1 %d\n", i, ipal[i], pal1[i]);
 
     MESSAGE(5, printf("Modifying first palette\n");
         );
@@ -1881,9 +1885,10 @@ test_pal(void)
 
     ret = DFPgetpal(TESTFILE, ipal);
     RESULT("DFPgetpal");
-    for (i = 0; i < 768; i++)
-        if (ipal[i] != pal1[i])
-            printf("Error at %d, ipal %d pal1 %d\n", i, ipal[i], pal1[i]);
+    if(HDmemcmp(ipal,pal1,768)!=0)
+        for (i = 0; i < 768; i++)
+            if (ipal[i] != pal1[i])
+                printf("(%d) Error at %d, ipal %d pal1 %d\n", __LINE__,i, ipal[i], pal1[i]);
     HDfree((VOIDP) pal1);
     HDfree((VOIDP) pal2);
     HDfree((VOIDP) ipal);
