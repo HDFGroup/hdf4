@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.31  1993/09/01 23:53:38  georgev
-Fixed some errors in prototypes for DFSD calls.
+Revision 1.32  1993/09/02 00:00:21  georgev
+Fixed some more prototypes.
 
+ * Revision 1.31  1993/09/01  23:53:38  georgev
+ * Fixed some errors in prototypes for DFSD calls.
+ *
  * Revision 1.30  1993/08/16  21:45:23  koziol
  * Wrapped in changes for final, working version on the PC.
  *
@@ -1485,7 +1488,7 @@ intn DFSDstartslice(filename)
  *---------------------------------------------------------------------------*/
 
 #ifdef PROTOTYPE
-intn DFSDputslice(int32 winend[], VOIDP *data, int32 dims[])
+intn DFSDputslice(int32 winend[], VOIDP data, int32 dims[])
 #else
 intn DFSDputslice(winend, data, dims)
      int32 winend[];
