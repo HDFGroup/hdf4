@@ -78,13 +78,13 @@ JAVABINPATH_FOUND=1
 AC_CACHE_CHECK("java",ac_cv_prog_JAVA,JAVABINPATH_FOUND=0)
 AC_CACHE_CHECK("javac",ac_cv_prog_JAVAC,JAVABINPATH_FOUND=0)
 AC_CACHE_CHECK("javadoc",ac_cv_prog_JAVADOC,JAVABINPATH_FOUND=0)
-AC_CACHE_CHECK("javadoc images",ac_cv_prog_JAVADOCIMAGES,JAVABINPATH_FOUND=0)
+AC_CACHE_CHECK("javadoc images",ac_cv_prog_JAVADOC_IMAGES,JAVABINPATH_FOUND=0)
 AC_CACHE_CHECK("jar",ac_cv_prog_JAR,JAVABINPATH_FOUND=0)
 if test $JAVABINPATH_FOUND -eq 1; then
 	JAVA=$ac_cv_prog_JAVA;
 	JAVAC=$ac_cv_prog_JAVAC;
 	JAVADOC=$ac_cv_prog_JAVADOC;
-	JAVADOC_IMAGES=$ac_cv_prog_JAVADOCIMAGES;
+	JAVADOC_IMAGES=$ac_cv_prog_JAVADOC_IMAGES;
 	JAR=$ac_cv_prog_JAR;
 fi
 
@@ -114,12 +114,14 @@ fi
 JAVA=$JAVAPATH/java
 JAVAC=$JAVAPATH/javac
 JAVADOC=$JAVAPATH/javadoc
+JAVADOC_IMAGES=$JAVAPATH/images
 JAR=$JAVAPATH/jar
 dnl do the caching...
 echo "Using Java binaries from: "$JAVAPATH
 ac_cv_prog_JAVA=$JAVA;
 ac_cv_prog_JAVAC=$JAVAC;
 ac_cv_prog_JAVADOC=$JAVADOC;
+ac_cv_prog_JAVADOC_IMAGES=$JAVADOC_IMAGES;
 ac_cv_prog_JAR=$JAR;
 JAVABINPATH_FOUND=1
 done
