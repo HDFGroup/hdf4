@@ -311,15 +311,9 @@ or
     [.mfhdf.fortran.vms], [.mfhdf.ncdump],[.mfhdf.ncgen], and 
     [.mfhdf.dumper]. 
 
-    Linking the example minigzip may fail due to an unresolved 
-    symbol UNLINK. People from GZIP suggested to add the following at
-    the beginning of minigzip.c and indicated the this fix will be
-    included in zlib 1.0.
-
-   #ifdef VMS
-   #  define unlink delete
-   #endif
-
+    Create a subdirectory named 'testdir' in [.hdf.test], if there
+    is no such one existing, before running 'testhdf' in [.hdf.test]
+    This directory is used for the external element test.
 
     Windows '95 or Windows NT
     -------------------------
