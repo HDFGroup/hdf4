@@ -1894,6 +1894,12 @@ void hdf_close(handle)
         Vdetach(vg);
     }
 
+#ifdef QAK
+    /* Free dimension array if necessary */
+    if(handle->dims) 
+        NC_free_array(handle->dims); /* Might need to close Vdatas? -QAK */
+#endif /* QAK */
+    
 } /* hdf_close */
                 
 #endif /* HDF */
