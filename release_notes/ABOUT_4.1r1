@@ -42,8 +42,8 @@ o Attributes are now supported in both the vdata and vgroup
   the HDF library cannot read the new version vdatas and vgroups.
   A vdata/vgroup having attributes will become a new version 
   vdata/vgroup.  For more information, please refer to the file 
-  ../release_notes/vattr.txt, the man pages for the new functions, and 
-  the HDF 4.1 User's Guide.
+  ../release_notes/vattr.txt, the man pages for the new functions, 
+  and the HDF 4.1 User's Guide.
 
 o Data chunking is now supported in SD scientific data sets.  
   When data chunking is used, an n-dimensional SDS is stored 
@@ -74,6 +74,22 @@ o Due to certain limitations in the way compressed SDS datasets are stored,
 
   Please refer to the HDF 4.1 User's Guide for more information.
 
+o HDF now creates free format FORTRAN include files.  In order to make 
+  FORTRAN 90 programs be able to use HDF include files (*.inc), HDF4.1r1 
+  creates F90 versions of these files during the 'make' process on UNIX 
+  platforms, by replacing 'C' or 'c' in column 1 with '!'.  Continuation 
+  lines in hdf.inc have been eliminated. The F90 version files are named 
+  as hdf.f90, dffunc.f90 and netcdf.f90.
+
+o Several performance improvements have been added. Test programs on SPARC
+  20/Solaris 2.5 show that when creating an hdf file with 2500 3D (10x10x10)
+  float32 SDSs, the program execution speed is improved by 2.5 - 4.8 times,
+  and SDend is faster by 4.3 - 20 times.
+
+o A new function, SDsetfillmode, has been added.  It can be used to prevent 
+  SDwritedata from pre-filling the dataset with a user defined or default 
+  fill value, so that better performance can be obtained.
+
 o SGI has changed some compiler default settings in IRIX 6.2.
   We decided to explicitly define the settings of various ABI related
   options.  For the 64 bit OS ("uname -s" returns IRIX64), HDF uses
@@ -85,10 +101,6 @@ o SGI has changed some compiler default settings in IRIX 6.2.
   We decided to explicitly set it to "-n32 -mips3".  Therefore,
   applications linking with the HDF library must be compiled with
   the same explicit ABI options.
-
-o Several performance improvements have been added.  In addition, the 
-  HDF 4.1 User's Guide now contains a chapter on how to improve 
-  performance.
 
 o This will be the last release that we support the CM5.
 
@@ -106,8 +118,8 @@ o The _HDF_ENTIRE_VDATA variable has been changed to _HDF_VDATA.
 
 o You can now create an empty compressed SDS.
 
-  Please refer to the ../release_notes/bugs_fixed.txt file for other 
-  fixes in this release.
+  Please refer to the ../release_notes/bugs_fixed.txt file for changes 
+  in this release.
  
 Platforms Tested:
 ================
@@ -128,13 +140,12 @@ HDF 4.1 Release 1 has been tested on the following platforms:
   IRIX 6.4_64
   IRIX 6.4_n32
   Linux A.OUT 1.2.4
-  Linux ELF 1.2.13 (C only)
+  Linux ELF 2.0.27 (C only)
   Macintosh PowerPC (C only) 
   SP2 4.1
   Solaris 2.5
   Solaris_x86 2.5 (C only)
   SunOS 4.1.3
-  T3D 9.0.lai
   Windows NT/95 (C only)
 
 Known Problems:
@@ -149,10 +160,6 @@ o With the SD interface, you are unable to overwrite
 o There are no plans to add the DF24writeref function 
   to the DF24 interface.  This function will be removed
   from the documentation.
-
-o When running "make test" on OpenVMS, Test 3 (float32) of the 
-  chunking tests fails, and has therefore been commented out.
-
 
 Important Fixes:
 ===============
