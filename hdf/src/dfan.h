@@ -2,9 +2,14 @@
 $Header$
 
 $Log$
-Revision 1.1  1992/08/25 21:40:44  koziol
-Initial revision
+Revision 1.2  1992/12/18 15:45:00  mfolk
+Added defines for default label blocksize and default description
+blocksize, for when annotations get converted to linked block
+storage.
 
+ * Revision 1.1  1992/08/25  21:40:44  koziol
+ * Initial revision
+ *
 */
 /*------------------------------------------------------------------------------
  * File:    dfan.h
@@ -23,6 +28,9 @@ Initial revision
 
 #define DFAN_LABEL  0
 #define DFAN_DESC   1
+
+#define DFAN_LAB_BLKSIZE   64   /* default blksize to use for labels */
+#define DFAN_DESC_BLKSIZE 512   /* default blksize to use for descriptions */
 
 #define DFAN_DEFENTRIES 16          /* no of dir entries to add at a time */
 
