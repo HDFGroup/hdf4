@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.8  1992/05/18 22:11:07  sxu
+# Revision 1.9  1992/05/27 21:55:34  chouck
+# Added 'make clean'
+#
+# Revision 1.8  1992/05/18  22:11:07  sxu
 # added vset test programs
 #
 # Revision 1.7  1992/05/08  20:54:15  sxu
@@ -128,21 +131,21 @@
 # ##################################################################
 
 # ==> specify your machine
-MACHINE=SUN
+MACHINE=IBM6000
 
 # ==> specify your fortran compiler
-FC=f77 
+FC=xlf 
 FFLAGS=  -g
 
 # ==> specify your C compiler
-CC=cc
+CC=gcc
 CFLAGS=  -g -D${MACHINE} $(IFLAGS)
 
 # ==> where are your hdf.h, hdfi.h and vg.h files located?
 IFLAGS=   -I../include -I.
 
 # ==> where is your HDF library (libdf.a) located?
-LIBS= ../src/libdf.a
+LIBS= ../formal/libdf.a
 
 RM=/bin/rm
 RMFLAGS=-f
@@ -270,3 +273,5 @@ thextelt:     thextelt.c
 	$(CC) $(CFLAGS) -D$(MACHINE) thextelt.c $(LIBS) -o thextelt
 
 
+clean:
+	rm -f $(CTESTS) $(HTESTS)
