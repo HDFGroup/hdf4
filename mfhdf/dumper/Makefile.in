@@ -127,7 +127,7 @@ LD_NETCDF	= ../libsrc/libmfhdf.a
 OBJS		=  hdp.o hdp_list.o hdp_sds.o hdp_util.o hdp_vd.o hdp_vg.o hdp_rig.o show.o hdp_dump.o hdp_gr.o
 #LD_XDR		= @LD_XDR@
 LD_NETCDF	= -L../libsrc -lmfhdf
-LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) -lm $(JPEG_LIB) $(ZLIB_LIB)
+LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(LIBSX) $(JPEG_LIB) $(ZLIB_LIB)
 prefix		= ../../..
 GARBAGE		= $(PROGRAM) *.o
 
