@@ -528,12 +528,12 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
           printf("     %d attributes:  attr_tag/ref     attr_of_field\n",
                        nattrs);
           for (i=0; i<nattrs; i++)  {
-             if (vs_alist->findex != (int)_HDF_ENTIRE_VDATA)
+             if (vs_alist->findex != (int)_HDF_VDATA)
                  printf("     %d:               %d/%d               %d\n",
                  i, vs_alist->atag, vs_alist->aref,vs_alist->findex);
              else
                  printf("     %d:               %d/%d         %s\n",
-                 i, vs_alist->atag, vs_alist->aref, "ENTIRE_VDATA");
+                 i, vs_alist->atag, vs_alist->aref, "VDATA");
              vs_alist++;
          }
          return SUCCEED;
@@ -542,7 +542,7 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
       for (j=-1; j<vs->wlist.n; j++)  
       {	  int32 temp;
 
-	  temp = (j == -1) ? (int)_HDF_ENTIRE_VDATA : j;
+	  temp = (j == -1) ? (int)_HDF_VDATA : j;
           f_nattrs = VSfnattrs(vid, temp);
           if (f_nattrs == 0) continue;  /* no attr for this field */
           if (j == -1)
