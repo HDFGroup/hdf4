@@ -22,6 +22,7 @@ static char RcsId[] = "@(#)$Revision$";
 
  */
 #include "hdf.h"
+#include "hfile.h"
 #include "tproto.h"
 
 #define VDATA_COUNT  256   /* make this many Vdatas to check for memory leaks */
@@ -631,34 +632,42 @@ read_vset_stuff(void)
     VSdetach(vs1);
 
     /* testing VSsetexternalfile by reading the external file directly */
-    {   int fd, j;
+    {   hdf_file_t fd;
+        int j;
 	int32 ival;
 
 
-	if ((fd = open(EXTFNM, O_RDONLY)) < 0 ){
+	fd = HI_OPEN(EXTFNM, DFACC_RDONLY);
+	if (OPENERR(fd)){
 	    num_errs++;
 	    printf(">>> Reopen External file %s failed\n", EXTFNM);
 	}
 	else{
-	    status = read(fd, gbuf, 2*count*sizeof(int32));
+	    status = HI_READ(fd, gbuf, (2*count*sizeof(int32)));
+	    if (status == FAIL){
+		num_errs++;
+		printf(">>> Reading External file data failed\n");
+	    }
+	    else{
 
-	    j = 0;
-	    for (i = 0; i < 2 * count; i++)
-	    {
-		ival = 0xff & gbuf[j++];
-		ival = ival<<8 | (0xff & gbuf[j++]);
-		ival = ival<<8 | (0xff & gbuf[j++]);
-		ival = ival<<8 | (0xff & gbuf[j++]);
-
-		if (ival != i)
+		j = 0;
+		for (i = 0; i < 2 * count; i++)
 		{
-		    num_errs++;
-		    printf(">>> External value %d was expecting %d got %d\n",
-			(int) i, (int) i, (int) ival);
+		    ival = 0xff & gbuf[j++];
+		    ival = ival<<8 | (0xff & gbuf[j++]);
+		    ival = ival<<8 | (0xff & gbuf[j++]);
+		    ival = ival<<8 | (0xff & gbuf[j++]);
+
+		    if (ival != i)
+		    {
+			num_errs++;
+			printf(">>> External value %d was expecting %d got %d\n",
+			    (int) i, (int) i, (int) ival);
+		    }
 		}
 	    }
+	    HI_CLOSE(fd);
 	}
-	close(fd);
     }
 
 	    
