@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1992/08/24 21:59:44  sxu
-*** empty log message ***
+Revision 1.7  1992/09/11 18:31:21  chouck
+Assorted MAC munging
 
+ * Revision 1.6  1992/08/24  21:59:44  sxu
+ * *** empty log message ***
+ *
  * Revision 1.5  1992/08/18  19:49:46  chouck
  * Added casts to string calls
  *
@@ -347,9 +350,7 @@ int dump(length, offset, format, raw_flag)
     int32 eltLength;
     register int32 i;
     register int len = 0;
-    register char *posn;
     char *data;
-    char *tmpFile;
 
     if (!fileOpen()) {
 	noFile();
@@ -374,23 +375,6 @@ int dump(length, offset, format, raw_flag)
     /* adjust the length if it falls beyond the end of the element */
     if (length == 0 || length > (eltLength - offset))
 	length = eltLength - offset;
-
-#ifdef USE_OD
-    /* get a temp file name to put the data for od to dump */
-    getTmpName(&tmpFile);
-    if (writeToFile(tmpFile, data + offset, length) < 0) {
-	fprintf(stderr, "Unable to complete dump.\n");
-	return HE_FAIL;
-    }
-
-    /* do an od on the tmp file */
-    od(format, tmpFile);
-
-    /* clean up */
-    removeFile(tmpFile);
-    free(tmpFile);
-
-#else
 
     /*
      * Dump the data to the console
@@ -542,10 +526,6 @@ int dump(length, offset, format, raw_flag)
         break;
 
     }
-
-
-
-#endif
 
     free(data);
 
@@ -951,6 +931,9 @@ void prompt(void)
 void prompt()
 #endif
 {
+
+#ifndef MAC
+
     if (!he_nestLevel)
 	printf("hdfed%s ", he_prompt);
     else
@@ -961,6 +944,9 @@ void prompt()
 	for (i = he_nestLevel; i; i--) putchar(he_nestChar);
 	putchar(' ');
     }
+
+#endif /* MAC */
+
 }
 
 
@@ -980,7 +966,7 @@ int getLine(p)
     do
     {
 	if (!he_batch && (ch != EOF)) prompt();
-	ch = getchar();
+	ch = getc(stdin);
 	if (ch == COMMENT)
 	{
 	    /* Skip this line */
@@ -1495,7 +1481,7 @@ HE_PRED *parsePred(argc, argv)
 		}
 		else if (key & HE_COMPARATOR)
 		{
-		    pred[predNum].comp =
+		    pred[predNum].Comp =
 			key & ~(HE_PREDICATE | HE_COMPARATOR);
 		    state = 2;
 		}
@@ -1560,7 +1546,7 @@ int satPred(desc, pred)
 		fprintf(stderr, "Argument to tag predicate not a number.");
 		return NO;
 	    }
-	    if (!numCompare((int)desc->tag, pred[i].comp, pred[i].arg.i))
+	    if (!numCompare((int)desc->tag, pred[i].Comp, pred[i].arg.i))
 		return NO;
 	    break;
 	case HEK_REF:
@@ -1569,7 +1555,7 @@ int satPred(desc, pred)
 		fprintf(stderr, "Argument to ref predicate not a number.");
 		return NO;
 	    }
-	    if (!numCompare((int)desc->ref, pred[i].comp, pred[i].arg.i))
+	    if (!numCompare((int)desc->ref, pred[i].Comp, pred[i].arg.i))
 		return NO;
 	    break;
 	case HEK_SUCCEED:
@@ -1612,13 +1598,13 @@ char *nextToken(p)
 }
     
 #ifdef PROTOTYPE
-int numCompare(int n1, int comp, int n2)
+int numCompare(int n1, int Comp, int n2)
 #else
-int numCompare(n1, comp, n2)
-    int n1, comp, n2;
+int numCompare(n1, Comp, n2)
+    int n1, Comp, n2;
 #endif
 {
-    switch(comp)
+    switch(Comp)
     {
     case HEK_EQUAL:
 	return (n1 == n2);

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1992/08/24 21:59:44  sxu
-*** empty log message ***
+Revision 1.6  1992/09/11 18:31:21  chouck
+Assorted MAC munging
 
+ * Revision 1.5  1992/08/24  21:59:44  sxu
+ * *** empty log message ***
+ *
  * Revision 1.4  1992/08/18  19:56:09  chouck
  * Fixed some casting problems for SGI -ansi
  *
@@ -333,7 +336,7 @@ int bigImg(targ, src)
     unsigned char *targ,*src;
 #endif
 {
-    register i,j,line;
+    register int i,j,line;
     register unsigned char *p,*q,*oldq;
 
     for (line = 0; line < ydim; line++) {

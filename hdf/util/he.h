@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.5  1992/08/18 19:49:33  chouck
-Include string.h
+Revision 1.6  1992/09/11 18:31:21  chouck
+Assorted MAC munging
 
+ * Revision 1.5  1992/08/18  19:49:33  chouck
+ * Include string.h
+ *
  * Revision 1.4  1992/07/31  21:10:24  chouck
  * Use in-house print routines rather than fork() a call to od
  *
@@ -130,7 +133,7 @@ typedef struct he_cmd {
 } HE_CMD;
 
 typedef struct he_pred {
-    int key, comp, argType;
+    int key, Comp, argType;
     union {
 	int i;
 	char *str;
