@@ -69,7 +69,7 @@ char**av;
   nvg=0;
   while( (vgid = Vgetid(f,vgid)) != -1) {
     vg = Vattach(f,vgid,"r");
-    if(vg==NULL) {
+    if(vg == FAIL) {
       printf("cannot open vg id=%d\n",vgid);
     }
     Vinquire(vg,&n, vgname);
@@ -87,7 +87,7 @@ char**av;
       if (vstag==VSDESCTAG)  {  
         vs = VSattach(f,vsid,"r");
 
-        if(vs==NULL) {
+        if(vs == FAIL) {
           printf("cannot open vs id=%d\n",vsid);
           continue;
         }
@@ -110,7 +110,7 @@ char**av;
           /* ------ V G R O U P ----- */
           vgt = Vattach(f,vsid,"r");
           
-          if(vgt==NULL) {
+          if(vgt== FAIL) {
             printf("cannot open vg id=%d\n",vsid);
             continue;
           }
