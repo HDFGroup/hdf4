@@ -31,7 +31,7 @@ CFLAGS=-O
 # Fortran compilier
 FC = NONE
 #FC = frt
-FFLAGS = -Ab -J -Sw
+FFLAGS = -Ab -Sw
 
 # Name of achive randomizer, usually ranlib (use 'true' if non-existant)
 RANLIB = true
