@@ -27,7 +27,11 @@
 #define MFAN_H
 
 #include "hdf.h"
+#ifdef HAVE_RBTREE
 #include "rb.h"  /* Red-Black tree routines */
+#else /* use tbbt */
+#include "tbbt.h"
+#endif /* use tbbt */
 
 /* enumerated types of the varous annotation types */
 typedef enum 
@@ -67,15 +71,23 @@ typedef struct ANfile
   char    *filename;      /* File name */
   int32   access_mode;    /* access mode this file was opened with */
   intn    an_num[4];      /* Holds number of annotations found of each type */
+#ifdef HAVE_RBTREE
   Rb_node an_tree[4];     /* Red-Black tree of annotations in file 
                            * i.e. file/data labels and descriptions */
+#else  /* use tbbt */
+  TBBT_TREE *an_tree[4];
+#endif /* use tbbt */
 } ANfile;
 
 #ifdef MFAN_C
 /* We are in annotation source file */
-
-PRIVATE Rb_node ANfilelist = NULL; /* List of open files */
-PRIVATE Rb_node ANnodelist = NULL; /* List of all anotations across files */
+#ifdef HAVE_RBTREE
+EXPORT Rb_node ANfilelist = NULL; /* List of open files */
+EXPORT Rb_node ANnodelist = NULL; /* List of all anotations across files */
+#else /* use tbbt */
+EXPORT TBBT_TREE *ANfilelist = NULL; /* List of open files */
+EXPORT TBBT_TREE *ANnodelist = NULL; /* List of all anotations across files */
+#endif /* use tbbt */
 PRIVATE intn    num_anns   = 0;    /* total number of annotations 
                                       i.e. all files */
 
@@ -86,7 +98,10 @@ PRIVATE intn    num_anns   = 0;    /* total number of annotations
  *  -----------------------------*/
 #define AN_CREATE_KEY(t,r) ((((int32)t & 0xff) << 16) | r)
 #define AN_KEY2REF(k)      ((uint16)((int32)k & 0xff))
+#define AN_KEY2TYPE(k)     ((int32)((int32)k >> 16))
+#if 0
 #define AN_KEY2TYPE(k)     ((int32)((int32)k & 0xff00) >> 16)
+#endif
 
 #else /* !MFAN_C */
 /* We dont't EXPORT any global variables */
