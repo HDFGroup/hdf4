@@ -170,6 +170,7 @@ intn write_vattrs(void)
    int32 fid, vgid, vsid;
    int32 vsref, vgref;
    int32 fldindex, vsversion;
+   intn  n_flds;
    
     /* add attrs to the 1 vg */
    if (FAIL == (fid = Hopen(FILENAME, DFACC_RDWR, -1))) {
@@ -230,6 +231,12 @@ intn write_vattrs(void)
          num_errs++;
          printf(">>> Wrong version, should be 3, got %d \n",
                      vsversion);
+      }
+   /* check number of fields */
+   if (2 != (n_flds = VSQuerynfields(vsid)))  {
+         num_errs++;
+         printf(">>> Wrong number of fields, should be 2, got %d.\n",
+                      n_flds);
       }
    /* search for non-existing field  */
    if (FAIL != VSfindex(vsid, (char *)FLDNAME0, &fldindex)) {
@@ -446,7 +453,7 @@ intn read_vattrs(void)
    int32 fid, vgid, vsid, vgref, vsref;
    intn n_vgattrs, n_vsattrs, n_fldattrs;
    intn  iattrindex, i;
-   int32 i_type, i_count, iversion;
+   int32 i_type, i_count, i_size, iversion;
    char iname[FIELDNAMELENMAX+1], iclass[FIELDNAMELENMAX+1];
    char iattrname[FIELDNAMELENMAX+1];
 
@@ -482,12 +489,13 @@ intn read_vattrs(void)
          printf(">>> attname1 should be 0th attr of vgname0, ");
          printf("not %d.\n", iattrindex);
       }
-   if (FAIL == Vattrinfo(vgid, 0, iattrname, &i_type,&i_count) ||
+   if (FAIL == Vattrinfo(vgid,0,iattrname,&i_type,&i_count,&i_size) ||
        HDstrncmp(iattrname, ATTNAME1, HDstrlen(ATTNAME1)) != 0 ||
-       i_type != DFNT_UINT32 || i_count != 2)   {
+       i_type != DFNT_UINT32 || i_count != 2 ||
+       i_size != i_count * DFKNTsize(DFNT_UINT32 | DFNT_NATIVE))   {
          num_errs++;
          printf(">>> Wrong attrinfo for attname1 of vgname0; \
-                     got %8c %d %d.\n", iattrname, i_type,i_count);
+             got %s %d %d %d.\n", iattrname, i_type,i_count,i_size);
       }
    if (FAIL == Vgetattr(vgid, 0, iattr1) ||
        iattr1[0] != attr1[2] || iattr1[1] != attr1[3])  {
@@ -497,12 +505,13 @@ intn read_vattrs(void)
                      iattr1[0], iattr1[1], attr1[2], attr1[3]);
       }
 
-   if (FAIL == Vattrinfo(vgid, 1, iattrname, &i_type,&i_count) ||
+   if (FAIL == Vattrinfo(vgid,1,iattrname,&i_type,&i_count,&i_size) ||
        HDstrncmp(iattrname, ATTNAME2,HDstrlen(ATTNAME2)) != 0 ||
-       i_type != DFNT_UINT16 || i_count != 2)   {
+       i_type != DFNT_UINT16 || i_count != 2 ||
+       i_size != i_count * DFKNTsize(DFNT_UINT16 | DFNT_NATIVE))   {
          num_errs++;
          printf(">>> Wrong attrinfo for attname2 of vgname0; \
-                     got %s %d %d.\n", iattrname, i_type,i_count);
+            got %s %d %d %d.\n", iattrname, i_type,i_count,i_size);
       }
    if (FAIL == Vgetattr(vgid, 1, iattr2) ||
        iattr2[0] != attr2[0] || iattr2[1] != attr2[1])  {
@@ -565,13 +574,14 @@ intn read_vattrs(void)
    }
    /* read the 3rd attr of fld 0. The attr is char type. */
    if ((FAIL == VSattrinfo(vsid, 0, 2, iattrname,
-               &i_type, &i_count)) ||
+               &i_type, &i_count, &i_size)) ||
                (HDstrcmp(iattrname, ATTNAME9) != 0) ||
                (i_type != DFNT_CHAR8) ||
-               (i_count != 5)) {
+               (i_count != 5) || (i_size != 5)) {
         num_errs++;
         printf(">>> Wrong attrinfo for attname9 of vsname0 fld0; ");
-        printf(" got  %s %d %d.\n", iattrname, i_type,i_count);
+        printf(" got  %s %d %d %d.\n", iattrname, i_type,
+                 i_count, i_size);
    }
    if (FAIL == VSgetattr(vsid, 0, 2, iattr3) ||
        iattr3[0] != attr3[0] || iattr3[1] != attr3[1] ||
@@ -623,12 +633,13 @@ intn read_vattrs(void)
         printf(" should fail.\n");
    }
    /* use wrong findex, should fail */
-   if (FAIL != VSattrinfo(vsid, 4, 0, iattrname, &i_type, &i_count)) {
+   if (FAIL != VSattrinfo(vsid, 4, 0, NULL, &i_type, &i_count,
+                          &i_size)) {
         num_errs++;
         printf(">>> Vdata vsname1 has only 2 fields, should fail.\n");
    }
    /* use wrong attrindex, should fail */
-   if (FAIL != VSattrinfo(vsid, 1, 3, iattrname, &i_type, &i_count)) {
+   if (FAIL != VSattrinfo(vsid, 1, 3, iattrname, &i_type, &i_count, NULL)) {
         num_errs++;
         printf(">>> Field1 of vsname1 has only 1 attr, should fail.\n");
    }
@@ -651,10 +662,10 @@ intn read_vattrs(void)
                      iattrindex);
    }
    if ((FAIL == VSattrinfo(vsid, -1, iattrindex, iattrname, 
-               &i_type, &i_count)) || 
+               &i_type, &i_count, &i_size)) || 
                (HDstrcmp(iattrname, ATTNAME4) != 0) ||
-               (i_type != DFNT_FLOAT32) ||
-               (i_count != 1)) {
+               (i_type != DFNT_FLOAT32) || (i_count != 1) || 
+               (i_size != DFKNTsize(DFNT_FLOAT | DFNT_NATIVE))) {
         num_errs++;
         printf(">>> Wrong attrinfo for attname4 of vdata vsname1; ");
         printf(" got  %s %d %d.\n", iattrname, i_type,i_count);
@@ -678,10 +689,10 @@ intn read_vattrs(void)
         printf("  not %d.\n", iattrindex);
    }
    if ((FAIL == VSattrinfo(vsid, 0, iattrindex, iattrname,
-               &i_type, &i_count)) ||
+               &i_type, &i_count, &i_size)) ||
                (HDstrcmp(iattrname, VSNAME1) != 0) ||
-               (i_type != DFNT_FLOAT64) ||
-               (i_count != 1)) {
+               (i_type != DFNT_FLOAT64) || (i_count != 1) || 
+               (i_size != DFKNTsize(DFNT_FLOAT64 | DFNT_NATIVE))) {
         num_errs++;
         printf(">>> Wrong attrinfo for VSNAME1 of fld 0 of vdata vsname1; ");
         printf(" got  %s %d %d.\n", iattrname, i_type,i_count);
