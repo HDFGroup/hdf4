@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.34  1993/09/11 21:00:25  koziol
-Defined alternate HDstrdup routine for VMS and fixed a couple of HDstrdup
-mistakes.
+Revision 1.35  1993/09/15 19:41:16  georgev
+Added #define for Mac for local HDstrdup().
 
+ * Revision 1.34  1993/09/11  21:00:25  koziol
+ * Defined alternate HDstrdup routine for VMS and fixed a couple of HDstrdup
+ * mistakes.
+ *
  * Revision 1.33  1993/09/11  18:07:55  koziol
  * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
  * cleaned up some goofy string manipulations in various places.
@@ -625,15 +628,15 @@ Please check your Makefile.
 #define GOT_MACHINE 1
 #define PROTOTYPE
 
-#include <memory.h>             /* malloc stuff for MPW 3.0 */
-#include <fcntl.h>              /* unbuffered IO stuff for MPW 3.0 */
+#include <memory.h>             /* malloc stuff for MPW */
+#include <fcntl.h>              /* unbuffered I/O stuff for MPW */
 #include <string.h>
 #include <stdlib.h>
-#ifdef THINK_C                  /* for LightSpeed C */
+#ifdef THINK_C                  /* for THINK C */
 #include <unix.h>
 #define isascii(c)  (isprint(c) || iscntrl(c))
-#else /*THINK_C                   MPW, possibly others */
-#include <Files.h>              /* for unbuffered i/o stuff */
+#else  /* MPW, possibly others */
+#include <Files.h>              /* for unbuffered I/O stuff */
 #endif /*THINK_C*/
 #ifndef ABSOFT
 #define DF_CAPFNAMES            /* fortran names are in all caps */
@@ -1158,7 +1161,7 @@ extern uint8 FAR *DFtbuf;
 #  define HDstrncpy(s1,s2,n)    (strncpy((s1),(s2),(n)))
 #  define HDstrchr(s,c)    (strchr((s),(c)))
 /* Can't use on PCs. strdup() uses malloc() and HDgetspace uses halloc() */
-#if !(defined VMS | (defined PC & !defined PC386))
+#if !(defined VMS | (defined PC & !defined PC386) | defined macintosh)
 #  define HDstrdup(s)      (strdup((s)))
 #endif /* !(VMS | PC) */
 #endif /* WIN3 */
