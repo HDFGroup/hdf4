@@ -145,7 +145,7 @@ test_ref_limits()
     MESSAGE(6, printf("Testing reference # limits\n"););
     MESSAGE(7, printf("Writing out data\n"););
     /* Write out MAX_REF number of data items for each tag */
-    fid=Hopen(TESTREF_NAME, DFACC_ALL, 512);
+    fid=Hopen(TESTREF_NAME, DFACC_CREATE, 512);
     CHECK(fid, FAIL, "Hopen");
 
     if(fid!=FAIL)
