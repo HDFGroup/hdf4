@@ -172,16 +172,6 @@
 #endif	/* NC_OLD_FILLVALUES above */
 
 /*
- * Added feature. The above values are defaults.
- * If you wish a variable to use a different value than the above
- * defaults, create an attribute with the same type as the variable
- * and the following reserved name. The value you give the attribute
- * will be used as the fill value for that variable.
- */
-#define _FillValue	"_FillValue"
-
-
-/*
  *  masks for the struct NC flags field; passed in as 'mode' arg to
  * nccreate and ncopen.
  *
@@ -217,7 +207,7 @@
  */
 #define NC_GLOBAL -1
 
-
+#ifndef HDF
 /*
  * This can be as large as the maximum number of stdio streams
  * you can have open on your system.
@@ -234,6 +224,21 @@
 #define MAX_NC_VARS 5000	 /* max variables per file */
 #define MAX_NC_NAME 256		 /* max length of a name */
 #define MAX_VAR_DIMS 32          /* max per variable dimensions */
+
+/*
+ * Added feature. 
+ * If you wish a variable to use a different value than the above
+ * defaults, create an attribute with the same type as the variable
+ * and the following reserved name. The value you give the attribute
+ * will be used as the fill value for that variable.
+ */
+#define _FillValue	"_FillValue"
+
+#else /* HDF */
+
+#include "hlimits.h"  /* Hard coded constants for HDF library */
+
+#endif /* HDF */
 
 #ifdef USE_ENUM
 /*
@@ -354,6 +359,8 @@ extern int ncopts ;	/* default is (NC_FATAL | NC_VERBOSE) */
 #else
 #   define	PROTO(x)	()
 #endif
+
+#include "hdf2netcdf.h"
 
 #ifdef __cplusplus
 extern "C" {
