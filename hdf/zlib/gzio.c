@@ -149,7 +149,7 @@ local gzFile gz_open (path, mode, fd)
     s->stream.avail_out = Z_BUFSIZE;
 
     errno = 0;
-    s->file = fd < 0 ? FOPEN(path, mode) : fdopen(fd, mode);
+    s->file = fd < 0 ? FOPEN(path, mode) : (FILE *)fdopen(fd, mode);
 
     if (s->file == NULL) {
         return destroy(s), (gzFile)Z_NULL;
