@@ -707,10 +707,12 @@ NC_var *vp;
     }
     byte_count = to_do * vp->HDFsize;       /* external buffer size */
 
-    if(!attr) {
-        NC_arrayfill((VOIDP)tValues, len, vp->type);
-    } else {
-        HDmemfill((VOIDP)tValues,(*attr)->data->values,vp->szof,to_do);
+    if ((handle->flags & NC_NOFILL) == 0) { /* fill the array */
+       if(!attr) {
+            NC_arrayfill((VOIDP)tValues, len, vp->type);
+       } else {
+            HDmemfill((VOIDP)tValues,(*attr)->data->values,vp->szof,to_do);
+       }
     }
     
     /* --------------------------------------
@@ -742,38 +744,39 @@ NC_var *vp;
 
     if(vp->aid == FAIL) return FALSE;
 
+    if ((handle->flags & NC_NOFILL) == 0) { /* fill the array */
     /* make sure our tmp buffer is big enough to hold everything */
-    if(tBuf_size < byte_count) {
-        if(tBuf) HDfree((VOIDP)tBuf);
-        tBuf_size = byte_count;
-        tBuf = (int8 *) HDmalloc(byte_count);
-        if (tBuf == NULL) 
-          {
-            tBuf_size=0;
-            return FALSE;
-          } /* end if */
-    }
+        if(tBuf_size < byte_count) {
+            if(tBuf) HDfree((VOIDP)tBuf);
+            tBuf_size = byte_count;
+            tBuf = (int8 *) HDmalloc(byte_count);
+            if (tBuf == NULL) 
+              {
+                tBuf_size=0;
+                return FALSE;
+              } /* end if */
+        }
 
     /*
      * Do numerical conversions
      */
-    DFKsetNT(vp->HDFtype);
-    DFKnumout((uint8 *) tValues, tBuf, (uint32) to_do, 0, 0);
+        DFKsetNT(vp->HDFtype);
+        DFKnumout((uint8 *) tValues, tBuf, (uint32) to_do, 0, 0);
 
     /*
      * Write out the values
      */
-    done = 0;
-    while(done != nvalues) {
-        status = Hwrite(vp->aid, byte_count, (uint8 *) tBuf);
-        if(status != byte_count) return FALSE;
-        done += to_do;
-        if(nvalues - done < to_do) {
-            to_do = nvalues - done;
-            byte_count = to_do * vp->HDFsize;
+        done = 0;
+        while(done != nvalues) {
+            status = Hwrite(vp->aid, byte_count, (uint8 *) tBuf);
+            if(status != byte_count) return FALSE;
+            done += to_do;
+            if(nvalues - done < to_do)  {
+                to_do = nvalues - done;
+                byte_count = to_do * vp->HDFsize;
+            }
         }
-    }
-
+    }  /* NC_NOFILL */
     if(Hendaccess(vp->aid) == FAIL) return FALSE;
 
     /* if it is a record var might as well make it linked blocks now */
