@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/05/31 15:30:06  mfolk
-Changed type of rank and dims[2] from int to int32 for Convex.
+Revision 1.5  1992/07/09 16:07:09  chouck
+Added header
 
+ * Revision 1.4  1992/05/31  15:30:06  mfolk
+ * Changed type of rank and dims[2] from int to int32 for Convex.
+ *
  * Revision 1.3  1992/05/28  15:12:18  chouck
  * Made all test files have thr string '.hdf' somewhere in their name
  *
@@ -24,6 +27,19 @@ Changed type of rank and dims[2] from int to int32 for Convex.
  * Initial revision
  *
 */
+
+/***********************************************************
+*
+* Program to test use of native mode number types in SDS.
+* Creates arrays of all types.
+* Stores arrays in individual files and reads them back.
+* Stores all arrays in one file and reads them back.
+*
+* NOTE: Default HDF mode not tested in this program. See tsdnt.c
+*       for same tests applied to default mode.
+*
+*************************************************************/
+
 #include "hdf.h"
 #include "dfsd.h"
 
@@ -73,9 +89,9 @@ int main()
     printf("Testing arrays in individual files...\n");
 
     DFSDsetNT(DFNT_NFLOAT64);
-    err = DFSDadddata("con.hdf.00", rank, dims, f64);
+    err = DFSDadddata("con00.hdf", rank, dims, f64);
     printf("Write: %d     ", err);		
-    err = DFSDgetdata("con.hdf.00", rank, dims, tf64);
+    err = DFSDgetdata("con00.hdf", rank, dims, tf64);
     HEprint(stderr, 0);
     printf("Read: %d\n", err);
     err = 0;
@@ -93,9 +109,9 @@ int main()
 	printf("Test passed for float64 array.\n");	
     
     DFSDsetNT(DFNT_NFLOAT32);
-    err = DFSDadddata("con.hdf.0", rank, dims, f32);
+    err = DFSDadddata("con0.hdf", rank, dims, f32);
     printf("Write: %d     ", err);		
-    err = DFSDgetdata("con.hdf.0", rank, dims, tf32);
+    err = DFSDgetdata("con0.hdf", rank, dims, tf32);
     HEprint(stderr, 0);
     printf("Read: %d\n", err);
     err = 0;
@@ -114,9 +130,9 @@ int main()
     
 
     DFSDsetNT(DFNT_NINT8);
-    err = DFSDadddata("con.hdf.1", rank, dims, i8);
+    err = DFSDadddata("con1.hdf", rank, dims, i8);
     printf("Write: %d     ", err);
-    err = DFSDgetdata("con.hdf.1", rank, dims, ti8);
+    err = DFSDgetdata("con1.hdf", rank, dims, ti8);
     printf("Read: %d\n", err);
     err = 0;
     for (i=0; i<10; i++)
@@ -133,9 +149,9 @@ int main()
 	printf("Test passed for int8 array.\n");
 
     DFSDsetNT(DFNT_NUINT8);
-    err = DFSDadddata("con.hdf.2", rank, dims, ui8);
+    err = DFSDadddata("con2.hdf", rank, dims, ui8);
     printf("Write: %d     ", err);
-    err = DFSDgetdata("con.hdf.2", rank, dims, tui8);
+    err = DFSDgetdata("con2.hdf", rank, dims, tui8);
     printf("Read: %d\n", err);
     err = 0;
     for (i=0; i<10; i++) {
@@ -153,9 +169,9 @@ int main()
 	printf("Test passed for uint8 array.\n");
 
     DFSDsetNT(DFNT_NINT16);
-    err = DFSDadddata("con.hdf.3", rank, dims, i16);
+    err = DFSDadddata("con3.hdf", rank, dims, i16);
     printf("Write: %d     ", err);
-    err = DFSDgetdata("con.hdf.3", rank, dims, ti16);
+    err = DFSDgetdata("con3.hdf", rank, dims, ti16);
     printf("Read: %d\n", err);
     err = 0;
     for (i=0; i<10; i++)
@@ -172,9 +188,9 @@ int main()
 	printf("Test passed for int16 array.\n");
 
     DFSDsetNT(DFNT_NUINT16);
-    err = DFSDadddata("con.hdf.4", rank, dims, ui16);
+    err = DFSDadddata("con4.hdf", rank, dims, ui16);
     printf("Write: %d     ", err);
-    err = DFSDgetdata("con.hdf.4", rank, dims, tui16);
+    err = DFSDgetdata("con4.hdf", rank, dims, tui16);
     printf("Read: %d\n", err);
     err = 0;
     for (i=0; i<10; i++)
@@ -191,9 +207,9 @@ int main()
 	printf("Test passed for uint16 array.\n");
 
     DFSDsetNT(DFNT_NINT32);
-    err = DFSDadddata("con.hdf.5", rank, dims, i32);
+    err = DFSDadddata("con5.hdf", rank, dims, i32);
     printf("Write: %d     ", err);
-    err = DFSDgetdata("con.hdf.5", rank, dims, ti32);
+    err = DFSDgetdata("con5.hdf", rank, dims, ti32);
     printf("Read: %d\n", err);
     err = 0;
     for (i=0; i<10; i++)
@@ -210,9 +226,9 @@ int main()
 	printf("Test passed for int32 array.\n");
 
     DFSDsetNT(DFNT_NUINT32);
-    err = DFSDadddata("con.hdf.6", rank, dims, ui32);
+    err = DFSDadddata("con6.hdf", rank, dims, ui32);
     printf("Write: %d     ", err);
-    err = DFSDgetdata("con.hdf.6", rank, dims, tui32);
+    err = DFSDgetdata("con6.hdf", rank, dims, tui32);
     printf("Read: %d\n", err);
     err = 0;
     for (i=0; i<10; i++) {
