@@ -7507,6 +7507,7 @@ rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
 
 case "$host" in
   alpha-*-*)            BAR="alpha"       ;;
+  alphaev56-*-*)        BAR="alpha"       ;;
   alphaev68-*-*)        BAR="alpha"       ;;
   mips*-dec-ultrix*)    BAR="dec"         ;;
   mips*-sgi-irix6.*)    BAR="irix6"       ;;
