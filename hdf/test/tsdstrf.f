@@ -2,9 +2,13 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.2  1992/07/09 19:39:35  chouck
-C rank was declared twice
+C Revision 1.3  1992/08/09 19:47:09  chouck
+C Changed add-data to put-data.  Increased size of arrays strings are
+C returned in to avoid memory over-writes.
 C
+c Revision 1.2  1992/07/09  19:39:35  chouck
+c rank was declared twice
+c
 c Revision 1.1  1992/07/08  22:15:59  sxu
 c Initial revision
 c
@@ -18,13 +22,13 @@ C characters of output and input strings in subroutine compare()
 
       integer rank, i, j, ret, err, num_failed
       integer dims(2)
-      integer dssnt, dssdims, dssdast, dssdist, dsadata
+      integer dssnt, dssdims, dssdast, dssdist, dspdata
       integer dsgdast, dsgdist, dsgdata, DFNT_NFLOAT32
       real    f32(10,10), inf32(10,10)
       character*15 datalabel, dataunit, datafmt, coordsys
       character*15 dimlabels(2), dimunits(2), dimfmts(2)
-      character*15 indatalabel, indataunit, indatafmt, incoordsys
-      character*15 indimlabels(2), indimunits(2), indimfmts(2)
+      character*16 indatalabel, indataunit, indatafmt, incoordsys
+      character*16 indimlabels(2), indimunits(2), indimfmts(2)
       character*15 fn
 
       DFNT_NFLOAT32 = 4096+5
@@ -36,11 +40,11 @@ C characters of output and input strings in subroutine compare()
       datafmt = 'Datafmt'
       coordsys = 'Coordsys'
       dimlabels(1) = 'f_dim1_label_b'
-      dimunits(1) = 'f_dim1_unit_b'
-      dimfmts(1) = 'f_dim1_fmt_b'
+      dimunits(1) =  'f_dim1_unit_b '
+      dimfmts(1) =   'f_dim1_fmt_b  '
       dimlabels(2) = 'f_dim2_label_a'
-      dimunits(2) = 'f_dim2_unit_a'
-      dimfmts(2) = 'f_dim2_fmt_a'
+      dimunits(2) =  'f_dim2_unit_a '
+      dimfmts(2) =   'f_dim2_fmt_a  '
       fn = 'sdstrsf.hdf'
 
       err = 0
@@ -64,7 +68,7 @@ C characters of output and input strings in subroutine compare()
       err = err + ret
       ret = dssdist(2, dimlabels(2), dimunits(2), dimfmts(2))
       err = err + ret
-      ret = dsadata(fn, rank,dims, f32)
+      ret = dspdata(fn, rank,dims, f32)
       err = err + ret
 
       print *, 'Test strings written so far'
@@ -108,15 +112,11 @@ C Note, outstring and instring are of length 14 instead of 15.
 C
  
       if (outstring .ne. instring) then
-          print *, 'Test failed for ', outstring
-          print *, 'input string= ', instring
+          print *, 'Test failed for <', outstring,'>'
+          print *, '      HDF says= <', instring,'>'
           num= num+ 1
       else
           print *, 'Test passed for ', outstring
       endif
       return
       end
-
-
-
-  
