@@ -3356,7 +3356,7 @@ done:
   /* Normal function cleanup */
 
   return ret_value;
-}	/* Hsync */
+}	/* HIsync */
 
 /*--------------------------------------------------------------------------
 NAME

@@ -172,7 +172,11 @@ PABLO_SRC=$(srcdir)/../pablo
 FMPOOL_INC=$(srcdir)/../fmpool
 FMPOOL_SRC=$(srcdir)/../fmpool
 
-ALL_CFLAGS = -I. $(CFLAGS) $(FMPOOL_FLAGS) -I$(JPEGINC)
+# ==> specify where to find the gzip zlib include files and library
+ZLIBINC=$(srcdir)/../zlib
+ZLIBLIB=$(srcdir)/../zlib
+
+ALL_CFLAGS = -I. $(CFLAGS) $(FMPOOL_FLAGS) -I$(JPEGINC) -I$(ZLIBINC)
 LINTFLAGS=
 SHAR=shar
 ARCHIVE=hdf.shar
@@ -452,7 +456,7 @@ tbbt.o: vproto.h tbbt.h $(FRC)
 hdfalloc.o: hdf.h hlimits.h hdfi.h  hbitio.h
 hdfalloc.o: hcomp.h herr.h hproto.h vproto.h hfile.h $(FRC)
 hcomp.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
-hcomp.o: vproto.h hfile.h hcompi.h mstdio.h cnone.h crle.h cnbit.h cskphuff.h $(FRC)
+hcomp.o: vproto.h hfile.h hcompi.h mstdio.h cnone.h crle.h cnbit.h cskphuff.h cdeflate.h $(FRC)
 crle.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 crle.o: vproto.h hfile.h hcompi.h mstdio.h crle.h  $(FRC)
 cnbit.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
@@ -463,6 +467,8 @@ cnone.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 cnone.o: vproto.h hfile.h hcompi.h mstdio.h cnone.h $(FRC)
 cskphuff.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 cskphuff.o: vproto.h hfile.h hcompi.h mstdio.h cskphuff.h $(FRC)
+cdeflate.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+cdeflate.o: vproto.h hfile.h hcompi.h mstdio.h cdeflate.h $(FRC)
 hblocks.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 hblocks.o: vproto.h hfile.h $(FRC)
 mfan.o: hdf.h hlimits.h hdfi.h hbitio.h hcomp.h herr.h hproto.h

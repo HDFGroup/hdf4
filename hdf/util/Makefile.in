@@ -131,10 +131,14 @@ PABLO_HINC= $(srcdir)/../pablo
 FMPOOL_INC=$(srcdir)/../fmpool
 FMPOOL_SRC=$(srcdir)/../fmpool
 
+# ==> where is your zlib library (libz.a) located?
+ZLIBLIB=$(srcdir)/../zlib
+ZLIBINC=$(srcdir)/../zlib
+
 #Where are the utility includes
 UTILINC=$(srcdir)
 
-ALL_CFLAGS = $(CFLAGS) $(FMPOOL_FLAGS) -I$(HDFINC) -I$(JPEGINC) -I$(UTILINC)
+ALL_CFLAGS = $(CFLAGS) $(FMPOOL_FLAGS) -I$(HDFINC) -I$(JPEGINC) -I$(ZLIBINC) -I$(UTILINC)
 
 OTHERDIRS = fixatr testfiles
 
@@ -203,19 +207,19 @@ install-prog: all
 #	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
 #
 #.c.o: 
-#	 $(CC) $(CFLAGS) -c -I$(HDFINC) -I$(UTILINC) -I$(JPEGINC) $*.c 
+#	 $(CC) $(CFLAGS) -c -I$(HDFINC) -I$(UTILINC) -I$(JPEGINC) -I$(ZLIBINC) $*.c 
 
 .c.o: he.h he_proto.h $(HDFLIB)/libdf.a $(FRC)
 	$(CC) $(ALL_CFLAGS) -c $<
 
 .c: $(HDFLIB)/libdf.a
-	$(CC) $(ALL_CFLAGS) $< -o $@ $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(LIBS)
+	$(CC) $(ALL_CFLAGS) $< -o $@ $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a $(LIBS)
 
 .f: $(HDFLIB)/libdf.a 
-	$(FC) $(FFLAGS) $< $(HDFLIB)/libdf.a -o $@ $(JPEGLIB)/libjpeg.a
+	$(FC) $(FFLAGS) $< $(HDFLIB)/libdf.a -o $@ $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
 
 hdfed: he.h he_proto.h $(HEOBJ) $(HDFLIB)/libdf.a $(FRC)
-	$(CC) $(ALL_CFLAGS) $(HEOBJ) $(HDFLIB)/libdf.a -o hdfed $(JPEGLIB)/libjpeg.a
+	$(CC) $(ALL_CFLAGS) $(HEOBJ) $(HDFLIB)/libdf.a -o hdfed $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
 
 utils: $(UTILS) $(HDFLIB)/libdf.a
 
@@ -226,6 +230,8 @@ $(UTILS): $(FRC)
 $(HDFLIB)/libdf.a:
 
 $(JPEGLIB)/libjpeg.a:
+
+$(ZLIBLIB)/libz.a:
 
 clean:
 	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed fptest

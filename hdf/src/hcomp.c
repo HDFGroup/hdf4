@@ -197,6 +197,14 @@ HCIinit_coder(comp_coder_info_t * cinfo, comp_coder_t coder_type,
               cinfo->coder_info.skphuff_info.skip_size = c_info->skphuff.skp_size;
               break;
 
+          case COMP_CODE_DEFLATE:   /* gzip 'deflate' encoding */
+              cinfo->coder_type = COMP_CODE_DEFLATE;    /* set the coding type */
+              cinfo->coder_funcs = cdeflate_funcs;  /* set the gzip 'deflate' func. ptrs */
+
+              /* copy encoding info */
+              cinfo->coder_info.deflate_info.deflate_level = c_info->deflate.level;
+              break;
+
           default:
               HRETURN_ERROR(DFE_BADCODER, FAIL);
       }     /* end switch */

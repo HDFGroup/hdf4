@@ -81,6 +81,7 @@ HDF_INC  = $(TOP_SRCDIR)/hdf/src/
 PABLO_HINC = $(TOP_SRCDIR)/hdf/pablo
 FMPOOL_INC = $(TOP_SRCDIR)/hdf/fmpool
 JPEG_LIB = $(TOP_SRCDIR)/hdf/jpeg/libjpeg.a
+ZLIB_LIB = $(TOP_SRCDIR)/hdf/zlib/libz.a
 NETCDF_INC = $(TOP_SRCDIR)/mfhdf/libsrc
 PORT_INC   = $(TOP_SRCDIR)/mfhdf/port
 CPP	   = $(CC) -E
@@ -126,7 +127,7 @@ LD_NETCDF	= ../libsrc/libmfhdf.a
 OBJS		=  hdp.o hdp_list.o hdp_sds.o hdp_util.o hdp_vd.o hdp_vg.o hdp_rig.o show.o hdp_dump.o
 #LD_XDR		= @LD_XDR@
 LD_NETCDF	= -L../libsrc -lmfhdf
-LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) -lm $(JPEG_LIB)
+LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) -lm $(JPEG_LIB) $(ZLIB_LIB)
 prefix		= ../../..
 GARBAGE		= $(PROGRAM) *.o
 

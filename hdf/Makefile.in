@@ -79,7 +79,7 @@ VERSION  = 4.0
 MANIFEST = $(DISTFILES)
 DISTFILES = Makefile.in COPYING build.inc
 
-SUBDIRS= src jpeg fmpool pablo test util
+SUBDIRS= src jpeg zlib fmpool pablo test util
 
 HDFINC= $(srcdir)/src
 HDFLIB= $(srcdir)/src
@@ -122,24 +122,32 @@ LOCAL_MACROS  = CC="$(CC)" \
 all:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd  
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libz.a \
+          SUBDIRS="zlib" subd  
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="src fmpool pablo util test" subd message 
 
 allnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd  
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libz.a \
+          SUBDIRS="zlib" subd  
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
           SUBDIRS="src fmpool pablo util test" subd message 
 
 rebuild rebuildnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd 
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libz.a \
+          SUBDIRS="zlib" subd 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="src fmpool pablo util test" subd message 
 
 libnofortran:
 	@$(MAKE) $(MYFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
 	  SUBDIRS="jpeg" subd 
+	@$(MAKE) $(MYFLAGS) $(HDF_FLAGS) TARG=libz.a \
+	  SUBDIRS="zlib" subd 
 	@$(MAKE) $(MYFLAGS) $(HDF_FLAGS) TARG=nofortran \
 	  SUBDIRS="src fmpool pablo" subd message
 
@@ -150,6 +158,8 @@ allnostub: allnofortran
 libs:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libz.a \
+          SUBDIRS="zlib" subd
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
           SUBDIRS="src fmpool pablo" subd
 
@@ -161,27 +171,39 @@ libjpeg:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd
 
+libjpeg:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libz.a \
+          SUBDIRS="zlib" subd
+
 utilities:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libz.a \
+          SUBDIRS="zlib" subd
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
           SUBDIRS="src fmpool pablo util" subd
 
 hdf-test:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libz.a \
+          SUBDIRS="zlib" subd
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
           SUBDIRS="src fmpool pablo test" subd
 
 hdf-testnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libz.a \
+          SUBDIRS="zlib" subd
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
           SUBDIRS="src fmpool pablo test" subd
 
 testnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd 
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libz.a \
+          SUBDIRS="zlib" subd 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
           SUBDIRS="src fmpool pablo test" subd message 
 
@@ -199,13 +221,13 @@ test-hdffortran:
 
 install:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install-lib \
-          SUBDIRS="src jpeg fmpool pablo" subd
+          SUBDIRS="src jpeg zlib fmpool pablo" subd
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install \
           SUBDIRS="util" subd
 
 install-libs:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install-lib \
-          SUBDIRS="src jpeg fmpool pablo" subd
+          SUBDIRS="src jpeg zlib fmpool pablo" subd
 
 install-utils:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install \
@@ -214,6 +236,8 @@ install-utils:
 perfs:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libz.a \
+          SUBDIRS="zlib" subd
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
           SUBDIRS="src fmpool perf" subd
 
@@ -224,21 +248,23 @@ perfs:
 debug:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libjpeg.a \
           SUBDIRS="jpeg" subd 
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=libz.a \
+          SUBDIRS="zlib" subd 
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=debug \
           SUBDIRS="fmpool src test" subd message 
 
 saber:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=saber \
-          SUBDIRS="src jpeg test" subd
+          SUBDIRS="src jpeg zlib test" subd
 
 clean:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
-          SUBDIRS="src jpeg fmpool pablo util test" subd
+          SUBDIRS="src jpeg zlib fmpool pablo util test" subd
 	-$(RM) $(RMFLAGS) core *.log
 
 distclean:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
-          SUBDIRS="src jpeg fmpool pablo util test" subd
+          SUBDIRS="src jpeg zlib fmpool pablo util test" subd
 	-$(RM) $(RMFLAGS) core *.log
 	-$(RM) -rf bin lib include config.status Makefile
 
@@ -295,6 +321,7 @@ help:
 	@echo "make libs          - makes HDF and IJG JPEG libraries only"
 	@echo "make libdf         - makes HDF library "
 	@echo "make libjpeg       - makes IJG JPEG library "
+	@echo "make libz          - makes GZIP deflate library "
 	@echo "make test-hdf          - run HDF tests " 
 	@echo "make test-hdfnofortran - run HDF tests except the fortran test " 
 	@echo "make test-hdffortran   - run HDF fortran tests only " 

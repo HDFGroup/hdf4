@@ -1,4 +1,3 @@
-
 /****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
@@ -57,7 +56,7 @@ comp_model_info_t;
 #include "crle.h"   /* run-length encoding header */
 #include "cnbit.h"  /* N-bit encoding header */
 #include "cskphuff.h"   /* Skipping huffman encoding header */
-#include "cgzip.h"  /* gzip encoding header */
+#include "cdeflate.h"   /* gzip 'deflate' encoding header */
 
 typedef struct comp_coder_info_tag
   {
@@ -68,7 +67,7 @@ typedef struct comp_coder_info_tag
             comp_coder_rle_info_t rle_info;     /* RLE coding info */
             comp_coder_nbit_info_t nbit_info;   /* N-bit coding info */
             comp_coder_skphuff_info_t skphuff_info;     /* Skipping huffman coding info */
-            comp_coder_gzip_info_t gzip_info;   /* gzip coding info */
+            comp_coder_deflate_info_t deflate_info;   /* gzip 'deflate' coding info */
         }
       coder_info;
       funclist_t  coder_funcs;  /* functions to perform encoding */

@@ -42,7 +42,7 @@ typedef enum
       COMP_CODE_RLE,            /* for simple RLE encoding */
       COMP_CODE_NBIT,           /* for N-bit encoding */
       COMP_CODE_SKPHUFF,        /* for Skipping huffman encoding */
-      COMP_CODE_GZIP,           /* for gzip encoding */
+      COMP_CODE_DEFLATE,        /* for gzip 'deflate' encoding */
       COMP_CODE_INVALID         /* invalid last code, for range checking */
   }
 comp_coder_t;
@@ -53,11 +53,6 @@ comp_coder_t;
 #define COMP_RLE        11
 #define COMP_IMCOMP     12
 
-#if 0
-/* Set the following macro to the value the highest compression scheme is */
-#define COMP_MAX_COMP   12
-#endif
-
 #ifndef COMPRESS_MASTER
 extern uint16 compress_map[];
 #else
@@ -65,11 +60,7 @@ uint16      compress_map[COMP_MAX_COMP + 1] =
 {                               /* Mapping from compression types to tags */
     0,                          /* No corresponding tag for un-compressed data */
     0,                          /* (1) */
-#ifdef OLD_WAY
-    DFTAG_JPEG,                 /* COMP_JPEG -> DFTAG_JPEG (for JPEG compression) */
-#else /* OLD_WAY */
     DFTAG_JPEG5,                /* COMP_JPEG -> DFTAG_JPEG5 (for JPEG compression) */
-#endif /* OLD_WAY */
     0,                          /* (3) */
     0,                          /* (4) */
     0,                          /* (5) */
@@ -130,8 +121,9 @@ typedef union tag_comp_info
             /* or decompress a gzip encoded dataset */
             intn    level;   /* how hard to work when compressing the data */
         }
-      gzip;
+      deflate;
   }
 comp_info;
 
 #endif /* __HCOMP_H */
+

@@ -83,6 +83,7 @@ HDF_INC  = $(TOP_SRCDIR)/hdf/src/
 PABLO_HINC = $(TOP_SRCDIR)/hdf/pablo
 FMPOOL_INC = $(TOP_SRCDIR)/hdf/fmpool
 JPEG_LIB = $(TOP_SRCDIR)/hdf/jpeg/libjpeg.a
+ZLIB_LIB = $(TOP_SRCDIR)/hdf/zlib/libz.a
 NETCDF_INC = $(TOP_SRCDIR)/mfhdf/libsrc
 PORT_INC   = $(TOP_SRCDIR)/mfhdf/port
 CPP	   = $(CC) -E

@@ -13,18 +13,23 @@
  /* $Id$ */
 
  /*-----------------------------------------------------------------------------
- * File:    cgzip.h
- * Purpose: Header file for gzip encoding information.
+ * File:    cdeflate.h
+ * Purpose: Header file for gzip 'deflate' encoding information.
  * Dependencies: should only be included from hcompi.h
  * Invokes: none
- * Contents: Structures & definitions for gzip encoding.
+ * Contents: Structures & definitions for gzip 'deflate' encoding.
  * Structure definitions:
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
 /* avoid re-inclusion */
-#ifndef __CGZIP_H
-#define __CGZIP_H
+#ifndef __CDEFLATE_H
+#define __CDEFLATE_H
+
+/* Get the gzip 'deflate' header */
+#define intf zintf
+#include "zlib.h"
+#undef zintf
 
 #if defined c_plusplus || defined __cplusplus
 extern      "C"
@@ -32,59 +37,64 @@ extern      "C"
 #endif                          /* c_plusplus || __cplusplus */
 
 /*
-   ** from cgzip.c
+   ** from cdeflate.c
  */
 
-    extern int32 HCPcgzip_stread
+    extern int32 HCPcdeflate_stread
                 (accrec_t * rec);
 
-    extern int32 HCPcgzip_stwrite
+    extern int32 HCPcdeflate_stwrite
                 (accrec_t * rec);
 
-    extern int32 HCPcgzip_seek
+    extern int32 HCPcdeflate_seek
                 (accrec_t * access_rec, int32 offset, int origin);
 
-    extern int32 HCPcgzip_inquire
+    extern int32 HCPcdeflate_inquire
                 (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
                int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
                  int16 *pspecial);
 
-    extern int32 HCPcgzip_read
+    extern int32 HCPcdeflate_read
                 (accrec_t * access_rec, int32 length, VOIDP data);
 
-    extern int32 HCPcgzip_write
+    extern int32 HCPcdeflate_write
                 (accrec_t * access_rec, int32 length, const VOIDP data);
 
-    extern intn HCPcgzip_endaccess
+    extern intn HCPcdeflate_endaccess
                 (accrec_t * access_rec);
 
 #if defined c_plusplus || defined __cplusplus
 }
 #endif                          /* c_plusplus || __cplusplus */
 
+/* Define the [default] size of the buffer to interact with the file. */
+#define DEFLATE_BUF_SIZE    4096
+#define TMP_BUF_SIZE        16384
+
 /* gzip [en|de]coding information */
 typedef struct
 {
-    intn        skip_size;      /* number of bytes in each element */
-    intn        skip_pos;       /* current byte to read or write */
+    intn        deflate_level;  /* how hard to try to compress this data */
     int32       offset;         /* offset in the de-compressed array */
+    VOIDP       io_buf;         /* buffer for I/O with the file */
+    z_stream    deflate_context;    /* pointer to the deflation context for each byte in the element */
 }
-comp_coder_gzip_info_t;
+comp_coder_deflate_info_t;
 
-#ifndef CGZIP_MASTER
-extern funclist_t cgzip_funcs;   /* functions to perform gzip encoding */
+#ifndef CDEFLATE_MASTER
+extern funclist_t cdeflate_funcs;   /* functions to perform gzip encoding */
 #else
-funclist_t  cgzip_funcs =
+funclist_t  cdeflate_funcs =
 {                               /* functions to perform gzip encoding */
-    HCPcgzip_stread,
-    HCPcgzip_stwrite,
-    HCPcgzip_seek,
-    HCPcgzip_inquire,
-    HCPcgzip_read,
-    HCPcgzip_write,
-    HCPcgzip_endaccess
+    HCPcdeflate_stread,
+    HCPcdeflate_stwrite,
+    HCPcdeflate_seek,
+    HCPcdeflate_inquire,
+    HCPcdeflate_read,
+    HCPcdeflate_write,
+    HCPcdeflate_endaccess
 };
 #endif
 
-#endif /* __CGZIP_H */
+#endif /* __CDEFLATE_H */
 

@@ -261,6 +261,10 @@ libjpeg:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(HDFDIR)" subd
 
+libz: 
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
+          SUBDIRS="$(HDFDIR)" subd
+
 install:	
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(HDFDIR)" subd
@@ -331,6 +335,7 @@ help:
 	@echo "make hdf-libs          - makes HDF and IJG JPEG libraries only"
 	@echo "make libdf             - makes HDF library"
 	@echo "make libjpeg           - makes IJG JPEG library"
+	@echo "make libz              - makes GZIP deflate library"
 	@echo "make test              - run both HDF and NETCDF tests"
 	@echo "make testnofortran     - run HDF tests except the fortran test" 
 	@echo "                         and NETCDF tests"
